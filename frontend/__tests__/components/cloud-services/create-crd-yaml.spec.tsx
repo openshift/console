@@ -25,41 +25,45 @@ describe(CreateCRDYAML.displayName, () => {
   });
 
   it('renders a `Firehose` for the ClusterServiceVersion', () => {
-    expect(wrapper.find<any>(Firehose).props().resources).toEqual([
+    expect(wrapper.shallow().find(Firehose).props().resources).toEqual([
       {kind: referenceForModel(ClusterServiceVersionModel), name: 'example', namespace: 'default', isList: false, prop: 'ClusterServiceVersion'}
     ]);
   });
 
   it('renders YAML editor component', () => {
-    wrapper = wrapper.setProps({ClusterServiceVersion: {loaded: true, data: _.cloneDeep(testClusterServiceVersion)}} as any);
+    const render = wrapper.find('CreateCRDYAMLFirehose').prop<Function>('render');
+    wrapper = shallow(<div>{render({ClusterServiceVersion: {loaded: true, data: _.cloneDeep(testClusterServiceVersion)}})}</div>);
 
-    expect(wrapper.find(Firehose).childAt(0).dive().find(CreateYAML).exists()).toBe(true);
+    expect(wrapper.childAt(0).shallow().find(CreateYAML).exists()).toBe(true);
   });
 
   it('registers example YAML templates using annotations on the ClusterServiceVersion', () => {
     let data = _.cloneDeep(testClusterServiceVersion);
     data.metadata.annotations = {'alm-examples': JSON.stringify([testResourceInstance])};
-    wrapper = wrapper.setProps({ClusterServiceVersion: {loaded: true, data}} as any);
+    const render = wrapper.find('CreateCRDYAMLFirehose').prop<Function>('render');
+    wrapper = shallow(<div>{render({ClusterServiceVersion: {loaded: true, data}})}</div>);
 
-    wrapper.find(Firehose).childAt(0).dive();
+    wrapper.childAt(0).dive();
 
     expect(registerTemplateSpy.calls.count()).toEqual(1);
     expect(registerTemplateSpy.calls.argsFor(0)[1]).toEqual(safeDump(testResourceInstance));
   });
 
   it('registers fallback example YAML template if annotations not present on ClusterServiceVersion', () => {
-    wrapper = wrapper.setProps({ClusterServiceVersion: {loaded: true, data: _.cloneDeep(testClusterServiceVersion)}} as any);
+    const render = wrapper.find('CreateCRDYAMLFirehose').prop<Function>('render');
+    wrapper = shallow(<div>{render({ClusterServiceVersion: {loaded: true, data: _.cloneDeep(testClusterServiceVersion)}})}</div>);
 
-    wrapper.find(Firehose).childAt(0).dive();
+    wrapper.childAt(0).dive();
 
     expect(registerTemplateSpy.calls.count()).toEqual(1);
     expect(registerTemplateSpy.calls.argsFor(0)[1]).not.toEqual(safeDump(testResourceInstance));
   });
 
   it('does not render YAML editor component if ClusterServiceVersion has not loaded yet', () => {
-    wrapper = wrapper.setProps({ClusterServiceVersion: {loaded: false}} as any);
+    const render = wrapper.find('CreateCRDYAMLFirehose').prop<Function>('render');
+    wrapper = shallow(<div>{render({ClusterServiceVersion: {loaded: false}})}</div>);
 
-    expect(wrapper.find(Firehose).childAt(0).dive().find(CreateYAML).exists()).toBe(false);
-    expect(wrapper.find(Firehose).childAt(0).dive().find(LoadingBox).exists()).toBe(true);
+    expect(wrapper.childAt(0).dive().find(CreateYAML).exists()).toBe(false);
+    expect(wrapper.childAt(0).dive().find(LoadingBox).exists()).toBe(true);
   });
 });

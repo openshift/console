@@ -8,10 +8,9 @@ import { Link } from 'react-router-dom';
 import { safeLoad, safeDump } from 'js-yaml';
 import Spy = jasmine.Spy;
 
-import { CatalogSourceDetails, CatalogSourceDetailsProps, CatalogSourceDetailsPage, CatalogSourceDetailsPageProps, PackageHeader, PackageHeaderProps, PackageRow, PackageRowProps, PackageList, PackageListProps, CreateSubscriptionYAML, CreateSubscriptionYAMLProps } from '../../../public/components/cloud-services/catalog-source';
+import { CatalogSourceDetails, CatalogSourceFirehose, CatalogSourceDetailsProps, CatalogSourceDetailsPage, CatalogSourceDetailsPageProps, PackageHeader, PackageHeaderProps, PackageRow, PackageRowProps, PackageList, PackageListProps, CreateSubscriptionYAML, CreateSubscriptionYAMLProps, CreateSubscriptionYAMLFirehose } from '../../../public/components/cloud-services/catalog-source';
 import { ClusterServiceVersionLogo, SubscriptionKind } from '../../../public/components/cloud-services';
-import { referenceForModel } from '../../../public/module/k8s';
-import { SubscriptionModel, CatalogSourceModel } from '../../../public/models';
+import { SubscriptionModel } from '../../../public/models';
 import { ListHeader, ColHead, List } from '../../../public/components/factory';
 import { Firehose, NavTitle, LoadingBox, ErrorBoundary } from '../../../public/components/utils';
 import { CreateYAML } from '../../../public/components/create-yaml';
@@ -159,27 +158,18 @@ describe(CatalogSourceDetailsPage.displayName, () => {
     expect(wrapper.find(NavTitle).props().title).toEqual('Open Cloud Services');
   });
 
-  it('creates a `Firehose` component for the necessary resources', () => {
-    expect(wrapper.find<any>(Firehose).props().resources).toEqual([{
-      kind: referenceForModel(CatalogSourceModel),
-      name: 'tectonic-ocs',
-      namespace: 'tectonic-system',
-      isList: false,
-      prop: 'catalogSource',
-    }, {
-      kind: referenceForModel(SubscriptionModel),
-      isList: true,
-      prop: 'subscription',
-    }, {
-      kind: 'ConfigMap',
-      isList: false,
-      name: 'tectonic-ocs',
-      namespace: 'tectonic-system',
-      prop: 'configMap'}]);
-  });
+  it('renders `CatalogSourceDetails` component wrapped in a custom `Firehose`', () => {
+    const configMap = {loaded: false, loadError: null, data: null};
+    const subscription = {loaded: false, loadError: null, data: null};
+    const catalogSource = {loaded: false, loadError: null, data: null};
 
-  it('renders `CatalogSourceDetails` component', () => {
-    expect(wrapper.find(Firehose).find(CatalogSourceDetails).exists()).toBe(true);
+    const render = wrapper.find(CatalogSourceFirehose).props().render;
+    wrapper = shallow(<div>{render({configMap, subscription, catalogSource})}</div>);
+
+    expect(wrapper.find(CatalogSourceDetails).props().ns).toEqual('default');
+    expect(wrapper.find(CatalogSourceDetails).props().configMap).toEqual(configMap);
+    expect(wrapper.find(CatalogSourceDetails).props().subscription).toEqual(subscription);
+    expect(wrapper.find(CatalogSourceDetails).props().catalogSource).toEqual(catalogSource);
   });
 });
 
@@ -193,23 +183,25 @@ describe(CreateSubscriptionYAML.displayName, () => {
     wrapper = shallow(<CreateSubscriptionYAML match={{isExact: true, url: '', path: '', params: {ns: 'default', pkgName: testPackage.packageName}}} />);
   });
 
-  it('renders a `Firehose` for the catalog ConfigMap', () => {
-    expect(wrapper.find<any>(Firehose).props().resources).toEqual([
+  it('renders a custom `Firehose` for the catalog ConfigMap', () => {
+    expect(wrapper.find(CreateSubscriptionYAMLFirehose).shallow().find(Firehose).props().resources).toEqual([
       {kind: 'ConfigMap', name: 'tectonic-ocs', namespace: 'tectonic-system', isList: false, prop: 'ConfigMap'}
     ]);
   });
 
   it('renders YAML editor component wrapped by an error boundary component', () => {
-    wrapper = wrapper.setProps({ConfigMap: {loaded: true, data: {data: {packages: safeDump([testPackage])}}}} as any);
+    const render = wrapper.find(CreateSubscriptionYAMLFirehose).props().render;
+    wrapper = shallow(<div>{render({ConfigMap: {loaded: true, data: {data: {packages: safeDump([testPackage])}}}})}</div>);
 
-    expect(wrapper.find(Firehose).childAt(0).dive().find(ErrorBoundary).exists()).toBe(true);
-    expect(wrapper.find(Firehose).childAt(0).dive().find(ErrorBoundary).childAt(0).dive().find(CreateYAML).exists()).toBe(true);
+    expect(wrapper.childAt(0).dive().find(ErrorBoundary).exists()).toBe(true);
+    expect(wrapper.childAt(0).dive().find(ErrorBoundary).childAt(0).dive().find(CreateYAML).exists()).toBe(true);
   });
 
   it('registers example YAML templates using the package default channel', () => {
-    wrapper = wrapper.setProps({ConfigMap: {loaded: true, data: {data: {packages: safeDump([testPackage])}}}} as any);
+    const render = wrapper.find(CreateSubscriptionYAMLFirehose).props().render;
+    wrapper = shallow(<div>{render({ConfigMap: {loaded: true, data: {data: {packages: safeDump([testPackage])}}}})}</div>);
 
-    wrapper.find(Firehose).childAt(0).dive().find(ErrorBoundary).childAt(0).dive();
+    wrapper.childAt(0).dive().find(ErrorBoundary).childAt(0).dive();
     const subTemplate: SubscriptionKind = safeLoad(registerTemplateSpy.calls.argsFor(0)[1]);
 
     expect(registerTemplateSpy.calls.count()).toEqual(1);
@@ -221,9 +213,10 @@ describe(CreateSubscriptionYAML.displayName, () => {
   });
 
   it('does not render YAML editor component if ConfigMap has not loaded yet', () => {
-    wrapper = wrapper.setProps({ConfigMap: {loaded: false}} as any);
+    const render = wrapper.find(CreateSubscriptionYAMLFirehose).props().render;
+    wrapper = shallow(<div>{render({ConfigMap: {loaded: false}})}</div>);
 
-    expect(wrapper.find(Firehose).childAt(0).dive().find(CreateYAML).exists()).toBe(false);
-    expect(wrapper.find(Firehose).childAt(0).dive().find(ErrorBoundary).childAt(0).dive().find(LoadingBox).exists()).toBe(true);
+    expect(wrapper.childAt(0).dive().find(CreateYAML).exists()).toBe(false);
+    expect(wrapper.childAt(0).dive().find(ErrorBoundary).childAt(0).dive().find(LoadingBox).exists()).toBe(true);
   });
 });

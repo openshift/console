@@ -302,6 +302,7 @@ describe(ClusterServiceVersionPrometheusGraph.displayName, () => {
 });
 
 describe('ResourcesList', () => {
+
   it('uses the resources defined in the CSV', () => {
     const kindObj: K8sKind = {
       abbr: '',

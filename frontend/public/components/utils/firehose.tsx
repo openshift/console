@@ -1,3 +1,5 @@
+/* eslint-disable no-undef, no-unused-vars */
+
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as PropTypes from 'prop-types';
@@ -5,20 +7,20 @@ import { connect } from 'react-redux';
 import { Map as ImmutableMap } from 'immutable';
 
 import { inject } from './index';
+import { K8sKind, K8sResourceKindReference } from '../../module/k8s';
 import actions from '../../module/k8s/k8s-actions';
 
-export const makeReduxID = (k8sKind = {}, query) => {
+export const makeReduxID = (k8sKind: K8sKind, query: Query) => {
   let qs = '';
   if (!_.isEmpty(query)) {
     qs = `---${JSON.stringify(query)}`;
   }
 
-  return `${k8sKind.plural}${qs}`;
+  return `${_.get(k8sKind, 'plural')}${qs}`;
 };
 
-/** @type {(namespace: string, labelSelector?: any, fieldSelector?: any, name?: string) => {[key: string]: string}} */
-export const makeQuery = (namespace, labelSelector, fieldSelector, name, limit) => {
-  const query = {};
+export const makeQuery = (namespace: string, labelSelector?: LabelSelector, fieldSelector?, name?: string, limit?: number): Query => {
+  let query = {} as any;
 
   if (!_.isEmpty(labelSelector)) {
     query.labelSelector = labelSelector;
@@ -92,10 +94,8 @@ const worstError = errors => {
   return worst;
 };
 
-// A wrapper Component that takes data out of redux for a list or object at some reduxID ...
-// passing it to children
-const ConnectToState = connect(({k8s}, {reduxes}) => {
-  const resources = {};
+const stateToProps = ({k8s}, {reduxes}) => {
+  const resources = {} as any;
 
   reduxes.forEach(redux => {
     resources[redux.prop] = processReduxId({k8s}, redux);
@@ -112,23 +112,28 @@ const ConnectToState = connect(({k8s}, {reduxes}) => {
     reduxIDs: _.map(reduxes, 'reduxID'),
     resources,
   });
-})(props => <div className={props.className}>
+};
+
+// A wrapper Component that takes data out of redux for a list or object at some reduxID ...
+// passing it to children
+const ConnectToState = connect(stateToProps)((props: ConnectToStateProps) => <div className={props.className}>
   {inject(props.children, _.omit(props, ['children', 'className', 'reduxes']))}
 </div>);
 
-const stateToProps = ({k8s}, {resources}) => ({
+const firehoseStateToProps = ({k8s}, {resources}) => ({
   k8sModels: resources.reduce((models, {kind}) => models.set(kind, k8s.getIn(['RESOURCES', 'models', kind])), ImmutableMap()),
 });
 
 export const Firehose = connect(
-  stateToProps, {
+  firehoseStateToProps, {
     stopK8sWatch: actions.stopK8sWatch,
     watchK8sObject: actions.watchK8sObject,
     watchK8sList: actions.watchK8sList,
   })(
-  /** @augments {React.Component<{k8sModels?: Map<string, K8sKind}>} */
-  class Firehose extends React.Component {
-    componentWillMount (props=this.props) {
+  class Firehose extends React.Component<FirehoseProps> {
+    private firehoses = [];
+
+    componentWillMount (props = this.props) {
       const { watchK8sList, watchK8sObject, resources, k8sModels } = props;
 
       this.firehoses = resources.map(resource => {
@@ -187,6 +192,7 @@ export const Firehose = connect(
     }
   }
 );
+
 Firehose.WrappedComponent.contextTypes = {
   router: PropTypes.object,
 };
@@ -208,4 +214,79 @@ Firehose.propTypes = {
     isList: PropTypes.bool,
     optional: PropTypes.bool,
   })).isRequired,
+};
+
+export type FirehoseFor = <ResourceKeys extends string>(resources: {[K in ResourceKeys]: FirehoseResource}) =>
+  React.ComponentType<{render: (props: {[K in ResourceKeys]: FirehoseResponse}) => JSX.Element}>;
+
+/**
+ * Factory function to produce a component that renders a `Firehose` with render props matching `props.resources`.
+ */
+export const firehoseFor: FirehoseFor = <ResourceKeys extends string>(resources: {[K in ResourceKeys]: FirehoseResource}) => {
+  type FirehoseRCProps = {render: (props: {[K in ResourceKeys]: {}}) => JSX.Element};
+
+  // Needed because `Firehose` doesn't support React.Fragment
+  const Render = ({render, ...rest}) => render(rest);
+
+  const FirehoseRC: React.SFC<FirehoseRCProps> = (props) => <Firehose resources={_.map(resources, (resource: FirehoseResource, prop) => ({...resource, prop}))}>
+    {/* FIXME: Replace this once `Firehose` itself uses render callback */}
+    <Render render={props.render} />
+  </Firehose>;
+
+  return FirehoseRC;
+};
+
+export type FirehoseResource = {
+  kind: K8sResourceKindReference;
+  name?: string;
+  namespace?: string;
+  selector?: {[key: string]: any};
+  fieldSelector?: string;
+  isList: boolean;
+  optional?: boolean;
+  prop?: string;
+};
+
+export type FirehoseProps = {
+  k8sModels: Map<string, K8sKind>;
+  watchK8sList: any;
+  watchK8sObject: any;
+  stopK8sWatch: any;
+  resources: FirehoseResource[];
+  expand?: boolean;
+  children: React.ReactNode;
+};
+
+export type ConnectToStateProps = {
+  resources: {
+    kind: K8sResourceKindReference;
+    name: string;
+    namespace: string;
+    selector: {[key: string]: any};
+    fieldSelector: string;
+    isList: boolean;
+    optional: boolean;
+  }[];
+  loaded: boolean;
+  loadError: string;
+  reduxIDs: string[];
+  filters: any;
+} & React.HTMLProps<any>;
+
+export type FirehoseResponse = {
+  loaded: boolean;
+  loadError: string | Object;
+  // FIXME(alecmerdler)
+  data: any;
+};
+
+export type LabelSelector = {
+
+};
+
+export type Query = {
+  labelSelector: LabelSelector;
+  ns: string;
+  name: string;
+  fieldSelector: string;
 };

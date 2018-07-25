@@ -5,7 +5,7 @@ import { safeDump } from 'js-yaml';
 import { match } from 'react-router-dom';
 import * as _ from 'lodash-es';
 
-import { Firehose, LoadingBox } from '../utils';
+import { firehoseFor, LoadingBox } from '../utils';
 import { CreateYAML } from '../create-yaml';
 import { referenceForModel, K8sResourceKind, K8sResourceKindReference, kindForReference, apiVersionForReference } from '../../module/k8s';
 import { ClusterServiceVersionModel } from '../../models';
@@ -18,6 +18,17 @@ import { ocsTemplates } from './ocs-templates';
  */
 export const CreateCRDYAML: React.SFC<CreateCRDYAMLProps> = (props) => {
   const annotationKey = 'alm-examples';
+
+  const CreateCRDYAMLFirehose = firehoseFor({
+    ClusterServiceVersion: {
+      kind: referenceForModel(ClusterServiceVersionModel),
+      name: props.match.params.appName,
+      namespace: props.match.params.ns,
+      isList: false,
+      prop: 'ClusterServiceVersion'
+    }
+  });
+  CreateCRDYAMLFirehose.displayName = 'CreateCRDYAMLFirehose';
 
   const Create = (createProps: {ClusterServiceVersion: {loaded: boolean, data: ClusterServiceVersionKind}}) => {
     if (createProps.ClusterServiceVersion.loaded && createProps.ClusterServiceVersion.data) {
@@ -34,15 +45,9 @@ export const CreateCRDYAML: React.SFC<CreateCRDYAMLProps> = (props) => {
     return <LoadingBox />;
   };
 
-  return <Firehose resources={[{
-    kind: referenceForModel(ClusterServiceVersionModel),
-    name: props.match.params.appName,
-    namespace: props.match.params.ns,
-    isList: false,
-    prop: 'ClusterServiceVersion'
-  }]}>
-    <Create {...props as any} />
-  </Firehose>;
+  return <CreateCRDYAMLFirehose render={({ClusterServiceVersion}) =>
+    <Create ClusterServiceVersion={ClusterServiceVersion} />
+  } />;
 };
 
 export type CreateCRDYAMLProps = {
