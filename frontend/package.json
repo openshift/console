@@ -78,6 +78,7 @@
     "react-modal": "3.x",
     "react-redux": "5.x",
     "react-router-dom": "4.x",
+    "react-router-hash-link": "^1.2.0",
     "react-tagsinput": "3.19.x",
     "react-transition-group": "2.3.x",
     "react-virtualized": "9.x",

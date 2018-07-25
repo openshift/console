@@ -3,6 +3,7 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
+import { HashLink } from 'react-router-hash-link';
 
 import { coFetch, coFetchJSON } from '../co-fetch';
 import { NavTitle, AsyncComponent, Firehose, StatusBox, DocumentationLinks, AdditionalSupportLinks } from './utils';
@@ -166,7 +167,7 @@ const GraphsPage = ({fake, limited, namespace, openshiftFlag}) => {
       </div>
     </div>
     <div className="col-lg-4 col-md-12">
-      <div className="group">
+      <div className="group" id="software-info">
         <div className="group__title">
           <h2 className="h3">Software Info</h2>
         </div>
@@ -241,7 +242,11 @@ const ClusterOverviewPage_ = props => {
     <Helmet>
       <title>{fake ? 'Overview' : title}</title>
     </Helmet>
-    <NavTitle title={fake ? 'Overview' : title} />
+    <NavTitle title={fake ? 'Overview' : title} style={{alignItems: 'baseline', display: 'flex', justifyContent: 'space-between'}}>
+      <p className="hidden-lg">
+        <HashLink smooth to="#software-info">Software Info</HashLink>
+      </p>
+    </NavTitle>
     <div className="cluster-overview-cell container-fluid">
       <AsyncComponent namespace={namespace} loader={permissionedLoader} openshiftFlag={openshiftFlag} fake={fake} />
     </div>
