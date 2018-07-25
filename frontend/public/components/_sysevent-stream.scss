@@ -67,7 +67,7 @@ $color-dark-border: #ddd;
   display: flex;
   justify-content: flex-start;
   flex-wrap: wrap;
-  height: 115px;
+  height: 120px;
   .co-m-resource-icon {
     margin-left: 0;
   }
@@ -106,11 +106,11 @@ $color-dark-border: #ddd;
 }
 
 .co-sysevent__message {
+  @include co-break-word;
   cursor: help;
   margin-top: 10px;
   overflow: hidden;
   text-overflow: ellipsis;
-  word-wrap: break-word;
   height: 40px;
   position: relative;
 }
@@ -118,7 +118,7 @@ $color-dark-border: #ddd;
   background: linear-gradient(to right, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1) 50%);
   bottom: 0;
   content: "";
-  height: 1.2em;
+  height: 25px;
   position: absolute;
   right: 0;
   width: 15%;
@@ -147,6 +147,17 @@ $color-dark-border: #ddd;
   width: 50%;
 }
 
+/* The AutoSizer/VirtualList height change kicks in here. This is meant to handle the remainder of the mobile view (which has a shorter row height). */
+@media(min-width: 508px) {
+  .co-sysevent {
+    height: 95px;
+  }
+
+  .co-sysevent__message {
+    height: 25px;
+  }
+}
+
 @media(min-width: $grid-float-breakpoint) {
   .co-sysevent {
     flex-wrap: nowrap;
@@ -154,7 +165,7 @@ $color-dark-border: #ddd;
   }
 
   .co-sysevent__box {
-    padding: 20px;
+    padding: 10px 10px 0 10px;
     flex: 1 2 auto;
     border: solid 1px $color-grey-border;
     min-width: 0%; // necessary for wrapping since its a flex child
@@ -165,6 +176,7 @@ $color-dark-border: #ddd;
   }
 
   .co-sysevent-stream {
+    padding-top: 50px;
     padding-left: 10px;
   }
 
