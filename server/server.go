@@ -39,6 +39,7 @@ const (
 	authLogoutEndpoint        = "/auth/logout"
 	k8sProxyEndpoint          = "/api/kubernetes/"
 	prometheusProxyEndpoint   = "/api/prometheus"
+	alertManagerProxyEndpoint = "/api/alertmanager"
 )
 
 var (
@@ -57,6 +58,7 @@ type jsGlobals struct {
 	LogoutRedirect       string `json:"logoutRedirect"`
 	KubeAPIServerURL     string `json:"kubeAPIServerURL"`
 	PrometheusBaseURL    string `json:"prometheusBaseURL"`
+	AlertManagerBaseURL  string `json:"alertManagerBaseURL"`
 	DeveloperConsoleURL  string `json:"developerConsoleURL"`
 	Branding             string `json:"branding"`
 	DocumentationBaseURL string `json:"documentationBaseURL"`
@@ -89,8 +91,9 @@ type Server struct {
 	KubeConfigTmpl *KubeConfigTmpl
 	DexClient      api.DexClient
 	// A client with the correct TLS setup for communicating with the API server.
-	K8sClient             *http.Client
-	PrometheusProxyConfig *proxy.Config
+	K8sClient               *http.Client
+	PrometheusProxyConfig   *proxy.Config
+	AlertManagerProxyConfig *proxy.Config
 }
 
 func (s *Server) authDisabled() bool {
@@ -99,6 +102,10 @@ func (s *Server) authDisabled() bool {
 
 func (s *Server) prometheusProxyEnabled() bool {
 	return s.PrometheusProxyConfig != nil
+}
+
+func (s *Server) alertManagerProxyEnabled() bool {
+	return s.AlertManagerProxyConfig != nil
 }
 
 func (s *Server) HTTPHandler() http.Handler {
@@ -207,6 +214,18 @@ func (s *Server) HTTPHandler() http.Handler {
 		)
 	}
 
+	if s.alertManagerProxyEnabled() {
+		alertManagerProxyAPIPath := alertManagerProxyEndpoint + "/api/"
+		alertManagerProxy := proxy.NewProxy(s.AlertManagerProxyConfig)
+		handle(alertManagerProxyAPIPath, http.StripPrefix(
+			proxy.SingleJoiningSlash(s.BaseURL.Path, alertManagerProxyAPIPath),
+			authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
+				r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
+				alertManagerProxy.ServeHTTP(w, r)
+			})),
+		)
+	}
+
 	handle("/api/tectonic/version", authHandler(s.versionHandler))
 	handle("/api/tectonic/ldap/validate", authHandler(handleLDAPVerification))
 	handle("/api/tectonic/certs", authHandler(s.certsHandler))
@@ -288,6 +307,10 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 
 	if s.prometheusProxyEnabled() {
 		jsg.PrometheusBaseURL = proxy.SingleJoiningSlash(s.BaseURL.Path, prometheusProxyEndpoint)
+	}
+
+	if s.alertManagerProxyEnabled() {
+		jsg.AlertManagerBaseURL = proxy.SingleJoiningSlash(s.BaseURL.Path, alertManagerProxyEndpoint)
 	}
 
 	if !s.authDisabled() {

@@ -6,6 +6,7 @@ import { FLAGS, connectToFlags, flagPending } from '../../features';
 export { Status, errorStatus } from './status';
 
 export const prometheusBasePath = window.SERVER_FLAGS.prometheusBaseURL;
+export const alertManagerBasePath = window.SERVER_FLAGS.alertManagerBaseURL;
 
 export const Bar = props => <AsyncComponent loader={() => import('./graph-loader').then(c => c.Bar)} {...props} />;
 export const Gauge = props => <AsyncComponent loader={() => import('./graph-loader').then(c => c.Gauge)} {...props} />;
