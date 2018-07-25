@@ -39,7 +39,7 @@ const (
 	authLogoutEndpoint        = "/auth/logout"
 
 	k8sProxyEndpoint        = "/api/kubernetes/"
-	prometheusProxyEndpoint = "/api/prometheus/"
+	prometheusProxyEndpoint = "/api/prometheus"
 )
 
 var (
@@ -192,9 +192,11 @@ func (s *Server) HTTPHandler() http.Handler {
 	)
 
 	if s.prometheusProxyEnabled() {
+		// Only proxy requests to the Prometheus API, not the UI.
+		prometheusProxyAPIPath := prometheusProxyEndpoint + "/api/"
 		prometheusProxy := proxy.NewProxy(s.PrometheusProxyConfig)
-		handle(prometheusProxyEndpoint, http.StripPrefix(
-			proxy.SingleJoiningSlash(s.BaseURL.Path, prometheusProxyEndpoint),
+		handle(prometheusProxyAPIPath, http.StripPrefix(
+			proxy.SingleJoiningSlash(s.BaseURL.Path, prometheusProxyAPIPath),
 			authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
 				r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
 				prometheusProxy.ServeHTTP(w, r)
