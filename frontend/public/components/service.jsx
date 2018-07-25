@@ -2,7 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
-import { Cog, navFactory, LabelList, ResourceCog, Heading, ResourceIcon, ResourceLink, ResourceSummary, Selector } from './utils';
+import { Cog, navFactory, LabelList, ResourceCog, SectionHeading, ResourceIcon, ResourceLink, ResourceSummary, Selector } from './utils';
 import { registerTemplate } from '../yaml-templates';
 
 registerTemplate('v1.Service', `apiVersion: v1
@@ -114,14 +114,14 @@ const ServicePortMapping = ({s}) => <div>
 const Details = ({obj: s}) => <div className="co-m-pane__body">
   <div className="row">
     <div className="col-sm-6">
-      <Heading text="Service Overview" />
+      <SectionHeading text="Service Overview" />
       <ResourceSummary resource={s} showNodeSelector={false}>
         <dt>Session Affinity</dt>
         <dd>{s.spec.sessionAffinity || '-'}</dd>
       </ResourceSummary>
     </div>
     <div className="col-sm-6">
-      <Heading text="Service Routing" />
+      <SectionHeading text="Service Routing" />
       <dl>
         <dt>Service Address</dt>
         <dd className="service-ips">

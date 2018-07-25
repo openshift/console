@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 import { Map as ImmutableMap } from 'immutable';
 
 import { List, ListHeader, ColHead, DetailsPage, ListPage } from '../factory';
-import { MsgBox, ResourceLink, ResourceCog, navFactory, Cog, ResourceSummary, LoadingInline, makeQuery, makeReduxID } from '../utils';
+import { MsgBox, SectionHeading, ResourceLink, ResourceCog, navFactory, Cog, ResourceSummary, LoadingInline, makeQuery, makeReduxID } from '../utils';
 import { SubscriptionKind, SubscriptionState, Package, InstallPlanApproval, ClusterServiceVersionKind } from './index';
 import { referenceForModel, k8sKill, k8sUpdate } from '../../module/k8s';
 import { SubscriptionModel, ClusterServiceVersionModel, CatalogSourceModel, ConfigMapModel, InstallPlanModel } from '../../models';
@@ -92,6 +92,7 @@ export const SubscriptionDetails = connect(stateToProps, null)((props: Subscript
   const {obj, pkg, installedCSV} = props;
 
   return <div className="co-m-pane__body">
+    <SectionHeading text="Subscription Overview" />
     <div className="co-m-pane__body-group">
       <SubscriptionUpdates pkg={pkg} obj={obj} installedCSV={installedCSV} />
     </div>

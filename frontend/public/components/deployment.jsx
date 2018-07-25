@@ -4,7 +4,7 @@ import * as _ from 'lodash-es';
 import { DeploymentModel } from '../models';
 import { configureUpdateStrategyModal, configureRevisionHistoryLimitModal } from './modals';
 import { DetailsPage, List, ListPage, WorkloadListHeader, WorkloadListRow } from './factory';
-import { Cog, DeploymentPodCounts, LoadingInline, navFactory, Overflow, pluralize, ResourceSummary } from './utils';
+import { Cog, DeploymentPodCounts, SectionHeading, LoadingInline, navFactory, Overflow, pluralize, ResourceSummary } from './utils';
 import { registerTemplate } from '../yaml-templates';
 import { Conditions } from './conditions';
 import { EnvironmentPage } from './environment';
@@ -83,8 +83,8 @@ const DeploymentDetails = ({obj: deployment}) => {
 
   return <React.Fragment>
     <div className="co-m-pane__body">
+      <SectionHeading text="Deployment Overview" />
       <DeploymentPodCounts resource={deployment} resourceKind={DeploymentModel} />
-
       <div className="co-m-pane__body-group">
         <div className="row">
           <div className="col-sm-6">
@@ -111,11 +111,11 @@ const DeploymentDetails = ({obj: deployment}) => {
       </div>
     </div>
     <div className="co-m-pane__body">
-      <h1 className="co-section-title">Containers</h1>
+      <SectionHeading text="Containers" />
       <ContainerTable containers={deployment.spec.template.spec.containers} />
     </div>
     <div className="co-m-pane__body">
-      <h1 className="co-section-title">Conditions</h1>
+      <SectionHeading text="Conditions" />
       <Conditions conditions={deployment.status.conditions} />
     </div>
   </React.Fragment>;

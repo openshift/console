@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
-import { Cog, navFactory, ResourceCog, Heading, ResourceLink, ResourceSummary } from './utils';
+import { Cog, navFactory, ResourceCog, SectionHeading, ResourceLink, ResourceSummary } from './utils';
 import { registerTemplate } from '../yaml-templates';
 import { EnvironmentPage } from './environment';
 import { ResourceEventStream } from './events';
@@ -63,7 +63,7 @@ const Row = ({obj: ss}) => <div className="row co-resource-list__item">
 
 const Details = ({obj: ss}) => <React.Fragment>
   <div className="co-m-pane__body">
-    <Heading text="StatefulSet Overview" />
+    <SectionHeading text="StatefulSet Overview" />
     <ResourceSummary resource={ss} showNodeSelector={false} />
   </div>
 </React.Fragment>;

@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
-import { Cog, LabelList, navFactory, ResourceCog, Heading, ResourceLink, ResourceSummary, Timestamp } from './utils';
+import { Cog, LabelList, navFactory, ResourceCog, SectionHeading, ResourceLink, ResourceSummary, Timestamp } from './utils';
 import { registerTemplate } from '../yaml-templates';
 
 registerTemplate('v1.PersistentVolume', `apiVersion: v1
@@ -44,7 +44,7 @@ const Row = ({obj}) => <div className="row co-resource-list__item">
 
 const Details = ({obj}) => <React.Fragment>
   <div className="co-m-pane__body">
-    <Heading text="PersistentVolume Overview" />
+    <SectionHeading text="PersistentVolume Overview" />
     <ResourceSummary resource={obj} podSelector="spec.podSelector" showNodeSelector={false} />
   </div>
 </React.Fragment>;

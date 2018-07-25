@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
-import { Cog, detailsPage, navFactory, ResourceCog, Heading, ResourceLink, ResourceSummary } from './utils';
+import { Cog, detailsPage, navFactory, ResourceCog, SectionHeading, ResourceLink, ResourceSummary } from './utils';
 import { fromNow } from './utils/datetime';
 // eslint-disable-next-line no-unused-vars
 import { K8sResourceKindReference } from '../module/k8s';
@@ -48,7 +48,7 @@ const StorageClassRow: React.SFC<StorageClassRowProps> = ({obj}) => {
 
 const StorageClassDetails: React.SFC<StorageClassDetailsProps> = ({obj}) => <React.Fragment>
   <div className="co-m-pane__body">
-    <Heading text="StorageClass Overview" />
+    <SectionHeading text="StorageClass Overview" />
     <ResourceSummary resource={obj} showNodeSelector={false} showPodSelector={false} />
   </div>
 </React.Fragment>;

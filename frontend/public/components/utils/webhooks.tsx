@@ -4,7 +4,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 
 import { K8sResourceKind } from '../../module/k8s';
-import { ResourceLink } from './';
+import { SectionHeading, ResourceLink } from '.';
 import { Overflow } from './overflow';
 
 const kubeAPIServerURL = (window as any).SERVER_FLAGS.kubeAPIServerURL || 'https://<api-server>';
@@ -46,7 +46,7 @@ export const WebhookTriggers: React.SFC<WebhookTriggersProps> = ({ resource }) =
   };
 
   return <div className="co-m-pane__body">
-    <h1 className="co-section-title">Webhooks</h1>
+    <SectionHeading text="Webhooks" />
     <div className="co-table-container">
       <table className="table">
         <colgroup>

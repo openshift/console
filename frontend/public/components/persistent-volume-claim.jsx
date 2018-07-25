@@ -3,7 +3,7 @@ import * as _ from 'lodash-es';
 
 import { FLAGS, connectToFlags } from '../features';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
-import { Cog, navFactory, ResourceCog, Heading, ResourceLink, ResourceSummary, Selector } from './utils';
+import { Cog, navFactory, ResourceCog, SectionHeading, ResourceLink, ResourceSummary, Selector } from './utils';
 import { registerTemplate } from '../yaml-templates';
 import { ResourceEventStream } from './events';
 
@@ -75,7 +75,7 @@ const Details_ = ({flags, obj: pvc}) => {
   const storage = _.get(pvc, 'status.capacity.storage');
   const accessModes = _.get(pvc, 'status.accessModes');
   return <div className="co-m-pane__body">
-    <Heading text="PersistentVolumeClaim Overview" />
+    <SectionHeading text="PersistentVolumeClaim Overview" />
     <div className="row">
       <div className="col-sm-6">
         <ResourceSummary resource={pvc} showPodSelector={false} showNodeSelector={false}>

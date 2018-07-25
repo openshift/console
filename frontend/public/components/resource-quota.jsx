@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
-import { Cog, navFactory, ResourceCog, Heading, ResourceLink, ResourceSummary } from './utils';
+import { Cog, SectionHeading, navFactory, ResourceCog, ResourceLink, ResourceSummary } from './utils';
 import { registerTemplate } from '../yaml-templates';
 
 registerTemplate('v1.ResourceQuota', `apiVersion: v1
@@ -38,7 +38,7 @@ const Row = ({obj: rq}) => <div className="row co-resource-list__item">
 
 const Details = ({obj: rq}) => <React.Fragment>
   <div className="co-m-pane__body">
-    <Heading text="ResourceQuota Overview" />
+    <SectionHeading text="Resource Quota Overview" />
     <ResourceSummary resource={rq} podSelector="spec.podSelector" showNodeSelector={false} />
   </div>
 </React.Fragment>;

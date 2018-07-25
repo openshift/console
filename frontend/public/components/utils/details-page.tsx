@@ -10,8 +10,6 @@ export const detailsPage = <T extends {}>(Component: React.ComponentType<T>) => 
   return <Component {...props} />;
 };
 
-export const Heading: React.SFC<HeadingProps> = ({text, children}) => <h1 className="co-m-pane__heading">{text}{children}</h1>;
-
 export const ResourceSummary: React.SFC<ResourceSummaryProps> = ({children, resource, showPodSelector = true, showNodeSelector = true, showAnnotations = true, podSelector = 'spec.selector'}) => {
   const { metadata, type } = resource;
   const owners = (_.get(metadata, 'ownerReferences') || [])
@@ -48,11 +46,6 @@ export const ResourcePodCount: React.SFC<ResourcePodCountProps> = ({resource}) =
 </dl>;
 
 /* eslint-disable no-undef */
-export type HeadingProps = {
-  text: string;
-  children?: any;
-};
-
 export type ResourceSummaryProps = {
   resource: K8sResourceKind;
   showPodSelector?: boolean;
@@ -67,6 +60,5 @@ export type ResourcePodCountProps = {
 };
 /* eslint-enable no-undef */
 
-Heading.displayName = 'Heading';
 ResourceSummary.displayName = 'ResourceSummary';
 ResourcePodCount.displayName = 'ResourcePodCount';

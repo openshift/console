@@ -97,17 +97,19 @@
   color: $red;
 }
 
-.co-section-title {
+.co-section-heading {
+  display: flex;
   font-size: 20px;
   font-weight: 600;
+  justify-content: space-between;
   margin: 0 0 20px 0;
   &--contains-resource-icon {
     align-items: center;
-    display: flex;
+    justify-content: flex-start;
   }
 }
 
-.co-section-title-secondary {
+.co-section-heading-secondary {
   font-size: 16px;
   font-weight: 600;
   margin: 30px 0;

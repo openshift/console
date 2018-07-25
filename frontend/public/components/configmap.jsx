@@ -3,7 +3,7 @@ import * as React from 'react';
 
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import { ConfigMapData } from './configmap-and-secret-data';
-import { Cog, Heading, navFactory, ResourceCog, ResourceLink, ResourceSummary } from './utils';
+import { Cog, SectionHeading, navFactory, ResourceCog, ResourceLink, ResourceSummary } from './utils';
 import { registerTemplate } from '../yaml-templates';
 import { fromNow } from './utils/datetime';
 
@@ -45,10 +45,11 @@ const ConfigMapRow = ({obj: configMap}) => <ResourceRow obj={configMap}>
 const ConfigMapDetails = ({obj: configMap}) => {
   return <React.Fragment>
     <div className="co-m-pane__body">
+      <SectionHeading text="Config Map Overview" />
       <ResourceSummary resource={configMap} showPodSelector={false} showNodeSelector={false} />
     </div>
     <div className="co-m-pane__body">
-      <Heading text="Data" />
+      <SectionHeading text="Data" />
       <ConfigMapData data={configMap.data} />
     </div>
   </React.Fragment>;

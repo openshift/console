@@ -2,7 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
-import { Cog, navFactory, ResourceCog, Heading, ResourceLink, ResourceSummary, kindObj } from './utils';
+import { Cog, navFactory, ResourceCog, SectionHeading, ResourceLink, ResourceSummary, kindObj } from './utils';
 import { fromNow } from './utils/datetime';
 import { referenceFor, kindForReference } from '../module/k8s';
 
@@ -36,7 +36,7 @@ const RowForKind = kind => function RowForKind_ ({obj}) {
 const DetailsForKind = kind => function DetailsForKind_ ({obj}) {
   return <React.Fragment>
     <div className="co-m-pane__body">
-      <Heading text={`${kindForReference(kind)} Overview`} />
+      <SectionHeading text={`${kindForReference(kind)} Overview`} />
       <ResourceSummary resource={obj} podSelector="spec.podSelector" showNodeSelector={false} />
     </div>
   </React.Fragment>;

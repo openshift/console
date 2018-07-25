@@ -10,7 +10,7 @@ import { k8sGet } from '../module/k8s';
 import { UIActions } from '../ui/ui-actions';
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import { SafetyFirst } from './safety-first';
-import { Cog, Dropdown, Firehose, LabelList, LoadingInline, navFactory, ResourceCog, Heading, ResourceLink, ResourceSummary, humanizeMem, MsgBox } from './utils';
+import { Cog, Dropdown, Firehose, LabelList, LoadingInline, navFactory, ResourceCog, SectionHeading, ResourceLink, ResourceSummary, humanizeMem, MsgBox } from './utils';
 import { createNamespaceModal, createProjectModal, deleteNamespaceModal, configureNamespacePullSecretModal } from './modals';
 import { RoleBindingsPage } from './RBAC';
 import { Bar, Line, requirePrometheus } from './graphs';
@@ -141,7 +141,7 @@ class PullSecret extends SafetyFirst {
 }
 
 const ResourceUsage = requirePrometheus(({ns}) => <div className="co-m-pane__body">
-  <Heading text="Resource Usage" />
+  <SectionHeading text="Resource Usage" />
   <div className="row">
     <div className="col-sm-6 col-xs-12">
       <Line title="CPU Shares" query={[
@@ -168,7 +168,7 @@ const Details = ({obj: ns}) => {
   const requester = getRequester(ns);
   return <div>
     <div className="co-m-pane__body">
-      <Heading text="Namespace Overview" />
+      <SectionHeading text="Namespace Overview" />
       <div className="row">
         <div className="col-sm-6 col-xs-12">
           <ResourceSummary resource={ns} showPodSelector={false} showNodeSelector={false}>

@@ -6,7 +6,7 @@ import { match, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import { safeLoad } from 'js-yaml';
 
-import { NavTitle, Firehose, MsgBox, LoadingBox, withFallback } from '../utils';
+import { NavTitle, SectionHeading, Firehose, MsgBox, LoadingBox, withFallback } from '../utils';
 import { CreateYAML } from '../create-yaml';
 import { ClusterServiceVersionLogo, SubscriptionKind, CatalogSourceKind, ClusterServiceVersionKind, Package } from './index';
 import { SubscriptionModel, CatalogSourceModel } from '../../models';
@@ -84,14 +84,8 @@ export const CatalogSourceDetails: React.SFC<CatalogSourceDetailsProps> = ({cata
         </div>
       </div>
       <div className="co-m-pane__body">
-        <div className="row">
-          <div className="col-xs-12">
-            <h2>Applications</h2>
-          </div>
-        </div>
-        <div style={{marginTop: '15px'}}>
-          <PackageList packages={packages} namespace={ns} catalogSource={catalogSource.data} subscriptionsFor={subscriptionsFor} csvFor={csvFor} />
-        </div>
+        <SectionHeading text="Applications" />
+        <PackageList packages={packages} namespace={ns} catalogSource={catalogSource.data} subscriptionsFor={subscriptionsFor} csvFor={csvFor} />
       </div>
     </div>
     : <div />;

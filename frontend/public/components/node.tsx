@@ -5,7 +5,7 @@ import { ResourceEventStream } from './events';
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import { configureUnschedulableModal } from './modals';
 import { PodsPage } from './pod';
-import { Cog, navFactory, LabelList, ResourceCog, Heading, ResourceLink, Timestamp, units, cloudProviderNames, cloudProviderID, pluralize, containerLinuxUpdateOperator } from './utils';
+import { Cog, navFactory, LabelList, ResourceCog, SectionHeading, ResourceLink, Timestamp, units, cloudProviderNames, cloudProviderID, pluralize, containerLinuxUpdateOperator } from './utils';
 import { Line, requirePrometheus } from './graphs';
 import { NodeModel } from '../models';
 import { CamelCaseWrap } from './utils/camel-case-wrap';
@@ -164,7 +164,7 @@ const NodeGraphs = requirePrometheus(({node}) => {
 const Details = ({obj: node}) => {
   return <React.Fragment>
     <div className="co-m-pane__body">
-      <Heading text="Node Overview" />
+      <SectionHeading text="Node Overview" />
       <NodeGraphs node={node} />
       <div className="row">
         <div className="col-md-6 col-xs-12">
@@ -210,7 +210,7 @@ const Details = ({obj: node}) => {
     </div>
 
     { containerLinuxUpdateOperator.isOperatorInstalled(node) && <div className="co-m-pane__body">
-      <h1 className="co-section-title">Container Linux</h1>
+      <SectionHeading text="Container Linux" />
       <div className="row">
         <div className="col-md-6 col-xs-12">
           <dl className="co-m-pane__details">
@@ -230,7 +230,7 @@ const Details = ({obj: node}) => {
     </div> }
 
     <div className="co-m-pane__body">
-      <h1 className="co-section-title">Node Conditions</h1>
+      <SectionHeading text="Node Conditions" />
       <div className="co-table-container">
         <table className="table">
           <thead>
@@ -256,7 +256,7 @@ const Details = ({obj: node}) => {
     </div>
 
     <div className="co-m-pane__body">
-      <h1 className="co-section-title">Images</h1>
+      <SectionHeading text="Images" />
       <div className="co-table-container">
         <table className="table">
           <thead>

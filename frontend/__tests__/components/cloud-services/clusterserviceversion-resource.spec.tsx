@@ -161,7 +161,7 @@ describe(ClusterServiceVersionResourceDetails.displayName, () => {
   });
 
   it('renders description title', () => {
-    const title = wrapper.find('.co-section-title');
+    const title = wrapper.find('.co-section-heading');
     expect(title.text()).toEqual('Test Resource Overview');
   });
 

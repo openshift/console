@@ -2,7 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
-import { Cog, navFactory, ResourceCog, Heading, ResourceLink, ResourceSummary, Timestamp } from './utils';
+import { Cog, navFactory, ResourceCog, SectionHeading, ResourceLink, ResourceSummary, Timestamp } from './utils';
 import { registerTemplate } from '../yaml-templates';
 import { ResourceEventStream } from './events';
 
@@ -62,7 +62,7 @@ const Details = ({obj: cronjob}) => {
   return <div className="co-m-pane__body">
     <div className="row">
       <div className="col-md-6">
-        <Heading text="CronJob Overview" />
+        <SectionHeading text="CronJob Overview" />
         <ResourceSummary resource={cronjob} showNodeSelector={false} showPodSelector={false} showAnnotations={false}>
           <dt>Schedule</dt>
           <dd>{cronjob.spec.schedule}</dd>
@@ -73,7 +73,7 @@ const Details = ({obj: cronjob}) => {
         </ResourceSummary>
       </div>
       <div className="col-md-6">
-        <Heading text="Job Overview" />
+        <SectionHeading text="Job Overview" />
         <ResourceSummary resource={cronjob} showNodeSelector={false}>
           <dt>Desired Completions</dt>
           <dd>{job.spec.completions || '-'}</dd>

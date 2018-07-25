@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import { DetailsPage, List, ListPage, WorkloadListHeader, WorkloadListRow } from './factory';
-import { Cog, navFactory, Heading, ResourceSummary, ResourcePodCount } from './utils';
+import { Cog, navFactory, SectionHeading, ResourceSummary, ResourcePodCount } from './utils';
 import { breadcrumbsForOwnerRefs } from './utils/breadcrumbs';
 import { registerTemplate } from '../yaml-templates';
 import { EnvironmentPage } from './environment';
@@ -33,7 +33,7 @@ export const replicaSetMenuActions = [ModifyCount, ModifyNodeSelector, EditEnvir
 
 const Details = ({obj: replicaSet}) => <React.Fragment>
   <div className="co-m-pane__body">
-    <Heading text="Replica Set Overview" />
+    <SectionHeading text="Replica Set Overview" />
     <div className="row">
       <div className="col-md-6">
         <ResourceSummary resource={replicaSet} />

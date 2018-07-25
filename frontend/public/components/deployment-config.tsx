@@ -6,7 +6,7 @@ import { k8sCreate, K8sResourceKindReference } from '../module/k8s';
 import { errorModal } from './modals';
 import { DeploymentConfigModel } from '../models';
 import { DetailsPage, List, ListPage, WorkloadListHeader, WorkloadListRow } from './factory';
-import { Cog, DeploymentPodCounts, LoadingInline, navFactory, pluralize, ResourceSummary } from './utils';
+import { Cog, DeploymentPodCounts, SectionHeading, LoadingInline, navFactory, pluralize, ResourceSummary } from './utils';
 import { registerTemplate } from '../yaml-templates';
 import { Conditions } from './conditions';
 import { EnvironmentPage } from './environment';
@@ -78,8 +78,8 @@ export const DeploymentConfigsDetails: React.SFC<{obj: any}> = ({obj: deployment
 
   return <React.Fragment>
     <div className="co-m-pane__body">
+      <SectionHeading text="Deployment Config Overview" />
       <DeploymentPodCounts resource={deploymentConfig} resourceKind={DeploymentConfigModel} />
-
       <div className="co-m-pane__body-group">
         <div className="row">
           <div className="col-sm-6">
@@ -116,11 +116,11 @@ export const DeploymentConfigsDetails: React.SFC<{obj: any}> = ({obj: deployment
       </div>
     </div>
     <div className="co-m-pane__body">
-      <h1 className="co-section-title">Containers</h1>
+      <SectionHeading text="Containers" />
       <ContainerTable containers={deploymentConfig.spec.template.spec.containers} />
     </div>
     <div className="co-m-pane__body">
-      <h1 className="co-section-title">Conditions</h1>
+      <SectionHeading text="Conditions" />
       <Conditions conditions={deploymentConfig.status.conditions} />
     </div>
   </React.Fragment>;

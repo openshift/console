@@ -6,7 +6,7 @@ import { match, Link } from 'react-router-dom';
 import { Map as ImmutableMap } from 'immutable';
 
 import { ListPage, List, ListHeader, ColHead, ResourceRow, DetailsPage } from '../factory';
-import { MsgBox, ResourceLink, ResourceCog, Cog, ResourceIcon, navFactory, ResourceSummary } from '../utils';
+import { SectionHeading, MsgBox, ResourceLink, ResourceCog, Cog, ResourceIcon, navFactory, ResourceSummary } from '../utils';
 import { InstallPlanKind, InstallPlanApproval, Step } from './index';
 import { referenceForModel, referenceForOwnerRef, k8sUpdate } from '../../module/k8s';
 import { SubscriptionModel, ClusterServiceVersionModel, InstallPlanModel, CatalogSourceModel } from '../../models';
@@ -73,6 +73,7 @@ export const InstallPlanDetails: React.SFC<InstallPlanDetailsProps> = ({obj}) =>
       </Link>
     </div> }
     <div className="co-m-pane__body">
+      <SectionHeading text="Install Plan Overview" />
       <div className="co-m-pane__body-group">
         <div className="row">
           <div className="col-sm-6">
@@ -136,7 +137,7 @@ export class InstallPlanPreview extends React.Component<InstallPlanPreviewProps,
           </button>
         </div> }
         { stepsByCSV.map((steps, i) => <div key={i} className="co-m-pane__body">
-          <h1 className="co-section-title">{steps[0].resolving}</h1>
+          <SectionHeading text={steps[0].resolving} />
           <div className="co-table-container">
             <table className="table">
               <thead>

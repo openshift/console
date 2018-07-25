@@ -5,7 +5,7 @@ import * as _ from 'lodash-es';
 import { K8sResourceKindReference } from '../module/k8s';
 import { Conditions } from './conditions';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
-import { Cog, LabelList, navFactory, ResourceCog, ResourceLink, ResourceSummary, Timestamp } from './utils';
+import { Cog, SectionHeading, LabelList, navFactory, ResourceCog, ResourceLink, ResourceSummary, Timestamp } from './utils';
 import { registerTemplate } from '../yaml-templates';
 import { ResourceEventStream } from './events';
 
@@ -115,7 +115,7 @@ const resourceRow = (metric, current, key) => {
 
 const MetricsTable: React.SFC<MetricsTableProps> = ({obj: hpa}) => {
   return <React.Fragment>
-    <h1 className="co-section-title">Metrics</h1>
+    <SectionHeading text="Metrics" />
     <div className="co-m-table-grid co-m-table-grid--bordered">
       <div className="row co-m-table-grid__head">
         <div className="col-xs-6">Type</div>
@@ -150,6 +150,7 @@ const MetricsTable: React.SFC<MetricsTableProps> = ({obj: hpa}) => {
 
 export const HorizontalPodAutoscalersDetails: React.SFC<HorizontalPodAutoscalersDetailsProps> = ({obj: hpa}) => <React.Fragment>
   <div className="co-m-pane__body">
+    <SectionHeading text="Horizontal Pod Autoscaler Overview" />
     <div className="row">
       <div className="col-sm-6">
         <ResourceSummary resource={hpa} showPodSelector={false} showNodeSelector={false} />
@@ -178,7 +179,7 @@ export const HorizontalPodAutoscalersDetails: React.SFC<HorizontalPodAutoscalers
     <MetricsTable obj={hpa} />
   </div>
   <div className="co-m-pane__body">
-    <h1 className="co-section-title">Conditions</h1>
+    <SectionHeading text="Conditions" />
     <Conditions conditions={hpa.status.conditions} />
   </div>
 </React.Fragment>;

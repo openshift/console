@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 
 import { K8sResourceKind } from '../../module/k8s';
+import { SectionHeading } from '.';
 
 export const BuildHooks: React.SFC<BuildHooksProps> = ({ resource }) => {
   const postCommitArgs = _.get(resource, 'spec.postCommit.args');
@@ -10,7 +11,7 @@ export const BuildHooks: React.SFC<BuildHooksProps> = ({ resource }) => {
 
   return (!_.isEmpty(postCommitCommand) || !_.isEmpty(postCommitArgs) || postCommitScript)
     ? <div className="co-m-pane__body">
-      <h1 className="co-section-title">Post-Commit Hooks</h1>
+      <SectionHeading text="Post-Commit Hooks" />
       <dl className="co-m-pane__details">
         {!_.isEmpty(postCommitCommand) && <dt>Command</dt>}
         {!_.isEmpty(postCommitCommand) && <dd><code>{postCommitCommand.join(' ')}</code></dd>}

@@ -162,7 +162,7 @@ export const ClusterServiceVersionsPage = connect(stateToProps)(
         </Box>
         : <React.Fragment>
           <NavTitle title="Available Applications" />
-          <h3 className="co-clusterserviceversion-list__title">Open Cloud Services</h3>
+          <h2 className="co-clusterserviceversion-list__title co-section-heading">Open Cloud Services</h2>
           <MultiListPage
             {...this.props}
             namespace={this.props.match.params.ns}
@@ -176,7 +176,7 @@ export const ClusterServiceVersionsPage = connect(stateToProps)(
             ListComponent={ClusterServiceVersionList}
             filterLabel="Applications by name"
             showTitle={false} />
-          <h3 className="co-clusterserviceversion-list__title">Custom Applications</h3>
+          <h2 className="co-clusterserviceversion-list__title co-section-heading">Custom Applications</h2>
           <MultiListPage
             {...this.props}
             namespace={this.props.match.params.ns}

@@ -3,7 +3,7 @@ import * as React from 'react';
 import { safeDump } from 'js-yaml';
 
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
-import { Cog, navFactory, NavTitle, ResourceCog, ResourceLink, ResourceSummary } from './utils';
+import { Cog, SectionHeading, navFactory, ResourceCog, ResourceLink, ResourceSummary } from './utils';
 import { fromNow } from './utils/datetime';
 import { k8sGet } from '../module/k8s';
 import { SecretModel } from '../models';
@@ -105,9 +105,10 @@ const Details = ({obj: serviceaccount}) => {
   return (
     <React.Fragment>
       <div className="co-m-pane__body">
+        <SectionHeading text="Service Account Overview" />
         <ResourceSummary resource={serviceaccount} showPodSelector={false} showNodeSelector={false} />
       </div>
-      <NavTitle title="Secrets" />
+      <SectionHeading text="Secrets" style={{marginLeft: '30px', marginTop: '30px', marginBottom: '-20px'}} />
       <SecretsPage kind="Secret" canCreate={false} namespace={namespace} filters={filters} autoFocus={false} showTitle={false} />
     </React.Fragment>
   );

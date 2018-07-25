@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { getJobTypeAndCompletions } from '../module/k8s';
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import { configureJobParallelismModal } from './modals';
-import { Cog, Heading, LabelList, ResourceCog, ResourceLink, ResourceSummary, Timestamp, navFactory } from './utils';
+import { Cog, SectionHeading, LabelList, ResourceCog, ResourceLink, ResourceSummary, Timestamp, navFactory } from './utils';
 import { registerTemplate } from '../yaml-templates';
 import { ResourceEventStream } from './events';
 
@@ -70,7 +70,7 @@ const JobRow = ({obj: job}) => {
 const Details = ({obj: job}) => <div className="co-m-pane__body">
   <div className="row">
     <div className="col-md-6">
-      <Heading text="Job Overview" />
+      <SectionHeading text="Job Overview" />
       <ResourceSummary resource={job} showNodeSelector={false}>
         <dt>Desired Completions</dt>
         <dd>{job.spec.completions || '-'}</dd>
@@ -81,7 +81,7 @@ const Details = ({obj: job}) => <div className="co-m-pane__body">
       </ResourceSummary>
     </div>
     <div className="col-md-6">
-      <Heading text="Job Status" />
+      <SectionHeading text="Job Status" />
       <dl className="co-m-pane__details">
         <dt>Status</dt>
         <dd>{job.status.conditions ? job.status.conditions[0].type : 'In Progress'}</dd>

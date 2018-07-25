@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
-import { Cog, LabelList, ResourceCog, ResourceLink, ResourceSummary, Selector, navFactory, detailsPage } from './utils';
+import { SectionHeading, Cog, LabelList, ResourceCog, ResourceLink, ResourceSummary, Selector, navFactory, detailsPage } from './utils';
 import { EnvironmentPage } from './environment';
 import { registerTemplate } from '../yaml-templates';
 
@@ -57,6 +57,7 @@ const DaemonSetRow = ({obj: daemonset}) => <ResourceRow obj={daemonset}>
 </ResourceRow>;
 
 const Details = ({obj: daemonset}) => <div className="co-m-pane__body">
+  <SectionHeading text="Daemon Set Overview" />
   <div className="row">
     <div className="col-lg-6">
       <ResourceSummary resource={daemonset} />

@@ -3,7 +3,7 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 
 import {ColHead, DetailsPage, List, ListHeader, ListPage} from './factory';
-import {Cog, navFactory, ResourceCog, Heading, ResourceLink, ResourceSummary, Selector} from './utils';
+import {Cog, navFactory, ResourceCog, SectionHeading, ResourceLink, ResourceSummary, Selector} from './utils';
 import { registerTemplate } from '../yaml-templates';
 
 registerTemplate('v1.NetworkPolicy', `apiVersion: networking.k8s.io/v1
@@ -114,11 +114,11 @@ const IngressRow = ({ingress, namespace, podSelector}) => {
 
 const Details = ({obj: np}) => <React.Fragment>
   <div className="co-m-pane__body">
-    <Heading text="Namespace Overview" />
+    <SectionHeading text="Namespace Overview" />
     <ResourceSummary resource={np} podSelector={'spec.podSelector'} showNodeSelector={false} />
   </div>
   <div className="co-m-pane__body">
-    <Heading text="Ingress Rules" />
+    <SectionHeading text="Ingress Rules" />
     <p className="co-m-pane__explanation">
       Pods accept all traffic by default.
       They can be isolated via Network Policies which specify a whitelist of ingress rules.

@@ -2,7 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
-import { Cog, Heading, LabelList, ResourceCog, ResourceIcon, detailsPage, EmptyBox, navFactory, ResourceLink, ResourceSummary } from './utils';
+import { Cog, SectionHeading, LabelList, ResourceCog, ResourceIcon, detailsPage, EmptyBox, navFactory, ResourceLink, ResourceSummary } from './utils';
 import { registerTemplate } from '../yaml-templates';
 
 const menuActions = Cog.factory.common;
@@ -129,13 +129,14 @@ const RulesRows = (props) => {
 
 const Details = ({obj: ingress}) => <React.Fragment>
   <div className="co-m-pane__body">
+    <SectionHeading text="Ingress Overview" />
     <ResourceSummary resource={ingress} showPodSelector={false} showNodeSelector={false}>
       <dt>TLS Certificate</dt>
       <dd>{getTLSCert(ingress)}</dd>
     </ResourceSummary>
   </div>
   <div className="co-m-pane__body">
-    <Heading text="Ingress Rules" />
+    <SectionHeading text="Ingress Rules" />
     <p className="co-m-pane__explanation">These rules are handled by a routing layer (Ingress Controller) which is updated as the rules are modified. The Ingress controller implementation defines how headers and other metadata are forwarded or manipulated.</p>
     <div className="co-m-table-grid co-m-table-grid--bordered">
       <RulesHeader />

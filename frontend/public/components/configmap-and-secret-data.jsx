@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as PropTypes from 'prop-types';
 import * as _ from 'lodash-es';
-import { Heading, CopyToClipboard } from './utils';
+import { SectionHeading, CopyToClipboard } from './utils';
 
 export const MaskedData = () => <React.Fragment>
   <span className="sr-only">Value hidden</span>
@@ -50,7 +50,7 @@ export class SecretData extends React.PureComponent {
       dl.push(<dd key={`${k}-v`}>{value}</dd>);
     });
     return <React.Fragment>
-      <Heading text="Data">
+      <SectionHeading text="Data">
         <button className="btn btn-link" type="button" onClick={this.toggleSecret}>
           {
             showSecret
@@ -58,7 +58,7 @@ export class SecretData extends React.PureComponent {
               : <React.Fragment><i className="fa fa-eye" aria-hidden="true"></i> Reveal Values</React.Fragment>
           }
         </button>
-      </Heading>
+      </SectionHeading>
       <dl>{dl}</dl>
     </React.Fragment>;
   }
