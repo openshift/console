@@ -206,7 +206,7 @@ describe(SubscriptionDetailsPage.displayName, () => {
     const wrapper = shallow(<SubscriptionDetailsPage match={match} namespace="default" />);
 
     expect(wrapper.find(DetailsPage).props().resources).toEqual([
-      {kind: ConfigMapModel.kind, name: 'tectonic-ocs', namespace: 'tectonic-system', isList: false, prop: 'configMap'},
+      {kind: ConfigMapModel.kind, name: 'tectonic-ocs', namespace: 'operator-lifecycle-manager', isList: false, prop: 'configMap'},
       {kind: referenceForModel(ClusterServiceVersionModel), namespace: 'default', isList: true, prop: 'clusterServiceVersion'}
     ]);
   });

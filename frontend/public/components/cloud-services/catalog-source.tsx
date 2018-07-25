@@ -107,7 +107,7 @@ export const CatalogSourceDetailsPage: React.SFC<CatalogSourceDetailsPageProps> 
     resources={[{
       kind: referenceForModel(CatalogSourceModel),
       name: 'tectonic-ocs',
-      namespace: 'tectonic-system',
+      namespace: 'operator-lifecycle-manager',
       isList: false,
       prop: 'catalogSource',
     }, {
@@ -118,7 +118,7 @@ export const CatalogSourceDetailsPage: React.SFC<CatalogSourceDetailsPageProps> 
       kind: 'ConfigMap',
       isList: false,
       name: 'tectonic-ocs',
-      namespace: 'tectonic-system',
+      namespace: 'operator-lifecycle-manager',
       prop: 'configMap'}]}>
     {/* FIXME(alecmerdler): Hack because `Firehose` injects props without TypeScript knowing about it */}
     <CatalogSourceDetails {...props as any} ns={props.match.params.ns} />
@@ -154,7 +154,7 @@ export const CreateSubscriptionYAML: React.SFC<CreateSubscriptionYAMLProps> = (p
     kind: 'ConfigMap',
     isList: false,
     name: 'tectonic-ocs',
-    namespace: 'tectonic-system',
+    namespace: 'operator-lifecycle-manager',
     prop: 'ConfigMap'
   }]}>
     {/* FIXME(alecmerdler): Hack because `Firehose` injects props without TypeScript knowing about it */}

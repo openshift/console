@@ -84,7 +84,7 @@ export const SubscriptionsPage: React.SFC<SubscriptionsPageProps> = (props) => <
 const stateToProps = ({k8s}, {obj}) => ({
   installedCSV: k8s.getIn([makeReduxID(ClusterServiceVersionModel, makeQuery(obj.metadata.namespace)), 'data'], ImmutableMap())
     .find((csv, key) => csv.getIn(['metadata', 'name']) === _.get(obj, 'status.installedCSV')),
-  pkg: (safeLoad(k8s.getIn([makeReduxID(ConfigMapModel, makeQuery('tectonic-system', null, null, obj.spec.source)), 'data', 'data', 'packages'], null)) || [])
+  pkg: (safeLoad(k8s.getIn([makeReduxID(ConfigMapModel, makeQuery('operator-lifecycle-manager', null, null, obj.spec.source)), 'data', 'data', 'packages'], null)) || [])
     .find((pkg: Package) => pkg.packageName === obj.spec.name),
 });
 
@@ -198,7 +198,7 @@ export const SubscriptionDetailsPage: React.SFC<SubscriptionDetailsPageProps> = 
   ]}
   resources={[
     // FIXME: Only including `tectonic-ocs` catalog's configmap, need to revise when we support more catalog sources
-    {kind: ConfigMapModel.kind, name: 'tectonic-ocs', namespace: 'tectonic-system', isList: false, prop: 'configMap'},
+    {kind: ConfigMapModel.kind, name: 'tectonic-ocs', namespace: 'operator-lifecycle-manager', isList: false, prop: 'configMap'},
     {kind: referenceForModel(ClusterServiceVersionModel), namespace: props.namespace, isList: true, prop: 'clusterServiceVersion'},
   ]}
   menuActions={Cog.factory.common} />;

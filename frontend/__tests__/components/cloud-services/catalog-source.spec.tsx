@@ -163,7 +163,7 @@ describe(CatalogSourceDetailsPage.displayName, () => {
     expect(wrapper.find<any>(Firehose).props().resources).toEqual([{
       kind: referenceForModel(CatalogSourceModel),
       name: 'tectonic-ocs',
-      namespace: 'tectonic-system',
+      namespace: 'operator-lifecycle-manager',
       isList: false,
       prop: 'catalogSource',
     }, {
@@ -174,7 +174,7 @@ describe(CatalogSourceDetailsPage.displayName, () => {
       kind: 'ConfigMap',
       isList: false,
       name: 'tectonic-ocs',
-      namespace: 'tectonic-system',
+      namespace: 'operator-lifecycle-manager',
       prop: 'configMap'}]);
   });
 
@@ -195,7 +195,7 @@ describe(CreateSubscriptionYAML.displayName, () => {
 
   it('renders a `Firehose` for the catalog ConfigMap', () => {
     expect(wrapper.find<any>(Firehose).props().resources).toEqual([
-      {kind: 'ConfigMap', name: 'tectonic-ocs', namespace: 'tectonic-system', isList: false, prop: 'ConfigMap'}
+      {kind: 'ConfigMap', name: 'tectonic-ocs', namespace: 'operator-lifecycle-manager', isList: false, prop: 'ConfigMap'}
     ]);
   });
 
