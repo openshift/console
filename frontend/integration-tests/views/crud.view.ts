@@ -25,7 +25,7 @@ export const gearOptions = {
  * Deletes a row from a list. Does not wait until the row is no longer visible.
  */
 export const deleteRow = (kind: string) => (name: string) => rowForName(name).$$('.co-m-cog').first().click()
-  .then(() => browser.wait(until.visibilityOf(rowForName(name).$('.co-m-cog__dropdown'))))
+  .then(() => browser.wait(until.elementToBeClickable(rowForName(name).$('.co-m-cog__dropdown'))))
   .then(() => rowForName(name).$('.co-m-cog__dropdown').$$('a').filter(link => link.getText().then(text => text.startsWith('Delete'))).first().click())
   .then(async() => {
     switch (kind) {
