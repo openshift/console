@@ -380,7 +380,7 @@ export class Nav extends React.Component {
             <ResourceNSLink resource="deploymentconfigs" name={DeploymentConfigModel.labelPlural} onClick={this.close} required={FLAGS.OPENSHIFT} />
             <ResourceNSLink resource="replicasets" name="Replica Sets" onClick={this.close} />
             <ResourceNSLink resource="replicationcontrollers" name="Replication Controllers" onClick={this.close} />
-            <ResourceNSLink resource="persistentvolumeclaims" name="Persistent Volume Claims" onClick={this.close} />
+            <ResourceNSLink resource="persistentvolumeclaims" name="PVCs" onClick={this.close} />
             <ResourceNSLink resource="statefulsets" name="Stateful Sets" onClick={this.close} />
             <Sep />
             <ResourceNSLink resource="jobs" name="Jobs" onClick={this.close} />
