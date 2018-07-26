@@ -6,11 +6,10 @@ $active-border: 3px;
 .co-m-nav-link {
   display: block;
   float: none;
-  padding: 2px 0;
-  padding-left: $link-padding-left;
-  line-height: 25px;
-  font-size: 14px;
+  font-size: 13px;
+  line-height: 23px;
   overflow-x: hidden;
+  padding: 2px 0 2px $link-padding-left;
   white-space: nowrap;
 
   a {
