@@ -1,5 +1,3 @@
-import * as _ from 'lodash';
-
 export const LINE_PATTERN = /^.*(\n|$)/gm;
 
 export class LineBuffer {
@@ -19,7 +17,7 @@ export class LineBuffer {
   ingest(text): number {
     const lines = text.match(LINE_PATTERN);
     let lineCount = 0;
-    _.each(lines, (line) => {
+    lines.forEach((line) => {
       let next = `${this._tail}${line}`;
       if (/\n$/.test(line)) {
         if (this._buffer.length === this._maxSize) {
