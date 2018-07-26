@@ -117,7 +117,7 @@ describe('Kubernetes resource CRUD operations', () => {
 
       it('search view displays created resource instance', async() => {
         await browser.get(`${appHost}/search/${namespaced ? `ns/${testName}` : 'all-namespaces'}?kind=${kind}&q=${testLabel}%3d${testName}`);
-        await crudView.isLoaded();
+        await crudView.resourceRowsPresent();
         await crudView.rowForName(testName).element(by.linkText(testName)).click();
         await browser.wait(until.urlContains(`/${testName}`));
 
@@ -128,7 +128,7 @@ describe('Kubernetes resource CRUD operations', () => {
 
       it('deletes the resource instance', async() => {
         await browser.get(`${appHost}${namespaced ? `/k8s/ns/${testName}` : '/k8s/cluster'}/${resource}`);
-        await crudView.isLoaded();
+        await crudView.resourceRowsPresent();
         await crudView.deleteRow(kind)(testName);
 
         leakedResources.delete(JSON.stringify({name: testName, plural: resource, namespace: namespaced ? testName : undefined}));
@@ -154,11 +154,12 @@ describe('Kubernetes resource CRUD operations', () => {
       leakedResources.add(JSON.stringify({name: bindingName, plural: 'rolebindings', namespace: testName}));
       await crudView.createYAMLButton.click();
       await browser.wait(until.urlContains(`/k8s/ns/${testName}/rolebindings`));
-      await crudView.isLoaded();
+      await crudView.resourceRowsPresent();
       expect(crudView.rowForName(bindingName).isPresent()).toBe(true);
     });
 
     it('deletes the RoleBinding', async() => {
+      await crudView.resourceRowsPresent();
       await crudView.deleteRow('RoleBinding')(bindingName);
       leakedResources.delete(JSON.stringify({name: bindingName, plural: 'rolebindings', namespace: testName}));
     });
@@ -187,7 +188,7 @@ describe('Kubernetes resource CRUD operations', () => {
 
     it('deletes the namespace', async() => {
       await browser.get(`${appHost}/k8s/cluster/namespaces`);
-      await crudView.isLoaded();
+      await crudView.resourceRowsPresent();
       await crudView.deleteRow('Namespace')(name);
       leakedResources.delete(JSON.stringify({name, plural: 'namespaces'}));
     });
@@ -253,7 +254,7 @@ describe('Kubernetes resource CRUD operations', () => {
 
     it('deletes the `CustomResourceDefinition`', async() => {
       await browser.get(`${appHost}/k8s/cluster/customresourcedefinitions?name=${name}`);
-      await crudView.isLoaded();
+      await crudView.resourceRowsPresent();
       await crudView.deleteRow('CustomResourceDefinition')(crd.spec.names.kind);
       leakedResources.delete(JSON.stringify({name, plural: 'customresourcedefinitions'}));
     });
