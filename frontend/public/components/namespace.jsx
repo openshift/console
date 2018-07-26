@@ -15,7 +15,7 @@ import { createNamespaceModal, createProjectModal, deleteNamespaceModal, configu
 import { RoleBindingsPage } from './RBAC';
 import { Bar, Line, requirePrometheus } from './graphs';
 import { NAMESPACE_LOCAL_STORAGE_KEY, ALL_NAMESPACES_KEY } from '../const';
-import { FLAGS, connectToFlags, featureReducerName, flagPending, setFlag } from '../features';
+import { FLAGS, featureReducerName, flagPending, setFlag } from '../features';
 import { openshiftHelpBase } from './utils/documentation';
 
 const getModel = useProjects => useProjects ? ProjectModel : NamespaceModel;
@@ -268,22 +268,18 @@ class NamespaceDropdown_ extends React.Component {
 
 const NamespaceDropdown = connect(namespaceDropdownStateToProps)(NamespaceDropdown_);
 
-const NamespaceSelector_ = ({flags}) => {
-  const openshiftFlag = flags[FLAGS.OPENSHIFT];
-  if (flagPending(openshiftFlag)) {
-    // Wait until the flag is initialized.
-    return <div className="co-namespace-selector" />;
-  }
-
-  const model = getModel(openshiftFlag);
-  const resources = [{ kind: model.kind, prop: 'namespace', isList: true }];
-
-  return <Firehose resources={resources}>
-    <NamespaceDropdown useProjects={openshiftFlag} />
+const NamespaceSelector_ = ({useProjects, inFlight}) => inFlight
+  ? <div className="co-namespace-selector" />
+  : <Firehose resources={[{ kind: getModel(useProjects).kind, prop: 'namespace', isList: true }]}>
+    <NamespaceDropdown useProjects={useProjects} />
   </Firehose>;
-};
 
-export const NamespaceSelector = connectToFlags(FLAGS.OPENSHIFT)(NamespaceSelector_);
+const namespaceSelectorStateToProps = ({k8s}) => ({
+  inFlight: k8s.getIn(['RESOURCES', 'inFlight']),
+  useProjects: k8s.hasIn(['RESOURCES', 'models', ProjectModel.kind]),
+});
+
+export const NamespaceSelector = connect(namespaceSelectorStateToProps)(NamespaceSelector_);
 
 export const NamespacesDetailsPage = props => <DetailsPage
   {...props}

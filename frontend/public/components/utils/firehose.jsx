@@ -118,6 +118,7 @@ const ConnectToState = connect(({k8s}, {reduxes}) => {
 
 const stateToProps = ({k8s}, {resources}) => ({
   k8sModels: resources.reduce((models, {kind}) => models.set(kind, k8s.getIn(['RESOURCES', 'models', kind])), ImmutableMap()),
+  inFlight: k8s.getIn(['RESOURCES', 'inFlight']),
 });
 
 export const Firehose = connect(
@@ -129,20 +130,24 @@ export const Firehose = connect(
   /** @augments {React.Component<{k8sModels?: Map<string, K8sKind}>} */
   class Firehose extends React.Component {
     componentWillMount (props=this.props) {
-      const { watchK8sList, watchK8sObject, resources, k8sModels } = props;
+      const { watchK8sList, watchK8sObject, resources, k8sModels, inFlight } = props;
 
-      this.firehoses = resources.map(resource => {
-        const query = makeQuery(resource.namespace, resource.selector, resource.fieldSelector, resource.name);
-        const k8sKind = k8sModels.get(resource.kind);
-        const id = makeReduxID(k8sKind, query);
-        return _.extend({}, resource, {query, id, k8sKind});
-      }).filter(f => {
-        if (_.isEmpty(f.k8sKind)) {
-          // eslint-disable-next-line no-console
-          console.warn(`No model registered for ${f.kind}`);
-        }
-        return !_.isEmpty(f.k8sKind);
-      });
+      if (inFlight) {
+        this.firehoses = [];
+      } else {
+        this.firehoses = resources.map(resource => {
+          const query = makeQuery(resource.namespace, resource.selector, resource.fieldSelector, resource.name);
+          const k8sKind = k8sModels.get(resource.kind);
+          const id = makeReduxID(k8sKind, query);
+          return _.extend({}, resource, {query, id, k8sKind});
+        }).filter(f => {
+          if (_.isEmpty(f.k8sKind)) {
+            // eslint-disable-next-line no-console
+            console.warn(`No model registered for ${f.kind}`);
+          }
+          return !_.isEmpty(f.k8sKind);
+        });
+      }
 
       this.firehoses.forEach(({ id, query, k8sKind, isList, name, namespace }) => isList
         ? watchK8sList(id, query, k8sKind)
@@ -160,9 +165,9 @@ export const Firehose = connect(
     shouldComponentUpdate(nextProps, nextState, nextContext) {
       const currentResources = this.props.resources;
 
-      const { resources, expand } = nextProps;
+      const { resources, expand, inFlight } = nextProps;
 
-      if (_.intersectionWith(resources, currentResources, _.isEqual).length === resources.length) {
+      if (_.intersectionWith(resources, currentResources, _.isEqual).length === resources.length && inFlight === this.props.inFlight) {
         if (_.get(nextContext, 'router.route.location.pathname') !== _.get(this.context, 'router.route.location.pathname')) {
           return true;
         }
@@ -183,7 +188,7 @@ export const Firehose = connect(
         'className',
       ]));
 
-      return <ConnectToState reduxes={reduxes}> {children} </ConnectToState>;
+      return this.props.inFlight ? null : <ConnectToState reduxes={reduxes}> {children} </ConnectToState>;
     }
   }
 );

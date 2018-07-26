@@ -34,7 +34,7 @@ import { UIActions, getActiveNamespace } from '../ui/ui-actions';
 import { ClusterHealth } from './cluster-health';
 import { CatalogSourceDetailsPage, CreateSubscriptionYAML } from './cloud-services';
 import { CreateCRDYAML } from './cloud-services/create-crd-yaml';
-import { ClusterServiceVersionModel, CatalogSourceModel } from '../models';
+import { ClusterServiceVersionModel, CatalogSourceModel, AlertmanagerModel } from '../models';
 import { referenceForModel } from '../module/k8s';
 import k8sActions from '../module/k8s/k8s-actions';
 import { coFetch } from '../co-fetch';
@@ -170,6 +170,8 @@ class App extends React.PureComponent {
           <Route path={`/k8s/ns/:ns/${CatalogSourceModel.plural}/tectonic-ocs`} exact component={CatalogSourceDetailsPage} />
           <Route path={`/k8s/all-namespaces/${CatalogSourceModel.plural}/tectonic-ocs/:pkgName/subscribe`} exact component={CreateSubscriptionYAML} />
           <Route path={`/k8s/ns/:ns/${CatalogSourceModel.plural}/tectonic-ocs/:pkgName/subscribe`} exact component={NamespaceFromURL(CreateSubscriptionYAML)} />
+
+          <Route path="/k8s/ns/:ns/alertmanagers/:name" exact render={({match}) => <Redirect to={`/k8s/ns/${match.params.ns}/${referenceForModel(AlertmanagerModel)}/${match.params.name}`} />} />
 
           <Route path={`/k8s/ns/:ns/${ClusterServiceVersionModel.plural}/:name/edit`} exact component={props => <EditYAMLPage {...props} kind={referenceForModel(ClusterServiceVersionModel)} />}/>
           <Route path={`/k8s/ns/:ns/${ClusterServiceVersionModel.plural}/:appName/:plural/new`} exact component={NamespaceFromURL(CreateCRDYAML)} />

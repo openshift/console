@@ -1,34 +1,37 @@
 import * as _ from 'lodash-es';
-import {coFetchJSON} from '../../co-fetch';
-import {k8sBasePath} from './k8s';
-import {selectorToString} from './selector';
-import {WSFactory} from '../ws-factory';
+import { coFetchJSON } from '../../co-fetch';
+import { k8sBasePath } from './k8s';
+import { selectorToString } from './selector';
+import { WSFactory } from '../ws-factory';
 
-const getK8sAPIPath = kind => {
+/** @type {(model: K8sKind) => string} */
+const getK8sAPIPath = model => {
+  const isLegacy = _.get(model, 'apiGroup', 'core') === 'core' && model.apiVersion === 'v1';
   let p = k8sBasePath;
 
-  if (kind.legacy) {
+  if (isLegacy) {
     p += '/api/';
   } else {
     p += '/apis/';
   }
 
-  if (kind.apiGroup) {
-    p += `${kind.apiGroup}/`;
+  if (!isLegacy && model.apiGroup) {
+    p += `${model.apiGroup}/`;
   }
 
-  p += kind.apiVersion;
+  p += model.apiVersion;
   return p;
 };
 
-export const resourceURL = (kind, options) => {
+/** @type {(model: GroupVersionKind, options: {ns?: string, name?: string, path?: string, queryParams?: {[k: string]: string}}) => string} */
+export const resourceURL = (model, options) => {
   let q = '';
-  let u = getK8sAPIPath(kind);
+  let u = getK8sAPIPath(model);
 
   if (options.ns) {
     u += `/namespaces/${options.ns}`;
   }
-  u += `/${kind.path}`;
+  u += `/${model.path}`;
   if (options.name) {
     u += `/${options.name}`;
   }
@@ -101,7 +104,7 @@ export const k8sListPartialMetadata = (kind, params = {}, raw = false) => {
   return k8sList(kind, params, raw, {headers: {Accept: 'application/json;as=PartialObjectMetadataList;v=v1alpha1;g=meta.k8s.io,application/json'}});
 };
 
-export const k8sWatch = (kind, query={}, wsOptions={}) => {
+export const k8sWatch = (kind, query = {}, wsOptions = {}) => {
   const queryParams = {watch: true};
   const opts = {queryParams};
   wsOptions = Object.assign({

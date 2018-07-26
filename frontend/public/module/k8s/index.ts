@@ -65,9 +65,6 @@ export type K8sKind = {
   crd?: boolean;
   apiVersion: string;
   apiGroup?: string;
-  // https://kubernetes.io/docs/reference/api-overview/#api-groups
-  legacy?: boolean;
-  // basePath?: string;
   namespaced?: boolean;
   selector?: {matchLabels?: {[key: string]: string}};
   labels?: {[key: string]: string};

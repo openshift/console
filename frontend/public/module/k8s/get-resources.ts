@@ -9,23 +9,12 @@ const ADMIN_RESOURCES = new Set(
   ['roles', 'rolebindings', 'clusterroles', 'clusterrolebindings', 'thirdpartyresources', 'nodes', 'secrets']
 );
 
-export const getResources = () => coFetchJSON('api/kubernetes/')
+export const getResources = () => coFetchJSON('api/kubernetes/apis')
   .then(res => {
-    const {paths} = res;
-    const apiPaths = new Set();
-
-    paths
-      // only /api or /apis
-      .filter(p => p.startsWith('/api'))
-      // no need for both /api and /api/v1
-      .forEach(p => {
-        const parts = p.split('/');
-        const parent = parts.slice(0, parts.length - 1).join('/');
-        apiPaths.delete(parent);
-        apiPaths.add(p);
-      });
-
-    const all = [...apiPaths]
+    const preferredVersions = res.groups.map(group => group.preferredVersion);
+    const all: Promise<APIResourceList>[] = _.flatten(res.groups
+      .map(group => group.versions.map(version => `/apis/${version.groupVersion}`)))
+      .concat(['/api/v1'])
       .map(p => coFetchJSON(`api/kubernetes${p}`).catch(err => err));
 
     return Promise.all(all)
@@ -62,7 +51,7 @@ export const getResources = () => coFetchJSON('api/kubernetes/')
         const models = _.flatten(data.filter(d => d.resources).map(defineModels));
         allResources.forEach(r => ADMIN_RESOURCES.has(r.split('/')[0]) ? adminResources.push(r) : safeResources.push(r));
 
-        return {allResources, safeResources, adminResources, namespacedSet, models};
+        return {allResources, safeResources, adminResources, namespacedSet, models, preferredVersions};
       });
   });
 

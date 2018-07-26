@@ -152,7 +152,6 @@ export const ChargebackReportModel: K8sKind = {
 
 export const ServiceModel: K8sKind = {
   apiVersion: 'v1',
-  legacy: true,
   label: 'Service',
   path: 'services',
   plural: 'services',
@@ -165,7 +164,6 @@ export const ServiceModel: K8sKind = {
 
 export const PodModel: K8sKind = {
   apiVersion: 'v1',
-  legacy: true,
   label: 'Pod',
   path: 'pods',
   plural: 'pods',
@@ -178,7 +176,6 @@ export const PodModel: K8sKind = {
 
 export const ContainerModel: K8sKind = {
   apiVersion: 'v1',
-  legacy: true,
   label: 'Container',
   path: 'containers',
   plural: 'containers',
@@ -204,7 +201,6 @@ export const DaemonSetModel: K8sKind = {
 
 export const ReplicationControllerModel: K8sKind = {
   apiVersion: 'v1',
-  legacy: true,
   label: 'Replication Controller',
   path: 'replicationcontrollers',
   plural: 'replicationcontrollers',
@@ -231,7 +227,6 @@ export const HorizontalPodAutoscalerModel: K8sKind = {
 
 export const ServiceAccountModel: K8sKind = {
   apiVersion: 'v1',
-  legacy: true,
   label: 'Service Account',
   path: 'serviceaccounts',
   plural: 'serviceaccounts',
@@ -356,7 +351,6 @@ export const JobModel: K8sKind = {
 
 export const NodeModel: K8sKind = {
   apiVersion: 'v1',
-  legacy: true,
   label: 'Node',
   path: 'nodes',
   plural: 'nodes',
@@ -368,7 +362,6 @@ export const NodeModel: K8sKind = {
 
 export const EventModel: K8sKind = {
   apiVersion: 'v1',
-  legacy: true,
   label: 'Event',
   path: 'events',
   plural: 'events',
@@ -381,7 +374,6 @@ export const EventModel: K8sKind = {
 
 export const ComponentStatusModel: K8sKind = {
   apiVersion: 'v1',
-  legacy: true,
   label: 'Component Status',
   labelPlural: 'Component Statuses',
   path: 'componentstatuses',
@@ -393,7 +385,6 @@ export const ComponentStatusModel: K8sKind = {
 
 export const NamespaceModel: K8sKind = {
   apiVersion: 'v1',
-  legacy: true,
   label: 'Namespace',
   path: 'namespaces',
   plural: 'namespaces',
@@ -455,7 +446,6 @@ export const RouteModel: K8sKind = {
 
 export const ConfigMapModel: K8sKind = {
   apiVersion: 'v1',
-  legacy: true,
   label: 'Config Map',
   path: 'configmaps',
   plural: 'configmaps',
@@ -468,7 +458,6 @@ export const ConfigMapModel: K8sKind = {
 
 export const SecretModel: K8sKind = {
   apiVersion: 'v1',
-  legacy: true,
   label: 'Secret',
   path: 'secrets',
   plural: 'secrets',
@@ -584,7 +573,6 @@ export const AppVersionModel: K8sKind = {
 export const PersistentVolumeModel: K8sKind = {
   label: 'Persistent Volume',
   apiVersion: 'v1',
-  legacy: true,
   path: 'persistentvolumes',
   plural: 'persistentvolumes',
   abbr: 'PV',
@@ -596,7 +584,6 @@ export const PersistentVolumeModel: K8sKind = {
 export const PersistentVolumeClaimModel: K8sKind = {
   label: 'Persistent Volume Claim',
   apiVersion: 'v1',
-  legacy: true,
   path: 'persistentvolumeclaims',
   plural: 'persistentvolumeclaims',
   abbr: 'PVC',
@@ -608,7 +595,6 @@ export const PersistentVolumeClaimModel: K8sKind = {
 
 export const PetsetModel: K8sKind = {
   apiVersion: 'v1',
-  legacy: true,
   label: 'Petset',
   plural: 'petsets',
   abbr: 'PS',
@@ -636,7 +622,6 @@ export const StatefulSetModel: K8sKind = {
 export const ResourceQuotaModel: K8sKind = {
   label: 'Resource Quota',
   apiVersion: 'v1',
-  legacy: true,
   path: 'resourcequotas',
   plural: 'resourcequotas',
   abbr: 'RQ',
@@ -661,7 +646,6 @@ export const NetworkPolicyModel: K8sKind = {
 
 export const PodVulnModel: K8sKind = {
   apiVersion: 'v1',
-  legacy: true,
   label: 'Pod Vuln',
   labelPlural: 'Pod Vulns',
   path: 'podvulns',
