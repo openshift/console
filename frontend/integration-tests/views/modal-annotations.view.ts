@@ -9,6 +9,7 @@ const annotationRows = $$('.pairs-list__row');
 export const annotationRowsKey = $$('[placeholder="key"]');
 export const annotationRowsValue = $$('[placeholder="value"]');
 export const annotationRowsDelete = $$('.pairs-list__delete-icon');
+export const annotationDialogOverlay = $('.co-overlay');
 
 export const isLoaded = () => browser.wait(until.presenceOf(addMoreBtn), BROWSER_TIMEOUT);
 
