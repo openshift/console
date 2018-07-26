@@ -1,21 +1,21 @@
-$color-service-dark: #99BA45;
+$color-service-dark: $color-pf-light-green-500;
 
-$color-pod-dark: #30C2B6;
+$color-pod-dark: $color-pf-cyan-400;
 
-$color-namespace-dark: #128E72;
+$color-namespace-dark: $color-pf-green-500;
 
-$color-node-dark: #C049BF;
+$color-node-dark: $color-pf-purple-400;
 
-$color-container-dark: #63C2E4;
+$color-container-dark: $color-pf-light-blue-400;
 
-$color-secret-dark: #F77454;
+$color-secret-dark: $color-pf-orange-400;
 
-$color-rbac-binding-dark: #99BA45;
-$color-rbac-role-dark: #C049BF;
+$color-rbac-binding-dark: $color-pf-cyan-500;
+$color-rbac-role-dark: $color-pf-orange-600;
 
-$color-configmap-dark: #872C6C;
+$color-configmap-dark: $color-pf-purple-600;
 
-$color-pod-overlord: #145884;
+$color-pod-overlord: $color-pf-blue-600;
 
 $color-controller-dark: $color-pod-overlord;
 $color-replicaset-dark: $color-controller-dark;
@@ -26,9 +26,9 @@ $color-petset-dark: $color-controller-dark;
 
 $color-serviceaccount-dark: $color-configmap-dark;
 
-$color-alertmanager-dark: #F77454;
+$color-alertmanager-dark: $color-pf-orange-500;
 
-$color-ingress-dark: #872C6C;
+$color-ingress-dark: $color-pf-purple-700;
 
 $color-grey-medium: #666;
 $color-grey-text: #777;
@@ -54,20 +54,16 @@ $color-text-secondary: $color-grey-medium;
 $masthead-height-desktop: 60px;
 $masthead-height-mobile: 40px;
 
-//OpenShift color variables
-$color-os-nav-title: #d1d1d1; // why not $color-pf-black-300
-$color-os-nav-background: #2A2E34; // why not $color-pf-black-900
-$color-os-nav-background-active: #383f47; // why not $color-pf-black-800
-$color-os-nav-item-seperator: #050505; // why not $color-pf-black
-$color-os-nav-active: #383f47; // why not $color-pf-black-800
+// Masthead and navigation colors
+$color-os-nav-title: $color-pf-black-300;
+$color-os-nav-background: $color-pf-black-900;
+$color-os-nav-background-active: $color-pf-black-800;
+$color-os-nav-item-seperator: #050505;
+$color-os-nav-active: $color-pf-black-800;
 $color-os-nav-hover: lighten($color-os-nav-active, 8%);
-$color-os-nav-border-left-active: #39a5dc; // why not $color-pf-blue-300
-$color-os-nav-icon: #72767b;
+$color-os-nav-border-left-active: $color-pf-blue-300;
+$color-os-nav-icon: $color-pf-black-600;
 
-// Patternfly defaults to dark gray. Override with black. Body text color is lighten()ed to #333
-$color-pf-black: black;
-// Bootstrap/Patternfly muted text is #999. Use #777 for better contrast.
-$text-muted: $color-grey-text;
 // Patternfly defaults to 12px, which is too small in many cases
 $font-size-base: 13px;
 // Patternfly defaults to 40px, which leaves a lot more whitespace than we're used to
