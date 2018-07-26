@@ -53,7 +53,12 @@ const RadioButton = ({name, value, label, text, onChange, activeValue}) => <div>
 const HRMinor = () => <hr className="rbac-minor" />;
 const HRMajor = () => <hr className="rbac-major" />;
 
-const EditRule = connect(state => state.k8s.get('RESOURCES') || {}, {getResources: k8sActions.getResources}) (
+const stateToProps = state => {
+  const resourceMap = state.k8s.get('RESOURCES');
+  return resourceMap ? resourceMap.toObject() : {};
+};
+
+const EditRule = connect(stateToProps, {getResources: k8sActions.getResources}) (
   class EditRule_ extends PromiseComponent {
     constructor (props) {
       super(props);
