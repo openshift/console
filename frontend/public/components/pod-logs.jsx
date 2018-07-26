@@ -16,7 +16,13 @@ const containersToStatuses = ({ status }, containers) => {
   }, {});
 };
 
-const containerToLogSourceStatus = ({ state, lastState }) => {
+const containerToLogSourceStatus = (container) => {
+  if (!container) {
+    return LOG_SOURCE_WAITING;
+  }
+
+  const { state, lastState } = container;
+
   if (state.waiting && !_.isEmpty(lastState)) {
     return LOG_SOURCE_RESTARTING;
   }
@@ -51,7 +57,7 @@ export class PodLogs extends React.Component {
     newState.initContainers = containersToStatuses(build, initContainers);
     if (!currentKey) {
       const firstContainer = _.find(newState.containers, { order: 0 });
-      newState.currentKey = firstContainer.name;
+      newState.currentKey = firstContainer ? firstContainer.name : '';
     }
     return newState;
   }
@@ -74,7 +80,7 @@ export class PodLogs extends React.Component {
 
     return <div className="co-m-pane__body">
       <ResourceLog
-        containerName={currentContainer.name}
+        containerName={currentContainer ? currentContainer.name : ''}
         kind="Pod"
         dropdown={containerDropdown}
         namespace={namespace}
