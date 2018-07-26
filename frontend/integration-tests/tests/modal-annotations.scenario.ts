@@ -66,14 +66,20 @@ describe('Modal Annotations', () => {
     }
   };
 
+  const clickModalAnnotationsLink = async function () {
+    await browser.wait(until.elementToBeClickable(crudView.modalAnnotationsLink));
+    // Make sure no dialog overlay is blocking the link from being clicked.
+    await browser.wait(until.invisibilityOf(modalAnnotationsView.annotationDialogOverlay));
+    await crudView.modalAnnotationsLink.click();
+  };
+
   const crudAnnotationFromDetail = async function (
     action: string,
     annotationKey: string,
     annotationValue: string
   ) {
     await browser.get(`${appHost}/k8s/ns/${testName}/daemonsets/${WORKLOAD_NAME}`);
-    await crudView.isLoaded();
-    await crudView.modalAnnotationsLink.click();
+    await clickModalAnnotationsLink();
     await modalAnnotationsView.isLoaded();
 
     switch (action) {
@@ -106,7 +112,7 @@ describe('Modal Annotations', () => {
     isPresent: boolean
   ) {
     await crudAnnotationFromDetail(action, annotationKey, annotationValue);
-    await crudView.modalAnnotationsLink.click();
+    await clickModalAnnotationsLink();
     await modalAnnotationsView.isLoaded();
     await validateKeyAndValue(annotationKey, annotationValue, isPresent);
   };
@@ -124,13 +130,13 @@ describe('Modal Annotations', () => {
     const annotationValue = 'delete';
 
     await crudAnnotationFromDetail(Actions.add, annotationKey, annotationValue);
-    await crudView.modalAnnotationsLink.click();
+    await clickModalAnnotationsLink();
     await modalAnnotationsView.isLoaded();
     await browser.wait(until.textToBePresentInElement(crudView.modalAnnotationsLink, '2'), BROWSER_TIMEOUT);
     await validateKeyAndValue(annotationKey, annotationValue, true);
 
     await crudAnnotationFromDetail(Actions.delete, annotationKey, annotationValue);
-    await crudView.modalAnnotationsLink.click();
+    await clickModalAnnotationsLink();
     await modalAnnotationsView.isLoaded();
     await validateKeyAndValue(annotationKey, annotationValue, false);
   });
