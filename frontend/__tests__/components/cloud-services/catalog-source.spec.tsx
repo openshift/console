@@ -154,9 +154,9 @@ describe(CatalogSourceDetailsPage.displayName, () => {
   });
 
   it('renders catalog display name', () => {
-    expect(wrapper.find(Helmet).find('title').text()).toEqual('Open Cloud Services');
+    expect(wrapper.find(Helmet).find('title').text()).toEqual('Catalog Sources');
     expect(wrapper.find(NavTitle).props().detail).toBe(true);
-    expect(wrapper.find(NavTitle).props().title).toEqual('Open Cloud Services');
+    expect(wrapper.find(NavTitle).props().title).toEqual('Catalog Sources');
   });
 
   it('creates a `Firehose` component for the necessary resources', () => {

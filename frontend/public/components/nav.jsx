@@ -14,10 +14,10 @@ import { authSvc } from '../module/auth';
 
 import { ClusterPicker } from './cluster-picker';
 
+import * as operatorImg from '../imgs/operator.svg';
+import * as operatorActiveImg from '../imgs/operator-active.svg';
 import * as routingImg from '../imgs/routing.svg';
-import * as appsLogoImg from '../imgs/apps-logo.svg';
 import * as routingActiveImg from '../imgs/routing-active.svg';
-import * as appsLogoActiveImg from '../imgs/apps-logo-active.svg';
 import { history, stripBasePath } from './utils';
 
 export const matchesPath = (resourcePath, prefix) => resourcePath === prefix || _.startsWith(resourcePath, `${prefix}/`);
@@ -366,10 +366,11 @@ export class Nav extends React.Component {
         <ClusterPickerNavSection />
         <div ref={this.scroller} onWheel={this.preventScroll} className="navigation-container">
           <NavSection text="Overview" icon="fa fa-tachometer" href="/overview" activePath="/overview/" onClick={this.close} />
-          <NavSection required={FLAGS.CLOUD_SERVICES} text="Applications" img={appsLogoImg} activeImg={appsLogoActiveImg} >
+
+          <NavSection required={FLAGS.CLOUD_SERVICES} text="Operators" img={operatorImg} activeImg={operatorActiveImg} >
             <ResourceNSLink model={ClusterServiceVersionModel} resource={ClusterServiceVersionModel.plural} name="Cluster Service Versions" onClick={this.close} />
             <Sep />
-            <ResourceNSLink model={CatalogSourceModel} resource={CatalogSourceModel.plural} name="Open Cloud Catalog" onClick={this.close} />
+            <ResourceNSLink model={CatalogSourceModel} resource={CatalogSourceModel.plural} name="Catalog Sources" onClick={this.close} />
             <ResourceNSLink model={SubscriptionModel} resource={SubscriptionModel.plural} name="Subscriptions" onClick={this.close} />
             <ResourceNSLink model={InstallPlanModel} resource={InstallPlanModel.plural} name="Install Plans" onClick={this.close} />
           </NavSection>

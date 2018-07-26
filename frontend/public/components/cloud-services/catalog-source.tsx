@@ -93,9 +93,9 @@ export const CatalogSourceDetails: React.SFC<CatalogSourceDetailsProps> = ({cata
 
 export const CatalogSourceDetailsPage: React.SFC<CatalogSourceDetailsPageProps> = (props) => <div>
   <Helmet>
-    <title>Open Cloud Services</title>
+    <title>Catalog Sources</title>
   </Helmet>
-  <NavTitle detail={true} title="Open Cloud Services" />
+  <NavTitle detail={true} title="Catalog Sources" />
   <Firehose
     {...props}
     resources={[{
