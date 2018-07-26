@@ -365,7 +365,7 @@ export class Nav extends React.Component {
       <div id="sidebar" className={classNames({'open': isOpen})}>
         <ClusterPickerNavSection />
         <div ref={this.scroller} onWheel={this.preventScroll} className="navigation-container">
-          <NavSection text="Overview" icon="fa fa-tachometer" href="/overview" activePath="/overview/" onClick={this.close} />
+          <NavSection text="Dashboard" icon="fa fa-tachometer" href="/overview" activePath="/overview/" onClick={this.close} />
 
           <NavSection required={FLAGS.CLOUD_SERVICES} text="Operators" img={operatorImg} activeImg={operatorActiveImg} >
             <ResourceNSLink model={ClusterServiceVersionModel} resource={ClusterServiceVersionModel.plural} name="Cluster Service Versions" onClick={this.close} />
