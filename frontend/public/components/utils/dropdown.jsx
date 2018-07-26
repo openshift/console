@@ -411,7 +411,7 @@ ActionsMenu.propTypes = {
 };
 
 const containerLabel = (container) =>
-  <ResourceName name={container.name} kind="Container" />;
+  <ResourceName name={container ? container.name : ''} kind="Container" />;
 
 export class ContainerDropdown extends React.PureComponent {
 
@@ -429,6 +429,9 @@ export class ContainerDropdown extends React.PureComponent {
 
   render() {
     const {currentKey, containers, initContainers, onChange} = this.props;
+    if (_.isEmpty(containers) && _.isEmpty(initContainers)) {
+      return null;
+    }
     const firstInitContainer = _.find(initContainers, {order: 0});
     const firstContainer = _.find(containers, {order: 0});
     const spacerBefore = this.getSpacer(firstInitContainer);
