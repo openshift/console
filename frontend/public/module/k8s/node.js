@@ -25,3 +25,7 @@ export const isNodeReady = (node) => {
 
   return readyState.status === 'True';
 };
+
+export const isNodeSchedulable = (node) => {
+  return !node.spec.unschedulable;
+};

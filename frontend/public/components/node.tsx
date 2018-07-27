@@ -1,6 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import { isNodeReady, makeNodeSchedulable } from '../module/k8s/node';
+import { isNodeReady, isNodeSchedulable, makeNodeSchedulable } from '../module/k8s/node';
 import { ResourceEventStream } from './events';
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import { configureUnschedulableModal } from './modals';
@@ -54,7 +54,22 @@ const HeaderSearch = props => <ListHeader>
   <ColHead {...props} className="col-md-2 col-sm-3 hidden-xs" sortField="status.addresses">Node Addresses</ColHead>
 </ListHeader>;
 
-const NodeStatus = ({node}) => isNodeReady(node) ? <span className="node-ready"><i className="fa fa-check"></i> Ready</span> : <span className="node-not-ready"><i className="fa fa-minus-circle"></i> Not Ready</span>;
+const NodeStatus = ({node}) => {
+  if (isNodeReady(node)) {
+    if (!isNodeSchedulable(node)) {
+      return <React.Fragment>
+        <span className="node-ready co-icon-and-text"><i className="fa fa-check co-icon-and-text__icon" aria-hidden="true"></i> Ready</span>
+        <span className="text-muted co-icon-and-text">Scheduling Disabled</span>
+      </React.Fragment>;
+    }
+    return <span className="node-ready co-icon-and-text">
+      <i className="fa fa-check co-icon-and-text__icon" aria-hidden="true"></i> Ready
+    </span>;
+  }
+  return <span className="node-not-ready co-icon-and-text">
+    <i className="fa fa-minus-circle co-icon-and-text__icon" aria-hidden="true"></i> Not Ready
+  </span>;
+};
 
 const NodeCLUpdateStatus = ({node}) => {
   const updateStatus = containerLinuxUpdateOperator.getUpdateStatus(node);
