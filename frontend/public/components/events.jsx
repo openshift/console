@@ -16,6 +16,8 @@ import { TextFilter } from './factory';
 import { Dropdown, ResourceLink, Box, Loading, NavTitle, Timestamp, TogglePlay, pluralize } from './utils';
 import { WSFactory } from '../module/ws-factory';
 import { ResourceListDropdown } from './resource-dropdown';
+import { connectToFlags, FLAGS, flagPending } from '../features';
+import { OpenShiftGettingStarted } from './start-guide';
 
 const maxMessages = 500;
 const flushInterval = 500;
@@ -119,7 +121,7 @@ class SysEvent extends React.Component {
 
 const categories = {all: 'All Categories', info: 'Info', error: 'Error'};
 
-export class EventStreamPage extends React.Component {
+class EventsStreamPage_ extends React.Component {
   constructor (props) {
     super(props);
     this.state = {
@@ -131,25 +133,35 @@ export class EventStreamPage extends React.Component {
 
   render () {
     const { category, kind, textFilter } = this.state;
-    const { showTitle=true, autoFocus=true } = this.props;
+    const { flags, showTitle=true, autoFocus=true } = this.props;
+    if (flagPending(flags.OPENSHIFT) || flagPending(flags.PROJECTS_AVAILABLE)) {
+      return null;
+    }
+    const showGettingStarted = flags.OPENSHIFT && !flags.PROJECTS_AVAILABLE;
+
     return <React.Fragment>
-      { showTitle && <Helmet>
-        <title>Events</title>
-      </Helmet> }
-      { showTitle && <NavTitle title="Events" /> }
-      <div className="co-m-pane__filter-bar co-m-pane__filter-bar--group__body">
-        <div className="co-m-pane__filter-bar-group">
-          <ResourceListDropdown title="All Types" className="btn-group" onChange={v => this.setState({kind: v})} showAll selected={kind} />
-          <Dropdown title="All Categories" className="btn-group" items={categories} onChange={v => this.setState({category: v})} />
+      { showGettingStarted && <OpenShiftGettingStarted /> }
+      <div className={classNames({'co-disabled': showGettingStarted })}>
+        { showTitle && <Helmet>
+          <title>Events</title>
+        </Helmet> }
+        { showTitle && <NavTitle title="Events" /> }
+        <div className="co-m-pane__filter-bar co-m-pane__filter-bar--group__body">
+          <div className="co-m-pane__filter-bar-group">
+            <ResourceListDropdown title="All Types" className="btn-group" onChange={v => this.setState({kind: v})} showAll selected={kind} />
+            <Dropdown title="All Categories" className="btn-group" items={categories} onChange={v => this.setState({category: v})} />
+          </div>
+          <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--filter">
+            <TextFilter label="Events by message" onChange={e => this.setState({textFilter: e.target.value || ''})} autoFocus={autoFocus} />
+          </div>
         </div>
-        <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--filter">
-          <TextFilter label="Events by message" onChange={e => this.setState({textFilter: e.target.value || ''})} autoFocus={autoFocus} />
-        </div>
+        <EventStream {...this.props} category={category} kind={kind} textFilter={textFilter} fake={showGettingStarted} />
       </div>
-      <EventStream {...this.props} category={category} kind={kind} textFilter={textFilter} />
     </React.Fragment>;
   }
 }
+
+export const EventStreamPage = connectToFlags(FLAGS.OPENSHIFT, FLAGS.PROJECTS_AVAILABLE)(EventsStreamPage_);
 
 class EventStream extends SafetyFirst {
   constructor (props) {
