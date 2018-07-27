@@ -10,6 +10,7 @@ import { appHost, testName, checkLogs, checkErrors } from '../protractor.conf';
 import * as crudView from '../views/crud.view';
 import * as yamlView from '../views/yaml.view';
 import * as namespaceView from '../views/namespace.view';
+import * as roleBindingsView from '../views/role-bindings.view';
 
 const K8S_CREATION_TIMEOUT = 15000;
 
@@ -138,6 +139,9 @@ describe('Kubernetes resource CRUD operations', () => {
 
   describe('Bindings', () => {
     const bindingName = `${testName}-cluster-admin`;
+    function validateIfClusterAdmin (role) {
+      return role === 'CR cluster-admin';
+    }
 
     it('clicks on the `create bindings` button', async() => {
       await browser.get(`${appHost}/k8s/all-namespaces/rolebindings`);
@@ -149,7 +153,11 @@ describe('Kubernetes resource CRUD operations', () => {
     it('creates a RoleBinding', async() => {
       await $('#test––role-binding-name').sendKeys(bindingName);
       await $('#test--ns-dropdown').click().then(() => browser.actions().sendKeys(testName, Key.ARROW_DOWN, Key.ENTER).perform());
-      await $('#test--role-dropdown').click().then(() => browser.actions().sendKeys('cluster-admin', Key.ARROW_DOWN, Key.ENTER).perform());
+      await roleBindingsView.crbRoleBtn.click();
+      await browser.wait(until.presenceOf(roleBindingsView.crbRoleList.get(0)));
+      await roleBindingsView.crbRoleList.filter(function(elem){
+        return elem.getText().then(validateIfClusterAdmin);
+      }).first().click();
       await $('#test--subject-name').sendKeys('subject-name');
       leakedResources.add(JSON.stringify({name: bindingName, plural: 'rolebindings', namespace: testName}));
       await crudView.createYAMLButton.click();

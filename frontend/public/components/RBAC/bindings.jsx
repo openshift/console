@@ -516,7 +516,7 @@ const BaseEditRoleBinding = connect(null, {setActiveNamespace: UIActions.setActi
             {subject.kind === 'ServiceAccount' && <div>
               <div className="separator"></div>
               <p className="rbac-edit-binding__input-label">Subject Namespace:</p>
-              <NsDropdown selectedKey={subject.namespace} onChange={this.changeSubjectNamespace} />
+              <NsDropdown selectedKey={subject.namespace} onChange={this.changeSubjectNamespace} id="test--subject-ns-dropdown" />
             </div>}
             <div className="separator"></div>
             <p className="rbac-edit-binding__input-label">Subject Name:</p>
