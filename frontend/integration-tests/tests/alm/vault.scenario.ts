@@ -19,7 +19,7 @@ describe('Interacting with the Vault OCS', () => {
 
   beforeAll(async() => {
     browser.get(`${appHost}/overview/all-namespaces`);
-    await browser.wait(until.presenceOf(sidenavView.navSectionFor('Applications')));
+    await browser.wait(until.presenceOf(sidenavView.navSectionFor('Operators')));
   });
 
   afterEach(() => {
@@ -27,8 +27,8 @@ describe('Interacting with the Vault OCS', () => {
     checkErrors();
   });
 
-  it('can be enabled from the Open Cloud Catalog', async() => {
-    await sidenavView.clickNavLink(['Applications', 'Open Cloud Catalog']);
+  it('can be enabled from the Catalog Sources', async() => {
+    await sidenavView.clickNavLink(['Operators', 'Catalog Sources']);
     await catalogView.isLoaded();
     await catalogView.entryRowFor('Vault').element(by.buttonText('Subscribe')).click();
     await browser.wait(until.presenceOf($('.ace_text-input')));
@@ -37,7 +37,7 @@ describe('Interacting with the Vault OCS', () => {
     await yamlView.setContent(safeDump(newContent));
     await $('#save-changes').click();
     await crudView.isLoaded();
-    await sidenavView.clickNavLink(['Applications', 'Open Cloud Catalog']);
+    await sidenavView.clickNavLink(['Operators', 'Catalog Sources']);
     await catalogView.isLoaded();
 
     expect(catalogView.hasSubscription('Vault')).toBe(true);

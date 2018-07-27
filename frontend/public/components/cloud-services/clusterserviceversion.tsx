@@ -71,7 +71,7 @@ export const ClusterServiceVersionRow = withFallback<ClusterServiceVersionRowPro
 });
 
 const EmptyAppsMsg = () => <MsgBox title="No Applications Found" detail={<div>
-  Applications are installed per namespace from the Open Cloud Catalog. For more information, see <a href="https://coreos.com/tectonic/docs/latest/alm/using-ocs.html" target="_blank" className="co-external-link" rel="noopener noreferrer">Using Open Cloud Services</a>.
+  Applications are installed per namespace from Catalog Sources. For more information, see <a href="https://coreos.com/tectonic/docs/latest/alm/using-ocs.html" target="_blank" className="co-external-link" rel="noopener noreferrer">Using Open Cloud Services</a>.
 </div>} />;
 
 export const ClusterServiceVersionList: React.SFC<ClusterServiceVersionListProps> = (props) => {

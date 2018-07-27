@@ -6,7 +6,7 @@ import { appHost, checkLogs, checkErrors } from '../../protractor.conf';
 import * as catalogView from '../../views/catalog.view';
 import * as sidenavView from '../../views/sidenav.view';
 
-describe('Installing a service from the Open Cloud Catalog', () => {
+describe('Installing a service from the Catalog Sources', () => {
   const openCloudServices = new Set(['etcd', 'Prometheus', 'Prometheus']);
 
   beforeAll(async() => {
@@ -19,14 +19,14 @@ describe('Installing a service from the Open Cloud Catalog', () => {
     checkErrors();
   });
 
-  it('displays `Applications` tab in navigation sidebar', async() => {
-    await browser.wait(until.presenceOf(sidenavView.navSectionFor('Applications')));
+  it('displays `Operators` tab in navigation sidebar', async() => {
+    await browser.wait(until.presenceOf(sidenavView.navSectionFor('Operators')));
 
-    expect(sidenavView.navSectionFor('Applications').isDisplayed()).toBe(true);
+    expect(sidenavView.navSectionFor('Operators').isDisplayed()).toBe(true);
   });
 
-  it('displays Open Cloud Catalog with three available services', async() => {
-    await sidenavView.clickNavLink(['Applications', 'Open Cloud Catalog']);
+  it('displays Catalog Sources with three available services', async() => {
+    await sidenavView.clickNavLink(['Operators', 'Catalog Sources']);
     await catalogView.isLoaded();
 
     openCloudServices.forEach(name => {

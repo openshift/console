@@ -272,7 +272,7 @@ describe(ClusterServiceVersionsPage.displayName, () => {
     wrapper = shallow(<ClusterServiceVersionsPage.WrappedComponent kind={referenceForModel(ClusterServiceVersionModel)} namespaceEnabled={true} resourceDescriptions={[]} match={{params: {ns: 'foo'}, isExact: true, path: '', url: ''}} />);
   });
 
-  it('renders a `MultiListPage` for Open Cloud Catalog apps with correct props', () => {
+  it('renders a `MultiListPage` for Catalog Sources apps with correct props', () => {
     const listPage = wrapper.find(MultiListPage).at(0);
 
     expect(listPage.props().resources).toEqual([
@@ -285,7 +285,7 @@ describe(ClusterServiceVersionsPage.displayName, () => {
     expect(listPage.props().showTitle).toBe(false);
   });
 
-  it('passes `flatten` function to Open Cloud Catalog `MultiListPage` that returns list of all resources', () => {
+  it('passes `flatten` function to Catalog Sources `MultiListPage` that returns list of all resources', () => {
     const resources = {
       TestResource: {data: [testResourceInstance]},
       'ClusterServiceVersion-v1': {data: [localClusterServiceVersion, testClusterServiceVersion]},
