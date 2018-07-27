@@ -13,7 +13,10 @@ const editYamlComponent = (props) => <AsyncComponent loader={() => import('../ed
 class PodsComponent extends React.PureComponent {
   render() {
     const {metadata: {namespace}, spec: {selector}} = this.props.obj;
-    return <PodsPage showTitle={false} namespace={namespace} selector={selector} />;
+    // Hide the create button to avoid confusion when showing pods for an object.
+    // Otherwise it might seem like you click "Create Pod" to add replicas instead
+    // of scaling the owner.
+    return <PodsPage showTitle={false} namespace={namespace} selector={selector} canCreate={false} />;
   }
 }
 
