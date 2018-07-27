@@ -316,9 +316,10 @@ export class PodsPage extends React.Component {
     return !_.isEqual(nextProps, this.props);
   }
   render() {
+    const { canCreate = true } = this.props;
     return <ListPage
       {...this.props}
-      canCreate={true}
+      canCreate={canCreate}
       kind="Pod"
       ListComponent={PodList}
       rowFilters={filters}
