@@ -73,11 +73,6 @@ const actions = {
     POLLs[id] = setInterval(poller, 30 * 1000);
     poller();
 
-    if (k8sType.crd && name) {
-      // You can't watch a CRD with a fieldSelector as of 1.8
-      return;
-    }
-
     const {subprotocols} = getState().UI.get('impersonate', {});
 
     WS[id] = k8sWatch(k8sType, {...query, subprotocols}).onbulkmessage(events =>
