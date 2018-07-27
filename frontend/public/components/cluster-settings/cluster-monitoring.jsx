@@ -89,7 +89,7 @@ class PromSettingsModal extends PromiseComponent {
   }
 
   render () {
-    return <this.Form {...this.state}/>;
+    return <this.Form {...this.state} />;
   }
 }
 
@@ -116,7 +116,7 @@ const renderField = ({
     error,
     warning }
 }) => <div>
-  <input className={classNames('form-control', {'form-control--invalid': !!error})} style={fieldStyle} {...input} type={type} autoFocus={autoFocus} placeholder={placeholder}/>
+  <input className={classNames('form-control', {'form-control--invalid': !!error})} style={fieldStyle} {...input} type={type} autoFocus={autoFocus} placeholder={placeholder} />
   {
     (error && <div className="error-message">{error}</div>) ||
       (warning && <span>{warning}</span>)

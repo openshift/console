@@ -45,7 +45,7 @@ const RadioButton = ({name, value, label, text, onChange, activeValue}) => <div>
   <label htmlFor={value} className="control-label">
     <input onChange={() => onChange(name, value)} type="radio" name={name} value={value} id={value} checked={activeValue === value} />
     {label}
-    <br/>
+    <br />
     <HelpText>{text}</HelpText>
   </label>
 </div>;
@@ -326,7 +326,7 @@ const EditRule = connect(state => state.k8s.get('RESOURCES') || {}, {getResource
               </div>
             </div>
 
-            <HRMajor/>
+            <HRMajor />
 
             <div className="row rule-row">
               <div className="col-xs-2">

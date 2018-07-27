@@ -88,7 +88,7 @@ const FeatureFlagGate = connectToFlags(FLAGS.MULTI_CLUSTER)(props => {
   </div>;
 });
 
-export const ClustersPage: React.SFC<ClustersPageProps> = props => <div><FeatureFlagGate {...props}/></div>;
+export const ClustersPage: React.SFC<ClustersPageProps> = props => <div><FeatureFlagGate {...props} /></div>;
 
 const pages = [navFactory.details(detailsPage(ClustersDetails)), navFactory.editYaml()];
 

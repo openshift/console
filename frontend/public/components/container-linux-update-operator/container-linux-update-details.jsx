@@ -134,7 +134,7 @@ export const ContainerLinuxUpdateDetails = ({nodeListUpdateStatus, isOperatorIns
           <span className="co-cluster-updates__heading--name">Container Linux</span>
         </div>
       </div>
-      <Status status="Not available in Tectonic Sandbox"/>
+      <Status status="Not available in Tectonic Sandbox" />
     </div> }
     { isOperatorInstalled && <div className="co-cluster-updates__component">
       <div className="co-cluster-updates__heading">
@@ -142,7 +142,7 @@ export const ContainerLinuxUpdateDetails = ({nodeListUpdateStatus, isOperatorIns
           <span className="co-cluster-updates__heading--name">Container Linux</span>
         </div>
       </div>
-      <Status status={overallState} upgradeCount={upgradeCount}/>
+      <Status status={overallState} upgradeCount={upgradeCount} />
       <div className="co-cluster-updates__operator">
         {nodeListUpdateStatus.upToDate.length !== count &&
           <UpdateProgress nodeListUpdateStatus={nodeListUpdateStatus} />

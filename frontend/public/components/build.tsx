@@ -104,7 +104,7 @@ export const BuildEnvironmentComponent = (props) => {
       obj={obj}
       rawEnvData={obj.spec.strategy[getStrategyType(obj.spec.strategy)]}
       envPath={getEnvPath(props)}
-      readOnly={readOnly}/>;
+      readOnly={readOnly} />;
   }
   return <div className="cos-status-box">
     <div className="text-center">The environment variable editor does not support build

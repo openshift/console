@@ -74,9 +74,9 @@ const IngressRow = ({ingress, namespace, podSelector}) => {
   const style = {margin: '5px 0'};
   _.each(ingress.from, ({namespaceSelector, podSelector: ps}) => {
     if (namespaceSelector) {
-      nsSelectors.push(<div key={i++} style={style}><Selector selector={namespaceSelector} kind="Namespace"/></div>);
+      nsSelectors.push(<div key={i++} style={style}><Selector selector={namespaceSelector} kind="Namespace" /></div>);
     } else {
-      podSelectors.push(<div key={i++} style={style}><Selector selector={ps} namespace={namespace}/></div>);
+      podSelectors.push(<div key={i++} style={style}><Selector selector={ps} namespace={namespace} /></div>);
     }
   });
   return <div className="row co-resource-list__item">

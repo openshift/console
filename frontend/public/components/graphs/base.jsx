@@ -124,7 +124,7 @@ export class BaseGraph extends SafetyFirst {
     const url = this.prometheusURL();
     const graph = <div className="graph-wrapper" style={this.style}>
       <h5 className="graph-title">{this.props.title}</h5>
-      <div ref={this.setNode} style={{width: '100%'}}/>
+      <div ref={this.setNode} style={{width: '100%'}} />
     </div>;
 
     return url

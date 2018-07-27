@@ -34,7 +34,7 @@ const ResourceListPage_ = connectToPlural((props: ResourceListPageProps) => {
     PageComponent = resourceListPages.get('Default');
   }
   return <div className="co-m-list">
-    {showGettingStarted && <OpenShiftGettingStarted/>}
+    {showGettingStarted && <OpenShiftGettingStarted />}
     <Helmet>
       <title>{kindObj.labelPlural}</title>
     </Helmet>

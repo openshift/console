@@ -31,7 +31,7 @@ export class FileInput extends React.Component<FileInputProps, FileInputState> {
       <span className="input-group-btn">
         <span className="btn btn-default co-btn-file">
           Browse&hellip;
-          <input type="file" onChange={this.onFileChange} className="form-control"/>
+          <input type="file" onChange={this.onFileChange} className="form-control" />
         </span>
       </span>
     </div>;

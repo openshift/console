@@ -99,7 +99,7 @@ const ProjectEmptyMessageDetail = <p>
   Create a project for your application. To learn more, visit the OpenShift <a href={openshiftHelpBase} target="_blank" rel="noopener noreferrer">documentation</a>.
 </p>;
 const ProjectEmptyMessage = () => <MsgBox title="Welcome to OpenShift" detail={ProjectEmptyMessageDetail} />;
-export const ProjectList = props => <List {...props} Header={ProjectHeader} Row={ProjectRow} EmptyMsg={ProjectEmptyMessage}/>;
+export const ProjectList = props => <List {...props} Header={ProjectHeader} Row={ProjectRow} EmptyMsg={ProjectEmptyMessage} />;
 export const ProjectsPage = props => <ListPage {...props} ListComponent={ProjectList} canCreate={true} createHandler={createProjectModal} />;
 
 class PullSecret extends SafetyFirst {

@@ -62,7 +62,7 @@ class BaseLabelsModal extends PromiseComponent {
             <label className="control-label">
               {_.capitalize(description) || 'Labels'} for <ResourceIcon kind={kind.crd ? referenceForModel(kind) : kind.kind} /> {resource.metadata.name}
             </label>
-            <SelectorInput onChange={labels => this.setState({labels})} tags={this.state.labels} labelClassName={labelClassName || `co-text-${kind.id}`} autoFocus/>
+            <SelectorInput onChange={labels => this.setState({labels})} tags={this.state.labels} labelClassName={labelClassName || `co-text-${kind.id}`} autoFocus />
           </div>
         </div>
       </ModalBody>

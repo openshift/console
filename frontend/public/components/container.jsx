@@ -248,6 +248,6 @@ export const ContainersDetailsPage = (props) => <div>
     isList: false,
     prop: 'obj',
   }]}>
-    <VertNav hideNav={true} pages={[{name: 'container', href: '', component: Details}]} match={props.match}/>
+    <VertNav hideNav={true} pages={[{name: 'container', href: '', component: Details}]} match={props.match} />
   </Firehose>
 </div>;

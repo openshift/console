@@ -258,7 +258,7 @@ export const Rows: React.SFC<RowsProps> = (props) => {
 
   return <div className="co-m-table-grid__body">
     { fake
-      ? <EmptyBox label={label}/>
+      ? <EmptyBox label={label} />
       : <WindowScroller>
         {({height, isScrolling, registerChild, onChildScroll, scrollTop}) =>
           <AutoSizer disableHeight>

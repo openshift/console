@@ -236,7 +236,7 @@ class TaskStatus extends React.Component {
 
         {!_.isEmpty(_.get(taskStatus, 'statuses')) && taskStatus.state !== 'Completed' &&
           _.map(taskStatus.statuses, (status, index) =>
-            <TaskStatusStep status={status} key={index} style={{padding: '0 0 10px 20px'}}/>)
+            <TaskStatusStep status={status} key={index} style={{padding: '0 0 10px 20px'}} />)
         }
 
         {reason && !isTCAppVersion &&

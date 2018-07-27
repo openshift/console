@@ -59,7 +59,7 @@ class TagsModal extends PromiseComponent {
     return <form onSubmit={this._submit}>
       <ModalTitle>{this.props.title}</ModalTitle>
       <ModalBody>
-        <NameValueEditorComponent nameValuePairs={tags} submit={this._submit} updateParentData={this._updateTags}/>
+        <NameValueEditorComponent nameValuePairs={tags} submit={this._submit} updateParentData={this._updateTags} />
       </ModalBody>
       <ModalSubmitFooter submitText="Save Changes" cancel={this._cancel} errorMessage={this.state.errorMessage} inProgress={this.state.inProgress} />
     </form>;
