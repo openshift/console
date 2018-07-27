@@ -25,7 +25,7 @@ export const ResourceSummary: React.SFC<ResourceSummaryProps> = ({children, reso
     <dt>Labels</dt>
     <dd><LabelList kind={resource.kind} labels={metadata.labels} /></dd>
     {showPodSelector && <dt>Pod Selector</dt>}
-    {showPodSelector && <dd><Selector selector={_.get(resource, podSelector)} /></dd>}
+    {showPodSelector && <dd><Selector selector={_.get(resource, podSelector)} namespace={_.get(resource, 'metadata.namespace')} /></dd>}
     {showNodeSelector && <dt>Node Selector</dt>}
     {showNodeSelector && <dd><Selector kind="Node" selector={_.get(resource, 'spec.template.spec.nodeSelector')} /></dd>}
     {showAnnotations && <dt>Annotations</dt>}
