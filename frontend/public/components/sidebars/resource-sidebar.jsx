@@ -39,6 +39,10 @@ export class ResourceSidebarWrapper extends React.Component {
 
 export const ResourceSidebar = props => {
   const {kindObj, height} = props;
+  if (!kindObj) {
+    return null;
+  }
+
   const {kind, label} = kindObj;
   let SidebarComponent = resourceSidebars.get(kind);
   if (SidebarComponent) {
