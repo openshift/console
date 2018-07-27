@@ -104,7 +104,7 @@ export const BindingName = connect(null, {startImpersonate: UIActions.startImper
   ({binding, startImpersonate}) => <React.Fragment>
     {binding.subjects &&
       <ResourceCog actions={menuActions(binding, startImpersonate)} kind={bindingKind(binding)} resource={binding} />}
-    <ResourceLink kind={bindingKind(binding)} name={binding.metadata.name} namespace={binding.metadata.namespace} className="co-resource-link__resource-name"/>
+    <ResourceLink kind={bindingKind(binding)} name={binding.metadata.name} namespace={binding.metadata.namespace} className="co-resource-link__resource-name" />
   </React.Fragment>);
 
 export const RoleLink = ({binding}) => {

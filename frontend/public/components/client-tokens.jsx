@@ -36,7 +36,7 @@ export class ClientTokensContainer extends SafetyFirst {
     return <ClientTokens clients={this.state.clients}
       loadingError={this.state.loadingError}
       onTokenRevocation={this._getClients}
-      resourceLoaded={this.state.resourceLoaded}/>;
+      resourceLoaded={this.state.resourceLoaded} />;
   }
 }
 
@@ -91,7 +91,7 @@ const ClientTokens = ({clients, onTokenRevocation, resourceLoaded, loadingError}
           { !resourceLoaded && <div className="text-center"><LoadingInline /></div> }
           { loadingError && <div className="text-center"><LoadError label="Clients" /></div> }
           { clients && clients.length === 0 && !loadingError && <EmptyBox label="Clients" />}
-          { clients && clients.length > 0 && _.map(clients, (client) => <ClientRow client={client} key={client.id} onTokenRevocation={onTokenRevocation}/>)}
+          { clients && clients.length > 0 && _.map(clients, (client) => <ClientRow client={client} key={client.id} onTokenRevocation={onTokenRevocation} />)}
         </div>
       </div>
     </div>

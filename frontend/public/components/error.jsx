@@ -51,7 +51,7 @@ export const ErrorPage = () => <div>
   <Helmet>
     <title>Error</title>
   </Helmet>
-  <ErrorComponent title="Oh no! Something went wrong." message={urlMessage()} errMessage={getErrMessage()}/>
+  <ErrorComponent title="Oh no! Something went wrong." message={urlMessage()} errMessage={getErrMessage()} />
 </div>;
 
 export const ErrorPage404 = () => <div>

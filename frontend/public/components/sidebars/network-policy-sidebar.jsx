@@ -170,7 +170,7 @@ const SampleYaml = ({sample, loadSampleYaml, downloadSampleYaml}) => {
     <h5 className="co-resource-sidebar-item__header">
       <span className="text-uppercase">{highlightText}</span> {subheader}
     </h5>
-    <img src={img} className="co-resource-sidebar-item__img"/>
+    <img src={img} className="co-resource-sidebar-item__img" />
     <p className="co-resource-sidebar-item__details">
       {details}
     </p>

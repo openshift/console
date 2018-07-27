@@ -32,8 +32,8 @@ const LogControls = ({dropdown, onDownload, status, toggleStreaming}) => {
   return <div className="co-toolbar">
     <div className="co-toolbar__group co-toolbar__group--left">
       <div className="co-toolbar__item">
-        { status === STREAM_LOADING && <React.Fragment><LoadingInline/>&nbsp;</React.Fragment> }
-        { [STREAM_ACTIVE, STREAM_PAUSED].includes(status) && <TogglePlay active={status === STREAM_ACTIVE} onClick={toggleStreaming}/>}
+        { status === STREAM_LOADING && <React.Fragment><LoadingInline />&nbsp;</React.Fragment> }
+        { [STREAM_ACTIVE, STREAM_PAUSED].includes(status) && <TogglePlay active={status === STREAM_ACTIVE} onClick={toggleStreaming} />}
         {streamStatusMessages[status]}
       </div>
       {dropdown && <div className="co-toolbar__item">{dropdown}</div>}

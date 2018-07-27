@@ -281,7 +281,7 @@ const selector = formValueSelector(LDAPFormName);
 const Security = connect(state => ({sslValue: selector(state, SSLType)})
 )(({sslValue}) => <div>
   <Row name={SSLType}>
-    <label><Field name={SSLType} component="input" type="radio" value={NoSSL}/> No SSL</label>
+    <label><Field name={SSLType} component="input" type="radio" value={NoSSL} /> No SSL</label>
     <Help>Required if LDAP host does not use SSL.</Help>
   </Row>
   <Row name={SSLType}>
@@ -293,8 +293,8 @@ const Security = connect(state => ({sslValue: selector(state, SSLType)})
     <Help>PEM data containing the root CAs.</Help>
     { sslValue === RootCA &&
       <div>
-        <br/>
-        <Field name={RootCA} component="textarea" className="form-control col-lg-4 col-sm-9" autoCorrect="off" autoCapitalize="off" autoComplete="off" spellCheck="false"/>
+        <br />
+        <Field name={RootCA} component="textarea" className="form-control col-lg-4 col-sm-9" autoCorrect="off" autoCapitalize="off" autoComplete="off" spellCheck="false" />
       </div>
     }
   </Row>
@@ -451,7 +451,7 @@ const LDAPs = reduxForm({
 
     render () {
       if (this.state.loadError) {
-        return <LoadError label="Tectonic Identity Configuration" loadError={this.state.loadError}/>;
+        return <LoadError label="Tectonic Identity Configuration" loadError={this.state.loadError} />;
       }
 
       if (!this.state.tectonicIdentityConfig) {
@@ -475,8 +475,8 @@ const LDAPs = reduxForm({
           { s.description && <p className="co-m-form-row">{s.description}</p> }
           { _.map(fields, FieldRow) }
           { stepName === 'Globals' && <Security /> }
-          <hr/>
-          { s.next && !populated && <div><p className="text-muted">Next: {s.next}</p><hr/></div> }
+          <hr />
+          { s.next && !populated && <div><p className="text-muted">Next: {s.next}</p><hr /></div> }
           { !lastStep && !populated && <a onClick={() => this.populate(stepName)}><button className="btn btn-primary">Continue</button></a> }
         </div>;
 
@@ -491,7 +491,7 @@ const LDAPs = reduxForm({
           <Row label="Test Results">
             { validationError
               ? <p className="alert alert-danger"><span className="pficon pficon-error-circle-o"></span>Error - {validationError}:
-                <br/>
+                <br />
                 <span>{validationData}</span>
               </p>
               : <div>
@@ -510,7 +510,7 @@ const LDAPs = reduxForm({
 
           {stateMachine !== STATES.updating && <div>
             <p className="text-muted">Next: Update Tectonic Identity</p>
-            <hr/>
+            <hr />
           </div>}
 
           {(stateMachine === STATES.untested || stateMachine === STATES.invalid) &&
@@ -524,9 +524,9 @@ const LDAPs = reduxForm({
             <p>
             The last step is to apply the updated configuration to the cluster.
             This is done via <code>kubectl</code> to avoid locking yourself out if something goes wrong.
-              <br/><br/>
+              <br /><br />
             During installation, an assets bundle was generated which included a kubeconfig (users name <code>kubelet</code>) that bypasses Tectonic Identity in the case that the older configuration needs to be re-applied.
-              <br/><br/>
+              <br /><br />
               <b>It is highly recommended you use the root kubeconfig and that you download a backup of the current configuration before proceeding.</b>
             </p>
 

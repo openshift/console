@@ -65,6 +65,7 @@
     "react/no-string-refs": 1,
     "react/jsx-uses-react": "error",
     "react/jsx-uses-vars": "error",
+    "react/jsx-tag-spacing": 2,
     "react/no-unknown-property": "error",
     "react/prop-types": 0,
     "react/self-closing-comp": ["error", {"component": true, "html": false}],

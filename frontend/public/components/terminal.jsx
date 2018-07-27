@@ -104,7 +104,7 @@ export class Terminal extends React.Component {
     return <div ref={this.outerRef} style={this.state} className={this.props.className}>
       <div ref={this.innerRef} className="console">
         { this.isFullscreen && <button className="btn btn-link console-collapse-link" onClick={() => this.setFullscreen(false)}>
-          <i className="fa fa-compress" aria-hidden="true"/> Collapse
+          <i className="fa fa-compress" aria-hidden="true" /> Collapse
         </button> }
       </div>
     </div>;

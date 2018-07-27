@@ -264,7 +264,7 @@ export const EditYAML = connect(stateToProps)(
 
     render () {
       if (_.isEmpty(this.props.obj)) {
-        return <Loading/>;
+        return <Loading />;
       }
       /*
         Rendering:

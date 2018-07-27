@@ -360,7 +360,7 @@ const reportsPages = [
 ];
 
 const EmptyMsg = () => <MsgBox title="No reports have been generated" detail="Reports allow resource usage and cost to be tracked per namespace, pod, and more." />;
-export const ReportsList: React.SFC = props => <List {...props} Header={ReportsHeader} Row={ReportsRow} EmptyMsg={EmptyMsg}/>;
+export const ReportsList: React.SFC = props => <List {...props} Header={ReportsHeader} Row={ReportsRow} EmptyMsg={EmptyMsg} />;
 
 const ReportsPage_: React.SFC<ReportsPageProps> = props => {
   if (flagPending(props.flags[FLAGS.CHARGEBACK])) {
@@ -386,7 +386,7 @@ const ReportsPage_: React.SFC<ReportsPageProps> = props => {
         <button className="btn btn-info">Installing Chargeback Report <i className="fa fa-external-link" /></button>
       </a>
     </div>
-    <ListPage {...props} title="Chargeback Reporting" kind={ReportReference} ListComponent={ReportsList} canCreate={true} fake={true}/>
+    <ListPage {...props} title="Chargeback Reporting" kind={ReportReference} ListComponent={ReportsList} canCreate={true} fake={true} />
     <div style={{marginTop: '-60px', textAlign: 'center'}}>
       <EmptyMsg />
     </div>

@@ -176,7 +176,7 @@ export class PodExec extends React.PureComponent {
         {!error && <div className="co-toolbar__group co-toolbar__group--right">
           <div className="co-toolbar__item">
             <button className="btn btn-link" onClick={() => this.setFullscreen(true)}>
-              <i className="fa fa-expand" aria-hidden="true"/> Expand
+              <i className="fa fa-expand" aria-hidden="true" /> Expand
             </button>
           </div>
         </div>}

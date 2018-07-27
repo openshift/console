@@ -46,7 +46,7 @@ export const ClusterServiceVersionResourceStatus: React.SFC<ClusterServiceVersio
         return <span>{statusValue} pods</span>;
       default:
         return statusCapability.startsWith(ALMStatusDescriptors.k8sResourcePrefix)
-          ? <ResourceLink kind={statusCapability.substr(ALMStatusDescriptors.k8sResourcePrefix.length)} name={statusValue} namespace={namespace} title={statusValue}/>
+          ? <ResourceLink kind={statusCapability.substr(ALMStatusDescriptors.k8sResourcePrefix.length)} name={statusValue} namespace={namespace} title={statusValue} />
           : result;
     }
   }, <span>{_.isEmpty(statusValue) && !_.isNumber(statusValue) ? 'None' : statusValue}</span>);

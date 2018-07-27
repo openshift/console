@@ -173,7 +173,7 @@ class App extends React.PureComponent {
 
           <Route path="/k8s/ns/:ns/alertmanagers/:name" exact render={({match}) => <Redirect to={`/k8s/ns/${match.params.ns}/${referenceForModel(AlertmanagerModel)}/${match.params.name}`} />} />
 
-          <Route path={`/k8s/ns/:ns/${ClusterServiceVersionModel.plural}/:name/edit`} exact component={props => <EditYAMLPage {...props} kind={referenceForModel(ClusterServiceVersionModel)} />}/>
+          <Route path={`/k8s/ns/:ns/${ClusterServiceVersionModel.plural}/:name/edit`} exact component={props => <EditYAMLPage {...props} kind={referenceForModel(ClusterServiceVersionModel)} />} />
           <Route path={`/k8s/ns/:ns/${ClusterServiceVersionModel.plural}/:appName/:plural/new`} exact component={NamespaceFromURL(CreateCRDYAML)} />
           <Route path={`/k8s/ns/:ns/${ClusterServiceVersionModel.plural}/:appName/:plural/:name`} component={ResourceDetailsPage} />
 

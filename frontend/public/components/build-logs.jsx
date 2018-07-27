@@ -55,7 +55,7 @@ export class BuildLogs extends React.Component {
 
     return <div className="co-m-pane__body">
       { isPipeline
-        ? <PipelineLogMessage build={build}/>
+        ? <PipelineLogMessage build={build} />
         : <ResourceLog
           kind="Build"
           namespace={namespace}

@@ -86,7 +86,7 @@ const ServiceAccountRow = ({obj: serviceaccount}) => {
         <ResourceLink kind="ServiceAccount" name={name} namespace={namespace} title={uid} />
       </div>
       <div className="col-sm-4 col-xs-6 co-break-word">
-        <ResourceLink kind="Namespace" name={namespace} title={namespace}/> {}
+        <ResourceLink kind="Namespace" name={namespace} title={namespace} /> {}
       </div>
       <div className="col-sm-2 hidden-xs">
         {secrets ? secrets.length : 0}
@@ -120,5 +120,5 @@ const ServiceAccountsDetailsPage = props => <DetailsPage
   pages={[navFactory.details(Details), navFactory.editYaml()]}
 />;
 const ServiceAccountsList = props => <List {...props} Header={Header} Row={ServiceAccountRow} />;
-const ServiceAccountsPage = props => <ListPage ListComponent={ServiceAccountsList} {...props} canCreate={true}/>;
+const ServiceAccountsPage = props => <ListPage ListComponent={ServiceAccountsList} {...props} canCreate={true} />;
 export {ServiceAccountsList, ServiceAccountsPage, ServiceAccountsDetailsPage};
