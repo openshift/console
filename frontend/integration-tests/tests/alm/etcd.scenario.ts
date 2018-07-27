@@ -22,7 +22,7 @@ describe('Interacting with the etcd OCS', () => {
 
   beforeAll(async() => {
     browser.get(`${appHost}/overview/all-namespaces`);
-    await browser.wait(until.presenceOf(sidenavView.navSectionFor('Applications')));
+    await browser.wait(until.presenceOf(sidenavView.navSectionFor('Operators')));
   });
 
   afterEach(() => {
