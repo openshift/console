@@ -18,7 +18,7 @@ describe('Manually approving an install plan', () => {
 
   beforeAll(async() => {
     browser.get(`${appHost}/overview/${testName}`);
-    await browser.wait(until.presenceOf(sidenavView.navSectionFor('Applications')));
+    await browser.wait(until.presenceOf(sidenavView.navSectionFor('Operators')));
   });
 
   afterEach(() => {
@@ -27,7 +27,7 @@ describe('Manually approving an install plan', () => {
   });
 
   it('removes existing subscription if necessary', async() => {
-    await sidenavView.clickNavLink(['Applications', 'Open Cloud Catalog']);
+    await sidenavView.clickNavLink(['Operators', 'Catalog Sources']);
     await catalogView.isLoaded();
 
     if (await catalogView.hasSubscription(pkgName)) {
@@ -40,7 +40,7 @@ describe('Manually approving an install plan', () => {
   });
 
   it('creates a subscription with a `startingCSV` that is not latest and manual approval strategy', async() => {
-    await sidenavView.clickNavLink(['Applications', 'Open Cloud Catalog']);
+    await sidenavView.clickNavLink(['Operators', 'Catalog Sources']);
     await catalogView.isLoaded();
     await catalogView.entryRowFor(pkgName).element(by.buttonText('Subscribe')).click();
     await browser.wait(until.presenceOf($('.ace_text-input')));
@@ -49,7 +49,7 @@ describe('Manually approving an install plan', () => {
     await yamlView.setContent(safeDump(newContent));
     await $('#save-changes').click();
     await crudView.isLoaded();
-    await sidenavView.clickNavLink(['Applications', 'Open Cloud Catalog']);
+    await sidenavView.clickNavLink(['Operators', 'Catalog Sources']);
     await catalogView.isLoaded();
 
     expect(catalogView.hasSubscription(pkgName)).toBe(true);

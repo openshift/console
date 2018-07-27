@@ -76,7 +76,7 @@ describe('Filtering', () => {
   it('searches for object by label', async() => {
     await browser.get(`${appHost}/search/ns/${testName}`);
     await browser.wait(until.elementToBeClickable(searchView.dropdown), BROWSER_TIMEOUT);
-    await searchView.selectSearchType('Daemon Sets (apps/v1beta2)');
+    await searchView.selectSearchType('DaemonSet');
     await searchView.labelFilter.sendKeys(WORKLOAD_LABEL, Key.ENTER);
     await browser.wait(until.elementToBeClickable(crudView.resourceRowNamesAndNs.first()), BROWSER_TIMEOUT);
     expect(crudView.resourceRowNamesAndNs.first().getText()).toContain(WORKLOAD_NAME);
