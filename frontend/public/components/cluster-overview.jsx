@@ -162,7 +162,7 @@ const GraphsPage = ({fake, limited, namespace, openshiftFlag}) => {
           <h2 className="h3">Events</h2>
           <a href={formatNamespacedRouteForResource('events', namespace)}>View All</a>
         </div>
-        <div className="group__body">
+        <div className="group__body group__body--filter-bar">
           <EventStreamPage namespace={namespace} showTitle={false} autoFocus={false} fake={fake} />
         </div>
       </div>

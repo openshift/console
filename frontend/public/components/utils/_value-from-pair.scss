@@ -9,13 +9,14 @@
     width: 100%;
   }
 
-  .caret {
-    position: absolute;
-    right: 14px;
-    top: 9px;
-  }
-
   .dropdown-menu {
+    min-width: 250px;
     width: 100%;
+  }
+}
+@media (max-width: $screen-xs-max) {
+  .value-from__menu {
+    left: auto;
+    right: 0;
   }
 }
