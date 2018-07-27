@@ -115,7 +115,7 @@ class DropDownRow extends React.PureComponent {
       suffix = <a className={classNames('bookmarker', {focus: selected, hover})} onClick={e => onFavorite(e, (isFavorite ? undefined : itemKey))}><i className={classNames('fa fa-star', {'favorite': isFavorite})} /></a>;
     }
 
-    return <li className={classNames(className)} key={itemKey}>
+    return <li role="option" className={classNames(className)} key={itemKey}>
       {prefix}
       <a ref={ref => this.ref=ref} id={`${itemKey}-link`} className={classNames({'next-to-bookmark': !!prefix, focus: selected, hover})} onClick={e => onclick(itemKey, e)}>{content}</a>
       {suffix}
@@ -371,7 +371,7 @@ export class Dropdown extends DropdownMixin {
             </button>
         }
         {
-          active && <ul ref={this.dropdownList} className={classNames('dropdown-menu', menuClassName)}>
+          active && <ul role="listbox" ref={this.dropdownList} className={classNames('dropdown-menu', menuClassName)}>
             {
               autocompleteFilter && <div className="dropdown-menu__filter">
                 <input
