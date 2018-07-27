@@ -3,6 +3,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Helmet } from 'react-helmet';
 import * as PropTypes from 'prop-types';
+import * as classNames from 'classnames';
 
 import { history, NavTitle, SelectorInput, LoadingBox } from './utils';
 
@@ -12,8 +13,10 @@ import { requirementFromString } from '../module/k8s/selector-requirement';
 import { resourceListPages } from './resource-pages';
 import { ResourceListDropdown } from './resource-dropdown';
 import { connectToModel } from '../kinds';
+import { connectToFlags, FLAGS, flagPending } from '../features';
+import { OpenShiftGettingStarted } from './start-guide';
 
-const ResourceList = connectToModel(({kind, kindObj, kindsInFlight, namespace, selector}) => {
+const ResourceList = connectToModel(({kind, kindObj, kindsInFlight, namespace, selector, fake}) => {
   if (kindsInFlight) {
     return <LoadingBox />;
   }
@@ -22,7 +25,7 @@ const ResourceList = connectToModel(({kind, kindObj, kindsInFlight, namespace, s
   const ListPage = resourceListPages.get(name) || resourceListPages.get('Default');
   const ns = kindObj.namespaced ? namespace : undefined;
 
-  return <ListPage namespace={ns} selector={selector} kind={kind} showTitle={false} autoFocus={false} />;
+  return <ListPage namespace={ns} selector={selector} kind={kind} showTitle={false} autoFocus={false} fake={fake} />;
 });
 
 const updateUrlParams = (k, v) => {
@@ -35,7 +38,7 @@ const updateUrlParams = (k, v) => {
 const updateKind = kind => updateUrlParams('kind', encodeURIComponent(kind));
 const updateTags = tags => updateUrlParams('q', tags.map(encodeURIComponent).join(','));
 
-export class SearchPage extends React.PureComponent {
+class SearchPage_ extends React.PureComponent {
   constructor(props) {
     super(props);
     this.setRef = ref => this.ref = ref;
@@ -46,8 +49,13 @@ export class SearchPage extends React.PureComponent {
   }
 
   render() {
-    const {location, namespace} = this.props;
+    const {flags, location, namespace} = this.props;
     let kind, q;
+
+    if (flagPending(flags.OPENSHIFT) || flagPending(flags.PROJECTS_AVAILABLE)) {
+      return null;
+    }
+
     if (location.search) {
       const sp = new URLSearchParams(window.location.search);
       kind = sp.get('kind');
@@ -61,25 +69,31 @@ export class SearchPage extends React.PureComponent {
     const validTags = _.reject(tags, tag => requirementFromString(tag) === undefined);
     const selector = selectorFromString(validTags.join(','));
     const labelClassName = `co-text-${_.toLower(kind)}`;
+    const showGettingStarted = flags.OPENSHIFT && !flags.PROJECTS_AVAILABLE;
 
-    return <div>
-      <Helmet>
-        <title>Search</title>
-      </Helmet>
-      <NavTitle detail={true} title="Search" >
-        <div style={{paddingBottom: 30}}>
-          <div className="input-group">
-            <div className="input-group-btn">
-              <ResourceListDropdown selected={kind} onChange={this.onSelectorChange} />
+    return <React.Fragment>
+      { showGettingStarted && <OpenShiftGettingStarted /> }
+      <div className={classNames({'co-disabled': showGettingStarted})}>
+        <Helmet>
+          <title>Search</title>
+        </Helmet>
+        <NavTitle detail={true} title="Search" >
+          <div style={{paddingBottom: 30}}>
+            <div className="input-group">
+              <div className="input-group-btn">
+                <ResourceListDropdown selected={kind} onChange={this.onSelectorChange} />
+              </div>
+              <SelectorInput labelClassName={labelClassName} tags={validTags} onChange={updateTags} ref={this.setRef} autoFocus={!showGettingStarted} />
             </div>
-            <SelectorInput labelClassName={labelClassName} tags={validTags} onChange={updateTags} ref={this.setRef} autoFocus />
           </div>
-        </div>
-      </NavTitle>
-      <ResourceList kind={kind} selector={selector} namespace={namespace} />
-    </div>;
+        </NavTitle>
+        <ResourceList kind={kind} selector={selector} namespace={namespace} fake={showGettingStarted} />
+      </div>
+    </React.Fragment>;
   }
 }
+
+export const SearchPage = connectToFlags(FLAGS.OPENSHIFT, FLAGS.PROJECTS_AVAILABLE)(SearchPage_);
 
 SearchPage.propTypes = {
   namespace: namespaceProptype,
