@@ -152,39 +152,36 @@ const roleResources = [
   {kind: 'ClusterRoleBinding', namespaced: false, optional: true},
 ];
 
-export const RoleBindingsPage = ({namespace, showTitle=true, fake, kind}) => {
-  const {labelPlural} = kindObj(kind);
-  return <MultiListPage
-    canCreate={true}
-    createButtonText="Create Binding"
-    createProps={{to: '/k8s/cluster/rolebindings/new'}}
-    fake={fake}
-    filterLabel="Role Bindings by role or subject"
-    flatten={flatten}
-    label={labelPlural}
-    ListComponent={BindingsList}
-    namespace={namespace}
-    resources={roleResources}
-    rowFilters={[{
-      type: 'role-binding-kind',
-      selected: ['cluster', 'namespace'],
-      reducer: bindingType,
-      items: ({ClusterRoleBinding: data}) => {
-        const items = [
-          {id: 'namespace', title: 'Namespace Role Bindings'},
-          {id: 'system', title: 'System Role Bindings'},
-        ];
-        if (data && data.loaded && !data.loadError) {
-          items.unshift({id: 'cluster', title: 'Cluster-wide Role Bindings'});
-        }
-        return items;
-      },
-    }]}
-    showTitle={showTitle}
-    textFilter="role-binding"
-    title="Role Bindings"
-  />;
-};
+export const RoleBindingsPage = ({namespace, showTitle=true, fake}) => <MultiListPage
+  canCreate={true}
+  createButtonText="Create Binding"
+  createProps={{to: '/k8s/cluster/rolebindings/new'}}
+  fake={fake}
+  filterLabel="Role Bindings by role or subject"
+  flatten={flatten}
+  label="Role Bindings"
+  ListComponent={BindingsList}
+  namespace={namespace}
+  resources={roleResources}
+  rowFilters={[{
+    type: 'role-binding-kind',
+    selected: ['cluster', 'namespace'],
+    reducer: bindingType,
+    items: ({ClusterRoleBinding: data}) => {
+      const items = [
+        {id: 'namespace', title: 'Namespace Role Bindings'},
+        {id: 'system', title: 'System Role Bindings'},
+      ];
+      if (data && data.loaded && !data.loadError) {
+        items.unshift({id: 'cluster', title: 'Cluster-wide Role Bindings'});
+      }
+      return items;
+    },
+  }]}
+  showTitle={showTitle}
+  textFilter="role-binding"
+  title="Role Bindings"
+/>;
 
 class ListDropdown_ extends React.Component {
   constructor (props) {
