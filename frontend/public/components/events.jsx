@@ -226,7 +226,7 @@ class EventStream extends SafetyFirst {
       })
       .onclose(evt => {
         if (evt && evt.wasClean === false) {
-          this.setState({error: evt.reason || 'WebSocket closed uncleanly.'});
+          this.setState({error: evt.reason || 'Connection did not close cleanly.'});
         }
         this.messages = {};
         this.setState({sortedMessages: [], filteredMessages: []});

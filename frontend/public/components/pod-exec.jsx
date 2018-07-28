@@ -94,7 +94,7 @@ export class PodExec extends React.PureComponent {
         if (!evt || evt.wasClean === true) {
           return;
         }
-        const error = evt.reason || 'Connection closed uncleanly.';
+        const error = evt.reason || 'Connection did not close cleanly.';
         this.setState({error});
         this.terminal.current && this.terminal.current.onConnectionClosed(error);
         this.ws.destroy();
