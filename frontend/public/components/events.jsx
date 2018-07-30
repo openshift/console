@@ -258,7 +258,7 @@ class EventStream extends SafetyFirst {
   }
 
   static getDerivedStateFromProps (nextProps, prevState) {
-    const {filter, kind, category, textFilter} = prevState;
+    const {filter, kind, category, textFilter, loading} = prevState;
 
     if (_.isEqual(filter, nextProps.filter)
       && kind === nextProps.kind
@@ -269,7 +269,7 @@ class EventStream extends SafetyFirst {
 
     return {
       active: !nextProps.fake,
-      loading: !nextProps.fake,
+      loading: !nextProps.fake && loading,
       // update the filteredMessages
       filteredMessages: EventStream.filterMessages(prevState.sortedMessages, nextProps),
       // we need these for bookkeeping because getDerivedStateFromProps doesn't get prevProps
