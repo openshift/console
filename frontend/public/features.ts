@@ -52,8 +52,6 @@ export const DEFAULTS_ = _.mapValues(FLAGS, flag => flag === FLAGS.AUTH_ENABLED
 export const CRDs = {
   [referenceForModel(ChannelOperatorConfigModel)]: FLAGS.CLUSTER_UPDATES,
   [referenceForModel(PrometheusModel)]: FLAGS.PROMETHEUS,
-  // FIXME(alecmerdler): This should look for OLM+Catalog deployments instead of CRD
-  [referenceForModel(ClusterServiceVersionModel)]: FLAGS.CLOUD_SERVICES,
   [referenceForModel(ClusterModel)]: FLAGS.MULTI_CLUSTER,
   [referenceForModel(ChargebackReportModel)]: FLAGS.CHARGEBACK,
 };
@@ -118,6 +116,7 @@ export let featureActions = [
   [FLAGS.CAN_LIST_PV, { resource: 'persistentvolumes', verb: 'list' }],
   [FLAGS.CAN_LIST_STORE, { group: 'storage.k8s.io', resource: 'storageclasses', verb: 'list' }],
   [FLAGS.CAN_LIST_CRD, { group: 'apiextensions.k8s.io', resource: 'customresourcedefinitions', verb: 'list' }],
+  [FLAGS.CLOUD_SERVICES, { group: ClusterServiceVersionModel.apiGroup, resource: ClusterServiceVersionModel.plural, verb: 'list' }],
 ].forEach(_.spread((FLAG, resourceAttributes) => {
   const req = {
     spec: { resourceAttributes }
