@@ -159,9 +159,14 @@ export const getPropertyValueCompletions = async(state: Editor, session: IEditSe
   const line = session.getLine(pos.row).substr(0, pos.column);
   const field = (/([\w]+):[^:]*$/.exec(line) || {})[1];
 
-  const parentPropertyFor = (currentRow: number): string => session.getLine(currentRow - 1).trim().endsWith(':')
-    ? (/([\w]+):[^:]*$/.exec(session.getLine(currentRow - 1)) || {})[1]
-    : parentPropertyFor(currentRow - 1);
+  const parentPropertyFor = (currentRow: number): string => {
+    if (currentRow < 1) {
+      return '';
+    }
+    return session.getLine(currentRow - 1).trim().endsWith(':')
+      ? (/([\w]+):[^:]*$/.exec(session.getLine(currentRow - 1)) || {})[1]
+      : parentPropertyFor(currentRow - 1);
+  };
 
   if (simpleCompletions.has(field)) {
     callback(null, simpleCompletions.get(field).map((value, i) => ({
