@@ -73,6 +73,17 @@ describe('getCompletions', () => {
     });
   });
 
+  it('does not invoke callback with completions if no matches for property values', (done) => {
+    sessionMock.getLine = jasmine.createSpy('getLineSpy').and.returnValue('apiVersion: ');
+    position = {row: 0, column: 'apiVersion: '.length};
+
+    getCompletions(editorMock, sessionMock, position, '', () => {
+      fail('Should not be called');
+      done();
+    });
+    done();
+  });
+
   it('invokes callback with appropriate completions for properties', (done) => {
     const swagger = {
       definitions: {
