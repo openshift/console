@@ -39,7 +39,6 @@ describe('featureReducer', () => {
       [FLAGS.CLUSTER_UPDATES]: false,
       [FLAGS.PROMETHEUS]: false,
       [FLAGS.MULTI_CLUSTER]: false,
-      [FLAGS.CLOUD_SERVICES]: true,
       [FLAGS.CHARGEBACK]: false,
     }));
   });

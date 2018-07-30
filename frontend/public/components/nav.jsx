@@ -367,6 +367,7 @@ export class Nav extends React.Component {
         <div ref={this.scroller} onWheel={this.preventScroll} className="navigation-container">
           <NavSection text="Overview" icon="fa fa-tachometer" href="/overview" activePath="/overview/" onClick={this.close} />
 
+          {/* TODO(alecmerdler): RBAC check for `app.coreos.com` API group */}
           <NavSection required={FLAGS.CLOUD_SERVICES} text="Operators" img={operatorImg} activeImg={operatorActiveImg} >
             <ResourceNSLink model={ClusterServiceVersionModel} resource={ClusterServiceVersionModel.plural} name="Cluster Service Versions" onClick={this.close} />
             <Sep />
