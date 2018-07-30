@@ -21,6 +21,7 @@ const ResourceList = connectToModel(({kind, kindObj, kindsInFlight, namespace, s
     return <LoadingBox />;
   }
 
+  kindObj = kindObj || {labelPlural: 'Default'};
   const name = kindObj.labelPlural.replace(/ /g, '');
   const ListPage = resourceListPages.get(name) || resourceListPages.get('Default');
   const ns = kindObj.namespaced ? namespace : undefined;
