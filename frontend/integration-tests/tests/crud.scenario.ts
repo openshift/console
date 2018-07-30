@@ -289,7 +289,7 @@ describe('Kubernetes resource CRUD operations', () => {
       await browser.wait(until.presenceOf(crudView.actionsDropdown));
       await crudView.actionsDropdown.click();
       await browser.wait(until.presenceOf(crudView.actionsDropdownMenu), 500);
-      await crudView.actionsDropdownMenu.element(by.linkText('Modify Labels...')).click();
+      await crudView.actionsDropdownMenu.element(by.linkText('Edit Labels')).click();
       await browser.wait(until.presenceOf($('.tags input')), 500);
       await $('.tags input').sendKeys(labelValue, Key.ENTER);
       // This only works because there's only one label

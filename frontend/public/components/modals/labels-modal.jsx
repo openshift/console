@@ -52,7 +52,7 @@ class BaseLabelsModal extends PromiseComponent {
     const { kind, resource, description, message, labelClassName } = this.props;
 
     return <form onSubmit={this._submit} name="form">
-      <ModalTitle>Modify {description || `${kind.label} Labels`}</ModalTitle>
+      <ModalTitle>Edit {description || 'Labels'}</ModalTitle>
       <ModalBody>
         <div className="row co-m-form-row">
           <div className="col-sm-12">{message || 'Labels help you organize and select resources. Adding labels below will let you query for objects that have similar, overlapping or dissimilar labels.'}</div>

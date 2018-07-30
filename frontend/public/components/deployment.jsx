@@ -34,12 +34,12 @@ spec:
 const {ModifyCount, ModifyNodeSelector, EditEnvironment, common} = Cog.factory;
 
 const RevisionHistory = (kind, deployment) => ({
-  label: 'Revision History...',
+  label: 'Edit Revision History Limit',
   callback: () => configureRevisionHistoryLimitModal({deployment}),
 });
 
 const UpdateStrategy = (kind, deployment) => ({
-  label: 'Update Strategy...',
+  label: 'Edit Update Strategy',
   callback: () => configureUpdateStrategyModal({deployment}),
 });
 

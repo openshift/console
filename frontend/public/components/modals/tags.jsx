@@ -69,6 +69,6 @@ class TagsModal extends PromiseComponent {
 export const annotationsModal = createModalLauncher(props => <TagsModal
   path="/metadata/annotations"
   tags={props.resource.metadata.annotations}
-  title="Annotations"
+  title="Edit Annotations"
   {...props}
 />);

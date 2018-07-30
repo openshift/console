@@ -81,7 +81,7 @@ export const configureCountModal = createModalLauncher(ConfigureCountModal);
 export const configureReplicaCountModal = (props) => {
   return configureCountModal(_.defaults({}, {
     defaultValue: 0,
-    title: 'Modify Desired Count',
+    title: 'Edit Count',
     message: `${props.resourceKind.labelPlural} maintain the desired number of healthy pods.`,
     path: '/spec/replicas',
     buttonText: 'Save Desired Count'
@@ -91,7 +91,7 @@ export const configureReplicaCountModal = (props) => {
 export const configureJobParallelismModal = (props) => {
   return configureCountModal(_.defaults({}, {
     defaultValue: 1,
-    title: 'Modify Desired Parallelism',
+    title: 'Edit Parallelism',
     message: `${props.resourceKind.labelPlural} create one or more pods and ensure that a specified number of them successfully terminate. When the specified number of completions is successfully reached, the job is complete.`,
     path: '/spec/parallelism',
     buttonText: 'Save Desired Parallelism'
@@ -101,7 +101,7 @@ export const configureJobParallelismModal = (props) => {
 export const configureClusterSizeModal = (props) => {
   return configureCountModal(_.defaults({}, {
     defaultValue: 0,
-    title: 'Modify Cluster Size',
+    title: 'Edit Cluster Size',
     message: `${props.resourceKind.labelPlural} maintain the desired number of healthy pods.`,
     path: '/spec/size',
     buttonText: 'Save Cluster Size'

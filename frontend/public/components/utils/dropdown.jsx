@@ -385,7 +385,7 @@ export const ActionsMenu = (props) => {
   const {actions, title = undefined, menuClassName = undefined, noButton = false} = props;
   const shownActions = _.reject(actions, o => _.get(o, 'hidden', false));
   const items = _.fromPairs(_.map(shownActions, (v, k) => [k, v.label]));
-  const btnTitle = title || <span id="action-dropdown"><i className="fa fa-cog" /> Actions</span>;
+  const btnTitle = title || <span id="action-dropdown">Actions</span>;
   const onChange = (key, e) => {
     const action = shownActions[key];
     if (action.callback) {
