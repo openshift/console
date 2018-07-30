@@ -4,6 +4,7 @@ import * as _ from 'lodash-es';
 
 import { K8sResourceKindReference } from '../../module/k8s';
 import { modelFor } from '../../module/k8s/k8s-models';
+import { kindToAbbr } from '../../module/k8s/get-resources';
 
 const MEMO = {};
 
@@ -16,7 +17,7 @@ export const ResourceIcon = (props: ResourceIconProps) => {
   const kindObj = modelFor(kind);
   const kindStr = _.get(kindObj, 'kind', kind);
   const klass = classNames(`co-m-resource-icon co-m-resource-${kindStr.toLowerCase()}`, className);
-  const iconLabel = (kindObj && kindObj.abbr) || kindStr.toUpperCase().slice(0, 3);
+  const iconLabel = (kindObj && kindObj.abbr) || kindToAbbr(kindStr);
 
   const rendered = <span className={klass}>{iconLabel}</span>;
   if (kindObj) {

@@ -69,6 +69,7 @@ export type K8sKind = {
   selector?: {matchLabels?: {[key: string]: string}};
   labels?: {[key: string]: string};
   annotations?: {[key: string]: string};
+  verbs?: string[];
 };
 
 /**

@@ -9,6 +9,8 @@ const ADMIN_RESOURCES = new Set(
   ['roles', 'rolebindings', 'clusterroles', 'clusterrolebindings', 'thirdpartyresources', 'nodes', 'secrets']
 );
 
+export const kindToAbbr = kind => (kind.replace(/[^A-Z]/g, '') || kind.toUpperCase()).slice(0, 3);
+
 export const getResources = () => coFetchJSON('api/kubernetes/apis')
   .then(res => {
     const preferredVersions = res.groups.map(group => group.preferredVersion);
@@ -31,15 +33,15 @@ export const getResources = () => coFetchJSON('api/kubernetes/apis')
         const adminResources = [];
 
         const defineModels = (list: APIResourceList): K8sKind[] => list.resources.filter(({name}) => !name.includes('/'))
-          .map(({name, singularName, namespaced, kind}) => {
+          .map(({name, singularName, namespaced, kind, verbs}) => {
             const label = kind.replace(/([A-Z]+)/g, ' $1').slice(1);
             const groupVersion = list.groupVersion.split('/').length === 2 ? list.groupVersion : `core/${list.groupVersion}`;
 
             return {
-              kind, namespaced, label,
+              kind, namespaced, label, verbs,
               plural: name,
               apiVersion: groupVersion.split('/')[1],
-              abbr: kind.replace(/([a-z+])/g, ''),
+              abbr: kindToAbbr(kind),
               apiGroup: groupVersion.split('/')[0],
               labelPlural: `${label}${label.endsWith('s') ? 'es' : 's'}`,
               path: name,
