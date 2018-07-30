@@ -140,7 +140,7 @@ class EventsStreamPage_ extends React.Component {
     const showGettingStarted = flags.OPENSHIFT && !flags.PROJECTS_AVAILABLE;
 
     return <React.Fragment>
-      { showGettingStarted && <OpenShiftGettingStarted /> }
+      { showGettingStarted && showTitle && <OpenShiftGettingStarted /> }
       <div className={classNames({'co-disabled': showGettingStarted })}>
         { showTitle && <Helmet>
           <title>Events</title>
