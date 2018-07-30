@@ -3,16 +3,34 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { match, Link } from 'react-router-dom';
-import { Helmet } from 'react-helmet';
 import { safeLoad } from 'js-yaml';
 
-import { NavTitle, SectionHeading, Firehose, MsgBox, LoadingBox, withFallback } from '../utils';
+import { SectionHeading, Firehose, MsgBox, LoadingBox, ResourceCog, ResourceLink, Cog, navFactory, resourceObjPath, Timestamp } from '../utils';
+import { withFallback } from '../utils/error-boundary';
 import { CreateYAML } from '../create-yaml';
-import { ClusterServiceVersionLogo, SubscriptionKind, CatalogSourceKind, ClusterServiceVersionKind, Package } from './index';
-import { SubscriptionModel, CatalogSourceModel } from '../../models';
-import { referenceForModel, K8sResourceKind, apiVersionForModel } from '../../module/k8s';
-import { List, ListHeader, ColHead } from '../factory';
+import { ClusterServiceVersionLogo, CatalogSourceKind, ClusterServiceVersionKind, Package, SubscriptionKind, olmNamespace } from './index';
+import { SubscriptionModel, CatalogSourceModel, ConfigMapModel } from '../../models';
+import { referenceForModel, K8sResourceKind, apiVersionForModel, ConfigMapKind } from '../../module/k8s';
+import { List, ListHeader, ColHead, ResourceRow, DetailsPage, MultiListPage } from '../factory';
 import { registerTemplate } from '../../yaml-templates';
+import { getActiveNamespace } from '../../ui/ui-actions';
+import { ALL_NAMESPACES_KEY } from '../../const';
+
+type ConfigMapFor = (data: {data?: ConfigMapKind[]}) => (name: string) => ConfigMapKind;
+const configMapFor: ConfigMapFor = data => name => _.get(data, 'data', [] as ConfigMapKind[]).find(cm => cm.metadata.name === name);
+
+type SubscriptionsFor = (subs: SubscriptionKind[]) => (obj: CatalogSourceKind) => SubscriptionKind[];
+const subscriptionsFor: SubscriptionsFor = subs => obj => subs.filter(sub => sub.spec.source === obj.metadata.name);
+
+type PackagesFor = (configMap: ConfigMapKind) => Package[];
+const packagesFor: PackagesFor = configMap => _.get(configMap, 'data.packages')
+  ? safeLoad(_.get(configMap, 'data.packages', ''))
+  : [];
+
+type ClusterServiceVersionsFor = (configMap: ConfigMapKind) => ClusterServiceVersionKind[];
+const clusterServiceVersionsFor: ClusterServiceVersionsFor = configMap => _.get(configMap, 'data.clusterServiceVersions')
+  ? safeLoad(_.get(configMap, 'data.clusterServiceVersions', ''))
+  : [];
 
 export const PackageHeader: React.SFC<PackageHeaderProps> = (props) => <ListHeader>
   <ColHead {...props} className="col-sm-4 col-xs-6">Name</ColHead>
@@ -21,28 +39,29 @@ export const PackageHeader: React.SFC<PackageHeaderProps> = (props) => <ListHead
 </ListHeader>;
 
 export const PackageRow: React.SFC<PackageRowProps> = (props) => {
-  const {obj, catalogSource, currentCSV, namespace, allPkgSubscriptions = []} = props;
+  const {obj, catalogSource, currentCSV, subscription} = props;
   const {displayName, icon = [], version} = currentCSV.spec;
-
+  const ns = getActiveNamespace();
   const channel = !_.isEmpty(obj.defaultChannel) ? obj.channels.find(ch => ch.name === obj.defaultChannel) : obj.channels[0];
-  const subscriptions = allPkgSubscriptions.filter(sub => sub.metadata.namespace === namespace || _.isEmpty(namespace));
 
-  return <div className="row co-resource-list__item" style={{display: 'flex', alignItems: 'center'}}>
+  const subscriptionLink = () => ns
+    ? <Link to={`/k8s/ns/${ns}/${SubscriptionModel.plural}/${subscription.metadata.name}`}>View subscription</Link>
+    : <Link to={`/k8s/all-namespaces/${SubscriptionModel.plural}?name=${obj.packageName}`}>View subscriptions</Link>;
+
+  const createSubscriptionLink = () => `/k8s/ns/${ns === ALL_NAMESPACES_KEY ? 'default' : ns}/${SubscriptionModel.plural}/new?pkg=${obj.packageName}&catalog=${catalogSource.metadata.name}&catalogNamespace=${catalogSource.metadata.namespace}`;
+
+  return <div className="row co-resource-list__item co-package-row">
     <div className="col-sm-4 col-xs-6">
       <ClusterServiceVersionLogo displayName={displayName} icon={_.get(icon, '[0]')} provider={catalogSource.spec.publisher} />
     </div>
     <div className="col-xs-4 hidden-xs">{version} ({channel.name})</div>
-    <div className="col-sm-4 col-xs-6" style={{display: 'flex', justifyContent: 'space-between'}}>
-      { subscriptions.length > 0
-        ? <Link to={`/k8s/${_.isEmpty(namespace) ? 'all-namespaces' : `ns/${_.get(subscriptions[0], 'metadata.namespace')}`}/${SubscriptionModel.plural}?name=${subscriptions[0].spec.name}`}>
-          { subscriptions.length > 1 ? `View ${subscriptions.length} subscriptions` : 'View subscription' }
-        </Link>
-        : <span className="text-muted hidden-xs">Not subscribed</span> }
-      { _.isEmpty(namespace) || subscriptions.length === 0
-        ? <Link to={`/k8s/${_.isEmpty(namespace) ? 'all-namespaces' : `ns/${namespace}`}/${CatalogSourceModel.plural}/tectonic-ocs/${obj.packageName}/subscribe`}>
-          <button className="btn btn-primary">Subscribe</button>
-        </Link>
-        : <div /> }
+    <div className="col-sm-4 col-xs-6 co-package-row__actions">
+      { subscription
+        ? subscriptionLink()
+        : <span className="text-muted">Not subscribed</span> }
+      { (!subscription || ns === ALL_NAMESPACES_KEY) && <Link to={createSubscriptionLink()}>
+        <button className="btn btn-primary">Create Subscription</button>
+      </Link> }
     </div>
   </div>;
 };
@@ -53,78 +72,137 @@ export const PackageList: React.SFC<PackageListProps> = (props) => <List
   Header={PackageHeader}
   Row={(rowProps: {obj: Package}) => <PackageRow
     obj={rowProps.obj}
-    currentCSV={props.csvFor(rowProps.obj.channels[0].currentCSV)}
+    currentCSV={props.clusterServiceVersions.find(({metadata}) => metadata.name === rowProps.obj.channels[0].currentCSV)}
     catalogSource={props.catalogSource}
-    allPkgSubscriptions={props.subscriptionsFor(rowProps.obj.packageName)}
-    namespace={props.namespace} />}
+    subscription={props.subscriptions.find(sub => sub.spec.name === rowProps.obj.packageName)} />}
   label="Packages"
   EmptyMsg={() => <MsgBox title="No Packages Found" detail="The catalog author has not added any packages." />} />;
 
-export const CatalogSourceDetails: React.SFC<CatalogSourceDetailsProps> = ({catalogSource, configMap, subscription, ns}) => {
-  const packages = _.get(configMap, 'data.data.packages') ? safeLoad(_.get(configMap, 'data.data.packages')) : [];
-  const csvs: ClusterServiceVersionKind[] = _.get(configMap, 'data.data.clusterServiceVersions') ? safeLoad(_.get(configMap, 'data.data.clusterServiceVersions')) : [];
+export const CatalogSourceDetails = withFallback<CatalogSourceDetailsProps>(({obj, configMap, subscription}) => {
+  const packages = packagesFor(configMap) || [];
+  const clusterServiceVersions = clusterServiceVersionsFor(configMap) || [];
+  const subscriptions = subscriptionsFor(_.get(subscription, 'data', []))(obj);
 
-  const csvFor = (name: string) => csvs.find(({metadata}) => metadata.name === name);
-  const subscriptionsFor = (pkgName: string) => subscription.loaded ? subscription.data.filter(sub => sub.spec.name === pkgName) : [];
-
-  return catalogSource.loaded && configMap.loaded && subscription.loaded ?
-    <div className="co-catalog-details co-m-pane">
+  return !_.isEmpty(obj) && !_.isEmpty(configMap)
+    ? <div className="co-catalog-details co-m-pane">
       <div className="co-m-pane__body">
         <div className="col-xs-4">
           <dl className="co-m-pane__details">
             <dt>Name</dt>
-            <dd>{catalogSource.data.spec.displayName}</dd>
+            <dd>{obj.spec.displayName}</dd>
           </dl>
         </div>
         <div className="col-xs-4">
           <dl className="co-m-pane__details">
             <dt>Publisher</dt>
-            <dd>{catalogSource.data.spec.publisher}</dd>
+            <dd>{obj.spec.publisher}</dd>
           </dl>
         </div>
       </div>
       <div className="co-m-pane__body">
-        <SectionHeading text="Applications" />
-        <PackageList packages={packages} namespace={ns} catalogSource={catalogSource.data} subscriptionsFor={subscriptionsFor} csvFor={csvFor} />
+        <SectionHeading text="Packages" />
+        <PackageList packages={packages} catalogSource={obj} clusterServiceVersions={clusterServiceVersions} subscriptions={subscriptions} />
       </div>
     </div>
     : <div />;
+}, () => <MsgBox title="Error Parsing Catalog" detail="The contents of the catalog source could not be retrieved." />);
+
+export const CatalogSourceHeader: React.SFC<CatalogSourceHeaderProps> = (props) => <ListHeader>
+  <ColHead {...props} className="col-md-3" sortField="metadata.name">Name</ColHead>
+  <ColHead {...props} className="col-md-2" sortField="metadata.namespace">Namespace</ColHead>
+  <ColHead {...props} className="col-md-2" sortField="spec.publisher">Publisher</ColHead>
+  <ColHead {...props} className="col-md-2">Created</ColHead>
+</ListHeader>;
+
+export const CatalogSourceRow: React.SFC<CatalogSourceRowProps> = (props) => <ResourceRow obj={props.obj}>
+  <div className="col-md-3 co-resource-link-wrapper">
+    <ResourceCog actions={Cog.factory.common} kind={referenceForModel(CatalogSourceModel)} resource={props.obj} />
+    <ResourceLink kind={referenceForModel(CatalogSourceModel)} namespace={props.obj.metadata.namespace} name={props.obj.metadata.name} title={props.obj.metadata.uid} />
+  </div>
+  <div className="col-md-2">
+    <ResourceLink kind="Namespace" name={props.obj.metadata.namespace} title={props.obj.metadata.namespace} displayName={props.obj.metadata.namespace} />
+  </div>
+  <div className="col-md-2">{props.obj.spec.publisher}</div>
+  <div className="col-md-2"><Timestamp timestamp={props.obj.metadata.creationTimestamp} /></div>
+</ResourceRow>;
+
+export const CatalogSourceList = withFallback((props: CatalogSourceListProps) => {
+  const cmFor = configMapFor({data: [..._.get(props.configMap, 'data', []), ..._.get(props.globalConfigMap, 'data', [])]});
+  const pkgsFor = (obj: CatalogSourceKind) => packagesFor(cmFor(obj.spec.configMap));
+  const csvsFor = (obj: CatalogSourceKind) => clusterServiceVersionsFor(cmFor(obj.spec.configMap));
+  const subsFor = subscriptionsFor(_.get(props.subscription, 'data', [] as SubscriptionKind[]));
+
+  const data = [...props.data, ..._.get(props.globalCatalogSource, 'data', [])];
+
+  return props.loaded
+    ? <React.Fragment>
+      { _.isEmpty(data) && <MsgBox title="No Catalog Sources Found" detail="Catalog Sources contain packaged Operators which can be subscribed to for automatic upgrades." /> }
+      {/* TODO(alecmerdler): Handle filtering based on package name */}
+      { data.map((obj) => <div key={obj.metadata.uid} className="co-catalogsource-list__section">
+        <div className="co-catalogsource-list__section__packages">
+          <div>
+            <h3>{obj.spec.displayName || obj.metadata.name}</h3>
+            <span className="text-muted">Provided by {obj.spec.publisher}</span>
+          </div>
+          <Link to={`/k8s/ns/${obj.metadata.namespace}/${CatalogSourceModel.plural}/${obj.metadata.name}`}>View catalog details</Link>
+        </div>
+        <PackageList catalogSource={obj} clusterServiceVersions={csvsFor(obj)} packages={pkgsFor(obj)} subscriptions={subsFor(obj)} />
+      </div>) }
+    </React.Fragment>
+    : <LoadingBox />;
+}, () => <MsgBox title="Error Parsing Catalog" detail="The contents of the catalog source could not be retrieved." />);
+
+export const CatalogSourcesPage: React.SFC<CatalogSourcePageProps> = (props) => {
+  type Flatten = (resources: {[kind: string]: {data: K8sResourceKind[]}}) => K8sResourceKind[];
+  const flatten: Flatten = resources => resources.catalogSource.data;
+
+  return <MultiListPage
+    {...props}
+    title="Catalog Sources"
+    showTitle={true}
+    ListComponent={CatalogSourceList}
+    filterLabel="Packages by name"
+    flatten={flatten}
+    resources={[
+      {kind: referenceForModel(CatalogSourceModel), isList: true, namespaced: true, prop: 'catalogSource'},
+      {kind: ConfigMapModel.kind, isList: true, namespaced: true, prop: 'configMap'},
+      // FIXME(alecmerdler): Don't hard-code catalog namespace, use the `alm-manager` annotation on the current namespace
+      ...((props.namespace || olmNamespace) !== olmNamespace ? {kind: referenceForModel(CatalogSourceModel), isList: true, namespace: olmNamespace, prop: 'globalCatalogSource'} : []),
+      ...((props.namespace || olmNamespace) !== olmNamespace ? {kind: ConfigMapModel.kind, isList: true, namespace: olmNamespace, prop: 'globalConfigMap'} : []),
+      {kind: referenceForModel(SubscriptionModel), isList: true, namespaced: true, prop: 'subscription'},
+    ]} />;
 };
 
-export const CatalogSourceDetailsPage: React.SFC<CatalogSourceDetailsPageProps> = (props) => <div>
-  <Helmet>
-    <title>Catalog Sources</title>
-  </Helmet>
-  <NavTitle detail={true} title="Catalog Sources" />
-  <Firehose
-    {...props}
-    resources={[{
-      kind: referenceForModel(CatalogSourceModel),
-      name: 'tectonic-ocs',
-      namespace: 'operator-lifecycle-manager',
-      isList: false,
-      prop: 'catalogSource',
-    }, {
-      kind: referenceForModel(SubscriptionModel),
-      isList: true,
-      prop: 'subscription',
-    }, {
-      kind: 'ConfigMap',
-      isList: false,
-      name: 'tectonic-ocs',
-      namespace: 'operator-lifecycle-manager',
-      prop: 'configMap'}]}>
-    {/* FIXME(alecmerdler): Hack because `Firehose` injects props without TypeScript knowing about it */}
-    <CatalogSourceDetails {...props as any} ns={props.match.params.ns} />
-  </Firehose>
-</div>;
+export const CatalogSourceDetailsPage: React.SFC<CatalogSourceDetailsPageProps> = (props) => <DetailsPage
+  {...props}
+  namespace={props.match.params.ns}
+  kind={referenceForModel(CatalogSourceModel)}
+  name={props.match.params.name}
+  pages={[
+    navFactory.details(CatalogSourceDetails),
+    navFactory.editYaml(),
+  ]}
+  menuActions={[...Cog.factory.common, (kind, obj) => ({label: 'View Contents...', href: resourceObjPath(obj, ConfigMapModel.kind)})]}
+  resources={[{
+    kind: ConfigMapModel.kind,
+    isList: false,
+    namespace: props.match.params.ns,
+    name: props.match.params.name,
+    prop: 'configMap'
+  }, {
+    kind: referenceForModel(SubscriptionModel),
+    isList: true,
+    namespace: props.match.params.ns,
+    prop: 'subscription',
+  }]}
+/>;
 
 export const CreateSubscriptionYAML: React.SFC<CreateSubscriptionYAMLProps> = (props) => {
   type CreateProps = {ConfigMap: {loaded: boolean, data: K8sResourceKind}};
   const Create = withFallback<CreateProps>((createProps) => {
     if (createProps.ConfigMap.loaded && createProps.ConfigMap.data) {
       const pkg: Package = (_.get(createProps.ConfigMap.data, 'data.packages') ? safeLoad(_.get(createProps.ConfigMap.data, 'data.packages')) : [])
-        .find(({packageName}) => packageName === props.match.params.pkgName);
+        .find(({packageName}) => packageName === new URLSearchParams(props.location.search).get('pkg'));
       const channel = _.get(pkg, 'channels[0]');
 
       registerTemplate(`${apiVersionForModel(SubscriptionModel)}.${SubscriptionModel.kind}`, `
@@ -145,11 +223,11 @@ export const CreateSubscriptionYAML: React.SFC<CreateSubscriptionYAMLProps> = (p
   }, () => <MsgBox title="Package Not Found" detail="Cannot create a Subscription to a non-existent package." />);
 
   return <Firehose resources={[{
-    kind: 'ConfigMap',
+    kind: ConfigMapModel.kind,
     isList: false,
-    name: 'tectonic-ocs',
-    namespace: 'operator-lifecycle-manager',
-    prop: 'ConfigMap'
+    name: new URLSearchParams(props.location.search).get('catalog'),
+    namespace: new URLSearchParams(props.location.search).get('catalogNamespace'),
+    prop: 'ConfigMap',
   }]}>
     {/* FIXME(alecmerdler): Hack because `Firehose` injects props without TypeScript knowing about it */}
     <Create {...props as any} />
@@ -164,36 +242,59 @@ export type PackageRowProps = {
   obj: Package;
   catalogSource: CatalogSourceKind;
   currentCSV: ClusterServiceVersionKind;
-  allPkgSubscriptions: SubscriptionKind[];
-  namespace: string;
+  subscription?: SubscriptionKind;
 };
 
 export type PackageListProps = {
-  packages: Package[];
   catalogSource: CatalogSourceKind;
-  namespace: string;
-  csvFor: (name: string) => ClusterServiceVersionKind | null;
-  subscriptionsFor: (pkgName: string) => SubscriptionKind[];
+  packages: Package[];
+  clusterServiceVersions: ClusterServiceVersionKind[];
+  subscriptions: SubscriptionKind[];
+};
+
+export type CatalogSourceHeaderProps = {
+
+};
+
+export type CatalogSourceRowProps = {
+  obj: CatalogSourceKind;
+};
+
+export type CatalogSourceListProps = {
+  configMap: {loaded?: boolean, data?: ConfigMapKind[]};
+  globalConfigMap: {loaded?: boolean, data?: ConfigMapKind[]};
+  data: CatalogSourceKind[];
+  globalCatalogSource: {loaded?: boolean, data?: CatalogSourceKind[]};
+  subscription: {loaded?: boolean, data?: SubscriptionKind[]}
+  loaded: boolean;
+};
+
+export type CatalogSourcePageProps = {
+  namespace?: string;
 };
 
 export type CatalogSourceDetailsProps = {
-  catalogSource?: {loaded: boolean, data: CatalogSourceKind, loadError: Object | string};
-  configMap: {loaded: boolean, data: {data: {packages: string}}, loadError: Object | string};
-  subscription: {loaded: boolean, data: SubscriptionKind[], loadError: Object | string};
-  ns: string;
+  obj: CatalogSourceKind;
+  configMap: K8sResourceKind & {data: {packages: string}};
+  subscription: {loaded?: boolean, data?: SubscriptionKind[]};
 };
 
 export type CatalogSourceDetailsPageProps = {
-  match: match<{ns?: string}>;
+  match: match<{ns?: string, name: string}>;
 };
 
 export type CreateSubscriptionYAMLProps = {
-  match: match<{ns: string, pkgName: string}>
+  match: match<{ns: string, pkgName: string}>;
+  location: Location;
 };
 
 PackageHeader.displayName = 'PackageHeader';
 PackageRow.displayName = 'PackageRow';
 PackageList.displayName = 'PackageList';
+CatalogSourceHeader.displayName = 'CatalogSourceHeader';
+CatalogSourceRow.displayName = 'CatalogSourceRow';
+CatalogSourceList.displayName = 'CatalogSourceList';
+CatalogSourcesPage.displayName = 'CatalogSourcePage';
 CatalogSourceDetails.displayName = 'CatalogSourceDetails';
 CatalogSourceDetailsPage.displayName = 'CatalogSourceDetailPage';
 CreateSubscriptionYAML.displayName = 'CreateSubscriptionYAML';

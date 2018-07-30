@@ -167,6 +167,28 @@ $clusterserviceversion-list-border: #ccc;
   flex-direction: column;
 }
 
+.co-package-row {
+  display: flex;
+  align-items: center;
+}
+
+.co-package-row__actions {
+  display: flex;
+  justify-content: space-between;
+}
+
+.co-catalogsource-list__section {
+  margin-bottom: 40px;
+}
+
+.co-catalogsource-list__section__packages {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 20px;
+}
+
 .co-clusterserviceversion-list__disabled-icon {
   margin: 10px;
   width: 100px;

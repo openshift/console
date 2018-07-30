@@ -42,7 +42,7 @@ describe('Manually approving an install plan', () => {
   it('creates a subscription with a `startingCSV` that is not latest and manual approval strategy', async() => {
     await sidenavView.clickNavLink(['Operators', 'Catalog Sources']);
     await catalogView.isLoaded();
-    await catalogView.entryRowFor(pkgName).element(by.buttonText('Subscribe')).click();
+    await catalogView.entryRowFor(pkgName).element(by.buttonText('Create Subscription')).click();
     await browser.wait(until.presenceOf($('.ace_text-input')));
     const content = await yamlView.editorContent.getText();
     const newContent = defaultsDeep({}, {metadata: {name: subName, namespace: testName, labels: {[testLabel]: testName}}, spec: {startingCSV, installPlanApproval: 'Manual'}}, safeLoad(content));

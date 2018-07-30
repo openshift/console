@@ -41,7 +41,7 @@ import { CustomResourceDefinitionsPage } from './custom-resource-definition';
 import { ClusterServiceVersionsPage, ClusterServiceVersionsDetailsPage, ClusterServiceVersionResourcesDetailsPage } from './cloud-services';
 import { SubscriptionsPage, SubscriptionDetailsPage } from './cloud-services/subscription';
 import { InstallPlansPage, InstallPlanDetailsPage } from './cloud-services/install-plan';
-import { CatalogSourceDetailsPage } from './cloud-services/catalog-source';
+import { CatalogSourceDetailsPage, CatalogSourcesPage } from './cloud-services/catalog-source';
 import { StorageClassPage, StorageClassDetailsPage } from './storage-class';
 
 import { referenceForModel, GroupVersionKind } from '../module/k8s';
@@ -132,6 +132,7 @@ export const resourceListPages = new Map<GroupVersionKind | string, React.Compon
   .set(referenceForModel(StorageClassModel), StorageClassPage)
   .set(referenceForModel(CustomResourceDefinitionModel), CustomResourceDefinitionsPage)
   .set(referenceForModel(ClusterServiceVersionModel), ClusterServiceVersionsPage)
+  .set(referenceForModel(CatalogSourceModel), CatalogSourcesPage)
   .set(referenceForModel(SubscriptionModel), SubscriptionsPage)
   .set(referenceForModel(InstallPlanModel), InstallPlansPage)
   /*  ------------------------------- NOTE -------------------------------

@@ -4,13 +4,11 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { match, Link } from 'react-router-dom';
 import { safeLoad } from 'js-yaml';
-import { connect } from 'react-redux';
-import { Map as ImmutableMap } from 'immutable';
 
 import { List, ListHeader, ColHead, DetailsPage, ListPage } from '../factory';
-import { MsgBox, SectionHeading, ResourceLink, ResourceCog, navFactory, Cog, ResourceSummary, LoadingInline, makeQuery, makeReduxID } from '../utils';
-import { SubscriptionKind, SubscriptionState, Package, InstallPlanApproval, ClusterServiceVersionKind } from './index';
-import { referenceForModel, k8sKill, k8sUpdate } from '../../module/k8s';
+import { MsgBox, ResourceLink, ResourceCog, navFactory, Cog, ResourceSummary, LoadingInline, SectionHeading } from '../utils';
+import { SubscriptionKind, SubscriptionState, Package, InstallPlanApproval, ClusterServiceVersionKind, olmNamespace } from './index';
+import { referenceForModel, k8sKill, k8sUpdate, ConfigMapKind } from '../../module/k8s';
 import { SubscriptionModel, ClusterServiceVersionModel, CatalogSourceModel, ConfigMapModel, InstallPlanModel } from '../../models';
 import { createDisableApplicationModal } from '../modals/disable-application-modal';
 import { createSubscriptionChannelModal } from '../modals/subscription-channel-modal';
@@ -81,15 +79,8 @@ export const SubscriptionsPage: React.SFC<SubscriptionsPageProps> = (props) => <
   ListComponent={SubscriptionsList}
   filterLabel="Subscriptions by package" />;
 
-const stateToProps = ({k8s}, {obj}) => ({
-  installedCSV: k8s.getIn([makeReduxID(ClusterServiceVersionModel, makeQuery(obj.metadata.namespace)), 'data'], ImmutableMap())
-    .find((csv, key) => csv.getIn(['metadata', 'name']) === _.get(obj, 'status.installedCSV')),
-  pkg: (safeLoad(k8s.getIn([makeReduxID(ConfigMapModel, makeQuery('operator-lifecycle-manager', null, null, obj.spec.source)), 'data', 'data', 'packages'], null)) || [])
-    .find((pkg: Package) => pkg.packageName === obj.spec.name),
-});
-
-export const SubscriptionDetails = connect(stateToProps, null)((props: SubscriptionDetailsProps) => {
-  const {obj, pkg, installedCSV} = props;
+export const SubscriptionDetails: React.SFC<SubscriptionDetailsProps> = (props) => {
+  const {obj, installedCSV, pkg} = props;
 
   return <div className="co-m-pane__body">
     <SectionHeading text="Subscription Overview" />
@@ -120,7 +111,7 @@ export const SubscriptionDetails = connect(stateToProps, null)((props: Subscript
       </div>
     </div>
   </div>;
-});
+};
 
 export class SubscriptionUpdates extends React.Component<SubscriptionUpdatesProps, SubscriptionUpdatesState> {
   constructor(props) {
@@ -188,21 +179,44 @@ export class SubscriptionUpdates extends React.Component<SubscriptionUpdatesProp
   }
 }
 
-export const SubscriptionDetailsPage: React.SFC<SubscriptionDetailsPageProps> = (props) => <DetailsPage
-  {...props}
-  namespace={props.match.params.ns}
-  kind={referenceForModel(SubscriptionModel)}
-  name={props.match.params.name}
-  pages={[
-    navFactory.details(SubscriptionDetails),
-    navFactory.editYaml(),
-  ]}
-  resources={[
-    // FIXME: Only including `tectonic-ocs` catalog's configmap, need to revise when we support more catalog sources
-    {kind: ConfigMapModel.kind, name: 'tectonic-ocs', namespace: 'operator-lifecycle-manager', isList: false, prop: 'configMap'},
-    {kind: referenceForModel(ClusterServiceVersionModel), namespace: props.namespace, isList: true, prop: 'clusterServiceVersion'},
-  ]}
-  menuActions={Cog.factory.common} />;
+export const SubscriptionDetailsPage: React.SFC<SubscriptionDetailsPageProps> = (props) => {
+  type PkgFor = (configMap: ConfigMapKind[]) => (obj: SubscriptionKind) => Package;
+  const pkgFor: PkgFor = configMaps => obj => configMaps.filter(cm => _.get(cm.data, 'packages') !== undefined)
+    .map(cm => safeLoad(cm.data.packages) as Package[])
+    .reduce((allPackages, packages) => [...allPackages, ...packages], [])
+    .find((pkg: Package) => pkg.packageName === obj.spec.name);
+
+  type InstalledCSV = (clusterServiceVersions?: ClusterServiceVersionKind[]) => (obj: SubscriptionKind) => ClusterServiceVersionKind;
+  const installedCSV: InstalledCSV = clusterServiceVersions => obj => clusterServiceVersions.find(csv => csv.metadata.name === _.get(obj, 'status.installedCSV'));
+
+  type DetailsProps = {
+    configMaps?: ConfigMapKind[];
+    ocsConfigMap?: ConfigMapKind;
+    clusterServiceVersions?: ClusterServiceVersionKind[];
+    obj: SubscriptionKind;
+  };
+
+  return <DetailsPage
+    {...props}
+    namespace={props.match.params.ns}
+    kind={referenceForModel(SubscriptionModel)}
+    name={props.match.params.name}
+    pages={[
+      navFactory.details((detailsProps: DetailsProps) =>
+        <SubscriptionDetails
+          obj={detailsProps.obj}
+          pkg={pkgFor(detailsProps.configMaps.concat(!_.isEmpty(detailsProps.ocsConfigMap) ? [detailsProps.ocsConfigMap] : []))(detailsProps.obj)}
+          installedCSV={installedCSV(detailsProps.clusterServiceVersions)(detailsProps.obj)} />
+      ),
+      navFactory.editYaml(),
+    ]}
+    resources={[
+      {kind: ConfigMapModel.kind, name: 'tectonic-ocs', namespace: olmNamespace, isList: false, prop: 'ocsConfigMap'},
+      {kind: ConfigMapModel.kind, namespace: props.namespace, isList: true, prop: 'configMaps'},
+      {kind: referenceForModel(ClusterServiceVersionModel), namespace: props.namespace, isList: true, prop: 'clusterServiceVersions'},
+    ]}
+    menuActions={Cog.factory.common} />;
+};
 
 export type SubscriptionsPageProps = {
   namespace?: string;

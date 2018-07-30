@@ -177,6 +177,8 @@ export type Package = {
   defaultChannel?: string;
 };
 
+export const olmNamespace = 'operator-lifecycle-manager';
+
 export const isEnabled = (namespace: K8sResourceKind) => _.has(namespace, ['metadata', 'annotations', 'alm-manager']);
 
 export const referenceForCRDDesc = (desc: CRDDescription): GroupVersionKind => `${desc.name.slice(desc.name.indexOf('.') + 1)}:${desc.version}:${desc.kind}`;

@@ -22,7 +22,7 @@ describe('Interacting with the etcd OCS', () => {
 
   beforeAll(async() => {
     browser.get(`${appHost}/overview/all-namespaces`);
-    await browser.wait(until.presenceOf(sidenavView.navSectionFor('Applications')));
+    await browser.wait(until.presenceOf(sidenavView.navSectionFor('Operators')));
   });
 
   afterEach(() => {
@@ -33,7 +33,7 @@ describe('Interacting with the etcd OCS', () => {
   it('can be enabled from the Catalog Sources', async() => {
     await sidenavView.clickNavLink(['Operators', 'Catalog Sources']);
     await catalogView.isLoaded();
-    await catalogView.entryRowFor('etcd').element(by.buttonText('Subscribe')).click();
+    await catalogView.entryRowFor('etcd').element(by.buttonText('Create Subscription')).click();
     await browser.wait(until.presenceOf($('.ace_text-input')));
     const content = await yamlView.editorContent.getText();
     const newContent = defaultsDeep({}, {metadata: {generateName: `${testName}-etcd-`, namespace: testName, labels: {[testLabel]: testName}}, spec: {channel: 'alpha', source: 'tectonic-ocs', name: 'etcd'}}, safeLoad(content));
@@ -64,7 +64,7 @@ describe('Interacting with the etcd OCS', () => {
     expect(crudView.rowForName(etcdOperatorName).isDisplayed()).toBe(true);
   }, deleteRecoveryTime);
 
-  it('displays etcd OCS in "Available Applications" view for the namespace', async() => {
+  it('displays etcd OCS in "Available Operators" view for the namespace', async() => {
     await browser.get(`${appHost}/k8s/ns/${testName}/clusterserviceversion-v1s`);
     await appListView.isLoaded();
     await browser.sleep(500);
@@ -98,7 +98,7 @@ describe('Interacting with the etcd OCS', () => {
     const newContent = defaultsDeep({}, {metadata: {name: `${testName}-etcdcluster`, labels: {[testLabel]: testName}}}, safeLoad(content));
     await yamlView.setContent(safeDump(newContent));
 
-    expect($('.yaml-editor-header').getText()).toEqual('Create etcd Cluster');
+    expect($('.yaml-editor-header').getText()).toEqual('Create Etcd Cluster');
   });
 
   it('displays new `EtcdCluster` that was created from YAML editor', async() => {

@@ -211,6 +211,7 @@ export const testCatalogSource: CatalogSourceKind = {
   metadata: {
     name: 'test-catalog',
     namespace: 'tectonic-system',
+    creationTimestamp: '2018-05-02T18:10:38Z',
   },
   spec: {
     name: 'test-catalog',

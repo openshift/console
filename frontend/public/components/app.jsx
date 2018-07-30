@@ -32,9 +32,9 @@ import { history, AsyncComponent, Loading } from './utils';
 import { namespacedPrefixes } from './utils/link';
 import { UIActions, getActiveNamespace } from '../ui/ui-actions';
 import { ClusterHealth } from './cluster-health';
-import { CatalogSourceDetailsPage, CreateSubscriptionYAML } from './cloud-services';
+import { CreateSubscriptionYAML } from './cloud-services';
 import { CreateCRDYAML } from './cloud-services/create-crd-yaml';
-import { ClusterServiceVersionModel, CatalogSourceModel, AlertmanagerModel } from '../models';
+import { ClusterServiceVersionModel, SubscriptionModel, AlertmanagerModel } from '../models';
 import { referenceForModel } from '../module/k8s';
 import k8sActions from '../module/k8s/k8s-actions';
 import { coFetch } from '../co-fetch';
@@ -164,12 +164,7 @@ class App extends React.PureComponent {
           <Route path="/cluster-health" exact component={ClusterHealth} />
           <Route path="/start-guide" exact component={StartGuidePage} />
 
-          <Route path={`/k8s/all-namespaces/${CatalogSourceModel.plural}`} exact render={() => <Redirect to={`/k8s/all-namespaces/${CatalogSourceModel.plural}/tectonic-ocs`} />} />
-          <Route path={`/k8s/ns/:ns/${CatalogSourceModel.plural}`} exact render={({match}) => <Redirect to={`/k8s/ns/${match.params.ns}/${CatalogSourceModel.plural}/tectonic-ocs`} />} />
-          <Route path={`/k8s/all-namespaces/${CatalogSourceModel.plural}/tectonic-ocs`} exact component={CatalogSourceDetailsPage} />
-          <Route path={`/k8s/ns/:ns/${CatalogSourceModel.plural}/tectonic-ocs`} exact component={CatalogSourceDetailsPage} />
-          <Route path={`/k8s/all-namespaces/${CatalogSourceModel.plural}/tectonic-ocs/:pkgName/subscribe`} exact component={CreateSubscriptionYAML} />
-          <Route path={`/k8s/ns/:ns/${CatalogSourceModel.plural}/tectonic-ocs/:pkgName/subscribe`} exact component={NamespaceFromURL(CreateSubscriptionYAML)} />
+          <Route path={`/k8s/ns/:ns/${SubscriptionModel.plural}/new`} exact component={NamespaceFromURL(CreateSubscriptionYAML)} />
 
           <Route path="/k8s/ns/:ns/alertmanagers/:name" exact render={({match}) => <Redirect to={`/k8s/ns/${match.params.ns}/${referenceForModel(AlertmanagerModel)}/${match.params.name}`} />} />
 
@@ -226,7 +221,6 @@ class App extends React.PureComponent {
     </React.Fragment>;
   }
 }
-
 
 _.each(featureActions, store.dispatch);
 store.dispatch(k8sActions.getResources());

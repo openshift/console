@@ -16,7 +16,30 @@ export type OwnerReference = {
   apiVersion: string;
 };
 
+export type ObjectMetadata = {
+  annotations?: {[key: string]: string},
+  name: string,
+  namespace?: string,
+  labels?: {[key: string]: string},
+  ownerReferences?: OwnerReference[],
+  [key: string]: any,
+};
+
 export type K8sResourceKind = {
+  apiVersion: string;
+  kind: string;
+  metadata: ObjectMetadata;
+  spec?: {
+    selector?: {
+      matchLabels?: {[key: string]: any},
+    },
+    [key: string]: any
+  };
+  status?: {[key: string]: any};
+  type?: {[key: string]: any};
+};
+
+export type ConfigMapKind = {
   apiVersion: string;
   kind: string;
   metadata: {
@@ -27,14 +50,7 @@ export type K8sResourceKind = {
     ownerReferences?: OwnerReference[],
     [key: string]: any,
   };
-  spec?: {
-    selector?: {
-      matchLabels?: {[key: string]: any},
-    },
-    [key: string]: any
-  };
-  status?: {[key: string]: any};
-  type?: {[key: string]: any};
+  data: {[key: string]: string};
 };
 
 export type CustomResourceDefinitionKind = {

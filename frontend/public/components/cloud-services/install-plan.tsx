@@ -91,7 +91,7 @@ export const InstallPlanDetails: React.SFC<InstallPlanDetailsProps> = ({obj}) =>
               </dd>) }
               <dt>Catalog Sources</dt>
               { (_.get(obj.status, 'catalogSources') || []).map((catalogName, i) => <dd key={i}>
-                <ResourceLink kind={referenceForModel(CatalogSourceModel)} name={catalogName} namespace="tectonic-system" title={catalogName} />
+                <ResourceLink kind={referenceForModel(CatalogSourceModel)} name={catalogName} namespace="openshift" title={catalogName} />
               </dd>) }
             </dl>
           </div>
