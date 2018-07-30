@@ -253,10 +253,11 @@ func main() {
 				log.Fatalf("no CA found for Kubernetes services")
 			}
 			prometheusTLSConfig := &tls.Config{RootCAs: prometheusProxyRootCAs}
+			// Only proxy requests to the Prometheus API, not the UI.
 			srv.PrometheusProxyConfig = &proxy.Config{
 				TLSClientConfig: prometheusTLSConfig,
 				HeaderBlacklist: []string{"Cookie"},
-				Endpoint:        &url.URL{Scheme: "https", Host: openshiftPrometheusHost},
+				Endpoint:        &url.URL{Scheme: "https", Host: openshiftPrometheusHost, Path: "/api"},
 			}
 		} else if !os.IsNotExist(err) {
 			// Ignore errors when the file does not exist, which is the case if not running on OpenShift. Fail on other errors.

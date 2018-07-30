@@ -217,6 +217,10 @@ const GraphsPage = ({fake, limited, namespace, openshiftFlag}) => {
 const permissionedLoader = () => {
   const AllGraphs = (props) => <GraphsPage {...props} />;
   const SomeGraphs = (props) => <GraphsPage limited {...props} />;
+  if (!prometheusBasePath) {
+    return Promise.resolve(SomeGraphs);
+  }
+
   // Show events list if user lacks permission to view graphs.
   const q = 'sum(ALERTS{alertstate="firing", alertname!="DeadMansSwitch"})';
   return coFetchJSON(`${prometheusBasePath}/api/v1/query?query=${encodeURIComponent(q)}`)
