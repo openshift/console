@@ -98,6 +98,17 @@ export class DropdownMixin extends React.PureComponent {
 const Caret = () => <span className="caret" />;
 
 class DropDownRow extends React.PureComponent {
+  constructor(props) {
+    super(props);
+    this.link = React.createRef();
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.hover !== prevProps.hover && this.props.hover === true) {
+      this.link.current.scrollIntoView(false);
+    }
+  }
+
   render () {
     const {itemKey, content, onclick, onBookmark, onUnBookmark, className, selected, hover, canFavorite, onFavorite, favoriteKey} = this.props;
 
@@ -117,7 +128,7 @@ class DropDownRow extends React.PureComponent {
 
     return <li role="option" className={classNames(className)} key={itemKey}>
       {prefix}
-      <a ref={ref => this.ref=ref} id={`${itemKey}-link`} className={classNames({'next-to-bookmark': !!prefix, focus: selected, hover})} onClick={e => onclick(itemKey, e)}>{content}</a>
+      <a ref={this.link} id={`${itemKey}-link`} className={classNames({'next-to-bookmark': !!prefix, focus: selected, hover})} onClick={e => onclick(itemKey, e)}>{content}</a>
       {suffix}
     </li>;
   }
@@ -238,6 +249,7 @@ export class Dropdown extends DropdownMixin {
       return;
     }
 
+    const { sortedItemKeys } = this.props;
     const { items, keyboardHoverKey, selectedKey } = this.state;
 
     if (key === 'Enter') {
@@ -255,10 +267,15 @@ export class Dropdown extends DropdownMixin {
       return;
     }
 
-    const keys = Object.keys(items);
-    let index = _.indexOf(keys, keyboardHoverKey);
+    let keys;
 
-    const { current } = this.dropdownList;
+    if (sortedItemKeys) {
+      keys = sortedItemKeys;
+    } else {
+      keys = Object.keys(items);
+    }
+
+    let index = _.indexOf(keys, keyboardHoverKey);
 
     // so namespace and Events resource selector advance correctly
     if (selectedKey && index === -1) {
@@ -268,22 +285,16 @@ export class Dropdown extends DropdownMixin {
 
     if (key === 'ArrowDown') {
       index += 1;
-      if (index > 0) {
-        current.scrollTop += 20;
-      }
     } else {
       index -= 1;
-      current.scrollTop -= 20;
     }
 
     // periodic boundaries
     if (index >= keys.length ) {
       index = 0;
-      current.scrollTop = 0;
     }
     if (index < 0) {
       index = keys.length - 1;
-      current.scrollTop = (keys.length * 20);
     }
 
     const newKey = keys[index];
@@ -323,7 +334,7 @@ export class Dropdown extends DropdownMixin {
 
   render() {
     const {active, autocompleteText, selectedKey, items, title, bookmarks, keyboardHoverKey, favoriteKey} = this.state;
-    const {autocompleteFilter, autocompletePlaceholder, noButton, noSelection, className, buttonClassName, menuClassName, storageKey, canFavorite, dropDownClassName, titlePrefix, sortedItemKeys} = this.props;
+    const {autocompleteFilter, autocompletePlaceholder, noButton, className, buttonClassName, menuClassName, storageKey, canFavorite, dropDownClassName, titlePrefix, sortedItemKeys} = this.props;
 
     const spacerBefore = this.props.spacerBefore || new Set();
     const headerBefore = this.props.headerBefore || {};
@@ -363,7 +374,7 @@ export class Dropdown extends DropdownMixin {
               {titlePrefix && `${titlePrefix}: `}
               <span className="dropdown__not-btn__title">{title}</span>&nbsp;<Caret />
             </div>
-            : <button onClick={this.toggle} onKeyDown={this.onKeyDown} type="button" className={classNames('btn', 'btn--dropdown', 'dropdown-toggle', buttonClassName ? buttonClassName : 'btn-default')} id={this.props.id}>
+            : <button aria-haspopup="true" onClick={this.toggle} onKeyDown={this.onKeyDown} type="button" className={classNames('btn', 'btn--dropdown', 'dropdown-toggle', buttonClassName ? buttonClassName : 'btn-default')} id={this.props.id}>
               <div className="btn--dropdown__content-wrap">
                 {titlePrefix && `${titlePrefix}: `}
                 {title}&nbsp;&nbsp;<Caret />
