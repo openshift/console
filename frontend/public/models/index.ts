@@ -110,20 +110,6 @@ export const AlertmanagerModel: K8sKind = {
   propagationPolicy : 'Foreground',
 };
 
-export const VaultServiceModel: K8sKind = {
-  kind: 'VaultService',
-  label: 'VaultService',
-  labelPlural: 'VaultServices',
-  apiGroup: 'vault.security.coreos.com',
-  apiVersion: 'v1alpha1',
-  path: 'vaultservices',
-  abbr: 'VS',
-  namespaced: true,
-  crd: true,
-  plural: 'vaultservices',
-  propagationPolicy : 'Foreground',
-};
-
 export const ClusterModel: K8sKind = {
   kind: 'Cluster',
   label: 'Cluster',

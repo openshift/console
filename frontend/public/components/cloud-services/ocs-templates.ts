@@ -1,18 +1,10 @@
 import { Map as ImmutableMap } from 'immutable';
 
-import { VaultServiceModel, EtcdClusterModel, PrometheusModel, ServiceMonitorModel, AlertmanagerModel } from '../../models';
+import { EtcdClusterModel, PrometheusModel, ServiceMonitorModel, AlertmanagerModel } from '../../models';
 import { apiVersionForModel } from '../../module/k8s';
 
 export const ocsTemplates = ImmutableMap()
-  .set(`${apiVersionForModel(VaultServiceModel)}.VaultService`, `
-    apiVersion: vault.security.coreos.com/v1alpha1
-    kind: VaultService
-    metadata:
-      name: example
-    spec:
-      nodes: 2
-      version: 0.9.1-0
-  `).set(`${apiVersionForModel(EtcdClusterModel)}.EtcdCluster`, `
+  .set(`${apiVersionForModel(EtcdClusterModel)}.EtcdCluster`, `
     apiVersion: etcd.database.coreos.com/v1beta2
     kind: EtcdCluster
     metadata:
