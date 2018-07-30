@@ -1,17 +1,12 @@
-$height: 18px;
-
 .co-m-label {
-  display: inline-flex;
-  flex-wrap: nowrap;
-  max-width: 100%;
-  border-radius: 10px;
-  padding: 0px 8px;
-  height: ($height + 3);
-  line-height: $height;
-  margin: 1px;
   background-color: $color-grey-background;
-  font-size: $font-size-base;
-  border: solid 1px $color-grey-border;
+  border-radius: 12px;
+  border: 1px solid $color-grey-border;
+  display: inline-flex;
+  line-height: $co-m-label-line-height;
+  margin: 2px 2px 2px 0;
+  max-width: 100%;
+  padding: 0 8px;
 
   &__key, &__value {
     max-width: 60px;

@@ -55,14 +55,12 @@ tags-input .host:active {
 }
 
 tags-input .tags {
-  overflow: hidden;
-  word-wrap: break-word;
   cursor: text;
   // Style to look like .form-control
-  height: $input-height-base; // Make inputs at least the height of their button counterpart (base line-height + padding + border)
-  padding: $padding-base-vertical $padding-base-horizontal;
+  min-height: $input-height-base; // Make inputs at least the height of their button counterpart (base line-height + padding + border)
+  padding: 0 $padding-base-horizontal;
   font-size: $font-size-base;
-  line-height: $line-height-base;
+  line-height: $co-m-label-line-height;
   color: $input-color;
   background-color: $input-bg;
   background-image: none; // Reset unusual Firefox-on-Android default style; see https://github.com/necolas/normalize.css/issues/214
@@ -87,11 +85,9 @@ tags-input .tags .tag-list {
 
 tags-input .tags .tag-item {
   @extend .co-m-label;
+  word-break: break-all; // required for Firefox, Edge
 }
 
-tags-input .tags .tag-item {
-  float: left;
-}
 tags-input .tags .tag-item.selected {
   border: solid 1px;
 }
@@ -114,11 +110,21 @@ tags-input .remove-button:hover {
   text-decoration: none;
 }
 tags-input .tags .input {
-  border: 0;
+  background: transparent;
+  border: 1px solid transparent;
+  line-height: $co-m-label-line-height;
+  margin: 2px 0;
   outline: none;
-  padding: 1px 0 0;
-  float: left;
-  height: ($input-height-base - ($padding-base-vertical * 2) - 2);
+  padding: 0;
+  // Since iOS phone text input size is larger, remove border and margin and increase line-height
+  @supports (-webkit-overflow-scrolling: touch) { // Target mobile Safari
+    @media (max-width: $grid-float-breakpoint-max) { // Target phones
+      border: 0;
+      line-height: 24px;
+      margin-bottom: 0;
+      margin-top: 0;
+    }
+  }
 }
 tags-input .tags .input.invalid-tag {
   color: $red-invalid;
