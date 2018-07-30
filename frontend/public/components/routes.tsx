@@ -238,7 +238,7 @@ const RouteIngressStatus: React.SFC<RouteIngressStatusProps> = ({ingresses}) =>
       </div>)}
   </React.Fragment>;
 
-const RouteDetails: React.SFC<RoutesDetailsProps> = ({obj: route}) => <React.Fragment>
+export const RouteDetails: React.SFC<RoutesDetailsProps> = ({obj: route}) => <React.Fragment>
   <div className="co-m-pane__body">
     <SectionHeading text="Route Overview" />
     <div className="row">

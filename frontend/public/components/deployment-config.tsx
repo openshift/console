@@ -68,6 +68,8 @@ const menuActions = [
   ...common,
 ];
 
+export const DeploymentConfigMenuActions = menuActions;
+
 export const DeploymentConfigsDetails: React.SFC<{obj: any}> = ({obj: deploymentConfig}) => {
   const reason = _.get(deploymentConfig, 'status.details.message');
   const timeout = _.get(deploymentConfig, 'spec.strategy.rollingParams.timeoutSeconds');
