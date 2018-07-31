@@ -404,6 +404,7 @@ export class Nav extends React.Component {
             <ResourceNSLink resource="replicasets" name="Replica Sets" onClick={this.close} />
             <ResourceNSLink resource="replicationcontrollers" name="Replication Controllers" onClick={this.close} />
             <ResourceNSLink resource="horizontalpodautoscalers" name="HPAs" onClick={this.close} />
+            <ResourceNSLink resource="virtualmachines" name="Virtual Machines" onClick={this.close} required={FLAGS.KUBEVIRT} />
           </NavSection>
 
           <NavSection text="Networking" img={routingImg} activeImg={routingActiveImg} >

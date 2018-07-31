@@ -41,6 +41,7 @@ describe('featureReducer', () => {
       [FLAGS.PROMETHEUS]: false,
       [FLAGS.MULTI_CLUSTER]: false,
       [FLAGS.CHARGEBACK]: false,
+      [FLAGS.KUBEVIRT]: false,
       [FLAGS.SERVICE_CATALOG]: false,
       [FLAGS.OPERATOR_LIFECYCLE_MANAGER]: true,
       [FLAGS.KUBERNETES_MARKETPLACE]: false,

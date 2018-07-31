@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { Map as ImmutableMap } from 'immutable';
 import * as _ from 'lodash-es';
 
-import { SelfSubjectAccessReviewModel, ChannelOperatorConfigModel, PrometheusModel, ClusterServiceVersionModel, ClusterModel, ChargebackReportModel, ClusterServiceClassModel, PackageManifestModel } from './models';
+import { SelfSubjectAccessReviewModel, ChannelOperatorConfigModel, PrometheusModel, ClusterServiceVersionModel, ClusterModel, ChargebackReportModel, ClusterServiceClassModel, VirtualMachineModel, PackageManifestModel } from './models';
 import { k8sBasePath, referenceForModel } from './module/k8s/k8s';
 import { k8sCreate } from './module/k8s/resource';
 import { types } from './module/k8s/k8s-actions';
@@ -27,6 +27,7 @@ import { UIActions } from './ui/ui-actions';
   CAN_LIST_STORE: false,
   CAN_LIST_CRD: false,
   CAN_CREATE_PROJECT: false,
+  KUBEVIRT: false,
   PROJECTS_AVAILABLE: false,
   SERVICE_CATALOG: false,
  */
@@ -45,6 +46,7 @@ export enum FLAGS {
   CAN_LIST_STORE = 'CAN_LIST_STORE',
   CAN_LIST_CRD = 'CAN_LIST_CRD',
   CAN_CREATE_PROJECT = 'CAN_CREATE_PROJECT',
+  KUBEVIRT = 'KUBEVIRT',
   PROJECTS_AVAILABLE = 'PROJECTS_AVAILABLE',
   SERVICE_CATALOG = 'SERVICE_CATALOG',
   KUBERNETES_MARKETPLACE = 'KUBERNETES_MARKETPLACE',
@@ -60,6 +62,7 @@ export const CRDs = {
   [referenceForModel(PrometheusModel)]: FLAGS.PROMETHEUS,
   [referenceForModel(ClusterModel)]: FLAGS.MULTI_CLUSTER,
   [referenceForModel(ChargebackReportModel)]: FLAGS.CHARGEBACK,
+  [referenceForModel(VirtualMachineModel)]: FLAGS.KUBEVIRT,
   [referenceForModel(ClusterServiceClassModel)]: FLAGS.SERVICE_CATALOG,
   [referenceForModel(ClusterServiceVersionModel)]: FLAGS.OPERATOR_LIFECYCLE_MANAGER,
   [referenceForModel(PackageManifestModel)]: FLAGS.KUBERNETES_MARKETPLACE,
