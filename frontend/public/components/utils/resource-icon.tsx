@@ -19,7 +19,10 @@ export const ResourceIcon = (props: ResourceIconProps) => {
   const klass = classNames(`co-m-resource-icon co-m-resource-${kindStr.toLowerCase()}`, className);
   const iconLabel = (kindObj && kindObj.abbr) || kindToAbbr(kindStr);
 
-  const rendered = <span className={klass}>{iconLabel}</span>;
+  const rendered = <React.Fragment>
+    <span className="sr-only">{kindStr}</span>
+    <span className={klass} title={kindStr}>{iconLabel}</span>
+  </React.Fragment>;
   if (kindObj) {
     MEMO[memoKey] = rendered;
   }
