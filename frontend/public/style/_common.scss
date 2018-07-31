@@ -170,11 +170,30 @@
   white-space: pre-wrap;
 }
 
+.co-search {
+  padding-bottom: 30px;
+  .input-group-btn {
+    vertical-align: top;
+  }
+}
+
 .co-well {
   color: $blue-darker;
   background-color: $blue-bg;
   padding: 20px;
   margin: 30px;
+}
+
+// Prevent iOS phones from zooming on form inputs
+@supports (-webkit-overflow-scrolling: touch) { // Target mobile Safari
+  @media (max-width: $grid-float-breakpoint-max) { // Target phones
+    input,
+    select,
+    .tag-item,
+    textarea {
+      font-size: 16px !important;
+    }
+  }
 }
 
 // Remove annoying default spinners browsers add to number fields.
