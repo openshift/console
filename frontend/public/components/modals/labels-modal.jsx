@@ -77,7 +77,7 @@ export const labelsModal = createModalLauncher((props) => <BaseLabelsModal
 />);
 
 export const podSelectorModal = createModalLauncher((props) => <BaseLabelsModal
-  path={['replicationcontroller', 'service'].includes(props.kind.id) ? '/spec/selector' : '/spec/selector/matchLabels'}
+  path={['replicationcontrolleres', 'services'].includes(props.kind.plural) ? '/spec/selector' : '/spec/selector/matchLabels'}
   isPodSelector={true}
   description="Pod Selector"
   message={`Determines the set of pods targeted by this ${props.kind.label.toLowerCase()}.`}
