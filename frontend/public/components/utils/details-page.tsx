@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 
 import { Cog, kindObj, LabelList, ResourceLink, Selector, Timestamp } from './index';
-import { referenceForOwnerRef, K8sResourceKind } from '../../module/k8s';
+import { referenceForOwnerRef, K8sResourceKind, referenceFor } from '../../module/k8s';
 
 export const pluralize = (i: number, singular: string, plural: string = `${singular}s`) => `${i || 0} ${i === 1 ? singular : plural}`;
 
@@ -23,7 +23,7 @@ export const ResourceSummary: React.SFC<ResourceSummaryProps> = ({children, reso
     { type ? <dt>Type</dt> : null }
     { type ? <dd>{type}</dd> : null }
     <dt>Labels</dt>
-    <dd><LabelList kind={resource.kind} labels={metadata.labels} /></dd>
+    <dd><LabelList kind={referenceFor(resource)} labels={metadata.labels} /></dd>
     {showPodSelector && <dt>Pod Selector</dt>}
     {showPodSelector && <dd><Selector selector={_.get(resource, podSelector)} namespace={_.get(resource, 'metadata.namespace')} /></dd>}
     {showNodeSelector && <dt>Node Selector</dt>}

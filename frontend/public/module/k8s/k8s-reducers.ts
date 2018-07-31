@@ -96,11 +96,10 @@ export default (state: ImmutableMap<string, any>, action) => {
           return model;
         })
         .reduce((prevState, newModel) => {
-          const modelRef = allModels().find(staticModel => !staticModel.crd && referenceForModel(staticModel) === referenceForModel(newModel))
-            // FIXME: Need to use `kind` as model reference for legacy components accessing k8s primitives
-            ? newModel.kind
-            : referenceForModel(newModel);
-          return prevState.updateIn(['RESOURCES', 'models'], models => models.set(modelRef, newModel));
+          // FIXME: Need to use `kind` as model reference for legacy components accessing k8s primitives
+          const [modelRef, model] = allModels().findEntry(staticModel => !staticModel.crd && referenceForModel(staticModel) === referenceForModel(newModel))
+            || [referenceForModel(newModel), newModel];
+          return prevState.updateIn(['RESOURCES', 'models'], models => models.set(modelRef, model));
         }, state)
         // TODO: Determine where these are used and implement filtering in that component instead of storing in Redux
         .setIn(['RESOURCES', 'allResources'], action.resources.allResources)

@@ -15,8 +15,9 @@ import { ResourceListDropdown } from './resource-dropdown';
 import { connectToModel } from '../kinds';
 import { connectToFlags, FLAGS, flagPending } from '../features';
 import { OpenShiftGettingStarted } from './start-guide';
+import { referenceForModel, kindForReference } from '../module/k8s';
 
-const ResourceList = connectToModel(({kind, kindObj, kindsInFlight, namespace, selector, fake}) => {
+const ResourceList = connectToModel(({kindObj, kindsInFlight, namespace, selector, fake}) => {
   if (kindsInFlight) {
     return <LoadingBox />;
   }
@@ -25,7 +26,7 @@ const ResourceList = connectToModel(({kind, kindObj, kindsInFlight, namespace, s
   const ListPage = resourceListPages.get(name) || resourceListPages.get('Default');
   const ns = kindObj.namespaced ? namespace : undefined;
 
-  return <ListPage namespace={ns} selector={selector} kind={kind} showTitle={false} autoFocus={false} fake={fake} />;
+  return <ListPage namespace={ns} selector={selector} kind={kindObj.crd ? referenceForModel(kindObj) : kindObj.kind} showTitle={false} autoFocus={false} fake={fake} />;
 });
 
 const updateUrlParams = (k, v) => {
@@ -68,7 +69,7 @@ class SearchPage_ extends React.PureComponent {
     const tags = split(_.isString(q) ? decodeURIComponent(q) : '');
     const validTags = _.reject(tags, tag => requirementFromString(tag) === undefined);
     const selector = selectorFromString(validTags.join(','));
-    const labelClassName = `co-text-${_.toLower(kind)}`;
+    const labelClassName = `co-text-${_.toLower(kindForReference(kind))}`;
     const showGettingStarted = flags.OPENSHIFT && !flags.PROJECTS_AVAILABLE;
 
     return <React.Fragment>
