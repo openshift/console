@@ -40,6 +40,7 @@ describe('featureReducer', () => {
       [FLAGS.PROMETHEUS]: false,
       [FLAGS.MULTI_CLUSTER]: false,
       [FLAGS.CHARGEBACK]: false,
+      [FLAGS.KUBEVIRT]: false,
     }));
   });
 });
