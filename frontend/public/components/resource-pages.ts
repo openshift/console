@@ -16,6 +16,7 @@ import { NamespacesPage, NamespacesDetailsPage, ProjectsPage, ProjectsDetailsPag
 import { NetworkPoliciesPage, NetworkPoliciesDetailsPage } from './network-policy';
 import { NodesPage, NodesDetailsPage } from './node';
 import { PodsPage, PodsDetailsPage } from './pod';
+import { VirtualMachinesPage, VirtualMachinesDetailsPage } from './vm';
 import { ReplicaSetsPage, ReplicaSetsDetailsPage } from './replicaset';
 import { ReplicationControllersPage, ReplicationControllersDetailsPage } from './replication-controller';
 import { SecretsPage, SecretsDetailsPage } from './secret';
@@ -87,6 +88,7 @@ import {
   ClusterRoleModel,
   ContainerModel,
   CatalogSourceModel,
+  VirtualMachineModel,
 } from '../models';
 
 export const resourceListPages = new Map<GroupVersionKind | string, React.ComponentType<any>>()
@@ -106,6 +108,7 @@ export const resourceListPages = new Map<GroupVersionKind | string, React.Compon
   .set(referenceForModel(NetworkPolicyModel), NetworkPoliciesPage)
   .set(referenceForModel(NodeModel), NodesPage)
   .set(referenceForModel(PodModel), PodsPage)
+  .set(referenceForModel(VirtualMachineModel), VirtualMachinesPage)
   .set(referenceForModel(ReplicaSetModel), ReplicaSetsPage)
   .set(referenceForModel(ReplicationControllerModel), ReplicationControllersPage)
   .set(referenceForModel(SecretModel), SecretsPage)
@@ -159,6 +162,7 @@ export const resourceDetailPages = new Map<GroupVersionKind | string, React.Comp
   .set(referenceForModel(NetworkPolicyModel), NetworkPoliciesDetailsPage)
   .set(referenceForModel(NodeModel), NodesDetailsPage)
   .set(referenceForModel(PodModel), PodsDetailsPage)
+  .set(referenceForModel(VirtualMachineModel), VirtualMachinesDetailsPage)
   .set(referenceForModel(ReplicaSetModel), ReplicaSetsDetailsPage)
   .set(referenceForModel(ReplicationControllerModel), ReplicationControllersDetailsPage)
   .set(referenceForModel(SecretModel), SecretsDetailsPage)
