@@ -15,8 +15,9 @@ import { createNamespaceModal, createProjectModal, deleteNamespaceModal, configu
 import { RoleBindingsPage } from './RBAC';
 import { Bar, Line, requirePrometheus } from './graphs';
 import { NAMESPACE_LOCAL_STORAGE_KEY, ALL_NAMESPACES_KEY } from '../const';
-import { FLAGS, featureReducerName, flagPending, setFlag } from '../features';
+import { FLAGS, featureReducerName, flagPending, setFlag, connectToFlags } from '../features';
 import { openshiftHelpBase } from './utils/documentation';
+import { createProjectMessageStateToProps } from '../ui/ui-reducers';
 
 const getModel = useProjects => useProjects ? ProjectModel : NamespaceModel;
 const getDisplayName = obj => _.get(obj, ['metadata', 'annotations', 'openshift.io/display-name']);
@@ -95,12 +96,25 @@ const ProjectRow = ({obj: project}) => {
   </ResourceRow>;
 };
 
-const ProjectEmptyMessageDetail = <p>
-  Create a project for your application. To learn more, visit the OpenShift <a href={openshiftHelpBase} target="_blank" rel="noopener noreferrer">documentation</a>.
-</p>;
-const ProjectEmptyMessage = () => <MsgBox title="Welcome to OpenShift" detail={ProjectEmptyMessageDetail} />;
-export const ProjectList = props => <List {...props} Header={ProjectHeader} Row={ProjectRow} EmptyMsg={ProjectEmptyMessage} />;
-export const ProjectsPage = props => <ListPage {...props} ListComponent={ProjectList} canCreate={true} createHandler={createProjectModal} />;
+const ProjectList_ = props => {
+  const ProjectEmptyMessageDetail = <React.Fragment>
+    <p className="co-pre-line">
+      {props.createProjectMessage || 'Create a project for your application.'}
+    </p>
+    <p>
+      To learn more, visit the OpenShift <a href={openshiftHelpBase} target="_blank" rel="noopener noreferrer">documentation</a>.
+    </p>
+  </React.Fragment>;
+  const ProjectEmptyMessage = () => <MsgBox title="Welcome to OpenShift" detail={ProjectEmptyMessageDetail} />;
+  return <List {...props} Header={ProjectHeader} Row={ProjectRow} EmptyMsg={ProjectEmptyMessage} />;
+};
+export const ProjectList = connect(createProjectMessageStateToProps)(ProjectList_);
+
+const ProjectsPage_ = props => {
+  const canCreate = props.flags.CAN_CREATE_PROJECT;
+  return <ListPage {...props} ListComponent={ProjectList} canCreate={canCreate} createHandler={createProjectModal} />;
+};
+export const ProjectsPage = connectToFlags(FLAGS.CAN_CREATE_PROJECT)(ProjectsPage_);
 
 class PullSecret extends SafetyFirst {
   constructor (props) {

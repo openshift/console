@@ -24,6 +24,7 @@ export default (state, action) => {
       activeNavSectionId: 'workloads',
       location: pathname,
       activeNamespace: activeNamespace || 'default',
+      createProjectMessage: ''
     });
   }
 
@@ -53,8 +54,15 @@ export default (state, action) => {
     case types.sortList:
       return state.mergeIn(['listSorts', action.listId], _.pick(action, ['field', 'func', 'orderBy']));
 
+    case types.setCreateProjectMessage:
+      return state.set('createProjectMessage', action.message);
+
     default:
       break;
   }
   return state;
+};
+
+export const createProjectMessageStateToProps = ({UI}) => {
+  return {createProjectMessage: UI.get('createProjectMessage')};
 };
