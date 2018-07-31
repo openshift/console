@@ -25,7 +25,6 @@ import { IngressesPage, IngressesDetailsPage } from './ingress';
 import { RoutesPage, RoutesDetailsPage } from './routes';
 import { ClusterRolesDetailsPage, RolesPage, RolesDetailsPage } from './RBAC/role';
 import { RoleBindingsPage } from './RBAC/bindings';
-import { EtcdClustersPage } from './etcd-cluster';
 import { PrometheusInstancesPage } from './prometheus';
 import { ServiceMonitorsPage } from './service-monitor';
 import { AlertManagersPage, AlertManagersDetailsPage } from './alert-manager';
@@ -70,7 +69,6 @@ import {
   RouteModel,
   RoleModel,
   RoleBindingModel,
-  EtcdClusterModel,
   PrometheusModel,
   ServiceMonitorModel,
   AlertmanagerModel,
@@ -117,7 +115,6 @@ export const resourceListPages = new Map<GroupVersionKind | string, React.Compon
   .set(referenceForModel(RouteModel), RoutesPage)
   .set(referenceForModel(RoleModel), RolesPage)
   .set(referenceForModel(RoleBindingModel), RoleBindingsPage)
-  .set(referenceForModel(EtcdClusterModel), EtcdClustersPage)
   .set(referenceForModel(PrometheusModel), PrometheusInstancesPage)
   .set(referenceForModel(ServiceMonitorModel), ServiceMonitorsPage)
   .set(referenceForModel(AlertmanagerModel), AlertManagersPage)

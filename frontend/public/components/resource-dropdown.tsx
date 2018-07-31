@@ -8,7 +8,7 @@ import { Map as ImmutableMap, OrderedMap, Set as ImmutableSet } from 'immutable'
 import * as classNames from 'classnames';
 
 import { Dropdown, ResourceIcon } from './utils';
-import { K8sKind, K8sResourceKindReference, referenceForModel, apiVersionForReference } from '../module/k8s';
+import { K8sKind, K8sResourceKindReference, referenceForModel, apiVersionForReference, kindForReference } from '../module/k8s';
 
 // Blacklist known duplicate resources.
 const blacklistGroups = ImmutableSet([
@@ -88,7 +88,9 @@ const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = props => {
     )
     .toJS() as {[s: string]: JSX.Element};
 
-  return <Dropdown className={classNames('co-type-selector', className)} items={allItems} title={allItems[selected]} onChange={onChange} selectedKey={selected} />;
+  const selectedKey = allItems[selected] ? selected : kindForReference(selected);
+
+  return <Dropdown className={classNames('co-type-selector', className)} items={allItems} title={allItems[selectedKey]} onChange={onChange} selectedKey={selectedKey} />;
 };
 
 const resourceListDropdownStateToProps = ({k8s}) => ({
@@ -108,7 +110,7 @@ ResourceListDropdown.propTypes = {
 
 export type ResourceListDropdownProps = {
   // FIXME: `selected` should be GroupVersionKind
-  selected: string;
+  selected: K8sResourceKindReference;
   onChange: Function;
   allModels: ImmutableMap<K8sResourceKindReference, K8sKind>;
   preferredVersions: {groupVersion: string, version: string}[];
