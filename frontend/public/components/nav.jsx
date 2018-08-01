@@ -419,6 +419,11 @@ export class Nav extends React.Component {
             <ResourceNSLink resource="imagestreams" name={ImageStreamModel.labelPlural} onClick={this.close} required={FLAGS.OPENSHIFT} startsWith={imagestreamsStartsWith} />
           </NavSection>
 
+          <NavSection text="Service Catalog" icon="pficon pficon-catalog" required={FLAGS.SERVICE_CATALOG} >
+            <ResourceNSLink resource="serviceinstances" name="Service Instances" onClick={this.close} />
+            <ResourceNSLink resource="servicebindings" name="Service Bindings" onClick={this.close} />
+          </NavSection>
+
           <MonitoringNavSection closeMenu={this.close} />
 
           <NavSection text="Administration" icon="fa fa-cog">

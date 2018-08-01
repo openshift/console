@@ -46,6 +46,8 @@ import {
   ClusterRoleModel,
   ContainerModel,
   CatalogSourceModel,
+  ServiceInstanceModel,
+  ServiceBindingModel,
 } from '../models';
 
 export const resourceDetailPages = ImmutableMap<GroupVersionKind | string, () => Promise<React.ComponentType<any>>>()
@@ -70,6 +72,8 @@ export const resourceDetailPages = ImmutableMap<GroupVersionKind | string, () =>
   .set(referenceForModel(ReplicationControllerModel), () => import('./replication-controller' /* webpackChunkName: "replication-controller" */).then(m => m.ReplicationControllersDetailsPage))
   .set(referenceForModel(SecretModel), () => import('./secret' /* webpackChunkName: "secret" */).then(m => m.SecretsDetailsPage))
   .set(referenceForModel(ServiceAccountModel), () => import('./service-account' /* webpackChunkName: "service-account" */).then(m => m.ServiceAccountsDetailsPage))
+  .set(referenceForModel(ServiceInstanceModel), () => import('./service-instance' /* webpackChunkName: "service-instance" */).then(m => m.ServiceInstanceDetailsPage))
+  .set(referenceForModel(ServiceBindingModel), () => import('./service-binding' /* webpackChunkName: "service-binding" */).then(m => m.ServiceBindingDetailsPage))
   .set(referenceForModel(ServiceModel), () => import('./service' /* webpackChunkName: "service" */).then(m => m.ServicesDetailsPage))
   .set(referenceForModel(IngressModel), () => import('./ingress' /* webpackChunkName: "ingress" */).then(m => m.IngressesDetailsPage))
   .set(referenceForModel(RouteModel), () => import('./routes' /* webpackChunkName: "routes" */).then(m => m.RoutesDetailsPage))
@@ -109,6 +113,8 @@ export const resourceListPages = ImmutableMap<GroupVersionKind | string, () => P
   .set(referenceForModel(ReplicationControllerModel), () => import('./replication-controller' /* webpackChunkName: "replication-controller" */).then(m => m.ReplicationControllersPage))
   .set(referenceForModel(SecretModel), () => import('./secret' /* webpackChunkName: "secret" */).then(m => m.SecretsPage))
   .set(referenceForModel(ServiceAccountModel), () => import('./service-account' /* webpackChunkName: "service-account" */).then(m => m.ServiceAccountsPage))
+  .set(referenceForModel(ServiceInstanceModel), () => import('./service-instance' /* webpackChunkName: "service-instance" */).then(m => m.ServiceInstancesPage))
+  .set(referenceForModel(ServiceBindingModel), () => import('./service-binding' /* webpackChunkName: "service-binding" */).then(m => m.ServiceBindingsPage))
   .set(referenceForModel(ServiceModel), () => import('./service' /* webpackChunkName: "service" */).then(m => m.ServicesPage))
   .set(referenceForModel(IngressModel), () => import('./ingress' /* webpackChunkName: "ingress" */).then(m => m.IngressesPage))
   .set(referenceForModel(RouteModel), () => import('./routes' /* webpackChunkName: "routes" */).then(m => m.RoutesPage))

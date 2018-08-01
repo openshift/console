@@ -1,19 +1,26 @@
-.node-ready,
-.pvc-bound,
-.route-accepted {
-  color: $color-pf-green-400;
-}
-
-.node-not-ready,
-.pvc-lost,
-.route-rejected {
-  color: $color-red-error;
-}
-
 .co-icon-space-l {
   margin-left: 0.25em;
 }
 
 .co-icon-space-r {
   margin-right: 0.25em;
+}
+
+.co-status-icon {
+  padding-right: 6px;
+  width: 16px;
+}
+
+.node-ready,
+.pvc-bound,
+.route-accepted,
+.status-ready {
+  color: $color-pf-green-400;
+}
+
+.node-not-ready,
+.pvc-lost,
+.route-rejected,
+.status-failed {
+  color: $color-red-error;
 }
