@@ -7,6 +7,7 @@ import { k8sBasePath, referenceForModel } from './module/k8s/k8s';
 import { k8sCreate } from './module/k8s/resource';
 import { types } from './module/k8s/k8s-actions';
 import { coFetchJSON } from './co-fetch';
+import { UIActions } from './ui/ui-actions';
 
 /* global
   FLAGS: false,
@@ -24,6 +25,7 @@ import { coFetchJSON } from './co-fetch';
   CAN_LIST_PV: false,
   CAN_LIST_STORE: false,
   CAN_LIST_CRD: false,
+  CAN_CREATE_PROJECT: false
   PROJECTS_AVAILABLE: false
  */
 export enum FLAGS {
@@ -41,7 +43,8 @@ export enum FLAGS {
   CAN_LIST_PV = 'CAN_LIST_PV',
   CAN_LIST_STORE = 'CAN_LIST_STORE',
   CAN_LIST_CRD = 'CAN_LIST_CRD',
-  PROJECTS_AVAILABLE = 'PROJECTS_AVAILABLE'
+  CAN_CREATE_PROJECT = 'CAN_CREATE_PROJECT',
+  PROJECTS_AVAILABLE = 'PROJECTS_AVAILABLE',
 }
 
 export const DEFAULTS_ = _.mapValues(FLAGS, flag => flag === FLAGS.AUTH_ENABLED
@@ -59,13 +62,17 @@ export const CRDs = {
 const SET_FLAG = 'SET_FLAG';
 export const setFlag = (dispatch, flag, value) => dispatch({flag, value, type: SET_FLAG});
 
+const retryFlagDetection = (dispatch, cb) => {
+  setTimeout(() => cb(dispatch), 15000);
+};
+
 const handleError = (res, flag, dispatch, cb) => {
   const status = _.get(res, 'response.status');
-  if (status === 403 || status === 502) {
+  if (_.includes([403, 502], status)) {
     setFlag(dispatch, flag, undefined);
   }
   if (!_.includes([401, 403, 500], status)) {
-    setTimeout(() => cb(dispatch), 15000);
+    retryFlagDetection(dispatch, cb);
   }
 };
 
@@ -102,11 +109,27 @@ const detectProjectsAvailable = dispatch => coFetchJSON(projectListPath)
       : handleError(err, FLAGS.PROJECTS_AVAILABLE, dispatch, detectProjectsAvailable)
   );
 
+const projectRequestPath = `${k8sBasePath}/apis/project.openshift.io/v1/projectrequests`;
+const detectCanCreateProject = dispatch => coFetchJSON(projectRequestPath)
+  .then(
+    res => setFlag(dispatch, FLAGS.CAN_CREATE_PROJECT, res.status === 'Success'),
+    err => {
+      const status = _.get(err, 'response.status');
+      if (status === 403) {
+        setFlag(dispatch, FLAGS.CAN_CREATE_PROJECT, false);
+        dispatch(UIActions.setCreateProjectMessage(err.message));
+      } else if (!_.includes([400, 404, 500], status)) {
+        retryFlagDetection(dispatch, detectCanCreateProject);
+      }
+    }
+  );
+
 export let featureActions = [
   detectSecurityLabellerFlags,
   detectCalicoFlags,
   detectOpenShift,
-  detectProjectsAvailable
+  detectProjectsAvailable,
+  detectCanCreateProject
 ];
 
 // generate additional featureActions
