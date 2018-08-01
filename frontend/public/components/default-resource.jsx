@@ -7,7 +7,7 @@ import { fromNow } from './utils/datetime';
 import { referenceFor, kindForReference } from '../module/k8s';
 
 
-const menuActions = [Cog.factory.ModifyLabels, Cog.factory.ModifyAnnotations, Cog.factory.Edit, Cog.factory.Delete];
+const menuActions = [Cog.factory.Edit, Cog.factory.Delete];
 
 const Header = props => <ListHeader>
   <ColHead {...props} className="col-xs-6 col-sm-4" sortField="metadata.name">Name</ColHead>
