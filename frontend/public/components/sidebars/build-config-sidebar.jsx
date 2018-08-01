@@ -95,14 +95,14 @@ spec:
 
 const samples = [
   {
-    header: 'Docker build',
-    details: 'The Docker build strategy invokes the docker build command, and it therefore expects a repository with a Dockerfile and all required artifacts in it to produce a runnable image.',
+    header: 'Build from Dockerfile',
+    details: 'A Dockerfile build performs an image build using a Dockerfile in the source repository or specified in build configuration.',
     templateName: 'docker-build',
     kind: 'BuildConfig',
   },
   {
     header: 'Source-to-Image (S2I) build',
-    details: 'Source-to-Image (S2I) is a tool for building reproducible, Docker-formatted container images. It produces ready-to-run images by injecting application source into a container image and assembling a new image.',
+    details: 'S2I is a tool for building reproducible container images. It produces ready-to-run images by injecting the application source into a container image and assembling a new image.',
     templateName: 's2i-build',
     kind: 'BuildConfig',
   },
