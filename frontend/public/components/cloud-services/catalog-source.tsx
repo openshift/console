@@ -154,7 +154,7 @@ export const CatalogSourceList = withFallback((props: CatalogSourceListProps) =>
 
 export const CatalogSourcesPage: React.SFC<CatalogSourcePageProps> = (props) => {
   type Flatten = (resources: {[kind: string]: {data: K8sResourceKind[]}}) => K8sResourceKind[];
-  const flatten: Flatten = resources => resources.catalogSource.data;
+  const flatten: Flatten = resources => _.get(resources.catalogSource, 'data', []);
 
   return <MultiListPage
     {...props}
