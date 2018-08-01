@@ -287,14 +287,14 @@ export class Dropdown extends DropdownMixin {
 
   render() {
     const {active, autocompleteText, selectedKey, items, title, bookmarks, keyboardHoverKey, favoriteKey} = this.state;
-    const {autocompleteFilter, autocompletePlaceholder, noButton, noSelection, className, buttonClassName, menuClassName, storageKey, canFavorite, dropDownClassName, titlePrefix} = this.props;
+    const {autocompleteFilter, autocompletePlaceholder, noButton, noSelection, className, buttonClassName, menuClassName, storageKey, canFavorite, dropDownClassName, titlePrefix, sortedItemKeys} = this.props;
 
     const spacerBefore = this.props.spacerBefore || new Set();
     const headerBefore = this.props.headerBefore || {};
     const rows = [];
     const bookMarkRows = [];
 
-    _.each(items, (content, key) => {
+    const addItem = (key, content) => {
       const selected = !noSelection && key === selectedKey;
       const hover = key === keyboardHoverKey;
       const klass = classNames({'active': selected});
@@ -310,7 +310,13 @@ export class Dropdown extends DropdownMixin {
         rows.push(<li key={`${key}-header`}><div className="dropdown-menu__header" >{headerBefore[key]}</div></li>);
       }
       rows.push(<DropDownRow className={klass} key={key} itemKey={key} content={content} onBookmark={storageKey && this.onBookmark} onclick={this.onClick} selected={selected} hover={hover} />);
-    });
+    };
+
+    if (sortedItemKeys) {
+      _.each(sortedItemKeys, k => addItem(k, items[k]));
+    } else {
+      _.each(items, (v, k) => addItem(k, v));
+    }
 
     //Adding `dropDownClassName` specifically to use patternfly's context selector component, which expects `bootstrap-select` class on the dropdown. We can remove this additional property if that changes in upcoming patternfly versions.
     return <div className={className} ref={this.dropdownElement} style={this.props.style}>
@@ -365,6 +371,7 @@ Dropdown.propTypes = {
   enableBookmarks: PropTypes.bool,
   headerBefore: PropTypes.objectOf(PropTypes.string),
   items: PropTypes.object.isRequired,
+  sortedItemKeys: PropTypes.array,
   menuClassName: PropTypes.string,
   noButton: PropTypes.bool,
   noSelection: PropTypes.bool,
