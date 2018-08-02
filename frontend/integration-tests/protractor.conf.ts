@@ -87,7 +87,7 @@ export const config: Config = {
   },
   suites: {
     filter: ['tests/base.scenario.ts', 'tests/filter.scenario.ts'],
-    crud: ['tests/base.scenario.ts', 'tests/crud.scenario.ts', 'tests/filter.scenario.ts', 'tests/modal-annotations.scenario.ts'],
+    crud: ['tests/base.scenario.ts', 'tests/crud.scenario.ts', 'tests/filter.scenario.ts', 'tests/modal-annotations.scenario.ts', 'tests/environment.scenario.ts'],
     alm: ['tests/base.scenario.ts', 'tests/alm/catalog.scenario.ts', 'tests/alm/etcd.scenario.ts', 'tests/alm/prometheus.scenario.ts'],
     almUpgrade: ['tests/base.scenario.ts', 'tests/alm/update-channel-approval.scenario.ts'],
     performance: ['tests/base.scenario.ts', 'tests/performance.scenario.ts'],
