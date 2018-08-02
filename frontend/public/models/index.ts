@@ -2,56 +2,56 @@
 import { K8sKind } from '../module/k8s';
 
 export const CatalogSourceModel: K8sKind = {
-  kind: 'CatalogSource-v1',
-  label: 'CatalogSource-v1',
-  labelPlural: 'CatalogSource-v1s',
-  apiGroup: 'app.coreos.com',
+  kind: 'CatalogSource',
+  label: 'CatalogSource',
+  labelPlural: 'CatalogSources',
+  apiGroup: 'operators.coreos.com',
   apiVersion: 'v1alpha1',
-  path: 'catalogsource-v1s',
+  path: 'catalogsources',
   abbr: 'CS',
   namespaced: true,
   crd: true,
-  plural: 'catalogsource-v1s',
+  plural: 'catalogsources',
 };
 
 export const ClusterServiceVersionModel: K8sKind = {
-  kind: 'ClusterServiceVersion-v1',
-  label: 'ClusterServiceVersion-v1',
-  labelPlural: 'ClusterServiceVersion-v1s',
-  apiGroup: 'app.coreos.com',
+  kind: 'ClusterServiceVersion',
+  label: 'ClusterServiceVersion',
+  labelPlural: 'ClusterServiceVersions',
+  apiGroup: 'operators.coreos.com',
   apiVersion: 'v1alpha1',
-  path: 'clusterserviceversion-v1s',
+  path: 'clusterserviceversions',
   abbr: 'CSV',
   namespaced: true,
   crd: true,
-  plural: 'clusterserviceversion-v1s',
+  plural: 'clusterserviceversions',
   propagationPolicy : 'Foreground',
 };
 
 export const InstallPlanModel: K8sKind = {
-  kind: 'InstallPlan-v1',
-  label: 'InstallPlan-v1',
-  labelPlural: 'InstallPlan-v1s',
-  apiGroup: 'app.coreos.com',
+  kind: 'InstallPlan',
+  label: 'InstallPlan',
+  labelPlural: 'InstallPlans',
+  apiGroup: 'operators.coreos.com',
   apiVersion: 'v1alpha1',
-  path: 'installplan-v1s',
+  path: 'installplans',
   abbr: 'IP',
   namespaced: true,
   crd: true,
-  plural: 'installplan-v1s',
+  plural: 'installplans',
 };
 
 export const SubscriptionModel: K8sKind = {
-  kind: 'Subscription-v1',
-  label: 'Subscription-v1',
-  labelPlural: 'Subscription-v1s',
-  apiGroup: 'app.coreos.com',
+  kind: 'Subscription',
+  label: 'Subscription',
+  labelPlural: 'Subscriptions',
+  apiGroup: 'operators.coreos.com',
   apiVersion: 'v1alpha1',
-  path: 'subscription-v1s',
+  path: 'subscriptions',
   abbr: 'SUB',
   namespaced: true,
   crd: true,
-  plural: 'subscription-v1s',
+  plural: 'subscriptions',
 };
 
 export const EtcdClusterModel: K8sKind = {

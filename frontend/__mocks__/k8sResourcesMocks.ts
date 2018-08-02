@@ -13,8 +13,8 @@ export const testNamespace: K8sResourceKind = {
 };
 
 export const testClusterServiceVersion: ClusterServiceVersionKind = {
-  apiVersion: 'app.coreos.com/v1alpha1',
-  kind: 'ClusterServiceVersion-v1',
+  apiVersion: 'operators.coreos.com/v1alpha1',
+  kind: 'ClusterServiceVersion',
   metadata: {
     name: 'testapp',
     uid: 'c02c0a8f-88e0-11e7-851b-080027b424ef',
@@ -39,12 +39,12 @@ export const testClusterServiceVersion: ClusterServiceVersionKind = {
       {base64data: '', mediatype: 'image/png',}
     ],
     labels: {
-      'alm-owner-testapp': 'testapp.clusterserviceversion-v1s.app.coreos.com.v1alpha1',
+      'alm-owner-testapp': 'testapp.clusterserviceversions.operators.coreos.com.v1alpha1',
       'alm-catalog': 'open-cloud-services.coreos.com',
     },
     selector: {
       matchLabels: {
-        'alm-owner-testapp': 'testapp.clusterserviceversion-v1s.app.coreos.com.v1alpha1'
+        'alm-owner-testapp': 'testapp.clusterserviceversions.operators.coreos.com.v1alpha1'
       }
     },
     customresourcedefinitions: {
@@ -98,8 +98,8 @@ export const testClusterServiceVersion: ClusterServiceVersionKind = {
 };
 
 export const localClusterServiceVersion: ClusterServiceVersionKind = {
-  apiVersion: 'app.coreos.com/v1alpha1',
-  kind: 'ClusterServiceVersion-v1',
+  apiVersion: 'operators.coreos.com/v1alpha1',
+  kind: 'ClusterServiceVersion',
   metadata: {
     name: 'local-testapp',
     uid: 'c02c0a8f-88e0-12e7-851b-080027b424ef',
@@ -110,11 +110,11 @@ export const localClusterServiceVersion: ClusterServiceVersionKind = {
     displayName: 'Local Test App',
     description: 'This app does cool stuff - locally',
     labels: {
-      'alm-owner-local-testapp': 'local-testapp.clusterserviceversion-v1s.app.coreos.com.v1alpha1',
+      'alm-owner-local-testapp': 'local-testapp.clusterserviceversions.operators.coreos.com.v1alpha1',
     },
     selector: {
       matchLabels: {
-        'alm-owner-local-testapp': 'local-testapp.clusterserviceversion-v1s.app.coreos.com.v1alpha1'
+        'alm-owner-local-testapp': 'local-testapp.clusterserviceversions.operators.coreos.com.v1alpha1'
       }
     },
     customresourcedefinitions: {
@@ -139,7 +139,7 @@ export const testClusterServiceVersionResource: CustomResourceDefinitionKind = {
   metadata: {
     name: 'testresource.testapp.coreos.com',
     labels: {
-      'owner-testapp': 'testapp.clusterserviceversion-v1s.coreos.com',
+      'owner-testapp': 'testapp.clusterserviceversions.coreos.com',
     },
     annotations: {
       displayName: 'Dashboard',
@@ -180,7 +180,7 @@ export const testResourceInstance: ClusterServiceVersionResourceKind = {
 };
 
 export const testOwnedResourceInstance: ClusterServiceVersionResourceKind = {
-  apiVersion: 'ownedapp.coreos.com/v1alpha1',
+  apiVersion: 'ownedoperators.coreos.com/v1alpha1',
   kind: 'TestOwnedResource',
   metadata: {
     name: 'owned-test-resource',
@@ -206,8 +206,8 @@ export const testPackage: Package = {
 };
 
 export const testCatalogSource: CatalogSourceKind = {
-  apiVersion: 'app.coreos.com/v1alpha1',
-  kind: 'CatalogSource-v1',
+  apiVersion: 'operators.coreos.com/v1alpha1',
+  kind: 'CatalogSource',
   metadata: {
     name: 'test-catalog',
     namespace: 'tectonic-system',
@@ -222,13 +222,13 @@ export const testCatalogSource: CatalogSourceKind = {
 };
 
 export const testInstallPlan: InstallPlanKind = {
-  apiVersion: 'app.coreos.com/v1alpha1',
-  kind: 'InstallPlan-v1',
+  apiVersion: 'operators.coreos.com/v1alpha1',
+  kind: 'InstallPlan',
   metadata: {
     namespace: 'default',
     name: 'etcd',
     uid: '042d62a9-63dd-4ece-b74a-95944ce78268',
-    ownerReferences: [{name: 'etcd-subscription', kind: 'Subscription-v1', uid: 'c0220a8f-88e0-12e7-83ed-081027b424ea', apiVersion: 'app.coreos.com/v1alpha1'}],
+    ownerReferences: [{name: 'etcd-subscription', kind: 'Subscription', uid: 'c0220a8f-88e0-12e7-83ed-081027b424ea', apiVersion: 'operators.coreos.com/v1alpha1'}],
   },
   spec: {
     clusterServiceVersionNames: ['etcd'],
@@ -260,8 +260,8 @@ export const testOperatorDeployment: K8sResourceKind = {
 };
 
 export const testSubscription: SubscriptionKind = {
-  apiVersion: 'app.coreos.com/v1alpha1',
-  kind: 'Subscription-v1',
+  apiVersion: 'operators.coreos.com/v1alpha1',
+  kind: 'Subscription',
   metadata: {
     namespace: 'default',
     name: 'test-subscription',

@@ -2,7 +2,7 @@
 
 import { browser, by, $, ExpectedConditions as until } from 'protractor';
 
-import { appHost, checkLogs, checkErrors } from '../../protractor.conf';
+import { appHost, checkLogs, checkErrors, testName } from '../../protractor.conf';
 import * as catalogView from '../../views/catalog.view';
 import * as sidenavView from '../../views/sidenav.view';
 
@@ -10,7 +10,7 @@ describe('Installing a service from the Catalog Sources', () => {
   const openCloudServices = new Set(['etcd', 'Prometheus', 'Prometheus']);
 
   beforeAll(async() => {
-    browser.get(`${appHost}/overview/all-namespaces`);
+    browser.get(`${appHost}/overview/ns/${testName}`);
     await browser.wait(until.presenceOf($('#sidebar')));
   });
 
@@ -38,6 +38,6 @@ describe('Installing a service from the Catalog Sources', () => {
     await catalogView.entryRowFor('Prometheus').element(by.buttonText('Create Subscription')).click();
     await browser.wait(until.presenceOf($('.ace_text-input')));
 
-    expect($('.yaml-editor-header').getText()).toEqual('Create Subscription-v1');
+    expect($('.yaml-editor-header').getText()).toEqual('Create Subscription');
   });
 });

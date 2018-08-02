@@ -65,7 +65,7 @@ describe('Interacting with the etcd OCS', () => {
   }, deleteRecoveryTime);
 
   it('displays etcd OCS in "Available Operators" view for the namespace', async() => {
-    await browser.get(`${appHost}/k8s/ns/${testName}/clusterserviceversion-v1s`);
+    await browser.get(`${appHost}/k8s/ns/${testName}/clusterserviceversions`);
     await appListView.isLoaded();
     await browser.sleep(500);
 

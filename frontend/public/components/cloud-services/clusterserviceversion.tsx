@@ -148,7 +148,7 @@ export const ClusterServiceVersionsPage = connect(stateToProps)(
         },
         title: 'Catalog',
       }];
-      const csvResource = {kind: referenceForModel(ClusterServiceVersionModel), namespaced: true, prop: 'ClusterServiceVersion-v1'};
+      const csvResource = {kind: referenceForModel(ClusterServiceVersionModel), namespaced: true, prop: 'ClusterServiceVersion'};
 
       // Wait for OpenShift feature detection to prevent flash of "disabled" UI
       if (this.props.loading) {

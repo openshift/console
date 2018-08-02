@@ -9,7 +9,7 @@ describe('referenceFor', () => {
   });
 
   it('returns a reference for objects with an API group', () => {
-    expect(referenceFor(testClusterServiceVersion)).toEqual('app.coreos.com:v1alpha1:ClusterServiceVersion-v1');
+    expect(referenceFor(testClusterServiceVersion)).toEqual('operators.coreos.com:v1alpha1:ClusterServiceVersion');
   });
 });
 

@@ -212,12 +212,12 @@ describe(InstallPlanDetailsPage.displayName, () => {
     expect(wrapper.find(DetailsPage).props().pages.map(p => p.name)).toEqual(['Overview', 'YAML', 'Components']);
   });
 
-  it('passes `breadcrumbsFor` function for rendering a link back to the parent `Subscription-v1` if it has one', () => {
+  it('passes `breadcrumbsFor` function for rendering a link back to the parent `Subscription` if it has one', () => {
     const breadcrumbsFor = wrapper.find(DetailsPage).props().breadcrumbsFor;
 
     expect(breadcrumbsFor(testInstallPlan)).toEqual([{
       name: testInstallPlan.metadata.ownerReferences[0].name,
-      path: `/k8s/ns/default/subscription-v1s/${testInstallPlan.metadata.ownerReferences[0].name}`,
+      path: `/k8s/ns/default/subscriptions/${testInstallPlan.metadata.ownerReferences[0].name}`,
     }, {
       name: 'Install Plan Details',
       path: match.url,
