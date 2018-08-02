@@ -138,7 +138,7 @@ export const EditYAML = connect(stateToProps)(
       });
     }
 
-    loadYaml(reload=false, obj=this.props.obj) {
+    loadYaml(reload=false, obj=this.props.obj, readOnly=this.props.readOnly) {
       if (_.isEmpty(obj)) {
         return;
       }
@@ -179,6 +179,7 @@ export const EditYAML = connect(stateToProps)(
         this.ace.getSession().setUndoManager(new ace.UndoManager());
       }
       this.ace.focus();
+      this.ace.setReadOnly(readOnly);
       this.displayedVersion = _.get(obj, 'metadata.resourceVersion');
       this.setState({initialized: true, stale: false});
       this.resize_();
@@ -292,7 +293,7 @@ export const EditYAML = connect(stateToProps)(
       */
 
       const {error, success, stale} = this.state;
-      const {create, obj, showHeader = false} = this.props;
+      const {create, obj, showHeader = false, readOnly} = this.props;
       const kind = obj.kind;
       const model = this.getModel(obj);
 
@@ -313,7 +314,7 @@ export const EditYAML = connect(stateToProps)(
                       <span className="pficon pficon-info"></span>This object has been updated. Click reload to see the new version.
                     </p>}
                     {create && <button type="submit" className="btn btn-primary" id="save-changes" onClick={() => this.save()}>Create</button>}
-                    {!create && <button type="submit" className="btn btn-primary" id="save-changes" onClick={() => this.save()}>Save Changes</button>}
+                    {!create && !readOnly && <button type="submit" className="btn btn-primary" id="save-changes" onClick={() => this.save()}>Save Changes</button>}
                     {!create && <button type="submit" className="btn btn-default" id="reload-object" onClick={() => this.reload()}>Reload</button>}
                     <button className="btn btn-default" id="cancel" onClick={() => this.onCancel()}>Cancel</button>
                     <button type="submit" className="btn btn-default pull-right hidden-sm hidden-xs" onClick={() => this.download()}><i className="fa fa-download"></i>&nbsp;Download</button>

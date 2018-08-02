@@ -65,6 +65,7 @@
     "js-base64": "^2.4.5",
     "js-yaml": "3.x",
     "lodash-es": "4.x",
+    "openshift-logos-icon": "1.6.0",
     "patternfly": "^3.45.0",
     "plotly.js": "1.28.x",
     "prop-types": "15.6.x",

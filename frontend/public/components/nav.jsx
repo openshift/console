@@ -8,7 +8,8 @@ import * as PropTypes from 'prop-types';
 import { FLAGS, connectToFlags, featureReducerName, flagPending } from '../features';
 import { MonitoringRoutes, connectToURLs } from '../monitoring';
 import { formatNamespacedRouteForResource } from '../ui/ui-actions';
-import { BuildConfigModel, BuildModel, ClusterServiceVersionModel, DeploymentConfigModel, ImageStreamModel, SubscriptionModel, InstallPlanModel, CatalogSourceModel } from '../models';
+import { BuildConfigModel, BuildModel, ClusterServiceVersionModel, DeploymentConfigModel, ImageStreamModel,
+  SubscriptionModel, InstallPlanModel, CatalogSourceModel, ClusterServiceClassModel } from '../models';
 import { referenceForModel } from '../module/k8s';
 import { authSvc } from '../module/auth';
 
@@ -420,6 +421,7 @@ export class Nav extends React.Component {
           </NavSection>
 
           <NavSection text="Service Catalog" icon="pficon pficon-catalog" required={FLAGS.SERVICE_CATALOG} >
+            <ResourceNSLink resource="clusterserviceclasses" name={ClusterServiceClassModel.labelPlural} onClick={this.close} required={FLAGS.SERVICE_CATALOG} />
             <ResourceNSLink resource="serviceinstances" name="Service Instances" onClick={this.close} />
             <ResourceNSLink resource="servicebindings" name="Service Bindings" onClick={this.close} />
           </NavSection>

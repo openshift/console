@@ -684,8 +684,8 @@ export const ClusterServiceBrokerModel: K8sKind = {
 };
 
 export const ClusterServiceClassModel: K8sKind = {
-  label: 'Cluster Service Class',
-  labelPlural: 'Cluster Service Classes',
+  label: 'Service Class',
+  labelPlural: 'Service Classes',
   apiVersion: 'v1beta1',
   path: 'clusterserviceclasses',
   apiGroup: 'servicecatalog.k8s.io',
