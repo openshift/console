@@ -18,6 +18,7 @@ import { ContainersDetailsPage } from './container';
 import { CreateYAML, EditYAMLPage } from './create-yaml';
 import { ErrorPage, ErrorPage404 } from './error';
 import { EventStreamPage } from './events';
+import { Overview } from './overview';
 import { GlobalNotifications } from './global-notifications';
 import { Masthead } from './masthead';
 import { NamespaceSelector } from './namespace';
@@ -159,7 +160,7 @@ class App extends React.PureComponent {
         <Switch>
           <Route path={['/all-namespaces', '/ns/:ns',]} component={RedirectComponent} />
           <Route path="/overview/all-namespaces" exact component={ClusterOverviewContainer} />
-          <Route path="/overview/ns/:ns" exact component={ClusterOverviewContainer} />
+          <Route path="/overview/ns/:ns" exact component={NamespaceFromURL(Overview)} />
           <Route path="/overview" exact component={NamespaceRedirect} />
           <Route path="/cluster-health" exact component={ClusterHealth} />
           <Route path="/start-guide" exact component={StartGuidePage} />

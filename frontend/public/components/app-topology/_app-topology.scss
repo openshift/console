@@ -1,0 +1,319 @@
+$app-topology-transition-delay: 0.25s;
+
+@-webkit-keyframes loading-spin2 {
+  from { -webkit-transform: rotate(0deg);}
+  to { -webkit-transform: rotate(360deg);}
+}
+
+@keyframes loading-spin {
+  from { transform: scale(1) rotate(0deg);}
+  to { transform: scale(1) rotate(360deg);}
+}
+
+.app-topology {
+
+  .blank-slate-pf {
+    background: transparent;
+    border: 0;
+    width: 100%;
+
+    .pficon-in-progress {
+      -animation: loading-spin 1s infinite linear;
+      -webkit-animation: loading-spin2 1s infinite linear;
+    }
+  }
+
+  .co-m-pane__filter-bar {
+    @media (min-width: $screen-sm) {
+      border-bottom: 1px solid $color-pf-black-300;
+      margin-bottom: 0;
+      margin-left: 0;
+      margin-right: 0;
+      padding: 0 30px 20px;
+    }
+  }
+
+  .co-m-pane__filter-bar-group-label {
+    margin-right: 10px;
+    padding: 2px 0;
+  }
+
+  .co-m-pane__filter-bar-group-value {
+    flex: 1;
+  }
+
+  .app-topology-view {
+    display: flex;
+    flex-direction: row;
+    padding-left: 30px;
+  }
+
+  .app-topology-list-view {
+    align-content: flex-start;
+    align-items: flex-start;
+    display: flex;
+    flex: 1;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+
+  .app-topology-group {
+    padding-right: 30px;
+    padding-top: 20px;
+  }
+
+  .app-topology-group-items {
+    background-color: $color-pf-blue-50;
+    border: 2px solid $color-pf-blue-400;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    @media (min-width: $screen-sm) {
+      flex-direction: row;
+    }
+  }
+
+  .app-topology-details {
+    background-color: $color-pf-white;
+    bottom: 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 1);
+    -webkit-transition:height, $app-topology-transition-delay linear;
+    -moz-transition: height, $app-topology-transition-delay linear;
+    -ms-transition: height, $app-topology-transition-delay linear;
+    -o-transition: height, $app-topology-transition-delay linear;
+    left: 0;
+    position: fixed;
+    top: 70px;
+    width: 0;
+
+    @media (min-width: $screen-sm) {
+      bottom: inherit;
+      height: 100%;
+      position: relative;
+      left: inherit;
+      top: inherit;
+    }
+
+    transition: height, $app-topology-transition-delay linear;
+
+    .details-header-button {
+      color: $gray-darker;
+      cursor: pointer;
+      line-height: inherit;
+      padding: 2px 10px;
+      position: absolute;
+      &:hover,
+      &:focus {
+        color: $color-pf-blue-400;
+        text-decoration: none;
+      }
+      &:hover {
+        color: $link-color;
+      }
+    }
+
+    .details-toggle-collapse {
+      display: none;
+      left: 0;
+      @media (min-width: $screen-sm) {
+        display: inherit;
+      }
+      &:before {
+        content: "\f101";
+        font-family: "FontAwesome";
+      }
+    }
+
+    .details-close {
+      right: 0;
+      &:before {
+        content: $pficon-var-close;
+        font-family: $icon-font-name-pf;
+      }
+    }
+
+    &.details-collapsed {
+      @media (min-width: $screen-sm) {
+        .details-toggle-collapse {
+          &:before {
+            content: "\f100";
+          }
+        }
+        .details-close {
+          display: none;
+        }
+        .co-m-nav-title--detail {
+          padding: 25px 0 0;
+        }
+        .co-m-pane__heading {
+          border-top: 1px solid $color-pf-black-700;
+          padding-top: 10px;
+        }
+        .co-m-pane__name {
+          margin: 0;
+          padding-left: 4px;
+          writing-mode: vertical-lr;
+        }
+        .co-m-resource-icon {
+          height: inherit;
+          margin-bottom: 15px;
+          padding: 7px 0;
+        }
+        .btn--actions {
+          display: none;
+        }
+        .details-body {
+          display: none;
+        }
+      }
+    }
+  }
+
+  .details-shown {
+    .app-topology-details {
+      -webkit-transition:height, $app-topology-transition-delay linear;
+      -moz-transition: height, $app-topology-transition-delay linear;
+      -ms-transition: height, $app-topology-transition-delay linear;
+      -o-transition: height, $app-topology-transition-delay linear;
+      transition: height, $app-topology-transition-delay linear;
+      width: 100%;
+
+      @media (min-width: $screen-sm) {
+        max-width: 100%;
+        width: 600px;
+        &.details-collapsed {
+          width: 38px;
+        }
+      }
+    }
+  }
+
+  .topology-details-metrics {
+    display: flex;
+    flex-direction: row;
+
+    .details-metric {
+      display: flex;
+      flex: 1;
+      justify-content: center;
+    }
+  }
+
+  .app-topology-item {
+    padding: 10px 0 10px 20px;
+  }
+
+  .app-topology-node-container {
+    position: relative;
+  }
+
+  .app-topology-routes {
+    display: flex;
+    flex-direction: row;
+    margin-left: 16px;
+  }
+
+  .app-topology-route {
+    border: 3px solid transparent;
+    border-radius: 24px;
+    border-bottom-color: $color-pf-black-300;
+    color: $color-pf-black-600;
+    font-size: 32px;
+    height: 50px;
+    margin-right: 10px;
+    width: 50px;
+
+    .route-icon {
+      left: 5px;
+      position: absolute;
+      top: 5px;
+    }
+  }
+
+  .app-topology-route-background {
+    height: 48px;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 48px;
+  }
+
+  .app-topology-background-circle {
+    fill: $color-pf-black-100;
+    &.selected {
+      stroke: $color-pf-blue-200;
+      stroke-width: 4px;
+    }
+  }
+  .app-topology-connector {
+    height: 50px;
+    margin-bottom: -12px;
+  };
+
+  .app-topology-connection-line {
+    fill: none;
+    stroke: $color-pf-black-300;
+    stroke-width: 3px;
+  }
+
+  .app-topology-deployment-config {
+    display: flex;
+    flex-direction: row;
+    margin-top: -7px;
+    max-height: 84px;
+
+    .app-topology-node-label {
+      margin-top: 10px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      width: 80px;
+      &.selected {
+        color: $color-pf-blue-300;
+      }
+    }
+    .app-topology-pod-donut {
+      left: 0;
+      position: relative;
+      top: -94px;
+      .main-svg {
+        background: transparent !important;
+      }
+    }
+  }
+
+  .app-topology-deployment-config-background {
+    fill: transparent;
+    height: 88px;
+    width: 88px;
+  }
+
+  .topology-details-metrics {
+    .deployment-donut-column {
+      display: flex;
+      flex-direction: column;
+    }
+    .deployment-donut-row {
+      display: flex;
+    }
+    .scaling-controls {
+      justify-content: center;
+      .btn.btn-link {
+        color: $color-pf-black-400;
+        font-size: 24px;
+        &:hover, &:active {
+          color: $color-pf-black-600;
+          text-decoration: none;
+        }
+        &.disabled {
+          cursor: not-allowed;
+          opacity: 0.4;
+          &:hover {
+            color: $color-pf-black-400;
+          }
+        }
+      }
+    }
+  }
+}

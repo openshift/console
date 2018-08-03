@@ -1,0 +1,23 @@
+.co-m-select {
+  .Select-placeholder, &.Select--single > .Select-control .Select-value, .Select-input > input {
+    line-height: 1.66667;
+    padding: 2px 6px;
+  }
+
+  .Select-placeholder {
+    max-width: calc(100% - 15px);
+  }
+
+  .Select-clear {
+    padding-top: 3px;
+  }
+
+  .Select-control {
+    height: inherit;
+  }
+
+  .Select-input {
+    height: inherit;
+    padding-left: 0;
+  }
+}
