@@ -26,9 +26,9 @@ export const NameValueEditor = DragDropContext(HTML5Backend)(class NameValueEdit
   }
 
   _appendConfigMapOrSecret() {
-    const {updateParentData, nameValuePairs} = this.props;
+    const {updateParentData, nameValuePairs, nameValueId} = this.props;
     const configMapSecretKeyRef = {name: '', key: ''};
-    updateParentData({nameValuePairs: nameValuePairs.concat([['', {configMapSecretKeyRef}, nameValuePairs.length]])});
+    updateParentData({nameValuePairs: nameValuePairs.concat([['', {configMapSecretKeyRef}, nameValuePairs.length]])}, nameValueId);
   }
 
   _remove(i) {
