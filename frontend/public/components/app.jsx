@@ -11,7 +11,7 @@ import { ALL_NAMESPACES_KEY } from '../const';
 import { connectToFlags, featureActions, flagPending, FLAGS } from '../features';
 import { detectMonitoringURLs } from '../monitoring';
 import { analyticsSvc } from '../module/analytics';
-import { ClusterOverviewContainer } from './cluster-overview-container';
+import { ClusterOverviewPage } from './cluster-overview';
 import { ClusterSettingsPage } from './cluster-settings/cluster-settings';
 import { LDAPPage } from './cluster-settings/ldap';
 import { ContainersDetailsPage } from './container';
@@ -158,8 +158,8 @@ class App extends React.PureComponent {
         <GlobalNotifications />
         <Switch>
           <Route path={['/all-namespaces', '/ns/:ns',]} component={RedirectComponent} />
-          <Route path="/overview/all-namespaces" exact component={ClusterOverviewContainer} />
-          <Route path="/overview/ns/:ns" exact component={ClusterOverviewContainer} />
+          <Route path="/overview/all-namespaces" exact component={ClusterOverviewPage} />
+          <Route path="/overview/ns/:ns" exact component={ClusterOverviewPage} />
           <Route path="/overview" exact component={NamespaceRedirect} />
           <Route path="/cluster-health" exact component={ClusterHealth} />
           <Route path="/start-guide" exact component={StartGuidePage} />
