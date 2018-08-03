@@ -2,14 +2,17 @@
 
 set -euo pipefail
 
-source ./contrib/environment.sh
 
+BRIDGE_K8S_AUTH_BEARER_TOKEN=$(kubectl config view -o json | jq '{myctx: .["current-context"], ctxs: .contexts[], users: .users[]}' | jq 'select(.myctx == .ctxs.name)' | jq 'select(.ctxs.context.user ==  .users.name)' | jq '.users.user.token' -r)
+export BRIDGE_K8S_AUTH_BEARER_TOKEN
 if [ -z "$BRIDGE_K8S_AUTH_BEARER_TOKEN" ];
 then
 	echo "no BRIDGE_K8S_AUTH_BEARER_TOKEN!?"
 	exit 1
 fi
 
+BRIDGE_K8S_MODE_OFF_CLUSTER_ENDPOINT=$(kubectl config view -o json | jq '{myctx: .["current-context"], ctxs: .contexts[], clusters: .clusters[]}' | jq 'select(.myctx == .ctxs.name)' | jq 'select(.ctxs.context.cluster ==  .clusters.name)' | jq '.clusters.cluster.server' -r)
+export BRIDGE_K8S_MODE_OFF_CLUSTER_ENDPOINT
 if [ -z "$BRIDGE_K8S_MODE_OFF_CLUSTER_ENDPOINT" ];
 then
 	echo "no BRIDGE_K8S_MODE_OFF_CLUSTER_ENDPOINT!?"

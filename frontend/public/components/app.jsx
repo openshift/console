@@ -180,7 +180,6 @@ class App extends React.PureComponent {
 
           <Route path="/k8s/cluster/clusterroles/:name/add-rule" exact component={EditRulePage} />
           <Route path="/k8s/cluster/clusterroles/:name/:rule/edit" exact component={EditRulePage} />
-          <Route path="/k8s/cluster/clusterroles/:name" component={props => <ResourceDetailsPage {...props} plural="clusterroles" />} />
 
           <Route path="/k8s/ns/:ns/roles/:name/add-rule" exact component={EditRulePage} />
           <Route path="/k8s/ns/:ns/roles/:name/:rule/edit" exact component={EditRulePage} />
