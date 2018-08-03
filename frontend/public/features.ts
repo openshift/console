@@ -15,7 +15,6 @@ import { UIActions } from './ui/ui-actions';
   CLUSTER_UPDATES: false,
   PROMETHEUS: false,
   MULTI_CLUSTER: false,
-  SECURITY_LABELLER: false,
   CLOUD_SERVICES: false,
   CALICO: false,
   CHARGEBACK: false,
@@ -33,7 +32,6 @@ export enum FLAGS {
   CLUSTER_UPDATES = 'CLUSTER_UPDATES',
   PROMETHEUS = 'PROMETHEUS',
   MULTI_CLUSTER = 'MULTI_CLUSTER',
-  SECURITY_LABELLER = 'SECURITY_LABELLER',
   CLOUD_SERVICES = 'CLOUD_SERVICES',
   CALICO = 'CALICO',
   CHARGEBACK = 'CHARGEBACK',
@@ -75,13 +73,6 @@ const handleError = (res, flag, dispatch, cb) => {
     retryFlagDetection(dispatch, cb);
   }
 };
-
-const labellerDeploymentPath = `${k8sBasePath}/apis/apps/v1/deployments?fieldSelector=metadata.name%3Dsecurity-labeller-app`;
-const detectSecurityLabellerFlags = dispatch => coFetchJSON(labellerDeploymentPath)
-  .then(
-    res => setFlag(dispatch, FLAGS.SECURITY_LABELLER, _.size(res.items) > 0),
-    err => handleError(err, FLAGS.SECURITY_LABELLER, dispatch, detectSecurityLabellerFlags)
-  );
 
 const calicoDaemonSetPath = `${k8sBasePath}/apis/apps/v1/daemonsets?fieldSelector=metadata.name%3Dkube-calico`;
 const detectCalicoFlags = dispatch => coFetchJSON(calicoDaemonSetPath)
@@ -125,7 +116,6 @@ const detectCanCreateProject = dispatch => coFetchJSON(projectRequestPath)
   );
 
 export let featureActions = [
-  detectSecurityLabellerFlags,
   detectCalicoFlags,
   detectOpenShift,
   detectProjectsAvailable,

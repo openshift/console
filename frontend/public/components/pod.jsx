@@ -183,7 +183,6 @@ const Details = ({obj: pod}) => {
     return sum + value;
   }, 0);
   const activeDeadlineSeconds = _.get(pod, 'spec.activeDeadlineSeconds');
-  const securityScan = _.get(pod, 'metadata.labels[secscan/fixables]');
 
   return <React.Fragment>
     <ScrollToTopOnMount />
@@ -216,13 +215,6 @@ const Details = ({obj: pod}) => {
             <dd>{pod.status.podIP || '-'}</dd>
             <dt>Node</dt>
             <dd><NodeLink name={pod.spec.nodeName} /></dd>
-            {
-              securityScan &&
-                <React.Fragment>
-                  <dt>Security Scan</dt>
-                  <dd>{securityScan} fixable packages</dd>
-                </React.Fragment>
-            }
           </dl>
         </div>
       </div>

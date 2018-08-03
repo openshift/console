@@ -630,18 +630,6 @@ export const NetworkPolicyModel: K8sKind = {
   id: 'networkpolicy'
 };
 
-export const PodVulnModel: K8sKind = {
-  apiVersion: 'v1',
-  label: 'Pod Vuln',
-  labelPlural: 'Pod Vulns',
-  path: 'podvulns',
-  plural: 'podvulns',
-  abbr: 'V',
-  namespaced: true,
-  kind: 'PodVuln',
-  id: 'podvuln'
-};
-
 export const CustomResourceDefinitionModel: K8sKind = {
   label: 'Custom Resource Definition',
   apiGroup: 'apiextensions.k8s.io',
