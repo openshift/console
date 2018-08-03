@@ -170,7 +170,10 @@ export const FireMan_ = connect(null, {filterList: k8sActions.filterList})(
           </Link>;
         } else if (createProps.items) {
           createLink = <div className="co-m-primary-action">
-            <Dropdown buttonClassName="btn-primary" id="item-create" title={createButtonText} items={createProps.items} onChange={(name) => history.push(createProps.createLink(name))} />
+            <Dropdown buttonClassName="btn-primary" id="item-create" noSelection={true} title={createButtonText} items={createProps.items} onChange={(name) => {
+              const action = createProps.action(name);
+              _.isFunction(action) ? action() : history.push(action);
+            }} />
           </div>;
         } else {
           createLink = <div className="co-m-primary-action">

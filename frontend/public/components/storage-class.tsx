@@ -56,10 +56,47 @@ const StorageClassDetails: React.SFC<StorageClassDetailsProps> = ({obj}) => <Rea
 export const StorageClassList: React.SFC = props => <List {...props} Header={StorageClassHeader} Row={StorageClassRow} />;
 StorageClassList.displayName = 'StorageClassList';
 
-export const StorageClassPage: React.SFC<StorageClassPageProps> = props =>
-  <ListPage {...props} title="Storage Classes" kind={StorageClassReference} ListComponent={StorageClassList} canCreate={true} filterLabel={props.filterLabel} />;
-StorageClassPage.displayName = 'StorageClassListPage';
+/* eslint-disable no-undef */
+export class StorageClassPage extends React.Component<StorageClassPageProps, StorageClassPageState> {
 
+  constructor(props){
+    super(props);
+    this.state = {
+      showWizard: false
+    };
+  }
+
+  createItems = {
+    wizard: 'Create with Wizard',
+    yaml: 'Create from YAML'
+  };
+
+  createProps = {
+    items: this.createItems,
+    action: (type) => {
+      switch (type) {
+        case 'wizard':
+          return () => this.setState({showWizard: true});
+        default:
+          return `/k8s/ns/${this.props.namespace}/storageclasses/new/`;
+      }
+    }
+  };
+
+  render() {
+    return <React.Fragment>
+      <StorageWizard show={this.state.showWizard} onClose={() => this.setState({showWizard: false})} />
+
+      <ListPage {...this.props}
+        title="Storage Classes"
+        kind={StorageClassReference}
+        ListComponent={StorageClassList}
+        canCreate={true}
+        filterLabel={this.props.filterLabel}
+        createProps={this.createProps} />;
+    </React.Fragment>;
+  }
+}
 
 const pages = [navFactory.details(detailsPage(StorageClassDetails)), navFactory.editYaml()];
 
@@ -68,7 +105,6 @@ export const StorageClassDetailsPage: React.SFC<StorageClassDetailsPageProps> = 
 };
 StorageClassDetailsPage.displayName = 'StorageClassDetailsPage';
 
-/* eslint-disable no-undef */
 export type StorageClassRowProps = {
   obj: any,
 };
@@ -79,6 +115,11 @@ export type StorageClassDetailsProps = {
 
 export type StorageClassPageProps = {
   filterLabel: string,
+  namespace: string
+};
+
+export type StorageClassPageState = {
+  showWizard: boolean
 };
 
 export type StorageClassDetailsPageProps = {
