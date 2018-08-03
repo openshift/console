@@ -2,7 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { registerTemplate } from '../../yaml-templates';
 
-registerTemplate('rbac.authorization.k8s.io/v1beta1.Role', `apiVersion: rbac.authorization.k8s.io/v1beta1
+registerTemplate('rbac.authorization.k8s.io/v1.Role', `apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: read-pods-within-ns
@@ -13,7 +13,7 @@ rules:
   verbs: ["get", "list", "watch"]
 `, 'read-pods-within-ns');
 
-registerTemplate('rbac.authorization.k8s.io/v1beta1.Role', `apiVersion: rbac.authorization.k8s.io/v1beta1
+registerTemplate('rbac.authorization.k8s.io/v1.Role', `apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: read-write-deployment-in-ext-and-apps-apis
@@ -24,7 +24,7 @@ rules:
   verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
 `, 'read-write-deployment-in-ext-and-apps-apis');
 
-registerTemplate('rbac.authorization.k8s.io/v1beta1.Role', `apiVersion: rbac.authorization.k8s.io/v1beta1
+registerTemplate('rbac.authorization.k8s.io/v1.Role', `apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: read-pods-and-read-write-jobs
@@ -38,7 +38,7 @@ rules:
   verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
 `, 'read-pods-and-read-write-jobs');
 
-registerTemplate('rbac.authorization.k8s.io/v1beta1.Role', `apiVersion: rbac.authorization.k8s.io/v1beta1
+registerTemplate('rbac.authorization.k8s.io/v1.Role', `apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: read-configmap-within-ns
@@ -50,7 +50,7 @@ rules:
   verbs: ["get"]
 `, 'read-configmap-within-ns');
 
-registerTemplate('rbac.authorization.k8s.io/v1beta1.ClusterRole', `apiVersion: rbac.authorization.k8s.io/v1beta1
+registerTemplate('rbac.authorization.k8s.io/v1.ClusterRole', `apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   # "namespace" omitted since ClusterRoles are not namespaced
@@ -61,7 +61,7 @@ rules:
   verbs: ["get", "list", "watch"]
 `, 'read-nodes');
 
-registerTemplate('rbac.authorization.k8s.io/v1beta1.ClusterRole', `apiVersion: rbac.authorization.k8s.io/v1beta1
+registerTemplate('rbac.authorization.k8s.io/v1.ClusterRole', `apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   # "namespace" omitted since ClusterRoles are not namespaced
