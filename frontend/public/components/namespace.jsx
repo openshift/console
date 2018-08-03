@@ -182,7 +182,7 @@ const Details = ({obj: ns}) => {
   const requester = getRequester(ns);
   return <div>
     <div className="co-m-pane__body">
-      <SectionHeading text="Namespace Overview" />
+      <SectionHeading text={`${ns.kind} Overview`} />
       <div className="row">
         <div className="col-sm-6 col-xs-12">
           <ResourceSummary resource={ns} showPodSelector={false} showNodeSelector={false}>
