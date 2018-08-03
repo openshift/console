@@ -40,11 +40,11 @@ export class FileInput extends React.Component<FileInputProps, FileInputState> {
 
 /* eslint-disable no-undef */
 export type FileInputState = {
-  inputFileData: string,
-  inputFileName: string,
+  inputFileData: string | ArrayBuffer;
+  inputFileName: string;
 };
 
 export type FileInputProps = {
-  onChange: Function,
+  onChange: (data: string | ArrayBuffer) => void;
 };
 /* eslint-enable no-undef */
