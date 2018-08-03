@@ -457,7 +457,7 @@ export const SecretModel: K8sKind = {
 export const ClusterRoleBindingModel: K8sKind = {
   label: 'Cluster Role Binding',
   apiGroup: 'rbac.authorization.k8s.io',
-  apiVersion: 'v1beta1',
+  apiVersion: 'v1',
   path: 'clusterrolebindings',
   plural: 'clusterrolebindings',
   abbr: 'CRB',
@@ -469,7 +469,7 @@ export const ClusterRoleBindingModel: K8sKind = {
 export const ClusterRoleModel: K8sKind = {
   label: 'Cluster Role',
   apiGroup: 'rbac.authorization.k8s.io',
-  apiVersion: 'v1beta1',
+  apiVersion: 'v1',
   path: 'clusterroles',
   plural: 'clusterroles',
   abbr: 'CR',
@@ -481,7 +481,7 @@ export const ClusterRoleModel: K8sKind = {
 export const RoleBindingModel: K8sKind = {
   label: 'Role Binding',
   apiGroup: 'rbac.authorization.k8s.io',
-  apiVersion: 'v1beta1',
+  apiVersion: 'v1',
   path: 'rolebindings',
   plural: 'rolebindings',
   abbr: 'RB',
@@ -494,7 +494,7 @@ export const RoleBindingModel: K8sKind = {
 export const RoleModel: K8sKind = {
   label: 'Role',
   apiGroup: 'rbac.authorization.k8s.io',
-  apiVersion: 'v1beta1',
+  apiVersion: 'v1',
   path: 'roles',
   plural: 'roles',
   abbr: 'R',

@@ -157,6 +157,9 @@ describe('Kubernetes resource CRUD operations', () => {
       leakedResources.add(JSON.stringify({name: bindingName, plural: 'rolebindings', namespace: testName}));
       await crudView.createYAMLButton.click();
       await browser.wait(until.urlContains(`/k8s/ns/${testName}/rolebindings`));
+      // Filter by resource name to make sure the resource is on the first page of results.
+      // Otherwise the tests fail since we do virtual scrolling and the element isn't found.
+      await crudView.filterForName(bindingName);
       await crudView.resourceRowsPresent();
       expect(crudView.rowForName(bindingName).isPresent()).toBe(true);
     });
