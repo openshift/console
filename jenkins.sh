@@ -108,7 +108,7 @@ set +e
 builder_run 'Build' 0 1 ./build.sh
 builder_run 'Tests' 0 1 ./test.sh
 builder_run 'GUI-Tests' 1 1 ./test-gui.sh crud
-builder_run 'GUI-Tests-ALM' 1 0 ./test-gui.sh alm
+builder_run 'GUI-Tests-OLM' 1 0 ./test-gui.sh olm
 
 status 'Performance' 'pending'
 if DOCKER_ENV="KUBECONFIG" ./builder-run.sh ./test-gui.sh performance

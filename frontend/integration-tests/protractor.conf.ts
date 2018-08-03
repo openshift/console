@@ -88,10 +88,10 @@ export const config: Config = {
   suites: {
     filter: ['tests/base.scenario.ts', 'tests/filter.scenario.ts'],
     crud: ['tests/base.scenario.ts', 'tests/crud.scenario.ts', 'tests/filter.scenario.ts', 'tests/modal-annotations.scenario.ts', 'tests/environment.scenario.ts'],
-    alm: ['tests/base.scenario.ts', 'tests/alm/catalog.scenario.ts', 'tests/alm/etcd.scenario.ts', 'tests/alm/prometheus.scenario.ts'],
-    almUpgrade: ['tests/base.scenario.ts', 'tests/alm/update-channel-approval.scenario.ts'],
+    olm: ['tests/base.scenario.ts', 'tests/olm/catalog.scenario.ts', 'tests/olm/etcd.scenario.ts', 'tests/olm/prometheus.scenario.ts'],
+    olmUpgrade: ['tests/base.scenario.ts', 'tests/olm/update-channel-approval.scenario.ts'],
     performance: ['tests/base.scenario.ts', 'tests/performance.scenario.ts'],
-    all: ['tests/base.scenario.ts', 'tests/crud.scenario.ts', 'tests/alm/**/*.scenario.ts', 'tests/filter.scenario.ts', 'tests/modal-annotations.scenario.ts'],
+    all: ['tests/base.scenario.ts', 'tests/crud.scenario.ts', 'tests/olm/**/*.scenario.ts', 'tests/filter.scenario.ts', 'tests/modal-annotations.scenario.ts'],
   },
   params: {
     // Set to 'true' to enable OpenShift resources in the crud scenario.

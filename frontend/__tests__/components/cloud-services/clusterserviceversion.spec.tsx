@@ -276,7 +276,7 @@ describe(ClusterServiceVersionsPage.displayName, () => {
     const listPage = wrapper.find(MultiListPage).at(0);
 
     expect(listPage.props().resources).toEqual([
-      {kind: referenceForModel(ClusterServiceVersionModel), namespaced: true, prop: 'ClusterServiceVersion-v1', selector: {matchLabels: {[appCatalogLabel]: AppCatalog.tectonicOCS}}},
+      {kind: referenceForModel(ClusterServiceVersionModel), namespaced: true, prop: 'ClusterServiceVersion', selector: {matchLabels: {[appCatalogLabel]: AppCatalog.tectonicOCS}}},
       {kind: 'Deployment', namespaced: true, isList: true, prop: 'Deployment'},
     ]);
     expect(listPage.props().dropdownFilters).toBeDefined();
@@ -288,7 +288,7 @@ describe(ClusterServiceVersionsPage.displayName, () => {
   it('passes `flatten` function to Catalog Sources `MultiListPage` that returns list of all resources', () => {
     const resources = {
       TestResource: {data: [testResourceInstance]},
-      'ClusterServiceVersion-v1': {data: [localClusterServiceVersion, testClusterServiceVersion]},
+      'ClusterServiceVersion': {data: [localClusterServiceVersion, testClusterServiceVersion]},
     };
     const flatten = wrapper.find(MultiListPage).at(0).props().flatten;
     const data = flatten(resources);
@@ -300,7 +300,7 @@ describe(ClusterServiceVersionsPage.displayName, () => {
     const listPage = wrapper.find(MultiListPage).at(1);
 
     expect(listPage.props().resources).toEqual([
-      {kind: referenceForModel(ClusterServiceVersionModel), namespaced: true, prop: 'ClusterServiceVersion-v1', selector: {matchExpressions: [{key: appCatalogLabel, operator: 'DoesNotExist', values: []}]}},
+      {kind: referenceForModel(ClusterServiceVersionModel), namespaced: true, prop: 'ClusterServiceVersion', selector: {matchExpressions: [{key: appCatalogLabel, operator: 'DoesNotExist', values: []}]}},
     ]);
     // TODO(alecmerdler): Test custom applications list component
     expect(listPage.props().ListComponent).toBeDefined();
@@ -310,7 +310,7 @@ describe(ClusterServiceVersionsPage.displayName, () => {
 
   it('passes `flatten` function to custom apps `MultiListPage` that returns list of all resources', () => {
     const resources = {
-      'ClusterServiceVersion-v1': {data: [localClusterServiceVersion, testClusterServiceVersion]},
+      'ClusterServiceVersion': {data: [localClusterServiceVersion, testClusterServiceVersion]},
     };
     const flatten = wrapper.find(MultiListPage).at(1).props().flatten;
     const data = flatten(resources);
