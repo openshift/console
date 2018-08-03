@@ -37,9 +37,8 @@ const (
 	AuthLoginSuccessEndpoint  = "/"
 	AuthLoginErrorEndpoint    = "/error"
 	authLogoutEndpoint        = "/auth/logout"
-
-	k8sProxyEndpoint        = "/api/kubernetes/"
-	prometheusProxyEndpoint = "/api/prometheus"
+	k8sProxyEndpoint          = "/api/kubernetes/"
+	prometheusProxyEndpoint   = "/api/prometheus"
 )
 
 var (
@@ -86,9 +85,11 @@ type Server struct {
 	LoadTestFactor       int
 	// Helpers for logging into kubectl and rendering kubeconfigs. These fields
 	// may be nil.
-	KubectlAuther         *auth.Authenticator
-	KubeConfigTmpl        *KubeConfigTmpl
-	DexClient             api.DexClient
+	KubectlAuther  *auth.Authenticator
+	KubeConfigTmpl *KubeConfigTmpl
+	DexClient      api.DexClient
+	// A client with the correct TLS setup for communicating with the API server.
+	K8sClient             *http.Client
 	PrometheusProxyConfig *proxy.Config
 }
 
@@ -164,8 +165,10 @@ func (s *Server) HTTPHandler() http.Handler {
 			handleFunc("/api/tectonic/kubectl/code", s.KubectlAuther.LoginFunc)
 			handleFunc("/api/tectonic/kubectl/config", s.handleRenderKubeConfig)
 		}
+
 		handle("/api/tectonic/clients", authHandlerWithUser(s.handleListClients))
 		handle("/api/tectonic/revoke-token", authHandlerWithUser(s.handleTokenRevocation))
+		handle("/api/openshift/delete-token", authHandlerWithUser(s.handleOpenShiftTokenDeletion))
 	}
 
 	handleFunc("/api/", notFoundHandler)
@@ -566,4 +569,31 @@ func (s *Server) handleListClients(user *auth.User, w http.ResponseWriter, r *ht
 	}{
 		TokenData: resp.RefreshTokens,
 	})
+}
+
+func (s *Server) handleOpenShiftTokenDeletion(user *auth.User, w http.ResponseWriter, r *http.Request) {
+	if r.Method != "POST" {
+		sendResponse(w, http.StatusMethodNotAllowed, apiError{"Invalid method: only POST is allowed"})
+		return
+	}
+
+	// Delete the OpenShift OAuthAccessToken.
+	path := "/apis/oauth.openshift.io/v1/oauthaccesstokens/" + user.Token
+	url := proxy.SingleJoiningSlash(s.K8sProxyConfig.Endpoint.String(), path)
+	req, err := http.NewRequest("DELETE", url, nil)
+	if err != nil {
+		sendResponse(w, http.StatusInternalServerError, apiError{fmt.Sprintf("Failed to create token DELETE request: %v", err)})
+		return
+	}
+
+	r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
+	resp, err := s.K8sClient.Do(req)
+	if err != nil {
+		sendResponse(w, http.StatusBadGateway, apiError{fmt.Sprintf("Failed to delete token: %v", err)})
+		return
+	}
+
+	w.WriteHeader(resp.StatusCode)
+	io.Copy(w, resp.Body)
+	resp.Body.Close()
 }
