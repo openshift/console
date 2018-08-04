@@ -82,7 +82,7 @@ func main() {
 	fDeveloperConsoleURL := fs.String("developer-console-url", "", "URL for the developer console used in masthead context switcher. This option will be removed in a future release.")
 
 	fDexAPIHost := fs.String("dex-api-host", "", "Target host and port of the Dex API service.")
-	fBranding := fs.String("branding", "origin", "Console branding for the masthead logo and title. One of origin, ocp, or online. Defaults to origin.")
+	fBranding := fs.String("branding", "okd", "Console branding for the masthead logo and title. One of okd, ocp, or online. Defaults to okd.")
 	fDocumentationBaseURL := fs.String("documentation-base-url", "", "The base URL for documentation links.")
 	fGoogleTagManagerID := fs.String("google-tag-manager-id", "", "Google Tag Manager ID. External analytics are disabled if this is not set.")
 
@@ -140,6 +140,11 @@ func main() {
 		flagFatalf("developer-console-url", "value must end with slash")
 	}
 
+	branding := *fBranding
+	if branding == "origin" {
+		branding = "okd"
+	}
+
 	srv := &server.Server{
 		PublicDir:            *fPublicDir,
 		TectonicVersion:      *fTectonicVersion,
@@ -148,7 +153,7 @@ func main() {
 		TectonicCACertFile:   caCertFilePath,
 		ClusterName:          *fTectonicClusterName,
 		DeveloperConsoleURL:  *fDeveloperConsoleURL,
-		Branding:             *fBranding,
+		Branding:             branding,
 		DocumentationBaseURL: documentationBaseURL,
 		GoogleTagManagerID:   *fGoogleTagManagerID,
 		LoadTestFactor:       *fLoadTestFactor,

@@ -7,6 +7,7 @@ import { Redirect, Route, Router, Switch } from 'react-router-dom';
 import * as PropTypes from 'prop-types';
 
 import store from '../redux';
+import { productName } from '../branding';
 import { ALL_NAMESPACES_KEY } from '../const';
 import { connectToFlags, featureActions, flagPending, FLAGS } from '../features';
 import { detectMonitoringURLs } from '../monitoring';
@@ -136,19 +137,7 @@ class App extends React.PureComponent {
     analyticsSvc.route(pathname);
   }
 
-  getProductName () {
-    switch (window.SERVER_FLAGS.branding) {
-      case 'ocp':
-        return 'OpenShift Container Platform';
-      case 'online':
-        return 'OpenShift Online';
-      default:
-        return 'OpenShift Origin';
-    }
-  }
-
   render () {
-    const productName = this.getProductName();
     return <React.Fragment>
       <Helmet titleTemplate={`%s · ${productName}`} defaultTitle={productName} />
       <Masthead />

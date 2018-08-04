@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
 
+import { productName } from '../branding';
 import { k8sVersion } from '../module/status';
 import { coFetchJSON } from '../co-fetch';
 import { SafetyFirst } from './safety-first';
@@ -114,7 +115,7 @@ export const SoftwareDetails = connectToFlags(FLAGS.OPENSHIFT)(
 
       return <React.Fragment>
         <SoftwareDetailRow title="Kubernetes" detail={kubernetesVersion} text="Kubernetes version could not be determined." />
-        {openshiftFlag && <SoftwareDetailRow title="OpenShift" detail={openshiftVersion} text="OpenShift version could not be determined." />}
+        {openshiftFlag && <SoftwareDetailRow title={productName} detail={openshiftVersion} text={`${productName} version could not be determined.`} />}
       </React.Fragment>;
     }
   });

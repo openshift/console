@@ -1,8 +1,10 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 
+import { productName } from '../../branding';
+
 // Prefer the documentation base URL passed as a flag, but fall back to the latest docs if none was specified.
-export const openshiftHelpBase = (window as any).SERVER_FLAGS.documentationBaseURL || 'https://docs.openshift.org/latest/';
+export const openshiftHelpBase = (window as any).SERVER_FLAGS.documentationBaseURL || 'https://docs.okd.io/latest/';
 
 /* global
   HELP_TOPICS: false,
@@ -22,7 +24,7 @@ export const DocumentationLinks = () => <dl className="co-documentation-links">
   </dd>
   <dt className="co-documentation-links__title"><a href={helpLink(HELP_TOPICS.GET_STARTED_CLI)} target="_blank" rel="noopener">Get Started with the CLI</a></dt>
   <dd className="co-documentation-links__description">
-    With the OpenShift command line interface (CLI), you can create applications and manage projects from a terminal. Learn how to install
+    With the {productName} command line interface (CLI), you can create applications and manage projects from a terminal. Learn how to install
     and use the oc client tool.
   </dd>
 </dl>;
