@@ -7,9 +7,7 @@
   left: 0;
   position: fixed;
   right: 0;
-  // The z-index of the masthead needs to be greater than the left sidebar so
-  // that the context selector opens over it.
-  z-index: $zindex-navbar-fixed + 1;
+  z-index: $masthead-z-index;
   @media (max-width: $grid-float-breakpoint-max) {
     padding-left: 50px; // make space for .sidebar-toggle
   }
