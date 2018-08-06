@@ -2,7 +2,7 @@ import { connect } from 'react-redux';
 import { Map as ImmutableMap } from 'immutable';
 import * as _ from 'lodash-es';
 
-import { SelfSubjectAccessReviewModel, ChannelOperatorConfigModel, PrometheusModel, ClusterServiceVersionModel, ClusterModel, ChargebackReportModel } from './models';
+import { SelfSubjectAccessReviewModel, ChannelOperatorConfigModel, PrometheusModel, ClusterServiceVersionModel, ClusterModel, ChargebackReportModel, VirtualMachineModel } from './models';
 import { k8sBasePath, referenceForModel } from './module/k8s/k8s';
 import { k8sCreate } from './module/k8s/resource';
 import { types } from './module/k8s/k8s-actions';
@@ -25,7 +25,8 @@ import { UIActions } from './ui/ui-actions';
   CAN_LIST_STORE: false,
   CAN_LIST_CRD: false,
   CAN_CREATE_PROJECT: false
-  PROJECTS_AVAILABLE: false
+  PROJECTS_AVAILABLE: false,
+  KUBEVIRT: false
  */
 export enum FLAGS {
   AUTH_ENABLED = 'AUTH_ENABLED',
@@ -43,6 +44,7 @@ export enum FLAGS {
   CAN_LIST_CRD = 'CAN_LIST_CRD',
   CAN_CREATE_PROJECT = 'CAN_CREATE_PROJECT',
   PROJECTS_AVAILABLE = 'PROJECTS_AVAILABLE',
+  KUBEVIRT = 'KUBEVIRT'
 }
 
 export const DEFAULTS_ = _.mapValues(FLAGS, flag => flag === FLAGS.AUTH_ENABLED
@@ -55,6 +57,7 @@ export const CRDs = {
   [referenceForModel(PrometheusModel)]: FLAGS.PROMETHEUS,
   [referenceForModel(ClusterModel)]: FLAGS.MULTI_CLUSTER,
   [referenceForModel(ChargebackReportModel)]: FLAGS.CHARGEBACK,
+  [referenceForModel(VirtualMachineModel)]: FLAGS.KUBEVIRT,
 };
 
 const SET_FLAG = 'SET_FLAG';
