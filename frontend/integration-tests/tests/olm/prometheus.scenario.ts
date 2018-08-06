@@ -11,7 +11,7 @@ import * as sidenavView from '../../views/sidenav.view';
 import * as appListView from '../../views/app-list.view';
 import * as yamlView from '../../views/yaml.view';
 
-describe('Interacting with the Prometheus OCS', () => {
+xdescribe('Interacting with the Prometheus OCS', () => {
   const prometheusResources = new Set(['StatefulSet', 'Pod']);
   const alertmanagerResources = new Set(['StatefulSet', 'Pod']);
   const serviceMonitorResources = new Set(['Pod']);
