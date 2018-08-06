@@ -1,8 +1,9 @@
-/* eslint-disable no-undef */
+/* eslint-disable no-undef, no-unused-vars */
 
+import * as React from 'react';
 import * as Immutable from 'immutable';
 
-import { FLAGS, featureReducer, DEFAULTS_ } from '../public/features';
+import { FLAGS, featureReducer, DEFAULTS_, connectToFlags } from '../public/features';
 import { types } from '../public/module/k8s/k8s-actions';
 import { ClusterServiceVersionModel } from '../public/models';
 
@@ -41,5 +42,22 @@ describe('featureReducer', () => {
       [FLAGS.MULTI_CLUSTER]: false,
       [FLAGS.CHARGEBACK]: false,
     }));
+  });
+});
+
+describe('connectToFlags', () => {
+  type MyComponentProps = {propA: number, propB: boolean, flags: {[key: string]: boolean}};
+
+  class MyComponent extends React.Component<MyComponentProps> {
+    render() {
+      return <div>{this.props.propA}</div>;
+    }
+  }
+
+  it('returns a component which preserves needed props and removes `flags` prop', () => {
+    const MyComponentWithFlags = connectToFlags<MyComponentProps>()(MyComponent);
+    const jsx = <MyComponentWithFlags propA={42} propB={false} />;
+
+    expect(jsx).toBeDefined();
   });
 });
