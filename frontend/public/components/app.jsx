@@ -266,7 +266,10 @@ if ('serviceWorker' in navigator) {
       .then(() => new Promise(r => navigator.serviceWorker.controller ? r() : navigator.serviceWorker.addEventListener('controllerchange', () => r())))
       .then(() => navigator.serviceWorker.controller.postMessage({topic: 'setFactor', value: window.SERVER_FLAGS.loadTestFactor}));
   } else {
-    navigator.serviceWorker.getRegistrations().then((registrations) => registrations.forEach(reg => reg.unregister()));
+    navigator.serviceWorker.getRegistrations()
+      .then((registrations) => registrations.forEach(reg => reg.unregister()))
+      // eslint-disable-next-line no-console
+      .catch(e => console.warn('Error unregistering service workers', e));
   }
 }
 
