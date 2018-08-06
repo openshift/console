@@ -18,11 +18,20 @@ export const connectToModel = connect((state: State, props: {kind: K8sResourceKi
   return {kindObj, kindsInFlight: state.k8s.getIn(['RESOURCES', 'inFlight'])} as any;
 });
 
+type WithPluralProps = {
+  kindObj?: K8sKind;
+  modelRef?: K8sResourceKindReference;
+  kindsInFlight?: boolean;
+};
+
+export type ConnectToPlural = <P extends WithPluralProps>(C: React.ComponentType<P>) =>
+  React.ComponentType<Omit<P, keyof WithPluralProps>> & {WrappedComponent: React.ComponentType<P>};
+
 /**
  * @deprecated TODO(alecmerdler): `plural` is not a unique lookup key, remove uses of this.
  * FIXME(alecmerdler): Not returning correctly typed `WrappedComponent`
  */
-export const connectToPlural = connect((state: State, props: {plural?: GroupVersionKind | string, match: match<{plural: GroupVersionKind | string}>}) => {
+export const connectToPlural: ConnectToPlural = connect((state: State, props: {plural?: GroupVersionKind | string, match: match<{plural: GroupVersionKind | string}>}) => {
   const plural = props.plural || _.get(props, 'match.params.plural');
 
   const kindObj = isGroupVersionKind(plural)
@@ -31,7 +40,7 @@ export const connectToPlural = connect((state: State, props: {plural?: GroupVers
 
   const modelRef = isGroupVersionKind(plural) ? plural : _.get(kindObj, 'kind');
 
-  return {kindObj, modelRef, kindsInFlight: state.k8s.getIn(['RESOURCES', 'inFlight'])} as any;
+  return {kindObj, modelRef, kindsInFlight: state.k8s.getIn(['RESOURCES', 'inFlight'])};
 });
 
 type State = {k8s: ImmutableMap<string, any>};

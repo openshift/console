@@ -1,3 +1,5 @@
+/* eslint-disable no-undef, no-unused-vars */
+
 import { connect } from 'react-redux';
 import { Map as ImmutableMap } from 'immutable';
 import * as _ from 'lodash-es';
@@ -180,13 +182,13 @@ export const stateToProps = (desiredFlags: string[], state) => {
   return {flags};
 };
 
-export const mergeProps = (stateProps, dispatchProps, ownProps) => Object.assign({}, ownProps, stateProps, dispatchProps);
+type WithFlagsProps = {
+  flags: {[key: string]: boolean};
+};
 
-export const areStatesEqual = (next, previous) => next.FLAGS.equals(previous.FLAGS) &&
-  next.UI.get('activeNamespace') === previous.UI.get('activeNamespace') &&
-  next.UI.get('location') === previous.UI.get('location');
-
-export const connectToFlags = (...flags) => connect(state => stateToProps(flags, state));
+export type ConnectToFlags = <P extends WithFlagsProps>(...flags: FLAGS[]) => (C: React.ComponentType<P>) =>
+  React.ComponentType<Omit<P, keyof WithFlagsProps>> & {WrappedComponent: React.ComponentType<P>};
+export const connectToFlags: ConnectToFlags = (...flags) => connect(state => stateToProps(flags, state));
 
 // Flag detection is not complete if the flag's value is `undefined`.
 export const flagPending = flag => flag === undefined;
