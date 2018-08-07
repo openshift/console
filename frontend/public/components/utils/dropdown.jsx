@@ -295,6 +295,10 @@ export class Dropdown extends DropdownMixin {
     const bookMarkRows = [];
 
     const addItem = (key, content) => {
+      if (_.isNil(content)) {
+        return;
+      }
+
       const selected = !noSelection && key === selectedKey;
       const hover = key === keyboardHoverKey;
       const klass = classNames({'active': selected});
