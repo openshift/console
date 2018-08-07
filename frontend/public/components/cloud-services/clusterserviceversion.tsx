@@ -206,7 +206,7 @@ export const MarkdownView = (props: {content: string}) => {
 };
 
 export const ClusterServiceVersionDetails: React.SFC<ClusterServiceVersionDetailsProps> = (props) => {
-  const {spec, metadata, status} = props.obj;
+  const {spec, metadata, status = {} as ClusterServiceVersionKind['status']} = props.obj;
   const ownedCRDs = spec.customresourcedefinitions.owned || [];
   const route = (name: string) => `/k8s/ns/${metadata.namespace}/${ClusterServiceVersionModel.plural}/${metadata.name}/${referenceForCRDDesc(_.find(ownedCRDs, {name}))}/new`;
 
