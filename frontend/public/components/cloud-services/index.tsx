@@ -22,7 +22,7 @@ export enum CatalogEntryVisibility {
 
 export const appCatalogLabel = 'alm-catalog';
 export enum AppCatalog {
-  tectonicOCS = 'tectonic-ocs',
+  ocs = 'ocs',
 }
 
 export enum ALMSpecDescriptors {
