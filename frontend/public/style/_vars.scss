@@ -51,6 +51,13 @@ $color-grey-when-selected: #e5e5e5;
 $color-text-muted: $co-gray;
 $color-text-secondary: $color-grey-medium;
 
+// TODO: Set to $zindex-navbar-fixed var from Bootstrap. (We can't currently
+// since Bootstrap vars are imported after this file.)
+$sidebar-z-index: 1030;
+
+// The z-index of the masthead needs to be greater than the left sidebar so
+// that the context selector opens over it.
+$masthead-z-index: $sidebar-z-index + 1;
 $masthead-height-desktop: 60px;
 $masthead-height-mobile: 40px;
 
