@@ -206,7 +206,7 @@ describe(SubscriptionDetailsPage.displayName, () => {
     const wrapper = shallow(<SubscriptionDetailsPage match={match} namespace="default" />);
 
     expect(wrapper.find(DetailsPage).props().resources).toEqual([
-      {kind: ConfigMapModel.kind, name: 'tectonic-ocs', namespace: olmNamespace, isList: false, prop: 'ocsConfigMap'},
+      {kind: ConfigMapModel.kind, name: 'ocs', namespace: olmNamespace, isList: false, prop: 'ocsConfigMap'},
       {kind: ConfigMapModel.kind, namespace: 'default', isList: true, prop: 'configMaps'},
       {kind: referenceForModel(ClusterServiceVersionModel), namespace: 'default', isList: true, prop: 'clusterServiceVersions'},
     ]);

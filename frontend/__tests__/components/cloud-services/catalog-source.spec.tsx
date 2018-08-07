@@ -280,14 +280,14 @@ describe(CreateSubscriptionYAML.displayName, () => {
 
   beforeEach(() => {
     registerTemplateSpy = spyOn(yamlTemplates, 'registerTemplate');
-    locationMock = {search: `?pkg=${testPackage.packageName}&catalog=tectonic-ocs&catalogNamespace=${olmNamespace}`} as Location;
+    locationMock = {search: `?pkg=${testPackage.packageName}&catalog=ocs&catalogNamespace=${olmNamespace}`} as Location;
 
     wrapper = shallow(<CreateSubscriptionYAML match={{isExact: true, url: '', path: '', params: {ns: 'default', pkgName: testPackage.packageName}}} location={locationMock} />);
   });
 
   it('renders a `Firehose` for the catalog ConfigMap', () => {
     expect(wrapper.find<any>(Firehose).props().resources).toEqual([
-      {kind: 'ConfigMap', name: 'tectonic-ocs', namespace: olmNamespace, isList: false, prop: 'ConfigMap'}
+      {kind: 'ConfigMap', name: 'ocs', namespace: olmNamespace, isList: false, prop: 'ConfigMap'}
     ]);
   });
 
@@ -309,7 +309,7 @@ describe(CreateSubscriptionYAML.displayName, () => {
     expect(subTemplate.spec.name).toEqual(testPackage.packageName);
     expect(subTemplate.spec.channel).toEqual(testPackage.channels[0].name);
     expect(subTemplate.spec.startingCSV).toEqual(testPackage.channels[0].currentCSV);
-    expect(subTemplate.spec.source).toEqual('tectonic-ocs');
+    expect(subTemplate.spec.source).toEqual('ocs');
   });
 
   xit('does not render YAML editor component if ConfigMap has not loaded yet', () => {

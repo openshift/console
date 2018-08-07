@@ -268,7 +268,7 @@ export const testSubscription: SubscriptionKind = {
     uid: '09232c51-ed3e-4e60-b58e-9bee576ee612',
   },
   spec: {
-    source: 'tectonic-ocs',
+    source: 'ocs',
     name: 'test-package',
     channel: 'stable',
   }
