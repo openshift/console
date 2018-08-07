@@ -142,9 +142,14 @@ const Details = (props) => {
     return null;
   }
 
+  const { image, lifecycle, readinessProbe, livenessProbe, command, args, ports, volumeMounts, env } = container;
+  const { imageName, imageTag } = getImageNameAndTag(image);
+  const requests = getResourceRequestsValue(container);
+  const limits = getResourceLimitsValue(container);
   const status = getContainerStatus(pod, container.name) || {};
   const state = getContainerState(status) || {};
-  const { imageName, imageTag } = getImageNameAndTag(container.image);
+  const pullPolicy = getPullPolicyLabel(container);
+  const { startedAt, finisedAt } = state;
 
   return <div className="co-m-pane__body">
     <ScrollToTopOnMount />
@@ -159,20 +164,20 @@ const Details = (props) => {
           <dd><Overflow value={status.containerID} /></dd>
           <dt>Restarts</dt>
           <dd>{status.restartCount}</dd>
-          <dt>Resource Requests</dt>
-          <dd>{getResourceRequestsValue(container) || '-'}</dd>
-          <dt>Resource Limits</dt>
-          <dd>{getResourceLimitsValue(container) || '-'}</dd>
-          <dt>Lifecycle Hooks</dt>
-          <dd><Lifecycle lifecycle={container.lifecycle} /></dd>
-          <dt>Readiness Probe</dt>
-          <dd><Probe probe={container.readinessProbe} podIP={pod.status.podIP || '-'} /></dd>
-          <dt>Liveness Probe</dt>
-          <dd><Probe probe={container.livenessProbe} podIP={pod.status.podIP || '-'} /></dd>
-          <dt>Started</dt>
-          <dd><Timestamp timestamp={state.startedAt} /></dd>
-          <dt>Finished</dt>
-          <dd><Timestamp timestamp={state.finishedAt} /></dd>
+          {requests && <dt>Resource Requests</dt>}
+          {requests && <dd>{getResourceRequestsValue(container)}</dd>}
+          {limits && <dt>Resource Limits</dt>}
+          {limits && <dd>{getResourceLimitsValue(container)}</dd>}
+          {lifecycle && <dt>Lifecycle Hooks</dt>}
+          {lifecycle && <dd><Lifecycle lifecycle={lifecycle} /></dd>}
+          {readinessProbe && <dt>Readiness Probe</dt>}
+          {readinessProbe && <dd><Probe probe={container.readinessProbe} podIP={pod.status.podIP} /></dd>}
+          {livenessProbe && <dt>Liveness Probe</dt>}
+          {livenessProbe && <dd><Probe probe={container.livenessProbe} podIP={pod.status.podIP} /></dd>}
+          {startedAt && <dt>Started</dt>}
+          {startedAt && <dd><Timestamp timestamp={state.startedAt} /></dd>}
+          {finisedAt && <dt>Finished</dt>}
+          {finisedAt && <dd><Timestamp timestamp={finisedAt} /></dd>}
           <dt>Pod</dt>
           <dd><ResourceLink kind="Pod" name={props.match.params.podName} namespace={props.match.params.ns} /></dd>
         </dl>
@@ -182,15 +187,15 @@ const Details = (props) => {
         <SectionHeading text="Image Details" />
         <dl className="co-m-pane__details">
           <dt>Image</dt>
-          <dd><Overflow value={imageName || '-'} /></dd>
-          <dt>Image Version/Tag</dt>
-          <dd><Overflow value={imageTag || '-'} /></dd>
-          <dt>Command</dt>
-          <dd>{container.command ? <pre><code>{container.command.join(' ')}</code></pre> : <span>-</span>}</dd>
-          <dt>Args</dt>
-          <dd>{container.args ? <pre><code>{container.args.join(' ')}</code></pre> : <span>-</span>}</dd>
-          <dt>Pull Policy</dt>
-          <dd>{getPullPolicyLabel(container)}</dd>
+          <dd><Overflow value={imageName} /></dd>
+          {imageTag && <dt>Image Version/Tag</dt>}
+          {imageTag && <dd><Overflow value={imageTag} /></dd>}
+          {pullPolicy && <dt>Pull Policy</dt>}
+          {pullPolicy && <dd>{pullPolicy}</dd>}
+          {command && <dt>Command</dt>}
+          {command && <dd><pre><code>{command.join(' ')}</code></pre></dd>}
+          {args && <dt>Args</dt>}
+          {args && <dd><pre><code>{args.join(' ')}</code></pre></dd>}
         </dl>
       </div>
 
@@ -211,21 +216,21 @@ const Details = (props) => {
       <div className="col-lg-4">
         <SectionHeading text="Ports" />
         <div className="co-table-container">
-          <Ports ports={container.ports} />
+          <Ports ports={ports} />
         </div>
       </div>
 
       <div className="col-lg-4">
         <SectionHeading text="Mounted Volumes" />
         <div className="co-table-container">
-          <Volumes volumes={container.volumeMounts} />
+          <Volumes volumes={volumeMounts} />
         </div>
       </div>
 
       <div className="col-lg-4">
         <SectionHeading text="Environment Variables" />
         <div className="co-table-container">
-          <Env env={container.env} />
+          <Env env={env} />
         </div>
       </div>
     </div>
