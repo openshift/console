@@ -2,6 +2,7 @@ import * as _ from 'lodash-es';
 
 // eslint-disable-next-line no-unused-vars
 import { modelFor, referenceForOwnerRef, K8sResourceKind } from '../../module/k8s';
+import { resourcePathFromModel } from './resource-link';
 
 export const breadcrumbsForOwnerRefs = (obj: K8sResourceKind) => {
   const ownerRefs = _.get(obj, 'metadata.ownerReferences');
@@ -16,7 +17,7 @@ export const breadcrumbsForOwnerRefs = (obj: K8sResourceKind) => {
 
     return {
       name: ref.name,
-      path: `/k8s/ns/${obj.metadata.namespace}/${model.plural}/${ref.name}`,
+      path: resourcePathFromModel(model, ref.name, obj.metadata.namespace),
     };
   }));
 };
