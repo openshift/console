@@ -8,19 +8,7 @@ import { connectToModel } from '../../kinds';
 
 const unknownKinds = new Set();
 
-/**
- * NOTE: This will not work for runtime-defined resources. Use a `connect`-ed component like `ResourceLink` instead.
- */
-export const resourcePath = (kind, name, namespace = undefined) => {
-  const model = modelFor(kind);
-  if (!model) {
-    if (!unknownKinds.has(kind)) {
-      unknownKinds.add(kind);
-      // eslint-disable-next-line no-console
-      console.error(`resourcePath: no model for "${kind}"`);
-    }
-    return;
-  }
+export const resourcePathFromModel = (model, name, namespace) => {
   const {path, namespaced, crd} = model;
 
   let url = '/k8s/';
@@ -44,6 +32,23 @@ export const resourcePath = (kind, name, namespace = undefined) => {
   }
 
   return url;
+};
+
+/**
+ * NOTE: This will not work for runtime-defined resources. Use a `connect`-ed component like `ResourceLink` instead.
+ */
+export const resourcePath = (kind, name, namespace) => {
+  const model = modelFor(kind);
+  if (!model) {
+    if (!unknownKinds.has(kind)) {
+      unknownKinds.add(kind);
+      // eslint-disable-next-line no-console
+      console.error(`resourcePath: no model for "${kind}"`);
+    }
+    return;
+  }
+
+  return resourcePathFromModel(model, name, namespace);
 };
 
 export const resourceObjPath = (obj, kind) => resourcePath(kind, _.get(obj, 'metadata.name'), _.get(obj, 'metadata.namespace'));
