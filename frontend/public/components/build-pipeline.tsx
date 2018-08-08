@@ -17,7 +17,7 @@ const getJenkinsStatus = (resource: K8sResourceKind) => {
   return _.isError(status) ? {} : status;
 };
 
-export const getJenkinsLogURL = (resource: K8sResourceKind): string => _.get(resource, ['metadata', 'annotations', 'openshift.io/jenkins-log-url']);
+export const getJenkinsLogURL = (resource: K8sResourceKind): string => _.get(resource, ['metadata', 'annotations', 'openshift.io/jenkins-console-log-url']);
 export const getJenkinsBuildURL = (resource: K8sResourceKind): string => _.get(resource, ['metadata', 'annotations', 'openshift.io/jenkins-build-uri']);
 
 const BuildSummaryStatusIcon: React.SFC<BuildSummaryStatusIconProps> = ({ status }) => {

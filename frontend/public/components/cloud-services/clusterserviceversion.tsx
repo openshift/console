@@ -148,7 +148,7 @@ export const ClusterServiceVersionsPage = connect(stateToProps)(
         },
         title: 'Catalog',
       }];
-      const csvResource = {kind: referenceForModel(ClusterServiceVersionModel), namespaced: true, prop: 'ClusterServiceVersion-v1'};
+      const csvResource = {kind: referenceForModel(ClusterServiceVersionModel), namespaced: true, prop: 'ClusterServiceVersion'};
 
       // Wait for OpenShift feature detection to prevent flash of "disabled" UI
       if (this.props.loading) {
@@ -167,7 +167,7 @@ export const ClusterServiceVersionsPage = connect(stateToProps)(
             {...this.props}
             namespace={this.props.match.params.ns}
             resources={[
-              {...csvResource, selector: {matchLabels: {[appCatalogLabel]: AppCatalog.tectonicOCS}}},
+              {...csvResource, selector: {matchLabels: {[appCatalogLabel]: AppCatalog.ocs}}},
               {kind: 'Deployment', namespaced: true, isList: true, prop: 'Deployment'},
               ...this.state.resourceDescriptions.map(crdDesc => ({kind: referenceForCRDDesc(crdDesc), namespaced: true, optional: true, prop: crdDesc.kind, selector: null})),
             ]}
@@ -206,7 +206,7 @@ export const MarkdownView = (props: {content: string}) => {
 };
 
 export const ClusterServiceVersionDetails: React.SFC<ClusterServiceVersionDetailsProps> = (props) => {
-  const {spec, metadata, status} = props.obj;
+  const {spec, metadata, status = {} as ClusterServiceVersionKind['status']} = props.obj;
   const ownedCRDs = spec.customresourcedefinitions.owned || [];
   const route = (name: string) => `/k8s/ns/${metadata.namespace}/${ClusterServiceVersionModel.plural}/${metadata.name}/${referenceForCRDDesc(_.find(ownedCRDs, {name}))}/new`;
 

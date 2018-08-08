@@ -67,6 +67,18 @@ describe(DisableApplicationModal.name, () => {
     wrapper.find('form').simulate('submit', new Event('submit'));
   });
 
+  it('does not call `props.k8sKill` to delete `ClusterServiceVersion` if `status.installedCSV` field missing from subscription', (done) => {
+    wrapper = wrapper.setState({cascadeDelete: false});
+    wrapper = wrapper.setProps({subscription: testSubscription});
+
+    close.and.callFake(() => {
+      expect(k8sKill.calls.count()).toEqual(1);
+      done();
+    });
+
+    wrapper.find('form').simulate('submit', new Event('submit'));
+  });
+
   it('adds delete options with `propagationPolicy` if cascading delete checkbox is checked', (done) => {
     wrapper = wrapper.setState({cascadeDelete: true});
 

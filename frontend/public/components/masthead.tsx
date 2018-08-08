@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import * as _ from 'lodash-es';
 import { Link } from 'react-router-dom';
-import * as originLogoImg from '../imgs/openshift-origin-logo.svg';
+import * as okdLogoImg from '../imgs/okd-logo.svg';
 import * as ocpLogoImg from '../imgs/openshift-platform-logo.svg';
 import * as onlineLogoImg from '../imgs/openshift-online-logo.svg';
 import { FLAGS, connectToFlags, flagPending } from '../features';
@@ -112,8 +112,8 @@ export const LogoImage = () => {
       logoAlt = 'OpenShift Online';
       break;
     default:
-      logoImg = originLogoImg;
-      logoAlt = 'OpenShift Origin';
+      logoImg = okdLogoImg;
+      logoAlt = 'OKD';
   }
 
   return <div className="co-masthead__logo">

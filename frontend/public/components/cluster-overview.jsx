@@ -8,7 +8,6 @@ import { HashLink } from 'react-router-hash-link';
 import { coFetch, coFetchJSON } from '../co-fetch';
 import { NavTitle, AsyncComponent, Firehose, StatusBox, DocumentationLinks, AdditionalSupportLinks } from './utils';
 import { k8sBasePath } from '../module/k8s';
-import { SecurityScanningOverview } from './secscan/security-scan-overview';
 import { StartGuide } from './start-guide';
 import { Gauge, prometheusBasePath, requirePrometheus } from './graphs';
 import { Status, errorStatus } from './graphs/status';
@@ -254,11 +253,6 @@ const ClusterOverviewPage_ = props => {
     <div className="cluster-overview-cell container-fluid">
       <AsyncComponent namespace={namespace} loader={permissionedLoader} openshiftFlag={openshiftFlag} fake={fake} />
     </div>
-    <br />
-    <SecurityScanningOverview
-      {...props}
-      required="SECURITY_LABELLER"
-    />
   </React.Fragment>;
 };
 

@@ -128,6 +128,9 @@ describe('Kubernetes resource CRUD operations', () => {
 
       it('deletes the resource instance', async() => {
         await browser.get(`${appHost}${namespaced ? `/k8s/ns/${testName}` : '/k8s/cluster'}/${resource}`);
+        // Filter by resource name to make sure the resource is on the first page of results.
+        // Otherwise the tests fail since we do virtual scrolling and the element isn't found.
+        await crudView.filterForName(testName);
         await crudView.resourceRowsPresent();
         await crudView.deleteRow(kind)(testName);
 
@@ -154,6 +157,9 @@ describe('Kubernetes resource CRUD operations', () => {
       leakedResources.add(JSON.stringify({name: bindingName, plural: 'rolebindings', namespace: testName}));
       await crudView.createYAMLButton.click();
       await browser.wait(until.urlContains(`/k8s/ns/${testName}/rolebindings`));
+      // Filter by resource name to make sure the resource is on the first page of results.
+      // Otherwise the tests fail since we do virtual scrolling and the element isn't found.
+      await crudView.filterForName(bindingName);
       await crudView.resourceRowsPresent();
       expect(crudView.rowForName(bindingName).isPresent()).toBe(true);
     });
@@ -188,6 +194,9 @@ describe('Kubernetes resource CRUD operations', () => {
 
     it('deletes the namespace', async() => {
       await browser.get(`${appHost}/k8s/cluster/namespaces`);
+      // Filter by resource name to make sure the resource is on the first page of results.
+      // Otherwise the tests fail since we do virtual scrolling and the element isn't found.
+      await crudView.filterForName(name);
       await crudView.resourceRowsPresent();
       await crudView.deleteRow('Namespace')(name);
       leakedResources.delete(JSON.stringify({name, plural: 'namespaces'}));
@@ -280,7 +289,7 @@ describe('Kubernetes resource CRUD operations', () => {
       await browser.wait(until.presenceOf(crudView.actionsDropdown));
       await crudView.actionsDropdown.click();
       await browser.wait(until.presenceOf(crudView.actionsDropdownMenu), 500);
-      await crudView.actionsDropdownMenu.element(by.linkText('Modify Labels...')).click();
+      await crudView.actionsDropdownMenu.element(by.linkText('Edit Labels')).click();
       await browser.wait(until.presenceOf($('.tags input')), 500);
       await $('.tags input').sendKeys(labelValue, Key.ENTER);
       // This only works because there's only one label

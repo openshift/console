@@ -10,7 +10,6 @@ import { Link } from 'react-router-dom';
 import { AutoSizer, List as VirtualList, WindowScroller, CellMeasurerCache, CellMeasurer } from 'react-virtualized';
 
 import { getJobTypeAndCompletions, isNodeReady, podPhase, podPhaseFilterReducer, podReadiness, K8sResourceKind, K8sKind, K8sResourceKindReference } from '../../module/k8s';
-import { isScanned, isSupported, makePodvuln, numFixables } from '../../module/k8s/podvulns';
 import { UIActions } from '../../ui/ui-actions';
 import { ingressValidHosts } from '../ingress';
 import { routeStatus } from '../routes';
@@ -58,29 +57,6 @@ const listFilters = {
   'node-status': (status, node) => {
     const isReady = isNodeReady(node);
     return status === 'all' || (status === 'ready' && isReady) || (status === 'notReady' && !isReady);
-  },
-
-  'podvuln-filter': (filters, pod) => {
-    if (!filters || !filters.selected || !filters.selected.size) {
-      return true;
-    }
-    const podvuln = makePodvuln(pod);
-
-    const fixables = numFixables(podvuln);
-    const scanned = isScanned(podvuln);
-    const supported = isSupported(podvuln);
-    const P0 = _.get(pod, 'metadata.labels.secscan/P0');
-    const P1 = _.get(pod, 'metadata.labels.secscan/P1');
-    const P2 = _.get(pod, 'metadata.labels.secscan/P2');
-    const P3 = _.get(pod, 'metadata.labels.secscan/P3');
-
-    return filters.selected.has('P0') && P0 ||
-           filters.selected.has('P1') && P1 ||
-           filters.selected.has('P2') && P2 ||
-           filters.selected.has('P3') && P3 ||
-           filters.selected.has('Fixables') && (fixables ? true : false) ||
-           filters.selected.has('NotScanned') && (!scanned || !supported) ||
-           filters.selected.has('Passed') && !P0 && !P1 && !P2 && !P3 && isSupported(podvuln);
   },
 
   'clusterserviceversion-resource-kind': (filters, resource) => {

@@ -22,7 +22,7 @@ export enum CatalogEntryVisibility {
 
 export const appCatalogLabel = 'alm-catalog';
 export enum AppCatalog {
-  tectonicOCS = 'tectonic-ocs',
+  ocs = 'ocs',
 }
 
 export enum ALMSpecDescriptors {
@@ -140,8 +140,8 @@ export type InstallPlanKind = {
 } & K8sResourceKind;
 
 export type SubscriptionKind = {
-  apiVersion: 'app.coreos.com/v1alpha1',
-  kind: 'Subscription-v1',
+  apiVersion: 'operators.coreos.com/v1alpha1',
+  kind: 'Subscription',
   spec: {
     source: string;
     name: string;
@@ -157,8 +157,8 @@ export type SubscriptionKind = {
 } & K8sResourceKind;
 
 export type CatalogSourceKind = {
-  apiVersion: 'app.coreos.com/v1alpha1',
-  kind: 'CatalogSource-v1',
+  apiVersion: 'operators.coreos.com/v1alpha1',
+  kind: 'CatalogSource',
   spec: {
     name: string;
     sourceType: 'internal';

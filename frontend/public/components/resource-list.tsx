@@ -6,7 +6,7 @@ import * as _ from 'lodash-es';
 import { resourceListPages, resourceDetailPages } from './resource-pages';
 import { connectToPlural } from '../kinds';
 import { LoadingBox } from './utils';
-import { K8sResourceKindReference, referenceForModel } from '../module/k8s';
+import { K8sResourceKindReference, referenceForModel, K8sKind } from '../module/k8s';
 import { ErrorPage404 } from './error';
 import { FLAGS, connectToFlags, flagPending } from '../features';
 import { OpenShiftGettingStarted } from './start-guide';
@@ -76,11 +76,15 @@ export type ResourceListPageProps = {
   flags: any,
   modelRef: K8sResourceKindReference;
   match: match<any>;
+  kindObj: K8sKind;
+  kindsInFlight: boolean;
 };
 
 export type ResourceDetailsPageProps = {
   modelRef: K8sResourceKindReference;
   match: match<any>;
+  kindObj: K8sKind;
+  kindsInFlight: boolean;
 };
 /* eslint-enable no-undef, no-unused-vars */
 

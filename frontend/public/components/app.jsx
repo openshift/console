@@ -11,7 +11,7 @@ import { ALL_NAMESPACES_KEY } from '../const';
 import { connectToFlags, featureActions, flagPending, FLAGS } from '../features';
 import { detectMonitoringURLs } from '../monitoring';
 import { analyticsSvc } from '../module/analytics';
-import { ClusterOverviewContainer } from './cluster-overview-container';
+import { ClusterOverviewPage } from './cluster-overview';
 import { ClusterSettingsPage } from './cluster-settings/cluster-settings';
 import { LDAPPage } from './cluster-settings/ldap';
 import { ContainersDetailsPage } from './container';
@@ -158,8 +158,8 @@ class App extends React.PureComponent {
         <GlobalNotifications />
         <Switch>
           <Route path={['/all-namespaces', '/ns/:ns',]} component={RedirectComponent} />
-          <Route path="/overview/all-namespaces" exact component={ClusterOverviewContainer} />
-          <Route path="/overview/ns/:ns" exact component={ClusterOverviewContainer} />
+          <Route path="/overview/all-namespaces" exact component={ClusterOverviewPage} />
+          <Route path="/overview/ns/:ns" exact component={ClusterOverviewPage} />
           <Route path="/overview" exact component={NamespaceRedirect} />
           <Route path="/cluster-health" exact component={ClusterHealth} />
           <Route path="/start-guide" exact component={StartGuidePage} />
@@ -180,7 +180,6 @@ class App extends React.PureComponent {
 
           <Route path="/k8s/cluster/clusterroles/:name/add-rule" exact component={EditRulePage} />
           <Route path="/k8s/cluster/clusterroles/:name/:rule/edit" exact component={EditRulePage} />
-          <Route path="/k8s/cluster/clusterroles/:name" component={props => <ResourceDetailsPage {...props} plural="clusterroles" />} />
 
           <Route path="/k8s/ns/:ns/roles/:name/add-rule" exact component={EditRulePage} />
           <Route path="/k8s/ns/:ns/roles/:name/:rule/edit" exact component={EditRulePage} />
@@ -267,7 +266,10 @@ if ('serviceWorker' in navigator) {
       .then(() => new Promise(r => navigator.serviceWorker.controller ? r() : navigator.serviceWorker.addEventListener('controllerchange', () => r())))
       .then(() => navigator.serviceWorker.controller.postMessage({topic: 'setFactor', value: window.SERVER_FLAGS.loadTestFactor}));
   } else {
-    navigator.serviceWorker.getRegistrations().then((registrations) => registrations.forEach(reg => reg.unregister()));
+    navigator.serviceWorker.getRegistrations()
+      .then((registrations) => registrations.forEach(reg => reg.unregister()))
+      // eslint-disable-next-line no-console
+      .catch(e => console.warn('Error unregistering service workers', e));
   }
 }
 

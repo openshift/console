@@ -1,6 +1,7 @@
 /* eslint-disable no-undef, no-unused-vars */
 
 import * as React from 'react';
+import * as _ from 'lodash-es';
 
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
 import { PromiseComponent } from '../utils';
@@ -19,11 +20,14 @@ export class DisableApplicationModal extends PromiseComponent {
   private submit(event): void {
     event.preventDefault();
 
+    const {subscription, k8sKill} = this.props;
     const deleteOptions = this.state.cascadeDelete ? {kind: 'DeleteOptions', apiVersion: 'v1', propagationPolicy: 'Foreground'} : null;
-    this.handlePromise(Promise.all([
-      this.props.k8sKill(SubscriptionModel, this.props.subscription, {}, deleteOptions),
-      this.props.k8sKill(ClusterServiceVersionModel, {metadata: {name: this.props.subscription.status.installedCSV, namespace: this.props.subscription.metadata.namespace}} as ClusterServiceVersionKind, {}, deleteOptions),
-    ])).then(() => this.props.close());
+    const killPromises = [k8sKill(SubscriptionModel, subscription, {}, deleteOptions)]
+      .concat(_.get(this.props.subscription, 'status.installedCSV')
+        ? k8sKill(ClusterServiceVersionModel, {metadata: {name: subscription.status.installedCSV, namespace: subscription.metadata.namespace}} as ClusterServiceVersionKind, {}, deleteOptions)
+        : []);
+
+    this.handlePromise(Promise.all(killPromises)).then(() => this.props.close());
   }
 
   render() {

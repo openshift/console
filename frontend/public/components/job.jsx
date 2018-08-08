@@ -25,7 +25,7 @@ spec:
       restartPolicy: Never`);
 
 const ModifyJobParallelism = (kind, obj) => ({
-  label: 'Modify Parallelism...',
+  label: 'Edit Parallelism',
   callback: () => configureJobParallelismModal({
     resourceKind: kind,
     resource: obj,

@@ -21,53 +21,53 @@ const CogItems: React.SFC<CogItemsProps> = ({options, onClick}) => {
 
 const cogFactory: CogFactory = {
   Delete: (kind, obj) => ({
-    label: `Delete ${kind.label}...`,
+    label: `Delete ${kind.label}`,
     callback: () => deleteModal({
       kind: kind,
       resource: obj,
     }),
   }),
   Edit: (kind, obj) => ({
-    label: `Edit ${kind.label}...`,
+    label: `Edit ${kind.label}`,
     href: `${resourceObjPath(obj, kind.crd ? referenceForModel(kind) : kind.kind)}/yaml`,
   }),
   ModifyLabels: (kind, obj) => ({
-    label: 'Modify Labels...',
+    label: 'Edit Labels',
     callback: () => labelsModal({
       kind: kind,
       resource: obj,
     }),
   }),
   ModifyPodSelector: (kind, obj) => ({
-    label: 'Modify Pod Selector...',
+    label: 'Edit Pod Selector',
     callback: () => podSelectorModal({
       kind: kind,
       resource:  obj,
     }),
   }),
   ModifyNodeSelector: (kind, obj) => ({
-    label: 'Modify Node Selector...',
+    label: 'Edit Node Selector',
     callback: () => nodeSelectorModal({
       kind: kind,
       resource: obj,
     }),
   }),
   ModifyAnnotations: (kind, obj) => ({
-    label: 'Modify Annotations...',
+    label: 'Edit Annotations',
     callback: () => annotationsModal({
       kind: kind,
       resource: obj,
     }),
   }),
   ModifyCount: (kind, obj) => ({
-    label: 'Modify Count...',
+    label: 'Edit Count',
     callback: () => configureReplicaCountModal({
       resourceKind: kind,
       resource: obj,
     }),
   }),
   EditEnvironment: (kind, obj) => ({
-    label: `${kind.kind === 'Pod' ? 'View' : 'Edit'} Environment...`,
+    label: `${kind.kind === 'Pod' ? 'View' : 'Edit'} Environment`,
     href: `${resourceObjPath(obj, kind.crd ? referenceForModel(kind) : kind.kind)}/environment`,
   }),
 };

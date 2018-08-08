@@ -24,7 +24,7 @@ class UnscheduleNodeModal extends PromiseComponent {
 
   render() {
     return <form onSubmit={this._submit} name="form">
-      <ModalTitle>Mark as unschedulable</ModalTitle>
+      <ModalTitle>Mark as Unschedulable</ModalTitle>
       <ModalBody>
         Unschedulable nodes won&#39;t accept new pods. This is useful for scheduling maintenance or preparing to decommission a node.
       </ModalBody>

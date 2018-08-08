@@ -70,6 +70,7 @@ export const types = {
   startImpersonate: 'startImpersonate',
   stopImpersonate: 'stopImpersonate',
   sortList: 'sortList',
+  setCreateProjectMessage: 'setCreateProjectMessage'
 };
 
 export const UIActions = {
@@ -151,4 +152,6 @@ export const UIActions = {
     history.replace(`${url.pathname}?${sp.toString()}${url.hash}`);
     return {listId, field, func, orderBy, type: types.sortList};
   },
+
+  [types.setCreateProjectMessage]: message => ({type: types.setCreateProjectMessage, message})
 };

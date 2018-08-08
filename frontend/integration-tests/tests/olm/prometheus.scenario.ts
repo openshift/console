@@ -11,7 +11,7 @@ import * as sidenavView from '../../views/sidenav.view';
 import * as appListView from '../../views/app-list.view';
 import * as yamlView from '../../views/yaml.view';
 
-describe('Interacting with the Prometheus OCS', () => {
+xdescribe('Interacting with the Prometheus OCS', () => {
   const prometheusResources = new Set(['StatefulSet', 'Pod']);
   const alertmanagerResources = new Set(['StatefulSet', 'Pod']);
   const serviceMonitorResources = new Set(['Pod']);
@@ -35,7 +35,7 @@ describe('Interacting with the Prometheus OCS', () => {
     await catalogView.entryRowFor('Prometheus').element(by.buttonText('Create Subscription')).click();
     await browser.wait(until.presenceOf($('.ace_text-input')));
     const content = await yamlView.editorContent.getText();
-    const newContent = defaultsDeep({}, {metadata: {generateName: `${testName}-prometheus-`, namespace: testName, labels: {[testLabel]: testName}}, spec: {channel: 'alpha', source: 'tectonic-ocs', name: 'prometheus'}}, safeLoad(content));
+    const newContent = defaultsDeep({}, {metadata: {generateName: `${testName}-prometheus-`, namespace: testName, labels: {[testLabel]: testName}}, spec: {channel: 'alpha', source: 'ocs', name: 'prometheus'}}, safeLoad(content));
     await yamlView.setContent(safeDump(newContent));
     await $('#save-changes').click();
     await crudView.isLoaded();
@@ -64,7 +64,7 @@ describe('Interacting with the Prometheus OCS', () => {
   }, deleteRecoveryTime);
 
   it('displays Prometheus OCS in "Available Operators" view for the namespace', async() => {
-    await browser.get(`${appHost}/k8s/ns/${testName}/clusterserviceversion-v1s`);
+    await browser.get(`${appHost}/k8s/ns/${testName}/clusterserviceversions`);
     await appListView.isLoaded();
     await browser.sleep(500);
 

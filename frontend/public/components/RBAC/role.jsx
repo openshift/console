@@ -10,7 +10,7 @@ import { registerTemplate } from '../../yaml-templates';
 import { flatten as bindingsFlatten } from './bindings';
 import { flagPending } from '../../features';
 
-registerTemplate('rbac.authorization.k8s.io/v1beta1.Role', `apiVersion: rbac.authorization.k8s.io/v1beta1
+registerTemplate('rbac.authorization.k8s.io/v1.Role', `apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: example

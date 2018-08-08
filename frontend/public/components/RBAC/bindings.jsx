@@ -19,7 +19,7 @@ import { isSystemRole } from './index';
 import { registerTemplate } from '../../yaml-templates';
 import { connectToFlags, FLAGS, flagPending } from '../../features';
 
-registerTemplate('rbac.authorization.k8s.io/v1beta1.RoleBinding', `apiVersion: rbac.authorization.k8s.io/v1beta1
+registerTemplate('rbac.authorization.k8s.io/v1.RoleBinding', `apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: example
@@ -381,7 +381,7 @@ const BaseEditRoleBinding = connect(null, {setActiveNamespace: UIActions.setActi
       const existingData = _.pick(props.obj, ['metadata.name', 'metadata.namespace', 'roleRef', 'subjects']);
       existingData.kind = props.kind;
       const data = _.defaultsDeep({}, props.fixed, existingData, {
-        apiVersion: 'rbac.authorization.k8s.io/v1beta1',
+        apiVersion: 'rbac.authorization.k8s.io/v1',
         kind: 'RoleBinding',
         metadata: {
           name: '',

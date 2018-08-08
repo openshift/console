@@ -28,7 +28,6 @@ import { RoleBindingsPage } from './RBAC/bindings';
 import { PrometheusInstancesPage } from './prometheus';
 import { ServiceMonitorsPage } from './service-monitor';
 import { AlertManagersPage, AlertManagersDetailsPage } from './alert-manager';
-import { PodVulnsPage, PodVulnsDetailsPage } from './secscan/pod-vuln';
 import { StatefulSetsPage, StatefulSetsDetailsPage } from './stateful-set';
 import { ResourceQuotasPage, ResourceQuotasDetailsPage } from './resource-quota';
 import { HorizontalPodAutoscalersPage, HorizontalPodAutoscalersDetailsPage } from './hpa';
@@ -72,7 +71,6 @@ import {
   PrometheusModel,
   ServiceMonitorModel,
   AlertmanagerModel,
-  PodVulnModel,
   StatefulSetModel,
   ResourceQuotaModel,
   HorizontalPodAutoscalerModel,
@@ -118,7 +116,6 @@ export const resourceListPages = new Map<GroupVersionKind | string, React.Compon
   .set(referenceForModel(PrometheusModel), PrometheusInstancesPage)
   .set(referenceForModel(ServiceMonitorModel), ServiceMonitorsPage)
   .set(referenceForModel(AlertmanagerModel), AlertManagersPage)
-  .set(referenceForModel(PodVulnModel), PodVulnsPage)
   .set(referenceForModel(StatefulSetModel), StatefulSetsPage)
   .set(referenceForModel(ResourceQuotaModel), ResourceQuotasPage)
   .set(referenceForModel(HorizontalPodAutoscalerModel), HorizontalPodAutoscalersPage)
@@ -169,7 +166,6 @@ export const resourceDetailPages = new Map<GroupVersionKind | string, React.Comp
   .set(referenceForModel(ClusterRoleModel), ClusterRolesDetailsPage)
   .set(referenceForModel(RoleModel), RolesDetailsPage)
   .set(referenceForModel(AlertmanagerModel), AlertManagersDetailsPage)
-  .set(referenceForModel(PodVulnModel), PodVulnsDetailsPage)
   .set(referenceForModel(StatefulSetModel), StatefulSetsDetailsPage)
   .set(referenceForModel(ResourceQuotaModel), ResourceQuotasDetailsPage)
   .set(referenceForModel(HorizontalPodAutoscalerModel), HorizontalPodAutoscalersDetailsPage)

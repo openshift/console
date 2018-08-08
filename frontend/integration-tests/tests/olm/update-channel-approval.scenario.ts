@@ -33,7 +33,7 @@ describe('Manually approving an install plan', () => {
     if (await catalogView.hasSubscription(pkgName)) {
       await catalogView.entryRowFor(pkgName).element(by.linkText('View subscription')).click();
       const existingSub = await crudView.resourceRows.first().$$('.co-m-resource-icon + a').first().getText();
-      await crudView.deleteRow('Subscription-v1')(existingSub);
+      await crudView.deleteRow('Subscription')(existingSub);
 
       expect(crudView.rowForName(existingSub).isDisplayed()).toBe(false);
     }
@@ -57,13 +57,13 @@ describe('Manually approving an install plan', () => {
 
   it('does not create a cluster service version', async() => {
     await catalogView.entryRowFor(pkgName).element(by.linkText('View subscription')).click();
-    await crudView.selectOptionFromGear(subName, 'View ClusterServiceVersion-v1');
+    await crudView.selectOptionFromGear(subName, 'View ClusterServiceVersion');
 
     expect($('.co-m-pane__body').getText()).toContain('404: Not Found');
   });
 
   it('displays "Upgrading" for the subscription and a link to the active install plan', async() => {
-    await browser.get(`${appHost}/k8s/ns/${testName}/subscription-v1s/${subName}`);
+    await browser.get(`${appHost}/k8s/ns/${testName}/subscriptions/${subName}`);
     await crudView.isLoaded();
 
     expect($('.co-detail-table__section--last').isDisplayed()).toBe(true);
@@ -77,7 +77,7 @@ describe('Manually approving an install plan', () => {
   });
 
   it('displays the newly installed version', async() => {
-    await $('.co-m-resource-subscription-v1 + a').click();
+    await $('.co-m-resource-subscription + a').click();
     await crudView.isLoaded();
 
     expect(element(by.linkText('1 installed')).isDisplayed()).toBe(true);

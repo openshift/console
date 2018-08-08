@@ -14,12 +14,18 @@ export const resourceRows = $$('.co-resource-list__item');
 export const resourceRowNamesAndNs = $$('.co-m-resource-icon + a');
 export const rowForName = (name: string) => resourceRows.filter((row) => row.$$('.co-m-resource-icon + a').first().getText().then(text => text === name)).first();
 export const labelsForRow = (name: string) => rowForName(name).$$('.co-m-label');
+export const textFilter = $('.co-m-pane__filter-bar-group--filter input');
 export const gearOptions = {
-  nodeSelector: 'Modify Node Selector',
-  labels: 'Modify Labels',
-  annotations: 'Modify Annotations',
+  nodeSelector: 'Edit Node Selector',
+  labels: 'Edit Labels',
+  annotations: 'Edit Annotations',
   edit: 'Edit',
   delete: 'Delete',
+};
+
+export const filterForName = async(name: string) => {
+  await browser.wait(until.presenceOf(textFilter));
+  await textFilter.sendKeys(name);
 };
 
 /**

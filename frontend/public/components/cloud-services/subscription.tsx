@@ -211,7 +211,7 @@ export const SubscriptionDetailsPage: React.SFC<SubscriptionDetailsPageProps> = 
       navFactory.editYaml(),
     ]}
     resources={[
-      {kind: ConfigMapModel.kind, name: 'tectonic-ocs', namespace: olmNamespace, isList: false, prop: 'ocsConfigMap'},
+      {kind: ConfigMapModel.kind, name: 'ocs', namespace: olmNamespace, isList: false, prop: 'ocsConfigMap'},
       {kind: ConfigMapModel.kind, namespace: props.namespace, isList: true, prop: 'configMaps'},
       {kind: referenceForModel(ClusterServiceVersionModel), namespace: props.namespace, isList: true, prop: 'clusterServiceVersions'},
     ]}
