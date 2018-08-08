@@ -62,7 +62,7 @@ class ConfigureUpdateStrategyModal extends PromiseComponent {
     const maxSurge = _.get(this.deployment.spec, 'strategy.rollingUpdate.maxSurge', '');
 
     return <form onSubmit={this._submit} name="form">
-      <ModalTitle>Deployment Update Strategy</ModalTitle>
+      <ModalTitle>Edit Update Strategy</ModalTitle>
       <ModalBody>
         <div className="co-m-form-row">
           <p>

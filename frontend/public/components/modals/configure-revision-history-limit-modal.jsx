@@ -44,7 +44,7 @@ class ConfigureRevisionHistoryLimitModal extends PromiseComponent {
 
   render() {
     return <form onSubmit={this._submit} name="form">
-      <ModalTitle>Revision History Limit</ModalTitle>
+      <ModalTitle>Edit Revision History Limit</ModalTitle>
       <ModalBody>
         <div className="co-m-form-row">
           <p>

@@ -16,9 +16,9 @@ export const rowForName = (name: string) => resourceRows.filter((row) => row.$$(
 export const labelsForRow = (name: string) => rowForName(name).$$('.co-m-label');
 export const textFilter = $('.co-m-pane__filter-bar-group--filter input');
 export const gearOptions = {
-  nodeSelector: 'Modify Node Selector',
-  labels: 'Modify Labels',
-  annotations: 'Modify Annotations',
+  nodeSelector: 'Edit Node Selector',
+  labels: 'Edit Labels',
+  annotations: 'Edit Annotations',
   edit: 'Edit',
   delete: 'Delete',
 };
