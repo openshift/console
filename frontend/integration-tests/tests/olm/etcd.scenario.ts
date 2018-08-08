@@ -21,7 +21,7 @@ describe('Interacting with the etcd OCS', () => {
   const etcdrestore = `${testName}-etcdrestore`;
 
   beforeAll(async() => {
-    browser.get(`${appHost}/overview/all-namespaces`);
+    browser.get(`${appHost}/status/all-namespaces`);
     await browser.wait(until.presenceOf(sidenavView.navSectionFor('Operators')));
   });
 

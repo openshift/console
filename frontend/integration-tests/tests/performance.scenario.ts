@@ -15,20 +15,20 @@ const chunkedRoutes = OrderedMap<string, {section: string, name: string}>()
   .set('deployment-config', {section: 'Workloads', name: 'Deployment Configs'})
   .set('replicaset', {section: 'Workloads', name: 'Replica Sets'})
   .set('replication-controller', {section: 'Workloads', name: 'Replication Controllers'})
-  .set('persistent-volume-claim', {section: 'Workloads', name: 'Persistent Volume Claims'})
   .set('stateful-set', {section: 'Workloads', name: 'Stateful Sets'})
   .set('job', {section: 'Workloads', name: 'Jobs'})
   .set('cron-job', {section: 'Workloads', name: 'Cron Jobs'})
-  .set('build-config', {section: 'Workloads', name: 'Build Configs'})
-  .set('image-stream', {section: 'Workloads', name: 'Image Streams'})
   .set('configmap', {section: 'Workloads', name: 'Config Maps'})
-  .set('resource-quota', {section: 'Workloads', name: 'Resource Quotas'})
   .set('hpa', {section: 'Workloads', name: 'HPAs'})
   .set('service', {section: 'Networking', name: 'Services'})
+  .set('persistent-volume', {section: 'Storage', name: 'Persistent Volumes'})
+  .set('persistent-volume-claim', {section: 'Storage', name: 'Persistent Volume Claims'})
+  .set('storage-class', {section: 'Storage', name: 'Storage Classes'})
+  .set('build-config', {section: 'Builds', name: 'Build Configs'})
+  .set('image-stream', {section: 'Builds', name: 'Image Streams'})
   .set('node', {section: 'Administration', name: 'Nodes'})
-  .set('persistent-volume', {section: 'Administration', name: 'Persistent Volumes'})
   .set('service-account', {section: 'Administration', name: 'Service Accounts'})
-  .set('storage-class', {section: 'Administration', name: 'Storage Classes'})
+  .set('resource-quota', {section: 'Administration', name: 'Resource Quotas'})
   .set('custom-resource-definition', {section: 'Administration', name: 'CRDs'});
 
 describe('Performance test', () => {
@@ -46,7 +46,7 @@ describe('Performance test', () => {
   });
 
   it('downloads new bundle for "Overview" route', async() => {
-    browser.get(`${appHost}/overview/all-namespaces`);
+    browser.get(`${appHost}/status/all-namespaces`);
     await browser.wait(until.presenceOf(crudView.resourceTitle));
 
     const overviewChunk = await browser.executeScript<any>(() => performance.getEntriesByType('resource')

@@ -20,7 +20,7 @@ xdescribe('Interacting with the Prometheus OCS', () => {
   const testLabel = 'automatedTestName';
 
   beforeAll(async() => {
-    browser.get(`${appHost}/overview/all-namespaces`);
+    browser.get(`${appHost}/status/all-namespaces`);
     await browser.wait(until.presenceOf(sidenavView.navSectionFor('Operators')));
   });
 
