@@ -6,19 +6,34 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     [[ if eq .Branding "origin" ]]
-    <title>OpenShift Origin</title>
+    <title>OKD</title>
+    <meta name="application-name" content="OKD">
     [[ end ]]
     [[ if eq .Branding "ocp" ]]
     <title>OpenShift Container Platform</title>
+    <meta name="application-name" content="OpenShift Container Platform">
     [[ end ]]
     [[ if eq .Branding "online" ]]
     <title>OpenShift Online</title>
+    <meta name="application-name" content="OpenShift Online">
     [[ end ]]
+
+    [[ if eq .Branding "origin" ]]
+    <link rel="shortcut icon" href="<%= require('./imgs/okd/favicon.png') %>">
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="<%= require('./imgs/okd/apple-touch-icon-precomposed.png') %>">
+    <link rel="mask-icon" href="<%= require('./imgs/okd/mask-icon.svg') %>" color="#DB242F">
+    <meta name="msapplication-TileColor" content="#000000">
+    <meta name="msapplication-TileImage" content="<%= require('./imgs/okd/mstile-144x144.png') %>">
+    [[ else ]]
+    <link rel="shortcut icon" href="<%= require('./imgs/ocp/favicon.png') %>">
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="<%= require('./imgs/ocp/apple-touch-icon-precomposed.png') %>">
+    <link rel="mask-icon" href="<%= require('./imgs/ocp/mask-icon.svg') %>" color="#DB242F">
+    <meta name="msapplication-TileColor" content="#000000">
+    <meta name="msapplication-TileImage" content="<%= require('./imgs/ocp/mstile-144x144.png') %>">
+    [[ end ]]
+
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="shortcut icon" href="<%= require('./imgs/favicon.png') %>">
-    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="<%= require('./imgs/apple-touch-icon-precomposed.png') %>">
-    <link rel="mask-icon" href="<%= require('./imgs/mask-icon.svg') %>" color="#DB242F">
     <script type="text/javascript">
       window.SERVER_FLAGS = [[.]];
     </script>
