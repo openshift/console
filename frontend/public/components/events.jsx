@@ -47,23 +47,24 @@ class Inner extends React.PureComponent {
       </div>
       <div className="co-sysevent__box">
         <div className="co-sysevent__header">
-          <div className="co-sysevent__header__link">
+          <div className="co-sysevent__subheader">
             <ResourceLink
+              className="co-sysevent__resourcelink"
               kind={obj.kind}
               namespace={obj.namespace}
               name={obj.name}
               title={obj.uid}
             />
+            <Timestamp timestamp={lastTimestamp} />
+          </div>
+          <div className="co-sysevent__details">
             <small className="co-sysevent__source">
               Generated from <span>{source.component}</span>
               {source.component === 'kubelet' &&
                 <span> on <Link to={`/k8s/cluster/nodes/${source.host}`}>{source.host}</Link></span>
               }
             </small>
-          </div>
-          <div className="co-sysevent__timestamp">
-            <Timestamp timestamp={lastTimestamp} />
-            {count > 1 && <small className="co-sysevent__source text-secondary">
+            {count > 1 && <small className="co-sysevent__count text-secondary">
               {count} times in the last <Timestamp timestamp={firstTimestamp} simple={true} omitSuffix={true} />
             </small>}
           </div>

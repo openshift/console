@@ -82,27 +82,29 @@ $color-dark-border: #ddd;
   flex: none;
 }
 
-.co-sysevent__timestamp {
-  display: inline-block;
-}
-
-.co-sysevent__header {
-  justify-content: space-between;
+.co-sysevent__details {
   display: flex;
+  justify-content: space-between;
 }
 
-.co-sysevent__header__link {
-  flex: 1 0;
+.co-sysevent__resourcelink {
+  display: block;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.co-sysevent__subheader {
+  display: flex;
+  justify-content: space-between;
   white-space: pre;
 }
 
 .co-sysevent__source {
+  flex: 1;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: pre;
-  display: block;
+  white-space: nowrap;
 }
 
 .co-sysevent__message {

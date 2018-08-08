@@ -1,6 +1,7 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
+import * as classNames from 'classnames';
 
 import { ResourceIcon } from './index';
 import { modelFor, referenceForModel } from '../../module/k8s';
@@ -54,14 +55,14 @@ export const resourcePath = (kind, name, namespace) => {
 export const resourceObjPath = (obj, kind) => resourcePath(kind, _.get(obj, 'metadata.name'), _.get(obj, 'metadata.namespace'));
 
 export const ResourceLink = connectToModel(
-  ({kind, name, namespace, title, displayName, linkTo = true, kindsInFlight}) => {
+  ({className, kind, name, namespace, title, displayName, linkTo = true, kindsInFlight}) => {
     if (kindsInFlight) {
       return null;
     }
     const path = resourcePath(kind, name, namespace);
     const value = displayName ? displayName : name;
 
-    return <span className="co-resource-link">
+    return <span className={classNames('co-resource-link', className)}>
       <ResourceIcon kind={kind} />
       {(path && linkTo) ? <Link to={path} title={title} className="co-resource-link__resource-name">{value}</Link> : <span className="co-resource-link__resource-name">{value}</span>}
     </span>;
