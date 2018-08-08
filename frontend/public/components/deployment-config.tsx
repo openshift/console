@@ -51,7 +51,7 @@ const rollout = dc => {
 };
 
 const rolloutAction = (kind, obj) => ({
-  label: 'Rollout',
+  label: 'Start Rollout',
   callback: () => rollout(obj).catch(err => {
     const error = err.message;
     errorModal({error});
