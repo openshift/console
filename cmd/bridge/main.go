@@ -144,6 +144,13 @@ func main() {
 	if branding == "origin" {
 		branding = "okd"
 	}
+	switch branding {
+	case "okd":
+	case "ocp":
+	case "online":
+	default:
+		flagFatalf("branding", "value must be one of okd, ocp, or online")
+	}
 
 	srv := &server.Server{
 		PublicDir:            *fPublicDir,
