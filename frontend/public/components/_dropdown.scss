@@ -59,6 +59,17 @@ $color-bookmarker: #DDD;
       &.next-to-bookmark {
         padding-left: 5px
       }
+      &.hover {
+        background-color: $dropdown-link-hover-bg;
+        color: $dropdown-link-hover-color;
+        position: relative;
+        border-top: 1px solid #bee1f4;
+        border-bottom: 1px solid #bee1f4;
+        &:after,
+        &:before {
+          height: 1px;
+        }
+      }
     }
   }
 }
