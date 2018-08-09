@@ -13,7 +13,8 @@ metadata:
   name: example
 spec:
   rules:
-  - http:
+  - host: example.com
+    http:
       paths:
       - path: /testpath
         backend:
