@@ -5,7 +5,7 @@ import * as _ from 'lodash-es';
 
 import { ActionsMenu, ResourceIcon } from './index';
 import { ClusterServiceVersionLogo } from '../cloud-services';
-import { K8sResourceKind, K8sResourceKindReference, K8sKind, referenceFor, referenceForModel } from '../../module/k8s';
+import { K8sResourceKind, K8sResourceKindReference, K8sKind, referenceForModel } from '../../module/k8s';
 import { connectToModel } from '../../kinds';
 import { ClusterServiceVersionModel } from '../../models';
 
@@ -27,9 +27,13 @@ export const BreadCrumbs: React.SFC<BreadCrumbsProps> = ({breadcrumbs}) => (
 export const NavTitle = connectToModel((props: NavTitleProps) => {
   const {kind, kindObj, detail, title, menuActions, obj, breadcrumbsFor, style} = props;
   const data = _.get(obj, 'data');
-  const isCSV = !_.isEmpty(data) && referenceFor(data) === referenceForModel(ClusterServiceVersionModel);
-  const logo = isCSV
+  const isCSV = kind === referenceForModel(ClusterServiceVersionModel);
+  const csvLogo = () => !_.isEmpty(data)
     ? <ClusterServiceVersionLogo icon={_.get(data, 'spec.icon', [])[0]} displayName={data.spec.displayName} version={data.spec.version} provider={data.spec.provider} />
+    : <div style={{height: '60px'}} />;
+
+  const logo = isCSV
+    ? csvLogo()
     : <div className="co-m-pane__name">{ kind && <ResourceIcon kind={kind} className="co-m-resource-icon--lg pull-left" /> } <span id="resource-title">{title}</span></div>;
 
   return <div className={classNames('co-m-nav-title', {'co-m-nav-title--detail': detail}, {'co-m-nav-title--logo': isCSV}, {'co-m-nav-title--breadcrumbs': breadcrumbsFor && !_.isEmpty(data)})} style={style}>
