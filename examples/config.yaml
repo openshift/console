@@ -10,4 +10,4 @@ auth:
   clientSecretFile: examples/console-client-secret
   issuerURL: https://127.0.0.1:8443
 customization:
-  logoImageName: origin
+  branding: okd

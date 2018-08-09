@@ -130,6 +130,8 @@ const LimitedGraphs = ({openshiftFlag}) => {
   if (flagPending(openshiftFlag)) {
     return null;
   }
+  // Use the shorter 'OpenShift Console' instead of 'OpenShift Container Platform Console' since the title appears in the chart.
+  const consoleName = window.SERVER_FLAGS.branding === 'okd' ? 'OKD Console' : 'OpenShift Console';
   return <div className="group">
     <div className="group__title">
       <h2 className="h3">Health</h2>
@@ -140,7 +142,7 @@ const LimitedGraphs = ({openshiftFlag}) => {
           <Status title="Kubernetes API" fetch={fetchHealth} />
         </div>
         <div className="col-lg-6 col-md-6">
-          <Status title="OpenShift Console" fetch={fetchConsoleHealth} />
+          <Status title={consoleName} fetch={fetchConsoleHealth} />
         </div>
       </div>
     </div>
