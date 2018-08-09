@@ -254,8 +254,7 @@ class BasicAuthSubform extends React.Component<BasicAuthSubformProps, BasicAuthS
             type="text"
             name="username"
             onChange={this.changeData}
-            value={this.state.username}
-            required />
+            value={this.state.username} />
           <p className="help-block" id="username-help">Optional username for Git authentication.</p>
         </div>
       </div>
