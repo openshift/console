@@ -94,4 +94,27 @@ describe('AsyncComponent', () => {
 
     wrapper = mount(<AsyncComponent loader={loader} className={className} />);
   });
+
+  it('renders new component if `props.loader` changes', (done) => {
+    const barId = 'barId';
+    const Bar = (props: {className: string}) => <div id={barId} className={props.className} />;
+
+    const loader1 = () => new Promise<typeof Foo>((resolve) => {
+      resolve(Foo);
+      setTimeout(() => {
+        expect(wrapper.update().find(`#${fooId}`).exists()).toBe(true);
+      }, 10);
+    });
+
+    const loader2 = () => new Promise<typeof Bar>((resolve) => {
+      resolve(Bar);
+      setTimeout(() => {
+        expect(wrapper.update().find(`#${barId}`).exists()).toBe(true);
+        done();
+      }, 10);
+    });
+
+    wrapper = mount(<AsyncComponent loader={loader1} />);
+    wrapper = wrapper.setProps({loader: loader2});
+  });
 });

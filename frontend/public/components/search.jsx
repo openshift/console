@@ -6,7 +6,6 @@ import * as PropTypes from 'prop-types';
 import * as classNames from 'classnames';
 
 import { history, NavTitle, SelectorInput, LoadingBox } from './utils';
-
 import { namespaceProptype } from '../propTypes';
 import { split, selectorFromString } from '../module/k8s/selector';
 import { requirementFromString } from '../module/k8s/selector-requirement';
@@ -16,17 +15,18 @@ import { connectToModel } from '../kinds';
 import { connectToFlags, FLAGS, flagPending } from '../features';
 import { OpenShiftGettingStarted } from './start-guide';
 import { referenceForModel, kindForReference } from '../module/k8s';
+import { AsyncComponent } from './utils/async';
+import { DefaultPage } from './default-resource';
 
 const ResourceList = connectToModel(({kindObj, kindsInFlight, namespace, selector, fake}) => {
   if (kindsInFlight) {
     return <LoadingBox />;
   }
 
-  const name = kindObj.labelPlural.replace(/ /g, '');
-  const ListPage = resourceListPages.get(name) || resourceListPages.get('Default');
+  const componentLoader = resourceListPages.get(referenceForModel(kindObj), () => Promise.resolve(DefaultPage));
   const ns = kindObj.namespaced ? namespace : undefined;
 
-  return <ListPage namespace={ns} selector={selector} kind={kindObj.crd ? referenceForModel(kindObj) : kindObj.kind} showTitle={false} autoFocus={false} fake={fake} />;
+  return <AsyncComponent loader={componentLoader} namespace={ns} selector={selector} kind={kindObj.crd ? referenceForModel(kindObj) : kindObj.kind} showTitle={false} autoFocus={false} fake={fake} />;
 });
 
 const updateUrlParams = (k, v) => {

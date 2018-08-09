@@ -10,7 +10,6 @@ import * as MiniCssExtractPlugin from 'mini-css-extract-plugin';
 const NODE_ENV = process.env.NODE_ENV;
 
 /* Helpers */
-const gitHash = () => require('child_process').execSync('git rev-parse --short HEAD').toString().trim();
 const extractCSS = new MiniCssExtractPlugin({filename: 'app-bundle.css'});
 
 let config: webpack.Configuration = {
@@ -124,9 +123,9 @@ let config: webpack.Configuration = {
 
 /* Production settings */
 if (NODE_ENV === 'production') {
-  config.output.filename = `[name]-bundle.${gitHash()}.min.js`;
-  config.output.chunkFilename = `[name]-[chunkhash].${gitHash()}.min.js`;
-  extractCSS.filename = `[name]-[chunkhash].${gitHash()}.min.css`;
+  config.output.filename = '[name]-bundle-[hash].min.js';
+  config.output.chunkFilename = '[name]-chunk-[chunkhash].min.js';
+  extractCSS.filename = '[name]-[chunkhash].min.css';
   // Causes error in --mode=production due to scope hoisting
   config.optimization.concatenateModules = false;
   config.stats = 'normal';

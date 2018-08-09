@@ -118,12 +118,11 @@ describe('Kubernetes resource CRUD operations', () => {
       it('search view displays created resource instance', async() => {
         await browser.get(`${appHost}/search/${namespaced ? `ns/${testName}` : 'all-namespaces'}?kind=${kind}&q=${testLabel}%3d${testName}`);
         await crudView.resourceRowsPresent();
+        await crudView.filterForName(testName);
         await crudView.rowForName(testName).element(by.linkText(testName)).click();
         await browser.wait(until.urlContains(`/${testName}`));
 
-        if (resource !== 'roles'){
-          expect(crudView.resourceTitle.getText()).toEqual(testName);
-        }
+        expect(crudView.resourceTitle.getText()).toEqual(testName);
       });
 
       it('deletes the resource instance', async() => {

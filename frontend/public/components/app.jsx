@@ -12,33 +12,18 @@ import { ALL_NAMESPACES_KEY } from '../const';
 import { connectToFlags, featureActions, flagPending, FLAGS } from '../features';
 import { detectMonitoringURLs } from '../monitoring';
 import { analyticsSvc } from '../module/analytics';
-import { ClusterOverviewPage } from './cluster-overview';
-import { ClusterSettingsPage } from './cluster-settings/cluster-settings';
-import { LDAPPage } from './cluster-settings/ldap';
-import { ContainersDetailsPage } from './container';
-import { CreateYAML, EditYAMLPage } from './create-yaml';
-import { ErrorPage, ErrorPage404 } from './error';
-import { EventStreamPage } from './events';
 import { GlobalNotifications } from './global-notifications';
 import { Masthead } from './masthead';
 import { NamespaceSelector } from './namespace';
 import { Nav } from './nav';
-import { ProfilePage } from './profile';
-import { ResourceDetailsPage, ResourceListPage } from './resource-list';
-import { CopyRoleBinding, CreateRoleBinding, EditRoleBinding, EditRulePage } from './RBAC';
-import { CreateSecret, EditSecret } from './secrets/create-secret';
-import { StartGuidePage } from './start-guide';
 import { SearchPage } from './search';
+import { ResourceDetailsPage, ResourceListPage } from './resource-list';
 import { history, AsyncComponent, Loading } from './utils';
 import { namespacedPrefixes } from './utils/link';
 import { UIActions, getActiveNamespace } from '../ui/ui-actions';
-import { ClusterHealth } from './cluster-health';
-import { CreateSubscriptionYAML } from './cloud-services';
-import { CreateCRDYAML } from './cloud-services/create-crd-yaml';
 import { ClusterServiceVersionModel, SubscriptionModel, AlertmanagerModel } from '../models';
 import { referenceForModel } from '../module/k8s';
 import k8sActions from '../module/k8s/k8s-actions';
-import { coFetch } from '../co-fetch';
 import '../vendor.scss';
 import '../style.scss';
 
@@ -50,12 +35,6 @@ Route.propTypes.path = PropTypes.oneOfType([
   PropTypes.string,
   PropTypes.arrayOf(PropTypes.string),
 ]);
-
-// eslint-disable-next-line react/display-name
-const boundResourcePage = (Page, plural) => props => <Page {...props} plural={plural} />;
-
-// React router will destroy & recreate components if these are passed in as anonymous functions. Bind them here.
-const rolesListPage = boundResourcePage(ResourceListPage, 'roles');
 
 const RedirectComponent = props => {
   const to = `/k8s${props.location.pathname}`;
@@ -122,6 +101,8 @@ const DefaultPage = connectToFlags(FLAGS.OPENSHIFT)(({ flags }) => {
   return <NamespaceRedirect />;
 });
 
+const LazyRoute = (props) => <Route {...props} component={(componentProps) => <AsyncComponent loader={props.loader} {...componentProps} />} />;
+
 class App extends React.PureComponent {
   componentDidUpdate (prevProps) {
     const props = this.props;
@@ -147,63 +128,63 @@ class App extends React.PureComponent {
         <GlobalNotifications />
         <Switch>
           <Route path={['/all-namespaces', '/ns/:ns',]} component={RedirectComponent} />
-          <Route path="/overview/all-namespaces" exact component={ClusterOverviewPage} />
-          <Route path="/overview/ns/:ns" exact component={ClusterOverviewPage} />
+          <LazyRoute path="/overview/all-namespaces" exact loader={() => import('./cluster-overview' /* webpackChunkName: "cluster-overview" */).then(m => m.ClusterOverviewPage)} />
+          <LazyRoute path="/overview/ns/:ns" exact loader={() => import('./cluster-overview' /* webpackChunkName: "cluster-overview" */).then(m => m.ClusterOverviewPage)} />
           <Route path="/overview" exact component={NamespaceRedirect} />
-          <Route path="/cluster-health" exact component={ClusterHealth} />
-          <Route path="/start-guide" exact component={StartGuidePage} />
+          <LazyRoute path="/cluster-health" exact loader={() => import('./cluster-health' /* webpackChunkName: "cluster-health" */).then(m => m.ClusterHealth)} />
+          <LazyRoute path="/start-guide" exact loader={() => import('./start-guide' /* webpackChunkName: "start-guide" */).then(m => m.StartGuidePage)} />
 
-          <Route path={`/k8s/ns/:ns/${SubscriptionModel.plural}/new`} exact component={NamespaceFromURL(CreateSubscriptionYAML)} />
+          <LazyRoute path={`/k8s/ns/:ns/${SubscriptionModel.plural}/new`} exact loader={() => import('./cloud-services').then(m => NamespaceFromURL(m.CreateSubscriptionYAML))} />
 
           <Route path="/k8s/ns/:ns/alertmanagers/:name" exact render={({match}) => <Redirect to={`/k8s/ns/${match.params.ns}/${referenceForModel(AlertmanagerModel)}/${match.params.name}`} />} />
 
-          <Route path={`/k8s/ns/:ns/${ClusterServiceVersionModel.plural}/:name/edit`} exact component={props => <EditYAMLPage {...props} kind={referenceForModel(ClusterServiceVersionModel)} />} />
-          <Route path={`/k8s/ns/:ns/${ClusterServiceVersionModel.plural}/:appName/:plural/new`} exact component={NamespaceFromURL(CreateCRDYAML)} />
+          <LazyRoute path={`/k8s/ns/:ns/${ClusterServiceVersionModel.plural}/:name/edit`} exact loader={() => import('./create-yaml').then(m => m.EditYAMLPage)} kind={referenceForModel(ClusterServiceVersionModel)} />
+          <LazyRoute path={`/k8s/ns/:ns/${ClusterServiceVersionModel.plural}/:appName/:plural/new`} exact loader={() => import('./cloud-services/create-crd-yaml').then(m => m.CreateCRDYAML)} />
           <Route path={`/k8s/ns/:ns/${ClusterServiceVersionModel.plural}/:appName/:plural/:name`} component={ResourceDetailsPage} />
 
-          <Route path="/k8s/all-namespaces/events" exact component={NamespaceFromURL(EventStreamPage)} />
-          <Route path="/k8s/ns/:ns/events" exact component={NamespaceFromURL(EventStreamPage)} />
+          <LazyRoute path="/k8s/all-namespaces/events" exact loader={() => import('./events').then(m => NamespaceFromURL(m.EventStreamPage))} />
+          <LazyRoute path="/k8s/ns/:ns/events" exact loader={() => import('./events').then(m => NamespaceFromURL(m.EventStreamPage))} />
           <Route path="/search/all-namespaces" exact component={NamespaceFromURL(SearchPage)} />
           <Route path="/search/ns/:ns" exact component={NamespaceFromURL(SearchPage)} />
           <Route path="/search" exact component={ActiveNamespaceRedirect} />
 
-          <Route path="/k8s/cluster/clusterroles/:name/add-rule" exact component={EditRulePage} />
-          <Route path="/k8s/cluster/clusterroles/:name/:rule/edit" exact component={EditRulePage} />
+          <LazyRoute path="/k8s/cluster/clusterroles/:name/add-rule" exact loader={() => import('./RBAC' /* webpackChunkName: "rbac" */).then(m => m.EditRulePage)} />
+          <LazyRoute path="/k8s/cluster/clusterroles/:name/:rule/edit" exact loader={() => import('./RBAC' /* webpackChunkName: "rbac" */).then(m => m.EditRulePage)} />
+          <Route path="/k8s/cluster/clusterroles/:name" component={props => <ResourceDetailsPage {...props} plural="clusterroles" />} />
 
-          <Route path="/k8s/ns/:ns/roles/:name/add-rule" exact component={EditRulePage} />
-          <Route path="/k8s/ns/:ns/roles/:name/:rule/edit" exact component={EditRulePage} />
-          <Route path="/k8s/ns/:ns/roles" exact component={rolesListPage} />
+          <LazyRoute path="/k8s/ns/:ns/roles/:name/add-rule" exact loader={() => import('./RBAC' /* webpackChunkName: "rbac" */).then(m => m.EditRulePage)} />
+          <LazyRoute path="/k8s/ns/:ns/roles/:name/:rule/edit" exact loader={() => import('./RBAC' /* webpackChunkName: "rbac" */).then(m => m.EditRulePage)} />
 
-          <Route path="/k8s/ns/:ns/secrets/new/:type" exact component={props => <CreateSecret {...props} kind="Secret" />} />
-          <Route path="/k8s/ns/:ns/secrets/:name/edit" exact component={props => <EditSecret {...props} kind="Secret" />} />
-          <Route path="/k8s/ns/:ns/secrets/:name/edit-yaml" exact component={props => <EditYAMLPage {...props} kind="Secret" />} />
+          <LazyRoute path="/k8s/ns/:ns/secrets/new/:type" exact kind="Secret" loader={() => import('./secrets/create-secret' /* webpackChunkName: "create-secret" */).then(m => m.CreateSecret)} />
+          <LazyRoute path="/k8s/ns/:ns/secrets/:name/edit" exact kind="Secret" loader={() => import('./secrets/create-secret' /* webpackChunkName: "create-secret" */).then(m => m.EditSecret)} />
+          <LazyRoute path="/k8s/ns/:ns/secrets/:name/edit-yaml" exact kind="Secret" loader={() => import('./create-yaml').then(m => m.EditYAMLPage)} />
 
-          <Route path="/k8s/cluster/rolebindings/new" exact component={props => <CreateRoleBinding {...props} kind="RoleBinding" />} />
-          <Route path="/k8s/ns/:ns/rolebindings/new" exact component={props => <CreateRoleBinding {...props} kind="RoleBinding" />} />
-          <Route path="/k8s/ns/:ns/rolebindings/:name/copy" exact component={props => <CopyRoleBinding {...props} kind="RoleBinding" />} />
-          <Route path="/k8s/ns/:ns/rolebindings/:name/edit" exact component={props => <EditRoleBinding {...props} kind="RoleBinding" />} />
-          <Route path="/k8s/cluster/clusterrolebindings/:name/copy" exact component={props => <CopyRoleBinding {...props} kind="ClusterRoleBinding" />} />
-          <Route path="/k8s/cluster/clusterrolebindings/:name/edit" exact component={props => <EditRoleBinding {...props} kind="ClusterRoleBinding" />} />
+          <LazyRoute path="/k8s/cluster/rolebindings/new" exact loader={() => import('./RBAC' /* webpackChunkName: "rbac" */).then(m => m.CreateRoleBinding)} kind="RoleBinding" />
+          <LazyRoute path="/k8s/ns/:ns/rolebindings/new" exact loader={() => import('./RBAC' /* webpackChunkName: "rbac" */).then(m => m.CreateRoleBinding)} kind="RoleBinding" />
+          <LazyRoute path="/k8s/ns/:ns/rolebindings/:name/copy" exact kind="RoleBinding" loader={() => import('./RBAC' /* webpackChunkName: "rbac" */).then(m => m.CopyRoleBinding)} />
+          <LazyRoute path="/k8s/ns/:ns/rolebindings/:name/edit" exact kind="RoleBinding" loader={() => import('./RBAC' /* webpackChunkName: "rbac" */).then(m => m.EditRoleBinding)} />
+          <LazyRoute path="/k8s/cluster/clusterrolebindings/:name/copy" exact kind="ClusterRoleBinding" loader={() => import('./RBAC' /* webpackChunkName: "rbac" */).then(m => m.CopyRoleBinding)} />
+          <LazyRoute path="/k8s/cluster/clusterrolebindings/:name/edit" exact kind="ClusterRoleBinding" loader={() => import('./RBAC' /* webpackChunkName: "rbac" */).then(m => m.EditRoleBinding)} />
 
           <Route path="/k8s/cluster/:plural" exact component={ResourceListPage} />
-          <Route path="/k8s/cluster/:plural/new" exact component={CreateYAML} />
+          <LazyRoute path="/k8s/cluster/:plural/new" exact loader={() => import('./create-yaml' /* webpackChunkName: "create-yaml" */).then(m => m.CreateYAML)} />
           <Route path="/k8s/cluster/:plural/:name" component={ResourceDetailsPage} />
-          <Route path="/k8s/ns/:ns/pods/:podName/containers/:name" component={ContainersDetailsPage} />
-          <Route path="/k8s/ns/:ns/:plural/new" exact component={NamespaceFromURL(CreateYAML)} />
+          <LazyRoute path="/k8s/ns/:ns/pods/:podName/containers/:name" loader={() => import('./container').then(m => m.ContainersDetailsPage)} />
+          <LazyRoute path="/k8s/ns/:ns/:plural/new" exact loader={() => import('./create-yaml' /* webpackChunkName: "create-yaml" */).then(m => NamespaceFromURL(m.CreateYAML))} />
           <Route path="/k8s/ns/:ns/:plural/:name" component={ResourceDetailsPage} />
           <Route path="/k8s/ns/:ns/:plural" exact component={ResourceListPage} />
 
           <Route path="/k8s/all-namespaces/:plural" exact component={ResourceListPage} />
           <Route path="/k8s/all-namespaces/:plural/:name" component={ResourceDetailsPage} />
 
-          <Route path="/settings/profile" exact component={ProfilePage} />
-          <Route path="/settings/ldap" exact component={LDAPPage} />
-          <Route path="/settings/cluster" exact component={ClusterSettingsPage} />
+          <LazyRoute path="/settings/profile" exact loader={() => import('./profile').then(m => m.ProfilePage)} />
+          <LazyRoute path="/settings/ldap" exact loader={() => import('./cluster-settings/ldap').then(m => m.LDAPPage)} />
+          <LazyRoute path="/settings/cluster" exact loader={() => import('./cluster-settings/cluster-settings').then(m => m.ClusterSettingsPage)} />
 
-          <Route path="/error" exact component={ErrorPage} />
+          <LazyRoute path="/error" exact loader={() => import('./error').then(m => m.ErrorPage)} />
           <Route path="/" exact component={DefaultPage} />
 
-          <Route component={ErrorPage404} />
+          <LazyRoute loader={() => import('./error').then(m => m.ErrorPage404)} />
         </Switch>
       </div>
     </React.Fragment>;
@@ -262,12 +243,10 @@ if ('serviceWorker' in navigator) {
   }
 }
 
-const AppGuard = (props) => <AsyncComponent loader={() => coFetch('api/tectonic/version').then(() => App)} {...props} />;
-
 render((
   <Provider store={store}>
     <Router history={history} basename={window.SERVER_FLAGS.basePath}>
-      <Route path="/" component={AppGuard} />
+      <Route path="/" component={App} />
     </Router>
   </Provider>
 ), document.getElementById('app'));
