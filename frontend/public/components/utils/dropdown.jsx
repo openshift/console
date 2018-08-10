@@ -54,8 +54,8 @@ export class DropdownMixin extends React.PureComponent {
 
     this.setState({
       active: false,
-      selectedKey: selectedKey,
-      keyboardHoverKey: selectedKey,
+      selectedKey: noSelection ? undefined: selectedKey,
+      keyboardHoverKey: noSelection ? undefined: selectedKey,
       title: noSelection ? title : this.props.items[selectedKey]
     });
   }
@@ -91,7 +91,11 @@ export class DropdownMixin extends React.PureComponent {
   hide (e) {
     e && e.stopPropagation();
     window.removeEventListener('click', this.listener);
-    this.setState({active: false});
+    const keyboardHoverKey = this.props.noSelection ? undefined : this.state.keyboardHoverKey;
+    this.setState({
+      active: false,
+      keyboardHoverKey: keyboardHoverKey,
+    });
   }
 }
 
@@ -346,7 +350,7 @@ export class Dropdown extends DropdownMixin {
         return;
       }
 
-      const selected = key === selectedKey;
+      const selected = (key === selectedKey) && !this.props.noSelection;
       const hover = key === keyboardHoverKey;
       const klass = classNames({'active': selected});
       if (storageKey && bookmarks && bookmarks[key]) {
