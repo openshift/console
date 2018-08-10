@@ -101,7 +101,7 @@ type Config struct {
 	SecureCookies bool
 }
 
-func newHTTPClient(issuerCA string) (*http.Client, error) {
+func newHTTPClient(issuerCA string, includeSystemRoots bool) (*http.Client, error) {
 	if issuerCA == "" {
 		return http.DefaultClient, nil
 	}
@@ -110,7 +110,16 @@ func newHTTPClient(issuerCA string) (*http.Client, error) {
 		return nil, fmt.Errorf("load issuer CA file %s: %v", issuerCA, err)
 	}
 
-	certPool := x509.NewCertPool()
+	var certPool *x509.CertPool
+	if includeSystemRoots {
+		certPool, err = x509.SystemCertPool()
+		if err != nil {
+			log.Errorf("error copying system cert pool: %v", err)
+			certPool = x509.NewCertPool()
+		}
+	} else {
+		certPool = x509.NewCertPool()
+	}
 	if !certPool.AppendCertsFromPEM(data) {
 		return nil, fmt.Errorf("file %s contained no CA data", issuerCA)
 	}
@@ -146,7 +155,7 @@ func NewAuthenticator(ctx context.Context, c *Config) (*Authenticator, error) {
 		switch c.AuthSource {
 		case AuthSourceOpenShift:
 			// Use the k8s CA for OAuth metadata discovery.
-			client, err := newHTTPClient(c.DiscoveryCA)
+			client, err := newHTTPClient(c.DiscoveryCA, false)
 			if err != nil {
 				return nil, err
 			}
@@ -187,7 +196,7 @@ func NewAuthenticator(ctx context.Context, c *Config) (*Authenticator, error) {
 }
 
 func newUnstartedAuthenticator(c *Config) (*Authenticator, error) {
-	client, err := newHTTPClient(c.IssuerCA)
+	client, err := newHTTPClient(c.IssuerCA, true)
 	if err != nil {
 		return nil, err
 	}
