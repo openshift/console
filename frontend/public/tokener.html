@@ -3,13 +3,31 @@
   <head>
     [[ if eq .Branding "okd" ]]
     <title>OKD</title>
+    <meta name="application-name" content="OKD">
     [[ end ]]
     [[ if eq .Branding "ocp" ]]
     <title>OpenShift Container Platform</title>
+    <meta name="application-name" content="OpenShift Container Platform">
     [[ end ]]
     [[ if eq .Branding "online" ]]
     <title>OpenShift Online</title>
+    <meta name="application-name" content="OpenShift Online">
     [[ end ]]
+
+    [[ if eq .Branding "okd" ]]
+    <link rel="shortcut icon" href="<%= require('./imgs/okd-favicon.png') %>">
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="<%= require('./imgs/okd-apple-touch-icon-precomposed.png') %>">
+    <link rel="mask-icon" href="<%= require('./imgs/okd-mask-icon.svg') %>" color="#DB242F">
+    <meta name="msapplication-TileColor" content="#000000">
+    <meta name="msapplication-TileImage" content="<%= require('./imgs/okd-mstile-144x144.png') %>">
+    [[ else ]]
+    <link rel="shortcut icon" href="<%= require('./imgs/openshift-favicon.png') %>">
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="<%= require('./imgs/openshift-apple-touch-icon-precomposed.png') %>">
+    <link rel="mask-icon" href="<%= require('./imgs/openshift-mask-icon.svg') %>" color="#DB242F">
+    <meta name="msapplication-TileColor" content="#000000">
+    <meta name="msapplication-TileImage" content="<%= require('./imgs/openshift-mstile-144x144.png') %>">
+    [[ end ]]
+
     <script type="text/javascript">
       // eslint-disable-next-line no-var
       var json = [[.]];
