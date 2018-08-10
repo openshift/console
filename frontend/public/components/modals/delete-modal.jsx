@@ -2,8 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
-import { PromiseComponent, history } from '../utils';
-import { formatNamespacedRouteForResource } from '../../ui/ui-actions';
+import { PromiseComponent, history, resourceListPathFromModel } from '../utils';
 import { k8sKill } from '../../module/k8s/';
 
 //Modal for resource deletion and allows cascading deletes if propagationPolicy is provided for the enum
@@ -32,9 +31,8 @@ class DeleteModal extends PromiseComponent {
       // If we are currently on the deleted resource's page, redirect to the resource list page
       const re = new RegExp(`/${resource.metadata.name}(/|$)`);
       if (re.test(window.location.pathname)) {
-        history.push( resource.metadata.namespace
-          ? formatNamespacedRouteForResource(kind.path)
-          : `/k8s/cluster/${kind.path}` );
+        const listPath = resourceListPathFromModel(kind, _.get(resource, 'metadata.namespace'));
+        history.push(listPath);
       }
     });
   }

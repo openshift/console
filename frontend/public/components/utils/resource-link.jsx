@@ -35,6 +35,8 @@ export const resourcePathFromModel = (model, name, namespace) => {
   return url;
 };
 
+export const resourceListPathFromModel = (model, namespace) => resourcePathFromModel(model, null, namespace);
+
 /**
  * NOTE: This will not work for runtime-defined resources. Use a `connect`-ed component like `ResourceLink` instead.
  */
