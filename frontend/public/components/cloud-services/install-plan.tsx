@@ -13,11 +13,11 @@ import { SubscriptionModel, ClusterServiceVersionModel, InstallPlanModel, Catalo
 import { breadcrumbsForOwnerRefs } from '../utils/breadcrumbs';
 
 export const InstallPlanHeader: React.SFC<InstallPlanHeaderProps> = (props) => <ListHeader>
-  <ColHead {...props} className="col-md-3" sortField="metadata.name">Name</ColHead>
-  <ColHead {...props} className="col-md-2" sortField="metadata.namespace">Namespace</ColHead>
-  <ColHead {...props} className="col-md-3">Components</ColHead>
-  <ColHead {...props} className="col-md-2">Subscriptions</ColHead>
-  <ColHead {...props} className="col-md-2" sortField="status.phase">Status</ColHead>
+  <ColHead {...props} className="col-xs-6 col-sm-4 col-md-3" sortField="metadata.name">Name</ColHead>
+  <ColHead {...props} className="col-xs-6 col-sm-4 col-md-3" sortField="metadata.namespace">Namespace</ColHead>
+  <ColHead {...props} className="hidden-xs col-sm-4 col-md-3 col-lg-2">Components</ColHead>
+  <ColHead {...props} className="hidden-xs hidden-sm col-md-3 col-lg-2">Subscriptions</ColHead>
+  <ColHead {...props} className="hidden-xs hidden-sm hidden-md col-lg-2" sortField="status.phase">Status</ColHead>
 </ListHeader>;
 
 export const InstallPlanRow: React.SFC<InstallPlanRowProps> = (props) => {
@@ -26,24 +26,24 @@ export const InstallPlanRow: React.SFC<InstallPlanRowProps> = (props) => {
     : phase;
 
   return <ResourceRow obj={props.obj}>
-    <div className="col-md-3 co-resource-link-wrapper">
+    <div className="col-xs-6 col-sm-4 col-md-3 co-resource-link-wrapper">
       <ResourceCog actions={Cog.factory.common} kind={referenceForModel(InstallPlanModel)} resource={props.obj} />
       <ResourceLink kind={referenceForModel(InstallPlanModel)} namespace={props.obj.metadata.namespace} name={props.obj.metadata.name} title={props.obj.metadata.uid} />
     </div>
-    <div className="col-md-2">
+    <div className="col-xs-6 col-sm-4 col-md-3">
       <ResourceLink kind="Namespace" name={props.obj.metadata.namespace} title={props.obj.metadata.namespace} displayName={props.obj.metadata.namespace} />
     </div>
-    <div className="col-md-3">
+    <div className="hidden-xs col-sm-4 col-md-3 col-lg-2">
       {props.obj.spec.clusterServiceVersionNames.map((csvName, i) => <span key={i}><ResourceIcon kind={referenceForModel(ClusterServiceVersionModel)} /> {csvName}</span>)}
     </div>
-    <div className="col-md-2">
+    <div className="hidden-xs hidden-sm col-md-3 col-lg-2">
       { (props.obj.metadata.ownerReferences || [])
         .filter(ref => referenceForOwnerRef(ref) === referenceForModel(SubscriptionModel))
         .map(ref => <div key={ref.uid}>
           <ResourceLink kind={referenceForModel(SubscriptionModel)} name={ref.name} namespace={props.obj.metadata.namespace} title={ref.uid} />
         </div>) || <span className="text-muted">None</span> }
     </div>
-    <div className="col-md-2">
+    <div className="hidden-xs hidden-sm hidden-md col-lg-2">
       {phaseFor(_.get(props.obj.status, 'phase')) || 'Unknown'}
     </div>
   </ResourceRow>;

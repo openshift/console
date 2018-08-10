@@ -15,11 +15,11 @@ import { createSubscriptionChannelModal } from '../modals/subscription-channel-m
 import { createInstallPlanApprovalModal } from '../modals/installplan-approval-modal';
 
 export const SubscriptionHeader: React.SFC<SubscriptionHeaderProps> = (props) => <ListHeader>
-  <ColHead {...props} className="col-md-3" sortField="metadata.name">Name</ColHead>
-  <ColHead {...props} className="col-md-2" sortField="metadata.namespace">Namespace</ColHead>
-  <ColHead {...props} className="col-md-2">Status</ColHead>
-  <ColHead {...props} className="col-md-2">Channel</ColHead>
-  <ColHead {...props} className="col-md-2">Approval Strategy</ColHead>
+  <ColHead {...props} className="col-xs-6 col-sm-4 col-md-3" sortField="metadata.name">Name</ColHead>
+  <ColHead {...props} className="col-xs-6 col-sm-4 col-md-3" sortField="metadata.namespace">Namespace</ColHead>
+  <ColHead {...props} className="hidden-xs col-sm-4 col-md-3 col-lg-2">Status</ColHead>
+  <ColHead {...props} className="hidden-xs hidden-sm col-md-3 col-lg-2">Channel</ColHead>
+  <ColHead {...props} className="hidden-xs hidden-sm hidden-md col-lg-2">Approval Strategy</ColHead>
 </ListHeader>;
 
 const subscriptionState = (state: SubscriptionState) => {
@@ -43,20 +43,20 @@ export const SubscriptionRow: React.SFC<SubscriptionRowProps> = (props) => {
   const actions = [disableAction, ...(_.get(props.obj.status, 'installedCSV') ? [viewCSVAction] : [])];
 
   return <div className="row co-resource-list__item">
-    <div className="col-md-3 co-resource-link-wrapper">
+    <div className="col-xs-6 col-sm-4 col-md-3 co-resource-link-wrapper">
       <ResourceCog actions={actions} kind={referenceForModel(SubscriptionModel)} resource={props.obj} />
       <ResourceLink kind={referenceForModel(SubscriptionModel)} name={props.obj.metadata.name} namespace={props.obj.metadata.namespace} title={props.obj.metadata.name} />
     </div>
-    <div className="col-md-2">
+    <div className="col-xs-6 col-sm-4 col-md-3">
       <ResourceLink kind="Namespace" name={props.obj.metadata.namespace} title={props.obj.metadata.namespace} displayName={props.obj.metadata.namespace} />
     </div>
-    <div className="col-md-2">
+    <div className="hidden-xs col-sm-4 col-md-3 col-lg-2">
       {subscriptionState(_.get(props.obj.status, 'state'))}
     </div>
-    <div className="col-md-2">
+    <div className="hidden-xs hidden-sm col-md-3 col-lg-2">
       {props.obj.spec.channel || 'default'}
     </div>
-    <div className="col-md-2">
+    <div className="hidden-xs hidden-sm hidden-md col-lg-2">
       {props.obj.spec.installPlanApproval || 'Automatic'}
     </div>
   </div>;
