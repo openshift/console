@@ -66,21 +66,32 @@ const ServiceAddress = ({s}) => {
     </div>
   </div>;
 
+  const ServiceType = (type) => {
+    switch (type) {
+      case 'NodePort':
+        return ServiceIPsRow('Node Port', 'Accessible outside the cluster', _.map(s.spec.ports, 'nodePort'), '(all nodes): ');
+      case 'LoadBalancer':
+        return ServiceIPsRow('External Load Balancer', 'Ingress point(s) of load balancer', _.map(s.status.loadBalancer.ingress, i => i.hostname || i.ip || '-'));
+      case 'ExternalName':
+        return ServiceIPsRow('External Service Name', 'Location of the resource that backs the service', [s.spec.externalName]);
+      default:
+        return ServiceIPsRow('Cluster IP', 'Accessible within the cluster only', [s.spec.clusterIP]);
+    }
+  };
+
   return <div>
     <div className="row co-ip-header">
       <div className="col-xs-6">Type</div>
       <div className="col-xs-6">Location</div>
     </div>
     <div className="rows">
-      {ServiceIPsRow('Cluster IP', 'Accessible within the cluster only', [s.spec.clusterIP])}
-      {s.spec.type === 'NodePort' && ServiceIPsRow('Node Port', 'Accessible outside the cluster', _.map(s.spec.ports, 'nodePort'), '(all nodes): ')}
-      {s.spec.type === 'LoadBalancer' && ServiceIPsRow('External Load Balancer', 'Ingress point(s) of load balancer', _.map(s.status.loadBalancer.ingress, i => i.hostname || i.ip || '-'))}
+      {ServiceType(s.spec.type)}
       {s.spec.externalIPs && ServiceIPsRow('External IP', 'IP Address(es) accepting traffic for service', s.spec.externalIPs)}
     </div>
   </div>;
 };
 
-const ServicePortMapping = ({s}) => <div>
+const ServicePortMapping = ({ports}) => <div>
   <div className="row co-ip-header">
     <div className="col-xs-3">Name</div>
     <div className="col-xs-3">Port</div>
@@ -88,7 +99,7 @@ const ServicePortMapping = ({s}) => <div>
     <div className="col-xs-3">Pod Port or Name</div>
   </div>
   <div className="rows">
-    {s.spec.ports.map((portObj, i) => {
+    {ports.map((portObj, i) => {
       return <div className="co-ip-row" key={i}>
         <div className="row">
           <div className="col-xs-3 co-text-service">
@@ -129,7 +140,7 @@ const Details = ({obj: s}) => <div className="co-m-pane__body">
         </dd>
         <dt>Service Port Mapping</dt>
         <dd className="service-ips">
-          <ServicePortMapping s={s} />
+          {s.spec.ports ? <ServicePortMapping ports={s.spec.ports} /> : '-'}
         </dd>
       </dl>
     </div>
