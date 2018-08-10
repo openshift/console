@@ -45,15 +45,13 @@ export const AccessDenied = ({message}) => <Box className="text-center">
 </Box>;
 AccessDenied.displayName = 'AccessDenied';
 
-const Data = props => {
-  const {EmptyMsg, label, data} = props;
-  let component = props.children;
+const Data = ({EmptyMsg, label, data, children}) => {
   if (!data || _.isEmpty(data)) {
-    component = EmptyMsg ? <EmptyMsg /> : <EmptyBox label={label} />;
-    return <div className="loading-box loading-box__loaded">{component}</div>;
+    return <div className="loading-box loading-box__loaded">
+      {EmptyMsg ? <EmptyMsg /> : <EmptyBox label={label} />}
+    </div>;
   }
-
-  return <div className="loading-box loading-box__loaded">{props.children}</div>;
+  return <div className="loading-box loading-box__loaded">{children}</div>;
 };
 
 export const StatusBox = props => {
