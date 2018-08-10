@@ -9,36 +9,7 @@ import { errorModal } from './modals';
 import { BuildHooks, BuildStrategy, Cog, SectionHeading, LabelList, history, navFactory, ResourceCog, ResourceLink, resourceObjPath, ResourceSummary, WebhookTriggers } from './utils';
 import { BuildsPage, BuildEnvironmentComponent } from './build';
 import { fromNow } from './utils/datetime';
-import { registerTemplate } from '../yaml-templates';
 import { ResourceEventStream } from './events';
-
-// Pushes to the image stream created by the image stream YAML template.
-registerTemplate('build.openshift.io/v1.BuildConfig', `apiVersion: build.openshift.io/v1
-kind: BuildConfig
-metadata:
-  name: example
-spec:
-  output:
-    to:
-      kind: ImageStreamTag
-      name: example:latest
-  source:
-    git:
-      ref: master
-      uri: https://github.com/openshift/ruby-ex.git
-    type: Git
-  strategy:
-    type: Source
-    sourceStrategy:
-      from:
-        kind: ImageStreamTag
-        name: ruby:2.4
-        namespace: openshift
-      env: []
-  triggers:
-  - type: ImageChange
-    imageChange: {}
-  - type: ConfigChange`);
 
 const BuildConfigsReference: K8sResourceKindReference = 'BuildConfig';
 

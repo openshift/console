@@ -1,6 +1,5 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import { registerTemplate } from '../../yaml-templates';
 
 import * as denyOtherNamespacesImg from '../../imgs/network-policy-samples/1-deny-other-namespaces.svg';
 import * as limitCertainAppImg from '../../imgs/network-policy-samples/2-limit-certain-apps.svg';
@@ -9,107 +8,6 @@ import * as defaultDenyAllImg from '../../imgs/network-policy-samples/4-default-
 import * as webAllowExternalImg from '../../imgs/network-policy-samples/5-web-allow-external.svg';
 import * as webDbAllowAllNsImg from '../../imgs/network-policy-samples/6-web-db-allow-all-ns.svg';
 import * as webAllowProductionImg from '../../imgs/network-policy-samples/7-web-allow-production.svg';
-
-registerTemplate('networking.k8s.io/v1.NetworkPolicy', `apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: deny-other-namespaces
-  namespace: target-ns
-spec:
-  podSelector:
-  ingress:
-  - from:
-    - podSelector: {}
-`, 'deny-other-namespaces');
-
-registerTemplate('networking.k8s.io/v1.NetworkPolicy', `apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: db-or-api-allow-app
-  namespace: target-ns
-spec:
-  podSelector:
-    matchLabels:
-      role: db
-  ingress:
-    - from:
-      - podSelector:
-          matchLabels:
-            app: mail
-`, 'db-or-api-allow-app');
-
-registerTemplate('networking.k8s.io/v1.NetworkPolicy', `apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: api-allow-http-and-https
-  namespace: target-ns
-spec:
-  podSelector:
-    matchLabels:
-      app: api
-  ingress:
-  - from:
-    - podSelector:
-          matchLabels:
-            role: monitoring
-  - ports:
-    - protocol: TCP
-      port: 80
-    - protocol: TCP
-      port: 443
-`, 'api-allow-http-and-https');
-
-registerTemplate('networking.k8s.io/v1.NetworkPolicy', `apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: default-deny-all
-  namespace: target-ns
-spec:
-  podSelector:
-`, 'default-deny-all');
-
-registerTemplate('networking.k8s.io/v1.NetworkPolicy', `apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: web-allow-external
-  namespace: target-ns
-spec:
-  podSelector:
-    matchLabels:
-      app: web
-  ingress:
-  - {}
-`, 'web-allow-external');
-
-registerTemplate('networking.k8s.io/v1.NetworkPolicy', `apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: web-db-allow-all-ns
-  namespace: target-ns
-spec:
-  podSelector:
-    matchLabels:
-      role: web-db
-  ingress:
-    - from:
-      - namespaceSelector: {}
-`, 'web-db-allow-all-ns');
-
-registerTemplate('networking.k8s.io/v1.NetworkPolicy', `apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: web-allow-production
-  namespace: target-ns
-spec:
-  podSelector:
-    matchLabels:
-      app: web
-  ingress:
-    - from:
-      - namespaceSelector:
-        matchLabels:
-        env: production
-`, 'web-allow-production');
 
 const samples = [
   {

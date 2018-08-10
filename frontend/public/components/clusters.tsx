@@ -5,19 +5,8 @@ import { FLAGS, connectToFlags, flagPending } from '../features';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
 import { Cog, detailsPage, navFactory, ResourceCog, SectionHeading, ResourceLink, ResourceSummary, LoadingBox, MsgBox } from './utils';
 // eslint-disable-next-line no-unused-vars
-import { referenceForModel, apiVersionForModel } from '../module/k8s';
-import { registerTemplate } from '../yaml-templates';
+import { referenceForModel } from '../module/k8s';
 import { ClusterModel } from '../models';
-
-registerTemplate(`${apiVersionForModel(ClusterModel)}.${ClusterModel.kind}`, `apiVersion: multicluster.coreos.com/v1
-kind: Cluster
-metadata:
-  name: example
-  annotations:
-    'multicluster.coreos.com/console-url': 'http://localhost:9000'
-    'multicluster.coreos.com/directory': true
-spec: {}
-`);
 
 const menuActions = [Cog.factory.ModifyLabels, Cog.factory.ModifyAnnotations, Cog.factory.Edit, Cog.factory.Delete];
 

@@ -1,116 +1,27 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import { registerTemplate } from '../../yaml-templates';
 
-registerTemplate('build.openshift.io/v1.BuildConfig', `apiVersion: build.openshift.io/v1
-kind: BuildConfig
-metadata:
-  name: docker-build
-  namespace: default
-  labels:
-    name: docker-build
-spec:
-  triggers:
-  - type: GitHub
-    github:
-      secret: secret101
-  - type: ImageChange
-    imageChange: {}
-  - type: ConfigChange
-  source:
-    type: Git
-    git:
-      uri: https://github.com/openshift/ruby-hello-world.git
-  strategy:
-    type: Docker
-    dockerStrategy:
-      from:
-        kind: ImageStreamTag
-        name: ruby:latest
-        namespace: openshift
-      env:
-      - name: EXAMPLE
-        value: sample-app
-  output:
-    to:
-      kind: ImageStreamTag
-      name: origin-ruby-sample:latest
-  postCommit:
-    args:
-    - bundle
-    - exec
-    - rake
-    - test
-`, 'docker-build');
-
-registerTemplate('build.openshift.io/v1.BuildConfig', `apiVersion: build.openshift.io/v1
-kind: BuildConfig
-metadata:
-  name: s2i-build
-  namespace: default
-spec:
-  output:
-    to:
-      kind: ImageStreamTag
-      name: s2i-build:latest
-  source:
-    git:
-      ref: master
-      uri: https://github.com/openshift/ruby-ex.git
-    type: Git
-  strategy:
-    type: Source
-    sourceStrategy:
-      from:
-        kind: ImageStreamTag
-        name: ruby:2.4
-        namespace: openshift
-      env: []
-  triggers:
-  - type: ImageChange
-    imageChange: {}
-  - type: ConfigChange
-`, 's2i-build');
-
-registerTemplate('build.openshift.io/v1.BuildConfig', `apiVersion: build.openshift.io/v1
-kind: BuildConfig
-metadata:
-  labels:
-    name: pipeline-build
-  name: pipeline-build
-  namespace: default
-spec:
-  strategy:
-    jenkinsPipelineStrategy:
-      jenkinsfile: |-
-        node('nodejs') {
-          stage('build') {
-            sh 'npm --version'
-          }
-        }
-    type: JenkinsPipeline
-  triggers:
-  - type: ConfigChange
-`, 'pipeline-build');
+import { BuildConfigModel } from '../../models';
+import { referenceForModel } from '../../module/k8s';
 
 const samples = [
   {
     header: 'Build from Dockerfile',
     details: 'A Dockerfile build performs an image build using a Dockerfile in the source repository or specified in build configuration.',
     templateName: 'docker-build',
-    kind: 'BuildConfig',
+    kind: referenceForModel(BuildConfigModel),
   },
   {
     header: 'Source-to-Image (S2I) build',
     details: 'S2I is a tool for building reproducible container images. It produces ready-to-run images by injecting the application source into a container image and assembling a new image.',
     templateName: 's2i-build',
-    kind: 'BuildConfig',
+    kind: referenceForModel(BuildConfigModel),
   },
   {
     header: 'Pipeline build',
     details: 'The Pipeline build strategy allows developers to define a Jenkins pipeline for execution by the Jenkins pipeline plugin. The build can be started, monitored, and managed in the same way as any other build type.',
     templateName: 'pipeline-build',
-    kind: 'BuildConfig',
+    kind: referenceForModel(BuildConfigModel),
   }
 ];
 

@@ -8,7 +8,6 @@ import { ResourceEventStream } from './events';
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import { SectionHeading, Cog, LabelList, navFactory, Overflow, ResourceCog, ResourceIcon, ResourceLink, ResourceSummary, ScrollToTopOnMount, Selector, Timestamp, VolumeIcon, units, AsyncComponent } from './utils';
 import { PodLogs } from './pod-logs';
-import { registerTemplate } from '../yaml-templates';
 import { Line, requirePrometheus } from './graphs';
 import { breadcrumbsForOwnerRefs } from './utils/breadcrumbs';
 import { EnvironmentPage } from './environment';
@@ -18,20 +17,6 @@ import { CamelCaseWrap } from './utils/camel-case-wrap';
 const menuActions = [Cog.factory.EditEnvironment, ...Cog.factory.common];
 const validReadinessStates = new Set(['Ready', 'PodCompleted']);
 const validStatuses = new Set(['Running', 'Completed']);
-
-registerTemplate('v1.Pod', `apiVersion: v1
-kind: Pod
-metadata:
-  name: example
-  labels:
-    app: hello-openshift
-spec:
-  containers:
-    - name: hello-openshift
-      image: openshift/hello-openshift
-      ports:
-        - containerPort: 8080`);
-
 
 /** @type {React.SFC.<{pod: string}>} */
 export const Readiness = ({pod}) => {

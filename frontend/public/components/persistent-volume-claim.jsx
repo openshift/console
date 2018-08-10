@@ -4,26 +4,7 @@ import * as _ from 'lodash-es';
 import { FLAGS, connectToFlags } from '../features';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
 import { Cog, navFactory, ResourceCog, SectionHeading, ResourceLink, ResourceSummary, Selector } from './utils';
-import { registerTemplate } from '../yaml-templates';
 import { ResourceEventStream } from './events';
-
-registerTemplate('v1.PersistentVolumeClaim', `kind: PersistentVolumeClaim
-apiVersion: v1
-metadata:
-  name: example
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 8Gi
-  storageClassName: slow
-  selector:
-    matchLabels:
-      release: "stable"
-    matchExpressions:
-      - {key: environment, operator: In, values: [dev]}
-`);
 
 const pvcPhase = pvc => pvc.status.phase;
 const menuActions = [Cog.factory.ModifyLabels, Cog.factory.ModifyAnnotations, Cog.factory.Edit, Cog.factory.Delete];

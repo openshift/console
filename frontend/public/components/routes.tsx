@@ -4,8 +4,6 @@ import * as React from 'react';
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import { Cog, CopyToClipboard, SectionHeading, ResourceCog, detailsPage, navFactory, ResourceLink, ResourceSummary } from './utils';
 import { MaskedData } from './configmap-and-secret-data';
-
-import { registerTemplate } from '../yaml-templates';
 // eslint-disable-next-line no-unused-vars
 import { K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
 import { SafetyFirst } from './safety-first';
@@ -13,18 +11,6 @@ import { Conditions, conditionProps } from './conditions';
 
 const RoutesReference: K8sResourceKindReference = 'Route';
 const menuActions = Cog.factory.common;
-
-registerTemplate('route.openshift.io/v1.Route', `apiVersion: route.openshift.io/v1
-kind: Route
-metadata:
-  name: example
-spec:
-  path: /
-  to:
-    kind: Service
-    name: example
-  port:
-    targetPort: 80`);
 
 const getRouteHost = (route, onlyAdmitted) => {
   let oldestAdmittedIngress = null;

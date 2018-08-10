@@ -3,29 +3,7 @@ import * as React from 'react';
 
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
 import { Cog, navFactory, ResourceCog, SectionHeading, ResourceLink, ResourceSummary, Timestamp } from './utils';
-import { registerTemplate } from '../yaml-templates';
 import { ResourceEventStream } from './events';
-
-registerTemplate('batch/v1beta1.CronJob', `apiVersion: batch/v1beta1
-kind: CronJob
-metadata:
-  name: example
-spec:
-  schedule: "@daily"
-  jobTemplate:
-    spec:
-      template:
-        spec:
-          containers:
-          - name: hello
-            image: busybox
-            args:
-            - /bin/sh
-            - -c
-            - date; echo Hello from the Kubernetes cluster
-          restartPolicy: OnFailure
-`);
-
 
 const menuActions = [Cog.factory.Edit, Cog.factory.Delete];
 

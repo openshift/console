@@ -3,19 +3,6 @@ import * as React from 'react';
 
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import { Cog, navFactory, LabelList, ResourceCog, SectionHeading, ResourceIcon, ResourceLink, ResourceSummary, Selector } from './utils';
-import { registerTemplate } from '../yaml-templates';
-
-registerTemplate('v1.Service', `apiVersion: v1
-kind: Service
-metadata:
-  name: example
-spec:
-  selector:
-    app: MyApp
-  ports:
-  - protocol: TCP
-    port: 80
-    targetPort: 9376`);
 
 const menuActions = [Cog.factory.ModifyPodSelector, ...Cog.factory.common];
 

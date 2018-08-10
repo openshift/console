@@ -2,23 +2,6 @@ import * as React from 'react';
 
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
 import { Cog, LabelList, navFactory, ResourceCog, SectionHeading, ResourceLink, ResourceSummary, Timestamp } from './utils';
-import { registerTemplate } from '../yaml-templates';
-
-registerTemplate('v1.PersistentVolume', `apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: example
-spec:
-  capacity:
-    storage: 5Gi
-  accessModes:
-    - ReadWriteOnce
-  persistentVolumeReclaimPolicy: Recycle
-  storageClassName: slow
-  nfs:
-    path: /tmp
-    server: 172.17.0.2
-`);
 
 const menuActions = [Cog.factory.ModifyLabels, Cog.factory.ModifyAnnotations, Cog.factory.Edit, Cog.factory.Delete];
 

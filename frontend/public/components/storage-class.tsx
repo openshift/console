@@ -6,16 +6,6 @@ import { fromNow } from './utils/datetime';
 // eslint-disable-next-line no-unused-vars
 import { K8sResourceKindReference } from '../module/k8s';
 
-import { registerTemplate } from '../yaml-templates';
-
-registerTemplate('storage.k8s.io/v1.StorageClass', `apiVersion: storage.k8s.io/v1
-kind: StorageClass
-metadata:
-  name: example
-provisioner: my-provisioner
-reclaimPolicy: Delete
-`);
-
 export const StorageClassReference: K8sResourceKindReference = 'StorageClass';
 
 const menuActions = [Cog.factory.ModifyLabels, Cog.factory.ModifyAnnotations, Cog.factory.Edit, Cog.factory.Delete];

@@ -7,30 +7,10 @@ import { errorModal } from './modals';
 import { DeploymentConfigModel } from '../models';
 import { DetailsPage, List, ListPage, WorkloadListHeader, WorkloadListRow } from './factory';
 import { Cog, DeploymentPodCounts, SectionHeading, LoadingInline, navFactory, pluralize, ResourceSummary } from './utils';
-import { registerTemplate } from '../yaml-templates';
 import { Conditions } from './conditions';
 import { EnvironmentPage } from './environment';
 import { ResourceEventStream } from './events';
 import { ContainerTable } from './deployment';
-
-registerTemplate('apps.openshift.io/v1.DeploymentConfig', `apiVersion: apps.openshift.io/v1
-kind: DeploymentConfig
-metadata:
-  name: example
-spec:
-  selector:
-    app: hello-openshift
-  replicas: 3
-  template:
-    metadata:
-      labels:
-        app: hello-openshift
-    spec:
-      containers:
-      - name: hello-openshift
-        image: openshift/hello-openshift
-        ports:
-        - containerPort: 8080`);
 
 const DeploymentConfigsReference: K8sResourceKindReference = 'DeploymentConfig';
 

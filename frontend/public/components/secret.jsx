@@ -5,17 +5,7 @@ import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from '.
 import { SecretData } from './configmap-and-secret-data';
 import { Cog, SectionHeading, ResourceCog, ResourceLink, ResourceSummary, detailsPage, navFactory, resourceObjPath } from './utils';
 import { fromNow } from './utils/datetime';
-import { registerTemplate } from '../yaml-templates';
 import { SecretType } from './secrets/create-secret';
-
-registerTemplate('v1.Secret', `apiVersion: v1
-kind: Secret
-metadata:
-  name: example
-type: Opaque
-stringData:
-  username: admin
-  password: opensesame`);
 
 export const WebHookSecretKey = 'WebHookSecretKey';
 

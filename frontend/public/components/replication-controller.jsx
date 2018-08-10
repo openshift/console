@@ -5,29 +5,7 @@ import { DetailsPage, List, ListPage, WorkloadListHeader, WorkloadListRow } from
 import { replicaSetMenuActions } from './replicaset';
 import { navFactory, SectionHeading, ResourceSummary, ResourcePodCount } from './utils';
 import { breadcrumbsForOwnerRefs } from './utils/breadcrumbs';
-import { registerTemplate } from '../yaml-templates';
 import { EnvironmentPage } from './environment';
-
-registerTemplate('v1.ReplicationController', `apiVersion: v1
-kind: ReplicationController
-metadata:
-  name: example
-spec:
-  replicas: 2
-  selector:
-    app: hello-openshift
-  template:
-    metadata:
-      name: hello-openshift
-      labels:
-        app: hello-openshift
-    spec:
-      containers:
-      - name: hello-openshift
-        image: openshift/hello-openshift
-        ports:
-        - containerPort: 8080`);
-
 
 const Details = ({obj: replicationController}) => <React.Fragment>
   <div className="co-m-pane__body">

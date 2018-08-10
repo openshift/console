@@ -6,26 +6,7 @@ import { K8sResourceKindReference } from '../module/k8s';
 import { Conditions } from './conditions';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
 import { Cog, SectionHeading, LabelList, navFactory, ResourceCog, ResourceLink, ResourceSummary, Timestamp } from './utils';
-import { registerTemplate } from '../yaml-templates';
 import { ResourceEventStream } from './events';
-
-// Pushes to the HPA created by the HPA YAML template.
-registerTemplate('autoscaling/v2beta1.HorizontalPodAutoscaler', `apiVersion: autoscaling/v2beta1
-kind: HorizontalPodAutoscaler
-metadata:
-  name: example
-spec:
-  scaleTargetRef:
-    apiVersion: apps/v1
-    kind: Deployment
-    name: example
-  minReplicas: 1
-  maxReplicas: 3
-  metrics:
-  - type: Resource
-    resource:
-      name: cpu
-      targetAverageUtilization: 50`);
 
 const HorizontalPodAutoscalersReference: K8sResourceKindReference = 'HorizontalPodAutoscaler';
 

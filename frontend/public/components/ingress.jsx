@@ -3,23 +3,8 @@ import * as React from 'react';
 
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import { Cog, SectionHeading, LabelList, ResourceCog, ResourceIcon, detailsPage, EmptyBox, navFactory, ResourceLink, ResourceSummary } from './utils';
-import { registerTemplate } from '../yaml-templates';
 
 const menuActions = Cog.factory.common;
-
-registerTemplate('extensions/v1beta1.Ingress', `apiVersion: extensions/v1beta1
-kind: Ingress
-metadata:
-  name: example
-spec:
-  rules:
-  - host: example.com
-    http:
-      paths:
-      - path: /testpath
-        backend:
-          serviceName: test
-          servicePort: 80`);
 
 export const ingressValidHosts = ingress => _.map(_.get(ingress, 'spec.rules', []), 'host').filter(_.isString);
 
