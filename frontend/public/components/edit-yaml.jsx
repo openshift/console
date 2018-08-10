@@ -11,7 +11,7 @@ import 'brace/theme/clouds';
 import 'brace/ext/language_tools';
 import 'brace/snippets/yaml';
 
-import { k8sCreate, k8sUpdate, referenceFor, getCompletions, snippets, referenceForModel } from '../module/k8s';
+import { k8sCreate, k8sUpdate, referenceFor, getCompletions, groupVersionFor, snippets, referenceForModel } from '../module/k8s';
 import { history, Loading, resourceObjPath } from './utils';
 import { SafetyFirst } from './safety-first';
 import { coFetchJSON } from '../co-fetch';
@@ -32,8 +32,8 @@ const generateObjToLoad = (kind, templateName, namespace = 'default') => {
   return sampleObj;
 };
 
-const stateToProps = ({k8s}, {obj}) => ({
-  model: k8s.getIn(['RESOURCES', 'models', referenceFor(obj)]) || k8s.getIn(['RESOURCES', 'models', obj.kind]),
+const stateToProps = ({k8s}) => ({
+  models: k8s.getIn(['RESOURCES', 'models']),
 });
 
 /**
@@ -69,6 +69,11 @@ export const EditYAML = connect(stateToProps)(
         coFetchJSON('api/kubernetes/swagger.json')
           .then(swagger => window.sessionStorage.setItem(`${window.SERVER_FLAGS.consoleVersion}--swagger.json`, JSON.stringify(swagger)));
       }
+    }
+
+    getModel(obj) {
+      const { models } = this.props;
+      return models.get(referenceFor(obj)) || models.get(obj.kind);
     }
 
     handleError(error) {
@@ -188,13 +193,19 @@ export const EditYAML = connect(stateToProps)(
         return;
       }
 
+      if (!obj.apiVersion) {
+        this.handleError('No "apiVersion" field found in YAML.');
+        return;
+      }
+
       if (!obj.kind) {
         this.handleError('No "kind" field found in YAML.');
         return;
       }
 
-      if (!this.props.model) {
-        this.handleError(`"${obj.kind}" is not a valid kind.`);
+      const model = this.getModel(obj);
+      if (!model) {
+        this.handleError(`The server doesn't have a resource type "kind: ${obj.kind}, apiVersion: ${obj.apiVersion}".`);
         return;
       }
       const { namespace, name } = this.props.obj.metadata;
@@ -209,6 +220,17 @@ export const EditYAML = connect(stateToProps)(
           this.handleError(`Cannot change resource namespace (original: "${namespace}", updated: "${newNamespace}").`);
           return;
         }
+        if (this.props.obj.kind !== obj.kind) {
+          this.handleError(`Cannot change resource kind (original: "${this.props.obj.kind}", updated: "${obj.kind}").`);
+          return;
+        }
+
+        const apiGroup = groupVersionFor(this.props.obj.apiVersion).group;
+        const newAPIGroup = groupVersionFor(obj.apiVersion).group;
+        if (apiGroup !== newAPIGroup) {
+          this.handleError(`Cannot change API group (original: "${apiGroup}", updated: "${newAPIGroup}").`);
+          return;
+        }
       }
 
       this.setState({success: null, error: null}, () => {
@@ -219,7 +241,7 @@ export const EditYAML = connect(stateToProps)(
           delete obj.metadata.resourceVersion;
           redirect = true;
         }
-        action(this.props.model, obj, namespace, name)
+        action(model, obj, namespace, name)
           .then(o => {
             if (redirect) {
               history.push(this.props.redirectURL || resourceObjPath(o, referenceFor(o)));
@@ -270,8 +292,9 @@ export const EditYAML = connect(stateToProps)(
       */
 
       const {error, success, stale} = this.state;
-      const {create, obj, showHeader = false, model} = this.props;
+      const {create, obj, showHeader = false} = this.props;
       const kind = obj.kind;
+      const model = this.getModel(obj);
 
       return <div>
         {showHeader && <div className="yaml-editor-header">
