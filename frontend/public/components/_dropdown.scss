@@ -53,6 +53,9 @@ $color-bookmarker: #DDD;
   li {
     padding: 0;
     display: flex;
+    &:focus {
+      outline: none;
+    }
     a {
       cursor: pointer;
       flex-grow: 1;
@@ -61,14 +64,17 @@ $color-bookmarker: #DDD;
       }
       &.hover {
         background-color: $dropdown-link-hover-bg;
-        color: $dropdown-link-hover-color;
-        position: relative;
         border-top: 1px solid #bee1f4;
         border-bottom: 1px solid #bee1f4;
+        color: $dropdown-link-hover-color;
+        position: relative;
         &:after,
         &:before {
           height: 1px;
         }
+      }
+      &.focus {
+        color: white;
       }
     }
   }
@@ -89,7 +95,6 @@ $color-bookmarker: #DDD;
 
     &:hover {
       background-color: rgba(255, 255, 255, 0.15);
-      border-color: transparent;
       color: white;
     }
   }
@@ -187,7 +192,7 @@ $color-bookmarker: #DDD;
     > a {
       padding: 6px;
       text-decoration: none;
-      &:hover,&.active,&:focus {
+      &.active {
         border-color: transparent;
       }
       &:active {
