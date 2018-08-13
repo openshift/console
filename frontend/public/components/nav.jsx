@@ -279,13 +279,13 @@ const MonitoringNavSection_ = ({urls, closeMenu}) => {
   const prometheusURL = urls[MonitoringRoutes.Prometheus];
   const alertManagerURL = urls[MonitoringRoutes.AlertManager];
   const grafanaURL = urls[MonitoringRoutes.Grafana];
-  return <NavSection text="Monitoring" icon="pficon pficon-screen">
-    <HrefLink href="/search" name="Search" onClick={closeMenu} startsWith={searchStartsWith} />
-    <ResourceNSLink resource="events" name="Events" onClick={closeMenu} />
-    {prometheusURL && <HrefLink href={prometheusURL} target="_blank" name="Metrics" onClick={closeMenu} isExternal={true} />}
-    {alertManagerURL && <HrefLink href={alertManagerURL} target="_blank" name="Alerts" onClick={closeMenu} isExternal={true} />}
-    {grafanaURL && <HrefLink href={grafanaURL} target="_blank" name="Dashboards" onClick={closeMenu} isExternal={true} />}
-  </NavSection>;
+  return prometheusURL || alertManagerURL || grafanaURL
+    ? <NavSection text="Monitoring" icon="pficon pficon-screen">
+      {prometheusURL && <HrefLink href={prometheusURL} target="_blank" name="Metrics" onClick={closeMenu} isExternal={true} />}
+      {alertManagerURL && <HrefLink href={alertManagerURL} target="_blank" name="Alerts" onClick={closeMenu} isExternal={true} />}
+      {grafanaURL && <HrefLink href={grafanaURL} target="_blank" name="Dashboards" onClick={closeMenu} isExternal={true} />}
+    </NavSection>
+    : null;
 };
 const MonitoringNavSection = connectToURLs(MonitoringRoutes.Prometheus, MonitoringRoutes.AlertManager, MonitoringRoutes.Grafana)(MonitoringNavSection_);
 
@@ -365,7 +365,11 @@ export class Nav extends React.Component {
       <div id="sidebar" className={classNames({'open': isOpen})}>
         <ClusterPickerNavSection />
         <div ref={this.scroller} onWheel={this.preventScroll} className="navigation-container">
-          <NavSection text="Overview" icon="fa fa-tachometer" href="/overview" activePath="/overview/" onClick={this.close} />
+          <NavSection text="Home" icon="pficon pficon-home">
+            <HrefLink href="/status" name="Status" activePath="/status/" onClick={this.close} />
+            <HrefLink href="/search" name="Search" onClick={this.close} startsWith={searchStartsWith} />
+            <ResourceNSLink resource="events" name="Events" onClick={this.close} />
+          </NavSection>
 
           {/* TODO(alecmerdler): RBAC check for `app.coreos.com` API group */}
           <NavSection required={FLAGS.CLOUD_SERVICES} text="Operators" img={operatorImg} activeImg={operatorActiveImg} >
@@ -377,31 +381,38 @@ export class Nav extends React.Component {
           </NavSection>
 
           <NavSection text="Workloads" icon="fa fa-folder-open-o">
-            <ResourceNSLink resource="daemonsets" name="Daemon Sets" onClick={this.close} />
+            <ResourceNSLink resource="pods" name="Pods" onClick={this.close} />
             <ResourceNSLink resource="deployments" name="Deployments" onClick={this.close} />
             <ResourceNSLink resource="deploymentconfigs" name={DeploymentConfigModel.labelPlural} onClick={this.close} required={FLAGS.OPENSHIFT} />
+            <ResourceNSLink resource="statefulsets" name="Stateful Sets" onClick={this.close} />
+            <ResourceNSLink resource="secrets" name="Secrets" onClick={this.close} />
+            <ResourceNSLink resource="configmaps" name="Config Maps" onClick={this.close} />
+            <Sep />
+            <ResourceNSLink resource="cronjobs" name="Cron Jobs" onClick={this.close} />
+            <ResourceNSLink resource="jobs" name="Jobs" onClick={this.close} />
+            <ResourceNSLink resource="daemonsets" name="Daemon Sets" onClick={this.close} />
             <ResourceNSLink resource="replicasets" name="Replica Sets" onClick={this.close} />
             <ResourceNSLink resource="replicationcontrollers" name="Replication Controllers" onClick={this.close} />
-            <ResourceNSLink resource="persistentvolumeclaims" name="Persistent Volume Claims" onClick={this.close} />
-            <ResourceNSLink resource="statefulsets" name="Stateful Sets" onClick={this.close} />
-            <Sep />
-            <ResourceNSLink resource="jobs" name="Jobs" onClick={this.close} />
-            <ResourceNSLink resource="cronjobs" name="Cron Jobs" onClick={this.close} />
-            <ResourceNSLink resource="pods" name="Pods" onClick={this.close} />
-            <ResourceNSLink resource="buildconfigs" name={BuildConfigModel.labelPlural} onClick={this.close} required={FLAGS.OPENSHIFT} />
-            <ResourceNSLink resource="builds" name={BuildModel.labelPlural} onClick={this.close} required={FLAGS.OPENSHIFT} />
-            <ResourceNSLink resource="imagestreams" name={ImageStreamModel.labelPlural} onClick={this.close} required={FLAGS.OPENSHIFT} startsWith={imagestreamsStartsWith} />
-            <ResourceNSLink resource="configmaps" name="Config Maps" onClick={this.close} />
-            <ResourceNSLink resource="secrets" name="Secrets" onClick={this.close} />
-            <ResourceNSLink resource="resourcequotas" name="Resource Quotas" onClick={this.close} />
             <ResourceNSLink resource="horizontalpodautoscalers" name="HPAs" onClick={this.close} />
           </NavSection>
 
           <NavSection text="Networking" img={routingImg} activeImg={routingActiveImg} >
-            <ResourceNSLink resource="ingresses" name="Ingress" onClick={this.close} />
-            <ResourceNSLink resource="routes" name="Routes" onClick={this.close} required={FLAGS.OPENSHIFT} />
-            <ResourceNSLink resource="networkpolicies" name="Network Policies" onClick={this.close} required={FLAGS.CALICO} />
             <ResourceNSLink resource="services" name="Services" onClick={this.close} />
+            <ResourceNSLink resource="routes" name="Routes" onClick={this.close} required={FLAGS.OPENSHIFT} />
+            <ResourceNSLink resource="ingresses" name="Ingress" onClick={this.close} />
+            <ResourceNSLink resource="networkpolicies" name="Network Policies" onClick={this.close} />
+          </NavSection>
+
+          <NavSection text="Storage" icon="pficon pficon-container-node">
+            <ResourceClusterLink resource="persistentvolumes" name="Persistent Volumes" onClick={this.close} required={FLAGS.CAN_LIST_PV} />
+            <ResourceNSLink resource="persistentvolumeclaims" name="Persistent Volume Claims" onClick={this.close} />
+            <ResourceClusterLink resource="storageclasses" name="Storage Classes" onClick={this.close} required={FLAGS.CAN_LIST_STORE} />
+          </NavSection>
+
+          <NavSection text="Builds" icon="pficon pficon-build">
+            <ResourceNSLink resource="buildconfigs" name={BuildConfigModel.labelPlural} onClick={this.close} required={FLAGS.OPENSHIFT} />
+            <ResourceNSLink resource="builds" name={BuildModel.labelPlural} onClick={this.close} required={FLAGS.OPENSHIFT} />
+            <ResourceNSLink resource="imagestreams" name={ImageStreamModel.labelPlural} onClick={this.close} required={FLAGS.OPENSHIFT} startsWith={imagestreamsStartsWith} />
           </NavSection>
 
           <MonitoringNavSection closeMenu={this.close} />
@@ -410,12 +421,11 @@ export class Nav extends React.Component {
             <ResourceClusterLink resource="projects" name="Projects" onClick={this.close} required={FLAGS.OPENSHIFT} />
             <ResourceClusterLink resource="namespaces" name="Namespaces" onClick={this.close} required={FLAGS.CAN_LIST_NS} />
             <ResourceClusterLink resource="nodes" name="Nodes" onClick={this.close} required={FLAGS.CAN_LIST_NODE} />
-            <ResourceClusterLink resource="persistentvolumes" name="Persistent Volumes" onClick={this.close} required={FLAGS.CAN_LIST_PV} />
             <HrefLink href="/settings/cluster" name="Cluster Settings" onClick={this.close} startsWith={clusterSettingsStartsWith} disallowed={FLAGS.OPENSHIFT} />
             <ResourceNSLink resource="serviceaccounts" name="Service Accounts" onClick={this.close} />
-            <ResourceClusterLink resource="storageclasses" name="Storage Classes" onClick={this.close} required={FLAGS.CAN_LIST_STORE} />
             <ResourceNSLink resource="roles" name="Roles" startsWith={rolesStartsWith} onClick={this.close} />
             <ResourceNSLink resource="rolebindings" name="Role Bindings" onClick={this.close} startsWith={rolebindingsStartsWith} />
+            <ResourceNSLink resource="resourcequotas" name="Resource Quotas" onClick={this.close} />
             <ResourceNSLink resource="chargeback.coreos.com:v1alpha1:Report" name="Chargeback" onClick={this.close} disallowed={FLAGS.OPENSHIFT} />
             <ResourceClusterLink resource="customresourcedefinitions" name="CRDs" onClick={this.close} required={FLAGS.CAN_LIST_CRD} />
           </NavSection>

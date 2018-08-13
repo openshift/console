@@ -10,7 +10,7 @@ describe('Installing a service from the Catalog Sources', () => {
   const openCloudServices = new Set(['etcd', 'Prometheus', 'Prometheus']);
 
   beforeAll(async() => {
-    browser.get(`${appHost}/overview/ns/${testName}`);
+    browser.get(`${appHost}/status/ns/${testName}`);
     await browser.wait(until.presenceOf($('#sidebar')));
   });
 

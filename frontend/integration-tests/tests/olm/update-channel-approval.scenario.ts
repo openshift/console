@@ -17,7 +17,7 @@ describe('Manually approving an install plan', () => {
   const testLabel = 'automatedTestName';
 
   beforeAll(async() => {
-    browser.get(`${appHost}/overview/${testName}`);
+    browser.get(`${appHost}/status/${testName}`);
     await browser.wait(until.presenceOf(sidenavView.navSectionFor('Operators')));
   });
 

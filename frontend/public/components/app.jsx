@@ -65,9 +65,9 @@ const NamespaceRedirect = () => {
 
   let to;
   if (activeNamespace === ALL_NAMESPACES_KEY) {
-    to = '/overview/all-namespaces';
+    to = '/status/all-namespaces';
   } else if (activeNamespace) {
-    to = `/overview/ns/${activeNamespace}`;
+    to = `/status/ns/${activeNamespace}`;
   }
   // TODO: check if namespace exists
   return <Redirect to={to} />;
@@ -128,9 +128,9 @@ class App extends React.PureComponent {
         <GlobalNotifications />
         <Switch>
           <Route path={['/all-namespaces', '/ns/:ns',]} component={RedirectComponent} />
-          <LazyRoute path="/overview/all-namespaces" exact loader={() => import('./cluster-overview' /* webpackChunkName: "cluster-overview" */).then(m => m.ClusterOverviewPage)} />
-          <LazyRoute path="/overview/ns/:ns" exact loader={() => import('./cluster-overview' /* webpackChunkName: "cluster-overview" */).then(m => m.ClusterOverviewPage)} />
-          <Route path="/overview" exact component={NamespaceRedirect} />
+          <LazyRoute path="/status/all-namespaces" exact loader={() => import('./cluster-overview' /* webpackChunkName: "cluster-overview" */).then(m => m.ClusterOverviewPage)} />
+          <LazyRoute path="/status/ns/:ns" exact loader={() => import('./cluster-overview' /* webpackChunkName: "cluster-overview" */).then(m => m.ClusterOverviewPage)} />
+          <Route path="/status" exact component={NamespaceRedirect} />
           <LazyRoute path="/cluster-health" exact loader={() => import('./cluster-health' /* webpackChunkName: "cluster-health" */).then(m => m.ClusterHealth)} />
           <LazyRoute path="/start-guide" exact loader={() => import('./start-guide' /* webpackChunkName: "start-guide" */).then(m => m.StartGuidePage)} />
 

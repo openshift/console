@@ -15,7 +15,7 @@ describe('ui-actions', () => {
       [
         ['bar', '/k8s/ns/foo/pods', '/k8s/ns/bar/pods'],
         ['bar', '/search/ns/foo', '/search/ns/bar'],
-        ['bar', '/overview/ns/foo', '/overview/ns/bar'],
+        ['bar', '/status/ns/foo', '/status/ns/bar'],
         ['bar', '/k8s/all-namespaces/foo', '/k8s/ns/bar/foo'],
         ['bar', '/k8s/ns/foo/bar/baz', '/k8s/ns/bar/bar'],
       ].forEach(t => {
