@@ -5,24 +5,7 @@ import { getJobTypeAndCompletions } from '../module/k8s';
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import { configureJobParallelismModal } from './modals';
 import { Cog, SectionHeading, LabelList, ResourceCog, ResourceLink, ResourceSummary, Timestamp, navFactory } from './utils';
-import { registerTemplate } from '../yaml-templates';
 import { ResourceEventStream } from './events';
-
-registerTemplate('batch/v1.Job', `apiVersion: batch/v1
-kind: Job
-metadata:
-  name: example
-spec:
-  selector: {}
-  template:
-    metadata:
-      name: pi
-    spec:
-      containers:
-      - name: pi
-        image: perl
-        command: ["perl",  "-Mbignum=bpi", "-wle", "print bpi(2000)"]
-      restartPolicy: Never`);
 
 const ModifyJobParallelism = (kind, obj) => ({
   label: 'Edit Parallelism',

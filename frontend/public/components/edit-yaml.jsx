@@ -11,13 +11,12 @@ import 'brace/theme/clouds';
 import 'brace/ext/language_tools';
 import 'brace/snippets/yaml';
 
-import { k8sCreate, k8sUpdate, referenceFor, modelFor, getCompletions, apiVersionForModel, snippets } from '../module/k8s';
+import { k8sCreate, k8sUpdate, referenceFor, getCompletions, snippets, referenceForModel } from '../module/k8s';
 import { history, Loading, resourceObjPath } from './utils';
 import { SafetyFirst } from './safety-first';
 import { coFetchJSON } from '../co-fetch';
-
 import { ResourceSidebar } from './sidebars/resource-sidebar';
-import { TEMPLATES } from '../yaml-templates';
+import { yamlTemplates } from '../models/yaml-templates';
 
 const { snippetManager } = ace.acequire('ace/snippets');
 snippetManager.register([...snippets.values()], 'yaml');
@@ -26,9 +25,7 @@ ace.acequire('ace/ext/language_tools').addCompleter({getCompletions});
 let id = 0;
 
 const generateObjToLoad = (kind, templateName, namespace = 'default') => {
-  const kindObj = modelFor(kind) || {};
-  const kindStr = `${apiVersionForModel(kindObj)}.${kind}`;
-  const sampleObj = safeLoad(TEMPLATES[kindStr][templateName]);
+  const sampleObj = safeLoad(yamlTemplates.getIn([kind, templateName]));
   if (_.has(sampleObj.metadata, 'namespace')) {
     sampleObj.metadata.namespace = namespace;
   }
@@ -251,14 +248,14 @@ export const EditYAML = connect(stateToProps)(
       saveAs(blob, filename);
     }
 
-    loadSampleYaml_(templateName = 'default', kind = this.props.obj.kind) {
+    loadSampleYaml_(templateName = 'default', kind = referenceForModel(this.props.model)) {
       const sampleObj = generateObjToLoad(kind, templateName, this.props.obj.metadata.namespace);
-      this.setState({ sampleObj: sampleObj });
+      this.setState({sampleObj});
       this.loadYaml(true, sampleObj);
     }
 
     downloadSampleYaml_ (templateName = 'default') {
-      const data = safeDump(generateObjToLoad(this.props.obj.kind, templateName, this.props.obj.metadata.namespace));
+      const data = safeDump(generateObjToLoad(referenceForModel(this.props.model), templateName, this.props.obj.metadata.namespace));
       this.download(data);
     }
 

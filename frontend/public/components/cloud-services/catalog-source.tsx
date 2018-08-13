@@ -10,9 +10,8 @@ import { withFallback } from '../utils/error-boundary';
 import { CreateYAML } from '../create-yaml';
 import { ClusterServiceVersionLogo, CatalogSourceKind, ClusterServiceVersionKind, Package, SubscriptionKind, olmNamespace } from './index';
 import { SubscriptionModel, CatalogSourceModel, ConfigMapModel } from '../../models';
-import { referenceForModel, K8sResourceKind, apiVersionForModel, ConfigMapKind } from '../../module/k8s';
+import { referenceForModel, K8sResourceKind, ConfigMapKind } from '../../module/k8s';
 import { List, ListHeader, ColHead, ResourceRow, DetailsPage, MultiListPage } from '../factory';
-import { registerTemplate } from '../../yaml-templates';
 import { getActiveNamespace } from '../../ui/ui-actions';
 import { ALL_NAMESPACES_KEY } from '../../const';
 
@@ -205,7 +204,7 @@ export const CreateSubscriptionYAML: React.SFC<CreateSubscriptionYAMLProps> = (p
         .find(({packageName}) => packageName === new URLSearchParams(props.location.search).get('pkg'));
       const channel = _.get(pkg, 'channels[0]');
 
-      registerTemplate(`${apiVersionForModel(SubscriptionModel)}.${SubscriptionModel.kind}`, `
+      const template = `
         apiVersion: ${SubscriptionModel.apiGroup}/${SubscriptionModel.apiVersion}
         kind: ${SubscriptionModel.kind},
         metadata:
@@ -216,8 +215,8 @@ export const CreateSubscriptionYAML: React.SFC<CreateSubscriptionYAMLProps> = (p
           name: ${pkg.packageName}
           startingCSV: ${channel.currentCSV}
           channel: ${channel.name}
-      `);
-      return <CreateYAML {...props as any} plural={SubscriptionModel.plural} />;
+      `;
+      return <CreateYAML {...props as any} plural={SubscriptionModel.plural} template={template} />;
     }
     return <LoadingBox />;
   }, () => <MsgBox title="Package Not Found" detail="Cannot create a Subscription to a non-existent package." />);

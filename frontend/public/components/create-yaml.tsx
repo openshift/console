@@ -1,13 +1,12 @@
 import * as React from 'react';
 import { match as RouterMatch } from 'react-router-dom';
-import * as _ from 'lodash-es';
 
 import { safeLoad } from 'js-yaml';
-import { TEMPLATES } from '../yaml-templates';
+import { yamlTemplates } from '../models/yaml-templates';
 import { connectToPlural } from '../kinds';
 import { AsyncComponent } from './utils/async';
 import { Firehose, LoadingBox } from './utils';
-import { K8sKind, apiVersionForModel } from '../module/k8s';
+import { K8sKind, referenceForModel } from '../module/k8s';
 import { ErrorPage404 } from './error';
 import { ClusterServiceVersionModel } from '../models';
 
@@ -23,13 +22,7 @@ export const CreateYAML = connectToPlural((props: CreateYAMLProps) => {
   }
 
   const namespace = params.ns || 'default';
-  const kindStr = `${apiVersionForModel(kindObj)}.${kindObj.kind}`;
-  let template = _.get(TEMPLATES, [kindStr, 'default']);
-  if (!template) {
-    // eslint-disable-next-line no-console
-    console.warn(`No template found for ${kindStr}. Falling back to default template.`);
-    template = TEMPLATES.DEFAULT.default;
-  }
+  const template = props.template || yamlTemplates.getIn([referenceForModel(kindObj), 'default']) || yamlTemplates.getIn(['DEFAULT', 'default']);
 
   const obj = safeLoad(template);
   obj.kind = kindObj.kind;
@@ -37,7 +30,7 @@ export const CreateYAML = connectToPlural((props: CreateYAMLProps) => {
   if (kindObj.namespaced) {
     obj.metadata.namespace = namespace;
   }
-  if (kindObj.crd && template === TEMPLATES.DEFAULT.default) {
+  if (kindObj.crd && template === yamlTemplates.getIn(['DEFAULT', 'default'])) {
     const apiGroup = kindObj.apiGroup ? `${kindObj.apiGroup}/` : '';
     obj.apiVersion = `${apiGroup}${kindObj.apiVersion}`;
     obj.spec = obj.spec || {};
@@ -61,6 +54,7 @@ export type CreateYAMLProps = {
   match: RouterMatch<{ns: string, plural: string, appName?: string}>;
   kindsInFlight: boolean;
   kindObj: K8sKind;
+  template?: string;
 };
 
 export type EditYAMLPageProps = {

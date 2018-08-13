@@ -2,46 +2,8 @@ import * as React from 'react';
 
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
 import { Cog, navFactory, ResourceCog, SectionHeading, ResourceLink, ResourceSummary } from './utils';
-import { registerTemplate } from '../yaml-templates';
 import { EnvironmentPage } from './environment';
 import { ResourceEventStream } from './events';
-
-registerTemplate('apps/v1.StatefulSet', `apiVersion: apps/v1
-kind: StatefulSet
-metadata:
-  name: example
-spec:
-  serviceName: "nginx"
-  replicas: 3
-  selector:
-    matchLabels:
-      app: nginx
-  template:
-    metadata:
-      labels:
-        app: nginx
-    spec:
-      terminationGracePeriodSeconds: 10
-      containers:
-      - name: nginx
-        image: gcr.io/google_containers/nginx-slim:0.8
-        ports:
-        - containerPort: 80
-          name: web
-        volumeMounts:
-        - name: www
-          mountPath: /usr/share/nginx/html
-  volumeClaimTemplates:
-  - metadata:
-      name: www
-    spec:
-      accessModes: [ "ReadWriteOnce" ]
-      storageClassName: my-storage-class
-      resources:
-        requests:
-          storage: 1Gi
-`);
-
 
 const menuActions = [Cog.factory.EditEnvironment, ...Cog.factory.common];
 

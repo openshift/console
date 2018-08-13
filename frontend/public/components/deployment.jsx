@@ -5,31 +5,10 @@ import { DeploymentModel } from '../models';
 import { configureUpdateStrategyModal, configureRevisionHistoryLimitModal } from './modals';
 import { DetailsPage, List, ListPage, WorkloadListHeader, WorkloadListRow } from './factory';
 import { Cog, DeploymentPodCounts, SectionHeading, LoadingInline, navFactory, Overflow, pluralize, ResourceSummary } from './utils';
-import { registerTemplate } from '../yaml-templates';
 import { Conditions } from './conditions';
 import { EnvironmentPage } from './environment';
 import { ResourceEventStream } from './events';
 import { formatDuration } from './utils/datetime';
-
-registerTemplate('apps/v1.Deployment', `apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: example
-spec:
-  selector:
-    matchLabels:
-      app: hello-openshift
-  replicas: 3
-  template:
-    metadata:
-      labels:
-        app: hello-openshift
-    spec:
-      containers:
-      - name: hello-openshift
-        image: openshift/hello-openshift
-        ports:
-        - containerPort: 8080`);
 
 const {ModifyCount, ModifyNodeSelector, EditEnvironment, common} = Cog.factory;
 

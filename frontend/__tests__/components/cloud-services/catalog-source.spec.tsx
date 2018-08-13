@@ -5,17 +5,15 @@ import { shallow, ShallowWrapper } from 'enzyme';
 import * as _ from 'lodash';
 import { Link } from 'react-router-dom';
 import { safeDump, safeLoad } from 'js-yaml';
-import Spy = jasmine.Spy;
 
 import { CatalogSourceDetails, CatalogSourceDetailsProps, CatalogSourceDetailsPage, CatalogSourceDetailsPageProps, PackageHeader, PackageHeaderProps, PackageRow, PackageRowProps, PackageList, PackageListProps, CreateSubscriptionYAML, CreateSubscriptionYAMLProps, CatalogSourcesPage, CatalogSourcePageProps, CatalogSourceList, CatalogSourceListProps, CatalogSourceHeader, CatalogSourceHeaderProps, CatalogSourceRow, CatalogSourceRowProps } from '../../../public/components/cloud-services/catalog-source';
-import { ClusterServiceVersionLogo, SubscriptionKind, olmNamespace } from '../../../public/components/cloud-services';
+import { ClusterServiceVersionLogo, olmNamespace } from '../../../public/components/cloud-services';
 import { referenceForModel } from '../../../public/module/k8s';
 import { SubscriptionModel, CatalogSourceModel, ConfigMapModel } from '../../../public/models';
 import { ListHeader, ColHead, List, MultiListPage, ResourceRow, DetailsPage } from '../../../public/components/factory';
 import { Firehose, LoadingBox, ErrorBoundary, ResourceLink, MsgBox, Timestamp } from '../../../public/components/utils';
-import { CreateYAML } from '../../../public/components/create-yaml';
+import { CreateYAML, CreateYAMLProps } from '../../../public/components/create-yaml';
 import { testPackage, testCatalogSource, testClusterServiceVersion, testSubscription } from '../../../__mocks__/k8sResourcesMocks';
-import * as yamlTemplates from '../../../public/yaml-templates';
 
 describe(PackageHeader.displayName, () => {
   let wrapper: ShallowWrapper<PackageHeaderProps>;
@@ -275,11 +273,9 @@ describe(CatalogSourcesPage.displayName, () => {
 
 describe(CreateSubscriptionYAML.displayName, () => {
   let wrapper: ShallowWrapper<CreateSubscriptionYAMLProps>;
-  let registerTemplateSpy: Spy;
   let locationMock: Location;
 
   beforeEach(() => {
-    registerTemplateSpy = spyOn(yamlTemplates, 'registerTemplate');
     locationMock = {search: `?pkg=${testPackage.packageName}&catalog=ocs&catalogNamespace=${olmNamespace}`} as Location;
 
     wrapper = shallow(<CreateSubscriptionYAML match={{isExact: true, url: '', path: '', params: {ns: 'default', pkgName: testPackage.packageName}}} location={locationMock} />);
@@ -298,13 +294,12 @@ describe(CreateSubscriptionYAML.displayName, () => {
     expect(wrapper.find(Firehose).childAt(0).dive().find(ErrorBoundary).childAt(0).dive().find(CreateYAML).exists()).toBe(true);
   });
 
-  xit('registers example YAML templates using the package default channel', () => {
+  xit('passes example YAML templates using the package default channel', () => {
     wrapper = wrapper.setProps({ConfigMap: {loaded: true, data: {data: {packages: safeDump([testPackage])}}}} as any);
 
-    wrapper.find(Firehose).childAt(0).dive().find(ErrorBoundary).childAt(0).dive();
-    const subTemplate: SubscriptionKind = safeLoad(registerTemplateSpy.calls.argsFor(0)[1]);
+    const createYAML = wrapper.find(Firehose).childAt(0).dive().find(ErrorBoundary).childAt(0).dive<CreateYAMLProps, {}>();
+    const subTemplate = safeDump(createYAML.props().template);
 
-    expect(registerTemplateSpy.calls.count()).toEqual(1);
     expect(subTemplate.kind).toContain(SubscriptionModel.kind);
     expect(subTemplate.spec.name).toEqual(testPackage.packageName);
     expect(subTemplate.spec.channel).toEqual(testPackage.channels[0].name);

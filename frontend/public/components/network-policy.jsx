@@ -2,32 +2,8 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 
-import {ColHead, DetailsPage, List, ListHeader, ListPage} from './factory';
-import {Cog, navFactory, ResourceCog, SectionHeading, ResourceLink, ResourceSummary, Selector} from './utils';
-import { registerTemplate } from '../yaml-templates';
-
-registerTemplate('v1.NetworkPolicy', `apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: example
-  namespace: default
-spec:
-  podSelector:
-    matchLabels:
-      role: db
-  ingress:
-  - from:
-    - namespaceSelector:
-        matchLabels:
-          project: myproject
-    - podSelector:
-        matchLabels:
-          role: somerole
-    ports:
-    - protocol: TCP
-      port: 6379
-`);
-
+import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
+import { Cog, navFactory, ResourceCog, SectionHeading, ResourceLink, ResourceSummary, Selector } from './utils';
 
 const menuActions = [Cog.factory.ModifyLabels, Cog.factory.ModifyAnnotations, Cog.factory.Edit, Cog.factory.Delete];
 

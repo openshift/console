@@ -6,13 +6,7 @@ import { K8sResourceKindReference } from '../module/k8s';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
 import { Cog, SectionHeading, LabelList, navFactory, Overflow, ResourceCog, ResourceLink, ResourceSummary, Timestamp } from './utils';
 import { fromNow } from './utils/datetime';
-import { registerTemplate } from '../yaml-templates';
 
-// The build config YAML template pushes to an image stream with this name.
-registerTemplate('image.openshift.io/v1.ImageStream', `apiVersion: image.openshift.io/v1
-kind: ImageStream
-metadata:
-  name: example`);
 const ImageStreamsReference: K8sResourceKindReference = 'ImageStream';
 const ImageStreamTagsReference: K8sResourceKindReference = 'ImageStreamTag';
 

@@ -8,7 +8,6 @@ import { fromNow } from './utils/datetime';
 import { k8sGet } from '../module/k8s';
 import { SecretModel } from '../models';
 import { SecretsPage } from './secret';
-import { registerTemplate } from '../yaml-templates';
 import { saveAs } from 'file-saver';
 import { errorModal } from './modals';
 
@@ -63,11 +62,6 @@ const KubeConfigify = (kind, sa) => ({
   },
 });
 const menuActions = [KubeConfigify, Cog.factory.Delete];
-
-registerTemplate('v1.ServiceAccount', `apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: example`);
 
 const Header = props => <ListHeader>
   <ColHead {...props} className="col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>

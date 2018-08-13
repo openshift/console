@@ -10,24 +10,8 @@ import { LoadError, LoadingBox, LoadingInline, MsgBox } from './utils/status-box
 import { getQueryArgument, setQueryArgument } from './utils/router';
 import { coFetchJSON } from '../co-fetch';
 // eslint-disable-next-line no-unused-vars
-import { GroupVersionKind, resourceURL, modelFor, apiVersionForModel, referenceForModel } from '../module/k8s';
+import { GroupVersionKind, resourceURL, modelFor, referenceForModel } from '../module/k8s';
 import { ChargebackReportModel } from '../models';
-
-import { registerTemplate } from '../yaml-templates';
-
-registerTemplate(`${apiVersionForModel(ChargebackReportModel)}.Chargeback`, `
-  apiVersion: chargeback.coreos.com/v1alpha1
-  kind: Report
-  metadata:
-    name: namespace-memory-request
-    namespace: default
-  spec:
-    generationQuery: namespace-memory-request
-    gracePeriod: 5m0s
-    reportingStart: '2018-01-01T00:00:00Z'
-    reportingEnd: '2018-12-30T23:59:59Z'
-    runImmediately: true
-  `);
 
 export const ReportReference: GroupVersionKind = referenceForModel(ChargebackReportModel);
 export const ScheduledReportReference: GroupVersionKind = 'chargeback.coreos.com:v1alpha1:ScheduledReport';

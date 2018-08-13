@@ -4,22 +4,7 @@ import * as React from 'react';
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import { ConfigMapData } from './configmap-and-secret-data';
 import { Cog, SectionHeading, navFactory, ResourceCog, ResourceLink, ResourceSummary } from './utils';
-import { registerTemplate } from '../yaml-templates';
 import { fromNow } from './utils/datetime';
-
-registerTemplate('v1.ConfigMap', `apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: example
-  namespace: default
-data:
-  example.property.1: hello
-  example.property.2: world
-  example.property.file: |-
-    property.1=value-1
-    property.2=value-2
-    property.3=value-3`);
-
 
 const menuActions = Cog.factory.common;
 

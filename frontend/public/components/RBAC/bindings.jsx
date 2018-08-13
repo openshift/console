@@ -16,22 +16,7 @@ import { ButtonBar, Cog, Dropdown, Firehose, history, kindObj, LoadingInline, Ms
   OverflowYFade, ResourceCog, ResourceName, ResourceLink,
   resourceObjPath, StatusBox, getQueryArgument } from '../utils';
 import { isSystemRole } from './index';
-import { registerTemplate } from '../../yaml-templates';
 import { connectToFlags, FLAGS, flagPending } from '../../features';
-
-registerTemplate('rbac.authorization.k8s.io/v1.RoleBinding', `apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
-metadata:
-  name: example
-subjects:
-- kind: Group
-  name: "my-sample-group"
-  apiGroup: rbac.authorization.k8s.io
-roleRef:
-  kind: ClusterRole
-  name: view
-  apiGroup: rbac.authorization.k8s.io`);
-
 
 const bindingKind = binding => binding.metadata.namespace ? 'RoleBinding' : 'ClusterRoleBinding';
 

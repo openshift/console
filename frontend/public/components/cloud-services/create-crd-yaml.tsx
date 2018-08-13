@@ -7,11 +7,9 @@ import * as _ from 'lodash-es';
 
 import { Firehose, LoadingBox } from '../utils';
 import { CreateYAML } from '../create-yaml';
-import { referenceForModel, K8sResourceKind, K8sResourceKindReference, kindForReference, apiVersionForReference } from '../../module/k8s';
+import { referenceForModel, K8sResourceKind, K8sResourceKindReference, referenceFor } from '../../module/k8s';
 import { ClusterServiceVersionModel } from '../../models';
 import { ClusterServiceVersionKind } from './index';
-import { registerTemplate } from '../../yaml-templates';
-import { ocsTemplates } from './ocs-templates';
 
 /**
  * Component which wraps the YAML editor to ensure the templates are added from the `ClusterServiceVersion` annotations.
@@ -21,16 +19,14 @@ export const CreateCRDYAML: React.SFC<CreateCRDYAMLProps> = (props) => {
 
   const Create = (createProps: {ClusterServiceVersion: {loaded: boolean, data: ClusterServiceVersionKind}}) => {
     if (createProps.ClusterServiceVersion.loaded && createProps.ClusterServiceVersion.data) {
-      try {
-        (JSON.parse(_.get(createProps.ClusterServiceVersion.data.metadata.annotations, annotationKey)) as K8sResourceKind[] || [])
-          .forEach((template) => registerTemplate(`${template.apiVersion}.${template.kind}`, safeDump(template)));
-      } catch (err) {
-        const key = `${apiVersionForReference(props.match.params.plural)}.${kindForReference(props.match.params.plural)}`;
-        registerTemplate(key, ocsTemplates.get(key));
-      }
-      return <CreateYAML {...props as any} />;
+      const templates = _.get(createProps.ClusterServiceVersion.data.metadata.annotations, annotationKey, '[]');
+      const templateObj = (JSON.parse(templates) as K8sResourceKind[])
+        .find(obj => referenceFor(obj) === props.match.params.plural);
+      const template = templateObj ? _.attempt(() => safeDump(templateObj)) : null;
+
+      return <CreateYAML {...props as any} template={!_.isError(template) ? template : null} />;
     }
-    // Do not render the YAML editor until the template is registered
+    // Do not render the YAML editor until the template is registered from the loaded `ClusterServiceVersion`
     return <LoadingBox />;
   };
 

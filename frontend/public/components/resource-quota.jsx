@@ -2,21 +2,6 @@ import * as React from 'react';
 
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
 import { Cog, SectionHeading, navFactory, ResourceCog, ResourceLink, ResourceSummary } from './utils';
-import { registerTemplate } from '../yaml-templates';
-
-registerTemplate('v1.ResourceQuota', `apiVersion: v1
-kind: ResourceQuota
-metadata:
-  name: example
-spec:
-  hard:
-    pods: "4"
-    requests.cpu: "1"
-    requests.memory: 1Gi
-    limits.cpu: "2"
-    limits.memory: 2Gi
-`);
-
 
 const menuActions = [Cog.factory.ModifyLabels, Cog.factory.ModifyAnnotations, Cog.factory.Edit, Cog.factory.Delete];
 

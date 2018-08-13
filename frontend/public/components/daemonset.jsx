@@ -4,26 +4,6 @@ import { Link } from 'react-router-dom';
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import { SectionHeading, Cog, LabelList, ResourceCog, ResourceLink, ResourceSummary, Selector, navFactory, detailsPage } from './utils';
 import { EnvironmentPage } from './environment';
-import { registerTemplate } from '../yaml-templates';
-
-registerTemplate('apps/v1.DaemonSet', `apiVersion: apps/v1
-kind: DaemonSet
-metadata:
-  name: example
-spec:
-  selector:
-    matchLabels:
-      app: hello-openshift
-  template:
-    metadata:
-      labels:
-        app: hello-openshift
-    spec:
-      containers:
-      - name: hello-openshift
-        image: openshift/hello-openshift
-        ports:
-        - containerPort: 8080`);
 
 const menuActions = [Cog.factory.ModifyNodeSelector, Cog.factory.EditEnvironment, ...Cog.factory.common];
 

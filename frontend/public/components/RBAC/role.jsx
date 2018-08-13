@@ -6,18 +6,8 @@ import { Link } from 'react-router-dom';
 import { ColHead, DetailsPage, List, ListHeader, MultiListPage, ResourceRow, TextFilter } from '../factory';
 import { Cog, SectionHeading, MsgBox, navFactory, ResourceCog, ResourceLink, Timestamp } from '../utils';
 import { BindingName, BindingsList, RulesList } from './index';
-import { registerTemplate } from '../../yaml-templates';
 import { flatten as bindingsFlatten } from './bindings';
 import { flagPending, connectToFlags, FLAGS } from '../../features';
-
-registerTemplate('rbac.authorization.k8s.io/v1.Role', `apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
-metadata:
-  name: example
-rules:
-- apiGroups: [""] # "" indicates the core API group
-  resources: ["pods"]
-  verbs: ["get", "watch", "list"]`);
 
 export const isSystemRole = role => _.startsWith(role.metadata.name, 'system:');
 
