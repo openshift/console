@@ -101,7 +101,7 @@ const DefaultPage = connectToFlags(FLAGS.OPENSHIFT)(({ flags }) => {
   return <NamespaceRedirect />;
 });
 
-const LazyRoute = (props) => <Route {...props} component={(componentProps) => <AsyncComponent loader={props.loader} {...componentProps} />} />;
+const LazyRoute = (props) => <Route {...props} component={(componentProps) => <AsyncComponent loader={props.loader} kind={props.kind} {...componentProps} />} />;
 
 class App extends React.PureComponent {
   componentDidUpdate (prevProps) {
