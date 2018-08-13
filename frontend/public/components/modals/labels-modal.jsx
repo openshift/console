@@ -7,7 +7,6 @@ import { PromiseComponent, ResourceIcon, SelectorInput } from '../utils';
 
 const LABELS_PATH = '/metadata/labels';
 const TEMPLATE_SELECTOR_PATH = '/spec/template/metadata/labels';
-const NODE_SELECTOR_PATH = '/spec/template/spec/nodeSelector';
 
 class BaseLabelsModal extends PromiseComponent {
   constructor(props) {
@@ -82,13 +81,5 @@ export const podSelectorModal = createModalLauncher((props) => <BaseLabelsModal
   description="Pod Selector"
   message={`Determines the set of pods targeted by this ${props.kind.label.toLowerCase()}.`}
   labelClassName="co-text-pod"
-  {...props}
-/>);
-
-export const nodeSelectorModal = createModalLauncher((props) => <BaseLabelsModal
-  path={NODE_SELECTOR_PATH}
-  description="Node Selector"
-  message="Node selectors allow you to constrain pods to only run on nodes with matching labels."
-  labelClassName="co-text-node"
   {...props}
 />);

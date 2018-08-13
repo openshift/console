@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 
 import { DeploymentModel } from '../models';
-import { configureUpdateStrategyModal, configureRevisionHistoryLimitModal } from './modals';
+import { configureUpdateStrategyModal } from './modals';
 import { DetailsPage, List, ListPage, WorkloadListHeader, WorkloadListRow } from './factory';
 import { Cog, DeploymentPodCounts, SectionHeading, LoadingInline, navFactory, Overflow, pluralize, ResourceSummary } from './utils';
 import { Conditions } from './conditions';
@@ -10,12 +10,7 @@ import { EnvironmentPage } from './environment';
 import { ResourceEventStream } from './events';
 import { formatDuration } from './utils/datetime';
 
-const {ModifyCount, ModifyNodeSelector, EditEnvironment, common} = Cog.factory;
-
-const RevisionHistory = (kind, deployment) => ({
-  label: 'Edit Revision History Limit',
-  callback: () => configureRevisionHistoryLimitModal({deployment}),
-});
+const {ModifyCount, EditEnvironment, common} = Cog.factory;
 
 const UpdateStrategy = (kind, deployment) => ({
   label: 'Edit Update Strategy',
@@ -24,9 +19,7 @@ const UpdateStrategy = (kind, deployment) => ({
 
 const menuActions = [
   ModifyCount,
-  RevisionHistory,
   UpdateStrategy,
-  ModifyNodeSelector,
   EditEnvironment,
   ...common,
 ];
