@@ -6,7 +6,6 @@ ENV container=oci
 RUN mkdir -p /go/src/github.com/openshift/console/
 ADD . /go/src/github.com/openshift/console/
 WORKDIR /go/src/github.com/openshift/console/
-ADD etc/ssl /etc/ssl
 
 # TODO: Switch to multistage builds as soon as we can.
 #
