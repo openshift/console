@@ -6,7 +6,7 @@ import { yamlTemplates } from '../models/yaml-templates';
 import { connectToPlural } from '../kinds';
 import { AsyncComponent } from './utils/async';
 import { Firehose, LoadingBox } from './utils';
-import { K8sKind, referenceForModel } from '../module/k8s';
+import { K8sKind, apiVersionForModel, referenceForModel } from '../module/k8s';
 import { ErrorPage404 } from './error';
 import { ClusterServiceVersionModel } from '../models';
 
@@ -31,8 +31,7 @@ export const CreateYAML = connectToPlural((props: CreateYAMLProps) => {
     obj.metadata.namespace = namespace;
   }
   if (kindObj.crd && template === yamlTemplates.getIn(['DEFAULT', 'default'])) {
-    const apiGroup = kindObj.apiGroup ? `${kindObj.apiGroup}/` : '';
-    obj.apiVersion = `${apiGroup}${kindObj.apiVersion}`;
+    obj.apiVersion = apiVersionForModel(kindObj);
     obj.spec = obj.spec || {};
   }
 
