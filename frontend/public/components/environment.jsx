@@ -25,6 +25,9 @@ const getPairsFromObject = (element) => {
     return [['', '', 0]];
   }
   return _.map(element.env, (leafNode, i) => {
+    if (!_.has(leafNode, 'value') && !_.has(leafNode, 'valueFrom')) {
+      leafNode.value = '';
+    }
     leafNode.ID = i;
     return Object.values(leafNode);
   });
