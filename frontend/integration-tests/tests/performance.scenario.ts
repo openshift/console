@@ -29,6 +29,7 @@ const chunkedRoutes = OrderedMap<string, {section: string, name: string}>()
   .set('node', {section: 'Administration', name: 'Nodes'})
   .set('service-account', {section: 'Administration', name: 'Service Accounts'})
   .set('resource-quota', {section: 'Administration', name: 'Resource Quotas'})
+  .set('limit-range', {section: 'Administration', name: 'Limit Ranges'})
   .set('custom-resource-definition', {section: 'Administration', name: 'CRDs'});
 
 describe('Performance test', () => {
