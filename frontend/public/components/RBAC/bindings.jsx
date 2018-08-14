@@ -523,8 +523,8 @@ const BaseEditRoleBinding = connect(null, {setActiveNamespace: UIActions.setActi
           <div className="separator"></div>
 
           <ButtonBar errorMessage={this.state.error} inProgress={this.state.inProgress}>
-            <button type="submit" className="btn btn-primary" id="yaml-create">{saveButtonText || 'Create Binding'}</button>
-            <Link to={formatNamespacedRouteForResource('rolebindings')} className="btn btn-default">Cancel</Link>
+            <button type="submit" className="btn btn-primary" id="save-changes">{saveButtonText || 'Create Binding'}</button>
+            <Link to={formatNamespacedRouteForResource('rolebindings')} className="btn btn-default" id="cancel">Cancel</Link>
           </ButtonBar>
         </form>
       </div>;

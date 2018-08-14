@@ -135,8 +135,8 @@ const withSecretForm = (SubForm) => class SecretFormComponent extends React.Comp
           isCreate={this.props.isCreate}
         />
         <ButtonBar errorMessage={this.state.error} inProgress={this.state.inProgress} >
-          <button type="submit" className="btn btn-primary" id="create-secret">{this.props.saveButtonText || 'Create'}</button>
-          <Link to={formatNamespacedRouteForResource('secrets')} className="btn btn-default">Cancel</Link>
+          <button type="submit" className="btn btn-primary" id="save-changes">{this.props.saveButtonText || 'Create'}</button>
+          <Link to={formatNamespacedRouteForResource('secrets')} className="btn btn-default" id="cancel">Cancel</Link>
         </ButtonBar>
       </form>
     </div>;
