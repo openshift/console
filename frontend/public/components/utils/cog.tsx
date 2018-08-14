@@ -5,7 +5,7 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 import { Tooltip } from './tooltip';
 
-import { annotationsModal, configureReplicaCountModal, labelsModal, nodeSelectorModal, podSelectorModal, deleteModal } from '../modals';
+import { annotationsModal, configureReplicaCountModal, labelsModal, podSelectorModal, deleteModal } from '../modals';
 import { DropdownMixin } from './dropdown';
 import { history, resourceObjPath } from './index';
 import { referenceForModel, K8sResourceKind, K8sResourceKindReference, K8sKind } from '../../module/k8s';
@@ -43,13 +43,6 @@ const cogFactory: CogFactory = {
     callback: () => podSelectorModal({
       kind: kind,
       resource:  obj,
-    }),
-  }),
-  ModifyNodeSelector: (kind, obj) => ({
-    label: 'Edit Node Selector',
-    callback: () => nodeSelectorModal({
-      kind: kind,
-      resource: obj,
     }),
   }),
   ModifyAnnotations: (kind, obj) => ({

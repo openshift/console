@@ -6,8 +6,8 @@ import { breadcrumbsForOwnerRefs } from './utils/breadcrumbs';
 import { EnvironmentPage } from './environment';
 import { ResourceEventStream } from './events';
 
-const {ModifyCount, ModifyNodeSelector, EditEnvironment, common} = Cog.factory;
-export const replicaSetMenuActions = [ModifyCount, ModifyNodeSelector, EditEnvironment, ...common];
+const {ModifyCount, EditEnvironment, common} = Cog.factory;
+export const replicaSetMenuActions = [ModifyCount, EditEnvironment, ...common];
 
 const Details = ({obj: replicaSet}) => <React.Fragment>
   <div className="co-m-pane__body">

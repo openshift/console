@@ -5,7 +5,7 @@ import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from '.
 import { SectionHeading, Cog, LabelList, ResourceCog, ResourceLink, ResourceSummary, Selector, navFactory, detailsPage } from './utils';
 import { EnvironmentPage } from './environment';
 
-const menuActions = [Cog.factory.ModifyNodeSelector, Cog.factory.EditEnvironment, ...Cog.factory.common];
+const menuActions = [Cog.factory.EditEnvironment, ...Cog.factory.common];
 
 const DaemonSetHeader = props => <ListHeader>
   <ColHead {...props} className="col-lg-2 col-md-3 col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
