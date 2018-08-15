@@ -57,6 +57,9 @@ export default (state, action) => {
     case types.setCreateProjectMessage:
       return state.set('createProjectMessage', action.message);
 
+    case types.setMonitoringRules:
+      return state.set('monitoringRules', action.data);
+
     default:
       break;
   }

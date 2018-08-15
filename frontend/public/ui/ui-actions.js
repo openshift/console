@@ -70,7 +70,8 @@ export const types = {
   startImpersonate: 'startImpersonate',
   stopImpersonate: 'stopImpersonate',
   sortList: 'sortList',
-  setCreateProjectMessage: 'setCreateProjectMessage'
+  setCreateProjectMessage: 'setCreateProjectMessage',
+  setMonitoringRules: 'setMonitoringRules',
 };
 
 export const UIActions = {
@@ -153,5 +154,11 @@ export const UIActions = {
     return {listId, field, func, orderBy, type: types.sortList};
   },
 
-  [types.setCreateProjectMessage]: message => ({type: types.setCreateProjectMessage, message})
+  [types.setCreateProjectMessage]: message => ({type: types.setCreateProjectMessage, message}),
+
+  monitoringRulesLoading: () => ({type: types.setMonitoringRules, data: {loaded: false, loadError: null, rules: null}}),
+
+  monitoringRulesLoaded: rules => ({type: types.setMonitoringRules, data: {loaded: true, loadError: null, rules}}),
+
+  monitoringRulesErrored: loadError => ({type: types.setMonitoringRules, data: {loaded: true, loadError, rules: null}}),
 };

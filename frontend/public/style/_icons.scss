@@ -18,9 +18,14 @@
   color: $color-pf-green-400;
 }
 
+.alert-firing,
 .node-not-ready,
 .pvc-lost,
 .route-rejected,
 .status-failed {
   color: $color-red-error;
+}
+
+.alert-pending {
+  color: $color-orange-warning;
 }

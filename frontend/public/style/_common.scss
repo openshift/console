@@ -47,6 +47,10 @@
   min-width: 0;
 }
 
+.co-m-pane__filter-bar-group--description {
+  margin-right: 20px;
+}
+
 .co-m-pane__filter-bar-group--filter {
   @media(min-width: $screen-xs-min) {
     flex: 1 1 auto;

@@ -1,0 +1,34 @@
+.monitoring-heading {
+  display: flex;
+  justify-content: space-between;
+}
+
+$monitoring-line-height: 18px;
+
+.monitoring-description, .monitoring-timestamp {
+  line-height: $monitoring-line-height;
+  margin-top: 4px;
+}
+
+.monitoring-description {
+  margin-left: 3px;
+
+  // Limit to $num-lines lines of text. Truncate with an ellipsis in WebKit. Just overflow hidden for other browsers.
+  $num-lines: 2;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: $num-lines;
+  height: $num-lines * $monitoring-line-height;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.monitoring-timestamp {
+  display: flex;
+  flex-flow: row wrap;
+  font-size: 11px;
+}
+
+.monitoring-query {
+  color: $color-pf-blue-400;
+}
