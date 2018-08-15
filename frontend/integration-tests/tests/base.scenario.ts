@@ -36,7 +36,7 @@ describe('Basic console test', () => {
       await crudView.createYAMLButton.click();
       await browser.wait(until.presenceOf($('.modal-body__field')));
       await $$('.modal-body__field').get(0).$('input').sendKeys(testName);
-      await $('.modal-content').$('#confirm-delete').click();
+      await $('.modal-content').$('#confirm-action').click();
       await browser.wait(until.urlContains(`/namespaces/${testName}`), BROWSER_TIMEOUT);
     }
 

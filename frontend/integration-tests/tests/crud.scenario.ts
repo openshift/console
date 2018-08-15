@@ -185,7 +185,7 @@ describe('Kubernetes resource CRUD operations', () => {
       await browser.wait(until.presenceOf($('.modal-body__field')));
       await $$('.modal-body__field').get(0).$('input').sendKeys(name);
       leakedResources.add(JSON.stringify({name, plural: 'namespaces'}));
-      await $('#confirm-delete').click();
+      await $('#confirm-action').click();
       await browser.wait(until.invisibilityOf($('.modal-content')), K8S_CREATION_TIMEOUT);
 
       expect(browser.getCurrentUrl()).toContain(`/k8s/cluster/namespaces/${testName}-ns`);
@@ -293,7 +293,7 @@ describe('Kubernetes resource CRUD operations', () => {
       await $('.tags input').sendKeys(labelValue, Key.ENTER);
       // This only works because there's only one label
       await browser.wait(until.textToBePresentInElement($('.tags .tag-item'), labelValue), 1000);
-      await $('.modal-footer #confirm-delete').click();
+      await $('.modal-footer #confirm-action').click();
     });
 
     it('updates the resource instance labels', async() => {
@@ -314,8 +314,8 @@ describe('Kubernetes resource CRUD operations', () => {
       await crudView.actionsDropdown.click();
       await browser.wait(until.presenceOf(crudView.actionsDropdownMenu), 1000);
       await crudView.actionsDropdownMenu.element(by.partialLinkText('Delete ')).click();
-      await browser.wait(until.presenceOf($('#confirm-delete')));
-      await $('.modal-footer #confirm-delete').click();
+      await browser.wait(until.presenceOf($('#confirm-action')));
+      await $('.modal-footer #confirm-action').click();
 
       leakedResources.delete(JSON.stringify({name, plural, namespace: testName}));
     });

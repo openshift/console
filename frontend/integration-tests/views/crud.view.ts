@@ -40,11 +40,11 @@ export const deleteRow = (kind: string) => (name: string) => rowForName(name).$$
         await $('input[placeholder="Enter name"]').sendKeys(name);
         break;
       default:
-        await browser.wait(until.presenceOf($('#confirm-delete')));
+        await browser.wait(until.presenceOf($('#confirm-action')));
         break;
     }
 
-    await $('#confirm-delete').click();
+    await $('#confirm-action').click();
 
     const cogIsDisabled = until.presenceOf(rowForName(name).$('.co-m-cog--disabled'));
     const listIsEmpty = until.textToBePresentInElement($('.cos-status-box > .text-center'), 'No ');
