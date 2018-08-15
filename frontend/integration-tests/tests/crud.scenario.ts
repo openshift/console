@@ -125,6 +125,15 @@ describe('Kubernetes resource CRUD operations', () => {
         expect(crudView.resourceTitle.getText()).toEqual(testName);
       });
 
+      it('edit the resource instance', async() => {
+        if (kind !== 'ServiceAccount') {
+          await browser.get(`${appHost}/search/${namespaced ? `ns/${testName}` : 'all-namespaces'}?kind=${kind}&q=${testLabel}%3d${testName}`);
+          await crudView.filterForName(testName);
+          await crudView.resourceRowsPresent();
+          await crudView.editRow(kind)(testName);
+        }
+      });
+
       it('deletes the resource instance', async() => {
         await browser.get(`${appHost}${namespaced ? `/k8s/ns/${testName}` : '/k8s/cluster'}/${resource}`);
         // Filter by resource name to make sure the resource is on the first page of results.
@@ -154,7 +163,7 @@ describe('Kubernetes resource CRUD operations', () => {
       await $('#test--role-dropdown').click().then(() => browser.actions().sendKeys('cluster-admin', Key.ARROW_DOWN, Key.ENTER).perform());
       await $('#test--subject-name').sendKeys('subject-name');
       leakedResources.add(JSON.stringify({name: bindingName, plural: 'rolebindings', namespace: testName}));
-      await crudView.createYAMLButton.click();
+      await crudView.saveChangesBtn.click();
       await browser.wait(until.urlContains(`/k8s/ns/${testName}/rolebindings`));
       // Filter by resource name to make sure the resource is on the first page of results.
       // Otherwise the tests fail since we do virtual scrolling and the element isn't found.

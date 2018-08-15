@@ -4,6 +4,10 @@ export const createYAMLButton = $('#yaml-create');
 export const createItemButton = $('#item-create');
 export const createYAMLLink = $('#yaml-link');
 
+export const saveChangesBtn = $('#save-changes');
+export const reloadBtn = $('#reload-object');
+export const cancelBtn = $('#cancel');
+
 /**
  * Returns a promise that resolves after the loading spinner is not present.
  */
@@ -26,6 +30,26 @@ export const filterForName = async(name: string) => {
   await browser.wait(until.presenceOf(textFilter));
   await textFilter.sendKeys(name);
 };
+
+export const editHumanizedKind = (kind) => {
+  const humanizedKind = kind.split(/(?=[A-Z])/).join(' ');
+  return `Edit ${humanizedKind}`;
+};
+
+/**
+ * Edit row from a list.
+ */
+export const editRow = (kind: string) => (name: string) => rowForName(name).$$('.co-m-cog').first().click()
+  .then(() => browser.wait(until.elementToBeClickable(rowForName(name).$('.co-m-cog__dropdown'))))
+  .then(() => rowForName(name).$('.co-m-cog__dropdown').$$('a').filter(link => link.getText().then(text => text.startsWith(editHumanizedKind(kind)))).first().click())
+  .then(async() => {
+    await browser.wait(until.presenceOf(cancelBtn));
+    const reloadBtnIsPresent = await reloadBtn.isPresent();
+    if (reloadBtnIsPresent) {
+      await reloadBtn.click();
+    }
+    await saveChangesBtn.click();
+  });
 
 /**
  * Deletes a row from a list. Does not wait until the row is no longer visible.
@@ -73,7 +97,6 @@ export const actionsDropdownMenu = actionsButton.$$('.dropdown-menu').first();
 
 export const resourceTitle = $('#resource-title');
 
-export const saveChangesBtn = $('#save-changes');
 export const nameFilter = $('.form-control.text-filter');
 export const messageLbl = $('.cos-status-box');
 export const modalAnnotationsLink = $('.co-m-modal-link');
