@@ -32,7 +32,7 @@ const DaemonSetRow = ({obj: daemonset}) => <ResourceRow obj={daemonset}>
     </Link>
   </div>
   <div className="col-lg-3 hidden-md hidden-sm hidden-xs">
-    <Selector selector={daemonset.spec.selector} />
+    <Selector selector={daemonset.spec.selector} namespace={daemonset.metadata.namespace} />
   </div>
 </ResourceRow>;
 
