@@ -4,8 +4,8 @@ import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import * as _ from 'lodash';
 
-import { SubscriptionHeader, SubscriptionHeaderProps, SubscriptionRow, SubscriptionRowProps, SubscriptionsList, SubscriptionsListProps, SubscriptionsPage, SubscriptionsPageProps, SubscriptionDetails, SubscriptionDetailsPage, SubscriptionDetailsProps, SubscriptionUpdates, SubscriptionUpdatesProps, SubscriptionUpdatesState } from '../../../public/components/cloud-services/subscription';
-import { SubscriptionKind, SubscriptionState, olmNamespace } from '../../../public/components/cloud-services';
+import { SubscriptionHeader, SubscriptionHeaderProps, SubscriptionRow, SubscriptionRowProps, SubscriptionsList, SubscriptionsListProps, SubscriptionsPage, SubscriptionsPageProps, SubscriptionDetails, SubscriptionDetailsPage, SubscriptionDetailsProps, SubscriptionUpdates, SubscriptionUpdatesProps, SubscriptionUpdatesState } from '../../../public/components/operator-lifecycle-manager/subscription';
+import { SubscriptionKind, SubscriptionState, olmNamespace } from '../../../public/components/operator-lifecycle-manager';
 import { referenceForModel } from '../../../public/module/k8s';
 import { SubscriptionModel, ClusterServiceVersionModel, ConfigMapModel } from '../../../public/models';
 import { ListHeader, ColHead, List, ListPage, DetailsPage } from '../../../public/components/factory';

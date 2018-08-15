@@ -4,7 +4,7 @@ import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
 
 import { ActionsMenu, ResourceIcon } from './index';
-import { ClusterServiceVersionLogo } from '../cloud-services';
+import { ClusterServiceVersionLogo } from '../operator-lifecycle-manager';
 import { K8sResourceKind, K8sResourceKindReference, K8sKind, referenceFor, referenceForModel } from '../../module/k8s';
 import { connectToModel } from '../../kinds';
 import { ClusterServiceVersionModel } from '../../models';

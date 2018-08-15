@@ -5,10 +5,12 @@ import { Link, match } from 'react-router-dom';
 import * as _ from 'lodash-es';
 import { connect } from 'react-redux';
 
-import { ClusterServiceVersionResourceKind, ALMStatusDescriptors, ClusterServiceVersionKind, referenceForCRDDesc, ClusterServiceVersionPhase } from './index';
+import { ClusterServiceVersionResourceKind, ClusterServiceVersionKind, referenceForCRDDesc, ClusterServiceVersionPhase } from './index';
+import { StatusDescriptor } from './descriptors/status';
+import { SpecDescriptor } from './descriptors/spec';
+// FIXME(alecmerdler): Should not be importing `StatusCapability` enum
+import { StatusCapability, Descriptor } from './descriptors/types';
 import { Resources } from './k8s-resource';
-import { StatusDescriptor, PodStatusChart, ClusterServiceVersionResourceStatus } from './status-descriptors';
-import { ClusterServiceVersionResourceSpec, SpecDescriptor } from './spec-descriptors';
 import { List, MultiListPage, ListHeader, ColHead, DetailsPage, CompactExpandButtons } from '../factory';
 import { ResourceLink, ResourceSummary, StatusBox, navFactory, Timestamp, LabelList, humanizeNumber, ResourceIcon, MsgBox, ResourceCog, Cog } from '../utils';
 import { connectToModel } from '../../kinds';
@@ -136,12 +138,13 @@ export const ClusterServiceVersionResourceDetails = connectToModel(
     }
 
     render() {
-      const isMainDescriptor = (descriptor: StatusDescriptor) => {
-        return (descriptor['x-descriptors'] || []).some((type: ALMStatusDescriptors) => {
+      // TODO(alecmerdler): Use additional `x-descriptor` to specify if should be considered main?
+      const isMainDescriptor = (descriptor: Descriptor) => {
+        return (descriptor['x-descriptors'] as StatusCapability[] || []).some((type) => {
           switch (type) {
-            case ALMStatusDescriptors.importantMetrics:
-            case ALMStatusDescriptors.prometheus:
-            case ALMStatusDescriptors.podStatuses:
+            case StatusCapability.importantMetrics:
+            case StatusCapability.prometheus:
+            case StatusCapability.podStatuses:
               return true;
             default:
               return false;
@@ -149,12 +152,12 @@ export const ClusterServiceVersionResourceDetails = connectToModel(
         });
       };
 
-      const blockValue = (descriptor: StatusDescriptor | SpecDescriptor, block: {[key: string]: any}) => !_.isEmpty(descriptor)
+      const blockValue = (descriptor: Descriptor, block: {[key: string]: any}) => !_.isEmpty(descriptor)
         ? _.get(block, descriptor.path, descriptor.value)
         : undefined;
 
-      const descriptorFor = (descriptors: StatusDescriptor[] = [], capability: ALMStatusDescriptors) => {
-        return descriptors.find((descriptor) => (descriptor['x-descriptors'] || []).some((cap) => cap === capability));
+      const descriptorFor = (descriptors: Descriptor[] = [], capability: StatusCapability) => {
+        return descriptors.find((descriptor) => (descriptor['x-descriptors'] as StatusCapability[] || []).some((cap) => cap === capability));
       };
 
       const {kind, metadata, spec, status} = this.props.obj;
@@ -163,13 +166,13 @@ export const ClusterServiceVersionResourceDetails = connectToModel(
       const ownedDefinitions = _.get(this.props.clusterServiceVersion, 'spec.customresourcedefinitions.owned', []);
       const reqDefinitions = _.get(this.props.clusterServiceVersion, 'spec.customresourcedefinitions.required', []);
       const thisDefinition = _.find(ownedDefinitions.concat(reqDefinitions), (def) => def.name.split('.')[0] === this.props.kindObj.path);
-      const statusDescriptors = _.get<StatusDescriptor[]>(thisDefinition, 'statusDescriptors', []);
-      const specDescriptors = _.get<SpecDescriptor[]>(thisDefinition, 'specDescriptors', []);
+      const statusDescriptors = _.get<Descriptor[]>(thisDefinition, 'statusDescriptors', []);
+      const specDescriptors = _.get<Descriptor[]>(thisDefinition, 'specDescriptors', []);
 
       // Find the important metrics and prometheus endpoints, if any.
-      const metricsDescriptor = descriptorFor(statusDescriptors, ALMStatusDescriptors.importantMetrics);
-      const promDescriptor = descriptorFor(statusDescriptors, ALMStatusDescriptors.prometheus);
-      const podStatusesDescriptor = descriptorFor(statusDescriptors, ALMStatusDescriptors.podStatuses);
+      const metricsDescriptor = descriptorFor(statusDescriptors, StatusCapability.importantMetrics);
+      const promDescriptor = descriptorFor(statusDescriptors, StatusCapability.prometheus);
+      const podStatusesDescriptor = descriptorFor(statusDescriptors, StatusCapability.podStatuses);
 
       const metricsValue = blockValue(metricsDescriptor, status);
 
@@ -177,9 +180,12 @@ export const ClusterServiceVersionResourceDetails = connectToModel(
         <div className="co-m-pane__body">
           <h2 className="co-section-heading">{`${thisDefinition ? thisDefinition.displayName : kind} Overview`}</h2>
           <div className="row">
-            { podStatusesDescriptor && <div className="col-sm-6 col-md-4"><PodStatusChart statusDescriptor={podStatusesDescriptor} fetcher={() => blockValue(podStatusesDescriptor, status)} /></div> }
+            { podStatusesDescriptor && <div className="col-sm-6 col-md-4">
+              <StatusDescriptor descriptor={podStatusesDescriptor} value={blockValue(podStatusesDescriptor, status)} obj={this.props.obj} model={this.props.kindObj} />
+            </div> }
             { metricsValue && metricsValue.queries.map((query: ClusterServiceVersionPrometheusQuery, i) => (
               <div key={i} className="col-sm-6 col-md-4 co-clusterserviceversion-resource-details__section__metric">
+                {/* FIXME(alecmerdler): Use `StatusDescriptor` component */}
                 <ClusterServiceVersionPrometheusGraph query={query} basePath={blockValue(promDescriptor, status)} />
               </div>)) }
           </div>
@@ -202,16 +208,16 @@ export const ClusterServiceVersionResourceDetails = connectToModel(
                     <dd><Timestamp timestamp={metadata.creationTimestamp} /></dd>
                   </dl> }
               </div>
-              { specDescriptors.map((specDescriptor: SpecDescriptor, i) => <div key={i} className="col-xs-6">
-                <ClusterServiceVersionResourceSpec namespace={metadata.namespace} resource={this.props.obj} kindObj={this.props.kindObj} specValue={blockValue(specDescriptor, spec)} specDescriptor={specDescriptor} />
+              { specDescriptors.map((specDescriptor: Descriptor, i) => <div key={i} className="col-xs-6">
+                <SpecDescriptor namespace={metadata.namespace} obj={this.props.obj} model={this.props.kindObj} value={blockValue(specDescriptor, spec)} descriptor={specDescriptor} />
               </div>) }
 
               { statusDescriptors.filter(descriptor => !isMainDescriptor(descriptor))
-                .map((statusDescriptor: StatusDescriptor) => {
+                .map((statusDescriptor: Descriptor) => {
                   const statusValue = blockValue(statusDescriptor, status);
                   return !_.isEmpty(statusValue) || _.isNumber(statusValue) || this.state.expanded
                     ? <div className="col-xs-6" key={statusDescriptor.path}>
-                      <ClusterServiceVersionResourceStatus namespace={metadata.namespace} statusDescriptor={statusDescriptor} statusValue={statusValue} />
+                      <StatusDescriptor namespace={metadata.namespace} obj={this.props.obj} model={this.props.kindObj} descriptor={statusDescriptor} value={statusValue} />
                     </div>
                     : null;
                 }) }

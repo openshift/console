@@ -8,7 +8,7 @@ import * as _ from 'lodash-es';
 import { DisableApplicationModal, DisableApplicationModalProps, DisableApplicationModalState } from '../../../public/components/modals/disable-application-modal';
 import { ModalTitle, ModalSubmitFooter } from '../../../public/components/factory/modal';
 import { testSubscription } from '../../../__mocks__/k8sResourcesMocks';
-import { SubscriptionKind } from '../../../public/components/cloud-services/index';
+import { SubscriptionKind } from '../../../public/components/operator-lifecycle-manager/index';
 import { ClusterServiceVersionModel, SubscriptionModel } from '../../../public/models';
 
 describe(DisableApplicationModal.name, () => {

@@ -58,7 +58,7 @@ export const ResourceDetailsPage = connectToPlural((props: ResourceDetailsPagePr
 
   const ref = props.match.path.indexOf('customresourcedefinitions') === -1 ? referenceForModel(kindObj) : null;
   const componentLoader = props.match.params.appName
-    ? () => import('./cloud-services/clusterserviceversion-resource' /* webpackChunkName: "csv-resource" */).then(m => m.ClusterServiceVersionResourcesDetailsPage)
+    ? () => import('./operator-lifecycle-manager/clusterserviceversion-resource' /* webpackChunkName: "csv-resource" */).then(m => m.ClusterServiceVersionResourcesDetailsPage)
     : resourceDetailPages.get(ref, () => Promise.resolve(DefaultDetailsPage));
 
   return <React.Fragment>

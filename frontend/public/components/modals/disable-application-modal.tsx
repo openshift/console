@@ -5,7 +5,7 @@ import * as _ from 'lodash-es';
 
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
 import { PromiseComponent } from '../utils';
-import { ClusterServiceVersionKind, SubscriptionKind } from '../cloud-services';
+import { ClusterServiceVersionKind, SubscriptionKind } from '../operator-lifecycle-manager';
 import { K8sKind, K8sResourceKind } from '../../module/k8s';
 import { ClusterServiceVersionModel, SubscriptionModel } from '../../models';
 

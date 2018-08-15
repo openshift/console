@@ -5,8 +5,8 @@ import { shallow, ShallowWrapper, mount, ReactWrapper } from 'enzyme';
 import { Link } from 'react-router-dom';
 import * as _ from 'lodash-es';
 
-import { ClusterServiceVersionsDetailsPage, ClusterServiceVersionsDetailsPageProps, ClusterServiceVersionDetails, ClusterServiceVersionDetailsProps, ClusterServiceVersionsPage, ClusterServiceVersionsPageProps, ClusterServiceVersionList, ClusterServiceVersionListProps, ClusterServiceVersionListItem, ClusterServiceVersionListItemProps, ClusterServiceVersionHeader, ClusterServiceVersionRow, ClusterServiceVersionRowProps } from '../../../public/components/cloud-services/clusterserviceversion';
-import { ClusterServiceVersionKind, ClusterServiceVersionLogo, ClusterServiceVersionLogoProps, ClusterServiceVersionPhase, appCatalogLabel, AppCatalog, referenceForCRDDesc } from '../../../public/components/cloud-services';
+import { ClusterServiceVersionsDetailsPage, ClusterServiceVersionsDetailsPageProps, ClusterServiceVersionDetails, ClusterServiceVersionDetailsProps, ClusterServiceVersionsPage, ClusterServiceVersionsPageProps, ClusterServiceVersionList, ClusterServiceVersionListProps, ClusterServiceVersionListItem, ClusterServiceVersionListItemProps, ClusterServiceVersionHeader, ClusterServiceVersionRow, ClusterServiceVersionRowProps } from '../../../public/components/operator-lifecycle-manager/clusterserviceversion';
+import { ClusterServiceVersionKind, ClusterServiceVersionLogo, ClusterServiceVersionLogoProps, ClusterServiceVersionPhase, appCatalogLabel, AppCatalog, referenceForCRDDesc } from '../../../public/components/operator-lifecycle-manager';
 import { DetailsPage, MultiListPage, ListHeader, ColHead } from '../../../public/components/factory';
 import { testClusterServiceVersion, localClusterServiceVersion, testResourceInstance, testOperatorDeployment } from '../../../__mocks__/k8sResourcesMocks';
 import { StatusBox, Timestamp, OverflowLink, Dropdown, MsgBox, ResourceLink, ResourceCog, ErrorBoundary, LoadingBox } from '../../../public/components/utils';

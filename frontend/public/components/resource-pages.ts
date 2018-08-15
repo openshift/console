@@ -94,10 +94,10 @@ export const resourceDetailPages = ImmutableMap<GroupVersionKind | string, () =>
   .set(ReportReference, () => import('./chargeback' /* webpackChunkName: "chargeback" */).then(m => m.ReportsDetailsPage))
   .set(ReportGenerationQueryReference, () => import('./chargeback' /* webpackChunkName: "chargeback" */).then(m => m.ReportGenerationQueriesDetailsPage))
   .set(referenceForModel(StorageClassModel), () => import('./storage-class' /* webpackChunkName: "storage-class" */).then(m => m.StorageClassDetailsPage))
-  .set(referenceForModel(ClusterServiceVersionModel), () => import('./cloud-services/clusterserviceversion' /* webpackChunkName: "clusterserviceversion" */).then(m => m.ClusterServiceVersionsDetailsPage))
-  .set(referenceForModel(CatalogSourceModel), () => import('./cloud-services/catalog-source' /* webpackChunkName: "catalog-source" */).then(m => m.CatalogSourceDetailsPage))
-  .set(referenceForModel(SubscriptionModel), () => import('./cloud-services/subscription' /* webpackChunkName: "subscription" */).then(m => m.SubscriptionDetailsPage))
-  .set(referenceForModel(InstallPlanModel), () => import('./cloud-services/install-plan' /* webpackChunkName: "install-plan" */).then(m => m.InstallPlanDetailsPage));
+  .set(referenceForModel(ClusterServiceVersionModel), () => import('./operator-lifecycle-manager/clusterserviceversion' /* webpackChunkName: "clusterserviceversion" */).then(m => m.ClusterServiceVersionsDetailsPage))
+  .set(referenceForModel(CatalogSourceModel), () => import('./operator-lifecycle-manager/catalog-source' /* webpackChunkName: "catalog-source" */).then(m => m.CatalogSourceDetailsPage))
+  .set(referenceForModel(SubscriptionModel), () => import('./operator-lifecycle-manager/subscription' /* webpackChunkName: "subscription" */).then(m => m.SubscriptionDetailsPage))
+  .set(referenceForModel(InstallPlanModel), () => import('./operator-lifecycle-manager/install-plan' /* webpackChunkName: "install-plan" */).then(m => m.InstallPlanDetailsPage));
 
 export const resourceListPages = ImmutableMap<GroupVersionKind | string, () => Promise<React.ComponentType<any>>>()
   .set(referenceForModel(ClusterModel), () => import('./clusters' /* webpackChunkName: "clusters" */).then(m => m.ClustersPage))
@@ -141,7 +141,7 @@ export const resourceListPages = ImmutableMap<GroupVersionKind | string, () => P
   .set(ReportGenerationQueryReference, () => import('./chargeback' /* webpackChunkName: "chargeback" */).then(m => m.ReportGenerationQueriesPage))
   .set(referenceForModel(StorageClassModel), () => import('./storage-class' /* webpackChunkName: "storage-class" */).then(m => m.StorageClassPage))
   .set(referenceForModel(CustomResourceDefinitionModel), () => import('./custom-resource-definition' /* webpackChunkName: "custom-resource-definition" */).then(m => m.CustomResourceDefinitionsPage))
-  .set(referenceForModel(ClusterServiceVersionModel), () => import('./cloud-services/clusterserviceversion' /* webpackChunkName: "clusterserviceversion" */).then(m => m.ClusterServiceVersionsPage))
-  .set(referenceForModel(CatalogSourceModel), () => import('./cloud-services/catalog-source' /* webpackChunkName: "catalog-source" */).then(m => m.CatalogSourcesPage))
-  .set(referenceForModel(SubscriptionModel), () => import('./cloud-services/subscription' /* webpackChunkName: "subscription" */).then(m => m.SubscriptionsPage))
-  .set(referenceForModel(InstallPlanModel), () => import('./cloud-services/install-plan' /* webpackChunkName: "install-plan" */).then(m => m.InstallPlansPage));
+  .set(referenceForModel(ClusterServiceVersionModel), () => import('./operator-lifecycle-manager/clusterserviceversion' /* webpackChunkName: "clusterserviceversion" */).then(m => m.ClusterServiceVersionsPage))
+  .set(referenceForModel(CatalogSourceModel), () => import('./operator-lifecycle-manager/catalog-source' /* webpackChunkName: "catalog-source" */).then(m => m.CatalogSourcesPage))
+  .set(referenceForModel(SubscriptionModel), () => import('./operator-lifecycle-manager/subscription' /* webpackChunkName: "subscription" */).then(m => m.SubscriptionsPage))
+  .set(referenceForModel(InstallPlanModel), () => import('./operator-lifecycle-manager/install-plan' /* webpackChunkName: "install-plan" */).then(m => m.InstallPlansPage));

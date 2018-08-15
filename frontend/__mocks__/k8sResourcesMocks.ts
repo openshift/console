@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
-import { ClusterServiceVersionKind, ClusterServiceVersionResourceKind, ALMStatusDescriptors, Package, InstallPlanKind, ClusterServiceVersionPhase, CSVConditionReason, SubscriptionKind, CatalogSourceKind, InstallPlanApproval } from '../public/components/cloud-services';
-import { CustomResourceDefinitionKind, K8sResourceKind } from '../public/module/k8s';
+import { ClusterServiceVersionKind, ClusterServiceVersionResourceKind, Package, InstallPlanKind, ClusterServiceVersionPhase, CSVConditionReason, SubscriptionKind, CatalogSourceKind, InstallPlanApproval } from '../public/components/operator-lifecycle-manager';
+import { StatusCapability, SpecCapability } from '../public/components/operator-lifecycle-manager/descriptors/types';
+import { CustomResourceDefinitionKind, K8sResourceKind, K8sKind } from '../public/module/k8s';
 /* eslint-enable no-unused-vars */
 
 export const testNamespace: K8sResourceKind = {
@@ -61,13 +62,13 @@ export const testClusterServiceVersion: ClusterServiceVersionKind = {
           path: 'size',
           displayName: 'Size',
           description: 'The desired number of Pods for the cluster',
-          'x-descriptors': ['urn:alm:descriptor:com.tectonic.ui:podCount'],
+          'x-descriptors': [SpecCapability.podCount],
         }],
         statusDescriptors: [{
           path: 'importantMetrics',
           displayName: 'Important Metrics',
           description: 'Important prometheus metrics ',
-          'x-descriptors': [ALMStatusDescriptors.importantMetrics],
+          'x-descriptors': [StatusCapability.importantMetrics],
           value: {
             queries: [{
               query: 'foobarbaz',
@@ -80,13 +81,13 @@ export const testClusterServiceVersion: ClusterServiceVersionKind = {
           path: 'some-unfilled-path',
           displayName: 'Some Unfilled Path',
           description: 'This status is unfilled in the tests',
-          'x-descriptors': [ALMStatusDescriptors.text],
+          'x-descriptors': [StatusCapability.text],
         },
         {
           path: 'some-filled-path',
           displayName: 'Some Status',
           description: 'This status is filled',
-          'x-descriptors': [ALMStatusDescriptors.text],
+          'x-descriptors': [StatusCapability.text],
         }]
       }],
     }
@@ -133,7 +134,7 @@ export const localClusterServiceVersion: ClusterServiceVersionKind = {
   }
 };
 
-export const testClusterServiceVersionResource: CustomResourceDefinitionKind = {
+export const testCRD: CustomResourceDefinitionKind = {
   apiVersion: 'apiextensions.k8s.io/v1beta1',
   kind: 'CustomResourceDefinition',
   metadata: {
@@ -156,6 +157,17 @@ export const testClusterServiceVersionResource: CustomResourceDefinitionKind = {
       listKind: 'TestResourceList',
     },
   }
+};
+
+export const testModel: K8sKind = {
+  abbr: 'TR',
+  kind: 'TestResource',
+  label: 'Test Resource',
+  labelPlural: '',
+  path: 'test-resource',
+  plural: 'test-resources',
+  apiVersion: 'v1',
+  crd: true,
 };
 
 export const testResourceInstance: ClusterServiceVersionResourceKind = {

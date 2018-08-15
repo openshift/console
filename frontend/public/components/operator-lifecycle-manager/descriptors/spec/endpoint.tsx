@@ -3,7 +3,7 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 
-import { ResourceIcon } from '../../utils';
+import { ResourceIcon } from '../../../utils';
 
 export const EndpointRow: React.SFC<EndpointRowProps> = ({endpoint}) => {
   const detail = ['scheme', 'honorLabels', 'targetPort'].reduce((element, field) => _.get(endpoint, field)

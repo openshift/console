@@ -134,12 +134,12 @@ class App extends React.PureComponent {
           <LazyRoute path="/cluster-health" exact loader={() => import('./cluster-health' /* webpackChunkName: "cluster-health" */).then(m => m.ClusterHealth)} />
           <LazyRoute path="/start-guide" exact loader={() => import('./start-guide' /* webpackChunkName: "start-guide" */).then(m => m.StartGuidePage)} />
 
-          <LazyRoute path={`/k8s/ns/:ns/${SubscriptionModel.plural}/new`} exact loader={() => import('./cloud-services').then(m => NamespaceFromURL(m.CreateSubscriptionYAML))} />
+          <LazyRoute path={`/k8s/ns/:ns/${SubscriptionModel.plural}/new`} exact loader={() => import('./operator-lifecycle-manager').then(m => NamespaceFromURL(m.CreateSubscriptionYAML))} />
 
           <Route path="/k8s/ns/:ns/alertmanagers/:name" exact render={({match}) => <Redirect to={`/k8s/ns/${match.params.ns}/${referenceForModel(AlertmanagerModel)}/${match.params.name}`} />} />
 
           <LazyRoute path={`/k8s/ns/:ns/${ClusterServiceVersionModel.plural}/:name/edit`} exact loader={() => import('./create-yaml').then(m => m.EditYAMLPage)} kind={referenceForModel(ClusterServiceVersionModel)} />
-          <LazyRoute path={`/k8s/ns/:ns/${ClusterServiceVersionModel.plural}/:appName/:plural/new`} exact loader={() => import('./cloud-services/create-crd-yaml').then(m => m.CreateCRDYAML)} />
+          <LazyRoute path={`/k8s/ns/:ns/${ClusterServiceVersionModel.plural}/:appName/:plural/new`} exact loader={() => import('./operator-lifecycle-manager/create-crd-yaml').then(m => m.CreateCRDYAML)} />
           <Route path={`/k8s/ns/:ns/${ClusterServiceVersionModel.plural}/:appName/:plural/:name`} component={ResourceDetailsPage} />
 
           <LazyRoute path="/k8s/all-namespaces/events" exact loader={() => import('./events').then(m => NamespaceFromURL(m.EventStreamPage))} />
