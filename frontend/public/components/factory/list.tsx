@@ -378,7 +378,7 @@ export const WorkloadListRow: React.SFC<WorkloadListRowProps> = ({kind, actions,
     </Link>
   </div>
   <div className="col-lg-3 hidden-md hidden-sm hidden-xs">
-    <Selector selector={o.spec.selector} />
+    <Selector selector={o.spec.selector} namespace={o.metadata.namespace} />
   </div>
 </ResourceRow>;
 
