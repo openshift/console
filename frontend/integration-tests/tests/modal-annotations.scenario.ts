@@ -101,7 +101,7 @@ describe('Modal Annotations', () => {
     }
 
     await modalAnnotationsView.isLoaded();
-    await modalAnnotationsView.saveChangesBtn.click();
+    await modalAnnotationsView.confirmActionBtn.click();
     await crudView.isLoaded();
   };
 
@@ -162,7 +162,7 @@ describe('Modal Annotations', () => {
     await modalAnnotationsView.isLoaded();
     await modalAnnotationsView.addAnnotation(annotationKey,annotationValue);
     await modalAnnotationsView.isLoaded();
-    await modalAnnotationsView.saveChangesBtn.click();
+    await modalAnnotationsView.confirmActionBtn.click();
     await crudView.isLoaded();
     await crudView.selectOptionFromGear(WORKLOAD_NAME, crudView.gearOptions.annotations);
     await modalAnnotationsView.isLoaded();

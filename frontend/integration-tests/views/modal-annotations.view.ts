@@ -4,7 +4,7 @@ const BROWSER_TIMEOUT = 15000;
 
 const addMoreBtn = $('.btn-link');
 export const cancelBtn = $$('.btn-default').filter(link => link.getText().then(text => text.startsWith('Cancel'))).first();
-export const saveChangesBtn = $('#confirm-delete');
+export const confirmActionBtn = $('#confirm-action');
 const annotationRows = $$('.pairs-list__row');
 export const annotationRowsKey = $$('[placeholder="key"]');
 export const annotationRowsValue = $$('[placeholder="value"]');
