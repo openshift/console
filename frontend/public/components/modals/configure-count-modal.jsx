@@ -107,4 +107,3 @@ export const configureClusterSizeModal = (props) => {
     buttonText: 'Save Cluster Size'
   }, props));
 };
-

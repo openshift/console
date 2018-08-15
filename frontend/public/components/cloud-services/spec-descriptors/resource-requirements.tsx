@@ -46,7 +46,7 @@ export const ResourceRequirementsModalLink: React.SFC<ResourceRequirementsModalL
   const {cpu, memory} = _.get(obj.spec, `${path}.${type}`, {cpu: null, memory: null});
 
   const onClick = () => {
-    const modal = createModalLauncher(modalProps => <ResourceRequirementsModal {...modalProps} cancel={(e) => onChange().then(() => modalProps.cancel(e))} />);
+    const modal = createModalLauncher<ResourceRequirementsModalProps>(modalProps => <ResourceRequirementsModal {...modalProps} cancel={(e) => onChange().then(() => modalProps.cancel(e))} />);
     const description = `Define the ${type === 'limits' ? 'resource' : 'request'} limits for this ${obj.kind} instance.`;
     const title = `${obj.kind} ${type === 'limits' ? 'Resource' : 'Request'} Limits`;
 
@@ -77,6 +77,7 @@ export type ResourceRequirementsModalProps = {
   type: 'requests' | 'limits';
   path: string;
   cancel: (error: any) => void;
+  close: () => void;
 };
 
 export type ResourceRequirementsModalLinkProps = {

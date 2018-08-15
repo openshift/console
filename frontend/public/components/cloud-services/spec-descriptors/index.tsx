@@ -34,7 +34,7 @@ export class ClusterServiceVersionResourceSpec extends React.Component<SpecDescr
     const controlElm = descriptors.reduce((result, specCapability) => {
       switch (specCapability) {
         case ALMSpecDescriptors.podCount:
-          return <a onClick={() => configureSizeModal(kindObj, resource, specDescriptor, specValue, wasChanged)} className="co-m-modal-link">{specValue} pods</a>;
+          return <a onClick={() => configureSizeModal({kindObj, resource, specDescriptor, specValue, wasChanged})} className="co-m-modal-link">{specValue} pods</a>;
         case ALMSpecDescriptors.endpointList:
           return <EndpointList endpoints={specValue} />;
         case ALMSpecDescriptors.label:

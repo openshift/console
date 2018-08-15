@@ -75,7 +75,7 @@ export class InstallPlanApprovalModal extends PromiseComponent {
   }
 }
 
-export const createInstallPlanApprovalModal: (props: ModalProps) => {result: Promise<void>} = createModalLauncher(InstallPlanApprovalModal);
+export const createInstallPlanApprovalModal = createModalLauncher<InstallPlanApprovalModalProps>(InstallPlanApprovalModal);
 
 export type InstallPlanApprovalModalProps = {
   cancel: (e: Event) => void;
@@ -89,5 +89,3 @@ export type InstallPlanApprovalModalState = {
   errorMessage: string;
   selectedApprovalStrategy: InstallPlanApproval;
 };
-
-type ModalProps = Omit<InstallPlanApprovalModalProps, 'cancel' | 'close'>;
