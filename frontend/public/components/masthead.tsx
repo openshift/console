@@ -14,11 +14,6 @@ import { SafetyFirst } from './safety-first';
 
 const developerConsoleURL = (window as any).SERVER_FLAGS.developerConsoleURL;
 
-const logout = e => {
-  e.preventDefault();
-  authSvc.logout();
-};
-
 const UserMenu: React.StatelessComponent<UserMenuProps> = ({username, actions}) => {
   const title = <React.Fragment>
     <i className="pficon pficon-user co-masthead__user-icon" aria-hidden="true"></i>
@@ -39,8 +34,15 @@ const UserMenuWrapper = connectToFlags(FLAGS.AUTH_ENABLED, FLAGS.OPENSHIFT)((pro
   }
 
   const actions: Actions = [];
-
   if (props.flags[FLAGS.AUTH_ENABLED]) {
+    const logout = e => {
+      e.preventDefault();
+      if (props.flags[FLAGS.OPENSHIFT]) {
+        authSvc.deleteOpenShiftToken().then(() => authSvc.logout());
+      } else {
+        authSvc.logout();
+      }
+    };
     actions.push({
       label: 'Logout',
       callback: logout

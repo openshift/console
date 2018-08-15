@@ -295,6 +295,11 @@ func main() {
 		apiServerEndpoint = srv.K8sProxyConfig.Endpoint.String()
 	}
 	srv.KubeAPIServerURL = apiServerEndpoint
+	srv.K8sClient = &http.Client{
+		Transport: &http.Transport{
+			TLSClientConfig: srv.K8sProxyConfig.TLSClientConfig,
+		},
+	}
 
 	switch *fUserAuth {
 	case "oidc", "openshift":

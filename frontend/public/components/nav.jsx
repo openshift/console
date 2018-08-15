@@ -289,15 +289,19 @@ const MonitoringNavSection_ = ({urls, closeMenu}) => {
 };
 const MonitoringNavSection = connectToURLs(MonitoringRoutes.Prometheus, MonitoringRoutes.AlertManager, MonitoringRoutes.Grafana)(MonitoringNavSection_);
 
-const logout = e => {
-  e && e.preventDefault();
-  authSvc.logout();
-};
-
 const UserNavSection = connectToFlags(FLAGS.AUTH_ENABLED, FLAGS.OPENSHIFT)(({flags, closeMenu}) => {
   if (!flags[FLAGS.AUTH_ENABLED] || flagPending(flags[FLAGS.OPENSHIFT])) {
     return null;
   }
+
+  const logout = e => {
+    e && e.preventDefault();
+    if (flags[FLAGS.OPENSHIFT]) {
+      authSvc.deleteOpenShiftToken().then(() => authSvc.logout());
+    } else {
+      authSvc.logout();
+    }
+  };
 
   if (flags[FLAGS.OPENSHIFT]) {
     return <NavSection text="Logout" icon="pficon pficon-user" klass="visible-xs-block" onClick={logout} />;

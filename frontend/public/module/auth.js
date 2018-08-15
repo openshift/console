@@ -35,6 +35,12 @@ export const authSvc = {
   name: () => loginStateItem(name),
   email: () => loginStateItem(email),
 
+  deleteOpenShiftToken: () => {
+    return coFetch('/api/openshift/delete-token', { method: 'POST' })
+      // eslint-disable-next-line no-console
+      .catch(e => console.error('Error deleting token', e));
+  },
+
   logout: (next) => {
     setNext(next);
     [userID, name, email].forEach(key => {
@@ -46,21 +52,16 @@ export const authSvc = {
       }
     });
 
-    coFetch(window.SERVER_FLAGS.logoutURL, {
-      method: 'POST',
-    }).then(() => authSvc._onLogout(next)).catch(e => {
+    coFetch(window.SERVER_FLAGS.logoutURL, { method: 'POST', })
       // eslint-disable-next-line no-console
-      console.error('ERROR LOGGING OUT', e);
-      authSvc._onLogout(next);
-    });
-  },
-
-  _onLogout: (next) => {
-    if (window.SERVER_FLAGS.logoutRedirect && !next) {
-      window.location = window.SERVER_FLAGS.logoutRedirect;
-    } else {
-      authSvc.login();
-    }
+      .catch(e => console.error('Error logging out', e))
+      .then(() => {
+        if (window.SERVER_FLAGS.logoutRedirect && !next) {
+          window.location = window.SERVER_FLAGS.logoutRedirect;
+        } else {
+          authSvc.login();
+        }
+      });
   },
 
   login: () => {
