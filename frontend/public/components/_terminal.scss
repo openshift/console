@@ -22,6 +22,7 @@ $console-collapse-link-z-index: $console-z-index + 20;
 }
 
 .console-collapse-link {
+  background:rgba(0, 0, 0, 0.75) !important;
   color: $color-pf-blue-300;
   position: fixed;
   right: 18px;
