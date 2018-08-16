@@ -135,6 +135,7 @@ export const CatalogSourceList = withFallback((props: CatalogSourceListProps) =>
 
   return props.loaded
     ? <React.Fragment>
+      <p className="co-m-pane__explanation" style={{marginTop: '-65px'}}>Catalogs are groups of Operators you can make available on the cluster. Subscribe and grant a namespace access to use the installed Operators.</p>
       { _.isEmpty(data) && <MsgBox title="No Catalog Sources Found" detail="Catalog Sources contain packaged Operators which can be subscribed to for automatic upgrades." /> }
       {/* TODO(alecmerdler): Handle filtering based on package name */}
       { data.map((obj) => <div key={obj.metadata.uid} className="co-catalogsource-list__section">
@@ -157,7 +158,7 @@ export const CatalogSourcesPage: React.SFC<CatalogSourcePageProps> = (props) => 
 
   return <MultiListPage
     {...props}
-    title="Catalog Sources"
+    title="Operator Catalog Sources"
     showTitle={true}
     ListComponent={CatalogSourceList}
     filterLabel="Packages by name"
