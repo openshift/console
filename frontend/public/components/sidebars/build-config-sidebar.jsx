@@ -26,7 +26,7 @@ const samples = [
 ];
 
 const SampleYaml = ({sample, loadSampleYaml, downloadSampleYaml}) => {
-  const {header, subHeader, details, templateName} = sample;
+  const {header, subHeader, details, templateName, kind} = sample;
   return <li className="co-resource-sidebar-item">
     <h5 className="co-resource-sidebar-item__header">
       {header} <span className="co-role-sidebar-subheader">{subHeader}</span>
@@ -34,10 +34,10 @@ const SampleYaml = ({sample, loadSampleYaml, downloadSampleYaml}) => {
     <p className="co-resource-sidebar-item__details">
       {details}
     </p>
-    <button className="btn btn-link" onClick={() => loadSampleYaml(templateName, sample.kind)}>
+    <button className="btn btn-link" onClick={() => loadSampleYaml(templateName, kind)}>
       <span className="fa fa-fw fa-paste" aria-hidden="true"></span> Try it
     </button>
-    <button className="btn btn-link pull-right" onClick={() => downloadSampleYaml(templateName)}>
+    <button className="btn btn-link pull-right" onClick={() => downloadSampleYaml(templateName, kind)}>
       <span className="fa fa-fw fa-download" aria-hidden="true"></span> Download yaml
     </button>
   </li>;
