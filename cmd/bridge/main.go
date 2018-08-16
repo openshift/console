@@ -34,6 +34,9 @@ const (
 
 	// Well-known location of Prometheus service for OpenShift. This is only accessible in-cluster.
 	openshiftPrometheusHost = "prometheus-k8s.openshift-monitoring.svc:9091"
+
+	// Well-known location of Alert Manager service for OpenShift. This is only accessible in-cluster.
+	openshiftAlertManagerHost = "alertmanager-main.openshift-monitoring.svc:9094"
 )
 
 func main() {
@@ -260,16 +263,20 @@ func main() {
 			if err != nil {
 				log.Fatalf("failed to read service-ca.crt file: %v", err)
 			}
-			prometheusProxyRootCAs := x509.NewCertPool()
-			if !prometheusProxyRootCAs.AppendCertsFromPEM(serviceCertPEM) {
+			monitoringProxyRootCAs := x509.NewCertPool()
+			if !monitoringProxyRootCAs.AppendCertsFromPEM(serviceCertPEM) {
 				log.Fatalf("no CA found for Kubernetes services")
 			}
-			prometheusTLSConfig := &tls.Config{RootCAs: prometheusProxyRootCAs}
-			// Only proxy requests to the Prometheus API, not the UI.
+			monitoringProxyTLSConfig := &tls.Config{RootCAs: monitoringProxyRootCAs}
 			srv.PrometheusProxyConfig = &proxy.Config{
-				TLSClientConfig: prometheusTLSConfig,
+				TLSClientConfig: monitoringProxyTLSConfig,
 				HeaderBlacklist: []string{"Cookie"},
 				Endpoint:        &url.URL{Scheme: "https", Host: openshiftPrometheusHost, Path: "/api"},
+			}
+			srv.AlertManagerProxyConfig = &proxy.Config{
+				TLSClientConfig: monitoringProxyTLSConfig,
+				HeaderBlacklist: []string{"Cookie"},
+				Endpoint:        &url.URL{Scheme: "https", Host: openshiftAlertManagerHost, Path: "/api"},
 			}
 		} else if !os.IsNotExist(err) {
 			// Ignore errors when the file does not exist, which is the case if not running on OpenShift. Fail on other errors.
