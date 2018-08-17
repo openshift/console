@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import * as PropTypes from 'prop-types';
 import { Map as ImmutableMap, OrderedMap, Set as ImmutableSet } from 'immutable';
 import * as classNames from 'classnames';
+import * as fuzzy from 'fuzzysearch';
 
 import { Dropdown, ResourceIcon } from './utils';
 import { K8sKind, K8sResourceKindReference, referenceForModel, apiVersionForReference, kindForReference } from '../module/k8s';
@@ -89,8 +90,23 @@ const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = props => {
     .toJS() as {[s: string]: JSX.Element};
 
   const selectedKey = allItems[selected] ? selected : kindForReference(selected);
+  const autocompleteFilter = (text, item) => {
+    const { model } = item.props;
+    if (!model) {
+      return false;
+    }
 
-  return <Dropdown className={classNames('co-type-selector', className)} items={allItems} title={allItems[selectedKey]} onChange={onChange} selectedKey={selectedKey} />;
+    return fuzzy(_.toLower(text), _.toLower(model.abbr + model.kind));
+  };
+
+  return <Dropdown
+    className={classNames('co-type-selector', className)}
+    items={allItems}
+    title={allItems[selectedKey]}
+    onChange={onChange}
+    autocompleteFilter={autocompleteFilter}
+    autocompletePlaceholder="Select Resource"
+    selectedKey={selectedKey} />;
 };
 
 const resourceListDropdownStateToProps = ({k8s}) => ({
