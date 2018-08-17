@@ -2,6 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { LOG_SOURCE_RUNNING, LOG_SOURCE_TERMINATED, LOG_SOURCE_WAITING, MsgBox, ResourceLog } from './utils';
 import { getJenkinsLogURL } from './build-pipeline';
+import { BuildStrategyType } from './build';
 
 const PipelineLogMessage = ({ build }) => {
   const logURL = getJenkinsLogURL(build);
@@ -51,7 +52,7 @@ export class BuildLogs extends React.Component {
   render() {
     const { obj: build } = this.props;
     const { name, namespace } = build.metadata;
-    const isPipeline = _.get(build, 'spec.strategy.type') === 'JenkinsPipeline';
+    const isPipeline = _.get(build, 'spec.strategy.type') === BuildStrategyType.JenkinsPipeline;
 
     return <div className="co-m-pane__body">
       { isPipeline
