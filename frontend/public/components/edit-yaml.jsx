@@ -276,8 +276,8 @@ export const EditYAML = connect(stateToProps)(
       this.loadYaml(true, sampleObj);
     }
 
-    downloadSampleYaml_ (templateName = 'default') {
-      const data = safeDump(generateObjToLoad(referenceForModel(this.props.model), templateName, this.props.obj.metadata.namespace));
+    downloadSampleYaml_ (templateName = 'default', kind = referenceForModel(this.props.model)) {
+      const data = safeDump(generateObjToLoad(kind, templateName, this.props.obj.metadata.namespace));
       this.download(data);
     }
 

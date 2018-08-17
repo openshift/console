@@ -8,6 +8,8 @@ import * as defaultDenyAllImg from '../../imgs/network-policy-samples/4-default-
 import * as webAllowExternalImg from '../../imgs/network-policy-samples/5-web-allow-external.svg';
 import * as webDbAllowAllNsImg from '../../imgs/network-policy-samples/6-web-db-allow-all-ns.svg';
 import * as webAllowProductionImg from '../../imgs/network-policy-samples/7-web-allow-production.svg';
+import { NetworkPolicyModel } from '../../models';
+import { referenceForModel } from '../../module/k8s';
 
 const samples = [
   {
@@ -16,6 +18,7 @@ const samples = [
     img: denyOtherNamespacesImg,
     details: 'Deny traffic from other namespaces while allowing all traffic from the namespaces the Pod is living in.',
     templateName: 'deny-other-namespaces',
+    kind: referenceForModel(NetworkPolicyModel),
   },
   {
     highlightText: 'Limit',
@@ -23,6 +26,7 @@ const samples = [
     img: limitCertainAppImg,
     details: 'Allow inbound traffic from only certain Pods. One typical use case is to restrict the connections to a database only to the specific applications.',
     templateName: 'db-or-api-allow-app',
+    kind: referenceForModel(NetworkPolicyModel),
   },
   {
     highlightText: 'Allow',
@@ -30,6 +34,7 @@ const samples = [
     img: allowIngressImg,
     details: 'Define ingress rules for specific port numbers of an application. The rule applies to all port numbers if not specified.',
     templateName: 'api-allow-http-and-https',
+    kind: referenceForModel(NetworkPolicyModel),
   },
   {
     highlightText: 'Deny',
@@ -37,6 +42,7 @@ const samples = [
     img: defaultDenyAllImg,
     details: 'A fundamental policy by blocking all cross-pod traffics expect whitelisted ones through the other Network Policies being deployed.',
     templateName: 'default-deny-all',
+    kind: referenceForModel(NetworkPolicyModel),
   },
   {
     highlightText: 'Allow',
@@ -44,6 +50,7 @@ const samples = [
     img: webAllowExternalImg,
     details: 'Allow external service from public Internet directly or through a Load Balancer to access the pod.',
     templateName: 'web-allow-external',
+    kind: referenceForModel(NetworkPolicyModel),
   },
   {
     highlightText: 'Allow',
@@ -51,6 +58,7 @@ const samples = [
     img: webDbAllowAllNsImg,
     details: 'One typical use case is for a common database which is used by deployments in different namespaces.',
     templateName: 'web-db-allow-all-ns',
+    kind: referenceForModel(NetworkPolicyModel),
   },
   {
     highlightText: 'Allow',
@@ -58,12 +66,13 @@ const samples = [
     img: webAllowProductionImg,
     details: 'Typical use case should be "only allow deployments in production namespaces to access the database" or "allow monitoring tools (in another namespace) to scrape metrics from current namespace."',
     templateName: 'web-allow-production',
+    kind: referenceForModel(NetworkPolicyModel),
   },
 
 ];
 
 const SampleYaml = ({sample, loadSampleYaml, downloadSampleYaml}) => {
-  const {highlightText, subheader, img, details, templateName} = sample;
+  const {highlightText, subheader, img, details, templateName, kind} = sample;
   return <li className="co-resource-sidebar-item">
     <h5 className="co-resource-sidebar-item__header">
       <span className="text-uppercase">{highlightText}</span> {subheader}
@@ -72,10 +81,10 @@ const SampleYaml = ({sample, loadSampleYaml, downloadSampleYaml}) => {
     <p className="co-resource-sidebar-item__details">
       {details}
     </p>
-    <button className="btn btn-link" onClick={() => loadSampleYaml(templateName)}>
+    <button className="btn btn-link" onClick={() => loadSampleYaml(templateName, kind)}>
       <span className="fa fa-fw fa-paste" aria-hidden="true"></span> Try policy
     </button>
-    <button className="btn btn-link pull-right" onClick={() => downloadSampleYaml(templateName)}>
+    <button className="btn btn-link pull-right" onClick={() => downloadSampleYaml(templateName, kind)}>
       <span className="fa fa-fw fa-download" aria-hidden="true"></span> Download yaml
     </button>
   </li>;
