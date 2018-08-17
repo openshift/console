@@ -106,10 +106,11 @@ export class ResourceLog extends SafetyFirst {
 
   // Download currently displayed log content
   _download () {
-    const blob = new Blob([this._buffer.join('')], {type: 'text/plain;charset=utf-8'});
-    let filename = this.props.resourceName;
-    if (this.props.containerName) {
-      filename = `${filename}-${this.props.containerName}`;
+    const {resourceName, containerName} = this.props;
+    const blob = this._buffer.getBlob({type: 'text/plain;charset=utf-8'});
+    let filename = resourceName;
+    if (containerName) {
+      filename = `${filename}-${containerName}`;
     }
     saveAs(blob, `${filename}.log`);
   }

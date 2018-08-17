@@ -41,6 +41,10 @@ export class LineBuffer {
     return this._buffer;
   }
 
+  getBlob(options): Blob {
+    return new Blob([this._buffer.join('')], options);
+  }
+
   length(): number {
     return this._buffer.length;
   }
