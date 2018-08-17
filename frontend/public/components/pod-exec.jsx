@@ -3,6 +3,7 @@ import * as _ from 'lodash-es';
 
 import store from '../redux';
 import { LoadingBox, LoadingInline, Dropdown, ResourceIcon } from './utils';
+import { connectToFlags, FLAGS } from '../features';
 import { Terminal } from './terminal';
 import { WSFactory } from '../module/ws-factory';
 import { resourceURL } from '../module/k8s';
@@ -19,7 +20,7 @@ const nameWithIcon = (name) => <span><span className="co-icon-space-r"><Resource
 
 const NO_SH = 'starting container process caused "exec: \\"sh\\": executable file not found in $PATH"';
 
-export class PodExec extends React.PureComponent {
+export const PodExec = connectToFlags(FLAGS.OPENSHIFT)(class PodExec extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -36,6 +37,7 @@ export class PodExec extends React.PureComponent {
   connect_ () {
     const { metadata } = this.props.obj;
     const { activeContainer } = this.state;
+    const usedClient = this.props.flags[FLAGS.OPENSHIFT] ? 'oc' : 'kubectl';
 
     const params = {
       ns: metadata.namespace,
@@ -74,7 +76,7 @@ export class PodExec extends React.PureComponent {
         if (raw[0] === '3') {
           if (previous.includes(NO_SH)) {
             current.reset();
-            current.onConnectionClosed(`This container doesn't have a /bin/sh shell. Try specifying your command in a terminal with:\r\n\r\n  kubectl -n ${metadata.namespace} exec ${metadata.name} -ti <command>`);
+            current.onConnectionClosed(`This container doesn't have a /bin/sh shell. Try specifying your command in a terminal with:\r\n\r\n ${usedClient} -n ${metadata.namespace} exec ${metadata.name} -ti <command>`);
             this.ws.destroy();
             previous = '';
             return;
@@ -184,4 +186,4 @@ export class PodExec extends React.PureComponent {
       {contents}
     </div>;
   }
-}
+});
