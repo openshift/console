@@ -71,7 +71,7 @@ const PodHeader = props => <ListHeader>
   <ColHead {...props} className="col-lg-2 hidden-md hidden-sm hidden-xs" sortFunc="podReadiness">Readiness</ColHead>
 </ListHeader>;
 
-const ContainerLink = ({pod, name}) => <span className="co-resource-link">
+const ContainerLink = ({pod, name}) => <span className="co-resource-link co-resource-link--inline">
   <ResourceIcon kind="Container" />
   <Link to={`/k8s/ns/${pod.metadata.namespace}/pods/${pod.metadata.name}/containers/${name}`}>{name}</Link>
 </span>;
@@ -110,10 +110,9 @@ const Volume = ({pod, volume}) => {
     </div>
     <div className="col-sm-3 hidden-xs">{mountPermissions}</div>
     <div className="col-sm-3 col-xs-4">
-      {volume.mounts.map((m, i) => <div key={i}>
+      {volume.mounts.map((m, i) => <React.Fragment key={i}>
         <ContainerLink pod={pod} name={m.container} />
-        {i < volume.mounts.length - 1 && ', '}
-      </div>)}
+      </React.Fragment>)}
     </div>
   </div>;
 };

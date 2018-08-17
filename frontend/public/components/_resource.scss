@@ -105,6 +105,10 @@ $height: 18px;
   display: flex;
   min-width: 0; // required so co-break-word works
   @include co-break-word;
+  &--inline {
+    display: inline-flex;
+    margin: 0 20px 0 0;
+  }
   &__resource-name {
     min-width: 0; // required so co-break-word works
   }
