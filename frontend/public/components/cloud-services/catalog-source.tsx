@@ -43,7 +43,7 @@ export const PackageRow: React.SFC<PackageRowProps> = (props) => {
   const ns = getActiveNamespace();
   const channel = !_.isEmpty(obj.defaultChannel) ? obj.channels.find(ch => ch.name === obj.defaultChannel) : obj.channels[0];
 
-  const subscriptionLink = () => ns
+  const subscriptionLink = () => ns !== ALL_NAMESPACES_KEY
     ? <Link to={`/k8s/ns/${ns}/${SubscriptionModel.plural}/${subscription.metadata.name}`}>View subscription</Link>
     : <Link to={`/k8s/all-namespaces/${SubscriptionModel.plural}?name=${obj.packageName}`}>View subscriptions</Link>;
 
