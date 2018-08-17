@@ -247,7 +247,7 @@ describe(CatalogSourcesPage.displayName, () => {
   it('renders a `MultiListPage` component with correct props', () => {
     wrapper = shallow(<CatalogSourcesPage namespace="default" />);
 
-    expect(wrapper.find(MultiListPage).props().title).toEqual('Catalog Sources');
+    expect(wrapper.find(MultiListPage).props().title).toEqual('Operator Catalog Sources');
     expect(wrapper.find(MultiListPage).props().showTitle).toBe(true);
     expect(wrapper.find(MultiListPage).props().ListComponent).toEqual(CatalogSourceList);
     expect(wrapper.find(MultiListPage).props().filterLabel).toEqual('Packages by name');
