@@ -7,7 +7,7 @@ import { startBuild } from '../module/k8s/builds';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
 import { errorModal } from './modals';
 import { BuildHooks, BuildStrategy, Cog, SectionHeading, LabelList, history, navFactory, ResourceCog, ResourceLink, resourceObjPath, ResourceSummary, WebhookTriggers } from './utils';
-import { BuildsPage, BuildEnvironmentComponent } from './build';
+import { BuildsPage, BuildEnvironmentComponent, BuildStrategyType } from './build';
 import { fromNow } from './utils/datetime';
 import { ResourceEventStream } from './events';
 
@@ -90,7 +90,7 @@ const BuildConfigsRow: React.SFC<BuildConfigsRowProps> = ({obj}) => <div classNa
 
 const buildStrategy = buildConfig => buildConfig.spec.strategy.type;
 
-const allStrategies = ['Docker', 'JenkinsPipeline', 'Source', 'Custom'];
+const allStrategies = [BuildStrategyType.Docker, BuildStrategyType.JenkinsPipeline, BuildStrategyType.Source, BuildStrategyType.Custom];
 const filters = [{
   type: 'build-strategy',
   selected: allStrategies,

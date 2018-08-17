@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import * as React from 'react';
 import * as _ from 'lodash-es';
 
@@ -34,11 +35,18 @@ const menuActions = [
   ...common,
 ];
 
+export enum BuildStrategyType {
+  Docker = 'Docker',
+  Custom = 'Custom',
+  JenkinsPipeline = 'JenkinsPipeline',
+  Source = 'Source',
+}
+
 export const BuildsDetails: React.SFC<BuildsDetailsProps> = ({ obj: build }) => {
   const { logSnippet, message, startTimestamp } = build.status;
   const triggeredBy = _.map(build.spec.triggeredBy, 'message').join(', ');
   const duration = formatBuildDuration(build);
-  const hasPipeline = build.spec.strategy.type === 'JenkinsPipeline';
+  const hasPipeline = build.spec.strategy.type === BuildStrategyType.JenkinsPipeline;
 
   return <React.Fragment>
     <div className="co-m-pane__body">
@@ -75,15 +83,15 @@ export const BuildsDetails: React.SFC<BuildsDetailsProps> = ({ obj: build }) => 
   </React.Fragment>;
 };
 
-export const getStrategyType = (strategy) => {
-  switch (strategy.type) {
-    case 'Docker':
+export const getStrategyType = (strategy: BuildStrategyType) => {
+  switch (strategy) {
+    case BuildStrategyType.Docker:
       return 'dockerStrategy';
-    case 'Custom':
+    case BuildStrategyType.Custom:
       return 'customStrategy';
-    case 'JenkinsPipeline':
+    case BuildStrategyType.JenkinsPipeline:
       return 'jenkinsPipelineStrategy';
-    case 'Source':
+    case BuildStrategyType.Source:
       return 'sourceStrategy';
     default:
       return null;
@@ -91,7 +99,7 @@ export const getStrategyType = (strategy) => {
 };
 
 export const getEnvPath = (props) => {
-  const strategyType = getStrategyType(props.obj.spec.strategy);
+  const strategyType = getStrategyType(props.obj.spec.strategy.type);
   return strategyType ? ['spec', 'strategy', strategyType] : null;
 };
 
@@ -102,7 +110,7 @@ export const BuildEnvironmentComponent = (props) => {
   if (envPath) {
     return <EnvironmentPage
       obj={obj}
-      rawEnvData={obj.spec.strategy[getStrategyType(obj.spec.strategy)]}
+      rawEnvData={obj.spec.strategy[getStrategyType(obj.spec.strategy.type)]}
       envPath={getEnvPath(props)}
       readOnly={readOnly} />;
   }
@@ -183,7 +191,6 @@ export const BuildsPage: React.SFC<BuildsPageProps> = props =>
   />;
 BuildsPage.displayName = 'BuildsListPage';
 
-/* eslint-disable no-undef */
 export type BuildsRowProps = {
   obj: any,
 };
