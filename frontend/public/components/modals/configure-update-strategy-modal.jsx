@@ -44,10 +44,10 @@ class ConfigureUpdateStrategyModal extends PromiseComponent {
     const patch = { path: '/spec/strategy/rollingUpdate' };
     if (type === 'RollingUpdate') {
       patch.value = {
-        maxUnavailable: getNumberOrPercent(event.target.elements['input-max-unavailable'].value),
-        maxSurge: getNumberOrPercent(event.target.elements['input-max-surge'].value)
+        maxUnavailable: getNumberOrPercent(event.target.elements['input-max-unavailable'].value || '25%'),
+        maxSurge: getNumberOrPercent(event.target.elements['input-max-surge'].value || '25%')
       };
-      patch.op = 'replace';
+      patch.op = 'add';
     } else {
       patch.op = 'remove';
     }
@@ -94,7 +94,7 @@ class ConfigureUpdateStrategyModal extends PromiseComponent {
                     <div className="form-inline">
                       <div className="input-group">
                         <input disabled={this.state.strategyType !== 'RollingUpdate'}
-                          placeholder="1" size="5" type="text" className="form-control"
+                          placeholder="25%" size="5" type="text" className="form-control"
                           id="input-max-unavailable"
                           defaultValue={maxUnavailable} />
                         <span className="input-group-addon">
@@ -113,7 +113,7 @@ class ConfigureUpdateStrategyModal extends PromiseComponent {
                   <div className="co-m-form-col col-sm-9">
                     <div className="form-inline">
                       <div className="input-group">
-                        <input disabled={this.state.strategyType !== 'RollingUpdate'} placeholder="1" size="5" type="text" className="form-control"
+                        <input disabled={this.state.strategyType !== 'RollingUpdate'} placeholder="25%" size="5" type="text" className="form-control"
                           id="input-max-surge"
                           defaultValue={maxSurge} />
                         <span className="input-group-addon">
