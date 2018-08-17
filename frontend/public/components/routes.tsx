@@ -98,17 +98,17 @@ export const RouteStatus: React.SFC<RouteStatusProps> = ({obj: route}) => {
   switch (status) {
     case 'Pending':
       return <span>
-        <span className="fa fa-hourglass-half co-m-route-status-icon" aria-hidden="true"></span>
+        <span className="fa fa-hourglass-half co-status-icon" aria-hidden="true"></span>
         Pending
       </span>;
     case 'Accepted':
       return <span className="route-accepted">
-        <span className="fa fa-check co-m-route-status-icon" aria-hidden="true"></span>
+        <span className="fa fa-check co-status-icon" aria-hidden="true"></span>
         Accepted
       </span>;
     case 'Rejected':
       return <span className="route-rejected">
-        <span className="fa fa-times-circle co-m-route-status-icon" aria-hidden="true"></span>
+        <span className="fa fa-times-circle co-status-icon" aria-hidden="true"></span>
         Rejected
       </span>;
     default:
@@ -239,16 +239,18 @@ const RouteDetails: React.SFC<RoutesDetailsProps> = ({obj: route}) => <React.Fra
         </ResourceSummary>
       </div>
       <div className="col-sm-6">
-        <dt>Location</dt>
-        <dd><RouteLocation obj={route} /></dd>
-        <dt>Status</dt>
-        <dd>
-          <RouteStatus obj={route} />
-        </dd>
-        <dt>Hostname</dt>
-        <dd>{route.spec.host}</dd>
-        <dt>Path</dt>
-        <dd>{route.spec.path || '-'}</dd>
+        <dl className="co-m-pane__details">
+          <dt>Location</dt>
+          <dd><RouteLocation obj={route} /></dd>
+          <dt>Status</dt>
+          <dd>
+            <RouteStatus obj={route} />
+          </dd>
+          <dt>Hostname</dt>
+          <dd>{route.spec.host}</dd>
+          <dt>Path</dt>
+          <dd>{route.spec.path || '-'}</dd>
+        </dl>
       </div>
     </div>
   </div>

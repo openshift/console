@@ -42,6 +42,7 @@ export * from './build-hooks';
 export * from './webhooks';
 export * from './section-heading';
 export * from './scroll-to-top-on-mount';
+export * from './service-catalog-status';
 
 /*
   Add the enum for NameValueEditorPair here and not in its namesake file because the editor should always be
