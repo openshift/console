@@ -11,6 +11,7 @@
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/mixins";
 @import "~font-awesome-sass/assets/stylesheets/font-awesome/variables";
 @import "~xterm/dist/addons/fullscreen/fullscreen";
+@import "~openshift-logos-icon/style";
 
 @import "style/base";
 
@@ -82,3 +83,4 @@
 @import "components/utils/value-from-pair";
 @import "components/documentation";
 @import "components/terminal";
+@import "components/cluster-service-class";

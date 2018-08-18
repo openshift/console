@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { AutoSizer, List as VirtualList, WindowScroller, CellMeasurerCache, CellMeasurer } from 'react-virtualized';
 
-import { getJobTypeAndCompletions, isNodeReady, podPhase, podPhaseFilterReducer, podReadiness, K8sResourceKind, K8sKind, K8sResourceKindReference } from '../../module/k8s';
+import { getJobTypeAndCompletions, isNodeReady, podPhase, podPhaseFilterReducer, podReadiness, K8sResourceKind, K8sKind, K8sResourceKindReference, serviceClassDisplayName } from '../../module/k8s';
 import { UIActions } from '../../ui/ui-actions';
 import { ingressValidHosts } from '../ingress';
 import { routeStatus } from '../routes';
@@ -154,6 +154,7 @@ const sorts = {
   numReplicas: resource => _.toInteger(_.get(resource, 'status.replicas')),
   podPhase,
   podReadiness,
+  serviceClassDisplayName,
   string: val => JSON.stringify(val),
 };
 

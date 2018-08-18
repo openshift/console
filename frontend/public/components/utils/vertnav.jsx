@@ -9,6 +9,7 @@ import { PodsPage } from '../pod';
 import { AsyncComponent } from '../utils/async';
 
 const editYamlComponent = (props) => <AsyncComponent loader={() => import('../edit-yaml').then(c => c.EditYAML)} obj={props.obj} />;
+export const viewYamlComponent = (props) => <AsyncComponent loader={() => import('../edit-yaml').then(c => c.EditYAML)} obj={props.obj} readOnly={true} />;
 
 class PodsComponent extends React.PureComponent {
   render() {

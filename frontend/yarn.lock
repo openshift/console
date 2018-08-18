@@ -7548,6 +7548,10 @@ opener@^1.4.3:
   version "1.4.3"
   resolved "https://registry.yarnpkg.com/opener/-/opener-1.4.3.tgz#5c6da2c5d7e5831e8ffa3964950f8d6674ac90b8"
 
+openshift-logos-icon@1.6.0:
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/openshift-logos-icon/-/openshift-logos-icon-1.6.0.tgz#7cc3b3a7ada6971baeb5bec73e3b860a0c4ae975"
+
 optical-properties@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/optical-properties/-/optical-properties-1.0.0.tgz#c3a694bbab7cc4587070886c47f43c8c3a6cceae"

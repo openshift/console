@@ -5,6 +5,7 @@ export * from './k8s';
 export * from './node';
 export * from './pods';
 export * from './resource';
+export * from './service-class';
 export * from './autocomplete';
 export * from './get-resources';
 export * from './k8s-models';
