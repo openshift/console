@@ -50,7 +50,7 @@ export class SubscriptionChannelModal extends PromiseComponent {
   }
 }
 
-export const createSubscriptionChannelModal: (props: ModalProps) => {result: Promise<void>} = createModalLauncher(SubscriptionChannelModal);
+export const createSubscriptionChannelModal = createModalLauncher<SubscriptionChannelModalProps>(SubscriptionChannelModal);
 
 export type SubscriptionChannelModalProps = {
   cancel: (e: Event) => void;
@@ -65,5 +65,3 @@ export type SubscriptionChannelModalState = {
   errorMessage: string;
   selectedChannel: string;
 };
-
-type ModalProps = Omit<SubscriptionChannelModalProps, 'cancel' | 'close'>;

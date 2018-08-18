@@ -4,7 +4,7 @@ import { configureCountModal } from '../../modals';
 import { K8sResourceKind, K8sKind } from '../../../module/k8s';
 import { SpecDescriptor } from '../spec-descriptors';
 
-export const configureSizeModal: ConfigureSizeModal = (kindObj, resource, specDescriptor, specValue, wasChanged) => {
+export const configureSizeModal = ({kindObj, resource, specDescriptor, specValue, wasChanged}: ConfigureSizeModalProps) => {
   return configureCountModal({
     resourceKind: kindObj,
     resource: resource,
@@ -22,4 +22,10 @@ export const configureSizeModal: ConfigureSizeModal = (kindObj, resource, specDe
   });
 };
 
-type ConfigureSizeModal = (kindObj: K8sKind, resource: K8sResourceKind, specDescriptor: SpecDescriptor, specValue: any, wasChanged: () => Promise<any>) => {result: Promise<any>};
+type ConfigureSizeModalProps = {
+  kindObj: K8sKind;
+  resource: K8sResourceKind;
+  specDescriptor: SpecDescriptor;
+  specValue: any;
+  wasChanged: () => Promise<any>;
+};

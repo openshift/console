@@ -51,7 +51,7 @@ export class DisableApplicationModal extends PromiseComponent {
   }
 }
 
-export const createDisableApplicationModal: (props: ModalProps) => {result: Promise<void>} = createModalLauncher(DisableApplicationModal);
+export const createDisableApplicationModal = createModalLauncher<DisableApplicationModalProps>(DisableApplicationModal);
 
 export type DisableApplicationModalProps = {
   cancel: (e: Event) => void;
@@ -65,5 +65,3 @@ export type DisableApplicationModalState = {
   errorMessage: string;
   cascadeDelete: boolean;
 };
-
-type ModalProps = Omit<DisableApplicationModalProps, 'cancel' | 'close'>;

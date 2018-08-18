@@ -1,3 +1,5 @@
+/* eslint-disable no-undef, no-unused-vars */
+
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
@@ -10,7 +12,7 @@ import store from '../../redux';
 import { ButtonBar } from '../utils/button-bar';
 import { history } from '../utils/router';
 
-export const createModalLauncher = (Component) => (props = {}) => {
+export const createModalLauncher: CreateModalLauncher = (Component) => (props) => {
   const modalContainer = document.getElementById('modal-container');
 
   const result = new Promise(resolve => {
@@ -27,7 +29,7 @@ export const createModalLauncher = (Component) => (props = {}) => {
     };
     Modal.setAppElement(modalContainer);
     ReactDOM.render(<Provider store={store}>
-      <Router history={history} basename={window.SERVER_FLAGS.basePath}>
+      <Router {...{history, basename: (window as any).SERVER_FLAGS.basePath}}>
         <Modal
           isOpen={true}
           contentLabel="Modal"
@@ -43,18 +45,17 @@ export const createModalLauncher = (Component) => (props = {}) => {
   return {result};
 };
 
-export const ModalTitle = ({children, className='modal-header'}) => <div className={className}><h4 className="modal-title">{children}</h4></div>;
+export const ModalTitle: React.SFC<ModalTitleProps> = ({children, className = 'modal-header'}) => <div className={className}><h4 className="modal-title">{children}</h4></div>;
 
-export const ModalBody = ({children}) => <div className="modal-body">{children}</div>;
+export const ModalBody: React.SFC<ModalBodyProps> = ({children}) => <div className="modal-body">{children}</div>;
 
-export const ModalFooter = ({message, errorMessage, inProgress, children}) => {
+export const ModalFooter: React.SFC<ModalFooterProps> = ({message, errorMessage, inProgress, children}) => {
   return <ButtonBar className="modal-footer" errorMessage={errorMessage} infoMessage={message} inProgress={inProgress}>
     {children}
   </ButtonBar>;
 };
 
-/** @type {React.SFC<{message?: string, errorMessage?: string, inProgress: boolean, cancel: (e: Event) => void, submitText: string, submitDisabled?: boolean}>} */
-export const ModalSubmitFooter = ({message, errorMessage, inProgress, cancel, submitText, submitDisabled}) => {
+export const ModalSubmitFooter: React.SFC<ModalSubmitFooterProps> = ({message, errorMessage, inProgress, cancel, submitText, submitDisabled}) => {
   const onCancelClick = e => {
     e.stopPropagation();
     cancel(e);
@@ -72,3 +73,38 @@ ModalSubmitFooter.propTypes = {
   message: PropTypes.string,
   submitText: PropTypes.node.isRequired,
 };
+
+export type CreateModalLauncherProps = {
+  blocking?: boolean;
+};
+
+export type ModalComponentProps = {
+  cancel: (e?: Event) => void;
+  close: (e?: Event) => void;
+};
+
+export type ModalTitleProps = {
+  className?: string;
+};
+
+export type ModalBodyProps = {
+
+};
+
+export type ModalFooterProps = {
+  message?: string;
+  errorMessage?: string;
+  inProgress: boolean;
+};
+
+export type ModalSubmitFooterProps = {
+  message?: string;
+  errorMessage?: string;
+  inProgress: boolean;
+  cancel: (e: Event) => void;
+  submitText: string;
+  submitDisabled?: boolean;
+};
+
+export type CreateModalLauncher = <P extends ModalComponentProps>(C: React.ComponentType<P>) =>
+  (props: Omit<P, keyof ModalComponentProps> & CreateModalLauncherProps) => {result: Promise<{}>};

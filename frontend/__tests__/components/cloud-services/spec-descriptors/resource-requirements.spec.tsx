@@ -19,7 +19,7 @@ describe(ResourceRequirementsModal.name, () => {
   beforeEach(() => {
     const Form: any = () => <div />;
     Form.formName = 'ResourceRequirements';
-    wrapper = shallow(<ResourceRequirementsModal title={title} description={description} obj={testResourceInstance} type="requests" cancel={cancel} Form={Form} path="resources" />);
+    wrapper = shallow(<ResourceRequirementsModal title={title} description={description} obj={testResourceInstance} type="requests" cancel={cancel} Form={Form} path="resources" close={null} />);
   });
 
   it('renders a modal form with given title and description', () => {
