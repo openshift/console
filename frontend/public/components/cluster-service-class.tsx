@@ -1,3 +1,5 @@
+/* eslint-disable no-undef */
+
 import * as React from 'react';
 
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
@@ -5,7 +7,7 @@ import { SectionHeading, detailsPage, navFactory, ResourceLink, ResourceSummary 
 import { viewYamlComponent } from './utils/vertnav';
 import * as classNames from 'classnames';
 // eslint-disable-next-line no-unused-vars
-import { K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
+import { K8sResourceKind, K8sResourceKindReference, serviceClassDisplayName } from '../module/k8s';
 import * as _ from 'lodash-es';
 
 const ClusterServiceClassReference: K8sResourceKindReference = 'ClusterServiceClass';
@@ -15,84 +17,76 @@ const normalizeIconClass = (iconClass) => {
 };
 
 export const ClusterServiceClassIcon: React.SFC<ClusterServiceClassIconProps> = ({serviceClass, imageClass}) => {
-  const iconClass = _.get(serviceClass, ['spec', 'externalMetadata', 'console.openshift.io/iconClass']);
   const imageUrl = _.get(serviceClass, ['spec', 'externalMetadata', 'imageUrl']);
-
-  if (iconClass) {
-    return <span className={classNames('fa-3x', 'co-cluster-service-class-title__icon', normalizeIconClass(iconClass))} />;
-  }
   if (imageUrl) {
     return <img className={classNames('co-cluster-service-class-title__icon', imageClass ? imageClass : null)} src={imageUrl} />;
   }
 
-  return null;
+  const iconClass = _.get(serviceClass, ['spec', 'externalMetadata', 'console.openshift.io/iconClass'], 'fa fa-clone');
+  return <span className={classNames('fa-2x', 'co-cluster-service-class-title__icon', normalizeIconClass(iconClass))} />;
 };
 ClusterServiceClassIcon.displayName = 'ClusterServiceClassIcon';
 
 const ClusterServiceClassHeader: React.SFC<ClusterServiceClassHeaderProps> = props => <ListHeader>
-  <ColHead {...props} className="col-lg-4 col-md-4 col-sm-6 col-xs-6" sortField="metadata.name">Name</ColHead>
-  <ColHead {...props} className="col-lg-5 col-md-5 col-sm-6 col-xs-6" sortField="spec.externalMetadata.displayName">Display Name</ColHead>
-  <ColHead {...props} className="col-lg-3 col-md-3 hidden-sm hidden-xs" sortField="spec.externalName">External Name</ColHead>
+  <ColHead {...props} className="col-xs-6" sortField="metadata.name">Name</ColHead>
+  <ColHead {...props} className="col-xs-6" sortFunc="serviceClassDisplayName">Display Name</ColHead>
 </ListHeader>;
 
 const ClusterServiceClassListRow: React.SFC<ClusterServiceClassRowProps> = ({obj: serviceClass}) => <ResourceRow obj={serviceClass}>
-  <div className="col-lg-4 col-md-4 col-sm-6 col-xs-6 co-resource-link-wrapper">
+  <div className="col-xs-6 co-resource-link-wrapper">
     <ResourceLink kind="ClusterServiceClass" name={serviceClass.metadata.name} />
   </div>
-  <div className="col-lg-5 col-md-5 col-sm-6 col-xs-6">
+  <div className="col-xs-6">
     <ClusterServiceClassIcon serviceClass={serviceClass} imageClass="co-cluster-service-class-row__img" />
-    {_.get(serviceClass, 'spec.externalMetadata.displayName')}
+    {serviceClassDisplayName(serviceClass)}
   </div>
-  <div className="col-lg-3 col-md-3 hidden-sm hidden-xs">{serviceClass.spec.externalName}</div>
 </ResourceRow>;
 
-const ClusterServiceClassDetails: React.SFC<ClusterServiceClassDetailsProps> = ({obj: serviceClass}) => <React.Fragment>
-  <div className="co-m-pane__body">
-    <SectionHeading text="Service Class Overview" />
+const ClusterServiceClassDetails: React.SFC<ClusterServiceClassDetailsProps> = ({obj: serviceClass}) => {
+  const displayName = _.get(serviceClass, 'spec.externalMetadata.displayName', '-');
+  const provider = _.get(serviceClass, 'spec.externalMetadata.providerDisplayName', '-');
+  const tags = _.get(serviceClass, 'spec.tags');
+  const description = _.get(serviceClass, 'spec.description');
+  const longDescription = _.get(serviceClass, 'spec.externalMetadata.longDescription');
+  const documentationURL = _.get(serviceClass, 'spec.externalMetadata.documentationUrl');
+  const supportURL = _.get(serviceClass, 'spec.externalMetadata.supportUrl');
+  const heading = <span>
+    <ClusterServiceClassIcon serviceClass={serviceClass} imageClass="co-cluster-service-class-details__img" />
+    {serviceClassDisplayName(serviceClass)}
+  </span>;
+  return <div className="co-m-pane__body">
     <div className="row">
-      <div className="col-sm-6">
+      <div className="col-md-7 col-md-push-5" style={{marginBottom: '20px'}}>
+        <h2 className="co-section-heading">{heading}</h2>
+        {description && <p>{description}</p>}
+        {longDescription && <p>{longDescription}</p>}
+        {(documentationURL || supportURL) && <dl>
+          {documentationURL && <dt>Documentation</dt>}
+          {documentationURL && <dd className="co-break-word">
+            <a href={serviceClass.spec.externalMetadata.documentationUrl} target="_blank" rel="noopener noreferrer">{serviceClass.spec.externalMetadata.documentationUrl}</a>
+          </dd>}
+          {supportURL && <dt>Support</dt>}
+          {supportURL && <dd className="co-break-word">
+            <a href={serviceClass.spec.externalMetadata.supportUrl} target="_blank" rel="noopener noreferrer">{serviceClass.spec.externalMetadata.supportUrl}</a>
+          </dd>}
+        </dl>}
+      </div>
+      <div className="col-md-5 col-md-pull-7">
+        <SectionHeading text="Service Class Overview" />
         <ResourceSummary resource={serviceClass} showPodSelector={false} showNodeSelector={false}>
           <dt>Display Name</dt>
-          <dd>{_.get(serviceClass, 'spec.externalMetadata.displayName', '-')}</dd>
+          <dd>{displayName}</dd>
           <dt>External Name</dt>
-          <dd>{_.get(serviceClass, 'spec.externalName', '-')}</dd>
+          <dd>{serviceClass.spec.externalName || '-'}</dd>
           <dt>Provider</dt>
-          <dd>{_.get(serviceClass, 'spec.externalMetadata.providerDisplayName', '-')}</dd>
-          {!_.isEmpty('serviceClass.spec.tags') && <React.Fragment>
-            <dt>Tags</dt>
-            <dd>{_.join(_.get(serviceClass, 'spec.tags'), ', ')}</dd>
-          </React.Fragment>
-          }
+          <dd>{provider}</dd>
+          <dt>Tags</dt>
+          <dd>{_.isEmpty(tags) ? '-' : tags.join(', ')}</dd>
         </ResourceSummary>
       </div>
-      <div className="col-sm-6 ">
-        <h2>
-          <ClusterServiceClassIcon serviceClass={serviceClass} imageClass="co-cluster-service-class-details__img" />
-          <span>
-            {_.get(serviceClass, 'spec.externalMetadata.displayName',
-              _.get(serviceClass, 'spec.externalName', ''))}
-          </span>
-        </h2>
-        <dd>{_.get(serviceClass, ['spec', 'description'])}</dd>
-        <dd>{_.get(serviceClass, ['spec', 'externalMetadata', 'longDescription'])}</dd>
-        {_.has(serviceClass, ['spec', 'externalMetadata', 'documentationUrl']) && <React.Fragment>
-          <dt>Documentation</dt>
-          <dd>
-            <a href={serviceClass.spec.externalMetadata.documentationUrl} target="_blank"
-              rel="noopener noreferrer">{serviceClass.spec.externalMetadata.documentationUrl}</a>
-          </dd>
-        </React.Fragment>}
-        {_.has(serviceClass, ['spec', 'externalMetadata', 'supportUrl']) && <React.Fragment>
-          <dt>Support</dt>
-          <dd>
-            <a href={serviceClass.spec.externalMetadata.supportUrl} target="_blank"
-              rel="noopener noreferrer">{serviceClass.spec.externalMetadata.supportUrl}</a>
-          </dd>
-        </React.Fragment>}
-      </div>
     </div>
-  </div>
-</React.Fragment>;
+  </div>;
+};
 
 export const ClusterServiceClassDetailsPage: React.SFC<ClusterServiceClassDetailsPageProps> = props => <DetailsPage
   {...props}
@@ -109,7 +103,6 @@ export const ClusterServiceClassPage: React.SFC<ClusterServiceClassPageProps> = 
     {...props}
   />;
 
-/* eslint-disable no-undef */
 export type ClusterServiceClassRowProps = {
   obj: K8sResourceKind
 };
@@ -134,4 +127,3 @@ export type ClusterServiceClassIconProps = {
   serviceClass: K8sResourceKind,
   imageClass?: string
 };
-/* eslint-enable no-undef */
