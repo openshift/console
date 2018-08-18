@@ -109,6 +109,13 @@ const listFilters = {
     const phase = pvc.status.phase;
     return phases.selected.has(phase) || !_.includes(phases.all, phase);
   },
+
+  // Filter service classes by text match
+  'service-class': (str, serviceClass) => {
+    const displayName = serviceClassDisplayName(serviceClass);
+    return fuzzyCaseInsensitive(str, displayName);
+  },
+
 };
 
 const getFilteredRows = (_filters, objects) => {
