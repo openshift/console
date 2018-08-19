@@ -8,8 +8,18 @@ import * as fuzzy from 'fuzzysearch';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { AutoSizer, List as VirtualList, WindowScroller, CellMeasurerCache, CellMeasurer } from 'react-virtualized';
-
-import { getJobTypeAndCompletions, isNodeReady, podPhase, podPhaseFilterReducer, podReadiness, K8sResourceKind, K8sKind, K8sResourceKindReference, serviceClassDisplayName } from '../../module/k8s';
+import {
+  K8sKind,
+  K8sResourceKind,
+  K8sResourceKindReference,
+  getJobTypeAndCompletions,
+  instanceOrBindingStatus,
+  isNodeReady,
+  planExternalName,
+  podPhase,
+  podPhaseFilterReducer,
+  podReadiness,
+  serviceClassDisplayName } from '../../module/k8s';
 import { UIActions } from '../../ui/ui-actions';
 import { ingressValidHosts } from '../ingress';
 import { routeStatus } from '../routes';
@@ -143,6 +153,7 @@ const sorts = {
   daemonsetNumScheduled: daemonset => _.toInteger(_.get(daemonset, 'status.currentNumberScheduled')),
   dataSize: resource => _.size(_.get(resource, 'data')),
   ingressValidHosts,
+  instanceOrBindingStatus,
   jobCompletions: job => getJobTypeAndCompletions(job).completions,
   jobType: job => getJobTypeAndCompletions(job).type,
   nodeReadiness: node => {
@@ -152,6 +163,7 @@ const sorts = {
   },
   nodeUpdateStatus: node => _.get(containerLinuxUpdateOperator.getUpdateStatus(node), 'text'),
   numReplicas: resource => _.toInteger(_.get(resource, 'status.replicas')),
+  planExternalName,
   podPhase,
   podReadiness,
   serviceClassDisplayName,
