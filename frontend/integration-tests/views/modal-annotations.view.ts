@@ -2,7 +2,7 @@ import { $, $$, browser, ExpectedConditions as until } from 'protractor';
 
 const BROWSER_TIMEOUT = 15000;
 
-const addMoreBtn = $('.btn-link');
+const addMoreBtn = $('.pairs-list__add-btn');
 export const cancelBtn = $$('.btn-default').filter(link => link.getText().then(text => text.startsWith('Cancel'))).first();
 export const confirmActionBtn = $('#confirm-action');
 const annotationRows = $$('.pairs-list__row');
