@@ -374,7 +374,7 @@ export const NamespaceModel: K8sKind = {
   label: 'Namespace',
   path: 'namespaces',
   plural: 'namespaces',
-  abbr: 'N',
+  abbr: 'NS',
   kind: 'Namespace',
   id: 'namespace',
   labelPlural: 'Namespaces'
