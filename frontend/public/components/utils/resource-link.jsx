@@ -6,6 +6,7 @@ import * as classNames from 'classnames';
 import { ResourceIcon } from './index';
 import { modelFor, referenceForModel } from '../../module/k8s';
 import { connectToModel } from '../../kinds';
+import { connectToFlags, FLAGS } from '../../features';
 
 const unknownKinds = new Set();
 
@@ -71,3 +72,15 @@ export const ResourceLink = connectToModel(
   });
 
 ResourceLink.displayName = 'ResourceLink';
+
+const NodeLink_ = (props) => {
+  const {name, flags} = props;
+  if (!name) {
+    return <React.Fragment>-</React.Fragment>;
+  }
+  return flags[FLAGS.CAN_LIST_NODE]
+    ? <ResourceLink kind="Node" name={name} title={name} />
+    : <React.Fragment>{name}</React.Fragment>;
+};
+
+export const NodeLink = connectToFlags(FLAGS.CAN_LIST_NODE)(NodeLink_);

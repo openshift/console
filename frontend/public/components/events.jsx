@@ -2,7 +2,6 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { CSSTransition } from 'react-transition-group';
 import { Helmet } from 'react-helmet';
-import { Link } from 'react-router-dom';
 import * as classNames from 'classnames';
 import * as PropTypes from 'prop-types';
 import { AutoSizer, List as VirtualList, WindowScroller } from 'react-virtualized';
@@ -13,7 +12,7 @@ import { watchURL } from '../module/k8s';
 import { EventModel } from '../models';
 import { SafetyFirst } from './safety-first';
 import { TextFilter } from './factory';
-import { Dropdown, ResourceLink, Box, Loading, NavTitle, Timestamp, TogglePlay, pluralize } from './utils';
+import { Dropdown, NodeLink, ResourceLink, Box, Loading, NavTitle, Timestamp, TogglePlay, pluralize } from './utils';
 import { WSFactory } from '../module/ws-factory';
 import { ResourceListDropdown } from './resource-dropdown';
 import { connectToFlags, FLAGS, flagPending } from '../features';
@@ -61,7 +60,7 @@ class Inner extends React.PureComponent {
             <small className="co-sysevent__source">
               Generated from <span>{source.component}</span>
               {source.component === 'kubelet' &&
-                <span> on <Link to={`/k8s/cluster/nodes/${source.host}`}>{source.host}</Link></span>
+                <span> on <NodeLink name={source.host} /></span>
               }
             </small>
             {count > 1 && <small className="co-sysevent__count text-secondary">
