@@ -420,7 +420,7 @@ export class Nav extends React.Component {
           </NavSection>
 
           <NavSection text="Service Catalog" icon="pficon pficon-catalog" required={FLAGS.SERVICE_CATALOG} >
-            <ResourceNSLink resource="clusterserviceclasses" name="Service Classes" onClick={this.close} />
+            <ResourceClusterLink resource="clusterserviceclasses" name="Service Classes" onClick={this.close} />
             <ResourceNSLink resource="serviceinstances" name="Service Instances" onClick={this.close} />
             <ResourceNSLink resource="servicebindings" name="Service Bindings" onClick={this.close} />
           </NavSection>
