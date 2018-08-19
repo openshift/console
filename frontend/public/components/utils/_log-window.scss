@@ -6,6 +6,8 @@ $color-log-window-divider: $color-log-window-header-bg;
 
 .log-window {
   color: $color-log-window-text;
+  background-color: $color-log-window-body-bg;
+  height: 100%;
 }
 
 .log-window__header {

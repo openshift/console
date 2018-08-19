@@ -27,26 +27,9 @@
   padding-top: 5px;
 }
 
-.pairs-list__btn {
-  cursor: pointer;
-  display: block;
-  @media(min-width: $screen-md-min) {
-    padding-right: 8px;
-    display: inline;
-  }
-}
-
 .pairs-list__side-btn {
   cursor: pointer;
   padding-right: 8px;
-}
-
-.pairs-list__action-divider {
-  display: none;
-  @media(min-width: $screen-md-min) {
-    display: inline;
-    padding-right: 10px;
-  }
 }
 
 .pairs-list__delete-icon {

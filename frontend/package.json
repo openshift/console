@@ -87,6 +87,7 @@
     "redux-form": "7.x",
     "redux-thunk": "2.x",
     "sanitize-html": "1.x",
+    "screenfull": "^3.3.2",
     "showdown": "1.8.x",
     "text-encoding": "0.x",
     "url-polyfill": "^1.0.12",
