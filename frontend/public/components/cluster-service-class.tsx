@@ -99,6 +99,8 @@ export const ClusterServiceClassPage: React.SFC<ClusterServiceClassPageProps> = 
   <ListPage
     ListComponent={ClusterServiceClassList}
     kind={ClusterServiceClassReference}
+    filterLabel="Service Classes by display name"
+    textFilter="service-class"
     canCreate={false}
     {...props}
   />;
