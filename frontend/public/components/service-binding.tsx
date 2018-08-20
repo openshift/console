@@ -61,7 +61,7 @@ const ServiceBindingsHeader = props => <ListHeader>
   <ColHead {...props} className="col-md-2 col-sm-4 col-xs-6" sortField="metadata.namespace">Namespace</ColHead>
   <ColHead {...props} className="col-md-2 col-sm-4 hidden-xs" sortField="spec.instanceRef.name">Service Instance</ColHead>
   <ColHead {...props} className="col-md-3 hidden-sm hidden-xs" sortField="spec.secretName">Secret</ColHead>
-  <ColHead {...props} className="col-md-2 hidden-sm hidden-xs">Status</ColHead>
+  <ColHead {...props} className="col-md-2 hidden-sm hidden-xs" sortFunc="instanceOrBindingStatus">Status</ColHead>
 </ListHeader>;
 
 const ServiceBindingsRow: React.SFC<ServiceBindingsRowProps> = ({obj}) => <div className="row co-resource-list__item">

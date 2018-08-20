@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 
 // eslint-disable-next-line no-unused-vars
-import { K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
+import { K8sResourceKind, K8sResourceKindReference, planExternalName } from '../module/k8s';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
 import { Cog, SectionHeading, navFactory, ResourceCog, ResourceLink, ResourceSummary, StatusWithIcon, Timestamp } from './utils';
 import { ResourceEventStream } from './events';
@@ -18,8 +18,8 @@ const menuActions = [
 ];
 
 const ServiceInstanceDetails: React.SFC<ServiceInstanceDetailsProps> = ({obj: si}) => {
-  const siPlan = si.spec.clusterServicePlanExternalName || si.spec.servicePlanExternalName;
-  const siParameters = _.get(si, 'status.externalProperties.parameters', {});
+  const plan = planExternalName(si);
+  const parameters = _.get(si, 'status.externalProperties.parameters', {});
 
   return <React.Fragment>
     <div className="co-m-pane__body">
@@ -36,7 +36,7 @@ const ServiceInstanceDetails: React.SFC<ServiceInstanceDetailsProps> = ({obj: si
             <dt>Status</dt>
             <dd><StatusWithIcon obj={si} /></dd>
             <dt>Plan</dt>
-            <dd>{siPlan || '-'}</dd>
+            <dd>{plan || '-'}</dd>
           </dl>
         </div>
       </div>
@@ -46,7 +46,7 @@ const ServiceInstanceDetails: React.SFC<ServiceInstanceDetailsProps> = ({obj: si
       <Conditions conditions={si.status.conditions} />
     </div>
     {!_.isEmpty(si.spec.parametersFrom) && <ServiceCatalogParametersSecrets obj={si} /> }
-    {!_.isEmpty(siParameters) && <ServiceCatalogParameters parameters={siParameters} /> }
+    {!_.isEmpty(parameters) && <ServiceCatalogParameters parameters={parameters} /> }
   </React.Fragment>;
 };
 
@@ -62,9 +62,9 @@ ServiceInstanceDetailsPage.displayName = 'ServiceInstanceDetailsPage';
 const ServiceInstancesHeader = props => <ListHeader>
   <ColHead {...props} className="col-md-3 col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
   <ColHead {...props} className="col-md-3 col-sm-4 col-xs-6" sortField="metadata.namespace">Namespace</ColHead>
-  <ColHead {...props} className="col-md-2 col-sm-4 hidden-xs">Status</ColHead>
+  <ColHead {...props} className="col-md-2 col-sm-4 hidden-xs" sortFunc="instanceOrBindingStatus">Status</ColHead>
+  <ColHead {...props} className="col-md-2 hidden-sm hidden-xs" sortFunc="planExternalName">Plan</ColHead>
   <ColHead {...props} className="col-md-2 hidden-sm hidden-xs" sortField="metadata.creationTimestamp">Created</ColHead>
-  <ColHead {...props} className="col-md-2 hidden-sm hidden-xs" sortFunc="spec.clusterServicePlanExternalName || spec.servicePlanExternalName">Plan</ColHead>
 </ListHeader>;
 
 const ServiceInstancesRow: React.SFC<ServiceInstancesRowProps> = ({obj}) => <div className="row co-resource-list__item">
@@ -79,10 +79,10 @@ const ServiceInstancesRow: React.SFC<ServiceInstancesRowProps> = ({obj}) => <div
     <StatusWithIcon obj={obj} />
   </div>
   <div className="col-md-2 hidden-sm hidden-xs co-break-word">
-    <Timestamp timestamp={obj.metadata.creationTimestamp} />
+    {planExternalName(obj) || '-'}
   </div>
   <div className="col-md-2 hidden-sm hidden-xs co-break-word">
-    {obj.spec.clusterServicePlanExternalName || obj.spec.servicePlanExternalName}
+    <Timestamp timestamp={obj.metadata.creationTimestamp} />
   </div>
 </div>;
 
