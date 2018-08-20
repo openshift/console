@@ -44,7 +44,7 @@ const DropdownItem: React.SFC<DropdownItemProps> = ({model, showGroup}) => <Reac
     <ResourceIcon kind={model.kind} />
   </span>
   {model.kind}
-  {showGroup && <React.Fragment>&nbsp;<small className="text-muted">&ndash; {model.apiGroup}/{model.apiVersion}</small></React.Fragment>}
+  {showGroup && <React.Fragment>&nbsp;<small className="text-muted">&ndash; {model.apiGroup || 'core'}/{model.apiVersion}</small></React.Fragment>}
 </React.Fragment>;
 
 const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = props => {
