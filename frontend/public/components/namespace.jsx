@@ -206,7 +206,7 @@ const Details = ({obj: ns}) => {
         </div>
       </div>
     </div>
-    <ResourceUsage ns={ns} />;
+    <ResourceUsage ns={ns} />
   </div>;
 };
 
