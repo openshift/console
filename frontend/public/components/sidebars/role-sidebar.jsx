@@ -3,6 +3,7 @@ import * as React from 'react';
 
 import { RoleModel, ClusterRoleModel } from '../../models';
 import { referenceForModel } from '../../module/k8s';
+import { SampleYaml } from './resource-sidebar';
 
 const samples = [
   {
@@ -25,46 +26,26 @@ const samples = [
   },
   {
     header: 'Allow reading a ConfigMap in a specific namespace',
-    subHeader: '(for RoleBinding)',
+    subheader: '(for RoleBinding)',
     details: 'This "Role" is allowed to read a "ConfigMap" named "my-config" (must be bound with a "RoleBinding" to limit to a single "ConfigMap" in a single namespace).',
     templateName: 'read-configmap-within-ns',
     kind: referenceForModel(RoleModel),
   },
   {
     header: 'Allow reading Nodes in the core API groups',
-    subHeader: '(for ClusterRoleBinding)',
+    subheader: '(for ClusterRoleBinding)',
     details: 'This "ClusterRole" is allowed to read the resource "nodes" in the core group (because a Node is cluster-scoped, this must be bound with a "ClusterRoleBinding" to be effective).',
     templateName: 'read-nodes',
     kind: referenceForModel(ClusterRoleModel),
   },
   {
     header: '"GET/POST" requests to non-resource endpoint and all subpaths',
-    subHeader: '(for ClusterRoleBinding)',
+    subheader: '(for ClusterRoleBinding)',
     details: 'This "ClusterRole" is allowed to "GET" and "POST" requests to the non-resource endpoint "/healthz" and all subpaths (must be in the "ClusterRole" bound with a "ClusterRoleBinding" to be effective).',
     templateName: 'get-and-post-to-non-resource-endpoints',
     kind: referenceForModel(ClusterRoleModel),
   },
-
 ];
-
-const SampleYaml = ({sample, loadSampleYaml, downloadSampleYaml}) => {
-  const {header, subHeader, details, templateName, kind} = sample;
-  return <li className="co-resource-sidebar-item">
-    <h5 className="co-resource-sidebar-item__header">
-      {header} <span className="co-role-sidebar-subheader">{subHeader}</span>
-    </h5>
-    <p className="co-resource-sidebar-item__details">
-      {details}
-    </p>
-    <button className="btn btn-link" onClick={() => loadSampleYaml(templateName, kind)}>
-      <span className="fa fa-fw fa-paste" aria-hidden="true"></span> Try policy
-    </button>
-    <button className="btn btn-link pull-right" onClick={() => downloadSampleYaml(templateName, kind)}>
-      <span className="fa fa-fw fa-download" aria-hidden="true"></span> Download yaml
-    </button>
-  </li>;
-};
-
 
 export const RoleSidebar = ({kindObj, loadSampleYaml, downloadSampleYaml, isCreateMode}) => {
   const filteredSamples = isCreateMode ? samples : _.filter(samples, {'kind' : referenceForModel(kindObj)});

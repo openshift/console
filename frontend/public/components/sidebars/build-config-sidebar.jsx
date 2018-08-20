@@ -3,6 +3,7 @@ import * as React from 'react';
 
 import { BuildConfigModel } from '../../models';
 import { referenceForModel } from '../../module/k8s';
+import { SampleYaml } from './resource-sidebar';
 
 const samples = [
   {
@@ -24,25 +25,6 @@ const samples = [
     kind: referenceForModel(BuildConfigModel),
   }
 ];
-
-const SampleYaml = ({sample, loadSampleYaml, downloadSampleYaml}) => {
-  const {header, subHeader, details, templateName, kind} = sample;
-  return <li className="co-resource-sidebar-item">
-    <h5 className="co-resource-sidebar-item__header">
-      {header} <span className="co-role-sidebar-subheader">{subHeader}</span>
-    </h5>
-    <p className="co-resource-sidebar-item__details">
-      {details}
-    </p>
-    <button className="btn btn-link" onClick={() => loadSampleYaml(templateName, kind)}>
-      <span className="fa fa-fw fa-paste" aria-hidden="true"></span> Try it
-    </button>
-    <button className="btn btn-link pull-right" onClick={() => downloadSampleYaml(templateName, kind)}>
-      <span className="fa fa-fw fa-download" aria-hidden="true"></span> Download yaml
-    </button>
-  </li>;
-};
-
 
 export const BuildConfigSidebar = ({loadSampleYaml, downloadSampleYaml}) => {
   return <ol className="co-resource-sidebar-list">
