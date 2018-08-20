@@ -5,7 +5,6 @@ import { Helmet } from 'react-helmet';
 import * as classNames from 'classnames';
 import * as PropTypes from 'prop-types';
 import { AutoSizer, List as VirtualList, WindowScroller } from 'react-virtualized';
-import * as fuzzy from 'fuzzysearch';
 
 import { namespaceProptype } from '../propTypes';
 import { watchURL } from '../module/k8s';
@@ -152,7 +151,7 @@ class EventsStreamPage_ extends React.Component {
             <Dropdown title="All Categories" className="btn-group" items={categories} onChange={v => this.setState({category: v})} />
           </div>
           <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--filter">
-            <TextFilter label="Events by message" onChange={e => this.setState({textFilter: e.target.value || ''})} autoFocus={autoFocus} />
+            <TextFilter label="Events by name or message" onChange={e => this.setState({textFilter: e.target.value || ''})} autoFocus={autoFocus} />
           </div>
         </div>
         <EventStream {...this.props} category={category} kind={kind} textFilter={textFilter} fake={showGettingStarted} />
@@ -170,14 +169,14 @@ class EventStream extends SafetyFirst {
     this.state = {
       active: true,
       sortedMessages: [],
-      filteredMessages: [],
+      filteredEvents: [],
       error: null,
       loading: true,
       oldestTimestamp: new Date(),
     };
     this.toggleStream = this.toggleStream_.bind(this);
     this.rowRenderer = function rowRenderer ({index, style, key}) {
-      const event = this.state.filteredMessages[index];
+      const event = this.state.filteredEvents[index];
       return <SysEvent {...event} key={key} style={style} index={index} />;
     }.bind(this);
   }
@@ -222,18 +221,18 @@ class EventStream extends SafetyFirst {
       })
       .onopen(() => {
         this.messages = {};
-        this.setState({error: false, loading: false, sortedMessages: [], filteredMessages: []});
+        this.setState({error: false, loading: false, sortedMessages: [], filteredEvents: []});
       })
       .onclose(evt => {
         if (evt && evt.wasClean === false) {
           this.setState({error: evt.reason || 'Connection did not close cleanly.'});
         }
         this.messages = {};
-        this.setState({sortedMessages: [], filteredMessages: []});
+        this.setState({sortedMessages: [], filteredEvents: []});
       })
       .onerror(() => {
         this.messages = {};
-        this.setState({error: true, sortedMessages: [], filteredMessages: []});
+        this.setState({error: true, sortedMessages: [], filteredEvents: []});
       });
   }
 
@@ -249,7 +248,23 @@ class EventStream extends SafetyFirst {
     this.ws && this.ws.destroy();
   }
 
-  static filterMessages (messages, {kind, category, filter, textFilter}) {
+  static filterEvents (messages, {kind, category, filter, textFilter}) {
+    // Don't use `fuzzy` because it results in some surprising matches in long event messages.
+    // Instead perform an exact substring match on each word in the text filter.
+    const words = _.words(_.toLower(textFilter)).sort((a, b) => {
+      // Sort the longest words first.
+      return b.length - a.length;
+    });
+
+    const textMatches = (obj) => {
+      if (_.isEmpty(words)) {
+        return true;
+      }
+      const name = _.get(obj, 'involvedObject.name', '');
+      const message = _.toLower(obj.message);
+      return _.every(words, word => name.indexOf(word) !== -1 || message.indexOf(word) !== -1);
+    };
+
     const f = (obj) => {
       if (category && !categoryFilter(category, obj)) {
         return false;
@@ -260,7 +275,7 @@ class EventStream extends SafetyFirst {
       if (filter && !_.isMatch(obj.involvedObject, filter)) {
         return false;
       }
-      if (textFilter && !fuzzy(textFilter, obj.message)) {
+      if (!textMatches(obj)) {
         return false;
       }
       return true;
@@ -282,8 +297,8 @@ class EventStream extends SafetyFirst {
     return {
       active: !nextProps.fake,
       loading: !nextProps.fake && loading,
-      // update the filteredMessages
-      filteredMessages: EventStream.filterMessages(prevState.sortedMessages, nextProps),
+      // update the filteredEvents
+      filteredEvents: EventStream.filterEvents(prevState.sortedMessages, nextProps),
       // we need these for bookkeeping because getDerivedStateFromProps doesn't get prevProps
       textFilter: nextProps.textFilter,
       kind: nextProps.kind,
@@ -312,7 +327,7 @@ class EventStream extends SafetyFirst {
     this.setState({
       oldestTimestamp,
       sortedMessages: sorted,
-      filteredMessages: EventStream.filterMessages(sorted, this.props),
+      filteredEvents: EventStream.filterEvents(sorted, this.props),
     });
 
     // Shrink this.messages back to maxMessages messages, to stop it growing indefinitely
@@ -331,8 +346,8 @@ class EventStream extends SafetyFirst {
 
   render () {
     const { fake, resourceEventStream } = this.props;
-    const {active, error, loading, filteredMessages, sortedMessages} = this.state;
-    const count = filteredMessages.length;
+    const {active, error, loading, filteredEvents, sortedMessages} = this.state;
+    const count = filteredEvents.length;
     const allCount = sortedMessages.length;
     const noEvents = allCount === 0 && this.ws && this.ws.bufferSize() === 0;
     const noMatches = allCount > 0 && count === 0;
@@ -404,7 +419,7 @@ class EventStream extends SafetyFirst {
                   {({width}) => <div ref={registerChild}>
                     <VirtualList
                       autoHeight
-                      data={filteredMessages}
+                      data={filteredEvents}
                       height={height}
                       isScrolling={isScrolling}
                       onScroll={onChildScroll}
