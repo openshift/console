@@ -37,6 +37,25 @@ export class ResourceSidebarWrapper extends React.Component {
   }
 }
 
+export const SampleYaml = ({sample, loadSampleYaml, downloadSampleYaml}) => {
+  const {highlightText, header, subheader, img, details, templateName, kind} = sample;
+  return <li className="co-resource-sidebar-item">
+    <h5 className="co-resource-sidebar-item__header">
+      <span className="text-uppercase">{highlightText}</span> {header} <span className="co-role-sidebar-subheader">{subheader}</span>
+    </h5>
+    {img && <img src={img} className="co-resource-sidebar-item__img" />}
+    <p className="co-resource-sidebar-item__details">
+      {details}
+    </p>
+    <button className="btn btn-link" onClick={() => loadSampleYaml(templateName, kind)}>
+      <span className="fa fa-fw fa-paste" aria-hidden="true"></span> Try it
+    </button>
+    <button className="btn btn-link pull-right" onClick={() => downloadSampleYaml(templateName, kind)}>
+      <span className="fa fa-fw fa-download" aria-hidden="true"></span> Download yaml
+    </button>
+  </li>;
+};
+
 export const ResourceSidebar = props => {
   const {kindObj, height} = props;
   if (!kindObj) {
