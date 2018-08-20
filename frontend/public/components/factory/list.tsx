@@ -287,13 +287,14 @@ Rows.propTypes = {
   Row: PropTypes.func.isRequired,
 };
 
-const stateToProps = ({UI}, {data = [], filters = {}, loaded = false, reduxID = null, reduxIDs = null, staticFilters = [{}]}) => {
+const stateToProps = ({UI}, {data = [], filters = {}, loaded = false, reduxID = null, reduxIDs = null, staticFilters = [{}], defaultSortField = 'metadata.name', defaultSortFunc = undefined}) => {
   const allFilters = staticFilters ? Object.assign({}, filters, ...staticFilters) : filters;
   let newData = getFilteredRows(allFilters, data);
 
   const listId = reduxIDs ? reduxIDs.join(',') : reduxID;
-  const currentSortField = UI.getIn(['listSorts', listId, 'field'], 'metadata.name');
-  const currentSortFunc = UI.getIn(['listSorts', listId, 'func']);
+  // Only default to 'metadata.name' if no `defaultSortFunc`
+  const currentSortField = UI.getIn(['listSorts', listId, 'field'], defaultSortFunc ? undefined : defaultSortField);
+  const currentSortFunc = UI.getIn(['listSorts', listId, 'func'], defaultSortFunc);
   const currentSortOrder = UI.getIn(['listSorts', listId, 'orderBy'], 'asc');
 
   if (loaded) {
@@ -435,6 +436,8 @@ export type ListInnerProps = {
   currentSortOrder?: any;
   listId?: string;
   sortList?: (...args) => any;
+  defaultSortField?: string;
+  defaultSortFunc?: string;
 };
 
 export type ResourceRowProps = {
