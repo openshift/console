@@ -62,7 +62,7 @@ ServiceInstanceDetailsPage.displayName = 'ServiceInstanceDetailsPage';
 const ServiceInstancesHeader = props => <ListHeader>
   <ColHead {...props} className="col-md-3 col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
   <ColHead {...props} className="col-md-3 col-sm-4 col-xs-6" sortField="metadata.namespace">Namespace</ColHead>
-  <ColHead {...props} className="col-md-2 col-sm-4 hidden-xs" sortFunc="instanceOrBindingStatus">Status</ColHead>
+  <ColHead {...props} className="col-md-2 col-sm-4 hidden-xs" sortFunc="serviceCatalogStatus">Status</ColHead>
   <ColHead {...props} className="col-md-2 hidden-sm hidden-xs" sortFunc="planExternalName">Plan</ColHead>
   <ColHead {...props} className="col-md-2 hidden-sm hidden-xs" sortField="metadata.creationTimestamp">Created</ColHead>
 </ListHeader>;

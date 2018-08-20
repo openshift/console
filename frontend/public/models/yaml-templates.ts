@@ -693,4 +693,11 @@ spec:
     type: JenkinsPipeline
   triggers:
   - type: ConfigChange
+`).setIn([referenceForModel(k8sModels.ClusterServiceBrokerModel), 'default'], `
+apiVersion: servicecatalog.k8s.io/v1beta1
+kind: ClusterServiceBroker
+metadata:
+  name: example-cluster-service-broker
+spec:
+  url: https://example.com/broker/
 `);

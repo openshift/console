@@ -1,10 +1,10 @@
 import * as React from 'react';
 
 // eslint-disable-next-line no-unused-vars
-import { K8sResourceKind, instanceOrBindingStatus } from '../../module/k8s';
+import { K8sResourceKind, serviceCatalogStatus } from '../../module/k8s';
 
 export const StatusWithIcon: React.SFC<StatusWithIconProps> = ({obj}) => {
-  const objStatus: string = instanceOrBindingStatus(obj);
+  const objStatus: string = serviceCatalogStatus(obj);
 
   switch (objStatus) {
     case 'Pending':

@@ -18,7 +18,7 @@ const isStatusReady = (obj: K8sResourceKind) => {
   return _.get(statusCondition(obj, 'Ready'), 'status') === 'True';
 };
 
-export const instanceOrBindingStatus = (obj: K8sResourceKind) => {
+export const serviceCatalogStatus = (obj: K8sResourceKind) => {
   const conditions = _.get(obj, 'status.conditions');
   const statusError = _.find(conditions, {type: 'Failed', status: 'True'});
 
