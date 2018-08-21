@@ -5,7 +5,7 @@ import * as _ from 'lodash-es';
 import { match, Link } from 'react-router-dom';
 import { safeLoad } from 'js-yaml';
 
-import { SectionHeading, Firehose, MsgBox, LoadingBox, ResourceCog, ResourceLink, Cog, navFactory, resourceObjPath, Timestamp } from '../utils';
+import { SectionHeading, Firehose, MsgBox, LoadingBox, ResourceCog, ResourceLink, Cog, navFactory, resourceObjPath, Timestamp, StatusBox } from '../utils';
 import { withFallback } from '../utils/error-boundary';
 import { CreateYAML } from '../create-yaml';
 import { ClusterServiceVersionLogo, CatalogSourceKind, ClusterServiceVersionKind, Package, SubscriptionKind, olmNamespace } from './index';
@@ -149,7 +149,7 @@ export const CatalogSourceList = withFallback((props: CatalogSourceListProps) =>
         <PackageList catalogSource={obj} clusterServiceVersions={csvsFor(obj)} packages={pkgsFor(obj)} subscriptions={subsFor(obj)} />
       </div>) }
     </React.Fragment>
-    : <LoadingBox />;
+    : <StatusBox loaded={props.loaded} loadError={props.loadError} label={CatalogSourceModel.labelPlural} />;
 }, () => <MsgBox title="Error Parsing Catalog" detail="The contents of the catalog source could not be retrieved." />);
 
 export const CatalogSourcesPage: React.SFC<CatalogSourcePageProps> = (props) => {
@@ -267,6 +267,7 @@ export type CatalogSourceListProps = {
   globalCatalogSource: {loaded?: boolean, data?: CatalogSourceKind[]};
   subscription: {loaded?: boolean, data?: SubscriptionKind[]}
   loaded: boolean;
+  loadError?: string | Object;
 };
 
 export type CatalogSourcePageProps = {
