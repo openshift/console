@@ -51,72 +51,57 @@ export const LimitRangeListPage: React.SFC<LimitRangeListPageProps> = props =>
     canCreate={true}
   />;
 
-const LimitRangeDetailsRow: React.SFC<LimitRangeRowProps> = ({row}) => {
+const LimitRangeDetailsRow: React.SFC<LimitRangeDetailsRowProps> = ({limitType, resource, limit}) => {
   return <div className="row co-resource-list__item">
-    <div className="col-sm-2 col-xs-2">
-      {row.resourceType}
+    <div className="col-xs-2">
+      {limitType}
     </div>
-    <div className="col-sm-2 col-xs-2">
-      {row.min || '-'}
+    <div className="col-xs-2">
+      {resource}
     </div>
-    <div className="col-sm-2 col-xs-2">
-      {row.max || '-'}
+    <div className="col-xs-1">
+      {limit.min || '-'}
     </div>
-    <div className="col-sm-2 col-xs-2">
-      {row.defaultRequest || '-'}
+    <div className="col-xs-1">
+      {limit.max || '-'}
     </div>
-    <div className="col-sm-2 col-xs-2">
-      {row.default || '-'}
+    <div className="col-xs-2">
+      {limit.defaultRequest || '-'}
     </div>
-    <div className="col-sm-2 col-xs-2">
-      {row.maxLimitRequestRatio || '-'}
+    <div className="col-xs-2">
+      {limit.default || '-'}
+    </div>
+    <div className="col-xs-2">
+      {limit.maxLimitRequestRatio || '-'}
     </div>
   </div>;
 };
 
-const LimitRangeDetailsRows: React.SFC<LimitRangeRowsProps> = ({limit}) => {
-  const type = limit.type; //We have nested types, top level type is something like "Container"
+const LimitRangeDetailsRows: React.SFC<LimitRangeDetailsRowsProps> = ({limit}) => {
   const properties = ['max', 'min', 'default', 'defaultRequest', 'maxLimitRequestRatio'];
-  const cpuLimits = {};
-  const memoryLimits = {};
-
-  _.forEach(properties, function(property){
-    if (limit[property]) {
-      if (limit[property].hasOwnProperty('cpu')) {
-        cpuLimits[property] = limit[property].cpu;
-      }
-      if (limit[property].hasOwnProperty('memory')) {
-        memoryLimits[property] = limit[property].memory;
-      }
-    }
+  const resources = {};
+  _.each(properties, property => {
+    _.each(limit[property], (value, resource) => _.set(resources, [resource, property], value));
   });
 
-  if (!_.isEmpty(cpuLimits)){
-    _.merge(cpuLimits, {resourceType: `${type} CPU`});
-  }
-
-  if (!_.isEmpty(memoryLimits)){
-    _.merge(memoryLimits, {resourceType: `${type} Memory`});
-  }
-
   return <React.Fragment>
-    {!_.isEmpty(cpuLimits) && <LimitRangeDetailsRow row={cpuLimits} />}
-    {!_.isEmpty(memoryLimits) && <LimitRangeDetailsRow row={memoryLimits} />}
+    {_.map(resources, (resourceLimit, resource) => <LimitRangeDetailsRow key={resource} limitType={limit.type} resource={resource} limit={resourceLimit} />)}
   </React.Fragment>;
 };
 
 export const LimitRangeDetailsList = (resource) => {
   return <div className="co-m-pane__body">
-    <h1 className="co-section-title">Details</h1>
+    <SectionHeading text="Limits" />
     <div className="row">
       <div className="co-m-table-grid co-m-table-grid--bordered">
         <div className="row co-m-table-grid__head">
-          <div className="col-sm-2 col-xs-2">Resource Type</div>
-          <div className="col-sm-2 col-xs-2">Min</div>
-          <div className="col-sm-2 col-xs-2">Max</div>
-          <div className="col-sm-2 col-xs-2">Default Request</div>
-          <div className="col-sm-2 col-xs-2">Default Limit</div>
-          <div className="col-sm-2 col-xs-2">Max Limit/Request Ratio</div>
+          <div className="col-xs-2">Type</div>
+          <div className="col-xs-2">Resource</div>
+          <div className="col-xs-1">Min</div>
+          <div className="col-xs-1">Max</div>
+          <div className="col-xs-2">Default Request</div>
+          <div className="col-xs-2">Default Limit</div>
+          <div className="col-xs-2">Max Limit/Request Ratio</div>
         </div>
         <div className="co-m-table-grid__body">
           {_.map(resource.resource.spec.limits, (limit, index) => <LimitRangeDetailsRows limit={limit} key={index} />)}
@@ -147,11 +132,13 @@ export type LimitRangeProps = {
 export type LimitRangeListPageProps = {
   filterLabel: string,
 };
-export type LimitRangeRowsProps = {
+export type LimitRangeDetailsRowsProps = {
   limit: any,
 };
-export type LimitRangeRowProps = {
-  row: any,
+export type LimitRangeDetailsRowProps = {
+  limitType: string,
+  resource: string,
+  limit: any,
 };
 export type LimitRangeHeaderProps = {
   obj: any,
