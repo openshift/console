@@ -126,9 +126,12 @@ export const ImageStreamTagsDetails: React.SFC<ImageStreamTagsDetailsProps> = ({
   </div>;
 };
 
-export const getImageStreamNameForTag = (imageStreamTag: K8sResourceKind): string => {
-  const name = _.get(imageStreamTag, 'metadata.name', '');
-  return name.split(':')[0];
+export const getImageStreamNameForTag = (imageStreamTag: K8sResourceKind): {[key: string]: string} => {
+  const imageStreamTagArray = _.get(imageStreamTag, 'metadata.name', '').split(':');
+  return {
+    imageStream: _.head(imageStreamTagArray),
+    tag: _.last(imageStreamTagArray)
+  }
 };
 
 const pages = [navFactory.details(ImageStreamTagsDetails), navFactory.editYaml()];
@@ -136,12 +139,12 @@ export const ImageStreamTagsDetailsPage: React.SFC<ImageStreamTagsDetailsPagePro
   <DetailsPage
     {...props}
     breadcrumbsFor={obj => {
-      const imageStreamName = getImageStreamNameForTag(obj);
+      const imageStreamTag = getImageStreamNameForTag(obj);
       return [{
-        name: imageStreamName,
-        path: `/k8s/ns/${obj.metadata.namespace}/imagestreams/${imageStreamName}`,
+        name: imageStreamTag.imageStream,
+        path: `/k8s/ns/${obj.metadata.namespace}/imagestreams/${imageStreamTag.imageStream}`,
       }, {
-        name: 'ImageStreamTag Details',
+        name: imageStreamTag.tag,
         path: props.match.url,
       }];
     }}
