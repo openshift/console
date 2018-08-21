@@ -734,3 +734,15 @@ export const ServiceBindingModel: K8sKind = {
   kind: 'ServiceBinding',
   id: 'servicebinding'
 };
+
+export const LimitRangeModel: K8sKind = {
+  label: 'Limit Range',
+  apiVersion: 'v1',
+  path: 'limitranges',
+  plural: 'limitranges',
+  abbr: 'LR',
+  namespaced: true,
+  kind: 'LimitRange',
+  id: 'limitrange',
+  labelPlural: 'Limit Ranges'
+};

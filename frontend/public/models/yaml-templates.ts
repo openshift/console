@@ -497,6 +497,18 @@ spec:
     requests.memory: 1Gi
     limits.cpu: "2"
     limits.memory: 2Gi
+`).setIn([referenceForModel(k8sModels.LimitRangeModel), 'default'], `
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: mem-limit-range
+spec:
+  limits:
+  - default:
+      memory: 512Mi
+    defaultRequest:
+      memory: 256Mi
+    type: Container
 `).setIn([referenceForModel(k8sModels.StatefulSetModel), 'default'], `
 apiVersion: apps/v1
 kind: StatefulSet

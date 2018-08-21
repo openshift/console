@@ -437,6 +437,7 @@ export class Nav extends React.Component {
             <ResourceNSLink resource="roles" name="Roles" startsWith={rolesStartsWith} onClick={this.close} />
             <ResourceNSLink resource="rolebindings" name="Role Bindings" onClick={this.close} startsWith={rolebindingsStartsWith} />
             <ResourceNSLink resource="resourcequotas" name="Resource Quotas" onClick={this.close} />
+            <ResourceNSLink resource="limitranges" name="Limit Ranges" onClick={this.close} />
             <ResourceNSLink resource="chargeback.coreos.com:v1alpha1:Report" name="Chargeback" onClick={this.close} disallowed={FLAGS.OPENSHIFT} />
             <ResourceClusterLink resource="customresourcedefinitions" name="CRDs" onClick={this.close} required={FLAGS.CAN_LIST_CRD} />
           </NavSection>
