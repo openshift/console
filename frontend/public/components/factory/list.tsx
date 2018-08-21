@@ -13,7 +13,7 @@ import {
   K8sResourceKind,
   K8sResourceKindReference,
   getJobTypeAndCompletions,
-  instanceOrBindingStatus,
+  serviceCatalogStatus,
   isNodeReady,
   planExternalName,
   podPhase,
@@ -160,7 +160,7 @@ const sorts = {
   daemonsetNumScheduled: daemonset => _.toInteger(_.get(daemonset, 'status.currentNumberScheduled')),
   dataSize: resource => _.size(_.get(resource, 'data')),
   ingressValidHosts,
-  instanceOrBindingStatus,
+  serviceCatalogStatus,
   jobCompletions: job => getJobTypeAndCompletions(job).completions,
   jobType: job => getJobTypeAndCompletions(job).type,
   nodeReadiness: node => {
