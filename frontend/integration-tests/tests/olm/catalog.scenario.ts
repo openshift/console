@@ -7,7 +7,7 @@ import * as catalogView from '../../views/catalog.view';
 import * as sidenavView from '../../views/sidenav.view';
 
 describe('Installing a service from the Catalog Sources', () => {
-  const openCloudServices = new Set(['etcd', 'Prometheus', 'Prometheus']);
+  const openCloudServices = new Set(['etcd', 'Prometheus Operator']);
 
   beforeAll(async() => {
     browser.get(`${appHost}/status/ns/${testName}`);
@@ -25,7 +25,7 @@ describe('Installing a service from the Catalog Sources', () => {
     expect(sidenavView.navSectionFor('Operators').isDisplayed()).toBe(true);
   });
 
-  it('displays Catalog Sources with three available services', async() => {
+  it('displays Catalog Sources with expected available services', async() => {
     await sidenavView.clickNavLink(['Operators', 'Catalog Sources']);
     await catalogView.isLoaded();
 
