@@ -118,21 +118,21 @@ class DropDownRow extends React.PureComponent {
 
     let prefix;
     if (onUnBookmark) {
-      prefix = <a className={classNames('bookmarker', {focus: selected, hover})} onClick={e => onUnBookmark(e, itemKey)}><i className="fa fa-minus-circle" /></a>;
+      prefix = <a href="#" className={classNames('bookmarker', {hover, focus: selected})} onClick={e => onUnBookmark(e, itemKey)}><i aria-hidden className="fa fa-minus-circle" /></a>;
     }
     if (onBookmark) {
-      prefix = <a className={classNames('bookmarker', {focus: selected, hover})} onClick={e => onBookmark(e, itemKey, content)}><i className="fa fa-plus-circle" /></a>;
+      prefix = <a href="#" className={classNames('bookmarker', {hover, focus: selected})} onClick={e => onBookmark(e, itemKey, content)}><i aria-hidden className="fa fa-plus-circle" /></a>;
     }
 
     let suffix;
     if (onUnBookmark && canFavorite) {
       const isFavorite = favoriteKey === itemKey;
-      suffix = <a className={classNames('bookmarker', {focus: selected, hover})} onClick={e => onFavorite(e, (isFavorite ? undefined : itemKey))}><i className={classNames('fa fa-star', {'favorite': isFavorite})} /></a>;
+      suffix = <a href="#" className={classNames('bookmarker', {hover, focus: selected})} onClick={e => onFavorite(e, (isFavorite ? undefined : itemKey))}><i aria-hidden className={classNames('fa fa-star', {'favorite': isFavorite})} /></a>;
     }
 
-    return <li role="option" className={classNames(className)} key={itemKey}>
+    return <li role="option" tabIndex={(selected || hover) ? 0 : null} className={classNames(className)} key={itemKey}>
       {prefix}
-      <a ref={this.link} id={`${itemKey}-link`} className={classNames({'next-to-bookmark': !!prefix, focus: selected, hover})} onClick={e => onclick(itemKey, e)}>{content}</a>
+      <a href="#" ref={this.link} id={`${itemKey}-link`} className={classNames({'next-to-bookmark': !!prefix, hover, focus: selected})} onClick={e => onclick(itemKey, e)}>{content}</a>
       {suffix}
     </li>;
   }
@@ -199,9 +199,16 @@ export class Dropdown extends DropdownMixin {
     return `${this.props.storageKey}-bookmarks`;
   }
 
+  focusInput() {
+    this.input.focus();
+  }
+
   componentDidMount () {
     if (this.props.shortCut) {
       window.addEventListener('keydown', this.globalKeyDown);
+    }
+    if (this.state.active && this.input) {
+      this.focusInput();
     }
   }
 
@@ -229,6 +236,9 @@ export class Dropdown extends DropdownMixin {
       const position = this.state.autocompleteText && this.state.autocompleteText.length;
       this.input.setSelectionRange(position, position);
     }
+    if (this.state.active && this.input) {
+      this.focusInput();
+    }
   }
 
   applyTextFilter_(autocompleteText, items) {
@@ -239,7 +249,6 @@ export class Dropdown extends DropdownMixin {
     }
     this.setState({autocompleteText, items});
   }
-
 
   onKeyDown_ (e) {
     const { key } = e;
@@ -254,14 +263,9 @@ export class Dropdown extends DropdownMixin {
     }
 
     const { sortedItemKeys } = this.props;
-    const { items, keyboardHoverKey, selectedKey } = this.state;
+    const { items, keyboardHoverKey, selectedKey, autocompleteText, bookmarks } = this.state;
 
     if (key === 'Enter') {
-      if (!keyboardHoverKey) {
-        this.hide(e);
-        return;
-      }
-
       if (this.state.active) {
         this.onClick(keyboardHoverKey, e);
         return;
@@ -287,6 +291,25 @@ export class Dropdown extends DropdownMixin {
       index = correctIndex;
     }
 
+    // so filtered content advances correctly
+    if (autocompleteText) {
+      keys = _.keys(items).sort();
+      index = _.indexOf(keys, keyboardHoverKey);
+    }
+
+    // so bookmarks advance correctly
+    if (bookmarks) {
+      const notBookmarked = keys.filter(k => !_.has(bookmarks, k));
+      const bookmarked = keys.filter(k => _.has(bookmarks, k));
+      keys = bookmarked.sort().concat(notBookmarked);
+      const current = selectedKey || keyboardHoverKey;
+      index = current ? _.indexOf(keys, current) : -1;
+    }
+
+    if (_.isEmpty(keys)) {
+      return;
+    }
+
     if (key === 'ArrowDown') {
       index += 1;
     } else {
@@ -308,6 +331,7 @@ export class Dropdown extends DropdownMixin {
   }
 
   onFavorite_ (e, favoriteKey) {
+    e.preventDefault();
     e.stopPropagation();
     this.setState({favoriteKey});
     if (favoriteKey) {
@@ -319,6 +343,7 @@ export class Dropdown extends DropdownMixin {
   }
 
   onBookmark_ (e, key, value) {
+    e.preventDefault();
     e.stopPropagation();
 
     const bookmarks = Object.assign({}, this.state.bookmarks);
@@ -328,6 +353,7 @@ export class Dropdown extends DropdownMixin {
   }
 
   onUnBookmark_ (e, key) {
+    e.preventDefault();
     e.stopPropagation();
 
     const bookmarks = Object.assign({}, this.state.bookmarks);
@@ -378,7 +404,7 @@ export class Dropdown extends DropdownMixin {
       <div className={classNames('dropdown', dropDownClassName)}>
         {
           noButton
-            ? <div onClick={this.toggle} className="dropdown__not-btn" id={this.props.id}>
+            ? <div role="button" tabIndex="0" onClick={this.toggle} onKeyDown={this.onKeyDown} className="dropdown__not-btn" id={this.props.id}>
               {titlePrefix && `${titlePrefix}: `}
               <span className="dropdown__not-btn__title">{title}</span>&nbsp;<Caret />
             </div>
