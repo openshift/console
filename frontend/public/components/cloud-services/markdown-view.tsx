@@ -54,6 +54,7 @@ export class SyncMarkdownView extends React.Component<{content: string}, {}> {
           color: ${this.props.content ? '#333' : '#999'};
           background-color: transparent !important;
           min-width: auto !important;
+          font-family: "Open Sans",Helvetica,Arial,sans-serif
       }
       </style>
       <body><div>${markdownConvert(this.props.content || 'Not available')}</div></body>`;
