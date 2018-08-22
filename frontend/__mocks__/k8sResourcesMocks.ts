@@ -65,17 +65,11 @@ export const testClusterServiceVersion: ClusterServiceVersionKind = {
           'x-descriptors': [SpecCapability.podCount],
         }],
         statusDescriptors: [{
-          path: 'importantMetrics',
-          displayName: 'Important Metrics',
-          description: 'Important prometheus metrics ',
-          'x-descriptors': [StatusCapability.importantMetrics],
-          value: {
-            queries: [{
-              query: 'foobarbaz',
-              name: 'something',
-              type: 'gauge',
-            }],
-          }
+          path: 'podStatusus',
+          displayName: 'Member Status',
+          description: 'Status of each member pod ',
+          'x-descriptors': [StatusCapability.podStatuses],
+          value: {ready: ['pod-0', 'pod-1'], unhealthy: ['pod-2'], stopped: ['pod-3']},
         },
         {
           path: 'some-unfilled-path',

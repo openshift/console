@@ -86,10 +86,10 @@ $ yarn run test
 #### E2E Tests
 
 Located at `frontend/integration-tests/tests/olm`.
+To sufficiently test your component, modify `descriptors.scenario.ts` and add a new case to `defaultValueFor` to provide a default value for your descriptor.
+
 Run the OLM end-to-end tests against a cluster with OLM installed:
 
 ```shell
 $ yarn run test-suite --suite olm
 ```
-
-TODO(alecmerdler0): Add all possible descriptors to a `ClusterServiceVersion` and run tests against it.

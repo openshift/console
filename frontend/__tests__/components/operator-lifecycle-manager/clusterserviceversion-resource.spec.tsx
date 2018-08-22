@@ -5,7 +5,7 @@ import { match as RouterMatch } from 'react-router-dom';
 import { shallow, ShallowWrapper } from 'enzyme';
 import * as _ from 'lodash-es';
 
-import { ClusterServiceVersionResourceList, ClusterServiceVersionResourceListProps, ClusterServiceVersionResourcesPage, ClusterServiceVersionResourcesPageProps, ClusterServiceVersionResourceHeaderProps, ClusterServiceVersionResourcesDetailsState, ClusterServiceVersionResourceRowProps, ClusterServiceVersionResourceHeader, ClusterServiceVersionResourceRow, ClusterServiceVersionResourceDetails, ClusterServiceVersionPrometheusGraph, ClusterServiceVersionResourcesDetailsPageProps, ClusterServiceVersionResourcesDetailsProps, ClusterServiceVersionResourcesDetailsPage, PrometheusQueryTypes, ClusterServiceVersionResourceLink } from '../../../public/components/operator-lifecycle-manager/clusterserviceversion-resource';
+import { ClusterServiceVersionResourceList, ClusterServiceVersionResourceListProps, ClusterServiceVersionResourcesPage, ClusterServiceVersionResourcesPageProps, ClusterServiceVersionResourceHeaderProps, ClusterServiceVersionResourcesDetailsState, ClusterServiceVersionResourceRowProps, ClusterServiceVersionResourceHeader, ClusterServiceVersionResourceRow, ClusterServiceVersionResourceDetails, ClusterServiceVersionResourcesDetailsPageProps, ClusterServiceVersionResourcesDetailsProps, ClusterServiceVersionResourcesDetailsPage, ClusterServiceVersionResourceLink } from '../../../public/components/operator-lifecycle-manager/clusterserviceversion-resource';
 import { Resources } from '../../../public/components/operator-lifecycle-manager/k8s-resource';
 import { ClusterServiceVersionResourceKind } from '../../../public/components/operator-lifecycle-manager';
 import { StatusDescriptor } from '../../../public/components/operator-lifecycle-manager/descriptors/status';
@@ -13,7 +13,6 @@ import { SpecDescriptor } from '../../../public/components/operator-lifecycle-ma
 import { testCRD, testResourceInstance, testClusterServiceVersion, testOwnedResourceInstance } from '../../../__mocks__/k8sResourcesMocks';
 import { List, ColHead, ListHeader, DetailsPage, MultiListPage } from '../../../public/components/factory';
 import { Timestamp, LabelList, ResourceSummary, StatusBox, ResourceCog, Cog } from '../../../public/components/utils';
-import { Gauge, Scalar, Line, Bar } from '../../../public/components/graphs';
 import { referenceFor, K8sKind, referenceForModel } from '../../../public/module/k8s';
 import { ClusterServiceVersionModel } from '../../../public/models';
 
@@ -185,13 +184,6 @@ describe(ClusterServiceVersionResourceDetails.displayName, () => {
     expect(statusView.exists()).toBe(false);
   });
 
-  it('renders the specified important prometheus metrics as graphs', () => {
-    wrapper.setState({expanded: false});
-    const metric = wrapper.find('.co-clusterserviceversion-resource-details__section__metric');
-
-    expect(metric.exists()).toBe(true);
-  });
-
   it('does not render the extended information unless in expanded mode', () => {
     expect(wrapper.find(ResourceSummary).exists()).toBe(false);
   });
@@ -239,65 +231,6 @@ describe(ClusterServiceVersionResourceDetails.displayName, () => {
     wrapper = wrapper.setProps({clusterServiceVersion});
 
     expect(wrapper.find(SpecDescriptor).length).toEqual(1);
-  });
-});
-
-describe(ClusterServiceVersionPrometheusGraph.displayName, () => {
-
-  it('renders a counter', () => {
-    const query = {
-      'name': 'foo',
-      'unit': 'blargs',
-      'query': 'somequery',
-      'type': PrometheusQueryTypes.Counter,
-    };
-    const wrapper = shallow(<ClusterServiceVersionPrometheusGraph query={query} />);
-
-    expect(wrapper.is(Scalar)).toBe(true);
-  });
-
-  it('renders a gauge', () => {
-    const query = {
-      'name': 'foo',
-      'query': 'somequery',
-      'type': PrometheusQueryTypes.Gauge,
-    };
-    const wrapper = shallow(<ClusterServiceVersionPrometheusGraph query={query} />);
-
-    expect(wrapper.is(Gauge)).toBe(true);
-  });
-
-  it('renders a line', () => {
-    const query = {
-      'name': 'foo',
-      'query': 'somequery',
-      'type': PrometheusQueryTypes.Line,
-    };
-    const wrapper = shallow(<ClusterServiceVersionPrometheusGraph query={query} />);
-
-    expect(wrapper.is(Line)).toBe(true);
-  });
-
-  it('renders a bar', () => {
-    const query = {
-      'name': 'foo',
-      'query': 'somequery',
-      'type': PrometheusQueryTypes.Bar,
-    };
-    const wrapper = shallow(<ClusterServiceVersionPrometheusGraph query={query} />);
-
-    expect(wrapper.is(Bar)).toBe(true);
-  });
-
-  it('handles unknown kinds of metrics', () => {
-    const query: any = {
-      'name': 'foo',
-      'query': 'somequery',
-      'type': 'unknown',
-    };
-    const wrapper = shallow(<ClusterServiceVersionPrometheusGraph query={query} />);
-
-    expect(wrapper.html()).toBe('<span>Unknown graph type: unknown</span>');
   });
 });
 
