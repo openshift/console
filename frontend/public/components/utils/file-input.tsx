@@ -3,7 +3,7 @@ import * as classNames from 'classnames';
 import { NativeTypes } from 'react-dnd-html5-backend';
 // eslint-disable-next-line no-unused-vars
 import { DropTarget, ConnectDropTarget, DropTargetMonitor } from 'react-dnd';
-import withDragDropContext from '../utils/drag-drop-context';
+import withDragDropContext from './drag-drop-context';
 
 export class FileInput extends React.Component<FileInputProps, FileInputState> {
   constructor(props) {
