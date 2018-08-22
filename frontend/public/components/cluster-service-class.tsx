@@ -64,7 +64,6 @@ const ClusterServiceClassDetails: React.SFC<ClusterServiceClassDetailsProps> = (
     {serviceClassDisplayName(serviceClass)}
   </span>;
   return <div className="co-m-pane__body">
-    <SectionHeading text="Service Class Overview" />
     <div className="row">
       <div className="col-md-7 col-md-push-5" style={{marginBottom: '20px'}}>
         <h2 className="co-section-heading">{heading}</h2>
@@ -82,6 +81,7 @@ const ClusterServiceClassDetails: React.SFC<ClusterServiceClassDetailsProps> = (
         </dl>}
       </div>
       <div className="col-md-5 col-md-pull-7">
+        <SectionHeading text="Service Class Overview" />
         <ResourceSummary resource={serviceClass} showPodSelector={false} showNodeSelector={false}>
           <dt>Display Name</dt>
           <dd>{displayName}</dd>
