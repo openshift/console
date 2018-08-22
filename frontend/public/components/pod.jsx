@@ -279,7 +279,9 @@ const filters = [{
     { id: 'Pending', title: 'Pending' },
     { id: 'Terminating', title: 'Terminating' },
     { id: 'CrashLoopBackOff', title: 'CrashLoopBackOff' },
-    { id: 'Succeeded', title: 'Succeeded' },
+    // Use title "Completed" to match what appears in the status column for the pod.
+    // The pod phase is "Succeeded," but the container state is "Completed."
+    { id: 'Succeeded', title: 'Completed' },
     { id: 'Failed', title: 'Failed' },
     { id: 'Unknown', title: 'Unknown '}
   ]
