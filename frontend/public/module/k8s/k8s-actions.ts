@@ -50,7 +50,7 @@ const actions = {
     return {id, name, value, type: types.filterList};
   },
 
-  watchK8sObject: (id, name, namespace, query, k8sType) => (dispatch, getState) => {
+  watchK8sObject: (id, name, namespace, query, k8sType, poll = false) => (dispatch, getState) => {
     if (id in REF_COUNTS) {
       REF_COUNTS[id] += 1;
       return nop;
@@ -72,6 +72,9 @@ const actions = {
     };
     POLLs[id] = setInterval(poller, 30 * 1000);
     poller();
+    if (poll) {
+      return;
+    }
 
     const {subprotocols} = getState().UI.get('impersonate', {});
 

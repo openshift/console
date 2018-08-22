@@ -307,7 +307,7 @@ const NsDropdown_ = props => {
   const resources = [{ kind }];
   return <ListDropdown {...props} desc="Namespaces" resources={resources} selectedKeyKind={kind} placeholder="Select namespace" />;
 };
-const NsDropdown = connectToFlags(FLAGS.OPENSHIFT)(NsDropdown_);
+export const NsDropdown = connectToFlags(FLAGS.OPENSHIFT)(NsDropdown_);
 
 const NsRoleDropdown_ = props => {
   const openshiftFlag = props.flags[FLAGS.OPENSHIFT];

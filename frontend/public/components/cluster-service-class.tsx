@@ -1,34 +1,36 @@
 /* eslint-disable no-undef */
 
 import * as React from 'react';
-import * as _ from 'lodash-es';
 import { Link } from 'react-router-dom';
-import * as classNames from 'classnames';
+import * as _ from 'lodash-es';
 
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
-import { SectionHeading, detailsPage, navFactory, ResourceSummary, resourcePathFromModel, ResourceLink } from './utils';
+import { history, SectionHeading, detailsPage, navFactory, ResourceSummary, resourcePathFromModel, ResourceLink } from './utils';
 import { viewYamlComponent } from './utils/vertnav';
 import { ClusterServiceClassModel } from '../models';
 // eslint-disable-next-line no-unused-vars
 import { K8sResourceKind, K8sResourceKindReference, serviceClassDisplayName } from '../module/k8s';
 import { ClusterServicePlanPage } from './cluster-service-plan';
+import { ClusterServiceClassIcon } from './cluster-service-class-icon';
+import { ClusterServiceClassInfo } from './cluster-service-class-info';
 
 const ClusterServiceClassReference: K8sResourceKindReference = 'ClusterServiceClass';
 
-const normalizeIconClass = (iconClass) => {
-  return _.startsWith(iconClass, 'icon-') ? `font-icon ${iconClass}` : iconClass;
-};
-
-export const ClusterServiceClassIcon: React.SFC<ClusterServiceClassIconProps> = ({serviceClass, imageClass}) => {
-  const imageUrl = _.get(serviceClass, ['spec', 'externalMetadata', 'imageUrl']);
-  if (imageUrl) {
-    return <img className={classNames('co-cluster-service-class-title__icon', imageClass ? imageClass : null)} src={imageUrl} />;
+const createInstance = (kindObj, serviceClass) => {
+  if (!_.get(serviceClass, 'status.removedFromBrokerCatalog')) {
+    return {
+      btnClass: 'btn-primary',
+      callback: () => {
+        history.push(`/k8s/cluster/clusterserviceclasses/${serviceClass.metadata.name}/new`);
+      },
+      label: 'Create Instance',
+    };
   }
-
-  const iconClass = _.get(serviceClass, ['spec', 'externalMetadata', 'console.openshift.io/iconClass'], 'fa fa-clone');
-  return <span className={classNames('fa-2x', 'co-cluster-service-class-title__icon', normalizeIconClass(iconClass))} />;
 };
-ClusterServiceClassIcon.displayName = 'ClusterServiceClassIcon';
+
+const actionButtons = [
+  createInstance
+];
 
 const ClusterServiceClassHeader: React.SFC<ClusterServiceClassHeaderProps> = props => <ListHeader>
   <ColHead {...props} className="col-sm-6 col-xs-12" sortFunc="serviceClassDisplayName" currentSortFunc="serviceClassDisplayName">Display Name</ColHead>
@@ -40,7 +42,7 @@ const ClusterServiceClassListRow: React.SFC<ClusterServiceClassRowProps> = ({obj
   const path = resourcePathFromModel(ClusterServiceClassModel, serviceClass.metadata.name);
   return <ResourceRow obj={serviceClass}>
     <div className="col-sm-6 col-xs-12 co-resource-link-wrapper">
-      <ClusterServiceClassIcon serviceClass={serviceClass} imageClass="co-cluster-service-class-row__img" />
+      <ClusterServiceClassIcon serviceClass={serviceClass} />
       <Link to={path}>{serviceClassDisplayName(serviceClass)}</Link>
     </div>
     <div className="col-sm-3 hidden-xs">
@@ -52,64 +54,35 @@ const ClusterServiceClassListRow: React.SFC<ClusterServiceClassRowProps> = ({obj
   </ResourceRow>;
 };
 
-const ClusterServiceClassDetails: React.SFC<ClusterServiceClassDetailsProps> = ({obj: serviceClass}) => {
-  const displayName = _.get(serviceClass, 'spec.externalMetadata.displayName', '-');
-  const provider = _.get(serviceClass, 'spec.externalMetadata.providerDisplayName', '-');
-  const tags = _.get(serviceClass, 'spec.tags');
-  const description = _.get(serviceClass, 'spec.description');
-  const longDescription = _.get(serviceClass, 'spec.externalMetadata.longDescription');
-  const documentationURL = _.get(serviceClass, 'spec.externalMetadata.documentationUrl');
-  const supportURL = _.get(serviceClass, 'spec.externalMetadata.supportUrl');
-  const heading = <span>
-    <ClusterServiceClassIcon serviceClass={serviceClass} imageClass="co-cluster-service-class-details__img" />
-    {serviceClassDisplayName(serviceClass)}
-  </span>;
-  return <div className="co-m-pane__body">
-    <div className="row">
-      <div className="col-md-7 col-md-push-5" style={{marginBottom: '20px'}}>
-        <h2 className="co-section-heading">{heading}</h2>
-        {description && <p>{description}</p>}
-        {longDescription && <p>{longDescription}</p>}
-        {(documentationURL || supportURL) && <dl>
-          {documentationURL && <dt>Documentation</dt>}
-          {documentationURL && <dd className="co-break-word">
-            <a href={serviceClass.spec.externalMetadata.documentationUrl} target="_blank" rel="noopener noreferrer">{serviceClass.spec.externalMetadata.documentationUrl}</a>
-          </dd>}
-          {supportURL && <dt>Support</dt>}
-          {supportURL && <dd className="co-break-word">
-            <a href={serviceClass.spec.externalMetadata.supportUrl} target="_blank" rel="noopener noreferrer">{serviceClass.spec.externalMetadata.supportUrl}</a>
-          </dd>}
-        </dl>}
-      </div>
-      <div className="col-md-5 col-md-pull-7">
-        <SectionHeading text="Service Class Overview" />
-        <ResourceSummary resource={serviceClass} showPodSelector={false} showNodeSelector={false}>
-          <dt>Display Name</dt>
-          <dd>{displayName}</dd>
-          <dt>External Name</dt>
-          <dd>{serviceClass.spec.externalName || '-'}</dd>
-          <dt>Provider</dt>
-          <dd>{provider}</dd>
-          <dt>Tags</dt>
-          <dd>{_.isEmpty(tags) ? '-' : tags.join(', ')}</dd>
-        </ResourceSummary>
-        {serviceClass.status.removedFromBrokerCatalog && <React.Fragment>
-          <dt>Removed From Catalog</dt>
-          <dd>{serviceClass.status.removedFromBrokerCatalog}</dd>
-        </React.Fragment>}
-      </div>
+const ClusterServiceClassDetails: React.SFC<ClusterServiceClassDetailsProps> = ({obj: serviceClass}) => <div className="co-m-pane__body">
+  <div className="row">
+    <div className="col-md-7 col-md-push-5" style={{marginBottom: '20px'}}>
+      <ClusterServiceClassInfo obj={serviceClass} />
     </div>
-  </div>;
-};
+    <div className="col-md-5 col-md-pull-7">
+      <SectionHeading text="Service Class Overview" />
+      <ResourceSummary resource={serviceClass} showPodSelector={false} showNodeSelector={false}>
+        <dt>External Name</dt>
+        <dd>{serviceClass.spec.externalName || '-'}</dd>
+      </ResourceSummary>
+      {serviceClass.status.removedFromBrokerCatalog && <React.Fragment>
+        <dt>Removed From Catalog</dt>
+        <dd>{serviceClass.status.removedFromBrokerCatalog}</dd>
+      </React.Fragment>}
+    </div>
+  </div>
+</div>;
 
 export const ClusterServiceClassDetailsPage: React.SFC<ClusterServiceClassDetailsPageProps> = props => <DetailsPage
   {...props}
+  buttonActions={actionButtons}
   kind={ClusterServiceClassReference}
   pages={[navFactory.details(detailsPage(ClusterServiceClassDetails)),
     navFactory.editYaml(viewYamlComponent),
     navFactory.clusterServicePlans(({obj}) => <ClusterServicePlanPage showTitle={false}
       fieldSelector={`spec.clusterServiceClassRef.name=${obj.metadata.name}`} />)]}
 />;
+
 export const ClusterServiceClassList: React.SFC = props => <List {...props} Header={ClusterServiceClassHeader} Row={ClusterServiceClassListRow} defaultSortFunc="serviceClassDisplayName" />;
 
 export const ClusterServiceClassPage: React.SFC<ClusterServiceClassPageProps> = props =>
@@ -136,14 +109,10 @@ export type ClusterServiceClassPageProps = {
 };
 
 export type ClusterServiceClassDetailsProps = {
-  obj: K8sResourceKind
+  obj: K8sResourceKind,
 };
 
 export type ClusterServiceClassDetailsPageProps = {
-  match: any
-};
-
-export type ClusterServiceClassIconProps = {
-  serviceClass: K8sResourceKind,
-  imageClass?: string
+  match: any,
+  name: string,
 };
