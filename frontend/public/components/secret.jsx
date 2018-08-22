@@ -28,7 +28,7 @@ const menuActions = [
   Cog.factory.ModifyLabels,
   Cog.factory.ModifyAnnotations,
   (kind, obj) => ({
-    label: `Edit ${kind.label}...`,
+    label: `Edit ${kind.label}`,
     href: editInYaml(obj) ? `${resourceObjPath(obj, kind.kind)}/edit-yaml` : `${resourceObjPath(obj, kind.kind)}/edit`,
   }),
   Cog.factory.Delete,
