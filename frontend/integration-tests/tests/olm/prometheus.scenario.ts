@@ -32,7 +32,7 @@ describe('Interacting with the Prometheus OCS', () => {
   it('can be enabled from the Catalog Sources', async() => {
     await sidenavView.clickNavLink(['Operators', 'Catalog Sources']);
     await catalogView.isLoaded();
-    await catalogView.entryRowFor('Prometheus').element(by.buttonText('Create Subscription')).click();
+    await catalogView.entryRowFor('Prometheus Operator').element(by.buttonText('Create Subscription')).click();
     await browser.wait(until.presenceOf($('.ace_text-input')));
     const content = await yamlView.editorContent.getText();
     const newContent = defaultsDeep({}, {metadata: {generateName: `${testName}-prometheus-`, namespace: testName, labels: {[testLabel]: testName}}, spec: {channel: 'alpha', source: 'ocs', name: 'prometheus'}}, safeLoad(content));
@@ -42,7 +42,7 @@ describe('Interacting with the Prometheus OCS', () => {
     await sidenavView.clickNavLink(['Operators', 'Catalog Sources']);
     await catalogView.isLoaded();
 
-    expect(catalogView.hasSubscription('Prometheus')).toBe(true);
+    expect(catalogView.hasSubscription('Prometheus Operator')).toBe(true);
   });
 
   it('creates Prometheus Operator `Deployment`', async() => {
@@ -68,11 +68,11 @@ describe('Interacting with the Prometheus OCS', () => {
     await appListView.isLoaded();
     await browser.sleep(500);
 
-    browser.wait(until.visibilityOf(appListView.appTileFor('Prometheus')), 5000);
+    browser.wait(until.visibilityOf(appListView.appTileFor('Prometheus Operator')), 5000);
   });
 
   it('displays metadata about Prometheus OCS in the "Overview" section', async() => {
-    await appListView.viewDetailsFor('Prometheus');
+    await appListView.viewDetailsFor('Prometheus Operator');
     await browser.wait(until.presenceOf($('.loading-box__loaded')), 5000);
 
     expect($('.co-clusterserviceversion-details__section--info').isDisplayed()).toBe(true);
@@ -137,7 +137,7 @@ describe('Interacting with the Prometheus OCS', () => {
     await crudView.isLoaded();
     await $$('.dropdown').filter(btn => btn.getText().then(text => text.startsWith('Create New'))).first().click();
     await browser.wait(until.visibilityOf($$('.dropdown-menu').first()), 1000);
-    await $$('.dropdown-menu').first().element(by.linkText('Alert Manager')).click();
+    await $$('.dropdown-menu').first().element(by.linkText('Alertmanager')).click();
     await browser.wait(until.presenceOf($('.ace_text-input')));
 
     expect($('.yaml-editor-header').getText()).toEqual('Create Alertmanager');
