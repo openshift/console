@@ -52,29 +52,15 @@ export const LimitRangeListPage: React.SFC<LimitRangeListPageProps> = props =>
   />;
 
 const LimitRangeDetailsRow: React.SFC<LimitRangeDetailsRowProps> = ({limitType, resource, limit}) => {
-  return <div className="row co-resource-list__item">
-    <div className="col-xs-2">
-      {limitType}
-    </div>
-    <div className="col-xs-2">
-      {resource}
-    </div>
-    <div className="col-xs-1">
-      {limit.min || '-'}
-    </div>
-    <div className="col-xs-1">
-      {limit.max || '-'}
-    </div>
-    <div className="col-xs-2">
-      {limit.defaultRequest || '-'}
-    </div>
-    <div className="col-xs-2">
-      {limit.default || '-'}
-    </div>
-    <div className="col-xs-2">
-      {limit.maxLimitRequestRatio || '-'}
-    </div>
-  </div>;
+  return <tr className="co-resource-list__item">
+    <td>{limitType}</td>
+    <td>{resource}</td>
+    <td>{limit.min || '-'}</td>
+    <td>{limit.max || '-'}</td>
+    <td>{limit.defaultRequest || '-'}</td>
+    <td>{limit.default || '-'}</td>
+    <td>{limit.maxLimitRequestRatio || '-'}</td>
+  </tr>;
 };
 
 const LimitRangeDetailsRows: React.SFC<LimitRangeDetailsRowsProps> = ({limit}) => {
@@ -92,21 +78,23 @@ const LimitRangeDetailsRows: React.SFC<LimitRangeDetailsRowsProps> = ({limit}) =
 export const LimitRangeDetailsList = (resource) => {
   return <div className="co-m-pane__body">
     <SectionHeading text="Limits" />
-    <div className="row">
-      <div className="co-m-table-grid co-m-table-grid--bordered">
-        <div className="row co-m-table-grid__head">
-          <div className="col-xs-2">Type</div>
-          <div className="col-xs-2">Resource</div>
-          <div className="col-xs-1">Min</div>
-          <div className="col-xs-1">Max</div>
-          <div className="col-xs-2">Default Request</div>
-          <div className="col-xs-2">Default Limit</div>
-          <div className="col-xs-2">Max Limit/Request Ratio</div>
-        </div>
-        <div className="co-m-table-grid__body">
+    <div className="table-responsive">
+      <table className="co-m-table-grid co-m-table-grid--bordered table">
+        <thead className="co-m-table-grid__head">
+          <tr>
+            <td>Type</td>
+            <td>Resource</td>
+            <td>Min</td>
+            <td>Max</td>
+            <td>Default Request</td>
+            <td>Default Limit</td>
+            <td>Max Limit/Request Ratio</td>
+          </tr>
+        </thead>
+        <tbody className="co-m-table-grid__body">
           {_.map(resource.resource.spec.limits, (limit, index) => <LimitRangeDetailsRows limit={limit} key={index} />)}
-        </div>
-      </div>
+        </tbody>
+      </table>
     </div>
   </div>;
 };
