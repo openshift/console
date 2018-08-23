@@ -49,7 +49,7 @@ export const ClusterServiceVersionRow = withFallback<ClusterServiceVersionRowPro
 
   const installStatus = obj.status && obj.status.phase === ClusterServiceVersionPhase.CSVPhaseSucceeded
     ? <span>Enabled</span>
-    : <span className="co-error"><i className="fa fa-times-circle co-icon-space-r" /> {obj.status.reason}</span>;
+    : <span className="co-error"><i className="fa fa-times-circle co-icon-space-r" /> {_.get(obj, 'status.reason', ClusterServiceVersionPhase.CSVPhaseUnknown)}</span>;
 
   return <div className="row co-resource-list__item" style={{display: 'flex', alignItems: 'center'}}>
     <div className="col-xs-3" style={{display: 'flex', alignItems: 'center'}}>
