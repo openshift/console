@@ -45,27 +45,23 @@ const Details = ({obj: cronjob}) => {
           <dt>Schedule</dt>
           <dd>{cronjob.spec.schedule}</dd>
           <dt>Concurrency Policy</dt>
-          <dd>{_.get(cronjob.spec, 'concurrencyPolicy', '-')}</dd>
+          <dd>{cronjob.spec.concurrencyPolicy || '-'}</dd>
           <dt>Starting Deadline Seconds</dt>
-          <dd>{_.get(cronjob.spec, 'startingDeadlineSeconds', '-')}</dd>
+          <dd>{cronjob.spec.startingDeadlineSeconds || '-'}</dd>
+          <dt>Last Schedule Time</dt>
+          <dd><Timestamp timestamp={cronjob.status.lastScheduleTime} /></dd>
         </ResourceSummary>
       </div>
       <div className="col-md-6">
         <SectionHeading text="Job Overview" />
-        <ResourceSummary resource={cronjob} showNodeSelector={false}>
+        <dl className="co-m-pane__details">
           <dt>Desired Completions</dt>
           <dd>{job.spec.completions || '-'}</dd>
           <dt>Parallelism</dt>
           <dd>{job.spec.parallelism || '-'}</dd>
           <dt>Deadline</dt>
           <dd>{job.spec.activeDeadlineSeconds ? `${job.spec.activeDeadlineSeconds} seconds` : '-'}</dd>
-          <dt>Status</dt>
-          <dd>{_.get(job, 'status.conditions[0].type', 'In Progress')}</dd>
-          <dt>Start Time</dt>
-          <dd><Timestamp timestamp={_.get(job, 'status.startTime')} /></dd>
-          <dt>Completion Time</dt>
-          <dd><Timestamp timestamp={_.get(job, 'status.completionTime')} /></dd>
-        </ResourceSummary>
+        </dl>
       </div>
     </div>
   </div>;
