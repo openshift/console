@@ -2,8 +2,9 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 
+import { FLAGS, connectToFlags } from '../features';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
-import { Cog, navFactory, ResourceCog, SectionHeading, ResourceLink, ResourceSummary, Selector } from './utils';
+import { Cog, navFactory, ResourceCog, SectionHeading, ResourceLink, ResourceSummary, Selector, helpLink, HELP_TOPICS } from './utils';
 
 const menuActions = [Cog.factory.ModifyLabels, Cog.factory.ModifyAnnotations, Cog.factory.Edit, Cog.factory.Delete];
 
@@ -88,31 +89,38 @@ const IngressRow = ({ingress, namespace, podSelector}) => {
   </div>;
 };
 
-const Details = ({obj: np}) => <React.Fragment>
-  <div className="co-m-pane__body">
-    <SectionHeading text="Namespace Overview" />
-    <ResourceSummary resource={np} podSelector={'spec.podSelector'} showNodeSelector={false} />
-  </div>
-  <div className="co-m-pane__body">
-    <SectionHeading text="Ingress Rules" />
-    <p className="co-m-pane__explanation">
-      Pods accept all traffic by default.
-      They can be isolated via Network Policies which specify a whitelist of ingress rules.
-      When a Pod is selected by a Network Policy, it will reject all traffic not explicitly allowed via a Network Policy.
-      See more details in <a target="_blank" rel="noopener noreferrer" href="https://kubernetes.io/docs/concepts/services-networking/network-policies/">Network Policies Documentation</a>.
-    </p>
-    {
-      _.isEmpty(_.get(np, 'spec.ingress[0]', [])) ?
-        `All traffic is allowed to Pods in ${np.metadata.namespace}.` :
-        <div className="co-m-table-grid co-m-table-grid--bordered">
-          <IngressHeader />
-          <div className="co-m-table-grid__body">
-            { _.map(np.spec.ingress, (ingress, i) => <IngressRow key={i} ingress={ingress} podSelector={np.spec.podSelector} namespace={np.metadata.namespace} />) }
+const Details_ = ({flags, obj: np}) => {
+  const networkPolicyDocs = flags[FLAGS.OPENSHIFT]
+    ? helpLink(HELP_TOPICS.NETWORK_POLICY_GUIDE)
+    : 'https://kubernetes.io/docs/concepts/services-networking/network-policies/';
+  return <React.Fragment>
+    <div className="co-m-pane__body">
+      <SectionHeading text="Namespace Overview" />
+      <ResourceSummary resource={np} podSelector={'spec.podSelector'} showNodeSelector={false} />
+    </div>
+    <div className="co-m-pane__body">
+      <SectionHeading text="Ingress Rules" />
+      <p className="co-m-pane__explanation">
+        Pods accept all traffic by default.
+        They can be isolated via Network Policies which specify a whitelist of ingress rules.
+        When a Pod is selected by a Network Policy, it will reject all traffic not explicitly allowed via a Network Policy.
+        See more details in <a target="_blank" rel="noopener noreferrer" href={networkPolicyDocs}>Network Policies Documentation</a>.
+      </p>
+      {
+        _.isEmpty(_.get(np, 'spec.ingress[0]', [])) ?
+          `All traffic is allowed to Pods in ${np.metadata.namespace}.` :
+          <div className="co-m-table-grid co-m-table-grid--bordered">
+            <IngressHeader />
+            <div className="co-m-table-grid__body">
+              { _.map(np.spec.ingress, (ingress, i) => <IngressRow key={i} ingress={ingress} podSelector={np.spec.podSelector} namespace={np.metadata.namespace} />) }
+            </div>
           </div>
-        </div>
-    }
-  </div>
-</React.Fragment>;
+      }
+    </div>
+  </React.Fragment>;
+};
+
+const Details = connectToFlags(FLAGS.OPENSHIFT)(Details_);
 
 export const NetworkPoliciesDetailsPage = props => <DetailsPage
   {...props}
