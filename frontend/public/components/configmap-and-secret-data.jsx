@@ -1,7 +1,8 @@
 import * as React from 'react';
 import * as PropTypes from 'prop-types';
 import * as _ from 'lodash-es';
-import { SectionHeading, CopyToClipboard } from './utils';
+
+import { CopyToClipboard, EmptyBox, SectionHeading } from './utils';
 
 export const MaskedData = () => <React.Fragment>
   <span className="sr-only">Value hidden</span>
@@ -15,7 +16,7 @@ export const ConfigMapData = ({data}) => {
     dl.push(<dt key={`${k}-k`}>{k}</dt>);
     dl.push(<dd key={`${k}-v`}><CopyToClipboard value={value} /></dd>);
   });
-  return <dl>{dl}</dl>;
+  return dl.length ? <dl>{dl}</dl> : <EmptyBox label="Data" />;
 };
 
 export class SecretData extends React.PureComponent {
@@ -51,15 +52,15 @@ export class SecretData extends React.PureComponent {
     });
     return <React.Fragment>
       <SectionHeading text="Data">
-        <button className="btn btn-link" type="button" onClick={this.toggleSecret}>
-          {
-            showSecret
+        {dl.length
+          ? <button className="btn btn-link" type="button" onClick={this.toggleSecret}>
+            {showSecret
               ? <React.Fragment><i className="fa fa-eye-slash" aria-hidden="true"></i> Hide Values</React.Fragment>
-              : <React.Fragment><i className="fa fa-eye" aria-hidden="true"></i> Reveal Values</React.Fragment>
-          }
-        </button>
+              : <React.Fragment><i className="fa fa-eye" aria-hidden="true"></i> Reveal Values</React.Fragment>}
+          </button>
+          : null}
       </SectionHeading>
-      <dl>{dl}</dl>
+      {dl.length ? <dl>{dl}</dl> : <EmptyBox label="Data" />}
     </React.Fragment>;
   }
 }
