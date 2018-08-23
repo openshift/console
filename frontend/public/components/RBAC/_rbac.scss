@@ -77,16 +77,17 @@
 
 .rbac-edit-binding {
 
-  .co-m-resource-icon {
-    margin-left: 0;
-  }
-
   .alert {
     margin-top: 20px;
   }
 
   .btn--dropdown {
-    width: 400px;
+    max-width: 400px;
+    width: 100%;
+  }
+
+  .btn-group {
+    width: 100%;
   }
 
   .form-control {
@@ -94,19 +95,11 @@
   }
   .dropdown {
     max-width: 400px;
-    .form-control {
-      width: 380px;
-    }
   }
 
-  .dropdown {
-    .caret {
-      position: absolute;
-      right: 14px;
-      top: 9px;
-    }
+  @media (min-width: $grid-float-breakpoint) {
     .dropdown-menu {
-      width: 400px;
+      min-width: 400px;
     }
   }
 

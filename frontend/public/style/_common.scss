@@ -14,12 +14,12 @@
 .co-m-pane__filter-bar {
   display: flex;
   flex-wrap: wrap;
-  margin: 10px ($grid-gutter-width / 2) 20px;
+  justify-content: space-between;
+  margin: 20px ($grid-gutter-width / 2);
   @media (min-width: $grid-float-breakpoint) {
     margin-left: $grid-gutter-width;
     margin-right: $grid-gutter-width;
     margin-top: $grid-gutter-width;
-
   }
   .btn-group,
   .co-m-primary-action,
@@ -28,6 +28,7 @@
   }
   .btn-group {
     margin-right: 10px;
+    min-width: 0; // enables truncation of selected item, if needed
   }
   &--alt {
     margin-left: 0;
@@ -42,10 +43,13 @@
 .co-m-pane__filter-bar-group {
   display: flex;
   flex: 1 1 auto;
+  flex-wrap: wrap;
+  min-width: 0;
 }
 
 .co-m-pane__filter-bar-group--filter {
   @media(min-width: $screen-xs-min) {
+    flex: 1 1 auto;
     justify-content: flex-end;
   }
 }
@@ -55,10 +59,6 @@
   justify-content: space-between;
   .btn-group {
     display: flex;
-    .btn {
-      // necessary since .btn is a grandchild of .btn-group and not a child
-      margin-left: -1px;
-    }
   }
   .co-m-pane__filter-bar-group + & {
     flex-grow: 0;
@@ -174,6 +174,23 @@
   padding-bottom: 30px;
   .input-group-btn {
     vertical-align: top;
+    @media(max-width: $grid-float-breakpoint-max) {
+      display: flex;
+      min-width: 0;
+      width: auto;
+      .co-type-selector {
+        width: 100%;
+      }
+    }
+  }
+  @media(max-width: $grid-float-breakpoint-max) {
+    .input-group-select {
+      display: block;
+      .btn--dropdown {
+        margin-bottom: 2px;
+        width: 100%;
+      }
+    }
   }
 }
 
@@ -183,6 +200,7 @@
   padding: 20px;
   margin: 30px;
 }
+
 
 // Prevent iOS phones from zooming on form inputs
 @supports (-webkit-overflow-scrolling: touch) { // Target mobile Safari
@@ -253,20 +271,25 @@ input[type=number]::-webkit-outer-spin-button {
 .co-toolbar {
   align-items: stretch;
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   margin-bottom: 5px;
 }
 
 .co-toolbar__item {
+  max-width: 100%;
   padding: 5px 0;
+  .btn-group {
+    max-width: 100%;
+  }
 }
 
 .co-toolbar__group {
   align-items: center;
   display: flex;
-  flex-grow: 1;
   flex-wrap: wrap;
   justify-content: center;
+  min-width: 0;
 
   @media (max-width: $screen-xs-max) {
     flex-direction: column;
@@ -286,8 +309,10 @@ input[type=number]::-webkit-outer-spin-button {
 
 .co-toolbar__group--right {
   justify-content: flex-end;
-  .co-toolbar__item {
-    padding-left: 15px;
+  @media (min-width: $screen-xs-min) {
+    .co-toolbar__item {
+      padding-left: 15px;
+    }
   }
   @media (max-width: $screen-xs-max) {
     align-items: flex-end;

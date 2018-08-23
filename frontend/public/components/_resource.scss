@@ -3,6 +3,7 @@ $height: 18px;
 .co-m-resource-icon {
   display: inline-block;
   font-size: $font-size-base - 1;
+  font-weight: normal;
   text-align: center;
   border-radius: 10px;
   height: $height;
@@ -24,6 +25,13 @@ $height: 18px;
     position: relative;
     top: 4px;
   }
+}
+
+.co-resource-icon--fixed-width {
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  width: 40px;
 }
 
 .co-m-resource-clusterrole,
