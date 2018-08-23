@@ -25,6 +25,8 @@ describe('Interacting with the environment variable editor', () => {
     const newContent = _.defaultsDeep({}, {metadata: {name: WORKLOAD_NAME, labels: {['lbl-env']: testName}}}, safeLoad(content));
     await yamlView.setContent(safeDump(newContent));
     await crudView.saveChangesBtn.click();
+    // Wait until the resource is created and the details page loads before continuing.
+    await browser.wait(until.presenceOf(crudView.actionsDropdown));
     checkLogs();
     checkErrors();
   });
