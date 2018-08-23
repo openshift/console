@@ -32,7 +32,8 @@ const ResourceListPage_ = connectToPlural((props: ResourceListPageProps) => {
   const noProjectsAvailable = !flagPending(flags.PROJECTS_AVAILABLE) && !flags.PROJECTS_AVAILABLE;
   const showGettingStarted = notProjectsListPage && isOpenShift && noProjectsAvailable;
 
-  const componentLoader = resourceListPages.get(referenceForModel(kindObj), () => Promise.resolve(DefaultPage));
+  const ref = props.match.path.indexOf('customresourcedefinitions') === -1 ? referenceForModel(kindObj) : null;
+  const componentLoader = resourceListPages.get(ref, () => Promise.resolve(DefaultPage));
 
   return <div className="co-m-list">
     {showGettingStarted && <OpenShiftGettingStarted />}
@@ -55,9 +56,10 @@ export const ResourceDetailsPage = connectToPlural((props: ResourceDetailsPagePr
     return <ErrorPage404 />;
   }
 
+  const ref = props.match.path.indexOf('customresourcedefinitions') === -1 ? referenceForModel(kindObj) : null;
   const componentLoader = props.match.params.appName
     ? () => import('./cloud-services/clusterserviceversion-resource' /* webpackChunkName: "csv-resource" */).then(m => m.ClusterServiceVersionResourcesDetailsPage)
-    : resourceDetailPages.get(referenceForModel(kindObj), () => Promise.resolve(DefaultDetailsPage));
+    : resourceDetailPages.get(ref, () => Promise.resolve(DefaultDetailsPage));
 
   return <React.Fragment>
     <Helmet>

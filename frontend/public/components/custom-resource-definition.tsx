@@ -1,8 +1,9 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
+import { Link } from 'react-router-dom';
 
 import { ColHead, List, ListHeader, ListPage } from './factory';
-import { Cog, ResourceCog, ResourceLink } from './utils';
+import { Cog, ResourceCog, ResourceIcon } from './utils';
 import { referenceForCRD } from '../module/k8s';
 
 const menuActions = [Cog.factory.ModifyLabels, Cog.factory.ModifyAnnotations, Cog.factory.Edit, Cog.factory.Delete];
@@ -25,7 +26,8 @@ const namespaced = crd => crd.spec.scope === 'Namespaced';
 const CRDRow = ({obj: crd}) => <div className="row co-resource-list__item">
   <div className="col-lg-4 col-md-4 col-sm-4 col-xs-6 co-resource-link-wrapper">
     <ResourceCog actions={menuActions} kind="CustomResourceDefinition" resource={crd} />
-    <ResourceLink kind={referenceForCRD(crd)} displayName={_.get(crd, 'spec.names.kind', crd.metadata.name)} namespace={crd.metadata.namespace} title={crd.metadata.name} />
+    <ResourceIcon kind="CustomResourceDefinition" />
+    <Link to={`/k8s/all-namespaces/customresourcedefinitions/${referenceForCRD(crd)}`}>{_.get(crd, 'spec.names.kind', crd.metadata.name)}</Link>
   </div>
   <div className="col-lg-3 col-md-4 col-sm-4 col-xs-6 co-break-word">
     { crd.spec.group }
