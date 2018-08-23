@@ -21,6 +21,13 @@
   border-top: none;
 }
 
+// Maintain uniform spacing above filter-bar and
+// allow group__body borders to connect with group__title bar
+.group__body--filter-bar {
+  margin-top: -$grid-gutter-width;
+  padding-top: $grid-gutter-width;
+}
+
 .group__documentation {
   padding-bottom: 12px;
   padding-top: 12px;

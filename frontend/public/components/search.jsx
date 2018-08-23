@@ -80,7 +80,7 @@ class SearchPage_ extends React.PureComponent {
         </Helmet>
         <NavTitle detail={true} title="Search" >
           <div className="co-search">
-            <div className="input-group">
+            <div className="input-group input-group-select">
               <div className="input-group-btn">
                 <ResourceListDropdown selected={kind} onChange={this.onSelectorChange} />
               </div>

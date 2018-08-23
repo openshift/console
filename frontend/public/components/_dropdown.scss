@@ -6,6 +6,9 @@ $color-bookmarker: #DDD;
 
 .dropdown {
   position: relative;
+  .co-m-resource-icon {
+    margin-left: 2px;
+  }
 }
 
 .dropdown__disabled {
@@ -47,6 +50,7 @@ $color-bookmarker: #DDD;
 
 .dropdown-menu {
   display: block;
+  max-width: 100%;
 
   ul {
     padding: 0;
@@ -63,6 +67,8 @@ $color-bookmarker: #DDD;
     a {
       cursor: pointer;
       flex-grow: 1;
+      white-space: normal;
+      width: 100%;
       &.next-to-bookmark {
         padding-left: 5px
       }
@@ -156,6 +162,11 @@ $color-bookmarker: #DDD;
     min-width: 250px;
   }
 
+  a {
+    white-space: nowrap;
+    width: auto;
+  }
+
   .dropdown__selected {
     background-color: inherit;
     color: inherit;
@@ -235,9 +246,30 @@ $color-bookmarker: #DDD;
   }
 }
 
+.btn--dropdown {
+  max-width: 100%;
+  .caret {
+    flex: 0 0 auto;
+    margin-left: 5px;
+  }
+}
+
+.btn--dropdown__item {
+  overflow: hidden;
+  text-align: left;
+  text-overflow: ellipsis;
+  .co-resource-link__resource-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
 .btn--dropdown__content-wrap {
-  display: flex;
   align-items: center;
+  display: flex;
+  flex: 1 1 auto;
+  justify-content: space-between;
+  min-width: 0;
 }
 
 .btn--actions {

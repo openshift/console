@@ -42,6 +42,6 @@ export type ResourceNameProps = {
 };
 /* eslint-enable no-undef */
 
-export const ResourceName: React.SFC<ResourceNameProps> = (props) => <span><ResourceIcon kind={props.kind} /> {props.name}</span>;
+export const ResourceName: React.SFC<ResourceNameProps> = (props) => <span className="co-resource-link"><ResourceIcon kind={props.kind} /> <span className="co-resource-link__resource-name">{props.name}</span></span>;
 
 ResourceName.displayName = 'ResourceName';

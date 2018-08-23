@@ -400,7 +400,7 @@ export class Dropdown extends DropdownMixin {
     }
 
     //Adding `dropDownClassName` specifically to use patternfly's context selector component, which expects `bootstrap-select` class on the dropdown. We can remove this additional property if that changes in upcoming patternfly versions.
-    return <div className={className} ref={this.dropdownElement} style={this.props.style}>
+    return <div className={classNames(className)} ref={this.dropdownElement} style={this.props.style}>
       <div className={classNames('dropdown', dropDownClassName)}>
         {
           noButton
@@ -410,8 +410,10 @@ export class Dropdown extends DropdownMixin {
             </div>
             : <button aria-haspopup="true" onClick={this.toggle} onKeyDown={this.onKeyDown} type="button" className={classNames('btn', 'btn--dropdown', 'dropdown-toggle', buttonClassName ? buttonClassName : 'btn-default')} id={this.props.id}>
               <div className="btn--dropdown__content-wrap">
-                {titlePrefix && `${titlePrefix}: `}
-                {title}&nbsp;&nbsp;<Caret />
+                <span className="btn--dropdown__item">
+                  {titlePrefix && `${titlePrefix}: `}
+                  {title}
+                </span><Caret />
               </div>
             </button>
         }

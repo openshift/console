@@ -1,20 +1,14 @@
 .co-type-selector {
-  .co-type-selector__icon-wrapper {
-    display: inline-block;
-    text-align: center;
-    width: 40px;
-  }
-
-  .dropdown .btn {
-    margin-right: -2px;
-  }
-
+  margin-right: -2px;
+  min-width: 0;
   .dropdown-menu {
-    max-height: 80vh;
+    max-height: 75vh;
+    min-width: 270px;
     overflow-x: hidden;
     overflow-y: auto;
     a {
       padding: 4px 20px 4px 6px;
+      white-space: nowrap;
     }
   }
 }

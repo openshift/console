@@ -172,7 +172,7 @@ export const FireMan_ = connect(null, {filterList: k8sActions.filterList})(
       }
 
       const {title} = this.props;
-      return <div>
+      return <React.Fragment>
         {title && <NavTitle title={title} />}
         <div className="co-m-pane__filter-bar">
           {createLink && <div className="co-m-pane__filter-bar-group">
@@ -195,7 +195,7 @@ export const FireMan_ = connect(null, {filterList: k8sActions.filterList})(
             reduxIDs: this.state.reduxIDs,
           })}
         </div>
-      </div>;
+      </React.Fragment>;
     }
   }
 );
