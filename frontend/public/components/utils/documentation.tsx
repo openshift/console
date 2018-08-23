@@ -9,11 +9,14 @@ export const openshiftHelpBase = (window as any).SERVER_FLAGS.documentationBaseU
 /* global
   HELP_TOPICS: false,
   GET_STARTED_CLI: false,
+  NETWORK_POLICY_GUIDE: false,
  */
-enum HELP_TOPICS {
+export enum HELP_TOPICS {
   GET_STARTED_CLI = 'cli_reference/get_started_cli.html',
+  NETWORK_POLICY_GUIDE = 'admin_guide/managing_networking.html#admin-guide-networking-networkpolicy',
 }
-const helpLink = (topic: HELP_TOPICS) => `${openshiftHelpBase}${topic}`;
+
+export const helpLink = (topic: HELP_TOPICS) => `${openshiftHelpBase}${topic}`;
 
 /* eslint-disable react/jsx-no-target-blank */
 export const DocumentationLinks = () => <dl className="co-documentation-links">
