@@ -6,8 +6,8 @@ import * as _ from 'lodash';
 import { Link } from 'react-router-dom';
 import { safeDump, safeLoad } from 'js-yaml';
 
-import { CatalogSourceDetails, CatalogSourceDetailsProps, CatalogSourceDetailsPage, CatalogSourceDetailsPageProps, PackageHeader, PackageHeaderProps, PackageRow, PackageRowProps, PackageList, PackageListProps, CreateSubscriptionYAML, CreateSubscriptionYAMLProps, CatalogSourcesPage, CatalogSourcePageProps, CatalogSourceList, CatalogSourceListProps, CatalogSourceHeader, CatalogSourceHeaderProps, CatalogSourceRow, CatalogSourceRowProps } from '../../../public/components/cloud-services/catalog-source';
-import { ClusterServiceVersionLogo, olmNamespace } from '../../../public/components/cloud-services';
+import { CatalogSourceDetails, CatalogSourceDetailsProps, CatalogSourceDetailsPage, CatalogSourceDetailsPageProps, PackageHeader, PackageHeaderProps, PackageRow, PackageRowProps, PackageList, PackageListProps, CreateSubscriptionYAML, CreateSubscriptionYAMLProps, CatalogSourcesPage, CatalogSourcePageProps, CatalogSourceList, CatalogSourceListProps, CatalogSourceHeader, CatalogSourceHeaderProps, CatalogSourceRow, CatalogSourceRowProps } from '../../../public/components/operator-lifecycle-manager/catalog-source';
+import { ClusterServiceVersionLogo, olmNamespace } from '../../../public/components/operator-lifecycle-manager';
 import { referenceForModel } from '../../../public/module/k8s';
 import { SubscriptionModel, CatalogSourceModel, ConfigMapModel } from '../../../public/models';
 import { ListHeader, ColHead, List, MultiListPage, ResourceRow, DetailsPage } from '../../../public/components/factory';

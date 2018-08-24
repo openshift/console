@@ -8,7 +8,7 @@ import * as _ from 'lodash-es';
 import { SubscriptionChannelModal, SubscriptionChannelModalProps, SubscriptionChannelModalState } from '../../../public/components/modals/subscription-channel-modal';
 import { ModalTitle, ModalSubmitFooter, ModalBody } from '../../../public/components/factory/modal';
 import { testSubscription } from '../../../__mocks__/k8sResourcesMocks';
-import { SubscriptionKind, Package } from '../../../public/components/cloud-services/index';
+import { SubscriptionKind, Package } from '../../../public/components/operator-lifecycle-manager/index';
 import { SubscriptionModel } from '../../../public/models';
 import { RadioInput } from '../../../public/components/radio';
 

@@ -5,7 +5,7 @@ import { shallow, ShallowWrapper } from 'enzyme';
 import * as _ from 'lodash-es';
 import { safeDump } from 'js-yaml';
 
-import { CreateCRDYAML, CreateCRDYAMLProps } from '../../../public/components/cloud-services/create-crd-yaml';
+import { CreateCRDYAML, CreateCRDYAMLProps } from '../../../public/components/operator-lifecycle-manager/create-crd-yaml';
 import { Firehose, LoadingBox } from '../../../public/components/utils';
 import { ClusterServiceVersionModel } from '../../../public/models';
 import { referenceForModel, referenceFor } from '../../../public/module/k8s';

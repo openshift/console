@@ -5,12 +5,12 @@ import { match as RouterMatch } from 'react-router-dom';
 import { shallow, ShallowWrapper } from 'enzyme';
 import * as _ from 'lodash-es';
 
-import { ClusterServiceVersionResourceList, ClusterServiceVersionResourceListProps, ClusterServiceVersionResourcesPage, ClusterServiceVersionResourcesPageProps, ClusterServiceVersionResourceHeaderProps, ClusterServiceVersionResourcesDetailsState, ClusterServiceVersionResourceRowProps, ClusterServiceVersionResourceHeader, ClusterServiceVersionResourceRow, ClusterServiceVersionResourceDetails, ClusterServiceVersionPrometheusGraph, ClusterServiceVersionResourcesDetailsPageProps, ClusterServiceVersionResourcesDetailsProps, ClusterServiceVersionResourcesDetailsPage, PrometheusQueryTypes, ClusterServiceVersionResourceLink } from '../../../public/components/cloud-services/clusterserviceversion-resource';
-import { Resources } from '../../../public/components/cloud-services/k8s-resource';
-import { ClusterServiceVersionResourceKind } from '../../../public/components/cloud-services';
-import { ClusterServiceVersionResourceStatus } from '../../../public/components/cloud-services/status-descriptors';
-import { ClusterServiceVersionResourceSpec } from '../../../public/components/cloud-services/spec-descriptors';
-import { testClusterServiceVersionResource, testResourceInstance, testClusterServiceVersion, testOwnedResourceInstance } from '../../../__mocks__/k8sResourcesMocks';
+import { ClusterServiceVersionResourceList, ClusterServiceVersionResourceListProps, ClusterServiceVersionResourcesPage, ClusterServiceVersionResourcesPageProps, ClusterServiceVersionResourceHeaderProps, ClusterServiceVersionResourcesDetailsState, ClusterServiceVersionResourceRowProps, ClusterServiceVersionResourceHeader, ClusterServiceVersionResourceRow, ClusterServiceVersionResourceDetails, ClusterServiceVersionPrometheusGraph, ClusterServiceVersionResourcesDetailsPageProps, ClusterServiceVersionResourcesDetailsProps, ClusterServiceVersionResourcesDetailsPage, PrometheusQueryTypes, ClusterServiceVersionResourceLink } from '../../../public/components/operator-lifecycle-manager/clusterserviceversion-resource';
+import { Resources } from '../../../public/components/operator-lifecycle-manager/k8s-resource';
+import { ClusterServiceVersionResourceKind } from '../../../public/components/operator-lifecycle-manager';
+import { StatusDescriptor } from '../../../public/components/operator-lifecycle-manager/descriptors/status';
+import { SpecDescriptor } from '../../../public/components/operator-lifecycle-manager/descriptors/spec';
+import { testCRD, testResourceInstance, testClusterServiceVersion, testOwnedResourceInstance } from '../../../__mocks__/k8sResourcesMocks';
 import { List, ColHead, ListHeader, DetailsPage, MultiListPage } from '../../../public/components/factory';
 import { Timestamp, LabelList, ResourceSummary, StatusBox, ResourceCog, Cog } from '../../../public/components/utils';
 import { Gauge, Scalar, Line, Bar } from '../../../public/components/graphs';
@@ -154,8 +154,8 @@ describe(ClusterServiceVersionResourceDetails.displayName, () => {
 
   beforeEach(() => {
     resourceDefinition = {
-      path: testClusterServiceVersionResource.metadata.name.split('.')[0],
-      annotations: testClusterServiceVersionResource.metadata.annotations,
+      path: testCRD.metadata.name.split('.')[0],
+      annotations: testCRD.metadata.annotations,
     };
     wrapper = shallow(<ClusterServiceVersionResourceDetails.WrappedComponent clusterServiceVersion={testClusterServiceVersion} obj={testResourceInstance} kindObj={resourceDefinition} appName={testClusterServiceVersion.metadata.name} />);
   });
@@ -180,7 +180,7 @@ describe(ClusterServiceVersionResourceDetails.displayName, () => {
     const filteredDescriptor = crd.statusDescriptors.find((sd) => sd.path === 'importantMetrics');
 
     wrapper.setState({expanded: false});
-    const statusView = wrapper.find(ClusterServiceVersionResourceStatus).filterWhere(node => node.props().statusDescriptor === filteredDescriptor);
+    const statusView = wrapper.find(StatusDescriptor).filterWhere(node => node.props().descriptor === filteredDescriptor);
 
     expect(statusView.exists()).toBe(false);
   });
@@ -205,7 +205,7 @@ describe(ClusterServiceVersionResourceDetails.displayName, () => {
   it('does not render the non-filled in status field when in expanded mode', () => {
     const crd = testClusterServiceVersion.spec.customresourcedefinitions.owned.find(c => c.name === 'testresource.testapp.coreos.com');
     const unfilledDescriptor = crd.statusDescriptors.find((sd) => sd.path === 'some-unfilled-path');
-    const statusView = wrapper.find(ClusterServiceVersionResourceStatus).filterWhere(node => node.props().statusDescriptor === unfilledDescriptor);
+    const statusView = wrapper.find(StatusDescriptor).filterWhere(node => node.props().descriptor === unfilledDescriptor);
 
     expect(statusView.exists()).toBe(false);
   });
@@ -215,7 +215,7 @@ describe(ClusterServiceVersionResourceDetails.displayName, () => {
     const unfilledDescriptor = crd.statusDescriptors.find((sd) => sd.path === 'some-unfilled-path');
 
     wrapper.setState({expanded: true});
-    const statusView = wrapper.find(ClusterServiceVersionResourceStatus).filterWhere(node => node.props().statusDescriptor === unfilledDescriptor);
+    const statusView = wrapper.find(StatusDescriptor).filterWhere(node => node.props().descriptor === unfilledDescriptor);
 
     expect(statusView.exists()).toBe(true);
   });
@@ -225,11 +225,11 @@ describe(ClusterServiceVersionResourceDetails.displayName, () => {
     clusterServiceVersion.spec.customresourcedefinitions.owned = [];
     wrapper = wrapper.setProps({clusterServiceVersion});
 
-    expect(wrapper.find(ClusterServiceVersionResourceSpec).length).toEqual(0);
+    expect(wrapper.find(SpecDescriptor).length).toEqual(0);
   });
 
   it('renders spec descriptor fields if the custom resource is `owned`', () => {
-    expect(wrapper.find(ClusterServiceVersionResourceSpec).length).toEqual(1);
+    expect(wrapper.find(SpecDescriptor).length).toEqual(1);
   });
 
   it('renders spec descriptor fields if the custom resource is `required`', () => {
@@ -238,7 +238,7 @@ describe(ClusterServiceVersionResourceDetails.displayName, () => {
     clusterServiceVersion.spec.customresourcedefinitions.owned = [];
     wrapper = wrapper.setProps({clusterServiceVersion});
 
-    expect(wrapper.find(ClusterServiceVersionResourceSpec).length).toEqual(1);
+    expect(wrapper.find(SpecDescriptor).length).toEqual(1);
   });
 });
 

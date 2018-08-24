@@ -4,11 +4,11 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { Field, reduxForm, getFormValues } from 'redux-form';
 
-import store from '../../../redux';
-import { ClusterServiceVersionResourceKind } from '../index';
-import { PromiseComponent } from '../../utils';
-import { k8sUpdate, referenceFor } from '../../../module/k8s';
-import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../../factory/modal';
+import store from '../../../../redux';
+import { ClusterServiceVersionResourceKind } from '../../index';
+import { PromiseComponent } from '../../../utils';
+import { k8sUpdate, referenceFor } from '../../../../module/k8s';
+import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../../../factory/modal';
 
 export class ResourceRequirementsModal extends PromiseComponent {
   props: ResourceRequirementsModalProps;
@@ -42,11 +42,11 @@ export class ResourceRequirementsModal extends PromiseComponent {
 }
 
 export const ResourceRequirementsModalLink: React.SFC<ResourceRequirementsModalLinkProps> = (props) => {
-  const {obj, type, path, onChange} = props;
+  const {obj, type, path} = props;
   const {cpu, memory} = _.get(obj.spec, `${path}.${type}`, {cpu: null, memory: null});
 
   const onClick = () => {
-    const modal = createModalLauncher<ResourceRequirementsModalProps>(modalProps => <ResourceRequirementsModal {...modalProps} cancel={(e) => onChange().then(() => modalProps.cancel(e))} />);
+    const modal = createModalLauncher<ResourceRequirementsModalProps>(ResourceRequirementsModal);
     const description = `Define the ${type === 'limits' ? 'resource' : 'request'} limits for this ${obj.kind} instance.`;
     const title = `${obj.kind} ${type === 'limits' ? 'Resource' : 'Request'} Limits`;
 
@@ -84,7 +84,6 @@ export type ResourceRequirementsModalLinkProps = {
   obj: ClusterServiceVersionResourceKind;
   type: 'requests' | 'limits';
   path: string;
-  onChange: () => Promise<any>;
 };
 
 ResourceRequirementsModalLink.displayName = 'ResourceRequirementsModalLink';

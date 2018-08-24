@@ -8,7 +8,7 @@ import * as _ from 'lodash-es';
 import { InstallPlanApprovalModal, InstallPlanApprovalModalProps, InstallPlanApprovalModalState } from '../../../public/components/modals/installplan-approval-modal';
 import { ModalTitle, ModalSubmitFooter, ModalBody } from '../../../public/components/factory/modal';
 import { testSubscription, testInstallPlan } from '../../../__mocks__/k8sResourcesMocks';
-import { SubscriptionKind, InstallPlanApproval } from '../../../public/components/cloud-services/index';
+import { SubscriptionKind, InstallPlanApproval } from '../../../public/components/operator-lifecycle-manager/index';
 import { SubscriptionModel, InstallPlanModel } from '../../../public/models';
 import { RadioInput } from '../../../public/components/radio';
 

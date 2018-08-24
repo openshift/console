@@ -1,5 +1,5 @@
 import { referenceFor, referenceForCRD, referenceForOwnerRef, referenceForModel, kindForReference, versionForReference } from '../../../public/module/k8s';
-import { testNamespace, testClusterServiceVersion, testClusterServiceVersionResource, testOwnedResourceInstance } from '../../../__mocks__/k8sResourcesMocks';
+import { testNamespace, testClusterServiceVersion, testCRD, testOwnedResourceInstance } from '../../../__mocks__/k8sResourcesMocks';
 import { PodModel, DeploymentModel } from '../../../public/models';
 
 describe('referenceFor', () => {
@@ -16,7 +16,7 @@ describe('referenceFor', () => {
 describe('referenceForCRD', () => {
 
   it('returns a reference for custom resource definitions', () => {
-    expect(referenceForCRD(testClusterServiceVersionResource)).toEqual('testapp.coreos.com:v1alpha1:TestResource');
+    expect(referenceForCRD(testCRD)).toEqual('testapp.coreos.com:v1alpha1:TestResource');
   });
 });
 

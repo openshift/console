@@ -4,11 +4,11 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { shallow, ShallowWrapper } from 'enzyme';
 
-import { ResourceRequirementsModal, ResourceRequirementsModalProps, ResourceRequirementsModalLink, ResourceRequirementsModalLinkProps } from '../../../../public/components/cloud-services/spec-descriptors/resource-requirements';
-import { ClusterServiceVersionResourceKind } from '../../../../public/components/cloud-services/index';
-import { testResourceInstance } from '../../../../__mocks__/k8sResourcesMocks';
-import * as modal from '../../../../public/components/factory/modal';
-import * as k8s from '../../../../public/module/k8s';
+import { ResourceRequirementsModal, ResourceRequirementsModalProps, ResourceRequirementsModalLink, ResourceRequirementsModalLinkProps } from '../../../../../public/components/operator-lifecycle-manager/descriptors/spec/resource-requirements';
+import { ClusterServiceVersionResourceKind } from '../../../../../public/components/operator-lifecycle-manager';
+import { testResourceInstance } from '../../../../../__mocks__/k8sResourcesMocks';
+import * as modal from '../../../../../public/components/factory/modal';
+import * as k8s from '../../../../../public/module/k8s';
 
 describe(ResourceRequirementsModal.name, () => {
   let wrapper: ShallowWrapper<ResourceRequirementsModalProps>;
@@ -44,12 +44,11 @@ describe(ResourceRequirementsModal.name, () => {
 describe(ResourceRequirementsModalLink.displayName, () => {
   let wrapper: ShallowWrapper<ResourceRequirementsModalLinkProps>;
   let obj: ClusterServiceVersionResourceKind;
-  const onChangeSpy = jasmine.createSpy('onChangeSpy').and.returnValue(Promise.resolve());
 
   beforeEach(() => {
     obj = _.cloneDeep(testResourceInstance);
     obj.spec.resources = {limits: {memory: '50Mi', cpu: '500m'}, requests: {memory: '50Mi', cpu: '500m'}};
-    wrapper = shallow(<ResourceRequirementsModalLink obj={obj} type="limits" path="resources" onChange={onChangeSpy} />);
+    wrapper = shallow(<ResourceRequirementsModalLink obj={obj} type="limits" path="resources" />);
   });
 
   it('renders a link with the resource requests limits', () => {
@@ -83,19 +82,5 @@ describe(ResourceRequirementsModalLink.displayName, () => {
     expect(modalSpy.calls.argsFor(0)[0].Form).toBeDefined();
     expect(modalSpy.calls.argsFor(0)[0].type).toEqual('limits');
     expect(modalSpy.calls.argsFor(0)[0].path).toEqual('resources');
-  });
-
-  it('passes function to modal which calls `onChange` when cancelled', (done) => {
-    const spy = spyOn(modal, 'createModalLauncher').and.callThrough();
-    wrapper.find('a').simulate('click');
-    const Modal = spy.calls.argsFor(0)[0];
-    const cancelSpy = jasmine.createSpy('cancelSpy');
-    const modalWrapper = shallow(<Modal cancel={cancelSpy} />);
-
-    modalWrapper.find(ResourceRequirementsModal).props().cancel().then(() => {
-      expect(onChangeSpy).toHaveBeenCalled();
-      expect(cancelSpy).toHaveBeenCalled();
-      done();
-    });
   });
 });

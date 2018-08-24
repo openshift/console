@@ -5,8 +5,8 @@ import * as _ from 'lodash';
 import { shallow, ShallowWrapper } from 'enzyme';
 import { Link } from 'react-router-dom';
 
-import { InstallPlanHeader, InstallPlanHeaderProps, InstallPlanRow, InstallPlanRowProps, InstallPlansList, InstallPlansListProps, InstallPlansPage, InstallPlansPageProps, InstallPlanDetailsPage, InstallPlanPreview, InstallPlanPreviewProps, InstallPlanPreviewState, InstallPlanDetailsPageProps, InstallPlanDetails, InstallPlanDetailsProps } from '../../../public/components/cloud-services/install-plan';
-import { InstallPlanKind, InstallPlanApproval } from '../../../public/components/cloud-services';
+import { InstallPlanHeader, InstallPlanHeaderProps, InstallPlanRow, InstallPlanRowProps, InstallPlansList, InstallPlansListProps, InstallPlansPage, InstallPlansPageProps, InstallPlanDetailsPage, InstallPlanPreview, InstallPlanPreviewProps, InstallPlanPreviewState, InstallPlanDetailsPageProps, InstallPlanDetails, InstallPlanDetailsProps } from '../../../public/components/operator-lifecycle-manager/install-plan';
+import { InstallPlanKind, InstallPlanApproval } from '../../../public/components/operator-lifecycle-manager';
 import { ListHeader, ColHead, ResourceRow, List, ListPage, DetailsPage } from '../../../public/components/factory';
 import { ResourceCog, ResourceLink, ResourceIcon, Cog, MsgBox } from '../../../public/components/utils';
 import { testInstallPlan } from '../../../__mocks__/k8sResourcesMocks';
