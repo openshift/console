@@ -125,7 +125,8 @@ export const coFetchJSON = (url, method = 'GET', options = {}) => {
       headers['Impersonate-Group'] = name;
     }
   }
-  const allOptions = _.defaultsDeep({method, headers}, options);
+  // Pass headers last to let callers to override Accept.
+  const allOptions = _.defaultsDeep({method}, options, {headers});
   return coFetch(url, allOptions).then(response => {
     if (!response.ok) {
       return response.text().then(text => {
