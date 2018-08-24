@@ -253,7 +253,7 @@ class EventStream extends SafetyFirst {
   static filterEvents (messages, {kind, category, filter, textFilter}) {
     // Don't use `fuzzy` because it results in some surprising matches in long event messages.
     // Instead perform an exact substring match on each word in the text filter.
-    const words = _.words(_.toLower(textFilter)).sort((a, b) => {
+    const words = _.uniq(_.toLower(textFilter).match(/\S+/g)).sort((a, b) => {
       // Sort the longest words first.
       return b.length - a.length;
     });
