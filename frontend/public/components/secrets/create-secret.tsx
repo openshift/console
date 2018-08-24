@@ -5,7 +5,7 @@ import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 
 import { k8sCreate, k8sUpdate, K8sResourceKind } from '../../module/k8s';
-import { ButtonBar, Firehose, history, kindObj, StatusBox, LoadingBox } from '../utils';
+import { ButtonBar, Firehose, history, kindObj, StatusBox, LoadingBox, Dropdown } from '../utils';
 import { formatNamespacedRouteForResource } from '../../ui/ui-actions';
 import { AsyncComponent } from '../utils/async';
 
@@ -69,7 +69,6 @@ const generateSecret = () => {
   const s4 = () => Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
   return s4() + s4() + s4() + s4();
 };
-
 
 // withSecretForm returns SubForm which is a Higher Order Component for all the types of secret forms.
 const withSecretForm = (SubForm) => class SecretFormComponent extends React.Component<BaseEditSecretProps_, BaseEditSecretState_> {
@@ -216,42 +215,44 @@ class ImageSecretForm extends React.Component<ImageSecretFormProps, ImageSecretF
       type: this.props.secretType,
       dataKey: getImageSecretKey(this.props.secretType),
       stringData: parsedData,
-      uploadConfig: 'false',
+      authType: 'credentials',
     };
     this.onDataChanged = this.onDataChanged.bind(this);
     this.changeFormType = this.changeFormType.bind(this);
     this.onFormDisable = this.onFormDisable.bind(this);
   }
   onDataChanged (secretData) {
+    const dataKey = secretData[AUTHS_KEY] ? '.dockerconfigjson' : '.dockercfg';
     this.setState({
-      stringData: {[this.state.dataKey]: secretData}
+      stringData: {[dataKey]: secretData}
     }, () => this.props.onChange({
       stringData: _.mapValues(this.state.stringData, JSON.stringify),
-      type: getImageSecretType(this.state.dataKey),
+      type: getImageSecretType(dataKey),
     }));
   }
-  changeFormType(event) {
+  changeFormType(authType) {
     this.setState({
-      uploadConfig: event.target.value,
+      authType: authType,
     });
   }
   onFormDisable(disable) {
     this.props.onFormDisable(disable);
   }
   render () {
+    const authTypes = {
+      'credentials': 'Image Registry Credentials',
+      'config-file': 'Upload Configuration File'
+    };
     const data = _.get(this.state.stringData, this.state.dataKey);
     return <React.Fragment>
       {this.props.isCreate && <div className="form-group">
         <label className="control-label" htmlFor="secret-type">Authentication Type</label>
-        <div>
-          <select onChange={this.changeFormType} value={this.state.uploadConfig} className="form-control" id="secret-type">
-            <option value="false">Image Registry Credentials</option>
-            <option value="true">Upload Configuration File</option>
-          </select>
+        <div className="co-create-secret__dropdown">
+          <Dropdown title="Image Registry Credential" items={authTypes} id="dropdown-selectbox" onChange={this.changeFormType} />
         </div>
       </div>
       }
-      { this.state.uploadConfig === 'false'
+      { this.state.authType === 'credentials'
         ? <CreateConfigSubform onChange={this.onDataChanged} stringData={data} />
         : <UploadConfigSubform onChange={this.onDataChanged} stringData={data} onDisable={this.onFormDisable} />
       }
@@ -265,6 +266,7 @@ export type ConfigEntryFormState = {
   password: string,
   email: string,
   auth: string,
+  uid: string,
 };
 
 export type ConfigEntryFormProps = {
@@ -282,6 +284,7 @@ class ConfigEntryForm extends React.Component<ConfigEntryFormProps, ConfigEntryF
       password: _.get(this.props.entry, 'password'),
       email: _.get(this.props.entry, 'email'),
       auth: _.get(this.props.entry, 'auth'),
+      uid: _.get(this.props.entry, 'uid'),
     };
     this.changeData = this.changeData.bind(this);
   }
@@ -359,7 +362,8 @@ export type CreateConfigSubformState = {
     username: string,
     password: string,
     email: string,
-    auth: string
+    auth: string,
+    uid: string,
   }[],
 };
 
@@ -368,7 +372,7 @@ class CreateConfigSubform extends React.Component<CreateConfigSubformProps, Crea
     super(props);
     this.state = {
       // If user creates a new image secret by filling out the form a 'kubernetes.io/dockerconfigjson' secret will be created.
-      isDockerconfigjson: _.isEmpty(this.props.stringData) || Object.keys(this.props.stringData)[0] === AUTHS_KEY,
+      isDockerconfigjson: _.isEmpty(this.props.stringData) || !!this.props.stringData[AUTHS_KEY],
       secretEntriesArray: this.imageSecretObjectToArray(this.props.stringData[AUTHS_KEY] || this.props.stringData),
       hasDuplicate: false,
     };
@@ -381,6 +385,7 @@ class CreateConfigSubform extends React.Component<CreateConfigSubformProps, Crea
       password: '',
       email: '',
       auth: '',
+      uid: _.uniqueId(),
     };
   }
   imageSecretObjectToArray(imageSecretObject) {
@@ -398,6 +403,7 @@ class CreateConfigSubform extends React.Component<CreateConfigSubformProps, Crea
         password: _.get(v, 'password', parsedAuth[1]),
         email: _.get(v, 'email', ''),
         auth: _.get(v, 'auth', ''),
+        uid: _.get(v, 'uid', _.uniqueId()),
       });
     });
     return imageSecretArray;
@@ -419,22 +425,51 @@ class CreateConfigSubform extends React.Component<CreateConfigSubformProps, Crea
   checkEntryAddressForDuplicates(updatedData, updatedIndex) {
     return this.state.secretEntriesArray.some((entry, i) => i !== updatedIndex && _.isEqual(entry.address, updatedData.address));
   }
-  onDataChanged (updatedEntryData, entryID) {
-    const secretEntriesArray = this.state.secretEntriesArray;
-    secretEntriesArray.splice(entryID, 1, updatedEntryData);
+  propagateEntryChange(secretEntriesArray) {
+    const imageSecretObject = this.imageSecretArrayToObject(secretEntriesArray);
+    this.props.onChange(this.state.isDockerconfigjson ? {[AUTHS_KEY]: imageSecretObject} : imageSecretObject);
+  }
+  onDataChanged(updatedEntryData, entryID) {
+    const updatedSecretEntriesArray = [...this.state.secretEntriesArray];
+    updatedSecretEntriesArray.splice(entryID, 1, updatedEntryData);
     this.setState({
-      secretEntriesArray: secretEntriesArray,
+      secretEntriesArray: updatedSecretEntriesArray,
       hasDuplicate: this.checkEntryAddressForDuplicates(updatedEntryData, entryID)
     }, () => {
-      const imageSecretObject = this.imageSecretArrayToObject(this.state.secretEntriesArray);
-      this.props.onChange(this.state.isDockerconfigjson ? {[AUTHS_KEY]: imageSecretObject} : imageSecretObject);
+      this.propagateEntryChange(this.state.secretEntriesArray);
+    });
+  }
+  removeEntry(entryID){
+    const updatedSecretEntriesArray = [...this.state.secretEntriesArray];
+    updatedSecretEntriesArray.splice(entryID, 1);
+    this.setState({
+      secretEntriesArray: updatedSecretEntriesArray
+    }, () => {
+      this.propagateEntryChange(this.state.secretEntriesArray);
+    });
+  }
+  addEntry(){
+    this.setState({
+      secretEntriesArray: _.concat(this.state.secretEntriesArray, this.newImageSecretEntry())
+    }, () => {
+      this.propagateEntryChange(this.state.secretEntriesArray);
     });
   }
   render() {
-    const secretEntriesList = _.map(this.state.secretEntriesArray, (entry, index) => <ConfigEntryForm key={index} id={index} entry={entry} onChange={this.onDataChanged} />);
+    const secretEntriesList = _.map(this.state.secretEntriesArray, (entry, index) => {
+      return <div className="co-create-image-secret__form-wrapper" key={entry.uid}>
+        {_.size(this.state.secretEntriesArray) > 1 && <button className="btn btn-link co-create-secret-form__link--remove-entry" type="button" key={entry.uid} onClick={() => this.removeEntry(index)}>
+          <i className="fa fa-minus-circle" aria-hidden="true" /> Remove Credentials
+        </button>}
+        <ConfigEntryForm id={index} key={`${entry.uid}-form`} entry={entry} onChange={this.onDataChanged} />
+      </div>;
+    });
     return (
       <React.Fragment>
         {secretEntriesList}
+        <button className="btn btn-link co-create-secret-form__link--add-entry" type="button" onClick={() => this.addEntry()}>
+          <i className="fa fa-plus-circle" aria-hidden="true" /> Add Credentials
+        </button>
         { this.state.hasDuplicate && <div className="co-create-secret-warning">Updated <b>Registry Server Address</b> is duplicate. Remove it, or it will be removed upon saving.</div> }
       </React.Fragment>
     );
@@ -718,7 +753,7 @@ export type ImageSecretFormState = {
   stringData: {
     [key: string]: any
   },
-  uploadConfig: string,
+  authType: string,
   dataKey: string,
 };
 
