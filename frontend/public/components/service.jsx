@@ -35,7 +35,7 @@ const ServiceRow = ({obj: s}) => <ResourceRow obj={s}>
     <LabelList kind="Service" labels={s.metadata.labels} />
   </div>
   <div className="col-lg-2 col-md-3 hidden-sm hidden-xs">
-    <Selector selector={s.spec.selector} />
+    <Selector selector={s.spec.selector} namespace={s.metadata.namespace} />
   </div>
   <div className="col-lg-2 hidden-md hidden-sm hidden-xs">
     <ServiceIP s={s} />
