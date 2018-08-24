@@ -66,6 +66,11 @@ export const navFactory = {
     href: 'serviceclasses',
     name: 'Service Classes',
     component: component,
+  }),
+  clusterServicePlans: component => ({
+    href: 'serviceplans',
+    name: 'Service Plans',
+    component: component,
   })
 };
 
