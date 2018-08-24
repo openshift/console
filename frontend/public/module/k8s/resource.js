@@ -100,8 +100,7 @@ export const k8sList = (kind, params={}, raw=false, options = {}) => {
 };
 
 export const k8sListPartialMetadata = (kind, params = {}, raw = false) => {
-  // FIXME: Use v1beta1 in kube 1.10
-  return k8sList(kind, params, raw, {headers: {Accept: 'application/json;as=PartialObjectMetadataList;v=v1alpha1;g=meta.k8s.io,application/json'}});
+  return k8sList(kind, params, raw, {headers: {Accept: 'application/json;as=PartialObjectMetadataList;v=v1beta1;g=meta.k8s.io,application/json'}});
 };
 
 export const k8sWatch = (kind, query = {}, wsOptions = {}) => {
