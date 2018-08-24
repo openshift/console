@@ -1,5 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
+import { Link } from 'react-router-dom';
 import { CSSTransition } from 'react-transition-group';
 import { Helmet } from 'react-helmet';
 import * as classNames from 'classnames';
@@ -8,10 +9,10 @@ import { AutoSizer, List as VirtualList, WindowScroller } from 'react-virtualize
 
 import { namespaceProptype } from '../propTypes';
 import { watchURL } from '../module/k8s';
-import { EventModel } from '../models';
+import { EventModel, NodeModel } from '../models';
 import { SafetyFirst } from './safety-first';
 import { TextFilter } from './factory';
-import { Dropdown, NodeLink, ResourceLink, Box, Loading, NavTitle, Timestamp, TogglePlay, pluralize } from './utils';
+import { Dropdown, ResourceLink, Box, Loading, NavTitle, Timestamp, TogglePlay, pluralize, resourcePathFromModel } from './utils';
 import { WSFactory } from '../module/ws-factory';
 import { ResourceListDropdown } from './resource-dropdown';
 import { connectToFlags, FLAGS, flagPending } from '../features';
@@ -34,9 +35,9 @@ const kindFilter = (kind, {involvedObject}) => {
   return kind === 'all' || involvedObject.kind === kind;
 };
 
-class Inner extends React.PureComponent {
+const Inner = connectToFlags(FLAGS.CAN_LIST_NODE)(class Inner extends React.PureComponent {
   render () {
-    const {klass, status, tooltipMsg, obj, lastTimestamp, firstTimestamp, message, source, count} = this.props;
+    const {klass, status, tooltipMsg, obj, lastTimestamp, firstTimestamp, message, source, count, flags} = this.props;
 
     return <div className={`${klass} slide-${status}`}>
       <div className="co-sysevent__icon-box">
@@ -58,9 +59,10 @@ class Inner extends React.PureComponent {
           <div className="co-sysevent__details">
             <small className="co-sysevent__source">
               Generated from <span>{source.component}</span>
-              {source.component === 'kubelet' &&
-                <span> on <NodeLink name={source.host} /></span>
-              }
+              {source.component === 'kubelet' && <span> on {flags[FLAGS.CAN_LIST_NODE]
+                ? <Link to={resourcePathFromModel(NodeModel, source.host)}>{source.host}</Link>
+                : <React.Fragment>{source.host}</React.Fragment>}
+              </span>}
             </small>
             {count > 1 && <small className="co-sysevent__count text-secondary">
               {count} times in the last <Timestamp timestamp={firstTimestamp} simple={true} omitSuffix={true} />
@@ -74,7 +76,7 @@ class Inner extends React.PureComponent {
       </div>
     </div>;
   }
-}
+});
 
 // Keep track of seen events so we only animate new ones.
 const seen = new Set();
