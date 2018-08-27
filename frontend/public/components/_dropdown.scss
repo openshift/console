@@ -40,6 +40,16 @@ $color-bookmarker: #DDD;
   padding: 5px 10px 10px;
 }
 
+.dropdown-menu--text-wrap {
+  max-width: 100%;
+  li a {
+    min-width: 0;
+    overflow-wrap: break-word;
+    white-space: normal;
+    word-wrap: break-word;
+  }
+}
+
 .dropdown--text-filter {
   float: none !important;
 }
@@ -50,7 +60,6 @@ $color-bookmarker: #DDD;
 
 .dropdown-menu {
   display: block;
-  max-width: 100%;
 
   ul {
     padding: 0;
@@ -67,7 +76,6 @@ $color-bookmarker: #DDD;
     a {
       cursor: pointer;
       flex-grow: 1;
-      white-space: normal;
       width: 100%;
       &.next-to-bookmark {
         padding-left: 5px
