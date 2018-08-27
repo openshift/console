@@ -251,7 +251,7 @@ func main() {
 
 		srv.K8sProxyConfig = &proxy.Config{
 			TLSClientConfig: tlsConfig,
-			HeaderBlacklist: []string{"Cookie"},
+			HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
 			Endpoint:        k8sEndpoint,
 		}
 
@@ -270,12 +270,12 @@ func main() {
 			monitoringProxyTLSConfig := &tls.Config{RootCAs: monitoringProxyRootCAs}
 			srv.PrometheusProxyConfig = &proxy.Config{
 				TLSClientConfig: monitoringProxyTLSConfig,
-				HeaderBlacklist: []string{"Cookie"},
+				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
 				Endpoint:        &url.URL{Scheme: "https", Host: openshiftPrometheusHost, Path: "/api"},
 			}
 			srv.AlertManagerProxyConfig = &proxy.Config{
 				TLSClientConfig: monitoringProxyTLSConfig,
-				HeaderBlacklist: []string{"Cookie"},
+				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
 				Endpoint:        &url.URL{Scheme: "https", Host: openshiftAlertManagerHost, Path: "/api"},
 			}
 		} else if !os.IsNotExist(err) {
@@ -290,7 +290,7 @@ func main() {
 			TLSClientConfig: &tls.Config{
 				InsecureSkipVerify: *fK8sModeOffClusterSkipVerifyTLS,
 			},
-			HeaderBlacklist: []string{"Cookie"},
+			HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
 			Endpoint:        k8sEndpoint,
 		}
 	default:

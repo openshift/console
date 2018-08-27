@@ -27,27 +27,16 @@ func authMiddlewareWithUser(a *auth.Authenticator, handlerFunc func(user *auth.U
 
 		r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
 
-		safe := false
-		switch r.Method {
-		case
-			"GET",
-			"HEAD",
-			"OPTIONS",
-			"TRACE":
-			safe = true
+		if err := a.VerifySourceOrigin(r); err != nil {
+			plog.Infof("invalid source origin: %v", err)
+			w.WriteHeader(http.StatusForbidden)
+			return
 		}
 
-		if !safe {
-			if err := a.VerifyReferer(r); err != nil {
-				plog.Infof("Invalid referer %v", err)
-				w.WriteHeader(http.StatusForbidden)
-				return
-			}
-			if err := a.VerifyCSRFToken(r); err != nil {
-				plog.Infof("Invalid CSRFToken %v", err)
-				w.WriteHeader(http.StatusForbidden)
-				return
-			}
+		if err := a.VerifyCSRFToken(r); err != nil {
+			plog.Infof("invalid CSRFToken: %v", err)
+			w.WriteHeader(http.StatusForbidden)
+			return
 		}
 
 		handlerFunc(user, w, r)
