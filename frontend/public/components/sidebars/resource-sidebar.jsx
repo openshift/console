@@ -58,7 +58,7 @@ export const SampleYaml = ({sample, loadSampleYaml, downloadSampleYaml}) => {
 
 export const ResourceSidebar = props => {
   const {kindObj, height} = props;
-  if (!kindObj) {
+  if (!kindObj || !props.isCreateMode) {
     return null;
   }
 
