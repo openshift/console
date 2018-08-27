@@ -1,16 +1,17 @@
 /* eslint-disable no-undef */
 
 import * as React from 'react';
+import * as _ from 'lodash-es';
 import { Link } from 'react-router-dom';
+import * as classNames from 'classnames';
 
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
-import { SectionHeading, detailsPage, navFactory, ResourceSummary, resourcePathFromModel } from './utils';
+import { SectionHeading, detailsPage, navFactory, ResourceSummary, resourcePathFromModel, ResourceLink } from './utils';
 import { viewYamlComponent } from './utils/vertnav';
-import * as classNames from 'classnames';
 import { ClusterServiceClassModel } from '../models';
 // eslint-disable-next-line no-unused-vars
 import { K8sResourceKind, K8sResourceKindReference, serviceClassDisplayName } from '../module/k8s';
-import * as _ from 'lodash-es';
+import { ClusterServicePlanPage } from './cluster-service-plan';
 
 const ClusterServiceClassReference: K8sResourceKindReference = 'ClusterServiceClass';
 
@@ -45,8 +46,8 @@ const ClusterServiceClassListRow: React.SFC<ClusterServiceClassRowProps> = ({obj
     <div className="col-sm-3 hidden-xs">
       {serviceClass.spec.externalName}
     </div>
-    <div className="col-sm-3 hidden-xs">
-      {serviceClass.spec.clusterServiceBrokerName}
+    <div className="col-sm-3 hidden-xs co-break-word">
+      <ResourceLink kind="ClusterServiceBroker" name={serviceClass.spec.clusterServiceBrokerName} />
     </div>
   </ResourceRow>;
 };
@@ -92,6 +93,10 @@ const ClusterServiceClassDetails: React.SFC<ClusterServiceClassDetailsProps> = (
           <dt>Tags</dt>
           <dd>{_.isEmpty(tags) ? '-' : tags.join(', ')}</dd>
         </ResourceSummary>
+        {serviceClass.status.removedFromBrokerCatalog && <React.Fragment>
+          <dt>Removed From Catalog</dt>
+          <dd>{serviceClass.status.removedFromBrokerCatalog}</dd>
+        </React.Fragment>}
       </div>
     </div>
   </div>;
@@ -100,7 +105,10 @@ const ClusterServiceClassDetails: React.SFC<ClusterServiceClassDetailsProps> = (
 export const ClusterServiceClassDetailsPage: React.SFC<ClusterServiceClassDetailsPageProps> = props => <DetailsPage
   {...props}
   kind={ClusterServiceClassReference}
-  pages={[navFactory.details(detailsPage(ClusterServiceClassDetails)), navFactory.editYaml(viewYamlComponent)]}
+  pages={[navFactory.details(detailsPage(ClusterServiceClassDetails)),
+    navFactory.editYaml(viewYamlComponent),
+    navFactory.clusterServicePlans(({obj}) => <ClusterServicePlanPage showTitle={false}
+      fieldSelector={`spec.clusterServiceClassRef.name=${obj.metadata.name}`} />)]}
 />;
 export const ClusterServiceClassList: React.SFC = props => <List {...props} Header={ClusterServiceClassHeader} Row={ClusterServiceClassListRow} defaultSortFunc="serviceClassDisplayName" />;
 
