@@ -27,6 +27,7 @@ import (
 const (
 	CSRFCookieName    = "csrf-token"
 	CSRFHeader        = "X-CSRFToken"
+	CSRFQueryParam    = "x-csrf-token"
 	stateCookieName   = "state-token"
 	errorOAuth        = "oauth_error"
 	errorLoginState   = "login_state_error"
@@ -356,13 +357,24 @@ func (a *Authenticator) redirectAuthError(w http.ResponseWriter, authErr string,
 	w.WriteHeader(http.StatusSeeOther)
 }
 
-func (a *Authenticator) VerifyReferer(r *http.Request) (err error) {
-	referer := r.Referer()
-	if len(referer) == 0 {
-		return fmt.Errorf("No referer!")
+func (a *Authenticator) getSourceOrigin(r *http.Request) string {
+	origin := r.Header.Get("Origin")
+	if len(origin) != 0 {
+		return origin
 	}
 
-	u, err := url.Parse(referer)
+	return r.Referer()
+}
+
+// VerifySourceOrigin checks that the Origin request header, if present, matches the target origin. Otherwise, it checks the Referer request header.
+// https://www.owasp.org/index.php/Cross-Site_Request_Forgery_(CSRF)_Prevention_Cheat_Sheet#Identifying_Source_Origin
+func (a *Authenticator) VerifySourceOrigin(r *http.Request) (err error) {
+	source := a.getSourceOrigin(r)
+	if len(source) == 0 {
+		return fmt.Errorf("no Origin or Referer header in request")
+	}
+
+	u, err := url.Parse(source)
 	if err != nil {
 		return err
 	}
@@ -370,10 +382,11 @@ func (a *Authenticator) VerifyReferer(r *http.Request) (err error) {
 	isValid := a.refererURL.Hostname() == u.Hostname() &&
 		a.refererURL.Port() == u.Port() &&
 		a.refererURL.Scheme == u.Scheme &&
-		strings.HasPrefix(u.Path, a.refererURL.Path)
+		// The Origin header does not have a path
+		(u.Path == "" || strings.HasPrefix(u.Path, a.refererURL.Path))
 
 	if !isValid {
-		return fmt.Errorf("invalid referer: %v expected `%v`", referer, a.refererURL)
+		return fmt.Errorf("invalid Origin or Referer: %v expected `%v`", source, a.refererURL)
 	}
 	return nil
 }
@@ -392,6 +405,11 @@ func (a *Authenticator) SetCSRFCookie(path string, w *http.ResponseWriter) {
 
 func (a *Authenticator) VerifyCSRFToken(r *http.Request) (err error) {
 	CSRFToken := r.Header.Get(CSRFHeader)
+	if CSRFToken == "" {
+		// Fallback to a query parameter, which is needed for websockets
+		CSRFToken = r.URL.Query().Get(CSRFQueryParam)
+	}
+
 	CRSCookie, err := r.Cookie(CSRFCookieName)
 	if err != nil {
 		return fmt.Errorf("No CSRF Cookie!")

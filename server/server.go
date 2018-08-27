@@ -61,7 +61,6 @@ type jsGlobals struct {
 	Branding             string `json:"branding"`
 	DocumentationBaseURL string `json:"documentationBaseURL"`
 	ClusterName          string `json:"clusterName"`
-	CSRFToken            string `json:"CSRFToken"`
 	GoogleTagManagerID   string `json:"googleTagManagerID"`
 	LoadTestFactor       int    `json:"loadTestFactor"`
 }

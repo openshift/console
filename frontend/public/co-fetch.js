@@ -84,16 +84,14 @@ export class TimeoutError extends Error {
 }
 
 const cookiePrefix = 'csrf-token=';
-const getCSRFToken = () => document && document.cookie && document.cookie.split(';')
+export const getCSRFToken = () => document && document.cookie && document.cookie.split(';')
   .map(c => _.trim(c))
   .filter(c => c.startsWith(cookiePrefix))
   .map(c => c.slice(cookiePrefix.length)).pop();
 
 export const coFetch = (url, options = {}, timeout=20000) => {
   const allOptions = _.defaultsDeep({}, initDefaults, options);
-  if (allOptions.method !== 'GET') {
-    allOptions.headers['X-CSRFToken'] = getCSRFToken();
-  }
+  allOptions.headers['X-CSRFToken'] = getCSRFToken();
 
   // If the URL being requested is absolute (and therefore, not a local request),
   // remove the authorization header to prevent credentials from leaking.

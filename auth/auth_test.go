@@ -228,7 +228,7 @@ func testReferer(t *testing.T, referer string, accept bool) {
 		r.Header.Set("Referer", referer)
 	}
 
-	err = a.VerifyReferer(r)
+	err = a.VerifySourceOrigin(r)
 
 	if err != nil && accept {
 		t.Errorf("Unexpected error for referer `%v`:\n%v", referer, err)
