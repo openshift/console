@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-const tectonicSessionCookieName = "tectonic-session-token"
+const openshiftSessionCookieName = "openshift-session-token"
 
 type oldSession struct {
 	token string

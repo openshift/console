@@ -71,7 +71,7 @@ func (o *oidcAuth) login(w http.ResponseWriter, token *oauth2.Token) (*loginStat
 	}
 
 	cookie := http.Cookie{
-		Name:     tectonicSessionCookieName,
+		Name:     openshiftSessionCookieName,
 		Value:    ls.sessionToken,
 		MaxAge:   maxAge(ls.exp, time.Now()),
 		HttpOnly: true,
@@ -91,7 +91,7 @@ func (o *oidcAuth) logout(w http.ResponseWriter, r *http.Request) {
 	}
 	// Delete session cookie
 	cookie := http.Cookie{
-		Name:     tectonicSessionCookieName,
+		Name:     openshiftSessionCookieName,
 		Value:    "",
 		MaxAge:   0,
 		HttpOnly: true,
@@ -103,7 +103,7 @@ func (o *oidcAuth) logout(w http.ResponseWriter, r *http.Request) {
 }
 
 func (o *oidcAuth) getLoginState(r *http.Request) (*loginState, error) {
-	sessionCookie, err := r.Cookie(tectonicSessionCookieName)
+	sessionCookie, err := r.Cookie(openshiftSessionCookieName)
 	if err != nil {
 		return nil, err
 	}
