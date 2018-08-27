@@ -108,6 +108,7 @@ const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = props => {
   };
 
   return <Dropdown
+    menuClassName="dropdown-menu--text-wrap"
     className={classNames('co-type-selector', className)}
     items={allItems}
     title={allItems[selectedKey]}

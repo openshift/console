@@ -530,6 +530,7 @@ export class ContainerDropdown extends React.PureComponent {
     const title = _.get(dropdownItems, currentKey) || containerLabel(firstContainer);
     return <Dropdown
       className="btn-group"
+      menuClassName="dropdown-menu--text-wrap"
       headerBefore={headerBefore}
       items={dropdownItems}
       spacerBefore={spacerBefore}

@@ -82,7 +82,7 @@ const NameKeyDropdownPair = ({name, key, configMaps, secrets, onChange, kind, na
   const items = _.assign({}, cmItems, secretItems);
   return <React.Fragment>
     <Dropdown
-      menuClassName="value-from__menu"
+      menuClassName="value-from__menu dropdown-menu--text-wrap"
       className="value-from"
       autocompleteFilter={nameAutocompleteFilter}
       autocompletePlaceholder={placeholderString}
@@ -100,7 +100,7 @@ const NameKeyDropdownPair = ({name, key, configMaps, secrets, onChange, kind, na
       }}
     />
     <Dropdown
-      menuClassName="value-from__menu"
+      menuClassName="value-from__menu dropdown-menu--text-wrap"
       className="value-from"
       autocompleteFilter={keyAutocompleteFilter}
       autocompletePlaceholder="Key"

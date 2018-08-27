@@ -259,8 +259,16 @@ class ListDropdown_ extends React.Component {
 
     const Component = fixed
       ? items[selectedKey]
-      : <Dropdown autocompleteFilter={this.autocompleteFilter} autocompletePlaceholder={placeholder} items={items} sortedItemKeys={sortedItems}
-        selectedKey={selectedKey} title={this.state.title} onChange={this.onChange} id={id} />;
+      : <Dropdown
+        autocompleteFilter={this.autocompleteFilter}
+        autocompletePlaceholder={placeholder}
+        items={items}
+        sortedItemKeys={sortedItems}
+        selectedKey={selectedKey}
+        title={this.state.title}
+        onChange={this.onChange}
+        id={id}
+        menuClassName="dropdown-menu--text-wrap" />;
 
     return <div>
       { Component }
