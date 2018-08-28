@@ -54,3 +54,19 @@ export const enum NameValueEditorPair {
   Value,
   Index
 }
+
+export const enum EnvFromPair {
+  Prefix = 0,
+  Resource,
+  Index
+}
+
+/**
+ * The environment editor manages two types of env variables env and envFrom. This const distinguishes the two.
+ */
+export const enum EnvType {
+  ENV = 0,
+  ENV_FROM = 1
+}
+
+

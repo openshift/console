@@ -1,3 +1,4 @@
 export const DRAGGABLE_TYPE = {
-  ROW: 'row',
+  ENV_ROW: 'env_row',
+  ENV_FROM_ROW: 'env_from_row'
 };

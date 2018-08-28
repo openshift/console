@@ -4,7 +4,7 @@ import * as PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import { k8sPatch, k8sGet, referenceFor } from '../module/k8s';
-import { PromiseComponent, NameValueEditorPair, LoadingBox, AsyncComponent, ResourceIcon } from './utils';
+import { PromiseComponent, NameValueEditorPair, EnvType, EnvFromPair, LoadingBox, AsyncComponent, ResourceIcon } from './utils';
 import { ConfigMapModel, SecretModel } from '../models';
 
 /**
@@ -12,25 +12,48 @@ import { ConfigMapModel, SecretModel } from '../models';
  * vendor footprint size.
  */
 const NameValueEditorComponent = (props) => <AsyncComponent loader={() => import('./utils/name-value-editor.jsx').then(c => c.NameValueEditor)} {...props} />;
+const EnvFromEditorComponent = (props) => <AsyncComponent loader={() => import('./utils/name-value-editor.jsx').then(c => c.EnvFromEditor)} {...props} />;
 
 /**
  * Set up initial value for the environment vars state. Use this in constructor or cancelChanges.
+ *
+ * Our return value here is an object in the form of:
+ * {
+ *   env: [[envname, value, id],[...]]
+ *   envFrom: [[envFromprefix, resourceObject, id], [...]]
+ * }
+ *
  *
  * @param initialPairObjects
  * @returns {*}
  * @private
  */
 const getPairsFromObject = (element) => {
-  if (_.isUndefined(element.env)) {
-    return [['', '', 0]];
+  let returnedPairs = {};
+  if (_.isNil(element.env)) {
+    returnedPairs.env = [['', '', 0]];
+  } else {
+    returnedPairs.env = _.map(element.env, (leafNode, i) => {
+      if (!_.has(leafNode, 'value') && !_.has(leafNode, 'valueFrom')) {
+        leafNode.value = '';
+      }
+      leafNode.ID = i;
+      return Object.values(leafNode);
+    });
   }
-  return _.map(element.env, (leafNode, i) => {
-    if (!_.has(leafNode, 'value') && !_.has(leafNode, 'valueFrom')) {
-      leafNode.value = '';
-    }
-    leafNode.ID = i;
-    return Object.values(leafNode);
-  });
+  if (_.isNil(element.envFrom)) {
+    const configMapSecretRef = {name: '', key: ''};
+    returnedPairs.envFrom = [['', {configMapSecretRef}, 0]];
+  } else {
+    returnedPairs.envFrom = _.map(element.envFrom, (leafNode, i) => {
+      if (!_.has(leafNode, 'prefix')) {
+        leafNode.prefix = '';
+      }
+      leafNode.ID = i;
+      return [leafNode.prefix, _.pick(leafNode, ['configMapRef', 'secretRef']), leafNode.ID];
+    });
+  }
+  return returnedPairs;
 };
 
 /**
@@ -39,13 +62,16 @@ const getPairsFromObject = (element) => {
  * @param initialPairObjects
  * @returns {Array}
  */
-export const envVarsToArray = (initialPairObjects) => {
-  if (_.isArray(initialPairObjects)) {
-    return _.map(initialPairObjects, (element) => {
-      return getPairsFromObject(element);
+const envVarsToArray = (initialPairObjects) => {
+  const cpOfInitialPairs = _.cloneDeep(initialPairObjects);
+  if (_.isArray(cpOfInitialPairs)) {
+    return _.map(cpOfInitialPairs, (element) => {
+      const { env, envFrom } = getPairsFromObject(element);
+      return [env, envFrom];
     });
   }
-  return [getPairsFromObject(initialPairObjects)];
+  const { env, envFrom } = getPairsFromObject(cpOfInitialPairs);
+  return [[env, envFrom]];
 };
 
 /** @type {(state: any, props: {obj: object, rawEnvData: any, readOnly: boolean, envPath: any}) => {model: K8sKind}} */
@@ -79,7 +105,7 @@ export const EnvironmentPage = connect(stateToProps)(
 
       const {readOnly} = this.props;
       if (readOnly) {
-        const configMaps={}, secrets = {};
+        const configMaps = {}, secrets = {};
         this.setState({configMaps, secrets});
         return;
       }
@@ -89,7 +115,7 @@ export const EnvironmentPage = connect(stateToProps)(
         k8sGet(ConfigMapModel, null, envNamespace).catch((err) => {
           if (err.response.status !== 403) {
             const errorMessage = err.message || 'Could not load config maps.';
-            this.setState({ errorMessage });
+            this.setState({errorMessage});
           }
           return {
             configMaps: {}
@@ -98,7 +124,7 @@ export const EnvironmentPage = connect(stateToProps)(
         k8sGet(SecretModel, null, envNamespace).catch((err) => {
           if (err.response.status !== 403) {
             const errorMessage = err.message || 'Could not load secrets.';
-            this.setState({ errorMessage });
+            this.setState({errorMessage});
           }
           return {
             secrets: {}
@@ -107,6 +133,7 @@ export const EnvironmentPage = connect(stateToProps)(
       ])
         .then(_.spread((configMaps, secrets) => this.setState({configMaps, secrets})));
     }
+
     /**
      * Return env var pairs in name value notation, and strip out any pairs that have empty NAME values.
      *
@@ -132,15 +159,30 @@ export const EnvironmentPage = connect(stateToProps)(
     }
 
     /**
+     * Return env var pairs in envFrom (resource/prefix) notation, and strip out any pairs that have empty resource values.
+     *
+     *
+     * @param finalEnvPairs
+     * @returns {Array}
+     * @private
+     */
+    _envFromVarsToResourcePrefix(finalEnvPairs) {
+      return _.filter(finalEnvPairs, finalEnvPair => (!_.isEmpty(finalEnvPair[EnvFromPair.Resource]) && !finalEnvPair[EnvFromPair.Resource].configMapSecretRef))
+        .map(finalPairForContainer => {
+          return _.assign({'prefix': finalPairForContainer[EnvFromPair.Prefix]}, finalPairForContainer[EnvFromPair.Resource]);
+        });
+    }
+
+    /**
      * Callback for NVEditor update our state with new values
      * @param env
      * @param i
      */
-    _updateEnvVars(env, i=0) {
+    _updateEnvVars(env, i = 0, type = EnvType.ENV) {
       const {rawEnvData} = this.props;
       const {currentEnvVars} = this.state;
       const currentEnv = currentEnvVars;
-      currentEnv[i] = env.nameValuePairs;
+      currentEnv[i][type] = env.nameValuePairs;
       const modified = !_.isEqual(currentEnv, envVarsToArray(rawEnvData));
       this.setState({
         currentEnvVars: currentEnv,
@@ -179,9 +221,8 @@ export const EnvironmentPage = connect(stateToProps)(
       if (_.isEqual(incomingEnvVars, currentEnvVars)) {
         return null;
       }
-      return readOnly ? { currentEnvVars: incomingEnvVars } : { stale: true, success: null };
+      return readOnly ? {currentEnvVars: incomingEnvVars} : {stale: true, success: null};
     }
-
 
 
     /**
@@ -198,21 +239,20 @@ export const EnvironmentPage = connect(stateToProps)(
       const {currentEnvVars} = this.state;
       e.preventDefault();
 
-      const patch = currentEnvVars.map((finalPairsForContainer, i) => {
-        let op = 'add';
+      const envPatch = currentEnvVars.map((finalPairsForContainer, i) => {
+        const op = 'add';
         const path = _.isArray(rawEnvData) ? `/${envPath.join('/')}/${i}/env` : `/${envPath.join('/')}/env`;
-        if (_.isArray(rawEnvData)) {
-          if (rawEnvData[i].env) {
-            op = 'replace';
-          }
-        } else {
-          if (rawEnvData.env) {
-            op = 'replace';
-          }
-        }
-        return {path, op, value: this._envVarsToNameVal(finalPairsForContainer)};
+
+        return {path, op, value: this._envVarsToNameVal(finalPairsForContainer[EnvType.ENV])};
       });
-      const promise = k8sPatch(model, obj, patch);
+
+      const envFromPatch = currentEnvVars.map((finalPairsForContainer, i) => {
+        const op = 'add';
+        const path = _.isArray(rawEnvData) ? `/${envPath.join('/')}/${i}/envFrom` : `/${envPath.join('/')}/envFrom`;
+
+        return {path, op, value: this._envFromVarsToResourcePrefix(finalPairsForContainer[EnvType.ENV_FROM])};
+      });
+      const promise = k8sPatch(model, obj, _.concat(envPatch, envFromPatch));
       this.handlePromise(promise).then((res) => {
         const newEnvData = _.get(res, envPath);
         this.setState({
@@ -228,29 +268,47 @@ export const EnvironmentPage = connect(stateToProps)(
     render() {
       const {errorMessage, success, inProgress, currentEnvVars, stale, configMaps, secrets} = this.state;
       const {rawEnvData, readOnly, obj} = this.props;
+      const isContainerArray = _.isArray(rawEnvData);
 
       if (!configMaps || !currentEnvVars || !secrets) {
         return <LoadingBox />;
       }
       const containerVars = currentEnvVars.map((envVar, i) => {
-        const keyString = _.isArray(rawEnvData) ? rawEnvData[i].name : obj.metadata.name;
-        return <div key={keyString} className="co-m-pane__body-group">
-          { _.isArray(rawEnvData) && <h2 className="co-section-heading co-section-heading--contains-resource-icon"><ResourceIcon kind="Container" className="co-m-resource-icon--align-left co-m-resource-icon--flex-child" /> {keyString}</h2> }
-          <NameValueEditorComponent nameValueId={i} nameValuePairs={envVar} updateParentData={this.updateEnvVars} addString="Add Value" nameString="Name" readOnly={readOnly} allowSorting={true} configMaps={configMaps} secrets={secrets} />
-        </div>;
+        const keyString = isContainerArray ? rawEnvData[i].name : obj.metadata.name;
+        return <React.Fragment key={keyString}>
+          <div className="co-m-pane__body-group">
+            { isContainerArray &&
+            <h2 className="co-section-heading co-section-heading--contains-resource-icon"><ResourceIcon kind="Container" className="co-m-resource-icon--align-left co-m-resource-icon--flex-child" /> {keyString}
+            </h2>}
+            <NameValueEditorComponent nameValueId={i} nameValuePairs={envVar[EnvType.ENV]} updateParentData={this.updateEnvVars} addString="Add Value" nameString="Name" readOnly={readOnly} allowSorting={true} configMaps={configMaps} secrets={secrets} />
+          </div>
+          { isContainerArray && <div className="co-m-pane__body-group">
+            <h3 className="co-section-heading__title">Environment From</h3>
+            <EnvFromEditorComponent nameValueId={i} nameValuePairs={envVar[EnvType.ENV_FROM]} updateParentData={this.updateEnvVars} readOnly={readOnly} configMaps={configMaps} secrets={secrets} />
+          </div>}
+        </React.Fragment>;
       });
 
       return <div className="co-m-pane__body">
-        { !readOnly &&
-            <p className="co-m-pane__explanation">Define environment variables as key-value pairs to store configuration settings. You can enter text or add values from a ConfigMap or Secret. Drag and drop environment variables to change the order in which they are run. A variable can reference any other variables that come before it in the list, for example <code>FULLDOMAIN = $(SUBDOMAIN).example.com</code>.</p>
+        {!readOnly &&
+        <p className="co-m-pane__explanation">Define environment variables as key-value pairs to store configuration
+          settings. You can enter text or add values from a ConfigMap or Secret. Drag and drop environment variables to
+          change the order in which they are run. A variable can reference any other variables that come before it in
+          the list, for example <code>FULLDOMAIN = $(SUBDOMAIN).example.com</code>.</p>
         }
         {containerVars}
         <div className="co-m-pane__body-group">
           <div className="environment-buttons">
             {errorMessage && <p className="alert alert-danger"><span className="pficon pficon-error-circle-o" aria-hidden="true"></span>{errorMessage}</p>}
-            {stale && <p className="alert alert-info"><span className="pficon pficon-info" aria-hidden="true"></span>The information on this page is no longer current. Click Reload to update and lose edits, or Save Changes to overwrite.</p>}
-            {success && <p className="alert alert-success"><span className="pficon pficon-ok" aria-hidden="true"></span>{success}</p>}
-            {!readOnly && <button disabled={inProgress} type="submit" className="btn btn-primary" onClick={this.saveChanges}>Save Changes</button>}
+            {stale && <p className="alert alert-info"><span className="pficon pficon-info" aria-hidden="true"></span>The
+              information on this page is no longer current. Click Reload to update and lose edits, or Save Changes to
+              overwrite.</p>}
+            {success &&
+            <p className="alert alert-success"><span className="pficon pficon-ok" aria-hidden="true"></span>{success}
+            </p>}
+            {!readOnly &&
+            <button disabled={inProgress} type="submit" className="btn btn-primary" onClick={this.saveChanges}>Save
+              Changes</button>}
             {!readOnly && <button disabled={inProgress} type="button" className="btn btn-default" onClick={this.reload}>Reload</button>}
           </div>
         </div>

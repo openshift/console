@@ -2,8 +2,7 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
-import { SectionHeading, Cog, LabelList, ResourceCog, ResourceLink, ResourceSummary, Selector, navFactory, detailsPage } from './utils';
-import { EnvironmentPage } from './environment';
+import { SectionHeading, Cog, LabelList, ResourceCog, ResourceLink, ResourceSummary, Selector, navFactory, detailsPage, AsyncComponent } from './utils';
 
 const menuActions = [Cog.factory.EditEnvironment, ...Cog.factory.common];
 
@@ -52,6 +51,8 @@ const Details = ({obj: daemonset}) => <div className="co-m-pane__body">
     </div>
   </div>
 </div>;
+
+const EnvironmentPage = (props) => <AsyncComponent loader={() => import('./environment.jsx').then(c => c.EnvironmentPage)} {...props} />;
 
 const envPath = ['spec','template','spec','containers'];
 const environmentComponent = (props) => <EnvironmentPage

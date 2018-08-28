@@ -3,9 +3,8 @@ import * as React from 'react';
 import { ResourceEventStream } from './events';
 import { DetailsPage, List, ListPage, WorkloadListHeader, WorkloadListRow } from './factory';
 import { replicaSetMenuActions } from './replicaset';
-import { navFactory, SectionHeading, ResourceSummary, ResourcePodCount } from './utils';
+import {navFactory, SectionHeading, ResourceSummary, ResourcePodCount, AsyncComponent} from './utils';
 import { breadcrumbsForOwnerRefs } from './utils/breadcrumbs';
-import { EnvironmentPage } from './environment';
 
 const Details = ({obj: replicationController}) => <React.Fragment>
   <div className="co-m-pane__body">
@@ -20,6 +19,8 @@ const Details = ({obj: replicationController}) => <React.Fragment>
     </div>
   </div>
 </React.Fragment>;
+
+const EnvironmentPage = (props) => <AsyncComponent loader={() => import('./environment.jsx').then(c => c.EnvironmentPage)} {...props} />;
 
 const envPath = ['spec','template','spec','containers'];
 const environmentComponent = (props) => <EnvironmentPage

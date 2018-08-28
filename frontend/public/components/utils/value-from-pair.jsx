@@ -51,26 +51,28 @@ const getKeys = (keyMap) => {
   return itemKeys;
 };
 
-const NameKeyDropdownPair = ({name, key, configMaps, secrets, onChange, kind, nameTitle, placeholderString}) => {
+export const NameKeyDropdownPair = ({name, key, configMaps, secrets, onChange, kind, nameTitle, placeholderString, isKeyRef = true}) => {
   let itemKeys = {};
-  let keyRefString;
+  let refProperty;
   const cmItems = {};
   const secretItems = {};
   const nameAutocompleteFilter = (text, item) => fuzzy(text, item.props.name);
   const keyAutocompleteFilter = (text, item) => fuzzy(text, item);
   const keyTitle = _.isEmpty(key) ? <span className="text-muted">Select a key</span> : <span>{key}</span>;
+  const cmRefProperty = isKeyRef ? 'configMapKeyRef' : 'configMapRef';
+  const secretRefProperty = isKeyRef ? 'secretKeyRef' : 'secretRef';
 
   _.each(configMaps.items, (v) => {
-    cmItems[`${v.metadata.name}:configMapKeyRef`] = <ResourceName kind="ConfigMap" name={v.metadata.name} />;
+    cmItems[`${v.metadata.name}:${cmRefProperty}`] = <ResourceName kind="ConfigMap" name={v.metadata.name} />;
     if (kind === 'ConfigMap' && _.isEqual(v.metadata.name, name)) {
-      keyRefString = 'configMapKeyRef';
+      refProperty = cmRefProperty;
       itemKeys = getKeys(v.data);
     }
   });
   _.each(secrets.items, (v) => {
-    secretItems[`${v.metadata.name}:secretKeyRef`] = <ResourceName kind="Secret" name={v.metadata.name} />;
+    secretItems[`${v.metadata.name}:${secretRefProperty}`] = <ResourceName kind="Secret" name={v.metadata.name} />;
     if (kind === 'Secret' && _.isEqual(v.metadata.name, name)) {
-      keyRefString = 'secretKeyRef';
+      refProperty = secretRefProperty;
       itemKeys = getKeys(v.data);
     }
   });
@@ -95,10 +97,10 @@ const NameKeyDropdownPair = ({name, key, configMaps, secrets, onChange, kind, na
         const keyValuePair = _.split(val, ':');
         onChange({
           [keyValuePair[1]]:
-            {'name': keyValuePair[0], 'key': ''}
+            isKeyRef ? {'name': keyValuePair[0], 'key': ''} : {'name': keyValuePair[0]}
         });
       }}
-    />
+    />{isKeyRef &&
     <Dropdown
       menuClassName="value-from__menu dropdown-menu--text-wrap"
       className="value-from"
@@ -107,8 +109,8 @@ const NameKeyDropdownPair = ({name, key, configMaps, secrets, onChange, kind, na
       items={itemKeys}
       selectedKey={key}
       title={keyTitle}
-      onChange={val => onChange({[keyRefString]:{'name': name, 'key': val}})}
-    />
+      onChange={val => onChange({[refProperty]:{'name': name, 'key': val}})}
+    />}
   </React.Fragment>;
 };
 
@@ -138,6 +140,20 @@ const ConfigMapSecretKeyRef = ({data: {name, key}, configMaps, secrets, onChange
   return NameKeyDropdownPair({name, key, configMaps, secrets, onChange, kind, nameTitle, placeholderString});
 };
 
+const ConfigMapSecretRef = ({data: {name, key}, configMaps, secrets, onChange, disabled, kind}) => {
+  const placeholderString = 'Config Map or Secret';
+  const nameTitle = _.isEmpty(name) ? <span className="text-muted">Select a resource</span> : <ResourceName kind={kind} name={name} />;
+  const isKeyRef = false;
+  const nameString = _.isEmpty(name) ? '' : `${name} - ${kind}`;
+
+  if (disabled) {
+    return <div className="pairs-list__value-ro-field">
+      <input type="text" className="form-control" value={nameString} disabled placeholder="config map/secret" />
+    </div>;
+  }
+  return NameKeyDropdownPair({name, key, configMaps, secrets, onChange, kind, nameTitle, placeholderString, isKeyRef});
+};
+
 const ResourceFieldRef = ({data: {containerName, resource}}) => <React.Fragment>
   <div className="pairs-list__value-ro-field">
     <input type="text" className="form-control value-from" value={`${containerName} - Resource Field`} disabled />
@@ -164,6 +180,17 @@ const keyStringToComponent = {
   },
   resourceFieldRef: {
     component: ResourceFieldRef,
+  },
+  configMapRef: {
+    component: ConfigMapSecretRef,
+    kind: 'ConfigMap'
+  },
+  secretRef: {
+    component: ConfigMapSecretRef,
+    kind: 'Secret'
+  },
+  configMapSecretRef: {
+    component: ConfigMapSecretRef
   },
 };
 

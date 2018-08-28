@@ -1,9 +1,8 @@
 import * as React from 'react';
 
 import { DetailsPage, List, ListPage, WorkloadListHeader, WorkloadListRow } from './factory';
-import { Cog, navFactory, SectionHeading, ResourceSummary, ResourcePodCount } from './utils';
+import {Cog, navFactory, SectionHeading, ResourceSummary, ResourcePodCount, AsyncComponent} from './utils';
 import { breadcrumbsForOwnerRefs } from './utils/breadcrumbs';
-import { EnvironmentPage } from './environment';
 import { ResourceEventStream } from './events';
 
 const {ModifyCount, EditEnvironment, common} = Cog.factory;
@@ -22,6 +21,8 @@ const Details = ({obj: replicaSet}) => <React.Fragment>
     </div>
   </div>
 </React.Fragment>;
+
+const EnvironmentPage = (props) => <AsyncComponent loader={() => import('./environment.jsx').then(c => c.EnvironmentPage)} {...props} />;
 
 const envPath = ['spec','template','spec','containers'];
 const environmentComponent = (props) => <EnvironmentPage

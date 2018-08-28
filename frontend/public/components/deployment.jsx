@@ -4,9 +4,8 @@ import * as _ from 'lodash-es';
 import { DeploymentModel } from '../models';
 import { configureUpdateStrategyModal } from './modals';
 import { DetailsPage, List, ListPage, WorkloadListHeader, WorkloadListRow } from './factory';
-import { Cog, DeploymentPodCounts, SectionHeading, LoadingInline, navFactory, Overflow, pluralize, ResourceSummary } from './utils';
+import { Cog, DeploymentPodCounts, SectionHeading, LoadingInline, navFactory, Overflow, pluralize, ResourceSummary, AsyncComponent } from './utils';
 import { Conditions } from './conditions';
-import { EnvironmentPage } from './environment';
 import { ResourceEventStream } from './events';
 import { formatDuration } from './utils/datetime';
 
@@ -92,6 +91,7 @@ const DeploymentDetails = ({obj: deployment}) => {
     </div>
   </React.Fragment>;
 };
+const EnvironmentPage = (props) => <AsyncComponent loader={() => import('./environment.jsx').then(c => c.EnvironmentPage)} {...props} />;
 
 const envPath = ['spec','template','spec','containers'];
 const environmentComponent = (props) => <EnvironmentPage

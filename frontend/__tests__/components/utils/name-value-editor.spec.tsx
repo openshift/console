@@ -20,8 +20,8 @@ describe(NameValueEditor.displayName, () => {
         />
       );
 
-      expect(wrapper.html()).toContain('FOO');
-      expect(wrapper.html()).toContain('BAR');
+      expect(wrapper.html()).toContain('foo');
+      expect(wrapper.html()).toContain('bar');
     });
   });
 

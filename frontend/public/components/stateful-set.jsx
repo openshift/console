@@ -1,8 +1,7 @@
 import * as React from 'react';
 
 import { DetailsPage, List, ListPage, WorkloadListHeader, WorkloadListRow } from './factory';
-import { Cog, navFactory, SectionHeading, ResourceSummary } from './utils';
-import { EnvironmentPage } from './environment';
+import {Cog, navFactory, SectionHeading, ResourceSummary, AsyncComponent} from './utils';
 import { ResourceEventStream } from './events';
 
 const menuActions = [Cog.factory.EditEnvironment, ...Cog.factory.common];
@@ -16,6 +15,8 @@ const Details = ({obj: ss}) => <React.Fragment>
     <ResourceSummary resource={ss} showNodeSelector={false} />
   </div>
 </React.Fragment>;
+
+const EnvironmentPage = (props) => <AsyncComponent loader={() => import('./environment.jsx').then(c => c.EnvironmentPage)} {...props} />;
 
 const envPath = ['spec','template','spec','containers'];
 const environmentComponent = (props) => <EnvironmentPage
