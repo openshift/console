@@ -223,7 +223,6 @@ const namespaceDropdownStateToProps = state => {
   return { activeNamespace, canListNS };
 };
 
-
 class NamespaceDropdown_ extends React.Component {
 
   componentDidUpdate() {
@@ -243,26 +242,21 @@ class NamespaceDropdown_ extends React.Component {
     const { loaded, data } = this.props.namespace;
     const model = getModel(useProjects);
     const allNamespacesTitle = `all ${model.labelPlural.toLowerCase()}`;
-    const sortedNames = _.map(data, 'metadata.name');
-    const allNamespacesActive = (activeNamespace === ALL_NAMESPACES_KEY);
-    const title = allNamespacesActive
-      ? allNamespacesTitle
-      : activeNamespace;
-    const items = _.reduce(sortedNames, (result, name) => {
-      result[name] = name;
-      return result;
-    }, {});
-    const titleInItems = loaded && _.has(items, title);
-    if (!allNamespacesActive && !titleInItems) {
-      items[title] = title;
-      sortedNames.push(title);
-    }
-    sortedNames.sort();
+    const items = {};
     if (canListNS) {
-      // we always want ALL_NAMESPACES_KEY first!
-      sortedNames.unshift(ALL_NAMESPACES_KEY);
       items[ALL_NAMESPACES_KEY] = allNamespacesTitle;
     }
+
+    _.map(data, 'metadata.name').sort().forEach(name => items[name] = name);
+
+    let title = activeNamespace;
+    if (activeNamespace === ALL_NAMESPACES_KEY) {
+      title = allNamespacesTitle;
+    } else if (loaded && !_.has(items, title)) {
+      // If the currently active namespace is not found in the list of all namespaces, put it in anyway
+      items[title] = title;
+    }
+
     const onChange = newNamespace => dispatch(UIActions.setActiveNamespace(newNamespace));
 
     return <div className="co-namespace-selector">
@@ -272,7 +266,6 @@ class NamespaceDropdown_ extends React.Component {
         noButton
         canFavorite
         items={items}
-        sortedItemKeys={sortedNames}
         titlePrefix={model.label}
         title={title}
         onChange={onChange}

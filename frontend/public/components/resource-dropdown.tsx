@@ -104,7 +104,7 @@ const ResourceListDropdown_: React.SFC<ResourceListDropdownProps> = props => {
       return false;
     }
 
-    return fuzzy(_.toLower(text), _.toLower(model.abbr + model.kind));
+    return fuzzy(_.toLower(text), _.toLower(model.kind));
   };
 
   return <Dropdown
