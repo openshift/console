@@ -86,7 +86,7 @@ func (o *openShiftAuth) login(w http.ResponseWriter, token *oauth2.Token) (*logi
 	// only logic using the OAuth2 implicit flow.
 	// https://tools.ietf.org/html/rfc6749#section-4.2
 	cookie := http.Cookie{
-		Name:     tectonicSessionCookieName,
+		Name:     openshiftSessionCookieName,
 		Value:    ls.rawToken,
 		MaxAge:   int(expiresIn),
 		HttpOnly: true,
@@ -103,7 +103,7 @@ func (o *openShiftAuth) logout(w http.ResponseWriter, r *http.Request) {
 
 	// Delete session cookie
 	cookie := http.Cookie{
-		Name:     tectonicSessionCookieName,
+		Name:     openshiftSessionCookieName,
 		Value:    "",
 		MaxAge:   0,
 		HttpOnly: true,
@@ -118,7 +118,7 @@ func (o *openShiftAuth) authenticate(r *http.Request) (*User, error) {
 	// TODO: This doesn't do any validation of the cookie with the assumption that the
 	// API server will reject tokens it doesn't recognize. If we want to keep some backend
 	// state we should sign this cookie. If not there's not much we can do.
-	cookie, err := r.Cookie(tectonicSessionCookieName)
+	cookie, err := r.Cookie(openshiftSessionCookieName)
 	if err != nil {
 		return nil, err
 	}
