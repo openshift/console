@@ -409,7 +409,7 @@ export const MonitoringListPage = connect(filtersToProps)(class InnerMonitoringL
   }
 
   render () {
-    const {data, filters, Header, loaded, loadError, match, PageDescription, reduxID, Row, rowFilter, textFilterLabel} = this.props;
+    const {CreateButton, data, filters, Header, loaded, loadError, match, PageDescription, reduxID, Row, rowFilter, textFilterLabel} = this.props;
 
     return <React.Fragment>
       <Helmet>
@@ -433,6 +433,11 @@ export const MonitoringListPage = connect(filtersToProps)(class InnerMonitoringL
           <TextFilter defaultValue={this.defaultNameFilter} label={textFilterLabel} onChange={this.applyTextFilter} />
         </div>
       </div>
+      {CreateButton && <div className="co-m-pane__filter-bar">
+        <div className="co-m-pane__filter-bar-group">
+          <CreateButton />
+        </div>
+      </div>}
       <div className="co-m-pane__body">
         <div className="row">
           <CheckBoxes
@@ -513,6 +518,7 @@ export type AlertRulesDetailsPageProps = {
   rule: Rule;
 };
 export type ListPageProps = {
+  CreateButton: React.ComponentType<any>;
   data: Rule[] | Silence[];
   filters: {[key: string]: any};
   Header: React.ComponentType<any>;

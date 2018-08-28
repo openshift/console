@@ -45,11 +45,11 @@ const validateStatus = (response, url) => {
     throw error;
   }
 
-
   if (response.status === 403) {
     return response.json().then(json => {
       const error = new Error(json.message || 'Access denied due to cluster policy.');
       error.response = response;
+      error.json = json;
       throw error;
     });
   }
@@ -71,6 +71,7 @@ const validateStatus = (response, url) => {
     }
     const error = new Error(reason);
     error.response = response;
+    error.json = json;
     throw error;
   });
 };

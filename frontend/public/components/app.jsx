@@ -18,7 +18,7 @@ import { Masthead } from './masthead';
 import { NamespaceSelector } from './namespace';
 import { Nav } from './nav';
 import { SearchPage } from './search';
-import { SilencesPage, SilencesDetailsPage } from './silence';
+import { CreateSilence, SilencesPage, SilencesDetailsPage } from './silence';
 import { ResourceDetailsPage, ResourceListPage } from './resource-list';
 import { history, AsyncComponent, Loading } from './utils';
 import { namespacedPrefixes } from './utils/link';
@@ -200,6 +200,7 @@ class App extends React.PureComponent {
             <Route path="/monitoring/alerts/:name" exact component={AlertsDetailsPage} />
             <Route path="/monitoring/alertrules/:name" exact component={AlertRulesDetailsPage} />
             <Route path="/monitoring/silences" exact component={SilencesPage} />
+            <Route path="/monitoring/silences/new" exact component={CreateSilence} />
             <Route path="/monitoring/silences/:id" exact component={SilencesDetailsPage} />
 
             <Route path="/k8s/cluster/:plural" exact component={ResourceListPage} />
