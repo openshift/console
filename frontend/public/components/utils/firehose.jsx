@@ -149,9 +149,9 @@ export const Firehose = connect(
         });
       }
 
-      this.firehoses.forEach(({ id, query, k8sKind, isList, name, namespace }) => isList
+      this.firehoses.forEach(({ id, query, k8sKind, isList, name, namespace, poll }) => isList
         ? watchK8sList(id, query, k8sKind)
-        : watchK8sObject(id, name, namespace, query, k8sKind)
+        : watchK8sObject(id, name, namespace, query, k8sKind, poll)
       );
     }
 
