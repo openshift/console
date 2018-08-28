@@ -248,7 +248,7 @@ class ImageSecretForm extends React.Component<ImageSecretFormProps, ImageSecretF
       {this.props.isCreate && <div className="form-group">
         <label className="control-label" htmlFor="secret-type">Authentication Type</label>
         <div className="co-create-secret__dropdown">
-          <Dropdown title="Image Registry Credential" items={authTypes} id="dropdown-selectbox" onChange={this.changeFormType} />
+          <Dropdown title="Image Registry Credential" items={authTypes} dropDownClassName="dropdown--full-width" id="dropdown-selectbox" onChange={this.changeFormType} />
         </div>
       </div>
       }

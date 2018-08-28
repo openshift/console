@@ -2,7 +2,7 @@ import { $, $$, browser, by, element, ExpectedConditions as until } from 'protra
 
 const BROWSER_TIMEOUT = 15000;
 
-export const dropdown = $('.btn--dropdown__content-wrap');
+export const dropdown = $('.btn-dropdown__content-wrap');
 export const dropdownLinks = $$('.dropdown-menu a');
 export const labelFilter = $('.co-m-selector-input input');
 export const linkForType = type => element(by.partialLinkText(type));

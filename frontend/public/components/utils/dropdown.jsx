@@ -326,9 +326,9 @@ export class Dropdown extends DropdownMixin {
               {titlePrefix && `${titlePrefix}: `}
               <span className="dropdown__not-btn__title">{title}</span>&nbsp;<Caret />
             </div>
-            : <button aria-haspopup="true" onClick={this.toggle} onKeyDown={this.onKeyDown} type="button" className={classNames('btn', 'btn--dropdown', 'dropdown-toggle', buttonClassName ? buttonClassName : 'btn-default')} id={this.props.id}>
-              <div className="btn--dropdown__content-wrap">
-                <span className="btn--dropdown__item">
+            : <button aria-haspopup="true" onClick={this.toggle} onKeyDown={this.onKeyDown} type="button" className={classNames('btn', 'btn-dropdown', 'dropdown-toggle', buttonClassName ? buttonClassName : 'btn-default')} id={this.props.id}>
+              <div className="btn-dropdown__content-wrap">
+                <span className="btn-dropdown__item">
                   {titlePrefix && `${titlePrefix}: `}
                   {title}
                 </span><Caret />
