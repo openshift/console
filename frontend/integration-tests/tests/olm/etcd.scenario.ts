@@ -36,7 +36,7 @@ describe('Interacting with the etcd OCS', () => {
     await catalogView.entryRowFor('etcd').element(by.buttonText('Create Subscription')).click();
     await browser.wait(until.presenceOf($('.ace_text-input')));
     const content = await yamlView.editorContent.getText();
-    const newContent = defaultsDeep({}, {metadata: {generateName: `${testName}-etcd-`, namespace: testName, labels: {[testLabel]: testName}}, spec: {channel: 'alpha', source: 'ocs', name: 'etcd'}}, safeLoad(content));
+    const newContent = defaultsDeep({}, {metadata: {generateName: `${testName}-etcd-`, namespace: testName, labels: {[testLabel]: testName}}, spec: {channel: 'alpha', source: 'rh-operators', name: 'etcd'}}, safeLoad(content));
     await yamlView.setContent(safeDump(newContent));
     await $('#save-changes').click();
     await crudView.isLoaded();

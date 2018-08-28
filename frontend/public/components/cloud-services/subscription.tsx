@@ -190,8 +190,8 @@ export const SubscriptionDetailsPage: React.SFC<SubscriptionDetailsPageProps> = 
   const installedCSV: InstalledCSV = clusterServiceVersions => obj => clusterServiceVersions.find(csv => csv.metadata.name === _.get(obj, 'status.installedCSV'));
 
   type DetailsProps = {
-    configMaps?: ConfigMapKind[];
-    ocsConfigMap?: ConfigMapKind;
+    localConfigMaps?: ConfigMapKind[];
+    globalConfigMaps?: ConfigMapKind[];
     clusterServiceVersions?: ClusterServiceVersionKind[];
     obj: SubscriptionKind;
   };
@@ -202,17 +202,16 @@ export const SubscriptionDetailsPage: React.SFC<SubscriptionDetailsPageProps> = 
     kind={referenceForModel(SubscriptionModel)}
     name={props.match.params.name}
     pages={[
-      navFactory.details((detailsProps: DetailsProps) =>
-        <SubscriptionDetails
-          obj={detailsProps.obj}
-          pkg={pkgFor(detailsProps.configMaps.concat(!_.isEmpty(detailsProps.ocsConfigMap) ? [detailsProps.ocsConfigMap] : []))(detailsProps.obj)}
-          installedCSV={installedCSV(detailsProps.clusterServiceVersions)(detailsProps.obj)} />
-      ),
+      navFactory.details((detailsProps: DetailsProps) => <SubscriptionDetails
+        obj={detailsProps.obj}
+        pkg={pkgFor(detailsProps.localConfigMaps.concat(detailsProps.globalConfigMaps || []))(detailsProps.obj)}
+        installedCSV={installedCSV(detailsProps.clusterServiceVersions)(detailsProps.obj)}
+      />),
       navFactory.editYaml(),
     ]}
     resources={[
-      {kind: ConfigMapModel.kind, name: 'ocs', namespace: olmNamespace, isList: false, prop: 'ocsConfigMap'},
-      {kind: ConfigMapModel.kind, namespace: props.namespace, isList: true, prop: 'configMaps'},
+      {kind: ConfigMapModel.kind, namespace: olmNamespace, isList: true, prop: 'globalConfigMaps'},
+      {kind: ConfigMapModel.kind, namespace: props.namespace, isList: true, prop: 'localConfigMaps'},
       {kind: referenceForModel(ClusterServiceVersionModel), namespace: props.namespace, isList: true, prop: 'clusterServiceVersions'},
     ]}
     menuActions={Cog.factory.common} />;
