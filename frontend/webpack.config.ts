@@ -6,6 +6,7 @@ import * as path from 'path';
 import * as HtmlWebpackPlugin from 'html-webpack-plugin';
 import * as ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
 import * as MiniCssExtractPlugin from 'mini-css-extract-plugin';
+import * as PreloadWebpackPlugin from 'preload-webpack-plugin';
 
 const NODE_ENV = process.env.NODE_ENV;
 
@@ -115,6 +116,7 @@ let config: webpack.Configuration = {
       production: NODE_ENV === 'production',
       chunksSortMode: 'none',
     }),
+    new PreloadWebpackPlugin({rel: 'prefetch'}),
     extractCSS,
   ],
   devtool: 'cheap-module-source-map',
