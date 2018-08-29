@@ -212,7 +212,7 @@ export const CreateSubscriptionYAML: React.SFC<CreateSubscriptionYAMLProps> = (p
           generateName: ${pkg.packageName}-
           namespace: default
         spec:
-          source: ocs
+          source: ${createProps.ConfigMap.data.metadata.name}
           name: ${pkg.packageName}
           startingCSV: ${channel.currentCSV}
           channel: ${channel.name}

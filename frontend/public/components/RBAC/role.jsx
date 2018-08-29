@@ -127,7 +127,7 @@ const BindingRow = ({obj: binding}) => <ResourceRow obj={binding}>
 const BindingsListComponent = props => <BindingsList {...props} Header={BindingHeader} Row={BindingRow} />;
 
 export const BindingsForRolePage = (props) => {
-  const {match: {params: {name, ns}}, kind} = props;
+  const {match: {params: {name, ns}}, obj:{kind}} = props;
   let resources = [{kind: 'RoleBinding', namespaced: true}];
   if (!ns) {
     resources.push({kind: 'ClusterRoleBinding', namespaced: false, optional: true});
@@ -135,7 +135,7 @@ export const BindingsForRolePage = (props) => {
   return <MultiListPage
     canCreate={true}
     createButtonText="Create Binding"
-    createProps={{to: `/k8s/cluster/rolebindings/new?${ns ? `ns=${ns}&` : ''}rolekind=${kind}&rolename=${name}`}}
+    createProps={{to: `/k8s/${ns ? `ns/${ns}` : 'cluster'}/rolebindings/new?rolekind=${kind}&rolename=${name}`}}
     ListComponent={BindingsListComponent}
     staticFilters={[{'role-binding-roleRef': name}]}
     resources={resources}

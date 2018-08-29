@@ -276,7 +276,7 @@ describe(ClusterServiceVersionsPage.displayName, () => {
     const listPage = wrapper.find(MultiListPage).at(0);
 
     expect(listPage.props().resources).toEqual([
-      {kind: referenceForModel(ClusterServiceVersionModel), namespaced: true, prop: 'ClusterServiceVersion', selector: {matchLabels: {[appCatalogLabel]: AppCatalog.ocs}}},
+      {kind: referenceForModel(ClusterServiceVersionModel), namespaced: true, prop: 'ClusterServiceVersion', selector: {matchLabels: {[appCatalogLabel]: AppCatalog.rhOperators}}},
       {kind: 'Deployment', namespaced: true, isList: true, prop: 'Deployment'},
     ]);
     expect(listPage.props().dropdownFilters).toBeDefined();

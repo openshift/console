@@ -12,15 +12,9 @@ export { ClusterServiceVersionResourcesDetailsPage, ClusterServiceVersionResourc
 export { CatalogSourceDetailsPage, CreateSubscriptionYAML } from './catalog-source';
 export { SubscriptionsPage } from './subscription';
 
-export const catalogEntryVisibilityLabel = 'tectonic-visibility';
-export enum CatalogEntryVisibility {
-  catalogEntryVisibilityTectonicFeature = 'tectonic-feature',
-  catalogEntryVisibilityOCS = 'ocs',
-}
-
 export const appCatalogLabel = 'alm-catalog';
 export enum AppCatalog {
-  ocs = 'ocs',
+  rhOperators = 'rh-operators',
 }
 
 export enum ClusterServiceVersionPhase {
