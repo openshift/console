@@ -54,18 +54,8 @@ export class DropdownMixin extends React.PureComponent {
 
     this.setState({
       active: false,
-      selectedKey: noSelection ? undefined: selectedKey,
-      keyboardHoverKey: noSelection ? undefined: selectedKey,
+      selectedKey: selectedKey,
       title: noSelection ? title : this.props.items[selectedKey]
-    });
-  }
-
-  onArrowKey_ (selectedKey, e) {
-    e.preventDefault();
-
-    this.setState({
-      active: true,
-      selectedKey: null,
     });
   }
 
@@ -91,31 +81,15 @@ export class DropdownMixin extends React.PureComponent {
   hide (e) {
     e && e.stopPropagation();
     window.removeEventListener('click', this.listener);
-    const keyboardHoverKey = this.props.noSelection ? undefined : this.state.keyboardHoverKey;
-    this.setState({
-      active: false,
-      keyboardHoverKey: keyboardHoverKey,
-    });
+    this.setState({active: false});
   }
 }
 
 const Caret = () => <span className="caret" />;
 
 class DropDownRow extends React.PureComponent {
-  constructor(props) {
-    super(props);
-    this.link = React.createRef();
-  }
-
-  componentDidUpdate(prevProps) {
-    if (this.props.hover !== prevProps.hover && this.props.hover === true) {
-      this.link.current.scrollIntoView(false);
-    }
-  }
-
   render () {
     const {itemKey, content, onclick, onBookmark, onUnBookmark, className, selected, hover, canFavorite, onFavorite, favoriteKey} = this.props;
-
     let prefix;
     if (onUnBookmark) {
       prefix = <a href="#" className={classNames('bookmarker', {hover, focus: selected})} onClick={e => onUnBookmark(e, itemKey)}><i aria-hidden className="fa fa-minus-circle" /></a>;
@@ -130,7 +104,7 @@ class DropDownRow extends React.PureComponent {
       suffix = <a href="#" className={classNames('bookmarker', {hover, focus: selected})} onClick={e => onFavorite(e, (isFavorite ? undefined : itemKey))}><i aria-hidden className={classNames('fa fa-star', {'favorite': isFavorite})} /></a>;
     }
 
-    return <li role="option" tabIndex={(selected || hover) ? 0 : null} className={classNames(className)} key={itemKey}>
+    return <li role="option" className={classNames(className)} key={itemKey}>
       {prefix}
       <a href="#" ref={this.link} id={`${itemKey}-link`} className={classNames({'next-to-bookmark': !!prefix, hover, focus: selected})} onClick={e => onclick(itemKey, e)}>{content}</a>
       {suffix}
@@ -146,7 +120,6 @@ export class Dropdown extends DropdownMixin {
     this.onBookmark = (...args) => this.onBookmark_(...args);
     this.onFavorite = (...args) => this.onFavorite_(...args);
     this.onClick = (...args) => this.onClick_(...args);
-    this.onArrow = (...args) => this.onArrowKey_(...args);
 
     let bookmarks = props.defaultBookmarks || {};
     let favoriteKey;
@@ -199,16 +172,9 @@ export class Dropdown extends DropdownMixin {
     return `${this.props.storageKey}-bookmarks`;
   }
 
-  focusInput() {
-    this.input.focus();
-  }
-
   componentDidMount () {
     if (this.props.shortCut) {
       window.addEventListener('keydown', this.globalKeyDown);
-    }
-    if (this.state.active && this.input) {
-      this.focusInput();
     }
   }
 
@@ -236,9 +202,6 @@ export class Dropdown extends DropdownMixin {
       const position = this.state.autocompleteText && this.state.autocompleteText.length;
       this.input.setSelectionRange(position, position);
     }
-    if (this.state.active && this.input) {
-      this.focusInput();
-    }
   }
 
   applyTextFilter_(autocompleteText, items) {
@@ -252,8 +215,7 @@ export class Dropdown extends DropdownMixin {
 
   onKeyDown_ (e) {
     const { key } = e;
-
-    if (key === 'Escape' || key === 'Tab') {
+    if (key === 'Escape') {
       this.hide(e);
       return;
     }
@@ -262,53 +224,18 @@ export class Dropdown extends DropdownMixin {
       return;
     }
 
-    const { sortedItemKeys } = this.props;
-    const { items, keyboardHoverKey, selectedKey, autocompleteText, bookmarks } = this.state;
+    const { items, keyboardHoverKey } = this.state;
 
     if (key === 'Enter') {
-      if (this.state.active) {
+      if (this.state.active && items[keyboardHoverKey]) {
         this.onClick(keyboardHoverKey, e);
-        return;
       }
-
-      this.toggle(e);
       return;
     }
 
-    let keys;
-
-    if (sortedItemKeys) {
-      keys = sortedItemKeys;
-    } else {
-      keys = Object.keys(items);
-    }
+    const keys = _.keys(items);
 
     let index = _.indexOf(keys, keyboardHoverKey);
-
-    // so namespace and Events resource selector advance correctly
-    if (selectedKey && index === -1) {
-      const correctIndex = _.indexOf(keys, selectedKey);
-      index = correctIndex;
-    }
-
-    // so filtered content advances correctly
-    if (autocompleteText) {
-      keys = _.keys(items).sort();
-      index = _.indexOf(keys, keyboardHoverKey);
-    }
-
-    // so bookmarks advance correctly
-    if (bookmarks) {
-      const notBookmarked = keys.filter(k => !_.has(bookmarks, k));
-      const bookmarked = keys.filter(k => _.has(bookmarks, k));
-      keys = bookmarked.sort().concat(notBookmarked);
-      const current = selectedKey || keyboardHoverKey;
-      index = current ? _.indexOf(keys, current) : -1;
-    }
-
-    if (_.isEmpty(keys)) {
-      return;
-    }
 
     if (key === 'ArrowDown') {
       index += 1;
@@ -326,7 +253,6 @@ export class Dropdown extends DropdownMixin {
 
     const newKey = keys[index];
     this.setState({keyboardHoverKey: newKey});
-    this.onArrow(newKey, e);
     e.stopPropagation();
   }
 
@@ -364,7 +290,7 @@ export class Dropdown extends DropdownMixin {
 
   render() {
     const {active, autocompleteText, selectedKey, items, title, bookmarks, keyboardHoverKey, favoriteKey} = this.state;
-    const {autocompleteFilter, autocompletePlaceholder, noButton, className, buttonClassName, menuClassName, storageKey, canFavorite, dropDownClassName, titlePrefix, sortedItemKeys} = this.props;
+    const {autocompleteFilter, autocompletePlaceholder, noButton, className, buttonClassName, menuClassName, storageKey, canFavorite, dropDownClassName, titlePrefix} = this.props;
 
     const spacerBefore = this.props.spacerBefore || new Set();
     const headerBefore = this.props.headerBefore || {};
@@ -372,10 +298,6 @@ export class Dropdown extends DropdownMixin {
     const bookMarkRows = [];
 
     const addItem = (key, content) => {
-      if (_.isNil(content)) {
-        return;
-      }
-
       const selected = (key === selectedKey) && !this.props.noSelection;
       const hover = key === keyboardHoverKey;
       const klass = classNames({'active': selected});
@@ -393,11 +315,7 @@ export class Dropdown extends DropdownMixin {
       rows.push(<DropDownRow className={klass} key={key} itemKey={key} content={content} onBookmark={storageKey && this.onBookmark} onclick={this.onClick} selected={selected} hover={hover} />);
     };
 
-    if (sortedItemKeys) {
-      _.each(sortedItemKeys, k => addItem(k, items[k]));
-    } else {
-      _.each(items, (v, k) => addItem(k, v));
-    }
+    _.each(items, (v, k) => addItem(k, v));
 
     //Adding `dropDownClassName` specifically to use patternfly's context selector component, which expects `bootstrap-select` class on the dropdown. We can remove this additional property if that changes in upcoming patternfly versions.
     return <div className={classNames(className)} ref={this.dropdownElement} style={this.props.style}>
@@ -454,7 +372,6 @@ Dropdown.propTypes = {
   enableBookmarks: PropTypes.bool,
   headerBefore: PropTypes.objectOf(PropTypes.string),
   items: PropTypes.object.isRequired,
-  sortedItemKeys: PropTypes.array,
   menuClassName: PropTypes.string,
   noButton: PropTypes.bool,
   noSelection: PropTypes.bool,
