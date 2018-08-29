@@ -75,6 +75,7 @@
     "react-dnd-html5-backend": "^2.6.0",
     "react-dom": "16.x",
     "react-helmet": "5.x",
+    "react-jsonschema-form": "^1.0.4",
     "react-lightweight-tooltip": "1.x",
     "react-modal": "3.x",
     "react-redux": "5.x",
