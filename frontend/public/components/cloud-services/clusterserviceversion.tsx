@@ -167,7 +167,7 @@ export const ClusterServiceVersionsPage = connect(stateToProps)(
             {...this.props}
             namespace={this.props.match.params.ns}
             resources={[
-              {...csvResource, selector: {matchLabels: {[appCatalogLabel]: AppCatalog.ocs}}},
+              {...csvResource, selector: {matchLabels: {[appCatalogLabel]: AppCatalog.rhOperators}}},
               {kind: 'Deployment', namespaced: true, isList: true, prop: 'Deployment'},
               ...this.state.resourceDescriptions.map(crdDesc => ({kind: referenceForCRDDesc(crdDesc), namespaced: true, optional: true, prop: crdDesc.kind, selector: null})),
             ]}

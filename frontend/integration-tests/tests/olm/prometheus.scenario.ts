@@ -35,7 +35,7 @@ describe('Interacting with the Prometheus OCS', () => {
     await catalogView.entryRowFor('Prometheus Operator').element(by.buttonText('Create Subscription')).click();
     await browser.wait(until.presenceOf($('.ace_text-input')));
     const content = await yamlView.editorContent.getText();
-    const newContent = defaultsDeep({}, {metadata: {generateName: `${testName}-prometheus-`, namespace: testName, labels: {[testLabel]: testName}}, spec: {channel: 'alpha', source: 'ocs', name: 'prometheus'}}, safeLoad(content));
+    const newContent = defaultsDeep({}, {metadata: {generateName: `${testName}-prometheus-`, namespace: testName, labels: {[testLabel]: testName}}, spec: {channel: 'alpha', source: 'rh-operators', name: 'prometheus'}}, safeLoad(content));
     await yamlView.setContent(safeDump(newContent));
     await $('#save-changes').click();
     await crudView.isLoaded();
