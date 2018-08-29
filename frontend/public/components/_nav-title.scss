@@ -1,3 +1,16 @@
+.co-actions {
+  align-items: flex-end;
+  display: flex;
+  @media(max-width: $screen-xs){
+    flex-direction: column;
+  }
+}
+
+.co-action-buttons__btn,
+.co-actions-menu {
+  margin-left: 3px;
+}
+
 .co-m-nav-title {
   padding: $grid-gutter-width ($grid-gutter-width / 2) 0;
   @media (min-width: $grid-float-breakpoint) {

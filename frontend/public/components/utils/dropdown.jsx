@@ -396,7 +396,7 @@ export const ActionsMenu = (props) => {
     }
   };
   return <Dropdown
-    className="btn--actions"
+    className="co-actions-menu"
     menuClassName={menuClassName || 'dropdown-menu-right'}
     items={items}
     title={btnTitle}

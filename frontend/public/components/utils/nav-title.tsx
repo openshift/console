@@ -39,13 +39,18 @@ export const NavTitle = connectToModel((props: NavTitleProps) => {
   const logo = isCSV
     ? <ClusterServiceVersionLogo icon={_.get(data, 'spec.icon', [])[0]} displayName={data.spec.displayName} version={data.spec.version} provider={data.spec.provider} />
     : <div className="co-m-pane__name">{ kind && <ResourceIcon kind={kind} className="co-m-resource-icon--lg pull-left" /> } <span id="resource-title">{title}</span></div>;
+  const hasButtonActions = !_.isEmpty(buttonActions);
+  const hasMenuActions = !_.isEmpty(menuActions);
+  const showActions = (hasButtonActions || hasMenuActions) && !_.isEmpty(data) && !_.get(data, 'deletionTimestamp');
 
   return <div className={classNames('co-m-nav-title', {'co-m-nav-title--detail': detail}, {'co-m-nav-title--logo': isCSV}, {'co-m-nav-title--breadcrumbs': breadcrumbsFor && !_.isEmpty(data)})} style={style}>
     { breadcrumbsFor && !_.isEmpty(data) && <BreadCrumbs breadcrumbs={breadcrumbsFor(data)} /> }
     <h1 className={classNames('co-m-pane__heading', {'co-m-pane__heading--logo': isCSV})}>
       { logo }
-      { menuActions && !_.isEmpty(data) && !_.get(data.metadata, 'deletionTimestamp') && <ActionsMenu actions={menuActions.map(a => a(kindObj, data))} /> }
-      { buttonActions && !_.isEmpty(data) && <ActionButtons actionButtons={buttonActions.map(a => a(kindObj, data))} /> }
+      { showActions && <div className="co-actions">
+        { hasButtonActions && <ActionButtons actionButtons={buttonActions.map(a => a(kindObj, data))} /> }
+        { hasMenuActions && <ActionsMenu actions={menuActions.map(a => a(kindObj, data))} /> }
+      </div> }
     </h1>
     {props.children}
   </div>;

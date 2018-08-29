@@ -91,7 +91,7 @@ export const activeRowFilters = $$('.row-filter--box__active');
 export const statusMessageTitle = $('.cos-status-box__title');
 export const statusMessageDetail = $('.cos-status-box__detail');
 
-const actionsButton = $('.co-m-nav-title .btn--actions');
+const actionsButton = $('.co-m-nav-title .co-actions-menu');
 export const actionsDropdown = actionsButton.$('button');
 export const actionsDropdownMenu = actionsButton.$$('.dropdown-menu').first();
 
