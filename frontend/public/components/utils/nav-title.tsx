@@ -33,12 +33,13 @@ const ActionButtons: React.SFC<ActionButtonsProps> = ({actionButtons}) => <div c
 </div>;
 
 export const NavTitle = connectToModel((props: NavTitleProps) => {
-  const {kind, kindObj, detail, title, menuActions, buttonActions, obj, breadcrumbsFor, style} = props;
+  const {kind, kindObj, detail, title, menuActions, buttonActions, obj, breadcrumbsFor, titleFunc, style} = props;
   const data = _.get(obj, 'data');
   const isCSV = !_.isEmpty(data) && referenceFor(data) === referenceForModel(ClusterServiceVersionModel);
+  const resourceTitle = (titleFunc && data) ? titleFunc(data) : title;
   const logo = isCSV
     ? <ClusterServiceVersionLogo icon={_.get(data, 'spec.icon', [])[0]} displayName={data.spec.displayName} version={data.spec.version} provider={data.spec.provider} />
-    : <div className="co-m-pane__name">{ kind && <ResourceIcon kind={kind} className="co-m-resource-icon--lg pull-left" /> } <span id="resource-title">{title}</span></div>;
+    : <div className="co-m-pane__name">{ kind && <ResourceIcon kind={kind} className="co-m-resource-icon--lg pull-left" /> } <span id="resource-title">{resourceTitle}</span></div>;
   const hasButtonActions = !_.isEmpty(buttonActions);
   const hasMenuActions = !_.isEmpty(menuActions);
   const showActions = (hasButtonActions || hasMenuActions) && !_.isEmpty(data) && !_.get(data, 'deletionTimestamp');
@@ -66,6 +67,7 @@ export type NavTitleProps = {
   buttonActions?: any[];
   obj?: {data: K8sResourceKind};
   breadcrumbsFor?: (obj: K8sResourceKind) => {name: string, path: string}[];
+  titleFunc?: (obj: K8sResourceKind) => string | JSX.Element;
   children?: React.ReactChildren;
   style?: object;
 };

@@ -5,7 +5,7 @@ import * as React from 'react';
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import { SectionHeading, detailsPage, navFactory, ResourceLink, ResourceSummary } from './utils';
 // eslint-disable-next-line no-unused-vars
-import { K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
+import { K8sResourceKind, K8sResourceKindReference, servicePlanDisplayName } from '../module/k8s';
 import { viewYamlComponent } from './utils/vertnav';
 
 const ClusterServicePlanReference: K8sResourceKindReference = 'ClusterServicePlan';
@@ -55,6 +55,7 @@ const ClusterServicePlanDetails: React.SFC<ClusterServicePlanDetailsProps> = ({o
 
 export const ClusterServicePlanDetailsPage: React.SFC<ClusterServicePlanDetailsPageProps> = props => <DetailsPage
   {...props}
+  titleFunc={servicePlanDisplayName}
   kind={ClusterServicePlanReference}
   pages={[
     navFactory.details(detailsPage(ClusterServicePlanDetails)),

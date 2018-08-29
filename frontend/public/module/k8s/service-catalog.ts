@@ -7,6 +7,9 @@ import { K8sResourceKind } from '../../module/k8s';
 export const serviceClassDisplayName = (serviceClass: K8sResourceKind): string =>
   _.get(serviceClass, 'spec.externalMetadata.displayName') || _.get(serviceClass, 'spec.externalName');
 
+export const servicePlanDisplayName = (servicePlan: K8sResourceKind): string =>
+  _.get(servicePlan, 'spec.externalMetadata.displayName') || _.get(servicePlan, 'spec.externalName');
+
 export const planExternalName = (serviceInstance: K8sResourceKind): string =>
   _.get(serviceInstance, 'spec.clusterServicePlanExternalName') || _.get(serviceInstance, 'spec.servicePlanExternalName');
 

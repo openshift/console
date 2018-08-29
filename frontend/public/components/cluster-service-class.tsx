@@ -76,6 +76,7 @@ const ClusterServiceClassDetails: React.SFC<ClusterServiceClassDetailsProps> = (
 export const ClusterServiceClassDetailsPage: React.SFC<ClusterServiceClassDetailsPageProps> = props => <DetailsPage
   {...props}
   buttonActions={actionButtons}
+  titleFunc={serviceClassDisplayName}
   kind={ClusterServiceClassReference}
   pages={[navFactory.details(detailsPage(ClusterServiceClassDetails)),
     navFactory.editYaml(viewYamlComponent),
