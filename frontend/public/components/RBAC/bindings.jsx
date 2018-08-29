@@ -525,18 +525,23 @@ const BaseEditRoleBinding = connect(null, {setActiveNamespace: UIActions.setActi
     }
   });
 
-export const CreateRoleBinding = ({match: {params}}) => <BaseEditRoleBinding
-  metadata={{
-    namespace: getActiveNamespace(),
-  }}
-  fixed={{
-    kind: (params.ns || params.rolekind === 'Role') ? 'RoleBinding' : undefined,
+export const CreateRoleBinding = ({match: {params}, location}) => {
+  const searchParams = new URLSearchParams(location.search);
+  const roleKind = searchParams.get('rolekind');
+  const roleName = searchParams.get('rolename');
+  const metadata = {namespace: getActiveNamespace()};
+  const fixed = {
+    kind: (params.ns || roleKind === 'Role') ? 'RoleBinding' : undefined,
     metadata: {namespace: params.ns},
-    roleRef: {kind: params.rolekind, name: params.rolename},
-  }}
-  isCreate={true}
-  titleVerb="Create"
-/>;
+    roleRef: {kind: roleKind, name: roleName},
+  };
+  return <BaseEditRoleBinding
+    metadata={metadata}
+    fixed={fixed}
+    isCreate={true}
+    titleVerb="Create"
+  />;
+};
 
 const getSubjectIndex = () => {
   const subjectIndex = getQueryArgument('subjectIndex') || '0';
