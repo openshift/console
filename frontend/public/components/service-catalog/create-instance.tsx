@@ -219,7 +219,7 @@ class CreateInstanceForm extends React.Component<CreateInstanceFormProps, Create
 
 export const CreateInstance = (props) => {
   const resources = [
-    {kind: 'ClusterServiceClass', name: props.match.params.name, isList: false, prop: 'obj', poll: true},
+    {kind: 'ClusterServiceClass', name: props.match.params.name, isList: false, prop: 'obj'},
     {kind: 'ClusterServicePlan', isList: true, prop: 'plans', fieldSelector: `spec.clusterServiceClassRef.name=${props.match.params.name}`}
   ];
   return <Firehose resources={resources}>
