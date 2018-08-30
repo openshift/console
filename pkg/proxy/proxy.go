@@ -159,7 +159,6 @@ func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				} else {
 					proxiedHeader.Set("Sec-Websocket-Protocol", protocol)
 					subProtocol = protocol
-					log.Printf("subprotol: %v", protocol)
 				}
 			}
 		}
