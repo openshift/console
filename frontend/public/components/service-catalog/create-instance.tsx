@@ -182,7 +182,7 @@ class CreateInstanceForm extends React.Component<CreateInstanceFormProps, Create
         obj={obj}
         breadcrumbsFor={() => [
           {name: displayName, path: resourcePathFromModel(ClusterServiceClassModel, serviceClass.metadata.name)},
-          {name: title, path: `${match.url}`}
+          {name: `${title}`, path: `${match.url}`}
         ]}
       />
       <div className="co-m-pane__body">

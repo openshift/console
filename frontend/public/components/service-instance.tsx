@@ -4,12 +4,26 @@ import * as _ from 'lodash-es';
 // eslint-disable-next-line no-unused-vars
 import { K8sResourceKind, K8sResourceKindReference, planExternalName } from '../module/k8s';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
-import { Cog, SectionHeading, navFactory, ResourceCog, ResourceLink, ResourceSummary, StatusWithIcon, Timestamp } from './utils';
+import { Cog, history, navFactory, ResourceCog, ResourceLink, ResourceSummary, SectionHeading, StatusWithIcon, Timestamp } from './utils';
 import { ResourceEventStream } from './events';
 import { Conditions } from './conditions';
 import { ServiceCatalogParameters, ServiceCatalogParametersSecrets } from './service-catalog-parameters';
 
 const ServiceInstancesReference: K8sResourceKindReference = 'ServiceInstance';
+
+const createBinding = (kindObj, serviceInstance) => {
+  return {
+    btnClass: 'btn-primary',
+    callback: () => {
+      history.push(`/k8s/ns/${serviceInstance.metadata.namespace}/serviceinstances/${serviceInstance.metadata.name}/create-binding`);
+    },
+    label: 'Create Binding',
+  };
+};
+
+const actionButtons = [
+  createBinding
+];
 
 const { common } = Cog.factory;
 
@@ -55,6 +69,7 @@ export const ServiceInstanceDetailsPage: React.SFC<ServiceInstanceDetailsPagePro
   <DetailsPage
     {...props}
     kind={ServiceInstancesReference}
+    buttonActions={actionButtons}
     menuActions={menuActions}
     pages={pages} />;
 ServiceInstanceDetailsPage.displayName = 'ServiceInstanceDetailsPage';
