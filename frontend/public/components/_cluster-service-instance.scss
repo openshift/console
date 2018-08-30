@@ -1,3 +1,7 @@
+.co-service-catalog-parameters label[for="root"] {
+  // Hide the empty root label from service catalog parameter forms to avoid unwanted top margin.
+  display: none;
+}
 
 .co-create-service-instance__namespace {
   .btn-dropdown,

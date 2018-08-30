@@ -4,12 +4,12 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
-import * as classNames from 'classnames';
-import Form from 'react-jsonschema-form';
+import { IChangeEvent, ISubmitEvent } from 'react-jsonschema-form';
 
+import { createParametersSecret, getInstanceCreateSchema, ServiceCatalogParametersForm } from './schema-form';
 import { LoadingBox } from '../utils/status-box';
 import { history, Firehose, NavTitle, resourcePathFromModel } from '../utils';
-import { ClusterServiceClassModel, SecretModel, ServiceInstanceModel } from '../../models';
+import { ClusterServiceClassModel, ServiceInstanceModel } from '../../models';
 import { k8sCreate, K8sResourceKind, serviceClassDisplayName } from '../../module/k8s';
 import { NsDropdown } from '../RBAC/bindings';
 import { ClusterServiceClassInfo } from '../cluster-service-class-info';
@@ -17,17 +17,9 @@ import { ButtonBar } from '../utils/button-bar';
 
 const PARAMETERS_SECRET_KEY = 'parameters';
 
-const getAvailablePlans = (plans: any[]): any[] => _.reject(_.get(plans, 'data'), plan => plan.status.removedFromBrokerCatalog);
+const getAvailablePlans = (plans: any): any[] => _.reject(plans.data, 'status.removedFromBrokerCatalog');
 
-const CustomFieldTemplate = ({id, classNames: klass, label, help, required, description, errors, children}) => <div className={klass}>
-  <label htmlFor={id} className={classNames('control-label', {'co-required': required})}>{label}</label>
-  {children}
-  <div className="help-block">{description}</div>
-  {help}
-  {errors}
-</div>;
-
-class CreateInstanceForm extends React.Component<CreateInstanceFormProps, CreateInstanceFormState> {
+class CreateInstance extends React.Component<CreateInstanceProps, CreateInstanceState> {
   constructor (props) {
     super(props);
 
@@ -35,15 +27,17 @@ class CreateInstanceForm extends React.Component<CreateInstanceFormProps, Create
       name: '',
       namespace: '',
       plan: '',
+      formData: {},
       inProgress: false,
     };
 
     this.onNamespaceChange = this.onNamespaceChange.bind(this);
     this.onNameChange = this.onNameChange.bind(this);
+    this.onFormChange = this.onFormChange.bind(this);
     this.save = this.save.bind(this);
   }
 
-  static getDerivedStateFromProps(props: CreateInstanceFormProps, state: CreateInstanceFormState) {
+  static getDerivedStateFromProps(props: CreateInstanceProps, state: CreateInstanceState) {
     const { name, plan } = state;
     const { obj, plans } = props;
     const newState: any = {};
@@ -63,7 +57,7 @@ class CreateInstanceForm extends React.Component<CreateInstanceFormProps, Create
 
   onNamespaceChange = (namespace: string) => {
     this.setState({namespace: namespace});
-  };
+  }
 
   onNameChange: React.ReactEventHandler<HTMLInputElement> = event => {
     this.setState({name: event.currentTarget.value});
@@ -104,31 +98,9 @@ class CreateInstanceForm extends React.Component<CreateInstanceFormProps, Create
     return k8sCreate(ServiceInstanceModel, serviceInstance);
   }
 
-  createParametersSecret = (instance: K8sResourceKind, secretName: string, parameters: any): Promise<K8sResourceKind> => {
-    const secret = {
-      apiVersion: 'v1',
-      kind: 'Secret',
-      metadata: {
-        name: secretName,
-        namespace: instance.metadata.namespace,
-        ownerReferences: [{
-          apiVersion: instance.apiVersion,
-          kind: instance.kind,
-          name: instance.metadata.name,
-          uid: instance.metadata.uid,
-          controller: false,
-          blockOwnerDeletion: false
-        }],
-      },
-      stringData: {
-        [PARAMETERS_SECRET_KEY]: JSON.stringify(parameters),
-      },
-    };
+  onFormChange = ({formData}: IChangeEvent) => this.setState({formData})
 
-    return k8sCreate(SecretModel, secret);
-  };
-
-  save = ({formData}) => {
+  save = ({formData}: ISubmitEvent<any>) => {
     const { name, namespace, plan } = this.state;
     if (!name || !namespace || !plan) {
       this.setState({error: 'Please complete all fields.'});
@@ -141,12 +113,12 @@ class CreateInstanceForm extends React.Component<CreateInstanceFormProps, Create
 
     // Create the instance first so we can set an ownerRef from the parameters secret to the instance.
     this.createInstance(secretName)
-      .then(instance => secretName ? this.createParametersSecret(instance, secretName, parameters) : null)
+      .then(instance => secretName ? createParametersSecret(secretName, PARAMETERS_SECRET_KEY, parameters, instance) : null)
       .then(() => {
         this.setState({inProgress: false});
         history.push(resourcePathFromModel(ServiceInstanceModel, name, namespace));
       }, err => this.setState({error: err.message, inProgress: false}));
-  };
+  }
 
   render() {
     const { obj, plans, match } = this.props;
@@ -161,7 +133,7 @@ class CreateInstanceForm extends React.Component<CreateInstanceFormProps, Create
     const { plan: selectedPlanName } = this.state;
     const availablePlans = getAvailablePlans(plans);
     const selectedPlan = _.find(availablePlans, { spec: { externalName: selectedPlanName } });
-    const parameters = _.get(selectedPlan, 'spec.instanceCreateParameterSchema', { type: 'object', properties: {} });
+    const schema = getInstanceCreateSchema(selectedPlan);
 
     const planOptions = _.map(availablePlans, plan => {
       return <div className="radio co-create-service-instance__plan" key={plan.spec.externalName}>
@@ -185,7 +157,7 @@ class CreateInstanceForm extends React.Component<CreateInstanceFormProps, Create
           {name: `${title}`, path: `${match.url}`}
         ]}
       />
-      <div className="co-m-pane__body">
+      <div className="co-m-pane__body co-create-service-instance">
         <div className="row">
           <div className="col-md-7 col-md-push-5 co-cluster-service-instance-info">
             <ClusterServiceClassInfo obj={serviceClass} />
@@ -212,12 +184,12 @@ class CreateInstanceForm extends React.Component<CreateInstanceFormProps, Create
                   : planOptions}
               </div>
             </form>
-            <Form FieldTemplate={CustomFieldTemplate} schema={parameters} onSubmit={this.save}>
+            <ServiceCatalogParametersForm schema={schema} onSubmit={this.save} formData={this.state.formData} onChange={this.onFormChange}>
               <ButtonBar errorMessage={this.state.error} inProgress={this.state.inProgress}>
                 <button type="submit" className="btn btn-primary">Create</button>
                 <Link to={resourcePathFromModel(ClusterServiceClassModel, serviceClass.metadata.name)} className="btn btn-default">Cancel</Link>
               </ButtonBar>
-            </Form>
+            </ServiceCatalogParametersForm>
           </div>
         </div>
       </div>
@@ -225,26 +197,31 @@ class CreateInstanceForm extends React.Component<CreateInstanceFormProps, Create
   }
 }
 
-export const CreateInstance = (props) => {
+export const CreateInstancePage: React.SFC<CreateInstancePageProps> = (props) => {
   const resources = [
     {kind: 'ClusterServiceClass', name: props.match.params.name, isList: false, prop: 'obj'},
-    {kind: 'ClusterServicePlan', isList: true, prop: 'plans', fieldSelector: `spec.clusterServiceClassRef.name=${props.match.params.name}`}
+    {kind: 'ClusterServicePlan', isList: true, prop: 'plans', fieldSelector: `spec.clusterServiceClassRef.name=${props.match.params.name}`},
   ];
   return <Firehose resources={resources}>
-    <CreateInstanceForm {...props} />
+    <CreateInstance {...props as any} />
   </Firehose>;
 };
 
-export type CreateInstanceFormProps = {
+export type CreateInstanceProps = {
   obj: any,
   plans: any,
   match: any,
 };
 
-export type CreateInstanceFormState = {
+export type CreateInstanceState = {
   name: string,
   namespace: string,
   plan: string,
+  formData: any,
   inProgress: boolean,
   error?: any,
+};
+
+export type CreateInstancePageProps = {
+  match: any,
 };
