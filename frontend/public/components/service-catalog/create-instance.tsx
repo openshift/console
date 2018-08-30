@@ -155,7 +155,7 @@ class CreateInstanceForm extends React.Component<CreateInstanceFormProps, Create
     }
 
     const serviceClass = _.get(obj, 'data');
-    const title = 'Create Instance';
+    const title = 'Create Service Instance';
     const displayName = serviceClassDisplayName(serviceClass);
 
     const { plan: selectedPlanName } = this.state;

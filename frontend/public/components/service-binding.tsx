@@ -105,9 +105,13 @@ export type ServiceBindingDetailsProps = {
 };
 
 export type ServiceBindingsPageProps = {
-  showTitle?: boolean,
+  autoFocus?: boolean,
+  canCreate?: boolean,
+  createHandler?: any,
+  filters?: any,
   namespace?: string,
   selector?: any,
+  showTitle?: boolean,
 };
 
 export type ServiceBindingDetailsPageProps = {

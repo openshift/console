@@ -69,7 +69,7 @@ class CreateBindingForm extends React.Component<CreateBindingFormProps, CreateBi
   render() {
     const { obj, match } = this.props;
     const serviceInstance = _.get(obj, 'data');
-    const title = 'Create Binding';
+    const title = 'Create Service Binding';
 
     if (!obj.loaded) {
       return <LoadingBox />;
@@ -88,7 +88,7 @@ class CreateBindingForm extends React.Component<CreateBindingFormProps, CreateBi
         ]}
       />
       <div className="co-m-pane__body">
-        <p className="co-m-pane__explanation">Bindings create a secret containing the necessary information for an application to use a service.</p>
+        <p className="co-m-pane__explanation">Service bindings create a secret containing the necessary information for an application to use a service.</p>
         <div className="row">
           <div className="col-md-5">
             <p>Create a binding for <strong>{serviceInstance.metadata.name}</strong> in <strong>{serviceInstance.metadata.namespace}</strong>.</p>
