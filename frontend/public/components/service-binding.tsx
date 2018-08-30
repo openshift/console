@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 
 // eslint-disable-next-line no-unused-vars
-import { K8sResourceKindReference } from '../module/k8s';
+import { K8sResourceKindReference, serviceCatalogStatus } from '../module/k8s';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
 import { Cog, SectionHeading, navFactory, ResourceCog, ResourceLink, ResourceSummary, StatusWithIcon } from './utils';
 import { ResourceEventStream } from './events';
@@ -16,6 +16,10 @@ const { common } = Cog.factory;
 const menuActions = [
   ...common,
 ];
+
+const secretLink = (obj) => serviceCatalogStatus(obj) === 'Ready'
+  ? <ResourceLink kind="Secret" name={obj.spec.secretName} title={obj.spec.secretName} namespace={obj.metadata.namespace} />
+  : '-';
 
 const ServiceBindingDetails: React.SFC<ServiceBindingDetailsProps> = ({obj: sb}) => {
   const sbParameters = _.get(sb, 'status.externalProperties.parameters', {});
@@ -32,7 +36,7 @@ const ServiceBindingDetails: React.SFC<ServiceBindingDetailsProps> = ({obj: sb})
             <dt>Service Instance</dt>
             <dd><ResourceLink kind="ServiceInstance" name={sb.spec.instanceRef.name} title={sb.spec.instanceRef.name} namespace={sb.metadata.namespace} /></dd>
             <dt>Secret</dt>
-            <dd><ResourceLink kind="Secret" name={sb.spec.secretName} title={sb.spec.secretName} namespace={sb.metadata.namespace} /></dd>
+            <dd>{ secretLink(sb) }</dd>
             <dt>Status</dt>
             <dd><StatusWithIcon obj={sb} /></dd>
           </dl>
@@ -76,7 +80,7 @@ const ServiceBindingsRow: React.SFC<ServiceBindingsRowProps> = ({obj}) => <div c
     <ResourceLink kind="ServiceInstance" name={obj.spec.instanceRef.name} title={obj.spec.instanceRef.name} namespace={obj.metadata.namespace} />
   </div>
   <div className="col-md-3 hidden-sm hidden-xs co-break-word">
-    <ResourceLink kind="Secret" name={obj.spec.secretName} title={obj.spec.secretName} namespace={obj.metadata.namespace} />
+    { secretLink(obj) }
   </div>
   <div className="col-md-2 hidden-sm hidden-xs co-break-word">
     <StatusWithIcon obj={obj} />
