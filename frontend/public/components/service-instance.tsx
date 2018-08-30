@@ -8,32 +8,31 @@ import { Cog, history, navFactory, ResourceCog, ResourceLink, ResourceSummary, S
 import { ResourceEventStream } from './events';
 import { Conditions } from './conditions';
 import { ServiceCatalogParameters, ServiceCatalogParametersSecrets } from './service-catalog-parameters';
+import { ServiceBindingsPage } from './service-binding';
 
 const ServiceInstancesReference: K8sResourceKindReference = 'ServiceInstance';
 
 const createBinding = (kindObj, serviceInstance) => {
   return {
-    btnClass: 'btn-primary',
     callback: () => {
       history.push(`/k8s/ns/${serviceInstance.metadata.namespace}/serviceinstances/${serviceInstance.metadata.name}/create-binding`);
     },
-    label: 'Create Binding',
+    label: 'Create Service Binding',
   };
 };
-
-const actionButtons = [
-  createBinding
-];
 
 const { common } = Cog.factory;
 
 const menuActions = [
+  createBinding,
   ...common,
 ];
 
 const ServiceInstanceDetails: React.SFC<ServiceInstanceDetailsProps> = ({obj: si}) => {
   const plan = planExternalName(si);
   const parameters = _.get(si, 'status.externalProperties.parameters', {});
+  const bindingCreateHandler = createBinding(null, si).callback;
+  const bindingFilters = {selector: {field: 'spec.instanceRef.name', values: new Set(_.map(si, 'name'))}};
 
   return <React.Fragment>
     <div className="co-m-pane__body">
@@ -55,6 +54,11 @@ const ServiceInstanceDetails: React.SFC<ServiceInstanceDetailsProps> = ({obj: si
         </div>
       </div>
     </div>
+    <div className="co-m-pane__body co-m-pane__body--alt">
+      <SectionHeading text="Service Bindings" />
+      <p className="co-m-pane__explanation">Service bindings create a secret containing the necessary information for an application to use a service.</p>
+    </div>
+    <ServiceBindingsPage canCreate={true} createHandler={bindingCreateHandler} namespace={si.metadata.namespace} filters={bindingFilters} autoFocus={false} showTitle={false} />
     <div className="co-m-pane__body">
       <SectionHeading text="Conditions" />
       <Conditions conditions={si.status.conditions} />
@@ -69,7 +73,6 @@ export const ServiceInstanceDetailsPage: React.SFC<ServiceInstanceDetailsPagePro
   <DetailsPage
     {...props}
     kind={ServiceInstancesReference}
-    buttonActions={actionButtons}
     menuActions={menuActions}
     pages={pages} />;
 ServiceInstanceDetailsPage.displayName = 'ServiceInstanceDetailsPage';
