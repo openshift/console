@@ -15,7 +15,7 @@ LABEL io.k8s.display-name="OpenShift Console" \
       io.openshift.tags="openshift" \
       maintainer="Samuel Padgett <spadgett@redhat.com>"
 
-# doesn't require a root user.
+# Doesn't require a root user.
 USER 1001
 
 CMD [ "/opt/bridge/bin/bridge", "--public-dir=/opt/bridge/static" ]
