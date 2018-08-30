@@ -16,8 +16,9 @@ const Default: React.SFC<StatusCapabilityProps> = ({value}) => _.isEmpty(value) 
 
 const PodStatuses: React.SFC<StatusCapabilityProps> = (props) => <PodStatusChart fetcher={() => props.value} statusDescriptor={props.descriptor} />;
 
+// FIXME(alecmerdler): Need to revisit this component to show a table of conditions
 const Conditions: React.SFC<StatusCapabilityProps> = ({value}) => !_.isEmpty(value)
-  ? <span>{value.reduce((latest, next) => new Date(latest.lastUpdateTime) < new Date(next.lastUpdateTime) ? latest : next).phase}</span>
+  ? <span>{value.reduce((latest, next) => new Date(latest.lastUpdateTime) < new Date(next.lastUpdateTime) ? latest : next).type}</span>
   : <span className="text-muted">None</span>;
 
 const Link: React.SFC<StatusCapabilityProps> = ({value}) => <a href={value}>{value.replace(/https?:\/\//, '')}</a>;
@@ -31,7 +32,6 @@ const K8sResourceLink: React.SFC<StatusCapabilityProps> = (props) => <ResourceLi
 const capabilityComponents = ImmutableMap<StatusCapability, React.ComponentType<StatusCapabilityProps>>()
   .set(StatusCapability.podStatuses, PodStatuses)
   .set(StatusCapability.conditions, Conditions)
-  .set(StatusCapability.tectonicLink, Link)
   .set(StatusCapability.w3Link, Link)
   .set(StatusCapability.k8sPhase, K8sPhase)
   .set(StatusCapability.k8sPhaseReason, K8sPhaseReason)

@@ -12,11 +12,10 @@ import { SpecDescriptor } from './descriptors/spec';
 import { StatusCapability, Descriptor } from './descriptors/types';
 import { Resources } from './k8s-resource';
 import { List, MultiListPage, ListHeader, ColHead, DetailsPage, CompactExpandButtons } from '../factory';
-import { ResourceLink, ResourceSummary, StatusBox, navFactory, Timestamp, LabelList, humanizeNumber, ResourceIcon, MsgBox, ResourceCog, Cog } from '../utils';
+import { ResourceLink, ResourceSummary, StatusBox, navFactory, Timestamp, LabelList, ResourceIcon, MsgBox, ResourceCog, Cog } from '../utils';
 import { connectToModel } from '../../kinds';
 import { kindForReference, K8sResourceKind, OwnerReference, K8sKind, referenceFor, GroupVersionKind, referenceForModel } from '../../module/k8s';
 import { ClusterServiceVersionModel } from '../../models';
-import { Gauge, Scalar, Line, Bar } from '../graphs';
 
 export const ClusterServiceVersionResourceHeader: React.SFC<ClusterServiceVersionResourceHeaderProps> = (props) => <ListHeader>
   <ColHead {...props} className="col-xs-2" sortField="metadata.name">Name</ColHead>
@@ -68,21 +67,6 @@ export const ClusterServiceVersionResourceList: React.SFC<ClusterServiceVersionR
   const EmptyMsg = () => <MsgBox title="No Application Resources Found" detail="Application resources are declarative components used to define the behavior of the application." />;
 
   return <List {...props} EmptyMsg={EmptyMsg} Header={ClusterServiceVersionResourceHeader} Row={ClusterServiceVersionResourceRow} label="Application Resources" />;
-};
-
-export const ClusterServiceVersionPrometheusGraph: React.SFC<ClusterServiceVersionPrometheusGraphProps> = (props) => {
-  switch (props.query.type) {
-    case PrometheusQueryTypes.Counter:
-      return <Scalar title={props.query.name} unit={props.query.unit} query={props.query.query} basePath={props.basePath} />;
-    case PrometheusQueryTypes.Gauge:
-      return <Gauge title={props.query.name} query={props.query.query} basePath={props.basePath} />;
-    case PrometheusQueryTypes.Line:
-      return <Line title={props.query.name} query={props.query.query} basePath={props.basePath} />;
-    case PrometheusQueryTypes.Bar:
-      return <Bar title={props.query.name} query={props.query.query} metric={props.query.metric} humanize={humanizeNumber} basePath={props.basePath} />;
-    default:
-      return <span>Unknown graph type: {props.query.type}</span>;
-  }
 };
 
 const inFlightStateToProps = ({k8s}) => ({inFlight: k8s.getIn(['RESOURCES', 'inFlight'])});
@@ -142,8 +126,6 @@ export const ClusterServiceVersionResourceDetails = connectToModel(
       const isMainDescriptor = (descriptor: Descriptor) => {
         return (descriptor['x-descriptors'] as StatusCapability[] || []).some((type) => {
           switch (type) {
-            case StatusCapability.importantMetrics:
-            case StatusCapability.prometheus:
             case StatusCapability.podStatuses:
               return true;
             default:
@@ -168,13 +150,7 @@ export const ClusterServiceVersionResourceDetails = connectToModel(
       const thisDefinition = _.find(ownedDefinitions.concat(reqDefinitions), (def) => def.name.split('.')[0] === this.props.kindObj.path);
       const statusDescriptors = _.get<Descriptor[]>(thisDefinition, 'statusDescriptors', []);
       const specDescriptors = _.get<Descriptor[]>(thisDefinition, 'specDescriptors', []);
-
-      // Find the important metrics and prometheus endpoints, if any.
-      const metricsDescriptor = descriptorFor(statusDescriptors, StatusCapability.importantMetrics);
-      const promDescriptor = descriptorFor(statusDescriptors, StatusCapability.prometheus);
       const podStatusesDescriptor = descriptorFor(statusDescriptors, StatusCapability.podStatuses);
-
-      const metricsValue = blockValue(metricsDescriptor, status);
 
       return <div className="co-clusterserviceversion-resource-details co-m-pane">
         <div className="co-m-pane__body">
@@ -183,11 +159,6 @@ export const ClusterServiceVersionResourceDetails = connectToModel(
             { podStatusesDescriptor && <div className="col-sm-6 col-md-4">
               <StatusDescriptor descriptor={podStatusesDescriptor} value={blockValue(podStatusesDescriptor, status)} obj={this.props.obj} model={this.props.kindObj} />
             </div> }
-            { metricsValue && metricsValue.queries.map((query: ClusterServiceVersionPrometheusQuery, i) => (
-              <div key={i} className="col-sm-6 col-md-4 co-clusterserviceversion-resource-details__section__metric">
-                {/* FIXME(alecmerdler): Use `StatusDescriptor` component */}
-                <ClusterServiceVersionPrometheusGraph query={query} basePath={blockValue(promDescriptor, status)} />
-              </div>)) }
           </div>
         </div>
         <div className="co-m-pane__body">
@@ -299,33 +270,12 @@ export type ClusterServiceVersionResourceLinkProps = {
   obj: ClusterServiceVersionResourceKind;
 };
 
-export enum PrometheusQueryTypes {
-  Gauge = 'Gauge',
-  Counter = 'Counter',
-  Line = 'Line',
-  Bar = 'Bar',
-}
-
-export type ClusterServiceVersionPrometheusQuery = {
-  query: string;
-  name: string;
-  type: PrometheusQueryTypes;
-  unit?: string;
-  metric?: string;
-};
-
-export type ClusterServiceVersionPrometheusGraphProps = {
-  query: ClusterServiceVersionPrometheusQuery;
-  basePath?: string;
-};
-
 // TODO(alecmerdler): Find Webpack loader/plugin to add `displayName` to React components automagically
 ClusterServiceVersionResourceList.displayName = 'ClusterServiceVersionResourceList';
 ClusterServiceVersionResourceHeader.displayName = 'ClusterServiceVersionResourceHeader';
 ClusterServiceVersionResourceRow.displayName = 'ClusterServiceVersionResourceRow';
 ClusterServiceVersionResourceDetails.displayName = 'ClusterServiceVersionResourceDetails';
 ClusterServiceVersionResourceList.displayName = 'ClusterServiceVersionResourceList';
-ClusterServiceVersionPrometheusGraph.displayName = 'ClusterServiceVersionPrometheusGraph';
 ClusterServiceVersionResourceLink.displayName = 'ClusterServiceVersionResourceLink';
 ClusterServiceVersionResourcesPage.displayName = 'ClusterServiceVersionResourcesPage';
 ClusterServiceVersionResourcesDetailsPage.displayName = 'ClusterServiceVersionResourcesDetailsPage';

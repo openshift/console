@@ -30,17 +30,17 @@ describe(StatusDescriptor.displayName, () => {
   it('renders a conditions status', () => {
     const value = [{
       lastUpdateTime: '2017-10-16 12:00:00',
-      phase: 'somephase',
+      type: 'SomeType',
     }];
     descriptor['x-descriptors'] = [StatusCapability.conditions];
     wrapper = wrapper.setProps({descriptor, value});
 
-    expect(wrapper.find('dd').childAt(0).shallow().text()).toEqual('somephase');
+    expect(wrapper.find('dd').childAt(0).shallow().text()).toEqual('SomeType');
   });
 
   it('renders a link status', () => {
     const value = 'https://example.com';
-    descriptor['x-descriptors'] = [StatusCapability.tectonicLink];
+    descriptor['x-descriptors'] = [StatusCapability.w3Link];
     wrapper = wrapper.setProps({descriptor, value});
 
     expect(wrapper.find('dd').childAt(0).shallow().text()).toEqual('example.com');

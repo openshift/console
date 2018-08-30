@@ -13,15 +13,12 @@ export enum SpecCapability {
 }
 
 export enum StatusCapability {
-  metrics = 'urn:alm:descriptor:com.tectonic.ui:metrics',
   podStatuses = 'urn:alm:descriptor:com.tectonic.ui:podStatuses',
   podCount = 'urn:alm:descriptor:com.tectonic.ui:podCount',
   w3Link = 'urn:alm:descriptor:org.w3:link',
-  tectonicLink = 'urn:alm:descriptor:com.tectonic.ui:important.link',
   conditions = 'urn:alm:descriptor:io.kubernetes.conditions',
-  importantMetrics = 'urn:alm:descriptor:com.tectonic.ui:metrics',
   text = 'urn:alm:descriptor:text',
-  prometheus = 'urn:alm:descriptor:io.prometheus:api.v1',
+  prometheusEndpoint = 'urn:alm:descriptor:prometheusEndpoint',
   k8sPhase = 'urn:alm:descriptor:io.kubernetes.phase',
   k8sPhaseReason = 'urn:alm:descriptor:io.kubernetes.phase:reason',
   // Prefix for all kubernetes resource status descriptors.
