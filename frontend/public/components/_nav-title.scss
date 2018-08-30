@@ -1,7 +1,7 @@
 .co-actions {
-  align-items: flex-end;
   display: flex;
   @media(max-width: $screen-xs){
+    align-items: flex-end;
     flex-direction: column;
   }
 }
