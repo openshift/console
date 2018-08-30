@@ -90,4 +90,5 @@ class CheckBoxes_ extends React.Component {
   }
 }
 
+/** @type {React.SFC<{items: Array, numbers: any, reduxIDs: Array, selected?: Array, type: string}>} */
 export const CheckBoxes = connect(null, {filterList: k8sActions.filterList})(CheckBoxes_);

@@ -59,10 +59,12 @@ $height: 18px;
   background-color: $color-node-dark;
 }
 
+.co-m-resource-alertrule,
 .co-m-resource-configmap {
   background-color: $color-configmap-dark;
 }
 
+.co-m-resource-alert,
 .co-m-resource-container {
   background-color: $color-container-dark;
 }

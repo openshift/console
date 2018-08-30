@@ -89,7 +89,7 @@ export const fromNow = (dateTime, now=undefined, options = { omitSuffix: false }
 
 export const isValid = (dateTime: Date) => dateTime instanceof Date && !_.isNaN(dateTime.valueOf());
 
-// Formats a duration in milliseconds like '1h10m23s'.
+// Formats a duration in milliseconds like '1h 10m 23s'.
 export const formatDuration = (ms: number) => {
   if (!_.isFinite(ms) || ms < 0) {
     return '';

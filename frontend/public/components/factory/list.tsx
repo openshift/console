@@ -20,6 +20,7 @@ import {
   podPhaseFilterReducer,
   podReadiness,
   serviceClassDisplayName } from '../../module/k8s';
+import { alertRuleState } from '../../module/monitoring';
 import { UIActions } from '../../ui/ui-actions';
 import { ingressValidHosts } from '../ingress';
 import { routeStatus } from '../routes';
@@ -32,6 +33,10 @@ const fuzzyCaseInsensitive = (a, b) => fuzzy(_.toLower(a), _.toLower(b));
 // TODO: Having list filters here is undocumented, stringly-typed, and non-obvious. We can change that
 const listFilters = {
   'name': (filter, obj) => fuzzyCaseInsensitive(filter, obj.metadata.name),
+
+  'alert-rule-name': (filter, alertRule) => fuzzyCaseInsensitive(filter, alertRule.name),
+
+  'alert-rule-state': (filter, alertRule) => filter.selected.has(alertRuleState(alertRule)),
 
   // Filter role by role kind
   'role-kind': (filter, role) => filter.selected.has(roleType(role)),
@@ -157,6 +162,7 @@ const filterPropType = (props, propName, componentName) => {
 };
 
 const sorts = {
+  alertRuleState,
   daemonsetNumScheduled: daemonset => _.toInteger(_.get(daemonset, 'status.currentNumberScheduled')),
   dataSize: resource => _.size(_.get(resource, 'data')),
   ingressValidHosts,

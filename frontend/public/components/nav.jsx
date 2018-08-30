@@ -281,8 +281,9 @@ const MonitoringNavSection_ = ({urls, closeMenu}) => {
   const grafanaURL = urls[MonitoringRoutes.Grafana];
   return prometheusURL || alertManagerURL || grafanaURL
     ? <NavSection text="Monitoring" icon="pficon pficon-screen">
+      {prometheusURL && <HrefLink href="/monitoring/alerts" name="Alerts" onClick={closeMenu} />}
       {prometheusURL && <HrefLink href={prometheusURL} target="_blank" name="Metrics" onClick={closeMenu} isExternal={true} />}
-      {alertManagerURL && <HrefLink href={alertManagerURL} target="_blank" name="Alerts" onClick={closeMenu} isExternal={true} />}
+      {alertManagerURL && <HrefLink href={alertManagerURL} target="_blank" name="Alertmanager" onClick={closeMenu} isExternal={true} />}
       {grafanaURL && <HrefLink href={grafanaURL} target="_blank" name="Dashboards" onClick={closeMenu} isExternal={true} />}
     </NavSection>
     : null;
