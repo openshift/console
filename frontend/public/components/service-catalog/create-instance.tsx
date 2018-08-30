@@ -4,6 +4,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
+import * as classNames from 'classnames';
 import Form from 'react-jsonschema-form';
 
 import { LoadingBox } from '../utils/status-box';
@@ -17,6 +18,14 @@ import { ButtonBar } from '../utils/button-bar';
 const PARAMETERS_SECRET_KEY = 'parameters';
 
 const getAvailablePlans = (plans: any[]): any[] => _.reject(_.get(plans, 'data'), plan => plan.status.removedFromBrokerCatalog);
+
+const CustomFieldTemplate = ({id, classNames: klass, label, help, required, description, errors, children}) => <div className={klass}>
+  <label htmlFor={id} className={classNames('control-label', {'co-required': required})}>{label}</label>
+  {children}
+  <div className="help-block">{description}</div>
+  {help}
+  {errors}
+</div>;
 
 class CreateInstanceForm extends React.Component<CreateInstanceFormProps, CreateInstanceFormState> {
   constructor (props) {
@@ -184,12 +193,11 @@ class CreateInstanceForm extends React.Component<CreateInstanceFormProps, Create
           <div className="col-md-5 col-md-pull-7">
             <form className="co-create-service-instance">
               <div className="form-group co-create-service-instance__namespace">
-                {/* Use the same required style as used by react-jsonschema-form for consistency. */}
-                <label className="control-label" htmlFor="dropdown-selectbox">Namespace<span className="required">*</span></label>
+                <label className="control-label co-required" htmlFor="dropdown-selectbox">Namespace</label>
                 <NsDropdown selectedKey={this.state.namespace} onChange={this.onNamespaceChange} id="dropdown-selectbox" />
               </div>
               <div className="form-group co-create-service-instance__name">
-                <label className="control-label" htmlFor="name">Service Instance Name<span className="required">*</span></label>
+                <label className="control-label co-required" htmlFor="name">Service Instance Name</label>
                 <input className="form-control"
                   type="text"
                   onChange={this.onNameChange}
@@ -204,7 +212,7 @@ class CreateInstanceForm extends React.Component<CreateInstanceFormProps, Create
                   : planOptions}
               </div>
             </form>
-            <Form schema={parameters} onSubmit={this.save}>
+            <Form FieldTemplate={CustomFieldTemplate} schema={parameters} onSubmit={this.save}>
               <ButtonBar errorMessage={this.state.error} inProgress={this.state.inProgress}>
                 <button type="submit" className="btn btn-primary">Create</button>
                 <Link to={resourcePathFromModel(ClusterServiceClassModel, serviceClass.metadata.name)} className="btn btn-default">Cancel</Link>
