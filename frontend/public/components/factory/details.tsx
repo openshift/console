@@ -22,7 +22,14 @@ export const DetailsPage: React.SFC<DetailsPageProps> = (props) => <Firehose res
   isList: false,
   prop: 'obj',
 } as FirehoseResource].concat(props.resources || [])}>
-  <NavTitle detail={true} title={props.name} menuActions={props.menuActions} buttonActions={props.buttonActions} kind={props.kind} breadcrumbsFor={props.breadcrumbsFor} />
+  <NavTitle
+    detail={true}
+    title={props.name}
+    titleFunc={props.titleFunc}
+    menuActions={props.menuActions}
+    buttonActions={props.buttonActions}
+    kind={props.kind}
+    breadcrumbsFor={props.breadcrumbsFor} />
   <VertNav
     pages={props.pages}
     className={`co-m-${_.get(props.kind, 'kind', props.kind)}`}
@@ -34,6 +41,7 @@ export const DetailsPage: React.SFC<DetailsPageProps> = (props) => <Firehose res
 export type DetailsPageProps = {
   match: match<any>;
   title?: string | JSX.Element;
+  titleFunc?: (obj: K8sResourceKind) => string | JSX.Element;
   menuActions?: any[];
   buttonActions?: any[];
   pages: any[];
