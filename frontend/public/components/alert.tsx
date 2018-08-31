@@ -1,6 +1,7 @@
 import * as _ from 'lodash-es';
 import * as classNames from 'classnames';
 import * as React from 'react';
+import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
@@ -125,6 +126,9 @@ const AlertsDetailsPage_ = connect(alertStateToProps)((props: AlertsDetailsPageP
   const annotations = _.get(alert || rule, 'annotations', {});
 
   return <React.Fragment>
+    <Helmet>
+      <title>{`${name} · Details`}</title>
+    </Helmet>
     <div className="co-m-nav-title co-m-nav-title--detail">
       <h1 className="co-m-pane__heading">
         <div className="co-m-pane__name"><ResourceIcon className="co-m-resource-icon--lg pull-left" resource={AlertResource} />{name}</div>
@@ -230,6 +234,9 @@ const AlertRulesDetailsPage_ = connect(ruleStateToProps)((props: AlertRulesDetai
   ];
 
   return <React.Fragment>
+    <Helmet>
+      <title>{`${name} · Details`}</title>
+    </Helmet>
     <div className="co-m-nav-title co-m-nav-title--detail co-m-nav-title--breadcrumbs">
       <BreadCrumbs breadcrumbs={breadcrumbs} />
       <h1 className="co-m-pane__heading">
@@ -384,6 +391,9 @@ const AlertsPage_ = connect(listStateToProps)(class InnerAlertsPage_ extends Rea
     const {filters, loaded, loadError, rules} = this.props;
 
     return <React.Fragment>
+      <Helmet>
+        <title>Monitoring Alerts</title>
+      </Helmet>
       <NavTitle title="Monitoring Alerts" />
       <div className="co-m-pane__filter-bar">
         <div className="co-m-pane__filter-bar-group">
