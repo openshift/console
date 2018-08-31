@@ -1,46 +1,34 @@
-FROM openshift/origin-base
-
-ENV GOPATH=/go
-ENV container=oci
-
+FROM openshift/origin-release:golang AS gobuilder
 RUN mkdir -p /go/src/github.com/openshift/console/
 ADD . /go/src/github.com/openshift/console/
 WORKDIR /go/src/github.com/openshift/console/
+RUN ./build-backend.sh
 
-# TODO: Switch to multistage builds as soon as we can.
-#
-# Multi stage builds are not yet supported for product builds. For now, install
-# dependencies and do our best to clean up after building.
-#
-# Node.js 8+ is required, but EPEL only has Node.js 6.
-#
-# `rm -rf /tmp/*` is needed to remove chromedriver and other temporary files
-# created while building frontend assets.
 
-RUN curl --silent --location https://rpm.nodesource.com/setup_8.x | bash - && \
-    curl --silent --location https://dl.yarnpkg.com/rpm/yarn.repo | tee /etc/yum.repos.d/yarn.repo && \
-    INSTALL_PKGS="git golang nodejs yarn" && \
-    yum install -y $INSTALL_PKGS && \
-    rpm -V $INSTALL_PKGS && \
-    ./build.sh && \
-    mkdir -p /opt/bridge/bin && \
-    cp -R frontend/public/dist /opt/bridge/static && \
-    cp bin/bridge /opt/bridge/bin && \
-    yarn cache clean && \
-    yum autoremove -y $INSTALL_PKGS && \
-    yum clean all && \
-    rm /etc/yum.repos.d/yarn.repo && \
-    rm -rf /tmp/* && \
-    rm -rf /go
+# note: front end built separately in order to keep a record of any build tools 
+# from yarn/npm that might have been updated between builds.
+FROM openshift3/origin-console-nodebuilder AS nodebuilder
+
+
+# actual base image for final product
+FROM openshift3/origin-base
+RUN mkdir -p /opt/bridge/bin
+COPY --from=gobuilder /go/src/github.com/openshift/console/bin/bridge /opt/bridge/bin
+COPY --from=nodebuilder /go/src/github.com/openshift/console/frontend/public/dist /opt/bridge/static
 
 WORKDIR /
-
-LABEL io.k8s.display-name="OpenShift Console" \
-      io.k8s.description="This is a component of OpenShift Container Platform and provides a web console." \
-      io.openshift.tags="openshift" \
-      maintainer="Samuel Padgett <spadgett@redhat.com>"
-
 # doesn't require a root user.
 USER 1001
 
 CMD [ "/opt/bridge/bin/bridge", "--public-dir=/opt/bridge/static" ]
+
+LABEL \
+        io.k8s.description="This is a component of OpenShift Container Platform and provides a web console." \
+        com.redhat.component="openshift-enterprise-console-container" \
+        maintainer="Samuel Padgett <spadgett@redhat.com>" \
+        name="openshift3/ose-console" \ 
+        License="Apache 2.0" \
+        io.k8s.display-name="OpenShift Console" \
+        vendor="Red Hat" \
+        io.openshift.tags="openshift,console"
+
