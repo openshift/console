@@ -395,12 +395,12 @@ const AlertsPage_ = connect(listStateToProps)(class InnerAlertsPage_ extends Rea
         <title>Monitoring Alerts</title>
       </Helmet>
       <NavTitle title="Monitoring Alerts" />
-      <div className="co-m-pane__filter-bar">
+      <div className="co-m-pane__filter-bar co-m-pane__filter-bar--with-description">
         <div className="co-m-pane__filter-bar-group">
           <AlertsPageDescription />
-          <div className="co-m-pane__filter-bar-group--filter">
-            <TextFilter defaultValue={this.defaultNameFilter} label="Alerts by name" onChange={this.applyTextFilter} />
-          </div>
+        </div>
+        <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--filter">
+          <TextFilter defaultValue={this.defaultNameFilter} label="Alerts by name" onChange={this.applyTextFilter} />
         </div>
       </div>
       <div className="co-m-pane__body">
