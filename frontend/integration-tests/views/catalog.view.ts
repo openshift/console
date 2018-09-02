@@ -16,7 +16,7 @@ export const hasSubscription = (name: string) => browser.getCurrentUrl().then(ur
 }).then(canSubscribe => !canSubscribe);
 
 export const createSubscriptionView = $('.co-create-subscription');
-export const subscriptionNSDropdown = createSubscriptionView.$$('.btn.btn--dropdown').first();
+export const subscriptionNSDropdown = createSubscriptionView.$$('.btn.btn-dropdown').first();
 
 /**
  * Returns a promise that resolves to the row for a given namespace in the enable/disable modal.
