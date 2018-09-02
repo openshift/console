@@ -183,10 +183,10 @@ export const ClusterServiceClassIcon: React.SFC<ClusterServiceClassIconProps> = 
   const iconClass = _.get(serviceClass, ['spec', 'externalMetadata', 'console.openshift.io/iconClass'], 'fa fa-clone');
   const iconClassImg = logos.get(iconClass);
   const imageUrl = _.get(serviceClass, ['spec', 'externalMetadata', 'imageUrl']) || iconClassImg;
-  return <span className="co-cluster-service-class-icon">
+  return <span className="co-catalog-item-icon">
     { imageUrl
-      ? <img className={classNames('co-cluster-service-class-icon__img', iconSize && `co-cluster-service-class-icon__img--${iconSize}`)} src={imageUrl} />
-      : <span className={classNames('co-cluster-service-class-icon__icon', iconSize && `co-cluster-service-class-icon__icon--${iconSize}`, normalizeIconClass(iconClass))} /> }
+      ? <img className={classNames('co-catalog-item-icon__img', iconSize && `co-catalog-item-icon__img--${iconSize}`)} src={imageUrl} />
+      : <span className={classNames('co-catalog-item-icon__icon', iconSize && `co-catalog-item-icon__icon--${iconSize}`, normalizeIconClass(iconClass))} /> }
   </span>;
 };
 ClusterServiceClassIcon.displayName = 'ClusterServiceClassIcon';
@@ -195,3 +195,19 @@ export type ClusterServiceClassIconProps = {
   serviceClass: K8sResourceKind,
   iconSize?: string,
 };
+
+export const ImageStreamIcon: React.SFC<ImageStreamIconProps> = ({tag, iconSize}) => {
+  const iconClass = _.get(tag, 'annotations.iconClass');
+  const iconClassImg = logos.get(iconClass);
+  return <span className="co-catalog-item-icon">
+    { iconClassImg
+      ? <img className={classNames('co-catalog-item-icon__img', iconSize && `co-catalog-item-icon__img--${iconSize}`)} src={iconClassImg} />
+      : <span className={classNames('co-catalog-item-icon__icon', iconSize && `co-catalog-item-icon__icon--${iconSize}`, normalizeIconClass(iconClass))} /> }
+  </span>;
+};
+
+export type ImageStreamIconProps = {
+  tag: any,
+  iconSize?: string,
+};
+

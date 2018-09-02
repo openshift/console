@@ -5,6 +5,7 @@ import * as _ from 'lodash-es';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 
+import { getPorts } from './source-to-image';
 import { history, Loading, NavTitle, resourcePathFromModel, Timestamp, units } from './utils';
 import { getActiveNamespace } from '../ui/ui-actions';
 import { NsDropdown } from './RBAC/bindings';
@@ -19,39 +20,9 @@ const runsAsRoot = image => {
           user === 'root';
 };
 
-const getImagePorts = image => _.get(image, 'dockerImageMetadata.Config.ExposedPorts') || _.get(image, 'image.dockerImageMetadata.ContainerConfig.ExposedPorts');
-
-const parsePorts = image => {
-  // map ports to k8s structure
-  const parsePortsFromSpec = portSpec => {
-    const ports = [];
-    _.each(portSpec, (value, key) => {
-      const parts = key.split('/');
-      if (parts.length === 1){
-        parts.push('tcp');
-      }
-
-      const containerPort = parseInt(parts[0], 10);
-      if (!_.isFinite(containerPort)) {
-        // eslint-disable-next-line no-console
-        console.log(`Container port ${parts[0]} is not a number for image ${image.metadata.name}`);
-      } else {
-        ports.push({
-          containerPort: containerPort,
-          protocol: parts[1].toUpperCase()
-        });
-      }
-    });
-
-    return _.sortBy(ports, 'containerPort');
-  };
-
-  return parsePortsFromSpec(getImagePorts(image) || []);
-};
-
 const ImagePorts = ({ports, name}) => <React.Fragment>
   {_.size(ports) > 1 ? 'Ports ' : 'Port '}
-  {_.map(ports, (value, key) => key.toUpperCase()).join(', ')} will be load balanced by Service <strong>{name || '<name>'}</strong>.
+  {_.map(ports, port => `${port.containerPort}/${port.protocol.toUpperCase()}`).join(', ')} will be load balanced by Service <strong>{name || '<name>'}</strong>.
   <div>Other containers can access this service through the hostname <strong>{name || '<name>'}</strong>.</div>
 </React.Fragment>;
 
@@ -175,7 +146,7 @@ export class DeployImage extends React.Component<DeployImageProps, DeployImageSt
       });
     });
 
-    const ports = parsePorts(isi.image);
+    const ports = getPorts(isi);
 
     const labels = {app: name};
 
@@ -301,6 +272,7 @@ export class DeployImage extends React.Component<DeployImageProps, DeployImageSt
   render() {
     const title = 'Deploy Image';
     const { loading, isi, name, searchError } = this.state;
+    const ports = getPorts(isi);
 
     return <React.Fragment>
       <Helmet>
@@ -368,7 +340,7 @@ export class DeployImage extends React.Component<DeployImageProps, DeployImageSt
                   <ul>
                     {!isi.namespace && <li>Image Stream <strong>{name || '<name>'}:{isi.tag || 'latest'}</strong> will track this image.</li>}
                     <li>This image will be deployed in Deployment Config <strong>{name || '<name>'}</strong>.</li>
-                    {getImagePorts(isi.image) && <li><ImagePorts ports={getImagePorts(isi.image)} name={name} /></li>}
+                    {ports && <li><ImagePorts ports={ports} name={name} /></li>}
                   </ul>
                   {!_.isEmpty(isi.image.dockerImageMetadata.Config.Volumes) && <p className="help-block">
                     This image declares volumes and will default to use non-persistent, host-local storage.
