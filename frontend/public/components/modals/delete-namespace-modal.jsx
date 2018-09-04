@@ -30,12 +30,15 @@ class DeleteNamespaceModal extends PromiseComponent {
   render() {
     return <form onSubmit={this._submit} name="form">
       <ModalTitle>Delete {this.props.kind.label}</ModalTitle>
-      <ModalBody>
-        <p>This action cannot be undone. It will destroy all pods, services and other objects in the deleted namespace.</p>
-        <p>Confirm deletion by typing <strong>{this.props.resource.metadata.name}</strong> below:</p>
-        <input type="text" className="form-control" onKeyUp={this._matchTypedNamespace} placeholder="Enter name" autoFocus={true} />
+      <ModalBody className="modal-body co-delete-modal">
+        <span aria-hidden="true" className="co-delete-modal__icon pficon pficon-warning-triangle-o"></span>
+        <div>
+          <p>This action cannot be undone. It will destroy all pods, services and other objects in the deleted namespace.</p>
+          <p>Confirm deletion by typing <strong>{this.props.resource.metadata.name}</strong> below:</p>
+          <input type="text" className="form-control" onKeyUp={this._matchTypedNamespace} placeholder="Enter name" autoFocus={true} />
+        </div>
       </ModalBody>
-      <ModalSubmitFooter submitText={`Delete ${this.props.kind.label}`} submitDisabled={!this.state.isTypedNsMatching} cancel={this._cancel} errorMessage={this.state.errorMessage} inProgress={this.state.inProgress} />
+      <ModalSubmitFooter submitText="Delete" submitDisabled={!this.state.isTypedNsMatching} submitButtonClass="btn-danger" cancel={this._cancel} errorMessage={this.state.errorMessage} inProgress={this.state.inProgress} />
     </form>;
   }
 }

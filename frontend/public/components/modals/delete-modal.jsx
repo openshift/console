@@ -45,17 +45,22 @@ class DeleteModal extends PromiseComponent {
     const {kind, resource} = this.props;
     return <form onSubmit={this._submit} name="form">
       <ModalTitle>Delete {kind.label}</ModalTitle>
-      <ModalBody>
-        Are you sure you want to delete <strong>{resource.metadata.name}</strong>
-        {_.has(resource.metadata, 'namespace') && <span> in namespace <strong>{resource.metadata.namespace}</strong>?</span>}
-        {_.has(kind, 'propagationPolicy') && <div className="co-delete-modal-checkbox">
-          <label className="co-delete-modal-checkbox-label">
-            <input type="checkbox" onChange={() => this.setState({isChecked: !this.state.isChecked})} checked={!!this.state.isChecked} />
-            &nbsp;&nbsp; <span>Delete dependent objects of this resource</span>
-          </label>
-        </div>}
+      <ModalBody className="modal-body co-delete-modal">
+        <span aria-hidden="true" className="co-delete-modal__icon pficon pficon-warning-triangle-o"></span>
+        <div>
+          <p className="lead">Delete {resource.metadata.name}?</p>
+          <div>Are you sure you want to delete <strong>{resource.metadata.name}</strong>
+            {_.has(resource.metadata, 'namespace') && <span> in namespace <strong>{ resource.metadata.namespace }</strong>?</span>}
+            {_.has(kind, 'propagationPolicy') && <div className="co-delete-modal__checkbox">
+              <label className="co-delete-modal__checkbox-label">
+                <input type="checkbox" onChange={() => this.setState({isChecked: !this.state.isChecked})} checked={!!this.state.isChecked} />
+                &nbsp;&nbsp; <span>Delete dependent objects of this resource</span>
+              </label>
+            </div>}
+          </div>
+        </div>
       </ModalBody>
-      <ModalSubmitFooter errorMessage={this.state.errorMessage} inProgress={this.state.inProgress} submitText={this.props.btnText || 'Confirm'} cancel={this._cancel} />
+      <ModalSubmitFooter errorMessage={this.state.errorMessage} inProgress={this.state.inProgress} submitButtonClass="btn-danger" submitText={this.props.btnText || 'Delete'} cancel={this._cancel} />
     </form>;
   }
 }

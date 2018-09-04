@@ -47,7 +47,7 @@ export const createModalLauncher: CreateModalLauncher = (Component) => (props) =
 
 export const ModalTitle: React.SFC<ModalTitleProps> = ({children, className = 'modal-header'}) => <div className={className}><h4 className="modal-title">{children}</h4></div>;
 
-export const ModalBody: React.SFC<ModalBodyProps> = ({children}) => <div className="modal-body">{children}</div>;
+export const ModalBody: React.SFC<ModalBodyProps> = ({children, className= 'modal-body'}) => <div className={className}>{children}</div>;
 
 export const ModalFooter: React.SFC<ModalFooterProps> = ({message, errorMessage, inProgress, children}) => {
   return <ButtonBar className="modal-footer" errorMessage={errorMessage} infoMessage={message} inProgress={inProgress}>
@@ -55,14 +55,15 @@ export const ModalFooter: React.SFC<ModalFooterProps> = ({message, errorMessage,
   </ButtonBar>;
 };
 
-export const ModalSubmitFooter: React.SFC<ModalSubmitFooterProps> = ({message, errorMessage, inProgress, cancel, submitText, submitDisabled}) => {
+export const ModalSubmitFooter: React.SFC<ModalSubmitFooterProps> = ({message, errorMessage, inProgress, cancel, submitText, submitDisabled, submitButtonClass='btn-primary'}) => {
   const onCancelClick = e => {
     e.stopPropagation();
     cancel(e);
   };
+
   return <ModalFooter inProgress={inProgress} errorMessage={errorMessage} message={message}>
     <button type="button" onClick={onCancelClick} className="btn btn-default">Cancel</button>
-    <button type="submit" className="btn btn-primary" disabled={submitDisabled} id="confirm-action">{submitText}</button>
+    <button type="submit" className={submitButtonClass} disabled={submitDisabled} id="confirm-action">{submitText}</button>
   </ModalFooter>;
 };
 
@@ -72,6 +73,7 @@ ModalSubmitFooter.propTypes = {
   inProgress: PropTypes.bool.isRequired,
   message: PropTypes.string,
   submitText: PropTypes.node.isRequired,
+  submitButtonClass: PropTypes.string,
 };
 
 export type CreateModalLauncherProps = {
@@ -88,7 +90,7 @@ export type ModalTitleProps = {
 };
 
 export type ModalBodyProps = {
-
+  className?: string;
 };
 
 export type ModalFooterProps = {
@@ -104,6 +106,7 @@ export type ModalSubmitFooterProps = {
   cancel: (e: Event) => void;
   submitText: string;
   submitDisabled?: boolean;
+  submitButtonClass?: string;
 };
 
 export type CreateModalLauncher = <P extends ModalComponentProps>(C: React.ComponentType<P>) =>
