@@ -57,8 +57,8 @@ export default (state, action) => {
     case types.setCreateProjectMessage:
       return state.set('createProjectMessage', action.message);
 
-    case types.setMonitoringRules:
-      return state.set('monitoringRules', action.data);
+    case types.setMonitoringData:
+      return state.setIn(['monitoring', action.key], action.data);
 
     default:
       break;
@@ -69,3 +69,7 @@ export default (state, action) => {
 export const createProjectMessageStateToProps = ({UI}) => {
   return {createProjectMessage: UI.get('createProjectMessage')};
 };
+
+export const monitoringAlertsToProps = ({UI}) => UI.getIn(['monitoring', 'alerts'], {});
+export const monitoringRulesToProps = ({UI}) => UI.getIn(['monitoring', 'rules'], {});
+export const monitoringSilencesToProps = ({UI}) => UI.getIn(['monitoring', 'silences'], {});

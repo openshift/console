@@ -18,6 +18,7 @@ import { Masthead } from './masthead';
 import { NamespaceSelector } from './namespace';
 import { Nav } from './nav';
 import { SearchPage } from './search';
+import { SilencesPage, SilencesDetailsPage } from './silence';
 import { ResourceDetailsPage, ResourceListPage } from './resource-list';
 import { history, AsyncComponent, Loading } from './utils';
 import { namespacedPrefixes } from './utils/link';
@@ -190,9 +191,12 @@ class App extends React.PureComponent {
           <LazyRoute path="/k8s/cluster/clusterrolebindings/:name/copy" exact kind="ClusterRoleBinding" loader={() => import('./RBAC' /* webpackChunkName: "rbac" */).then(m => m.CopyRoleBinding)} />
           <LazyRoute path="/k8s/cluster/clusterrolebindings/:name/edit" exact kind="ClusterRoleBinding" loader={() => import('./RBAC' /* webpackChunkName: "rbac" */).then(m => m.EditRoleBinding)} />
 
+          <Redirect from="/monitoring" exact to="/monitoring/alerts" />
           <Route path="/monitoring/alerts" exact component={AlertsPage} />
           <Route path="/monitoring/alerts/:name" exact component={AlertsDetailsPage} />
-          <Route path="/monitoring/alerts/rules/:name" exact component={AlertRulesDetailsPage} />
+          <Route path="/monitoring/alertrules/:name" exact component={AlertRulesDetailsPage} />
+          <Route path="/monitoring/silences" exact component={SilencesPage} />
+          <Route path="/monitoring/silences/:id" exact component={SilencesDetailsPage} />
 
           <Route path="/k8s/cluster/:plural" exact component={ResourceListPage} />
           <LazyRoute path="/k8s/cluster/:plural/new" exact loader={() => import('./create-yaml' /* webpackChunkName: "create-yaml" */).then(m => m.CreateYAML)} />

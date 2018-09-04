@@ -20,7 +20,7 @@ import {
   podPhaseFilterReducer,
   podReadiness,
   serviceClassDisplayName } from '../../module/k8s';
-import { alertRuleState } from '../../module/monitoring';
+import { alertRuleState, silenceState } from '../../module/monitoring';
 import { UIActions } from '../../ui/ui-actions';
 import { ingressValidHosts } from '../ingress';
 import { routeStatus } from '../routes';
@@ -37,6 +37,10 @@ const listFilters = {
   'alert-rule-name': (filter, alertRule) => fuzzyCaseInsensitive(filter, alertRule.name),
 
   'alert-rule-state': (filter, alertRule) => filter.selected.has(alertRuleState(alertRule)),
+
+  'silence-name': (filter, silence) => fuzzyCaseInsensitive(filter, silence.name),
+
+  'silence-state': (filter, silence) => filter.selected.has(silenceState(silence)),
 
   // Filter role by role kind
   'role-kind': (filter, role) => filter.selected.has(roleType(role)),
