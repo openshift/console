@@ -59,12 +59,14 @@ describe(SubscriptionRow.displayName, () => {
   });
 
   it('renders actions cog', () => {
+    const menuArgs = [ClusterServiceVersionModel, subscription];
     expect(wrapper.find('.co-resource-list__item').childAt(0).find(ResourceCog).props().kind).toEqual(referenceForModel(SubscriptionModel));
     expect(wrapper.find('.co-resource-list__item').childAt(0).find(ResourceCog).props().resource).toEqual(subscription);
-    expect(wrapper.find('.co-resource-list__item').childAt(0).find(ResourceCog).props().actions[0]().label).toEqual('Remove Subscription...');
-    expect(wrapper.find('.co-resource-list__item').childAt(0).find(ResourceCog).props().actions[0]().callback).toBeDefined();
-    expect(wrapper.find('.co-resource-list__item').childAt(0).find(ResourceCog).props().actions[1]().label).toEqual(`View ${ClusterServiceVersionModel.kind}...`);
-    expect(wrapper.find('.co-resource-list__item').childAt(0).find(ResourceCog).props().actions[1]().href).toEqual(`/k8s/ns/${testClusterServiceVersion.metadata.namespace}/${ClusterServiceVersionModel.plural}/${subscription.status.installedCSV}`);
+    expect(wrapper.find('.co-resource-list__item').childAt(0).find(ResourceCog).props().actions[0]).toEqual(Cog.factory.Edit);
+    expect(wrapper.find('.co-resource-list__item').childAt(0).find(ResourceCog).props().actions[1]().label).toEqual('Remove Subscription...');
+    expect(wrapper.find('.co-resource-list__item').childAt(0).find(ResourceCog).props().actions[1]().callback).toBeDefined();
+    expect(wrapper.find('.co-resource-list__item').childAt(0).find(ResourceCog).props().actions[2](...menuArgs).label).toEqual(`View ${ClusterServiceVersionModel.kind}...`);
+    expect(wrapper.find('.co-resource-list__item').childAt(0).find(ResourceCog).props().actions[2](...menuArgs).href).toEqual(`/k8s/ns/default/${ClusterServiceVersionModel.plural}/testapp.v1.0.0`);
   });
 
   it('renders column for namespace name', () => {
@@ -193,12 +195,15 @@ describe(SubscriptionDetails.displayName, () => {
 describe(SubscriptionDetailsPage.displayName, () => {
 
   it('renders `DetailsPage` with correct props', () => {
+    const menuArgs = [ClusterServiceVersionModel, testSubscription];
     const match = {params: {ns: 'default', name: 'example-sub'}, url: '', isExact: true, path: ''};
     const wrapper = shallow(<SubscriptionDetailsPage match={match} namespace="default" />);
 
     expect(wrapper.find(DetailsPage).props().kind).toEqual(referenceForModel(SubscriptionModel));
     expect(wrapper.find(DetailsPage).props().pages.length).toEqual(2);
-    expect(wrapper.find(DetailsPage).props().menuActions).toEqual(Cog.factory.common);
+    expect(wrapper.find(DetailsPage).props().menuActions[0]).toEqual(Cog.factory.Edit);
+    expect(wrapper.find(DetailsPage).props().menuActions[1](...menuArgs).label).toEqual('Remove Subscription...');
+    expect(wrapper.find(DetailsPage).props().menuActions[2](...menuArgs).label).toEqual(`View ${ClusterServiceVersionModel.kind}...`);
   });
 
   it('passes additional resources to watch', () => {

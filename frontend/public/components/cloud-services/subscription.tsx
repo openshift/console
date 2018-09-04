@@ -31,20 +31,22 @@ const subscriptionState = (state: SubscriptionState) => {
   }
 };
 
-export const SubscriptionRow: React.SFC<SubscriptionRowProps> = (props) => {
-  const disableAction = () => ({
+const menuActions = [
+  Cog.factory.Edit,
+  (kind, obj) => ({
     label: 'Remove Subscription...',
-    callback: () => createDisableApplicationModal({k8sKill, subscription: props.obj}),
-  });
-  const viewCSVAction = () => ({
+    callback: () => createDisableApplicationModal({k8sKill, subscription: obj}),
+  }),
+  (kind, obj) => ({
     label: `View ${ClusterServiceVersionModel.kind}...`,
-    href: `/k8s/ns/${props.obj.metadata.namespace}/${ClusterServiceVersionModel.plural}/${_.get(props.obj.status, 'installedCSV')}`,
-  });
-  const actions = [disableAction, ...(_.get(props.obj.status, 'installedCSV') ? [viewCSVAction] : [])];
+    href: `/k8s/ns/${obj.metadata.namespace}/${ClusterServiceVersionModel.plural}/${_.get(obj.status, 'installedCSV')}`,
+  })
+];
 
+export const SubscriptionRow: React.SFC<SubscriptionRowProps> = (props) => {
   return <div className="row co-resource-list__item">
     <div className="col-xs-6 col-sm-4 col-md-3 co-resource-link-wrapper">
-      <ResourceCog actions={actions} kind={referenceForModel(SubscriptionModel)} resource={props.obj} />
+      <ResourceCog actions={_.get(props.obj.status, 'installedCSV') ? menuActions : menuActions.slice(0, -1)} kind={referenceForModel(SubscriptionModel)} resource={props.obj} />
       <ResourceLink kind={referenceForModel(SubscriptionModel)} name={props.obj.metadata.name} namespace={props.obj.metadata.namespace} title={props.obj.metadata.name} />
     </div>
     <div className="col-xs-6 col-sm-4 col-md-3">
@@ -214,7 +216,7 @@ export const SubscriptionDetailsPage: React.SFC<SubscriptionDetailsPageProps> = 
       {kind: ConfigMapModel.kind, namespace: props.namespace, isList: true, prop: 'localConfigMaps'},
       {kind: referenceForModel(ClusterServiceVersionModel), namespace: props.namespace, isList: true, prop: 'clusterServiceVersions'},
     ]}
-    menuActions={Cog.factory.common} />;
+    menuActions={menuActions} />;
 };
 
 export type SubscriptionsPageProps = {
