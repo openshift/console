@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="30mm"
+   height="30mm"
+   viewBox="0 0 30 30"
+   version="1.1"
+   id="svg4660"
+   inkscape:version="0.92.2 (5c3e80d, 2017-08-06)"
+   sodipodi:docname="kubevirt-pre.svg"
+   inkscape:export-filename="/home/fabiand/work/kubevirt/community/logo/kubevirt-pre.png"
+   inkscape:export-xdpi="599"
+   inkscape:export-ydpi="599">
+  <defs
+     id="defs4654" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="7.5962804"
+     inkscape:cx="67.743469"
+     inkscape:cy="46.433636"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1920"
+     inkscape:window-height="1043"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     units="mm"
+     width="30mm" />
+  <metadata
+     id="metadata4657">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Ebene 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-267)">
+    <path
+       style="fill:#326de6;stroke-width:0.32433048"
+       inkscape:connector-curvature="0"
+       class="st1"
+       d="m 26.699808,274.38954 c -0.162166,-0.51892 -0.551362,-0.94055 -1.037858,-1.20002 l -9.892081,-4.73522 c -0.259464,-0.12974 -0.551361,-0.16217 -0.810826,-0.16217 -0.259465,0 -0.551362,0 -0.810826,0.0648 l -9.8920807,4.76767 c -0.4864961,0.22702 -0.8432597,0.64865 -0.9729919,1.20001 l -2.43247871,10.67048 c -0.0972992,0.55136 0.0324326,1.10272 0.35676361,1.55679 l 6.843374,8.46502 c 0.3891966,0.3892 0.9405588,0.64867 1.4919199,0.6811 H 20.440228 c 0.583795,0.0649 1.135158,-0.1946 1.491921,-0.6811 l 6.843374,-8.46502 c 0.32433,-0.45407 0.454063,-1.00543 0.389196,-1.55679 z"
+       id="path4543" />
+    <g
+       aria-label="V"
+       transform="scale(0.96037023,1.0412651)"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:19.44939232px;line-height:32.41543961px;font-family:Comfortaa;-inkscape-font-specification:'Comfortaa, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:0.5291667;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="text4637">
+      <path
+         d="m 21.514922,264.47772 q 0.427887,0 0.66128,0.23339 0.252842,0.23339 0.252842,0.60293 0,0.2334 -0.116697,0.50569 l -5.75702,13.20613 q -0.252842,0.64183 -0.914121,0.64183 -0.622381,0 -0.914122,-0.64183 L 9.0284125,265.99477 q -0.1555952,-0.40844 -0.1555952,-0.68073 0,-0.38899 0.2333928,-0.60293 0.2528421,-0.23339 0.6807287,-0.23339 0.6807292,0 0.9335712,0.60293 l 4.901246,11.74743 4.979045,-11.74743 q 0.136146,-0.35009 0.350089,-0.46679 0.213943,-0.13614 0.564032,-0.13614 z"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:19.44939232px;font-family:Comfortaa;-inkscape-font-specification:'Comfortaa, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#ffffff;stroke:#ffffff;stroke-width:0.5291667;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         id="path960" />
+    </g>
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="Ebene 2"
+     sodipodi:insensitive="true"
+     style="display:none">
+    <image
+       sodipodi:absref="/home/fabiand/work/kubevirt/community/logo/kubevirt-pre.png"
+       xlink:href="kubevirt-pre.png"
+       y="0.010183334"
+       x="0.010183334"
+       id="image938"
+       preserveAspectRatio="none"
+       height="29.979633"
+       width="29.979633"
+       style="opacity:0.34900004" />
+  </g>
+</svg>
