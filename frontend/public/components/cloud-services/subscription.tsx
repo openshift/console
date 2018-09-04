@@ -83,6 +83,7 @@ export const SubscriptionsPage: React.SFC<SubscriptionsPageProps> = (props) => <
 
 export const SubscriptionDetails: React.SFC<SubscriptionDetailsProps> = (props) => {
   const {obj, installedCSV, pkg} = props;
+  const catalogNS = obj.spec.sourceNamespace || olmNamespace;
 
   return <div className="co-m-pane__body">
     <SectionHeading text="Subscription Overview" />
@@ -106,7 +107,7 @@ export const SubscriptionDetails: React.SFC<SubscriptionDetailsProps> = (props) 
             <dd>{obj.spec.startingCSV || 'None'}</dd>
             <dt>Catalog</dt>
             <dd>
-              <ResourceLink kind={referenceForModel(CatalogSourceModel)} name={obj.spec.source} namespace={obj.metadata.namespace} title={obj.spec.source} />
+              <ResourceLink kind={referenceForModel(CatalogSourceModel)} name={obj.spec.source} namespace={catalogNS} title={obj.spec.source} />
             </dd>
           </dl>
         </div>

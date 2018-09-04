@@ -160,6 +160,7 @@ export type SubscriptionKind = {
     name: string;
     channel?: string;
     startingCSV?: string;
+    sourceNamespace?: string;
     installPlanApproval?: InstallPlanApproval;
   },
   status?: {
