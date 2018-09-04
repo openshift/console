@@ -67,7 +67,9 @@ export const PackageRow: React.SFC<PackageRowProps> = (props) => {
 
 export const PackageList: React.SFC<PackageListProps> = (props) => <List
   loaded={true}
-  data={props.packages.map(pkg => ({...pkg, rowKey: pkg.packageName}))}
+  // TODO(alecmerdler): Adding `metadata` as a hack to get text filter to work until `Package` is a real k8s resource
+  data={props.packages.map(pkg => ({...pkg, rowKey: pkg.packageName, metadata: {name: pkg.packageName}}))}
+  filters={props.filters}
   Header={PackageHeader}
   Row={(rowProps: {obj: Package}) => <PackageRow
     obj={rowProps.obj}
@@ -146,7 +148,7 @@ export const CatalogSourceList = withFallback((props: CatalogSourceListProps) =>
           </div>
           <Link to={`/k8s/ns/${obj.metadata.namespace}/${CatalogSourceModel.plural}/${obj.metadata.name}`}>View catalog details</Link>
         </div>
-        <PackageList catalogSource={obj} clusterServiceVersions={csvsFor(obj)} packages={pkgsFor(obj)} subscriptions={subsFor(obj)} />
+        <PackageList catalogSource={obj} clusterServiceVersions={csvsFor(obj)} packages={pkgsFor(obj)} subscriptions={subsFor(obj)} filters={props.filters} />
       </div>) }
     </React.Fragment>
     : <StatusBox loaded={props.loaded} loadError={props.loadError} label={CatalogSourceModel.labelPlural} />;
@@ -250,6 +252,7 @@ export type PackageListProps = {
   packages: Package[];
   clusterServiceVersions: ClusterServiceVersionKind[];
   subscriptions: SubscriptionKind[];
+  filters?: {[name: string]: string};
 };
 
 export type CatalogSourceHeaderProps = {
@@ -264,6 +267,7 @@ export type CatalogSourceListProps = {
   configMap: {loaded?: boolean, data?: ConfigMapKind[]};
   globalConfigMap: {loaded?: boolean, data?: ConfigMapKind[]};
   data: CatalogSourceKind[];
+  filters?: {[name: string]: string};
   globalCatalogSource: {loaded?: boolean, data?: CatalogSourceKind[]};
   subscription: {loaded?: boolean, data?: SubscriptionKind[]}
   loaded: boolean;
