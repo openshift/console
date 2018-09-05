@@ -8,8 +8,7 @@ import { kindToAbbr } from '../../module/k8s/get-resources';
 
 const MEMO = {};
 
-export const ResourceIcon = (props: ResourceIconProps) => {
-  const { kind, className } = props;
+export const ResourceIcon: React.SFC<ResourceIconProps> = ({className, kind}) => {
   const memoKey = className ? `${kind}/${className}` : kind;
   if (MEMO[memoKey]) {
     return MEMO[memoKey];

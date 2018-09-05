@@ -1,0 +1,57 @@
+.project-overview__group {
+  margin-bottom: 40px;
+}
+
+.project-overview__group-heading {
+  border-bottom: 1px solid black;
+  margin: 0;
+  padding: 5px 0;
+}
+
+.project-overview__list {
+  margin-top: 0;
+}
+
+.project-overview__item-heading {
+  margin: 0;
+}
+
+.project-overview__additional-info {
+  align-items: center;
+  display: grid;
+  grid-template-columns: 50% 50%;
+  grid-template-areas: "controller status";
+  width: 100%;
+}
+
+.project-overview__detail--controller {
+  grid-area: controller;
+}
+
+.project-overview__detail--status {
+  grid-area: status;
+}
+
+@media (max-width: $screen-sm-max) {
+
+  .project-overview__item-heading {
+    margin-bottom: 20px;
+  }
+
+  .project-overview__additional-info {
+    grid-template-columns: auto;
+    grid-template-rows: auto auto;
+    grid-template-areas:
+      "controller"
+      "status";
+  }
+
+  .project-overview__detail {
+    margin-bottom: 20px;
+  }
+
+  .project-overview__detail:last-child {
+    margin-bottom: 0px;
+  }
+
+}

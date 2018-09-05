@@ -330,3 +330,9 @@ input[type=number]::-webkit-outer-spin-button {
     align-items: flex-end;
   }
 }
+
+.co-component-label {
+  color: $co-gray-dark;
+  text-transform: uppercase;
+  font-size: $font-size-small;
+}

@@ -14,7 +14,7 @@ export const legalNamePattern = /[a-z0-9](?:[-a-z0-9]*[a-z0-9])?/;
 
 const basePathPattern = new RegExp(`^/?${window.SERVER_FLAGS.basePath}`);
 
-export const namespacedPrefixes = ['/search', '/status', '/k8s'];
+export const namespacedPrefixes = ['/search', '/status', '/k8s', '/overview'];
 
 export const stripBasePath = path => path.replace(basePathPattern, '/');
 
