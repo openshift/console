@@ -774,32 +774,7 @@ export const ServiceBindingModel: K8sKind = {
   id: 'servicebinding'
 };
 
-export const LimitRangeModel: K8sKind = {
-  label: 'Limit Range',
-  apiVersion: 'v1',
-  path: 'limitranges',
-  plural: 'limitranges',
-  abbr: 'LR',
-  namespaced: true,
-  kind: 'LimitRange',
-  id: 'limitrange',
-  labelPlural: 'Limit Ranges'
-};
-
-export const APIServiceModel: K8sKind = {
-  label: 'API Service',
-  labelPlural: 'API Services',
-  apiVersion: 'v1',
-  path: 'apiservices',
-  apiGroup: 'apiregistration.k8s.io',
-  plural: 'apiservices',
-  abbr: 'APIS',
-  namespaced: false,
-  kind: 'APIService',
-  id: 'apiservice',
-  crd: true,
-};
-
+export * from '../kubevirt/models/vm'; // needed when setting features and resource pages
 export const VirtualMachineModel: K8sKind = {
   label: 'Virtual Machine',
   labelPlural: 'Virtual Machines',
@@ -837,5 +812,31 @@ export const VirtualMachineInstancePresetModel: K8sKind = {
   namespaced: true,
   kind: 'VirtualMachineInstancePreset',
   id: 'virtualmachineinstancepreset'
+};
+
+export const LimitRangeModel: K8sKind = {
+  label: 'Limit Range',
+  apiVersion: 'v1',
+  path: 'limitranges',
+  plural: 'limitranges',
+  abbr: 'LR',
+  namespaced: true,
+  kind: 'LimitRange',
+  id: 'limitrange',
+  labelPlural: 'Limit Ranges'
+};
+
+export const APIServiceModel: K8sKind = {
+  label: 'API Service',
+  labelPlural: 'API Services',
+  apiVersion: 'v1',
+  path: 'apiservices',
+  apiGroup: 'apiregistration.k8s.io',
+  plural: 'apiservices',
+  abbr: 'APIS',
+  namespaced: false,
+  kind: 'APIService',
+  id: 'apiservice',
+  crd: true,
 };
 
