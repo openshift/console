@@ -69,7 +69,7 @@ export const Resources = connectToPlural((props: ResourceProps) => {
     ListComponent={(listProps) => <List
       {...listProps}
       data={listProps.data.map(o => ({...o, rowKey: o.metadata.uid}))}
-      EmptyMsg={() => <MsgBox title="No Resources Found" detail="Resources are dependent servcies and Kubernetes primitives used by this instance." />}
+      EmptyMsg={() => <MsgBox title="No Resources Found" detail={`There are no Kubernetes resources used by this ${props.obj.kind}.`} />}
       Header={ResourceHeader}
       Row={ResourceRow} />}
   />;

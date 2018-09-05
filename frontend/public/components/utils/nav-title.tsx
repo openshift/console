@@ -5,7 +5,7 @@ import * as _ from 'lodash-es';
 
 import { ActionsMenu, ResourceIcon } from './index';
 import { ClusterServiceVersionLogo } from '../operator-lifecycle-manager';
-import { K8sResourceKind, K8sResourceKindReference, K8sKind, referenceFor, referenceForModel } from '../../module/k8s';
+import { K8sResourceKind, K8sResourceKindReference, K8sKind, referenceForModel } from '../../module/k8s';
 import { connectToModel } from '../../kinds';
 import { ClusterServiceVersionModel } from '../../models';
 
@@ -35,10 +35,14 @@ const ActionButtons: React.SFC<ActionButtonsProps> = ({actionButtons}) => <div c
 export const NavTitle = connectToModel((props: NavTitleProps) => {
   const {kind, kindObj, detail, title, menuActions, buttonActions, obj, breadcrumbsFor, titleFunc, style} = props;
   const data = _.get(obj, 'data');
-  const isCSV = !_.isEmpty(data) && referenceFor(data) === referenceForModel(ClusterServiceVersionModel);
   const resourceTitle = (titleFunc && data) ? titleFunc(data) : title;
-  const logo = isCSV
+  const isCSV = kind === referenceForModel(ClusterServiceVersionModel);
+  const csvLogo = () => !_.isEmpty(data)
     ? <ClusterServiceVersionLogo icon={_.get(data, 'spec.icon', [])[0]} displayName={data.spec.displayName} version={data.spec.version} provider={data.spec.provider} />
+    : <div style={{height: '60px'}} />;
+
+  const logo = isCSV
+    ? csvLogo()
     : <div className="co-m-pane__name">{ kind && <ResourceIcon kind={kind} className="co-m-resource-icon--lg pull-left" /> } <span id="resource-title">{resourceTitle}</span></div>;
   const hasButtonActions = !_.isEmpty(buttonActions);
   const hasMenuActions = !_.isEmpty(menuActions);

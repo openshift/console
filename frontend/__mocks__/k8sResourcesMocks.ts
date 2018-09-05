@@ -48,6 +48,13 @@ export const testClusterServiceVersion: ClusterServiceVersionKind = {
         'alm-owner-testapp': 'testapp.clusterserviceversions.operators.coreos.com.v1alpha1'
       }
     },
+    install: {
+      strategy: 'Deployment',
+      spec: {
+        permissions: [{serviceAccountName: 'testapp-operator', rules: [{apiGroups: ['testapp.coreos.com'], resources: ['testresource'], verbs: ['*']}]}],
+        deployments: [{name: 'testapp-operator', spec: {}}],
+      }
+    },
     customresourcedefinitions: {
       owned: [{
         name: 'testresource.testapp.coreos.com',
@@ -112,6 +119,13 @@ export const localClusterServiceVersion: ClusterServiceVersionKind = {
         'alm-owner-local-testapp': 'local-testapp.clusterserviceversions.operators.coreos.com.v1alpha1'
       }
     },
+    install: {
+      strategy: 'Deployment',
+      spec: {
+        permissions: [{serviceAccountName: 'local-operator', rules: [{apiGroups: ['testapp.coreos.com'], resources: ['testresource'], verbs: ['*']}]}],
+        deployments: [{name: 'testapp-operator', spec: {}}],
+      }
+    },
     customresourcedefinitions: {
       owned: [{
         name: 'testresource.testapp.coreos.com',
@@ -146,7 +160,7 @@ export const testCRD: CustomResourceDefinitionKind = {
     version: 'v1alpha1',
     names: {
       kind: 'TestResource',
-      plural: 'testresources',
+      plural: 'testresource',
       singular: 'testresource',
       listKind: 'TestResourceList',
     },
