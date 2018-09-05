@@ -21,7 +21,7 @@ const VMHeader = props => <ListHeader>
 </ListHeader>;
 
 const getAction = (vm) => {
-  return vm.spec.running ? 'Stop Virtual Machine':'Start Virtual Machine';
+  return _.get(vm, 'spec.running', false) ? 'Stop Virtual Machine' : 'Start Virtual Machine';
 };
 
 const menuActionStart = (kind, vm) => ({
@@ -29,7 +29,7 @@ const menuActionStart = (kind, vm) => ({
   callback: () => startStopVmModal({
     kind: kind,
     resource: vm,
-    start: !vm.spec.running
+    start: !_.get(vm, 'spec.running', false)
   })
 });
 
@@ -48,7 +48,7 @@ const StateColumn = props => {
   if (props.loaded){
     const vm = props.flatten(props.resources);
     if (vm){
-      return vm.spec.running ? 'Running':'Stopped';
+      return _.get(vm, 'spec.running', false) ? 'Running' : 'Stopped';
     }
   }
   return dashes;
@@ -239,5 +239,4 @@ export class VirtualMachinesPage extends Component {
       ListComponent={VMList}
     />;
   }
-
 }
