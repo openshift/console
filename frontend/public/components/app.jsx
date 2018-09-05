@@ -11,7 +11,6 @@ import { productName } from '../branding';
 import { ALL_NAMESPACES_KEY } from '../const';
 import { connectToFlags, featureActions, flagPending, FLAGS } from '../features';
 import { detectMonitoringURLs } from '../monitoring';
-import { analyticsSvc } from '../module/analytics';
 import { AlertsPage, AlertsDetailsPage, AlertRulesDetailsPage } from './alert';
 import { GlobalNotifications } from './global-notifications';
 import { Masthead } from './masthead';
@@ -116,7 +115,6 @@ class App extends React.PureComponent {
     // two way data binding :-/
     const { pathname } = props.location;
     store.dispatch(UIActions.setCurrentLocation(pathname));
-    analyticsSvc.route(pathname);
   }
 
   render () {
@@ -209,39 +207,10 @@ _.each(featureActions, store.dispatch);
 store.dispatch(k8sActions.getResources());
 store.dispatch(detectMonitoringURLs);
 
-analyticsSvc.push({tier: 'tectonic'});
-
 // Used by GUI tests to check for unhandled exceptions
 window.windowError = false;
-
-window.onerror = function (message, source, lineno, colno, optError={}) {
-  try {
-    const e = `${message} ${source} ${lineno} ${colno}`;
-    analyticsSvc.error(e, null, optError.stack);
-  } catch (err) {
-    try {
-      // eslint-disable-next-line no-console
-      console.error(err);
-    } catch (ignored) {
-      // ignore
-    }
-  }
-  window.windowError = true;
-};
-
-window.onunhandledrejection = function (e) {
-  try {
-    analyticsSvc.error(e, null);
-  } catch (err) {
-    try {
-      // eslint-disable-next-line no-console
-      console.error(err);
-    } catch (ignored) {
-      // ignore
-    }
-  }
-  window.windowError = true;
-};
+window.onerror = () => window.windowError = true;
+window.onunhandledrejection = () => window.windowError = true;
 
 if ('serviceWorker' in navigator) {
   if (window.SERVER_FLAGS.loadTestFactor > 1) {
