@@ -180,7 +180,7 @@ class ConfigureNamespacePullSecret extends PromiseComponent {
 
         <div className="row co-m-form-row">
           <div className="col-xs-3">
-            <label>Namespace:</label>
+            <label>Namespace</label>
           </div>
           <div className="col-xs-9">
             <ResourceIcon kind="Namespace" className="co-m-resource-icon--align-left" /> &nbsp;{namespace.metadata.name}
@@ -189,7 +189,7 @@ class ConfigureNamespacePullSecret extends PromiseComponent {
 
         <div className="row co-m-form-row">
           <div className="col-xs-3">
-            <label htmlFor="namespace-pull-secret-name">Secret Name:</label>
+            <label htmlFor="namespace-pull-secret-name">Secret Name</label>
           </div>
           { pullSecret ?
             <div className="col-xs-9">
@@ -204,7 +204,7 @@ class ConfigureNamespacePullSecret extends PromiseComponent {
 
         <div className="row co-m-form-row form-group">
           <div className="col-xs-3">
-            <label>Method:</label>
+            <label>Method</label>
           </div>
           <div className="col-xs-9">
             <div className="radio">
@@ -230,7 +230,7 @@ class ConfigureNamespacePullSecret extends PromiseComponent {
         { this.state.method === 'form' && <div>
           <div className="row co-m-form-row">
             <div className="col-xs-3">
-              <label htmlFor="namespace-pull-secret-address">Registry Address:</label>
+              <label htmlFor="namespace-pull-secret-address">Registry Address</label>
             </div>
             <div className="col-xs-9">
               <input type="text" className="form-control" id="namespace-pull-secret-address" defaultValue={existingData.address} placeholder="quay.io" required />
@@ -238,7 +238,7 @@ class ConfigureNamespacePullSecret extends PromiseComponent {
           </div>
           <div className="row co-m-form-row">
             <div className="col-xs-3">
-              <label htmlFor="namespace-pull-secret-email">Email Address:</label>
+              <label htmlFor="namespace-pull-secret-email">Email Address</label>
             </div>
             <div className="col-xs-9">
               <input type="email" className="form-control" defaultValue={existingData.email} id="namespace-pull-secret-email" />
@@ -247,7 +247,7 @@ class ConfigureNamespacePullSecret extends PromiseComponent {
           </div>
           <div className="row co-m-form-row">
             <div className="col-xs-3">
-              <label htmlFor="namespace-pull-secret-username">Username:</label>
+              <label htmlFor="namespace-pull-secret-username">Username</label>
             </div>
             <div className="col-xs-9">
               <input type="text" defaultValue={existingData.username} className="form-control" id="namespace-pull-secret-username" required />
@@ -255,7 +255,7 @@ class ConfigureNamespacePullSecret extends PromiseComponent {
           </div>
           <div className="row co-m-form-row">
             <div className="col-xs-3">
-              <label htmlFor="namespace-pull-secret-password">Password:</label>
+              <label htmlFor="namespace-pull-secret-password">Password</label>
             </div>
             <div className="col-xs-9">
               <input type="text" defaultValue={existingData.password} className="form-control" id="namespace-pull-secret-password" required />
@@ -266,7 +266,7 @@ class ConfigureNamespacePullSecret extends PromiseComponent {
         { this.state.method === 'upload' && <div>
           <div className="row co-m-form-row">
             <div className="col-xs-3">
-              <label htmlFor="namespace-pull-secret-file">File Upload:</label>
+              <label htmlFor="namespace-pull-secret-file">File Upload</label>
             </div>
             <div className="col-xs-9">
               <input type="file" id="namespace-pull-secret-file" onChange={this._onFileChange} />

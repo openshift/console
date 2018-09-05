@@ -358,7 +358,7 @@ const subjectKinds = [
 
 const Section = ({label, children}) => <div className="row">
   <div className="col-xs-2">
-    <label>{label}:</label>
+    <label>{label}</label>
   </div>
   <div className="col-xs-10">
     {children}
