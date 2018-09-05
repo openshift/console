@@ -163,7 +163,7 @@ export const Firehose = connect(
     }
 
     shouldComponentUpdate(nextProps, nextState, nextContext) {
-      const currentResources = this.props.resources;
+      const {resources: currentResources, forceUpdate = false} = this.props;
 
       const { resources, expand, inFlight } = nextProps;
 
@@ -174,7 +174,7 @@ export const Firehose = connect(
         if (expand !== this.props.expand) {
           return true;
         }
-        return false;
+        return forceUpdate;
       }
       this.componentWillUnmount();
       this.componentWillMount(nextProps);
@@ -203,6 +203,7 @@ Firehose.contextTypes = {
 Firehose.propTypes = {
   children: PropTypes.node,
   expand: PropTypes.bool,
+  forceUpdate: PropTypes.bool,
   resources: PropTypes.arrayOf(PropTypes.shape({
     kind: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
     name: PropTypes.string,

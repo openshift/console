@@ -42,6 +42,7 @@ export * from './webhooks';
 export * from './section-heading';
 export * from './scroll-to-top-on-mount';
 export * from './service-catalog-status';
+export * from './close-button';
 
 /*
   Add the enum for NameValueEditorPair here and not in its namesake file because the editor should always be
@@ -68,5 +69,3 @@ export const enum EnvType {
   ENV = 0,
   ENV_FROM = 1
 }
-
-

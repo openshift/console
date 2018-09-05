@@ -5,11 +5,28 @@ import * as _ from 'lodash-es';
 import { k8sCreate, K8sResourceKindReference } from '../module/k8s';
 import { errorModal } from './modals';
 import { DeploymentConfigModel } from '../models';
-import { DetailsPage, List, ListPage, WorkloadListHeader, WorkloadListRow } from './factory';
-import { Cog, DeploymentPodCounts, SectionHeading, LoadingInline, navFactory, pluralize, ResourceSummary, AsyncComponent } from './utils';
 import { Conditions } from './conditions';
 import { ResourceEventStream } from './events';
 import { ContainerTable } from './deployment';
+import { connectToModel } from '../kinds';
+import { ResourceOverviewHeading } from './overview';
+import {
+  DetailsPage,
+  List,
+  ListPage,
+  WorkloadListHeader,
+  WorkloadListRow
+} from './factory';
+import {
+  AsyncComponent,
+  Cog,
+  DeploymentPodCounts,
+  LoadingInline,
+  navFactory,
+  pluralize,
+  ResourceSummary,
+  SectionHeading
+} from './utils';
 
 const DeploymentConfigsReference: K8sResourceKindReference = 'DeploymentConfig';
 
@@ -46,60 +63,86 @@ const menuActions = [
   ...common,
 ];
 
-export const DeploymentConfigsDetails: React.SFC<{obj: any}> = ({obj: deploymentConfig}) => {
-  const reason = _.get(deploymentConfig, 'status.details.message');
-  const timeout = _.get(deploymentConfig, 'spec.strategy.rollingParams.timeoutSeconds');
-  const updatePeriod = _.get(deploymentConfig, 'spec.strategy.rollingParams.updatePeriodSeconds');
-  const interval = _.get(deploymentConfig, 'spec.strategy.rollingParams.intervalSeconds');
-  const isRecreate = 'Recreate' === _.get(deploymentConfig, 'spec.strategy.type');
-  const triggers = _.map(deploymentConfig.spec.triggers, 'type').join(', ');
+const DeploymentConfigDetailsList = ({dc}) => {
+  const reason = _.get(dc, 'status.details.message');
+  const timeout = _.get(dc, 'spec.strategy.rollingParams.timeoutSeconds');
+  const updatePeriod = _.get(dc, 'spec.strategy.rollingParams.updatePeriodSeconds');
+  const interval = _.get(dc, 'spec.strategy.rollingParams.intervalSeconds');
+  const isRecreate = 'Recreate' === _.get(dc, 'spec.strategy.type');
+  const triggers = _.map(dc.spec.triggers, 'type').join(', ');
+  return <dl className="co-m-pane__details">
+    <dt>Latest Version</dt>
+    <dd>{_.get(dc, 'status.latestVersion', '-')}</dd>
+    {reason && <dt>Reason</dt>}
+    {reason && <dd>{reason}</dd>}
+    <dt>Update Strategy</dt>
+    <dd>{_.get(dc, 'spec.strategy.type', 'Rolling')}</dd>
+    {timeout && <dt>Timeout</dt>}
+    {timeout && <dd>{pluralize(timeout, 'second')}</dd>}
+    {updatePeriod && <dt>Update Period</dt>}
+    {updatePeriod && <dd>{pluralize(updatePeriod, 'second')}</dd>}
+    {interval && <dt>Interval</dt>}
+    {interval && <dd>{pluralize(interval, 'second')}</dd>}
+    {isRecreate || <dt>Max Unavailable</dt>}
+    {isRecreate || <dd>{_.get(dc, 'spec.strategy.rollingParams.maxUnavailable', 1)} of {pluralize(dc.spec.replicas, 'pod')}</dd>}
+    {isRecreate || <dt>Max Surge</dt>}
+    {isRecreate || <dd>{_.get(dc, 'spec.strategy.rollingParams.maxSurge', 1)} greater than {pluralize(dc.spec.replicas, 'pod')}</dd>}
+    <dt>Min Ready Seconds</dt>
+    <dd>{dc.spec.minReadySeconds ? pluralize(dc.spec.minReadySeconds, 'second') : 'Not Configured'}</dd>
+    {triggers && <dt>Triggers</dt>}
+    {triggers && <dd>{triggers}</dd>}
+  </dl>;
+};
 
+export const DeploymentConfigOverview = connectToModel(({resource: dc, kindObj}) =>
+  <div className="co-m-pane resource-overview">
+    <ResourceOverviewHeading
+      actions={menuActions}
+      kindObj={kindObj}
+      resource={dc}
+    />
+    <div className="co-m-pane__body resource-overview__body">
+      <div className="resource-overview__pod-counts">
+        <DeploymentPodCounts resource={dc} resourceKind={DeploymentConfigModel} />
+      </div>
+      <div className="resource-overview__summary">
+        <ResourceSummary resource={dc}>
+          <dt>Status</dt>
+          <dd>{dc.status.availableReplicas === dc.status.updatedReplicas ? <span>Active</span> : <div><span className="co-icon-space-r"><LoadingInline /></span> Updating</div>}</dd>
+        </ResourceSummary>
+      </div>
+      <div className="resource-overview__details">
+        <DeploymentConfigDetailsList dc={dc} />
+      </div>
+    </div>
+  </div>);
+
+export const DeploymentConfigsDetails: React.SFC<{obj: any}> = ({obj: dc}) => {
   return <React.Fragment>
     <div className="co-m-pane__body">
       <SectionHeading text="Deployment Config Overview" />
-      <DeploymentPodCounts resource={deploymentConfig} resourceKind={DeploymentConfigModel} />
+      <DeploymentPodCounts resource={dc} resourceKind={DeploymentConfigModel} />
       <div className="co-m-pane__body-group">
         <div className="row">
           <div className="col-sm-6">
-            <ResourceSummary resource={deploymentConfig}>
+            <ResourceSummary resource={dc}>
               <dt>Status</dt>
-              <dd>{deploymentConfig.status.availableReplicas === deploymentConfig.status.updatedReplicas ? <span>Active</span> : <div><span className="co-icon-space-r"><LoadingInline /></span> Updating</div>}</dd>
+              <dd>{dc.status.availableReplicas === dc.status.updatedReplicas ? <span>Active</span> : <div><span className="co-icon-space-r"><LoadingInline /></span> Updating</div>}</dd>
             </ResourceSummary>
           </div>
           <div className="col-sm-6">
-            <dl className="co-m-pane__details">
-              <dt>Latest Version</dt>
-              <dd>{_.get(deploymentConfig, 'status.latestVersion', '-')}</dd>
-              {reason && <dt>Reason</dt>}
-              {reason && <dd>{reason}</dd>}
-              <dt>Update Strategy</dt>
-              <dd>{_.get(deploymentConfig, 'spec.strategy.type', 'Rolling')}</dd>
-              {timeout && <dt>Timeout</dt>}
-              {timeout && <dd>{pluralize(timeout, 'second')}</dd>}
-              {updatePeriod && <dt>Update Period</dt>}
-              {updatePeriod && <dd>{pluralize(updatePeriod, 'second')}</dd>}
-              {interval && <dt>Interval</dt>}
-              {interval && <dd>{pluralize(interval, 'second')}</dd>}
-              {isRecreate || <dt>Max Unavailable</dt>}
-              {isRecreate || <dd>{_.get(deploymentConfig, 'spec.strategy.rollingParams.maxUnavailable', 1)} of {pluralize(deploymentConfig.spec.replicas, 'pod')}</dd>}
-              {isRecreate || <dt>Max Surge</dt>}
-              {isRecreate || <dd>{_.get(deploymentConfig, 'spec.strategy.rollingParams.maxSurge', 1)} greater than {pluralize(deploymentConfig.spec.replicas, 'pod')}</dd>}
-              <dt>Min Ready Seconds</dt>
-              <dd>{deploymentConfig.spec.minReadySeconds ? pluralize(deploymentConfig.spec.minReadySeconds, 'second') : 'Not Configured'}</dd>
-              {triggers && <dt>Triggers</dt>}
-              {triggers && <dd>{triggers}</dd>}
-            </dl>
+            <DeploymentConfigDetailsList dc={dc} />
           </div>
         </div>
       </div>
     </div>
     <div className="co-m-pane__body">
       <SectionHeading text="Containers" />
-      <ContainerTable containers={deploymentConfig.spec.template.spec.containers} />
+      <ContainerTable containers={dc.spec.template.spec.containers} />
     </div>
     <div className="co-m-pane__body">
       <SectionHeading text="Conditions" />
-      <Conditions conditions={deploymentConfig.status.conditions} />
+      <Conditions conditions={dc.status.conditions} />
     </div>
   </React.Fragment>;
 };

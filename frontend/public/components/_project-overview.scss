@@ -1,66 +1,92 @@
-.project-overview__group {
-  margin-bottom: 40px;
-}
 
-.project-overview__group-heading {
-  border-bottom: 1px solid $color-pf-black-400;
-  font-size: 22px;
-  font-weight: 300;
-  line-height: normal;
-  margin: 0;
-  overflow: hidden;
-  padding: 5px 0;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
+// Nesting increases specificity so that pf list styles are always overridden
+.project-overview {
+  .project-overview__additional-info {
+    align-items: center;
+    display: grid;
+    grid-column-gap: 10px;
+    grid-template-areas: "controller status";
+    grid-template-columns: 50% 50%;
+    width: 100%;
+  }
 
-.project-overview__list {
-  margin-top: 0;
-}
+  .project-overview__detail--controller {
+    grid-area: controller;
+    min-width: 0; // To enable text-overflow: ellipsis within a css-grid area
+  }
 
-.project-overview__item-heading {
-  font-size: 16px;
-  margin: 0;
-}
+  .project-overview__detail--status {
+    grid-area: status;
+  }
 
-.project-overview__additional-info {
-  align-items: center;
-  display: grid;
-  grid-column-gap: 10px;
-  grid-template-areas: "controller status";
-  grid-template-columns: 50% 50%;
-  width: 100%;
-}
+  .project-overview__group {
+    margin-bottom: 40px;
+  }
 
-.project-overview__detail--controller {
-  grid-area: controller;
-  min-width: 0; // To enable text-overflow: ellipsis within a css-grid area
-}
+  .project-overview__group-heading {
+    border-bottom: 1px solid $color-pf-black-400;
+    font-size: 22px;
+    font-weight: 300;
+    line-height: normal;
+    margin: 0;
+    overflow: hidden;
+    padding: 5px 0;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 
-.project-overview__detail--status {
-  grid-area: status;
-}
+  .project-overview__item {
+    position: relative;
+    cursor: pointer;
 
-@media (max-width: $screen-sm-max) {
+    &::after {
+      content: '\f054';
+      display: none;
+      font-family: 'FontAwesome';
+      position: absolute;
+      right: 15px;
+    }
+
+    &--selected::after,
+    &:hover::after {
+      display: block;
+    }
+
+    &--selected,
+    &--selected:hover {
+      background-color: $color-pf-blue-100;
+    }
+  }
 
   .project-overview__item-heading {
-    margin-bottom: 20px;
+    font-size: 16px;
+    margin: 0;
   }
 
-  .project-overview__additional-info {
-    grid-template-columns: auto;
-    grid-template-rows: auto auto;
-    grid-template-areas:
-      "controller"
-      "status";
+  .project-overview__list {
+    margin-top: 0;
   }
 
-  .project-overview__detail {
-    margin-bottom: 20px;
-  }
+  @media (max-width: $screen-sm-max) {
 
-  .project-overview__detail:last-child {
-    margin-bottom: 0px;
-  }
+    .project-overview__additional-info {
+      grid-template-columns: auto;
+      grid-template-rows: auto auto;
+      grid-template-areas:
+        "controller"
+        "status";
+    }
 
+    .project-overview__detail {
+      margin-bottom: 20px;
+
+      &:last-child {
+        margin-bottom: 0px;
+      }
+    }
+
+    .project-overview__item-heading {
+      margin-bottom: 20px;
+    }
+  }
 }

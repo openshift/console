@@ -2,9 +2,19 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
-import { Cog, navFactory, ResourceCog, SectionHeading, ResourceLink, ResourceSummary, kindObj } from './utils';
 import { fromNow } from './utils/datetime';
 import { referenceFor, kindForReference } from '../module/k8s';
+import { ResourceOverviewHeading } from './overview';
+import { connectToModel } from '../kinds';
+import {
+  Cog,
+  kindObj,
+  navFactory,
+  ResourceCog,
+  ResourceLink,
+  ResourceSummary,
+  SectionHeading
+} from './utils';
 
 
 const menuActions = [Cog.factory.ModifyLabels, Cog.factory.ModifyAnnotations, Cog.factory.Edit, Cog.factory.Delete];
@@ -59,5 +69,20 @@ export const DefaultDetailsPage = props => {
   const pages = [navFactory.details(DetailsForKind(props.kind)), navFactory.editYaml()];
   return <DetailsPage {...props} menuActions={menuActions} pages={pages} />;
 };
+
+export const DefaultOverviewPage = connectToModel( ({kindObj: kindObject, resource}) =>
+  <div className="co-m-pane resource-overview">
+    <ResourceOverviewHeading
+      actions={menuActions}
+      kindObj={kindObject}
+      resource={resource}
+    />
+    <div className="co-m-pane__body resource-overview__body">
+      <div className="resource-overview__summary">
+        <ResourceSummary resource={resource} />
+      </div>
+    </div>
+  </div>
+);
 
 DefaultDetailsPage.displayName = 'DefaultDetailsPage';
