@@ -282,7 +282,7 @@ const EditRule = connect(stateToProps, {getResources: k8sActions.getResources}) 
 
             <div className="row rule-row">
               <div className="col-xs-2">
-                <label>{ this.kind.label } Name:</label>
+                <label>{ this.kind.label } Name</label>
               </div>
               <div className="col-xs-10">
                 <ResourceIcon kind={this.kind.kind} className="no-margin" /> {name}
@@ -293,7 +293,7 @@ const EditRule = connect(stateToProps, {getResources: k8sActions.getResources}) 
               namespace &&
             <div className="row rule-row">
               <div className="col-xs-2">
-                <label>Namespace:</label>
+                <label>Namespace</label>
               </div>
               <div className="col-xs-10">
                 <ResourceIcon kind="Namespace" className="no-margin" /> {namespace}
@@ -304,7 +304,7 @@ const EditRule = connect(stateToProps, {getResources: k8sActions.getResources}) 
 
             <div className="row rule-row">
               <div className="col-xs-2">
-                <label>Type of Access:</label>
+                <label>Type of Access</label>
               </div>
               <div className="col-xs-10">
                 <RadioButton name="verbControl" activeValue={verbControl} onChange={this.set}
@@ -321,7 +321,7 @@ const EditRule = connect(stateToProps, {getResources: k8sActions.getResources}) 
               <div className="col-xs-10">
                 <HRMinor />
                 <p>
-                  <label>Actions:</label>
+                  <label>Actions</label>
                 </p>
                 <div className="newspaper-columns">
                   {
@@ -335,7 +335,7 @@ const EditRule = connect(stateToProps, {getResources: k8sActions.getResources}) 
 
             <div className="row rule-row">
               <div className="col-xs-2">
-                <label>Allowed Resources:</label>
+                <label>Allowed Resources</label>
               </div>
 
               <div className="col-xs-10">
@@ -403,7 +403,7 @@ const EditRule = connect(stateToProps, {getResources: k8sActions.getResources}) 
               <div className="col-xs-10">
                 <HRMinor />
                 <p>
-                  <label>API Groups:</label>
+                  <label>API Groups</label>
                 </p>
                 <p className="text-secondary">Restrict this role to a subset of API URLs that don&rsquo;t correspond to objects.</p>
 

@@ -47,7 +47,7 @@ export const CertsInfo = (props) => {
 
   return <div>
     {caCertDate && <SettingsRow>
-      <SettingsLabel>CA Certificate:</SettingsLabel>
+      <SettingsLabel>CA Certificate</SettingsLabel>
       <SettingsContent>
         <div className="certs-info-cert">
           <ResourceLink kind="Secret" name="tectonic-ca-cert-secret" namespace="tectonic-system" displayName="Tectonic CA certificate" />
