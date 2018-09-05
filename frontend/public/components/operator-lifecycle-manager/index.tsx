@@ -5,7 +5,7 @@ import * as _ from 'lodash-es';
 
 import { K8sResourceKind, GroupVersionKind, OwnerReference } from '../../module/k8s';
 import { Descriptor } from './descriptors/types';
-import * as appsLogoImg from '../../imgs/apps-logo.svg';
+import * as operatorLogo from '../../imgs/operator.svg';
 
 export { ClusterServiceVersionsDetailsPage, ClusterServiceVersionsPage } from './clusterserviceversion';
 export { ClusterServiceVersionResourcesDetailsPage, ClusterServiceVersionResourceLink } from './clusterserviceversion-resource';
@@ -20,19 +20,28 @@ export enum AppCatalog {
 export enum ClusterServiceVersionPhase {
   CSVPhaseNone = '',
   CSVPhasePending = 'Pending',
+  CSVPhaseInstallReady = 'InstallReady',
   CSVPhaseInstalling = 'Installing',
   CSVPhaseSucceeded = 'Succeeded',
   CSVPhaseFailed = 'Failed',
   CSVPhaseUnknown = 'Unknown',
+  CSVPhaseReplacing = 'Replacing',
+  CSVPhaseDeleting = 'Deleting',
 }
 
 export enum CSVConditionReason {
   CSVReasonRequirementsUnknown = 'RequirementsUnknown',
   CSVReasonRequirementsNotMet = 'RequirementsNotMet',
   CSVReasonRequirementsMet = 'AllRequirementsMet',
+  CSVReasonOwnerConflict = 'OwnerConflict',
   CSVReasonComponentFailed = 'InstallComponentFailed',
+  CSVReasonInvalidStrategy = 'InvalidInstallStrategy',
+  CSVReasonWaiting = 'InstallWaiting',
   CSVReasonInstallSuccessful = 'InstallSucceeded',
   CSVReasonInstallCheckFailed = 'InstallCheckFailed',
+  CSVReasonComponentUnhealthy = 'ComponentUnhealthy',
+  CSVReasonBeingReplaced = 'BeingReplaced',
+  CSVReasonReplaced = 'Replaced',
 }
 
 export enum InstallPlanApproval {
@@ -65,6 +74,16 @@ export type CRDDescription = {
 
 export type ClusterServiceVersionKind = {
   spec: {
+    install: {
+      strategy: 'Deployment';
+      spec: {
+        permissions: {
+          serviceAccountName: string;
+          rules: {apiGroups: string[], resources: string[], verbs: string[]}[];
+        }[];
+        deployments: {name: string, spec: any}[];
+      };
+    };
     customresourcedefinitions: {owned?: CRDDescription[], required?: CRDDescription[]};
     replaces?: string;
   };
@@ -114,6 +133,7 @@ export type SubscriptionKind = {
     name: string;
     channel?: string;
     startingCSV?: string;
+    sourceNamespace?: string;
     installPlanApproval?: InstallPlanApproval;
   },
   status?: {
@@ -155,7 +175,7 @@ export const ClusterServiceVersionLogo: React.SFC<ClusterServiceVersionLogoProps
 
   return <div className="co-clusterserviceversion-logo">
     <div className="co-clusterserviceversion-logo__icon">{ _.isEmpty(icon)
-      ? <img src={appsLogoImg} height="40" width="40" />
+      ? <img src={operatorLogo} height="40" width="40" />
       : <img src={`data:${icon.mediatype};base64,${icon.base64data}`} height="40" width="40" /> }
     </div>
     <div className="co-clusterserviceversion-logo__name">

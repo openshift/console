@@ -8,7 +8,6 @@ import { appHost, testName, checkLogs, checkErrors } from '../../protractor.conf
 import * as crudView from '../../views/crud.view';
 import * as catalogView from '../../views/catalog.view';
 import * as sidenavView from '../../views/sidenav.view';
-import * as appListView from '../../views/app-list.view';
 import * as yamlView from '../../views/yaml.view';
 
 describe('Interacting with the Prometheus OCS', () => {
@@ -63,16 +62,16 @@ describe('Interacting with the Prometheus OCS', () => {
     expect(crudView.rowForName(prometheusOperatorName).isDisplayed()).toBe(true);
   }, deleteRecoveryTime);
 
-  it('displays Prometheus OCS in "Available Operators" view for the namespace', async() => {
+  it('displays Prometheus OCS in "Cluster Service Versions" view for the namespace', async() => {
     await browser.get(`${appHost}/k8s/ns/${testName}/clusterserviceversions`);
-    await appListView.isLoaded();
+    await crudView.isLoaded();
     await browser.sleep(500);
 
-    browser.wait(until.visibilityOf(appListView.appTileFor('Prometheus Operator')), 5000);
+    browser.wait(until.visibilityOf(crudView.rowForOperator('Prometheus Operator')), 5000);
   });
 
   it('displays metadata about Prometheus OCS in the "Overview" section', async() => {
-    await appListView.viewDetailsFor('Prometheus Operator');
+    await crudView.rowForOperator('Prometheus Operator').$('.co-clusterserviceversion-logo').click();
     await browser.wait(until.presenceOf($('.loading-box__loaded')), 5000);
 
     expect($('.co-clusterserviceversion-details__section--info').isDisplayed()).toBe(true);

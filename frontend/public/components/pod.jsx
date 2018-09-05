@@ -15,8 +15,8 @@ import { formatDuration } from './utils/datetime';
 import { CamelCaseWrap } from './utils/camel-case-wrap';
 
 const menuActions = [Cog.factory.EditEnvironment, ...Cog.factory.common];
-const validReadinessStates = new Set(['Ready', 'PodCompleted']);
-const validStatuses = new Set(['Running', 'Completed']);
+const validReadinessStates = new Set(['ContainersNotReady', 'Ready', 'PodCompleted']);
+const validStatuses = new Set(['ContainerCreating', 'Running', 'Completed']);
 
 /** @type {React.SFC.<{pod: string}>} */
 export const Readiness = ({pod}) => {

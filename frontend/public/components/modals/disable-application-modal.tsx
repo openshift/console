@@ -14,16 +14,16 @@ export class DisableApplicationModal extends PromiseComponent {
 
   constructor(public props: DisableApplicationModalProps) {
     super(props);
-    this.state.cascadeDelete = true;
+    this.state.deleteCSV = true;
   }
 
   private submit(event): void {
     event.preventDefault();
 
     const {subscription, k8sKill} = this.props;
-    const deleteOptions = this.state.cascadeDelete ? {kind: 'DeleteOptions', apiVersion: 'v1', propagationPolicy: 'Foreground'} : null;
+    const deleteOptions = {kind: 'DeleteOptions', apiVersion: 'v1', propagationPolicy: 'Foreground'};
     const killPromises = [k8sKill(SubscriptionModel, subscription, {}, deleteOptions)]
-      .concat(_.get(this.props.subscription, 'status.installedCSV')
+      .concat(_.get(this.props.subscription, 'status.installedCSV') && this.state.deleteCSV
         ? k8sKill(ClusterServiceVersionModel, {metadata: {name: subscription.status.installedCSV, namespace: subscription.metadata.namespace}} as ClusterServiceVersionKind, {}, deleteOptions)
         : []);
 
@@ -31,22 +31,24 @@ export class DisableApplicationModal extends PromiseComponent {
   }
 
   render() {
+    const {name} = this.props.subscription.spec;
+
     return <form onSubmit={this.submit.bind(this)} name="form" className="co-catalog-install-modal">
       <ModalTitle className="modal-header">Remove Subscription</ModalTitle>
       <ModalBody>
         <div>
           <p>
-            This will completely remove the <b>{this.props.subscription.spec.name}</b> subscription and service from {this.props.subscription.metadata.namespace}.
+            This will remove the <b>{name}</b> subscription from <i>{this.props.subscription.metadata.namespace}</i> and the Operator will no longer receive updates.
           </p>
         </div>
         <div>
           <label className="co-delete-modal-checkbox-label">
-            <input type="checkbox" checked={this.state.cascadeDelete} onChange={() => this.setState({cascadeDelete: !this.state.cascadeDelete})} />
-            &nbsp;&nbsp; <strong>Completely remove application instances and resources from the selected namespace</strong>
+            <input type="checkbox" checked={this.state.deleteCSV} onChange={() => this.setState({deleteCSV: !this.state.deleteCSV})} />
+            &nbsp;&nbsp; <strong>Also completely remove the <b>{name}</b> Operator from the selected namespace.</strong>
           </label>
         </div>
       </ModalBody>
-      <ModalSubmitFooter inProgress={this.state.inProgress} errorMessage={this.state.errorMessage} cancel={this.props.cancel.bind(this)} submitText="Disable" />
+      <ModalSubmitFooter inProgress={this.state.inProgress} errorMessage={this.state.errorMessage} cancel={this.props.cancel.bind(this)} submitText="Remove" />
     </form>;
   }
 }
@@ -63,5 +65,5 @@ export type DisableApplicationModalProps = {
 export type DisableApplicationModalState = {
   inProgress: boolean;
   errorMessage: string;
-  cascadeDelete: boolean;
+  deleteCSV: boolean;
 };
