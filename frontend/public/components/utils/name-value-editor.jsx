@@ -2,14 +2,14 @@ import * as React from 'react';
 import * as PropTypes from 'prop-types';
 import * as _ from 'lodash-es';
 import * as classNames from 'classnames';
-import { DragDropContext, DragSource, DropTarget } from 'react-dnd';
+import { DragSource, DropTarget } from 'react-dnd';
 import { DRAGGABLE_TYPE } from './draggable-item-types';
-import HTML5Backend from 'react-dnd-html5-backend';
 
-import { NameValueEditorPair } from './index';
+import { NameValueEditorPair, EnvFromPair, EnvType } from './index';
 import { ValueFromPair } from './value-from-pair';
+import withDragDropContext from './drag-drop-context';
 
-export const NameValueEditor = DragDropContext(HTML5Backend)(class NameValueEditor extends React.Component {
+export const NameValueEditor = withDragDropContext(class NameValueEditor extends React.Component {
   constructor (props) {
     super(props);
     this._append = this._append.bind(this);
@@ -58,15 +58,16 @@ export const NameValueEditor = DragDropContext(HTML5Backend)(class NameValueEdit
   }
 
   render () {
-    const {nameString, valueString, addString, nameValuePairs, allowSorting, readOnly, nameValueId, configMaps, secrets} = this.props;
+    const {nameString, valueString, addString, nameValuePairs, allowSorting, readOnly, nameValueId, configMaps, secrets, envFrom} = this.props;
     const pairElems = nameValuePairs.map((pair, i) => {
       const key = _.get(pair, [NameValueEditorPair.Index], i);
+
       return <PairElement onChange={this._change} index={i} nameString={nameString} valueString={valueString} allowSorting={allowSorting} readOnly={readOnly} pair={pair} key={key} onRemove={this._remove} onMove={this._move} rowSourceId={nameValueId} configMaps={configMaps} secrets={secrets} />;
     });
     return <React.Fragment>
       <div className="row">
-        <div className="col-md-5 col-xs-5 text-secondary">{nameString.toUpperCase()}</div>
-        <div className="col-md-6 col-xs-5 text-secondary">{valueString.toUpperCase()}</div>
+        <div className="col-md-5 col-xs-5 text-secondary text-uppercase">{nameString}</div>
+        <div className="col-md-6 col-xs-5 text-secondary text-uppercase">{valueString}</div>
       </div>
       {pairElems}
       <div className="row">
@@ -79,7 +80,7 @@ export const NameValueEditor = DragDropContext(HTML5Backend)(class NameValueEdit
                   <i aria-hidden="true" className="fa fa-plus-circle pairs-list__add-icon" />{addString}
                 </button>
                 {
-                  allowSorting &&
+                  allowSorting && !envFrom &&
                     <React.Fragment>
                       <span aria-hidden="true" className="co-action-divider hidden-xs">|</span>
                       <button type="button" className="btn btn-link" onClick={this._appendConfigMapOrSecret}>
@@ -110,13 +111,104 @@ NameValueEditor.propTypes = {
   ).isRequired,
   updateParentData: PropTypes.func.isRequired,
   configMaps: PropTypes.object,
-  secrets: PropTypes.object
+  secrets: PropTypes.object,
+  envFrom: PropTypes.bool
 };
 NameValueEditor.defaultProps = {
   nameString: 'Key',
   valueString: 'Value',
   addString: 'Add More',
   allowSorting: false,
+  readOnly: false,
+  nameValueId: 0,
+  envFrom: false
+};
+
+NameValueEditor.displayName = 'Name Value Editor';
+
+export const EnvFromEditor = withDragDropContext(class EnvFromEditor extends React.Component {
+  constructor (props) {
+    super(props);
+    this._append = this._append.bind(this);
+    this._change = this._change.bind(this);
+    this._move = this._move.bind(this);
+    this._remove = this._remove.bind(this);
+  }
+
+  _append() {
+    const {updateParentData, nameValuePairs, nameValueId} = this.props;
+    const configMapSecretRef = {name: '', key: ''};
+    updateParentData({nameValuePairs: nameValuePairs.concat([['', {configMapSecretRef}, nameValuePairs.length]])}, nameValueId, EnvType.ENV_FROM);
+  }
+
+  _remove(i) {
+    const {updateParentData, nameValueId} = this.props;
+    const nameValuePairs = _.cloneDeep(this.props.nameValuePairs);
+    nameValuePairs.splice(i, 1);
+    const configMapSecretRef = {name: '', key: ''};
+
+    updateParentData({nameValuePairs: nameValuePairs.length ? nameValuePairs : [['', {configMapSecretRef}]]}, nameValueId, EnvType.ENV_FROM);
+  }
+
+  _change(e, i, type) {
+    const {updateParentData, nameValueId} = this.props;
+    const nameValuePairs = _.cloneDeep(this.props.nameValuePairs);
+    nameValuePairs[i][type === EnvFromPair.Prefix ? EnvFromPair.Prefix : EnvFromPair.Resource] = e.target.value;
+    updateParentData({nameValuePairs}, nameValueId, EnvType.ENV_FROM);
+  }
+
+  _move(dragIndex, hoverIndex) {
+    const {updateParentData, nameValueId} = this.props;
+    const nameValuePairs = _.cloneDeep(this.props.nameValuePairs);
+    const movedPair = nameValuePairs[dragIndex];
+
+    nameValuePairs[dragIndex] = nameValuePairs[hoverIndex];
+    nameValuePairs[hoverIndex] = movedPair;
+    updateParentData({nameValuePairs}, nameValueId, EnvType.ENV_FROM);
+  }
+
+  render () {
+    const {nameValuePairs, readOnly, nameValueId, configMaps, secrets} = this.props;
+    const pairElems = nameValuePairs.map((pair, i) => {
+      const key = _.get(pair, [EnvFromPair.Index], i);
+
+      return <EnvFromPairElement onChange={this._change} index={i} nameString="config map/secret" valueString="prefix (optional)" readOnly={readOnly} pair={pair} key={key} onRemove={this._remove} onMove={this._move} rowSourceId={nameValueId} configMaps={configMaps} secrets={secrets} />;
+    });
+
+    return <React.Fragment>
+      <div className="row">
+        <div className="col-md-5 col-xs-5 text-secondary text-uppercase">Config Map/Secret</div>
+        <div className="col-md-6 col-xs-5 text-secondary text-uppercase">Prefix (Optional)</div>
+      </div>
+      {pairElems}
+      <div className="row">
+        <div className="col-xs-12">
+          {
+            !readOnly &&
+            <button type="button" className="btn-link pairs-list__btn" onClick={this._append}>
+              <i aria-hidden="true" className="fa fa-plus-circle pairs-list__add-icon" />Add All Values From Config Map or Secret
+            </button>
+          }
+        </div>
+      </div>
+    </React.Fragment>;
+  }
+});
+EnvFromEditor.propTypes = {
+  readOnly: PropTypes.bool,
+  nameValueId: PropTypes.number,
+  nameValuePairs: PropTypes.arrayOf(
+    PropTypes.oneOfType([
+      PropTypes.arrayOf(PropTypes.string),
+      PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.string, PropTypes.object])),
+      PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.string, PropTypes.object, PropTypes.number])),
+    ])
+  ).isRequired,
+  updateParentData: PropTypes.func.isRequired,
+  configMaps: PropTypes.object,
+  secrets: PropTypes.object
+};
+EnvFromEditor.defaultProps = {
   readOnly: false,
   nameValueId: 0
 };
@@ -188,7 +280,7 @@ const collectTargetPair = (connect) => ({
   connectDropTarget: connect.dropTarget(),
 });
 
-const PairElement = DragSource(DRAGGABLE_TYPE.ROW, pairSource, collectSourcePair)(DropTarget(DRAGGABLE_TYPE.ROW, itemTarget, collectTargetPair)(class PairElement extends React.Component {
+const PairElement = DragSource(DRAGGABLE_TYPE.ENV_ROW, pairSource, collectSourcePair)(DropTarget(DRAGGABLE_TYPE.ENV_ROW, itemTarget, collectTargetPair)(class PairElement extends React.Component {
   constructor(props) {
     super(props);
 
@@ -233,7 +325,7 @@ const PairElement = DragSource(DRAGGABLE_TYPE.ROW, pairSource, collectSourcePair
               </div>
           }
           {
-            readOnly ? null :
+            !readOnly &&
               <div className="col-md-1 col-xs-2">
                 <span className={classNames(allowSorting ? 'pairs-list__span-btns' : null)}>
                   {
@@ -273,3 +365,71 @@ PairElement.propTypes = {
   secrets: PropTypes.object
 };
 
+const EnvFromPairElement = DragSource(DRAGGABLE_TYPE.ENV_FROM_ROW, pairSource, collectSourcePair)(DropTarget(DRAGGABLE_TYPE.ENV_FROM_ROW, itemTarget, collectTargetPair)(class EnvFromPairElement extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this._onRemove = this._onRemove.bind(this);
+    this._onChangePrefix = this._onChangePrefix.bind(this);
+    this._onChangeResource = this._onChangeResource.bind(this);
+  }
+
+  _onRemove() {
+    const {index, onRemove} = this.props;
+    onRemove(index);
+  }
+
+  _onChangePrefix(e) {
+    const {index, onChange} = this.props;
+    onChange(e, index, EnvFromPair.Prefix);
+  }
+
+  _onChangeResource(e) {
+    const {index, onChange} = this.props;
+    onChange(e, index, EnvFromPair.Resource);
+  }
+
+  render() {
+    const {isDragging, connectDragSource, connectDragPreview, connectDropTarget, valueString, readOnly, pair, configMaps, secrets} = this.props;
+    const deleteButton = <React.Fragment><i className="fa fa-minus-circle pairs-list__side-btn pairs-list__delete-icon" aria-hidden="true" onClick={this._onRemove}></i><span className="sr-only">Delete</span></React.Fragment>;
+
+    return connectDropTarget(
+      connectDragPreview(
+        <div className={classNames('row', isDragging ? 'pairs-list__row-dragging' : 'pairs-list__row')} ref={node => this.node = node}>
+          <div className="col-md-5 col-xs-5 pairs-list__value-pair-field">
+            <ValueFromPair pair={pair[EnvFromPair.Resource]} configMaps={configMaps} secrets={secrets} onChange={this._onChangeResource} disabled={readOnly} />
+          </div>
+          <div className="col-md-6 col-xs-5 pairs-list__name-field">
+            <input type="text" className="form-control" placeholder={valueString.toLowerCase()} value={pair[EnvFromPair.Prefix]} onChange={this._onChangePrefix} disabled={readOnly} />
+          </div>
+          {
+            readOnly ? null :
+              <div className="col-md-1 col-xs-2">
+                <span className="pairs-list__span-btns">
+                  {connectDragSource(<i className="fa fa-bars pairs-list__reorder-icon" />)}
+                  {deleteButton}
+                </span>
+              </div>
+          }
+        </div>)
+    );
+  }
+}));
+EnvFromPairElement.propTypes = {
+  valueString: PropTypes.string,
+  readOnly: PropTypes.bool,
+  index: PropTypes.number.isRequired,
+  pair: PropTypes.oneOfType([
+    PropTypes.arrayOf(PropTypes.string),
+    PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.string, PropTypes.object])),
+    PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.string, PropTypes.object, PropTypes.number])),
+  ]),
+  onChange: PropTypes.func.isRequired,
+  connectDragSource: PropTypes.func,
+  connectDropTarget: PropTypes.func,
+  isDragging: PropTypes.bool,
+  onMove: PropTypes.func.isRequired,
+  rowSourceId: PropTypes.number.isRequired,
+  configMaps: PropTypes.object,
+  secrets: PropTypes.object
+};

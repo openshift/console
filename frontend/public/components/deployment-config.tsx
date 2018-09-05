@@ -6,9 +6,8 @@ import { k8sCreate, K8sResourceKindReference } from '../module/k8s';
 import { errorModal } from './modals';
 import { DeploymentConfigModel } from '../models';
 import { DetailsPage, List, ListPage, WorkloadListHeader, WorkloadListRow } from './factory';
-import { Cog, DeploymentPodCounts, SectionHeading, LoadingInline, navFactory, pluralize, ResourceSummary } from './utils';
+import { Cog, DeploymentPodCounts, SectionHeading, LoadingInline, navFactory, pluralize, ResourceSummary, AsyncComponent } from './utils';
 import { Conditions } from './conditions';
-import { EnvironmentPage } from './environment';
 import { ResourceEventStream } from './events';
 import { ContainerTable } from './deployment';
 
@@ -104,6 +103,8 @@ export const DeploymentConfigsDetails: React.SFC<{obj: any}> = ({obj: deployment
     </div>
   </React.Fragment>;
 };
+
+const EnvironmentPage = (props) => <AsyncComponent loader={() => import('./environment.jsx').then(c => c.EnvironmentPage)} {...props} />;
 
 const envPath = ['spec','template','spec','containers'];
 const environmentComponent = (props) => <EnvironmentPage

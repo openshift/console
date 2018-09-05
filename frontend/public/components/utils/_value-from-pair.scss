@@ -1,8 +1,12 @@
 .value-from {
   padding-top: 5px;
   width: 100%;
-  @media(min-width: $screen-md-min) {
-    width: 50%;
+
+  .value-from-pair {
+    width: 100%;
+    @media(min-width: $screen-md-min) {
+      width: 50%;
+    }
   }
 
   .btn-dropdown {

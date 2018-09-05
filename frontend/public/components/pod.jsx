@@ -10,7 +10,6 @@ import { SectionHeading, Cog, LabelList, navFactory, NodeLink, Overflow, Resourc
 import { PodLogs } from './pod-logs';
 import { Line, requirePrometheus } from './graphs';
 import { breadcrumbsForOwnerRefs } from './utils/breadcrumbs';
-import { EnvironmentPage } from './environment';
 import { formatDuration } from './utils/datetime';
 import { CamelCaseWrap } from './utils/camel-case-wrap';
 
@@ -224,6 +223,8 @@ const Details = ({obj: pod}) => {
     </div>
   </React.Fragment>;
 };
+
+const EnvironmentPage = (props) => <AsyncComponent loader={() => import('./environment.jsx').then(c => c.EnvironmentPage)} {...props} />;
 
 const envPath = ['spec','containers'];
 const environmentComponent = (props) => <EnvironmentPage

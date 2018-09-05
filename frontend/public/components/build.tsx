@@ -7,11 +7,10 @@ import { K8sResourceKindReference, referenceFor } from '../module/k8s';
 import { cloneBuild, formatBuildDuration } from '../module/k8s/builds';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
 import { errorModal } from './modals';
-import { BuildHooks, BuildStrategy, Cog, SectionHeading, history, navFactory, ResourceCog, ResourceLink, resourceObjPath, ResourceSummary, Timestamp } from './utils';
+import { BuildHooks, BuildStrategy, Cog, SectionHeading, history, navFactory, ResourceCog, ResourceLink, resourceObjPath, ResourceSummary, Timestamp, AsyncComponent } from './utils';
 import { BuildPipeline } from './build-pipeline';
 import { breadcrumbsForOwnerRefs } from './utils/breadcrumbs';
 import { fromNow } from './utils/datetime';
-import { EnvironmentPage } from './environment';
 import { BuildLogs } from './build-logs';
 import { ResourceEventStream } from './events';
 
@@ -102,6 +101,8 @@ export const getEnvPath = (props) => {
   const strategyType = getStrategyType(props.obj.spec.strategy.type);
   return strategyType ? ['spec', 'strategy', strategyType] : null;
 };
+
+const EnvironmentPage = (props) => <AsyncComponent loader={() => import('./environment.jsx').then(c => c.EnvironmentPage)} {...props} />;
 
 export const BuildEnvironmentComponent = (props) => {
   const {obj} = props;
