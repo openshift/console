@@ -13,6 +13,7 @@ import { breadcrumbsForOwnerRefs } from './utils/breadcrumbs';
 import { fromNow } from './utils/datetime';
 import { BuildLogs } from './build-logs';
 import { ResourceEventStream } from './events';
+import { Line, requirePrometheus } from './graphs';
 
 const BuildsReference: K8sResourceKindReference = 'Build';
 
@@ -41,6 +42,29 @@ export enum BuildStrategyType {
   Source = 'Source',
 }
 
+const BuildGraphs = requirePrometheus(({build}) => {
+  const podName = _.get(build, ['metadata', 'annotations', 'openshift.io/build.pod-name']);
+  if (!podName) {
+    return null;
+  }
+
+  return <React.Fragment>
+    <div className="row">
+      <div className="col-md-4">
+        <Line title="RAM" query={`pod_name:container_memory_usage_bytes:sum{pod_name='${podName}',container_name='',namespace='${build.metadata.namespace}'}`} />
+      </div>
+      <div className="col-md-4">
+        <Line title="CPU Shares" query={`pod_name:container_cpu_usage:sum{pod_name='${podName}',container_name='',namespace='${build.metadata.namespace}'} * 1000`} />
+      </div>
+      <div className="col-md-4">
+        <Line title="Filesystem (bytes)" query={`pod_name:container_fs_usage_bytes:sum{pod_name='${podName}',container_name='',namespace='${build.metadata.namespace}'}`} />
+      </div>
+    </div>
+
+    <br />
+  </React.Fragment>;
+});
+
 export const BuildsDetails: React.SFC<BuildsDetailsProps> = ({ obj: build }) => {
   const { logSnippet, message, startTimestamp } = build.status;
   const triggeredBy = _.map(build.spec.triggeredBy, 'message').join(', ');
@@ -50,6 +74,7 @@ export const BuildsDetails: React.SFC<BuildsDetailsProps> = ({ obj: build }) => 
   return <React.Fragment>
     <div className="co-m-pane__body">
       <SectionHeading text="Build Overview" />
+      <BuildGraphs build={build} />
       {hasPipeline && <div className="row">
         <div className="col-xs-12">
           <BuildPipeline obj={build} />
