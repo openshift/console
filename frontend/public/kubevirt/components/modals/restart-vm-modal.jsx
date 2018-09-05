@@ -1,8 +1,9 @@
 import * as _ from 'lodash-es';
 import React from 'react';
-import { PromiseComponent } from '../utils';
-import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
-import { k8sKill,k8sList } from '../../module/k8s';
+
+import { PromiseComponent } from '../utils/okdutils';
+import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/okdfactory';
+import { k8sKill,k8sList } from '../../../module/k8s';
 import { VirtualMachineInstanceModel } from '../../models';
 
 class RestartVmModal extends PromiseComponent {

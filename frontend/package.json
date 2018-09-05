@@ -50,7 +50,7 @@
     ],
     "collectCoverageFrom": [
       "public/*.{js,jsx,ts,tsx}",
-      "public/{components,module,ui}/**/*.{js,jsx,ts,tsx}"
+      "public/{components,module,ui,kubevirt}/**/*.{js,jsx,ts,tsx}"
     ]
   },
   "dependencies": {

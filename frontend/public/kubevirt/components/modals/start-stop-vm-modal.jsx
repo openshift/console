@@ -1,7 +1,8 @@
 import React from 'react';
-import { PromiseComponent } from '../utils';
-import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
-import { k8sPatch } from '../../module/k8s';
+
+import { PromiseComponent } from '../utils/okdutils';
+import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/okdfactory';
+import { k8sPatch } from '../../../module/k8s';
 
 class StartStopVmModal extends PromiseComponent {
   constructor(props) {

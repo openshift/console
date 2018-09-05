@@ -1,12 +1,12 @@
 import * as _ from 'lodash-es';
 import React, { Component, Fragment } from 'react';
-import { ListHeader, ColHead, List, ListPage, ResourceRow, DetailsPage } from './factory';
-import { ResourceLink, navFactory, ResourceCog, Cog } from './utils';
-import { breadcrumbsForOwnerRefs } from './utils/breadcrumbs';
+
+import { ListHeader, ColHead, List, ListPage, ResourceRow, DetailsPage } from './factory/okdfactory';
+import { breadcrumbsForOwnerRefs, Firehose, ResourceLink, navFactory, ResourceCog, Cog } from './utils/okdutils';
+import { VirtualMachineInstanceModel, VirtualMachineModel, PodModel, NamespaceModel } from '../models';
+
 import { startStopVmModal } from './modals/start-stop-vm-modal';
 import { restartVmModal } from './modals/restart-vm-modal';
-import { Firehose } from './utils/firehose';
-import { VirtualMachineInstanceModel, VirtualMachineModel, PodModel, NamespaceModel } from '../models';
 
 const dashes = '---';
 const getLabelMatcher = (vm) => _.get(vm, 'spec.template.metadata.labels');
