@@ -16,7 +16,7 @@ import { LoadingInline, LoadError, NavTitle } from '../utils';
 import { SettingsRow, SettingsLabel, SettingsContent } from './cluster-settings';
 
 export const LDAPSetting = () => <SettingsRow>
-  <SettingsLabel>LDAP:</SettingsLabel>
+  <SettingsLabel>LDAP</SettingsLabel>
   <SettingsContent>
     <Link className="co-m-modal-link" to="/settings/ldap">LDAP</Link>
   </SettingsContent>
@@ -194,7 +194,7 @@ const Help = ({children}) => <div><small className="text-muted">{children}</smal
 const Row = ({children, name, label}) =>
   <div className="form-group co-m-form-row">
     {label
-      ? <label className="col-sm-2 control-label" htmlFor={name}>{label}:</label>
+      ? <label className="col-sm-2 control-label" htmlFor={name}>{label}</label>
       : <div className="col-sm-2 control-label"></div>
     }
     <div className="co-m-form-col col-sm-10">

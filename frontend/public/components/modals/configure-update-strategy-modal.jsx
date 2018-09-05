@@ -87,7 +87,7 @@ class ConfigureUpdateStrategyModal extends PromiseComponent {
                 <div className="row co-m-form-row">
                   <div className="col-sm-3">
                     <label htmlFor="input-max-unavailable" className="control-label">
-                      Max Unavailable:
+                      Max Unavailable
                     </label>
                   </div>
                   <div className="co-m-form-col col-sm-9">
@@ -108,7 +108,7 @@ class ConfigureUpdateStrategyModal extends PromiseComponent {
 
                 <div className="row co-m-form-row">
                   <div className="col-sm-3">
-                    <label htmlFor="input-max-surge" className="control-label">Max Surge:</label>
+                    <label htmlFor="input-max-surge" className="control-label">Max Surge</label>
                   </div>
                   <div className="co-m-form-col col-sm-9">
                     <div className="form-inline">
