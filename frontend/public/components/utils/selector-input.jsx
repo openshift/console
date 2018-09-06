@@ -92,6 +92,7 @@ export class SelectorInput extends React.Component {
       placeholder: 'app=frontend',
       spellCheck: 'false',
       value: inputValue,
+      id: 'tags-input',
     };
 
     const renderTag = ({tag, key, onRemove, getTagDisplayValue}) => {

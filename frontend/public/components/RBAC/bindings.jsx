@@ -358,7 +358,7 @@ const subjectKinds = [
 
 const Section = ({label, children}) => <div className="row">
   <div className="col-xs-2">
-    <label>{label}</label>
+    <strong>{label}</strong>
   </div>
   <div className="col-xs-10">
     {children}
@@ -475,28 +475,28 @@ const BaseEditRoleBinding = connect(null, {setActiveNamespace: UIActions.setActi
           <div className="separator"></div>
 
           <Section label="Role Binding">
-            <p className="rbac-edit-binding__input-label">Name:</p>
+            <label htmlFor="role-binding-name" className="rbac-edit-binding__input-label">Name</label>
             {_.get(fixed, 'metadata.name')
               ? <ResourceName kind={kind} name={metadata.name} />
-              : <input className="form-control" type="text" onChange={this.changeName} placeholder="Role binding name" value={metadata.name} required id="test––role-binding-name" />}
+              : <input className="form-control" type="text" onChange={this.changeName} placeholder="Role binding name" value={metadata.name} required id="role-binding-name" />}
             {kind === 'RoleBinding' && <div>
               <div className="separator"></div>
-              <p className="rbac-edit-binding__input-label">Namespace:</p>
-              <NsDropdown fixed={!!_.get(fixed, 'metadata.namespace')} selectedKey={metadata.namespace} onChange={this.changeNamespace} id="test--ns-dropdown" />
+              <label htmlFor="ns-dropdown" className="rbac-edit-binding__input-label">Namespace</label>
+              <NsDropdown fixed={!!_.get(fixed, 'metadata.namespace')} selectedKey={metadata.namespace} onChange={this.changeNamespace} id="ns-dropdown" />
             </div>}
           </Section>
 
           <div className="separator"></div>
 
           <Section label="Role">
-            <p className="rbac-edit-binding__input-label">Role Name:</p>
+            <label htmlFor="role-dropdown" className="rbac-edit-binding__input-label">Role Name</label>
             <RoleDropdown
               fixed={!!_.get(fixed, 'roleRef.name')}
               namespace={metadata.namespace}
               onChange={this.changeRoleRef}
               selectedKey={_.get(fixed, 'roleRef.name') || roleRef.name}
               selectedKeyKind={_.get(fixed, 'roleRef.kind') || roleRef.kind}
-              id="test--role-dropdown"
+              id="role-dropdown"
             />
           </Section>
 
@@ -506,12 +506,12 @@ const BaseEditRoleBinding = connect(null, {setActiveNamespace: UIActions.setActi
             <RadioGroup currentValue={subject.kind} items={subjectKinds} onChange={this.changeSubjectKind} />
             {subject.kind === 'ServiceAccount' && <div>
               <div className="separator"></div>
-              <p className="rbac-edit-binding__input-label">Subject Namespace:</p>
-              <NsDropdown selectedKey={subject.namespace} onChange={this.changeSubjectNamespace} />
+              <label htmlFor="subject-namespace" className="rbac-edit-binding__input-label">Subject Namespace</label>
+              <NsDropdown id="subject-namespace" selectedKey={subject.namespace} onChange={this.changeSubjectNamespace} />
             </div>}
             <div className="separator"></div>
-            <p className="rbac-edit-binding__input-label">Subject Name:</p>
-            <input className="form-control" type="text" onChange={this.changeSubjectName} placeholder="Subject name" value={subject.name} required id="test--subject-name" />
+            <label htmlFor="subject-name" className="rbac-edit-binding__input-label">Subject Name</label>
+            <input className="form-control" type="text" onChange={this.changeSubjectName} placeholder="Subject name" value={subject.name} required id="subject-name" />
           </Section>
 
           <div className="separator"></div>

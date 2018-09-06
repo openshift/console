@@ -98,15 +98,15 @@ class CreateNamespaceModal extends PromiseComponent {
           </div>
         </div>}
         {!this.props.createProject && <div className="form-group">
-          <label className="control-label">Labels</label>
+          <label htmlFor="tags-input" className="control-label">Labels</label>
           <div className="modal-body__field">
             <SelectorInput labelClassName="co-text-namespace" onChange={this.onLabels.bind(this)} tags={[]} />
           </div>
         </div>}
         {!this.props.createProject && <div className="form-group">
-          <label className="control-label">Default Network Policy</label>
+          <label htmlFor="network-policy" className="control-label">Default Network Policy</label>
           <div className="modal-body__field ">
-            <select onChange={e => this.setState({np: e.target.value})} value={this.state.np} className="form-control">
+            <select id="network-policy" onChange={e => this.setState({np: e.target.value})} value={this.state.np} className="form-control">
               <option value={allow}>No restrictions (default)</option>
               <option value={deny}>Deny all inbound traffic.</option>
             </select>
