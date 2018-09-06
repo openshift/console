@@ -20,6 +20,7 @@ export default ({ isOpen, onToggle, close, scroller, onWheel }) => {
         <ClusterPickerNavSection/>
         <div ref={scroller} onWheel={onWheel} className="navigation-container">
           <NavSection text="Virtual Machines" href={formatNamespacedRouteForResource('virtualmachines')} icon="pficon pficon-home" />
+          <NavSection text="Templates" icon="pficon pficon-template"/>
           <UserNavSection closeMenu={close}/>
         </div>
       </div>
