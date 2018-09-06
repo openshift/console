@@ -10,7 +10,7 @@ import {TectonicChannel} from '../channel-operators/tectonic-channel';
 import {ContainerLinuxUpdates} from '../container-linux-update-operator/container-linux-updates';
 
 export const SettingsRow = ({children}) => <div className="row co-m-form-row">{children}</div>;
-export const SettingsLabel = ({children}) => <div className="col-sm-4 col-md-3"><label>{children}</label></div>;
+export const SettingsLabel = ({children}) => <div className="col-sm-4 col-md-3"><strong>{children}</strong></div>;
 export const SettingsContent = ({children}) => <div className="col-sm-8 col-md-9">{children}</div>;
 
 export const ClusterSettingsPage = connectToFlags(FLAGS.CLUSTER_UPDATES)(
