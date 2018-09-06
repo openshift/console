@@ -7,6 +7,7 @@ import { Provider } from 'react-redux';
 import * as Modal from 'react-modal';
 import * as PropTypes from 'prop-types';
 import { Router } from 'react-router-dom';
+import * as classNames from 'classnames';
 
 import store from '../../redux';
 import { ButtonBar } from '../utils/button-bar';
@@ -63,7 +64,7 @@ export const ModalSubmitFooter: React.SFC<ModalSubmitFooterProps> = ({message, e
 
   return <ModalFooter inProgress={inProgress} errorMessage={errorMessage} message={message}>
     <button type="button" onClick={onCancelClick} className="btn btn-default">Cancel</button>
-    <button type="submit" className={submitButtonClass} disabled={submitDisabled} id="confirm-action">{submitText}</button>
+    <button type="submit" className={classNames('btn', submitButtonClass)} disabled={submitDisabled} id="confirm-action">{submitText}</button>
   </ModalFooter>;
 };
 
