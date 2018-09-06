@@ -85,7 +85,7 @@ func main() {
 	fDeveloperConsoleURL := fs.String("developer-console-url", "", "URL for the developer console used in masthead context switcher. This option will be removed in a future release.")
 
 	fDexAPIHost := fs.String("dex-api-host", "", "Target host and port of the Dex API service.")
-	fBranding := fs.String("branding", "okd", "Console branding for the masthead logo and title. One of okd, ocp, online, or dedicated. Defaults to okd.")
+	fBranding := fs.String("branding", "okd", "Console branding for the masthead logo and title. One of okd, okdvirt, ocp, online, or dedicated. Defaults to okd.")
 	fDocumentationBaseURL := fs.String("documentation-base-url", "", "The base URL for documentation links.")
 	fGoogleTagManagerID := fs.String("google-tag-manager-id", "", "Google Tag Manager ID. External analytics are disabled if this is not set.")
 
@@ -149,6 +149,7 @@ func main() {
 	}
 	switch branding {
 	case "okd":
+	case "okdvirt":
 	case "ocp":
 	case "online":
 	case "dedicated":
