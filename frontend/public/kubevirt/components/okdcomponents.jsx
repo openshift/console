@@ -3,3 +3,8 @@
  */
 
 export * from '../../components/nav';
+export * from '../../components/app';
+export * from '../../components/masthead';
+export * from '../../components/namespace';
+export * from '../../components/global-notifications';
+export * from '../../components/resource-list';
