@@ -43,7 +43,7 @@ const ClusterServiceClassListRow: React.SFC<ClusterServiceClassRowProps> = ({obj
   return <ResourceRow obj={serviceClass}>
     <div className="col-sm-6 col-xs-12 co-resource-link-wrapper">
       <ClusterServiceClassIcon serviceClass={serviceClass} />
-      <Link to={path}>{serviceClassDisplayName(serviceClass)}</Link>
+      <Link className="co-cluster-service-class-link" to={path}>{serviceClassDisplayName(serviceClass)}</Link>
     </div>
     <div className="col-sm-3 hidden-xs">
       {serviceClass.spec.externalName}

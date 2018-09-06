@@ -38,9 +38,9 @@ yarn run webdriver-update --quiet > /dev/null 2>&1
 
 if [ $# -gt 0 ] && [ -n "$1" ];
 then
-  yarn run test-suite --suite "$1" --params.openshift true
+  yarn run test-suite --suite "$1" --params.openshift true --params.servicecatalog true
 else
-  yarn run test-gui --params.openshift true
+  yarn run test-gui --params.openshift true --params.servicecatalog true
 fi
 
 kill "$(cat ../bridge.pid)"
