@@ -21,6 +21,7 @@ import * as routingActiveImg from '../imgs/routing-active.svg';
 import { history, stripBasePath } from './utils';
 
 import KubevirtNav from '../kubevirt/components/nav';
+import { isKubevirt } from '../kubevirt/components/utils/selectors';
 
 export const matchesPath = (resourcePath, prefix) => resourcePath === prefix || _.startsWith(resourcePath, `${prefix}/`);
 export const matchesModel = (resourcePath, model) => model && matchesPath(resourcePath, referenceForModel(model));
@@ -362,7 +363,7 @@ export class Nav extends React.Component {
   render () {
     const { isOpen } = this.state;
 
-    if (FLAGS.KUBEVIRT) {
+    if (isKubevirt()) {
       return <KubevirtNav isOpen={isOpen} onToggle={this.toggle} close={this.close} scroller={this.scroller} onWheel={this.preventScroll} />;
     }
 
