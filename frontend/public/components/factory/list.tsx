@@ -108,6 +108,15 @@ const listFilters = {
     return statuses.selected.has(status) || !_.includes(statuses.all, status);
   },
 
+  'catalog-status': (statuses, catalog) => {
+    if (!statuses || !statuses.selected || !statuses.selected.size) {
+      return true;
+    }
+
+    let status = serviceCatalogStatus(catalog);
+    return statuses.selected.has(status) || !_.includes(statuses.all, status);
+  },
+
   'secret-type': (types, secret) => {
     if (!types || !types.selected || !types.selected.size) {
       return true;
@@ -468,3 +477,4 @@ export type WorkloadListRowProps = {
 
 Rows.displayName = 'Rows';
 WorkloadListRow.displayName = 'WorkloadListRow';
+
