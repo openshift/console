@@ -69,8 +69,9 @@ describe(InstallPlanRow.displayName, () => {
   });
 
   it('render column for install plan components list', () => {
-    expect(wrapper.find(ResourceRow).childAt(2).find(ResourceIcon).length).toEqual(1);
-    expect(wrapper.find(ResourceRow).childAt(2).find(ResourceIcon).at(0).props().kind).toEqual(k8s.referenceForModel(ClusterServiceVersionModel));
+    expect(wrapper.find(ResourceRow).childAt(2).find(ResourceLink).props().kind).toEqual(k8s.referenceForModel(ClusterServiceVersionModel));
+    expect(wrapper.find(ResourceRow).childAt(2).find(ResourceLink).props().name).toEqual(testInstallPlan.spec.clusterServiceVersionNames.toString());
+    expect(wrapper.find(ResourceRow).childAt(2).find(ResourceLink).props().namespace).toEqual(testInstallPlan.metadata.namespace);
   });
 
   it('renders column for parent subscription(s) determined by `metadata.ownerReferences`', () => {
