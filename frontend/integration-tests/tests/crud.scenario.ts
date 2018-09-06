@@ -158,10 +158,10 @@ describe('Kubernetes resource CRUD operations', () => {
     });
 
     it('creates a RoleBinding', async() => {
-      await $('#test––role-binding-name').sendKeys(bindingName);
-      await $('#test--ns-dropdown').click().then(() => browser.actions().sendKeys(testName, Key.ARROW_DOWN, Key.ENTER).perform());
-      await $('#test--role-dropdown').click().then(() => browser.actions().sendKeys('cluster-admin', Key.ARROW_DOWN, Key.ENTER).perform());
-      await $('#test--subject-name').sendKeys('subject-name');
+      await $('#role-binding-name').sendKeys(bindingName);
+      await $('#ns-dropdown').click().then(() => browser.actions().sendKeys(testName, Key.ARROW_DOWN, Key.ENTER).perform());
+      await $('#role-dropdown').click().then(() => browser.actions().sendKeys('cluster-admin', Key.ARROW_DOWN, Key.ENTER).perform());
+      await $('#subject-name').sendKeys('subject-name');
       leakedResources.add(JSON.stringify({name: bindingName, plural: 'rolebindings', namespace: testName}));
       await crudView.saveChangesBtn.click();
       await browser.wait(until.urlContains(`/k8s/ns/${testName}/rolebindings`));
