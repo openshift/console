@@ -101,14 +101,15 @@ const DeleteRule = (name, namespace, i) => ({
   })
 });
 
-const EditRule = (name, namespace, i) => ({
-  label: 'Edit Rule...',
-  href: namespace ? `/k8s/ns/${namespace}/roles/${name}/${i}/edit` : `/k8s/cluster/clusterroles/${name}/${i}/edit`,
-});
+// This page is temporarily disabled until we update the safe resources list.
+// const EditRule = (name, namespace, i) => ({
+//   label: 'Edit Rule...',
+//   href: namespace ? `/k8s/ns/${namespace}/roles/${name}/${i}/edit` : `/k8s/cluster/clusterroles/${name}/${i}/edit`,
+// });
 
 const RuleCog = ({name, namespace, i}) => {
   const options = [
-    EditRule,
+    // EditRule,
     DeleteRule,
   ].map(f => f(name, namespace, i));
   return <Cog options={options} />;
