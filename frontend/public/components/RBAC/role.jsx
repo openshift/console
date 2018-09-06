@@ -1,7 +1,7 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as fuzzy from 'fuzzysearch';
-import { Link } from 'react-router-dom';
+// import { Link } from 'react-router-dom';
 
 import { ColHead, DetailsPage, List, ListHeader, MultiListPage, ResourceRow, TextFilter } from '../factory';
 import { Cog, SectionHeading, MsgBox, navFactory, ResourceCog, ResourceLink, Timestamp } from '../utils';
@@ -11,15 +11,16 @@ import { flagPending, connectToFlags, FLAGS } from '../../features';
 
 export const isSystemRole = role => _.startsWith(role.metadata.name, 'system:');
 
-const addHref = (name, ns) => ns ? `/k8s/ns/${ns}/roles/${name}/add-rule` : `/k8s/cluster/clusterroles/${name}/add-rule`;
+// const addHref = (name, ns) => ns ? `/k8s/ns/${ns}/roles/${name}/add-rule` : `/k8s/cluster/clusterroles/${name}/add-rule`;
 
 export const roleKind = role => role.metadata.namespace ? 'Role' : 'ClusterRole';
 
 const menuActions = [
-  (kind, role) => ({
-    label: 'Add Rule...',
-    href: addHref(role.metadata.name, role.metadata.namespace),
-  }),
+  // This page is temporarily disabled until we update the safe resources list.
+  // (kind, role) => ({
+  //   label: 'Add Rule...',
+  //   href: addHref(role.metadata.name, role.metadata.namespace),
+  // }),
   (kind, role) => ({
     label: 'Add Role Binding...',
     href: `/k8s/cluster/rolebindings/new?rolekind=${roleKind(role)}&rolename=${role.metadata.name}`,
@@ -87,11 +88,13 @@ class Details extends React.Component {
       <div className="co-m-pane__body">
         <SectionHeading text="Rules" />
         <div className="co-m-pane__filter-bar co-m-pane__filter-bar--alt">
+          {/* This page is temporarily disabled until we update the safe resources list.
           <div className="co-m-pane__filter-bar-group">
             <Link to={addHref(name, namespace)} className="co-m-primary-action">
               <button className="btn btn-primary">Add Rule</button>
             </Link>
           </div>
+          */}
           <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--filter">
             <TextFilter label="Rules by action or resource" onChange={this.changeFilter} />
           </div>
