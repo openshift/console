@@ -156,7 +156,8 @@ func NewAuthenticator(ctx context.Context, c *Config) (*Authenticator, error) {
 		switch c.AuthSource {
 		case AuthSourceOpenShift:
 			// Use the k8s CA for OAuth metadata discovery.
-			client, err := newHTTPClient(c.DiscoveryCA, false)
+			var client *http.Client
+			client, err = newHTTPClient(c.DiscoveryCA, false)
 			if err != nil {
 				return nil, err
 			}
