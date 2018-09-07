@@ -240,11 +240,11 @@ export const ListPage = props => {
   const ko = kindObj(kind);
   const {labelPlural, plural, namespaced, label} = ko;
   const title = props.title || labelPlural;
-  let href = namespaced ? `/k8s/ns/${namespace || 'default'}/${plural}/new` : `/k8s/cluster/${plural}/new`;
+  let href = namespaced ? `/k8s/ns/${namespace || 'default'}/${plural}/_new` : `/k8s/cluster/${plural}/_new`;
   if (ko.crd) {
     try {
       const ref = referenceForModel(ko);
-      href = namespaced ? `/k8s/ns/${namespace || 'default'}/${ref}/new` : `/k8s/cluster/${ref}/new`;
+      href = namespaced ? `/k8s/ns/${namespace || 'default'}/${ref}/_new` : `/k8s/cluster/${ref}/_new`;
     } catch (unused) { /**/ }
   }
 

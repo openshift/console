@@ -47,7 +47,7 @@ export const PackageRow: React.SFC<PackageRowProps> = (props) => {
     ? <Link to={`/k8s/ns/${ns}/${SubscriptionModel.plural}/${subscription.metadata.name}`}>View subscription</Link>
     : <Link to={`/k8s/all-namespaces/${SubscriptionModel.plural}?name=${obj.packageName}`}>View subscriptions</Link>;
 
-  const createSubscriptionLink = () => `/k8s/ns/${ns === ALL_NAMESPACES_KEY ? 'default' : ns}/${SubscriptionModel.plural}/new?pkg=${obj.packageName}&catalog=${catalogSource.metadata.name}&catalogNamespace=${catalogSource.metadata.namespace}`;
+  const createSubscriptionLink = () => `/k8s/ns/${ns === ALL_NAMESPACES_KEY ? 'default' : ns}/${SubscriptionModel.plural}/_new?pkg=${obj.packageName}&catalog=${catalogSource.metadata.name}&catalogNamespace=${catalogSource.metadata.namespace}`;
 
   return <div className="row co-resource-list__item co-package-row">
     <div className="col-sm-4 col-xs-6">

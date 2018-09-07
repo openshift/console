@@ -201,7 +201,7 @@ describe(ClusterServiceVersionDetails.displayName, () => {
     const createButton = wrapper.find('.btn-primary');
 
     expect(createButton.type()).toEqual(Link);
-    expect(createButton.props().to).toEqual(`/k8s/ns/default/${ClusterServiceVersionModel.plural}/testapp/${referenceForCRDDesc(testClusterServiceVersion.spec.customresourcedefinitions.owned[0])}/new`);
+    expect(createButton.props().to).toEqual(`/k8s/ns/default/${ClusterServiceVersionModel.plural}/testapp/${referenceForCRDDesc(testClusterServiceVersion.spec.customresourcedefinitions.owned[0])}/_new`);
   });
 
   it('renders a create dropdown button if more than one `owned` app resource', () => {

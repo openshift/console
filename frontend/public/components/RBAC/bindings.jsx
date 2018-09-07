@@ -140,7 +140,7 @@ const roleResources = [
 export const RoleBindingsPage = ({namespace, showTitle=true, fake}) => <MultiListPage
   canCreate={true}
   createButtonText="Create Binding"
-  createProps={{to: '/k8s/cluster/rolebindings/new'}}
+  createProps={{to: '/k8s/cluster/rolebindings/_new'}}
   fake={fake}
   filterLabel="Role Bindings by role or subject"
   flatten={flatten}

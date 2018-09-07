@@ -92,7 +92,7 @@ export const ClusterServiceVersionResourcesPage = connect(inFlightStateToProps)(
     const firehoseResources = owned.map((desc) => ({kind: referenceForCRDDesc(desc), namespaced: true, prop: desc.kind}));
 
     const EmptyMsg = () => <MsgBox title="No Application Resources Defined" detail="This application was not properly installed or configured." />;
-    const createLink = (name: string) => `/k8s/ns/${obj.metadata.namespace}/${ClusterServiceVersionModel.plural}/${obj.metadata.name}/${referenceForCRDDesc(_.find(owned, {name}))}/new`;
+    const createLink = (name: string) => `/k8s/ns/${obj.metadata.namespace}/${ClusterServiceVersionModel.plural}/${obj.metadata.name}/${referenceForCRDDesc(_.find(owned, {name}))}/_new`;
     const createProps = owned.length > 1
       ? {items: owned.reduce((acc, crd) => ({...acc, [crd.name]: crd.displayName}), {}), createLink}
       : {to: owned.length === 1 ? createLink(owned[0].name) : null};
