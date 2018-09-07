@@ -3,9 +3,15 @@
 }
 
 .project-overview__group-heading {
-  border-bottom: 1px solid black;
+  border-bottom: 1px solid $color-pf-black-400;
+  font-size: 22px;
+  font-weight: 300;
+  line-height: normal;
   margin: 0;
+  overflow: hidden;
   padding: 5px 0;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .project-overview__list {
@@ -13,12 +19,14 @@
 }
 
 .project-overview__item-heading {
+  font-size: 16px;
   margin: 0;
 }
 
 .project-overview__additional-info {
   align-items: center;
   display: grid;
+  grid-column-gap: 10px;
   grid-template-columns: 50% 50%;
   grid-template-areas: "controller status";
   width: 100%;
@@ -26,6 +34,7 @@
 
 .project-overview__detail--controller {
   grid-area: controller;
+  min-width: 0; // To enable text-overflow: ellipsis within a css-grid area
 }
 
 .project-overview__detail--status {

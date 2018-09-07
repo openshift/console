@@ -303,7 +303,8 @@ input[type="radio"] {
   pointer-events: none; }
 
 .co-m-cog-wrapper {
-  display: inline-block; }
+  display: inline-block;
+  margin-right: 4px; }
 
 .co-m-cog__icon--disabled {
   color: #ddd; }
