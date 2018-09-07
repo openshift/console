@@ -39,7 +39,7 @@ export const PackageHeader: React.SFC<PackageHeaderProps> = (props) => <ListHead
 
 export const PackageRow: React.SFC<PackageRowProps> = (props) => {
   const {obj, catalogSource, currentCSV, subscription} = props;
-  const {displayName, icon = [], version} = currentCSV.spec;
+  const {displayName, icon = [], version, provider} = currentCSV.spec;
   const ns = getActiveNamespace();
   const channel = !_.isEmpty(obj.defaultChannel) ? obj.channels.find(ch => ch.name === obj.defaultChannel) : obj.channels[0];
 
@@ -51,7 +51,7 @@ export const PackageRow: React.SFC<PackageRowProps> = (props) => {
 
   return <div className="row co-resource-list__item co-package-row">
     <div className="col-sm-4 col-xs-6">
-      <ClusterServiceVersionLogo displayName={displayName} icon={_.get(icon, '[0]')} provider={catalogSource.spec.publisher} />
+      <ClusterServiceVersionLogo displayName={displayName} icon={_.get(icon, '[0]')} provider={provider.name} />
     </div>
     <div className="col-xs-4 hidden-xs">{version} ({channel.name})</div>
     <div className="col-sm-4 col-xs-6 co-package-row__actions">
@@ -144,7 +144,7 @@ export const CatalogSourceList = withFallback((props: CatalogSourceListProps) =>
         <div className="co-catalogsource-list__section__packages">
           <div>
             <h3>{obj.spec.displayName || obj.metadata.name}</h3>
-            <span className="text-muted">Provided by {obj.spec.publisher}</span>
+            <span className="text-muted">Packaged by {obj.spec.publisher}</span>
           </div>
           <Link to={`/k8s/ns/${obj.metadata.namespace}/${CatalogSourceModel.plural}/${obj.metadata.name}`}>View catalog details</Link>
         </div>
