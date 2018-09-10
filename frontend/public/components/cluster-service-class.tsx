@@ -34,7 +34,7 @@ const actionButtons = [
 
 const ClusterServiceClassHeader: React.SFC<ClusterServiceClassHeaderProps> = props => <ListHeader>
   <ColHead {...props} className="col-sm-6 col-xs-12" sortFunc="serviceClassDisplayName" currentSortFunc="serviceClassDisplayName">Display Name</ColHead>
-  <ColHead {...props} className="col-sm-3 hidden-xs" sortField="spec.clusterServiceBrokerName">External Name</ColHead>
+  <ColHead {...props} className="col-sm-3 hidden-xs" sortField="spec.externalName">External Name</ColHead>
   <ColHead {...props} className="col-sm-3 hidden-xs" sortField="spec.clusterServiceBrokerName">Broker</ColHead>
 </ListHeader>;
 
