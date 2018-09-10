@@ -457,8 +457,8 @@ export class ContainerDropdown extends React.PureComponent {
 }
 
 ContainerDropdown.propTypes = {
-  containers: PropTypes.object.isRequired,
-  currentKey: PropTypes.string,
+  containers: PropTypes.oneOfType([PropTypes.object, PropTypes.array]).isRequired,
+  currentKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   initContainers: PropTypes.object,
   onChange: PropTypes.func.isRequired
 };

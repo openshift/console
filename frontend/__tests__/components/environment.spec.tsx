@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
+import { FieldLevelHelp } from 'patternfly-react';
 
 import { EnvironmentPage } from '../../public/components/environment';
 import * as k8s from '../../public/module/k8s';
@@ -22,8 +23,8 @@ describe(EnvironmentPage.name, () => {
       wrapperRO = shallow(environmentPageRO);
     });
 
-    it('does not show help text', () => {
-      expect(wrapperRO.find('p').exists()).toEqual(false);
+    it('does not show field level help', () => {
+      expect(wrapperRO.find(FieldLevelHelp).exists()).toEqual(false);
     });
 
     it('does not render save and reload buttons', () => {
@@ -44,8 +45,8 @@ describe(EnvironmentPage.name, () => {
       wrapper.setState({secrets, configMaps});
     });
 
-    it('shows help text', () => {
-      expect(wrapper.find('p').text()).toContain('Define environment variables as key-value pairs to store configuration settings.');
+    it('shows field level help component', () => {
+      expect(wrapper.find(FieldLevelHelp).exists()).toEqual(true);
     });
 
     it('renders save and reload buttons', () => {
