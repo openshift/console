@@ -5,6 +5,10 @@ import { NativeTypes } from 'react-dnd-html5-backend';
 import { DropTarget, ConnectDropTarget, DropTargetMonitor } from 'react-dnd';
 import withDragDropContext from './drag-drop-context';
 
+// Maximal file size, in bytes, that user can upload
+const maxFileUploadSize = 4000000;
+const fileSizeErrorMsg = 'Maximum file size exceeded. File limit is 4MB.';
+
 export class FileInput extends React.Component<FileInputProps, FileInputState> {
   constructor(props) {
     super(props);
@@ -12,13 +16,24 @@ export class FileInput extends React.Component<FileInputProps, FileInputState> {
     this.onFileUpload = this.onFileUpload.bind(this);
   }
   onDataChange(event) {
-    this.props.onChange(event.target.value);
+    this.props.onChange({
+      fileData: event.target.value
+    });
   }
   readFile(file) {
+    if (file.size > maxFileUploadSize) {
+      this.props.onChange({
+        errorMessage: fileSizeErrorMsg,
+      });
+      return;
+    }
     const reader = new FileReader();
     reader.onload = () => {
       const input = reader.result;
-      this.props.onChange(input, file.name);
+      this.props.onChange({
+        fileData: input,
+        fileName: file.name,
+      });
     };
     reader.readAsText(file, 'UTF-8');
   }
@@ -58,6 +73,7 @@ export class FileInput extends React.Component<FileInputProps, FileInputState> {
                 required>
               </textarea>
               <p className="help-block" id={`${id}-textarea-help`}>{this.props.textareaFieldHelpText}</p>
+              { this.props.errorMessage && <div className="text-danger">{this.props.errorMessage}</div> }
             </div>
           </div>
         </div>
@@ -95,25 +111,37 @@ export const DroppableFileInput = withDragDropContext(class DroppableFileInput e
       return;
     }
     const file = monitor.getItem().files[0];
+    if (file.size > maxFileUploadSize) {
+      this.setState({
+        errorMessage: fileSizeErrorMsg,
+        inputFileName: '',
+        inputFileData: '',
+      });
+      return;
+    }
     const reader = new FileReader();
     reader.onload = () => {
       const input = reader.result;
       this.setState({
         inputFileName: file.name,
-        inputFileData: input
+        inputFileData: input,
+        errorMessage: '',
       }, () => this.props.onChange(input));
     };
     reader.readAsText(file, 'UTF-8');
   }
-  onDataChange(fileData, fileName) {
+  onDataChange(data) {
+    const { fileData, fileName, errorMessage } = data;
     this.setState({
-      inputFileData: fileData,
-      inputFileName: !fileName ? '' : fileName
-    }, () => this.props.onChange(fileData));
+      inputFileData: fileData || '',
+      inputFileName: fileName || '',
+      errorMessage: errorMessage || '',
+    }, () => this.props.onChange(this.state.inputFileData));
   }
   render() {
     return <FileInputComponent
       {...this.props}
+      errorMessage={this.state.errorMessage}
       onDrop={this.handleFileDrop}
       onChange={this.onDataChange}
       inputFileData={this.state.inputFileData}
@@ -132,12 +160,14 @@ export type DroppableFileInputProps = {
 export type DroppableFileInputState = {
   inputFileData: string,
   inputFileName: string,
+  errorMessage?: any,
 };
 export type FileInputState = {
   inputFileData: string,
   inputFileName: string,
 };
 export type FileInputProps = {
+  errorMessage: string,
   connectDropTarget?: ConnectDropTarget,
   isOver?: boolean,
   canDrop?: boolean,
