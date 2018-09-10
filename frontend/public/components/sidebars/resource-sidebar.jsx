@@ -51,7 +51,7 @@ export const SampleYaml = ({sample, loadSampleYaml, downloadSampleYaml}) => {
       <span className="fa fa-fw fa-paste" aria-hidden="true"></span> Try it
     </button>
     <button className="btn btn-link pull-right" onClick={() => downloadSampleYaml(templateName, kind)}>
-      <span className="fa fa-fw fa-download" aria-hidden="true"></span> Download yaml
+      <span className="fa fa-fw fa-download" aria-hidden="true"></span> Download YAML
     </button>
   </li>;
 };
