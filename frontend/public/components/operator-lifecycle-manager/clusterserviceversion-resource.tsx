@@ -89,7 +89,7 @@ export const ClusterServiceVersionResourcesPage = connect(inFlightStateToProps)(
 
     const rowFilters = [{
       type: 'clusterserviceversion-resource-kind',
-      selected: firehoseResources.map(({kind}) => kind),
+      selected: firehoseResources.map(({kind}) => kindForReference(kind)),
       reducer: ({kind}) => kind,
       items: firehoseResources.map(({kind}) => ({id: kindForReference(kind), title: kindForReference(kind)})),
     }];
