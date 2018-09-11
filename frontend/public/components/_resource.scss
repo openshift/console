@@ -11,7 +11,7 @@ $height: 18px;
   padding: 0 4px;
   line-height: $height;
   color: #fff;
-  margin: 0 4px;
+  margin-right: 4px;
   background-color: $color-container-dark;
   &--lg {
     border-radius: 12px;
@@ -124,6 +124,15 @@ $height: 18px;
   }
   .co-m-resource-icon {
     flex-shrink: 0;
+  }
+}
+
+.co-resource-link-truncate {
+  white-space: nowrap;
+  .co-resource-link__resource-name {
+    line-height: normal;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
 

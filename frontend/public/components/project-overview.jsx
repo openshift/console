@@ -13,6 +13,7 @@ const ProjectOverviewListItem = ({obj}) => {
   const {namespace, name, uid} = metadata;
   const heading = <h3 className="project-overview__item-heading">
     <ResourceLink
+      className="co-resource-link-truncate"
       kind={kind}
       name={name}
       namespace={namespace}
@@ -24,6 +25,7 @@ const ProjectOverviewListItem = ({obj}) => {
       <div className="project-overview__detail project-overview__detail--controller">
         <ComponentLabel text={_.startCase(currentController.kind)} />
         <ResourceLink
+          className="co-resource-link-truncate"
           kind={currentController.kind}
           name={currentController.metadata.name}
           namespace={namespace}
