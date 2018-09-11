@@ -17,7 +17,7 @@ import { UIActions } from './ui/ui-actions';
   CLUSTER_UPDATES: false,
   PROMETHEUS: false,
   MULTI_CLUSTER: false,
-  CLOUD_SERVICES: false,
+  OPERATOR_LIFECYCLE_MANAGER: false,
   CALICO: false,
   CHARGEBACK: false,
   OPENSHIFT: false,
@@ -35,7 +35,7 @@ export enum FLAGS {
   CLUSTER_UPDATES = 'CLUSTER_UPDATES',
   PROMETHEUS = 'PROMETHEUS',
   MULTI_CLUSTER = 'MULTI_CLUSTER',
-  CLOUD_SERVICES = 'CLOUD_SERVICES',
+  OPERATOR_LIFECYCLE_MANAGER = 'OPERATOR_LIFECYCLE_MANAGER',
   CALICO = 'CALICO',
   CHARGEBACK = 'CHARGEBACK',
   OPENSHIFT = 'OPENSHIFT',
@@ -60,6 +60,7 @@ export const CRDs = {
   [referenceForModel(ClusterModel)]: FLAGS.MULTI_CLUSTER,
   [referenceForModel(ChargebackReportModel)]: FLAGS.CHARGEBACK,
   [referenceForModel(ClusterServiceClassModel)]: FLAGS.SERVICE_CATALOG,
+  [referenceForModel(ClusterServiceVersionModel)]: FLAGS.OPERATOR_LIFECYCLE_MANAGER,
 };
 
 const SET_FLAG = 'SET_FLAG';
@@ -134,7 +135,6 @@ export let featureActions = [
   [FLAGS.CAN_LIST_PV, { resource: 'persistentvolumes', verb: 'list' }],
   [FLAGS.CAN_LIST_STORE, { group: 'storage.k8s.io', resource: 'storageclasses', verb: 'list' }],
   [FLAGS.CAN_LIST_CRD, { group: 'apiextensions.k8s.io', resource: 'customresourcedefinitions', verb: 'list' }],
-  [FLAGS.CLOUD_SERVICES, { group: ClusterServiceVersionModel.apiGroup, resource: ClusterServiceVersionModel.plural, verb: 'list' }],
 ].forEach(_.spread((FLAG, resourceAttributes) => {
   const req = {
     spec: { resourceAttributes }
