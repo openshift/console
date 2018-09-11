@@ -375,7 +375,7 @@ export class Nav extends React.Component {
             <ResourceNSLink resource="events" name="Events" onClick={this.close} />
           </NavSection>
 
-          <NavSection required={FLAGS.CLOUD_SERVICES} text="Operators" img={operatorImg} activeImg={operatorActiveImg} >
+          <NavSection required={FLAGS.OPERATOR_LIFECYCLE_MANAGER} text="Operators" img={operatorImg} activeImg={operatorActiveImg} >
             <ResourceNSLink model={ClusterServiceVersionModel} resource={ClusterServiceVersionModel.plural} name="Cluster Service Versions" onClick={this.close} />
             <Sep />
             <ResourceNSLink model={CatalogSourceModel} resource={CatalogSourceModel.plural} name="Catalog Sources" onClick={this.close} />
