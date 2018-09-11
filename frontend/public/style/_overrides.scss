@@ -207,4 +207,13 @@ tags-input .autocomplete .suggestion-item em {
 .toolbar-pf {
   border-bottom: none;
   box-shadow: none;
+  min-width: 0; // enable text-overflow: ellipsis
+  padding-top: 0;
+}
+
+@media (max-width: $screen-sm-max) {
+  .toolbar-pf-actions {
+    display: block;
+    margin-bottom: 0;
+  }
 }

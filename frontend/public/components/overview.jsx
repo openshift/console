@@ -7,7 +7,7 @@ import { Helmet } from 'react-helmet';
 
 import { StartGuide } from './start-guide';
 import { FLAGS, connectToFlags, flagPending } from '../features';
-import { Dropdown, Firehose, NavTitle, StatusBox } from './utils';
+import { Dropdown, Firehose, StatusBox } from './utils';
 import { TextFilter } from './factory';
 import { ProjectOverview } from './project-overview';
 
@@ -264,13 +264,20 @@ class OverviewDetails extends React.Component {
     const {filteredItems, filterValue, groupedItems, groupOptions, selectedGroupLabel} = this.state;
 
     return <div className="co-m-pane">
-      <OverviewToolbar
-        filterValue={filterValue}
-        groupOptions={groupOptions}
-        handleFilterChange={this.handleFilterChange}
-        handleGroupChange={this.handleGroupChange}
-        selectedGroup={selectedGroupLabel}
-      />
+      <div className="co-m-nav-title co-m-nav-title--overview">
+        <h1 className="co-m-pane__heading">
+          <div className="co-m-pane__name">
+            <span id="resource-title">Overview</span>
+          </div>
+        </h1>
+        <OverviewToolbar
+          filterValue={filterValue}
+          groupOptions={groupOptions}
+          handleFilterChange={this.handleFilterChange}
+          handleGroupChange={this.handleGroupChange}
+          selectedGroup={selectedGroupLabel}
+        />
+      </div>
       <div className="co-m-pane__body">
         <StatusBox data={filteredItems} loaded={loaded} loadError={loadError} label="Resources">
           <ProjectOverview groups={groupedItems} />
@@ -361,7 +368,6 @@ class OverviewPage_ extends React.PureComponent {
       <Helmet>
         <title>Project Overview</title>
       </Helmet>
-      <NavTitle title="Project Overview" />
       <Overview
         fake={fake} //TODO implement first time user experience using this prop as a flag
         namespace={namespace}
