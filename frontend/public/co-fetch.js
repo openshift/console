@@ -1,7 +1,6 @@
 import * as _ from 'lodash-es';
 import 'whatwg-fetch';
 
-import { analyticsSvc } from './module/analytics';
 import { authSvc } from './module/auth';
 import store from './redux';
 
@@ -126,12 +125,6 @@ export const coFetchJSON = (url, method = 'GET', options = {}) => {
   // Pass headers last to let callers to override Accept.
   const allOptions = _.defaultsDeep({method}, options, {headers});
   return coFetch(url, allOptions).then(response => {
-    if (!response.ok) {
-      return response.text().then(text => {
-        analyticsSvc.error(`${text}: ${method} ${response.url}`);
-      });
-    }
-
     // If the response has no body, return promise that resolves with an empty object
     if (response.headers.get('Content-Length') === '0') {
       return Promise.resolve({});
