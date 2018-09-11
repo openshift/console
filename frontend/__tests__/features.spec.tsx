@@ -16,7 +16,7 @@ describe('featureReducer', () => {
   });
 
   it('returns updated state with new flags if `SET_FLAG` action', () => {
-    const action = {type: 'SET_FLAG', flag: FLAGS.CLOUD_SERVICES, value: true};
+    const action = {type: 'SET_FLAG', flag: FLAGS.OPERATOR_LIFECYCLE_MANAGER, value: true};
     const initialState = Immutable.Map(DEFAULTS_);
     const newState = featureReducer(initialState, action);
 
@@ -31,7 +31,7 @@ describe('featureReducer', () => {
     expect(newState).toEqual(initialState);
   });
 
-  it('set flags when it gets CRDs', () => {
+  it('sets flags when it gets CRDs', () => {
     const action = {type: types.resources, resources: {models: [ClusterServiceVersionModel]}};
     const initialState = Immutable.Map(DEFAULTS_);
     const newState = featureReducer(initialState, action);
@@ -42,6 +42,7 @@ describe('featureReducer', () => {
       [FLAGS.MULTI_CLUSTER]: false,
       [FLAGS.CHARGEBACK]: false,
       [FLAGS.SERVICE_CATALOG]: false,
+      [FLAGS.OPERATOR_LIFECYCLE_MANAGER]: true,
     }));
   });
 });
