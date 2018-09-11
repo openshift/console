@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 
 // eslint-disable-next-line no-unused-vars
-import { K8sResourceKind, K8sResourceKindReference, planExternalName } from '../module/k8s';
+import { K8sResourceKind, K8sResourceKindReference, planExternalName, serviceCatalogStatus } from '../module/k8s';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
 import { Cog, history, navFactory, ResourceCog, ResourceLink, ResourceSummary, SectionHeading, StatusWithIcon, Timestamp } from './utils';
 import { ResourceEventStream } from './events';
@@ -33,6 +33,8 @@ const ServiceInstanceDetails: React.SFC<ServiceInstanceDetailsProps> = ({obj: si
   const parameters = _.get(si, 'status.externalProperties.parameters', {});
   const bindingCreateHandler = createBinding(null, si).callback;
   const bindingFilters = {selector: {field: 'spec.instanceRef.name', values: new Set(_.map(si, 'name'))}};
+  const classDisplayName = si.spec.clusterServiceClassExternalName || si.spec.serviceClassExternalName;
+  const clusterServiceClassName = _.get(si, 'spec.clusterServiceClassRef.name');
 
   return <React.Fragment>
     <div className="co-m-pane__body">
@@ -43,9 +45,12 @@ const ServiceInstanceDetails: React.SFC<ServiceInstanceDetailsProps> = ({obj: si
         </div>
         <div className="col-sm-6">
           <dl className="co-m-pane__details">
-            <dt>External Name</dt>
-            {/* TODO:  add link */}
-            <dd>{si.spec.clusterServiceClassExternalName || si.spec.serviceClassExternalName}</dd>
+            <dt>Service Class</dt>
+            <dd>
+              {clusterServiceClassName
+                ? <ResourceLink kind="ClusterServiceClass" displayName={classDisplayName} title={classDisplayName} name={clusterServiceClassName} />
+                : classDisplayName}
+            </dd>
             <dt>Status</dt>
             <dd><StatusWithIcon obj={si} /></dd>
             <dt>Plan</dt>
@@ -79,33 +84,54 @@ ServiceInstanceDetailsPage.displayName = 'ServiceInstanceDetailsPage';
 
 const ServiceInstancesHeader = props => <ListHeader>
   <ColHead {...props} className="col-md-3 col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
-  <ColHead {...props} className="col-md-3 col-sm-4 col-xs-6" sortField="metadata.namespace">Namespace</ColHead>
-  <ColHead {...props} className="col-md-2 col-sm-4 hidden-xs" sortFunc="serviceCatalogStatus">Status</ColHead>
+  <ColHead {...props} className="col-md-2 col-sm-3 col-xs-6" sortField="metadata.namespace">Namespace</ColHead>
+  <ColHead {...props} className="col-md-2 col-sm-3 hidden-xs" sortField="spec.clusterServiceClassExternalName">Service Class</ColHead>
+  <ColHead {...props} className="col-md-1 col-sm-2 hidden-xs" sortFunc="serviceCatalogStatus">Status</ColHead>
   <ColHead {...props} className="col-md-2 hidden-sm hidden-xs" sortFunc="planExternalName">Plan</ColHead>
   <ColHead {...props} className="col-md-2 hidden-sm hidden-xs" sortField="metadata.creationTimestamp">Created</ColHead>
 </ListHeader>;
 
-const ServiceInstancesRow: React.SFC<ServiceInstancesRowProps> = ({obj}) => <div className="row co-resource-list__item">
-  <div className="col-md-3 col-sm-4 col-xs-6 co-resource-link-wrapper">
-    <ResourceCog actions={menuActions} kind={ServiceInstancesReference} resource={obj} />
-    <ResourceLink kind={ServiceInstancesReference} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
-  </div>
-  <div className="col-md-3 col-sm-4 col-xs-6 co-break-word">
-    <ResourceLink kind="Namespace" name={obj.metadata.namespace} title={obj.metadata.namespace} />
-  </div>
-  <div className="col-md-2 col-sm-4 hidden-xs co-break-word">
-    <StatusWithIcon obj={obj} />
-  </div>
-  <div className="col-md-2 hidden-sm hidden-xs co-break-word">
-    {planExternalName(obj) || '-'}
-  </div>
-  <div className="col-md-2 hidden-sm hidden-xs co-break-word">
-    <Timestamp timestamp={obj.metadata.creationTimestamp} />
-  </div>
-</div>;
+const ServiceInstancesRow: React.SFC<ServiceInstancesRowProps> = ({obj}) => {
+  const clusterServiceClassRefName = _.get(obj, 'spec.clusterServiceClassRef.name');
+
+  return <div className="row co-resource-list__item">
+    <div className="col-md-3 col-sm-4 col-xs-6 co-resource-link-wrapper">
+      <ResourceCog actions={menuActions} kind={ServiceInstancesReference} resource={obj} />
+      <ResourceLink kind={ServiceInstancesReference} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
+    </div>
+    <div className="col-md-2 col-sm-3 col-xs-6 co-break-word">
+      <ResourceLink kind="Namespace" name={obj.metadata.namespace} title={obj.metadata.namespace} />
+    </div>
+    <div className="col-md-2 col-sm-3 hidden-xs co-break-word">
+      {clusterServiceClassRefName
+        ? <ResourceLink kind="ClusterServiceClass" displayName={obj.spec.clusterServiceClassExternalName} title={obj.spec.clusterServiceClassExternalName} name={obj.spec.clusterServiceClassRef.name} />
+        : obj.spec.clusterServiceClassExternalName }
+    </div>
+    <div className="col-md-1 col-sm-2 hidden-xs">
+      <StatusWithIcon obj={obj} />
+    </div>
+    <div className="col-md-2 hidden-sm hidden-xs co-break-word">
+      {planExternalName(obj) || '-'}
+    </div>
+    <div className="col-md-2 hidden-sm hidden-xs co-break-word">
+      <Timestamp timestamp={obj.metadata.creationTimestamp} />
+    </div>
+  </div>;
+};
 
 const ServiceInstancesList: React.SFC = props => <List {...props} Header={ServiceInstancesHeader} Row={ServiceInstancesRow} />;
 ServiceInstancesList.displayName = 'ServiceInstancesList';
+
+const filters = [{
+  type: 'catalog-status',
+  selected: ['Ready', 'Pending', 'Failed'],
+  reducer: serviceCatalogStatus,
+  items: [
+    {id: 'Ready', title: 'Ready'},
+    {id: 'Pending', title: 'Pending'},
+    {id: 'Failed', title: 'Failed'}
+  ],
+}];
 
 export const ServiceInstancesPage: React.SFC<ServiceInstancesPageProps> = props =>
   <ListPage
@@ -113,6 +139,7 @@ export const ServiceInstancesPage: React.SFC<ServiceInstancesPageProps> = props 
     kind={ServiceInstancesReference}
     ListComponent={ServiceInstancesList}
     filterLabel="Service Instances by name"
+    rowFilters={filters}
   />;
 ServiceInstancesPage.displayName = 'ServiceInstancesListPage';
 
