@@ -10,7 +10,7 @@ We determine if the feature is enabled by first checking if the operator feature
 
 The update UI is divided into several key components and is abstracted such that additional channels could be added in the future e.g. Tectonic channel, Container Linux channel, etc.
 
-All components live in [components/cluster-updates](https://github.com/openshift/console/blob/master/frontend/public/components/cluster-updates). Each major component has a description in the file of how it's intended to be used.
+All components live in [components/channel-operators](https://github.com/openshift/console/blob/master/frontend/public/components/channel-operators). Each major component has a description in the file of how it's intended to be used.
 
 ## Data flow
 
