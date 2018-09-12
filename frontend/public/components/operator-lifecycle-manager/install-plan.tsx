@@ -7,7 +7,7 @@ import { Map as ImmutableMap } from 'immutable';
 
 import { ListPage, List, ListHeader, ColHead, ResourceRow, DetailsPage } from '../factory';
 import { SectionHeading, MsgBox, ResourceLink, ResourceCog, Cog, ResourceIcon, navFactory, ResourceSummary } from '../utils';
-import { InstallPlanKind, InstallPlanApproval, Step } from './index';
+import { InstallPlanKind, InstallPlanApproval, olmNamespace, Step } from './index';
 import { referenceForModel, referenceForOwnerRef, k8sUpdate } from '../../module/k8s';
 import { SubscriptionModel, ClusterServiceVersionModel, InstallPlanModel, CatalogSourceModel } from '../../models';
 import { breadcrumbsForOwnerRefs } from '../utils/breadcrumbs';
@@ -34,7 +34,11 @@ export const InstallPlanRow: React.SFC<InstallPlanRowProps> = (props) => {
       <ResourceLink kind="Namespace" name={props.obj.metadata.namespace} title={props.obj.metadata.namespace} displayName={props.obj.metadata.namespace} />
     </div>
     <div className="hidden-xs col-sm-4 col-md-3 col-lg-2">
-      {props.obj.spec.clusterServiceVersionNames.map((csvName, i) => <span key={i}><ResourceIcon kind={referenceForModel(ClusterServiceVersionModel)} /> {csvName}</span>)}
+      {props.obj.spec.clusterServiceVersionNames.map((csvName, i) => <span key={i}>
+        { _.get(props, 'obj.status.phase') === 'Complete'
+          ? <ResourceLink kind={referenceForModel(ClusterServiceVersionModel)} name={csvName} namespace={props.obj.metadata.namespace} title={csvName} />
+          : <React.Fragment><ResourceIcon kind={referenceForModel(ClusterServiceVersionModel)} />{csvName}</React.Fragment> }
+      </span>) }
     </div>
     <div className="hidden-xs hidden-sm col-md-3 col-lg-2">
       { (props.obj.metadata.ownerReferences || [])
@@ -91,7 +95,7 @@ export const InstallPlanDetails: React.SFC<InstallPlanDetailsProps> = ({obj}) =>
               </dd>) }
               <dt>Catalog Sources</dt>
               { (_.get(obj.status, 'catalogSources') || []).map((catalogName, i) => <dd key={i}>
-                <ResourceLink kind={referenceForModel(CatalogSourceModel)} name={catalogName} namespace="openshift" title={catalogName} />
+                <ResourceLink kind={referenceForModel(CatalogSourceModel)} name={catalogName} namespace={obj.spec.sourceNamespace || olmNamespace} title={catalogName} />
               </dd>) }
             </dl>
           </div>
