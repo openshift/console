@@ -124,7 +124,7 @@ class App extends React.PureComponent {
   }
 
   render () {
-    let DefaultPage = isKubevirt() ? KubevirtDefaultPage : DefaultPage; // eslint-disable-line no-shadow no-use-before-define
+    let DefaultPage = isKubevirt() ? KubevirtDefaultPage : DefaultPage; // eslint-disable-line
 
     /*
     if (isKubevirt()) {
