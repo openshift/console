@@ -9,32 +9,12 @@ import { SecretType } from './secrets/create-secret';
 
 export const WebHookSecretKey = 'WebHookSecretKey';
 
-// Edit in YAML if not editing:
-// - source secrets
-// - image secret, both formats:
-//     - kubernetes.io/dockerconfigjson
-//     - kubernetes.io/dockercfg
-// - webhook secret with one key.
-const editInYaml = obj => {
-  switch (obj.type) {
-    case SecretType.basicAuth:
-    case SecretType.sshAuth:
-    case SecretType.dockercfg:
-    case SecretType.dockerconfigjson:
-      return false;
-    case SecretType.opaque:
-      return !_.has(obj, ['data', WebHookSecretKey]) || _.size(obj.data) !== 1;
-    default:
-      return true;
-  }
-};
-
 const menuActions = [
   Cog.factory.ModifyLabels,
   Cog.factory.ModifyAnnotations,
   (kind, obj) => ({
     label: `Edit ${kind.label}`,
-    href: editInYaml(obj) ? `${resourceObjPath(obj, kind.kind)}/edit-yaml` : `${resourceObjPath(obj, kind.kind)}/edit`,
+    href: `${resourceObjPath(obj, kind.kind)}/edit`,
   }),
   Cog.factory.Delete,
 ];
@@ -126,8 +106,8 @@ const filters = [{
 
 const SecretsPage = props => {
   const createItems = {
+    generic: 'Key/Value Secret',
     image: 'Image Pull Secret',
-    // generic: 'Create Key/Value Secret',
     source: 'Source Secret',
     webhook: 'Webhook Secret',
     yaml: 'Secret from YAML',
