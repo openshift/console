@@ -1,3 +1,2 @@
 // indirect reuse of OKD in kubevirt
-
-export * from '../../../components/factory'; 
+export * from '../../../components/factory';
