@@ -17,6 +17,15 @@ enum SecretTypeAbstraction {
   webhook = 'webhook',
 }
 
+const secretDisplayType = (abstraction: SecretTypeAbstraction) => {
+  switch (abstraction) {
+    case 'generic':
+      return 'Key/Value';
+    default:
+      return _.upperFirst(abstraction);
+  }
+};
+
 const AUTHS_KEY = 'auths';
 
 export enum SecretType {
@@ -35,9 +44,10 @@ export type BasicAuthSubformState = {
 };
 
 const secretFormExplanation = {
-  [SecretTypeAbstraction.source]: 'Source secrets allow you to authenticate against the SCM server.',
-  [SecretTypeAbstraction.image]: 'Image secrets allow you to authenticate against a private image registry.',
-  [SecretTypeAbstraction.webhook]: 'Webhook secrets allow you to authenticate a webhook trigger.',
+  [SecretTypeAbstraction.generic]: 'Key/value secrets let you inject sensitive data into your application as files or environment variables.',
+  [SecretTypeAbstraction.source]: 'Source secrets let you authenticate against a Git server.',
+  [SecretTypeAbstraction.image]: 'Image secrets let you authenticate against a private image registry.',
+  [SecretTypeAbstraction.webhook]: 'Webhook secrets let you authenticate a webhook trigger.',
 };
 
 const toDefaultSecretType = (typeAbstraction: SecretTypeAbstraction): SecretType => {
@@ -144,7 +154,8 @@ const withSecretForm = (SubForm) => class SecretFormComponent extends React.Comp
     }, err => this.setState({error: err.message, inProgress: false}));
   }
   render () {
-    const title = `${this.props.titleVerb} ${_.upperFirst(this.state.secretTypeAbstraction)} Secret`;
+    const { secretTypeAbstraction } = this.state;
+    const title = `${this.props.titleVerb} ${secretDisplayType(secretTypeAbstraction)} Secret`;
     return <div className="co-m-pane__body">
       <Helmet>
         <title>{title}</title>
@@ -847,7 +858,7 @@ class KeyValueEntryForm extends React.Component<KeyValueEntryFormProps, KeyValue
   }
 }
 
-const secretFormFactory = (secretType: SecretTypeAbstraction, ) => {
+const secretFormFactory = (secretType: SecretTypeAbstraction) => {
   switch (secretType) {
     case SecretTypeAbstraction.source:
       return withSecretForm(SourceSecretForm);
