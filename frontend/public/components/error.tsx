@@ -1,10 +1,12 @@
+/* eslint-disable no-unused-vars, no-undef */
+
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 
-import {NavTitle, getQueryArgument} from './utils';
+import { NavTitle, getQueryArgument } from './utils';
 
-//User messages for error_types returned in auth.go
+// User messages for error_types returned in auth.go
 const messages = {
   auth: {
     'oauth_error': 'There was an error generating OAuth client from OIDC client.',
@@ -38,7 +40,7 @@ const getErrMessage = () => {
   return '';
 };
 
-const ErrorComponent = ({title, message, errMessage}) => <React.Fragment>
+const ErrorComponent: React.SFC<ErrorComponentProps> = ({title, message, errMessage}) => <React.Fragment>
   <NavTitle detail={true} title="Error" />
   <div className="co-m-pane__body">
     <h1 className="co-m-pane__heading co-m-pane__heading--center">{title}</h1>
@@ -47,16 +49,25 @@ const ErrorComponent = ({title, message, errMessage}) => <React.Fragment>
   </div>
 </React.Fragment>;
 
-export const ErrorPage = () => <div>
+export const ErrorPage: React.SFC<ErrorPageProps> = () => <div>
   <Helmet>
     <title>Error</title>
   </Helmet>
   <ErrorComponent title="Oh no! Something went wrong." message={urlMessage()} errMessage={getErrMessage()} />
 </div>;
 
-export const ErrorPage404 = () => <div>
+export const ErrorPage404: React.SFC<ErrorPage404Props> = (props) => <div>
   <Helmet>
     <title>Page Not Found (404)</title>
   </Helmet>
-  <ErrorComponent title="404: Page Not Found" />
+  <ErrorComponent title="404: Page Not Found" message={props.message} errMessage={props.errMessage} />
 </div>;
+
+export type ErrorComponentProps = {
+  title: string;
+  message?: string;
+  errMessage?: string;
+};
+
+export type ErrorPageProps = {};
+export type ErrorPage404Props = Omit<ErrorComponentProps, 'title'>;
