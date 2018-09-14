@@ -180,6 +180,7 @@ The following build task will watch the source code for changes and compile auto
 ```
 yarn run dev
 ```
+If changes aren't detected, you might need to increase `fs.inotify.max_user_watches`. See <https://webpack.js.org/configuration/watch/#not-enough-watchers>.
 
 ### Tests
 
