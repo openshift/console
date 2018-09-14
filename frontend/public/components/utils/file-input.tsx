@@ -41,7 +41,7 @@ export class FileInput extends React.Component<FileInputProps, FileInputState> {
     this.readFile(event.target.files[0]);
   }
   render() {
-    const { connectDropTarget, isOver, canDrop, id } = this.props;
+    const { connectDropTarget, isOver, canDrop, id, isRequired } = this.props;
     const klass = classNames('co-file-dropzone-container', {'co-file-dropzone--drop-over': isOver});
     return (
       connectDropTarget(
@@ -70,7 +70,7 @@ export class FileInput extends React.Component<FileInputProps, FileInputState> {
                 onChange={this.onDataChange}
                 value={this.props.inputFileData}
                 aria-describedby={`${id}-textarea-help`}
-                required>
+                required={isRequired}>
               </textarea>
               <p className="help-block" id={`${id}-textarea-help`}>{this.props.textareaFieldHelpText}</p>
               { this.props.errorMessage && <div className="text-danger">{this.props.errorMessage}</div> }
@@ -156,6 +156,7 @@ export type DroppableFileInputProps = {
   id: string,
   inputFieldHelpText: string,
   textareaFieldHelpText: string,
+  isRequired: boolean,
 };
 export type DroppableFileInputState = {
   inputFileData: string,
@@ -179,5 +180,6 @@ export type FileInputProps = {
   id: string,
   inputFieldHelpText: string,
   textareaFieldHelpText: string,
+  isRequired: boolean,
 };
 /* eslint-enable no-undef */

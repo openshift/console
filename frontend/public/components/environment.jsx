@@ -2,9 +2,10 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import * as PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { FieldLevelHelp, Alert } from 'patternfly-react';
 
-import { k8sPatch, k8sGet, referenceFor } from '../module/k8s';
-import { PromiseComponent, NameValueEditorPair, EnvType, EnvFromPair, LoadingBox, AsyncComponent, ResourceIcon } from './utils';
+import { k8sPatch, k8sGet, referenceFor, referenceForOwnerRef } from '../module/k8s';
+import { PromiseComponent, NameValueEditorPair, EnvType, EnvFromPair, LoadingBox, AsyncComponent, ContainerDropdown, ResourceLink } from './utils';
 import { ConfigMapModel, SecretModel } from '../models';
 
 /**
@@ -92,11 +93,13 @@ export const EnvironmentPage = connect(stateToProps)(
       this.reload = this._reload.bind(this);
       this.saveChanges = this._saveChanges.bind(this);
       this.updateEnvVars = this._updateEnvVars.bind(this);
+      this.selectContainer = this._selectContainer.bind(this);
 
       const currentEnvVars = envVarsToArray(this.props.rawEnvData);
       this.state = {
         currentEnvVars,
-        success: null
+        success: null,
+        containerKey: 0
       };
     }
 
@@ -224,6 +227,9 @@ export const EnvironmentPage = connect(stateToProps)(
       return readOnly ? {currentEnvVars: incomingEnvVars} : {stale: true, success: null};
     }
 
+    _selectContainer(index) {
+      this.setState({containerKey: parseInt(index, 10)});
+    }
 
     /**
      * Make it so. Patch the values for the env var changes made on the page.
@@ -266,36 +272,54 @@ export const EnvironmentPage = connect(stateToProps)(
     }
 
     render() {
-      const {errorMessage, success, inProgress, currentEnvVars, stale, configMaps, secrets} = this.state;
+      const {errorMessage, success, inProgress, currentEnvVars, stale, configMaps, secrets, containerKey} = this.state;
       const {rawEnvData, readOnly, obj} = this.props;
       const isContainerArray = _.isArray(rawEnvData);
+      const containerDropdown = <ContainerDropdown
+        currentKey={containerKey}
+        containers={rawEnvData}
+        onChange={this.selectContainer} />;
 
       if (!configMaps || !currentEnvVars || !secrets) {
         return <LoadingBox />;
       }
-      const containerVars = currentEnvVars.map((envVar, i) => {
-        const keyString = isContainerArray ? rawEnvData[i].name : obj.metadata.name;
-        return <React.Fragment key={keyString}>
-          <div className="co-m-pane__body-group">
-            { isContainerArray &&
-            <h2 className="co-section-heading co-section-heading--contains-resource-icon"><ResourceIcon kind="Container" className="co-m-resource-icon--align-left co-m-resource-icon--flex-child" /> {keyString}
-            </h2>}
-            <NameValueEditorComponent nameValueId={i} nameValuePairs={envVar[EnvType.ENV]} updateParentData={this.updateEnvVars} addString="Add Value" nameString="Name" readOnly={readOnly} allowSorting={true} configMaps={configMaps} secrets={secrets} />
+      const envVar = currentEnvVars[containerKey];
+      const owners = _.get(obj.metadata, 'ownerReferences', [])
+        .map((o, i) => <ResourceLink key={i} kind={referenceForOwnerRef(o)} name={o.name} namespace={obj.metadata.namespace} title={o.uid} />);
+      const resourceName = _.get(obj.metadata, 'name', '');
+      const containerVars =
+        <React.Fragment>
+          { readOnly &&
+            <div className="co-toolbar__group co-toolbar__group--left">
+              <Alert className="col-md-11 col-xs-10" type="info">Environment variables for {resourceName} were set from the resource {owners.length > 1 ? 'owners' : 'owner'}: <span className="environment-resource-link">{owners}</span>
+              </Alert>
+            </div>
+          }
+          { isContainerArray && <div className="co-toolbar__group co-toolbar__group--left">
+            <div className="co-toolbar__item">Container:</div>
+            <div className="co-toolbar__item">{containerDropdown}</div>
           </div>
-          { isContainerArray && <div className="co-m-pane__body-group">
-            <h3 className="co-section-heading__title">Environment From</h3>
-            <EnvFromEditorComponent nameValueId={i} nameValuePairs={envVar[EnvType.ENV_FROM]} updateParentData={this.updateEnvVars} readOnly={readOnly} configMaps={configMaps} secrets={secrets} />
+          }
+          <div className="co-m-pane__body-group">
+            <h3 className="co-section-heading-tertiary">Single values (env)
+              {
+                !readOnly && <FieldLevelHelp content={
+                  <div>Define environment variables as key-value pairs to store configuration settings. You can enter text or add values from a ConfigMap or Secret. Drag and drop environment variables to change the order in which they are run. A variable can reference any other variables that come before it in the list, for example <code>FULLDOMAIN = $(SUBDOMAIN).example.com</code>.</div>} />
+              }
+            </h3>
+            <NameValueEditorComponent nameValueId={containerKey} nameValuePairs={envVar[EnvType.ENV]} updateParentData={this.updateEnvVars} addString="Add Value" nameString="Name" readOnly={readOnly} allowSorting={true} configMaps={configMaps} secrets={secrets} />
+          </div>
+          { isContainerArray && <div className="co-m-pane__body-group environment-buttons">
+            <h3 className="co-section-heading-tertiary">All values from existing config maps or secrets (envFrom) {
+              !readOnly && <FieldLevelHelp content={
+                <div>Add new values by referencing an existing config map or secret. Drag and drop environment variables within this section to change the order in which they are run.<br /><strong>Note: </strong>If identical values exist in both lists, the single value in the list above will take precedence.</div>} />
+            }
+            </h3>
+            <EnvFromEditorComponent nameValueId={containerKey} nameValuePairs={envVar[EnvType.ENV_FROM]} updateParentData={this.updateEnvVars} readOnly={readOnly} configMaps={configMaps} secrets={secrets} />
           </div>}
         </React.Fragment>;
-      });
 
       return <div className="co-m-pane__body">
-        {!readOnly &&
-        <p className="co-m-pane__explanation">Define environment variables as key-value pairs to store configuration
-          settings. You can enter text or add values from a ConfigMap or Secret. Drag and drop environment variables to
-          change the order in which they are run. A variable can reference any other variables that come before it in
-          the list, for example <code>FULLDOMAIN = $(SUBDOMAIN).example.com</code>.</p>
-        }
         {containerVars}
         <div className="co-m-pane__body-group">
           <div className="environment-buttons">

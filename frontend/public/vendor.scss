@@ -32,6 +32,7 @@
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/tooltip";
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/utilities";
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/responsive-utilities";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/popovers";
 @import "~patternfly/dist/sass/patternfly/mixins";  // Including this file breaks sourcemaps
 @import '~patternfly/dist/sass/patternfly/icons';  // Including this file breaks sourcemaps
 @import '~patternfly/dist/sass/patternfly/type';
@@ -44,3 +45,4 @@
 @import '~patternfly/dist/sass/patternfly/toolbar';
 @import '~patternfly/dist/sass/patternfly/blank-slate';
 @import '~patternfly/dist/sass/patternfly/list-view';
+@import '~patternfly/dist/sass/patternfly/popovers';

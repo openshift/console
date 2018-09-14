@@ -8,6 +8,7 @@ import { k8sCreate, k8sUpdate, K8sResourceKind } from '../../module/k8s';
 import { ButtonBar, Firehose, history, kindObj, StatusBox, LoadingBox, Dropdown } from '../utils';
 import { formatNamespacedRouteForResource } from '../../ui/ui-actions';
 import { AsyncComponent } from '../utils/async';
+import { WebHookSecretKey } from '../secret';
 
 enum SecretTypeAbstraction {
   generic = 'generic',
@@ -15,6 +16,15 @@ enum SecretTypeAbstraction {
   image = 'image',
   webhook = 'webhook',
 }
+
+const secretDisplayType = (abstraction: SecretTypeAbstraction) => {
+  switch (abstraction) {
+    case 'generic':
+      return 'Key/Value';
+    default:
+      return _.upperFirst(abstraction);
+  }
+};
 
 const AUTHS_KEY = 'auths';
 
@@ -34,12 +44,13 @@ export type BasicAuthSubformState = {
 };
 
 const secretFormExplanation = {
-  [SecretTypeAbstraction.source]: 'Source secrets allow you to authenticate against the SCM server.',
-  [SecretTypeAbstraction.image]: 'Image secrets allow you to authenticate against a private image registry.',
-  [SecretTypeAbstraction.webhook]: 'Webhook secrets allow you to authenticate a webhook trigger.',
+  [SecretTypeAbstraction.generic]: 'Key/value secrets let you inject sensitive data into your application as files or environment variables.',
+  [SecretTypeAbstraction.source]: 'Source secrets let you authenticate against a Git server.',
+  [SecretTypeAbstraction.image]: 'Image secrets let you authenticate against a private image registry.',
+  [SecretTypeAbstraction.webhook]: 'Webhook secrets let you authenticate a webhook trigger.',
 };
 
-const toDefaultSecretType = (typeAbstraction: SecretTypeAbstraction) => {
+const toDefaultSecretType = (typeAbstraction: SecretTypeAbstraction): SecretType => {
   switch (typeAbstraction) {
     case SecretTypeAbstraction.source:
       return SecretType.basicAuth;
@@ -51,7 +62,8 @@ const toDefaultSecretType = (typeAbstraction: SecretTypeAbstraction) => {
 };
 
 
-const toTypeAbstraction = (type: SecretType): SecretTypeAbstraction => {
+const toTypeAbstraction = (obj): SecretTypeAbstraction => {
+  const { data, type } = obj;
   switch (type) {
     case (SecretType.basicAuth):
     case (SecretType.sshAuth):
@@ -60,7 +72,10 @@ const toTypeAbstraction = (type: SecretType): SecretTypeAbstraction => {
     case (SecretType.dockercfg):
       return SecretTypeAbstraction.image;
     default:
-      return SecretTypeAbstraction.webhook;
+      if (data[WebHookSecretKey] && _.size(data) === 1) {
+        return SecretTypeAbstraction.webhook;
+      }
+      return SecretTypeAbstraction.generic;
   }
 };
 
@@ -91,7 +106,9 @@ const withSecretForm = (SubForm) => class SecretFormComponent extends React.Comp
       secret: secret,
       inProgress: false,
       type: defaultSecretType,
-      stringData: _.mapValues(_.get(props.obj, 'data'), window.atob),
+      stringData: _.mapValues(_.get(props.obj, 'data'), (value) => {
+        return value ? window.atob(value) : '';
+      }),
       disableForm: false,
     };
     this.onDataChanged = this.onDataChanged.bind(this);
@@ -137,7 +154,8 @@ const withSecretForm = (SubForm) => class SecretFormComponent extends React.Comp
     }, err => this.setState({error: err.message, inProgress: false}));
   }
   render () {
-    const title = `${this.props.titleVerb} ${_.upperFirst(this.state.secretTypeAbstraction)} Secret`;
+    const { secretTypeAbstraction } = this.state;
+    const title = `${this.props.titleVerb} ${secretDisplayType(secretTypeAbstraction)} Secret`;
     return <div className="co-m-pane__body">
       <Helmet>
         <title>{title}</title>
@@ -358,11 +376,13 @@ export type CreateConfigSubformState = {
   isDockerconfigjson: boolean,
   hasDuplicate: boolean,
   secretEntriesArray: {
-    address: string,
-    username: string,
-    password: string,
-    email: string,
-    auth: string,
+    entry: {
+      address: string,
+      username: string,
+      password: string,
+      email: string,
+      auth: string,
+    }
     uid: string,
   }[],
 };
@@ -380,11 +400,13 @@ class CreateConfigSubform extends React.Component<CreateConfigSubformProps, Crea
   }
   newImageSecretEntry() {
     return {
-      address: '',
-      username: '',
-      password: '',
-      email: '',
-      auth: '',
+      entry: {
+        address: '',
+        username: '',
+        password: '',
+        email: '',
+        auth: '',
+      },
       uid: _.uniqueId(),
     };
   }
@@ -398,11 +420,13 @@ class CreateConfigSubform extends React.Component<CreateConfigSubformProps, Crea
       const decodedAuth = window.atob(_.get(v, 'auth', ''));
       const parsedAuth = _.isEmpty(decodedAuth) ? _.fill(Array(2), '') : _.split(decodedAuth, ':');
       imageSecretArray.push({
-        address: k,
-        username: _.get(v, 'username', parsedAuth[0]),
-        password: _.get(v, 'password', parsedAuth[1]),
-        email: _.get(v, 'email', ''),
-        auth: _.get(v, 'auth', ''),
+        entry: {
+          address: k,
+          username: _.get(v, 'username', parsedAuth[0]),
+          password: _.get(v, 'password', parsedAuth[1]),
+          email: _.get(v, 'email', ''),
+          auth: _.get(v, 'auth', ''),
+        },
         uid: _.get(v, 'uid', _.uniqueId()),
       });
     });
@@ -410,31 +434,24 @@ class CreateConfigSubform extends React.Component<CreateConfigSubformProps, Crea
   }
   imageSecretArrayToObject(imageSecretArray) {
     const imageSecretsObject = {};
-    _.each(imageSecretArray, (entry) => {
-      const entryCredentials = {
-        username: entry.username,
-        password: entry.password,
-        auth: entry.auth,
-        email: entry.email
-      };
-      imageSecretsObject[entry.address] = entryCredentials;
+    _.each(imageSecretArray, (value) => {
+      imageSecretsObject[value.entry.address] = _.pick(value.entry, ['username', 'password', 'auth', 'email']);
     });
     return imageSecretsObject;
-  }
-  // Image secrets entry address can't be duplicate in the secret, else the first one will be deleted.
-  checkEntryAddressForDuplicates(updatedData, updatedIndex) {
-    return this.state.secretEntriesArray.some((entry, i) => i !== updatedIndex && _.isEqual(entry.address, updatedData.address));
   }
   propagateEntryChange(secretEntriesArray) {
     const imageSecretObject = this.imageSecretArrayToObject(secretEntriesArray);
     this.props.onChange(this.state.isDockerconfigjson ? {[AUTHS_KEY]: imageSecretObject} : imageSecretObject);
   }
-  onDataChanged(updatedEntryData, entryID) {
+  onDataChanged(updatedEntry, entryID) {
     const updatedSecretEntriesArray = [...this.state.secretEntriesArray];
-    updatedSecretEntriesArray.splice(entryID, 1, updatedEntryData);
+    const updatedEntryData = {
+      uid: updatedSecretEntriesArray[entryID].uid,
+      entry: updatedEntry,
+    };
+    updatedSecretEntriesArray[entryID] = updatedEntryData;
     this.setState({
       secretEntriesArray: updatedSecretEntriesArray,
-      hasDuplicate: this.checkEntryAddressForDuplicates(updatedEntryData, entryID)
     }, () => {
       this.propagateEntryChange(this.state.secretEntriesArray);
     });
@@ -456,12 +473,14 @@ class CreateConfigSubform extends React.Component<CreateConfigSubformProps, Crea
     });
   }
   render() {
-    const secretEntriesList = _.map(this.state.secretEntriesArray, (entry, index) => {
-      return <div className="co-create-image-secret__form-wrapper" key={entry.uid}>
-        {_.size(this.state.secretEntriesArray) > 1 && <button className="btn btn-link co-create-secret-form__link--remove-entry" type="button" key={entry.uid} onClick={() => this.removeEntry(index)}>
-          <i className="fa fa-minus-circle" aria-hidden="true" /> Remove Credentials
-        </button>}
-        <ConfigEntryForm id={index} key={`${entry.uid}-form`} entry={entry} onChange={this.onDataChanged} />
+    const secretEntriesList = _.map(this.state.secretEntriesArray, (entryData, index) => {
+      return <div className="co-create-secret__form-entry-wrapper" key={entryData.uid}>
+        {_.size(this.state.secretEntriesArray) > 1 && <div className="co-create-secret-form__link--remove-entry">
+          <button className="btn btn-link" type="button" onClick={() => this.removeEntry(index)}>
+            <i className="fa fa-minus-circle" aria-hidden="true" /> Remove Credentials
+          </button>
+        </div>}
+        <ConfigEntryForm id={index} entry={entryData.entry} onChange={this.onDataChanged} />
       </div>;
     });
     return (
@@ -470,7 +489,6 @@ class CreateConfigSubform extends React.Component<CreateConfigSubformProps, Crea
         <button className="btn btn-link co-create-secret-form__link--add-entry" type="button" onClick={() => this.addEntry()}>
           <i className="fa fa-plus-circle" aria-hidden="true" /> Add Credentials
         </button>
-        { this.state.hasDuplicate && <div className="co-create-secret-warning">Updated <b>Registry Server Address</b> is duplicate. Remove it, or it will be removed upon saving.</div> }
       </React.Fragment>
     );
   }
@@ -509,7 +527,8 @@ class UploadConfigSubform extends React.Component<UploadConfigSubformProps, Uplo
         id="docker-config"
         label="Configuration File"
         inputFieldHelpText="Upload a .dockercfg or .docker/config.json file."
-        textareaFieldHelpText="File with credentials and other configuration for connecting to a secured image registry." />
+        textareaFieldHelpText="File with credentials and other configuration for connecting to a secured image registry."
+        isRequired={true} />
       { this.state.parseError && <div className="co-create-secret-warning">Configuration file should be in JSON format.</div> }
     </React.Fragment>;
   }
@@ -671,8 +690,171 @@ class SSHAuthSubform extends React.Component<SSHAuthSubformProps, SSHAuthSubform
       inputFileData={this.state['ssh-privatekey']}
       id="ssh-privatekey"
       label="SSH Private Key"
-      inputFieldHelpText="Drag and drop your private SSH key here or browse to upload it."
-      textareaFieldHelpText="Private SSH key file for Git authentication." />;
+      inputFieldHelpText="Drag and drop file with your private SSH key here or browse to upload it."
+      textareaFieldHelpText="Private SSH key file for Git authentication."
+      isRequired={true} />;
+  }
+}
+
+export type KeyValueEntryFormState = {
+  key: string,
+  value: string,
+};
+
+export type KeyValueEntryFormProps = {
+  entry: KeyValueEntryFormState
+  id: number,
+  onChange: Function,
+};
+
+export type GenericSecretFormProps = {
+  onChange: Function,
+  stringData: {
+    [key: string]: string
+  },
+  secretType: SecretType,
+  isCreate: boolean,
+};
+
+export type GenericSecretFormState = {
+  secretEntriesArray: {
+    entry: KeyValueEntryFormState,
+    uid: string,
+  }[],
+};
+
+class GenericSecretForm extends React.Component<GenericSecretFormProps, GenericSecretFormState> {
+  constructor(props) {
+    super(props);
+    this.state = {
+      secretEntriesArray: this.genericSecretObjectToArray(this.props.stringData),
+    };
+    this.onDataChanged = this.onDataChanged.bind(this);
+  }
+  newGenericSecretEntry() {
+    return {
+      entry: {
+        key: '',
+        value: '',
+      },
+      uid: _.uniqueId(),
+    };
+  }
+  genericSecretObjectToArray(genericSecretObject) {
+    if (_.isEmpty(genericSecretObject)) {
+      return [this.newGenericSecretEntry()];
+    }
+    return _.map(genericSecretObject, (value, key) => {
+      return { uid: _.uniqueId(),
+        entry: {
+          key: key,
+          value: value,
+        },
+      };
+    });
+  }
+  genericSecretArrayToObject(genericSecretArray) {
+    return _.reduce(genericSecretArray, (acc, k) => (_.assign(acc, {[k.entry.key]: k.entry.value})), {});
+  }
+  onDataChanged (updatedEntry, entryID) {
+    const updatedSecretEntriesArray = [...this.state.secretEntriesArray];
+    const updatedEntryData = {
+      uid: updatedSecretEntriesArray[entryID].uid,
+      entry: updatedEntry,
+    };
+    updatedSecretEntriesArray[entryID] = updatedEntryData;
+    this.setState({
+      secretEntriesArray: updatedSecretEntriesArray,
+    }, () => this.props.onChange({
+      stringData: this.genericSecretArrayToObject(this.state.secretEntriesArray),
+      type: SecretType.opaque,
+    }));
+  }
+  removeEntry(entryID){
+    const updatedSecretEntriesArray = [...this.state.secretEntriesArray];
+    updatedSecretEntriesArray.splice(entryID, 1);
+    this.setState({
+      secretEntriesArray: updatedSecretEntriesArray
+    }, () => this.props.onChange({
+      stringData: this.genericSecretArrayToObject(this.state.secretEntriesArray),
+      type: SecretType.opaque,
+    }));
+  }
+  addEntry(){
+    this.setState({
+      secretEntriesArray: _.concat(this.state.secretEntriesArray, this.newGenericSecretEntry())
+    }, () => this.props.onChange({
+      stringData: this.genericSecretArrayToObject(this.state.secretEntriesArray),
+      type: SecretType.opaque,
+    }));
+  }
+  render() {
+    const secretEntriesList = _.map(this.state.secretEntriesArray, (entryData, index) => {
+      return <div className="co-create-secret__form-entry-wrapper" key={entryData.uid}>
+        {_.size(this.state.secretEntriesArray) > 1 && <div className="co-create-secret-form__link--remove-entry">
+          <button className="btn btn-link" type="button" onClick={() => this.removeEntry(index)}>
+            <i className="fa fa-minus-circle" aria-hidden="true" /> Remove Key/Value
+          </button>
+        </div>}
+        <KeyValueEntryForm id={index} entry={entryData.entry} onChange={this.onDataChanged} />
+      </div>;
+    });
+    return (
+      <React.Fragment>
+        {secretEntriesList}
+        <button className="btn btn-link co-create-secret-form__link--add-entry" type="button" onClick={() => this.addEntry()}>
+          <i className="fa fa-plus-circle" aria-hidden="true" /> Add Key/Value
+        </button>
+      </React.Fragment>
+    );
+  }
+}
+
+class KeyValueEntryForm extends React.Component<KeyValueEntryFormProps, KeyValueEntryFormState> {
+  constructor(props) {
+    super(props);
+    this.state = {
+      key: props.entry.key,
+      value: props.entry.value,
+    };
+    this.onValueChange = this.onValueChange.bind(this);
+    this.onKeyChange = this.onKeyChange.bind(this);
+  }
+  onValueChange(fileData) {
+    this.setState({
+      value: fileData,
+    }, () => this.props.onChange(this.state, this.props.id));
+  }
+  onKeyChange(event) {
+    this.setState({
+      key: event.target.value,
+    }, () => this.props.onChange(this.state, this.props.id));
+  }
+  render() {
+    return <div className="co-create-generic-secret__form">
+      <div className="form-group">
+        <label className="control-label" htmlFor={`${this.props.id}-key`}>Key</label>
+        <div>
+          <input className="form-control"
+            id={`${this.props.id}-key`}
+            type="text"
+            name="key"
+            onChange={this.onKeyChange}
+            value={this.state.key}
+            required />
+        </div>
+      </div>
+      <div className="form-group">
+        <div>
+          <DroppableFileInput
+            onChange={this.onValueChange}
+            inputFileData={this.state.value}
+            id={`${this.props.id}-value`}
+            label="Value"
+            inputFieldHelpText="Drag and drop file with your value here or browse to upload it." />
+        </div>
+      </div>
+    </div>;
   }
 }
 
@@ -682,8 +864,10 @@ const secretFormFactory = (secretType: SecretTypeAbstraction) => {
       return withSecretForm(SourceSecretForm);
     case SecretTypeAbstraction.image:
       return withSecretForm(ImageSecretForm);
-    default:
+    case SecretTypeAbstraction.webhook:
       return withSecretForm(WebHookSecretForm);
+    default:
+      return withSecretForm(GenericSecretForm);
   }
 };
 
@@ -691,7 +875,7 @@ const SecretLoadingWrapper = props => {
   if (!props.obj.loaded) {
     return <LoadingBox />;
   }
-  const secretTypeAbstraction = toTypeAbstraction(props.obj.data.type);
+  const secretTypeAbstraction = toTypeAbstraction(props.obj.data);
   const SecretFormComponent = secretFormFactory(secretTypeAbstraction);
   const fixed = _.reduce(props.fixedKeys, (acc, k) => ({...acc, k: _.get(props.obj.data, k)}), {});
   return <StatusBox {...props.obj}>
