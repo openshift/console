@@ -56,8 +56,10 @@ const ClusterServiceBrokerDetails: React.SFC<ClusterServiceBrokerDetailsProps> =
             </dd>
             <dt>Relist Behavior</dt>
             <dd>{serviceBroker.spec.relistBehavior}</dd>
-            <dt>Relist Duration</dt>
-            <dd>{serviceBroker.spec.relistDuration || '-'}</dd>
+            {serviceBroker.spec.relistBehavior === 'Duration' && <React.Fragment>
+              <dt>Relist Duration</dt>
+              <dd>{serviceBroker.spec.relistDuration || '-'}</dd>
+            </React.Fragment>}
           </dl>
         </div>
       </div>

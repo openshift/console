@@ -84,7 +84,7 @@ export const NameValueEditor = withDragDropContext(class NameValueEditor extends
                     <React.Fragment>
                       <span aria-hidden="true" className="co-action-divider hidden-xs">|</span>
                       <button type="button" className="btn btn-link" onClick={this._appendConfigMapOrSecret}>
-                        <i aria-hidden="true" className="fa fa-plus-circle pairs-list__add-icon" />Add Value from Config Map or Secret
+                        <i aria-hidden="true" className="fa fa-plus-circle pairs-list__add-icon" />Add from Config Map or Secret
                       </button>
                     </React.Fragment>
                 }
@@ -172,7 +172,7 @@ export const EnvFromEditor = withDragDropContext(class EnvFromEditor extends Rea
     const pairElems = nameValuePairs.map((pair, i) => {
       const key = _.get(pair, [EnvFromPair.Index], i);
 
-      return <EnvFromPairElement onChange={this._change} index={i} nameString="config map/secret" valueString="prefix (optional)" readOnly={readOnly} pair={pair} key={key} onRemove={this._remove} onMove={this._move} rowSourceId={nameValueId} configMaps={configMaps} secrets={secrets} />;
+      return <EnvFromPairElement onChange={this._change} index={i} nameString="config map/secret" valueString="" readOnly={readOnly} pair={pair} key={key} onRemove={this._remove} onMove={this._move} rowSourceId={nameValueId} configMaps={configMaps} secrets={secrets} />;
     });
 
     return <React.Fragment>
@@ -186,7 +186,7 @@ export const EnvFromEditor = withDragDropContext(class EnvFromEditor extends Rea
           {
             !readOnly &&
             <button type="button" className="btn-link pairs-list__btn" onClick={this._append}>
-              <i aria-hidden="true" className="fa fa-plus-circle pairs-list__add-icon" />Add All Values From Config Map or Secret
+              <i aria-hidden="true" className="fa fa-plus-circle pairs-list__add-icon" />Add All From Config Map or Secret
             </button>
           }
         </div>

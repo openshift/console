@@ -111,10 +111,6 @@
   font-weight: 600;
   justify-content: space-between;
   margin: 0 0 20px 0;
-  &--contains-resource-icon {
-    align-items: center;
-    justify-content: flex-start;
-  }
 }
 
 .co-section-heading__title {
@@ -126,6 +122,12 @@
   font-size: 16px;
   font-weight: 600;
   margin: 30px 0;
+}
+
+.co-section-heading-tertiary {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 15px 0;
 }
 
 .co-table-container {
@@ -158,6 +160,7 @@
   margin-bottom: 30px;
 }
 
+.popover-content code,
 .co-m-pane__explanation code {
   background-color: $co-gray-lightest;
   color: $co-gray;
