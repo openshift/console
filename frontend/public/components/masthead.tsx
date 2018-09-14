@@ -3,6 +3,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { Link } from 'react-router-dom';
 import * as okdLogoImg from '../imgs/okd-logo.svg';
+import * as okdvirtLogoImg from '../imgs/okdvirt-logo.svg';
 import * as ocpLogoImg from '../imgs/openshift-platform-logo.svg';
 import * as onlineLogoImg from '../imgs/openshift-online-logo.svg';
 import { FLAGS, connectToFlags, flagPending } from '../features';
@@ -112,6 +113,10 @@ export const LogoImage = () => {
     case 'online':
       logoImg = onlineLogoImg;
       logoAlt = 'OpenShift Online';
+      break;
+    case 'okdvirt':
+      logoImg = okdvirtLogoImg;
+      logoAlt = 'OKD Virtualization';
       break;
     default:
       logoImg = okdLogoImg;

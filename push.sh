@@ -15,8 +15,9 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 pushd $SCRIPT_DIR
 
 set -x
-: ${REPO:=quay.io/coreos/tectonic-console}
-: ${TESTER_REPO:=quay.io/coreos/tectonic-console-tester}
+: ${REPO:=mareklibra/kubevirt-web-ui}
+#: ${REPO:=quay.io/coreos/tectonic-console}
+#: ${TESTER_REPO:=quay.io/coreos/tectonic-console-tester}
 
 GIT_VERSION=$(./git-version.sh)
 
@@ -35,11 +36,12 @@ fi
 docker build -q --rm=true -f Dockerfile -t $REPO:$GIT_VERSION .
 docker push $REPO:$GIT_VERSION
 
-TAG=$(git describe --exact-match --abbrev=0 --tags ${COMMIT} 2> /dev/null || true)
-if [ -n "$TAG" ]; then
-  echo "Release tag is $TAG. Uploading test image to quay."
-  docker build -q --rm=true -f e2e.Dockerfile -t $TESTER_REPO:$GIT_VERSION .
-  docker push $TESTER_REPO:$GIT_VERSION
-fi
+# Not used by kubevirt:
+#TAG=$(git describe --exact-match --abbrev=0 --tags ${COMMIT} 2> /dev/null || true)
+#if [ -n "$TAG" ]; then
+#  echo "Release tag is $TAG. Uploading test image to quay."
+#  docker build -q --rm=true -f e2e.Dockerfile -t $TESTER_REPO:$GIT_VERSION .
+#  docker push $TESTER_REPO:$GIT_VERSION
+#fi
 
 popd
