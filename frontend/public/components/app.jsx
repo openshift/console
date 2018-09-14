@@ -138,8 +138,8 @@ class App extends React.PureComponent {
 
           <LazyRoute path={`/k8s/ns/:ns/${SubscriptionModel.plural}/new`} exact loader={() => import('./operator-lifecycle-manager').then(m => NamespaceFromURL(m.CreateSubscriptionYAML))} />
 
-          <LazyRoute path="/k8s/cluster/clusterserviceclasses/:name/new" exact loader={() => import('./service-catalog/create-instance').then(m => m.CreateInstance)} />
-          <LazyRoute path="/k8s/ns/:ns/serviceinstances/:name/create-binding" exact loader={() => import('./service-catalog/create-binding').then(m => m.CreateBinding)} />
+          <LazyRoute path="/k8s/cluster/clusterserviceclasses/:name/create-instance" exact loader={() => import('./service-catalog/create-instance').then(m => m.CreateInstancePage)} />
+          <LazyRoute path="/k8s/ns/:ns/serviceinstances/:name/create-binding" exact loader={() => import('./service-catalog/create-binding').then(m => m.CreateBindingPage)} />
 
           <Route path="/k8s/ns/:ns/alertmanagers/:name" exact render={({match}) => <Redirect to={`/k8s/ns/${match.params.ns}/${referenceForModel(AlertmanagerModel)}/${match.params.name}`} />} />
 

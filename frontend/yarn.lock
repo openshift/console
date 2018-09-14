@@ -257,6 +257,10 @@
   dependencies:
     "@types/jasmine" "*"
 
+"@types/json-schema@*":
+  version "7.0.0"
+  resolved "https://registry.yarnpkg.com/@types/json-schema/-/json-schema-7.0.0.tgz#5a2b780fec9f2cf851e1b5e0a29a4cac6c9686c5"
+
 "@types/lodash-es@4.x":
   version "4.17.0"
   resolved "https://registry.yarnpkg.com/@types/lodash-es/-/lodash-es-4.17.0.tgz#ed9044d62ee36a93e0650b112701986b1c74c766"
@@ -294,6 +298,13 @@
   version "5.0.5"
   resolved "https://registry.yarnpkg.com/@types/react-helmet/-/react-helmet-5.0.5.tgz#30a12b0431732a20882f0fa9b75bf56ff91700d3"
   dependencies:
+    "@types/react" "*"
+
+"@types/react-jsonschema-form@^1.0.8":
+  version "1.0.8"
+  resolved "https://registry.yarnpkg.com/@types/react-jsonschema-form/-/react-jsonschema-form-1.0.8.tgz#97f389d0a06a2dcb327149d093922e83c5986961"
+  dependencies:
+    "@types/json-schema" "*"
     "@types/react" "*"
 
 "@types/react-redux@6.0.2":
