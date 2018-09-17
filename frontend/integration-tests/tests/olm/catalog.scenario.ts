@@ -1,6 +1,6 @@
 /* eslint-disable no-undef, no-unused-vars */
 
-import { browser, by, $, ExpectedConditions as until } from 'protractor';
+import { browser, $, ExpectedConditions as until } from 'protractor';
 
 import { appHost, checkLogs, checkErrors, testName } from '../../protractor.conf';
 import * as catalogView from '../../views/catalog.view';
@@ -34,8 +34,8 @@ describe('Installing a service from the Catalog Sources', () => {
     });
   });
 
-  it('displays available namespaces for service to be enabled in', async() => {
-    await catalogView.entryRowFor('Prometheus Operator').element(by.buttonText('Create Subscription')).click();
+  it('displays YAML editor for creating a subscription to a service', async() => {
+    await catalogView.createSubscriptionFor('Prometheus Operator');
     await browser.wait(until.presenceOf($('.ace_text-input')));
 
     expect($('.yaml-editor-header').getText()).toEqual('Create Subscription');
