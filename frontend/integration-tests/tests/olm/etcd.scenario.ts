@@ -32,7 +32,7 @@ describe('Interacting with the etcd OCS', () => {
   it('can be enabled from the Catalog Sources', async() => {
     await sidenavView.clickNavLink(['Operators', 'Catalog Sources']);
     await catalogView.isLoaded();
-    await catalogView.entryRowFor('etcd').element(by.buttonText('Create Subscription')).click();
+    await catalogView.createSubscriptionFor('etcd');
     await browser.wait(until.presenceOf($('.ace_text-input')));
     const content = await yamlView.editorContent.getText();
     const newContent = defaultsDeep({}, {metadata: {generateName: `${testName}-etcd-`, namespace: testName, labels: {[testLabel]: testName}}, spec: {channel: 'alpha', source: 'rh-operators', name: 'etcd'}}, safeLoad(content));
