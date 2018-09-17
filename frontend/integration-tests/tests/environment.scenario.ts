@@ -17,7 +17,7 @@ const Actions = {
 describe('Interacting with the environment variable editor', () => {
 
   beforeAll(async() => {
-    await browser.get(`${appHost}/k8s/ns/${testName}/daemonsets`);
+    await browser.get(`${appHost}/k8s/ns/${testName}/deployments`);
     await crudView.isLoaded();
     await crudView.createYAMLButton.click();
     await yamlView.isLoaded();
@@ -37,11 +37,11 @@ describe('Interacting with the environment variable editor', () => {
   });
 
   afterAll(async() => {
-    await browser.get(`${appHost}/k8s/ns/${testName}/daemonsets`);
+    await browser.get(`${appHost}/k8s/ns/${testName}/deployments`);
     await crudView.isLoaded();
     await crudView.nameFilter.sendKeys(WORKLOAD_NAME);
     await browser.wait(until.elementToBeClickable(crudView.resourceRowNamesAndNs.first()), BROWSER_TIMEOUT);
-    await crudView.deleteRow('daemonset')(WORKLOAD_NAME);
+    await crudView.deleteRow('deployment')(WORKLOAD_NAME);
     checkLogs();
     checkErrors();
   });
@@ -73,7 +73,7 @@ describe('Interacting with the environment variable editor', () => {
     key: string,
     value: string
   ) => {
-    await browser.get(`${appHost}/k8s/ns/${testName}/daemonsets/${WORKLOAD_NAME}/environment`);
+    await browser.get(`${appHost}/k8s/ns/${testName}/deployments/${WORKLOAD_NAME}/environment`);
 
     switch (action) {
       case Actions.add: {

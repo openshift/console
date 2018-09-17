@@ -91,6 +91,7 @@ export const config: Config = {
   suites: {
     filter: ['tests/base.scenario.ts', 'tests/filter.scenario.ts'],
     annotation: ['tests/base.scenario.ts', 'tests/modal-annotations.scenario.ts'],
+    environment: ['tests/base.scenario.ts', 'tests/environment.scenario.ts'],
     crud: ['tests/base.scenario.ts', 'tests/crud.scenario.ts', 'tests/secrets.scenario.ts', 'tests/filter.scenario.ts', 'tests/modal-annotations.scenario.ts', 'tests/environment.scenario.ts'],
     olm: ['tests/base.scenario.ts', 'tests/olm/descriptors.scenario.ts', 'tests/olm/catalog.scenario.ts', 'tests/olm/etcd.scenario.ts', 'tests/olm/prometheus.scenario.ts'],
     olmUpgrade: ['tests/base.scenario.ts', 'tests/olm/update-channel-approval.scenario.ts'],
