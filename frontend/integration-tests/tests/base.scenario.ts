@@ -29,7 +29,9 @@ describe('Basic console test', () => {
   });
 
   it(`creates test namespace ${testName} if necessary`, async() => {
-    await browser.get(`${appHost}/k8s/cluster/namespaces`);
+    // Use projects if OpenShift so non-admin users can run tests.
+    const resource = browser.params.openshift === 'true' ? 'projects' : 'namespaces';
+    await browser.get(`${appHost}/k8s/cluster/${resource}`);
     await crudView.isLoaded();
     const exists = await crudView.rowForName(testName).isPresent();
     if (!exists) {
@@ -37,7 +39,7 @@ describe('Basic console test', () => {
       await browser.wait(until.presenceOf($('.modal-body__field')));
       await $$('.modal-body__field').get(0).$('input').sendKeys(testName);
       await $('.modal-content').$('#confirm-action').click();
-      await browser.wait(until.urlContains(`/namespaces/${testName}`), BROWSER_TIMEOUT);
+      await browser.wait(until.urlContains(`/${resource}/${testName}`), BROWSER_TIMEOUT);
     }
 
     expect(browser.getCurrentUrl()).toContain(appHost);
