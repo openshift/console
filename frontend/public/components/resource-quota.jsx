@@ -1,18 +1,14 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 
+import { referenceForModel } from '../module/k8s';
+import { ResourceQuotaModel, ClusterResourceQuotaModel } from '../models';
 import { ColHead, DetailsPage, List, ListHeader, MultiListPage } from './factory';
 import { Cog, SectionHeading, navFactory, ResourceCog, ResourceLink, ResourceSummary } from './utils';
 
 const menuActions = [Cog.factory.ModifyLabels, Cog.factory.ModifyAnnotations, Cog.factory.Edit, Cog.factory.Delete];
 
-export const QuotaName = ({quota: quota}) => {
-  const kind = quota.metadata.namespace ? 'ResourceQuota' : 'quota.openshift.io:v1:ClusterResourceQuota';
-  return <React.Fragment>
-    <ResourceCog actions={menuActions} kind={kind} resource={quota} />
-    <ResourceLink kind={kind} name={quota.metadata.name} namespace={quota.metadata.namespace} className="co-resource-link__resource-name" />
-  </React.Fragment>;
-};
+const quotaKind = quota => quota.metadata.namespace ? referenceForModel(ResourceQuotaModel) : referenceForModel(ClusterResourceQuotaModel);
 
 const Header = props => <ListHeader>
   <ColHead {...props} className="col-md-5 col-xs-6" sortField="metadata.name">Name</ColHead>
@@ -21,7 +17,8 @@ const Header = props => <ListHeader>
 
 const Row = ({obj: rq}) => <div className="row co-resource-list__item">
   <div className="col-md-5 col-xs-6 co-resource-link-wrapper">
-    <QuotaName quota={rq} />
+    <ResourceCog actions={menuActions} kind={quotaKind(rq)} resource={rq} />
+    <ResourceLink kind={quotaKind(rq)} name={rq.metadata.name} namespace={rq.metadata.namespace} className="co-resource-link__resource-name" />
   </div>
   <div className="col-md-7 col-xs-6 co-break-word">
     {rq.metadata.namespace ? <ResourceLink kind="Namespace" name={rq.metadata.namespace} title={rq.metadata.namespace} /> : 'all'}
@@ -60,7 +57,7 @@ export const flatten = resources => _.flatMap(resources, resource => {
 
 export const ResourceQuotasPage = props => {
   const {match: {params: {name, ns}}} = props;
-  let resources = [{kind: 'ResourceQuota', namespaced: true}, {kind: 'quota.openshift.io:v1:ClusterResourceQuota', namespaced: false, optional: true}];
+  let resources = [{kind: 'ResourceQuota', namespaced: true}, {kind: 'ClusterResourceQuota', namespaced: false, optional: true}];
   return <MultiListPage
     canCreate={true}
     createButtonText="Create Resource Quota"
