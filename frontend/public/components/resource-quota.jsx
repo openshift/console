@@ -46,45 +46,40 @@ export const quotaType = quota => {
 // Split each resource quota into one row per subject
 export const flatten = resources => _.flatMap(resources, resource => _.compact(resource.data));
 
-const ResourceQuotasPage_ = props => {
-  const {match: {params: {name, ns}}} = props;
-  const clusterSelected = ['cluster'];
-  const clusterItems = [{id: 'cluster', title: 'Cluster-wide Resource Quotas'}];
+export const ResourceQuotasPage = connectToFlags(FLAGS.OPENSHIFT)(({namespace, flags}) => {
 
   let resources = [{kind: 'ResourceQuota', namespaced: true}];
-  let selected = ['namespace'];
-  let items = [{id: 'namespace', title: 'Namespace Resource Quotas'}];
+  let rowFilters = null;
 
-  if (flagPending(props.flags[FLAGS.OPENSHIFT])) {
+  if (flagPending(flags[FLAGS.OPENSHIFT])) {
     return <LoadingBox />;
   }
-  if (props.flags[FLAGS.OPENSHIFT]) {
+  if (flags[FLAGS.OPENSHIFT]) {
     resources.push({kind: 'ClusterResourceQuota', namespaced: false, optional: true});
-    items = clusterItems.concat(items);
-    selected = clusterSelected.concat(selected);
+    rowFilters = [{
+      type: 'role-kind',
+      selected: ['cluster', 'namespace'],
+      reducer: quotaType,
+      items: [
+        {id: 'cluster', title: 'Cluster-wide Resource Quotas'},
+        {id: 'namespace', title: 'Namespace Resource Quotas'},
+      ]
+    }];
   }
   return <MultiListPage
     canCreate={true}
     createButtonText="Create Resource Quota"
-    createProps={{to: `/k8s/ns/${ns}/resourcequotas/new`}}
+    createProps={{to: `/k8s/ns/${namespace}/resourcequotas/new`}}
     ListComponent={ResourceQuotasList}
-    staticFilters={[{'resource-quota-roleRef': name}]}
     resources={resources}
     filterLabel="Resource Quotas by name"
     label="Resource Quotas"
-    namespace={ns}
+    namespace={namespace}
     flatten={flatten}
     title="Resource Quotas"
-    rowFilters={[{
-      type: 'role-kind',
-      selected: selected,
-      reducer: quotaType,
-      items: items,
-    }]}
+    rowFilters={rowFilters}
   />;
-};
-
-export const ResourceQuotasPage = connectToFlags(FLAGS.OPENSHIFT)(ResourceQuotasPage_);
+});
 
 export const ResourceQuotasDetailsPage = props => <DetailsPage
   {...props}
