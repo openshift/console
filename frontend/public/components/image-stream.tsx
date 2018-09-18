@@ -2,15 +2,57 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 
 // eslint-disable-next-line no-unused-vars
-import { K8sResourceKindReference } from '../module/k8s';
+import { K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
-import { Cog, SectionHeading, LabelList, navFactory, Overflow, ResourceCog, ResourceLink, ResourceSummary, Timestamp } from './utils';
+import { Cog, SectionHeading, LabelList, navFactory, Overflow, ResourceCog, ResourceLink, ResourceSummary, history, Timestamp } from './utils';
 import { fromNow } from './utils/datetime';
 
 const ImageStreamsReference: K8sResourceKindReference = 'ImageStream';
 const ImageStreamTagsReference: K8sResourceKindReference = 'ImageStreamTag';
 
 const getImageStreamTagName = (imageStreamName: string, tag: string): string => `${imageStreamName}:${tag}`;
+
+export const getAnnotationTags = (specTag: any) => _.get(specTag, 'annotations.tags', '').split(/\s*,\s*/);
+
+const isBuilderTag = (specTag: any) => {
+  // A spec tag has annotations tags, which is a comma-delimited string (e.g., 'builder,httpd').
+  const annotationTags = getAnnotationTags(specTag);
+  return _.includes(annotationTags, 'builder') && !_.includes(annotationTags, 'hidden');
+};
+
+const getStatusTags = (imageStream: K8sResourceKind): any => {
+  const statusTags = _.get(imageStream, 'status.tags');
+  return _.keyBy(statusTags, 'tag');
+};
+
+export const getBuilderTags = (imageStream: K8sResourceKind) => {
+  const statusTags = getStatusTags(imageStream);
+  return _.filter(imageStream.spec.tags, tag => isBuilderTag(tag) && statusTags[tag.name]);
+};
+
+// An image stream is a builder image if
+// - It has a spec tag annotated with `builder` and not `hidden`
+// - It has a corresponding status tag
+const isBuilder = (imageStream: K8sResourceKind) => !_.isEmpty(getBuilderTags(imageStream));
+
+const createApplication = (kindObj, imageStream) => {
+  if (!isBuilder(imageStream)) {
+    return null;
+  }
+
+  const { name, namespace } = imageStream.metadata;
+  return {
+    btnClass: 'btn-primary',
+    callback: () => {
+      history.push(`/source-to-image?imagestream=${name}&ns=${namespace}`);
+    },
+    label: 'Create Application',
+  };
+};
+
+const actionButtons = [
+  createApplication,
+];
 
 const { common } = Cog.factory;
 
@@ -93,6 +135,7 @@ export const ImageStreamsDetailsPage: React.SFC<ImageStreamsDetailsPageProps> = 
   <DetailsPage
     {...props}
     kind={ImageStreamsReference}
+    buttonActions={actionButtons}
     menuActions={menuActions}
     pages={pages} />;
 ImageStreamsDetailsPage.displayName = 'ImageStreamsDetailsPage';
