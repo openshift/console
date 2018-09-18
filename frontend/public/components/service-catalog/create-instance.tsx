@@ -30,11 +30,6 @@ class CreateInstance extends React.Component<CreateInstanceProps, CreateInstance
       formData: {},
       inProgress: false,
     };
-
-    this.onNamespaceChange = this.onNamespaceChange.bind(this);
-    this.onNameChange = this.onNameChange.bind(this);
-    this.onFormChange = this.onFormChange.bind(this);
-    this.save = this.save.bind(this);
   }
 
   static getDerivedStateFromProps(props: CreateInstanceProps, state: CreateInstanceState) {
