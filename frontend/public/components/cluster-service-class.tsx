@@ -21,7 +21,7 @@ const createInstance = (kindObj, serviceClass) => {
     return {
       btnClass: 'btn-primary',
       callback: () => {
-        history.push(`/k8s/cluster/clusterserviceclasses/${serviceClass.metadata.name}/new`);
+        history.push(`/k8s/cluster/clusterserviceclasses/${serviceClass.metadata.name}/create-instance`);
       },
       label: 'Create Instance',
     };

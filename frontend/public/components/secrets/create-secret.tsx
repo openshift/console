@@ -744,14 +744,13 @@ class GenericSecretForm extends React.Component<GenericSecretFormProps, GenericS
     if (_.isEmpty(genericSecretObject)) {
       return [this.newGenericSecretEntry()];
     }
-    return _.map(genericSecretObject, (value, key) => {
-      return { uid: _.uniqueId(),
-        entry: {
-          key: key,
-          value: value,
-        },
-      };
-    });
+    return _.map(genericSecretObject, (value, key) => ({
+      uid: _.uniqueId(),
+      entry: {
+        key: key,
+        value: value,
+      },
+    }));
   }
   genericSecretArrayToObject(genericSecretArray) {
     return _.reduce(genericSecretArray, (acc, k) => (_.assign(acc, {[k.entry.key]: k.entry.value})), {});

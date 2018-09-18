@@ -1,7 +1,26 @@
-.overview-toolbar__label {
-  margin-right: 10px;
+.overview-toolbar {
+  margin: 0;
+  min-width: 0;
+  padding: 0;
 }
 
 .overview-toolbar__dropdown {
   display: inline-block;
+  max-width: 100%; // enable text-overflow: ellipsis
+  @media (max-width: $screen-xs-max) {
+    min-width: 100%;
+  }
+  .btn-dropdown {
+    max-width: 280px;
+  }
+}
+
+.overview-toolbar__label {
+  margin: 0 10px 0 0;
+  vertical-align: middle;
+}
+
+.toolbar-pf .overview-toolbar__form-group:first-child {
+  margin-bottom:  ($grid-gutter-width / 4);
+  padding-left: 0;
 }

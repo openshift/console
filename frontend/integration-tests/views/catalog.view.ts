@@ -1,6 +1,8 @@
 /* eslint-disable no-undef, no-unused-vars */
 
-import { browser, $, $$, by, ExpectedConditions as until, Key } from 'protractor';
+import { browser, $, $$, by, ExpectedConditions as until, ElementFinder } from 'protractor';
+
+const moveTo = (elem: ElementFinder) => browser.actions().mouseMove(elem).perform().then(() => elem);
 
 export const entryRows = $$('.co-resource-list__item');
 export const entryRowFor = (name: string) => entryRows.filter((row) => row.$('.co-clusterserviceversion-logo__name__clusterserviceversion').getText()
@@ -15,11 +17,6 @@ export const hasSubscription = (name: string) => browser.getCurrentUrl().then(ur
   return entryRowFor(name).element(by.buttonText('Create Subscription')).isPresent();
 }).then(canSubscribe => !canSubscribe);
 
-export const createSubscriptionView = $('.co-create-subscription');
-export const subscriptionNSDropdown = createSubscriptionView.$$('.btn.btn-dropdown').first();
-
-/**
- * Returns a promise that resolves to the row for a given namespace in the enable/disable modal.
- */
-export const selectNamespace = (namespace: string) => subscriptionNSDropdown.click()
-  .then(() => browser.actions().sendKeys(namespace, Key.ARROW_DOWN, Key.ENTER).perform());
+export const createSubscriptionFor = (pkgName: string) => moveTo(
+  entryRowFor(pkgName).element(by.buttonText('Create Subscription'))).then(el => el.click()
+);
