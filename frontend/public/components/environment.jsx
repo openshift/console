@@ -29,9 +29,9 @@ const EnvFromEditorComponent = (props) => <AsyncComponent loader={() => import('
  * @returns {*}
  * @private
  */
-const getPairsFromObject = (element) => {
+const getPairsFromObject = (element = {}) => {
   let returnedPairs = {};
-  if (_.isNil(element.env)) {
+  if ( _.isEmpty(element.env)) {
     returnedPairs.env = [['', '', 0]];
   } else {
     returnedPairs.env = _.map(element.env, (leafNode, i) => {
@@ -42,7 +42,7 @@ const getPairsFromObject = (element) => {
       return Object.values(leafNode);
     });
   }
-  if (_.isNil(element.envFrom)) {
+  if (_.isEmpty(element.envFrom)) {
     const configMapSecretRef = {name: '', key: ''};
     returnedPairs.envFrom = [['', {configMapSecretRef}, 0]];
   } else {
@@ -75,10 +75,151 @@ const envVarsToArray = (initialPairObjects) => {
   return [[env, envFrom]];
 };
 
+const getContainersObjectForDropdown = (containerArray) => {
+  return _.reduce(containerArray, (result, elem, order) => {
+    result[elem.name] = { ...elem, order };
+    return result;
+  }, {});
+};
+
 /** @type {(state: any, props: {obj: object, rawEnvData: any, readOnly: boolean, envPath: any}) => {model: K8sKind}} */
 const stateToProps = ({k8s}, {obj}) => ({
   model: k8s.getIn(['RESOURCES', 'models', referenceFor(obj)]) || k8s.getIn(['RESOURCES', 'models', obj.kind]),
 });
+
+class CurrentEnvVars {
+  constructor() {
+    this.currentEnvVars = {};
+  }
+
+  setRawData(rawEnvData) {
+    this.isContainerArray = _.isArray(rawEnvData.containers);
+    this.hasInitContainers = !_.isUndefined(rawEnvData.initContainers);
+
+    if (this.isContainerArray) {
+      this.currentEnvVars.containers = envVarsToArray(rawEnvData.containers);
+      this.currentEnvVars.initContainers = envVarsToArray(rawEnvData.initContainers);
+    } else {
+      this.currentEnvVars.buildObject = envVarsToArray(rawEnvData);
+    }
+    return this;
+  }
+
+  /**
+   * Initialize CurrentEnvVars with result object after patch operation.
+   *
+   * If this is a containerArray its possible to have initContainers at a level above
+   * the current envPath, so when we setRawData, we want to drop right such that
+   * not only the containers can be initialized, but also initContainers. A build object
+   * only has env data in the base path.
+   *
+   * @param resultObject
+   * @param isContainerArray
+   * @param path
+   * @returns CurrentEnvVars
+   */
+  setResultObject(resultObject, isContainerArray, path) {
+    if (isContainerArray) {
+      return this.setRawData(_.get(resultObject, _.dropRight(path)));
+    }
+    return this.setRawData(_.get(resultObject, path));
+  }
+
+  getEnvVarByTypeAndIndex(type, index) {
+    return this.currentEnvVars[type][index];
+  }
+
+  setFormattedVars(containerType, index, environmentType, formattedPairs) {
+    this.currentEnvVars[containerType][index][environmentType] = formattedPairs;
+    return this;
+  }
+
+  /**
+   * Return array of patches for the save operation.
+   *
+   *
+   * @param envPath
+   * @returns {Array}
+   * @public
+   */
+  getPatches(envPath) {
+    if (this.isContainerArray) {
+      const envPathForIC = _.dropRight(envPath).concat('initContainers');
+      const op = 'add';
+
+      const containerEnvPatch = this.currentEnvVars.containers.map((finalPairsForContainer, i) => {
+        const path = `/${envPath.join('/')}/${i}/env`;
+        const value = this._envVarsToNameVal(finalPairsForContainer[EnvType.ENV]);
+        return {path, op, value};
+      });
+
+      const containerEnvFromPatch = this.currentEnvVars.containers.map((finalPairsForContainer, i) => {
+        const path = `/${envPath.join('/')}/${i}/envFrom`;
+        const value = this._envFromVarsToResourcePrefix(finalPairsForContainer[EnvType.ENV_FROM]);
+        return {path, op, value};
+      });
+
+      let patches = _.concat(containerEnvPatch, containerEnvFromPatch);
+
+      if (this.hasInitContainers) {
+        const envPatchForIC = this.currentEnvVars.initContainers.map((finalPairsForContainer, i) => {
+          const path = `/${envPathForIC.join('/')}/${i}/env`;
+          const value = this._envVarsToNameVal(finalPairsForContainer[EnvType.ENV]);
+          return {path, op, value};
+        });
+
+        const envFromPatchForIC = this.currentEnvVars.initContainers.map((finalPairsForContainer, i) => {
+          const path = `/${envPathForIC.join('/')}/${i}/envFrom`;
+          const value = this._envFromVarsToResourcePrefix(finalPairsForContainer[EnvType.ENV_FROM]);
+          return {path, op, value};
+        });
+
+        patches = _.concat(patches, envPatchForIC, envFromPatchForIC);
+      }
+      return patches;
+    }
+    return this.currentEnvVars.buildObject.map((finalPairsForContainer) => {
+      const op = 'add';
+      const path = `/${envPath.join('/')}/env`;
+      const value = this._envVarsToNameVal(finalPairsForContainer[EnvType.ENV]);
+      return {path, op, value};
+    });
+  }
+
+  /**
+   * Return env var pairs in name value notation, and strip out any pairs that have empty NAME values.
+   *
+   *
+   * @param finalEnvPairs
+   * @returns {Array}
+   * @private
+   */
+  _envVarsToNameVal(finalEnvPairs) {
+    return _.filter(finalEnvPairs, finalEnvPair => finalEnvPair[NameValueEditorPair.Name])
+      .map(finalPairForContainer => {
+        const name = finalPairForContainer[NameValueEditorPair.Name];
+        const value = finalPairForContainer[NameValueEditorPair.Value];
+        return _.isObject(value)
+          ? { name, valueFrom: value }
+          : { name, value };
+      });
+  }
+
+  /**
+   * Return env var pairs in envFrom (resource/prefix) notation, and strip out any pairs that have empty resource values.
+   *
+   *
+   * @param finalEnvPairs
+   * @returns {Array}
+   * @private
+   */
+  _envFromVarsToResourcePrefix(finalEnvPairs) {
+    return _.filter(finalEnvPairs, finalEnvPair => (!_.isEmpty(finalEnvPair[EnvFromPair.Resource]) && !finalEnvPair[EnvFromPair.Resource].configMapSecretRef))
+      .map(finalPairForContainer => {
+        return _.assign({'prefix': finalPairForContainer[EnvFromPair.Prefix]}, finalPairForContainer[EnvFromPair.Resource]);
+      });
+  }
+}
 
 export const EnvironmentPage = connect(stateToProps)(
   class EnvironmentPage extends PromiseComponent {
@@ -94,12 +235,13 @@ export const EnvironmentPage = connect(stateToProps)(
       this.saveChanges = this._saveChanges.bind(this);
       this.updateEnvVars = this._updateEnvVars.bind(this);
       this.selectContainer = this._selectContainer.bind(this);
-
-      const currentEnvVars = envVarsToArray(this.props.rawEnvData);
+      const currentEnvVars = new CurrentEnvVars();
+      currentEnvVars.setRawData(this.props.rawEnvData);
       this.state = {
         currentEnvVars,
         success: null,
-        containerKey: 0
+        containerIndex: 0,
+        containerType: currentEnvVars.isContainerArray ? 'containers' : 'buildObject',
       };
     }
 
@@ -138,55 +280,19 @@ export const EnvironmentPage = connect(stateToProps)(
     }
 
     /**
-     * Return env var pairs in name value notation, and strip out any pairs that have empty NAME values.
-     *
-     *
-     * @param finalEnvPairs
-     * @returns {Array}
-     * @private
-     */
-    _envVarsToNameVal(finalEnvPairs) {
-      return _.filter(finalEnvPairs, finalEnvPair => !_.isEmpty(finalEnvPair[NameValueEditorPair.Name]))
-        .map(finalPairForContainer => {
-          if (finalPairForContainer[NameValueEditorPair.Value] instanceof Object) {
-            return {
-              'name': finalPairForContainer[NameValueEditorPair.Name],
-              'valueFrom': finalPairForContainer[NameValueEditorPair.Value]
-            };
-          }
-          return {
-            'name': finalPairForContainer[NameValueEditorPair.Name],
-            'value': finalPairForContainer[NameValueEditorPair.Value]
-          };
-        });
-    }
-
-    /**
-     * Return env var pairs in envFrom (resource/prefix) notation, and strip out any pairs that have empty resource values.
-     *
-     *
-     * @param finalEnvPairs
-     * @returns {Array}
-     * @private
-     */
-    _envFromVarsToResourcePrefix(finalEnvPairs) {
-      return _.filter(finalEnvPairs, finalEnvPair => (!_.isEmpty(finalEnvPair[EnvFromPair.Resource]) && !finalEnvPair[EnvFromPair.Resource].configMapSecretRef))
-        .map(finalPairForContainer => {
-          return _.assign({'prefix': finalPairForContainer[EnvFromPair.Prefix]}, finalPairForContainer[EnvFromPair.Resource]);
-        });
-    }
-
-    /**
      * Callback for NVEditor update our state with new values
      * @param env
      * @param i
      */
     _updateEnvVars(env, i = 0, type = EnvType.ENV) {
       const {rawEnvData} = this.props;
-      const {currentEnvVars} = this.state;
-      const currentEnv = currentEnvVars;
-      currentEnv[i][type] = env.nameValuePairs;
-      const modified = !_.isEqual(currentEnv, envVarsToArray(rawEnvData));
+      const {currentEnvVars, containerType} = this.state;
+      const currentEnv = _.cloneDeep(currentEnvVars);
+      const originalEnv = new CurrentEnvVars();
+      originalEnv.setRawData(rawEnvData);
+      currentEnv.setFormattedVars(containerType, i, type, env.nameValuePairs);
+      const modified = !_.isEqual(currentEnv, originalEnv);
+
       this.setState({
         currentEnvVars: currentEnv,
         success: null,
@@ -200,12 +306,17 @@ export const EnvironmentPage = connect(stateToProps)(
      */
     _reload() {
       const {rawEnvData} = this.props;
-      this.setState({
-        currentEnvVars: envVarsToArray(rawEnvData),
-        errorMessage: null,
-        success: null,
-        modified: false,
-        stale: false
+      this.setState((prevState) => {
+        const {currentEnvVars} = prevState;
+        const reloadedEnvVars = _.cloneDeep(currentEnvVars);
+        reloadedEnvVars.setRawData(rawEnvData);
+        return {
+          errorMessage: null,
+          success: null,
+          modified: false,
+          stale: false,
+          currentEnvVars: reloadedEnvVars,
+        };
       });
     }
 
@@ -220,15 +331,32 @@ export const EnvironmentPage = connect(stateToProps)(
     static getDerivedStateFromProps(nextProps, prevState) {
       const { currentEnvVars } = prevState;
       const { rawEnvData, readOnly } = nextProps;
-      const incomingEnvVars = envVarsToArray(rawEnvData);
-      if (_.isEqual(incomingEnvVars, currentEnvVars)) {
+      const incomingEnvVars = new CurrentEnvVars();
+      incomingEnvVars.setRawData(rawEnvData);
+      if (_.isEqual(currentEnvVars, incomingEnvVars)) {
         return null;
       }
-      return readOnly ? {currentEnvVars: incomingEnvVars} : {stale: true, success: null};
+      return readOnly ? {
+        currentEnvVars
+      } : {stale: true, success: null};
     }
 
-    _selectContainer(index) {
-      this.setState({containerKey: parseInt(index, 10)});
+    _selectContainer(containerName) {
+      const { rawEnvData } = this.props;
+      let containerIndex = _.findIndex(rawEnvData.containers, {name: containerName});
+      if (containerIndex !== -1) {
+        return this.setState({
+          containerIndex,
+          containerType: 'containers',
+        });
+      }
+      containerIndex = _.findIndex(rawEnvData.initContainers, {name: containerName});
+      if (containerIndex !== -1) {
+        return this.setState({
+          containerIndex,
+          containerType: 'initContainers',
+        });
+      }
     }
 
     /**
@@ -241,49 +369,42 @@ export const EnvironmentPage = connect(stateToProps)(
      * @param e
      */
     _saveChanges(e) {
-      const {envPath, rawEnvData, obj, model} = this.props;
+      const {envPath, obj, model} = this.props;
       const {currentEnvVars} = this.state;
+
       e.preventDefault();
 
-      const envPatch = currentEnvVars.map((finalPairsForContainer, i) => {
-        const op = 'add';
-        const path = _.isArray(rawEnvData) ? `/${envPath.join('/')}/${i}/env` : `/${envPath.join('/')}/env`;
-
-        return {path, op, value: this._envVarsToNameVal(finalPairsForContainer[EnvType.ENV])};
-      });
-
-      const envFromPatch = currentEnvVars.map((finalPairsForContainer, i) => {
-        const op = 'add';
-        const path = _.isArray(rawEnvData) ? `/${envPath.join('/')}/${i}/envFrom` : `/${envPath.join('/')}/envFrom`;
-
-        return {path, op, value: this._envFromVarsToResourcePrefix(finalPairsForContainer[EnvType.ENV_FROM])};
-      });
-      const promise = k8sPatch(model, obj, _.concat(envPatch, envFromPatch));
+      const patches = currentEnvVars.getPatches(envPath);
+      const promise = k8sPatch(model, obj, patches);
       this.handlePromise(promise).then((res) => {
-        const newEnvData = _.get(res, envPath);
+        const newEnvVars = new CurrentEnvVars();
+        newEnvVars.setResultObject(res, currentEnvVars.isContainerArray, envPath);
+
         this.setState({
           success: 'Successfully updated the environment variables.',
           errorMessage: null,
-          currentEnvVars: envVarsToArray(newEnvData),
+          currentEnvVars: newEnvVars,
           modified: false,
-          stale: false
+          stale: false,
         });
       });
     }
 
     render() {
-      const {errorMessage, success, inProgress, currentEnvVars, stale, configMaps, secrets, containerKey} = this.state;
+      const {errorMessage, success, inProgress, currentEnvVars, stale, configMaps, secrets, containerIndex, containerType} = this.state;
       const {rawEnvData, readOnly, obj} = this.props;
-      const isContainerArray = _.isArray(rawEnvData);
-      const containerDropdown = <ContainerDropdown
-        currentKey={containerKey}
-        containers={rawEnvData}
-        onChange={this.selectContainer} />;
 
       if (!configMaps || !currentEnvVars || !secrets) {
         return <LoadingBox />;
       }
-      const envVar = currentEnvVars[containerKey];
+
+      const envVar = currentEnvVars.getEnvVarByTypeAndIndex(containerType, containerIndex);
+      const containerDropdown = currentEnvVars.isContainerArray ? <ContainerDropdown
+        currentKey={rawEnvData[containerType][containerIndex].name}
+        containers={getContainersObjectForDropdown(rawEnvData.containers)}
+        initContainers={getContainersObjectForDropdown(rawEnvData.initContainers)}
+        onChange={this.selectContainer} /> : null;
+
       const owners = _.get(obj.metadata, 'ownerReferences', [])
         .map((o, i) => <ResourceLink key={i} kind={referenceForOwnerRef(o)} name={o.name} namespace={obj.metadata.namespace} title={o.uid} />);
       const resourceName = _.get(obj.metadata, 'name', '');
@@ -295,8 +416,8 @@ export const EnvironmentPage = connect(stateToProps)(
               </Alert>
             </div>
           }
-          { isContainerArray && <div className="co-toolbar__group co-toolbar__group--left">
-            <div className="co-toolbar__item">Container:</div>
+          { currentEnvVars.isContainerArray && <div className="co-toolbar__group co-toolbar__group--left">
+            <div className="co-toolbar__item">{containerType === 'containers' ? 'Container:' : 'Init Container:'}</div>
             <div className="co-toolbar__item">{containerDropdown}</div>
           </div>
           }
@@ -307,15 +428,15 @@ export const EnvironmentPage = connect(stateToProps)(
                   <div>Define environment variables as key-value pairs to store configuration settings. You can enter text or add values from a ConfigMap or Secret. Drag and drop environment variables to change the order in which they are run. A variable can reference any other variables that come before it in the list, for example <code>FULLDOMAIN = $(SUBDOMAIN).example.com</code>.</div>} />
               }
             </h3>
-            <NameValueEditorComponent nameValueId={containerKey} nameValuePairs={envVar[EnvType.ENV]} updateParentData={this.updateEnvVars} addString="Add Value" nameString="Name" readOnly={readOnly} allowSorting={true} configMaps={configMaps} secrets={secrets} />
+            <NameValueEditorComponent nameValueId={containerIndex} nameValuePairs={envVar[EnvType.ENV]} updateParentData={this.updateEnvVars} addString="Add Value" nameString="Name" readOnly={readOnly} allowSorting={true} configMaps={configMaps} secrets={secrets} />
           </div>
-          { isContainerArray && <div className="co-m-pane__body-group environment-buttons">
+          { currentEnvVars.isContainerArray && <div className="co-m-pane__body-group environment-buttons">
             <h3 className="co-section-heading-tertiary">All values from existing config maps or secrets (envFrom) {
               !readOnly && <FieldLevelHelp content={
                 <div>Add new values by referencing an existing config map or secret. Drag and drop environment variables within this section to change the order in which they are run.<br /><strong>Note: </strong>If identical values exist in both lists, the single value in the list above will take precedence.</div>} />
             }
             </h3>
-            <EnvFromEditorComponent nameValueId={containerKey} nameValuePairs={envVar[EnvType.ENV_FROM]} updateParentData={this.updateEnvVars} readOnly={readOnly} configMaps={configMaps} secrets={secrets} />
+            <EnvFromEditorComponent nameValueId={containerIndex} nameValuePairs={envVar[EnvType.ENV_FROM]} updateParentData={this.updateEnvVars} readOnly={readOnly} configMaps={configMaps} secrets={secrets} />
           </div>}
         </React.Fragment>;
 
@@ -343,5 +464,5 @@ EnvironmentPage.propTypes = {
   obj: PropTypes.object.isRequired,
   rawEnvData: PropTypes.oneOfType([PropTypes.object, PropTypes.array]).isRequired,
   envPath: PropTypes.array.isRequired,
-  readOnly: PropTypes.bool.isRequired
+  readOnly: PropTypes.bool.isRequired,
 };
