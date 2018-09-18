@@ -1,10 +1,12 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 
-import { referenceForModel } from '../module/k8s';
-import { ResourceQuotaModel, ClusterResourceQuotaModel } from '../models';
 import { ColHead, DetailsPage, List, ListHeader, MultiListPage } from './factory';
 import { Cog, SectionHeading, navFactory, ResourceCog, ResourceLink, ResourceSummary } from './utils';
+import { FLAGS, connectToFlags, flagPending } from '../features';
+import { LoadingBox } from './utils/status-box';
+import { referenceForModel } from '../module/k8s';
+import { ResourceQuotaModel, ClusterResourceQuotaModel } from '../models';
 
 const menuActions = [Cog.factory.ModifyLabels, Cog.factory.ModifyAnnotations, Cog.factory.Edit, Cog.factory.Delete];
 
@@ -42,26 +44,29 @@ export const quotaType = quota => {
 };
 
 // Split each resource quota into one row per subject
-export const flatten = resources => _.flatMap(resources, resource => {
-  const rows = [];
+export const flatten = resources => _.flatMap(resources, resource => _.compact(resource.data));
 
-  _.each(resource.data, quota => {
-    if (!quota) {
-      return undefined;
-    }
-    rows.push(quota);
-  });
-
-  return rows;
-});
-
-export const ResourceQuotasPage = props => {
+const ResourceQuotasPage_ = props => {
   const {match: {params: {name, ns}}} = props;
-  let resources = [{kind: 'ResourceQuota', namespaced: true}, {kind: 'ClusterResourceQuota', namespaced: false, optional: true}];
+  const clusterSelected = ['cluster'];
+  const clusterItems = [{id: 'cluster', title: 'Cluster-wide Resource Quotas'}];
+
+  let resources = [{kind: 'ResourceQuota', namespaced: true}];
+  let selected = ['namespace'];
+  let items = [{id: 'namespace', title: 'Namespace Resource Quotas'}];
+
+  if (flagPending(props.flags[FLAGS.OPENSHIFT])) {
+    return <LoadingBox />;
+  }
+  if (props.flags[FLAGS.OPENSHIFT]) {
+    resources.push({kind: 'ClusterResourceQuota', namespaced: false, optional: true});
+    items = clusterItems.concat(items);
+    selected = clusterSelected.concat(selected);
+  }
   return <MultiListPage
     canCreate={true}
     createButtonText="Create Resource Quota"
-    createProps={{to: '/k8s/ns/tectonic-system/resourcequotas/new'}}
+    createProps={{to: `/k8s/ns/${ns}/resourcequotas/new`}}
     ListComponent={ResourceQuotasList}
     staticFilters={[{'resource-quota-roleRef': name}]}
     resources={resources}
@@ -72,15 +77,14 @@ export const ResourceQuotasPage = props => {
     title="Resource Quotas"
     rowFilters={[{
       type: 'role-kind',
-      selected: ['cluster', 'namespace'],
+      selected: selected,
       reducer: quotaType,
-      items: [
-        {id: 'cluster', title: 'Cluster-wide Resource Quotas'},
-        {id: 'namespace', title: 'Namespace Resource Quotas'},
-      ],
+      items: items,
     }]}
   />;
 };
+
+export const ResourceQuotasPage = connectToFlags(FLAGS.OPENSHIFT)(ResourceQuotasPage_);
 
 export const ResourceQuotasDetailsPage = props => <DetailsPage
   {...props}
