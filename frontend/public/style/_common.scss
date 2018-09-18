@@ -76,7 +76,7 @@
 .co-m-pane__heading {
   display: flex;
   justify-content: space-between;
-  margin: 0 0 $grid-gutter-width;
+  margin: 0 ($grid-gutter-width / 2) $grid-gutter-width 0;
   &--center {
     justify-content: center;
   }

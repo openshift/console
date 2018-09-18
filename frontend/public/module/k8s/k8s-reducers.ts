@@ -84,6 +84,8 @@ export default (state: ImmutableMap<string, any>, action) => {
   switch (action.type) {
     case types.getResourcesInFlight:
       return state.setIn(['RESOURCES', 'inFlight'], true);
+    case types.setAPIGroups:
+      return state.setIn(['RESOURCES', 'apiGroups'], action.value);
     case types.resources:
       return action.resources.models
         .filter(model => !state.getIn(['RESOURCES', 'models']).has(referenceForModel(model)))

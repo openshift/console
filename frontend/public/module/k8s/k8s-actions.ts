@@ -2,10 +2,14 @@
 
 import { getResources as getResources_ } from './get-resources';
 import { k8sList, k8sWatch, k8sGet } from './resource';
+import { makeReduxID } from '../../components/utils/k8s-watcher';
+import { APIServiceModel } from '../../models';
+import { coFetchJSON } from '../../co-fetch';
 
 const types = {
   resources: 'resources',
   getResourcesInFlight: 'getResourcesInFlight',
+  setAPIGroups: 'setAPIGroups',
 
   watchK8sObject: 'watchK8sObject',
   stopK8sWatch: 'stopK8sWatch',
@@ -29,6 +33,7 @@ const REF_COUNTS = {};
 
 const nop = () => {};
 const paginationLimit = 250;
+const apiGroups = 'apiGroups';
 
 const actions = {
   [types.updateListFromWS]: action_(types.updateListFromWS),
@@ -37,11 +42,35 @@ const actions = {
   [types.errored]: action_(types.errored),
   [types.modifyObject]: action_(types.modifyObject),
 
+  /**
+   * Attempts to watch `APIServices` and fire API discovery to register new models when new API groups are added.
+   * Falls back to polling `/apis` if RBAC restricts this resource.
+   */
+  watchAPIServices: () => (dispatch, getState) => {
+    if (getState().k8s.has('apiservices') || POLLs[apiGroups]) {
+      return;
+    }
+    dispatch({type: types.getResourcesInFlight});
+
+    k8sList(APIServiceModel, {})
+      .then(() => dispatch(actions.watchK8sList(makeReduxID(APIServiceModel, {}), {}, APIServiceModel, actions.getResources)))
+      .catch(() => {
+        const poller = () => coFetchJSON('api/kubernetes/apis').then(d => {
+          if (d.length !== getState().k8s.getIn(['RESOURCES', apiGroups], 0)) {
+            dispatch(actions.getResources());
+          }
+          dispatch({type: types.setAPIGroups, value: d.groups.length});
+        });
+
+        POLLs[apiGroups] = setInterval(poller, 30 * 1000);
+        poller();
+      });
+  },
+
   getResources: () => dispatch => {
     dispatch({type: types.getResourcesInFlight});
     getResources_()
       .then(resources => dispatch({type: types.resources, resources}))
-      // try again or something?
       // eslint-disable-next-line no-console
       .catch(err => console.error(err));
   },
@@ -98,7 +127,7 @@ const actions = {
     return {type: types.stopK8sWatch, id};
   },
 
-  watchK8sList: (id, query, k8skind) => (dispatch, getState) => {
+  watchK8sList: (id, query, k8skind, extraAction) => (dispatch, getState) => {
     // Only one watch per unique list ID
     if (id in REF_COUNTS) {
       REF_COUNTS[id] += 1;
@@ -108,8 +137,7 @@ const actions = {
     dispatch({type: types.watchK8sList, id, query});
     REF_COUNTS[id] = 1;
 
-    /** @type {(continueToken: string) => Promise<string>} */
-    const incrementallyLoad = async (continueToken = '') => {
+    const incrementallyLoad = async(continueToken = ''): Promise<string> => {
       // the list may not still be around...
       if (!REF_COUNTS[id]) {
         // let .then handle the cleanup
@@ -123,7 +151,7 @@ const actions = {
       }
 
       if (!continueToken) {
-        dispatch(actions.loaded(id, response.items));
+        [actions.loaded, extraAction].forEach(f => f && dispatch(f(id, response.items)));
       }
 
       if (response.metadata.continue) {
@@ -207,7 +235,7 @@ const actions = {
 
           POLLs[id] = setTimeout(pollAndWatch, 15 * 1000);
         })
-        .onbulkmessage(events => dispatch(actions.updateListFromWS(id, events)));
+        .onbulkmessage(events => [actions.updateListFromWS, extraAction].forEach(f => f && dispatch(f(id, events))));
     };
     pollAndWatch();
   },

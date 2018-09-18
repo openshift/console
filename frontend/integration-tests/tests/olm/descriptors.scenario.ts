@@ -31,7 +31,7 @@ const defaultValueFor = <C extends SpecCapability | StatusCapability>(capability
   }
 };
 
-describe('Using OLM descriptor components', () => {
+xdescribe('Using OLM descriptor components', () => {
   const testLabel = 'automatedTestName';
   const prefixedCapabilities = new Set([SpecCapability.selector, SpecCapability.k8sResourcePrefix, StatusCapability.k8sResourcePrefix]);
   const testCRD = {

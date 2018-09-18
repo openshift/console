@@ -78,8 +78,11 @@ export const config: Config = {
     });
     console.log('END BROWSER LOGS');
 
+    // Use projects if OpenShift so non-admin users can run tests. We need the fully-qualified name
+    // since we're using kubectl instead of oc.
+    const resource = browser.params.openshift === 'true' ? 'projects.project.openshift.io' : 'namespaces';
     await browser.close();
-    execSync(`kubectl delete --cascade ns ${testName}`);
+    execSync(`kubectl delete ${resource} ${testName}`);
   },
   afterLaunch: (exitCode) => {
     failFast.clean();
