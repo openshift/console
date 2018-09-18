@@ -321,6 +321,19 @@ export const ImageStreamTagModel: K8sKind = {
   labelPlural: 'Image Stream Tags'
 };
 
+export const ImageStreamImportsModel: K8sKind = {
+  label: 'Image Stream Import',
+  apiVersion: 'v1',
+  path: 'imagestreamimports',
+  apiGroup: 'image.openshift.io',
+  plural: 'imagestreamimports',
+  abbr: 'ISI',
+  namespaced: true,
+  kind: 'ImageStreamImport',
+  id: 'imagestreamimport',
+  labelPlural: 'Image Stream Imports'
+};
+
 export const JobModel: K8sKind = {
   label: 'Job',
   apiVersion: 'v1',
