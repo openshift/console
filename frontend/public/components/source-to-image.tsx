@@ -394,70 +394,66 @@ class BuildSource extends React.Component<BuildSourceProps, BuildSourceState> {
     const tagOptions = {};
     _.each(imageStream.spec.tags, ({name}) => tagOptions[name] = <ResourceName kind="ImageStreamTag" name={`${imageStream.metadata.name}:${name}`} />);
 
-    return <React.Fragment>
-      <div className="co-m-pane__body">
-        <div className="row">
-          <div className="col-md-7 col-md-push-5 co-catalog-item-info">
-            <ImageStreamInfo imageStream={imageStream} tag={tag} />
-          </div>
-          <div className="col-md-5 col-md-pull-7">
-            <form className="co-source-to-image-form" onSubmit={this.save}>
-              <div className="form-group">
-                <label className="control-label" htmlFor="namespace">Namespace</label>
-                <NsDropdown selectedKey={this.state.namespace} onChange={this.onNamespaceChange} id="namespace" />
-              </div>
-              <div className="form-group">
-                <label className="control-label" htmlFor="tag">Version</label>
-                <Dropdown items={tagOptions} selectedKey={selectedTag} title={tagOptions[selectedTag]} onChange={this.onTagChange} id="tag" />
-              </div>
-              <div className="form-group">
-                <label className="control-label" htmlFor="name">Name</label>
-                <input className="form-control"
-                  type="text"
-                  onChange={this.onNameChange}
-                  value={this.state.name}
-                  id="name"
-                  required />
-                <div className="help-block">
-                  Names the resources created for this application.
-                </div>
-              </div>
-              <div className="form-group">
-                <label className="control-label" htmlFor="repository">Git Repository</label>
-                <input className="form-control"
-                  type="text"
-                  onChange={this.onRepositoryChange}
-                  value={this.state.repository}
-                  id="repository"
-                  required />
-                {sampleRepo && <div className="help-block">
-                  <button type="button" className="btn btn-link btn-link--no-padding" onClick={this.fillSample}>
-                    Try Sample <i className="fa fa-level-up" aria-hidden="true" />
-                  </button>
-                </div>}
-                <div className="help-block">
-                  For private Git repositories,
-                  create a <Link to={`/k8s/ns/${this.state.namespace || 'default'}/secrets/new/source`}>source secret</Link>.
-                </div>
-              </div>
-              {!_.isEmpty(ports) && <div className="form-group">
-                <div className="checkbox">
-                  <label className="control-label">
-                    <input type="checkbox" onChange={this.onCreateRouteChange} checked={this.state.createRoute} />
-                    Create route
-                  </label>
-                  <div className="help-block">Exposes your application at a public URL.</div>
-                </div>
-              </div>}
-              <ButtonBar className="co-source-to-image-form__button-bar" errorMessage={this.state.error} inProgress={this.state.inProgress}>
-                <button type="submit" className="btn btn-primary">Create</button>
-                <button type="button" className="btn btn-default" onClick={history.goBack}>Cancel</button>
-              </ButtonBar>
-            </form>
-          </div>
-        </div>
+    return <div className="row">
+      <div className="col-md-7 col-md-push-5 co-catalog-item-info">
+        <ImageStreamInfo imageStream={imageStream} tag={tag} />
       </div>
-    </React.Fragment>;
+      <div className="col-md-5 col-md-pull-7">
+        <form className="co-source-to-image-form" onSubmit={this.save}>
+          <div className="form-group">
+            <label className="control-label" htmlFor="namespace">Namespace</label>
+            <NsDropdown selectedKey={this.state.namespace} onChange={this.onNamespaceChange} id="namespace" />
+          </div>
+          <div className="form-group">
+            <label className="control-label" htmlFor="tag">Version</label>
+            <Dropdown items={tagOptions} selectedKey={selectedTag} title={tagOptions[selectedTag]} onChange={this.onTagChange} id="tag" />
+          </div>
+          <div className="form-group">
+            <label className="control-label" htmlFor="name">Name</label>
+            <input className="form-control"
+              type="text"
+              onChange={this.onNameChange}
+              value={this.state.name}
+              id="name"
+              required />
+            <div className="help-block">
+              Names the resources created for this application.
+            </div>
+          </div>
+          <div className="form-group">
+            <label className="control-label" htmlFor="repository">Git Repository</label>
+            <input className="form-control"
+              type="text"
+              onChange={this.onRepositoryChange}
+              value={this.state.repository}
+              id="repository"
+              required />
+            {sampleRepo && <div className="help-block">
+              <button type="button" className="btn btn-link btn-link--no-padding" onClick={this.fillSample}>
+                Try Sample <i className="fa fa-level-up" aria-hidden="true" />
+              </button>
+            </div>}
+            <div className="help-block">
+              For private Git repositories,
+              create a <Link to={`/k8s/ns/${this.state.namespace || 'default'}/secrets/new/source`}>source secret</Link>.
+            </div>
+          </div>
+          {!_.isEmpty(ports) && <div className="form-group">
+            <div className="checkbox">
+              <label className="control-label">
+                <input type="checkbox" onChange={this.onCreateRouteChange} checked={this.state.createRoute} />
+                Create route
+              </label>
+              <div className="help-block">Exposes your application at a public URL.</div>
+            </div>
+          </div>}
+          <ButtonBar className="co-source-to-image-form__button-bar" errorMessage={this.state.error} inProgress={this.state.inProgress}>
+            <button type="submit" className="btn btn-primary">Create</button>
+            <button type="button" className="btn btn-default" onClick={history.goBack}>Cancel</button>
+          </ButtonBar>
+        </form>
+      </div>
+    </div>;
   }
 }
 
