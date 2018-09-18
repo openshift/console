@@ -48,10 +48,6 @@ class CreateBindingForm extends React.Component<CreateBindingProps, CreateBindin
       formData: {},
       inProgress: false,
     };
-
-    this.onNameChange = this.onNameChange.bind(this);
-    this.onFormChange = this.onFormChange.bind(this);
-    this.save = this.save.bind(this);
   }
 
   onNameChange: React.ReactEventHandler<HTMLInputElement> = event => {
