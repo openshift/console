@@ -90,6 +90,7 @@
     "redux-thunk": "2.x",
     "sanitize-html": "1.x",
     "screenfull": "^3.3.2",
+    "semver": "^5.5.1",
     "showdown": "1.8.x",
     "text-encoding": "0.x",
     "url-polyfill": "^1.0.12",
