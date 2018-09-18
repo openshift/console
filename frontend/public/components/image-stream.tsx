@@ -25,7 +25,7 @@ const getStatusTags = (imageStream: K8sResourceKind): any => {
   return _.keyBy(statusTags, 'tag');
 };
 
-export const getBuilderTags = (imageStream: K8sResourceKind) => {
+export const getBuilderTags = (imageStream: K8sResourceKind): any[] => {
   const statusTags = getStatusTags(imageStream);
   return _.filter(imageStream.spec.tags, tag => isBuilderTag(tag) && statusTags[tag.name]);
 };

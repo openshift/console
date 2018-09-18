@@ -4,6 +4,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
+import * as semver from 'semver';
 
 import { LoadingBox, LoadError } from './utils/status-box';
 import { Dropdown, Firehose, history, MsgBox, ResourceName, resourcePathFromModel } from './utils';
@@ -92,7 +93,21 @@ class BuildSource extends React.Component<BuildSourceProps, BuildSourceState> {
     const { obj } = this.props;
     if (obj !== prevProps.obj && obj.loaded) {
       const previousTag = this.state.selectedTag;
-      const tags = getBuilderTags(obj.data);
+      // Sort tags in reverse order by semver, falling back to a string comparison if not a valid version.
+      const tags = getBuilderTags(obj.data).sort(({name: a}, {name: b}) => {
+        const v1 = semver.coerce(a);
+        const v2 = semver.coerce(b);
+        if (!v1 && !v2) {
+          return a.localeCompare(b);
+        }
+        if (!v1) {
+          return 1;
+        }
+        if (!v2) {
+          return -1;
+        }
+        return semver.rcompare(v1, v2);
+      });
       // Select the first tag if the current tag is missing or empty.
       const selectedTag = previousTag && _.includes(tags, previousTag)
         ? previousTag
@@ -372,7 +387,7 @@ class BuildSource extends React.Component<BuildSourceProps, BuildSourceState> {
 
   render() {
     const { obj } = this.props;
-    const { selectedTag, ports } = this.state;
+    const { selectedTag, tags, ports } = this.state;
     if (obj.loadError) {
       return <LoadError message={obj.loadError.message} label="Image Stream" className="loading-box loading-box__errored" />;
     }
@@ -382,7 +397,6 @@ class BuildSource extends React.Component<BuildSourceProps, BuildSourceState> {
     }
 
     const imageStream = obj.data;
-    const { tags } = this.state;
     if (_.isEmpty(tags)) {
       return <MsgBox title="No Builder Tags" detail={`ImageStream ${imageStream.metadata.name} has no Source-to-Image builder tags.`} />;
     }
@@ -390,9 +404,8 @@ class BuildSource extends React.Component<BuildSourceProps, BuildSourceState> {
     const tag = _.find(imageStream.spec.tags, { name: selectedTag });
     const sampleRepo = getSampleRepo(tag);
 
-    // TODO: Sort tags by semver.
     const tagOptions = {};
-    _.each(imageStream.spec.tags, ({name}) => tagOptions[name] = <ResourceName kind="ImageStreamTag" name={`${imageStream.metadata.name}:${name}`} />);
+    _.each(tags, ({name}) => tagOptions[name] = <ResourceName kind="ImageStreamTag" name={`${imageStream.metadata.name}:${name}`} />);
 
     return <React.Fragment>
       <div className="co-m-pane__body">
