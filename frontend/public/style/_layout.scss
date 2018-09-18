@@ -8,11 +8,22 @@ body,
 }
 
 #content {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   padding-top: $masthead-height-mobile;
+  position: relative;
   @media (min-width: $grid-float-breakpoint) {
     padding-left: $sidebar-width;
     padding-top: $masthead-height-desktop;
   }
+}
+
+.content-scrollable {
+  height: 100%;
+  overflow: hidden auto;
+  position: relative;
+  -webkit-overflow-scrolling: touch;
 }
 
 #sidebar {

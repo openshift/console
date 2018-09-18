@@ -59,13 +59,13 @@ const DeploymentDetailsList = ({deployment}) => {
 };
 
 export const DeploymentOverview = connectToModel(({kindObj, resource: deployment}) =>
-  <div className="co-m-pane resource-overview">
+  <div className="overview__sidebar-pane resource-overview">
     <ResourceOverviewHeading
       actions={menuActions}
       kindObj={kindObj}
       resource={deployment}
     />
-    <div className="co-m-pane__body resource-overview__body">
+    <div className="overview__sidebar-pane-body resource-overview__body">
       <div className="resource-overview__pod-counts">
         <DeploymentPodCounts resource={deployment} resourceKind={DeploymentModel} />
       </div>
