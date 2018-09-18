@@ -1,4 +1,15 @@
 .co-m-requirement {
-  font-size: $font-size-base;
-  vertical-align: middle;
+  &__icon {
+    margin-right: 4px;
+  }
+
+  &__label {
+    min-width: 0; // required so co-break-word on .co-m-requirement__link works
+  }
+
+  &__link  {
+    align-items: baseline;
+    display: flex;
+    @include co-break-word;
+  }
 }
