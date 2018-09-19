@@ -141,7 +141,9 @@ export const DeploymentConfigsPage: React.SFC<DeploymentConfigsPageProps> = prop
 
   const createProps = {
     items: createItems,
-    createLink: type => `/k8s/ns/${props.namespace || 'default'}/deploymentconfigs/new/${type !== 'yaml' ? type : ''}`
+    createLink: type => type === 'image'
+      ? `/deploy-image${props.namespace ? `?ns=${props.namespace}` : ''}`
+      : `/k8s/ns/${props.namespace || 'default'}/deploymentconfigs/new`
   };
   return <ListPage {...props} title="Deployment Configs" kind={DeploymentConfigsReference} ListComponent={DeploymentConfigsList} canCreate={true} createButtonText="Create" createProps={createProps} filterLabel={props.filterLabel} />;
 };
