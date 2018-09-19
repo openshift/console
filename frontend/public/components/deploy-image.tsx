@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 
 import { getPorts } from './source-to-image';
 import { history, Loading, NavTitle, resourcePathFromModel, Timestamp, units } from './utils';
-import { getActiveNamespace } from '../ui/ui-actions';
+import { formatNamespacedRouteForResource } from '../ui/ui-actions';
 import { NsDropdown } from './RBAC/bindings';
 import { k8sCreate } from '../module/k8s';
 import { ButtonBar } from './utils/button-bar';
@@ -30,8 +30,11 @@ export class DeployImage extends React.Component<DeployImageProps, DeployImageSt
   constructor (props) {
     super(props);
 
+    const params = new URLSearchParams(props.location.search);
+    const ns = params.get('ns');
+
     this.state = {
-      namespace: '',
+      namespace: ns,
       imageName: '',
       loading: false,
       inProgress: false,
@@ -363,7 +366,7 @@ export class DeployImage extends React.Component<DeployImageProps, DeployImageSt
           </div>
           <ButtonBar errorMessage={this.state.error} inProgress={this.state.inProgress}>
             <button type="submit" className="btn btn-primary" disabled={!this.state.namespace || !this.state.imageName || !this.state.name}>Deploy</button>
-            <Link to={`/k8s/ns/${getActiveNamespace() || 'default'}/deploymentconfigs`} className="btn btn-default">Cancel</Link>
+            <Link to={formatNamespacedRouteForResource('deploymentconfigs')} className="btn btn-default">Cancel</Link>
           </ButtonBar>
         </form>
       </div>
@@ -371,7 +374,9 @@ export class DeployImage extends React.Component<DeployImageProps, DeployImageSt
   }
 }
 
-export type DeployImageProps = {};
+export type DeployImageProps = {
+  location: any,
+};
 
 export type DeployImageState = {
   namespace: string,
