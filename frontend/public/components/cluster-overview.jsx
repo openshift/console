@@ -12,7 +12,6 @@ import { Gauge, prometheusBasePath, requirePrometheus } from './graphs';
 import { Status, errorStatus } from './graphs/status';
 import { EventStreamPage } from './events';
 import { SoftwareDetails } from './software-details';
-import { formatNamespacedRouteForResource } from '../ui/ui-actions';
 import { FLAGS, connectToFlags, flagPending } from '../features';
 import { connectToURLs, MonitoringRoutes } from '../monitoring';
 
@@ -159,7 +158,6 @@ const GraphsPage = ({fake, limited, namespace, openshiftFlag}) => {
       <div className={classNames('group', {'co-disabled': fake})}>
         <div className="group__title">
           <h2 className="h3">Events</h2>
-          <a href={formatNamespacedRouteForResource('events', namespace)}>View All</a>
         </div>
         <div className="group__body group__body--filter-bar">
           <EventStreamPage namespace={namespace} showTitle={false} autoFocus={false} fake={fake} />
