@@ -4,7 +4,7 @@ import * as React from 'react';
 import { match } from 'react-router-dom';
 import * as _ from 'lodash-es';
 
-import { Firehose, VertNav, NavTitle } from '../utils';
+import { Firehose, HorizontalNav, NavTitle } from '../utils';
 import { K8sResourceKindReference, K8sResourceKind } from '../../module/k8s';
 
 export type FirehoseResource = {
@@ -30,7 +30,7 @@ export const DetailsPage: React.SFC<DetailsPageProps> = (props) => <Firehose res
     buttonActions={props.buttonActions}
     kind={props.kind}
     breadcrumbsFor={props.breadcrumbsFor} />
-  <VertNav
+  <HorizontalNav
     pages={props.pages}
     className={`co-m-${_.get(props.kind, 'kind', props.kind)}`}
     match={props.match}

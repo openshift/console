@@ -3,7 +3,7 @@ import * as _ from 'lodash-es';
 
 import { getContainerState, getContainerStatus, getPullPolicyLabel } from '../module/k8s/docker';
 import * as k8sProbe from '../module/k8s/probe';
-import { SectionHeading, Firehose, Overflow, MsgBox, NavTitle, Timestamp, VertNav, ResourceLink, ScrollToTopOnMount } from './utils';
+import { SectionHeading, Firehose, Overflow, MsgBox, NavTitle, Timestamp, HorizontalNav, ResourceLink, ScrollToTopOnMount } from './utils';
 
 const formatComputeResources = resources => _.map(resources, (v, k) => `${k}: ${v}`).join(', ');
 
@@ -248,6 +248,6 @@ export const ContainersDetailsPage = (props) => <div>
     isList: false,
     prop: 'obj',
   }]}>
-    <VertNav hideNav={true} pages={[{name: 'container', href: '', component: Details}]} match={props.match} />
+    <HorizontalNav hideNav={true} pages={[{name: 'container', href: '', component: Details}]} match={props.match} />
   </Firehose>
 </div>;

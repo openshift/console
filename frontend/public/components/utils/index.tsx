@@ -10,7 +10,7 @@ export * from './resource-link';
 export * from './resource-log';
 export * from './volume-icon';
 export * from './timestamp';
-export * from './vertnav';
+export * from './horizontal-nav';
 export * from './details-page';
 export * from './inject';
 export * from './disabled';
