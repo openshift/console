@@ -164,7 +164,7 @@ go, glide, glide-vc, nodejs/yarn, kubectl
 
 ### Frontend Development
 
-All frontend code lives in the `frontend/` directory.  The frontend uses node, yarn, and webpack to compile dependencies into self contained bundles which are loaded dynamically at run time in the browser.  These bundles are not commited to git. Tasks are defined in `package.json` in the `scripts` section and are aliased to `yarn run <cmd>` (in the frontend directory).
+All frontend code lives in the `frontend/` directory.  The frontend uses node, yarn, and webpack to compile dependencies into self contained bundles which are loaded dynamically at run time in the browser.  These bundles are not committed to git. Tasks are defined in `package.json` in the `scripts` section and are aliased to `yarn run <cmd>` (in the frontend directory).
 
 #### Install Dependencies
 
@@ -172,7 +172,7 @@ To install the build tools and dependencies:
 ```
 yarn install
 ```
-You must run this command once, and every time the dependencies change. `node_modules` are not commited to git.
+You must run this command once, and every time the dependencies change. `node_modules` are not committed to git.
 
 #### Interactive Development
 
@@ -244,7 +244,7 @@ Add new backend dependencies:
  2. `./revendor.sh`
 
 Update existing backend dependencies:
- 1. Edit the `glide.yaml` file to the desired verison (most likely a git hash)
+ 1. Edit the `glide.yaml` file to the desired version (most likely a git hash)
  2. Run `./revendor.sh`
  3. Verify update was successful. `glide.lock` will have been updated to reflect the changes to `glide.yaml` and the package will have been updated in `vendor`.
 
