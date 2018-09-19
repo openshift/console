@@ -137,7 +137,6 @@ export const CatalogSourceList = withFallback((props: CatalogSourceListProps) =>
 
   return props.loaded
     ? <React.Fragment>
-      <p className="co-m-pane__explanation">Catalogs are groups of Operators you can make available on the cluster. Subscribe and grant a namespace access to use the installed Operators.</p>
       { _.isEmpty(data) && <MsgBox title="No Catalog Sources Found" detail="Catalog Sources contain packaged Operators which can be subscribed to for automatic upgrades." /> }
       {/* TODO(alecmerdler): Handle filtering based on package name */}
       { data.map((obj) => <div key={obj.metadata.uid} className="co-catalogsource-list__section">
@@ -157,11 +156,13 @@ export const CatalogSourceList = withFallback((props: CatalogSourceListProps) =>
 export const CatalogSourcesPage: React.SFC<CatalogSourcePageProps> = (props) => {
   type Flatten = (resources: {[kind: string]: {data: K8sResourceKind[]}}) => K8sResourceKind[];
   const flatten: Flatten = resources => _.get(resources.catalogSource, 'data', []);
+  const HelpText = <p className="co-help-text">Catalogs are groups of Operators you can make available on the cluster. Subscribe and grant a namespace access to use the installed Operators.</p>;
 
   return <MultiListPage
     {...props}
     title="Operator Catalog Sources"
     showTitle={true}
+    helpText={HelpText}
     ListComponent={CatalogSourceList}
     filterLabel="Packages by name"
     flatten={flatten}
