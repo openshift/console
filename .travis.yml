@@ -1,0 +1,9 @@
+language: node_js
+node_js:
+  - '10'
+cache: yarn
+before_install: cd frontend
+script:
+- yarn run lint
+- CI=true yarn test --ci --debug --verbose
+
