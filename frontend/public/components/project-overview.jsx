@@ -11,10 +11,12 @@ import { ResourceLink, resourcePath } from './utils';
 export const ComponentLabel = ({text}) => <div className="co-component-label">{text}</div>;
 
 const ProjectOverviewListItem = ({obj, onClick, selectedItem}) => {
-  const {currentController, kind, metadata} = obj;
+  const {controller, kind, metadata} = obj;
   const {namespace, name, uid} = metadata;
   const isSelected = obj.metadata.uid === _.get(selectedItem, 'metadata.uid', '');
   const className = classnames('project-overview__item', {'project-overview__item--selected': isSelected});
+  const readyPods = obj.status.replicas || obj.status.currentNumberScheduled || 0;
+  const desiredPods = obj.spec.replicas || obj.status.desiredNumberScheduled || 0;
   const heading = <h3 className="project-overview__item-heading">
     <ResourceLink
       className="co-resource-link-truncate"
@@ -25,13 +27,13 @@ const ProjectOverviewListItem = ({obj, onClick, selectedItem}) => {
   </h3>;
 
   const additionalInfo = <div key={uid} className="project-overview__additional-info">
-    { currentController &&
+    { controller &&
       <div className="project-overview__detail project-overview__detail--controller">
-        <ComponentLabel text={_.startCase(currentController.kind)} />
+        <ComponentLabel text={_.startCase(controller.kind)} />
         <ResourceLink
           className="co-resource-link-truncate"
-          kind={currentController.kind}
-          name={currentController.metadata.name}
+          kind={controller.kind}
+          name={controller.metadata.name}
           namespace={namespace}
         />
       </div>
@@ -39,7 +41,7 @@ const ProjectOverviewListItem = ({obj, onClick, selectedItem}) => {
     <div className="project-overview__detail project-overview__detail--status">
       <ComponentLabel text="Status" />
       <Link to={`${resourcePath(kind, name, namespace)}/pods`}>
-        {obj.status.replicas || 0} of {obj.spec.replicas} pods
+        {readyPods} of {desiredPods} pods
       </Link>
     </div>
   </div>;

@@ -95,10 +95,11 @@ class OverviewDetails extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const {deployments, deploymentConfigs, loaded, namespace, pods, replicaSets, replicationControllers} = this.props;
+    const {daemonSets, deployments, deploymentConfigs, loaded, namespace, pods, replicaSets, replicationControllers} = this.props;
     const {filterValue, selectedGroupLabel} = this.state;
 
     if (!_.isEqual(namespace, prevProps.namespace)
+      || !_.isEqual(daemonSets, prevProps.daemonSets)
       || !_.isEqual(replicationControllers, prevProps.replicationControllers)
       || !_.isEqual(replicaSets, prevProps.replicaSets)
       || !_.isEqual(pods, prevProps.pods)
@@ -233,11 +234,11 @@ class OverviewDetails extends React.Component {
       const ownedReplicaSets = this.buildGraphForReplicators(getOwnedResources(replicaSets.data, rootResourceUid), 'ReplicaSet');
       const orderedReplicationControllers = this.sortRCByRevision(ownedReplicationControllers, 'ReplicationController', true);
       const orderedReplicaSets = this.sortRSByRevison(ownedReplicaSets, 'ReplicaSet', true);
-      const currentController = _.head(orderedReplicationControllers) || _.head(orderedReplicaSets);
+      const controller = _.head(orderedReplicationControllers) || _.head(orderedReplicaSets);
 
       return {
         ...rootResource,
-        currentController,
+        controller,
         kind,
         replicaSets: orderedReplicaSets,
         replicationControllers: orderedReplicationControllers,
@@ -246,17 +247,19 @@ class OverviewDetails extends React.Component {
   }
 
   createOverviewData() {
-    const {deploymentConfigs, deployments, loaded, statefulSets} = this.props;
+    const {daemonSets, deploymentConfigs, deployments, loaded, statefulSets} = this.props;
 
     if (!loaded) {
       return;
     }
 
+    const daemonSetItems = this.buildGraphForRootResources(daemonSets.data, 'DaemonSet');
     const deploymentConfigItems = this.buildGraphForRootResources(deploymentConfigs.data, 'DeploymentConfig');
     const deploymentItems = this.buildGraphForRootResources(deployments.data, 'Deployment');
     const statefulSetItems = this.buildGraphForReplicators(statefulSets.data, 'StatefulSet');
 
     const items = [
+      ...daemonSetItems,
       ...deploymentConfigItems,
       ...deploymentItems,
       ...statefulSetItems
@@ -360,21 +363,9 @@ export class Overview extends React.Component {
     const resources = [
       {
         isList: true,
-        kind: 'Pod',
+        kind: 'DaemonSet',
         namespace,
-        prop: 'pods'
-      },
-      {
-        isList: true,
-        kind: 'ReplicationController',
-        namespace,
-        prop: 'replicationControllers'
-      },
-      {
-        isList: true,
-        kind: 'DeploymentConfig',
-        namespace,
-        prop: 'deploymentConfigs'
+        prop: 'daemonSets'
       },
       {
         isList: true,
@@ -384,9 +375,27 @@ export class Overview extends React.Component {
       },
       {
         isList: true,
+        kind: 'DeploymentConfig',
+        namespace,
+        prop: 'deploymentConfigs'
+      },
+      {
+        isList: true,
+        kind: 'Pod',
+        namespace,
+        prop: 'pods'
+      },
+      {
+        isList: true,
         kind: 'ReplicaSet',
         namespace,
         prop: 'replicaSets'
+      },
+      {
+        isList: true,
+        kind: 'ReplicationController',
+        namespace,
+        prop: 'replicationControllers'
       },
       {
         isList: true,

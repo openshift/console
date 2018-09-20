@@ -1,8 +1,28 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 
-import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
-import { SectionHeading, Cog, LabelList, ResourceCog, ResourceLink, ResourceSummary, Selector, navFactory, detailsPage, AsyncComponent } from './utils';
+import { connectToModel } from '../kinds';
+import { ResourceOverviewHeading } from './overview';
+import {
+  ColHead,
+  DetailsPage,
+  List,
+  ListHeader,
+  ListPage,
+  ResourceRow
+} from './factory';
+import {
+  AsyncComponent,
+  Cog,
+  detailsPage,
+  LabelList,
+  navFactory,
+  ResourceCog,
+  ResourceLink,
+  ResourceSummary,
+  SectionHeading,
+  Selector
+} from './utils';
 
 const menuActions = [Cog.factory.EditEnvironment, ...Cog.factory.common];
 
@@ -35,6 +55,31 @@ const DaemonSetRow = ({obj: daemonset}) => <ResourceRow obj={daemonset}>
   </div>
 </ResourceRow>;
 
+const DaemonSetDetailsList = ({ds}) =>
+  <dl className="co-m-pane__details">
+    <dt>Current Count</dt>
+    <dd>{ds.status.currentNumberScheduled || '-'}</dd>
+    <dt>Desired Count</dt>
+    <dd>{ds.status.desiredNumberScheduled || '-'}</dd>
+  </dl>;
+
+export const DaemonSetOverview = connectToModel(({kindObj, resource: ds}) =>
+  <div className="co-m-pane resource-overview">
+    <ResourceOverviewHeading
+      actions={menuActions}
+      kindObj={kindObj}
+      resource={ds}
+    />
+    <div className="co-m-pane__body resource-overview__body">
+      <div className="resource-overview__summary">
+        <ResourceSummary resource={ds} />
+      </div>
+      <div className="resource-overview__details">
+        <DaemonSetDetailsList ds={ds} />
+      </div>
+    </div>
+  </div>);
+
 const Details = ({obj: daemonset}) => <div className="co-m-pane__body">
   <SectionHeading text="Daemon Set Overview" />
   <div className="row">
@@ -42,12 +87,7 @@ const Details = ({obj: daemonset}) => <div className="co-m-pane__body">
       <ResourceSummary resource={daemonset} />
     </div>
     <div className="col-lg-6">
-      <dl className="co-m-pane__details">
-        <dt>Current Count</dt>
-        <dd>{daemonset.status.currentNumberScheduled || '-'}</dd>
-        <dt>Desired Count</dt>
-        <dd>{daemonset.status.desiredNumberScheduled || '-'}</dd>
-      </dl>
+      <DaemonSetDetailsList ds={daemonset} />
     </div>
   </div>
 </div>;
