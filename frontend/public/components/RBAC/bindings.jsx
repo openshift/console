@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import * as PropTypes from 'prop-types';
 
-import { getQN, k8sCreate, k8sPatch } from '../../module/k8s';
+import { getQN, k8sCreate, k8sPatch, referenceFor } from '../../module/k8s';
 import { getActiveNamespace, formatNamespacedRouteForResource, UIActions } from '../../ui/ui-actions';
 import { ColHead, List, ListHeader, MultiListPage, ResourceRow } from '../factory';
 import { RadioGroup } from '../radio';
@@ -443,16 +443,13 @@ const BaseEditRoleBinding = connect(null, {setActiveNamespace: UIActions.setActi
       (this.props.isCreate
         ? k8sCreate(ko, this.state.data)
         : k8sPatch(ko, {metadata}, [{op: 'replace', path: `/subjects/${this.subjectIndex}`, value: subject}])
-      ).then(
-        () => {
-          this.setState({inProgress: false});
-          if (metadata.namespace) {
-            this.props.setActiveNamespace(metadata.namespace);
-          }
-          history.push(formatNamespacedRouteForResource('rolebindings'));
-        },
-        err => this.setState({error: err.message, inProgress: false})
-      );
+      ).then(obj => {
+        this.setState({inProgress: false});
+        if (metadata.namespace) {
+          this.props.setActiveNamespace(metadata.namespace);
+        }
+        history.push(resourceObjPath(obj, referenceFor(obj)));
+      }, err => this.setState({error: err.message, inProgress: false}));
     }
 
     render () {

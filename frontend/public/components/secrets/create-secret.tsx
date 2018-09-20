@@ -4,8 +4,8 @@ import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 
-import { k8sCreate, k8sUpdate, K8sResourceKind } from '../../module/k8s';
-import { ButtonBar, Firehose, history, kindObj, StatusBox, LoadingBox, Dropdown } from '../utils';
+import { k8sCreate, k8sUpdate, K8sResourceKind, referenceFor } from '../../module/k8s';
+import { ButtonBar, Firehose, history, kindObj, StatusBox, LoadingBox, Dropdown, resourceObjPath } from '../utils';
 import { formatNamespacedRouteForResource } from '../../ui/ui-actions';
 import { AsyncComponent } from '../utils/async';
 import { WebHookSecretKey } from '../secret';
@@ -148,9 +148,9 @@ const withSecretForm = (SubForm) => class SecretFormComponent extends React.Comp
     (this.props.isCreate
       ? k8sCreate(ko, newSecret)
       : k8sUpdate(ko, newSecret, metadata.namespace, newSecret.metadata.name)
-    ).then(() => {
+    ).then(secret => {
       this.setState({inProgress: false});
-      history.push(formatNamespacedRouteForResource('secrets'));
+      history.push(resourceObjPath(secret, referenceFor(secret)));
     }, err => this.setState({error: err.message, inProgress: false}));
   }
   render () {

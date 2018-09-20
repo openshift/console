@@ -3,7 +3,6 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
-import { HashLink } from 'react-router-hash-link';
 
 import { coFetch, coFetchJSON } from '../co-fetch';
 import { NavTitle, AsyncComponent, Firehose, StatusBox, DocumentationLinks, AdditionalSupportLinks } from './utils';
@@ -13,7 +12,6 @@ import { Gauge, prometheusBasePath, requirePrometheus } from './graphs';
 import { Status, errorStatus } from './graphs/status';
 import { EventStreamPage } from './events';
 import { SoftwareDetails } from './software-details';
-import { formatNamespacedRouteForResource } from '../ui/ui-actions';
 import { FLAGS, connectToFlags, flagPending } from '../features';
 import { connectToURLs, MonitoringRoutes } from '../monitoring';
 
@@ -160,7 +158,6 @@ const GraphsPage = ({fake, limited, namespace, openshiftFlag}) => {
       <div className={classNames('group', {'co-disabled': fake})}>
         <div className="group__title">
           <h2 className="h3">Events</h2>
-          <a href={formatNamespacedRouteForResource('events', namespace)}>View All</a>
         </div>
         <div className="group__body group__body--filter-bar">
           <EventStreamPage namespace={namespace} showTitle={false} autoFocus={false} fake={fake} />
@@ -168,7 +165,7 @@ const GraphsPage = ({fake, limited, namespace, openshiftFlag}) => {
       </div>
     </div>
     <div className="col-lg-4 col-md-12">
-      <div className="group" id="software-info">
+      <div className="group">
         <div className="group__title">
           <h2 className="h3">Software Info</h2>
         </div>
@@ -247,11 +244,7 @@ const ClusterOverviewPage_ = props => {
     <Helmet>
       <title>{fake ? 'Overview' : title}</title>
     </Helmet>
-    <NavTitle title={fake ? 'Overview' : title} style={{alignItems: 'baseline', display: 'flex', justifyContent: 'space-between'}}>
-      <p className="hidden-lg">
-        <HashLink smooth to="#software-info">Software Info</HashLink>
-      </p>
-    </NavTitle>
+    <NavTitle title={fake ? 'Overview' : title} />
     <div className="cluster-overview-cell container-fluid">
       <AsyncComponent namespace={namespace} loader={permissionedLoader} openshiftFlag={openshiftFlag} fake={fake} />
     </div>

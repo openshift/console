@@ -89,6 +89,11 @@ export type K8sKind = {
   verbs?: string[];
 };
 
+export type ContainerPort = {
+  containerPort: number,
+  protocol: string,
+};
+
 /**
  * GroupVersionKind unambiguously identifies a kind.
  * https://godoc.org/k8s.io/apimachinery/pkg/runtime/schema#GroupVersionKind

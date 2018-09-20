@@ -133,8 +133,20 @@ const DeploymentConfigsRow: React.SFC<DeploymentConfigsRowProps> = props => {
 export const DeploymentConfigsList: React.SFC = props => <List {...props} Header={WorkloadListHeader} Row={DeploymentConfigsRow} />;
 DeploymentConfigsList.displayName = 'DeploymentConfigsList';
 
-export const DeploymentConfigsPage: React.SFC<DeploymentConfigsPageProps> = props =>
-  <ListPage {...props} title="Deployment Configs" kind={DeploymentConfigsReference} ListComponent={DeploymentConfigsList} canCreate={true} filterLabel={props.filterLabel} />;
+export const DeploymentConfigsPage: React.SFC<DeploymentConfigsPageProps> = props => {
+  const createItems = {
+    image: 'From Image',
+    yaml: 'From YAML',
+  };
+
+  const createProps = {
+    items: createItems,
+    createLink: type => type === 'image'
+      ? `/deploy-image${props.namespace ? `?ns=${props.namespace}` : ''}`
+      : `/k8s/ns/${props.namespace || 'default'}/deploymentconfigs/new`
+  };
+  return <ListPage {...props} title="Deployment Configs" kind={DeploymentConfigsReference} ListComponent={DeploymentConfigsList} canCreate={true} createButtonText="Create" createProps={createProps} filterLabel={props.filterLabel} />;
+};
 DeploymentConfigsPage.displayName = 'DeploymentConfigsListPage';
 
 /* eslint-disable no-undef */
@@ -144,6 +156,7 @@ export type DeploymentConfigsRowProps = {
 
 export type DeploymentConfigsPageProps = {
   filterLabel: string,
+  namespace: string,
 };
 
 export type DeploymentConfigsDetailsPageProps = {
