@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 import { IChangeEvent, ISubmitEvent } from 'react-jsonschema-form';
 import { JSONSchema6 } from 'json-schema';
 
-import { createParametersSecret, getBindingCreateSchema, ServiceCatalogParametersForm } from './schema-form';
+import { createParametersSecret, getBindingCreateSchema, getBindingParametersForm, ServiceCatalogParametersForm, getUISchema } from './schema-form';
 import { LoadingBox } from '../utils/status-box';
 import { history, Firehose, NavTitle, resourcePathFromModel } from '../utils';
 import { ServiceInstanceModel, ServiceBindingModel } from '../../models';
@@ -22,7 +22,9 @@ const BindingParametersForm: React.SFC<BindingParametersFormProps> = ({plan, ...
   }
 
   const schema: JSONSchema6 = getBindingCreateSchema(plan.data);
-  return <ServiceCatalogParametersForm schema={schema} {...rest} />;
+  const parametersForm = getBindingParametersForm(plan.data);
+  const uiSchema = getUISchema(parametersForm);
+  return <ServiceCatalogParametersForm schema={schema} uiSchema={uiSchema} {...rest} />;
 };
 
 const BindingParameters: React.SFC<BindingParametersProps> = props => {

@@ -5,7 +5,7 @@ import * as _ from 'lodash-es';
 import { Helmet } from 'react-helmet';
 import { IChangeEvent, ISubmitEvent } from 'react-jsonschema-form';
 
-import { createParametersSecret, getInstanceCreateSchema, ServiceCatalogParametersForm } from './schema-form';
+import { createParametersSecret, getInstanceCreateSchema, getInstanceCreateParametersForm, ServiceCatalogParametersForm, getUISchema } from './schema-form';
 import { LoadingBox } from '../utils/status-box';
 import { history, Firehose, NavTitle, resourcePathFromModel } from '../utils';
 import { ClusterServiceClassModel, ServiceInstanceModel } from '../../models';
@@ -128,6 +128,8 @@ class CreateInstance extends React.Component<CreateInstanceProps, CreateInstance
     const availablePlans = getAvailablePlans(plans);
     const selectedPlan = _.find(availablePlans, { spec: { externalName: selectedPlanName } });
     const schema = getInstanceCreateSchema(selectedPlan);
+    const parametersForm = getInstanceCreateParametersForm(selectedPlan);
+    const uiSchema = getUISchema(parametersForm);
 
     const planOptions = _.map(availablePlans, plan => {
       return <div className="radio co-create-service-instance__plan" key={plan.spec.externalName}>
@@ -178,7 +180,7 @@ class CreateInstance extends React.Component<CreateInstanceProps, CreateInstance
                   : planOptions}
               </div>
             </form>
-            <ServiceCatalogParametersForm schema={schema} onSubmit={this.save} formData={this.state.formData} onChange={this.onFormChange}>
+            <ServiceCatalogParametersForm schema={schema} uiSchema={uiSchema} onSubmit={this.save} formData={this.state.formData} onChange={this.onFormChange}>
               <ButtonBar errorMessage={this.state.error} inProgress={this.state.inProgress}>
                 <button type="submit" className="btn btn-primary">Create</button>
                 <button type="button" className="btn btn-default" onClick={history.goBack}>Cancel</button>
