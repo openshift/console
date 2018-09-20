@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as PropTypes from 'prop-types';
-import * as _ from 'lodash-es';
 
 import { CopyToClipboard, EmptyBox, SectionHeading } from './utils';
 
@@ -31,7 +30,7 @@ export class SecretData extends React.PureComponent {
   }
 
   getValue(rawValue) {
-    if (_.isNil(rawValue)) {
+    if (!rawValue) {
       return <span className="text-muted">No value</span>;
     }
 
