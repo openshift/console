@@ -61,14 +61,14 @@ _.each(namespacedPrefixes, p => {
   namespacedRoutes.push(`${p}/all-namespaces`);
 });
 
-const NamespaceRedirect = () => {
+const NamespaceRedirect = ({location}) => {
   const activeNamespace = getActiveNamespace();
 
   let to;
   if (activeNamespace === ALL_NAMESPACES_KEY) {
-    to = '/status/all-namespaces';
+    to = `${location.pathname}/all-namespaces`;
   } else if (activeNamespace) {
-    to = `/status/ns/${activeNamespace}`;
+    to = `${location.pathname}/ns/${activeNamespace}`;
   }
   // TODO: check if namespace exists
   return <Redirect to={to} />;
@@ -129,9 +129,15 @@ class App extends React.PureComponent {
         <GlobalNotifications />
         <Switch>
           <Route path={['/all-namespaces', '/ns/:ns',]} component={RedirectComponent} />
+
+          <LazyRoute path="/catalog/all-namespaces" exact loader={() => import('./catalog' /* webpackChunkName: "catalog" */).then(m => m.CatalogPage)} />
+          <LazyRoute path="/catalog/ns/:ns" exact loader={() => import('./catalog' /* webpackChunkName: "catalog" */).then(m => m.CatalogPage)} />
+          <Route path="/catalog" exact component={NamespaceRedirect} />
+
           <LazyRoute path="/status/all-namespaces" exact loader={() => import('./cluster-overview' /* webpackChunkName: "cluster-overview" */).then(m => m.ClusterOverviewPage)} />
           <LazyRoute path="/status/ns/:ns" exact loader={() => import('./cluster-overview' /* webpackChunkName: "cluster-overview" */).then(m => m.ClusterOverviewPage)} />
           <Route path="/status" exact component={NamespaceRedirect} />
+
           <LazyRoute path="/cluster-health" exact loader={() => import('./cluster-health' /* webpackChunkName: "cluster-health" */).then(m => m.ClusterHealth)} />
           <LazyRoute path="/start-guide" exact loader={() => import('./start-guide' /* webpackChunkName: "start-guide" */).then(m => m.StartGuidePage)} />
           <LazyRoute path="/overview/ns/:ns" exact loader={() => import('./overview' /* webpackChunkName: "overview" */).then(m => m.OverviewPage)} />

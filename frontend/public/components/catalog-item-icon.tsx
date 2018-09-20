@@ -175,14 +175,31 @@ const logos = new Map()
   .set('icon-xamarin', xamarinImg)
   .set('icon-zend', zendImg);
 
-const normalizeIconClass = (iconClass) => {
+export const normalizeIconClass = (iconClass) => {
   return _.startsWith(iconClass, 'icon-') ? `font-icon ${iconClass}` : iconClass;
 };
 
+export const getImageForIconClass = (iconClass) => {
+  return logos.get(iconClass);
+};
+
+export const getServiceClassIcon = (serviceClass) => {
+  return _.get(serviceClass, ['spec', 'externalMetadata', 'console.openshift.io/iconClass'], 'fa fa-clone');
+};
+
+export const getServiceClassImage = (serviceClass) => {
+  const iconClass = getServiceClassIcon(serviceClass);
+  const iconClassImg = getImageForIconClass(iconClass);
+  return _.get(serviceClass, ['spec', 'externalMetadata', 'imageUrl']) || iconClassImg;
+};
+
+export const getImageStreamIcon = (tag) => {
+  return _.get(tag, 'annotations.iconClass');
+};
+
 export const ClusterServiceClassIcon: React.SFC<ClusterServiceClassIconProps> = ({serviceClass, iconSize}) => {
-  const iconClass = _.get(serviceClass, ['spec', 'externalMetadata', 'console.openshift.io/iconClass'], 'fa fa-clone');
-  const iconClassImg = logos.get(iconClass);
-  const imageUrl = _.get(serviceClass, ['spec', 'externalMetadata', 'imageUrl']) || iconClassImg;
+  const iconClass = getServiceClassIcon(serviceClass);
+  const imageUrl = getServiceClassImage(serviceClass);
   return <span className="co-catalog-item-icon">
     { imageUrl
       ? <img className={classNames('co-catalog-item-icon__img', iconSize && `co-catalog-item-icon__img--${iconSize}`)} src={imageUrl} />
@@ -197,8 +214,8 @@ export type ClusterServiceClassIconProps = {
 };
 
 export const ImageStreamIcon: React.SFC<ImageStreamIconProps> = ({tag, iconSize}) => {
-  const iconClass = _.get(tag, 'annotations.iconClass');
-  const iconClassImg = logos.get(iconClass);
+  const iconClass = getImageStreamIcon(tag);
+  const iconClassImg = getImageForIconClass(iconClass);
   return <span className="co-catalog-item-icon">
     { iconClassImg
       ? <img className={classNames('co-catalog-item-icon__img', iconSize && `co-catalog-item-icon__img--${iconSize}`)} src={iconClassImg} />

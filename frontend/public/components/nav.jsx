@@ -372,6 +372,7 @@ export class Nav extends React.Component {
         <div ref={this.scroller} onWheel={this.preventScroll} className="navigation-container">
           <NavSection text="Home" icon="pficon pficon-home">
             <HrefLink href="/status" name="Status" activePath="/status/" onClick={this.close} />
+            <HrefLink href="/catalog" name="Catalog" activePath="/catalog/" onClick={this.close} />
             <HrefLink href="/search" name="Search" onClick={this.close} startsWith={searchStartsWith} />
             <ResourceNSLink resource="events" name="Events" onClick={this.close} />
           </NavSection>

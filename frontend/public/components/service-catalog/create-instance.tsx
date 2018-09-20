@@ -3,7 +3,6 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { Helmet } from 'react-helmet';
-import { Link } from 'react-router-dom';
 import { IChangeEvent, ISubmitEvent } from 'react-jsonschema-form';
 
 import { createParametersSecret, getInstanceCreateSchema, ServiceCatalogParametersForm } from './schema-form';
@@ -182,7 +181,7 @@ class CreateInstance extends React.Component<CreateInstanceProps, CreateInstance
             <ServiceCatalogParametersForm schema={schema} onSubmit={this.save} formData={this.state.formData} onChange={this.onFormChange}>
               <ButtonBar errorMessage={this.state.error} inProgress={this.state.inProgress}>
                 <button type="submit" className="btn btn-primary">Create</button>
-                <Link to={resourcePathFromModel(ClusterServiceClassModel, serviceClass.metadata.name)} className="btn btn-default">Cancel</Link>
+                <button type="button" className="btn btn-default" onClick={history.goBack}>Cancel</button>
               </ButtonBar>
             </ServiceCatalogParametersForm>
           </div>
