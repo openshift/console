@@ -13,6 +13,14 @@ import { ProjectOverview } from './project-overview';
 import { ResourceOverviewPage } from './resource-list';
 import { ALL_NAMESPACES_KEY } from '../const';
 import {
+  DaemonSetModel,
+  DeploymentModel,
+  DeploymentConfigModel,
+  ReplicationControllerModel,
+  ReplicaSetModel,
+  StatefulSetModel
+} from '../models';
+import {
   ActionsMenu,
   CloseButton,
   Disabled,
@@ -23,13 +31,52 @@ import {
   StatusBox,
 } from './utils';
 
-const getOwnedResources = (resources, uid) => {
+const getOwnedResources = ({metadata:{uid}}, resources) => {
   return _.filter(resources, ({metadata:{ownerReferences}}) => {
     return _.some(ownerReferences, {
       uid,
       controller: true
     });
   });
+};
+
+const sortByRevision = (replicators, annotation, descending = true) => {
+  const compare = (left, right) => {
+    const leftVersion = parseInt(_.get(left, ['metadata', 'annotations', annotation]), 10);
+    const rightVersion = parseInt(_.get(right, ['metadata', 'annotations', annotation]), 10);
+    if (!_.isFinite(leftVersion) && !_.isFinite(rightVersion)) {
+      const leftName = _.get(left, 'metadata.name', '');
+      const rightName = _.get(right, 'metadata.name', '');
+      if (descending) {
+        return rightName.localeCompare(leftName);
+      }
+      return leftName.localeCompare(rightName);
+    }
+
+    if (!leftVersion) {
+      return descending ? 1 : -1;
+    }
+
+    if (!rightVersion) {
+      return descending ? -1 : 1;
+    }
+
+    if (descending) {
+      return rightVersion - leftVersion;
+    }
+
+    return leftVersion - rightVersion;
+  };
+
+  return _.toArray(replicators).sort(compare);
+};
+
+const sortReplicaSetsByRevision = (replicaSets) => {
+  return sortByRevision(replicaSets, 'deployment.kubernetes.io/revision');
+};
+
+const sortReplicationControllersByRevision = (replicationControllers) => {
+  return sortByRevision(replicationControllers, 'openshift.io/deployment-config.latest-version');
 };
 
 export const ResourceOverviewHeading = ({kindObj, actions, resource }) => <div className="co-m-nav-title resource-overview__heading">
@@ -123,13 +170,13 @@ class OverviewDetails extends React.Component {
     const {filterValue, selectedGroupLabel} = this.state;
 
     if (!_.isEqual(namespace, prevProps.namespace)
+      || loaded !== prevProps.loaded
       || !_.isEqual(daemonSets, prevProps.daemonSets)
-      || !_.isEqual(replicationControllers, prevProps.replicationControllers)
-      || !_.isEqual(replicaSets, prevProps.replicaSets)
-      || !_.isEqual(pods, prevProps.pods)
       || !_.isEqual(deploymentConfigs, prevProps.deploymentConfigs)
       || !_.isEqual(deployments, prevProps.deployments)
-      || loaded !== prevProps.loaded) {
+      || !_.isEqual(pods, prevProps.pods)
+      || !_.isEqual(replicaSets, prevProps.replicaSets)
+      || !_.isEqual(replicationControllers, prevProps.replicationControllers)) {
       this.createOverviewData();
     } else if (filterValue !== prevState.filterValue) {
       const filteredItems = this.filterItems(this.state.items);
@@ -144,45 +191,6 @@ class OverviewDetails extends React.Component {
     }
   }
 
-  sortByRevision(replicators, descending, annotation) {
-    const compare = (left, right) => {
-      const leftVersion = parseInt(_.get(left, ['metadata', 'annotations', annotation]), 10);
-      const rightVersion = parseInt(_.get(right, ['metadata', 'annotations', annotation]), 10);
-      if (!_.isFinite(leftVersion) && !_.isFinite(rightVersion)) {
-        const leftName = _.get(left, 'metadata.name', '');
-        const rightName = _.get(right, 'metadata.name', '');
-        if (descending) {
-          return rightName.localeCompare(leftName);
-        }
-        return leftName.localeCompare(rightName);
-      }
-
-      if (!leftVersion) {
-        return descending ? 1 : -1;
-      }
-
-      if (!rightVersion) {
-        return descending ? -1 : 1;
-      }
-
-      if (descending) {
-        return rightVersion - leftVersion;
-      }
-
-      return leftVersion - rightVersion;
-    };
-
-    return _.toArray(replicators).sort(compare);
-  }
-
-  sortRSByRevison(replicaSets, descending) {
-    return this.sortByRevision(replicaSets, descending, 'deployment.kubernetes.io/revision');
-  }
-
-  sortRCByRevision(replicationControllers, descending) {
-    return this.sortByRevision(replicationControllers, descending, 'openshift.io/deployment-config.latest-version');
-  }
-
   filterItems(items) {
     const {filterValue} = this.state;
     const {selectedItem} = this.props;
@@ -193,7 +201,7 @@ class OverviewDetails extends React.Component {
 
     const filterString = filterValue.toLowerCase();
     return _.filter(items, item => {
-      return fuzzy(filterString, _.get(item, 'metadata.name', '')) || _.get(item, 'metadata.uid') === _.get(selectedItem, 'metadata.uid');
+      return fuzzy(filterString, _.get(item, 'obj.metadata.name', '')) || _.get(item, 'obj.metadata.uid') === _.get(selectedItem, 'obj.metadata.uid');
     });
   }
 
@@ -212,7 +220,7 @@ class OverviewDetails extends React.Component {
       return [{items}];
     }
 
-    const groups = _.groupBy(items, item => _.get(item, ['metadata', 'labels', label], 'other'));
+    const groups = _.groupBy(items, item => _.get(item, ['obj', 'metadata', 'labels', label], 'other'));
     return _.map(groups, (group, name) => {
       return {
         name,
@@ -223,7 +231,7 @@ class OverviewDetails extends React.Component {
 
   getGroupOptionsFromLabels(items) {
     const {groupOptions} = this.state;
-    const labelKeys = _.flatMap(items, item => _.keys(item.metadata.labels));
+    const labelKeys = _.flatMap(items, item => _.keys(_.get(item,'obj.metadata.labels', {})));
     return _.reduce(labelKeys, (accumulator, key) => {
       if (_.has(key, accumulator)) {
         return accumulator;
@@ -235,58 +243,128 @@ class OverviewDetails extends React.Component {
     }, groupOptions);
   }
 
-  buildGraphForReplicators(replicators, kind) {
+  addPodsToItem(item) {
     const {pods} = this.props;
-    return _.map(replicators, replicator => {
-      const {uid: replicatorUid} = replicator.metadata;
-      const ownedPods = getOwnedResources(pods.data, replicatorUid);
-      return {
-        ...replicator,
-        kind,
-        pods: ownedPods
-      };
+    return {
+      ...item,
+      pods: getOwnedResources(item.obj, pods.data)
+    };
+  }
+
+  addReplicationControllersToItem(item) {
+    const {replicationControllers} = this.props;
+    const ownedRCs = _.map(getOwnedResources(item.obj, replicationControllers.data), rc => {
+      return this.addPodsToItem({
+        obj: {
+          ...rc,
+          kind: ReplicationControllerModel.kind
+        }
+      });
+    });
+    const sortedRCs = sortReplicationControllersByRevision(ownedRCs);
+    const latestRC = _.head(sortedRCs);
+    return {
+      ...item,
+      replicationControllers: sortedRCs,
+      controller: latestRC
+    };
+  }
+
+  addReplicaSetsToItem(item) {
+    const {replicaSets} = this.props;
+    const ownedRSs = _.map(getOwnedResources(item.obj, replicaSets.data), rs => {
+      return this.addPodsToItem({
+        obj: {
+          ...rs,
+          kind: ReplicaSetModel.kind
+        }
+      });
+    });
+    const sortedRSs = sortReplicaSetsByRevision(ownedRSs);
+    const latestRS = _.head(sortedRSs);
+    return {
+      ...item,
+      replicaSets: sortedRSs,
+      controller: latestRS
+    };
+  }
+
+  createDaemonSetItems() {
+    const {daemonSets} = this.props;
+    return _.map(daemonSets.data, ds => {
+      return this.addPodsToItem({
+        obj: {
+          ...ds,
+          kind: DaemonSetModel.kind
+        },
+        readiness: {
+          desired: ds.status.desiredNumberScheduled || 0,
+          ready: ds.status.currentNumberScheduled || 0
+        }
+      });
     });
   }
 
-  buildGraphForRootResources(rootResources, kind) {
-    const {replicationControllers, replicaSets} = this.props;
+  createDeploymentItems() {
+    const {deployments} = this.props;
+    return _.map(deployments.data, d => {
+      return this.addReplicaSetsToItem({
+        obj: {
+          ...d,
+          kind: DeploymentModel.kind
+        },
+        readiness: {
+          desired: d.spec.replicas || 0,
+          ready: d.status.replicas || 0
+        }
+      });
+    });
+  }
 
-    return _.map(rootResources, rootResource => {
-      const {uid: rootResourceUid} = rootResource.metadata;
-      // Determine the replication controllers/replica sets associated with these resources
-      const ownedReplicationControllers = this.buildGraphForReplicators(getOwnedResources(replicationControllers.data, rootResourceUid), 'ReplicationController');
-      const ownedReplicaSets = this.buildGraphForReplicators(getOwnedResources(replicaSets.data, rootResourceUid), 'ReplicaSet');
-      const orderedReplicationControllers = this.sortRCByRevision(ownedReplicationControllers, 'ReplicationController', true);
-      const orderedReplicaSets = this.sortRSByRevison(ownedReplicaSets, 'ReplicaSet', true);
-      const controller = _.head(orderedReplicationControllers) || _.head(orderedReplicaSets);
+  createDeploymentConfigItems() {
+    const {deploymentConfigs} = this.props;
+    return _.map(deploymentConfigs.data, dc => {
+      return this.addReplicationControllersToItem({
+        obj: {
+          ...dc,
+          kind: DeploymentConfigModel.kind
+        },
+        readiness: {
+          desired: dc.spec.replicas || 0,
+          ready: dc.status.replicas || 0
+        }
+      });
+    });
+  }
 
-      return {
-        ...rootResource,
-        controller,
-        kind,
-        replicaSets: orderedReplicaSets,
-        replicationControllers: orderedReplicationControllers,
-      };
+  createStatefulSetItems() {
+    const {statefulSets} = this.props;
+    return _.map(statefulSets.data, (ss) => {
+      return this.addPodsToItem({
+        obj: {
+          ...ss,
+          kind: StatefulSetModel.kind
+        },
+        readiness: {
+          desired: ss.spec.replicas || 0,
+          ready: ss.status.replicas || 0
+        }
+      });
     });
   }
 
   createOverviewData() {
-    const {daemonSets, deploymentConfigs, deployments, loaded, statefulSets} = this.props;
+    const {loaded} = this.props;
 
     if (!loaded) {
       return;
     }
 
-    const daemonSetItems = this.buildGraphForRootResources(daemonSets.data, 'DaemonSet');
-    const deploymentConfigItems = this.buildGraphForRootResources(deploymentConfigs.data, 'DeploymentConfig');
-    const deploymentItems = this.buildGraphForRootResources(deployments.data, 'Deployment');
-    const statefulSetItems = this.buildGraphForReplicators(statefulSets.data, 'StatefulSet');
-
     const items = [
-      ...daemonSetItems,
-      ...deploymentConfigItems,
-      ...deploymentItems,
-      ...statefulSetItems
+      ...this.createDaemonSetItems(),
+      ...this.createDeploymentItems(),
+      ...this.createDeploymentConfigItems(),
+      ...this.createStatefulSetItems()
     ];
 
     const filteredItems = this.filterItems(items);
@@ -453,8 +531,8 @@ export class Overview extends React.Component {
             <CloseButton onClick={() => this.selectItem({})} />
           </div>
           <ResourceOverviewPage
-            kind={selectedItem.kind}
-            resource={selectedItem}
+            kind={selectedItem.obj.kind}
+            resource={selectedItem.obj}
           />
         </div>
       }
