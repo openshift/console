@@ -4,7 +4,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import * as classNames from 'classnames';
 import { JSONSchema6 } from 'json-schema';
-import Form, { FieldTemplateProps, FormProps } from 'react-jsonschema-form';
+import Form, { FieldTemplateProps, FormProps, UiSchema } from 'react-jsonschema-form';
 
 import { SecretModel } from '../../models';
 import { k8sCreate, K8sResourceKind } from '../../module/k8s';
@@ -16,7 +16,57 @@ const getSchema = (plan: K8sResourceKind, path: string): JSONSchema6 => {
 };
 
 export const getInstanceCreateSchema = (plan: K8sResourceKind) => getSchema(plan, 'spec.instanceCreateParameterSchema');
+export const getInstanceCreateParametersForm = (plan: K8sResourceKind) => _.get(plan, 'spec.externalMetadata.schemas.service_instance.create.openshift_form_definition');
+
 export const getBindingCreateSchema = (plan: K8sResourceKind) => getSchema(plan, 'spec.serviceBindingCreateParameterSchema');
+export const getBindingParametersForm = (plan: K8sResourceKind) => _.get(plan, 'spec.externalMetadata.schemas.service_binding.create.openshift_form_definition');
+
+// Flatten items from fieldsets into a single list of parameters. Fieldsets aren't supported.
+const flattenParameters = (parametersForm: ParameterFormItem[]): ParameterFormItem[] => {
+  return parametersForm.reduce((result: ParameterFormItem[], param: ParameterFormItem) => {
+    // If param has an `items` array, it's a fieldset. Add the fieldset parameters to the top-level array (preserving order).
+    const fieldsetItems = _.get(param, 'items');
+    const values = _.isEmpty(fieldsetItems) ? param : fieldsetItems;
+    return result.concat(values);
+  }, []);
+};
+
+const UI_ORDER = 'ui:order';
+const UI_WIDGET = 'ui:widget';
+
+// The whitelist of types for openshift_form_defintion items are textarea, password, checkbox, select.
+// Map these to the `ui:widget` value expected by react-jsonschema-form.
+const widgetForType = Object.freeze({
+  'checkbox': 'checkboxes',
+  'password': 'password',
+  'select': 'select',
+  'textarea': 'textarea',
+});
+
+// Convert from the broker parameters form definition to the UI schema expected by react-jsonschema-form:
+// https://github.com/mozilla-services/react-jsonschema-form#form-customization
+//
+// The parameters form definition is a small subset of what was supported by angular-schema-form in the previous AngularJS catalog implementation:
+// https://github.com/json-schema-form/angular-schema-form
+export const getUISchema = (parametersForm: ParameterFormItem[]): UiSchema => {
+  if (_.isEmpty(parametersForm)) {
+    return {};
+  }
+
+  const flatParams = flattenParameters(parametersForm);
+  return flatParams.reduce((result: UiSchema, param: ParameterFormItem) => {
+    if (_.isString(param)) {
+      result[UI_ORDER].push(param);
+    } else if (param.key) {
+      result[UI_ORDER].push(param.key);
+      const widget = widgetForType[param.type];
+      if (widget) {
+        _.set(result, [param.key, UI_WIDGET], widget);
+      }
+    }
+    return result;
+  }, {[UI_ORDER]: []});
+};
 
 export const createParametersSecret = (secretName: string, key: string, parameters: any, owner: K8sResourceKind): Promise<K8sResourceKind> => {
   const secret = {
@@ -54,3 +104,9 @@ const CustomFieldTemplate: React.SFC<FieldTemplateProps> = ({id, classNames: kla
 
 export const ServiceCatalogParametersForm: React.SFC<FormProps<any>> = props =>
   <Form className="co-service-catalog-parameters" FieldTemplate={CustomFieldTemplate} {...props} />;
+
+export type ParameterFormItem = {
+  key: string;
+  type?: string;
+  items?: any[];
+} | string;
