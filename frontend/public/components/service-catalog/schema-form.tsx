@@ -94,16 +94,29 @@ export const createParametersSecret = (secretName: string, key: string, paramete
 
 // Override react-jsonschema-form rendering of fields so we can use different required and description styles.
 // https://github.com/mozilla-services/react-jsonschema-form#field-template
-const CustomFieldTemplate: React.SFC<FieldTemplateProps> = ({id, classNames: klass, label, help, required, description, errors, children}) => <div className={klass}>
-  <label htmlFor={id} className={classNames('control-label', {'co-required': required})}>{label}</label>
+const CustomFieldTemplate: React.SFC<FieldTemplateProps> = ({id, classNames: klass, displayLabel, label, help, required, description, errors, children}) => <div className={klass}>
+  {displayLabel && <label htmlFor={id} className={classNames('control-label', {'co-required': required})}>{label}</label>}
   {children}
   <div className="help-block">{description}</div>
   {help}
   {errors}
 </div>;
 
+// Create a custom checkbox widget to prevent any checkbox from receiving a `required` attribute.
+// With HTML5 form validation, a required checkbox has to be checked to submit the form.
+const CustomCheckbox = ({onChange, label, value}) => <div className="checkbox">
+  <label className="control-label">
+    <input type="checkbox" onClick={() => onChange(!value)} checked={value} />
+    {label}
+  </label>
+</div>;
+
+const widgets: any = {
+  CheckboxWidget: CustomCheckbox,
+};
+
 export const ServiceCatalogParametersForm: React.SFC<FormProps<any>> = props =>
-  <Form className="co-service-catalog-parameters" FieldTemplate={CustomFieldTemplate} {...props} />;
+  <Form className="co-service-catalog-parameters" FieldTemplate={CustomFieldTemplate} widgets={widgets} {...props} />;
 
 export type ParameterFormItem = {
   key: string;
