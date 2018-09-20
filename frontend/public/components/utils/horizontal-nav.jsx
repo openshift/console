@@ -4,9 +4,9 @@ import * as classNames from 'classnames';
 import * as PropTypes from 'prop-types';
 import { Route, Switch, Link } from 'react-router-dom';
 
-import { EmptyBox, StatusBox } from './index';
+import { EmptyBox, StatusBox } from '.';
 import { PodsPage } from '../pod';
-import { AsyncComponent } from '../utils/async';
+import { AsyncComponent } from './async';
 
 const editYamlComponent = (props) => <AsyncComponent loader={() => import('../edit-yaml').then(c => c.EditYAML)} obj={props.obj} />;
 export const viewYamlComponent = (props) => <AsyncComponent loader={() => import('../edit-yaml').then(c => c.EditYAML)} obj={props.obj} readOnly={true} />;
@@ -80,11 +80,11 @@ export const navFactory = {
 
 /** @type {React.SFC<{pages: {href: string, name: string}[], basePath: string}>} */
 export const NavBar = ({pages, basePath}) => {
-  const divider = <li className="co-m-vert-nav__menu-item co-m-vert-nav__menu-item--divider" key="_divider" />;
+  const divider = <li className="co-m-horizontal-nav__menu-item co-m-horizontal-nav__menu-item--divider" key="_divider" />;
   basePath = basePath.replace(/\/$/, '');
 
-  return <ul className="co-m-vert-nav__menu">{_.flatten(_.map(pages, ({name, href}, i) => {
-    const klass = classNames('co-m-vert-nav__menu-item', {'co-m-vert-nav-item--active': location.pathname.replace(basePath, '/').endsWith(`/${href}`)});
+  return <ul className="co-m-horizontal-nav__menu">{_.flatten(_.map(pages, ({name, href}, i) => {
+    const klass = classNames('co-m-horizontal-nav__menu-item', {'co-m-horizontal-nav-item--active': location.pathname.replace(basePath, '/').endsWith(`/${href}`)});
     const tab = <li className={klass} key={name}><Link to={`${basePath}/${href}`}>{name}</Link></li>;
 
     // These tabs go before the divider
@@ -95,7 +95,7 @@ export const NavBar = ({pages, basePath}) => {
 NavBar.displayName = 'NavBar';
 
 /** @augments {React.PureComponent<{className?: string, label?: string, pages: {href: string, name: string, component: React.ComponentType}[], match: any, resourceKeys?: string[]}>} */
-export class VertNav extends React.PureComponent {
+export class HorizontalNav extends React.PureComponent {
   render () {
     const props = this.props;
 
@@ -112,7 +112,7 @@ export class VertNav extends React.PureComponent {
     });
 
     return <div className={props.className}>
-      <div className="co-m-vert-nav">
+      <div className="co-m-horizontal-nav">
         {!props.hideNav && <NavBar pages={props.pages} basePath={props.match.url} />}
         <StatusBox {...props.obj} EmptyMsg={props.EmptyMsg} label={props.label}>
           <Switch> {routes} </Switch>
@@ -122,7 +122,7 @@ export class VertNav extends React.PureComponent {
   }
 }
 
-VertNav.propTypes = {
+HorizontalNav.propTypes = {
   pages: PropTypes.arrayOf(PropTypes.shape({
     href: PropTypes.string,
     name: PropTypes.string,

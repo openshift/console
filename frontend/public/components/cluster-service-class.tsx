@@ -6,7 +6,7 @@ import * as _ from 'lodash-es';
 
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import { history, SectionHeading, detailsPage, navFactory, ResourceSummary, resourcePathFromModel, ResourceLink } from './utils';
-import { viewYamlComponent } from './utils/vertnav';
+import { viewYamlComponent } from './utils/horizontal-nav';
 import { ClusterServiceClassModel } from '../models';
 // eslint-disable-next-line no-unused-vars
 import { K8sResourceKind, K8sResourceKindReference, serviceClassDisplayName } from '../module/k8s';

@@ -6,7 +6,7 @@ import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from '.
 import { SectionHeading, detailsPage, navFactory, ResourceLink, ResourceSummary } from './utils';
 // eslint-disable-next-line no-unused-vars
 import { K8sResourceKind, K8sResourceKindReference, servicePlanDisplayName } from '../module/k8s';
-import { viewYamlComponent } from './utils/vertnav';
+import { viewYamlComponent } from './utils/horizontal-nav';
 
 const ClusterServicePlanReference: K8sResourceKindReference = 'ClusterServicePlan';
 
