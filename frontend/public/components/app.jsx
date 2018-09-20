@@ -130,6 +130,10 @@ class App extends React.PureComponent {
         <Switch>
           <Route path={['/all-namespaces', '/ns/:ns',]} component={RedirectComponent} />
 
+          <LazyRoute path="/overview/ns/:ns" exact loader={() => import('./overview' /* webpackChunkName: "overview" */).then(m => m.OverviewPage)} />
+          <LazyRoute path="/overview/all-namespaces" exact loader={() => import('./overview' /* webpackChunkName: "overview" */).then(m => m.OverviewPage)} />
+          <Route path="/overview" exact component={NamespaceRedirect} />
+
           <LazyRoute path="/catalog/all-namespaces" exact loader={() => import('./catalog' /* webpackChunkName: "catalog" */).then(m => m.CatalogPage)} />
           <LazyRoute path="/catalog/ns/:ns" exact loader={() => import('./catalog' /* webpackChunkName: "catalog" */).then(m => m.CatalogPage)} />
           <Route path="/catalog" exact component={NamespaceRedirect} />
@@ -140,7 +144,6 @@ class App extends React.PureComponent {
 
           <LazyRoute path="/cluster-health" exact loader={() => import('./cluster-health' /* webpackChunkName: "cluster-health" */).then(m => m.ClusterHealth)} />
           <LazyRoute path="/start-guide" exact loader={() => import('./start-guide' /* webpackChunkName: "start-guide" */).then(m => m.StartGuidePage)} />
-          <LazyRoute path="/overview/ns/:ns" exact loader={() => import('./overview' /* webpackChunkName: "overview" */).then(m => m.OverviewPage)} />
 
           <LazyRoute path={`/k8s/ns/:ns/${SubscriptionModel.plural}/new`} exact loader={() => import('./operator-lifecycle-manager').then(m => NamespaceFromURL(m.CreateSubscriptionYAML))} />
 
