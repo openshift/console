@@ -10,8 +10,8 @@ import { viewYamlComponent } from './utils/vertnav';
 import { ClusterServiceClassModel } from '../models';
 // eslint-disable-next-line no-unused-vars
 import { K8sResourceKind, K8sResourceKindReference, serviceClassDisplayName } from '../module/k8s';
+import { ClusterServiceClassIcon } from './catalog-item-icon';
 import { ClusterServicePlanPage } from './cluster-service-plan';
-import { ClusterServiceClassIcon } from './cluster-service-class-icon';
 import { ClusterServiceClassInfo } from './cluster-service-class-info';
 
 const ClusterServiceClassReference: K8sResourceKindReference = 'ClusterServiceClass';

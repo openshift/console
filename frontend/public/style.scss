@@ -87,11 +87,11 @@
 @import "components/utils/value-from-pair";
 @import "components/documentation";
 @import "components/terminal";
-@import "components/cluster-service-class";
+@import "components/catalog-item";
 @import "components/cluster-service-instance";
 @import "components/overview";
 @import "components/project-overview";
 @import "components/list-view";
-
 @import "kubevirt/style";
-
+@import "components/deploy-image";
+@import "components/source-to-image";

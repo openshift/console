@@ -30,11 +30,6 @@ class CreateInstance extends React.Component<CreateInstanceProps, CreateInstance
       formData: {},
       inProgress: false,
     };
-
-    this.onNamespaceChange = this.onNamespaceChange.bind(this);
-    this.onNameChange = this.onNameChange.bind(this);
-    this.onFormChange = this.onFormChange.bind(this);
-    this.save = this.save.bind(this);
   }
 
   static getDerivedStateFromProps(props: CreateInstanceProps, state: CreateInstanceState) {
@@ -159,7 +154,7 @@ class CreateInstance extends React.Component<CreateInstanceProps, CreateInstance
       />
       <div className="co-m-pane__body co-create-service-instance">
         <div className="row">
-          <div className="col-md-7 col-md-push-5 co-cluster-service-instance-info">
+          <div className="col-md-7 col-md-push-5 co-catalog-item-info">
             <ClusterServiceClassInfo obj={serviceClass} />
           </div>
           <div className="col-md-5 col-md-pull-7">

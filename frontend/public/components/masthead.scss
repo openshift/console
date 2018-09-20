@@ -39,7 +39,8 @@
   &__user {
     display: none;
     @media (min-width: $grid-float-breakpoint) {
-      display: block;
+      align-items: baseline;
+      display: flex;
       margin-left: auto;
       margin-right: 20px;
     }
@@ -59,6 +60,8 @@
     max-width: 200px;
     overflow: hidden;
     text-overflow: ellipsis;
+    // if the username is long and contains a space, prevent wrapping
+    white-space: nowrap;
     @media(min-width: $screen-md-min) {
       max-width: 300px;
     }
