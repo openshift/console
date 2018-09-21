@@ -1,5 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
+import * as classNames from 'classnames';
 import { Tooltip } from './tooltip';
 
 import { K8sKind, K8sResourceKind } from '../../module/k8s';
@@ -12,6 +13,8 @@ import { LoadingInline, pluralize } from './';
 type DPCProps = {
   resource: K8sResourceKind;
   resourceKind: K8sKind;
+  // Stack the pod counts if we don't have the full screen width.
+  sidebar?: boolean;
 };
 
 type DPCState = {
@@ -60,13 +63,13 @@ export class DeploymentPodCounts extends SafetyFirst<DPCProps, DPCState> {
   }
 
   render () {
-    const { resource, resourceKind } = this.props;
+    const { resource, resourceKind, sidebar } = this.props;
     const { spec, status } = resource;
 
     return <div className="co-m-pane__body-group">
       <div className="co-detail-table">
         <div className="co-detail-table__row row">
-          <div className="co-detail-table__section col-sm-3">
+          <div className={classNames('co-detail-table__section', { 'col-sm-3': !sidebar })}>
             <dl className="co-m-pane__details">
               <dt className="co-detail-table__section-header">Desired Count</dt>
               <dd>
@@ -78,7 +81,7 @@ export class DeploymentPodCounts extends SafetyFirst<DPCProps, DPCState> {
               </dd>
             </dl>
           </div>
-          <div className="co-detail-table__section col-sm-3">
+          <div className={classNames('co-detail-table__section', { 'col-sm-3': !sidebar })}>
             <dl className="co-m-pane__details">
               <dt className="co-detail-table__section-header">Up-to-date Count</dt>
               <dd>
@@ -88,7 +91,7 @@ export class DeploymentPodCounts extends SafetyFirst<DPCProps, DPCState> {
               </dd>
             </dl>
           </div>
-          <div className="co-detail-table__section co-detail-table__section--last col-sm-6">
+          <div className={classNames('co-detail-table__section', 'co-detail-table__section--last', { 'col-sm-6': !sidebar })}>
             <dl className="co-m-pane__details">
               <dt className="co-detail-table__section-header">Matching Pods</dt>
               <dd>
