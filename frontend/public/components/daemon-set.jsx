@@ -14,6 +14,7 @@ import {
 import {
   AsyncComponent,
   Cog,
+  ContainerTable,
   detailsPage,
   LabelList,
   navFactory,
@@ -80,17 +81,23 @@ export const DaemonSetOverview = connectToModel(({kindObj, resource: ds}) =>
     </div>
   </div>);
 
-const Details = ({obj: daemonset}) => <div className="co-m-pane__body">
-  <SectionHeading text="Daemon Set Overview" />
-  <div className="row">
-    <div className="col-lg-6">
-      <ResourceSummary resource={daemonset} />
-    </div>
-    <div className="col-lg-6">
-      <DaemonSetDetailsList ds={daemonset} />
+const Details = ({obj: daemonset}) => <React.Fragment>
+  <div className="co-m-pane__body">
+    <SectionHeading text="Daemon Set Overview" />
+    <div className="row">
+      <div className="col-lg-6">
+        <ResourceSummary resource={daemonset} />
+      </div>
+      <div className="col-lg-6">
+        <DaemonSetDetailsList ds={daemonset} />
+      </div>
     </div>
   </div>
-</div>;
+  <div className="co-m-pane__body">
+    <SectionHeading text="Containers" />
+    <ContainerTable containers={daemonset.spec.template.spec.containers} />
+  </div>
+</React.Fragment>;
 
 const EnvironmentPage = (props) => <AsyncComponent loader={() => import('./environment.jsx').then(c => c.EnvironmentPage)} {...props} />;
 

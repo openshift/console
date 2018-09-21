@@ -3,7 +3,7 @@ import * as React from 'react';
 import { ResourceEventStream } from './events';
 import { DetailsPage, List, ListPage, WorkloadListHeader, WorkloadListRow } from './factory';
 import { replicaSetMenuActions } from './replicaset';
-import {navFactory, SectionHeading, ResourceSummary, ResourcePodCount, AsyncComponent} from './utils';
+import { ContainerTable, navFactory, SectionHeading, ResourceSummary, ResourcePodCount, AsyncComponent} from './utils';
 import { breadcrumbsForOwnerRefs } from './utils/breadcrumbs';
 
 const Details = ({obj: replicationController}) => <React.Fragment>
@@ -17,6 +17,10 @@ const Details = ({obj: replicationController}) => <React.Fragment>
         <ResourcePodCount resource={replicationController} />
       </div>
     </div>
+  </div>
+  <div className="co-m-pane__body">
+    <SectionHeading text="Containers" />
+    <ContainerTable containers={replicationController.spec.template.spec.containers} />
   </div>
 </React.Fragment>;
 

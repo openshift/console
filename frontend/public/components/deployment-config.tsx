@@ -7,7 +7,6 @@ import { errorModal } from './modals';
 import { DeploymentConfigModel } from '../models';
 import { Conditions } from './conditions';
 import { ResourceEventStream } from './events';
-import { ContainerTable } from './deployment';
 import { connectToModel } from '../kinds';
 import { ResourceOverviewHeading } from './overview';
 import {
@@ -20,6 +19,7 @@ import {
 import {
   AsyncComponent,
   Cog,
+  ContainerTable,
   DeploymentPodCounts,
   LoadingInline,
   navFactory,

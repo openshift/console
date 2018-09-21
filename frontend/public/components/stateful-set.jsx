@@ -13,6 +13,7 @@ import {
 import {
   AsyncComponent,
   Cog,
+  ContainerTable,
   ResourceSummary,
   SectionHeading,
   navFactory
@@ -27,6 +28,10 @@ const Details = ({obj: ss}) => <React.Fragment>
   <div className="co-m-pane__body">
     <SectionHeading text="StatefulSet Overview" />
     <ResourceSummary resource={ss} showNodeSelector={false} />
+  </div>
+  <div className="co-m-pane__body">
+    <SectionHeading text="Containers" />
+    <ContainerTable containers={ss.spec.template.spec.containers} />
   </div>
 </React.Fragment>;
 
