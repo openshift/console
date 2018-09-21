@@ -108,6 +108,7 @@ set +e
 builder_run 'Build' 0 1 ./build.sh
 builder_run 'Tests' 0 1 ./test.sh
 builder_run 'GUI-Tests' 1 1 ./test-gui.sh crud
+builder_run 'GUI-Tests-S2I' 1 0 ./test-gui.sh s2i
 builder_run 'GUI-Tests-OLM' 1 0 ./test-gui.sh olm
 
 status 'Performance' 'pending'
