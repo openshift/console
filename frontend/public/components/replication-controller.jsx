@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as _ from 'lodash-es';
 
 import { ResourceEventStream } from './events';
 import { DetailsPage, List, ListPage, WorkloadListHeader, WorkloadListRow } from './factory';
@@ -6,23 +7,31 @@ import { replicaSetMenuActions } from './replicaset';
 import { ContainerTable, navFactory, SectionHeading, ResourceSummary, ResourcePodCount, AsyncComponent} from './utils';
 import { breadcrumbsForOwnerRefs } from './utils/breadcrumbs';
 
-const Details = ({obj: replicationController}) => <React.Fragment>
-  <div className="co-m-pane__body">
-    <SectionHeading text="Replication Controller Overview" />
-    <div className="row">
-      <div className="col-md-6">
-        <ResourceSummary resource={replicationController} />
-      </div>
-      <div className="col-md-6">
-        <ResourcePodCount resource={replicationController} />
+const Details = ({obj: replicationController}) => {
+  const revision = _.get(replicationController, ['metadata', 'annotations', 'openshift.io/deployment-config.latest-version']);
+  return <React.Fragment>
+    <div className="co-m-pane__body">
+      <SectionHeading text="Replication Controller Overview" />
+      <div className="row">
+        <div className="col-md-6">
+          <ResourceSummary resource={replicationController}>
+            {revision && <React.Fragment>
+              <dt>Deployment Revision</dt>
+              <dd>{revision}</dd>
+            </React.Fragment>}
+          </ResourceSummary>
+        </div>
+        <div className="col-md-6">
+          <ResourcePodCount resource={replicationController} />
+        </div>
       </div>
     </div>
-  </div>
-  <div className="co-m-pane__body">
-    <SectionHeading text="Containers" />
-    <ContainerTable containers={replicationController.spec.template.spec.containers} />
-  </div>
-</React.Fragment>;
+    <div className="co-m-pane__body">
+      <SectionHeading text="Containers" />
+      <ContainerTable containers={replicationController.spec.template.spec.containers} />
+    </div>
+  </React.Fragment>;
+};
 
 const EnvironmentPage = (props) => <AsyncComponent loader={() => import('./environment.jsx').then(c => c.EnvironmentPage)} {...props} />;
 
