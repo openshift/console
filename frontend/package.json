@@ -1,8 +1,7 @@
 {
-  "name": "bridge",
-  "description": "CoreOS Tectonic Dashboard",
+  "description": "OpenShift Web Console",
   "repository": "https://github.com/openshift/console",
-  "version": "0.1.0",
+  "license": "Apache-2.0",
   "private": true,
   "scripts": {
     "dev": "rm -rf ./public/dist/ && ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/webpack --mode development --watch --progress",
