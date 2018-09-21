@@ -8141,9 +8141,9 @@ patternfly-bootstrap-treeview@~2.1.0:
     bootstrap "3.3.x"
     jquery ">= 2.1.x"
 
-patternfly-react-extensions@2.5.0:
-  version "2.5.0"
-  resolved "https://registry.yarnpkg.com/patternfly-react-extensions/-/patternfly-react-extensions-2.5.0.tgz#50631d2ca9bc143cb8cd13a2534518e352344375"
+patternfly-react-extensions@2.5.1:
+  version "2.5.1"
+  resolved "https://registry.yarnpkg.com/patternfly-react-extensions/-/patternfly-react-extensions-2.5.1.tgz#52027c32ef4e64cced16f18ceea230166033e061"
   dependencies:
     breakjs "^1.0.0"
     classnames "^2.2.5"
