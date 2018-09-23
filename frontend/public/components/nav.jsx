@@ -259,6 +259,7 @@ const Sep = () => <div className="navigation-container__section__separator" />;
 const searchStartsWith = ['search'];
 const rolesStartsWith = ['roles', 'clusterroles'];
 const rolebindingsStartsWith = ['rolebindings', 'clusterrolebindings'];
+const quotaStartsWith = ['resourcequotas', 'clusterresourcequotas'];
 const imagestreamsStartsWith = ['imagestreams', 'imagestreamtags'];
 const clusterSettingsStartsWith = ['settings/cluster', 'settings/ldap'];
 
@@ -437,7 +438,7 @@ export class Nav extends React.Component {
             <ResourceNSLink resource="serviceaccounts" name="Service Accounts" onClick={this.close} />
             <ResourceNSLink resource="roles" name="Roles" startsWith={rolesStartsWith} onClick={this.close} />
             <ResourceNSLink resource="rolebindings" name="Role Bindings" onClick={this.close} startsWith={rolebindingsStartsWith} />
-            <ResourceNSLink resource="resourcequotas" name="Resource Quotas" onClick={this.close} />
+            <ResourceNSLink resource="resourcequotas" name="Resource Quotas" onClick={this.close} startsWith={quotaStartsWith} />
             <ResourceNSLink resource="limitranges" name="Limit Ranges" onClick={this.close} />
             <ResourceNSLink resource="chargeback.coreos.com:v1alpha1:Report" name="Chargeback" onClick={this.close} disallowed={FLAGS.OPENSHIFT} />
             <ResourceClusterLink resource="customresourcedefinitions" name="CRDs" onClick={this.close} required={FLAGS.CAN_LIST_CRD} />
