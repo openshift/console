@@ -2,7 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
-import { Cog, navFactory, ResourceCog, SectionHeading, ResourceLink, ResourceSummary, Timestamp } from './utils';
+import { Cog, ContainerTable, navFactory, ResourceCog, SectionHeading, ResourceLink, ResourceSummary, Timestamp } from './utils';
 import { ResourceEventStream } from './events';
 
 const menuActions = [Cog.factory.Edit, Cog.factory.Delete];
@@ -37,34 +37,40 @@ const Row = ({obj: cronjob}) => <div className="row co-resource-list__item">
 
 const Details = ({obj: cronjob}) => {
   const job = cronjob.spec.jobTemplate;
-  return <div className="co-m-pane__body">
-    <div className="row">
-      <div className="col-md-6">
-        <SectionHeading text="CronJob Overview" />
-        <ResourceSummary resource={cronjob} showNodeSelector={false} showPodSelector={false} showAnnotations={false}>
-          <dt>Schedule</dt>
-          <dd>{cronjob.spec.schedule}</dd>
-          <dt>Concurrency Policy</dt>
-          <dd>{cronjob.spec.concurrencyPolicy || '-'}</dd>
-          <dt>Starting Deadline Seconds</dt>
-          <dd>{cronjob.spec.startingDeadlineSeconds || '-'}</dd>
-          <dt>Last Schedule Time</dt>
-          <dd><Timestamp timestamp={cronjob.status.lastScheduleTime} /></dd>
-        </ResourceSummary>
-      </div>
-      <div className="col-md-6">
-        <SectionHeading text="Job Overview" />
-        <dl className="co-m-pane__details">
-          <dt>Desired Completions</dt>
-          <dd>{job.spec.completions || '-'}</dd>
-          <dt>Parallelism</dt>
-          <dd>{job.spec.parallelism || '-'}</dd>
-          <dt>Deadline</dt>
-          <dd>{job.spec.activeDeadlineSeconds ? `${job.spec.activeDeadlineSeconds} seconds` : '-'}</dd>
-        </dl>
+  return <React.Fragment>
+    <div className="co-m-pane__body">
+      <div className="row">
+        <div className="col-md-6">
+          <SectionHeading text="CronJob Overview" />
+          <ResourceSummary resource={cronjob} showNodeSelector={false} showPodSelector={false} showAnnotations={false}>
+            <dt>Schedule</dt>
+            <dd>{cronjob.spec.schedule}</dd>
+            <dt>Concurrency Policy</dt>
+            <dd>{cronjob.spec.concurrencyPolicy || '-'}</dd>
+            <dt>Starting Deadline Seconds</dt>
+            <dd>{cronjob.spec.startingDeadlineSeconds || '-'}</dd>
+            <dt>Last Schedule Time</dt>
+            <dd><Timestamp timestamp={cronjob.status.lastScheduleTime} /></dd>
+          </ResourceSummary>
+        </div>
+        <div className="col-md-6">
+          <SectionHeading text="Job Overview" />
+          <dl className="co-m-pane__details">
+            <dt>Desired Completions</dt>
+            <dd>{job.spec.completions || '-'}</dd>
+            <dt>Parallelism</dt>
+            <dd>{job.spec.parallelism || '-'}</dd>
+            <dt>Deadline</dt>
+            <dd>{job.spec.activeDeadlineSeconds ? `${job.spec.activeDeadlineSeconds} seconds` : '-'}</dd>
+          </dl>
+        </div>
       </div>
     </div>
-  </div>;
+    <div className="co-m-pane__body">
+      <SectionHeading text="Containers" />
+      <ContainerTable containers={job.spec.template.spec.containers} />
+    </div>
+  </React.Fragment>;
 };
 
 export const CronJobsList = props => <List {...props} Header={Header} Row={Row} />;
