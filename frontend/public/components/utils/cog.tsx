@@ -14,7 +14,7 @@ import { connectToModel } from '../../kinds';
 const CogItems: React.SFC<CogItemsProps> = ({options, onClick}) => {
   const visibleOptions = _.reject(options, o => _.get(o, 'hidden', false));
   const lis = _.map(visibleOptions, (o, i) => <li key={i}><a onClick={e => onClick(e, o)}>{o.label}</a></li>);
-  return <ul className="dropdown-menu co-m-cog__dropdown">
+  return <ul className="dropdown-menu dropdown-menu--block co-m-cog__dropdown">
     {lis}
   </ul>;
 };
