@@ -44,6 +44,7 @@ class CatalogListPage extends React.Component {
   }
 
   normalizeClusterServiceClasses(serviceClasses, kind) {
+    const {namespace = ''} = this.props;
     const activeServiceClasses = _.filter(serviceClasses, serviceClass => {
       return !serviceClass.status.removedFromBrokerCatalog;
     });
@@ -55,7 +56,7 @@ class CatalogListPage extends React.Component {
       const tileIconClass = tileImgUrl ? null : iconClass;
       const tileDescription = _.get(serviceClass, 'spec.description');
       const tileProvider = _.get(serviceClass, 'spec.externalMetadata.providerDisplayName');
-      const href = `/k8s/cluster/clusterserviceclasses/${serviceClass.metadata.name}/create-instance`;
+      const href = `/k8s/cluster/clusterserviceclasses/${serviceClass.metadata.name}/create-instance?preselected-ns=${namespace}`;
       return {
         obj: serviceClass,
         kind,
@@ -74,18 +75,19 @@ class CatalogListPage extends React.Component {
       return isBuilder(imagestream);
     });
 
-    return _.map(builderImageStreams, imagestream => {
-      const tag = getMostRecentBuilderTag(imagestream);
-      const tileName = _.get(imagestream, ['metadata', 'annotations', 'openshift.io/display-name']) || imagestream.metadata.name;
+    return _.map(builderImageStreams, imageStream => {
+      const { namespace: currentNamespace } = this.props;
+      const tag = getMostRecentBuilderTag(imageStream);
+      const tileName = _.get(imageStream, ['metadata', 'annotations', 'openshift.io/display-name']) || imageStream.metadata.name;
       const iconClass = getImageStreamIcon(tag);
       const tileImgUrl = getImageForIconClass(iconClass);
       const tileIconClass = tileImgUrl ? null : iconClass;
       const tileDescription = _.get(tag, 'annotations.description');
       const tileProvider = _.get(tag, 'annotations.openshift.io/provider-display-name');
-      const { name, namespace } = imagestream.metadata;
-      const href = `/source-to-image?imagestream=${name}&ns=${namespace}`;
+      const { name, namespace } = imageStream.metadata;
+      const href = `/source-to-image?imagestream=${name}&imagestream-ns=${namespace}&preselected-ns=${currentNamespace}`;
       return {
-        obj: imagestream,
+        obj: imageStream,
         kind,
         tileName,
         tileIconClass,
@@ -114,7 +116,8 @@ class CatalogListPage extends React.Component {
 CatalogListPage.displayName = 'CatalogList';
 
 CatalogListPage.propTypes = {
-  obj: PropTypes.object
+  obj: PropTypes.object,
+  namespace: PropTypes.string,
 };
 
 // eventually may use namespace
@@ -144,7 +147,7 @@ export const Catalog = connectToFlags(FLAGS.OPENSHIFT, FLAGS.SERVICE_CATALOG)(({
   }
   return <div className="catalog">
     <Firehose resources={resources}>
-      <CatalogListPage />
+      <CatalogListPage namespace={namespace} />
     </Firehose>
   </div>;
 });
@@ -152,7 +155,7 @@ export const Catalog = connectToFlags(FLAGS.OPENSHIFT, FLAGS.SERVICE_CATALOG)(({
 Catalog.displayName = 'Catalog';
 
 Catalog.propTypes = {
-  namespace: PropTypes.string.isRequired,
+  namespace: PropTypes.string,
 };
 
 export const CatalogPage = ({match}) => {

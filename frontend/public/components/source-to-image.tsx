@@ -74,9 +74,10 @@ class BuildSource extends React.Component<BuildSourceProps, BuildSourceState> {
   constructor (props) {
     super(props);
 
+    const { preselectNamespace: namespace = ''} = this.props;
     this.state = {
       tags: [],
-      namespace: '',
+      namespace,
       selectedTag: '',
       name: '',
       repository: '',
@@ -459,10 +460,11 @@ class BuildSource extends React.Component<BuildSourceProps, BuildSourceState> {
 export const SourceToImagePage = (props) => {
   const title = 'Create Source-to-Image Application';
   const searchParams = new URLSearchParams(location.search);
-  const namespace = searchParams.get('ns');
-  const name = searchParams.get('imagestream');
+  const imageStreamName = searchParams.get('imagestream');
+  const imageStreamNamespace = searchParams.get('imagestream-ns');
+  const preselectNamespace = searchParams.get('preselected-ns');
   const resources = [
-    {kind: 'ImageStream', name, namespace, isList: false, prop: 'obj'},
+    {kind: 'ImageStream', name: imageStreamName, namespace: imageStreamNamespace, isList: false, prop: 'obj'},
   ];
 
   return <React.Fragment>
@@ -472,7 +474,7 @@ export const SourceToImagePage = (props) => {
     <div className="co-m-pane__body">
       <h1 className="co-m-pane__heading">{title}</h1>
       <Firehose resources={resources}>
-        <BuildSource {...props} />
+        <BuildSource preselectNamespace={preselectNamespace} {...props} />
       </Firehose>
     </div>
   </React.Fragment>;
@@ -485,6 +487,7 @@ export type ImageStreamInfoProps = {
 
 export type BuildSourceProps = {
   obj: any,
+  preselectNamespace: string,
 };
 
 export type BuildSourceState = {

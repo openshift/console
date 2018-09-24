@@ -31,10 +31,10 @@ export class DeployImage extends React.Component<DeployImageProps, DeployImageSt
     super(props);
 
     const params = new URLSearchParams(props.location.search);
-    const ns = params.get('ns');
+    const namespace = params.get('preselected-ns');
 
     this.state = {
-      namespace: ns,
+      namespace,
       imageName: '',
       loading: false,
       inProgress: false,
