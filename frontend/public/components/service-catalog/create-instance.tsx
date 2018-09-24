@@ -22,9 +22,10 @@ class CreateInstance extends React.Component<CreateInstanceProps, CreateInstance
   constructor (props) {
     super(props);
 
+    const { preselectNamespace: namespace = ''} = this.props;
     this.state = {
       name: '',
-      namespace: '',
+      namespace,
       plan: '',
       formData: {},
       inProgress: false,
@@ -198,8 +199,10 @@ export const CreateInstancePage: React.SFC<CreateInstancePageProps> = (props) =>
     {kind: 'ClusterServiceClass', name: props.match.params.name, isList: false, prop: 'obj'},
     {kind: 'ClusterServicePlan', isList: true, prop: 'plans', fieldSelector: `spec.clusterServiceClassRef.name=${props.match.params.name}`},
   ];
+  const searchParams = new URLSearchParams(location.search);
+  const preselectNamespace = searchParams.get('preselect-ns');
   return <Firehose resources={resources}>
-    <CreateInstance {...props as any} />
+    <CreateInstance preselectNamespace={preselectNamespace} {...props as any} />
   </Firehose>;
 };
 
@@ -207,6 +210,7 @@ export type CreateInstanceProps = {
   obj: any,
   plans: any,
   match: any,
+  preselectNamespace: string,
 };
 
 export type CreateInstanceState = {
