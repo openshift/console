@@ -584,9 +584,9 @@ class SourceSecretForm extends React.Component<SourceSecretFormProps, SourceSecr
     this.changeAuthenticationType = this.changeAuthenticationType.bind(this);
     this.onDataChanged = this.onDataChanged.bind(this);
   }
-  changeAuthenticationType(event) {
+  changeAuthenticationType(type: SecretType) {
     this.setState({
-      type: event.target.value
+      type: type,
     }, () => this.props.onChange(this.state));
   }
   onDataChanged (secretsData) {
@@ -595,15 +595,16 @@ class SourceSecretForm extends React.Component<SourceSecretFormProps, SourceSecr
     }, () => this.props.onChange(this.state));
   }
   render () {
+    const authTypes = {
+      [SecretType.basicAuth]: 'Basic Authentication',
+      [SecretType.sshAuth]: 'SSH Key',
+    };
     return <React.Fragment>
       {this.props.isCreate
         ? <div className="form-group">
           <label className="control-label" htmlFor="secret-type">Authentication Type</label>
-          <div>
-            <select onChange={this.changeAuthenticationType} value={this.state.type} className="form-control" id="secret-type">
-              <option value={SecretType.basicAuth}>Basic Authentication</option>
-              <option value={SecretType.sshAuth}>SSH Key</option>
-            </select>
+          <div className="co-create-secret__dropdown">
+            <Dropdown title="Basic Authentication" items={authTypes} dropDownClassName="dropdown--full-width" id="dropdown-selectbox" onChange={this.changeAuthenticationType} />
           </div>
         </div>
         : null
