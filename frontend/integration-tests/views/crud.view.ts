@@ -1,5 +1,7 @@
 import { $, $$, browser, by, element, ExpectedConditions as until } from 'protractor';
 
+import { appHost, testName } from '../protractor.conf';
+
 export const createYAMLButton = $('#yaml-create');
 export const createItemButton = $('#item-create');
 export const createYAMLLink = $('#yaml-link');
@@ -101,3 +103,25 @@ export const resourceTitle = $('#resource-title');
 export const nameFilter = $('.form-control.text-filter');
 export const messageLbl = $('.cos-status-box');
 export const modalAnnotationsLink = element(by.partialLinkText('Annotation'));
+
+
+export const visitResource = async(resource: string, name: string) => {
+  await browser.get(`${appHost}/k8s/ns/${testName}/${resource}/${name}`);
+};
+
+export const deleteResource = async(resource: string, kind: string, name: string) => {
+  await visitResource(resource, name);
+  await isLoaded();
+  await actionsDropdown.click();
+  await browser.wait(until.presenceOf(actionsDropdownMenu), 500);
+  await actionsDropdownMenu.element(by.partialLinkText('Delete ')).click();
+  await browser.wait(until.presenceOf($('#confirm-action')));
+  await $('#confirm-action').click();
+};
+
+export const checkResourceExists = async(resource: string, name: string) => {
+  await visitResource(resource, name);
+  await isLoaded();
+  await browser.wait(until.presenceOf(actionsDropdown));
+  expect(resourceTitle.getText()).toEqual(name);
+};

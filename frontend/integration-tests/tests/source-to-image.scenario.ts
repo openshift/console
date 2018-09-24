@@ -1,9 +1,9 @@
 /* eslint-disable no-undef, no-unused-vars */
 
-import { browser, $, element, by, ExpectedConditions as until } from 'protractor';
+import { browser, ExpectedConditions as until } from 'protractor';
 import * as _ from 'lodash';
 
-import { appHost, checkLogs, checkErrors, testName } from '../protractor.conf';
+import { checkLogs, checkErrors } from '../protractor.conf';
 import * as crudView from '../views/crud.view';
 import * as sourceToImageView from '../views/source-to-image.view';
 
@@ -27,27 +27,12 @@ describe('Source-to-Image', () => {
 
   describe('Node.js app', () => {
     const appName = 'test-nodejs';
-    const appLabel = `app=${appName}`;
     const resources = {
       'buildconfigs': {kind: 'BuildConfig'},
       'deploymentconfigs': {kind: 'DeploymentConfig'},
       'imagestreams': {kind: 'ImageStream'},
       'routes': {kind: 'Route'},
       'services': {kind: 'Service'},
-    };
-
-    const visitResource = async(resource: string) => {
-      await browser.get(`${appHost}/k8s/ns/${testName}/${resource}/${appName}`);
-    };
-
-    const deleteResource = async(resource: string, kind: string) => {
-      await visitResource(resource);
-      await crudView.isLoaded();
-      await crudView.actionsDropdown.click();
-      await browser.wait(until.presenceOf(crudView.actionsDropdownMenu), 500);
-      await crudView.actionsDropdownMenu.element(by.partialLinkText('Delete ')).click();
-      await browser.wait(until.presenceOf($('#confirm-action')));
-      await $('#confirm-action').click();
     };
 
     beforeAll(async() => {
@@ -67,18 +52,14 @@ describe('Source-to-Image', () => {
       for (const resource in resources) {
         if (resources.hasOwnProperty(resource)) {
           const { kind } = resources[resource];
-          await deleteResource(resource, kind);
+          await crudView.deleteResource(resource, kind, appName);
         }
       }
     });
 
     _.each(resources, ({kind}, resource) => {
-      it(`creates a ${kind}`, async() => {
-        await visitResource(resource);
-        await crudView.isLoaded();
-        await browser.wait(until.presenceOf(crudView.actionsDropdown));
-        expect(crudView.resourceTitle.getText()).toEqual(appName);
-        expect(element(by.cssContainingText('.co-m-label', appLabel)).isPresent()).toBe(true);
+      it(`displays detail view for new ${kind} instance`, async() => {
+        crudView.checkResourceExists(resource, appName);
       });
     });
   });
