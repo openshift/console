@@ -1,9 +1,11 @@
 import * as React from 'react';
+import { connect } from 'react-redux';
 
 import { k8sCreate, referenceFor } from '../../module/k8s';
 import { NamespaceModel, ProjectRequestModel, NetworkPolicyModel } from '../../models';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
 import { history, PromiseComponent, resourceObjPath, SelectorInput } from '../utils';
+import { FLAGS, setFlag } from '../../features';
 
 const allow = 'allow';
 const deny = 'deny';
@@ -16,7 +18,11 @@ const defaultDeny = {
   }
 };
 
-class CreateNamespaceModal extends PromiseComponent {
+const mapDispatchToProps = dispatch => ({
+  setProjectsAvailable: () => setFlag(dispatch, FLAGS.PROJECTS_AVAILABLE, true)
+});
+
+const CreateNamespaceModal = connect(null, mapDispatchToProps)(class CreateNamespaceModal extends PromiseComponent {
   constructor(props) {
     super(props);
     this.state.np = allow;
@@ -42,6 +48,7 @@ class CreateNamespaceModal extends PromiseComponent {
   }
 
   createProject() {
+    const {setProjectsAvailable} = this.props;
     const {name, displayName, description} = this.state;
     const project = {
       metadata: {
@@ -50,7 +57,11 @@ class CreateNamespaceModal extends PromiseComponent {
       displayName,
       description,
     };
-    return k8sCreate(ProjectRequestModel, project);
+    return k8sCreate(ProjectRequestModel, project).then(obj => {
+      // Immediately update the projects available flag to avoid the empty state message from displaying when projects watch is slow.
+      setProjectsAvailable();
+      return obj;
+    });
   }
 
   _submit(event) {
@@ -116,7 +127,7 @@ class CreateNamespaceModal extends PromiseComponent {
       <ModalSubmitFooter errorMessage={this.state.errorMessage} inProgress={this.state.inProgress} submitText={`Create ${label}`} cancel={this.props.cancel.bind(this)} />
     </form>;
   }
-}
+});
 
 export const createNamespaceModal = createModalLauncher(CreateNamespaceModal);
 export const createProjectModal = createModalLauncher(props => <CreateNamespaceModal {...props} createProject={true} />);
