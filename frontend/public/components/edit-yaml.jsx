@@ -32,7 +32,8 @@ const generateObjToLoad = (kind, templateName, namespace = 'default') => {
   return sampleObj;
 };
 
-const stateToProps = ({k8s}) => ({
+const stateToProps = ({k8s, UI}) => ({
+  activeNamespace: UI.get('activeNamespace'),
   models: k8s.getIn(['RESOURCES', 'models']),
 });
 
@@ -209,6 +210,12 @@ export const EditYAML = connect(stateToProps)(
         this.handleError(`The server doesn't have a resource type "kind: ${obj.kind}, apiVersion: ${obj.apiVersion}".`);
         return;
       }
+
+      // If this is a namesapced resource, default to the active namespace when none is specified in the YAML.
+      if (!obj.metadata.namespace && model.namespaced) {
+        obj.metadata.namespace = this.props.activeNamespace;
+      }
+
       const { namespace, name } = this.props.obj.metadata;
       const { namespace: newNamespace, name: newName } = obj.metadata;
 
