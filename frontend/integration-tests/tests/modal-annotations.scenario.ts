@@ -18,7 +18,7 @@ const Actions = {
 describe('Modal Annotations', () => {
 
   beforeAll(async() => {
-    await browser.get(`${appHost}/k8s/ns/${testName}/daemonsets`);
+    await browser.get(`${appHost}/k8s/ns/${testName}/deployments`);
     await crudView.isLoaded();
     await crudView.createYAMLButton.click();
     await yamlView.isLoaded();
@@ -38,11 +38,11 @@ describe('Modal Annotations', () => {
   });
 
   afterAll(async() => {
-    await browser.get(`${appHost}/k8s/ns/${testName}/daemonsets`);
+    await browser.get(`${appHost}/k8s/ns/${testName}/deployments`);
     await crudView.isLoaded();
     await crudView.nameFilter.sendKeys(WORKLOAD_NAME);
     await browser.wait(until.elementToBeClickable(crudView.resourceRowNamesAndNs.first()), BROWSER_TIMEOUT);
-    await crudView.deleteRow('daemonset')(WORKLOAD_NAME);
+    await crudView.deleteRow('deployment')(WORKLOAD_NAME);
     checkLogs();
     checkErrors();
   });
@@ -80,7 +80,7 @@ describe('Modal Annotations', () => {
     annotationKey: string,
     annotationValue: string
   ) {
-    await browser.get(`${appHost}/k8s/ns/${testName}/daemonsets/${WORKLOAD_NAME}`);
+    await browser.get(`${appHost}/k8s/ns/${testName}/deployments/${WORKLOAD_NAME}`);
     await clickModalAnnotationsLink();
     await modalAnnotationsView.isLoaded();
 
@@ -120,7 +120,7 @@ describe('Modal Annotations', () => {
   };
 
   // Given I log in into the console if it's required
-  //   And I create a daemonset
+  //   And I create a deployment
   //   And I open modal annotations from gear option
   //   And I add an annotation
   //   And I open modal annotations from gear option
@@ -145,8 +145,8 @@ describe('Modal Annotations', () => {
 
   // Scenario: Add numeric Annotation from grid
   // Given I log in into the console if it's required
-  //   And I create a daemonset
-  //   And I go to the daemonsets list page
+  //   And I create a deployment
+  //   And I go to the deployments list page
   //   And I open modal annotations from gear option
   //  When I add an annotation
   //   And I close the modal
@@ -158,7 +158,7 @@ describe('Modal Annotations', () => {
     const annotationValue = '2233344';
     const annotationYAML = `${annotationKey}: '${annotationValue}'`;
 
-    await browser.get(`${appHost}/k8s/ns/${testName}/daemonsets`);
+    await browser.get(`${appHost}/k8s/ns/${testName}/deployments`);
     await crudView.isLoaded();
     await crudView.selectOptionFromGear(WORKLOAD_NAME, crudView.gearOptions.annotations);
     await modalAnnotationsView.isLoaded();
@@ -170,15 +170,15 @@ describe('Modal Annotations', () => {
     await modalAnnotationsView.isLoaded();
     await validateKeyAndValue(annotationKey, annotationValue, true);
 
-    await browser.get(`${appHost}/k8s/ns/${testName}/daemonsets/${WORKLOAD_NAME}/yaml`);
+    await browser.get(`${appHost}/k8s/ns/${testName}/deployments/${WORKLOAD_NAME}/yaml`);
     await yamlView.isLoaded();
     expect(yamlView.editorContent.getText()).toContain(annotationYAML);
   });
 
   // Scenario: Add alphanumeric Annotation from object detail
   // Given I log in into the console if it's required
-  //   And I create a daemonset
-  //   And I open the daemonset detail
+  //   And I create a deployment
+  //   And I open the deployment detail
   //   And I open modal annotations
   //  When I add an annotation
   //   And I close the modal
@@ -192,15 +192,15 @@ describe('Modal Annotations', () => {
 
     await crudAndValidate(Actions.add, annotationKey, annotationValue, true);
 
-    await browser.get(`${appHost}/k8s/ns/${testName}/daemonsets/${WORKLOAD_NAME}/yaml`);
+    await browser.get(`${appHost}/k8s/ns/${testName}/deployments/${WORKLOAD_NAME}/yaml`);
     await yamlView.isLoaded();
     expect(yamlView.editorContent.getText()).toContain(annotationYAML);
   });
 
   // Scenario: Add Annotation without value
   // Given I log in into the console if it's required
-  //   And I create a daemonset
-  //   And I open the daemonset detail
+  //   And I create a deployment
+  //   And I open the deployment detail
   //   And I open modal annotations
   //  When I add an annotation without value
   //  Then I expect to see the annotation created without value
@@ -212,15 +212,15 @@ describe('Modal Annotations', () => {
 
     await crudAndValidate(Actions.add, annotationKey, annotationValue, true);
 
-    await browser.get(`${appHost}/k8s/ns/${testName}/daemonsets/${WORKLOAD_NAME}/yaml`);
+    await browser.get(`${appHost}/k8s/ns/${testName}/deployments/${WORKLOAD_NAME}/yaml`);
     await yamlView.isLoaded();
     expect(yamlView.editorContent.getText()).toContain(annotationYAML);
   });
 
   // Scenario: Add annotation wihout key
   // Given I log in into the console if it's required
-  //   And I create a daemonset
-  //   And I open the daemonset detail
+  //   And I create a deployment
+  //   And I open the deployment detail
   //   And I open modal annotations
   //  When I add an annotation without key
   //   And I close the modal
@@ -234,8 +234,8 @@ describe('Modal Annotations', () => {
 
   // Scenario: Update Annotation from value to empty value
   // Given I log in into the console if it's required
-  //   And I create a daemonset
-  //   And I open the daemonset detail
+  //   And I create a deployment
+  //   And I open the deployment detail
   //   And I open modal annotations
   //  When I add an annotation
   //   And I update this annotation to empty value
@@ -250,7 +250,7 @@ describe('Modal Annotations', () => {
     await crudAndValidate(Actions.update, annotationKey, annotationValueAfterUpd, true);
   });
 
-  //   And I create a daemonset
+  //   And I create a deployment
   //   And I open modal annotations from gear option
   //   And I add an annotation without value
   //   And I open modal annotations from gear option
@@ -265,15 +265,15 @@ describe('Modal Annotations', () => {
     await crudAndValidate(Actions.add, annotationKey, annotationValueBeforeUpd, true);
     await crudAndValidate(Actions.update, annotationKey, annotationValueAfterUpd, true);
 
-    await browser.get(`${appHost}/k8s/ns/${testName}/daemonsets/${WORKLOAD_NAME}/yaml`);
+    await browser.get(`${appHost}/k8s/ns/${testName}/deployments/${WORKLOAD_NAME}/yaml`);
     await yamlView.isLoaded();
     expect(yamlView.editorContent.getText()).toContain(annotationYAML);
   });
 
   // Scenario: Cancel add Annotation
   // Given I log in into the console if it's required
-  //   And I create a daemonset
-  //   And I go to the daemonsets list page
+  //   And I create a deployment
+  //   And I go to the deployments list page
   //   And I open modal annotations from gear option
   //  When I add an annotation
   //   And I cancel the action
@@ -283,7 +283,7 @@ describe('Modal Annotations', () => {
     const annotationKey = 'KEY_Cancel';
     const annotationValue = 'cancel';
 
-    await browser.get(`${appHost}/k8s/ns/${testName}/daemonsets`);
+    await browser.get(`${appHost}/k8s/ns/${testName}/deployments`);
     await crudView.isLoaded();
     await crudView.selectOptionFromGear(WORKLOAD_NAME, crudView.gearOptions.annotations);
     await modalAnnotationsView.isLoaded();

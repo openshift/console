@@ -7,10 +7,10 @@ export const StatusWithIcon: React.SFC<StatusWithIconProps> = ({obj}) => {
   const objStatus: string = serviceCatalogStatus(obj);
 
   switch (objStatus) {
-    case 'Pending':
-      return <span className="status-pending">
+    case 'Not Ready':
+      return <span className="status-not-ready">
         <span className="fa fa-hourglass-half co-status-icon" aria-hidden="true"></span>
-        Pending
+        Not Ready
       </span>;
     case 'Failed':
       return <span className="status-failed">

@@ -14,7 +14,7 @@ const WORKLOAD_LABEL = `lbl-filter=${testName}`;
 describe('Filtering', () => {
 
   beforeAll(async() => {
-    await browser.get(`${appHost}/k8s/ns/${testName}/daemonsets`);
+    await browser.get(`${appHost}/k8s/ns/${testName}/deployments`);
     await crudView.isLoaded();
     await crudView.createYAMLButton.click();
     await yamlView.isLoaded();
@@ -32,19 +32,19 @@ describe('Filtering', () => {
   });
 
   afterAll(async() => {
-    await browser.get(`${appHost}/k8s/ns/${testName}/daemonsets`);
+    await browser.get(`${appHost}/k8s/ns/${testName}/deployments`);
     await crudView.isLoaded();
     await crudView.nameFilter.sendKeys(WORKLOAD_NAME);
     await browser.wait(until.elementToBeClickable(crudView.resourceRowNamesAndNs.first()), BROWSER_TIMEOUT);
-    await crudView.deleteRow('daemonset')(WORKLOAD_NAME);
+    await crudView.deleteRow('deployment')(WORKLOAD_NAME);
   });
 
   it('filters Pod from object detail', async() => {
-    await browser.get(`${appHost}/k8s/ns/${testName}/daemonsets`);
+    await browser.get(`${appHost}/k8s/ns/${testName}/deployments`);
     await browser.wait(until.elementToBeClickable(crudView.resourceRowNamesAndNs.first()), BROWSER_TIMEOUT);
     expect(crudView.resourceRowNamesAndNs.first().getText()).toContain(WORKLOAD_NAME);
 
-    await browser.get(`${appHost}/k8s/ns/${testName}/daemonsets/${WORKLOAD_NAME}/pods`);
+    await browser.get(`${appHost}/k8s/ns/${testName}/deployments/${WORKLOAD_NAME}/pods`);
     await browser.wait(until.elementToBeClickable(crudView.nameFilter), BROWSER_TIMEOUT);
     await crudView.nameFilter.sendKeys(WORKLOAD_NAME);
     await browser.wait(until.elementToBeClickable(crudView.resourceRowNamesAndNs.first()), BROWSER_TIMEOUT);
@@ -52,15 +52,15 @@ describe('Filtering', () => {
   });
 
   it('filters invalid Pod from object detail', async() => {
-    await browser.get(`${appHost}/k8s/ns/${testName}/daemonsets/${WORKLOAD_NAME}/pods`);
+    await browser.get(`${appHost}/k8s/ns/${testName}/deployments/${WORKLOAD_NAME}/pods`);
     await browser.wait(until.elementToBeClickable(crudView.nameFilter), BROWSER_TIMEOUT);
     await crudView.nameFilter.sendKeys('XYZ123');
     await browser.wait(until.elementToBeClickable(crudView.messageLbl), BROWSER_TIMEOUT);
     expect(crudView.messageLbl.isPresent()).toBe(true);
   });
 
-  it('filters DaemonSet from other namespace', async() => {
-    await browser.get(`${appHost}/k8s/ns/kube-system/daemonsets`);
+  it('filters Deployment from other namespace', async() => {
+    await browser.get(`${appHost}/k8s/ns/kube-system/deployments`);
     await browser.wait(until.elementToBeClickable(crudView.nameFilter), BROWSER_TIMEOUT);
     await crudView.nameFilter.sendKeys(WORKLOAD_NAME);
     await browser.wait(until.elementToBeClickable(crudView.messageLbl), BROWSER_TIMEOUT);
@@ -78,7 +78,7 @@ describe('Filtering', () => {
   it('searches for object by label', async() => {
     await browser.get(`${appHost}/search/ns/${testName}`);
     await browser.wait(until.elementToBeClickable(searchView.dropdown), BROWSER_TIMEOUT);
-    await searchView.selectSearchType('DaemonSet');
+    await searchView.selectSearchType('Deployment');
     await searchView.labelFilter.sendKeys(WORKLOAD_LABEL, Key.ENTER);
     await browser.wait(until.elementToBeClickable(crudView.resourceRowNamesAndNs.first()), BROWSER_TIMEOUT);
     expect(crudView.resourceRowNamesAndNs.first().getText()).toContain(WORKLOAD_NAME);
@@ -94,7 +94,7 @@ describe('Filtering', () => {
   });
 
   it('searches for object by label using by other kind of workload', async() => {
-    await browser.get(`${appHost}/search/all-namespaces?kind=Deployment`);
+    await browser.get(`${appHost}/search/all-namespaces?kind=ReplicationController`);
     await crudView.isLoaded();
     await searchView.labelFilter.sendKeys(WORKLOAD_LABEL, Key.ENTER);
     await crudView.nameFilter.sendKeys(WORKLOAD_NAME);

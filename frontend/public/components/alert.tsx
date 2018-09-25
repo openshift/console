@@ -324,8 +324,8 @@ const AlertHeader = props => <ListHeader>
   <ColHead {...props} className="col-xs-2" sortField="labels.severity">Severity</ColHead>
 </ListHeader>;
 
-const AlertsPageDescription_ = ({urls}) => <div className="co-m-pane__filter-bar-group--description">
-  OpenShift ships with a pre-configured and self-updating monitoring stack powered by <ExternalLink href={urls[MonitoringRoutes.Prometheus]} text="Prometheus" />
+const AlertsPageDescription_ = ({urls}) => <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--help-text">
+  <p className="co-help-text">OpenShift ships with a pre-configured and self-updating monitoring stack powered by <ExternalLink href={urls[MonitoringRoutes.Prometheus]} text="Prometheus" /></p>
 </div>;
 const AlertsPageDescription = connectToURLs(MonitoringRoutes.Prometheus)(AlertsPageDescription_);
 
@@ -395,7 +395,7 @@ const AlertsPage_ = connect(listStateToProps)(class InnerAlertsPage_ extends Rea
         <title>Monitoring Alerts</title>
       </Helmet>
       <NavTitle title="Monitoring Alerts" />
-      <div className="co-m-pane__filter-bar co-m-pane__filter-bar--with-description">
+      <div className="co-m-pane__filter-bar co-m-pane__filter-bar--with-help-text">
         <div className="co-m-pane__filter-bar-group">
           <AlertsPageDescription />
         </div>

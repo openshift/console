@@ -55,3 +55,14 @@ $catalog-item-icon-size-sm: 24px;
     }
   }
 }
+
+a.co-catalog-item-tile {
+  color: inherit;
+  text-decoration: none;
+  :active,
+  :hover,
+  :visited {
+    color: inherit;
+    text-decoration: none;
+  }
+}

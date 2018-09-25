@@ -1,7 +1,9 @@
+// TODO file should be renamed replica-set.jsx to match convention
+
 import * as React from 'react';
 
 import { DetailsPage, List, ListPage, WorkloadListHeader, WorkloadListRow } from './factory';
-import {Cog, navFactory, SectionHeading, ResourceSummary, ResourcePodCount, AsyncComponent} from './utils';
+import {Cog, ContainerTable, navFactory, SectionHeading, ResourceSummary, ResourcePodCount, AsyncComponent} from './utils';
 import { breadcrumbsForOwnerRefs } from './utils/breadcrumbs';
 import { ResourceEventStream } from './events';
 
@@ -19,6 +21,10 @@ const Details = ({obj: replicaSet}) => <React.Fragment>
         <ResourcePodCount resource={replicaSet} />
       </div>
     </div>
+  </div>
+  <div className="co-m-pane__body">
+    <SectionHeading text="Containers" />
+    <ContainerTable containers={replicaSet.spec.template.spec.containers} />
   </div>
 </React.Fragment>;
 

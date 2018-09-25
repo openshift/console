@@ -10,10 +10,10 @@ import * as yamlView from '../views/yaml.view';
 
 const chunkedRoutes = OrderedMap<string, {section: string, name: string}>()
   .set('install-plan', {section: 'Operators', name: 'Install Plans'})
-  .set('daemonset', {section: 'Workloads', name: 'Daemon Sets'})
+  .set('daemon-set', {section: 'Workloads', name: 'Daemon Sets'})
   .set('deployment', {section: 'Workloads', name: 'Deployments'})
   .set('deployment-config', {section: 'Workloads', name: 'Deployment Configs'})
-  .set('replicaset', {section: 'Workloads', name: 'Replica Sets'})
+  .set('replicaset', {section: 'Workloads', name: 'Replica Sets'}) // TODO should be replica-set
   .set('replication-controller', {section: 'Workloads', name: 'Replication Controllers'})
   .set('stateful-set', {section: 'Workloads', name: 'Stateful Sets'})
   .set('job', {section: 'Workloads', name: 'Jobs'})
@@ -74,7 +74,7 @@ describe('Performance test', () => {
   });
 
   chunkedRoutes.forEach((route, routeName) => {
-    const chunkLimit = 12000;
+    const chunkLimit = 15000;
 
     const routeChunkFor = function() {
       const chunkName = arguments[0];

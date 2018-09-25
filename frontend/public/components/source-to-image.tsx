@@ -4,14 +4,13 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
-import * as semver from 'semver';
 
 import { LoadingBox, LoadError } from './utils/status-box';
 import { Dropdown, Firehose, history, MsgBox, ResourceName, resourcePathFromModel } from './utils';
 import { BuildConfigModel, DeploymentConfigModel, ImageStreamModel, ImageStreamTagModel, RouteModel, ServiceModel } from '../models';
 import { ContainerPort, k8sCreate, k8sGet, K8sResourceKind } from '../module/k8s';
 import { ImageStreamIcon } from './catalog-item-icon';
-import { getAnnotationTags, getBuilderTags } from './image-stream';
+import { getAnnotationTags, getBuilderTagsSortedByVersion } from './image-stream';
 import { NsDropdown } from './RBAC/bindings';
 import { ButtonBar } from './utils/button-bar';
 
@@ -75,9 +74,10 @@ class BuildSource extends React.Component<BuildSourceProps, BuildSourceState> {
   constructor (props) {
     super(props);
 
+    const { preselectedNamespace: namespace = ''} = this.props;
     this.state = {
       tags: [],
-      namespace: '',
+      namespace,
       selectedTag: '',
       name: '',
       repository: '',
@@ -94,20 +94,7 @@ class BuildSource extends React.Component<BuildSourceProps, BuildSourceState> {
     if (obj !== prevProps.obj && obj.loaded) {
       const previousTag = this.state.selectedTag;
       // Sort tags in reverse order by semver, falling back to a string comparison if not a valid version.
-      const tags = getBuilderTags(obj.data).sort(({name: a}, {name: b}) => {
-        const v1 = semver.coerce(a);
-        const v2 = semver.coerce(b);
-        if (!v1 && !v2) {
-          return a.localeCompare(b);
-        }
-        if (!v1) {
-          return 1;
-        }
-        if (!v2) {
-          return -1;
-        }
-        return semver.rcompare(v1, v2);
-      });
+      const tags = getBuilderTagsSortedByVersion(obj.data);
       // Select the first tag if the current tag is missing or empty.
       const selectedTag = previousTag && _.includes(tags, previousTag)
         ? previousTag
@@ -473,10 +460,11 @@ class BuildSource extends React.Component<BuildSourceProps, BuildSourceState> {
 export const SourceToImagePage = (props) => {
   const title = 'Create Source-to-Image Application';
   const searchParams = new URLSearchParams(location.search);
-  const namespace = searchParams.get('ns');
-  const name = searchParams.get('imagestream');
+  const imageStreamName = searchParams.get('imagestream');
+  const imageStreamNamespace = searchParams.get('imagestream-ns');
+  const preselectedNamespace = searchParams.get('preselected-ns');
   const resources = [
-    {kind: 'ImageStream', name, namespace, isList: false, prop: 'obj'},
+    {kind: 'ImageStream', name: imageStreamName, namespace: imageStreamNamespace, isList: false, prop: 'obj'},
   ];
 
   return <React.Fragment>
@@ -486,7 +474,7 @@ export const SourceToImagePage = (props) => {
     <div className="co-m-pane__body">
       <h1 className="co-m-pane__heading">{title}</h1>
       <Firehose resources={resources}>
-        <BuildSource {...props} />
+        <BuildSource preselectedNamespace={preselectedNamespace} {...props} />
       </Firehose>
     </div>
   </React.Fragment>;
@@ -499,6 +487,7 @@ export type ImageStreamInfoProps = {
 
 export type BuildSourceProps = {
   obj: any,
+  preselectedNamespace: string,
 };
 
 export type BuildSourceState = {

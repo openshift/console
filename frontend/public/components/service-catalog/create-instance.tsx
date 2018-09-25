@@ -3,10 +3,9 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { Helmet } from 'react-helmet';
-import { Link } from 'react-router-dom';
 import { IChangeEvent, ISubmitEvent } from 'react-jsonschema-form';
 
-import { createParametersSecret, getInstanceCreateSchema, ServiceCatalogParametersForm } from './schema-form';
+import { createParametersSecret, getInstanceCreateSchema, getInstanceCreateParametersForm, ServiceCatalogParametersForm, getUISchema } from './schema-form';
 import { LoadingBox } from '../utils/status-box';
 import { history, Firehose, NavTitle, resourcePathFromModel } from '../utils';
 import { ClusterServiceClassModel, ServiceInstanceModel } from '../../models';
@@ -23,9 +22,10 @@ class CreateInstance extends React.Component<CreateInstanceProps, CreateInstance
   constructor (props) {
     super(props);
 
+    const { preselectedNamespace: namespace = ''} = this.props;
     this.state = {
       name: '',
-      namespace: '',
+      namespace,
       plan: '',
       formData: {},
       inProgress: false,
@@ -129,6 +129,8 @@ class CreateInstance extends React.Component<CreateInstanceProps, CreateInstance
     const availablePlans = getAvailablePlans(plans);
     const selectedPlan = _.find(availablePlans, { spec: { externalName: selectedPlanName } });
     const schema = getInstanceCreateSchema(selectedPlan);
+    const parametersForm = getInstanceCreateParametersForm(selectedPlan);
+    const uiSchema = getUISchema(parametersForm);
 
     const planOptions = _.map(availablePlans, plan => {
       return <div className="radio co-create-service-instance__plan" key={plan.spec.externalName}>
@@ -179,10 +181,10 @@ class CreateInstance extends React.Component<CreateInstanceProps, CreateInstance
                   : planOptions}
               </div>
             </form>
-            <ServiceCatalogParametersForm schema={schema} onSubmit={this.save} formData={this.state.formData} onChange={this.onFormChange}>
+            <ServiceCatalogParametersForm schema={schema} uiSchema={uiSchema} onSubmit={this.save} formData={this.state.formData} onChange={this.onFormChange}>
               <ButtonBar errorMessage={this.state.error} inProgress={this.state.inProgress}>
                 <button type="submit" className="btn btn-primary">Create</button>
-                <Link to={resourcePathFromModel(ClusterServiceClassModel, serviceClass.metadata.name)} className="btn btn-default">Cancel</Link>
+                <button type="button" className="btn btn-default" onClick={history.goBack}>Cancel</button>
               </ButtonBar>
             </ServiceCatalogParametersForm>
           </div>
@@ -197,8 +199,10 @@ export const CreateInstancePage: React.SFC<CreateInstancePageProps> = (props) =>
     {kind: 'ClusterServiceClass', name: props.match.params.name, isList: false, prop: 'obj'},
     {kind: 'ClusterServicePlan', isList: true, prop: 'plans', fieldSelector: `spec.clusterServiceClassRef.name=${props.match.params.name}`},
   ];
+  const searchParams = new URLSearchParams(location.search);
+  const preselectedNamespace = searchParams.get('preselected-ns');
   return <Firehose resources={resources}>
-    <CreateInstance {...props as any} />
+    <CreateInstance preselectedNamespace={preselectedNamespace} {...props as any} />
   </Firehose>;
 };
 
@@ -206,6 +210,7 @@ export type CreateInstanceProps = {
   obj: any,
   plans: any,
   match: any,
+  preselectedNamespace: string,
 };
 
 export type CreateInstanceState = {
