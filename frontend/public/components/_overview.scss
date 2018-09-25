@@ -24,3 +24,31 @@
   margin-bottom:  ($grid-gutter-width / 4);
   padding-left: 0;
 }
+
+.overview {
+  width: 100%;
+  display: flex;
+}
+
+.overview__body {
+  flex-grow: 1;
+}
+
+.overview__sidebar {
+  display: none;
+}
+
+.overview__sidebar-dismiss {
+  margin: 30px 30px 0 30px;
+}
+
+.overview.overview--sidebar-shown {
+  .overview__body {
+    width: 60%;
+  }
+
+  .overview__sidebar {
+    display: block;
+    width: 40%;
+  }
+}

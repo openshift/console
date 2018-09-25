@@ -10,7 +10,7 @@ export * from './resource-link';
 export * from './resource-log';
 export * from './volume-icon';
 export * from './timestamp';
-export * from './vertnav';
+export * from './horizontal-nav';
 export * from './details-page';
 export * from './inject';
 export * from './disabled';
@@ -42,6 +42,8 @@ export * from './webhooks';
 export * from './section-heading';
 export * from './scroll-to-top-on-mount';
 export * from './service-catalog-status';
+export * from './close-button';
+export * from './container-table';
 
 /*
   Add the enum for NameValueEditorPair here and not in its namesake file because the editor should always be
@@ -68,5 +70,3 @@ export const enum EnvType {
   ENV = 0,
   ENV_FROM = 1
 }
-
-

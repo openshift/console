@@ -16,7 +16,7 @@
 - All SCSS files are imported from the top-level file: `/frontend/public/style.scss`
 - No need to import SCSS files as dependencies of others, top-level file handles this.
 - All SCSS files should be prefixed with an underscore, (eg `_my-custom-file.scss`).
-- When possible, avoid element seclectors. Class selectors are preferred.
+- When possible, avoid element selectors. Class selectors are preferred.
 - Scope all classes with a recognizable prefix to avoid collisions with any imported CSS (this project uses `co-` by convention).
 - Class names should be all lowercase and dash-separated.
 - All SCSS variables should be scoped within their component.
@@ -27,4 +27,4 @@
 - Run the linter and follow all rules defined in .eslintrc
 - Prefer ES6 `const` over `let` or `var` when values do not change.
 - Never use absolute paths in code. The app should be able to run behind a proxy under an arbitrary path.
-- TESTS: Should follow a simliar "test tables" convention as used in Go where applicable.
+- TESTS: Should follow a similar "test tables" convention as used in Go where applicable.

@@ -1,4 +1,4 @@
-import { $, $$, browser, ExpectedConditions as until } from 'protractor';
+import { $, $$, browser, by, element, ExpectedConditions as until } from 'protractor';
 
 export const createYAMLButton = $('#yaml-create');
 export const createItemButton = $('#item-create');
@@ -86,7 +86,7 @@ export const selectOptionFromGear = (name: string, gearOptionStartsWith: string)
     );
 
 export const rowFilters = $$('.row-filter--box');
-export const rowFilterFor = (name: string) => rowFilters.filter(element => element.getText().then(text => text.includes(name))).first();
+export const rowFilterFor = (name: string) => rowFilters.filter(el => el.getText().then(text => text.includes(name))).first();
 export const activeRowFilters = $$('.row-filter--box__active');
 
 export const statusMessageTitle = $('.cos-status-box__title');
@@ -100,4 +100,4 @@ export const resourceTitle = $('#resource-title');
 
 export const nameFilter = $('.form-control.text-filter');
 export const messageLbl = $('.cos-status-box');
-export const modalAnnotationsLink = $('.co-m-modal-link');
+export const modalAnnotationsLink = element(by.partialLinkText('Annotation'));

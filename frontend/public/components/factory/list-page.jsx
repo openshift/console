@@ -148,7 +148,7 @@ export const FireMan_ = connect(null, {filterList: k8sActions.filterList})(
     }
 
     render () {
-      const {createButtonText, dropdownFilters, textFilter, filterLabel, canExpand, canCreate, createProps, autoFocus, resources} = this.props;
+      const {helpText, createButtonText, dropdownFilters, textFilter, filterLabel, canExpand, canCreate, createProps, autoFocus, resources} = this.props;
 
       const DropdownFilters = dropdownFilters && dropdownFilters.map(({type, items, title}) => {
         return <Dropdown key={title} items={items} title={title} onChange={v => this.applyFilter(type, v)} />;
@@ -174,7 +174,10 @@ export const FireMan_ = connect(null, {filterList: k8sActions.filterList})(
       const {title} = this.props;
       return <React.Fragment>
         {title && <NavTitle title={title} />}
-        <div className="co-m-pane__filter-bar">
+        <div className={classNames('co-m-pane__filter-bar', {'co-m-pane__filter-bar--with-help-text': helpText})}>
+          {helpText && <div className={classNames('co-m-pane__filter-bar-group', {'co-m-pane__filter-bar-group--help-text': helpText})}>
+            {helpText}
+          </div>}
           {createLink && <div className="co-m-pane__filter-bar-group">
             {createLink}
           </div>}
@@ -212,6 +215,7 @@ FireMan_.propTypes = {
   createProps: PropTypes.object,
   createButtonText: PropTypes.string,
   fieldSelector: PropTypes.string,
+  helpText: PropTypes.any,
   selectorFilterLabel: PropTypes.string,
   filterLabel: PropTypes.string,
   textFilter: PropTypes.string,
@@ -264,6 +268,7 @@ export const ListPage = props => {
     createProps={createProps}
     title={title}
     showTitle={showTitle}
+    helpText={props.helpText}
     canCreate={props.canCreate}
     canExpand={props.canExpand}
     createButtonText={createButtonText || `Create ${label}`}
@@ -282,7 +287,7 @@ export const ListPage = props => {
 
 ListPage.displayName = 'ListPage';
 
-/** @type {React.SFC<{canCreate?: boolean, createButtonText?: string, createProps?: any, flatten?: Function, title?: string, showTitle?: boolean, dropdownFilters?: any[], filterLabel?: string, rowFilters?: any[], resources: any[], ListComponent: React.ComponentType<any>, namespace?: string}>} */
+/** @type {React.SFC<{canCreate?: boolean, createButtonText?: string, createProps?: any, flatten?: Function, title?: string, showTitle?: boolean, helpText?: any, dropdownFilters?: any[], filterLabel?: string, rowFilters?: any[], resources: any[], ListComponent: React.ComponentType<any>, namespace?: string}>} */
 export const MultiListPage = props => {
   const {createButtonText, flatten, filterLabel, createProps, showTitle = true, title, namespace, fake} = props;
   const resources = _.map(props.resources, (r) => ({
@@ -297,6 +302,7 @@ export const MultiListPage = props => {
     selectorFilterLabel="Filter by selector (app=nginx) ..."
     createProps={createProps}
     title={showTitle ? title : undefined}
+    helpText={props.helpText}
     canCreate={props.canCreate}
     canExpand={props.canExpand}
     createButtonText={createButtonText || 'Create'}

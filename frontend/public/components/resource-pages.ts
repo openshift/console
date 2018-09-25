@@ -5,54 +5,54 @@ import { Map as ImmutableMap } from 'immutable';
 import { ReportReference, ReportGenerationQueryReference } from './chargeback';
 import { referenceForModel, GroupVersionKind } from '../module/k8s';
 import {
-  ClusterModel,
-  ConfigMapModel,
-  DaemonSetModel,
-  DeploymentModel,
-  DeploymentConfigModel,
+  AlertmanagerModel,
   BuildConfigModel,
   BuildModel,
-  ImageStreamModel,
-  JobModel,
+  CatalogSourceModel,
+  ClusterModel,
+  ClusterRoleModel,
+  ClusterServiceBrokerModel,
+  ClusterServiceClassModel,
+  ClusterServicePlanModel,
+  ClusterServiceVersionModel,
+  ConfigMapModel,
+  ContainerModel,
   CronJobModel,
-  ProjectModel,
+  CustomResourceDefinitionModel,
+  DaemonSetModel,
+  DeploymentConfigModel,
+  DeploymentModel,
+  HorizontalPodAutoscalerModel,
+  ImageStreamModel,
+  ImageStreamTagModel,
+  IngressModel,
+  InstallPlanModel,
+  JobModel,
+  LimitRangeModel,
   NamespaceModel,
   NetworkPolicyModel,
   NodeModel,
+  PersistentVolumeClaimModel,
+  PersistentVolumeModel,
   PodModel,
+  ProjectModel,
+  PrometheusModel,
   ReplicaSetModel,
   ReplicationControllerModel,
+  ResourceQuotaModel,
+  RoleBindingModel,
+  RoleModel,
+  RouteModel,
   SecretModel,
   ServiceAccountModel,
-  ServiceModel,
-  IngressModel,
-  RouteModel,
-  RoleModel,
-  RoleBindingModel,
-  PrometheusModel,
-  ServiceMonitorModel,
-  AlertmanagerModel,
-  StatefulSetModel,
-  ResourceQuotaModel,
-  LimitRangeModel,
-  HorizontalPodAutoscalerModel,
-  PersistentVolumeModel,
-  PersistentVolumeClaimModel,
-  StorageClassModel,
-  CustomResourceDefinitionModel,
-  ClusterServiceVersionModel,
-  SubscriptionModel,
-  InstallPlanModel,
-  ImageStreamTagModel,
-  ClusterRoleModel,
-  ContainerModel,
-  CatalogSourceModel,
-  VirtualMachineModel,
-  ServiceInstanceModel,
   ServiceBindingModel,
-  ClusterServiceClassModel,
-  ClusterServiceBrokerModel,
-  ClusterServicePlanModel
+  ServiceInstanceModel,
+  ServiceModel,
+  ServiceMonitorModel,
+  StatefulSetModel,
+  StorageClassModel,
+  SubscriptionModel,
+  VirtualMachineModel,
 } from '../models';
 
 export const resourceDetailPages = ImmutableMap<GroupVersionKind | string, () => Promise<React.ComponentType<any>>>()
@@ -62,7 +62,7 @@ export const resourceDetailPages = ImmutableMap<GroupVersionKind | string, () =>
   .set(referenceForModel(ClusterServicePlanModel), () => import('./cluster-service-plan' /* webpackChunkName: "cluster-service-plan" */).then(m => m.ClusterServicePlanDetailsPage))
   .set(referenceForModel(ConfigMapModel), () => import('./configmap' /* webpackChunkName: "configmap" */).then(m => m.ConfigMapsDetailsPage))
   .set(referenceForModel(ContainerModel), () => import('./container' /* webpackChunkName: "container" */).then(m => m.ContainersDetailsPage))
-  .set(referenceForModel(DaemonSetModel), () => import('./daemonset' /* webpackChunkName: "daemonset" */).then(m => m.DaemonSetsDetailsPage))
+  .set(referenceForModel(DaemonSetModel), () => import('./daemon-set' /* webpackChunkName: "daemon-set" */).then(m => m.DaemonSetsDetailsPage))
   .set(referenceForModel(DeploymentConfigModel), () => import('./deployment-config' /* webpackChunkName: "deployment-config" */).then(m => m.DeploymentConfigsDetailsPage))
   .set(referenceForModel(DeploymentModel), () => import('./deployment' /* webpackChunkName: "deployment" */).then(m => m.DeploymentsDetailsPage))
   .set(referenceForModel(BuildConfigModel), () => import('./build-config' /* webpackChunkName: "build-config" */).then(m => m.BuildConfigsDetailsPage))
@@ -76,7 +76,7 @@ export const resourceDetailPages = ImmutableMap<GroupVersionKind | string, () =>
   .set(referenceForModel(NetworkPolicyModel), () => import('./network-policy' /* webpackChunkName: "network-policy" */).then(m => m.NetworkPoliciesDetailsPage))
   .set(referenceForModel(NodeModel), () => import('./node' /* webpackChunkName: "node" */).then(m => m.NodesDetailsPage))
   .set(referenceForModel(PodModel), () => import('./pod' /* webpackChunkName: "pod" */).then(m => m.PodsDetailsPage))
-  .set(referenceForModel(ReplicaSetModel), () => import('./replicaset' /* webpackChunkName: "replicaset" */).then(m => m.ReplicaSetsDetailsPage))
+  .set(referenceForModel(ReplicaSetModel), () => import('./replicaset' /* webpackChunkName: "replicaset" */).then(m => m.ReplicaSetsDetailsPage)) //TODO should be replica-set
   .set(referenceForModel(ReplicationControllerModel), () => import('./replication-controller' /* webpackChunkName: "replication-controller" */).then(m => m.ReplicationControllersDetailsPage))
   .set(referenceForModel(SecretModel), () => import('./secret' /* webpackChunkName: "secret" */).then(m => m.SecretsDetailsPage))
   .set(referenceForModel(ServiceAccountModel), () => import('./service-account' /* webpackChunkName: "service-account" */).then(m => m.ServiceAccountsDetailsPage))
@@ -109,7 +109,7 @@ export const resourceListPages = ImmutableMap<GroupVersionKind | string, () => P
   .set(referenceForModel(ClusterServiceBrokerModel), () => import('./cluster-service-broker' /* webpackChunkName: "cluster-service-broker" */).then(m => m.ClusterServiceBrokerPage))
   .set(referenceForModel(ClusterServicePlanModel), () => import('./cluster-service-plan' /* webpackChunkName: "cluster-service-plan" */).then(m => m.ClusterServicePlanPage))
   .set(referenceForModel(ConfigMapModel), () => import('./configmap' /* webpackChunkName: "configmap" */).then(m => m.ConfigMapsPage))
-  .set(referenceForModel(DaemonSetModel), () => import('./daemonset' /* webpackChunkName: "daemonset" */).then(m => m.DaemonSetsPage))
+  .set(referenceForModel(DaemonSetModel), () => import('./daemon-set' /* webpackChunkName: "daemon-set" */).then(m => m.DaemonSetsPage))
   .set(referenceForModel(DeploymentConfigModel), () => import('./deployment-config' /* webpackChunkName: "deployment-config" */).then(m => m.DeploymentConfigsPage))
   .set(referenceForModel(DeploymentModel), () => import('./deployment' /* webpackChunkName: "deployment" */).then(m => m.DeploymentsPage))
   .set(referenceForModel(BuildConfigModel), () => import('./build-config' /* webpackChunkName: "build-config" */).then(m => m.BuildConfigsPage))
@@ -122,7 +122,7 @@ export const resourceListPages = ImmutableMap<GroupVersionKind | string, () => P
   .set(referenceForModel(NetworkPolicyModel), () => import('./network-policy' /* webpackChunkName: "network-policy" */).then(m => m.NetworkPoliciesPage))
   .set(referenceForModel(NodeModel), () => import('./node' /* webpackChunkName: "node" */).then(m => m.NodesPage))
   .set(referenceForModel(PodModel), () => import('./pod' /* webpackChunkName: "pod" */).then(m => m.PodsPage))
-  .set(referenceForModel(ReplicaSetModel), () => import('./replicaset' /* webpackChunkName: "replicaset" */).then(m => m.ReplicaSetsPage))
+  .set(referenceForModel(ReplicaSetModel), () => import('./replicaset' /* webpackChunkName: "replicaset" */).then(m => m.ReplicaSetsPage)) //TODO should be replica-set
   .set(referenceForModel(ReplicationControllerModel), () => import('./replication-controller' /* webpackChunkName: "replication-controller" */).then(m => m.ReplicationControllersPage))
   .set(referenceForModel(SecretModel), () => import('./secret' /* webpackChunkName: "secret" */).then(m => m.SecretsPage))
   .set(referenceForModel(ServiceAccountModel), () => import('./service-account' /* webpackChunkName: "service-account" */).then(m => m.ServiceAccountsPage))
@@ -151,3 +151,9 @@ export const resourceListPages = ImmutableMap<GroupVersionKind | string, () => P
   .set(referenceForModel(CatalogSourceModel), () => import('./operator-lifecycle-manager/catalog-source' /* webpackChunkName: "catalog-source" */).then(m => m.CatalogSourcesPage))
   .set(referenceForModel(SubscriptionModel), () => import('./operator-lifecycle-manager/subscription' /* webpackChunkName: "subscription" */).then(m => m.SubscriptionsPage))
   .set(referenceForModel(InstallPlanModel), () => import('./operator-lifecycle-manager/install-plan' /* webpackChunkName: "install-plan" */).then(m => m.InstallPlansPage));
+
+export const resourceOverviewPages = ImmutableMap<GroupVersionKind | string, () => Promise<React.ComponentType<any>>>()
+  .set(referenceForModel(DaemonSetModel), () => import('./daemon-set' /* webpackChunkNmae: "daemon-set"*/).then(m => m.DaemonSetOverview))
+  .set(referenceForModel(DeploymentModel), () => import('./deployment' /* webpackChunkNmae: "deployment"*/).then(m => m.DeploymentOverview))
+  .set(referenceForModel(DeploymentConfigModel), () => import('./deployment-config' /* webpackChunkNmae: "deployment-config"*/).then(m => m.DeploymentConfigOverview))
+  .set(referenceForModel(StatefulSetModel), () => import('./stateful-set' /* webpackChunkNmae: "stateful-set"*/).then(m => m.StatefulSetOverview));

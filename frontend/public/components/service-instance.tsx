@@ -83,10 +83,10 @@ export const ServiceInstanceDetailsPage: React.SFC<ServiceInstanceDetailsPagePro
 ServiceInstanceDetailsPage.displayName = 'ServiceInstanceDetailsPage';
 
 const ServiceInstancesHeader = props => <ListHeader>
-  <ColHead {...props} className="col-md-3 col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
+  <ColHead {...props} className="col-md-2 col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
   <ColHead {...props} className="col-md-2 col-sm-3 col-xs-6" sortField="metadata.namespace">Namespace</ColHead>
   <ColHead {...props} className="col-md-2 col-sm-3 hidden-xs" sortField="spec.clusterServiceClassExternalName">Service Class</ColHead>
-  <ColHead {...props} className="col-md-1 col-sm-2 hidden-xs" sortFunc="serviceCatalogStatus">Status</ColHead>
+  <ColHead {...props} className="col-md-2 col-sm-2 hidden-xs" sortFunc="serviceCatalogStatus">Status</ColHead>
   <ColHead {...props} className="col-md-2 hidden-sm hidden-xs" sortFunc="planExternalName">Plan</ColHead>
   <ColHead {...props} className="col-md-2 hidden-sm hidden-xs" sortField="metadata.creationTimestamp">Created</ColHead>
 </ListHeader>;
@@ -95,7 +95,7 @@ const ServiceInstancesRow: React.SFC<ServiceInstancesRowProps> = ({obj}) => {
   const clusterServiceClassRefName = _.get(obj, 'spec.clusterServiceClassRef.name');
 
   return <div className="row co-resource-list__item">
-    <div className="col-md-3 col-sm-4 col-xs-6 co-resource-link-wrapper">
+    <div className="col-md-2 col-sm-4 col-xs-6 co-resource-link-wrapper">
       <ResourceCog actions={menuActions} kind={ServiceInstancesReference} resource={obj} />
       <ResourceLink kind={ServiceInstancesReference} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
     </div>
@@ -107,7 +107,7 @@ const ServiceInstancesRow: React.SFC<ServiceInstancesRowProps> = ({obj}) => {
         ? <ResourceLink kind="ClusterServiceClass" displayName={obj.spec.clusterServiceClassExternalName} title={obj.spec.clusterServiceClassExternalName} name={obj.spec.clusterServiceClassRef.name} />
         : obj.spec.clusterServiceClassExternalName }
     </div>
-    <div className="col-md-1 col-sm-2 hidden-xs">
+    <div className="col-md-2 col-sm-2 hidden-xs">
       <StatusWithIcon obj={obj} />
     </div>
     <div className="col-md-2 hidden-sm hidden-xs co-break-word">

@@ -630,6 +630,19 @@ export const ResourceQuotaModel: K8sKind = {
   labelPlural: 'Resource Quotas'
 };
 
+export const ClusterResourceQuotaModel: K8sKind = {
+  label: 'Cluster Resource Quota',
+  apiGroup: 'quota.openshift.io',
+  apiVersion: 'v1',
+  path: 'clusterresourcequotas',
+  plural: 'clusterresourcequotas',
+  abbr: 'CRQ',
+  namespaced: false,
+  kind: 'ClusterResourceQuota',
+  id: 'clusterresourcequota',
+  labelPlural: 'Cluster Resource Quotas'
+};
+
 export const NetworkPolicyModel: K8sKind = {
   label: 'Network Policy',
   labelPlural: 'Network Policies',

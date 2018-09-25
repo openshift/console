@@ -1,8 +1,23 @@
 import * as React from 'react';
 
-import { DetailsPage, List, ListPage, WorkloadListHeader, WorkloadListRow } from './factory';
-import {Cog, navFactory, SectionHeading, ResourceSummary, AsyncComponent} from './utils';
 import { ResourceEventStream } from './events';
+import { connectToModel } from '../kinds';
+import { ResourceOverviewHeading } from './overview';
+import {
+  DetailsPage,
+  List,
+  ListPage,
+  WorkloadListHeader,
+  WorkloadListRow
+} from './factory';
+import {
+  AsyncComponent,
+  Cog,
+  ContainerTable,
+  ResourceSummary,
+  SectionHeading,
+  navFactory
+} from './utils';
 
 const menuActions = [Cog.factory.EditEnvironment, ...Cog.factory.common];
 
@@ -13,6 +28,10 @@ const Details = ({obj: ss}) => <React.Fragment>
   <div className="co-m-pane__body">
     <SectionHeading text="StatefulSet Overview" />
     <ResourceSummary resource={ss} showNodeSelector={false} />
+  </div>
+  <div className="co-m-pane__body">
+    <SectionHeading text="Containers" />
+    <ContainerTable containers={ss.spec.template.spec.containers} />
   </div>
 </React.Fragment>;
 
@@ -42,3 +61,17 @@ export const StatefulSetsDetailsPage = props => <DetailsPage
   menuActions={menuActions}
   pages={pages}
 />;
+
+export const StatefulSetOverview = connectToModel(({kindObj, resource: ss}) =>
+  <div className="co-m-pane resource-overview">
+    <ResourceOverviewHeading
+      actions={menuActions}
+      kindObj={kindObj}
+      resource={ss}
+    />
+    <div className="co-m-pane__body resource-overview__body">
+      <div className="resource-overview__summary">
+        <ResourceSummary resource={ss} />
+      </div>
+    </div>
+  </div>);

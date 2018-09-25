@@ -53,10 +53,11 @@ export class DropdownMixin extends React.PureComponent {
     }
 
     this.setState({
-      active: false,
       selectedKey: selectedKey,
       title: noSelection ? title : this.props.items[selectedKey]
     });
+
+    this.hide();
   }
 
   toggle (e) {
@@ -197,10 +198,9 @@ export class Dropdown extends DropdownMixin {
   }
 
   componentDidUpdate (prevProps, prevState) {
-    // kans: we have to move the carret to the end for some presently unknown reason
     if (!prevState.active && this.state.active && this.input) {
-      const position = this.state.autocompleteText && this.state.autocompleteText.length;
-      this.input.setSelectionRange(position, position);
+      // Clear any previous filter when reopening the dropdown.
+      this.applyTextFilter_('', this.props.items);
     }
   }
 
