@@ -8,8 +8,9 @@ import { Cog, ContainerTable, navFactory, SectionHeading, ResourceSummary, Resou
 import { breadcrumbsForOwnerRefs } from './utils/breadcrumbs';
 import { ResourceEventStream } from './events';
 
-const {ModifyCount, EditEnvironment, common} = Cog.factory;
-export const replicaSetMenuActions = [ModifyCount, EditEnvironment, ...common];
+const {ModifyCount, AddStorage, EditEnvironment, common} = Cog.factory;
+
+export const replicaSetMenuActions = [ModifyCount, AddStorage, EditEnvironment, ...common];
 
 const Details = ({obj: replicaSet}) => {
   const revision = _.get(replicaSet, ['metadata', 'annotations', 'deployment.kubernetes.io/revision']);

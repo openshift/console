@@ -27,7 +27,7 @@ import {
   SectionHeading
 } from './utils';
 
-const {ModifyCount, EditEnvironment, common} = Cog.factory;
+const {ModifyCount, AddStorage, EditEnvironment, common} = Cog.factory;
 
 const UpdateStrategy = (kind, deployment) => ({
   label: 'Edit Update Strategy',
@@ -36,6 +36,7 @@ const UpdateStrategy = (kind, deployment) => ({
 
 const menuActions = [
   ModifyCount,
+  AddStorage,
   UpdateStrategy,
   EditEnvironment,
   ...common,

@@ -19,7 +19,8 @@ import {
   navFactory
 } from './utils';
 
-const menuActions = [Cog.factory.EditEnvironment, ...Cog.factory.common];
+const { EditEnvironment, common } = Cog.factory;
+const menuActions = [EditEnvironment, ...common];
 
 const kind = 'StatefulSet';
 const Row = props => <WorkloadListRow {...props} kind={kind} actions={menuActions} />;
