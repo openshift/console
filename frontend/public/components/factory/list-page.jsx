@@ -20,6 +20,8 @@ import {
   PageHeading
 } from '../utils';
 
+import { generateOnChange } from '../../kubevirt/components/factory/list-page';
+
 export const CompactExpandButtons = ({expand = false, onExpandChange = _.noop}) => <div className="btn-group btn-group-sm" data-toggle="buttons">
   <label className={classNames('btn compaction-btn', expand ? 'btn-default' : 'btn-primary')}>
     <input type="radio" onClick={() => onExpandChange(false)} /> Compact
@@ -170,7 +172,7 @@ export const FireMan_ = connect(null, {filterList: k8sActions.filterList})(
           </Link>;
         } else if (createProps.items) {
           createLink = <div className="co-m-primary-action">
-            <Dropdown buttonClassName="btn-primary" id="item-create" title={createButtonText} items={createProps.items} onChange={(name) => history.push(createProps.createLink(name))} />
+            <Dropdown buttonClassName="btn-primary" id="item-create" noSelection={true} title={createButtonText} items={createProps.items} onChange={(name) => generateOnChange(createProps.createLink(name), history)} />
           </div>;
         } else {
           createLink = <div className="co-m-primary-action">
