@@ -106,8 +106,13 @@ $catalog-item-icon-size-sm: 24px;
   }
 
   &__tabs {
-    flex: 0 0 165px;
+    flex: 0 0 170px;
     margin: 0 ($grid-gutter-width / 2) 0 0;
   }
+}
+
+.co-catalog-tab__empty {
+  font-weight: lighter;
+  color: $color-grey-medium;
 }
 

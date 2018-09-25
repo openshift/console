@@ -76,6 +76,12 @@ const addItem = (item, category, subcategory = null) => {
 };
 
 const sortItems = (items: any[]) => _.sortBy(items, 'tileName');
+const isCategoryEmpty = ({items}) => _.isEmpty(items);
+
+const pruneCategoriesWithNoItems = (categories: any[]) => {
+  _.remove(categories, isCategoryEmpty);
+  _.each(categories, category => _.remove(category.subcategories, isCategoryEmpty));
+};
 
 // calculate numItems per Category and subcategories, sort items
 const processCategories = (categories: any[]) => {
@@ -93,12 +99,18 @@ const processCategories = (categories: any[]) => {
   });
 };
 
-/**
- * Creates an items array under each category and subcategory.  If no match, categorizes item
- * under 'Other' main category.
- */
-export const categorizeItems = (items: any[]) => {
-  const categories = _.cloneDeep(catalogCategories);
+const clearItemsFromCategories = (categories: any[]) => {
+  _.each(categories, (category) => {
+    category.numItems = 0;
+    category.items = [];
+    _.each(category.subcategories, (subcategory) => {
+      subcategory.numItems = 0;
+      subcategory.items = [];
+    });
+  });
+};
+
+export const categorize = (items: any[], categories: any[]) => {
   const allCategory = _.first(categories);
   const otherCategory = _.last(categories);
 
@@ -117,7 +129,29 @@ export const categorizeItems = (items: any[]) => {
     }
   });
 
+  allCategory.items = items;
   allCategory.numItems = _.size(items);
+  return categories;
+};
+
+/**
+ * Creates an items array under each category and subcategory.  If no match, categorizes item
+ * under 'Other' main category.
+ */
+export const categorizeItems = (items: any[]) => {
+  const categories = _.cloneDeep(catalogCategories);
+  categorize(items, categories);
+  pruneCategoriesWithNoItems(categories);
   processCategories(categories);
   return categories;
 };
+
+export const recategorizeItems = (items: any[], categories: any[]) => {
+  const newCategories = _.cloneDeep(categories);
+  clearItemsFromCategories(newCategories);
+  categorize(items, newCategories);
+  processCategories(newCategories);
+  return newCategories;
+};
+
+
