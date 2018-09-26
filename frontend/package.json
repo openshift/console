@@ -63,6 +63,7 @@
     "immutable": "3.x",
     "js-base64": "^2.4.5",
     "js-yaml": "3.x",
+    "kubevirt-web-ui-components": "0.1.x",
     "lodash-es": "4.x",
     "openshift-logos-icon": "1.7.0",
     "patternfly": "^3.45.0",
