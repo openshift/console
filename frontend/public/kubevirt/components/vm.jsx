@@ -3,10 +3,15 @@ import React, { Component, Fragment } from 'react';
 
 import { ListHeader, ColHead, List, ListPage, ResourceRow, DetailsPage } from './factory/okdfactory';
 import { breadcrumbsForOwnerRefs, Firehose, ResourceLink, navFactory, ResourceCog, Cog } from './utils/okdutils';
-import { VirtualMachineInstanceModel, VirtualMachineModel, PodModel, NamespaceModel } from '../models';
+import { VirtualMachineInstanceModel, VirtualMachineModel, PodModel, NamespaceModel, TemplateModel } from '../models';
+import { k8sCreate } from '../../module/k8s';
+import actions from '../../module/k8s/k8s-actions';
+import { connect } from 'react-redux';
 
 import { startStopVmModal } from './modals/start-stop-vm-modal';
 import { restartVmModal } from './modals/restart-vm-modal';
+
+import { CreateVmWizard } from 'kubevirt-web-ui-components/dist/js';
 
 const dashes = '---';
 const getLabelMatcher = (vm) => _.get(vm, 'spec.template.metadata.labels');
@@ -243,13 +248,82 @@ export const VirtualMachinesDetailsPage = props => <DetailsPage
   ]}
 />;
 
-export class VirtualMachinesPage extends Component {
-  render() {
-    return <ListPage
-      {...this.props}
-      canCreate={true}
-      kind={VirtualMachineModel.kind}
-      ListComponent={VMList}
-    />;
+const mapStateToProps = ({k8s}) => ({
+  k8s
+});
+
+const mapDispatchToProps = () => ({
+  stopK8sWatch: actions.stopK8sWatch,
+  watchK8sList: actions.watchK8sList
+});
+
+const ConnectedNewVMWizard = props => {
+  const namespaces = props.flatten(props.resources);
+  const templates = _.get(props.resources, TemplateModel.kind, {}).data;
+  return <CreateVmWizard
+    onHide={props.onHide}
+    namespaces={namespaces}
+    templates={templates}
+    k8sCreate={props.createVm} />;
+};
+
+export const VirtualMachinesPage = connect(
+  mapStateToProps, mapDispatchToProps)(class VirtualMachinesPage extends Component {
+
+  constructor(props){
+    super(props);
+
+    this.state = {
+      showWizard: false
+    };
+
+    this.createItems = {
+      wizard: 'Create with Wizard',
+      yaml: 'Create from YAML'
+    };
+
+    this.createProps = {
+      items: this.createItems,
+      createLink: (type) => {
+        switch (type) {
+          case 'wizard':
+            return () => this.setState({showWizard: true});
+          default:
+            return `/k8s/ns/${this.props.namespace}/virtualmachines/new/`;
+        }
+      }
+    };
+
+    this._onHide = this.onHide.bind(this);
+    this._openNewVmWizard = this.openNewVmWizard.bind(this);
   }
-}
+
+  onHide() {
+    this.setState({
+      showWizard: false
+    });
+  }
+
+  openNewVmWizard() {
+    const resources = [
+      { kind:NamespaceModel.kind, isList: true, prop: NamespaceModel.kind},
+      { kind:TemplateModel.kind, isList: true, prop: TemplateModel.kind, namespace: 'kubevirt-templates'}
+    ];
+    return <Firehose resources={resources} flatten={getFlattenForKind(NamespaceModel.kind)}>
+      <ConnectedNewVMWizard onHide={this._onHide} createVm={k8sCreate} />
+    </Firehose>;
+  }
+
+  render() {
+    return <React.Fragment>
+      {this.state.showWizard ? this._openNewVmWizard() : undefined}
+      <ListPage
+        {...this.props}
+        canCreate={true}
+        kind={VirtualMachineModel.kind}
+        ListComponent={VMList}
+        createProps={this.createProps}
+      />;
+    </React.Fragment>;
+  }
+});

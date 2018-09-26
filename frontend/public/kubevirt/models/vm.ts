@@ -39,3 +39,16 @@ export const VirtualMachineInstancePresetModel: K8sKind = {
   kind: 'VirtualMachineInstancePreset',
   id: 'virtualmachineinstancepreset'
 };
+
+export const TemplateModel: K8sKind = {
+  label: 'Template',
+  labelPlural: 'Templates',
+  apiVersion: 'v1',
+  path: 'templates',
+  apiGroup: 'template.openshift.io',
+  plural: 'templates',
+  namespaced: true,
+  abbr: 'Template',
+  kind: 'Template',
+  id: 'template'
+};
