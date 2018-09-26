@@ -20,7 +20,7 @@ spec:
         deploymentconfig: kubevirt-web-ui
     spec:
       containers:
-        - image: docker.io/mareklibra/kubevirt-web-ui:f679e704219f58aea97a1433ea01e7c7227afc7d
+        - image: docker.io/mareklibra/kubevirt-web-ui:dfe2736842f02b6f63880436eb8e9961a86e5d39
           imagePullPolicy: IfNotPresent
           name: kubevirt-web-ui
           resources: {}
