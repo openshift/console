@@ -5,16 +5,20 @@ import * as PropTypes from 'prop-types';
 import * as classnames from 'classnames';
 import { Toolbar } from 'patternfly-react';
 import { Helmet } from 'react-helmet';
+import { Link } from 'react-router-dom';
 
 import { StartGuide } from './start-guide';
 import { TextFilter } from './factory';
 import { ProjectOverview } from './project-overview';
 import { ResourceOverviewPage } from './resource-list';
+import { ALL_NAMESPACES_KEY } from '../const';
 import {
   ActionsMenu,
   CloseButton,
+  Disabled,
   Dropdown,
   Firehose,
+  MsgBox,
   ResourceIcon,
   StatusBox,
 } from './utils';
@@ -40,41 +44,61 @@ export const ResourceOverviewHeading = ({kindObj, actions, resource }) => <div c
   </h1>
 </div>;
 
-const OverviewToolbar = ({groupOptions, handleFilterChange, handleGroupChange, selectedGroup}) =>
-  <Toolbar className="overview-toolbar">
-    <Toolbar.RightContent>
-      {
-        !_.isEmpty(groupOptions) &&
+const OverviewHeading = ({disabled, groupOptions, handleFilterChange, handleGroupChange, selectedGroup, title}) =>
+  <div className="co-m-nav-title co-m-nav-title--overview">
+    {
+      title &&
+      <h1 className="co-m-pane__heading">
+        <div className="co-m-pane__name">{title}</div>
+      </h1>
+    }
+    <Toolbar className="overview-toolbar">
+      <Toolbar.RightContent>
+        {
+          !_.isEmpty(groupOptions) &&
+          <div className="form-group overview-toolbar__form-group">
+            <label className="overview-toolbar__label">
+              Group by label
+            </label>
+            <Dropdown
+              className="overview-toolbar__dropdown"
+              disabled={disabled}
+              items={groupOptions}
+              onChange={handleGroupChange}
+              style={{display: 'inline-block'}}
+              title={selectedGroup}
+            />
+          </div>
+        }
         <div className="form-group overview-toolbar__form-group">
-          <label className="overview-toolbar__label">
-            Group by label
-          </label>
-          <Dropdown
-            className="overview-toolbar__dropdown"
-            disabled={_.isEmpty(groupOptions)}
-            items={groupOptions}
-            onChange={handleGroupChange}
-            style={{display: 'inline-block'}}
-            title={selectedGroup}
+          <TextFilter
+            autofocus={!disabled}
+            disabled={disabled}
+            label="Resources by name"
+            onChange={handleFilterChange}
           />
         </div>
-      }
-      <div className="form-group overview-toolbar__form-group">
-        <TextFilter
-          label="Resources by name"
-          onChange={handleFilterChange}
-        />
-      </div>
-    </Toolbar.RightContent>
-  </Toolbar>;
+      </Toolbar.RightContent>
+    </Toolbar>
+  </div>;
 
-OverviewToolbar.displayName = 'OverviewToolbar';
+OverviewHeading.displayName = 'OverviewHeading';
 
-OverviewToolbar.propTypes = {
+OverviewHeading.propTypes = {
+  disabled: PropTypes.bool,
   groupOptions: PropTypes.object,
-  handleFilterChange: PropTypes.func.isRequired,
-  handleGroupChange: PropTypes.func.isRequired,
-  selectedGroup: PropTypes.string
+  handleFilterChange: PropTypes.func,
+  handleGroupChange: PropTypes.func,
+  selectedGroup: PropTypes.string,
+  title: PropTypes.string
+};
+
+OverviewHeading.defaultProps = {
+  disabled: false,
+  groupOptions: {},
+  handleFilterChange: _.noop,
+  handleGroupChange: _.noop,
+  selectedGroup: ''
 };
 
 class OverviewDetails extends React.Component {
@@ -292,26 +316,15 @@ class OverviewDetails extends React.Component {
 
   render() {
     const {loaded, loadError, selectedItem, title} = this.props;
-    const {filteredItems, filterValue, groupedItems, groupOptions, selectedGroupLabel} = this.state;
-
+    const {filteredItems, groupedItems, groupOptions, selectedGroupLabel} = this.state;
     return <div className="co-m-pane">
-      <div className="co-m-nav-title co-m-nav-title--overview">
-        <h1 className="co-m-pane__heading">
-          {
-            title &&
-            <div className="co-m-pane__name">
-              <span id="resource-title">{title}</span>
-            </div>
-          }
-        </h1>
-        <OverviewToolbar
-          filterValue={filterValue}
-          groupOptions={groupOptions}
-          handleFilterChange={this.handleFilterChange}
-          handleGroupChange={this.handleGroupChange}
-          selectedGroup={selectedGroupLabel}
-        />
-      </div>
+      <OverviewHeading
+        groupOptions={groupOptions}
+        handleFilterChange={this.handleFilterChange}
+        handleGroupChange={this.handleGroupChange}
+        selectedGroup={selectedGroupLabel}
+        title={title}
+      />
       <div className="co-m-pane__body">
         <StatusBox
           data={filteredItems}
@@ -405,6 +418,23 @@ export class Overview extends React.Component {
       }
     ];
 
+    if (_.isEmpty(namespace) || namespace === ALL_NAMESPACES_KEY) {
+      return <div className="co-m-pane">
+        <Disabled>
+          <OverviewHeading disabled title={title} />
+        </Disabled>
+        <div className="co-m-pane__body">
+          <MsgBox
+            detail={<React.Fragment>
+              Select a project from the dropdown above to see an overview of its workloads.
+              To view the status of all projects in the cluster, go to the <Link to="/status">status page</Link>.
+            </React.Fragment>}
+            title="Select a Project"
+          />
+        </div>
+      </div>;
+    }
+
     return <div className={className}>
       <div className="overview__body">
         <Firehose resources={resources} forceUpdate={true}>
@@ -435,7 +465,7 @@ export class Overview extends React.Component {
 Overview.displayName = 'Overview';
 
 Overview.propTypes = {
-  namespace: PropTypes.string.isRequired,
+  namespace: PropTypes.string,
   title: PropTypes.string
 };
 
