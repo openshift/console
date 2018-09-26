@@ -41,7 +41,7 @@ let config: webpack.Configuration = {
             loader: 'thread-loader',
             options: {
               // Leave one core spare for fork-ts-checker-webpack-plugin
-              workers: require('os').cpus().length - 1,
+              workers: process.env.MAX_WORKERS || require('os').cpus().length - 1,
             }
           },
           {
