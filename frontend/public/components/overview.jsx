@@ -166,7 +166,7 @@ class OverviewDetails extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const {daemonSets, deployments, deploymentConfigs, loaded, namespace, pods, replicaSets, replicationControllers} = this.props;
+    const {daemonSets, deployments, deploymentConfigs, loaded, namespace, pods, replicaSets, replicationControllers, statefulSets} = this.props;
     const {filterValue, selectedGroupLabel} = this.state;
 
     if (!_.isEqual(namespace, prevProps.namespace)
@@ -176,7 +176,8 @@ class OverviewDetails extends React.Component {
       || !_.isEqual(deployments, prevProps.deployments)
       || !_.isEqual(pods, prevProps.pods)
       || !_.isEqual(replicaSets, prevProps.replicaSets)
-      || !_.isEqual(replicationControllers, prevProps.replicationControllers)) {
+      || !_.isEqual(replicationControllers, prevProps.replicationControllers)
+      || !_.isEqual(statefulSets, prevProps.statefulSets)) {
       this.createOverviewData();
     } else if (filterValue !== prevState.filterValue) {
       const filteredItems = this.filterItems(this.state.items);
@@ -354,7 +355,7 @@ class OverviewDetails extends React.Component {
   }
 
   createOverviewData() {
-    const {loaded} = this.props;
+    const {loaded, selectedItem, selectItem} = this.props;
 
     if (!loaded) {
       return;
@@ -366,6 +367,11 @@ class OverviewDetails extends React.Component {
       ...this.createDeploymentConfigItems(),
       ...this.createStatefulSetItems()
     ];
+
+    // Ensure any changes to the selected item propagate back up to the side panel
+    if (!_.isEmpty(selectedItem)) {
+      selectItem(_.find(items, {obj: {metadata: {uid: selectedItem.obj.metadata.uid }}}));
+    }
 
     const filteredItems = this.filterItems(items);
     const groupOptions = this.getGroupOptionsFromLabels(filteredItems);
