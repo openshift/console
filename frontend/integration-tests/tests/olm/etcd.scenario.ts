@@ -32,6 +32,8 @@ describe('Interacting with the etcd OCS', () => {
   it('can be enabled from the Catalog Sources', async() => {
     await sidenavView.clickNavLink(['Operators', 'Catalog Sources']);
     await catalogView.isLoaded();
+    await catalogView.viewCatalogDetail('Red Hat Operators');
+    await catalogView.isLoaded();
     await catalogView.createSubscriptionFor('etcd');
     await browser.wait(until.presenceOf($('.ace_text-input')));
     const content = await yamlView.editorContent.getText();

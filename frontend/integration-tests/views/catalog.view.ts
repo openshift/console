@@ -4,6 +4,11 @@ import { browser, $, $$, by, ExpectedConditions as until, ElementFinder } from '
 
 const moveTo = (elem: ElementFinder) => browser.actions().mouseMove(elem).perform().then(() => elem);
 
+const withRetry = (action) => (args) => action(args)
+  .catch(() => action(args))
+  .catch(() => action(args))
+  .catch(() => action(args));
+
 export const entryRows = $$('.co-resource-list__item');
 export const entryRowFor = (name: string) => entryRows.filter((row) => row.$('.co-clusterserviceversion-logo__name__clusterserviceversion').getText()
   .then(text => text === name)).first();
@@ -17,6 +22,10 @@ export const hasSubscription = (name: string) => browser.getCurrentUrl().then(ur
   return entryRowFor(name).element(by.buttonText('Create Subscription')).isPresent();
 }).then(canSubscribe => !canSubscribe);
 
-export const createSubscriptionFor = (pkgName: string) => moveTo(
-  entryRowFor(pkgName).element(by.buttonText('Create Subscription'))).then(el => el.click()
-);
+export const viewCatalogDetail = (name: string) => $$('.co-catalogsource-list__section').filter(section => section.$('h3').getText()
+  .then(text => text === name)).first().element(by.linkText('View catalog details'))
+  .click();
+
+export const createSubscriptionFor = withRetry((pkgName: string) => moveTo(
+  entryRowFor(pkgName).element(by.buttonText('Create Subscription'))
+).then(el => el.click()));

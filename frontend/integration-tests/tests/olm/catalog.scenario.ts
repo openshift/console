@@ -28,6 +28,8 @@ describe('Installing a service from the Catalog Sources', () => {
   it('displays Catalog Sources with expected available services', async() => {
     await sidenavView.clickNavLink(['Operators', 'Catalog Sources']);
     await catalogView.isLoaded();
+    await catalogView.viewCatalogDetail('Red Hat Operators');
+    await catalogView.isLoaded();
 
     openCloudServices.forEach(name => {
       expect(catalogView.entryRowFor(name).isDisplayed()).toBe(true);
