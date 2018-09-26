@@ -113,13 +113,9 @@ class CatalogListPage extends React.Component {
     const {loaded, loadError} = this.props;
     const {items} = this.state;
 
-    return <div className="co-m-pane">
-      <div className="co-m-pane__body">
-        <StatusBox data={items} loaded={loaded} loadError={loadError} label="Resources">
-          <CatalogTileViewPage items={items} />
-        </StatusBox>
-      </div>
-    </div>;
+    return <StatusBox data={items} loaded={loaded} loadError={loadError} label="Resources">
+      <CatalogTileViewPage items={items} />
+    </StatusBox>;
   }
 }
 
@@ -155,11 +151,9 @@ export const Catalog = connectToFlags(FLAGS.OPENSHIFT, FLAGS.SERVICE_CATALOG)(({
       prop: 'imagestreams'
     });
   }
-  return <div className="catalog">
-    <Firehose resources={resources}>
-      <CatalogListPage namespace={namespace} />
-    </Firehose>
-  </div>;
+  return <Firehose resources={resources}>
+    <CatalogListPage namespace={namespace} />
+  </Firehose>;
 });
 
 Catalog.displayName = 'Catalog';
@@ -174,7 +168,9 @@ export const CatalogPage = ({match}) => {
     <Helmet>
       <title>Catalog</title>
     </Helmet>
-    <NavTitle title="Catalog" />
-    <Catalog namespace={namespace} />
+    <div className="co-catalog">
+      <NavTitle title="Catalog" />
+      <Catalog namespace={namespace} />
+    </div>
   </React.Fragment>;
 };
