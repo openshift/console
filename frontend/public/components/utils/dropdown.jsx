@@ -336,7 +336,7 @@ export class Dropdown extends DropdownMixin {
             </button>
         }
         {
-          active && <ul role="listbox" ref={this.dropdownList} className={classNames('dropdown-menu', menuClassName)}>
+          active && <ul role="listbox" ref={this.dropdownList} className={classNames('dropdown-menu', 'dropdown-menu--block', menuClassName)}>
             {
               autocompleteFilter && <div className="dropdown-menu__filter">
                 <input
