@@ -29,6 +29,9 @@ import k8sActions from '../module/k8s/k8s-actions';
 import '../vendor.scss';
 import '../style.scss';
 
+import { KubevirtDefaultPage } from '../kubevirt/components/app';
+import { isKubevirt } from '../kubevirt/components/utils/selectors';
+
 // Edge lacks URLSearchParams
 import 'url-search-params-polyfill';
 
@@ -90,6 +93,7 @@ const ActiveNamespaceRedirect = ({location}) => {
 };
 
 // The default page component lets us connect to flags without connecting the entire App.
+// eslint-disable-next-line no-unused-vars
 const DefaultPage = connectToFlags(FLAGS.OPENSHIFT)(({ flags }) => {
   const openshiftFlag = flags[FLAGS.OPENSHIFT];
   if (flagPending(openshiftFlag)) {
@@ -121,6 +125,20 @@ class App extends React.PureComponent {
   }
 
   render () {
+    let DefaultPage = isKubevirt() ? KubevirtDefaultPage : DefaultPage; // eslint-disable-line
+
+    /*
+    if (isKubevirt()) {
+      return <KubevirtApp namespacedRoutes={namespacedRoutes} />;
+    }
+    */
+    /*
+      TODO: following routes must be refined!!
+
+      All non-kubevirt routes should be redirected to external application (means OKD)
+      Do we need any additional handling for virtual machines?
+     */
+
     return <React.Fragment>
       <Helmet titleTemplate={`%s · ${productName}`} defaultTitle={productName} />
       <Masthead />
@@ -282,3 +300,6 @@ render((
     </Router>
   </Provider>
 ), document.getElementById('app'));
+
+// For Kubevirt to ease reuse
+export { NamespaceRedirect };

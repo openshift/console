@@ -20,6 +20,9 @@ import * as routingImg from '../imgs/routing.svg';
 import * as routingActiveImg from '../imgs/routing-active.svg';
 import { history, stripBasePath } from './utils';
 
+import KubevirtNav from '../kubevirt/components/nav';
+import { isKubevirt } from '../kubevirt/components/utils/selectors';
+
 export const matchesPath = (resourcePath, prefix) => resourcePath === prefix || _.startsWith(resourcePath, `${prefix}/`);
 export const matchesModel = (resourcePath, model) => model && matchesPath(resourcePath, referenceForModel(model));
 
@@ -360,6 +363,9 @@ export class Nav extends React.Component {
   render () {
     const { isOpen } = this.state;
 
+    if (isKubevirt()) {
+      return <KubevirtNav isOpen={isOpen} onToggle={this.toggle} close={this.close} scroller={this.scroller} onWheel={this.preventScroll} />;
+    }
 
     return <React.Fragment>
       <button type="button" className="sidebar-toggle" aria-controls="sidebar" aria-expanded={isOpen} onClick={this.toggle}>
@@ -450,3 +456,6 @@ export class Nav extends React.Component {
     </React.Fragment>;
   }
 }
+
+// For reuse by kubevirt
+export { ClusterPickerNavSection, NavSection, UserNavSection };

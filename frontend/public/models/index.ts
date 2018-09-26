@@ -761,6 +761,8 @@ export const ServiceBindingModel: K8sKind = {
   id: 'servicebinding'
 };
 
+export * from '../kubevirt/models/vm'; // needed when setting features and resource pages
+
 export const LimitRangeModel: K8sKind = {
   label: 'Limit Range',
   apiVersion: 'v1',
@@ -786,3 +788,4 @@ export const APIServiceModel: K8sKind = {
   id: 'apiservice',
   crd: true,
 };
+

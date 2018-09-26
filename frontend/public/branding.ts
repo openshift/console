@@ -4,6 +4,8 @@ const getProductName = () => {
       return 'OpenShift Container Platform';
     case 'online':
       return 'OpenShift Online';
+    case 'okdvirt':
+      return 'OKD Virtualization';
     default:
       return 'OKD';
   }
