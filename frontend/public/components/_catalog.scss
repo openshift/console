@@ -1,0 +1,115 @@
+$catalog-item-icon-size-lg: 40px;
+$catalog-item-icon-size-sm: 24px;
+
+// reset font size back to 12px since console base font size is 13px
+.catalog-tile-pf-description,
+.catalog-tile-pf-body .catalog-tile-pf-subtitle {
+  font-size: ($font-size-base - 1);
+}
+
+.co-catalog {
+  background: $color-grey-background;
+  min-height: 100%;
+  padding: 0 0 ($grid-gutter-width / 2);
+}
+
+.co-catalog-item-details {
+  display: flex;
+  margin: 0 0 10px;
+
+  &__description {
+    white-space: pre-wrap;
+  }
+
+  &__name {
+    margin-bottom: 10px;
+  }
+
+  &__provider,
+  &__tags {
+    margin-bottom: 5px;
+  }
+
+  &__tag {
+    color: $co-gray;
+    font-size: ($font-size-base - 1);
+    margin-right: 5px;
+    text-transform: uppercase;
+  }
+}
+
+.co-catalog-item-icon {
+  padding-right: 10px;
+
+  &__icon {
+    font-size: $catalog-item-icon-size-sm;
+
+    &--large {
+      font-size: $catalog-item-icon-size-lg;
+    }
+  }
+
+  &__img {
+    max-height: $catalog-item-icon-size-sm;
+    max-width: $catalog-item-icon-size-sm;
+
+    &[src$=".svg"] {
+      height: $catalog-item-icon-size-sm;
+    }
+
+    &--large {
+      max-height: $catalog-item-icon-size-lg;
+      max-width: $catalog-item-icon-size-lg;
+
+      &[src$=".svg"] {
+        height: $catalog-item-icon-size-lg;
+      }
+    }
+  }
+}
+
+.co-catalog-item-tile {
+  color: inherit;
+  text-decoration: none;
+
+  &:active,
+  &:hover,
+  &:visited {
+    color: inherit;
+    text-decoration: none;
+  }
+}
+
+.co-catalog-page {
+  background: #fff;
+  box-shadow: 0 0.0625rem 0.125rem 0 rgba(3,3,3,.2);
+  display: flex;
+  margin: 0 ($grid-gutter-width / 2);
+  padding: ($grid-gutter-width / 2) 0 0;
+
+  &__content {
+    flex: 1 1 auto;
+    margin: 0 0 0 ($grid-gutter-width / 2);
+  }
+
+  &__heading {
+    font-size: 16px;
+    font-weight: 400;
+    margin: 0 0 ($grid-gutter-width / 2);
+  }
+
+  &__num-items {
+    border-bottom: 1px solid $color-grey-border;
+    font-weight: 700;
+    margin: 0 ($grid-gutter-width / 2) $grid-gutter-width 0;
+    padding: 0 0 ($grid-gutter-width / 2)
+  }
+
+  &__tabs {
+    // Note the design spec calls for width of 165px, but https://github.com/patternfly/patternfly-react/issues/663
+    // is allowing the tabs to grow.  In order to accomodate "Middleware > Runtimes & Frameworks", this value needs to be wider.
+    flex: 0 0 190px;
+    margin: 0 ($grid-gutter-width / 2) 0 0;
+  }
+}
+
