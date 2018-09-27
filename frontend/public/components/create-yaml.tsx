@@ -11,7 +11,7 @@ import { ErrorPage404 } from './error';
 import { ClusterServiceVersionModel } from '../models';
 
 export const CreateYAML = connectToPlural((props: CreateYAMLProps) => {
-  const {match, kindsInFlight, kindObj} = props;
+  const {match, kindsInFlight, kindObj, showHeader = true} = props;
   const {params} = match;
 
   if (!kindObj) {
@@ -38,7 +38,7 @@ export const CreateYAML = connectToPlural((props: CreateYAMLProps) => {
   // TODO: if someone edits namespace, we'll redirect to old namespace
   const redirectURL = params.appName ? `/k8s/ns/${namespace}/${ClusterServiceVersionModel.plural}/${params.appName}/instances` : null;
 
-  return <AsyncComponent loader={() => import('./edit-yaml').then(c => c.EditYAML)} obj={obj} create={true} kind={kindObj.kind} redirectURL={redirectURL} showHeader={true} />;
+  return <AsyncComponent loader={() => import('./edit-yaml').then(c => c.EditYAML)} obj={obj} create={true} kind={kindObj.kind} redirectURL={redirectURL} showHeader={showHeader} />;
 });
 
 export const EditYAMLPage: React.SFC<EditYAMLPageProps> = (props) => {
@@ -54,6 +54,8 @@ export type CreateYAMLProps = {
   kindsInFlight: boolean;
   kindObj: K8sKind;
   template?: string;
+  download?: boolean;
+  showHeader?: boolean;
 };
 
 export type EditYAMLPageProps = {

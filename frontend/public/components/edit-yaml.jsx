@@ -73,6 +73,9 @@ export const EditYAML = connect(stateToProps)(
     }
 
     getModel(obj) {
+      if (_.isEmpty(obj)) {
+        return null;
+      }
       const { models } = this.props;
       return models.get(referenceFor(obj)) || models.get(obj.kind);
     }
@@ -140,9 +143,6 @@ export const EditYAML = connect(stateToProps)(
     }
 
     loadYaml(reload=false, obj=this.props.obj, readOnly=this.props.readOnly) {
-      if (_.isEmpty(obj)) {
-        return;
-      }
 
       if (this.state.initialized && !reload) {
         return;
@@ -160,13 +160,16 @@ export const EditYAML = connect(stateToProps)(
         es.setUseWrapMode(true);
         this.doc = es.getDocument();
       }
-      let yaml;
+      let yaml = '';
 
-      try {
-        yaml = safeDump(obj);
-      } catch (e) {
-        yaml = `Error dumping YAML: ${e}`;
+      if (obj) {
+        try {
+          yaml = safeDump(obj);
+        } catch (e) {
+          yaml = `Error dumping YAML: ${e}`;
+        }
       }
+
       this.doc.setValue(yaml);
       this.ace.moveCursorTo(0, 0);
       this.ace.clearSelection();
@@ -216,10 +219,11 @@ export const EditYAML = connect(stateToProps)(
         obj.metadata.namespace = this.props.activeNamespace;
       }
 
-      const { namespace, name } = this.props.obj.metadata;
       const { namespace: newNamespace, name: newName } = obj.metadata;
 
-      if (!this.props.create) {
+      if (!this.props.create && this.props.obj) {
+        const { namespace, name } = this.props.obj.metadata;
+
         if (name !== newName) {
           this.handleError(`Cannot change resource name (original: "${name}", updated: "${newName}").`);
           return;
@@ -249,7 +253,7 @@ export const EditYAML = connect(stateToProps)(
           delete obj.metadata.resourceVersion;
           redirect = true;
         }
-        action(model, obj, namespace, name)
+        action(model, obj, newNamespace, newName)
           .then(o => {
             if (redirect) {
               history.push(this.props.redirectURL || resourceObjPath(o, referenceFor(o)));
@@ -290,7 +294,7 @@ export const EditYAML = connect(stateToProps)(
     }
 
     render () {
-      if (_.isEmpty(this.props.obj)) {
+      if (!this.props.create && !this.props.obj) {
         return <Loading />;
       }
       /*
@@ -300,21 +304,21 @@ export const EditYAML = connect(stateToProps)(
       */
 
       const {error, success, stale} = this.state;
-      const {create, obj, showHeader = false, readOnly} = this.props;
-      const kind = obj.kind;
+      const {create, obj, download = true, showHeader = true, readOnly} = this.props;
+      const kind = obj && obj.kind;
       const model = this.getModel(obj);
 
       return <div>
-        {showHeader && <div className="yaml-editor-header">
+        {showHeader && <div className="yaml-editor__header">
           {`${create ? 'Create' : 'Edit'} ${_.get(model, 'label', kind)}`}
         </div>}
         <div className="co-p-has-sidebar">
           <div className="co-p-has-sidebar__body">
             <div className="yaml-editor" ref={r => this.editor = r} style={{height: this.state.height}}>
               <div className="absolute-zero">
-                <div className="full-width-and-height yaml-editor--flexbox">
-                  <div id={this.id} key={this.id} className="yaml-editor--acebox" />
-                  <div className="yaml-editor--buttons">
+                <div className="full-width-and-height yaml-editor__flexbox">
+                  <div id={this.id} key={this.id} className="yaml-editor__acebox" />
+                  <div className="yaml-editor__buttons">
                     {error && <p className="alert alert-danger"><span className="pficon pficon-error-circle-o"></span>{error}</p>}
                     {success && <p className="alert alert-success"><span className="pficon pficon-ok"></span>{success}</p>}
                     {stale && <p className="alert alert-info">
@@ -324,7 +328,7 @@ export const EditYAML = connect(stateToProps)(
                     {!create && !readOnly && <button type="submit" className="btn btn-primary" id="save-changes" onClick={() => this.save()}>Save</button>}
                     {!create && <button type="submit" className="btn btn-default" id="reload-object" onClick={() => this.reload()}>Reload</button>}
                     <button className="btn btn-default" id="cancel" onClick={() => this.onCancel()}>Cancel</button>
-                    <button type="submit" className="btn btn-default pull-right hidden-sm hidden-xs" onClick={() => this.download()}><i className="fa fa-download"></i>&nbsp;Download</button>
+                    {download && <button type="submit" className="btn btn-default pull-right hidden-sm hidden-xs" onClick={() => this.download()}><i className="fa fa-download"></i>&nbsp;Download</button>}
                   </div>
                 </div>
               </div>

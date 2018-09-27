@@ -2,8 +2,8 @@
 
 import { $, $$, by, Key, browser, ExpectedConditions as until } from 'protractor';
 
-export const saveButton = $('.yaml-editor--buttons').$('#save-changes');
-export const cancelButton = $('.yaml-editor--buttons').element(by.buttonText('Cancel'));
+export const saveButton = $('.yaml-editor__buttons').$('#save-changes');
+export const cancelButton = $('.yaml-editor__buttons').element(by.buttonText('Cancel'));
 
 export const isLoaded = () => browser.wait(until.visibilityOf(saveButton));
 

@@ -3,6 +3,7 @@ $link-padding-left: 40px;
 $section-padding-left: 13px;
 $active-border: 3px;
 
+.co-m-masthead-link,
 .co-m-nav-link {
   display: block;
   float: none;
@@ -28,13 +29,15 @@ $active-border: 3px;
       color: #fff;
     }
   }
+}
 
+.co-m-nav-link {
   &:hover {
-   background-color: $color-os-nav-background-active;
+    background-color: $color-os-nav-background-active;
   }
 
   &:focus {
-   background-color: transparent;
+    background-color: transparent;
   }
 }
 

@@ -165,6 +165,9 @@ class App extends React.PureComponent {
             <Route path="/search/ns/:ns" exact component={NamespaceFromURL(SearchPage)} />
             <Route path="/search" exact component={ActiveNamespaceRedirect} />
 
+            <LazyRoute path="/k8s/all-namespaces/import" exact loader={() => import('./import-yaml').then(m => NamespaceFromURL(m.ImportYamlPage))} />
+            <LazyRoute path="/k8s/ns/:ns/import/" exact loader={() => import('./import-yaml').then(m => NamespaceFromURL(m.ImportYamlPage))} />
+
             <Route path="/k8s/ns/:ns/customresourcedefinitions/:plural" exact component={ResourceListPage} />
             <Route path="/k8s/ns/:ns/customresourcedefinitions/:plural/:name" component={ResourceDetailsPage} />
             <Route path="/k8s/all-namespaces/customresourcedefinitions/:plural" exact component={ResourceListPage} />
