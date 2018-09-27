@@ -21,13 +21,11 @@ import {
   StatefulSetModel
 } from '../models';
 import {
-  ActionsMenu,
   CloseButton,
   Disabled,
   Dropdown,
   Firehose,
   MsgBox,
-  ResourceIcon,
   StatusBox,
 } from './utils';
 
@@ -78,18 +76,6 @@ const sortReplicaSetsByRevision = (replicaSets) => {
 const sortReplicationControllersByRevision = (replicationControllers) => {
   return sortByRevision(replicationControllers, 'openshift.io/deployment-config.latest-version');
 };
-
-export const ResourceOverviewHeading = ({kindObj, actions, resource }) => <div className="overview__sidebar-pane-head resource-overview__heading">
-  <h1 className="co-m-pane__heading">
-    <div className="co-m-pane__name">
-      <ResourceIcon className="co-m-resource-icon--lg pull-left" kind={kindObj.kind} />
-      {resource.metadata.name}
-    </div>
-    <div className="co-actions">
-      <ActionsMenu actions={actions.map(a => a(kindObj, resource))} />
-    </div>
-  </h1>
-</div>;
 
 const OverviewHeading = ({disabled, groupOptions, handleFilterChange, handleGroupChange, selectedGroup, title}) =>
   <div className="co-m-nav-title co-m-nav-title--overview">

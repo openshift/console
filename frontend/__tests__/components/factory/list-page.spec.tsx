@@ -3,7 +3,7 @@ import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 
 import { TextFilter, ListPageWrapper_, FireMan_, MultiListPage } from '../../../public/components/factory/list-page';
-import { NavTitle, Dropdown, Firehose } from '../../../public/components/utils';
+import { Dropdown, Firehose, PageHeading } from '../../../public/components/utils';
 import { CheckBoxes } from '../../../public/components/row-filter';
 
 describe(TextFilter.displayName, () => {
@@ -38,13 +38,13 @@ describe(FireMan_.displayName, () => {
     wrapper = shallow(<FireMan_.WrappedComponent resources={resources} />);
   });
 
-  it('renders `NavTitle` if given `title`', () => {
-    expect(wrapper.find(NavTitle).exists()).toBe(false);
+  it('renders `PageHeading` if given `title`', () => {
+    expect(wrapper.find(PageHeading).exists()).toBe(false);
 
     const title = 'My pods';
     wrapper.setProps({title});
 
-    expect(wrapper.find(NavTitle).props().title).toEqual(title);
+    expect(wrapper.find(PageHeading).props().title).toEqual(title);
   });
 
   it('renders create button if given `canCreate` true', () => {

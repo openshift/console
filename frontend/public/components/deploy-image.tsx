@@ -6,12 +6,24 @@ import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 
 import { getPorts } from './source-to-image';
-import { history, Loading, NavTitle, resourcePathFromModel, Timestamp, units } from './utils';
 import { formatNamespacedRouteForResource } from '../ui/ui-actions';
 import { NsDropdown } from './RBAC/bindings';
 import { k8sCreate } from '../module/k8s';
 import { ButtonBar } from './utils/button-bar';
-import { DeploymentConfigModel, ImageStreamModel, ImageStreamImportsModel, ServiceModel } from '../models';
+import {
+  history,
+  Loading,
+  PageHeading,
+  resourcePathFromModel,
+  Timestamp,
+  units
+} from './utils';
+import {
+  DeploymentConfigModel,
+  ImageStreamModel,
+  ImageStreamImportsModel,
+  ServiceModel
+} from '../models';
 
 const runsAsRoot = image => {
   const user = _.get(image, 'dockerImageMetadata.Config.User');
@@ -281,7 +293,7 @@ export class DeployImage extends React.Component<DeployImageProps, DeployImageSt
       <Helmet>
         <title>{title}</title>
       </Helmet>
-      <NavTitle title={title} />
+      <PageHeading title={title} />
       <div className="co-m-pane__body">
         <form onSubmit={this.save} className="co-deploy-image">
           <div className="form-group co-deploy-image__namespace">

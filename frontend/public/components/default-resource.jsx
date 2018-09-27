@@ -4,7 +4,6 @@ import * as React from 'react';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
 import { fromNow } from './utils/datetime';
 import { referenceFor, kindForReference } from '../module/k8s';
-import { ResourceOverviewHeading } from './overview';
 import { connectToModel } from '../kinds';
 import {
   Cog,
@@ -12,6 +11,7 @@ import {
   navFactory,
   ResourceCog,
   ResourceLink,
+  ResourceOverviewHeading,
   ResourceSummary,
   SectionHeading
 } from './utils';
@@ -69,6 +69,7 @@ export const DefaultDetailsPage = props => {
   const pages = [navFactory.details(DetailsForKind(props.kind)), navFactory.editYaml()];
   return <DetailsPage {...props} menuActions={menuActions} pages={pages} />;
 };
+DefaultDetailsPage.displayName = 'DefaultDetailsPage';
 
 export const DefaultOverviewPage = connectToModel( ({kindObj: kindObject, resource}) =>
   <div className="overview__sidebar-pane resource-overview">
@@ -84,5 +85,3 @@ export const DefaultOverviewPage = connectToModel( ({kindObj: kindObject, resour
     </div>
   </div>
 );
-
-DefaultDetailsPage.displayName = 'DefaultDetailsPage';

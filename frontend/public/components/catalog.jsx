@@ -4,11 +4,20 @@ import * as PropTypes from 'prop-types';
 import { Helmet } from 'react-helmet';
 
 import { FLAGS, connectToFlags, flagPending } from '../features';
-import { Firehose, NavTitle, StatusBox } from './utils';
+import { Firehose, PageHeading, StatusBox } from './utils';
 import { CatalogTileViewPage } from './catalog-items';
-import { getMostRecentBuilderTag, getAnnotationTags, isBuilder} from './image-stream';
 import { serviceClassDisplayName } from '../module/k8s';
-import { getServiceClassIcon, getServiceClassImage, getImageStreamIcon, getImageForIconClass } from './catalog-item-icon';
+import {
+  getAnnotationTags,
+  getMostRecentBuilderTag,
+  isBuilder
+} from './image-stream';
+import {
+  getImageForIconClass,
+  getImageStreamIcon,
+  getServiceClassIcon,
+  getServiceClassImage,
+} from './catalog-item-icon';
 
 class CatalogListPage extends React.Component {
   constructor(props) {
@@ -169,7 +178,7 @@ export const CatalogPage = ({match}) => {
       <title>Catalog</title>
     </Helmet>
     <div className="co-catalog">
-      <NavTitle title="Catalog" />
+      <PageHeading title="Catalog" />
       <Catalog namespace={namespace} />
     </div>
   </React.Fragment>;

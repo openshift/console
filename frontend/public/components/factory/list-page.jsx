@@ -7,10 +7,18 @@ import * as PropTypes from 'prop-types';
 
 import k8sActions from '../../module/k8s/k8s-actions';
 import { CheckBoxes, storagePrefix } from '../row-filter';
-import { Dropdown, Firehose, kindObj, NavTitle, history, inject, Disabled} from '../utils';
 import { ErrorPage404 } from '../error';
 import { makeReduxID, makeQuery } from '../utils/k8s-watcher';
 import { referenceForModel } from '../../module/k8s';
+import {
+  Disabled,
+  Dropdown,
+  Firehose,
+  history,
+  inject,
+  kindObj,
+  PageHeading
+} from '../utils';
 
 export const CompactExpandButtons = ({expand = false, onExpandChange = _.noop}) => <div className="btn-group btn-group-sm" data-toggle="buttons">
   <label className={classNames('btn compaction-btn', expand ? 'btn-default' : 'btn-primary')}>
@@ -173,7 +181,7 @@ export const FireMan_ = connect(null, {filterList: k8sActions.filterList})(
 
       const {title} = this.props;
       return <React.Fragment>
-        {title && <NavTitle title={title} />}
+        {title && <PageHeading title={title} />}
         <div className={classNames('co-m-pane__filter-bar', {'co-m-pane__filter-bar--with-help-text': helpText})}>
           {helpText && <div className={classNames('co-m-pane__filter-bar-group', {'co-m-pane__filter-bar-group--help-text': helpText})}>
             {helpText}

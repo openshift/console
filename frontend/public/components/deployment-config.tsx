@@ -8,7 +8,6 @@ import { DeploymentConfigModel } from '../models';
 import { Conditions } from './conditions';
 import { ResourceEventStream } from './events';
 import { connectToModel } from '../kinds';
-import { ResourceOverviewHeading } from './overview';
 import {
   DetailsPage,
   List,
@@ -24,6 +23,7 @@ import {
   LoadingInline,
   navFactory,
   pluralize,
+  ResourceOverviewHeading,
   ResourceSummary,
   SectionHeading
 } from './utils';

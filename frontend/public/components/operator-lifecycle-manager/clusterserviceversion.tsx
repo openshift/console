@@ -4,15 +4,34 @@ import * as _ from 'lodash-es';
 import { Map as ImmutableMap } from 'immutable';
 import { connect } from 'react-redux';
 
-import { ClusterServiceVersionKind, ClusterServiceVersionLogo, CRDDescription, ClusterServiceVersionPhase, referenceForCRDDesc } from './index';
 import { ClusterServiceVersionResourcesPage } from './clusterserviceversion-resource';
 import { DetailsPage, ListHeader, ColHead, List, ListPage } from '../factory';
-import { navFactory, Timestamp, ResourceLink, OverflowLink, Dropdown, history, MsgBox, Box, Cog, ResourceCog, NavTitle, LoadingBox } from '../utils';
 import { withFallback } from '../utils/error-boundary';
 import { referenceForModel, referenceFor } from '../../module/k8s';
 import { ClusterServiceVersionModel } from '../../models';
 import { AsyncComponent } from '../utils/async';
 import { FLAGS as featureFlags } from '../../features';
+import {
+  ClusterServiceVersionKind,
+  ClusterServiceVersionLogo,
+  ClusterServiceVersionPhase,
+  CRDDescription,
+  referenceForCRDDesc
+} from './index';
+import {
+  Box,
+  Cog,
+  Dropdown,
+  history,
+  LoadingBox,
+  MsgBox,
+  navFactory,
+  OverflowLink,
+  PageHeading,
+  ResourceCog,
+  ResourceLink,
+  Timestamp
+} from '../utils';
 
 import * as operatorLogo from '../../imgs/operator.svg';
 
@@ -85,7 +104,7 @@ export const ClusterServiceVersionsPage = connect(stateToProps)((props: ClusterS
       <MsgBox title="Operator Lifecycle Manager not enabled for this namespace" detail="Please contact a system administrator and ask them to enable Operator Lifecycle Manager to continue." />
     </Box>
     : <React.Fragment>
-      <NavTitle title="Cluster Service Versions" />
+      <PageHeading title="Cluster Service Versions" />
       <ListPage
         {...props}
         namespace={props.match.params.ns}

@@ -4,7 +4,7 @@ import * as React from 'react';
 import { match } from 'react-router-dom';
 import * as _ from 'lodash-es';
 
-import { Firehose, HorizontalNav, NavTitle } from '../utils';
+import { Firehose, HorizontalNav, PageHeading } from '../utils';
 import { K8sResourceKindReference, K8sResourceKind } from '../../module/k8s';
 
 export type FirehoseResource = {
@@ -22,7 +22,7 @@ export const DetailsPage: React.SFC<DetailsPageProps> = (props) => <Firehose res
   isList: false,
   prop: 'obj',
 } as FirehoseResource].concat(props.resources || [])}>
-  <NavTitle
+  <PageHeading
     detail={true}
     title={props.name}
     titleFunc={props.titleFunc}

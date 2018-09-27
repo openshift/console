@@ -5,14 +5,28 @@ import * as _ from 'lodash-es';
 import { Helmet } from 'react-helmet';
 import { IChangeEvent, ISubmitEvent } from 'react-jsonschema-form';
 
-import { createParametersSecret, getInstanceCreateSchema, getInstanceCreateParametersForm, ServiceCatalogParametersForm, getUISchema } from './schema-form';
 import { LoadingBox } from '../utils/status-box';
-import { history, Firehose, NavTitle, resourcePathFromModel } from '../utils';
 import { ServiceInstanceModel } from '../../models';
-import { k8sCreate, K8sResourceKind } from '../../module/k8s';
 import { NsDropdown } from '../RBAC/bindings';
 import { ClusterServiceClassInfo } from '../cluster-service-class-info';
 import { ButtonBar } from '../utils/button-bar';
+import {
+  k8sCreate,
+  K8sResourceKind
+} from '../../module/k8s';
+import {
+  createParametersSecret,
+  getInstanceCreateParametersForm,
+  getInstanceCreateSchema,
+  getUISchema,
+  ServiceCatalogParametersForm
+} from './schema-form';
+import {
+  Firehose,
+  history,
+  PageHeading,
+  resourcePathFromModel
+} from '../utils';
 
 const PARAMETERS_SECRET_KEY = 'parameters';
 
@@ -145,7 +159,7 @@ class CreateInstance extends React.Component<CreateInstanceProps, CreateInstance
       <Helmet>
         <title>{title}</title>
       </Helmet>
-      <NavTitle title={title} />
+      <PageHeading title={title} />
       <div className="co-m-pane__body co-create-service-instance">
         <div className="row">
           <div className="col-md-7 col-md-push-5 co-catalog-item-info">

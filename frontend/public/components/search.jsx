@@ -5,7 +5,7 @@ import { Helmet } from 'react-helmet';
 import * as PropTypes from 'prop-types';
 import * as classNames from 'classnames';
 
-import { history, NavTitle, SelectorInput, LoadingBox } from './utils';
+import { history, PageHeading, SelectorInput, LoadingBox } from './utils';
 import { namespaceProptype } from '../propTypes';
 import { split, selectorFromString } from '../module/k8s/selector';
 import { requirementFromString } from '../module/k8s/selector-requirement';
@@ -78,7 +78,7 @@ class SearchPage_ extends React.PureComponent {
         <Helmet>
           <title>Search</title>
         </Helmet>
-        <NavTitle detail={true} title="Search" >
+        <PageHeading detail={true} title="Search" >
           <div className="co-search">
             <div className="input-group input-group-select">
               <div className="input-group-btn">
@@ -87,7 +87,7 @@ class SearchPage_ extends React.PureComponent {
               <SelectorInput labelClassName={labelClassName} tags={validTags} onChange={updateTags} ref={this.setRef} autoFocus={!showGettingStarted} />
             </div>
           </div>
-        </NavTitle>
+        </PageHeading>
         <ResourceList kind={kind} selector={selector} namespace={namespace} fake={showGettingStarted} />
       </div>
     </React.Fragment>;

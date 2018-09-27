@@ -4,7 +4,7 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { shallow, ShallowWrapper } from 'enzyme';
 
-import { NavTitle, NavTitleProps, BreadCrumbs, BreadCrumbsProps } from '../../../public/components/utils/nav-title';
+import { PageHeading, PageHeadingProps, BreadCrumbs, BreadCrumbsProps } from '../../../public/components/utils/headings';
 import { ResourceIcon } from '../../../public/components/utils';
 import { testResourceInstance } from '../../../__mocks__/k8sResourcesMocks';
 
@@ -37,11 +37,11 @@ describe(BreadCrumbs.displayName, () => {
   });
 });
 
-describe(NavTitle.displayName, () => {
-  let wrapper: ShallowWrapper<NavTitleProps>;
+describe(PageHeading.displayName, () => {
+  let wrapper: ShallowWrapper<PageHeadingProps>;
 
   beforeEach(() => {
-    wrapper = shallow(<NavTitle.WrappedComponent obj={null} />);
+    wrapper = shallow(<PageHeading.WrappedComponent obj={null} />);
   });
 
   it('renders resource icon if given `kind`', () => {
