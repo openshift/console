@@ -118,7 +118,7 @@ describe('Interacting with the Prometheus OCS', () => {
   it('displays the raw YAML for the `Prometheus`', async() => {
     await element(by.linkText('YAML')).click();
     await browser.wait(until.presenceOf($('.yaml-editor--buttons')));
-    await $('.yaml-editor--buttons').element(by.buttonText('Save Changes')).click();
+    await $('.yaml-editor--buttons').element(by.buttonText('Save')).click();
     await browser.wait(until.visibilityOf($('.alert-success')), 1000);
 
     expect($('.alert-success').getText()).toContain('example has been updated to version');
@@ -163,7 +163,7 @@ describe('Interacting with the Prometheus OCS', () => {
   it('displays the raw YAML for the `Alertmanager`', async() => {
     await element(by.linkText('YAML')).click();
     await browser.wait(until.presenceOf($('.yaml-editor--buttons')));
-    await $('.yaml-editor--buttons').element(by.buttonText('Save Changes')).click();
+    await $('.yaml-editor--buttons').element(by.buttonText('Save')).click();
     await browser.wait(until.visibilityOf($('.alert-success')), 1000);
 
     expect($('.alert-success').getText()).toContain('alertmanager-main has been updated to version');
@@ -207,7 +207,7 @@ describe('Interacting with the Prometheus OCS', () => {
   it('displays the raw YAML for the `ServiceMonitor`', async() => {
     await element(by.linkText('YAML')).click();
     await browser.wait(until.presenceOf($('.yaml-editor--buttons')));
-    await $('.yaml-editor--buttons').element(by.buttonText('Save Changes')).click();
+    await $('.yaml-editor--buttons').element(by.buttonText('Save')).click();
     await browser.wait(until.visibilityOf($('.alert-success')), 1000);
 
     expect($('.alert-success').getText()).toContain('example has been updated to version');

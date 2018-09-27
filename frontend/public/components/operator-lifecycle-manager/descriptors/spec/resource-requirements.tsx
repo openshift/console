@@ -36,7 +36,7 @@ export class ResourceRequirementsModal extends PromiseComponent {
           <this.props.Form handleSubmit={this.submit} />
         </div>
       </ModalBody>
-      <ModalSubmitFooter errorMessage={this.state.errorMessage} inProgress={this.state.inProgress} submitText="Save Changes" cancel={e => this.props.cancel(e)} />
+      <ModalSubmitFooter errorMessage={this.state.errorMessage} inProgress={this.state.inProgress} submitText="Save" cancel={e => this.props.cancel(e)} />
     </form>;
   }
 }

@@ -26,7 +26,7 @@ describe(ResourceRequirementsModal.name, () => {
     expect(wrapper.find('form').exists()).toBe(true);
     expect(wrapper.find(modal.ModalTitle).childAt(0).text()).toEqual(title);
     expect(wrapper.find(modal.ModalBody).childAt(0).text()).toContain(description);
-    expect(wrapper.find(modal.ModalSubmitFooter).props().submitText).toEqual('Save Changes');
+    expect(wrapper.find(modal.ModalSubmitFooter).props().submitText).toEqual('Save');
   });
 
   it('calls function to update resource instance when form is submitted', (done) => {

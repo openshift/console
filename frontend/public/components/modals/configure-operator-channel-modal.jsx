@@ -56,7 +56,7 @@ class ConfigureOperatorChannel extends PromiseComponent {
       <ModalSubmitFooter
         errorMessage={this.state.errorMessage}
         inProgress={this.state.inProgress}
-        submitText="Save Channel"
+        submitText="Save"
         cancel={this._cancel} />
     </form>;
   }
