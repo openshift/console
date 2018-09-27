@@ -23,7 +23,8 @@ const reportPages=[
   {name: 'Generation Queries', href: ReportGenerationQueryReference},
 ];
 
-const menuActions = [Cog.factory.ModifyLabels, Cog.factory.ModifyAnnotations, Cog.factory.Edit, Cog.factory.Delete];
+const { common } = Cog.factory;
+const menuActions = [...common];
 
 const dataURL = (obj, format='json') => {
   const serviceModel = modelFor('Service');

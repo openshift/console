@@ -61,7 +61,8 @@ const KubeConfigify = (kind, sa) => ({
     });
   },
 });
-const menuActions = [KubeConfigify, Cog.factory.Delete];
+const { common } = Cog.factory;
+const menuActions = [KubeConfigify, ...common];
 
 const Header = props => <ListHeader>
   <ColHead {...props} className="col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>

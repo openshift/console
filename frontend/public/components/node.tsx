@@ -22,7 +22,8 @@ const MarkAsSchedulable = (kind, obj) => ({
   callback: () => makeNodeSchedulable(obj),
 });
 
-const menuActions = [MarkAsSchedulable, MarkAsUnschedulable, Cog.factory.ModifyLabels, Cog.factory.ModifyAnnotations, Cog.factory.Edit];
+const { ModifyLabels, ModifyAnnotations, Edit } = Cog.factory;
+const menuActions = [MarkAsSchedulable, MarkAsUnschedulable, ModifyLabels, ModifyAnnotations, Edit];
 
 const NodeCog = ({node}) => <ResourceCog actions={menuActions} kind="Node" resource={node} />;
 

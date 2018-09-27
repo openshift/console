@@ -8,7 +8,8 @@ import { K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
 
 export const StorageClassReference: K8sResourceKindReference = 'StorageClass';
 
-const menuActions = [Cog.factory.ModifyLabels, Cog.factory.ModifyAnnotations, Cog.factory.Edit, Cog.factory.Delete];
+const { common } = Cog.factory;
+const menuActions = [...common];
 
 const defaultClassAnnotation = 'storageclass.beta.kubernetes.io/is-default-class';
 const isDefaultClass = (storageClass: K8sResourceKind) => _.get(storageClass, ['metadata', 'annotations', defaultClassAnnotation], 'false');

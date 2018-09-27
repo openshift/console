@@ -3,7 +3,7 @@
 import * as React from 'react';
 
 import { DetailsPage, List, ListPage, WorkloadListHeader, WorkloadListRow } from './factory';
-import {Cog, ContainerTable, navFactory, SectionHeading, ResourceSummary, ResourcePodCount, AsyncComponent} from './utils';
+import { Cog, ContainerTable, navFactory, SectionHeading, ResourceSummary, ResourcePodCount, AsyncComponent } from './utils';
 import { breadcrumbsForOwnerRefs } from './utils/breadcrumbs';
 import { ResourceEventStream } from './events';
 

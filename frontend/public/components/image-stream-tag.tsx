@@ -10,10 +10,7 @@ import { humanizeMem } from './utils/units';
 const ImageStreamTagsReference: K8sResourceKindReference = 'ImageStreamTag';
 
 const { common } = Cog.factory;
-
-const menuActions = [
-  ...common,
-];
+const menuActions = [...common];
 
 // Splits a name/value pair separated by an `=`
 const splitEnv = (nameValue: string) => {
