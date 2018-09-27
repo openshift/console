@@ -95,14 +95,14 @@ $catalog-item-icon-size-sm: 24px;
   &__heading {
     font-size: 16px;
     font-weight: 400;
-    margin: 0 0 ($grid-gutter-width / 2);
+    margin: 0 0 20px;
   }
 
   &__num-items {
     border-bottom: 1px solid $color-grey-border;
     font-weight: 700;
     margin: 0 ($grid-gutter-width / 2) $grid-gutter-width 0;
-    padding: 0 0 ($grid-gutter-width / 2)
+    padding: 0 0 20px;
   }
 
   &__tabs {
