@@ -31,6 +31,10 @@ import {
   StatusBox,
 } from './utils';
 
+// Should not be a valid label value to avoid conflicts.
+// https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/#syntax-and-character-set
+const EMPTY_GROUP_LABEL = 'other resources';
+
 const getOwnedResources = ({metadata:{uid}}, resources) => {
   return _.filter(resources, ({metadata:{ownerReferences}}) => {
     return _.some(ownerReferences, {
@@ -208,10 +212,10 @@ class OverviewDetails extends React.Component {
 
   groupItems(items, label) {
     const compareGroups = (a, b) => {
-      if (a.name === 'other') {
+      if (a.name === EMPTY_GROUP_LABEL) {
         return 1;
       }
-      if (b.name === 'other') {
+      if (b.name === EMPTY_GROUP_LABEL) {
         return -1;
       }
       return a.name.localeCompare(b.name);
@@ -221,7 +225,7 @@ class OverviewDetails extends React.Component {
       return [{items}];
     }
 
-    const groups = _.groupBy(items, item => _.get(item, ['obj', 'metadata', 'labels', label], 'other'));
+    const groups = _.groupBy(items, item => _.get(item, ['obj', 'metadata', 'labels', label]) || EMPTY_GROUP_LABEL);
     return _.map(groups, (group, name) => {
       return {
         name,
