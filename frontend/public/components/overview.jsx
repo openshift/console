@@ -79,7 +79,7 @@ const sortReplicationControllersByRevision = (replicationControllers) => {
   return sortByRevision(replicationControllers, 'openshift.io/deployment-config.latest-version');
 };
 
-export const ResourceOverviewHeading = ({kindObj, actions, resource }) => <div className="co-m-nav-title resource-overview__heading">
+export const ResourceOverviewHeading = ({kindObj, actions, resource }) => <div className="overview__sidebar-pane-head resource-overview__heading">
   <h1 className="co-m-pane__heading">
     <div className="co-m-pane__name">
       <ResourceIcon className="co-m-resource-icon--lg pull-left" kind={kindObj.kind} />
@@ -520,15 +520,17 @@ export class Overview extends React.Component {
     }
 
     return <div className={className}>
-      <div className="overview__body">
-        <Firehose resources={resources} forceUpdate={true}>
-          <OverviewDetails
-            namespace={namespace}
-            selectedItem={selectedItem}
-            selectItem={this.selectItem}
-            title={title}
-          />
-        </Firehose>
+      <div className="overview__main-column">
+        <div className="overview__main-column-section">
+          <Firehose resources={resources} forceUpdate={true}>
+            <OverviewDetails
+              namespace={namespace}
+              selectedItem={selectedItem}
+              selectItem={this.selectItem}
+              title={title}
+            />
+          </Firehose>
+        </div>
       </div>
       {
         !_.isEmpty(selectedItem) &&

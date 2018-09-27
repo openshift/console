@@ -71,13 +71,13 @@ export const DefaultDetailsPage = props => {
 };
 
 export const DefaultOverviewPage = connectToModel( ({kindObj: kindObject, resource}) =>
-  <div className="co-m-pane resource-overview">
+  <div className="overview__sidebar-pane resource-overview">
     <ResourceOverviewHeading
       actions={menuActions}
       kindObj={kindObject}
       resource={resource}
     />
-    <div className="co-m-pane__body resource-overview__body">
+    <div className="overview__sidebar-pane-body resource-overview__body">
       <div className="resource-overview__summary">
         <ResourceSummary resource={resource} />
       </div>

@@ -5,6 +5,8 @@
   white-space: nowrap;
 
   &__row {
+    display: flex;
+    flex-wrap: wrap;
     margin-left: 0;
     margin-right: 0;
   }
@@ -15,13 +17,14 @@
   }
 
   &__section {
-    display: flex;
     align-items: center;
-    justify-content: center;
     border-width: 1px 1px 0 0;
+    display: flex;
+    flex: 1 0 auto;
+    justify-content: center;
     padding: 20px 10px;
-    margin-top: -1px;
     margin-right: -1px;
+    margin-top: -1px;
 
     &--last {
       border-right-width: 0;

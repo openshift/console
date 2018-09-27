@@ -19,6 +19,25 @@
     grid-area: status;
   }
 
+  .project-overview__item--selected,
+  .project-overview__item.project-overview__item--selected:hover, {
+    background-color: $color-pf-blue-100;
+  }
+
+  .project-overview__item .project-overview__item-chevron {
+    visibility: hidden;
+  }
+
+  .project-overview__item:hover .project-overview__item-chevron,
+  .project-overview__item.project-overview__item--selected .project-overview__item-chevron {
+    visibility: visible;
+  }
+
+  .project-overview__item-heading {
+    font-size: 16px;
+    margin: 0;
+  }
+
   .project-overview__group {
     margin-bottom: 40px;
   }
@@ -36,15 +55,20 @@
   }
 
   .project-overview__item {
-    position: relative;
     cursor: pointer;
+    border-left: 0;
+    border-right: 0;
+    position: relative;
+    &:first-child {
+      border-top: 0;
+    }
 
     &::after {
       content: '\f054';
       display: none;
       font-family: 'FontAwesome';
       position: absolute;
-      right: 15px;
+      right: 25px;
     }
 
     &--selected::after,
@@ -55,6 +79,7 @@
     &--selected,
     &--selected:hover {
       background-color: $color-pf-blue-100;
+      border-color: $color-pf-blue-100;
     }
   }
 
