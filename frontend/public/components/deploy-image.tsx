@@ -283,7 +283,7 @@ export class DeployImage extends React.Component<DeployImageProps, DeployImageSt
       </Helmet>
       <NavTitle title={title} />
       <div className="co-m-pane__body">
-        <form onSubmit={this.save}>
+        <form onSubmit={this.save} className="co-deploy-image">
           <div className="form-group co-deploy-image__namespace">
             <label className="control-label co-required" htmlFor="dropdown-selectbox">Namespace</label>
             <NsDropdown selectedKey={this.state.namespace} onChange={this.onNamespaceChange} id="dropdown-selectbox" />
