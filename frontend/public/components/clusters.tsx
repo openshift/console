@@ -8,7 +8,8 @@ import { Cog, detailsPage, navFactory, ResourceCog, SectionHeading, ResourceLink
 import { referenceForModel } from '../module/k8s';
 import { ClusterModel } from '../models';
 
-const menuActions = [Cog.factory.ModifyLabels, Cog.factory.ModifyAnnotations, Cog.factory.Edit, Cog.factory.Delete];
+const { common } = Cog.factory;
+const menuActions = [...common];
 
 const ClustersHeader = props => <ListHeader>
   <ColHead {...props} className="col-xs-4" sortField="metadata.name">Cluster Name</ColHead>

@@ -79,10 +79,7 @@ const actionButtons = [
 ];
 
 const { common } = Cog.factory;
-
-const menuActions = [
-  ...common,
-];
+const menuActions = [...common];
 
 const ImageStreamTagsRow: React.SFC<ImageStreamTagsRowProps> = ({imageStream, specTag, statusTag}) => {
   const latest = _.get(statusTag, ['items', 0]);

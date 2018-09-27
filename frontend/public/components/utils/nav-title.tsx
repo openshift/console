@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
 
-import { ActionsMenu, ResourceIcon } from './index';
+import { ActionsMenu, ResourceIcon, CogAction } from './index';
 import { ClusterServiceVersionLogo } from '../operator-lifecycle-manager';
 import { K8sResourceKind, K8sResourceKindReference, K8sKind, referenceForModel } from '../../module/k8s';
 import { connectToModel } from '../../kinds';
@@ -67,7 +67,7 @@ export type NavTitleProps = {
   kindObj?: K8sKind;
   detail?: boolean;
   title?: string | JSX.Element;
-  menuActions?: any[];
+  menuActions?: CogAction[];
   buttonActions?: any[];
   obj?: {data: K8sResourceKind};
   breadcrumbsFor?: (obj: K8sResourceKind) => {name: string, path: string}[];

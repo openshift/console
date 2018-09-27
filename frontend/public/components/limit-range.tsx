@@ -7,10 +7,7 @@ import {ColHead, DetailsPage, List, ListHeader, ListPage} from './factory';
 import {Cog, navFactory, SectionHeading, ResourceCog, ResourceLink, ResourceSummary, Timestamp} from './utils';
 
 const { common } = Cog.factory;
-
-const menuActions = [
-  ...common,
-];
+const menuActions = [...common];
 
 const LimitRangeReference: K8sResourceKindReference = 'LimitRange';
 
