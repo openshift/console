@@ -21,8 +21,7 @@ TBD - how to build docker image
 Is same as for openshift/console. See project's [README.md](https://github.com/kubevirt/web-ui/blob/master/README.md).\
 
 # Deployment
-TBD - use of kubevirt-web-ui.yaml and other configuration
-
+Please see [kubevirt-ansible/kubeirt-web-ui playbook](https://github.com/kubevirt/kubevirt-ansible/tree/master/playbooks/kubevirt-web-ui) for deployment instructions.
 
 # List of important patches
 Kubevirt-related code lives either in separate `**/kubevirt` folders (see above) or in external projects referenced from web-ui (like [web-ui-components](https://github.com/kubevirt/web-ui-components) or [patternfly-react](https://github.com/patternfly/patternfly-react/)).
