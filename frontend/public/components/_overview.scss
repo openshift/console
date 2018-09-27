@@ -35,7 +35,8 @@
 
   .overview__main-column {
     height: 100%;
-    overflow: hidden auto;
+    overflow-x: hidden;
+    overflow-y: auto;
     width: 100%;
     -webkit-overflow-scrolling: touch;
   }
@@ -54,7 +55,8 @@
     .resource-overview {
       height: 100%;
       min-height: 0;
-      overflow: hidden auto;
+      overflow-x: hidden;
+      overflow-y: auto;
       -webkit-overflow-scrolling: touch;
     }
   }

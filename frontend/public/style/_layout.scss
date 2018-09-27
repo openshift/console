@@ -21,7 +21,8 @@ body,
 
 .content-scrollable {
   height: 100%;
-  overflow: hidden auto;
+  overflow-x: hidden;
+  overflow-y: auto;
   position: relative;
   -webkit-overflow-scrolling: touch;
 }
