@@ -1,9 +1,8 @@
-import * as _ from 'lodash-es';
 import React from 'react';
 
 import { PromiseComponent } from '../utils/okdutils';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/okdfactory';
-import { k8sKill,k8sList } from '../../../module/k8s';
+import { k8sKill, k8sGet } from '../../../module/k8s';
 import { VirtualMachineInstanceModel } from '../../models';
 
 class RestartVmModal extends PromiseComponent {
@@ -15,10 +14,10 @@ class RestartVmModal extends PromiseComponent {
 
   submit(event) {
     event.preventDefault();
-    const listPromise = k8sList(VirtualMachineInstanceModel, {ns: this.props.resource.metadata.namespace, labelSelector: {matchLabels: _.get(this.props.resource, 'spec.template.metadata.labels')}});
-    this.handlePromise(listPromise).then(list => {
-      const promise = k8sKill(VirtualMachineInstanceModel, list[0]);
-      this.handlePromise(promise).then(this.props.close);
+    const getVmiPromise = k8sGet(VirtualMachineInstanceModel, this.props.resource.metadata.name, this.props.resource.metadata.namespace);
+    this.handlePromise(getVmiPromise).then(vmi => {
+      const killPromise = k8sKill(VirtualMachineInstanceModel, vmi);
+      this.handlePromise(killPromise).then(this.props.close);
     });
   }
 
