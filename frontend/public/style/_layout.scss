@@ -10,7 +10,6 @@ body,
 #content {
   display: flex;
   flex-direction: column;
-  overflow: hidden;
   padding-top: $masthead-height-mobile;
   position: relative;
   @media (min-width: $grid-float-breakpoint) {
@@ -19,7 +18,7 @@ body,
   }
 }
 
-.content-scrollable {
+#content-scrollable {
   height: 100%;
   overflow-x: hidden;
   overflow-y: auto;
