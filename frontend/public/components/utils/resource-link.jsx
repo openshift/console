@@ -59,7 +59,7 @@ export const resourceObjPath = (obj, kind) => resourcePath(kind, _.get(obj, 'met
 
 export const ResourceLink = connectToModel(
   ({className, kind, name, namespace, title, displayName, linkTo = true, kindsInFlight}) => {
-    if (kindsInFlight) {
+    if (!kind && kindsInFlight) {
       return null;
     }
     const path = resourcePath(kind, name, namespace);

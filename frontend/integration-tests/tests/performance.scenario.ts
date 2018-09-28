@@ -35,7 +35,7 @@ const chunkedRoutes = OrderedMap<string, {section: string, name: string}>()
 describe('Performance test', () => {
 
   it('checks bundle size using ResourceTiming API', async() => {
-    const resources = await browser.executeScript<{name: string, size: number}[]>(() => performance.getEntriesByType('resource')
+    const resources = await browser.executeScript<string[]>(() => performance.getEntriesByType('resource')
       .filter(({name}) => name.endsWith('.js') && name.indexOf('main') > -1 && name.indexOf('runtime') === -1)
       .map(({name, decodedBodySize}) => ({name: name.split('/').slice(-1)[0], size: Math.floor(decodedBodySize / 1024)}))
       .reduce((acc, val) => acc.concat(`${val.name.split('-')[0]}: ${val.size} KB, `), '')
@@ -47,7 +47,7 @@ describe('Performance test', () => {
   });
 
   it('downloads new bundle for "Overview" route', async() => {
-    browser.get(`${appHost}/status/all-namespaces`);
+    await browser.get(`${appHost}/status/all-namespaces`);
     await browser.wait(until.presenceOf(crudView.resourceTitle));
 
     const overviewChunk = await browser.executeScript<any>(() => performance.getEntriesByType('resource')
@@ -82,13 +82,15 @@ describe('Performance test', () => {
     };
 
     it(`downloads new bundle for ${routeName}`, async() => {
+      await browser.get(`${appHost}/status/all-namespaces`);
+      await browser.wait(until.presenceOf(crudView.resourceTitle));
       await sidenavView.clickNavLink([route.section, route.name]);
       await crudView.isLoaded();
 
-      const routeChunk = await browser.executeScript<any>(routeChunkFor, routeName);
+      const routeChunk = await browser.executeScript<PerformanceEntry>(routeChunkFor, routeName);
 
       expect(routeChunk).toBeDefined();
-      expect(routeChunk.decodedBodySize).toBeLessThan(chunkLimit);
+      expect((routeChunk as any).decodedBodySize).toBeLessThan(chunkLimit);
     });
   });
 });

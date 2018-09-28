@@ -286,16 +286,19 @@ class NamespaceDropdown_ extends React.Component {
 
 const NamespaceDropdown = connect(namespaceDropdownStateToProps)(NamespaceDropdown_);
 
-const NamespaceSelector_ = ({useProjects, inFlight}) => inFlight
-  ? <div className="co-namespace-selector" />
-  : <Firehose resources={[{ kind: getModel(useProjects).kind, prop: 'namespace', isList: true }]}>
+const NamespaceSelector_ = ({useProjects, loaded}) => <div className={`co-ns-selector co-ns-selector--${!loaded ? 'hidden' : 'visible'}`}>
+  <Firehose resources={[{kind: getModel(useProjects).kind, prop: 'namespace', isList: true}]}>
     <NamespaceDropdown useProjects={useProjects} />
-  </Firehose>;
+  </Firehose>
+</div>;
 
-const namespaceSelectorStateToProps = ({k8s}) => ({
-  inFlight: k8s.getIn(['RESOURCES', 'inFlight']),
-  useProjects: k8s.hasIn(['RESOURCES', 'models', ProjectModel.kind]),
-});
+const namespaceSelectorStateToProps = ({k8s}) => {
+  const useProjects = k8s.hasIn(['RESOURCES', 'models', ProjectModel.kind]);
+  return {
+    useProjects,
+    loaded: k8s.getIn([useProjects ? 'projects' : 'namespaces', 'loaded']),
+  };
+};
 
 export const NamespaceSelector = connect(namespaceSelectorStateToProps)(NamespaceSelector_);
 
