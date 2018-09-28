@@ -14,6 +14,19 @@ export const CatalogSourceModel: K8sKind = {
   plural: 'catalogsources',
 };
 
+export const PackageManifestModel: K8sKind = {
+  kind: 'PackageManifest',
+  label: 'PackageManifest',
+  labelPlural: 'PackageManifests',
+  apiGroup: 'packages.apps.redhat.com',
+  apiVersion: 'v1alpha1',
+  path: 'packagemanifests',
+  abbr: 'PM',
+  namespaced: true,
+  crd: true,
+  plural: 'packagemanifests',
+};
+
 export const ClusterServiceVersionModel: K8sKind = {
   kind: 'ClusterServiceVersion',
   label: 'ClusterServiceVersion',
