@@ -331,9 +331,7 @@ const AlertHeader = props => <ListHeader>
   <ColHead {...props} className="col-xs-2" sortField="labels.severity">Severity</ColHead>
 </ListHeader>;
 
-const AlertsPageDescription_ = ({urls}) => <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--help-text">
-  <p className="co-help-text">OpenShift ships with a pre-configured and self-updating monitoring stack powered by <ExternalLink href={urls[MonitoringRoutes.Prometheus]} text="Prometheus" /></p>
-</div>;
+const AlertsPageDescription_ = ({urls}) => <p className="co-help-text">OpenShift ships with a pre-configured and self-updating monitoring stack powered by <ExternalLink href={urls[MonitoringRoutes.Prometheus]} text="Prometheus" /></p>;
 const AlertsPageDescription = connectToURLs(MonitoringRoutes.Prometheus)(AlertsPageDescription_);
 
 const alertsRowFilter = {
@@ -411,9 +409,9 @@ export const MonitoringListPage = connect(filtersToProps)(class InnerMonitoringL
         <li className="co-m-horizontal-nav__menu-item co-m-horizontal-nav__menu-item--divider"></li>
       </ul>
       <div className="co-m-pane__filter-bar co-m-pane__filter-bar--with-help-text">
-        <div className="co-m-pane__filter-bar-group">
+        {PageDescription && <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--help-text">
           <PageDescription />
-        </div>
+        </div>}
         <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--filter">
           <TextFilter defaultValue={this.defaultNameFilter} label={textFilterLabel} onChange={this.applyTextFilter} />
         </div>

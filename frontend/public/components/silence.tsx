@@ -130,9 +130,7 @@ const SilenceHeader = props => <ListHeader>
   <ColHead {...props} className="col-xs-2">Silenced Alerts</ColHead>
 </ListHeader>;
 
-const SilencesPageDescription_ = ({urls}) => <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--help-text">
-  <p className="co-help-text">Silences are a straightforward way to simply mute alerts for a given time powered by <ExternalLink href={urls[MonitoringRoutes.AlertManager]} text="Alertmanager" /></p>
-</div>;
+const SilencesPageDescription_ = ({urls}) => <p className="co-help-text">Silences are a straightforward way to simply mute alerts for a given time powered by <ExternalLink href={urls[MonitoringRoutes.AlertManager]} text="Alertmanager" /></p>;
 const SilencesPageDescription = connectToURLs(MonitoringRoutes.AlertManager)(SilencesPageDescription_);
 
 const silencesRowFilter = {
