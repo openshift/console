@@ -8,8 +8,8 @@ import { IChangeEvent, ISubmitEvent } from 'react-jsonschema-form';
 import { createParametersSecret, getInstanceCreateSchema, getInstanceCreateParametersForm, ServiceCatalogParametersForm, getUISchema } from './schema-form';
 import { LoadingBox } from '../utils/status-box';
 import { history, Firehose, NavTitle, resourcePathFromModel } from '../utils';
-import { ClusterServiceClassModel, ServiceInstanceModel } from '../../models';
-import { k8sCreate, K8sResourceKind, serviceClassDisplayName } from '../../module/k8s';
+import { ServiceInstanceModel } from '../../models';
+import { k8sCreate, K8sResourceKind } from '../../module/k8s';
 import { NsDropdown } from '../RBAC/bindings';
 import { ClusterServiceClassInfo } from '../cluster-service-class-info';
 import { ButtonBar } from '../utils/button-bar';
@@ -116,14 +116,13 @@ class CreateInstance extends React.Component<CreateInstanceProps, CreateInstance
   }
 
   render() {
-    const { obj, plans, match } = this.props;
+    const { obj, plans } = this.props;
     if (!obj.loaded) {
       return <LoadingBox />;
     }
 
     const serviceClass = _.get(obj, 'data');
     const title = 'Create Service Instance';
-    const displayName = serviceClassDisplayName(serviceClass);
 
     const { plan: selectedPlanName } = this.state;
     const availablePlans = getAvailablePlans(plans);
@@ -146,14 +145,7 @@ class CreateInstance extends React.Component<CreateInstanceProps, CreateInstance
       <Helmet>
         <title>{title}</title>
       </Helmet>
-      <NavTitle
-        title={title}
-        obj={obj}
-        breadcrumbsFor={() => [
-          {name: displayName, path: resourcePathFromModel(ClusterServiceClassModel, serviceClass.metadata.name)},
-          {name: `${title}`, path: `${match.url}`}
-        ]}
-      />
+      <NavTitle title={title} />
       <div className="co-m-pane__body co-create-service-instance">
         <div className="row">
           <div className="col-md-7 col-md-push-5 co-catalog-item-info">
@@ -194,7 +186,7 @@ class CreateInstance extends React.Component<CreateInstanceProps, CreateInstance
   }
 }
 
-export const CreateInstancePage: React.SFC<CreateInstancePageProps> = (props) => {
+export const CreateInstancePage = (props) => {
   const resources = [
     {kind: 'ClusterServiceClass', name: props.match.params.name, isList: false, prop: 'obj'},
     {kind: 'ClusterServicePlan', isList: true, prop: 'plans', fieldSelector: `spec.clusterServiceClassRef.name=${props.match.params.name}`},
@@ -220,8 +212,4 @@ export type CreateInstanceState = {
   formData: any,
   inProgress: boolean,
   error?: any,
-};
-
-export type CreateInstancePageProps = {
-  match: any,
 };
