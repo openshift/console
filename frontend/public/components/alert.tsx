@@ -98,8 +98,11 @@ class MonitoringPageWrapper extends SafetyFirst<AlertsPageWrapperProps, null> {
     poll(`${alertManagerBaseURL}/api/v1/silences`, 'silences', data => {
       // Set a name field on the Silence to make things easier
       _.each(data, s => {
-        const alertname = _.get(_.find(s.matchers, {name: 'alertname'}), 'value');
-        s.name = alertname || _.truncate(s.comment, {length: 100});
+        s.name = _.get(_.find(s.matchers, {name: 'alertname'}), 'value');
+        if (!s.name) {
+          // No alertname, so fall back to displaying the other matchers
+          s.name = s.matchers.map(m => `${m.name}=${m.value}`).join(', ');
+        }
       });
       return data;
     });
