@@ -72,8 +72,12 @@ export const types = {
   sortList: 'sortList',
   setCreateProjectMessage: 'setCreateProjectMessage',
   setMonitoringData: 'setMonitoringData',
+  selectOverviewItem: 'selectOverviewItem',
+  selectOverviewDetailsTab: 'selectOverviewDetailsTab',
+  updateOverviewResources: 'updateOverviewResources'
 };
 
+/** @type {{[key: string]: function}} */
 export const UIActions = {
   [types.setCurrentLocation]: location => ({location, type: types.setCurrentLocation}),
 
@@ -155,6 +159,12 @@ export const UIActions = {
   },
 
   [types.setCreateProjectMessage]: message => ({type: types.setCreateProjectMessage, message}),
+
+  [types.selectOverviewItem]: uid => ({type: types.selectOverviewItem, uid}),
+
+  [types.selectOverviewDetailsTab]: tab => ({type: types.selectOverviewDetailsTab, tab}),
+
+  [types.updateOverviewResources]: resources => ({type: types.updateOverviewResources, resources}),
 
   monitoringLoading: key => ({type: types.setMonitoringData, key, data: {loaded: false, loadError: null, data: null}}),
 

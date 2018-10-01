@@ -1,7 +1,6 @@
 import * as React from 'react';
 
 import { ResourceEventStream } from './events';
-import { connectToModel } from '../kinds';
 import {
   DetailsPage,
   List,
@@ -13,14 +12,13 @@ import {
   AsyncComponent,
   Cog,
   ContainerTable,
-  ResourceOverviewHeading,
   ResourceSummary,
   SectionHeading,
   navFactory
 } from './utils';
 
 const { EditEnvironment, common } = Cog.factory;
-const menuActions = [EditEnvironment, ...common];
+export const menuActions = [EditEnvironment, ...common];
 
 const kind = 'StatefulSet';
 const Row = props => <WorkloadListRow {...props} kind={kind} actions={menuActions} />;
@@ -62,17 +60,3 @@ export const StatefulSetsDetailsPage = props => <DetailsPage
   menuActions={menuActions}
   pages={pages}
 />;
-
-export const StatefulSetOverview = connectToModel(({kindObj, resource: ss}) =>
-  <div className="overview__sidebar-pane resource-overview">
-    <ResourceOverviewHeading
-      actions={menuActions}
-      kindObj={kindObj}
-      resource={ss}
-    />
-    <div className="overview__sidebar-pane-body resource-overview__body">
-      <div className="resource-overview__summary">
-        <ResourceSummary resource={ss} />
-      </div>
-    </div>
-  </div>);

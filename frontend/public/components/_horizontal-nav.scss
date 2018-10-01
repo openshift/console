@@ -23,29 +23,35 @@ $co-m-horizontal-nav__menu-item-link-padding-lr-mobile: 15px;
   font-size: 18px;
   margin: 0;
   text-align: center;
-  &.co-m-horizontal-nav-item--active a {
-    color: $color-highlight-blue;
-    position: relative;
-    &::after {
-      background: $color-highlight-blue;
-      bottom: 0;
-      content: "";
-      display: block;
-      height: 2px;
-      left: $co-m-horizontal-nav__menu-item-link-padding-lr-mobile;
-      position: absolute;
-      right: $co-m-horizontal-nav__menu-item-link-padding-lr-mobile;
-      @media (min-width: $grid-float-breakpoint) {
-        left: $co-m-horizontal-nav__menu-item-link-padding-lr-desktop;
-        right: $co-m-horizontal-nav__menu-item-link-padding-lr-desktop;
+  &.co-m-horizontal-nav-item--active {
+    a,
+    button {
+      color: $color-highlight-blue;
+      position: relative;
+      &::after {
+        background: $color-highlight-blue;
+        bottom: 0;
+        content: "";
+        display: block;
+        height: 2px;
+        left: $co-m-horizontal-nav__menu-item-link-padding-lr-mobile;
+        position: absolute;
+        right: $co-m-horizontal-nav__menu-item-link-padding-lr-mobile;
+        @media (min-width: $grid-float-breakpoint) {
+          left: $co-m-horizontal-nav__menu-item-link-padding-lr-desktop;
+          right: $co-m-horizontal-nav__menu-item-link-padding-lr-desktop;
+        }
       }
     }
   }
-  a {
+  a,
+  button {
+    background: none;
+    border: none;
     color: inherit;
     display: block;
-    text-decoration: none;
     padding: 6px $co-m-horizontal-nav__menu-item-link-padding-lr-mobile 8px;
+    text-decoration: none;
     @media (min-width: $grid-float-breakpoint) {
       padding-left: $co-m-horizontal-nav__menu-item-link-padding-lr-desktop;
       padding-right: $co-m-horizontal-nav__menu-item-link-padding-lr-desktop;

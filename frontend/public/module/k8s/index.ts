@@ -9,6 +9,7 @@ export * from './service-catalog';
 export * from './autocomplete';
 export * from './get-resources';
 export * from './k8s-models';
+export * from './label-selector';
 
 export type OwnerReference = {
   name: string;

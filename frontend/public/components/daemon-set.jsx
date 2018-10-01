@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 
-import { connectToModel } from '../kinds';
 import {
   ColHead,
   DetailsPage,
@@ -19,13 +18,12 @@ import {
   navFactory,
   ResourceCog,
   ResourceLink,
-  ResourceOverviewHeading,
   ResourceSummary,
   SectionHeading,
   Selector
 } from './utils';
 
-const menuActions = [Cog.factory.EditEnvironment, ...Cog.factory.common];
+export const menuActions = [Cog.factory.EditEnvironment, ...Cog.factory.common];
 
 const DaemonSetHeader = props => <ListHeader>
   <ColHead {...props} className="col-lg-2 col-md-3 col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
@@ -56,30 +54,13 @@ const DaemonSetRow = ({obj: daemonset}) => <ResourceRow obj={daemonset}>
   </div>
 </ResourceRow>;
 
-const DaemonSetDetailsList = ({ds}) =>
+export const DaemonSetDetailsList = ({ds}) =>
   <dl className="co-m-pane__details">
     <dt>Current Count</dt>
     <dd>{ds.status.currentNumberScheduled || '-'}</dd>
     <dt>Desired Count</dt>
     <dd>{ds.status.desiredNumberScheduled || '-'}</dd>
   </dl>;
-
-export const DaemonSetOverview = connectToModel(({kindObj, resource: ds}) =>
-  <div className="co-m-pane resource-overview">
-    <ResourceOverviewHeading
-      actions={menuActions}
-      kindObj={kindObj}
-      resource={ds}
-    />
-    <div className="co-m-pane__body resource-overview__body">
-      <div className="resource-overview__summary">
-        <ResourceSummary resource={ds} />
-      </div>
-      <div className="resource-overview__details">
-        <DaemonSetDetailsList ds={ds} />
-      </div>
-    </div>
-  </div>);
 
 const Details = ({obj: daemonset}) => <div className="co-m-pane__body">
   <SectionHeading text="Daemon Set Overview" />

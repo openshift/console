@@ -90,8 +90,8 @@
 @import "components/terminal";
 @import "components/catalog";
 @import "components/cluster-service-instance";
-@import "components/overview";
-@import "components/project-overview";
+@import "components/overview/overview";
+@import "components/overview/project-overview";
 @import "components/list-view";
 @import "components/deploy-image";
 @import "components/source-to-image";
