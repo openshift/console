@@ -3,7 +3,7 @@ import { Helmet } from 'react-helmet';
 
 import { authSvc } from '../module/auth';
 import { kubectlConfigModal } from './modals';
-import { NavTitle } from './utils';
+import { PageHeading } from './utils';
 import { SafetyFirst } from './safety-first';
 import { ClientTokensContainer } from './client-tokens';
 
@@ -25,7 +25,7 @@ export class ProfilePage extends SafetyFirst {
       <Helmet>
         <title>Profile</title>
       </Helmet>
-      <NavTitle detail={true} title="Profile" />
+      <PageHeading detail={true} title="Profile" />
       <div className="co-m-pane__body">
         <dl className="co-m-pane__details">
           <dt>Name</dt>

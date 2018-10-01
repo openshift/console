@@ -1,10 +1,9 @@
 /* eslint-disable no-unused-vars, no-undef */
-
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 
-import { NavTitle, getQueryArgument } from './utils';
+import { getQueryArgument, PageHeading } from './utils';
 
 // User messages for error_types returned in auth.go
 const messages = {
@@ -41,7 +40,7 @@ const getErrMessage = () => {
 };
 
 const ErrorComponent: React.SFC<ErrorComponentProps> = ({title, message, errMessage}) => <React.Fragment>
-  <NavTitle detail={true} title="Error" />
+  <PageHeading detail={true} title="Error" />
   <div className="co-m-pane__body">
     <h1 className="co-m-pane__heading co-m-pane__heading--center">{title}</h1>
     {message && <div className="text-center">{message}</div>}

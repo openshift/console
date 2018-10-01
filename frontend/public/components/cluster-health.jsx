@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 
-import { NavTitle, humanizeCPU, humanizeMem } from './utils';
+import { humanizeCPU, humanizeMem, PageHeading } from './utils';
 import { Bar, Gauge, Line, Scalar } from './graphs';
 
 const multiLoadQueries = [
@@ -46,7 +46,7 @@ export const ClusterHealth = () => <div>
     <title>Cluster Health</title>
   </Helmet>
 
-  <NavTitle title="Cluster Health" />
+  <PageHeading title="Cluster Health" />
 
   <div className="cluster-overview-cell container-fluid">
     <div className="row">

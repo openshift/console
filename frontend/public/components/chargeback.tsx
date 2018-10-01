@@ -5,13 +5,35 @@ import * as classNames from 'classnames';
 import { SafetyFirst } from './safety-first';
 import { FLAGS, connectToFlags, flagPending } from '../features';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
-import { Cog, navFactory, NavBar, NavTitle, ResourceCog, SectionHeading, ResourceLink, ResourceSummary, Timestamp, LabelList, DownloadButton } from './utils';
-import { LoadError, LoadingBox, LoadingInline, MsgBox } from './utils/status-box';
 import { getQueryArgument, setQueryArgument } from './utils/router';
 import { coFetchJSON } from '../co-fetch';
-// eslint-disable-next-line no-unused-vars
-import { GroupVersionKind, resourceURL, modelFor, referenceForModel } from '../module/k8s';
 import { ChargebackReportModel } from '../models';
+import {
+  LoadError,
+  LoadingBox,
+  LoadingInline,
+  MsgBox
+} from './utils/status-box';
+import {
+  // eslint-disable-next-line no-unused-vars
+  GroupVersionKind,
+  modelFor,
+  referenceForModel,
+  resourceURL
+} from '../module/k8s';
+import {
+  Cog,
+  DownloadButton,
+  LabelList,
+  NavBar,
+  navFactory,
+  PageHeading,
+  ResourceCog,
+  ResourceLink,
+  ResourceSummary,
+  SectionHeading,
+  Timestamp
+} from './utils';
 
 export const ReportReference: GroupVersionKind = referenceForModel(ChargebackReportModel);
 export const ScheduledReportReference: GroupVersionKind = 'chargeback.coreos.com:v1alpha1:ScheduledReport';
@@ -40,7 +62,7 @@ const dataURL = (obj, format='json') => {
 };
 
 const ChargebackNavBar: React.SFC<{match: {url: string}}> = props => <div>
-  <NavTitle title="Chargeback Reporting" style={{paddingBottom: 15}} />
+  <PageHeading title="Chargeback Reporting" style={{paddingBottom: 15}} />
   <NavBar pages={reportPages} basePath={props.match.url.split('/').slice(0, -1).join('/')} />
 </div>;
 

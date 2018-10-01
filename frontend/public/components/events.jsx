@@ -1,22 +1,40 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import { Link } from 'react-router-dom';
-import { CSSTransition } from 'react-transition-group';
-import { Helmet } from 'react-helmet';
 import * as classNames from 'classnames';
 import * as PropTypes from 'prop-types';
-import { AutoSizer, List as VirtualList, WindowScroller } from 'react-virtualized';
+import { CSSTransition } from 'react-transition-group';
+import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet';
+import {
+  AutoSizer,
+  List as VirtualList,
+  WindowScroller
+} from 'react-virtualized';
 
 import { namespaceProptype } from '../propTypes';
 import { watchURL } from '../module/k8s';
 import { EventModel, NodeModel } from '../models';
 import { SafetyFirst } from './safety-first';
 import { TextFilter } from './factory';
-import { Dropdown, ResourceLink, Box, Loading, NavTitle, Timestamp, TogglePlay, pluralize, resourcePathFromModel } from './utils';
 import { WSFactory } from '../module/ws-factory';
 import { ResourceListDropdown } from './resource-dropdown';
-import { connectToFlags, FLAGS, flagPending } from '../features';
 import { OpenShiftGettingStarted } from './start-guide';
+import {
+  connectToFlags,
+  FLAGS,
+  flagPending
+} from '../features';
+import {
+  Box,
+  Dropdown,
+  Loading,
+  PageHeading,
+  pluralize,
+  ResourceLink,
+  resourcePathFromModel,
+  Timestamp,
+  TogglePlay,
+} from './utils';
 
 const maxMessages = 500;
 const flushInterval = 500;
@@ -146,7 +164,7 @@ class EventsStreamPage_ extends React.Component {
         { showTitle && <Helmet>
           <title>Events</title>
         </Helmet> }
-        { showTitle && <NavTitle title="Events" /> }
+        { showTitle && <PageHeading title="Events" /> }
         <div className="co-m-pane__filter-bar">
           <div className="co-m-pane__filter-bar-group">
             <ResourceListDropdown title="All Types" className="btn-group" onChange={v => this.setState({kind: v})} showAll selected={kind} />

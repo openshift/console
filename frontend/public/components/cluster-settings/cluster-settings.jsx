@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 
-import {NavTitle, DocumentationSidebar} from '../utils';
+import {PageHeading, DocumentationSidebar} from '../utils';
 import {LDAPSetting} from './ldap';
 import {CertsInfoContainer} from './certs-info';
 import {SafetyFirst} from '../safety-first';
@@ -23,7 +23,7 @@ export const ClusterSettingsPage = connectToFlags(FLAGS.CLUSTER_UPDATES)(
           <title>Cluster</title>
         </Helmet>
         <div className="co-p-has-sidebar__body">
-          <NavTitle title="Cluster Settings" />
+          <PageHeading title="Cluster Settings" />
           <div className="co-m-pane__body">
             <div className="row" style={{marginBottom: 28}}>
               <div className="col-md-12">

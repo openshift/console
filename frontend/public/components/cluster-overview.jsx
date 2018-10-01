@@ -5,7 +5,6 @@ import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 
 import { coFetch, coFetchJSON } from '../co-fetch';
-import { NavTitle, AsyncComponent, Firehose, StatusBox, DocumentationLinks, AdditionalSupportLinks } from './utils';
 import { k8sBasePath } from '../module/k8s';
 import { StartGuide } from './start-guide';
 import { Gauge, prometheusBasePath, requirePrometheus } from './graphs';
@@ -14,6 +13,14 @@ import { EventStreamPage } from './events';
 import { SoftwareDetails } from './software-details';
 import { FLAGS, connectToFlags, flagPending } from '../features';
 import { connectToURLs, MonitoringRoutes } from '../monitoring';
+import {
+  AdditionalSupportLinks,
+  AsyncComponent,
+  DocumentationLinks,
+  Firehose,
+  PageHeading,
+  StatusBox,
+} from './utils';
 
 const fetchHealth = () => coFetch(`${k8sBasePath}/healthz`)
   .then(response => response.text())
@@ -244,7 +251,7 @@ const ClusterOverviewPage_ = props => {
     <Helmet>
       <title>{fake ? 'Overview' : title}</title>
     </Helmet>
-    <NavTitle title={fake ? 'Overview' : title} />
+    <PageHeading title={fake ? 'Overview' : title} />
     <div className="cluster-overview-cell container-fluid">
       <AsyncComponent namespace={namespace} loader={permissionedLoader} openshiftFlag={openshiftFlag} fake={fake} />
     </div>

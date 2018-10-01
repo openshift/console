@@ -1,13 +1,18 @@
 import * as React from 'react';
-import { Link } from 'react-router-dom';
 import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
+import { Link } from 'react-router-dom';
 
 import { ActionsMenu, ResourceIcon, CogAction } from './index';
 import { ClusterServiceVersionLogo } from '../operator-lifecycle-manager';
-import { K8sResourceKind, K8sResourceKindReference, K8sKind, referenceForModel } from '../../module/k8s';
 import { connectToModel } from '../../kinds';
 import { ClusterServiceVersionModel } from '../../models';
+import {
+  K8sKind,
+  K8sResourceKind,
+  K8sResourceKindReference,
+  referenceForModel
+} from '../../module/k8s';
 
 export const BreadCrumbs: React.SFC<BreadCrumbsProps> = ({breadcrumbs}) => (
   <ol className="breadcrumb">
@@ -32,7 +37,7 @@ const ActionButtons: React.SFC<ActionButtonsProps> = ({actionButtons}) => <div c
   })}
 </div>;
 
-export const NavTitle = connectToModel((props: NavTitleProps) => {
+export const PageHeading = connectToModel((props: PageHeadingProps) => {
   const {kind, kindObj, detail, title, menuActions, buttonActions, obj, breadcrumbsFor, titleFunc, style} = props;
   const data = _.get(obj, 'data');
   const resourceTitle = (titleFunc && data) ? titleFunc(data) : title;
@@ -61,29 +66,57 @@ export const NavTitle = connectToModel((props: NavTitleProps) => {
   </div>;
 });
 
+export const SectionHeading: React.SFC<SectionHeadingProps> = ({text, children, style}) => <h2 className="co-section-heading" style={style}>{text}{children}</h2>;
+
+export const ResourceOverviewHeading: React.SFC<ResourceOverviewHeadingProps> = ({kindObj, actions, resource}) => <div className="co-m-nav-title resource-overview__heading">
+  <h1 className="co-m-pane__heading">
+    <div className="co-m-pane__name">
+      <ResourceIcon className="co-m-resource-icon--lg pull-left" kind={kindObj.kind} />
+      {resource.metadata.name}
+    </div>
+    <div className="co-actions">
+      <ActionsMenu actions={actions.map(a => a(kindObj, resource))} />
+    </div>
+  </h1>
+</div>;
+
 /* eslint-disable no-undef */
-export type NavTitleProps = {
-  kind?: K8sResourceKindReference;
-  kindObj?: K8sKind;
-  detail?: boolean;
-  title?: string | JSX.Element;
-  menuActions?: CogAction[];
-  buttonActions?: any[];
-  obj?: {data: K8sResourceKind};
-  breadcrumbsFor?: (obj: K8sResourceKind) => {name: string, path: string}[];
-  titleFunc?: (obj: K8sResourceKind) => string | JSX.Element;
-  children?: React.ReactChildren;
-  style?: object;
+export type ActionButtonsProps = {
+  actionButtons: any[];
 };
 
 export type BreadCrumbsProps = {
   breadcrumbs: {name: string, path: string}[];
 };
 
-export type ActionButtonsProps = {
-  actionButtons: any[];
+export type PageHeadingProps = {
+  breadcrumbsFor?: (obj: K8sResourceKind) => {name: string, path: string}[];
+  buttonActions?: any[];
+  children?: React.ReactChildren;
+  detail?: boolean;
+  kind?: K8sResourceKindReference;
+  kindObj?: K8sKind;
+  menuActions?: any[];
+  obj?: {data: K8sResourceKind};
+  style?: object;
+  title?: string | JSX.Element;
+  titleFunc?: (obj: K8sResourceKind) => string | JSX.Element;
+};
+
+export type ResourceOverviewHeadingProps = {
+  actions: CogAction[];
+  kindObj: K8sKind;
+  resource: K8sResourceKind;
+};
+
+export type SectionHeadingProps = {
+  children?: any;
+  style?: any;
+  text: string;
 };
 /* eslint-enable no-undef */
 
-NavTitle.displayName = 'NavTitle';
 BreadCrumbs.displayName = 'BreadCrumbs';
+PageHeading.displayName = 'PageHeading';
+ResourceOverviewHeading.displayName = 'ResourceOverviewHeading';
+SectionHeading.displayName = 'SectionHeading';

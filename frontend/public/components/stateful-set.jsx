@@ -2,7 +2,6 @@ import * as React from 'react';
 
 import { ResourceEventStream } from './events';
 import { connectToModel } from '../kinds';
-import { ResourceOverviewHeading } from './overview';
 import {
   DetailsPage,
   List,
@@ -14,6 +13,7 @@ import {
   AsyncComponent,
   Cog,
   ContainerTable,
+  ResourceOverviewHeading,
   ResourceSummary,
   SectionHeading,
   navFactory

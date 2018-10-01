@@ -2,7 +2,6 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 
 import { connectToModel } from '../kinds';
-import { ResourceOverviewHeading } from './overview';
 import {
   ColHead,
   DetailsPage,
@@ -20,6 +19,7 @@ import {
   navFactory,
   ResourceCog,
   ResourceLink,
+  ResourceOverviewHeading,
   ResourceSummary,
   SectionHeading,
   Selector

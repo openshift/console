@@ -5,15 +5,28 @@ import { saveAs } from 'file-saver';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { safeLoad, safeDump } from 'js-yaml';
-import { Field, reduxForm, formValueSelector, getFormValues } from 'redux-form';
+import {
+  Field,
+  reduxForm,
+  formValueSelector,
+  getFormValues
+} from 'redux-form';
 
 import store from '../../redux';
 import { k8sGet } from '../../module/k8s';
 import { ConfigMapModel } from '../../models';
 import { SafetyFirst } from '../safety-first';
 import { coFetchJSON } from '../../co-fetch';
-import { LoadingInline, LoadError, NavTitle } from '../utils';
-import { SettingsRow, SettingsLabel, SettingsContent } from './cluster-settings';
+import {
+  LoadingInline,
+  LoadError,
+  PageHeading
+} from '../utils';
+import {
+  SettingsContent,
+  SettingsLabel,
+  SettingsRow
+} from './cluster-settings';
 
 export const LDAPSetting = () => <SettingsRow>
   <SettingsLabel>LDAP</SettingsLabel>
@@ -561,7 +574,7 @@ export const LDAPPage = () => <div>
   <Helmet>
     <title>LDAP</title>
   </Helmet>
-  <NavTitle title="LDAP" />
+  <PageHeading title="LDAP" />
   <div className="co-m-pane__body">
     <LDAPs />
   </div>

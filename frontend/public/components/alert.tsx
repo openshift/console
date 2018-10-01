@@ -6,18 +6,32 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 import { coFetchJSON } from '../co-fetch';
-import { AlertResource, AlertRuleResource, alertRuleState, SilenceResource } from '../module/monitoring';
 import k8sActions from '../module/k8s/k8s-actions';
-import { MonitoringRoutes, connectToURLs } from '../monitoring';
 import store from '../redux';
 import { UIActions } from '../ui/ui-actions';
 import { monitoringRulesToProps } from '../ui/ui-reducers';
-import { ColHead, List, ListHeader, ResourceRow, TextFilter } from './factory';
 import { CheckBoxes } from './row-filter';
 import { SafetyFirst } from './safety-first';
 import { Silence } from './silence';
-import { BreadCrumbs, ExternalLink, history, NavTitle, SectionHeading, StatusBox, Timestamp, withFallback } from './utils';
 import { formatDuration } from './utils/datetime';
+import { MonitoringRoutes, connectToURLs } from '../monitoring';
+import { ColHead, List, ListHeader, ResourceRow, TextFilter } from './factory';
+import {
+  BreadCrumbs,
+  ExternalLink,
+  history,
+  PageHeading,
+  SectionHeading,
+  StatusBox,
+  Timestamp,
+  withFallback
+} from './utils';
+import {
+  AlertResource,
+  AlertRuleResource,
+  alertRuleState,
+  SilenceResource
+} from '../module/monitoring';
 
 const detailsURL = (resource, name, labels) => `${resource.path}/${name}?${_.map(labels, (v, k) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`).join('&')}`;
 
@@ -401,7 +415,7 @@ export const MonitoringListPage = connect(filtersToProps)(class InnerMonitoringL
       <Helmet>
         <title>Monitoring Alerts</title>
       </Helmet>
-      <NavTitle title="Monitoring Alerts" />
+      <PageHeading title="Monitoring Alerts" />
       <ul className="co-m-horizontal-nav__menu">
         <li className={classNames('co-m-horizontal-nav__menu-item', {'co-m-horizontal-nav-item--active': match.path === AlertResource.path})}>
           <Link to={AlertResource.path}>Alerts</Link>

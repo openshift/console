@@ -7,12 +7,23 @@ import { Link } from 'react-router-dom';
 import { IChangeEvent, ISubmitEvent } from 'react-jsonschema-form';
 import { JSONSchema6 } from 'json-schema';
 
-import { createParametersSecret, getBindingCreateSchema, getBindingParametersForm, ServiceCatalogParametersForm, getUISchema } from './schema-form';
 import { LoadingBox } from '../utils/status-box';
-import { history, Firehose, NavTitle, resourcePathFromModel } from '../utils';
 import { ServiceInstanceModel, ServiceBindingModel } from '../../models';
 import { k8sCreate, K8sResourceKind } from '../../module/k8s';
 import { ButtonBar } from '../utils/button-bar';
+import {
+  createParametersSecret,
+  getBindingCreateSchema,
+  getBindingParametersForm,
+  getUISchema,
+  ServiceCatalogParametersForm
+} from './schema-form';
+import {
+  Firehose,
+  history,
+  PageHeading,
+  resourcePathFromModel
+} from '../utils';
 
 const PARAMETERS_SECRET_KEY = 'parameters';
 
@@ -109,7 +120,7 @@ class CreateBindingForm extends React.Component<CreateBindingProps, CreateBindin
       <Helmet>
         <title>{title}</title>
       </Helmet>
-      <NavTitle
+      <PageHeading
         title={title}
         obj={obj}
         breadcrumbsFor={() => [

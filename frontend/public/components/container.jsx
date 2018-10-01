@@ -1,9 +1,23 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 
-import { getContainerState, getContainerStatus, getPullPolicyLabel } from '../module/k8s/docker';
 import * as k8sProbe from '../module/k8s/probe';
-import { SectionHeading, Firehose, Overflow, MsgBox, NavTitle, Timestamp, HorizontalNav, ResourceLink, ScrollToTopOnMount } from './utils';
+import {
+  getContainerState,
+  getContainerStatus,
+  getPullPolicyLabel
+} from '../module/k8s/docker';
+import {
+  Firehose,
+  HorizontalNav,
+  MsgBox,
+  Overflow,
+  PageHeading,
+  ResourceLink,
+  ScrollToTopOnMount,
+  SectionHeading,
+  Timestamp,
+} from './utils';
 
 const formatComputeResources = resources => _.map(resources, (v, k) => `${k}: ${v}`).join(', ');
 
@@ -233,7 +247,7 @@ const Details = (props) => {
 };
 
 export const ContainersDetailsPage = (props) => <div>
-  <NavTitle
+  <PageHeading
     detail={true}
     title={props.match.params.name}
     kind="Container"
