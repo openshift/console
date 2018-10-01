@@ -30,7 +30,7 @@ git merge upstream/${UPSTREAM_BRANCH}
 cat <<EOF
 Now resolve all merge conflicts in following directory:
 
-  cd ${ROOT} && get status
+  cd ${ROOT} && git status
 
 Then open pull-request by
 
