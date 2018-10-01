@@ -64,7 +64,8 @@
     }
 
     &::after {
-      content: '\f054';
+      align-self: center;
+      content: $fa-var-chevron-right;
       display: none;
       font-family: 'FontAwesome';
       position: absolute;
