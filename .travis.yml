@@ -11,4 +11,4 @@ script:
 - yarn run lint
 - CI=true yarn test --maxWorkers=2
 - MAX_WORKERS=1 yarn run build
-
+- cd .. && docker build -q --rm=true -f Dockerfile -t kubevirt-web-ui-travis:test-build-only .
