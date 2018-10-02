@@ -4,12 +4,15 @@ import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
+import { coFetchJSON } from '../co-fetch';
 import { SilenceResource, silenceState } from '../module/monitoring';
 import { MonitoringRoutes, connectToURLs } from '../monitoring';
 import { monitoringAlertsToProps, monitoringSilencesToProps } from '../ui/ui-reducers';
 import { connectMonitoringPage, MonitoringListPage, MonitoringResourceIcon } from './alert';
 import { ColHead, ListHeader, ResourceRow } from './factory';
-import { ExternalLink, SectionHeading, StatusBox, Timestamp } from './utils';
+import { SafetyFirst } from './safety-first';
+import { ButtonBar, ExternalLink, history, SectionHeading, StatusBox, Timestamp, withFallback } from './utils';
+import { Tooltip } from './utils/tooltip';
 
 const silenceLabels = silence => _.mapValues(_.keyBy(_.get(silence, 'matchers'), 'name'), 'value');
 
@@ -144,8 +147,13 @@ const silencesRowFilter = {
   ],
 };
 
+const CreateButton = () => <Link className="co-m-primary-action" to="/monitoring/silences/new">
+  <button className="btn btn-primary">Create Silence</button>
+</Link>;
+
 const SilencesPage_ = props => <MonitoringListPage
   {...props}
+  CreateButton={CreateButton}
   Header={SilenceHeader}
   nameFilterID="silence-name"
   PageDescription={SilencesPageDescription}
@@ -155,6 +163,164 @@ const SilencesPage_ = props => <MonitoringListPage
   textFilterLabel="Silences by name"
 />;
 export const SilencesPage = connectMonitoringPage(connect(monitoringSilencesToProps)(SilencesPage_));
+
+const pad = i => i < 10 ? `0${i}` : i;
+const formatDate = (d: Date): string => `${d.getFullYear()}/${pad(d.getMonth() + 1)}/${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+
+const toISODate = (dateStr: string): string => {
+  const timestamp = Date.parse(dateStr);
+  return isNaN(timestamp) ? undefined : (new Date(timestamp)).toISOString();
+};
+
+const Text = props => <input {...props} type="text" className="form-control form-control--silence-text" />;
+
+const Datetime = props => <Tooltip content={[<span className="co-nowrap" key="co-timestamp">{toISODate(props.value)}</span>]}>
+  <Text
+    {...props}
+    pattern="\d{4}/(0[1-9]|1[012])/(0[1-9]|[12][0-9]|3[01]) ([01]\d|2[0-3]):[0-5]\d(:[0-5]\d)?"
+    placeholder="YYYY/MM/DD hh:mm:ss"
+  />
+</Tooltip>;
+
+export const CreateSilence = withFallback(connectToURLs(MonitoringRoutes.AlertManager)(class InnerCreateSilence extends SafetyFirst<CreateSilenceProps, CreateSilenceState> {
+  constructor (props) {
+    super(props);
+
+    const now = new Date();
+    const startsAt = formatDate(now);
+    const endsAt = formatDate(new Date(now.setHours(now.getHours() + 2)));
+    const data = {startsAt, endsAt, matchers: [], createdBy: '', comment: ''};
+    this.state = {data, error: undefined, inProgress: false};
+
+    this.addMatcher();
+  }
+
+  /* eslint-disable no-undef */
+  setField = (path: string, v: any): void => {
+    const data = Object.assign({}, this.state.data);
+    _.set(data, path, v);
+    this.setState({data});
+  }
+
+  onFieldChange = (path: string): ((e) => void) => {
+    return e => this.setField(path, e.target.value);
+  }
+
+  onIsRegexChange = (e, i: number): void => {
+    this.setField(`matchers[${i}].isRegex`, e.target.checked);
+  }
+
+  addMatcher = (): void => {
+    this.setField(`matchers[${this.state.data.matchers.length}]`, {name: '', value: '', isRegex: false});
+  }
+
+  removeMatcher = (i: number): void => {
+    const data = Object.assign({}, this.state.data);
+    data.matchers.splice(i, 1);
+    this.setState({data});
+    if (!data.matchers.length) {
+      // All matchers have been removed, so add back a single blank matcher
+      this.addMatcher();
+    }
+  }
+
+  onSubmit = (e): void => {
+    e.preventDefault();
+
+    const alertManagerURL = this.props.urls[MonitoringRoutes.AlertManager];
+    if (!alertManagerURL) {
+      this.setState({error: 'Alertmanager URL not set'});
+      return;
+    }
+
+    this.setState({inProgress: true});
+
+    const body = Object.assign({}, this.state.data);
+    body.startsAt = toISODate(body.startsAt);
+    body.endsAt = toISODate(body.endsAt);
+
+    coFetchJSON.post(`${alertManagerURL}/api/v1/silences`, body)
+      .then(({data}) => {
+        this.setState({error: undefined});
+        history.push(`${SilenceResource.path}/${encodeURIComponent(_.get(data, 'silenceId'))}`);
+      })
+      .catch(err => this.setState({error: err.json.error}))
+      .then(() => this.setState({inProgress: false}));
+  }
+  /* eslint-enable no-undef */
+
+  render () {
+    const title = 'Create Silence';
+    const {data, error, inProgress} = this.state;
+
+    return <div className="co-m-pane__body">
+      <Helmet>
+        <title>{title}</title>
+      </Helmet>
+      <form className="co-m-pane__body-group silence-form" onSubmit={this.onSubmit}>
+        <SectionHeading text={title} />
+        <p className="co-m-pane__explanation">A silence is configured based on a matcher (label selector). No notification will be sent out for alerts that match all the values or regular expressions.</p>
+        <hr />
+
+        <div className="form-group">
+          <label>Start</label>
+          <Datetime onChange={this.onFieldChange('startsAt')} value={data.startsAt} required />
+        </div>
+        <div className="form-group">
+          <label>End</label>
+          <Datetime onChange={this.onFieldChange('endsAt')} value={data.endsAt} required />
+        </div>
+        <hr />
+
+        <div className="form-group">
+          <label>Matchers</label> (label selectors)
+          <p className="co-help-text">Alerts affected by this silence. Matching alerts must satisfy all of the specified label constraints, though they may have additional labels as well.</p>
+          <div className="row co-m-table-grid__head">
+            <div className="col-xs-4">Name</div>
+            <div className="col-xs-4">Value</div>
+          </div>
+          {_.map(data.matchers, (matcher, i) => <div className="row form-group" key={i}>
+            <div className="col-xs-4">
+              <Text onChange={this.onFieldChange(`matchers[${i}].name`)} placeholder="Name" value={matcher.name} required />
+            </div>
+            <div className="col-xs-4">
+              <Text onChange={this.onFieldChange(`matchers[${i}].value`)} placeholder="Value" value={matcher.value} required />
+            </div>
+            <div className="col-xs-3">
+              <label className="co-no-bold">
+                <input type="checkbox" onChange={e => this.onIsRegexChange(e, i)} checked={matcher.isRegex} />&nbsp; Regular Expression
+              </label>
+            </div>
+            <div className="col-xs-1">
+              <button type="button" className="btn btn-link" onClick={() => this.removeMatcher(i)} aria-label="Remove matcher">
+                <i className="fa fa-minus-circle" aria-hidden="true" />
+              </button>
+            </div>
+          </div>)}
+          <button type="button" className="btn btn-link btn--silence-add-more" onClick={this.addMatcher}>
+            <i className="fa fa-plus-circle" aria-hidden="true" /> Add More
+          </button>
+        </div>
+        <hr />
+
+        <div className="form-group">
+          <label>Creator</label>
+          <Text onChange={this.onFieldChange('createdBy')} value={data.createdBy} />
+        </div>
+        <div className="form-group">
+          <label>Comment</label>
+          <textarea className="form-control" onChange={this.onFieldChange('comment')} value={data.comment} />
+        </div>
+        <hr />
+
+        <ButtonBar errorMessage={error} inProgress={inProgress}>
+          <button type="submit" className="btn btn-primary" id="yaml-create">Create</button>
+          <Link to={SilenceResource.path} className="btn btn-default">Cancel</Link>
+        </ButtonBar>
+      </form>
+    </div>;
+  }
+}));
 
 /* eslint-disable no-undef, no-unused-vars */
 type Alert = {
@@ -170,14 +336,16 @@ type Alerts = {
   loaded: boolean;
   loadError?: string;
 };
-export type Silence = {
+type NewSilence = {
   comment: string;
   createdBy: string;
   endsAt: string;
-  id: string;
-  matchers: {name: string, value: string}[];
-  name: string;
+  matchers: {name: string, value: string, isRegex: boolean}[];
   startsAt: string;
+};
+export type Silence = NewSilence & {
+  id: string;
+  name: string;
   status: {state: string};
   updatedAt: string;
 };
@@ -195,4 +363,12 @@ export type SilencesDetailsPageProps = {
 export type SilenceRowProps = {
   obj: any;
   numSilencedAlerts: number;
+};
+export type CreateSilenceProps = {
+  urls: {key: string}[];
+};
+export type CreateSilenceState = {
+  data: NewSilence;
+  error: string;
+  inProgress: boolean;
 };
