@@ -1,10 +1,24 @@
+.co-empty__header {
+  width: auto;
+}
+
 .pairs-list__row {
   padding-bottom: 15px;
 }
 
 .pairs-list__row-dragging {
-  padding-bottom: 15px;
-  opacity: 0
+  background-color: $color-pf-black-200;
+  border: 1px dashed $color-pf-black-300;
+  border-radius: 4px;
+  height: 28px;
+  margin-left: 28px;
+  margin-bottom: 15px;
+  overflow: hidden;
+  padding-right: 100px;
+  width: calc(83.34% + 11px); /* sum of the widths of the input fields plus an offset for padding */
+  div {
+    opacity: 0; /* hides input boxes and other children so there's just a gray target */
+  }
 }
 
 .pairs-list__value-field,
@@ -32,18 +46,22 @@
   padding-right: 8px;
 }
 
-.pairs-list__delete-icon {
-  line-height: 32px;
+.pairs-list__action-icon {
+  padding-right: 0;
+  width: auto;
 }
 
-.pairs-list__reorder-icon {
-  line-height: 32px;
-  padding-right: 10px;
+.pairs-list__action-icon--reorder {
+  line-height: 35px;
   cursor: move;
 }
 
 .pairs-list__add-icon {
   margin-right: 6px;
+}
+
+.pairs-list__delete-icon {
+  line-height: 35px;
 }
 
 .pairs-list__span-btns {

@@ -66,12 +66,14 @@ export const NameValueEditor = withDragDropContext(class NameValueEditor extends
     });
     return <React.Fragment>
       <div className="row">
-        <div className="col-md-5 col-xs-5 text-secondary text-uppercase">{nameString}</div>
-        <div className="col-md-6 col-xs-5 text-secondary text-uppercase">{valueString}</div>
+        <div className="col-xs-1 co-empty__header"></div>
+        <div className="col-xs-5 text-secondary text-uppercase">{nameString}</div>
+        <div className="col-xs-5 text-secondary text-uppercase">{valueString}</div>
+        <div className="col-xs-1 co-empty__header"></div>
       </div>
       {pairElems}
       <div className="row">
-        <div className="col-md-12 col-xs-12">
+        <div className="col-xs-12">
           {
             readOnly ?
               null :
@@ -177,8 +179,10 @@ export const EnvFromEditor = withDragDropContext(class EnvFromEditor extends Rea
 
     return <React.Fragment>
       <div className="row">
-        <div className="col-md-5 col-xs-5 text-secondary text-uppercase">Config Map/Secret</div>
-        <div className="col-md-6 col-xs-5 text-secondary text-uppercase">Prefix (Optional)</div>
+        <div className="col-xs-1 co-empty__header"></div>
+        <div className="col-xs-5 text-secondary text-uppercase">Config Map/Secret</div>
+        <div className="col-xs-5 text-secondary text-uppercase">Prefix (Optional)</div>
+        <div className="col-xs-1 co-empty__header"></div>
       </div>
       {pairElems}
       <div className="row">
@@ -311,32 +315,29 @@ const PairElement = DragSource(DRAGGABLE_TYPE.ENV_ROW, pairSource, collectSource
     return connectDropTarget(
       connectDragPreview(
         <div className={classNames('row', isDragging ? 'pairs-list__row-dragging' : 'pairs-list__row')} ref={node => this.node = node}>
-          <div className="col-md-5 col-xs-5 pairs-list__name-field">
+          <div className="col-xs-1 pairs-list__action-icon">
+            { allowSorting &&
+              connectDragSource(<i className="pficon pficon-drag-drop pairs-list__action-icon--reorder" />)
+            }
+          </div>
+          <div className="col-xs-5 pairs-list__name-field">
             <input type="text" className="form-control" placeholder={nameString.toLowerCase()} value={pair[NameValueEditorPair.Name]} onChange={this._onChangeName} disabled={readOnly} />
           </div>
           {
             _.isPlainObject(pair[NameValueEditorPair.Value]) ?
-              <div className="col-md-6 col-xs-5 pairs-list__value-pair-field">
+              <div className="col-xs-5 pairs-list__value-pair-field">
                 <ValueFromPair pair={pair[NameValueEditorPair.Value]} configMaps={configMaps} secrets={secrets} onChange={this._onChangeValue} disabled={readOnly} />
               </div>
               :
-              <div className="col-md-6 col-xs-5 pairs-list__value-field">
+              <div className="col-xs-5 pairs-list__value-field">
                 <input type="text" className="form-control" placeholder={valueString.toLowerCase()} value={pair[NameValueEditorPair.Value] || ''} onChange={this._onChangeValue} disabled={readOnly} />
               </div>
           }
           {
             !readOnly &&
-              <div className="col-md-1 col-xs-2">
+              <div className="col-xs-1">
                 <span className={classNames(allowSorting ? 'pairs-list__span-btns' : null)}>
-                  {
-                    allowSorting ?
-                      <React.Fragment>
-                        {connectDragSource(<i className="fa fa-bars pairs-list__reorder-icon" />)}
-                        {deleteButton}
-                      </React.Fragment>
-                      :
-                      deleteButton
-                  }
+                  {deleteButton}
                 </span>
               </div>
           }
@@ -396,17 +397,21 @@ const EnvFromPairElement = DragSource(DRAGGABLE_TYPE.ENV_FROM_ROW, pairSource, c
     return connectDropTarget(
       connectDragPreview(
         <div className={classNames('row', isDragging ? 'pairs-list__row-dragging' : 'pairs-list__row')} ref={node => this.node = node}>
-          <div className="col-md-5 col-xs-5 pairs-list__value-pair-field">
+          <div className="col-xs-1 pairs-list__action-icon">
+            { !readOnly &&
+              <React.Fragment>{connectDragSource(<i className="pficon pficon-drag-drop pairs-list__action-icon--reorder" />)}</React.Fragment>
+            }
+          </div>
+          <div className="col-xs-5 pairs-list__value-pair-field">
             <ValueFromPair pair={pair[EnvFromPair.Resource]} configMaps={configMaps} secrets={secrets} onChange={this._onChangeResource} disabled={readOnly} />
           </div>
-          <div className="col-md-6 col-xs-5 pairs-list__name-field">
+          <div className="col-xs-5 pairs-list__name-field">
             <input type="text" className="form-control" placeholder={valueString.toLowerCase()} value={pair[EnvFromPair.Prefix]} onChange={this._onChangePrefix} disabled={readOnly} />
           </div>
           {
             readOnly ? null :
-              <div className="col-md-1 col-xs-2">
+              <div className="col-xs-1">
                 <span className="pairs-list__span-btns">
-                  {connectDragSource(<i className="fa fa-bars pairs-list__reorder-icon" />)}
                   {deleteButton}
                 </span>
               </div>
