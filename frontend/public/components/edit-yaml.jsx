@@ -321,7 +321,7 @@ export const EditYAML = connect(stateToProps)(
                       <span className="pficon pficon-info"></span>This object has been updated. Click reload to see the new version.
                     </p>}
                     {create && <button type="submit" className="btn btn-primary" id="save-changes" onClick={() => this.save()}>Create</button>}
-                    {!create && !readOnly && <button type="submit" className="btn btn-primary" id="save-changes" onClick={() => this.save()}>Save Changes</button>}
+                    {!create && !readOnly && <button type="submit" className="btn btn-primary" id="save-changes" onClick={() => this.save()}>Save</button>}
                     {!create && <button type="submit" className="btn btn-default" id="reload-object" onClick={() => this.reload()}>Reload</button>}
                     <button className="btn btn-default" id="cancel" onClick={() => this.onCancel()}>Cancel</button>
                     <button type="submit" className="btn btn-default pull-right hidden-sm hidden-xs" onClick={() => this.download()}><i className="fa fa-download"></i>&nbsp;Download</button>

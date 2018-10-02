@@ -514,7 +514,7 @@ const BaseEditRoleBinding = connect(null, {setActiveNamespace: UIActions.setActi
           <div className="separator"></div>
 
           <ButtonBar errorMessage={this.state.error} inProgress={this.state.inProgress}>
-            <button type="submit" className="btn btn-primary" id="save-changes">{saveButtonText || 'Create Binding'}</button>
+            <button type="submit" className="btn btn-primary" id="save-changes">{saveButtonText || 'Create'}</button>
             <Link to={formatNamespacedRouteForResource('rolebindings')} className="btn btn-default" id="cancel">Cancel</Link>
           </ButtonBar>
         </form>
@@ -554,7 +554,7 @@ const BindingLoadingWrapper = props => {
 };
 
 export const EditRoleBinding = ({match: {params}, kind}) => <Firehose resources={[{kind: kind, name: params.name, namespace: params.ns, isList: false, prop: 'obj'}]}>
-  <BindingLoadingWrapper fixedKeys={['kind', 'metadata', 'roleRef']} subjectIndex={getSubjectIndex()} titleVerb="Edit" saveButtonText="Save Binding" />
+  <BindingLoadingWrapper fixedKeys={['kind', 'metadata', 'roleRef']} subjectIndex={getSubjectIndex()} titleVerb="Edit" saveButtonText="Save" />
 </Firehose>;
 
 export const CopyRoleBinding = ({match: {params}, kind}) => <Firehose resources={[{kind: kind, name: params.name, namespace: params.ns, isList: false, prop: 'obj'}]}>

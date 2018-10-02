@@ -70,7 +70,7 @@ export class InstallPlanApprovalModal extends PromiseComponent {
           </div>
         </div>
       </ModalBody>
-      <ModalSubmitFooter inProgress={this.state.inProgress} errorMessage={this.state.errorMessage} cancel={this.props.cancel.bind(this)} submitText="Save Channel" />
+      <ModalSubmitFooter inProgress={this.state.inProgress} errorMessage={this.state.errorMessage} cancel={this.props.cancel.bind(this)} submitText="Save" />
     </form>;
   }
 }

@@ -88,7 +88,7 @@ const CreateNamespaceModal = connect(null, mapDispatchToProps)(class CreateNames
   render() {
     const label = this.props.createProject ? 'Project' : 'Namespace';
     return <form onSubmit={this._submit.bind(this)} name="form" className="co-p-new-user-modal">
-      <ModalTitle>Create New {label}</ModalTitle>
+      <ModalTitle>Create {label}</ModalTitle>
       <ModalBody>
         <div className="form-group">
           <label htmlFor="input-name" className="control-label">Name</label>
@@ -124,7 +124,7 @@ const CreateNamespaceModal = connect(null, mapDispatchToProps)(class CreateNames
           </div>
         </div>}
       </ModalBody>
-      <ModalSubmitFooter errorMessage={this.state.errorMessage} inProgress={this.state.inProgress} submitText={`Create ${label}`} cancel={this.props.cancel.bind(this)} />
+      <ModalSubmitFooter errorMessage={this.state.errorMessage} inProgress={this.state.inProgress} submitText="Create" cancel={this.props.cancel.bind(this)} />
     </form>;
   }
 });

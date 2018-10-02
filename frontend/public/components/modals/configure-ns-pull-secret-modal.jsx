@@ -286,7 +286,7 @@ class ConfigureNamespacePullSecret extends PromiseComponent {
         </div> }
 
       </ModalBody>
-      <ModalSubmitFooter errorMessage={this.state.errorMessage} inProgress={this.state.inProgress} submitText="Save Secret" cancel={this._cancel} />
+      <ModalSubmitFooter errorMessage={this.state.errorMessage} inProgress={this.state.inProgress} submitText="Save" cancel={this._cancel} />
     </form>;
   }
 }

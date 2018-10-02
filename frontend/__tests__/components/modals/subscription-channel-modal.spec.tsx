@@ -37,7 +37,7 @@ describe(SubscriptionChannelModal.name, () => {
   it('renders a modal form', () => {
     expect(wrapper.find('form').props().name).toEqual('form');
     expect(wrapper.find(ModalTitle).exists()).toBe(true);
-    expect(wrapper.find(ModalSubmitFooter).props().submitText).toEqual('Save Channel');
+    expect(wrapper.find(ModalSubmitFooter).props().submitText).toEqual('Save');
   });
 
   it('renders a radio button for each available channel in the package', () => {

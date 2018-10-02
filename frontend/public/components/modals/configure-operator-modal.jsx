@@ -73,7 +73,7 @@ const configureOperatorModal = createModalLauncher(ConfigureOperatorModal);
 
 export const configureOperatorStrategyModal = (props) => {
   return configureOperatorModal(_.defaults({}, {
-    buttonText: 'Save Strategy',
+    buttonText: 'Save',
     message: <p>Select an update method for the cluster:</p>,
     path: '/automaticUpdate',
     radios: [

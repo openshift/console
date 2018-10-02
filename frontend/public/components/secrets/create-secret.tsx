@@ -899,7 +899,7 @@ export const CreateSecret = ({match: {params}}) => {
 };
 
 export const EditSecret = ({match: {params}, kind}) => <Firehose resources={[{kind: kind, name: params.name, namespace: params.ns, isList: false, prop: 'obj'}]}>
-  <SecretLoadingWrapper fixedKeys={['kind', 'metadata']} titleVerb="Edit" saveButtonText="Save Changes" />
+  <SecretLoadingWrapper fixedKeys={['kind', 'metadata']} titleVerb="Edit" saveButtonText="Save" />
 </Firehose>;
 
 export type BaseEditSecretState_ = {

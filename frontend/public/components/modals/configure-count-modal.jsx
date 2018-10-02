@@ -84,7 +84,7 @@ export const configureReplicaCountModal = (props) => {
     title: 'Edit Count',
     message: `${props.resourceKind.labelPlural} maintain the desired number of healthy pods.`,
     path: '/spec/replicas',
-    buttonText: 'Save Desired Count'
+    buttonText: 'Save'
   }, props));
 };
 
@@ -94,7 +94,7 @@ export const configureJobParallelismModal = (props) => {
     title: 'Edit Parallelism',
     message: `${props.resourceKind.labelPlural} create one or more pods and ensure that a specified number of them successfully terminate. When the specified number of completions is successfully reached, the job is complete.`,
     path: '/spec/parallelism',
-    buttonText: 'Save Desired Parallelism'
+    buttonText: 'Save'
   }, props));
 };
 
@@ -104,6 +104,6 @@ export const configureClusterSizeModal = (props) => {
     title: 'Edit Cluster Size',
     message: `${props.resourceKind.labelPlural} maintain the desired number of healthy pods.`,
     path: '/spec/size',
-    buttonText: 'Save Cluster Size'
+    buttonText: 'Save'
   }, props));
 };

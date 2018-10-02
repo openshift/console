@@ -416,7 +416,7 @@ const EditRule = connect(stateToProps, {getResources: k8sActions.getResources}) 
             <div className="row">
               <div className="col-xs-12">
                 <ButtonBar errorMessage={this.state.errorMessage} inProgress={this.state.inProgress}>
-                  <button type="submit" className="btn btn-primary" onClick={this.save}>Save Rule</button>
+                  <button type="submit" className="btn btn-primary" onClick={this.save}>Save</button>
                   {role && <Link to={`${resourceObjPath(role, this.kind.kind)}`} className="btn btn-default">Cancel</Link>}
                 </ButtonBar>
               </div>

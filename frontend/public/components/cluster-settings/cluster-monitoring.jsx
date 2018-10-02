@@ -60,7 +60,7 @@ class PromSettingsModal extends PromiseComponent {
           submitDisabled={invalid}
           errorMessage={errorMessage}
           inProgress={inProgress}
-          submitText="Save Changes"
+          submitText="Save"
           cancel={e => this.props.cancel(e)} />
       </form>
     );

@@ -331,8 +331,7 @@ export const EnvironmentPage = connect(stateToProps)(
             <p className="alert alert-success"><span className="pficon pficon-ok" aria-hidden="true"></span>{success}
             </p>}
             {!readOnly &&
-            <button disabled={inProgress} type="submit" className="btn btn-primary" onClick={this.saveChanges}>Save
-              Changes</button>}
+            <button disabled={inProgress} type="submit" className="btn btn-primary" onClick={this.saveChanges}>Save</button>}
             {!readOnly && <button disabled={inProgress} type="button" className="btn btn-default" onClick={this.reload}>Reload</button>}
           </div>
         </div>
