@@ -432,15 +432,16 @@ class EventStream extends SafetyFirst {
           There are no events before <Timestamp timestamp={this.state.oldestTimestamp} />
           </div>
         </div>
+        { /* Default `height` to 0 to avoid console errors from https://github.com/bvaughn/react-virtualized/issues/1158 */}
         { count > 0 &&
-            <WindowScroller>
+            <WindowScroller scrollElement={document.getElementById('content-scrollable')}>
               {({height, isScrolling, registerChild, onChildScroll, scrollTop}) =>
                 <AutoSizer disableHeight>
                   {({width}) => <div ref={registerChild}>
                     <VirtualList
                       autoHeight
                       data={filteredEvents}
-                      height={height}
+                      height={height || 0}
                       isScrolling={isScrolling}
                       onScroll={onChildScroll}
                       rowRenderer={this.rowRenderer}

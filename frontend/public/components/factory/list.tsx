@@ -271,10 +271,11 @@ export const Rows: React.SFC<RowsProps> = (props) => {
     </CellMeasurer>;
   };
 
+  // Default `height` to 0 to avoid console errors from https://github.com/bvaughn/react-virtualized/issues/1158
   return <div className="co-m-table-grid__body">
     { fake
       ? <EmptyBox label={label} />
-      : <WindowScroller>
+      : <WindowScroller scrollElement={document.getElementById('content-scrollable')}>
         {({height, isScrolling, registerChild, onChildScroll, scrollTop}) =>
           <AutoSizer disableHeight>
             {({width}) => <div ref={registerChild}>
@@ -282,7 +283,7 @@ export const Rows: React.SFC<RowsProps> = (props) => {
                 autoHeight
                 data={props.data}
                 expand={props.expand}
-                height={height}
+                height={height || 0}
                 deferredMeasurementCache={measurementCache}
                 rowHeight={measurementCache.rowHeight}
                 isScrolling={isScrolling}

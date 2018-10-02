@@ -128,7 +128,7 @@ class App extends React.PureComponent {
       <div id="content">
         <Route path={namespacedRoutes} component={NamespaceSelector} />
         <GlobalNotifications />
-        <div className="content-scrollable">
+        <div id="content-scrollable">
           <Switch>
             <Route path={['/all-namespaces', '/ns/:ns',]} component={RedirectComponent} />
 
