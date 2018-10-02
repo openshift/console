@@ -23,9 +23,8 @@ class CatalogListPage extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      items: [],
-    };
+    const items = this.getItems();
+    this.state = {items};
   }
 
   componentDidUpdate(prevProps) {
@@ -33,16 +32,17 @@ class CatalogListPage extends React.Component {
     if (namespace !== prevProps.namespace ||
       clusterserviceclasses !== prevProps.clusterserviceclasses ||
       imagestreams !== prevProps.imagestreams) {
-      this.createCatalogData();
+      const items = this.getItems();
+      this.setState({items});
     }
   }
 
-  createCatalogData() {
+  getItems() {
     const {clusterserviceclasses, imagestreams, loaded} = this.props;
     let clusterServiceClassItems = null, imageStreamsItems = null;
 
     if (!loaded) {
-      return;
+      return [];
     }
 
     if (clusterserviceclasses) {
@@ -53,9 +53,7 @@ class CatalogListPage extends React.Component {
       imageStreamsItems = this.normalizeImagestreams(imagestreams.data, 'ImageStream');
     }
 
-    const items = _.sortBy([...clusterServiceClassItems, ...imageStreamsItems], 'tileName');
-
-    this.setState({items});
+    return _.sortBy([...clusterServiceClassItems, ...imageStreamsItems], 'tileName');
   }
 
   normalizeClusterServiceClasses(serviceClasses, kind) {
