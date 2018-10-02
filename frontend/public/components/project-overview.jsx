@@ -102,9 +102,9 @@ ProjectOverviewGroup.propTypes = {
 
 export const ProjectOverview = ({selectedItem, groups, onClickItem}) =>
   <div className="project-overview">
-    {_.map(groups, ({name, items}, index) =>
+    {_.map(groups, ({name, items}) =>
       <ProjectOverviewGroup
-        key={`overview-group-${name}${index}`}
+        key={name}
         heading={name}
         items={items}
         onClickItem={onClickItem}
