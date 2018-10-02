@@ -20,7 +20,7 @@ import {
   getServiceClassImage,
 } from './catalog-item-icon';
 
-class CatalogListPage extends React.Component {
+export class CatalogListPage extends React.Component {
   constructor(props) {
     super(props);
 
