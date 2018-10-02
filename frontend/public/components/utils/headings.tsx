@@ -68,7 +68,7 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
 
 export const SectionHeading: React.SFC<SectionHeadingProps> = ({text, children, style}) => <h2 className="co-section-heading" style={style}>{text}{children}</h2>;
 
-export const ResourceOverviewHeading: React.SFC<ResourceOverviewHeadingProps> = ({kindObj, actions, resource}) => <div className="co-m-nav-title resource-overview__heading">
+export const ResourceOverviewHeading: React.SFC<ResourceOverviewHeadingProps> = ({kindObj, actions, resource}) => <div className="overview__sidebar-pane-head resource-overview__heading">
   <h1 className="co-m-pane__heading">
     <div className="co-m-pane__name">
       <ResourceIcon className="co-m-resource-icon--lg pull-left" kind={kindObj.kind} />
