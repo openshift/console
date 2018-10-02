@@ -5,8 +5,18 @@ import * as classnames from 'classnames';
 import { Link } from 'react-router-dom';
 import { ListView } from 'patternfly-react';
 
-import { ResourceLink, resourcePath } from './utils';
+import { ResourceIcon, resourceObjPath, resourcePath } from './utils';
 
+const getRevision = (obj) => {
+  const annotation = obj.kind === 'ReplicaSet'
+    ? 'deployment.kubernetes.io/revision'
+    : 'openshift.io/deployment-config.latest-version';
+  const revision = _.get(obj, ['metadata', 'annotations', annotation]);
+  return revision ? `#${revision}` : obj.metadata.name;
+};
+
+const ControllerLink = ({controller}) =>
+  <Link to={resourceObjPath(controller, controller.kind)} title={controller.metadata.name}>{getRevision(controller)}</Link>;
 
 export const ComponentLabel = ({text}) => <div className="co-component-label">{text}</div>;
 
@@ -16,26 +26,16 @@ const ProjectOverviewListItem = ({item, onClick, selectedItem}) => {
   const isSelected = uid === _.get(selectedItem, 'obj.metadata.uid', '');
   const className = classnames('project-overview__item', {'project-overview__item--selected': isSelected});
   const heading = <h3 className="project-overview__item-heading">
-    <ResourceLink
-      className="co-resource-link-truncate"
-      kind={obj.kind}
-      name={name}
-      namespace={namespace}
-    />
+    <span className="co-resource-link co-resource-link-truncate">
+      <ResourceIcon kind={obj.kind} />
+      <Link to={resourcePath(obj.kind, name, namespace)} className="co-resource-link__resource-name">
+        {name}
+      </Link>
+      {controller && <React.Fragment>,&nbsp;<ControllerLink controller={controller.obj} /></React.Fragment>}
+    </span>
   </h3>;
 
   const additionalInfo = <div key={uid} className="project-overview__additional-info">
-    { controller &&
-      <div className="project-overview__detail project-overview__detail--controller">
-        <ComponentLabel text={_.startCase(controller.obj.kind)} />
-        <ResourceLink
-          className="co-resource-link-truncate"
-          kind={controller.obj.kind}
-          name={_.get(controller, 'obj.metadata.name')}
-          namespace={namespace}
-        />
-      </div>
-    }
     {
       readiness &&
       <div className="project-overview__detail project-overview__detail--status">

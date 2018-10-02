@@ -1,6 +1,7 @@
 // TODO file should be renamed replica-set.jsx to match convention
 
 import * as React from 'react';
+import * as _ from 'lodash-es';
 
 import { DetailsPage, List, ListPage, WorkloadListHeader, WorkloadListRow } from './factory';
 import { Cog, ContainerTable, navFactory, SectionHeading, ResourceSummary, ResourcePodCount, AsyncComponent } from './utils';
@@ -10,23 +11,31 @@ import { ResourceEventStream } from './events';
 const {ModifyCount, EditEnvironment, common} = Cog.factory;
 export const replicaSetMenuActions = [ModifyCount, EditEnvironment, ...common];
 
-const Details = ({obj: replicaSet}) => <React.Fragment>
-  <div className="co-m-pane__body">
-    <SectionHeading text="Replica Set Overview" />
-    <div className="row">
-      <div className="col-md-6">
-        <ResourceSummary resource={replicaSet} />
-      </div>
-      <div className="col-md-6">
-        <ResourcePodCount resource={replicaSet} />
+const Details = ({obj: replicaSet}) => {
+  const revision = _.get(replicaSet, ['metadata', 'annotations', 'deployment.kubernetes.io/revision']);
+  return <React.Fragment>
+    <div className="co-m-pane__body">
+      <SectionHeading text="Replica Set Overview" />
+      <div className="row">
+        <div className="col-md-6">
+          <ResourceSummary resource={replicaSet}>
+            {revision && <React.Fragment>
+              <dt>Deployment Revision</dt>
+              <dd>{revision}</dd>
+            </React.Fragment>}
+          </ResourceSummary>
+        </div>
+        <div className="col-md-6">
+          <ResourcePodCount resource={replicaSet} />
+        </div>
       </div>
     </div>
-  </div>
-  <div className="co-m-pane__body">
-    <SectionHeading text="Containers" />
-    <ContainerTable containers={replicaSet.spec.template.spec.containers} />
-  </div>
-</React.Fragment>;
+    <div className="co-m-pane__body">
+      <SectionHeading text="Containers" />
+      <ContainerTable containers={replicaSet.spec.template.spec.containers} />
+    </div>
+  </React.Fragment>;
+};
 
 const EnvironmentPage = (props) => <AsyncComponent loader={() => import('./environment.jsx').then(c => c.EnvironmentPage)} {...props} />;
 
