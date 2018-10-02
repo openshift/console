@@ -106,9 +106,7 @@ $catalog-item-icon-size-sm: 24px;
   }
 
   &__tabs {
-    // Note the design spec calls for width of 165px, but https://github.com/patternfly/patternfly-react/issues/663
-    // is allowing the tabs to grow.  In order to accomodate "Middleware > Runtimes & Frameworks", this value needs to be wider.
-    flex: 0 0 190px;
+    flex: 0 0 165px;
     margin: 0 ($grid-gutter-width / 2) 0 0;
   }
 }
