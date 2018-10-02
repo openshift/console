@@ -97,13 +97,24 @@ export const config: Config = {
     olm: ['tests/base.scenario.ts', 'tests/olm/descriptors.scenario.ts', 'tests/olm/catalog.scenario.ts', 'tests/olm/etcd.scenario.ts', 'tests/olm/prometheus.scenario.ts'],
     olmUpgrade: ['tests/base.scenario.ts', 'tests/olm/update-channel-approval.scenario.ts'],
     performance: ['tests/base.scenario.ts', 'tests/performance.scenario.ts'],
-    all: ['tests/base.scenario.ts', 'tests/crud.scenario.ts', 'tests/secrets.scenario.ts', 'tests/olm/**/*.scenario.ts', 'tests/filter.scenario.ts', 'tests/modal-annotations.scenario.ts', 'tests/source-to-image.scenario.ts', 'tests/deploy-image.scenario.ts'],
+    serviceCatalog: ['tests/base.scenario.ts', 'tests/service-catalog/service-catalog.scenario.ts', 'tests/service-catalog/service-broker.scenario.ts', 'tests/service-catalog/service-class.scenario.ts', 'tests/service-catalog/service-binding.scenario.ts'],
+    all: ['tests/base.scenario.ts',
+      'tests/crud.scenario.ts',
+      'tests/secrets.scenario.ts',
+      'tests/olm/**/*.scenario.ts',
+      'tests/service-catalog/**/*.scenario.ts',
+      'tests/filter.scenario.ts',
+      'tests/modal-annotations.scenario.ts',
+      'tests/source-to-image.scenario.ts',
+      'tests/deploy-image.scenario.ts'],
   },
   params: {
     // Set to 'true' to enable OpenShift resources in the crud scenario.
     // Use a string rather than boolean so it can be specified on the command line:
     // $ yarn run test-gui --params.openshift true
-    openshift: 'false'
+    openshift: 'false',
+    // Set to 'true' to enable Service Catalog resources in the crud scenario.
+    servicecatalog: 'false'
   }
 };
 
