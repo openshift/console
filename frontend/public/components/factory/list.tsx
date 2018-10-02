@@ -20,7 +20,7 @@ import {
   podPhaseFilterReducer,
   podReadiness,
   serviceClassDisplayName } from '../../module/k8s';
-import { alertRuleState, silenceState } from '../../module/monitoring';
+import { alertState, silenceState } from '../../module/monitoring';
 import { UIActions } from '../../ui/ui-actions';
 import { ingressValidHosts } from '../ingress';
 import { routeStatus } from '../routes';
@@ -36,7 +36,7 @@ const listFilters = {
 
   'alert-rule-name': (filter, alertRule) => fuzzyCaseInsensitive(filter, alertRule.name),
 
-  'alert-rule-state': (filter, alertRule) => filter.selected.has(alertRuleState(alertRule)),
+  'alert-rule-state': (filter, alertRule) => filter.selected.has(alertState(alertRule)),
 
   'silence-name': (filter, silence) => fuzzyCaseInsensitive(filter, silence.name),
 
@@ -175,7 +175,7 @@ const filterPropType = (props, propName, componentName) => {
 };
 
 const sorts = {
-  alertRuleState,
+  alertState,
   daemonsetNumScheduled: daemonset => _.toInteger(_.get(daemonset, 'status.currentNumberScheduled')),
   dataSize: resource => _.size(_.get(resource, 'data')),
   ingressValidHosts,
