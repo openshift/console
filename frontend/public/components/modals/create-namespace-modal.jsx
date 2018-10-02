@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { k8sCreate, referenceFor } from '../../module/k8s';
 import { NamespaceModel, ProjectRequestModel, NetworkPolicyModel } from '../../models';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
-import { history, PromiseComponent, resourceObjPath, SelectorInput } from '../utils';
+import { Dropdown, history, PromiseComponent, resourceObjPath, SelectorInput } from '../utils';
 import { FLAGS, setFlag } from '../../features';
 
 const allow = 'allow';
@@ -26,6 +26,8 @@ const CreateNamespaceModal = connect(null, mapDispatchToProps)(class CreateNames
   constructor(props) {
     super(props);
     this.state.np = allow;
+    this.handleChange = this.handleChange.bind(this);
+    this.onLabels = this.onLabels.bind(this);
   }
 
   handleChange (e) {
@@ -87,40 +89,41 @@ const CreateNamespaceModal = connect(null, mapDispatchToProps)(class CreateNames
 
   render() {
     const label = this.props.createProject ? 'Project' : 'Namespace';
+    const defaultNetworkPolicies = {
+      [allow]: 'No restrictions (default)',
+      [deny]: 'Deny all inbound traffic',
+    };
     return <form onSubmit={this._submit.bind(this)} name="form" className="co-p-new-user-modal">
       <ModalTitle>Create New {label}</ModalTitle>
       <ModalBody>
         <div className="form-group">
           <label htmlFor="input-name" className="control-label">Name</label>
           <div className="modal-body__field">
-            <input id="input-name" name="name" type="text" className="form-control" onChange={this.handleChange.bind(this)} value={this.state.name || ''} autoFocus required />
+            <input id="input-name" name="name" type="text" className="form-control" onChange={this.handleChange} value={this.state.name || ''} autoFocus required />
           </div>
         </div>
         {this.props.createProject && <div className="form-group">
           <label htmlFor="input-display-name" className="control-label">Display Name</label>
           <div className="modal-body__field">
-            <input id="input-display-name" name="displayName" type="text" className="form-control" onChange={this.handleChange.bind(this)} value={this.state.displayName || ''} />
+            <input id="input-display-name" name="displayName" type="text" className="form-control" onChange={this.handleChange} value={this.state.displayName || ''} />
           </div>
         </div>}
         {this.props.createProject && <div className="form-group">
           <label htmlFor="input-description" className="control-label">Description</label>
           <div className="modal-body__field">
-            <textarea id="input-description" name="description" className="form-control" onChange={this.handleChange.bind(this)} value={this.state.description || ''} />
+            <textarea id="input-description" name="description" className="form-control" onChange={this.handleChange} value={this.state.description || ''} />
           </div>
         </div>}
         {!this.props.createProject && <div className="form-group">
           <label htmlFor="tags-input" className="control-label">Labels</label>
           <div className="modal-body__field">
-            <SelectorInput labelClassName="co-text-namespace" onChange={this.onLabels.bind(this)} tags={[]} />
+            <SelectorInput labelClassName="co-text-namespace" onChange={this.onLabels} tags={[]} />
           </div>
         </div>}
         {!this.props.createProject && <div className="form-group">
           <label htmlFor="network-policy" className="control-label">Default Network Policy</label>
           <div className="modal-body__field ">
-            <select id="network-policy" onChange={e => this.setState({np: e.target.value})} value={this.state.np} className="form-control">
-              <option value={allow}>No restrictions (default)</option>
-              <option value={deny}>Deny all inbound traffic.</option>
-            </select>
+            <Dropdown title="No restrictions (default)" items={defaultNetworkPolicies} dropDownClassName="dropdown--full-width" id="dropdown-selectbox" onChange={np => this.setState({np: np})} />
           </div>
         </div>}
       </ModalBody>
