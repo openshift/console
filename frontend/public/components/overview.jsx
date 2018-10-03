@@ -45,6 +45,76 @@ const getDeploymentConfigVersion = obj => {
   return version && parseInt(version, 10);
 };
 
+const getDeploymentPhase = rc => _.get(rc, ['metadata', 'annotations', 'openshift.io/deployment.phase']);
+
+// Only show an alert once if multiple pods have the same error for the same owner.
+const podAlertKey = (alert, pod, containerName = 'all') => {
+  const id = _.get(pod, 'metadata.ownerReferences[0].uid', pod.metadata.uid);
+  return `${alert}--${id}--${containerName}`;
+};
+
+const getPodAlerts = pod => {
+  const alerts = {};
+  const statuses = [
+    ..._.get(pod, 'status.initContainerStatuses', []),
+    ..._.get(pod, 'status.containerStatuses', []),
+  ];
+  statuses.forEach(status => {
+    const { name, state } = status;
+    const waitingReason = _.get(state, 'waiting.reason');
+    if (waitingReason === 'CrashLoopBackOff') {
+      const key = podAlertKey(waitingReason, pod, name);
+      alerts[key] = {
+        severity: 'error',
+        message: `Container ${name} is crash-looping.`,
+      };
+    }
+  });
+
+  _.get(pod, 'status.conditions', []).forEach(condition => {
+    const { type, status, reason, message } = condition;
+    if (type === 'PodScheduled' && status === 'False' && reason === 'Unschedulable') {
+      const key = podAlertKey(reason, pod, name);
+      alerts[key] = {
+        severity: 'error',
+        message: `${reason}: ${message}`,
+      };
+    }
+  });
+
+  return alerts;
+};
+
+const combinePodAlerts = pods => _.reduce(pods, (acc, pod) => ({
+  ...acc,
+  ...getPodAlerts(pod),
+}), {});
+
+const getReplicationControllerAlerts = rc => {
+  const phase = getDeploymentPhase(rc);
+  const version = getDeploymentConfigVersion(rc);
+  const label = _.isFinite(version) ? `#${version}` : rc.metadata.name;
+  const key = `${rc.metadata.uid}--Rollout${phase}`;
+  switch (phase) {
+    case 'Cancelled':
+      return {
+        [key]: {
+          severity: 'info',
+          message: `Rollout ${label} was cancelled.`,
+        },
+      };
+    case 'Failed':
+      return {
+        [key]: {
+          severity: 'error',
+          message: `Rollout ${label} failed.`,
+        },
+      };
+    default:
+      return {};
+  }
+};
+
 const getOwnedResources = ({metadata:{uid}}, resources) => {
   return _.filter(resources, ({metadata:{ownerReferences}}) => {
     return _.some(ownerReferences, {
@@ -247,20 +317,32 @@ class OverviewDetails extends React.Component {
   }
 
   addPodsToItem(item) {
-    const {pods} = this.props;
+    const {pods: allPods} = this.props;
+    const {obj} = item;
+    const pods = getOwnedResources(obj, allPods.data);
+    const alerts = {
+      ...item.alerts,
+      ...combinePodAlerts(pods),
+    };
     return {
       ...item,
-      pods: getOwnedResources(item.obj, pods.data)
+      pods,
+      alerts,
     };
   }
 
   toReplicationControllerItem(rc) {
+    const alerts = getReplicationControllerAlerts(rc);
+    const phase = getDeploymentPhase(rc);
+    const revision = getDeploymentConfigVersion(rc);
     return this.addPodsToItem({
       obj: {
         ...rc,
         kind: ReplicationControllerModel.kind
       },
-      revision: getDeploymentConfigVersion(rc),
+      alerts,
+      phase,
+      revision,
     });
   }
 
@@ -277,11 +359,13 @@ class OverviewDetails extends React.Component {
     const rcItems = sortReplicationControllersByRevision(replicationControllers).map(rc => this.toReplicationControllerItem(rc));
     const current = _.first(rcItems);
     const previous = _.nth(rcItems, 1);
+    const isRollingOut = current && previous && current.phase !== 'Cancelled' && current.phase !== 'Failed';
 
     return {
       ...item,
       current,
       previous,
+      isRollingOut,
     };
   }
 
@@ -308,10 +392,12 @@ class OverviewDetails extends React.Component {
     const rsItems = sortReplicaSetsByRevision(replicaSets).map(rs => this.toReplicaSetItem(rs));
     const current = _.first(rsItems);
     const previous = _.nth(rsItems, 1);
+    const isRollingOut = current && previous;
     return {
       ...item,
       current,
       previous,
+      isRollingOut,
     };
   }
 

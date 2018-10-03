@@ -5,7 +5,8 @@ import * as classnames from 'classnames';
 import { Link } from 'react-router-dom';
 import { ListView } from 'patternfly-react';
 
-import { ResourceIcon, resourceObjPath, resourcePath } from './utils';
+import { pluralize, ResourceIcon, resourceObjPath, resourcePath } from './utils';
+import { Tooltip } from './utils/tooltip';
 
 const ControllerLink = ({controller}) => {
   const { obj, revision } = controller;
@@ -17,31 +18,70 @@ const ControllerLink = ({controller}) => {
 export const ComponentLabel = ({text}) => <div className="co-component-label">{text}</div>;
 
 const Status = ({item}) => {
-  const {current, previous, readiness, obj} = item;
-  const {namespace, name, uid} = obj.metadata;
-  if (current && previous) {
+  const {isRollingOut, readiness, obj} = item;
+  const {namespace, name} = obj.metadata;
+  if (isRollingOut) {
     // TODO: Show pod status for previous and next revisions.
-    return <div key={uid} className="project-overview__additional-info">
-      <div className="project-overview__detail project-overview__detail--status text-muted">
-        Rollout in progress...
-      </div>
+    return <div className="project-overview__detail project-overview__detail--status text-muted">
+      Rollout in progress...
     </div>;
   }
 
   if (readiness) {
-    return <div key={uid} className="project-overview__additional-info">
-      <div className="project-overview__detail project-overview__detail--status">
-        <ComponentLabel text="Status" />
-        <Link to={`${resourcePath(obj.kind, name, namespace)}/pods`}>
-          {readiness.ready} of {readiness.desired} pods
-        </Link>
-      </div>
+    return <div className="project-overview__detail project-overview__detail--status">
+      <ComponentLabel text="Status" />
+      <Link to={`${resourcePath(obj.kind, name, namespace)}/pods`}>
+        {readiness.ready} of {readiness.desired} pods
+      </Link>
     </div>;
   }
 
   return null;
 };
 
+const iconClassBySeverity = Object.freeze({
+  error: 'pficon pficon-error-circle-o text-danger',
+  info: 'pficon pficon-info',
+  warning: 'pficon pficon-warning-triangle-o text-warning',
+});
+
+const alertLabelBySeverity = Object.freeze({
+  error: 'Error',
+  info: 'Message',
+  warning: 'Warning',
+});
+
+const AlertTooltip = ({alerts, severity}) => {
+  const iconClass = iconClassBySeverity[severity];
+  const label = alertLabelBySeverity[severity];
+  const count = _.size(alerts);
+  const message = _.map(alerts, 'message').join('\n');
+  const content = [<span key="message" className="co-pre-wrap">{message}</span>];
+  return <Tooltip content={content}>
+    <i className={iconClass} aria-hidden="true" /> {pluralize(count, label)}
+  </Tooltip>;
+};
+
+const Alerts = ({item}) => {
+  const currentAlerts = _.get(item, 'current.alerts', {});
+  const previousAlerts = _.get(item, 'previous.alerts', {});
+  const itemAlerts = _.get(item, 'alerts', {});
+  const alerts ={
+    ...itemAlerts,
+    ...currentAlerts,
+    ...previousAlerts,
+  };
+  if (_.isEmpty(alerts)) {
+    return null;
+  }
+
+  const { error, warning, info } = _.groupBy(alerts, 'severity');
+  return <div className="project-overview__detail project-overview__detail--alert">
+    {error && <AlertTooltip severity="error" alerts={error} />}
+    {warning && <AlertTooltip severity="warning" alerts={warning} />}
+    {info && <AlertTooltip severity="info" alerts={info} />}
+  </div>;
+};
 
 const ProjectOverviewListItem = ({item, onClick, selectedItem}) => {
   const {current, obj} = item;
@@ -58,7 +98,10 @@ const ProjectOverviewListItem = ({item, onClick, selectedItem}) => {
     </span>
   </h3>;
 
-  const additionalInfo = <Status key={uid} item={item} />;
+  const additionalInfo = <div key={uid} className="project-overview__additional-info">
+    <Alerts item={item} />
+    <Status item={item} />
+  </div>;
   return <ListView.Item
     onClick={() => isSelected ? onClick({}) : onClick(item)}
     className={className}
