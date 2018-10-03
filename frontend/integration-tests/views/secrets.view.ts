@@ -8,7 +8,6 @@ export const pre = $$('.co-copy-to-clipboard__text');
 export const dt = $$('dl.secret-data dt');
 
 export const saveButton = $('#save-changes');
-export const errorMessage = $('.alert-danger');
 export const authTypeDropdown = $('#dropdown-selectbox');
 
 export const webhookSecretValueInput = $('input[name=webhookSecretKey]');
@@ -30,7 +29,7 @@ export const createSecret = async(linkElement: ElementFinder, ns: string, name: 
   await secretNameInput.sendKeys(name);
   await updateForm();
   await saveButton.click();
-  expect(errorMessage.isPresent()).toBe(false);
+  expect(crudView.errorMessage.isPresent()).toBe(false);
 };
 
 export const checkSecret = async(ns: string, name: string, keyValuesToCheck: Object) => {
@@ -53,5 +52,5 @@ export const editSecret = async(ns: string, name: string, updateForm: Function) 
   await browser.wait(until.urlContains(`/k8s/ns/${ns}/secrets/${name}/edit`));
   await updateForm();
   await saveButton.click();
-  expect(errorMessage.isPresent()).toBe(false);
+  expect(crudView.errorMessage.isPresent()).toBe(false);
 };

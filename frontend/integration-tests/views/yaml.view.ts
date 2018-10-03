@@ -14,6 +14,3 @@ export const setContent = (text: string) => editorContent.click()
   .then(() => editorInput.sendKeys(Key.chord(Key.CONTROL, 'a'), Key.BACK_SPACE))
   .then(() => editorInput.sendKeys(Key.chord(Key.COMMAND, 'a'), Key.BACK_SPACE)) // For those OSX users...
   .then(() => text.split(/\n/g).map(line => editorInput.sendKeys(line, Key.ENTER, Key.HOME)));
-
-export const errorMessage = $('.alert-danger');
-export const successMessage = $('.alert-success');

@@ -108,7 +108,7 @@ describe('Kubernetes resource CRUD operations', () => {
         leakedResources.add(JSON.stringify({name: testName, plural: resource, namespace: namespaced ? testName : undefined}));
         await yamlView.saveButton.click();
 
-        expect(yamlView.errorMessage.isPresent()).toBe(false);
+        expect(crudView.errorMessage.isPresent()).toBe(false);
       });
 
       it('displays detail view for new resource instance', async() => {
@@ -167,7 +167,7 @@ describe('Kubernetes resource CRUD operations', () => {
       await $('#subject-name').sendKeys('subject-name');
       leakedResources.add(JSON.stringify({name: bindingName, plural: 'rolebindings', namespace: testName}));
       await crudView.saveChangesBtn.click();
-      expect(yamlView.errorMessage.isPresent()).toBe(false);
+      expect(crudView.errorMessage.isPresent()).toBe(false);
     });
 
     it('search view displays created RoleBinding', async() => {
@@ -255,7 +255,7 @@ describe('Kubernetes resource CRUD operations', () => {
       await yamlView.saveButton.click();
       await browser.wait(until.urlContains(name), K8S_CREATION_TIMEOUT);
 
-      expect(yamlView.errorMessage.isPresent()).toBe(false);
+      expect(crudView.errorMessage.isPresent()).toBe(false);
     });
 
     it('displays YAML editor for creating a new custom resource instance', async() => {
@@ -273,7 +273,7 @@ describe('Kubernetes resource CRUD operations', () => {
       leakedResources.add(JSON.stringify({name, plural: 'customresourcedefinitions'}));
       await yamlView.saveButton.click();
 
-      expect(yamlView.errorMessage.isPresent()).toBe(false);
+      expect(crudView.errorMessage.isPresent()).toBe(false);
     });
 
     it('deletes the `CustomResourceDefinition`', async() => {
