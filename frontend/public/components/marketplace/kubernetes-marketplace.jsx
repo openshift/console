@@ -3,12 +3,12 @@ import * as _ from 'lodash-es';
 import * as PropTypes from 'prop-types';
 import { Helmet } from 'react-helmet';
 
-import { FLAGS, connectToFlags, flagPending } from '../../features';
 import { Firehose, PageHeading, StatusBox } from '../utils';
-import { CatalogTileViewPage } from '../catalog-items';
 import { referenceForModel } from '../../module/k8s';
-import { getServiceClassIcon, getServiceClassImage } from '../catalog-item-icon';
+import { normalizeIconClass } from '../catalog-item-icon';
 import { PackageManifestModel } from '../../models';
+import CatalogTileView from 'patternfly-react-extensions/dist/esm/components/CatalogTileView/CatalogTileView';
+import CatalogTile from 'patternfly-react-extensions/dist/esm/components/CatalogTile/CatalogTile';
 
 class MarketplaceListPage extends React.Component {
   constructor(props) {
@@ -42,14 +42,12 @@ class MarketplaceListPage extends React.Component {
     });
     return _.map(activePackageManifests, packageManifest => {
       const tileName = packageManifest.metadata.name;
-      const iconClass = getServiceClassIcon(packageManifest);
-      const tileImgUrl = getServiceClassImage(packageManifest, iconClass);
+      const iconClass = 'fa fa-clone'; // TODO: get this info from the packagemanifest
+      const tileImgUrl = null; // TODO: get this info from the packagemanifest
       const tileIconClass = tileImgUrl ? null : iconClass;
       const tileDescription = packageManifest.metadata.description;
       const tileProvider = packageManifest.metadata.labels.provider;
       const tags = packageManifest.metadata.tags;
-      const { name, namespace } = packageManifest.metadata;
-      const href = null;
       return {
         obj: packageManifest,
         kind,
@@ -58,16 +56,49 @@ class MarketplaceListPage extends React.Component {
         tileImgUrl,
         tileDescription,
         tileProvider,
-        href,
         tags,
       };
     });
   }
+
+  renderTiles() {
+    const { items } = this.state;
+
+    return (
+      <CatalogTileView.Category totalItems={items.length} viewAll={true}>
+        {_.map(items, ((item) => {
+          const { tileName, tileImgUrl, tileIconClass, tileProvider, tileDescription } = item;
+          const uid = tileName;
+          const iconClass = tileIconClass ? `icon ${normalizeIconClass(tileIconClass)}` : null;
+          const vendor = tileProvider ? `Provided by ${tileProvider}` : null;
+          return <CatalogTile
+            id={uid}
+            key={uid}
+            title={tileName}
+            iconImg={tileImgUrl}
+            iconClass={iconClass}
+            vendor={vendor}
+            description={tileDescription}
+          />;
+        }))}
+      </CatalogTileView.Category>
+    );
+  }
+
   render() {
     const { loaded, loadError } = this.props;
     const { items } = this.state;
     return <StatusBox data={items} loaded={loaded} loadError={loadError} label="Resources">
-      <CatalogTileViewPage items={items} />
+      <div className="co-catalog-page">
+        <div className="co-catalog-page__content">
+          <div>
+            <div className="co-catalog-page__num-items">{_.size(items)} items</div>
+          </div>
+          <CatalogTileView>
+            {this.renderTiles()}
+          </CatalogTileView>
+        </div>
+      </div>
     </StatusBox>;
   }
 }
@@ -76,23 +107,19 @@ MarketplaceListPage.propTypes = {
   obj: PropTypes.object,
   namespace: PropTypes.string,
 };
-// eventually may use namespace
-// eslint-disable-next-line no-unused-vars
-export const Marketplace = connectToFlags(FLAGS.OPENSHIFT, FLAGS.SERVICE_CATALOG)(({namespace, flags}) => {
-  if (flagPending(flags.OPENSHIFT) || flagPending(flags.SERVICE_CATALOG)) {
-    return null;
-  }
+
+export const Marketplace = ({namespace}) => {
   const resources = [];
   resources.push({
     isList: true,
     kind: referenceForModel(PackageManifestModel),
-    namespace: 'kube-system',
+    namespace: undefined, // shows operators from all-namespaces - when backend is hooked up we will use 'marketplace'
     prop: 'packagemanifests'
   });
   return <Firehose resources={resources}>
     <MarketplaceListPage namespace={namespace} />
   </Firehose>;
-});
+};
 Marketplace.displayName = 'Marketplace';
 Marketplace.propTypes = {
   namespace: PropTypes.string,
