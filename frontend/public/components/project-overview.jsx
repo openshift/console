@@ -7,21 +7,44 @@ import { ListView } from 'patternfly-react';
 
 import { ResourceIcon, resourceObjPath, resourcePath } from './utils';
 
-const getRevision = (obj) => {
-  const annotation = obj.kind === 'ReplicaSet'
-    ? 'deployment.kubernetes.io/revision'
-    : 'openshift.io/deployment-config.latest-version';
-  const revision = _.get(obj, ['metadata', 'annotations', annotation]);
-  return revision ? `#${revision}` : obj.metadata.name;
+const ControllerLink = ({controller}) => {
+  const { obj, revision } = controller;
+  const { name } = obj.metadata;
+  const label = _.isFinite(revision) ? `#${revision}` : name;
+  return <Link to={resourceObjPath(obj, obj.kind)} title={name}>{label}</Link>;
 };
-
-const ControllerLink = ({controller}) =>
-  <Link to={resourceObjPath(controller, controller.kind)} title={controller.metadata.name}>{getRevision(controller)}</Link>;
 
 export const ComponentLabel = ({text}) => <div className="co-component-label">{text}</div>;
 
+const Status = ({item}) => {
+  const {current, previous, readiness, obj} = item;
+  const {namespace, name, uid} = obj.metadata;
+  if (current && previous) {
+    // TODO: Show pod status for previous and next revisions.
+    return <div key={uid} className="project-overview__additional-info">
+      <div className="project-overview__detail project-overview__detail--status text-muted">
+        Rollout in progress...
+      </div>
+    </div>;
+  }
+
+  if (readiness) {
+    return <div key={uid} className="project-overview__additional-info">
+      <div className="project-overview__detail project-overview__detail--status">
+        <ComponentLabel text="Status" />
+        <Link to={`${resourcePath(obj.kind, name, namespace)}/pods`}>
+          {readiness.ready} of {readiness.desired} pods
+        </Link>
+      </div>
+    </div>;
+  }
+
+  return null;
+};
+
+
 const ProjectOverviewListItem = ({item, onClick, selectedItem}) => {
-  const {controller, readiness, obj} = item;
+  const {current, obj} = item;
   const {namespace, name, uid} = obj.metadata;
   const isSelected = uid === _.get(selectedItem, 'obj.metadata.uid', '');
   const className = classnames('project-overview__item', {'project-overview__item--selected': isSelected});
@@ -31,22 +54,11 @@ const ProjectOverviewListItem = ({item, onClick, selectedItem}) => {
       <Link to={resourcePath(obj.kind, name, namespace)} className="co-resource-link__resource-name">
         {name}
       </Link>
-      {controller && <React.Fragment>,&nbsp;<ControllerLink controller={controller.obj} /></React.Fragment>}
+      {current && <React.Fragment>,&nbsp;<ControllerLink controller={current} /></React.Fragment>}
     </span>
   </h3>;
 
-  const additionalInfo = <div key={uid} className="project-overview__additional-info">
-    {
-      readiness &&
-      <div className="project-overview__detail project-overview__detail--status">
-        <ComponentLabel text="Status" />
-        <Link to={`${resourcePath(obj.kind, name, namespace)}/pods`}>
-          {readiness.ready} of {readiness.desired} pods
-        </Link>
-      </div>
-    }
-  </div>;
-
+  const additionalInfo = <Status key={uid} item={item} />;
   return <ListView.Item
     onClick={() => isSelected ? onClick({}) : onClick(item)}
     className={className}

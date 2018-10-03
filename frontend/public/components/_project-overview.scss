@@ -19,6 +19,10 @@
     grid-area: status;
   }
 
+  .project-overview__item {
+    min-height: 71px;
+  }
+
   .project-overview__item--selected,
   .project-overview__item.project-overview__item--selected:hover, {
     background-color: $color-pf-blue-100;
