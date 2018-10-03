@@ -32,6 +32,18 @@ import {
 // Should not be a valid label value to avoid conflicts.
 // https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/#syntax-and-character-set
 const EMPTY_GROUP_LABEL = 'other resources';
+const DEPLOYMENT_REVISION_ANNOTATION = 'deployment.kubernetes.io/revision';
+const DEPLOYMENT_CONFIG_LATEST_VERSION_ANNOTATION = 'openshift.io/deployment-config.latest-version';
+
+const getDeploymentRevision = obj => {
+  const revision = _.get(obj, ['metadata', 'annotations', DEPLOYMENT_REVISION_ANNOTATION]);
+  return revision && parseInt(revision, 10);
+};
+
+const getDeploymentConfigVersion = obj => {
+  const version = _.get(obj, ['metadata', 'annotations', DEPLOYMENT_CONFIG_LATEST_VERSION_ANNOTATION]);
+  return version && parseInt(version, 10);
+};
 
 const getOwnedResources = ({metadata:{uid}}, resources) => {
   return _.filter(resources, ({metadata:{ownerReferences}}) => {
@@ -42,10 +54,10 @@ const getOwnedResources = ({metadata:{uid}}, resources) => {
   });
 };
 
-const sortByRevision = (replicators, annotation, descending = true) => {
+const sortByRevision = (replicators, getRevision, descending = true) => {
   const compare = (left, right) => {
-    const leftVersion = parseInt(_.get(left, ['metadata', 'annotations', annotation]), 10);
-    const rightVersion = parseInt(_.get(right, ['metadata', 'annotations', annotation]), 10);
+    const leftVersion = getRevision(left);
+    const rightVersion = getRevision(right);
     if (!_.isFinite(leftVersion) && !_.isFinite(rightVersion)) {
       const leftName = _.get(left, 'metadata.name', '');
       const rightName = _.get(right, 'metadata.name', '');
@@ -74,11 +86,11 @@ const sortByRevision = (replicators, annotation, descending = true) => {
 };
 
 const sortReplicaSetsByRevision = (replicaSets) => {
-  return sortByRevision(replicaSets, 'deployment.kubernetes.io/revision');
+  return sortByRevision(replicaSets, getDeploymentRevision);
 };
 
 const sortReplicationControllersByRevision = (replicationControllers) => {
-  return sortByRevision(replicationControllers, 'openshift.io/deployment-config.latest-version');
+  return sortByRevision(replicationControllers, getDeploymentConfigVersion);
 };
 
 const OverviewHeading = ({disabled, groupOptions, handleFilterChange, handleGroupChange, selectedGroup, title}) =>
@@ -242,41 +254,64 @@ class OverviewDetails extends React.Component {
     };
   }
 
-  addReplicationControllersToItem(item) {
-    const {replicationControllers} = this.props;
-    const ownedRCs = _.map(getOwnedResources(item.obj, replicationControllers.data), rc => {
-      return this.addPodsToItem({
-        obj: {
-          ...rc,
-          kind: ReplicationControllerModel.kind
-        }
-      });
+  toReplicationControllerItem(rc) {
+    return this.addPodsToItem({
+      obj: {
+        ...rc,
+        kind: ReplicationControllerModel.kind
+      },
+      revision: getDeploymentConfigVersion(rc),
     });
-    const sortedRCs = sortReplicationControllersByRevision(ownedRCs);
-    const latestRC = _.head(sortedRCs);
+  }
+
+  getActiveReplicationControllers(deploymentConfig) {
+    const {replicationControllers} = this.props;
+    const currentVersion = _.get(deploymentConfig, 'status.latestVersion');
+    const ownedRC = getOwnedResources(deploymentConfig, replicationControllers.data);
+    return _.filter(ownedRC, rc => _.get(rc, 'status.replicas') || getDeploymentConfigVersion(rc) === currentVersion);
+  }
+
+  addReplicationControllersToItem(item) {
+    const { obj: deploymentConfig } = item;
+    const replicationControllers = this.getActiveReplicationControllers(deploymentConfig);
+    const rcItems = sortReplicationControllersByRevision(replicationControllers).map(rc => this.toReplicationControllerItem(rc));
+    const current = _.first(rcItems);
+    const previous = _.nth(rcItems, 1);
+
     return {
       ...item,
-      replicationControllers: sortedRCs,
-      controller: latestRC
+      current,
+      previous,
     };
   }
 
-  addReplicaSetsToItem(item) {
-    const {replicaSets} = this.props;
-    const ownedRSs = _.map(getOwnedResources(item.obj, replicaSets.data), rs => {
-      return this.addPodsToItem({
-        obj: {
-          ...rs,
-          kind: ReplicaSetModel.kind
-        }
-      });
+  toReplicaSetItem(rs) {
+    return this.addPodsToItem({
+      obj: {
+        ...rs,
+        kind: ReplicaSetModel.kind,
+      },
+      revision: getDeploymentRevision(rs),
     });
-    const sortedRSs = sortReplicaSetsByRevision(ownedRSs);
-    const latestRS = _.head(sortedRSs);
+  }
+
+  getActiveReplicaSets(deployment) {
+    const {replicaSets} = this.props;
+    const currentRevision = getDeploymentRevision(deployment);
+    const ownedRS = getOwnedResources(deployment, replicaSets.data);
+    return _.filter(ownedRS, rs => _.get(rs, 'status.replicas') || getDeploymentRevision(rs) === currentRevision);
+  }
+
+  addReplicaSetsToItem(item) {
+    const { obj: deployment } = item;
+    const replicaSets = this.getActiveReplicaSets(deployment);
+    const rsItems = sortReplicaSetsByRevision(replicaSets).map(rs => this.toReplicaSetItem(rs));
+    const current = _.first(rsItems);
+    const previous = _.nth(rsItems, 1);
     return {
       ...item,
-      replicaSets: sortedRSs,
-      controller: latestRS
+      current,
+      previous,
     };
   }
 
@@ -547,7 +582,7 @@ Overview.propTypes = {
 
 export const OverviewPage = ({match}) => {
   const namespace = _.get(match, 'params.ns');
-  const title = 'Project Overview';
+  const title = 'Overview';
   return <React.Fragment>
     <Helmet>
       <title>{title}</title>
