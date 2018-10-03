@@ -52,3 +52,16 @@ export const TemplateModel: K8sKind = {
   kind: 'Template',
   id: 'template'
 };
+
+export const NetworkAttachmentDefinitionModel: K8sKind = {
+  label: 'network-attachment-definition',
+  labelPlural: 'network-attachment-definitions',
+  apiVersion: 'k8s.cni.cncf.io/v1',
+  path: 'network-attachment-definitions',
+  apiGroup: 'k8s.cni.cncf.io',
+  plural: 'network-attachment-definitions',
+  namespaced: false,
+  abbr: 'network-attachment-definitions',
+  kind: 'network-attachment-definitions',
+  id: 'network-attachment-definitions'
+};

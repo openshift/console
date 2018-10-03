@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
 import { startStopVmModal } from './modals/start-stop-vm-modal';
 import { restartVmModal } from './modals/restart-vm-modal';
 
-import { CreateVmWizard } from 'kubevirt-web-ui-components/dist/js';
+import { CreateVmWizard, TEMPLATE_TYPE_LABEL } from 'kubevirt-web-ui-components/dist/js';
 
 const dashes = '---';
 const getLabelMatcher = (vm) => _.get(vm, 'spec.template.metadata.labels');
@@ -91,15 +91,18 @@ const FirehoseResourceLink = props => {
 const findPod = (data, name) => data.find(p => p.metadata.name.startsWith(`virt-launcher-${name}-`));
 const findVMI = (data, name) => data.find(vmi => vmi.metadata.name === name);
 
-const getResourceKind = (kind, namespace, labelMatcher) => {
-  let res = { kind:kind, namespaced: true, namespace: namespace, isList: true, prop: kind};
+const getResourceKind = (model, name, namespaced, namespace, isList, matchLabels, matchExpressions) => {
+  let res = { kind:model.kind, namespaced, namespace, isList, prop: model.kind};
   if (name) {
     res.name = name;
   }
-  if (labelMatcher) {
-    res.selector = {matchLabels:labelMatcher};
+  if (matchLabels) {
+    res.selector = {matchLabels};
   }
-  return [res];
+  if (matchExpressions) {
+    res.selector = {matchExpressions};
+  }
+  return res;
 };
 
 const getFlattenForKind = (kind) => {
@@ -107,9 +110,10 @@ const getFlattenForKind = (kind) => {
 };
 
 export const VMRow = ({obj: vm}) => {
-  const vmResource = [{ kind:VirtualMachineModel.kind, namespaced: true, namespace: vm.metadata.namespace, isList: false, prop: VirtualMachineModel.kind, name: vm.metadata.name}];
-  const vmiResources = getResourceKind(VirtualMachineInstanceModel.kind, vm.metadata.namespace, getLabelMatcher(vm), vm.metadata.name);
-  const podResources = getResourceKind(PodModel.kind, vm.metadata.namespace, getLabelMatcher(vm));
+  const vmResource = getResourceKind(VirtualMachineModel, vm.metadata.name, true, vm.metadata.namespace, false);
+  const vmiResources = getResourceKind(VirtualMachineInstanceModel, vm.metadata.name, true, vm.metadata.namespace, true, getLabelMatcher(vm));
+  const podResources = getResourceKind(PodModel, undefined, true, vm.metadata.namespace, true, getLabelMatcher(vm));
+
   return <ResourceRow obj={vm}>
     <div className="col-lg-2 col-md-2 col-sm-2 col-xs-6 co-resource-link-wrapper">
       <ResourceCog actions={menuActions} kind={VirtualMachineModel.kind} resource={vm} />
@@ -119,22 +123,22 @@ export const VMRow = ({obj: vm}) => {
       <ResourceLink kind={NamespaceModel.kind} name={vm.metadata.namespace} title={vm.metadata.namespace} />
     </div>
     <div className="col-lg-2 col-md-2 col-sm-2 hidden-xs">
-      <Firehose resources={vmResource} flatten={getFlattenForKind(VirtualMachineModel.kind)}>
+      <Firehose resources={[vmResource]} flatten={getFlattenForKind(VirtualMachineModel.kind)}>
         <StateColumn />
       </Firehose>
     </div>
     <div className="col-lg-2 col-md-2 col-sm-2 hidden-xs">
-      <Firehose resources={vmiResources} flatten={getFlattenForKind(VirtualMachineInstanceModel.kind)}>
+      <Firehose resources={[vmiResources]} flatten={getFlattenForKind(VirtualMachineInstanceModel.kind)}>
         <PhaseColumn filter={data => findVMI(data, vm.metadata.name)} />
       </Firehose>
     </div>
     <div className="col-lg-2 col-md-2 col-sm-2 hidden-xs">
-      <Firehose resources={vmiResources} flatten={getFlattenForKind(VirtualMachineInstanceModel.kind)}>
+      <Firehose resources={[vmiResources]} flatten={getFlattenForKind(VirtualMachineInstanceModel.kind)}>
         <FirehoseResourceLink filter={data => findVMI(data, vm.metadata.name)} />
       </Firehose>
     </div>
     <div className="col-lg-2 col-md-2 col-sm-2 hidden-xs">
-      <Firehose resources={podResources} flatten={getFlattenForKind(PodModel.kind)}>
+      <Firehose resources={[podResources]} flatten={getFlattenForKind(PodModel.kind)}>
         <FirehoseResourceLink filter={data => findPod(data, vm.metadata.name)} />
       </Firehose>
     </div>
@@ -142,9 +146,10 @@ export const VMRow = ({obj: vm}) => {
 };
 
 const VMStatus = (props) => {
-  const vmResource = [{ kind:VirtualMachineModel.kind, namespaced: true, namespace: props.vm.metadata.namespace, isList: false, prop: VirtualMachineModel.kind, name: props.vm.metadata.name}];
-  const vmiResources = getResourceKind(VirtualMachineInstanceModel.kind, props.vm.metadata.namespace, getLabelMatcher(props.vm), props.vm.metadata.name);
-  const podResources = getResourceKind(PodModel.kind, props.vm.metadata.namespace, getLabelMatcher(props.vm));
+  const vmResource = getResourceKind(VirtualMachineModel, props.vm.metadata.name, true, props.vm.metadata.namespace, false);
+  const vmiResources = getResourceKind(VirtualMachineInstanceModel, props.vm.metadata.name, true, props.vm.metadata.namespace, true, getLabelMatcher(props.vm));
+  const podResources = getResourceKind(PodModel, undefined, true, props.vm.metadata.namespace, true, getLabelMatcher(props.vm));
+
   return <div className="row">
     <div className="col-lg-12">
       <h3 className="overview-section-title">Status</h3>
@@ -153,25 +158,25 @@ const VMStatus = (props) => {
         <dd>{props.vm.metadata.name}</dd>
         <dt>State:</dt>
         <dd>
-          <Firehose resources={vmResource} flatten={getFlattenForKind(VirtualMachineModel.kind)}>
+          <Firehose resources={[vmResource]} flatten={getFlattenForKind(VirtualMachineModel.kind)}>
             <StateColumn />
           </Firehose>
         </dd>
         <dt>Phase:</dt>
         <dd>
-          <Firehose resources={vmiResources} flatten={getFlattenForKind(VirtualMachineInstanceModel.kind)}>
+          <Firehose resources={[vmiResources]} flatten={getFlattenForKind(VirtualMachineInstanceModel.kind)}>
             <PhaseColumn filter={data => findVMI(data, props.vm.metadata.name)} />
           </Firehose>
         </dd>
         <dt>VM Instance:</dt>
         <dd>
-          <Firehose resources={vmiResources} flatten={getFlattenForKind(VirtualMachineInstanceModel.kind)}>
+          <Firehose resources={[vmiResources]} flatten={getFlattenForKind(VirtualMachineInstanceModel.kind)}>
             <FirehoseResourceLink filter={data => findVMI(data, props.vm.metadata.name)} />
           </Firehose>
         </dd>
         <dt>Pod:</dt>
         <dd>
-          <Firehose resources={podResources} flatten={getFlattenForKind(PodModel.kind)}>
+          <Firehose resources={[podResources]} flatten={getFlattenForKind(PodModel.kind)}>
             <FirehoseResourceLink filter={data => findPod(data, props.vm.metadata.name)} />
           </Firehose>
         </dd>
@@ -183,12 +188,35 @@ const VMStatus = (props) => {
 
 class VMResourceConfiguration extends Component {
 
+  getCpu(resource) {
+    return this.getFromDomain(resource, ['cpu','cores']);
+  }
+
+  getMemory(resource) {
+    return this.getFromDomain(resource, ['resources','requests','memory']);
+  }
+
+  getFromDomain(resource, path) {
+    const domain = ['spec','domain'];
+    if (resource.kind === VirtualMachineModel.kind) {
+      domain.unshift('spec','template');
+    }
+    domain.push(...path);
+    return _.get(resource, domain);
+  }
+
   getVMConfiguration() {
     const configuration = {};
     const data = this.props.flatten(this.props.resources);
-    configuration.cpu = _.get(data[0], 'spec.domain.cpu.cores');
-    configuration.memory = _.get(data[0], 'spec.domain.resources.requests.memory');
-    //configuration.os = _.get(this.props.vm,'metadata.selector.matchLabels.kubevirt.io/os');
+    const vmi = this.props.filter(data);
+    if (vmi) {
+      configuration.cpu = this.getCpu(vmi);
+      configuration.memory = this.getMemory(vmi);
+      //configuration.os = _.get(this.props.vm,'metadata.selector.matchLabels.kubevirt.io/os');
+    } else {
+      configuration.cpu = this.getCpu(this.props.vm);
+      configuration.memory = this.getMemory(this.props.vm);
+    }
     return configuration;
   }
 
@@ -215,7 +243,7 @@ class VMResourceConfiguration extends Component {
 export const VMList = (props) => <List {...props} Header={VMHeader} Row={VMRow} />;
 
 const Details = ({obj: vm}) => {
-  const vmiResources = getResourceKind(VirtualMachineInstanceModel.kind, vm.metadata.namespace, getLabelMatcher(vm));
+  const vmiResources = getResourceKind(VirtualMachineInstanceModel, vm.metadata.name, true, vm.metadata.namespace, true, getLabelMatcher(vm));
   return <Fragment>
     <div className="co-m-pane__body">
       <h1 className="co-m-pane__heading">Virtual Machine Overview</h1>
@@ -225,8 +253,8 @@ const Details = ({obj: vm}) => {
             <VMStatus vm={vm} />
           </div>
           <div className="col-lg-6">
-            <Firehose resources={vmiResources} flatten={getFlattenForKind(VirtualMachineInstanceModel.kind)}>
-              <VMResourceConfiguration vm={vm} />
+            <Firehose resources={[vmiResources]} flatten={getFlattenForKind(VirtualMachineInstanceModel.kind)}>
+              <VMResourceConfiguration vm={vm} filter={data => findVMI(data, vm.metadata.name)} />
             </Firehose>
           </div>
         </div>
@@ -260,6 +288,7 @@ const mapDispatchToProps = () => ({
 const ConnectedNewVMWizard = props => {
   const namespaces = props.flatten(props.resources);
   const templates = _.get(props.resources, TemplateModel.kind, {}).data;
+
   return <CreateVmWizard
     onHide={props.onHide}
     namespaces={namespaces}
@@ -305,9 +334,12 @@ export const VirtualMachinesPage = connect(
   }
 
   openNewVmWizard() {
+    const namespaces = getResourceKind(NamespaceModel, undefined, true, undefined, true);
+    const templates = getResourceKind(TemplateModel, undefined, true, undefined, true, undefined, [{key: TEMPLATE_TYPE_LABEL, operator: 'Exists' }]);
+
     const resources = [
-      { kind:NamespaceModel.kind, isList: true, prop: NamespaceModel.kind},
-      { kind:TemplateModel.kind, isList: true, prop: TemplateModel.kind, namespace: 'kubevirt-templates'}
+      namespaces,
+      templates
     ];
     return <Firehose resources={resources} flatten={getFlattenForKind(NamespaceModel.kind)}>
       <ConnectedNewVMWizard onHide={this._onHide} createVm={k8sCreate} />
