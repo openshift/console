@@ -229,7 +229,7 @@ const EnvironmentPage = (props) => <AsyncComponent loader={() => import('./envir
 const envPath = ['spec','containers'];
 const environmentComponent = (props) => <EnvironmentPage
   obj={props.obj}
-  rawEnvData={props.obj.spec.containers}
+  rawEnvData={props.obj.spec}
   envPath={envPath}
   readOnly={true}
 />;
