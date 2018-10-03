@@ -307,14 +307,27 @@ const filters = [{
   ],
 }];
 
-export const RoutesPage: React.SFC<RoutesPageProps> = props =>
-  <ListPage
+export const RoutesPage: React.SFC<RoutesPageProps> = props => {
+  const createItems = {
+    form: 'From Form',
+    yaml: 'From YAML',
+  };
+
+  const createProps = {
+    items: createItems,
+    createLink: (type) => `/k8s/ns/${props.namespace || 'default'}/routes/new/${type !== 'yaml' ? type : ''}`
+  };
+
+  return <ListPage
     ListComponent={RoutesList}
     kind={RoutesReference}
     canCreate={true}
+    createButtonText="Create"
+    createProps={createProps}
     rowFilters={filters}
     {...props}
   />;
+};
 
 /* eslint-disable no-undef */
 export type RouteHostnameProps = {
@@ -334,7 +347,8 @@ export type RouteHeaderProps = {
 };
 
 export type RoutesPageProps = {
-  obj: K8sResourceKind
+  obj: K8sResourceKind,
+  namespace: string
 };
 
 export type RoutesDetailsProps = {
