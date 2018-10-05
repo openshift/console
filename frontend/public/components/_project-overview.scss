@@ -47,7 +47,6 @@
   }
 
   .project-overview__group-heading {
-    border-bottom: 1px solid $color-pf-black-400;
     font-size: 22px;
     font-weight: 300;
     line-height: normal;
@@ -63,10 +62,6 @@
     border-left: 0;
     border-right: 0;
     position: relative;
-    &:first-child {
-      border-top: 0;
-    }
-
     &::after {
       align-self: center;
       content: $fa-var-chevron-right;
