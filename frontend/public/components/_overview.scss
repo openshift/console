@@ -68,14 +68,14 @@
   }
 
   @media(max-width: $screen-xs-max) {
-    .overview__sidebar--entered {
-      transform: translateX(0);
-      opacity: 1;
-    }
-
-    .overview__sidebar--entering {
+    .overview__sidebar-appear {
       transform: translateX(7px);
       opacity: .75;
+    }
+
+    .overview__sidebar-appear-active {
+      transform: translateX(0);
+      opacity: 1;
     }
   }
 
