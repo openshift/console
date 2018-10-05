@@ -1,17 +1,26 @@
-
 // Nesting increases specificity so that pf list styles are always overridden
 .project-overview {
   .project-overview__additional-info {
     align-items: center;
     display: grid;
     grid-column-gap: 10px;
-    grid-template-areas: "alert status";
-    grid-template-columns: 50% 50%;
+    grid-template-areas: "alert memory cpu status";
+    grid-template-columns: 20% 20% 20% 40%;
     width: 100%;
   }
 
   .project-overview__detail--alert {
     grid-area: alert;
+    min-width: 0; // To enable text-overflow: ellipsis within a css-grid area
+  }
+
+  .project-overview__detail--cpu {
+    grid-area: cpu;
+    min-width: 0; // To enable text-overflow: ellipsis within a css-grid area
+  }
+
+  .project-overview__detail--memory {
+    grid-area: memory;
     min-width: 0; // To enable text-overflow: ellipsis within a css-grid area
   }
 
@@ -92,18 +101,30 @@
     margin-top: 0;
   }
 
-  @media (max-width: $screen-sm-max) {
+  .project-overview__metric-value {
+    font-size: 18px;
+    font-weight: 300;
+  }
 
+  .project-overview__metric-unit {
+    color: $color-text-muted;
+    font-size: 10px;
+    margin-left: 3px;
+  }
+
+  @media (max-width: $screen-sm-max) {
     .project-overview__additional-info {
       grid-template-columns: auto;
       grid-template-rows: auto auto;
       grid-template-areas:
         "alert"
+        "memory"
+        "cpu"
         "status";
     }
 
     .project-overview__detail {
-      margin-bottom: 20px;
+      margin-bottom: 10px;
 
       &:last-child {
         margin-bottom: 0px;
@@ -112,6 +133,50 @@
 
     .project-overview__item-heading {
       margin-bottom: 20px;
+    }
+  }
+
+  @media (min-width: $screen-md-min) {
+    // Override Patternfly list view styles so that the additional info has a
+    // little more space for alerts, metrics, and pod status.
+    .list-view-pf-additional-info {
+      width: 60%;
+    }
+
+    .list-view-pf-description {
+      flex-basis: 40%;
+      width: 40%;
+    }
+
+    .project-overview__detail--cpu,
+    .project-overview__detail--memory {
+      margin-right: 5px;
+      text-align: right;
+    }
+
+    .project-overview__detail--status {
+      // Give enough margin for the chevron.
+      margin-right: 60px;
+      text-align: right;
+    }
+  }
+}
+
+@media (min-width: $screen-md-min) {
+  // Metrics are hidden when the sidebar is open. Adjust list row styles.
+  .overview--sidebar-shown .project-overview {
+    .list-view-pf-additional-info {
+      width: 50%;
+    }
+
+    .list-view-pf-description {
+      flex-basis: 50%;
+      width: 50%;
+    }
+
+    .project-overview__additional-info {
+      grid-template-areas: "alert status";
+      grid-template-columns: 40% 60%;
     }
   }
 }
