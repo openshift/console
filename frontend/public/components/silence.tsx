@@ -10,9 +10,21 @@ import { MonitoringRoutes, connectToURLs } from '../monitoring';
 import { monitoringAlertsToProps, monitoringSilencesToProps } from '../ui/ui-reducers';
 import { connectMonitoringPage, MonitoringListPage, MonitoringResourceIcon } from './alert';
 import { ColHead, ListHeader, ResourceRow } from './factory';
+import { confirmModal } from './modals';
 import { SafetyFirst } from './safety-first';
-import { ButtonBar, ExternalLink, history, SectionHeading, StatusBox, Timestamp, withFallback } from './utils';
 import { Tooltip } from './utils/tooltip';
+import {
+  ActionsMenu,
+  ButtonBar,
+  Cog,
+  ExternalLink,
+  getURLSearchParams,
+  history,
+  SectionHeading,
+  StatusBox,
+  Timestamp,
+  withFallback,
+} from './utils';
 
 const silenceLabels = silence => _.mapValues(_.keyBy(_.get(silence, 'matchers'), 'name'), 'value');
 
@@ -31,17 +43,44 @@ const State = ({silence}) => {
   return klass ? <React.Fragment><i className={klass} aria-hidden="true"></i> {_.startCase(state)}</React.Fragment> : null;
 };
 
-const silenceStateToProps = (state, {match}): SilencesDetailsPageProps => {
+const silenceParamToProps = (state, {match}) => {
   const {data: silences, loaded, loadError}: Silences = monitoringSilencesToProps(state);
   const silence = _.find(silences, {id: _.get(match, 'params.id')});
-
-  const {data: alerts}: Alerts = monitoringAlertsToProps(state);
-  const numSilencedAlerts = alerts ? _.filter(alerts, _.matches({labels: silenceLabels(silence)})).length : undefined;
-
-  return {loaded, loadError, numSilencedAlerts, silence};
+  return {loaded, loadError, silence};
 };
 
-const SilencesDetailsPage_ = connect(silenceStateToProps)((props: SilencesDetailsPageProps) => {
+const silenceStateToProps = (state, {silence}) => {
+  const {data: alerts}: Alerts = monitoringAlertsToProps(state);
+  return {numSilencedAlerts: alerts ? _.filter(alerts, _.matches({labels: silenceLabels(silence)})).length : undefined};
+};
+
+const menuActions = (silence, alertManagerURL) => {
+  const actions: any[] = [{label: 'Edit Silence', href: `${SilenceResource.path}/${silence.id}/edit`}];
+
+  if (silenceState(silence) !== 'expired') {
+    actions.push({
+      label: 'Cancel Silence',
+      callback: () => confirmModal({
+        title: 'Cancel Silence',
+        message: 'Are you sure you want to expire this silence?',
+        btnText: 'Expire Silence',
+        executeFn: () => coFetchJSON.delete(`${alertManagerURL}/api/v1/silence/${silence.id}`),
+      }),
+    });
+  }
+
+  return actions;
+};
+
+const SilenceCog_ = ({silence, urls}) => <Cog options={menuActions(silence, urls[MonitoringRoutes.AlertManager])} />;
+const SilenceCog = connectToURLs(MonitoringRoutes.AlertManager)(SilenceCog_);
+
+const SilenceActionsMenu_ = ({silence, urls}) => <div className="co-actions">
+  <ActionsMenu actions={menuActions(silence, urls[MonitoringRoutes.AlertManager])} />
+</div>;
+const SilenceActionsMenu = connectToURLs(MonitoringRoutes.AlertManager)(SilenceActionsMenu_);
+
+const SilencesDetailsPage_ = connect(silenceParamToProps)(connect(silenceStateToProps)((props: SilencesDetailsPageProps) => {
   const {loaded, loadError, numSilencedAlerts, silence} = props;
 
   if (!silence) {
@@ -55,6 +94,7 @@ const SilencesDetailsPage_ = connect(silenceStateToProps)((props: SilencesDetail
     <div className="co-m-nav-title co-m-nav-title--detail">
       <h1 className="co-m-pane__heading">
         <div className="co-m-pane__name"><MonitoringResourceIcon className="co-m-resource-icon--lg pull-left" resource={SilenceResource} />{silence.name}</div>
+        <SilenceActionsMenu silence={silence} />
       </h1>
     </div>
     <StatusBox data={silence} loaded={loaded} loadError={loadError}>
@@ -93,7 +133,7 @@ const SilencesDetailsPage_ = connect(silenceStateToProps)((props: SilencesDetail
       </div>
     </StatusBox>
   </React.Fragment>;
-});
+}));
 export const SilencesDetailsPage = connectMonitoringPage(SilencesDetailsPage_);
 
 const rowStateToProps = (state, {obj}) => {
@@ -109,6 +149,7 @@ const SilenceRow = connect(rowStateToProps)((props: SilenceRowProps) => {
   return <ResourceRow obj={obj}>
     <div className="col-xs-7">
       <div className="co-resource-link-wrapper">
+        <SilenceCog silence={obj} />
         <div className="co-resource-link">
           <MonitoringResourceIcon resource={SilenceResource} />
           <Link className="co-resource-link__resource-name" title={obj.id} to={`${SilenceResource.path}/${obj.id}`}>{obj.name}</Link>
@@ -182,17 +223,19 @@ const Datetime = props => <Tooltip content={[<span className="co-nowrap" key="co
   />
 </Tooltip>;
 
-export const CreateSilence = withFallback(connectToURLs(MonitoringRoutes.AlertManager)(class InnerCreateSilence extends SafetyFirst<CreateSilenceProps, CreateSilenceState> {
+class SilenceForm_ extends SafetyFirst<SilenceFormProps, SilenceFormState> {
   constructor (props) {
     super(props);
 
     const now = new Date();
     const startsAt = formatDate(now);
     const endsAt = formatDate(new Date(now.setHours(now.getHours() + 2)));
-    const data = {startsAt, endsAt, matchers: [], createdBy: '', comment: ''};
+    const data = _.defaults(props.defaults, {startsAt, endsAt, matchers: [], createdBy: '', comment: ''});
     this.state = {data, error: undefined, inProgress: false};
 
-    this.addMatcher();
+    if (_.isEmpty(data.matchers)) {
+      this.addMatcher();
+    }
   }
 
   /* eslint-disable no-undef */
@@ -250,15 +293,14 @@ export const CreateSilence = withFallback(connectToURLs(MonitoringRoutes.AlertMa
   /* eslint-enable no-undef */
 
   render () {
-    const title = 'Create Silence';
     const {data, error, inProgress} = this.state;
 
     return <div className="co-m-pane__body">
       <Helmet>
-        <title>{title}</title>
+        <title>{this.props.title}</title>
       </Helmet>
       <form className="co-m-pane__body-group silence-form" onSubmit={this.onSubmit}>
-        <SectionHeading text={title} />
+        <SectionHeading text={this.props.title} />
         <p className="co-m-pane__explanation">A silence is configured based on a matcher (label selector). No notification will be sent out for alerts that match all the values or regular expressions.</p>
         <hr />
 
@@ -314,13 +356,30 @@ export const CreateSilence = withFallback(connectToURLs(MonitoringRoutes.AlertMa
         <hr />
 
         <ButtonBar errorMessage={error} inProgress={inProgress}>
-          <button type="submit" className="btn btn-primary" id="yaml-create">Create</button>
-          <Link to={SilenceResource.path} className="btn btn-default">Cancel</Link>
+          <button type="submit" className="btn btn-primary" id="yaml-create">{this.props.saveButtonText || 'Save'}</button>
+          <Link to={data.id ? `${SilenceResource.path}/${data.id}` : SilenceResource.path} className="btn btn-default">Cancel</Link>
         </ButtonBar>
       </form>
     </div>;
   }
+}
+const SilenceForm = withFallback(connectToURLs(MonitoringRoutes.AlertManager)<SilenceFormProps>(SilenceForm_));
+
+export const EditSilence = connectMonitoringPage(connect(silenceParamToProps)(({loaded, loadError, silence}) => {
+  const defaults = _.pick(silence, ['comment', 'createdBy', 'endsAt', 'id', 'matchers', 'startsAt']);
+  defaults.startsAt = formatDate(new Date(defaults.startsAt));
+  defaults.endsAt = formatDate(new Date(defaults.endsAt));
+  return <StatusBox data={silence} loaded={loaded} loadError={loadError}>
+    <SilenceForm defaults={defaults} title="Edit Silence" />
+  </StatusBox>;
 }));
+
+export const CreateSilence = () => {
+  const matchers = _.map(getURLSearchParams(), (value, name) => ({name, value, isRegex: false}));
+  return _.isEmpty(matchers)
+    ? <SilenceForm saveButtonText="Create" title="Create Silence" />
+    : <SilenceForm defaults={{matchers}} saveButtonText="Create" title="Silence Alert" />;
+};
 
 /* eslint-disable no-undef, no-unused-vars */
 type Alert = {
@@ -336,18 +395,16 @@ type Alerts = {
   loaded: boolean;
   loadError?: string;
 };
-type NewSilence = {
+export type Silence = {
   comment: string;
   createdBy: string;
   endsAt: string;
+  id?: string;
   matchers: {name: string, value: string, isRegex: boolean}[];
+  name?: string;
   startsAt: string;
-};
-export type Silence = NewSilence & {
-  id: string;
-  name: string;
-  status: {state: string};
-  updatedAt: string;
+  status?: {state: string};
+  updatedAt?: string;
 };
 type Silences = {
   data: Silence[];
@@ -364,11 +421,14 @@ export type SilenceRowProps = {
   obj: any;
   numSilencedAlerts: number;
 };
-export type CreateSilenceProps = {
+export type SilenceFormProps = {
+  defaults?: any;
+  saveButtonText?: string;
+  title: string;
   urls: {key: string}[];
 };
-export type CreateSilenceState = {
-  data: NewSilence;
+export type SilenceFormState = {
+  data: Silence;
   error: string;
   inProgress: boolean;
 };

@@ -7,24 +7,26 @@ import { Link } from 'react-router-dom';
 
 import { coFetchJSON } from '../co-fetch';
 import k8sActions from '../module/k8s/k8s-actions';
+import { MonitoringRoutes, connectToURLs } from '../monitoring';
 import store from '../redux';
 import { UIActions } from '../ui/ui-actions';
 import { monitoringRulesToProps } from '../ui/ui-reducers';
+import { ColHead, List, ListHeader, ResourceRow, TextFilter } from './factory';
 import { CheckBoxes } from './row-filter';
 import { SafetyFirst } from './safety-first';
 import { Silence } from './silence';
 import { formatDuration } from './utils/datetime';
-import { MonitoringRoutes, connectToURLs } from '../monitoring';
-import { ColHead, List, ListHeader, ResourceRow, TextFilter } from './factory';
 import {
+  ActionsMenu,
   BreadCrumbs,
   ExternalLink,
+  getURLSearchParams,
   history,
   PageHeading,
   SectionHeading,
   StatusBox,
   Timestamp,
-  withFallback
+  withFallback,
 } from './utils';
 import {
   AlertResource,
@@ -33,7 +35,18 @@ import {
   SilenceResource
 } from '../module/monitoring';
 
-const detailsURL = (resource, name, labels) => `${resource.path}/${name}?${_.map(labels, (v, k) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`).join('&')}`;
+const labelsToParams = labels => _.map(labels, (v, k) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`).join('&');
+
+const detailsURL = (resource, name, labels) => `${resource.path}/${name}?${labelsToParams(labels)}`;
+
+const silenceAction = labels => ({
+  label: 'Silence Alert',
+  href: `${SilenceResource.path}/new?${labelsToParams(labels)}`,
+});
+
+const AlertActionsMenu = ({labels}) => <div className="co-actions">
+  <ActionsMenu actions={[silenceAction(labels)]} />
+</div>;
 
 export const MonitoringResourceIcon = props => {
   const {className, resource} = props;
@@ -56,15 +69,6 @@ const State: React.SFC<StateProps> = ({state}) => {
 const Annotation = ({children, title}) => _.isNil(children)
   ? null
   : <React.Fragment><dt>{title}</dt><dd>{children}</dd></React.Fragment>;
-
-const getURLSearchParams = () => {
-  const labels = {};
-  const params: any = new URLSearchParams(window.location.search);
-  for (let [k, v] of params.entries()) {
-    labels[k] = v;
-  }
-  return labels;
-};
 
 class MonitoringPageWrapper extends SafetyFirst<AlertsPageWrapperProps, null> {
   componentDidMount () {
@@ -156,6 +160,7 @@ const AlertsDetailsPage_ = connect(alertStateToProps)((props: AlertsDetailsPageP
     <div className="co-m-nav-title co-m-nav-title--detail">
       <h1 className="co-m-pane__heading">
         <div className="co-m-pane__name"><MonitoringResourceIcon className="co-m-resource-icon--lg pull-left" resource={AlertResource} />{name}</div>
+        <AlertActionsMenu labels={_.get(alert, 'labels')} />
       </h1>
     </div>
     <StatusBox data={rule} loaded={loaded} loadError={loadError}>

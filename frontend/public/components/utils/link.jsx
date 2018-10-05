@@ -48,3 +48,12 @@ export const getNamespace = path => {
 };
 
 export const ExternalLink = ({href, text}) => <a className="co-external-link" href={href} target="_blank" rel="noopener noreferrer">{text}</a>;
+
+export const getURLSearchParams = () => {
+  const all = {};
+  const params = new URLSearchParams(window.location.search);
+  for (let [k, v] of params.entries()) {
+    all[k] = v;
+  }
+  return all;
+};
