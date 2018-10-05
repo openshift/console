@@ -210,10 +210,9 @@ class ListDropdown_ extends React.Component {
     if (!loaded) {
       return;
     }
-
     const state = {};
+    const { resources, dataFilter, selectedKey } = nextProps;
 
-    const { resources, dataFilter } = nextProps;
     state.items = {};
     _.each(resources, ({data}, kindLabel) => {
       _.reduce(data, (acc, resource) => {
@@ -224,9 +223,8 @@ class ListDropdown_ extends React.Component {
       }, state.items);
     });
 
-    const { selectedKey } = this.state;
     // did we switch from !loaded -> loaded ?
-    if (!this.props.loaded && !selectedKey) {
+    if (!this.props.loaded || !selectedKey) {
       state.title = <span className="text-muted">{nextProps.placeholder}</span>;
     }
 
