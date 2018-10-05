@@ -7,7 +7,7 @@ import * as fuzzy from 'fuzzysearch';
 
 import { NamespaceModel, ProjectModel, SecretModel } from '../models';
 import { k8sGet } from '../module/k8s';
-import { UIActions } from '../ui/ui-actions';
+import { formatNamespacedRouteForResource, UIActions } from '../ui/ui-actions';
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import { SafetyFirst } from './safety-first';
 import { Cog, Dropdown, Firehose, LabelList, LoadingInline, navFactory, ResourceCog, SectionHeading, ResourceLink, ResourceSummary, humanizeMem, MsgBox } from './utils';
@@ -275,6 +275,11 @@ class NamespaceDropdown_ extends React.Component {
         defaultBookmarks={defaultBookmarks}
         storageKey={NAMESPACE_LOCAL_STORAGE_KEY}
         shortCut="n" />
+      <div className="co-import-yaml-link co-m-masthead-link">
+        <Link to={formatNamespacedRouteForResource('import', activeNamespace)}>
+          <span className="pficon pficon-add-circle-o co-create-from-yaml__add-icon" aria-hidden="true"></span>Import YAML
+        </Link>
+      </div>
     </div>;
   }
 }
