@@ -10,11 +10,6 @@ import * as failFast from 'protractor-fail-fast';
 
 let tap = !!process.env.TAP;
 
-if (tap) {
-  // FIXME: Remove once https://github.com/angular/protractor/pull/4068 is merged
-  require('protractor/built/logger').Logger.setWrite(3); // Disable all logging for TAP mode (otherwise output isn't valid TAP)
-}
-
 export const appHost = `${process.env.BRIDGE_BASE_ADDRESS || 'http://localhost:9000'}${(process.env.BRIDGE_BASE_PATH || '/').replace(/\/$/, '')}`;
 export const testName = `test-${Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5)}`;
 
@@ -29,6 +24,7 @@ export const config: Config = {
     print: () => null,
     defaultTimeoutInterval: 40000,
   },
+  logLevel: tap ? 'ERROR' : 'INFO',
   plugins: [failFast.init()],
   capabilities: {
     browserName: 'chrome',

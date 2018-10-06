@@ -132,7 +132,7 @@
     "jest-cli": "21.x",
     "mini-css-extract-plugin": "0.4.x",
     "node-sass": "4.8.x",
-    "protractor": "5.x",
+    "protractor": "5.4.x",
     "protractor-fail-fast": "3.x",
     "protractor-jasmine2-screenshot-reporter": "0.5.x",
     "react-test-renderer": "16.x",
