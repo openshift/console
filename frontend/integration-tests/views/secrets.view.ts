@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { $, $$, browser, by, ExpectedConditions as until, element, ElementFinder } from 'protractor';
+import { Base64 } from 'js-base64';
 
 import * as crudView from '../views/crud.view';
 
@@ -10,18 +11,28 @@ export const dt = $$('dl.secret-data dt');
 export const saveButton = $('#save-changes');
 export const authTypeDropdown = $('#dropdown-selectbox');
 
-export const webhookSecretValueInput = $('input[name=webhookSecretKey]');
-export const sourceSecretUsernameInput = $('input[name=username]');
-export const sourceSecretPasswordInput = $('input[name=password]');
-export const sourceSecretSSHTextArea = $('.co-file-dropzone__textarea');
+export const secretWebhookInput = $('input[name=webhookSecretKey]');
+export const secretAddressInput = $('input[name=address]');
+export const secretUsernameInput = $('input[name=username]');
+export const secretPasswordInput = $('input[name=password]');
+export const secretEmailInput = $('input[name=email]');
+
+export const uploadFileTextArea = $('.co-file-dropzone__textarea');
 
 export const createWebhookSecretLink = $('#webhook-link');
 export const createSourceSecretLink = $('#source-link');
+export const createImageSecretLink = $('#image-link');
+
+export const addSecretEntryLink = $('.co-create-secret-form__link--add-entry');
+export const removeSecretEntryLink = $('.co-create-secret-form__link--remove-entry .btn-link');
+export const imageSecretForm = $$('.co-create-image-secret__form');
 
 export const visitSecretsPage = async(appHost: string, ns: string) => {
   await browser.get(`${appHost}/k8s/ns/${ns}/secrets`);
   await crudView.isLoaded();
 };
+
+export const encode = (username, password) => Base64.encode(`${username}:${password}`);
 
 export const createSecret = async(linkElement: ElementFinder, ns: string, name: string, updateForm: Function) => {
   await crudView.createItemButton.click();
@@ -32,14 +43,14 @@ export const createSecret = async(linkElement: ElementFinder, ns: string, name: 
   expect(crudView.errorMessage.isPresent()).toBe(false);
 };
 
-export const checkSecret = async(ns: string, name: string, keyValuesToCheck: Object) => {
+export const checkSecret = async(ns: string, name: string, keyValuesToCheck: Object, jsonOutput: boolean = false) => {
   await browser.wait(until.urlContains(`/k8s/ns/${ns}/secrets/${name}`));
   await browser.wait(until.textToBePresentInElement($('.co-m-pane__heading'), name));
   await element(by.partialButtonText('Reveal Values')).click();
   const renderedKeyValues = await dt.reduce(async(acc, el, index) => {
     const key = await el.getAttribute('textContent');
     const value = await pre.get(index).getText();
-    acc[key] = value;
+    acc[key] = jsonOutput ? JSON.parse(value) : value;
     return acc;
   }, {});
   expect(renderedKeyValues).toEqual(keyValuesToCheck);
