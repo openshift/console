@@ -6,7 +6,7 @@ import * as classnames from 'classnames';
 import { Toolbar } from 'patternfly-react';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
-
+import { CSSTransition } from 'react-transition-group';
 import { StartGuide } from './start-guide';
 import { TextFilter } from './factory';
 import { ProjectOverview } from './project-overview';
@@ -559,15 +559,17 @@ export class Overview extends React.Component {
       </div>
       {
         !_.isEmpty(selectedItem) &&
-        <div className="overview__sidebar">
-          <div className="overview__sidebar-dismiss clearfix">
-            <CloseButton onClick={() => this.selectItem({})} />
+        <CSSTransition in appear timeout={1} classNames="overview__sidebar">
+          <div className="overview__sidebar">
+            <div className="overview__sidebar-dismiss clearfix">
+              <CloseButton onClick={() => this.selectItem({})} />
+            </div>
+            <ResourceOverviewPage
+              kind={selectedItem.obj.kind}
+              resource={selectedItem.obj}
+            />
           </div>
-          <ResourceOverviewPage
-            kind={selectedItem.obj.kind}
-            resource={selectedItem.obj}
-          />
-        </div>
+        </CSSTransition>
       }
     </div>;
   }
