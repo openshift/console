@@ -6,7 +6,7 @@ import { appHost, checkLogs, checkErrors, testName } from '../../protractor.conf
 import * as catalogView from '../../views/catalog.view';
 import * as sidenavView from '../../views/sidenav.view';
 
-describe('Installing a service from the Catalog Sources', () => {
+describe('Installing a service from a Catalog Source', () => {
   const openCloudServices = new Set(['etcd', 'Prometheus Operator']);
 
   beforeAll(async() => {
@@ -25,8 +25,8 @@ describe('Installing a service from the Catalog Sources', () => {
     expect(sidenavView.navSectionFor('Operators').isDisplayed()).toBe(true);
   });
 
-  it('displays Catalog Sources with expected available services', async() => {
-    await sidenavView.clickNavLink(['Operators', 'Catalog Sources']);
+  it('displays Catalog Source with expected available packages', async() => {
+    await sidenavView.clickNavLink(['Operators', 'Package Manifests']);
     await catalogView.isLoaded();
     await catalogView.viewCatalogDetail('Red Hat Operators');
     await catalogView.isLoaded();

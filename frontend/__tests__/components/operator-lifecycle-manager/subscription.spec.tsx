@@ -5,12 +5,12 @@ import { shallow, ShallowWrapper } from 'enzyme';
 import * as _ from 'lodash';
 
 import { SubscriptionHeader, SubscriptionHeaderProps, SubscriptionRow, SubscriptionRowProps, SubscriptionsList, SubscriptionsListProps, SubscriptionsPage, SubscriptionsPageProps, SubscriptionDetails, SubscriptionDetailsPage, SubscriptionDetailsProps, SubscriptionUpdates, SubscriptionUpdatesProps, SubscriptionUpdatesState } from '../../../public/components/operator-lifecycle-manager/subscription';
-import { SubscriptionKind, SubscriptionState, olmNamespace } from '../../../public/components/operator-lifecycle-manager';
+import { SubscriptionKind, SubscriptionState } from '../../../public/components/operator-lifecycle-manager';
 import { referenceForModel } from '../../../public/module/k8s';
-import { SubscriptionModel, ClusterServiceVersionModel, ConfigMapModel } from '../../../public/models';
+import { SubscriptionModel, ClusterServiceVersionModel, PackageManifestModel } from '../../../public/models';
 import { ListHeader, ColHead, List, ListPage, DetailsPage } from '../../../public/components/factory';
 import { ResourceCog, ResourceLink, Cog } from '../../../public/components/utils';
-import { testSubscription, testClusterServiceVersion, testPackage } from '../../../__mocks__/k8sResourcesMocks';
+import { testSubscription, testClusterServiceVersion, testPackageManifest } from '../../../__mocks__/k8sResourcesMocks';
 
 describe(SubscriptionHeader.displayName, () => {
   let wrapper: ShallowWrapper<SubscriptionHeaderProps>;
@@ -136,7 +136,7 @@ describe(SubscriptionsPage.displayName, () => {
     expect(wrapper.find(ListPage).props().title).toEqual('Subscriptions');
     expect(wrapper.find(ListPage).props().showTitle).toBe(true);
     expect(wrapper.find(ListPage).props().canCreate).toBe(true);
-    expect(wrapper.find(ListPage).props().createProps).toEqual({to: '/k8s/ns/default/catalogsources'});
+    expect(wrapper.find(ListPage).props().createProps).toEqual({to: `/k8s/ns/default/${referenceForModel(PackageManifestModel)}`});
     expect(wrapper.find(ListPage).props().createButtonText).toEqual('Create Subscription');
     expect(wrapper.find(ListPage).props().filterLabel).toEqual('Subscriptions by package');
     expect(wrapper.find(ListPage).props().kind).toEqual(referenceForModel(SubscriptionModel));
@@ -147,7 +147,7 @@ describe(SubscriptionUpdates.name, () => {
   let wrapper: ShallowWrapper<SubscriptionUpdatesProps, SubscriptionUpdatesState>;
 
   beforeEach(() => {
-    wrapper = shallow(<SubscriptionUpdates obj={testSubscription} pkg={testPackage} />);
+    wrapper = shallow(<SubscriptionUpdates obj={testSubscription} pkg={testPackageManifest} />);
   });
 
   it('renders link to configure update channel', () => {
@@ -167,7 +167,7 @@ describe(SubscriptionDetails.displayName, () => {
   let wrapper: ShallowWrapper<SubscriptionDetailsProps>;
 
   beforeEach(() => {
-    wrapper = shallow(<SubscriptionDetails obj={testSubscription} pkg={testPackage} />);
+    wrapper = shallow(<SubscriptionDetails obj={testSubscription} pkg={testPackageManifest} />);
   });
 
   it('renders subscription update channel and approval component', () => {
@@ -211,8 +211,7 @@ describe(SubscriptionDetailsPage.displayName, () => {
     const wrapper = shallow(<SubscriptionDetailsPage match={match} namespace="default" />);
 
     expect(wrapper.find(DetailsPage).props().resources).toEqual([
-      {kind: ConfigMapModel.kind, namespace: olmNamespace, isList: true, prop: 'globalConfigMaps'},
-      {kind: ConfigMapModel.kind, namespace: 'default', isList: true, prop: 'localConfigMaps'},
+      {kind: referenceForModel(PackageManifestModel), namespace: 'default', isList: true, prop: 'packageManifests'},
       {kind: referenceForModel(ClusterServiceVersionModel), namespace: 'default', isList: true, prop: 'clusterServiceVersions'},
     ]);
   });

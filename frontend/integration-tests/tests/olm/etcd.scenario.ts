@@ -29,8 +29,8 @@ describe('Interacting with the etcd OCS', () => {
     checkErrors();
   });
 
-  it('can be enabled from the Catalog Sources', async() => {
-    await sidenavView.clickNavLink(['Operators', 'Catalog Sources']);
+  it('can be enabled from the Catalog Source', async() => {
+    await sidenavView.clickNavLink(['Operators', 'Package Manifests']);
     await catalogView.isLoaded();
     await catalogView.viewCatalogDetail('Red Hat Operators');
     await catalogView.isLoaded();
@@ -41,7 +41,7 @@ describe('Interacting with the etcd OCS', () => {
     await yamlView.setContent(safeDump(newContent));
     await $('#save-changes').click();
     await crudView.isLoaded();
-    await sidenavView.clickNavLink(['Operators', 'Catalog Sources']);
+    await sidenavView.clickNavLink(['Operators', 'Package Manifests']);
     await catalogView.isLoaded();
 
     expect(catalogView.hasSubscription('etcd')).toBe(true);

@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { ClusterServiceVersionKind, ClusterServiceVersionResourceKind, Package, InstallPlanKind, ClusterServiceVersionPhase, CSVConditionReason, SubscriptionKind, CatalogSourceKind, InstallPlanApproval } from '../public/components/operator-lifecycle-manager';
+import { ClusterServiceVersionKind, ClusterServiceVersionResourceKind, InstallPlanKind, ClusterServiceVersionPhase, CSVConditionReason, SubscriptionKind, CatalogSourceKind, InstallPlanApproval, PackageManifestKind } from '../public/components/operator-lifecycle-manager';
 import { StatusCapability, SpecCapability } from '../public/components/operator-lifecycle-manager/descriptors/types';
 import { CustomResourceDefinitionKind, K8sResourceKind, K8sKind } from '../public/module/k8s';
 /* eslint-enable no-unused-vars */
@@ -219,10 +219,37 @@ export const testOwnedResourceInstance: ClusterServiceVersionResourceKind = {
   },
 };
 
-export const testPackage: Package = {
-  packageName: 'testapp-package',
-  channels: [{name: 'stable', currentCSV: 'testapp'}],
-  defaultChannel: 'stable',
+export const testPackageManifest: PackageManifestKind = {
+  apiVersion: 'packages.app.redhat.com/v1alpha1',
+  kind: 'PackageManifest',
+  metadata: {
+    name: 'test-package',
+    namespace: 'default',
+  },
+  spec: {},
+  status: {
+    catalogSource: 'test-catalog',
+    catalogSourceNamespace: 'tectonic-system',
+    catalogSourceDisplayName: 'Test Catalog',
+    catalogSourcePublisher: 'Test Publisher',
+    provider: {
+      name: 'CoreOS, Inc',
+    },
+    packageName: 'test-package',
+    channels: [{
+      name: 'alpha',
+      currentCSV: 'testapp',
+      currentCSVDesc: {
+        displayName: 'Test App',
+        icon: [{mediatype: 'image/png', data: ''}],
+        version: '0.0.1',
+        provider: {
+          name: 'CoreOS, Inc',
+        },
+      }
+    }],
+    defaultChannel: 'alpha',
+  },
 };
 
 export const testCatalogSource: CatalogSourceKind = {

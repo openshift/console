@@ -12,6 +12,9 @@ export type FirehoseResource = {
   name?: string;
   namespace: string;
   isList?: boolean;
+  selector?: {
+    matchLabels?: {[label: string]: string};
+  };
   prop: string;
 };
 
