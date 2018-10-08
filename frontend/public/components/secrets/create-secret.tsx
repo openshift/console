@@ -302,7 +302,7 @@ class ConfigEntryForm extends React.Component<ConfigEntryFormProps, ConfigEntryF
       password: _.get(this.props.entry, 'password'),
       email: _.get(this.props.entry, 'email'),
       auth: _.get(this.props.entry, 'auth'),
-      uid: _.get(this.props.entry, 'uid'),
+      uid: _.get(this.props, 'uid'),
     };
     this.changeData = this.changeData.bind(this);
   }
@@ -313,10 +313,14 @@ class ConfigEntryForm extends React.Component<ConfigEntryFormProps, ConfigEntryF
       : this.state.auth;
   }
   changeData(event) {
+    const { name, value } = event.target;
     this.setState({
-      auth: this.updateAuth(event.target.name),
-      [event.target.name]: event.target.value
-    } as ConfigEntryFormState, () => this.props.onChange(this.state, this.props.id));
+      [name]: value
+    } as ConfigEntryFormState, () => {
+      this.setState({
+        auth: this.updateAuth(name)
+      } as ConfigEntryFormState, () => this.props.onChange(this.state, this.props.id));
+    });
   }
   render() {
     return <div className="co-create-image-secret__form">
