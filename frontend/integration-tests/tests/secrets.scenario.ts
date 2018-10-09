@@ -30,6 +30,7 @@ describe('Interacting with the create secret forms', () => {
 
     it('edits webhook secret', async() => {
       await secretsView.editSecret(testName, webhookSecretName, async() => {
+        await element(by.buttonText('Generate')).isPresent();
         await element(by.buttonText('Generate')).click();
       });
     });
