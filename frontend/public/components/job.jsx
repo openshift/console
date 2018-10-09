@@ -28,8 +28,7 @@ const JobRow = ({obj: job}) => {
   const {type, completions} = getJobTypeAndCompletions(job);
   return (
     <ResourceRow obj={job}>
-      <div className="col-lg-2 col-md-3 col-sm-4 col-xs-6 co-resource-link-wrapper">
-        <ResourceCog actions={menuActions} kind="Job" resource={job} />
+      <div className="col-lg-2 col-md-3 col-sm-4 col-xs-6">
         <ResourceLink kind="Job" name={job.metadata.name} namespace={job.metadata.namespace} title={job.metadata.uid} />
       </div>
       <div className="col-lg-2 col-md-3 col-sm-4 col-xs-6 co-break-word">
@@ -45,6 +44,9 @@ const JobRow = ({obj: job}) => {
       </div>
       <div className="col-lg-2 hidden-md hidden-sm hidden-xs">
         {type}
+      </div>
+      <div className="co-resource-kebab">
+        <ResourceCog actions={menuActions} kind="Job" resource={job} />
       </div>
     </ResourceRow>
   );

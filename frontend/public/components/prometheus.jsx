@@ -12,8 +12,7 @@ const PrometheusRow = ({obj: instance}) => {
   const {metadata, spec} = instance;
 
   return <ResourceRow obj={instance}>
-    <div className="col-lg-3 col-md-3 col-sm-4 col-xs-6 co-resource-link-wrapper">
-      <ResourceCog actions={menuActions} kind={referenceForModel(PrometheusModel)} resource={instance} />
+    <div className="col-lg-3 col-md-3 col-sm-4 col-xs-6">
       <ResourceLink kind={referenceForModel(PrometheusModel)} name={metadata.name} namespace={metadata.namespace} title={metadata.uid} />
     </div>
     <div className="col-lg-3 col-md-3 col-sm-4 col-xs-6">
@@ -25,6 +24,9 @@ const PrometheusRow = ({obj: instance}) => {
     <div className="col-lg-1 col-md-2 hidden-sm hidden-xs">{spec.version}</div>
     <div className="col-lg-2 hidden-md hidden-sm hidden-xs">
       <Selector selector={spec.serviceMonitorSelector} kind="ServiceMonitor" namespace={metadata.namespace} />
+    </div>
+    <div className="co-resource-kebab">
+      <ResourceCog actions={menuActions} kind={referenceForModel(PrometheusModel)} resource={instance} />
     </div>
   </ResourceRow>;
 };

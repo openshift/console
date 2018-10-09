@@ -85,11 +85,14 @@ const Header = props => <ListHeader>
   <ColHead {...props} className="col-md-2 col-sm-4 col-xs-6" sortField="metadata.namespace">Namespace</ColHead>
 </ListHeader>;
 
-export const BindingName = connect(null, {startImpersonate: UIActions.startImpersonate})(
+export const BindingName = ({binding}) => {
+  <ResourceLink kind={bindingKind(binding)} name={binding.metadata.name} namespace={binding.metadata.namespace} className="co-resource-link__resource-name" />;
+};
+
+export const BindingCog = connect(null, {startImpersonate: UIActions.startImpersonate})(
   ({binding, startImpersonate}) => <React.Fragment>
     {binding.subjects &&
       <ResourceCog actions={menuActions(binding, startImpersonate)} kind={bindingKind(binding)} resource={binding} />}
-    <ResourceLink kind={bindingKind(binding)} name={binding.metadata.name} namespace={binding.metadata.namespace} className="co-resource-link__resource-name" />
   </React.Fragment>);
 
 export const RoleLink = ({binding}) => {
@@ -101,8 +104,8 @@ export const RoleLink = ({binding}) => {
 };
 
 const Row = ({obj: binding}) => <ResourceRow obj={binding}>
-  <div className="col-md-3 col-sm-4 col-xs-6 co-resource-link-wrapper">
-    <BindingName binding={binding} />
+  <div className="col-md-3 col-sm-4 col-xs-6">
+    <ResourceLink kind={bindingKind(binding)} name={binding.metadata.name} namespace={binding.metadata.namespace} className="co-resource-link__resource-name" />
   </div>
   <OverflowYFade className="col-md-3 col-sm-4 hidden-xs">
     <RoleLink binding={binding} />
@@ -116,6 +119,9 @@ const Row = ({obj: binding}) => <ResourceRow obj={binding}>
   <OverflowYFade className="col-md-2 col-sm-4 col-xs-6 co-break-word">
     {binding.metadata.namespace ? <ResourceLink kind="Namespace" name={binding.metadata.namespace} /> : 'all'}
   </OverflowYFade>
+  <div className="co-resource-kebab">
+    <BindingCog binding={binding} />
+  </div>
 </ResourceRow>;
 
 const EmptyMsg = () => <MsgBox title="No Role Bindings Found" detail="Roles grant access to types of objects in the cluster. Roles are applied to a group or user via a Role Binding." />;

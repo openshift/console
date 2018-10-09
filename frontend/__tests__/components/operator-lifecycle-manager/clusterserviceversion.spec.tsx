@@ -58,7 +58,7 @@ describe(ClusterServiceVersionRow.displayName, () => {
   });
 
   it('renders `ResourceCog` with actions', () => {
-    const col = wrapper.find('.row').childAt(0);
+    const col = wrapper.find('.row');
 
     expect(col.find(ResourceCog).props().resource).toEqual(testClusterServiceVersion);
     expect(col.find(ResourceCog).props().kind).toEqual(referenceForModel(ClusterServiceVersionModel));

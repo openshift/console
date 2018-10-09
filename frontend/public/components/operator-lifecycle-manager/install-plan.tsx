@@ -26,8 +26,7 @@ export const InstallPlanRow: React.SFC<InstallPlanRowProps> = (props) => {
     : phase;
 
   return <ResourceRow obj={props.obj}>
-    <div className="col-xs-6 col-sm-4 col-md-3 co-resource-link-wrapper">
-      <ResourceCog actions={Cog.factory.common} kind={referenceForModel(InstallPlanModel)} resource={props.obj} />
+    <div className="col-xs-6 col-sm-4 col-md-3">
       <ResourceLink kind={referenceForModel(InstallPlanModel)} namespace={props.obj.metadata.namespace} name={props.obj.metadata.name} title={props.obj.metadata.uid} />
     </div>
     <div className="col-xs-6 col-sm-4 col-md-3">
@@ -49,6 +48,9 @@ export const InstallPlanRow: React.SFC<InstallPlanRowProps> = (props) => {
     </div>
     <div className="hidden-xs hidden-sm hidden-md col-lg-2">
       {phaseFor(_.get(props.obj.status, 'phase')) || 'Unknown'}
+    </div>
+    <div className="co-resource-kebab">
+      <ResourceCog actions={Cog.factory.common} kind={referenceForModel(InstallPlanModel)} resource={props.obj} />
     </div>
   </ResourceRow>;
 };

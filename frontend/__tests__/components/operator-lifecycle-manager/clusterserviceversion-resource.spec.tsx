@@ -78,8 +78,7 @@ describe(ClusterServiceVersionResourceRow.displayName, () => {
   });
 
   it('renders a `ResourceCog` for common actions', () => {
-    const col = wrapper.childAt(0);
-    const cog = col.find(ResourceCog);
+    const cog = wrapper.find(ResourceCog);
 
     expect(cog.props().actions).toEqual(Cog.factory.common);
     expect(cog.props().kind).toEqual(referenceFor(testResourceInstance));

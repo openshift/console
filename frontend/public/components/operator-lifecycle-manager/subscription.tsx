@@ -44,8 +44,7 @@ const menuActions = [
 
 export const SubscriptionRow: React.SFC<SubscriptionRowProps> = (props) => {
   return <div className="row co-resource-list__item">
-    <div className="col-xs-6 col-sm-4 col-md-3 co-resource-link-wrapper">
-      <ResourceCog actions={_.get(props.obj.status, 'installedCSV') ? menuActions : menuActions.slice(0, -1)} kind={referenceForModel(SubscriptionModel)} resource={props.obj} />
+    <div className="col-xs-6 col-sm-4 col-md-3">
       <ResourceLink kind={referenceForModel(SubscriptionModel)} name={props.obj.metadata.name} namespace={props.obj.metadata.namespace} title={props.obj.metadata.name} />
     </div>
     <div className="col-xs-6 col-sm-4 col-md-3">
@@ -59,6 +58,9 @@ export const SubscriptionRow: React.SFC<SubscriptionRowProps> = (props) => {
     </div>
     <div className="hidden-xs hidden-sm hidden-md col-lg-2">
       {props.obj.spec.installPlanApproval || 'Automatic'}
+    </div>
+    <div className="co-resource-kebab">
+      <ResourceCog actions={_.get(props.obj.status, 'installedCSV') ? menuActions : menuActions.slice(0, -1)} kind={referenceForModel(SubscriptionModel)} resource={props.obj} />
     </div>
   </div>;
 };

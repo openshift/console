@@ -24,8 +24,7 @@ const ServiceHeader = props => <ListHeader>
 </ListHeader>;
 
 const ServiceRow = ({obj: s}) => <ResourceRow obj={s}>
-  <div className="col-lg-3 col-md-3 col-sm-4 col-xs-6 co-resource-link-wrapper">
-    <ResourceCog actions={menuActions} kind="Service" resource={s} />
+  <div className="col-lg-3 col-md-3 col-sm-4 col-xs-6">
     <ResourceLink kind="Service" name={s.metadata.name} namespace={s.metadata.namespace} title={s.metadata.uid} />
   </div>
   <div className="col-lg-2 col-md-3 col-sm-4 col-xs-6 co-break-word">
@@ -39,6 +38,9 @@ const ServiceRow = ({obj: s}) => <ResourceRow obj={s}>
   </div>
   <div className="col-lg-2 hidden-md hidden-sm hidden-xs">
     <ServiceIP s={s} />
+  </div>
+  <div className="co-resource-kebab">
+    <ResourceCog actions={menuActions} kind="Service" resource={s} />
   </div>
 </ResourceRow>;
 

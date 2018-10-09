@@ -76,8 +76,7 @@ const ServiceAccountRow = ({obj: serviceaccount}) => {
 
   return (
     <ResourceRow obj={serviceaccount}>
-      <div className="col-sm-4 col-xs-6 co-resource-link-wrapper">
-        <ResourceCog actions={menuActions} kind="ServiceAccount" resource={serviceaccount} />
+      <div className="col-sm-4 col-xs-6">
         <ResourceLink kind="ServiceAccount" name={name} namespace={namespace} title={uid} />
       </div>
       <div className="col-sm-4 col-xs-6 co-break-word">
@@ -88,6 +87,9 @@ const ServiceAccountRow = ({obj: serviceaccount}) => {
       </div>
       <div className="col-sm-2 hidden-xs">
         {fromNow(creationTimestamp)}
+      </div>
+      <div className="co-resource-kebab">
+        <ResourceCog actions={menuActions} kind="ServiceAccount" resource={serviceaccount} />
       </div>
     </ResourceRow>
   );

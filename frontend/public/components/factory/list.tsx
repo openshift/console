@@ -440,8 +440,7 @@ export class ResourceRow extends React.Component<ResourceRowProps> {
 }
 
 export const WorkloadListRow: React.SFC<WorkloadListRowProps> = ({kind, actions, obj: o}) => <ResourceRow obj={o}>
-  <div className="col-lg-2 col-md-3 col-sm-4 col-xs-6 co-resource-link-wrapper">
-    <ResourceCog actions={actions} kind={kind} resource={o} />
+  <div className="col-lg-2 col-md-3 col-sm-4 col-xs-6">
     <ResourceLink kind={kind} name={o.metadata.name} namespace={o.metadata.namespace} title={o.metadata.uid} />
   </div>
   <div className="col-lg-2 col-md-3 col-sm-4 col-xs-6 co-break-word">
@@ -457,6 +456,9 @@ export const WorkloadListRow: React.SFC<WorkloadListRowProps> = ({kind, actions,
   </div>
   <div className="col-lg-3 hidden-md hidden-sm hidden-xs">
     <Selector selector={o.spec.selector} namespace={o.metadata.namespace} />
+  </div>
+  <div className="co-resource-kebab">
+    <ResourceCog actions={actions} kind={kind} resource={o} />
   </div>
 </ResourceRow>;
 

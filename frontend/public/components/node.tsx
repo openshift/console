@@ -84,8 +84,7 @@ const NodeRow = ({obj: node, expand}) => {
   const isOperatorInstalled = containerLinuxUpdateOperator.isOperatorInstalled(node);
 
   return <ResourceRow obj={node}>
-    <div className="col-xs-4 co-resource-link-wrapper">
-      <NodeCog node={node} />
+    <div className="col-xs-4">
       <ResourceLink kind="Node" name={node.metadata.name} title={node.metadata.uid} />
     </div>
     <div className="col-sm-2 col-xs-4"><NodeStatus node={node} /></div>
@@ -96,6 +95,9 @@ const NodeRow = ({obj: node, expand}) => {
     {expand && <div className="col-xs-12">
       <LabelList kind="Node" labels={node.metadata.labels} />
     </div>}
+    <div className="co-resource-kebab">
+      <NodeCog node={node} />
+    </div>
   </ResourceRow>;
 };
 

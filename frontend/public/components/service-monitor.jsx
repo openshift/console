@@ -29,8 +29,7 @@ const ServiceMonitorRow = ({obj: sm}) => {
   const {metadata} = sm;
 
   return <ResourceRow obj={sm}>
-    <div className="col-md-3 col-sm-3 col-xs-6 co-resource-link-wrapper">
-      <ResourceCog actions={menuActions} kind={referenceForModel(ServiceMonitorModel)} resource={sm} />
+    <div className="col-md-3 col-sm-3 col-xs-6">
       <ResourceLink kind={referenceForModel(ServiceMonitorModel)} name={metadata.name} namespace={metadata.namespace} title={metadata.uid} />
     </div>
     <div className="col-md-3 col-sm-3 col-xs-6">
@@ -43,6 +42,9 @@ const ServiceMonitorRow = ({obj: sm}) => {
       <p>
         { namespaceSelectorLinks(sm) }
       </p>
+    </div>
+    <div className="co-resource-kebab">
+      <ResourceCog actions={menuActions} kind={referenceForModel(ServiceMonitorModel)} resource={sm} />
     </div>
   </ResourceRow>;
 };

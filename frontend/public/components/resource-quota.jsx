@@ -19,12 +19,14 @@ const Header = props => <ListHeader>
 </ListHeader>;
 
 const Row = ({obj: rq}) => <div className="row co-resource-list__item">
-  <div className="col-md-5 col-xs-6 co-resource-link-wrapper">
-    <ResourceCog actions={menuActions} kind={quotaKind(rq)} resource={rq} />
+  <div className="col-md-5 col-xs-6">
     <ResourceLink kind={quotaKind(rq)} name={rq.metadata.name} namespace={rq.metadata.namespace} className="co-resource-link__resource-name" />
   </div>
   <div className="col-md-7 col-xs-6 co-break-word">
     {rq.metadata.namespace ? <ResourceLink kind="Namespace" name={rq.metadata.namespace} title={rq.metadata.namespace} /> : 'all'}
+  </div>
+  <div className="co-resource-kebab">
+    <ResourceCog actions={menuActions} kind={quotaKind(rq)} resource={rq} />
   </div>
 </div>;
 

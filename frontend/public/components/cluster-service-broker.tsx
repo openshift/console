@@ -19,8 +19,7 @@ const ClusterServiceBrokerHeader: React.SFC<ClusterServiceBrokerHeaderProps> = p
 </ListHeader>;
 
 const ClusterServiceBrokerListRow: React.SFC<ClusterServiceBrokerRowProps> = ({obj: serviceBroker}) => <ResourceRow obj={serviceBroker}>
-  <div className="col-sm-3 col-xs-6 co-resource-link-wrapper">
-    <ResourceCog actions={menuActions} kind="ClusterServiceBroker" resource={serviceBroker} />
+  <div className="col-sm-3 col-xs-6">
     <ResourceLink kind="ClusterServiceBroker" name={serviceBroker.metadata.name} />
   </div>
   <div className="col-sm-3 col-xs-6 co-break-word">
@@ -31,6 +30,9 @@ const ClusterServiceBrokerListRow: React.SFC<ClusterServiceBrokerRowProps> = ({o
   </div>
   <div className="col-sm-3 hidden-xs">
     <Timestamp timestamp={serviceBroker.status.lastCatalogRetrievalTime} />
+  </div>
+  <div className="co-resource-kebab">
+    <ResourceCog actions={menuActions} kind="ClusterServiceBroker" resource={serviceBroker} />
   </div>
 </ResourceRow>;
 
