@@ -4,17 +4,17 @@ import React, { Component, Fragment } from 'react';
 import { ListHeader, ColHead, List, ListPage, ResourceRow, DetailsPage } from './factory/okdfactory';
 import { breadcrumbsForOwnerRefs, Firehose, ResourceLink, navFactory, ResourceCog, Cog } from './utils/okdutils';
 import { VirtualMachineInstanceModel, VirtualMachineModel, PodModel, NamespaceModel, TemplateModel } from '../models';
-import { k8sCreate } from '../../module/k8s';
-import actions from '../../module/k8s/k8s-actions';
+import { k8sCreate, actions } from '../module/okdk8s';
 import { connect } from 'react-redux';
 
 import { startStopVmModal } from './modals/start-stop-vm-modal';
 import { restartVmModal } from './modals/restart-vm-modal';
+import { getResourceKind, getLabelMatcher, findVMI, findPod, getFlattenForKind } from './utils/resources';
 
 import { CreateVmWizard, TEMPLATE_TYPE_LABEL } from 'kubevirt-web-ui-components/dist/js';
+import VmConsolesConnected from './vmconsoles';
 
 const dashes = '---';
-const getLabelMatcher = (vm) => _.get(vm, 'spec.template.metadata.labels');
 
 const VMHeader = props => <ListHeader>
   <ColHead {...props} className="col-lg-2 col-md-2 col-sm-2 col-xs-6" sortField="metadata.name">Name</ColHead>
@@ -86,27 +86,6 @@ const FirehoseResourceLink = props => {
     }
   }
   return dashes;
-};
-
-const findPod = (data, name) => data.find(p => p.metadata.name.startsWith(`virt-launcher-${name}-`));
-const findVMI = (data, name) => data.find(vmi => vmi.metadata.name === name);
-
-const getResourceKind = (model, name, namespaced, namespace, isList, matchLabels, matchExpressions) => {
-  let res = { kind:model.kind, namespaced, namespace, isList, prop: model.kind};
-  if (name) {
-    res.name = name;
-  }
-  if (matchLabels) {
-    res.selector = {matchLabels};
-  }
-  if (matchExpressions) {
-    res.selector = {matchExpressions};
-  }
-  return res;
-};
-
-const getFlattenForKind = (kind) => {
-  return resources => _.get(resources, kind, {}).data;
 };
 
 export const VMRow = ({obj: vm}) => {
@@ -263,18 +242,25 @@ const Details = ({obj: vm}) => {
   </Fragment>;
 };
 
-export const VirtualMachinesDetailsPage = props => <DetailsPage
-  {...props}
-  breadcrumbsFor={obj => breadcrumbsForOwnerRefs(obj).concat({
-    name: 'Virtual Machine Details',
-    path: props.match.url,
-  })}
-  menuActions={menuActions}
-  pages={[
-    navFactory.details(Details),
-    navFactory.editYaml()
-  ]}
-/>;
+export const VirtualMachinesDetailsPage = props => {
+  const pages = [navFactory.details(Details)];
+  pages.push({ // TODO: might be moved based on review; or display conditionally if VM is running?
+    href: 'consoles',
+    name: 'Consoles',
+    component: VmConsolesConnected
+  });
+  pages.push(navFactory.editYaml());
+  return (
+    <DetailsPage
+      {...props}
+      breadcrumbsFor={obj => breadcrumbsForOwnerRefs(obj).concat({
+        name: 'Virtual Machine Details',
+        path: props.match.url,
+      })}
+      menuActions={menuActions}
+      pages={pages}
+    />);
+};
 
 const mapStateToProps = ({k8s}) => ({
   k8s
