@@ -89,17 +89,24 @@ class BuildSource extends React.Component<BuildSourceProps, BuildSourceState> {
     };
   }
 
-  componentDidUpdate(prevProps) {
-    const { obj } = this.props;
-    if (obj !== prevProps.obj && obj.loaded) {
-      const previousTag = this.state.selectedTag;
-      // Sort tags in reverse order by semver, falling back to a string comparison if not a valid version.
-      const tags = getBuilderTagsSortedByVersion(obj.data);
-      // Select the first tag if the current tag is missing or empty.
-      const selectedTag = previousTag && _.includes(tags, previousTag)
-        ? previousTag
-        : _.get(_.head(tags), 'name');
-      this.setState({tags, selectedTag}, this.getImageStreamImage);
+  static getDerivedStateFromProps(props, state) {
+    if (_.isEmpty(props.obj.data)) {
+      return null;
+    }
+    const previousTag = state.selectedTag;
+    // Sort tags in reverse order by semver, falling back to a string comparison if not a valid version.
+    const tags = getBuilderTagsSortedByVersion(props.obj.data);
+    // Select the first tag if the current tag is missing or empty.
+    const selectedTag = previousTag && _.includes(tags, previousTag)
+      ? previousTag
+      : _.get(_.head(tags), 'name');
+
+    return {tags, selectedTag};
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.selectedTag !== this.state.selectedTag) {
+      this.getImageStreamImage();
     }
   }
 

@@ -1,3 +1,5 @@
+/* eslint-disable no-undef, no-unused-vars */
+
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as classNames from 'classnames';
@@ -7,11 +9,12 @@ import { Route, Switch, Link } from 'react-router-dom';
 import { EmptyBox, StatusBox } from '.';
 import { PodsPage } from '../pod';
 import { AsyncComponent } from './async';
+import { K8sResourceKind } from '../../module/k8s';
 
 const editYamlComponent = (props) => <AsyncComponent loader={() => import('../edit-yaml').then(c => c.EditYAML)} obj={props.obj} />;
 export const viewYamlComponent = (props) => <AsyncComponent loader={() => import('../edit-yaml').then(c => c.EditYAML)} obj={props.obj} readOnly={true} />;
 
-class PodsComponent extends React.PureComponent {
+class PodsComponent extends React.PureComponent<PodsComponentProps> {
   render() {
     const {metadata: {namespace}, spec: {selector}} = this.props.obj;
     if (_.isEmpty(selector)) {
@@ -25,7 +28,14 @@ class PodsComponent extends React.PureComponent {
   }
 }
 
-export const navFactory = {
+type Page = {
+  href: string;
+  name: string;
+  component?: React.ComponentType<any>;
+};
+
+type NavFactory = {[name: string]: (c?: React.ComponentType<any>) => Page};
+export const navFactory: NavFactory = {
   details: component => ({
     href: '',
     name: 'Overview',
@@ -78,8 +88,7 @@ export const navFactory = {
   })
 };
 
-/** @type {React.SFC<{pages: {href: string, name: string}[], basePath: string}>} */
-export const NavBar = ({pages, basePath}) => {
+export const NavBar: React.SFC<NavBarProps> = ({pages, basePath}) => {
   const divider = <li className="co-m-horizontal-nav__menu-item co-m-horizontal-nav__menu-item--divider" key="_divider" />;
   basePath = basePath.replace(/\/$/, '');
 
@@ -94,14 +103,25 @@ export const NavBar = ({pages, basePath}) => {
 };
 NavBar.displayName = 'NavBar';
 
-/** @augments {React.PureComponent<{className?: string, label?: string, pages: {href: string, name: string, component: React.ComponentType}[], match: any, resourceKeys?: string[]}>} */
-export class HorizontalNav extends React.PureComponent {
+export class HorizontalNav extends React.PureComponent<HorizontalNavProps> {
+  static propTypes = {
+    pages: PropTypes.arrayOf(PropTypes.shape({
+      href: PropTypes.string,
+      name: PropTypes.string,
+      component: PropTypes.func,
+    })),
+    className: PropTypes.string,
+    hideNav: PropTypes.bool,
+    match: PropTypes.shape({
+      path: PropTypes.string,
+    }),
+  };
+
   render () {
     const props = this.props;
 
-    const componentProps = _.pick(props, ['filters', 'selected', 'match']);
-    componentProps.obj = props.obj.data;
-    const extraResources = _.reduce(props.resourceKeys, (acc, key) => ({...acc, [key]: props[key].data}), {});
+    const componentProps = {..._.pick(props, ['filters', 'selected', 'match']), obj: props.obj.data};
+    const extraResources = _.reduce(props.resourceKeys, (extraObjs, key) => ({...extraObjs, [key]: props[key].data}), {});
 
     const routes = props.pages.map(p => {
       const path = `${props.match.url}/${p.href}`;
@@ -122,15 +142,22 @@ export class HorizontalNav extends React.PureComponent {
   }
 }
 
-HorizontalNav.propTypes = {
-  pages: PropTypes.arrayOf(PropTypes.shape({
-    href: PropTypes.string,
-    name: PropTypes.string,
-    component: PropTypes.func,
-  })),
-  className: PropTypes.string,
-  hideNav: PropTypes.bool,
-  match: PropTypes.shape({
-    path: PropTypes.string,
-  }),
+export type PodsComponentProps = {
+  obj: K8sResourceKind;
+};
+
+export type NavBarProps = {
+  pages: Page[];
+  basePath: string;
+};
+
+export type HorizontalNavProps = {
+  className?: string;
+  obj?: {loaded: boolean, data: K8sResourceKind};
+  label?: string;
+  pages: Page[];
+  match: any;
+  resourceKeys?: string[];
+  hideNav?: boolean;
+  EmptyMsg?: React.ComponentType<any>;
 };
