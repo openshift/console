@@ -89,6 +89,9 @@
   display: flex;
   justify-content: space-between;
   margin: 0 0 $grid-gutter-width;
+  &--baseline {
+    align-items: baseline;
+  }
   &--center {
     justify-content: center;
   }
@@ -96,6 +99,10 @@
     align-items: center;
     margin-bottom: ($grid-gutter-width / 2);
   }
+}
+
+.co-m-pane__heading-link {
+  font-size: $font-size-base;
 }
 
 .co-m-pane__name {
