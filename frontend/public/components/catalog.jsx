@@ -39,7 +39,7 @@ class CatalogListPage extends React.Component {
 
   getItems() {
     const {clusterserviceclasses, imagestreams, loaded} = this.props;
-    let clusterServiceClassItems = null, imageStreamsItems = null;
+    let clusterServiceClassItems = [], imageStreamsItems = [];
 
     if (!loaded) {
       return [];
