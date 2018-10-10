@@ -8,7 +8,9 @@ import { Helmet } from 'react-helmet';
 import {
   AutoSizer,
   List as VirtualList,
-  WindowScroller
+  WindowScroller,
+  CellMeasurerCache,
+  CellMeasurer,
 } from 'react-virtualized';
 
 import { namespaceProptype } from '../propTypes';
@@ -130,7 +132,7 @@ class SysEvent extends React.Component {
       shouldAnimate = true;
     }
 
-    return <div style={style}>
+    return <div className="co-sysevent--transition" style={style}>
       <CSSTransition mountOnEnter={true} appear={shouldAnimate} in exit={false} timeout={timeout} classNames="slide">
         {status => <Inner klass={klass} status={status} tooltipMsg={tooltipMsg} obj={obj} firstTimestamp={firstTimestamp} lastTimestamp={lastTimestamp} count={count} message={message} source={source} width={style.width} />}
       </CSSTransition>
@@ -182,6 +184,11 @@ class EventsStreamPage_ extends React.Component {
 
 export const EventStreamPage = connectToFlags(FLAGS.OPENSHIFT, FLAGS.PROJECTS_AVAILABLE)(EventsStreamPage_);
 
+const measurementCache = new CellMeasurerCache({
+  fixedWidth: true,
+  minHeight: 109, /* height of event with a one-line event message on desktop */
+});
+
 class EventStream extends SafetyFirst {
   constructor (props) {
     super(props);
@@ -195,9 +202,18 @@ class EventStream extends SafetyFirst {
       oldestTimestamp: new Date(),
     };
     this.toggleStream = this.toggleStream_.bind(this);
-    this.rowRenderer = function rowRenderer ({index, style, key}) {
+    this.rowRenderer = function rowRenderer ({index, style, key, parent}) {
       const event = this.state.filteredEvents[index];
-      return <SysEvent {...event} key={key} style={style} index={index} />;
+      return <CellMeasurer
+        cache={measurementCache}
+        columnIndex={0}
+        key={key}
+        rowIndex={index}
+        parent={parent}>
+        {({ measure }) =>
+          <SysEvent {...event} onLoad={measure} onEntered={print} src={event} key={key} style={style} index={index} />
+        }
+      </CellMeasurer>;
     }.bind(this);
   }
 
@@ -238,6 +254,7 @@ class EventStream extends SafetyFirst {
           }
         });
         this.flushMessages();
+        this.resizeEvents();
       })
       .onopen(() => {
         this.messages = {};
@@ -332,6 +349,20 @@ class EventStream extends SafetyFirst {
     if (prevProps.namespace !== this.props.namespace) {
       this.ws && this.ws.destroy();
       this.wsInit(this.props.namespace);
+    }
+    if ((prevProps.textFilter !== this.props.textFilter) || (prevProps.kind !== this.props.kind) || (prevProps.category !== this.props.category)) {
+      this.resizeEvents();
+    }
+  }
+
+  onResize() {
+    measurementCache.clearAll();
+  }
+
+  resizeEvents () {
+    measurementCache.clearAll();
+    if (this.list) {
+      this.list.recomputeRowHeights();
     }
   }
 
@@ -436,21 +467,22 @@ class EventStream extends SafetyFirst {
         { count > 0 &&
             <WindowScroller scrollElement={document.getElementById('content-scrollable')}>
               {({height, isScrolling, registerChild, onChildScroll, scrollTop}) =>
-                <AutoSizer disableHeight>
+                <AutoSizer disableHeight onResize={this.onResize}>
                   {({width}) => <div ref={registerChild}>
                     <VirtualList
                       autoHeight
                       data={filteredEvents}
+                      deferredMeasurementCache={measurementCache}
                       height={height || 0}
                       isScrolling={isScrolling}
                       onScroll={onChildScroll}
+                      ref={virtualList => this.list = virtualList}
+                      rowCount={count}
+                      rowHeight={measurementCache.rowHeight}
                       rowRenderer={this.rowRenderer}
                       scrollTop={scrollTop}
-                      width={width}
-                      rowCount={count}
                       tabIndex={null}
-                      /* Width goes up to 675 and then goes down to 416 when the mobile/desktop breakpoint kicks in. It keeps increasing from there. You have to pick a number that won't overlap both ranges multiple times unless you want to write a ton of media queries. */
-                      rowHeight={width < 416 ? 140 : 110}
+                      width={width}
                     />
                   </div>}
                 </AutoSizer> }
