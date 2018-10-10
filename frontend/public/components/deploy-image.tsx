@@ -25,6 +25,16 @@ import {
   ServiceModel
 } from '../models';
 
+const getSuggestedName = name => {
+  if (!name) {
+    return;
+  }
+
+  const imageName: string = _.last(name.split('/'));
+
+  return _.first(imageName.split(/[^a-z0-9-]/));
+};
+
 const runsAsRoot = image => {
   const user = _.get(image, 'dockerImageMetadata.Config.User');
   return !user ||
@@ -80,7 +90,7 @@ export class DeployImage extends React.Component<DeployImageProps, DeployImageSt
       kind: 'ImageStreamImport',
       apiVersion: 'image.openshift.io/v1',
       metadata: {
-        name: imageName,
+        name: 'search',
         namespace
       },
       spec: {
@@ -88,7 +98,7 @@ export class DeployImage extends React.Component<DeployImageProps, DeployImageSt
         images: [{
           from: {
             kind: 'DockerImage',
-            name: imageName
+            name: _.trim(imageName)
           }
         }]
       },
@@ -118,7 +128,7 @@ export class DeployImage extends React.Component<DeployImageProps, DeployImageSt
               tag,
               status
             },
-            name,
+            name: getSuggestedName(name),
           });
         } else {
           this.setState({
@@ -343,7 +353,7 @@ export class DeployImage extends React.Component<DeployImageProps, DeployImageSt
                     <span className="pficon pficon-warning-triangle-o" aria-hidden="true"></span>
                     Image <strong>{isi.name}</strong> runs as the <strong>root</strong> user which might not be permitted by your cluster administrator.
                   </div>}
-                  <h2 className="co-image-name-results__heading">
+                  <h2 className="co-image-name-results__heading co-break-word">
                     {isi.name}
                     <small>
                       {_.get(isi, 'result.ref.registry') && <span>from {isi.result.ref.registry}, </span>}
