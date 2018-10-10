@@ -304,7 +304,7 @@ export const EditYAML = connect(stateToProps)(
       */
 
       const {error, success, stale} = this.state;
-      const {create, obj, download = true, showHeader = true, readOnly} = this.props;
+      const {create, obj, download = true, showHeader, readOnly} = this.props;
       const kind = obj && obj.kind;
       const model = this.getModel(obj);
 
