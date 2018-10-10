@@ -94,12 +94,12 @@ input[type="radio"] {
 .co-m-modal-link {
   cursor: pointer;
   position: relative;
-  padding-right: 9px;
+  padding-right:  20px;
   outline: none; }
   .co-m-modal-link:after {
     color: $co-gray;
-    content: "\f105";
-    font-family: "FontAwesome";
+    content: $pficon-var-edit;
+    font-family: $icon-font-name-pf;
     pointer-events: none;
     position: absolute;
     right: 0; }
