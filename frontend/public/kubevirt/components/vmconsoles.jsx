@@ -13,6 +13,15 @@ const VmIsNotRunning = () => (
 );
 
 /**
+ * Once design is stabilized, this will go to pf-react's VncConsole.
+ */
+const ConsoleType = ({ type }) => (
+  <div className="vmconsoles-type">
+    <b>Console</b> {type}
+  </div>
+);
+
+/**
  * Actual component for consoles.
  */
 const VmConsoles = ({ vmi }) => {
@@ -23,6 +32,7 @@ const VmConsoles = ({ vmi }) => {
   const vncConDetails = getVncConnectionDetails(vmi);
   return (
     <div className="co-m-pane__body">
+      <ConsoleType type="VNC" />
       <VncConsole {...vncConDetails} />
     </div>
   );
