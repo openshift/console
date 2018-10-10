@@ -90,7 +90,7 @@ const Inner = connectToFlags(FLAGS.CAN_LIST_NODE)(class Inner extends React.Pure
           </div>
         </div>
 
-        <div className="co-sysevent__message" title={_.trim(message)}>
+        <div className="co-sysevent__message">
           {message}
         </div>
       </div>
