@@ -1,3 +1,4 @@
+$co-namespace-selector-background-color: #292E34;
 $co-namespace-selector-desktop: 40px;
 $co-namespace-selector-mobile: 27px;
 $color-dropdown-hover: rgba(0, 0, 0, .05);
@@ -129,7 +130,8 @@ $color-bookmarker: #DDD;
 }
 
 .co-namespace-selector {
-  background-color: #292E34;
+  align-items: center;
+  background-color: $co-namespace-selector-background-color;
   color: $color-os-nav-title;
   display: flex;
   font-size: ($font-size-base + 1);
@@ -264,16 +266,11 @@ $color-bookmarker: #DDD;
 }
 
 .co-ns-selector {
-  height: 42px;
-  transition: 0.4s;
-}
-
-.co-ns-selector--hidden {
-  opacity: 0;
-}
-
-.co-ns-selector--visible {
-  opacity: 1;
+  background-color: $co-namespace-selector-background-color;
+  min-height: $co-namespace-selector-mobile;
+  @media (min-width: $grid-float-breakpoint) {
+    min-height: $co-namespace-selector-desktop;
+  }
 }
 
 .btn-dropdown {
