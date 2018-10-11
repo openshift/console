@@ -19,6 +19,7 @@ import { formatDuration } from './utils/datetime';
 import {
   ActionsMenu,
   BreadCrumbs,
+  Cog,
   ExternalLink,
   getURLSearchParams,
   history,
@@ -31,7 +32,7 @@ import {
 import {
   AlertResource,
   AlertRuleResource,
-  alertRuleState,
+  alertState,
   SilenceResource
 } from '../module/monitoring';
 
@@ -39,14 +40,10 @@ const labelsToParams = labels => _.map(labels, (v, k) => `${encodeURIComponent(k
 
 const detailsURL = (resource, name, labels) => `${resource.path}/${name}?${labelsToParams(labels)}`;
 
-const silenceAction = labels => ({
+const silenceAction = alert => ({
   label: 'Silence Alert',
-  href: `${SilenceResource.path}/new?${labelsToParams(labels)}`,
+  href: `${SilenceResource.path}/new?${labelsToParams(alert.labels)}`,
 });
-
-const AlertActionsMenu = ({labels}) => <div className="co-actions">
-  <ActionsMenu actions={[silenceAction(labels)]} />
-</div>;
 
 export const MonitoringResourceIcon = props => {
   const {className, resource} = props;
@@ -74,7 +71,7 @@ class MonitoringPageWrapper extends SafetyFirst<AlertsPageWrapperProps, null> {
   componentDidMount () {
     super.componentDidMount();
 
-    const poll = (url: string, key: string, dataHandler: (data: any[]) => any[]): void => {
+    const poll = (url: string, key: string, dataHandler: (data: any[]) => any): void => {
       store.dispatch(UIActions.monitoringLoading(key));
       const poller = (): void => {
         coFetchJSON(url)
@@ -101,7 +98,14 @@ class MonitoringPageWrapper extends SafetyFirst<AlertsPageWrapperProps, null> {
       // Flatten the rules data to make it easier to work with and also discard non-alerting rules since those are
       // the only ones we will be using
       const allRules = _.flatMap(_.get(data, 'groups'), 'rules');
-      return _.filter(allRules, {type: 'alerting'});
+      const alertingRules = _.filter(allRules, {type: 'alerting'});
+      return {
+        asRules: alertingRules,
+        asAlerts: _.flatMap(alertingRules, rule => {
+          // Give the alerts a name field matching their rule
+          return _.isEmpty(rule.alerts) ? rule : rule.alerts.map(a => ({name: rule.name, rule, ...a}));
+        }),
+      };
     });
 
     if (!alertManagerBaseURL) {
@@ -134,24 +138,19 @@ class MonitoringPageWrapper extends SafetyFirst<AlertsPageWrapperProps, null> {
 export const connectMonitoringPage = Page => withFallback(props => <MonitoringPageWrapper {...props} Page={Page} />);
 
 const alertStateToProps = (state, {match}): AlertsDetailsPageProps => {
-  const {data: rules, loaded, loadError}: Rules = monitoringRulesToProps(state);
+  const {data, loaded, loadError}: Rules = monitoringRulesToProps(state);
   const name = _.get(match, 'params.name');
   const labels = getURLSearchParams();
-
-  for (let rule of _.filter(rules, {name})) {
-    const alert = _.find(_.get(rule, 'alerts'), {labels});
-    if (alert) {
-      return {alert, loaded, loadError, name, rule};
-    }
-  }
-  return {alert: null, loaded, loadError, name, rule: _.find(rules, {name, labels})};
+  const alert = _.find(data && data.asAlerts, {labels});
+  const rule = alert ? alert.rule : _.find(data && data.asRules, {labels, name});
+  return {alert, loaded, loadError, name, rule};
 };
 
 const AlertsDetailsPage_ = connect(alertStateToProps)((props: AlertsDetailsPageProps) => {
   const {alert, loaded, loadError, name, rule} = props;
-  const severity = _.get(rule, 'labels.severity');
+  const severity = _.get(alert, 'labels.severity');
   const activeAt = _.get(alert, 'activeAt');
-  const annotations = _.get(alert || rule, 'annotations', {});
+  const annotations = _.get(alert, 'annotations', {});
 
   return <React.Fragment>
     <Helmet>
@@ -160,10 +159,12 @@ const AlertsDetailsPage_ = connect(alertStateToProps)((props: AlertsDetailsPageP
     <div className="co-m-nav-title co-m-nav-title--detail">
       <h1 className="co-m-pane__heading">
         <div className="co-m-pane__name"><MonitoringResourceIcon className="co-m-resource-icon--lg pull-left" resource={AlertResource} />{name}</div>
-        <AlertActionsMenu labels={_.get(alert, 'labels')} />
+        {alertState(alert) !== 'inactive' && <div className="co-actions">
+          <ActionsMenu actions={[silenceAction(alert)]} />
+        </div>}
       </h1>
     </div>
-    <StatusBox data={rule} loaded={loaded} loadError={loadError}>
+    <StatusBox data={alert} loaded={loaded} loadError={loadError}>
       <div className="co-m-pane__body">
         <SectionHeading text="Alert Overview" />
         <div className="co-m-pane__body-group">
@@ -178,7 +179,7 @@ const AlertsDetailsPage_ = connect(alertStateToProps)((props: AlertsDetailsPageP
                 </React.Fragment>}
                 <dt>State</dt>
                 <dd>
-                  <State state={alertRuleState(rule)} />
+                  <State state={alertState(alert)} />
                   {activeAt && <div className="text-muted monitoring-timestamp">Active since&nbsp;<Timestamp timestamp={activeAt} /></div>}
                 </dd>
                 <dt>Alert Rule</dt>
@@ -233,6 +234,7 @@ const ActiveAlerts = ({alerts}) => <div className="co-m-table-grid co-m-table-gr
       const description = _.get(a, 'annotations.description') || _.get(a, 'annotations.message') || name;
       return <ResourceRow key={i} obj={a}>
         <div className="col-xs-6 co-resource-link-wrapper">
+          <Cog options={[silenceAction(a)]} />
           <Link className="co-resource-link" to={detailsURL(AlertResource, name, a.labels)}>{description}</Link>
         </div>
         <div className="col-xs-2"><Timestamp timestamp={a.activeAt} /></div>
@@ -244,9 +246,9 @@ const ActiveAlerts = ({alerts}) => <div className="co-m-table-grid co-m-table-gr
 </div>;
 
 const ruleStateToProps = (state, {match}): AlertRulesDetailsPageProps => {
-  const {data: rules, loaded, loadError}: Rules = monitoringRulesToProps(state);
+  const {data, loaded, loadError}: Rules = monitoringRulesToProps(state);
   const name = _.get(match, 'params.name');
-  const rule = _.find(rules, {name, labels: getURLSearchParams()});
+  const rule = _.find(data && data.asRules, {name, labels: getURLSearchParams()});
   return {loaded, loadError, name, rule};
 };
 
@@ -326,12 +328,12 @@ const AlertRulesDetailsPage_ = connect(ruleStateToProps)((props: AlertRulesDetai
 export const AlertRulesDetailsPage = connectMonitoringPage(AlertRulesDetailsPage_);
 
 const AlertRow = ({obj}) => {
-  const {alerts, annotations, labels, name} = obj;
-  const activeAt = _.min(_.map(alerts, 'activeAt'));
+  const {activeAt, annotations, labels, name} = obj;
 
   return <ResourceRow obj={obj}>
     <div className="col-xs-7">
       <div className="co-resource-link-wrapper">
+        {alertState(obj) !== 'inactive' && <Cog options={[silenceAction(obj)]} />}
         <span className="co-resource-link">
           <MonitoringResourceIcon resource={AlertResource} />
           <Link to={detailsURL(AlertResource, name, labels)} className="co-resource-link__resource-name">{name}</Link>
@@ -340,7 +342,7 @@ const AlertRow = ({obj}) => {
       <div className="monitoring-description">{_.get(annotations, 'description') || _.get(annotations, 'message')}</div>
     </div>
     <div className="col-xs-3">
-      <State state={alertRuleState(obj)} />
+      <State state={alertState(obj)} />
       {activeAt && <div className="text-muted monitoring-timestamp">since&nbsp;<Timestamp timestamp={activeAt} /></div>}
     </div>
     <div className="col-xs-2">{_.startCase(_.get(labels, 'severity', '-'))}</div>
@@ -349,7 +351,7 @@ const AlertRow = ({obj}) => {
 
 const AlertHeader = props => <ListHeader>
   <ColHead {...props} className="col-xs-7" sortField="name">Name</ColHead>
-  <ColHead {...props} className="col-xs-3" sortFunc="alertRuleState">State</ColHead>
+  <ColHead {...props} className="col-xs-3" sortFunc="alertState">State</ColHead>
   <ColHead {...props} className="col-xs-2" sortField="labels.severity">Severity</ColHead>
 </ListHeader>;
 
@@ -359,7 +361,7 @@ const AlertsPageDescription = connectToURLs(MonitoringRoutes.Prometheus)(AlertsP
 const alertsRowFilter = {
   type: 'alert-rule-state',
   selected: ['firing', 'pending'],
-  reducer: alertRuleState,
+  reducer: alertState,
   items: [
     {id: 'firing', title: 'Firing'},
     {id: 'pending', title: 'Pending'},
@@ -368,7 +370,7 @@ const alertsRowFilter = {
 };
 
 // Row filter settings are stored in "k8s"
-export const filtersToProps = ({k8s}, {reduxID}) => {
+const filtersToProps = ({k8s}, {reduxID}) => {
   const filtersMap = k8s.getIn([reduxID, 'filters']);
   return {filters: filtersMap ? filtersMap.toJS() : null};
 };
@@ -473,6 +475,7 @@ export const MonitoringListPage = connect(filtersToProps)(class InnerMonitoringL
 
 const AlertsPage_ = props => <MonitoringListPage
   {...props}
+  data={props.data && props.data.asAlerts}
   Header={AlertHeader}
   nameFilterID="alert-rule-name"
   PageDescription={AlertsPageDescription}
@@ -488,6 +491,7 @@ type Alert = {
   activeAt: string;
   annotations: any;
   labels: {[key: string]: string};
+  rule?: any;
   state: string;
   value: number,
 };
@@ -499,7 +503,7 @@ type Rule = {
   query: string;
 };
 type Rules = {
-  data: Rule[];
+  data: {asRules: Rule[], asAlerts: Alert[]},
   loaded: boolean;
   loadError?: string;
 };
