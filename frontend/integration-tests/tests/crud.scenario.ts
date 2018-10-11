@@ -77,13 +77,12 @@ describe('Kubernetes resource CRUD operations', () => {
 
       if (namespaced) {
         it('has a working namespace dropdown on namespaced objects', async() => {
-          expect(namespaceView.namespaceDropdown.isPresent()).toBe(true);
-          await namespaceView.namespaceDropdown.click();
+          expect(namespaceView.namespaceSelector.isPresent()).toBe(true);
           expect(namespaceView.selectedNamespace.getText()).toEqual(testName);
         });
       } else {
         it('does not have a namespace dropdown on non-namespaced objects', async() => {
-          expect(namespaceView.namespaceDropdown.isPresent()).toBe(false);
+          expect(namespaceView.namespaceSelector.isPresent()).toBe(false);
         });
       }
 

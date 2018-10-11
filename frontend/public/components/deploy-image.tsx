@@ -14,7 +14,6 @@ import {
   history,
   Loading,
   PageHeading,
-  resourcePathFromModel,
   Timestamp,
   units
 } from './utils';
@@ -289,7 +288,7 @@ export class DeployImage extends React.Component<DeployImageProps, DeployImageSt
       .then(() => {
         this.setState({inProgress: false});
         if (!this.state.error) {
-          history.push(resourcePathFromModel(DeploymentConfigModel, deploymentConfig.metadata.name, deploymentConfig.metadata.namespace));
+          history.push(`/overview/ns/${this.state.namespace}`);
         }
       });
   };

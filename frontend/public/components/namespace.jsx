@@ -10,7 +10,7 @@ import { k8sGet } from '../module/k8s';
 import { formatNamespacedRouteForResource, UIActions } from '../ui/ui-actions';
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import { SafetyFirst } from './safety-first';
-import { Cog, Dropdown, Firehose, LabelList, LoadingInline, navFactory, ResourceCog, SectionHeading, ResourceLink, ResourceSummary, humanizeMem, MsgBox } from './utils';
+import { ActionsMenu, Cog, Dropdown, Firehose, LabelList, LoadingInline, navFactory, ResourceCog, SectionHeading, ResourceLink, ResourceSummary, humanizeMem, MsgBox } from './utils';
 import { createNamespaceModal, createProjectModal, deleteNamespaceModal, configureNamespacePullSecretModal } from './modals';
 import { RoleBindingsPage } from './RBAC';
 import { Bar, Line, requirePrometheus } from './graphs';
@@ -216,14 +216,14 @@ const autocompleteFilter = (text, item) => fuzzy(text, item);
 
 const defaultBookmarks = {};
 
-const namespaceDropdownStateToProps = state => {
+const namespaceBarDropdownStateToProps = state => {
   const activeNamespace = state.UI.get('activeNamespace');
   const canListNS = state[featureReducerName].get(FLAGS.CAN_LIST_NS);
 
   return { activeNamespace, canListNS };
 };
 
-class NamespaceDropdown_ extends React.Component {
+class NamespaceBarDropdowns_ extends React.Component {
 
   componentDidUpdate() {
     const { namespace, dispatch } = this.props;
@@ -259,9 +259,24 @@ class NamespaceDropdown_ extends React.Component {
 
     const onChange = newNamespace => dispatch(UIActions.setActiveNamespace(newNamespace));
 
-    return <div className="co-namespace-selector">
+    const addActions = [
+      {
+        label: 'Browse Catalog',
+        href: '/catalog',
+      },
+      {
+        label: 'Deploy Image',
+        href: `/deploy-image?preselected-ns=${activeNamespace}`
+      },
+      {
+        label: 'Import YAML',
+        href: formatNamespacedRouteForResource('import', activeNamespace),
+      }
+    ];
+
+    return <div className="co-namespace-bar__dropdowns">
       <Dropdown
-        className="co-namespace-selector__dropdown"
+        className="co-namespace-selector"
         menuClassName="co-namespace-selector__menu"
         noButton
         canFavorite
@@ -275,21 +290,20 @@ class NamespaceDropdown_ extends React.Component {
         defaultBookmarks={defaultBookmarks}
         storageKey={NAMESPACE_LOCAL_STORAGE_KEY}
         shortCut="n" />
-      <div className="co-import-yaml-link co-m-masthead-link">
-        <Link to={formatNamespacedRouteForResource('import', activeNamespace)}>
-          <span className="pficon pficon-add-circle-o co-create-from-yaml__add-icon" aria-hidden="true"></span>Import YAML
-        </Link>
-      </div>
+      <ActionsMenu actions={addActions}
+        title={<React.Fragment><span className="pficon pficon-add-circle-o co-add-actions-selector__icon" aria-hidden="true"></span> Add</React.Fragment>}
+        noButton={true}
+        menuClassName="co-add-actions-selector__menu dropdown-menu--right" />
     </div>;
   }
 }
 
-const NamespaceDropdown = connect(namespaceDropdownStateToProps)(NamespaceDropdown_);
+const NamespaceBarDropdowns = connect(namespaceBarDropdownStateToProps)(NamespaceBarDropdowns_);
 
 const NamespaceBar_ = ({useProjects}) => {
   return <div className="co-namespace-bar">
     <Firehose resources={[{kind: getModel(useProjects).kind, prop: 'namespace', isList: true}]}>
-      <NamespaceDropdown useProjects={useProjects} />
+      <NamespaceBarDropdowns useProjects={useProjects} />
     </Firehose>
   </div>;
 };

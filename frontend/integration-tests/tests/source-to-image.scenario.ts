@@ -1,6 +1,6 @@
 /* eslint-disable no-undef, no-unused-vars */
 
-import { browser, ExpectedConditions as until } from 'protractor';
+import { $, browser, ExpectedConditions as until } from 'protractor';
 import * as _ from 'lodash';
 
 import { checkLogs, checkErrors } from '../protractor.conf';
@@ -44,8 +44,8 @@ describe('Source-to-Image', () => {
       await sourceToImageView.trySampleButton.click();
       await sourceToImageView.routeCheckbox.click();
       await sourceToImageView.submitButton.click();
-      // Wait until we're redirected to the deployment config page.
-      await browser.wait(until.presenceOf(crudView.actionsDropdown));
+      // Wait until we're redirected to the overview page.
+      await browser.wait(until.presenceOf($('.overview')));
     });
 
     afterAll(async() => {
