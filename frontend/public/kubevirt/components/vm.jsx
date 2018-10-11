@@ -271,17 +271,24 @@ const mapDispatchToProps = () => ({
   watchK8sList: actions.watchK8sList
 });
 
-const ConnectedNewVMWizard = props => {
-  const namespaces = props.flatten(props.resources);
-  const templates = _.get(props.resources, TemplateModel.kind, {}).data;
-  const networkConfigs = _.get(props.resources, NetworkAttachmentDefinitionModel.kind, {}).data;
+const ConnectedNewVMWizard = ({ activeNamespace, resources, flatten, onHide, createVm }) => {
+  const namespaces = flatten(resources);
+  const templates = _.get(resources, TemplateModel.kind, {}).data;
+  const networkConfigs = _.get(resources, NetworkAttachmentDefinitionModel.kind, {}).data;
+
+  let selectedNamespace;
+
+  if (activeNamespace) {
+    selectedNamespace = namespaces.find(namespace => namespace.metadata.name === activeNamespace);
+  }
 
   return <CreateVmWizard
-    onHide={props.onHide}
+    onHide={onHide}
     namespaces={namespaces}
     templates={templates}
     networkConfigs={networkConfigs || []}
-    k8sCreate={props.createVm} />;
+    selectedNamespace={selectedNamespace}
+    k8sCreate={createVm} />;
 };
 
 export const VirtualMachinesPage = connect(
@@ -306,7 +313,7 @@ export const VirtualMachinesPage = connect(
           case 'wizard':
             return () => this.setState({showWizard: true});
           default:
-            return `/k8s/ns/${this.props.namespace}/virtualmachines/new/`;
+            return `/k8s/ns/${this.props.namespace || 'default'}/virtualmachines/new/`;
         }
       }
     };
@@ -332,7 +339,7 @@ export const VirtualMachinesPage = connect(
       networkConfigs
     ];
     return <Firehose resources={resources} flatten={getFlattenForKind(NamespaceModel.kind)}>
-      <ConnectedNewVMWizard onHide={this._onHide} createVm={k8sCreate} />
+      <ConnectedNewVMWizard onHide={this._onHide} createVm={k8sCreate} activeNamespace={this.props.namespace} />
     </Firehose>;
   }
 
