@@ -4,10 +4,6 @@
   &:hover {
     background-color: transparent;
   }
-
-  @media (min-width: $grid-float-breakpoint) {
-    padding-top: 7px !important;
-  }
 }
 
 .co-create-from-yaml__add-icon {
