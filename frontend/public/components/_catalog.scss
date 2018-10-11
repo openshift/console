@@ -89,7 +89,7 @@ $catalog-item-icon-size-sm: 24px;
 
   &__content {
     flex: 1 1 auto;
-    margin: 0 0 0 ($grid-gutter-width / 2);
+    margin: 0 ($grid-gutter-width / 2);
   }
 
   &__heading {
@@ -101,13 +101,23 @@ $catalog-item-icon-size-sm: 24px;
   &__num-items {
     border-bottom: 1px solid $color-grey-border;
     font-weight: 700;
-    margin: 0 ($grid-gutter-width / 2) $grid-gutter-width 0;
+    margin: 0 0 $grid-gutter-width 0;
     padding: 0 0 20px;
   }
 
   &__tabs {
     flex: 0 0 170px;
     margin: 0 ($grid-gutter-width / 2) 0 0;
+  }
+
+  &__no-filter-results {
+    background-color: transparent;
+    border: none;
+    padding: 0;
+    &-title {
+      color: $co-gray-darker;
+      font-size: 18px;
+    }
   }
 }
 

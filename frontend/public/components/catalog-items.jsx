@@ -62,6 +62,12 @@ export class CatalogTileViewPage extends React.Component {
     if (items !== prevProps.items) {
       const newCategories = categorizeItems(items);
       this.setState(this.getCategoryState(activeTabs, newCategories));
+      if (this.hasActiveFilters(filters)) {
+        const filteredItems = this.filterItems(items);
+        const filteredCategories = recategorizeItems(filteredItems, newCategories);
+        this.setState(this.getCategoryState(activeTabs, filteredCategories));
+      }
+      this.setState(this.getFilterCounts(activeTabs, filters, filterCounts, newCategories));
     }
 
     if (filters !== prevState.filters) {
@@ -78,6 +84,11 @@ export class CatalogTileViewPage extends React.Component {
     if (activeTabs !== prevState.activeTabs || prevState.filters.byName !== filters.byName ) {
       this.setState(this.getFilterCounts(activeTabs, filters, filterCounts, categories));
     }
+  }
+
+  hasActiveFilters(filters) {
+    const { byName, byType } = filters;
+    return byType.clusterServiceClass.active || byType.imageStream.active || byName.active;
   }
 
   getActiveCategories(activeTabs, categories) {
@@ -256,7 +267,7 @@ export class CatalogTileViewPage extends React.Component {
     const { byName, byType } = filters;
     const { items } = this.props;
 
-    if (!byType.clusterServiceClass.active && !byType.imageStream.active && !byName.active) {
+    if (!this.hasActiveFilters(filters) ) {
       return items;
     }
 
@@ -294,6 +305,7 @@ export class CatalogTileViewPage extends React.Component {
     const filters = _.cloneDeep(this.state.filters);
     filters.byName.active = filters.byType.clusterServiceClass.active = filters.byType.imageStream.active = false;
     filters.byName.value = '';
+    this.filterByNameInput.focus();
     this.setState({filters});
   }
 
@@ -321,7 +333,7 @@ export class CatalogTileViewPage extends React.Component {
           { this.renderCategoryTabs() }
           <FilterSidePanel>
             <FilterSidePanel.Category>
-              <FormControl type="text" placeholder="Filter by name..." bsClass="form-control"
+              <FormControl type="text" inputRef={(ref) => this.filterByNameInput = ref} placeholder="Filter by name..." bsClass="form-control"
                 value={filters.byName.value} autoFocus={true}
                 onChange={e => this.onFilterChange('byName', null, e.target.value)}
               />
@@ -354,9 +366,11 @@ export class CatalogTileViewPage extends React.Component {
               ? this.renderCategoryTiles(activeCategory)
               : _.map(currentCategories, category => (category.numItems && category.id !== 'all') ? this.renderCategoryTiles(category) : null)}
           </CatalogTileView>}
-          {numItems === 0 && <EmptyState className="blank-slate-content-pf">
-            <EmptyState.Title>No Results Match the Filter Criteria</EmptyState.Title>
-            <EmptyState.Info>
+          {numItems === 0 && <EmptyState className="co-catalog-page__no-filter-results">
+            <EmptyState.Title className="co-catalog-page__no-filter-results-title" aria-level="2">
+              No Results Match the Filter Criteria
+            </EmptyState.Title>
+            <EmptyState.Info className="text-secondary">
               No catalog items are being shown due to the filters being applied.
             </EmptyState.Info>
             <EmptyState.Help>
