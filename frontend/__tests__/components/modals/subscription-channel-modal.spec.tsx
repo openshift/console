@@ -7,8 +7,8 @@ import * as _ from 'lodash-es';
 
 import { SubscriptionChannelModal, SubscriptionChannelModalProps, SubscriptionChannelModalState } from '../../../public/components/modals/subscription-channel-modal';
 import { ModalTitle, ModalSubmitFooter, ModalBody } from '../../../public/components/factory/modal';
-import { testSubscription } from '../../../__mocks__/k8sResourcesMocks';
-import { SubscriptionKind, Package } from '../../../public/components/operator-lifecycle-manager/index';
+import { testSubscription, testPackageManifest } from '../../../__mocks__/k8sResourcesMocks';
+import { SubscriptionKind, PackageManifestKind } from '../../../public/components/operator-lifecycle-manager/index';
 import { SubscriptionModel } from '../../../public/models';
 import { RadioInput } from '../../../public/components/radio';
 
@@ -18,18 +18,38 @@ describe(SubscriptionChannelModal.name, () => {
   let close: Spy;
   let cancel: Spy;
   let subscription: SubscriptionKind;
-  let pkg: Package;
+  let pkg: PackageManifestKind;
 
   beforeEach(() => {
     k8sUpdate = jasmine.createSpy('k8sUpdate').and.returnValue(Promise.resolve());
     close = jasmine.createSpy('close');
     cancel = jasmine.createSpy('cancel');
     subscription = _.cloneDeep(testSubscription);
-    pkg = {
-      packageName: 'testapp-package',
-      channels: [{name: 'stable', currentCSV: 'testapp'}, {name: 'nightly', currentCSV: 'testapp-nightly'}],
-      defaultChannel: 'stable',
-    };
+    pkg = _.cloneDeep(testPackageManifest);
+    pkg.status.defaultChannel = 'stable';
+    pkg.status.channels = [{
+      name: 'stable',
+      currentCSV: 'testapp',
+      currentCSVDesc: {
+        displayName: 'Test App',
+        icon: [{mediatype: 'image/png', data: ''}],
+        version: '0.0.1',
+        provider: {
+          name: 'CoreOS, Inc',
+        },
+      }
+    }, {
+      name: 'nightly',
+      currentCSV: 'testapp-nightly',
+      currentCSVDesc: {
+        displayName: 'Test App',
+        icon: [{mediatype: 'image/png', data: ''}],
+        version: '0.0.1',
+        provider: {
+          name: 'CoreOS, Inc',
+        },
+      }
+    }];
 
     wrapper = shallow(<SubscriptionChannelModal subscription={subscription} pkg={pkg} k8sUpdate={k8sUpdate} close={close} cancel={cancel} />);
   });
@@ -41,7 +61,7 @@ describe(SubscriptionChannelModal.name, () => {
   });
 
   it('renders a radio button for each available channel in the package', () => {
-    expect(wrapper.find(ModalBody).find(RadioInput).length).toEqual(pkg.channels.length);
+    expect(wrapper.find(ModalBody).find(RadioInput).length).toEqual(pkg.status.channels.length);
   });
 
   it('calls `props.k8sUpdate` to update the subscription when form is submitted', (done) => {

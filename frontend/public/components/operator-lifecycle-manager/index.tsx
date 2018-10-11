@@ -3,7 +3,7 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 
-import { K8sResourceKind, GroupVersionKind, OwnerReference, K8sKind } from '../../module/k8s';
+import { K8sResourceKind, GroupVersionKind, OwnerReference } from '../../module/k8s';
 import { Descriptor } from './descriptors/types';
 import * as operatorLogo from '../../imgs/operator.svg';
 
@@ -158,20 +158,15 @@ export type CatalogSourceKind = {
   },
 } & K8sResourceKind;
 
-// TODO(alecmerdler): Remove this in favor of `PackageManifest`
-export type Package = {
-  packageName: string;
-  channels: {name: string, currentCSV: string}[];
-  defaultChannel?: string;
-};
-
-export type PackageManifest = {
+export type PackageManifestKind = {
   apiVersion: 'packages.app.redhat.com/v1alpha1';
   kind: 'PackageManifest';
   spec: {};
   status: {
     catalogSource: string;
     catalogSourceNamespace: string;
+    catalogSourceDisplayName: string;
+    catalogSourcePublisher: string;
     provider: {
       name: string;
     };
@@ -190,8 +185,9 @@ export type PackageManifest = {
     }[];
     defaultChannel: string;
   };
-} & K8sKind;
+} & K8sResourceKind;
 
+// TODO(alecmerdler): Shouldn't be needed anymore
 export const olmNamespace = 'operator-lifecycle-manager';
 
 export const isEnabled = (namespace: K8sResourceKind) => _.has(namespace, ['metadata', 'annotations', 'alm-manager']);

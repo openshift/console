@@ -6,7 +6,7 @@ import * as _ from 'lodash-es';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
 import { PromiseComponent, ResourceLink } from '../utils';
 import { K8sKind, K8sResourceKind, referenceForModel } from '../../module/k8s';
-import { SubscriptionKind, Package } from '../operator-lifecycle-manager/index';
+import { SubscriptionKind, PackageManifestKind } from '../operator-lifecycle-manager/index';
 import { SubscriptionModel, ClusterServiceVersionModel } from '../../models';
 import { RadioInput } from '../radio';
 
@@ -16,7 +16,7 @@ export class SubscriptionChannelModal extends PromiseComponent {
   constructor(public props: SubscriptionChannelModalProps) {
     super(props);
 
-    this.state.selectedChannel = props.subscription.spec.channel || props.pkg.channels[0].name;
+    this.state.selectedChannel = props.subscription.spec.channel || props.pkg.status.channels[0].name;
   }
 
   private submit(event): void {
@@ -35,7 +35,7 @@ export class SubscriptionChannelModal extends PromiseComponent {
           <p>Which channel is used to receive updates?</p>
         </div>
         <div className="co-m-form-row row">
-          { this.props.pkg.channels.map((channel, i) => <div key={i} className="col-sm-12">
+          { this.props.pkg.status.channels.map((channel, i) => <div key={i} className="col-sm-12">
             <RadioInput
               onChange={(e) => this.setState({selectedChannel: e.target.value})}
               value={channel.name}
@@ -57,7 +57,7 @@ export type SubscriptionChannelModalProps = {
   close: () => void;
   k8sUpdate: (kind: K8sKind, newObj: K8sResourceKind) => Promise<any>;
   subscription: SubscriptionKind;
-  pkg: Package;
+  pkg: PackageManifestKind;
 };
 
 export type SubscriptionChannelModalState = {

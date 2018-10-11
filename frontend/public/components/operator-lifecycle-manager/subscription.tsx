@@ -3,13 +3,12 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { match, Link } from 'react-router-dom';
-import { safeLoad } from 'js-yaml';
 
 import { List, ListHeader, ColHead, DetailsPage, ListPage } from '../factory';
 import { MsgBox, ResourceLink, ResourceCog, navFactory, Cog, ResourceSummary, LoadingInline, SectionHeading } from '../utils';
-import { SubscriptionKind, SubscriptionState, Package, InstallPlanApproval, ClusterServiceVersionKind, olmNamespace } from './index';
-import { referenceForModel, k8sKill, k8sUpdate, ConfigMapKind } from '../../module/k8s';
-import { SubscriptionModel, ClusterServiceVersionModel, CatalogSourceModel, ConfigMapModel, InstallPlanModel } from '../../models';
+import { SubscriptionKind, SubscriptionState, PackageManifestKind, InstallPlanApproval, ClusterServiceVersionKind, olmNamespace } from './index';
+import { referenceForModel, k8sKill, k8sUpdate } from '../../module/k8s';
+import { SubscriptionModel, ClusterServiceVersionModel, CatalogSourceModel, InstallPlanModel, PackageManifestModel } from '../../models';
 import { createDisableApplicationModal } from '../modals/disable-application-modal';
 import { createSubscriptionChannelModal } from '../modals/subscription-channel-modal';
 import { createInstallPlanApprovalModal } from '../modals/installplan-approval-modal';
@@ -76,7 +75,7 @@ export const SubscriptionsPage: React.SFC<SubscriptionsPageProps> = (props) => <
   title="Subscriptions"
   showTitle={true}
   canCreate={true}
-  createProps={{to: props.namespace ? `/k8s/ns/${props.namespace}/${CatalogSourceModel.plural}` : `/k8s/all-namespaces/${CatalogSourceModel.plural}`}}
+  createProps={{to: props.namespace ? `/k8s/ns/${props.namespace}/${referenceForModel(PackageManifestModel)}` : `/k8s/all-namespaces/${referenceForModel(PackageManifestModel)}`}}
   createButtonText="Create Subscription"
   ListComponent={SubscriptionsList}
   filterLabel="Subscriptions by package" />;
@@ -183,19 +182,15 @@ export class SubscriptionUpdates extends React.Component<SubscriptionUpdatesProp
 }
 
 export const SubscriptionDetailsPage: React.SFC<SubscriptionDetailsPageProps> = (props) => {
-  type PkgFor = (configMap: ConfigMapKind[]) => (obj: SubscriptionKind) => Package;
-  const pkgFor: PkgFor = configMaps => obj => configMaps.filter(cm => _.get(cm.data, 'packages') !== undefined)
-    .map(cm => safeLoad(cm.data.packages) as Package[])
-    .reduce((allPackages, packages) => [...allPackages, ...packages], [])
-    .find((pkg: Package) => pkg.packageName === obj.spec.name);
+  type PkgFor = (pkgs: PackageManifestKind[]) => (obj: SubscriptionKind) => PackageManifestKind;
+  const pkgFor: PkgFor = pkgs => obj => pkgs.find(pkg => pkg.metadata.name === obj.spec.name && pkg.status.catalogSource === obj.spec.source);
 
   type InstalledCSV = (clusterServiceVersions?: ClusterServiceVersionKind[]) => (obj: SubscriptionKind) => ClusterServiceVersionKind;
   const installedCSV: InstalledCSV = clusterServiceVersions => obj => clusterServiceVersions.find(csv => csv.metadata.name === _.get(obj, 'status.installedCSV'));
 
   type DetailsProps = {
-    localConfigMaps?: ConfigMapKind[];
-    globalConfigMaps?: ConfigMapKind[];
     clusterServiceVersions?: ClusterServiceVersionKind[];
+    packageManifests?: PackageManifestKind[];
     obj: SubscriptionKind;
   };
 
@@ -207,14 +202,14 @@ export const SubscriptionDetailsPage: React.SFC<SubscriptionDetailsPageProps> = 
     pages={[
       navFactory.details((detailsProps: DetailsProps) => <SubscriptionDetails
         obj={detailsProps.obj}
-        pkg={pkgFor(detailsProps.localConfigMaps.concat(detailsProps.globalConfigMaps || []))(detailsProps.obj)}
+        pkg={pkgFor(detailsProps.packageManifests)(detailsProps.obj)}
         installedCSV={installedCSV(detailsProps.clusterServiceVersions)(detailsProps.obj)}
       />),
       navFactory.editYaml(),
+      // TODO(alecmerdler): List install plans created by the subscription
     ]}
     resources={[
-      {kind: ConfigMapModel.kind, namespace: olmNamespace, isList: true, prop: 'globalConfigMaps'},
-      {kind: ConfigMapModel.kind, namespace: props.namespace, isList: true, prop: 'localConfigMaps'},
+      {kind: referenceForModel(PackageManifestModel), isList: true, namespace: props.namespace, prop: 'packageManifests'},
       {kind: referenceForModel(ClusterServiceVersionModel), namespace: props.namespace, isList: true, prop: 'clusterServiceVersions'},
     ]}
     menuActions={menuActions} />;
@@ -241,7 +236,7 @@ export type SubscriptionRowProps = {
 
 export type SubscriptionUpdatesProps = {
   obj: SubscriptionKind;
-  pkg: Package;
+  pkg: PackageManifestKind;
   installedCSV?: ClusterServiceVersionKind;
 };
 
@@ -253,7 +248,7 @@ export type SubscriptionUpdatesState = {
 
 export type SubscriptionDetailsProps = {
   obj: SubscriptionKind;
-  pkg: Package;
+  pkg: PackageManifestKind;
   installedCSV?: ClusterServiceVersionKind;
 };
 
