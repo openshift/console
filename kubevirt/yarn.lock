@@ -691,6 +691,10 @@ react-transition-group@^2.0.0, react-transition-group@^2.2.0:
     prop-types "^15.6.2"
     react-lifecycles-compat "^3.0.4"
 
+reactabular-dnd@^8.16.0:
+  version "8.16.0"
+  resolved "https://registry.yarnpkg.com/reactabular-dnd/-/reactabular-dnd-8.16.0.tgz#c66df1cfa08615978aa4eeb885747a1634dfc54a"
+
 reactabular-table@^8.14.0:
   version "8.14.0"
   resolved "https://registry.yarnpkg.com/reactabular-table/-/reactabular-table-8.14.0.tgz#2ce05de47d499db91678fa9518505ea509bf3d7f"

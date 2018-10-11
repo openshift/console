@@ -3,7 +3,7 @@ import React, { Component, Fragment } from 'react';
 
 import { ListHeader, ColHead, List, ListPage, ResourceRow, DetailsPage } from './factory/okdfactory';
 import { breadcrumbsForOwnerRefs, Firehose, ResourceLink, navFactory, ResourceCog, Cog } from './utils/okdutils';
-import { VirtualMachineInstanceModel, VirtualMachineModel, PodModel, NamespaceModel, TemplateModel } from '../models';
+import { VirtualMachineInstanceModel, VirtualMachineModel, PodModel, NamespaceModel, TemplateModel, NetworkAttachmentDefinitionModel } from '../models';
 import { k8sCreate, actions } from '../module/okdk8s';
 import { connect } from 'react-redux';
 
@@ -274,11 +274,13 @@ const mapDispatchToProps = () => ({
 const ConnectedNewVMWizard = props => {
   const namespaces = props.flatten(props.resources);
   const templates = _.get(props.resources, TemplateModel.kind, {}).data;
+  const networkConfigs = _.get(props.resources, NetworkAttachmentDefinitionModel.kind, {}).data;
 
   return <CreateVmWizard
     onHide={props.onHide}
     namespaces={namespaces}
     templates={templates}
+    networkConfigs={networkConfigs || []}
     k8sCreate={props.createVm} />;
 };
 
@@ -322,10 +324,12 @@ export const VirtualMachinesPage = connect(
   openNewVmWizard() {
     const namespaces = getResourceKind(NamespaceModel, undefined, true, undefined, true);
     const templates = getResourceKind(TemplateModel, undefined, true, undefined, true, undefined, [{key: TEMPLATE_TYPE_LABEL, operator: 'Exists' }]);
+    const networkConfigs = getResourceKind(NetworkAttachmentDefinitionModel, undefined, true, undefined, true);
 
     const resources = [
       namespaces,
-      templates
+      templates,
+      networkConfigs
     ];
     return <Firehose resources={resources} flatten={getFlattenForKind(NamespaceModel.kind)}>
       <ConnectedNewVMWizard onHide={this._onHide} createVm={k8sCreate} />
