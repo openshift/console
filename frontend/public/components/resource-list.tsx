@@ -33,6 +33,7 @@ const ResourceListPage_ = connectToPlural((props: ResourceListPageProps) => {
   const noProjectsAvailable = !flagPending(flags.PROJECTS_AVAILABLE) && !flags.PROJECTS_AVAILABLE;
   const showGettingStarted = notProjectsListPage && isOpenShift && noProjectsAvailable;
 
+  // const ref = props.match.path.indexOf('customresourcedefinitions') === -1 ? referenceForModel(kindObj) : referenceForCRD(kindObj);
   const ref = props.match.path.indexOf('customresourcedefinitions') === -1 ? referenceForModel(kindObj) : null;
   const componentLoader = resourceListPages.get(ref, () => Promise.resolve(DefaultPage));
 
@@ -57,6 +58,7 @@ export const ResourceDetailsPage = connectToPlural((props: ResourceDetailsPagePr
     return <ErrorPage404 />;
   }
 
+  // const ref = props.match.path.indexOf('customresourcedefinitions') === -1 ? referenceForModel(kindObj) : referenceForCRD(kindObj);
   const ref = props.match.path.indexOf('customresourcedefinitions') === -1 ? referenceForModel(kindObj) : null;
   const componentLoader = props.match.params.appName
     ? () => import('./operator-lifecycle-manager/clusterserviceversion-resource' /* webpackChunkName: "csv-resource" */).then(m => m.ClusterServiceVersionResourcesDetailsPage)

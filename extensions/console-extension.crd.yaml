@@ -1,0 +1,67 @@
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  name: consoleextensions.config.openshift.io
+  annotations:
+    displayName: ConsoleExtension
+    description: Extension for configuring openshift web console.
+spec:
+  group: config.openshift.io
+  version: v1
+  versions:
+  - name: v1
+    served: true
+    storage: true
+  scope: Cluster
+  names:
+    plural: consoleextensions
+    singular: consoleextension
+    kind: ConsoleExtension
+    listKind: ConsoleExtensionList
+  additionalPrinterColumns:
+  - name: Age
+    type: date
+    JSONPath: .metadata.creationTimestamp
+  subresources:
+    status: {}
+  validation:
+    openAPIV3Schema:
+      properties:
+        spec:
+          type: object
+          description: Represents console extension spec
+          required:
+          - navExtension
+          - reference
+          - scope
+          properties:
+            navExtension:
+              type: object
+              description: Object that holds navigation bar extensions
+              required:
+                - navSection
+              properties:
+                displayName:
+                  type: string
+                  description: Name of the CRD
+                navSection:
+                  type: string
+                  description: Navigation section where the CRD should be placed
+                  enum:
+                  - Home
+                  - Operators
+                  - Workloads
+                  - Networking
+                  - Storage
+                  - Builds
+                  - Service Catalog
+                  - Monitoring
+                  - Administration
+            reference:
+              type: string
+              description: Reference of the CRD
+            scope:
+              type: string
+              enum:
+              - Namespaced
+              - Cluster

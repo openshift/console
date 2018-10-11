@@ -54,3 +54,6 @@ export const tokenInfoModal = (props) => import('./token-info-modal' /* webpackC
 
 export const deleteModal = (props) => import('./delete-modal' /* webpackChunkName: "delete-modal" */)
   .then(m => m.deleteModal(props));
+
+export const promoteCrdModal = (props) => import('./promote-crd-modal' /* webpackChunkName: "configure-update-strategy-modal" */)
+  .then(m => m.promoteCrdModal(props));

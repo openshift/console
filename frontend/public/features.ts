@@ -26,6 +26,7 @@ import { UIActions } from './ui/ui-actions';
   CAN_LIST_PV: false,
   CAN_LIST_STORE: false,
   CAN_LIST_CRD: false,
+  CAN_PROMOTE_CRD: false,
   CAN_CREATE_PROJECT: false,
   PROJECTS_AVAILABLE: false,
   SERVICE_CATALOG: false,
@@ -44,6 +45,7 @@ export enum FLAGS {
   CAN_LIST_PV = 'CAN_LIST_PV',
   CAN_LIST_STORE = 'CAN_LIST_STORE',
   CAN_LIST_CRD = 'CAN_LIST_CRD',
+  CAN_PROMOTE_CRD = 'CAN_PROMOTE_CRD',
   CAN_CREATE_PROJECT = 'CAN_CREATE_PROJECT',
   PROJECTS_AVAILABLE = 'PROJECTS_AVAILABLE',
   SERVICE_CATALOG = 'SERVICE_CATALOG',
@@ -137,6 +139,7 @@ export let featureActions = [
   [FLAGS.CAN_LIST_PV, { resource: 'persistentvolumes', verb: 'list' }],
   [FLAGS.CAN_LIST_STORE, { group: 'storage.k8s.io', resource: 'storageclasses', verb: 'list' }],
   [FLAGS.CAN_LIST_CRD, { group: 'apiextensions.k8s.io', resource: 'customresourcedefinitions', verb: 'list' }],
+  [FLAGS.CAN_PROMOTE_CRD, { group: 'config.openshift.io', resource: 'consoleextensions', verb: 'create'}],
 ].forEach(_.spread((FLAG, resourceAttributes) => {
   const req = {
     spec: { resourceAttributes }

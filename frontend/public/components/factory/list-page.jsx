@@ -4,8 +4,10 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import * as classNames from 'classnames';
 import * as PropTypes from 'prop-types';
+import store from '../../redux';
 
 import k8sActions from '../../module/k8s/k8s-actions';
+import { UIActions } from '../../ui/ui-actions';
 import { CheckBoxes, storagePrefix } from '../row-filter';
 import { ErrorPage404 } from '../error';
 import { makeReduxID, makeQuery } from '../utils/k8s-watcher';
@@ -57,6 +59,14 @@ TextFilter.displayName = 'TextFilter';
 
 /** @augments {React.PureComponent<{ListComponent: React.ComponentType<any>, kinds: string[], flatten?: function, data?: any[], rowFilters?: any[]}>} */
 export class ListPageWrapper_ extends React.PureComponent {
+  componentDidMount() {
+    if (!_.isEmpty(this.props.kinds) && _.size(this.props.kinds) === 1) {
+      store.dispatch(UIActions.setTableObject(kindObj(this.props.kinds[0])));
+    }
+  }
+  componentWillUnmount() {
+    store.dispatch(UIActions.unsetTableObject());
+  }
   render () {
     const {kinds, ListComponent, rowFilters, reduxIDs, flatten} = this.props;
     const data = flatten ? flatten(this.props.resources) : [];

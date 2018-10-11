@@ -1,6 +1,20 @@
 // eslint-disable-next-line no-unused-vars
 import { K8sKind } from '../module/k8s';
 
+export const ConsoleExtensionModel: K8sKind = {
+  kind:'ConsoleExtension',
+  namespaced: false,
+  label:'Console Extension',
+  plural:'consoleextensions',
+  apiVersion:'v1',
+  abbr:'CE',
+  apiGroup:'config.openshift.io',
+  labelPlural:'Console Extensions',
+  path:'consoleextensions',
+  id:'consoleextension',
+  crd:true
+};
+
 export const CatalogSourceModel: K8sKind = {
   kind: 'CatalogSource',
   label: 'CatalogSource',

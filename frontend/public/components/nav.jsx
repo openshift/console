@@ -7,7 +7,7 @@ import * as PropTypes from 'prop-types';
 
 import { FLAGS, connectToFlags, featureReducerName, flagPending } from '../features';
 import { MonitoringRoutes, connectToURLs } from '../monitoring';
-import { formatNamespacedRouteForResource } from '../ui/ui-actions';
+import { formatNamespacedRouteForResource, getActiveNamespace } from '../ui/ui-actions';
 import { BuildConfigModel, BuildModel, ClusterServiceVersionModel, DeploymentConfigModel, ImageStreamModel, SubscriptionModel, InstallPlanModel, PackageManifestModel } from '../models';
 import { referenceForModel } from '../module/k8s';
 import { authSvc } from '../module/auth';
@@ -19,6 +19,7 @@ import * as operatorActiveImg from '../imgs/operator-active.svg';
 import * as routingImg from '../imgs/routing.svg';
 import * as routingActiveImg from '../imgs/routing-active.svg';
 import { history, stripBasePath } from './utils';
+import { ALL_NAMESPACES_KEY } from '../const';
 
 export const matchesPath = (resourcePath, prefix) => resourcePath === prefix || _.startsWith(resourcePath, `${prefix}/`);
 export const matchesModel = (resourcePath, model) => model && matchesPath(resourcePath, referenceForModel(model));
@@ -122,7 +123,33 @@ const navSectionStateToProps = (state, {required}) => {
     flags, canRender,
     activeNamespace: state.UI.get('activeNamespace'),
     location: state.UI.get('location'),
+    promotedCrds: state.UI.get('consoleExtensions'),
   };
+};
+
+// class CrdNSLink extends NavLink {
+//   static isActive (props, resourcePath, activeNamespace) {
+//     const href = stripNS(formatNamespacedRouteForCrd(props.resource, activeNamespace));
+//     return matchesPath(resourcePath, href) || matchesModel(resourcePath, props.model);
+//   }
+//    get to () {
+//     const { resource, activeNamespace } = this.props;
+//     return formatNamespacedRouteForCrd(resource, activeNamespace);
+//   }
+// }
+// class CrdClusterLink extends NavLink {
+//   static isActive (props, resourcePath) {
+//     return resourcePath === props.resource || _.startsWith(resourcePath, `${props.resource}/`);
+//   }
+//    get to () {
+//     return `/k8s/cluster/${referenceForCRD(this.props.resource)}`;
+//   }
+// }
+
+const formatNamespacedRouteForCrd = (crdRef, activeNamespace=getActiveNamespace()) => {
+  return activeNamespace === ALL_NAMESPACES_KEY
+    ? `/k8s/all-namespaces/customresourcedefinitions/${crdRef}`
+    : `/k8s/ns/${activeNamespace}/customresourcedefinitions/${crdRef}`;
 };
 
 const NavSection = connect(navSectionStateToProps)(
@@ -155,7 +182,8 @@ const NavSection = connect(navSectionStateToProps)(
     }
 
     getActiveChild () {
-      const { activeNamespace, location, children } = this.props;
+      const { activeNamespace, location } = this.props;
+      const children = React.Children.toArray(this.props.children);
 
       if (!children) {
         return stripBasePath(location).startsWith(this.props.activePath);
@@ -164,7 +192,7 @@ const NavSection = connect(navSectionStateToProps)(
       const resourcePath = location ? stripNS(location) : '';
 
       return children.filter(c => {
-        if (!c) {
+        if (!c.props) {
           return false;
         }
         if (c.props.startsWith) {
@@ -219,12 +247,28 @@ const NavSection = connect(navSectionStateToProps)(
       // we could use scaleY, but that literally scales along the Y axis, ie shrinks
       // we could use flexbox or the equivalent to get an actual height, but this is the easiest solution :-/
 
-      const maxHeight = !this.state.isOpen ? 0 : 29 * _.get(this.props.children, 'length', 1);
+      const childrenArray = React.Children.toArray(children);
+      let addSeparator = true;
+      if (!_.isEmpty(_.get(this,['props', 'promotedCrds']))){
+        _.each(this.props.promotedCrds, (ce) => {
+          if (ce.spec.navExtension.navSection === this.props.text) {
+            if (addSeparator) {
+              childrenArray.push(<Sep />);
+              addSeparator = false;
+            }
+            const link = ce.spec.scope === 'Namespaced'
+              ? formatNamespacedRouteForCrd(ce.spec.reference, activeNamespace)
+              : `/k8s/cluster/${ce.spec.reference}`;
+            childrenArray.push(<HrefLink href={link} name={ce.spec.navExtension.displayName} key={ce.spec.reference} />);
+          }
+        });
+      }
+      const maxHeight = !this.state.isOpen ? 0 : 29 * _.get(childrenArray, 'length', 1);
 
       const iconClassName = icon && `${icon} navigation-container__section__title__icon ${isActive ? 'navigation-container__section__title__icon--active' : ''}`;
       const sectionClassName = isActive && href ? 'navigation-container__section navigation-container__section--active' : 'navigation-container__section';
 
-      const Children = React.Children.map(children, c => {
+      const Children = React.Children.map(childrenArray, c => {
         if (!c) {
           return null;
         }

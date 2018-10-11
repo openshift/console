@@ -24,7 +24,9 @@ export default (state, action) => {
       activeNavSectionId: 'workloads',
       location: pathname,
       activeNamespace: activeNamespace || 'default',
-      createProjectMessage: ''
+      createProjectMessage: '',
+      consoleExtensions: [],
+      resourceTable: {},
     });
   }
 
@@ -59,7 +61,12 @@ export default (state, action) => {
 
     case types.setMonitoringData:
       return state.setIn(['monitoring', action.key], action.data);
-
+    case types.setConsoleExtensions:
+      return state.set('consoleExtensions', action.obj);
+    case types.setTableObject:
+      return state.set('resourceTable', _.pick(action, ['table', 'isNamespaced']));
+    case types.unsetTableObject:
+      return state.set('resourceTable', {});
     default:
       break;
   }

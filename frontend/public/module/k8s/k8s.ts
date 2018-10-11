@@ -2,7 +2,7 @@
 
 import * as _ from 'lodash-es';
 
-import { K8sResourceKindReference, GroupVersionKind, CustomResourceDefinitionKind, K8sResourceKind, K8sKind, OwnerReference } from './index';
+import { K8sResourceKindReference, GroupVersionKind, K8sResourceKind, K8sKind, OwnerReference } from './index';
 
 export const getQN: (obj: K8sResourceKind) => string = ({metadata: {name, namespace}}) => (namespace ? `(${namespace})-` : '') + name;
 
@@ -19,9 +19,11 @@ export const referenceFor = (obj: K8sResourceKind): GroupVersionKind => obj.kind
   ? `${groupVersionFor(obj.apiVersion).group}:${groupVersionFor(obj.apiVersion).version}:${obj.kind}`
   : '';
 
-export const referenceForCRD = (obj: CustomResourceDefinitionKind): GroupVersionKind => (
-  `${obj.spec.group}:${obj.spec.version}:${obj.spec.names.kind}`
-);
+export const referenceForCRD = (obj) => {
+  return obj.apiGroup
+    ? `${obj.apiGroup}:${obj.apiVersion}:${obj.kind}`
+    : `${obj.spec.group}:${obj.spec.version}:${obj.spec.names.kind}`;
+};
 
 export const referenceForOwnerRef = (ownerRef: OwnerReference): GroupVersionKind => (
   `${groupVersionFor(ownerRef.apiVersion).group}:${groupVersionFor(ownerRef.apiVersion).version}:${ownerRef.kind}`

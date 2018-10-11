@@ -3,6 +3,9 @@ import { history } from '../components/utils/router';
 import { ALL_NAMESPACES_KEY, LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY } from '../const';
 import { getNSPrefix } from '../components/utils/link';
 import { allModels } from '../module/k8s/k8s-models';
+import { k8sList, k8sListTableColumns } from '../module/k8s/resource';
+import { ConsoleExtensionModel } from '../models';
+
 
 // URL routes that can be namespaced
 export const namespacedResources = new Set();
@@ -72,6 +75,9 @@ export const types = {
   sortList: 'sortList',
   setCreateProjectMessage: 'setCreateProjectMessage',
   setMonitoringData: 'setMonitoringData',
+  setConsoleExtensions: 'setConsoleExtensions',
+  setTableObject: 'setTableObject',
+  unsetTableObject: 'unsetTableObject',
 };
 
 export const UIActions = {
@@ -155,6 +161,21 @@ export const UIActions = {
   },
 
   [types.setCreateProjectMessage]: message => ({type: types.setCreateProjectMessage, message}),
+
+  [types.setConsoleExtensions]: () => (dispatch) => {
+    k8sList(ConsoleExtensionModel, {}).then((obj) => {
+      dispatch({type: types.setConsoleExtensions, obj});
+    });
+  },
+  [types.setTableObject]: (crdModel) => dispatch => {
+    const activeNamespace = getActiveNamespace();
+    const ns = activeNamespace === ALL_NAMESPACES_KEY ? {} : {ns: activeNamespace};
+    k8sListTableColumns(crdModel, ns).then((table) => {
+      const isNamespaced = crdModel.namespaced;
+      dispatch({type: types.setTableObject, table, isNamespaced});
+    });
+  },
+  [types.unsetTableObject]: () => ({type: types.unsetTableObject}),
 
   monitoringLoading: key => ({type: types.setMonitoringData, key, data: {loaded: false, loadError: null, data: null}}),
 
