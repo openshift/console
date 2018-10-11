@@ -15,7 +15,7 @@ import { analyticsSvc } from '../module/analytics';
 import { AlertsPage, AlertsDetailsPage, AlertRulesDetailsPage } from './alert';
 import { GlobalNotifications } from './global-notifications';
 import { Masthead } from './masthead';
-import { NamespaceSelector } from './namespace';
+import { NamespaceBar } from './namespace';
 import { Nav } from './nav';
 import { SearchPage } from './search';
 import { CreateSilence, EditSilence, SilencesPage, SilencesDetailsPage } from './silence';
@@ -126,7 +126,7 @@ class App extends React.PureComponent {
       <Masthead />
       <Nav />
       <div id="content">
-        <Route path={namespacedRoutes} component={NamespaceSelector} />
+        <Route path={namespacedRoutes} component={NamespaceBar} />
         <GlobalNotifications />
         <div id="content-scrollable">
           <Switch>

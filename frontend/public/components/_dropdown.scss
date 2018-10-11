@@ -128,6 +128,14 @@ $color-bookmarker: #DDD;
 }
 }
 
+.co-namespace-bar {
+  height: $co-namespace-selector-mobile;
+
+  @media (min-width: $grid-float-breakpoint) {
+    height: $co-namespace-selector-desktop;
+  }
+}
+
 .co-namespace-selector {
   background-color: #292E34;
   color: $color-os-nav-title;
@@ -261,19 +269,6 @@ $color-bookmarker: #DDD;
       }
     }
   }
-}
-
-.co-ns-selector {
-  height: 42px;
-  transition: 0.4s;
-}
-
-.co-ns-selector--hidden {
-  opacity: 0;
-}
-
-.co-ns-selector--visible {
-  opacity: 1;
 }
 
 .btn-dropdown {
