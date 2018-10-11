@@ -7,10 +7,14 @@ import { Toolbar } from 'patternfly-react';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 import { CSSTransition } from 'react-transition-group';
+
+import { SafetyFirst } from './safety-first';
 import { StartGuide } from './start-guide';
 import { TextFilter } from './factory';
 import { ProjectOverview } from './project-overview';
 import { ResourceOverviewPage } from './resource-list';
+import { prometheusBasePath } from './graphs';
+import { coFetchJSON } from '../co-fetch';
 import { ALL_NAMESPACES_KEY } from '../const';
 import {
   DaemonSetModel,
@@ -34,6 +38,7 @@ import {
 const EMPTY_GROUP_LABEL = 'other resources';
 const DEPLOYMENT_REVISION_ANNOTATION = 'deployment.kubernetes.io/revision';
 const DEPLOYMENT_CONFIG_LATEST_VERSION_ANNOTATION = 'openshift.io/deployment-config.latest-version';
+const METRICS_POLL_INTERVAL = 30 * 1000;
 
 const getDeploymentRevision = obj => {
   const revision = _.get(obj, ['metadata', 'annotations', DEPLOYMENT_REVISION_ANNOTATION]);
@@ -176,7 +181,7 @@ const OverviewHeading = ({disabled, groupOptions, handleFilterChange, handleGrou
         {
           !_.isEmpty(groupOptions) &&
           <div className="form-group overview-toolbar__form-group">
-            <label className="overview-toolbar__label">
+            <label className="overview-toolbar__label co-no-bold">
               Group by label
             </label>
             <Dropdown
@@ -220,7 +225,7 @@ OverviewHeading.defaultProps = {
   selectedGroup: ''
 };
 
-class OverviewDetails extends React.Component {
+class OverviewDetails extends SafetyFirst {
   constructor(props) {
     super(props);
     this.handleFilterChange = this.handleFilterChange.bind(this);
@@ -235,6 +240,16 @@ class OverviewDetails extends React.Component {
       groupOptions: {},
       selectedGroupLabel: ''
     };
+  }
+
+  componentDidMount() {
+    super.componentDidMount();
+    this.fetchMetrics();
+  }
+
+  componentWillUnmount () {
+    super.componentWillUnmount();
+    clearInterval(this.metricsInterval);
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -262,6 +277,48 @@ class OverviewDetails extends React.Component {
         groupedItems: this.groupItems(this.state.filteredItems, selectedGroupLabel)
       });
     }
+  }
+
+  fetchMetrics() {
+    if (!prometheusBasePath) {
+      // Proxy has not been set up.
+      return;
+    }
+
+    const { namespace } = this.props;
+    const { metrics: previousMetrics } = this.state;
+    const queries = {
+      memory: `pod_name:container_memory_usage_bytes:sum{namespace="${namespace}"}`,
+      cpu: `pod_name:container_cpu_usage:sum{namespace="${namespace}"}`,
+    };
+
+    const promises = _.map(queries, (query, name) => {
+      const url = `${prometheusBasePath}/api/v1/query?query=${encodeURIComponent(query)}`;
+      return coFetchJSON(url).then(({ data: {result} }) => {
+        const byPod = result.reduce((acc, { metric, value }) => {
+          acc[metric.pod_name] = Number(value[1]);
+          return acc;
+        }, {});
+        return { [name]: byPod };
+      });
+    });
+
+    Promise.all(promises).then(data => {
+      const metrics = data.reduce((acc, metric) => _.assign(acc, metric), {});
+      this.setState({metrics});
+    }).catch(res => {
+      const status = _.get(res, 'response.status');
+      // eslint-disable-next-line no-console
+      console.error('Could not fetch metrics, status:', status);
+      // Don't retry on some status codes unless a previous request succeeded.
+      if (_.includes([401, 403, 502, 503], status) && _.isEmpty(previousMetrics)) {
+        throw new Error(`Could not fetch metrics, status: ${status}`);
+      }
+    }).then(() => this.metricsInterval = setTimeout(() => {
+      if (this.isMounted_) {
+        this.fetchMetrics();
+      }
+    }, METRICS_POLL_INTERVAL));
   }
 
   filterItems(items) {
@@ -511,7 +568,7 @@ class OverviewDetails extends React.Component {
 
   render() {
     const {loaded, loadError, selectedItem, title} = this.props;
-    const {filteredItems, groupedItems, groupOptions, selectedGroupLabel} = this.state;
+    const {filteredItems, groupedItems, groupOptions, metrics, selectedGroupLabel} = this.state;
     return <div className="co-m-pane">
       <OverviewHeading
         groupOptions={groupOptions}
@@ -530,6 +587,7 @@ class OverviewDetails extends React.Component {
           <ProjectOverview
             selectedItem={selectedItem}
             groups={groupedItems}
+            metrics={metrics}
             onClickItem={this.props.selectItem}
           />
         </StatusBox>
