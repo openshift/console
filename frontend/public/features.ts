@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { Map as ImmutableMap } from 'immutable';
 import * as _ from 'lodash-es';
 
-import { SelfSubjectAccessReviewModel, ChannelOperatorConfigModel, PrometheusModel, ClusterServiceVersionModel, ClusterModel, ChargebackReportModel, ClusterServiceClassModel } from './models';
+import { SelfSubjectAccessReviewModel, ChannelOperatorConfigModel, PrometheusModel, ClusterServiceVersionModel, ClusterModel, ChargebackReportModel, ClusterServiceClassModel, PackageManifestModel } from './models';
 import { k8sBasePath, referenceForModel } from './module/k8s/k8s';
 import { k8sCreate } from './module/k8s/resource';
 import { types } from './module/k8s/k8s-actions';
@@ -47,6 +47,7 @@ export enum FLAGS {
   CAN_CREATE_PROJECT = 'CAN_CREATE_PROJECT',
   PROJECTS_AVAILABLE = 'PROJECTS_AVAILABLE',
   SERVICE_CATALOG = 'SERVICE_CATALOG',
+  KUBERNETES_MARKETPLACE = 'KUBERNETES_MARKETPLACE',
 }
 
 export const DEFAULTS_ = _.mapValues(FLAGS, flag => flag === FLAGS.AUTH_ENABLED
@@ -61,6 +62,7 @@ export const CRDs = {
   [referenceForModel(ChargebackReportModel)]: FLAGS.CHARGEBACK,
   [referenceForModel(ClusterServiceClassModel)]: FLAGS.SERVICE_CATALOG,
   [referenceForModel(ClusterServiceVersionModel)]: FLAGS.OPERATOR_LIFECYCLE_MANAGER,
+  [referenceForModel(PackageManifestModel)]: FLAGS.KUBERNETES_MARKETPLACE,
 };
 
 const SET_FLAG = 'SET_FLAG';
