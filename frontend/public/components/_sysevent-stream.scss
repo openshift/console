@@ -113,7 +113,6 @@ $color-dark-border: #ddd;
 
 .co-sysevent__message {
   @include co-break-word;
-  cursor: help;
   margin-top: 10px;
   position: relative;
 }
