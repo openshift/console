@@ -212,6 +212,7 @@ const NavSection = connect(navSectionStateToProps)(
       }
 
       const { id, icon, img, text, children, activeNamespace, flags, href = null, activeImg, klass } = this.props;
+      const { isOpen } = this.state;
       const isActive = !!this.state.activeChild;
       // WARNING:
       // we transition on max-height because you can't transition to height 'inherit'
@@ -222,7 +223,6 @@ const NavSection = connect(navSectionStateToProps)(
       const maxHeight = !this.state.isOpen ? 0 : 29 * _.get(this.props.children, 'length', 1);
 
       const iconClassName = icon && `${icon} navigation-container__section__title__icon ${isActive ? 'navigation-container__section__title__icon--active' : ''}`;
-      const sectionClassName = isActive && href ? 'navigation-container__section navigation-container__section--active' : 'navigation-container__section';
 
       const Children = React.Children.map(children, c => {
         if (!c) {
@@ -238,22 +238,23 @@ const NavSection = connect(navSectionStateToProps)(
         return React.cloneElement(c, {key: name, isActive: name === this.state.activeChild, activeNamespace});
       });
 
-      return <div className={classNames(sectionClassName, klass)}>
-        <div id={id} className="navigation-container__section__title" onClick={this.toggle}>
+      return <div className={classNames('navigation-container__section', klass, {'navigation-container--active': isActive, 'navigation-container--open': isOpen})}>
+        <div id={id} className={classNames('navigation-container__section__title', {'navigation-container__section__title--active': isActive, 'navigation-container__section__title--active-closed': (isActive && !isOpen), 'navigation-container__section__title--active-open': (isActive && isOpen), 'navigation-container__section__title--inactive-open': (!isActive && isOpen)})} onClick={this.toggle}>
           {icon && <i className={iconClassName} aria-hidden="true"></i>}
           {img && <img src={isActive && activeImg ? activeImg : img} />}
           { !href
             ? text
             : <Link className="navigation-container__section__title__link" to={href} onClick={this.open}>{text}</Link>
           }
+          <i className={classNames('icon navigation-container__section__title__icon fa', isOpen ? 'fa-angle-down' : 'fa-angle-right')} aria-hidden="true" />
         </div>
-        {Children && <ul className="navigation-container__list" style={{maxHeight}}>{Children}</ul>}
+        {Children && <ul className={classNames('navigation-container__list', {'navigation-container__list--open': isOpen})} style={{maxHeight}}>{Children}</ul>}
       </div>;
     }
   }
 );
 
-const Sep = () => <div className="navigation-container__section__separator" />;
+const Sep = () => <div className="navigation-container__separator" />;
 
 // HrefLinks are PureComponents...
 const searchStartsWith = ['search'];
