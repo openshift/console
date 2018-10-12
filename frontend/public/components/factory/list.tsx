@@ -14,9 +14,9 @@ import {
   WindowScroller,
 } from 'react-virtualized';
 
-import { alertState, silenceState } from '../../module/monitoring';
 import { UIActions } from '../../ui/ui-actions';
 import { ingressValidHosts } from '../ingress';
+import { alertState, silenceState } from '../monitoring';
 import { routeStatus } from '../routes';
 import { secretTypeFilterReducer } from '../secret';
 import { bindingType, roleType } from '../RBAC';
