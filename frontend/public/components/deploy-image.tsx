@@ -89,7 +89,7 @@ export class DeployImage extends React.Component<DeployImageProps, DeployImageSt
       kind: 'ImageStreamImport',
       apiVersion: 'image.openshift.io/v1',
       metadata: {
-        name: 'search',
+        name: 'newapp',
         namespace
       },
       spec: {
@@ -205,7 +205,7 @@ export class DeployImage extends React.Component<DeployImageProps, DeployImageSt
             ],
             from: {
               kind: 'ImageStreamTag',
-              name: `${isi.name}:${isi.tag}`,
+              name: `${name}:${isi.tag}`,
               namespace
             }
           }
@@ -270,9 +270,10 @@ export class DeployImage extends React.Component<DeployImageProps, DeployImageSt
       spec: {
         tags: [{
           name: isi.tag,
-          annotations: _.assign({
+          annotations: {
+            ...annotations,
             'openshift.io/imported-from': isi.name
-          }, annotations),
+          },
           from: {
             kind: 'DockerImage',
             name: isi.name
