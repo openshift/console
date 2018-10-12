@@ -242,4 +242,52 @@ describe('Interacting with the create secret forms', () => {
       await crudView.deleteResource('secrets', 'Secret', uploadConfigFileImageSecretName);
     });
   });
+
+  describe('Key/Value secrets', () => {
+    const keyValueSecretName = 'key-value-secret';
+    const key = 'key';
+    const value = 'value';
+    const key0 = 'key0';
+    const value0 = 'value0';
+    const key1 = 'key1';
+    const value1 = 'value1';
+    const keyUpdated = 'keyUpdated';
+    const valueUpdated = 'valueUpdated';
+
+    beforeAll(async() => secretsView.visitSecretsPage(appHost, testName));
+
+    it('creates Key/Value secret', async() => {
+      await secretsView.createSecret(secretsView.createGenericSecretLink, testName, keyValueSecretName, async() => {
+        await browser.wait(until.presenceOf(secretsView.addSecretEntryLink));
+        await secretsView.addSecretEntryLink.click();
+        await secretsView.genericSecretForm.each(async(el, index) => {
+          await el.$('input[name=key]').sendKeys(key + index);
+          await el.$('.co-file-dropzone__textarea').sendKeys(value + index);
+        });
+      });
+    });
+
+    it('check for created Key/Value secret values', async() => {
+      await secretsView.checkSecret(testName, keyValueSecretName, {[key0]: value0, [key1]: value1});
+    });
+
+    it('edits Key/Value secret', async() => {
+      await secretsView.editSecret(testName, keyValueSecretName, async() => {
+        await browser.wait(until.presenceOf(secretsView.removeSecretEntryLink));
+        await secretsView.removeSecretEntryLink.click();
+        await secretsView.secretKeyInput.clear();
+        await secretsView.secretKeyInput.sendKeys(keyUpdated);
+        await secretsView.uploadFileTextArea.clear();
+        await secretsView.uploadFileTextArea.sendKeys(valueUpdated);
+      });
+    });
+
+    it('check for edited Key/Value secret values', async() => {
+      await secretsView.checkSecret(testName, keyValueSecretName, {[keyUpdated]: valueUpdated});
+    });
+
+    it('deletes the Key/Value secret', async() => {
+      await crudView.deleteResource('secrets', 'Secret', keyValueSecretName);
+    });
+  });
 });
