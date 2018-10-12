@@ -100,7 +100,7 @@ describe('Interacting with the etcd OCS', () => {
     const newContent = defaultsDeep({}, {metadata: {name: `${testName}-etcdcluster`, labels: {[testLabel]: testName}}}, safeLoad(content));
     await yamlView.setContent(safeDump(newContent));
 
-    expect($('.yaml-editor__header').getText()).toEqual('Create Etcd Cluster');
+    expect($('.yaml-editor__header').getText()).toContain('Create Etcd Cluster');
   });
 
   it('displays new `EtcdCluster` that was created from YAML editor', async() => {
@@ -150,7 +150,7 @@ describe('Interacting with the etcd OCS', () => {
     const newContent = defaultsDeep({}, {metadata: {name: `${testName}-etcdbackup`, labels: {[testLabel]: testName}}}, safeLoad(content));
     await yamlView.setContent(safeDump(newContent));
 
-    expect($('.yaml-editor__header').getText()).toEqual('Create Etcd Backup');
+    expect($('.yaml-editor__header').getText()).toContain('Create Etcd Backup');
   });
 
   it('displays new `EtcdBackup` that was created from YAML editor', async() => {
@@ -200,7 +200,7 @@ describe('Interacting with the etcd OCS', () => {
     const newContent = defaultsDeep({}, {metadata: {name: `${testName}-etcdrestore`, labels: {[testLabel]: testName}}}, safeLoad(content));
     await yamlView.setContent(safeDump(newContent));
 
-    expect($('.yaml-editor__header').getText()).toEqual('Create Etcd Restore');
+    expect($('.yaml-editor__header').getText()).toContain('Create Etcd Restore');
   });
 
   it('displays new `EtcdRestore` that was created from YAML editor', async() => {
