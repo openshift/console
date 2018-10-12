@@ -16,16 +16,19 @@ export const secretAddressInput = $('input[name=address]');
 export const secretUsernameInput = $('input[name=username]');
 export const secretPasswordInput = $('input[name=password]');
 export const secretEmailInput = $('input[name=email]');
+export const secretKeyInput = $('input[name=key]');
 
 export const uploadFileTextArea = $('.co-file-dropzone__textarea');
 
 export const createWebhookSecretLink = $('#webhook-link');
 export const createSourceSecretLink = $('#source-link');
 export const createImageSecretLink = $('#image-link');
+export const createGenericSecretLink = $('#generic-link');
 
 export const addSecretEntryLink = $('.co-create-secret-form__link--add-entry');
 export const removeSecretEntryLink = $('.co-create-secret-form__link--remove-entry .btn-link');
 export const imageSecretForm = $$('.co-create-image-secret__form');
+export const genericSecretForm = $$('.co-create-generic-secret__form');
 
 export const visitSecretsPage = async(appHost: string, ns: string) => {
   await browser.get(`${appHost}/k8s/ns/${ns}/secrets`);
