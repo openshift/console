@@ -6,7 +6,7 @@ import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 
 import { LoadingBox, LoadError } from './utils/status-box';
-import { Dropdown, Firehose, history, MsgBox, ResourceName, resourcePathFromModel } from './utils';
+import { Dropdown, Firehose, history, MsgBox, ResourceName } from './utils';
 import { BuildConfigModel, DeploymentConfigModel, ImageStreamModel, ImageStreamTagModel, RouteModel, ServiceModel } from '../models';
 import { ContainerPort, k8sCreate, k8sGet, K8sResourceKind } from '../module/k8s';
 import { ImageStreamIcon } from './catalog-item-icon';
@@ -374,7 +374,7 @@ class BuildSource extends React.Component<BuildSourceProps, BuildSourceState> {
     Promise.all(requests).then(() => {
       this.setState({inProgress: false});
       if (!this.state.error) {
-        history.push(resourcePathFromModel(DeploymentConfigModel, this.state.name, this.state.namespace));
+        history.push(`/overview/ns/${this.state.namespace}`);
       }
     }).catch(() => this.setState({inProgress: false}));
   };
