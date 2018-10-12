@@ -20,7 +20,7 @@ body,
 
 #content-scrollable {
   height: 100%;
-  overflow-x: hidden;
+  overflow-x: auto; // so catalog is scrollable at mobile
   overflow-y: auto;
   position: relative;
   -webkit-overflow-scrolling: touch;
