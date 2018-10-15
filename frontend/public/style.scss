@@ -11,6 +11,7 @@
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/mixins";
 @import "~patternfly-react/dist/sass/patternfly-react";
 @import '~patternfly-react-extensions/dist/sass/patternfly-react-extensions';
+@import '~patternfly-react/dist/sass/modeless-overlay';
 @import "~font-awesome-sass/assets/stylesheets/font-awesome/variables";
 @import "~xterm/dist/addons/fullscreen/fullscreen";
 @import "~openshift-logos-icon/style";
@@ -98,3 +99,4 @@
 @import "components/source-to-image";
 @import "components/routes/create-route";
 @import "components/storage-class-form";
+@import "components/marketplace/marketplace";

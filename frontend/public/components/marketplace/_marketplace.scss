@@ -1,0 +1,19 @@
+.co-marketplace-modal {
+  &__body {
+    display: flex;
+  }
+
+  &__item-header {
+    float: left;
+  }
+
+  &__description {
+    flex: 1;
+    padding-left: 20px;
+  }
+  
+  &__subscribe {
+    margin-bottom: 20px;
+    width: 100%;
+  }
+}

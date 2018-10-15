@@ -1,37 +1,47 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import * as PropTypes from 'prop-types';
-import { Helmet } from 'react-helmet';
+import {Helmet} from 'react-helmet';
+import {CatalogTileView} from 'patternfly-react-extensions/dist/esm/components/CatalogTileView';
+import {CatalogTile} from 'patternfly-react-extensions/dist/esm/components/CatalogTile';
 
 import {Firehose, PageHeading, StatusBox} from '../utils';
 import {referenceForModel} from '../../module/k8s';
 import {normalizeIconClass} from '../catalog-item-icon';
 import {PackageManifestModel} from '../../models';
-import CatalogTileView from 'patternfly-react-extensions/dist/esm/components/CatalogTileView/CatalogTileView';
-import CatalogTile from 'patternfly-react-extensions/dist/esm/components/CatalogTile/CatalogTile';
+import {MarketplaceItemModal} from './marketplace-item-modal';
 
 const normalizePackageManifests = (packageManifests, kind) => {
   const activePackageManifests = _.filter(packageManifests, packageManifest => {
     return !packageManifest.status.removedFromBrokerCatalog;
   });
   return _.map(activePackageManifests, packageManifest => {
-    const tileName = packageManifest.metadata.name;
+    const itemName = packageManifest.metadata.name;
     const iconClass = 'fa fa-clone'; // TODO: get this info from the packagemanifest
     const iconObj = _.get(packageManifest, 'status.channels[0].currentCSVDesc.icon[0]');
-    const tileImgUrl = iconObj && `data:${iconObj.mediatype};base64,${iconObj.base64data}`;
-    const tileIconClass = tileImgUrl ? null : iconClass;
-    const tileDescription = packageManifest.metadata.description;
-    const tileProvider = _.get(packageManifest, 'metadata.labels.provider');
+    const itemImgUrl = iconObj && `data:${iconObj.mediatype};base64,${iconObj.base64data}`;
+    const itemIconClass = itemImgUrl ? null : iconClass;
+    const provider = _.get(packageManifest, 'metadata.labels.provider');
     const tags = packageManifest.metadata.tags;
+    const version = _.get(packageManifest, 'status.channels[0].currentCSVDesc.version');
+    const currentCSVAnnotations = _.get(packageManifest, 'status.channels[0].currentCSVDesc.annotations', {});
+    const { description, certifiedLevel, healthIndex, repository, containerImage, createdAt, support } = currentCSVAnnotations;
     return {
       obj: packageManifest,
       kind,
-      tileName,
-      tileIconClass,
-      tileImgUrl,
-      tileDescription,
-      tileProvider,
+      itemName,
+      itemIconClass,
+      itemImgUrl,
+      description,
+      provider,
       tags,
+      version,
+      certifiedLevel,
+      healthIndex,
+      repository,
+      containerImage,
+      createdAt,
+      support,
     };
   });
 };
@@ -43,13 +53,15 @@ const getItems = (props) => {
     return [];
   }
   packageManifestItems = normalizePackageManifests(packagemanifests.data, 'PackageManifest');
-  return _.sortBy([...packageManifestItems], 'tileName');
+  return _.sortBy([...packageManifestItems], 'itemName');
 };
 
 class MarketplaceListPage extends React.Component {
   constructor() {
     super();
-    this.state = {};
+    this.state = {
+      selectedItem: null
+    };
   }
 
   static getDerivedStateFromProps(props, state) {
@@ -60,24 +72,37 @@ class MarketplaceListPage extends React.Component {
     }
   }
 
+  openOverlay(item) {
+    this.setState({
+      selectedItem : item
+    });
+  }
+
+  closeOverlay() {
+    this.setState({
+      selectedItem : null
+    });
+  }
+
   renderTiles() {
     const {items} = this.state;
 
     return (
       <CatalogTileView.Category totalItems={items.length} viewAll={true}>
         {_.map(items, ((item) => {
-          const {obj, tileName, tileImgUrl, tileIconClass, tileProvider, tileDescription} = item;
+          const {obj, itemName, itemImgUrl, itemIconClass, provider, description} = item;
           const uid = obj.metadata.uid;
-          const iconClass = tileIconClass ? `icon ${normalizeIconClass(tileIconClass)}` : null;
-          const vendor = tileProvider ? `Provided by ${tileProvider}` : null;
+          const iconClass = itemIconClass ? `icon ${normalizeIconClass(itemIconClass)}` : null;
+          const vendor = provider ? `Provided by ${provider}` : null;
           return <CatalogTile
             id={uid}
             key={uid}
-            title={tileName}
-            iconImg={tileImgUrl}
+            title={itemName}
+            iconImg={itemImgUrl}
             iconClass={iconClass}
             vendor={vendor}
-            description={tileDescription}
+            description={description}
+            onClick={() => this.openOverlay(item)}
           />;
         }))}
       </CatalogTileView.Category>
@@ -86,7 +111,7 @@ class MarketplaceListPage extends React.Component {
 
   render() {
     const {loaded, loadError} = this.props;
-    const {items} = this.state;
+    const {items, selectedItem} = this.state;
     return <StatusBox data={items} loaded={loaded} loadError={loadError} label="Resources">
       <div className="co-catalog-page">
         <div className="co-catalog-page__content">
@@ -94,6 +119,8 @@ class MarketplaceListPage extends React.Component {
           <CatalogTileView>
             {this.renderTiles()}
           </CatalogTileView>
+          {selectedItem &&
+          <MarketplaceItemModal item={selectedItem} close={() => this.closeOverlay()} openSubscribe={/* TODO */} />}
         </div>
       </div>
     </StatusBox>;
