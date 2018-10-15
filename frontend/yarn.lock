@@ -8154,25 +8154,25 @@ patternfly-bootstrap-treeview@~2.1.0:
     bootstrap "3.3.x"
     jquery ">= 2.1.x"
 
-patternfly-react-extensions@2.8.1:
-  version "2.8.1"
-  resolved "https://registry.yarnpkg.com/patternfly-react-extensions/-/patternfly-react-extensions-2.8.1.tgz#bdbf1ebe9b046bdd2ae80fad68be69338ee76ffd"
+patternfly-react-extensions@2.9.1:
+  version "2.9.1"
+  resolved "https://registry.yarnpkg.com/patternfly-react-extensions/-/patternfly-react-extensions-2.9.1.tgz#ccc0eb393adc7897f5c25d45ac397e7dab1056f6"
   dependencies:
     breakjs "^1.0.0"
     classnames "^2.2.5"
     css-element-queries "^1.0.1"
     patternfly "^3.52.1"
-    patternfly-react "^2.15.0"
+    patternfly-react "^2.21.0"
 
-patternfly-react@^2.15.0:
-  version "2.19.1"
-  resolved "https://registry.yarnpkg.com/patternfly-react/-/patternfly-react-2.19.1.tgz#38ddbd09f2d3914051a3b3e4a0918c8b1cc00408"
+patternfly-react@^2.16.0:
+  version "2.16.0"
+  resolved "https://registry.yarnpkg.com/patternfly-react/-/patternfly-react-2.16.0.tgz#5268662e2a7e795e63467e3ccdff3005eef2a67b"
   dependencies:
     bootstrap-slider-without-jquery "^10.0.0"
     breakjs "^1.0.0"
     classnames "^2.2.5"
     css-element-queries "^1.0.1"
-    patternfly "^3.52.4"
+    patternfly "^3.52.1"
     react-bootstrap "^0.32.1"
     react-bootstrap-switch "^15.5.3"
     react-bootstrap-typeahead "^3.1.3"
@@ -8187,15 +8187,15 @@ patternfly-react@^2.15.0:
     sortabular "^1.5.1"
     table-resolver "^3.2.0"
 
-patternfly-react@^2.16.0:
-  version "2.16.0"
-  resolved "https://registry.yarnpkg.com/patternfly-react/-/patternfly-react-2.16.0.tgz#5268662e2a7e795e63467e3ccdff3005eef2a67b"
+patternfly-react@^2.21.0:
+  version "2.21.1"
+  resolved "https://registry.yarnpkg.com/patternfly-react/-/patternfly-react-2.21.1.tgz#620db1a5efe7c48f6fd5e0dafc52da986867965b"
   dependencies:
     bootstrap-slider-without-jquery "^10.0.0"
     breakjs "^1.0.0"
     classnames "^2.2.5"
     css-element-queries "^1.0.1"
-    patternfly "^3.52.1"
+    patternfly "^3.52.4"
     react-bootstrap "^0.32.1"
     react-bootstrap-switch "^15.5.3"
     react-bootstrap-typeahead "^3.1.3"
