@@ -79,7 +79,10 @@
 
     @media(min-width: $screen-lg-min) {
       .overview__main-column {
-        width: calc(100% - 505px);
+        width: calc(100% - 535px);
+        .co-m-pane__body {
+          padding-right: 0;
+        }
       }
 
       .overview__sidebar {
