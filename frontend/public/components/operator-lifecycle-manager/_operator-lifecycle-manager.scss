@@ -1,36 +1,11 @@
-$clusterserviceversion-list-border: #ccc;
-
 .co-clusterserviceversion-list {
   display: flex;
   flex-wrap: wrap;
   margin: 0 -7.5px 0;
 }
 
-.co-clusterserviceversion-list__tile {
-  padding: 0 7.5px 15px;
-  width: 100%;
-  @media (min-width: $screen-sm) {
-    width: 50%;
-  }
-  @media (min-width: $screen-md) {
-    width: 33.333%;
-  }
-  @media (min-width: 1920px) {
-    width: 25%;
-  }
-}
-
-.co-clusterserviceversion-list-item {
-  border: 1px solid $clusterserviceversion-list-border;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: 20px;
-  height: 200px;
-}
-
-.co-clusterserviceversion-list-item--error {
-  border: 1px solid #dd1326;
+.co-clusterserviceversion-details__field {
+  padding-bottom: 10px;
 }
 
 .co-clusterserviceversion-logo {
@@ -67,17 +42,42 @@ $clusterserviceversion-list-border: #ccc;
   font-size: 13px;
 }
 
-.co-clusterserviceversion-list-item__actions {
-  align-items: center;
+.co-crd-card-row {
   display: flex;
-  justify-content: space-between;
+  flex-wrap: wrap;
+  margin-bottom: 15px;
 }
 
-.co-clusterserviceversion-list-item__description {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  padding: 10px 0;
+.co-crd-card {
+  border: 1px solid rgba(209,209,209,0.75);
+  box-shadow: 0 1px 1px rgba(3,3,3,0.175);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 0 15px;
+  max-width: 300px;
+  min-width: 300px;
+  margin: 0 10px 20px 10px;
+}
+
+.co-crd-card:hover {
+  box-shadow: 0 1px 10px rgba(3,3,3,0.175);
+}
+
+.co-crd-card__title {
+  margin: 15px 0;
+  padding: 0;
+}
+
+.co-crd-card__body {
+  padding: 0 0 15px;
+}
+
+.co-crd-card__footer {
+  background-color: $color-pf-black-100;
+  border-top: 1px solid $color-pf-black-300;
+  margin: 0 -15px !important;
+  padding: 7.5px 15px;
 }
 
 .co-clusterserviceversion-resource-details__compact-expand {
@@ -88,64 +88,6 @@ $clusterserviceversion-list-border: #ccc;
 
 .co-clusterserviceversion-resource-details__section--info dd {
   margin-bottom: 20px;
-}
-
-.co-clusterserviceversion-details {
-  display: flex;
-  flex-wrap: wrap;
-}
-
-.co-clusterserviceversion-details__section--info {
-  display: flex;
-  flex-direction: column;
-  @media (min-width: 768px) {
-    width: 33%;
-  }
-  @media (min-width: 1024px) {
-    width: 25%;
-  }
-  @media (min-width: 1280px) {
-    width: 20%;
-  }
-  @media (min-width: 1440px) {
-    width: 20%;
-  }
-  @media (min-width: 1920px) {
-    width: 20%;
-  }
-}
-
-.co-clusterserviceversion-details__section--info__item {
-  margin-bottom: 15px;
-}
-
-.co-clusterserviceversion-details__section--description {
-  display: flex;
-  flex-direction: column;
-  @media (min-width: 768px) {
-    width: 66%;
-  }
-  @media (min-width: 1024px) {
-    width: 75%;
-  }
-  @media (min-width: 1280px) {
-    width: 80%;
-  }
-  @media (min-width: 1440px) {
-    width: 80%;
-  }
-  @media (min-width: 1920px) {
-    width: 80%;
-  }
-}
-
-.co-clusterserviceversion-detail__error-box {
-  padding: 10px;
-  border: 1px solid #dd1326;
-  background: #ffe6e6;
-  color: #dd1326;
-  font-size: 14px;
-  margin-bottom: 10px;
 }
 
 .co-catalog-install-modal .modal-header .co-clusterserviceversion-logo__icon {
@@ -200,9 +142,4 @@ $clusterserviceversion-list-border: #ccc;
   display: flex;
   align-items: center;
   height: 25px;
-}
-
-.step--present {
-  color: $color-pf-green-400;
-
 }

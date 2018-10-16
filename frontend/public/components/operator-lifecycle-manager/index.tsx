@@ -72,6 +72,15 @@ export type CRDDescription = {
   }[];
 };
 
+export type RequirementStatus = {
+  group: string;
+  version: string;
+  kind: string;
+  name: string;
+  status: string;
+  uuid?: string;
+};
+
 export type ClusterServiceVersionKind = {
   spec: {
     install: {
@@ -90,6 +99,7 @@ export type ClusterServiceVersionKind = {
   status?: {
     phase: ClusterServiceVersionPhase;
     reason: CSVConditionReason;
+    requirementStatus?: RequirementStatus[];
   };
 } & K8sResourceKind;
 

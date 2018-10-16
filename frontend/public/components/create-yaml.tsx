@@ -36,7 +36,7 @@ export const CreateYAML = connectToPlural((props: CreateYAMLProps) => {
   }
 
   // TODO: if someone edits namespace, we'll redirect to old namespace
-  const redirectURL = params.appName ? `/k8s/ns/${namespace}/${ClusterServiceVersionModel.plural}/${params.appName}/instances` : null;
+  const redirectURL = params.appName ? `/k8s/ns/${namespace}/${ClusterServiceVersionModel.plural}/${params.appName}/${referenceForModel(kindObj)}` : null;
 
   return <AsyncComponent loader={() => import('./edit-yaml').then(c => c.EditYAML)} obj={obj} create={true} kind={kindObj.kind} redirectURL={redirectURL} showHeader={showHeader} />;
 });
