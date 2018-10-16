@@ -1,7 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import * as PropTypes from 'prop-types';
-import {Link} from 'react-router-dom';
 import {CatalogTileView} from 'patternfly-react-extensions/dist/esm/components/CatalogTileView';
 import {CatalogTile} from 'patternfly-react-extensions/dist/esm/components/CatalogTile';
 import {VerticalTabs} from 'patternfly-react-extensions/dist/esm/components/VerticalTabs';
@@ -244,15 +243,17 @@ export class CatalogTileViewPage extends React.Component {
         const uid = obj.metadata.uid;
         const iconClass = tileIconClass ? `icon ${normalizeIconClass(tileIconClass)}` : null;
         const vendor = tileProvider ? `Provided by ${tileProvider}` : null;
-        const catalogTile = <CatalogTile
-          id={uid}
-          key={uid}
-          title={tileName}
-          iconImg={tileImgUrl}
-          iconClass={iconClass}
-          vendor={vendor}
-          description={tileDescription} />;
-        return href ? <Link key={uid} className="co-catalog-item-tile" to={href}>{catalogTile}</Link> : catalogTile;
+        return (
+          <CatalogTile
+            id={uid}
+            key={uid}
+            href={href}
+            title={tileName}
+            iconImg={tileImgUrl}
+            iconClass={iconClass}
+            vendor={vendor}
+            description={tileDescription} />
+        );
       }))}
     </CatalogTileView.Category>;
   }
