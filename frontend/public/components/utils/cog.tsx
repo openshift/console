@@ -63,6 +63,10 @@ const cogFactory: CogFactory = {
     label: `${kind.kind === 'Pod' ? 'View' : 'Edit'} Environment`,
     href: `${resourceObjPath(obj, kind.crd ? referenceForModel(kind) : kind.kind)}/environment`,
   }),
+  AddStorage: (kind, obj) => ({
+    label: 'Add Storage',
+    href: `${resourceObjPath(obj, kind.crd ? referenceForModel(kind) : kind.kind)}/attach-storage`,
+  }),
 };
 
 // The common menu actions that most resource share

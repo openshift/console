@@ -277,7 +277,8 @@ class ListDropdown_ extends React.Component {
   }
 }
 
-const ListDropdown = props => {
+// TODO: Move into separate module.
+export const ListDropdown = props => {
   const resources = _.map(props.resources, resource => _.assign({ isList: true, prop: resource.kind }, resource));
   return <Firehose resources={resources}>
     <ListDropdown_ {...props} />
@@ -307,6 +308,7 @@ const NsDropdown_ = props => {
   const resources = [{ kind }];
   return <ListDropdown {...props} desc="Namespaces" resources={resources} selectedKeyKind={kind} placeholder="Select namespace" />;
 };
+// TODO: Move into separate module.
 export const NsDropdown = connectToFlags(FLAGS.OPENSHIFT)(NsDropdown_);
 
 const NsRoleDropdown_ = props => {

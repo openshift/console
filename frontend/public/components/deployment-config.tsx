@@ -54,11 +54,12 @@ const rolloutAction = (kind, obj) => ({
   }),
 });
 
-const {ModifyCount, EditEnvironment, common} = Cog.factory;
+const {ModifyCount, AddStorage, EditEnvironment, common} = Cog.factory;
 
 const menuActions = [
   rolloutAction,
   ModifyCount,
+  AddStorage,
   EditEnvironment,
   ...common,
 ];
