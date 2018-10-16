@@ -70,7 +70,7 @@ const ImageStreamInfo: React.SFC<ImageStreamInfoProps> = ({imageStream, tag}) =>
   </div>;
 };
 
-class BuildSource extends React.Component<BuildSourceProps, BuildSourceState> {
+export class BuildSource extends React.Component<BuildSourceProps, BuildSourceState> {
   constructor (props) {
     super(props);
 

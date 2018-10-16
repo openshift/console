@@ -7,9 +7,13 @@ import {VerticalTabs} from 'patternfly-react-extensions/dist/esm/components/Vert
 import {FilterSidePanel} from 'patternfly-react-extensions/dist/esm/components/FilterSidePanel';
 import {EmptyState} from 'patternfly-react/dist/esm/components/EmptyState';
 import FormControl from 'patternfly-react/dist/esm/components/Form/FormControl';
+import {Modal} from 'patternfly-react/dist/esm/components/Modal';
 
 import {normalizeIconClass} from './catalog-item-icon';
 import {categorizeItems, recategorizeItems} from './utils/categorize-catalog-items';
+import {Firehose} from './utils';
+import {BuildSource} from './source-to-image';
+import {CreateInstance} from './service-catalog/create-instance';
 
 export class CatalogTileViewPage extends React.Component {
   constructor(props) {
@@ -51,7 +55,11 @@ export class CatalogTileViewPage extends React.Component {
       activeTabs,
       filters,
       filterCounts,
+      showOverlay: false,
     });
+
+    this.onTileClick = this.onTileClick.bind(this);
+    this.onClose = this.onClose.bind(this);
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -225,6 +233,52 @@ export class CatalogTileViewPage extends React.Component {
     this.syncTabsAndTiles(category, parent);
   }
 
+  getOverlayContent(href, name) {
+    // get the params from the href
+    let regex = /[?&]([^=#]+)=([^&#]*)/g,
+        url = href,
+        params = {},
+        match;
+    while ((match = regex.exec(url))) {
+      params[match[1]] = match[2];
+    }
+
+    let overlayContent;
+    if (href.includes('source-to-image')) {
+      overlayContent = <div className="co-m-pane__body">
+        <h1 className="co-m-pane__heading">Create Source-to-Image Application</h1>
+        <Firehose resources={[{kind: 'ImageStream', name: params.imagestream, namespace: params['imagestream-ns'], isList: false, prop: 'obj'}]}>
+          <BuildSource preselectedNamespace={params['preselected-ns']} />
+        </Firehose>
+      </div>;
+    } else if (href.includes('create-instance')) {
+      overlayContent = <Firehose resources={[
+        {kind: 'ClusterServiceClass', name, isList: false, prop: 'obj'},
+        {kind: 'ClusterServicePlan', isList: true, prop: 'plans', fieldSelector: `spec.clusterServiceClassRef.name=${name}`},
+      ]}>
+        <CreateInstance preselectedNamespace={params['preselected-ns']} />
+      </Firehose>;
+    }
+
+    this.setState({overlayContent});
+  }
+
+  onTileClick(href, name, e) {
+    // if the viewport is not mobile (larger than 767px wide), open the clicked tile in the overlay
+    if ((Math.max(document.documentElement.clientWidth, window.innerWidth || 0)) > 767 ) {
+      e.preventDefault();
+      this.getOverlayContent(href, name);
+      this.setState({ showOverlay: true });
+    }
+  }
+
+  onClose() {
+    this.setState({
+      showOverlay: false,
+      overlayContent: null,
+    });
+  }
+
   renderCategoryTiles(category) {
     const { showAllItemsForCategory } = this.state;
     const { id, label, parentCategory, items } = category;
@@ -241,6 +295,7 @@ export class CatalogTileViewPage extends React.Component {
       {_.map(items, ((item) => {
         const { obj, tileName, tileImgUrl, tileIconClass, tileProvider, tileDescription, href } = item;
         const uid = obj.metadata.uid;
+        const name = obj.metadata.name;
         const iconClass = tileIconClass ? `icon ${normalizeIconClass(tileIconClass)}` : null;
         const vendor = tileProvider ? `Provided by ${tileProvider}` : null;
         return (
@@ -252,7 +307,8 @@ export class CatalogTileViewPage extends React.Component {
             iconImg={tileImgUrl}
             iconClass={iconClass}
             vendor={vendor}
-            description={tileDescription} />
+            description={tileDescription}
+            onClick={(e) => this.onTileClick(href, name, e)} />
         );
       }))}
     </CatalogTileView.Category>;
@@ -322,7 +378,7 @@ export class CatalogTileViewPage extends React.Component {
   }
 
   render() {
-    const { activeTabs, showAllItemsForCategory, currentCategories, numItems, filters, filterCounts } = this.state;
+    const { activeTabs, showAllItemsForCategory, currentCategories, numItems, filters, filterCounts, showOverlay, overlayContent } = this.state;
     const { clusterServiceClass, imageStream } = filters.byType;
     const { clusterServiceClasses, imageStreams } = filterCounts.byType;
     const activeCategory = showAllItemsForCategory ? _.find(currentCategories, { id: showAllItemsForCategory }) : null;
@@ -380,6 +436,14 @@ export class CatalogTileViewPage extends React.Component {
           </EmptyState>
           }
         </div>
+        <Modal show={showOverlay} onHide={this.onClose} bsSize="large" className="co-catalog-page__overlay right-side-modal-pf">
+          <Modal.Header>
+            <Modal.CloseButton onClick={this.onClose} />
+          </Modal.Header>
+          <Modal.Body>
+            {overlayContent}
+          </Modal.Body>
+        </Modal>
       </div>
     );
   }
