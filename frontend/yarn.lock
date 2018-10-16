@@ -1720,12 +1720,6 @@ bootstrap-select@1.12.2:
   dependencies:
     jquery ">=1.8"
 
-bootstrap-select@^1.12.2:
-  version "1.12.4"
-  resolved "https://registry.yarnpkg.com/bootstrap-select/-/bootstrap-select-1.12.4.tgz#7f15d3c0ce978868d9c09c70f96624f55fa02ee1"
-  dependencies:
-    jquery ">=1.8"
-
 bootstrap-slider-without-jquery@^10.0.0:
   version "10.0.0"
   resolved "https://registry.yarnpkg.com/bootstrap-slider-without-jquery/-/bootstrap-slider-without-jquery-10.0.0.tgz#5c304461b3b915037c7c118806c8ca08102f5de3"
@@ -8210,37 +8204,7 @@ patternfly-react@^2.21.0:
     sortabular "^1.5.1"
     table-resolver "^3.2.0"
 
-patternfly@^3.45.0:
-  version "3.45.0"
-  resolved "https://registry.yarnpkg.com/patternfly/-/patternfly-3.45.0.tgz#5b27bde3e3ef68a1542906b96016654aa089a7f3"
-  dependencies:
-    bootstrap "~3.3.7"
-    font-awesome "^4.7.0"
-    jquery "~3.2.1"
-  optionalDependencies:
-    bootstrap-datepicker "^1.7.1"
-    bootstrap-sass "^3.3.7"
-    bootstrap-select "^1.12.2"
-    bootstrap-slider "^9.9.0"
-    bootstrap-switch "~3.3.4"
-    bootstrap-touchspin "~3.1.1"
-    c3 "~0.4.11"
-    d3 "~3.5.17"
-    datatables.net "^1.10.15"
-    datatables.net-colreorder "^1.4.1"
-    datatables.net-colreorder-bs "~1.3.2"
-    datatables.net-select "~1.2.0"
-    drmonty-datatables-colvis "~1.1.2"
-    eonasdan-bootstrap-datetimepicker "^4.17.47"
-    font-awesome-sass "^4.7.0"
-    google-code-prettify "~1.0.5"
-    jquery-match-height "^0.7.2"
-    moment "^2.19.1"
-    moment-timezone "^0.4.1"
-    patternfly-bootstrap-combobox "~1.1.7"
-    patternfly-bootstrap-treeview "~2.1.0"
-
-patternfly@^3.52.1, patternfly@^3.52.4:
+patternfly@^3.52.1, patternfly@^3.52.4, patternfly@^3.54.8:
   version "3.54.8"
   resolved "https://registry.yarnpkg.com/patternfly/-/patternfly-3.54.8.tgz#fd6c69714dc460575d2534c9f29017a58b442a83"
   dependencies:
