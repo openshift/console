@@ -51,10 +51,10 @@ class DeleteModal extends PromiseComponent {
           <p className="lead">Delete {resource.metadata.name}?</p>
           <div>Are you sure you want to delete <strong>{resource.metadata.name}</strong>
             {_.has(resource.metadata, 'namespace') && <span> in namespace <strong>{ resource.metadata.namespace }</strong>?</span>}
-            {_.has(kind, 'propagationPolicy') && <div className="co-delete-modal__checkbox">
-              <label className="co-delete-modal__checkbox-label">
+            {_.has(kind, 'propagationPolicy') && <div className="checkbox">
+              <label className="control-label">
                 <input type="checkbox" onChange={() => this.setState({isChecked: !this.state.isChecked})} checked={!!this.state.isChecked} />
-                &nbsp;&nbsp; <span>Delete dependent objects of this resource</span>
+                Delete dependent objects of this resource
               </label>
             </div>}
           </div>
