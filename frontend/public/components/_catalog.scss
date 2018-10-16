@@ -1,6 +1,16 @@
 $catalog-item-icon-size-lg: 40px;
 $catalog-item-icon-size-sm: 24px;
 
+// reset font size back to 13px since console h5 font size is 15px
+.catalog-item-header-pf-subtitle {
+  font-size: 13px;
+}
+
+// reset font size back to 24px since console h1 font size is 26px
+.catalog-item-header-pf-title {
+  font-size: 24px;
+}
+
 // reset font size back to 12px since console base font size is 13px
 .catalog-tile-pf-description,
 .catalog-tile-pf-body .catalog-tile-pf-subtitle {
@@ -92,6 +102,45 @@ $catalog-item-icon-size-sm: 24px;
     font-weight: 700;
     margin: 0 0 $grid-gutter-width 0;
     padding: 0 0 20px;
+  }
+
+  // Enable scrolling on the modal
+  &__overlay {
+    .modal-body {
+      flex: 1 1 auto;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .modal-content {
+      display: flex;
+      flex-direction: column;
+    }
+  }
+
+  &__overlay-body {
+    margin: 15px 0 0;
+    @media(min-width: $screen-sm-min) {
+      display: flex;
+    }
+  }
+
+  &__overlay-create {
+    margin-bottom: 20px;
+    width: 100%;
+  }
+
+  &__overlay-description {
+    margin: 20px 0 0;
+    white-space: pre-wrap;
+    // TODO: find fix for urls that don't wrap
+    // fix below causes undesirable wrapping on non-urls
+    // word-break: break-all;
+
+    @media(min-width: $screen-sm-min) {
+        flex: 1 1 auto;
+        margin-left: 20px;
+        margin-top: 0;
+      }
   }
 
   &__tabs {
