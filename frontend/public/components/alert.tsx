@@ -46,6 +46,11 @@ const silenceAction = alert => ({
   href: `${SilenceResource.path}/new?${labelsToParams(alert.labels)}`,
 });
 
+const viewRuleAction = alert => ({
+  label: 'View Alert Rule',
+  href: ruleURL(alert.rule),
+});
+
 const AlertmanagerLink_ = ({text, urls}) => <ExternalLink href={urls[MonitoringRoutes.AlertManager]} text={text} />;
 export const AlertmanagerLink = connectToURLs(MonitoringRoutes.AlertManager)(AlertmanagerLink_);
 
@@ -112,13 +117,19 @@ class MonitoringPageWrapper extends SafetyFirst<AlertsPageWrapperProps, null> {
         return _.filter(g.rules, {type: 'alerting'}).map(addID);
       });
 
-      return {
-        asRules: rules,
-        asAlerts: _.flatMap(rules, rule => {
-          // Give the alerts a name field matching their rule
-          return _.isEmpty(rule.alerts) ? rule : rule.alerts.map(a => ({name: rule.name, rule, ...a}));
-        }),
-      };
+      // If a rule is inactive (has no active alerts), create a "fake" alert with state "inactive"
+      const asAlerts = _.flatMap(rules, rule => _.isEmpty(rule.alerts)
+        ? {
+          annotations: rule.annotations,
+          id: rule.id,
+          labels: {alertname: rule.name, ...rule.labels},
+          rule,
+          state: 'inactive',
+        }
+        : rule.alerts.map(a => ({rule, ...a}))
+      );
+
+      return {asAlerts, asRules: rules};
     });
 
     if (!alertManagerBaseURL) {
@@ -150,28 +161,25 @@ class MonitoringPageWrapper extends SafetyFirst<AlertsPageWrapperProps, null> {
 }
 export const connectMonitoringPage = Page => withFallback(props => <MonitoringPageWrapper {...props} Page={Page} />);
 
-const alertStateToProps = (state, {match}): AlertsDetailsPageProps => {
+const alertStateToProps = (state): AlertsDetailsPageProps => {
   const {data, loaded, loadError}: Rules = monitoringRulesToProps(state);
-  const name = _.get(match, 'params.name');
   const labels = getURLSearchParams();
   const alert = _.find(data && data.asAlerts, {labels});
-  const rule = _.get(alert, 'rule') || _.find(data && data.asRules, {labels, name});
-  return {alert, loaded, loadError, name, rule};
+  return {alert, loaded, loadError};
 };
 
 const AlertsDetailsPage_ = connect(alertStateToProps)((props: AlertsDetailsPageProps) => {
-  const {alert, loaded, loadError, name, rule} = props;
-  const severity = _.get(alert, 'labels.severity');
-  const activeAt = _.get(alert, 'activeAt');
-  const annotations = _.get(alert, 'annotations', {});
+  const {alert, loaded, loadError} = props;
+  const {activeAt = '', annotations = {}, labels = {}, rule = null} = alert || {};
+  const {alertname, severity} = labels as any;
 
   return <React.Fragment>
     <Helmet>
-      <title>{`${name} · Details`}</title>
+      <title>{`${alertname} · Details`}</title>
     </Helmet>
     <div className="co-m-nav-title co-m-nav-title--detail">
       <h1 className="co-m-pane__heading">
-        <div className="co-m-pane__name"><MonitoringResourceIcon className="co-m-resource-icon--lg pull-left" resource={AlertResource} />{name}</div>
+        <div className="co-m-pane__name"><MonitoringResourceIcon className="co-m-resource-icon--lg pull-left" resource={AlertResource} />{alertname}</div>
         {alertState(alert) !== 'inactive' && <div className="co-actions">
           <ActionsMenu actions={[silenceAction(alert)]} />
         </div>}
@@ -185,7 +193,7 @@ const AlertsDetailsPage_ = connect(alertStateToProps)((props: AlertsDetailsPageP
             <div className="col-sm-6">
               <dl className="co-m-pane__details">
                 <dt>Name</dt>
-                <dd>{name}</dd>
+                <dd>{alertname}</dd>
                 {severity && <React.Fragment>
                   <dt>Severity</dt>
                   <dd>{_.startCase(severity)}</dd>
@@ -199,7 +207,7 @@ const AlertsDetailsPage_ = connect(alertStateToProps)((props: AlertsDetailsPageP
                 <dd>
                   <div className="co-resource-link">
                     <MonitoringResourceIcon resource={AlertRuleResource} />
-                    <Link to={ruleURL(rule)} className="co-resource-link__resource-name">{name}</Link>
+                    <Link to={ruleURL(rule)} className="co-resource-link__resource-name">{alertname}</Link>
                   </div>
                 </dd>
               </dl>
@@ -252,9 +260,9 @@ const ActiveAlerts = ({alerts}) => <div className="co-m-table-grid co-m-table-gr
         <Cog options={[silenceAction(a)]} />
         <Link className="co-resource-link" to={alertURL(a.labels.alertname, a.labels)}>{alertDescription(a)}</Link>
       </div>
-      <div className="col-xs-2"><Timestamp timestamp={a.activeAt} /></div>
-      <div className="col-xs-2"><State state={a.state} /></div>
-      <div className="col-xs-2">{a.value}</div>
+      <div className="col-xs-2 hidden-xs"><Timestamp timestamp={a.activeAt} /></div>
+      <div className="col-sm-2 col-xs-3"><State state={a.state} /></div>
+      <div className="col-sm-2 col-xs-3 co-break-word">{a.value}</div>
     </ResourceRow>)}
   </div>
 </div>;
@@ -269,7 +277,7 @@ const ruleStateToProps = (state, {match}): AlertRulesDetailsPageProps => {
 const AlertRulesDetailsPage_ = connect(ruleStateToProps)((props: AlertRulesDetailsPageProps) => {
   const {loaded, loadError, rule} = props;
   const {alerts = [], annotations = {}, duration = null, labels = {}, name = '', query = ''} = rule || {};
-  const severity = _.get(labels, 'severity');
+  const {severity} = labels as any;
   const breadcrumbs = [
     {name, path: alertURL(name, labels)},
     {name: `${AlertRuleResource.label} Details`, path: null},
@@ -339,18 +347,19 @@ const AlertRulesDetailsPage_ = connect(ruleStateToProps)((props: AlertRulesDetai
 export const AlertRulesDetailsPage = connectMonitoringPage(AlertRulesDetailsPage_);
 
 const AlertRow = ({obj}) => {
-  const {activeAt, annotations, labels, name} = obj;
+  const {activeAt, annotations = {}, labels = {}} = obj;
+  const {alertname} = labels;
 
   return <ResourceRow obj={obj}>
     <div className="col-xs-7">
       <div className="co-resource-link-wrapper">
-        {alertState(obj) !== 'inactive' && <Cog options={[silenceAction(obj)]} />}
+        <Cog options={alertState(obj) === 'inactive' ? [viewRuleAction(obj)] : [silenceAction(obj), viewRuleAction(obj)]} />
         <span className="co-resource-link">
           <MonitoringResourceIcon resource={AlertResource} />
-          <Link to={alertURL(name, labels)} className="co-resource-link__resource-name">{name}</Link>
+          <Link to={alertURL(alertname, labels)} className="co-resource-link__resource-name">{alertname}</Link>
         </span>
       </div>
-      <div className="monitoring-description">{_.get(annotations, 'description') || _.get(annotations, 'message')}</div>
+      <div className="monitoring-description">{annotations.description || annotations.message}</div>
     </div>
     <div className="col-xs-3">
       <State state={alertState(obj)} />
@@ -361,7 +370,7 @@ const AlertRow = ({obj}) => {
 };
 
 const AlertHeader = props => <ListHeader>
-  <ColHead {...props} className="col-xs-7" sortField="name">Name</ColHead>
+  <ColHead {...props} className="col-xs-7" sortField="labels.alertname">Name</ColHead>
   <ColHead {...props} className="col-xs-3" sortFunc="alertState">State</ColHead>
   <ColHead {...props} className="col-xs-2" sortField="labels.severity">Severity</ColHead>
 </ListHeader>;
@@ -370,7 +379,7 @@ const AlertsPageDescription_ = ({urls}) => <p className="co-help-text">OpenShift
 const AlertsPageDescription = connectToURLs(MonitoringRoutes.Prometheus)(AlertsPageDescription_);
 
 const alertsRowFilter = {
-  type: 'alert-rule-state',
+  type: 'alert-state',
   selected: ['firing', 'pending'],
   reducer: alertState,
   items: [
@@ -494,7 +503,7 @@ const AlertsPage_ = props => <MonitoringListPage
   {...props}
   data={props.data && props.data.asAlerts}
   Header={AlertHeader}
-  nameFilterID="alert-rule-name"
+  nameFilterID="alert-name"
   PageDescription={AlertsPageDescription}
   reduxID="monitoringRules"
   Row={AlertRow}
@@ -510,7 +519,7 @@ type Alert = {
   labels: {[key: string]: string};
   rule?: any;
   state: string;
-  value: number,
+  value: number;
 };
 type Rule = {
   alerts: Alert[];
@@ -522,7 +531,7 @@ type Rule = {
   query: string;
 };
 type Rules = {
-  data: {asRules: Rule[], asAlerts: Alert[]},
+  data: {asRules: Rule[], asAlerts: Alert[]};
   loaded: boolean;
   loadError?: string;
 };
@@ -536,8 +545,6 @@ export type AlertsDetailsPageProps = {
   alert: Alert;
   loaded: boolean;
   loadError?: string;
-  name: string;
-  rule: Rule;
 };
 export type AlertRulesDetailsPageProps = {
   loaded: boolean;
