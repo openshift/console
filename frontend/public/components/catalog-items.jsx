@@ -10,6 +10,7 @@ import FormControl from 'patternfly-react/dist/esm/components/Form/FormControl';
 
 import {normalizeIconClass} from './catalog-item-icon';
 import {categorizeItems, recategorizeItems} from './utils/categorize-catalog-items';
+import {history} from './utils';
 
 export class CatalogTileViewPage extends React.Component {
   constructor(props) {
@@ -225,6 +226,10 @@ export class CatalogTileViewPage extends React.Component {
     this.syncTabsAndTiles(category, parent);
   }
 
+  onItemClick (href) {
+    history.push(href);
+  }
+
   renderCategoryTiles(category) {
     const { showAllItemsForCategory } = this.state;
     const { id, label, parentCategory, items } = category;
@@ -247,7 +252,7 @@ export class CatalogTileViewPage extends React.Component {
           <CatalogTile
             id={uid}
             key={uid}
-            href={href}
+            onClick={() => this.onItemClick(href)}
             title={tileName}
             iconImg={tileImgUrl}
             iconClass={iconClass}
