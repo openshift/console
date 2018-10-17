@@ -61,7 +61,7 @@ describe(NameValueEditor.displayName, () => {
         />
       );
       expect(wrapper.html()).not.toContain('pairs-list__delete-icon');
-      expect(wrapper.html()).not.toContain('pairs-list__reorder-icon');
+      expect(wrapper.html()).not.toContain('pairs-list__action-icon--reorder');
     });
   });
 
@@ -92,7 +92,7 @@ describe(NameValueEditor.displayName, () => {
       );
 
       expect(wrapper.html()).toContain('pairs-list__delete-icon');
-      expect(wrapper.html()).toContain('pairs-list__reorder-icon');
+      expect(wrapper.html()).toContain('pairs-list__action-icon--reorder');
     });
   });
 
@@ -106,7 +106,7 @@ describe(NameValueEditor.displayName, () => {
         />
       );
       expect(wrapper.html()).toContain('pairs-list__delete-icon');
-      expect(wrapper.html()).not.toContain('pairs-list__reorder-icon');
+      expect(wrapper.html()).not.toContain('pairs-list__action-icon--reorder');
     });
   });
 });
