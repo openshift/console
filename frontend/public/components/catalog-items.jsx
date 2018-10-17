@@ -333,7 +333,7 @@ export class CatalogTileViewPage extends React.Component {
         <div className="co-catalog-page__tabs">
           { this.renderCategoryTabs() }
           <FilterSidePanel>
-            <FilterSidePanel.Category>
+            <FilterSidePanel.Category onSubmit={(e) => e.preventDefault()}>
               <FormControl type="text" inputRef={(ref) => this.filterByNameInput = ref} placeholder="Filter by name..." bsClass="form-control"
                 value={filters.byName.value} autoFocus={true}
                 onChange={e => this.onFilterChange('byName', null, e.target.value)}
