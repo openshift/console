@@ -66,7 +66,7 @@
     "lodash-es": "4.x",
     "openshift-logos-icon": "1.7.1",
     "patternfly": "^3.54.8",
-    "patternfly-react": "^2.16.0",
+    "patternfly-react": "^2.18.0",
     "patternfly-react-extensions": "2.9.1",
     "plotly.js": "1.28.x",
     "prop-types": "15.6.x",

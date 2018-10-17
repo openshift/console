@@ -32,7 +32,7 @@ const PARAMETERS_SECRET_KEY = 'parameters';
 
 const getAvailablePlans = (plans: any): any[] => _.reject(plans.data, 'status.removedFromBrokerCatalog');
 
-class CreateInstance extends React.Component<CreateInstanceProps, CreateInstanceState> {
+export class CreateInstance extends React.Component<CreateInstanceProps, CreateInstanceState> {
   constructor (props) {
     super(props);
 

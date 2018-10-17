@@ -8158,15 +8158,15 @@ patternfly-react-extensions@2.9.1:
     patternfly "^3.52.1"
     patternfly-react "^2.21.0"
 
-patternfly-react@^2.16.0:
-  version "2.16.0"
-  resolved "https://registry.yarnpkg.com/patternfly-react/-/patternfly-react-2.16.0.tgz#5268662e2a7e795e63467e3ccdff3005eef2a67b"
+patternfly-react@^2.18.0:
+  version "2.21.2"
+  resolved "https://registry.yarnpkg.com/patternfly-react/-/patternfly-react-2.21.2.tgz#69f6611c08cc97e9f0ee750a738c6d27cbfbc3be"
   dependencies:
     bootstrap-slider-without-jquery "^10.0.0"
     breakjs "^1.0.0"
     classnames "^2.2.5"
     css-element-queries "^1.0.1"
-    patternfly "^3.52.1"
+    patternfly "^3.52.4"
     react-bootstrap "^0.32.1"
     react-bootstrap-switch "^15.5.3"
     react-bootstrap-typeahead "^3.1.3"
