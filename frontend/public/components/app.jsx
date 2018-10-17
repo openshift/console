@@ -211,6 +211,8 @@ class App extends React.PureComponent {
             <Route path="/monitoring/silences/:id" exact component={SilencesDetailsPage} />
             <Route path="/monitoring/silences/:id/edit" exact component={EditSilence} />
 
+            <LazyRoute path={'/k8s/cluster/storageclasses/new/form'} exact loader={() => import('./storage-class-form').then(m => m.StorageClassForm)} />
+
             <Route path="/k8s/cluster/:plural" exact component={ResourceListPage} />
             <LazyRoute path="/k8s/cluster/:plural/new" exact loader={() => import('./create-yaml' /* webpackChunkName: "create-yaml" */).then(m => m.CreateYAML)} />
             <Route path="/k8s/cluster/:plural/:name" component={ResourceDetailsPage} />

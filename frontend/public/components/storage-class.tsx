@@ -57,46 +57,27 @@ export const StorageClassList: React.SFC = props => <List {...props} Header={Sto
 StorageClassList.displayName = 'StorageClassList';
 
 /* eslint-disable no-undef */
-export class StorageClassPage extends React.Component<StorageClassPageProps, StorageClassPageState> {
-
-  constructor(props){
-    super(props);
-    this.state = {
-      showWizard: false
-    };
-  }
-
-  createItems = {
-    wizard: 'Create with Wizard',
-    yaml: 'Create from YAML'
+export const StorageClassPage: React.SFC<StorageClassPageProps> = props => {
+  const createItems = {
+    form: 'From Form',
+    yaml: 'From YAML',
   };
 
-  createProps = {
-    items: this.createItems,
-    action: (type) => {
-      switch (type) {
-        case 'wizard':
-          return () => this.setState({showWizard: true});
-        default:
-          return `/k8s/ns/${this.props.namespace}/storageclasses/new/`;
-      }
-    }
+  const createProps = {
+    items: createItems,
+    createLink: (type) => `/k8s/cluster/storageclasses/new/${type !== 'yaml' ? type : ''}`
   };
 
-  render() {
-    return <React.Fragment>
-      <StorageWizard show={this.state.showWizard} onClose={() => this.setState({showWizard: false})} />
-
-      <ListPage {...this.props}
-        title="Storage Classes"
-        kind={StorageClassReference}
-        ListComponent={StorageClassList}
-        canCreate={true}
-        filterLabel={this.props.filterLabel}
-        createProps={this.createProps} />;
-    </React.Fragment>;
-  }
-}
+  return <ListPage
+    {...props}
+    title="Storage Classes"
+    kind={StorageClassReference}
+    ListComponent={StorageClassList}
+    canCreate={true}
+    filterLabel={props.filterLabel}
+    createProps={createProps}
+    createButtonText="Create Storage Class" />;
+};
 
 const pages = [navFactory.details(detailsPage(StorageClassDetails)), navFactory.editYaml()];
 
@@ -116,10 +97,6 @@ export type StorageClassDetailsProps = {
 export type StorageClassPageProps = {
   filterLabel: string,
   namespace: string
-};
-
-export type StorageClassPageState = {
-  showWizard: boolean
 };
 
 export type StorageClassDetailsPageProps = {
