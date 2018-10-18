@@ -166,7 +166,7 @@ const withSecretForm = (SubForm) => class SecretFormComponent extends React.Comp
 
         <fieldset disabled={!this.props.isCreate}>
           <div className="form-group">
-            <label className="control-label" htmlFor="secret-name">Secret Name</label>
+            <label className="control-label co-required" htmlFor="secret-name">Secret Name</label>
             <div>
               <input className="form-control"
                 type="text"
@@ -325,7 +325,7 @@ class ConfigEntryForm extends React.Component<ConfigEntryFormProps, ConfigEntryF
   render() {
     return <div className="co-create-image-secret__form">
       <div className="form-group">
-        <label className="control-label" htmlFor={`${this.props.id}-address`}>Registry Server Address</label>
+        <label className="control-label co-required" htmlFor={`${this.props.id}-address`}>Registry Server Address</label>
         <div>
           <input className="form-control"
             id={`${this.props.id}-address`}
@@ -337,7 +337,7 @@ class ConfigEntryForm extends React.Component<ConfigEntryFormProps, ConfigEntryF
         </div>
       </div>
       <div className="form-group">
-        <label className="control-label" htmlFor={`${this.props.id}-username`}>Username</label>
+        <label className="control-label co-required" htmlFor={`${this.props.id}-username`}>Username</label>
         <div>
           <input className="form-control"
             id={`${this.props.id}-username`}
@@ -349,7 +349,7 @@ class ConfigEntryForm extends React.Component<ConfigEntryFormProps, ConfigEntryF
         </div>
       </div>
       <div className="form-group">
-        <label className="control-label" htmlFor={`${this.props.id}-password`}>Password</label>
+        <label className="control-label co-required" htmlFor={`${this.props.id}-password`}>Password</label>
         <div>
           <input className="form-control"
             id={`${this.props.id}-password`}
@@ -361,7 +361,7 @@ class ConfigEntryForm extends React.Component<ConfigEntryFormProps, ConfigEntryF
         </div>
       </div>
       <div className="form-group">
-        <label className="control-label" htmlFor={`${this.props.id}-email`}>Email</label>
+        <label className="control-label co-required" htmlFor={`${this.props.id}-email`}>Email</label>
         <div>
           <input className="form-control"
             id={`${this.props.id}-email`}
@@ -559,7 +559,7 @@ class WebHookSecretForm extends React.Component<WebHookSecretFormProps, WebHookS
   }
   render () {
     return <div className="form-group">
-      <label className="control-label" htmlFor="webhook-secret-key">Webhook Secret Key</label>
+      <label className="control-label co-required" htmlFor="webhook-secret-key">Webhook Secret Key</label>
       <div className="input-group">
         <input className="form-control"
           id="webhook-secret-key"
@@ -651,7 +651,7 @@ export class BasicAuthSubform extends React.Component<BasicAuthSubformProps, Bas
         </div>
       </div>
       <div className="form-group">
-        <label className="control-label" htmlFor="password">Password or Token</label>
+        <label className="control-label co-required" htmlFor="password">Password or Token</label>
         <div>
           <input className="form-control"
             id="password"
@@ -837,7 +837,7 @@ class KeyValueEntryForm extends React.Component<KeyValueEntryFormProps, KeyValue
   render() {
     return <div className="co-create-generic-secret__form">
       <div className="form-group">
-        <label className="control-label" htmlFor={`${this.props.id}-key`}>Key</label>
+        <label className="control-label co-required" htmlFor={`${this.props.id}-key`}>Key</label>
         <div>
           <input className="form-control"
             id={`${this.props.id}-key`}

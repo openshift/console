@@ -49,7 +49,7 @@ export class FileInput extends React.Component<FileInputProps, FileInputState> {
           { canDrop && <div className={klass}><p className="co-file-dropzone__drop-text">Drop file here</p></div> }
 
           <div className="form-group">
-            <label className="control-label" htmlFor={id}>{this.props.label}</label>
+            <label className={classNames('control-label', {'co-required': isRequired})} htmlFor={id}>{this.props.label}</label>
             <div className="modal-body__field">
               <div className="input-group">
                 <input type="text"
