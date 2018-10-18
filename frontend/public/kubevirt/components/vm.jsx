@@ -1,12 +1,21 @@
 import * as _ from 'lodash-es';
 import React, { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
 
 import { ResourceEventStream } from './okdcomponents';
 import { ListHeader, ColHead, List, ListPage, ResourceRow, DetailsPage } from './factory/okdfactory';
-import { breadcrumbsForOwnerRefs, Firehose, ResourceLink, navFactory, ResourceCog, Cog } from './utils/okdutils';
-import { VirtualMachineInstanceModel, VirtualMachineModel, PodModel, NamespaceModel, TemplateModel, NetworkAttachmentDefinitionModel } from '../models';
+import { breadcrumbsForOwnerRefs, Firehose, ResourceLink, navFactory, ResourceCog, Cog, units } from './utils/okdutils';
+import {
+  VirtualMachineInstanceModel,
+  VirtualMachineModel,
+  PodModel,
+  NamespaceModel,
+  TemplateModel,
+  NetworkAttachmentDefinitionModel,
+  StorageClassModel,
+  PersistentVolumeClaimModel
+} from '../models';
 import { k8sCreate, actions } from '../module/okdk8s';
-import { connect } from 'react-redux';
 
 import { startStopVmModal } from './modals/start-stop-vm-modal';
 import { restartVmModal } from './modals/restart-vm-modal';
@@ -291,6 +300,8 @@ const ConnectedNewVMWizard = ({ activeNamespace, resources, flatten, onHide, cre
   const namespaces = flatten(resources);
   const templates = _.get(resources, TemplateModel.kind, {}).data;
   const networkConfigs = _.get(resources, NetworkAttachmentDefinitionModel.kind, {}).data;
+  const storageClasses = _.get(resources, StorageClassModel.kind, {}).data;
+  const persistentVolumeClaims = _.get(resources, PersistentVolumeClaimModel.kind, {}).data;
 
   let selectedNamespace;
 
@@ -304,7 +315,10 @@ const ConnectedNewVMWizard = ({ activeNamespace, resources, flatten, onHide, cre
     templates={templates}
     networkConfigs={networkConfigs || []}
     selectedNamespace={selectedNamespace}
-    k8sCreate={createVm} />;
+    storageClasses={storageClasses}
+    persistentVolumeClaims={persistentVolumeClaims}
+    k8sCreate={createVm}
+    units={units} />;
 };
 
 export const VirtualMachinesPage = connect(
@@ -352,7 +366,9 @@ export const VirtualMachinesPage = connect(
     const resources = [
       namespaces,
       templates,
-      networkConfigs
+      networkConfigs,
+      { kind:StorageClassModel.kind, isList: true, prop: StorageClassModel.kind},
+      { kind:PersistentVolumeClaimModel.kind, isList: true, prop: PersistentVolumeClaimModel.kind}
     ];
     return <Firehose resources={resources} flatten={getFlattenForKind(NamespaceModel.kind)}>
       <ConnectedNewVMWizard onHide={this._onHide} createVm={k8sCreate} activeNamespace={this.props.namespace} />
