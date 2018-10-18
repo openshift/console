@@ -28,6 +28,7 @@ describe('Test for Cluster Service Broker', () => {
     await crudView.navTabFor('Service Classes').click();
     await crudView.isLoaded();
 
+    await crudView.filterForName('MongoDB');
     await srvCatalogView.linkForCSC('MongoDB').click();
     await crudView.isLoaded();
 
