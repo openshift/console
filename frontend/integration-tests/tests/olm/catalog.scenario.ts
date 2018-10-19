@@ -3,7 +3,7 @@
 import { browser, $, ExpectedConditions as until } from 'protractor';
 
 import { appHost, checkLogs, checkErrors, testName } from '../../protractor.conf';
-import * as catalogView from '../../views/catalog.view';
+import * as catalogView from '../../views/olm-catalog.view';
 import * as sidenavView from '../../views/sidenav.view';
 
 describe('Installing a service from a Catalog Source', () => {

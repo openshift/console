@@ -104,6 +104,7 @@ export const config: Config = {
       'tests/modal-annotations.scenario.ts',
       'tests/source-to-image.scenario.ts',
       'tests/deploy-image.scenario.ts'],
+    catalog: ['tests/base.scenario.ts', 'tests/catalog.scenario.ts'],
   },
   params: {
     // Set to 'true' to enable OpenShift resources in the crud scenario.

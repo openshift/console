@@ -1,31 +1,9 @@
-/* eslint-disable no-undef, no-unused-vars */
+import { $, $$, browser, ExpectedConditions as until } from 'protractor';
 
-import { browser, $, $$, by, ExpectedConditions as until, ElementFinder } from 'protractor';
-
-const moveTo = (elem: ElementFinder) => browser.actions().mouseMove(elem).perform().then(() => elem);
-
-const withRetry = (action) => (args) => action(args)
-  .catch(() => action(args))
-  .catch(() => action(args))
-  .catch(() => action(args));
-
-export const entryRows = $$('.co-resource-list__item');
-export const entryRowFor = (name: string) => entryRows.filter((row) => row.$('.co-clusterserviceversion-logo__name__clusterserviceversion').getText()
-  .then(text => text === name)).first();
-
-export const isLoaded = () => browser.wait(until.presenceOf($('.loading-box__loaded')), 10000).then(() => browser.sleep(500));
-
-export const hasSubscription = (name: string) => browser.getCurrentUrl().then(url => {
-  if (url.indexOf('all-namespaces') > -1) {
-    throw new Error('Cannot call `hasSubscription` for all namespaces');
-  }
-  return entryRowFor(name).element(by.buttonText('Create Subscription')).isPresent();
-}).then(canSubscribe => !canSubscribe);
-
-export const viewCatalogDetail = (name: string) => $$('.co-catalogsource-list__section').filter(section => section.$('h3').getText()
-  .then(text => text === name)).first().element(by.linkText('View catalog details'))
-  .click();
-
-export const createSubscriptionFor = withRetry((pkgName: string) => moveTo(
-  entryRowFor(pkgName).element(by.buttonText('Create Subscription'))
-).then(el => el.click()));
+export const categoryTabs = $$('.vertical-tabs-pf-tab > a');
+export const pageHeading = $('.co-catalog-page__heading');
+export const pageNumberItemsHeading = $('.co-catalog-page__num-items');
+export const pageHeadingNumberOfItems = () => pageNumberItemsHeading.getText()
+  .then(text => parseInt(text.substring(0, text.indexOf(' items')), 10));
+export const categoryViewAllLinks = $$('.catalog-tile-view-pf-category-view-all');
+export const createCatalogItemPageIsLoaded = () => browser.wait(until.presenceOf($('.co-catalog-item-info')), 10000).then(() => browser.sleep(1000));
