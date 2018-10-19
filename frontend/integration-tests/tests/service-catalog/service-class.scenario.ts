@@ -19,16 +19,16 @@ describe('Test for Cluster Service Class', () => {
     checkErrors();
   });
 
-  it('displays `default` service plan for service class `MongoDB`', async() => {
+  it('displays `default` service plan for service class `MariaDB`', async() => {
     await sidenavView.clickNavLink(['Service Catalog', 'Service Classes']);
     await crudView.isLoaded();
 
     // Filter by service class name to make sure it is on the first page of results.
     // Otherwise the tests fail since we do virtual scrolling and the element isn't found.
-    await crudView.filterForName('MongoDB');
+    await crudView.filterForName('MariaDB');
     await srvCatalogView.cscLinksPresent();
 
-    await srvCatalogView.linkForCSC('MongoDB').click();
+    await srvCatalogView.linkForCSC('MariaDB').click();
     await crudView.isLoaded();
 
     await crudView.navTabFor('Service Plans').click();
@@ -40,17 +40,17 @@ describe('Test for Cluster Service Class', () => {
     expect(crudView.resourceTitle.getText()).toEqual('default');
   });
 
-  it('creates a new instance for service class `MongoDB`', async() => {
+  it('creates a new instance for service class `MariaDB`', async() => {
     await sidenavView.clickNavLink(['Service Catalog', 'Service Classes']);
     await crudView.isLoaded();
 
     // Filter by service class name to make sure it is on the first page of results.
     // Otherwise the tests fail since we do virtual scrolling and the element isn't found.
-    await crudView.filterForName('MongoDB');
+    await crudView.filterForName('MariaDB');
     await srvCatalogView.cscLinksPresent();
-    expect(srvCatalogView.linkForCSC('MongoDB').isPresent()).toBe(true);
+    expect(srvCatalogView.linkForCSC('MariaDB').isPresent()).toBe(true);
 
-    await srvCatalogView.linkForCSC('MongoDB').click();
+    await srvCatalogView.linkForCSC('MariaDB').click();
     await crudView.isLoaded();
 
     expect(srvCatalogView.createInstanceButton.isDisplayed()).toBe(true);
@@ -63,8 +63,8 @@ describe('Test for Cluster Service Class', () => {
     await srvCatalogView.createButton.click();
     await crudView.isLoaded();
 
-    expect(crudView.resourceTitle.getText()).toEqual('mongodb-persistent');
+    expect(crudView.resourceTitle.getText()).toEqual('mariadb-persistent');
 
-    execSync(`kubectl delete -n ${testName} serviceinstance mongodb-persistent`);
+    execSync(`kubectl delete -n ${testName} serviceinstance mariadb-persistent`);
   });
 });
