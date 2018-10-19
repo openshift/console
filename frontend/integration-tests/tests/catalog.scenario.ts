@@ -50,12 +50,12 @@ describe('Catalog', () => {
   });
 
   it('displays ".NET Core" catalog tile when filter by name: "net"', async() => {
-    await catalogPageView.filterByName('net');
+    await catalogPageView.filterByKeyword('net');
     expect(catalogPageView.catalogTileFor('.NET Core').isDisplayed()).toBe(true);
   });
 
   it('displays "No Filter Results" page correctly', async() => {
-    await catalogPageView.filterByName('NoFilterResultsTest');
+    await catalogPageView.filterByKeyword('NoFilterResultsTest');
     expect(catalogPageView.catalogTiles.count()).toBe(0);
     expect(catalogPageView.clearFiltersText.isDisplayed()).toBe(true);
 

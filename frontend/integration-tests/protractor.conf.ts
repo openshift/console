@@ -106,6 +106,7 @@ export const config: Config = {
       'tests/modal-annotations.scenario.ts',
       'tests/source-to-image.scenario.ts',
       'tests/deploy-image.scenario.ts',
+      'tests/marketplace/kubernetes-marketplace.scenario.ts',
       'tests/catalog.scenario.ts'],
   },
   params: {

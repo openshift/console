@@ -10,5 +10,3 @@ export const operatorModalTitle = operatorModal.$('.catalog-item-header-pf-title
 export const closeOperatorModal = () => operatorModal.$('.close').click();
 export const operatorModalIsClosed = () => browser.wait(until.not(until.presenceOf(operatorModal)), 1000)
   .then(() => browser.sleep(500));
-
-export const isLoaded = () => browser.wait(until.presenceOf($('.loading-box__loaded')), 10000).then(() => browser.sleep(500));
