@@ -96,13 +96,14 @@ class ConfigureUpdateStrategyModal extends PromiseComponent {
                         <input disabled={this.state.strategyType !== 'RollingUpdate'}
                           placeholder="25%" size="5" type="text" className="form-control"
                           id="input-max-unavailable"
-                          defaultValue={maxUnavailable} />
+                          defaultValue={maxUnavailable}
+                          aria-describedby="input-max-unavailable-help" />
                         <span className="input-group-addon">
                           <Tooltip content="Current desired pod count">of { pluralize(this.deployment.spec.replicas, 'pod')}</Tooltip>
                         </span>
                       </div>
                     </div>
-                    <p className="help-block text-muted">Number or percentage of total pods at the start of the update (optional)</p>
+                    <p className="help-block text-muted" id="input-max-unavailable-help">Number or percentage of total pods at the start of the update (optional)</p>
                   </div>
                 </div>
 
@@ -113,15 +114,20 @@ class ConfigureUpdateStrategyModal extends PromiseComponent {
                   <div className="co-m-form-col col-sm-9">
                     <div className="form-inline">
                       <div className="input-group">
-                        <input disabled={this.state.strategyType !== 'RollingUpdate'} placeholder="25%" size="5" type="text" className="form-control"
+                        <input disabled={this.state.strategyType !== 'RollingUpdate'}
+                          placeholder="25%"
+                          size="5"
+                          type="text"
+                          className="form-control"
                           id="input-max-surge"
-                          defaultValue={maxSurge} />
+                          defaultValue={maxSurge}
+                          aria-describedby="input-max-surge-help" />
                         <span className="input-group-addon">
                           <Tooltip content="Current desired pod count">greater than { pluralize(this.deployment.spec.replicas, 'pod')}</Tooltip>
                         </span>
                       </div>
                     </div>
-                    <p className="help-block text-muted">Number or percentage of total pods at the start of the update (optional)</p>
+                    <p className="help-block text-muted" id="input-max-surge-help">Number or percentage of total pods at the start of the update (optional)</p>
                   </div>
                 </div>
               </div>

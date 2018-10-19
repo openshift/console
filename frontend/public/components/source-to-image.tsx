@@ -422,8 +422,9 @@ class BuildSource extends React.Component<BuildSourceProps, BuildSourceState> {
               onChange={this.onNameChange}
               value={this.state.name}
               id="name"
+              aria-describedby="name-help"
               required />
-            <div className="help-block">
+            <div className="help-block" id="name-help">
               Names the resources created for this application.
             </div>
           </div>
@@ -448,10 +449,10 @@ class BuildSource extends React.Component<BuildSourceProps, BuildSourceState> {
           {!_.isEmpty(ports) && <div className="form-group">
             <div className="checkbox">
               <label className="control-label">
-                <input type="checkbox" onChange={this.onCreateRouteChange} checked={this.state.createRoute} />
+                <input type="checkbox" onChange={this.onCreateRouteChange} checked={this.state.createRoute} aria-describedby="create-route-help" />
                 Create route
               </label>
-              <div className="help-block">Exposes your application at a public URL.</div>
+              <div className="help-block" id="create-route-help">Exposes your application at a public URL.</div>
             </div>
           </div>}
           <ButtonBar className="co-source-to-image-form__button-bar" errorMessage={this.state.error} inProgress={this.state.inProgress}>
