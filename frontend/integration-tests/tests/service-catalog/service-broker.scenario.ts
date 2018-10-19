@@ -18,7 +18,7 @@ describe('Test for Cluster Service Broker', () => {
     checkErrors();
   });
 
-  it('displays `MongoDB` service class for `template-service-broker`', async() => {
+  it('displays `MariaDB` service class for `template-service-broker`', async() => {
     await sidenavView.clickNavLink(['Service Catalog', 'Service Brokers']);
     await crudView.isLoaded();
 
@@ -28,10 +28,10 @@ describe('Test for Cluster Service Broker', () => {
     await crudView.navTabFor('Service Classes').click();
     await crudView.isLoaded();
 
-    await crudView.filterForName('MongoDB');
-    await srvCatalogView.linkForCSC('MongoDB').click();
+    await crudView.filterForName('MariaDB');
+    await srvCatalogView.linkForCSC('MariaDB').click();
     await crudView.isLoaded();
 
-    expect(crudView.resourceTitle.getText()).toEqual('MongoDB');
+    expect(crudView.resourceTitle.getText()).toEqual('MariaDB');
   });
 });
