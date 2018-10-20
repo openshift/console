@@ -24,8 +24,8 @@ import { history, AsyncComponent, Loading } from './utils';
 import { namespacedPrefixes } from './utils/link';
 import { UIActions, getActiveNamespace } from '../ui/ui-actions';
 import { ClusterServiceVersionModel, SubscriptionModel, AlertmanagerModel } from '../models';
-import { referenceForModel } from '../module/k8s';
-import k8sActions from '../module/k8s/k8s-actions';
+import { getCachedResources, referenceForModel } from '../module/k8s';
+import k8sActions, { types } from '../module/k8s/k8s-actions';
 import '../vendor.scss';
 import '../style.scss';
 
@@ -239,8 +239,18 @@ class App extends React.PureComponent {
   }
 }
 
+const startDiscovery = () => store.dispatch(k8sActions.watchAPIServices());
+
+// Load cached API resources from localStorage to speed up page load.
+getCachedResources().then(resources => {
+  if (resources) {
+    store.dispatch({type: types.resources, resources});
+  }
+  // Still perform discovery to refresh the cache.
+  startDiscovery();
+}).catch(startDiscovery);
+
 _.each(featureActions, store.dispatch);
-store.dispatch(k8sActions.watchAPIServices());
 store.dispatch(detectMonitoringURLs);
 
 analyticsSvc.push({tier: 'tectonic'});

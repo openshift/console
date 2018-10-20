@@ -46,10 +46,24 @@ describe(Firehose.displayName, () => {
     wrapper = shallow(<Component resources={resources} k8sModels={k8sModels} loaded={true} inFlight={false} stopK8sWatch={stopK8sWatch} watchK8sObject={watchK8sObject} watchK8sList={watchK8sList} />);
   });
 
-  it('returns nothing if `props.inFlight` is true', () => {
-    wrapper = shallow(<Component resources={resources} k8sModels={k8sModels} loaded={false} inFlight={true} stopK8sWatch={stopK8sWatch} watchK8sObject={watchK8sObject} watchK8sList={watchK8sList} />);
+  it('returns nothing if there are no cached models and `props.inFlight` is true', () => {
+    const noModels = ImmutableMap<K8sResourceKindReference, K8sKind>();
+    wrapper = shallow(<Component resources={resources} k8sModels={noModels} loaded={false} inFlight={true} stopK8sWatch={stopK8sWatch} watchK8sObject={watchK8sObject} watchK8sList={watchK8sList} />);
 
     expect(wrapper.html()).toBeNull();
+  });
+
+  it('returns nothing if a required model from `props.resources` is missing and `props.inFlight` is true', () => {
+    const incompleteModels = ImmutableMap<K8sResourceKindReference, K8sKind>().set('Service', ServiceModel);
+    wrapper = shallow(<Component resources={resources} k8sModels={incompleteModels} loaded={false} inFlight={true} stopK8sWatch={stopK8sWatch} watchK8sObject={watchK8sObject} watchK8sList={watchK8sList} />);
+
+    expect(wrapper.html()).toBeNull();
+  });
+
+  it('renders if a cached model is available even if `props.inFlight` is true', () => {
+    wrapper = shallow(<Component resources={resources} k8sModels={k8sModels} loaded={false} inFlight={true} stopK8sWatch={stopK8sWatch} watchK8sObject={watchK8sObject} watchK8sList={watchK8sList} />);
+
+    expect(watchK8sList.calls.count()).toBeGreaterThan(0);
   });
 
   it('does not re-render when `props.inFlight` changes but Firehose data is loaded', () => {
