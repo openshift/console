@@ -71,6 +71,7 @@ const ClusterServiceBrokerDetails: React.SFC<ClusterServiceBrokerDetailsProps> =
   </React.Fragment>;
 };
 
+const ServiceClassTabPage = ({obj}) => <ClusterServiceClassPage showTitle={false} fieldSelector={`spec.clusterServiceBrokerName=${obj.metadata.name}`} />;
 export const ClusterServiceBrokerDetailsPage: React.SFC<ClusterServiceBrokerDetailsPageProps> = props => <DetailsPage
   {...props}
   kind={ClusterServiceBrokerReference}
@@ -78,8 +79,7 @@ export const ClusterServiceBrokerDetailsPage: React.SFC<ClusterServiceBrokerDeta
   pages={[
     navFactory.details(detailsPage(ClusterServiceBrokerDetails)),
     navFactory.editYaml(),
-    navFactory.clusterServiceClasses(({obj}) => <ClusterServiceClassPage showTitle={false}
-      fieldSelector={`spec.clusterServiceBrokerName=${obj.metadata.name}`} />)
+    navFactory.clusterServiceClasses(ServiceClassTabPage),
   ]}
 />;
 export const ClusterServiceBrokerList: React.SFC = props => <List {...props} Header={ClusterServiceBrokerHeader} Row={ClusterServiceBrokerListRow} />;

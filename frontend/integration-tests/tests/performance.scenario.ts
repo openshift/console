@@ -84,6 +84,8 @@ describe('Performance test', () => {
     it(`downloads new bundle for ${routeName}`, async() => {
       await browser.get(`${appHost}/status/all-namespaces`);
       await browser.wait(until.presenceOf(crudView.resourceTitle));
+      // Avoid problems where the Operators nav section appears where Workloads was at the moment the tests try to click.
+      await browser.wait(until.visibilityOf(sidenavView.navSectionFor('Operators')));
       await sidenavView.clickNavLink([route.section, route.name]);
       await crudView.isLoaded();
 

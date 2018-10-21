@@ -31,14 +31,14 @@ describe('Test for existence of Service Catalog nav items', () => {
     expect(crudView.rowForName('template-service-broker').isDisplayed()).toBe(true);
   });
 
-  it('displays `MongoDB` service class', async() => {
+  it('displays `MariaDB` service class', async() => {
     await sidenavView.clickNavLink(['Service Catalog', 'Service Classes']);
     await crudView.isLoaded();
 
-    await crudView.filterForName('MongoDB');
+    await crudView.filterForName('MariaDB');
     await srvCatalogView.cscLinksPresent();
 
-    expect(srvCatalogView.linkForCSC('MongoDB').isDisplayed()).toBe(true);
+    expect(srvCatalogView.linkForCSC('MariaDB').isDisplayed()).toBe(true);
   });
 
   it('initially displays no service instances', async() => {

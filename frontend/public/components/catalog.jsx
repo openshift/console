@@ -58,8 +58,9 @@ class CatalogListPage extends React.Component {
 
   normalizeClusterServiceClasses(serviceClasses, kind) {
     const {namespace = ''} = this.props;
-    const activeServiceClasses = _.filter(serviceClasses, serviceClass => {
-      return !serviceClass.status.removedFromBrokerCatalog;
+    const activeServiceClasses = _.reject(serviceClasses, serviceClass => {
+      const tags = _.get(serviceClass, 'spec.tags');
+      return serviceClass.status.removedFromBrokerCatalog || _.includes(tags, 'hidden');
     });
 
     return _.map(activeServiceClasses, serviceClass => {
