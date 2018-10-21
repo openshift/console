@@ -7330,7 +7330,7 @@ mumath@^3.3.4:
   dependencies:
     almost-equal "^1.1.0"
 
-murmurhash-js@^1.0.0:
+murmurhash-js@1.0.x, murmurhash-js@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/murmurhash-js/-/murmurhash-js-1.0.0.tgz#b06278e21fc6c37fa5313732b0412bcb6ae15f51"
 

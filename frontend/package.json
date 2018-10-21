@@ -64,6 +64,7 @@
     "js-base64": "^2.4.5",
     "js-yaml": "3.x",
     "lodash-es": "4.x",
+    "murmurhash-js": "1.0.x",
     "openshift-logos-icon": "1.7.1",
     "patternfly": "^3.54.8",
     "patternfly-react": "^2.16.0",

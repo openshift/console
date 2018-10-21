@@ -205,7 +205,7 @@ class App extends React.PureComponent {
             <Redirect from="/monitoring" exact to="/monitoring/alerts" />
             <Route path="/monitoring/alerts" exact component={AlertsPage} />
             <Route path="/monitoring/alerts/:name" exact component={AlertsDetailsPage} />
-            <Route path="/monitoring/alertrules/:name" exact component={AlertRulesDetailsPage} />
+            <Route path="/monitoring/alertrules/:id" exact component={AlertRulesDetailsPage} />
             <Route path="/monitoring/silences" exact component={SilencesPage} />
             <Route path="/monitoring/silences/new" exact component={CreateSilence} />
             <Route path="/monitoring/silences/:id" exact component={SilencesDetailsPage} />
