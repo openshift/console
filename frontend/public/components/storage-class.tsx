@@ -56,10 +56,28 @@ const StorageClassDetails: React.SFC<StorageClassDetailsProps> = ({obj}) => <Rea
 export const StorageClassList: React.SFC = props => <List {...props} Header={StorageClassHeader} Row={StorageClassRow} />;
 StorageClassList.displayName = 'StorageClassList';
 
-export const StorageClassPage: React.SFC<StorageClassPageProps> = props =>
-  <ListPage {...props} title="Storage Classes" kind={StorageClassReference} ListComponent={StorageClassList} canCreate={true} filterLabel={props.filterLabel} />;
-StorageClassPage.displayName = 'StorageClassListPage';
+/* eslint-disable no-undef */
+export const StorageClassPage: React.SFC<StorageClassPageProps> = props => {
+  const createItems = {
+    form: 'From Form',
+    yaml: 'From YAML',
+  };
 
+  const createProps = {
+    items: createItems,
+    createLink: (type) => `/k8s/cluster/storageclasses/new/${type !== 'yaml' ? type : ''}`
+  };
+
+  return <ListPage
+    {...props}
+    title="Storage Classes"
+    kind={StorageClassReference}
+    ListComponent={StorageClassList}
+    canCreate={true}
+    filterLabel={props.filterLabel}
+    createProps={createProps}
+    createButtonText="Create Storage Class" />;
+};
 
 const pages = [navFactory.details(detailsPage(StorageClassDetails)), navFactory.editYaml()];
 
@@ -68,7 +86,6 @@ export const StorageClassDetailsPage: React.SFC<StorageClassDetailsPageProps> = 
 };
 StorageClassDetailsPage.displayName = 'StorageClassDetailsPage';
 
-/* eslint-disable no-undef */
 export type StorageClassRowProps = {
   obj: any,
 };
@@ -79,6 +96,7 @@ export type StorageClassDetailsProps = {
 
 export type StorageClassPageProps = {
   filterLabel: string,
+  namespace: string
 };
 
 export type StorageClassDetailsPageProps = {
