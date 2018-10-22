@@ -408,15 +408,15 @@ class BuildSource extends React.Component<BuildSourceProps, BuildSourceState> {
       <div className="col-md-5 col-md-pull-7">
         <form className="co-source-to-image-form" onSubmit={this.save}>
           <div className="form-group">
-            <label className="control-label" htmlFor="namespace">Namespace</label>
+            <label className="control-label co-required" htmlFor="namespace">Namespace</label>
             <NsDropdown selectedKey={this.state.namespace} onChange={this.onNamespaceChange} id="namespace" />
           </div>
           <div className="form-group">
-            <label className="control-label" htmlFor="tag">Version</label>
+            <label className="control-label co-required" htmlFor="tag">Version</label>
             <Dropdown items={tagOptions} selectedKey={selectedTag} title={tagOptions[selectedTag]} onChange={this.onTagChange} id="tag" />
           </div>
           <div className="form-group">
-            <label className="control-label" htmlFor="name">Name</label>
+            <label className="control-label co-required" htmlFor="name">Name</label>
             <input className="form-control"
               type="text"
               onChange={this.onNameChange}
@@ -428,7 +428,7 @@ class BuildSource extends React.Component<BuildSourceProps, BuildSourceState> {
             </div>
           </div>
           <div className="form-group">
-            <label className="control-label" htmlFor="repository">Git Repository</label>
+            <label className="control-label co-required" htmlFor="repository">Git Repository</label>
             <input className="form-control"
               type="text"
               onChange={this.onRepositoryChange}
