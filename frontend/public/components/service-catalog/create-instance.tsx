@@ -201,12 +201,13 @@ class CreateInstance extends React.Component<CreateInstanceProps, CreateInstance
 }
 
 export const CreateInstancePage = (props) => {
-  const resources = [
-    {kind: 'ClusterServiceClass', name: props.match.params.name, isList: false, prop: 'obj'},
-    {kind: 'ClusterServicePlan', isList: true, prop: 'plans', fieldSelector: `spec.clusterServiceClassRef.name=${props.match.params.name}`},
-  ];
   const searchParams = new URLSearchParams(location.search);
+  const name = searchParams.get('cluster-service-class');
   const preselectedNamespace = searchParams.get('preselected-ns');
+  const resources = [
+    {kind: 'ClusterServiceClass', name, isList: false, prop: 'obj'},
+    {kind: 'ClusterServicePlan', isList: true, prop: 'plans', fieldSelector: `spec.clusterServiceClassRef.name=${name}`},
+  ];
   return <Firehose resources={resources}>
     <CreateInstance preselectedNamespace={preselectedNamespace} {...props as any} />
   </Firehose>;

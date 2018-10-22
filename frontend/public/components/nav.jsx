@@ -260,7 +260,7 @@ const searchStartsWith = ['search'];
 const rolesStartsWith = ['roles', 'clusterroles'];
 const rolebindingsStartsWith = ['rolebindings', 'clusterrolebindings'];
 const quotaStartsWith = ['resourcequotas', 'clusterresourcequotas'];
-const imagestreamsStartsWith = ['imagestreams', 'imagestreamtags', 'source-to-image'];
+const imagestreamsStartsWith = ['imagestreams', 'imagestreamtags'];
 const clusterSettingsStartsWith = ['settings/cluster', 'settings/ldap'];
 
 const ClusterPickerNavSection = connectToFlags(FLAGS.OPENSHIFT)(({flags}) => {
