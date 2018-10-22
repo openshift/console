@@ -163,6 +163,7 @@ const NodeGraphs = requirePrometheus(({node}) => {
 });
 
 const Details = ({obj: node}) => {
+  const images = _.filter(node.status.images, 'names');
   return <React.Fragment>
     <div className="co-m-pane__body">
       <SectionHeading text="Node Overview" />
@@ -267,7 +268,7 @@ const Details = ({obj: node}) => {
             </tr>
           </thead>
           <tbody>
-            {_.map(node.status.images, (image, i) => <tr key={i}>
+            {_.map(images, (image, i) => <tr key={i}>
               <td>{image.names.find(name => !name.includes('@')) || image.names[0]}</td>
               <td>{units.humanize(image.sizeBytes, 'decimalBytes', true).string || '-'}</td>
             </tr>)}
