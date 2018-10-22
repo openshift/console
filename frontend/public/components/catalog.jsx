@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import * as PropTypes from 'prop-types';
+import * as classNames from 'classnames';
 import { Helmet } from 'react-helmet';
 
 import { FLAGS, connectToFlags, flagPending } from '../features';
@@ -18,6 +19,28 @@ import {
   getServiceClassIcon,
   getServiceClassImage,
 } from './catalog-item-icon';
+import { OpenShiftGettingStarted } from './start-guide';
+
+const getResources = (flags) => {
+  const resources = [];
+  if (flags.SERVICE_CATALOG) {
+    resources.push({
+      isList: true,
+      kind: 'ClusterServiceClass',
+      namespaced: false,
+      prop: 'clusterserviceclasses'
+    });
+  }
+  if (flags.OPENSHIFT) {
+    resources.push({
+      isList: true,
+      kind: 'ImageStream',
+      namespace: 'openshift',
+      prop: 'imagestreams'
+    });
+  }
+  return resources;
+};
 
 class CatalogListPage extends React.Component {
   constructor(props) {
@@ -135,34 +158,12 @@ CatalogListPage.propTypes = {
 };
 
 // eventually may use namespace
-// eslint-disable-next-line no-unused-vars
-export const Catalog = connectToFlags(FLAGS.OPENSHIFT, FLAGS.SERVICE_CATALOG)(({namespace, flags}) => {
-
-  if (flagPending(flags.OPENSHIFT) || flagPending(flags.SERVICE_CATALOG)) {
-    return null;
-  }
-
-  const resources = [];
-  if (flags.SERVICE_CATALOG) {
-    resources.push({
-      isList: true,
-      kind: 'ClusterServiceClass',
-      namespaced: false,
-      prop: 'clusterserviceclasses'
-    });
-  }
-  if (flags.OPENSHIFT) {
-    resources.push({
-      isList: true,
-      kind: 'ImageStream',
-      namespace: 'openshift',
-      prop: 'imagestreams'
-    });
-  }
+export const Catalog = ({flags, namespace}) => {
+  const resources = getResources(flags);
   return <Firehose resources={resources}>
     <CatalogListPage namespace={namespace} />
   </Firehose>;
-});
+};
 
 Catalog.displayName = 'Catalog';
 
@@ -170,15 +171,22 @@ Catalog.propTypes = {
   namespace: PropTypes.string,
 };
 
-export const CatalogPage = ({match}) => {
+export const CatalogPage = connectToFlags(FLAGS.OPENSHIFT, FLAGS.PROJECTS_AVAILABLE, FLAGS.SERVICE_CATALOG)(({match, flags}) => {
   const namespace = _.get(match, 'params.ns');
+  if (flagPending(flags.OPENSHIFT) || flagPending(flags.PROJECTS_AVAILABLE) || flagPending(flags.PROJECTS_AVAILABLE)) {
+    return null;
+  }
+
+  const showGettingStarted = flags.OPENSHIFT && !flags.PROJECTS_AVAILABLE;
+  const className = classNames('co-catalog', {'co-disabled': showGettingStarted});
   return <React.Fragment>
+    { showGettingStarted && <OpenShiftGettingStarted /> }
     <Helmet>
       <title>Catalog</title>
     </Helmet>
-    <div className="co-catalog">
+    <div className={className}>
       <PageHeading title="Catalog" />
-      <Catalog namespace={namespace} />
+      <Catalog namespace={namespace} flags={flags} />
     </div>
   </React.Fragment>;
-};
+});

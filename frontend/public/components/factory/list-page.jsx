@@ -316,7 +316,7 @@ export const MultiListPage = props => {
     createButtonText={createButtonText || 'Create'}
     textFilter={props.textFilter}
     resources={resources}
-    autoFocus={fake ? false: props.autoFocus}
+    autoFocus={fake ? false : props.autoFocus}
     dropdownFilters={props.dropdownFilters}
   >
     <Firehose resources={resources}>
