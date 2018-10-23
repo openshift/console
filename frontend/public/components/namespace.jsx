@@ -290,18 +290,10 @@ class NamespaceBarDropdowns_ extends React.Component {
         defaultBookmarks={defaultBookmarks}
         storageKey={NAMESPACE_LOCAL_STORAGE_KEY}
         shortCut="n" />
-<<<<<<< HEAD
       <ActionsMenu actions={addActions}
         title={<React.Fragment><span className="pficon pficon-add-circle-o co-add-actions-selector__icon" aria-hidden="true"></span> Add</React.Fragment>}
         noButton={true}
         menuClassName="co-add-actions-selector__menu dropdown-menu--right" />
-=======
-      <div className="co-import-yaml-link co-m-masthead-link">
-        <Link to={formatNamespacedRouteForResource('import', activeNamespace)}>
-          <span className="pficon pficon-add-circle-o co-create-from-yaml__add-icon" aria-hidden="true"></span>Import YAML
-        </Link>
-      </div>
->>>>>>> Create Import YAML page
     </div>;
   }
 }
