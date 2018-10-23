@@ -3,9 +3,7 @@ OpenShift Console
 
 Codename: "Bridge"
 
-[![Build Status](https://jenkins-tectonic.prod.coreos.systems/buildStatus/icon?job=console-build)](https://jenkins-tectonic.prod.coreos.systems/job/console-build/)
-
-[quay.io/openshift/origin-console](https://quay.io/repository/openshift/origin-console?tab=tags)
+[![Build Status](https://travis-ci.org/kubevirt/web-ui.svg?branch=master)](https://travis-ci.org/kubevirt/web-ui)
 
 The console is a more friendly `kubectl` in the form of a single page webapp.  It also integrates with other services like monitoring, chargeback, and OLM.  Some things that go on behind the scenes include:
 
