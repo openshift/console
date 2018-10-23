@@ -43,6 +43,7 @@ import {
   serviceCatalogStatus,
   serviceClassDisplayName
 } from '../../module/k8s';
+import { getVmStatus } from '../../kubevirt/components/utils/resources';
 
 const fuzzyCaseInsensitive = (a, b) => fuzzy(_.toLower(a), _.toLower(b));
 
@@ -159,6 +160,15 @@ const listFilters = {
     const displayName = serviceClassDisplayName(serviceClass);
     return fuzzyCaseInsensitive(str, displayName);
   },
+
+  'vm-status' : (statuses, vm) => {
+    if (!statuses || !statuses.selected || !statuses.selected.size) {
+      return true;
+    }
+
+    const status = getVmStatus(vm);
+    return statuses.selected.has(status) || !_.includes(statuses.all, status);
+  }
 
 };
 
