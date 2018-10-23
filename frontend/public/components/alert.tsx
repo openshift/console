@@ -235,9 +235,9 @@ const ViewInPrometheusLink = connectToURLs(MonitoringRoutes.Prometheus)(ViewInPr
 const ActiveAlerts = ({alerts}) => <div className="co-m-table-grid co-m-table-grid--bordered">
   <div className="row co-m-table-grid__head">
     <div className="col-xs-6">Description</div>
-    <div className="col-xs-2">Active Since</div>
-    <div className="col-xs-2">State</div>
-    <div className="col-xs-2">Value</div>
+    <div className="col-sm-2 hidden-xs">Active Since</div>
+    <div className="col-sm-2 col-xs-3">State</div>
+    <div className="col-sm-2 col-xs-3">Value</div>
   </div>
   <div className="co-m-table-grid__body">
     {alerts.map((a, i) => {
@@ -248,9 +248,9 @@ const ActiveAlerts = ({alerts}) => <div className="co-m-table-grid co-m-table-gr
           <Cog options={[silenceAction(a)]} />
           <Link className="co-resource-link" to={alertURL(name, a.labels)}>{description}</Link>
         </div>
-        <div className="col-xs-2"><Timestamp timestamp={a.activeAt} /></div>
-        <div className="col-xs-2"><State state={a.state} /></div>
-        <div className="col-xs-2">{a.value}</div>
+        <div className="col-sm-2 hidden-xs"><Timestamp timestamp={a.activeAt} /></div>
+        <div className="col-sm-2 col-xs-3"><State state={a.state} /></div>
+        <div className="col-sm-2 col-xs-3 co-break-word">{a.value}</div>
       </ResourceRow>;
     })}
   </div>
