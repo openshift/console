@@ -43,6 +43,7 @@ export * from './scroll-to-top-on-mount';
 export * from './service-catalog-status';
 export * from './close-button';
 export * from './container-table';
+export * from './simple-tab-nav';
 
 /*
   Add the enum for NameValueEditorPair here and not in its namesake file because the editor should always be

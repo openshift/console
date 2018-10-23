@@ -7,7 +7,6 @@ import { errorModal } from './modals';
 import { DeploymentConfigModel } from '../models';
 import { Conditions } from './conditions';
 import { ResourceEventStream } from './events';
-import { connectToModel } from '../kinds';
 import {
   DetailsPage,
   List,
@@ -23,7 +22,6 @@ import {
   LoadingInline,
   navFactory,
   pluralize,
-  ResourceOverviewHeading,
   ResourceSummary,
   SectionHeading
 } from './utils';
@@ -56,7 +54,7 @@ const rolloutAction = (kind, obj) => ({
 
 const {ModifyCount, AddStorage, EditEnvironment, common} = Cog.factory;
 
-const menuActions = [
+export const menuActions = [
   rolloutAction,
   ModifyCount,
   AddStorage,
@@ -64,7 +62,7 @@ const menuActions = [
   ...common,
 ];
 
-const DeploymentConfigDetailsList = ({dc}) => {
+export const DeploymentConfigDetailsList = ({dc}) => {
   const reason = _.get(dc, 'status.details.message');
   const timeout = _.get(dc, 'spec.strategy.rollingParams.timeoutSeconds');
   const updatePeriod = _.get(dc, 'spec.strategy.rollingParams.updatePeriodSeconds');
@@ -94,29 +92,6 @@ const DeploymentConfigDetailsList = ({dc}) => {
     {triggers && <dd>{triggers}</dd>}
   </dl>;
 };
-
-export const DeploymentConfigOverview = connectToModel(({resource: dc, kindObj}) =>
-  <div className="overview__sidebar-pane resource-overview">
-    <ResourceOverviewHeading
-      actions={menuActions}
-      kindObj={kindObj}
-      resource={dc}
-    />
-    <div className="overview__sidebar-pane-body resource-overview__body">
-      <div className="resource-overview__pod-counts">
-        <DeploymentPodCounts resource={dc} resourceKind={DeploymentConfigModel} />
-      </div>
-      <div className="resource-overview__summary">
-        <ResourceSummary resource={dc}>
-          <dt>Status</dt>
-          <dd>{dc.status.availableReplicas === dc.status.updatedReplicas ? <span>Active</span> : <div><span className="co-icon-space-r"><LoadingInline /></span> Updating</div>}</dd>
-        </ResourceSummary>
-      </div>
-      <div className="resource-overview__details">
-        <DeploymentConfigDetailsList dc={dc} />
-      </div>
-    </div>
-  </div>);
 
 export const DeploymentConfigsDetails: React.SFC<{obj: any}> = ({obj: dc}) => {
   return <React.Fragment>

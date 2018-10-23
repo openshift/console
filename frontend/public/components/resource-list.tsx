@@ -5,14 +5,14 @@ import { match } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import * as _ from 'lodash-es';
 
-import { connectToPlural, connectToModel } from '../kinds';
+import { connectToPlural } from '../kinds';
 import { LoadingBox, AsyncComponent } from './utils';
 import { K8sResourceKindReference, referenceForModel, K8sKind, isGroupVersionKind, kindForReference, apiVersionForReference } from '../module/k8s';
 import { ErrorPage404 } from './error';
 import { FLAGS, connectToFlags, flagPending } from '../features';
 import { OpenShiftGettingStarted } from './start-guide';
-import { resourceListPages, resourceDetailPages, resourceOverviewPages } from './resource-pages';
-import { DefaultPage, DefaultDetailsPage, DefaultOverviewPage } from './default-resource';
+import { resourceListPages, resourceDetailPages } from './resource-pages';
+import { DefaultPage, DefaultDetailsPage } from './default-resource';
 
 // Parameters can be in pros.params (in URL) or in props.route (attribute of Route tag)
 const allParams = props => Object.assign({}, _.get(props, 'match.params'), props);
@@ -68,12 +68,6 @@ export const ResourceDetailsPage = connectToPlural((props: ResourceDetailsPagePr
     </Helmet>
     <AsyncComponent loader={componentLoader} match={props.match} namespace={ns} kind={props.modelRef} name={name} />
   </React.Fragment>;
-});
-
-export const ResourceOverviewPage = connectToModel(({kind, kindObj, resource}) => {
-  const ref = referenceForModel(kindObj);
-  const loader = resourceOverviewPages.get(ref, () => Promise.resolve(DefaultOverviewPage));
-  return <AsyncComponent loader={loader} kind={kind} resource={resource} />;
 });
 
 export type ResourceListPageProps = {

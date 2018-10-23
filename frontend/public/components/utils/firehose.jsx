@@ -133,7 +133,7 @@ export const Firehose = connect(
     watchK8sObject: actions.watchK8sObject,
     watchK8sList: actions.watchK8sList,
   })(
-  /** @augments {React.Component<{k8sModels?: Map<string, K8sKind}>} */
+  /** @augments {React.Component<{k8sModels?: Map<string, K8sKind>, forceUpdate?: boolean}>} */
   class Firehose extends React.Component {
     // TODO: Convert this to `componentDidMount`
     // eslint-disable-next-line camelcase

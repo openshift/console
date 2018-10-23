@@ -1,5 +1,6 @@
 import * as _ from 'lodash-es';
 import * as classNames from 'classnames';
+import { murmur3 } from 'murmurhash-js';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
@@ -38,7 +39,8 @@ import {
 
 const labelsToParams = labels => _.map(labels, (v, k) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`).join('&');
 
-const detailsURL = (resource, name, labels) => `${resource.path}/${name}?${labelsToParams(labels)}`;
+const alertURL = (name, labels) => `${AlertResource.path}/${name}?${labelsToParams(labels)}`;
+const ruleURL = rule => `${AlertRuleResource.path}/${_.get(rule, 'id')}`;
 
 const silenceAction = alert => ({
   label: 'Silence Alert',
@@ -95,13 +97,22 @@ class MonitoringPageWrapper extends SafetyFirst<AlertsPageWrapperProps, null> {
     }
 
     poll(`${prometheusBaseURL}/api/v1/rules`, 'rules', data => {
-      // Flatten the rules data to make it easier to work with and also discard non-alerting rules since those are
-      // the only ones we will be using
-      const allRules = _.flatMap(_.get(data, 'groups'), 'rules');
-      const alertingRules = _.filter(allRules, {type: 'alerting'});
+      // Flatten the rules data to make it easier to work with, discard non-alerting rules since those are the only ones
+      // we will be using and add a unique ID to each rule.
+      const groups = _.get(data, 'groups');
+      const rules = _.flatMap(groups, g => {
+        const addID = r => {
+          const key = [g.file, g.name, r.name, r.duration, r.query, ..._.map(r.labels, (k, v) => `${k}=${v}`)].join(',');
+          r.id = String(murmur3(key, 'monitoring-salt'));
+          return r;
+        };
+
+        return _.filter(g.rules, {type: 'alerting'}).map(addID);
+      });
+
       return {
-        asRules: alertingRules,
-        asAlerts: _.flatMap(alertingRules, rule => {
+        asRules: rules,
+        asAlerts: _.flatMap(rules, rule => {
           // Give the alerts a name field matching their rule
           return _.isEmpty(rule.alerts) ? rule : rule.alerts.map(a => ({name: rule.name, rule, ...a}));
         }),
@@ -142,7 +153,7 @@ const alertStateToProps = (state, {match}): AlertsDetailsPageProps => {
   const name = _.get(match, 'params.name');
   const labels = getURLSearchParams();
   const alert = _.find(data && data.asAlerts, {labels});
-  const rule = alert ? alert.rule : _.find(data && data.asRules, {labels, name});
+  const rule = _.get(alert, 'rule') || _.find(data && data.asRules, {labels, name});
   return {alert, loaded, loadError, name, rule};
 };
 
@@ -186,7 +197,7 @@ const AlertsDetailsPage_ = connect(alertStateToProps)((props: AlertsDetailsPageP
                 <dd>
                   <div className="co-resource-link">
                     <MonitoringResourceIcon resource={AlertRuleResource} />
-                    <Link to={detailsURL(AlertRuleResource, name, _.get(rule, 'labels'))} className="co-resource-link__resource-name">{name}</Link>
+                    <Link to={ruleURL(rule)} className="co-resource-link__resource-name">{name}</Link>
                   </div>
                 </dd>
               </dl>
@@ -235,7 +246,7 @@ const ActiveAlerts = ({alerts}) => <div className="co-m-table-grid co-m-table-gr
       return <ResourceRow key={i} obj={a}>
         <div className="col-xs-6 co-resource-link-wrapper">
           <Cog options={[silenceAction(a)]} />
-          <Link className="co-resource-link" to={detailsURL(AlertResource, name, a.labels)}>{description}</Link>
+          <Link className="co-resource-link" to={alertURL(name, a.labels)}>{description}</Link>
         </div>
         <div className="col-xs-2"><Timestamp timestamp={a.activeAt} /></div>
         <div className="col-xs-2"><State state={a.state} /></div>
@@ -247,20 +258,17 @@ const ActiveAlerts = ({alerts}) => <div className="co-m-table-grid co-m-table-gr
 
 const ruleStateToProps = (state, {match}): AlertRulesDetailsPageProps => {
   const {data, loaded, loadError}: Rules = monitoringRulesToProps(state);
-  const name = _.get(match, 'params.name');
-  const rule = _.find(data && data.asRules, {name, labels: getURLSearchParams()});
-  return {loaded, loadError, name, rule};
+  const id = _.get(match, 'params.id');
+  const rule = _.find(_.get(data, 'asRules'), {id});
+  return {loaded, loadError, rule};
 };
 
 const AlertRulesDetailsPage_ = connect(ruleStateToProps)((props: AlertRulesDetailsPageProps) => {
-  const {loaded, loadError, name, rule} = props;
-  const annotations = _.get(rule, 'annotations', {});
-  const labels = _.get(rule, 'labels');
+  const {loaded, loadError, rule} = props;
+  const {alerts = [], annotations = {}, duration = null, labels = {}, name = '', query = ''} = rule || {};
   const severity = _.get(labels, 'severity');
-  const alerts = _.get(rule, 'alerts');
-  const duration = _.get(rule, 'duration');
   const breadcrumbs = [
-    {name, path: detailsURL(AlertResource, name, labels)},
+    {name, path: alertURL(name, labels)},
     {name: `${AlertRuleResource.label} Details`, path: null},
   ];
 
@@ -302,7 +310,7 @@ const AlertRulesDetailsPage_ = connect(ruleStateToProps)((props: AlertRulesDetai
                   <dd>{formatDuration(duration * 1000)}</dd>
                 </React.Fragment>}
                 <dt>Expression</dt>
-                <dd><pre className="monitoring-query">{_.get(rule, 'query')}</pre></dd>
+                <dd><pre className="monitoring-query">{query}</pre></dd>
                 {annotations.runbook_url && <React.Fragment>
                   <dt>Runbook</dt>
                   <dd><ExternalLink href={annotations.runbook_url} text={annotations.runbook_url} /></dd>
@@ -336,7 +344,7 @@ const AlertRow = ({obj}) => {
         {alertState(obj) !== 'inactive' && <Cog options={[silenceAction(obj)]} />}
         <span className="co-resource-link">
           <MonitoringResourceIcon resource={AlertResource} />
-          <Link to={detailsURL(AlertResource, name, labels)} className="co-resource-link__resource-name">{name}</Link>
+          <Link to={alertURL(name, labels)} className="co-resource-link__resource-name">{name}</Link>
         </span>
       </div>
       <div className="monitoring-description">{_.get(annotations, 'description') || _.get(annotations, 'message')}</div>
@@ -499,7 +507,9 @@ type Rule = {
   alerts: Alert[];
   annotations: any;
   duration: number;
+  id: string;
   labels: {[key: string]: string};
+  name: string;
   query: string;
 };
 type Rules = {
@@ -523,7 +533,6 @@ export type AlertsDetailsPageProps = {
 export type AlertRulesDetailsPageProps = {
   loaded: boolean;
   loadError?: string;
-  name: string;
   rule: Rule;
 };
 export type ListPageProps = {

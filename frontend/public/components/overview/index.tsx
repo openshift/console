@@ -1,21 +1,26 @@
-import * as React from 'react';
 import * as _ from 'lodash-es';
-import * as fuzzy from 'fuzzysearch';
-import * as PropTypes from 'prop-types';
 import * as classnames from 'classnames';
-import { Toolbar } from 'patternfly-react';
+import * as fuzzy from 'fuzzysearch';
+import * as React from 'react';
+import { connect } from 'react-redux';
+import { CSSTransition } from 'react-transition-group';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
-import { CSSTransition } from 'react-transition-group';
+import { Toolbar } from 'patternfly-react';
 
-import { SafetyFirst } from './safety-first';
-import { StartGuide } from './start-guide';
-import { TextFilter } from './factory';
-import { ProjectOverview } from './project-overview';
-import { ResourceOverviewPage } from './resource-list';
-import { prometheusBasePath } from './graphs';
-import { coFetchJSON } from '../co-fetch';
-import { ALL_NAMESPACES_KEY } from '../const';
+import store from '../../redux';
+import { ALL_NAMESPACES_KEY } from '../../const';
+import { coFetchJSON } from '../../co-fetch';
+import {
+  /* eslint-disable-next-line no-unused-vars */
+  K8sResourceKind,
+  LabelSelector,
+} from '../../module/k8s';
+import { prometheusBasePath } from '../graphs';
+import { SafetyFirst } from '../safety-first';
+import { StartGuide } from '../start-guide';
+import { TextFilter } from '../factory';
+import { UIActions } from '../../ui/ui-actions';
 import {
   DaemonSetModel,
   DeploymentModel,
@@ -23,7 +28,7 @@ import {
   ReplicationControllerModel,
   ReplicaSetModel,
   StatefulSetModel
-} from '../models';
+} from '../../models';
 import {
   CloseButton,
   Disabled,
@@ -31,34 +36,38 @@ import {
   Firehose,
   MsgBox,
   StatusBox,
-} from './utils';
+} from '../utils';
+
+import { ProjectOverview } from './project-overview';
+import { ResourceOverviewPage } from './resource-overview-page';
 
 // Should not be a valid label value to avoid conflicts.
 // https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/#syntax-and-character-set
 const EMPTY_GROUP_LABEL = 'other resources';
 const DEPLOYMENT_REVISION_ANNOTATION = 'deployment.kubernetes.io/revision';
 const DEPLOYMENT_CONFIG_LATEST_VERSION_ANNOTATION = 'openshift.io/deployment-config.latest-version';
+const DEPLOYMENT_PHASE_ANNOTATION = 'openshift.io/deployment.phase';
 const METRICS_POLL_INTERVAL = 30 * 1000;
 
-const getDeploymentRevision = obj => {
+const getDeploymentRevision = (obj: K8sResourceKind): number => {
   const revision = _.get(obj, ['metadata', 'annotations', DEPLOYMENT_REVISION_ANNOTATION]);
   return revision && parseInt(revision, 10);
 };
 
-const getDeploymentConfigVersion = obj => {
+const getDeploymentConfigVersion = (obj: K8sResourceKind): number => {
   const version = _.get(obj, ['metadata', 'annotations', DEPLOYMENT_CONFIG_LATEST_VERSION_ANNOTATION]);
   return version && parseInt(version, 10);
 };
 
-const getDeploymentPhase = rc => _.get(rc, ['metadata', 'annotations', 'openshift.io/deployment.phase']);
+const getDeploymentPhase = (rc: K8sResourceKind): string => _.get(rc, ['metadata', 'annotations', DEPLOYMENT_PHASE_ANNOTATION]);
 
 // Only show an alert once if multiple pods have the same error for the same owner.
-const podAlertKey = (alert, pod, containerName = 'all') => {
+const podAlertKey = (alert: any, pod: K8sResourceKind, containerName: string = 'all'): string => {
   const id = _.get(pod, 'metadata.ownerReferences[0].uid', pod.metadata.uid);
   return `${alert}--${id}--${containerName}`;
 };
 
-const getPodAlerts = pod => {
+const getPodAlerts = (pod: K8sResourceKind): any => {
   const alerts = {};
   const statuses = [
     ..._.get(pod, 'status.initContainerStatuses', []),
@@ -90,12 +99,12 @@ const getPodAlerts = pod => {
   return alerts;
 };
 
-const combinePodAlerts = pods => _.reduce(pods, (acc, pod) => ({
+const combinePodAlerts = (pods: K8sResourceKind[]): any => _.reduce(pods, (acc, pod) => ({
   ...acc,
   ...getPodAlerts(pod),
 }), {});
 
-const getReplicationControllerAlerts = rc => {
+const getReplicationControllerAlerts = (rc: K8sResourceKind): any => {
   const phase = getDeploymentPhase(rc);
   const version = getDeploymentConfigVersion(rc);
   const label = _.isFinite(version) ? `#${version}` : rc.metadata.name;
@@ -120,8 +129,8 @@ const getReplicationControllerAlerts = rc => {
   }
 };
 
-const getOwnedResources = ({metadata:{uid}}, resources) => {
-  return _.filter(resources, ({metadata:{ownerReferences}}) => {
+const getOwnedResources = ({metadata:{uid}}: K8sResourceKind, resources: K8sResourceKind[]): K8sResourceKind[] => {
+  return _.filter(resources, ({metadata:{ownerReferences}}: K8sResourceKind) => {
     return _.some(ownerReferences, {
       uid,
       controller: true
@@ -129,7 +138,7 @@ const getOwnedResources = ({metadata:{uid}}, resources) => {
   });
 };
 
-const sortByRevision = (replicators, getRevision, descending = true) => {
+const sortByRevision = (replicators: K8sResourceKind[], getRevision: Function, descending: boolean = true): K8sResourceKind[] => {
   const compare = (left, right) => {
     const leftVersion = getRevision(left);
     const rightVersion = getRevision(right);
@@ -160,15 +169,15 @@ const sortByRevision = (replicators, getRevision, descending = true) => {
   return _.toArray(replicators).sort(compare);
 };
 
-const sortReplicaSetsByRevision = (replicaSets) => {
+const sortReplicaSetsByRevision = (replicaSets: K8sResourceKind[]): K8sResourceKind[] => {
   return sortByRevision(replicaSets, getDeploymentRevision);
 };
 
-const sortReplicationControllersByRevision = (replicationControllers) => {
+const sortReplicationControllersByRevision = (replicationControllers: K8sResourceKind[]): K8sResourceKind[] => {
   return sortByRevision(replicationControllers, getDeploymentConfigVersion);
 };
 
-const OverviewHeading = ({disabled, groupOptions, handleFilterChange, handleGroupChange, selectedGroup, title}) =>
+const OverviewHeading: React.SFC<OverviewHeadingProps> = ({disabled, groupOptions, handleFilterChange = _.noop, handleGroupChange = _.noop, selectedGroup = '', title}) => (
   <div className="co-m-nav-title co-m-nav-title--overview">
     {
       title &&
@@ -197,6 +206,7 @@ const OverviewHeading = ({disabled, groupOptions, handleFilterChange, handleGrou
         <div className="form-group overview-toolbar__form-group">
           <TextFilter
             autofocus={!disabled}
+            defaultValue={''}
             disabled={disabled}
             label="Resources by name"
             onChange={handleFilterChange}
@@ -204,28 +214,13 @@ const OverviewHeading = ({disabled, groupOptions, handleFilterChange, handleGrou
         </div>
       </Toolbar.RightContent>
     </Toolbar>
-  </div>;
+  </div>
+);
 
-OverviewHeading.displayName = 'OverviewHeading';
+class OverviewDetails extends SafetyFirst<OverviewDetailsProps, OverviewDetailsState> {
+  /* eslint-disable-next-line no-undef */
+  metricsInterval_: any;
 
-OverviewHeading.propTypes = {
-  disabled: PropTypes.bool,
-  groupOptions: PropTypes.object,
-  handleFilterChange: PropTypes.func,
-  handleGroupChange: PropTypes.func,
-  selectedGroup: PropTypes.string,
-  title: PropTypes.string
-};
-
-OverviewHeading.defaultProps = {
-  disabled: false,
-  groupOptions: {},
-  handleFilterChange: _.noop,
-  handleGroupChange: _.noop,
-  selectedGroup: ''
-};
-
-class OverviewDetails extends SafetyFirst {
   constructor(props) {
     super(props);
     this.handleFilterChange = this.handleFilterChange.bind(this);
@@ -238,7 +233,8 @@ class OverviewDetails extends SafetyFirst {
       filteredItems: [],
       groupedItems: [],
       groupOptions: {},
-      selectedGroupLabel: ''
+      metrics: {},
+      selectedGroupLabel: '',
     };
   }
 
@@ -249,11 +245,23 @@ class OverviewDetails extends SafetyFirst {
 
   componentWillUnmount () {
     super.componentWillUnmount();
-    clearInterval(this.metricsInterval);
+    clearInterval(this.metricsInterval_);
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const {daemonSets, deployments, deploymentConfigs, loaded, namespace, pods, replicaSets, replicationControllers, statefulSets} = this.props;
+    const {
+      daemonSets,
+      deployments,
+      deploymentConfigs,
+      loaded,
+      namespace,
+      pods,
+      replicaSets,
+      replicationControllers,
+      routes,
+      services,
+      statefulSets
+    } = this.props;
     const {filterValue, selectedGroupLabel} = this.state;
 
     if (!_.isEqual(namespace, prevProps.namespace)
@@ -264,6 +272,8 @@ class OverviewDetails extends SafetyFirst {
       || !_.isEqual(pods, prevProps.pods)
       || !_.isEqual(replicaSets, prevProps.replicaSets)
       || !_.isEqual(replicationControllers, prevProps.replicationControllers)
+      || !_.isEqual(routes, prevProps.routes)
+      || !_.isEqual(services, prevProps.services)
       || !_.isEqual(statefulSets, prevProps.statefulSets)) {
       this.createOverviewData();
     } else if (filterValue !== prevState.filterValue) {
@@ -280,8 +290,8 @@ class OverviewDetails extends SafetyFirst {
   }
 
   fetchMetrics() {
-    if (!prometheusBasePath) {
-      // Proxy has not been set up.
+    if (!this.isMounted_ || !prometheusBasePath) {
+      // Component is not mounted or proxy has not been set up.
       return;
     }
 
@@ -314,16 +324,14 @@ class OverviewDetails extends SafetyFirst {
       if (_.includes([401, 403, 502, 503], status) && _.isEmpty(previousMetrics)) {
         throw new Error(`Could not fetch metrics, status: ${status}`);
       }
-    }).then(() => this.metricsInterval = setTimeout(() => {
-      if (this.isMounted_) {
-        this.fetchMetrics();
-      }
-    }, METRICS_POLL_INTERVAL));
+    }).then(() => {
+      this.metricsInterval_ = setTimeout(this.fetchMetrics, METRICS_POLL_INTERVAL);
+    });
   }
 
   filterItems(items) {
-    const {filterValue} = this.state;
     const {selectedItem} = this.props;
+    const {filterValue} = this.state;
 
     if (!filterValue) {
       return items;
@@ -331,7 +339,8 @@ class OverviewDetails extends SafetyFirst {
 
     const filterString = filterValue.toLowerCase();
     return _.filter(items, item => {
-      return fuzzy(filterString, _.get(item, 'obj.metadata.name', '')) || _.get(item, 'obj.metadata.uid') === _.get(selectedItem, 'obj.metadata.uid');
+      return fuzzy(filterString, _.get(item, 'obj.metadata.name', ''))
+        || _.get(item, 'obj.metadata.uid') === _.get(selectedItem, 'obj.metadata.uid');
     });
   }
 
@@ -373,53 +382,64 @@ class OverviewDetails extends SafetyFirst {
     }, groupOptions);
   }
 
-  addPodsToItem(item) {
-    const {pods: allPods} = this.props;
-    const {obj} = item;
-    const pods = getOwnedResources(obj, allPods.data);
-    const alerts = {
-      ...item.alerts,
-      ...combinePodAlerts(pods),
-    };
-    return {
-      ...item,
-      pods,
-      alerts,
-    };
+  getPodsForResource(resource) {
+    const {pods} = this.props;
+    return getOwnedResources(resource, pods.data);
   }
 
-  toReplicationControllerItem(rc) {
-    const alerts = getReplicationControllerAlerts(rc);
-    const phase = getDeploymentPhase(rc);
-    const revision = getDeploymentConfigVersion(rc);
-    return this.addPodsToItem({
-      obj: {
-        ...rc,
-        kind: ReplicationControllerModel.kind
-      },
-      alerts,
-      phase,
-      revision,
+  getRoutesForServices(services) {
+    const {routes} = this.props;
+    return _.filter(routes.data, route => {
+      const name = _.get(route, 'spec.to.name');
+      return _.some(services, {metadata: {name}});
     });
   }
 
-  getActiveReplicationControllers(deploymentConfig) {
+  getServicesForResource(resource) {
+    const {services} = this.props;
+    const template = _.get(resource, 'spec.template');
+    return _.filter(services.data, service => {
+      const selector = new LabelSelector(_.get(service, 'spec.selector', {}));
+      return selector.matches(template);
+    });
+  }
+
+  toReplicationControllerItem(rc) {
+    const pods = this.getPodsForResource(rc);
+    const alerts = [
+      ...combinePodAlerts(pods),
+      ...getReplicationControllerAlerts(rc)
+    ];
+    const phase = getDeploymentPhase(rc);
+    const revision = getDeploymentConfigVersion(rc);
+    const obj = {
+      ...rc,
+      kind: ReplicationControllerModel.kind
+    };
+    return {
+      alerts,
+      obj,
+      phase,
+      pods,
+      revision,
+    };
+  }
+
+  getActiveReplicationControllers(resource) {
     const {replicationControllers} = this.props;
-    const currentVersion = _.get(deploymentConfig, 'status.latestVersion');
-    const ownedRC = getOwnedResources(deploymentConfig, replicationControllers.data);
+    const currentVersion = _.get(resource, 'status.latestVersion');
+    const ownedRC = getOwnedResources(resource, replicationControllers.data);
     return _.filter(ownedRC, rc => _.get(rc, 'status.replicas') || getDeploymentConfigVersion(rc) === currentVersion);
   }
 
-  addReplicationControllersToItem(item) {
-    const { obj: deploymentConfig } = item;
-    const replicationControllers = this.getActiveReplicationControllers(deploymentConfig);
+  getReplicationControllersForResource(resource) {
+    const replicationControllers = this.getActiveReplicationControllers(resource);
     const rcItems = sortReplicationControllersByRevision(replicationControllers).map(rc => this.toReplicationControllerItem(rc));
-    const current = _.first(rcItems);
-    const previous = _.nth(rcItems, 1);
+    const current: any = _.first(rcItems);
+    const previous: any = _.nth(rcItems, 1);
     const isRollingOut = current && previous && current.phase !== 'Cancelled' && current.phase !== 'Failed';
 
     return {
-      ...item,
       current,
       previous,
       isRollingOut,
@@ -427,13 +447,18 @@ class OverviewDetails extends SafetyFirst {
   }
 
   toReplicaSetItem(rs) {
-    return this.addPodsToItem({
-      obj: {
-        ...rs,
-        kind: ReplicaSetModel.kind,
-      },
+    const obj = {
+      ...rs,
+      kind: ReplicaSetModel.kind,
+    };
+    const pods = this.getPodsForResource(rs);
+    const alerts = combinePodAlerts(pods);
+    return {
+      alerts,
+      obj,
+      pods,
       revision: getDeploymentRevision(rs),
-    });
+    };
   }
 
   getActiveReplicaSets(deployment) {
@@ -443,15 +468,13 @@ class OverviewDetails extends SafetyFirst {
     return _.filter(ownedRS, rs => _.get(rs, 'status.replicas') || getDeploymentRevision(rs) === currentRevision);
   }
 
-  addReplicaSetsToItem(item) {
-    const { obj: deployment } = item;
+  getReplicaSetsForResource(deployment) {
     const replicaSets = this.getActiveReplicaSets(deployment);
     const rsItems = sortReplicaSetsByRevision(replicaSets).map(rs => this.toReplicaSetItem(rs));
     const current = _.first(rsItems);
     const previous = _.nth(rsItems, 1);
     const isRollingOut = current && previous;
     return {
-      ...item,
       current,
       previous,
       isRollingOut,
@@ -461,69 +484,108 @@ class OverviewDetails extends SafetyFirst {
   createDaemonSetItems() {
     const {daemonSets} = this.props;
     return _.map(daemonSets.data, ds => {
-      return this.addPodsToItem({
-        obj: {
-          ...ds,
-          kind: DaemonSetModel.kind
-        },
-        readiness: {
-          desired: ds.status.desiredNumberScheduled || 0,
-          ready: ds.status.currentNumberScheduled || 0
-        }
-      });
+      const services = this.getServicesForResource(ds);
+      const routes = this.getRoutesForServices(services);
+      const obj = {
+        ...ds,
+        kind: DaemonSetModel.kind
+      };
+      const readiness = {
+        desired: ds.status.desiredNumberScheduled || 0,
+        ready: ds.status.currentNumberScheduled || 0
+      };
+      const pods = this.getPodsForResource(ds);
+      const alerts = combinePodAlerts(pods);
+
+      return {
+        alerts,
+        obj,
+        pods,
+        readiness,
+        routes,
+        services
+      };
     });
   }
 
   createDeploymentItems() {
     const {deployments} = this.props;
     return _.map(deployments.data, d => {
-      return this.addReplicaSetsToItem({
-        obj: {
-          ...d,
-          kind: DeploymentModel.kind
-        },
-        readiness: {
-          desired: d.spec.replicas || 0,
-          ready: d.status.replicas || 0
-        }
-      });
+      const {current, previous, isRollingOut} = this.getReplicaSetsForResource(d);
+      const services = this.getServicesForResource(d);
+      const routes = this.getRoutesForServices(services);
+      const obj = {
+        ...d,
+        kind: DeploymentModel.kind
+      };
+      const readiness = {
+        desired: d.spec.replicas || 0,
+        ready: d.status.replicas || 0
+      };
+
+      return {
+        current,
+        isRollingOut,
+        obj,
+        previous,
+        readiness,
+        routes,
+        services,
+      };
     });
   }
 
   createDeploymentConfigItems() {
     const {deploymentConfigs} = this.props;
     return _.map(deploymentConfigs.data, dc => {
-      return this.addReplicationControllersToItem({
-        obj: {
-          ...dc,
-          kind: DeploymentConfigModel.kind
-        },
-        readiness: {
-          desired: dc.spec.replicas || 0,
-          ready: dc.status.replicas || 0
-        }
-      });
+      const {current, previous, isRollingOut} = this.getReplicationControllersForResource(dc);
+      const services = this.getServicesForResource(dc);
+      const routes = this.getRoutesForServices(services);
+      const obj = {
+        ...dc,
+        kind: DeploymentConfigModel.kind
+      };
+      const readiness = {
+        desired: dc.spec.replicas || 0,
+        ready: dc.status.replicas || 0
+      };
+
+      return {
+        current,
+        isRollingOut,
+        obj,
+        previous,
+        readiness,
+        routes,
+        services,
+      };
     });
   }
 
   createStatefulSetItems() {
     const {statefulSets} = this.props;
     return _.map(statefulSets.data, (ss) => {
-      return this.addPodsToItem({
-        obj: {
-          ...ss,
-          kind: StatefulSetModel.kind
-        },
-        readiness: {
-          desired: ss.spec.replicas || 0,
-          ready: ss.status.replicas || 0
-        }
-      });
+      const obj = {
+        ...ss,
+        kind: StatefulSetModel.kind
+      };
+      const readiness = {
+        desired: ss.spec.replicas || 0,
+        ready: ss.status.replicas || 0
+      };
+      const pods = this.getPodsForResource(ss);
+      const alerts = combinePodAlerts(pods);
+      return {
+        alerts,
+        obj,
+        pods,
+        readiness,
+      };
     });
   }
 
   createOverviewData() {
-    const {loaded, selectedItem, selectItem} = this.props;
+    const {loaded} = this.props;
 
     if (!loaded) {
       return;
@@ -536,10 +598,7 @@ class OverviewDetails extends SafetyFirst {
       ...this.createStatefulSetItems()
     ];
 
-    // Ensure any changes to the selected item propagate back up to the side panel
-    if (!_.isEmpty(selectedItem)) {
-      selectItem(_.find(items, {obj: {metadata: {uid: selectedItem.obj.metadata.uid }}}));
-    }
+    store.dispatch(UIActions.updateOverviewResources(items));
 
     const filteredItems = this.filterItems(items);
     const groupOptions = this.getGroupOptionsFromLabels(filteredItems);
@@ -567,7 +626,7 @@ class OverviewDetails extends SafetyFirst {
   }
 
   render() {
-    const {loaded, loadError, selectedItem, title} = this.props;
+    const {loaded, loadError, title} = this.props;
     const {filteredItems, groupedItems, groupOptions, metrics, selectedGroupLabel} = this.state;
     return <div className="co-m-pane">
       <OverviewHeading
@@ -585,10 +644,8 @@ class OverviewDetails extends SafetyFirst {
           label="Resources"
         >
           <ProjectOverview
-            selectedItem={selectedItem}
             groups={groupedItems}
             metrics={metrics}
-            onClickItem={this.props.selectItem}
           />
         </StatusBox>
       </div>
@@ -596,137 +653,127 @@ class OverviewDetails extends SafetyFirst {
   }
 }
 
-OverviewDetails.displayName = 'OverviewDetails';
-
-OverviewDetails.propTypes = {
-  deploymentConfigs: PropTypes.object,
-  deployments: PropTypes.object,
-  loaded: PropTypes.bool,
-  loadError: PropTypes.object,
-  pods: PropTypes.object,
-  replicationControllers: PropTypes.object,
-  replicaSets: PropTypes.object,
-  statefulSets: PropTypes.object,
-};
-
-export class Overview extends React.Component {
-  constructor(props){
-    super(props);
-    this.selectItem = this.selectItem.bind(this);
-    this.state = {
+const overviewStateToProps = ({UI}, ownProps): OverviewProps => {
+  const selectedUID = UI.getIn(['overview', 'selectedUID']);
+  const resources = UI.getIn(['overview', 'resources']);
+  if (_.isEmpty(selectedUID)) {
+    return {
+      ...ownProps,
       selectedItem: {}
     };
   }
-
-  selectItem(selectedItem){
-    this.setState({selectedItem});
-  }
-
-  render() {
-    const {namespace, title} = this.props;
-    const {selectedItem} = this.state;
-    const className = classnames('overview', {'overview--sidebar-shown': !_.isEmpty(selectedItem)});
-    const resources = [
-      {
-        isList: true,
-        kind: 'DaemonSet',
-        namespace,
-        prop: 'daemonSets'
-      },
-      {
-        isList: true,
-        kind: 'Deployment',
-        namespace,
-        prop: 'deployments'
-      },
-      {
-        isList: true,
-        kind: 'DeploymentConfig',
-        namespace,
-        prop: 'deploymentConfigs'
-      },
-      {
-        isList: true,
-        kind: 'Pod',
-        namespace,
-        prop: 'pods'
-      },
-      {
-        isList: true,
-        kind: 'ReplicaSet',
-        namespace,
-        prop: 'replicaSets'
-      },
-      {
-        isList: true,
-        kind: 'ReplicationController',
-        namespace,
-        prop: 'replicationControllers'
-      },
-      {
-        isList: true,
-        kind: 'StatefulSet',
-        namespace,
-        prop: 'statefulSets'
-      }
-    ];
-
-    if (_.isEmpty(namespace) || namespace === ALL_NAMESPACES_KEY) {
-      return <div className="co-m-pane">
-        <Disabled>
-          <OverviewHeading disabled title={title} />
-        </Disabled>
-        <div className="co-m-pane__body">
-          <MsgBox
-            detail={<React.Fragment>
-              Select a project from the dropdown above to see an overview of its workloads.
-              To view the status of all projects in the cluster, go to the <Link to="/status">status page</Link>.
-            </React.Fragment>}
-            title="Select a Project"
-          />
-        </div>
-      </div>;
-    }
-
-    return <div className={className}>
-      <div className="overview__main-column">
-        <div className="overview__main-column-section">
-          <Firehose resources={resources} forceUpdate={true}>
-            <OverviewDetails
-              namespace={namespace}
-              selectedItem={selectedItem}
-              selectItem={this.selectItem}
-              title={title}
-            />
-          </Firehose>
-        </div>
-      </div>
-      {
-        !_.isEmpty(selectedItem) &&
-        <CSSTransition in appear timeout={1} classNames="overview__sidebar">
-          <div className="overview__sidebar">
-            <div className="overview__sidebar-dismiss clearfix">
-              <CloseButton onClick={() => this.selectItem({})} />
-            </div>
-            <ResourceOverviewPage
-              kind={selectedItem.obj.kind}
-              resource={selectedItem.obj}
-            />
-          </div>
-        </CSSTransition>
-      }
-    </div>;
-  }
-}
-
-Overview.displayName = 'Overview';
-
-Overview.propTypes = {
-  namespace: PropTypes.string,
-  title: PropTypes.string
+  return {
+    ...ownProps,
+    selectedItem: resources.get(selectedUID)
+  };
 };
 
-export const OverviewPage = ({match}) => {
+export const Overview = connect(overviewStateToProps)(({namespace, selectedItem, title}) => {
+  const className = classnames('overview', {'overview--sidebar-shown': !_.isEmpty(selectedItem)});
+  const resources = [
+    {
+      isList: true,
+      kind: 'DaemonSet',
+      namespace,
+      prop: 'daemonSets'
+    },
+    {
+      isList: true,
+      kind: 'Deployment',
+      namespace,
+      prop: 'deployments'
+    },
+    {
+      isList: true,
+      kind: 'DeploymentConfig',
+      namespace,
+      prop: 'deploymentConfigs'
+    },
+    {
+      isList: true,
+      kind: 'Pod',
+      namespace,
+      prop: 'pods'
+    },
+    {
+      isList: true,
+      kind: 'ReplicaSet',
+      namespace,
+      prop: 'replicaSets'
+    },
+    {
+      isList: true,
+      kind: 'ReplicationController',
+      namespace,
+      prop: 'replicationControllers'
+    },
+    {
+      isList: true,
+      kind: 'Route',
+      namespace,
+      prop: 'routes'
+    },
+    {
+      isList: true,
+      kind: 'StatefulSet',
+      namespace,
+      prop: 'statefulSets'
+    },
+    {
+      isList: true,
+      kind: 'Service',
+      namespace,
+      prop: 'services'
+    }
+  ];
+
+  if (_.isEmpty(namespace) || namespace === ALL_NAMESPACES_KEY) {
+    return <div className="co-m-pane">
+      <Disabled>
+        <OverviewHeading disabled title={title} />
+      </Disabled>
+      <div className="co-m-pane__body">
+        <MsgBox
+          detail={<React.Fragment>
+            Select a project from the dropdown above to see an overview of its workloads.
+            To view the status of all projects in the cluster, go to the <Link to="/status">status page</Link>.
+          </React.Fragment>}
+          title="Select a Project"
+        />
+      </div>
+    </div>;
+  }
+
+  return <div className={className}>
+    <div className="overview__main-column">
+      <div className="overview__main-column-section">
+        <Firehose resources={resources} forceUpdate={true}>
+          <OverviewDetails
+            namespace={namespace}
+            selectedItem={selectedItem}
+            title={title}
+          />
+        </Firehose>
+      </div>
+    </div>
+    {
+      !_.isEmpty(selectedItem) &&
+      <CSSTransition in appear timeout={1} classNames="overview__sidebar">
+        <div className="overview__sidebar">
+          <div className="overview__sidebar-dismiss clearfix">
+            <CloseButton onClick={() => store.dispatch(UIActions.selectOverviewItem(''))} />
+          </div>
+          <ResourceOverviewPage
+            kind={selectedItem.obj.kind}
+            item={selectedItem}
+          />
+        </div>
+      </CSSTransition>
+    }
+  </div>;
+});
+
+export const OverviewPage: React.SFC<OverviewPageProps> = ({match}) => {
   const namespace = _.get(match, 'params.ns');
   const title = 'Overview';
   return <React.Fragment>
@@ -738,8 +785,50 @@ export const OverviewPage = ({match}) => {
   </React.Fragment>;
 };
 
-OverviewPage.displayName = 'OverviewPage';
-
-OverviewPage.propTypes = {
-  match: PropTypes.object.isRequired
+/* eslint-disable no-unused-vars, no-undef */
+type OverviewHeadingProps = {
+  disabled?: boolean;
+  groupOptions?: any,
+  handleFilterChange?: (...args: any[]) => void,
+  handleGroupChange?: (...args: any[]) => void,
+  selectedGroup?: string,
+  title: string
 };
+
+type OverviewDetailsProps = {
+  daemonSets?: any;
+  deploymentConfigs?: any;
+  deployments?: any;
+  loaded?: boolean;
+  loadError?: any;
+  namespace: string;
+  pods?: any;
+  replicationControllers?: any;
+  replicaSets?: any;
+  routes?: any;
+  services?: any;
+  selectedItem: any;
+  statefulSets?: any;
+  title?: string;
+};
+
+type OverviewDetailsState = {
+  filterValue: string;
+  items: any[];
+  filteredItems: any[];
+  groupedItems: any[];
+  groupOptions: any;
+  metrics: any,
+  selectedGroupLabel: string;
+};
+
+type OverviewProps = {
+  namespace: string;
+  selectedItem: any;
+  title: string;
+};
+
+type OverviewPageProps = {
+  match: any;
+};
+/* eslint-enable no-unused-vars, no-undef */

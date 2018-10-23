@@ -151,9 +151,3 @@ export const resourceListPages = ImmutableMap<GroupVersionKind | string, () => P
   .set(referenceForModel(PackageManifestModel), () => import('./operator-lifecycle-manager/package-manifest' /* webpackChunkName: "package-manifest" */).then(m => m.PackageManifestsPage))
   .set(referenceForModel(SubscriptionModel), () => import('./operator-lifecycle-manager/subscription' /* webpackChunkName: "subscription" */).then(m => m.SubscriptionsPage))
   .set(referenceForModel(InstallPlanModel), () => import('./operator-lifecycle-manager/install-plan' /* webpackChunkName: "install-plan" */).then(m => m.InstallPlansPage));
-
-export const resourceOverviewPages = ImmutableMap<GroupVersionKind | string, () => Promise<React.ComponentType<any>>>()
-  .set(referenceForModel(DaemonSetModel), () => import('./daemon-set' /* webpackChunkNmae: "daemon-set"*/).then(m => m.DaemonSetOverview))
-  .set(referenceForModel(DeploymentModel), () => import('./deployment' /* webpackChunkNmae: "deployment"*/).then(m => m.DeploymentOverview))
-  .set(referenceForModel(DeploymentConfigModel), () => import('./deployment-config' /* webpackChunkNmae: "deployment-config"*/).then(m => m.DeploymentConfigOverview))
-  .set(referenceForModel(StatefulSetModel), () => import('./stateful-set' /* webpackChunkNmae: "stateful-set"*/).then(m => m.StatefulSetOverview));

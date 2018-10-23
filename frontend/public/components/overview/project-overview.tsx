@@ -1,12 +1,20 @@
-import * as React from 'react';
 import * as _ from 'lodash-es';
-import * as PropTypes from 'prop-types';
 import * as classnames from 'classnames';
+import * as React from 'react';
+import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { ListView } from 'patternfly-react';
 
-import { pluralize, ResourceIcon, resourceObjPath, resourcePath } from './utils';
-import { Tooltip } from './utils/tooltip';
+import { Tooltip } from '../utils/tooltip';
+/* eslint-disable-next-line no-unused-vars */
+import { K8sResourceKind } from '../../module/k8s';
+import { UIActions } from '../../ui/ui-actions';
+import {
+  pluralize,
+  ResourceIcon,
+  resourceObjPath,
+  resourcePath
+} from '../utils';
 
 const ControllerLink = ({controller}) => {
   const { obj, revision } = controller;
@@ -23,13 +31,13 @@ const Metrics = ({metrics, item}) => {
   }
 
   const pods = item.current ? item.current.pods : item.pods;
-  const totalBytes = _.reduce(pods, (total, pod) => {
-    const bytes = _.get(metrics, ['memory', pod.metadata.name]);
+  const totalBytes: number = _.reduce(pods, (total: number, pod: K8sResourceKind) => {
+    const bytes: number = _.get(metrics, ['memory', pod.metadata.name]);
     return _.isFinite(bytes) ? total + bytes : total;
   }, 0);
 
-  const totalCores = _.reduce(pods, (total, pod) => {
-    const cores = _.get(metrics, ['cpu', pod.metadata.name]);
+  const totalCores: number = _.reduce(pods, (total: number, pod: K8sResourceKind) => {
+    const cores: number = _.get(metrics, ['cpu', pod.metadata.name]);
     return _.isFinite(cores) ? total + cores : total;
   }, 0);
 
@@ -118,56 +126,54 @@ const Alerts = ({item}) => {
   </div>;
 };
 
-const ProjectOverviewListItem = ({item, metrics, onClick, selectedItem}) => {
-  const {current, obj} = item;
-  const {namespace, name, uid} = obj.metadata;
-  const selectedUID = _.get(selectedItem, 'obj.metadata.uid');
-  // Hide metrics when a selection is active.
-  const hasSelection = !!selectedUID;
-  const isSelected = uid === selectedUID;
-  const className = classnames('project-overview__item', {'project-overview__item--selected': isSelected});
-  const heading = <h3 className="project-overview__item-heading">
-    <span className="co-resource-link co-resource-link-truncate">
-      <ResourceIcon kind={obj.kind} />
-      <Link to={resourcePath(obj.kind, name, namespace)} className="co-resource-link__resource-name">
-        {name}
-      </Link>
-      {current && <React.Fragment>,&nbsp;<ControllerLink controller={current} /></React.Fragment>}
-    </span>
-  </h3>;
+const projectOverviewListItemStateToProps = ({UI}): ProjectOverviewListItemPropsFromState => ({
+  selectedUID: UI.getIn(['overview', 'selectedUID'])
+});
 
-  const additionalInfo = <div key={uid} className="project-overview__additional-info">
-    <Alerts item={item} />
-    {!hasSelection && <Metrics item={item} metrics={metrics} />}
-    <Status item={item} />
-  </div>;
+const projectOverviewListItemDispatchToProps = (dispatch): ProjectOverviewListItemPropsFromDispatch => ({
+  onClick: (uid) => dispatch(UIActions.selectOverviewItem(uid))
+});
 
-  return <ListView.Item
-    onClick={() => isSelected ? onClick({}) : onClick(item)}
-    className={className}
-    heading={heading}
-    additionalInfo={[additionalInfo]}
-  />;
-};
+const ProjectOverviewListItem = connect<ProjectOverviewListItemPropsFromState, ProjectOverviewListItemPropsFromDispatch, ProjectOverviewListItemOwnProps>(projectOverviewListItemStateToProps, projectOverviewListItemDispatchToProps)(
+  ({item, metrics, onClick, selectedUID}: ProjectOverviewListItemProps) => {
+    const {current, obj} = item;
+    const {namespace, name, uid} = obj.metadata;
+    const {kind} = obj;
+    // Hide metrics when a selection is active.
+    const hasSelection = !!selectedUID;
+    const isSelected = uid === selectedUID;
+    const className = classnames('project-overview__item', {'project-overview__item--selected': isSelected});
+    const heading = <h3 className="project-overview__item-heading">
+      <span className="co-resource-link co-resource-link-truncate">
+        <ResourceIcon kind={kind} />
+        <Link to={resourcePath(kind, name, namespace)} className="co-resource-link__resource-name">
+          {name}
+        </Link>
+        {current && <React.Fragment>,&nbsp;<ControllerLink controller={current} /></React.Fragment>}
+      </span>
+    </h3>;
 
-ProjectOverviewListItem.displayName = 'ProjectOverviewListItem';
+    const additionalInfo = <div key={uid} className="project-overview__additional-info">
+      <Alerts item={item} />
+      {!hasSelection && <Metrics item={item} metrics={metrics} />}
+      <Status item={item} />
+    </div>;
 
-ProjectOverviewListItem.propTypes = {
-  item: PropTypes.shape({
-    controller: PropTypes.object,
-    obj: PropTypes.object.isRequired,
-    readiness: PropTypes.object,
-  }).isRequired
-};
+    return <ListView.Item
+      onClick={() => onClick(isSelected ? '' : uid)}
+      className={className}
+      heading={heading}
+      additionalInfo={[additionalInfo]}
+    />;
+  }
+);
 
-const ProjectOverviewList = ({items, metrics, onClickItem, selectedItem}) => {
+const ProjectOverviewList: React.SFC<ProjectOverviewListProps> = ({items, metrics}) => {
   const listItems = _.map(items, (item) =>
     <ProjectOverviewListItem
-      key={item.obj.metadata.uid}
       item={item}
+      key={item.obj.metadata.uid}
       metrics={metrics}
-      onClick={onClickItem}
-      selectedItem={selectedItem}
     />
   );
   return <ListView className="project-overview__list">
@@ -175,28 +181,18 @@ const ProjectOverviewList = ({items, metrics, onClickItem, selectedItem}) => {
   </ListView>;
 };
 
-
-ProjectOverviewList.displayName = 'ProjectOverviewList';
-
-ProjectOverviewList.propTypes = {
-  items: PropTypes.array.isRequired
-};
-
-const ProjectOverviewGroup = ({heading, items, metrics, onClickItem, selectedItem}) =>
+const ProjectOverviewGroup: React.SFC<ProjectOverviewGroupProps> = ({heading, items, metrics}) =>
   <div className="project-overview__group">
     {heading && <h2 className="project-overview__group-heading">{heading}</h2>}
-    <ProjectOverviewList items={items} metrics={metrics} onClickItem={onClickItem} selectedItem={selectedItem} />
+    <ProjectOverviewList
+      items={items}
+      metrics={metrics}
+    />
   </div>;
 
 
-ProjectOverviewGroup.displayName = 'ProjectOverviewGroup';
 
-ProjectOverviewGroup.propTypes = {
-  heading: PropTypes.string,
-  items: PropTypes.array.isRequired
-};
-
-export const ProjectOverview = ({selectedItem, groups, metrics, onClickItem}) =>
+export const ProjectOverview: React.SFC<ProjectOverviewProps> = ({groups, metrics}) =>
   <div className="project-overview">
     {_.map(groups, ({name, items, index}) =>
       <ProjectOverviewGroup
@@ -204,19 +200,43 @@ export const ProjectOverview = ({selectedItem, groups, metrics, onClickItem}) =>
         heading={name}
         items={items}
         metrics={metrics}
-        onClickItem={onClickItem}
-        selectedItem={selectedItem}
       />
     )}
   </div>;
 
-ProjectOverview.displayName = 'ProjectOverview';
-
-ProjectOverview.propTypes = {
-  groups: PropTypes.arrayOf(
-    PropTypes.shape({
-      name: PropTypes.string,
-      items: PropTypes.array.isRequired
-    })
-  )
+/* eslint-disable no-unused-vars, no-undef */
+type ProjectOverviewListItemPropsFromState = {
+  selectedUID: string;
 };
+
+type ProjectOverviewListItemPropsFromDispatch = {
+  onClick: (uid: string) => void;
+};
+
+type ProjectOverviewListItemOwnProps= {
+  item: any;
+  metrics: any;
+};
+
+type ProjectOverviewListItemProps = ProjectOverviewListItemOwnProps & ProjectOverviewListItemPropsFromDispatch & ProjectOverviewListItemPropsFromState;
+
+type ProjectOverviewListProps = {
+  items: any[];
+  metrics: any;
+};
+
+type ProjectOverviewGroupProps = {
+  heading: string;
+  items: any[];
+  metrics: any;
+};
+
+type ProjectOverviewProps = {
+  groups: {
+    index: number;
+    name: string;
+    items: any[];
+  }[];
+  metrics: any;
+};
+/* eslint-enable no-unused-vars, no-undef */

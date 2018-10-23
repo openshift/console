@@ -24,7 +24,12 @@ export default (state, action) => {
       activeNavSectionId: 'workloads',
       location: pathname,
       activeNamespace: activeNamespace || 'default',
-      createProjectMessage: ''
+      createProjectMessage: '',
+      overview: new ImmutableMap({
+        resources: new ImmutableMap({}),
+        selectedDetailsTab: '',
+        selectedUID: '',
+      })
     });
   }
 
@@ -60,6 +65,16 @@ export default (state, action) => {
     case types.setMonitoringData:
       return state.setIn(['monitoring', action.key], action.data);
 
+    case types.selectOverviewItem:
+      return state.setIn(['overview', 'selectedUID'], action.uid);
+
+    case types.selectOverviewDetailsTab:
+      return state.setIn(['overview', 'selectedDetailsTab'], action.tab);
+
+    case types.updateOverviewResources: {
+      const newResources = new ImmutableMap(_.keyBy(action.resources, 'obj.metadata.uid'));
+      return state.setIn(['overview', 'resources'], newResources);
+    }
     default:
       break;
   }
