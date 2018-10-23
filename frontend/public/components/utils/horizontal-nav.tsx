@@ -85,6 +85,11 @@ export const navFactory: NavFactory = {
     href: 'serviceplans',
     name: 'Service Plans',
     component: component,
+  }),
+  serviceBindings: component => ({
+    href: 'servicebindings',
+    name: 'Service Bindings',
+    component: component,
   })
 };
 
