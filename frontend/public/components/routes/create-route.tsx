@@ -74,6 +74,8 @@ export class CreateRoute extends React.Component<null, CreateRouteState> {
     this.setState({
       service: serviceName,
       portOptions,
+      // unset targetPort if previously set
+      targetPort: '',
       labels,
     });
   }
@@ -188,7 +190,7 @@ export class CreateRoute extends React.Component<null, CreateRouteState> {
 
   render() {
     const title = 'Create Route';
-    const { loaded, services, service, portOptions, termination } = this.state;
+    const { loaded, services, service, portOptions, targetPort, termination } = this.state;
     const serviceOptions = {};
     _.each(_.sortBy(services, 'metadata.name'), ({ metadata: { name } }) => serviceOptions[name] = <ResourceName kind="Service" name={name} />);
     const terminationTypes = {
@@ -278,7 +280,7 @@ export class CreateRoute extends React.Component<null, CreateRouteState> {
           <div className="form-group co-create-route__target-port">
             <label className="co-required" htmlFor="target-port">Target Port</label>
             {_.isEmpty(portOptions) && <p>Select a service above</p>}
-            {!_.isEmpty(portOptions) && <Dropdown items={portOptions} title="Select target port" dropDownClassName="dropdown--full-width" id="target-port" onChange={this.changeTargetPort} /> }
+            {!_.isEmpty(portOptions) && <Dropdown items={portOptions} title={targetPort || 'Select target port'} dropDownClassName="dropdown--full-width" id="target-port" onChange={this.changeTargetPort} /> }
             <div className="help-block">
               Target port for traffic.
             </div>
