@@ -14,7 +14,7 @@ export const RadioInput = (props) => {
     {props.children}
   </React.Fragment>;
 
-  return props.inline ? inputElement : <div className="radio-item form-group">{inputElement}</div>;
+  return props.inline ? inputElement : <div className="radio">{inputElement}</div>;
 
 };
 

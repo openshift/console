@@ -9,8 +9,13 @@ import { ResourceEventStream } from './events';
 import { Conditions } from './conditions';
 import { ServiceCatalogParameters, ServiceCatalogParametersSecrets } from './service-catalog-parameters';
 import { ServiceBindingDescription } from './service-instance';
+import { addSecretToApplication } from './secret';
 
 const ServiceBindingsReference: K8sResourceKindReference = 'ServiceBinding';
+
+const actionButtons = [
+  addSecretToApplication,
+];
 
 const { common } = Cog.factory;
 const menuActions = [...common];
@@ -61,6 +66,7 @@ export const ServiceBindingDetailsPage: React.SFC<ServiceBindingDetailsPageProps
   <DetailsPage
     {...props}
     kind={ServiceBindingsReference}
+    buttonActions={actionButtons}
     menuActions={menuActions}
     pages={pages} />;
 ServiceBindingDetailsPage.displayName = 'ServiceBindingDetailsPage';

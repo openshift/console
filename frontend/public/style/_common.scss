@@ -371,3 +371,14 @@ input[type=number]::-webkit-outer-spin-button {
   text-transform: uppercase;
   font-size: $font-size-small;
 }
+
+.co-legend {
+  border-bottom: 0;
+  font-weight: 600;
+  font-size: $font-size-base;
+  margin-bottom: 5px;
+
+  + .radio {
+    margin-top :0;
+  }
+}

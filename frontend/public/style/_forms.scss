@@ -2,7 +2,7 @@
   padding: 0;
 }
 
-label.co-required:after {
+.co-required:after {
   content: '*';
   padding-left: 3px;
 }

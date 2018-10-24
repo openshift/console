@@ -6,8 +6,24 @@ import { SecretData } from './configmap-and-secret-data';
 import { Cog, SectionHeading, ResourceCog, ResourceLink, ResourceSummary, detailsPage, navFactory, resourceObjPath } from './utils';
 import { fromNow } from './utils/datetime';
 import { SecretType } from './secrets/create-secret';
+import { configureAddSecretToApplicationModal } from './modals/add-secret-to-application';
+import { serviceCatalogStatus } from '../module/k8s';
 
 export const WebHookSecretKey = 'WebHookSecretKey';
+
+export const addSecretToApplication = (kindObj, secret) => {
+  const { name: secretName, namespace } = secret.metadata;
+
+  return {
+    btnClass: 'btn-primary',
+    callback: () => configureAddSecretToApplicationModal({secretName, namespace}),
+    label: 'Add Secret to Application',
+  };
+};
+
+const actionButtons = [
+  addSecretToApplication,
+];
 
 const menuActions = [
   Cog.factory.ModifyLabels,
@@ -123,6 +139,7 @@ const SecretsPage = props => {
 
 const SecretsDetailsPage = props => <DetailsPage
   {...props}
+  buttonActions={actionButtons}
   menuActions={menuActions}
   pages={[navFactory.details(detailsPage(SecretDetails)), navFactory.editYaml()]}
 />;
