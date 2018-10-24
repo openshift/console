@@ -234,6 +234,11 @@ const ViewInPrometheusLink_ = ({rule, urls}) => {
 };
 const ViewInPrometheusLink = connectToURLs(MonitoringRoutes.Prometheus)(ViewInPrometheusLink_);
 
+const alertDescription = alert => {
+  const {annotations = {}, labels = {}} = alert;
+  return annotations.description || annotations.message || labels.alertname;
+};
+
 const ActiveAlerts = ({alerts}) => <div className="co-m-table-grid co-m-table-grid--bordered">
   <div className="row co-m-table-grid__head">
     <div className="col-xs-6">Description</div>
@@ -242,19 +247,15 @@ const ActiveAlerts = ({alerts}) => <div className="co-m-table-grid co-m-table-gr
     <div className="col-sm-2 col-xs-3">Value</div>
   </div>
   <div className="co-m-table-grid__body">
-    {alerts.map((a, i) => {
-      const name = a.labels.alertname;
-      const description = _.get(a, 'annotations.description') || _.get(a, 'annotations.message') || name;
-      return <ResourceRow key={i} obj={a}>
-        <div className="col-xs-6 co-resource-link-wrapper">
-          <Cog options={[silenceAction(a)]} />
-          <Link className="co-resource-link" to={alertURL(name, a.labels)}>{description}</Link>
-        </div>
-        <div className="col-sm-2 hidden-xs"><Timestamp timestamp={a.activeAt} /></div>
-        <div className="col-sm-2 col-xs-3"><State state={a.state} /></div>
-        <div className="col-sm-2 col-xs-3 co-break-word">{a.value}</div>
-      </ResourceRow>;
-    })}
+    {_.sortBy(alerts, alertDescription).map((a, i) => <ResourceRow key={i} obj={a}>
+      <div className="col-xs-6 co-resource-link-wrapper">
+        <Cog options={[silenceAction(a)]} />
+        <Link className="co-resource-link" to={alertURL(a.labels.alertname, a.labels)}>{alertDescription(a)}</Link>
+      </div>
+      <div className="col-xs-2"><Timestamp timestamp={a.activeAt} /></div>
+      <div className="col-xs-2"><State state={a.state} /></div>
+      <div className="col-xs-2">{a.value}</div>
+    </ResourceRow>)}
   </div>
 </div>;
 
