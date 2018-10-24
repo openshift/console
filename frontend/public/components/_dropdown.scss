@@ -145,7 +145,7 @@ $color-bookmarker: #DDD;
   white-space: nowrap;
 
   @media (min-width: $grid-float-breakpoint) {
-    border-left: 1px solid $color-os-nav-item-seperator;
+    border-left: 1px solid $color-os-nav-border-bottom;
     height: $co-namespace-selector-desktop;
   }
 

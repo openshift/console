@@ -66,14 +66,15 @@ $masthead-height-mobile: 40px;
 $co-m-label-line-height: 19px;
 
 // Masthead and navigation colors
-$color-os-nav-title: $color-pf-black-300;
-$color-os-nav-background: $color-pf-black-900;
-$color-os-nav-background-active: $color-pf-black-800;
-$color-os-nav-item-seperator: #050505;
 $color-os-nav-active: $color-pf-black-800;
-$color-os-nav-hover: lighten($color-os-nav-active, 8%);
+$color-os-nav-background: $color-pf-black-900;
+$color-os-nav-background-active: $color-pf-black-700;
+$color-os-nav-border-bottom: #050505;
 $color-os-nav-border-left-active: $color-pf-blue-300;
+$color-os-nav-hover: lighten($color-os-nav-active, 8%);
 $color-os-nav-icon: $color-pf-black-600;
+$color-os-nav-separator: $color-pf-black-900;
+$color-os-nav-title: $color-pf-black-300;
 
 // Patternfly defaults to 12px, which is too small in many cases
 $font-size-base: 13px;
