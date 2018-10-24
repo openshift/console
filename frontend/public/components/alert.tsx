@@ -24,7 +24,6 @@ import {
   ExternalLink,
   getURLSearchParams,
   history,
-  PageHeading,
   SectionHeading,
   StatusBox,
   Timestamp,
@@ -46,6 +45,9 @@ const silenceAction = alert => ({
   label: 'Silence Alert',
   href: `${SilenceResource.path}/new?${labelsToParams(alert.labels)}`,
 });
+
+const AlertmanagerLink_ = ({text, urls}) => <ExternalLink href={urls[MonitoringRoutes.AlertManager]} text={text} />;
+export const AlertmanagerLink = connectToURLs(MonitoringRoutes.AlertManager)(AlertmanagerLink_);
 
 export const MonitoringResourceIcon = props => {
   const {className, resource} = props;
@@ -430,7 +432,13 @@ export const MonitoringListPage = connect(filtersToProps)(class InnerMonitoringL
       <Helmet>
         <title>Monitoring Alerts</title>
       </Helmet>
-      <PageHeading title="Monitoring Alerts" />
+      <div className="co-m-nav-title co-m-nav-title--detail">
+        <h1 className="co-m-pane__heading">
+          <div className="co-m-pane__name">
+            Monitoring Alerts &nbsp;<span className="monitoring-header-link"><AlertmanagerLink text="Alertmanager UI" /></span>
+          </div>
+        </h1>
+      </div>
       <ul className="co-m-horizontal-nav__menu">
         <li className={classNames('co-m-horizontal-nav__menu-item', {'co-m-horizontal-nav-item--active': match.path === AlertResource.path})}>
           <Link to={AlertResource.path}>Alerts</Link>
