@@ -90,7 +90,8 @@ describe('Interacting with the etcd OCS', () => {
   });
 
   it('displays YAML editor for creating a new `EtcdCluster` instance', async() => {
-    await $$('.dropdown').filter(btn => btn.getText().then(text => text.startsWith('Create New'))).first().click();
+    await browser.wait(until.visibilityOf(element(by.buttonText('Create New'))));
+    await element(by.buttonText('Create New')).click();
     await browser.wait(until.visibilityOf($$('.dropdown-menu').first()), 1000);
     await $$('.dropdown-menu').first().element(by.linkText('etcd Cluster')).click();
     await browser.wait(until.presenceOf($('.ace_text-input')));
