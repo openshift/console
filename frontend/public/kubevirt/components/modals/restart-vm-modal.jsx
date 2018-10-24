@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import { PromiseComponent } from '../utils/okdutils';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/okdfactory';
@@ -32,5 +33,11 @@ class RestartVmModal extends PromiseComponent {
     </form>;
   }
 }
+
+RestartVmModal.propTypes = {
+  resource: PropTypes.object.isRequired,
+  close: PropTypes.func.isRequired,
+  cancel: PropTypes.func.isRequired
+};
 
 export const restartVmModal = createModalLauncher(RestartVmModal);

@@ -11,7 +11,7 @@ import { startStopVmModal } from './modals/start-stop-vm-modal';
 import { restartVmModal } from './modals/restart-vm-modal';
 import { getResourceKind, getLabelMatcher, findVMI, findPod, getFlattenForKind } from './utils/resources';
 
-import { CreateVmWizard, TEMPLATE_TYPE_LABEL } from 'kubevirt-web-ui-components/dist/js';
+import { CreateVmWizard, TEMPLATE_TYPE_LABEL } from 'kubevirt-web-ui-components';
 import VmConsolesConnected from './vmconsoles';
 
 const dashes = '---';
