@@ -106,6 +106,23 @@
     font-weight: 300;
   }
 
+  .project-overview__metric-tooltip {
+    display: flex;
+  }
+
+  .project-overview__metric-tooltip-name {
+    flex: 2;
+    overflow: hidden;
+    text-align: left;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .project-overview__metric-tooltip-value {
+    flex: 1;
+    text-align: right;
+  }
+
   .project-overview__metric-unit {
     color: $color-text-muted;
     font-size: 10px;

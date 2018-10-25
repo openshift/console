@@ -16,6 +16,35 @@ import {
   resourcePath
 } from '../utils';
 
+const formatToFractionalDigits = (value: number, digits: number) => Intl.NumberFormat(undefined, { minimumFractionDigits: digits, maximumFractionDigits: digits }).format(value);
+
+const formatBytesAsMiB = bytes => {
+  const mib = bytes / 1024 / 1024;
+  return formatToFractionalDigits(mib, 1);
+};
+
+const formatCores = (cores: number) => formatToFractionalDigits(cores, 3);
+
+const overviewTooltipStyles = Object.freeze({
+  content: {
+    maxWidth: '225px',
+  },
+  tooltip: {
+    minWidth: '225px',
+  },
+});
+
+const truncateMiddle = (text = '') => {
+  const length = text.length;
+  if (length < 20) {
+    return text;
+  }
+
+  const begin = text.substr(0, 7);
+  const end = text.substr(length - 10, length);
+  return <span className="text-nowrap">{begin}&hellip;{end}</span>;
+};
+
 const ControllerLink = ({controller}) => {
   const { obj, revision } = controller;
   const { name } = obj.metadata;
@@ -25,38 +54,70 @@ const ControllerLink = ({controller}) => {
 
 export const ComponentLabel = ({text}) => <div className="co-component-label">{text}</div>;
 
+const MetricsTooltip = ({metricLabel, byPod, children}) => {
+  const content: any[] = _.isEmpty(byPod)
+    ? [<React.Fragment key="no-metrics">No {metricLabel} metrics available.</React.Fragment>]
+    : _.concat(<div key="#title">{metricLabel} Usage by Pod</div>, _.map(byPod, (value, name) => (
+      <div key={name} className="project-overview__metric-tooltip">
+        <div className="project-overview__metric-tooltip-name">{truncateMiddle(name)}</div>
+        <div className="project-overview__metric-tooltip-value">{value}</div>
+      </div>
+    )));
+
+  const keepLines = 6;
+  // Don't remove a single line to show a "1 other" message since there's space to show the last pod in that case.
+  // Make sure we always remove at least 2 lines if we truncate.
+  if (content.length > (keepLines + 1)) {
+    const numRemoved = content.length - keepLines;
+    content.splice(keepLines, numRemoved, <div key="#removed-pods">and {numRemoved} other pods</div>);
+  }
+  return <Tooltip content={content} styles={overviewTooltipStyles}>{children}</Tooltip>;
+};
+
 const Metrics = ({metrics, item}) => {
   if (_.isEmpty(metrics)) {
     return null;
   }
 
   const pods = item.current ? item.current.pods : item.pods;
-  const totalBytes: number = _.reduce(pods, (total: number, pod: K8sResourceKind) => {
-    const bytes: number = _.get(metrics, ['memory', pod.metadata.name]);
-    return _.isFinite(bytes) ? total + bytes : total;
-  }, 0);
+  let totalBytes = 0;
+  let totalCores = 0;
+  const memoryByPod = {};
+  const cpuByPod = {};
+  _.each(pods, ({ metadata: { name } }: K8sResourceKind) => {
+    const bytes = _.get(metrics, ['memory', name]);
+    if (_.isFinite(bytes)) {
+      totalBytes += bytes;
+      memoryByPod[name] = `${formatBytesAsMiB(bytes)} MiB`;
+    }
 
-  const totalCores: number = _.reduce(pods, (total: number, pod: K8sResourceKind) => {
-    const cores: number = _.get(metrics, ['cpu', pod.metadata.name]);
-    return _.isFinite(cores) ? total + cores : total;
-  }, 0);
+    const cores = _.get(metrics, ['cpu', name]);
+    if (_.isFinite(cores)) {
+      totalCores += cores;
+      cpuByPod[name] = `${formatCores(cores)} cores`;
+    }
+  });
 
   if (!totalBytes && !totalCores) {
     return null;
   }
 
-  const mib = _.round(totalBytes / 1024 / 1024, 1);
-  const cores = _.round(totalCores, 3);
+  const formattedMiB = formatBytesAsMiB(totalBytes);
+  const formattedCores = formatCores(totalCores);
   return <React.Fragment>
     <div className="project-overview__detail project-overview__detail--memory">
-      <span className="project-overview__metric-value">{mib || '--'}</span>
-      &nbsp;
-      <span className="project-overview__metric-unit">MiB</span>
+      <MetricsTooltip metricLabel="Memory" byPod={memoryByPod}>
+        <span className="project-overview__metric-value">{formattedMiB}</span>
+        &nbsp;
+        <span className="project-overview__metric-unit">MiB</span>
+      </MetricsTooltip>
     </div>
     <div className="project-overview__detail project-overview__detail--cpu">
-      <span className="project-overview__metric-value">{cores || '--'}</span>
-      &nbsp;
-      <span className="project-overview__metric-unit">cores</span>
+      <MetricsTooltip metricLabel="CPU" byPod={cpuByPod}>
+        <span className="project-overview__metric-value">{formattedCores}</span>
+        &nbsp;
+        <span className="project-overview__metric-unit">cores</span>
+      </MetricsTooltip>
     </div>
   </React.Fragment>;
 };
@@ -100,7 +161,7 @@ const AlertTooltip = ({alerts, severity}) => {
   const count = _.size(alerts);
   const message = _.map(alerts, 'message').join('\n');
   const content = [<span key="message" className="co-pre-wrap">{message}</span>];
-  return <Tooltip content={content}>
+  return <Tooltip content={content} styles={overviewTooltipStyles}>
     <i className={iconClass} aria-hidden="true" /> {pluralize(count, label)}
   </Tooltip>;
 };
