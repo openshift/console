@@ -237,7 +237,11 @@
   color: $blue-darker;
   background-color: $blue-bg;
   padding: 20px;
-  margin: 30px;
+  margin: ($grid-gutter-width / 2);
+
+  @media (min-width: $screen-sm-min) {
+    margin: $grid-gutter-width;
+  }
 }
 
 
