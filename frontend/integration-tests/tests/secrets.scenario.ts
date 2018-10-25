@@ -105,7 +105,6 @@ describe('Interacting with the create secret forms', () => {
 
     it('edits SSH source secret', async() => {
       await secretsView.editSecret(testName, sshSourceSecretName, async() => {
-        await browser.wait(until.presenceOf(secretsView.uploadFileTextArea));
         await secretsView.uploadFileTextArea.clear();
         await secretsView.uploadFileTextArea.sendKeys(sshSourceSecretSSHKeUpdated);
       });
@@ -187,7 +186,6 @@ describe('Interacting with the create secret forms', () => {
 
     it('edits registry credentials image secret', async() => {
       await secretsView.editSecret(testName, credentialsImageSecretName, async() => {
-        await browser.wait(until.presenceOf(secretsView.removeSecretEntryLink));
         await secretsView.removeSecretEntryLink.click();
         await secretsView.secretAddressInput.clear();
         await secretsView.secretAddressInput.sendKeys(addressUpdated);
@@ -273,7 +271,6 @@ describe('Interacting with the create secret forms', () => {
 
     it('edits Key/Value secret', async() => {
       await secretsView.editSecret(testName, keyValueSecretName, async() => {
-        await browser.wait(until.presenceOf(secretsView.removeSecretEntryLink));
         await secretsView.removeSecretEntryLink.click();
         await secretsView.secretKeyInput.clear();
         await secretsView.secretKeyInput.sendKeys(keyUpdated);

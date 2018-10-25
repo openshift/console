@@ -40,6 +40,7 @@ export const encode = (username, password) => Base64.encode(`${username}:${passw
 export const createSecret = async(linkElement: ElementFinder, ns: string, name: string, updateForm: Function) => {
   await crudView.createItemButton.click();
   await linkElement.click();
+  await browser.wait(until.presenceOf(secretNameInput));
   await secretNameInput.sendKeys(name);
   await updateForm();
   await saveButton.click();
@@ -64,6 +65,7 @@ export const editSecret = async(ns: string, name: string, updateForm: Function) 
   await browser.wait(until.presenceOf(crudView.actionsDropdownMenu), 500);
   await crudView.actionsDropdownMenu.element(by.linkText('Edit Secret')).click();
   await browser.wait(until.urlContains(`/k8s/ns/${ns}/secrets/${name}/edit`));
+  await browser.wait(until.presenceOf(secretNameInput));
   await updateForm();
   await saveButton.click();
   expect(crudView.errorMessage.isPresent()).toBe(false);
