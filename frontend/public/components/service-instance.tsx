@@ -32,8 +32,8 @@ const menuActions = [
   ...common,
 ];
 
-const ServiceBindingDescription: React.SFC<ServiceBindingDescriptionProps> = ({obj: si}) => <p>
-  Service bindings create a secret containing the necessary information for another application to use <ResourceIcon kind="ServiceInstance" />{si.metadata.name}.
+export const ServiceBindingDescription: React.SFC<ServiceBindingDescriptionProps> = ({instanceName, className}) => <p className={className}>
+  Service bindings create a secret containing the necessary information for another application to use <ResourceIcon kind="ServiceInstance" />{instanceName}.
   Once the binding is ready, add the secret to your application&apos;s environment variables or volumes.
 </p>;
 
@@ -61,7 +61,7 @@ class CreateServiceBinding extends React.Component<CreateServiceBindingProps, Cr
 
     return visible && <div className="co-well">
       <h4>Create Service Binding</h4>
-      <ServiceBindingDescription obj={obj} />
+      <ServiceBindingDescription instanceName={obj.metadata.name} />
       <button className="btn btn-primary" onClick={onClick}>Create Service Binding</button>
     </div>;
   }
@@ -202,7 +202,8 @@ export type ServiceInstanceDetailsProps = {
 };
 
 export type ServiceBindingDescriptionProps = {
-  obj: any,
+  instanceName: string,
+  className?: string,
 };
 
 export type CreateServiceBindingProps = {
