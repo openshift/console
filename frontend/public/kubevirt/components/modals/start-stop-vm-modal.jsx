@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 
 import { PromiseComponent } from '../utils/okdutils';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/okdfactory';
-import { k8sPatch, k8sUpdate } from '../../../module/k8s';
+import { k8sPatch, k8sUpdate } from '../../module/okdk8s';
 import { ANNOTATION_FIRST_BOOT } from 'kubevirt-web-ui-components';
 
 class StartStopVmModal extends PromiseComponent {

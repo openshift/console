@@ -1,6 +1,7 @@
 import * as _ from 'lodash-es';
 import React, { Component, Fragment } from 'react';
 
+import { ResourceEventStream } from './okdcomponents';
 import { ListHeader, ColHead, List, ListPage, ResourceRow, DetailsPage } from './factory/okdfactory';
 import { breadcrumbsForOwnerRefs, Firehose, ResourceLink, navFactory, ResourceCog, Cog } from './utils/okdutils';
 import { VirtualMachineInstanceModel, VirtualMachineModel, PodModel, NamespaceModel, TemplateModel, NetworkAttachmentDefinitionModel } from '../models';
@@ -242,14 +243,29 @@ const Details = ({obj: vm}) => {
   </Fragment>;
 };
 
+const VmiEvents = ({obj: vm}) => {
+  const vmi = {
+    kind: VirtualMachineInstanceModel.kind,
+    metadata: {
+      name: vm.metadata.name,
+      namespace: vm.metadata.namespace
+    }
+  };
+  return <ResourceEventStream obj={vmi} />;
+};
+
 export const VirtualMachinesDetailsPage = props => {
-  const pages = [navFactory.details(Details)];
-  pages.push({ // TODO: might be moved based on review; or display conditionally if VM is running?
+  const consolePage = { // TODO: might be moved based on review; or display conditionally if VM is running?
     href: 'consoles',
     name: 'Consoles',
     component: VmConsolesConnected
-  });
-  pages.push(navFactory.editYaml());
+  };
+  const pages = [
+    navFactory.details(Details),
+    consolePage,
+    navFactory.events(VmiEvents),
+    navFactory.editYaml()
+  ];
   return (
     <DetailsPage
       {...props}

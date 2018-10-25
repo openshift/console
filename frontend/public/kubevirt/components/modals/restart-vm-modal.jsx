@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import { PromiseComponent } from '../utils/okdutils';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/okdfactory';
-import { k8sKill, k8sGet } from '../../../module/k8s';
+import { k8sKill, k8sGet } from '../../module/okdk8s';
 import { VirtualMachineInstanceModel } from '../../models';
 
 class RestartVmModal extends PromiseComponent {

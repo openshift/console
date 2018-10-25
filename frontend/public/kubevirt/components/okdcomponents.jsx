@@ -8,3 +8,4 @@ export * from '../../components/masthead';
 export * from '../../components/namespace';
 export * from '../../components/global-notifications';
 export * from '../../components/resource-list';
+export * from '../../components/events';
