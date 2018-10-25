@@ -19,7 +19,7 @@ export class CatalogTileViewPage extends React.Component {
     const categories = categorizeItems(props.items);
     const activeTabs = ['all']; // array of tabs [main category, sub-category]
     const filters = {
-      byName: {
+      byKeyword: {
         value: '',
         active: false,
       },
@@ -81,14 +81,14 @@ export class CatalogTileViewPage extends React.Component {
     }
 
     // filter counts are updated when new Category tab is selected or filter by name changed
-    if (activeTabs !== prevState.activeTabs || prevState.filters.byName !== filters.byName ) {
+    if (activeTabs !== prevState.activeTabs || prevState.filters.byKeyword !== filters.byKeyword ) {
       this.setState(this.getFilterCounts(activeTabs, filters, filterCounts, categories));
     }
   }
 
   hasActiveFilters(filters) {
-    const { byName, byType } = filters;
-    return byType.clusterServiceClass.active || byType.imageStream.active || byName.active;
+    const { byKeyword, byType } = filters;
+    return byType.clusterServiceClass.active || byType.imageStream.active || byKeyword.active;
   }
 
   getActiveCategories(activeTabs, categories) {
@@ -268,9 +268,19 @@ export class CatalogTileViewPage extends React.Component {
     return _.find(categories, { id: categoryID }).label;
   }
 
+  filterByKeyword(items) {
+    const { filters } = this.state;
+    const { byKeyword } = filters;
+
+    const filterString = byKeyword.value.toLowerCase();
+    return _.filter(items, item => item.tileName.toLowerCase().includes(filterString) ||
+      item.tileDescription.toLowerCase().includes(filterString) ||
+      item.tags.includes(filterString));
+  }
+
   filterItems() {
     const { filters } = this.state;
-    const { byName, byType } = filters;
+    const { byKeyword, byType } = filters;
     const { items } = this.props;
 
     if (!this.hasActiveFilters(filters) ) {
@@ -287,21 +297,19 @@ export class CatalogTileViewPage extends React.Component {
       filteredItems = filteredItems.concat(_.filter(items, { kind: byType.imageStream.value }));
     }
 
-    if (byName.active) {
-      const filterString = byName.value.toLowerCase();
-      return _.filter((byType.clusterServiceClass.active || byType.imageStream.active ? filteredItems : items), item => item.tileName.toLowerCase().includes(filterString));
+    if (byKeyword.active) {
+      return this.filterByKeyword(byType.clusterServiceClass.active || byType.imageStream.active ? filteredItems : items);
     }
 
     return filteredItems;
   }
 
   filterItemsForCounts(filters) {
-    const { byName } = filters;
+    const { byKeyword } = filters;
     const { items } = this.props;
 
-    if (byName.active) {
-      const filterString = byName.value.toLowerCase();
-      return _.filter( items, item => item.tileName.toLowerCase().includes(filterString));
+    if (byKeyword.active) {
+      return this.filterByKeyword(items);
     }
 
     return items;
@@ -309,15 +317,15 @@ export class CatalogTileViewPage extends React.Component {
 
   clearFilters() {
     const filters = _.cloneDeep(this.state.filters);
-    filters.byName.active = filters.byType.clusterServiceClass.active = filters.byType.imageStream.active = false;
-    filters.byName.value = '';
-    this.filterByNameInput.focus();
+    filters.byKeyword.active = filters.byType.clusterServiceClass.active = filters.byType.imageStream.active = false;
+    filters.byKeyword.value = '';
+    this.filterByKeywordInput.focus();
     this.setState({filters});
   }
 
   onFilterChange(filterType, id, value) {
     const filters = _.cloneDeep(this.state.filters);
-    if (filterType === 'byName') {
+    if (filterType === 'byKeyword') {
       const active = !!value;
       filters[filterType] = { active, value };
     } else {
@@ -339,9 +347,9 @@ export class CatalogTileViewPage extends React.Component {
           { this.renderCategoryTabs() }
           <FilterSidePanel>
             <FilterSidePanel.Category onSubmit={(e) => e.preventDefault()}>
-              <FormControl type="text" inputRef={(ref) => this.filterByNameInput = ref} placeholder="Filter by name..." bsClass="form-control"
-                value={filters.byName.value} autoFocus={true}
-                onChange={e => this.onFilterChange('byName', null, e.target.value)}
+              <FormControl type="text" inputRef={(ref) => this.filterByKeywordInput = ref} placeholder="Filter by keyword..." bsClass="form-control"
+                value={filters.byKeyword.value} autoFocus={true}
+                onChange={e => this.onFilterChange('byKeyword', null, e.target.value)}
               />
             </FilterSidePanel.Category>
             <FilterSidePanel.Category title="Type">
