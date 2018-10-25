@@ -352,7 +352,7 @@ export const VirtualMachinesPage = connect(
         kind={VirtualMachineModel.kind}
         ListComponent={VMList}
         createProps={this.createProps}
-      />;
+      />
     </React.Fragment>;
   }
 });
