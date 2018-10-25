@@ -15,6 +15,7 @@ const defaultValueFor = <C extends SpecCapability | StatusCapability>(capability
     case SpecCapability.label: return 'app=openshift';
     case SpecCapability.resourceRequirements: return {limits: {cpu: '500m', memory: '50Mi'}, requests: {cpu: '500m', memory: '50Mi'}};
     case SpecCapability.namespaceSelector: return {matchNames: ['default']};
+    case SpecCapability.booleanSwitch: return true;
 
     case StatusCapability.podStatuses: return {ready: ['pod-0', 'pod-1'], unhealthy: ['pod-2'], stopped: ['pod-3']};
     case StatusCapability.podCount: return 3;

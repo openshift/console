@@ -8,11 +8,18 @@ import { SpecCapability, DescriptorProps, CapabilityProps } from '../types';
 import { ResourceRequirementsModalLink } from './resource-requirements';
 import { EndpointList } from './endpoint';
 import { configureSizeModal } from './configure-size';
-import { Selector, ResourceLink } from '../../../utils';
+import { Selector, ResourceLink, LoadingInline, AsyncComponent } from '../../../utils';
+import { Tooltip } from '../../../utils/tooltip';
+import { k8sPatch } from '../../../../module/k8s';
 
-const Default: React.SFC<SpecCapabilityProps> = ({value}) => _.isEmpty(value) && !_.isNumber(value)
-  ? <span className="text-muted">None</span>
-  : <span>{value}</span>;
+const Default: React.SFC<SpecCapabilityProps> = ({value}) => {
+  if (_.isEmpty(value) && !_.isNumber(value)) {
+    return <span className="text-muted">None</span>;
+  } else if (_.isObject(value)) {
+    return <div>{_.map(value, (v, k) => <span key={k} className="row">{k}: {v}</span>)}</div>;
+  }
+  return <span>{_.toString(value)}</span>;
+};
 
 const PodCount: React.SFC<SpecCapabilityProps> = ({model, obj, descriptor, value}) =>
   <a onClick={() => configureSizeModal({kindObj: model, resource: obj, specDescriptor: descriptor, specValue: value})} className="co-m-modal-link">{value} pods</a>;
@@ -30,9 +37,41 @@ const ResourceRequirements: React.SFC<SpecCapabilityProps> = ({obj, descriptor})
   <dd><ResourceRequirementsModalLink type="requests" obj={obj} path={descriptor.path} /></dd>
 </dl>;
 
-const K8sResourceLink: React.SFC<SpecCapabilityProps> = (props) => <ResourceLink kind={props.capability.split(SpecCapability.k8sResourcePrefix)[1]} name={props.value} namespace={props.namespace} title={props.value} />;
+const K8sResourceLink: React.SFC<SpecCapabilityProps> = (props) => _.isEmpty(props.value)
+  ? <span className="text-muted">None</span>
+  : <ResourceLink kind={props.capability.split(SpecCapability.k8sResourcePrefix)[1]} name={props.value} namespace={props.namespace} />;
 
 const BasicSelector: React.SFC<SpecCapabilityProps> = ({value, capability}) => <Selector selector={value} kind={capability.split(SpecCapability.selector)[1]} />;
+
+class BooleanSwitch extends React.Component<SpecCapabilityProps, BooleanSwitchState> {
+  public state = {value: this.props.value, confirmed: false};
+
+  render() {
+    const {props, state} = this;
+    const patchFor = (value: boolean) => [{op: 'replace', path: `/spec/${props.descriptor.path.replace('.', '/')}`, value}];
+
+    const update = () => {
+      this.setState({confirmed: true});
+      return k8sPatch(props.model, props.obj, patchFor(state.value));
+    };
+
+    return <div className="co-spec-descriptor--switch">
+      <AsyncComponent
+        loader={() => import('patternfly-react').then(m => m.Switch)}
+        value={state.value}
+        onChange={(el, value) => this.setState({value, confirmed: false})}
+        onText="True"
+        offText="False"
+        bsSize="mini" />
+      &nbsp;&nbsp;
+      {state.value !== props.value && state.confirmed && <LoadingInline />}
+      {state.value !== props.value && !state.confirmed && <React.Fragment>
+        &nbsp;&nbsp;<i className="fa fa-exclamation-triangle text-warning" aria-hidden="true" />
+        <button className="btn btn-link" onClick={update}>Confirm change</button>
+      </React.Fragment>}
+    </div>;
+  }
+}
 
 const capabilityComponents = ImmutableMap<SpecCapability, React.ComponentType<SpecCapabilityProps>>()
   .set(SpecCapability.podCount, PodCount)
@@ -41,7 +80,8 @@ const capabilityComponents = ImmutableMap<SpecCapability, React.ComponentType<Sp
   .set(SpecCapability.namespaceSelector, NamespaceSelector)
   .set(SpecCapability.resourceRequirements, ResourceRequirements)
   .set(SpecCapability.k8sResourcePrefix, K8sResourceLink)
-  .set(SpecCapability.selector, BasicSelector);
+  .set(SpecCapability.selector, BasicSelector)
+  .set(SpecCapability.booleanSwitch, BooleanSwitch);
 
 const capabilityFor = (specCapability: SpecCapability) => {
   if (_.isEmpty(specCapability)) {
@@ -65,9 +105,18 @@ export const SpecDescriptor: React.SFC<DescriptorProps> = (props) => {
   const Capability = capabilityFor(capability);
 
   return <dl>
-    <dt>{descriptor.displayName}</dt>
+    <div style={{width: 'max-content'}}>
+      <Tooltip content={descriptor.description}>
+        <dt>{descriptor.displayName}</dt>
+      </Tooltip>
+    </div>
     <dd><Capability descriptor={descriptor} capability={capability} value={value} namespace={namespace} model={model} obj={obj} /></dd>
   </dl>;
+};
+
+type BooleanSwitchState = {
+  value: boolean;
+  confirmed: boolean;
 };
 
 type SpecCapabilityProps = CapabilityProps<SpecCapability>;
