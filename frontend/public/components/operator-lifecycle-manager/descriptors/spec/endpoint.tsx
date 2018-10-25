@@ -11,32 +11,30 @@ export const EndpointRow: React.SFC<EndpointRowProps> = ({endpoint}) => {
     : element,
   <span className="text-muted">--</span>);
 
-  return <div>
-    <div className="row co-ip-header">
-      <div className="col-xs-6">Port</div>
-      <div className="col-xs-2">Interval</div>
-      <div className="col-xs-4"></div>
-    </div>
-    <div className="rows">
-      <div className="co-ip-row">
-        <div className="row">
-          <div className="col-xs-6">
-            <p><ResourceIcon kind="Service" />{endpoint.port || '--'}</p>
-          </div>
-          <div className="col-xs-2">
-            <p>{endpoint.interval || '--'}</p>
-          </div>
-          <div className="col-xs-4">
-            {detail}
-          </div>
-        </div>
+  return <div className="co-ip-row">
+    <div className="row">
+      <div className="col-xs-6">
+        <p><ResourceIcon kind="Service" />{endpoint.port || '--'}</p>
+      </div>
+      <div className="col-xs-2">
+        <p>{endpoint.interval || '--'}</p>
+      </div>
+      <div className="col-xs-4">
+        {detail}
       </div>
     </div>
   </div>;
 };
 
 export const EndpointList: React.SFC<EndpointListProps> = (props) => <div className="service-ips">
-  { props.endpoints.map((e, i) => <EndpointRow endpoint={e} key={i} />) }
+  <div className="row co-ip-header">
+    <div className="col-xs-6">Port</div>
+    <div className="col-xs-2">Interval</div>
+    <div className="col-xs-4"></div>
+  </div>
+  <div className="rows">
+    { props.endpoints.map((e, i) => <EndpointRow endpoint={e} key={i} />) }
+  </div>
 </div>;
 
 /**

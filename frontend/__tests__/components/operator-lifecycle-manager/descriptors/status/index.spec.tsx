@@ -7,6 +7,7 @@ import { DescriptorProps, StatusCapability, Descriptor, SpecCapability } from '.
 import { StatusDescriptor } from '../../../../../public/components/operator-lifecycle-manager/descriptors/status';
 import { ResourceLink } from '../../../../../public/components/utils';
 import { testModel } from '../../../../../__mocks__/k8sResourcesMocks';
+import { Conditions } from '../../../../../public/components/conditions';
 
 describe(StatusDescriptor.displayName, () => {
   let wrapper: ShallowWrapper<DescriptorProps>;
@@ -35,7 +36,7 @@ describe(StatusDescriptor.displayName, () => {
     descriptor['x-descriptors'] = [StatusCapability.conditions];
     wrapper = wrapper.setProps({descriptor, value});
 
-    expect(wrapper.find('dd').childAt(0).shallow().text()).toEqual('SomeType');
+    expect(wrapper.find('dd').childAt(0).shallow().find(Conditions).exists()).toBe(true);
   });
 
   it('renders a link status', () => {

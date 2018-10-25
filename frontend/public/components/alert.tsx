@@ -24,7 +24,6 @@ import {
   ExternalLink,
   getURLSearchParams,
   history,
-  PageHeading,
   SectionHeading,
   StatusBox,
   Timestamp,
@@ -46,6 +45,9 @@ const silenceAction = alert => ({
   label: 'Silence Alert',
   href: `${SilenceResource.path}/new?${labelsToParams(alert.labels)}`,
 });
+
+const AlertmanagerLink_ = ({text, urls}) => <ExternalLink href={urls[MonitoringRoutes.AlertManager]} text={text} />;
+export const AlertmanagerLink = connectToURLs(MonitoringRoutes.AlertManager)(AlertmanagerLink_);
 
 export const MonitoringResourceIcon = props => {
   const {className, resource} = props;
@@ -232,27 +234,28 @@ const ViewInPrometheusLink_ = ({rule, urls}) => {
 };
 const ViewInPrometheusLink = connectToURLs(MonitoringRoutes.Prometheus)(ViewInPrometheusLink_);
 
+const alertDescription = alert => {
+  const {annotations = {}, labels = {}} = alert;
+  return annotations.description || annotations.message || labels.alertname;
+};
+
 const ActiveAlerts = ({alerts}) => <div className="co-m-table-grid co-m-table-grid--bordered">
   <div className="row co-m-table-grid__head">
     <div className="col-xs-6">Description</div>
-    <div className="col-xs-2">Active Since</div>
-    <div className="col-xs-2">State</div>
-    <div className="col-xs-2">Value</div>
+    <div className="col-sm-2 hidden-xs">Active Since</div>
+    <div className="col-sm-2 col-xs-3">State</div>
+    <div className="col-sm-2 col-xs-3">Value</div>
   </div>
   <div className="co-m-table-grid__body">
-    {alerts.map((a, i) => {
-      const name = a.labels.alertname;
-      const description = _.get(a, 'annotations.description') || _.get(a, 'annotations.message') || name;
-      return <ResourceRow key={i} obj={a}>
-        <div className="col-xs-6 co-resource-link-wrapper">
-          <Cog options={[silenceAction(a)]} />
-          <Link className="co-resource-link" to={alertURL(name, a.labels)}>{description}</Link>
-        </div>
-        <div className="col-xs-2"><Timestamp timestamp={a.activeAt} /></div>
-        <div className="col-xs-2"><State state={a.state} /></div>
-        <div className="col-xs-2">{a.value}</div>
-      </ResourceRow>;
-    })}
+    {_.sortBy(alerts, alertDescription).map((a, i) => <ResourceRow key={i} obj={a}>
+      <div className="col-xs-6 co-resource-link-wrapper">
+        <Cog options={[silenceAction(a)]} />
+        <Link className="co-resource-link" to={alertURL(a.labels.alertname, a.labels)}>{alertDescription(a)}</Link>
+      </div>
+      <div className="col-xs-2"><Timestamp timestamp={a.activeAt} /></div>
+      <div className="col-xs-2"><State state={a.state} /></div>
+      <div className="col-xs-2">{a.value}</div>
+    </ResourceRow>)}
   </div>
 </div>;
 
@@ -430,7 +433,13 @@ export const MonitoringListPage = connect(filtersToProps)(class InnerMonitoringL
       <Helmet>
         <title>Monitoring Alerts</title>
       </Helmet>
-      <PageHeading title="Monitoring Alerts" />
+      <div className="co-m-nav-title co-m-nav-title--detail">
+        <h1 className="co-m-pane__heading">
+          <div className="co-m-pane__name">
+            Monitoring Alerts &nbsp;<span className="monitoring-header-link"><AlertmanagerLink text="Alertmanager UI" /></span>
+          </div>
+        </h1>
+      </div>
       <ul className="co-m-horizontal-nav__menu">
         <li className={classNames('co-m-horizontal-nav__menu-item', {'co-m-horizontal-nav-item--active': match.path === AlertResource.path})}>
           <Link to={AlertResource.path}>Alerts</Link>

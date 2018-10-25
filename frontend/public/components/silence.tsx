@@ -8,7 +8,7 @@ import { coFetchJSON } from '../co-fetch';
 import { SilenceResource, silenceState } from '../module/monitoring';
 import { MonitoringRoutes, connectToURLs } from '../monitoring';
 import { monitoringAlertsToProps, monitoringSilencesToProps } from '../ui/ui-reducers';
-import { connectMonitoringPage, MonitoringListPage, MonitoringResourceIcon } from './alert';
+import { AlertmanagerLink, connectMonitoringPage, MonitoringListPage, MonitoringResourceIcon } from './alert';
 import { ColHead, ListHeader, ResourceRow } from './factory';
 import { confirmModal } from './modals';
 import { SafetyFirst } from './safety-first';
@@ -17,7 +17,6 @@ import {
   ActionsMenu,
   ButtonBar,
   Cog,
-  ExternalLink,
   getURLSearchParams,
   history,
   SectionHeading,
@@ -174,8 +173,7 @@ const SilenceHeader = props => <ListHeader>
   <ColHead {...props} className="col-xs-2">Silenced Alerts</ColHead>
 </ListHeader>;
 
-const SilencesPageDescription_ = ({urls}) => <p className="co-help-text">Silences are a straightforward way to simply mute alerts for a given time powered by <ExternalLink href={urls[MonitoringRoutes.AlertManager]} text="Alertmanager" /></p>;
-const SilencesPageDescription = connectToURLs(MonitoringRoutes.AlertManager)(SilencesPageDescription_);
+const SilencesPageDescription = () => <p className="co-help-text">Silences are a straightforward way to simply mute alerts for a given time powered by <AlertmanagerLink text="Alertmanager" /></p>;
 
 const silencesRowFilter = {
   type: 'silence-state',

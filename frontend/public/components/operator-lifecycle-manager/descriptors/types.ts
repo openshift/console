@@ -10,6 +10,7 @@ export enum SpecCapability {
   selector = 'urn:alm:descriptor:com.tectonic.ui:selector:',
   namespaceSelector = 'urn:alm:descriptor:com.tectonic.ui:namespaceSelector',
   k8sResourcePrefix = 'urn:alm:descriptor:io.kubernetes:',
+  booleanSwitch = 'urn:alm:descriptor:com.tectonic.ui:booleanSwitch',
 }
 
 export enum StatusCapability {

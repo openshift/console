@@ -71,7 +71,7 @@ class CatalogListPage extends React.Component {
       const tileDescription = _.get(serviceClass, 'spec.description');
       const tileProvider = _.get(serviceClass, 'spec.externalMetadata.providerDisplayName');
       const tags = _.get(serviceClass, 'spec.tags');
-      const href = `/k8s/cluster/clusterserviceclasses/${serviceClass.metadata.name}/create-instance?preselected-ns=${namespace}`;
+      const href = `/catalog/create-service-instance?cluster-service-class=${serviceClass.metadata.name}&preselected-ns=${namespace}`;
       return {
         obj: serviceClass,
         kind,
@@ -102,7 +102,7 @@ class CatalogListPage extends React.Component {
       const tags = getAnnotationTags(tag);
       const tileProvider = _.get(tag, 'annotations.openshift.io/provider-display-name');
       const { name, namespace } = imageStream.metadata;
-      const href = `/source-to-image?imagestream=${name}&imagestream-ns=${namespace}&preselected-ns=${currentNamespace}`;
+      const href = `/catalog/source-to-image?imagestream=${name}&imagestream-ns=${namespace}&preselected-ns=${currentNamespace}`;
       return {
         obj: imageStream,
         kind,

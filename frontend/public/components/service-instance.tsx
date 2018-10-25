@@ -1,22 +1,26 @@
+/* eslint-disable no-undef */
 import * as React from 'react';
 import * as _ from 'lodash-es';
 
 // eslint-disable-next-line no-unused-vars
-import { K8sResourceKind, K8sResourceKindReference, planExternalName, serviceCatalogStatus } from '../module/k8s';
+import { k8sList, K8sResourceKind, K8sResourceKindReference, planExternalName, serviceCatalogStatus } from '../module/k8s';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
-import { Cog, history, navFactory, ResourceCog, ResourceLink, ResourceSummary, SectionHeading, StatusWithIcon, Timestamp } from './utils';
+import { Cog, history, navFactory, ResourceCog, ResourceIcon, ResourceLink, ResourceSummary, SectionHeading, StatusWithIcon, Timestamp } from './utils';
 import { ResourceEventStream } from './events';
 import { Conditions } from './conditions';
 import { ServiceCatalogParameters, ServiceCatalogParametersSecrets } from './service-catalog-parameters';
 import { ServiceBindingsPage } from './service-binding';
+import { ServiceBindingModel } from '../models';
 
 const ServiceInstancesReference: K8sResourceKindReference = 'ServiceInstance';
 
+const goToCreateBindingPage = (serviceInstance: K8sResourceKind) => {
+  history.push(`/k8s/ns/${serviceInstance.metadata.namespace}/serviceinstances/${serviceInstance.metadata.name}/create-binding`);
+};
+
 const createBinding = (kindObj, serviceInstance) => {
   return {
-    callback: () => {
-      history.push(`/k8s/ns/${serviceInstance.metadata.namespace}/serviceinstances/${serviceInstance.metadata.name}/create-binding`);
-    },
+    callback: () => goToCreateBindingPage(serviceInstance),
     label: 'Create Service Binding',
   };
 };
@@ -28,15 +32,49 @@ const menuActions = [
   ...common,
 ];
 
+const ServiceBindingDescription: React.SFC<ServiceBindingDescriptionProps> = ({obj: si}) => <p>
+  Service bindings create a secret containing the necessary information for another application to use <ResourceIcon kind="ServiceInstance" />{si.metadata.name}.
+  Once the binding is ready, add the secret to your application&apos;s environment variables or volumes.
+</p>;
+
+class CreateServiceBinding extends React.Component<CreateServiceBindingProps, CreateServiceBindingState> {
+  state = {
+    visible: false
+  }
+
+  componentDidMount () {
+    const { obj } = this.props;
+
+    k8sList(ServiceBindingModel, {ns: obj.metadata.namespace})
+      .then(serviceBindings => {
+        if (!_.some(serviceBindings, {'spec': { 'instanceRef': { 'name': obj.metadata.name} } })) {
+          this.setState({
+            visible: true,
+          });
+        }
+      });
+  }
+
+  render() {
+    const {obj, onClick} = this.props;
+    const {visible} = this.state;
+
+    return visible && <div className="co-well">
+      <h4>Create Service Binding</h4>
+      <ServiceBindingDescription obj={obj} />
+      <button className="btn btn-primary" onClick={onClick}>Create Service Binding</button>
+    </div>;
+  }
+}
+
 const ServiceInstanceDetails: React.SFC<ServiceInstanceDetailsProps> = ({obj: si}) => {
   const plan = planExternalName(si);
   const parameters = _.get(si, 'status.externalProperties.parameters', {});
-  const bindingCreateHandler = createBinding(null, si).callback;
-  const bindingFilters = {selector: {field: 'spec.instanceRef.name', values: new Set(_.map(si, 'name'))}};
   const classDisplayName = si.spec.clusterServiceClassExternalName || si.spec.serviceClassExternalName;
   const clusterServiceClassName = _.get(si, 'spec.clusterServiceClassRef.name');
 
   return <React.Fragment>
+    <CreateServiceBinding obj={si} onClick={() => goToCreateBindingPage(si)} />
     <div className="co-m-pane__body">
       <SectionHeading text="Service Instance Overview" />
       <div className="row">
@@ -59,11 +97,6 @@ const ServiceInstanceDetails: React.SFC<ServiceInstanceDetailsProps> = ({obj: si
         </div>
       </div>
     </div>
-    <div className="co-m-pane__body co-m-pane__body--alt">
-      <SectionHeading text="Service Bindings" />
-      <p className="co-m-pane__explanation">Service bindings create a secret containing the necessary information for an application to use a service.</p>
-    </div>
-    <ServiceBindingsPage canCreate={true} createHandler={bindingCreateHandler} namespace={si.metadata.namespace} filters={bindingFilters} autoFocus={false} showTitle={false} />
     <div className="co-m-pane__body">
       <SectionHeading text="Conditions" />
       <Conditions conditions={si.status.conditions} />
@@ -73,7 +106,19 @@ const ServiceInstanceDetails: React.SFC<ServiceInstanceDetailsProps> = ({obj: si
   </React.Fragment>;
 };
 
-const pages = [navFactory.details(ServiceInstanceDetails), navFactory.editYaml(), navFactory.events(ResourceEventStream)];
+const ServiceBindingsDetails: React.SFC<ServiceBindingsDetailsProps> = ({obj: si}) => {
+  const bindingFilters = {selector: {field: 'spec.instanceRef.name', values: new Set(_.map(si, 'name'))}};
+
+  return <ServiceBindingsPage canCreate={true} createHandler={() => goToCreateBindingPage(si)} namespace={si.metadata.namespace} filters={bindingFilters} autoFocus={false} showTitle={false} />;
+};
+
+const pages = [
+  navFactory.details(ServiceInstanceDetails),
+  navFactory.editYaml(),
+  navFactory.events(ResourceEventStream),
+  navFactory.serviceBindings(ServiceBindingsDetails)
+];
+
 export const ServiceInstanceDetailsPage: React.SFC<ServiceInstanceDetailsPageProps> = props =>
   <DetailsPage
     {...props}
@@ -153,6 +198,23 @@ export type ServiceInstancesRowProps = {
 };
 
 export type ServiceInstanceDetailsProps = {
+  obj: any,
+};
+
+export type ServiceBindingDescriptionProps = {
+  obj: any,
+};
+
+export type CreateServiceBindingProps = {
+  obj: any,
+  onClick: any,
+};
+
+export type CreateServiceBindingState = {
+  visible: boolean
+};
+
+export type ServiceBindingsDetailsProps = {
   obj: any,
 };
 

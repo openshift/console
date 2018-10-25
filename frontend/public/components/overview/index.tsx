@@ -49,6 +49,9 @@ const DEPLOYMENT_CONFIG_LATEST_VERSION_ANNOTATION = 'openshift.io/deployment-con
 const DEPLOYMENT_PHASE_ANNOTATION = 'openshift.io/deployment.phase';
 const METRICS_POLL_INTERVAL = 30 * 1000;
 
+// List of container status waiting reason values that we should call out as errors in overview rows.
+const CONTAINER_WAITING_STATE_ERROR_REASONS = ['CrashLoopBackOff', 'ErrImagePull', 'ImagePullBackOff'];
+
 const getDeploymentRevision = (obj: K8sResourceKind): number => {
   const revision = _.get(obj, ['metadata', 'annotations', DEPLOYMENT_REVISION_ANNOTATION]);
   return revision && parseInt(revision, 10);
@@ -76,12 +79,10 @@ const getPodAlerts = (pod: K8sResourceKind): any => {
   statuses.forEach(status => {
     const { name, state } = status;
     const waitingReason = _.get(state, 'waiting.reason');
-    if (waitingReason === 'CrashLoopBackOff') {
+    if (CONTAINER_WAITING_STATE_ERROR_REASONS.includes(waitingReason)) {
       const key = podAlertKey(waitingReason, pod, name);
-      alerts[key] = {
-        severity: 'error',
-        message: `Container ${name} is crash-looping.`,
-      };
+      const message = state.waiting.message || waitingReason;
+      alerts[key] = { severity: 'error', message };
     }
   });
 
@@ -406,10 +407,10 @@ class OverviewDetails extends SafetyFirst<OverviewDetailsProps, OverviewDetailsS
 
   toReplicationControllerItem(rc) {
     const pods = this.getPodsForResource(rc);
-    const alerts = [
+    const alerts = {
       ...combinePodAlerts(pods),
       ...getReplicationControllerAlerts(rc)
-    ];
+    };
     const phase = getDeploymentPhase(rc);
     const revision = getDeploymentConfigVersion(rc);
     const obj = {

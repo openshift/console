@@ -196,6 +196,12 @@ $clusterserviceversion-list-border: #ccc;
   margin-top: 10px;
 }
 
+.co-spec-descriptor--switch {
+  display: flex;
+  align-items: center;
+  height: 25px;
+}
+
 .step--present {
   color: $color-pf-green-400;
 

@@ -43,6 +43,8 @@ describe('Test for Cluster Service Binding', () => {
 
     expect(crudView.resourceTitle.getText()).toEqual('mysql-persistent');
 
+    await crudView.navTabFor('Service Bindings').click();
+    await crudView.isLoaded();
     await crudView.createYAMLButton.click(); // embedded Create Service Binding button
     await srvCatalogView.createBindingFormIsLoaded();
     expect(crudView.resourceTitle.getText()).toEqual('Create Service Binding');

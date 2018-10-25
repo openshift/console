@@ -38,7 +38,7 @@ export class CreateRoute extends React.Component<null, CreateRouteState> {
     certificate: '',
     key: '',
     caCertificate: '',
-    destinationCaCertificate: '',
+    destinationCACertificate: '',
     secure: false,
     loaded: false,
     inProgress: false,
@@ -74,6 +74,8 @@ export class CreateRoute extends React.Component<null, CreateRouteState> {
     this.setState({
       service: serviceName,
       portOptions,
+      // unset targetPort if previously set
+      targetPort: '',
       labels,
     });
   }
@@ -98,7 +100,7 @@ export class CreateRoute extends React.Component<null, CreateRouteState> {
     switch (termination) {
       case 'edge':
         // unset tls data if it was set
-        newState.destinationCaCertificate = '';
+        newState.destinationCACertificate = '';
         break;
       case 'passthrough':
         Object.assign(newState, {
@@ -106,7 +108,7 @@ export class CreateRoute extends React.Component<null, CreateRouteState> {
           certificate: '',
           key: '',
           caCertificate: '',
-          destinationCaCertificate: '',
+          destinationCACertificate: '',
         });
         break;
       default:
@@ -122,7 +124,7 @@ export class CreateRoute extends React.Component<null, CreateRouteState> {
 
   onCaCertificateChange = (caCertificate: string) => this.setState({caCertificate});
 
-  onDestinationCaCertificateChange = (destinationCaCertificate: string) => this.setState({destinationCaCertificate});
+  onDestinationCACertificateChange = (destinationCACertificate: string) => this.setState({destinationCACertificate});
 
   save = event => {
     event.preventDefault();
@@ -138,7 +140,7 @@ export class CreateRoute extends React.Component<null, CreateRouteState> {
       certificate,
       key,
       caCertificate,
-      destinationCaCertificate,
+      destinationCACertificate,
       secure,
       namespace,
       labels,
@@ -150,7 +152,7 @@ export class CreateRoute extends React.Component<null, CreateRouteState> {
         certificate,
         key,
         caCertificate,
-        destinationCaCertificate,
+        destinationCACertificate,
       }
       : null;
     const route = {
@@ -188,7 +190,7 @@ export class CreateRoute extends React.Component<null, CreateRouteState> {
 
   render() {
     const title = 'Create Route';
-    const { loaded, services, service, portOptions, termination } = this.state;
+    const { loaded, services, service, portOptions, targetPort, termination } = this.state;
     const serviceOptions = {};
     _.each(_.sortBy(services, 'metadata.name'), ({ metadata: { name } }) => serviceOptions[name] = <ResourceName kind="Service" name={name} />);
     const terminationTypes = {
@@ -278,7 +280,7 @@ export class CreateRoute extends React.Component<null, CreateRouteState> {
           <div className="form-group co-create-route__target-port">
             <label className="co-required" htmlFor="target-port">Target Port</label>
             {_.isEmpty(portOptions) && <p>Select a service above</p>}
-            {!_.isEmpty(portOptions) && <Dropdown items={portOptions} title="Select target port" dropDownClassName="dropdown--full-width" id="target-port" onChange={this.changeTargetPort} /> }
+            {!_.isEmpty(portOptions) && <Dropdown items={portOptions} title={targetPort || 'Select target port'} dropDownClassName="dropdown--full-width" id="target-port" onChange={this.changeTargetPort} /> }
             <div className="help-block">
               Target port for traffic.
             </div>
@@ -340,8 +342,8 @@ export class CreateRoute extends React.Component<null, CreateRouteState> {
               </div>
               {termination === 'reencrypt' && <div className="form-group co-create-route__destinationCaCertificate">
                 <DroppableFileInput
-                  onChange={this.onDestinationCaCertificateChange}
-                  inputFileData={this.state.destinationCaCertificate}
+                  onChange={this.onDestinationCACertificateChange}
+                  inputFileData={this.state.destinationCACertificate}
                   id="destination-ca-certificate"
                   label="Destination CA Certificate" />
               </div>}
@@ -371,7 +373,7 @@ export type CreateRouteState = {
   certificate: string,
   key: string,
   caCertificate: string,
-  destinationCaCertificate: string,
+  destinationCACertificate: string,
   secure: boolean,
   loaded: boolean,
   inProgress: boolean,

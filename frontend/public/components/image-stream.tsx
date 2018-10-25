@@ -68,7 +68,7 @@ const createApplication = (kindObj, imageStream) => {
   return {
     btnClass: 'btn-primary',
     callback: () => {
-      history.push(`/source-to-image?imagestream=${name}&imagestream-ns=${namespace}`);
+      history.push(`/catalog/source-to-image?imagestream=${name}&imagestream-ns=${namespace}`);
     },
     label: 'Create Application',
   };

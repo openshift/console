@@ -92,7 +92,6 @@ describe(SpecDescriptor.name, () => {
 
     expect(wrapper.find('dd').childAt(0).shallow().find(ResourceLink).props().kind).toEqual('core:v1:Service');
     expect(wrapper.find('dd').childAt(0).shallow().find(ResourceLink).props().name).toEqual(value);
-    expect(wrapper.find('dd').childAt(0).shallow().find(ResourceLink).props().title).toEqual(value);
     expect(wrapper.find('dd').childAt(0).shallow().find(ResourceLink).props().namespace).toEqual('foo');
   });
 
