@@ -66,7 +66,7 @@ export const NameValueEditor = withDragDropContext(class NameValueEditor extends
     });
     return <React.Fragment>
       <div className="row">
-        {(!readOnly && allowSorting) && <div className="col-xs-1 co-empty__header"></div>}
+        {!readOnly && allowSorting && <div className="col-xs-1 co-empty__header"></div>}
         <div className="col-xs-5 text-secondary text-uppercase">{nameString}</div>
         <div className="col-xs-5 text-secondary text-uppercase">{valueString}</div>
         <div className="col-xs-1 co-empty__header"></div>
@@ -315,7 +315,7 @@ const PairElement = DragSource(DRAGGABLE_TYPE.ENV_ROW, pairSource, collectSource
     return connectDropTarget(
       connectDragPreview(
         <div className={classNames('row', isDragging ? 'pairs-list__row-dragging' : 'pairs-list__row')} ref={node => this.node = node}>
-          { (allowSorting && !readOnly) &&
+          {allowSorting && !readOnly &&
             <div className="col-xs-1 pairs-list__action-icon">
               {connectDragSource(<i className="pficon pficon-drag-drop pairs-list__action-icon--reorder" />)}
             </div>
@@ -399,7 +399,7 @@ const EnvFromPairElement = DragSource(DRAGGABLE_TYPE.ENV_FROM_ROW, pairSource, c
         <div className={classNames('row', isDragging ? 'pairs-list__row-dragging' : 'pairs-list__row')} ref={node => this.node = node}>
           { !readOnly &&
             <div className="col-xs-1 pairs-list__action-icon">
-              <React.Fragment>{connectDragSource(<i className="pficon pficon-drag-drop pairs-list__action-icon--reorder" />)}</React.Fragment>
+              {connectDragSource(<i className="pficon pficon-drag-drop pairs-list__action-icon--reorder" />)}
             </div>
           }
           <div className="col-xs-5 pairs-list__value-pair-field">
