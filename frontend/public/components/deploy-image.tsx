@@ -5,7 +5,9 @@ import * as _ from 'lodash-es';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 
+import { FieldLevelHelp } from 'patternfly-react';
 import { getPorts } from './source-to-image';
+import { EnvironmentPage } from './environment';
 import { formatNamespacedRouteForResource } from '../ui/ui-actions';
 import { NsDropdown } from './RBAC/bindings';
 import { k8sCreate } from '../module/k8s';
@@ -63,19 +65,26 @@ export class DeployImage extends React.Component<DeployImageProps, DeployImageSt
     };
   }
 
+  // The EnvironmentPage callback will set env with updates from the editor. env is then referenced in the deployment config onSave.
+  env: object = {};
+
   onNamespaceChange = (namespace: string) => {
     this.setState({namespace});
   };
 
   onImageNameChange: React.ReactEventHandler<HTMLInputElement> = event => {
     this.setState({imageName: event.currentTarget.value});
-  }
+  };
 
   onKeyPress = event => {
     if (this.state.imageName && event.key === 'Enter') {
       this.search(event);
     }
-  }
+  };
+
+  onEnvironmentChange = (env) => {
+    this.env = env;
+  };
 
   onNameChange: React.ReactEventHandler<HTMLInputElement> = event => {
     this.setState({name: event.currentTarget.value});
@@ -223,7 +232,8 @@ export class DeployImage extends React.Component<DeployImageProps, DeployImageSt
               name,
               image: isi.image.dockerImageMetadata.Config.Image,
               ports,
-              volumeMounts
+              volumeMounts,
+              env: this.env
             }],
           }
         }
@@ -343,48 +353,62 @@ export class DeployImage extends React.Component<DeployImageProps, DeployImageSt
                 <p className="co-image-name-results__loading-error">{searchError}</p>
               </React.Fragment>}
             </div>}
-            {isi && <div className="co-image-name-results__details">
-              <div className="row">
-                <div className="col-sm-3 col-md-2 hidden-xs text-right h2">
-                  <span className="fa fa-cube text-muted" style={{fontSize: '100px'}} aria-hidden="true"></span>
+            {isi && <React.Fragment>
+              <div className="co-image-name-results__details">
+                <div className="row">
+                  <div className="col-sm-3 col-md-2 hidden-xs text-right h2">
+                    <span className="fa fa-cube text-muted" style={{fontSize: '100px'}} aria-hidden="true"></span>
+                  </div>
+                  <div className="col-sm-9 col-md-10">
+                    {runsAsRoot(isi.image) && <div className="alert alert-warning">
+                      <span className="pficon pficon-warning-triangle-o" aria-hidden="true"></span>
+                      Image <strong>{isi.name}</strong> runs as the <strong>root</strong> user which might not be permitted by your cluster administrator.
+                    </div>}
+                    <h2 className="co-image-name-results__heading co-break-word">
+                      {isi.name}
+                      <small>
+                        {_.get(isi, 'result.ref.registry') && <span>from {isi.result.ref.registry}, </span>}
+                        <React.Fragment><Timestamp timestamp={isi.image.dockerImageMetadata.Created} />, </React.Fragment>
+                        {_.get(isi, 'image.dockerImageMetadata.Size') && <span>{units.humanize(isi.image.dockerImageMetadata.Size, 'binaryBytes', true).string}, </span>}
+                        {_.size(isi.image.dockerImageLayers)} layers
+                      </small>
+                    </h2>
+                    <ul>
+                      {!isi.namespace && <li>Image Stream <strong>{name || '<name>'}:{isi.tag || 'latest'}</strong> will track this image.</li>}
+                      <li>This image will be deployed in Deployment Config <strong>{name || '<name>'}</strong>.</li>
+                      {ports && <li><ImagePorts ports={ports} name={name} /></li>}
+                    </ul>
+                    {!_.isEmpty(isi.image.dockerImageMetadata.Config.Volumes) && <p className="help-block">
+                      This image declares volumes and will default to use non-persistent, host-local storage.
+                      You can add persistent storage later to the deployment config.
+                    </p>}
+                  </div>
                 </div>
-                <div className="col-sm-9 col-md-10">
-                  {runsAsRoot(isi.image) && <div className="alert alert-warning">
-                    <span className="pficon pficon-warning-triangle-o" aria-hidden="true"></span>
-                    Image <strong>{isi.name}</strong> runs as the <strong>root</strong> user which might not be permitted by your cluster administrator.
-                  </div>}
-                  <h2 className="co-image-name-results__heading co-break-word">
-                    {isi.name}
-                    <small>
-                      {_.get(isi, 'result.ref.registry') && <span>from {isi.result.ref.registry}, </span>}
-                      <React.Fragment><Timestamp timestamp={isi.image.dockerImageMetadata.Created} />, </React.Fragment>
-                      {_.get(isi, 'image.dockerImageMetadata.Size') && <span>{units.humanize(isi.image.dockerImageMetadata.Size, 'binaryBytes', true).string}, </span>}
-                      {_.size(isi.image.dockerImageLayers)} layers
-                    </small>
-                  </h2>
-                  <ul>
-                    {!isi.namespace && <li>Image Stream <strong>{name || '<name>'}:{isi.tag || 'latest'}</strong> will track this image.</li>}
-                    <li>This image will be deployed in Deployment Config <strong>{name || '<name>'}</strong>.</li>
-                    {ports && <li><ImagePorts ports={ports} name={name} /></li>}
-                  </ul>
-                  {!_.isEmpty(isi.image.dockerImageMetadata.Config.Volumes) && <p className="help-block">
-                    This image declares volumes and will default to use non-persistent, host-local storage.
-                    You can add persistent storage later to the deployment config.
-                  </p>}
+                <div className="form-group co-deploy-image__name">
+                  <label htmlFor="name" className="control-label co-required">Name</label>
+                  <input className="form-control"
+                    type="text"
+                    onChange={this.onNameChange}
+                    value={name}
+                    id="name"
+                    name="name"
+                    required />
+                  <div className="help-block">Identifies the resources created for this image.</div>
                 </div>
               </div>
-              <div className="form-group co-deploy-image__name">
-                <label htmlFor="name" className="control-label co-required">Name</label>
-                <input className="form-control"
-                  type="text"
-                  onChange={this.onNameChange}
-                  value={name}
-                  id="name"
-                  name="name"
-                  required />
-                <div className="help-block">Identifies the resources created for this image.</div>
+              <div>
+                <label>Environment Variables</label>
+                <FieldLevelHelp content={
+                  <div>Define environment variables as key-value pairs to store configuration settings. Drag and drop environment variables to change the order in which they are run. A variable can reference any other variables that come before it in the list, for example <code>FULLDOMAIN = $(SUBDOMAIN).example.com</code>.</div>} />
+                <div>
+                  <EnvironmentPage
+                    envPath={['spec','template','spec','containers']}
+                    readOnly={false}
+                    onChange={this.onEnvironmentChange}
+                    addConfigMapSecret={false} />
+                </div>
               </div>
-            </div>}
+            </React.Fragment>}
           </div>
           <ButtonBar errorMessage={this.state.error} inProgress={this.state.inProgress}>
             <button type="submit" className="btn btn-primary" disabled={!this.state.namespace || !this.state.imageName || !this.state.name}>Deploy</button>
@@ -409,4 +433,5 @@ export type DeployImageState = {
   name: string,
   error?: any,
   searchError?: string,
+  env?: any,
 };
