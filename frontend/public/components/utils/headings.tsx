@@ -68,6 +68,8 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
 
 export const SectionHeading: React.SFC<SectionHeadingProps> = ({text, children, style}) => <h2 className="co-section-heading" style={style}>{text}{children}</h2>;
 
+export const SidebarSectionHeading: React.SFC<SidebarSectionHeadingProps> = ({text, children, style}) => <h2 className="sidebar__section-heading" style={style}>{text}{children}</h2>;
+
 export const ResourceOverviewHeading: React.SFC<ResourceOverviewHeadingProps> = ({kindObj, actions, resource}) => <div className="overview__sidebar-pane-head resource-overview__heading">
   <h1 className="co-m-pane__heading">
     <div className="co-m-pane__name">
@@ -114,9 +116,16 @@ export type SectionHeadingProps = {
   style?: any;
   text: string;
 };
+
+export type SidebarSectionHeadingProps = {
+  children?: any;
+  style?: any;
+  text: string;
+};
 /* eslint-enable no-undef */
 
 BreadCrumbs.displayName = 'BreadCrumbs';
 PageHeading.displayName = 'PageHeading';
 ResourceOverviewHeading.displayName = 'ResourceOverviewHeading';
 SectionHeading.displayName = 'SectionHeading';
+SidebarSectionHeading.displayName = 'SidebarSectionHeading';

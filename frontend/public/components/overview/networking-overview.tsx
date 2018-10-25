@@ -3,7 +3,7 @@ import * as _ from 'lodash-es';
 import { Icon, ListGroup } from 'patternfly-react';
 
 import { K8sResourceKind } from '../../module/k8s';
-import { ResourceLink, SectionHeading } from '../utils';
+import { ResourceLink, SidebarSectionHeading } from '../utils';
 import { RouteLocation } from '../routes';
 
 const ServicePortList: React.SFC<ServicePortListProps> = ({service}) => {
@@ -48,23 +48,23 @@ const RoutesOverviewList: React.SFC<RoutesOverviewListProps> = ({routes}) => <Li
 </ListGroup>;
 
 export const NetworkingOverview: React.SFC<NetworkingOverviewProps> = ({routes, services}) => {
-  return <div className="co-m-pane">
-    <div className="co-m-pane__body">
-      <SectionHeading text="Services" />
-      {
-        _.isEmpty(services)
-          ? <span className="text-muted">No Services found for this resource.</span>
-          : <ServicesOverviewList services={services} />
-      }
-    </div>
-    <div className="co-m-pane__body">
-      <SectionHeading text="Routes" />
-      {
-        _.isEmpty(routes)
-          ? <span className="text-muted">No Routes found for this resource.</span>
-          : <RoutesOverviewList routes={routes} />
-      }
-    </div>
+  return <div className="overview__sidebar-pane-body">
+
+    <SidebarSectionHeading text="Services" />
+    {
+      _.isEmpty(services)
+        ? <span className="text-muted">No Services found for this resource.</span>
+        : <ServicesOverviewList services={services} />
+    }
+
+
+    <SidebarSectionHeading text="Routes" />
+    {
+      _.isEmpty(routes)
+        ? <span className="text-muted">No Routes found for this resource.</span>
+        : <RoutesOverviewList routes={routes} />
+    }
+
   </div>;
 };
 

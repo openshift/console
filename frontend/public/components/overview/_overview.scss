@@ -93,10 +93,18 @@
   }
 
   .overview__sidebar-dismiss {
-    background: #fff;
-    border-bottom: 1px solid $color-grey-background-border;
-    padding: 5px 20px;
-    overflow: hidden;
+    background: $color-grey-background;
+    box-shadow: 0px 1px 0px 0px $color-grey-background-border;
+    padding: 0 5px;
+
+    .close {
+      // adjustments to increase click target and default color contrast because it's on a grey background
+      opacity: .3;
+      padding: 10px 15px;
+      &:hover, &:focus {
+        opacity: .6;
+      }
+    }
 
     .pficon-close {
       font-size: 16px;
@@ -112,7 +120,7 @@
 .overview__sidebar-pane-head {
   background-color: $color-grey-background;
   border-bottom: 1px solid $color-grey-background-border;
-  padding-top: 20px;
+  padding-top: 5px;
 
   .co-m-pane__heading {
     margin: 0 20px 25px;
@@ -147,4 +155,9 @@
 .resource-overview__summary {
   padding-right: 10px;
   width: 50%;
+}
+
+.sidebar__section-heading {
+  font-size: 18px;
+  margin-top: 30px;
 }
