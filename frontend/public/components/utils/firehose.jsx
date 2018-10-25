@@ -166,7 +166,7 @@ export const Firehose = connect(
     start() {
       const { watchK8sList, watchK8sObject, resources, k8sModels, inFlight } = this.props;
 
-      if (inFlight) {
+      if (inFlight && _.some(resources, ({kind}) => !k8sModels.get(kind))) {
         this.firehoses = [];
       } else {
         this.firehoses = resources.map(resource => {

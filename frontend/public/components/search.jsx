@@ -19,7 +19,7 @@ import { AsyncComponent } from './utils/async';
 import { DefaultPage } from './default-resource';
 
 const ResourceList = connectToModel(({kindObj, kindsInFlight, namespace, selector, fake}) => {
-  if (kindsInFlight) {
+  if (!kindObj && kindsInFlight) {
     return <LoadingBox />;
   }
 

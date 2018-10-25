@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars, no-undef */
 
-import { getResources as getResources_ } from './get-resources';
+import { cacheResources, getResources as getResources_ } from './get-resources';
 import { k8sList, k8sWatch, k8sGet } from './resource';
 import { makeReduxID } from '../../components/utils/k8s-watcher';
 import { APIServiceModel } from '../../models';
@@ -70,7 +70,11 @@ const actions = {
   getResources: () => dispatch => {
     dispatch({type: types.getResourcesInFlight});
     getResources_()
-      .then(resources => dispatch({type: types.resources, resources}))
+      .then(resources => {
+        // Cache the resources whenever discovery completes to improve console load times.
+        cacheResources(resources);
+        dispatch({type: types.resources, resources});
+      })
       // eslint-disable-next-line no-console
       .catch(err => console.error(err));
   },
