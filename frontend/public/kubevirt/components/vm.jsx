@@ -23,8 +23,9 @@ import { getResourceKind, getLabelMatcher, findVMI, findPod, getFlattenForKind, 
 
 import { CreateVmWizard, TEMPLATE_TYPE_LABEL, TEMPLATE_OS_LABEL } from 'kubevirt-web-ui-components';
 import VmConsolesConnected from './vmconsoles';
-
-const dashes = '---';
+import { Nic } from './nic';
+import { Disk } from './disk';
+import { DASHES } from './utils/constants';
 
 const VMHeader = props => <ListHeader>
   <ColHead {...props} className="col-lg-2 col-md-2 col-sm-2 col-xs-6" sortField="metadata.name">Name</ColHead>
@@ -66,16 +67,16 @@ const StateColumn = props => {
       return getVmStatus(vm);
     }
   }
-  return dashes;
+  return DASHES;
 };
 
 const PhaseColumn = props => {
   if (props.loaded){
     const resources = props.flatten(props.resources);
     const vmi = props.filter(resources);
-    return _.get(vmi, 'status.phase', dashes);
+    return _.get(vmi, 'status.phase', DASHES);
   }
-  return dashes;
+  return DASHES;
 };
 
 const FirehoseResourceLink = props => {
@@ -95,7 +96,7 @@ const FirehoseResourceLink = props => {
       }
     }
   }
-  return dashes;
+  return DASHES;
 };
 
 export const VMRow = ({obj: vm}) => {
@@ -104,8 +105,7 @@ export const VMRow = ({obj: vm}) => {
   const podResources = getResourceKind(PodModel, undefined, true, vm.metadata.namespace, true, getLabelMatcher(vm));
 
   return <ResourceRow obj={vm}>
-    <div className="col-lg-2 col-md-2 col-sm-2 col-xs-6 co-resource-link-wrapper">
-      <ResourceCog actions={menuActions} kind={VirtualMachineModel.kind} resource={vm} />
+    <div className="col-lg-2 col-md-2 col-sm-2 col-xs-6">
       <ResourceLink kind={VirtualMachineModel.kind} name={vm.metadata.name} namespace={vm.metadata.namespace} title={vm.metadata.uid} />
     </div>
     <div className="col-lg-2 col-md-2 col-sm-2 col-xs-6 co-break-word">
@@ -130,6 +130,9 @@ export const VMRow = ({obj: vm}) => {
       <Firehose resources={[podResources]} flatten={getFlattenForKind(PodModel.kind)}>
         <FirehoseResourceLink filter={data => findPod(data, vm.metadata.name)} />
       </Firehose>
+    </div>
+    <div className="co-resource-kebab">
+      <ResourceCog actions={menuActions} kind={VirtualMachineModel.kind} resource={vm} />
     </div>
   </ResourceRow>;
 };
@@ -217,11 +220,11 @@ class VMResourceConfiguration extends Component {
         <h3 className="overview-section-title">Configuration</h3>
         <dl className="dl-horizontal  dl-left">
           <dt>Memory:</dt>
-          <dd>{configuration.memory || dashes}</dd>
+          <dd>{configuration.memory || DASHES}</dd>
           <dt>CPU:</dt>
-          <dd>{configuration.cpu || dashes}</dd>
+          <dd>{configuration.cpu || DASHES}</dd>
           <dt>Operating System:</dt>
-          <dd>{configuration.os || dashes}</dd>
+          <dd>{configuration.os || DASHES}</dd>
         </dl>
       </div>
     </div>;
@@ -269,11 +272,26 @@ export const VirtualMachinesDetailsPage = props => {
     name: 'Consoles',
     component: VmConsolesConnected
   };
+
+  const nicsPage = {
+    href: 'nics',
+    name: 'Networks',
+    component: Nic
+  };
+
+  const disksPage = {
+    href: 'disks',
+    name: 'Disks',
+    component: Disk
+  };
+
   const pages = [
     navFactory.details(Details),
     navFactory.editYaml(),
     consolePage,
     navFactory.events(VmiEvents),
+    nicsPage,
+    disksPage
   ];
   return (
     <DetailsPage
