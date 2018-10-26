@@ -19,7 +19,7 @@ describe('Interacting with the Prometheus OCS', () => {
   const testLabel = 'automatedTestName';
 
   beforeAll(async() => {
-    browser.get(`${appHost}/status/all-namespaces`);
+    await browser.get(`${appHost}/status/all-namespaces`);
     await browser.wait(until.presenceOf(sidenavView.navSectionFor('Operators')));
   });
 
@@ -30,8 +30,6 @@ describe('Interacting with the Prometheus OCS', () => {
 
   it('can be enabled from the Catalog Source', async() => {
     await sidenavView.clickNavLink(['Operators', 'Package Manifests']);
-    await catalogView.isLoaded();
-    await catalogView.viewCatalogDetail('Red Hat Operators');
     await catalogView.isLoaded();
     await catalogView.createSubscriptionFor('Prometheus Operator');
     await browser.wait(until.presenceOf($('.ace_text-input')));

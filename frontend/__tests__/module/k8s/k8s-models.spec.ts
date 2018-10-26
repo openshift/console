@@ -5,36 +5,36 @@ import { PodModel, DeploymentModel } from '../../../public/models';
 describe('referenceFor', () => {
 
   it('returns a reference for objects without an API group', () => {
-    expect(referenceFor(testNamespace)).toEqual('core:v1:Namespace');
+    expect(referenceFor(testNamespace)).toEqual('core~v1~Namespace');
   });
 
   it('returns a reference for objects with an API group', () => {
-    expect(referenceFor(testClusterServiceVersion)).toEqual('operators.coreos.com:v1alpha1:ClusterServiceVersion');
+    expect(referenceFor(testClusterServiceVersion)).toEqual('operators.coreos.com~v1alpha1~ClusterServiceVersion');
   });
 });
 
 describe('referenceForCRD', () => {
 
   it('returns a reference for custom resource definitions', () => {
-    expect(referenceForCRD(testCRD)).toEqual('testapp.coreos.com:v1alpha1:TestResource');
+    expect(referenceForCRD(testCRD)).toEqual('testapp.coreos.com~v1alpha1~TestResource');
   });
 });
 
 describe('referenceForOwnerRef', () => {
 
   it('returns a reference for an ownerRef', () => {
-    expect(referenceForOwnerRef(testOwnedResourceInstance.metadata.ownerReferences[0])).toEqual('testapp.coreos.com:v1alpha1:TestResource');
+    expect(referenceForOwnerRef(testOwnedResourceInstance.metadata.ownerReferences[0])).toEqual('testapp.coreos.com~v1alpha1~TestResource');
   });
 });
 
 describe('referenceForModel', () => {
 
   it('returns a reference for a legacy k8s model', () => {
-    expect(referenceForModel(PodModel)).toEqual('core:v1:Pod');
+    expect(referenceForModel(PodModel)).toEqual('core~v1~Pod');
   });
 
   it('returns a reference for a non-legacy k8s model', () => {
-    expect(referenceForModel(DeploymentModel)).toEqual('apps:v1:Deployment');
+    expect(referenceForModel(DeploymentModel)).toEqual('apps~v1~Deployment');
   });
 });
 

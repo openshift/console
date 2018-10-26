@@ -7,7 +7,7 @@ import * as _ from 'lodash-es';
 
 import { ClusterServiceVersionResourceList, ClusterServiceVersionResourceListProps, ClusterServiceVersionResourcesPage, ClusterServiceVersionResourcesPageProps, ClusterServiceVersionResourceHeaderProps, ClusterServiceVersionResourcesDetailsState, ClusterServiceVersionResourceRowProps, ClusterServiceVersionResourceHeader, ClusterServiceVersionResourceRow, ClusterServiceVersionResourceDetails, ClusterServiceVersionResourcesDetailsPageProps, ClusterServiceVersionResourcesDetailsProps, ClusterServiceVersionResourcesDetailsPage, ClusterServiceVersionResourceLink } from '../../../public/components/operator-lifecycle-manager/clusterserviceversion-resource';
 import { Resources } from '../../../public/components/operator-lifecycle-manager/k8s-resource';
-import { ClusterServiceVersionResourceKind } from '../../../public/components/operator-lifecycle-manager';
+import { ClusterServiceVersionResourceKind, referenceForCRDDesc } from '../../../public/components/operator-lifecycle-manager';
 import { StatusDescriptor } from '../../../public/components/operator-lifecycle-manager/descriptors/status';
 import { SpecDescriptor } from '../../../public/components/operator-lifecycle-manager/descriptors/spec';
 import { testCRD, testResourceInstance, testClusterServiceVersion, testOwnedResourceInstance } from '../../../__mocks__/k8sResourcesMocks';
@@ -369,7 +369,7 @@ describe(ClusterServiceVersionResourcesPage.displayName, () => {
     expect(listPage.props().filterLabel).toEqual('Resources by name');
     expect(listPage.props().canCreate).toBe(true);
     expect(listPage.props().resources).toEqual(owned.concat(required).map((crdDesc) => ({
-      kind: `${crdDesc.name.slice(crdDesc.name.indexOf('.') + 1)}:${crdDesc.version}:${crdDesc.kind}`,
+      kind: referenceForCRDDesc(crdDesc),
       namespaced: true,
       prop: crdDesc.kind,
     })));
@@ -385,7 +385,7 @@ describe(ClusterServiceVersionResourcesPage.displayName, () => {
     expect(listPage.props().createButtonText).toEqual('Create New');
     expect(listPage.props().createProps.to).not.toBeDefined();
     expect(listPage.props().createProps.items).toEqual({'testresource.testapp.coreos.com': 'Test Resource', 'foobars.testapp.coreos.com': 'Foo Bars'});
-    expect(listPage.props().createProps.createLink(obj.spec.customresourcedefinitions.owned[0].name)).toEqual(`/k8s/ns/default/${ClusterServiceVersionModel.plural}/testapp/testapp.coreos.com:v1:TestResource/new`);
+    expect(listPage.props().createProps.createLink(obj.spec.customresourcedefinitions.owned[0].name)).toEqual(`/k8s/ns/default/${ClusterServiceVersionModel.plural}/testapp/testapp.coreos.com~v1~TestResource/new`);
   });
 
   it('passes `createProps` for single create button if app has only one owned CRD', () => {
@@ -394,7 +394,7 @@ describe(ClusterServiceVersionResourcesPage.displayName, () => {
     expect(listPage.props().createButtonText).toEqual(`Create ${testClusterServiceVersion.spec.customresourcedefinitions.owned[0].displayName}`);
     expect(listPage.props().createProps.items).not.toBeDefined();
     expect(listPage.props().createProps.createLink).not.toBeDefined();
-    expect(listPage.props().createProps.to).toEqual(`/k8s/ns/default/${ClusterServiceVersionModel.plural}/testapp/testapp.coreos.com:v1:TestResource/new`);
+    expect(listPage.props().createProps.to).toEqual(`/k8s/ns/default/${ClusterServiceVersionModel.plural}/testapp/testapp.coreos.com~v1~TestResource/new`);
   });
 
   it('passes `flatten` function which removes `required` resources with owner references to items not in the same list', () => {

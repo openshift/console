@@ -220,7 +220,7 @@ describe(InstallPlanDetailsPage.displayName, () => {
 
     expect(breadcrumbsFor(testInstallPlan)).toEqual([{
       name: testInstallPlan.metadata.ownerReferences[0].name,
-      path: `/k8s/ns/default/operators.coreos.com:v1alpha1:Subscription/${testInstallPlan.metadata.ownerReferences[0].name}`,
+      path: `/k8s/ns/default/operators.coreos.com~v1alpha1~Subscription/${testInstallPlan.metadata.ownerReferences[0].name}`,
     }, {
       name: 'Install Plan Details',
       path: match.url,

@@ -172,7 +172,7 @@ describe('Using OLM descriptor components', () => {
 
   it('displays detail view for custom resource', async() => {
     const {group, version, names: {kind}} = testCRD.spec;
-    await browser.get(`${appHost}/ns/${testName}/clusterserviceversions/${testCSV.metadata.name}/${group}:${version}:${kind}/${testCR.metadata.name}`);
+    await browser.get(`${appHost}/ns/${testName}/clusterserviceversions/${testCSV.metadata.name}/${group}~${version}~${kind}/${testCR.metadata.name}`);
     await crudView.isLoaded();
 
     expect(crudView.resourceTitle.getText()).toEqual(testCR.metadata.name);
