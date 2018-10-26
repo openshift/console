@@ -4,12 +4,61 @@ import * as _ from 'lodash-es';
 
 import { coFetchJSON } from '../../co-fetch';
 import { K8sKind } from '../../module/k8s';
+import { API_DISCOVERY_RESOURCES_LOCAL_STORAGE_KEY } from '../../const';
 
 const ADMIN_RESOURCES = new Set(
   ['roles', 'rolebindings', 'clusterroles', 'clusterrolebindings', 'thirdpartyresources', 'nodes', 'secrets']
 );
 
 export const kindToAbbr = kind => (kind.replace(/[^A-Z]/g, '') || kind.toUpperCase()).slice(0, 3);
+
+export const cacheResources = (resources) => new Promise<void>((resolve, reject) => {
+  try {
+    // Add the console version. We invalidate the cache when console version changes.
+    const { consoleVersion } = (window as any).SERVER_FLAGS;
+    const versionedResources = _.assign({}, resources, { consoleVersion });
+    localStorage.setItem(API_DISCOVERY_RESOURCES_LOCAL_STORAGE_KEY, JSON.stringify(versionedResources));
+    resolve();
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.error('Error caching API resources in localStorage', e);
+    reject(e);
+  }
+});
+
+export const getCachedResources = () => new Promise<any>((resolve, reject) => {
+  try {
+    const resourcesJSON = localStorage.getItem(API_DISCOVERY_RESOURCES_LOCAL_STORAGE_KEY);
+
+    // Clear cached resources after load as a safeguard. If there's any errors
+    // with the content that prevents the console from working, the bad data
+    // will not be loaded when the user refreshes the console. The cache will
+    // be refreshed when discovery completes.
+    localStorage.removeItem(API_DISCOVERY_RESOURCES_LOCAL_STORAGE_KEY);
+
+    if (resourcesJSON) {
+      const resources = JSON.parse(resourcesJSON);
+      const { consoleVersion: currentVersion } = (window as any).SERVER_FLAGS;
+      const { consoleVersion: cachedVersion } = resources;
+      if (cachedVersion !== currentVersion) {
+        // eslint-disable-next-line no-console
+        console.log(`Invalidating API discovery cache from earlier console version (current: ${currentVersion}, cached: ${cachedVersion})`);
+        resolve(null);
+        return;
+      }
+      // eslint-disable-next-line no-console
+      console.log('Loaded cached API resources from localStorage');
+      resolve(resources);
+      return;
+    }
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.error('Error reading API resources from localStorage', e);
+    reject(e);
+  }
+
+  resolve(null);
+});
 
 export const getResources = () => coFetchJSON('api/kubernetes/apis')
   .then(res => {

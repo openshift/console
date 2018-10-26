@@ -34,9 +34,9 @@ const fuzzyCaseInsensitive = (a, b) => fuzzy(_.toLower(a), _.toLower(b));
 const listFilters = {
   'name': (filter, obj) => fuzzyCaseInsensitive(filter, obj.metadata.name),
 
-  'alert-rule-name': (filter, alertRule) => fuzzyCaseInsensitive(filter, alertRule.name),
+  'alert-name': (filter, alert) => fuzzyCaseInsensitive(filter, _.get(alert, 'labels.alertname')),
 
-  'alert-rule-state': (filter, alertRule) => filter.selected.has(alertState(alertRule)),
+  'alert-state': (filter, alert) => filter.selected.has(alertState(alert)),
 
   'silence-name': (filter, silence) => fuzzyCaseInsensitive(filter, silence.name),
 

@@ -3,6 +3,7 @@ import * as _ from 'lodash-es';
 import * as PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { FieldLevelHelp, Alert } from 'patternfly-react';
+import * as classNames from 'classnames';
 
 import { k8sPatch, k8sGet, referenceFor, referenceForOwnerRef } from '../module/k8s';
 import { PromiseComponent, NameValueEditorPair, EnvType, EnvFromPair, LoadingBox, AsyncComponent, ContainerDropdown, ResourceLink } from './utils';
@@ -82,7 +83,7 @@ const getContainersObjectForDropdown = (containerArray) => {
   }, {});
 };
 
-/** @type {(state: any, props: {obj: object, rawEnvData: any, readOnly: boolean, envPath: any}) => {model: K8sKind}} */
+/** @type {(state: any, props: {obj?: object, rawEnvData?: any, readOnly: boolean, envPath: any, onChange?: (env: any) => void, addConfigMapSecret?: boolean}) => {model: K8sKind}} */
 const stateToProps = ({k8s}, {obj}) => ({
   model: k8s.getIn(['RESOURCES', 'models', referenceFor(obj)]) || k8s.getIn(['RESOURCES', 'models', obj.kind]),
 });
@@ -94,9 +95,10 @@ class CurrentEnvVars {
 
   setRawData(rawEnvData) {
     this.isContainerArray = _.isArray(rawEnvData.containers);
+    this.isCreate = _.isEmpty(rawEnvData);
     this.hasInitContainers = !_.isUndefined(rawEnvData.initContainers);
 
-    if (this.isContainerArray) {
+    if (this.isContainerArray || this.isCreate) {
       this.currentEnvVars.containers = envVarsToArray(rawEnvData.containers);
       this.currentEnvVars.initContainers = envVarsToArray(rawEnvData.initContainers);
     } else {
@@ -187,6 +189,16 @@ class CurrentEnvVars {
   }
 
   /**
+   * Return array of variables for the create operation.
+   *
+   * @returns {Array}
+   * @public
+   */
+  dispatchNewEnvironmentVariables() {
+    return this.isCreate ? this._envVarsToNameVal(this.currentEnvVars.containers[0][EnvType.ENV]) : null;
+  }
+
+  /**
    * Return env var pairs in name value notation, and strip out any pairs that have empty NAME values.
    *
    *
@@ -220,7 +232,6 @@ class CurrentEnvVars {
       });
   }
 }
-
 export const EnvironmentPage = connect(stateToProps)(
   class EnvironmentPage extends PromiseComponent {
   /**
@@ -241,7 +252,7 @@ export const EnvironmentPage = connect(stateToProps)(
         currentEnvVars,
         success: null,
         containerIndex: 0,
-        containerType: currentEnvVars.isContainerArray ? 'containers' : 'buildObject',
+        containerType: currentEnvVars.isContainerArray || currentEnvVars.isCreate ? 'containers' : 'buildObject',
       };
     }
 
@@ -285,7 +296,7 @@ export const EnvironmentPage = connect(stateToProps)(
      * @param i
      */
     _updateEnvVars(env, i = 0, type = EnvType.ENV) {
-      const {rawEnvData} = this.props;
+      const {rawEnvData, onChange} = this.props;
       const {currentEnvVars, containerType} = this.state;
       const currentEnv = _.cloneDeep(currentEnvVars);
       const originalEnv = new CurrentEnvVars();
@@ -298,6 +309,7 @@ export const EnvironmentPage = connect(stateToProps)(
         success: null,
         modified,
       });
+      _.isFunction(onChange) && onChange(currentEnv.dispatchNewEnvironmentVariables());
     }
 
     /**
@@ -392,7 +404,7 @@ export const EnvironmentPage = connect(stateToProps)(
 
     render() {
       const {errorMessage, success, inProgress, currentEnvVars, stale, configMaps, secrets, containerIndex, containerType} = this.state;
-      const {rawEnvData, readOnly, obj} = this.props;
+      const {rawEnvData, readOnly, obj, addConfigMapSecret} = this.props;
 
       if (!configMaps || !currentEnvVars || !secrets) {
         return <LoadingBox />;
@@ -421,14 +433,15 @@ export const EnvironmentPage = connect(stateToProps)(
             <div className="co-toolbar__item">{containerDropdown}</div>
           </div>
           }
-          <div className="co-m-pane__body-group">
-            <h3 className="co-section-heading-tertiary">Single values (env)
+          <div className={classNames({'co-m-pane__body-group': !currentEnvVars.isCreate})}>
+            { !currentEnvVars.isCreate && <h3 className="co-section-heading-tertiary">Single values (env)
               {
                 !readOnly && <FieldLevelHelp content={
                   <div>Define environment variables as key-value pairs to store configuration settings. You can enter text or add values from a ConfigMap or Secret. Drag and drop environment variables to change the order in which they are run. A variable can reference any other variables that come before it in the list, for example <code>FULLDOMAIN = $(SUBDOMAIN).example.com</code>.</div>} />
               }
             </h3>
-            <NameValueEditorComponent nameValueId={containerIndex} nameValuePairs={envVar[EnvType.ENV]} updateParentData={this.updateEnvVars} addString="Add Value" nameString="Name" readOnly={readOnly} allowSorting={true} configMaps={configMaps} secrets={secrets} />
+            }
+            <NameValueEditorComponent nameValueId={containerIndex} nameValuePairs={envVar[EnvType.ENV]} updateParentData={this.updateEnvVars} addString="Add Value" nameString="Name" readOnly={readOnly} allowSorting={true} configMaps={configMaps} secrets={secrets} addConfigMapSecret={addConfigMapSecret} />
           </div>
           { currentEnvVars.isContainerArray && <div className="co-m-pane__body-group environment-buttons">
             <h3 className="co-section-heading-tertiary">All values from existing config maps or secrets (envFrom) {
@@ -440,9 +453,9 @@ export const EnvironmentPage = connect(stateToProps)(
           </div>}
         </React.Fragment>;
 
-      return <div className="co-m-pane__body">
+      return <div className={classNames({'co-m-pane__body': !currentEnvVars.isCreate})}>
         {containerVars}
-        <div className="co-m-pane__body-group">
+        { !currentEnvVars.isCreate && <div className="co-m-pane__body-group">
           <div className="environment-buttons">
             {errorMessage && <p className="alert alert-danger"><span className="pficon pficon-error-circle-o" aria-hidden="true"></span>{errorMessage}</p>}
             {stale && <p className="alert alert-info"><span className="pficon pficon-info" aria-hidden="true"></span>The
@@ -455,13 +468,20 @@ export const EnvironmentPage = connect(stateToProps)(
             <button disabled={inProgress} type="submit" className="btn btn-primary" onClick={this.saveChanges}>Save</button>}
             {!readOnly && <button disabled={inProgress} type="button" className="btn btn-default" onClick={this.reload}>Reload</button>}
           </div>
-        </div>
+        </div> }
       </div>;
     }
   });
 EnvironmentPage.propTypes = {
-  obj: PropTypes.object.isRequired,
-  rawEnvData: PropTypes.oneOfType([PropTypes.object, PropTypes.array]).isRequired,
+  obj: PropTypes.object,
+  rawEnvData: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
   envPath: PropTypes.array.isRequired,
   readOnly: PropTypes.bool.isRequired,
+  onChange: PropTypes.func,
+  addConfigMapSecret: PropTypes.bool,
+};
+EnvironmentPage.defaultProps = {
+  obj: {},
+  rawEnvData: {},
+  addConfigMapSecret: true,
 };

@@ -58,7 +58,7 @@ export const NameValueEditor = withDragDropContext(class NameValueEditor extends
   }
 
   render () {
-    const {nameString, valueString, addString, nameValuePairs, allowSorting, readOnly, nameValueId, configMaps, secrets, envFrom} = this.props;
+    const {nameString, valueString, addString, nameValuePairs, allowSorting, readOnly, nameValueId, configMaps, secrets, addConfigMapSecret} = this.props;
     const pairElems = nameValuePairs.map((pair, i) => {
       const key = _.get(pair, [NameValueEditorPair.Index], i);
 
@@ -82,7 +82,7 @@ export const NameValueEditor = withDragDropContext(class NameValueEditor extends
                   <i aria-hidden="true" className="fa fa-plus-circle pairs-list__add-icon" />{addString}
                 </button>
                 {
-                  allowSorting && !envFrom &&
+                  addConfigMapSecret &&
                     <React.Fragment>
                       <span aria-hidden="true" className="co-action-divider hidden-xs">|</span>
                       <button type="button" className="btn btn-link" onClick={this._appendConfigMapOrSecret}>
@@ -114,7 +114,7 @@ NameValueEditor.propTypes = {
   updateParentData: PropTypes.func.isRequired,
   configMaps: PropTypes.object,
   secrets: PropTypes.object,
-  envFrom: PropTypes.bool
+  addConfigMapSecret: PropTypes.bool,
 };
 NameValueEditor.defaultProps = {
   nameString: 'Key',
@@ -123,7 +123,7 @@ NameValueEditor.defaultProps = {
   allowSorting: false,
   readOnly: false,
   nameValueId: 0,
-  envFrom: false
+  addConfigMapSecret: false,
 };
 
 NameValueEditor.displayName = 'Name Value Editor';

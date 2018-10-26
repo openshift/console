@@ -8,6 +8,7 @@ import { Cog, SectionHeading, navFactory, ResourceCog, ResourceLink, ResourceSum
 import { ResourceEventStream } from './events';
 import { Conditions } from './conditions';
 import { ServiceCatalogParameters, ServiceCatalogParametersSecrets } from './service-catalog-parameters';
+import { ServiceBindingDescription } from './service-instance';
 
 const ServiceBindingsReference: K8sResourceKindReference = 'ServiceBinding';
 
@@ -20,9 +21,15 @@ const secretLink = (obj) => serviceCatalogStatus(obj) === 'Ready'
 
 const ServiceBindingDetails: React.SFC<ServiceBindingDetailsProps> = ({obj: sb}) => {
   const sbParameters = _.get(sb, 'status.externalProperties.parameters', {});
+  const notReady = serviceCatalogStatus(sb) === 'Not Ready' ? true : false;
 
   return <React.Fragment>
     <div className="co-m-pane__body">
+      {notReady && <p className="alert alert-warning">
+        <span className="pficon pficon-warning-triangle-o" aria-hidden="true"></span>
+        This binding is not ready yet.  Once it is ready, bind its secret to an application.
+      </p>}
+      <ServiceBindingDescription instanceName={sb.spec.instanceRef.name} className="co-m-pane__explanation" />
       <SectionHeading text="Service Binding Overview" />
       <div className="row">
         <div className="col-sm-6">

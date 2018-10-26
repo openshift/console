@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars, no-undef */
+import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Tooltip as RLT } from 'react-lightweight-tooltip';
 
@@ -32,4 +34,12 @@ const tooltipOverrides = Object.freeze({
   },
 });
 
-export const Tooltip = ({ content, children }) => <RLT content={content} styles={tooltipOverrides}>{children}</RLT>;
+export const Tooltip: React.SFC<TooltipProps> = ({ content, styles, children }) => {
+  const mergedStyles = styles ? _.merge({}, tooltipOverrides, styles) : tooltipOverrides;
+  return <RLT content={content} styles={mergedStyles}>{children}</RLT>;
+};
+
+type TooltipProps = {
+  content: React.ReactNode;
+  styles?: any;
+};
