@@ -19,7 +19,10 @@ git remote add upstream ${UPSTREAM_GIT}
 git fetch --all
 
 git checkout -b okdvirt.master -t remotes/origin/${OKDVIRT_BRANCH}
-git merge upstream/${UPSTREAM_BRANCH}
+export COMMIT_COUNT_BEFORE=`git log --pretty=oneline | wc -l`
+git merge upstream/${UPSTREAM_BRANCH} -v
+echo Commit count before merge: ${COMMIT_COUNT_BEFORE}
+echo Commit count after merge: `git log --pretty=oneline | wc -l`
 
 cat <<EOF
 Now resolve all merge conflicts in following directory:
@@ -28,7 +31,7 @@ Now resolve all merge conflicts in following directory:
 
 Then push changes to kubevirt-web-ui HEAD:master by
 
-  cd ${ROOT} && ./build.sh && cd frontent && yarn run test && \\
+  cd ${ROOT} && ./build.sh && cd frontend && yarn run test && \\
   git status && git push origin HEAD:master
 
 To see kubevirt/web-ui diference to upstream
