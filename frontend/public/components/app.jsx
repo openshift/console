@@ -105,6 +105,20 @@ class App extends React.PureComponent {
   }
 
   render() {
+    // Needed so we don't pull in the Catalog pages and its dependencies until the user navigates to the page
+    let catalogPageLoader = () =>
+      import('./catalog/catalog-page' /* webpackChunkName: "catalog" */).then(m => {
+        this.CatalogPage = m.CatalogPage;
+        return m.CatalogPage;
+      });
+
+    let renderCatalogRoute = (path) => {
+      if (this.CatalogPage) {
+        return <Route path={path} exact component={this.CatalogPage} />;
+      }
+      return <LazyRoute path={path} exact loader={catalogPageLoader} />;
+    };
+
     return <React.Fragment>
       <Helmet titleTemplate={`%s · ${productName}`} defaultTitle={productName} />
       <Masthead />
@@ -120,8 +134,8 @@ class App extends React.PureComponent {
             <LazyRoute path="/overview/all-namespaces" exact loader={() => import('./overview' /* webpackChunkName: "overview" */).then(m => m.OverviewPage)} />
             <Route path="/overview" exact component={NamespaceRedirect} />
 
-            <LazyRoute path="/catalog/all-namespaces" exact loader={() => import('./catalog/catalog-page' /* webpackChunkName: "catalog" */).then(m => m.CatalogPage)} />
-            <LazyRoute path="/catalog/ns/:ns" exact loader={() => import('./catalog/catalog-page' /* webpackChunkName: "catalog" */).then(m => m.CatalogPage)} />
+            {renderCatalogRoute('/catalog/all-namespaces')}
+            {renderCatalogRoute('/catalog/ns/:ns')}
             <Route path="/catalog" exact component={NamespaceRedirect} />
 
             <LazyRoute path="/status/all-namespaces" exact loader={() => import('./cluster-overview' /* webpackChunkName: "cluster-overview" */).then(m => m.ClusterOverviewPage)} />

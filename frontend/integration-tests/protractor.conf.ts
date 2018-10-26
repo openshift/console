@@ -95,6 +95,7 @@ export const config: Config = {
     olmUpgrade: ['tests/base.scenario.ts', 'tests/olm/update-channel-approval.scenario.ts'],
     performance: ['tests/base.scenario.ts', 'tests/performance.scenario.ts'],
     serviceCatalog: ['tests/base.scenario.ts', 'tests/service-catalog/service-catalog.scenario.ts', 'tests/service-catalog/service-broker.scenario.ts', 'tests/service-catalog/service-class.scenario.ts', 'tests/service-catalog/service-binding.scenario.ts'],
+    catalog: ['tests/base.scenario.ts', 'tests/catalog.scenario.ts'],
     all: ['tests/base.scenario.ts',
       'tests/crud.scenario.ts',
       'tests/secrets.scenario.ts',
@@ -103,8 +104,8 @@ export const config: Config = {
       'tests/filter.scenario.ts',
       'tests/modal-annotations.scenario.ts',
       'tests/source-to-image.scenario.ts',
-      'tests/deploy-image.scenario.ts'],
-    catalog: ['tests/base.scenario.ts', 'tests/catalog.scenario.ts'],
+      'tests/deploy-image.scenario.ts',
+      'tests/catalog.scenario.ts'],
   },
   params: {
     // Set to 'true' to enable OpenShift resources in the crud scenario.
