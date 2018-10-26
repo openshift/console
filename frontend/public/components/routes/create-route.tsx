@@ -10,13 +10,15 @@ import { formatNamespacedRouteForResource, getActiveNamespace } from '../../ui/u
 import { ServiceModel, RouteModel } from '../../models';
 import { AsyncComponent } from '../utils/async';
 
+const UNNAMED_PORT_KEY = '#unnamed';
+
 const getPortOptions = (service: K8sResourceKind) => {
   if (!service) {
     return {};
   }
 
   const ports = _.get(service, 'spec.ports', []);
-  const portOptions = ports.reduce((acc, { name, port, targetPort, protocol }) => {
+  const portOptions = ports.reduce((acc, { name = UNNAMED_PORT_KEY, port, targetPort, protocol }) => {
     acc[name] = <React.Fragment>{port} &rarr; {targetPort} ({protocol})</React.Fragment>;
     return acc;
   }, {});
@@ -31,7 +33,7 @@ export class CreateRoute extends React.Component<null, CreateRouteState> {
     name: '',
     hostname: '',
     path: '',
-    service: '',
+    service: null,
     targetPort: '',
     termination: '',
     insecureEdgeTerminationPolicy: '',
@@ -68,20 +70,18 @@ export class CreateRoute extends React.Component<null, CreateRouteState> {
   }
 
   changeService = (serviceName: string) => {
-    const selectedService = _.find(this.state.services, { metadata: { name: serviceName } });
-    const portOptions = getPortOptions(selectedService);
-    const labels = selectedService.metadata.labels;
+    const service = _.find(this.state.services, { metadata: { name: serviceName } });
+    const portOptions = getPortOptions(service);
     this.setState({
-      service: serviceName,
+      service,
       portOptions,
       // unset targetPort if previously set
       targetPort: '',
-      labels,
     });
   }
 
-  changeTargetPort = (portName: string) => this.setState({
-    targetPort: portName
+  changeTargetPort = (targetPort: string) => this.setState({
+    targetPort,
   });
 
   toggleSection: React.ReactEventHandler<HTMLInputElement> = event => {
@@ -134,7 +134,7 @@ export class CreateRoute extends React.Component<null, CreateRouteState> {
       hostname,
       path,
       service,
-      targetPort,
+      targetPort: selectedPort,
       termination,
       insecureEdgeTerminationPolicy,
       certificate,
@@ -143,8 +143,8 @@ export class CreateRoute extends React.Component<null, CreateRouteState> {
       destinationCACertificate,
       secure,
       namespace,
-      labels,
     } = this.state;
+
     const tls = secure
       ? {
         termination,
@@ -155,6 +155,15 @@ export class CreateRoute extends React.Component<null, CreateRouteState> {
         destinationCACertificate,
       }
       : null;
+
+    const serviceName = _.get(service, 'metadata.name');
+    const labels = _.get(service, 'metadata.labels');
+
+    // If the port is unnamed, there is only one port. Use the port number.
+    const targetPort = selectedPort === UNNAMED_PORT_KEY
+      ? _.get(service, 'spec.ports[0].port')
+      : selectedPort;
+
     const route = {
       kind: 'Route',
       apiVersion: 'route.openshift.io/v1',
@@ -166,7 +175,7 @@ export class CreateRoute extends React.Component<null, CreateRouteState> {
       spec: {
         to: {
           kind: 'Service',
-          name: service
+          name: serviceName,
         },
         tls,
         host: hostname,
@@ -272,7 +281,7 @@ export class CreateRoute extends React.Component<null, CreateRouteState> {
           <div className="form-group co-create-route__service">
             <label className="co-required" htmlFor="service">Service</label>
             {(loaded && _.isEmpty(serviceOptions)) && <p className="alert alert-info co-create-route__alert"><span className="pficon pficon-info" aria-hidden="true"></span> There are no services in your project to expose with a route.</p> }
-            {(loaded && !_.isEmpty(serviceOptions)) && <Dropdown items={serviceOptions} title={service ? serviceOptions[service] : 'Select a service'} dropDownClassName="dropdown--full-width" id="service" onChange={this.changeService} /> }
+            {(loaded && !_.isEmpty(serviceOptions)) && <Dropdown items={serviceOptions} title={service ? serviceOptions[service.metadata.name] : 'Select a service'} dropDownClassName="dropdown--full-width" id="service" onChange={this.changeService} /> }
             <div className="help-block">
               Service to route to.
             </div>
@@ -280,7 +289,7 @@ export class CreateRoute extends React.Component<null, CreateRouteState> {
           <div className="form-group co-create-route__target-port">
             <label className="co-required" htmlFor="target-port">Target Port</label>
             {_.isEmpty(portOptions) && <p>Select a service above</p>}
-            {!_.isEmpty(portOptions) && <Dropdown items={portOptions} title={targetPort || 'Select target port'} dropDownClassName="dropdown--full-width" id="target-port" onChange={this.changeTargetPort} /> }
+            {!_.isEmpty(portOptions) && <Dropdown items={portOptions} title={portOptions[targetPort] || 'Select target port'} dropDownClassName="dropdown--full-width" id="target-port" onChange={this.changeTargetPort} /> }
             <div className="help-block">
               Target port for traffic.
             </div>
@@ -366,7 +375,7 @@ export type CreateRouteState = {
   name: string,
   hostname: string,
   path: string,
-  service: string,
+  service: K8sResourceKind,
   targetPort: string,
   termination: string,
   insecureEdgeTerminationPolicy: string,
