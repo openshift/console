@@ -12,7 +12,6 @@ import { Status, errorStatus } from './graphs/status';
 import { EventStreamPage } from './events';
 import { SoftwareDetails } from './software-details';
 import { FLAGS, connectToFlags, flagPending } from '../features';
-import { connectToURLs, MonitoringRoutes } from '../monitoring';
 import {
   AdditionalSupportLinks,
   AsyncComponent,
@@ -39,12 +38,10 @@ const fetchConsoleHealth = () => coFetchJSON('health')
 
 const DashboardLink = ({to, id}) => <Link id={id} className="co-external-link" target="_blank" to={to}>View Grafana Dashboard</Link>;
 
-const Graphs = requirePrometheus(connectToURLs(MonitoringRoutes.AlertManager)(({namespace, isOpenShift, urls}) => {
+const Graphs = requirePrometheus(({namespace, isOpenShift}) => {
   // TODO: Revert this change in OpenShift 4.0. In OpenShift 3.11, the scheduler and controller manager is a single component.
   const controllerManagerJob = isOpenShift ? 'kube-controllers' : 'kube-controller-manager';
   const schedulerJob = isOpenShift ? 'kube-controllers' : 'kube-scheduler';
-  const alertManagerURL = urls[MonitoringRoutes.AlertManager];
-  const alertsURL = alertManagerURL && `${alertManagerURL}/#/alerts`;
   return <React.Fragment>
     <div className="group">
       <div className="group__title">
@@ -64,7 +61,7 @@ const Graphs = requirePrometheus(connectToURLs(MonitoringRoutes.AlertManager)(({
               title="Alerts Firing"
               name="Alerts"
               query={`sum(ALERTS{alertstate="firing", alertname!="DeadMansSwitch" ${namespace ? `, namespace="${namespace}"` : ''}})`}
-              href={alertsURL} target="_blank" rel="noopener"
+              href="/monitoring"
             />
           </div>
           <div className="col-md-3 col-sm-6">
@@ -129,7 +126,7 @@ const Graphs = requirePrometheus(connectToURLs(MonitoringRoutes.AlertManager)(({
       </div>
     }
   </React.Fragment>;
-}));
+});
 
 const LimitedGraphs = ({openshiftFlag}) => {
   if (flagPending(openshiftFlag)) {
