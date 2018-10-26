@@ -55,12 +55,13 @@ const ControllerLink = ({controller}) => {
 export const ComponentLabel = ({text}) => <div className="co-component-label">{text}</div>;
 
 const MetricsTooltip = ({metricLabel, byPod, children}) => {
-  const content: any[] = _.isEmpty(byPod)
+  const sortedMetrics = _.orderBy(byPod, ['value', 'name'], ['desc', 'asc']);
+  const content: any[] = _.isEmpty(sortedMetrics)
     ? [<React.Fragment key="no-metrics">No {metricLabel} metrics available.</React.Fragment>]
-    : _.concat(<div key="#title">{metricLabel} Usage by Pod</div>, _.map(byPod, (value, name) => (
+    : _.concat(<div key="#title">{metricLabel} Usage by Pod</div>, sortedMetrics.map(({name, formattedValue}) => (
       <div key={name} className="project-overview__metric-tooltip">
         <div className="project-overview__metric-tooltip-name">{truncateMiddle(name)}</div>
-        <div className="project-overview__metric-tooltip-value">{value}</div>
+        <div className="project-overview__metric-tooltip-value">{formattedValue}</div>
       </div>
     )));
 
@@ -82,19 +83,22 @@ const Metrics = ({metrics, item}) => {
   const pods = item.current ? item.current.pods : item.pods;
   let totalBytes = 0;
   let totalCores = 0;
-  const memoryByPod = {};
-  const cpuByPod = {};
+  const memoryByPod = [];
+  const cpuByPod = [];
   _.each(pods, ({ metadata: { name } }: K8sResourceKind) => {
     const bytes = _.get(metrics, ['memory', name]);
     if (_.isFinite(bytes)) {
       totalBytes += bytes;
-      memoryByPod[name] = `${formatBytesAsMiB(bytes)} MiB`;
+      const formattedValue = `${formatBytesAsMiB(bytes)} MiB`;
+      memoryByPod.push({ name, value: bytes, formattedValue });
     }
 
     const cores = _.get(metrics, ['cpu', name]);
     if (_.isFinite(cores)) {
       totalCores += cores;
       cpuByPod[name] = `${formatCores(cores)} cores`;
+      const formattedValue = `${formatCores(cores)} cores`;
+      cpuByPod.push({ name, value: cores, formattedValue });
     }
   });
 
