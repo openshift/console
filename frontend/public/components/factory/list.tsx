@@ -1,32 +1,48 @@
 /* eslint-disable no-undef */
-
 import * as _ from 'lodash-es';
-import * as React from 'react';
-import * as PropTypes from 'prop-types';
 import * as classNames from 'classnames';
 import * as fuzzy from 'fuzzysearch';
+import * as PropTypes from 'prop-types';
+import * as React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { AutoSizer, List as VirtualList, WindowScroller, CellMeasurerCache, CellMeasurer } from 'react-virtualized';
 import {
-  K8sKind,
-  K8sResourceKind,
-  K8sResourceKindReference,
-  getJobTypeAndCompletions,
-  serviceCatalogStatus,
-  isNodeReady,
-  planExternalName,
-  podPhase,
-  podPhaseFilterReducer,
-  podReadiness,
-  serviceClassDisplayName } from '../../module/k8s';
+  AutoSizer,
+  CellMeasurer,
+  CellMeasurerCache,
+  List as VirtualList,
+  WindowScroller,
+} from 'react-virtualized';
+
 import { alertState, silenceState } from '../../module/monitoring';
 import { UIActions } from '../../ui/ui-actions';
 import { ingressValidHosts } from '../ingress';
 import { routeStatus } from '../routes';
 import { secretTypeFilterReducer } from '../secret';
 import { bindingType, roleType } from '../RBAC';
-import { LabelList, ResourceCog, ResourceLink, resourcePath, Selector, StatusBox, containerLinuxUpdateOperator, EmptyBox } from '../utils';
+import {
+  containerLinuxUpdateOperator,
+  EmptyBox,
+  LabelList,
+  ResourceCog,
+  ResourceLink,
+  resourcePath,
+  Selector,
+  StatusBox,
+} from '../utils';
+import {
+  getJobTypeAndCompletions,
+  isNodeReady,
+  K8sKind,
+  K8sResourceKind,
+  K8sResourceKindReference,
+  planExternalName,
+  podPhase,
+  podPhaseFilterReducer,
+  podReadiness,
+  serviceCatalogStatus,
+  serviceClassDisplayName
+} from '../../module/k8s';
 
 const fuzzyCaseInsensitive = (a, b) => fuzzy(_.toLower(a), _.toLower(b));
 
@@ -220,7 +236,15 @@ export class ColHead extends React.Component<ColHeadProps> {
   render () {
     // currentSortField/Func == info for currently sorted ColHead.
     // sortField/Func == this ColHead's field/func
-    const {applySort, children, currentSortField, currentSortFunc, currentSortOrder, sortField, sortFunc} = this.props;
+    const {
+      applySort,
+      children,
+      currentSortField,
+      currentSortFunc,
+      currentSortOrder,
+      sortField,
+      sortFunc
+    } = this.props;
     const className = classNames(this.props.className, 'text-nowrap');
     if (!sortField && !sortFunc) {
       return <div className={className}>{children}</div>;
@@ -248,7 +272,7 @@ export const WorkloadListHeader = props => <ListHeader>
 </ListHeader>;
 
 export const Rows: React.SFC<RowsProps> = (props) => {
-  const { fake, label } = props;
+  const { mock, label } = props;
   const measurementCache = new CellMeasurerCache({
     fixedWidth: true,
     minHeight: 44,
@@ -263,8 +287,8 @@ export const Rows: React.SFC<RowsProps> = (props) => {
       cache={measurementCache}
       columnIndex={0}
       key={key}
-      rowIndex={index}
-      parent={parent}>
+      parent={parent}
+      rowIndex={index}>
       <div style={style}>
         <Row key={_.get(obj, 'metadata.uid', index)} obj={obj} expand={expand} kindObj={kindObj} index={index} />
       </div>
@@ -273,7 +297,7 @@ export const Rows: React.SFC<RowsProps> = (props) => {
 
   // Default `height` to 0 to avoid console errors from https://github.com/bvaughn/react-virtualized/issues/1158
   return <div className="co-m-table-grid__body">
-    { fake
+    { mock
       ? <EmptyBox label={label} />
       : <WindowScroller scrollElement={document.getElementById('content-scrollable')}>
         {({height, isScrolling, registerChild, onChildScroll, scrollTop}) =>
@@ -282,17 +306,17 @@ export const Rows: React.SFC<RowsProps> = (props) => {
               <VirtualList
                 autoHeight
                 data={props.data}
+                deferredMeasurementCache={measurementCache}
                 expand={props.expand}
                 height={height || 0}
-                deferredMeasurementCache={measurementCache}
-                rowHeight={measurementCache.rowHeight}
                 isScrolling={isScrolling}
                 onScroll={onChildScroll}
-                rowRenderer={rowRenderer}
                 rowCount={props.data.length}
+                rowHeight={measurementCache.rowHeight}
+                rowRenderer={rowRenderer}
                 scrollTop={scrollTop}
-                width={width}
                 tabIndex={null}
+                width={width}
               />
             </div>}
           </AutoSizer>}
@@ -307,7 +331,7 @@ Rows.propTypes = {
   Row: PropTypes.func.isRequired,
 };
 
-const stateToProps = ({UI}, {data = [], filters = {}, loaded = false, reduxID = null, reduxIDs = null, staticFilters = [{}], defaultSortField = 'metadata.name', defaultSortFunc = undefined}) => {
+const stateToProps = ({UI}, {data = [], defaultSortField = 'metadata.name', defaultSortFunc = undefined, filters = {}, loaded = false, reduxID = null, reduxIDs = null, staticFilters = [{}]}) => {
   const allFilters = staticFilters ? Object.assign({}, filters, ...staticFilters) : filters;
   let newData = getFilteredRows(allFilters, data);
 
@@ -331,7 +355,13 @@ const stateToProps = ({UI}, {data = [], filters = {}, loaded = false, reduxID = 
     newData = _.orderBy(newData, [sortBy, 'metadata.name'], [currentSortOrder, 'asc']);
   }
 
-  return {currentSortField, currentSortFunc, currentSortOrder, data: newData, listId};
+  return {
+    currentSortField,
+    currentSortFunc,
+    currentSortOrder,
+    data: newData,
+    listId
+  };
 };
 
 export const List = connect(stateToProps, {sortList: UIActions.sortList})(
@@ -345,33 +375,40 @@ export const List = connect(stateToProps, {sortList: UIActions.sortList})(
       Header: PropTypes.func.isRequired,
       loaded: PropTypes.bool,
       loadError: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
+      mock: PropTypes.bool,
       namespace: PropTypes.string,
       reduxID: PropTypes.string,
       reduxIDs: PropTypes.array,
       Row: PropTypes.func.isRequired,
       selector: PropTypes.object,
       staticFilters: PropTypes.array,
-      fake: PropTypes.bool,
     };
 
     render() {
-      const {currentSortField, currentSortFunc, currentSortOrder, expand, Header, label, listId, Row, sortList, fake} = this.props;
+      const {currentSortField, currentSortFunc, currentSortOrder, expand, Header, label, listId, mock, Row, sortList} = this.props;
       const componentProps: any = _.pick(this.props, ['data', 'filters', 'selected', 'match', 'kindObj']);
 
       const children = <React.Fragment>
         <Header
-          key="header"
+          {...componentProps}
           applySort={_.partial(sortList, listId)}
           currentSortField={currentSortField}
           currentSortFunc={currentSortFunc}
           currentSortOrder={currentSortOrder}
-          {...componentProps}
+          key="header"
         />
-        <Rows key="rows" expand={expand} Row={Row} fake={fake} label={label} {...componentProps} />
+        <Rows
+          {...componentProps}
+          expand={expand}
+          key="rows"
+          label={label}
+          mock={mock}
+          Row={Row}
+        />
       </React.Fragment>;
 
       return <div className="co-m-table-grid co-m-table-grid--bordered">
-        { fake ? children : <StatusBox {...this.props}>{children}</StatusBox> }
+        { mock ? children : <StatusBox {...this.props}>{children}</StatusBox> }
       </div>;
     }
   });
@@ -435,29 +472,29 @@ export type ColHeadProps = {
 };
 
 export type ListInnerProps = {
-  Header: React.ComponentType<any>;
-  Row: React.ComponentType<any>;
+  currentSortField?: string;
+  currentSortFunc?: Function;
+  currentSortOrder?: any;
   data?: any[];
-  label?: string;
+  defaultSortField?: string;
+  defaultSortFunc?: string;
   EmptyMsg?: React.ComponentType<{}>;
   expand?: boolean;
   fieldSelector?: string;
   filters?: {[name: string]: any};
+  Header: React.ComponentType<any>;
+  label?: string;
+  listId?: string;
   loaded?: boolean;
   loadError?: string | Object;
+  mock?: boolean;
   namespace?: string;
   reduxID?: string;
   reduxIDs?: string[];
+  Row: React.ComponentType<any>;
   selector?: Object;
-  staticFilters?: any[];
-  fake?: boolean;
-  currentSortField?: string;
-  currentSortFunc?: Function;
-  currentSortOrder?: any;
-  listId?: string;
   sortList?: (...args) => any;
-  defaultSortField?: string;
-  defaultSortFunc?: string;
+  staticFilters?: any[];
 };
 
 export type ResourceRowProps = {
@@ -468,18 +505,17 @@ export type ResourceRowProps = {
 export type RowsProps = {
   data?: any[];
   expand?: boolean;
-  fake?: boolean;
-  label?: string;
-  Row: React.ComponentType<any>;
   kindObj?: K8sKind;
+  label?: string;
+  mock?: boolean;
+  Row: React.ComponentType<any>;
 };
 
 export type WorkloadListRowProps = {
-  kind: K8sResourceKindReference;
   actions: any;
+  kind: K8sResourceKindReference;
   obj: K8sResourceKind;
 };
 
 Rows.displayName = 'Rows';
 WorkloadListRow.displayName = 'WorkloadListRow';
-

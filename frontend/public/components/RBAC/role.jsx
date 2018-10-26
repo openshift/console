@@ -3,11 +3,10 @@ import * as React from 'react';
 import * as fuzzy from 'fuzzysearch';
 // import { Link } from 'react-router-dom';
 
+import { flatten as bindingsFlatten } from './bindings';
+import { BindingName, BindingsList, RulesList } from './index';
 import { ColHead, DetailsPage, List, ListHeader, MultiListPage, ResourceRow, TextFilter } from '../factory';
 import { Cog, SectionHeading, MsgBox, navFactory, ResourceCog, ResourceLink, Timestamp } from '../utils';
-import { BindingName, BindingsList, RulesList } from './index';
-import { flatten as bindingsFlatten } from './bindings';
-import { flagPending, connectToFlags, FLAGS } from '../../features';
 
 export const isSystemRole = role => _.startsWith(role.metadata.name, 'system:');
 
@@ -169,8 +168,7 @@ export const roleType = role => {
   return role.metadata.namespace ? 'namespace' : 'cluster';
 };
 
-export const RolesPage = connectToFlags(FLAGS.PROJECTS_AVAILBLE, FLAGS.PROJECTS_AVAILBLE)(({namespace, showTitle, flags}) => {
-  const projectsAvailable = !flagPending(flags.PROJECTS_AVAILBLE) && flags.PROJECTS_AVAILBLE;
+export const RolesPage = ({namespace, mock, showTitle}) => {
   return <MultiListPage
     ListComponent={RolesList}
     canCreate={true}
@@ -181,7 +179,7 @@ export const RolesPage = connectToFlags(FLAGS.PROJECTS_AVAILBLE, FLAGS.PROJECTS_
     filterLabel="Roles by name"
     flatten={resources => _.flatMap(resources, 'data').filter(r => !!r)}
     resources={[
-      {kind: 'Role', namespaced: true, optional: !projectsAvailable},
+      {kind: 'Role', namespaced: true, optional: mock},
       {kind: 'ClusterRole', namespaced: false, optional: true},
     ]}
     rowFilters={[{
@@ -196,4 +194,4 @@ export const RolesPage = connectToFlags(FLAGS.PROJECTS_AVAILBLE, FLAGS.PROJECTS_
     }]}
     title="Roles"
   />;
-});
+};

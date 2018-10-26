@@ -393,7 +393,7 @@ const ReportsPage_: React.SFC<ReportsPageProps> = props => {
         <button className="btn btn-info">Installing Chargeback Report <i className="fa fa-external-link" /></button>
       </a>
     </div>
-    <ListPage {...props} title="Chargeback Reporting" kind={ReportReference} ListComponent={ReportsList} canCreate={true} fake={true} />
+    <ListPage {...props} canCreate kind={ReportReference} ListComponent={ReportsList} mock title="Chargeback Reporting" />
     <div style={{marginTop: '-60px', textAlign: 'center'}}>
       <EmptyMsg />
     </div>

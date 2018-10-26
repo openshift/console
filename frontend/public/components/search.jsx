@@ -1,24 +1,27 @@
 import * as _ from 'lodash-es';
+import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Helmet } from 'react-helmet';
-import * as PropTypes from 'prop-types';
-import * as classNames from 'classnames';
 
-import { history, PageHeading, SelectorInput, LoadingBox } from './utils';
-import { namespaceProptype } from '../propTypes';
-import { split, selectorFromString } from '../module/k8s/selector';
-import { requirementFromString } from '../module/k8s/selector-requirement';
-import { resourceListPages } from './resource-pages';
-import { ResourceListDropdown } from './resource-dropdown';
-import { connectToModel } from '../kinds';
-import { connectToFlags, FLAGS, flagPending } from '../features';
-import { OpenShiftGettingStarted } from './start-guide';
-import { referenceForModel, kindForReference } from '../module/k8s';
 import { AsyncComponent } from './utils/async';
+import { connectToModel } from '../kinds';
 import { DefaultPage } from './default-resource';
+import { namespaceProptype } from '../propTypes';
+import { requirementFromString } from '../module/k8s/selector-requirement';
+import { ResourceListDropdown } from './resource-dropdown';
+import { resourceListPages } from './resource-pages';
+import { withStartGuide } from './start-guide';
+import { split, selectorFromString } from '../module/k8s/selector';
+import { referenceForModel, kindForReference } from '../module/k8s';
+import {
+  history,
+  LoadingBox,
+  PageHeading,
+  SelectorInput,
+} from './utils';
 
-const ResourceList = connectToModel(({kindObj, kindsInFlight, namespace, selector, fake}) => {
+const ResourceList = connectToModel(({kindObj, kindsInFlight, mock, namespace, selector}) => {
   if (!kindObj && kindsInFlight) {
     return <LoadingBox />;
   }
@@ -26,7 +29,7 @@ const ResourceList = connectToModel(({kindObj, kindsInFlight, namespace, selecto
   const componentLoader = resourceListPages.get(referenceForModel(kindObj), () => Promise.resolve(DefaultPage));
   const ns = kindObj.namespaced ? namespace : undefined;
 
-  return <AsyncComponent loader={componentLoader} namespace={ns} selector={selector} kind={kindObj.crd ? referenceForModel(kindObj) : kindObj.kind} showTitle={false} autoFocus={false} fake={fake} />;
+  return <AsyncComponent loader={componentLoader} namespace={ns} selector={selector} kind={kindObj.crd ? referenceForModel(kindObj) : kindObj.kind} showTitle={false} autoFocus={false} mock={mock} />;
 });
 
 const updateUrlParams = (k, v) => {
@@ -50,12 +53,8 @@ class SearchPage_ extends React.PureComponent {
   }
 
   render() {
-    const {flags, location, namespace} = this.props;
+    const {location, namespace, noProjectsAvailable} = this.props;
     let kind, q;
-
-    if (flagPending(flags.OPENSHIFT) || flagPending(flags.PROJECTS_AVAILABLE)) {
-      return null;
-    }
 
     if (location.search) {
       const sp = new URLSearchParams(window.location.search);
@@ -70,33 +69,30 @@ class SearchPage_ extends React.PureComponent {
     const validTags = _.reject(tags, tag => requirementFromString(tag) === undefined);
     const selector = selectorFromString(validTags.join(','));
     const labelClassName = `co-text-${_.toLower(kindForReference(kind))}`;
-    const showGettingStarted = flags.OPENSHIFT && !flags.PROJECTS_AVAILABLE;
 
     return <React.Fragment>
-      { showGettingStarted && <OpenShiftGettingStarted /> }
-      <div className={classNames({'co-disabled': showGettingStarted})}>
-        <Helmet>
-          <title>Search</title>
-        </Helmet>
-        <PageHeading detail={true} title="Search" >
-          <div className="co-search">
-            <div className="input-group input-group-select">
-              <div className="input-group-btn">
-                <ResourceListDropdown selected={kind} onChange={this.onSelectorChange} />
-              </div>
-              <SelectorInput labelClassName={labelClassName} tags={validTags} onChange={updateTags} ref={this.setRef} autoFocus={!showGettingStarted} />
+      <Helmet>
+        <title>Search</title>
+      </Helmet>
+      <PageHeading detail={true} title="Search" >
+        <div className="co-search">
+          <div className="input-group input-group-select">
+            <div className="input-group-btn">
+              <ResourceListDropdown selected={kind} onChange={this.onSelectorChange} />
             </div>
+            <SelectorInput labelClassName={labelClassName} tags={validTags} onChange={updateTags} ref={this.setRef} autoFocus={!noProjectsAvailable} />
           </div>
-        </PageHeading>
-        <ResourceList kind={kind} selector={selector} namespace={namespace} fake={showGettingStarted} />
-      </div>
+        </div>
+      </PageHeading>
+      <ResourceList kind={kind} selector={selector} namespace={namespace} mock={noProjectsAvailable} />
     </React.Fragment>;
   }
 }
 
-export const SearchPage = connectToFlags(FLAGS.OPENSHIFT, FLAGS.PROJECTS_AVAILABLE)(SearchPage_);
+export const SearchPage = withStartGuide(SearchPage_);
 
 SearchPage.propTypes = {
-  namespace: namespaceProptype,
   location: PropTypes.object.isRequired,
+  namespace: namespaceProptype,
+  noProjectsAvailable: PropTypes.bool.isRequired
 };
