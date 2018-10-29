@@ -55,7 +55,13 @@ const FeatureFlagGate = connectToFlags(FLAGS.MULTI_CLUSTER)(props => {
     return <LoadingBox />;
   }
   if (props.flags[FLAGS.MULTI_CLUSTER]) {
-    return <ListPage {...props} title="Cluster Directory" kind={referenceForModel(ClusterModel)} ListComponent={ClustersList} canCreate={true} />;
+    return <ListPage
+      {...props}
+      canCreate
+      kind={referenceForModel(ClusterModel)}
+      ListComponent={ClustersList}
+      title="Cluster Directory"
+    />;
   }
   return <div>
     <div className="co-well">
@@ -71,7 +77,14 @@ const FeatureFlagGate = connectToFlags(FLAGS.MULTI_CLUSTER)(props => {
         <button className="btn btn-info">Installing Multi-cluster Directory <i className="fa fa-external-link" /></button>
       </a>
     </div>
-    <ListPage {...props} title="Cluster Directory" kind={referenceForModel(ClusterModel)} ListComponent={ClustersList} canCreate={true} fake={true} />
+    <ListPage
+      {...props}
+      canCreate
+      kind={referenceForModel(ClusterModel)}
+      ListComponent={ClustersList}
+      mock
+      title="Cluster Directory"
+    />
     <div style={{marginTop: '-60px', textAlign: 'center'}}>
       <EmptyMsg />
     </div>

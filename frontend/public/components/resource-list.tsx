@@ -1,51 +1,55 @@
-/* eslint-disable no-undef, no-unused-vars */
-
-import * as React from 'react';
-import { match } from 'react-router-dom';
-import { Helmet } from 'react-helmet';
 import * as _ from 'lodash-es';
+import * as React from 'react';
+import { Helmet } from 'react-helmet';
+import { match } from 'react-router-dom';
 
 import { connectToPlural } from '../kinds';
-import { LoadingBox, AsyncComponent } from './utils';
-import { K8sResourceKindReference, referenceForModel, K8sKind, isGroupVersionKind, kindForReference, apiVersionForReference } from '../module/k8s';
 import { ErrorPage404 } from './error';
-import { FLAGS, connectToFlags, flagPending } from '../features';
-import { OpenShiftGettingStarted } from './start-guide';
-import { resourceListPages, resourceDetailPages } from './resource-pages';
+import { withStartGuide } from './start-guide';
+import { AsyncComponent, LoadingBox } from './utils';
 import { DefaultPage, DefaultDetailsPage } from './default-resource';
+import { resourceListPages, resourceDetailPages } from './resource-pages';
+import {
+  apiVersionForReference,
+  isGroupVersionKind,
+  K8sKind,
+  K8sResourceKindReference,
+  kindForReference,
+  referenceForModel,
+} from '../module/k8s';
 
 // Parameters can be in pros.params (in URL) or in props.route (attribute of Route tag)
 const allParams = props => Object.assign({}, _.get(props, 'match.params'), props);
 
-const ResourceListPage_ = connectToPlural((props: ResourceListPageProps) => {
-  const { flags, kindObj, kindsInFlight, modelRef, ns, plural } = allParams(props);
+export const ResourceListPage = connectToPlural(withStartGuide(
+  (props: ResourceListPageProps) => {
+    const { kindObj, kindsInFlight, modelRef, noProjectsAvailable, ns, plural } = allParams(props);
 
-  if (!kindObj) {
-    if (kindsInFlight) {
-      return <LoadingBox />;
+    if (!kindObj) {
+      if (kindsInFlight) {
+        return <LoadingBox />;
+      }
+      const missingType = isGroupVersionKind(plural) ? `"${kindForReference(plural)}" in "${apiVersionForReference(plural)}"` : `"${plural}"`;
+      return <ErrorPage404 message={`The server doesn't have a resource type ${missingType}. Try refreshing the page if it was recently added.`} />;
     }
-    const missingType = isGroupVersionKind(plural) ? `"${kindForReference(plural)}" in "${apiVersionForReference(plural)}"` : `"${plural}"`;
-    return <ErrorPage404 message={`The server doesn't have a resource type ${missingType}. Try refreshing the page if it was recently added.`} />;
+    const ref = props.match.path.indexOf('customresourcedefinitions') === -1 ? referenceForModel(kindObj) : null;
+    const componentLoader = resourceListPages.get(ref, () => Promise.resolve(DefaultPage));
+
+    return <div className="co-m-list">
+      <Helmet>
+        <title>{kindObj.labelPlural}</title>
+      </Helmet>
+      <AsyncComponent
+        autoFocus={!noProjectsAvailable}
+        kind={modelRef}
+        loader={componentLoader}
+        match={props.match}
+        mock={noProjectsAvailable}
+        namespace={ns}
+      />
+    </div>;
   }
-
-  const notProjectsListPage = kindObj.labelPlural !== 'Projects';
-  const isOpenShift = !flagPending(flags.OPENSHIFT) && flags.OPENSHIFT;
-  const noProjectsAvailable = !flagPending(flags.PROJECTS_AVAILABLE) && !flags.PROJECTS_AVAILABLE;
-  const showGettingStarted = notProjectsListPage && isOpenShift && noProjectsAvailable;
-
-  const ref = props.match.path.indexOf('customresourcedefinitions') === -1 ? referenceForModel(kindObj) : null;
-  const componentLoader = resourceListPages.get(ref, () => Promise.resolve(DefaultPage));
-
-  return <div className="co-m-list">
-    {showGettingStarted && <OpenShiftGettingStarted />}
-    <Helmet>
-      <title>{kindObj.labelPlural}</title>
-    </Helmet>
-    <AsyncComponent loader={componentLoader} match={props.match} namespace={ns} kind={modelRef} fake={showGettingStarted} />
-  </div>;
-});
-
-export const ResourceListPage = connectToFlags(FLAGS.PROJECTS_AVAILABLE, FLAGS.OPENSHIFT)(ResourceListPage_);
+));
 
 export const ResourceDetailsPage = connectToPlural((props: ResourceDetailsPageProps) => {
   const { name, ns, kindObj, kindsInFlight } = allParams(props);
@@ -70,20 +74,23 @@ export const ResourceDetailsPage = connectToPlural((props: ResourceDetailsPagePr
   </React.Fragment>;
 });
 
+/* eslint-disable no-undef, no-unused-vars */
 export type ResourceListPageProps = {
   flags: any,
-  modelRef: K8sResourceKindReference;
-  match: match<any>;
   kindObj: K8sKind;
   kindsInFlight: boolean;
+  match: match<any>;
+  modelRef: K8sResourceKindReference;
 };
 
 export type ResourceDetailsPageProps = {
-  modelRef: K8sResourceKindReference;
-  match: match<any>;
   kindObj: K8sKind;
   kindsInFlight: boolean;
+  match: match<any>;
+  modelRef: K8sResourceKindReference;
 };
+/* eslint-enable no-undef, no-unused-vars */
+
 
 ResourceListPage.displayName = 'ResourceListPage';
 ResourceDetailsPage.displayName = 'ResourceDetailsPage';

@@ -14,18 +14,14 @@ import {
 } from 'react-virtualized';
 
 import { namespaceProptype } from '../propTypes';
-import { watchURL } from '../module/k8s';
-import { EventModel, NodeModel } from '../models';
+import { ResourceListDropdown } from './resource-dropdown';
 import { SafetyFirst } from './safety-first';
 import { TextFilter } from './factory';
+import { watchURL } from '../module/k8s';
+import { withStartGuide } from './start-guide';
 import { WSFactory } from '../module/ws-factory';
-import { ResourceListDropdown } from './resource-dropdown';
-import { OpenShiftGettingStarted } from './start-guide';
-import {
-  connectToFlags,
-  FLAGS,
-  flagPending
-} from '../features';
+import { EventModel, NodeModel } from '../models';
+import { connectToFlags, FLAGS } from '../features';
 import {
   Box,
   Dropdown,
@@ -142,7 +138,7 @@ class SysEvent extends React.Component {
 
 const categories = {all: 'All Categories', info: 'Info', error: 'Error'};
 
-class EventsStreamPage_ extends React.Component {
+export class EventsList extends React.Component {
   constructor (props) {
     super(props);
     this.state = {
@@ -154,35 +150,53 @@ class EventsStreamPage_ extends React.Component {
 
   render () {
     const { category, kind, textFilter } = this.state;
-    const { flags, showTitle=true, autoFocus=true } = this.props;
-    if (flagPending(flags.OPENSHIFT) || flagPending(flags.PROJECTS_AVAILABLE)) {
-      return null;
-    }
-    const showGettingStarted = flags.OPENSHIFT && !flags.PROJECTS_AVAILABLE;
+    const { autoFocus=true, mock } = this.props;
 
     return <React.Fragment>
-      { showGettingStarted && showTitle && <OpenShiftGettingStarted /> }
-      <div className={classNames({'co-disabled': showGettingStarted })}>
-        { showTitle && <Helmet>
-          <title>Events</title>
-        </Helmet> }
-        { showTitle && <PageHeading title="Events" /> }
-        <div className="co-m-pane__filter-bar">
-          <div className="co-m-pane__filter-bar-group">
-            <ResourceListDropdown title="All Types" className="btn-group" onChange={v => this.setState({kind: v})} showAll selected={kind} />
-            <Dropdown title="All Categories" className="btn-group" items={categories} onChange={v => this.setState({category: v})} />
-          </div>
-          <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--filter">
-            <TextFilter label="Events by name or message" onChange={e => this.setState({textFilter: e.target.value || ''})} autoFocus={autoFocus} />
-          </div>
+      <div className="co-m-pane__filter-bar">
+        <div className="co-m-pane__filter-bar-group">
+          <ResourceListDropdown
+            className="btn-group"
+            onChange={v => this.setState({kind: v})}
+            selected={kind}
+            showAll
+            title="All Types"
+          />
+          <Dropdown
+            className="btn-group"
+            items={categories}
+            onChange={v => this.setState({category: v})}
+            title="All Categories"
+          />
         </div>
-        <EventStream {...this.props} category={category} kind={kind} textFilter={textFilter} fake={showGettingStarted} />
+        <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--filter">
+          <TextFilter
+            autoFocus={autoFocus}
+            label="Events by name or message"
+            onChange={e => this.setState({textFilter: e.target.value || ''})}
+          />
+        </div>
       </div>
+      <EventStream
+        {...this.props}
+        category={category}
+        kind={kind}
+        mock={mock}
+        textFilter={textFilter}
+      />
     </React.Fragment>;
   }
 }
 
-export const EventStreamPage = connectToFlags(FLAGS.OPENSHIFT, FLAGS.PROJECTS_AVAILABLE)(EventsStreamPage_);
+export const EventStreamPage = withStartGuide(({noProjectsAvailable, ...rest}) =>
+  <React.Fragment>
+    <Helmet>
+      <title>Events</title>
+    </Helmet>
+    <PageHeading title="Events" />
+    <EventsList {...rest} autoFocus={!noProjectsAvailable} mock={noProjectsAvailable} />
+  </React.Fragment>
+);
 
 const measurementCache = new CellMeasurerCache({
   fixedWidth: true,
@@ -275,7 +289,7 @@ class EventStream extends SafetyFirst {
 
   componentDidMount () {
     super.componentDidMount();
-    if (!this.props.fake) {
+    if (!this.props.mock) {
       this.wsInit(this.props.namespace);
     }
   }
@@ -332,8 +346,8 @@ class EventStream extends SafetyFirst {
     }
 
     return {
-      active: !nextProps.fake,
-      loading: !nextProps.fake && loading,
+      active: !nextProps.mock,
+      loading: !nextProps.mock && loading,
       // update the filteredEvents
       filteredEvents: EventStream.filterEvents(prevState.sortedMessages, nextProps),
       // we need these for bookkeeping because getDerivedStateFromProps doesn't get prevProps
@@ -396,7 +410,7 @@ class EventStream extends SafetyFirst {
   }
 
   render () {
-    const { fake, resourceEventStream } = this.props;
+    const { mock, resourceEventStream } = this.props;
     const {active, error, loading, filteredEvents, sortedMessages} = this.state;
     const count = filteredEvents.length;
     const allCount = sortedMessages.length;
@@ -404,7 +418,7 @@ class EventStream extends SafetyFirst {
     const noMatches = allCount > 0 && count === 0;
     let sysEventStatus, statusBtnTxt;
 
-    if (noEvents || fake || (noMatches && resourceEventStream)) {
+    if (noEvents || mock || (noMatches && resourceEventStream)) {
       sysEventStatus = (
         <Box className="co-sysevent-stream__status-box-empty">
           <div className="text-center cos-status-box__detail">
@@ -495,19 +509,19 @@ class EventStream extends SafetyFirst {
 }
 
 EventStream.defaultProps = {
-  fake: false,
-  kind: 'all',
   category: 'all',
+  kind: 'all',
+  mock: false,
 };
 
 EventStream.propTypes = {
-  fake: PropTypes.bool,
-  namespace: namespaceProptype,
-  kind: PropTypes.string.isRequired,
   category: PropTypes.string,
   filter: PropTypes.object,
-  textFilter: PropTypes.string,
+  kind: PropTypes.string.isRequired,
+  mock: PropTypes.bool,
+  namespace: namespaceProptype,
   showTitle: PropTypes.bool,
+  textFilter: PropTypes.string,
 };
 
 

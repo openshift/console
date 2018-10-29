@@ -1,9 +1,9 @@
 import * as _ from 'lodash-es';
+import * as classNames from 'classnames';
+import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import * as classNames from 'classnames';
-import * as PropTypes from 'prop-types';
 
 import k8sActions from '../../module/k8s/k8s-actions';
 import { CheckBoxes, storagePrefix } from '../row-filter';
@@ -11,7 +11,6 @@ import { ErrorPage404 } from '../error';
 import { makeReduxID, makeQuery } from '../utils/k8s-watcher';
 import { referenceForModel } from '../../module/k8s';
 import {
-  Disabled,
   Dropdown,
   Firehose,
   history,
@@ -29,7 +28,7 @@ export const CompactExpandButtons = ({expand = false, onExpandChange = _.noop}) 
   </label>
 </div>;
 
-/** @type {React.SFC<{autofocus?: boolean, disabled?: boolean, label: string, onChange: React.ChangeEventHandler<any>, defaultValue: string}}>} */
+/** @type {React.SFC<{autoFocus?: boolean, disabled?: boolean, label: string, onChange: React.ChangeEventHandler<any>, defaultValue: string}}>} */
 export const TextFilter = ({label, onChange, defaultValue, style, className, autoFocus}) => {
   if (_.isUndefined(autoFocus)) {
     if (window.matchMedia('(min-width: 800px)').matches) {
@@ -40,25 +39,32 @@ export const TextFilter = ({label, onChange, defaultValue, style, className, aut
     }
   }
   return <input
-    type="text"
     autoCapitalize="none"
-    style={style}
-    className={classNames('form-control text-filter', className)}
-    tabIndex={0}
-    placeholder={`Filter ${label}...`}
-    onChange={onChange}
     autoFocus={autoFocus}
+    className={classNames('form-control text-filter', className)}
     defaultValue={defaultValue}
+    onChange={onChange}
     onKeyDown={e => e.key === 'Escape' && e.target.blur()}
+    placeholder={`Filter ${label}...`}
+    style={style}
+    tabIndex={0}
+    type="text"
   />;
 };
 
 TextFilter.displayName = 'TextFilter';
 
+// TODO (jon) make this into "withListPageFilters" HOC
 /** @augments {React.PureComponent<{ListComponent: React.ComponentType<any>, kinds: string[], flatten?: function, data?: any[], rowFilters?: any[]}>} */
 export class ListPageWrapper_ extends React.PureComponent {
   render () {
-    const {kinds, ListComponent, rowFilters, reduxIDs, flatten} = this.props;
+    const {
+      flatten,
+      kinds,
+      ListComponent,
+      reduxIDs,
+      rowFilters,
+    } = this.props;
     const data = flatten ? flatten(this.props.resources) : [];
 
     const RowsOfRowFilters = rowFilters && _.map(rowFilters, ({items, reducer, selected, type, numbers}, i) => {
@@ -156,10 +162,26 @@ export const FireMan_ = connect(null, {filterList: k8sActions.filterList})(
     }
 
     render () {
-      const {helpText, createButtonText, dropdownFilters, textFilter, filterLabel, canExpand, canCreate, createProps, autoFocus, resources} = this.props;
+      const {
+        autoFocus,
+        canCreate,
+        canExpand,
+        createButtonText,
+        createProps,
+        dropdownFilters,
+        filterLabel,
+        helpText,
+        resources,
+        textFilter,
+      } = this.props;
 
       const DropdownFilters = dropdownFilters && dropdownFilters.map(({type, items, title}) => {
-        return <Dropdown key={title} items={items} title={title} onChange={v => this.applyFilter(type, v)} />;
+        return <Dropdown
+          items={items}
+          key={title}
+          onChange={v => this.applyFilter(type, v)}
+          title={title}
+        />;
       });
 
       let createLink;
@@ -220,37 +242,62 @@ FireMan_.defaultProps = {
 FireMan_.propTypes = {
   canCreate: PropTypes.bool,
   canExpand: PropTypes.bool,
-  createProps: PropTypes.object,
   createButtonText: PropTypes.string,
+  createProps: PropTypes.object,
   fieldSelector: PropTypes.string,
-  helpText: PropTypes.any,
-  selectorFilterLabel: PropTypes.string,
   filterLabel: PropTypes.string,
-  textFilter: PropTypes.string,
-  title: PropTypes.string,
+  helpText: PropTypes.any,
   resources: PropTypes.arrayOf(
     PropTypes.shape({
+      fieldSelector: PropTypes.string,
+      filters: PropTypes.object,
+      isList: PropTypes.bool,
       kind: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
+      name: PropTypes.string,
+      namespace: PropTypes.string,
+      namespaced: PropTypes.bool,
       selector: PropTypes.shape({
         matchLabels: PropTypes.objectOf(PropTypes.string),
         matchExpressions: PropTypes.arrayOf(PropTypes.object),
       }),
-      fieldSelector: PropTypes.string,
-      namespace: PropTypes.string,
-      name: PropTypes.string,
-      isList: PropTypes.bool,
-      namespaced: PropTypes.bool,
-      filters: PropTypes.object,
     })
   ).isRequired,
+  selectorFilterLabel: PropTypes.string,
+  textFilter: PropTypes.string,
+  title: PropTypes.string,
 };
 
-/** @type {React.SFC<{ListComponent: React.ComponentType<any>, kind: string, namespace?: string, filterLabel?: string, textFilter?: string, title?: string, showTitle?: boolean, dropdownFilters?: any[], rowFilters?: any[], selector?: any, fieldSelector?: string, canCreate?: boolean, createButtonText?: string, createProps?: any, fake?: boolean}>} */
+/** @type {React.SFC<{ListComponent: React.ComponentType<any>, kind: string, namespace?: string, filterLabel?: string, textFilter?: string, title?: string, showTitle?: boolean, dropdownFilters?: any[], rowFilters?: any[], selector?: any, fieldSelector?: string, canCreate?: boolean, createButtonText?: string, createProps?: any, mock?: boolean}>} */
 export const ListPage = props => {
-  const {createButtonText, createHandler, filterLabel, kind, namespace, selector, name, fieldSelector, filters, limit, showTitle = true, fake} = props;
+  const {
+    autoFocus,
+    canCreate,
+    canExpand,
+    createButtonText,
+    createHandler,
+    dropdownFilters,
+    fieldSelector,
+    filterLabel,
+    filters,
+    helpText,
+    kind,
+    limit,
+    ListComponent,
+    mock,
+    name,
+    namespace,
+    selector,
+    showTitle = true,
+    textFilter,
+  } = props;
   let { createProps } = props;
   const ko = kindObj(kind);
-  const {labelPlural, plural, namespaced, label} = ko;
+  const {
+    label,
+    labelPlural,
+    namespaced,
+    plural,
+  } = ko;
   const title = props.title || labelPlural;
   let href = namespaced ? `/k8s/ns/${namespace || 'default'}/${plural}/new` : `/k8s/cluster/${plural}/new`;
   if (ko.crd) {
@@ -261,7 +308,15 @@ export const ListPage = props => {
   }
 
   createProps = createProps || (createHandler ? {onClick: createHandler} : {to: href});
-  const resources = [{ kind, name, namespaced, selector, fieldSelector, filters, limit }];
+  const resources = [{
+    fieldSelector,
+    filters,
+    kind,
+    limit,
+    name,
+    namespaced,
+    selector,
+  }];
 
   // Don't show row filters if props.filters were passed. The content is already filtered and the row filters will have incorrect counts.
   const rowFilters = _.isEmpty(filters) ? props.rowFilters : null;
@@ -271,25 +326,25 @@ export const ListPage = props => {
   }
 
   return <MultiListPage
-    filterLabel={filterLabel || `${labelPlural} by name`}
-    selectorFilterLabel="Filter by selector (app=nginx) ..."
-    createProps={createProps}
-    title={title}
-    showTitle={showTitle}
-    helpText={props.helpText}
-    canCreate={props.canCreate}
-    canExpand={props.canExpand}
+    autoFocus={autoFocus}
+    canCreate={canCreate}
+    canExpand={canExpand}
     createButtonText={createButtonText || `Create ${label}`}
-    textFilter={props.textFilter}
-    resources={resources}
-    autoFocus={props.autoFocus}
-    dropdownFilters={props.dropdownFilters}
-    ListComponent={props.ListComponent}
-    rowFilters={rowFilters}
-    label={labelPlural}
+    createProps={createProps}
+    dropdownFilters={dropdownFilters}
+    filterLabel={filterLabel || `${labelPlural} by name`}
     flatten={_resources => _.get(_resources, (name || kind), {}).data}
+    helpText={helpText}
+    label={labelPlural}
+    ListComponent={ListComponent}
+    mock={mock}
     namespace={namespace}
-    fake={fake}
+    resources={resources}
+    rowFilters={rowFilters}
+    selectorFilterLabel="Filter by selector (app=nginx) ..."
+    showTitle={showTitle}
+    textFilter={textFilter}
+    title={title}
   />;
 };
 
@@ -297,33 +352,61 @@ ListPage.displayName = 'ListPage';
 
 /** @type {React.SFC<{canCreate?: boolean, createButtonText?: string, createProps?: any, flatten?: Function, title?: string, showTitle?: boolean, helpText?: any, dropdownFilters?: any[], filterLabel?: string, rowFilters?: any[], resources: any[], ListComponent: React.ComponentType<any>, namespace?: string}>} */
 export const MultiListPage = props => {
-  const {createButtonText, flatten, filterLabel, createProps, showTitle = true, title, namespace, fake} = props;
+  const {
+    autoFocus,
+    canCreate,
+    canExpand,
+    createButtonText,
+    createProps,
+    dropdownFilters,
+    filterLabel,
+    flatten,
+    helpText,
+    label,
+    ListComponent,
+    mock,
+    namespace,
+    rowFilters,
+    showTitle = true,
+    staticFilters,
+    textFilter,
+    title,
+  } = props;
+
   const resources = _.map(props.resources, (r) => ({
     ...r,
     isList: true,
-    prop: r.prop || r.kind,
     namespace: r.namespaced ? namespace : r.namespace,
+    prop: r.prop || r.kind,
   }));
 
-  const elems = <FireMan_
-    filterLabel={filterLabel}
-    selectorFilterLabel="Filter by selector (app=nginx) ..."
-    createProps={createProps}
-    title={showTitle ? title : undefined}
-    helpText={props.helpText}
-    canCreate={props.canCreate}
-    canExpand={props.canExpand}
+
+  return <FireMan_
+    autoFocus={autoFocus}
+    canCreate={canCreate}
+    canExpand={canExpand}
     createButtonText={createButtonText || 'Create'}
-    textFilter={props.textFilter}
-    resources={resources}
-    autoFocus={fake ? false: props.autoFocus}
-    dropdownFilters={props.dropdownFilters}
+    createProps={createProps}
+    dropdownFilters={dropdownFilters}
+    filterLabel={filterLabel}
+    helpText={helpText}
+    resources={mock ? [] : resources}
+    selectorFilterLabel="Filter by selector (app=nginx) ..."
+    textFilter={textFilter}
+    title={showTitle ? title : undefined}
   >
-    <Firehose resources={resources}>
-      <ListPageWrapper_ ListComponent={props.ListComponent} kinds={_.map(resources, 'kind')} rowFilters={props.rowFilters} staticFilters={props.staticFilters} flatten={flatten} label={props.label} fake={fake} />
+    <Firehose resources={mock ? [] : resources}>
+      <ListPageWrapper_
+        flatten={flatten}
+        kinds={_.map(resources, 'kind')}
+        label={label}
+        ListComponent={ListComponent}
+        mock={mock}
+        rowFilters={rowFilters}
+        staticFilters={staticFilters}
+      />
     </Firehose>
   </FireMan_>;
-  return fake ? <Disabled>{elems}</Disabled> : elems;
 };
 
 MultiListPage.displayName = 'MultiListPage';
