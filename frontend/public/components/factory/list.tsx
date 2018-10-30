@@ -289,7 +289,7 @@ export const Rows: React.SFC<RowsProps> = (props) => {
       key={key}
       parent={parent}
       rowIndex={index}>
-      <div style={style}>
+      <div style={style} className="co-m-row">
         <Row key={_.get(obj, 'metadata.uid', index)} obj={obj} expand={expand} kindObj={kindObj} index={index} />
       </div>
     </CellMeasurer>;
