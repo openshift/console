@@ -68,7 +68,7 @@ const Graphs = requirePrometheus(({namespace, isOpenShift}) => {
             <Status
               title="Crashlooping Pods"
               name="Pods"
-              query={`count(increase(kube_pod_container_status_restarts${namespace ? `{namespace="${namespace}"}` : ''}[1h]) > 5 )`}
+              query={`count(increase(kube_pod_container_status_restarts_total${namespace ? `{namespace="${namespace}"}` : ''}[1h]) > 5 )`}
               href={`/k8s/${namespace ? `ns/${namespace}` : 'all-namespaces'}/pods?rowFilter-pod-status=CrashLoopBackOff`}
             />
           </div>
