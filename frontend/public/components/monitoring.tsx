@@ -845,7 +845,7 @@ class SilenceForm_ extends SafetyFirst<SilenceFormProps, SilenceFormState> {
         <hr />
 
         <ButtonBar errorMessage={error} inProgress={inProgress}>
-          <button type="submit" className="btn btn-primary" id="yaml-create">{this.props.saveButtonText || 'Save'}</button>
+          <button type="submit" className="btn btn-primary">{this.props.saveButtonText || 'Save'}</button>
           <Link to={data.id ? `${SilenceResource.path}/${data.id}` : SilenceResource.path} className="btn btn-default">Cancel</Link>
         </ButtonBar>
       </form>
