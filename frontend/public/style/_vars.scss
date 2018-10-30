@@ -16,6 +16,8 @@ $contextselector-pf-margin-left: 20px;
 $fa-font-path: $consoleWebFontPath;
 // PatternFly font path.
 $font-path: '~patternfly/dist/fonts/';
+// PatternFly image path.
+$img-path: '~patternfly/dist/img/';
 // Patternfly defaults to 12px, which is too small in many cases.
 $font-size-base: 13px;
 // Patternfly defaults to 40px, which leaves a lot more whitespace than we're used to.

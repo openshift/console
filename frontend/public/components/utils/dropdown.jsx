@@ -290,7 +290,7 @@ export class Dropdown extends DropdownMixin {
 
   render() {
     const {active, autocompleteText, selectedKey, items, title, bookmarks, keyboardHoverKey, favoriteKey} = this.state;
-    const {autocompleteFilter, autocompletePlaceholder, noButton, className, buttonClassName, menuClassName, storageKey, canFavorite, dropDownClassName, titlePrefix, describedBy} = this.props;
+    const {autocompleteFilter, autocompletePlaceholder, noButton, className, buttonClassName, menuClassName, storageKey, canFavorite, dropDownClassName, titlePrefix, describedBy, noCaret} = this.props;
 
     const spacerBefore = this.props.spacerBefore || new Set();
     const headerBefore = this.props.headerBefore || {};
@@ -319,19 +319,21 @@ export class Dropdown extends DropdownMixin {
 
     //Adding `dropDownClassName` specifically to use patternfly's context selector component, which expects `bootstrap-select` class on the dropdown. We can remove this additional property if that changes in upcoming patternfly versions.
     return <div className={classNames(className)} ref={this.dropdownElement} style={this.props.style}>
-      <div className={classNames('dropdown', dropDownClassName)}>
+      <div className={classNames('dropdown', dropDownClassName, {'open': active})}>
         {
           noButton
-            ? <div role="button" tabIndex="0" onClick={this.toggle} onKeyDown={this.onKeyDown} className="dropdown__not-btn" id={this.props.id}>
+            ? <div role="button" tabIndex="0" onClick={this.toggle} onKeyDown={this.onKeyDown} className={classNames('dropdown__not-btn', buttonClassName)} id={this.props.id}>
               {titlePrefix && `${titlePrefix}: `}
-              <span className="dropdown__not-btn__title">{title}</span>&nbsp;<Caret />
+              <span className="dropdown__not-btn__title">{title}</span>&nbsp;
+              {noCaret ? null : <Caret />}
             </div>
             : <button aria-haspopup="true" onClick={this.toggle} onKeyDown={this.onKeyDown} type="button" className={classNames('btn', 'btn-dropdown', 'dropdown-toggle', buttonClassName ? buttonClassName : 'btn-default')} id={this.props.id} aria-describedby={describedBy} >
               <div className="btn-dropdown__content-wrap">
                 <span className="btn-dropdown__item">
                   {titlePrefix && `${titlePrefix}: `}
                   {title}
-                </span><Caret />
+                </span>
+                {noCaret ? null : <Caret />}
               </div>
             </button>
         }
@@ -382,7 +384,7 @@ Dropdown.propTypes = {
 };
 
 export const ActionsMenu = (props) => {
-  const {actions, title = undefined, menuClassName = undefined, noButton = false} = props;
+  const {actions, buttonClassName, title = undefined, menuClassName = undefined, noButton, noCaret = false} = props;
   const shownActions = _.reject(actions, o => _.get(o, 'hidden', false));
   const items = _.fromPairs(_.map(shownActions, (v, k) => [k, v.label]));
   const btnTitle = title || <span id="action-dropdown">Actions</span>;
@@ -396,13 +398,15 @@ export const ActionsMenu = (props) => {
     }
   };
   return <Dropdown
+    buttonClassName={buttonClassName}
     className="co-actions-menu"
     menuClassName={menuClassName || 'dropdown-menu-right'}
     items={items}
     title={btnTitle}
     onChange={onChange}
     noSelection={true}
-    noButton={noButton} />;
+    noButton={noButton}
+    noCaret={noCaret} />;
 };
 
 ActionsMenu.propTypes = {
@@ -414,6 +418,7 @@ ActionsMenu.propTypes = {
     })).isRequired,
   menuClassName: PropTypes.string,
   noButton: PropTypes.bool,
+  noCaret: PropTypes.bool,
   title: PropTypes.node,
 };
 
