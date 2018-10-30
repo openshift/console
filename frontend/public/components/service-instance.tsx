@@ -1,9 +1,8 @@
-/* eslint-disable no-undef */
+/* eslint-disable no-undef, no-unused-vars */
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import { Link } from 'react-router-dom';
+import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
 
-// eslint-disable-next-line no-unused-vars
 import { k8sList, K8sResourceKind, K8sResourceKindReference, planExternalName, serviceCatalogStatus } from '../module/k8s';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
 import { Cog, history, navFactory, ResourceCog, ResourceIcon, ResourceLink, ResourceSummary, SectionHeading, StatusWithIcon, Timestamp } from './utils';
@@ -38,7 +37,7 @@ export const ServiceBindingDescription: React.SFC<ServiceBindingDescriptionProps
   Once the binding is ready, add the secret to your application&apos;s environment variables or volumes.
 </p>;
 
-class ServiceInstanceMessage extends React.Component<ServiceInstanceMessageProps, ServiceInstanceMessageState> {
+class ServiceInstanceMessage_ extends React.Component<ServiceInstanceMessageProps & RouteComponentProps<{}>, ServiceInstanceMessageState> {
   state = {
     hasBindings: false,
     loaded: false,
@@ -61,7 +60,7 @@ class ServiceInstanceMessage extends React.Component<ServiceInstanceMessageProps
   };
 
   render() {
-    const {obj} = this.props;
+    const {obj, match: {url}} = this.props;
     const {deletionTimestamp} = obj.metadata;
     const {loaded, hasBindings} = this.state;
 
@@ -71,11 +70,12 @@ class ServiceInstanceMessage extends React.Component<ServiceInstanceMessageProps
 
     // Warn when the instance is deleted, but is still has bindings.
     if (deletionTimestamp && hasBindings) {
+      const basePath = url.replace(/\/$/, '');
       return <p className="alert alert-warning co-service-instance-delete-bindings-warning">
         <i className="pficon pficon-warning-triangle-o" aria-hidden="true" />
         This service instance is marked for deletion, but still has bindings.
         You must delete the bindings before the instance will be deleted.&nbsp;&nbsp;
-        <Link to="servicebindings">View Service Bindings</Link>
+        <Link to={`${basePath}/servicebindings`}>View Service Bindings</Link>
       </p>;
     }
 
@@ -92,6 +92,7 @@ class ServiceInstanceMessage extends React.Component<ServiceInstanceMessageProps
     return null;
   }
 }
+const ServiceInstanceMessage = withRouter(ServiceInstanceMessage_);
 
 const ServiceInstanceDetails: React.SFC<ServiceInstanceDetailsProps> = ({obj: si}) => {
   const plan = planExternalName(si);
@@ -214,7 +215,6 @@ export const ServiceInstancesPage: React.SFC<ServiceInstancesPageProps> = props 
   />;
 ServiceInstancesPage.displayName = 'ServiceInstancesListPage';
 
-/* eslint-disable no-undef */
 export type ServiceInstanceStatusProps = {
   obj: K8sResourceKind
 };
@@ -254,4 +254,3 @@ export type ServiceInstancesPageProps = {
 export type ServiceInstanceDetailsPageProps = {
   match: any,
 };
-/* eslint-enable no-undef */
