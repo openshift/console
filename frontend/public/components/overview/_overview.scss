@@ -122,6 +122,8 @@
     }
 
   &.overview--sidebar-shown {
+    position: relative;
+    height: 100%;
     .overview__sidebar {
       display: flex;
       flex-direction: column;

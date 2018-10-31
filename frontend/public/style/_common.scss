@@ -91,7 +91,7 @@
 .co-m-pane__heading {
   display: flex;
   justify-content: space-between;
-  margin: 0 0 $grid-gutter-width;
+  margin: 0 0 var(--pf-global--spacer--md);
   &--baseline {
     align-items: baseline;
   }
@@ -102,6 +102,11 @@
     align-items: center;
     margin-bottom: ($grid-gutter-width / 2);
   }
+}
+
+h1.co-m-pane__heading {
+  // we can either set these explicitly or adopt the .pf-c-title.pf-X classes and variables
+  font-size: 22px;
 }
 
 .co-m-pane__heading-link {
@@ -213,7 +218,6 @@
 }
 
 .co-search {
-  padding-bottom: 30px;
   .input-group-btn {
     vertical-align: top;
     @media(max-width: $grid-float-breakpoint-max) {
@@ -246,7 +250,6 @@
     margin: $grid-gutter-width;
   }
 }
-
 
 // Prevent iOS phones from zooming on form inputs
 @supports (-webkit-overflow-scrolling: touch) { // Target mobile Safari

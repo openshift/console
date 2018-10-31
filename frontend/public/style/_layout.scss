@@ -7,23 +7,48 @@ body,
   height: 100%; // so .co-p-has-sidebar, .yaml-editor are full height
 }
 
+body {
+  --pf-global--FontSize--md: 16px;
+}
+
+main.pf-l-page__main {
+  overflow-x: inherit;
+}
+
+.pf-l-page__main .pf-l-page__main-section {
+  --pf-global--FontSize--md: 13px;
+  &.pf-m-light {
+    background-color: transparent;
+  }
+  height: 100%;
+}
+
+//override pf4 heading margins and sizes
+.pf-l-page__main-section h4, .h4, h5, .h5, h6, .h6 {
+  margin-top: 10.5px;
+  margin-bottom: 10.5px;
+}
+
+.pf-l-page__main-section h5, .h5 {
+  font-size: 15px;
+}
+
+//pf sections now wrap content, so absolute positioning no longer necessary
 #content {
+  height: 100%;
   display: flex;
   flex-direction: column;
-  padding-top: $masthead-height-mobile;
-  position: relative;
-  @media (min-width: $grid-float-breakpoint) {
-    padding-left: $sidebar-width;
-    padding-top: $masthead-height-desktop;
-  }
 }
 
 #content-scrollable {
   height: 100%;
-  overflow-x: auto; // so catalog is scrollable at mobile
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
   overflow-y: auto;
   position: relative;
   -webkit-overflow-scrolling: touch;
+  background-color: var(--pf-l-page__main-section--m-light--BackgroundColor);
 }
 
 #sidebar {
@@ -48,7 +73,6 @@ body,
     top: $masthead-height-desktop;
   }
 }
-
 
 .sidebar-toggle {
   background-color: transparent;
