@@ -260,7 +260,7 @@ const ActiveAlerts = ({alerts}) => <div className="co-m-table-grid co-m-table-gr
         <Cog options={[silenceAction(a)]} />
         <Link className="co-resource-link" to={alertURL(a.labels.alertname, a.labels)}>{alertDescription(a)}</Link>
       </div>
-      <div className="col-xs-2 hidden-xs"><Timestamp timestamp={a.activeAt} /></div>
+      <div className="col-sm-2 hidden-xs"><Timestamp timestamp={a.activeAt} /></div>
       <div className="col-sm-2 col-xs-3"><State state={a.state} /></div>
       <div className="col-sm-2 col-xs-3 co-break-word">{a.value}</div>
     </ResourceRow>)}

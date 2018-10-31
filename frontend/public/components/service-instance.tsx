@@ -1,8 +1,8 @@
-/* eslint-disable no-undef */
+/* eslint-disable no-undef, no-unused-vars */
 import * as React from 'react';
 import * as _ from 'lodash-es';
+import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
 
-// eslint-disable-next-line no-unused-vars
 import { k8sList, K8sResourceKind, K8sResourceKindReference, planExternalName, serviceCatalogStatus } from '../module/k8s';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
 import { Cog, history, navFactory, ResourceCog, ResourceIcon, ResourceLink, ResourceSummary, SectionHeading, StatusWithIcon, Timestamp } from './utils';
@@ -37,35 +37,62 @@ export const ServiceBindingDescription: React.SFC<ServiceBindingDescriptionProps
   Once the binding is ready, add the secret to your application&apos;s environment variables or volumes.
 </p>;
 
-class CreateServiceBinding extends React.Component<CreateServiceBindingProps, CreateServiceBindingState> {
+class ServiceInstanceMessage_ extends React.Component<ServiceInstanceMessageProps & RouteComponentProps<{}>, ServiceInstanceMessageState> {
   state = {
-    visible: false
-  }
+    hasBindings: false,
+    loaded: false,
+  };
 
   componentDidMount () {
-    const { obj } = this.props;
+    const {obj} = this.props;
 
+    // Get the bindings for this service instance to know what messages to display.
     k8sList(ServiceBindingModel, {ns: obj.metadata.namespace})
       .then(serviceBindings => {
-        if (!_.some(serviceBindings, {'spec': { 'instanceRef': { 'name': obj.metadata.name} } })) {
-          this.setState({
-            visible: true,
-          });
-        }
+        const hasBindings = _.some(serviceBindings, {spec: {instanceRef: {name: obj.metadata.name}}});
+        this.setState({ loaded: true, hasBindings });
       });
   }
 
-  render() {
-    const {obj, onClick} = this.props;
-    const {visible} = this.state;
+  createBinding = () => {
+    const {obj} = this.props;
+    goToCreateBindingPage(obj);
+  };
 
-    return visible && <div className="co-well">
-      <h4>Create Service Binding</h4>
-      <ServiceBindingDescription instanceName={obj.metadata.name} />
-      <button className="btn btn-primary" onClick={onClick}>Create Service Binding</button>
-    </div>;
+  render() {
+    const {obj, match: {url}} = this.props;
+    const {deletionTimestamp} = obj.metadata;
+    const {loaded, hasBindings} = this.state;
+
+    if (!loaded) {
+      return null;
+    }
+
+    // Warn when the instance is deleted, but is still has bindings.
+    if (deletionTimestamp && hasBindings) {
+      const basePath = url.replace(/\/$/, '');
+      return <p className="alert alert-warning co-service-instance-delete-bindings-warning">
+        <i className="pficon pficon-warning-triangle-o" aria-hidden="true" />
+        This service instance is marked for deletion, but still has bindings.
+        You must delete the bindings before the instance will be deleted.&nbsp;&nbsp;
+        <Link to={`${basePath}/servicebindings`}>View Service Bindings</Link>
+      </p>;
+    }
+
+    // Show help for creating a binding when there are none for this instance.
+    // TODO: Check if the plan is actually bindable.
+    if (!deletionTimestamp && !hasBindings) {
+      return <div className="co-well">
+        <h4>Create Service Binding</h4>
+        <ServiceBindingDescription instanceName={obj.metadata.name} />
+        <button className="btn btn-primary" type="button" onClick={this.createBinding}>Create Service Binding</button>
+      </div>;
+    }
+
+    return null;
   }
 }
+const ServiceInstanceMessage = withRouter(ServiceInstanceMessage_);
 
 const ServiceInstanceDetails: React.SFC<ServiceInstanceDetailsProps> = ({obj: si}) => {
   const plan = planExternalName(si);
@@ -74,7 +101,7 @@ const ServiceInstanceDetails: React.SFC<ServiceInstanceDetailsProps> = ({obj: si
   const clusterServiceClassName = _.get(si, 'spec.clusterServiceClassRef.name');
 
   return <React.Fragment>
-    <CreateServiceBinding obj={si} onClick={() => goToCreateBindingPage(si)} />
+    <ServiceInstanceMessage obj={si} />
     <div className="co-m-pane__body">
       <SectionHeading text="Service Instance Overview" />
       <div className="row">
@@ -188,17 +215,16 @@ export const ServiceInstancesPage: React.SFC<ServiceInstancesPageProps> = props 
   />;
 ServiceInstancesPage.displayName = 'ServiceInstancesListPage';
 
-/* eslint-disable no-undef */
 export type ServiceInstanceStatusProps = {
   obj: K8sResourceKind
 };
 
 export type ServiceInstancesRowProps = {
-  obj: any,
+  obj: K8sResourceKind,
 };
 
 export type ServiceInstanceDetailsProps = {
-  obj: any,
+  obj: K8sResourceKind,
 };
 
 export type ServiceBindingDescriptionProps = {
@@ -206,13 +232,13 @@ export type ServiceBindingDescriptionProps = {
   className?: string,
 };
 
-export type CreateServiceBindingProps = {
-  obj: any,
-  onClick: any,
+export type ServiceInstanceMessageProps = {
+  obj: K8sResourceKind,
 };
 
-export type CreateServiceBindingState = {
-  visible: boolean
+export type ServiceInstanceMessageState = {
+  hasBindings: boolean,
+  loaded: boolean,
 };
 
 export type ServiceBindingsDetailsProps = {
@@ -228,4 +254,3 @@ export type ServiceInstancesPageProps = {
 export type ServiceInstanceDetailsPageProps = {
   match: any,
 };
-/* eslint-enable no-undef */

@@ -11,16 +11,20 @@ import { Toolbar } from 'patternfly-react';
 import store from '../../redux';
 import { ALL_NAMESPACES_KEY } from '../../const';
 import { coFetchJSON } from '../../co-fetch';
+import { prometheusBasePath } from '../graphs';
+import { SafetyFirst } from '../safety-first';
+import { TextFilter } from '../factory';
+import { UIActions } from '../../ui/ui-actions';
 import {
   /* eslint-disable-next-line no-unused-vars */
   K8sResourceKind,
   LabelSelector,
 } from '../../module/k8s';
-import { prometheusBasePath } from '../graphs';
-import { SafetyFirst } from '../safety-first';
-import { StartGuide } from '../start-guide';
-import { TextFilter } from '../factory';
-import { UIActions } from '../../ui/ui-actions';
+import {
+  withStartGuide,
+  /* eslint-disable-next-line no-unused-vars */
+  WithStartGuideProps
+} from '../start-guide';
 import {
   DaemonSetModel,
   DeploymentModel,
@@ -206,7 +210,7 @@ const OverviewHeading: React.SFC<OverviewHeadingProps> = ({disabled, groupOption
         }
         <div className="form-group overview-toolbar__form-group">
           <TextFilter
-            autofocus={!disabled}
+            autoFocus={!disabled}
             defaultValue={''}
             disabled={disabled}
             label="Resources by name"
@@ -627,10 +631,11 @@ class OverviewDetails extends SafetyFirst<OverviewDetailsProps, OverviewDetailsS
   }
 
   render() {
-    const {loaded, loadError, title} = this.props;
+    const { loaded, loadError, mock, title} = this.props;
     const {filteredItems, groupedItems, groupOptions, metrics, selectedGroupLabel} = this.state;
     return <div className="co-m-pane">
       <OverviewHeading
+        disabled={mock}
         groupOptions={groupOptions}
         handleFilterChange={this.handleFilterChange}
         handleGroupChange={this.handleGroupChange}
@@ -640,14 +645,11 @@ class OverviewDetails extends SafetyFirst<OverviewDetailsProps, OverviewDetailsS
       <div className="co-m-pane__body">
         <StatusBox
           data={filteredItems}
+          label="Resources"
           loaded={loaded}
           loadError={loadError}
-          label="Resources"
         >
-          <ProjectOverview
-            groups={groupedItems}
-            metrics={metrics}
-          />
+          <ProjectOverview groups={groupedItems} metrics={metrics} />
         </StatusBox>
       </div>
     </div>;
@@ -669,7 +671,7 @@ const overviewStateToProps = ({UI}, ownProps): OverviewProps => {
   };
 };
 
-export const Overview = connect(overviewStateToProps)(({namespace, selectedItem, title}) => {
+export const Overview = connect(overviewStateToProps)(({mock, namespace, selectedItem, title}) => {
   const className = classnames('overview', {'overview--sidebar-shown': !_.isEmpty(selectedItem)});
   const resources = [
     {
@@ -748,8 +750,9 @@ export const Overview = connect(overviewStateToProps)(({namespace, selectedItem,
   return <div className={className}>
     <div className="overview__main-column">
       <div className="overview__main-column-section">
-        <Firehose resources={resources} forceUpdate={true}>
+        <Firehose resources={mock ? [] : resources} forceUpdate>
           <OverviewDetails
+            mock={mock}
             namespace={namespace}
             selectedItem={selectedItem}
             title={title}
@@ -765,8 +768,8 @@ export const Overview = connect(overviewStateToProps)(({namespace, selectedItem,
             <CloseButton onClick={() => store.dispatch(UIActions.selectOverviewItem(''))} />
           </div>
           <ResourceOverviewPage
-            kind={selectedItem.obj.kind}
             item={selectedItem}
+            kind={selectedItem.obj.kind}
           />
         </div>
       </CSSTransition>
@@ -774,32 +777,38 @@ export const Overview = connect(overviewStateToProps)(({namespace, selectedItem,
   </div>;
 });
 
-export const OverviewPage: React.SFC<OverviewPageProps> = ({match}) => {
-  const namespace = _.get(match, 'params.ns');
-  const title = 'Overview';
-  return <React.Fragment>
-    <Helmet>
-      <title>{title}</title>
-    </Helmet>
-    <StartGuide dismissible={true} style={{margin: 15}} />
-    <Overview namespace={namespace} title={title} />
-  </React.Fragment>;
-};
+export const OverviewPage = withStartGuide(
+  ({match, noProjectsAvailable}: OverviewPageProps & WithStartGuideProps) => {
+    const namespace = _.get(match, 'params.ns');
+    const title = 'Overview';
+    return <React.Fragment>
+      <Helmet>
+        <title>{title}</title>
+      </Helmet>
+      <Overview
+        mock={noProjectsAvailable}
+        namespace={namespace}
+        title={title}
+      />
+    </React.Fragment>;
+  }
+);
 
 /* eslint-disable no-unused-vars, no-undef */
 type OverviewHeadingProps = {
   disabled?: boolean;
-  groupOptions?: any,
-  handleFilterChange?: (...args: any[]) => void,
-  handleGroupChange?: (...args: any[]) => void,
-  selectedGroup?: string,
-  title: string
+  groupOptions?: any;
+  handleFilterChange?: (...args: any[]) => void;
+  handleGroupChange?: (...args: any[]) => void;
+  selectedGroup?: string;
+  title: string;
 };
 
 type OverviewDetailsProps = {
   daemonSets?: any;
   deploymentConfigs?: any;
   deployments?: any;
+  mock: boolean;
   loaded?: boolean;
   loadError?: any;
   namespace: string;
@@ -819,11 +828,12 @@ type OverviewDetailsState = {
   filteredItems: any[];
   groupedItems: any[];
   groupOptions: any;
-  metrics: any,
+  metrics: any;
   selectedGroupLabel: string;
 };
 
 type OverviewProps = {
+  mock: boolean;
   namespace: string;
   selectedItem: any;
   title: string;

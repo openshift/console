@@ -145,6 +145,10 @@ input[type="radio"] {
   position: relative;
   width: 100%; }
 
+.co-m-row:hover {
+  background-color: #fafafa;
+}
+
 .co-m-table-grid .co-m-table-grid__body .row {
   padding: 10px 0; }
 

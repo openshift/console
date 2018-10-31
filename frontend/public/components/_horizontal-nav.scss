@@ -23,24 +23,37 @@ $co-m-horizontal-nav__menu-item-link-padding-lr-mobile: 15px;
   font-size: 18px;
   margin: 0;
   text-align: center;
+  a,
+  button {
+    color: $color-pf-black-700;
+    position: relative;
+    &:hover,
+    &:focus {
+      color: #252525;
+      &::after {
+        background: $color-pf-black-400;
+      }
+    }
+    &::after {
+      bottom: -1px;
+      content: "";
+      display: block;
+      height: 2px;
+      left: $co-m-horizontal-nav__menu-item-link-padding-lr-mobile;
+      position: absolute;
+      right: $co-m-horizontal-nav__menu-item-link-padding-lr-mobile;
+      @media (min-width: $grid-float-breakpoint) {
+        left: $co-m-horizontal-nav__menu-item-link-padding-lr-desktop;
+        right: $co-m-horizontal-nav__menu-item-link-padding-lr-desktop;
+      }
+    }
+  }
   &.co-m-horizontal-nav-item--active {
     a,
     button {
       color: $color-highlight-blue;
-      position: relative;
       &::after {
         background: $color-highlight-blue;
-        bottom: 0;
-        content: "";
-        display: block;
-        height: 2px;
-        left: $co-m-horizontal-nav__menu-item-link-padding-lr-mobile;
-        position: absolute;
-        right: $co-m-horizontal-nav__menu-item-link-padding-lr-mobile;
-        @media (min-width: $grid-float-breakpoint) {
-          left: $co-m-horizontal-nav__menu-item-link-padding-lr-desktop;
-          right: $co-m-horizontal-nav__menu-item-link-padding-lr-desktop;
-        }
       }
     }
   }
@@ -48,7 +61,6 @@ $co-m-horizontal-nav__menu-item-link-padding-lr-mobile: 15px;
   button {
     background: none;
     border: none;
-    color: inherit;
     display: block;
     padding: 6px $co-m-horizontal-nav__menu-item-link-padding-lr-mobile 8px;
     text-decoration: none;
@@ -62,4 +74,14 @@ $co-m-horizontal-nav__menu-item-link-padding-lr-mobile: 15px;
 .co-m-horizontal-nav__menu-item--divider {
   border-left: 1px solid $color-grey-background-border;
   margin: 0 10px;
+}
+
+.overview__sidebar {
+  .co-m-horizontal-nav__menu {
+    padding: 0 20px;
+  }
+  .co-m-horizontal-nav__menu-item {
+    font-size: 16px;
+    line-height: normal;
+  }
 }

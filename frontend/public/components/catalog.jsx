@@ -3,10 +3,11 @@ import * as _ from 'lodash-es';
 import * as PropTypes from 'prop-types';
 import { Helmet } from 'react-helmet';
 
-import { FLAGS, connectToFlags, flagPending } from '../features';
-import { Firehose, PageHeading, StatusBox } from './utils';
 import { CatalogTileViewPage } from './catalog-items';
 import { serviceClassDisplayName } from '../module/k8s';
+import { withStartGuide } from './start-guide';
+import { FLAGS, connectToFlags, flagPending } from '../features';
+import { Firehose, PageHeading, StatusBox } from './utils';
 import {
   getAnnotationTags,
   getMostRecentBuilderTag,
@@ -136,7 +137,7 @@ CatalogListPage.propTypes = {
 
 // eventually may use namespace
 // eslint-disable-next-line no-unused-vars
-export const Catalog = connectToFlags(FLAGS.OPENSHIFT, FLAGS.SERVICE_CATALOG)(({namespace, flags}) => {
+export const Catalog = connectToFlags(FLAGS.OPENSHIFT, FLAGS.SERVICE_CATALOG)(({flags, mock, namespace}) => {
 
   if (flagPending(flags.OPENSHIFT) || flagPending(flags.SERVICE_CATALOG)) {
     return null;
@@ -159,7 +160,7 @@ export const Catalog = connectToFlags(FLAGS.OPENSHIFT, FLAGS.SERVICE_CATALOG)(({
       prop: 'imagestreams'
     });
   }
-  return <Firehose resources={resources}>
+  return <Firehose resources={mock ? [] : resources}>
     <CatalogListPage namespace={namespace} />
   </Firehose>;
 });
@@ -170,7 +171,7 @@ Catalog.propTypes = {
   namespace: PropTypes.string,
 };
 
-export const CatalogPage = ({match}) => {
+export const CatalogPage = withStartGuide(({match, noProjectsAvailable}) => {
   const namespace = _.get(match, 'params.ns');
   return <React.Fragment>
     <Helmet>
@@ -178,7 +179,7 @@ export const CatalogPage = ({match}) => {
     </Helmet>
     <div className="co-catalog">
       <PageHeading title="Catalog" />
-      <Catalog namespace={namespace} />
+      <Catalog namespace={namespace} mock={noProjectsAvailable} />
     </div>
   </React.Fragment>;
-};
+});

@@ -4,15 +4,14 @@ import * as classNames from 'classnames';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 
-import { coFetch, coFetchJSON } from '../co-fetch';
+import { EventsList } from './events';
 import { k8sBasePath } from '../module/k8s';
-import { StartGuide } from './start-guide';
-import { Gauge, prometheusBasePath, requirePrometheus } from './graphs';
-import { Status, errorStatus } from './graphs/status';
-import { EventStreamPage } from './events';
 import { SoftwareDetails } from './software-details';
+import { withStartGuide } from './start-guide';
+import { coFetch, coFetchJSON } from '../co-fetch';
+import { Status, errorStatus } from './graphs/status';
 import { FLAGS, connectToFlags, flagPending } from '../features';
-import { connectToURLs, MonitoringRoutes } from '../monitoring';
+import { Gauge, prometheusBasePath, requirePrometheus } from './graphs';
 import {
   AdditionalSupportLinks,
   AsyncComponent,
@@ -39,12 +38,10 @@ const fetchConsoleHealth = () => coFetchJSON('health')
 
 const DashboardLink = ({to, id}) => <Link id={id} className="co-external-link" target="_blank" to={to}>View Grafana Dashboard</Link>;
 
-const Graphs = requirePrometheus(connectToURLs(MonitoringRoutes.AlertManager)(({namespace, isOpenShift, urls}) => {
+const Graphs = requirePrometheus(({namespace, isOpenShift}) => {
   // TODO: Revert this change in OpenShift 4.0. In OpenShift 3.11, the scheduler and controller manager is a single component.
   const controllerManagerJob = isOpenShift ? 'kube-controllers' : 'kube-controller-manager';
   const schedulerJob = isOpenShift ? 'kube-controllers' : 'kube-scheduler';
-  const alertManagerURL = urls[MonitoringRoutes.AlertManager];
-  const alertsURL = alertManagerURL && `${alertManagerURL}/#/alerts`;
   return <React.Fragment>
     <div className="group">
       <div className="group__title">
@@ -64,21 +61,20 @@ const Graphs = requirePrometheus(connectToURLs(MonitoringRoutes.AlertManager)(({
               title="Alerts Firing"
               name="Alerts"
               query={`sum(ALERTS{alertstate="firing", alertname!="DeadMansSwitch" ${namespace ? `, namespace="${namespace}"` : ''}})`}
-              href={alertsURL} target="_blank" rel="noopener"
+              href="/monitoring"
             />
           </div>
           <div className="col-md-3 col-sm-6">
             <Status
               title="Crashlooping Pods"
               name="Pods"
-              query={`count(increase(kube_pod_container_status_restarts${namespace ? `{namespace="${namespace}"}` : ''}[1h]) > 5 )`}
+              query={`count(increase(kube_pod_container_status_restarts_total${namespace ? `{namespace="${namespace}"}` : ''}[1h]) > 5 )`}
               href={`/k8s/${namespace ? `ns/${namespace}` : 'all-namespaces'}/pods?rowFilter-pod-status=CrashLoopBackOff`}
             />
           </div>
         </div>
       </div>
     </div>
-
     { !namespace &&
       <div className="group">
         <div className="group__title">
@@ -103,7 +99,6 @@ const Graphs = requirePrometheus(connectToURLs(MonitoringRoutes.AlertManager)(({
         </div>
       </div>
     }
-
     { !namespace &&
       <div className="group">
         <div className="group__title">
@@ -129,12 +124,9 @@ const Graphs = requirePrometheus(connectToURLs(MonitoringRoutes.AlertManager)(({
       </div>
     }
   </React.Fragment>;
-}));
+});
 
-const LimitedGraphs = ({openshiftFlag}) => {
-  if (flagPending(openshiftFlag)) {
-    return null;
-  }
+const LimitedGraphs = () => {
   // Use the shorter 'OpenShift Console' instead of 'OpenShift Container Platform Console' since the title appears in the chart.
   const consoleName = window.SERVER_FLAGS.branding === 'okd' ? 'OKD Console' : 'OpenShift Console';
   return <div className="group">
@@ -154,20 +146,23 @@ const LimitedGraphs = ({openshiftFlag}) => {
   </div>;
 };
 
-const GraphsPage = ({fake, limited, namespace, openshiftFlag}) => {
-  if (flagPending(openshiftFlag)) {
+const GraphsPage = connectToFlags(FLAGS.OPENSHIFT)(({flags, mock, limited, namespace}) => {
+  const openShiftFlag = flags[FLAGS.OPENSHIFT];
+
+  if (flagPending(openShiftFlag)) {
     return null;
   }
-  const graphs = limited ? <LimitedGraphs namespace={namespace} openshiftFlag={openshiftFlag} /> : <Graphs namespace={namespace} />;
+
+  const graphs = limited ? <LimitedGraphs namespace={namespace} /> : <Graphs namespace={namespace} isOpenShift={openShiftFlag} />;
   const body = <div className="row">
     <div className="col-lg-8 col-md-12">
-      {!fake && graphs}
-      <div className={classNames('group', {'co-disabled': fake})}>
+      {!mock && graphs}
+      <div className={classNames('group', {'co-disabled': mock})}>
         <div className="group__title">
           <h2 className="h3">Events</h2>
         </div>
         <div className="group__body group__body--filter-bar">
-          <EventStreamPage namespace={namespace} showTitle={false} autoFocus={false} fake={fake} />
+          <EventsList namespace={namespace} showTitle={false} autoFocus={false} mock={mock} />
         </div>
       </div>
     </div>
@@ -199,14 +194,12 @@ const GraphsPage = ({fake, limited, namespace, openshiftFlag}) => {
     </div>
   </div>;
 
-  if (!namespace || fake) {
+  if (!namespace || mock) {
     return body;
   }
 
   const resources = [{
-    kind: openshiftFlag
-      ? 'Project'
-      : 'Namespace',
+    kind: openShiftFlag ? 'Project' : 'Namespace',
     name: namespace,
     isList: false,
     prop: 'data'
@@ -217,7 +210,7 @@ const GraphsPage = ({fake, limited, namespace, openshiftFlag}) => {
       { body }
     </StatusBox>
   </Firehose>;
-};
+});
 
 const permissionedLoader = () => {
   const AllGraphs = (props) => <GraphsPage {...props} />;
@@ -240,22 +233,16 @@ const permissionedLoader = () => {
     );
 };
 
-const ClusterOverviewPage_ = props => {
-  const { OPENSHIFT: openshiftFlag, PROJECTS_AVAILABLE: projectsFlag } = props.flags;
-  const fake = !flagPending(openshiftFlag) && !flagPending(projectsFlag) && openshiftFlag && !projectsFlag;
-  const namespace = _.get(props, 'match.params.ns');
+export const ClusterOverviewPage = withStartGuide(({match, noProjectsAvailable}) => {
+  const namespace = _.get(match, 'params.ns');
   const title = namespace ? `Status of ${ namespace }` : 'Cluster Status';
-
   return <React.Fragment>
-    <StartGuide dismissible={true} style={{margin: 15}} />
     <Helmet>
-      <title>{fake ? 'Overview' : title}</title>
+      <title>{noProjectsAvailable ? 'Overview' : title}</title>
     </Helmet>
-    <PageHeading title={fake ? 'Overview' : title} />
+    <PageHeading title={noProjectsAvailable ? 'Overview' : title} />
     <div className="cluster-overview-cell container-fluid">
-      <AsyncComponent namespace={namespace} loader={permissionedLoader} openshiftFlag={openshiftFlag} fake={fake} />
+      <AsyncComponent namespace={namespace} loader={permissionedLoader} mock={noProjectsAvailable} />
     </div>
   </React.Fragment>;
-};
-
-export const ClusterOverviewPage = connectToFlags(FLAGS.OPENSHIFT, FLAGS.PROJECTS_AVAILABLE)(ClusterOverviewPage_);
+}, true);

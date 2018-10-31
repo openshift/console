@@ -36,9 +36,9 @@ import {
 } from './utils';
 
 export const ReportReference: GroupVersionKind = referenceForModel(ChargebackReportModel);
-export const ScheduledReportReference: GroupVersionKind = 'chargeback.coreos.com:v1alpha1:ScheduledReport';
-export const ReportGenerationQueryReference: GroupVersionKind = 'chargeback.coreos.com:v1alpha1:ReportGenerationQuery';
-export const ReportPrometheusQueryReference: GroupVersionKind = 'chargeback.coreos.com:v1alpha1:ReportPrometheusQuery';
+export const ScheduledReportReference: GroupVersionKind = 'chargeback.coreos.com~v1alpha1~ScheduledReport';
+export const ReportGenerationQueryReference: GroupVersionKind = 'chargeback.coreos.com~v1alpha1~ReportGenerationQuery';
+export const ReportPrometheusQueryReference: GroupVersionKind = 'chargeback.coreos.com~v1alpha1~ReportPrometheusQuery';
 
 const reportPages=[
   {name: 'All Reports', href: ReportReference},
@@ -393,7 +393,7 @@ const ReportsPage_: React.SFC<ReportsPageProps> = props => {
         <button className="btn btn-info">Installing Chargeback Report <i className="fa fa-external-link" /></button>
       </a>
     </div>
-    <ListPage {...props} title="Chargeback Reporting" kind={ReportReference} ListComponent={ReportsList} canCreate={true} fake={true} />
+    <ListPage {...props} canCreate kind={ReportReference} ListComponent={ReportsList} mock title="Chargeback Reporting" />
     <div style={{marginTop: '-60px', textAlign: 'center'}}>
       <EmptyMsg />
     </div>
