@@ -7,7 +7,7 @@ import {CatalogTile} from 'patternfly-react-extensions/dist/esm/components/Catal
 
 import {Firehose, PageHeading, StatusBox} from '../utils';
 import {referenceForModel} from '../../module/k8s';
-import {normalizeIconClass} from '../catalog-item-icon';
+import {normalizeIconClass} from '../catalog/catalog-item-icon';
 import {PackageManifestModel} from '../../models';
 import {MarketplaceItemModal} from './marketplace-item-modal';
 
