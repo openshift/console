@@ -80,3 +80,9 @@
 .contextselector-pf .bootstrap-select > .dropdown-menu {
   min-width: 100%;
 }
+
+
+.pf-c-dropdown__toggle .pf-user-icon {
+  margin-right: var(--pf-global--spacer--md);
+  font-size: .9em;
+}
