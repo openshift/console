@@ -288,7 +288,7 @@ const MonitoringNavSection_ = ({urls, closeMenu}) => {
     </NavSection>
     : null;
 };
-const MonitoringNavSection = connectToURLs(MonitoringRoutes.Prometheus, MonitoringRoutes.AlertManager, MonitoringRoutes.Grafana)(MonitoringNavSection_);
+const MonitoringNavSection = connectToURLs(MonitoringRoutes.Prometheus, MonitoringRoutes.Grafana)(MonitoringNavSection_);
 
 const UserNavSection = connectToFlags(FLAGS.AUTH_ENABLED, FLAGS.OPENSHIFT)(({flags, closeMenu}) => {
   if (!flags[FLAGS.AUTH_ENABLED] || flagPending(flags[FLAGS.OPENSHIFT])) {
