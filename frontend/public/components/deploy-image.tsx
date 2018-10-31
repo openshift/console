@@ -322,15 +322,16 @@ export class DeployImage extends React.Component<DeployImageProps, DeployImageSt
           </div>
           <p>Deploy an existing image from an {/*image stream tag or */} image registry.</p>
           <div className="form-group co-deploy-image__image-name">
-            <label htmlFor="imageName">Image Name</label>
+            <label htmlFor="image-name">Image Name</label>
             <div className="input-group">
               <input className="form-control"
                 type="search"
                 onChange={this.onImageNameChange}
                 onKeyDown={this.onKeyPress}
                 value={this.state.imageName}
-                id="imageName"
-                name="imageName" />
+                id="image-name"
+                name="imageName"
+                aria-describedby="image-name-help" />
               <span className="input-group-btn">
                 <button type="button" className="btn btn-default" onClick={this.search} disabled={!this.state.imageName}>
                   <i className="fa fa-search" aria-hidden="true"></i>
@@ -338,7 +339,7 @@ export class DeployImage extends React.Component<DeployImageProps, DeployImageSt
                 </button>
               </span>
             </div>
-            <div className="help-block">
+            <div className="help-block" id="image-name-help">
               To deploy an image from a private repository, you must <Link to={`/k8s/ns/${this.state.namespace || 'default'}/secrets/new/image`}>create an image pull secret</Link> with your image registry credentials.
             </div>
           </div>

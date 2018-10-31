@@ -245,8 +245,9 @@ export class CreateRoute extends React.Component<null, CreateRouteState> {
               placeholder="my-route"
               id="name"
               name="name"
+              aria-describedby="name-help"
               required />
-            <div className="help-block">
+            <div className="help-block" id="name-help">
               A unique name for the route within the project.
             </div>
           </div>
@@ -258,8 +259,9 @@ export class CreateRoute extends React.Component<null, CreateRouteState> {
               value={this.state.hostname}
               placeholder="www.example.com"
               id="hostname"
-              name="hostname" />
-            <div className="help-block">
+              name="hostname"
+              aria-describedby="hostname-help" />
+            <div className="help-block" id="hostname-help">
               <p>Public hostname for the route.  If not specified, a hostname is generated.</p>
               <p>The hostname cannot be changed after the route is created.</p>
               {/* TODO:  add additional wildcard help text from https://github.com/openshift/origin-web-console/blob/master/app/views/directives/osc-routing.html#L65-L67 */}
@@ -273,24 +275,25 @@ export class CreateRoute extends React.Component<null, CreateRouteState> {
               value={this.state.path}
               placeholder="/"
               id="path"
-              name="path" />
-            <div className="help-block">
+              name="path"
+              aria-describedby="path-help" />
+            <div className="help-block" id="path-help">
               Path that the router watches to route traffic to the service.
             </div>
           </div>
           <div className="form-group co-create-route__service">
             <label className="co-required" htmlFor="service">Service</label>
             {(loaded && _.isEmpty(serviceOptions)) && <p className="alert alert-info co-create-route__alert"><span className="pficon pficon-info" aria-hidden="true"></span> There are no services in your project to expose with a route.</p> }
-            {(loaded && !_.isEmpty(serviceOptions)) && <Dropdown items={serviceOptions} title={service ? serviceOptions[service.metadata.name] : 'Select a service'} dropDownClassName="dropdown--full-width" id="service" onChange={this.changeService} /> }
-            <div className="help-block">
+            {(loaded && !_.isEmpty(serviceOptions)) && <Dropdown items={serviceOptions} title={service ? serviceOptions[service.metadata.name] : 'Select a service'} dropDownClassName="dropdown--full-width" id="service" onChange={this.changeService} describedBy="service-help" /> }
+            <div className="help-block" id="service-help">
               Service to route to.
             </div>
           </div>
           <div className="form-group co-create-route__target-port">
             <label className="co-required" htmlFor="target-port">Target Port</label>
             {_.isEmpty(portOptions) && <p>Select a service above</p>}
-            {!_.isEmpty(portOptions) && <Dropdown items={portOptions} title={portOptions[targetPort] || 'Select target port'} dropDownClassName="dropdown--full-width" id="target-port" onChange={this.changeTargetPort} /> }
-            <div className="help-block">
+            {!_.isEmpty(portOptions) && <Dropdown items={portOptions} title={portOptions[targetPort] || 'Select target port'} dropDownClassName="dropdown--full-width" id="target-port" onChange={this.changeTargetPort} describedBy="target-port-help" /> }
+            <div className="help-block" id="target-port-help">
               Target port for traffic.
             </div>
           </div>
@@ -301,10 +304,11 @@ export class CreateRoute extends React.Component<null, CreateRouteState> {
                 onChange={this.toggleSection}
                 checked={this.state.secure}
                 id="secure"
-                name="secure" />
+                name="secure"
+                aria-describedby="secure-help" />
               Secure route
             </label>
-            <div className="help-block">
+            <div className="help-block" id="secure-help">
               <p>Routes can be secured using several TLS termination types for serving certificates.</p>
             </div>
           </div>
@@ -315,8 +319,8 @@ export class CreateRoute extends React.Component<null, CreateRouteState> {
             </div>
             <div className="form-group co-create-route__insecure-traffic">
               <label className="co-required" htmlFor="insecure-traffic">Insecure Traffic</label>
-              <Dropdown items={termination === 'passthrough' ? passthroughInsecureTrafficTypes : insecureTrafficTypes} title="Select insecure traffic type" dropDownClassName="dropdown--full-width" id="insecure-traffic" onChange={this.changeInsecureTraffic} />
-              <div className="help-block">
+              <Dropdown items={termination === 'passthrough' ? passthroughInsecureTrafficTypes : insecureTrafficTypes} title="Select insecure traffic type" dropDownClassName="dropdown--full-width" id="insecure-traffic" onChange={this.changeInsecureTraffic} describedBy="insecure-traffic-help" />
+              <div className="help-block" id="insecure-traffic-help">
                 Policy for traffic on insecure schemes like HTTP.
               </div>
             </div>

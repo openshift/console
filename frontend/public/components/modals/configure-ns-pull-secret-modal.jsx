@@ -196,8 +196,8 @@ class ConfigureNamespacePullSecret extends PromiseComponent {
               <ResourceIcon kind="Secret" className="co-m-resource-icon--align-left" />
                 &nbsp;{_.get(pullSecret, 'metadata.name')}
             </div> : <div className="col-xs-9">
-              <input type="text" className="form-control" id="namespace-pull-secret-name" required />
-              <p className="help-block text-muted">Friendly name to help you manage this in the future</p>
+              <input type="text" className="form-control" id="namespace-pull-secret-name" aria-describedby="namespace-pull-secret-name-help" required />
+              <p className="help-block text-muted" id="namespace-pull-secret-name-help">Friendly name to help you manage this in the future</p>
             </div>
           }
         </div>
@@ -241,8 +241,8 @@ class ConfigureNamespacePullSecret extends PromiseComponent {
               <label htmlFor="namespace-pull-secret-email">Email Address</label>
             </div>
             <div className="col-xs-9">
-              <input type="email" className="form-control" defaultValue={existingData.email} id="namespace-pull-secret-email" />
-              <p className="help-block text-muted">Optional, depending on registry provider</p>
+              <input type="email" className="form-control" defaultValue={existingData.email} id="namespace-pull-secret-email" aria-describedby="namespace-pull-secret-email-help" />
+              <p className="help-block text-muted" id="namespace-pull-secret-email-help">Optional, depending on registry provider</p>
             </div>
           </div>
           <div className="row co-m-form-row">
@@ -269,8 +269,8 @@ class ConfigureNamespacePullSecret extends PromiseComponent {
               <label htmlFor="namespace-pull-secret-file">File Upload</label>
             </div>
             <div className="col-xs-9">
-              <input type="file" id="namespace-pull-secret-file" onChange={this._onFileChange} />
-              <p className="help-block etext-muted">Properly configured Docker config file in JSON format. Will be base64 encoded after upload.</p>
+              <input type="file" id="namespace-pull-secret-file" onChange={this._onFileChange} aria-describedby="namespace-pull-secret-file-help" />
+              <p className="help-block etext-muted" id="namespace-pull-secret-file-help">Properly configured Docker config file in JSON format. Will be base64 encoded after upload.</p>
             </div>
           </div>
           { this.state.invalidJson || existingData.invalidJson && <div className="row co-m-form-row">
