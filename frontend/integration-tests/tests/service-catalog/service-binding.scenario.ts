@@ -11,7 +11,7 @@ import * as crudView from '../../views/crud.view';
 describe('Test for Cluster Service Binding', () => {
   beforeAll(async() => {
     browser.get(`${appHost}/status/ns/${testName}`);
-    await browser.wait(until.presenceOf($('#sidebar')));
+    await browser.wait(until.presenceOf($('.pf-c-nav')));
   });
 
   afterEach(() => {

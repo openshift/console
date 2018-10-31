@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import { safeDump, safeLoad } from 'js-yaml';
-import { $, $$, browser, by, element, ExpectedConditions as until } from 'protractor';
+import { $, $$, browser, by, ExpectedConditions as until } from 'protractor';
 
 import * as yamlView from './yaml.view';
 import { appHost, testName } from '../protractor.conf';
@@ -108,7 +108,7 @@ export const resourceTitle = $('#resource-title');
 
 export const nameFilter = $('.form-control.text-filter');
 export const messageLbl = $('.cos-status-box');
-export const modalAnnotationsLink = element(by.partialLinkText('Annotation'));
+export const modalAnnotationsLink = $('.loading-box__loaded').element(by.partialLinkText('Annotation'));
 
 export const visitResource = async(resource: string, name: string) => {
   await browser.get(`${appHost}/k8s/ns/${testName}/${resource}/${name}`);

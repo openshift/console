@@ -1,11 +1,10 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
 import * as PropTypes from 'prop-types';
 
-import { FLAGS, connectToFlags, featureReducerName, flagPending } from '../features';
+import { FLAGS, featureReducerName, flagPending } from '../features';
 import { MonitoringRoutes, connectToURLs } from '../monitoring';
 import { formatNamespacedRouteForResource } from '../ui/ui-actions';
 import {
@@ -22,25 +21,22 @@ import {
   SubscriptionModel,
 } from '../models';
 import { referenceForModel } from '../module/k8s';
-import { authSvc } from '../module/auth';
 
-import * as operatorImg from '../imgs/operator.svg';
-import * as operatorActiveImg from '../imgs/operator-active.svg';
-import * as routingImg from '../imgs/routing.svg';
-import * as routingActiveImg from '../imgs/routing-active.svg';
 import { history, stripBasePath } from './utils';
 
 export const matchesPath = (resourcePath, prefix) => resourcePath === prefix || _.startsWith(resourcePath, `${prefix}/`);
 export const matchesModel = (resourcePath, model) => model && matchesPath(resourcePath, referenceForModel(model));
+
+import { Nav, NavExpandable, NavItem, NavList, PageSidebar } from '@patternfly/react-core';
 
 const stripNS = href => {
   href = stripBasePath(href);
   return href.replace(/^\/?k8s\//, '').replace(/^\/?(cluster|all-namespaces|ns\/[^/]*)/, '').replace(/^\//, '');
 };
 
-const ExternalLink = ({href, name, onClick}) => <li className="co-m-nav-link co-m-nav-link__external">
-  <a className="co-external-link" href={href} onClick={onClick} target="_blank">{name}</a>
-</li>;
+const ExternalLink = ({href, name}) => <NavItem isActive={false}>
+  <a className="pf-c-nav__link" href={href} target="_blank">{name}<span className="co-external-link"></span></a>
+</NavItem>;
 
 class NavLink extends React.PureComponent {
   static isActive() {
@@ -58,9 +54,20 @@ class NavLink extends React.PureComponent {
   render() {
     const { isActive, id, name, onClick } = this.props;
 
-    return <li className={classNames('co-m-nav-link', {active: isActive})}>
-      <Link id={id} to={this.to} onClick={onClick}>{name}</Link>
-    </li>;
+    // onClick is now handled globally by the Nav's onSelect,
+    // however onClick can still be passed if desired in certain cases
+
+    return (
+      <NavItem isActive={isActive}>
+        <Link
+          id={id}
+          to={this.to}
+          onClick={onClick}
+        >
+          {name}
+        </Link>
+      </NavItem>
+    );
   }
 }
 
@@ -73,7 +80,6 @@ NavLink.propTypes = {
   required: PropTypes.string,
   disallowed: PropTypes.string,
 };
-
 
 class ResourceNSLink extends NavLink {
   static isActive(props, resourcePath, activeNamespace) {
@@ -177,6 +183,7 @@ const NavSection = connect(navSectionStateToProps)(
 
       const resourcePath = location ? stripNS(location) : '';
 
+      //current bug? - we should be checking if children is a single item or .filter is undefined
       return children.filter(c => {
         if (!c) {
           return false;
@@ -225,20 +232,9 @@ const NavSection = connect(navSectionStateToProps)(
         return null;
       }
 
-      const { id, icon, img, text, children, activeNamespace, flags, href = null, activeImg, klass } = this.props;
-      const { isOpen } = this.state;
-      const isActive = !!this.state.activeChild;
-      // WARNING:
-      // we transition on max-height because you can't transition to height 'inherit'
-      // however, the transition animiation is calculated on the actual max-height, so it must be roughly equal to the actual height
-      // we could use scaleY, but that literally scales along the Y axis, ie shrinks
-      // we could use flexbox or the equivalent to get an actual height, but this is the easiest solution :-/
-
-      const maxHeight = !this.state.isOpen ? 0 : 27 * _.get(this.props.children, 'length', 1);
-
-      const iconClassName = 'navigation-container__section__title__icon';
-
-      const fontIconClassNames = icon && `${icon} ${iconClassName} ${isActive ? 'navigation-container__section__title__icon--active' : ''}`;
+      const { title, children, activeNamespace, flags } = this.props;
+      const { isOpen, activeChild } = this.state;
+      const isActive = !!activeChild;
 
       const Children = React.Children.map(children, c => {
         if (!c) {
@@ -254,27 +250,15 @@ const NavSection = connect(navSectionStateToProps)(
         return React.cloneElement(c, {key: name, isActive: name === this.state.activeChild, activeNamespace});
       });
 
-      return <div className={classNames('navigation-container__section', klass, {'navigation-container--active': isActive, 'navigation-container--open': isOpen})}>
-        <div id={id} className={classNames('navigation-container__section__title', {'navigation-container__section__title--active': isActive, 'navigation-container__section__title--active-closed': (isActive && !isOpen), 'navigation-container__section__title--active-open': (isActive && isOpen), 'navigation-container__section__title--inactive-open': (!isActive && isOpen)})} onClick={this.toggle}>
-          {icon && <i className={fontIconClassNames} aria-hidden="true"></i>}
-          {img && <img className={iconClassName} src={isActive && activeImg ? activeImg : img} />}
-          <div className="navigation-container__section__title__text">
-            { !href
-              ? text
-              : <Link className="navigation-container__section__title__link" to={href} onClick={this.open}>{text}</Link>
-            }
-          </div>
-          {children && <i className={classNames('icon fa fa-angle-right', isOpen ? 'navigation-container__section--open' : '')} aria-hidden="true" />}
-        </div>
-        {Children && <ul className={classNames('navigation-container__list', {'navigation-container__list--open': isOpen})} style={{maxHeight}}>{Children}</ul>}
-      </div>;
+      return Children ? (
+        <NavExpandable title={title} isActive={isActive} isExpanded={isOpen}>
+          {Children}
+        </NavExpandable>
+      ) : null;
     }
   }
 );
 
-const Sep = () => <div className="navigation-container__separator" />;
-
-// HrefLinks are PureComponents...
 const searchStartsWith = ['search'];
 const rolesStartsWith = ['roles', 'clusterroles'];
 const rolebindingsStartsWith = ['rolebindings', 'clusterrolebindings'];
@@ -282,176 +266,109 @@ const quotaStartsWith = ['resourcequotas', 'clusterresourcequotas'];
 const imagestreamsStartsWith = ['imagestreams', 'imagestreamtags'];
 const monitoringAlertsStartsWith = ['monitoring/alerts', 'monitoring/alertrules'];
 
-const MonitoringNavSection_ = ({urls, closeMenu}) => {
+const MonitoringNavSection_ = ({ urls }) => {
   const prometheusURL = urls[MonitoringRoutes.Prometheus];
   const grafanaURL = urls[MonitoringRoutes.Grafana];
-  return window.SERVER_FLAGS.prometheusBaseURL || window.SERVER_FLAGS.alertManagerBaseURL || prometheusURL || grafanaURL
-    ? <NavSection text="Monitoring" icon="pficon pficon-screen">
-      {window.SERVER_FLAGS.prometheusBaseURL && <HrefLink href="/monitoring/alerts" name="Alerts" onClick={closeMenu} startsWith={monitoringAlertsStartsWith} />}
-      {window.SERVER_FLAGS.alertManagerBaseURL && <HrefLink href="/monitoring/silences" name="Silences" onClick={closeMenu} />}
-      {prometheusURL && <ExternalLink href={prometheusURL} name="Metrics" onClick={closeMenu} />}
-      {grafanaURL && <ExternalLink href={grafanaURL} name="Dashboards" onClick={closeMenu} />}
+  return window.SERVER_FLAGS.prometheusBaseURL || prometheusURL || grafanaURL
+    ? <NavSection title="Monitoring">
+      {window.SERVER_FLAGS.prometheusBaseURL && <HrefLink href="/monitoring/alerts" name="Alerts" startsWith={monitoringAlertsStartsWith} />}
+      {window.SERVER_FLAGS.alertManagerBaseURL && <HrefLink href="/monitoring/silences" name="Silences" />}
+      {prometheusURL && <ExternalLink href={prometheusURL} name="Metrics" />}
+      {grafanaURL && <ExternalLink href={grafanaURL} name="Dashboards" />}
     </NavSection>
     : null;
 };
 const MonitoringNavSection = connectToURLs(MonitoringRoutes.Prometheus, MonitoringRoutes.Grafana)(MonitoringNavSection_);
 
-const UserNavSection = connectToFlags(FLAGS.AUTH_ENABLED, FLAGS.OPENSHIFT)(({flags}) => {
-  if (!flags[FLAGS.AUTH_ENABLED] || flagPending(flags[FLAGS.OPENSHIFT])) {
-    return null;
-  }
+export const Navigation = ({ isNavOpen, onNavSelect }) => {
+  const PageNav = (
+    <Nav aria-label="Nav" onSelect={onNavSelect}>
+      <NavList>
+        <NavSection title="Home">
+          <ResourceClusterLink resource="projects" name="Projects" required={FLAGS.OPENSHIFT} />
+          {
+            // Show different status pages based on OpenShift vs native Kubernetes.
+            // TODO: Make Overview work on native Kubernetes. It currently assumes OpenShift resources.
+          }
+          <HrefLink href="/overview" name="Status" activePath="/overview/" required={FLAGS.OPENSHIFT} />
+          <HrefLink href="/status" name="Status" activePath="/status/" disallowed={FLAGS.OPENSHIFT} />
+          <HrefLink href="/catalog" name="Catalog" activePath="/catalog/" />
+          <HrefLink href="/search" name="Search" startsWith={searchStartsWith} />
+          <ResourceNSLink resource="events" name="Events" />
+        </NavSection>
 
-  const logout = e => {
-    e && e.preventDefault();
-    if (flags[FLAGS.OPENSHIFT]) {
-      authSvc.deleteOpenShiftToken().then(() => authSvc.logout());
-    } else {
-      authSvc.logout();
-    }
-  };
+        <NavSection required={FLAGS.OPERATOR_LIFECYCLE_MANAGER} title="Operators">
+          <HrefLink required={FLAGS.KUBERNETES_MARKETPLACE} href="/marketplace" name="Kubernetes Marketplace" activePath="/marketplace/" />
+          <ResourceNSLink model={ClusterServiceVersionModel} resource={ClusterServiceVersionModel.plural} name="Cluster Service Versions" />
+          <ResourceNSLink model={PackageManifestModel} resource={PackageManifestModel.plural} name="Package Manifests" />
+          <ResourceNSLink model={SubscriptionModel} resource={SubscriptionModel.plural} name="Subscriptions" />
+          <ResourceNSLink model={InstallPlanModel} resource={InstallPlanModel.plural} name="Install Plans" />
+        </NavSection>
 
-  return <NavSection text="Logout" icon="pficon pficon-user" klass="visible-xs-block" onClick={logout} />;
-});
+        <NavSection title="Workloads">
+          <ResourceNSLink resource="pods" name="Pods" />
+          <ResourceNSLink resource="deployments" name="Deployments" />
+          <ResourceNSLink resource="deploymentconfigs" name={DeploymentConfigModel.labelPlural} required={FLAGS.OPENSHIFT} />
+          <ResourceNSLink resource="statefulsets" name="Stateful Sets" />
+          <ResourceNSLink resource="secrets" name="Secrets" />
+          <ResourceNSLink resource="configmaps" name="Config Maps" />
+          <ResourceNSLink resource="cronjobs" name="Cron Jobs" />
+          <ResourceNSLink resource="jobs" name="Jobs" />
+          <ResourceNSLink resource="daemonsets" name="Daemon Sets" />
+          <ResourceNSLink resource="replicasets" name="Replica Sets" />
+          <ResourceNSLink resource="replicationcontrollers" name="Replication Controllers" />
+          <ResourceNSLink resource="horizontalpodautoscalers" name="HPAs" />
+        </NavSection>
 
-export class Nav extends React.Component {
-  constructor(props) {
-    super(props);
-    this.scroller = React.createRef();
-    this.preventScroll = e => this.preventScroll_(e);
-    this.close = () => this.close_();
-    this.toggle = () => this.toggle_();
+        <NavSection title="Networking">
+          <ResourceNSLink resource="services" name="Services" />
+          <ResourceNSLink resource="routes" name="Routes" required={FLAGS.OPENSHIFT} />
+          <ResourceNSLink resource="ingresses" name="Ingress" />
+          <ResourceNSLink resource="networkpolicies" name="Network Policies" />
+        </NavSection>
 
-    this.state = {
-      isOpen: false,
-    };
-  }
+        <NavSection title="Storage">
+          <ResourceClusterLink resource="persistentvolumes" name="Persistent Volumes" required={FLAGS.CAN_LIST_PV} />
+          <ResourceNSLink resource="persistentvolumeclaims" name="Persistent Volume Claims" />
+          <ResourceClusterLink resource="storageclasses" name="Storage Classes" />
+        </NavSection>
 
-  // Edge disobeys the spec and doesn't fire off wheel events: https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/7134034/
-  // TODO maybe bind to touch events or something? (onpointermove)
-  preventScroll_(e) {
-    const elem = this.scroller.current;
+        <NavSection title="Builds" required={FLAGS.OPENSHIFT}>
+          <ResourceNSLink resource="buildconfigs" name={BuildConfigModel.labelPlural} />
+          <ResourceNSLink resource="builds" name={BuildModel.labelPlural} />
+          <ResourceNSLink resource="imagestreams" name={ImageStreamModel.labelPlural} startsWith={imagestreamsStartsWith} />
+        </NavSection>
 
-    const scrollTop = elem.scrollTop; // scroll position
-    const scrollHeight = elem.scrollHeight; // height of entire area
-    const height = elem.offsetHeight; // height of visible area
-    const delta = e.deltaY; // how far we scrolled up/down
+        <NavSection title="Service Catalog" required={FLAGS.SERVICE_CATALOG}>
+          <ResourceClusterLink resource="clusterservicebrokers" name="Service Brokers" />
+          <ResourceClusterLink resource="clusterserviceclasses" name="Service Classes" />
+          <ResourceNSLink resource="serviceinstances" name="Service Instances" />
+          <ResourceNSLink resource="servicebindings" name="Service Bindings" />
+        </NavSection>
 
-    const atBottom = delta > 0 && delta + scrollTop + height >= scrollHeight;
-    const atTop = delta < 0 && scrollTop + delta <= 0;
-    if (atTop || atBottom) {
-      // Prevent scroll on body
-      e.stopPropagation();
-      e.preventDefault();
-      return false;
-    }
-  }
+        <MonitoringNavSection />
 
-  close_() {
-    this.setState({isOpen: false});
-  }
+        <NavSection title="Administration">
+          <ResourceClusterLink resource="namespaces" name="Namespaces" required={FLAGS.CAN_LIST_NS} />
+          <ResourceClusterLink resource="nodes" name="Nodes" required={FLAGS.CAN_LIST_NODE} />
+          <ResourceNSLink resource={referenceForModel(MachineSetModel)} name="Machine Sets" required={FLAGS.CLUSTER_API} />
+          <ResourceNSLink resource={referenceForModel(MachineModel)} name="Machines" required={FLAGS.CLUSTER_API} />
+          <HrefLink href="/settings/cluster" activePath="/settings/cluster/" name="Cluster Settings" required={FLAGS.CLUSTER_VERSION} />
+          <ResourceNSLink resource="serviceaccounts" name="Service Accounts" />
+          <ResourceNSLink resource="roles" name="Roles" startsWith={rolesStartsWith} />
+          <ResourceNSLink resource="rolebindings" name="Role Bindings" startsWith={rolebindingsStartsWith} />
+          <ResourceNSLink resource="resourcequotas" name="Resource Quotas" startsWith={quotaStartsWith} />
+          <ResourceNSLink resource="limitranges" name="Limit Ranges" />
+          <ResourceNSLink resource={referenceForModel(ChargebackReportModel)} name="Chargeback" disallowed={FLAGS.OPENSHIFT} />
+          <ResourceClusterLink resource="customresourcedefinitions" name="CRDs" required={FLAGS.CAN_LIST_CRD} />
+        </NavSection>
+      </NavList>
+    </Nav>
+  );
+  return <PageSidebar nav={PageNav} isNavOpen={isNavOpen} />;
+};
 
-  toggle_() {
-    const { isOpen } = this.state;
-    this.setState({isOpen: !isOpen});
-  }
-
-  render() {
-    const { isOpen } = this.state;
-
-
-    return <React.Fragment>
-      <button type="button" className="sidebar-toggle" aria-controls="sidebar" aria-expanded={isOpen} onClick={this.toggle}>
-        <span className="sr-only">Toggle navigation</span>
-        <span className="icon-bar" aria-hidden="true"></span>
-        <span className="icon-bar" aria-hidden="true"></span>
-        <span className="icon-bar" aria-hidden="true"></span>
-      </button>
-      <div id="sidebar" className={classNames({'open': isOpen})}>
-        <div ref={this.scroller} onWheel={this.preventScroll} className="navigation-container">
-          <NavSection text="Home" icon="pficon pficon-home">
-            <ResourceClusterLink resource="projects" name="Projects" onClick={this.close} required={FLAGS.OPENSHIFT} />
-            {
-              // Show different status pages based on OpenShift vs native Kubernetes.
-              // TODO: Make Overview work on native Kubernetes. It currently assumes OpenShift resources.
-            }
-            <HrefLink href="/overview" name="Status" activePath="/overview/" onClick={this.close} required={FLAGS.OPENSHIFT} />
-            <HrefLink href="/status" name="Status" activePath="/status/" onClick={this.close} disallowed={FLAGS.OPENSHIFT} />
-            <HrefLink href="/catalog" name="Catalog" activePath="/catalog/" onClick={this.close} />
-            <HrefLink href="/search" name="Search" onClick={this.close} startsWith={searchStartsWith} />
-            <ResourceNSLink resource="events" name="Events" onClick={this.close} />
-          </NavSection>
-
-          <NavSection required={FLAGS.OPERATOR_LIFECYCLE_MANAGER} text="Operators" img={operatorImg} activeImg={operatorActiveImg} >
-            <HrefLink required={FLAGS.KUBERNETES_MARKETPLACE} href="/marketplace" name="Kubernetes Marketplace" activePath="/marketplace/" onClick={this.close} />
-            <ResourceNSLink model={ClusterServiceVersionModel} resource={ClusterServiceVersionModel.plural} name="Cluster Service Versions" onClick={this.close} />
-            <Sep />
-            <ResourceNSLink model={PackageManifestModel} resource={PackageManifestModel.plural} name="Package Manifests" onClick={this.close} />
-            <ResourceNSLink model={SubscriptionModel} resource={SubscriptionModel.plural} name="Subscriptions" onClick={this.close} />
-            <ResourceNSLink model={InstallPlanModel} resource={InstallPlanModel.plural} name="Install Plans" onClick={this.close} />
-          </NavSection>
-
-          <NavSection text="Workloads" icon="fa fa-folder-open-o">
-            <ResourceNSLink resource="pods" name="Pods" onClick={this.close} />
-            <ResourceNSLink resource="deployments" name="Deployments" onClick={this.close} />
-            <ResourceNSLink resource="deploymentconfigs" name={DeploymentConfigModel.labelPlural} onClick={this.close} required={FLAGS.OPENSHIFT} />
-            <ResourceNSLink resource="statefulsets" name="Stateful Sets" onClick={this.close} />
-            <ResourceNSLink resource="secrets" name="Secrets" onClick={this.close} />
-            <ResourceNSLink resource="configmaps" name="Config Maps" onClick={this.close} />
-            <Sep />
-            <ResourceNSLink resource="cronjobs" name="Cron Jobs" onClick={this.close} />
-            <ResourceNSLink resource="jobs" name="Jobs" onClick={this.close} />
-            <ResourceNSLink resource="daemonsets" name="Daemon Sets" onClick={this.close} />
-            <ResourceNSLink resource="replicasets" name="Replica Sets" onClick={this.close} />
-            <ResourceNSLink resource="replicationcontrollers" name="Replication Controllers" onClick={this.close} />
-            <ResourceNSLink resource="horizontalpodautoscalers" name="HPAs" onClick={this.close} />
-          </NavSection>
-
-          <NavSection text="Networking" img={routingImg} activeImg={routingActiveImg} >
-            <ResourceNSLink resource="services" name="Services" onClick={this.close} />
-            <ResourceNSLink resource="routes" name="Routes" onClick={this.close} required={FLAGS.OPENSHIFT} />
-            <ResourceNSLink resource="ingresses" name="Ingress" onClick={this.close} />
-            <ResourceNSLink resource="networkpolicies" name="Network Policies" onClick={this.close} />
-          </NavSection>
-
-          <NavSection text="Storage" icon="pficon pficon-container-node">
-            <ResourceClusterLink resource="persistentvolumes" name="Persistent Volumes" onClick={this.close} required={FLAGS.CAN_LIST_PV} />
-            <ResourceNSLink resource="persistentvolumeclaims" name="Persistent Volume Claims" onClick={this.close} />
-            <ResourceClusterLink resource="storageclasses" name="Storage Classes" onClick={this.close} />
-          </NavSection>
-
-          <NavSection text="Builds" icon="pficon pficon-build" required={FLAGS.OPENSHIFT}>
-            <ResourceNSLink resource="buildconfigs" name={BuildConfigModel.labelPlural} onClick={this.close} />
-            <ResourceNSLink resource="builds" name={BuildModel.labelPlural} onClick={this.close} />
-            <ResourceNSLink resource="imagestreams" name={ImageStreamModel.labelPlural} onClick={this.close} startsWith={imagestreamsStartsWith} />
-          </NavSection>
-
-          <NavSection text="Service Catalog" icon="pficon pficon-catalog" required={FLAGS.SERVICE_CATALOG} >
-            <ResourceClusterLink resource="clusterservicebrokers" name="Service Brokers" onClick={this.close} />
-            <ResourceClusterLink resource="clusterserviceclasses" name="Service Classes" onClick={this.close} />
-            <ResourceNSLink resource="serviceinstances" name="Service Instances" onClick={this.close} />
-            <ResourceNSLink resource="servicebindings" name="Service Bindings" onClick={this.close} />
-          </NavSection>
-
-          <MonitoringNavSection closeMenu={this.close} />
-
-          <NavSection text="Administration" icon="fa fa-cog">
-            <ResourceClusterLink resource="namespaces" name="Namespaces" onClick={this.close} required={FLAGS.CAN_LIST_NS} />
-            <ResourceClusterLink resource="nodes" name="Nodes" onClick={this.close} required={FLAGS.CAN_LIST_NODE} />
-            <ResourceNSLink resource={referenceForModel(MachineSetModel)} name="Machine Sets" onClick={this.close} required={FLAGS.CLUSTER_API} />
-            <ResourceNSLink resource={referenceForModel(MachineModel)} name="Machines" onClick={this.close} required={FLAGS.CLUSTER_API} />
-            <HrefLink href="/settings/cluster" activePath="/settings/cluster/" name="Cluster Settings" onClick={this.close} required={FLAGS.CLUSTER_VERSION} />
-            <ResourceNSLink resource="serviceaccounts" name="Service Accounts" onClick={this.close} />
-            <ResourceNSLink resource="roles" name="Roles" startsWith={rolesStartsWith} onClick={this.close} />
-            <ResourceNSLink resource="rolebindings" name="Role Bindings" onClick={this.close} startsWith={rolebindingsStartsWith} />
-            <ResourceNSLink resource="resourcequotas" name="Resource Quotas" onClick={this.close} startsWith={quotaStartsWith} />
-            <ResourceNSLink resource="limitranges" name="Limit Ranges" onClick={this.close} />
-            <ResourceNSLink resource={referenceForModel(ChargebackReportModel)} name="Chargeback" onClick={this.close} disallowed={FLAGS.OPENSHIFT} />
-            <ResourceClusterLink resource="customresourcedefinitions" name="CRDs" onClick={this.close} required={FLAGS.CAN_LIST_CRD} />
-          </NavSection>
-
-          <UserNavSection closeMenu={this.close} />
-        </div>
-      </div>
-    </React.Fragment>;
-  }
-}
+Navigation.propTypes = {
+  isNavOpen: PropTypes.bool,
+  onNavSelect: PropTypes.func,
+};

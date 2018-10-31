@@ -312,10 +312,11 @@ class NamespaceBarDropdowns_ extends React.Component {
         defaultBookmarks={defaultBookmarks}
         storageKey={NAMESPACE_LOCAL_STORAGE_KEY}
         shortCut="n" />
-      <ActionsMenu actions={addActions}
-        title={<React.Fragment><span className="pficon pficon-add-circle-o co-add-actions-selector__icon" aria-hidden="true"></span> Add</React.Fragment>}
-        buttonClassName="btn-link"
-        menuClassName="co-add-actions-selector__menu dropdown-menu--right" />
+      <ActionsMenu
+        actions={addActions}
+        title={<React.Fragment><span className="fa fa-plus-circle co-add-actions-selector__icon" aria-hidden="true"></span> Add</React.Fragment>}
+        menuClassName="co-add-actions-selector__menu dropdown-menu--right"
+        buttonClassName="btn-link" />
     </div>;
   }
 }

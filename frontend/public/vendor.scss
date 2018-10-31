@@ -9,7 +9,6 @@
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/variables";
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/mixins";
 @import '~patternfly/dist/sass/patternfly/bootstrap-mixin-overrides';
-@import '~patternfly/dist/sass/patternfly/fonts';
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/normalize";
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/scaffolding";
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/type";  // Including this file breaks sourcemaps
@@ -47,8 +46,6 @@
 @import '~patternfly/dist/sass/patternfly/forms';
 @import '~patternfly/dist/sass/patternfly/dependencies/bootstrap-switch/bootstrap-switch';
 @import '~patternfly/dist/sass/patternfly/bootstrap-switch';
-@import '~patternfly/dist/sass/patternfly/about-modal';
-@import '~patternfly/dist/sass/patternfly/navbar-vertical';
 @import "~xterm/dist/addons/fullscreen/fullscreen";
 @import "~patternfly-react/dist/sass/field-level-help";
 @import "~patternfly-react/dist/sass/modeless-overlay";
@@ -59,3 +56,9 @@
 @import '~patternfly-react-extensions/dist/sass/filter-side-panel';
 @import '~patternfly-react-extensions/dist/sass/properties-side-panel';
 @import '~patternfly-react-extensions/dist/sass/vertical-tabs';
+@import '~@patternfly/patternfly-next/sass-utilities/all';
+@import "~@patternfly/patternfly-next/_variables";
+@import "~@patternfly/patternfly-next/_fonts";
+@import "~@patternfly/patternfly-next/_base";
+@import '~@patternfly/patternfly-next/utilities/Accessibility/accessibility';
+@import '~@patternfly/patternfly-next/utilities/Spacing/spacing';

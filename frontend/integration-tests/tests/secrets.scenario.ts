@@ -1,7 +1,7 @@
 /* eslint-disable max-nested-callbacks */
-import { $, element, browser, by, ExpectedConditions as until, Key } from 'protractor';
+import { $, $$, element, browser, by, ExpectedConditions as until, Key } from 'protractor';
 
-import { appHost, testName, checkLogs, checkErrors } from '../protractor.conf';
+import { appHost, testName, checkLogs, checkErrors, waitForCount } from '../protractor.conf';
 import * as crudView from '../views/crud.view';
 import * as secretsView from '../views/secrets.view';
 
@@ -258,6 +258,7 @@ describe('Interacting with the create secret forms', () => {
       await secretsView.createSecret(secretsView.createGenericSecretLink, testName, keyValueSecretName, async() => {
         await browser.wait(until.presenceOf(secretsView.addSecretEntryLink));
         await secretsView.addSecretEntryLink.click();
+        await browser.wait(waitForCount($$('.co-file-dropzone__textarea'), 2));
         await secretsView.genericSecretForm.each(async(el, index) => {
           await el.$('input[name=key]').sendKeys(key + index);
           await el.$('.co-file-dropzone__textarea').sendKeys(value + index);

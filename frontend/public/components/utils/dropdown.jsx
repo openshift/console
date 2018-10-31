@@ -290,7 +290,7 @@ export class Dropdown extends DropdownMixin {
 
   render() {
     const {active, autocompleteText, selectedKey, items, title, bookmarks, keyboardHoverKey, favoriteKey} = this.state;
-    const {autocompleteFilter, autocompletePlaceholder, className, buttonClassName, menuClassName, storageKey, canFavorite, dropDownClassName, titlePrefix, describedBy, noCaret} = this.props;
+    const {autocompleteFilter, autocompletePlaceholder, className, buttonClassName, menuClassName, storageKey, canFavorite, dropDownClassName, titlePrefix, describedBy} = this.props;
 
     const spacerBefore = this.props.spacerBefore || new Set();
     const headerBefore = this.props.headerBefore || {};
@@ -318,14 +318,14 @@ export class Dropdown extends DropdownMixin {
     _.each(items, (v, k) => addItem(k, v));
 
     return <div className={classNames(className)} ref={this.dropdownElement} style={this.props.style}>
-      <div className={classNames('dropdown', dropDownClassName, {'open': active && _.includes(buttonClassName, 'nav-item-iconic')})}>
+      <div className={classNames('dropdown', dropDownClassName)}>
         <button aria-haspopup="true" onClick={this.toggle} onKeyDown={this.onKeyDown} type="button" className={classNames('btn', 'btn-dropdown', 'dropdown-toggle', buttonClassName ? buttonClassName : 'btn-default')} id={this.props.id} aria-describedby={describedBy} >
           <div className="btn-dropdown__content-wrap">
             <span className="btn-dropdown__item">
               {titlePrefix && <span className="btn-link__titlePrefix">{titlePrefix}: </span>}
               {title}
             </span>
-            {noCaret ? null : <Caret />}
+            <Caret />
           </div>
         </button>
         {
@@ -375,7 +375,7 @@ Dropdown.propTypes = {
 };
 
 export const ActionsMenu = (props) => {
-  const {actions, title = undefined, menuClassName = undefined, buttonClassName = undefined, noCaret = false} = props;
+  const {actions, title = undefined, menuClassName = undefined, buttonClassName = undefined} = props;
   const shownActions = _.reject(actions, o => _.get(o, 'hidden', false));
   const items = _.fromPairs(_.map(shownActions, (v, k) => [k, v.label]));
   const btnTitle = title || <span id="action-dropdown">Actions</span>;
@@ -395,8 +395,7 @@ export const ActionsMenu = (props) => {
     items={items}
     title={btnTitle}
     onChange={onChange}
-    noSelection={true}
-    noCaret={noCaret} />;
+    noSelection={true} />;
 };
 
 ActionsMenu.propTypes = {
@@ -408,7 +407,6 @@ ActionsMenu.propTypes = {
     })).isRequired,
   menuClassName: PropTypes.string,
   title: PropTypes.node,
-  noCaret: PropTypes.bool,
 };
 
 const containerLabel = (container) =>

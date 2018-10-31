@@ -11,7 +11,7 @@ import {execSync} from 'child_process';
 describe('Test for Cluster Service Class', () => {
   beforeAll(async() => {
     browser.get(`${appHost}/status/ns/${testName}`);
-    await browser.wait(until.presenceOf($('#sidebar')));
+    await browser.wait(until.presenceOf($('.pf-c-nav')));
   });
 
   afterEach(() => {
