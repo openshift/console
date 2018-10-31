@@ -1,9 +1,10 @@
 /* eslint-disable no-undef */
 import * as React from 'react';
 import * as _ from 'lodash-es';
+import { Icon } from 'patternfly-react';
 
 // eslint-disable-next-line no-unused-vars
-import { K8sResourceKindReference, referenceFor } from '../module/k8s';
+import { K8sResourceKindReference, referenceFor, K8sResourceKind } from '../module/k8s';
 import { cloneBuild, formatBuildDuration } from '../module/k8s/builds';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
 import { errorModal } from './modals';
@@ -41,6 +42,22 @@ export enum BuildStrategyType {
   JenkinsPipeline = 'JenkinsPipeline',
   Source = 'Source',
 }
+
+export const BuildPhaseIcon: React.SFC<BuildPhaseIconProps> = ({build}) => {
+  const {status: {phase}} = build;
+  switch (phase) {
+    case 'Running':
+      return <span className="fa fa-spin fa-refresh" aria-hidden="true" />;
+    case 'Complete':
+      return <Icon type="pf" name="ok" />;
+    case 'Failed':
+      return <Icon type="pf" name="error-circle-o" />;
+    case 'Cancelled':
+      return <Icon type="fa" name="ban" />;
+    default:
+      return <Icon type="fa" name="clock-o" />;
+  }
+};
 
 const BuildGraphs = requirePrometheus(({build}) => {
   const podName = _.get(build, ['metadata', 'annotations', 'openshift.io/build.pod-name']);
@@ -233,5 +250,9 @@ export type BuildsPageProps = {
 
 export type BuildsDetailsPageProps = {
   match: any,
+};
+
+export type BuildPhaseIconProps = {
+  build: K8sResourceKind
 };
 /* eslint-enable no-undef */

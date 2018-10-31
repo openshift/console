@@ -48,8 +48,7 @@ const RoutesOverviewList: React.SFC<RoutesOverviewListProps> = ({routes}) => <Li
 </ListGroup>;
 
 export const NetworkingOverview: React.SFC<NetworkingOverviewProps> = ({routes, services}) => {
-  return <div className="overview__sidebar-pane-body">
-
+  return <React.Fragment>
     <SidebarSectionHeading text="Services" />
     {
       _.isEmpty(services)
@@ -64,8 +63,7 @@ export const NetworkingOverview: React.SFC<NetworkingOverviewProps> = ({routes, 
         ? <span className="text-muted">No Routes found for this resource.</span>
         : <RoutesOverviewList routes={routes} />
     }
-
-  </div>;
+  </React.Fragment>;
 };
 
 /* eslint-disable no-unused-vars, no-undef */
