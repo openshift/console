@@ -62,30 +62,14 @@ _.each(namespacedPrefixes, p => {
   namespacedRoutes.push(`${p}/all-namespaces`);
 });
 
-const NamespaceRedirect = ({location}) => {
+const appendActiveNamespace = pathname => {
+  const basePath = pathname.replace(/\/$/, '');
   const activeNamespace = getActiveNamespace();
-
-  let to;
-  if (activeNamespace === ALL_NAMESPACES_KEY) {
-    to = `${location.pathname}/all-namespaces`;
-  } else if (activeNamespace) {
-    to = `${location.pathname}/ns/${activeNamespace}`;
-  }
-  // TODO: check if namespace exists
-  return <Redirect to={to} />;
+  return activeNamespace === ALL_NAMESPACES_KEY ? `${basePath}/all-namespaces` : `${basePath}/ns/${activeNamespace}`;
 };
 
-const ActiveNamespaceRedirect = ({location}) => {
-  const activeNamespace = getActiveNamespace();
-
-  let to;
-  if (activeNamespace === ALL_NAMESPACES_KEY) {
-    to = '/search/all-namespaces';
-  } else if (activeNamespace) {
-    to = `/search/ns/${activeNamespace}`;
-  }
-
-  to += location.search;
+const NamespaceRedirect = ({location: {pathname}}) => {
+  const to = appendActiveNamespace(pathname) + location.search;
   return <Redirect to={to} />;
 };
 
@@ -100,7 +84,8 @@ const DefaultPage = connectToFlags(FLAGS.OPENSHIFT)(({ flags }) => {
     return <Redirect to="/k8s/cluster/projects" />;
   }
 
-  return <NamespaceRedirect />;
+  const statusPage = appendActiveNamespace('/status');
+  return <Redirect to={statusPage} />;
 });
 
 const LazyRoute = (props) => <Route {...props} component={(componentProps) => <AsyncComponent loader={props.loader} kind={props.kind} {...componentProps} />} />;
@@ -165,7 +150,7 @@ class App extends React.PureComponent {
             <LazyRoute path="/k8s/ns/:ns/events" exact loader={() => import('./events').then(m => NamespaceFromURL(m.EventStreamPage))} />
             <Route path="/search/all-namespaces" exact component={NamespaceFromURL(SearchPage)} />
             <Route path="/search/ns/:ns" exact component={NamespaceFromURL(SearchPage)} />
-            <Route path="/search" exact component={ActiveNamespaceRedirect} />
+            <Route path="/search" exact component={NamespaceRedirect} />
 
             <LazyRoute path="/k8s/all-namespaces/import" exact loader={() => import('./import-yaml').then(m => NamespaceFromURL(m.ImportYamlPage))} />
             <LazyRoute path="/k8s/ns/:ns/import/" exact loader={() => import('./import-yaml').then(m => NamespaceFromURL(m.ImportYamlPage))} />
