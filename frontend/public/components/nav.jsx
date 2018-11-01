@@ -284,9 +284,10 @@ const ClusterPickerNavSection = connectToFlags(FLAGS.OPENSHIFT)(({flags}) => {
 const MonitoringNavSection_ = ({urls, closeMenu}) => {
   const prometheusURL = urls[MonitoringRoutes.Prometheus];
   const grafanaURL = urls[MonitoringRoutes.Grafana];
-  return window.SERVER_FLAGS.prometheusBaseURL || prometheusURL || grafanaURL
+  return window.SERVER_FLAGS.prometheusBaseURL || window.SERVER_FLAGS.alertManagerBaseURL || prometheusURL || grafanaURL
     ? <NavSection text="Monitoring" icon="pficon pficon-screen">
-      {window.SERVER_FLAGS.prometheusBaseURL && <HrefLink href="/monitoring" name="Alerts" onClick={closeMenu} />}
+      {window.SERVER_FLAGS.prometheusBaseURL && <HrefLink href="/monitoring/alerts" name="Alerts" onClick={closeMenu} />}
+      {window.SERVER_FLAGS.alertManagerBaseURL && <HrefLink href="/monitoring/silences" name="Silences" onClick={closeMenu} />}
       {prometheusURL && <HrefLink href={prometheusURL} target="_blank" name="Metrics" onClick={closeMenu} isExternal={true} />}
       {grafanaURL && <HrefLink href={grafanaURL} target="_blank" name="Dashboards" onClick={closeMenu} isExternal={true} />}
     </NavSection>

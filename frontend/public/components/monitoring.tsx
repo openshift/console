@@ -181,39 +181,38 @@ class MonitoringPageWrapper extends SafetyFirst<AlertsPageWrapperProps, null> {
 
     const {alertManagerBaseURL, prometheusBaseURL} = (window as any).SERVER_FLAGS;
 
-    if (!prometheusBaseURL) {
-      store.dispatch(UIActions.monitoringErrored('rules', new Error('prometheusBaseURL not set')));
-      return;
-    }
+    if (prometheusBaseURL) {
+      poll(`${prometheusBaseURL}/api/v1/rules`, 'rules', data => {
+        // Flatten the rules data to make it easier to work with, discard non-alerting rules since those are the only
+        // ones we will be using and add a unique ID to each rule.
+        const groups = _.get(data, 'groups');
+        const rules = _.flatMap(groups, g => {
+          const addID = r => {
+            const key = [g.file, g.name, r.name, r.duration, r.query, ..._.map(r.labels, (k, v) => `${k}=${v}`)].join(',');
+            r.id = String(murmur3(key, 'monitoring-salt'));
+            return r;
+          };
 
-    poll(`${prometheusBaseURL}/api/v1/rules`, 'rules', data => {
-      // Flatten the rules data to make it easier to work with, discard non-alerting rules since those are the only ones
-      // we will be using and add a unique ID to each rule.
-      const groups = _.get(data, 'groups');
-      const rules = _.flatMap(groups, g => {
-        const addID = r => {
-          const key = [g.file, g.name, r.name, r.duration, r.query, ..._.map(r.labels, (k, v) => `${k}=${v}`)].join(',');
-          r.id = String(murmur3(key, 'monitoring-salt'));
-          return r;
-        };
+          return _.filter(g.rules, {type: 'alerting'}).map(addID);
+        });
 
-        return _.filter(g.rules, {type: 'alerting'}).map(addID);
+        // If a rule is inactive (has no active alerts), create a "fake" alert with state "inactive"
+        const asAlerts = _.flatMap(rules, rule => _.isEmpty(rule.alerts)
+          ? {
+            annotations: rule.annotations,
+            id: rule.id,
+            labels: {alertname: rule.name, ...rule.labels},
+            rule,
+            state: 'inactive',
+          }
+          : rule.alerts.map(a => ({rule, ...a}))
+        );
+
+        return {asAlerts, asRules: rules};
       });
-
-      // If a rule is inactive (has no active alerts), create a "fake" alert with state "inactive"
-      const asAlerts = _.flatMap(rules, rule => _.isEmpty(rule.alerts)
-        ? {
-          annotations: rule.annotations,
-          id: rule.id,
-          labels: {alertname: rule.name, ...rule.labels},
-          rule,
-          state: 'inactive',
-        }
-        : rule.alerts.map(a => ({rule, ...a}))
-      );
-
-      return {asAlerts, asRules: rules};
-    });
+    } else {
+      store.dispatch(UIActions.monitoringErrored('rules', new Error('prometheusBaseURL not set')));
+    }
 
     if (!alertManagerBaseURL) {
       const e = new Error('alertManagerBaseURL not set');
