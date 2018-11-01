@@ -90,18 +90,19 @@ class CreateBindingForm extends React.Component<CreateBindingProps, CreateBindin
   onFormChange = ({formData}: IChangeEvent) => this.setState({formData})
 
   save = ({formData}: ISubmitEvent<any>) => {
-    if (!this.state.name) {
+    const { name: bindingName } = this.state;
+    if (!bindingName) {
       this.setState({error: 'Please complete all fields.'});
       return;
     }
     this.setState({inProgress: true});
-    const secretName = _.isEmpty(formData) ? null : `${this.state.name}-bind-parameters`;
+    const secretName = _.isEmpty(formData) ? null : `${bindingName}-bind-parameters`;
     this.createBinding(secretName)
       .then(binding => secretName ? createParametersSecret(secretName, PARAMETERS_SECRET_KEY, formData, binding) : null)
       .then(() => {
         this.setState({inProgress: false});
         const instance = this.props.obj.data;
-        history.push(resourcePathFromModel(ServiceInstanceModel, instance.metadata.name, instance.metadata.namespace));
+        history.push(resourcePathFromModel(ServiceBindingModel, bindingName, instance.metadata.namespace));
       }, err => this.setState({error: err.message, inProgress: false}));
   };
 
