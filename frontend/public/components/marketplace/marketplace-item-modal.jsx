@@ -7,7 +7,7 @@ import {PropertiesSidePanel, PropertyItem} from 'patternfly-react-extensions/dis
 
 const MarketplaceItemModal = (props) => {
   const { item, close /* openSubscribe */ } = props;
-  const { itemName, itemImgUrl, provider, description, version, certifiedLevel, healthIndex, repository, containerImage, createdAt, support } = item;
+  const { itemName, itemIconClass, itemImgUrl, provider, description, version, certifiedLevel, healthIndex, repository, containerImage, createdAt, support } = item;
   const notAvailable = <span className="properties-side-panel-pf-property-label">N/A</span>;
   const MarketplaceProperty = ({label, value}) => {
     return <PropertyItem label={label} value={value || notAvailable} />;
@@ -17,6 +17,7 @@ const MarketplaceItemModal = (props) => {
       <Modal.Header>
         <CatalogItemHeader
           className="co-marketplace-modal__item-header"
+          iconClass={itemIconClass}
           iconImg={itemImgUrl}
           title={itemName}
           vendor={<span> {provider}</span>}
