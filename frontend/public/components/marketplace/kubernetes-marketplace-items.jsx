@@ -207,8 +207,7 @@ export class MarketplaceTileViewPage extends React.Component {
     return (
       <CatalogTileView.Category totalItems={items.length} viewAll={true}>
         {_.map(items, item => {
-          const { obj, name, imgUrl, iconClass, provider, description } = item;
-          const uid = obj.metadata.uid;
+          const { uid, name, imgUrl, iconClass, provider, description } = item;
           const normalizedIconClass = iconClass && `icon ${normalizeIconClass(iconClass)}`;
           const vendor = provider ? `Provided by ${provider}` : null;
           return <CatalogTile
