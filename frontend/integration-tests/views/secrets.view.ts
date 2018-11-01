@@ -30,9 +30,16 @@ export const removeSecretEntryLink = $('.co-create-secret-form__link--remove-ent
 export const imageSecretForm = $$('.co-create-image-secret__form');
 export const genericSecretForm = $$('.co-create-generic-secret__form');
 
+const revealValuesButton = element(by.partialButtonText('Reveal Values'));
+
 export const visitSecretsPage = async(appHost: string, ns: string) => {
   await browser.get(`${appHost}/k8s/ns/${ns}/secrets`);
   await crudView.isLoaded();
+};
+
+export const clickRevealValues = async() => {
+  await browser.wait(until.presenceOf(revealValuesButton));
+  await revealValuesButton.click();
 };
 
 export const encode = (username, password) => Base64.encode(`${username}:${password}`);
@@ -50,7 +57,7 @@ export const createSecret = async(linkElement: ElementFinder, ns: string, name: 
 export const checkSecret = async(ns: string, name: string, keyValuesToCheck: Object, jsonOutput: boolean = false) => {
   await browser.wait(until.urlContains(`/k8s/ns/${ns}/secrets/${name}`));
   await browser.wait(until.textToBePresentInElement($('.co-m-pane__heading'), name));
-  await element(by.partialButtonText('Reveal Values')).click();
+  await clickRevealValues();
   const renderedKeyValues = await dt.reduce(async(acc, el, index) => {
     const key = await el.getAttribute('textContent');
     const value = await pre.get(index).getText();
