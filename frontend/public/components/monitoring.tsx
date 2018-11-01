@@ -564,9 +564,6 @@ const AlertHeader = props => <ListHeader>
   <ColHead {...props} className="col-xs-2" sortField="labels.severity">Severity</ColHead>
 </ListHeader>;
 
-const AlertsPageDescription_ = ({urls}) => <p className="co-help-text">OpenShift ships with a pre-configured and self-updating monitoring stack powered by <ExternalLink href={urls[MonitoringRoutes.Prometheus]} text="Prometheus" /></p>;
-const AlertsPageDescription = connectToURLs(MonitoringRoutes.Prometheus)(AlertsPageDescription_);
-
 const alertsRowFilter = {
   type: 'alert-state',
   selected: ['firing', 'silenced', 'pending'],
@@ -626,7 +623,7 @@ const MonitoringListPage = connect(filtersToProps)(class InnerMonitoringListPage
   }
 
   render () {
-    const {CreateButton, data, filters, Header, loaded, loadError, match, PageDescription, reduxID, Row, rowFilter, textFilterLabel} = this.props;
+    const {CreateButton, data, filters, Header, loaded, loadError, match, reduxID, Row, rowFilter, textFilterLabel} = this.props;
 
     return <React.Fragment>
       <Helmet>
@@ -649,18 +646,13 @@ const MonitoringListPage = connect(filtersToProps)(class InnerMonitoringListPage
         <li className="co-m-horizontal-nav__menu-item co-m-horizontal-nav__menu-item--divider"></li>
       </ul>
       <div className="co-m-pane__filter-bar co-m-pane__filter-bar--with-help-text">
-        {PageDescription && <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--help-text">
-          <PageDescription />
+        {CreateButton && <div className="co-m-pane__filter-bar-group">
+          <CreateButton />
         </div>}
         <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--filter">
           <TextFilter defaultValue={this.defaultNameFilter} label={textFilterLabel} onChange={this.applyTextFilter} />
         </div>
       </div>
-      {CreateButton && <div className="co-m-pane__filter-bar">
-        <div className="co-m-pane__filter-bar-group">
-          <CreateButton />
-        </div>
-      </div>}
       <div className="co-m-pane__body">
         <div className="row">
           <CheckBoxes
@@ -694,7 +686,6 @@ const AlertsPage_ = props => <MonitoringListPage
   data={props.data && props.data.asAlerts}
   Header={AlertHeader}
   nameFilterID="alert-name"
-  PageDescription={AlertsPageDescription}
   reduxID="monitoringRules"
   Row={AlertRow}
   rowFilter={alertsRowFilter}
@@ -733,8 +724,6 @@ const SilenceRow = ({obj}) => {
   </ResourceRow>;
 };
 
-const SilencesPageDescription = () => <p className="co-help-text">Silences are a straightforward way to simply mute alerts for a given time powered by <AlertmanagerLink text="Alertmanager" /></p>;
-
 const silencesRowFilter = {
   type: 'silence-state',
   selected: ['active', 'pending'],
@@ -755,7 +744,6 @@ const SilencesPage_ = props => <MonitoringListPage
   CreateButton={CreateButton}
   Header={SilenceHeader}
   nameFilterID="silence-name"
-  PageDescription={SilencesPageDescription}
   reduxID="monitoringSilences"
   Row={SilenceRow}
   rowFilter={silencesRowFilter}
@@ -1020,7 +1008,6 @@ export type ListPageProps = {
   loadError?: string;
   match: {path: string};
   nameFilterID: string;
-  PageDescription: React.ComponentType<any>;
   reduxID: string;
   Row: React.ComponentType<any>;
   rowFilter: {type: string, selected: string[], reducer: (any) => string, items: {id: string, title: string}[]};
