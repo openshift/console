@@ -3,6 +3,23 @@ $link-padding-left: 40px;
 $section-padding-left: 13px;
 $active-border: 3px;
 
+@mixin active-bar {
+  &::before {
+    background: $color-os-nav-border-left-active;
+    content: " ";
+    height: 100%;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 3px;
+  }
+}
+
+@mixin active-text {
+  color: #fff;
+  font-weight: 600;
+}
+
 .co-m-masthead-link,
 .co-m-nav-link {
   display: block;
@@ -10,24 +27,22 @@ $active-border: 3px;
   font-size: 12px;
   line-height: 23px;
   overflow-x: hidden;
-  padding: 2px 0 2px $link-padding-left;
+  padding-left: $link-padding-left;
+  position: relative;
   white-space: nowrap;
-
   a {
     background-color: inherit;
     color: $color-os-nav-title;
     display: inline-block;
+    padding: 2px 0;
     text-decoration: none;
     width: 100%;
   }
-
   &.active {
     background-color: $color-pf-black-700;
-    border-left: $active-border solid $color-os-nav-border-left-active;
-    font-weight: 600;
-    padding-left: $link-padding-left - $active-border;
+    @include active-bar;
     a {
-      color: #fff;
+      @include active-text;
     }
   }
 }
@@ -36,7 +51,6 @@ $active-border: 3px;
   &:hover {
     background-color: $color-os-nav-background-active;
   }
-
   &:focus {
     background-color: transparent;
   }
@@ -53,8 +67,13 @@ $active-border: 3px;
   -webkit-overflow-scrolling: touch;
 }
 
-.navigation-container--open .navigation-container__separator {
-  border-bottom: 1px solid $color-pf-black;
+.navigation-container--open {
+  .navigation-container__section__title .fa-angle-right {
+    display: inline-block;
+  }
+  .navigation-container__separator {
+    border-bottom: 1px solid $color-pf-black;
+  }
 }
 
 .navigation-container--active {
@@ -65,14 +84,25 @@ $active-border: 3px;
 }
 
 .navigation-container__list {
-  margin: -10px 0 10px 0;
+  margin: 0;
+  opacity: 0;
   overflow-y: hidden;
   padding-left: 0;
-  transition: max-height 0.25s;
+  transition:
+    max-height 150ms ease-in-out,
+    opacity 150ms 25ms;
+  > li {
+    &:first-child {
+      margin-top: 5px;
+    }
+    &:last-child {
+      margin-bottom: 10px;
+    }
+  }
 }
 
 .navigation-container__list--open {
-  margin: 5px 0 10px 0;
+  opacity: 1;
 }
 
 .navigation-container__section {
@@ -87,36 +117,36 @@ $active-border: 3px;
   font-size: 14px;
   line-height: 20px;
   padding: 20px 0px 20px $section-padding-left;
+  position: relative;
   width: 100%;
-  img {
-    margin-right: 12px;
-    width: 15px;
-    &[src^="/static/assets/routing"] {
-      margin-left: -1px;
-      margin-right: 10px;
-      width: 18px;
-    }
-  }
-  span {
-    display: inline-block;
-    margin: 0 15px 0 11px;
-  }
   &:hover {
     background-color: $color-pf-black-800;
     .fa-angle-right {
       display: inline-block;
     }
   }
+  .fa-angle-right {
+    display: none;
+    font-size: 20px;
+    margin-right: 20px;
+    transform: rotate(0);
+    transition: transform 100ms;
+    &.navigation-container__section--open {
+      transform: rotate(90deg);
+    }
+  }
+  span {
+    display: inline-block;
+    margin: 0 15px 0 11px;
+  }
 }
 
 .navigation-container__section__title--active {
-  color: #fff;
-  font-weight: 600;
+  @include active-text;
 }
 
 .navigation-container__section__title--active-closed {
-  border-left: $active-border solid $color-os-nav-border-left-active;
-  padding-left: $section-padding-left - $active-border;
+  @include active-bar;
 }
 
 .navigation-container__section__title--active-open {
@@ -137,34 +167,33 @@ $active-border: 3px;
   text-decoration: none;
   vertical-align: middle;
 }
-
 .navigation-container__section__title__icon {
   color: $color-os-nav-icon;
-  margin-right: 9px;
-  width: 18px;
-  &.fa {
-    font-size: 15px;
+  font-size: 15px;
+  left: $section-padding-left;
+  position: absolute;
+  &[src*="operator"] {
+    width: 15px;
   }
-  &.fa-angle-down {
-    font-size: 20px;
-    margin-left: auto;
-  }
-  &.fa-angle-right {
-    display: none;
-    font-size: 20px;
-    margin-left: auto;
+  &[src*="routing"] {
+    margin-left: -1px;
+    width: 18px;
   }
   &.fa-cog {
-    font-size: 18px;
+    font-size: 17px;
   }
-  &.fa-folder-open-o,
-  &.pficon-user {
-    font-size: 16px;
+  &.pficon-catalog {
+    font-size: 14px;
   }
 }
 
 .navigation-container__section__title__icon--active {
   color: $color-pf-blue-300;
+}
+
+.navigation-container__section__title__text {
+  flex: 1;
+  margin-left: ($link-padding-left - $section-padding-left);
 }
 
 .navigation-container__separator {
