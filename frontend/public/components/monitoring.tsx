@@ -71,7 +71,7 @@ export const silenceState = s => _.get(s, 'status.state');
 // Determine if an Alert is silenced by a Silence (if all of the Silence's matchers match one of the Alert's labels)
 const isSilenced = (alert, silence) => alertState(alert) === 'silenced' &&
   _.get(silence, 'status.state') === 'active' &&
-  !_.find(silence.matchers, m => _.get(alert.labels, m.name) !== m.value);
+  _.every(silence.matchers, m => _.get(alert.labels, m.name) === m.value);
 
 const silenceAlert = alert => ({
   label: 'Silence Alert',
