@@ -6,12 +6,13 @@ import * as routingActiveImg from '../../imgs/routing-active.svg';
 import { FLAGS } from '../../features';
 
 import { NavSection, ClusterPickerNavSection, UserNavSection } from './okdcomponents';
-import { DeploymentConfigModel } from '../models';
+import { ChargebackReportModel, DeploymentConfigModel } from '../models';
+import { referenceForModel } from '../module/okdk8s';
 
 // With respect to keep changes to OKD codebase at bare minimum,
 // the navigation needs to be reconstructed.
 // The ResourceNSLink, HrefLink, Sep components are passed as props to eliminate the need for additional changes in OKD core code. Ugly anti-pattern, but serves its purpose.
-const Nav = ({ isOpen, onToggle, close, scroller, onWheel, searchStartsWith, ResourceNSLink, HrefLink, Sep, ResourceClusterLink }) => {
+const Nav = ({ isOpen, onToggle, close, scroller, onWheel, searchStartsWith, ResourceNSLink, HrefLink, Sep, ResourceClusterLink, clusterSettingsStartsWith, rolesStartsWith, rolebindingsStartsWith, quotaStartsWith }) => {
   return (
     <React.Fragment>
       <button type="button" className="sidebar-toggle" aria-controls="sidebar" aria-expanded={isOpen} onClick={onToggle}>
@@ -60,6 +61,20 @@ const Nav = ({ isOpen, onToggle, close, scroller, onWheel, searchStartsWith, Res
             <ResourceClusterLink resource="persistentvolumes" name="Persistent Volumes" onClick={close} required={FLAGS.CAN_LIST_PV} />
             <ResourceNSLink resource="persistentvolumeclaims" name="Persistent Volume Claims" onClick={close} />
             <ResourceClusterLink resource="storageclasses" name="Storage Classes" onClick={close} required={FLAGS.CAN_LIST_STORE} />
+          </NavSection>
+
+          <NavSection text="Administration" icon="fa fa-cog">
+            <ResourceClusterLink resource="projects" name="Projects" onClick={close} required={FLAGS.OPENSHIFT} />
+            <ResourceClusterLink resource="namespaces" name="Namespaces" onClick={close} required={FLAGS.CAN_LIST_NS} />
+            <ResourceClusterLink resource="nodes" name="Nodes" onClick={close} required={FLAGS.CAN_LIST_NODE} />
+            <HrefLink href="/settings/cluster" name="Cluster Settings" onClick={close} startsWith={clusterSettingsStartsWith} disallowed={FLAGS.OPENSHIFT} />
+            <ResourceNSLink resource="serviceaccounts" name="Service Accounts" onClick={close} />
+            <ResourceNSLink resource="roles" name="Roles" startsWith={rolesStartsWith} onClick={close} />
+            <ResourceNSLink resource="rolebindings" name="Role Bindings" onClick={close} startsWith={rolebindingsStartsWith} />
+            <ResourceNSLink resource="resourcequotas" name="Resource Quotas" onClick={close} startsWith={quotaStartsWith} />
+            <ResourceNSLink resource="limitranges" name="Limit Ranges" onClick={close} />
+            <ResourceNSLink resource={referenceForModel(ChargebackReportModel)} name="Chargeback" onClick={close} disallowed={FLAGS.OPENSHIFT} />
+            <ResourceClusterLink resource="customresourcedefinitions" name="CRDs" onClick={close} required={FLAGS.CAN_LIST_CRD} />
           </NavSection>
 
           <UserNavSection closeMenu={close} />
