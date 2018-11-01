@@ -72,10 +72,10 @@ export default (state, action) => {
         const activeSilences = _.filter(silences.data, s => _.get(s, 'status.state') === 'active');
 
         // Is an Alert silenced by a Silence (if all the Silence's matchers match one of the Alert's labels)
-        const isSilenced = (alert, silence) => !_.find(silence.matchers, m => _.get(alert.labels, m.name) !== m.value);
+        const isSilenced = (alert, silence) => _.every(silence.matchers, m => _.get(alert.labels, m.name) === m.value);
 
         _.each(_.get(alerts, 'data.asAlerts'), a => {
-          if (a.state === 'firing' && _.find(activeSilences, s => isSilenced(a, s))) {
+          if (a.state === 'firing' && _.some(activeSilences, s => isSilenced(a, s))) {
             a.state = 'silenced';
           }
         });
