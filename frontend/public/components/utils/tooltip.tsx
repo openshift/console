@@ -6,7 +6,7 @@ import { Tooltip as RLT } from 'react-lightweight-tooltip';
 const tooltipOverrides = Object.freeze({
   wrapper: {
     color: 'inherit',
-    display: 'block',
+    display: 'inline-block',
     zIndex: 'auto',
   },
   tooltip: {
