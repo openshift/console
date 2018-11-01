@@ -13,7 +13,7 @@ const MarketplaceItemModal = (props) => {
     return <PropertyItem label={label} value={value || notAvailable} />;
   };
   return (
-    <Modal show={true} className="right-side-modal-pf" bsSize={'lg'}>
+    <Modal show={true} backdrop={true} onHide={close} className="right-side-modal-pf" bsSize={'lg'}>
       <Modal.Header>
         <CatalogItemHeader
           className="co-marketplace-modal__item-header"
