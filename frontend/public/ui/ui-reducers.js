@@ -63,7 +63,25 @@ export default (state, action) => {
       return state.set('createProjectMessage', action.message);
 
     case types.setMonitoringData:
-      return state.setIn(['monitoring', action.key], action.data);
+      state = state.setIn(['monitoring', action.key], action.data);
+
+      // For Alerts that are silenced by at least one active Silence, set the Alert's state to indicate that
+      if (action.key === 'rules' || action.key === 'silences') {
+        const alerts = state.getIn(['monitoring', 'rules']);
+        const silences = state.getIn(['monitoring', 'silences'], {});
+        const activeSilences = _.filter(silences.data, s => _.get(s, 'status.state') === 'active');
+
+        // Is an Alert silenced by a Silence (if all the Silence's matchers match one of the Alert's labels)
+        const isSilenced = (alert, silence) => !_.find(silence.matchers, m => _.get(alert.labels, m.name) !== m.value);
+
+        _.each(_.get(alerts, 'data.asAlerts'), a => {
+          if (a.state === 'firing' && _.find(activeSilences, s => isSilenced(a, s))) {
+            a.state = 'silenced';
+          }
+        });
+        state = state.setIn(['monitoring', 'rules'], alerts);
+      }
+      return state;
 
     case types.selectOverviewItem:
       return state.setIn(['overview', 'selectedUID'], action.uid);

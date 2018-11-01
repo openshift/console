@@ -30,7 +30,7 @@ describe('Deploy Image', () => {
 
   describe('Deploy Image page', () => {
     it('can be used to search for an image', async() => {
-      await $('#imageName').sendKeys(appName);
+      await $('#image-name').sendKeys(appName);
       await $('.input-group-btn .btn-default').click();
       await browser.wait(until.presenceOf($('.co-image-name-results__details')));
       expect((element(by.cssContainingText('.co-image-name-results__heading', appName))).isPresent()).toBe(true);

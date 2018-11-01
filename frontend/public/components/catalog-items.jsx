@@ -6,11 +6,12 @@ import {CatalogTile} from 'patternfly-react-extensions/dist/esm/components/Catal
 import {VerticalTabs} from 'patternfly-react-extensions/dist/esm/components/VerticalTabs';
 import {FilterSidePanel} from 'patternfly-react-extensions/dist/esm/components/FilterSidePanel';
 import {EmptyState} from 'patternfly-react/dist/esm/components/EmptyState';
-import FormControl from 'patternfly-react/dist/esm/components/Form/FormControl';
+import {FormControl} from 'patternfly-react/dist/esm/components/Form';
+import {Modal} from 'patternfly-react/dist/esm/components/Modal';
 
 import {normalizeIconClass} from './catalog-item-icon';
 import {categorizeItems, recategorizeItems} from './utils/categorize-catalog-items';
-import {history} from './utils';
+import {CatalogTileDetails} from './catalog-item-details';
 
 export class CatalogTileViewPage extends React.Component {
   constructor(props) {
@@ -52,7 +53,11 @@ export class CatalogTileViewPage extends React.Component {
       activeTabs,
       filters,
       filterCounts,
+      showOverlay: false,
     });
+
+    this.openOverlay = this.openOverlay.bind(this);
+    this.closeOverlay = this.closeOverlay.bind(this);
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -226,8 +231,18 @@ export class CatalogTileViewPage extends React.Component {
     this.syncTabsAndTiles(category, parent);
   }
 
-  onItemClick (href) {
-    history.push(href);
+  openOverlay(item) {
+    this.setState({
+      item,
+      showOverlay: true,
+    });
+  }
+
+  closeOverlay() {
+    this.setState({
+      showOverlay: false,
+      item: null,
+    });
   }
 
   renderCategoryTiles(category) {
@@ -244,15 +259,15 @@ export class CatalogTileViewPage extends React.Component {
       viewAll={showAllItemsForCategory === id}
       onViewAll={() => this.syncTabsAndTiles(id, parentCategory)}>
       {_.map(items, ((item) => {
-        const { obj, tileName, tileImgUrl, tileIconClass, tileProvider, tileDescription, href } = item;
+        const { obj, tileName, tileImgUrl, tileIconClass, tileProvider, tileDescription } = item;
         const uid = obj.metadata.uid;
-        const iconClass = tileIconClass ? `icon ${normalizeIconClass(tileIconClass)}` : null;
+        const iconClass = tileIconClass ? normalizeIconClass(tileIconClass) : null;
         const vendor = tileProvider ? `Provided by ${tileProvider}` : null;
         return (
           <CatalogTile
             id={uid}
             key={uid}
-            onClick={() => this.onItemClick(href)}
+            onClick={() => this.openOverlay(item)}
             title={tileName}
             iconImg={tileImgUrl}
             iconClass={iconClass}
@@ -335,7 +350,7 @@ export class CatalogTileViewPage extends React.Component {
   }
 
   render() {
-    const { activeTabs, showAllItemsForCategory, currentCategories, numItems, filters, filterCounts } = this.state;
+    const { activeTabs, showAllItemsForCategory, currentCategories, numItems, filters, filterCounts, showOverlay, item } = this.state;
     const { clusterServiceClass, imageStream } = filters.byType;
     const { clusterServiceClasses, imageStreams } = filterCounts.byType;
     const activeCategory = showAllItemsForCategory ? _.find(currentCategories, { id: showAllItemsForCategory }) : null;
@@ -393,6 +408,9 @@ export class CatalogTileViewPage extends React.Component {
           </EmptyState>
           }
         </div>
+        <Modal show={showOverlay} onHide={this.closeOverlay} bsSize={'lg'} className="co-catalog-page__overlay right-side-modal-pf">
+          {showOverlay && <CatalogTileDetails item={item} closeOverlay={this.closeOverlay} />}
+        </Modal>
       </div>
     );
   }

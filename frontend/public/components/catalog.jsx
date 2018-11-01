@@ -73,6 +73,10 @@ class CatalogListPage extends React.Component {
       const tileProvider = _.get(serviceClass, 'spec.externalMetadata.providerDisplayName');
       const tags = _.get(serviceClass, 'spec.tags');
       const href = `/catalog/create-service-instance?cluster-service-class=${serviceClass.metadata.name}&preselected-ns=${namespace}`;
+      const supportUrl = _.get(serviceClass, 'spec.externalMetadata.supportUrl');
+      const longDescription = _.get(serviceClass, 'spec.externalMetadata.longDescription');
+      const documentationUrl = _.get(serviceClass, 'spec.externalMetadata.documentationUrl');
+
       return {
         obj: serviceClass,
         kind,
@@ -81,8 +85,11 @@ class CatalogListPage extends React.Component {
         tileImgUrl,
         tileDescription,
         tileProvider,
-        href,
         tags,
+        href,
+        supportUrl,
+        longDescription,
+        documentationUrl,
       };
     });
   }
@@ -104,6 +111,8 @@ class CatalogListPage extends React.Component {
       const tileProvider = _.get(tag, 'annotations.openshift.io/provider-display-name');
       const { name, namespace } = imageStream.metadata;
       const href = `/catalog/source-to-image?imagestream=${name}&imagestream-ns=${namespace}&preselected-ns=${currentNamespace}`;
+      const builderImageTag = _.head(_.get(imageStream,'spec.tags'));
+      const sampleRepo = _.get(builderImageTag, 'annotations.sampleRepo');
       return {
         obj: imageStream,
         kind,
@@ -111,9 +120,10 @@ class CatalogListPage extends React.Component {
         tileIconClass,
         tileImgUrl,
         tileDescription,
+        tags,
         tileProvider,
         href,
-        tags,
+        sampleRepo,
       };
     });
   }

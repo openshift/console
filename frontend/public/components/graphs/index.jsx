@@ -24,14 +24,13 @@ const canAccessPrometheus = (openshiftFlag, prometheusFlag, canListNS) => {
     return false;
   }
 
-  if (!openshiftFlag) {
-    // Charts should be available for Tectonic if the Prometheus flag is on. OpenShift needs additional checks.
-    return true;
+  if (!window.SERVER_FLAGS.prometheusBaseURL) {
+    // Proxy has not been set up.
+    return false;
   }
 
-  if (!window.SERVER_FLAGS.prometheusBaseURL) {
-    // Proxy has not been set up for OpenShift. (This can happen if running off-cluster.)
-    return false;
+  if (!openshiftFlag) {
+    return true;
   }
 
   // In OpenShift, the user must be able to list namespaces to query Prometheus.
