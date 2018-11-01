@@ -376,8 +376,13 @@ export class Nav extends React.Component {
         <ClusterPickerNavSection />
         <div ref={this.scroller} onWheel={this.preventScroll} className="navigation-container">
           <NavSection text="Home" icon="pficon pficon-home">
-            <HrefLink href="/overview" name="Overview" activePath="/overview/" onClick={this.close} />
-            <HrefLink href="/status" name="Status" activePath="/status/" onClick={this.close} />
+            <ResourceClusterLink resource="projects" name="Projects" onClick={this.close} required={FLAGS.OPENSHIFT} />
+            {
+              // Show different status pages based on OpenShift vs native Kubernetes.
+              // TODO: Make Overview work on native Kubernetes. It currently assumes OpenShift resources.
+            }
+            <HrefLink href="/overview" name="Status" activePath="/overview/" onClick={this.close} required={FLAGS.OPENSHIFT} />
+            <HrefLink href="/status" name="Status" activePath="/status/" onClick={this.close} disallowed={FLAGS.OPENSHIFT} />
             <HrefLink href="/catalog" name="Catalog" activePath="/catalog/" onClick={this.close} />
             <HrefLink href="/search" name="Search" onClick={this.close} startsWith={searchStartsWith} />
             <ResourceNSLink resource="events" name="Events" onClick={this.close} />
@@ -439,7 +444,6 @@ export class Nav extends React.Component {
           <MonitoringNavSection closeMenu={this.close} />
 
           <NavSection text="Administration" icon="fa fa-cog">
-            <ResourceClusterLink resource="projects" name="Projects" onClick={this.close} required={FLAGS.OPENSHIFT} />
             <ResourceClusterLink resource="namespaces" name="Namespaces" onClick={this.close} required={FLAGS.CAN_LIST_NS} />
             <ResourceClusterLink resource="nodes" name="Nodes" onClick={this.close} required={FLAGS.CAN_LIST_NODE} />
             <HrefLink href="/settings/cluster" name="Cluster Settings" onClick={this.close} startsWith={clusterSettingsStartsWith} disallowed={FLAGS.OPENSHIFT} />

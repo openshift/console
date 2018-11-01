@@ -14,6 +14,9 @@
     border-bottom: 0;
     padding-bottom: 0;
   }
+  &--no-top-margin {
+    margin-top: 0;
+  }
   &:last-child {
     border-bottom: 0;
   }
