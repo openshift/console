@@ -15,6 +15,7 @@ const normalizePackageManifests = (packageManifests, kind) => {
   });
   return _.map(activePackageManifests, packageManifest => {
     const name = packageManifest.metadata.name;
+    const uid = `${name}/${packageManifest.status.catalogSourceNamespace}`;
     const defaultIconClass = 'fa fa-clone'; // TODO: get this info from the packagemanifest
     const iconObj = _.get(packageManifest, 'status.channels[0].currentCSVDesc.icon[0]');
     const imgUrl = iconObj && `data:${iconObj.mediatype};base64,${iconObj.base64data}`;
@@ -28,6 +29,7 @@ const normalizePackageManifests = (packageManifests, kind) => {
       obj: packageManifest,
       kind,
       name,
+      uid,
       iconClass,
       imgUrl,
       description,
