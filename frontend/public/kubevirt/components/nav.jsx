@@ -11,8 +11,8 @@ import { referenceForModel } from '../module/okdk8s';
 
 // With respect to keep changes to OKD codebase at bare minimum,
 // the navigation needs to be reconstructed.
-// The ResourceNSLink, HrefLink, Sep components are passed as props to eliminate the need for additional changes in OKD core code. Ugly anti-pattern, but serves its purpose.
-const Nav = ({ isOpen, onToggle, close, scroller, onWheel, searchStartsWith, ResourceNSLink, HrefLink, Sep, ResourceClusterLink, clusterSettingsStartsWith, rolesStartsWith, rolebindingsStartsWith, quotaStartsWith }) => {
+// The ResourceNSLink, HrefLink, Sep, MonitoringNavSection components are passed as props to eliminate the need for additional changes in OKD core code. Ugly anti-pattern, but serves its purpose.
+const Nav = ({ isOpen, onToggle, close, scroller, onWheel, searchStartsWith, ResourceNSLink, HrefLink, Sep, ResourceClusterLink, MonitoringNavSection, clusterSettingsStartsWith, rolesStartsWith, rolebindingsStartsWith, quotaStartsWith }) => {
   return (
     <React.Fragment>
       <button type="button" className="sidebar-toggle" aria-controls="sidebar" aria-expanded={isOpen} onClick={onToggle}>
@@ -62,6 +62,8 @@ const Nav = ({ isOpen, onToggle, close, scroller, onWheel, searchStartsWith, Res
             <ResourceNSLink resource="persistentvolumeclaims" name="Persistent Volume Claims" onClick={close} />
             <ResourceClusterLink resource="storageclasses" name="Storage Classes" onClick={close} required={FLAGS.CAN_LIST_STORE} />
           </NavSection>
+
+          <MonitoringNavSection closeMenu={close} />
 
           <NavSection text="Administration" icon="fa fa-cog">
             <ResourceClusterLink resource="projects" name="Projects" onClick={close} required={FLAGS.OPENSHIFT} />
