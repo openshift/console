@@ -9,7 +9,7 @@ import { LoadingBox, LoadError } from './utils/status-box';
 import { Dropdown, Firehose, history, MsgBox, ResourceName } from './utils';
 import { BuildConfigModel, DeploymentConfigModel, ImageStreamModel, ImageStreamTagModel, RouteModel, ServiceModel } from '../models';
 import { ContainerPort, k8sCreate, k8sGet, K8sResourceKind } from '../module/k8s';
-import { ImageStreamIcon } from './catalog-item-icon';
+import { ImageStreamIcon } from './catalog/catalog-item-icon';
 import { getAnnotationTags, getBuilderTagsSortedByVersion } from './image-stream';
 import { NsDropdown } from './RBAC/bindings';
 import { ButtonBar } from './utils/button-bar';

@@ -4,15 +4,15 @@ import * as PropTypes from 'prop-types';
 import { Helmet } from 'react-helmet';
 
 import { CatalogTileViewPage } from './catalog-items';
-import { serviceClassDisplayName } from '../module/k8s';
-import { withStartGuide } from './start-guide';
-import { FLAGS, connectToFlags, flagPending } from '../features';
-import { Firehose, PageHeading, StatusBox } from './utils';
+import { serviceClassDisplayName } from '../../module/k8s';
+import { withStartGuide } from '../start-guide';
+import { FLAGS, connectToFlags, flagPending } from '../../features';
+import { Firehose, PageHeading, StatusBox } from '../utils';
 import {
   getAnnotationTags,
   getMostRecentBuilderTag,
   isBuilder
-} from './image-stream';
+} from '../image-stream';
 import {
   getImageForIconClass,
   getImageStreamIcon,

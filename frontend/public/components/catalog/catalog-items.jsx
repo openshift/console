@@ -10,7 +10,7 @@ import {FormControl} from 'patternfly-react/dist/esm/components/Form';
 import {Modal} from 'patternfly-react/dist/esm/components/Modal';
 
 import {normalizeIconClass} from './catalog-item-icon';
-import {categorizeItems, recategorizeItems} from './utils/categorize-catalog-items';
+import {categorizeItems, recategorizeItems} from '../utils/categorize-catalog-items';
 import {CatalogTileDetails} from './catalog-item-details';
 
 export class CatalogTileViewPage extends React.Component {
