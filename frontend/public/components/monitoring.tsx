@@ -149,6 +149,16 @@ const Annotation = ({children, title}) => _.isNil(children)
   ? null
   : <React.Fragment><dt>{title}</dt><dd>{children}</dd></React.Fragment>;
 
+const Label = ({k, v}) => <div className="co-m-label co-m-label--expand" key={k}>
+  <span className="co-m-label__key">{k}</span>
+  <span className="co-m-label__eq">=</span>
+  <span className="co-m-label__value">{v}</span>
+</div>;
+
+const SilenceMatchersList = ({silence}) => <div className={`co-text-${SilenceResource.kind.toLowerCase()}`}>
+  {_.map(silence.matchers, ({name, isRegex, value}) => <Label key={name} k={name} v={isRegex ? `~${value}` : value} />)}
+</div>;
+
 class MonitoringPageWrapper extends SafetyFirst<AlertsPageWrapperProps, null> {
   componentDidMount () {
     super.componentDidMount();
@@ -271,6 +281,13 @@ const AlertsDetailsPage_ = connect(alertStateToProps)((props: AlertsDetailsPageP
               <dl className="co-m-pane__details">
                 <dt>Name</dt>
                 <dd>{alertname}</dd>
+                <dt>Labels</dt>
+                <dd>{_.isEmpty(labels)
+                  ? <div className="text-muted">No labels</div>
+                  : <div className={`co-text-${AlertResource.kind.toLowerCase()}`}>
+                    {_.map(labels, (v, k) => <Label key={k} k={k} v={v} />)}
+                  </div>
+                }</dd>
                 {severity && <React.Fragment>
                   <dt>Severity</dt>
                   <dd>{_.startCase(severity)}</dd>
@@ -497,6 +514,11 @@ const SilencesDetailsPage_ = connect(silenceParamToProps)((props: SilencesDetail
                   <dt>Name</dt>
                   <dd>{silence.name}</dd>
                 </React.Fragment>}
+                <dt>Matchers</dt>
+                <dd>{_.isEmpty(silence.matchers)
+                  ? <div className="text-muted">No matchers</div>
+                  : <SilenceMatchersList silence={silence} />
+                }</dd>
                 <dt>State</dt>
                 <dd><SilenceState silence={silence} /></dd>
                 <dt>Last Updated At</dt>
@@ -719,6 +741,9 @@ const SilenceRow = ({obj}) => {
           <MonitoringResourceIcon resource={SilenceResource} />
           <Link className="co-resource-link__resource-name" title={obj.id} to={`${SilenceResource.path}/${obj.id}`}>{obj.name}</Link>
         </div>
+      </div>
+      <div className="monitoring-label-list">
+        <SilenceMatchersList silence={obj} />
       </div>
     </div>
     <div className="col-xs-3">
