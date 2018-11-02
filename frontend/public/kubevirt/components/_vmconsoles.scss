@@ -1,2 +1,14 @@
 @import '~@patternfly/react-console/dist/css/console.css';
 
+.vm-consoles-loading {
+  text-align: center;
+
+  .co-m-loader--inline {
+    margin-right: 1em;
+  }
+
+  button {
+    vertical-align: baseline;
+    padding: 0;
+  }
+}

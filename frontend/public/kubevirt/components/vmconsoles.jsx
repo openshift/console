@@ -1,14 +1,40 @@
 import React from 'react';
 import { VncConsole } from '@patternfly/react-console';
+import { Button } from 'patternfly-react';
 
-import { getLabelMatcher, getResourceKind, getVncConnectionDetails, getFlattenForKind, findVMI, isVmiRunning } from './utils/resources';
+import { getLabelMatcher, getResourceKind, getVncConnectionDetails, getFlattenForKind, findVMI, isVmiRunning, isVmStarting } from './utils/resources';
 import { Firehose } from './utils/okdutils';
+import { LoadingInline } from './okdcomponents';
 
-import { VirtualMachineInstanceModel } from '../models';
+import { VirtualMachineInstanceModel, VirtualMachineModel } from '../models';
+import { startStopVmModal } from './modals/start-stop-vm-modal';
 
-const VmIsNotRunning = () => (
+const VmIsDown = ({ vm }) => {
+  const action = (
+    <Button bsStyle="link" onClick={() => startStopVmModal({
+      kind: VirtualMachineModel,
+      resource: vm,
+      start: true
+    })}>
+      start
+    </Button>);
+
+  return (
+    <div className="co-m-pane__body">
+      <div className="vm-consoles-loading">
+        This Virtual Machine is down. Please {action} it to access its console.
+      </div>
+    </div>
+
+  );
+};
+
+const VmIsStarting = () => (
   <div className="co-m-pane__body">
-    Please start the VM prior accessing its console.
+    <div className="vm-consoles-loading">
+      <LoadingInline />
+      This Virtual Machine is still starting up. The console will be available soon.
+    </div>
   </div>
 );
 
@@ -24,9 +50,9 @@ const ConsoleType = ({ type }) => (
 /**
  * Actual component for consoles.
  */
-const VmConsoles = ({ vmi }) => {
+const VmConsoles = ({ vm, vmi }) => {
   if (!isVmiRunning(vmi)) {
-    return <VmIsNotRunning />;
+    return isVmStarting(vm, vmi) ? <VmIsStarting /> : <VmIsDown vm={vm} />;
   }
 
   const vncConDetails = getVncConnectionDetails(vmi);
@@ -44,7 +70,8 @@ const VmConsoles = ({ vmi }) => {
 const FirehoseVmConsoles = props => {
   const data = props.flatten(props.resources);
   const vmi = props.filter(data);
-  return <VmConsoles vmi={vmi} />;
+  const vm = props.vm;
+  return <VmConsoles vm={vm} vmi={vmi} />;
 };
 
 /**
@@ -54,7 +81,7 @@ const VmConsolesConnected = ({ obj: vm }) => {
   const vmiResources = getResourceKind(VirtualMachineInstanceModel, vm.metadata.name, true, vm.metadata.namespace, true, getLabelMatcher(vm));
   return (
     <Firehose resources={[vmiResources]} flatten={getFlattenForKind(VirtualMachineInstanceModel.kind)}>
-      <FirehoseVmConsoles filter={data => findVMI(data, vm.metadata.name)} />
+      <FirehoseVmConsoles vm={vm} filter={data => findVMI(data, vm.metadata.name)} />
     </Firehose>
   );
 };

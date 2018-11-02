@@ -65,7 +65,7 @@ class StartStopVmModal extends PromiseComponent {
 
 StartStopVmModal.propTypes = {
   start: PropTypes.bool.isRequired,
-  kind: PropTypes.string.isRequired,
+  kind: PropTypes.object.isRequired, /* object of model */
   resource: PropTypes.object.isRequired,
   close: PropTypes.func.isRequired
 };
