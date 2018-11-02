@@ -36,6 +36,11 @@ fi
 docker build -q --rm=true -f Dockerfile -t $REPO:$GIT_VERSION .
 docker push $REPO:$GIT_VERSION
 
+if [ -n "$IMAGE_TAG" ]; then
+  docker tag $REPO:$GIT_VERSION $REPO:latest
+  docker push $REPO:latest
+fi
+
 # Not used by kubevirt:
 #TAG=$(git describe --exact-match --abbrev=0 --tags ${COMMIT} 2> /dev/null || true)
 #if [ -n "$TAG" ]; then
