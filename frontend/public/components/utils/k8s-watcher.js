@@ -1,6 +1,6 @@
 import * as _ from 'lodash-es';
 
-export const makeReduxID = (k8sKind, query) => {
+export const makeReduxID = (k8sKind = {}, query) => {
   let qs = '';
   if (!_.isEmpty(query)) {
     qs = `---${JSON.stringify(query)}`;
@@ -9,7 +9,8 @@ export const makeReduxID = (k8sKind, query) => {
   return `${k8sKind.plural}${qs}`;
 };
 
-export const makeQuery = (namespace, labelSelector, fieldSelector, name) => {
+/** @type {(namespace: string, labelSelector?: any, fieldSelector?: any, name?: string) => {[key: string]: string}} */
+export const makeQuery = (namespace, labelSelector, fieldSelector, name, limit) => {
   const query = {};
 
   if (!_.isEmpty(labelSelector)) {
@@ -26,6 +27,10 @@ export const makeQuery = (namespace, labelSelector, fieldSelector, name) => {
 
   if (fieldSelector) {
     query.fieldSelector = fieldSelector;
+  }
+
+  if (limit) {
+    query.limit = limit;
   }
   return query;
 };
