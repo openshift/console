@@ -58,8 +58,8 @@ const labelsToParams = labels => _.map(labels, (v, k) => `${encodeURIComponent(k
 const alertURL = (name, labels) => `${AlertResource.path}/${name}?${labelsToParams(labels)}`;
 const ruleURL = rule => `${AlertRuleResource.path}/${_.get(rule, 'id')}`;
 
-// Return "inactive" if no state is found
-export const alertState = a => _.get(a, 'state', 'inactive');
+// Return "not-firing" if no state is found
+export const alertState = a => _.get(a, 'state', 'not-firing');
 
 const alertDescription = alert => {
   const {annotations = {}, labels = {}} = alert;
@@ -119,8 +119,8 @@ const MonitoringResourceIcon = props => {
 };
 
 const AlertState: React.SFC<StateProps> = ({state}) => {
-  if (state === 'inactive') {
-    return <span className="text-muted">{_.startCase(state)}</span>;
+  if (state === 'not-firing') {
+    return <span className="text-muted">Not Firing</span>;
   }
   const stateToIconClassName = {
     firing: 'fa fa-bell alert-firing',
@@ -196,14 +196,13 @@ class MonitoringPageWrapper extends SafetyFirst<AlertsPageWrapperProps, null> {
           return _.filter(g.rules, {type: 'alerting'}).map(addID);
         });
 
-        // If a rule is inactive (has no active alerts), create a "fake" alert with state "inactive"
+        // If a rule is has no active alerts, create a "fake" alert
         const asAlerts = _.flatMap(rules, rule => _.isEmpty(rule.alerts)
           ? {
             annotations: rule.annotations,
             id: rule.id,
             labels: {alertname: rule.name, ...rule.labels},
             rule,
-            state: 'inactive',
           }
           : rule.alerts.map(a => ({rule, ...a}))
         );
@@ -596,7 +595,7 @@ const alertsRowFilter = {
     {id: 'firing', title: 'Firing'},
     {id: 'silenced', title: 'Silenced'},
     {id: 'pending', title: 'Pending'},
-    {id: 'inactive', title: 'Inactive'},
+    {id: 'not-firing', title: 'Not Firing'},
   ],
 };
 
