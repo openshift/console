@@ -653,7 +653,7 @@ const MonitoringListPage = connect(filtersToProps)(class InnerMonitoringListPage
       <Helmet>
         <title>Monitoring Alerts</title>
       </Helmet>
-      <div className="co-m-nav-title co-m-nav-title--detail">
+      <div className="co-m-nav-title">
         <h1 className="co-m-pane__heading">
           <div className="co-m-pane__name">
             Monitoring Alerts &nbsp;<span className="monitoring-header-link"><AlertmanagerLink text="Alertmanager UI" /></span>
