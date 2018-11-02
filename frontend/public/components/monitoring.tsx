@@ -883,7 +883,7 @@ class SilenceForm_ extends SafetyFirst<SilenceFormProps, SilenceFormState> {
       </Helmet>
       <form className="co-m-pane__body-group silence-form" onSubmit={this.onSubmit}>
         <SectionHeading text={this.props.title} />
-        <p className="co-m-pane__explanation">A silence is configured based on a matcher (label selector). No notification will be sent out for alerts that match all the values or regular expressions.</p>
+        <p className="co-m-pane__explanation">A silence is configured based on matchers (label selectors). No notification will be sent out for alerts that match all the values or regular expressions.</p>
         <hr />
 
         <div className="form-group">
