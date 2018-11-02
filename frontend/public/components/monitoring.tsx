@@ -135,7 +135,7 @@ const AlertState: React.SFC<AlertStateProps> = ({state}) => {
   const stateToIconClassName = {
     firing: 'fa fa-bell alert-firing',
     silenced: 'fa fa-bell-slash text-muted',
-    pending: 'fa fa-exclamation-triangle alert-pending',
+    pending: 'fa fa-bell-o alert-pending',
   };
   const klass = stateToIconClassName[state];
   return klass ? <React.Fragment><i className={klass} aria-hidden="true"></i> {_.startCase(state)}</React.Fragment> : null;
@@ -146,7 +146,7 @@ const SilenceState = ({silence}) => {
   const stateToIconClassName = {
     active: 'fa fa-check-circle-o silence-active',
     pending: 'fa fa-hourglass-half silence-pending',
-    expired: 'fa fa-times-circle-o text-muted',
+    expired: 'fa fa-ban text-muted',
   };
   const klass = stateToIconClassName[state];
   return klass ? <React.Fragment><i className={klass} aria-hidden="true"></i> {_.startCase(state)}</React.Fragment> : null;
