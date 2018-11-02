@@ -133,9 +133,6 @@ const AlertState: React.SFC<StateProps> = ({state}) => {
 
 const SilenceState = ({silence}) => {
   const state = silenceState(silence);
-  if (state === 'inactive') {
-    return <span className="text-muted">{_.startCase(state)}</span>;
-  }
   const stateToIconClassName = {
     active: 'fa fa-check-circle-o silence-active',
     pending: 'fa fa-hourglass-half silence-pending',
