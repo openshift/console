@@ -643,28 +643,19 @@ const MonitoringListPage = connect(filtersToProps)(class InnerMonitoringListPage
   }
 
   render () {
-    const {CreateButton, data, filters, Header, loaded, loadError, match, PageDescription, reduxID, Row, rowFilter, textFilterLabel} = this.props;
+    const {CreateButton, data, filters, Header, loaded, loadError, PageDescription, reduxID, Row, rowFilter, textFilterLabel} = this.props;
 
     return <React.Fragment>
       <Helmet>
         <title>Monitoring Alerts</title>
       </Helmet>
-      <div className="co-m-nav-title co-m-nav-title--detail">
+      <div className="co-m-nav-title">
         <h1 className="co-m-pane__heading">
           <div className="co-m-pane__name">
             Monitoring Alerts &nbsp;<span className="monitoring-header-link"><AlertmanagerLink text="Alertmanager UI" /></span>
           </div>
         </h1>
       </div>
-      <ul className="co-m-horizontal-nav__menu">
-        <li className={classNames('co-m-horizontal-nav__menu-item', {'co-m-horizontal-nav-item--active': match.path === AlertResource.path})}>
-          <Link to={AlertResource.path}>Alerts</Link>
-        </li>
-        <li className={classNames('co-m-horizontal-nav__menu-item', {'co-m-horizontal-nav-item--active': match.path === SilenceResource.path})}>
-          <Link to={SilenceResource.path}>Silences</Link>
-        </li>
-        <li className="co-m-horizontal-nav__menu-item co-m-horizontal-nav__menu-item--divider"></li>
-      </ul>
       <div className="co-m-pane__filter-bar co-m-pane__filter-bar--with-help-text">
         {PageDescription && <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--help-text">
           <PageDescription />
