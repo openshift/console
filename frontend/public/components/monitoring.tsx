@@ -266,7 +266,7 @@ const AlertsDetailsPage_ = connect(alertStateToProps)((props: AlertsDetailsPageP
     <div className="co-m-nav-title co-m-nav-title--detail">
       <h1 className="co-m-pane__heading">
         <div className="co-m-pane__name"><MonitoringResourceIcon className="co-m-resource-icon--lg pull-left" resource={AlertResource} />{alertname}</div>
-        {state === 'firing' || state === 'pending' && <div className="co-actions">
+        {(state === 'firing' || state === 'pending') && <div className="co-actions">
           <ActionsMenu actions={[silenceAlert(alert)]} />
         </div>}
       </h1>
