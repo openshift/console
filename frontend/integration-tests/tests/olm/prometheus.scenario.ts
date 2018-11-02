@@ -74,17 +74,17 @@ describe('Interacting with the Prometheus OCS', () => {
     await crudView.rowForOperator('Prometheus Operator').$('.co-clusterserviceversion-logo').click();
     await browser.wait(until.presenceOf($('.loading-box__loaded')), 5000);
 
-    expect($('.co-clusterserviceversion-details__section--info').isDisplayed()).toBe(true);
-    expect($('.co-clusterserviceversion-details__section--description').isDisplayed()).toBe(true);
+    expect($('.co-m-pane__details').isDisplayed()).toBe(true);
   });
 
-  it('displays empty message in the "Instances" section', async() => {
-    await element(by.linkText('Instances')).click();
+  it('displays empty message in the "All Instances" section', async() => {
+    await element(by.linkText('All Instances')).click();
     await crudView.isLoaded();
 
     expect(crudView.rowFilterFor('Prometheus').isDisplayed()).toBe(true);
     expect(crudView.rowFilterFor('Alertmanager').isDisplayed()).toBe(true);
     expect(crudView.rowFilterFor('ServiceMonitor').isDisplayed()).toBe(true);
+    expect(crudView.rowFilterFor('PrometheusRule').isDisplayed()).toBe(true);
     expect(crudView.statusMessageTitle.getText()).toEqual('No Application Resources Found');
     expect(crudView.statusMessageDetail.getText()).toEqual('Application resources are declarative components used to define the behavior of the application.');
   });
@@ -104,7 +104,7 @@ describe('Interacting with the Prometheus OCS', () => {
     await crudView.isLoaded();
     await browser.wait(until.visibilityOf(crudView.rowForName('example')));
 
-    expect(crudView.rowFilterFor('Prometheus').$('.row-filter--number-bubble').getText()).toEqual('1');
+    expect(crudView.rowForName('example').getText()).toContain('Prometheus');
   });
 
   it('displays metadata about the created `Prometheus` in its "Overview" section', async() => {
@@ -135,7 +135,9 @@ describe('Interacting with the Prometheus OCS', () => {
   it('displays YAML editor for creating a new `Alertmanager` instance', async() => {
     await $$('.breadcrumb-link').first().click();
     await crudView.isLoaded();
-    await $$('.dropdown').filter(btn => btn.getText().then(text => text.startsWith('Create New'))).first().click();
+    await element(by.linkText('All Instances')).click();
+    await browser.wait(until.visibilityOf(element(by.buttonText('Create New'))));
+    await element(by.buttonText('Create New')).click();
     await browser.wait(until.visibilityOf($$('.dropdown-menu').first()), 1000);
     await $$('.dropdown-menu').first().element(by.linkText('Alertmanager')).click();
     await browser.wait(until.presenceOf($('.ace_text-input')));
@@ -148,7 +150,6 @@ describe('Interacting with the Prometheus OCS', () => {
     await crudView.isLoaded();
     await browser.wait(until.visibilityOf(crudView.rowForName('alertmanager-main')));
 
-    expect(crudView.rowFilterFor('Alertmanager').$('.row-filter--number-bubble').getText()).toEqual('1');
     expect(crudView.rowForName('alertmanager-main').getText()).toContain('Alertmanager');
   });
 
@@ -180,7 +181,9 @@ describe('Interacting with the Prometheus OCS', () => {
   it('displays YAML editor for creating a new `ServiceMonitor` instance', async() => {
     await $$('.breadcrumb-link').first().click();
     await crudView.isLoaded();
-    await $$('.dropdown').filter(btn => btn.getText().then(text => text.startsWith('Create New'))).first().click();
+    await element(by.linkText('All Instances')).click();
+    await browser.wait(until.visibilityOf(element(by.buttonText('Create New'))));
+    await element(by.buttonText('Create New')).click();
     await browser.wait(until.visibilityOf($$('.dropdown-menu').first()), 1000);
     await $$('.dropdown-menu').first().element(by.linkText('Service Monitor')).click();
     await browser.wait(until.presenceOf($('.ace_text-input')), 10000);
@@ -193,7 +196,7 @@ describe('Interacting with the Prometheus OCS', () => {
     await crudView.isLoaded();
     await browser.wait(until.visibilityOf(crudView.rowForName('example')));
 
-    expect(crudView.rowFilterFor('ServiceMonitor').$('.row-filter--number-bubble').getText()).toEqual('1');
+    expect(crudView.rowForName('example').getText()).toContain('ServiceMonitor');
   });
 
   it('displays metadata about the created `ServiceMonitor` in its "Overview" section', async() => {

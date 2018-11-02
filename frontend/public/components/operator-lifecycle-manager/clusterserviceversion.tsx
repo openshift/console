@@ -1,16 +1,21 @@
+/* eslint-disable no-undef */
+
 import * as React from 'react';
 import { Link, match as RouterMatch } from 'react-router-dom';
 import * as _ from 'lodash-es';
 import { Map as ImmutableMap } from 'immutable';
 import { connect } from 'react-redux';
+import { Alert } from 'patternfly-react';
 
-import { ClusterServiceVersionResourcesPage } from './clusterserviceversion-resource';
+import { ProvidedAPIsPage, ProvidedAPIPage } from './clusterserviceversion-resource';
 import { DetailsPage, ListHeader, ColHead, List, ListPage } from '../factory';
 import { withFallback } from '../utils/error-boundary';
 import { referenceForModel, referenceFor } from '../../module/k8s';
 import { ClusterServiceVersionModel } from '../../models';
 import { AsyncComponent } from '../utils/async';
 import { FLAGS as featureFlags } from '../../features';
+import { ResourceEventStream } from '../events';
+import { Conditions } from '../conditions';
 import {
   ClusterServiceVersionKind,
   ClusterServiceVersionLogo,
@@ -21,8 +26,6 @@ import {
 import {
   Box,
   Cog,
-  Dropdown,
-  history,
   LoadingBox,
   MsgBox,
   navFactory,
@@ -30,17 +33,20 @@ import {
   PageHeading,
   ResourceCog,
   ResourceLink,
-  Timestamp
+  Timestamp,
+  SectionHeading,
+  ResourceSummary,
+  ScrollToTopOnMount,
 } from '../utils';
 
 import * as operatorLogo from '../../imgs/operator.svg';
 
 export const ClusterServiceVersionHeader: React.SFC = () => <ListHeader>
-  <ColHead className="col-xs-3" sortField="metadata.name">Name</ColHead>
-  <ColHead className="col-xs-3">Namespace</ColHead>
-  <ColHead className="col-xs-2">Deployment</ColHead>
-  <ColHead className="col-xs-2">Status</ColHead>
-  <ColHead className="col-xs-2" />
+  <ColHead className="col-lg-3 col-md-4 col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
+  <ColHead className="col-lg-2 col-md-2 col-sm-4 col-xs-6">Namespace</ColHead>
+  <ColHead className="col-lg-2 hidden-md hidden-sm hidden-xs">Deployment</ColHead>
+  <ColHead className="col-lg-2 col-md-3 col-sm-4 hidden-xs">Status</ColHead>
+  <ColHead className="col-lg-3 col-md-3 hidden-sm hidden-xs">Provided APIs</ColHead>
 </ListHeader>;
 
 const menuActions = [Cog.factory.Edit, Cog.factory.Delete];
@@ -52,36 +58,37 @@ export const ClusterServiceVersionRow = withFallback<ClusterServiceVersionRowPro
     ? <span>Enabled</span>
     : <span className="co-error"><i className="fa fa-times-circle co-icon-space-r" /> {_.get(obj, 'status.reason', ClusterServiceVersionPhase.CSVPhaseUnknown)}</span>;
 
-  return <div className="row co-resource-list__item" style={{display: 'flex', alignItems: 'center'}}>
-    <div className="col-xs-3" style={{display: 'flex', alignItems: 'center'}}>
+  return <div className="row co-resource-list__item">
+    <div className="col-lg-3 col-md-4 col-sm-4 col-xs-6" style={{display: 'flex', alignItems: 'center'}}>
       <ResourceCog resource={obj} kind={referenceFor(obj)} actions={menuActions} />
       <Link to={route}>
         <ClusterServiceVersionLogo icon={_.get(obj, 'spec.icon', [])[0]} displayName={obj.spec.displayName} version={obj.spec.version} provider={obj.spec.provider} />
       </Link>
     </div>
-    <div className="col-xs-3">
+    <div className="col-lg-2 col-md-2 col-sm-4 col-xs-6">
       <ResourceLink kind="Namespace" title={obj.metadata.namespace} name={obj.metadata.namespace} />
     </div>
-    <div className="col-xs-2">
+    <div className="col-lg-2 hidden-md hidden-sm hidden-xs">
       <ResourceLink kind="Deployment" name={obj.spec.install.spec.deployments[0].name} namespace={obj.metadata.namespace} title={obj.spec.install.spec.deployments[0].name} />
     </div>
-    <div className="col-xs-2">{obj.metadata.deletionTimestamp ? 'Disabling' : installStatus}</div>
-    <div className="col-xs-2">
-      <div style={{display: 'flex', justifyContent: 'flex-end', alignItems: 'center'}}>
-        <Link to={`${route}/instances`} title="View instances">View instances</Link>
-      </div>
+    <div className="col-lg-2 col-md-3 col-sm-4 hidden-xs">{obj.metadata.deletionTimestamp ? 'Disabling' : installStatus}</div>
+    <div className="col-lg-3 col-md-3 hidden-sm hidden-xs">
+      { _.take(obj.spec.customresourcedefinitions.owned, 4).map(desc => <div key={desc.name}>
+        <Link to={`${route}/${referenceForCRDDesc(desc)}`} title={desc.name}>{desc.displayName}</Link>
+      </div>)}
+      { obj.spec.customresourcedefinitions.owned.length > 4 && <Link to={`${route}/instances`} title={`View ${obj.spec.customresourcedefinitions.owned.length - 4} more...`}>{`View ${obj.spec.customresourcedefinitions.owned.length - 4} more...`}</Link>}
     </div>
   </div>;
 });
 
-export const ClusterServiceVersionList: React.SFC<ClusterServiceVersionListProps> = (props) => {
-  const EmptyMsg = () => <MsgBox
-    title="No Cluster Service Versions Found"
-    detail={<div>
-      Cluster Service Versions are installed per namespace from Catalog Sources. For more information, see <a href="https://coreos.com/tectonic/docs/latest/alm/using-ocs.html" target="_blank" className="co-external-link" rel="noopener noreferrer">Using Open Cloud Services</a>.
+const helpText = <p className="co-help-text">
+  Cluster Service Versions are installed per namespace from Catalog Sources. For more information, see the <a href="https://github.com/operator-framework/operator-lifecycle-manager/blob/master/Documentation/design/architecture.md" target="_blank" className="co-external-link" rel="noopener noreferrer">Operator Lifecycle Manager documentation</a>.
 
-      Or create an Operator and Cluster Service Version using the <a href="https://github.com/operator-framework/helm-app-operator-kit" target="_blank" className="co-external-link" rel="noopener noreferrer">Helm App Operator Kit</a>.
-    </div>} />;
+  Or create an Operator and Cluster Service Version using the <a href="https://github.com/operator-framework/operator-sdk" target="_blank" className="co-external-link" rel="noopener noreferrer">Operator SDK</a>.
+</p>;
+
+export const ClusterServiceVersionList: React.SFC<ClusterServiceVersionListProps> = (props) => {
+  const EmptyMsg = () => <MsgBox title="No Cluster Service Versions Found" detail="" />;
 
   return <List {...props} Row={ClusterServiceVersionRow} Header={ClusterServiceVersionHeader} EmptyMsg={EmptyMsg} />;
 };
@@ -110,6 +117,7 @@ export const ClusterServiceVersionsPage = connect(stateToProps)((props: ClusterS
         namespace={props.match.params.ns}
         kind={referenceForModel(ClusterServiceVersionModel)}
         ListComponent={ClusterServiceVersionList}
+        helpText={helpText}
         filterLabel="Cluster Service Versions by name"
         showTitle={false} />
     </React.Fragment>;
@@ -119,68 +127,128 @@ export const MarkdownView = (props: {content: string}) => {
   return <AsyncComponent loader={() => import('./markdown-view').then(c => c.SyncMarkdownView)} {...props} />;
 };
 
-export const ClusterServiceVersionDetails: React.SFC<ClusterServiceVersionDetailsProps> = (props) => {
-  const {spec, metadata, status = {} as ClusterServiceVersionKind['status']} = props.obj;
-  const ownedCRDs = spec.customresourcedefinitions.owned || [];
-  const route = (name: string) => `/k8s/ns/${metadata.namespace}/${ClusterServiceVersionModel.plural}/${metadata.name}/${referenceForCRDDesc(_.find(ownedCRDs, {name}))}/new`;
+export const CRDCard: React.SFC<CRDCardProps> = ({crd, csv}) => {
+  const createRoute = `/k8s/ns/${csv.metadata.namespace}/${ClusterServiceVersionModel.plural}/${csv.metadata.name}/${referenceForCRDDesc(crd)}/new`;
 
-  return <div className="co-clusterserviceversion-details co-m-pane__body">
-    <div className="co-clusterserviceversion-details__section co-clusterserviceversion-details__section--info">
-      <div style={{marginBottom: '15px'}}>
-        { status.phase !== ClusterServiceVersionPhase.CSVPhaseSucceeded && <button disabled={true} className="btn btn-primary">Create New</button> }
-        { status.phase === ClusterServiceVersionPhase.CSVPhaseSucceeded && ownedCRDs.length > 1 && <Dropdown
-          buttonClassName="btn-primary"
-          title="Create New"
-          items={ownedCRDs.reduce((acc, crd) => ({...acc, [crd.name]: crd.displayName}), {})}
-          onChange={(name) => history.push(route(name))} /> }
-        { status.phase === ClusterServiceVersionPhase.CSVPhaseSucceeded && ownedCRDs.length === 1 && <Link to={route(ownedCRDs[0].name)} className="btn btn-primary">{`Create ${ownedCRDs[0].displayName}`}</Link> }
+  return <div className="co-crd-card">
+    <div className="co-crd-card__title">
+      <div style={{display: 'flex', alignItems: 'center', fontWeight: 600}}>
+        <ResourceLink kind={referenceForCRDDesc(crd)} title={crd.name} linkTo={false} displayName={crd.displayName} />
       </div>
-      <dl className="co-clusterserviceversion-details__section--info__item">
-        <dt>Provider</dt>
-        <dd>{spec.provider && spec.provider.name ? spec.provider.name : 'Not available'}</dd>
-        <dt>Created At</dt>
-        <dd><Timestamp timestamp={metadata.creationTimestamp} /></dd>
-      </dl>
-      <dl className="co-clusterserviceversion-details__section--info__item">
-        <dt>Links</dt>
-        { spec.links && spec.links.length > 0
-          ? spec.links.map((link, i) => <dd key={i} style={{display: 'flex', flexDirection: 'column'}}>
-            {link.name} <OverflowLink value={link.url} href={link.url} />
-          </dd>)
-          : <dd>Not available</dd> }
-      </dl>
-      <dl className="co-clusterserviceversion-details__section--info__item">
-        <dt>Maintainers</dt>
-        { spec.maintainers && spec.maintainers.length > 0
-          ? spec.maintainers.map((maintainer, i) => <dd key={i} style={{display: 'flex', flexDirection: 'column'}}>
-            {maintainer.name} <OverflowLink value={maintainer.email} href={`mailto:${maintainer.email}`} />
-          </dd>)
-          : <dd>Not available</dd> }
-      </dl>
     </div>
-    <div className="co-clusterserviceversion-details__section co-clusterserviceversion-details__section--description">
-      { status.phase !== ClusterServiceVersionPhase.CSVPhaseSucceeded && <div className="co-clusterserviceversion-detail__error-box">
-        <strong>{status.phase}</strong>: {status.message}
-      </div> }
-      <h1>Description</h1>
-      <MarkdownView content={spec.description || 'Not available'} />
+    <div className="co-crd-card__body" style={{margin: '0'}}>
+      <p>{crd.description}</p>
+    </div>
+    <div className="co-crd-card__footer">
+      <Link className="co-crd-card__link" to={createRoute}>
+        <span className="pficon pficon-add-circle-o" aria-hidden="true"></span> Create New
+      </Link>
     </div>
   </div>;
 };
 
+export const CRDCardRow: React.SFC<CRDCardRowProps> = (props) => <div className="co-crd-card-row">
+  {props.crdDescs.map(desc => <CRDCard key={desc.name} crd={desc} csv={props.csv} />)}
+</div>;
+
+export const ClusterServiceVersionDetails: React.SFC<ClusterServiceVersionDetailsProps> = (props) => {
+  const {spec, metadata, status = {} as ClusterServiceVersionKind['status']} = props.obj;
+
+  return <React.Fragment>
+    <ScrollToTopOnMount />
+
+    <div className="co-m-pane__body">
+      <div className="co-m-pane__body-group">
+        <div className="row">
+          <div className="col-sm-3">
+            <dl className="co-clusterserviceversion-details__field">
+              <dt>Provider</dt>
+              <dd>{spec.provider && spec.provider.name ? spec.provider.name : 'Not available'}</dd>
+              <dt>Created At</dt>
+              <dd><Timestamp timestamp={metadata.creationTimestamp} /></dd>
+            </dl>
+            <dl className="co-clusterserviceversion-details__field">
+              <dt>Links</dt>
+              { spec.links && spec.links.length > 0
+                ? spec.links.map((link, i) => <dd key={i} style={{display: 'flex', flexDirection: 'column'}}>
+                  {link.name} <OverflowLink value={link.url} href={link.url} />
+                </dd>)
+                : <dd>Not available</dd> }
+            </dl>
+            <dl className="co-clusterserviceversion-details__field">
+              <dt>Maintainers</dt>
+              { spec.maintainers && spec.maintainers.length > 0
+                ? spec.maintainers.map((maintainer, i) => <dd key={i} style={{display: 'flex', flexDirection: 'column'}}>
+                  {maintainer.name} <OverflowLink value={maintainer.email} href={`mailto:${maintainer.email}`} />
+                </dd>)
+                : <dd>Not available</dd> }
+            </dl>
+          </div>
+          <div className="col-sm-9">
+            {status.phase !== ClusterServiceVersionPhase.CSVPhaseSucceeded && <Alert type="error"><strong>{status.phase}</strong>: {status.message}</Alert>}
+            <SectionHeading text="Provided APIs" />
+            <div style={{width: '80%'}}>
+              <CRDCardRow csv={props.obj} crdDescs={spec.customresourcedefinitions.owned} />
+            </div>
+            <SectionHeading text="Description" />
+            <MarkdownView content={spec.description || 'Not available'} />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div className="co-m-pane__body">
+      <SectionHeading text="ClusterServiceVersion Overview" />
+      <div className="co-m-pane__body-group">
+        <div className="row">
+          <div className="col-sm-6">
+            <ResourceSummary resource={props.obj} showNodeSelector={false} showPodSelector={false} />
+          </div>
+          <div className="col-sm-6">
+            <dt>Status</dt>
+            <dd>{status.phase}</dd>
+            <dt>Status Reason</dt>
+            <dd>{status.message}</dd>
+            <dt>Operator Deployments</dt>
+            {spec.install.spec.deployments.map(({name}, i) => <dd key={i}><ResourceLink name={name} kind="Deployment" namespace={metadata.namespace} /></dd>)}
+            <dt>Operator Service Accounts</dt>
+            {spec.install.spec.permissions.map(({serviceAccountName}, i) => <dd key={i}><ResourceLink name={serviceAccountName} kind="ServiceAccount" namespace={metadata.namespace} /></dd>)}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div className="co-m-pane__body">
+      {/* FIXME(alecmerdler): Need to modify CSV conditions to follow standard conventions */}
+      <SectionHeading text="Conditions" />
+      <Conditions conditions={_.get(status, 'conditions', []).map(c => ({...c, type: c.phase, status: 'True'}))} />
+    </div>
+  </React.Fragment>;
+};
+
 export const ClusterServiceVersionsDetailsPage: React.StatelessComponent<ClusterServiceVersionsDetailsPageProps> = (props) => {
-  const Instances: React.SFC<{obj: ClusterServiceVersionKind}> = ({obj}) => <ClusterServiceVersionResourcesPage obj={obj} />;
-  Instances.displayName = 'Instances';
+  const AllInstances: React.SFC<{obj: ClusterServiceVersionKind}> = ({obj}) => <ProvidedAPIsPage obj={obj} />;
+  AllInstances.displayName = 'AllInstances';
+
+  const instancePagesFor = (obj: ClusterServiceVersionKind) => {
+    const ownedCRDs = _.get(obj, 'spec.customresourcedefinitions.owned', []);
+
+    return (ownedCRDs.length > 1 ? [{href: 'instances', name: 'All Instances', component: AllInstances}] : []).concat(ownedCRDs.map((desc: CRDDescription) => ({
+      href: referenceForCRDDesc(desc),
+      name: desc.displayName,
+      /* eslint-disable-next-line react/display-name */
+      component: (instancesProps) => <ProvidedAPIPage {...instancesProps} csv={obj} kind={referenceForCRDDesc(desc)} namespace={props.match.params.ns} />,
+    })));
+  };
 
   return <DetailsPage
     {...props}
     namespace={props.match.params.ns}
     kind={referenceForModel(ClusterServiceVersionModel)}
     name={props.match.params.name}
-    pages={[
+    pagesFor={(obj: ClusterServiceVersionKind) => [
       navFactory.details(ClusterServiceVersionDetails),
+      navFactory.events(ResourceEventStream),
       navFactory.editYaml(),
-      {href: 'instances', name: 'Instances', component: Instances}
+      ...instancePagesFor(obj),
     ]}
     menuActions={menuActions} />;
 };
@@ -200,6 +268,20 @@ export type ClusterServiceVersionListProps = {
   data: ClusterServiceVersionKind[];
 };
 
+export type CRDCardProps = {
+  crd: CRDDescription;
+  csv: ClusterServiceVersionKind;
+};
+
+export type CRDCardRowProps = {
+  crdDescs: CRDDescription[];
+  csv: ClusterServiceVersionKind;
+};
+
+export type CRDCardRowState = {
+  expand: boolean;
+};
+
 export type ClusterServiceVersionsDetailsPageProps = {
   match: RouterMatch<any>;
 };
@@ -216,6 +298,8 @@ export type ClusterServiceVersionRowProps = {
 // TODO(alecmerdler): Find Webpack loader/plugin to add `displayName` to React components automagically
 ClusterServiceVersionList.displayName = 'ClusterServiceVersionList';
 ClusterServiceVersionsPage.displayName = 'ClusterServiceVersionsPage';
+CRDCard.displayName = 'CRDCard';
 ClusterServiceVersionsDetailsPage.displayName = 'ClusterServiceVersionsDetailsPage';
+ClusterServiceVersionDetails.displayName = 'ClusterServiceVersionDetails';
 ClusterServiceVersionRow.displayName = 'ClusterServiceVersionRow';
 ClusterServiceVersionHeader.displayName = 'ClusterServiceVersionHeader';
