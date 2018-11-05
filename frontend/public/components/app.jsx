@@ -12,7 +12,7 @@ import { ALL_NAMESPACES_KEY } from '../const';
 import { connectToFlags, featureActions, flagPending, FLAGS } from '../features';
 import { detectMonitoringURLs } from '../monitoring';
 import { analyticsSvc } from '../module/analytics';
-import { AlertsPage, AlertsDetailsPage, AlertRulesDetailsPage, CreateSilence, EditSilence, SilencesPage, SilencesDetailsPage } from './monitoring';
+import { MonitoringUI } from './monitoring';
 import { GlobalNotifications } from './global-notifications';
 import { Masthead } from './masthead';
 import { NamespaceBar } from './namespace';
@@ -187,14 +187,8 @@ class App extends React.PureComponent {
             <LazyRoute path="/k8s/ns/:ns/:plural/:name/attach-storage" exact loader={() => import('./storage/attach-storage' /* webpackChunkName: "attach-storage" */).then(m => m.AttachStorage)} />
 
             <LazyRoute path="/k8s/ns/:ns/persistentvolumeclaims/new/form" exact kind="PersistentVolumeClaim" loader={() => import('./storage/create-pvc' /* webpackChunkName: "create-pvc" */).then(m => m.CreatePVC)} />
-            <Redirect from="/monitoring" exact to="/monitoring/alerts" />
-            <Route path="/monitoring/alerts" exact component={AlertsPage} />
-            <Route path="/monitoring/alerts/:name" exact component={AlertsDetailsPage} />
-            <Route path="/monitoring/alertrules/:id" exact component={AlertRulesDetailsPage} />
-            <Route path="/monitoring/silences" exact component={SilencesPage} />
-            <Route path="/monitoring/silences/new" exact component={CreateSilence} />
-            <Route path="/monitoring/silences/:id" exact component={SilencesDetailsPage} />
-            <Route path="/monitoring/silences/:id/edit" exact component={EditSilence} />
+
+            <Route path="/monitoring" component={MonitoringUI} />
 
             <LazyRoute path={'/k8s/cluster/storageclasses/new/form'} exact loader={() => import('./storage-class-form').then(m => m.StorageClassForm)} />
 
