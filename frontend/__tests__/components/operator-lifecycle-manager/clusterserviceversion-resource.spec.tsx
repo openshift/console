@@ -5,7 +5,7 @@ import { match as RouterMatch } from 'react-router-dom';
 import { shallow, ShallowWrapper } from 'enzyme';
 import * as _ from 'lodash-es';
 
-import { ClusterServiceVersionResourceList, ClusterServiceVersionResourceListProps, ClusterServiceVersionResourcesPage, ClusterServiceVersionResourcesPageProps, ClusterServiceVersionResourceHeaderProps, ClusterServiceVersionResourcesDetailsState, ClusterServiceVersionResourceRowProps, ClusterServiceVersionResourceHeader, ClusterServiceVersionResourceRow, ClusterServiceVersionResourceDetails, ClusterServiceVersionResourcesDetailsPageProps, ClusterServiceVersionResourcesDetailsProps, ClusterServiceVersionResourcesDetailsPage, ClusterServiceVersionResourceLink } from '../../../public/components/operator-lifecycle-manager/clusterserviceversion-resource';
+import { ClusterServiceVersionResourceList, ClusterServiceVersionResourceListProps, ProvidedAPIsPage, ProvidedAPIsPageProps, ClusterServiceVersionResourceHeaderProps, ClusterServiceVersionResourcesDetailsState, ClusterServiceVersionResourceRowProps, ClusterServiceVersionResourceHeader, ClusterServiceVersionResourceRow, ClusterServiceVersionResourceDetails, ClusterServiceVersionResourcesDetailsPageProps, ClusterServiceVersionResourcesDetailsProps, ClusterServiceVersionResourcesDetailsPage, ClusterServiceVersionResourceLink } from '../../../public/components/operator-lifecycle-manager/clusterserviceversion-resource';
 import { Resources } from '../../../public/components/operator-lifecycle-manager/k8s-resource';
 import { ClusterServiceVersionResourceKind, referenceForCRDDesc } from '../../../public/components/operator-lifecycle-manager';
 import { StatusDescriptor } from '../../../public/components/operator-lifecycle-manager/descriptors/status';
@@ -294,7 +294,7 @@ describe(ClusterServiceVersionResourcesDetailsPage.displayName, () => {
 
   it('passes function to create breadcrumbs for resource to `DetailsPage`', () => {
     expect(wrapper.find(DetailsPage).props().breadcrumbsFor(null)).toEqual([
-      {name: 'etcd', path: `/k8s/ns/default/${ClusterServiceVersionModel.plural}/etcd/instances`},
+      {name: 'etcd', path: `/k8s/ns/default/${ClusterServiceVersionModel.plural}/etcd/etcdclusters`},
       {name: `${testResourceInstance.kind} Details`, path: `/k8s/ns/default/${ClusterServiceVersionModel.plural}/etcd/etcdclusters/my-etcd`},
     ]);
   });
@@ -305,7 +305,7 @@ describe(ClusterServiceVersionResourcesDetailsPage.displayName, () => {
     wrapper.setProps({match});
 
     expect(wrapper.find(DetailsPage).props().breadcrumbsFor(null)).toEqual([
-      {name: 'example', path: `/k8s/ns/${ClusterServiceVersionModel.plural}/example/example/instances`},
+      {name: 'example', path: `/k8s/ns/${ClusterServiceVersionModel.plural}/example/example`},
       {name: `${testResourceInstance.kind} Details`, path: `/k8s/ns/${ClusterServiceVersionModel.plural}/example/example/example`},
     ]);
   });
@@ -344,11 +344,11 @@ describe(ClusterServiceVersionResourcesDetailsPage.displayName, () => {
   });
 });
 
-describe(ClusterServiceVersionResourcesPage.displayName, () => {
-  let wrapper: ShallowWrapper<ClusterServiceVersionResourcesPageProps>;
+describe(ProvidedAPIsPage.displayName, () => {
+  let wrapper: ShallowWrapper<ProvidedAPIsPageProps>;
 
   beforeEach(() => {
-    wrapper = shallow(<ClusterServiceVersionResourcesPage.WrappedComponent obj={testClusterServiceVersion} />);
+    wrapper = shallow(<ProvidedAPIsPage.WrappedComponent obj={testClusterServiceVersion} />);
   });
 
   it('renders a `StatusBox` if given app has no owned or required custom resources', () => {

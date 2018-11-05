@@ -75,14 +75,16 @@ describe('Interacting with the etcd OCS', () => {
     await crudView.rowForOperator('etcd').$('.co-clusterserviceversion-logo').click();
     await browser.wait(until.presenceOf($('.loading-box__loaded')), 5000);
 
-    expect($('.co-clusterserviceversion-details__section--info').isDisplayed()).toBe(true);
-    expect($('.co-clusterserviceversion-details__section--description').isDisplayed()).toBe(true);
+    expect($('.co-m-pane__details').isDisplayed()).toBe(true);
   });
 
-  it('displays empty message in the "Instances" section', async() => {
-    await element(by.linkText('Instances')).click();
+  it('displays empty message in the "All Instances" section', async() => {
+    await element(by.linkText('All Instances')).click();
     await crudView.isLoaded();
 
+    expect(crudView.rowFilterFor('EtcdCluster').isDisplayed()).toBe(true);
+    expect(crudView.rowFilterFor('EtcdBackup').isDisplayed()).toBe(true);
+    expect(crudView.rowFilterFor('EtcdRestore').isDisplayed()).toBe(true);
     expect(crudView.statusMessageTitle.getText()).toEqual('No Application Resources Found');
     expect(crudView.statusMessageDetail.getText()).toEqual('Application resources are declarative components used to define the behavior of the application.');
   });
@@ -106,7 +108,6 @@ describe('Interacting with the etcd OCS', () => {
     await crudView.isLoaded();
     await browser.wait(until.visibilityOf(crudView.rowForName(etcdcluster)));
 
-    expect(crudView.rowFilters.count()).toEqual(3);
     expect(crudView.rowForName(etcdcluster).getText()).toContain('EtcdCluster');
   });
 
@@ -138,7 +139,9 @@ describe('Interacting with the etcd OCS', () => {
   it('displays YAML editor for creating a new `EtcdBackup` instance', async() => {
     await $$('.breadcrumb-link').get(0).click();
     await crudView.isLoaded();
-    await $$('.dropdown').filter(btn => btn.getText().then(text => text.startsWith('Create New'))).first().click();
+    await element(by.linkText('All Instances')).click();
+    await browser.wait(until.visibilityOf(element(by.buttonText('Create New'))));
+    await element(by.buttonText('Create New')).click();
     await browser.wait(until.visibilityOf($$('.dropdown-menu').first()), 1000);
     await $$('.dropdown-menu').first().element(by.linkText('etcd Backup')).click();
     await browser.wait(until.presenceOf($('.ace_text-input')));
@@ -155,7 +158,6 @@ describe('Interacting with the etcd OCS', () => {
     await crudView.isLoaded();
     await browser.wait(until.visibilityOf(crudView.rowForName(etcdbackup)));
 
-    expect(crudView.rowFilters.count()).toEqual(3);
     expect(crudView.rowForName(etcdbackup).getText()).toContain('EtcdBackup');
   });
 
@@ -187,7 +189,9 @@ describe('Interacting with the etcd OCS', () => {
   it('displays YAML editor for creating a new `EtcdRestore` instance', async() => {
     await $$('.breadcrumb-link').get(0).click();
     await crudView.isLoaded();
-    await $$('.dropdown').filter(btn => btn.getText().then(text => text.startsWith('Create New'))).first().click();
+    await element(by.linkText('All Instances')).click();
+    await browser.wait(until.visibilityOf(element(by.buttonText('Create New'))));
+    await element(by.buttonText('Create New')).click();
     await browser.wait(until.visibilityOf($$('.dropdown-menu').first()), 1000);
     await $$('.dropdown-menu').first().element(by.linkText('etcd Restore')).click();
     await browser.wait(until.presenceOf($('.ace_text-input')));
@@ -204,7 +208,6 @@ describe('Interacting with the etcd OCS', () => {
     await crudView.isLoaded();
     await browser.wait(until.visibilityOf(crudView.rowForName(etcdrestore)));
 
-    expect(crudView.rowFilters.count()).toEqual(3);
     expect(crudView.rowForName(etcdrestore).getText()).toContain('EtcdRestore');
   });
 

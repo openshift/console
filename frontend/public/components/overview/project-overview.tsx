@@ -72,7 +72,10 @@ const MetricsTooltip = ({metricLabel, byPod, children}) => {
     const numRemoved = content.length - keepLines;
     content.splice(keepLines, numRemoved, <div key="#removed-pods">and {numRemoved} other pods</div>);
   }
-  return <Tooltip content={content} styles={overviewTooltipStyles}>{children}</Tooltip>;
+
+  // Disable the tooltip on mobile since a touch also opens the sidebar, which
+  // immediately covers the tooltip content.
+  return <Tooltip content={content} styles={overviewTooltipStyles} disableOnMobile>{children}</Tooltip>;
 };
 
 const Metrics = ({metrics, item}) => {
@@ -165,7 +168,10 @@ const AlertTooltip = ({alerts, severity}) => {
   const count = _.size(alerts);
   const message = _.map(alerts, 'message').join('\n');
   const content = [<span key="message" className="co-pre-wrap">{message}</span>];
-  return <Tooltip content={content} styles={overviewTooltipStyles}>
+
+  // Disable the tooltip on mobile since a touch also opens the sidebar, which
+  // immediately covers the tooltip content.
+  return <Tooltip content={content} styles={overviewTooltipStyles} disableOnMobile>
     <i className={iconClass} aria-hidden="true" /> {pluralize(count, label)}
   </Tooltip>;
 };

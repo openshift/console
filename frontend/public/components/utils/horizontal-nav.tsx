@@ -94,17 +94,27 @@ export const navFactory: NavFactory = {
 };
 
 export const NavBar: React.SFC<NavBarProps> = ({pages, basePath}) => {
+  // These tabs go before the divider
+  const before = ['', 'edit', 'yaml'];
   const divider = <li className="co-m-horizontal-nav__menu-item co-m-horizontal-nav__menu-item--divider" key="_divider" />;
   basePath = basePath.replace(/\/$/, '');
 
-  return <ul className="co-m-horizontal-nav__menu">{_.flatten(_.map(pages, ({name, href}, i) => {
-    const klass = classNames('co-m-horizontal-nav__menu-item', {'co-m-horizontal-nav-item--active': location.pathname.replace(basePath, '/').endsWith(`/${href}`)});
-    const tab = <li className={klass} key={name}><Link to={`${basePath}/${href}`}>{name}</Link></li>;
+  const primaryTabs = <ul className="co-m-horizontal-nav__menu__primary">{
+    pages.filter(({href}, i, all) => before.includes(href) || before.includes(_.get(all[i + 1], 'href'))).map(({name, href}) => {
+      const klass = classNames('co-m-horizontal-nav__menu-item', {'co-m-horizontal-nav-item--active': location.pathname.replace(basePath, '/').endsWith(`/${href}`)});
+      return <li className={klass} key={name}><Link to={`${basePath}/${href}`}>{name}</Link></li>;
+    })}{divider}</ul>;
 
-    // These tabs go before the divider
-    const before = ['', 'edit', 'yaml'];
-    return (!before.includes(href) && i !== 0 && before.includes(pages[i - 1].href)) ? [divider, tab] : [tab];
-  }))}</ul>;
+  const secondaryTabs = <ul className="co-m-horizontal-nav__menu__secondary">{
+    pages.slice(React.Children.count(primaryTabs.props.children) - 1).map(({name, href}) => {
+      const klass = classNames('co-m-horizontal-nav__menu-item', {'co-m-horizontal-nav-item--active': location.pathname.replace(basePath, '/').endsWith(`/${href}`)});
+      return <li className={klass} key={name}><Link to={`${basePath}/${href}`}>{name}</Link></li>;
+    })}</ul>;
+
+  return <div className="co-m-horizontal-nav__menu">
+    {primaryTabs}
+    {secondaryTabs}
+  </div>;
 };
 NavBar.displayName = 'NavBar';
 
@@ -115,6 +125,7 @@ export class HorizontalNav extends React.PureComponent<HorizontalNavProps> {
       name: PropTypes.string,
       component: PropTypes.func,
     })),
+    pagesFor: PropTypes.func,
     className: PropTypes.string,
     hideNav: PropTypes.bool,
     match: PropTypes.shape({
@@ -127,8 +138,9 @@ export class HorizontalNav extends React.PureComponent<HorizontalNavProps> {
 
     const componentProps = {..._.pick(props, ['filters', 'selected', 'match']), obj: props.obj.data};
     const extraResources = _.reduce(props.resourceKeys, (extraObjs, key) => ({...extraObjs, [key]: props[key].data}), {});
+    const pages = props.pages || props.pagesFor(props.obj.data);
 
-    const routes = props.pages.map(p => {
+    const routes = pages.map(p => {
       const path = `${props.match.url}/${p.href}`;
       const render = () => {
         return <p.component {...componentProps} {...extraResources} />;
@@ -138,7 +150,7 @@ export class HorizontalNav extends React.PureComponent<HorizontalNavProps> {
 
     return <div className={props.className}>
       <div className="co-m-horizontal-nav">
-        {!props.hideNav && <NavBar pages={props.pages} basePath={props.match.url} />}
+        {!props.hideNav && <NavBar pages={pages} basePath={props.match.url} />}
         <StatusBox {...props.obj} EmptyMsg={props.EmptyMsg} label={props.label}>
           <Switch> {routes} </Switch>
         </StatusBox>
@@ -161,6 +173,7 @@ export type HorizontalNavProps = {
   obj?: {loaded: boolean, data: K8sResourceKind};
   label?: string;
   pages: Page[];
+  pagesFor?: (obj: K8sResourceKind) => Page[];
   match: any;
   resourceKeys?: string[];
   hideNav?: boolean;

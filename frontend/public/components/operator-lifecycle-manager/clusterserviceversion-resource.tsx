@@ -5,13 +5,13 @@ import { Link, match } from 'react-router-dom';
 import * as _ from 'lodash-es';
 import { connect } from 'react-redux';
 
-import { ClusterServiceVersionResourceKind, ClusterServiceVersionKind, referenceForCRDDesc, ClusterServiceVersionPhase } from './index';
+import { ClusterServiceVersionResourceKind, ClusterServiceVersionKind, referenceForCRDDesc } from './index';
 import { StatusDescriptor } from './descriptors/status';
 import { SpecDescriptor } from './descriptors/spec';
 // FIXME(alecmerdler): Should not be importing `StatusCapability` enum
 import { StatusCapability, Descriptor } from './descriptors/types';
 import { Resources } from './k8s-resource';
-import { List, MultiListPage, ListHeader, ColHead, DetailsPage, CompactExpandButtons } from '../factory';
+import { List, MultiListPage, ListPage, ListHeader, ColHead, DetailsPage, CompactExpandButtons } from '../factory';
 import { ResourceLink, ResourceSummary, StatusBox, navFactory, Timestamp, LabelList, ResourceIcon, MsgBox, ResourceCog, Cog } from '../utils';
 import { connectToModel } from '../../kinds';
 import { kindForReference, K8sResourceKind, OwnerReference, K8sKind, referenceFor, GroupVersionKind, referenceForModel } from '../../module/k8s';
@@ -28,7 +28,7 @@ export const ClusterServiceVersionResourceHeader: React.SFC<ClusterServiceVersio
 
 export const ClusterServiceVersionResourceLink: React.SFC<ClusterServiceVersionResourceLinkProps> = (props) => {
   const {namespace, name} = props.obj.metadata;
-  // XXXX HORRIBLE HACK
+  // FIXME(alecmerdler): Grab `ClusterServiceVersion` name from Redux instead
   const appName = location.pathname.split('/').slice(-2, -1);
 
   return <span className="co-resource-link">
@@ -71,8 +71,8 @@ export const ClusterServiceVersionResourceList: React.SFC<ClusterServiceVersionR
 
 const inFlightStateToProps = ({k8s}) => ({inFlight: k8s.getIn(['RESOURCES', 'inFlight'])});
 
-export const ClusterServiceVersionResourcesPage = connect(inFlightStateToProps)(
-  (props: ClusterServiceVersionResourcesPageProps) => {
+export const ProvidedAPIsPage = connect(inFlightStateToProps)(
+  (props: ProvidedAPIsPageProps) => {
     const {obj} = props;
     const {owned = []} = obj.spec.customresourcedefinitions;
     const firehoseResources = owned.map((desc) => ({kind: referenceForCRDDesc(desc), namespaced: true, prop: desc.kind}));
@@ -105,7 +105,7 @@ export const ClusterServiceVersionResourcesPage = connect(inFlightStateToProps)(
         filterLabel="Resources by name"
         resources={firehoseResources}
         namespace={obj.metadata.namespace}
-        canCreate={owned.length > 0 && obj.status.phase === ClusterServiceVersionPhase.CSVPhaseSucceeded}
+        canCreate={owned.length > 0}
         createProps={createProps}
         createButtonText={owned.length > 1 ? 'Create New' : `Create ${owned[0].displayName}`}
         flatten={flatten}
@@ -113,6 +113,19 @@ export const ClusterServiceVersionResourcesPage = connect(inFlightStateToProps)(
       />
       : <StatusBox loaded={true} EmptyMsg={EmptyMsg} />;
   });
+
+export const ProvidedAPIPage = connect(inFlightStateToProps)((props: ProvidedAPIPageProps) => {
+  const {namespace, kind, inFlight, csv} = props;
+
+  return inFlight
+    ? null
+    : <ListPage
+      kind={kind}
+      ListComponent={ClusterServiceVersionResourceList}
+      canCreate={true}
+      createProps={{to: `/k8s/ns/${csv.metadata.namespace}/${ClusterServiceVersionModel.plural}/${csv.metadata.name}/${kind}/new`}}
+      namespace={namespace} />;
+});
 
 export const ClusterServiceVersionResourceDetails = connectToModel(
   class ClusterServiceVersionResourceDetails extends React.Component<ClusterServiceVersionResourcesDetailsProps, ClusterServiceVersionResourcesDetailsState> {
@@ -206,7 +219,7 @@ export const ClusterServiceVersionResourcesDetailsPage: React.SFC<ClusterService
   ]}
   menuActions={Cog.factory.common}
   breadcrumbsFor={() => [
-    {name: props.match.params.appName, path: `${props.match.url.split('/').filter((v, i) => i <= props.match.path.split('/').indexOf(':appName')).join('/')}/instances`},
+    {name: props.match.params.appName, path: props.match.url.slice(0, props.match.url.lastIndexOf('/'))},
     {name: `${kindForReference(props.kind)} Details`, path: `${props.match.url}`},
   ]}
   pages={[
@@ -235,9 +248,16 @@ export type ClusterServiceVersionResourceRowProps = {
   obj: ClusterServiceVersionResourceKind;
 };
 
-export type ClusterServiceVersionResourcesPageProps = {
+export type ProvidedAPIsPageProps = {
   obj: ClusterServiceVersionKind;
   inFlight?: boolean;
+};
+
+export type ProvidedAPIPageProps = {
+  csv: ClusterServiceVersionKind;
+  inFlight?: boolean;
+  kind: GroupVersionKind;
+  namespace: string;
 };
 
 export type ClusterServiceVersionResourcesDetailsProps = {
@@ -277,6 +297,6 @@ ClusterServiceVersionResourceRow.displayName = 'ClusterServiceVersionResourceRow
 ClusterServiceVersionResourceDetails.displayName = 'ClusterServiceVersionResourceDetails';
 ClusterServiceVersionResourceList.displayName = 'ClusterServiceVersionResourceList';
 ClusterServiceVersionResourceLink.displayName = 'ClusterServiceVersionResourceLink';
-ClusterServiceVersionResourcesPage.displayName = 'ClusterServiceVersionResourcesPage';
+ProvidedAPIsPage.displayName = 'ProvidedAPIsPage';
 ClusterServiceVersionResourcesDetailsPage.displayName = 'ClusterServiceVersionResourcesDetailsPage';
 Resources.displayName = 'Resources';

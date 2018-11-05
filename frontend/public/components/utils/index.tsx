@@ -44,6 +44,8 @@ export * from './service-catalog-status';
 export * from './close-button';
 export * from './container-table';
 export * from './simple-tab-nav';
+export * from './request-size-input';
+export * from './name-value-editor';
 
 /*
   Add the enum for NameValueEditorPair here and not in its namesake file because the editor should always be

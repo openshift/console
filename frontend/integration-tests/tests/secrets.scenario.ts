@@ -37,7 +37,7 @@ describe('Interacting with the create secret forms', () => {
 
     it('check for edited webhook secret value', async() => {
       await browser.wait(until.textToBePresentInElement($('.co-m-pane__heading'), webhookSecretName));
-      await element(by.partialButtonText('Reveal Values')).click();
+      await secretsView.clickRevealValues();
       expect(secretsView.pre.get(0).getText()).not.toEqual(webhookSecretValue);
     });
 

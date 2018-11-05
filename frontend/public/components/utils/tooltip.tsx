@@ -34,7 +34,13 @@ const tooltipOverrides = Object.freeze({
   },
 });
 
-export const Tooltip: React.SFC<TooltipProps> = ({ content, styles, children }) => {
+// Consider this mobile if the device screen width is less than 768. (This value shouldn't change.)
+const isMobile = window.screen.width < 768;
+
+export const Tooltip: React.SFC<TooltipProps> = ({ content, children, styles, disableOnMobile }) => {
+  if (disableOnMobile && isMobile) {
+    return <React.Fragment>{children}</React.Fragment>;
+  }
   const mergedStyles = styles ? _.merge({}, tooltipOverrides, styles) : tooltipOverrides;
   return <RLT content={content} styles={mergedStyles}>{children}</RLT>;
 };
@@ -42,4 +48,5 @@ export const Tooltip: React.SFC<TooltipProps> = ({ content, styles, children }) 
 type TooltipProps = {
   content: React.ReactNode;
   styles?: any;
+  disableOnMobile?: boolean;
 };

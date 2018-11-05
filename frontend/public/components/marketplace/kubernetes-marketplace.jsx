@@ -2,25 +2,24 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import * as PropTypes from 'prop-types';
 import {Helmet} from 'react-helmet';
-import {CatalogTileView} from 'patternfly-react-extensions/dist/esm/components/CatalogTileView';
-import {CatalogTile} from 'patternfly-react-extensions/dist/esm/components/CatalogTile';
 
 import {Firehose, PageHeading, StatusBox} from '../utils';
 import {referenceForModel} from '../../module/k8s';
-import {normalizeIconClass} from '../catalog-item-icon';
 import {PackageManifestModel} from '../../models';
 import {MarketplaceItemModal} from './marketplace-item-modal';
+import {MarketplaceTileViewPage} from './kubernetes-marketplace-items';
 
 const normalizePackageManifests = (packageManifests, kind) => {
   const activePackageManifests = _.filter(packageManifests, packageManifest => {
     return !packageManifest.status.removedFromBrokerCatalog;
   });
   return _.map(activePackageManifests, packageManifest => {
-    const itemName = packageManifest.metadata.name;
-    const iconClass = 'fa fa-clone'; // TODO: get this info from the packagemanifest
+    const name = packageManifest.metadata.name;
+    const uid = `${name}/${packageManifest.status.catalogSourceNamespace}`;
+    const defaultIconClass = 'fa fa-clone'; // TODO: get this info from the packagemanifest
     const iconObj = _.get(packageManifest, 'status.channels[0].currentCSVDesc.icon[0]');
-    const itemImgUrl = iconObj && `data:${iconObj.mediatype};base64,${iconObj.base64data}`;
-    const itemIconClass = itemImgUrl ? null : iconClass;
+    const imgUrl = iconObj && `data:${iconObj.mediatype};base64,${iconObj.base64data}`;
+    const iconClass = imgUrl ? null : defaultIconClass;
     const provider = _.get(packageManifest, 'metadata.labels.provider');
     const tags = packageManifest.metadata.tags;
     const version = _.get(packageManifest, 'status.channels[0].currentCSVDesc.version');
@@ -29,9 +28,10 @@ const normalizePackageManifests = (packageManifests, kind) => {
     return {
       obj: packageManifest,
       kind,
-      itemName,
-      itemIconClass,
-      itemImgUrl,
+      name,
+      uid,
+      iconClass,
+      imgUrl,
       description,
       provider,
       tags,
@@ -53,7 +53,7 @@ const getItems = (props) => {
     return [];
   }
   packageManifestItems = normalizePackageManifests(packagemanifests.data, 'PackageManifest');
-  return _.sortBy([...packageManifestItems], 'itemName');
+  return _.sortBy([...packageManifestItems], 'name');
 };
 
 class MarketplaceListPage extends React.Component {
@@ -84,45 +84,13 @@ class MarketplaceListPage extends React.Component {
     });
   }
 
-  renderTiles() {
-    const {items} = this.state;
-
-    return (
-      <CatalogTileView.Category totalItems={items.length} viewAll={true}>
-        {_.map(items, ((item) => {
-          const {obj, itemName, itemImgUrl, itemIconClass, provider, description} = item;
-          const uid = obj.metadata.uid;
-          const iconClass = itemIconClass ? `icon ${normalizeIconClass(itemIconClass)}` : null;
-          const vendor = provider ? `Provided by ${provider}` : null;
-          return <CatalogTile
-            id={uid}
-            key={uid}
-            title={itemName}
-            iconImg={itemImgUrl}
-            iconClass={iconClass}
-            vendor={vendor}
-            description={description}
-            onClick={() => this.openOverlay(item)}
-          />;
-        }))}
-      </CatalogTileView.Category>
-    );
-  }
-
   render() {
     const {loaded, loadError} = this.props;
     const {items, selectedItem} = this.state;
     return <StatusBox data={items} loaded={loaded} loadError={loadError} label="Resources">
-      <div className="co-catalog-page">
-        <div className="co-catalog-page__content">
-          <div className="co-catalog-page__num-items">{_.size(items)} items</div>
-          <CatalogTileView>
-            {this.renderTiles()}
-          </CatalogTileView>
-          {selectedItem &&
-          <MarketplaceItemModal item={selectedItem} close={() => this.closeOverlay()} openSubscribe={/* TODO */} />}
-        </div>
-      </div>
+      <MarketplaceTileViewPage items={items} openOverlay={(item) => this.openOverlay(item)} />
+      {selectedItem &&
+      <MarketplaceItemModal item={selectedItem} close={() => this.closeOverlay()} openSubscribe={/* TODO */} />}
     </StatusBox>;
   }
 }

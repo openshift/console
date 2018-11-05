@@ -7,26 +7,26 @@ import {PropertiesSidePanel, PropertyItem} from 'patternfly-react-extensions/dis
 
 const MarketplaceItemModal = (props) => {
   const { item, close /* openSubscribe */ } = props;
-  const { itemName, itemImgUrl, provider, description, version, certifiedLevel, healthIndex, repository, containerImage, createdAt, support } = item;
+  const { name, iconClass, imgUrl, provider, description, version, certifiedLevel, healthIndex, repository, containerImage, createdAt, support } = item;
   const notAvailable = <span className="properties-side-panel-pf-property-label">N/A</span>;
   const MarketplaceProperty = ({label, value}) => {
     return <PropertyItem label={label} value={value || notAvailable} />;
   };
   return (
-    <Modal show={true} className="right-side-modal-pf" bsSize={'lg'}>
+    <Modal show={true} backdrop={true} onHide={close} className="co-catalog-page__overlay right-side-modal-pf" bsSize={'lg'}>
       <Modal.Header>
+        <Modal.CloseButton onClick={close} />
         <CatalogItemHeader
-          className="co-marketplace-modal__item-header"
-          iconImg={itemImgUrl}
-          title={itemName}
+          iconClass={iconClass}
+          iconImg={imgUrl}
+          title={name}
           vendor={<span> {provider}</span>}
         />
-        <Modal.CloseButton onClick={close} />
       </Modal.Header>
       <Modal.Body>
-        <div className="co-marketplace-modal__body">
+        <div className="co-catalog-page__overlay-body">
           <PropertiesSidePanel>
-            <Button bsStyle="primary" className="co-marketplace-modal__subscribe" /* onClick={ openSubscribe }*/ >
+            <Button bsStyle="primary" className="co-catalog-page__overlay-create" /* onClick={ openSubscribe }*/ >
                 Subscribe
             </Button>
             <MarketplaceProperty label="Operator Version" value={version} />
@@ -38,7 +38,7 @@ const MarketplaceItemModal = (props) => {
             <MarketplaceProperty label="Created At" value={createdAt} />
             <MarketplaceProperty label="Support" value={support} />
           </PropertiesSidePanel>
-          <div className="co-marketplace-modal__item co-marketplace-modal__description">
+          <div className="co-catalog-page__overlay-description">
             {description}
           </div>
         </div>

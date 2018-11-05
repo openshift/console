@@ -115,6 +115,9 @@ $catalog-item-icon-size-sm: 24px;
       display: flex;
       flex-direction: column;
     }
+    .properties-side-panel-pf {
+      flex: 0 0 auto;
+    }
   }
 
   &__overlay-body {

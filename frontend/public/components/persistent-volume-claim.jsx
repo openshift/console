@@ -103,7 +103,18 @@ const filters = [{
 
 
 export const PersistentVolumeClaimsList = props => <List {...props} Header={Header} Row={Row} />;
-export const PersistentVolumeClaimsPage = props => <ListPage {...props} ListComponent={PersistentVolumeClaimsList} kind={kind} canCreate={true} rowFilters={filters} />;
+export const PersistentVolumeClaimsPage = props => {
+  const createItems = {
+    form: 'From Form',
+    yaml: 'From YAML',
+  };
+  const createProps = {
+    items: createItems,
+    btnActionItemKey: 'form',
+    createLink: type => `/k8s/ns/${props.namespace}/persistentvolumeclaims/new/${type !== 'yaml' ? 'form' : ''}`,
+  };
+  return <ListPage {...props} ListComponent={PersistentVolumeClaimsList} kind={kind} canCreate={true} rowFilters={filters} createProps={createProps} />;
+};
 export const PersistentVolumeClaimsDetailsPage = props => <DetailsPage
   {...props}
   menuActions={menuActions}

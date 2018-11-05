@@ -86,7 +86,7 @@
 @import "components/utils/value-from-pair";
 @import "components/documentation";
 @import "components/terminal";
-@import "components/catalog";
+@import "components/catalog/catalog";
 @import "components/cluster-service-instance";
 @import "components/overview/overview";
 @import "components/overview/project-overview";
@@ -96,4 +96,3 @@
 @import "components/source-to-image";
 @import "components/routes/create-route";
 @import "components/storage-class-form";
-@import "components/marketplace/marketplace";

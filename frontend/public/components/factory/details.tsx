@@ -35,11 +35,18 @@ export const DetailsPage: React.SFC<DetailsPageProps> = (props) => <Firehose res
     breadcrumbsFor={props.breadcrumbsFor} />
   <HorizontalNav
     pages={props.pages}
+    pagesFor={props.pagesFor}
     className={`co-m-${_.get(props.kind, 'kind', props.kind)}`}
     match={props.match}
     label={props.label || (props.kind as any).label}
     resourceKeys={_.map(props.resources, 'prop')} />
 </Firehose>;
+
+type Page = {
+  href: string;
+  name: string;
+  component?: React.ComponentType<any>;
+};
 
 export type DetailsPageProps = {
   match: match<any>;
@@ -47,7 +54,8 @@ export type DetailsPageProps = {
   titleFunc?: (obj: K8sResourceKind) => string | JSX.Element;
   menuActions?: any[];
   buttonActions?: any[];
-  pages: any[];
+  pages?: Page[];
+  pagesFor?: (obj: K8sResourceKind) => Page[];
   kind: K8sResourceKindReference;
   label?: string;
   name?: string;

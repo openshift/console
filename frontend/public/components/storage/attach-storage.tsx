@@ -5,6 +5,7 @@ import { Helmet } from 'react-helmet';
 
 import { connectToPlural } from '../../kinds';
 import {
+  k8sCreate,
   k8sGet,
   K8sKind,
   K8sResourceKind,
@@ -20,8 +21,11 @@ import {
   resourceObjPath,
 } from '../utils';
 import { Checkbox } from '../checkbox';
+import { RadioInput } from '../radio';
+import { CreatePVCForm } from '../storage/create-pvc';
+import { PersistentVolumeClaimModel } from '../../models/index';
 
-const PvcDropdown: React.SFC<PvcDropdownProps> = props => {
+const PVCDropdown: React.SFC<PVCDropdownProps> = props => {
   const kind = 'PersistentVolumeClaim';
   const { namespace, selectedKey, required, name } = props;
   const resources = [{ kind, namespace }];
@@ -56,6 +60,18 @@ class AttachStorageForm extends React.Component<
     containers: {},
     volumeAlreadyMounted: false,
     error: '',
+    showCreatePVC: 'existing',
+    newPVCObj: null,
+    existingOrNewRadios: [
+      {
+        value: 'existing',
+        title: 'Use existing claim',
+      },
+      {
+        value: 'new',
+        title: 'Create new claim',
+      },
+    ],
   };
 
   componentDidMount() {
@@ -109,46 +125,27 @@ class AttachStorageForm extends React.Component<
     this.checkMountPaths(mountPath);
   };
 
-  handlePvcChange = (claimName: string) => {
+  handlePVCChange = (claimName: string) => {
     this.updateVolumeName(claimName);
     this.setState({ claimName });
   };
 
-  onMountAsReadOnlyChanged: React.ReactEventHandler<
-    HTMLInputElement
-  > = event => {
-    const mountAsReadOnly = !this.state.mountAsReadOnly;
-    this.setState({ mountAsReadOnly });
+  onMountAsReadOnlyChanged: React.ReactEventHandler<HTMLInputElement> = () => {
+    this.setState({ mountAsReadOnly: !this.state.mountAsReadOnly });
   };
 
-  validateForm = () => {
-    const { claimName, volumeName, mountPath } = this.state;
-    // Check that a valid PVC has been choosen
-    if (!claimName) {
-      this.setState({ error: 'Persistent volume claim must be selected.' });
-      return false;
-    }
-    if (!volumeName) {
-      this.setState({ error: 'Volume name must be set.' });
-      return false;
-    }
-    if (!mountPath) {
-      this.setState({ error: 'Mount path must be set.' });
-      return false;
-    }
-    return true;
-  };
+  createPVCIfNecessary(): Promise<string> {
+    const { showCreatePVC, newPVCObj, claimName } = this.state;
+    return showCreatePVC === 'new'
+      ? k8sCreate(PersistentVolumeClaimModel, newPVCObj).then(claim => claim.metadata.name)
+      : Promise.resolve(claimName);
+  }
 
   save = (event: React.FormEvent<EventTarget>) => {
     event.preventDefault();
-    if (!this.validateForm()) {
-      return;
-    }
-
     const { kindObj } = this.props;
     const {
       resourceObj: originalObj,
-      claimName,
       volumeName,
       mountPath,
       subPath,
@@ -171,29 +168,35 @@ class AttachStorageForm extends React.Component<
         name: volumeName,
         mountPath,
         subPath,
-        mountAsReadOnly,
+        readOnly: mountAsReadOnly,
       });
     });
 
-    // add the new volume to the pod template
-    if (!volumeAlreadyMounted) {
-      template.spec.volumes = template.spec.volumes || [];
-      template.spec.volumes.push({
-        name: volumeName,
-        persistentVolumeClaim: {
-          claimName,
-        },
-      });
-    }
-
     this.setState({ inProgress: true });
-    k8sUpdate(kindObj, resourceObj, metadata.namespace, metadata.name).then(
-      resource => {
-        this.setState({ inProgress: false });
-        history.push(resourceObjPath(resource, referenceFor(resource)));
-      },
-      err => this.setState({ error: err.message, inProgress: false })
-    );
+    this.createPVCIfNecessary().then(claimName => {
+      // add new volume to the pod template if not preent
+      if (!volumeAlreadyMounted) {
+        template.spec.volumes = template.spec.volumes || [];
+        template.spec.volumes.push({
+          name: volumeName,
+          persistentVolumeClaim: {
+            claimName,
+          },
+        });
+      }
+      k8sUpdate(kindObj, resourceObj, metadata.namespace, metadata.name).then(
+        resource => {
+          this.setState({ inProgress: false });
+          history.push(resourceObjPath(resource, referenceFor(resource)));
+        },
+        err => this.setState({ error: err.message, inProgress: false })
+      );
+    }, err => this.setState({ error: err.message, inProgress: false }));
+
+  };
+
+  onPVCChange = newPVCObj => {
+    this.setState({ newPVCObj });
   };
 
   isContainerSelected = ({ name }) => {
@@ -257,18 +260,43 @@ class AttachStorageForm extends React.Component<
             </div>
           )}
           <div className="form-group">
-            <label className="control-label co-required" htmlFor="volume-name">
-              Persistent Volume Claim
-            </label>
-            <PvcDropdown
-              namespace={namespace}
-              onChange={this.handlePvcChange}
-              id="claimName"
-              name="claimName"
-              selectedKey={claimName}
-              required
-            />
+            {this.state.existingOrNewRadios.map(radio => {
+              const checked = radio.value === this.state.showCreatePVC;
+              return (
+                <RadioInput
+                  {...radio}
+                  key={radio.value}
+                  onChange={this.handleChange}
+                  checked={checked}
+                  aria-describedby="show-create-pvc-help"
+                  inline={true}
+                  name="showCreatePVC"
+                />
+              );
+            })}
+            <p className="help-block" id="show-create-pvc-help">
+              Choose to use existing claim or create a new one.
+            </p>
           </div>
+
+          {this.state.showCreatePVC === 'existing' &&
+            <div className="form-group">
+              <label className="control-label co-required" htmlFor="volume-name">
+                Persistent Volume Claim
+              </label>
+              <PVCDropdown
+                namespace={namespace}
+                onChange={this.handlePVCChange}
+                id="claimName"
+                name="claimName"
+                selectedKey={claimName}
+                required
+              />
+            </div>
+          }
+
+          {this.state.showCreatePVC === 'new' && <CreatePVCForm onChange={this.onPVCChange} namespace={this.props.namespace} />}
+
           <div className="form-group">
             <label className="control-label co-required" htmlFor="volume-name">
               Volume Name
@@ -286,7 +314,7 @@ class AttachStorageForm extends React.Component<
                 readOnly={volumeAlreadyMounted}
                 required
               />
-              <p className="form-text text-muted" id="volume-name-help">
+              <p className="help-block" id="volume-name-help">
                 Unique name to identify this volume.
               </p>
             </div>
@@ -306,7 +334,7 @@ class AttachStorageForm extends React.Component<
                 value={mountPath}
                 required
               />
-              <p className="form-text text-muted" id="mount-path-help">
+              <p className="help-block" id="mount-path-help">
                 Mount path for the volume inside the container.
               </p>
             </div>
@@ -331,7 +359,7 @@ class AttachStorageForm extends React.Component<
                 name="subPath"
                 value={subPath}
               />
-              <p className="form-text text-muted" id="subpath-help">
+              <p className="help-block" id="subpath-help">
                 Optional path within the volume from which it will be mounted
                 into the container. Defaults to the root of volume.
               </p>
@@ -370,11 +398,11 @@ const AttachStorage_ = ({ kindObj, kindsInFlight, match: { params } }) => {
 };
 export const AttachStorage = connectToPlural(AttachStorage_);
 
-export type PvcDropdownProps = {
+export type PVCDropdownProps = {
   namespace: string;
   selectedKey: string;
   required: boolean;
-  onChange: any;
+  onChange: (string) => void;
   id: string;
   name: string;
 };
@@ -387,10 +415,13 @@ export type AttachStorageFormState = {
   mountPath: string;
   subPath: string;
   mountAsReadOnly: boolean;
-  error: any;
+  error: string;
   allContainers: boolean;
   containers: any;
   volumeAlreadyMounted: boolean;
+  showCreatePVC: string;
+  newPVCObj: K8sResourceKind;
+  existingOrNewRadios: { value: string, title: string }[];
 };
 
 export type AttachStorageFormProps = {

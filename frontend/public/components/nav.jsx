@@ -225,7 +225,9 @@ const NavSection = connect(navSectionStateToProps)(
 
       const maxHeight = !this.state.isOpen ? 0 : 29 * _.get(this.props.children, 'length', 1);
 
-      const iconClassName = icon && `${icon} navigation-container__section__title__icon ${isActive ? 'navigation-container__section__title__icon--active' : ''}`;
+      const iconClassName = 'navigation-container__section__title__icon';
+
+      const fontIconClassNames = icon && `${icon} ${iconClassName} ${isActive ? 'navigation-container__section__title__icon--active' : ''}`;
 
       const Children = React.Children.map(children, c => {
         if (!c) {
@@ -243,13 +245,15 @@ const NavSection = connect(navSectionStateToProps)(
 
       return <div className={classNames('navigation-container__section', klass, {'navigation-container--active': isActive, 'navigation-container--open': isOpen})}>
         <div id={id} className={classNames('navigation-container__section__title', {'navigation-container__section__title--active': isActive, 'navigation-container__section__title--active-closed': (isActive && !isOpen), 'navigation-container__section__title--active-open': (isActive && isOpen), 'navigation-container__section__title--inactive-open': (!isActive && isOpen)})} onClick={this.toggle}>
-          {icon && <i className={iconClassName} aria-hidden="true"></i>}
-          {img && <img src={isActive && activeImg ? activeImg : img} />}
-          { !href
-            ? text
-            : <Link className="navigation-container__section__title__link" to={href} onClick={this.open}>{text}</Link>
-          }
-          <i className={classNames('icon navigation-container__section__title__icon fa', isOpen ? 'fa-angle-down' : 'fa-angle-right')} aria-hidden="true" />
+          {icon && <i className={fontIconClassNames} aria-hidden="true"></i>}
+          {img && <img className={iconClassName} src={isActive && activeImg ? activeImg : img} />}
+          <div className="navigation-container__section__title__text">
+            { !href
+              ? text
+              : <Link className="navigation-container__section__title__link" to={href} onClick={this.open}>{text}</Link>
+            }
+          </div>
+          <i className={classNames('icon fa fa-angle-right', isOpen ? 'navigation-container__section--open' : '')} aria-hidden="true" />
         </div>
         {Children && <ul className={classNames('navigation-container__list', {'navigation-container__list--open': isOpen})} style={{maxHeight}}>{Children}</ul>}
       </div>;
@@ -283,9 +287,10 @@ const ClusterPickerNavSection = connectToFlags(FLAGS.OPENSHIFT)(({flags}) => {
 const MonitoringNavSection_ = ({urls, closeMenu}) => {
   const prometheusURL = urls[MonitoringRoutes.Prometheus];
   const grafanaURL = urls[MonitoringRoutes.Grafana];
-  return window.SERVER_FLAGS.prometheusBaseURL || prometheusURL || grafanaURL
+  return window.SERVER_FLAGS.prometheusBaseURL || window.SERVER_FLAGS.alertManagerBaseURL || prometheusURL || grafanaURL
     ? <NavSection text="Monitoring" icon="pficon pficon-screen">
-      {window.SERVER_FLAGS.prometheusBaseURL && <HrefLink href="/monitoring" name="Alerts" onClick={closeMenu} />}
+      {window.SERVER_FLAGS.prometheusBaseURL && <HrefLink href="/monitoring/alerts" name="Alerts" onClick={closeMenu} />}
+      {window.SERVER_FLAGS.alertManagerBaseURL && <HrefLink href="/monitoring/silences" name="Silences" onClick={closeMenu} />}
       {prometheusURL && <HrefLink href={prometheusURL} target="_blank" name="Metrics" onClick={closeMenu} isExternal={true} />}
       {grafanaURL && <HrefLink href={grafanaURL} target="_blank" name="Dashboards" onClick={closeMenu} isExternal={true} />}
     </NavSection>

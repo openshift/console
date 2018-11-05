@@ -222,3 +222,11 @@ tags-input .autocomplete .suggestion-item em {
     margin-bottom: 0;
   }
 }
+
+// Catalog tile adjustments for fade out overflow text, due to different base font size
+.catalog-tile-pf {
+  padding-bottom: 17px;
+}
+.catalog-tile-pf-body .catalog-tile-pf-description::after {
+  bottom: 15px;
+}

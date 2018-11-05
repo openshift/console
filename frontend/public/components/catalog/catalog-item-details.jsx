@@ -8,9 +8,9 @@ import {CatalogItemHeader} from 'patternfly-react-extensions/dist/esm/components
 import {PropertiesSidePanel, PropertyItem} from 'patternfly-react-extensions/dist/esm/components/PropertiesSidePanel';
 
 import {normalizeIconClass} from './catalog-item-icon';
-import {ClusterServicePlanModel} from '../models';
-import {k8sGet} from '../module/k8s';
-import {Timestamp} from './utils';
+import {ClusterServicePlanModel} from '../../models';
+import {k8sGet} from '../../module/k8s';
+import {Timestamp} from '../utils';
 
 export class CatalogTileDetails extends React.Component {
   state = {

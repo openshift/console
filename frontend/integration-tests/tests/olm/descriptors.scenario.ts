@@ -152,7 +152,7 @@ describe('Using OLM descriptor components', () => {
     execSync(`echo '${JSON.stringify(testCSV)}' | kubectl create -f -`);
     execSync(`echo '${JSON.stringify(testCR)}' | kubectl create -f -`);
 
-    await browser.get(`${appHost}/ns/${testName}/clusterserviceversions/${testCSV.metadata.name}/instances`);
+    await browser.get(`${appHost}/ns/${testName}/clusterserviceversions/${testCSV.metadata.name}/${testCRD.spec.group}~${testCRD.spec.version}~${testCRD.spec.names.kind}`);
     await crudView.isLoaded();
   });
 

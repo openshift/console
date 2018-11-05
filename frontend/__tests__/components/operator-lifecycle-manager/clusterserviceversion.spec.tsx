@@ -5,11 +5,11 @@ import { shallow, ShallowWrapper, mount, ReactWrapper } from 'enzyme';
 import { Link } from 'react-router-dom';
 import * as _ from 'lodash-es';
 
-import { ClusterServiceVersionsDetailsPage, ClusterServiceVersionsDetailsPageProps, ClusterServiceVersionDetails, ClusterServiceVersionDetailsProps, ClusterServiceVersionsPage, ClusterServiceVersionsPageProps, ClusterServiceVersionList, ClusterServiceVersionListProps, ClusterServiceVersionHeader, ClusterServiceVersionRow, ClusterServiceVersionRowProps } from '../../../public/components/operator-lifecycle-manager/clusterserviceversion';
+import { ClusterServiceVersionsDetailsPage, ClusterServiceVersionsDetailsPageProps, ClusterServiceVersionDetails, ClusterServiceVersionDetailsProps, ClusterServiceVersionsPage, ClusterServiceVersionsPageProps, ClusterServiceVersionList, ClusterServiceVersionListProps, ClusterServiceVersionHeader, ClusterServiceVersionRow, ClusterServiceVersionRowProps, CRDCard, CRDCardRow } from '../../../public/components/operator-lifecycle-manager/clusterserviceversion';
 import { ClusterServiceVersionKind, ClusterServiceVersionLogo, ClusterServiceVersionLogoProps, referenceForCRDDesc } from '../../../public/components/operator-lifecycle-manager';
 import { DetailsPage, ListPage, ListHeader, ColHead, List } from '../../../public/components/factory';
 import { testClusterServiceVersion } from '../../../__mocks__/k8sResourcesMocks';
-import { Timestamp, OverflowLink, Dropdown, MsgBox, ResourceLink, ResourceCog, ErrorBoundary, LoadingBox } from '../../../public/components/utils';
+import { Timestamp, OverflowLink, MsgBox, ResourceLink, ResourceCog, ErrorBoundary, LoadingBox, ScrollToTopOnMount, SectionHeading } from '../../../public/components/utils';
 import { referenceForModel } from '../../../public/module/k8s';
 import { ClusterServiceVersionModel } from '../../../public/models';
 
@@ -100,10 +100,12 @@ describe(ClusterServiceVersionRow.displayName, () => {
     expect(col.childAt(0).text()).toEqual('Disabling');
   });
 
-  it('renders column with links to app detail view and instances', () => {
+  it('renders column with each CRD provided by the Operator', () => {
     const col = wrapper.find('.row').childAt(4);
-
-    expect(col.find(Link).childAt(0).text()).toEqual('View instances');
+    testClusterServiceVersion.spec.customresourcedefinitions.owned.forEach((desc, i) => {
+      expect(col.find(Link).at(i).props().title).toEqual(desc.name);
+      expect(col.find(Link).at(i).props().to).toEqual(`/k8s/ns/default/clusterserviceversions/testapp/${referenceForCRDDesc(desc)}`);
+    });
   });
 });
 
@@ -184,6 +186,24 @@ describe(ClusterServiceVersionsPage.displayName, () => {
   });
 });
 
+describe(CRDCard.displayName, () => {
+  const crd = testClusterServiceVersion.spec.customresourcedefinitions.owned[0];
+
+  it('renders a card with title, body, and footer', () => {
+    const wrapper = shallow(<CRDCard crd={crd} csv={testClusterServiceVersion} />);
+
+    expect(wrapper.find('.co-crd-card__title').exists()).toBe(true);
+    expect(wrapper.find('.co-crd-card__body').exists()).toBe(true);
+    expect(wrapper.find('.co-crd-card__footer').exists()).toBe(true);
+  });
+
+  it('renders a link to create a new instance', () => {
+    const wrapper = shallow(<CRDCard crd={crd} csv={testClusterServiceVersion} />);
+
+    expect(wrapper.find('.co-crd-card__footer').find(Link).props().to).toEqual(`/k8s/ns/${testClusterServiceVersion.metadata.namespace}/${ClusterServiceVersionModel.plural}/${testClusterServiceVersion.metadata.name}/${referenceForCRDDesc(crd)}/new`);
+  });
+});
+
 describe(ClusterServiceVersionDetails.displayName, () => {
   let wrapper: ShallowWrapper<ClusterServiceVersionDetailsProps>;
 
@@ -191,35 +211,17 @@ describe(ClusterServiceVersionDetails.displayName, () => {
     wrapper = shallow(<ClusterServiceVersionDetails obj={_.cloneDeep(testClusterServiceVersion)} />);
   });
 
-  it('renders info section for ClusterServiceVersion', () => {
-    const section = wrapper.find('.co-clusterserviceversion-details__section--info');
-
-    expect(section.exists()).toBe(true);
+  it('renders `ScrollToTopOnMount` component', () => {
+    expect(wrapper.find(ScrollToTopOnMount).exists()).toBe(true);
   });
 
-  it('renders create `Link` if only one `owned` app resource', () => {
-    const createButton = wrapper.find('.btn-primary');
-
-    expect(createButton.type()).toEqual(Link);
-    expect(createButton.props().to).toEqual(`/k8s/ns/default/${ClusterServiceVersionModel.plural}/testapp/${referenceForCRDDesc(testClusterServiceVersion.spec.customresourcedefinitions.owned[0])}/new`);
-  });
-
-  it('renders a create dropdown button if more than one `owned` app resource', () => {
-    let obj = _.cloneDeep(testClusterServiceVersion);
-    obj.spec.customresourcedefinitions.owned.push({name: 'foobars.testapp.coreos.com', displayName: 'Foo Bars', version: 'v1', kind: 'FooBars'});
-    wrapper.setProps({obj});
-    const createButton: ShallowWrapper<any> = wrapper.find('Dropdown');
-
-    expect(createButton.type()).toEqual(Dropdown);
-    expect(createButton.props().title).toEqual('Create New');
-    expect(createButton.props().items).toEqual({'testresource.testapp.coreos.com': 'Test Resource', 'foobars.testapp.coreos.com': 'Foo Bars'});
-    expect(createButton.props().onChange).toBeDefined();
+  it('renders row of cards for each "owned" CRD for the given `ClusterServiceVersion`', () => {
+    expect(wrapper.find(CRDCardRow).props().csv).toEqual(testClusterServiceVersion);
+    expect(wrapper.find(CRDCardRow).props().crdDescs).toEqual(testClusterServiceVersion.spec.customresourcedefinitions.owned);
   });
 
   it('renders description section for ClusterServiceVersion', () => {
-    const section = wrapper.find('.co-clusterserviceversion-details__section--description');
-
-    expect(section.find('h1').text()).toEqual('Description');
+    expect(wrapper.find('.co-m-pane__body').at(0).find(SectionHeading).at(1).props().text).toEqual('Description');
   });
 
   it('renders creation date from ClusterServiceVersion', () => {
@@ -260,6 +262,14 @@ describe(ClusterServiceVersionDetails.displayName, () => {
     expect(links.text()).toEqual('Not available');
     expect(maintainers.text()).toEqual('Not available');
   });
+
+  it('renders info section for ClusterServiceVersion', () => {
+    expect(wrapper.find('.co-m-pane__body').at(1).find(SectionHeading).props().text).toEqual('ClusterServiceVersion Overview');
+  });
+
+  it('renders conditions section for ClusterServiceVersion', () => {
+    expect(wrapper.find('.co-m-pane__body').at(2).find(SectionHeading).props().text).toEqual('Conditions');
+  });
 });
 
 describe(ClusterServiceVersionsDetailsPage.displayName, () => {
@@ -282,12 +292,32 @@ describe(ClusterServiceVersionsDetailsPage.displayName, () => {
   it('renders a `DetailsPage` with the correct subpages', () => {
     const detailsPage = wrapper.find(DetailsPage);
 
-    expect(detailsPage.props().pages[0].name).toEqual('Overview');
-    expect(detailsPage.props().pages[0].href).toEqual('');
-    expect(detailsPage.props().pages[0].component).toEqual(ClusterServiceVersionDetails);
-    expect(detailsPage.props().pages[1].name).toEqual('YAML');
-    expect(detailsPage.props().pages[1].href).toEqual('yaml');
-    expect(detailsPage.props().pages[2].name).toEqual('Instances');
-    expect(detailsPage.props().pages[2].href).toEqual('instances');
+    expect(detailsPage.props().pagesFor(testClusterServiceVersion)[0].name).toEqual('Overview');
+    expect(detailsPage.props().pagesFor(testClusterServiceVersion)[0].href).toEqual('');
+    expect(detailsPage.props().pagesFor(testClusterServiceVersion)[0].component).toEqual(ClusterServiceVersionDetails);
+    expect(detailsPage.props().pagesFor(testClusterServiceVersion)[1].name).toEqual('Events');
+    expect(detailsPage.props().pagesFor(testClusterServiceVersion)[1].href).toEqual('events');
+    expect(detailsPage.props().pagesFor(testClusterServiceVersion)[2].name).toEqual('YAML');
+    expect(detailsPage.props().pagesFor(testClusterServiceVersion)[2].href).toEqual('yaml');
+  });
+
+  it('includes tab for each "owned" CRD', () => {
+    const detailsPage = wrapper.find(DetailsPage);
+
+    const csv = _.cloneDeep(testClusterServiceVersion);
+    csv.spec.customresourcedefinitions.owned = csv.spec.customresourcedefinitions.owned.concat([{name: 'e.example.com', kind: 'E', version: 'v1', displayName: 'E'}]);
+
+    expect(detailsPage.props().pagesFor(csv)[3].name).toEqual('All Instances');
+    expect(detailsPage.props().pagesFor(csv)[3].href).toEqual('instances');
+    csv.spec.customresourcedefinitions.owned.forEach((desc, i) => {
+      expect(detailsPage.props().pagesFor(csv)[4 + i].name).toEqual(desc.displayName);
+      expect(detailsPage.props().pagesFor(csv)[4 + i].href).toEqual(referenceForCRDDesc(desc));
+    });
+  });
+
+  it('does not include "All Instances" tab if only one "owned" CRD', () => {
+    const detailsPage = wrapper.find(DetailsPage);
+
+    expect(detailsPage.props().pagesFor(testClusterServiceVersion).some(p => p.name === 'All Instances')).toBe(false);
   });
 });

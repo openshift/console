@@ -138,8 +138,8 @@ class App extends React.PureComponent {
             <LazyRoute path="/overview/all-namespaces" exact loader={() => import('./overview' /* webpackChunkName: "overview" */).then(m => m.OverviewPage)} />
             <Route path="/overview" exact component={NamespaceRedirect} />
 
-            <LazyRoute path="/catalog/all-namespaces" exact loader={() => import('./catalog' /* webpackChunkName: "catalog" */).then(m => m.CatalogPage)} />
-            <LazyRoute path="/catalog/ns/:ns" exact loader={() => import('./catalog' /* webpackChunkName: "catalog" */).then(m => m.CatalogPage)} />
+            <LazyRoute path="/catalog/all-namespaces" exact loader={() => import('./catalog/catalog-page' /* webpackChunkName: "catalog" */).then(m => m.CatalogPage)} />
+            <LazyRoute path="/catalog/ns/:ns" exact loader={() => import('./catalog/catalog-page' /* webpackChunkName: "catalog" */).then(m => m.CatalogPage)} />
             <Route path="/catalog" exact component={NamespaceRedirect} />
 
             <LazyRoute path="/status/all-namespaces" exact loader={() => import('./cluster-overview' /* webpackChunkName: "cluster-overview" */).then(m => m.ClusterOverviewPage)} />
@@ -204,6 +204,7 @@ class App extends React.PureComponent {
             <LazyRoute path="/k8s/cluster/clusterrolebindings/:name/edit" exact kind="ClusterRoleBinding" loader={() => import('./RBAC' /* webpackChunkName: "rbac" */).then(m => m.EditRoleBinding)} />
             <LazyRoute path="/k8s/ns/:ns/:plural/:name/attach-storage" exact loader={() => import('./storage/attach-storage' /* webpackChunkName: "attach-storage" */).then(m => m.AttachStorage)} />
 
+            <LazyRoute path="/k8s/ns/:ns/persistentvolumeclaims/new/form" exact kind="PersistentVolumeClaim" loader={() => import('./storage/create-pvc' /* webpackChunkName: "create-pvc" */).then(m => m.CreatePVC)} />
             <Redirect from="/monitoring" exact to="/monitoring/alerts" />
             <Route path="/monitoring/alerts" exact component={AlertsPage} />
             <Route path="/monitoring/alerts/:name" exact component={AlertsDetailsPage} />

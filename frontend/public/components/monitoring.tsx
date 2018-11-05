@@ -58,8 +58,8 @@ const labelsToParams = labels => _.map(labels, (v, k) => `${encodeURIComponent(k
 const alertURL = (name, labels) => `${AlertResource.path}/${name}?${labelsToParams(labels)}`;
 const ruleURL = rule => `${AlertRuleResource.path}/${_.get(rule, 'id')}`;
 
-// Return "inactive" if no state is found
-export const alertState = a => _.get(a, 'state', 'inactive');
+// Return "not-firing" if no state is found
+export const alertState = a => _.get(a, 'state', 'not-firing');
 
 const alertDescription = alert => {
   const {annotations = {}, labels = {}} = alert;
@@ -71,7 +71,7 @@ export const silenceState = s => _.get(s, 'status.state');
 // Determine if an Alert is silenced by a Silence (if all of the Silence's matchers match one of the Alert's labels)
 const isSilenced = (alert, silence) => alertState(alert) === 'silenced' &&
   _.get(silence, 'status.state') === 'active' &&
-  !_.find(silence.matchers, m => _.get(alert.labels, m.name) !== m.value);
+  _.every(silence.matchers, m => _.get(alert.labels, m.name) === m.value);
 
 const silenceAlert = alert => ({
   label: 'Silence Alert',
@@ -119,8 +119,8 @@ const MonitoringResourceIcon = props => {
 };
 
 const AlertState: React.SFC<StateProps> = ({state}) => {
-  if (state === 'inactive') {
-    return <span className="text-muted">{_.startCase(state)}</span>;
+  if (state === 'not-firing') {
+    return <span className="text-muted">Not Firing</span>;
   }
   const stateToIconClassName = {
     firing: 'fa fa-bell alert-firing',
@@ -133,9 +133,6 @@ const AlertState: React.SFC<StateProps> = ({state}) => {
 
 const SilenceState = ({silence}) => {
   const state = silenceState(silence);
-  if (state === 'inactive') {
-    return <span className="text-muted">{_.startCase(state)}</span>;
-  }
   const stateToIconClassName = {
     active: 'fa fa-check-circle-o silence-active',
     pending: 'fa fa-hourglass-half silence-pending',
@@ -148,6 +145,16 @@ const SilenceState = ({silence}) => {
 const Annotation = ({children, title}) => _.isNil(children)
   ? null
   : <React.Fragment><dt>{title}</dt><dd>{children}</dd></React.Fragment>;
+
+const Label = ({k, v}) => <div className="co-m-label co-m-label--expand" key={k}>
+  <span className="co-m-label__key">{k}</span>
+  <span className="co-m-label__eq">=</span>
+  <span className="co-m-label__value">{v}</span>
+</div>;
+
+const SilenceMatchersList = ({silence}) => <div className={`co-text-${SilenceResource.kind.toLowerCase()}`}>
+  {_.map(silence.matchers, ({name, isRegex, value}) => <Label key={name} k={name} v={isRegex ? `~${value}` : value} />)}
+</div>;
 
 class MonitoringPageWrapper extends SafetyFirst<AlertsPageWrapperProps, null> {
   componentDidMount () {
@@ -171,39 +178,37 @@ class MonitoringPageWrapper extends SafetyFirst<AlertsPageWrapperProps, null> {
 
     const {alertManagerBaseURL, prometheusBaseURL} = (window as any).SERVER_FLAGS;
 
-    if (!prometheusBaseURL) {
-      store.dispatch(UIActions.monitoringErrored('rules', new Error('prometheusBaseURL not set')));
-      return;
-    }
+    if (prometheusBaseURL) {
+      poll(`${prometheusBaseURL}/api/v1/rules`, 'rules', data => {
+        // Flatten the rules data to make it easier to work with, discard non-alerting rules since those are the only
+        // ones we will be using and add a unique ID to each rule.
+        const groups = _.get(data, 'groups');
+        const rules = _.flatMap(groups, g => {
+          const addID = r => {
+            const key = [g.file, g.name, r.name, r.duration, r.query, ..._.map(r.labels, (k, v) => `${k}=${v}`)].join(',');
+            r.id = String(murmur3(key, 'monitoring-salt'));
+            return r;
+          };
 
-    poll(`${prometheusBaseURL}/api/v1/rules`, 'rules', data => {
-      // Flatten the rules data to make it easier to work with, discard non-alerting rules since those are the only ones
-      // we will be using and add a unique ID to each rule.
-      const groups = _.get(data, 'groups');
-      const rules = _.flatMap(groups, g => {
-        const addID = r => {
-          const key = [g.file, g.name, r.name, r.duration, r.query, ..._.map(r.labels, (k, v) => `${k}=${v}`)].join(',');
-          r.id = String(murmur3(key, 'monitoring-salt'));
-          return r;
-        };
+          return _.filter(g.rules, {type: 'alerting'}).map(addID);
+        });
 
-        return _.filter(g.rules, {type: 'alerting'}).map(addID);
+        // If a rule is has no active alerts, create a "fake" alert
+        const asAlerts = _.flatMap(rules, rule => _.isEmpty(rule.alerts)
+          ? {
+            annotations: rule.annotations,
+            id: rule.id,
+            labels: {alertname: rule.name, ...rule.labels},
+            rule,
+          }
+          : rule.alerts.map(a => ({rule, ...a}))
+        );
+
+        return {asAlerts, asRules: rules};
       });
-
-      // If a rule is inactive (has no active alerts), create a "fake" alert with state "inactive"
-      const asAlerts = _.flatMap(rules, rule => _.isEmpty(rule.alerts)
-        ? {
-          annotations: rule.annotations,
-          id: rule.id,
-          labels: {alertname: rule.name, ...rule.labels},
-          rule,
-          state: 'inactive',
-        }
-        : rule.alerts.map(a => ({rule, ...a}))
-      );
-
-      return {asAlerts, asRules: rules};
-    });
+    } else {
+      store.dispatch(UIActions.monitoringErrored('rules', new Error('prometheusBaseURL not set')));
+    }
 
     if (!alertManagerBaseURL) {
       const e = new Error('alertManagerBaseURL not set');
@@ -257,7 +262,7 @@ const AlertsDetailsPage_ = connect(alertStateToProps)((props: AlertsDetailsPageP
     <div className="co-m-nav-title co-m-nav-title--detail">
       <h1 className="co-m-pane__heading">
         <div className="co-m-pane__name"><MonitoringResourceIcon className="co-m-resource-icon--lg pull-left" resource={AlertResource} />{alertname}</div>
-        {state === 'firing' || state === 'pending' && <div className="co-actions">
+        {(state === 'firing' || state === 'pending') && <div className="co-actions">
           <ActionsMenu actions={[silenceAlert(alert)]} />
         </div>}
       </h1>
@@ -271,6 +276,13 @@ const AlertsDetailsPage_ = connect(alertStateToProps)((props: AlertsDetailsPageP
               <dl className="co-m-pane__details">
                 <dt>Name</dt>
                 <dd>{alertname}</dd>
+                <dt>Labels</dt>
+                <dd>{_.isEmpty(labels)
+                  ? <div className="text-muted">No labels</div>
+                  : <div className={`co-text-${AlertResource.kind.toLowerCase()}`}>
+                    {_.map(labels, (v, k) => <Label key={k} k={k} v={v} />)}
+                  </div>
+                }</dd>
                 {severity && <React.Fragment>
                   <dt>Severity</dt>
                   <dd>{_.startCase(severity)}</dd>
@@ -497,6 +509,11 @@ const SilencesDetailsPage_ = connect(silenceParamToProps)((props: SilencesDetail
                   <dt>Name</dt>
                   <dd>{silence.name}</dd>
                 </React.Fragment>}
+                <dt>Matchers</dt>
+                <dd>{_.isEmpty(silence.matchers)
+                  ? <div className="text-muted">No matchers</div>
+                  : <SilenceMatchersList silence={silence} />
+                }</dd>
                 <dt>State</dt>
                 <dd><SilenceState silence={silence} /></dd>
                 <dt>Last Updated At</dt>
@@ -575,7 +592,7 @@ const alertsRowFilter = {
     {id: 'firing', title: 'Firing'},
     {id: 'silenced', title: 'Silenced'},
     {id: 'pending', title: 'Pending'},
-    {id: 'inactive', title: 'Inactive'},
+    {id: 'not-firing', title: 'Not Firing'},
   ],
 };
 
@@ -626,28 +643,19 @@ const MonitoringListPage = connect(filtersToProps)(class InnerMonitoringListPage
   }
 
   render () {
-    const {CreateButton, data, filters, Header, loaded, loadError, match, PageDescription, reduxID, Row, rowFilter, textFilterLabel} = this.props;
+    const {CreateButton, data, filters, Header, loaded, loadError, PageDescription, reduxID, Row, rowFilter, textFilterLabel} = this.props;
 
     return <React.Fragment>
       <Helmet>
         <title>Monitoring Alerts</title>
       </Helmet>
-      <div className="co-m-nav-title co-m-nav-title--detail">
+      <div className="co-m-nav-title">
         <h1 className="co-m-pane__heading">
           <div className="co-m-pane__name">
             Monitoring Alerts &nbsp;<span className="monitoring-header-link"><AlertmanagerLink text="Alertmanager UI" /></span>
           </div>
         </h1>
       </div>
-      <ul className="co-m-horizontal-nav__menu">
-        <li className={classNames('co-m-horizontal-nav__menu-item', {'co-m-horizontal-nav-item--active': match.path === AlertResource.path})}>
-          <Link to={AlertResource.path}>Alerts</Link>
-        </li>
-        <li className={classNames('co-m-horizontal-nav__menu-item', {'co-m-horizontal-nav-item--active': match.path === SilenceResource.path})}>
-          <Link to={SilenceResource.path}>Silences</Link>
-        </li>
-        <li className="co-m-horizontal-nav__menu-item co-m-horizontal-nav__menu-item--divider"></li>
-      </ul>
       <div className="co-m-pane__filter-bar co-m-pane__filter-bar--with-help-text">
         {PageDescription && <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--help-text">
           <PageDescription />
@@ -719,6 +727,9 @@ const SilenceRow = ({obj}) => {
           <MonitoringResourceIcon resource={SilenceResource} />
           <Link className="co-resource-link__resource-name" title={obj.id} to={`${SilenceResource.path}/${obj.id}`}>{obj.name}</Link>
         </div>
+      </div>
+      <div className="monitoring-label-list">
+        <SilenceMatchersList silence={obj} />
       </div>
     </div>
     <div className="col-xs-3">
@@ -859,7 +870,7 @@ class SilenceForm_ extends SafetyFirst<SilenceFormProps, SilenceFormState> {
       </Helmet>
       <form className="co-m-pane__body-group silence-form" onSubmit={this.onSubmit}>
         <SectionHeading text={this.props.title} />
-        <p className="co-m-pane__explanation">A silence is configured based on a matcher (label selector). No notification will be sent out for alerts that match all the values or regular expressions.</p>
+        <p className="co-m-pane__explanation">A silence is configured based on matchers (label selectors). No notification will be sent out for alerts that match all the values or regular expressions.</p>
         <hr />
 
         <div className="form-group">
