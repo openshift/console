@@ -187,9 +187,7 @@ export const ClusterServiceVersionDetails: React.SFC<ClusterServiceVersionDetail
           <div className="col-sm-9">
             {status.phase !== ClusterServiceVersionPhase.CSVPhaseSucceeded && <Alert type="error"><strong>{status.phase}</strong>: {status.message}</Alert>}
             <SectionHeading text="Provided APIs" />
-            <div style={{width: '80%'}}>
-              <CRDCardRow csv={props.obj} crdDescs={spec.customresourcedefinitions.owned} />
-            </div>
+            <CRDCardRow csv={props.obj} crdDescs={spec.customresourcedefinitions.owned} />
             <SectionHeading text="Description" />
             <MarkdownView content={spec.description || 'Not available'} />
           </div>
@@ -246,8 +244,8 @@ export const ClusterServiceVersionsDetailsPage: React.StatelessComponent<Cluster
     name={props.match.params.name}
     pagesFor={(obj: ClusterServiceVersionKind) => [
       navFactory.details(ClusterServiceVersionDetails),
-      navFactory.events(ResourceEventStream),
       navFactory.editYaml(),
+      navFactory.events(ResourceEventStream),
       ...instancePagesFor(obj),
     ]}
     menuActions={menuActions} />;
