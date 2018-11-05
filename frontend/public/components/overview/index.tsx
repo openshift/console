@@ -11,6 +11,7 @@ import { Toolbar } from 'patternfly-react';
 import store from '../../redux';
 import { ALL_NAMESPACES_KEY } from '../../const';
 import { coFetchJSON } from '../../co-fetch';
+import { getBuildNumber } from '../../module/k8s/builds';
 import { prometheusBasePath } from '../graphs';
 import { SafetyFirst } from '../safety-first';
 import { TextFilter } from '../factory';
@@ -51,19 +52,35 @@ const EMPTY_GROUP_LABEL = 'other resources';
 const DEPLOYMENT_REVISION_ANNOTATION = 'deployment.kubernetes.io/revision';
 const DEPLOYMENT_CONFIG_LATEST_VERSION_ANNOTATION = 'openshift.io/deployment-config.latest-version';
 const DEPLOYMENT_PHASE_ANNOTATION = 'openshift.io/deployment.phase';
+const TRIGGERS_ANNOTATION = 'image.openshift.io/triggers';
 const METRICS_POLL_INTERVAL = 30 * 1000;
 
 // List of container status waiting reason values that we should call out as errors in overview rows.
 const CONTAINER_WAITING_STATE_ERROR_REASONS = ['CrashLoopBackOff', 'ErrImagePull', 'ImagePullBackOff'];
 
+const getAnnotation = (obj: K8sResourceKind, annotation: string): string => {
+  return _.get(obj, ['metadata', 'annotations', annotation]);
+};
+
 const getDeploymentRevision = (obj: K8sResourceKind): number => {
-  const revision = _.get(obj, ['metadata', 'annotations', DEPLOYMENT_REVISION_ANNOTATION]);
+  const revision = getAnnotation(obj, DEPLOYMENT_REVISION_ANNOTATION);
   return revision && parseInt(revision, 10);
 };
 
 const getDeploymentConfigVersion = (obj: K8sResourceKind): number => {
-  const version = _.get(obj, ['metadata', 'annotations', DEPLOYMENT_CONFIG_LATEST_VERSION_ANNOTATION]);
+  const version = getAnnotation(obj, DEPLOYMENT_CONFIG_LATEST_VERSION_ANNOTATION);
   return version && parseInt(version, 10);
+};
+
+const getAnnotatedTriggers = (obj: K8sResourceKind) => {
+  const triggersJSON = getAnnotation(obj, TRIGGERS_ANNOTATION) || '[]';
+  try {
+    return JSON.parse(triggersJSON);
+  } catch (e) {
+    /* eslint-disable-next-line no-console */
+    console.warn('Error parsing triggers annotation', e);
+    return [];
+  }
 };
 
 const getDeploymentPhase = (rc: K8sResourceKind): string => _.get(rc, ['metadata', 'annotations', DEPLOYMENT_PHASE_ANNOTATION]);
@@ -135,7 +152,7 @@ const getReplicationControllerAlerts = (rc: K8sResourceKind): any => {
 };
 
 const getOwnedResources = ({metadata:{uid}}: K8sResourceKind, resources: K8sResourceKind[]): K8sResourceKind[] => {
-  return _.filter(resources, ({metadata:{ownerReferences}}: K8sResourceKind) => {
+  return _.filter(resources, ({metadata:{ownerReferences}}) => {
     return _.some(ownerReferences, {
       uid,
       controller: true
@@ -182,6 +199,26 @@ const sortReplicationControllersByRevision = (replicationControllers: K8sResourc
   return sortByRevision(replicationControllers, getDeploymentConfigVersion);
 };
 
+const sortBuilds = (builds: K8sResourceKind[]): K8sResourceKind[] => {
+
+  const byCreationTime = (left, right) => {
+    const leftCreationTime = new Date(_.get(left, 'metadata.creationTimestamp', Date.now()));
+    const rightCreationTime = new Date(_.get(right, 'metadata.creationTimestamp', Date.now()));
+    return rightCreationTime.getMilliseconds() - leftCreationTime.getMilliseconds();
+  };
+
+  const byBuildNumber = (left, right) => {
+    const leftBuildNumber = getBuildNumber(left);
+    const rightBuildNumber = getBuildNumber(right);
+    if (!_.isFinite(leftBuildNumber) || !_.isFinite(rightBuildNumber)) {
+      return byCreationTime(left, right);
+    }
+    return rightBuildNumber - leftBuildNumber;
+  };
+
+  return builds.sort(byBuildNumber);
+};
+
 const OverviewHeading: React.SFC<OverviewHeadingProps> = ({disabled, groupOptions, handleFilterChange = _.noop, handleGroupChange = _.noop, selectedGroup = '', title}) => (
   <div className="co-m-nav-title co-m-nav-title--overview">
     {
@@ -226,7 +263,7 @@ class OverviewDetails extends SafetyFirst<OverviewDetailsProps, OverviewDetailsS
   /* eslint-disable-next-line no-undef */
   metricsInterval_: any;
 
-  constructor(props) {
+  constructor(props: OverviewDetailsProps) {
     super(props);
     this.handleFilterChange = this.handleFilterChange.bind(this);
     this.handleGroupChange = this.handleGroupChange.bind(this);
@@ -243,18 +280,20 @@ class OverviewDetails extends SafetyFirst<OverviewDetailsProps, OverviewDetailsS
     };
   }
 
-  componentDidMount() {
+  componentDidMount(): void {
     super.componentDidMount();
     this.fetchMetrics();
   }
 
-  componentWillUnmount () {
+  componentWillUnmount (): void {
     super.componentWillUnmount();
     clearInterval(this.metricsInterval_);
   }
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(prevProps: OverviewDetailsProps, prevState: OverviewDetailsState): void {
     const {
+      builds,
+      buildConfigs,
       daemonSets,
       deployments,
       deploymentConfigs,
@@ -271,6 +310,8 @@ class OverviewDetails extends SafetyFirst<OverviewDetailsProps, OverviewDetailsS
 
     if (!_.isEqual(namespace, prevProps.namespace)
       || loaded !== prevProps.loaded
+      || !_.isEqual(buildConfigs, prevProps.buildConfigs)
+      || !_.isEqual(builds, prevProps.builds)
       || !_.isEqual(daemonSets, prevProps.daemonSets)
       || !_.isEqual(deploymentConfigs, prevProps.deploymentConfigs)
       || !_.isEqual(deployments, prevProps.deployments)
@@ -294,7 +335,7 @@ class OverviewDetails extends SafetyFirst<OverviewDetailsProps, OverviewDetailsS
     }
   }
 
-  fetchMetrics() {
+  fetchMetrics(): void {
     if (!this.isMounted_ || !prometheusBasePath) {
       // Component is not mounted or proxy has not been set up.
       return;
@@ -334,7 +375,7 @@ class OverviewDetails extends SafetyFirst<OverviewDetailsProps, OverviewDetailsS
     });
   }
 
-  filterItems(items) {
+  filterItems(items: OverviewItem[]): OverviewItem[] {
     const {selectedItem} = this.props;
     const {filterValue} = this.state;
 
@@ -349,7 +390,7 @@ class OverviewDetails extends SafetyFirst<OverviewDetailsProps, OverviewDetailsS
     });
   }
 
-  groupItems(items, label) {
+  groupItems(items: OverviewItem[], label: string): OverviewGroup[] {
     const compareGroups = (a, b) => {
       if (a.name === EMPTY_GROUP_LABEL) {
         return 1;
@@ -365,7 +406,7 @@ class OverviewDetails extends SafetyFirst<OverviewDetailsProps, OverviewDetailsS
     }
 
     const groups = _.groupBy(items, item => _.get(item, ['obj', 'metadata', 'labels', label]) || EMPTY_GROUP_LABEL);
-    return _.map(groups, (group, name) => {
+    return _.map(groups, (group: OverviewItem[], name: string) => {
       return {
         name,
         items: group
@@ -373,7 +414,7 @@ class OverviewDetails extends SafetyFirst<OverviewDetailsProps, OverviewDetailsS
     }).sort(compareGroups);
   }
 
-  getGroupOptionsFromLabels(items) {
+  getGroupOptionsFromLabels(items: OverviewItem[]): any {
     const {groupOptions} = this.state;
     const labelKeys = _.flatMap(items, item => _.keys(_.get(item,'obj.metadata.labels', {})));
     return _.reduce(labelKeys, (accumulator, key) => {
@@ -387,12 +428,12 @@ class OverviewDetails extends SafetyFirst<OverviewDetailsProps, OverviewDetailsS
     }, groupOptions);
   }
 
-  getPodsForResource(resource) {
+  getPodsForResource(resource: K8sResourceKind): K8sResourceKind[] {
     const {pods} = this.props;
     return getOwnedResources(resource, pods.data);
   }
 
-  getRoutesForServices(services) {
+  getRoutesForServices(services: K8sResourceKind[]): K8sResourceKind[] {
     const {routes} = this.props;
     return _.filter(routes.data, route => {
       const name = _.get(route, 'spec.to.name');
@@ -400,7 +441,7 @@ class OverviewDetails extends SafetyFirst<OverviewDetailsProps, OverviewDetailsS
     });
   }
 
-  getServicesForResource(resource) {
+  getServicesForResource(resource: K8sResourceKind): K8sResourceKind[] {
     const {services} = this.props;
     const template = _.get(resource, 'spec.template');
     return _.filter(services.data, service => {
@@ -409,7 +450,7 @@ class OverviewDetails extends SafetyFirst<OverviewDetailsProps, OverviewDetailsS
     });
   }
 
-  toReplicationControllerItem(rc) {
+  toReplicationControllerItem(rc: K8sResourceKind): OverviewItem {
     const pods = this.getPodsForResource(rc);
     const alerts = {
       ...combinePodAlerts(pods),
@@ -430,14 +471,14 @@ class OverviewDetails extends SafetyFirst<OverviewDetailsProps, OverviewDetailsS
     };
   }
 
-  getActiveReplicationControllers(resource) {
+  getActiveReplicationControllers(resource: K8sResourceKind): K8sResourceKind[] {
     const {replicationControllers} = this.props;
     const currentVersion = _.get(resource, 'status.latestVersion');
     const ownedRC = getOwnedResources(resource, replicationControllers.data);
     return _.filter(ownedRC, rc => _.get(rc, 'status.replicas') || getDeploymentConfigVersion(rc) === currentVersion);
   }
 
-  getReplicationControllersForResource(resource) {
+  getReplicationControllersForResource(resource: K8sResourceKind): ReplicatorOverviewItem {
     const replicationControllers = this.getActiveReplicationControllers(resource);
     const rcItems = sortReplicationControllersByRevision(replicationControllers).map(rc => this.toReplicationControllerItem(rc));
     const current: any = _.first(rcItems);
@@ -451,7 +492,7 @@ class OverviewDetails extends SafetyFirst<OverviewDetailsProps, OverviewDetailsS
     };
   }
 
-  toReplicaSetItem(rs) {
+  toReplicaSetItem(rs: K8sResourceKind): OverviewItem {
     const obj = {
       ...rs,
       kind: ReplicaSetModel.kind,
@@ -466,19 +507,19 @@ class OverviewDetails extends SafetyFirst<OverviewDetailsProps, OverviewDetailsS
     };
   }
 
-  getActiveReplicaSets(deployment) {
+  getActiveReplicaSets(deployment: K8sResourceKind): K8sResourceKind[] {
     const {replicaSets} = this.props;
     const currentRevision = getDeploymentRevision(deployment);
     const ownedRS = getOwnedResources(deployment, replicaSets.data);
     return _.filter(ownedRS, rs => _.get(rs, 'status.replicas') || getDeploymentRevision(rs) === currentRevision);
   }
 
-  getReplicaSetsForResource(deployment) {
+  getReplicaSetsForResource(deployment: K8sResourceKind): ReplicatorOverviewItem {
     const replicaSets = this.getActiveReplicaSets(deployment);
     const rsItems = sortReplicaSetsByRevision(replicaSets).map(rs => this.toReplicaSetItem(rs));
     const current = _.first(rsItems);
     const previous = _.nth(rsItems, 1);
-    const isRollingOut = current && previous;
+    const isRollingOut = !!current && !!previous;
     return {
       current,
       previous,
@@ -486,11 +527,50 @@ class OverviewDetails extends SafetyFirst<OverviewDetailsProps, OverviewDetailsS
     };
   }
 
-  createDaemonSetItems() {
+  getBuildsForResource(buildConfig: K8sResourceKind): K8sResourceKind[] {
+    const {builds} = this.props;
+    return getOwnedResources(buildConfig, builds.data);
+  }
+
+  getBuildConfigsForResource(resource: K8sResourceKind): BuildConfigOverviewItem[] {
+    const {buildConfigs} = this.props;
+    const currentNamespace = resource.metadata.namespace;
+    const nativeTriggers = _.get(resource, 'spec.triggers');
+    const annotatedTriggers = getAnnotatedTriggers(resource);
+    const triggers = _.unionWith(nativeTriggers, annotatedTriggers, _.isEqual);
+    return _.flatMap(triggers, (trigger) => {
+      const triggerFrom = trigger.from || _.get(trigger, 'imageChangeParams.from', {});
+      if ( triggerFrom.kind !== 'ImageStreamTag') {
+        return [];
+      }
+      return _.reduce(buildConfigs.data, (acc, buildConfig) => {
+        const triggerImageNamespace = triggerFrom.namespace || currentNamespace;
+        const triggerImageName = triggerFrom.name;
+        const targetImageNamespace = _.get(buildConfig, 'spec.output.to.namespace', currentNamespace);
+        const targetImageName = _.get(buildConfig, 'spec.output.to.name');
+        if (triggerImageNamespace === targetImageNamespace && triggerImageName === targetImageName) {
+          const builds = this.getBuildsForResource(buildConfig);
+          return [
+            ...acc,
+            {
+              ...buildConfig,
+              builds: sortBuilds(builds)
+            }
+          ];
+        }
+        return acc;
+      }, []);
+    });
+  }
+
+  createDaemonSetItems(): OverviewItem[] {
     const {daemonSets} = this.props;
     return _.map(daemonSets.data, ds => {
+      const buildConfigs = this.getBuildConfigsForResource(ds);
       const services = this.getServicesForResource(ds);
       const routes = this.getRoutesForServices(services);
+      const pods = this.getPodsForResource(ds);
+      const alerts = combinePodAlerts(pods);
       const obj = {
         ...ds,
         kind: DaemonSetModel.kind
@@ -499,11 +579,10 @@ class OverviewDetails extends SafetyFirst<OverviewDetailsProps, OverviewDetailsS
         desired: ds.status.desiredNumberScheduled || 0,
         ready: ds.status.currentNumberScheduled || 0
       };
-      const pods = this.getPodsForResource(ds);
-      const alerts = combinePodAlerts(pods);
 
       return {
         alerts,
+        buildConfigs,
         obj,
         pods,
         readiness,
@@ -513,10 +592,11 @@ class OverviewDetails extends SafetyFirst<OverviewDetailsProps, OverviewDetailsS
     });
   }
 
-  createDeploymentItems() {
+  createDeploymentItems(): OverviewItem[] {
     const {deployments} = this.props;
     return _.map(deployments.data, d => {
       const {current, previous, isRollingOut} = this.getReplicaSetsForResource(d);
+      const buildConfigs = this.getBuildConfigsForResource(d);
       const services = this.getServicesForResource(d);
       const routes = this.getRoutesForServices(services);
       const obj = {
@@ -529,6 +609,7 @@ class OverviewDetails extends SafetyFirst<OverviewDetailsProps, OverviewDetailsS
       };
 
       return {
+        buildConfigs,
         current,
         isRollingOut,
         obj,
@@ -540,10 +621,11 @@ class OverviewDetails extends SafetyFirst<OverviewDetailsProps, OverviewDetailsS
     });
   }
 
-  createDeploymentConfigItems() {
+  createDeploymentConfigItems(): OverviewItem[] {
     const {deploymentConfigs} = this.props;
     return _.map(deploymentConfigs.data, dc => {
       const {current, previous, isRollingOut} = this.getReplicationControllersForResource(dc);
+      const buildConfigs = this.getBuildConfigsForResource(dc);
       const services = this.getServicesForResource(dc);
       const routes = this.getRoutesForServices(services);
       const obj = {
@@ -556,6 +638,7 @@ class OverviewDetails extends SafetyFirst<OverviewDetailsProps, OverviewDetailsS
       };
 
       return {
+        buildConfigs,
         current,
         isRollingOut,
         obj,
@@ -567,9 +650,10 @@ class OverviewDetails extends SafetyFirst<OverviewDetailsProps, OverviewDetailsS
     });
   }
 
-  createStatefulSetItems() {
+  createStatefulSetItems(): OverviewItem[] {
     const {statefulSets} = this.props;
     return _.map(statefulSets.data, (ss) => {
+      const buildConfigs = this.getBuildConfigsForResource(ss);
       const obj = {
         ...ss,
         kind: StatefulSetModel.kind
@@ -582,6 +666,7 @@ class OverviewDetails extends SafetyFirst<OverviewDetailsProps, OverviewDetailsS
       const alerts = combinePodAlerts(pods);
       return {
         alerts,
+        buildConfigs,
         obj,
         pods,
         readiness,
@@ -589,7 +674,7 @@ class OverviewDetails extends SafetyFirst<OverviewDetailsProps, OverviewDetailsS
     });
   }
 
-  createOverviewData() {
+  createOverviewData(): void {
     const {loaded} = this.props;
 
     if (!loaded) {
@@ -618,15 +703,15 @@ class OverviewDetails extends SafetyFirst<OverviewDetailsProps, OverviewDetailsS
     });
   }
 
-  handleFilterChange(event) {
+  handleFilterChange(event: any): void {
     this.setState({filterValue: event.target.value});
   }
 
-  handleGroupChange(selectedGroupLabel) {
+  handleGroupChange(selectedGroupLabel: string): void {
     this.setState({selectedGroupLabel});
   }
 
-  clearFilter() {
+  clearFilter(): void {
     this.setState({filterValue: ''});
   }
 
@@ -656,24 +741,29 @@ class OverviewDetails extends SafetyFirst<OverviewDetailsProps, OverviewDetailsS
   }
 }
 
-const overviewStateToProps = ({UI}, ownProps): OverviewProps => {
-  const selectedUID = UI.getIn(['overview', 'selectedUID']);
+const overviewStateToProps = ({UI}): OverviewPropsFromState => {
+  const selectedUID = UI.getIn(['overview', 'selectedUID'], '');
   const resources = UI.getIn(['overview', 'resources']);
-  if (_.isEmpty(selectedUID)) {
-    return {
-      ...ownProps,
-      selectedItem: {}
-    };
-  }
   return {
-    ...ownProps,
-    selectedItem: resources.get(selectedUID)
+    selectedItem: !!resources && resources.get(selectedUID)
   };
 };
 
-export const Overview = connect(overviewStateToProps)(({mock, namespace, selectedItem, title}) => {
+export const Overview = connect<OverviewPropsFromState, {}, OverviewOwnProps>(overviewStateToProps)(({mock, namespace, selectedItem, title}: OverviewProps) => {
   const className = classnames('overview', {'overview--sidebar-shown': !_.isEmpty(selectedItem)});
   const resources = [
+    {
+      isList: true,
+      kind: 'Build',
+      namespace,
+      prop: 'builds'
+    },
+    {
+      isList: true,
+      kind: 'BuildConfig',
+      namespace,
+      prop: 'buildConfigs'
+    },
     {
       isList: true,
       kind: 'DaemonSet',
@@ -795,16 +885,40 @@ export const OverviewPage = withStartGuide(
 );
 
 /* eslint-disable no-unused-vars, no-undef */
+
+// TODO (jon) Improve overview item type to be more specific
+type OverviewItem = {
+  obj: K8sResourceKind;
+  [key: string]: any;
+};
+
+type ReplicatorOverviewItem = {
+  current: OverviewItem;
+  previous: OverviewItem;
+  isRollingOut: boolean;
+};
+
+type BuildConfigOverviewItem = K8sResourceKind & {
+  builds: K8sResourceKind[];
+};
+
+type OverviewGroup = {
+  name?: string;
+  items: OverviewItem[];
+};
+
 type OverviewHeadingProps = {
   disabled?: boolean;
   groupOptions?: any;
-  handleFilterChange?: (...args: any[]) => void;
-  handleGroupChange?: (...args: any[]) => void;
+  handleFilterChange?: (event: any) => void;
+  handleGroupChange?: (selectedLabel: string) => void;
   selectedGroup?: string;
   title: string;
 };
 
 type OverviewDetailsProps = {
+  builds?: any;
+  buildConfigs?: any;
   daemonSets?: any;
   deploymentConfigs?: any;
   deployments?: any;
@@ -832,12 +946,17 @@ type OverviewDetailsState = {
   selectedGroupLabel: string;
 };
 
-type OverviewProps = {
+type OverviewPropsFromState = {
+  selectedItem: OverviewItem | undefined;
+};
+
+type OverviewOwnProps = {
   mock: boolean;
   namespace: string;
-  selectedItem: any;
   title: string;
 };
+
+type OverviewProps = OverviewPropsFromState & OverviewOwnProps;
 
 type OverviewPageProps = {
   match: any;

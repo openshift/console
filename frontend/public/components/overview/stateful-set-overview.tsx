@@ -4,6 +4,7 @@ import { StatefulSetModel } from '../../models';
 import { menuActions } from '../stateful-set';
 import { ResourceSummary } from '../utils';
 
+import { BuildConfigsOverview } from './build-configs-overview';
 import { NetworkingOverview } from './networking-overview';
 import { ResourceOverviewDetails } from './resource-overview-details';
 
@@ -12,8 +13,12 @@ const StatefulSetOverviewDetails: React.SFC<{item:any}> = ({item}) =>
     <ResourceSummary resource={item.obj} />
   </div>;
 
-const StatefulSetResourceOverview: React.SFC<{item:any}> = ({item: {services, routes}}) =>
-  <NetworkingOverview services={services} routes={routes} />;
+const StatefulSetResourceOverview: React.SFC<{item:any}> = ({item: {buildConfigs, routes, services}}) => (
+  <div className="overview__sidebar-pane-body">
+    <BuildConfigsOverview buildConfigs={buildConfigs} />
+    <NetworkingOverview services={services} routes={routes} />
+  </div>
+);
 
 const tabs = [
   {

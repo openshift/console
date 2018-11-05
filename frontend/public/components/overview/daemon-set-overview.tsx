@@ -9,6 +9,7 @@ import {
 } from '../daemon-set';
 
 import { NetworkingOverview } from './networking-overview';
+import { BuildConfigsOverview } from './build-configs-overview';
 
 const DaemonSetOverviewDetails: React.SFC<{item:any}> = ({item}) =>
   <div className="co-m-pane__body resource-overview__body">
@@ -20,8 +21,12 @@ const DaemonSetOverviewDetails: React.SFC<{item:any}> = ({item}) =>
     </div>
   </div>;
 
-const DaemonSetResourceOverview: React.SFC<{item: any}> = ({item: {services, routes}}) =>
-  <NetworkingOverview services={services} routes={routes} />;
+const DaemonSetResourceOverview: React.SFC<{item: any}> = ({item: {buildConfigs, routes, services}}) => (
+  <div className="overview__sidebar-pane-body">
+    <BuildConfigsOverview buildConfigs={buildConfigs} />
+    <NetworkingOverview services={services} routes={routes} />
+  </div>
+);
 
 const tabs = [
   {
