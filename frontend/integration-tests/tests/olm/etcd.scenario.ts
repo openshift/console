@@ -6,7 +6,7 @@ import { defaultsDeep } from 'lodash';
 
 import { appHost, testName, checkLogs, checkErrors } from '../../protractor.conf';
 import * as crudView from '../../views/crud.view';
-import * as catalogView from '../../views/catalog.view';
+import * as catalogView from '../../views/olm-catalog.view';
 import * as sidenavView from '../../views/sidenav.view';
 import * as yamlView from '../../views/yaml.view';
 
