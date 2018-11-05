@@ -6,23 +6,22 @@ import { SecretData } from './configmap-and-secret-data';
 import { Cog, SectionHeading, ResourceCog, ResourceLink, ResourceSummary, detailsPage, navFactory, resourceObjPath } from './utils';
 import { fromNow } from './utils/datetime';
 import { SecretType } from './secrets/create-secret';
-import { configureAddSecretToApplicationModal } from './modals/add-secret-to-application';
-import { serviceCatalogStatus } from '../module/k8s';
+import { configureAddSecretToWorkloadModal } from './modals/add-secret-to-workload';
 
 export const WebHookSecretKey = 'WebHookSecretKey';
 
-export const addSecretToApplication = (kindObj, secret) => {
+export const addSecretToWorkload = (kindObj, secret) => {
   const { name: secretName, namespace } = secret.metadata;
 
   return {
     btnClass: 'btn-primary',
-    callback: () => configureAddSecretToApplicationModal({secretName, namespace}),
-    label: 'Add Secret to Application',
+    callback: () => configureAddSecretToWorkloadModal({secretName, namespace}),
+    label: 'Add Secret to Workload',
   };
 };
 
 const actionButtons = [
-  addSecretToApplication,
+  addSecretToWorkload,
 ];
 
 const menuActions = [
