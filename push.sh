@@ -15,7 +15,7 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 pushd $SCRIPT_DIR
 
 set -x
-: ${REPO:=mareklibra/kubevirt-web-ui}
+: ${REPO:=quay.io/kubevirt/kubevirt-web-ui}
 #: ${REPO:=quay.io/coreos/tectonic-console}
 #: ${TESTER_REPO:=quay.io/coreos/tectonic-console-tester}
 
