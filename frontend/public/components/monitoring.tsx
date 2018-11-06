@@ -98,9 +98,9 @@ const editSilence = silence => ({
 });
 
 const cancelSilence = (silence, urls) => ({
-  label: 'Cancel Silence',
+  label: 'Expire Silence',
   callback: () => confirmModal({
-    title: 'Cancel Silence',
+    title: 'Expire Silence',
     message: 'Are you sure you want to expire this silence?',
     btnText: 'Expire Silence',
     executeFn: () => coFetchJSON.delete(`${urls[MonitoringRoutes.AlertManager]}/api/v1/silence/${silence.id}`),
