@@ -1,5 +1,5 @@
 import * as _ from 'lodash-es';
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import { ResourceEventStream } from './okdcomponents';
@@ -26,6 +26,7 @@ import {
 import {
   BasicMigrationDialog,
   TEMPLATE_OS_LABEL,
+  VmDetails,
   VmStatus,
   getVmStatus,
   isBeingMigrated,
@@ -39,6 +40,7 @@ import VmConsolesConnected from './vmconsoles';
 import { Nic } from './nic';
 import { Disk } from './disk';
 import { openCreateVmWizard } from './modals/create-vm-modal';
+import { NodeLink } from "../../components/utils";
 
 const mainRowSize = 'col-lg-3 col-md-3 col-sm-6 col-xs-6';
 const otherRowSize = 'col-lg-2 col-md-2 hidden-sm hidden-xs';
@@ -182,117 +184,7 @@ export const VMRow = ({obj: vm}) => {
   </ResourceRow>;
 };
 
-const VMStatus = ({ vm }) => {
-  const vmiResource = getResourceKind(VirtualMachineInstanceModel, vm.metadata.name, true, vm.metadata.namespace, false);
-  const podResources = getResourceKind(PodModel, undefined, true, vm.metadata.namespace, true, getLabelMatcher(vm));
-  // https://kubevirt.io/api-reference/master/definitions.html#_v1_virtualmachineinstancemigration
-  const migrationResources = getResourceKind(VirtualMachineInstanceMigrationModel, undefined, true, vm.metadata.namespace, false);
-
-  return <div className="row">
-    <div className="col-lg-12">
-      <h3 className="overview-section-title">Status</h3>
-      <dl className="dl-horizontal dl-left">
-        <dt>Name:</dt>
-        <dd>{vm.metadata.name}</dd>
-        <dt>State:</dt>
-        <dd>
-          <Firehose resources={[podResources, migrationResources]}>
-            <StateColumn vm={vm} />
-          </Firehose>
-        </dd>
-        <dt>VM Instance:</dt>
-        <dd>
-          <Firehose resources={[vmiResource]} flatten={getFlattenForKind(VirtualMachineInstanceModel.kind)}>
-            <FirehoseResourceLink />
-          </Firehose>
-        </dd>
-        <dt>Pod:</dt>
-        <dd>
-          <Firehose resources={[podResources]} flatten={getFlattenForKind(PodModel.kind)}>
-            <FirehoseResourceLink filter={data => findPod(data, vm.metadata.name, VIRT_LAUNCHER_POD_PREFIX)} />
-          </Firehose>
-        </dd>
-      </dl>
-    </div>
-  </div>;
-};
-
-
-class VMResourceConfiguration extends Component {
-
-  getCpu(resource) {
-    return this.getFromDomain(resource, ['cpu','cores']);
-  }
-
-  getMemory(resource) {
-    return this.getFromDomain(resource, ['resources','requests','memory']);
-  }
-
-  getFromDomain(resource, path) {
-    const domain = ['spec','domain'];
-    if (resource.kind === VirtualMachineModel.kind) {
-      domain.unshift('spec','template');
-    }
-    domain.push(...path);
-    return _.get(resource, domain);
-  }
-
-  getVMConfiguration() {
-    const configuration = {};
-    const vmi = this.props.flatten(this.props.resources);
-    if (vmi) {
-      configuration.cpu = this.getCpu(vmi);
-      configuration.memory = this.getMemory(vmi);
-    } else {
-      configuration.cpu = this.getCpu(this.props.vm);
-      configuration.memory = this.getMemory(this.props.vm);
-    }
-    configuration.os = _.get(this.props.vm, ['metadata', 'annotations', TEMPLATE_OS_LABEL]);
-    return configuration;
-  }
-
-
-  render(){
-    const configuration = this.getVMConfiguration();
-    return <div className="row">
-      <div className="col-lg-12">
-        <h3 className="overview-section-title">Configuration</h3>
-        <dl className="dl-horizontal  dl-left">
-          <dt>Memory:</dt>
-          <dd>{configuration.memory || DASHES}</dd>
-          <dt>CPU:</dt>
-          <dd>{configuration.cpu || DASHES}</dd>
-          <dt>Operating System:</dt>
-          <dd>{configuration.os || DASHES}</dd>
-        </dl>
-      </div>
-    </div>;
-  }
-}
-
-
 export const VMList = (props) => <List {...props} Header={VMHeader} Row={VMRow} />;
-
-const Details = ({obj: vm}) => {
-  const vmiResource = getResourceKind(VirtualMachineInstanceModel, vm.metadata.name, true, vm.metadata.namespace, false);
-  return <Fragment>
-    <div className="co-m-pane__body">
-      <h1 className="co-m-pane__heading">Virtual Machine Overview</h1>
-      <div className="co-m-pane__body">
-        <div className="row">
-          <div className="col-lg-6">
-            <VMStatus vm={vm} />
-          </div>
-          <div className="col-lg-6">
-            <Firehose resources={[vmiResource]} flatten={getFlattenForKind(VirtualMachineInstanceModel.kind)}>
-              <VMResourceConfiguration vm={vm} />
-            </Firehose>
-          </div>
-        </div>
-      </div>
-    </div>
-  </Fragment>;
-};
 
 const VmiEvents = ({obj: vm}) => {
   const vmi = {
@@ -325,7 +217,7 @@ export const VirtualMachinesDetailsPage = props => {
   };
 
   const pages = [
-    navFactory.details(Details),
+    navFactory.details(ConnectedVmDetails),
     navFactory.editYaml(),
     consolePage,
     navFactory.events(VmiEvents),
@@ -357,6 +249,21 @@ const mapDispatchToProps = () => ({
   stopK8sWatch: actions.stopK8sWatch,
   watchK8sList: actions.watchK8sList,
 });
+
+const ConnectedVmDetails = ({ obj: vm }) => {
+  const vmResource = getResourceKind(VirtualMachineModel, vm.metadata.name, true, vm.metadata.namespace, false);
+  const vmiResources = getResourceKind(VirtualMachineInstanceModel, vm.metadata.name, true, vm.metadata.namespace, true, getLabelMatcher(vm));
+  const podResources = getResourceKind(PodModel, undefined, true, vm.metadata.namespace, true, getLabelMatcher(vm));
+  const migrationResources = getResourceKind(VirtualMachineInstanceMigrationModel, undefined, true, vm.metadata.namespace, false); // https://kubevirt.io/api-reference/master/definitions.html#_v1_virtualmachineinstancemigration
+  const resources = [vmResource, vmiResources, podResources, migrationResources];
+
+  return (
+    <Firehose resources={resources}>
+      <VmDetails vm={vm} ResourceLink={ResourceLink} NodeLink={NodeLink} />
+    </Firehose>
+
+  );
+};
 
 const filters = [{
   type: 'vm-status',
