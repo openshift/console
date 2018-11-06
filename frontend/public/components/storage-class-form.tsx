@@ -51,26 +51,6 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
           values: {io1: 'io1', gp2: 'gp2', sc1: 'sc1', st1: 'st1'},
           hintText: 'Select AWS Type'
         },
-        zone: {
-          name: 'Zone',
-          hintText: 'AWS zone',
-          validation: (params) => {
-            if (params.zone.value !== '' && _.get(params, 'zones.value', '') !== '') {
-              return 'Zone and zones parameters must not be used at the same time.';
-            }
-            return null;
-          }
-        },
-        zones: {
-          name: 'Zones',
-          hintText: 'AWS zones',
-          validation: (params) => {
-            if (params.zones.value !== '' && _.get(params, 'zone.value', '') !== '') {
-              return 'Zone and zones parameters must not be used at the same time.';
-            }
-            return null;
-          }
-        },
         iopsPerGB: {
           name: 'IOPS Per GiB',
           hintText: 'I/O operations per second per GiB',
