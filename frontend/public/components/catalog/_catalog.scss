@@ -18,7 +18,7 @@ $catalog-item-icon-size-sm: 24px;
 }
 
 .co-catalog {
-  background: $color-grey-background;
+  background: $color-pf-black-150;
   min-height: 100%;
   min-width: 465px; // in order to accommodate filters and tiles at mobile
   padding: 0 0 ($grid-gutter-width / 2);
@@ -98,7 +98,7 @@ $catalog-item-icon-size-sm: 24px;
   }
 
   &__num-items {
-    border-bottom: 1px solid $color-grey-border;
+    border-bottom: 1px solid $color-pf-black-200;
     font-weight: 700;
     margin: 0 0 $grid-gutter-width 0;
     padding: 0 0 20px;
@@ -164,6 +164,6 @@ $catalog-item-icon-size-sm: 24px;
 
 .co-catalog-tab__empty {
   font-weight: lighter;
-  color: $color-grey-medium;
+  color: $color-pf-black-600;
 }
 

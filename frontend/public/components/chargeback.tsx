@@ -350,7 +350,7 @@ class ReportData extends SafetyFirst<ReportDataProps, ReportDataState> {
             <div className="btn-group">
               {_.map(REDUCER_COLS, col => {
                 const disabled = !_.get(data, [0, col]);
-                return <button key={col} disabled={disabled} onClick={() => this.reduceBy(col)} className={classNames(['btn', 'btn-default'], {'btn-selected': col === reduceBy, disabled})}>By {_.startCase(col)}</button>;
+                return <button key={col} disabled={disabled} onClick={() => this.reduceBy(col)} className={classNames(['btn', 'btn-default'], {'btn-primary': col === reduceBy, disabled})}>By {_.startCase(col)}</button>;
               })}
             </div>
           </div>
