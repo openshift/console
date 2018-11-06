@@ -25,7 +25,18 @@ const normalizePackageManifests = (packageManifests, kind) => {
     const tags = packageManifest.metadata.tags;
     const version = _.get(packageManifest, 'status.channels[0].currentCSVDesc.version');
     const currentCSVAnnotations = _.get(packageManifest, 'status.channels[0].currentCSVDesc.annotations', {});
-    const { description, certifiedLevel, healthIndex, repository, containerImage, createdAt, support } = currentCSVAnnotations;
+    const {
+      description,
+      certifiedLevel,
+      healthIndex,
+      repository,
+      containerImage,
+      createdAt,
+      support,
+      longDescription,
+      keywords
+    } = currentCSVAnnotations;
+    const keywordArray = keywords && _.map(keywords.split(','), keyword => keyword.trim());
     return {
       obj: packageManifest,
       kind,
@@ -43,6 +54,8 @@ const normalizePackageManifests = (packageManifests, kind) => {
       containerImage,
       createdAt,
       support,
+      longDescription,
+      keywords: keywordArray,
     };
   });
 };

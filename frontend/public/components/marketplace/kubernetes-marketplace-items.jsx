@@ -4,56 +4,98 @@ import * as PropTypes from 'prop-types';
 import {CatalogTileView} from 'patternfly-react-extensions/dist/esm/components/CatalogTileView';
 import {CatalogTile} from 'patternfly-react-extensions/dist/esm/components/CatalogTile';
 import {FilterSidePanel} from 'patternfly-react-extensions/dist/esm/components/FilterSidePanel';
+import VerticalTabs from 'patternfly-react-extensions/dist/esm/components/VerticalTabs/VerticalTabs';
 import {EmptyState} from 'patternfly-react/dist/esm/components/EmptyState';
 import FormControl from 'patternfly-react/dist/esm/components/Form/FormControl';
 
 import {normalizeIconClass} from '../catalog/catalog-item-icon';
+import {CategoryFilterUtils} from '../utils/category-filter-utils';
+import {history} from '../utils';
 
-function getFilters(items, filterGroups=[]) {
-  const filters = {
-    keyword: {
-      value: '',
-      active: false,
-    },
-  };
-
-  _.each(filterGroups, field => {
-    _.each(items, item => {
-      const value = item[field];
-      if (value) {
-        _.set(filters, [field, value], {
-          label: value,
-          value,
-          active: false,
-        });
-      }
-    });
-  });
-
-  return filters;
-}
-
-function copyActiveFilters(filters, oldFilters) {
-  // Applies active values in oldFilters to filters
-  _.forOwn(filters, (groupValue, group) => {
-    if (group !== 'keyword') {
-      _.forOwn(filters[group], (filterValue, filter) => {
-        filters[group][filter].active = _.get(oldFilters, [group, filter, 'active'], false);
-      });
-    }
-  });
-
-  if (_.get(oldFilters, ['keyword', 'active'])) {
-    filters.keyword = oldFilters.keyword;
-  }
-
-  return filters;
-}
+const marketplaceCategories = [
+  {
+    id: 'featured',
+    label: 'Featured',
+    field: 'keywords',
+    values: ['featured']
+  },
+  {
+    id: 'databases',
+    label: 'Databases',
+    field: 'keywords',
+    values: ['database']
+  },
+  {
+    id: 'storage',
+    label: 'Storage',
+    field: 'keywords',
+    values: ['storage']
+  },
+  {
+    id: 'networking',
+    label: 'Networking',
+    field: 'keywords',
+    values: ['networking']
+  },
+  {
+    id: 'monitoring',
+    label: 'Monitoring',
+    field: 'keywords',
+    values: ['monitoring']
+  },
+  {
+    id: 'messaging',
+    label: 'Messaging',
+    field: 'keywords',
+    values: ['messaging']
+  },
+  {
+    id: 'dev-tools',
+    label: 'Developer Tools',
+    field: 'keywords',
+    values: ['dev-tool']
+  },
+  {
+    id: 'identity',
+    label: 'Identity',
+    field: 'keywords',
+    values: ['identity']
+  },
+  {
+    id: 'security',
+    label: 'Security',
+    field: 'keywords',
+    values: ['security']
+  },
+  {
+    id: 'catalog',
+    label: 'Catalog',
+    field: 'keywords',
+    values: ['catalog']
+  },
+  {
+    id: 'blog-cm',
+    label: 'Blog & CMS',
+    field: 'keywords',
+    values: ['blog', ['cms']]
+  },
+];
 
 // Filter property white list
 const filterGroups = [
   'provider',
 ];
+
+const defaultFilters = {
+  keyword: {
+    value: '',
+    active: false,
+  },
+};
+
+const defaultFilterCounts = {
+  provider: {},
+};
 
 export class MarketplaceTileViewPage extends React.Component {
   constructor(props) {
@@ -61,65 +103,80 @@ export class MarketplaceTileViewPage extends React.Component {
     const {items} = this.props;
 
     // Filters are populated based on white list of item properties
-    const filters = getFilters(items, filterGroups);
+    const availableFilters = CategoryFilterUtils.getAvailableFilters(defaultFilters, items, filterGroups);
 
     this.state = {
-      filters,
-      ...this.getFilterItemsAndCounts(filters),
+      categories: CategoryFilterUtils.categorizeItems(items, marketplaceCategories),
+      currentCategories: null,
+      activeTabId: 'all',
+      availableFilters,
+      activeFilters: availableFilters,
+      filterCounts: defaultFilterCounts
     };
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    const {filters} = this.state;
-    const {items} = this.props;
-    if ((items === prevProps.items) && (filters === prevState.filters)) {
+  componentDidMount() {
+    this.setState(this.getUpdatedStateFromURL(window.location.search));
+  }
+
+  componentDidUpdate(prevProps) {
+    const { activeFilters, activeTabId } = this.state;
+    const { items } = this.props;
+
+    if (items !== prevProps.items) {
+      const availableFilters = CategoryFilterUtils.getAvailableFilters(defaultFilters, items, filterGroups);
+      const categories = CategoryFilterUtils.categorizeItems(items, marketplaceCategories);
+      this.setState({availableFilters, ...this.getUpdatedState(categories, activeTabId, activeFilters)});
+    }
+  }
+
+  getUpdatedState (categories, activeTabId, activeFilters) {
+    const { items } = this.props;
+    const { filterCounts } = this.state || {};
+
+    if (!items) {
       return;
     }
 
-    const updatedState = {};
-
-    // Update filters to match new items
-    if (items !== prevProps.items) {
-      const newFilters = getFilters(items, filterGroups);
-      // Apply current filter state to new filters
-      updatedState.filters = copyActiveFilters(newFilters, filters);
-    }
-
-    // If only filters have changed, update filter items and filter counts
-    if (updatedState.filters || filters !== prevState.filters) {
-      Object.assign(updatedState, this.getFilterItemsAndCounts(updatedState.filters || filters));
-    }
-
-    this.setState(updatedState);
-  }
-
-  getFilterItemsAndCounts(filters) {
-    const { items } = this.props;
-
-    const itemsAndCounts = {
-      filteredItems: {},
-      filterCounts: {},
-    };
+    const updateFilterCounts = filterCounts || {};
 
     // Filter items by keyword first
-    const filteredByKeyword = this.filterByKeyword(items, filters);
+    const filteredByKeyword = this.filterByKeyword(items, activeFilters);
 
     // Apply each filter property individually. Example:
     //  filteredByGroup = {
     //    provider: [/*array of items filtered by provider*/],
     //    healthIndex: [/*array of items filtered by healthIndex*/],
     //  };
-    const filteredByGroup = this.filterByGroup(filteredByKeyword, filters);
+    const filteredByGroup = this.filterByGroup(filteredByKeyword, activeFilters);
 
     // Intersection of individually applied filters is all filters
     // In the case no filters are active, returns items filteredByKeyword
     const filteredItems = _.intersection(..._.values(filteredByGroup), filteredByKeyword);
-    itemsAndCounts.filteredItems = _.sortBy(filteredItems, 'name');
 
-    // Get counts for filtered items in each filter group
-    itemsAndCounts.filterCounts = this.getFilterCountsFromGroups(filteredByKeyword, filters, filteredByGroup);
+    const newCategories = CategoryFilterUtils.recategorizeItems(filteredItems, categories);
 
-    return itemsAndCounts;
+    return {
+      activeFilters,
+      activeTabId,
+      categories: newCategories,
+      currentCategories: MarketplaceTileViewPage.getCurrentCategories(activeTabId, newCategories),
+      filterCounts: this.getFilterCounts(activeTabId, activeFilters, updateFilterCounts, newCategories)
+    };
+  }
+
+  getUpdatedStateFromURL(searchURL) {
+    const {categories, availableFilters} = this.state;
+    const activeValues = CategoryFilterUtils.getActiveValuesFromURL(availableFilters, filterGroups, searchURL);
+
+    return this.getUpdatedState(categories, activeValues.activeTabId, activeValues.activeFilters);
+  }
+
+  getFilterCounts(activeTabId, filters, filterCounts, categories) {
+    const { items } = this.props;
+
+    const filteredItems = this.filterByKeyword(items, filters);
+    return CategoryFilterUtils.getFilterGroupCounts(filteredItems, filterGroups, activeTabId, filters, categories);
   }
 
   filterByGroup(items, filters) {
@@ -151,62 +208,112 @@ export class MarketplaceTileViewPage extends React.Component {
     return items;
   }
 
-  getFilterCountsFromGroups(items, filters, itemsFilteredByGroup) {
-    // Input items, filters, and mapping from filter property to filtered items
-    // Returns object mapping filter property to item counts
-    return _.reduce(filters, (counts, group, key) => {
-      if (key === 'keyword') {
-        return counts;
-      }
-
-      // Apply filters for all groups except for current group key
-      const itemsByGroup = _.filter(itemsFilteredByGroup, (groupItems, groupName) => groupName !== key);
-      const count = _.countBy(_.intersection(...itemsByGroup, items), key);
-
-      counts[key] = _.reduce(group, (groupCounts, value, elem) => {
-        groupCounts[elem] = count[elem] || 0;
-        return groupCounts;
-      }, {});
-
-      return counts;
-    }, {});
+  static getCurrentCategories(activeTabId, categories) {
+    const selectedCategory = CategoryFilterUtils.findActiveCategory(activeTabId, categories);
+    return (selectedCategory && selectedCategory.subcategories) || categories;
   }
 
   clearFilters() {
-    const filters = _.cloneDeep(this.state.filters);
-    _.forOwn(filters, (group, key) => {
-      if (key === 'keyword') {
-        _.set(filters, 'keyword', {
-          active: false,
-          value: '',
-        });
-      } else {
-        _.forOwn(group, (cItem, elem) => {
-          _.set(filters, [key, elem, 'active'], false);
-        });
-      }
+    const params = new URLSearchParams(window.location.search);
+
+    params.delete('keyword');
+
+    _.forEach(filterGroups, filterGroup => {
+      params.delete(filterGroup);
     });
-    this.setState({filters});
+
+    const url = new URL(window.location);
+    const searchParams = `?${params.toString()}${url.hash}`;
+
+    history.replace(`${url.pathname}${searchParams}`);
+    this.setState(this.getUpdatedStateFromURL(searchParams));
+
+    this.filterByKeywordInput.focus();
+  }
+
+  updateURL (filterName, value) {
+    const params = new URLSearchParams(window.location.search);
+    if (value) {
+      params.set(filterName, value);
+    } else {
+      params.delete(filterName);
+    }
+    const url = new URL(window.location);
+    const searchParams = `?${params.toString()}${url.hash}`;
+
+    history.replace(`${url.pathname}${searchParams}`);
+    this.setState(this.getUpdatedStateFromURL(searchParams));
+  }
+
+  selectCategory(categoryId) {
+    this.updateURL (CategoryFilterUtils.CATEGORY_URL_PARAM, categoryId);
   }
 
   onFilterChange(filterType, id, value) {
-    const filters = _.cloneDeep(this.state.filters);
+    const { activeFilters } = this.state;
+
     if (filterType === 'keyword') {
-      const active = !!value;
-      filters[filterType] = { active, value };
+      this.updateURL(CategoryFilterUtils.KEYWORD_URL_PARAM, `${value}`);
     } else {
-      filters[filterType][id].active = value;
+      const groupFilter = activeFilters[filterType];
+      _.set(groupFilter, [id, 'active'], value);
+      this.updateURL(filterType, CategoryFilterUtils.getFilterSearchParam(groupFilter));
     }
-    this.setState({filters});
   }
 
-  renderTiles() {
-    const items = this.state.filteredItems;
+  getCategoryLabel(categoryID) {
+    const { categories } = this.state;
+    if (!categoryID || !categories) {
+      return '';
+    }
+
+    return _.find(categories, { id: categoryID }).label;
+  }
+
+  renderTabs(category, activeTabId) {
+    const { id, label, subcategories } = category;
+    const active = id === activeTabId;
+    const shown = id === 'all';
+
+    return <VerticalTabs.Tab
+      key={id}
+      title={label}
+      active={active}
+      className={!category.numItems ? 'co-catalog-tab__empty' : null}
+      onActivate={() => this.selectCategory(id)}
+      hasActiveDescendant={CategoryFilterUtils.hasActiveDescendant(activeTabId, category)}
+      shown={shown}>
+      {!_.isEmpty(subcategories) && <VerticalTabs restrictTabs activeTab={CategoryFilterUtils.isActiveTab(activeTabId, category)}>
+        {_.map(subcategories, subcategory => this.renderTabs(subcategory, activeTabId))}
+      </VerticalTabs>}
+    </VerticalTabs.Tab>;
+  }
+
+  renderCategoryTabs(activeTabId) {
+    const { categories } = this.state;
+    const activeTab = !!_.find(categories, {id: activeTabId});
+
+    return <VerticalTabs restrictTabs activeTab={activeTab} shown="true">
+      {_.map(categories, (category) => this.renderTabs(category, activeTabId))}
+    </VerticalTabs>;
+  }
+
+
+  renderCategory(category, viewAll) {
     const { openOverlay } = this.props;
 
+    if (!_.size(category.items)) {
+      return null;
+    }
+
     return (
-      <CatalogTileView.Category totalItems={items.length} viewAll={true}>
-        {_.map(items, item => {
+      <CatalogTileView.Category
+        key={category.id}
+        title={category.label}
+        totalItems={_.size(category.items)}
+        viewAll={viewAll}
+        onViewAll={() => this.selectCategory(category.id)}>
+        {_.map(category.items, item => {
           const { uid, name, imgUrl, iconClass, provider, description } = item;
           const normalizedIconClass = iconClass && `icon ${normalizeIconClass(iconClass)}`;
           const vendor = provider ? `Provided by ${provider}` : null;
@@ -225,20 +332,59 @@ export class MarketplaceTileViewPage extends React.Component {
     );
   }
 
+  renderCategoryTiles(category, topLevel = true) {
+    const { currentCategories, activeTabId } = this.state;
+    const { subcategories } = category;
+
+    if (activeTabId === 'all') {
+      return (
+        <React.Fragment>
+          {_.map(currentCategories, topCategory => {
+            if (topCategory.id === 'all') {
+              return null;
+            }
+            return this.renderCategory(topCategory, false);
+          })}
+        </React.Fragment>
+      );
+    }
+    if (topLevel && !_.size(subcategories)) {
+      return this.renderCategory(category, true);
+    }
+
+    return (
+      <React.Fragment>
+        {_.map(subcategories, subcategory => this.renderCategory(subcategory, false))}
+      </React.Fragment>
+    );
+  }
+
   render() {
-    const { filters, filterCounts, filteredItems } = this.state;
+    const { activeTabId, categories, currentCategories, activeFilters, filterCounts } = this.state;
+    let activeCategory = CategoryFilterUtils.findActiveCategory(activeTabId, categories);
+    if (!activeCategory) {
+      activeCategory = CategoryFilterUtils.findActiveCategory('all', categories);
+    }
+
+    const heading = activeCategory ? activeCategory.label : this.getCategoryLabel('all');
+    const numItems = activeCategory ? activeCategory.numItems : 0;
 
     return (
       <div className="co-catalog-page">
         <div className="co-catalog-page__tabs">
+          { this.renderCategoryTabs(activeCategory.id) }
           <FilterSidePanel>
             <FilterSidePanel.Category key="keyword" onSubmit={(e) => e.preventDefault()}>
-              <FormControl type="text" placeholder="Filter by keyword..." bsClass="form-control"
-                value={filters.keyword.value}
+              <FormControl
+                type="text"
+                inputRef={(ref) => this.filterByKeywordInput = ref}
+                placeholder="Filter by keyword..."
+                bsClass="form-control"
+                value={activeFilters.keyword.value}
                 onChange={e => this.onFilterChange('keyword', null, e.target.value)}
               />
             </FilterSidePanel.Category>
-            {_.map(filters, (filterGroup, groupName) => {
+            {_.map(activeFilters, (filterGroup, groupName) => {
               if (groupName === 'keyword') {
                 return;
               }
@@ -250,7 +396,7 @@ export class MarketplaceTileViewPage extends React.Component {
                   const { label, active } = filter;
                   return <FilterSidePanel.CategoryItem
                     key={filterName}
-                    count={filterCounts[groupName][filterName]}
+                    count={_.get(filterCounts, [groupName, filterName], 0)}
                     checked={active}
                     onChange={e => this.onFilterChange(groupName, filterName, e.target.checked)}
                   >
@@ -262,11 +408,16 @@ export class MarketplaceTileViewPage extends React.Component {
           </FilterSidePanel>
         </div>
         <div className="co-catalog-page__content">
-          <div className="co-catalog-page__num-items">{_.size(filteredItems)} items</div>
-          {filteredItems.length > 0 && <CatalogTileView>
-            {this.renderTiles()}
+          <div>
+            <div className="co-catalog-page__heading">{heading}</div>
+            <div className="co-catalog-page__num-items">{numItems} items</div>
+          </div>
+          {numItems > 0 && <CatalogTileView>
+            {activeCategory
+              ? this.renderCategoryTiles(activeCategory)
+              : _.map(currentCategories, category => (category.numItems && category.id !== 'all') ? this.renderCategoryTiles(category) : null)}
           </CatalogTileView>}
-          {filteredItems.length === 0 && <EmptyState className="co-catalog-page__no-filter-results">
+          {numItems === 0 && <EmptyState className="co-catalog-page__no-filter-results">
             <EmptyState.Title className="co-catalog-page__no-filter-results-title" aria-level="2">
               No Results Match the Filter Criteria
             </EmptyState.Title>

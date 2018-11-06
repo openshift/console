@@ -89,6 +89,15 @@ const DefaultPage = connectToFlags(FLAGS.OPENSHIFT)(({ flags }) => {
 
 const LazyRoute = (props) => <Route {...props} component={(componentProps) => <AsyncComponent loader={props.loader} kind={props.kind} {...componentProps} />} />;
 
+const LazyOnceRoute = (props) => {
+  const { loadedComponent, ...otherProps } = props;
+
+  if (loadedComponent) {
+    return <Route exact component={loadedComponent} {...otherProps} />;
+  }
+  return <LazyRoute {...otherProps} />;
+};
+
 class App extends React.PureComponent {
   componentDidUpdate (prevProps) {
     const props = this.props;
@@ -120,8 +129,22 @@ class App extends React.PureComponent {
             <LazyRoute path="/overview/all-namespaces" exact loader={() => import('./overview' /* webpackChunkName: "overview" */).then(m => m.OverviewPage)} />
             <Route path="/overview" exact component={NamespaceRedirect} />
 
-            <LazyRoute path="/catalog/all-namespaces" exact loader={() => import('./catalog/catalog-page' /* webpackChunkName: "catalog" */).then(m => m.CatalogPage)} />
-            <LazyRoute path="/catalog/ns/:ns" exact loader={() => import('./catalog/catalog-page' /* webpackChunkName: "catalog" */).then(m => m.CatalogPage)} />
+            <LazyOnceRoute
+              path="/catalog/all-namespaces"
+              loadedComponent={this.CatalogPage}
+              loader={() => import('./catalog/catalog-page' /* webpackChunkName: "catalog" */).then(m => {
+                this.CatalogPage = m.CatalogPage;
+                return m.CatalogPage;
+              })}
+            />
+            <LazyOnceRoute
+              path="/catalog/ns/:ns"
+              loadedComponent={this.CatalogPage}
+              loader={() => import('./catalog/catalog-page' /* webpackChunkName: "catalog" */).then(m => {
+                this.CatalogPage = m.CatalogPage;
+                return m.CatalogPage;
+              })}
+            />
             <Route path="/catalog" exact component={NamespaceRedirect} />
 
             <LazyRoute path="/status/all-namespaces" exact loader={() => import('./cluster-overview' /* webpackChunkName: "cluster-overview" */).then(m => m.ClusterOverviewPage)} />
@@ -131,7 +154,14 @@ class App extends React.PureComponent {
             <LazyRoute path="/cluster-health" exact loader={() => import('./cluster-health' /* webpackChunkName: "cluster-health" */).then(m => m.ClusterHealth)} />
             <LazyRoute path="/start-guide" exact loader={() => import('./start-guide' /* webpackChunkName: "start-guide" */).then(m => m.StartGuidePage)} />
 
-            <LazyRoute path="/marketplace" exact loader={() => import('./marketplace/kubernetes-marketplace' /* webpackChunkName: "marketplace" */).then(m => m.MarketplacePage)} />
+            <LazyOnceRoute
+              path="/marketplace"
+              loadedComponent={this.MarketplacePage}
+              loader={() => import('./marketplace/kubernetes-marketplace' /* webpackChunkName: "marketplace" */).then(m => {
+                this.MarketplacePage = m.MarketplacePage;
+                return m.MarketplacePage;
+              })}
+            />
 
             <LazyRoute path={`/k8s/ns/:ns/${SubscriptionModel.plural}/new`} exact loader={() => import('./operator-lifecycle-manager').then(m => NamespaceFromURL(m.CreateSubscriptionYAML))} />
 
