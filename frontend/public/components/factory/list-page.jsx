@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 
 import k8sActions from '../../module/k8s/k8s-actions';
 import { CheckBoxes, storagePrefix } from '../row-filter';
-import { ErrorPage404 } from '../error';
+import { ErrorPage404, ErrorBoundaryFallbackComponent } from '../error';
 import { referenceForModel } from '../../module/k8s';
 import {
   Dropdown,
@@ -18,6 +18,7 @@ import {
   inject,
   kindObj,
   PageHeading,
+  withFallback,
 } from '../utils';
 
 export const CompactExpandButtons = ({expand = false, onExpandChange = _.noop}) => <div className="btn-group btn-group-sm" data-toggle="buttons">
@@ -268,6 +269,8 @@ FireMan_.propTypes = {
   title: PropTypes.string,
 };
 
+export const listPageWithFallback = Page => withFallback(props => <ListPage {...props} Page={Page} />, ErrorBoundaryFallbackComponent);
+
 /** @type {React.SFC<{ListComponent: React.ComponentType<any>, kind: string, helpText?: any, namespace?: string, filterLabel?: string, textFilter?: string, title?: string, showTitle?: boolean, dropdownFilters?: any[], rowFilters?: any[], selector?: any, fieldSelector?: string, canCreate?: boolean, createButtonText?: string, createProps?: any, mock?: boolean}>} */
 export const ListPage = props => {
   const {
@@ -350,6 +353,7 @@ export const ListPage = props => {
 };
 
 ListPage.displayName = 'ListPage';
+export const ListPageWrapper = listPageWithFallback(ListPage);
 
 /** @type {React.SFC<{canCreate?: boolean, createButtonText?: string, createProps?: any, flatten?: Function, title?: string, showTitle?: boolean, helpText?: any, dropdownFilters?: any[], filterLabel?: string, rowFilters?: any[], resources: any[], ListComponent: React.ComponentType<any>, namespace?: string}>} */
 export const MultiListPage = props => {

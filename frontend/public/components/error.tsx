@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars, no-undef */
 import * as _ from 'lodash-es';
 import * as React from 'react';
+import { ExpandCollapse } from 'patternfly-react';
 import { Helmet } from 'react-helmet';
 
 import { getQueryArgument, PageHeading } from './utils';
@@ -62,6 +63,26 @@ export const ErrorPage404: React.SFC<ErrorPage404Props> = (props) => <div>
   <ErrorComponent title="404: Page Not Found" message={props.message} errMessage={props.errMessage} />
 </div>;
 
+export const ErrorBoundaryFallbackComponent: React.SFC<ErrorBoundaryFallbackComponentProps> = (props) =>
+  <div className="co-m-pane__body">
+    <h1 className="co-m-pane__heading co-m-pane__heading--center">Oh no! Something went wrong.</h1>
+    <ExpandCollapse textCollapsed="Show error details..." textExpanded="Hide error details..." bordered={false}>
+      <h3 className="co-section-heading-tertiary">{props.title}</h3>
+      <div>
+        <strong>Description: </strong>
+        {props.errorMessage}
+      </div>
+      <div className="text-muted">
+        <strong>Component Trace: </strong>
+        {props.componentStack}
+      </div>
+      <div className="text-muted">
+        <strong>Stack Trace: </strong>
+        {props.stack}
+      </div>
+    </ExpandCollapse>
+  </div>;
+
 export type ErrorComponentProps = {
   title: string;
   message?: string;
@@ -70,3 +91,9 @@ export type ErrorComponentProps = {
 
 export type ErrorPageProps = {};
 export type ErrorPage404Props = Omit<ErrorComponentProps, 'title'>;
+export type ErrorBoundaryFallbackComponentProps = {
+  errorMessage: string;
+  componentStack: string;
+  stack: string;
+  title: string;
+};
