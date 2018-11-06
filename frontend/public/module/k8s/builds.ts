@@ -4,6 +4,8 @@ import { BuildModel, BuildConfigModel } from '../../models';
 import { k8sCreate } from './';
 import { formatDuration } from '../../components/utils/datetime';
 
+const BUILD_NUMBER_ANNOTATION = 'openshift.io/build.number';
+
 const createBuildRequest = (obj, model, subresource) => {
   const req = {
     kind: 'BuildRequest',
@@ -41,4 +43,9 @@ export const formatBuildDuration = build => {
   // Duration in the build is returned as nanoseconds. Convert to milliseconds.
   const ms = Math.floor(duration / 1000 / 1000);
   return formatDuration(ms);
+};
+
+export const getBuildNumber = (build) => {
+  const buildNumber = _.get(build, ['metadata', 'annotations', BUILD_NUMBER_ANNOTATION]);
+  return !!buildNumber && parseInt(buildNumber, 10);
 };

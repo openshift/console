@@ -295,10 +295,10 @@ describe(ClusterServiceVersionsDetailsPage.displayName, () => {
     expect(detailsPage.props().pagesFor(testClusterServiceVersion)[0].name).toEqual('Overview');
     expect(detailsPage.props().pagesFor(testClusterServiceVersion)[0].href).toEqual('');
     expect(detailsPage.props().pagesFor(testClusterServiceVersion)[0].component).toEqual(ClusterServiceVersionDetails);
-    expect(detailsPage.props().pagesFor(testClusterServiceVersion)[1].name).toEqual('Events');
-    expect(detailsPage.props().pagesFor(testClusterServiceVersion)[1].href).toEqual('events');
-    expect(detailsPage.props().pagesFor(testClusterServiceVersion)[2].name).toEqual('YAML');
-    expect(detailsPage.props().pagesFor(testClusterServiceVersion)[2].href).toEqual('yaml');
+    expect(detailsPage.props().pagesFor(testClusterServiceVersion)[1].name).toEqual('YAML');
+    expect(detailsPage.props().pagesFor(testClusterServiceVersion)[1].href).toEqual('yaml');
+    expect(detailsPage.props().pagesFor(testClusterServiceVersion)[2].name).toEqual('Events');
+    expect(detailsPage.props().pagesFor(testClusterServiceVersion)[2].href).toEqual('events');
   });
 
   it('includes tab for each "owned" CRD', () => {

@@ -6,7 +6,7 @@ import { safeDump, safeLoad } from 'js-yaml';
 
 import { checkErrors, checkLogs, appHost, testName } from '../../protractor.conf';
 import * as crudView from '../../views/crud.view';
-import * as catalogView from '../../views/catalog.view';
+import * as catalogView from '../../views/olm-catalog.view';
 import * as sidenavView from '../../views/sidenav.view';
 import * as yamlView from '../../views/yaml.view';
 

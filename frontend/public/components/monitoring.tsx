@@ -4,7 +4,7 @@ import { murmur3 } from 'murmurhash-js';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, Redirect, Route, Switch } from 'react-router-dom';
 
 import { coFetchJSON } from '../co-fetch';
 import k8sActions from '../module/k8s/k8s-actions';
@@ -73,6 +73,15 @@ const isSilenced = (alert, silence) => alertState(alert) === 'silenced' &&
   _.get(silence, 'status.state') === 'active' &&
   _.every(silence.matchers, m => _.get(alert.labels, m.name) === m.value);
 
+const pollers = {};
+const pollerTimeouts = {};
+
+// Force a poller to execute now instead of waiting for the next poll interval
+const refreshPoller = key => {
+  clearTimeout(pollerTimeouts[key]);
+  _.invoke(pollers, key);
+};
+
 const silenceAlert = alert => ({
   label: 'Silence Alert',
   href: `${SilenceResource.path}/new?${labelsToParams(alert.labels)}`,
@@ -118,7 +127,7 @@ const MonitoringResourceIcon = props => {
   return <span className={classNames(`co-m-resource-icon co-m-resource-${resource.kind.toLowerCase()}`, className)} title={resource.label}>{resource.abbr}</span>;
 };
 
-const AlertState: React.SFC<StateProps> = ({state}) => {
+const AlertState: React.SFC<AlertStateProps> = ({state}) => {
   if (state === 'not-firing') {
     return <span className="text-muted">Not Firing</span>;
   }
@@ -156,89 +165,6 @@ const SilenceMatchersList = ({silence}) => <div className={`co-text-${SilenceRes
   {_.map(silence.matchers, ({name, isRegex, value}) => <Label key={name} k={name} v={isRegex ? `~${value}` : value} />)}
 </div>;
 
-class MonitoringPageWrapper extends SafetyFirst<AlertsPageWrapperProps, null> {
-  componentDidMount () {
-    super.componentDidMount();
-
-    const poll = (url: string, key: string, dataHandler: (data: any[]) => any): void => {
-      store.dispatch(UIActions.monitoringLoading(key));
-      const poller = (): void => {
-        coFetchJSON(url)
-          .then(({data}) => dataHandler(data))
-          .then(data => store.dispatch(UIActions.monitoringLoaded(key, data)))
-          .catch(e => store.dispatch(UIActions.monitoringErrored(key, e)))
-          .then(() => setTimeout(() => {
-            if (this.isMounted_) {
-              poller();
-            }
-          }, 15 * 1000));
-      };
-      poller();
-    };
-
-    const {alertManagerBaseURL, prometheusBaseURL} = (window as any).SERVER_FLAGS;
-
-    if (prometheusBaseURL) {
-      poll(`${prometheusBaseURL}/api/v1/rules`, 'rules', data => {
-        // Flatten the rules data to make it easier to work with, discard non-alerting rules since those are the only
-        // ones we will be using and add a unique ID to each rule.
-        const groups = _.get(data, 'groups');
-        const rules = _.flatMap(groups, g => {
-          const addID = r => {
-            const key = [g.file, g.name, r.name, r.duration, r.query, ..._.map(r.labels, (k, v) => `${k}=${v}`)].join(',');
-            r.id = String(murmur3(key, 'monitoring-salt'));
-            return r;
-          };
-
-          return _.filter(g.rules, {type: 'alerting'}).map(addID);
-        });
-
-        // If a rule is has no active alerts, create a "fake" alert
-        const asAlerts = _.flatMap(rules, rule => _.isEmpty(rule.alerts)
-          ? {
-            annotations: rule.annotations,
-            id: rule.id,
-            labels: {alertname: rule.name, ...rule.labels},
-            rule,
-          }
-          : rule.alerts.map(a => ({rule, ...a}))
-        );
-
-        return {asAlerts, asRules: rules};
-      });
-    } else {
-      store.dispatch(UIActions.monitoringErrored('rules', new Error('prometheusBaseURL not set')));
-    }
-
-    if (!alertManagerBaseURL) {
-      const e = new Error('alertManagerBaseURL not set');
-      store.dispatch(UIActions.monitoringErrored('alerts', e));
-      store.dispatch(UIActions.monitoringErrored('silences', e));
-      return;
-    }
-
-    poll(`${alertManagerBaseURL}/api/v1/alerts`, 'alerts', data => data);
-
-    poll(`${alertManagerBaseURL}/api/v1/silences`, 'silences', data => {
-      // Set a name field on the Silence to make things easier
-      _.each(data, s => {
-        s.name = _.get(_.find(s.matchers, {name: 'alertname'}), 'value');
-        if (!s.name) {
-          // No alertname, so fall back to displaying the other matchers
-          s.name = s.matchers.map(m => `${m.name}=${m.value}`).join(', ');
-        }
-      });
-      return data;
-    });
-  }
-
-  render () {
-    const {Page, ...pageProps} = this.props;
-    return <Page {...pageProps} />;
-  }
-}
-const connectMonitoringPage = Page => withFallback(props => <MonitoringPageWrapper {...props} Page={Page} />);
-
 const alertStateToProps = (state): AlertsDetailsPageProps => {
   const {data, loaded, loadError}: Rules = monitoringRulesToProps(state);
   const labels = getURLSearchParams();
@@ -249,7 +175,7 @@ const alertStateToProps = (state): AlertsDetailsPageProps => {
   return {alert, loaded, loadError, silencedBy};
 };
 
-const AlertsDetailsPage_ = connect(alertStateToProps)((props: AlertsDetailsPageProps) => {
+const AlertsDetailsPage = withFallback(connect(alertStateToProps)((props: AlertsDetailsPageProps) => {
   const {alert, loaded, loadError, silencedBy} = props;
   const {activeAt = '', annotations = {}, labels = {}, rule = null} = alert || {};
   const {alertname, severity} = labels as any;
@@ -332,8 +258,7 @@ const AlertsDetailsPage_ = connect(alertStateToProps)((props: AlertsDetailsPageP
       </div>}
     </StatusBox>
   </React.Fragment>;
-});
-export const AlertsDetailsPage = connectMonitoringPage(AlertsDetailsPage_);
+}));
 
 const ViewInPrometheusLink_ = ({rule, urls}) => {
   const baseUrl = urls[MonitoringRoutes.Prometheus];
@@ -373,7 +298,7 @@ const ruleStateToProps = (state, {match}): AlertRulesDetailsPageProps => {
   return {loaded, loadError, rule};
 };
 
-const AlertRulesDetailsPage_ = connect(ruleStateToProps)((props: AlertRulesDetailsPageProps) => {
+const AlertRulesDetailsPage = withFallback(connect(ruleStateToProps)((props: AlertRulesDetailsPageProps) => {
   const {loaded, loadError, rule} = props;
   const {alerts = [], annotations = {}, duration = null, labels = {}, name = '', query = ''} = rule || {};
   const {severity} = labels as any;
@@ -442,8 +367,7 @@ const AlertRulesDetailsPage_ = connect(ruleStateToProps)((props: AlertRulesDetai
       </div>
     </StatusBox>
   </React.Fragment>;
-});
-export const AlertRulesDetailsPage = connectMonitoringPage(AlertRulesDetailsPage_);
+}));
 
 const silencedAlertsToProps = (state, {silence}) => ({
   alerts: _.filter(_.get(monitoringRulesToProps(state), 'data.asAlerts'), a => isSilenced(a, silence)),
@@ -481,7 +405,7 @@ const silenceParamToProps = (state, {match}) => {
   return {loaded, loadError, silence};
 };
 
-const SilencesDetailsPage_ = connect(silenceParamToProps)((props: SilencesDetailsPageProps) => {
+const SilencesDetailsPage = withFallback(connect(silenceParamToProps)((props: SilencesDetailsPageProps) => {
   const {loaded, loadError, silence} = props;
 
   if (!silence) {
@@ -549,8 +473,7 @@ const SilencesDetailsPage_ = connect(silenceParamToProps)((props: SilencesDetail
       </div>
     </StatusBox>
   </React.Fragment>;
-});
-export const SilencesDetailsPage = connectMonitoringPage(SilencesDetailsPage_);
+}));
 
 const AlertRow = ({obj}) => {
   const {activeAt, annotations = {}, labels = {}} = obj;
@@ -708,7 +631,7 @@ const AlertsPage_ = props => <MonitoringListPage
   rowFilter={alertsRowFilter}
   textFilterLabel="Alerts by name"
 />;
-export const AlertsPage = connectMonitoringPage(connect(monitoringRulesToProps)(AlertsPage_));
+const AlertsPage = withFallback(connect(monitoringRulesToProps)(AlertsPage_));
 
 const SilenceHeader = props => <ListHeader>
   <ColHead {...props} className="col-xs-7" sortField="name">Name</ColHead>
@@ -772,7 +695,7 @@ const SilencesPage_ = props => <MonitoringListPage
   rowFilter={silencesRowFilter}
   textFilterLabel="Silences by name"
 />;
-export const SilencesPage = connectMonitoringPage(connect(monitoringSilencesToProps)(SilencesPage_));
+const SilencesPage = withFallback(connect(monitoringSilencesToProps)(SilencesPage_));
 
 const pad = i => i < 10 ? `0${i}` : i;
 const formatDate = (d: Date): string => `${d.getFullYear()}/${pad(d.getMonth() + 1)}/${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
@@ -854,6 +777,7 @@ class SilenceForm_ extends SafetyFirst<SilenceFormProps, SilenceFormState> {
     coFetchJSON.post(`${alertManagerURL}/api/v1/silences`, body)
       .then(({data}) => {
         this.setState({error: undefined});
+        refreshPoller('silences');
         history.push(`${SilenceResource.path}/${encodeURIComponent(_.get(data, 'silenceId'))}`);
       })
       .catch(err => this.setState({error: err.json.error}))
@@ -934,21 +858,113 @@ class SilenceForm_ extends SafetyFirst<SilenceFormProps, SilenceFormState> {
 }
 const SilenceForm = withFallback(connectToURLs(MonitoringRoutes.AlertManager)<SilenceFormProps>(SilenceForm_));
 
-export const EditSilence = connectMonitoringPage(connect(silenceParamToProps)(({loaded, loadError, silence}) => {
+const EditSilence = connect(silenceParamToProps)(({loaded, loadError, silence}) => {
   const defaults = _.pick(silence, ['comment', 'createdBy', 'endsAt', 'id', 'matchers', 'startsAt']);
   defaults.startsAt = formatDate(new Date(defaults.startsAt));
   defaults.endsAt = formatDate(new Date(defaults.endsAt));
   return <StatusBox data={silence} loaded={loaded} loadError={loadError}>
     <SilenceForm defaults={defaults} title="Edit Silence" />
   </StatusBox>;
-}));
+});
 
-export const CreateSilence = () => {
+const CreateSilence = () => {
   const matchers = _.map(getURLSearchParams(), (value, name) => ({name, value, isRegex: false}));
   return _.isEmpty(matchers)
     ? <SilenceForm saveButtonText="Create" title="Create Silence" />
     : <SilenceForm defaults={{matchers}} saveButtonText="Create" title="Silence Alert" />;
 };
+
+export class MonitoringUI extends SafetyFirst<null, null> {
+  componentDidMount () {
+    super.componentDidMount();
+
+    const poll = (url: string, key: string, dataHandler: (data: any[]) => any): void => {
+      store.dispatch(UIActions.monitoringLoading(key));
+      const poller = (): void => {
+        coFetchJSON(url)
+          .then(({data}) => dataHandler(data))
+          .then(data => store.dispatch(UIActions.monitoringLoaded(key, data)))
+          .catch(e => store.dispatch(UIActions.monitoringErrored(key, e)))
+          .then(() => pollerTimeouts[key] = setTimeout(poller, 15 * 1000));
+      };
+      pollers[key] = poller;
+      poller();
+    };
+
+    const {alertManagerBaseURL, prometheusBaseURL} = (window as any).SERVER_FLAGS;
+
+    if (prometheusBaseURL) {
+      poll(`${prometheusBaseURL}/api/v1/rules`, 'rules', data => {
+        // Flatten the rules data to make it easier to work with, discard non-alerting rules since those are the only
+        // ones we will be using and add a unique ID to each rule.
+        const groups = _.get(data, 'groups');
+        const rules = _.flatMap(groups, g => {
+          const addID = r => {
+            const key = [g.file, g.name, r.name, r.duration, r.query, ..._.map(r.labels, (k, v) => `${k}=${v}`)].join(',');
+            r.id = String(murmur3(key, 'monitoring-salt'));
+            return r;
+          };
+
+          return _.filter(g.rules, {type: 'alerting'}).map(addID);
+        });
+
+        // If a rule is has no active alerts, create a "fake" alert
+        const asAlerts = _.flatMap(rules, rule => _.isEmpty(rule.alerts)
+          ? {
+            annotations: rule.annotations,
+            id: rule.id,
+            labels: {alertname: rule.name, ...rule.labels},
+            rule,
+          }
+          : rule.alerts.map(a => ({rule, ...a}))
+        );
+
+        return {asAlerts, asRules: rules};
+      });
+    } else {
+      store.dispatch(UIActions.monitoringErrored('rules', new Error('prometheusBaseURL not set')));
+    }
+
+    if (!alertManagerBaseURL) {
+      const e = new Error('alertManagerBaseURL not set');
+      store.dispatch(UIActions.monitoringErrored('alerts', e));
+      store.dispatch(UIActions.monitoringErrored('silences', e));
+      return;
+    }
+
+    poll(`${alertManagerBaseURL}/api/v1/alerts`, 'alerts', data => data);
+
+    poll(`${alertManagerBaseURL}/api/v1/silences`, 'silences', data => {
+      // Set a name field on the Silence to make things easier
+      _.each(data, s => {
+        s.name = _.get(_.find(s.matchers, {name: 'alertname'}), 'value');
+        if (!s.name) {
+          // No alertname, so fall back to displaying the other matchers
+          s.name = s.matchers.map(m => `${m.name}=${m.value}`).join(', ');
+        }
+      });
+      return data;
+    });
+  }
+
+  componentWillUnmount () {
+    super.componentWillUnmount();
+    _.each(pollerTimeouts, t => clearTimeout(t));
+  }
+
+  render () {
+    return <Switch>
+      <Redirect from="/monitoring" exact to="/monitoring/alerts" />
+      <Route path="/monitoring/alerts" exact component={AlertsPage} />
+      <Route path="/monitoring/alerts/:name" exact component={AlertsDetailsPage} />
+      <Route path="/monitoring/alertrules/:id" exact component={AlertRulesDetailsPage} />
+      <Route path="/monitoring/silences" exact component={SilencesPage} />
+      <Route path="/monitoring/silences/new" exact component={CreateSilence} />
+      <Route path="/monitoring/silences/:id" exact component={SilencesDetailsPage} />
+      <Route path="/monitoring/silences/:id/edit" exact component={EditSilence} />
+    </Switch>;
+  }
+}
 
 /* eslint-disable no-undef, no-unused-vars */
 type Silence = {
@@ -989,11 +1005,8 @@ type Rules = {
   loaded: boolean;
   loadError?: string;
 };
-type StateProps = {
+type AlertStateProps = {
   state: string;
-};
-type AlertsPageWrapperProps = {
-  Page: React.ComponentType<any>;
 };
 export type AlertsDetailsPageProps = {
   alert: Alert;

@@ -1,13 +1,13 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import * as PropTypes from 'prop-types';
-import {CatalogTileView} from 'patternfly-react-extensions/dist/esm/components/CatalogTileView';
-import {CatalogTile} from 'patternfly-react-extensions/dist/esm/components/CatalogTile';
-import {VerticalTabs} from 'patternfly-react-extensions/dist/esm/components/VerticalTabs';
-import {FilterSidePanel} from 'patternfly-react-extensions/dist/esm/components/FilterSidePanel';
-import {EmptyState} from 'patternfly-react/dist/esm/components/EmptyState';
-import {FormControl} from 'patternfly-react/dist/esm/components/Form';
-import {Modal} from 'patternfly-react/dist/esm/components/Modal';
+import {CatalogTileView} from 'patternfly-react-extensions/dist/js/components/CatalogTileView';
+import {CatalogTile} from 'patternfly-react-extensions/dist/js/components/CatalogTile';
+import {VerticalTabs} from 'patternfly-react-extensions/dist/js/components/VerticalTabs';
+import {FilterSidePanel} from 'patternfly-react-extensions/dist/js/components/FilterSidePanel';
+import {EmptyState} from 'patternfly-react/dist/js/components/EmptyState';
+import FormControl from 'patternfly-react/dist/js/components/Form/FormControl';
+import {Modal} from 'patternfly-react/dist/js/components/Modal';
 
 import {normalizeIconClass} from './catalog-item-icon';
 import {categorizeItems, recategorizeItems} from '../utils/categorize-catalog-items';

@@ -9,8 +9,13 @@ import { ResourceEventStream } from './events';
 import { Conditions } from './conditions';
 import { ServiceCatalogParameters, ServiceCatalogParametersSecrets } from './service-catalog-parameters';
 import { ServiceBindingDescription } from './service-instance';
+import { addSecretToWorkload } from './secret';
 
 const ServiceBindingsReference: K8sResourceKindReference = 'ServiceBinding';
+
+const actionButtons = [
+  addSecretToWorkload,
+];
 
 const { common } = Cog.factory;
 const menuActions = [...common];
@@ -27,7 +32,7 @@ const ServiceBindingDetails: React.SFC<ServiceBindingDetailsProps> = ({obj: sb})
     <div className="co-m-pane__body">
       {notReady && <p className="alert alert-warning">
         <span className="pficon pficon-warning-triangle-o" aria-hidden="true"></span>
-        This binding is not ready yet.  Once it is ready, bind its secret to an application.
+        This binding is not ready yet. Once it is ready, bind its secret to a workload.
       </p>}
       <ServiceBindingDescription instanceName={sb.spec.instanceRef.name} className="co-m-pane__explanation" />
       <SectionHeading text="Service Binding Overview" />
@@ -61,6 +66,7 @@ export const ServiceBindingDetailsPage: React.SFC<ServiceBindingDetailsPageProps
   <DetailsPage
     {...props}
     kind={ServiceBindingsReference}
+    buttonActions={actionButtons}
     menuActions={menuActions}
     pages={pages} />;
 ServiceBindingDetailsPage.displayName = 'ServiceBindingDetailsPage';

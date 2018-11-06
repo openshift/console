@@ -6,8 +6,23 @@ import { SecretData } from './configmap-and-secret-data';
 import { Cog, SectionHeading, ResourceCog, ResourceLink, ResourceSummary, detailsPage, navFactory, resourceObjPath } from './utils';
 import { fromNow } from './utils/datetime';
 import { SecretType } from './secrets/create-secret';
+import { configureAddSecretToWorkloadModal } from './modals/add-secret-to-workload';
 
 export const WebHookSecretKey = 'WebHookSecretKey';
+
+export const addSecretToWorkload = (kindObj, secret) => {
+  const { name: secretName, namespace } = secret.metadata;
+
+  return {
+    btnClass: 'btn-primary',
+    callback: () => configureAddSecretToWorkloadModal({secretName, namespace}),
+    label: 'Add Secret to Workload',
+  };
+};
+
+const actionButtons = [
+  addSecretToWorkload,
+];
 
 const menuActions = [
   Cog.factory.ModifyLabels,
@@ -123,6 +138,7 @@ const SecretsPage = props => {
 
 const SecretsDetailsPage = props => <DetailsPage
   {...props}
+  buttonActions={actionButtons}
   menuActions={menuActions}
   pages={[navFactory.details(detailsPage(SecretDetails)), navFactory.editYaml()]}
 />;

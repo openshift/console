@@ -8,11 +8,12 @@ import { Link } from 'react-router-dom';
 import k8sActions from '../../module/k8s/k8s-actions';
 import { CheckBoxes, storagePrefix } from '../row-filter';
 import { ErrorPage404 } from '../error';
-import { makeReduxID, makeQuery } from '../utils/k8s-watcher';
 import { referenceForModel } from '../../module/k8s';
 import {
   Dropdown,
   Firehose,
+  makeReduxID,
+  makeQuery,
   history,
   inject,
   kindObj,

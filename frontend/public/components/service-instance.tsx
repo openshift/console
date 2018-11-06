@@ -33,8 +33,8 @@ const menuActions = [
 ];
 
 export const ServiceBindingDescription: React.SFC<ServiceBindingDescriptionProps> = ({instanceName, className}) => <p className={className}>
-  Service bindings create a secret containing the necessary information for another application to use <ResourceIcon kind="ServiceInstance" />{instanceName}.
-  Once the binding is ready, add the secret to your application&apos;s environment variables or volumes.
+  Service bindings create a secret containing the necessary information for a workload to use <ResourceIcon kind="ServiceInstance" />{instanceName}.
+  Once the binding is ready, add the secret to your workload&apos;s environment variables or volumes.
 </p>;
 
 class ServiceInstanceMessage_ extends React.Component<ServiceInstanceMessageProps & RouteComponentProps<{}>, ServiceInstanceMessageState> {

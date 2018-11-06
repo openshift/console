@@ -13,6 +13,7 @@ import {
 
 import { NetworkingOverview } from './networking-overview';
 import { ResourceOverviewDetails } from './resource-overview-details';
+import { BuildConfigsOverview } from './build-configs-overview';
 
 const DeploymentOverviewDetails: React.SFC<{item: any}> = ({item: {obj: deployment}}) => {
   return <div className="overview__sidebar-pane-body resource-overview__body">
@@ -39,8 +40,12 @@ const DeploymentOverviewDetails: React.SFC<{item: any}> = ({item: {obj: deployme
   </div>;
 };
 
-const DeploymentResourceOverview: React.SFC<{item: any}>= ({item: {services, routes}}) =>
-  <NetworkingOverview services={services} routes={routes} />;
+const DeploymentResourceOverview: React.SFC<{item: any}>= ({item: {buildConfigs, routes, services}}) => (
+  <div className="overview__sidebar-pane-body">
+    <BuildConfigsOverview buildConfigs={buildConfigs} />
+    <NetworkingOverview services={services} routes={routes} />
+  </div>
+);
 
 const tabs = [
   {
