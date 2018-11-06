@@ -8,6 +8,7 @@ import {referenceForModel} from '../../module/k8s';
 import {PackageManifestModel} from '../../models';
 import {MarketplaceItemModal} from './marketplace-item-modal';
 import {MarketplaceTileViewPage} from './kubernetes-marketplace-items';
+import * as operatorImg from '../../imgs/operator.svg';
 
 const normalizePackageManifests = (packageManifests, kind) => {
   const activePackageManifests = _.filter(packageManifests, packageManifest => {
@@ -18,7 +19,7 @@ const normalizePackageManifests = (packageManifests, kind) => {
     const uid = `${name}/${packageManifest.status.catalogSourceNamespace}`;
     const defaultIconClass = 'fa fa-clone'; // TODO: get this info from the packagemanifest
     const iconObj = _.get(packageManifest, 'status.channels[0].currentCSVDesc.icon[0]');
-    const imgUrl = iconObj && `data:${iconObj.mediatype};base64,${iconObj.base64data}`;
+    const imgUrl = iconObj ? `data:${iconObj.mediatype};base64,${iconObj.base64data}` : operatorImg;
     const iconClass = imgUrl ? null : defaultIconClass;
     const provider = _.get(packageManifest, 'metadata.labels.provider');
     const tags = packageManifest.metadata.tags;
