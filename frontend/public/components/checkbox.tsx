@@ -21,6 +21,6 @@ export const Checkbox: React.SFC<CheckboxProps> = ({name, label, checked, onChan
 export type CheckboxProps = {
   name: string;
   label: string;
-  onChange: any;
+  onChange: React.ReactEventHandler<HTMLInputElement>;
   checked: boolean;
 };
