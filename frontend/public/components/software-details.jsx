@@ -98,13 +98,6 @@ export const SoftwareDetails = connectToFlags(FLAGS.OPENSHIFT)(
         .catch(() => this.setState({kubernetesVersion: 'unknown'}));
     }
 
-    _checkOpenshiftVersion() {
-      coFetchJSON('api/kubernetes/version/openshift')
-        .then((data) => {
-          this.setState({openshiftVersion: data.gitVersion, openshiftVersionObj: data});
-        }).catch(() => this.setState({openshiftVersion: 'unknown'}));
-    }
-
     render() {
       const {openshiftVersion, kubernetesVersion} = this.state;
       const openshiftFlag = this.props.flags[FLAGS.OPENSHIFT];
