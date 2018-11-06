@@ -132,13 +132,13 @@ tags-input .tags .input {
   }
 }
 tags-input .tags .input.invalid-tag {
-  color: $red-invalid;
+  color: $color-pf-red-200;
 }
 tags-input .tags .input::-ms-clear {
   display: none;
 }
 tags-input.ng-invalid .tags {
-  border-color: $red-invalid;
+  border-color: $color-pf-red-200;
 }
 
 tags-input .autocomplete {

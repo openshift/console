@@ -97,14 +97,14 @@ input[type="radio"] {
   padding-right:  20px;
   outline: none; }
   .co-m-modal-link:after {
-    color: $co-gray;
+    color: $color-pf-black-600;
     content: $pficon-var-edit;
     font-family: $icon-font-name-pf;
     pointer-events: none;
     position: absolute;
     right: 0; }
   .co-m-modal-link:hover:after {
-    color: $co-gray-dark; }
+    color: $color-pf-black-700; }
   .co-m-modal-link:focus {
     outline: none;
   }

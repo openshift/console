@@ -42,7 +42,7 @@ $catalog-item-icon-size-sm: 24px;
   }
 
   &__tag {
-    color: $co-gray;
+    color: $color-pf-black-600;
     font-size: ($font-size-base - 1);
     margin-right: 5px;
     text-transform: uppercase;
@@ -156,7 +156,7 @@ $catalog-item-icon-size-sm: 24px;
     border: none;
     padding: 0;
     &-title {
-      color: $co-gray-darker;
+      color: $color-pf-black-800;
       font-size: 18px;
     }
   }
