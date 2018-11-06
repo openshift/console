@@ -32,7 +32,7 @@ $color-bookmarker: #DDD;
   margin: 9px 0;
   overflow: hidden;
   flex-grow: 1;
-  background-color: $color-grey-when-selected;
+  background-color: $color-pf-black-200;
 }
 
 .dropdown-menu__header {
@@ -258,23 +258,14 @@ $color-bookmarker: #DDD;
           background-color: transparent;
           color: $color-bookmarker--hover;
         }
+        &:focus {
+          background-color: transparent;
+          border-color: transparent;
+        }
       }
       &.next-to-bookmark {
         overflow: hidden;
         text-overflow: ellipsis;
-      }
-    }
-
-    &.dropdown__selected > a {
-      color: $color-highlight-blue;
-      &.bookmarker {
-        color: $color-bookmarker;
-        &:hover {
-          color: $color-bookmarker--hover;
-        }
-      }
-      &.selected {
-        color: $color-highlight-blue;
       }
     }
   }

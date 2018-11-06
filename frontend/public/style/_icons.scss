@@ -24,10 +24,10 @@
 .pvc-lost,
 .route-rejected,
 .status-failed {
-  color: $color-red-error;
+  color: $color-pf-red;
 }
 
 .alert-pending,
 .silence-pending {
-  color: $color-orange-warning;
+  color: $color-pf-orange-300;
 }

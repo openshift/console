@@ -32,26 +32,10 @@ $color-alertmanager-dark: $color-pf-orange-500;
 
 $color-ingress-dark: $color-pf-purple-700;
 
-$color-grey-medium: #666;
-$color-grey-text: #777;
-$color-grey-border: #eee;
-$color-grey-background: #f5f5f5;
 $color-grey-background-border: #ccc;
 
-$color-red-error: #D64456;
-$color-orange-warning: #fca657;
-
-$color-highlight-blue: #52a3d9;
-$color-highlight-blue-dark: #2276AD;
-
-$color-tectonic-green: #68C28D;
-
-$color-border-brown: #947663;
-
-$color-grey-when-selected: #e5e5e5;
-
 $color-text-muted: $color-pf-black-600;
-$color-text-secondary: $color-grey-medium;
+$color-text-secondary: $color-pf-black-600;
 
 // TODO: Set to $zindex-navbar-fixed var from Bootstrap. (We can't currently
 // since Bootstrap vars are imported after this file.)
