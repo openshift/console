@@ -1,8 +1,4 @@
-/* Use this file to override styles from coreos-web and other 3rd party dependencies */
-/* Going forward, please just vendor bits of CoreOS web into
-   this project's build, and alter and maintain them in this project
-   rather than overriding or bringing in built assets.
-   The coreos-web project is no longer actively maintained */
+// Use this file to override styles from 3rd party dependencies
 
 // override patternfly's extra thin font weight for headers
 h1,
@@ -27,13 +23,6 @@ small {
 .text-filter {
   width: 250px;
   min-width: 150px;
-}
-
-.co-m-primary-action {
-  color: black;
-  &:hover, &:visited {
-    color: black;
-  }
 }
 
 .no-margin {
@@ -230,3 +219,23 @@ tags-input .autocomplete .suggestion-item em {
 .catalog-tile-pf-body .catalog-tile-pf-description::after {
   bottom: 15px;
 }
+
+.table {
+  margin-bottom: 0; }
+  .table thead > tr > th {
+    border-bottom: 0; }
+  .table th {
+    text-transform: uppercase;
+    padding-top: 0 !important; }
+  .table tr:last-child {
+    border-bottom: 1px solid #eee; }
+  .table td {
+    border-color: #eee !important;
+    vertical-align: middle !important; }
+    .table td input[type="radio"], .table td input[type="checkbox"] {
+      margin-top: 0;
+      vertical-align: middle; }
+
+.table-hover > tbody > tr:hover > td,
+.table-hover > tbody > tr:hover > th {
+  background-color: #EAF3FF; }
