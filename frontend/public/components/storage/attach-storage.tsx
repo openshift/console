@@ -249,7 +249,7 @@ class AttachStorageForm extends React.Component<
         >
           <h1 className="co-m-pane__heading">{title}</h1>
           {kindObj && (
-            <div className="co-m-pane__explanation co-resource-link-wrapper">
+            <div className="co-m-pane__explanation">
               Add a persistent volume claim to&nbsp;
               <ResourceLink
                 kind={kindObj.kind}

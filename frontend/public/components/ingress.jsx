@@ -39,8 +39,7 @@ const IngressListHeader = props => <ListHeader>
 </ListHeader>;
 
 const IngressListRow = ({obj: ingress}) => <ResourceRow obj={ingress}>
-  <div className="col-md-3 col-sm-4 col-xs-6 co-resource-link-wrapper">
-    <ResourceCog actions={menuActions} kind="Ingress" resource={ingress} />
+  <div className="col-md-3 col-sm-4 col-xs-6">
     <ResourceLink kind="Ingress" name={ingress.metadata.name}
       namespace={ingress.metadata.namespace} title={ingress.metadata.uid} />
   </div>
@@ -51,6 +50,9 @@ const IngressListRow = ({obj: ingress}) => <ResourceRow obj={ingress}>
     <LabelList kind="Ingress" labels={ingress.metadata.labels} />
   </div>
   <div className="col-md-3 hidden-sm hidden-xs">{getHosts(ingress)}</div>
+  <div className="co-resource-kebab">
+    <ResourceCog actions={menuActions} kind="Ingress" resource={ingress} />
+  </div>
 </ResourceRow>;
 
 const RulesHeader = () => <div className="row co-m-table-grid__head">

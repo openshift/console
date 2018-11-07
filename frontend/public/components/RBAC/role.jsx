@@ -34,12 +34,14 @@ const Header = props => <ListHeader>
 </ListHeader>;
 
 const Row = ({obj: role}) => <div className="row co-resource-list__item">
-  <div className="col-xs-6 co-resource-link-wrapper">
-    <ResourceCog actions={menuActions} kind={roleKind(role)} resource={role} />
+  <div className="col-xs-6">
     <ResourceLink kind={roleKind(role)} name={role.metadata.name} namespace={role.metadata.namespace} />
   </div>
   <div className="col-xs-6 co-break-word">
     {role.metadata.namespace ? <ResourceLink kind="Namespace" name={role.metadata.namespace} /> : 'all'}
+  </div>
+  <div className="co-resource-kebab">
+    <ResourceCog actions={menuActions} kind={roleKind(role)} resource={role} />
   </div>
 </div>;
 

@@ -62,13 +62,13 @@ const ClientRow = ({client, onTokenRevocation}) => {
   const options = [RevokeToken(client.client_id, onTokenRevocation)];
   return <div className="row co-resource-list__item">
     <div className="col-xs-4">
-      <Cog options={options} />&nbsp;{client.client_id}
-    </div>
-    <div className="col-xs-4">
       <Timestamp timestamp={client.created_at} isUnix={true} />
     </div>
     <div className="col-xs-4">
       <Timestamp timestamp={client.last_used} isUnix={true} />
+    </div>
+    <div className="col-xs-4">
+      <Cog options={options} />&nbsp;{client.client_id}
     </div>
   </div>;
 };

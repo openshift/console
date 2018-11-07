@@ -47,8 +47,7 @@ const SecretRow = ({obj: secret}) => {
   const age = fromNow(secret.metadata.creationTimestamp);
 
   return <ResourceRow obj={secret}>
-    <div className="col-md-3 col-sm-4 col-xs-6 co-resource-link-wrapper">
-      <ResourceCog actions={menuActions} kind="Secret" resource={secret} />
+    <div className="col-md-3 col-sm-4 col-xs-6">
       <ResourceLink kind="Secret" name={secret.metadata.name} namespace={secret.metadata.namespace} title={secret.metadata.uid} />
     </div>
     <div className="col-md-3 col-sm-4 col-xs-6 co-break-word">
@@ -57,6 +56,9 @@ const SecretRow = ({obj: secret}) => {
     <div className="col-md-3 col-sm-4 hidden-xs co-break-word">{secret.type}</div>
     <div className="col-md-1 hidden-sm hidden-xs">{data}</div>
     <div className="col-md-2 hidden-sm hidden-xs">{age}</div>
+    <div className="co-resource-kebab">
+      <ResourceCog actions={menuActions} kind="Secret" resource={secret} />
+    </div>
   </ResourceRow>;
 };
 

@@ -52,7 +52,7 @@ describe(InstallPlanRow.displayName, () => {
   });
 
   it('renders resource cog for performing common actions', () => {
-    expect(wrapper.find(ResourceRow).childAt(0).find(ResourceCog).props().actions).toEqual(Cog.factory.common);
+    expect(wrapper.find(ResourceRow).find(ResourceCog).props().actions).toEqual(Cog.factory.common);
   });
 
   it('renders column for install plan name', () => {

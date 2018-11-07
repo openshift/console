@@ -167,8 +167,7 @@ const ServiceInstancesRow: React.SFC<ServiceInstancesRowProps> = ({obj}) => {
   const clusterServiceClassRefName = _.get(obj, 'spec.clusterServiceClassRef.name');
 
   return <div className="row co-resource-list__item">
-    <div className="col-md-2 col-sm-4 col-xs-6 co-resource-link-wrapper">
-      <ResourceCog actions={menuActions} kind={ServiceInstancesReference} resource={obj} />
+    <div className="col-md-2 col-sm-4 col-xs-6">
       <ResourceLink kind={ServiceInstancesReference} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
     </div>
     <div className="col-md-2 col-sm-3 col-xs-6 co-break-word">
@@ -187,6 +186,9 @@ const ServiceInstancesRow: React.SFC<ServiceInstancesRowProps> = ({obj}) => {
     </div>
     <div className="col-md-2 hidden-sm hidden-xs co-break-word">
       <Timestamp timestamp={obj.metadata.creationTimestamp} />
+    </div>
+    <div className="co-resource-kebab">
+      <ResourceCog actions={menuActions} kind={ServiceInstancesReference} resource={obj} />
     </div>
   </div>;
 };

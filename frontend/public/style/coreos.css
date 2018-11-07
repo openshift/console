@@ -294,14 +294,27 @@ input[type="radio"] {
     transform: scale(1, 1); } }
 
 .co-m-cog {
-  position: relative;
   color: #999;
   display: inline-block;
-  font-size: 14px; }
+  font-size: 14px;
+  position: relative; }
   .co-m-cog:hover {
     cursor: pointer; }
-  .co-m-cog.open .co-m-cog__icon {
+  .co-m-cog.open {
     color: #2276ad; }
+  .co-m-cog__icon {
+    color: $color-pf-black-700;
+  }
+
+.co-m-cog__button {
+  padding: 0 7px;
+  &:active,
+  &:focus,
+  &:hover {
+    .co-m-cog__icon {
+      color: $color-pf-blue-400; }
+  }
+}
 
 .co-m-cog--disabled {
   pointer-events: none; }

@@ -60,13 +60,13 @@ describe(SubscriptionRow.displayName, () => {
 
   it('renders actions cog', () => {
     const menuArgs = [ClusterServiceVersionModel, subscription];
-    expect(wrapper.find('.co-resource-list__item').childAt(0).find(ResourceCog).props().kind).toEqual(referenceForModel(SubscriptionModel));
-    expect(wrapper.find('.co-resource-list__item').childAt(0).find(ResourceCog).props().resource).toEqual(subscription);
-    expect(wrapper.find('.co-resource-list__item').childAt(0).find(ResourceCog).props().actions[0]).toEqual(Cog.factory.Edit);
-    expect(wrapper.find('.co-resource-list__item').childAt(0).find(ResourceCog).props().actions[1]().label).toEqual('Remove Subscription...');
-    expect(wrapper.find('.co-resource-list__item').childAt(0).find(ResourceCog).props().actions[1]().callback).toBeDefined();
-    expect(wrapper.find('.co-resource-list__item').childAt(0).find(ResourceCog).props().actions[2](...menuArgs).label).toEqual(`View ${ClusterServiceVersionModel.kind}...`);
-    expect(wrapper.find('.co-resource-list__item').childAt(0).find(ResourceCog).props().actions[2](...menuArgs).href).toEqual(`/k8s/ns/default/${ClusterServiceVersionModel.plural}/testapp.v1.0.0`);
+    expect(wrapper.find('.co-resource-list__item').find(ResourceCog).props().kind).toEqual(referenceForModel(SubscriptionModel));
+    expect(wrapper.find('.co-resource-list__item').find(ResourceCog).props().resource).toEqual(subscription);
+    expect(wrapper.find('.co-resource-list__item').find(ResourceCog).props().actions[0]).toEqual(Cog.factory.Edit);
+    expect(wrapper.find('.co-resource-list__item').find(ResourceCog).props().actions[1]().label).toEqual('Remove Subscription...');
+    expect(wrapper.find('.co-resource-list__item').find(ResourceCog).props().actions[1]().callback).toBeDefined();
+    expect(wrapper.find('.co-resource-list__item').find(ResourceCog).props().actions[2](...menuArgs).label).toEqual(`View ${ClusterServiceVersionModel.kind}...`);
+    expect(wrapper.find('.co-resource-list__item').find(ResourceCog).props().actions[2](...menuArgs).href).toEqual(`/k8s/ns/default/${ClusterServiceVersionModel.plural}/testapp.v1.0.0`);
   });
 
   it('renders column for namespace name', () => {

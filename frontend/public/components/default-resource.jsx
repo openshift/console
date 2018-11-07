@@ -25,8 +25,7 @@ const Header = props => <ListHeader>
 
 const RowForKind = kind => function RowForKind_ ({obj}) {
   return <div className="row co-resource-list__item">
-    <div className="col-xs-6 col-sm-4 co-resource-link-wrapper">
-      <ResourceCog actions={menuActions} kind={referenceFor(obj) || kind} resource={obj} />
+    <div className="col-xs-6 col-sm-4">
       <ResourceLink kind={kind} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
     </div>
     <div className="col-xs-6 col-sm-4 co-break-word">
@@ -37,6 +36,9 @@ const RowForKind = kind => function RowForKind_ ({obj}) {
     </div>
     <div className="col-xs-6 col-sm-4 hidden-xs">
       { fromNow(obj.metadata.creationTimestamp) }
+    </div>
+    <div className="co-resource-kebab">
+      <ResourceCog actions={menuActions} kind={referenceFor(obj) || kind} resource={obj} />
     </div>
   </div>;
 };

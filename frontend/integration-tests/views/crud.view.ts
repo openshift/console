@@ -45,7 +45,7 @@ export const editHumanizedKind = (kind) => {
 /**
  * Edit row from a list.
  */
-export const editRow = (kind: string) => (name: string) => rowForName(name).$$('.co-m-cog').first().click()
+export const editRow = (kind: string) => (name: string) => rowForName(name).$$('.co-m-cog__button').first().click()
   .then(() => browser.wait(until.elementToBeClickable(rowForName(name).$('.co-m-cog__dropdown'))))
   .then(() => rowForName(name).$('.co-m-cog__dropdown').$$('a').filter(link => link.getText().then(text => text.startsWith(editHumanizedKind(kind)))).first().click())
   .then(async() => {
@@ -60,7 +60,7 @@ export const editRow = (kind: string) => (name: string) => rowForName(name).$$('
 /**
  * Deletes a row from a list. Does not wait until the row is no longer visible.
  */
-export const deleteRow = (kind: string) => (name: string) => rowForName(name).$$('.co-m-cog').first().click()
+export const deleteRow = (kind: string) => (name: string) => rowForName(name).$$('.co-m-cog__button').first().click()
   .then(() => browser.wait(until.elementToBeClickable(rowForName(name).$('.co-m-cog__dropdown'))))
   .then(() => rowForName(name).$('.co-m-cog__dropdown').$$('a').filter(link => link.getText().then(text => text.startsWith('Delete'))).first().click())
   .then(async() => {
@@ -84,7 +84,7 @@ export const deleteRow = (kind: string) => (name: string) => rowForName(name).$$
   });
 
 export const selectOptionFromGear = (name: string, gearOptionStartsWith: string) =>
-  rowForName(name).$$('.co-m-cog').first().click()
+  rowForName(name).$$('.co-m-cog__button').first().click()
     .then(() => browser.wait(until.visibilityOf(rowForName(name).$('.co-m-cog__dropdown'))))
     .then(() => $('.co-m-cog__dropdown').$$('a').filter(link => link.getText()
       .then(text => text.startsWith(gearOptionStartsWith))).first().click()

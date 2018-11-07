@@ -16,8 +16,7 @@ const ConfigMapHeader = props => <ListHeader>
 </ListHeader>;
 
 const ConfigMapRow = ({obj: configMap}) => <ResourceRow obj={configMap}>
-  <div className="col-sm-4 col-xs-6 co-resource-link-wrapper">
-    <ResourceCog actions={menuActions} kind="ConfigMap" resource={configMap} />
+  <div className="col-sm-4 col-xs-6">
     <ResourceLink kind="ConfigMap" name={configMap.metadata.name} namespace={configMap.metadata.namespace} title={configMap.metadata.uid} />
   </div>
   <div className="col-sm-4 col-xs-6 co-break-word">
@@ -25,6 +24,9 @@ const ConfigMapRow = ({obj: configMap}) => <ResourceRow obj={configMap}>
   </div>
   <div className="col-sm-2 hidden-xs">{_.size(configMap.data)}</div>
   <div className="col-sm-2 hidden-xs">{fromNow(configMap.metadata.creationTimestamp)}</div>
+  <div className="co-resource-kebab">
+    <ResourceCog actions={menuActions} kind="ConfigMap" resource={configMap} />
+  </div>
 </ResourceRow>;
 
 const ConfigMapDetails = ({obj: configMap}) => {

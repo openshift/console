@@ -13,8 +13,7 @@ const LimitRangeReference: K8sResourceKindReference = 'LimitRange';
 
 const LimitRangeRow: React.SFC<LimitRangeProps> = ({obj}) =>
   <div className="row co-resource-list__item">
-    <div className="col-xs-4 co-resource-link-wrapper">
-      <ResourceCog actions={menuActions} kind={LimitRangeReference} resource={obj} />
+    <div className="col-xs-4">
       <ResourceLink kind={LimitRangeReference} name={obj.metadata.name} namespace={obj.metadata.namespace} />
     </div>
     <div className="col-xs-4">
@@ -22,6 +21,9 @@ const LimitRangeRow: React.SFC<LimitRangeProps> = ({obj}) =>
     </div>
     <div className="col-xs-4">
       <Timestamp timestamp={obj.metadata.creationTimestamp} />
+    </div>
+    <div className="co-resource-kebab">
+      <ResourceCog actions={menuActions} kind={LimitRangeReference} resource={obj} />
     </div>
   </div>;
 
