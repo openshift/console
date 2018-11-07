@@ -257,16 +257,6 @@
   }
 }
 
-// Remove annoying default spinners browsers add to number fields.
-input[type=number] {
-  -moz-appearance: textfield;
-}
-input[type=number]::-webkit-inner-spin-button,
-input[type=number]::-webkit-outer-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
 .co-error {
   color: $color-pf-red;
   white-space: nowrap;
@@ -381,4 +371,203 @@ input[type=number]::-webkit-outer-spin-button {
   + .radio {
     margin-top :0;
   }
+}
+
+.help-block {
+  margin-bottom: 0;
+ }
+
+.co-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.co-nowrap {
+  white-space: nowrap;
+}
+
+.co-an-fade-in-out {
+  transition-duration: compact(0.2s, false, false, false, false, false, false, false, false, false);
+  transition-property: compact(opacity, false, false, false, false, false, false, false, false, false);
+  transition-timing-function: compact(linear, false, false, false, false, false, false, false, false, false);
+}
+
+.co-m-radio-desc {
+  margin-left: 20px;
+}
+
+.co-m-form-row {
+  margin-bottom: 20px;
+}
+
+.co-m-form-row:last-child {
+  margin-bottom: 0;
+}
+
+.co-m-form-col {
+  max-width: 600px;
+}
+
+.co-m-modal-link {
+  cursor: pointer;
+  outline: none;
+  padding-right:  20px;
+  position: relative;
+  &:after {
+    color: $color-pf-black-600;
+    content: $pficon-var-edit;
+    font-family: $icon-font-name-pf;
+    pointer-events: none;
+    position: absolute;
+    right: 0;
+  }
+  &:focus {
+    outline: none;
+  }
+  &:hover:after {
+    color: $color-pf-black-700;
+  }
+}
+
+.co-m-invisible-input {
+  background: none;
+  border: 0;
+  outline: 0;
+  width: 100%;
+  &:hover {
+    cursor: copy;
+  }
+}
+
+.co-m-pane__body-group {
+  padding: 0 0 30px 0;
+}
+
+.co-m-table-grid {
+  &__body {
+    min-height: 50px;
+    position: relative;
+    width: 100%;
+    .row {
+      padding: 10px 0;
+    }
+  }
+  &__head {
+    color: $color-text-secondary;
+    font-size: 12px;
+    padding: 0 0 10px 0;
+    text-transform: uppercase;
+    a {
+      cursor: pointer;
+    }
+  }
+  &__sort-arrow {
+    margin-left: 10px;
+  }
+  &__sort-link--unsorted {
+    color: $color-text-secondary;
+  }
+  &--bordered {
+    .co-m-table-grid__body .row,
+    .co-m-table-grid__head {
+      border-bottom: solid 1px #eee;
+    }
+  }
+  [class*='col-'],
+  .row {
+    vertical-align: middle;
+  }
+  .co-m-table-grid {
+    padding-left: 20px;
+  }
+  .row {
+    line-height: normal;
+    margin: 0;
+  }
+}
+
+.co-m-row:hover {
+  background-color: #fafafa;
+}
+
+.co-m-inline-loader,
+.co-m-loader {
+  min-width: 18px;
+}
+
+.co-m-inline-loader {
+  display: inline-block;
+  cursor: default;
+  &:hover {
+    text-decoration: none;
+  }
+}
+
+.co-m-loader {
+  display: block;
+  left: 50%;
+  margin: -11px 0 0 -13px;
+  position: absolute;
+  top: 50%;
+}
+
+.co-m-loader-dot__one,
+.co-m-loader-dot__two,
+.co-m-loader-dot__three {
+  animation-delay: 0;
+  animation-direction: normal;
+  animation-duration: 1s;
+  animation-fill-mode: forwards;
+  animation-iteration-count: infinite;
+  animation-name: bouncedelay;
+  animation-play-state: running;
+  animation-timing-function: ease-in-out;
+  background: #419eda;
+  border-radius: 100%;
+  display: inline-block;
+  height: 6px;
+  width: 6px;
+}
+
+.co-m-loader-dot__one {
+  animation-delay: -0.32s;
+}
+
+.co-m-loader-dot__two {
+  animation-delay: -0.16s;
+}
+
+@keyframes bouncedelay {
+  0%,
+  80%,
+  100% {
+    transform: scale(0.25, 0.25);
+  }
+  40% {
+    transform: scale(1, 1);
+  }
+}
+
+.co-m-cog {
+  color: #999;
+  display: inline-block;
+  font-size: 14px;
+  position: relative;
+  &:hover {
+    cursor: pointer;
+  }
+  &__dropdown {
+    margin-bottom: 10px;
+  }
+  &__icon--disabled {
+    color: #ddd;
+  }
+  &--disabled {
+    pointer-events: none;
+  }
+}
+
+.co-m-cog-wrapper {
+  display: inline-block;
+  margin-right: 4px;
 }

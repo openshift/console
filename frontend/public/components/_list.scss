@@ -1,16 +1,3 @@
-.co-m-table-grid {
-  &__head {
-    color: $color-text-secondary;
-    text-transform: uppercase;
-  }
-  &__sort-link--unsorted {
-    color: $color-text-secondary;
-  }
-  &__sort-arrow {
-    margin-left: 10px;
-  }
-}
-
 .co-resource-list__item {
   height: 100%;
   transition: all 0.25s;
@@ -18,8 +5,4 @@
 
 .compaction-btn {
   margin-right: 0 !important;
-}
-
-.co-m-cog__dropdown {
-  margin-bottom: 10px;
 }

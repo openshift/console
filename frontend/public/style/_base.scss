@@ -1,7 +1,6 @@
-/*
-Split out from coreos.css
-Contains all base element styles.
-*/
+// Base element styles.
+// Please DO NOT add rules of this type.
+// TODO:  remove these styles as they are overly broad.
 
 button:focus,
 a:focus {
@@ -25,3 +24,17 @@ dd {
 
 dd:last-child {
   margin-bottom: 0px; }
+
+input[type="number"] {
+  -webkit-appearance: textfield;
+  appearance: textfield;
+  max-width: 100px;
+  &::-webkit-inner-spin-button,
+  &::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+  }
+}
+
+input[type="radio"] {
+  margin-right: 7px;
+}
