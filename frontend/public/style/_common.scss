@@ -1,3 +1,7 @@
+.clickable {
+  cursor: pointer;
+}
+
 .co-m-pane__body {
   border-bottom: 1px solid $color-grey-background-border;
   margin: $grid-gutter-width 0 0;
@@ -583,4 +587,13 @@
 .co-m-cog-wrapper {
   display: inline-block;
   margin-right: 4px;
+}
+
+.no-margin {
+  margin: 0 !important;
+}
+
+.text-filter {
+  min-width: 150px;
+  width: 250px;
 }
