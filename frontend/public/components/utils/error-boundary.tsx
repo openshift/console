@@ -46,7 +46,7 @@ export const withFallback: WithFallback = (Component, FallbackComponent) => (pro
   <Component {...props} />
 </ErrorBoundary>;
 
-export type WithFallback = <P = {}>(Component: React.ComponentType<P>, FallbackComponent?: React.ComponentType<ErrorBoundaryFallbackComponentProps>) => React.ComponentType<P>;
+export type WithFallback = <P = {}>(Component: React.ComponentType<P>, FallbackComponent?: React.ComponentType<any>) => React.ComponentType<P>;
 
 export type ErrorBoundaryProps = {
   FallbackComponent?: React.ComponentType<ErrorBoundaryFallbackComponentProps>;
