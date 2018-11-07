@@ -21,7 +21,7 @@ import { startStopVmModal } from './modals/start-stop-vm-modal';
 import { restartVmModal } from './modals/restart-vm-modal';
 import { getResourceKind, getLabelMatcher, findVMI, findPod, getFlattenForKind, getVmStatus } from './utils/resources';
 
-import { CreateVmWizard, TEMPLATE_TYPE_LABEL } from 'kubevirt-web-ui-components';
+import { CreateVmWizard, TEMPLATE_TYPE_LABEL, TEMPLATE_OS_LABEL } from 'kubevirt-web-ui-components';
 import VmConsolesConnected from './vmconsoles';
 
 const dashes = '---';
@@ -201,11 +201,11 @@ class VMResourceConfiguration extends Component {
     if (vmi) {
       configuration.cpu = this.getCpu(vmi);
       configuration.memory = this.getMemory(vmi);
-      //configuration.os = _.get(this.props.vm,'metadata.selector.matchLabels.kubevirt.io/os');
     } else {
       configuration.cpu = this.getCpu(this.props.vm);
       configuration.memory = this.getMemory(this.props.vm);
     }
+    configuration.os = _.get(this.props.vm, ['metadata', 'annotations', TEMPLATE_OS_LABEL]);
     return configuration;
   }
 
