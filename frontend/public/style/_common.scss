@@ -121,7 +121,7 @@
 }
 
 .cos-error-title {
-  color: $red;
+  color: $color-pf-red;
 }
 
 .co-section-heading {
@@ -185,8 +185,8 @@
 
 .popover-content code,
 .co-m-pane__explanation code {
-  background-color: $co-gray-lightest;
-  color: $co-gray;
+  background-color: $color-pf-black-150;
+  color: $color-pf-black-600;
 }
 
 .co-btn--download {
@@ -234,8 +234,8 @@
 }
 
 .co-well {
-  color: $blue-darker;
-  background-color: $blue-bg;
+  color: $color-pf-blue-600;
+  background-color: $color-pf-blue-50;
   padding: 20px;
   margin: ($grid-gutter-width / 2);
 
@@ -367,7 +367,7 @@ input[type=number]::-webkit-outer-spin-button {
 }
 
 .co-component-label {
-  color: $co-gray-dark;
+  color: $color-pf-black-600;
   text-transform: uppercase;
   font-size: $font-size-small;
 }
