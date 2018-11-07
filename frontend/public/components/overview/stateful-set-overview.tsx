@@ -4,21 +4,14 @@ import { StatefulSetModel } from '../../models';
 import { menuActions } from '../stateful-set';
 import { ResourceSummary } from '../utils';
 
-import { BuildConfigsOverview } from './build-configs-overview';
-import { NetworkingOverview } from './networking-overview';
+import { OverviewDetailsResourcesTab } from './resource-overview-page';
+import { OverviewItem } from '.';
 import { ResourceOverviewDetails } from './resource-overview-details';
 
-const StatefulSetOverviewDetails: React.SFC<{item:any}> = ({item}) =>
+const StatefulSetOverviewDetails: React.SFC<StatefulSetOverviewDetailsProps> = ({item}) =>
   <div className="overview__sidebar-pane-body resource-overview__body">
     <ResourceSummary resource={item.obj} />
   </div>;
-
-const StatefulSetResourceOverview: React.SFC<{item:any}> = ({item: {buildConfigs, routes, services}}) => (
-  <div className="overview__sidebar-pane-body">
-    <BuildConfigsOverview buildConfigs={buildConfigs} />
-    <NetworkingOverview services={services} routes={routes} />
-  </div>
-);
 
 const tabs = [
   {
@@ -27,14 +20,24 @@ const tabs = [
   },
   {
     name: 'Resources',
-    component: StatefulSetResourceOverview
+    component: OverviewDetailsResourcesTab
   }
 ];
 
-export const StatefulSetOverview: React.SFC<{item:any}> = ({item}) =>
+export const StatefulSetOverview: React.SFC<StatefulSetOverviewProps> = ({item}) =>
   <ResourceOverviewDetails
     item={item}
     kindObj={StatefulSetModel}
     menuActions={menuActions}
     tabs={tabs}
   />;
+
+/* eslint-disable no-unused-vars, no-undef */
+type StatefulSetOverviewDetailsProps = {
+  item: OverviewItem;
+};
+
+type StatefulSetOverviewProps = {
+  item: OverviewItem;
+};
+/* eslint-enable no-unused-vars, no-undef */

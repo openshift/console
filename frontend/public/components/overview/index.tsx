@@ -450,7 +450,7 @@ class OverviewDetails extends SafetyFirst<OverviewDetailsProps, OverviewDetailsS
     });
   }
 
-  toReplicationControllerItem(rc: K8sResourceKind): OverviewItem {
+  toReplicationControllerItem(rc: K8sResourceKind): PodControllerOverviewItem {
     const pods = this.getPodsForResource(rc);
     const alerts = {
       ...combinePodAlerts(pods),
@@ -478,21 +478,12 @@ class OverviewDetails extends SafetyFirst<OverviewDetailsProps, OverviewDetailsS
     return _.filter(ownedRC, rc => _.get(rc, 'status.replicas') || getDeploymentConfigVersion(rc) === currentVersion);
   }
 
-  getReplicationControllersForResource(resource: K8sResourceKind): ReplicatorOverviewItem {
+  getReplicationControllersForResource(resource: K8sResourceKind): PodControllerOverviewItem[] {
     const replicationControllers = this.getActiveReplicationControllers(resource);
-    const rcItems = sortReplicationControllersByRevision(replicationControllers).map(rc => this.toReplicationControllerItem(rc));
-    const current: any = _.first(rcItems);
-    const previous: any = _.nth(rcItems, 1);
-    const isRollingOut = current && previous && current.phase !== 'Cancelled' && current.phase !== 'Failed';
-
-    return {
-      current,
-      previous,
-      isRollingOut,
-    };
+    return sortReplicationControllersByRevision(replicationControllers).map(rc => this.toReplicationControllerItem(rc));
   }
 
-  toReplicaSetItem(rs: K8sResourceKind): OverviewItem {
+  toReplicaSetItem(rs: K8sResourceKind): PodControllerOverviewItem {
     const obj = {
       ...rs,
       kind: ReplicaSetModel.kind,
@@ -514,17 +505,9 @@ class OverviewDetails extends SafetyFirst<OverviewDetailsProps, OverviewDetailsS
     return _.filter(ownedRS, rs => _.get(rs, 'status.replicas') || getDeploymentRevision(rs) === currentRevision);
   }
 
-  getReplicaSetsForResource(deployment: K8sResourceKind): ReplicatorOverviewItem {
+  getReplicaSetsForResource(deployment: K8sResourceKind): PodControllerOverviewItem[] {
     const replicaSets = this.getActiveReplicaSets(deployment);
-    const rsItems = sortReplicaSetsByRevision(replicaSets).map(rs => this.toReplicaSetItem(rs));
-    const current = _.first(rsItems);
-    const previous = _.nth(rsItems, 1);
-    const isRollingOut = !!current && !!previous;
-    return {
-      current,
-      previous,
-      isRollingOut,
-    };
+    return sortReplicaSetsByRevision(replicaSets).map(rs => this.toReplicaSetItem(rs));
   }
 
   getBuildsForResource(buildConfig: K8sResourceKind): K8sResourceKind[] {
@@ -595,7 +578,10 @@ class OverviewDetails extends SafetyFirst<OverviewDetailsProps, OverviewDetailsS
   createDeploymentItems(): OverviewItem[] {
     const {deployments} = this.props;
     return _.map(deployments.data, d => {
-      const {current, previous, isRollingOut} = this.getReplicaSetsForResource(d);
+      const replicaSets = this.getReplicaSetsForResource(d);
+      const current = _.head(replicaSets);
+      const previous = _.nth(replicaSets, 1);
+      const isRollingOut = !!current && !!previous;
       const buildConfigs = this.getBuildConfigsForResource(d);
       const services = this.getServicesForResource(d);
       const routes = this.getRoutesForServices(services);
@@ -624,7 +610,10 @@ class OverviewDetails extends SafetyFirst<OverviewDetailsProps, OverviewDetailsS
   createDeploymentConfigItems(): OverviewItem[] {
     const {deploymentConfigs} = this.props;
     return _.map(deploymentConfigs.data, dc => {
-      const {current, previous, isRollingOut} = this.getReplicationControllersForResource(dc);
+      const replicationControllers = this.getReplicationControllersForResource(dc);
+      const current = _.head(replicationControllers);
+      const previous = _.nth(replicationControllers, 1);
+      const isRollingOut = current && previous && current.phase !== 'Cancelled' && current.phase !== 'Failed';
       const buildConfigs = this.getBuildConfigsForResource(dc);
       const services = this.getServicesForResource(dc);
       const routes = this.getRoutesForServices(services);
@@ -664,12 +653,16 @@ class OverviewDetails extends SafetyFirst<OverviewDetailsProps, OverviewDetailsS
       };
       const pods = this.getPodsForResource(ss);
       const alerts = combinePodAlerts(pods);
+      const services = this.getServicesForResource(ss);
+      const routes = this.getRoutesForServices(services);
       return {
         alerts,
         buildConfigs,
         obj,
         pods,
         readiness,
+        routes,
+        services,
       };
     });
   }
@@ -885,24 +878,44 @@ export const OverviewPage = withStartGuide(
 );
 
 /* eslint-disable no-unused-vars, no-undef */
+type OverviewItemAlerts = {
+  [key: string]: {
+    message: string;
+    severity: string;
+  }
+};
 
-// TODO (jon) Improve overview item type to be more specific
-type OverviewItem = {
+export type PodControllerOverviewItem = {
+  alerts: OverviewItemAlerts;
+  revision: number;
   obj: K8sResourceKind;
-  [key: string]: any;
+  phase?: string;
+  pods: K8sResourceKind[];
 };
 
-type ReplicatorOverviewItem = {
-  current: OverviewItem;
-  previous: OverviewItem;
-  isRollingOut: boolean;
+type OverviewItemReadiness = {
+  desired: string | number;
+  ready: string | number;
 };
 
-type BuildConfigOverviewItem = K8sResourceKind & {
+export type BuildConfigOverviewItem = K8sResourceKind & {
   builds: K8sResourceKind[];
 };
 
-type OverviewGroup = {
+export type OverviewItem = {
+  alerts?: OverviewItemAlerts;
+  buildConfigs: BuildConfigOverviewItem[];
+  current?: PodControllerOverviewItem;
+  isRollingOut?: boolean;
+  obj: K8sResourceKind;
+  pods?: K8sResourceKind[];
+  previous?: PodControllerOverviewItem;
+  readiness: OverviewItemReadiness;
+  routes: K8sResourceKind[];
+  services: K8sResourceKind[];
+};
+
+export type OverviewGroup = {
   name?: string;
   items: OverviewItem[];
 };

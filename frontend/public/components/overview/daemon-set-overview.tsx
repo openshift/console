@@ -2,16 +2,17 @@ import * as React from 'react';
 
 import { DaemonSetModel } from '../../models';
 import { ResourceSummary } from '../utils';
-import { ResourceOverviewDetails } from './resource-overview-details';
 import {
   menuActions,
   DaemonSetDetailsList
 } from '../daemon-set';
 
-import { NetworkingOverview } from './networking-overview';
-import { BuildConfigsOverview } from './build-configs-overview';
 
-const DaemonSetOverviewDetails: React.SFC<{item:any}> = ({item}) =>
+import { OverviewDetailsResourcesTab } from './resource-overview-page';
+import { OverviewItem } from '.';
+import { ResourceOverviewDetails } from './resource-overview-details';
+
+const DaemonSetOverviewDetails: React.SFC<DaemonSetOverviewDetailsProps> = ({item}) =>
   <div className="co-m-pane__body resource-overview__body">
     <div className="resource-overview__summary">
       <ResourceSummary resource={item.obj} />
@@ -21,13 +22,6 @@ const DaemonSetOverviewDetails: React.SFC<{item:any}> = ({item}) =>
     </div>
   </div>;
 
-const DaemonSetResourceOverview: React.SFC<{item: any}> = ({item: {buildConfigs, routes, services}}) => (
-  <div className="overview__sidebar-pane-body">
-    <BuildConfigsOverview buildConfigs={buildConfigs} />
-    <NetworkingOverview services={services} routes={routes} />
-  </div>
-);
-
 const tabs = [
   {
     name: 'Overview',
@@ -35,14 +29,24 @@ const tabs = [
   },
   {
     name: 'Resources',
-    component: DaemonSetResourceOverview
+    component: OverviewDetailsResourcesTab
   }
 ];
 
-export const DaemonSetOverview: React.SFC<{item: any}> = ({item}) =>
+export const DaemonSetOverview: React.SFC<DaemonSetOverviewProps> = ({item}) =>
   <ResourceOverviewDetails
     item={item}
     kindObj={DaemonSetModel}
     menuActions={menuActions}
     tabs={tabs}
   />;
+
+/* eslint-disable no-unused-vars, no-undef */
+type DaemonSetOverviewDetailsProps = {
+  item: OverviewItem;
+};
+
+type DaemonSetOverviewProps = {
+  item: OverviewItem;
+};
+/* eslint-enable no-unused-vars, no-undef */

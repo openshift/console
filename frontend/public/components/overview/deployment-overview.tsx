@@ -11,21 +11,21 @@ import {
   ResourceSummary,
 } from '../utils';
 
-import { NetworkingOverview } from './networking-overview';
+import { OverviewDetailsResourcesTab } from './resource-overview-page';
+import { OverviewItem } from '.';
 import { ResourceOverviewDetails } from './resource-overview-details';
-import { BuildConfigsOverview } from './build-configs-overview';
 
-const DeploymentOverviewDetails: React.SFC<{item: any}> = ({item: {obj: deployment}}) => {
+const DeploymentOverviewDetails: React.SFC<DeploymentOverviewDetailsProps> = ({item}) => {
   return <div className="overview__sidebar-pane-body resource-overview__body">
     <div className="resource-overview__pod-counts">
-      <DeploymentPodCounts resource={deployment} resourceKind={DeploymentModel} />
+      <DeploymentPodCounts resource={item.obj} resourceKind={DeploymentModel} />
     </div>
     <div className="resource-overview__summary">
-      <ResourceSummary resource={deployment}>
+      <ResourceSummary resource={item.obj}>
         <dt>Status</dt>
         <dd>
           {
-            deployment.status.availableReplicas === deployment.status.updatedReplicas
+            item.obj.status.availableReplicas === item.obj.status.updatedReplicas
               ? 'Active'
               : <div>
                 <span className="co-icon-space-r"><LoadingInline /></span> Updating
@@ -35,17 +35,10 @@ const DeploymentOverviewDetails: React.SFC<{item: any}> = ({item: {obj: deployme
       </ResourceSummary>
     </div>
     <div className="resource-overview__details">
-      <DeploymentDetailsList deployment={deployment} />
+      <DeploymentDetailsList deployment={item.obj} />
     </div>
   </div>;
 };
-
-const DeploymentResourceOverview: React.SFC<{item: any}>= ({item: {buildConfigs, routes, services}}) => (
-  <div className="overview__sidebar-pane-body">
-    <BuildConfigsOverview buildConfigs={buildConfigs} />
-    <NetworkingOverview services={services} routes={routes} />
-  </div>
-);
 
 const tabs = [
   {
@@ -54,14 +47,24 @@ const tabs = [
   },
   {
     name: 'Resources',
-    component: DeploymentResourceOverview
+    component: OverviewDetailsResourcesTab
   }
 ];
 
-export const DeploymentOverviewPage: React.SFC<{item:any}> = ({item}) =>
+export const DeploymentOverviewPage: React.SFC<DeploymentOverviewProps> = ({item}) =>
   <ResourceOverviewDetails
     item={item}
     kindObj={DeploymentModel}
     menuActions={menuActions}
     tabs={tabs}
   />;
+
+/* eslint-disable no-unused-vars, no-undef */
+type DeploymentOverviewDetailsProps = {
+  item: OverviewItem;
+};
+
+type DeploymentOverviewProps = {
+  item: OverviewItem;
+};
+/* eslint-enable no-unused-vars, no-undef */

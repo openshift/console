@@ -8,7 +8,13 @@ import { errorModal } from '../modals/error-modal';
 import { fromNow } from '../utils/datetime';
 import { K8sResourceKind } from '../../module/k8s';
 import { startBuild, getBuildNumber } from '../../module/k8s/builds';
-import { ResourceLink, resourcePath, SidebarSectionHeading } from '../utils';
+import {
+  ResourceLink,
+  resourcePath,
+  SidebarSectionHeading
+} from '../utils';
+
+import { BuildConfigOverviewItem } from '.';
 
 const conjugateBuildPhase = (phase: string): string => {
   switch (phase) {
@@ -92,10 +98,6 @@ export const BuildConfigsOverview: React.SFC<BuildConfigsOverviewProps> = ({buil
 /* eslint-disable no-unused-vars, no-undef */
 type BuildOverviewItemProps = {
   build: K8sResourceKind;
-};
-
-type BuildConfigOverviewItem = K8sResourceKind & {
-  builds: K8sResourceKind[];
 };
 
 type BuildConfigOverviewListProps = {
