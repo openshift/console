@@ -38,7 +38,7 @@ export class CreatePVCForm extends React.Component<CreatePVCFormProps, CreatePVC
     requestSizeValue: '',
     requestSizeUnit: 'Gi',
     disableForm: false,
-    showLabelSelectors: false,
+    useSelector: false,
     nameValuePairs: [['', '']],
     accessModeRadios: [
       {
@@ -76,7 +76,7 @@ export class CreatePVCForm extends React.Component<CreatePVCFormProps, CreatePVC
     this.setState({ storageClass }, this.onChange);
   };
 
-  HandleRequestSizeInputChange = obj => {
+  handleRequestSizeInputChange = obj => {
     this.setState({ requestSizeValue: obj.value, requestSizeUnit: obj.unit }, this.onChange);
   }
 
@@ -84,15 +84,22 @@ export class CreatePVCForm extends React.Component<CreatePVCFormProps, CreatePVC
     this.setState({ storageClass: '' }, this.onChange);
   };
 
-  toggleShowLabelSelectors = () => {
-    this.setState({ showLabelSelectors: !this.state.showLabelSelectors });
+  handleUseSelector: React.ReactEventHandler<HTMLInputElement> = (event) => {
+    this.setState({ useSelector: event.currentTarget.checked }, this.onChange);
   };
 
-  nameValueArrayToObject = nvpArray => {
-    return _.reduce(nvpArray, (acc, [key, value]) => {
+  getSelector() {
+    const { nameValuePairs, useSelector } = this.state;
+    if (!useSelector) {
+      return null;
+    }
+
+    const matchLabels = _.reduce(nameValuePairs, (acc, [key, value]) => {
       return key ? { ...acc, [key]: value } : acc;
     }, {});
-  };
+
+    return _.isEmpty(matchLabels) ? null : { matchLabels };
+  }
 
   onChange = () => {
     return this.props.onChange(this.updatePVC());
@@ -100,10 +107,8 @@ export class CreatePVCForm extends React.Component<CreatePVCFormProps, CreatePVC
 
   updatePVC = () => {
     const { namespace } = this.props;
-    const { pvcName, accessMode, requestSizeValue, requestSizeUnit, storageClass, nameValuePairs } = this.state;
-    const valuePairs = this.nameValueArrayToObject(nameValuePairs);
-
-    const obj = {
+    const { pvcName, accessMode, requestSizeValue, requestSizeUnit, storageClass } = this.state;
+    const obj: K8sResourceKind = {
       apiVersion: 'v1',
       kind: 'PersistentVolumeClaim',
       metadata: {
@@ -118,16 +123,20 @@ export class CreatePVCForm extends React.Component<CreatePVCFormProps, CreatePVC
             storage: `${requestSizeValue}${requestSizeUnit}`,
           },
         },
-        selector: {
-          matchLabels: valuePairs,
-        },
       },
     };
+
+    // Add the selector only if specified.
+    const selector = this.getSelector();
+    if (selector) {
+      obj.spec.selector = selector;
+    }
+
     return obj;
   };
 
   render() {
-    const { dropdownUnits, showLabelSelectors, nameValuePairs, requestSizeUnit, requestSizeValue, storageClass } = this.state;
+    const { dropdownUnits, useSelector, nameValuePairs, requestSizeUnit, requestSizeValue, storageClass } = this.state;
     const { namespace } = this.props;
     return (
       <div>
@@ -196,7 +205,7 @@ export class CreatePVCForm extends React.Component<CreatePVCFormProps, CreatePVC
         <RequestSizeInput
           name="requestSize"
           required={false}
-          onChange={this.HandleRequestSizeInputChange}
+          onChange={this.handleRequestSizeInputChange}
           defaultRequestSizeUnit={requestSizeUnit}
           defaultRequestSizeValue={requestSizeValue}
           dropdownUnits={dropdownUnits}
@@ -207,12 +216,12 @@ export class CreatePVCForm extends React.Component<CreatePVCFormProps, CreatePVC
         </p>
         <Checkbox
           label="Use label selectors to request storage"
-          onChange={this.toggleShowLabelSelectors}
-          checked={showLabelSelectors}
+          onChange={this.handleUseSelector}
+          checked={useSelector}
           name="showLabelSelector"
         />
         <div className="form-group">
-          {showLabelSelectors && (
+          {useSelector && (
             <NameValueEditor
               nameValuePairs={nameValuePairs}
               valueString="Selector"
@@ -310,7 +319,7 @@ export type CreatePVCFormState = {
   disableForm: boolean;
   accessModeRadios: { value: string, title: string }[];
   dropdownUnits: { [key: string]: string };
-  showLabelSelectors: boolean;
+  useSelector: boolean;
   nameValuePairs: string[][];
 };
 
