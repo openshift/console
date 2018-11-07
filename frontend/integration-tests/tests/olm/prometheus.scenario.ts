@@ -31,7 +31,7 @@ describe('Interacting with the Prometheus OCS', () => {
   it('can be enabled from the Catalog Source', async() => {
     await sidenavView.clickNavLink(['Operators', 'Package Manifests']);
     await catalogView.isLoaded();
-    await catalogView.createSubscriptionFor('Prometheus Operator');
+    await catalogView.createSubscriptionFor('Prometheus');
     await browser.wait(until.presenceOf($('.ace_text-input')));
     const content = await yamlView.editorContent.getText();
     const newContent = defaultsDeep({}, {metadata: {generateName: `${testName}-prometheus-`, namespace: testName, labels: {[testLabel]: testName}}, spec: {channel: 'alpha', source: 'rh-operators', name: 'prometheus'}}, safeLoad(content));
@@ -41,7 +41,7 @@ describe('Interacting with the Prometheus OCS', () => {
     await sidenavView.clickNavLink(['Operators', 'Package Manifests']);
     await catalogView.isLoaded();
 
-    expect(catalogView.hasSubscription('Prometheus Operator')).toBe(true);
+    expect(catalogView.hasSubscription('Prometheus')).toBe(true);
   });
 
   it('creates Prometheus Operator `Deployment`', async() => {
