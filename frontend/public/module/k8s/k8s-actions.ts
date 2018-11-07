@@ -1,9 +1,11 @@
 /* eslint-disable no-unused-vars, no-undef */
 
+import * as _ from 'lodash-es';
+
 import { cacheResources, getResources as getResources_ } from './get-resources';
 import { k8sList, k8sWatch, k8sGet } from './resource';
 import { makeReduxID } from '../../components/utils/k8s-watcher';
-import { APIServiceModel } from '../../models';
+import { APIServiceModel, CustomResourceDefinitionModel } from '../../models';
 import { coFetchJSON } from '../../co-fetch';
 
 const types = {
@@ -22,6 +24,9 @@ const types = {
   bulkAddToList: 'bulkAddToList',
   filterList: 'filterList',
   updateListFromWS: 'updateListFromWS',
+
+  setPrinterColumns: 'setPrinterColumns',
+  clearPrinterColumns: 'clearPrinterColumns',
 };
 
 type Action = (type: string) => (id: string, k8sObjects: any) => {type: string, id: string, k8sObjects: any};
@@ -65,6 +70,39 @@ const actions = {
         POLLs[apiGroups] = setInterval(poller, 30 * 1000);
         poller();
       });
+  },
+
+  setPrinterColumns: (model, name) => dispatch => {
+    const kind = model.crd ? CustomResourceDefinitionModel : model;
+    k8sGet(kind, name).then(obj => {
+      const printerColumns = _.get(obj, 'spec.additionalPrinterColumns', []);
+      if (model.namespaced && !_.some(printerColumns, {name: 'Namespace', JSONPath: '.metadata.namespace'})) {
+        printerColumns.unshift({
+          name: 'Namespace',
+          type: 'string',
+          JSONPath: '.metadata.namespace',
+        });
+      }
+      if (!_.some(printerColumns, {name: 'Name', JSONPath: '.metadata.name'})) {
+        printerColumns.unshift({
+          name: 'Name',
+          type: 'string',
+          JSONPath: '.metadata.name',
+        });
+      }
+      if (!_.some(printerColumns, {name: 'Created', JSONPath: '.metadata.creationTimestamp'}) && !_.some(printerColumns, {name: 'Age', JSONPath: '.metadata.creationTimestamp'})) {
+        printerColumns.push({
+          name: 'Created',
+          type: 'string',
+          JSONPath: '.metadata.creationTimestamp',
+        });
+      }
+      dispatch({type: types.setPrinterColumns, printerColumns});
+    });
+  },
+
+  clearPrinterColumns: () => dispatch =>{
+    dispatch({type: types.clearPrinterColumns});
   },
 
   getResources: () => dispatch => {
