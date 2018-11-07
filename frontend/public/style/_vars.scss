@@ -1,9 +1,24 @@
+// == Config
+
+// Root path where you plan to host console.
+$consoleWebDistPath: './';
+$consoleWebFontPath: $consoleWebDistPath + 'fonts';
+// CoreOS-web image path.
+$img-path: $consoleWebDistPath + 'img';
+
+
 // == Overrides of external dependency variables
 
-// Patternfly defaults to 12px, which is too small in many cases
+// FontAwesome font path.
+$fa-font-path: $consoleWebFontPath;
+// PatternFly font path.
+$font-path: '~patternfly/dist/fonts/';
+// Patternfly defaults to 12px, which is too small in many cases.
 $font-size-base: 13px;
-// Patternfly defaults to 40px, which leaves a lot more whitespace than we're used to
+// Patternfly defaults to 40px, which leaves a lot more whitespace than we're used to.
 $grid-gutter-width: 30px;
+// Bootstrap font path.
+$icon-font-path: $consoleWebFontPath + '/';
 
 
 // == Custom variables

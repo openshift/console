@@ -1,7 +1,6 @@
 // Config
 @import '~patternfly/dist/sass/patternfly/color-variables';
 @import "style/vars";
-@import "style/config";
 
 // External dependencies (tilde tells Webpack not to use relative path). Seperate SCSS entrypoint here because some modules break sourcemaps.
 @import "~openshift-logos-icon/style";
