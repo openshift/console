@@ -62,16 +62,6 @@ class AttachStorageForm extends React.Component<
     error: '',
     showCreatePVC: 'existing',
     newPVCObj: null,
-    existingOrNewRadios: [
-      {
-        value: 'existing',
-        title: 'Use existing claim',
-      },
-      {
-        value: 'new',
-        title: 'Create new claim',
-      },
-    ],
   };
 
   componentDidMount() {
@@ -259,31 +249,22 @@ class AttachStorageForm extends React.Component<
               .
             </div>
           )}
+          <label className="control-label co-required" >
+            Persistent Volume Claim
+          </label>
           <div className="form-group">
-            {this.state.existingOrNewRadios.map(radio => {
-              const checked = radio.value === this.state.showCreatePVC;
-              return (
-                <RadioInput
-                  {...radio}
-                  key={radio.value}
-                  onChange={this.handleChange}
-                  checked={checked}
-                  aria-describedby="show-create-pvc-help"
-                  inline={true}
-                  name="showCreatePVC"
-                />
-              );
-            })}
-            <p className="help-block" id="show-create-pvc-help">
-              Choose to use existing claim or create a new one.
-            </p>
+            <RadioInput
+              title="Use existing claim"
+              value="existing"
+              key="existing"
+              onChange={this.handleChange}
+              checked={this.state.showCreatePVC === 'existing'}
+              name="showCreatePVC"
+            />
           </div>
 
           {this.state.showCreatePVC === 'existing' &&
-            <div className="form-group">
-              <label className="control-label co-required" htmlFor="volume-name">
-                Persistent Volume Claim
-              </label>
+            <div className="form-group co-form-subsection">
               <PVCDropdown
                 namespace={namespace}
                 onChange={this.handlePVCChange}
@@ -294,8 +275,18 @@ class AttachStorageForm extends React.Component<
               />
             </div>
           }
+          <div className="form-group">
+            <RadioInput
+              title="Create new claim"
+              value="new"
+              key="new"
+              onChange={this.handleChange}
+              checked={this.state.showCreatePVC === 'new'}
+              name="showCreatePVC"
+            />
+          </div>
 
-          {this.state.showCreatePVC === 'new' && <CreatePVCForm onChange={this.onPVCChange} namespace={this.props.namespace} />}
+          {this.state.showCreatePVC === 'new' && <div className="co-form-subsection"><CreatePVCForm onChange={this.onPVCChange} namespace={this.props.namespace} /></div>}
 
           <div className="form-group">
             <label className="control-label co-required" htmlFor="volume-name">
@@ -421,7 +412,6 @@ export type AttachStorageFormState = {
   volumeAlreadyMounted: boolean;
   showCreatePVC: string;
   newPVCObj: K8sResourceKind;
-  existingOrNewRadios: { value: string, title: string }[];
 };
 
 export type AttachStorageFormProps = {
