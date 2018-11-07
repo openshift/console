@@ -9,6 +9,7 @@ import {PropertiesSidePanel, PropertyItem} from 'patternfly-react-extensions/dis
 
 import {normalizeIconClass} from './catalog-item-icon';
 import {ClusterServicePlanModel} from '../../models';
+import {SourceToImageResourceDetails} from '../source-to-image';
 import {k8sGet} from '../../module/k8s';
 import {Timestamp} from '../utils';
 
@@ -91,6 +92,7 @@ export class CatalogTileDetails extends React.Component {
                   {planItems}
                 </ul>
               </React.Fragment>}
+              {kind === 'ImageStream' && <SourceToImageResourceDetails />}
             </div>
           </div>
         </Modal.Body>
