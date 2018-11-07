@@ -117,7 +117,6 @@ export class CreatePVCForm extends React.Component<CreatePVCFormProps, CreatePVC
       },
       spec: {
         accessModes: [accessMode],
-        storageClassName: storageClass,
         resources: {
           requests: {
             storage: `${requestSizeValue}${requestSizeUnit}`,
@@ -130,6 +129,10 @@ export class CreatePVCForm extends React.Component<CreatePVCFormProps, CreatePVC
     const selector = this.getSelector();
     if (selector) {
       obj.spec.selector = selector;
+    }
+
+    if (storageClass) {
+      obj.spec.storageClassName = storageClass;
     }
 
     return obj;
