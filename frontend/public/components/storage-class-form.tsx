@@ -826,7 +826,7 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
             <HelpBlock>Determines what volume plugin is used for provisioning persistent volumes.</HelpBlock>
           </FormGroup>
 
-          <div className="create-storage-class-form__subsection">
+          <div className="co-form-subsection">
             {newStorageClass.type !== null ? this.getProvisionerElements() : null}
           </div>
 
