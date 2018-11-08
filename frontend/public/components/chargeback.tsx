@@ -36,9 +36,7 @@ import {
 } from './utils';
 
 export const ReportReference: GroupVersionKind = referenceForModel(ChargebackReportModel);
-export const ScheduledReportReference: GroupVersionKind = 'chargeback.coreos.com~v1alpha1~ScheduledReport';
 export const ReportGenerationQueryReference: GroupVersionKind = 'chargeback.coreos.com~v1alpha1~ReportGenerationQuery';
-export const ReportPrometheusQueryReference: GroupVersionKind = 'chargeback.coreos.com~v1alpha1~ReportPrometheusQuery';
 
 const reportPages=[
   {name: 'All Reports', href: ReportReference},

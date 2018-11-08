@@ -2,13 +2,13 @@
 
 import { Map as ImmutableMap } from 'immutable';
 
-import { ReportReference, ReportGenerationQueryReference } from './chargeback';
 import { referenceForModel, GroupVersionKind } from '../module/k8s';
 import {
   AlertmanagerModel,
   BuildConfigModel,
   BuildModel,
   CatalogSourceModel,
+  ChargebackReportModel,
   ClusterModel,
   ClusterRoleModel,
   ClusterServiceBrokerModel,
@@ -54,6 +54,9 @@ import {
   SubscriptionModel,
   PackageManifestModel,
 } from '../models';
+
+const ReportReference: GroupVersionKind = referenceForModel(ChargebackReportModel);
+const ReportGenerationQueryReference: GroupVersionKind = 'chargeback.coreos.com~v1alpha1~ReportGenerationQuery';
 
 export const resourceDetailPages = ImmutableMap<GroupVersionKind | string, () => Promise<React.ComponentType<any>>>()
   .set(referenceForModel(ClusterModel), () => import('./clusters' /* webpackChunkName: "clusters" */).then(m => m.ClustersPage))
