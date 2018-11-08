@@ -1,72 +1,75 @@
-$color-service-dark: $color-pf-light-green-500;
+// == Config
 
-$color-pod-dark: $color-pf-cyan-400;
+// Root path where you plan to host console.
+$consoleWebDistPath: './';
+$consoleWebFontPath: $consoleWebDistPath + 'fonts';
 
-$color-namespace-dark: $color-pf-green-500;
 
-$color-node-dark: $color-pf-purple-400;
+// == Overrides of external dependency variables
 
-$color-container-dark: $color-pf-light-blue-400;
-
-$color-secret-dark: $color-pf-orange-400;
-
-$color-rbac-binding-dark: $color-pf-cyan-500;
-$color-rbac-role-dark: $color-pf-orange-600;
-
-$color-configmap-dark: $color-pf-purple-600;
-
-$color-pod-overlord: $color-pf-blue-600;
-
-$color-controller-dark: $color-pod-overlord;
-$color-replicaset-dark: $color-controller-dark;
-$color-job-dark: $color-controller-dark;
-$color-deployment-dark: $color-controller-dark;
-$color-deploymentconfig-dark: $color-controller-dark;
-$color-petset-dark: $color-controller-dark;
-
-$color-serviceaccount-dark: $color-configmap-dark;
-
-$color-alert-dark: $color-container-dark;
-$color-alertrule-dark: $color-configmap-dark;
-$color-alertmanager-dark: $color-pf-orange-500;
-
-$color-ingress-dark: $color-pf-purple-700;
-
-$color-grey-background-border: #ccc;
-
-$color-text-muted: $color-pf-black-600;
-$color-text-secondary: $color-pf-black-600;
-
-// TODO: Set to $zindex-navbar-fixed var from Bootstrap. (We can't currently
-// since Bootstrap vars are imported after this file.)
-$sidebar-z-index: 1030;
-
-// The z-index of the masthead needs to be greater than the left sidebar so
-// that the context selector opens over it.
-$masthead-z-index: $sidebar-z-index + 1;
-$masthead-height-desktop: 60px;
-$masthead-height-mobile: 40px;
-
-$co-m-label-line-height: 19px;
-
-// Masthead and navigation colors
-$color-os-nav-active: $color-pf-black-800;
-$color-os-nav-background: $color-pf-black-900;
-$color-os-nav-background-active: $color-pf-black-700;
-$color-os-nav-border-bottom: #050505;
-$color-os-nav-border-left-active: $color-pf-blue-300;
-$color-os-nav-hover: lighten($color-os-nav-active, 8%);
-$color-os-nav-icon: $color-pf-black-600;
-$color-os-nav-separator: $color-pf-black-900;
-$color-os-nav-title: $color-pf-black-300;
-
-// Patternfly defaults to 12px, which is too small in many cases
-$font-size-base: 13px;
-// Patternfly defaults to 40px, which leaves a lot more whitespace than we're used to
-$grid-gutter-width: 30px;
-
+$contextselector-pf-bootstrap-select-width-desktop: 145px;
+$contextselector-pf-bootstrap-select-width-mobile: $contextselector-pf-bootstrap-select-width-desktop;
 $contextselector-pf-dropdown-toggle-padding-bottom: 20px;
 $contextselector-pf-dropdown-toggle-padding-top: 20px;
 $contextselector-pf-margin-left: 20px;
-$contextselector-pf-bootstrap-select-width-desktop: 145px;
-$contextselector-pf-bootstrap-select-width-mobile: $contextselector-pf-bootstrap-select-width-desktop;
+// FontAwesome font path.
+$fa-font-path: $consoleWebFontPath;
+// PatternFly font path.
+$font-path: '~patternfly/dist/fonts/';
+// Patternfly defaults to 12px, which is too small in many cases.
+$font-size-base: 13px;
+// Patternfly defaults to 40px, which leaves a lot more whitespace than we're used to.
+$grid-gutter-width: 30px;
+// Bootstrap font path.
+$icon-font-path: $consoleWebFontPath + '/';
+
+
+// == Custom variables
+
+$co-m-label-line-height: 19px;
+$masthead-height-desktop: 60px;
+$masthead-height-mobile: 40px;
+// Same value as $zindex-navbar-fixed from Bootstrap.
+// $zindex-navbar-fixed is not available since Bootstrap vars are imported after this file.
+$sidebar-z-index: 1030;
+// -- Depend on vars defined above
+// The z-index of the masthead needs to be greater than the left sidebar so the context selector opens over it.
+$masthead-z-index: $sidebar-z-index + 1;
+
+
+// == Colors
+
+$color-alertmanager-dark: $color-pf-orange-500;
+$color-configmap-dark: $color-pf-purple-600;
+$color-container-dark: $color-pf-light-blue-400;
+$color-grey-background-border: #ccc;
+$color-ingress-dark: $color-pf-purple-700;
+$color-namespace-dark: $color-pf-green-500;
+$color-node-dark: $color-pf-purple-400;
+$color-os-nav-active: $color-pf-black-800;
+$color-os-nav-background-active: $color-pf-black-700;
+$color-os-nav-background: $color-pf-black-900;
+$color-os-nav-border-bottom: #050505;
+$color-os-nav-border-left-active: $color-pf-blue-300;
+$color-os-nav-icon: $color-pf-black-600;
+$color-os-nav-separator: $color-pf-black-900;
+$color-os-nav-title: $color-pf-black-300;
+$color-pod-dark: $color-pf-cyan-400;
+$color-pod-overlord: $color-pf-blue-600;
+$color-rbac-binding-dark: $color-pf-cyan-500;
+$color-rbac-role-dark: $color-pf-orange-600;
+$color-secret-dark: $color-pf-orange-400;
+$color-service-dark: $color-pf-light-green-500;
+$color-text-muted: $color-pf-black-600;
+$color-text-secondary: $color-pf-black-600;
+// -- Depend on color vars defined above
+$color-alert-dark: $color-container-dark;
+$color-alertrule-dark: $color-configmap-dark;
+$color-controller-dark: $color-pod-overlord;
+$color-deployment-dark: $color-controller-dark;
+$color-deploymentconfig-dark: $color-controller-dark;
+$color-job-dark: $color-controller-dark;
+$color-os-nav-hover: lighten($color-os-nav-active, 8%);
+$color-petset-dark: $color-controller-dark;
+$color-replicaset-dark: $color-controller-dark;
+$color-serviceaccount-dark: $color-configmap-dark;
