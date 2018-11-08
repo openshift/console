@@ -384,9 +384,7 @@ const SilencedAlertsList = connect(silencedAlertsToProps)(
       <div className="co-m-table-grid__body">
         {_.sortBy(alerts, alertDescription).map((a, i) => <div className="row co-resource-list__item" key={i}>
           <div className="col-xs-9">
-            <div>
-              <Link className="co-resource-link" to={alertURL(a.labels.alertname, a.labels)}>{a.labels.alertname}</Link>
-            </div>
+            <Link className="co-resource-link" to={alertURL(a.labels.alertname, a.labels)}>{a.labels.alertname}</Link>
             <div className="monitoring-description">{alertDescription(a)}</div>
           </div>
           <div className="col-xs-3">{a.labels.severity}</div>
@@ -483,11 +481,9 @@ const AlertRow = ({obj}) => {
 
   return <ResourceRow obj={obj}>
     <div className="col-xs-7">
-      <div>
-        <span className="co-resource-link">
-          <MonitoringResourceIcon resource={AlertResource} />
-          <Link to={alertURL(labels.alertname, labels)} className="co-resource-link__resource-name">{labels.alertname}</Link>
-        </span>
+      <div className="co-resource-link">
+        <MonitoringResourceIcon resource={AlertResource} />
+        <Link to={alertURL(labels.alertname, labels)} className="co-resource-link__resource-name">{labels.alertname}</Link>
       </div>
       <div className="monitoring-description">{annotations.description || annotations.message}</div>
     </div>
@@ -648,11 +644,9 @@ const SilenceRow = ({obj}) => {
 
   return <ResourceRow obj={obj}>
     <div className="col-xs-7">
-      <div>
-        <div className="co-resource-link">
-          <MonitoringResourceIcon resource={SilenceResource} />
-          <Link className="co-resource-link__resource-name" title={obj.id} to={`${SilenceResource.path}/${obj.id}`}>{obj.name}</Link>
-        </div>
+      <div className="co-resource-link">
+        <MonitoringResourceIcon resource={SilenceResource} />
+        <Link className="co-resource-link__resource-name" title={obj.id} to={`${SilenceResource.path}/${obj.id}`}>{obj.name}</Link>
       </div>
       <div className="monitoring-label-list">
         <SilenceMatchersList silence={obj} />
