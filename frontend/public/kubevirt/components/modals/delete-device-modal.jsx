@@ -79,7 +79,7 @@ class DeleteDeviceModal extends PromiseComponent {
         Are you sure you want to delete <strong>{device.name}</strong>
         <span> from  <strong>{vm.metadata.name} </strong>?</span>
       </ModalBody>
-      <ModalSubmitFooter errorMessage="" inProgress={false} submitText={'Delete'} cancel={this._cancel} />
+      <ModalSubmitFooter errorMessage={this.state.errorMessage} inProgress={this.state.inProgress} submitText={'Delete'} cancel={this._cancel} />
     </Form>;
   }
 }
