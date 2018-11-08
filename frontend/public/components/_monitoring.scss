@@ -15,8 +15,6 @@ $monitoring-line-height: 18px;
 }
 
 .monitoring-description {
-  margin-left: 16px;
-
   // Limit to $num-lines lines of text. Truncate with an ellipsis in WebKit. Just overflow hidden for other browsers.
   $num-lines: 2;
   display: -webkit-box;
