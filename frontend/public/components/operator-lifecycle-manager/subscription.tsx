@@ -4,11 +4,12 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { match, Link } from 'react-router-dom';
 
-import { List, ListHeader, ColHead, DetailsPage, ListPage } from '../factory';
+import { List, ListHeader, ColHead, DetailsPage, MultiListPage } from '../factory';
+import { requireOperatorGroup } from './operator-group';
 import { MsgBox, ResourceLink, ResourceKebab, navFactory, Kebab, ResourceSummary, LoadingInline, SectionHeading } from '../utils';
-import { SubscriptionKind, SubscriptionState, PackageManifestKind, InstallPlanApproval, ClusterServiceVersionKind, olmNamespace } from './index';
+import { SubscriptionKind, SubscriptionState, PackageManifestKind, InstallPlanApproval, ClusterServiceVersionKind, olmNamespace, OperatorGroupKind } from './index';
 import { referenceForModel, k8sKill, k8sUpdate } from '../../module/k8s';
-import { SubscriptionModel, ClusterServiceVersionModel, CatalogSourceModel, InstallPlanModel, PackageManifestModel } from '../../models';
+import { SubscriptionModel, ClusterServiceVersionModel, CatalogSourceModel, InstallPlanModel, PackageManifestModel, OperatorGroupModel } from '../../models';
 import { createDisableApplicationModal } from '../modals/disable-application-modal';
 import { createSubscriptionChannelModal } from '../modals/subscription-channel-modal';
 import { createInstallPlanApprovalModal } from '../modals/installplan-approval-modal';
@@ -65,22 +66,28 @@ export const SubscriptionRow: React.SFC<SubscriptionRowProps> = (props) => {
   </div>;
 };
 
-export const SubscriptionsList: React.SFC<SubscriptionsListProps> = (props) => <List
+export const SubscriptionsList = requireOperatorGroup((props: SubscriptionsListProps) => <List
   {...props}
   Row={SubscriptionRow}
   Header={SubscriptionHeader}
-  EmptyMsg={() => <MsgBox title="No Subscriptions Found" detail="Each namespace can subscribe to a single channel of a package for automatic updates." />} />;
+  EmptyMsg={() => <MsgBox title="No Subscriptions Found" detail="Each namespace can subscribe to a single channel of a package for automatic updates." />} />);
 
-export const SubscriptionsPage: React.SFC<SubscriptionsPageProps> = (props) => <ListPage
-  {...props}
-  kind={referenceForModel(SubscriptionModel)}
-  title="Subscriptions"
-  showTitle={true}
-  canCreate={true}
-  createProps={{to: props.namespace ? `/k8s/ns/${props.namespace}/${referenceForModel(PackageManifestModel)}` : `/k8s/all-namespaces/${referenceForModel(PackageManifestModel)}`}}
-  createButtonText="Create Subscription"
-  ListComponent={SubscriptionsList}
-  filterLabel="Subscriptions by package" />;
+export const SubscriptionsPage: React.SFC<SubscriptionsPageProps> = (props) => {
+  return <MultiListPage
+    {...props}
+    resources={[
+      {kind: referenceForModel(SubscriptionModel), namespace: props.namespace, namespaced: true, prop: 'subscription'},
+      {kind: referenceForModel(OperatorGroupModel), namespace: props.namespace, namespaced: true, prop: 'operatorGroup'},
+    ]}
+    flatten={resources => _.get(resources.subscription, 'data', [])}
+    title="Subscriptions"
+    showTitle={true}
+    canCreate={true}
+    createProps={{to: props.namespace ? `/k8s/ns/${props.namespace}/${referenceForModel(PackageManifestModel)}` : `/k8s/all-namespaces/${referenceForModel(PackageManifestModel)}`}}
+    createButtonText="Create Subscription"
+    ListComponent={SubscriptionsList}
+    filterLabel="Subscriptions by package" />;
+};
 
 export const SubscriptionDetails: React.SFC<SubscriptionDetailsProps> = (props) => {
   const {obj, installedCSV, pkg} = props;
@@ -106,7 +113,7 @@ export const SubscriptionDetails: React.SFC<SubscriptionDetailsProps> = (props) 
             </dd>
             <dt>Starting Version</dt>
             <dd>{obj.spec.startingCSV || 'None'}</dd>
-            <dt>Catalog</dt>
+            <dt>Catalog Source</dt>
             <dd>
               <ResourceLink kind={referenceForModel(CatalogSourceModel)} name={obj.spec.source} namespace={catalogNS} title={obj.spec.source} />
             </dd>
@@ -226,6 +233,7 @@ export type SubscriptionsListProps = {
   loaded: boolean;
   loadError?: string;
   data: (SubscriptionKind)[];
+  operatorGroup: {loaded: boolean, data?: OperatorGroupKind[]};
 };
 
 export type SubscriptionHeaderProps = {

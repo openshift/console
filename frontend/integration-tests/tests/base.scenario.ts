@@ -38,6 +38,7 @@ describe('Basic console test', () => {
       await crudView.createYAMLButton.click();
       await browser.wait(until.presenceOf($('.modal-body__field')));
       await $$('.modal-body__field').get(0).$('input').sendKeys(testName);
+      await $$('.modal-body__field').get(1).$('input').sendKeys(`test-name=${testName}`);
       await $('.modal-content').$('#confirm-action').click();
       await browser.wait(until.urlContains(`/${testName}`), BROWSER_TIMEOUT);
     }

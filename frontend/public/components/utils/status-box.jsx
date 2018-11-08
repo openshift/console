@@ -54,6 +54,7 @@ const Data = ({EmptyMsg, label, data, children}) => {
   return <div className="loading-box loading-box__loaded">{children}</div>;
 };
 
+/** @type {React.SFC<{label?: string, loadError?: string | Object, loaded?: boolean, data?: any, EmptyMsg?: React.ComponentType}>} */
 export const StatusBox = props => {
   const {label, loadError, loaded} = props;
 

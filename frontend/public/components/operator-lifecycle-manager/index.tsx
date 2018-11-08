@@ -3,14 +3,14 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 
-import { K8sResourceKind, GroupVersionKind, OwnerReference } from '../../module/k8s';
+import { K8sResourceKind, GroupVersionKind, OwnerReference, Selector } from '../../module/k8s';
 import { Descriptor } from './descriptors/types';
-import * as operatorLogo from '../../imgs/operator.svg';
-
 export { ClusterServiceVersionsDetailsPage, ClusterServiceVersionsPage } from './clusterserviceversion';
 export { ClusterServiceVersionResourcesDetailsPage, ClusterServiceVersionResourceLink } from './clusterserviceversion-resource';
 export { CatalogSourceDetailsPage, CreateSubscriptionYAML } from './catalog-source';
 export { SubscriptionsPage } from './subscription';
+
+import * as operatorLogo from '../../imgs/operator.svg';
 
 export const appCatalogLabel = 'alm-catalog';
 export enum AppCatalog {
@@ -42,6 +42,7 @@ export enum CSVConditionReason {
   CSVReasonComponentUnhealthy = 'ComponentUnhealthy',
   CSVReasonBeingReplaced = 'BeingReplaced',
   CSVReasonReplaced = 'Replaced',
+  CSVReasonCopied = 'Copied',
 }
 
 export enum InstallPlanApproval {
@@ -214,6 +215,13 @@ export type PackageManifestKind = {
     }[];
     defaultChannel: string;
   };
+} & K8sResourceKind;
+
+export type OperatorGroupKind = {
+  apiVersion: 'operators.coreos.com/v1alpha2';
+  kind: 'OperatorGroup';
+  spec: {selector: Selector};
+  status?: {namespaces: K8sResourceKind[]};
 } & K8sResourceKind;
 
 // TODO(alecmerdler): Shouldn't be needed anymore
