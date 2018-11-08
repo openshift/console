@@ -271,9 +271,9 @@ export const VirtualMachinesDetailsPage = props => {
   };
   const pages = [
     navFactory.details(Details),
+    navFactory.editYaml(),
     consolePage,
     navFactory.events(VmiEvents),
-    navFactory.editYaml()
   ];
   return (
     <DetailsPage
