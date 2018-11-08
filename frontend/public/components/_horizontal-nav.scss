@@ -72,9 +72,9 @@ $co-m-horizontal-nav__menu-item-link-padding-lr-mobile: 15px;
   &.co-m-horizontal-nav-item--active {
     a,
     button {
-      color: $color-highlight-blue;
+      color: $color-pf-blue-400;
       &::after {
-        background: $color-highlight-blue;
+        background: $color-pf-blue-400;
       }
     }
   }

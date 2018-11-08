@@ -1,18 +1,3 @@
-.btn-unselected {
-  &:hover {
-    color: $color-highlight-blue;
-  }
-}
-
-.btn-selected {
-  background-color: $color-highlight-blue;
-  color: white;
-  &:hover {
-    background-color: $color-highlight-blue-dark;
-    color: white;
-  }
-}
-
 .co-m-table-grid {
   &__head {
     color: $color-text-secondary;
