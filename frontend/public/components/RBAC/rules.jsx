@@ -116,10 +116,7 @@ const RuleCog = ({name, namespace, i}) => {
 };
 
 const Rule = ({resources, nonResourceURLs, verbs, apiGroups, name, namespace, i}) => <div className="rbac-rule">
-  <div className="col-xs-5 col-sm-4 col-md-3 col-lg-2 rbac-rule__actions">
-    <div className="rbac-rule__cog">
-      <RuleCog name={name} namespace={namespace} i={i} />
-    </div>
+  <div className="col-xs-5 col-sm-4 col-md-3 col-lg-2">
     <Actions verbs={verbs} />
   </div>
   <div className="hidden-xs col-sm-4 col-md-3 col-lg-3">
@@ -127,5 +124,8 @@ const Rule = ({resources, nonResourceURLs, verbs, apiGroups, name, namespace, i}
   </div>
   <div className="col-xs-7 col-sm-4 col-md-6 col-lg-7">
     <Resources resources={resources} nonResourceURLs={nonResourceURLs} />
+  </div>
+  <div className="co-resource-kebab">
+    <RuleCog name={name} namespace={namespace} i={i} />
   </div>
 </div>;
