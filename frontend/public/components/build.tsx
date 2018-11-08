@@ -192,8 +192,7 @@ const BuildsHeader = props => <ListHeader>
 </ListHeader>;
 
 const BuildsRow: React.SFC<BuildsRowProps> = ({ obj }) => <div className="row co-resource-list__item">
-  <div className="col-sm-3 col-xs-6 co-resource-link-wrapper">
-    <ResourceCog actions={menuActions} kind={BuildsReference} resource={obj} />
+  <div className="col-sm-3 col-xs-6">
     <ResourceLink kind={BuildsReference} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
   </div>
   <div className="col-sm-3 col-xs-6 co-break-word">
@@ -204,6 +203,9 @@ const BuildsRow: React.SFC<BuildsRowProps> = ({ obj }) => <div className="row co
   </div>
   <div className="col-sm-3 hidden-xs">
     {fromNow(obj.metadata.creationTimestamp)}
+  </div>
+  <div className="co-resource-kebab">
+    <ResourceCog actions={menuActions} kind={BuildsReference} resource={obj} />
   </div>
 </div>;
 

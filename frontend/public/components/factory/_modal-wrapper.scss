@@ -8,21 +8,6 @@
   z-index: $zindex-modal;
 }
 
-.ReactModal__Content {
-  // close icon
-  .fa-times-circle:hover {
-    cursor: pointer;
-    color: $black;
-  }
-}
-
-.ReactModal__Content--after-open {
-  -webkit-transform: translate(0, 0);
-  -ms-transform: translate(0, 0);
-  -o-transform: translate(0, 0);
-  transform: translate(0, 0);
-}
-
 .tags-list {
   &__row {
     padding-bottom: 15px;

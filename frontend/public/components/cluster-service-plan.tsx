@@ -17,7 +17,7 @@ const ClusterServicePlanHeader: React.SFC<ClusterServicePlanHeaderProps> = props
 </ListHeader>;
 
 const ClusterServicePlanListRow: React.SFC<ClusterServicePlanRowProps> = ({obj: servicePlan}) => <ResourceRow obj={servicePlan}>
-  <div className="col-sm-4 col-xs-6 co-resource-link-wrapper">
+  <div className="col-sm-4 col-xs-6">
     <ResourceLink kind="ClusterServicePlan" name={servicePlan.metadata.name} displayName={servicePlan.spec.externalName} />
   </div>
   <div className="col-sm-4 col-xs-6">

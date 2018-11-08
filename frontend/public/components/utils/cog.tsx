@@ -14,7 +14,7 @@ import { connectToModel } from '../../kinds';
 const CogItems: React.SFC<CogItemsProps> = ({options, onClick}) => {
   const visibleOptions = _.reject(options, o => _.get(o, 'hidden', false));
   const lis = _.map(visibleOptions, (o, i) => <li key={i}><a onClick={e => onClick(e, o)}>{o.label}</a></li>);
-  return <ul className="dropdown-menu dropdown-menu--block co-m-cog__dropdown">
+  return <ul className="dropdown-menu dropdown-menu-right dropdown-menu--block co-m-cog__dropdown">
     {lis}
   </ul>;
 };
@@ -110,13 +110,15 @@ export class Cog extends DropdownMixin {
     return <div className={classNames('co-m-cog-wrapper', {'co-m-cog-wrapper--enabled': !isDisabled})} id={id}>
       { isDisabled ?
         <Tooltip content="disabled">
-          <div ref={this.dropdownElement} className={classNames('co-m-cog', {'co-m-cog--disabled' : isDisabled})} >
-            <span className={classNames('fa', 'fa-cog', 'co-m-cog__icon', {'co-m-cog__icon--disabled' : isDisabled})} aria-hidden="true"></span>
+          <div ref={this.dropdownElement} className="co-m-cog co-m-cog--disabled" >
+            <span className="fa fa-ellipsis-v co-m-cog__icon co-m-cog__icon--disabled" aria-hidden="true"></span>
             <span className="sr-only">Actions</span>
           </div>
         </Tooltip> :
-        <div ref={this.dropdownElement} onClick={this.toggle} className={classNames('co-m-cog', {'co-m-cog--disabled' : isDisabled})} >
-          <span className={classNames('fa', 'fa-cog', 'co-m-cog__icon', {'co-m-cog__icon--disabled' : isDisabled})} aria-hidden="true"></span>
+        <div ref={this.dropdownElement} className="co-m-cog" >
+          <button type="button" aria-label="Actions" aria-haspopup="true" className="btn btn-link co-m-cog__button" onClick={this.toggle}>
+            <span className="fa fa-ellipsis-v co-m-cog__icon" aria-hidden="true"></span>
+          </button>
           <span className="sr-only">Actions</span>
           { this.state.active && <CogItems options={options} onClick={this.onClick} /> }
         </div>

@@ -126,8 +126,7 @@ const RouteListHeader: React.SFC<RouteHeaderProps> = props => <ListHeader>
 </ListHeader>;
 
 const RouteListRow: React.SFC<RoutesRowProps> = ({obj: route}) => <ResourceRow obj={route}>
-  <div className="col-lg-3 col-md-3 col-sm-4 col-xs-6 co-resource-link-wrapper">
-    <ResourceCog actions={menuActions} kind="Route" resource={route} />
+  <div className="col-lg-3 col-md-3 col-sm-4 col-xs-6">
     <ResourceLink kind="Route" name={route.metadata.name}
       namespace={route.metadata.namespace} title={route.metadata.uid} />
   </div>
@@ -141,6 +140,9 @@ const RouteListRow: React.SFC<RoutesRowProps> = ({obj: route}) => <ResourceRow o
     <ResourceLink kind="Service" name={route.spec.to.name} namespace={route.metadata.namespace} title={route.spec.to.name} />
   </div>
   <div className="col-lg-2 hidden-md hidden-sm hidden-xs"><RouteStatus obj={route} /></div>
+  <div className="co-resource-kebab">
+    <ResourceCog actions={menuActions} kind="Route" resource={route} />
+  </div>
 </ResourceRow>;
 
 class TLSSettings extends SafetyFirst<TLSDataProps, TLSDataState> {

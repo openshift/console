@@ -28,6 +28,7 @@ export class RequestSizeInput extends React.Component<RequestSizeInputProps> {
           <input
             className="form-control"
             type="number"
+            step="any"
             onChange={this.onValueChange}
             placeholder={this.props.placeholder}
             aria-describedby={describedBy}

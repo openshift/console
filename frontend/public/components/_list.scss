@@ -29,6 +29,7 @@
 .co-resource-list__item {
   height: 100%;
   transition: all 0.25s;
+  position: relative;
 }
 
 .compaction-btn {
@@ -38,3 +39,9 @@
 .co-m-cog__dropdown {
   margin-bottom: 10px;
 }
+
+.co-resource-kebab {
+  position: absolute;
+  right: 0px;
+}
+

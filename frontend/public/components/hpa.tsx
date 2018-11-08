@@ -181,8 +181,7 @@ const HorizontalPodAutoscalersHeader = props => <ListHeader>
 </ListHeader>;
 
 const HorizontalPodAutoscalersRow: React.SFC<HorizontalPodAutoscalersRowProps> = ({obj}) => <div className="row co-resource-list__item">
-  <div className="col-lg-3 col-md-3 col-sm-4 col-xs-6 co-resource-link-wrapper">
-    <ResourceCog actions={menuActions} kind={HorizontalPodAutoscalersReference} resource={obj} />
+  <div className="col-lg-3 col-md-3 col-sm-4 col-xs-6">
     <ResourceLink kind={HorizontalPodAutoscalersReference} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
   </div>
   <div className="col-lg-2 col-md-3 col-sm-4 col-xs-6 co-break-word">
@@ -199,6 +198,9 @@ const HorizontalPodAutoscalersRow: React.SFC<HorizontalPodAutoscalersRowProps> =
   </div>
   <div className="col-lg-1 hidden-md hidden-sm hidden-xs">
     {obj.spec.maxReplicas}
+  </div>
+  <div className="co-resource-kebab">
+    <ResourceCog actions={menuActions} kind={HorizontalPodAutoscalersReference} resource={obj} />
   </div>
 </div>;
 

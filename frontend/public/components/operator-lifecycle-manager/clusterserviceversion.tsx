@@ -60,7 +60,6 @@ export const ClusterServiceVersionRow = withFallback<ClusterServiceVersionRowPro
 
   return <div className="row co-resource-list__item">
     <div className="col-lg-3 col-md-4 col-sm-4 col-xs-6" style={{display: 'flex', alignItems: 'center'}}>
-      <ResourceCog resource={obj} kind={referenceFor(obj)} actions={menuActions} />
       <Link to={route}>
         <ClusterServiceVersionLogo icon={_.get(obj, 'spec.icon', [])[0]} displayName={obj.spec.displayName} version={obj.spec.version} provider={obj.spec.provider} />
       </Link>
@@ -77,6 +76,9 @@ export const ClusterServiceVersionRow = withFallback<ClusterServiceVersionRowPro
         <Link to={`${route}/${referenceForCRDDesc(desc)}`} title={desc.name}>{desc.displayName}</Link>
       </div>)}
       { obj.spec.customresourcedefinitions.owned.length > 4 && <Link to={`${route}/instances`} title={`View ${obj.spec.customresourcedefinitions.owned.length - 4} more...`}>{`View ${obj.spec.customresourcedefinitions.owned.length - 4} more...`}</Link>}
+    </div>
+    <div className="co-resource-kebab">
+      <ResourceCog resource={obj} kind={referenceFor(obj)} actions={menuActions} />
     </div>
   </div>;
 });

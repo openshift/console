@@ -98,9 +98,9 @@ const editSilence = silence => ({
 });
 
 const cancelSilence = (silence, urls) => ({
-  label: 'Cancel Silence',
+  label: 'Expire Silence',
   callback: () => confirmModal({
-    title: 'Cancel Silence',
+    title: 'Expire Silence',
     message: 'Are you sure you want to expire this silence?',
     btnText: 'Expire Silence',
     executeFn: () => coFetchJSON.delete(`${urls[MonitoringRoutes.AlertManager]}/api/v1/silence/${silence.id}`),
@@ -280,13 +280,13 @@ const ActiveAlerts = ({alerts}) => <div className="co-m-table-grid co-m-table-gr
   </div>
   <div className="co-m-table-grid__body">
     {_.sortBy(alerts, alertDescription).map((a, i) => <ResourceRow key={i} obj={a}>
-      <div className="col-xs-6 co-resource-link-wrapper">
-        <Cog options={[silenceAlert(a)]} />
+      <div className="col-xs-6">
         <Link className="co-resource-link" to={alertURL(a.labels.alertname, a.labels)}>{alertDescription(a)}</Link>
       </div>
       <div className="col-sm-2 hidden-xs"><Timestamp timestamp={a.activeAt} /></div>
       <div className="col-sm-2 col-xs-3"><AlertState state={a.state} /></div>
       <div className="col-sm-2 col-xs-3 co-break-word">{a.value}</div>
+      <div className="co-resource-kebab"><Cog options={[silenceAlert(a)]} /></div>
     </ResourceRow>)}
   </div>
 </div>;
@@ -384,13 +384,15 @@ const SilencedAlertsList = connect(silencedAlertsToProps)(
       <div className="co-m-table-grid__body">
         {_.sortBy(alerts, alertDescription).map((a, i) => <div className="row co-resource-list__item" key={i}>
           <div className="col-xs-9">
-            <div className="co-resource-link-wrapper">
-              <Cog options={[viewAlertRule(a)]} />
+            <div>
               <Link className="co-resource-link" to={alertURL(a.labels.alertname, a.labels)}>{a.labels.alertname}</Link>
             </div>
             <div className="monitoring-description">{alertDescription(a)}</div>
           </div>
           <div className="col-xs-3">{a.labels.severity}</div>
+          <div className="co-resource-kebab">
+            <Cog options={[viewAlertRule(a)]} />
+          </div>
         </div>)}
       </div>
     </div>
@@ -481,8 +483,7 @@ const AlertRow = ({obj}) => {
 
   return <ResourceRow obj={obj}>
     <div className="col-xs-7">
-      <div className="co-resource-link-wrapper">
-        <Cog options={state === 'firing' || state === 'pending' ? [silenceAlert(obj), viewAlertRule(obj)] : [viewAlertRule(obj)]} />
+      <div>
         <span className="co-resource-link">
           <MonitoringResourceIcon resource={AlertResource} />
           <Link to={alertURL(labels.alertname, labels)} className="co-resource-link__resource-name">{labels.alertname}</Link>
@@ -495,6 +496,9 @@ const AlertRow = ({obj}) => {
       {activeAt && <div className="text-muted monitoring-timestamp">since&nbsp;<Timestamp timestamp={activeAt} /></div>}
     </div>
     <div className="col-xs-2">{_.startCase(_.get(labels, 'severity', '-'))}</div>
+    <div className="co-resource-kebab">
+      <Cog options={state === 'firing' || state === 'pending' ? [silenceAlert(obj), viewAlertRule(obj)] : [viewAlertRule(obj)]} />
+    </div>
   </ResourceRow>;
 };
 
@@ -644,8 +648,7 @@ const SilenceRow = ({obj}) => {
 
   return <ResourceRow obj={obj}>
     <div className="col-xs-7">
-      <div className="co-resource-link-wrapper">
-        <SilenceCog silence={obj} />
+      <div>
         <div className="co-resource-link">
           <MonitoringResourceIcon resource={SilenceResource} />
           <Link className="co-resource-link__resource-name" title={obj.id} to={`${SilenceResource.path}/${obj.id}`}>{obj.name}</Link>
@@ -664,6 +667,9 @@ const SilenceRow = ({obj}) => {
       </div>
     </div>
     <div className="col-xs-2"><SilencedAlertsCount silence={obj} /></div>
+    <div className="co-resource-kebab">
+      <SilenceCog silence={obj} />
+    </div>
   </ResourceRow>;
 };
 

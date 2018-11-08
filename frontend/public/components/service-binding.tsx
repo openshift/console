@@ -80,8 +80,7 @@ const ServiceBindingsHeader = props => <ListHeader>
 </ListHeader>;
 
 const ServiceBindingsRow: React.SFC<ServiceBindingsRowProps> = ({obj}) => <div className="row co-resource-list__item">
-  <div className="col-md-3 col-sm-4 col-xs-6 co-resource-link-wrapper">
-    <ResourceCog actions={menuActions} kind={ServiceBindingsReference} resource={obj} />
+  <div className="col-md-3 col-sm-4 col-xs-6">
     <ResourceLink kind={ServiceBindingsReference} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
   </div>
   <div className="col-md-2 col-sm-4 col-xs-6 co-break-word">
@@ -95,6 +94,9 @@ const ServiceBindingsRow: React.SFC<ServiceBindingsRowProps> = ({obj}) => <div c
   </div>
   <div className="col-md-2 hidden-sm hidden-xs co-break-word">
     <StatusWithIcon obj={obj} />
+  </div>
+  <div className="co-resource-kebab">
+    <ResourceCog actions={menuActions} kind={ServiceBindingsReference} resource={obj} />
   </div>
 </div>;
 

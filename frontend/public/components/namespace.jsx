@@ -52,8 +52,7 @@ const NamespaceHeader = props => <ListHeader>
 </ListHeader>;
 
 const NamespaceRow = ({obj: ns}) => <ResourceRow obj={ns}>
-  <div className="col-sm-4 col-xs-6 co-resource-link-wrapper">
-    <ResourceCog actions={nsMenuActions} kind="Namespace" resource={ns} />
+  <div className="col-sm-4 col-xs-6">
     <ResourceLink kind="Namespace" name={ns.metadata.name} title={ns.metadata.uid} />
   </div>
   <div className="col-sm-4 col-xs-6 co-break-word">
@@ -61,6 +60,9 @@ const NamespaceRow = ({obj: ns}) => <ResourceRow obj={ns}>
   </div>
   <div className="col-sm-4 hidden-xs">
     <LabelList kind="Namespace" labels={ns.metadata.labels} />
+  </div>
+  <div className="co-resource-kebab">
+    <ResourceCog actions={nsMenuActions} kind="Namespace" resource={ns} />
   </div>
 </ResourceRow>;
 
@@ -80,8 +82,7 @@ const ProjectRow = ({obj: project}) => {
   const displayName = getDisplayName(project);
   const requester = getRequester(project);
   return <ResourceRow obj={project}>
-    <div className="col-md-3 col-sm-6 col-xs-8 co-resource-link-wrapper">
-      <ResourceCog actions={projectMenuActions} kind="Project" resource={project} />
+    <div className="col-md-3 col-sm-6 col-xs-8">
       <ResourceLink kind="Project" name={project.metadata.name} title={displayName || project.metadata.uid} />
     </div>
     <div className="col-md-3 col-sm-3 col-xs-4">
@@ -92,6 +93,9 @@ const ProjectRow = ({obj: project}) => {
     </div>
     <div className="col-md-3 hidden-sm hidden-xs">
       <LabelList kind="Project" labels={project.metadata.labels} />
+    </div>
+    <div className="co-resource-kebab">
+      <ResourceCog actions={projectMenuActions} kind="Project" resource={project} />
     </div>
   </ResourceRow>;
 };

@@ -28,8 +28,6 @@ describe('Installing a service from a Catalog Source', () => {
   it('displays Catalog Source with expected available packages', async() => {
     await sidenavView.clickNavLink(['Operators', 'Package Manifests']);
     await catalogView.isLoaded();
-    await catalogView.viewCatalogDetail('Red Hat Operators');
-    await catalogView.isLoaded();
 
     openCloudServices.forEach(name => {
       expect(catalogView.entryRowFor(name).isDisplayed()).toBe(true);
@@ -37,7 +35,7 @@ describe('Installing a service from a Catalog Source', () => {
   });
 
   it('displays YAML editor for creating a subscription to a service', async() => {
-    await catalogView.createSubscriptionFor('Prometheus Operator');
+    await catalogView.createSubscriptionFor('Prometheus');
     await browser.wait(until.presenceOf($('.ace_text-input')));
 
     expect($('.yaml-editor__header').getText()).toEqual('Create Subscription');

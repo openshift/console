@@ -41,8 +41,7 @@ export const ClusterServiceVersionResourceRow: React.SFC<ClusterServiceVersionRe
   const {obj} = props;
 
   return <div className="row co-resource-list__item">
-    <div className="col-xs-2 co-resource-link-wrapper">
-      <ResourceCog actions={Cog.factory.common} kind={referenceFor(obj)} resource={obj} />
+    <div className="col-xs-2">
       <ClusterServiceVersionResourceLink obj={obj} />
     </div>
     <div className="col-xs-2">
@@ -59,6 +58,9 @@ export const ClusterServiceVersionResourceRow: React.SFC<ClusterServiceVersionRe
     </div>
     <div className="col-xs-2">
       <Timestamp timestamp={obj.metadata.creationTimestamp} />
+    </div>
+    <div className="co-resource-kebab">
+      <ResourceCog actions={Cog.factory.common} kind={referenceFor(obj)} resource={obj} />
     </div>
   </div>;
 };

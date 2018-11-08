@@ -7,21 +7,21 @@
 }
 
 .co-m-status--critical {
-  color: $red-dark;
+  color: $color-pf-red-200 ;
 }
 
 .co-m-status--ok {
-  color: $green;
+  color: $color-pf-green;
 }
 
 .co-m-status--warning {
-  color: $orange;
+  color: $color-pf-orange;
 }
 
 .co-m-status--unknown {
-  color: $co-gray;
+  color: $color-pf-black-600;
 }
 
 .co-m-status--access-denied {
-  color: $co-gray;
+  color: $color-pf-black-600;
 }

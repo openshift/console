@@ -41,8 +41,7 @@ export const PodRow = ({obj: pod}) => {
     : <span className="co-error co-icon-and-text"><i className="fa fa-times-circle co-icon-and-text__icon" aria-hidden="true" /><CamelCaseWrap value={phase} /></span>;
 
   return <ResourceRow obj={pod}>
-    <div className="col-lg-2 col-md-3 col-sm-4 col-xs-6 co-resource-link-wrapper">
-      <ResourceCog actions={menuActions} kind="Pod" resource={pod} isDisabled={phase === 'Terminating'} />
+    <div className="col-lg-2 col-md-3 col-sm-4 col-xs-6">
       <ResourceLink kind="Pod" name={pod.metadata.name} namespace={pod.metadata.namespace} title={pod.metadata.uid} />
     </div>
     <div className="col-lg-2 col-md-2 col-sm-4 col-xs-6 co-break-word">
@@ -56,6 +55,9 @@ export const PodRow = ({obj: pod}) => {
     </div>
     <div className="col-lg-2 col-md-2 hidden-sm hidden-xs">{status}</div>
     <div className="col-lg-2 hidden-md hidden-sm hidden-xs"><Readiness pod={pod} /></div>
+    <div className="co-resource-kebab">
+      <ResourceCog actions={menuActions} kind="Pod" resource={pod} isDisabled={phase === 'Terminating'} />
+    </div>
   </ResourceRow>;
 };
 

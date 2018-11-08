@@ -78,8 +78,7 @@ const ReportsHeader = props => <ListHeader>
 
 const ReportsRow: React.SFC<ReportsRowProps> = ({obj}) => {
   return <div className="row co-resource-list__item">
-    <div className="col-lg-3 col-md-3 col-xs-4 co-resource-link-wrapper">
-      <ResourceCog actions={menuActions} kind={ReportReference} resource={obj} />
+    <div className="col-lg-3 col-md-3 col-xs-4">
       <ResourceLink kind={ReportReference} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
     </div>
     <div className="col-lg-2 col-md-3 col-xs-4"><ResourceLink kind="Namespace" name={obj.metadata.namespace} namespace={undefined} title={obj.metadata.namespace} /></div>
@@ -87,6 +86,9 @@ const ReportsRow: React.SFC<ReportsRowProps> = ({obj}) => {
     <div className="col-lg-1 col-md-2 col-xs-4">{_.get(obj, ['status', 'phase'])}</div>
     <div className="col-lg-2 col-md-2 hidden-sm hidden-xs"><Timestamp timestamp={_.get(obj, ['spec', 'reportingStart'])} /></div>
     <div className="col-lg-2 col-md-2 hidden-sm hidden-xs"><Timestamp timestamp={_.get(obj, ['spec', 'reportingEnd'])} /></div>
+    <div className="co-resource-kebab">
+      <ResourceCog actions={menuActions} kind={ReportReference} resource={obj} />
+    </div>
   </div>;
 };
 
@@ -416,13 +418,15 @@ const ReportGenerationQueriesHeader = props => <ListHeader>
 
 const ReportGenerationQueriesRow: React.SFC<ReportGenerationQueriesRowProps> = ({obj}) => {
   return <div className="row co-resource-list__item">
-    <div className="col-md-3 col-sm-4 co-resource-link-wrapper">
-      <ResourceCog actions={menuActions} kind={ReportGenerationQueryReference} resource={obj} />
+    <div className="col-md-3 col-sm-4">
       <ResourceLink kind={ReportGenerationQueryReference} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
     </div>
     <div className="col-md-3 col-sm-4"><ResourceLink kind="Namespace" namespace={undefined} name={obj.metadata.namespace} title={obj.metadata.namespace} /></div>
     <div className="col-md-3 hidden-sm hidden-xs"><LabelList kind={ReportGenerationQueryReference} labels={_.get(obj, ['metadata', 'labels'])} /></div>
     <div className="col-md-3 col-sm-4"><Timestamp timestamp={_.get(obj, ['metadata', 'creationTimestamp'])} /></div>
+    <div className="co-resource-kebab">
+      <ResourceCog actions={menuActions} kind={ReportGenerationQueryReference} resource={obj} />
+    </div>
   </div>;
 };
 

@@ -41,7 +41,7 @@ const ClusterServiceClassHeader: React.SFC<ClusterServiceClassHeaderProps> = pro
 const ClusterServiceClassListRow: React.SFC<ClusterServiceClassRowProps> = ({obj: serviceClass}) => {
   const path = resourcePathFromModel(ClusterServiceClassModel, serviceClass.metadata.name);
   return <ResourceRow obj={serviceClass}>
-    <div className="col-sm-6 col-xs-12 co-resource-link-wrapper">
+    <div className="col-sm-6 col-xs-12">
       <ClusterServiceClassIcon serviceClass={serviceClass} />
       <Link className="co-cluster-service-class-link" to={path}>{serviceClassDisplayName(serviceClass)}</Link>
     </div>
