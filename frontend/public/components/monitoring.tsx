@@ -880,10 +880,8 @@ const CreateSilence = () => {
     : <SilenceForm defaults={{matchers}} saveButtonText="Create" title="Silence Alert" />;
 };
 
-export class MonitoringUI extends SafetyFirst<null, null> {
+export class MonitoringUI extends React.Component<null, null> {
   componentDidMount () {
-    super.componentDidMount();
-
     const poll = (url: string, key: string, dataHandler: (data: any[]) => any): void => {
       store.dispatch(UIActions.monitoringLoading(key));
       const poller = (): void => {
@@ -954,7 +952,6 @@ export class MonitoringUI extends SafetyFirst<null, null> {
   }
 
   componentWillUnmount () {
-    super.componentWillUnmount();
     _.each(pollerTimeouts, t => clearTimeout(t));
   }
 
