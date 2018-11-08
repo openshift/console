@@ -1,4 +1,5 @@
 import * as React from 'react';
+import classNames from 'classnames';
 import * as _ from 'lodash-es';
 import * as PropTypes from 'prop-types';
 import {CatalogTileView} from 'patternfly-react-extensions/dist/esm/components/CatalogTileView';
@@ -10,76 +11,6 @@ import FormControl from 'patternfly-react/dist/esm/components/Form/FormControl';
 
 import {normalizeIconClass} from '../catalog/catalog-item-icon';
 import {CategoryFilterUtils} from '../utils/category-filter-utils';
-import {history} from '../utils';
-
-const marketplaceCategories = [
-  {
-    id: 'featured',
-    label: 'Featured',
-    field: 'keywords',
-    values: ['featured']
-  },
-  {
-    id: 'databases',
-    label: 'Databases',
-    field: 'keywords',
-    values: ['database']
-  },
-  {
-    id: 'storage',
-    label: 'Storage',
-    field: 'keywords',
-    values: ['storage']
-  },
-  {
-    id: 'networking',
-    label: 'Networking',
-    field: 'keywords',
-    values: ['networking']
-  },
-  {
-    id: 'monitoring',
-    label: 'Monitoring',
-    field: 'keywords',
-    values: ['monitoring']
-  },
-  {
-    id: 'messaging',
-    label: 'Messaging',
-    field: 'keywords',
-    values: ['messaging']
-  },
-  {
-    id: 'dev-tools',
-    label: 'Developer Tools',
-    field: 'keywords',
-    values: ['dev-tool']
-  },
-  {
-    id: 'identity',
-    label: 'Identity',
-    field: 'keywords',
-    values: ['identity']
-  },
-  {
-    id: 'security',
-    label: 'Security',
-    field: 'keywords',
-    values: ['security']
-  },
-  {
-    id: 'catalog',
-    label: 'Catalog',
-    field: 'keywords',
-    values: ['catalog']
-  },
-  {
-    id: 'blog-cm',
-    label: 'Blog & CMS',
-    field: 'keywords',
-    values: ['blog', ['cms']]
-  },
-];
 
 // Filter property white list
 const filterGroups = [
@@ -105,6 +36,9 @@ export class MarketplaceTileViewPage extends React.Component {
     // Filters are populated based on white list of item properties
     const availableFilters = CategoryFilterUtils.getAvailableFilters(defaultFilters, items, filterGroups);
 
+    // Categories are determined from the available items
+    const marketplaceCategories = MarketplaceTileViewPage.determineCategories(items);
+
     this.state = {
       categories: CategoryFilterUtils.categorizeItems(items, marketplaceCategories),
       currentCategories: null,
@@ -116,18 +50,40 @@ export class MarketplaceTileViewPage extends React.Component {
   }
 
   componentDidMount() {
-    this.setState(this.getUpdatedStateFromURL(window.location.search));
+    const {categories, availableFilters} = this.state;
+    const activeValues = CategoryFilterUtils.getActiveValuesFromURL(availableFilters, filterGroups);
+
+    this.setState(this.getUpdatedState(categories, activeValues.activeTabId, activeValues.activeFilters));
   }
 
   componentDidUpdate(prevProps) {
     const { activeFilters, activeTabId } = this.state;
     const { items } = this.props;
 
-    if (items !== prevProps.items) {
+    if (!_.isEqual(items, prevProps.items)) {
       const availableFilters = CategoryFilterUtils.getAvailableFilters(defaultFilters, items, filterGroups);
+      const marketplaceCategories = MarketplaceTileViewPage.determineCategories(items);
       const categories = CategoryFilterUtils.categorizeItems(items, marketplaceCategories);
       this.setState({availableFilters, ...this.getUpdatedState(categories, activeTabId, activeFilters)});
     }
+  }
+
+  static determineCategories(items) {
+    let newCategories = [];
+    _.each(items, item => {
+      _.each(item.categories, category => {
+        if (!_.find(newCategories, { id: category })) {
+          newCategories.push({
+            id: category,
+            label: category,
+            field: 'categories',
+            values: [category]
+          });
+        }
+      });
+    });
+
+    return newCategories;
   }
 
   getUpdatedState (categories, activeTabId, activeFilters) {
@@ -163,13 +119,6 @@ export class MarketplaceTileViewPage extends React.Component {
       currentCategories: MarketplaceTileViewPage.getCurrentCategories(activeTabId, newCategories),
       filterCounts: this.getFilterCounts(activeTabId, activeFilters, updateFilterCounts, newCategories)
     };
-  }
-
-  getUpdatedStateFromURL(searchURL) {
-    const {categories, availableFilters} = this.state;
-    const activeValues = CategoryFilterUtils.getActiveValuesFromURL(availableFilters, filterGroups, searchURL);
-
-    return this.getUpdatedState(categories, activeValues.activeTabId, activeValues.activeFilters);
   }
 
   getFilterCounts(activeTabId, filters, filterCounts, categories) {
@@ -214,51 +163,38 @@ export class MarketplaceTileViewPage extends React.Component {
   }
 
   clearFilters() {
-    const params = new URLSearchParams(window.location.search);
+    const { activeFilters, categories, activeTabId } = this.state;
 
-    params.delete('keyword');
+    CategoryFilterUtils.clearFilterURLParams(activeTabId);
 
-    _.forEach(filterGroups, filterGroup => {
-      params.delete(filterGroup);
-    });
+    const clearedFilters = CategoryFilterUtils.clearActiveFilters(activeFilters, filterGroups);
 
-    const url = new URL(window.location);
-    const searchParams = `?${params.toString()}${url.hash}`;
-
-    history.replace(`${url.pathname}${searchParams}`);
-    this.setState(this.getUpdatedStateFromURL(searchParams));
+    this.setState(this.getUpdatedState(categories, activeTabId, clearedFilters));
 
     this.filterByKeywordInput.focus();
   }
 
-  updateURL (filterName, value) {
-    const params = new URLSearchParams(window.location.search);
-    if (value) {
-      params.set(filterName, value);
-    } else {
-      params.delete(filterName);
-    }
-    const url = new URL(window.location);
-    const searchParams = `?${params.toString()}${url.hash}`;
-
-    history.replace(`${url.pathname}${searchParams}`);
-    this.setState(this.getUpdatedStateFromURL(searchParams));
-  }
-
   selectCategory(categoryId) {
-    this.updateURL (CategoryFilterUtils.CATEGORY_URL_PARAM, categoryId);
+    const { activeFilters, categories } = this.state;
+
+    CategoryFilterUtils.updateURLParams (CategoryFilterUtils.CATEGORY_URL_PARAM, categoryId);
+    this.setState(this.getUpdatedState(categories, categoryId, activeFilters));
   }
 
   onFilterChange(filterType, id, value) {
-    const { activeFilters } = this.state;
+    const { activeFilters, activeTabId, categories } = this.state;
 
     if (filterType === 'keyword') {
-      this.updateURL(CategoryFilterUtils.KEYWORD_URL_PARAM, `${value}`);
+      CategoryFilterUtils.updateURLParams(CategoryFilterUtils.KEYWORD_URL_PARAM, `${value}`);
     } else {
-      const groupFilter = activeFilters[filterType];
+      const groupFilter = _.cloneDeep(activeFilters[filterType]);
       _.set(groupFilter, [id, 'active'], value);
-      this.updateURL(filterType, CategoryFilterUtils.getFilterSearchParam(groupFilter));
+      CategoryFilterUtils.updateURLParams(filterType, CategoryFilterUtils.getFilterSearchParam(groupFilter));
     }
+
+    const updatedFilters = CategoryFilterUtils.updateActiveFilters(activeFilters, filterType, id, value);
+
+    this.setState(this.getUpdatedState(categories, activeTabId, updatedFilters));
   }
 
   getCategoryLabel(categoryID) {
@@ -275,11 +211,12 @@ export class MarketplaceTileViewPage extends React.Component {
     const active = id === activeTabId;
     const shown = id === 'all';
 
+    const tabClasses = classNames('text-capitalize', { 'co-catalog-tab__empty': !category.numItems });
     return <VerticalTabs.Tab
       key={id}
       title={label}
       active={active}
-      className={!category.numItems ? 'co-catalog-tab__empty' : null}
+      className={tabClasses}
       onActivate={() => this.selectCategory(id)}
       hasActiveDescendant={CategoryFilterUtils.hasActiveDescendant(activeTabId, category)}
       shown={shown}>
@@ -309,6 +246,7 @@ export class MarketplaceTileViewPage extends React.Component {
     return (
       <CatalogTileView.Category
         key={category.id}
+        className="capitalize-title"
         title={category.label}
         totalItems={_.size(category.items)}
         viewAll={viewAll}
@@ -332,31 +270,24 @@ export class MarketplaceTileViewPage extends React.Component {
     );
   }
 
-  renderCategoryTiles(category, topLevel = true) {
+  renderCategoryTiles(category) {
     const { currentCategories, activeTabId } = this.state;
     const { subcategories } = category;
 
     if (activeTabId === 'all') {
-      return (
-        <React.Fragment>
-          {_.map(currentCategories, topCategory => {
-            if (topCategory.id === 'all') {
-              return null;
-            }
-            return this.renderCategory(topCategory, false);
-          })}
-        </React.Fragment>
-      );
+      return _.map(currentCategories, topCategory => {
+        if (topCategory.id === 'all') {
+          return null;
+        }
+        return this.renderCategory(topCategory, false);
+      });
     }
-    if (topLevel && !_.size(subcategories)) {
+
+    if (!_.size(subcategories)) {
       return this.renderCategory(category, true);
     }
 
-    return (
-      <React.Fragment>
-        {_.map(subcategories, subcategory => this.renderCategory(subcategory, false))}
-      </React.Fragment>
-    );
+    return _.map(subcategories, subcategory => this.renderCategory(subcategory, false));
   }
 
   render() {
@@ -409,7 +340,7 @@ export class MarketplaceTileViewPage extends React.Component {
         </div>
         <div className="co-catalog-page__content">
           <div>
-            <div className="co-catalog-page__heading">{heading}</div>
+            <div className="co-catalog-page__heading text-capitalize">{heading}</div>
             <div className="co-catalog-page__num-items">{numItems} items</div>
           </div>
           {numItems > 0 && <CatalogTileView>

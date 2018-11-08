@@ -34,9 +34,9 @@ const normalizePackageManifests = (packageManifests, kind) => {
       createdAt,
       support,
       longDescription,
-      keywords
+      categories,
     } = currentCSVAnnotations;
-    const keywordArray = keywords && _.map(keywords.split(','), keyword => keyword.trim());
+    const categoryArray = categories && _.map(categories.split(','), category => category.trim());
     return {
       obj: packageManifest,
       kind,
@@ -55,7 +55,7 @@ const normalizePackageManifests = (packageManifests, kind) => {
       createdAt,
       support,
       longDescription,
-      keywords: keywordArray,
+      categories: categoryArray,
     };
   });
 };

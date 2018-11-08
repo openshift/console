@@ -1,9 +1,9 @@
 /* eslint-disable no-undef */
 import * as _ from 'lodash-es';
+import {history} from './router';
 
 const CATEGORY_URL_PARAM = 'category';
 const KEYWORD_URL_PARAM = 'keyword';
-const FILTER_SEPARATOR = ',|,';
 
 const filterSubcategories = (category: any, item: any) => {
   if (!_.size(category.subcategories)) {
@@ -249,8 +249,65 @@ const getActiveFilters = (keywordFilter, groupFilters, availableFilters) => {
   return activeFilters;
 };
 
-const getActiveValuesFromURL = (availableFilters, filterGroups, searchURL) => {
-  const searchParams = new URLSearchParams(searchURL);
+const updateActiveFilters = (activeFilters, filterType, id, value) => {
+  const updatedFilters = _.cloneDeep(activeFilters);
+
+  if (filterType === 'keyword') {
+    _.set(updatedFilters, 'keyword.value', value);
+    _.set(updatedFilters, 'keyword.active', !!value);
+  } else {
+    _.set(updatedFilters, [filterType, id, 'active'], value);
+  }
+
+  return updatedFilters;
+};
+
+const clearActiveFilters = (activeFilters, filterGroups) => {
+  const clearedFilters = _.cloneDeep(activeFilters);
+
+  // Clear the keyword filter
+  _.set(clearedFilters, 'keyword.value', '');
+  _.set(clearedFilters, 'keyword.active', false);
+
+  // Clear the group filters
+  _.each(filterGroups, field => {
+    _.each(_.keys(clearedFilters[field]), key => _.set(clearedFilters, [field, key, 'active'], false));
+  });
+
+  return clearedFilters;
+};
+
+const setURLParams = params => {
+  const location: any = window.location;
+  const url = new URL(location);
+  const searchParams = `?${params.toString()}${url.hash}`;
+
+  history.replace(`${url.pathname}${searchParams}`);
+};
+
+const updateURLParams = (filterName, value) => {
+  const params = new URLSearchParams(window.location.search);
+
+  if (value) {
+    params.set(filterName, Array.isArray(value) ? JSON.stringify(value) : value);
+  } else {
+    params.delete(filterName);
+  }
+  setURLParams(params);
+};
+
+const clearFilterURLParams = activeTabId => {
+  const params = new URLSearchParams(window.location.search);
+
+  if (activeTabId) {
+    params.set(CATEGORY_URL_PARAM, activeTabId);
+  }
+
+  setURLParams(params);
+};
+
+const getActiveValuesFromURL = (availableFilters, filterGroups) => {
+  const searchParams = new URLSearchParams(window.location.search);
   const categoryParam = searchParams.get(CATEGORY_URL_PARAM);
   let keywordFilter = searchParams.get(KEYWORD_URL_PARAM);
 
@@ -261,7 +318,7 @@ const getActiveValuesFromURL = (availableFilters, filterGroups, searchURL) => {
   _.forEach(filterGroups, filterGroup => {
     const groupFilterParam = searchParams.get(filterGroup);
     if (groupFilterParam) {
-      _.set(groupFilters, [filterGroup], groupFilterParam.split(FILTER_SEPARATOR));
+      _.set(groupFilters, [filterGroup], JSON.parse(groupFilterParam));
     }
   });
 
@@ -271,12 +328,18 @@ const getActiveValuesFromURL = (availableFilters, filterGroups, searchURL) => {
 };
 
 const getFilterSearchParam = groupFilter => {
-  let searchParam = '';
+  let activeValues = [];
   _.each(Object.keys(groupFilter), typeKey => {
-    searchParam += groupFilter[typeKey].active ? (searchParam ? `${FILTER_SEPARATOR}${typeKey}` : typeKey) : '';
+    if (groupFilter[typeKey].active) {
+      activeValues.push(typeKey);
+    }
   });
 
-  return searchParam;
+  if (_.size(activeValues)) {
+    return JSON.stringify(activeValues);
+  }
+
+  return '';
 };
 
 const getFilterGroupCounts = (items, filterGroups, activeTabId, filters, categories) => {
@@ -300,13 +363,16 @@ const getFilterGroupCounts = (items, filterGroups, activeTabId, filters, categor
 export const CategoryFilterUtils = {
   CATEGORY_URL_PARAM: CATEGORY_URL_PARAM,
   KEYWORD_URL_PARAM: KEYWORD_URL_PARAM,
-  FILTER_SEPARATOR: FILTER_SEPARATOR,
   categorizeItems: categorizeItems,
   recategorizeItems: recategorizeItems,
   isActiveTab: isActiveTab,
   hasActiveDescendant: hasActiveDescendant,
   findActiveCategory: findActiveCategory,
   getAvailableFilters: getAvailableFilters,
+  updateActiveFilters: updateActiveFilters,
+  clearFilterURLParams: clearFilterURLParams,
+  clearActiveFilters: clearActiveFilters,
+  updateURLParams: updateURLParams,
   getActiveValuesFromURL: getActiveValuesFromURL,
   getFilterSearchParam: getFilterSearchParam,
   getFilterGroupCounts: getFilterGroupCounts,

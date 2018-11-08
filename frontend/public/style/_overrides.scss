@@ -230,3 +230,7 @@ tags-input .autocomplete .suggestion-item em {
 .catalog-tile-pf-body .catalog-tile-pf-description::after {
   bottom: 15px;
 }
+
+.capitalize-title .catalog-tile-view-pf-category-header-title {
+  text-transform: capitalize;
+}
