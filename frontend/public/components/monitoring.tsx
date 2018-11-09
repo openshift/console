@@ -494,8 +494,9 @@ const AlertHeader = props => <ListHeader>
   <ColHead {...props} className="col-xs-2" sortField="labels.severity">Severity</ColHead>
 </ListHeader>;
 
-const AlertsPageDescription_ = ({urls}) => <p className="co-help-text">OpenShift ships with a pre-configured and self-updating monitoring stack powered by <ExternalLink href={urls[MonitoringRoutes.Prometheus]} text="Prometheus" /></p>;
-const AlertsPageDescription = connectToURLs(MonitoringRoutes.Prometheus)(AlertsPageDescription_);
+const AlertsPageDescription = () => <p className="co-help-text">
+  Alerts help notify you when certain conditions in your environment are met. <ExternalLink href="https://prometheus.io/docs/prometheus/latest/configuration/alerting_rules/" text="Learn more about how alerts are configured." />
+</p>;
 
 const alertsRowFilter = {
   type: 'alert-state',
@@ -568,20 +569,16 @@ const MonitoringListPage = connect(filtersToProps)(class InnerMonitoringListPage
             Monitoring Alerts &nbsp;<span className="monitoring-header-link"><AlertmanagerLink text="Alertmanager UI" /></span>
           </div>
         </h1>
+        <PageDescription />
       </div>
-      <div className="co-m-pane__filter-bar co-m-pane__filter-bar--with-help-text">
-        {PageDescription && <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--help-text">
-          <PageDescription />
+      <div className="co-m-pane__filter-bar">
+        {CreateButton && <div className="co-m-pane__filter-bar-group">
+          <CreateButton />
         </div>}
         <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--filter">
           <TextFilter defaultValue={this.defaultNameFilter} label={textFilterLabel} onChange={this.applyTextFilter} />
         </div>
       </div>
-      {CreateButton && <div className="co-m-pane__filter-bar">
-        <div className="co-m-pane__filter-bar-group">
-          <CreateButton />
-        </div>
-      </div>}
       <div className="co-m-pane__body">
         <div className="row">
           <CheckBoxes
@@ -657,7 +654,9 @@ const SilenceRow = ({obj}) => {
   </ResourceRow>;
 };
 
-const SilencesPageDescription = () => <p className="co-help-text">Silences are a straightforward way to simply mute alerts for a given time powered by <AlertmanagerLink text="Alertmanager" /></p>;
+const SilencesPageDescription = () => <p className="co-help-text">
+  Silences temporarily mute alerts based on a set of conditions that you define. Notifications are not sent for alerts that meet the given conditions.
+</p>;
 
 const silencesRowFilter = {
   type: 'silence-state',
