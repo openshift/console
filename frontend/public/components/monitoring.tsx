@@ -8,7 +8,7 @@ import { Link, Redirect, Route, Switch } from 'react-router-dom';
 
 import { coFetchJSON } from '../co-fetch';
 import k8sActions from '../module/k8s/k8s-actions';
-import { connectToURLs, MonitoringRoutes } from '../monitoring';
+import { connectToURLs, isSilenced, MonitoringRoutes } from '../monitoring';
 import store from '../redux';
 import { UIActions } from '../ui/ui-actions';
 import { monitoringRulesToProps, monitoringSilencesToProps } from '../ui/ui-reducers';
@@ -66,11 +66,6 @@ const alertDescription = alert => {
 };
 
 export const silenceState = s => _.get(s, 'status.state');
-
-// Determine if an Alert is silenced by a Silence (if all of the Silence's matchers match one of the Alert's labels)
-const isSilenced = (alert, silence) => alertState(alert) === 'silenced' &&
-  _.get(silence, 'status.state') === 'active' &&
-  _.every(silence.matchers, m => _.get(alert.labels, m.name) === m.value);
 
 const pollers = {};
 const pollerTimeouts = {};
@@ -365,7 +360,7 @@ const AlertRulesDetailsPage = withFallback(connect(ruleStateToProps)((props: Ale
 }));
 
 const silencedAlertsToProps = (state, {silence}) => ({
-  alerts: _.filter(_.get(monitoringRulesToProps(state), 'data.asAlerts'), a => isSilenced(a, silence)),
+  alerts: _.filter(_.get(monitoringRulesToProps(state), 'data.asAlerts'), a => alertState(a) === 'silenced' && isSilenced(a, silence)),
 });
 
 const SilencedAlertsList = connect(silencedAlertsToProps)(
