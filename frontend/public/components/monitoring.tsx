@@ -490,7 +490,7 @@ const AlertRow = ({obj}) => {
 
 const AlertHeader = props => <ListHeader>
   <ColHead {...props} className="col-xs-7" sortField="labels.alertname">Name</ColHead>
-  <ColHead {...props} className="col-xs-3" sortFunc="alertState">State</ColHead>
+  <ColHead {...props} className="col-xs-3" sortFunc="alertStateOrder">State</ColHead>
   <ColHead {...props} className="col-xs-2" sortField="labels.severity">Severity</ColHead>
 </ListHeader>;
 
@@ -622,7 +622,7 @@ const AlertsPage = withFallback(connect(monitoringRulesToProps)(AlertsPage_));
 
 const SilenceHeader = props => <ListHeader>
   <ColHead {...props} className="col-xs-7" sortField="name">Name</ColHead>
-  <ColHead {...props} className="col-xs-3" sortField="status.state">State</ColHead>
+  <ColHead {...props} className="col-xs-3" sortFunc="silenceStateOrder">State</ColHead>
   <ColHead {...props} className="col-xs-2">Silenced Alerts</ColHead>
 </ListHeader>;
 

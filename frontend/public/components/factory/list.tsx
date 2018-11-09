@@ -191,7 +191,7 @@ const filterPropType = (props, propName, componentName) => {
 };
 
 const sorts = {
-  alertState,
+  alertStateOrder: alert => ['firing', 'silenced', 'pending', 'not-firing'].indexOf(alertState(alert)),
   daemonsetNumScheduled: daemonset => _.toInteger(_.get(daemonset, 'status.currentNumberScheduled')),
   dataSize: resource => _.size(_.get(resource, 'data')),
   ingressValidHosts,
@@ -209,6 +209,7 @@ const sorts = {
   podPhase,
   podReadiness,
   serviceClassDisplayName,
+  silenceStateOrder: silence => ['active', 'pending', 'expired'].indexOf(silenceState(silence)),
   string: val => JSON.stringify(val),
 };
 
