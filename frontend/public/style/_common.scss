@@ -453,13 +453,13 @@
     position: relative;
     width: 100%;
     .row {
-      padding: 10px 0;
+      padding: 10px 20px 10px 0;  // right padding creates space for .co-resource-kebab
     }
   }
   &__head {
     color: $color-text-secondary;
     font-size: 12px;
-    padding: 0 0 10px 0;
+    padding: 0 20px 10px 0; // right padding to maintain alignment with __body .row
     text-transform: uppercase;
     a {
       cursor: pointer;
@@ -553,12 +553,7 @@
 }
 
 .co-m-cog {
-  display: inline-block;
-  font-size: 14px;
   position: relative;
-  &:hover {
-    cursor: pointer;
-  }
   &__button {
     padding: 0;
     &:active,
@@ -584,9 +579,9 @@
   }
 }
 
-.co-m-cog-wrapper {
-  display: inline-block;
-  margin-right: 4px;
+.co-resource-kebab {
+  position: absolute;
+  right: 0;
 }
 
 .no-margin {

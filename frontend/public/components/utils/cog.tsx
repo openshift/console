@@ -2,7 +2,6 @@
 
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import * as classNames from 'classnames';
 import { Tooltip } from './tooltip';
 
 import { annotationsModal, configureReplicaCountModal, labelsModal, podSelectorModal, deleteModal } from '../modals';
@@ -107,7 +106,7 @@ export class Cog extends DropdownMixin {
   render() {
     const {options, isDisabled, id} = this.props;
 
-    return <div className={classNames('co-m-cog-wrapper', {'co-m-cog-wrapper--enabled': !isDisabled})} id={id}>
+    return <div id={id}>
       { isDisabled ?
         <Tooltip content="disabled">
           <div ref={this.dropdownElement} className="co-m-cog co-m-cog--disabled" >
