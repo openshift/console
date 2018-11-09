@@ -16,7 +16,7 @@ import {
 } from './factory';
 import {
   AsyncComponent,
-  Cog,
+  Kebab,
   ContainerTable,
   DeploymentPodCounts,
   LoadingInline,
@@ -52,7 +52,7 @@ const rolloutAction = (kind, obj) => ({
   }),
 });
 
-const {ModifyCount, AddStorage, EditEnvironment, common} = Cog.factory;
+const {ModifyCount, AddStorage, EditEnvironment, common} = Kebab.factory;
 
 export const menuActions = [
   rolloutAction,

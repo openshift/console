@@ -3,10 +3,10 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 
 import { ColHead, List, ListHeader, ListPage } from './factory';
-import { Cog, ResourceCog, ResourceIcon } from './utils';
+import { Kebab, ResourceKebab, ResourceIcon } from './utils';
 import { referenceForCRD } from '../module/k8s';
 
-const { common } = Cog.factory;
+const { common } = Kebab.factory;
 const menuActions = [...common];
 
 const CRDHeader = props => <ListHeader>
@@ -45,8 +45,8 @@ const CRDRow = ({obj: crd}) => <div className="row co-resource-list__item">
         : <span className="node-not-ready"><i className="fa fa-minus-circle"></i></span>
     }
   </div>
-  <div className="co-resource-kebab">
-    <ResourceCog actions={menuActions} kind="CustomResourceDefinition" resource={crd} />
+  <div className="co-kebab-wrapper">
+    <ResourceKebab actions={menuActions} kind="CustomResourceDefinition" resource={crd} />
   </div>
 </div>;
 

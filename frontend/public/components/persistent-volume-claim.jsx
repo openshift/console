@@ -3,12 +3,12 @@ import * as _ from 'lodash-es';
 
 import { FLAGS, connectToFlags } from '../features';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
-import { Cog, navFactory, ResourceCog, SectionHeading, ResourceLink, ResourceSummary, Selector } from './utils';
+import { Kebab, navFactory, ResourceKebab, SectionHeading, ResourceLink, ResourceSummary, Selector } from './utils';
 import { ResourceEventStream } from './events';
 
 const pvcPhase = pvc => pvc.status.phase;
 
-const { common } = Cog.factory;
+const { common } = Kebab.factory;
 const menuActions = [...common];
 
 const PVCStatus = ({pvc}) => {
@@ -46,8 +46,8 @@ const Row = ({obj}) => <div className="row co-resource-list__item">
   <div className="col-sm-4 hidden-xs">
     <PVCStatus pvc={obj} />
   </div>
-  <div className="co-resource-kebab">
-    <ResourceCog actions={menuActions} kind={kind} resource={obj} />
+  <div className="co-kebab-wrapper">
+    <ResourceKebab actions={menuActions} kind={kind} resource={obj} />
   </div>
 </div>;
 

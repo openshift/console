@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { getJobTypeAndCompletions } from '../module/k8s';
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import { configureJobParallelismModal } from './modals';
-import { Cog, ContainerTable, SectionHeading, LabelList, ResourceCog, ResourceLink, ResourceSummary, Timestamp, navFactory } from './utils';
+import { Kebab, ContainerTable, SectionHeading, LabelList, ResourceKebab, ResourceLink, ResourceSummary, Timestamp, navFactory } from './utils';
 import { ResourceEventStream } from './events';
 
 const ModifyJobParallelism = (kind, obj) => ({
@@ -14,7 +14,7 @@ const ModifyJobParallelism = (kind, obj) => ({
     resource: obj,
   }),
 });
-const menuActions = [ModifyJobParallelism, ...Cog.factory.common];
+const menuActions = [ModifyJobParallelism, ...Kebab.factory.common];
 
 const JobHeader = props => <ListHeader>
   <ColHead {...props} className="col-lg-2 col-md-3 col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
@@ -45,8 +45,8 @@ const JobRow = ({obj: job}) => {
       <div className="col-lg-2 hidden-md hidden-sm hidden-xs">
         {type}
       </div>
-      <div className="co-resource-kebab">
-        <ResourceCog actions={menuActions} kind="Job" resource={job} />
+      <div className="co-kebab-wrapper">
+        <ResourceKebab actions={menuActions} kind="Job" resource={job} />
       </div>
     </ResourceRow>
   );

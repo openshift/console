@@ -22,7 +22,7 @@ import { Tooltip } from './utils/tooltip';
 import {
   ActionsMenu,
   ButtonBar,
-  Cog,
+  Kebab,
   ExternalLink,
   getURLSearchParams,
   history,
@@ -105,8 +105,8 @@ const silenceMenuActions = (silence, urls) => silenceState(silence) === SilenceS
   ? [editSilence(silence)]
   : [editSilence(silence), cancelSilence(silence, urls)];
 
-const SilenceCog_ = ({silence, urls}) => <Cog options={silenceMenuActions(silence, urls)} />;
-const SilenceCog = connectToURLs(MonitoringRoutes.AlertManager)(SilenceCog_);
+const SilenceKebab_ = ({silence, urls}) => <Kebab options={silenceMenuActions(silence, urls)} />;
+const SilenceKebab = connectToURLs(MonitoringRoutes.AlertManager)(SilenceKebab_);
 
 const SilenceActionsMenu_ = ({silence, urls}) => <div className="co-actions">
   <ActionsMenu actions={silenceMenuActions(silence, urls)} />
@@ -275,7 +275,7 @@ const ActiveAlerts = ({alerts}) => <div className="co-m-table-grid co-m-table-gr
       <div className="col-sm-2 hidden-xs"><Timestamp timestamp={a.activeAt} /></div>
       <div className="col-sm-2 col-xs-3"><AlertState state={a.state} /></div>
       <div className="col-sm-2 col-xs-3 co-break-word">{a.value}</div>
-      <div className="co-resource-kebab"><Cog options={[silenceAlert(a)]} /></div>
+      <div className="co-kebab-wrapper"><Kebab options={[silenceAlert(a)]} /></div>
     </ResourceRow>)}
   </div>
 </div>;
@@ -372,8 +372,8 @@ const SilencedAlertsList = connect(silencedAlertsToProps)(
             <div className="monitoring-description">{alertDescription(a)}</div>
           </div>
           <div className="col-xs-3">{a.labels.severity}</div>
-          <div className="co-resource-kebab">
-            <Cog options={[viewAlertRule(a)]} />
+          <div className="co-kebab-wrapper">
+            <Kebab options={[viewAlertRule(a)]} />
           </div>
         </div>)}
       </div>
@@ -476,8 +476,8 @@ const AlertRow = ({obj}) => {
       {activeAt && <div className="text-muted monitoring-timestamp">since&nbsp;<Timestamp timestamp={activeAt} /></div>}
     </div>
     <div className="col-xs-2">{_.startCase(_.get(labels, 'severity', '-'))}</div>
-    <div className="co-resource-kebab">
-      <Cog options={state === AlertStates.Firing || state === AlertStates.Pending ? [silenceAlert(obj), viewAlertRule(obj)] : [viewAlertRule(obj)]} />
+    <div className="co-kebab-wrapper">
+      <Kebab options={state === AlertStates.Firing || state === AlertStates.Pending ? [silenceAlert(obj), viewAlertRule(obj)] : [viewAlertRule(obj)]} />
     </div>
   </ResourceRow>;
 };
@@ -649,8 +649,8 @@ const SilenceRow = ({obj}) => {
       </div>
     </div>
     <div className="col-xs-2"><SilencedAlertsCount silence={obj} /></div>
-    <div className="co-resource-kebab">
-      <SilenceCog silence={obj} />
+    <div className="co-kebab-wrapper">
+      <SilenceKebab silence={obj} />
     </div>
   </ResourceRow>;
 };

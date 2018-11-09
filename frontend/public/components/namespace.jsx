@@ -10,7 +10,7 @@ import { k8sGet } from '../module/k8s';
 import { formatNamespacedRouteForResource, UIActions } from '../ui/ui-actions';
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import { SafetyFirst } from './safety-first';
-import { ActionsMenu, Cog, Dropdown, Firehose, LabelList, LoadingInline, navFactory, ResourceCog, SectionHeading, ResourceIcon, ResourceLink, ResourceSummary, humanizeMem, MsgBox } from './utils';
+import { ActionsMenu, Kebab, Dropdown, Firehose, LabelList, LoadingInline, navFactory, ResourceKebab, SectionHeading, ResourceIcon, ResourceLink, ResourceSummary, humanizeMem, MsgBox } from './utils';
 import { createNamespaceModal, createProjectModal, deleteNamespaceModal, configureNamespacePullSecretModal } from './modals';
 import { RoleBindingsPage } from './RBAC';
 import { Bar, Line, requirePrometheus } from './graphs';
@@ -24,7 +24,7 @@ const getDisplayName = obj => _.get(obj, ['metadata', 'annotations', 'openshift.
 const getRequester = obj => _.get(obj, ['metadata', 'annotations', 'openshift.io/requester']);
 
 export const deleteModal = (kind, ns) => {
-  let {label, weight} = Cog.factory.Delete(kind, ns);
+  let {label, weight} = Kebab.factory.Delete(kind, ns);
   let callback = undefined;
   let tooltip;
 
@@ -43,7 +43,7 @@ export const deleteModal = (kind, ns) => {
   return {label, weight, callback};
 };
 
-const nsMenuActions = [Cog.factory.ModifyLabels, Cog.factory.ModifyAnnotations, Cog.factory.Edit, deleteModal];
+const nsMenuActions = [Kebab.factory.ModifyLabels, Kebab.factory.ModifyAnnotations, Kebab.factory.Edit, deleteModal];
 
 const NamespaceHeader = props => <ListHeader>
   <ColHead {...props} className="col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
@@ -61,15 +61,15 @@ const NamespaceRow = ({obj: ns}) => <ResourceRow obj={ns}>
   <div className="col-sm-4 hidden-xs">
     <LabelList kind="Namespace" labels={ns.metadata.labels} />
   </div>
-  <div className="co-resource-kebab">
-    <ResourceCog actions={nsMenuActions} kind="Namespace" resource={ns} />
+  <div className="co-kebab-wrapper">
+    <ResourceKebab actions={nsMenuActions} kind="Namespace" resource={ns} />
   </div>
 </ResourceRow>;
 
 export const NamespacesList = props => <List {...props} Header={NamespaceHeader} Row={NamespaceRow} />;
 export const NamespacesPage = props => <ListPage {...props} ListComponent={NamespacesList} canCreate={true} createHandler={createNamespaceModal} />;
 
-const projectMenuActions = [Cog.factory.Edit, deleteModal];
+const projectMenuActions = [Kebab.factory.Edit, deleteModal];
 
 const ProjectHeader = props => <ListHeader>
   <ColHead {...props} className="col-md-3 col-sm-6 col-xs-8" sortField="metadata.name">Name</ColHead>
@@ -96,8 +96,8 @@ const ProjectRow = ({obj: project}) => {
     <div className="col-md-3 hidden-sm hidden-xs">
       <LabelList kind="Project" labels={project.metadata.labels} />
     </div>
-    <div className="co-resource-kebab">
-      <ResourceCog actions={projectMenuActions} kind="Project" resource={project} />
+    <div className="co-kebab-wrapper">
+      <ResourceKebab actions={projectMenuActions} kind="Project" resource={project} />
     </div>
   </ResourceRow>;
 };

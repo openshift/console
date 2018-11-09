@@ -555,14 +555,14 @@
   }
 }
 
-.co-m-cog {
+.co-kebab {
   position: relative;
   &__button {
     padding: 0;
     &:active,
     &:focus,
     &:hover {
-      .co-m-cog__icon {
+      .co-kebab__icon {
         color: $color-pf-blue-400;
       }
     }
@@ -582,7 +582,7 @@
   }
 }
 
-.co-resource-kebab {
+.co-kebab-wrapper {
   position: absolute;
   right: 0;
 }

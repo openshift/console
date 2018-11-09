@@ -1,9 +1,9 @@
 import * as React from 'react';
 
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
-import { Cog, LabelList, navFactory, ResourceCog, SectionHeading, ResourceLink, ResourceSummary, Timestamp } from './utils';
+import { Kebab, LabelList, navFactory, ResourceKebab, SectionHeading, ResourceLink, ResourceSummary, Timestamp } from './utils';
 
-const { common } = Cog.factory;
+const { common } = Kebab.factory;
 const menuActions = [...common];
 
 const Header = props => <ListHeader>
@@ -23,8 +23,8 @@ const Row = ({obj}) => <div className="row co-resource-list__item">
   <div className="col-sm-4 hidden-xs">
     <Timestamp timestamp={obj.metadata.creationTimestamp} />
   </div>
-  <div className="co-resource-kebab">
-    <ResourceCog actions={menuActions} kind={kind} resource={obj} />
+  <div className="co-kebab-wrapper">
+    <ResourceKebab actions={menuActions} kind={kind} resource={obj} />
   </div>
 </div>;
 

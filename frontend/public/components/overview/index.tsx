@@ -35,7 +35,7 @@ import {
 import {
   ActionsMenu,
   CloseButton,
-  CogAction,
+  KebabAction,
   Dropdown,
   Firehose,
   StatusBox,
@@ -293,7 +293,7 @@ const OverviewHeading_: React.SFC<OverviewHeadingProps> = ({disabled, groupOptio
           </div>
         </React.Fragment>}
         {selectedView === View.Dashboard && !_.isEmpty(project) && <div className="form-group overview-toolbar__form-group">
-          <ActionsMenu actions={overviewMenuActions.map((a: CogAction) => a(ProjectModel, project))} />
+          <ActionsMenu actions={overviewMenuActions.map((a: KebabAction) => a(ProjectModel, project))} />
         </div>}
       </Toolbar.RightContent>
     </Toolbar>

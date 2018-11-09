@@ -23,13 +23,13 @@ import {
   referenceForCRDDesc,
 } from './index';
 import {
-  Cog,
+  Kebab,
   LoadingBox,
   MsgBox,
   navFactory,
   OverflowLink,
   PageHeading,
-  ResourceCog,
+  ResourceKebab,
   ResourceLink,
   Timestamp,
   SectionHeading,
@@ -45,7 +45,7 @@ export const ClusterServiceVersionHeader: React.SFC = () => <ListHeader>
   <ColHead className="col-lg-3 col-md-3 hidden-sm hidden-xs">Provided APIs</ColHead>
 </ListHeader>;
 
-const menuActions = [Cog.factory.Edit, Cog.factory.Delete];
+const menuActions = [Kebab.factory.Edit, Kebab.factory.Delete];
 
 export const ClusterServiceVersionRow = withFallback<ClusterServiceVersionRowProps>(({obj}) => {
   const route = `/k8s/ns/${obj.metadata.namespace}/${ClusterServiceVersionModel.plural}/${obj.metadata.name}`;
@@ -73,8 +73,8 @@ export const ClusterServiceVersionRow = withFallback<ClusterServiceVersionRowPro
       </div>)}
       { obj.spec.customresourcedefinitions.owned.length > 4 && <Link to={`${route}/instances`} title={`View ${obj.spec.customresourcedefinitions.owned.length - 4} more...`}>{`View ${obj.spec.customresourcedefinitions.owned.length - 4} more...`}</Link>}
     </div>
-    <div className="co-resource-kebab">
-      <ResourceCog resource={obj} kind={referenceFor(obj)} actions={menuActions} />
+    <div className="co-kebab-wrapper">
+      <ResourceKebab resource={obj} kind={referenceFor(obj)} actions={menuActions} />
     </div>
   </div>;
 });

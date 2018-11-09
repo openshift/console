@@ -5,7 +5,7 @@ import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
 
 import { k8sList, K8sResourceKind, K8sResourceKindReference, planExternalName, serviceCatalogStatus } from '../module/k8s';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
-import { Cog, history, navFactory, ResourceCog, ResourceIcon, ResourceLink, ResourceSummary, SectionHeading, StatusWithIcon, Timestamp } from './utils';
+import { Kebab, history, navFactory, ResourceKebab, ResourceIcon, ResourceLink, ResourceSummary, SectionHeading, StatusWithIcon, Timestamp } from './utils';
 import { ResourceEventStream } from './events';
 import { Conditions } from './conditions';
 import { ServiceCatalogParameters, ServiceCatalogParametersSecrets } from './service-catalog-parameters';
@@ -25,7 +25,7 @@ const createBinding = (kindObj, serviceInstance) => {
   };
 };
 
-const { common } = Cog.factory;
+const { common } = Kebab.factory;
 
 const menuActions = [
   createBinding,
@@ -187,8 +187,8 @@ const ServiceInstancesRow: React.SFC<ServiceInstancesRowProps> = ({obj}) => {
     <div className="col-md-2 hidden-sm hidden-xs co-break-word">
       <Timestamp timestamp={obj.metadata.creationTimestamp} />
     </div>
-    <div className="co-resource-kebab">
-      <ResourceCog actions={menuActions} kind={ServiceInstancesReference} resource={obj} />
+    <div className="co-kebab-wrapper">
+      <ResourceKebab actions={menuActions} kind={ServiceInstancesReference} resource={obj} />
     </div>
   </div>;
 };

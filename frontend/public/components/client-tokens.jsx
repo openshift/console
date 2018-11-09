@@ -4,7 +4,7 @@ import * as React from 'react';
 import { coFetch, coFetchJSON } from '../co-fetch';
 import { SafetyFirst } from './safety-first';
 import { confirmModal } from './modals';
-import { Cog, Timestamp, EmptyBox, LoadingInline, LoadError } from './utils';
+import { Kebab, Timestamp, EmptyBox, LoadingInline, LoadError } from './utils';
 
 export class ClientTokensContainer extends SafetyFirst {
   constructor(props){
@@ -68,7 +68,7 @@ const ClientRow = ({client, onTokenRevocation}) => {
       <Timestamp timestamp={client.last_used} isUnix={true} />
     </div>
     <div className="col-xs-4">
-      <Cog options={options} />&nbsp;{client.client_id}
+      <Kebab options={options} />&nbsp;{client.client_id}
     </div>
   </div>;
 };

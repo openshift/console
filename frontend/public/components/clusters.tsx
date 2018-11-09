@@ -3,12 +3,12 @@ import * as _ from 'lodash-es';
 
 import { FLAGS, connectToFlags, flagPending } from '../features';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
-import { Cog, detailsPage, navFactory, ResourceCog, SectionHeading, ResourceLink, ResourceSummary, LoadingBox, MsgBox } from './utils';
+import { Kebab, detailsPage, navFactory, ResourceKebab, SectionHeading, ResourceLink, ResourceSummary, LoadingBox, MsgBox } from './utils';
 // eslint-disable-next-line no-unused-vars
 import { referenceForModel } from '../module/k8s';
 import { ClusterModel } from '../models';
 
-const { common } = Cog.factory;
+const { common } = Kebab.factory;
 const menuActions = [...common];
 
 const ClustersHeader = props => <ListHeader>
@@ -36,8 +36,8 @@ const ClustersRow: React.SFC<ClustersRowProps> = ({obj}) => {
         : '—'
       }
     </div>
-    <div className="co-resource-kebab">
-      <ResourceCog actions={menuActions} kind={referenceForModel(ClusterModel)} resource={obj} />
+    <div className="co-kebab-wrapper">
+      <ResourceKebab actions={menuActions} kind={referenceForModel(ClusterModel)} resource={obj} />
     </div>
   </div>;
 };

@@ -5,16 +5,16 @@ import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
 import { fromNow } from './utils/datetime';
 import { referenceFor, kindForReference } from '../module/k8s';
 import {
-  Cog,
+  Kebab,
   kindObj,
   navFactory,
-  ResourceCog,
+  ResourceKebab,
   ResourceLink,
   ResourceSummary,
   SectionHeading,
 } from './utils';
 
-const { common } = Cog.factory;
+const { common } = Kebab.factory;
 const menuActions = [...common];
 
 const Header = props => <ListHeader>
@@ -37,8 +37,8 @@ const RowForKind = kind => function RowForKind_({obj}) {
     <div className="col-xs-6 col-sm-4 hidden-xs">
       { fromNow(obj.metadata.creationTimestamp) }
     </div>
-    <div className="co-resource-kebab">
-      <ResourceCog actions={menuActions} kind={referenceFor(obj) || kind} resource={obj} />
+    <div className="co-kebab-wrapper">
+      <ResourceKebab actions={menuActions} kind={referenceFor(obj) || kind} resource={obj} />
     </div>
   </div>;
 };

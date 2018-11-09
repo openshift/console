@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom';
 import { InstallPlanHeader, InstallPlanHeaderProps, InstallPlanRow, InstallPlanRowProps, InstallPlansList, InstallPlansListProps, InstallPlansPage, InstallPlansPageProps, InstallPlanDetailsPage, InstallPlanPreview, InstallPlanPreviewProps, InstallPlanPreviewState, InstallPlanDetailsPageProps, InstallPlanDetails, InstallPlanDetailsProps } from '../../../public/components/operator-lifecycle-manager/install-plan';
 import { InstallPlanKind, InstallPlanApproval } from '../../../public/components/operator-lifecycle-manager';
 import { ListHeader, ColHead, ResourceRow, List, ListPage, DetailsPage } from '../../../public/components/factory';
-import { ResourceCog, ResourceLink, ResourceIcon, Cog, MsgBox } from '../../../public/components/utils';
+import { ResourceKebab, ResourceLink, ResourceIcon, Kebab, MsgBox } from '../../../public/components/utils';
 import { testInstallPlan } from '../../../__mocks__/k8sResourcesMocks';
 import { InstallPlanModel, ClusterServiceVersionModel } from '../../../public/models';
 import * as k8s from '../../../public/module/k8s';
@@ -51,8 +51,8 @@ describe(InstallPlanRow.displayName, () => {
     wrapper = shallow(<InstallPlanRow obj={_.cloneDeep(testInstallPlan)} />);
   });
 
-  it('renders resource cog for performing common actions', () => {
-    expect(wrapper.find(ResourceRow).find(ResourceCog).props().actions).toEqual(Cog.factory.common);
+  it('renders resource kebab for performing common actions', () => {
+    expect(wrapper.find(ResourceRow).find(ResourceKebab).props().actions).toEqual(Kebab.factory.common);
   });
 
   it('renders column for install plan name', () => {
