@@ -478,13 +478,7 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 8Gi
-  storageClassName: slow
-  selector:
-    matchLabels:
-      release: "stable"
-    matchExpressions:
-      - {key: environment, operator: In, values: [dev]}
+      storage: 1Gi
 `).setIn([referenceForModel(k8sModels.ResourceQuotaModel), 'default'], `
 apiVersion: v1
 kind: ResourceQuota
