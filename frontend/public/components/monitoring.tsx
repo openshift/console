@@ -939,7 +939,7 @@ export class MonitoringUI extends React.Component<null, null> {
         s.name = _.get(_.find(s.matchers, {name: 'alertname'}), 'value');
         if (!s.name) {
           // No alertname, so fall back to displaying the other matchers
-          s.name = s.matchers.map(m => `${m.name}=${m.value}`).join(', ');
+          s.name = s.matchers.map(m => `${m.name}${m.isRegex ? '=~' : '='}${m.value}`).join(', ');
         }
       });
       return data;
