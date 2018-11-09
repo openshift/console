@@ -3,6 +3,7 @@ import { Map as ImmutableMap } from 'immutable';
 
 import { types } from './ui-actions';
 import { ALL_NAMESPACES_KEY, LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY, NAMESPACE_LOCAL_STORAGE_KEY } from '../const';
+import { isSilenced } from '../monitoring';
 import { legalNamePattern, getNamespace } from '../components/utils/link';
 
 export default (state, action) => {
@@ -68,14 +69,10 @@ export default (state, action) => {
       // For Alerts that are silenced by at least one active Silence, set the Alert's state to indicate that
       if (action.key === 'rules' || action.key === 'silences') {
         const alerts = state.getIn(['monitoring', 'rules']);
-        const silences = state.getIn(['monitoring', 'silences'], {});
-        const activeSilences = _.filter(silences.data, s => _.get(s, 'status.state') === 'active');
-
-        // Is an Alert silenced by a Silence (if all the Silence's matchers match one of the Alert's labels)
-        const isSilenced = (alert, silence) => _.every(silence.matchers, m => _.get(alert.labels, m.name) === m.value);
+        const silences = state.getIn(['monitoring', 'silences'], {}).data;
 
         _.each(_.get(alerts, 'data.asAlerts'), a => {
-          if (a.state === 'firing' && _.some(activeSilences, s => isSilenced(a, s))) {
+          if (a.state === 'firing' && _.some(silences, s => isSilenced(a, s))) {
             a.state = 'silenced';
           }
         });
