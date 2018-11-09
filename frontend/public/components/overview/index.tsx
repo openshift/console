@@ -742,124 +742,132 @@ const overviewStateToProps = ({UI}): OverviewPropsFromState => {
   };
 };
 
-export const Overview = connect<OverviewPropsFromState, {}, OverviewOwnProps>(overviewStateToProps)(({mock, namespace, selectedItem, title}: OverviewProps) => {
-  const className = classnames('overview', {'overview--sidebar-shown': !_.isEmpty(selectedItem)});
-  const resources = [
-    {
-      isList: true,
-      kind: 'Build',
-      namespace,
-      prop: 'builds'
-    },
-    {
-      isList: true,
-      kind: 'BuildConfig',
-      namespace,
-      prop: 'buildConfigs'
-    },
-    {
-      isList: true,
-      kind: 'DaemonSet',
-      namespace,
-      prop: 'daemonSets'
-    },
-    {
-      isList: true,
-      kind: 'Deployment',
-      namespace,
-      prop: 'deployments'
-    },
-    {
-      isList: true,
-      kind: 'DeploymentConfig',
-      namespace,
-      prop: 'deploymentConfigs'
-    },
-    {
-      isList: true,
-      kind: 'Pod',
-      namespace,
-      prop: 'pods'
-    },
-    {
-      isList: true,
-      kind: 'ReplicaSet',
-      namespace,
-      prop: 'replicaSets'
-    },
-    {
-      isList: true,
-      kind: 'ReplicationController',
-      namespace,
-      prop: 'replicationControllers'
-    },
-    {
-      isList: true,
-      kind: 'Route',
-      namespace,
-      prop: 'routes'
-    },
-    {
-      isList: true,
-      kind: 'StatefulSet',
-      namespace,
-      prop: 'statefulSets'
-    },
-    {
-      isList: true,
-      kind: 'Service',
-      namespace,
-      prop: 'services'
-    }
-  ];
+const overviewDispatchToProps = (dispatch) => {
+  return {
+    dismissDetails: () => dispatch(UIActions.dismissOverviewDetails()),
+  };
+};
 
-  if (_.isEmpty(namespace) || namespace === ALL_NAMESPACES_KEY) {
-    return <div className="co-m-pane">
-      <Disabled>
-        <OverviewHeading disabled title={title} />
-      </Disabled>
-      <div className="co-m-pane__body">
-        <MsgBox
-          detail={<React.Fragment>
-            Select a project from the dropdown above to see an overview of its workloads.
-            To view the status of all projects in the cluster, go to the <Link to="/status">status page</Link>.
-          </React.Fragment>}
-          title="Select a Project"
-        />
-      </div>
-    </div>;
-  }
+export const Overview = connect<OverviewPropsFromState, OverviewPropsFromDispatch, OverviewOwnProps>(overviewStateToProps, overviewDispatchToProps)(
+  ({dismissDetails, mock, namespace, selectedItem, title}: OverviewProps) => {
+    const className = classnames('overview', {'overview--sidebar-shown': !_.isEmpty(selectedItem)});
+    const resources = [
+      {
+        isList: true,
+        kind: 'Build',
+        namespace,
+        prop: 'builds'
+      },
+      {
+        isList: true,
+        kind: 'BuildConfig',
+        namespace,
+        prop: 'buildConfigs'
+      },
+      {
+        isList: true,
+        kind: 'DaemonSet',
+        namespace,
+        prop: 'daemonSets'
+      },
+      {
+        isList: true,
+        kind: 'Deployment',
+        namespace,
+        prop: 'deployments'
+      },
+      {
+        isList: true,
+        kind: 'DeploymentConfig',
+        namespace,
+        prop: 'deploymentConfigs'
+      },
+      {
+        isList: true,
+        kind: 'Pod',
+        namespace,
+        prop: 'pods'
+      },
+      {
+        isList: true,
+        kind: 'ReplicaSet',
+        namespace,
+        prop: 'replicaSets'
+      },
+      {
+        isList: true,
+        kind: 'ReplicationController',
+        namespace,
+        prop: 'replicationControllers'
+      },
+      {
+        isList: true,
+        kind: 'Route',
+        namespace,
+        prop: 'routes'
+      },
+      {
+        isList: true,
+        kind: 'StatefulSet',
+        namespace,
+        prop: 'statefulSets'
+      },
+      {
+        isList: true,
+        kind: 'Service',
+        namespace,
+        prop: 'services'
+      }
+    ];
 
-  return <div className={className}>
-    <div className="overview__main-column">
-      <div className="overview__main-column-section">
-        <Firehose resources={mock ? [] : resources} forceUpdate>
-          <OverviewDetails
-            mock={mock}
-            namespace={namespace}
-            selectedItem={selectedItem}
-            title={title}
-          />
-        </Firehose>
-      </div>
-    </div>
-    {
-      !_.isEmpty(selectedItem) &&
-      <CSSTransition
-        appear={true} in timeout={225} classNames="overview__sidebar">
-        <div className="overview__sidebar">
-          <div className="overview__sidebar-dismiss clearfix">
-            <CloseButton onClick={() => store.dispatch(UIActions.selectOverviewItem(''))} />
-          </div>
-          <ResourceOverviewPage
-            item={selectedItem}
-            kind={selectedItem.obj.kind}
+    if (_.isEmpty(namespace) || namespace === ALL_NAMESPACES_KEY) {
+      return <div className="co-m-pane">
+        <Disabled>
+          <OverviewHeading disabled title={title} />
+        </Disabled>
+        <div className="co-m-pane__body">
+          <MsgBox
+            detail={<React.Fragment>
+              Select a project from the dropdown above to see an overview of its workloads.
+              To view the status of all projects in the cluster, go to the <Link to="/status">status page</Link>.
+            </React.Fragment>}
+            title="Select a Project"
           />
         </div>
-      </CSSTransition>
+      </div>;
     }
-  </div>;
-});
+
+    return <div className={className}>
+      <div className="overview__main-column">
+        <div className="overview__main-column-section">
+          <Firehose resources={mock ? [] : resources} forceUpdate>
+            <OverviewDetails
+              mock={mock}
+              namespace={namespace}
+              selectedItem={selectedItem}
+              title={title}
+            />
+          </Firehose>
+        </div>
+      </div>
+      {
+        !_.isEmpty(selectedItem) &&
+        <CSSTransition
+          appear={true} in timeout={225} classNames="overview__sidebar">
+          <div className="overview__sidebar">
+            <div className="overview__sidebar-dismiss clearfix">
+              <CloseButton onClick={dismissDetails} />
+            </div>
+            <ResourceOverviewPage
+              item={selectedItem}
+              kind={selectedItem.obj.kind}
+            />
+          </div>
+        </CSSTransition>
+      }
+    </div>;
+  }
+);
 
 export const OverviewPage = withStartGuide(
   ({match, noProjectsAvailable}: OverviewPageProps & WithStartGuideProps) => {
@@ -964,13 +972,17 @@ type OverviewPropsFromState = {
   selectedItem: OverviewItem | undefined;
 };
 
+type OverviewPropsFromDispatch = {
+  dismissDetails: () => void;
+};
+
 type OverviewOwnProps = {
   mock: boolean;
   namespace: string;
   title: string;
 };
 
-type OverviewProps = OverviewPropsFromState & OverviewOwnProps;
+type OverviewProps = OverviewPropsFromState & OverviewPropsFromDispatch & OverviewOwnProps;
 
 type OverviewPageProps = {
   match: any;

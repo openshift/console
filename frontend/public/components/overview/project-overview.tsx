@@ -208,11 +208,12 @@ const projectOverviewListItemStateToProps = ({UI}): ProjectOverviewListItemProps
 });
 
 const projectOverviewListItemDispatchToProps = (dispatch): ProjectOverviewListItemPropsFromDispatch => ({
-  onClick: (uid) => dispatch(UIActions.selectOverviewItem(uid))
+  selectItem: (uid) => dispatch(UIActions.selectOverviewItem(uid)),
+  dismissDetails: () => dispatch(UIActions.dismissOverviewDetails()),
 });
 
 const ProjectOverviewListItem = connect<ProjectOverviewListItemPropsFromState, ProjectOverviewListItemPropsFromDispatch, ProjectOverviewListItemOwnProps>(projectOverviewListItemStateToProps, projectOverviewListItemDispatchToProps)(
-  ({item, metrics, onClick, selectedUID}: ProjectOverviewListItemProps) => {
+  ({dismissDetails, item, metrics, selectItem, selectedUID}: ProjectOverviewListItemProps) => {
     const {current, obj} = item;
     const {namespace, name, uid} = obj.metadata;
     const {kind} = obj;
@@ -237,7 +238,7 @@ const ProjectOverviewListItem = connect<ProjectOverviewListItemPropsFromState, P
     </div>;
 
     return <ListView.Item
-      onClick={() => onClick(isSelected ? '' : uid)}
+      onClick={() => (isSelected ? dismissDetails() : selectItem(uid))}
       className={className}
       heading={heading}
       additionalInfo={[additionalInfo]}
@@ -317,7 +318,8 @@ type ProjectOverviewListItemPropsFromState = {
 };
 
 type ProjectOverviewListItemPropsFromDispatch = {
-  onClick: (uid: string) => void;
+  selectItem: (uid: string) => void;
+  dismissDetails: () => void;
 };
 
 type ProjectOverviewListItemOwnProps= {

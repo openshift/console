@@ -86,6 +86,9 @@ export default (state, action) => {
     case types.selectOverviewDetailsTab:
       return state.setIn(['overview', 'selectedDetailsTab'], action.tab);
 
+    case types.dismissOverviewDetails:
+      return state.mergeIn(['overview'], {selectedUID: '', selectedDetailsTab: ''});
+
     case types.updateOverviewResources: {
       const newResources = new ImmutableMap(_.keyBy(action.resources, 'obj.metadata.uid'));
       return state.setIn(['overview', 'resources'], newResources);
