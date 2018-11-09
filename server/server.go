@@ -1,10 +1,7 @@
 package server
 
 import (
-	"bytes"
-	"encoding/base64"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"html/template"
 	"io"
@@ -12,7 +9,6 @@ import (
 	"net/url"
 	"os"
 	"path"
-	"strconv"
 
 	"github.com/coreos/dex/api"
 	"github.com/coreos/pkg/capnslog"
@@ -77,10 +73,6 @@ type Server struct {
 	Branding             string
 	GoogleTagManagerID   string
 	LoadTestFactor       int
-	// Helpers for logging into kubectl and rendering kubeconfigs. These fields
-	// may be nil.
-	KubectlAuther  *auth.Authenticator
-	KubeConfigTmpl *KubeConfigTmpl
 	DexClient      api.DexClient
 	// A client with the correct TLS setup for communicating with the API server.
 	K8sClient               *http.Client
@@ -160,13 +152,6 @@ func (s *Server) HTTPHandler() http.Handler {
 		handleFunc(authLogoutEndpoint, s.Auther.LogoutFunc)
 		handleFunc(AuthLoginCallbackEndpoint, s.Auther.CallbackFunc(fn))
 
-		if s.KubectlAuther != nil {
-			handleFunc("/api/tectonic/kubectl/code", s.KubectlAuther.LoginFunc)
-			handleFunc("/api/tectonic/kubectl/config", s.handleRenderKubeConfig)
-		}
-
-		handle("/api/tectonic/clients", authHandlerWithUser(s.handleListClients))
-		handle("/api/tectonic/revoke-token", authHandlerWithUser(s.handleTokenRevocation))
 		handle("/api/openshift/delete-token", authHandlerWithUser(s.handleOpenShiftTokenDeletion))
 	}
 
@@ -245,36 +230,6 @@ type apiError struct {
 	Err string `json:"error"`
 }
 
-func (s *Server) handleRenderKubeConfig(w http.ResponseWriter, r *http.Request) {
-	statusCode, err := func() (int, error) {
-		if r.Method != "POST" {
-			return http.StatusMethodNotAllowed, errors.New("not found")
-		}
-		if s.KubeConfigTmpl == nil {
-			return http.StatusNotImplemented, errors.New("Kubeconfig generation not configured.")
-		}
-		oauth2Code := r.FormValue("code")
-		if oauth2Code == "" {
-			return http.StatusBadRequest, errors.New("No 'code' form value provided.")
-		}
-
-		idToken, refreshToken, err := s.KubectlAuther.ExchangeAuthCode(oauth2Code)
-		if err != nil {
-			return http.StatusInternalServerError, fmt.Errorf("Failed to exchange auth token: %v", err)
-		}
-		buff := new(bytes.Buffer)
-		if err := s.KubeConfigTmpl.Execute(buff, idToken, refreshToken); err != nil {
-			return http.StatusInternalServerError, fmt.Errorf("Failed to render kubeconfig: %v", err)
-		}
-		w.Header().Set("Content-Length", strconv.Itoa(buff.Len()))
-		buff.WriteTo(w)
-		return 0, nil
-	}()
-	if err != nil {
-		sendResponse(w, statusCode, apiError{err.Error()})
-	}
-}
-
 func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 	jsg := &jsGlobals{
 		ConsoleVersion:       version.Version,
@@ -332,152 +287,6 @@ func (s *Server) versionHandler(w http.ResponseWriter, r *http.Request) {
 func notFoundHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotFound)
 	w.Write([]byte("not found"))
-}
-
-// KubeConfigTmpl is a template which can be rendered into kubectl config file
-// ready to talk to a tectonic installation.
-type KubeConfigTmpl struct {
-	tectonicClusterName string
-
-	clientID     string
-	clientSecret string
-
-	k8sURL           string
-	k8sCAPEMBase64ed string
-
-	dexURL           string
-	dexCAPEMBase64ed string
-}
-
-// NewKubeConfigTmpl takes the necessary arguments required to create a KubeConfigTmpl.
-func NewKubeConfigTmpl(clusterName, clientID, clientSecret, k8sURL, dexURL string, k8sCA, dexCA []byte) *KubeConfigTmpl {
-	encode := func(b []byte) string {
-		if b == nil {
-			return ""
-		}
-		return base64.StdEncoding.EncodeToString(b)
-	}
-	return &KubeConfigTmpl{
-		tectonicClusterName: clusterName,
-		clientID:            clientID,
-		clientSecret:        clientSecret,
-		k8sURL:              k8sURL,
-		dexURL:              dexURL,
-		k8sCAPEMBase64ed:    encode(k8sCA),
-		dexCAPEMBase64ed:    encode(dexCA),
-	}
-}
-
-// Execute renders a kubectl config file unqiue to an authentication session.
-func (k *KubeConfigTmpl) Execute(w io.Writer, idToken, refreshToken string) error {
-	data := kubeConfigTmplData{
-		TectonicClusterName: k.tectonicClusterName,
-		K8sCA:               k.k8sCAPEMBase64ed,
-		K8sURL:              k.k8sURL,
-		DexCA:               k.dexCAPEMBase64ed,
-		DexURL:              k.dexURL,
-		ClientID:            k.clientID,
-		ClientSecret:        k.clientSecret,
-		IDToken:             idToken,
-		RefreshToken:        refreshToken,
-	}
-	return kubeConfigTmpl.Execute(w, data)
-}
-
-type kubeConfigTmplData struct {
-	TectonicClusterName    string
-	K8sCA, K8sURL          string
-	DexCA, DexURL          string
-	ClientID, ClientSecret string
-	IDToken                string
-	RefreshToken           string
-}
-
-var kubeConfigTmpl = template.Must(template.New("kubeConfig").Parse(`apiVersion: v1
-kind: Config
-
-clusters:
-- cluster:
-    server: {{ .K8sURL }}{{ if .K8sCA }}
-    certificate-authority-data: {{ .K8sCA }}{{ end }}
-  name: {{ .TectonicClusterName }}
-
-users:
-- name: {{ .TectonicClusterName }}-user
-  user:
-    auth-provider:
-      config:
-        client-id: {{ .ClientID }}
-        client-secret: {{ .ClientSecret }}
-        id-token: {{ .IDToken }}{{ if .DexCA }}
-        idp-certificate-authority-data: {{ .DexCA }}{{ end }}
-        idp-issuer-url: {{ .DexURL }}{{ if .RefreshToken }}
-        refresh-token: {{ .RefreshToken }}{{ end }}
-        extra-scopes: groups
-      name: oidc
-
-preferences: {}
-
-contexts:
-- context:
-    cluster: {{ .TectonicClusterName }}
-    user: {{ .TectonicClusterName }}-user
-  name: {{ .TectonicClusterName }}-context
-
-current-context: {{ .TectonicClusterName }}-context
-`))
-
-func (s *Server) handleTokenRevocation(user *auth.User, w http.ResponseWriter, r *http.Request) {
-	if s.DexClient == nil {
-		sendResponse(w, http.StatusNotImplemented, apiError{"Failed to revoke refresh token: Dex API access not configured"})
-		return
-	}
-
-	clientID := r.FormValue("clientId")
-	if clientID == "" {
-		sendResponse(w, http.StatusBadRequest, apiError{"Failed to revoke refresh token: client_id not provided"})
-		return
-	}
-
-	req := &api.RevokeRefreshReq{
-		UserId:   user.ID,
-		ClientId: clientID,
-	}
-
-	resp, err := s.DexClient.RevokeRefresh(r.Context(), req)
-	if err != nil {
-		sendResponse(w, http.StatusBadRequest, apiError{fmt.Sprintf("Failed to revoke refresh token: %v", err)})
-		return
-	}
-	if resp.NotFound {
-		sendResponse(w, http.StatusNotFound, apiError{"Failed to revoke refresh token: refresh token not found"})
-		return
-	}
-
-	sendResponse(w, http.StatusOK, apiError{})
-}
-
-func (s *Server) handleListClients(user *auth.User, w http.ResponseWriter, r *http.Request) {
-	if s.DexClient == nil {
-		sendResponse(w, http.StatusNotImplemented, apiError{"Failed to List Client: Dex API access not configured."})
-		return
-	}
-
-	req := &api.ListRefreshReq{
-		UserId: user.ID,
-	}
-
-	resp, err := s.DexClient.ListRefresh(r.Context(), req)
-	if err != nil {
-		sendResponse(w, http.StatusInternalServerError, apiError{fmt.Sprintf("Failed to list clients: %v", err)})
-		return
-	}
-
-	sendResponse(w, http.StatusOK, struct {
-		TokenData []*api.RefreshTokenRef `json:"token_data"`
-	}{
-		TokenData: resp.RefreshTokens,
-	})
 }
 
 func (s *Server) handleOpenShiftTokenDeletion(user *auth.User, w http.ResponseWriter, r *http.Request) {

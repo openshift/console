@@ -189,17 +189,8 @@ func main() {
 
 	var (
 		// Hold on to raw certificates so we can render them in kubeconfig files.
-		dexCertPEM []byte
 		k8sCertPEM []byte
 	)
-	if *fCAFile != "" {
-		var err error
-
-		if dexCertPEM, err = ioutil.ReadFile(*fCAFile); err != nil {
-			log.Fatalf("Failed to read cert file: %v", err)
-		}
-
-	}
 
 	var (
 		k8sAuthServiceAccountBearerToken string
@@ -392,48 +383,6 @@ func main() {
 				"audience:server:client_id:"+*fKubectlClientID,
 			)
 
-			kubectlClientSecret := *fKubectlClientSecret
-			if *fKubectlClientSecretFile != "" {
-				buf, err := ioutil.ReadFile(*fKubectlClientSecretFile)
-				if err != nil {
-					log.Fatalf("Failed to read client secret file: %v", err)
-				}
-				kubectlClientSecret = string(buf)
-			}
-
-			// Configure an OpenID Connect config for kubectl. This lets us issue
-			// refresh tokens that kubectl can redeem using its own credentials.
-			kubectlAuthConfig := &auth.Config{
-				IssuerURL:    userAuthOIDCIssuerURL.String(),
-				IssuerCA:     *fCAFile,
-				ClientID:     *fKubectlClientID,
-				ClientSecret: kubectlClientSecret,
-				// The magic "out of band" redirect URL.
-				RedirectURL: "urn:ietf:wg:oauth:2.0:oob",
-				// Request a refresh token with the "offline_access" scope.
-				Scope: []string{"openid", "email", "profile", "offline_access", "groups"},
-
-				ErrorURL:   authLoginErrorEndpoint,
-				SuccessURL: authLoginSuccessEndpoint,
-
-				CookiePath:    cookiePath,
-				RefererPath:   refererPath,
-				SecureCookies: secureCookies,
-			}
-
-			if srv.KubectlAuther, err = auth.NewAuthenticator(context.Background(), kubectlAuthConfig); err != nil {
-				log.Fatalf("Error initializing kubectl authenticator: %v", err)
-			}
-
-			srv.KubeConfigTmpl = server.NewKubeConfigTmpl(
-				*fTectonicClusterName,
-				*fKubectlClientID,
-				*fKubectlClientSecret,
-				apiServerEndpoint,
-				userAuthOIDCIssuerURL.String(),
-				k8sCertPEM,
-				dexCertPEM,
-			)
 		}
 
 		if srv.Auther, err = auth.NewAuthenticator(context.Background(), oidcClientConfig); err != nil {
