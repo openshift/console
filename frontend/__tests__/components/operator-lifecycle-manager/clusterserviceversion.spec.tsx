@@ -154,7 +154,7 @@ describe(ClusterServiceVersionsPage.displayName, () => {
   let wrapper: ShallowWrapper<ClusterServiceVersionsPageProps>;
 
   beforeEach(() => {
-    wrapper = shallow(<ClusterServiceVersionsPage.WrappedComponent kind={referenceForModel(ClusterServiceVersionModel)} namespaceEnabled={true} resourceDescriptions={[]} match={{params: {ns: 'foo'}, isExact: true, path: '', url: ''}} />);
+    wrapper = shallow(<ClusterServiceVersionsPage.WrappedComponent kind={referenceForModel(ClusterServiceVersionModel)} resourceDescriptions={[]} match={{params: {ns: 'foo'}, isExact: true, path: '', url: ''}} />);
   });
 
   it('renders a `ListPage` with correct props', () => {
@@ -166,17 +166,8 @@ describe(ClusterServiceVersionsPage.displayName, () => {
     expect(listPage.props().showTitle).toBe(false);
   });
 
-  it('renders an error page if the namespace is not enabled', () => {
-    wrapper = wrapper.setProps({namespaceEnabled: false});
-    const msgBox = wrapper.find(MsgBox);
-    const listPage = wrapper.find(ListPage);
-
-    expect(listPage.exists()).toBe(false);
-    expect(msgBox.exists()).toBe(true);
-  });
-
   it('renders `LoadingBox` if still detecting OpenShift or namespaces/projects are loading', () => {
-    wrapper = wrapper.setProps({namespaceEnabled: false, loading: true});
+    wrapper = wrapper.setProps({loading: true});
     const msgBox = wrapper.find(MsgBox);
     const listPage = wrapper.find(ListPage);
 

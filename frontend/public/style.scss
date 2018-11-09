@@ -1,7 +1,6 @@
 // Config
 @import '~patternfly/dist/sass/patternfly/color-variables';
 @import "style/vars";
-@import "style/config";
 
 // External dependency variables or mixins that are required/extended by our custom styles (tilde tells Webpack not to use relative path)
 // IMPORTANT: Please put non-variable/mixin external dependency imports in vendor.scss!

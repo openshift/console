@@ -2,7 +2,7 @@ $color-row-filter--border: #DDD;
 
 .row-filter {
   outline: 1px solid $color-row-filter--border;
-  background-color: $color-grey-background;
+  background-color: $color-pf-black-150;
   margin-bottom: 30px;
   margin-top: 3px;
 }
@@ -10,7 +10,7 @@ $color-row-filter--border: #DDD;
 .row-filter--box {
   display: inline-block;
   padding: 7px 10px;
-  background: $color-grey-background;
+  background: $color-pf-black-150;
   outline: 1px solid $color-row-filter--border;
   //  relative is to trigger z-index
   position: relative;

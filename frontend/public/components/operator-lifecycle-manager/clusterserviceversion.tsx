@@ -1,9 +1,8 @@
-/* eslint-disable no-undef */
+/* eslint-disable no-undef, no-unused-vars */
 
 import * as React from 'react';
 import { Link, match as RouterMatch } from 'react-router-dom';
 import * as _ from 'lodash-es';
-import { Map as ImmutableMap } from 'immutable';
 import { connect } from 'react-redux';
 import { Alert } from 'patternfly-react';
 
@@ -24,7 +23,6 @@ import {
   referenceForCRDDesc
 } from './index';
 import {
-  Box,
   Cog,
   LoadingBox,
   MsgBox,
@@ -38,8 +36,6 @@ import {
   ResourceSummary,
   ScrollToTopOnMount,
 } from '../utils';
-
-import * as operatorLogo from '../../imgs/operator.svg';
 
 export const ClusterServiceVersionHeader: React.SFC = () => <ListHeader>
   <ColHead className="col-lg-3 col-md-4 col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
@@ -96,9 +92,7 @@ export const ClusterServiceVersionList: React.SFC<ClusterServiceVersionListProps
 };
 
 const stateToProps = ({k8s, FLAGS}, {match}) => ({
-  loading: FLAGS.get(featureFlags.OPENSHIFT) === undefined || !k8s.getIn([FLAGS.get(featureFlags.OPENSHIFT) ? 'projects' : 'namespaces', 'loaded']),
-  namespaceEnabled: k8s.getIn([FLAGS.get(featureFlags.OPENSHIFT) ? 'projects' : 'namespaces', 'data'], ImmutableMap())
-    .find((objMap) => objMap.getIn(['metadata', 'name']) === match.params.ns && objMap.getIn(['metadata', 'annotations', 'alm-manager'])) !== undefined,
+  loading: FLAGS.get(featureFlags.OPENSHIFT) === undefined || !k8s.getIn([FLAGS.get(featureFlags.OPENSHIFT) ? 'projects' : 'namespaces', 'loaded'])
 });
 
 export const ClusterServiceVersionsPage = connect(stateToProps)((props: ClusterServiceVersionsPageProps) => {
@@ -107,22 +101,17 @@ export const ClusterServiceVersionsPage = connect(stateToProps)((props: ClusterS
     return <LoadingBox />;
   }
 
-  return props.match.params.ns && !props.namespaceEnabled
-    ? <Box className="text-center">
-      <img className="co-clusterserviceversion-list__disabled-icon" src={operatorLogo} />
-      <MsgBox title="Operator Lifecycle Manager not enabled for this namespace" detail="Please contact a system administrator and ask them to enable Operator Lifecycle Manager to continue." />
-    </Box>
-    : <React.Fragment>
-      <PageHeading title="Cluster Service Versions" />
-      <ListPage
-        {...props}
-        namespace={props.match.params.ns}
-        kind={referenceForModel(ClusterServiceVersionModel)}
-        ListComponent={ClusterServiceVersionList}
-        helpText={helpText}
-        filterLabel="Cluster Service Versions by name"
-        showTitle={false} />
-    </React.Fragment>;
+  return <React.Fragment>
+    <PageHeading title="Cluster Service Versions" />
+    <ListPage
+      {...props}
+      namespace={props.match.params.ns}
+      kind={referenceForModel(ClusterServiceVersionModel)}
+      ListComponent={ClusterServiceVersionList}
+      helpText={helpText}
+      filterLabel="Cluster Service Versions by name"
+      showTitle={false} />
+  </React.Fragment>;
 });
 
 export const MarkdownView = (props: {content: string}) => {
@@ -257,7 +246,6 @@ export const ClusterServiceVersionsDetailsPage: React.StatelessComponent<Cluster
 export type ClusterServiceVersionsPageProps = {
   kind: string;
   loading?: boolean;
-  namespaceEnabled: boolean;
   match: RouterMatch<{ns?: string}>;
   resourceDescriptions: CRDDescription[];
 };
