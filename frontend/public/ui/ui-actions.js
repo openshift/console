@@ -65,16 +65,17 @@ export const formatNamespaceRoute = (activeNamespace, originalPath, location) =>
 };
 
 export const types = {
+  dismissOverviewDetails: 'dismissOverviewDetails',
+  selectOverviewDetailsTab: 'selectOverviewDetailsTab',
+  selectOverviewItem: 'selectOverviewItem',
   setActiveNamespace: 'setActiveNamespace',
+  setCreateProjectMessage: 'setCreateProjectMessage',
   setCurrentLocation: 'setCurrentLocation',
+  setMonitoringData: 'setMonitoringData',
+  sortList: 'sortList',
   startImpersonate: 'startImpersonate',
   stopImpersonate: 'stopImpersonate',
-  sortList: 'sortList',
-  setCreateProjectMessage: 'setCreateProjectMessage',
-  setMonitoringData: 'setMonitoringData',
-  selectOverviewItem: 'selectOverviewItem',
-  selectOverviewDetailsTab: 'selectOverviewDetailsTab',
-  updateOverviewResources: 'updateOverviewResources'
+  updateOverviewResources: 'updateOverviewResources',
 };
 
 /** @type {{[key: string]: function}} */
@@ -165,6 +166,8 @@ export const UIActions = {
   [types.selectOverviewDetailsTab]: tab => ({type: types.selectOverviewDetailsTab, tab}),
 
   [types.updateOverviewResources]: resources => ({type: types.updateOverviewResources, resources}),
+
+  [types.dismissOverviewDetails]: () => ({type: types.dismissOverviewDetails}),
 
   monitoringLoading: key => ({type: types.setMonitoringData, key, data: {loaded: false, loadError: null, data: null}}),
 
