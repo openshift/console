@@ -1,9 +1,9 @@
 import { Map as ImmutableMap } from 'immutable';
 
 import {
-  referenceForModel,
   /* eslint-disable-next-line no-unused-vars */
-  GroupVersionKind
+  GroupVersionKind,
+  referenceForModel,
 } from '../../module/k8s';
 import {
   DaemonSetModel,

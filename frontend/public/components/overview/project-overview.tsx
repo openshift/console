@@ -16,14 +16,20 @@ import {
   resourcePath
 } from '../utils';
 
-const formatToFractionalDigits = (value: number, digits: number) => Intl.NumberFormat(undefined, { minimumFractionDigits: digits, maximumFractionDigits: digits }).format(value);
+import {
+  OverviewGroup,
+  OverviewItem,
+  PodControllerOverviewItem
+} from '.';
 
-const formatBytesAsMiB = bytes => {
+const formatToFractionalDigits = (value: number, digits: number): string => Intl.NumberFormat(undefined, { minimumFractionDigits: digits, maximumFractionDigits: digits }).format(value);
+
+const formatBytesAsMiB = (bytes: number): string => {
   const mib = bytes / 1024 / 1024;
   return formatToFractionalDigits(mib, 1);
 };
 
-const formatCores = (cores: number) => formatToFractionalDigits(cores, 3);
+const formatCores = (cores: number): string => formatToFractionalDigits(cores, 3);
 
 const overviewTooltipStyles = Object.freeze({
   content: {
@@ -34,7 +40,7 @@ const overviewTooltipStyles = Object.freeze({
   },
 });
 
-const truncateMiddle = (text = '') => {
+const truncateMiddle = (text: string = ''): React.ReactNode => {
   const length = text.length;
   if (length < 20) {
     return text;
@@ -45,16 +51,16 @@ const truncateMiddle = (text = '') => {
   return <span className="text-nowrap">{begin}&hellip;{end}</span>;
 };
 
-const ControllerLink = ({controller}) => {
+const ControllerLink: React.SFC<ControllerLinkProps> = ({controller}) => {
   const { obj, revision } = controller;
   const { name } = obj.metadata;
   const label = _.isFinite(revision) ? `#${revision}` : name;
   return <Link to={resourceObjPath(obj, obj.kind)} title={name}>{label}</Link>;
 };
 
-export const ComponentLabel = ({text}) => <div className="co-component-label">{text}</div>;
+export const ComponentLabel: React.SFC<ComponentLabelProps> = ({text}) => <div className="co-component-label">{text}</div>;
 
-const MetricsTooltip = ({metricLabel, byPod, children}) => {
+const MetricsTooltip: React.SFC<MetricsTooltipProps> = ({metricLabel, byPod, children}) => {
   const sortedMetrics = _.orderBy(byPod, ['value', 'name'], ['desc', 'asc']);
   const content: any[] = _.isEmpty(sortedMetrics)
     ? [<React.Fragment key="no-metrics">No {metricLabel} metrics available.</React.Fragment>]
@@ -78,7 +84,7 @@ const MetricsTooltip = ({metricLabel, byPod, children}) => {
   return <Tooltip content={content} styles={overviewTooltipStyles} disableOnMobile>{children}</Tooltip>;
 };
 
-const Metrics = ({metrics, item}) => {
+const Metrics: React.SFC<MetricsProps> = ({metrics, item}) => {
   if (_.isEmpty(metrics)) {
     return null;
   }
@@ -129,7 +135,7 @@ const Metrics = ({metrics, item}) => {
   </React.Fragment>;
 };
 
-const Status = ({item}) => {
+const Status: React.SFC<StatusProps> = ({item}) => {
   const {isRollingOut, readiness, obj} = item;
   const {namespace, name} = obj.metadata;
   if (isRollingOut) {
@@ -176,7 +182,7 @@ const AlertTooltip = ({alerts, severity}) => {
   </Tooltip>;
 };
 
-const Alerts = ({item}) => {
+const Alerts: React.SFC<AlertsProps> = ({item}) => {
   const currentAlerts = _.get(item, 'current.alerts', {});
   const previousAlerts = _.get(item, 'previous.alerts', {});
   const itemAlerts = _.get(item, 'alerts', {});
@@ -265,7 +271,7 @@ const ProjectOverviewGroup: React.SFC<ProjectOverviewGroupProps> = ({heading, it
 
 export const ProjectOverview: React.SFC<ProjectOverviewProps> = ({groups, metrics}) =>
   <div className="project-overview">
-    {_.map(groups, ({name, items, index}) =>
+    {_.map(groups, ({name, items}, index) =>
       <ProjectOverviewGroup
         key={name || `_${index}`}
         heading={name}
@@ -276,6 +282,36 @@ export const ProjectOverview: React.SFC<ProjectOverviewProps> = ({groups, metric
   </div>;
 
 /* eslint-disable no-unused-vars, no-undef */
+type ControllerLinkProps = {
+  controller: PodControllerOverviewItem;
+};
+
+type ComponentLabelProps = {
+  text: string;
+};
+
+type MetricsTooltipProps = {
+  metricLabel: string;
+  byPod: {
+    formattedValue: string
+    name: string;
+    value: number;
+  }[];
+};
+
+type MetricsProps = {
+  metrics: any;
+  item: OverviewItem;
+};
+
+type StatusProps = {
+  item: OverviewItem;
+};
+
+type AlertsProps = {
+  item: OverviewItem;
+};
+
 type ProjectOverviewListItemPropsFromState = {
   selectedUID: string;
 };
@@ -285,29 +321,25 @@ type ProjectOverviewListItemPropsFromDispatch = {
 };
 
 type ProjectOverviewListItemOwnProps= {
-  item: any;
+  item: OverviewItem;
   metrics: any;
 };
 
 type ProjectOverviewListItemProps = ProjectOverviewListItemOwnProps & ProjectOverviewListItemPropsFromDispatch & ProjectOverviewListItemPropsFromState;
 
 type ProjectOverviewListProps = {
-  items: any[];
+  items: OverviewItem[];
   metrics: any;
 };
 
 type ProjectOverviewGroupProps = {
   heading: string;
-  items: any[];
+  items: OverviewItem[];
   metrics: any;
 };
 
 type ProjectOverviewProps = {
-  groups: {
-    index: number;
-    name: string;
-    items: any[];
-  }[];
+  groups: OverviewGroup[];
   metrics: any;
 };
 /* eslint-enable no-unused-vars, no-undef */

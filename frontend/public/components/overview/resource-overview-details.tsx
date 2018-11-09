@@ -9,6 +9,8 @@ import {
   SimpleTabNav,
 } from '../utils';
 
+import { OverviewItem } from '.';
+
 const stateToProps = ({UI}): PropsFromState => ({
   selectedDetailsTab: UI.getIn(['overview', 'selectedDetailsTab'])
 });
@@ -44,10 +46,13 @@ type PropsFromDispatch = {
 };
 
 type OwnProps = {
-  item: any;
+  item: OverviewItem;
   kindObj: K8sKind;
   menuActions: CogAction[];
-  tabs: any;
+  tabs: {
+    name: string;
+    component: any;
+  }[];
 };
 
 type ResourceOverviewDetailsProps = PropsFromState & PropsFromDispatch & OwnProps;
