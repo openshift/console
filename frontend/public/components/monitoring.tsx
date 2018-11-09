@@ -21,7 +21,6 @@ import { withFallback } from './utils/error-boundary';
 import { Tooltip } from './utils/tooltip';
 import {
   ActionsMenu,
-  BreadCrumbs,
   ButtonBar,
   Cog,
   ExternalLink,
@@ -303,17 +302,12 @@ const AlertRulesDetailsPage = withFallback(connect(ruleStateToProps)((props: Ale
   const {loaded, loadError, rule} = props;
   const {alerts = [], annotations = {}, duration = null, labels = {}, name = '', query = ''} = rule || {};
   const {severity} = labels as any;
-  const breadcrumbs = [
-    {name, path: alertURL(name, labels)},
-    {name: `${AlertRuleResource.label} Details`, path: null},
-  ];
 
   return <React.Fragment>
     <Helmet>
       <title>{`${name} · Details`}</title>
     </Helmet>
-    <div className="co-m-nav-title co-m-nav-title--detail co-m-nav-title--breadcrumbs">
-      <BreadCrumbs breadcrumbs={breadcrumbs} />
+    <div className="co-m-nav-title co-m-nav-title--detail">
       <h1 className="co-m-pane__heading">
         <div className="co-m-pane__name"><MonitoringResourceIcon className="co-m-resource-icon--lg pull-left" resource={AlertRuleResource} />{name}</div>
       </h1>
