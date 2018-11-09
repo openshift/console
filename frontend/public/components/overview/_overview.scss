@@ -53,23 +53,21 @@
     @media(min-width: $screen-sm-min) {
       width: 550px;
     }
-    transition:
-      transform 125ms ease-out,
-      opacity 175ms linear;
     z-index: 5;
   }
 
-  @media(max-width: $screen-xs-max) {
     .overview__sidebar-appear {
-      transform: translateX(7px);
-      opacity: .75;
+      opacity: 0;
+      transform: translateX(10%);
     }
 
     .overview__sidebar-appear-active {
-      transform: translateX(0);
       opacity: 1;
+      transform: translateX(0);
+      transition:
+        opacity 175ms ease-out,
+        transform 225ms ease-out;
     }
-  }
 
   &.overview--sidebar-shown {
     .overview__sidebar {

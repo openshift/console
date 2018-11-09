@@ -852,7 +852,8 @@ export const Overview = connect<OverviewPropsFromState, {}, OverviewOwnProps>(ov
     </div>
     {
       !_.isEmpty(selectedItem) &&
-      <CSSTransition in appear timeout={1} classNames="overview__sidebar">
+      <CSSTransition
+        appear={true} in timeout={225} classNames="overview__sidebar">
         <div className="overview__sidebar">
           <div className="overview__sidebar-dismiss clearfix">
             <CloseButton onClick={() => store.dispatch(UIActions.selectOverviewItem(''))} />
