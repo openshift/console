@@ -90,9 +90,9 @@ export const selectOptionFromGear = (name: string, gearOptionStartsWith: string)
       .then(text => text.startsWith(gearOptionStartsWith))).first().click()
     );
 
-export const rowFilters = $$('.row-filter--box');
+export const rowFilters = $$('.row-filter__box');
 export const rowFilterFor = (name: string) => rowFilters.filter(el => el.getText().then(text => text.includes(name))).first();
-export const activeRowFilters = $$('.row-filter--box__active');
+export const activeRowFilters = $$('.row-filter__box--active');
 
 export const statusMessageTitle = $('.cos-status-box__title');
 export const statusMessageDetail = $('.cos-status-box__detail');
