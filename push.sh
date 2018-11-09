@@ -37,8 +37,14 @@ docker build -q --rm=true -f Dockerfile -t $REPO:$GIT_VERSION .
 docker push $REPO:$GIT_VERSION
 
 if [ -n "$IMAGE_TAG" ]; then
+  IMAGE_TAG_NO_DASH=`echo $IMAGE_TAG | sed 's/\(.*\)-.*$/\1/g'`  # v1.3.0-3 to v1.3.0
+  IMAGE_TAG_MAJOR_MINOR_ONLY=`echo $IMAGE_TAG | sed 's/\([a-zA-Z]*[0-9]\)\.\([0-9]\).*$/\1\.\2/g'` # v1.3.0-3 to v1.3
   docker tag $REPO:$GIT_VERSION $REPO:latest
+  docker tag $REPO:$GIT_VERSION $REPO:$IMAGE_TAG_NO_DASH
+  docker tag $REPO:$GIT_VERSION $REPO:$IMAGE_TAG_MAJOR_MINOR_ONLY
   docker push $REPO:latest
+  docker push $REPO:$IMAGE_TAG_NO_DASH
+  docker push $REPO:$IMAGE_TAG_MAJOR_MINOR_ONLY
 fi
 
 # Not used by kubevirt:
