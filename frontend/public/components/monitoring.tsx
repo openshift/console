@@ -54,7 +54,7 @@ const SilenceResource = {
 
 const labelsToParams = labels => _.map(labels, (v, k) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`).join('&');
 
-const alertURL = (name, labels) => `${AlertResource.path}/${name}?${labelsToParams(labels)}`;
+const alertURL = alert => `${AlertResource.path}/${_.get(alert.labels, 'alertname')}?${labelsToParams(alert.labels)}`;
 const ruleURL = rule => `${AlertRuleResource.path}/${_.get(rule, 'id')}`;
 
 // Return "not-firing" if no state is found
@@ -276,7 +276,7 @@ const ActiveAlerts = ({alerts}) => <div className="co-m-table-grid co-m-table-gr
   <div className="co-m-table-grid__body">
     {_.sortBy(alerts, alertDescription).map((a, i) => <ResourceRow key={i} obj={a}>
       <div className="col-xs-6">
-        <Link className="co-resource-link" to={alertURL(a.labels.alertname, a.labels)}>{alertDescription(a)}</Link>
+        <Link className="co-resource-link" to={alertURL(a)}>{alertDescription(a)}</Link>
       </div>
       <div className="col-sm-2 hidden-xs"><Timestamp timestamp={a.activeAt} /></div>
       <div className="col-sm-2 col-xs-3"><AlertState state={a.state} /></div>
@@ -374,7 +374,7 @@ const SilencedAlertsList = connect(silencedAlertsToProps)(
       <div className="co-m-table-grid__body">
         {_.sortBy(alerts, alertDescription).map((a, i) => <div className="row co-resource-list__item" key={i}>
           <div className="col-xs-9">
-            <Link className="co-resource-link" to={alertURL(a.labels.alertname, a.labels)}>{a.labels.alertname}</Link>
+            <Link className="co-resource-link" to={alertURL(a)}>{a.labels.alertname}</Link>
             <div className="monitoring-description">{alertDescription(a)}</div>
           </div>
           <div className="col-xs-3">{a.labels.severity}</div>
@@ -473,7 +473,7 @@ const AlertRow = ({obj}) => {
     <div className="col-xs-7">
       <div className="co-resource-link">
         <MonitoringResourceIcon resource={AlertResource} />
-        <Link to={alertURL(labels.alertname, labels)} className="co-resource-link__resource-name">{labels.alertname}</Link>
+        <Link to={alertURL(obj)} className="co-resource-link__resource-name">{labels.alertname}</Link>
       </div>
       <div className="monitoring-description">{annotations.description || annotations.message}</div>
     </div>
