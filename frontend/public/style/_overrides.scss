@@ -1,37 +1,11 @@
 // Use this file to override styles from 3rd party dependencies
 
-// override patternfly's extra thin font weight for headers
-h1,
-.h1,
-h2,
-.h2 {
-  font-weight: normal;
-}
-
 .text-secondary {
   color: $color-text-secondary;
 }
 
-small {
-  font-size: 12px;
-}
-
 .form-control[disabled], fieldset[disabled] .form-control {
   cursor: auto;
-}
-
-.text-filter {
-  width: 250px;
-  min-width: 150px;
-}
-
-.no-margin {
-  margin: 0 !important;
-}
-
-// override patternfly popover width to make less narrow
-.popover {
-  max-width: 325px;
 }
 
 tags-input:focus,
@@ -171,10 +145,6 @@ tags-input .autocomplete .suggestion-item em {
   background-color: white;
 }
 
-.clickable {
-  cursor: pointer;
-}
-
 // account for collapsing space between .btn
 .btn + .btn {
   margin-left: 3px;
@@ -221,21 +191,18 @@ tags-input .autocomplete .suggestion-item em {
 }
 
 .table {
-  margin-bottom: 0; }
-  .table thead > tr > th {
-    border-bottom: 0; }
-  .table th {
+  margin-bottom: 0;
+  td {
+    vertical-align: middle !important;
+  }
+  th {
+    padding-top: 0 !important;
     text-transform: uppercase;
-    padding-top: 0 !important; }
-  .table tr:last-child {
-    border-bottom: 1px solid #eee; }
-  .table td {
-    border-color: #eee !important;
-    vertical-align: middle !important; }
-    .table td input[type="radio"], .table td input[type="checkbox"] {
-      margin-top: 0;
-      vertical-align: middle; }
-
-.table-hover > tbody > tr:hover > td,
-.table-hover > tbody > tr:hover > th {
-  background-color: #EAF3FF; }
+  }
+  thead > tr > th {
+    border-bottom: 0;
+  }
+  tr:last-child {
+    border-bottom: 1px solid $table-border-color;
+  }
+}
