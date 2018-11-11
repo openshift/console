@@ -37,7 +37,7 @@ describe(SubscriptionChannelModal.name, () => {
         provider: {
           name: 'CoreOS, Inc',
         },
-      }
+      },
     }, {
       name: 'nightly',
       currentCSV: 'testapp-nightly',
@@ -48,7 +48,7 @@ describe(SubscriptionChannelModal.name, () => {
         provider: {
           name: 'CoreOS, Inc',
         },
-      }
+      },
     }];
 
     wrapper = shallow(<SubscriptionChannelModal subscription={subscription} pkg={pkg} k8sUpdate={k8sUpdate} close={close} cancel={cancel} />);

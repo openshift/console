@@ -10,7 +10,7 @@ export const catalogListPageProps = {
         'spec': {
           'tags': [
             'database',
-            'mongodb'
+            'mongodb',
           ],
           'externalMetadata': {
             'console.openshift.io/iconClass': 'icon-mongodb',
@@ -20,8 +20,8 @@ export const catalogListPageProps = {
           'description': 'MongoDB database service, with persistent storage. For more information about using this template, including OpenShift considerations, see https://github.com/sclorg/mongodb-container/blob/master/3.2/README.md.\n\nNOTE: Scaling to more than one replica is not supported. You must have persistent volumes available in your cluster to use this template.',
         },
         'status': {
-          'removedFromBrokerCatalog': false
-        }
+          'removedFromBrokerCatalog': false,
+        },
       },
       {
         'metadata': {
@@ -31,7 +31,7 @@ export const catalogListPageProps = {
         'spec': {
           'tags': [
             'instant-app',
-            'jenkins'
+            'jenkins',
           ],
           'externalMetadata': {
             'console.openshift.io/iconClass': 'icon-jenkins',
@@ -41,8 +41,8 @@ export const catalogListPageProps = {
           'description': 'Jenkins service, with persistent storage.\n\nNOTE: You must have persistent volumes available in your cluster to use this template.',
         },
         'status': {
-          'removedFromBrokerCatalog': false
-        }
+          'removedFromBrokerCatalog': false,
+        },
       },
       {
         'metadata': {
@@ -53,7 +53,7 @@ export const catalogListPageProps = {
           'tags': [
             'quickstart',
             'php',
-            'cakephp'
+            'cakephp',
           ],
           'externalMetadata': {
             'console.openshift.io/iconClass': 'icon-php',
@@ -63,8 +63,8 @@ export const catalogListPageProps = {
           'description': 'An example CakePHP application with a MySQL database. For more information about using this template, including OpenShift considerations, see https://github.com/openshift/cakephp-ex/blob/master/README.md.',
         },
         'status': {
-          'removedFromBrokerCatalog': false
-        }
+          'removedFromBrokerCatalog': false,
+        },
       },
       {
         'metadata': {
@@ -75,7 +75,7 @@ export const catalogListPageProps = {
           'tags': [
             'quickstart',
             'ruby',
-            'rails'
+            'rails',
           ],
           'externalMetadata': {
             'console.openshift.io/iconClass': 'icon-ruby',
@@ -85,8 +85,8 @@ export const catalogListPageProps = {
           'description': 'An example Rails application with a PostgreSQL database. For more information about using this template, including OpenShift considerations, see https://github.com/openshift/rails-ex/blob/master/README.md.',
         },
         'status': {
-          'removedFromBrokerCatalog': false
-        }
+          'removedFromBrokerCatalog': false,
+        },
       },
       {
         'metadata': {
@@ -97,7 +97,7 @@ export const catalogListPageProps = {
           'tags': [
             'quickstart',
             'python',
-            'django'
+            'django',
           ],
           'externalMetadata': {
             'console.openshift.io/iconClass': 'icon-python',
@@ -107,8 +107,8 @@ export const catalogListPageProps = {
           'description': 'An example Django application with a PostgreSQL database. For more information about using this template, including OpenShift considerations, see https://github.com/openshift/django-ex/blob/master/README.md.',
         },
         'status': {
-          'removedFromBrokerCatalog': false
-        }
+          'removedFromBrokerCatalog': false,
+        },
       },
       {
         'metadata': {
@@ -118,7 +118,7 @@ export const catalogListPageProps = {
         'spec': {
           'tags': [
             'database',
-            'postgresql'
+            'postgresql',
           ],
           'externalMetadata': {
             'console.openshift.io/iconClass': 'icon-postgresql',
@@ -128,8 +128,8 @@ export const catalogListPageProps = {
           'description': 'PostgreSQL database service, with persistent storage. For more information about using this template, including OpenShift considerations, see https://github.com/sclorg/postgresql-container/.\n\nNOTE: Scaling to more than one replica is not supported. You must have persistent volumes available in your cluster to use this template.',
         },
         'status': {
-          'removedFromBrokerCatalog': false
-        }
+          'removedFromBrokerCatalog': false,
+        },
       },
       {
         'metadata': {
@@ -139,7 +139,7 @@ export const catalogListPageProps = {
         'spec': {
           'tags': [
             'database',
-            'mariadb'
+            'mariadb',
           ],
           'externalMetadata': {
             'console.openshift.io/iconClass': 'icon-mariadb',
@@ -149,8 +149,8 @@ export const catalogListPageProps = {
           'description': 'MariaDB database service, with persistent storage. For more information about using this template, including OpenShift considerations, see https://github.com/sclorg/mariadb-container/blob/master/10.2/root/usr/share/container-scripts/mysql/README.md.\n\nNOTE: Scaling to more than one replica is not supported. You must have persistent volumes available in your cluster to use this template.',
         },
         'status': {
-          'removedFromBrokerCatalog': false
-        }
+          'removedFromBrokerCatalog': false,
+        },
       },
       {
         'metadata': {
@@ -160,7 +160,7 @@ export const catalogListPageProps = {
         'spec': {
           'tags': [
             'database',
-            'mysql'
+            'mysql',
           ],
           'externalMetadata': {
             'console.openshift.io/iconClass': 'icon-mysql-database',
@@ -170,8 +170,8 @@ export const catalogListPageProps = {
           'description': 'MySQL database service, with persistent storage. For more information about using this template, including OpenShift considerations, see https://github.com/sclorg/mysql-container/blob/master/5.7/root/usr/share/container-scripts/mysql/README.md.\n\nNOTE: Scaling to more than one replica is not supported. You must have persistent volumes available in your cluster to use this template.',
         },
         'status': {
-          'removedFromBrokerCatalog': false
-        }
+          'removedFromBrokerCatalog': false,
+        },
       },
       {
         'metadata': {
@@ -181,17 +181,17 @@ export const catalogListPageProps = {
         'spec': {
           'tags': [
             'instant-app',
-            'jenkins'
+            'jenkins',
           ],
           'externalMetadata': {
             'console.openshift.io/iconClass': 'icon-jenkins',
-            'displayName': 'Pipeline Build Example'
+            'displayName': 'Pipeline Build Example',
           },
           'description': 'This example showcases the new Jenkins Pipeline integration in OpenShift,\nwhich performs continuous integration and deployment right on the platform.\nThe template contains a Jenkinsfile - a definition of a multi-stage CI/CD process - that\nleverages the underlying OpenShift platform for dynamic and scalable\nbuilds. OpenShift integrates the status of your pipeline builds into the web\nconsole allowing you to see your entire application lifecycle in a single view.',
         },
         'status': {
-          'removedFromBrokerCatalog': false
-        }
+          'removedFromBrokerCatalog': false,
+        },
       },
       {
         'metadata': {
@@ -202,7 +202,7 @@ export const catalogListPageProps = {
           'tags': [
             'quickstart',
             'perl',
-            'dancer'
+            'dancer',
           ],
           'externalMetadata': {
             'console.openshift.io/iconClass': 'icon-perl',
@@ -212,8 +212,8 @@ export const catalogListPageProps = {
           'description': 'An example Dancer application with a MySQL database. For more information about using this template, including OpenShift considerations, see https://github.com/openshift/dancer-ex/blob/master/README.md.',
         },
         'status': {
-          'removedFromBrokerCatalog': false
-        }
+          'removedFromBrokerCatalog': false,
+        },
       },
       {
         'metadata': {
@@ -223,7 +223,7 @@ export const catalogListPageProps = {
         'spec': {
           'tags': [
             'quickstart',
-            'nodejs'
+            'nodejs',
           ],
           'externalMetadata': {
             'console.openshift.io/iconClass': 'icon-nodejs',
@@ -233,14 +233,14 @@ export const catalogListPageProps = {
           'description': 'An example Node.js application with a MongoDB database. For more information about using this template, including OpenShift considerations, see https://github.com/openshift/nodejs-ex/blob/master/README.md.',
         },
         'status': {
-          'removedFromBrokerCatalog': false
-        }
-      }
+          'removedFromBrokerCatalog': false,
+        },
+      },
     ],
     'filters': {},
     'loadError': '',
     'loaded': true,
-    'selected': null
+    'selected': null,
   },
   'imagestreams': {
     'data': [
@@ -251,17 +251,17 @@ export const catalogListPageProps = {
               'name': '10.2',
               'annotations': {
                 'tags': 'database,mariadb',
-              }
-            }
-          ]
+              },
+            },
+          ],
         },
         'status': {
           'tags': [
             {
               'tag': '10.2',
-            }
-          ]
-        }
+            },
+          ],
+        },
       },
       {
         'metadata': {
@@ -269,8 +269,8 @@ export const catalogListPageProps = {
           'uid': 'c00bec39-c641-11e8-be32-54e1ad486c15',
           'annotations': {
             'openshift.io/display-name': 'Perl',
-            'openshift.io/image.dockerRepositoryCheck': '2018-10-02T12:50:38Z'
-          }
+            'openshift.io/image.dockerRepositoryCheck': '2018-10-02T12:50:38Z',
+          },
         },
         'spec': {
           'tags': [
@@ -282,17 +282,17 @@ export const catalogListPageProps = {
                 'openshift.io/display-name': 'Perl 5.24',
                 'openshift.io/provider-display-name': 'Red Hat, Inc.',
                 'tags': 'builder,perl',
-              }
-            }
-          ]
+              },
+            },
+          ],
         },
         'status': {
           'tags': [
             {
               'tag': '5.24',
-            }
-          ]
-        }
+            },
+          ],
+        },
       },
       {
         'metadata': {
@@ -300,8 +300,8 @@ export const catalogListPageProps = {
           'uid': 'c00c829d-c641-11e8-be32-54e1ad486c15',
           'annotations': {
             'openshift.io/display-name': 'PHP',
-            'openshift.io/image.dockerRepositoryCheck': '2018-10-02T12:50:38Z'
-          }
+            'openshift.io/image.dockerRepositoryCheck': '2018-10-02T12:50:38Z',
+          },
         },
         'spec': {
           'tags': [
@@ -313,9 +313,9 @@ export const catalogListPageProps = {
                 'openshift.io/display-name': 'PHP 7.1',
                 'openshift.io/provider-display-name': 'Red Hat, Inc.',
                 'tags': 'builder,php',
-              }
-            }
-          ]
+              },
+            },
+          ],
         },
         'status': {
           'dockerImageRepository': '172.30.1.1:5000/openshift/php',
@@ -323,8 +323,8 @@ export const catalogListPageProps = {
             {
               'tag': '7.1',
             },
-          ]
-        }
+          ],
+        },
       },
       {
         'metadata': {
@@ -332,8 +332,8 @@ export const catalogListPageProps = {
           'uid': 'c00e6500-c641-11e8-be32-54e1ad486c15',
           'annotations': {
             'openshift.io/display-name': 'Nginx HTTP server and a reverse proxy (nginx)',
-            'openshift.io/image.dockerRepositoryCheck': '2018-10-02T12:50:37Z'
-          }
+            'openshift.io/image.dockerRepositoryCheck': '2018-10-02T12:50:37Z',
+          },
         },
         'spec': {
           'tags': [
@@ -345,17 +345,17 @@ export const catalogListPageProps = {
                 'openshift.io/display-name': 'Nginx HTTP server and a reverse proxy 1.12',
                 'openshift.io/provider-display-name': 'Red Hat, Inc.',
                 'tags': 'builder,nginx',
-              }
-            }
-          ]
+              },
+            },
+          ],
         },
         'status': {
           'tags': [
             {
               'tag': '1.12',
-            }
-          ]
-        }
+            },
+          ],
+        },
       },
       {
         'metadata': {
@@ -363,8 +363,8 @@ export const catalogListPageProps = {
           'uid': 'c0119342-c641-11e8-be32-54e1ad486c15',
           'annotations': {
             'openshift.io/display-name': 'Redis',
-            'openshift.io/image.dockerRepositoryCheck': '2018-10-02T12:50:38Z'
-          }
+            'openshift.io/image.dockerRepositoryCheck': '2018-10-02T12:50:38Z',
+          },
         },
         'spec': {
           'tags': [
@@ -376,17 +376,17 @@ export const catalogListPageProps = {
                 'openshift.io/display-name': 'Redis 3.2',
                 'openshift.io/provider-display-name': 'Red Hat, Inc.',
                 'tags': 'redis',
-              }
-            }
-          ]
+              },
+            },
+          ],
         },
         'status': {
           'tags': [
             {
               'tag': '3.2',
-            }
-          ]
-        }
+            },
+          ],
+        },
       },
       {
         'metadata': {
@@ -394,8 +394,8 @@ export const catalogListPageProps = {
           'uid': 'c00f890f-c641-11e8-be32-54e1ad486c15',
           'annotations': {
             'openshift.io/display-name': 'PostgreSQL',
-            'openshift.io/image.dockerRepositoryCheck': '2018-10-02T12:50:38Z'
-          }
+            'openshift.io/image.dockerRepositoryCheck': '2018-10-02T12:50:38Z',
+          },
         },
         'spec': {
           'tags': [
@@ -407,17 +407,17 @@ export const catalogListPageProps = {
                 'openshift.io/display-name': 'PostgreSQL 9.6',
                 'openshift.io/provider-display-name': 'Red Hat, Inc.',
                 'tags': 'database,postgresql',
-              }
-            }
-          ]
+              },
+            },
+          ],
         },
         'status': {
           'tags': [
             {
               'tag': '9.6',
-            }
-          ]
-        }
+            },
+          ],
+        },
       },
       {
         'metadata': {
@@ -425,8 +425,8 @@ export const catalogListPageProps = {
           'uid': 'c00aa68e-c641-11e8-be32-54e1ad486c15',
           'annotations': {
             'openshift.io/display-name': 'Apache HTTP Server (httpd)',
-            'openshift.io/image.dockerRepositoryCheck': '2018-10-02T12:50:36Z'
-          }
+            'openshift.io/image.dockerRepositoryCheck': '2018-10-02T12:50:36Z',
+          },
         },
         'spec': {
           'tags': [
@@ -438,17 +438,17 @@ export const catalogListPageProps = {
                 'openshift.io/display-name': 'Apache HTTP Server 2.4',
                 'openshift.io/provider-display-name': 'Red Hat, Inc.',
                 'tags': 'builder,httpd',
-              }
-            }
-          ]
+              },
+            },
+          ],
         },
         'status': {
           'tags': [
             {
               'tag': '2.4',
-            }
-          ]
-        }
+            },
+          ],
+        },
       },
       {
         'metadata': {
@@ -456,8 +456,8 @@ export const catalogListPageProps = {
           'uid': 'c01320a0-c641-11e8-be32-54e1ad486c15',
           'annotations': {
             'openshift.io/display-name': '.NET Core Builder Images',
-            'openshift.io/image.dockerRepositoryCheck': '2018-10-02T12:50:36Z'
-          }
+            'openshift.io/image.dockerRepositoryCheck': '2018-10-02T12:50:36Z',
+          },
         },
         'spec': {
           'tags': [
@@ -467,18 +467,18 @@ export const catalogListPageProps = {
                 'openshift.io/display-name': '.NET Core 2.0',
                 'tags': 'builder,.net,dotnet,dotnetcore,rh-dotnet20',
                 'description': 'Build and run .NET Core 2.0 applications on CentOS 7. For more information about using this builder image, including OpenShift considerations, see https://github.com/redhat-developer/s2i-dotnetcore/tree/master/2.0/build/README.md.',
-                'iconClass': 'icon-dotnet'
-              }
-            }
-          ]
+                'iconClass': 'icon-dotnet',
+              },
+            },
+          ],
         },
         'status': {
           'tags': [
             {
               'tag': '2.0',
-            }
-          ]
-        }
+            },
+          ],
+        },
       },
       {
         'metadata': {
@@ -486,8 +486,8 @@ export const catalogListPageProps = {
           'uid': 'c00b0711-c641-11e8-be32-54e1ad486c15',
           'annotations': {
             'openshift.io/display-name': 'Ruby',
-            'openshift.io/image.dockerRepositoryCheck': '2018-10-02T12:50:40Z'
-          }
+            'openshift.io/image.dockerRepositoryCheck': '2018-10-02T12:50:40Z',
+          },
         },
         'spec': {
           'tags': [
@@ -499,17 +499,17 @@ export const catalogListPageProps = {
                 'openshift.io/display-name': 'Ruby 2.4',
                 'openshift.io/provider-display-name': 'Red Hat, Inc.',
                 'tags': 'builder,ruby',
-              }
-            }
-          ]
+              },
+            },
+          ],
         },
         'status': {
           'tags': [
             {
               'tag': '2.4',
-            }
-          ]
-        }
+            },
+          ],
+        },
       },
       {
         'metadata': {
@@ -517,8 +517,8 @@ export const catalogListPageProps = {
           'uid': 'c00e1bc4-c641-11e8-be32-54e1ad486c15',
           'annotations': {
             'openshift.io/display-name': 'MySQL',
-            'openshift.io/image.dockerRepositoryCheck': '2018-10-02T12:50:37Z'
-          }
+            'openshift.io/image.dockerRepositoryCheck': '2018-10-02T12:50:37Z',
+          },
         },
         'spec': {
           'tags': [
@@ -532,15 +532,15 @@ export const catalogListPageProps = {
                 'tags': 'mysql',
               },
             },
-          ]
+          ],
         },
         'status': {
           'tags': [
             {
               'tag': '5.7',
             },
-          ]
-        }
+          ],
+        },
       },
       {
         'metadata': {
@@ -548,8 +548,8 @@ export const catalogListPageProps = {
           'uid': 'c00d0c6b-c641-11e8-be32-54e1ad486c15',
           'annotations': {
             'openshift.io/display-name': 'Python',
-            'openshift.io/image.dockerRepositoryCheck': '2018-10-02T12:50:39Z'
-          }
+            'openshift.io/image.dockerRepositoryCheck': '2018-10-02T12:50:39Z',
+          },
         },
         'spec': {
           'tags': [
@@ -563,15 +563,15 @@ export const catalogListPageProps = {
                 'tags': 'builder,python',
               },
             },
-          ]
+          ],
         },
         'status': {
           'tags': [
             {
               'tag': '3.6',
             },
-          ]
-        }
+          ],
+        },
       },
       {
         'metadata': {
@@ -579,8 +579,8 @@ export const catalogListPageProps = {
           'uid': 'c013e3d7-c641-11e8-be32-54e1ad486c15',
           'annotations': {
             'openshift.io/display-name': '.NET Core Runtime Images',
-            'openshift.io/image.dockerRepositoryCheck': '2018-10-02T12:50:36Z'
-          }
+            'openshift.io/image.dockerRepositoryCheck': '2018-10-02T12:50:36Z',
+          },
         },
         'spec': {
           'tags': [
@@ -593,15 +593,15 @@ export const catalogListPageProps = {
                 'tags': 'runtime,.net-runtime,dotnet-runtime,dotnetcore-runtime',
               },
             },
-          ]
+          ],
         },
         'status': {
           'tags': [
             {
               'tag': '2.0',
             },
-          ]
-        }
+          ],
+        },
       },
       {
         'metadata': {
@@ -609,8 +609,8 @@ export const catalogListPageProps = {
           'uid': 'c00d954a-c641-11e8-be32-54e1ad486c15',
           'annotations': {
             'openshift.io/display-name': 'WildFly',
-            'openshift.io/image.dockerRepositoryCheck': '2018-10-02T12:50:39Z'
-          }
+            'openshift.io/image.dockerRepositoryCheck': '2018-10-02T12:50:39Z',
+          },
         },
         'spec': {
           'tags': [
@@ -624,15 +624,15 @@ export const catalogListPageProps = {
                 'tags': 'builder,wildfly,java',
               },
             },
-          ]
+          ],
         },
         'status': {
           'tags': [
             {
               'tag': '10.1',
             },
-          ]
-        }
+          ],
+        },
       },
       {
         'metadata': {
@@ -640,8 +640,8 @@ export const catalogListPageProps = {
           'uid': 'c00fd59d-c641-11e8-be32-54e1ad486c15',
           'annotations': {
             'openshift.io/display-name': 'MongoDB',
-            'openshift.io/image.dockerRepositoryCheck': '2018-10-02T12:50:37Z'
-          }
+            'openshift.io/image.dockerRepositoryCheck': '2018-10-02T12:50:37Z',
+          },
         },
         'spec': {
           'tags': [
@@ -655,15 +655,15 @@ export const catalogListPageProps = {
                 'tags': 'database,mongodb',
               },
             },
-          ]
+          ],
         },
         'status': {
           'tags': [
             {
               'tag': '3.4',
             },
-          ]
-        }
+          ],
+        },
       },
       {
         'metadata': {
@@ -671,8 +671,8 @@ export const catalogListPageProps = {
           'uid': 'c00b594d-c641-11e8-be32-54e1ad486c15',
           'annotations': {
             'openshift.io/display-name': 'Node.js',
-            'openshift.io/image.dockerRepositoryCheck': '2018-10-02T12:50:38Z'
-          }
+            'openshift.io/image.dockerRepositoryCheck': '2018-10-02T12:50:38Z',
+          },
         },
         'spec': {
           'tags': [
@@ -686,23 +686,23 @@ export const catalogListPageProps = {
                 'tags': 'builder,nodejs',
               },
             },
-          ]
+          ],
         },
         'status': {
           'tags': [
             {
               'tag': '8',
             },
-          ]
-        }
-      }
+          ],
+        },
+      },
     ],
     'filters': {},
     'loadError': '',
     'loaded': true,
-    'selected': null
+    'selected': null,
   },
-  'loaded': true
+  'loaded': true,
 };
 
 export const catalogItems = [
@@ -712,213 +712,213 @@ export const catalogItems = [
       '.net',
       'dotnet',
       'dotnetcore',
-      'rh-dotnet20'
-    ]
+      'rh-dotnet20',
+    ],
   },
   {
     'tags': [
       'builder',
-      'httpd'
-    ]
+      'httpd',
+    ],
   },
   {
     'tags': [
       'quickstart',
       'php',
-      'cakephp'
-    ]
+      'cakephp',
+    ],
   },
   {
     'tags': [
       'quickstart',
       'perl',
-      'dancer'
-    ]
+      'dancer',
+    ],
   },
   {
     'tags': [
       'quickstart',
       'python',
-      'django'
-    ]
+      'django',
+    ],
   },
   {
     'tags': [
       'instant-app',
-      'jenkins'
-    ]
+      'jenkins',
+    ],
   },
   {
     'tags': [
       'database',
-      'mariadb'
-    ]
+      'mariadb',
+    ],
   },
   {
     'tags': [
       'database',
-      'mongodb'
-    ]
+      'mongodb',
+    ],
   },
   {
     'tags': [
       'database',
-      'mysql'
-    ]
+      'mysql',
+    ],
   },
   {
     'tags': [
       'builder',
-      'nginx'
-    ]
+      'nginx',
+    ],
   },
   {
     'tags': [
       'builder',
-      'nodejs'
-    ]
+      'nodejs',
+    ],
   },
   {
     'tags': [
       'quickstart',
-      'nodejs'
-    ]
+      'nodejs',
+    ],
   },
   {
     'tags': [
       'builder',
-      'php'
-    ]
+      'php',
+    ],
   },
   {
     'tags': [
       'builder',
-      'perl'
-    ]
+      'perl',
+    ],
   },
   {
     'tags': [
       'instant-app',
-      'jenkins'
-    ]
+      'jenkins',
+    ],
   },
   {
     'tags': [
       'database',
-      'postgresql'
-    ]
+      'postgresql',
+    ],
   },
   {
     'tags': [
       'builder',
-      'python'
-    ]
+      'python',
+    ],
   },
   {
     'tags': [
       'quickstart',
       'ruby',
-      'rails'
-    ]
+      'rails',
+    ],
   },
   {
     'tags': [
       'builder',
-      'ruby'
-    ]
+      'ruby',
+    ],
   },
   {
     'tags': [
       'builder',
       'wildfly',
-      'java'
-    ]
-  }
+      'java',
+    ],
+  },
 ];
 
 export const catalogCategories = [
   {
     'id': 'all',
-    'numItems': 20
+    'numItems': 20,
   },
   {
     'id': 'languages',
     'subcategories': [
       {
         'id': 'java',
-        'numItems': 1
+        'numItems': 1,
       },
       {
         'id': 'javascript',
-        'numItems': 2
+        'numItems': 2,
       },
       {
         'id': 'dotnet',
-        'numItems': 1
+        'numItems': 1,
       },
       {
         'id': 'perl',
-        'numItems': 2
+        'numItems': 2,
       },
       {
         'id': 'ruby',
-        'numItems': 2
+        'numItems': 2,
       },
       {
         'id': 'php',
-        'numItems': 2
+        'numItems': 2,
       },
       {
         'id': 'python',
-        'numItems': 2
-      }
+        'numItems': 2,
+      },
     ],
-    'numItems': 12
+    'numItems': 12,
   },
   {
     'id': 'databases',
     'subcategories': [
       {
         'id': 'mongodb',
-        'numItems': 1
+        'numItems': 1,
       },
       {
         'id': 'mysql',
-        'numItems': 1
+        'numItems': 1,
       },
       {
         'id': 'postgresql',
-        'numItems': 1
+        'numItems': 1,
       },
       {
         'id': 'mariadb',
-        'numItems': 1
-      }
+        'numItems': 1,
+      },
     ],
-    'numItems': 4
+    'numItems': 4,
   },
   {
     'id': 'middleware',
     'subcategories': [
       {
         'id': 'runtimes',
-        'numItems': 1
-      }
+        'numItems': 1,
+      },
     ],
-    'numItems': 1
+    'numItems': 1,
   },
   {
     'id': 'cicd',
     'subcategories': [
       {
         'id': 'jenkins',
-        'numItems': 2
-      }
+        'numItems': 2,
+      },
     ],
-    'numItems': 2
+    'numItems': 2,
   },
   {
     'id': 'other',
-    'numItems': 1
-  }
+    'numItems': 1,
+  },
 ];

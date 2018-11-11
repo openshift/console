@@ -11,7 +11,7 @@ import {
   ResourceCog,
   ResourceLink,
   ResourceSummary,
-  SectionHeading
+  SectionHeading,
 } from './utils';
 
 const { common } = Cog.factory;

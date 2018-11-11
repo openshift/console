@@ -28,7 +28,7 @@ class TagsModal extends PromiseComponent {
 
   _updateTags(tags) {
     this.setState({
-      tags: tags.nameValuePairs
+      tags: tags.nameValuePairs,
     });
   }
 

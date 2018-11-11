@@ -66,7 +66,7 @@ export const ResourceQuotasPage = connectToFlags(FLAGS.OPENSHIFT)(({namespace, f
       items: [
         {id: 'cluster', title: 'Cluster-wide Resource Quotas'},
         {id: 'namespace', title: 'Namespace Resource Quotas'},
-      ]
+      ],
     }];
   }
   return <MultiListPage

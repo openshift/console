@@ -127,7 +127,7 @@ export let featureActions = [
   detectCalicoFlags,
   detectOpenShift,
   detectProjectsAvailable,
-  detectCanCreateProject
+  detectCanCreateProject,
 ];
 
 // generate additional featureActions
@@ -139,7 +139,7 @@ export let featureActions = [
   [FLAGS.CAN_LIST_CRD, { group: 'apiextensions.k8s.io', resource: 'customresourcedefinitions', verb: 'list' }],
 ].forEach(_.spread((FLAG, resourceAttributes) => {
   const req = {
-    spec: { resourceAttributes }
+    spec: { resourceAttributes },
   };
   const fn = (dispatch) => {
     return k8sCreate(SelfSubjectAccessReviewModel, req)

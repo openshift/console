@@ -6,7 +6,7 @@ export const fromRequirements = (requirements, options) => {
   options = options || {};
   const selector = {
     matchLabels:      {},
-    matchExpressions: []
+    matchExpressions: [],
   };
 
   if (options.undefinedWhenEmpty && requirements.length === 0) {

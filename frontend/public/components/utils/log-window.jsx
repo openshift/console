@@ -19,7 +19,7 @@ export class LogWindow extends React.PureComponent {
     this._setLogContents = (element) => this.logContents = element;
     this.state = {
       content: '',
-      height: ''
+      height: '',
     };
   }
 
@@ -74,7 +74,7 @@ export class LogWindow extends React.PureComponent {
     const targetHeight = Math.floor(window.innerHeight - this.scrollPane.getBoundingClientRect().top -
       (this.props.isFullscreen ? FULLSCREEN_FUDGE_FACTOR : FUDGE_FACTOR));
     this.setState({
-      height: targetHeight
+      height: targetHeight,
     });
   }
 
@@ -132,5 +132,5 @@ LogWindow.propTypes = {
   lines: PropTypes.array.isRequired,
   linesBehind: PropTypes.number.isRequired,
   status: PropTypes.string.isRequired,
-  updateStatus: PropTypes.func.isRequired
+  updateStatus: PropTypes.func.isRequired,
 };

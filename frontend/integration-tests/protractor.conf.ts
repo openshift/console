@@ -36,14 +36,14 @@ export const config: Config = {
         '--window-size=1920,1200',
         '--disable-background-timer-throttling',
         '--disable-renderer-backgrounding',
-        '--disable-raf-throttling'
+        '--disable-raf-throttling',
       ],
       prefs: {
         'profile.password_manager_enabled': false,
         'credentials_enable_service': false,
-        'password_manager_enabled': false
-      }
-    }
+        'password_manager_enabled': false,
+      },
+    },
   },
   beforeLaunch: () => new Promise(resolve => htmlReporter.beforeLaunch(resolve)),
   onPrepare: () => {
@@ -112,8 +112,8 @@ export const config: Config = {
     // $ yarn run test-gui --params.openshift true
     openshift: 'false',
     // Set to 'true' to enable Service Catalog resources in the crud scenario.
-    servicecatalog: 'false'
-  }
+    servicecatalog: 'false',
+  },
 };
 
 export const checkLogs = async() => (await browser.manage().logs().get('browser'))

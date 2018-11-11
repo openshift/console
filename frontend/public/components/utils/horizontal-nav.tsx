@@ -90,7 +90,7 @@ export const navFactory: NavFactory = {
     href: 'servicebindings',
     name: 'Service Bindings',
     component: component,
-  })
+  }),
 };
 
 export const NavBar: React.SFC<NavBarProps> = ({pages, basePath}) => {

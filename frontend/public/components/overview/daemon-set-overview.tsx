@@ -4,7 +4,7 @@ import { DaemonSetModel } from '../../models';
 import { ResourceSummary } from '../utils';
 import {
   menuActions,
-  DaemonSetDetailsList
+  DaemonSetDetailsList,
 } from '../daemon-set';
 
 
@@ -25,12 +25,12 @@ const DaemonSetOverviewDetails: React.SFC<DaemonSetOverviewDetailsProps> = ({ite
 const tabs = [
   {
     name: 'Overview',
-    component: DaemonSetOverviewDetails
+    component: DaemonSetOverviewDetails,
   },
   {
     name: 'Resources',
-    component: OverviewDetailsResourcesTab
-  }
+    component: OverviewDetailsResourcesTab,
+  },
 ];
 
 export const DaemonSetOverview: React.SFC<DaemonSetOverviewProps> = ({item}) =>

@@ -24,7 +24,7 @@ import {
 import {
   withStartGuide,
   /* eslint-disable-next-line no-unused-vars */
-  WithStartGuideProps
+  WithStartGuideProps,
 } from '../start-guide';
 import {
   DaemonSetModel,
@@ -32,7 +32,7 @@ import {
   DeploymentConfigModel,
   ReplicationControllerModel,
   ReplicaSetModel,
-  StatefulSetModel
+  StatefulSetModel,
 } from '../../models';
 import {
   CloseButton,
@@ -155,7 +155,7 @@ const getOwnedResources = ({metadata:{uid}}: K8sResourceKind, resources: K8sReso
   return _.filter(resources, ({metadata:{ownerReferences}}) => {
     return _.some(ownerReferences, {
       uid,
-      controller: true
+      controller: true,
     });
   });
 };
@@ -304,7 +304,7 @@ class OverviewDetails extends SafetyFirst<OverviewDetailsProps, OverviewDetailsS
       replicationControllers,
       routes,
       services,
-      statefulSets
+      statefulSets,
     } = this.props;
     const {filterValue, selectedGroupLabel} = this.state;
 
@@ -326,11 +326,11 @@ class OverviewDetails extends SafetyFirst<OverviewDetailsProps, OverviewDetailsS
       const filteredItems = this.filterItems(this.state.items);
       this.setState({
         filteredItems,
-        groupedItems: this.groupItems(filteredItems, selectedGroupLabel)
+        groupedItems: this.groupItems(filteredItems, selectedGroupLabel),
       });
     } else if (selectedGroupLabel !== prevState.selectedGroupLabel) {
       this.setState({
-        groupedItems: this.groupItems(this.state.filteredItems, selectedGroupLabel)
+        groupedItems: this.groupItems(this.state.filteredItems, selectedGroupLabel),
       });
     }
   }
@@ -409,7 +409,7 @@ class OverviewDetails extends SafetyFirst<OverviewDetailsProps, OverviewDetailsS
     return _.map(groups, (group: OverviewItem[], name: string) => {
       return {
         name,
-        items: group
+        items: group,
       };
     }).sort(compareGroups);
   }
@@ -423,7 +423,7 @@ class OverviewDetails extends SafetyFirst<OverviewDetailsProps, OverviewDetailsS
       }
       return {
         ...accumulator,
-        [key]: key
+        [key]: key,
       };
     }, groupOptions);
   }
@@ -454,13 +454,13 @@ class OverviewDetails extends SafetyFirst<OverviewDetailsProps, OverviewDetailsS
     const pods = this.getPodsForResource(rc);
     const alerts = {
       ...combinePodAlerts(pods),
-      ...getReplicationControllerAlerts(rc)
+      ...getReplicationControllerAlerts(rc),
     };
     const phase = getDeploymentPhase(rc);
     const revision = getDeploymentConfigVersion(rc);
     const obj = {
       ...rc,
-      kind: ReplicationControllerModel.kind
+      kind: ReplicationControllerModel.kind,
     };
     return {
       alerts,
@@ -537,8 +537,8 @@ class OverviewDetails extends SafetyFirst<OverviewDetailsProps, OverviewDetailsS
             ...acc,
             {
               ...buildConfig,
-              builds: sortBuilds(builds)
-            }
+              builds: sortBuilds(builds),
+            },
           ];
         }
         return acc;
@@ -556,11 +556,11 @@ class OverviewDetails extends SafetyFirst<OverviewDetailsProps, OverviewDetailsS
       const alerts = combinePodAlerts(pods);
       const obj = {
         ...ds,
-        kind: DaemonSetModel.kind
+        kind: DaemonSetModel.kind,
       };
       const readiness = {
         desired: ds.status.desiredNumberScheduled || 0,
-        ready: ds.status.currentNumberScheduled || 0
+        ready: ds.status.currentNumberScheduled || 0,
       };
 
       return {
@@ -570,7 +570,7 @@ class OverviewDetails extends SafetyFirst<OverviewDetailsProps, OverviewDetailsS
         pods,
         readiness,
         routes,
-        services
+        services,
       };
     });
   }
@@ -587,11 +587,11 @@ class OverviewDetails extends SafetyFirst<OverviewDetailsProps, OverviewDetailsS
       const routes = this.getRoutesForServices(services);
       const obj = {
         ...d,
-        kind: DeploymentModel.kind
+        kind: DeploymentModel.kind,
       };
       const readiness = {
         desired: d.spec.replicas || 0,
-        ready: d.status.replicas || 0
+        ready: d.status.replicas || 0,
       };
 
       return {
@@ -619,11 +619,11 @@ class OverviewDetails extends SafetyFirst<OverviewDetailsProps, OverviewDetailsS
       const routes = this.getRoutesForServices(services);
       const obj = {
         ...dc,
-        kind: DeploymentConfigModel.kind
+        kind: DeploymentConfigModel.kind,
       };
       const readiness = {
         desired: dc.spec.replicas || 0,
-        ready: dc.status.replicas || 0
+        ready: dc.status.replicas || 0,
       };
 
       return {
@@ -645,11 +645,11 @@ class OverviewDetails extends SafetyFirst<OverviewDetailsProps, OverviewDetailsS
       const buildConfigs = this.getBuildConfigsForResource(ss);
       const obj = {
         ...ss,
-        kind: StatefulSetModel.kind
+        kind: StatefulSetModel.kind,
       };
       const readiness = {
         desired: ss.spec.replicas || 0,
-        ready: ss.status.replicas || 0
+        ready: ss.status.replicas || 0,
       };
       const pods = this.getPodsForResource(ss);
       const alerts = combinePodAlerts(pods);
@@ -678,7 +678,7 @@ class OverviewDetails extends SafetyFirst<OverviewDetailsProps, OverviewDetailsS
       ...this.createDaemonSetItems(),
       ...this.createDeploymentItems(),
       ...this.createDeploymentConfigItems(),
-      ...this.createStatefulSetItems()
+      ...this.createStatefulSetItems(),
     ];
 
     store.dispatch(UIActions.updateOverviewResources(items));
@@ -692,7 +692,7 @@ class OverviewDetails extends SafetyFirst<OverviewDetailsProps, OverviewDetailsS
       groupedItems,
       groupOptions,
       items,
-      selectedGroupLabel
+      selectedGroupLabel,
     });
   }
 
@@ -738,7 +738,7 @@ const overviewStateToProps = ({UI}): OverviewPropsFromState => {
   const selectedUID = UI.getIn(['overview', 'selectedUID'], '');
   const resources = UI.getIn(['overview', 'resources']);
   return {
-    selectedItem: !!resources && resources.get(selectedUID)
+    selectedItem: !!resources && resources.get(selectedUID),
   };
 };
 
@@ -756,68 +756,68 @@ export const Overview = connect<OverviewPropsFromState, OverviewPropsFromDispatc
         isList: true,
         kind: 'Build',
         namespace,
-        prop: 'builds'
+        prop: 'builds',
       },
       {
         isList: true,
         kind: 'BuildConfig',
         namespace,
-        prop: 'buildConfigs'
+        prop: 'buildConfigs',
       },
       {
         isList: true,
         kind: 'DaemonSet',
         namespace,
-        prop: 'daemonSets'
+        prop: 'daemonSets',
       },
       {
         isList: true,
         kind: 'Deployment',
         namespace,
-        prop: 'deployments'
+        prop: 'deployments',
       },
       {
         isList: true,
         kind: 'DeploymentConfig',
         namespace,
-        prop: 'deploymentConfigs'
+        prop: 'deploymentConfigs',
       },
       {
         isList: true,
         kind: 'Pod',
         namespace,
-        prop: 'pods'
+        prop: 'pods',
       },
       {
         isList: true,
         kind: 'ReplicaSet',
         namespace,
-        prop: 'replicaSets'
+        prop: 'replicaSets',
       },
       {
         isList: true,
         kind: 'ReplicationController',
         namespace,
-        prop: 'replicationControllers'
+        prop: 'replicationControllers',
       },
       {
         isList: true,
         kind: 'Route',
         namespace,
-        prop: 'routes'
+        prop: 'routes',
       },
       {
         isList: true,
         kind: 'StatefulSet',
         namespace,
-        prop: 'statefulSets'
+        prop: 'statefulSets',
       },
       {
         isList: true,
         kind: 'Service',
         namespace,
-        prop: 'services'
-      }
+        prop: 'services',
+      },
     ];
 
     if (_.isEmpty(namespace) || namespace === ALL_NAMESPACES_KEY) {

@@ -35,7 +35,7 @@ const KubeConfigify = (kind, sa) => ({
           cluster: {
             'certificate-authority-data': cert,
             server,
-          }
+          },
         }],
         contexts: [{
           name,
@@ -43,14 +43,14 @@ const KubeConfigify = (kind, sa) => ({
             cluster: clusterName,
             namespace,
             user: name,
-          }
+          },
         }],
         'users': [{
           name,
           user: {
             token: token,
-          }
-        }]
+          },
+        }],
       };
       const dump = safeDump(config);
       const blob = new Blob([dump], { type: 'text/yaml;charset=utf-8' });

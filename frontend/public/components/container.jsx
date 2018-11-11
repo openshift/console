@@ -5,7 +5,7 @@ import * as k8sProbe from '../module/k8s/probe';
 import {
   getContainerState,
   getContainerStatus,
-  getPullPolicyLabel
+  getPullPolicyLabel,
 } from '../module/k8s/docker';
 import {
   Firehose,

@@ -12,11 +12,11 @@ import {
 import { OverviewItem } from '.';
 
 const stateToProps = ({UI}): PropsFromState => ({
-  selectedDetailsTab: UI.getIn(['overview', 'selectedDetailsTab'])
+  selectedDetailsTab: UI.getIn(['overview', 'selectedDetailsTab']),
 });
 
 const dispatchToProps = (dispatch): PropsFromDispatch => ({
-  onClickTab: (name) => dispatch(UIActions.selectOverviewDetailsTab(name))
+  onClickTab: (name) => dispatch(UIActions.selectOverviewDetailsTab(name)),
 });
 
 export const ResourceOverviewDetails = connect<PropsFromState, PropsFromDispatch, OwnProps>(stateToProps, dispatchToProps)(

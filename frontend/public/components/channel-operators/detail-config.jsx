@@ -14,7 +14,7 @@ export class DetailConfig extends SafetyFirst {
   constructor(props) {
     super(props);
     this.state = {
-      outdated: false
+      outdated: false,
     };
     this._openModal = this._openModal.bind(this);
   }
@@ -27,14 +27,14 @@ export class DetailConfig extends SafetyFirst {
     this.props.modal(_.defaults({}, this.props.modalData, {
       config: this.props.config,
       callbacks: {
-        invalidateState: this._updateOutdated.bind(this)
-      }
+        invalidateState: this._updateOutdated.bind(this),
+      },
     }));
   }
 
   _updateOutdated(outdated) {
     this.setState({
-      outdated
+      outdated,
     });
   }
 
@@ -55,5 +55,5 @@ DetailConfig.propTypes = {
   displayFunction: PropTypes.func,
   modal: PropTypes.func,
   modalData: PropTypes.object,
-  field: PropTypes.string.isRequired
+  field: PropTypes.string.isRequired,
 };

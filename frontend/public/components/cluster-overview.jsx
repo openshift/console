@@ -202,7 +202,7 @@ const GraphsPage = connectToFlags(FLAGS.OPENSHIFT)(({flags, mock, limited, names
     kind: openShiftFlag ? 'Project' : 'Namespace',
     name: namespace,
     isList: false,
-    prop: 'data'
+    prop: 'data',
   }];
 
   return <Firehose resources={resources}>

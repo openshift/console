@@ -12,7 +12,7 @@ export class ClientTokensContainer extends SafetyFirst {
     this.state = {
       clients : null,
       resourceLoaded: false,
-      loadingError: false
+      loadingError: false,
     };
     this._getClients = this._getClients.bind(this);
   }
@@ -51,11 +51,11 @@ const RevokeToken = (id, onTokenRevocation) => ({
       data.append('clientId', id);
       const promise = coFetch('api/tectonic/revoke-token', {
         method: 'POST',
-        body: data
+        body: data,
       }).then(onTokenRevocation);
       return promise;
     },
-  })
+  }),
 });
 
 const ClientRow = ({client, onTokenRevocation}) => {

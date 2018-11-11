@@ -112,8 +112,8 @@ describe(ListPageWrapper_.displayName, () => {
       reducer: (item) => item.kind,
       items: [
         {id: 'database', title: 'Databases'},
-        {id: 'loadbalancer', title: 'Load Balancers'}
-      ]
+        {id: 'loadbalancer', title: 'Load Balancers'},
+      ],
     }];
     wrapper.setProps({rowFilters: rowFilters});
     const checkboxes = wrapper.find(CheckBoxes) as any;

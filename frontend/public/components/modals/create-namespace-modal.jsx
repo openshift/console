@@ -14,12 +14,12 @@ const defaultDeny = {
   'apiVersion': 'networking.k8s.io/v1',
   'kind': 'NetworkPolicy',
   'spec': {
-    'podSelector': null
-  }
+    'podSelector': null,
+  },
 };
 
 const mapDispatchToProps = dispatch => ({
-  setProjectsAvailable: () => setFlag(dispatch, FLAGS.PROJECTS_AVAILABLE, true)
+  setProjectsAvailable: () => setFlag(dispatch, FLAGS.PROJECTS_AVAILABLE, true),
 });
 
 const CreateNamespaceModal = connect(null, mapDispatchToProps)(class CreateNamespaceModal extends PromiseComponent {
@@ -34,7 +34,7 @@ const CreateNamespaceModal = connect(null, mapDispatchToProps)(class CreateNames
     const name = e.target.name;
     const value = e.target.value;
     this.setState({
-      [name]: value
+      [name]: value,
     });
   }
 

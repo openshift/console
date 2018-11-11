@@ -4,18 +4,18 @@ export const entitlementTitles = {
   nodes: {
     uppercase: 'Node',
     lowercase: 'node',
-    inPairs: false
+    inPairs: false,
   },
   vCPUs: {
     uppercase: 'vCPU',
     lowercase: 'vCPU',
-    inPairs: true
+    inPairs: true,
   },
   sockets: {
     uppercase: 'Socket',
     lowercase: 'socket',
-    inPairs: true
-  }
+    inPairs: true,
+  },
 };
 
 export const entitlementTitle = (name, count) => {

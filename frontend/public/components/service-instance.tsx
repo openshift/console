@@ -143,7 +143,7 @@ const pages = [
   navFactory.details(ServiceInstanceDetails),
   navFactory.editYaml(),
   navFactory.events(ResourceEventStream),
-  navFactory.serviceBindings(ServiceBindingsDetails)
+  navFactory.serviceBindings(ServiceBindingsDetails),
 ];
 
 export const ServiceInstanceDetailsPage: React.SFC<ServiceInstanceDetailsPageProps> = props =>
@@ -203,7 +203,7 @@ const filters = [{
   items: [
     {id: 'Ready', title: 'Ready'},
     {id: 'Not Ready', title: 'Not Ready'},
-    {id: 'Failed', title: 'Failed'}
+    {id: 'Failed', title: 'Failed'},
   ],
 }];
 

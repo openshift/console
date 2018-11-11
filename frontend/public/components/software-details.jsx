@@ -15,7 +15,7 @@ const StatusIconRow = ({state, text}) => {
     warning: 'fa-warning',
     critical: 'fa-warning',
     unknown: 'fa-question-circle',
-    'access-denied': 'fa-ban'
+    'access-denied': 'fa-ban',
   };
   return <div className={classNames('co-m-status', [`co-m-status--${state}`])}>
     <i className={classNames('co-m-status__icon', 'fa', iconClasses[state])}></i>

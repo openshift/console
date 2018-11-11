@@ -36,12 +36,12 @@ export class Donut extends SafetyFirst {
       annotations: [
         {
           font: {
-            size: 11
+            size: 11,
           },
           showarrow: false,
           text: '',
           x: 0.5,
-          y: 0.5
+          y: 0.5,
         },
       ],
     };

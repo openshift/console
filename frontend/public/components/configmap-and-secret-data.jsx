@@ -65,9 +65,9 @@ export class SecretData extends React.PureComponent {
 }
 
 SecretData.propTypes = {
-  data: PropTypes.object
+  data: PropTypes.object,
 };
 
 SecretData.defaultProps = {
-  data: {}
+  data: {},
 };

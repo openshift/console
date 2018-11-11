@@ -98,7 +98,7 @@ const DeleteRule = (name, namespace, i) => ({
         op: 'remove', path: `/rules/${i}`,
       }]);
     },
-  })
+  }),
 });
 
 // This page is temporarily disabled until we update the safe resources list.

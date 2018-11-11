@@ -46,7 +46,7 @@ const UserMenuWrapper = connectToFlags(FLAGS.AUTH_ENABLED, FLAGS.OPENSHIFT)((pro
     };
     actions.push({
       label: 'Logout',
-      callback: logout
+      callback: logout,
     });
   }
 
@@ -56,7 +56,7 @@ const UserMenuWrapper = connectToFlags(FLAGS.AUTH_ENABLED, FLAGS.OPENSHIFT)((pro
 
   actions.unshift({
     label: 'My Account',
-    href: '/settings/profile'
+    href: '/settings/profile',
   });
 
   return authSvc.userID() ? <UserMenu actions={actions} username={authSvc.name()} /> : null;
@@ -66,7 +66,7 @@ export class OSUserMenu extends SafetyFirst<OSUserMenuProps, OSUserMenuState> {
   constructor(props) {
     super(props);
     this.state = {
-      username: undefined
+      username: undefined,
     };
   }
 
@@ -92,7 +92,7 @@ const ContextSwitcher = () => {
   const items = {
     [`${developerConsoleURL}catalog`]: 'Service Catalog',
     [`${developerConsoleURL}projects`]: 'Application Console',
-    [(window as any).SERVER_FLAGS.basePath]: 'Cluster Console'
+    [(window as any).SERVER_FLAGS.basePath]: 'Cluster Console',
   };
 
   return <div className="contextselector-pf">

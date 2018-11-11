@@ -11,7 +11,7 @@ import { startBuild, getBuildNumber } from '../../module/k8s/builds';
 import {
   ResourceLink,
   resourcePath,
-  SidebarSectionHeading
+  SidebarSectionHeading,
 } from '../utils';
 
 import { BuildConfigOverviewItem } from '.';

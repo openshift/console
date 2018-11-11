@@ -9,7 +9,7 @@ import {
   DaemonSetModel,
   DeploymentModel,
   DeploymentConfigModel,
-  StatefulSetModel
+  StatefulSetModel,
 } from '../../models';
 
 export const resourceOverviewPages = ImmutableMap<GroupVersionKind | string, () => Promise<React.ComponentType<any>>>()

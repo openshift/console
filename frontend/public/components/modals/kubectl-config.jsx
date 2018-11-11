@@ -16,7 +16,7 @@ const getConfiguration = code => {
     method: 'POST',
     body: `code=${encodeURIComponent(code)}`,
     headers: {
-      'Content-Type': 'application/x-www-form-urlencoded'
+      'Content-Type': 'application/x-www-form-urlencoded',
     },
   }).then(res => res.text());
 };
@@ -29,7 +29,7 @@ const downloadConfiguration = config => {
 const steps = {
   GET_VERIFICATION_CODE: 1,
   VERIFY_CODE: 2,
-  DOWNLOAD_CONFIGURATION: 3
+  DOWNLOAD_CONFIGURATION: 3,
 };
 
 class KubectlConfigModal extends PromiseComponent {
@@ -42,7 +42,7 @@ class KubectlConfigModal extends PromiseComponent {
       verificationCode: null,
       kubectlLinuxUrl: null,
       kubectlMacUrl: null,
-      kubectlWinUrl: null
+      kubectlWinUrl: null,
     });
 
     this._updateCode = this._updateCode.bind(this);
@@ -62,7 +62,7 @@ class KubectlConfigModal extends PromiseComponent {
 
     getVerificationCode();
     this.setState({
-      step: steps.VERIFY_CODE
+      step: steps.VERIFY_CODE,
     });
   }
 
@@ -78,7 +78,7 @@ class KubectlConfigModal extends PromiseComponent {
     ).then((configuration) => {
       this.setState({
         step: steps.DOWNLOAD_CONFIGURATION,
-        configuration
+        configuration,
       });
       this.props.callback();
     });
@@ -86,7 +86,7 @@ class KubectlConfigModal extends PromiseComponent {
 
   _updateCode(event) {
     this.setState({
-      verificationCode: event.target.value
+      verificationCode: event.target.value,
     });
   }
 
@@ -103,7 +103,7 @@ class KubectlConfigModal extends PromiseComponent {
         this.setState({
           kubectlMacUrl: `${prefix}/bin/darwin${postfix}`,
           kubectlLinuxUrl: `${prefix}/bin/linux${postfix}`,
-          kubectlWinUrl: `${prefix}/bin/windows${postfix}.exe`
+          kubectlWinUrl: `${prefix}/bin/windows${postfix}.exe`,
         });
       });
   }

@@ -47,9 +47,9 @@ const MarketplaceItemModal = (props) => {
   );
 };
 MarketplaceItemModal.propTypes = {
-  size: PropTypes.string
+  size: PropTypes.string,
 };
 MarketplaceItemModal.defaultProps = {
-  size: 'default'
+  size: 'default',
 };
 export { MarketplaceItemModal };

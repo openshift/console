@@ -17,7 +17,7 @@ import {
   history,
   inject,
   kindObj,
-  PageHeading
+  PageHeading,
 } from '../utils';
 
 export const CompactExpandButtons = ({expand = false, onExpandChange = _.noop}) => <div className="btn-group btn-group-sm" data-toggle="buttons">

@@ -60,7 +60,7 @@ export class Bar extends BaseGraph {
         align: 'left',
         font: {
           size: 12,
-          color: 'black'
+          color: 'black',
         },
       }, {
         x: 0,
@@ -73,7 +73,7 @@ export class Bar extends BaseGraph {
         align: 'right',
         font: {
           size: 12,
-          color: 'black'
+          color: 'black',
         },
       });
     });

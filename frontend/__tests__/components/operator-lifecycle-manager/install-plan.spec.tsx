@@ -145,7 +145,7 @@ describe(InstallPlanPreview.name, () => {
           kind: ClusterServiceVersionModel.kind,
           name: 'testoperator.v1.0.0',
           manifest: '',
-        }
+        },
       },
     ];
 

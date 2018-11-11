@@ -12,14 +12,14 @@ import {
   LoadError,
   LoadingBox,
   LoadingInline,
-  MsgBox
+  MsgBox,
 } from './utils/status-box';
 import {
   // eslint-disable-next-line no-unused-vars
   GroupVersionKind,
   modelFor,
   referenceForModel,
-  resourceURL
+  resourceURL,
 } from '../module/k8s';
 import {
   Cog,
@@ -32,7 +32,7 @@ import {
   ResourceLink,
   ResourceSummary,
   SectionHeading,
-  Timestamp
+  Timestamp,
 } from './utils';
 
 export const ReportReference: GroupVersionKind = referenceForModel(ChargebackReportModel);

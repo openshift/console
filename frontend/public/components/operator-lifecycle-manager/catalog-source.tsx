@@ -51,7 +51,7 @@ export const CatalogSourceDetailsPage: React.SFC<CatalogSourceDetailsPageProps> 
     isList: true,
     namespace: props.match.params.ns,
     selector: {matchLabels: {catalog: props.match.params.name}},
-    prop: 'packageManifests'
+    prop: 'packageManifests',
   }, {
     kind: referenceForModel(SubscriptionModel),
     isList: true,

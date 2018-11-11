@@ -58,14 +58,14 @@ export class CreateRoute extends React.Component<null, CreateRouteState> {
         loaded: true,
       }))
       .catch(err => this.setState({
-        error: err.message
+        error: err.message,
       }));
   }
 
   handleChange: React.ReactEventHandler<HTMLInputElement> = event => {
     const { name, value } = event.currentTarget;
     this.setState({
-      [name]: value
+      [name]: value,
     } as any);
   }
 
@@ -87,7 +87,7 @@ export class CreateRoute extends React.Component<null, CreateRouteState> {
   toggleSection: React.ReactEventHandler<HTMLInputElement> = event => {
     const { name, checked } = event.currentTarget;
     this.setState({
-      [name]: checked
+      [name]: checked,
     } as any);
   }
 
@@ -182,8 +182,8 @@ export class CreateRoute extends React.Component<null, CreateRouteState> {
         path,
         port: {
           targetPort,
-        }
-      }
+        },
+      },
     };
 
     this.setState({ inProgress: true });
@@ -193,7 +193,7 @@ export class CreateRoute extends React.Component<null, CreateRouteState> {
         history.push(resourcePathFromModel(RouteModel, name, namespace));
       }, err => this.setState({
         error: err.message,
-        inProgress: false
+        inProgress: false,
       }));
   }
 

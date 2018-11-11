@@ -56,7 +56,7 @@ class Gauge_ extends BaseGraph {
         align: 'center',
         font: {
           size: 20,
-          color: '#333'
+          color: '#333',
         },
       }],
     };
@@ -81,7 +81,7 @@ class Gauge_ extends BaseGraph {
           colors.clear,
           colors.ok,
           colors.gray,
-        ]
+        ],
       },
       textinfo: 'none',
       hole: .65,

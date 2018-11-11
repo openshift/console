@@ -12,7 +12,7 @@ class DeleteModal extends PromiseComponent {
     this._submit = this._submit.bind(this);
     this._cancel = this.props.cancel.bind(this);
     this.state = Object.assign(this.state, {
-      isChecked: true
+      isChecked: true,
     });
   }
 

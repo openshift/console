@@ -3,7 +3,7 @@ import * as React from 'react';
 import { DeploymentModel } from '../../models';
 import {
   DeploymentDetailsList,
-  menuActions
+  menuActions,
 } from '../deployment';
 import {
   DeploymentPodCounts,
@@ -43,12 +43,12 @@ const DeploymentOverviewDetails: React.SFC<DeploymentOverviewDetailsProps> = ({i
 const tabs = [
   {
     name: 'Overview',
-    component: DeploymentOverviewDetails
+    component: DeploymentOverviewDetails,
   },
   {
     name: 'Resources',
-    component: OverviewDetailsResourcesTab
-  }
+    component: OverviewDetailsResourcesTab,
+  },
 ];
 
 export const DeploymentOverviewPage: React.SFC<DeploymentOverviewProps> = ({item}) =>

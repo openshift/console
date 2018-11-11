@@ -13,14 +13,14 @@ class Details extends SafetyFirst {
   constructor(props) {
     super(props);
     this.state = {
-      desiredCountOutdated: false
+      desiredCountOutdated: false,
     };
     this._openReplicaCountModal = this._openReplicaCountModal.bind(this);
   }
 
   componentWillReceiveProps() {
     this.setState({
-      desiredCountOutdated: false
+      desiredCountOutdated: false,
     });
   }
 
@@ -32,9 +32,9 @@ class Details extends SafetyFirst {
       resource: this.props.obj,
       invalidateState: (isInvalid) => {
         this.setState({
-          desiredCountOutdated: isInvalid
+          desiredCountOutdated: isInvalid,
         });
-      }
+      },
     });
   }
 

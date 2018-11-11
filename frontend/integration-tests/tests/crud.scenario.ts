@@ -226,7 +226,7 @@ describe('Kubernetes resource CRUD operations', () => {
       kind: 'CustomResourceDefinition',
       metadata: {
         name,
-        labels: {[testLabel]: testName}
+        labels: {[testLabel]: testName},
       },
       spec: {
         group,
@@ -236,8 +236,8 @@ describe('Kubernetes resource CRUD operations', () => {
           singular: `crd${testName}`,
           kind: `CRD${testName}`,
           shortNames: [testName],
-        }
-      }
+        },
+      },
     };
 
     it('displays `CustomResourceDefinitions` list view', async() => {

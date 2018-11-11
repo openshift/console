@@ -29,7 +29,7 @@ const createInstance = (kindObj, serviceClass) => {
 };
 
 const actionButtons = [
-  createInstance
+  createInstance,
 ];
 
 const ClusterServiceClassHeader: React.SFC<ClusterServiceClassHeaderProps> = props => <ListHeader>

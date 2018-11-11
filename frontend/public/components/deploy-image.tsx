@@ -17,13 +17,13 @@ import {
   Loading,
   PageHeading,
   Timestamp,
-  units
+  units,
 } from './utils';
 import {
   DeploymentConfigModel,
   ImageStreamModel,
   ImageStreamImportsModel,
-  ServiceModel
+  ServiceModel,
 } from '../models';
 
 const getSuggestedName = name => {
@@ -99,18 +99,18 @@ export class DeployImage extends React.Component<DeployImageProps, DeployImageSt
       apiVersion: 'image.openshift.io/v1',
       metadata: {
         name: 'newapp',
-        namespace
+        namespace,
       },
       spec: {
         import: false,
         images: [{
           from: {
             kind: 'DockerImage',
-            name: _.trim(imageName)
-          }
-        }]
+            name: _.trim(imageName),
+          },
+        }],
       },
-      status: {}
+      status: {},
     };
 
     this.setState({
@@ -134,7 +134,7 @@ export class DeployImage extends React.Component<DeployImageProps, DeployImageSt
               name,
               image,
               tag,
-              status
+              status,
             },
             name: getSuggestedName(name),
           });
@@ -155,13 +155,13 @@ export class DeployImage extends React.Component<DeployImageProps, DeployImageSt
 
     this.setState({
       inProgress: true,
-      error: null
+      error: null,
     });
 
     const { name, namespace, isi } = this.state;
 
     const annotations = {
-      'openshift.io/generated-by': 'OpenShiftWebConsole'
+      'openshift.io/generated-by': 'OpenShiftWebConsole',
     };
 
     const volumes = [], volumeMounts = [];
@@ -171,11 +171,11 @@ export class DeployImage extends React.Component<DeployImageProps, DeployImageSt
       const volumeName = `${name}-${volumeNumber}`;
       volumes.push({
         name: volumeName,
-        emptyDir: {}
+        emptyDir: {},
       });
       volumeMounts.push({
         name: volumeName,
-        mountPath: path
+        mountPath: path,
       });
     });
 
@@ -200,31 +200,31 @@ export class DeployImage extends React.Component<DeployImageProps, DeployImageSt
         name,
         namespace,
         labels,
-        annotations
+        annotations,
       },
       spec: {
         triggers: [{
-          type: 'ConfigChange'
+          type: 'ConfigChange',
         }, {
           type: 'ImageChange',
           imageChangeParams: {
             automatic: true,
             containerNames: [
-              name
+              name,
             ],
             from: {
               kind: 'ImageStreamTag',
               name: `${name}:${isi.tag}`,
-              namespace
-            }
-          }
+              namespace,
+            },
+          },
         }],
         replicas: 1,
         selector: labels,
         template: {
           metadata: {
             labels,
-            annotations
+            annotations,
           },
           spec: {
             volumes,
@@ -233,10 +233,10 @@ export class DeployImage extends React.Component<DeployImageProps, DeployImageSt
               image: isi.image.dockerImageMetadata.Config.Image,
               ports,
               volumeMounts,
-              env: this.env
+              env: this.env,
             }],
-          }
-        }
+          },
+        },
       },
     };
 
@@ -250,11 +250,11 @@ export class DeployImage extends React.Component<DeployImageProps, DeployImageSt
           name,
           namespace,
           labels,
-          annotations
+          annotations,
         },
         spec: {
           selector: {
-            deploymentconfig: name
+            deploymentconfig: name,
           },
           ports: _.map(ports, port => ({
             port: port.containerPort,
@@ -262,7 +262,7 @@ export class DeployImage extends React.Component<DeployImageProps, DeployImageSt
             protocol: port.protocol,
             // Use the same naming convention as CLI new-app.
             name: `${port.containerPort}-${port.protocol}`.toLowerCase(),
-          }))
+          })),
         },
       };
 
@@ -275,22 +275,22 @@ export class DeployImage extends React.Component<DeployImageProps, DeployImageSt
       metadata: {
         name,
         namespace,
-        labels
+        labels,
       },
       spec: {
         tags: [{
           name: isi.tag,
           annotations: {
             ...annotations,
-            'openshift.io/imported-from': isi.name
+            'openshift.io/imported-from': isi.name,
           },
           from: {
             kind: 'DockerImage',
-            name: isi.name
+            name: isi.name,
           },
-          importPolicy: {}
-        }]
-      }
+          importPolicy: {},
+        }],
+      },
     };
 
     createResource(ImageStreamModel, imageStream);

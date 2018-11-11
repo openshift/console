@@ -21,7 +21,7 @@ const defaultValueFor = <C extends SpecCapability | StatusCapability>(capability
     case StatusCapability.podCount: return 3;
     case StatusCapability.w3Link: return 'https://google.com';
     case StatusCapability.conditions: return [
-      {type: 'Available', status: 'True', lastUpdateTime: '2018-08-22T23:27:55Z', lastTransitionTime: '2018-08-22T23:27:55Z', reason: 'AppReady', message: 'App is ready.'}
+      {type: 'Available', status: 'True', lastUpdateTime: '2018-08-22T23:27:55Z', lastTransitionTime: '2018-08-22T23:27:55Z', reason: 'AppReady', message: 'App is ready.'},
     ];
     case StatusCapability.text: return 'Some text';
     case StatusCapability.prometheusEndpoint: return 'my-svc.my-namespace.svc.cluster.local';
@@ -51,8 +51,8 @@ describe('Using OLM descriptor components', () => {
         singular: 'app',
         kind: 'App',
         listKind: 'Apps',
-      }
-    }
+      },
+    },
   };
   const testCR = {
     apiVersion: `${testCRD.spec.group}/${testCRD.spec.version}`,
@@ -64,12 +64,12 @@ describe('Using OLM descriptor components', () => {
     },
     spec: {
       ...Object.keys(SpecCapability).filter(c => !prefixedCapabilities.has(SpecCapability[c])).reduce((acc, cur) => ({
-        ...acc, [cur]: defaultValueFor(SpecCapability[cur])
+        ...acc, [cur]: defaultValueFor(SpecCapability[cur]),
       }), {}),
     },
     status: {
       ...Object.keys(StatusCapability).filter(c => !prefixedCapabilities.has(StatusCapability[c])).reduce((acc, cur) => ({
-        ...acc, [cur]: defaultValueFor(StatusCapability[cur])
+        ...acc, [cur]: defaultValueFor(StatusCapability[cur]),
       }), {}),
     },
   };
@@ -93,27 +93,27 @@ describe('Using OLM descriptor components', () => {
               replicas: 1,
               selector: {
                 matchLabels: {
-                  name: 'test-operator-alm-owned'
-                }
+                  name: 'test-operator-alm-owned',
+                },
               },
               template: {
                 metadata: {
                   name: 'test-operator-alm-owned',
                   labels: {
-                    name: 'test-operator-alm-owned'
-                  }
+                    name: 'test-operator-alm-owned',
+                  },
                 },
                 spec: {
                   serviceAccountName: 'test-operator',
                   containers: [{
                     name: 'test-operator',
                     image: 'nginx',
-                  }]
-                }
-              }
-            }
-          }]
-        }
+                  }],
+                },
+              },
+            },
+          }],
+        },
       },
       customresourcedefinitions: {
         owned: [
@@ -136,10 +136,10 @@ describe('Using OLM descriptor components', () => {
               path: capability,
               'x-descriptors': [StatusCapability[capability]],
             })),
-          }
-        ]
-      }
-    }
+          },
+        ],
+      },
+    },
   };
 
   beforeAll(async() => {

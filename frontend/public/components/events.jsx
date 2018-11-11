@@ -456,7 +456,7 @@ class EventStream extends SafetyFirst {
     }
 
     const klass = classNames('co-sysevent-stream__timeline', {
-      'co-sysevent-stream__timeline--empty': !allCount || !count
+      'co-sysevent-stream__timeline--empty': !allCount || !count,
     });
     const messageCount = count < maxMessages ? `Showing ${pluralize(count, 'event')}` : `Showing ${count} of ${allCount}+ events`;
 

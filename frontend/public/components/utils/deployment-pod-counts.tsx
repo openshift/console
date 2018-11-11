@@ -31,7 +31,7 @@ export class DeploymentPodCounts extends SafetyFirst<DPCProps, DPCState> {
 
     this.state = {
       desiredCount: -1,
-      waitingForUpdate: false
+      waitingForUpdate: false,
     };
 
     this.openReplicaCountModal = event => {

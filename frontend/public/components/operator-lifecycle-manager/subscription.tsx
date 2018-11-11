@@ -39,7 +39,7 @@ const menuActions = [
   (kind, obj) => ({
     label: `View ${ClusterServiceVersionModel.kind}...`,
     href: `/k8s/ns/${obj.metadata.namespace}/${ClusterServiceVersionModel.plural}/${_.get(obj.status, 'installedCSV')}`,
-  })
+  }),
 ];
 
 export const SubscriptionRow: React.SFC<SubscriptionRowProps> = (props) => {

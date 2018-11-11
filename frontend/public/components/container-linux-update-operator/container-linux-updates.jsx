@@ -8,13 +8,13 @@ const firehoseResources = [
   {
     kind: 'Node',
     isList: true,
-    prop: 'nodes'
+    prop: 'nodes',
   },
   {
     kind: 'ConfigMap',
     namespace: 'tectonic-system',
     name: 'tectonic-config',
-    prop: 'configMap'
+    prop: 'configMap',
 
   },
 ];

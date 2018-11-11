@@ -20,7 +20,7 @@ import {
   ClusterServiceVersionLogo,
   ClusterServiceVersionPhase,
   CRDDescription,
-  referenceForCRDDesc
+  referenceForCRDDesc,
 } from './index';
 import {
   Cog,
@@ -92,7 +92,7 @@ export const ClusterServiceVersionList: React.SFC<ClusterServiceVersionListProps
 };
 
 const stateToProps = ({k8s, FLAGS}, {match}) => ({
-  loading: FLAGS.get(featureFlags.OPENSHIFT) === undefined || !k8s.getIn([FLAGS.get(featureFlags.OPENSHIFT) ? 'projects' : 'namespaces', 'loaded'])
+  loading: FLAGS.get(featureFlags.OPENSHIFT) === undefined || !k8s.getIn([FLAGS.get(featureFlags.OPENSHIFT) ? 'projects' : 'namespaces', 'loaded']),
 });
 
 export const ClusterServiceVersionsPage = connect(stateToProps)((props: ClusterServiceVersionsPageProps) => {

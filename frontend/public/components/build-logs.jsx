@@ -39,7 +39,7 @@ export class BuildLogs extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      status: LOG_SOURCE_WAITING
+      status: LOG_SOURCE_WAITING,
     };
   }
 

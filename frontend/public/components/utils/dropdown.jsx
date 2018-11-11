@@ -54,7 +54,7 @@ export class DropdownMixin extends React.PureComponent {
 
     this.setState({
       selectedKey: selectedKey,
-      title: noSelection ? title : this.props.items[selectedKey]
+      title: noSelection ? title : this.props.items[selectedKey],
     });
 
     this.hide();
@@ -430,7 +430,7 @@ export class ContainerDropdown extends React.PureComponent {
   getHeaders(container, initContainer) {
     return initContainer ? {
       [container.name]: 'Containers',
-      [initContainer.name]: 'Init Containers'
+      [initContainer.name]: 'Init Containers',
     } : {};
   }
 
@@ -460,10 +460,10 @@ ContainerDropdown.propTypes = {
   containers: PropTypes.oneOfType([PropTypes.object, PropTypes.array]).isRequired,
   currentKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   initContainers: PropTypes.object,
-  onChange: PropTypes.func.isRequired
+  onChange: PropTypes.func.isRequired,
 };
 
 ContainerDropdown.defaultProps = {
   currentKey: '',
-  initContainers: {}
+  initContainers: {},
 };

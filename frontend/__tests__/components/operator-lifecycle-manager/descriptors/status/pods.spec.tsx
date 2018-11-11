@@ -16,7 +16,7 @@ describe(PodStatusChart.displayName, () => {
       'path': 'size',
       'displayName': 'Size',
       'description': 'The desired number of member Pods for the etcd cluster.',
-      'x-descriptors': [SpecCapability.podCount]
+      'x-descriptors': [SpecCapability.podCount],
     };
     wrapper = shallow(<PodStatusChart statusDescriptor={descriptor} fetcher={() => null} />);
   });

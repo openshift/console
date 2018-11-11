@@ -52,7 +52,7 @@ export const authSvc = {
       }
     });
 
-    coFetch(window.SERVER_FLAGS.logoutURL, { method: 'POST', })
+    coFetch(window.SERVER_FLAGS.logoutURL, { method: 'POST' })
       // eslint-disable-next-line no-console
       .catch(e => console.error('Error logging out', e))
       .then(() => {

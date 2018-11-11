@@ -66,8 +66,8 @@ describe('podReadiness', () => {
         phase: 'Running',
         conditions: [
           {type: 'Ready', status: 'True'},
-        ]
-      }
+        ],
+      },
     };
   });
 

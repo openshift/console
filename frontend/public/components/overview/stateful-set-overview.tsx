@@ -16,12 +16,12 @@ const StatefulSetOverviewDetails: React.SFC<StatefulSetOverviewDetailsProps> = (
 const tabs = [
   {
     name: 'Overview',
-    component: StatefulSetOverviewDetails
+    component: StatefulSetOverviewDetails,
   },
   {
     name: 'Resources',
-    component: OverviewDetailsResourcesTab
-  }
+    component: OverviewDetailsResourcesTab,
+  },
 ];
 
 export const StatefulSetOverview: React.SFC<StatefulSetOverviewProps> = ({item}) =>

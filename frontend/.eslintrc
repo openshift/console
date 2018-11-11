@@ -25,6 +25,7 @@
   "rules": {
     "brace-style": 2,
     "camelcase": 2,
+    "comma-dangle": ["error", "always-multiline"],
     "consistent-return": 0,
     "consistent-this": [1, "that"],
     "curly": [2, "all"],
@@ -42,7 +43,6 @@
     "max-nested-callbacks": [1, 4],
     "no-alert": 2,
     "no-caller": 2,
-    "no-comma-dangle": 0,
     "no-console": 2,
     "no-constant-condition": 2,
     "no-debugger": 2,

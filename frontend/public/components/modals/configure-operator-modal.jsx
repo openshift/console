@@ -14,7 +14,7 @@ class ConfigureOperatorModal extends PromiseComponent {
 
     const getPath = this.props.path.replace('/', '.').substr(1);
     this.state = Object.assign(this.state, {
-      value: _.get(this.props.config, getPath).toString()
+      value: _.get(this.props.config, getPath).toString(),
     });
 
     this._change = this._change.bind(this);
@@ -66,7 +66,7 @@ ConfigureOperatorModal.propTypes = {
   close: PropTypes.func.isRequired,
   config: PropTypes.object.isRequired,
   callbacks: PropTypes.object.isRequired,
-  valueType: PropTypes.string
+  valueType: PropTypes.string,
 };
 
 const configureOperatorModal = createModalLauncher(ConfigureOperatorModal);
@@ -80,15 +80,15 @@ export const configureOperatorStrategyModal = (props) => {
       {
         value: 'true',
         title: <span>Automatic <span className="co-no-bold">(recommended)</span></span>,
-        desc: 'Stay up to date with the latest version automatically.'
+        desc: 'Stay up to date with the latest version automatically.',
       },
       {
         value: 'false',
         title: 'Admin Approval',
-        desc: 'All updates must be approved by an admin. Important security patches may be missed.'
-      }
+        desc: 'All updates must be approved by an admin. Important security patches may be missed.',
+      },
     ],
     title: 'Update Strategy',
-    valueType: 'bool'
+    valueType: 'bool',
   }, props));
 };

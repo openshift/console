@@ -35,7 +35,7 @@ export class CatalogTileViewPage extends React.Component {
           value: 'ImageStream',
           active: false,
         },
-      }
+      },
     };
 
     let filterCounts = {

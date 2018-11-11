@@ -15,5 +15,5 @@ export const NumberSpinner = (props) => {
 };
 NumberSpinner.propTypes = {
   // function that increments/decrements the existing value
-  changeValueBy: PropTypes.func.isRequired
+  changeValueBy: PropTypes.func.isRequired,
 };

@@ -28,7 +28,7 @@ export class StartGuide extends SafetyFirst<StartGuideProps, StartGuideState> {
       // ignored
     }
     this.state = {
-      visible
+      visible,
     };
   }
 

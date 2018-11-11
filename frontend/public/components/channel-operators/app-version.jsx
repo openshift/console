@@ -4,7 +4,7 @@ import * as classNames from 'classnames';
 import * as PropTypes from 'prop-types';
 
 import {LoadingInline, taskStatuses, operatorStates, calculateChannelState, determineOperatorState, orderedTaskStatuses} from '../utils';
-import {configureOperatorStrategyModal, configureOperatorChannelModal,} from '../modals';
+import {configureOperatorStrategyModal, configureOperatorChannelModal} from '../modals';
 import {DetailConfig} from './detail-config';
 import {DetailStatus} from './detail-status';
 
@@ -22,7 +22,7 @@ const groupTaskStatuses = tss => {
     reason: '',
     state: '',
     type: 'operator',
-    statuses: []
+    statuses: [],
   };
 
   const appVersionTaskStatuses = {
@@ -30,7 +30,7 @@ const groupTaskStatuses = tss => {
     reason: '',
     state: '',
     type: 'appversion',
-    statuses: []
+    statuses: [],
   };
 
   const groupedTaskStatuses = [operatorTaskStatuses, appVersionTaskStatuses];
@@ -63,7 +63,7 @@ const DetailWrapper = ({title, children}) => <div className="col-xs-6 col-sm-4 c
 
 DetailWrapper.propTypes = {
   title: PropTypes.node,
-  children: PropTypes.node
+  children: PropTypes.node,
 };
 
 const Details = ({config, channelState, tcAppVersion}) => {
@@ -223,7 +223,7 @@ class TaskStatus extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      isErrorMsgVisible: false
+      isErrorMsgVisible: false,
     };
   }
 

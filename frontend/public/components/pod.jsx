@@ -155,7 +155,7 @@ const PodGraphs = requirePrometheus(({pod}) => <React.Fragment>
 const Details = ({obj: pod}) => {
   const limits = {
     cpu: null,
-    memory: null
+    memory: null,
   };
   limits.cpu = _.reduce(pod.spec.containers, (sum, container) => {
     const value = units.dehumanize(_.get(container, 'resources.limits.cpu', 0), 'numeric').value;
@@ -286,8 +286,8 @@ const filters = [{
     // The pod phase is "Succeeded," but the container state is "Completed."
     { id: 'Succeeded', title: 'Completed' },
     { id: 'Failed', title: 'Failed' },
-    { id: 'Unknown', title: 'Unknown '}
-  ]
+    { id: 'Unknown', title: 'Unknown '},
+  ],
 }];
 
 export class PodsPage extends React.Component {

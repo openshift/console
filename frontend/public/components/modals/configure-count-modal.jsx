@@ -12,7 +12,7 @@ class ConfigureCountModal extends PromiseComponent {
 
     const getPath = this.props.path.substring(1).replace('/', '.');
     this.state = Object.assign(this.state, {
-      value: _.get(this.props.resource, getPath) || this.props.defaultValue
+      value: _.get(this.props.resource, getPath) || this.props.defaultValue,
     });
 
     this._change = this._change.bind(this);
@@ -28,7 +28,7 @@ class ConfigureCountModal extends PromiseComponent {
 
   _changeValueBy(operation) {
     this.setState({
-      value: _.toInteger(this.state.value) + operation
+      value: _.toInteger(this.state.value) + operation,
     });
   }
 
@@ -73,7 +73,7 @@ ConfigureCountModal.propTypes = {
   path: PropTypes.string.isRequired,
   resource: PropTypes.object.isRequired,
   resourceKind: PropTypes.object.isRequired,
-  title: PropTypes.node.isRequired
+  title: PropTypes.node.isRequired,
 };
 
 export const configureCountModal = createModalLauncher(ConfigureCountModal);
@@ -84,7 +84,7 @@ export const configureReplicaCountModal = (props) => {
     title: 'Edit Count',
     message: `${props.resourceKind.labelPlural} maintain the desired number of healthy pods.`,
     path: '/spec/replicas',
-    buttonText: 'Save'
+    buttonText: 'Save',
   }, props));
 };
 
@@ -94,7 +94,7 @@ export const configureJobParallelismModal = (props) => {
     title: 'Edit Parallelism',
     message: `${props.resourceKind.labelPlural} create one or more pods and ensure that a specified number of them successfully terminate. When the specified number of completions is successfully reached, the job is complete.`,
     path: '/spec/parallelism',
-    buttonText: 'Save'
+    buttonText: 'Save',
   }, props));
 };
 
@@ -104,6 +104,6 @@ export const configureClusterSizeModal = (props) => {
     title: 'Edit Cluster Size',
     message: `${props.resourceKind.labelPlural} maintain the desired number of healthy pods.`,
     path: '/spec/size',
-    buttonText: 'Save'
+    buttonText: 'Save',
   }, props));
 };

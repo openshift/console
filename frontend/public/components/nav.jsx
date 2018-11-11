@@ -52,12 +52,12 @@ class NavLink extends React.PureComponent {
 
 NavLink.defaultProps = {
   required: '',
-  disallowed: ''
+  disallowed: '',
 };
 
 NavLink.propTypes = {
   required: PropTypes.string,
-  disallowed: PropTypes.string
+  disallowed: PropTypes.string,
 };
 
 

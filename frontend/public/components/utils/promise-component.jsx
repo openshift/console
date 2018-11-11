@@ -14,7 +14,7 @@ export class PromiseComponent extends SafetyFirst {
 
   handlePromise(promise) {
     this.setState({
-      inProgress: true
+      inProgress: true,
     });
     return promise.then(
       res => this._then(res),

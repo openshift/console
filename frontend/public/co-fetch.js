@@ -111,7 +111,7 @@ export const coFetch = (url, options = {}, timeout=20000) => {
 const parseJson = (response) => response.json();
 
 export const coFetchUtils = {
-  parseJson
+  parseJson,
 };
 
 export const coFetchJSON = (url, method = 'GET', options = {}) => {

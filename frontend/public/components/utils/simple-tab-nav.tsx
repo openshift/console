@@ -33,7 +33,7 @@ export class SimpleTabNav extends React.Component<SimpleTabNavProps, SimpleTabNa
     const {tabs} = this.props;
     this.props.onClickTab(name);
     this.setState({
-      'selectedTab': _.find(tabs, {name})
+      'selectedTab': _.find(tabs, {name}),
     });
   }
 

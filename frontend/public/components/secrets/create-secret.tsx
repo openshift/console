@@ -127,7 +127,7 @@ const withSecretForm = (SubForm) => class SecretFormComponent extends React.Comp
   onError (err) {
     this.setState({
       error: err,
-      inProgress: false
+      inProgress: false,
     });
   }
   onNameChanged (event) {
@@ -242,7 +242,7 @@ class ImageSecretForm extends React.Component<ImageSecretFormProps, ImageSecretF
   onDataChanged (secretData) {
     const dataKey = secretData[AUTHS_KEY] ? '.dockerconfigjson' : '.dockercfg';
     this.setState({
-      stringData: {[dataKey]: secretData}
+      stringData: {[dataKey]: secretData},
     }, () => this.props.onChange({
       stringData: _.mapValues(this.state.stringData, JSON.stringify),
       type: getImageSecretType(dataKey),
@@ -259,7 +259,7 @@ class ImageSecretForm extends React.Component<ImageSecretFormProps, ImageSecretF
   render () {
     const authTypes = {
       'credentials': 'Image Registry Credentials',
-      'config-file': 'Upload Configuration File'
+      'config-file': 'Upload Configuration File',
     };
     const data = _.get(this.state.stringData, this.state.dataKey);
     return <React.Fragment>
@@ -315,10 +315,10 @@ class ConfigEntryForm extends React.Component<ConfigEntryFormProps, ConfigEntryF
   changeData(event) {
     const { name, value } = event.target;
     this.setState({
-      [name]: value
+      [name]: value,
     } as ConfigEntryFormState, () => {
       this.setState({
-        auth: this.updateAuth(name)
+        auth: this.updateAuth(name),
       } as ConfigEntryFormState, () => this.props.onChange(this.state, this.props.id));
     });
   }
@@ -464,14 +464,14 @@ class CreateConfigSubform extends React.Component<CreateConfigSubformProps, Crea
     const updatedSecretEntriesArray = [...this.state.secretEntriesArray];
     updatedSecretEntriesArray.splice(entryID, 1);
     this.setState({
-      secretEntriesArray: updatedSecretEntriesArray
+      secretEntriesArray: updatedSecretEntriesArray,
     }, () => {
       this.propagateEntryChange(this.state.secretEntriesArray);
     });
   }
   addEntry(){
     this.setState({
-      secretEntriesArray: _.concat(this.state.secretEntriesArray, this.newImageSecretEntry())
+      secretEntriesArray: _.concat(this.state.secretEntriesArray, this.newImageSecretEntry()),
     }, () => {
       this.propagateEntryChange(this.state.secretEntriesArray);
     });
@@ -542,19 +542,19 @@ class WebHookSecretForm extends React.Component<WebHookSecretFormProps, WebHookS
   constructor(props) {
     super(props);
     this.state = {
-      stringData: {WebHookSecretKey: this.props.stringData.WebHookSecretKey || ''}
+      stringData: {WebHookSecretKey: this.props.stringData.WebHookSecretKey || ''},
     };
     this.changeWebHookSecretkey = this.changeWebHookSecretkey.bind(this);
     this.generateWebHookSecret = this.generateWebHookSecret.bind(this);
   }
   changeWebHookSecretkey(event) {
     this.setState({
-      stringData: { WebHookSecretKey: event.target.value }
+      stringData: { WebHookSecretKey: event.target.value },
     }, () => this.props.onChange(this.state));
   }
   generateWebHookSecret() {
     this.setState({
-      stringData: { WebHookSecretKey: generateSecret() }
+      stringData: { WebHookSecretKey: generateSecret() },
     }, () => this.props.onChange(this.state));
   }
   render () {
@@ -632,7 +632,7 @@ export class BasicAuthSubform extends React.Component<BasicAuthSubformProps, Bas
   }
   changeData(event) {
     this.setState({
-      [event.target.name]: event.target.value
+      [event.target.name]: event.target.value,
     } as BasicAuthSubformState, () => this.props.onChange(this.state));
   }
   render() {
@@ -681,12 +681,12 @@ class SSHAuthSubform extends React.Component<SSHAuthSubformProps, SSHAuthSubform
   }
   changeData(event) {
     this.setState({
-      'ssh-privatekey': event.target.value
+      'ssh-privatekey': event.target.value,
     }, () => this.props.onChange(this.state));
   }
   onFileChange(fileData) {
     this.setState({
-      'ssh-privatekey': fileData
+      'ssh-privatekey': fileData,
     }, () => this.props.onChange(this.state));
   }
   render() {
@@ -778,7 +778,7 @@ class GenericSecretForm extends React.Component<GenericSecretFormProps, GenericS
     const updatedSecretEntriesArray = [...this.state.secretEntriesArray];
     updatedSecretEntriesArray.splice(entryID, 1);
     this.setState({
-      secretEntriesArray: updatedSecretEntriesArray
+      secretEntriesArray: updatedSecretEntriesArray,
     }, () => this.props.onChange({
       stringData: this.genericSecretArrayToObject(this.state.secretEntriesArray),
       type: SecretType.opaque,
@@ -786,7 +786,7 @@ class GenericSecretForm extends React.Component<GenericSecretFormProps, GenericS
   }
   addEntry(){
     this.setState({
-      secretEntriesArray: _.concat(this.state.secretEntriesArray, this.newGenericSecretEntry())
+      secretEntriesArray: _.concat(this.state.secretEntriesArray, this.newGenericSecretEntry()),
     }, () => this.props.onChange({
       stringData: this.genericSecretArrayToObject(this.state.secretEntriesArray),
       type: SecretType.opaque,

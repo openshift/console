@@ -11,7 +11,7 @@ import { Firehose, PageHeading, StatusBox } from '../utils';
 import {
   getAnnotationTags,
   getMostRecentBuilderTag,
-  isBuilder
+  isBuilder,
 } from '../image-stream';
 import {
   getImageForIconClass,
@@ -159,7 +159,7 @@ export const Catalog = connectToFlags(FLAGS.OPENSHIFT, FLAGS.SERVICE_CATALOG)(({
       isList: true,
       kind: 'ClusterServiceClass',
       namespaced: false,
-      prop: 'clusterserviceclasses'
+      prop: 'clusterserviceclasses',
     });
   }
   if (flags.OPENSHIFT) {
@@ -167,7 +167,7 @@ export const Catalog = connectToFlags(FLAGS.OPENSHIFT, FLAGS.SERVICE_CATALOG)(({
       isList: true,
       kind: 'ImageStream',
       namespace: 'openshift',
-      prop: 'imagestreams'
+      prop: 'imagestreams',
     });
   }
   return <Firehose resources={mock ? [] : resources}>

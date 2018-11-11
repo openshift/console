@@ -283,7 +283,7 @@ describe(ClusterServiceVersionResourcesDetailsPage.displayName, () => {
 
   it('renders a `DetailsPage` which also watches the parent CSV', () => {
     expect(wrapper.find(DetailsPage).props().resources).toEqual([
-      {kind: referenceForModel(ClusterServiceVersionModel), name: match.params.appName, namespace: match.params.ns, isList: false, prop: 'csv'}
+      {kind: referenceForModel(ClusterServiceVersionModel), name: match.params.appName, namespace: match.params.ns, isList: false, prop: 'csv'},
     ]);
   });
 
@@ -316,15 +316,15 @@ describe(ClusterServiceVersionResourcesDetailsPage.displayName, () => {
       kind: 'Pod',
       metadata: {
         uid: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
-        ownerReferences: [{uid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'}]
-      }
+        ownerReferences: [{uid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'}],
+      },
     };
     const deployment = {
       kind: 'Deployment',
       metadata: {
         uid: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-        ownerReferences: [{uid: testResourceInstance.metadata.uid}]
-      }
+        ownerReferences: [{uid: testResourceInstance.metadata.uid}],
+      },
     };
     const secret = {
       kind: 'Secret',

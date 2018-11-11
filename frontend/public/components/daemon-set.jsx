@@ -7,7 +7,7 @@ import {
   List,
   ListHeader,
   ListPage,
-  ResourceRow
+  ResourceRow,
 } from './factory';
 import {
   AsyncComponent,
@@ -20,7 +20,7 @@ import {
   ResourceLink,
   ResourceSummary,
   SectionHeading,
-  Selector
+  Selector,
 } from './utils';
 
 export const menuActions = [Cog.factory.EditEnvironment, ...Cog.factory.common];

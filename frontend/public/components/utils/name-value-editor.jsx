@@ -210,11 +210,11 @@ EnvFromEditor.propTypes = {
   ).isRequired,
   updateParentData: PropTypes.func.isRequired,
   configMaps: PropTypes.object,
-  secrets: PropTypes.object
+  secrets: PropTypes.object,
 };
 EnvFromEditor.defaultProps = {
   readOnly: false,
-  nameValueId: 0
+  nameValueId: 0,
 };
 
 
@@ -222,9 +222,9 @@ const pairSource = {
   beginDrag(props) {
     return {
       index: props.index,
-      rowSourceId: props.rowSourceId
+      rowSourceId: props.rowSourceId,
     };
-  }
+  },
 };
 
 const itemTarget = {
@@ -271,13 +271,13 @@ const itemTarget = {
     // but it's good here for the sake of performance
     // to avoid expensive index searches.
     monitor.getItem().index = hoverIndex;
-  }
+  },
 };
 
 const collectSourcePair = (connect, monitor) => ({
   connectDragSource: connect.dragSource(),
   connectDragPreview: connect.dragPreview(),
-  isDragging: monitor.isDragging()
+  isDragging: monitor.isDragging(),
 });
 
 const collectTargetPair = (connect) => ({
@@ -363,7 +363,7 @@ PairElement.propTypes = {
   onMove: PropTypes.func.isRequired,
   rowSourceId: PropTypes.number.isRequired,
   configMaps: PropTypes.object,
-  secrets: PropTypes.object
+  secrets: PropTypes.object,
 };
 
 const EnvFromPairElement = DragSource(DRAGGABLE_TYPE.ENV_FROM_ROW, pairSource, collectSourcePair)(DropTarget(DRAGGABLE_TYPE.ENV_FROM_ROW, itemTarget, collectTargetPair)(class EnvFromPairElement extends React.Component {
@@ -436,5 +436,5 @@ EnvFromPairElement.propTypes = {
   onMove: PropTypes.func.isRequired,
   rowSourceId: PropTypes.number.isRequired,
   configMaps: PropTypes.object,
-  secrets: PropTypes.object
+  secrets: PropTypes.object,
 };
