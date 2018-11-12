@@ -12,10 +12,10 @@ import {
   k8sUpdate,
   referenceFor,
 } from '../../module/k8s';
-import { ListDropdown } from '../RBAC/bindings';
 import {
   ButtonBar,
   history,
+  ListDropdown,
   LoadingBox,
   ResourceLink,
   resourceObjPath,

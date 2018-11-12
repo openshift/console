@@ -47,6 +47,7 @@ export * from './simple-tab-nav';
 export * from './request-size-input';
 export * from './name-value-editor';
 export * from './k8s-watcher';
+export * from './list-dropdown';
 
 /*
   Add the enum for NameValueEditorPair here and not in its namesake file because the editor should always be

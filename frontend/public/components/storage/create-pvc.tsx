@@ -4,8 +4,7 @@ import * as React from 'react';
 import { Helmet } from 'react-helmet';
 
 import { k8sCreate, K8sResourceKind, referenceFor } from '../../module/k8s';
-import { ButtonBar, history, NameValueEditor, resourceObjPath, RequestSizeInput } from '../utils';
-import { ListDropdown } from '../RBAC/bindings';
+import { ButtonBar, history, ListDropdown, NameValueEditor, resourceObjPath, RequestSizeInput } from '../utils';
 import { RadioInput } from '../radio';
 import { Checkbox } from '../checkbox';
 import { PersistentVolumeClaimModel } from '../../models/index';
