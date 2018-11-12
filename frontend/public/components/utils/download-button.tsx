@@ -10,7 +10,7 @@ const spanStyle = {
 };
 
 export class DownloadButton extends SafetyFirst<DownloadButtonProps, DownloadButtonState> {
-  constructor (props) {
+  constructor(props) {
     super(props);
     this.state = {
       inFlight: false,
@@ -18,7 +18,7 @@ export class DownloadButton extends SafetyFirst<DownloadButtonProps, DownloadBut
     };
   }
 
-  download () {
+  download() {
     const { filename, url } = this.props;
     this.setState({inFlight: true, error: null});
     // Increase default timeout to 30 seconds.
@@ -32,7 +32,7 @@ export class DownloadButton extends SafetyFirst<DownloadButtonProps, DownloadBut
       .then(() => this.setState({inFlight: false}));
   }
 
-  render () {
+  render() {
     const { className, filename } = this.props;
     const { error, inFlight } = this.state;
     // The position styling and always-hidden filename are so the button doesn't resize when its content changes.

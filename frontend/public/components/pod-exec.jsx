@@ -34,7 +34,7 @@ export const PodExec = connectToFlags(FLAGS.OPENSHIFT)(class PodExec extends Rea
     this.onChangeContainer = index => this.onChangeContainer_(index);
   }
 
-  connect_ () {
+  connect_() {
     const { metadata } = this.props.obj;
     const { activeContainer } = this.state;
     const usedClient = this.props.flags[FLAGS.OPENSHIFT] ? 'oc' : 'kubectl';
@@ -104,16 +104,16 @@ export const PodExec = connectToFlags(FLAGS.OPENSHIFT)(class PodExec extends Rea
       .onerror(evt => console.error(`WS error?! ${evt}`));
   }
 
-  componentDidMount () {
+  componentDidMount() {
     this.connect_();
   }
 
-  componentWillUnmount () {
+  componentWillUnmount() {
     this.ws && this.ws.destroy();
     delete this.ws;
   }
 
-  static getDerivedStateFromProps (nextProps, prevState) {
+  static getDerivedStateFromProps(nextProps, prevState) {
     const containers = _.get(nextProps.obj, 'spec.containers', []).map(n => n.name);
     if (_.isEqual(containers, prevState.containers)) {
       return null;
@@ -121,7 +121,7 @@ export const PodExec = connectToFlags(FLAGS.OPENSHIFT)(class PodExec extends Rea
     return { containers };
   }
 
-  onChangeContainer_ (index) {
+  onChangeContainer_(index) {
     const name = this.state.containers[index];
 
     if (!name) {
@@ -138,7 +138,7 @@ export const PodExec = connectToFlags(FLAGS.OPENSHIFT)(class PodExec extends Rea
     });
   }
 
-  onResize_ (rows, cols) {
+  onResize_(rows, cols) {
     const data = btoa(JSON.stringify({Height: rows, Width: cols}));
     this.ws && this.ws.send(`4${data}`);
   }
@@ -147,11 +147,11 @@ export const PodExec = connectToFlags(FLAGS.OPENSHIFT)(class PodExec extends Rea
     this.terminal.current.setFullscreen(fullscreen);
   }
 
-  onData_ (data) {
+  onData_(data) {
     this.ws && this.ws.send(`0${btoa(data)}`);
   }
 
-  render () {
+  render() {
     const { containers, activeContainer, open, error } = this.state;
 
     let contents = <LoadingBox />;

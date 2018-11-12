@@ -127,7 +127,7 @@ export const EditYAML = connect(stateToProps)(
       }
     }
 
-    get height () {
+    get height() {
       return Math.floor(
         document.body.getBoundingClientRect().bottom - this.editor.getBoundingClientRect().top
       );
@@ -268,7 +268,7 @@ export const EditYAML = connect(stateToProps)(
       });
     }
 
-    download (data = this.doc.getValue()) {
+    download(data = this.doc.getValue()) {
       const blob = new Blob([data], { type: 'text/yaml;charset=utf-8' });
       let filename = 'k8s-object.yaml';
       try {
@@ -288,12 +288,12 @@ export const EditYAML = connect(stateToProps)(
       this.loadYaml(true, sampleObj);
     }
 
-    downloadSampleYaml_ (templateName = 'default', kind = referenceForModel(this.props.model)) {
+    downloadSampleYaml_(templateName = 'default', kind = referenceForModel(this.props.model)) {
       const data = safeDump(generateObjToLoad(kind, templateName, this.props.obj.metadata.namespace));
       this.download(data);
     }
 
-    render () {
+    render() {
       if (!this.props.create && !this.props.obj) {
         return <Loading />;
       }

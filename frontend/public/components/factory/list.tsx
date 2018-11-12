@@ -233,7 +233,7 @@ export class ColHead extends React.Component<ColHeadProps> {
     }
   }
 
-  render () {
+  render() {
     // currentSortField/Func == info for currently sorted ColHead.
     // sortField/Func == this ColHead's field/func
     const {
@@ -434,7 +434,7 @@ export class ResourceRow extends React.Component<ResourceRowProps> {
     return false;
   }
 
-  render () {
+  render() {
     return <div className="row co-resource-list__item" style={this.props.style}>{this.props.children}</div>;
   }
 }

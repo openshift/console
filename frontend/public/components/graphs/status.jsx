@@ -41,7 +41,7 @@ const fetchQuery = (q, long) => coFetchJSON(`${prometheusBasePath}/api/v1/query?
 
 /** @augments {React.Component<{fetch?: () => Promise<any>, query?: string, title: string, href?: string, rel?: string, target?: string}}>} */
 export class Status extends SafetyFirst {
-  constructor (props) {
+  constructor(props) {
     super(props);
     this.interval = null;
     this.state = {
@@ -50,7 +50,7 @@ export class Status extends SafetyFirst {
     this.clock = 0;
   }
 
-  fetch (props=this.props) {
+  fetch(props=this.props) {
     const clock = this.clock;
     const promise = props.query ? fetchQuery(props.query, props.name) : props.fetch();
 
@@ -70,7 +70,7 @@ export class Status extends SafetyFirst {
       }, 30000)));
   }
 
-  componentWillReceiveProps (nextProps) {
+  componentWillReceiveProps(nextProps) {
     if (_.isEqual(nextProps, this.props)) {
       return;
     }
@@ -84,17 +84,17 @@ export class Status extends SafetyFirst {
     this.fetch(nextProps);
   }
 
-  componentWillMount () {
+  componentWillMount() {
     clearInterval(this.interval);
     this.fetch();
   }
 
-  componentWillUnmount () {
+  componentWillUnmount() {
     super.componentWillUnmount();
     clearInterval(this.interval);
   }
 
-  render () {
+  render() {
     const title = this.props.title;
     const { short, long, status } = this.state;
     let color = colors.gray;

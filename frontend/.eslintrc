@@ -70,6 +70,7 @@
     "react/prop-types": 0,
     "react/self-closing-comp": ["error", {"component": true, "html": false}],
     "semi": 2,
+    "space-before-function-paren": ["error", "never"],
     "wrap-iife": [2, "inside"],
   },
   "settings": {

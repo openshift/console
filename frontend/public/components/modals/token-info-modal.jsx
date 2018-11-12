@@ -6,14 +6,14 @@ import { PromiseComponent } from '../utils';
 import { createModalLauncher, ModalTitle, ModalBody, ModalFooter } from '../factory/modal';
 
 class TokenInfoModal extends PromiseComponent {
-  constructor (props) {
+  constructor(props) {
     super(props);
     this.state = Object.assign(this.state, {
       tokenReview: '',
     });
   }
 
-  componentWillMount () {
+  componentWillMount() {
     this.handlePromise(
       coFetchJSON.post(`${k8sBasePath}/apis/authentication.k8s.io/v1beta1/tokenreviews`)
     ).then(res => {
@@ -29,7 +29,7 @@ class TokenInfoModal extends PromiseComponent {
     });
   }
 
-  render () {
+  render() {
     const onCloseClick = e => {
       e.stopPropagation();
       this.props.close(e);

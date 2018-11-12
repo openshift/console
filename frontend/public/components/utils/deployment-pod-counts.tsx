@@ -59,7 +59,7 @@ export class DeploymentPodCounts extends SafetyFirst<DPCProps, DPCState> {
     return { waitingForUpdate: false, desiredCount: -1 };
   }
 
-  render () {
+  render() {
     const { resource, resourceKind } = this.props;
     const { spec, status } = resource;
 

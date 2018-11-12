@@ -22,11 +22,11 @@ export class SelectorInput extends React.Component {
     };
   }
 
-  static arrayify (obj) {
+  static arrayify(obj) {
     return _.map(obj, (v, k) => v ? `${k}=${v}` : k);
   }
 
-  static objectify (arr) {
+  static objectify(arr) {
     const result = {};
     _.each(arr, item => {
       const [key, value = null] = item.split('=');
@@ -35,23 +35,23 @@ export class SelectorInput extends React.Component {
     return result;
   }
 
-  focus () {
+  focus() {
     this.ref_ && this.ref_.focus();
   }
 
-  isTagValid (tag) {
+  isTagValid(tag) {
     const requirement = k8sSelectorRequirement.requirementFromString(tag);
     return !!(requirement && (!this.isBasic || requirement.operator === 'Equals'));
   }
 
-  handleInputChange (e) {
+  handleInputChange(e) {
     // We track the input field value in state so we can retain the input value when an invalid tag is entered.
     // Otherwise, the default behaviour of TagsInput is to clear the input field.
     const inputValue = e.target.value;
     this.setState({inputValue, isInputValid: this.isTagValid(inputValue)});
   }
 
-  handleChange (tags, changed) {
+  handleChange(tags, changed) {
     // The way we use TagsInput, there should only ever be one new tag in changed
     const newTag = changed[0];
 
@@ -76,7 +76,7 @@ export class SelectorInput extends React.Component {
     this.props.onChange(newTags);
   }
 
-  render () {
+  render() {
     const {inputValue, isInputValid, tags} = this.state;
 
     // Keys that add tags: Enter

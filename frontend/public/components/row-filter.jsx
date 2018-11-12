@@ -19,16 +19,16 @@ const CheckBox = ({title, active, number, toggle}) => {
 export const storagePrefix = 'rowFilter-';
 
 class CheckBoxes_ extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props);
     this.state = {selected: []};
   }
 
-  get storageKey () {
+  get storageKey() {
     return `${storagePrefix}${this.props.type}`;
   }
 
-  componentDidMount () {
+  componentDidMount() {
     let selected;
     try {
       selected = (getQueryArgument(this.storageKey)).split(',');
@@ -43,13 +43,13 @@ class CheckBoxes_ extends React.Component {
     this.setState({selected}, () => this.applyFilter());
   }
 
-  componentDidUpdate (prevProps) {
+  componentDidUpdate(prevProps) {
     if (!_.isEqual(this.props.items, prevProps.items) || !_.isEqual(this.props.reduxIDs, prevProps.reduxIDs)) {
       this.applyFilter();
     }
   }
 
-  applyFilter () {
+  applyFilter() {
     const all = _.map(this.props.items, 'id');
     const recognized = _.intersection(this.state.selected, all);
     if (!_.isEmpty(recognized)) {
@@ -57,7 +57,7 @@ class CheckBoxes_ extends React.Component {
     }
   }
 
-  toggle (itemId) {
+  toggle(itemId) {
     const selected = _.xor(this.state.selected, [itemId]);
 
     // Ensure something is always active
@@ -73,7 +73,7 @@ class CheckBoxes_ extends React.Component {
     }
   }
 
-  render () {
+  render() {
     const checkboxes = _.map(this.props.items, ({id, title}) => {
       return <CheckBox
         key={id}

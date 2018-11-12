@@ -11,7 +11,7 @@ const style = {
 };
 
 export class Scalar extends BaseGraph {
-  constructor (props) {
+  constructor(props) {
     super(props);
     this.timeSpan = 0;
     this.state = {
@@ -19,7 +19,7 @@ export class Scalar extends BaseGraph {
     };
   }
 
-  updateGraph (data, error) {
+  updateGraph(data, error) {
     const value = parseFloat(_.get(data, '[0].data.result[0].value[1]'), 10);
     if (isNaN(value)) {
       this.setState({error});
@@ -30,7 +30,7 @@ export class Scalar extends BaseGraph {
     this.setState({value, error});
   }
 
-  render () {
+  render() {
     const { value, unit } = units.humanize(this.state.value, this.props.unit, true);
     return <div className="graph-wrapper" style={Object.assign(style, this.props.style)}>
       <h5 className="graph-title">{this.props.title}</h5>

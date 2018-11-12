@@ -126,7 +126,7 @@ export class ResourceLog extends SafetyFirst {
   }
 
   // Download currently displayed log content
-  _download () {
+  _download() {
     const {resourceName, containerName} = this.props;
     const blob = this._buffer.getBlob({type: 'text/plain;charset=utf-8'});
     let filename = resourceName;
@@ -182,7 +182,7 @@ export class ResourceLog extends SafetyFirst {
   }
 
   // Toggle currently displayed log content to/from fullscreen
-  _toggleFullscreen () {
+  _toggleFullscreen() {
     const logConsole = this._resourceLogRef.current;
     if (!logConsole) {
       return;
@@ -217,7 +217,7 @@ export class ResourceLog extends SafetyFirst {
   }
 
   // Initialize websocket connection and wire up handlers
-  _wsInit ({kind, namespace, resourceName, containerName, bufferSize}) {
+  _wsInit({kind, namespace, resourceName, containerName, bufferSize}) {
     if ([LOG_SOURCE_RUNNING, LOG_SOURCE_TERMINATED, LOG_SOURCE_RESTARTING].includes(this.state.resourceStatus)) {
       const urlOpts = {
         ns: namespace,

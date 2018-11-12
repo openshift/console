@@ -12,7 +12,7 @@ const colors = {
 };
 
 export class Bar extends BaseGraph {
-  constructor (props) {
+  constructor(props) {
     super(props);
     this.data = [{
       y: [],
@@ -47,7 +47,7 @@ export class Bar extends BaseGraph {
     this.timeSpan = 0;
   }
 
-  annotate (texts, values) {
+  annotate(texts, values) {
     const annotations = [];
     _.each(texts, (text, i) => {
       annotations.push({
@@ -80,7 +80,7 @@ export class Bar extends BaseGraph {
     return annotations;
   }
 
-  updateGraph (data) {
+  updateGraph(data) {
     if (_.get(data, '[0].status') !== 'success') {
       return;
     }

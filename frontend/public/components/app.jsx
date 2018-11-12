@@ -44,7 +44,7 @@ const RedirectComponent = props => {
 
 // Ensure a *const* function wrapper for each namespaced Component so that react router doesn't recreate them
 const Memoized = new Map();
-function NamespaceFromURL (Component) {
+function NamespaceFromURL(Component) {
   let C = Memoized.get(Component);
   if (!C) {
     C = function NamespaceInjector(props) {
@@ -90,7 +90,7 @@ const DefaultPage = connectToFlags(FLAGS.OPENSHIFT)(({ flags }) => {
 const LazyRoute = (props) => <Route {...props} component={(componentProps) => <AsyncComponent loader={props.loader} kind={props.kind} {...componentProps} />} />;
 
 class App extends React.PureComponent {
-  componentDidUpdate (prevProps) {
+  componentDidUpdate(prevProps) {
     const props = this.props;
     // Prevent infinite loop in case React Router decides to destroy & recreate the component (changing key)
     const oldLocation = _.omit(prevProps.location, ['key']);
@@ -104,7 +104,7 @@ class App extends React.PureComponent {
     analyticsSvc.route(pathname);
   }
 
-  render () {
+  render() {
     return <React.Fragment>
       <Helmet titleTemplate={`%s · ${productName}`} defaultTitle={productName} />
       <Masthead />
@@ -237,7 +237,7 @@ analyticsSvc.push({tier: 'tectonic'});
 // Used by GUI tests to check for unhandled exceptions
 window.windowError = false;
 
-window.onerror = function (message, source, lineno, colno, optError={}) {
+window.onerror = function(message, source, lineno, colno, optError={}) {
   try {
     const e = `${message} ${source} ${lineno} ${colno}`;
     analyticsSvc.error(e, null, optError.stack);
@@ -252,7 +252,7 @@ window.onerror = function (message, source, lineno, colno, optError={}) {
   window.windowError = true;
 };
 
-window.onunhandledrejection = function (e) {
+window.onunhandledrejection = function(e) {
   try {
     analyticsSvc.error(e, null);
   } catch (err) {

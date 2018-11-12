@@ -3,7 +3,7 @@
 import * as React from 'react';
 
 class DefaultFallback extends React.Component {
-  render () {
+  render() {
     return <div />;
   }
 }

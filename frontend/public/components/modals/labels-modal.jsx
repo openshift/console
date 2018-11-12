@@ -20,7 +20,7 @@ class BaseLabelsModal extends PromiseComponent {
     this.createPath = !labels.length;
   }
 
-  _submit (e) {
+  _submit(e) {
     e.preventDefault();
 
     const { kind, path, resource, isPodSelector } = this.props;

@@ -30,7 +30,7 @@ const CreateNamespaceModal = connect(null, mapDispatchToProps)(class CreateNames
     this.onLabels = this.onLabels.bind(this);
   }
 
-  handleChange (e) {
+  handleChange(e) {
     const name = e.target.name;
     const value = e.target.value;
     this.setState({
@@ -83,7 +83,7 @@ const CreateNamespaceModal = connect(null, mapDispatchToProps)(class CreateNames
     });
   }
 
-  onLabels (labels) {
+  onLabels(labels) {
     this.setState({labels});
   }
 

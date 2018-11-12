@@ -32,7 +32,7 @@ export class Terminal extends React.Component {
     terminal.setOption('disableStdin', false);
   }
 
-  focus () {
+  focus() {
     this.terminal && this.terminal.focus();
   }
 
@@ -43,7 +43,7 @@ export class Terminal extends React.Component {
     this.onResize();
   }
 
-  onConnectionClosed (reason) {
+  onConnectionClosed(reason) {
     const terminal = this.terminal;
     if (!terminal) {
       return;
@@ -100,7 +100,7 @@ export class Terminal extends React.Component {
     });
   }
 
-  render () {
+  render() {
     return <div ref={this.outerRef} style={this.state} className={this.props.className}>
       <div ref={this.innerRef} className="console">
         { this.isFullscreen && <button className="btn btn-link console-collapse-link" onClick={() => this.setFullscreen(false)}>

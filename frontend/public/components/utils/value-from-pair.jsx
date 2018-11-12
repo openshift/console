@@ -195,7 +195,7 @@ const keyStringToComponent = {
 };
 
 export class ValueFromPair extends React.PureComponent {
-  constructor (props) {
+  constructor(props) {
     super(props);
 
     this.onChangeVal = (...args) => this._onChangeVal(...args);
@@ -207,7 +207,7 @@ export class ValueFromPair extends React.PureComponent {
     return onChange(e);
   }
 
-  render () {
+  render() {
     const {pair, configMaps, secrets, disabled} = this.props;
     const valueFromKey = Object.keys(this.props.pair)[0];
     const componentInfo = keyStringToComponent[valueFromKey];

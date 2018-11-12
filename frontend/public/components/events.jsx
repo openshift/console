@@ -52,7 +52,7 @@ const kindFilter = (kind, {involvedObject}) => {
 };
 
 const Inner = connectToFlags(FLAGS.CAN_LIST_NODE)(class Inner extends React.PureComponent {
-  render () {
+  render() {
     const {klass, status, tooltipMsg, obj, lastTimestamp, firstTimestamp, message, source, count, flags} = this.props;
 
     return <div className={`${klass} slide-${status}`}>
@@ -99,7 +99,7 @@ const seen = new Set();
 const timeout = {enter: 150};
 
 class SysEvent extends React.Component {
-  shouldComponentUpdate (nextProps) {
+  shouldComponentUpdate(nextProps) {
     if (this.props.lastTimestamp !== nextProps.lastTimestamp) {
       // Timestamps can be modified because events can be combined.
       return true;
@@ -110,12 +110,12 @@ class SysEvent extends React.Component {
     return true;
   }
 
-  componentWillUnmount () {
+  componentWillUnmount() {
     // TODO (kans): this is not correct, but don't memory leak :-/
     seen.delete(this.props.metadata.uid);
   }
 
-  render () {
+  render() {
     const { index, style, reason, message, source, metadata, firstTimestamp, lastTimestamp, count, involvedObject: obj} = this.props;
     const klass = classNames('co-sysevent', {'co-sysevent--error': categoryFilter('error', this.props)});
     const tooltipMsg = `${reason} (${obj.kind.toLowerCase()})`;
@@ -139,7 +139,7 @@ class SysEvent extends React.Component {
 const categories = {all: 'All Categories', info: 'Info', error: 'Error'};
 
 export class EventsList extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props);
     this.state = {
       category: 'all',
@@ -148,7 +148,7 @@ export class EventsList extends React.Component {
     };
   }
 
-  render () {
+  render() {
     const { category, kind, textFilter } = this.state;
     const { autoFocus=true, mock } = this.props;
 
@@ -204,7 +204,7 @@ const measurementCache = new CellMeasurerCache({
 });
 
 class EventStream extends SafetyFirst {
-  constructor (props) {
+  constructor(props) {
     super(props);
     this.messages = {};
     this.state = {
@@ -216,7 +216,7 @@ class EventStream extends SafetyFirst {
       oldestTimestamp: new Date(),
     };
     this.toggleStream = this.toggleStream_.bind(this);
-    this.rowRenderer = function rowRenderer ({index, style, key, parent}) {
+    this.rowRenderer = function rowRenderer({index, style, key, parent}) {
       const event = this.state.filteredEvents[index];
       return <CellMeasurer
         cache={measurementCache}
@@ -231,7 +231,7 @@ class EventStream extends SafetyFirst {
     }.bind(this);
   }
 
-  wsInit (ns) {
+  wsInit(ns) {
     const params = {
       ns,
       fieldSelector: this.props.fieldSelector,
@@ -287,19 +287,19 @@ class EventStream extends SafetyFirst {
       });
   }
 
-  componentDidMount () {
+  componentDidMount() {
     super.componentDidMount();
     if (!this.props.mock) {
       this.wsInit(this.props.namespace);
     }
   }
 
-  componentWillUnmount () {
+  componentWillUnmount() {
     super.componentWillUnmount();
     this.ws && this.ws.destroy();
   }
 
-  static filterEvents (messages, {kind, category, filter, textFilter}) {
+  static filterEvents(messages, {kind, category, filter, textFilter}) {
     // Don't use `fuzzy` because it results in some surprising matches in long event messages.
     // Instead perform an exact substring match on each word in the text filter.
     const words = _.uniq(_.toLower(textFilter).match(/\S+/g)).sort((a, b) => {
@@ -335,7 +335,7 @@ class EventStream extends SafetyFirst {
     return _.filter(messages, f);
   }
 
-  static getDerivedStateFromProps (nextProps, prevState) {
+  static getDerivedStateFromProps(nextProps, prevState) {
     const {filter, kind, category, textFilter, loading} = prevState;
 
     if (_.isEqual(filter, nextProps.filter)
@@ -358,7 +358,7 @@ class EventStream extends SafetyFirst {
     };
   }
 
-  componentDidUpdate (prevProps) {
+  componentDidUpdate(prevProps) {
     // If the namespace has changed, created a new WebSocket with the new namespace
     if (prevProps.namespace !== this.props.namespace) {
       this.ws && this.ws.destroy();
@@ -373,7 +373,7 @@ class EventStream extends SafetyFirst {
     measurementCache.clearAll();
   }
 
-  resizeEvents () {
+  resizeEvents() {
     measurementCache.clearAll();
     if (this.list) {
       this.list.recomputeRowHeights();
@@ -383,7 +383,7 @@ class EventStream extends SafetyFirst {
   // Messages can come in extremely fast when the buffer flushes.
   // Instead of calling setState() on every single message, let onmessage()
   // update an instance variable, and throttle the actual UI update (see constructor)
-  flushMessages () {
+  flushMessages() {
     // In addition to sorting by timestamp, secondarily sort by name so that the order is consistent when events have
     // the same timestamp
     const sorted = _.orderBy(this.messages, ['lastTimestamp', 'name'], ['desc', 'asc']);
@@ -399,7 +399,7 @@ class EventStream extends SafetyFirst {
     this.messages = _.keyBy(sorted, 'metadata.uid');
   }
 
-  toggleStream_ () {
+  toggleStream_() {
     this.setState({active: !this.state.active}, () => {
       if (this.state.active) {
         this.ws && this.ws.unpause();
@@ -409,7 +409,7 @@ class EventStream extends SafetyFirst {
     });
   }
 
-  render () {
+  render() {
     const { mock, resourceEventStream } = this.props;
     const {active, error, loading, filteredEvents, sortedMessages} = this.state;
     const count = filteredEvents.length;

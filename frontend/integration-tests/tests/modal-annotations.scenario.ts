@@ -47,13 +47,13 @@ describe('Modal Annotations', () => {
     checkErrors();
   });
 
-  const validateKeyAndValue = async function ( annotationKey: string,
+  const validateKeyAndValue = async function( annotationKey: string,
     annotationValue: string,
     isPresent: boolean
   ) {
     let keyFound = 0;
 
-    await modalAnnotationsView.annotationRowsKey.each( async function (item, index) {
+    await modalAnnotationsView.annotationRowsKey.each( async function(item, index) {
       const annKey = await item.getAttribute('value');
       if (annKey === annotationKey){
         keyFound = keyFound + 1;
@@ -68,14 +68,14 @@ describe('Modal Annotations', () => {
     }
   };
 
-  const clickModalAnnotationsLink = async function () {
+  const clickModalAnnotationsLink = async function() {
     await browser.wait(until.elementToBeClickable(crudView.modalAnnotationsLink));
     // Make sure no dialog overlay is blocking the link from being clicked.
     await browser.wait(until.invisibilityOf(modalAnnotationsView.annotationDialogOverlay));
     await crudView.modalAnnotationsLink.click();
   };
 
-  const crudAnnotationFromDetail = async function (
+  const crudAnnotationFromDetail = async function(
     action: string,
     annotationKey: string,
     annotationValue: string
@@ -107,7 +107,7 @@ describe('Modal Annotations', () => {
     await crudView.isLoaded();
   };
 
-  const crudAndValidate = async function (
+  const crudAndValidate = async function(
     action: string,
     annotationKey: string,
     annotationValue: string,

@@ -53,7 +53,7 @@ const BindingParameters: React.SFC<BindingParametersProps> = props => {
 };
 
 class CreateBindingForm extends React.Component<CreateBindingProps, CreateBindingState> {
-  constructor (props) {
+  constructor(props) {
     super(props);
 
     this.state = {

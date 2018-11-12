@@ -121,17 +121,17 @@ const ProjectsPage_ = props => {
 export const ProjectsPage = connectToFlags(FLAGS.CAN_CREATE_PROJECT)(ProjectsPage_);
 
 class PullSecret extends SafetyFirst {
-  constructor (props) {
+  constructor(props) {
     super(props);
     this.state = {isLoading: true, data: undefined};
   }
 
-  componentDidMount () {
+  componentDidMount() {
     super.componentDidMount();
     this.load(_.get(this.props, 'namespace.metadata.name'));
   }
 
-  load (namespaceName) {
+  load(namespaceName) {
     if (!namespaceName) {
       return;
     }
@@ -149,7 +149,7 @@ class PullSecret extends SafetyFirst {
       });
   }
 
-  render () {
+  render() {
     if (this.state.isLoading) {
       return <LoadingInline />;
     }

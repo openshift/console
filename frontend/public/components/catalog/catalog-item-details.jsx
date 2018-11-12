@@ -34,7 +34,7 @@ export class CatalogTileDetails extends React.Component {
       });
   }
 
-  render () {
+  render() {
     const { closeOverlay } = this.props;
     const { obj,
       kind,

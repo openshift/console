@@ -27,14 +27,14 @@ const updateTimestamps = () => {
 
 /** @augments {React.Component<{timestamp: string, isUnix?: boolean}>} */
 export class Timestamp extends SafetyFirst {
-  constructor (props) {
+  constructor(props) {
     super(props);
 
     this.intervalCB = null;
     this.reset(props.timestamp);
   }
 
-  componentWillUnmount () {
+  componentWillUnmount() {
     super.componentWillUnmount();
 
     intervalCBs.delete(this.intervalCB);
@@ -44,7 +44,7 @@ export class Timestamp extends SafetyFirst {
     }
   }
 
-  reset (timestamp) {
+  reset(timestamp) {
     const mdate = this.props.isUnix ? new Date(timestamp * 1000) : new Date(timestamp);
 
     if (this.intervalCB) {
@@ -68,7 +68,7 @@ export class Timestamp extends SafetyFirst {
     }
   }
 
-  getTimestamp (mdate, now) {
+  getTimestamp(mdate, now) {
     if (!dateTime.isValid(mdate)) {
       intervalCBs.delete(this.intervalCB);
       return '-';
@@ -103,7 +103,7 @@ export class Timestamp extends SafetyFirst {
   }
 
   // eslint-disable-next-line camelcase
-  UNSAFE_componentWillReceiveProps ({timestamp}) {
+  UNSAFE_componentWillReceiveProps({timestamp}) {
     // sometimes the timestamp prop changes...
     // and we need to trigger a side effect
     if (timestamp && timestamp === this.props.timestamp) {
@@ -112,12 +112,12 @@ export class Timestamp extends SafetyFirst {
     this.reset(timestamp);
   }
 
-  shouldComponentUpdate (nextProps, nextState) {
+  shouldComponentUpdate(nextProps, nextState) {
     return nextState.timestamp !== this.state.timestamp
         || nextState.mdate !== this.state.mdate;
   }
 
-  render () {
+  render() {
     const { mdate, timestamp } = this.state;
 
     if (!dateTime.isValid(mdate)) {
