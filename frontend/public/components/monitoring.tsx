@@ -8,7 +8,7 @@ import { Link, Redirect, Route, Switch } from 'react-router-dom';
 
 import { coFetchJSON } from '../co-fetch';
 import k8sActions from '../module/k8s/k8s-actions';
-import { AlertStates, connectToURLs, isSilenced, MonitoringRoutes, SilenceStates } from '../monitoring';
+import { AlertStates, connectToURLs, MonitoringRoutes, SilenceStates } from '../monitoring';
 import store from '../redux';
 import { UIActions } from '../ui/ui-actions';
 import { monitoringRulesToProps, monitoringSilencesToProps } from '../ui/ui-reducers';
@@ -158,15 +158,12 @@ const alertStateToProps = (state): AlertsDetailsPageProps => {
   const {data, loaded, loadError}: Rules = monitoringRulesToProps(state);
   const labels = getURLSearchParams();
   const alert = _.find(data, {labels});
-  const silencedBy = alertState(alert) === AlertStates.Silenced
-    ? _.filter(monitoringSilencesToProps(state).data, s => isSilenced(alert, s))
-    : [];
-  return {alert, loaded, loadError, silencedBy};
+  return {alert, loaded, loadError};
 };
 
 const AlertsDetailsPage = withFallback(connect(alertStateToProps)((props: AlertsDetailsPageProps) => {
-  const {alert, loaded, loadError, silencedBy} = props;
-  const {activeAt = '', annotations = {}, labels = {}, rule = null} = alert || {};
+  const {alert, loaded, loadError} = props;
+  const {activeAt = '', annotations = {}, labels = {}, rule = null, silencedBy = []} = alert || {};
   const {alertname, severity} = labels as any;
   const state = alertState(alert);
 
@@ -353,35 +350,26 @@ const AlertRulesDetailsPage = withFallback(connect(ruleStateToProps)((props: Ale
   </React.Fragment>;
 }));
 
-const silencedAlertsToProps = (state, {silence}) => ({
-  alerts: _.filter(_.get(monitoringRulesToProps(state), 'data'), a => alertState(a) === AlertStates.Silenced && isSilenced(a, silence)),
-});
-
-const SilencedAlertsList = connect(silencedAlertsToProps)(
-  ({alerts}) => _.isEmpty(alerts)
-    ? <div className="text-center">None Found</div>
-    : <div className="co-m-table-grid co-m-table-grid--bordered">
-      <div className="row co-m-table-grid__head">
-        <div className="col-xs-9">Name</div>
-        <div className="col-xs-3">Severity</div>
-      </div>
-      <div className="co-m-table-grid__body">
-        {_.sortBy(alerts, alertDescription).map((a, i) => <div className="row co-resource-list__item" key={i}>
-          <div className="col-xs-9">
-            <Link className="co-resource-link" to={alertURL(a)}>{a.labels.alertname}</Link>
-            <div className="monitoring-description">{alertDescription(a)}</div>
-          </div>
-          <div className="col-xs-3">{a.labels.severity}</div>
-          <div className="co-kebab-wrapper">
-            <Kebab options={[viewAlertRule(a)]} />
-          </div>
-        </div>)}
-      </div>
+const SilencedAlertsList = ({alerts}) => _.isEmpty(alerts)
+  ? <div className="text-center">None Found</div>
+  : <div className="co-m-table-grid co-m-table-grid--bordered">
+    <div className="row co-m-table-grid__head">
+      <div className="col-xs-9">Name</div>
+      <div className="col-xs-3">Severity</div>
     </div>
-);
-
-const SilencedAlertsCount_ = ({alerts}) => alerts.length;
-const SilencedAlertsCount = connect(silencedAlertsToProps)(SilencedAlertsCount_);
+    <div className="co-m-table-grid__body">
+      {_.sortBy(alerts, alertDescription).map((a, i) => <div className="row co-resource-list__item" key={i}>
+        <div className="col-xs-9">
+          <Link className="co-resource-link" to={alertURL(a)}>{a.labels.alertname}</Link>
+          <div className="monitoring-description">{alertDescription(a)}</div>
+        </div>
+        <div className="col-xs-3">{a.labels.severity}</div>
+        <div className="co-kebab-wrapper">
+          <Kebab options={[viewAlertRule(a)]} />
+        </div>
+      </div>)}
+    </div>
+  </div>;
 
 const silenceParamToProps = (state, {match}) => {
   const {data: silences, loaded, loadError}: Silences = monitoringSilencesToProps(state);
@@ -439,7 +427,7 @@ const SilencesDetailsPage = withFallback(connect(silenceParamToProps)((props: Si
                 <dt>Comments</dt>
                 <dd>{silence.comment || '-'}</dd>
                 <dt>Silenced Alerts</dt>
-                <dd><SilencedAlertsCount silence={silence} /></dd>
+                <dd>{silence.silencedAlerts.length}</dd>
               </dl>
             </div>
           </div>
@@ -450,7 +438,7 @@ const SilencesDetailsPage = withFallback(connect(silenceParamToProps)((props: Si
           <SectionHeading text="Silenced Alerts" />
           <div className="row">
             <div className="col-xs-12">
-              <SilencedAlertsList silence={silence} />
+              <SilencedAlertsList alerts={silence.silencedAlerts} />
             </div>
           </div>
         </div>
@@ -624,7 +612,7 @@ const AlertsPage = withFallback(connect(monitoringRulesToProps)(AlertsPage_));
 const SilenceHeader = props => <ListHeader>
   <ColHead {...props} className="col-xs-7" sortField="name">Name</ColHead>
   <ColHead {...props} className="col-xs-3" sortFunc="silenceStateOrder">State</ColHead>
-  <ColHead {...props} className="col-xs-2">Silenced Alerts</ColHead>
+  <ColHead {...props} className="col-xs-2" sortFunc="numSilencedAlerts">Silenced Alerts</ColHead>
 </ListHeader>;
 
 const SilenceRow = ({obj}) => {
@@ -648,7 +636,7 @@ const SilenceRow = ({obj}) => {
         {state === SilenceStates.Expired && <React.Fragment>expired&nbsp;<Timestamp timestamp={obj.endsAt} /></React.Fragment>}
       </div>
     </div>
-    <div className="col-xs-2"><SilencedAlertsCount silence={obj} /></div>
+    <div className="col-xs-2">{obj.silencedAlerts.length}</div>
     <div className="co-kebab-wrapper">
       <SilenceKebab silence={obj} />
     </div>
@@ -962,6 +950,8 @@ type Silence = {
   name?: string;
   startsAt: string;
   status?: {state: SilenceStates};
+  // eslint-disable-next-line no-use-before-define
+  silencedAlerts: Alert[];
   updatedAt?: string;
 };
 type Silences = {
@@ -974,6 +964,7 @@ type Alert = {
   annotations: any;
   labels: {[key: string]: string};
   rule?: any;
+  silencedBy: Silence[];
   state: AlertStates;
   value: number;
 };
@@ -998,7 +989,6 @@ export type AlertsDetailsPageProps = {
   alert: Alert;
   loaded: boolean;
   loadError?: string;
-  silencedBy: Silence[];
 };
 export type AlertRulesDetailsPageProps = {
   loaded: boolean;
