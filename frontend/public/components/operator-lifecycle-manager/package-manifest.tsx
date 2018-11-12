@@ -70,6 +70,7 @@ export const PackageManifestList: React.SFC<PackageManifestListProps> = (props) 
           loaded={true}
           data={props.data.filter(pkg => pkg.status.catalogSource === catalog.name)}
           filters={props.filters}
+          virtualize={false}
           Header={PackageManifestHeader}
           Row={(rowProps: {obj: PackageManifestKind}) => <PackageManifestRow
             obj={rowProps.obj}

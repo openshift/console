@@ -271,8 +271,9 @@ export const WorkloadListHeader = props => <ListHeader>
   <ColHead {...props} className="col-lg-3 hidden-md hidden-sm hidden-xs" sortField="spec.selector">Pod Selector</ColHead>
 </ListHeader>;
 
-export const Rows: React.SFC<RowsProps> = (props) => {
+const VirtualRows: React.SFC<RowsProps> = (props) => {
   const { mock, label } = props;
+
   const measurementCache = new CellMeasurerCache({
     fixedWidth: true,
     minHeight: 44,
@@ -322,6 +323,22 @@ export const Rows: React.SFC<RowsProps> = (props) => {
           </AutoSizer>}
       </WindowScroller>
     }
+  </div>;
+};
+
+VirtualRows.propTypes = {
+  data: PropTypes.arrayOf(PropTypes.object),
+  expand: PropTypes.bool,
+  Row: PropTypes.func.isRequired,
+};
+
+const Rows: React.SFC<RowsProps> = (props) => {
+  const {Row, expand, kindObj} = props;
+
+  return <div className="co-m-table-grid__body">
+    { props.data.map((obj, i) => <div key={_.get(obj, 'metadata.uid', i)} className="co-m-row">
+      <Row obj={obj} expand={expand} kindObj={kindObj} />
+    </div>) }
   </div>;
 };
 
@@ -382,11 +399,14 @@ export const List = connect(stateToProps, {sortList: UIActions.sortList})(
       Row: PropTypes.func.isRequired,
       selector: PropTypes.object,
       staticFilters: PropTypes.array,
+      virtualize: PropTypes.bool,
     };
 
     render() {
-      const {currentSortField, currentSortFunc, currentSortOrder, expand, Header, label, listId, mock, Row, sortList} = this.props;
+      const {currentSortField, currentSortFunc, currentSortOrder, expand, Header, label, listId, mock, Row, sortList, virtualize} = this.props;
       const componentProps: any = _.pick(this.props, ['data', 'filters', 'selected', 'match', 'kindObj']);
+
+      const ListRows = this.props.virtualize ? VirtualRows : Rows;
 
       const children = <React.Fragment>
         <Header
@@ -397,8 +417,9 @@ export const List = connect(stateToProps, {sortList: UIActions.sortList})(
           currentSortOrder={currentSortOrder}
           key="header"
         />
-        <Rows
+        <ListRows
           {...componentProps}
+          virtualize={virtualize}
           expand={expand}
           key="rows"
           label={label}
@@ -497,6 +518,7 @@ export type ListInnerProps = {
   selector?: Object;
   sortList?: (...args) => any;
   staticFilters?: any[];
+  virtualize?: boolean;
 };
 
 export type ResourceRowProps = {
@@ -511,6 +533,7 @@ export type RowsProps = {
   label?: string;
   mock?: boolean;
   Row: React.ComponentType<any>;
+  virtualize?: boolean;
 };
 
 export type WorkloadListRowProps = {
@@ -520,4 +543,5 @@ export type WorkloadListRowProps = {
 };
 
 Rows.displayName = 'Rows';
+VirtualRows.displayName = 'VirtualRows';
 WorkloadListRow.displayName = 'WorkloadListRow';
