@@ -9,6 +9,7 @@ import k8sActions from '../../module/k8s/k8s-actions';
 import { CheckBoxes, storagePrefix } from '../row-filter';
 import { ErrorPage404, ErrorBoundaryFallbackComponent } from '../error';
 import { referenceForModel } from '../../module/k8s';
+import { withFallback } from '../utils/error-boundary';
 import {
   Dropdown,
   Firehose,
@@ -18,7 +19,6 @@ import {
   inject,
   kindObj,
   PageHeading,
-  withFallback,
 } from '../utils';
 
 export const CompactExpandButtons = ({expand = false, onExpandChange = _.noop}) => <div className="btn-group btn-group-sm" data-toggle="buttons">
