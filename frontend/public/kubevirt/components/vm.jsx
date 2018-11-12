@@ -275,7 +275,7 @@ export const VirtualMachinesDetailsPage = props => {
 
   const nicsPage = {
     href: 'nics',
-    name: 'Networks',
+    name: 'Network Interfaces',
     component: Nic
   };
 

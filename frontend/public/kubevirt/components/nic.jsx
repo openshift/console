@@ -2,7 +2,7 @@ import React from 'react';
 import * as _ from 'lodash';
 import { Cog } from './utils/okdutils';
 import { List, ColHead, ListHeader, ResourceRow } from './factory/okdfactory';
-import { DASHES, BUS_VIRTIO, NETWORK_TYPE_MULTUS, NETWORK_TYPE_POD, NETWORK } from './utils/constants';
+import { DASHES, BUS_VIRTIO, NETWORK_TYPE_MULTUS, NETWORK_TYPE_POD, NIC } from './utils/constants';
 import { deleteDeviceModal } from './modals/delete-device-modal';
 
 const getNetworkType = network => {
@@ -19,7 +19,7 @@ const getNetworkType = network => {
 const menuActionDelete = (vm, nic) => ({
   label: 'Delete',
   callback: () => deleteDeviceModal({
-    type: NETWORK,
+    type: NIC,
     device: nic,
     vm: vm
   })
@@ -34,10 +34,10 @@ const visibleRowStyle = 'col-lg-3 col-md-3 col-sm-3 col-xs-4';
 const hiddenRowStyle = 'col-lg-3 col-md-3 col-sm-3 hidden-xs';
 
 const NicHeader = props => <ListHeader>
-  <ColHead {...props} className={visibleRowStyle} sortField="name">Nic Name</ColHead>
+  <ColHead {...props} className={visibleRowStyle} sortField="name">Name</ColHead>
   <ColHead {...props} className={visibleRowStyle} sortField="model">Model</ColHead>
   <ColHead {...props} className={visibleRowStyle} sortField="network">Network</ColHead>
-  <ColHead {...props} className={hiddenRowStyle} sortField="macAddress">Mac Address</ColHead>
+  <ColHead {...props} className={hiddenRowStyle} sortField="macAddress">MAC Address</ColHead>
 </ListHeader>;
 
 export const NicRow = ({obj: nic}) => <ResourceRow obj={nic}>
