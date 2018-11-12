@@ -18,5 +18,5 @@ export const SettingsModalLink = ({onClick, outdated, children}) => {
 SettingsModalLink.propTypes = {
   children: PropTypes.node,
   onClick: PropTypes.func,
-  outdated: PropTypes.bool
+  outdated: PropTypes.bool,
 };

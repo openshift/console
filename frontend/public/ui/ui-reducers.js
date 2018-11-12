@@ -30,7 +30,7 @@ export default (state, action) => {
         resources: new ImmutableMap({}),
         selectedDetailsTab: '',
         selectedUID: '',
-      })
+      }),
     });
   }
 

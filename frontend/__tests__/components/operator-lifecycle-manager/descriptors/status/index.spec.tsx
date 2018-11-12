@@ -18,7 +18,7 @@ describe(StatusDescriptor.displayName, () => {
       path: '',
       displayName: 'Some Thing',
       description: '',
-      'x-descriptors': []
+      'x-descriptors': [],
     };
     wrapper = shallow(<StatusDescriptor descriptor={descriptor} value={null} obj={null} model={testModel} namespace="foo" />);
   });

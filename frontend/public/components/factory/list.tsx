@@ -41,7 +41,7 @@ import {
   podPhaseFilterReducer,
   podReadiness,
   serviceCatalogStatus,
-  serviceClassDisplayName
+  serviceClassDisplayName,
 } from '../../module/k8s';
 
 const fuzzyCaseInsensitive = (a, b) => fuzzy(_.toLower(a), _.toLower(b));
@@ -243,7 +243,7 @@ export class ColHead extends React.Component<ColHeadProps> {
       currentSortFunc,
       currentSortOrder,
       sortField,
-      sortFunc
+      sortFunc,
     } = this.props;
     const className = classNames(this.props.className, 'text-nowrap');
     if (!sortField && !sortFunc) {
@@ -360,7 +360,7 @@ const stateToProps = ({UI}, {data = [], defaultSortField = 'metadata.name', defa
     currentSortFunc,
     currentSortOrder,
     data: newData,
-    listId
+    listId,
   };
 };
 

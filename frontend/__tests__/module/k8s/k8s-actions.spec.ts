@@ -60,7 +60,7 @@ describe(types.watchK8sList, () => {
     websocket = {
       onclose: jasmine.createSpy('onclose'),
       ondestroy: jasmine.createSpy('ondestroy'),
-      onbulkmessage: jasmine.createSpy('onbulkmessage')
+      onbulkmessage: jasmine.createSpy('onbulkmessage'),
     };
     websocket.onclose.and.returnValue(websocket);
     websocket.ondestroy.and.returnValue(websocket);

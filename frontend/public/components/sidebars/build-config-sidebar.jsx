@@ -23,7 +23,7 @@ const samples = [
     details: 'The Pipeline build strategy allows developers to define a Jenkins pipeline for execution by the Jenkins pipeline plugin. The build can be started, monitored, and managed in the same way as any other build type.',
     templateName: 'pipeline-build',
     kind: referenceForModel(BuildConfigModel),
-  }
+  },
 ];
 
 export const BuildConfigSidebar = ({loadSampleYaml, downloadSampleYaml}) => {

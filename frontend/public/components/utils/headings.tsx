@@ -11,7 +11,7 @@ import {
   K8sKind,
   K8sResourceKind,
   K8sResourceKindReference,
-  referenceForModel
+  referenceForModel,
 } from '../../module/k8s';
 
 export const BreadCrumbs: React.SFC<BreadCrumbsProps> = ({breadcrumbs}) => (

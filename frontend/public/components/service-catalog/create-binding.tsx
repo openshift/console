@@ -16,13 +16,13 @@ import {
   getBindingCreateSchema,
   getBindingParametersForm,
   getUISchema,
-  ServiceCatalogParametersForm
+  ServiceCatalogParametersForm,
 } from './schema-form';
 import {
   Firehose,
   history,
   PageHeading,
-  resourcePathFromModel
+  resourcePathFromModel,
 } from '../utils';
 
 const PARAMETERS_SECRET_KEY = 'parameters';
@@ -126,7 +126,7 @@ class CreateBindingForm extends React.Component<CreateBindingProps, CreateBindin
         obj={obj}
         breadcrumbsFor={() => [
           {name: serviceInstance.metadata.name, path: resourcePathFromModel(ServiceInstanceModel, serviceInstance.metadata.name, serviceInstance.metadata.namespace)},
-          {name: `${title}`, path: `${match.url}`}
+          {name: `${title}`, path: `${match.url}`},
         ]}
       />
       <div className="co-m-pane__body">

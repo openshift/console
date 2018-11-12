@@ -5,7 +5,7 @@ const toArray = value => Array.isArray(value) ? value : [value];
 export const createEquals = (key, value) => ({
   key:      key,
   operator: 'Equals',
-  values:   [value]
+  values:   [value],
 });
 
 export const requirementFromString = string => {
@@ -16,7 +16,7 @@ export const requirementFromString = string => {
     return {
       key:      string,
       operator: 'Exists',
-      values:   []
+      values:   [],
     };
   }
 
@@ -25,7 +25,7 @@ export const requirementFromString = string => {
     return {
       key:      string.split(/!\s*/)[1],
       operator: 'DoesNotExist',
-      values:   []
+      values:   [],
     };
   }
 
@@ -42,7 +42,7 @@ export const requirementFromString = string => {
     return {
       key:      string.split(/\s*!=\s*/)[0],
       operator: 'NotEquals',
-      values:   [string.split(/\s*!=\s*/)[1]]
+      values:   [string.split(/\s*!=\s*/)[1]],
     };
   }
 
@@ -55,7 +55,7 @@ export const requirementFromString = string => {
     return {
       key:      key,
       operator: 'In',
-      values:   values
+      values:   values,
     };
   }
 
@@ -68,7 +68,7 @@ export const requirementFromString = string => {
     return {
       key:      key,
       operator: 'NotIn',
-      values:   values
+      values:   values,
     };
   }
 
@@ -81,7 +81,7 @@ export const requirementFromString = string => {
     return {
       key:      key,
       operator: 'GreaterThan',
-      values:   [value]
+      values:   [value],
     };
   }
 
@@ -94,7 +94,7 @@ export const requirementFromString = string => {
     return {
       key:      key,
       operator: 'LessThan',
-      values:   [value]
+      values:   [value],
     };
   }
 

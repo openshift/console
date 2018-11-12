@@ -11,7 +11,7 @@ import {
   List,
   ListPage,
   WorkloadListHeader,
-  WorkloadListRow
+  WorkloadListRow,
 } from './factory';
 import {
   AsyncComponent,
@@ -22,7 +22,7 @@ import {
   navFactory,
   pluralize,
   ResourceSummary,
-  SectionHeading
+  SectionHeading,
 } from './utils';
 
 const {ModifyCount, AddStorage, EditEnvironment, common} = Cog.factory;

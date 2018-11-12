@@ -16,7 +16,7 @@ describe('Readiness', () => {
       status: {
         phase: 'Running',
         conditions: [],
-      }
+      },
     };
   });
 

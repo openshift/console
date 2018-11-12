@@ -26,7 +26,7 @@ const streamStatusMessages = {
   [STREAM_EOF]: 'Log stream ended.',
   [STREAM_LOADING]: 'Loading log...',
   [STREAM_PAUSED]: 'Log stream paused.',
-  [STREAM_ACTIVE]: 'Log streaming...'
+  [STREAM_ACTIVE]: 'Log streaming...',
 };
 
 // Component for log stream controls
@@ -78,7 +78,7 @@ export class ResourceLog extends SafetyFirst {
       resourceStatus: LOG_SOURCE_WAITING,
       stale: false,
       status: STREAM_LOADING,
-      isFullscreen: false
+      isFullscreen: false,
     };
   }
 
@@ -144,7 +144,7 @@ export class ResourceLog extends SafetyFirst {
   // Handler for websocket onerror event
   _onError(){
     this.setState({
-      error: true
+      error: true,
     });
   }
 
@@ -156,7 +156,7 @@ export class ResourceLog extends SafetyFirst {
       const linesAdded = this._buffer.ingest(text);
       this.setState({
         linesBehind: status === STREAM_PAUSED ? linesBehind + linesAdded : linesBehind,
-        lines: this._buffer.getLines()
+        lines: this._buffer.getLines(),
       });
     }
   }
@@ -174,7 +174,7 @@ export class ResourceLog extends SafetyFirst {
       lines: [],
       linesBehind: 0,
       stale: false,
-      status: STREAM_LOADING
+      status: STREAM_LOADING,
     }, () => {
       this._wsDestroy();
       this._wsInit(this.props);
@@ -226,14 +226,14 @@ export class ResourceLog extends SafetyFirst {
         queryParams: {
           container: containerName || '',
           follow: 'true',
-          tailLines: bufferSize
-        }
+          tailLines: bufferSize,
+        },
       };
       const watchURL = resourceURL(modelFor(kind), urlOpts);
       const wsOpts = {
         host: 'auto',
         path: watchURL,
-        subprotocols: ['base64.binary.k8s.io']
+        subprotocols: ['base64.binary.k8s.io'],
       };
 
       this.ws = new WSFactory(watchURL, wsOpts)
@@ -286,7 +286,7 @@ export class ResourceLog extends SafetyFirst {
 }
 
 ResourceLog.defaultProps = {
-  bufferSize: 1000
+  bufferSize: 1000,
 };
 
 ResourceLog.propTypes = {

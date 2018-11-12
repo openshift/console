@@ -5,7 +5,7 @@ describe('k8sSelector', () => {
     it('works for nullable', () => {
       expect(selectorFromString(null)).toEqual({
         matchLabels:      {},
-        matchExpressions: []
+        matchExpressions: [],
       });
     });
 
@@ -13,46 +13,46 @@ describe('k8sSelector', () => {
       expect(selectorFromString('key1=value1,key2=value2,key3,!key4,key5 in (value5),key6 in (value6.1,value6.2),key7 notin (value7),key8 notin (value8.1,value8.2)')).toEqual({
         matchLabels: {
           key1: 'value1',
-          key2: 'value2'
+          key2: 'value2',
         },
 
         matchExpressions: [
           {
             key:      'key3',
             operator: 'Exists',
-            values:   []
+            values:   [],
           },
 
           {
             key:      'key4',
             operator: 'DoesNotExist',
-            values:   []
+            values:   [],
           },
 
           {
             key:      'key5',
             operator: 'In',
-            values:   ['value5']
+            values:   ['value5'],
           },
 
           {
             key:      'key6',
             operator: 'In',
-            values:   ['value6.1', 'value6.2']
+            values:   ['value6.1', 'value6.2'],
           },
 
           {
             key:      'key7',
             operator: 'NotIn',
-            values:   ['value7']
+            values:   ['value7'],
           },
 
           {
             key:      'key8',
             operator: 'NotIn',
-            values:   ['value8.1', 'value8.2']
-          }
-        ]
+            values:   ['value8.1', 'value8.2'],
+          },
+        ],
       });
     });
   });
@@ -74,51 +74,51 @@ describe('k8sSelector', () => {
       expect(selectorToString({
         matchLabels: {
           key1: 'value1',
-          key2: 'value2'
+          key2: 'value2',
         },
 
         matchExpressions: [
           {
             key:      'key3',
-            operator: 'Exists'
+            operator: 'Exists',
           },
 
           {
             key:      'key4',
-            operator: 'DoesNotExist'
+            operator: 'DoesNotExist',
           },
 
           {
             key:      'key5',
             operator: 'In',
-            values:   'value5'
+            values:   'value5',
           },
 
           {
             key:      'key6',
             operator: 'In',
-            values:   ['value6.1', 'value6.2']
+            values:   ['value6.1', 'value6.2'],
           },
 
           {
             key:      'key7',
             operator: 'NotIn',
-            values:   'value7'
+            values:   'value7',
           },
 
           {
             key:      'key8',
             operator: 'NotIn',
-            values:   ['value8.1', 'value8.2']
-          }
-        ]
+            values:   ['value8.1', 'value8.2'],
+          },
+        ],
       })).toEqual('key1=value1,key2=value2,key3,!key4,key5 in (value5),key6 in (value6.1,value6.2),key7 notin (value7),key8 notin (value8.1,value8.2)');
     });
 
     it('works when V1 selector is given', () => {
       expect(selectorToString({
         key1: 'value1',
-        key2: 'value2'
+        key2: 'value2',
       })).toEqual('key1=value1,key2=value2');
     });
   });

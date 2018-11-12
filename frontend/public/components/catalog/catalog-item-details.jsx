@@ -29,7 +29,7 @@ export class CatalogTileDetails extends React.Component {
     k8sGet(ClusterServicePlanModel, null, null, {queryParams: { fieldSelector: `spec.clusterServiceClassRef.name=${obj.metadata.name}`} })
       .then(({items: plans}) => {
         this.setState({
-          plans: _.orderBy(plans, ['spec.externalMetadata.displayName', 'metadata.name'])
+          plans: _.orderBy(plans, ['spec.externalMetadata.displayName', 'metadata.name']),
         });
       });
   }

@@ -270,12 +270,12 @@ class NamespaceBarDropdowns_ extends React.Component {
       },
       {
         label: 'Deploy Image',
-        href: `/deploy-image?preselected-ns=${activeNamespace}`
+        href: `/deploy-image?preselected-ns=${activeNamespace}`,
       },
       {
         label: 'Import YAML',
         href: formatNamespacedRouteForResource('import', activeNamespace),
-      }
+      },
     ];
 
     return <div className="co-namespace-bar__dropdowns">
@@ -315,7 +315,7 @@ const NamespaceBar_ = ({useProjects}) => {
 const namespaceBarStateToProps = ({k8s}) => {
   const useProjects = k8s.hasIn(['RESOURCES', 'models', ProjectModel.kind]);
   return {
-    useProjects
+    useProjects,
   };
 };
 

@@ -6,7 +6,7 @@ export class ResourceSidebarWrapper extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      showSidebar: true
+      showSidebar: true,
     };
   }
 

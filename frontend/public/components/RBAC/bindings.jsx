@@ -208,7 +208,7 @@ class ListDropdown_ extends React.Component {
 
     if (loadError) {
       this.setState({
-        title: <div className="cos-error-title">Error Loading {nextProps.desc}</div>
+        title: <div className="cos-error-title">Error Loading {nextProps.desc}</div>,
       });
       return;
     }

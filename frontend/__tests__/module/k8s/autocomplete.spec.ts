@@ -93,11 +93,11 @@ describe('getCompletions', () => {
             minReadySeconds: {
               description: 'Dummy property',
               type: 'integer',
-              format: 'int32'
-            }
-          }
-        }
-      }
+              format: 'int32',
+            },
+          },
+        },
+      },
     };
     sessionMock.getLines = jasmine.createSpy('getLinesSpy').and.returnValue(['kind: Deployment', 'apiVersion: apps/v1']);
     spyOn(window.localStorage, 'getItem').and.returnValue(JSON.stringify(swagger));

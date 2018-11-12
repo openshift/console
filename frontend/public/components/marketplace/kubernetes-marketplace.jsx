@@ -61,7 +61,7 @@ class MarketplaceListPage extends React.Component {
   constructor() {
     super();
     this.state = {
-      selectedItem: null
+      selectedItem: null,
     };
   }
 
@@ -75,13 +75,13 @@ class MarketplaceListPage extends React.Component {
 
   openOverlay(item) {
     this.setState({
-      selectedItem : item
+      selectedItem : item,
     });
   }
 
   closeOverlay() {
     this.setState({
-      selectedItem : null
+      selectedItem : null,
     });
   }
 
@@ -106,7 +106,7 @@ export const Marketplace = () => {
     isList: true,
     kind: referenceForModel(PackageManifestModel),
     namespace: undefined, // shows operators from all-namespaces - when backend is hooked up we will use 'marketplace'
-    prop: 'packagemanifests'
+    prop: 'packagemanifests',
   });
   return <Firehose resources={resources}>
     <MarketplaceListPage />

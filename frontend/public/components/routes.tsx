@@ -305,7 +305,7 @@ const filters = [{
   items: [
     {id: 'Accepted', title: 'Accepted'},
     {id: 'Rejected', title: 'Rejected'},
-    {id: 'Pending', title: 'Pending'}
+    {id: 'Pending', title: 'Pending'},
   ],
 }];
 
@@ -317,7 +317,7 @@ export const RoutesPage: React.SFC<RoutesPageProps> = props => {
 
   const createProps = {
     items: createItems,
-    createLink: (type) => `/k8s/ns/${props.namespace || 'default'}/routes/new/${type !== 'yaml' ? type : ''}`
+    createLink: (type) => `/k8s/ns/${props.namespace || 'default'}/routes/new/${type !== 'yaml' ? type : ''}`,
   };
 
   return <ListPage

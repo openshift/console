@@ -15,5 +15,5 @@ export class TogglePlay extends React.Component {
 TogglePlay.propTypes = {
   active: PropTypes.bool.isRequired,
   className: PropTypes.string,
-  onClick: PropTypes.func.isRequired
+  onClick: PropTypes.func.isRequired,
 };

@@ -13,13 +13,13 @@ import {
   pluralize,
   ResourceIcon,
   resourceObjPath,
-  resourcePath
+  resourcePath,
 } from '../utils';
 
 import {
   OverviewGroup,
   OverviewItem,
-  PodControllerOverviewItem
+  PodControllerOverviewItem,
 } from '.';
 
 const formatToFractionalDigits = (value: number, digits: number): string => Intl.NumberFormat(undefined, { minimumFractionDigits: digits, maximumFractionDigits: digits }).format(value);
@@ -204,7 +204,7 @@ const Alerts: React.SFC<AlertsProps> = ({item}) => {
 };
 
 const projectOverviewListItemStateToProps = ({UI}): ProjectOverviewListItemPropsFromState => ({
-  selectedUID: UI.getIn(['overview', 'selectedUID'])
+  selectedUID: UI.getIn(['overview', 'selectedUID']),
 });
 
 const projectOverviewListItemDispatchToProps = (dispatch): ProjectOverviewListItemPropsFromDispatch => ({

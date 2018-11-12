@@ -10,7 +10,7 @@ export const testNamespace: K8sResourceKind = {
   metadata: {
     name: 'default',
     annotations: {'alm-manager': 'tectonic-system.alm-operator'},
-  }
+  },
 };
 
 export const testClusterServiceVersion: ClusterServiceVersionKind = {
@@ -37,7 +37,7 @@ export const testClusterServiceVersion: ClusterServiceVersionKind = {
       {name: 'John Doe', email: 'johndoe@example.com'},
     ],
     icon: [
-      {base64data: '', mediatype: 'image/png',}
+      {base64data: '', mediatype: 'image/png'},
     ],
     labels: {
       'alm-owner-testapp': 'testapp.clusterserviceversions.operators.coreos.com.v1alpha1',
@@ -45,15 +45,15 @@ export const testClusterServiceVersion: ClusterServiceVersionKind = {
     },
     selector: {
       matchLabels: {
-        'alm-owner-testapp': 'testapp.clusterserviceversions.operators.coreos.com.v1alpha1'
-      }
+        'alm-owner-testapp': 'testapp.clusterserviceversions.operators.coreos.com.v1alpha1',
+      },
     },
     install: {
       strategy: 'Deployment',
       spec: {
         permissions: [{serviceAccountName: 'testapp-operator', rules: [{apiGroups: ['testapp.coreos.com'], resources: ['testresource'], verbs: ['*']}]}],
         deployments: [{name: 'testapp-operator', spec: {}}],
-      }
+      },
     },
     customresourcedefinitions: {
       owned: [{
@@ -89,9 +89,9 @@ export const testClusterServiceVersion: ClusterServiceVersionKind = {
           displayName: 'Some Status',
           description: 'This status is filled',
           'x-descriptors': [StatusCapability.text],
-        }]
+        }],
       }],
-    }
+    },
   },
   status: {
     phase: ClusterServiceVersionPhase.CSVPhaseSucceeded,
@@ -116,15 +116,15 @@ export const localClusterServiceVersion: ClusterServiceVersionKind = {
     },
     selector: {
       matchLabels: {
-        'alm-owner-local-testapp': 'local-testapp.clusterserviceversions.operators.coreos.com.v1alpha1'
-      }
+        'alm-owner-local-testapp': 'local-testapp.clusterserviceversions.operators.coreos.com.v1alpha1',
+      },
     },
     install: {
       strategy: 'Deployment',
       spec: {
         permissions: [{serviceAccountName: 'local-operator', rules: [{apiGroups: ['testapp.coreos.com'], resources: ['testresource'], verbs: ['*']}]}],
         deployments: [{name: 'testapp-operator', spec: {}}],
-      }
+      },
     },
     customresourcedefinitions: {
       owned: [{
@@ -139,7 +139,7 @@ export const localClusterServiceVersion: ClusterServiceVersionKind = {
   status: {
     phase: ClusterServiceVersionPhase.CSVPhaseSucceeded,
     reason: CSVConditionReason.CSVReasonInstallSuccessful,
-  }
+  },
 };
 
 export const testCRD: CustomResourceDefinitionKind = {
@@ -153,7 +153,7 @@ export const testCRD: CustomResourceDefinitionKind = {
     annotations: {
       displayName: 'Dashboard',
       description: 'Test Dashboard',
-    }
+    },
   },
   spec: {
     group: 'testapp.coreos.com',
@@ -164,7 +164,7 @@ export const testCRD: CustomResourceDefinitionKind = {
       singular: 'testresource',
       listKind: 'TestResourceList',
     },
-  }
+  },
 };
 
 export const testModel: K8sKind = {
@@ -211,7 +211,7 @@ export const testOwnedResourceInstance: ClusterServiceVersionResourceKind = {
       kind: 'TestResource',
       apiVersion: testResourceInstance.apiVersion,
       uid: testResourceInstance.metadata.uid,
-    }]
+    }],
   },
   spec: {},
   status: {
@@ -246,7 +246,7 @@ export const testPackageManifest: PackageManifestKind = {
         provider: {
           name: 'CoreOS, Inc',
         },
-      }
+      },
     }],
     defaultChannel: 'alpha',
   },
@@ -298,12 +298,12 @@ export const testOperatorDeployment: K8sResourceKind = {
       name: testClusterServiceVersion.metadata.name,
       uid: testClusterServiceVersion.metadata.uid,
       kind: testClusterServiceVersion.kind,
-      apiVersion: testClusterServiceVersion.apiVersion
+      apiVersion: testClusterServiceVersion.apiVersion,
     }],
     spec: {
 
-    }
-  }
+    },
+  },
 };
 
 export const testSubscription: SubscriptionKind = {
@@ -318,5 +318,5 @@ export const testSubscription: SubscriptionKind = {
     source: 'ocs',
     name: 'test-package',
     channel: 'stable',
-  }
+  },
 };

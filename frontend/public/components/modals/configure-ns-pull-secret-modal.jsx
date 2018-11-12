@@ -57,7 +57,7 @@ const parseExisitingPullSecret = (pullSecret) => {
 
 const generateSecretData = (formData) => {
   const config = {
-    auths: {}
+    auths: {},
   };
 
   let authParts = [];
@@ -69,7 +69,7 @@ const generateSecretData = (formData) => {
 
   config.auths[formData.address] = {
     auth:  window.btoa(authParts.join(':')),
-    email: formData.email
+    email: formData.email,
   };
 
   return window.btoa(JSON.stringify(config));
@@ -88,7 +88,7 @@ class ConfigureNamespacePullSecret extends PromiseComponent {
     this.state = Object.assign(this.state, {
       method: 'form',
       fileData: null,
-      invalidJson: false
+      invalidJson: false,
     });
   }
 
@@ -143,7 +143,7 @@ class ConfigureNamespacePullSecret extends PromiseComponent {
       const patch = [{
         op: 'replace',
         path: `/data/${CONST.PULL_SECRET_DATA}`,
-        value: secretData
+        value: secretData,
       }];
       promise = k8sPatch(SecretModel, pullSecret, patch);
     } else {
@@ -153,10 +153,10 @@ class ConfigureNamespacePullSecret extends PromiseComponent {
       const secret = {
         metadata: {
           name: event.target.elements['namespace-pull-secret-name'].value,
-          namespace: namespace.metadata.name
+          namespace: namespace.metadata.name,
         },
         data: data,
-        type: CONST.PULL_SECRET_TYPE
+        type: CONST.PULL_SECRET_TYPE,
       };
       promise = k8sCreate(SecretModel, secret);
     }
@@ -293,7 +293,7 @@ class ConfigureNamespacePullSecret extends PromiseComponent {
 
 ConfigureNamespacePullSecret.propTypes = {
   namespace: PropTypes.object.isRequired,
-  pullSecret: PropTypes.object
+  pullSecret: PropTypes.object,
 };
 
 export const configureNamespacePullSecretModal = createModalLauncher(ConfigureNamespacePullSecret);

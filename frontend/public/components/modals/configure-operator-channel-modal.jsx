@@ -12,7 +12,7 @@ class ConfigureOperatorChannel extends PromiseComponent {
     super(props);
 
     this.state = Object.assign(this.state, {
-      value: _.get(this.props.config, 'channel').toString()
+      value: _.get(this.props.config, 'channel').toString(),
     });
 
     this._change = this._change.bind(this);
@@ -66,7 +66,7 @@ ConfigureOperatorChannel.propTypes = {
   close: PropTypes.func.isRequired,
   config: PropTypes.object.isRequired,
   callbacks: PropTypes.object.isRequired,
-  valueType: PropTypes.string
+  valueType: PropTypes.string,
 };
 
 export const configureOperatorChannelModal = createModalLauncher(ConfigureOperatorChannel);

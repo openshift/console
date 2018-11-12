@@ -12,20 +12,20 @@ import { ClusterServiceClassInfo } from '../cluster-service-class-info';
 import { ButtonBar } from '../utils/button-bar';
 import {
   k8sCreate,
-  K8sResourceKind
+  K8sResourceKind,
 } from '../../module/k8s';
 import {
   createParametersSecret,
   getInstanceCreateParametersForm,
   getInstanceCreateSchema,
   getUISchema,
-  ServiceCatalogParametersForm
+  ServiceCatalogParametersForm,
 } from './schema-form';
 import {
   Firehose,
   history,
   PageHeading,
-  resourcePathFromModel
+  resourcePathFromModel,
 } from '../utils';
 
 const PARAMETERS_SECRET_KEY = 'parameters';
@@ -101,7 +101,7 @@ class CreateInstance extends React.Component<CreateInstanceProps, CreateInstance
         clusterServiceClassExternalName: _.get(this.props.obj, 'data.spec.externalName'),
         clusterServicePlanExternalName: this.state.plan,
         parametersFrom,
-      }
+      },
     };
 
     return k8sCreate(ServiceInstanceModel, serviceInstance);

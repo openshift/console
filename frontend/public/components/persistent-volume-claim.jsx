@@ -100,7 +100,7 @@ const filters = [{
   items: _.map(allPhases, phase => ({
     id: phase,
     title: phase,
-  }))
+  })),
 }];
 
 

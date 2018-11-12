@@ -52,7 +52,7 @@ export const PackageManifestList: React.SFC<PackageManifestListProps> = (props) 
     displayName: status.catalogSourceDisplayName,
     name: status.catalogSource,
     publisher: status.catalogSourcePublisher,
-    namespace: status.catalogSourceNamespace
+    namespace: status.catalogSourceNamespace,
   }), new Map<string, CatalogSourceInfo>());
 
   return props.loaded

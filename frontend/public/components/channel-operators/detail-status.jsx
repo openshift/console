@@ -10,19 +10,19 @@ export class DetailStatus extends SafetyFirst {
   constructor(props) {
     super(props);
     this.state = {
-      outdated: false
+      outdated: false,
     };
   }
 
   componentWillReceiveProps() {
     this.setState({
-      outdated: false
+      outdated: false,
     });
   }
 
   _doAction(kind, field, value) {
     this.setState({
-      outdated: true
+      outdated: true,
     });
 
     let k8skind, resource;
@@ -38,7 +38,7 @@ export class DetailStatus extends SafetyFirst {
     k8sPatch(k8skind, resource, patch)
       .catch((error) => {
         this.setState({
-          outdated: false
+          outdated: false,
         });
         throw error;
       });

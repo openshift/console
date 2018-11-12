@@ -17,7 +17,7 @@ export class FileInput extends React.Component<FileInputProps, FileInputState> {
   }
   onDataChange(event) {
     this.props.onChange({
-      fileData: event.target.value
+      fileData: event.target.value,
     });
   }
   readFile(file) {
@@ -93,7 +93,7 @@ const boxTarget = {
 const FileInputComponent = DropTarget(NativeTypes.FILE, boxTarget, (connect, monitor) => ({
   connectDropTarget: connect.dropTarget(),
   isOver: monitor.isOver(),
-  canDrop: monitor.canDrop()
+  canDrop: monitor.canDrop(),
 }))(FileInput);
 
 export const DroppableFileInput = withDragDropContext(class DroppableFileInput extends React.Component<DroppableFileInputProps, DroppableFileInputState>{

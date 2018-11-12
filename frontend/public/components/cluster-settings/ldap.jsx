@@ -9,7 +9,7 @@ import {
   Field,
   reduxForm,
   formValueSelector,
-  getFormValues
+  getFormValues,
 } from 'redux-form';
 
 import store from '../../redux';
@@ -20,12 +20,12 @@ import { coFetchJSON } from '../../co-fetch';
 import {
   LoadingInline,
   LoadError,
-  PageHeading
+  PageHeading,
 } from '../utils';
 import {
   SettingsContent,
   SettingsLabel,
-  SettingsRow
+  SettingsRow,
 } from './cluster-settings';
 
 export const LDAPSetting = () => <SettingsRow>
@@ -86,7 +86,7 @@ const Fields = {
     {
       name: Password,
       label: 'Password',
-      type: 'password'
+      type: 'password',
     },
   ],
   ServiceAccount: [

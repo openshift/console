@@ -57,7 +57,7 @@ export class CopyToClipboard extends React.PureComponent {
         borderTop: '8px solid transparent',
         borderBottom: '8px solid transparent',
         borderLeft: '8px solid #000',
-      }
+      },
     });
 
     const tooltipText = this.state.copied ? 'Copied' : 'Copy to Clipboard';

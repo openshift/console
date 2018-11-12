@@ -41,7 +41,7 @@ const getHeaders = (configMap, secret) => {
   }
   return {
     [configMap]: 'Config Maps',
-    [secret]: 'Secrets'
+    [secret]: 'Secrets',
   };
 };
 
@@ -97,7 +97,7 @@ export const NameKeyDropdownPair = ({name, key, configMaps, secrets, onChange, k
         const keyValuePair = _.split(val, ':');
         onChange({
           [keyValuePair[1]]:
-            isKeyRef ? {'name': keyValuePair[0], 'key': ''} : {'name': keyValuePair[0]}
+            isKeyRef ? {'name': keyValuePair[0], 'key': ''} : {'name': keyValuePair[0]},
         });
       }}
     />{isKeyRef &&
@@ -169,28 +169,28 @@ const keyStringToComponent = {
   },
   secretKeyRef: {
     component: ConfigMapSecretKeyRef,
-    kind: 'Secret'
+    kind: 'Secret',
   },
   configMapKeyRef: {
     component: ConfigMapSecretKeyRef,
-    kind: 'ConfigMap'
+    kind: 'ConfigMap',
   },
   configMapSecretKeyRef: {
-    component: ConfigMapSecretKeyRef
+    component: ConfigMapSecretKeyRef,
   },
   resourceFieldRef: {
     component: ResourceFieldRef,
   },
   configMapRef: {
     component: ConfigMapSecretRef,
-    kind: 'ConfigMap'
+    kind: 'ConfigMap',
   },
   secretRef: {
     component: ConfigMapSecretRef,
-    kind: 'Secret'
+    kind: 'Secret',
   },
   configMapSecretRef: {
-    component: ConfigMapSecretRef
+    component: ConfigMapSecretRef,
   },
 };
 
@@ -221,5 +221,5 @@ ValueFromPair.propTypes = {
   configMaps: PropTypes.object,
   secrets: PropTypes.object,
   onChange: PropTypes.func,
-  disabled: PropTypes.bool
+  disabled: PropTypes.bool,
 };

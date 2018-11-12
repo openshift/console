@@ -114,7 +114,7 @@ const renderField = ({
   meta: {
     // touched,
     error,
-    warning }
+    warning },
 }) => <div>
   <input className={classNames('form-control', {'form-control--invalid': !!error})} style={fieldStyle} {...input} type={type} autoFocus={autoFocus} placeholder={placeholder} />
   {
@@ -216,8 +216,8 @@ const MemCPUModalLink = ({section, type, config, obj}) => {
           limits: {
             [type]: formData.limit,
           },
-        }
-      }
+        },
+      },
     });
 
     return modal({title, description, config, obj, reduxFormWrapper, FormBody, getNewConfig});

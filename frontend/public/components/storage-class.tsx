@@ -67,7 +67,7 @@ export const StorageClassPage: React.SFC<StorageClassPageProps> = props => {
 
   const createProps = {
     items: createItems,
-    createLink: (type) => `/k8s/cluster/storageclasses/new/${type !== 'yaml' ? type : ''}`
+    createLink: (type) => `/k8s/cluster/storageclasses/new/${type !== 'yaml' ? type : ''}`,
   };
 
   return <ListPage

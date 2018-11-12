@@ -16,7 +16,7 @@ class ConfirmModal extends PromiseComponent {
 
     this.handlePromise(
       this.props.executeFn(null, {
-        supressNotifications: true
+        supressNotifications: true,
       })
     ).then(this.props.close);
   }
@@ -35,7 +35,7 @@ ConfirmModal.propTypes = {
   close: PropTypes.func.isRequired,
   executeFn: PropTypes.func.isRequired,
   message: PropTypes.node,
-  title: PropTypes.node.isRequired
+  title: PropTypes.node.isRequired,
 };
 
 export const confirmModal = createModalLauncher(ConfirmModal);

@@ -169,7 +169,7 @@ const pages = [
   navFactory.editYaml(),
   navFactory.envEditor(BuildEnvironmentComponent),
   navFactory.logs(BuildLogs),
-  navFactory.events(ResourceEventStream)
+  navFactory.events(ResourceEventStream),
 ];
 
 export const BuildsDetailsPage: React.SFC<BuildsDetailsPageProps> = props =>

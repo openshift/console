@@ -20,7 +20,7 @@ describe(SpecDescriptor.name, () => {
       'path': '',
       'displayName': 'Some Spec Control',
       'description': '',
-      'x-descriptors': []
+      'x-descriptors': [],
     };
     wrapper = shallow(<SpecDescriptor model={testModel} obj={testResourceInstance} namespace="foo" descriptor={descriptor} value={null} />);
   });

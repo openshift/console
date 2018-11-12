@@ -126,5 +126,5 @@ Terminal.defaultProps = {
     cursorBlink: false,
     cols: 80,
     rows: 25,
-  }
+  },
 };

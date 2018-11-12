@@ -88,7 +88,7 @@ const secretTypeFilterValues = [
   SOURCE_FILTER_VALUE,
   TLS_FILTER_VALUE,
   SA_TOKEN_FILTER_VALUE,
-  OPAQUE_FILTER_VALUE
+  OPAQUE_FILTER_VALUE,
 ];
 
 export const secretTypeFilterReducer = secret => {
@@ -132,7 +132,7 @@ const SecretsPage = props => {
 
   const createProps = {
     items: createItems,
-    createLink: (type) => `/k8s/ns/${props.namespace || 'default'}/secrets/new/${type !== 'yaml' ? type : ''}`
+    createLink: (type) => `/k8s/ns/${props.namespace || 'default'}/secrets/new/${type !== 'yaml' ? type : ''}`,
   };
 
   return <ListPage ListComponent={SecretsList} canCreate={true} rowFilters={filters} createButtonText="Create" createProps={createProps} {...props} />;

@@ -142,5 +142,5 @@ export const containerLinuxUpdateOperator = {
   getNewVersion,
   getLastCheckedTime,
   getDownloadCompletedIconClass,
-  getUpdateCompletedIconClass
+  getUpdateCompletedIconClass,
 };

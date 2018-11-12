@@ -114,7 +114,7 @@ class App extends React.PureComponent {
         <GlobalNotifications />
         <div id="content-scrollable">
           <Switch>
-            <Route path={['/all-namespaces', '/ns/:ns',]} component={RedirectComponent} />
+            <Route path={['/all-namespaces', '/ns/:ns']} component={RedirectComponent} />
 
             <LazyRoute path="/overview/ns/:ns" exact loader={() => import('./overview' /* webpackChunkName: "overview" */).then(m => m.OverviewPage)} />
             <LazyRoute path="/overview/all-namespaces" exact loader={() => import('./overview' /* webpackChunkName: "overview" */).then(m => m.OverviewPage)} />
