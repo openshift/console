@@ -72,8 +72,6 @@ builder_run () {
     shift
     needs_kubeconfig=$1
     shift
-    exit_on_err=$1
-    shift
     cmd=$*
 
     status "$name" 'pending'
@@ -92,10 +90,7 @@ builder_run () {
     else
         status "$name" 'error'
         s3_upload "jenkins-logs/$name.log" "$BUILD_TAG/$name.log"
-        if [ "$exit_on_err" -ne 0 ]
-        then
-            exit 1
-        fi
+        exit 1
     fi
     unset DOCKER_ENV
 }
@@ -105,12 +100,12 @@ set -x
 
 set +e
 
-builder_run 'Build' 0 1 ./build.sh
-builder_run 'Tests' 0 1 ./test.sh
-builder_run 'GUI-Tests' 1 1 ./test-gui.sh crud
-builder_run 'GUI-Tests-New-App' 1 0 ./test-gui.sh newApp
-builder_run 'GUI-Tests-OLM' 1 0 ./test-gui.sh olm
-builder_run 'GUI-Tests-Service-Catalog' 1 0 ./test-gui.sh serviceCatalog
+builder_run 'Build' 0 ./build.sh
+builder_run 'Tests' 0 ./test.sh
+builder_run 'GUI-Tests' 1 ./test-gui.sh crud
+builder_run 'GUI-Tests-New-App' 1 ./test-gui.sh newApp
+builder_run 'GUI-Tests-OLM' 1 ./test-gui.sh olm
+builder_run 'GUI-Tests-Service-Catalog' 1 ./test-gui.sh serviceCatalog
 
 status 'Performance' 'pending'
 if DOCKER_ENV="KUBECONFIG" ./builder-run.sh ./test-gui.sh performance
