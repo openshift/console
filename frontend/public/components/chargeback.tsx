@@ -93,7 +93,7 @@ const ReportsRow: React.SFC<ReportsRowProps> = ({obj}) => {
 };
 
 class ReportsDetails extends React.Component<ReportsDetailsProps> {
-  render () {
+  render() {
     const {obj} = this.props;
     const phase = _.get(obj, ['status', 'phase']);
     return <div>
@@ -173,7 +173,7 @@ const DataTable = ({rows, orderBy, sortBy, applySort, keys, maxValues, totals}:D
 };
 
 class ReportData extends SafetyFirst<ReportDataProps, ReportDataState> {
-  constructor (props) {
+  constructor(props) {
     super(props);
     this.state = {
       inFlight: false,
@@ -189,7 +189,7 @@ class ReportData extends SafetyFirst<ReportDataProps, ReportDataState> {
     };
   }
 
-  fetchData () {
+  fetchData() {
     this.setState({
       inFlight: true,
       error: null,
@@ -200,12 +200,12 @@ class ReportData extends SafetyFirst<ReportDataProps, ReportDataState> {
       .then(() => this.setState({inFlight: false})));
   }
 
-  componentDidMount () {
+  componentDidMount() {
     super.componentDidMount();
     this.fetchData();
   }
 
-  componentWillReceiveProps (nextProps) {
+  componentWillReceiveProps(nextProps) {
     if (this.state.inFlight) {
       return;
     }
@@ -216,7 +216,7 @@ class ReportData extends SafetyFirst<ReportDataProps, ReportDataState> {
     }
   }
 
-  makeTable (data=this.state.data) {
+  makeTable(data=this.state.data) {
     const reduceBy = getQueryArgument('reduceBy') || 'namespace';
     const keys = this.filterKeys(data, reduceBy);
     const sortBy = getQueryArgument('sortBy') || keys[1] || keys[0];
@@ -235,12 +235,12 @@ class ReportData extends SafetyFirst<ReportDataProps, ReportDataState> {
     });
   }
 
-  orderBy (col) {
+  orderBy(col) {
     setQueryArgument('orderBy', col);
     this.makeTable();
   }
 
-  reduceBy (col) {
+  reduceBy(col) {
     if (REDUCER_COLS.indexOf(this.state.sortBy) >= 0) {
       // Sort field is going away. Sort by new field.
       this.sortBy(col);
@@ -249,12 +249,12 @@ class ReportData extends SafetyFirst<ReportDataProps, ReportDataState> {
     this.makeTable();
   }
 
-  sortBy (col) {
+  sortBy(col) {
     setQueryArgument('sortBy', col);
     this.makeTable();
   }
 
-  filterKeys (data=[], reduceBy) {
+  filterKeys(data=[], reduceBy) {
     const keys = _.keys(data[0]).filter(k => {
       if (k === reduceBy) {
         return true;
@@ -270,7 +270,7 @@ class ReportData extends SafetyFirst<ReportDataProps, ReportDataState> {
     return keys;
   }
 
-  transformData (data, reduceBy, sortBy, orderBy) {
+  transformData(data, reduceBy, sortBy, orderBy) {
     const reducedData = {};
     const maxValues = {};
     const totals = {};
@@ -312,12 +312,12 @@ class ReportData extends SafetyFirst<ReportDataProps, ReportDataState> {
     return {rows, maxValues, totals};
   }
 
-  applySort (sortBy, func, orderBy) {
+  applySort(sortBy, func, orderBy) {
     this.sortBy(sortBy);
     this.orderBy(orderBy);
   }
 
-  render () {
+  render() {
     const {obj} = this.props;
     const phase = _.get(obj, ['status', 'phase']);
 

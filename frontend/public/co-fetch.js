@@ -77,7 +77,7 @@ const validateStatus = (response, url) => {
 };
 
 export class TimeoutError extends Error {
-  constructor (url, ms, ...params) {
+  constructor(url, ms, ...params) {
     super(`Call to ${url} timed out after ${ms}ms.`, ...params);
     // Dumb hack to fix `instanceof TimeoutError`
     Object.setPrototypeOf(this, TimeoutError.prototype);

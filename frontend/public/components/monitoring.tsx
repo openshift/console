@@ -526,12 +526,12 @@ const MonitoringListPage = connect(filtersToProps)(class InnerMonitoringListPage
   defaultNameFilter: string;
   /* eslint-enable no-undef */
 
-  constructor (props) {
+  constructor(props) {
     super(props);
     this.applyTextFilter = this.applyTextFilter.bind(this);
   }
 
-  applyTextFilter (e) {
+  applyTextFilter(e) {
     const v = e.target.value;
     const {nameFilterID, reduxID} = this.props;
     store.dispatch(k8sActions.filterList(reduxID, nameFilterID, v));
@@ -546,7 +546,7 @@ const MonitoringListPage = connect(filtersToProps)(class InnerMonitoringListPage
     history.replace(`${url.pathname}?${params.toString()}${url.hash}`);
   }
 
-  componentWillMount () {
+  componentWillMount() {
     const {nameFilterID, reduxID} = this.props;
     const params = new URLSearchParams(window.location.search);
 
@@ -560,7 +560,7 @@ const MonitoringListPage = connect(filtersToProps)(class InnerMonitoringListPage
     }
   }
 
-  render () {
+  render() {
     const {alertmanagerLinkPath, CreateButton, data, filters, Header, kindPlural, loaded, loadError, PageDescription, reduxID, Row, rowFilter} = this.props;
 
     return <React.Fragment>
@@ -711,7 +711,7 @@ const Datetime = props => <Tooltip content={[<span className="co-nowrap" key="co
 </Tooltip>;
 
 class SilenceForm_ extends SafetyFirst<SilenceFormProps, SilenceFormState> {
-  constructor (props) {
+  constructor(props) {
     super(props);
 
     const now = new Date();
@@ -780,7 +780,7 @@ class SilenceForm_ extends SafetyFirst<SilenceFormProps, SilenceFormState> {
   }
   /* eslint-enable no-undef */
 
-  render () {
+  render() {
     const {data, error, inProgress} = this.state;
 
     return <div className="co-m-pane__body">
@@ -870,7 +870,7 @@ const CreateSilence = () => {
 };
 
 export class MonitoringUI extends React.Component<null, null> {
-  componentDidMount () {
+  componentDidMount() {
     const poll = (url: string, key: string, dataHandler: (data: any[]) => any): void => {
       store.dispatch(UIActions.monitoringLoading(key));
       const poller = (): void => {
@@ -940,11 +940,11 @@ export class MonitoringUI extends React.Component<null, null> {
     });
   }
 
-  componentWillUnmount () {
+  componentWillUnmount() {
     _.each(pollerTimeouts, t => clearTimeout(t));
   }
 
-  render () {
+  render() {
     return <Switch>
       <Redirect from="/monitoring" exact to="/monitoring/alerts" />
       <Route path="/monitoring/alerts" exact component={AlertsPage} />

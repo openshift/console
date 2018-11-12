@@ -58,7 +58,7 @@ TextFilter.displayName = 'TextFilter';
 // TODO (jon) make this into "withListPageFilters" HOC
 /** @augments {React.PureComponent<{ListComponent: React.ComponentType<any>, kinds: string[], flatten?: function, data?: any[], rowFilters?: any[]}>} */
 export class ListPageWrapper_ extends React.PureComponent {
-  render () {
+  render() {
     const {
       flatten,
       kinds,
@@ -105,7 +105,7 @@ ListPageWrapper_.propTypes = {
 
 export const FireMan_ = connect(null, {filterList: k8sActions.filterList})(
   class ConnectedFireMan extends React.PureComponent {
-    constructor (props) {
+    constructor(props) {
       super(props);
       this.onExpandChange = this.onExpandChange.bind(this);
       this.applyFilter = this.applyFilter.bind(this);
@@ -125,11 +125,11 @@ export const FireMan_ = connect(null, {filterList: k8sActions.filterList})(
       this.setState({ reduxIDs }, () => this.componentWillMount());
     }
 
-    onExpandChange (expand) {
+    onExpandChange(expand) {
       this.setState({expand});
     }
 
-    updateURL (filterName, options) {
+    updateURL(filterName, options) {
       if (filterName !== this.props.textFilter) {
         // TODO (ggreer): support complex filters (objects, not just strings)
         return;
@@ -144,7 +144,7 @@ export const FireMan_ = connect(null, {filterList: k8sActions.filterList})(
       history.replace(`${url.pathname}?${params.toString()}${url.hash}`);
     }
 
-    applyFilter (filterName, options) {
+    applyFilter(filterName, options) {
       // TODO: (ggreer) lame blacklist of query args. Use a whitelist based on resource filters
       if (['q', 'kind', 'orderBy', 'sortBy'].includes(filterName)) {
         return;
@@ -156,13 +156,13 @@ export const FireMan_ = connect(null, {filterList: k8sActions.filterList})(
       this.updateURL(filterName, options);
     }
 
-    componentWillMount () {
+    componentWillMount() {
       const params = new URLSearchParams(window.location.search);
       this.defaultValue = params.get(this.props.textFilter);
       params.forEach((v, k) => this.applyFilter(k, v));
     }
 
-    render () {
+    render() {
       const {
         autoFocus,
         canCreate,

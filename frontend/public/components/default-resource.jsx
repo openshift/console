@@ -23,7 +23,7 @@ const Header = props => <ListHeader>
   <ColHead {...props} className="col-sm-4 hidden-xs" sortField="metadata.creationTimestamp">Created</ColHead>
 </ListHeader>;
 
-const RowForKind = kind => function RowForKind_ ({obj}) {
+const RowForKind = kind => function RowForKind_({obj}) {
   return <div className="row co-resource-list__item">
     <div className="col-xs-6 col-sm-4">
       <ResourceLink kind={kind} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
@@ -43,7 +43,7 @@ const RowForKind = kind => function RowForKind_ ({obj}) {
   </div>;
 };
 
-const DetailsForKind = kind => function DetailsForKind_ ({obj}) {
+const DetailsForKind = kind => function DetailsForKind_({obj}) {
   return <React.Fragment>
     <div className="co-m-pane__body">
       <SectionHeading text={`${kindForReference(kind)} Overview`} />

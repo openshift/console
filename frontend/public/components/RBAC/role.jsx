@@ -46,13 +46,13 @@ const Row = ({obj: role}) => <div className="row co-resource-list__item">
 </div>;
 
 class Details extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props);
     this.state = {};
     this.changeFilter = e => this.setState({ruleFilter: e.target.value});
   }
 
-  render () {
+  render() {
     const ruleObj = this.props.obj;
     const {creationTimestamp, name, namespace} = ruleObj.metadata;
     const {ruleFilter} = this.state;

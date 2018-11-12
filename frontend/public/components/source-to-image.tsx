@@ -86,7 +86,7 @@ const ImageStreamInfo: React.SFC<ImageStreamInfoProps> = ({imageStream, tag}) =>
 };
 
 class BuildSource extends React.Component<BuildSourceProps, BuildSourceState> {
-  constructor (props) {
+  constructor(props) {
     super(props);
 
     const { preselectedNamespace: namespace = ''} = this.props;

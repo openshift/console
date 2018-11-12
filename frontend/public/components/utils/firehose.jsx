@@ -102,11 +102,11 @@ export const Firehose = connect(
   class Firehose extends React.Component {
     // TODO: Convert this to `componentDidMount`
     // eslint-disable-next-line camelcase
-    UNSAFE_componentWillMount () {
+    UNSAFE_componentWillMount() {
       this.start();
     }
 
-    componentWillUnmount () {
+    componentWillUnmount() {
       this.clear();
     }
 
@@ -159,7 +159,7 @@ export const Firehose = connect(
       this.firehoses = [];
     }
 
-    render () {
+    render() {
       const reduxes = this.firehoses.map(({id, prop, isList, filters, optional}) => ({reduxID: id, prop, isList, filters, optional}));
       const children = inject(this.props.children, _.omit(this.props, [
         'children',

@@ -43,7 +43,7 @@ class ServiceInstanceMessage_ extends React.Component<ServiceInstanceMessageProp
     loaded: false,
   };
 
-  componentDidMount () {
+  componentDidMount() {
     const {obj} = this.props;
 
     // Get the bindings for this service instance to know what messages to display.

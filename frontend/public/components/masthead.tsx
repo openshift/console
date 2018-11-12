@@ -82,7 +82,7 @@ export class OSUserMenu extends SafetyFirst<OSUserMenuProps, OSUserMenuState> {
       }).catch(() => this.setState({ username: null }));
   }
 
-  render () {
+  render() {
     const username = this.state.username;
     return username ? <UserMenu actions={this.props.actions} username={username} /> : null;
   }

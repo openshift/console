@@ -50,7 +50,7 @@ const ImagePorts = ({ports, name}) => <React.Fragment>
 </React.Fragment>;
 
 export class DeployImage extends React.Component<DeployImageProps, DeployImageState> {
-  constructor (props) {
+  constructor(props) {
     super(props);
 
     const params = new URLSearchParams(props.location.search);

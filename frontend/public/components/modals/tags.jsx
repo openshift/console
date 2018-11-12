@@ -13,7 +13,7 @@ import { AsyncComponent } from '../utils/async';
 const NameValueEditorComponent = (props) => <AsyncComponent loader={() => import('../utils/name-value-editor.jsx').then(c => c.NameValueEditor)} {...props} />;
 
 class TagsModal extends PromiseComponent {
-  constructor (props) {
+  constructor(props) {
     super(props);
 
     // Track tags as an array instead of an object / Map so we can preserve the order during editing and so we can have

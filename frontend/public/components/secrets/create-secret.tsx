@@ -118,29 +118,29 @@ const withSecretForm = (SubForm) => class SecretFormComponent extends React.Comp
     this.onFormDisable = this.onFormDisable.bind(this);
     this.save = this.save.bind(this);
   }
-  onDataChanged (secretsData) {
+  onDataChanged(secretsData) {
     this.setState({
       stringData: {...secretsData.stringData},
       type: secretsData.type,
     });
   }
-  onError (err) {
+  onError(err) {
     this.setState({
       error: err,
       inProgress: false,
     });
   }
-  onNameChanged (event) {
+  onNameChanged(event) {
     let secret = {...this.state.secret};
     secret.metadata.name = event.target.value;
     this.setState({secret});
   }
-  onFormDisable (disable) {
+  onFormDisable(disable) {
     this.setState({
       disableForm: disable,
     });
   }
-  save (e) {
+  save(e) {
     e.preventDefault();
     const { metadata } = this.state.secret;
     this.setState({ inProgress: true });
@@ -153,7 +153,7 @@ const withSecretForm = (SubForm) => class SecretFormComponent extends React.Comp
       history.push(resourceObjPath(secret, referenceFor(secret)));
     }, err => this.setState({error: err.message, inProgress: false}));
   }
-  render () {
+  render() {
     const { secretTypeAbstraction } = this.state;
     const title = `${this.props.titleVerb} ${secretDisplayType(secretTypeAbstraction)} Secret`;
     return <div className="co-m-pane__body">
@@ -239,7 +239,7 @@ class ImageSecretForm extends React.Component<ImageSecretFormProps, ImageSecretF
     this.changeFormType = this.changeFormType.bind(this);
     this.onFormDisable = this.onFormDisable.bind(this);
   }
-  onDataChanged (secretData) {
+  onDataChanged(secretData) {
     const dataKey = secretData[AUTHS_KEY] ? '.dockerconfigjson' : '.dockercfg';
     this.setState({
       stringData: {[dataKey]: secretData},
@@ -256,7 +256,7 @@ class ImageSecretForm extends React.Component<ImageSecretFormProps, ImageSecretF
   onFormDisable(disable) {
     this.props.onFormDisable(disable);
   }
-  render () {
+  render() {
     const authTypes = {
       'credentials': 'Image Registry Credentials',
       'config-file': 'Upload Configuration File',
@@ -557,7 +557,7 @@ class WebHookSecretForm extends React.Component<WebHookSecretFormProps, WebHookS
       stringData: { WebHookSecretKey: generateSecret() },
     }, () => this.props.onChange(this.state));
   }
-  render () {
+  render() {
     return <div className="form-group">
       <label className="control-label co-required" htmlFor="webhook-secret-key">Webhook Secret Key</label>
       <div className="input-group">
@@ -593,12 +593,12 @@ class SourceSecretForm extends React.Component<SourceSecretFormProps, SourceSecr
       type: type,
     }, () => this.props.onChange(this.state));
   }
-  onDataChanged (secretsData) {
+  onDataChanged(secretsData) {
     this.setState({
       stringData: {...secretsData},
     }, () => this.props.onChange(this.state));
   }
-  render () {
+  render() {
     const authTypes = {
       [SecretType.basicAuth]: 'Basic Authentication',
       [SecretType.sshAuth]: 'SSH Key',
@@ -760,7 +760,7 @@ class GenericSecretForm extends React.Component<GenericSecretFormProps, GenericS
   genericSecretArrayToObject(genericSecretArray) {
     return _.reduce(genericSecretArray, (acc, k) => (_.assign(acc, {[k.entry.key]: k.entry.value})), {});
   }
-  onDataChanged (updatedEntry, entryID) {
+  onDataChanged(updatedEntry, entryID) {
     const updatedSecretEntriesArray = [...this.state.secretEntriesArray];
     const updatedEntryData = {
       uid: updatedSecretEntriesArray[entryID].uid,

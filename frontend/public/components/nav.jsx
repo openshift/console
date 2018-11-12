@@ -62,12 +62,12 @@ NavLink.propTypes = {
 
 
 class ResourceNSLink extends NavLink {
-  static isActive (props, resourcePath, activeNamespace) {
+  static isActive(props, resourcePath, activeNamespace) {
     const href = stripNS(formatNamespacedRouteForResource(props.resource, activeNamespace));
     return matchesPath(resourcePath, href) || matchesModel(resourcePath, props.model);
   }
 
-  get to () {
+  get to() {
     const { resource, activeNamespace } = this.props;
     return formatNamespacedRouteForResource(resource, activeNamespace);
   }
@@ -82,11 +82,11 @@ ResourceNSLink.propTypes = {
 };
 
 class ResourceClusterLink extends NavLink {
-  static isActive (props, resourcePath) {
+  static isActive(props, resourcePath) {
     return resourcePath === props.resource || _.startsWith(resourcePath, `${props.resource}/`);
   }
 
-  get to () {
+  get to() {
     return `/k8s/cluster/${this.props.resource}`;
   }
 }
@@ -98,12 +98,12 @@ ResourceClusterLink.propTypes = {
 };
 
 class HrefLink extends NavLink {
-  static isActive (props, resourcePath) {
+  static isActive(props, resourcePath) {
     const noNSHref = stripNS(props.href);
     return resourcePath === noNSHref || _.startsWith(resourcePath, `${noNSHref}/`);
   }
 
-  get to () {
+  get to() {
     return this.props.href;
   }
 }
@@ -127,7 +127,7 @@ const navSectionStateToProps = (state, {required}) => {
 
 const NavSection = connect(navSectionStateToProps)(
   class NavSection extends React.Component {
-    constructor (props) {
+    constructor(props) {
       super(props);
       this.toggle = e => this.toggle_(e);
       this.open = () => this.open_();
@@ -140,7 +140,7 @@ const NavSection = connect(navSectionStateToProps)(
       }
     }
 
-    shouldComponentUpdate (nextProps, nextState) {
+    shouldComponentUpdate(nextProps, nextState) {
       const { isOpen } = this.state;
 
       if (isOpen !== nextProps.isOpen) {
@@ -154,7 +154,7 @@ const NavSection = connect(navSectionStateToProps)(
       return nextProps.location !== this.props.location || nextProps.flags !== this.props.flags;
     }
 
-    getActiveChild () {
+    getActiveChild() {
       const { activeNamespace, location, children } = this.props;
 
       if (!children) {
@@ -187,7 +187,7 @@ const NavSection = connect(navSectionStateToProps)(
       this.setState(state);
     }
 
-    open_ () {
+    open_() {
       this.setState({isOpen: true});
     }
 
@@ -206,7 +206,7 @@ const NavSection = connect(navSectionStateToProps)(
       this.setState({isOpen: !this.state.isOpen});
     }
 
-    render () {
+    render() {
       if (!this.props.canRender) {
         return null;
       }
@@ -320,7 +320,7 @@ const UserNavSection = connectToFlags(FLAGS.AUTH_ENABLED, FLAGS.OPENSHIFT)(({fla
 });
 
 export class Nav extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props);
     this.scroller = React.createRef();
     this.preventScroll = e => this.preventScroll_(e);
@@ -334,7 +334,7 @@ export class Nav extends React.Component {
 
   // Edge disobeys the spec and doesn't fire off wheel events: https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/7134034/
   // TODO maybe bind to touch events or something? (onpointermove)
-  preventScroll_ (e) {
+  preventScroll_(e) {
     const elem = this.scroller.current;
 
     const scrollTop = elem.scrollTop; // scroll position
@@ -352,16 +352,16 @@ export class Nav extends React.Component {
     }
   }
 
-  close_ () {
+  close_() {
     this.setState({isOpen: false});
   }
 
-  toggle_ () {
+  toggle_() {
     const { isOpen } = this.state;
     this.setState({isOpen: !isOpen});
   }
 
-  render () {
+  render() {
     const { isOpen } = this.state;
 
 

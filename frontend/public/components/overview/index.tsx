@@ -285,7 +285,7 @@ class OverviewDetails extends SafetyFirst<OverviewDetailsProps, OverviewDetailsS
     this.fetchMetrics();
   }
 
-  componentWillUnmount (): void {
+  componentWillUnmount(): void {
     super.componentWillUnmount();
     clearInterval(this.metricsInterval_);
   }

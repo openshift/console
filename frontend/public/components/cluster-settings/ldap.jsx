@@ -374,13 +374,13 @@ const LDAPs = reduxForm({
         })
         .catch(loadError => this.setState({loadError}));
     }
-    downloadBackup (e) {
+    downloadBackup(e) {
       e.preventDefault();
       const blob = new Blob([safeDump(this.state.tectonicIdentityConfig)], { type: 'text/yaml;charset=utf-8' });
       saveAs(blob, 'tectonic-identity.yaml');
     }
 
-    downloadNewConfig (e) {
+    downloadNewConfig(e) {
       e.preventDefault();
 
       const formData = getFormValues(LDAPFormName)(store.getState());
@@ -422,7 +422,7 @@ const LDAPs = reduxForm({
       saveAs(blob, 'new-tectonic-config.yaml');
     }
 
-    test (e) {
+    test(e) {
       e.preventDefault();
       this.setState({validationData: null, validationError: null, stateMachine: STATES.untested}, () => {
         const version = this.props.error;
@@ -451,18 +451,18 @@ const LDAPs = reduxForm({
       });
     }
 
-    continue (e) {
+    continue(e) {
       e.preventDefault();
       this.setState({stateMachine: STATES.updating});
     }
 
-    populate (stepName) {
+    populate(stepName) {
       const populated = this.state.populated;
       populated[stepName] = true;
       this.setState({populated});
     }
 
-    render () {
+    render() {
       if (this.state.loadError) {
         return <LoadError label="Tectonic Identity Configuration" loadError={this.state.loadError} />;
       }

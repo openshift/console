@@ -25,7 +25,7 @@ const fontColors = {
 };
 
 class Gauge_ extends BaseGraph {
-  constructor (props) {
+  constructor(props) {
     super(props);
 
     this.timeSpan = 0;
@@ -119,7 +119,7 @@ class Gauge_ extends BaseGraph {
     }];
   }
 
-  updateGraph (data, err) {
+  updateGraph(data, err) {
     if (err) {
       this.data[0].marker.colors[1] = colors.gray;
       this.data[0].values[1] = 0;

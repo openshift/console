@@ -60,7 +60,7 @@ const stateToProps = state => {
 
 const EditRule = connect(stateToProps, {getResources: k8sActions.getResources}) (
   class EditRule_ extends PromiseComponent {
-    constructor (props) {
+    constructor(props) {
       super(props);
 
       this.state = Object.assign(this.state, {
@@ -93,7 +93,7 @@ const EditRule = connect(stateToProps, {getResources: k8sActions.getResources}) 
       this.props.getResources();
     }
 
-    getResource () {
+    getResource() {
       const {name, namespace} = this.props;
 
       k8sGet(this.kind, name, namespace)
@@ -145,7 +145,7 @@ const EditRule = connect(stateToProps, {getResources: k8sActions.getResources}) 
         }).catch(this.errorModal.bind(this));
     }
 
-    save () {
+    save() {
       const {APIGroups, verbControl, resourceControl, nonResourceURLs} = this.state;
       const allResources = this.props.allResources || [];
 
@@ -168,7 +168,7 @@ const EditRule = connect(stateToProps, {getResources: k8sActions.getResources}) 
         });
     }
 
-    isVerbSelected_ (v) {
+    isVerbSelected_(v) {
       const {verbsSet, verbControl} = this.state;
       switch (verbControl) {
         case VERBS_ENUM.CUSTOM:
@@ -181,11 +181,11 @@ const EditRule = connect(stateToProps, {getResources: k8sActions.getResources}) 
           return false;
       }
     }
-    has (set, resource) {
+    has(set, resource) {
       return set.has(resource.split('/')[0]);
     }
 
-    isResourceSelected_ (r) {
+    isResourceSelected_(r) {
       const {adminResources} = this.props;
       const {resourceControl, resourceSet} = this.state;
       switch (resourceControl) {
@@ -202,7 +202,7 @@ const EditRule = connect(stateToProps, {getResources: k8sActions.getResources}) 
       }
     }
 
-    setNonResourceURL (nonResourceURLs) {
+    setNonResourceURL(nonResourceURLs) {
       const state = {nonResourceURLs};
 
       if (this.state.resourceControl !== RESOURCE_ENUM.NON) {
@@ -212,7 +212,7 @@ const EditRule = connect(stateToProps, {getResources: k8sActions.getResources}) 
       this.setState(state);
     }
 
-    toggleVerb_ (name, isSelected) {
+    toggleVerb_(name, isSelected) {
       let verbsSet;
 
       if (this.state.verbControl === VERBS_ENUM.CUSTOM) {
@@ -231,7 +231,7 @@ const EditRule = connect(stateToProps, {getResources: k8sActions.getResources}) 
       this.setState({verbsSet, verbControl: VERBS_ENUM.CUSTOM});
     }
 
-    toggleResource_ (name, isSelected) {
+    toggleResource_(name, isSelected) {
       let resourceSet;
 
       if (this.state.resourceControl === RESOURCE_ENUM.CUSTOM) {
@@ -251,16 +251,16 @@ const EditRule = connect(stateToProps, {getResources: k8sActions.getResources}) 
       this.setState({resourceSet, resourceControl: RESOURCE_ENUM.CUSTOM});
     }
 
-    setApiGroups (APIGroups) {
+    setApiGroups(APIGroups) {
       this.setState({APIGroups});
     }
 
-    errorModal (error) {
+    errorModal(error) {
       const message = _.get(error, 'data.message') || error.statusText;
       errorModal({error: message});
     }
 
-    render () {
+    render() {
       const {name, namespace, namespacedSet, safeResources, adminResources, rule} = this.props;
       const {verbControl, resourceControl, nonResourceURLs, APIGroups, role} = this.state;
       const heading = `${rule === undefined ? 'Create' : 'Edit'} Access Rule`;

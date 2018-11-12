@@ -24,7 +24,7 @@ export class LabelList extends React.Component<LabelListProps> {
     return !_.isEqual(nextProps, this.props);
   }
 
-  render () {
+  render() {
     const {labels, kind, expand = true} = this.props;
     let list = _.map(labels, (label, key) => <Label key={key} kind={kind} name={key} value={label} expand={expand} />);
 

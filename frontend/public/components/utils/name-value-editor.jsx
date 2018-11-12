@@ -10,7 +10,7 @@ import { ValueFromPair } from './value-from-pair';
 import withDragDropContext from './drag-drop-context';
 
 export const NameValueEditor = withDragDropContext(class NameValueEditor extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props);
     this._append = this._append.bind(this);
     this._appendConfigMapOrSecret = this._appendConfigMapOrSecret.bind(this);
@@ -57,7 +57,7 @@ export const NameValueEditor = withDragDropContext(class NameValueEditor extends
     updateParentData({nameValuePairs}, nameValueId);
   }
 
-  render () {
+  render() {
     const {nameString, valueString, addString, nameValuePairs, allowSorting, readOnly, nameValueId, configMaps, secrets, addConfigMapSecret} = this.props;
     const pairElems = nameValuePairs.map((pair, i) => {
       const key = _.get(pair, [NameValueEditorPair.Index], i);
@@ -129,7 +129,7 @@ NameValueEditor.defaultProps = {
 NameValueEditor.displayName = 'Name Value Editor';
 
 export const EnvFromEditor = withDragDropContext(class EnvFromEditor extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props);
     this._append = this._append.bind(this);
     this._change = this._change.bind(this);
@@ -169,7 +169,7 @@ export const EnvFromEditor = withDragDropContext(class EnvFromEditor extends Rea
     updateParentData({nameValuePairs}, nameValueId, EnvType.ENV_FROM);
   }
 
-  render () {
+  render() {
     const {nameValuePairs, readOnly, nameValueId, configMaps, secrets} = this.props;
     const pairElems = nameValuePairs.map((pair, i) => {
       const key = _.get(pair, [EnvFromPair.Index], i);

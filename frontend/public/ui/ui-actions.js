@@ -106,7 +106,7 @@ export const UIActions = {
     };
   },
 
-  [types.startImpersonate]: (kind, name) => async (dispatch, getState) => {
+  [types.startImpersonate]: (kind, name) => async(dispatch, getState) => {
     let textEncoder;
     try {
       textEncoder = new TextEncoder('utf-8');

@@ -175,7 +175,7 @@ export const RoleBindingsPage = ({namespace, showTitle=true, mock}) => <MultiLis
 />;
 
 class ListDropdown_ extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props);
     this.state = {
       items: {},
@@ -196,14 +196,14 @@ class ListDropdown_ extends React.Component {
     };
   }
 
-  componentWillMount () {
+  componentWillMount() {
     // we need to trigger state changes to get past shouldComponentUpdate...
     //   but the entire working set of data can be loaded in memory at this point in time
     //   in which case componentWillReceiveProps would not be called for a while...
     this.componentWillReceiveProps(this.props);
   }
 
-  componentWillReceiveProps (nextProps) {
+  componentWillReceiveProps(nextProps) {
     const {loaded, loadError} = nextProps;
 
     if (loadError) {
@@ -245,14 +245,14 @@ class ListDropdown_ extends React.Component {
     this.setState(state);
   }
 
-  shouldComponentUpdate (nextProps, nextState) {
+  shouldComponentUpdate(nextProps, nextState) {
     if (_.isEqual(this.state, nextState)) {
       return false;
     }
     return true;
   }
 
-  render () {
+  render() {
     const {desc, fixed, placeholder, id, loaded} = this.props;
     const items = {};
     const sortedItems = _.keys(this.state.items).sort();
@@ -373,7 +373,7 @@ const Section = ({label, children}) => <div className="row">
 
 const BaseEditRoleBinding = connect(null, {setActiveNamespace: UIActions.setActiveNamespace})(
   class BaseEditRoleBinding_ extends SafetyFirst {
-    constructor (props) {
+    constructor(props) {
       super(props);
 
       this.subjectIndex = props.subjectIndex || 0;
@@ -410,7 +410,7 @@ const BaseEditRoleBinding = connect(null, {setActiveNamespace: UIActions.setActi
       this.changeSubjectNamespace = namespace => this.setSubject({namespace});
     }
 
-    setKind (e) {
+    setKind(e) {
       const kind = e.target.value;
       const patch = {kind};
       if (kind === 'ClusterRoleBinding') {
@@ -419,18 +419,18 @@ const BaseEditRoleBinding = connect(null, {setActiveNamespace: UIActions.setActi
       this.setData(patch);
     }
 
-    getSubject () {
+    getSubject() {
       return _.get(this.state.data, `subjects[${this.subjectIndex}]`);
     }
 
-    setSubject (patch) {
+    setSubject(patch) {
       const {kind, name, namespace} = Object.assign({}, this.getSubject(), patch);
       const data = Object.assign({}, this.state.data);
       data.subjects[this.subjectIndex] = kind === 'ServiceAccount' ? {kind, name, namespace} : {apiGroup: 'rbac.authorization.k8s.io', kind, name};
       this.setState({data});
     }
 
-    save (e) {
+    save(e) {
       e.preventDefault();
 
       const {kind, metadata, roleRef} = this.state.data;
@@ -458,7 +458,7 @@ const BaseEditRoleBinding = connect(null, {setActiveNamespace: UIActions.setActi
       }, err => this.setState({error: err.message, inProgress: false}));
     }
 
-    render () {
+    render() {
       const {kind, metadata, roleRef} = this.state.data;
       const subject = this.getSubject();
       const {fixed, saveButtonText} = this.props;

@@ -133,7 +133,7 @@ export class HorizontalNav extends React.PureComponent<HorizontalNavProps> {
     }),
   };
 
-  render () {
+  render() {
     const props = this.props;
 
     const componentProps = {..._.pick(props, ['filters', 'selected', 'match']), obj: props.obj.data};
