@@ -114,9 +114,6 @@ const SilenceActionsMenu_ = ({silence, urls}) => <div className="co-actions">
 </div>;
 const SilenceActionsMenu = connectToURLs(MonitoringRoutes.AlertManager)(SilenceActionsMenu_);
 
-const AlertmanagerLink_ = ({text, urls}) => <ExternalLink href={urls[MonitoringRoutes.AlertManager]} text={text} />;
-const AlertmanagerLink = connectToURLs(MonitoringRoutes.AlertManager)(AlertmanagerLink_);
-
 const MonitoringResourceIcon = props => {
   const {className, resource} = props;
   return <span className={classNames(`co-m-resource-icon co-m-resource-${resource.kind.toLowerCase()}`, className)} title={resource.label}>{resource.abbr}</span>;
@@ -498,6 +495,13 @@ const AlertsPageDescription = () => <p className="co-help-text">
   Alerts help notify you when certain conditions in your environment are met. <ExternalLink href="https://prometheus.io/docs/prometheus/latest/configuration/alerting_rules/" text="Learn more about how alerts are configured." />
 </p>;
 
+const HeaderAlertmanagerLink_ = ({path, urls}) => _.isEmpty(urls[MonitoringRoutes.AlertManager])
+  ? null
+  : <span className="monitoring-header-link">
+    <ExternalLink href={`${urls[MonitoringRoutes.AlertManager]}${path || ''}`} text="Alertmanager UI" />
+  </span>;
+const HeaderAlertmanagerLink = connectToURLs(MonitoringRoutes.AlertManager)(HeaderAlertmanagerLink_);
+
 const alertsRowFilter = {
   type: 'alert-state',
   selected: ['firing', 'silenced', 'pending'],
@@ -557,16 +561,17 @@ const MonitoringListPage = connect(filtersToProps)(class InnerMonitoringListPage
   }
 
   render () {
-    const {CreateButton, data, filters, Header, loaded, loadError, PageDescription, reduxID, Row, rowFilter, textFilterLabel} = this.props;
+    const {alertmanagerLinkPath, CreateButton, data, filters, Header, kindPlural, loaded, loadError, PageDescription, reduxID, Row, rowFilter} = this.props;
 
     return <React.Fragment>
       <Helmet>
-        <title>Monitoring Alerts</title>
+        <title>{kindPlural}</title>
       </Helmet>
       <div className="co-m-nav-title">
         <h1 className="co-m-pane__heading">
           <div className="co-m-pane__name">
-            Monitoring Alerts &nbsp;<span className="monitoring-header-link"><AlertmanagerLink text="Alertmanager UI" /></span>
+            {kindPlural}
+            <HeaderAlertmanagerLink path={alertmanagerLinkPath} />
           </div>
         </h1>
         <PageDescription />
@@ -576,7 +581,7 @@ const MonitoringListPage = connect(filtersToProps)(class InnerMonitoringListPage
           <CreateButton />
         </div>}
         <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--filter">
-          <TextFilter defaultValue={this.defaultNameFilter} label={textFilterLabel} onChange={this.applyTextFilter} />
+          <TextFilter defaultValue={this.defaultNameFilter} label={`${kindPlural} by name`} onChange={this.applyTextFilter} />
         </div>
       </div>
       <div className="co-m-pane__body">
@@ -611,12 +616,12 @@ const AlertsPage_ = props => <MonitoringListPage
   {...props}
   data={props.data && props.data.asAlerts}
   Header={AlertHeader}
+  kindPlural="Alerts"
   nameFilterID="alert-name"
   PageDescription={AlertsPageDescription}
   reduxID="monitoringRules"
   Row={AlertRow}
   rowFilter={alertsRowFilter}
-  textFilterLabel="Alerts by name"
 />;
 const AlertsPage = withFallback(connect(monitoringRulesToProps)(AlertsPage_));
 
@@ -675,14 +680,15 @@ const CreateButton = () => <Link className="co-m-primary-action" to="/monitoring
 
 const SilencesPage_ = props => <MonitoringListPage
   {...props}
+  alertmanagerLinkPath="/#/silences"
   CreateButton={CreateButton}
   Header={SilenceHeader}
+  kindPlural="Silences"
   nameFilterID="silence-name"
   PageDescription={SilencesPageDescription}
   reduxID="monitoringSilences"
   Row={SilenceRow}
   rowFilter={silencesRowFilter}
-  textFilterLabel="Silences by name"
 />;
 const SilencesPage = withFallback(connect(monitoringSilencesToProps)(SilencesPage_));
 
@@ -1022,10 +1028,12 @@ export type SilenceFormState = {
   inProgress: boolean;
 };
 export type ListPageProps = {
+  alertmanagerLinkPath: string;
   CreateButton: React.ComponentType<any>;
   data: Rule[] | Silence[];
   filters: {[key: string]: any};
   Header: React.ComponentType<any>;
+  kindPlural: string;
   loaded: boolean;
   loadError?: string;
   match: {path: string};
@@ -1034,5 +1042,4 @@ export type ListPageProps = {
   reduxID: string;
   Row: React.ComponentType<any>;
   rowFilter: {type: string, selected: string[], reducer: (any) => string, items: {id: string, title: string}[]};
-  textFilterLabel: string;
 };
