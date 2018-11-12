@@ -3,7 +3,7 @@ import { Map as ImmutableMap } from 'immutable';
 
 import { types } from './ui-actions';
 import { ALL_NAMESPACES_KEY, LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY, NAMESPACE_LOCAL_STORAGE_KEY } from '../const';
-import { isSilenced } from '../monitoring';
+import { AlertStates, isSilenced } from '../monitoring';
 import { legalNamePattern, getNamespace } from '../components/utils/link';
 
 export default (state, action) => {
@@ -72,8 +72,8 @@ export default (state, action) => {
         const silences = state.getIn(['monitoring', 'silences'], {}).data;
 
         _.each(_.get(alerts, 'data.asAlerts'), a => {
-          if (a.state === 'firing' && _.some(silences, s => isSilenced(a, s))) {
-            a.state = 'silenced';
+          if (a.state === AlertStates.Firing && _.some(silences, s => isSilenced(a, s))) {
+            a.state = AlertStates.Silenced;
           }
         });
         state = state.setIn(['monitoring', 'rules'], alerts);

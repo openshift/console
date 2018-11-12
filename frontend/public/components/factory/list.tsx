@@ -14,6 +14,7 @@ import {
   WindowScroller,
 } from 'react-virtualized';
 
+import { AlertStates, SilenceStates } from '../../monitoring';
 import { UIActions } from '../../ui/ui-actions';
 import { ingressValidHosts } from '../ingress';
 import { alertState, silenceState } from '../monitoring';
@@ -191,7 +192,7 @@ const filterPropType = (props, propName, componentName) => {
 };
 
 const sorts = {
-  alertStateOrder: alert => ['firing', 'silenced', 'pending', 'not-firing'].indexOf(alertState(alert)),
+  alertStateOrder: alert => [AlertStates.Firing, AlertStates.Silenced, AlertStates.Pending, AlertStates.NotFiring].indexOf(alertState(alert)),
   daemonsetNumScheduled: daemonset => _.toInteger(_.get(daemonset, 'status.currentNumberScheduled')),
   dataSize: resource => _.size(_.get(resource, 'data')),
   ingressValidHosts,
@@ -209,7 +210,7 @@ const sorts = {
   podPhase,
   podReadiness,
   serviceClassDisplayName,
-  silenceStateOrder: silence => ['active', 'pending', 'expired'].indexOf(silenceState(silence)),
+  silenceStateOrder: silence => [SilenceStates.Active, SilenceStates.Pending, SilenceStates.Expired].indexOf(silenceState(silence)),
   string: val => JSON.stringify(val),
 };
 

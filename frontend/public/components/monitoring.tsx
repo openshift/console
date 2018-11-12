@@ -8,7 +8,7 @@ import { Link, Redirect, Route, Switch } from 'react-router-dom';
 
 import { coFetchJSON } from '../co-fetch';
 import k8sActions from '../module/k8s/k8s-actions';
-import { connectToURLs, isSilenced, MonitoringRoutes } from '../monitoring';
+import { AlertStates, connectToURLs, isSilenced, MonitoringRoutes, SilenceStates } from '../monitoring';
 import store from '../redux';
 import { UIActions } from '../ui/ui-actions';
 import { monitoringRulesToProps, monitoringSilencesToProps } from '../ui/ui-reducers';
@@ -57,8 +57,7 @@ const labelsToParams = labels => _.map(labels, (v, k) => `${encodeURIComponent(k
 const alertURL = alert => `${AlertResource.path}/${_.get(alert.labels, 'alertname')}?${labelsToParams(alert.labels)}`;
 const ruleURL = rule => `${AlertRuleResource.path}/${_.get(rule, 'id')}`;
 
-// Return "not-firing" if no state is found
-export const alertState = a => _.get(a, 'state', 'not-firing');
+export const alertState = a => _.get(a, 'state', AlertStates.NotFiring);
 
 const alertDescription = alert => {
   const {annotations = {}, labels = {}} = alert;
@@ -102,7 +101,7 @@ const cancelSilence = (silence, urls) => ({
   }),
 });
 
-const silenceMenuActions = (silence, urls) => silenceState(silence) === 'expired'
+const silenceMenuActions = (silence, urls) => silenceState(silence) === SilenceStates.Expired
   ? [editSilence(silence)]
   : [editSilence(silence), cancelSilence(silence, urls)];
 
@@ -123,26 +122,24 @@ const MonitoringResourceIcon = props => {
 };
 
 const AlertState: React.SFC<AlertStateProps> = ({state}) => {
-  if (state === 'not-firing') {
+  if (state === AlertStates.NotFiring) {
     return <span className="text-muted">Not Firing</span>;
   }
-  const stateToIconClassName = {
-    firing: 'fa fa-bell alert-firing',
-    silenced: 'fa fa-bell-slash text-muted',
-    pending: 'fa fa-bell-o alert-pending',
-  };
-  const klass = stateToIconClassName[state];
+  const klass = {
+    [AlertStates.Firing]: 'fa fa-bell alert-firing',
+    [AlertStates.Silenced]: 'fa fa-bell-slash text-muted',
+    [AlertStates.Pending]: 'fa fa-bell-o alert-pending',
+  }[state];
   return klass ? <React.Fragment><i className={klass} aria-hidden="true"></i> {_.startCase(state)}</React.Fragment> : null;
 };
 
 const SilenceState = ({silence}) => {
   const state = silenceState(silence);
-  const stateToIconClassName = {
-    active: 'fa fa-check-circle-o silence-active',
-    pending: 'fa fa-hourglass-half silence-pending',
-    expired: 'fa fa-ban text-muted',
-  };
-  const klass = stateToIconClassName[state];
+  const klass = {
+    [SilenceStates.Active]: 'fa fa-check-circle-o silence-active',
+    [SilenceStates.Pending]: 'fa fa-hourglass-half silence-pending',
+    [SilenceStates.Expired]: 'fa fa-ban text-muted',
+  }[state];
   return klass ? <React.Fragment><i className={klass} aria-hidden="true"></i> {_.startCase(state)}</React.Fragment> : null;
 };
 
@@ -164,7 +161,7 @@ const alertStateToProps = (state): AlertsDetailsPageProps => {
   const {data, loaded, loadError}: Rules = monitoringRulesToProps(state);
   const labels = getURLSearchParams();
   const alert = _.find(data && data.asAlerts, {labels});
-  const silencedBy = alertState(alert) === 'silenced'
+  const silencedBy = alertState(alert) === AlertStates.Silenced
     ? _.filter(monitoringSilencesToProps(state).data, s => isSilenced(alert, s))
     : [];
   return {alert, loaded, loadError, silencedBy};
@@ -183,7 +180,7 @@ const AlertsDetailsPage = withFallback(connect(alertStateToProps)((props: Alerts
     <div className="co-m-nav-title co-m-nav-title--detail">
       <h1 className="co-m-pane__heading">
         <div className="co-m-pane__name"><MonitoringResourceIcon className="co-m-resource-icon--lg pull-left" resource={AlertResource} />{alertname}</div>
-        {(state === 'firing' || state === 'pending') && <div className="co-actions">
+        {(state === AlertStates.Firing || state === AlertStates.Pending) && <div className="co-actions">
           <ActionsMenu actions={[silenceAlert(alert)]} />
         </div>}
       </h1>
@@ -360,7 +357,7 @@ const AlertRulesDetailsPage = withFallback(connect(ruleStateToProps)((props: Ale
 }));
 
 const silencedAlertsToProps = (state, {silence}) => ({
-  alerts: _.filter(_.get(monitoringRulesToProps(state), 'data.asAlerts'), a => alertState(a) === 'silenced' && isSilenced(a, silence)),
+  alerts: _.filter(_.get(monitoringRulesToProps(state), 'data.asAlerts'), a => alertState(a) === AlertStates.Silenced && isSilenced(a, silence)),
 });
 
 const SilencedAlertsList = connect(silencedAlertsToProps)(
@@ -483,7 +480,7 @@ const AlertRow = ({obj}) => {
     </div>
     <div className="col-xs-2">{_.startCase(_.get(labels, 'severity', '-'))}</div>
     <div className="co-resource-kebab">
-      <Cog options={state === 'firing' || state === 'pending' ? [silenceAlert(obj), viewAlertRule(obj)] : [viewAlertRule(obj)]} />
+      <Cog options={state === AlertStates.Firing || state === AlertStates.Pending ? [silenceAlert(obj), viewAlertRule(obj)] : [viewAlertRule(obj)]} />
     </div>
   </ResourceRow>;
 };
@@ -500,13 +497,13 @@ const AlertsPageDescription = () => <p className="co-help-text">
 
 const alertsRowFilter = {
   type: 'alert-state',
-  selected: ['firing', 'silenced', 'pending'],
+  selected: [AlertStates.Firing, AlertStates.Silenced, AlertStates.Pending],
   reducer: alertState,
   items: [
-    {id: 'firing', title: 'Firing'},
-    {id: 'silenced', title: 'Silenced'},
-    {id: 'pending', title: 'Pending'},
-    {id: 'not-firing', title: 'Not Firing'},
+    {id: AlertStates.Firing, title: 'Firing'},
+    {id: AlertStates.Silenced, title: 'Silenced'},
+    {id: AlertStates.Pending, title: 'Pending'},
+    {id: AlertStates.NotFiring, title: 'Not Firing'},
   ],
 };
 
@@ -642,9 +639,9 @@ const SilenceRow = ({obj}) => {
     <div className="col-xs-3">
       <SilenceState silence={obj} />
       <div className="text-muted monitoring-timestamp">
-        {state === 'pending' && <React.Fragment>starts&nbsp;<Timestamp timestamp={obj.startsAt} /></React.Fragment>}
-        {state === 'active' && <React.Fragment>ends&nbsp;<Timestamp timestamp={obj.endsAt} /></React.Fragment>}
-        {state === 'expired' && <React.Fragment>expired&nbsp;<Timestamp timestamp={obj.endsAt} /></React.Fragment>}
+        {state === SilenceStates.Pending && <React.Fragment>starts&nbsp;<Timestamp timestamp={obj.startsAt} /></React.Fragment>}
+        {state === SilenceStates.Active && <React.Fragment>ends&nbsp;<Timestamp timestamp={obj.endsAt} /></React.Fragment>}
+        {state === SilenceStates.Expired && <React.Fragment>expired&nbsp;<Timestamp timestamp={obj.endsAt} /></React.Fragment>}
       </div>
     </div>
     <div className="col-xs-2"><SilencedAlertsCount silence={obj} /></div>
@@ -660,12 +657,12 @@ const SilencesPageDescription = () => <p className="co-help-text">
 
 const silencesRowFilter = {
   type: 'silence-state',
-  selected: ['active', 'pending'],
+  selected: [SilenceStates.Active, SilenceStates.Pending],
   reducer: silenceState,
   items: [
-    {id: 'active', title: 'Active'},
-    {id: 'pending', title: 'Pending'},
-    {id: 'expired', title: 'Expired'},
+    {id: SilenceStates.Active, title: 'Active'},
+    {id: SilenceStates.Pending, title: 'Pending'},
+    {id: SilenceStates.Expired, title: 'Expired'},
   ],
 };
 
@@ -961,7 +958,7 @@ type Silence = {
   matchers: {name: string, value: string, isRegex: boolean}[];
   name?: string;
   startsAt: string;
-  status?: {state: string};
+  status?: {state: SilenceStates};
   updatedAt?: string;
 };
 type Silences = {
@@ -974,7 +971,7 @@ type Alert = {
   annotations: any;
   labels: {[key: string]: string};
   rule?: any;
-  state: string;
+  state: AlertStates;
   value: number;
 };
 type Rule = {
@@ -992,7 +989,7 @@ type Rules = {
   loadError?: string;
 };
 type AlertStateProps = {
-  state: string;
+  state: AlertStates;
 };
 export type AlertsDetailsPageProps = {
   alert: Alert;
