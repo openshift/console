@@ -7,7 +7,6 @@ import { IChangeEvent, ISubmitEvent } from 'react-jsonschema-form';
 
 import { LoadingBox } from '../utils/status-box';
 import { ServiceInstanceModel } from '../../models';
-import { NsDropdown } from '../RBAC/bindings';
 import { ClusterServiceClassInfo } from '../cluster-service-class-info';
 import { ButtonBar } from '../utils/button-bar';
 import {
@@ -24,6 +23,7 @@ import {
 import {
   Firehose,
   history,
+  NsDropdown,
   PageHeading,
   resourcePathFromModel,
 } from '../utils';

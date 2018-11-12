@@ -9,12 +9,12 @@ import { FieldLevelHelp } from 'patternfly-react';
 import { getPorts } from './source-to-image';
 import { EnvironmentPage } from './environment';
 import { formatNamespacedRouteForResource } from '../ui/ui-actions';
-import { NsDropdown } from './RBAC/bindings';
 import { k8sCreate } from '../module/k8s';
 import { ButtonBar } from './utils/button-bar';
 import {
   history,
   Loading,
+  NsDropdown,
   PageHeading,
   Timestamp,
   units,
