@@ -12,3 +12,7 @@
     padding: 0;
   }
 }
+
+.console-terminal-pf {
+  padding-top: 15px; // fix OKD core vs pf-react styling difference
+}

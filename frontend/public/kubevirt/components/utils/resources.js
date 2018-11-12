@@ -43,22 +43,39 @@ export const getFlattenForKind = (kind) => {
   return resources => _.get(resources, kind, {}).data;
 };
 
+// TODO: move following to web-ui-components
 export const isVmiRunning = (vmi) => _.get(vmi, 'status.phase') === 'Running';
 export const isVmStarting = (vm, vmi) => _.get(vm, 'spec.running') && !isVmiRunning(vmi);
+export const getVmStatus = vm => _.get(vm, 'spec.running', false) ? 'Running' : 'Stopped';
+
+const getApiConsoleApiBase = () => {
+  let base = k8sBasePath;
+  base = base[0] === '/' ? base.substring(1) : base; // avoid the extra slash when compose the URL by VncConsole
+  return base;
+};
+
+const getConsoleApiContext = () => `${getApiConsoleApiBase()}/apis/subresources.${VirtualMachineInstanceModel.apiGroup}`;
+const getConsoleApiPath = vmi => `${VirtualMachineInstanceModel.apiVersion}/namespaces/${vmi.metadata.namespace}/${VirtualMachineInstanceModel.path}/${vmi.metadata.name}`;
+const getConsoleApiQuery = () => `?x-csrf-token=${encodeURIComponent(getCSRFToken())}`;
+const isEncrypted = () => window.location.protocol === 'https:';
 
 export const getVncConnectionDetails = vmi => {
-  // Example: ws://localhost:9000/api/kubernetes/apis/subresources.kubevirt.io/v1alpha2/namespaces/kube-system/virtualmachineinstances/vm-cirros1/vnc
-  let base = k8sBasePath;
-  base = base[0] === '/' ? base.substring(1) : base; // avpid the extra slash when compose the URL by VncConsole
-  const context = `${base}/apis/subresources.${VirtualMachineInstanceModel.apiGroup}`;
-  const apiPath = `${VirtualMachineInstanceModel.apiVersion}/namespaces/${vmi.metadata.namespace}/${VirtualMachineInstanceModel.path}/${vmi.metadata.name}`;
-  const query = `?x-csrf-token=${encodeURIComponent(getCSRFToken())}`;
-  const encrypt = window.location.protocol === 'https:';
   // the novnc library requires protocol to be specified so the URL must be absolute - including host:port
   return {
     encrypt: isEncrypted(), // whether ws or wss to be used
     host: window.location.hostname,
-    port: window.location.port || (encrypt ? '443' : '80'),
-    path: `${context}/${apiPath}/vnc${query}`,
+    port: window.location.port || (isEncrypted() ? '443' : '80'),
+
+    // Example: ws://localhost:9000/api/kubernetes/apis/subresources.kubevirt.io/v1alpha2/namespaces/kube-system/virtualmachineinstances/vm-cirros1/vnc
+    path: `${getConsoleApiContext()}/${getConsoleApiPath(vmi)}/vnc${getConsoleApiQuery()}`,
+  };
+};
+
+export const getSerialConsoleConnectionDetails = vmi => {
+  const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
+  return {
+    vmi,
+    host: `${protocol}://${window.location.hostname}:${window.location.port || (isEncrypted() ? '443' : '80')}`,
+    path: `/${getConsoleApiContext()}/${getConsoleApiPath(vmi)}/console`, // CSRF Token will be added in WSFactory
   };
 };
