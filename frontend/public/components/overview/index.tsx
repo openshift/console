@@ -236,8 +236,8 @@ const OverviewHeading_: React.SFC<OverviewHeadingProps> = ({disabled, groupOptio
   <div className="co-m-nav-title co-m-nav-title--overview">
     {
       title &&
-      <h1 className="co-m-pane__heading">
-        <div className="co-m-pane__name">{title}</div>
+      <h1 className="co-m-pane__heading co-m-pane__heading--overview">
+        <div className="co-m-pane__name co-m-pane__name--overview">{title}</div>
         <div className="toolbar-pf">
           <div className="form-group toolbar-pf-view-selector overview-view-selector">
             <button
@@ -281,13 +281,15 @@ const OverviewHeading_: React.SFC<OverviewHeadingProps> = ({disabled, groupOptio
             />
           </div> }
           <div className="form-group overview-toolbar__form-group">
-            <TextFilter
-              autoFocus={!disabled}
-              defaultValue={''}
-              disabled={disabled}
-              label="Resources by name"
-              onChange={handleFilterChange}
-            />
+            <div className="overview-toolbar__text-filter">
+              <TextFilter
+                autoFocus={!disabled}
+                defaultValue={''}
+                disabled={disabled}
+                label="Resources by name"
+                onChange={handleFilterChange}
+              />
+            </div>
           </div>
         </React.Fragment>}
         {selectedView === View.Dashboard && !_.isEmpty(project) && <div className="form-group overview-toolbar__form-group">
