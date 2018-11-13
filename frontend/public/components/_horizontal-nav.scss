@@ -46,6 +46,7 @@ $co-m-horizontal-nav__menu-item-link-padding-lr: 15px;
     &:hover,
     &:focus {
       color: #252525;
+      text-decoration: none;
       &::after {
         background: $color-pf-black-400;
       }

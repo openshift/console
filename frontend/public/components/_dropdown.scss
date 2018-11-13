@@ -1,17 +1,14 @@
-$co-namespace-selector-desktop: 40px;
-$co-namespace-selector-mobile: 27px;
+$co-namespace-selector-desktop: 47px;
+$co-namespace-selector-mobile: 35px;
 $color-dropdown-hover: rgba(0, 0, 0, .05);
 $color-bookmarker--hover: #AAA;
 $color-bookmarker: #DDD;
+$masthead-height: 60px;
 
 .dropdown {
   position: relative;
   .co-m-resource-icon {
     margin-left: 2px;
-  }
-  //pf4 - dropdown should be more specific than page layout ul styles
-  ul, ol {
-    padding-left: 0px;
   }
 }
 
@@ -138,27 +135,33 @@ $color-bookmarker: #DDD;
 }
 
 .co-namespace-bar {
-  color: var(--pf-global--Color-100);
-  border-bottom: 1px solid var(--pf-global--BorderColor--light-200);
-  padding: var(--pf-global--spacer--xs) var(--pf-global--spacer--xl) var(--pf-global--spacer--xs) var(--pf-global--spacer--md);
-  background: var(--pf-global--BackgroundColor--100);
+  border-bottom: 1px solid $color-grey-background-border;
+  padding: 0 15px;
   white-space: nowrap;
+
+  @media (min-width: $grid-float-breakpoint) {
+    padding-left: 30px;
+    padding-right: 30px;
+  }
 
   &__dropdowns {
     display: flex;
     justify-content: space-between;
 
     .btn-link {
+      color: inherit;
       padding: 4px 0 2px !important;
 
       @media(min-width: $grid-float-breakpoint) {
-        padding-bottom: 7px !important;
-        padding-top: 12px !important;
+        padding-bottom: 10px !important;
+        padding-top: 11px !important;
+      }
+
+      &:hover,
+      &:focus {
+        text-decoration: none;
       }
     }
-  }
-  & .fa-plus-circle {
-    margin-right: var(--pf-global--spacer--xs);
   }
 }
 
@@ -170,9 +173,9 @@ $color-bookmarker: #DDD;
     padding: 2px 0 !important;
 
     @media (min-width: $grid-float-breakpoint) {
-      font-size: ($font-size-base + 3);
-      padding-bottom: 7px !important;
-      padding-top: 7px !important;
+      font-size: ($font-size-base + 2);
+      padding-bottom: 9px !important;
+      padding-top: 9px !important;
     }
 
     &__titlePrefix {
@@ -182,13 +185,14 @@ $color-bookmarker: #DDD;
 }
 
 .co-namespace-selector__menu.dropdown-menu {
-  max-height: calc(100vh - (#{$masthead-height-mobile} + #{$co-namespace-selector-mobile}));
+  max-height: calc(100vh - (#{$masthead-height} + #{$co-namespace-selector-mobile}));
   max-width: 100%;
   min-width: 210px;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 
   @media (min-width: $grid-float-breakpoint) {
-    max-height: calc(100vh - (#{$masthead-height-desktop} + #{$co-namespace-selector-desktop}));
+    max-height: calc(100vh - (#{$masthead-height} + #{$co-namespace-selector-desktop}));
     min-width: 250px;
   }
 

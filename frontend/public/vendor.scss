@@ -9,7 +9,6 @@
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/variables";
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/mixins";
 @import '~patternfly/dist/sass/patternfly/bootstrap-mixin-overrides';
-@import '~patternfly/dist/sass/patternfly/fonts';
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/normalize";
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/scaffolding";
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/type";  // Including this file breaks sourcemaps
@@ -59,8 +58,9 @@
 @import '~patternfly-react-extensions/dist/sass/filter-side-panel';
 @import '~patternfly-react-extensions/dist/sass/properties-side-panel';
 @import '~patternfly-react-extensions/dist/sass/vertical-tabs';
-
-//PF4 Styles
-@import '~@patternfly/react-core/dist/styles/base.css';
-@import '~@patternfly/patternfly-next/utilities/Accessibility/accessibility.css';
-@import '~@patternfly/patternfly-next/utilities/Spacing/spacing.css';
+@import '~@patternfly/patternfly-next/sass-utilities/all';
+@import "~@patternfly/patternfly-next/_variables";
+@import "~@patternfly/patternfly-next/_fonts";
+@import "~@patternfly/patternfly-next/_base";
+@import '~@patternfly/patternfly-next/utilities/Accessibility/accessibility';
+@import '~@patternfly/patternfly-next/utilities/Spacing/spacing';

@@ -1,105 +1,26 @@
-$sidebar-width: 220px;
-
 html,
 body,
 #app,
-#content {
+#content,
+#content-scrollable,
+.pf-l-page__main-section {
   height: 100%; // so .co-p-has-sidebar, .yaml-editor are full height
 }
 
-body {
-  --pf-global--FontSize--md: 16px;
-}
-
-main.pf-l-page__main {
-  overflow-x: inherit;
-}
-
-.pf-l-page__main .pf-l-page__main-section {
-  --pf-global--FontSize--md: 13px;
-  &.pf-m-light {
-    background-color: transparent;
-  }
-  height: 100%;
-}
-
-//override pf4 heading margins and sizes
-.pf-l-page__main-section h4, .h4, h5, .h5, h6, .h6 {
-  margin-top: 10.5px;
-  margin-bottom: 10.5px;
-}
-
-.pf-l-page__main-section h5, .h5 {
-  font-size: 15px;
-}
-
-//pf sections now wrap content, so absolute positioning no longer necessary
 #content {
-  height: 100%;
   display: flex;
   flex-direction: column;
 }
 
 #content-scrollable {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  overflow-x: hidden;
+  overflow-x: auto; // so catalog is scrollable at mobile
   overflow-y: auto;
   position: relative;
   -webkit-overflow-scrolling: touch;
-  background-color: var(--pf-l-page__main-section--m-light--BackgroundColor);
 }
 
-#sidebar {
-  background-color: $color-os-nav-background;
-  bottom: 0;
-  display: flex;
-  flex-direction: column;
-  left: 0;
-  position: fixed;
-  top: $masthead-height-mobile;
-  width: $sidebar-width;
-  z-index: $zindex-navbar-fixed;
-  @media (max-width: $grid-float-breakpoint-max) {
-    left: -($sidebar-width);
-    &.open {
-      box-shadow: 2px 0 3px rgba(0,0,0,.3);
-      left: 0;
-      transition: left .1s ease-in-out;
-    }
-  }
-  @media (min-width: $grid-float-breakpoint) {
-    top: $masthead-height-desktop;
-  }
-}
-
-.sidebar-toggle {
-  background-color: transparent;
-  border: 0;
-  margin: 4px 5px;
-  padding: 9px 10px;
-  position: fixed;
-  z-index: $zindex-navbar-fixed;
-  @media (min-width: $grid-float-breakpoint) {
-    display: none;
-  }
-  &:focus,
-  &:hover {
-    .icon-bar {
-      background: $navbar-pf-vertical-navbar-toggle-icon-bar-hover-bg;
-    }
-  }
-  .icon-bar {
-    background: $navbar-pf-vertical-color;
-    border-radius: 1px;
-    display: block;
-    height: 2px;
-    width: 20px;
-  }
-  .icon-bar + .icon-bar {
-    margin-top: 4px;
-  }
+.pf-l-page__main-section {
+  --pf-global--FontSize--md: #{$font-size-base};
 }
 
 .absolute-zero {

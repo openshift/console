@@ -3,7 +3,14 @@
 
 button:focus,
 a:focus {
-  outline-style: none; }
+  outline-style: none;
+
+  // restore outline-style to buttons, a in .pf-l-page__header
+  // so there is a visual indicator for keyboard users
+  .pf-l-page__header & {
+    outline-style: auto;
+  }
+}
 
 ul,
 ol {
