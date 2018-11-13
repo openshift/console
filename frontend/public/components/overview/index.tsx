@@ -50,14 +50,67 @@ enum View {
   Dashboard = 'dashboard',
 }
 
-// Should not be a valid label value to avoid conflicts.
+// The following values should not be valid label keys to avoid conflicts.
 // https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/#syntax-and-character-set
-const EMPTY_GROUP_LABEL = 'other resources';
+const GROUP_BY_APPLICATION = '#GROUP_BY_APPLICATION#';
+const GROUP_BY_RESOURCE = '#GROUP_BY_RESOURCE#';
+const EMPTY_GROUP_NAME = 'other resources';
+
 const DEPLOYMENT_REVISION_ANNOTATION = 'deployment.kubernetes.io/revision';
 const DEPLOYMENT_CONFIG_LATEST_VERSION_ANNOTATION = 'openshift.io/deployment-config.latest-version';
 const DEPLOYMENT_PHASE_ANNOTATION = 'openshift.io/deployment.phase';
 const TRIGGERS_ANNOTATION = 'image.openshift.io/triggers';
 const METRICS_POLL_INTERVAL = 30 * 1000;
+
+const asOverviewGroups = (keyedItems: { [name: string]: OverviewItem[] }): OverviewGroup[] => {
+  const compareGroups = (a: OverviewGroup, b: OverviewGroup) => {
+    if (a.name === EMPTY_GROUP_NAME) {
+      return 1;
+    }
+    if (b.name === EMPTY_GROUP_NAME) {
+      return -1;
+    }
+    return a.name.localeCompare(b.name);
+  };
+
+  return _.map(keyedItems, (group: OverviewItem[], name: string): OverviewGroup => {
+    return {
+      name,
+      items: group,
+    };
+  }).sort(compareGroups);
+};
+
+const getApplication = (item: OverviewItem): string => {
+  const labels = _.get(item, 'obj.metadata.labels') || {};
+  return labels['app.kubernetes.io/part-of'] || labels['app.kubernetes.io/name'] || labels.app || EMPTY_GROUP_NAME;
+};
+
+const groupByApplication = (items: OverviewItem[]): OverviewGroup[] => {
+  const byApplication = _.groupBy(items, getApplication);
+  return asOverviewGroups(byApplication);
+};
+
+const groupByResource = (items: OverviewItem[]): OverviewGroup[] => {
+  const byResource = _.groupBy(items, item => _.startCase(item.obj.kind));
+  return asOverviewGroups(byResource);
+};
+
+const groupByLabel = (items: OverviewItem[], label: string): OverviewGroup[] => {
+  const byLabel = _.groupBy(items, (item): string => _.get(item, ['obj', 'metadata', 'labels', label]) || EMPTY_GROUP_NAME);
+  return asOverviewGroups(byLabel);
+};
+
+const groupItems = (items: OverviewItem[], selectedGroup: string): OverviewGroup[] => {
+  switch (selectedGroup) {
+    case GROUP_BY_APPLICATION:
+      return groupByApplication(items);
+    case GROUP_BY_RESOURCE:
+      return groupByResource(items);
+    default:
+      return groupByLabel(items, selectedGroup);
+  }
+};
 
 // List of container status waiting reason values that we should call out as errors in overview rows.
 const CONTAINER_WAITING_STATE_ERROR_REASONS = ['CrashLoopBackOff', 'ErrImagePull', 'ImagePullBackOff'];
@@ -232,7 +285,7 @@ const headingDispatchToProps = (dispatch): OverviewHeadingPropsFromDispatch => (
   selectView: (view: View) => dispatch(UIActions.selectOverviewView(view)),
 });
 
-const OverviewHeading_: React.SFC<OverviewHeadingProps> = ({disabled, groupOptions, handleFilterChange = _.noop, handleGroupChange = _.noop, selectedGroup = '', selectView, selectedView, title, project}) => (
+const OverviewHeading_: React.SFC<OverviewHeadingProps> = ({disabled, firstLabel = '', groupOptions, handleFilterChange = _.noop, handleGroupChange = _.noop, selectedGroup = '', selectView, selectedView, title, project}) => (
   <div className="co-m-nav-title co-m-nav-title--overview">
     {
       title &&
@@ -267,19 +320,20 @@ const OverviewHeading_: React.SFC<OverviewHeadingProps> = ({disabled, groupOptio
     <Toolbar className="overview-toolbar">
       <Toolbar.RightContent>
         {selectedView === View.Resources && <React.Fragment>
-          {!_.isEmpty(groupOptions) && <div className="form-group overview-toolbar__form-group">
+          <div className="form-group overview-toolbar__form-group">
             <label className="overview-toolbar__label co-no-bold">
-              Group by label
+              Group by
             </label>
             <Dropdown
               className="overview-toolbar__dropdown"
               disabled={disabled}
               items={groupOptions}
               onChange={handleGroupChange}
-              style={{display: 'inline-block'}}
-              title={selectedGroup}
+              title={groupOptions[selectedGroup]}
+              spacerBefore={new Set([firstLabel])}
+              headerBefore={{[firstLabel]: 'Label'}}
             />
-          </div> }
+          </div>
           <div className="form-group overview-toolbar__form-group">
             <div className="overview-toolbar__text-filter">
               <TextFilter
@@ -326,9 +380,10 @@ class OverviewMainContent_ extends SafetyFirst<OverviewMainContentProps, Overvie
       items: [],
       filteredItems: [],
       groupedItems: [],
+      firstLabel: '',
       groupOptions: {},
       metrics: {},
-      selectedGroupLabel: '',
+      selectedGroup: '',
     };
   }
 
@@ -359,7 +414,7 @@ class OverviewMainContent_ extends SafetyFirst<OverviewMainContentProps, Overvie
       statefulSets,
       selectedView,
     } = this.props;
-    const {filterValue, selectedGroupLabel} = this.state;
+    const {filterValue, selectedGroup} = this.state;
 
     if (!_.isEqual(namespace, prevProps.namespace)
       || loaded !== prevProps.loaded
@@ -379,11 +434,11 @@ class OverviewMainContent_ extends SafetyFirst<OverviewMainContentProps, Overvie
       const filteredItems = this.filterItems(this.state.items);
       this.setState({
         filteredItems,
-        groupedItems: this.groupItems(filteredItems, selectedGroupLabel),
+        groupedItems: groupItems(filteredItems, selectedGroup),
       });
-    } else if (selectedGroupLabel !== prevState.selectedGroupLabel) {
+    } else if (selectedGroup !== prevState.selectedGroup) {
       this.setState({
-        groupedItems: this.groupItems(this.state.filteredItems, selectedGroupLabel),
+        groupedItems: groupItems(this.state.filteredItems, selectedGroup),
       });
     } else if (selectedView !== prevProps.selectedView && selectedView === View.Dashboard) {
       // TODO: Preserve filter when switching to dashboard view and back.
@@ -447,42 +502,23 @@ class OverviewMainContent_ extends SafetyFirst<OverviewMainContentProps, Overvie
     });
   }
 
-  groupItems(items: OverviewItem[], label: string): OverviewGroup[] {
-    const compareGroups = (a, b) => {
-      if (a.name === EMPTY_GROUP_LABEL) {
-        return 1;
-      }
-      if (b.name === EMPTY_GROUP_LABEL) {
-        return -1;
-      }
-      return a.name.localeCompare(b.name);
+  getGroupOptionsFromLabels(items: OverviewItem[]): any {
+    const specialGroups = {
+      [GROUP_BY_APPLICATION]: 'Application',
+      [GROUP_BY_RESOURCE]: 'Resource',
     };
 
-    if (!label) {
-      return [{items}];
+    const labelKeys = _.flatMap(items, item => _.keys(_.get(item, 'obj.metadata.labels'))).sort();
+    if (_.isEmpty(labelKeys)) {
+      return { firstLabel: '', groupOptions: specialGroups };
     }
 
-    const groups = _.groupBy(items, item => _.get(item, ['obj', 'metadata', 'labels', label]) || EMPTY_GROUP_LABEL);
-    return _.map(groups, (group: OverviewItem[], name: string) => {
-      return {
-        name,
-        items: group,
-      };
-    }).sort(compareGroups);
-  }
-
-  getGroupOptionsFromLabels(items: OverviewItem[]): any {
-    const {groupOptions} = this.state;
-    const labelKeys = _.flatMap(items, item => _.keys(_.get(item,'obj.metadata.labels', {})));
-    return _.reduce(labelKeys, (accumulator, key) => {
-      if (_.has(key, accumulator)) {
-        return accumulator;
-      }
-      return {
-        ...accumulator,
-        [key]: key,
-      };
-    }, groupOptions);
+    const firstLabel = _.first(labelKeys);
+    const groupOptions = _.reduce(labelKeys, (accumulator, key) => ({
+      ...accumulator,
+      [key]: key,
+    }), specialGroups);
+    return { firstLabel, groupOptions };
   }
 
   getPodsForResource(resource: K8sResourceKind): K8sResourceKind[] {
@@ -741,15 +777,16 @@ class OverviewMainContent_ extends SafetyFirst<OverviewMainContentProps, Overvie
     updateResources(items);
 
     const filteredItems = this.filterItems(items);
-    const groupOptions = this.getGroupOptionsFromLabels(filteredItems);
-    const selectedGroupLabel = _.has(groupOptions, 'app') ? 'app' : _.head(_.keys(groupOptions));
-    const groupedItems = this.groupItems(filteredItems, selectedGroupLabel);
+    const { firstLabel, groupOptions } = this.getGroupOptionsFromLabels(filteredItems);
+    const selectedGroup = GROUP_BY_APPLICATION;
+    const groupedItems = groupItems(filteredItems, selectedGroup);
     this.setState({
       filteredItems,
       groupedItems,
+      firstLabel,
       groupOptions,
       items,
-      selectedGroupLabel,
+      selectedGroup,
     });
   }
 
@@ -757,8 +794,8 @@ class OverviewMainContent_ extends SafetyFirst<OverviewMainContentProps, Overvie
     this.setState({filterValue: event.target.value});
   }
 
-  handleGroupChange(selectedGroupLabel: string): void {
-    this.setState({selectedGroupLabel});
+  handleGroupChange(selectedGroup: string): void {
+    this.setState({selectedGroup});
   }
 
   clearFilter(): void {
@@ -767,14 +804,15 @@ class OverviewMainContent_ extends SafetyFirst<OverviewMainContentProps, Overvie
 
   render() {
     const {loaded, loadError, mock, title, project = {}, selectedView} = this.props;
-    const {filteredItems, groupedItems, groupOptions, metrics, selectedGroupLabel} = this.state;
+    const {filteredItems, groupedItems, firstLabel, groupOptions, metrics, selectedGroup} = this.state;
     return <div className="co-m-pane">
       <OverviewHeading
         disabled={mock}
+        firstLabel={firstLabel}
         groupOptions={groupOptions}
         handleFilterChange={this.handleFilterChange}
         handleGroupChange={this.handleGroupChange}
-        selectedGroup={selectedGroupLabel}
+        selectedGroup={selectedGroup}
         selectedView={selectedView}
         title={title}
         project={project.data}
@@ -978,7 +1016,7 @@ export type OverviewItem = {
 };
 
 export type OverviewGroup = {
-  name?: string;
+  name: string;
   items: OverviewItem[];
 };
 
@@ -992,6 +1030,7 @@ type OverviewHeadingPropsFromDispatch = {
 
 type OverviewHeadingOwnProps = {
   disabled?: boolean;
+  firstLabel?: string;
   groupOptions?: any;
   handleFilterChange?: (event: any) => void;
   handleGroupChange?: (selectedLabel: string) => void;
@@ -1039,9 +1078,10 @@ type OverviewMainContentState = {
   items: any[];
   filteredItems: any[];
   groupedItems: any[];
+  firstLabel: string;
   groupOptions: any;
   metrics: any;
-  selectedGroupLabel: string;
+  selectedGroup: string;
 };
 
 type OverviewPropsFromState = {
