@@ -39,7 +39,7 @@ describe('Deploy Image', () => {
     it('can be used to create an app based on an image', async() => {
       await $('.co-m-btn-bar .btn-primary').click();
       await browser.wait(until.presenceOf($('.overview')));
-      expect($('.co-m-pane__name').getText()).toEqual('Overview');
+      expect($('.co-m-pane__name').getText()).toEqual('Project Status');
       await browser.get(`${appHost}/k8s/ns/${testName}/deploymentconfigs/${appName}`);
       await browser.wait(until.presenceOf(crudView.actionsDropdown));
       expect(browser.getCurrentUrl()).toContain(`/${appName}`);

@@ -5,11 +5,10 @@ import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 
 import { EventsList } from './events';
-import { k8sBasePath } from '../module/k8s';
 import { SoftwareDetails } from './software-details';
 import { withStartGuide } from './start-guide';
-import { coFetch, coFetchJSON } from '../co-fetch';
-import { Status, errorStatus } from './graphs/status';
+import { coFetchJSON } from '../co-fetch';
+import { ConsoleHealth, KubernetesHealth, Health } from './graphs/health';
 import { FLAGS, connectToFlags, flagPending } from '../features';
 import { Gauge, prometheusBasePath, requirePrometheus } from './graphs';
 import {
@@ -20,20 +19,6 @@ import {
   PageHeading,
   StatusBox,
 } from './utils';
-
-const fetchHealth = () => coFetch(`${k8sBasePath}/healthz`)
-  .then(response => response.text())
-  .then(body => {
-    if (body === 'ok') {
-      return {short: 'UP', long: 'All good', status: 'OK'};
-    }
-    return {short: 'ERROR', long: body, status: 'ERROR'};
-  })
-  .catch(errorStatus);
-
-const fetchConsoleHealth = () => coFetchJSON('health')
-  .then(() => ({short: 'UP', long: 'All good', status: 'OK'}))
-  .catch(() => ({short: 'ERROR', long: 'The console service cannot be reached', status: 'ERROR'}));
 
 
 const DashboardLink = ({to, id}) => <Link id={id} className="co-external-link" target="_blank" to={to}>View Grafana Dashboard</Link>;
@@ -49,30 +34,7 @@ const Graphs = requirePrometheus(({namespace, isOpenShift}) => {
         {!isOpenShift && <DashboardLink id="qa_dashboard_k8s_health" to="/grafana/dashboard/db/kubernetes-cluster-health?orgId=1" />}
       </div>
       <div className="container-fluid group__body">
-        <div className="row">
-          <div className="col-md-3 col-sm-6">
-            <Status title="Kubernetes API" fetch={fetchHealth} />
-          </div>
-          <div className="col-md-3 col-sm-6">
-            <Status title="OpenShift Console" fetch={fetchConsoleHealth} />
-          </div>
-          <div className="col-md-3 col-sm-6">
-            <Status
-              title="Alerts Firing"
-              name="Alerts"
-              query={`sum(ALERTS{alertstate="firing", alertname!="DeadMansSwitch" ${namespace ? `, namespace="${namespace}"` : ''}})`}
-              href="/monitoring"
-            />
-          </div>
-          <div className="col-md-3 col-sm-6">
-            <Status
-              title="Crashlooping Pods"
-              name="Pods"
-              query={`count(increase(kube_pod_container_status_restarts_total${namespace ? `{namespace="${namespace}"}` : ''}[1h]) > 5 )`}
-              href={`/k8s/${namespace ? `ns/${namespace}` : 'all-namespaces'}/pods?rowFilter-pod-status=CrashLoopBackOff`}
-            />
-          </div>
-        </div>
+        <Health namespace={namespace} />
       </div>
     </div>
     { !namespace &&
@@ -127,8 +89,6 @@ const Graphs = requirePrometheus(({namespace, isOpenShift}) => {
 });
 
 const LimitedGraphs = () => {
-  // Use the shorter 'OpenShift Console' instead of 'OpenShift Container Platform Console' since the title appears in the chart.
-  const consoleName = window.SERVER_FLAGS.branding === 'okd' ? 'OKD Console' : 'OpenShift Console';
   return <div className="group">
     <div className="group__title">
       <h2 className="h3">Health</h2>
@@ -136,10 +96,10 @@ const LimitedGraphs = () => {
     <div className="container-fluid group__body">
       <div className="row">
         <div className="col-lg-6 col-md-6">
-          <Status title="Kubernetes API" fetch={fetchHealth} />
+          <KubernetesHealth />
         </div>
         <div className="col-lg-6 col-md-6">
-          <Status title={consoleName} fetch={fetchConsoleHealth} />
+          <ConsoleHealth />
         </div>
       </div>
     </div>

@@ -80,6 +80,9 @@ export default (state, action) => {
       }
       return state;
 
+    case types.selectOverviewView:
+      return state.setIn(['overview', 'selectedView'], action.view);
+
     case types.selectOverviewItem:
       return state.setIn(['overview', 'selectedUID'], action.uid);
 
