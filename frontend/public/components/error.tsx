@@ -77,7 +77,7 @@ export const ErrorBoundaryFallback: React.SFC<ErrorBoundaryFallbackProps> = (pro
         <div className="form-group">
           <label htmlFor="componentTrace">Component Trace: </label>
           <div className="co-copy-to-clipboard__stacktrace-width-height">
-            <CopyToClipboard value={props.componentStack.trim()} className="co-copy-to-clipboard__stacktrace-height" />
+            <CopyToClipboard value={props.componentStack.trim()} />
           </div>
         </div>
         <div className="form-group">
