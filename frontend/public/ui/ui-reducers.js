@@ -71,7 +71,7 @@ export default (state, action) => {
         const alerts = state.getIn(['monitoring', 'rules']);
         const silences = state.getIn(['monitoring', 'silences'], {}).data;
 
-        _.each(_.get(alerts, 'data.asAlerts'), a => {
+        _.each(_.get(alerts, 'data'), a => {
           if (a.state === AlertStates.Firing && _.some(silences, s => isSilenced(a, s))) {
             a.state = AlertStates.Silenced;
           }
