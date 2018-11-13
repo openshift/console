@@ -1,9 +1,11 @@
 /* eslint-disable no-unused-vars, no-undef */
 import * as _ from 'lodash-es';
 import * as React from 'react';
+import { ExpandCollapse } from 'patternfly-react';
 import { Helmet } from 'react-helmet';
 
-import { getQueryArgument, PageHeading } from './utils';
+import {CopyToClipboard, getQueryArgument, PageHeading} from './utils';
+import {ErrorBoundaryFallbackProps} from './utils/error-boundary';
 
 // User messages for error_types returned in auth.go
 const messages = {
@@ -62,6 +64,32 @@ export const ErrorPage404: React.SFC<ErrorPage404Props> = (props) => <div>
   <ErrorComponent title="404: Page Not Found" message={props.message} errMessage={props.errMessage} />
 </div>;
 
+export const ErrorBoundaryFallback: React.SFC<ErrorBoundaryFallbackProps> = (props) =>
+  <div className="co-m-pane__body">
+    <h1 className="co-m-pane__heading co-m-pane__heading--center">Oh no! Something went wrong.</h1>
+    <div className="row">
+      <ExpandCollapse textCollapsed="Show error details..." textExpanded="Hide error details..." bordered={false}>
+        <h3 className="co-section-heading-tertiary">{props.title}</h3>
+        <div className="form-group">
+          <label htmlFor="description">Description: </label>
+          <p>{props.errorMessage}</p>
+        </div>
+        <div className="form-group">
+          <label htmlFor="componentTrace">Component Trace: </label>
+          <div className="co-copy-to-clipboard__stacktrace-width-height">
+            <CopyToClipboard value={props.componentStack.trim()} />
+          </div>
+        </div>
+        <div className="form-group">
+          <label htmlFor="stackTrace">Stack Trace: </label>
+          <div className="co-copy-to-clipboard__stacktrace-width-height">
+            <CopyToClipboard value={props.stack.trim()} />
+          </div>
+        </div>
+      </ExpandCollapse>
+    </div>
+  </div>;
+
 export type ErrorComponentProps = {
   title: string;
   message?: string;
@@ -70,3 +98,4 @@ export type ErrorComponentProps = {
 
 export type ErrorPageProps = {};
 export type ErrorPage404Props = Omit<ErrorComponentProps, 'title'>;
+
