@@ -836,89 +836,89 @@ export const catalogItems = [
   },
 ];
 
-export const catalogCategories = [
-  {
-    'id': 'all',
-    'numItems': 20,
+export const catalogCategories = {
+  all: {
+    id: 'all',
+    numItems: 20,
   },
-  {
-    'id': 'languages',
-    'subcategories': [
-      {
-        'id': 'java',
-        'numItems': 1,
+  languages: {
+    id: 'languages',
+    subcategories: {
+      java: {
+        id: 'java',
+        numItems: 1,
       },
-      {
-        'id': 'javascript',
-        'numItems': 2,
+      javascript: {
+        id: 'javascript',
+        numItems: 2,
       },
-      {
-        'id': 'dotnet',
-        'numItems': 1,
+      dotnet: {
+        id: 'dotnet',
+        numItems: 1,
       },
-      {
-        'id': 'perl',
-        'numItems': 2,
+      perl: {
+        id: 'perl',
+        numItems: 2,
       },
-      {
-        'id': 'ruby',
-        'numItems': 2,
+      ruby: {
+        id: 'ruby',
+        numItems: 2,
       },
-      {
-        'id': 'php',
-        'numItems': 2,
+      php: {
+        id: 'php',
+        numItems: 2,
       },
-      {
-        'id': 'python',
-        'numItems': 2,
+      python: {
+        id: 'python',
+        numItems: 2,
       },
-    ],
-    'numItems': 12,
+    },
+    numItems: 12,
   },
-  {
-    'id': 'databases',
-    'subcategories': [
-      {
-        'id': 'mongodb',
-        'numItems': 1,
+  databases: {
+    id: 'databases',
+    subcategories: {
+      mongodb: {
+        id: 'mongodb',
+        numItems: 1,
       },
-      {
-        'id': 'mysql',
-        'numItems': 1,
+      mysql: {
+        id: 'mysql',
+        numItems: 1,
       },
-      {
-        'id': 'postgresql',
-        'numItems': 1,
+      postgresql: {
+        id: 'postgresql',
+        numItems: 1,
       },
-      {
-        'id': 'mariadb',
-        'numItems': 1,
+      mariadb: {
+        id: 'mariadb',
+        numItems: 1,
       },
-    ],
-    'numItems': 4,
+    },
+    numItems: 4,
   },
-  {
-    'id': 'middleware',
-    'subcategories': [
-      {
-        'id': 'runtimes',
-        'numItems': 1,
+  middleware: {
+    id: 'middleware',
+    subcategories: {
+      runtimes: {
+        id: 'runtimes',
+        numItems: 1,
       },
-    ],
-    'numItems': 1,
+    },
+    numItems: 1,
   },
-  {
-    'id': 'cicd',
-    'subcategories': [
-      {
-        'id': 'jenkins',
-        'numItems': 2,
+  cicd: {
+    id: 'cicd',
+    subcategories: {
+      jenkins: {
+        id: 'jenkins',
+        numItems: 2,
       },
-    ],
-    'numItems': 2,
+    },
+    numItems: 2,
   },
-  {
-    'id': 'other',
-    'numItems': 1,
+  other: {
+    id: 'other',
+    numItems: 1,
   },
-];
+};
