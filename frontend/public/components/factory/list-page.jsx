@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 
 import k8sActions from '../../module/k8s/k8s-actions';
 import { CheckBoxes, storagePrefix } from '../row-filter';
-import { ErrorPage404, ErrorBoundaryFallbackComponent } from '../error';
+import { ErrorPage404, ErrorBoundaryFallback } from '../error';
 import { referenceForModel } from '../../module/k8s';
 import { withFallback } from '../utils/error-boundary';
 import {
@@ -269,10 +269,8 @@ FireMan_.propTypes = {
   title: PropTypes.string,
 };
 
-export const listPageWithFallback = Page => withFallback(props => <ListPage {...props} Page={Page} />, ErrorBoundaryFallbackComponent);
-
 /** @type {React.SFC<{ListComponent: React.ComponentType<any>, kind: string, helpText?: any, namespace?: string, filterLabel?: string, textFilter?: string, title?: string, showTitle?: boolean, dropdownFilters?: any[], rowFilters?: any[], selector?: any, fieldSelector?: string, canCreate?: boolean, createButtonText?: string, createProps?: any, mock?: boolean}>} */
-export const ListPage = props => {
+export const ListPage = withFallback(props => {
   const {
     autoFocus,
     canCreate,
@@ -350,10 +348,9 @@ export const ListPage = props => {
     textFilter={textFilter}
     title={title}
   />;
-};
+}, ErrorBoundaryFallback);
 
 ListPage.displayName = 'ListPage';
-export const ListPageWrapper = listPageWithFallback(ListPage);
 
 /** @type {React.SFC<{canCreate?: boolean, createButtonText?: string, createProps?: any, flatten?: Function, title?: string, showTitle?: boolean, helpText?: any, dropdownFilters?: any[], filterLabel?: string, rowFilters?: any[], resources: any[], ListComponent: React.ComponentType<any>, namespace?: string}>} */
 export const MultiListPage = props => {

@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-vars, no-undef, react/display-name */
 
 import * as React from 'react';
-import {ErrorBoundaryFallbackComponentProps} from '../error';
 
 class DefaultFallback extends React.Component {
   render() {
@@ -17,11 +16,11 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
       error: {
         message: '',
         stack: '',
-        name: ''
+        name: '',
       },
       errorInfo: {
-        componentStack: ''
-      }
+        componentStack: '',
+      },
     };
   }
 
@@ -29,7 +28,7 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
     this.setState({
       hasError: true,
       error,
-      errorInfo
+      errorInfo,
     });
   }
 
@@ -48,8 +47,15 @@ export const withFallback: WithFallback = (Component, FallbackComponent) => (pro
 
 export type WithFallback = <P = {}>(Component: React.ComponentType<P>, FallbackComponent?: React.ComponentType<any>) => React.ComponentType<P>;
 
+export type ErrorBoundaryFallbackProps = {
+  errorMessage: string;
+  componentStack: string;
+  stack: string;
+  title: string;
+};
+
 export type ErrorBoundaryProps = {
-  FallbackComponent?: React.ComponentType<ErrorBoundaryFallbackComponentProps>;
+  FallbackComponent?: React.ComponentType<ErrorBoundaryFallbackProps>;
 };
 
 export type ErrorBoundaryState = {
