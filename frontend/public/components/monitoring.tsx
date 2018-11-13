@@ -157,7 +157,7 @@ const SilenceMatchersList = ({silence}) => <div className={`co-text-${SilenceRes
 const alertStateToProps = (state): AlertsDetailsPageProps => {
   const {data, loaded, loadError}: Rules = monitoringRulesToProps(state);
   const labels = getURLSearchParams();
-  const alert = _.find(data && data.asAlerts, {labels});
+  const alert = _.find(data, {labels});
   const silencedBy = alertState(alert) === AlertStates.Silenced
     ? _.filter(monitoringSilencesToProps(state).data, s => isSilenced(alert, s))
     : [];
@@ -283,8 +283,8 @@ const ActiveAlerts = ({alerts}) => <div className="co-m-table-grid co-m-table-gr
 const ruleStateToProps = (state, {match}): AlertRulesDetailsPageProps => {
   const {data, loaded, loadError}: Rules = monitoringRulesToProps(state);
   const id = _.get(match, 'params.id');
-  const rule = _.find(_.get(data, 'asRules'), {id});
-  return {loaded, loadError, rule};
+  const alert = _.find(data, a => a.rule.id === id);
+  return {loaded, loadError, rule: _.get(alert, 'rule')};
 };
 
 const AlertRulesDetailsPage = withFallback(connect(ruleStateToProps)((props: AlertRulesDetailsPageProps) => {
@@ -354,7 +354,7 @@ const AlertRulesDetailsPage = withFallback(connect(ruleStateToProps)((props: Ale
 }));
 
 const silencedAlertsToProps = (state, {silence}) => ({
-  alerts: _.filter(_.get(monitoringRulesToProps(state), 'data.asAlerts'), a => alertState(a) === AlertStates.Silenced && isSilenced(a, silence)),
+  alerts: _.filter(_.get(monitoringRulesToProps(state), 'data'), a => alertState(a) === AlertStates.Silenced && isSilenced(a, silence)),
 });
 
 const SilencedAlertsList = connect(silencedAlertsToProps)(
@@ -611,7 +611,6 @@ const MonitoringListPage = connect(filtersToProps)(class InnerMonitoringListPage
 
 const AlertsPage_ = props => <MonitoringListPage
   {...props}
-  data={props.data && props.data.asAlerts}
   Header={AlertHeader}
   kindPlural="Alerts"
   nameFilterID="alert-name"
@@ -899,7 +898,7 @@ export class MonitoringUI extends React.Component<null, null> {
         });
 
         // If a rule is has no active alerts, create a "fake" alert
-        const asAlerts = _.flatMap(rules, rule => _.isEmpty(rule.alerts)
+        return _.flatMap(rules, rule => _.isEmpty(rule.alerts)
           ? {
             annotations: rule.annotations,
             id: rule.id,
@@ -908,8 +907,6 @@ export class MonitoringUI extends React.Component<null, null> {
           }
           : rule.alerts.map(a => ({rule, ...a}))
         );
-
-        return {asAlerts, asRules: rules};
       });
     } else {
       store.dispatch(UIActions.monitoringErrored('rules', new Error('prometheusBaseURL not set')));
@@ -990,7 +987,7 @@ type Rule = {
   query: string;
 };
 type Rules = {
-  data: {asRules: Rule[], asAlerts: Alert[]};
+  data: Alert[];
   loaded: boolean;
   loadError?: string;
 };
