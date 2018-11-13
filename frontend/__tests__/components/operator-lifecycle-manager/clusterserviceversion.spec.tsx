@@ -5,9 +5,9 @@ import { shallow, ShallowWrapper, mount, ReactWrapper } from 'enzyme';
 import { Link } from 'react-router-dom';
 import * as _ from 'lodash-es';
 
-import { ClusterServiceVersionsDetailsPage, ClusterServiceVersionsDetailsPageProps, ClusterServiceVersionDetails, ClusterServiceVersionDetailsProps, ClusterServiceVersionsPage, ClusterServiceVersionsPageProps, ClusterServiceVersionList, ClusterServiceVersionListProps, ClusterServiceVersionHeader, ClusterServiceVersionRow, ClusterServiceVersionRowProps, CRDCard, CRDCardRow } from '../../../public/components/operator-lifecycle-manager/clusterserviceversion';
+import { ClusterServiceVersionsDetailsPage, ClusterServiceVersionsDetailsPageProps, ClusterServiceVersionDetails, ClusterServiceVersionDetailsProps, ClusterServiceVersionsPage, ClusterServiceVersionsPageProps, ClusterServiceVersionList, ClusterServiceVersionHeader, ClusterServiceVersionRow, ClusterServiceVersionRowProps, CRDCard, CRDCardRow } from '../../../public/components/operator-lifecycle-manager/clusterserviceversion';
 import { ClusterServiceVersionKind, ClusterServiceVersionLogo, ClusterServiceVersionLogoProps, referenceForCRDDesc } from '../../../public/components/operator-lifecycle-manager';
-import { DetailsPage, ListPage, ListHeader, ColHead, List } from '../../../public/components/factory';
+import { DetailsPage, ListPage, ListHeader, ColHead, List, ListInnerProps } from '../../../public/components/factory';
 import { testClusterServiceVersion } from '../../../__mocks__/k8sResourcesMocks';
 import { Timestamp, OverflowLink, MsgBox, ResourceLink, ResourceCog, ErrorBoundary, LoadingBox, ScrollToTopOnMount, SectionHeading } from '../../../public/components/utils';
 import { referenceForModel } from '../../../public/module/k8s';
@@ -143,10 +143,10 @@ describe(ClusterServiceVersionLogo.displayName, () => {
 describe(ClusterServiceVersionList.displayName, () => {
 
   it('renders `List` with correct props', () => {
-    const wrapper = shallow<ClusterServiceVersionListProps>(<ClusterServiceVersionList data={[]} loaded={true} />);
+    const wrapper = shallow(<ClusterServiceVersionList data={[]} loaded={true} />);
 
-    expect(wrapper.find(List).props().Row).toEqual(ClusterServiceVersionRow);
-    expect(wrapper.find(List).props().Header).toEqual(ClusterServiceVersionHeader);
+    expect(wrapper.find<ListInnerProps>(List).props().Row).toEqual(ClusterServiceVersionRow);
+    expect(wrapper.find<ListInnerProps>(List).props().Header).toEqual(ClusterServiceVersionHeader);
   });
 });
 

@@ -8,7 +8,7 @@ import * as _ from 'lodash-es';
 import { PackageManifestHeader, PackageManifestHeaderProps, PackageManifestRow, PackageManifestRowProps, PackageManifestList, PackageManifestListProps } from '../../../public/components/operator-lifecycle-manager/package-manifest';
 import { ClusterServiceVersionLogo, PackageManifestKind } from '../../../public/components/operator-lifecycle-manager';
 import { SubscriptionModel } from '../../../public/models';
-import { ListHeader, ColHead, List } from '../../../public/components/factory';
+import { ListHeader, ColHead, List, ListInnerProps } from '../../../public/components/factory';
 import { testPackageManifest, testCatalogSource, testSubscription } from '../../../__mocks__/k8sResourcesMocks';
 
 describe(PackageManifestHeader.displayName, () => {
@@ -90,9 +90,9 @@ describe(PackageManifestList.displayName, () => {
   it('renders `List` component with correct props for each section', () => {
     expect(wrapper.find(List).length).toEqual(2);
     packages.forEach(({status}, i) => {
-      expect(wrapper.find('.co-catalogsource-list__section').at(i).find(List).props().Header).toEqual(PackageManifestHeader);
-      expect(wrapper.find('.co-catalogsource-list__section').at(i).find(List).props().data.length).toEqual(1);
-      expect(wrapper.find('.co-catalogsource-list__section').at(i).find(List).props().label).toEqual('Package Manifests');
+      expect(wrapper.find('.co-catalogsource-list__section').at(i).find<ListInnerProps>(List).props().Header).toEqual(PackageManifestHeader);
+      expect(wrapper.find('.co-catalogsource-list__section').at(i).find<ListInnerProps>(List).props().data.length).toEqual(1);
+      expect(wrapper.find('.co-catalogsource-list__section').at(i).find<ListInnerProps>(List).props().label).toEqual('Package Manifests');
     });
   });
 });

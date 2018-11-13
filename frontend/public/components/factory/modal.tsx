@@ -75,6 +75,7 @@ ModalSubmitFooter.propTypes = {
   message: PropTypes.string,
   submitText: PropTypes.node.isRequired,
   submitButtonClass: PropTypes.string,
+  submitDisabled: PropTypes.bool,
 };
 
 export type CreateModalLauncherProps = {
@@ -105,7 +106,7 @@ export type ModalSubmitFooterProps = {
   errorMessage?: string;
   inProgress: boolean;
   cancel: (e: Event) => void;
-  submitText: string;
+  submitText: React.ReactNode;
   submitDisabled?: boolean;
   submitButtonClass?: string;
 };
