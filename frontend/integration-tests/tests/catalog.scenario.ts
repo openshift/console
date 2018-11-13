@@ -18,12 +18,12 @@ describe('Catalog', () => {
     checkErrors();
   });
 
-  it('has clickable Catalog Tiles', async() => {
+  it('clicking on Catalog Tile opens details modal', async() => {
     expect(catalogPageView.catalogTiles.isPresent()).toBe(true);
 
     await catalogPageView.catalogTiles.first().click();
-    await catalogView.createCatalogItemPageIsLoaded();
-    expect($('.co-catalog-item-details__name').isPresent()).toBe(true);
+    await catalogView.catalogDetailsLoaded();
+    expect($('.co-catalog-page__overlay-body').isPresent()).toBe(true);
   });
 
   it('filters catalog tiles by Category', async() => {
