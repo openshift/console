@@ -332,6 +332,9 @@ VirtualRows.propTypes = {
   data: PropTypes.arrayOf(PropTypes.object),
   expand: PropTypes.bool,
   Row: PropTypes.func.isRequired,
+  kindObj: PropTypes.any.isRequired,
+  label: PropTypes.string,
+  mock: PropTypes.bool,
 };
 
 const Rows: React.SFC<RowsProps> = (props) => {
@@ -348,6 +351,9 @@ Rows.propTypes = {
   data: PropTypes.arrayOf(PropTypes.object),
   expand: PropTypes.bool,
   Row: PropTypes.func.isRequired,
+  kindObj: PropTypes.any,
+  label: PropTypes.string,
+  mock: PropTypes.bool,
 };
 
 const stateToProps = ({UI}, {data = [], defaultSortField = 'metadata.name', defaultSortFunc = undefined, filters = {}, loaded = false, reduxID = null, reduxIDs = null, staticFilters = [{}]}) => {
@@ -402,10 +408,18 @@ export const List = connect(stateToProps, {sortList: UIActions.sortList})(
       selector: PropTypes.object,
       staticFilters: PropTypes.array,
       virtualize: PropTypes.bool,
+      currentSortField: PropTypes.string,
+      currentSortFunc: PropTypes.func,
+      currentSortOrder: PropTypes.any,
+      defaultSortField: PropTypes.string,
+      defaultSortFunc: PropTypes.string,
+      label: PropTypes.string,
+      listId: PropTypes.string,
+      sortList: PropTypes.func,
     };
 
     render() {
-      const {currentSortField, currentSortFunc, currentSortOrder, expand, Header, label, listId, mock, Row, sortList, virtualize} = this.props;
+      const {currentSortField, currentSortFunc, currentSortOrder, expand, Header, label, listId, mock, Row, sortList} = this.props;
       const componentProps: any = _.pick(this.props, ['data', 'filters', 'selected', 'match', 'kindObj']);
 
       const ListRows = this.props.virtualize ? VirtualRows : Rows;
@@ -421,7 +435,6 @@ export const List = connect(stateToProps, {sortList: UIActions.sortList})(
         />
         <ListRows
           {...componentProps}
-          virtualize={virtualize}
           expand={expand}
           key="rows"
           label={label}
@@ -535,7 +548,6 @@ export type RowsProps = {
   label?: string;
   mock?: boolean;
   Row: React.ComponentType<any>;
-  virtualize?: boolean;
 };
 
 export type WorkloadListRowProps = {
