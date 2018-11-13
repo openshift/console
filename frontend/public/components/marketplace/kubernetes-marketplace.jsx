@@ -6,7 +6,6 @@ import {Helmet} from 'react-helmet';
 import {Firehose, PageHeading, StatusBox} from '../utils';
 import {referenceForModel} from '../../module/k8s';
 import {PackageManifestModel} from '../../models';
-import {MarketplaceItemModal} from './marketplace-item-modal';
 import {MarketplaceTileViewPage} from './kubernetes-marketplace-items';
 import * as operatorImg from '../../imgs/operator.svg';
 
@@ -25,7 +24,18 @@ const normalizePackageManifests = (packageManifests, kind) => {
     const tags = packageManifest.metadata.tags;
     const version = _.get(packageManifest, 'status.channels[0].currentCSVDesc.version');
     const currentCSVAnnotations = _.get(packageManifest, 'status.channels[0].currentCSVDesc.annotations', {});
-    const { description, certifiedLevel, healthIndex, repository, containerImage, createdAt, support } = currentCSVAnnotations;
+    const {
+      description,
+      certifiedLevel,
+      healthIndex,
+      repository,
+      containerImage,
+      createdAt,
+      support,
+      longDescription,
+      categories,
+    } = currentCSVAnnotations;
+    const categoryArray = categories && _.map(categories.split(','), category => category.trim());
     return {
       obj: packageManifest,
       kind,
@@ -43,6 +53,8 @@ const normalizePackageManifests = (packageManifests, kind) => {
       containerImage,
       createdAt,
       support,
+      longDescription,
+      categories: categoryArray,
     };
   });
 };
@@ -73,25 +85,11 @@ class MarketplaceListPage extends React.Component {
     }
   }
 
-  openOverlay(item) {
-    this.setState({
-      selectedItem : item,
-    });
-  }
-
-  closeOverlay() {
-    this.setState({
-      selectedItem : null,
-    });
-  }
-
   render() {
     const {loaded, loadError} = this.props;
-    const {items, selectedItem} = this.state;
+    const {items} = this.state;
     return <StatusBox data={items} loaded={loaded} loadError={loadError} label="Resources">
-      <MarketplaceTileViewPage items={items} openOverlay={(item) => this.openOverlay(item)} />
-      {selectedItem &&
-      <MarketplaceItemModal item={selectedItem} close={() => this.closeOverlay()} openSubscribe={/* TODO */} />}
+      <MarketplaceTileViewPage items={items} />
     </StatusBox>;
   }
 }

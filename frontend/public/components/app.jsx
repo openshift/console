@@ -89,6 +89,24 @@ const DefaultPage = connectToFlags(FLAGS.OPENSHIFT)(({ flags }) => {
 
 const LazyRoute = (props) => <Route {...props} component={(componentProps) => <AsyncComponent loader={props.loader} kind={props.kind} {...componentProps} />} />;
 
+// Imports the component only one time, when first shown. Necessary to prevent full page loads when changing URL search params.
+const cachedRouteComponents = {};
+const LazyOnceRoute = (props) => {
+  const { loader, componentName, ...otherProps } = props;
+
+  const saveLoader = () => {
+    return loader().then(m => {
+      cachedRouteComponents[componentName] = m[componentName];
+      return m[componentName];
+    });
+  };
+
+  if (cachedRouteComponents[componentName]) {
+    return <Route exact component={cachedRouteComponents[componentName]} {...otherProps} />;
+  }
+  return <LazyRoute loader={saveLoader}{...otherProps} />;
+};
+
 class App extends React.PureComponent {
   componentDidUpdate(prevProps) {
     const props = this.props;
@@ -105,20 +123,6 @@ class App extends React.PureComponent {
   }
 
   render() {
-    // Needed so we don't pull in the Catalog pages and its dependencies until the user navigates to the page
-    const catalogPageLoader = () =>
-      import('./catalog/catalog-page' /* webpackChunkName: "catalog" */).then(m => {
-        this.CatalogPage = m.CatalogPage;
-        return m.CatalogPage;
-      });
-
-    const renderCatalogRoute = (path) => {
-      if (this.CatalogPage) {
-        return <Route path={path} exact component={this.CatalogPage} />;
-      }
-      return <LazyRoute path={path} exact loader={catalogPageLoader} />;
-    };
-
     return <React.Fragment>
       <Helmet titleTemplate={`%s · ${productName}`} defaultTitle={productName} />
       <Masthead />
@@ -134,8 +138,8 @@ class App extends React.PureComponent {
             <LazyRoute path="/overview/ns/:ns" exact loader={() => import('./overview' /* webpackChunkName: "overview" */).then(m => m.OverviewPage)} />
             <Route path="/overview" exact component={NamespaceRedirect} />
 
-            {renderCatalogRoute('/catalog/all-namespaces')}
-            {renderCatalogRoute('/catalog/ns/:ns')}
+            <LazyOnceRoute path="/catalog/ns/:ns" exact componentName="CatalogPage"loader={() => import('./catalog/catalog-page' /* webpackChunkName: "catalog" */)} />
+            <LazyOnceRoute path="/catalog/all-namespaces" exact componentName="CatalogPage"loader={() => import('./catalog/catalog-page' /* webpackChunkName: "catalog" */)} />
             <Route path="/catalog" exact component={NamespaceRedirect} />
 
             <LazyRoute path="/status/all-namespaces" exact loader={() => import('./cluster-overview' /* webpackChunkName: "cluster-overview" */).then(m => m.ClusterOverviewPage)} />
@@ -145,7 +149,7 @@ class App extends React.PureComponent {
             <LazyRoute path="/cluster-health" exact loader={() => import('./cluster-health' /* webpackChunkName: "cluster-health" */).then(m => m.ClusterHealth)} />
             <LazyRoute path="/start-guide" exact loader={() => import('./start-guide' /* webpackChunkName: "start-guide" */).then(m => m.StartGuidePage)} />
 
-            <LazyRoute path="/marketplace" exact loader={() => import('./marketplace/kubernetes-marketplace' /* webpackChunkName: "marketplace" */).then(m => m.MarketplacePage)} />
+            <LazyOnceRoute path="/marketplace" exact componentName="MarketplacePage" loader={() => import('./marketplace/kubernetes-marketplace' /* webpackChunkName: "marketplace" */)} />
 
             <LazyRoute path={`/k8s/ns/:ns/${SubscriptionModel.plural}/new`} exact loader={() => import('./operator-lifecycle-manager').then(m => NamespaceFromURL(m.CreateSubscriptionYAML))} />
 
@@ -209,7 +213,7 @@ class App extends React.PureComponent {
             <Route path="/k8s/cluster/:plural" exact component={ResourceListPage} />
             <LazyRoute path="/k8s/cluster/:plural/new" exact loader={() => import('./create-yaml' /* webpackChunkName: "create-yaml" */).then(m => m.CreateYAML)} />
             <Route path="/k8s/cluster/:plural/:name" component={ResourceDetailsPage} />
-            <LazyRoute path="/k8s/ns/:ns/pods/:podName/containers/:name" loader={() => import('./container').then(m => m.ContainersDetailsPage)} />
+            <LazyRoute path="/k8s/ns/:ns/pods/:podName/containers/:name" exact loader={() => import('./container').then(m => m.ContainersDetailsPage)} />
             <LazyRoute path="/k8s/ns/:ns/:plural/new" exact loader={() => import('./create-yaml' /* webpackChunkName: "create-yaml" */).then(m => NamespaceFromURL(m.CreateYAML))} />
             <Route path="/k8s/ns/:ns/:plural/:name" component={ResourceDetailsPage} />
             <Route path="/k8s/ns/:ns/:plural" exact component={ResourceListPage} />
