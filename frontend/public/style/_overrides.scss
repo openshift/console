@@ -27,7 +27,6 @@ tags-input .tags {
   // Style to look like .form-control
   min-height: $input-height-base; // Make inputs at least the height of their button counterpart (base line-height + padding + border)
   padding: 0 $padding-base-horizontal;
-  font-size: $font-size-base;
   line-height: $co-m-label-line-height;
   color: $input-color;
   background-color: $input-bg;
@@ -206,4 +205,8 @@ tags-input .autocomplete .suggestion-item em {
 
 .pf-c-dropdown__menu {
   list-style: none;
+}
+
+.modal-title {
+  font-size: $font-size-base;
 }

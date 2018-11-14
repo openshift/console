@@ -1,7 +1,7 @@
 $pipeline-aborted-color: $color-pf-black-300;
 $pipeline-border-color: $color-pf-black-300;
-$pipeline-failed-color: $color-error;
-$pipeline-font-base: 12px;
+$pipeline-failed-color: $color-pf-red-100;
+$pipeline-font-base: 13px;
 $pipeline-in-progress-color: $color-pf-blue-400;
 $pipeline-new-color: $color-pf-blue-100;
 $pipeline-pending-color: $color-pf-black-300;
@@ -102,8 +102,8 @@ $pipeline-semi-circle-animation-time: ($pipeline-circle-animation-time / 2);
       bottom: auto;
       content: '\2192';
       left: auto;
-      right: 10px;
-      top: 37%;
+      right: 14px;
+      top: 40%;
     }
   }
 }
@@ -274,7 +274,7 @@ $pipelineStageStatus: (
     animation: pipeline-stage-fadeIcon $pipeline-icon-animation-time ($pipeline-line-grow-animation-time + $pipeline-semi-circle-animation-time + ($pipeline-inner-circle-animation-time * 2)) linear forwards;
     color: $pipeline-inner-circle-color;
     font-family: 'FontAwesome';
-    font-size: $pipeline-font-base;
+    font-size: 12px;
     left: 50%;
     opacity: 0;
     position: absolute;

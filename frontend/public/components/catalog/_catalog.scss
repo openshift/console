@@ -11,8 +11,6 @@ $catalog-item-icon-size-sm: 24px;
   font-size: 24px;
 }
 
-// reset font size back to 12px since console base font size is 13px
-.catalog-tile-pf-description,
 .catalog-tile-pf-body .catalog-tile-pf-subtitle {
   font-size: ($font-size-base - 1);
 }
@@ -185,3 +183,11 @@ $catalog-item-icon-size-sm: 24px;
   color: $color-pf-black-600;
 }
 
+.properties-side-panel-pf-property-label {
+  font-size: ($font-size-base - 1);
+}
+
+// set font size to 14px
+.vertical-tabs-pf-tab > a {
+  font-size: $font-size-base;
+}

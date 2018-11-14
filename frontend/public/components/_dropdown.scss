@@ -35,7 +35,7 @@ $masthead-height: 60px;
 .dropdown-menu__header {
   color: $color-pf-black-600;
   flex-grow: 1;
-  font-size: 11px;
+  font-size: ($font-size-base - 1);
   padding: 3px 10px;
   text-transform: uppercase;
 }

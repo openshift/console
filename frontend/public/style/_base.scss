@@ -23,7 +23,7 @@ dt {
   text-transform: uppercase;
   font-weight: 400;
   color: $color-text-secondary;
-  font-size: 12px; }
+  font-size: ($font-size-base - 1); }
 
 dd {
   margin-bottom: 20px; }

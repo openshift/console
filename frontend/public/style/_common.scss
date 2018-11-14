@@ -173,7 +173,6 @@
     margin-bottom: 0;
   }
   dd {
-    font-size: 14px;
     @include co-break-word;
   }
 }
@@ -272,7 +271,6 @@
 
 .error-message {
   color: #fff;
-  font-size: 14px;
   padding: 2px 12px;
   background-color: #D64456;
 }
@@ -362,7 +360,7 @@
 .co-component-label {
   color: $color-pf-black-600;
   text-transform: uppercase;
-  font-size: $font-size-small;
+  font-size: ($font-size-base - 1);
 }
 
 .co-legend {
@@ -457,7 +455,7 @@
   }
   &__head {
     color: $color-text-secondary;
-    font-size: 12px;
+    font-size: ($font-size-base - 1);
     padding: 0 20px 10px 0; // right padding to maintain alignment with __body .row
     text-transform: uppercase;
     a {

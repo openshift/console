@@ -139,7 +139,7 @@
 
   .project-overview__metric-unit {
     color: $color-text-muted;
-    font-size: 10px;
+    font-size: ($font-size-base - 1);
     margin-left: 3px;
   }
 
