@@ -6,6 +6,18 @@ import { formatDuration } from '../../components/utils/datetime';
 
 const BUILD_NUMBER_ANNOTATION = 'openshift.io/build.number';
 
+/* eslint-disable no-undef */
+export enum BuildPhase {
+  Cancelled = 'Cancelled',
+  Complete = 'Complete',
+  Error = 'Error',
+  Failed = 'Failed',
+  New = 'New',
+  Pending ='Pending',
+  Running = 'Running',
+}
+/* eslint-enable no-undef */
+
 const createBuildRequest = (obj, model, subresource) => {
   const req = {
     kind: 'BuildRequest',

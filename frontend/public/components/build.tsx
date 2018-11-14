@@ -2,14 +2,15 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { Icon } from 'patternfly-react';
+import { Link } from 'react-router-dom';
 
 // eslint-disable-next-line no-unused-vars
 import { K8sResourceKindReference, referenceFor, K8sResourceKind } from '../module/k8s';
-import { cloneBuild, formatBuildDuration } from '../module/k8s/builds';
+import { cloneBuild, formatBuildDuration, BuildPhase, getBuildNumber } from '../module/k8s/builds';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
 import { errorModal } from './modals';
-import { BuildHooks, BuildStrategy, Kebab, SectionHeading, history, navFactory, ResourceKebab, ResourceLink, resourceObjPath, ResourceSummary, Timestamp, AsyncComponent } from './utils';
-import { BuildPipeline } from './build-pipeline';
+import { BuildHooks, BuildStrategy, Kebab, SectionHeading, history, navFactory, ResourceKebab, ResourceLink, resourceObjPath, ResourceSummary, Timestamp, AsyncComponent, resourcePath } from './utils';
+import { BuildPipeline, BuildPipelineLogLink } from './build-pipeline';
 import { breadcrumbsForOwnerRefs } from './utils/breadcrumbs';
 import { fromNow } from './utils/datetime';
 import { BuildLogs } from './build-logs';
@@ -46,17 +47,38 @@ export enum BuildStrategyType {
 export const BuildPhaseIcon: React.SFC<BuildPhaseIconProps> = ({build}) => {
   const {status: {phase}} = build;
   switch (phase) {
-    case 'Running':
+    case BuildPhase.Running:
       return <span className="fa fa-spin fa-refresh" aria-hidden="true" />;
-    case 'Complete':
+    case BuildPhase.Complete:
       return <Icon type="pf" name="ok" />;
-    case 'Failed':
+    case BuildPhase.Failed:
+    case BuildPhase.Error:
       return <Icon type="pf" name="error-circle-o" />;
-    case 'Cancelled':
+    case BuildPhase.Cancelled:
       return <Icon type="fa" name="ban" />;
     default:
       return <Icon type="fa" name="clock-o" />;
   }
+};
+
+export const BuildLogLink = ({build}) => {
+  const {metadata: {name, namespace}} = build;
+  const isPipeline = _.get(build, 'spec.strategy.type') === BuildStrategyType.JenkinsPipeline;
+  return isPipeline
+    ? <BuildPipelineLogLink obj={build} />
+    : <Link to={`${resourcePath('Build', name, namespace)}/logs`}>
+    View Logs
+    </Link>;
+};
+
+export const BuildNumberLink = ({build}) => {
+  const {metadata: {name, namespace}} = build;
+  const buildNumber = getBuildNumber(build);
+  const title = _.isFinite(buildNumber) ? `#${buildNumber}` : name;
+
+  return <Link to={resourcePath('Build', name, namespace)}>
+    {title}
+  </Link>;
 };
 
 const BuildGraphs = requirePrometheus(({build}) => {

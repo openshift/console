@@ -9,7 +9,7 @@ import {
   ResourceSummary,
 } from '../utils';
 
-import { BuildConfigsOverview } from './build-configs-overview';
+import { BuildOverview } from './build-overview';
 import { NetworkingOverview } from './networking-overview';
 import { OverviewItem } from '.';
 import { resourceOverviewPages } from './resource-overview-pages';
@@ -19,7 +19,7 @@ const menuActions = [...common];
 
 export const OverviewDetailsResourcesTab: React.SFC<OverviewDetailsResourcesTabProps>= ({item: {buildConfigs, routes, services}}) => (
   <div className="overview__sidebar-pane-body">
-    <BuildConfigsOverview buildConfigs={buildConfigs} />
+    <BuildOverview buildConfigs={buildConfigs} />
     <NetworkingOverview services={services} routes={routes} />
   </div>
 );
