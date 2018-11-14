@@ -101,7 +101,7 @@ const Volume = ({pod, volume}) => {
   const loc = getVolumeLocation(volume.volume);
   const mountPermissions = getVolumeMountPermissions(volume);
 
-  return <div className="row">
+  return <div>
     <Overflow className="col-sm-3 col-xs-4 co-truncate" value={volume.name} />
     <div className="col-sm-3 col-xs-4">
       <VolumeIcon kind={kind} />
@@ -118,20 +118,18 @@ const Volume = ({pod, volume}) => {
 
 const ContainerTable = ({heading, containers, pod}) => <div className="co-m-pane__body">
   <SectionHeading text={heading} />
-  <div className="row">
-    <div className="co-m-table-grid co-m-table-grid--bordered">
-      <div className="row co-m-table-grid__head">
-        <div className="col-sm-2 col-xs-4">Name</div>
-        <div className="col-md-3 col-sm-4 col-xs-8">Image</div>
-        <div className="col-md-1 col-sm-2 hidden-xs">State</div>
-        <div className="col-md-1 col-sm-2 hidden-xs">Restarts</div>
-        <div className="col-md-2 hidden-sm hidden-xs">Started</div>
-        <div className="col-md-2 hidden-sm hidden-xs">Finished</div>
-        <div className="col-md-1 col-sm-2 hidden-xs">Exit Code</div>
-      </div>
-      <div className="co-m-table-grid__body">
-        {containers.map((c, i) => <ContainerRow key={i} pod={pod} container={c} />)}
-      </div>
+  <div className="co-m-table-grid co-m-table-grid--bordered">
+    <div className="row co-m-table-grid__head">
+      <div className="col-sm-2 col-xs-4">Name</div>
+      <div className="col-md-3 col-sm-4 col-xs-8">Image</div>
+      <div className="col-md-1 col-sm-2 hidden-xs">State</div>
+      <div className="col-md-1 col-sm-2 hidden-xs">Restarts</div>
+      <div className="col-md-2 hidden-sm hidden-xs">Started</div>
+      <div className="col-md-2 hidden-sm hidden-xs">Finished</div>
+      <div className="col-md-1 col-sm-2 hidden-xs">Exit Code</div>
+    </div>
+    <div className="co-m-table-grid__body">
+      {containers.map((c, i) => <ContainerRow key={i} pod={pod} container={c} />)}
     </div>
   </div>
 </div>;
@@ -209,17 +207,15 @@ const Details = ({obj: pod}) => {
 
     <div className="co-m-pane__body">
       <SectionHeading text="Pod Volumes" />
-      <div className="row">
-        <div className="co-m-table-grid co-m-table-grid--bordered">
-          <div className="row co-m-table-grid__head">
-            <div className="col-sm-3 col-xs-4">Name</div>
-            <div className="col-sm-3 col-xs-4">Type</div>
-            <div className="col-sm-3 hidden-xs">Permissions</div>
-            <div className="col-sm-3 col-xs-4">Utilized By</div>
-          </div>
-          <div className="co-m-table-grid__body">
-            {getVolumeMountsByPermissions(pod).map((v, i) => <Volume key={i} pod={pod} volume={v} />)}
-          </div>
+      <div className="co-m-table-grid co-m-table-grid--bordered">
+        <div className="row co-m-table-grid__head">
+          <div className="col-sm-3 col-xs-4">Name</div>
+          <div className="col-sm-3 col-xs-4">Type</div>
+          <div className="col-sm-3 hidden-xs">Permissions</div>
+          <div className="col-sm-3 col-xs-4">Utilized By</div>
+        </div>
+        <div className="co-m-table-grid__body">
+          {getVolumeMountsByPermissions(pod).map((v, i) => <Volume key={i} pod={pod} volume={v} />)}
         </div>
       </div>
     </div>
