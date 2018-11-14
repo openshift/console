@@ -230,8 +230,8 @@ class App extends React.PureComponent {
             style={{ padding: 0 }}
           >
             <div id="content">
-              <Route path={namespacedRoutes} component={NamespaceBar} />
               <GlobalNotifications />
+              <Route path={namespacedRoutes} component={NamespaceBar} />
               <div id="content-scrollable">
                 <Switch>
                   <Route path={['/all-namespaces', '/ns/:ns']} component={RedirectComponent} />
