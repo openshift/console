@@ -116,21 +116,13 @@ class App extends React.PureComponent {
 
     this._onNavToggle = this._onNavToggle.bind(this);
     this._onNavSelect = this._onNavSelect.bind(this);
-    this._handleScroll = this._handleScroll.bind(this);
     this._isDesktop = this._isDesktop.bind(this);
-    this._handleCondensedHeader = this._handleCondensedHeader.bind(this);
 
     this.state = {
       isNavOpen: this._isDesktop(),
     };
   }
-  componentDidMount(){
-    //overrides default pf4 scroll container for now to use #content scrollable
-    this.scrollable = document.querySelector('#content-scrollable');
-    this.scrollable.addEventListener('scroll', _.debounce(this._handleScroll, 16)); //single frame
-    window.addEventListener('resize', this._handleCondensedHeader);
-    this._handleCondensedHeader();
-  }
+
   componentDidUpdate(prevProps) {
     const props = this.props;
     // Prevent infinite loop in case React Router decides to destroy & recreate the component (changing key)
@@ -147,45 +139,11 @@ class App extends React.PureComponent {
     store.dispatch(UIActions.setCurrentLocation(pathname));
     analyticsSvc.route(pathname);
   }
-  componentWillUnmount() {
-    this.scrollable.removeEventListener('scroll', this._handleScroll);
-    window.removeEventListener('resize', this._handleCondensedHeader);
-  }
-  _handleScroll(e){
-    if (this._isDesktop()){
-      window.requestAnimationFrame(() => {
-        const header = document.querySelector('.pf-l-page__header');
-        const main = e.target;
-        const scrollingDistance = 20;
-        const condensedHeaderHeightOffset = 50; //the difference in condensed header height
-        const scrollPosition = main.scrollTop;
 
-        //prevent jank caused by offset of scroll height and the client height of the scrolled content
-        //compared with difference in our desktop condensed header height + the scrolling distance
-        if ((main.scrollHeight - main.clientHeight) < condensedHeaderHeightOffset + scrollingDistance){
-          return;
-        }
-        if (scrollPosition > scrollingDistance && header.classList.contains('pf-m-tall')) {
-          header.classList.remove('pf-m-tall');
-        } else if (scrollPosition < scrollingDistance && !header.classList.contains('pf-m-tall')) {
-          header.classList.add('pf-m-tall');
-        }
-      });
-    }
-  }
   _isDesktop() {
     return typeof window !== 'undefined' && window.innerWidth >= parseInt(breakpointMd.value, 10);
   }
-  _handleCondensedHeader(){
-    const header = document.querySelector('.pf-l-page__header');
-    if (this._isDesktop()){
-      if (!header.classList.contains('pf-m-tall')){
-        header.classList.add('pf-m-tall');
-      }
-    } else {
-      header.classList.remove('pf-m-tall');
-    }
-  }
+
   _onNavToggle() {
     this.setState(prevState => {
       return {
@@ -193,6 +151,7 @@ class App extends React.PureComponent {
       };
     });
   }
+
   _onNavSelect() {
     //close nav on mobile nav selects
     if (!this._isDesktop()){
