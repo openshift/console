@@ -1,28 +1,80 @@
 .overview-toolbar {
-  margin: 0;
+  margin: 0 0 ($grid-gutter-width / 2) 0;
   min-width: 0;
   padding: 0;
+  @media (max-width: $screen-sm-max) {
+    // maintain single row alignment
+    .toolbar-pf-action-right {
+      align-items: flex-end;
+      display: flex;
+      float: none;
+      justify-content: space-between;
+    }
+  }
 }
 
 .overview-toolbar__dropdown {
   display: inline-block;
   max-width: 100%; // enable text-overflow: ellipsis
-  @media (max-width: $screen-xs-max) {
+  @media (max-width: $screen-sm-max) {
     min-width: 100%;
   }
   .btn-dropdown {
-    max-width: 280px;
+    max-width: 250px; // same at default .text-filter
+    width: 100%;
+
+    @media (min-width: $screen-xs-min) and (max-width: $screen-sm-max) {
+      max-width: 100%;
+    }
   }
+}
+
+.overview-toolbar__form-group {
+  flex: 1 1 50%;
+  min-width: 0; // enable truncation
+  padding-right: 8px;
+  @media (min-width: $screen-xs-min) {
+    padding-right: 15px;
+  }
+
+  &:first-child {
+    border-right: 0;
+    margin-bottom: 0;
+    padding-left: 0;
+  }
+
+  + .overview-toolbar__form-group {
+    border-left: 1px solid $color-pf-black-300;
+    padding-left: 8px;
+    @media (min-width: $screen-xs-min) {
+      padding-left: 15px;
+    }
+  }
+}
+
+.co-m-pane__heading--overview {
+  justify-content: flex-start;
+  margin: 0 20px ($grid-gutter-width / 2) 0;
+}
+
+.co-m-pane__name--overview {
+  flex: 0 1 auto;
 }
 
 .overview-toolbar__label {
   margin: 0 10px 0 0;
   vertical-align: middle;
+  @media (max-width: $screen-sm-max) {
+    margin-bottom: 0;
+    margin-right: 10px;
+  }
 }
 
-.toolbar-pf .overview-toolbar__form-group:first-child {
-  margin-bottom:  ($grid-gutter-width / 4);
-  padding-left: 0;
+@media (max-width: $screen-sm-max) {
+  .overview-toolbar__text-filter .text-filter {
+    min-width: 100%;
+    width: 100%;
+  }
 }
 
 .overview {
@@ -127,10 +179,6 @@
   .co-actions-menu {
     margin-top: -3px;
   }
-}
-
-.overview-view-selector {
-  padding-top: 4px;
 }
 
 .resource-overview {
