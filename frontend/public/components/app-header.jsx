@@ -34,7 +34,7 @@ const AppHeader = ({ onNavToggle }) => {
     <PageHeader
       logo={<Brand src={logoImg} alt={logoAlt} />}
       toolbar={<AppToolbar />}
-      avatar={<Avatar src={avatarImg} alt="Avatar image" />}
+      avatar={<Avatar src={avatarImg} alt="Avatar image" className="pf-u-sr-only pf-u-visible-on-md" />}
       showNavToggle
       onNavToggle={onNavToggle}
     />

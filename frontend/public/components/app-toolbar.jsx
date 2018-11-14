@@ -142,11 +142,7 @@ class AppToolbar extends React.Component {
       );
     }
     if (_.isEmpty(actions)) {
-      return (
-        <div className="pf-c-dropdown pf-m-plain pf-m-align-right">
-          <div className="pf-c-dropdown__toggle">{username}</div>
-        </div>
-      );
+      return <div className="co-username">{username}</div>;
     }
     return (
       <Dropdown
@@ -242,10 +238,12 @@ class AppToolbar extends React.Component {
                 ]}
               />
             </ToolbarItem>
+          </ToolbarGroup>
+          <ToolbarGroup >
             {/* mobile menu */}
-            <ToolbarItem className={classNames('pf-u-hidden-on-md', 'pf-u-mr-0')}>{this._renderMenu(true)}</ToolbarItem>
+            <ToolbarItem className="pf-u-hidden-on-md pf-u-mr-0">{this._renderMenu(true)}</ToolbarItem>
             {/* desktop menu */}
-            <ToolbarItem className={classNames('pf-u-sr-only', 'pf-u-visible-on-md')}>{this._renderMenu(false)}</ToolbarItem>
+            <ToolbarItem className="pf-u-sr-only pf-u-visible-on-md">{this._renderMenu(false)}</ToolbarItem>
           </ToolbarGroup>
         </Toolbar>
         <AboutModal isOpen={showAboutModal} closeAboutModal={this._closeAboutModal} />
