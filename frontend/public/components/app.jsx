@@ -30,9 +30,6 @@ import '../style.scss';
 // Edge lacks URLSearchParams
 import 'url-search-params-polyfill';
 
-// Don't merge this PR.
-alert("PROW FOR THE WIN")
-
 // React Router's proptypes are incorrect. See https://github.com/ReactTraining/react-router/pull/5393
 Route.propTypes.path = PropTypes.oneOfType([
   PropTypes.string,
