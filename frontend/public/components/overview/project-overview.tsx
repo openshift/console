@@ -237,8 +237,22 @@ const ProjectOverviewListItem = connect<ProjectOverviewListItemPropsFromState, P
       <Status item={item} />
     </div>;
 
+    const onClick = (e: Event) => {
+      // Don't toggle details if clicking on a link inside the row.
+      const target = e.target as HTMLElement;
+      if (target.tagName.toLowerCase() === 'a') {
+        return;
+      }
+
+      if (isSelected) {
+        dismissDetails();
+      } else {
+        selectItem(uid);
+      }
+    };
+
     return <ListView.Item
-      onClick={() => (isSelected ? dismissDetails() : selectItem(uid))}
+      onClick={onClick}
       className={className}
       heading={heading}
       additionalInfo={[additionalInfo]}
