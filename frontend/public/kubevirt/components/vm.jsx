@@ -26,6 +26,7 @@ import VmConsolesConnected from './vmconsoles';
 import { Nic } from './nic';
 import { Disk } from './disk';
 import { DASHES } from './utils/constants';
+import { resourceLauncher } from './utils/resourceLauncher';
 
 const VMHeader = props => <ListHeader>
   <ColHead {...props} className="col-lg-2 col-md-2 col-sm-2 col-xs-6" sortField="metadata.name">Name</ColHead>
@@ -314,29 +315,40 @@ const mapDispatchToProps = () => ({
   watchK8sList: actions.watchK8sList
 });
 
-const ConnectedNewVMWizard = ({ activeNamespace, resources, flatten, onHide, createVm }) => {
-  const namespaces = flatten(resources);
-  const templates = _.get(resources, TemplateModel.kind, {}).data;
-  const networkConfigs = _.get(resources, NetworkAttachmentDefinitionModel.kind, {}).data;
-  const storageClasses = _.get(resources, StorageClassModel.kind, {}).data;
-  const persistentVolumeClaims = _.get(resources, PersistentVolumeClaimModel.kind, {}).data;
+const openNewVmWizard = activeNamespace => {
+  const launcher = resourceLauncher(CreateVmWizard, {
+    namespaces: {
+      resource: getResourceKind(NamespaceModel, undefined, true, undefined, true),
+    },
+    templates: {
+      resource: getResourceKind(TemplateModel, undefined, true, undefined, true, undefined, [{key: TEMPLATE_TYPE_LABEL, operator: 'Exists' }]),
+    },
+    networkConfigs: {
+      resource: getResourceKind(NetworkAttachmentDefinitionModel, undefined, true, undefined, true),
+    },
+    storageClasses: {
+      resource: { kind:StorageClassModel.kind, isList: true, prop: StorageClassModel.kind},
+    },
+    persistentVolumeClaims: {
+      resource: { kind:PersistentVolumeClaimModel.kind, isList: true, prop: PersistentVolumeClaimModel.kind},
+    },
+  },(({namespaces}) => {
+      let selectedNamespace;
 
-  let selectedNamespace;
+      if (namespaces && activeNamespace){
+        selectedNamespace = namespaces.find(namespace => namespace.metadata.name === activeNamespace);
+      }
 
-  if (activeNamespace) {
-    selectedNamespace = namespaces.find(namespace => namespace.metadata.name === activeNamespace);
-  }
+      return {
+        selectedNamespace
+      };
+    }));
 
-  return <CreateVmWizard
-    onHide={onHide}
-    namespaces={namespaces}
-    templates={templates}
-    networkConfigs={networkConfigs || []}
-    selectedNamespace={selectedNamespace}
-    storageClasses={storageClasses}
-    persistentVolumeClaims={persistentVolumeClaims}
-    k8sCreate={createVm}
-    units={units} />;
+  launcher({
+    k8sCreate,
+    units,
+  });
+
 };
 
 const filters = [{
@@ -355,57 +367,26 @@ export const VirtualMachinesPage = connect(
   constructor(props){
     super(props);
 
-    this.state = {
-      showWizard: false
-    };
-
-    this.createItems = {
+    const createItems = {
       wizard: 'Create with Wizard',
       yaml: 'Create from YAML'
     };
 
     this.createProps = {
-      items: this.createItems,
+      items: createItems,
       createLink: (type) => {
         switch (type) {
           case 'wizard':
-            return () => this.setState({showWizard: true});
+            return () => openNewVmWizard(this.props.namespace);
           default:
             return `/k8s/ns/${this.props.namespace || 'default'}/virtualmachines/new/`;
         }
       }
     };
-
-    this._onHide = this.onHide.bind(this);
-    this._openNewVmWizard = this.openNewVmWizard.bind(this);
-  }
-
-  onHide() {
-    this.setState({
-      showWizard: false
-    });
-  }
-
-  openNewVmWizard() {
-    const namespaces = getResourceKind(NamespaceModel, undefined, true, undefined, true);
-    const templates = getResourceKind(TemplateModel, undefined, true, undefined, true, undefined, [{key: TEMPLATE_TYPE_LABEL, operator: 'Exists' }]);
-    const networkConfigs = getResourceKind(NetworkAttachmentDefinitionModel, undefined, true, undefined, true);
-
-    const resources = [
-      namespaces,
-      templates,
-      networkConfigs,
-      { kind:StorageClassModel.kind, isList: true, prop: StorageClassModel.kind},
-      { kind:PersistentVolumeClaimModel.kind, isList: true, prop: PersistentVolumeClaimModel.kind}
-    ];
-    return <Firehose resources={resources} flatten={getFlattenForKind(NamespaceModel.kind)}>
-      <ConnectedNewVMWizard onHide={this._onHide} createVm={k8sCreate} activeNamespace={this.props.namespace} />
-    </Firehose>;
   }
 
   render() {
     return <React.Fragment>
-      {this.state.showWizard ? this._openNewVmWizard() : undefined}
       <ListPage
         {...this.props}
         canCreate={true}
