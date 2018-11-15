@@ -158,6 +158,9 @@ const Details = (props) => {
 
   const status = getContainerStatus(pod, container.name) || {};
   const state = getContainerState(status) || {};
+  const stateValue = state.value === 'terminated' && _.isFinite(state.exitCode)
+    ? `${state.label} with exit code ${state.exitCode}`
+    : state.label;
   const { imageName, imageTag } = getImageNameAndTag(container.image);
 
   return <div className="co-m-pane__body">
@@ -168,7 +171,7 @@ const Details = (props) => {
         <SectionHeading text="Container Overview" />
         <dl className="co-m-pane__details">
           <dt>State</dt>
-          <dd>{state.label}</dd>
+          <dd>{stateValue}</dd>
           <dt>ID</dt>
           <dd><Overflow value={status.containerID} /></dd>
           <dt>Restarts</dt>
