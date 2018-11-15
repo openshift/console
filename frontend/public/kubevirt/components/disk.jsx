@@ -11,7 +11,7 @@ const visibleRowStyle = 'col-lg-3 col-md-3 col-sm-3 col-xs-4';
 const hiddenRowStyle = 'col-lg-3 col-md-3 col-sm-3 hidden-xs';
 
 const DiskHeader = props => <ListHeader>
-  <ColHead {...props} className={visibleRowStyle} sortField="name">Disk Name</ColHead>
+  <ColHead {...props} className={visibleRowStyle} sortField="name">Name</ColHead>
   <ColHead {...props} className={visibleRowStyle}>Size</ColHead>
   <ColHead {...props} className={visibleRowStyle}>Interface</ColHead>
   <ColHead {...props} className={hiddenRowStyle}>Storage Class</ColHead>

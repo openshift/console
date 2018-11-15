@@ -7,7 +7,7 @@ import { PromiseComponent } from '../utils/okdutils';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/okdfactory';
 import { k8sPatch } from '../../module/okdk8s';
 import { VirtualMachineModel } from '../../models';
-import { NETWORK, DISK } from '../utils/constants';
+import { NIC, DISK } from '../utils/constants';
 
 class DeleteDeviceModal extends PromiseComponent {
   constructor(props) {
@@ -20,7 +20,7 @@ class DeleteDeviceModal extends PromiseComponent {
     event.preventDefault();
     const { vm, type, device } = this.props;
 
-    const deviceType = type === NETWORK ? {type: 'interfaces', spec: 'networks'} : { type: 'disks', spec: 'volumes'};
+    const deviceType = type === NIC ? {type: 'interfaces', spec: 'networks'} : { type: 'disks', spec: 'volumes'};
     const devices = _.get(vm, `spec.template.spec.domain.devices.${deviceType.type}`, []);
 
     const deviceIndex = devices.findIndex(d => d.name === device.name);
@@ -54,7 +54,7 @@ class DeleteDeviceModal extends PromiseComponent {
     }
 
     // if pod network is deleted, we need to set autoAttachPodInterface to false
-    if (type === NETWORK && _.get(device, 'network.pod')) {
+    if (type === NIC && _.get(device, 'network.pod')) {
       const op = _.has(vm, 'spec.domain.devices.autoAttachPodInterface') ? 'replace' : 'add';
       patch.push({
         op,
