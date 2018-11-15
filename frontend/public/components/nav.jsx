@@ -337,10 +337,10 @@ const AppNav = ({ isNavOpen, onNavSelect }) => {
           <ResourceClusterLink resource="storageclasses" name="Storage Classes" />
         </NavSection>
 
-        <NavSection title="Builds">
-          <ResourceNSLink resource="buildconfigs" name={BuildConfigModel.labelPlural} required={FLAGS.OPENSHIFT} />
-          <ResourceNSLink resource="builds" name={BuildModel.labelPlural} required={FLAGS.OPENSHIFT} />
-          <ResourceNSLink resource="imagestreams" name={ImageStreamModel.labelPlural} required={FLAGS.OPENSHIFT} startsWith={imagestreamsStartsWith} />
+        <NavSection title="Builds" required={FLAGS.OPENSHIFT}>
+          <ResourceNSLink resource="buildconfigs" name={BuildConfigModel.labelPlural} />
+          <ResourceNSLink resource="builds" name={BuildModel.labelPlural} />
+          <ResourceNSLink resource="imagestreams" name={ImageStreamModel.labelPlural} startsWith={imagestreamsStartsWith} />
         </NavSection>
 
         <NavSection title="Service Catalog" required={FLAGS.SERVICE_CATALOG}>
