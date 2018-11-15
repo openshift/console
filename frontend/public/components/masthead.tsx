@@ -17,11 +17,11 @@ import { createModalLauncher } from './factory/modal';
 import { coFetchJSON } from '../co-fetch';
 import { SafetyFirst } from './safety-first';
 
-const aboutModal = (props) => <AsyncComponent loader={() => import('./utils/about-modal').then(c => c.aboutModal)} {...props} />;
+const AboutModal = (props) => <AsyncComponent loader={() => import('./utils/about-modal').then(c => c.AboutModal)} {...props} />;
 
 const developerConsoleURL = (window as any).SERVER_FLAGS.developerConsoleURL;
 
-export const BrandingDetails = () => {
+export const getBrandingDetails = () => {
   let backgroundImg, logoImg, logoAlt, modalLogoImg, modalLogoAlt, productTitle;
 
   // Webpack won't bundle these images if we don't directly reference them, hence the switch
@@ -62,7 +62,7 @@ export const BrandingDetails = () => {
   return {backgroundImg, logoImg, logoAlt, modalLogoImg, modalLogoAlt, productTitle};
 };
 
-const launchAboutModal = createModalLauncher(aboutModal);
+const launchAboutModal = createModalLauncher(AboutModal);
 
 class HelpMenu extends React.Component<{}, {}> {
   constructor(props) {
@@ -176,7 +176,7 @@ const ContextSwitcher = () => {
 };
 
 export const LogoImage = () => {
-  const details = BrandingDetails();
+  const details = getBrandingDetails();
   return <div className="co-masthead__logo">
     <Link to="/" className="co-masthead__logo-link"><img src={details.logoImg} alt={details.logoAlt} /></Link>
   </div>;

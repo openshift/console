@@ -3,16 +3,14 @@ import * as classNames from 'classnames';
 import { AboutModal as PFAboutModal } from 'patternfly-react';
 
 import { k8sVersion } from '../../module/status';
-import { BrandingDetails } from '../masthead';
+import { getBrandingDetails } from '../masthead';
 
-export class aboutModal extends React.Component<AboutModalProps, AboutModalState> {
-  constructor(props) {
-    super(props);
-    this.state = {
-      showAboutModal: false,
-      kubernetesVersion: null,
-    };
-  }
+export class AboutModal extends React.Component<AboutModalProps, AboutModalState> {
+  /* eslint-disable no-undef */
+  state = {
+    showAboutModal: false,
+    kubernetesVersion: null,
+  };
 
   componentDidMount() {
     this.checkKubernetesVersion();
@@ -27,7 +25,7 @@ export class aboutModal extends React.Component<AboutModalProps, AboutModalState
 
   render() {
     const {kubernetesVersion, showAboutModal} = this.state;
-    const details = BrandingDetails();
+    const details = getBrandingDetails();
 
     return <PFAboutModal className={classNames('co-masthead__modal', {'co-masthead__modal--upstream': details.backgroundImg})} logo={details.modalLogoImg} altLogo={details.modalLogoAlt} productTitle={details.productTitle} show={showAboutModal} onHide={this.props.close}>
       <strong>About</strong>
@@ -46,8 +44,8 @@ export class aboutModal extends React.Component<AboutModalProps, AboutModalState
 
 /* eslint-disable no-undef */
 export type AboutModalProps = {
-  cancel: (e?: Event) => void,
-  close: (e?: Event) => void,
+  cancel: (e: Event) => void,
+  close: (e: Event) => void,
 };
 
 export type AboutModalState = {
