@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars, no-undef */
 import * as _ from 'lodash-es';
 import * as classnames from 'classnames';
 import * as React from 'react';
@@ -6,7 +7,6 @@ import { Link } from 'react-router-dom';
 import { ListView } from 'patternfly-react';
 
 import { Tooltip } from '../utils/tooltip';
-/* eslint-disable-next-line no-unused-vars */
 import { K8sResourceKind } from '../../module/k8s';
 import { UIActions } from '../../ui/ui-actions';
 import {
@@ -261,14 +261,12 @@ const ProjectOverviewList: React.SFC<ProjectOverviewListProps> = ({items, metric
 
 const ProjectOverviewGroup: React.SFC<ProjectOverviewGroupProps> = ({heading, items, metrics}) =>
   <div className="project-overview__group">
-    {heading && <h2 className="project-overview__group-heading">{heading}</h2>}
+    <h2 className="project-overview__group-heading">{heading}</h2>
     <ProjectOverviewList
       items={items}
       metrics={metrics}
     />
   </div>;
-
-
 
 export const ProjectOverview: React.SFC<ProjectOverviewProps> = ({groups, metrics}) =>
   <div className="project-overview">
@@ -282,7 +280,6 @@ export const ProjectOverview: React.SFC<ProjectOverviewProps> = ({groups, metric
     )}
   </div>;
 
-/* eslint-disable no-unused-vars, no-undef */
 type ControllerLinkProps = {
   controller: PodControllerOverviewItem;
 };
@@ -344,4 +341,3 @@ type ProjectOverviewProps = {
   groups: OverviewGroup[];
   metrics: any;
 };
-/* eslint-enable no-unused-vars, no-undef */
