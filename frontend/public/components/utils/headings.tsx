@@ -3,7 +3,7 @@ import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
 import { Link } from 'react-router-dom';
 
-import { ActionsMenu, ResourceIcon, CogAction } from './index';
+import { ActionsMenu, ResourceIcon, KebabAction } from './index';
 import { ClusterServiceVersionLogo } from '../operator-lifecycle-manager';
 import { connectToModel } from '../../kinds';
 import { ClusterServiceVersionModel } from '../../models';
@@ -106,7 +106,7 @@ export type PageHeadingProps = {
 };
 
 export type ResourceOverviewHeadingProps = {
-  actions: CogAction[];
+  actions: KebabAction[];
   kindObj: K8sKind;
   resource: K8sResourceKind;
 };

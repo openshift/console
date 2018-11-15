@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 
-import { Cog, kindObj, LabelList, ResourceLink, Selector, Timestamp } from './index';
+import { Kebab, kindObj, LabelList, ResourceLink, Selector, Timestamp } from './index';
 import { referenceForOwnerRef, K8sResourceKind } from '../../module/k8s';
 
 export const pluralize = (i: number, singular: string, plural: string = `${singular}s`) => `${i || 0} ${i === 1 ? singular : plural}`;
@@ -29,7 +29,7 @@ export const ResourceSummary: React.SFC<ResourceSummaryProps> = ({children, reso
     {showNodeSelector && <dt>Node Selector</dt>}
     {showNodeSelector && <dd><Selector kind="Node" selector={_.get(resource, 'spec.template.spec.nodeSelector')} /></dd>}
     {showAnnotations && <dt>Annotations</dt>}
-    {showAnnotations && <dd><a className="co-m-modal-link" onClick={Cog.factory.ModifyAnnotations(kindObj(kind), resource).callback}>{pluralize(_.size(metadata.annotations), 'Annotation')}</a></dd>}
+    {showAnnotations && <dd><a className="co-m-modal-link" onClick={Kebab.factory.ModifyAnnotations(kindObj(kind), resource).callback}>{pluralize(_.size(metadata.annotations), 'Annotation')}</a></dd>}
     {children}
     <dt>Created At</dt>
     <dd><Timestamp timestamp={metadata.creationTimestamp} /></dd>

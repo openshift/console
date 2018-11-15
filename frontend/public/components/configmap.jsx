@@ -3,10 +3,10 @@ import * as React from 'react';
 
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import { ConfigMapData } from './configmap-and-secret-data';
-import { Cog, SectionHeading, navFactory, ResourceCog, ResourceLink, ResourceSummary } from './utils';
+import { Kebab, SectionHeading, navFactory, ResourceKebab, ResourceLink, ResourceSummary } from './utils';
 import { fromNow } from './utils/datetime';
 
-const menuActions = Cog.factory.common;
+const menuActions = Kebab.factory.common;
 
 const ConfigMapHeader = props => <ListHeader>
   <ColHead {...props} className="col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
@@ -24,8 +24,8 @@ const ConfigMapRow = ({obj: configMap}) => <ResourceRow obj={configMap}>
   </div>
   <div className="col-sm-2 hidden-xs">{_.size(configMap.data)}</div>
   <div className="col-sm-2 hidden-xs">{fromNow(configMap.metadata.creationTimestamp)}</div>
-  <div className="co-resource-kebab">
-    <ResourceCog actions={menuActions} kind="ConfigMap" resource={configMap} />
+  <div className="co-kebab-wrapper">
+    <ResourceKebab actions={menuActions} kind="ConfigMap" resource={configMap} />
   </div>
 </ResourceRow>;
 

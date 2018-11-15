@@ -12,13 +12,13 @@ import { confirmModal } from '../modals';
 import { SafetyFirst } from '../safety-first';
 import {
   ButtonBar,
-  Cog,
+  Kebab,
   Firehose,
   ListDropdown,
   MsgBox,
   NsDropdown,
   OverflowYFade,
-  ResourceCog,
+  ResourceKebab,
   ResourceLink,
   ResourceName,
   StatusBox,
@@ -68,7 +68,7 @@ const menuActions = ({subjectIndex, subjects}, startImpersonate) => {
       label: `Edit ${kind.label} Subject...`,
       href: `${resourceObjPath(obj, kind.kind)}/edit?subjectIndex=${subjectIndex}`,
     }),
-    subjects.length === 1 ? Cog.factory.Delete : (kind, binding) => ({
+    subjects.length === 1 ? Kebab.factory.Delete : (kind, binding) => ({
       label: `Delete ${kind.label} Subject...`,
       callback: () => confirmModal({
         title: `Delete ${kind.label} Subject`,
@@ -101,10 +101,10 @@ export const BindingName = ({binding}) => {
   <ResourceLink kind={bindingKind(binding)} name={binding.metadata.name} namespace={binding.metadata.namespace} className="co-resource-link__resource-name" />;
 };
 
-export const BindingCog = connect(null, {startImpersonate: UIActions.startImpersonate})(
+export const BindingKebab = connect(null, {startImpersonate: UIActions.startImpersonate})(
   ({binding, startImpersonate}) => <React.Fragment>
     {binding.subjects &&
-      <ResourceCog actions={menuActions(binding, startImpersonate)} kind={bindingKind(binding)} resource={binding} />}
+      <ResourceKebab actions={menuActions(binding, startImpersonate)} kind={bindingKind(binding)} resource={binding} />}
   </React.Fragment>);
 
 export const RoleLink = ({binding}) => {
@@ -131,8 +131,8 @@ const Row = ({obj: binding}) => <ResourceRow obj={binding}>
   <OverflowYFade className="col-md-2 col-sm-4 col-xs-6 co-break-word">
     {binding.metadata.namespace ? <ResourceLink kind="Namespace" name={binding.metadata.namespace} /> : 'all'}
   </OverflowYFade>
-  <div className="co-resource-kebab">
-    <BindingCog binding={binding} />
+  <div className="co-kebab-wrapper">
+    <BindingKebab binding={binding} />
   </div>
 </ResourceRow>;
 

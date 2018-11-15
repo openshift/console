@@ -5,7 +5,7 @@ import * as _ from 'lodash-es';
 import { match, Link } from 'react-router-dom';
 
 import { List, ListHeader, ColHead, DetailsPage, ListPage } from '../factory';
-import { MsgBox, ResourceLink, ResourceCog, navFactory, Cog, ResourceSummary, LoadingInline, SectionHeading } from '../utils';
+import { MsgBox, ResourceLink, ResourceKebab, navFactory, Kebab, ResourceSummary, LoadingInline, SectionHeading } from '../utils';
 import { SubscriptionKind, SubscriptionState, PackageManifestKind, InstallPlanApproval, ClusterServiceVersionKind, olmNamespace } from './index';
 import { referenceForModel, k8sKill, k8sUpdate } from '../../module/k8s';
 import { SubscriptionModel, ClusterServiceVersionModel, CatalogSourceModel, InstallPlanModel, PackageManifestModel } from '../../models';
@@ -31,7 +31,7 @@ const subscriptionState = (state: SubscriptionState) => {
 };
 
 const menuActions = [
-  Cog.factory.Edit,
+  Kebab.factory.Edit,
   (kind, obj) => ({
     label: 'Remove Subscription...',
     callback: () => createDisableApplicationModal({k8sKill, subscription: obj}),
@@ -59,8 +59,8 @@ export const SubscriptionRow: React.SFC<SubscriptionRowProps> = (props) => {
     <div className="hidden-xs hidden-sm hidden-md col-lg-2">
       {props.obj.spec.installPlanApproval || 'Automatic'}
     </div>
-    <div className="co-resource-kebab">
-      <ResourceCog actions={_.get(props.obj.status, 'installedCSV') ? menuActions : menuActions.slice(0, -1)} kind={referenceForModel(SubscriptionModel)} resource={props.obj} />
+    <div className="co-kebab-wrapper">
+      <ResourceKebab actions={_.get(props.obj.status, 'installedCSV') ? menuActions : menuActions.slice(0, -1)} kind={referenceForModel(SubscriptionModel)} resource={props.obj} />
     </div>
   </div>;
 };

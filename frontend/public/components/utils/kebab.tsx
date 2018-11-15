@@ -10,15 +10,15 @@ import { history, resourceObjPath } from './index';
 import { referenceForModel, K8sResourceKind, K8sResourceKindReference, K8sKind } from '../../module/k8s';
 import { connectToModel } from '../../kinds';
 
-const CogItems: React.SFC<CogItemsProps> = ({options, onClick}) => {
+const KebabItems: React.SFC<KebabItemsProps> = ({options, onClick}) => {
   const visibleOptions = _.reject(options, o => _.get(o, 'hidden', false));
   const lis = _.map(visibleOptions, (o, i) => <li key={i}><a onClick={e => onClick(e, o)}>{o.label}</a></li>);
-  return <ul className="dropdown-menu dropdown-menu-right dropdown-menu--block co-m-cog__dropdown">
+  return <ul className="dropdown-menu dropdown-menu-right dropdown-menu--block co-kebab__dropdown">
     {lis}
   </ul>;
 };
 
-const cogFactory: CogFactory = {
+const kebabFactory: KebabFactory = {
   Delete: (kind, obj) => ({
     label: `Delete ${kind.label}`,
     callback: () => deleteModal({
@@ -69,24 +69,24 @@ const cogFactory: CogFactory = {
 };
 
 // The common menu actions that most resource share
-cogFactory.common = [cogFactory.ModifyLabels, cogFactory.ModifyAnnotations, cogFactory.Edit, cogFactory.Delete];
+kebabFactory.common = [kebabFactory.ModifyLabels, kebabFactory.ModifyAnnotations, kebabFactory.Edit, kebabFactory.Delete];
 
-export const ResourceCog = connectToModel((props: ResourceCogProps) => {
+export const ResourceKebab = connectToModel((props: ResourceKebabProps) => {
   const {actions, kindObj, resource, isDisabled} = props;
 
   if (!kindObj) {
     return null;
   }
-  return <Cog
+  return <Kebab
     options={actions.map(a => a(kindObj, resource))}
     key={resource.metadata.uid}
     isDisabled={isDisabled !== undefined ? isDisabled : _.get(resource.metadata, 'deletionTimestamp')}
-    id={`cog-for-${resource.metadata.uid}`}
+    id={`kebab-for-${resource.metadata.uid}`}
   />;
 });
 
-export class Cog extends DropdownMixin {
-  static factory: CogFactory = cogFactory;
+export class Kebab extends DropdownMixin {
+  static factory: KebabFactory = kebabFactory;
   private onClick = this.onClick_.bind(this);
 
   onClick_(event, option) {
@@ -109,43 +109,43 @@ export class Cog extends DropdownMixin {
     return <div id={id}>
       { isDisabled ?
         <Tooltip content="disabled">
-          <div ref={this.dropdownElement} className="co-m-cog co-m-cog--disabled" >
-            <span className="fa fa-ellipsis-v co-m-cog__icon co-m-cog__icon--disabled" aria-hidden="true"></span>
+          <div ref={this.dropdownElement} className="co-kebab co-kebab--disabled" >
+            <span className="fa fa-ellipsis-v co-kebab__icon co-kebab__icon--disabled" aria-hidden="true"></span>
             <span className="sr-only">Actions</span>
           </div>
         </Tooltip> :
-        <div ref={this.dropdownElement} className="co-m-cog" >
-          <button type="button" aria-label="Actions" aria-haspopup="true" className="btn btn-link co-m-cog__button" onClick={this.toggle}>
-            <span className="fa fa-ellipsis-v co-m-cog__icon" aria-hidden="true"></span>
+        <div ref={this.dropdownElement} className="co-kebab" >
+          <button type="button" aria-label="Actions" aria-haspopup="true" className="btn btn-link co-kebab__button" onClick={this.toggle}>
+            <span className="fa fa-ellipsis-v co-kebab__icon" aria-hidden="true"></span>
           </button>
           <span className="sr-only">Actions</span>
-          { this.state.active && <CogItems options={options} onClick={this.onClick} /> }
+          { this.state.active && <KebabItems options={options} onClick={this.onClick} /> }
         </div>
       }
     </div>;
   }
 }
 
-export type CogOption = {
+export type KebabOption = {
   label: string;
   href?: string, callback?: () => any;
 };
-export type CogAction = (kind, obj: K8sResourceKind) => CogOption;
+export type KebabAction = (kind, obj: K8sResourceKind) => KebabOption;
 
-export type ResourceCogProps = {
+export type ResourceKebabProps = {
   kindObj: K8sKind;
-  actions: CogAction[];
+  actions: KebabAction[];
   kind: K8sResourceKindReference;
   resource: K8sResourceKind;
   isDisabled?: boolean;
 };
 
-export type CogItemsProps = {
-  options: CogOption[];
-  onClick: (event: React.MouseEvent<{}>, option: CogOption) => void;
+export type KebabItemsProps = {
+  options: KebabOption[];
+  onClick: (event: React.MouseEvent<{}>, option: KebabOption) => void;
 };
 
-export type CogFactory = {[name: string]: CogAction} & {common?: CogAction[]};
+export type KebabFactory = {[name: string]: KebabAction} & {common?: KebabAction[]};
 
-CogItems.displayName = 'CogItems';
-ResourceCog.displayName = 'ResourceCog';
+KebabItems.displayName = 'KebabItems';
+ResourceKebab.displayName = 'ResourceKebab';

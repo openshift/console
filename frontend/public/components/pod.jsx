@@ -6,14 +6,14 @@ import { getVolumeType, getVolumeLocation, getVolumeMountPermissions, getVolumeM
 import { getContainerState, getContainerStatus } from '../module/k8s/docker';
 import { ResourceEventStream } from './events';
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
-import { SectionHeading, Cog, LabelList, navFactory, NodeLink, Overflow, ResourceCog, ResourceIcon, ResourceLink, ResourceSummary, ScrollToTopOnMount, Selector, Timestamp, VolumeIcon, units, AsyncComponent } from './utils';
+import { SectionHeading, Kebab, LabelList, navFactory, NodeLink, Overflow, ResourceKebab, ResourceIcon, ResourceLink, ResourceSummary, ScrollToTopOnMount, Selector, Timestamp, VolumeIcon, units, AsyncComponent } from './utils';
 import { PodLogs } from './pod-logs';
 import { Line, requirePrometheus } from './graphs';
 import { breadcrumbsForOwnerRefs } from './utils/breadcrumbs';
 import { formatDuration } from './utils/datetime';
 import { CamelCaseWrap } from './utils/camel-case-wrap';
 
-const menuActions = [Cog.factory.EditEnvironment, ...Cog.factory.common];
+const menuActions = [Kebab.factory.EditEnvironment, ...Kebab.factory.common];
 const validReadinessStates = new Set(['ContainersNotReady', 'Ready', 'PodCompleted']);
 const validStatuses = new Set(['ContainerCreating', 'Running', 'Completed']);
 
@@ -55,8 +55,8 @@ export const PodRow = ({obj: pod}) => {
     </div>
     <div className="col-lg-2 col-md-2 hidden-sm hidden-xs">{status}</div>
     <div className="col-lg-2 hidden-md hidden-sm hidden-xs"><Readiness pod={pod} /></div>
-    <div className="co-resource-kebab">
-      <ResourceCog actions={menuActions} kind="Pod" resource={pod} isDisabled={phase === 'Terminating'} />
+    <div className="co-kebab-wrapper">
+      <ResourceKebab actions={menuActions} kind="Pod" resource={pod} isDisabled={phase === 'Terminating'} />
     </div>
   </ResourceRow>;
 };

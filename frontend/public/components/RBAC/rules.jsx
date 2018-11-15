@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 
 import { k8sPatch } from '../../module/k8s';
 import { RoleModel, ClusterRoleModel } from '../../models';
-import { Cog, EmptyBox, ResourceIcon } from '../utils';
+import { Kebab, EmptyBox, ResourceIcon } from '../utils';
 import { confirmModal } from '../modals';
 
 export const RulesList = ({rules, name, namespace}) => _.isEmpty(rules)
@@ -107,12 +107,12 @@ const DeleteRule = (name, namespace, i) => ({
 //   href: namespace ? `/k8s/ns/${namespace}/roles/${name}/${i}/edit` : `/k8s/cluster/clusterroles/${name}/${i}/edit`,
 // });
 
-const RuleCog = ({name, namespace, i}) => {
+const RuleKebab = ({name, namespace, i}) => {
   const options = [
     // EditRule,
     DeleteRule,
   ].map(f => f(name, namespace, i));
-  return <Cog options={options} />;
+  return <Kebab options={options} />;
 };
 
 const Rule = ({resources, nonResourceURLs, verbs, apiGroups, name, namespace, i}) => <div className="rbac-rule">
@@ -125,7 +125,7 @@ const Rule = ({resources, nonResourceURLs, verbs, apiGroups, name, namespace, i}
   <div className="col-xs-7 col-sm-4 col-md-6 col-lg-7">
     <Resources resources={resources} nonResourceURLs={nonResourceURLs} />
   </div>
-  <div className="co-resource-kebab">
-    <RuleCog name={name} namespace={namespace} i={i} />
+  <div className="co-kebab-wrapper">
+    <RuleKebab name={name} namespace={namespace} i={i} />
   </div>
 </div>;

@@ -71,7 +71,7 @@ export class DropdownMixin extends React.PureComponent {
 
   show() {
     /* If you're wondering why this isn't in componentDidMount, it's because
-     * cogs are dropdowns. A list of 200 pods would mean 200 global event
+     * kebabs are dropdowns. A list of 200 pods would mean 200 global event
      * listeners. This is bad for performance. - ggreer
      */
     window.removeEventListener('click', this.listener);

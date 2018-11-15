@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { UIActions } from '../../ui/ui-actions';
 import { K8sKind } from '../../module/k8s';
 import {
-  CogAction,
+  KebabAction,
   ResourceOverviewHeading,
   SimpleTabNav,
 } from '../utils';
@@ -48,7 +48,7 @@ type PropsFromDispatch = {
 type OwnProps = {
   item: OverviewItem;
   kindObj: K8sKind;
-  menuActions: CogAction[];
+  menuActions: KebabAction[];
   tabs: {
     name: string;
     component: any;

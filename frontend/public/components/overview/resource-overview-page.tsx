@@ -4,7 +4,7 @@ import { connectToModel } from '../../kinds';
 import { referenceForModel } from '../../module/k8s';
 import {
   AsyncComponent,
-  Cog,
+  Kebab,
   ResourceOverviewHeading,
   ResourceSummary,
 } from '../utils';
@@ -14,7 +14,7 @@ import { NetworkingOverview } from './networking-overview';
 import { OverviewItem } from '.';
 import { resourceOverviewPages } from './resource-overview-pages';
 
-const { common } = Cog.factory;
+const { common } = Kebab.factory;
 const menuActions = [...common];
 
 export const OverviewDetailsResourcesTab: React.SFC<OverviewDetailsResourcesTabProps>= ({item: {buildConfigs, routes, services}}) => (

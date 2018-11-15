@@ -10,14 +10,14 @@ import {
 } from './factory';
 import {
   AsyncComponent,
-  Cog,
+  Kebab,
   ContainerTable,
   ResourceSummary,
   SectionHeading,
   navFactory,
 } from './utils';
 
-const { EditEnvironment, common } = Cog.factory;
+const { EditEnvironment, common } = Kebab.factory;
 export const menuActions = [EditEnvironment, ...common];
 
 const kind = 'StatefulSet';

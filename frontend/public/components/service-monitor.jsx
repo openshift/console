@@ -2,11 +2,11 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 
 import { ColHead, List, ListHeader, ListPage, ResourceRow } from './factory';
-import { Cog, ResourceCog, ResourceLink, Selector } from './utils';
+import { Kebab, ResourceKebab, ResourceLink, Selector } from './utils';
 import { ServiceMonitorModel } from '../models';
 import { referenceForModel } from '../module/k8s';
 
-const {Edit, Delete} = Cog.factory;
+const {Edit, Delete} = Kebab.factory;
 const menuActions = [Edit, Delete];
 
 const namespaceSelectorLinks = ({spec}) => {
@@ -43,8 +43,8 @@ const ServiceMonitorRow = ({obj: sm}) => {
         { namespaceSelectorLinks(sm) }
       </p>
     </div>
-    <div className="co-resource-kebab">
-      <ResourceCog actions={menuActions} kind={referenceForModel(ServiceMonitorModel)} resource={sm} />
+    <div className="co-kebab-wrapper">
+      <ResourceKebab actions={menuActions} kind={referenceForModel(ServiceMonitorModel)} resource={sm} />
     </div>
   </ResourceRow>;
 };

@@ -12,7 +12,7 @@ import { StatusDescriptor } from '../../../public/components/operator-lifecycle-
 import { SpecDescriptor } from '../../../public/components/operator-lifecycle-manager/descriptors/spec';
 import { testCRD, testResourceInstance, testClusterServiceVersion, testOwnedResourceInstance } from '../../../__mocks__/k8sResourcesMocks';
 import { List, ColHead, ListHeader, DetailsPage, MultiListPage } from '../../../public/components/factory';
-import { Timestamp, LabelList, ResourceSummary, StatusBox, ResourceCog, Cog } from '../../../public/components/utils';
+import { Timestamp, LabelList, ResourceSummary, StatusBox, ResourceKebab, Kebab } from '../../../public/components/utils';
 import { referenceFor, K8sKind, referenceForModel } from '../../../public/module/k8s';
 import { ClusterServiceVersionModel } from '../../../public/models';
 
@@ -77,12 +77,12 @@ describe(ClusterServiceVersionResourceRow.displayName, () => {
     expect(link.props().obj).toEqual(testResourceInstance);
   });
 
-  it('renders a `ResourceCog` for common actions', () => {
-    const cog = wrapper.find(ResourceCog);
+  it('renders a `ResourceKebab` for common actions', () => {
+    const kebab = wrapper.find(ResourceKebab);
 
-    expect(cog.props().actions).toEqual(Cog.factory.common);
-    expect(cog.props().kind).toEqual(referenceFor(testResourceInstance));
-    expect(cog.props().resource).toEqual(testResourceInstance);
+    expect(kebab.props().actions).toEqual(Kebab.factory.common);
+    expect(kebab.props().kind).toEqual(referenceFor(testResourceInstance));
+    expect(kebab.props().resource).toEqual(testResourceInstance);
   });
 
   it('renders column for resource labels', () => {
@@ -288,7 +288,7 @@ describe(ClusterServiceVersionResourcesDetailsPage.displayName, () => {
   });
 
   it('passes common menu actions to `DetailsPage`', () => {
-    expect(wrapper.find(DetailsPage).props().menuActions).toEqual(Cog.factory.common);
+    expect(wrapper.find(DetailsPage).props().menuActions).toEqual(Kebab.factory.common);
   });
 
   it('passes function to create breadcrumbs for resource to `DetailsPage`', () => {
