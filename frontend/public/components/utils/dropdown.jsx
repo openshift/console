@@ -290,7 +290,7 @@ export class Dropdown extends DropdownMixin {
 
   render() {
     const {active, autocompleteText, selectedKey, items, title, bookmarks, keyboardHoverKey, favoriteKey} = this.state;
-    const {autocompleteFilter, autocompletePlaceholder, noButton, className, buttonClassName, menuClassName, storageKey, canFavorite, dropDownClassName, titlePrefix, describedBy, noCaret} = this.props;
+    const {autocompleteFilter, autocompletePlaceholder, className, buttonClassName, menuClassName, storageKey, canFavorite, dropDownClassName, titlePrefix, describedBy, noCaret} = this.props;
 
     const spacerBefore = this.props.spacerBefore || new Set();
     const headerBefore = this.props.headerBefore || {};
@@ -320,23 +320,15 @@ export class Dropdown extends DropdownMixin {
     //Adding `dropDownClassName` specifically to use patternfly's context selector component, which expects `bootstrap-select` class on the dropdown. We can remove this additional property if that changes in upcoming patternfly versions.
     return <div className={classNames(className)} ref={this.dropdownElement} style={this.props.style}>
       <div className={classNames('dropdown', dropDownClassName, {'open': active})}>
-        {
-          noButton
-            ? <div role="button" tabIndex="0" onClick={this.toggle} onKeyDown={this.onKeyDown} className={classNames('dropdown__not-btn', buttonClassName)} id={this.props.id}>
-              {titlePrefix && `${titlePrefix}: `}
-              <span className="dropdown__not-btn__title">{title}</span>&nbsp;
-              {noCaret ? null : <Caret />}
-            </div>
-            : <button aria-haspopup="true" onClick={this.toggle} onKeyDown={this.onKeyDown} type="button" className={classNames('btn', 'btn-dropdown', 'dropdown-toggle', buttonClassName ? buttonClassName : 'btn-default')} id={this.props.id} aria-describedby={describedBy} >
-              <div className="btn-dropdown__content-wrap">
-                <span className="btn-dropdown__item">
-                  {titlePrefix && `${titlePrefix}: `}
-                  {title}
-                </span>
-                {noCaret ? null : <Caret />}
-              </div>
-            </button>
-        }
+        <button aria-haspopup="true" onClick={this.toggle} onKeyDown={this.onKeyDown} type="button" className={classNames('btn', 'btn-dropdown', 'dropdown-toggle', buttonClassName ? buttonClassName : 'btn-default')} id={this.props.id} aria-describedby={describedBy} >
+          <div className="btn-dropdown__content-wrap">
+            <span className="btn-dropdown__item">
+              {titlePrefix && <span className="btn-link__titlePrefix">{titlePrefix}: </span>}
+              {title}
+            </span>
+            {noCaret ? null : <Caret />}
+          </div>
+        </button>
         {
           active && <ul role="listbox" ref={this.dropdownList} className={classNames('dropdown-menu', 'dropdown-menu--block', menuClassName)}>
             {
@@ -375,7 +367,7 @@ Dropdown.propTypes = {
   headerBefore: PropTypes.objectOf(PropTypes.string),
   items: PropTypes.object.isRequired,
   menuClassName: PropTypes.string,
-  noButton: PropTypes.bool,
+  buttonClassName: PropTypes.string,
   noSelection: PropTypes.bool,
   storageKey: PropTypes.string,
   spacerBefore: PropTypes.instanceOf(Set),
@@ -384,7 +376,7 @@ Dropdown.propTypes = {
 };
 
 export const ActionsMenu = (props) => {
-  const {actions, buttonClassName, title = undefined, menuClassName = undefined, noButton, noCaret = false} = props;
+  const {actions, title = undefined, menuClassName = undefined, buttonClassName = undefined, noCaret = false} = props;
   const shownActions = _.reject(actions, o => _.get(o, 'hidden', false));
   const items = _.fromPairs(_.map(shownActions, (v, k) => [k, v.label]));
   const btnTitle = title || <span id="action-dropdown">Actions</span>;
@@ -405,7 +397,6 @@ export const ActionsMenu = (props) => {
     title={btnTitle}
     onChange={onChange}
     noSelection={true}
-    noButton={noButton}
     noCaret={noCaret} />;
 };
 
@@ -417,9 +408,8 @@ ActionsMenu.propTypes = {
       callback: PropTypes.func,
     })).isRequired,
   menuClassName: PropTypes.string,
-  noButton: PropTypes.bool,
-  noCaret: PropTypes.bool,
   title: PropTypes.node,
+  noCaret: PropTypes.bool,
 };
 
 const containerLabel = (container) =>

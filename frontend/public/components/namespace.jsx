@@ -298,11 +298,11 @@ class NamespaceBarDropdowns_ extends React.Component {
       <Dropdown
         className="co-namespace-selector"
         menuClassName="co-namespace-selector__menu"
-        noButton
+        buttonClassName="btn-link"
         canFavorite
         items={items}
         titlePrefix={model.label}
-        title={title}
+        title={<span className="btn-link__title">{title}</span>}
         onChange={onChange}
         selectedKey={activeNamespace || ALL_NAMESPACES_KEY}
         autocompleteFilter={autocompleteFilter}
@@ -312,7 +312,7 @@ class NamespaceBarDropdowns_ extends React.Component {
         shortCut="n" />
       <ActionsMenu actions={addActions}
         title={<React.Fragment><span className="pficon pficon-add-circle-o co-add-actions-selector__icon" aria-hidden="true"></span> Add</React.Fragment>}
-        noButton={true}
+        buttonClassName="btn-link"
         menuClassName="co-add-actions-selector__menu dropdown-menu--right" />
     </div>;
   }
