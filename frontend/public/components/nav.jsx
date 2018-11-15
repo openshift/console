@@ -428,10 +428,10 @@ export class Nav extends React.Component {
             <ResourceClusterLink resource="storageclasses" name="Storage Classes" onClick={this.close} required={FLAGS.CAN_LIST_STORE} />
           </NavSection>
 
-          <NavSection text="Builds" icon="pficon pficon-build">
-            <ResourceNSLink resource="buildconfigs" name={BuildConfigModel.labelPlural} onClick={this.close} required={FLAGS.OPENSHIFT} />
-            <ResourceNSLink resource="builds" name={BuildModel.labelPlural} onClick={this.close} required={FLAGS.OPENSHIFT} />
-            <ResourceNSLink resource="imagestreams" name={ImageStreamModel.labelPlural} onClick={this.close} required={FLAGS.OPENSHIFT} startsWith={imagestreamsStartsWith} />
+          <NavSection text="Builds" icon="pficon pficon-build" required={FLAGS.OPENSHIFT}>
+            <ResourceNSLink resource="buildconfigs" name={BuildConfigModel.labelPlural} onClick={this.close} />
+            <ResourceNSLink resource="builds" name={BuildModel.labelPlural} onClick={this.close} />
+            <ResourceNSLink resource="imagestreams" name={ImageStreamModel.labelPlural} onClick={this.close} startsWith={imagestreamsStartsWith} />
           </NavSection>
 
           <NavSection text="Service Catalog" icon="pficon pficon-catalog" required={FLAGS.SERVICE_CATALOG} >
