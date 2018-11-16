@@ -1,6 +1,6 @@
 import React from 'react';
 import * as _ from 'lodash';
-import { Cog } from './utils/okdutils';
+import { Kebab } from './utils/okdutils';
 import { List, ColHead, ListHeader, ResourceRow } from './factory/okdfactory';
 import { DASHES, BUS_VIRTIO, NETWORK_TYPE_MULTUS, NETWORK_TYPE_POD, NIC } from './utils/constants';
 import { deleteDeviceModal } from './modals/delete-device-modal';
@@ -53,12 +53,12 @@ export const NicRow = ({obj: nic}) => <ResourceRow obj={nic}>
   <div className={hiddenRowStyle}>
     {nic.macAddress || DASHES}
   </div>
-  <div className="co-resource-kebab">
-    <Cog
+  <div className="co-kebab-wrapper">
+    <Kebab
       options={getActions(nic.vm, nic)}
       key={`delete-nic-${nic.name}`}
       isDisabled={_.get(nic.vm.metadata, 'deletionTimestamp')}
-      id={`cog-for-${nic.name}`}
+      id={`kebab-for-${nic.name}`}
     />
   </div>
 </ResourceRow>;

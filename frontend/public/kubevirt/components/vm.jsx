@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 
 import { ResourceEventStream } from './okdcomponents';
 import { ListHeader, ColHead, List, ListPage, ResourceRow, DetailsPage } from './factory/okdfactory';
-import { breadcrumbsForOwnerRefs, Firehose, ResourceLink, navFactory, ResourceCog, Cog, units } from './utils/okdutils';
+import { breadcrumbsForOwnerRefs, Firehose, ResourceLink, navFactory, ResourceKebab, Kebab, units } from './utils/okdutils';
 import {
   VirtualMachineInstanceModel,
   VirtualMachineModel,
@@ -59,7 +59,7 @@ const menuActionRestart = (kind, vm) => ({
   }),
 });
 
-const menuActions = [menuActionStart, menuActionRestart, Cog.factory.Delete];
+const menuActions = [menuActionStart, menuActionRestart, Kebab.factory.Delete];
 
 const StateColumn = props => {
   if (props.loaded){
@@ -132,8 +132,8 @@ export const VMRow = ({obj: vm}) => {
         <FirehoseResourceLink filter={data => findPod(data, vm.metadata.name)} />
       </Firehose>
     </div>
-    <div className="co-resource-kebab">
-      <ResourceCog actions={menuActions} kind={VirtualMachineModel.kind} resource={vm} />
+    <div className="co-kebab-wrapper">
+      <ResourceKebab actions={menuActions} kind={VirtualMachineModel.kind} resource={vm} />
     </div>
   </ResourceRow>;
 };

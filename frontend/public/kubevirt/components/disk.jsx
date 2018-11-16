@@ -2,7 +2,7 @@ import React from 'react';
 import * as _ from 'lodash';
 import { List, ColHead, ListHeader, ResourceRow } from './factory/okdfactory';
 import { PersistentVolumeClaimModel } from '../models';
-import { Loading, Firehose, Cog } from './utils/okdutils';
+import { Loading, Firehose, Kebab } from './utils/okdutils';
 import { getResourceKind, getFlattenForKind } from './utils/resources';
 import { DASHES, BUS_VIRTIO, DISK } from './utils/constants';
 import { deleteDeviceModal } from './modals/delete-device-modal';
@@ -76,12 +76,12 @@ export const DiskRow = ({obj: storage}) => {
     <div className={hiddenRowStyle}>
       {storageRow}
     </div>
-    <div className="co-resource-kebab">
-      <Cog
+    <div className="co-kebab-wrapper">
+      <Kebab
         options={getActions(storage.vm, storage)}
         key={`delete-disk-${storage.name}`}
         isDisabled={_.get(storage.vm.metadata, 'deletionTimestamp')}
-        id={`cog-for-${storage.name}`}
+        id={`kebab-for-${storage.name}`}
       />
     </div>
   </ResourceRow>;
