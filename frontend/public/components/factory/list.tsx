@@ -44,7 +44,8 @@ import {
   serviceCatalogStatus,
   serviceClassDisplayName,
 } from '../../module/k8s';
-import { getVmStatus } from '../../kubevirt/components/utils/resources';
+
+import { getVmStatus } from 'kubevirt-web-ui-components';
 
 const fuzzyCaseInsensitive = (a, b) => fuzzy(_.toLower(a), _.toLower(b));
 

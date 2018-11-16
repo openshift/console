@@ -35,8 +35,6 @@ export const getFlattenForKind = (kind) => {
 export const isVmiRunning = (vmi) => _.get(vmi, 'status.phase') === 'Running';
 export const isVmStarting = (vm, vmi) => _.get(vm, 'spec.running') && !isVmiRunning(vmi);
 
-export const getVmStatus = vm => _.get(vm, 'spec.running', false) ? 'Running' : 'Stopped';
-
 export const getVncConnectionDetails = vmi => {
   // Example: ws://localhost:9000/api/kubernetes/apis/subresources.kubevirt.io/v1alpha2/namespaces/kube-system/virtualmachineinstances/vm-cirros1/vnc
   let base = k8sBasePath;

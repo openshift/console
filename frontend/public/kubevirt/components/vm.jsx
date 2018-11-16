@@ -19,9 +19,30 @@ import { k8sCreate, actions } from '../module/okdk8s';
 
 import { startStopVmModal } from './modals/start-stop-vm-modal';
 import { restartVmModal } from './modals/restart-vm-modal';
-import { getResourceKind, getLabelMatcher, findVMI, findPod, getFlattenForKind, getVmStatus } from './utils/resources';
+import {
+  getResourceKind,
+  getLabelMatcher,
+  findVMI,
+  findPod,
+  getFlattenForKind,
+} from './utils/resources';
 
-import { CreateVmWizard, BasicMigrationDialog, TEMPLATE_TYPE_LABEL, TEMPLATE_OS_LABEL } from 'kubevirt-web-ui-components';
+import {
+  CreateVmWizard,
+  BasicMigrationDialog,
+  TEMPLATE_TYPE_LABEL,
+  TEMPLATE_OS_LABEL,
+
+  VmStatus,
+  getVmStatus,
+  VM_STATUS_RUNNING,
+  VM_STATUS_STARTING,
+  VM_STATUS_OFF,
+  VM_STATUS_ERROR,
+  VM_STATUS_POD_ERROR,
+  VM_STATUS_UNKNOWN,
+} from 'kubevirt-web-ui-components';
+
 import VmConsolesConnected from './vmconsoles';
 import { Nic } from './nic';
 import { Disk } from './disk';
@@ -78,11 +99,17 @@ const menuActionMigrate = (kind, vm) => ({
 
 const menuActions = [menuActionStart, menuActionRestart, menuActionMigrate, Kebab.factory.Delete];
 
+const getPod = (vm, resources) => {
+  const podFlatten = getFlattenForKind(PodModel.kind);
+  const podData = podFlatten(resources);
+  return findPod(podData, vm.metadata.name);
+};
+
 const StateColumn = props => {
   if (props.loaded){
     const vm = props.flatten(props.resources);
-    if (vm){
-      return getVmStatus(vm);
+    if (vm) {
+      return <VmStatus vm={vm} pod={getPod(vm, props.resources)} />;
     }
   }
   return DASHES;
@@ -130,7 +157,7 @@ export const VMRow = ({obj: vm}) => {
       <ResourceLink kind={NamespaceModel.kind} name={vm.metadata.namespace} title={vm.metadata.namespace} />
     </div>
     <div className="col-lg-2 col-md-2 col-sm-2 hidden-xs">
-      <Firehose resources={[vmResource]} flatten={getFlattenForKind(VirtualMachineModel.kind)}>
+      <Firehose resources={[vmResource, podResources]} flatten={getFlattenForKind(VirtualMachineModel.kind)}>
         <StateColumn />
       </Firehose>
     </div>
@@ -368,14 +395,21 @@ const openNewVmWizard = activeNamespace => {
 
 };
 
+const VM_STATUS_TO_TEXT = {
+  [VM_STATUS_RUNNING]: 'Running',
+  [VM_STATUS_STARTING]: 'Starting',
+  [VM_STATUS_OFF]: 'Off',
+  [VM_STATUS_ERROR]: 'VM Error',
+  [VM_STATUS_POD_ERROR]: 'Pod Error',
+  [VM_STATUS_UNKNOWN]: 'Unknown',
+};
+const VM_STATUS_ALL = [VM_STATUS_RUNNING, VM_STATUS_STARTING, VM_STATUS_OFF, VM_STATUS_ERROR, VM_STATUS_POD_ERROR, VM_STATUS_UNKNOWN ];
+
 const filters = [{
   type: 'vm-status',
-  selected: [ 'Running', 'Stopped' ],
+  selected: VM_STATUS_ALL,
   reducer: getVmStatus,
-  items: [
-    { id: 'Running', title: 'Running' },
-    { id: 'Stopped', title: 'Stopped' },
-  ],
+  items: VM_STATUS_ALL.map(status => ({ id: status, title: VM_STATUS_TO_TEXT[status] }) ),
 }];
 
 export const VirtualMachinesPage = connect(

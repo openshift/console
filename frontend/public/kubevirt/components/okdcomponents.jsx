@@ -9,5 +9,5 @@ export * from '../../components/namespace';
 export * from '../../components/global-notifications';
 export * from '../../components/resource-list';
 export * from '../../components/events';
-export * from '../../components/utils/status-box';
+export * from '../../components/utils/status-box'; // TODO: move to utils/okdutils.jsx
 export * from '../../components/modals/error-modal';
