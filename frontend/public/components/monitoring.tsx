@@ -221,10 +221,6 @@ const AlertsDetailsPage = withFallback(connect(alertStateToProps)((props: Alerts
                 <Annotation title="Description">{annotations.description}</Annotation>
                 <Annotation title="Summary">{annotations.summary}</Annotation>
                 <Annotation title="Message">{annotations.message}</Annotation>
-                {annotations.runbook_url && <React.Fragment>
-                  <dt>Runbook</dt>
-                  <dd><ExternalLink href={annotations.runbook_url} text={annotations.runbook_url} /></dd>
-                </React.Fragment>}
               </dl>
             </div>
           </div>
@@ -330,10 +326,6 @@ const AlertRulesDetailsPage = withFallback(connect(ruleStateToProps)((props: Ale
                 </React.Fragment>}
                 <dt>Expression</dt>
                 <dd><pre className="monitoring-query">{query}</pre></dd>
-                {annotations.runbook_url && <React.Fragment>
-                  <dt>Runbook</dt>
-                  <dd><ExternalLink href={annotations.runbook_url} text={annotations.runbook_url} /></dd>
-                </React.Fragment>}
               </dl>
             </div>
           </div>
