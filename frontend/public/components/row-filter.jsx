@@ -7,13 +7,13 @@ import k8sActions from '../module/k8s/k8s-actions';
 import { getQueryArgument, setQueryArgument } from './utils';
 
 const CheckBox = ({title, active, number, toggle}) => {
-  const klass = classNames('row-filter--box clickable', {
-    'row-filter--box__active': active, 'row-filter--box__empty': !number,
+  const klass = classNames('row-filter__box', {
+    'row-filter__box--active': active, 'row-filter__box--empty': !number,
   });
 
-  return <div onClick={toggle} className={klass}>
-    <span className="row-filter--number-bubble">{number}</span> {title}
-  </div>;
+  return <a href="#" onClick={toggle} className={klass}>
+    <span className="row-filter__number-bubble">{number}</span>{title}
+  </a>;
 };
 
 export const storagePrefix = 'rowFilter-';
@@ -22,6 +22,7 @@ class CheckBoxes_ extends React.Component {
   constructor(props) {
     super(props);
     this.state = {selected: []};
+    this.toggle = this.toggle.bind(this);
   }
 
   get storageKey() {
@@ -57,7 +58,9 @@ class CheckBoxes_ extends React.Component {
     }
   }
 
-  toggle(itemId) {
+  toggle(event, itemId) {
+    event.preventDefault();
+
     const selected = _.xor(this.state.selected, [itemId]);
 
     // Ensure something is always active
@@ -80,7 +83,7 @@ class CheckBoxes_ extends React.Component {
         title={title}
         number={this.props.numbers[id] || 0}
         active={_.includes(this.state.selected, id)}
-        toggle={this.toggle.bind(this, id)}
+        toggle={event => this.toggle(event, id)}
       />;
     });
 
