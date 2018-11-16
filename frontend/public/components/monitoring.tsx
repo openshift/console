@@ -90,20 +90,21 @@ const editSilence = silence => ({
   href: `${SilenceResource.path}/${silence.id}/edit`,
 });
 
-const cancelSilence = (silence, urls) => ({
+const cancelSilence = (silence, baseURL) => ({
   label: 'Expire Silence',
   callback: () => confirmModal({
     title: 'Expire Silence',
     message: 'Are you sure you want to expire this silence?',
     btnText: 'Expire Silence',
-    executeFn: () => coFetchJSON.delete(`${urls[MonitoringRoutes.AlertManager]}/api/v1/silence/${silence.id}`)
+    executeFn: () => coFetchJSON.delete(`${baseURL}/api/v1/silence/${silence.id}`)
       .then(() => refreshPoller('silences')),
   }),
 });
 
-const silenceMenuActions = (silence, urls) => silenceState(silence) === SilenceStates.Expired
-  ? [editSilence(silence)]
-  : [editSilence(silence), cancelSilence(silence, urls)];
+const silenceMenuActions = (silence, urls) =>
+  silenceState(silence) === SilenceStates.Expired || !urls[MonitoringRoutes.AlertManager]
+    ? [editSilence(silence)]
+    : [editSilence(silence), cancelSilence(silence, urls[MonitoringRoutes.AlertManager])];
 
 const SilenceKebab_ = ({silence, urls}) => <Kebab options={silenceMenuActions(silence, urls)} />;
 const SilenceKebab = connectToURLs(MonitoringRoutes.AlertManager)(SilenceKebab_);
