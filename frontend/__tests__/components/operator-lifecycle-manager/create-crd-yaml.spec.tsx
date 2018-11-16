@@ -21,7 +21,7 @@ describe(CreateCRDYAML.displayName, () => {
 
   it('renders a `Firehose` for the ClusterServiceVersion', () => {
     expect(wrapper.find<any>(Firehose).props().resources).toEqual([
-      {kind: referenceForModel(ClusterServiceVersionModel), name: 'example', namespace: 'default', isList: false, prop: 'ClusterServiceVersion'}
+      {kind: referenceForModel(ClusterServiceVersionModel), name: 'example', namespace: 'default', isList: false, prop: 'ClusterServiceVersion'},
     ]);
   });
 

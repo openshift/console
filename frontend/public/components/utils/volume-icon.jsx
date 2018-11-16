@@ -7,7 +7,7 @@ export const VolumeIcon = ({kind}) => {
   const faClasses = _.fromPairs([
     [VolumeSource.emptyDir.id, 'fa-folder-open-o'],
     [VolumeSource.hostPath.id, 'fa-files-o'],
-    [VolumeSource.secret.id, 'fa-lock']
+    [VolumeSource.secret.id, 'fa-lock'],
   ]);
   const faClass = faClasses[kind];
 

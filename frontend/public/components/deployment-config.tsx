@@ -12,18 +12,18 @@ import {
   List,
   ListPage,
   WorkloadListHeader,
-  WorkloadListRow
+  WorkloadListRow,
 } from './factory';
 import {
   AsyncComponent,
-  Cog,
+  Kebab,
   ContainerTable,
   DeploymentPodCounts,
   LoadingInline,
   navFactory,
   pluralize,
   ResourceSummary,
-  SectionHeading
+  SectionHeading,
 } from './utils';
 
 const DeploymentConfigsReference: K8sResourceKindReference = 'DeploymentConfig';
@@ -52,7 +52,7 @@ const rolloutAction = (kind, obj) => ({
   }),
 });
 
-const {ModifyCount, AddStorage, EditEnvironment, common} = Cog.factory;
+const {ModifyCount, AddStorage, EditEnvironment, common} = Kebab.factory;
 
 export const menuActions = [
   rolloutAction,
@@ -138,7 +138,7 @@ const pages = [
   navFactory.editYaml(),
   navFactory.pods(),
   navFactory.envEditor(environmentComponent),
-  navFactory.events(ResourceEventStream)
+  navFactory.events(ResourceEventStream),
 ];
 
 export const DeploymentConfigsDetailsPage: React.SFC<DeploymentConfigsDetailsPageProps> = props => {
@@ -162,7 +162,7 @@ export const DeploymentConfigsPage: React.SFC<DeploymentConfigsPageProps> = prop
     items: createItems,
     createLink: type => type === 'image'
       ? `/deploy-image${props.namespace ? `?preselected-ns=${props.namespace}` : ''}`
-      : `/k8s/ns/${props.namespace || 'default'}/deploymentconfigs/new`
+      : `/k8s/ns/${props.namespace || 'default'}/deploymentconfigs/new`,
   };
   return <ListPage {...props} title="Deployment Configs" kind={DeploymentConfigsReference} ListComponent={DeploymentConfigsList} canCreate={true} createButtonText="Create" createProps={createProps} filterLabel={props.filterLabel} />;
 };

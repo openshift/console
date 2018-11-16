@@ -112,13 +112,13 @@ WSFactory.prototype._connect = function() {
       that._connectionAttempt = null;
     }
   };
-  this.ws.onclose = function (evt) {
+  this.ws.onclose = function(evt) {
     console.log(`websocket closed: ${that.id}`, evt);
     that._state = 'closed';
     that._triggerEvent('close', evt);
     that._reconnect();
   };
-  this.ws.onerror = function (evt) {
+  this.ws.onerror = function(evt) {
     console.log(`websocket error: ${that.id}`);
     that._state = 'error';
     that._triggerEvent('error', evt);
@@ -281,6 +281,6 @@ WSFactory.prototype.destroy = function(timedout) {
   this._messageBuffer = [];
 };
 
-WSFactory.prototype.send = function (data) {
+WSFactory.prototype.send = function(data) {
   this.ws && this.ws.send(data);
 };

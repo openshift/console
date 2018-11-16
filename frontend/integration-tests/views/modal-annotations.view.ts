@@ -13,7 +13,7 @@ export const annotationDialogOverlay = $('.co-overlay');
 
 export const isLoaded = () => browser.wait(until.presenceOf(addMoreBtn), BROWSER_TIMEOUT);
 
-export const addAnnotation = async function ( key: string, value: string) {
+export const addAnnotation = async function( key: string, value: string) {
   const initialRowCount = await annotationRows.count();
   await addMoreBtn.click();
   await isLoaded();
@@ -23,9 +23,9 @@ export const addAnnotation = async function ( key: string, value: string) {
   await annotationRowsValue.get(initialRowCount).sendKeys(value);
 };
 
-export const updateAnnotation = async function ( annotationKey: string, annotationValue: string) {
+export const updateAnnotation = async function( annotationKey: string, annotationValue: string) {
   let found = false;
-  await annotationRowsKey.each( async function (item, index) {
+  await annotationRowsKey.each( async function(item, index) {
     if (found) {
       return;
     }
@@ -41,9 +41,9 @@ export const updateAnnotation = async function ( annotationKey: string, annotati
   }
 };
 
-export const deleteAnnotation = async function ( annotationKey: string) {
+export const deleteAnnotation = async function( annotationKey: string) {
   let found = false;
-  await annotationRowsKey.each( async function (item, index) {
+  await annotationRowsKey.each( async function(item, index) {
     if (found) {
       return;
     }

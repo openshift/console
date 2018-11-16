@@ -3,7 +3,7 @@ import * as React from 'react';
 import { DeploymentConfigModel } from '../../models';
 import {
   DeploymentConfigDetailsList,
-  menuActions
+  menuActions,
 } from '../deployment-config';
 import {
   DeploymentPodCounts,
@@ -11,11 +11,11 @@ import {
   ResourceSummary,
 } from '../utils';
 
-import { BuildConfigsOverview } from './build-configs-overview';
-import { NetworkingOverview } from './networking-overview';
+import { OverviewDetailsResourcesTab } from './resource-overview-page';
+import { OverviewItem } from '.';
 import { ResourceOverviewDetails } from './resource-overview-details';
 
-const DeploymentConfigOverviewDetails: React.SFC<{item:any}> = ({item: {obj: dc}}) => {
+const DeploymentConfigOverviewDetails: React.SFC<DeploymentConfigOverviewDetailsProps> = ({item: {obj: dc}}) => {
   return <div className="overview__sidebar-pane-body resource-overview__body">
     <div className="resource-overview__pod-counts">
       <DeploymentPodCounts resource={dc} resourceKind={DeploymentConfigModel} />
@@ -40,28 +40,31 @@ const DeploymentConfigOverviewDetails: React.SFC<{item:any}> = ({item: {obj: dc}
   </div>;
 };
 
-const DeploymentConfigResources: React.SFC<{item:any}> = ({item: {buildConfigs, routes, services}}) => (
-  <div className="overview__sidebar-pane-body">
-    <BuildConfigsOverview buildConfigs={buildConfigs} />
-    <NetworkingOverview routes={routes} services={services} />
-  </div>
-);
-
 const tabs = [
   {
     name: 'Overview',
-    component: DeploymentConfigOverviewDetails
+    component: DeploymentConfigOverviewDetails,
   },
   {
     name: 'Resources',
-    component: DeploymentConfigResources
-  }
+    component: OverviewDetailsResourcesTab,
+  },
 ];
 
-export const DeploymentConfigOverviewPage: React.SFC<{item:any}> = ({item}) =>
+export const DeploymentConfigOverviewPage: React.SFC<DeploymentConfigOverviewProps> = ({item}) =>
   <ResourceOverviewDetails
     item={item}
     kindObj={DeploymentConfigModel}
     menuActions={menuActions}
     tabs={tabs}
   />;
+
+/* eslint-disable no-unused-vars, no-undef */
+type DeploymentConfigOverviewDetailsProps = {
+  item: OverviewItem;
+};
+
+type DeploymentConfigOverviewProps = {
+  item: OverviewItem;
+};
+/* eslint-enable no-unused-vars, no-undef */

@@ -3,7 +3,7 @@ import * as React from 'react';
 
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import { SecretData } from './configmap-and-secret-data';
-import { Cog, SectionHeading, ResourceCog, ResourceLink, ResourceSummary, detailsPage, navFactory, resourceObjPath } from './utils';
+import { Kebab, SectionHeading, ResourceKebab, ResourceLink, ResourceSummary, detailsPage, navFactory, resourceObjPath } from './utils';
 import { fromNow } from './utils/datetime';
 import { SecretType } from './secrets/create-secret';
 import { configureAddSecretToWorkloadModal } from './modals/add-secret-to-workload';
@@ -25,13 +25,13 @@ const actionButtons = [
 ];
 
 const menuActions = [
-  Cog.factory.ModifyLabels,
-  Cog.factory.ModifyAnnotations,
+  Kebab.factory.ModifyLabels,
+  Kebab.factory.ModifyAnnotations,
   (kind, obj) => ({
     label: `Edit ${kind.label}`,
     href: `${resourceObjPath(obj, kind.kind)}/edit`,
   }),
-  Cog.factory.Delete,
+  Kebab.factory.Delete,
 ];
 
 const SecretHeader = props => <ListHeader>
@@ -56,8 +56,8 @@ const SecretRow = ({obj: secret}) => {
     <div className="col-md-3 col-sm-4 hidden-xs co-break-word">{secret.type}</div>
     <div className="col-md-1 hidden-sm hidden-xs">{data}</div>
     <div className="col-md-2 hidden-sm hidden-xs">{age}</div>
-    <div className="co-resource-kebab">
-      <ResourceCog actions={menuActions} kind="Secret" resource={secret} />
+    <div className="co-kebab-wrapper">
+      <ResourceKebab actions={menuActions} kind="Secret" resource={secret} />
     </div>
   </ResourceRow>;
 };
@@ -88,7 +88,7 @@ const secretTypeFilterValues = [
   SOURCE_FILTER_VALUE,
   TLS_FILTER_VALUE,
   SA_TOKEN_FILTER_VALUE,
-  OPAQUE_FILTER_VALUE
+  OPAQUE_FILTER_VALUE,
 ];
 
 export const secretTypeFilterReducer = secret => {
@@ -132,7 +132,7 @@ const SecretsPage = props => {
 
   const createProps = {
     items: createItems,
-    createLink: (type) => `/k8s/ns/${props.namespace || 'default'}/secrets/new/${type !== 'yaml' ? type : ''}`
+    createLink: (type) => `/k8s/ns/${props.namespace || 'default'}/secrets/new/${type !== 'yaml' ? type : ''}`,
   };
 
   return <ListPage ListComponent={SecretsList} canCreate={true} rowFilters={filters} createButtonText="Create" createProps={createProps} {...props} />;

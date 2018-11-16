@@ -141,16 +141,16 @@ describe('Interacting with the create secret forms', () => {
             username: username0,
             password: password0,
             auth: secretsView.encode(username0, password0),
-            email: 'test@secret.com0'
+            email: 'test@secret.com0',
           },
           'https://index.openshift.io/v1':{
             username: username1,
             password: password1,
             auth: secretsView.encode(username1, password1),
-            email: 'test@secret.com1'
-          }
-        }
-      }
+            email: 'test@secret.com1',
+          },
+        },
+      },
     };
     const updatedCredentialsToCheck = {
       '.dockerconfigjson': {
@@ -159,10 +159,10 @@ describe('Interacting with the create secret forms', () => {
             username: usernameUpdated,
             password: passwordUpdated,
             auth: secretsView.encode(usernameUpdated, passwordUpdated),
-            email: 'testUpdated@secret.com'
-          }
-        }
-      }
+            email: 'testUpdated@secret.com',
+          },
+        },
+      },
     };
 
     beforeAll(async() => secretsView.visitSecretsPage(appHost, testName));
@@ -217,9 +217,9 @@ describe('Interacting with the create secret forms', () => {
           username: username,
           password: password,
           auth: secretsView.encode(username, password),
-          email: 'test@secret.com'
-        }
-      }
+          email: 'test@secret.com',
+        },
+      },
     };
 
     beforeAll(async() => secretsView.visitSecretsPage(appHost, testName));

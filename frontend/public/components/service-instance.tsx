@@ -5,7 +5,7 @@ import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
 
 import { k8sList, K8sResourceKind, K8sResourceKindReference, planExternalName, serviceCatalogStatus } from '../module/k8s';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
-import { Cog, history, navFactory, ResourceCog, ResourceIcon, ResourceLink, ResourceSummary, SectionHeading, StatusWithIcon, Timestamp } from './utils';
+import { Kebab, history, navFactory, ResourceKebab, ResourceIcon, ResourceLink, ResourceSummary, SectionHeading, StatusWithIcon, Timestamp } from './utils';
 import { ResourceEventStream } from './events';
 import { Conditions } from './conditions';
 import { ServiceCatalogParameters, ServiceCatalogParametersSecrets } from './service-catalog-parameters';
@@ -25,7 +25,7 @@ const createBinding = (kindObj, serviceInstance) => {
   };
 };
 
-const { common } = Cog.factory;
+const { common } = Kebab.factory;
 
 const menuActions = [
   createBinding,
@@ -43,7 +43,7 @@ class ServiceInstanceMessage_ extends React.Component<ServiceInstanceMessageProp
     loaded: false,
   };
 
-  componentDidMount () {
+  componentDidMount() {
     const {obj} = this.props;
 
     // Get the bindings for this service instance to know what messages to display.
@@ -143,7 +143,7 @@ const pages = [
   navFactory.details(ServiceInstanceDetails),
   navFactory.editYaml(),
   navFactory.events(ResourceEventStream),
-  navFactory.serviceBindings(ServiceBindingsDetails)
+  navFactory.serviceBindings(ServiceBindingsDetails),
 ];
 
 export const ServiceInstanceDetailsPage: React.SFC<ServiceInstanceDetailsPageProps> = props =>
@@ -187,8 +187,8 @@ const ServiceInstancesRow: React.SFC<ServiceInstancesRowProps> = ({obj}) => {
     <div className="col-md-2 hidden-sm hidden-xs co-break-word">
       <Timestamp timestamp={obj.metadata.creationTimestamp} />
     </div>
-    <div className="co-resource-kebab">
-      <ResourceCog actions={menuActions} kind={ServiceInstancesReference} resource={obj} />
+    <div className="co-kebab-wrapper">
+      <ResourceKebab actions={menuActions} kind={ServiceInstancesReference} resource={obj} />
     </div>
   </div>;
 };
@@ -203,7 +203,7 @@ const filters = [{
   items: [
     {id: 'Ready', title: 'Ready'},
     {id: 'Not Ready', title: 'Not Ready'},
-    {id: 'Failed', title: 'Failed'}
+    {id: 'Failed', title: 'Failed'},
   ],
 }];
 

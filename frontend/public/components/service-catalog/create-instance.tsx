@@ -7,25 +7,25 @@ import { IChangeEvent, ISubmitEvent } from 'react-jsonschema-form';
 
 import { LoadingBox } from '../utils/status-box';
 import { ServiceInstanceModel } from '../../models';
-import { NsDropdown } from '../RBAC/bindings';
 import { ClusterServiceClassInfo } from '../cluster-service-class-info';
 import { ButtonBar } from '../utils/button-bar';
 import {
   k8sCreate,
-  K8sResourceKind
+  K8sResourceKind,
 } from '../../module/k8s';
 import {
   createParametersSecret,
   getInstanceCreateParametersForm,
   getInstanceCreateSchema,
   getUISchema,
-  ServiceCatalogParametersForm
+  ServiceCatalogParametersForm,
 } from './schema-form';
 import {
   Firehose,
   history,
+  NsDropdown,
   PageHeading,
-  resourcePathFromModel
+  resourcePathFromModel,
 } from '../utils';
 
 const PARAMETERS_SECRET_KEY = 'parameters';
@@ -33,7 +33,7 @@ const PARAMETERS_SECRET_KEY = 'parameters';
 const getAvailablePlans = (plans: any): any[] => _.reject(plans.data, 'status.removedFromBrokerCatalog');
 
 class CreateInstance extends React.Component<CreateInstanceProps, CreateInstanceState> {
-  constructor (props) {
+  constructor(props) {
     super(props);
 
     const { preselectedNamespace: namespace = ''} = this.props;
@@ -101,7 +101,7 @@ class CreateInstance extends React.Component<CreateInstanceProps, CreateInstance
         clusterServiceClassExternalName: _.get(this.props.obj, 'data.spec.externalName'),
         clusterServicePlanExternalName: this.state.plan,
         parametersFrom,
-      }
+      },
     };
 
     return k8sCreate(ServiceInstanceModel, serviceInstance);

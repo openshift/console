@@ -18,13 +18,13 @@ const defaultState = {
     description: '',
     type: null,
     parameters: {},
-    reclaim: null
+    reclaim: null,
   },
   customParams: [['', '']],
   validationSuccessful: false,
   loading: false,
   error: null,
-  fieldErrors: {parameters: {}}
+  fieldErrors: {parameters: {}},
 };
 
 /*eslint-disable no-undef*/
@@ -49,7 +49,7 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
         type: {
           name: 'Type',
           values: {io1: 'io1', gp2: 'gp2', sc1: 'sc1', st1: 'st1'},
-          hintText: 'Select AWS Type'
+          hintText: 'Select AWS Type',
         },
         iopsPerGB: {
           name: 'IOPS Per GiB',
@@ -60,23 +60,23 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
             }
             return null;
           },
-          visible: (params) => _.get(params, 'type.value') === 'io1'
+          visible: (params) => _.get(params, 'type.value') === 'io1',
         },
         fsType: {
           name: 'Filesystem Type',
-          hintText: 'Filesystem to Be Laid Out'
+          hintText: 'Filesystem to Be Laid Out',
         },
         encrypted: {
           name: 'Encrypted',
           type: 'checkbox',
-          format: (value) => value.toString()
+          format: (value) => value.toString(),
         },
         kmsKeyId: {
           name: 'KMS Key ID',
           hintText: 'The full Amazon Resource Name of the key to use when encrypting the volume',
-          visible: (params) => _.get(params, 'encrypted.value', false)
-        }
-      }
+          visible: (params) => _.get(params, 'encrypted.value', false),
+        },
+      },
     },
     'gce-pd': {
       title: 'GCE PD',
@@ -86,7 +86,7 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
         type: {
           name: 'Type',
           values: {'pd-standard': 'pd-standard', 'pd-ssd': 'pd-ssd'},
-          hintText: 'Select GCE type'
+          hintText: 'Select GCE type',
         },
         zone: {
           name: 'Zone',
@@ -95,7 +95,7 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
               return 'Zone and zones parameters must not be used at the same time';
             }
             return null;
-          }
+          },
         },
         zones: {
           name: 'Zones',
@@ -104,7 +104,7 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
               return 'Zone and zones parameters must not be used at the same time';
             }
             return null;
-          }
+          },
         },
         'replication-type': {
           name: 'Replication Type',
@@ -115,9 +115,9 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
               return 'Zone cannot be specified when Replication Type regional-pd is chosen, use zones instead';
             }
             return null;
-          }
-        }
-      }
+          },
+        },
+      },
     },
     glusterfs: {
       title: 'Glusterfs',
@@ -126,19 +126,19 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
       parameters: {
         resturl: {
           name: 'Gluster REST/Heketi URL',
-          required: true
+          required: true,
         },
         restuser: {
-          name: 'Gluster REST/Heketi user'
+          name: 'Gluster REST/Heketi user',
         },
         secretNamespace: {
-          name: 'Secret Namespace'
+          name: 'Secret Namespace',
         },
         secretName: {
-          name: 'Secret Name'
+          name: 'Secret Name',
         },
         clusterid: {
-          name: 'Cluster ID'
+          name: 'Cluster ID',
         },
         gidMin: {
           name: 'GID Min',
@@ -156,12 +156,12 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
               return 'GID Max must be number';
             }
             return null;
-          }
+          },
         },
         volumetype: {
-          name: 'Volume Type'
-        }
-      }
+          name: 'Volume Type',
+        },
+      },
     },
     openstackCinder: {
       title: 'OpenStack Cinder',
@@ -169,12 +169,12 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
       documentationLink: 'https://kubernetes.io/docs/concepts/storage/storage-classes/#openstack-cinder',
       parameters: {
         type: {
-          name: 'Volume Type'
+          name: 'Volume Type',
         },
         availability:{
-          name: 'Availability Zone'
-        }
-      }
+          name: 'Availability Zone',
+        },
+      },
     },
     azureFile: {
       title: 'Azure File',
@@ -183,17 +183,17 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
       parameters: {
         skuName: {
           name: 'SKU Name',
-          hintText: 'Azure storage account SKU tier'
+          hintText: 'Azure storage account SKU tier',
         },
         location: {
           name: 'Location',
-          hintText: 'Azure storage account location'
+          hintText: 'Azure storage account location',
         },
         storageAccount: {
           name: 'Azure Storage Account Name',
-          hintText: 'Azure Storage Account Name'
-        }
-      }
+          hintText: 'Azure Storage Account Name',
+        },
+      },
     },
     azureDisk: {
       title: 'Azure Disk',
@@ -202,14 +202,14 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
       parameters: {
         storageaccounttype: {
           name: 'Storage Account Type',
-          hintText: 'Storage Account Type'
+          hintText: 'Storage Account Type',
         },
         kind: {
           name: 'Account Kind',
           values: {shared: 'shared', dedicated: 'dedicated', managed: 'managed'},
-          hintText: 'Select Account Kind'
-        }
-      }
+          hintText: 'Select Account Kind',
+        },
+      },
     },
     quobyte: {
       title: 'Quobyte',
@@ -218,37 +218,37 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
       parameters: {
         quobyteAPIServer: {
           name: 'Quobyte API Server',
-          hintText: 'Quobyte API Server'
+          hintText: 'Quobyte API Server',
         },
         registry: {
           name: 'Registry Address(es)',
-          hintText: 'Registry Address(es)'
+          hintText: 'Registry Address(es)',
         },
         adminSecretName: {
           name: 'Admin Secret Name',
-          hintText: 'Admin Secret Name'
+          hintText: 'Admin Secret Name',
         },
         adminSecretNamespace: {
           name: 'Admin Secret Namespace',
-          hintText: 'Admin Secret Namespace'
+          hintText: 'Admin Secret Namespace',
         },
         user: {
           name: 'User',
-          hintText: 'User'
+          hintText: 'User',
         },
         group: {
           name: 'Group',
-          hintText: 'Group'
+          hintText: 'Group',
         },
         quobyteConfig: {
           name: 'Quobyte Configuration',
-          hintText: 'Quobyte Configuration'
+          hintText: 'Quobyte Configuration',
         },
         quobyteTenant: {
           name: 'Quobyte Tenant',
-          hintText: 'Quobyte tenant ID used to create/delete the volume'
-        }
-      }
+          hintText: 'Quobyte tenant ID used to create/delete the volume',
+        },
+      },
     },
     cephRbd: {
       title: 'Ceph RBD',
@@ -258,53 +258,53 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
         monitors: {
           name: 'Monitors',
           required: true,
-          hintText: 'Monitors'
+          hintText: 'Monitors',
         },
         adminId: {
           name: 'Admin Client ID',
-          hintText: 'Admin Client ID'
+          hintText: 'Admin Client ID',
         },
         adminSecretName: {
           name: 'Admin Secret Name',
           required: true,
-          hintText: 'Admin Secret Name'
+          hintText: 'Admin Secret Name',
         },
         adminSecretNamespace: {
           name: 'Admin Secret Namespace',
-          hintText: 'Admin Secret Namespace'
+          hintText: 'Admin Secret Namespace',
         },
         pool: {
           name: 'Pool',
-          hintText: 'Pool'
+          hintText: 'Pool',
         },
         userId: {
           name: 'User Client ID',
-          hintText: 'Ceph client ID used to map the RBD image'
+          hintText: 'Ceph client ID used to map the RBD image',
         },
         userSecretName: {
           name: 'User Secret Name',
           required: true,
-          hintText: 'User Secret Name'
+          hintText: 'User Secret Name',
         },
         userSecretNamespace: {
           name: 'User Secret Namespace',
-          hintText: 'User Secret Namespace'
+          hintText: 'User Secret Namespace',
         },
         fsType: {
           name: 'Filesystem Type',
-          hintText: 'Filesystem Type'
+          hintText: 'Filesystem Type',
         },
         imageFormat: {
           name: 'Image Format',
           values: {1: '1', 2: '2'},
-          hintText: 'Select Image Format'
+          hintText: 'Select Image Format',
         },
         imageFeatures: {
           name: 'Image Features',
           hintText: 'Image Features',
-          visible: (params) => _.get(params, 'imageFormat.value') === '2'
-        }
-      }
+          visible: (params) => _.get(params, 'imageFormat.value') === '2',
+        },
+      },
     },
     vSphereVolume: {
       title: 'vSphere Volume',
@@ -314,13 +314,13 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
         diskformat: {
           name: 'Disk Format',
           values: {thin: 'thin', zeroedthick: 'zeroed thick', eagerzeroedthick: 'eager zeroed thick'},
-          hintText: 'Select Disk Format'
+          hintText: 'Select Disk Format',
         },
         datastore: {
           name: 'Datastore',
-          hintText: 'Datastore'
-        }
-      }
+          hintText: 'Datastore',
+        },
+      },
     },
     portworxVolume: {
       title: 'Portworx Volume',
@@ -330,7 +330,7 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
         fs: {
           name: 'Filesystem',
           values: {none: 'none', xfs: 'xfs', ext4: 'ext4'},
-          hintText: 'Select Filesystem'
+          hintText: 'Select Filesystem',
         },
         block_size: { // eslint-disable-line camelcase
           name: 'Block Size',
@@ -350,12 +350,12 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
               return 'Number of replicas must be a number';
             }
             return null;
-          }
+          },
         },
         io_priority: { // eslint-disable-line camelcase
           name: 'I/O Priority',
           values: {high: 'high', medium: 'medium', low: 'low'},
-          hintText: 'I/O Priority'
+          hintText: 'I/O Priority',
         },
         snap_interval: { // eslint-disable-line camelcase
           name: 'Snapshot Interval',
@@ -366,7 +366,7 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
             }
             return null;
           },
-          format: (value) => value.toString()
+          format: (value) => value.toString(),
         },
         aggregation_level: { // eslint-disable-line camelcase
           name: 'Aggregation Level',
@@ -377,14 +377,14 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
             }
             return null;
           },
-          format: (value) => value.toString()
+          format: (value) => value.toString(),
         },
         ephemeral: {
           name: 'Ephemeral',
           type: 'checkbox',
-          format: (value) => value.toString()
-        }
-      }
+          format: (value) => value.toString(),
+        },
+      },
     },
     scaleIo: {
       title: 'ScaleIO',
@@ -394,42 +394,42 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
         gateway: {
           name: 'API Gateway',
           required: true,
-          hintText: 'ScaleIO API gateway address'
+          hintText: 'ScaleIO API gateway address',
         },
         system: {
           name: 'System Name',
           required: true,
-          hintText: 'Name of the ScaleIO system'
+          hintText: 'Name of the ScaleIO system',
         },
         protectionDomain: {
           name: 'Protection Domain',
           required: true,
-          hintText: 'Name of the ScaleIO protection domain'
+          hintText: 'Name of the ScaleIO protection domain',
         },
         storagePool: {
           name: 'Storage Pool',
           required: true,
-          hintText: 'Name of the volume storage pool'
+          hintText: 'Name of the volume storage pool',
         },
         storageMode: {
           name: 'Storage Mode',
           values: {thinProvisioned: 'ThinProvisioned', thickProvisioned: 'ThickProvisioned'},
-          hintText: 'Select Storage Provision Mode'
+          hintText: 'Select Storage Provision Mode',
         },
         secretRef: {
           name: 'Secret Reference',
           required: true,
-          hintText: 'Reference to a configured Secret object'
+          hintText: 'Reference to a configured Secret object',
         },
         readOnly: {
           name: 'Read Only',
-          type: 'checkbox'
+          type: 'checkbox',
         },
         fsType: {
           name: 'Filesystem Type',
-          hintText: 'Filesystem to use for the volume'
-        }
-      }
+          hintText: 'Filesystem to use for the volume',
+        },
+      },
     },
     storageOs: {
       title: 'StorageOS',
@@ -438,19 +438,19 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
       parameters: {
         pool: {
           name: 'Pool',
-          hintText: 'Name of the StorageOS distributed capacity pool from which to provision the volume'
+          hintText: 'Name of the StorageOS distributed capacity pool from which to provision the volume',
         },
         description: {
           name: 'Description',
-          hintText: 'Description to assign to volumes that were created dynamically'
+          hintText: 'Description to assign to volumes that were created dynamically',
         },
         fsType: {
           name: 'Filesystem Type',
-          hintText: 'Default filesystem type to request'
+          hintText: 'Default filesystem type to request',
         },
         adminSecretName: {
           name: 'Admin Secret Name',
-          hintText: 'Name of the secret to use for obtaining the StorageOS API credentials'
+          hintText: 'Name of the secret to use for obtaining the StorageOS API credentials',
         },
         adminSecretNamespace: {
           name: 'Admin Secret Namespace',
@@ -460,13 +460,13 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
             return adminSecretName !== null && adminSecretName !== '';
           },
         },
-      }
-    }
+      },
+    },
   });
 
   reclaimPolicies = {
     Retain: 'Retain',
-    Delete: 'Delete'
+    Delete: 'Delete',
   };
 
   componentDidUpdate(prevProps) {
@@ -515,7 +515,7 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
   updateNewStorage = (param, value, runValidation) => {
     const newParams = {
       ...this.state.newStorageClass,
-      [param]: value
+      [param]: value,
     };
 
     runValidation ? this.setState({newStorageClass: newParams}, this.validateForm) : this.setState({newStorageClass: newParams});
@@ -523,7 +523,7 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
 
   createStorageClass = () => {
     this.setState({
-      loading: true
+      loading: true,
     });
 
     const type = this.state.newStorageClass.type;
@@ -532,7 +532,7 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
     let data : StorageClass = {
       metadata: {
         name: this.state.newStorageClass.name,
-        annotations: {description: this.state.newStorageClass.description}
+        annotations: {description: this.state.newStorageClass.description},
       },
       provisioner: this.storageTypes[type].provisioner,
       parameters: dataParameters,
@@ -585,7 +585,7 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
 
   updateCustomParams = (customParams) => {
     this.setState({
-      customParams: customParams.nameValuePairs
+      customParams: customParams.nameValuePairs,
     });
   };
 
@@ -620,7 +620,7 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
     const nameUpdated = updatedName !== this.previousName;
     const returnVal = {
       error: null,
-      nameIsValid: true
+      nameIsValid: true,
     };
 
     if (nameUpdated) {
@@ -855,12 +855,12 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
 
 const mapStateToProps = ({k8s}, {onClose}) => ({
   k8s: k8s,
-  onClose: onClose
+  onClose: onClose,
 });
 
 const mapDispatchToProps = () => ({
   stopK8sWatch: actions.stopK8sWatch,
-  watchK8sList: actions.watchK8sList
+  watchK8sList: actions.watchK8sList,
 });
 
 export type StorageClassFormProps = {

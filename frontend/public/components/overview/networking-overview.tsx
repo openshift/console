@@ -3,8 +3,8 @@ import * as _ from 'lodash-es';
 import { Icon, ListGroup } from 'patternfly-react';
 
 import { K8sResourceKind } from '../../module/k8s';
-import { ResourceLink, SidebarSectionHeading } from '../utils';
 import { RouteLocation } from '../routes';
+import { ResourceLink, SidebarSectionHeading } from '../utils';
 
 const ServicePortList: React.SFC<ServicePortListProps> = ({service}) => {
   const ports = _.get(service, 'spec.ports', []);

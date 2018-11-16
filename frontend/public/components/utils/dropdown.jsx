@@ -15,7 +15,7 @@ export class DropdownMixin extends React.PureComponent {
     this.dropdownList = React.createRef();
   }
 
-  _onWindowClick (event) {
+  _onWindowClick(event) {
     if (!this.state.active) {
       return;
     }
@@ -38,11 +38,11 @@ export class DropdownMixin extends React.PureComponent {
     }
   }
 
-  componentWillUnmount () {
+  componentWillUnmount() {
     window.removeEventListener('click', this.listener);
   }
 
-  onClick_ (selectedKey, e) {
+  onClick_(selectedKey, e) {
     e.preventDefault();
     e.stopPropagation();
 
@@ -54,13 +54,13 @@ export class DropdownMixin extends React.PureComponent {
 
     this.setState({
       selectedKey: selectedKey,
-      title: noSelection ? title : this.props.items[selectedKey]
+      title: noSelection ? title : this.props.items[selectedKey],
     });
 
     this.hide();
   }
 
-  toggle (e) {
+  toggle(e) {
     e.preventDefault();
     if (this.state.active) {
       this.hide(e);
@@ -69,9 +69,9 @@ export class DropdownMixin extends React.PureComponent {
     }
   }
 
-  show () {
+  show() {
     /* If you're wondering why this isn't in componentDidMount, it's because
-     * cogs are dropdowns. A list of 200 pods would mean 200 global event
+     * kebabs are dropdowns. A list of 200 pods would mean 200 global event
      * listeners. This is bad for performance. - ggreer
      */
     window.removeEventListener('click', this.listener);
@@ -79,7 +79,7 @@ export class DropdownMixin extends React.PureComponent {
     this.setState({active: true});
   }
 
-  hide (e) {
+  hide(e) {
     e && e.stopPropagation();
     window.removeEventListener('click', this.listener);
     this.setState({active: false});
@@ -89,7 +89,7 @@ export class DropdownMixin extends React.PureComponent {
 const Caret = () => <span className="caret" />;
 
 class DropDownRow extends React.PureComponent {
-  render () {
+  render() {
     const {itemKey, content, onclick, onBookmark, onUnBookmark, className, selected, hover, canFavorite, onFavorite, favoriteKey} = this.props;
     let prefix;
     if (onUnBookmark) {
@@ -115,7 +115,7 @@ class DropDownRow extends React.PureComponent {
 
 /** @augments {React.Component<any>} */
 export class Dropdown extends DropdownMixin {
-  constructor (props) {
+  constructor(props) {
     super(props);
     this.onUnBookmark = (...args) => this.onUnBookmark_(...args);
     this.onBookmark = (...args) => this.onBookmark_(...args);
@@ -169,17 +169,17 @@ export class Dropdown extends DropdownMixin {
     };
   }
 
-  get bookmarkStorageKey () {
+  get bookmarkStorageKey() {
     return `${this.props.storageKey}-bookmarks`;
   }
 
-  componentDidMount () {
+  componentDidMount() {
     if (this.props.shortCut) {
       window.addEventListener('keydown', this.globalKeyDown);
     }
   }
 
-  componentWillUnmount () {
+  componentWillUnmount() {
     super.componentWillUnmount();
     window.removeEventListener('keydown', this.globalKeyDown);
   }
@@ -197,7 +197,7 @@ export class Dropdown extends DropdownMixin {
     this.applyTextFilter_(this.state.autocompleteText, nextProps.items);
   }
 
-  componentDidUpdate (prevProps, prevState) {
+  componentDidUpdate(prevProps, prevState) {
     if (!prevState.active && this.state.active && this.input) {
       // Clear any previous filter when reopening the dropdown.
       this.applyTextFilter_('', this.props.items);
@@ -213,7 +213,7 @@ export class Dropdown extends DropdownMixin {
     this.setState({autocompleteText, items});
   }
 
-  onKeyDown_ (e) {
+  onKeyDown_(e) {
     const { key } = e;
     if (key === 'Escape') {
       this.hide(e);
@@ -256,7 +256,7 @@ export class Dropdown extends DropdownMixin {
     e.stopPropagation();
   }
 
-  onFavorite_ (e, favoriteKey) {
+  onFavorite_(e, favoriteKey) {
     e.preventDefault();
     e.stopPropagation();
     this.setState({favoriteKey});
@@ -268,7 +268,7 @@ export class Dropdown extends DropdownMixin {
     }
   }
 
-  onBookmark_ (e, key, value) {
+  onBookmark_(e, key, value) {
     e.preventDefault();
     e.stopPropagation();
 
@@ -278,7 +278,7 @@ export class Dropdown extends DropdownMixin {
     localStorage.setItem(this.bookmarkStorageKey, JSON.stringify(bookmarks));
   }
 
-  onUnBookmark_ (e, key) {
+  onUnBookmark_(e, key) {
     e.preventDefault();
     e.stopPropagation();
 
@@ -430,7 +430,7 @@ export class ContainerDropdown extends React.PureComponent {
   getHeaders(container, initContainer) {
     return initContainer ? {
       [container.name]: 'Containers',
-      [initContainer.name]: 'Init Containers'
+      [initContainer.name]: 'Init Containers',
     } : {};
   }
 
@@ -460,10 +460,10 @@ ContainerDropdown.propTypes = {
   containers: PropTypes.oneOfType([PropTypes.object, PropTypes.array]).isRequired,
   currentKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   initContainers: PropTypes.object,
-  onChange: PropTypes.func.isRequired
+  onChange: PropTypes.func.isRequired,
 };
 
 ContainerDropdown.defaultProps = {
   currentKey: '',
-  initContainers: {}
+  initContainers: {},
 };

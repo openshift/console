@@ -27,7 +27,10 @@
   color: $color-pf-red;
 }
 
-.alert-pending,
-.silence-pending {
+.alert-pending {
   color: $color-pf-orange-300;
+}
+
+.silence-pending {
+  color: $color-pf-black-700;
 }

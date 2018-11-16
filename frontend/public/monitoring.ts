@@ -7,6 +7,19 @@ import * as _ from 'lodash-es';
 import { k8sBasePath } from './module/k8s/k8s';
 import { coFetchJSON } from './co-fetch';
 
+export const enum AlertStates {
+  Firing = 'firing',
+  Silenced = 'silenced',
+  Pending = 'pending',
+  NotFiring = 'not-firing',
+}
+
+export const enum SilenceStates {
+  Active = 'active',
+  Pending = 'pending',
+  Expired = 'expired',
+}
+
 export enum MonitoringRoutes {
   Prometheus = 'prometheus-k8s',
   AlertManager = 'alertmanager-main',
@@ -60,3 +73,11 @@ const stateToProps = (desiredURLs: string[], state) => {
 };
 
 export const connectToURLs = (...urls) => connect(state => stateToProps(urls, state));
+
+// Determine if an Alert is silenced by a Silence (if all of the Silence's matchers match one of the Alert's labels)
+export const isSilenced = (alert, silence) => _.get(silence, 'status.state') === SilenceStates.Active &&
+  _.every(silence.matchers, m => {
+    const alertValue = _.get(alert.labels, m.name);
+    return alertValue !== undefined &&
+      (m.isRegex ? (new RegExp(`^${m.value}$`)).test(alertValue) : alertValue === m.value);
+  });

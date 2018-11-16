@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 
 import { k8sPatch } from '../../module/k8s';
 import { RoleModel, ClusterRoleModel } from '../../models';
-import { Cog, EmptyBox, ResourceIcon } from '../utils';
+import { Kebab, EmptyBox, ResourceIcon } from '../utils';
 import { confirmModal } from '../modals';
 
 export const RulesList = ({rules, name, namespace}) => _.isEmpty(rules)
@@ -98,7 +98,7 @@ const DeleteRule = (name, namespace, i) => ({
         op: 'remove', path: `/rules/${i}`,
       }]);
     },
-  })
+  }),
 });
 
 // This page is temporarily disabled until we update the safe resources list.
@@ -107,19 +107,16 @@ const DeleteRule = (name, namespace, i) => ({
 //   href: namespace ? `/k8s/ns/${namespace}/roles/${name}/${i}/edit` : `/k8s/cluster/clusterroles/${name}/${i}/edit`,
 // });
 
-const RuleCog = ({name, namespace, i}) => {
+const RuleKebab = ({name, namespace, i}) => {
   const options = [
     // EditRule,
     DeleteRule,
   ].map(f => f(name, namespace, i));
-  return <Cog options={options} />;
+  return <Kebab options={options} />;
 };
 
 const Rule = ({resources, nonResourceURLs, verbs, apiGroups, name, namespace, i}) => <div className="rbac-rule">
-  <div className="col-xs-5 col-sm-4 col-md-3 col-lg-2 rbac-rule__actions">
-    <div className="rbac-rule__cog">
-      <RuleCog name={name} namespace={namespace} i={i} />
-    </div>
+  <div className="col-xs-5 col-sm-4 col-md-3 col-lg-2">
     <Actions verbs={verbs} />
   </div>
   <div className="hidden-xs col-sm-4 col-md-3 col-lg-3">
@@ -127,5 +124,8 @@ const Rule = ({resources, nonResourceURLs, verbs, apiGroups, name, namespace, i}
   </div>
   <div className="col-xs-7 col-sm-4 col-md-6 col-lg-7">
     <Resources resources={resources} nonResourceURLs={nonResourceURLs} />
+  </div>
+  <div className="co-kebab-wrapper">
+    <RuleKebab name={name} namespace={namespace} i={i} />
   </div>
 </div>;

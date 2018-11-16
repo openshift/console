@@ -3,7 +3,7 @@ import * as React from 'react';
 import { safeDump } from 'js-yaml';
 
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
-import { Cog, SectionHeading, navFactory, ResourceCog, ResourceLink, ResourceSummary } from './utils';
+import { Kebab, SectionHeading, navFactory, ResourceKebab, ResourceLink, ResourceSummary } from './utils';
 import { fromNow } from './utils/datetime';
 import { k8sGet } from '../module/k8s';
 import { SecretModel } from '../models';
@@ -35,7 +35,7 @@ const KubeConfigify = (kind, sa) => ({
           cluster: {
             'certificate-authority-data': cert,
             server,
-          }
+          },
         }],
         contexts: [{
           name,
@@ -43,14 +43,14 @@ const KubeConfigify = (kind, sa) => ({
             cluster: clusterName,
             namespace,
             user: name,
-          }
+          },
         }],
         'users': [{
           name,
           user: {
             token: token,
-          }
-        }]
+          },
+        }],
       };
       const dump = safeDump(config);
       const blob = new Blob([dump], { type: 'text/yaml;charset=utf-8' });
@@ -61,7 +61,7 @@ const KubeConfigify = (kind, sa) => ({
     });
   },
 });
-const { common } = Cog.factory;
+const { common } = Kebab.factory;
 const menuActions = [KubeConfigify, ...common];
 
 const Header = props => <ListHeader>
@@ -88,8 +88,8 @@ const ServiceAccountRow = ({obj: serviceaccount}) => {
       <div className="col-sm-2 hidden-xs">
         {fromNow(creationTimestamp)}
       </div>
-      <div className="co-resource-kebab">
-        <ResourceCog actions={menuActions} kind="ServiceAccount" resource={serviceaccount} />
+      <div className="co-kebab-wrapper">
+        <ResourceKebab actions={menuActions} kind="ServiceAccount" resource={serviceaccount} />
       </div>
     </ResourceRow>
   );

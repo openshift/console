@@ -53,7 +53,7 @@ describe('Performance test', () => {
     const overviewChunk = await browser.executeScript<any>(() => performance.getEntriesByType('resource')
       .find(({name}) => name.endsWith('.js') && name.indexOf('cluster-overview') > -1));
 
-    expect(overviewChunk).toBeDefined();
+    expect(overviewChunk).not.toBeNull();
     expect(overviewChunk.decodedBodySize).toBeLessThan(100000);
   });
 
@@ -91,7 +91,7 @@ describe('Performance test', () => {
 
       const routeChunk = await browser.executeScript<PerformanceEntry>(routeChunkFor, routeName);
 
-      expect(routeChunk).toBeDefined();
+      expect(routeChunk).not.toBeNull();
       expect((routeChunk as any).decodedBodySize).toBeLessThan(chunkLimit);
     });
   });

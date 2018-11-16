@@ -65,16 +65,18 @@ export const formatNamespaceRoute = (activeNamespace, originalPath, location) =>
 };
 
 export const types = {
+  dismissOverviewDetails: 'dismissOverviewDetails',
+  selectOverviewDetailsTab: 'selectOverviewDetailsTab',
+  selectOverviewItem: 'selectOverviewItem',
+  selectOverviewView: 'selectOverviewView',
   setActiveNamespace: 'setActiveNamespace',
+  setCreateProjectMessage: 'setCreateProjectMessage',
   setCurrentLocation: 'setCurrentLocation',
+  setMonitoringData: 'setMonitoringData',
+  sortList: 'sortList',
   startImpersonate: 'startImpersonate',
   stopImpersonate: 'stopImpersonate',
-  sortList: 'sortList',
-  setCreateProjectMessage: 'setCreateProjectMessage',
-  setMonitoringData: 'setMonitoringData',
-  selectOverviewItem: 'selectOverviewItem',
-  selectOverviewDetailsTab: 'selectOverviewDetailsTab',
-  updateOverviewResources: 'updateOverviewResources'
+  updateOverviewResources: 'updateOverviewResources',
 };
 
 /** @type {{[key: string]: function}} */
@@ -105,7 +107,7 @@ export const UIActions = {
     };
   },
 
-  [types.startImpersonate]: (kind, name) => async (dispatch, getState) => {
+  [types.startImpersonate]: (kind, name) => async(dispatch, getState) => {
     let textEncoder;
     try {
       textEncoder = new TextEncoder('utf-8');
@@ -160,11 +162,15 @@ export const UIActions = {
 
   [types.setCreateProjectMessage]: message => ({type: types.setCreateProjectMessage, message}),
 
+  [types.selectOverviewView]: view => ({type: types.selectOverviewView, view}),
+
   [types.selectOverviewItem]: uid => ({type: types.selectOverviewItem, uid}),
 
   [types.selectOverviewDetailsTab]: tab => ({type: types.selectOverviewDetailsTab, tab}),
 
   [types.updateOverviewResources]: resources => ({type: types.updateOverviewResources, resources}),
+
+  [types.dismissOverviewDetails]: () => ({type: types.dismissOverviewDetails}),
 
   monitoringLoading: key => ({type: types.setMonitoringData, key, data: {loaded: false, loadError: null, data: null}}),
 

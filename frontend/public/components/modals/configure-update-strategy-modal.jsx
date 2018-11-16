@@ -29,7 +29,7 @@ class ConfigureUpdateStrategyModal extends PromiseComponent {
     this._cancel = this.props.cancel.bind(this);
 
     this.state = Object.assign({
-      strategyType: _.get(this.deployment.spec, 'strategy.type')
+      strategyType: _.get(this.deployment.spec, 'strategy.type'),
     }, this.state);
   }
 
@@ -45,7 +45,7 @@ class ConfigureUpdateStrategyModal extends PromiseComponent {
     if (type === 'RollingUpdate') {
       patch.value = {
         maxUnavailable: getNumberOrPercent(event.target.elements['input-max-unavailable'].value || '25%'),
-        maxSurge: getNumberOrPercent(event.target.elements['input-max-surge'].value || '25%')
+        maxSurge: getNumberOrPercent(event.target.elements['input-max-surge'].value || '25%'),
       };
       patch.op = 'add';
     } else {
@@ -157,7 +157,7 @@ class ConfigureUpdateStrategyModal extends PromiseComponent {
 }
 
 ConfigureUpdateStrategyModal.propTypes = {
-  deployment: PropTypes.object
+  deployment: PropTypes.object,
 };
 
 export const configureUpdateStrategyModal = createModalLauncher(ConfigureUpdateStrategyModal);

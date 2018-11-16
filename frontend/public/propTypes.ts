@@ -1,7 +1,7 @@
 import * as _ from 'lodash-es';
 
 // React's "isRequired" means that not only must key exist, but the *value* must be truthy too! This doesn't fly with NSs
-export const namespaceProptype = function (props: {namespace: string}, propName: string, componentName: string) {
+export const namespaceProptype = function(props: {namespace: string}, propName: string, componentName: string) {
   if (!props.hasOwnProperty('namespace')) {
     throw new Error(`${componentName}: "namespace" is a required prop`);
   }

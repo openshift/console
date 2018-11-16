@@ -6,14 +6,14 @@ export const fromRequirements = (requirements, options) => {
   options = options || {};
   const selector = {
     matchLabels:      {},
-    matchExpressions: []
+    matchExpressions: [],
   };
 
   if (options.undefinedWhenEmpty && requirements.length === 0) {
     return;
   }
 
-  requirements.forEach(function (r) {
+  requirements.forEach(function(r) {
     if (r.operator === 'Equals') {
       selector.matchLabels[r.key] = r.values[0];
     } else {
@@ -37,11 +37,11 @@ export const toRequirements = selector => {
   const matchLabels = isOldFormat(selector) ? selector : selector.matchLabels;
   const matchExpressions = selector.matchExpressions;
 
-  Object.keys(matchLabels || {}).sort().forEach(function (k) {
+  Object.keys(matchLabels || {}).sort().forEach(function(k) {
     requirements.push(createEquals(k, matchLabels[k]));
   });
 
-  (matchExpressions || []).forEach(function (me) {
+  (matchExpressions || []).forEach(function(me) {
     requirements.push(me);
   });
 

@@ -8,7 +8,7 @@ import { K8sResourceKindReference, referenceFor, K8sResourceKind } from '../modu
 import { cloneBuild, formatBuildDuration } from '../module/k8s/builds';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
 import { errorModal } from './modals';
-import { BuildHooks, BuildStrategy, Cog, SectionHeading, history, navFactory, ResourceCog, ResourceLink, resourceObjPath, ResourceSummary, Timestamp, AsyncComponent } from './utils';
+import { BuildHooks, BuildStrategy, Kebab, SectionHeading, history, navFactory, ResourceKebab, ResourceLink, resourceObjPath, ResourceSummary, Timestamp, AsyncComponent } from './utils';
 import { BuildPipeline } from './build-pipeline';
 import { breadcrumbsForOwnerRefs } from './utils/breadcrumbs';
 import { fromNow } from './utils/datetime';
@@ -18,7 +18,7 @@ import { Line, requirePrometheus } from './graphs';
 
 const BuildsReference: K8sResourceKindReference = 'Build';
 
-const { common, EditEnvironment } = Cog.factory;
+const { common, EditEnvironment } = Kebab.factory;
 
 const cloneBuildAction = (kind, build) => ({
   label: 'Rebuild',
@@ -169,7 +169,7 @@ const pages = [
   navFactory.editYaml(),
   navFactory.envEditor(BuildEnvironmentComponent),
   navFactory.logs(BuildLogs),
-  navFactory.events(ResourceEventStream)
+  navFactory.events(ResourceEventStream),
 ];
 
 export const BuildsDetailsPage: React.SFC<BuildsDetailsPageProps> = props =>
@@ -204,8 +204,8 @@ const BuildsRow: React.SFC<BuildsRowProps> = ({ obj }) => <div className="row co
   <div className="col-sm-3 hidden-xs">
     {fromNow(obj.metadata.creationTimestamp)}
   </div>
-  <div className="co-resource-kebab">
-    <ResourceCog actions={menuActions} kind={BuildsReference} resource={obj} />
+  <div className="co-kebab-wrapper">
+    <ResourceKebab actions={menuActions} kind={BuildsReference} resource={obj} />
   </div>
 </div>;
 

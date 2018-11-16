@@ -7,32 +7,32 @@ const TYPES = {
   numeric: {
     units: ['', 'k', 'm', 'b'],
     space: false,
-    divisor: 1000
+    divisor: 1000,
   },
   percentage: {
     units: ['%'],
     space: false,
-    divisor: 1000
+    divisor: 1000,
   },
   decimalBytes: {
     units: ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB'],
     space: true,
-    divisor: 1000
+    divisor: 1000,
   },
   binaryBytes: {
     units: ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB'],
     space: true,
-    divisor: 1024
+    divisor: 1024,
   },
   binaryBytesWithoutB: {
     units: ['i', 'Ki', 'Mi', 'Gi', 'Ti', 'Pi', 'Ei'],
     space: true,
-    divisor: 1024
+    divisor: 1024,
   },
   SI: {
     units: ['', 'K', 'M', 'G', 'T', 'P', 'E'],
     space: false,
-    divisor: 1000
+    divisor: 1000,
   },
 };
 
@@ -42,7 +42,7 @@ const getType = (name) => {
     return {
       units: [],
       space: false,
-      divisor: 1000
+      divisor: 1000,
     };
   }
   return type;
@@ -133,7 +133,7 @@ const humanize = units.humanize = (value, typeName, useRound = false) => {
   return {
     string: converted.value + converted.unit,
     value: converted.value,
-    unit: converted.unit
+    unit: converted.unit,
   };
 };
 

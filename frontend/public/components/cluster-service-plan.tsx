@@ -59,7 +59,7 @@ export const ClusterServicePlanDetailsPage: React.SFC<ClusterServicePlanDetailsP
   kind={ClusterServicePlanReference}
   pages={[
     navFactory.details(detailsPage(ClusterServicePlanDetails)),
-    navFactory.editYaml(viewYamlComponent)
+    navFactory.editYaml(viewYamlComponent),
   ]}
 />;
 export const ClusterServicePlanList: React.SFC = props => <List {...props} Header={ClusterServicePlanHeader} Row={ClusterServicePlanListRow} />;

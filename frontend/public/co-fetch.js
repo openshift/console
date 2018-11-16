@@ -77,7 +77,7 @@ const validateStatus = (response, url) => {
 };
 
 export class TimeoutError extends Error {
-  constructor (url, ms, ...params) {
+  constructor(url, ms, ...params) {
     super(`Call to ${url} timed out after ${ms}ms.`, ...params);
     // Dumb hack to fix `instanceof TimeoutError`
     Object.setPrototypeOf(this, TimeoutError.prototype);
@@ -111,7 +111,7 @@ export const coFetch = (url, options = {}, timeout=20000) => {
 const parseJson = (response) => response.json();
 
 export const coFetchUtils = {
-  parseJson
+  parseJson,
 };
 
 export const coFetchJSON = (url, method = 'GET', options = {}) => {

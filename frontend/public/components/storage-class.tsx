@@ -2,13 +2,13 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
-import { Cog, detailsPage, navFactory, ResourceCog, SectionHeading, ResourceLink, ResourceSummary } from './utils';
+import { Kebab, detailsPage, navFactory, ResourceKebab, SectionHeading, ResourceLink, ResourceSummary } from './utils';
 // eslint-disable-next-line no-unused-vars
 import { K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
 
 export const StorageClassReference: K8sResourceKindReference = 'StorageClass';
 
-const { common } = Cog.factory;
+const { common } = Kebab.factory;
 const menuActions = [...common];
 
 const defaultClassAnnotation = 'storageclass.beta.kubernetes.io/is-default-class';
@@ -35,8 +35,8 @@ const StorageClassRow: React.SFC<StorageClassRowProps> = ({obj}) => {
     <div className="col-sm-2 hidden-xs">
       {isDefaultClass(obj)}
     </div>
-    <div className="co-resource-kebab">
-      <ResourceCog actions={menuActions} kind={StorageClassReference} resource={obj} />
+    <div className="co-kebab-wrapper">
+      <ResourceKebab actions={menuActions} kind={StorageClassReference} resource={obj} />
     </div>
   </div>;
 };
@@ -67,7 +67,7 @@ export const StorageClassPage: React.SFC<StorageClassPageProps> = props => {
 
   const createProps = {
     items: createItems,
-    createLink: (type) => `/k8s/cluster/storageclasses/new/${type !== 'yaml' ? type : ''}`
+    createLink: (type) => `/k8s/cluster/storageclasses/new/${type !== 'yaml' ? type : ''}`,
   };
 
   return <ListPage

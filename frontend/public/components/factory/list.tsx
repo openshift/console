@@ -14,6 +14,7 @@ import {
   WindowScroller,
 } from 'react-virtualized';
 
+import { AlertStates, SilenceStates } from '../../monitoring';
 import { UIActions } from '../../ui/ui-actions';
 import { ingressValidHosts } from '../ingress';
 import { alertState, silenceState } from '../monitoring';
@@ -24,7 +25,7 @@ import {
   containerLinuxUpdateOperator,
   EmptyBox,
   LabelList,
-  ResourceCog,
+  ResourceKebab,
   ResourceLink,
   resourcePath,
   Selector,
@@ -41,7 +42,7 @@ import {
   podPhaseFilterReducer,
   podReadiness,
   serviceCatalogStatus,
-  serviceClassDisplayName
+  serviceClassDisplayName,
 } from '../../module/k8s';
 import { getVmStatus } from '../../kubevirt/components/utils/resources';
 
@@ -201,7 +202,7 @@ const filterPropType = (props, propName, componentName) => {
 };
 
 const sorts = {
-  alertState,
+  alertStateOrder: alert => [AlertStates.Firing, AlertStates.Silenced, AlertStates.Pending, AlertStates.NotFiring].indexOf(alertState(alert)),
   daemonsetNumScheduled: daemonset => _.toInteger(_.get(daemonset, 'status.currentNumberScheduled')),
   dataSize: resource => _.size(_.get(resource, 'data')),
   ingressValidHosts,
@@ -219,6 +220,7 @@ const sorts = {
   podPhase,
   podReadiness,
   serviceClassDisplayName,
+  silenceStateOrder: silence => [SilenceStates.Active, SilenceStates.Pending, SilenceStates.Expired].indexOf(silenceState(silence)),
   string: val => JSON.stringify(val),
 };
 
@@ -243,7 +245,7 @@ export class ColHead extends React.Component<ColHeadProps> {
     }
   }
 
-  render () {
+  render() {
     // currentSortField/Func == info for currently sorted ColHead.
     // sortField/Func == this ColHead's field/func
     const {
@@ -253,7 +255,7 @@ export class ColHead extends React.Component<ColHeadProps> {
       currentSortFunc,
       currentSortOrder,
       sortField,
-      sortFunc
+      sortFunc,
     } = this.props;
     const className = classNames(this.props.className, 'text-nowrap');
     if (!sortField && !sortFunc) {
@@ -281,8 +283,9 @@ export const WorkloadListHeader = props => <ListHeader>
   <ColHead {...props} className="col-lg-3 hidden-md hidden-sm hidden-xs" sortField="spec.selector">Pod Selector</ColHead>
 </ListHeader>;
 
-export const Rows: React.SFC<RowsProps> = (props) => {
+const VirtualRows: React.SFC<RowsProps> = (props) => {
   const { mock, label } = props;
+
   const measurementCache = new CellMeasurerCache({
     fixedWidth: true,
     minHeight: 44,
@@ -335,10 +338,32 @@ export const Rows: React.SFC<RowsProps> = (props) => {
   </div>;
 };
 
+VirtualRows.propTypes = {
+  data: PropTypes.arrayOf(PropTypes.object),
+  expand: PropTypes.bool,
+  Row: PropTypes.func.isRequired,
+  kindObj: PropTypes.any.isRequired,
+  label: PropTypes.string,
+  mock: PropTypes.bool,
+};
+
+const Rows: React.SFC<RowsProps> = (props) => {
+  const {Row, expand, kindObj} = props;
+
+  return <div className="co-m-table-grid__body">
+    { props.data.map((obj, i) => <div key={_.get(obj, 'metadata.uid', i)} className="co-m-row">
+      <Row obj={obj} expand={expand} kindObj={kindObj} />
+    </div>) }
+  </div>;
+};
+
 Rows.propTypes = {
   data: PropTypes.arrayOf(PropTypes.object),
   expand: PropTypes.bool,
   Row: PropTypes.func.isRequired,
+  kindObj: PropTypes.any,
+  label: PropTypes.string,
+  mock: PropTypes.bool,
 };
 
 const stateToProps = ({UI}, {data = [], defaultSortField = 'metadata.name', defaultSortFunc = undefined, filters = {}, loaded = false, reduxID = null, reduxIDs = null, staticFilters = [{}]}) => {
@@ -370,7 +395,7 @@ const stateToProps = ({UI}, {data = [], defaultSortField = 'metadata.name', defa
     currentSortFunc,
     currentSortOrder,
     data: newData,
-    listId
+    listId,
   };
 };
 
@@ -392,11 +417,22 @@ export const List = connect(stateToProps, {sortList: UIActions.sortList})(
       Row: PropTypes.func.isRequired,
       selector: PropTypes.object,
       staticFilters: PropTypes.array,
+      virtualize: PropTypes.bool,
+      currentSortField: PropTypes.string,
+      currentSortFunc: PropTypes.func,
+      currentSortOrder: PropTypes.any,
+      defaultSortField: PropTypes.string,
+      defaultSortFunc: PropTypes.string,
+      label: PropTypes.string,
+      listId: PropTypes.string,
+      sortList: PropTypes.func,
     };
 
     render() {
       const {currentSortField, currentSortFunc, currentSortOrder, expand, Header, label, listId, mock, Row, sortList} = this.props;
       const componentProps: any = _.pick(this.props, ['data', 'filters', 'selected', 'match', 'kindObj']);
+
+      const ListRows = this.props.virtualize ? VirtualRows : Rows;
 
       const children = <React.Fragment>
         <Header
@@ -407,7 +443,7 @@ export const List = connect(stateToProps, {sortList: UIActions.sortList})(
           currentSortOrder={currentSortOrder}
           key="header"
         />
-        <Rows
+        <ListRows
           {...componentProps}
           expand={expand}
           key="rows"
@@ -444,7 +480,7 @@ export class ResourceRow extends React.Component<ResourceRowProps> {
     return false;
   }
 
-  render () {
+  render() {
     return <div className="row co-resource-list__item" style={this.props.style}>{this.props.children}</div>;
   }
 }
@@ -467,8 +503,8 @@ export const WorkloadListRow: React.SFC<WorkloadListRowProps> = ({kind, actions,
   <div className="col-lg-3 hidden-md hidden-sm hidden-xs">
     <Selector selector={o.spec.selector} namespace={o.metadata.namespace} />
   </div>
-  <div className="co-resource-kebab">
-    <ResourceCog actions={actions} kind={kind} resource={o} />
+  <div className="co-kebab-wrapper">
+    <ResourceKebab actions={actions} kind={kind} resource={o} />
   </div>
 </ResourceRow>;
 
@@ -507,6 +543,7 @@ export type ListInnerProps = {
   selector?: Object;
   sortList?: (...args) => any;
   staticFilters?: any[];
+  virtualize?: boolean;
 };
 
 export type ResourceRowProps = {
@@ -530,4 +567,5 @@ export type WorkloadListRowProps = {
 };
 
 Rows.displayName = 'Rows';
+VirtualRows.displayName = 'VirtualRows';
 WorkloadListRow.displayName = 'WorkloadListRow';

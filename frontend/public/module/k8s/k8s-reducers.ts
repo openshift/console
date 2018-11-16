@@ -167,7 +167,7 @@ export default (state: ImmutableMap<string, any>, action) => {
       // eslint-disable-next-line no-console
       console.info(`loaded ${id}`);
       state = state.mergeDeep({
-        [id]: {loaded: true, loadError: ''}
+        [id]: {loaded: true, loadError: ''},
       });
       newList = loadList(list, k8sObjects);
       break;

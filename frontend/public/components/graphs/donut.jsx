@@ -16,7 +16,7 @@ const colors = {
 
 /** @augments {React.Component<{fetch: () => Promise<any>, kind: string, title: string}}>} */
 export class Donut extends SafetyFirst {
-  constructor (props) {
+  constructor(props) {
     super(props);
     this.interval = null;
     this.setNode = n => this.setNode_(n);
@@ -36,12 +36,12 @@ export class Donut extends SafetyFirst {
       annotations: [
         {
           font: {
-            size: 11
+            size: 11,
           },
           showarrow: false,
           text: '',
           x: 0.5,
-          y: 0.5
+          y: 0.5,
         },
       ],
     };
@@ -69,7 +69,7 @@ export class Donut extends SafetyFirst {
     }
   }
 
-  fetch () {
+  fetch() {
     this.props.fetch()
       .then((data) => this.updateGraph(data[0], data[1], false))
       .catch(() => this.updateGraph(null, null, true))
@@ -80,19 +80,19 @@ export class Donut extends SafetyFirst {
       }, 30000));
   }
 
-  componentWillMount () {
+  componentWillMount() {
     clearInterval(this.interval);
     this.fetch();
     window.addEventListener('resize', this.resize);
   }
 
-  componentWillUnmount () {
+  componentWillUnmount() {
     super.componentWillUnmount();
     window.removeEventListener('resize', this.resize);
     clearInterval(this.interval);
   }
 
-  componentDidMount () {
+  componentDidMount() {
     super.componentDidMount();
 
     if (!this.node) {
@@ -110,7 +110,7 @@ export class Donut extends SafetyFirst {
     });
   }
 
-  updateGraph (values, labels, err) {
+  updateGraph(values, labels, err) {
     if (err) {
       this.data[0].values = [];
       this.data[0].labels = [];
@@ -137,7 +137,7 @@ export class Donut extends SafetyFirst {
     relayout(this.node, this.layout);
   }
 
-  render () {
+  render() {
     return <div className="graph-wrapper" style={this.style}>
       <h5 className="graph-title">{this.props.title}</h5>
       <div ref={this.setNode} style={{width: '100%'}} />

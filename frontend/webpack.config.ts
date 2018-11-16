@@ -42,14 +42,14 @@ let config: webpack.Configuration = {
             options: {
               // Leave one core spare for fork-ts-checker-webpack-plugin
               workers: process.env.MAX_WORKERS || require('os').cpus().length - 1,
-            }
+            },
           },
           {
             loader: 'ts-loader',
             options: {
               happyPackMode: true, // This implicitly enables transpileOnly! No type checking!
               transpileOnly: true, // fork-ts-checker-webpack-plugin takes care of type checking
-            }
+            },
           },
         ],
       },
@@ -60,8 +60,8 @@ let config: webpack.Configuration = {
           {
             loader: MiniCssExtractPlugin.loader,
             options: {
-              publicPath: './'
-            }
+              publicPath: './',
+            },
           },
           { loader: 'cache-loader' },
           { loader: 'thread-loader' },
@@ -69,20 +69,20 @@ let config: webpack.Configuration = {
             loader: 'css-loader',
             options: {
               sourceMap: true,
-            }
+            },
           },
           {
             loader: 'resolve-url-loader',
             options: {
               sourceMap: true,
-            }
+            },
           },
           {
             loader: 'sass-loader',
             options: {
               sourceMap: true,
               outputStyle: 'compressed',
-            }
+            },
           },
         ],
       },
@@ -93,7 +93,7 @@ let config: webpack.Configuration = {
           name: 'assets/[name].[ext]',
         },
       },
-    ]
+    ],
   },
   optimization: {
     splitChunks: {

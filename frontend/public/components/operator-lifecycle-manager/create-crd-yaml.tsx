@@ -35,7 +35,7 @@ export const CreateCRDYAML: React.SFC<CreateCRDYAMLProps> = (props) => {
     name: props.match.params.appName,
     namespace: props.match.params.ns,
     isList: false,
-    prop: 'ClusterServiceVersion'
+    prop: 'ClusterServiceVersion',
   }]}>
     <Create {...props as any} />
   </Firehose>;

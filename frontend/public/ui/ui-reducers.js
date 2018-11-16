@@ -3,6 +3,7 @@ import { Map as ImmutableMap } from 'immutable';
 
 import { types } from './ui-actions';
 import { ALL_NAMESPACES_KEY, LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY, NAMESPACE_LOCAL_STORAGE_KEY } from '../const';
+import { AlertStates, isSilenced } from '../monitoring';
 import { legalNamePattern, getNamespace } from '../components/utils/link';
 
 export default (state, action) => {
@@ -29,7 +30,7 @@ export default (state, action) => {
         resources: new ImmutableMap({}),
         selectedDetailsTab: '',
         selectedUID: '',
-      })
+      }),
     });
   }
 
@@ -68,26 +69,28 @@ export default (state, action) => {
       // For Alerts that are silenced by at least one active Silence, set the Alert's state to indicate that
       if (action.key === 'rules' || action.key === 'silences') {
         const alerts = state.getIn(['monitoring', 'rules']);
-        const silences = state.getIn(['monitoring', 'silences'], {});
-        const activeSilences = _.filter(silences.data, s => _.get(s, 'status.state') === 'active');
+        const silences = state.getIn(['monitoring', 'silences'], {}).data;
 
-        // Is an Alert silenced by a Silence (if all the Silence's matchers match one of the Alert's labels)
-        const isSilenced = (alert, silence) => _.every(silence.matchers, m => _.get(alert.labels, m.name) === m.value);
-
-        _.each(_.get(alerts, 'data.asAlerts'), a => {
-          if (a.state === 'firing' && _.some(activeSilences, s => isSilenced(a, s))) {
-            a.state = 'silenced';
+        _.each(_.get(alerts, 'data'), a => {
+          if (a.state === AlertStates.Firing && _.some(silences, s => isSilenced(a, s))) {
+            a.state = AlertStates.Silenced;
           }
         });
         state = state.setIn(['monitoring', 'rules'], alerts);
       }
       return state;
 
+    case types.selectOverviewView:
+      return state.setIn(['overview', 'selectedView'], action.view);
+
     case types.selectOverviewItem:
       return state.setIn(['overview', 'selectedUID'], action.uid);
 
     case types.selectOverviewDetailsTab:
       return state.setIn(['overview', 'selectedDetailsTab'], action.tab);
+
+    case types.dismissOverviewDetails:
+      return state.mergeIn(['overview'], {selectedUID: '', selectedDetailsTab: ''});
 
     case types.updateOverviewResources: {
       const newResources = new ImmutableMap(_.keyBy(action.resources, 'obj.metadata.uid'));

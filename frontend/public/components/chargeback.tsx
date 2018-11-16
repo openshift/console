@@ -12,27 +12,27 @@ import {
   LoadError,
   LoadingBox,
   LoadingInline,
-  MsgBox
+  MsgBox,
 } from './utils/status-box';
 import {
   // eslint-disable-next-line no-unused-vars
   GroupVersionKind,
   modelFor,
   referenceForModel,
-  resourceURL
+  resourceURL,
 } from '../module/k8s';
 import {
-  Cog,
+  Kebab,
   DownloadButton,
   LabelList,
   NavBar,
   navFactory,
   PageHeading,
-  ResourceCog,
+  ResourceKebab,
   ResourceLink,
   ResourceSummary,
   SectionHeading,
-  Timestamp
+  Timestamp,
 } from './utils';
 
 export const ReportReference: GroupVersionKind = referenceForModel(ChargebackReportModel);
@@ -45,7 +45,7 @@ const reportPages=[
   {name: 'Generation Queries', href: ReportGenerationQueryReference},
 ];
 
-const { common } = Cog.factory;
+const { common } = Kebab.factory;
 const menuActions = [...common];
 
 const dataURL = (obj, format='json') => {
@@ -86,14 +86,14 @@ const ReportsRow: React.SFC<ReportsRowProps> = ({obj}) => {
     <div className="col-lg-1 col-md-2 col-xs-4">{_.get(obj, ['status', 'phase'])}</div>
     <div className="col-lg-2 col-md-2 hidden-sm hidden-xs"><Timestamp timestamp={_.get(obj, ['spec', 'reportingStart'])} /></div>
     <div className="col-lg-2 col-md-2 hidden-sm hidden-xs"><Timestamp timestamp={_.get(obj, ['spec', 'reportingEnd'])} /></div>
-    <div className="co-resource-kebab">
-      <ResourceCog actions={menuActions} kind={ReportReference} resource={obj} />
+    <div className="co-kebab-wrapper">
+      <ResourceKebab actions={menuActions} kind={ReportReference} resource={obj} />
     </div>
   </div>;
 };
 
 class ReportsDetails extends React.Component<ReportsDetailsProps> {
-  render () {
+  render() {
     const {obj} = this.props;
     const phase = _.get(obj, ['status', 'phase']);
     return <div>
@@ -173,7 +173,7 @@ const DataTable = ({rows, orderBy, sortBy, applySort, keys, maxValues, totals}:D
 };
 
 class ReportData extends SafetyFirst<ReportDataProps, ReportDataState> {
-  constructor (props) {
+  constructor(props) {
     super(props);
     this.state = {
       inFlight: false,
@@ -189,7 +189,7 @@ class ReportData extends SafetyFirst<ReportDataProps, ReportDataState> {
     };
   }
 
-  fetchData () {
+  fetchData() {
     this.setState({
       inFlight: true,
       error: null,
@@ -200,12 +200,12 @@ class ReportData extends SafetyFirst<ReportDataProps, ReportDataState> {
       .then(() => this.setState({inFlight: false})));
   }
 
-  componentDidMount () {
+  componentDidMount() {
     super.componentDidMount();
     this.fetchData();
   }
 
-  componentWillReceiveProps (nextProps) {
+  componentWillReceiveProps(nextProps) {
     if (this.state.inFlight) {
       return;
     }
@@ -216,7 +216,7 @@ class ReportData extends SafetyFirst<ReportDataProps, ReportDataState> {
     }
   }
 
-  makeTable (data=this.state.data) {
+  makeTable(data=this.state.data) {
     const reduceBy = getQueryArgument('reduceBy') || 'namespace';
     const keys = this.filterKeys(data, reduceBy);
     const sortBy = getQueryArgument('sortBy') || keys[1] || keys[0];
@@ -235,12 +235,12 @@ class ReportData extends SafetyFirst<ReportDataProps, ReportDataState> {
     });
   }
 
-  orderBy (col) {
+  orderBy(col) {
     setQueryArgument('orderBy', col);
     this.makeTable();
   }
 
-  reduceBy (col) {
+  reduceBy(col) {
     if (REDUCER_COLS.indexOf(this.state.sortBy) >= 0) {
       // Sort field is going away. Sort by new field.
       this.sortBy(col);
@@ -249,12 +249,12 @@ class ReportData extends SafetyFirst<ReportDataProps, ReportDataState> {
     this.makeTable();
   }
 
-  sortBy (col) {
+  sortBy(col) {
     setQueryArgument('sortBy', col);
     this.makeTable();
   }
 
-  filterKeys (data=[], reduceBy) {
+  filterKeys(data=[], reduceBy) {
     const keys = _.keys(data[0]).filter(k => {
       if (k === reduceBy) {
         return true;
@@ -270,7 +270,7 @@ class ReportData extends SafetyFirst<ReportDataProps, ReportDataState> {
     return keys;
   }
 
-  transformData (data, reduceBy, sortBy, orderBy) {
+  transformData(data, reduceBy, sortBy, orderBy) {
     const reducedData = {};
     const maxValues = {};
     const totals = {};
@@ -312,12 +312,12 @@ class ReportData extends SafetyFirst<ReportDataProps, ReportDataState> {
     return {rows, maxValues, totals};
   }
 
-  applySort (sortBy, func, orderBy) {
+  applySort(sortBy, func, orderBy) {
     this.sortBy(sortBy);
     this.orderBy(orderBy);
   }
 
-  render () {
+  render() {
     const {obj} = this.props;
     const phase = _.get(obj, ['status', 'phase']);
 
@@ -424,8 +424,8 @@ const ReportGenerationQueriesRow: React.SFC<ReportGenerationQueriesRowProps> = (
     <div className="col-md-3 col-sm-4"><ResourceLink kind="Namespace" namespace={undefined} name={obj.metadata.namespace} title={obj.metadata.namespace} /></div>
     <div className="col-md-3 hidden-sm hidden-xs"><LabelList kind={ReportGenerationQueryReference} labels={_.get(obj, ['metadata', 'labels'])} /></div>
     <div className="col-md-3 col-sm-4"><Timestamp timestamp={_.get(obj, ['metadata', 'creationTimestamp'])} /></div>
-    <div className="co-resource-kebab">
-      <ResourceCog actions={menuActions} kind={ReportGenerationQueryReference} resource={obj} />
+    <div className="co-kebab-wrapper">
+      <ResourceKebab actions={menuActions} kind={ReportGenerationQueryReference} resource={obj} />
     </div>
   </div>;
 };

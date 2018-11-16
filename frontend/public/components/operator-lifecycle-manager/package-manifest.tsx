@@ -52,7 +52,7 @@ export const PackageManifestList: React.SFC<PackageManifestListProps> = (props) 
     displayName: status.catalogSourceDisplayName,
     name: status.catalogSource,
     publisher: status.catalogSourcePublisher,
-    namespace: status.catalogSourceNamespace
+    namespace: status.catalogSourceNamespace,
   }), new Map<string, CatalogSourceInfo>());
 
   return props.loaded
@@ -70,6 +70,7 @@ export const PackageManifestList: React.SFC<PackageManifestListProps> = (props) 
           loaded={true}
           data={props.data.filter(pkg => pkg.status.catalogSource === catalog.name)}
           filters={props.filters}
+          virtualize={false}
           Header={PackageManifestHeader}
           Row={(rowProps: {obj: PackageManifestKind}) => <PackageManifestRow
             obj={rowProps.obj}

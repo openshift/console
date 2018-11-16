@@ -90,7 +90,7 @@ export const navFactory: NavFactory = {
     href: 'servicebindings',
     name: 'Service Bindings',
     component: component,
-  })
+  }),
 };
 
 export const NavBar: React.SFC<NavBarProps> = ({pages, basePath}) => {
@@ -133,7 +133,7 @@ export class HorizontalNav extends React.PureComponent<HorizontalNavProps> {
     }),
   };
 
-  render () {
+  render() {
     const props = this.props;
 
     const componentProps = {..._.pick(props, ['filters', 'selected', 'match']), obj: props.obj.data};

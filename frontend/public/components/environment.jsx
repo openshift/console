@@ -274,7 +274,7 @@ export const EnvironmentPage = connect(stateToProps)(
             this.setState({errorMessage});
           }
           return {
-            configMaps: {}
+            configMaps: {},
           };
         }),
         k8sGet(SecretModel, null, envNamespace).catch((err) => {
@@ -283,9 +283,9 @@ export const EnvironmentPage = connect(stateToProps)(
             this.setState({errorMessage});
           }
           return {
-            secrets: {}
+            secrets: {},
           };
-        })
+        }),
       ])
         .then(_.spread((configMaps, secrets) => this.setState({configMaps, secrets})));
     }
@@ -349,7 +349,7 @@ export const EnvironmentPage = connect(stateToProps)(
         return null;
       }
       return readOnly ? {
-        currentEnvVars
+        currentEnvVars,
       } : {stale: true, success: null};
     }
 

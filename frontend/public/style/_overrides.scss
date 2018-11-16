@@ -1,48 +1,11 @@
-/* Use this file to override styles from coreos-web and other 3rd party dependencies */
-/* Going forward, please just vendor bits of CoreOS web into
-   this project's build, and alter and maintain them in this project
-   rather than overriding or bringing in built assets.
-   The coreos-web project is no longer actively maintained */
-
-// override patternfly's extra thin font weight for headers
-h1,
-.h1,
-h2,
-.h2 {
-  font-weight: normal;
-}
+// Use this file to override styles from 3rd party dependencies
 
 .text-secondary {
   color: $color-text-secondary;
 }
 
-small {
-  font-size: 12px;
-}
-
 .form-control[disabled], fieldset[disabled] .form-control {
   cursor: auto;
-}
-
-.text-filter {
-  width: 250px;
-  min-width: 150px;
-}
-
-.co-m-primary-action {
-  color: black;
-  &:hover, &:visited {
-    color: black;
-  }
-}
-
-.no-margin {
-  margin: 0 !important;
-}
-
-// override patternfly popover width to make less narrow
-.popover {
-  max-width: 325px;
 }
 
 tags-input:focus,
@@ -182,10 +145,6 @@ tags-input .autocomplete .suggestion-item em {
   background-color: white;
 }
 
-.clickable {
-  cursor: pointer;
-}
-
 // account for collapsing space between .btn
 .btn + .btn {
   margin-left: 3px;
@@ -210,11 +169,18 @@ tags-input .autocomplete .suggestion-item em {
 }
 
 .toolbar-pf {
+  background-color: transparent;
   border-bottom: none;
   box-shadow: none;
   min-width: 0; // enable text-overflow: ellipsis
   padding-top: 0;
+
+  .overview-view-selector {
+    padding: 4px 0 0 15px;
+  }
 }
+
+
 
 @media (max-width: $screen-sm-max) {
   .toolbar-pf-actions {
@@ -229,4 +195,21 @@ tags-input .autocomplete .suggestion-item em {
 }
 .catalog-tile-pf-body .catalog-tile-pf-description::after {
   bottom: 15px;
+}
+
+.table {
+  margin-bottom: 0;
+  td {
+    vertical-align: middle !important;
+  }
+  th {
+    padding-top: 0 !important;
+    text-transform: uppercase;
+  }
+  thead > tr > th {
+    border-bottom: 0;
+  }
+  tr:last-child {
+    border-bottom: 1px solid $table-border-color;
+  }
 }

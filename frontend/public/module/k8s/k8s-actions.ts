@@ -171,7 +171,7 @@ const actions = {
      *   1. the WS closes abnormally
      *   2. the WS can not establish a connection within $TIMEOUT
      */
-    const pollAndWatch = async () => {
+    const pollAndWatch = async() => {
       delete POLLs[id];
 
       try {

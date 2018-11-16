@@ -14,7 +14,7 @@ const WHITELIST = [RoleModel.kind, StorageClassModel.kind];
 const seenGuide: string = 'seenGuide';
 
 export class StartGuide extends SafetyFirst<StartGuideProps, StartGuideState> {
-  constructor (props) {
+  constructor(props) {
     super(props);
 
     // TODO: The dismissable logic is not currently being used, but we'll
@@ -28,18 +28,18 @@ export class StartGuide extends SafetyFirst<StartGuideProps, StartGuideState> {
       // ignored
     }
     this.state = {
-      visible
+      visible,
     };
   }
 
-  dismiss () {
+  dismiss() {
     this.setState({
       visible: false,
     });
     localStorage.setItem(seenGuide, 'true');
   }
 
-  render () {
+  render() {
     const { visible } = this.state;
     return visible ? <OpenShiftGettingStarted /> : null;
   }

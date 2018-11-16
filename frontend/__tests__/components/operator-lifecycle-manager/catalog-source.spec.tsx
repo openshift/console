@@ -79,7 +79,7 @@ describe(CreateSubscriptionYAML.displayName, () => {
       name: testPackageManifest.metadata.name,
       namespace: 'default',
       isList: false,
-      prop: 'packageManifest'
+      prop: 'packageManifest',
     }]);
   });
 

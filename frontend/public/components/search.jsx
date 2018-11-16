@@ -94,5 +94,5 @@ export const SearchPage = withStartGuide(SearchPage_);
 SearchPage.propTypes = {
   location: PropTypes.object.isRequired,
   namespace: namespaceProptype,
-  noProjectsAvailable: PropTypes.bool
+  noProjectsAvailable: PropTypes.bool,
 };

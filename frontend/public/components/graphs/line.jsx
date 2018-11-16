@@ -15,7 +15,7 @@ const baseData = {
 };
 
 export class Line_ extends BaseGraph {
-  constructor (props) {
+  constructor(props) {
     super(props);
 
     let queries = props.query;
@@ -44,7 +44,7 @@ export class Line_ extends BaseGraph {
         x: 0, y: 1,
         bgcolor: 'rgba(255, 255, 255, 0.5)',
         size: '12px',
-        orientation: 'h'
+        orientation: 'h',
       },
       margin: {
         l: 30,
@@ -83,17 +83,17 @@ export class Line_ extends BaseGraph {
     };
   }
 
-  componentDidMount () {
+  componentDidMount() {
     super.componentDidMount();
     this.node.on('plotly_relayout', this.onPlotlyRelayout);
   }
 
-  componentWillUnmount () {
+  componentWillUnmount() {
     super.componentWillUnmount();
     this.node.removeListener('plotly_relayout', this.onPlotlyRelayout);
   }
 
-  updateGraph (data) {
+  updateGraph(data) {
     let queries = this.props.query;
     if (!_.isArray(queries)) {
       queries = [{

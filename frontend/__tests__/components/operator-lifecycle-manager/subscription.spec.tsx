@@ -9,7 +9,7 @@ import { SubscriptionKind, SubscriptionState } from '../../../public/components/
 import { referenceForModel } from '../../../public/module/k8s';
 import { SubscriptionModel, ClusterServiceVersionModel, PackageManifestModel } from '../../../public/models';
 import { ListHeader, ColHead, List, ListPage, DetailsPage } from '../../../public/components/factory';
-import { ResourceCog, ResourceLink, Cog } from '../../../public/components/utils';
+import { ResourceKebab, ResourceLink, Kebab } from '../../../public/components/utils';
 import { testSubscription, testClusterServiceVersion, testPackageManifest } from '../../../__mocks__/k8sResourcesMocks';
 
 describe(SubscriptionHeader.displayName, () => {
@@ -58,15 +58,15 @@ describe(SubscriptionRow.displayName, () => {
     expect(wrapper.find('.co-resource-list__item').childAt(0).find(ResourceLink).props().kind).toEqual(referenceForModel(SubscriptionModel));
   });
 
-  it('renders actions cog', () => {
+  it('renders actions kebab', () => {
     const menuArgs = [ClusterServiceVersionModel, subscription];
-    expect(wrapper.find('.co-resource-list__item').find(ResourceCog).props().kind).toEqual(referenceForModel(SubscriptionModel));
-    expect(wrapper.find('.co-resource-list__item').find(ResourceCog).props().resource).toEqual(subscription);
-    expect(wrapper.find('.co-resource-list__item').find(ResourceCog).props().actions[0]).toEqual(Cog.factory.Edit);
-    expect(wrapper.find('.co-resource-list__item').find(ResourceCog).props().actions[1]().label).toEqual('Remove Subscription...');
-    expect(wrapper.find('.co-resource-list__item').find(ResourceCog).props().actions[1]().callback).toBeDefined();
-    expect(wrapper.find('.co-resource-list__item').find(ResourceCog).props().actions[2](...menuArgs).label).toEqual(`View ${ClusterServiceVersionModel.kind}...`);
-    expect(wrapper.find('.co-resource-list__item').find(ResourceCog).props().actions[2](...menuArgs).href).toEqual(`/k8s/ns/default/${ClusterServiceVersionModel.plural}/testapp.v1.0.0`);
+    expect(wrapper.find('.co-resource-list__item').find(ResourceKebab).props().kind).toEqual(referenceForModel(SubscriptionModel));
+    expect(wrapper.find('.co-resource-list__item').find(ResourceKebab).props().resource).toEqual(subscription);
+    expect(wrapper.find('.co-resource-list__item').find(ResourceKebab).props().actions[0]).toEqual(Kebab.factory.Edit);
+    expect(wrapper.find('.co-resource-list__item').find(ResourceKebab).props().actions[1]().label).toEqual('Remove Subscription...');
+    expect(wrapper.find('.co-resource-list__item').find(ResourceKebab).props().actions[1]().callback).toBeDefined();
+    expect(wrapper.find('.co-resource-list__item').find(ResourceKebab).props().actions[2](...menuArgs).label).toEqual(`View ${ClusterServiceVersionModel.kind}...`);
+    expect(wrapper.find('.co-resource-list__item').find(ResourceKebab).props().actions[2](...menuArgs).href).toEqual(`/k8s/ns/default/${ClusterServiceVersionModel.plural}/testapp.v1.0.0`);
   });
 
   it('renders column for namespace name', () => {
@@ -201,7 +201,7 @@ describe(SubscriptionDetailsPage.displayName, () => {
 
     expect(wrapper.find(DetailsPage).props().kind).toEqual(referenceForModel(SubscriptionModel));
     expect(wrapper.find(DetailsPage).props().pages.length).toEqual(2);
-    expect(wrapper.find(DetailsPage).props().menuActions[0]).toEqual(Cog.factory.Edit);
+    expect(wrapper.find(DetailsPage).props().menuActions[0]).toEqual(Kebab.factory.Edit);
     expect(wrapper.find(DetailsPage).props().menuActions[1](...menuArgs).label).toEqual('Remove Subscription...');
     expect(wrapper.find(DetailsPage).props().menuActions[2](...menuArgs).label).toEqual(`View ${ClusterServiceVersionModel.kind}...`);
   });

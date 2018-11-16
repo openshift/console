@@ -4,7 +4,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { match } from 'react-router-dom';
 
-import { SectionHeading, Firehose, MsgBox, LoadingBox, Cog, navFactory } from '../utils';
+import { SectionHeading, Firehose, MsgBox, LoadingBox, Kebab, navFactory } from '../utils';
 import { withFallback } from '../utils/error-boundary';
 import { CreateYAML } from '../create-yaml';
 import { CatalogSourceKind, SubscriptionKind, PackageManifestKind } from './index';
@@ -45,13 +45,13 @@ export const CatalogSourceDetailsPage: React.SFC<CatalogSourceDetailsPageProps> 
     navFactory.details(CatalogSourceDetails),
     navFactory.editYaml(),
   ]}
-  menuActions={Cog.factory.common}
+  menuActions={Kebab.factory.common}
   resources={[{
     kind: referenceForModel(PackageManifestModel),
     isList: true,
     namespace: props.match.params.ns,
     selector: {matchLabels: {catalog: props.match.params.name}},
-    prop: 'packageManifests'
+    prop: 'packageManifests',
   }, {
     kind: referenceForModel(SubscriptionModel),
     isList: true,

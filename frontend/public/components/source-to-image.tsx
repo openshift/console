@@ -6,12 +6,11 @@ import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 
 import { LoadingBox, LoadError } from './utils/status-box';
-import { Dropdown, Firehose, history, MsgBox, ResourceName } from './utils';
+import { Dropdown, Firehose, history, MsgBox, NsDropdown, ResourceName } from './utils';
 import { BuildConfigModel, DeploymentConfigModel, ImageStreamModel, ImageStreamTagModel, RouteModel, ServiceModel } from '../models';
 import { ContainerPort, k8sCreate, k8sGet, K8sResourceKind } from '../module/k8s';
 import { ImageStreamIcon } from './catalog/catalog-item-icon';
 import { getAnnotationTags, getBuilderTagsSortedByVersion } from './image-stream';
-import { NsDropdown } from './RBAC/bindings';
 import { ButtonBar } from './utils/button-bar';
 
 const getSampleRepo = tag => _.get(tag, 'annotations.sampleRepo');
@@ -86,7 +85,7 @@ const ImageStreamInfo: React.SFC<ImageStreamInfoProps> = ({imageStream, tag}) =>
 };
 
 class BuildSource extends React.Component<BuildSourceProps, BuildSourceState> {
-  constructor (props) {
+  constructor(props) {
     super(props);
 
     const { preselectedNamespace: namespace = ''} = this.props;

@@ -81,7 +81,7 @@ export const createParametersSecret = (secretName: string, key: string, paramete
         name: owner.metadata.name,
         uid: owner.metadata.uid,
         controller: false,
-        blockOwnerDeletion: false
+        blockOwnerDeletion: false,
       }],
     },
     stringData: {

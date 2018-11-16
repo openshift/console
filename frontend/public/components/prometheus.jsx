@@ -1,11 +1,11 @@
 import * as React from 'react';
 
 import { ColHead, List, ListHeader, ListPage, ResourceRow } from './factory';
-import { Cog, LabelList, ResourceCog, ResourceLink, Selector } from './utils';
+import { Kebab, LabelList, ResourceKebab, ResourceLink, Selector } from './utils';
 import { PrometheusModel } from '../models';
 import { referenceForModel } from '../module/k8s';
 
-const {Edit, Delete, ModifyCount} = Cog.factory;
+const {Edit, Delete, ModifyCount} = Kebab.factory;
 const menuActions = [ModifyCount, Edit, Delete];
 
 const PrometheusRow = ({obj: instance}) => {
@@ -25,8 +25,8 @@ const PrometheusRow = ({obj: instance}) => {
     <div className="col-lg-2 hidden-md hidden-sm hidden-xs">
       <Selector selector={spec.serviceMonitorSelector} kind="ServiceMonitor" namespace={metadata.namespace} />
     </div>
-    <div className="co-resource-kebab">
-      <ResourceCog actions={menuActions} kind={referenceForModel(PrometheusModel)} resource={instance} />
+    <div className="co-kebab-wrapper">
+      <ResourceKebab actions={menuActions} kind={referenceForModel(PrometheusModel)} resource={instance} />
     </div>
   </ResourceRow>;
 };

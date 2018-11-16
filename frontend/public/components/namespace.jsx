@@ -10,7 +10,7 @@ import { k8sGet } from '../module/k8s';
 import { formatNamespacedRouteForResource, UIActions } from '../ui/ui-actions';
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import { SafetyFirst } from './safety-first';
-import { ActionsMenu, Cog, Dropdown, Firehose, LabelList, LoadingInline, navFactory, ResourceCog, SectionHeading, ResourceLink, ResourceSummary, humanizeMem, MsgBox } from './utils';
+import { ActionsMenu, Kebab, Dropdown, Firehose, LabelList, LoadingInline, navFactory, ResourceKebab, SectionHeading, ResourceIcon, ResourceLink, ResourceSummary, humanizeMem, MsgBox } from './utils';
 import { createNamespaceModal, createProjectModal, deleteNamespaceModal, configureNamespacePullSecretModal } from './modals';
 import { RoleBindingsPage } from './RBAC';
 import { Bar, Line, requirePrometheus } from './graphs';
@@ -23,8 +23,8 @@ const getModel = useProjects => useProjects ? ProjectModel : NamespaceModel;
 const getDisplayName = obj => _.get(obj, ['metadata', 'annotations', 'openshift.io/display-name']);
 const getRequester = obj => _.get(obj, ['metadata', 'annotations', 'openshift.io/requester']);
 
-const deleteModal = (kind, ns) => {
-  let {label, weight} = Cog.factory.Delete(kind, ns);
+export const deleteModal = (kind, ns) => {
+  let {label, weight} = Kebab.factory.Delete(kind, ns);
   let callback = undefined;
   let tooltip;
 
@@ -43,7 +43,7 @@ const deleteModal = (kind, ns) => {
   return {label, weight, callback};
 };
 
-const nsMenuActions = [Cog.factory.ModifyLabels, Cog.factory.ModifyAnnotations, Cog.factory.Edit, deleteModal];
+const nsMenuActions = [Kebab.factory.ModifyLabels, Kebab.factory.ModifyAnnotations, Kebab.factory.Edit, deleteModal];
 
 const NamespaceHeader = props => <ListHeader>
   <ColHead {...props} className="col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
@@ -61,15 +61,15 @@ const NamespaceRow = ({obj: ns}) => <ResourceRow obj={ns}>
   <div className="col-sm-4 hidden-xs">
     <LabelList kind="Namespace" labels={ns.metadata.labels} />
   </div>
-  <div className="co-resource-kebab">
-    <ResourceCog actions={nsMenuActions} kind="Namespace" resource={ns} />
+  <div className="co-kebab-wrapper">
+    <ResourceKebab actions={nsMenuActions} kind="Namespace" resource={ns} />
   </div>
 </ResourceRow>;
 
 export const NamespacesList = props => <List {...props} Header={NamespaceHeader} Row={NamespaceRow} />;
 export const NamespacesPage = props => <ListPage {...props} ListComponent={NamespacesList} canCreate={true} createHandler={createNamespaceModal} />;
 
-const projectMenuActions = [Cog.factory.Edit, deleteModal];
+const projectMenuActions = [Kebab.factory.Edit, deleteModal];
 
 const ProjectHeader = props => <ListHeader>
   <ColHead {...props} className="col-md-3 col-sm-6 col-xs-8" sortField="metadata.name">Name</ColHead>
@@ -79,11 +79,13 @@ const ProjectHeader = props => <ListHeader>
 </ListHeader>;
 
 const ProjectRow = ({obj: project}) => {
+  const name = project.metadata.name;
   const displayName = getDisplayName(project);
   const requester = getRequester(project);
   return <ResourceRow obj={project}>
     <div className="col-md-3 col-sm-6 col-xs-8">
-      <ResourceLink kind="Project" name={project.metadata.name} title={displayName || project.metadata.uid} />
+      <ResourceIcon kind="Project" />
+      <Link to={`/overview/ns/${name}`} title={displayName} className="co-resource-link__resource-name">{project.metadata.name}</Link>
     </div>
     <div className="col-md-3 col-sm-3 col-xs-4">
       {project.status.phase}
@@ -94,8 +96,8 @@ const ProjectRow = ({obj: project}) => {
     <div className="col-md-3 hidden-sm hidden-xs">
       <LabelList kind="Project" labels={project.metadata.labels} />
     </div>
-    <div className="co-resource-kebab">
-      <ResourceCog actions={projectMenuActions} kind="Project" resource={project} />
+    <div className="co-kebab-wrapper">
+      <ResourceKebab actions={projectMenuActions} kind="Project" resource={project} />
     </div>
   </ResourceRow>;
 };
@@ -121,17 +123,17 @@ const ProjectsPage_ = props => {
 export const ProjectsPage = connectToFlags(FLAGS.CAN_CREATE_PROJECT)(ProjectsPage_);
 
 class PullSecret extends SafetyFirst {
-  constructor (props) {
+  constructor(props) {
     super(props);
     this.state = {isLoading: true, data: undefined};
   }
 
-  componentDidMount () {
+  componentDidMount() {
     super.componentDidMount();
     this.load(_.get(this.props, 'namespace.metadata.name'));
   }
 
-  load (namespaceName) {
+  load(namespaceName) {
     if (!namespaceName) {
       return;
     }
@@ -149,7 +151,7 @@ class PullSecret extends SafetyFirst {
       });
   }
 
-  render () {
+  render() {
     if (this.state.isLoading) {
       return <LoadingInline />;
     }
@@ -158,57 +160,71 @@ class PullSecret extends SafetyFirst {
   }
 }
 
+export const NamespaceLineCharts = ({ns}) => <div className="row">
+  <div className="col-sm-6 col-xs-12">
+    <Line title="CPU Shares" query={[
+      {
+        name: 'Used',
+        query: `namespace:container_spec_cpu_shares:sum{namespace='${ns.metadata.name}'}`,
+      },
+    ]} />
+  </div>
+  <div className="col-sm-6 col-xs-12">
+    <Line title="RAM" query={[
+      {
+        name: 'Used',
+        query: `namespace:container_memory_usage_bytes:sum{namespace='${ns.metadata.name}'}`,
+      },
+    ]} />
+  </div>
+</div>;
+
+export const TopPodsBarChart = ({ns}) => (
+  <Bar
+    title="Memory Usage by Pod (Top 10)"
+    query={`sort(topk(10, sum by (pod_name)(container_memory_usage_bytes{pod_name!="", namespace="${ns.metadata.name}"})))`}
+    humanize={humanizeMem}
+    metric="pod_name" />
+);
+
 const ResourceUsage = requirePrometheus(({ns}) => <div className="co-m-pane__body">
   <SectionHeading text="Resource Usage" />
-  <div className="row">
-    <div className="col-sm-6 col-xs-12">
-      <Line title="CPU Shares" query={[
-        {
-          name: 'Used',
-          query: `namespace:container_spec_cpu_shares:sum{namespace='${ns.metadata.name}'}`,
-        },
-      ]} />
-    </div>
-    <div className="col-sm-6 col-xs-12">
-      <Line title="RAM" query={[
-        {
-          name: 'Used',
-          query: `namespace:container_memory_usage_bytes:sum{namespace='${ns.metadata.name}'}`,
-        },
-      ]} />
-    </div>
-  </div>
-  <Bar title="Memory Usage by Pod (Top 10)" query={`sort(topk(10, sum by (pod_name)(container_memory_usage_bytes{pod_name!="", namespace="${ns.metadata.name}"})))`} humanize={humanizeMem} metric="pod_name" />
+  <NamespaceLineCharts ns={ns} />
+  <TopPodsBarChart ns={ns} />
 </div>);
 
-const Details = ({obj: ns}) => {
+export const NamespaceSummary = ({ns}) => {
   const displayName = getDisplayName(ns);
   const requester = getRequester(ns);
+  return <div className="row">
+    <div className="col-sm-6 col-xs-12">
+      <ResourceSummary resource={ns} showPodSelector={false} showNodeSelector={false}>
+        {displayName && <dt>Display Name</dt>}
+        {displayName && <dd>{displayName}</dd>}
+        {requester && <dt>Requester</dt>}
+        {requester && <dd>{requester}</dd>}
+      </ResourceSummary>
+    </div>
+    <div className="col-sm-6 col-xs-12">
+      <dl className="co-m-pane__details">
+        <dt>Status</dt>
+        <dd>{ns.status.phase}</dd>
+        <dt>Default Pull Secret</dt>
+        <dd><PullSecret namespace={ns} /></dd>
+        <dt>Network Policies</dt>
+        <dd>
+          <Link to={`/k8s/ns/${ns.metadata.name}/networkpolicies`}>Network Policies</Link>
+        </dd>
+      </dl>
+    </div>
+  </div>;
+};
+
+const Details = ({obj: ns}) => {
   return <div>
     <div className="co-m-pane__body">
       <SectionHeading text={`${ns.kind} Overview`} />
-      <div className="row">
-        <div className="col-sm-6 col-xs-12">
-          <ResourceSummary resource={ns} showPodSelector={false} showNodeSelector={false}>
-            {displayName && <dt>Display Name</dt>}
-            {displayName && <dd>{displayName}</dd>}
-            {requester && <dt>Requester</dt>}
-            {requester && <dd>{requester}</dd>}
-          </ResourceSummary>
-        </div>
-        <div className="col-sm-6 col-xs-12">
-          <dl className="co-m-pane__details">
-            <dt>Status</dt>
-            <dd>{ns.status.phase}</dd>
-            <dt>Default Pull Secret</dt>
-            <dd><PullSecret namespace={ns} /></dd>
-            <dt>Network Policies</dt>
-            <dd>
-              <Link to={`/k8s/ns/${ns.metadata.name}/networkpolicies`}>Network Policies</Link>
-            </dd>
-          </dl>
-        </div>
-      </div>
+      <NamespaceSummary ns={ns} />
     </div>
     <ResourceUsage ns={ns} />
   </div>;
@@ -270,12 +286,12 @@ class NamespaceBarDropdowns_ extends React.Component {
       },
       {
         label: 'Deploy Image',
-        href: `/deploy-image?preselected-ns=${activeNamespace}`
+        href: `/deploy-image?preselected-ns=${activeNamespace}`,
       },
       {
         label: 'Import YAML',
         href: formatNamespacedRouteForResource('import', activeNamespace),
-      }
+      },
     ];
 
     return <div className="co-namespace-bar__dropdowns">
@@ -315,7 +331,7 @@ const NamespaceBar_ = ({useProjects}) => {
 const namespaceBarStateToProps = ({k8s}) => {
   const useProjects = k8s.hasIn(['RESOURCES', 'models', ProjectModel.kind]);
   return {
-    useProjects
+    useProjects,
   };
 };
 

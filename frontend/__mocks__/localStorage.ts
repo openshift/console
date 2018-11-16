@@ -9,5 +9,5 @@ let _localStorage = {};
   },
   clear() {
     _localStorage = {};
-  }
+  },
 };

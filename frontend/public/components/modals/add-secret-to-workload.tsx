@@ -61,7 +61,7 @@ export class AddSecretToWorkloadModal extends React.Component<AddSecretToWorkloa
   handleChange: React.ReactEventHandler<HTMLInputElement> = event => {
     const { name, value } = event.currentTarget;
     this.setState({
-      [name]: value
+      [name]: value,
     } as any);
   }
 

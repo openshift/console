@@ -2,13 +2,13 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 
 import { ColHead, DetailsPage, List, ListHeader, MultiListPage } from './factory';
-import { Cog, SectionHeading, navFactory, ResourceCog, ResourceLink, ResourceSummary } from './utils';
+import { Kebab, SectionHeading, navFactory, ResourceKebab, ResourceLink, ResourceSummary } from './utils';
 import { FLAGS, connectToFlags, flagPending } from '../features';
 import { LoadingBox } from './utils/status-box';
 import { referenceForModel } from '../module/k8s';
 import { ResourceQuotaModel, ClusterResourceQuotaModel } from '../models';
 
-const { common } = Cog.factory;
+const { common } = Kebab.factory;
 const menuActions = [...common];
 
 const quotaKind = quota => quota.metadata.namespace ? referenceForModel(ResourceQuotaModel) : referenceForModel(ClusterResourceQuotaModel);
@@ -25,8 +25,8 @@ const Row = ({obj: rq}) => <div className="row co-resource-list__item">
   <div className="col-md-7 col-xs-6 co-break-word">
     {rq.metadata.namespace ? <ResourceLink kind="Namespace" name={rq.metadata.namespace} title={rq.metadata.namespace} /> : 'all'}
   </div>
-  <div className="co-resource-kebab">
-    <ResourceCog actions={menuActions} kind={quotaKind(rq)} resource={rq} />
+  <div className="co-kebab-wrapper">
+    <ResourceKebab actions={menuActions} kind={quotaKind(rq)} resource={rq} />
   </div>
 </div>;
 
@@ -66,7 +66,7 @@ export const ResourceQuotasPage = connectToFlags(FLAGS.OPENSHIFT)(({namespace, f
       items: [
         {id: 'cluster', title: 'Cluster-wide Resource Quotas'},
         {id: 'namespace', title: 'Namespace Resource Quotas'},
-      ]
+      ],
     }];
   }
   return <MultiListPage

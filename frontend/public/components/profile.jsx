@@ -11,7 +11,7 @@ export class ProfilePage extends SafetyFirst {
   constructor(props) {
     super(props);
     this.state = {
-      isKubeCtlDownloaded: false
+      isKubeCtlDownloaded: false,
     };
     this._onKubeCtlDownloaded = this._onKubeCtlDownloaded.bind(this);
   }

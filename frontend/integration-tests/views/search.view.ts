@@ -7,7 +7,7 @@ export const dropdownLinks = $$('.dropdown-menu a');
 export const labelFilter = $('.co-m-selector-input input');
 export const linkForType = type => element(by.partialLinkText(type));
 
-export const selectSearchType = async (objectType: string) => {
+export const selectSearchType = async(objectType: string) => {
   const isPresent = await dropdownLinks.isPresent();
   if (!isPresent) {
     await dropdown.click();

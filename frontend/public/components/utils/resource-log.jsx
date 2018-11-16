@@ -26,7 +26,7 @@ const streamStatusMessages = {
   [STREAM_EOF]: 'Log stream ended.',
   [STREAM_LOADING]: 'Loading log...',
   [STREAM_PAUSED]: 'Log stream paused.',
-  [STREAM_ACTIVE]: 'Log streaming...'
+  [STREAM_ACTIVE]: 'Log streaming...',
 };
 
 // Component for log stream controls
@@ -78,7 +78,7 @@ export class ResourceLog extends SafetyFirst {
       resourceStatus: LOG_SOURCE_WAITING,
       stale: false,
       status: STREAM_LOADING,
-      isFullscreen: false
+      isFullscreen: false,
     };
   }
 
@@ -126,7 +126,7 @@ export class ResourceLog extends SafetyFirst {
   }
 
   // Download currently displayed log content
-  _download () {
+  _download() {
     const {resourceName, containerName} = this.props;
     const blob = this._buffer.getBlob({type: 'text/plain;charset=utf-8'});
     let filename = resourceName;
@@ -144,7 +144,7 @@ export class ResourceLog extends SafetyFirst {
   // Handler for websocket onerror event
   _onError(){
     this.setState({
-      error: true
+      error: true,
     });
   }
 
@@ -156,7 +156,7 @@ export class ResourceLog extends SafetyFirst {
       const linesAdded = this._buffer.ingest(text);
       this.setState({
         linesBehind: status === STREAM_PAUSED ? linesBehind + linesAdded : linesBehind,
-        lines: this._buffer.getLines()
+        lines: this._buffer.getLines(),
       });
     }
   }
@@ -174,7 +174,7 @@ export class ResourceLog extends SafetyFirst {
       lines: [],
       linesBehind: 0,
       stale: false,
-      status: STREAM_LOADING
+      status: STREAM_LOADING,
     }, () => {
       this._wsDestroy();
       this._wsInit(this.props);
@@ -182,7 +182,7 @@ export class ResourceLog extends SafetyFirst {
   }
 
   // Toggle currently displayed log content to/from fullscreen
-  _toggleFullscreen () {
+  _toggleFullscreen() {
     const logConsole = this._resourceLogRef.current;
     if (!logConsole) {
       return;
@@ -217,7 +217,7 @@ export class ResourceLog extends SafetyFirst {
   }
 
   // Initialize websocket connection and wire up handlers
-  _wsInit ({kind, namespace, resourceName, containerName, bufferSize}) {
+  _wsInit({kind, namespace, resourceName, containerName, bufferSize}) {
     if ([LOG_SOURCE_RUNNING, LOG_SOURCE_TERMINATED, LOG_SOURCE_RESTARTING].includes(this.state.resourceStatus)) {
       const urlOpts = {
         ns: namespace,
@@ -226,14 +226,14 @@ export class ResourceLog extends SafetyFirst {
         queryParams: {
           container: containerName || '',
           follow: 'true',
-          tailLines: bufferSize
-        }
+          tailLines: bufferSize,
+        },
       };
       const watchURL = resourceURL(modelFor(kind), urlOpts);
       const wsOpts = {
         host: 'auto',
         path: watchURL,
-        subprotocols: ['base64.binary.k8s.io']
+        subprotocols: ['base64.binary.k8s.io'],
       };
 
       this.ws = new WSFactory(watchURL, wsOpts)
@@ -286,7 +286,7 @@ export class ResourceLog extends SafetyFirst {
 }
 
 ResourceLog.defaultProps = {
-  bufferSize: 1000
+  bufferSize: 1000,
 };
 
 ResourceLog.propTypes = {

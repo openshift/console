@@ -36,14 +36,14 @@ export const config: Config = {
         '--window-size=1920,1200',
         '--disable-background-timer-throttling',
         '--disable-renderer-backgrounding',
-        '--disable-raf-throttling'
+        '--disable-raf-throttling',
       ],
       prefs: {
         'profile.password_manager_enabled': false,
         'credentials_enable_service': false,
-        'password_manager_enabled': false
-      }
-    }
+        'password_manager_enabled': false,
+      },
+    },
   },
   beforeLaunch: () => new Promise(resolve => htmlReporter.beforeLaunch(resolve)),
   onPrepare: () => {
@@ -95,6 +95,7 @@ export const config: Config = {
     olmUpgrade: ['tests/base.scenario.ts', 'tests/olm/update-channel-approval.scenario.ts'],
     performance: ['tests/base.scenario.ts', 'tests/performance.scenario.ts'],
     serviceCatalog: ['tests/base.scenario.ts', 'tests/service-catalog/service-catalog.scenario.ts', 'tests/service-catalog/service-broker.scenario.ts', 'tests/service-catalog/service-class.scenario.ts', 'tests/service-catalog/service-binding.scenario.ts'],
+    catalog: ['tests/base.scenario.ts', 'tests/catalog.scenario.ts'],
     all: ['tests/base.scenario.ts',
       'tests/crud.scenario.ts',
       'tests/secrets.scenario.ts',
@@ -103,8 +104,8 @@ export const config: Config = {
       'tests/filter.scenario.ts',
       'tests/modal-annotations.scenario.ts',
       'tests/source-to-image.scenario.ts',
-      'tests/deploy-image.scenario.ts'],
-    catalog: ['tests/base.scenario.ts', 'tests/catalog.scenario.ts'],
+      'tests/deploy-image.scenario.ts',
+      'tests/catalog.scenario.ts'],
   },
   params: {
     // Set to 'true' to enable OpenShift resources in the crud scenario.
@@ -112,8 +113,8 @@ export const config: Config = {
     // $ yarn run test-gui --params.openshift true
     openshift: 'false',
     // Set to 'true' to enable Service Catalog resources in the crud scenario.
-    servicecatalog: 'false'
-  }
+    servicecatalog: 'false',
+  },
 };
 
 export const checkLogs = async() => (await browser.manage().logs().get('browser'))
@@ -122,7 +123,7 @@ export const checkLogs = async() => (await browser.manage().logs().get('browser'
     return log;
   });
 
-function hasError () {
+function hasError() {
   return (window as any).windowError;
 }
 export const checkErrors = async() => await browser.executeScript(hasError).then(err => {

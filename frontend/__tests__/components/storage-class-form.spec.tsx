@@ -51,8 +51,8 @@ describe(ConnectedStorageClassForm.displayName, () => {
     wrapper.setState({
       newStorageClass: {
         ...wrapper.state().newStorageClass,
-        type: 'aws'
-      }
+        type: 'aws',
+      },
     });
     expect(wrapper.find({title: 'Select AWS Type'}).exists()).toBe(true);
   });

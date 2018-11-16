@@ -17,9 +17,9 @@ describe(RouteLocation.displayName, () => {
       'spec': {
         'host': 'www.example.com',
         'tls': {
-          'termination': 'edge'
+          'termination': 'edge',
         },
-        'wildcardPolicy': 'None'
+        'wildcardPolicy': 'None',
       },
       'status': {
         'ingress': [
@@ -29,12 +29,12 @@ describe(RouteLocation.displayName, () => {
               {
                 'type': 'Admitted',
                 'status': 'True',
-                'lastTransitionTime': '2018-04-30T16:55:48Z'
-              }
-            ]
-          }
-        ]
-      }
+                'lastTransitionTime': '2018-04-30T16:55:48Z',
+              },
+            ],
+          },
+        ],
+      },
     };
 
     const wrapper = shallow(<RouteLocation obj={route} />);
@@ -51,7 +51,7 @@ describe(RouteLocation.displayName, () => {
       },
       'spec': {
         'host': 'www.example.com',
-        'wildcardPolicy': 'None'
+        'wildcardPolicy': 'None',
       },
       'status': {
         'ingress': [
@@ -61,12 +61,12 @@ describe(RouteLocation.displayName, () => {
               {
                 'type': 'Admitted',
                 'status': 'True',
-                'lastTransitionTime': '2018-04-30T16:55:48Z'
-              }
-            ]
-          }
-        ]
-      }
+                'lastTransitionTime': '2018-04-30T16:55:48Z',
+              },
+            ],
+          },
+        ],
+      },
     };
 
     const wrapper = shallow(<RouteLocation obj={route} />);
@@ -84,7 +84,7 @@ describe(RouteLocation.displayName, () => {
       'spec': {
         'host': 'www.example.com',
         'path': '\\mypath',
-        'wildcardPolicy': 'None'
+        'wildcardPolicy': 'None',
       },
       'status': {
         'ingress': [
@@ -94,12 +94,12 @@ describe(RouteLocation.displayName, () => {
               {
                 'type': 'Admitted',
                 'status': 'True',
-                'lastTransitionTime': '2018-04-30T16:55:48Z'
-              }
-            ]
-          }
-        ]
-      }
+                'lastTransitionTime': '2018-04-30T16:55:48Z',
+              },
+            ],
+          },
+        ],
+      },
     };
 
     const wrapper = shallow(<RouteLocation obj={route} />);
@@ -116,7 +116,7 @@ describe(RouteLocation.displayName, () => {
       },
       'spec': {
         'host': 'www.example.com',
-        'wildcardPolicy': 'Subdomain'
+        'wildcardPolicy': 'Subdomain',
       },
       'status': {
         'ingress': [
@@ -126,12 +126,12 @@ describe(RouteLocation.displayName, () => {
               {
                 'type': 'Admitted',
                 'status': 'True',
-                'lastTransitionTime': '2018-04-30T16:55:48Z'
-              }
-            ]
-          }
-        ]
-      }
+                'lastTransitionTime': '2018-04-30T16:55:48Z',
+              },
+            ],
+          },
+        ],
+      },
     };
 
     const wrapper = shallow(<RouteLocation obj={route} />);
@@ -148,7 +148,7 @@ describe(RouteLocation.displayName, () => {
       },
       'spec': {
         'host': 'www.example.com',
-        'wildcardPolicy': 'None'
+        'wildcardPolicy': 'None',
       },
       'status': {
         'ingress': [
@@ -158,12 +158,12 @@ describe(RouteLocation.displayName, () => {
               {
                 'type': 'Admitted',
                 'status': 'False',
-                'lastTransitionTime': '2018-04-30T16:55:48Z'
-              }
-            ]
-          }
-        ]
-      }
+                'lastTransitionTime': '2018-04-30T16:55:48Z',
+              },
+            ],
+          },
+        ],
+      },
     };
 
     const wrapper = shallow(<RouteLocation obj={route} />);
@@ -188,12 +188,12 @@ describe(RouteStatus.displayName, () => {
               {
                 'type': 'Admitted',
                 'status': 'True',
-                'lastTransitionTime': '2018-04-30T16:55:48Z'
-              }
-            ]
-          }
-        ]
-      }
+                'lastTransitionTime': '2018-04-30T16:55:48Z',
+              },
+            ],
+          },
+        ],
+      },
     };
 
     const wrapper = shallow(<RouteStatus obj={route} />);
@@ -215,12 +215,12 @@ describe(RouteStatus.displayName, () => {
               {
                 'type': 'Admitted',
                 'status': 'False',
-                'lastTransitionTime': '2018-04-30T16:55:48Z'
-              }
-            ]
-          }
-        ]
-      }
+                'lastTransitionTime': '2018-04-30T16:55:48Z',
+              },
+            ],
+          },
+        ],
+      },
     };
 
     const wrapper = shallow(<RouteStatus obj={route} />);
@@ -234,7 +234,7 @@ describe(RouteStatus.displayName, () => {
       'kind': 'Route',
       'metadata': {
         name: 'example',
-      }
+      },
     };
 
     const wrapper = shallow(<RouteStatus obj={route} />);

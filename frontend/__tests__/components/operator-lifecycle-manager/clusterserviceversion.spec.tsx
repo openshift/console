@@ -5,11 +5,11 @@ import { shallow, ShallowWrapper, mount, ReactWrapper } from 'enzyme';
 import { Link } from 'react-router-dom';
 import * as _ from 'lodash-es';
 
-import { ClusterServiceVersionsDetailsPage, ClusterServiceVersionsDetailsPageProps, ClusterServiceVersionDetails, ClusterServiceVersionDetailsProps, ClusterServiceVersionsPage, ClusterServiceVersionsPageProps, ClusterServiceVersionList, ClusterServiceVersionListProps, ClusterServiceVersionHeader, ClusterServiceVersionRow, ClusterServiceVersionRowProps, CRDCard, CRDCardRow } from '../../../public/components/operator-lifecycle-manager/clusterserviceversion';
+import { ClusterServiceVersionsDetailsPage, ClusterServiceVersionsDetailsPageProps, ClusterServiceVersionDetails, ClusterServiceVersionDetailsProps, ClusterServiceVersionsPage, ClusterServiceVersionsPageProps, ClusterServiceVersionList, ClusterServiceVersionHeader, ClusterServiceVersionRow, ClusterServiceVersionRowProps, CRDCard, CRDCardRow } from '../../../public/components/operator-lifecycle-manager/clusterserviceversion';
 import { ClusterServiceVersionKind, ClusterServiceVersionLogo, ClusterServiceVersionLogoProps, referenceForCRDDesc } from '../../../public/components/operator-lifecycle-manager';
-import { DetailsPage, ListPage, ListHeader, ColHead, List } from '../../../public/components/factory';
+import { DetailsPage, ListPage, ListHeader, ColHead, List, ListInnerProps } from '../../../public/components/factory';
 import { testClusterServiceVersion } from '../../../__mocks__/k8sResourcesMocks';
-import { Timestamp, OverflowLink, MsgBox, ResourceLink, ResourceCog, ErrorBoundary, LoadingBox, ScrollToTopOnMount, SectionHeading } from '../../../public/components/utils';
+import { Timestamp, OverflowLink, MsgBox, ResourceLink, ResourceKebab, ErrorBoundary, LoadingBox, ScrollToTopOnMount, SectionHeading } from '../../../public/components/utils';
 import { referenceForModel } from '../../../public/module/k8s';
 import { ClusterServiceVersionModel } from '../../../public/models';
 
@@ -57,12 +57,12 @@ describe(ClusterServiceVersionRow.displayName, () => {
     expect(wrapper.find(ErrorBoundary).exists()).toBe(true);
   });
 
-  it('renders `ResourceCog` with actions', () => {
+  it('renders `ResourceKebab` with actions', () => {
     const col = wrapper.find('.row');
 
-    expect(col.find(ResourceCog).props().resource).toEqual(testClusterServiceVersion);
-    expect(col.find(ResourceCog).props().kind).toEqual(referenceForModel(ClusterServiceVersionModel));
-    expect(col.find(ResourceCog).props().actions.length).toEqual(2);
+    expect(col.find(ResourceKebab).props().resource).toEqual(testClusterServiceVersion);
+    expect(col.find(ResourceKebab).props().kind).toEqual(referenceForModel(ClusterServiceVersionModel));
+    expect(col.find(ResourceKebab).props().actions.length).toEqual(2);
   });
 
   it('renders clickable column for app logo and name', () => {
@@ -143,10 +143,10 @@ describe(ClusterServiceVersionLogo.displayName, () => {
 describe(ClusterServiceVersionList.displayName, () => {
 
   it('renders `List` with correct props', () => {
-    const wrapper = shallow<ClusterServiceVersionListProps>(<ClusterServiceVersionList data={[]} loaded={true} />);
+    const wrapper = shallow(<ClusterServiceVersionList data={[]} loaded={true} />);
 
-    expect(wrapper.find(List).props().Row).toEqual(ClusterServiceVersionRow);
-    expect(wrapper.find(List).props().Header).toEqual(ClusterServiceVersionHeader);
+    expect(wrapper.find<ListInnerProps>(List).props().Row).toEqual(ClusterServiceVersionRow);
+    expect(wrapper.find<ListInnerProps>(List).props().Header).toEqual(ClusterServiceVersionHeader);
   });
 });
 

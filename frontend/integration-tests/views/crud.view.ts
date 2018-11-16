@@ -45,9 +45,9 @@ export const editHumanizedKind = (kind) => {
 /**
  * Edit row from a list.
  */
-export const editRow = (kind: string) => (name: string) => rowForName(name).$$('.co-m-cog__button').first().click()
-  .then(() => browser.wait(until.elementToBeClickable(rowForName(name).$('.co-m-cog__dropdown'))))
-  .then(() => rowForName(name).$('.co-m-cog__dropdown').$$('a').filter(link => link.getText().then(text => text.startsWith(editHumanizedKind(kind)))).first().click())
+export const editRow = (kind: string) => (name: string) => rowForName(name).$$('.co-kebab__button').first().click()
+  .then(() => browser.wait(until.elementToBeClickable(rowForName(name).$('.co-kebab__dropdown'))))
+  .then(() => rowForName(name).$('.co-kebab__dropdown').$$('a').filter(link => link.getText().then(text => text.startsWith(editHumanizedKind(kind)))).first().click())
   .then(async() => {
     await browser.wait(until.presenceOf(cancelBtn));
     const reloadBtnIsPresent = await reloadBtn.isPresent();
@@ -60,9 +60,9 @@ export const editRow = (kind: string) => (name: string) => rowForName(name).$$('
 /**
  * Deletes a row from a list. Does not wait until the row is no longer visible.
  */
-export const deleteRow = (kind: string) => (name: string) => rowForName(name).$$('.co-m-cog__button').first().click()
-  .then(() => browser.wait(until.elementToBeClickable(rowForName(name).$('.co-m-cog__dropdown'))))
-  .then(() => rowForName(name).$('.co-m-cog__dropdown').$$('a').filter(link => link.getText().then(text => text.startsWith('Delete'))).first().click())
+export const deleteRow = (kind: string) => (name: string) => rowForName(name).$$('.co-kebab__button').first().click()
+  .then(() => browser.wait(until.elementToBeClickable(rowForName(name).$('.co-kebab__dropdown'))))
+  .then(() => rowForName(name).$('.co-kebab__dropdown').$$('a').filter(link => link.getText().then(text => text.startsWith('Delete'))).first().click())
   .then(async() => {
     switch (kind) {
       case 'Namespace':
@@ -76,23 +76,23 @@ export const deleteRow = (kind: string) => (name: string) => rowForName(name).$$
 
     await $('#confirm-action').click();
 
-    const cogIsDisabled = until.presenceOf(rowForName(name).$('.co-m-cog--disabled'));
+    const kebabIsDisabled = until.presenceOf(rowForName(name).$('.co-kebab--disabled'));
     const listIsEmpty = until.textToBePresentInElement($('.cos-status-box > .text-center'), 'No ');
-    const rowIsGone = until.not(until.presenceOf(rowForName(name).$('.co-m-cog')));
-    return browser.wait(until.or(cogIsDisabled, until.or(listIsEmpty, rowIsGone)));
+    const rowIsGone = until.not(until.presenceOf(rowForName(name).$('.co-kebab')));
+    return browser.wait(until.or(kebabIsDisabled, until.or(listIsEmpty, rowIsGone)));
 
   });
 
 export const selectOptionFromGear = (name: string, gearOptionStartsWith: string) =>
-  rowForName(name).$$('.co-m-cog__button').first().click()
-    .then(() => browser.wait(until.visibilityOf(rowForName(name).$('.co-m-cog__dropdown'))))
-    .then(() => $('.co-m-cog__dropdown').$$('a').filter(link => link.getText()
+  rowForName(name).$$('.co-kebab__button').first().click()
+    .then(() => browser.wait(until.visibilityOf(rowForName(name).$('.co-kebab__dropdown'))))
+    .then(() => $('.co-kebab__dropdown').$$('a').filter(link => link.getText()
       .then(text => text.startsWith(gearOptionStartsWith))).first().click()
     );
 
-export const rowFilters = $$('.row-filter--box');
+export const rowFilters = $$('.row-filter__box');
 export const rowFilterFor = (name: string) => rowFilters.filter(el => el.getText().then(text => text.includes(name))).first();
-export const activeRowFilters = $$('.row-filter--box__active');
+export const activeRowFilters = $$('.row-filter__box--active');
 
 export const statusMessageTitle = $('.cos-status-box__title');
 export const statusMessageDetail = $('.cos-status-box__detail');

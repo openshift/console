@@ -10,7 +10,7 @@ export class CertsInfoContainer extends SafetyFirst {
   constructor(props){
     super(props);
     this.state = {
-      info : null
+      info : null,
     };
   }
 

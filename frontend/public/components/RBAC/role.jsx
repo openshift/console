@@ -6,7 +6,7 @@ import * as fuzzy from 'fuzzysearch';
 import { flatten as bindingsFlatten } from './bindings';
 import { BindingName, BindingsList, RulesList } from './index';
 import { ColHead, DetailsPage, List, ListHeader, MultiListPage, ResourceRow, TextFilter } from '../factory';
-import { Cog, SectionHeading, MsgBox, navFactory, ResourceCog, ResourceLink, Timestamp } from '../utils';
+import { Kebab, SectionHeading, MsgBox, navFactory, ResourceKebab, ResourceLink, Timestamp } from '../utils';
 
 export const isSystemRole = role => _.startsWith(role.metadata.name, 'system:');
 
@@ -24,8 +24,8 @@ const menuActions = [
     label: 'Add Role Binding...',
     href: `/k8s/cluster/rolebindings/new?rolekind=${roleKind(role)}&rolename=${role.metadata.name}`,
   }),
-  Cog.factory.Edit,
-  Cog.factory.Delete,
+  Kebab.factory.Edit,
+  Kebab.factory.Delete,
 ];
 
 const Header = props => <ListHeader>
@@ -40,19 +40,19 @@ const Row = ({obj: role}) => <div className="row co-resource-list__item">
   <div className="col-xs-6 co-break-word">
     {role.metadata.namespace ? <ResourceLink kind="Namespace" name={role.metadata.namespace} /> : 'all'}
   </div>
-  <div className="co-resource-kebab">
-    <ResourceCog actions={menuActions} kind={roleKind(role)} resource={role} />
+  <div className="co-kebab-wrapper">
+    <ResourceKebab actions={menuActions} kind={roleKind(role)} resource={role} />
   </div>
 </div>;
 
 class Details extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props);
     this.state = {};
     this.changeFilter = e => this.setState({ruleFilter: e.target.value});
   }
 
-  render () {
+  render() {
     const ruleObj = this.props.obj;
     const {creationTimestamp, name, namespace} = ruleObj.metadata;
     const {ruleFilter} = this.state;

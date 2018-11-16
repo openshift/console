@@ -4,17 +4,19 @@ import { connect } from 'react-redux';
 import { UIActions } from '../../ui/ui-actions';
 import { K8sKind } from '../../module/k8s';
 import {
-  CogAction,
+  KebabAction,
   ResourceOverviewHeading,
   SimpleTabNav,
 } from '../utils';
 
+import { OverviewItem } from '.';
+
 const stateToProps = ({UI}): PropsFromState => ({
-  selectedDetailsTab: UI.getIn(['overview', 'selectedDetailsTab'])
+  selectedDetailsTab: UI.getIn(['overview', 'selectedDetailsTab']),
 });
 
 const dispatchToProps = (dispatch): PropsFromDispatch => ({
-  onClickTab: (name) => dispatch(UIActions.selectOverviewDetailsTab(name))
+  onClickTab: (name) => dispatch(UIActions.selectOverviewDetailsTab(name)),
 });
 
 export const ResourceOverviewDetails = connect<PropsFromState, PropsFromDispatch, OwnProps>(stateToProps, dispatchToProps)(
@@ -44,10 +46,13 @@ type PropsFromDispatch = {
 };
 
 type OwnProps = {
-  item: any;
+  item: OverviewItem;
   kindObj: K8sKind;
-  menuActions: CogAction[];
-  tabs: any;
+  menuActions: KebabAction[];
+  tabs: {
+    name: string;
+    component: any;
+  }[];
 };
 
 type ResourceOverviewDetailsProps = PropsFromState & PropsFromDispatch & OwnProps;

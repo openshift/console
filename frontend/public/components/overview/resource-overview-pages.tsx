@@ -1,15 +1,15 @@
 import { Map as ImmutableMap } from 'immutable';
 
 import {
-  referenceForModel,
   /* eslint-disable-next-line no-unused-vars */
-  GroupVersionKind
+  GroupVersionKind,
+  referenceForModel,
 } from '../../module/k8s';
 import {
   DaemonSetModel,
   DeploymentModel,
   DeploymentConfigModel,
-  StatefulSetModel
+  StatefulSetModel,
 } from '../../models';
 
 export const resourceOverviewPages = ImmutableMap<GroupVersionKind | string, () => Promise<React.ComponentType<any>>>()

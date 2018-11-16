@@ -8,7 +8,7 @@ import { Link, Redirect, Route, Switch } from 'react-router-dom';
 
 import { coFetchJSON } from '../co-fetch';
 import k8sActions from '../module/k8s/k8s-actions';
-import { connectToURLs, MonitoringRoutes } from '../monitoring';
+import { AlertStates, connectToURLs, isSilenced, MonitoringRoutes, SilenceStates } from '../monitoring';
 import store from '../redux';
 import { UIActions } from '../ui/ui-actions';
 import { monitoringRulesToProps, monitoringSilencesToProps } from '../ui/ui-reducers';
@@ -21,9 +21,8 @@ import { withFallback } from './utils/error-boundary';
 import { Tooltip } from './utils/tooltip';
 import {
   ActionsMenu,
-  BreadCrumbs,
   ButtonBar,
-  Cog,
+  Kebab,
   ExternalLink,
   getURLSearchParams,
   history,
@@ -55,11 +54,10 @@ const SilenceResource = {
 
 const labelsToParams = labels => _.map(labels, (v, k) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`).join('&');
 
-const alertURL = (name, labels) => `${AlertResource.path}/${name}?${labelsToParams(labels)}`;
+const alertURL = alert => `${AlertResource.path}/${_.get(alert.labels, 'alertname')}?${labelsToParams(alert.labels)}`;
 const ruleURL = rule => `${AlertRuleResource.path}/${_.get(rule, 'id')}`;
 
-// Return "not-firing" if no state is found
-export const alertState = a => _.get(a, 'state', 'not-firing');
+export const alertState = a => _.get(a, 'state', AlertStates.NotFiring);
 
 const alertDescription = alert => {
   const {annotations = {}, labels = {}} = alert;
@@ -67,11 +65,6 @@ const alertDescription = alert => {
 };
 
 export const silenceState = s => _.get(s, 'status.state');
-
-// Determine if an Alert is silenced by a Silence (if all of the Silence's matchers match one of the Alert's labels)
-const isSilenced = (alert, silence) => alertState(alert) === 'silenced' &&
-  _.get(silence, 'status.state') === 'active' &&
-  _.every(silence.matchers, m => _.get(alert.labels, m.name) === m.value);
 
 const pollers = {};
 const pollerTimeouts = {};
@@ -108,20 +101,17 @@ const cancelSilence = (silence, urls) => ({
   }),
 });
 
-const silenceMenuActions = (silence, urls) => silenceState(silence) === 'expired'
+const silenceMenuActions = (silence, urls) => silenceState(silence) === SilenceStates.Expired
   ? [editSilence(silence)]
   : [editSilence(silence), cancelSilence(silence, urls)];
 
-const SilenceCog_ = ({silence, urls}) => <Cog options={silenceMenuActions(silence, urls)} />;
-const SilenceCog = connectToURLs(MonitoringRoutes.AlertManager)(SilenceCog_);
+const SilenceKebab_ = ({silence, urls}) => <Kebab options={silenceMenuActions(silence, urls)} />;
+const SilenceKebab = connectToURLs(MonitoringRoutes.AlertManager)(SilenceKebab_);
 
 const SilenceActionsMenu_ = ({silence, urls}) => <div className="co-actions">
   <ActionsMenu actions={silenceMenuActions(silence, urls)} />
 </div>;
 const SilenceActionsMenu = connectToURLs(MonitoringRoutes.AlertManager)(SilenceActionsMenu_);
-
-const AlertmanagerLink_ = ({text, urls}) => <ExternalLink href={urls[MonitoringRoutes.AlertManager]} text={text} />;
-const AlertmanagerLink = connectToURLs(MonitoringRoutes.AlertManager)(AlertmanagerLink_);
 
 const MonitoringResourceIcon = props => {
   const {className, resource} = props;
@@ -129,26 +119,24 @@ const MonitoringResourceIcon = props => {
 };
 
 const AlertState: React.SFC<AlertStateProps> = ({state}) => {
-  if (state === 'not-firing') {
+  if (state === AlertStates.NotFiring) {
     return <span className="text-muted">Not Firing</span>;
   }
-  const stateToIconClassName = {
-    firing: 'fa fa-bell alert-firing',
-    silenced: 'fa fa-bell-slash text-muted',
-    pending: 'fa fa-exclamation-triangle alert-pending',
-  };
-  const klass = stateToIconClassName[state];
+  const klass = {
+    [AlertStates.Firing]: 'fa fa-bell alert-firing',
+    [AlertStates.Silenced]: 'fa fa-bell-slash text-muted',
+    [AlertStates.Pending]: 'fa fa-bell-o alert-pending',
+  }[state];
   return klass ? <React.Fragment><i className={klass} aria-hidden="true"></i> {_.startCase(state)}</React.Fragment> : null;
 };
 
 const SilenceState = ({silence}) => {
   const state = silenceState(silence);
-  const stateToIconClassName = {
-    active: 'fa fa-check-circle-o silence-active',
-    pending: 'fa fa-hourglass-half silence-pending',
-    expired: 'fa fa-times-circle-o text-muted',
-  };
-  const klass = stateToIconClassName[state];
+  const klass = {
+    [SilenceStates.Active]: 'fa fa-check-circle-o silence-active',
+    [SilenceStates.Pending]: 'fa fa-hourglass-half silence-pending',
+    [SilenceStates.Expired]: 'fa fa-ban text-muted',
+  }[state];
   return klass ? <React.Fragment><i className={klass} aria-hidden="true"></i> {_.startCase(state)}</React.Fragment> : null;
 };
 
@@ -169,8 +157,8 @@ const SilenceMatchersList = ({silence}) => <div className={`co-text-${SilenceRes
 const alertStateToProps = (state): AlertsDetailsPageProps => {
   const {data, loaded, loadError}: Rules = monitoringRulesToProps(state);
   const labels = getURLSearchParams();
-  const alert = _.find(data && data.asAlerts, {labels});
-  const silencedBy = alertState(alert) === 'silenced'
+  const alert = _.find(data, {labels});
+  const silencedBy = alertState(alert) === AlertStates.Silenced
     ? _.filter(monitoringSilencesToProps(state).data, s => isSilenced(alert, s))
     : [];
   return {alert, loaded, loadError, silencedBy};
@@ -189,7 +177,7 @@ const AlertsDetailsPage = withFallback(connect(alertStateToProps)((props: Alerts
     <div className="co-m-nav-title co-m-nav-title--detail">
       <h1 className="co-m-pane__heading">
         <div className="co-m-pane__name"><MonitoringResourceIcon className="co-m-resource-icon--lg pull-left" resource={AlertResource} />{alertname}</div>
-        {(state === 'firing' || state === 'pending') && <div className="co-actions">
+        {(state === AlertStates.Firing || state === AlertStates.Pending) && <div className="co-actions">
           <ActionsMenu actions={[silenceAlert(alert)]} />
         </div>}
       </h1>
@@ -282,12 +270,12 @@ const ActiveAlerts = ({alerts}) => <div className="co-m-table-grid co-m-table-gr
   <div className="co-m-table-grid__body">
     {_.sortBy(alerts, alertDescription).map((a, i) => <ResourceRow key={i} obj={a}>
       <div className="col-xs-6">
-        <Link className="co-resource-link" to={alertURL(a.labels.alertname, a.labels)}>{alertDescription(a)}</Link>
+        <Link className="co-resource-link" to={alertURL(a)}>{alertDescription(a)}</Link>
       </div>
       <div className="col-sm-2 hidden-xs"><Timestamp timestamp={a.activeAt} /></div>
       <div className="col-sm-2 col-xs-3"><AlertState state={a.state} /></div>
       <div className="col-sm-2 col-xs-3 co-break-word">{a.value}</div>
-      <div className="co-resource-kebab"><Cog options={[silenceAlert(a)]} /></div>
+      <div className="co-kebab-wrapper"><Kebab options={[silenceAlert(a)]} /></div>
     </ResourceRow>)}
   </div>
 </div>;
@@ -295,25 +283,20 @@ const ActiveAlerts = ({alerts}) => <div className="co-m-table-grid co-m-table-gr
 const ruleStateToProps = (state, {match}): AlertRulesDetailsPageProps => {
   const {data, loaded, loadError}: Rules = monitoringRulesToProps(state);
   const id = _.get(match, 'params.id');
-  const rule = _.find(_.get(data, 'asRules'), {id});
-  return {loaded, loadError, rule};
+  const alert = _.find(data, a => a.rule.id === id);
+  return {loaded, loadError, rule: _.get(alert, 'rule')};
 };
 
 const AlertRulesDetailsPage = withFallback(connect(ruleStateToProps)((props: AlertRulesDetailsPageProps) => {
   const {loaded, loadError, rule} = props;
   const {alerts = [], annotations = {}, duration = null, labels = {}, name = '', query = ''} = rule || {};
   const {severity} = labels as any;
-  const breadcrumbs = [
-    {name, path: alertURL(name, labels)},
-    {name: `${AlertRuleResource.label} Details`, path: null},
-  ];
 
   return <React.Fragment>
     <Helmet>
       <title>{`${name} · Details`}</title>
     </Helmet>
-    <div className="co-m-nav-title co-m-nav-title--detail co-m-nav-title--breadcrumbs">
-      <BreadCrumbs breadcrumbs={breadcrumbs} />
+    <div className="co-m-nav-title co-m-nav-title--detail">
       <h1 className="co-m-pane__heading">
         <div className="co-m-pane__name"><MonitoringResourceIcon className="co-m-resource-icon--lg pull-left" resource={AlertRuleResource} />{name}</div>
       </h1>
@@ -371,7 +354,7 @@ const AlertRulesDetailsPage = withFallback(connect(ruleStateToProps)((props: Ale
 }));
 
 const silencedAlertsToProps = (state, {silence}) => ({
-  alerts: _.filter(_.get(monitoringRulesToProps(state), 'data.asAlerts'), a => isSilenced(a, silence)),
+  alerts: _.filter(_.get(monitoringRulesToProps(state), 'data'), a => alertState(a) === AlertStates.Silenced && isSilenced(a, silence)),
 });
 
 const SilencedAlertsList = connect(silencedAlertsToProps)(
@@ -385,12 +368,12 @@ const SilencedAlertsList = connect(silencedAlertsToProps)(
       <div className="co-m-table-grid__body">
         {_.sortBy(alerts, alertDescription).map((a, i) => <div className="row co-resource-list__item" key={i}>
           <div className="col-xs-9">
-            <Link className="co-resource-link" to={alertURL(a.labels.alertname, a.labels)}>{a.labels.alertname}</Link>
+            <Link className="co-resource-link" to={alertURL(a)}>{a.labels.alertname}</Link>
             <div className="monitoring-description">{alertDescription(a)}</div>
           </div>
           <div className="col-xs-3">{a.labels.severity}</div>
-          <div className="co-resource-kebab">
-            <Cog options={[viewAlertRule(a)]} />
+          <div className="co-kebab-wrapper">
+            <Kebab options={[viewAlertRule(a)]} />
           </div>
         </div>)}
       </div>
@@ -484,7 +467,7 @@ const AlertRow = ({obj}) => {
     <div className="col-xs-7">
       <div className="co-resource-link">
         <MonitoringResourceIcon resource={AlertResource} />
-        <Link to={alertURL(labels.alertname, labels)} className="co-resource-link__resource-name">{labels.alertname}</Link>
+        <Link to={alertURL(obj)} className="co-resource-link__resource-name">{labels.alertname}</Link>
       </div>
       <div className="monitoring-description">{annotations.description || annotations.message}</div>
     </div>
@@ -493,30 +476,38 @@ const AlertRow = ({obj}) => {
       {activeAt && <div className="text-muted monitoring-timestamp">since&nbsp;<Timestamp timestamp={activeAt} /></div>}
     </div>
     <div className="col-xs-2">{_.startCase(_.get(labels, 'severity', '-'))}</div>
-    <div className="co-resource-kebab">
-      <Cog options={state === 'firing' || state === 'pending' ? [silenceAlert(obj), viewAlertRule(obj)] : [viewAlertRule(obj)]} />
+    <div className="co-kebab-wrapper">
+      <Kebab options={state === AlertStates.Firing || state === AlertStates.Pending ? [silenceAlert(obj), viewAlertRule(obj)] : [viewAlertRule(obj)]} />
     </div>
   </ResourceRow>;
 };
 
 const AlertHeader = props => <ListHeader>
   <ColHead {...props} className="col-xs-7" sortField="labels.alertname">Name</ColHead>
-  <ColHead {...props} className="col-xs-3" sortFunc="alertState">State</ColHead>
+  <ColHead {...props} className="col-xs-3" sortFunc="alertStateOrder">State</ColHead>
   <ColHead {...props} className="col-xs-2" sortField="labels.severity">Severity</ColHead>
 </ListHeader>;
 
-const AlertsPageDescription_ = ({urls}) => <p className="co-help-text">OpenShift ships with a pre-configured and self-updating monitoring stack powered by <ExternalLink href={urls[MonitoringRoutes.Prometheus]} text="Prometheus" /></p>;
-const AlertsPageDescription = connectToURLs(MonitoringRoutes.Prometheus)(AlertsPageDescription_);
+const AlertsPageDescription = () => <p className="co-help-text">
+  Alerts help notify you when certain conditions in your environment are met. <ExternalLink href="https://prometheus.io/docs/prometheus/latest/configuration/alerting_rules/" text="Learn more about how alerts are configured." />
+</p>;
+
+const HeaderAlertmanagerLink_ = ({path, urls}) => _.isEmpty(urls[MonitoringRoutes.AlertManager])
+  ? null
+  : <span className="monitoring-header-link">
+    <ExternalLink href={`${urls[MonitoringRoutes.AlertManager]}${path || ''}`} text="Alertmanager UI" />
+  </span>;
+const HeaderAlertmanagerLink = connectToURLs(MonitoringRoutes.AlertManager)(HeaderAlertmanagerLink_);
 
 const alertsRowFilter = {
   type: 'alert-state',
-  selected: ['firing', 'silenced', 'pending'],
+  selected: [AlertStates.Firing, AlertStates.Silenced, AlertStates.Pending],
   reducer: alertState,
   items: [
-    {id: 'firing', title: 'Firing'},
-    {id: 'silenced', title: 'Silenced'},
-    {id: 'pending', title: 'Pending'},
-    {id: 'not-firing', title: 'Not Firing'},
+    {id: AlertStates.Firing, title: 'Firing'},
+    {id: AlertStates.Silenced, title: 'Silenced'},
+    {id: AlertStates.Pending, title: 'Pending'},
+    {id: AlertStates.NotFiring, title: 'Not Firing'},
   ],
 };
 
@@ -532,12 +523,12 @@ const MonitoringListPage = connect(filtersToProps)(class InnerMonitoringListPage
   defaultNameFilter: string;
   /* eslint-enable no-undef */
 
-  constructor (props) {
+  constructor(props) {
     super(props);
     this.applyTextFilter = this.applyTextFilter.bind(this);
   }
 
-  applyTextFilter (e) {
+  applyTextFilter(e) {
     const v = e.target.value;
     const {nameFilterID, reduxID} = this.props;
     store.dispatch(k8sActions.filterList(reduxID, nameFilterID, v));
@@ -552,7 +543,7 @@ const MonitoringListPage = connect(filtersToProps)(class InnerMonitoringListPage
     history.replace(`${url.pathname}?${params.toString()}${url.hash}`);
   }
 
-  componentWillMount () {
+  componentWillMount() {
     const {nameFilterID, reduxID} = this.props;
     const params = new URLSearchParams(window.location.search);
 
@@ -566,33 +557,30 @@ const MonitoringListPage = connect(filtersToProps)(class InnerMonitoringListPage
     }
   }
 
-  render () {
-    const {CreateButton, data, filters, Header, loaded, loadError, PageDescription, reduxID, Row, rowFilter, textFilterLabel} = this.props;
+  render() {
+    const {alertmanagerLinkPath, CreateButton, data, filters, Header, kindPlural, loaded, loadError, PageDescription, reduxID, Row, rowFilter} = this.props;
 
     return <React.Fragment>
       <Helmet>
-        <title>Monitoring Alerts</title>
+        <title>{kindPlural}</title>
       </Helmet>
       <div className="co-m-nav-title">
         <h1 className="co-m-pane__heading">
           <div className="co-m-pane__name">
-            Monitoring Alerts &nbsp;<span className="monitoring-header-link"><AlertmanagerLink text="Alertmanager UI" /></span>
+            {kindPlural}
+            <HeaderAlertmanagerLink path={alertmanagerLinkPath} />
           </div>
         </h1>
+        <PageDescription />
       </div>
-      <div className="co-m-pane__filter-bar co-m-pane__filter-bar--with-help-text">
-        {PageDescription && <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--help-text">
-          <PageDescription />
+      <div className="co-m-pane__filter-bar">
+        {CreateButton && <div className="co-m-pane__filter-bar-group">
+          <CreateButton />
         </div>}
         <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--filter">
-          <TextFilter defaultValue={this.defaultNameFilter} label={textFilterLabel} onChange={this.applyTextFilter} />
+          <TextFilter defaultValue={this.defaultNameFilter} label={`${kindPlural} by name`} onChange={this.applyTextFilter} />
         </div>
       </div>
-      {CreateButton && <div className="co-m-pane__filter-bar">
-        <div className="co-m-pane__filter-bar-group">
-          <CreateButton />
-        </div>
-      </div>}
       <div className="co-m-pane__body">
         <div className="row">
           <CheckBoxes
@@ -623,20 +611,19 @@ const MonitoringListPage = connect(filtersToProps)(class InnerMonitoringListPage
 
 const AlertsPage_ = props => <MonitoringListPage
   {...props}
-  data={props.data && props.data.asAlerts}
   Header={AlertHeader}
+  kindPlural="Alerts"
   nameFilterID="alert-name"
   PageDescription={AlertsPageDescription}
   reduxID="monitoringRules"
   Row={AlertRow}
   rowFilter={alertsRowFilter}
-  textFilterLabel="Alerts by name"
 />;
 const AlertsPage = withFallback(connect(monitoringRulesToProps)(AlertsPage_));
 
 const SilenceHeader = props => <ListHeader>
   <ColHead {...props} className="col-xs-7" sortField="name">Name</ColHead>
-  <ColHead {...props} className="col-xs-3" sortField="status.state">State</ColHead>
+  <ColHead {...props} className="col-xs-3" sortFunc="silenceStateOrder">State</ColHead>
   <ColHead {...props} className="col-xs-2">Silenced Alerts</ColHead>
 </ListHeader>;
 
@@ -656,28 +643,30 @@ const SilenceRow = ({obj}) => {
     <div className="col-xs-3">
       <SilenceState silence={obj} />
       <div className="text-muted monitoring-timestamp">
-        {state === 'pending' && <React.Fragment>starts&nbsp;<Timestamp timestamp={obj.startsAt} /></React.Fragment>}
-        {state === 'active' && <React.Fragment>ends&nbsp;<Timestamp timestamp={obj.endsAt} /></React.Fragment>}
-        {state === 'expired' && <React.Fragment>expired&nbsp;<Timestamp timestamp={obj.endsAt} /></React.Fragment>}
+        {state === SilenceStates.Pending && <React.Fragment>starts&nbsp;<Timestamp timestamp={obj.startsAt} /></React.Fragment>}
+        {state === SilenceStates.Active && <React.Fragment>ends&nbsp;<Timestamp timestamp={obj.endsAt} /></React.Fragment>}
+        {state === SilenceStates.Expired && <React.Fragment>expired&nbsp;<Timestamp timestamp={obj.endsAt} /></React.Fragment>}
       </div>
     </div>
     <div className="col-xs-2"><SilencedAlertsCount silence={obj} /></div>
-    <div className="co-resource-kebab">
-      <SilenceCog silence={obj} />
+    <div className="co-kebab-wrapper">
+      <SilenceKebab silence={obj} />
     </div>
   </ResourceRow>;
 };
 
-const SilencesPageDescription = () => <p className="co-help-text">Silences are a straightforward way to simply mute alerts for a given time powered by <AlertmanagerLink text="Alertmanager" /></p>;
+const SilencesPageDescription = () => <p className="co-help-text">
+  Silences temporarily mute alerts based on a set of conditions that you define. Notifications are not sent for alerts that meet the given conditions.
+</p>;
 
 const silencesRowFilter = {
   type: 'silence-state',
-  selected: ['active', 'pending'],
+  selected: [SilenceStates.Active, SilenceStates.Pending],
   reducer: silenceState,
   items: [
-    {id: 'active', title: 'Active'},
-    {id: 'pending', title: 'Pending'},
-    {id: 'expired', title: 'Expired'},
+    {id: SilenceStates.Active, title: 'Active'},
+    {id: SilenceStates.Pending, title: 'Pending'},
+    {id: SilenceStates.Expired, title: 'Expired'},
   ],
 };
 
@@ -687,14 +676,15 @@ const CreateButton = () => <Link className="co-m-primary-action" to="/monitoring
 
 const SilencesPage_ = props => <MonitoringListPage
   {...props}
+  alertmanagerLinkPath="/#/silences"
   CreateButton={CreateButton}
   Header={SilenceHeader}
+  kindPlural="Silences"
   nameFilterID="silence-name"
   PageDescription={SilencesPageDescription}
   reduxID="monitoringSilences"
   Row={SilenceRow}
   rowFilter={silencesRowFilter}
-  textFilterLabel="Silences by name"
 />;
 const SilencesPage = withFallback(connect(monitoringSilencesToProps)(SilencesPage_));
 
@@ -717,7 +707,7 @@ const Datetime = props => <Tooltip content={[<span className="co-nowrap" key="co
 </Tooltip>;
 
 class SilenceForm_ extends SafetyFirst<SilenceFormProps, SilenceFormState> {
-  constructor (props) {
+  constructor(props) {
     super(props);
 
     const now = new Date();
@@ -786,7 +776,7 @@ class SilenceForm_ extends SafetyFirst<SilenceFormProps, SilenceFormState> {
   }
   /* eslint-enable no-undef */
 
-  render () {
+  render() {
     const {data, error, inProgress} = this.state;
 
     return <div className="co-m-pane__body">
@@ -876,7 +866,7 @@ const CreateSilence = () => {
 };
 
 export class MonitoringUI extends React.Component<null, null> {
-  componentDidMount () {
+  componentDidMount() {
     const poll = (url: string, key: string, dataHandler: (data: any[]) => any): void => {
       store.dispatch(UIActions.monitoringLoading(key));
       const poller = (): void => {
@@ -908,7 +898,7 @@ export class MonitoringUI extends React.Component<null, null> {
         });
 
         // If a rule is has no active alerts, create a "fake" alert
-        const asAlerts = _.flatMap(rules, rule => _.isEmpty(rule.alerts)
+        return _.flatMap(rules, rule => _.isEmpty(rule.alerts)
           ? {
             annotations: rule.annotations,
             id: rule.id,
@@ -917,8 +907,6 @@ export class MonitoringUI extends React.Component<null, null> {
           }
           : rule.alerts.map(a => ({rule, ...a}))
         );
-
-        return {asAlerts, asRules: rules};
       });
     } else {
       store.dispatch(UIActions.monitoringErrored('rules', new Error('prometheusBaseURL not set')));
@@ -939,18 +927,18 @@ export class MonitoringUI extends React.Component<null, null> {
         s.name = _.get(_.find(s.matchers, {name: 'alertname'}), 'value');
         if (!s.name) {
           // No alertname, so fall back to displaying the other matchers
-          s.name = s.matchers.map(m => `${m.name}=${m.value}`).join(', ');
+          s.name = s.matchers.map(m => `${m.name}${m.isRegex ? '=~' : '='}${m.value}`).join(', ');
         }
       });
       return data;
     });
   }
 
-  componentWillUnmount () {
+  componentWillUnmount() {
     _.each(pollerTimeouts, t => clearTimeout(t));
   }
 
-  render () {
+  render() {
     return <Switch>
       <Redirect from="/monitoring" exact to="/monitoring/alerts" />
       <Route path="/monitoring/alerts" exact component={AlertsPage} />
@@ -973,7 +961,7 @@ type Silence = {
   matchers: {name: string, value: string, isRegex: boolean}[];
   name?: string;
   startsAt: string;
-  status?: {state: string};
+  status?: {state: SilenceStates};
   updatedAt?: string;
 };
 type Silences = {
@@ -986,7 +974,7 @@ type Alert = {
   annotations: any;
   labels: {[key: string]: string};
   rule?: any;
-  state: string;
+  state: AlertStates;
   value: number;
 };
 type Rule = {
@@ -999,12 +987,12 @@ type Rule = {
   query: string;
 };
 type Rules = {
-  data: {asRules: Rule[], asAlerts: Alert[]};
+  data: Alert[];
   loaded: boolean;
   loadError?: string;
 };
 type AlertStateProps = {
-  state: string;
+  state: AlertStates;
 };
 export type AlertsDetailsPageProps = {
   alert: Alert;
@@ -1034,10 +1022,12 @@ export type SilenceFormState = {
   inProgress: boolean;
 };
 export type ListPageProps = {
+  alertmanagerLinkPath: string;
   CreateButton: React.ComponentType<any>;
   data: Rule[] | Silence[];
   filters: {[key: string]: any};
   Header: React.ComponentType<any>;
+  kindPlural: string;
   loaded: boolean;
   loadError?: string;
   match: {path: string};
@@ -1046,5 +1036,4 @@ export type ListPageProps = {
   reduxID: string;
   Row: React.ComponentType<any>;
   rowFilter: {type: string, selected: string[], reducer: (any) => string, items: {id: string, title: string}[]};
-  textFilterLabel: string;
 };

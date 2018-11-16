@@ -12,101 +12,157 @@ import {Modal} from 'patternfly-react/dist/js/components/Modal';
 import {normalizeIconClass} from './catalog-item-icon';
 import {categorizeItems, recategorizeItems} from '../utils/categorize-catalog-items';
 import {CatalogTileDetails} from './catalog-item-details';
+import {history} from '../utils';
+
+const CATEGORY_URL_PARAM = 'category';
+const KEYWORD_URL_PARAM = 'keyword';
+const TYPE_URL_PARAM = 'by-type';
+
+const defaultFilters = {
+  byKeyword: {
+    value: '',
+    active: false,
+  },
+  byType: {
+    clusterServiceClass: {
+      label: 'Service Class',
+      value: 'ClusterServiceClass',
+      active: false,
+    },
+    imageStream: {
+      label: 'Source-to-Image',
+      value: 'ImageStream',
+      active: false,
+    },
+  },
+};
+
+const defaultFilterCounts = {
+  byType: {
+    clusterServiceClasses: 0,
+    imageStreams: 0,
+  },
+};
 
 export class CatalogTileViewPage extends React.Component {
   constructor(props) {
     super(props);
 
-    const categories = categorizeItems(props.items);
-    const activeTabs = ['all']; // array of tabs [main category, sub-category]
-    const filters = {
-      byKeyword: {
-        value: '',
-        active: false,
-      },
-      byType: {
-        clusterServiceClass: {
-          label: 'Service Class',
-          value: 'ClusterServiceClass',
-          active: false,
-        },
-        imageStream: {
-          label: 'Source-to-Image',
-          value: 'ImageStream',
-          active: false,
-        },
+    /* saving in state
+      {
+        categories: set of categories and subcategories based on passed in items.  Initially, empty categories are
+          removed. Subsequent filtering may result in empty categories.
+        currentCategories: categories/subcategories to list in the right hand CatalogTileView
+        selectedCategory: category selected from left hand tabs or from url
+        showAllItemsForCategory: flag to show all items/tiles for selected category
+        filters: active filters from left side panel or url
+        filterCounts: number of items that match each filter type
+        numItems: displayed in title above CatalogTileView
       }
+    */
+    this.state = {
+      categories: categorizeItems(props.items),
+      currentCategories: null,
+      selectedCategory: null,
+      showAllItemsForCategory: false,
+      filters: defaultFilters,
+      filterCounts: defaultFilterCounts,
+      numItems: 0,
     };
-
-    let filterCounts = {
-      byType: {
-        clusterServiceClasses: 0,
-        imageStreams: 0,
-      },
-    };
-
-    this.state = this.getCategoryState(activeTabs, categories);
-    filterCounts = this.getFilterCounts(activeTabs, filters, filterCounts, categories);
-
-    _.assign(this.state, {
-      showAllItemsForCategory: null,
-      activeTabs,
-      filters,
-      filterCounts,
-      showOverlay: false,
-    });
 
     this.openOverlay = this.openOverlay.bind(this);
     this.closeOverlay = this.closeOverlay.bind(this);
+    this.unmounted = false;
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    const { filters, filterCounts, activeTabs, categories } = this.state;
+  componentDidMount() {
+    this.setState(this.getUpdatedStateFromURLParams(window.location.search));
+  }
+
+  componentWillUnmount() {
+    this.unmounted = true;
+  }
+
+  componentDidUpdate(prevProps) {
+    const { filters, selectedCategory } = this.state;
     const { items } = this.props;
 
     if (items !== prevProps.items) {
-      const newCategories = categorizeItems(items);
-      this.setState(this.getCategoryState(activeTabs, newCategories));
-      if (this.hasActiveFilters(filters)) {
-        const filteredItems = this.filterItems(items);
-        const filteredCategories = recategorizeItems(filteredItems, newCategories);
-        this.setState(this.getCategoryState(activeTabs, filteredCategories));
-      }
-      this.setState(this.getFilterCounts(activeTabs, filters, filterCounts, newCategories));
-    }
-
-    if (filters !== prevState.filters) {
-      const filteredItems = this.filterItems(items);
-      const newCategories = recategorizeItems(filteredItems, categories);
-      this.setState(this.getCategoryState(activeTabs, newCategories));
-    }
-
-    if (activeTabs !== prevState.activeTabs) {
-      this.setState(this.getCategoryState(activeTabs, categories));
-    }
-
-    // filter counts are updated when new Category tab is selected or filter by name changed
-    if (activeTabs !== prevState.activeTabs || prevState.filters.byKeyword !== filters.byKeyword ) {
-      this.setState(this.getFilterCounts(activeTabs, filters, filterCounts, categories));
+      const categories = categorizeItems(items);
+      this.setState(this.getUpdatedState(categories, selectedCategory, filters));
     }
   }
 
-  hasActiveFilters(filters) {
+  getUpdatedState(categories, selectedCategory, filters) {
+    const { items } = this.props;
+    const { filterCounts } = this.state || {};
+
+    if (!items) {
+      return;
+    }
+
+    const updateFilterCounts = filterCounts ||
+      {
+        byType: {
+          clusterServiceClasses: 0,
+          imageStreams: 0,
+        },
+      };
+
+    const filteredItems = this.filterItems(items, filters);
+
+    const newCategories = recategorizeItems(filteredItems, categories);
+
+    return {
+      filters,
+      ...CatalogTileViewPage.getCategoryState(selectedCategory, newCategories),
+      filterCounts: this.getFilterCounts(selectedCategory, filters, updateFilterCounts, newCategories),
+    };
+  }
+
+  getUpdatedStateFromURLParams(paramsString) {
+    const { categories } = this.state;
+    const searchParams = new URLSearchParams(paramsString);
+    const categoryParam = searchParams.get(CATEGORY_URL_PARAM);
+    const keywordParam = searchParams.get(KEYWORD_URL_PARAM);
+    const byTypeParam = searchParams.get(TYPE_URL_PARAM);
+    try {
+      const typeFilters = byTypeParam ? JSON.parse(byTypeParam) : [];
+      const curCategory = categoryParam ? JSON.parse(categoryParam) : ['all'];
+      const filters = CatalogTileViewPage.getFilterState(keywordParam, typeFilters, defaultFilters);
+      return this.getUpdatedState(categories, curCategory, filters);
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.warn('could not update state from url params: could not parse search params');
+    }
+  }
+
+  static hasActiveFilters(filters) {
     const { byKeyword, byType } = filters;
     return byType.clusterServiceClass.active || byType.imageStream.active || byKeyword.active;
   }
 
-  getActiveCategories(activeTabs, categories) {
-    const mainCategory = _.find(categories, { id: _.first(activeTabs) });
-    const subCategory = activeTabs.length < 2 ? null : _.find(mainCategory.subcategories, { id: _.last(activeTabs) });
+  static getActiveCategories(selectedCategory, categories) {
+    const mainCategory = _.find(categories, { id: _.first(selectedCategory) });
+    const subCategory = selectedCategory.length < 2 ? null : _.find(mainCategory.subcategories, { id: _.last(selectedCategory) });
     return [mainCategory, subCategory];
   }
 
-  getFilterCounts(activeTabs, filters, filterCounts, categories) {
+  static getFilterState(keyword, byType, filters) {
+    const newFilters = _.cloneDeep(filters);
+    const active = !!keyword;
+    newFilters.byKeyword = { active, value: keyword || '' };
+    newFilters.byType.clusterServiceClass.active = _.includes(byType, 'clusterServiceClass');
+    newFilters.byType.imageStream.active = _.includes(byType, 'imageStream');
+
+    return newFilters;
+  }
+
+  getFilterCounts(selectedCategory, filters, filterCounts, categories) {
     const filteredItems = this.filterItemsForCounts(filters);
     const categoriesForCounts = recategorizeItems(filteredItems, categories);
 
-    const [ mainCategory, subCategory ] = this.getActiveCategories(activeTabs, categoriesForCounts);
+    const [ mainCategory, subCategory ] = CatalogTileViewPage.getActiveCategories(selectedCategory, categoriesForCounts);
     const items = subCategory ? subCategory.items : mainCategory.items;
 
     const count = _.countBy(items, 'kind');
@@ -117,50 +173,49 @@ export class CatalogTileViewPage extends React.Component {
     return newFilterCounts;
   }
 
-  getCategoryState(activeTabs, categories) {
-    const [ mainCategory, subCategory ] = this.getActiveCategories(activeTabs, categories);
+  static getCategoryState(selectedCategory, categories) {
+    const [ mainCategory, subCategory ] = CatalogTileViewPage.getActiveCategories(selectedCategory, categories);
     const currentCategories = mainCategory.subcategories || categories;
     const numItems = subCategory ? subCategory.numItems : mainCategory.numItems;
+    // showAllItemsForCategory if main category doesn't contain subcategories and not showing 'all categories' (ie. 'Other') OR subcategory has been selected
+    const showAllItemsForCategory = (_.isEmpty(mainCategory.subcategories) && _.first(selectedCategory) !== 'all') || subCategory !== null ? _.last(selectedCategory) : null;
 
     return {
       categories,
+      selectedCategory,
       currentCategories,
       numItems: numItems || 0,
+      showAllItemsForCategory,
     };
   }
 
-  isAllTabActive() {
-    const { activeTabs } = this.state;
-    return _.first(activeTabs) === 'all';
-  }
-
   activeTabIsSubCategory(subcategories) {
-    const { activeTabs } = this.state;
-    if (activeTabs.length < 2) {
+    const { selectedCategory } = this.state;
+    if (_.size(selectedCategory) < 2) {
       return false;
     }
 
-    const activeID = _.last(activeTabs);
+    const activeID = _.last(selectedCategory);
     return _.some(subcategories, { id: activeID });
   }
 
   isActiveTab(categoryID) {
-    const { activeTabs } = this.state;
-    const activeID = _.last(activeTabs);
+    const { selectedCategory } = this.state;
+    const activeID = _.last(selectedCategory);
     return activeID === categoryID;
   }
 
   hasActiveDescendant(categoryID) {
-    const { activeTabs } = this.state;
-    return _.first(activeTabs) === categoryID;
+    const { selectedCategory } = this.state;
+    return _.first(selectedCategory) === categoryID;
   }
 
   renderTabs(category, parentID = null){
     const { id, label, subcategories } = category;
     const active = this.isActiveTab(id);
     const onActivate = () => {
-      const tabs = parentID ? [parentID, id] : [id];
-      this.onActivateTab(tabs);
+      const selectedCategory = parentID ? [parentID, id] : [id];
+      this.selectCategory(selectedCategory);
     };
     const hasActiveDescendant = this.hasActiveDescendant(id);
     const shown = id === 'all';
@@ -185,50 +240,8 @@ export class CatalogTileViewPage extends React.Component {
     </VerticalTabs>;
   }
 
-  syncTabsAndTiles(category, parentCategory) {
-    const { categories } = this.state;
-    if (!parentCategory && category === 'all') {
-      this.setState({
-        activeTabs: [category],
-        currentCategories: categories,
-        numItems: _.first(categories).numItems,
-        showAllItemsForCategory: null,
-      });
-      return;
-    }
-
-    const { currentCategories } = this.state;
-    const tmpCategories = parentCategory ? currentCategories : categories;
-    const activeCategory = _.find(tmpCategories, { id: category });
-    if (!activeCategory) {
-      return;
-    }
-
-    const { numItems, subcategories } = activeCategory;
-    const state = {
-      activeTabs: parentCategory ? [parentCategory, category] : [category],
-      numItems: numItems || 0,
-    };
-    if (_.isEmpty(subcategories)) {
-      // no sub-categories, show all items for selected category
-      _.assign(state, {
-        currentCategories: categories,
-        showAllItemsForCategory: category,
-      });
-    } else {
-      // show list of sub-categories
-      _.assign(state, {
-        currentCategories: subcategories,
-        showAllItemsForCategory: null,
-      });
-    }
-    this.setState(state);
-  }
-
-  onActivateTab(tabs) {
-    const category = _.last(tabs);
-    const parent = tabs.length > 1 ? _.first(tabs) : null;
-    this.syncTabsAndTiles(category, parent);
+  selectCategory(selectedCategory) {
+    this.updateURL(CATEGORY_URL_PARAM, selectedCategory);
   }
 
   openOverlay(item) {
@@ -248,6 +261,8 @@ export class CatalogTileViewPage extends React.Component {
   renderCategoryTiles(category) {
     const { showAllItemsForCategory } = this.state;
     const { id, label, parentCategory, items } = category;
+    const selectedCategory = parentCategory ? [parentCategory, id] : [id];
+
     if (showAllItemsForCategory && id !== showAllItemsForCategory) {
       return null;
     }
@@ -257,7 +272,7 @@ export class CatalogTileViewPage extends React.Component {
       title={label}
       totalItems={items && category.items.length}
       viewAll={showAllItemsForCategory === id}
-      onViewAll={() => this.syncTabsAndTiles(id, parentCategory)}>
+      onViewAll={() => this.selectCategory(selectedCategory)}>
       {_.map(items, ((item) => {
         const { obj, tileName, tileImgUrl, tileIconClass, tileProvider, tileDescription } = item;
         const uid = obj.metadata.uid;
@@ -280,25 +295,24 @@ export class CatalogTileViewPage extends React.Component {
 
   getCategoryLabel(categoryID) {
     const { categories } = this.state;
+    if (!categoryID || !categories) {
+      return '';
+    }
+
     return _.find(categories, { id: categoryID }).label;
   }
 
-  filterByKeyword(items) {
-    const { filters } = this.state;
-    const { byKeyword } = filters;
-
-    const filterString = byKeyword.value.toLowerCase();
+  filterByKeyword(keyword, items) {
+    const filterString = keyword.toLowerCase();
     return _.filter(items, item => item.tileName.toLowerCase().includes(filterString) ||
       item.tileDescription.toLowerCase().includes(filterString) ||
       item.tags.includes(filterString));
   }
 
-  filterItems() {
-    const { filters } = this.state;
+  filterItems(items, filters) {
     const { byKeyword, byType } = filters;
-    const { items } = this.props;
 
-    if (!this.hasActiveFilters(filters) ) {
+    if (!CatalogTileViewPage.hasActiveFilters(filters) ) {
       return items;
     }
 
@@ -313,7 +327,7 @@ export class CatalogTileViewPage extends React.Component {
     }
 
     if (byKeyword.active) {
-      return this.filterByKeyword(byType.clusterServiceClass.active || byType.imageStream.active ? filteredItems : items);
+      return this.filterByKeyword(filters.byKeyword.value, byType.clusterServiceClass.active || byType.imageStream.active ? filteredItems : items);
     }
 
     return filteredItems;
@@ -324,37 +338,70 @@ export class CatalogTileViewPage extends React.Component {
     const { items } = this.props;
 
     if (byKeyword.active) {
-      return this.filterByKeyword(items);
+      return this.filterByKeyword(byKeyword.value, items);
     }
 
     return items;
   }
 
   clearFilters() {
-    const filters = _.cloneDeep(this.state.filters);
-    filters.byKeyword.active = filters.byType.clusterServiceClass.active = filters.byType.imageStream.active = false;
-    filters.byKeyword.value = '';
+    const params = new URLSearchParams(window.location.search);
+    params.delete(KEYWORD_URL_PARAM);
+    params.delete(TYPE_URL_PARAM);
+    const url = new URL(window.location);
+    const searchParams = `?${params.toString()}${url.hash}`;
+    history.replace(`${url.pathname}${searchParams}`);
+    if (this.unmounted) {
+      return;
+    }
+    this.setState(this.getUpdatedStateFromURLParams(searchParams));
     this.filterByKeywordInput.focus();
-    this.setState({filters});
+  }
+
+  updateURL(filterName, value) {
+    const params = new URLSearchParams(window.location.search);
+    if (value) {
+      params.set(filterName, Array.isArray(value) ? JSON.stringify(value) : value);
+    } else {
+      params.delete(filterName);
+    }
+    const url = new URL(window.location);
+    const searchParams = `?${params.toString()}${url.hash}`;
+    history.replace(`${url.pathname}${searchParams}`);
+    // do not set state if unmounted, case for when history.replace taking too much time
+    // and causes component to remount.  Noticeable in Safari
+    if (this.unmounted) {
+      return;
+    }
+    this.setState(this.getUpdatedStateFromURLParams(searchParams));
   }
 
   onFilterChange(filterType, id, value) {
-    const filters = _.cloneDeep(this.state.filters);
+    const { filters } = this.state;
+    const { byType } = filters;
+    let byTypeValues = [];
+
     if (filterType === 'byKeyword') {
-      const active = !!value;
-      filters[filterType] = { active, value };
+      this.updateURL(KEYWORD_URL_PARAM, value);
     } else {
-      filters[filterType][id].active = value;
+      if (value) {
+        byTypeValues.push(id);
+      }
+      _.forOwn(byType, (typeKeyValue, typeKey) => {
+        if (typeKey !== id && byType[typeKey].active) {
+          byTypeValues.push(typeKey);
+        }
+      });
+      this.updateURL(TYPE_URL_PARAM, _.isEmpty(byTypeValues) ? false : byTypeValues);
     }
-    this.setState({filters});
   }
 
   render() {
-    const { activeTabs, showAllItemsForCategory, currentCategories, numItems, filters, filterCounts, showOverlay, item } = this.state;
+    const { selectedCategory, showAllItemsForCategory, currentCategories, numItems, filters, filterCounts, showOverlay, item } = this.state;
     const { clusterServiceClass, imageStream } = filters.byType;
     const { clusterServiceClasses, imageStreams } = filterCounts.byType;
     const activeCategory = showAllItemsForCategory ? _.find(currentCategories, { id: showAllItemsForCategory }) : null;
-    const heading = activeCategory ? activeCategory.label : this.getCategoryLabel(_.first(activeTabs));
+    const heading = activeCategory ? activeCategory.label : this.getCategoryLabel(_.first(selectedCategory));
 
     return (
       <div className="co-catalog-page">

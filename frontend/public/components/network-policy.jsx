@@ -4,9 +4,9 @@ import { Link } from 'react-router-dom';
 
 import { FLAGS, connectToFlags } from '../features';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
-import { Cog, navFactory, ResourceCog, SectionHeading, ResourceLink, ResourceSummary, Selector, helpLink, HELP_TOPICS } from './utils';
+import { Kebab, navFactory, ResourceKebab, SectionHeading, ResourceLink, ResourceSummary, Selector, helpLink, HELP_TOPICS } from './utils';
 
-const { common } = Cog.factory;
+const { common } = Kebab.factory;
 const menuActions = [...common];
 
 const Header = props => <ListHeader>
@@ -31,8 +31,8 @@ const Row = ({obj: np}) => <div className="row co-resource-list__item">
         <Selector selector={np.spec.podSelector} namespace={np.metadata.namespace} />
     }
   </div>
-  <div className="co-resource-kebab">
-    <ResourceCog actions={menuActions} kind={kind} resource={np} />
+  <div className="co-kebab-wrapper">
+    <ResourceKebab actions={menuActions} kind={kind} resource={np} />
   </div>
 </div>;
 

@@ -4,7 +4,7 @@ import * as _ from 'lodash-es';
 // eslint-disable-next-line no-unused-vars
 import { K8sResourceKindReference, serviceCatalogStatus } from '../module/k8s';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
-import { Cog, SectionHeading, navFactory, ResourceCog, ResourceLink, ResourceSummary, StatusWithIcon } from './utils';
+import { Kebab, SectionHeading, navFactory, ResourceKebab, ResourceLink, ResourceSummary, StatusWithIcon } from './utils';
 import { ResourceEventStream } from './events';
 import { Conditions } from './conditions';
 import { ServiceCatalogParameters, ServiceCatalogParametersSecrets } from './service-catalog-parameters';
@@ -17,7 +17,7 @@ const actionButtons = [
   addSecretToWorkload,
 ];
 
-const { common } = Cog.factory;
+const { common } = Kebab.factory;
 const menuActions = [...common];
 
 const secretLink = (obj) => serviceCatalogStatus(obj) === 'Ready'
@@ -95,8 +95,8 @@ const ServiceBindingsRow: React.SFC<ServiceBindingsRowProps> = ({obj}) => <div c
   <div className="col-md-2 hidden-sm hidden-xs co-break-word">
     <StatusWithIcon obj={obj} />
   </div>
-  <div className="co-resource-kebab">
-    <ResourceCog actions={menuActions} kind={ServiceBindingsReference} resource={obj} />
+  <div className="co-kebab-wrapper">
+    <ResourceKebab actions={menuActions} kind={ServiceBindingsReference} resource={obj} />
   </div>
 </div>;
 

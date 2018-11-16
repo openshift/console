@@ -2,14 +2,14 @@
 
 import * as React from 'react';
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
-import { Cog, SectionHeading, detailsPage, navFactory, ResourceLink, ResourceCog, ResourceSummary, StatusWithIcon, Timestamp } from './utils';
+import { Kebab, SectionHeading, detailsPage, navFactory, ResourceLink, ResourceKebab, ResourceSummary, StatusWithIcon, Timestamp } from './utils';
 // eslint-disable-next-line no-unused-vars
 import { K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
 import { Conditions } from './conditions';
 import { ClusterServiceClassPage } from './cluster-service-class';
 
 const ClusterServiceBrokerReference: K8sResourceKindReference = 'ClusterServiceBroker';
-const menuActions = Cog.factory.common;
+const menuActions = Kebab.factory.common;
 
 const ClusterServiceBrokerHeader: React.SFC<ClusterServiceBrokerHeaderProps> = props => <ListHeader>
   <ColHead {...props} className="col-sm-3 col-xs-6" sortField="metadata.name">Name</ColHead>
@@ -31,8 +31,8 @@ const ClusterServiceBrokerListRow: React.SFC<ClusterServiceBrokerRowProps> = ({o
   <div className="col-sm-3 hidden-xs">
     <Timestamp timestamp={serviceBroker.status.lastCatalogRetrievalTime} />
   </div>
-  <div className="co-resource-kebab">
-    <ResourceCog actions={menuActions} kind="ClusterServiceBroker" resource={serviceBroker} />
+  <div className="co-kebab-wrapper">
+    <ResourceKebab actions={menuActions} kind="ClusterServiceBroker" resource={serviceBroker} />
   </div>
 </ResourceRow>;
 

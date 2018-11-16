@@ -47,7 +47,7 @@ const RedirectComponent = props => {
 
 // Ensure a *const* function wrapper for each namespaced Component so that react router doesn't recreate them
 const Memoized = new Map();
-function NamespaceFromURL (Component) {
+function NamespaceFromURL(Component) {
   let C = Memoized.get(Component);
   if (!C) {
     C = function NamespaceInjector(props) {
@@ -94,7 +94,7 @@ const DefaultPage = connectToFlags(FLAGS.OPENSHIFT)(({ flags }) => {
 const LazyRoute = (props) => <Route {...props} component={(componentProps) => <AsyncComponent loader={props.loader} kind={props.kind} {...componentProps} />} />;
 
 class App extends React.PureComponent {
-  componentDidUpdate (prevProps) {
+  componentDidUpdate(prevProps) {
     const props = this.props;
     // Prevent infinite loop in case React Router decides to destroy & recreate the component (changing key)
     const oldLocation = _.omit(prevProps.location, ['key']);
@@ -108,20 +108,22 @@ class App extends React.PureComponent {
     analyticsSvc.route(pathname);
   }
 
-  render () {
+  render() {
     let DefaultPage = isKubevirt() ? KubevirtDefaultPage : DefaultPage; // eslint-disable-line
 
-    /*
-    if (isKubevirt()) {
-      return <KubevirtApp namespacedRoutes={namespacedRoutes} />;
-    }
-    */
-    /*
-      TODO: following routes must be refined!!
+    // Needed so we don't pull in the Catalog pages and its dependencies until the user navigates to the page
+    let catalogPageLoader = () =>
+      import('./catalog/catalog-page' /* webpackChunkName: "catalog" */).then(m => {
+        this.CatalogPage = m.CatalogPage;
+        return m.CatalogPage;
+      });
 
-      All non-kubevirt routes should be redirected to external application (means OKD)
-      Do we need any additional handling for virtual machines?
-     */
+    let renderCatalogRoute = (path) => {
+      if (this.CatalogPage) {
+        return <Route path={path} exact component={this.CatalogPage} />;
+      }
+      return <LazyRoute path={path} exact loader={catalogPageLoader} />;
+    };
 
     return <React.Fragment>
       <Helmet titleTemplate={`%s · ${productName}`} defaultTitle={productName} />
@@ -132,14 +134,14 @@ class App extends React.PureComponent {
         <GlobalNotifications />
         <div id="content-scrollable">
           <Switch>
-            <Route path={['/all-namespaces', '/ns/:ns',]} component={RedirectComponent} />
+            <Route path={['/all-namespaces', '/ns/:ns']} component={RedirectComponent} />
 
+            <LazyRoute path="/overview/all-namespaces" exact loader={() => import('./cluster-overview' /* webpackChunkName: "cluster-overview" */).then(m => m.ClusterOverviewPage)} />
             <LazyRoute path="/overview/ns/:ns" exact loader={() => import('./overview' /* webpackChunkName: "overview" */).then(m => m.OverviewPage)} />
-            <LazyRoute path="/overview/all-namespaces" exact loader={() => import('./overview' /* webpackChunkName: "overview" */).then(m => m.OverviewPage)} />
             <Route path="/overview" exact component={NamespaceRedirect} />
 
-            <LazyRoute path="/catalog/all-namespaces" exact loader={() => import('./catalog/catalog-page' /* webpackChunkName: "catalog" */).then(m => m.CatalogPage)} />
-            <LazyRoute path="/catalog/ns/:ns" exact loader={() => import('./catalog/catalog-page' /* webpackChunkName: "catalog" */).then(m => m.CatalogPage)} />
+            {renderCatalogRoute('/catalog/all-namespaces')}
+            {renderCatalogRoute('/catalog/ns/:ns')}
             <Route path="/catalog" exact component={NamespaceRedirect} />
 
             <LazyRoute path="/status/all-namespaces" exact loader={() => import('./cluster-overview' /* webpackChunkName: "cluster-overview" */).then(m => m.ClusterOverviewPage)} />
@@ -255,7 +257,7 @@ analyticsSvc.push({tier: 'tectonic'});
 // Used by GUI tests to check for unhandled exceptions
 window.windowError = false;
 
-window.onerror = function (message, source, lineno, colno, optError={}) {
+window.onerror = function(message, source, lineno, colno, optError={}) {
   try {
     const e = `${message} ${source} ${lineno} ${colno}`;
     analyticsSvc.error(e, null, optError.stack);
@@ -270,7 +272,7 @@ window.onerror = function (message, source, lineno, colno, optError={}) {
   window.windowError = true;
 };
 
-window.onunhandledrejection = function (e) {
+window.onunhandledrejection = function(e) {
   try {
     analyticsSvc.error(e, null);
   } catch (err) {

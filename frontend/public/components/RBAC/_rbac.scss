@@ -2,16 +2,6 @@
   margin: 30px 0;
 }
 
-.rbac-rule {
-  &__actions {
-    align-items: baseline;
-    display: flex;
-  }
-  &__cog {
-    margin-right: 5px;
-  }
-}
-
 .rbac-rule-resource {
   align-items: baseline;
   display: inline-flex;

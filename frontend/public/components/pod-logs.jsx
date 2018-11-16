@@ -9,7 +9,7 @@ const containersToStatuses = ({ status }, containers) => {
     if (containerStatus) {
       return {
         ...accumulator,
-        [name]: { ...containerStatus, order }
+        [name]: { ...containerStatus, order },
       };
     }
     return accumulator;

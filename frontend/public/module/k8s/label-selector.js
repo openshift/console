@@ -26,13 +26,13 @@ export class LabelSelector {
       'In': 'in',
       'NotIn': 'not in',
       'Exists': 'exists',
-      'DoesNotExist': 'does not exist'
+      'DoesNotExist': 'does not exist',
     };
     this._REVERSE_OPERATOR_MAP = {
       'in': 'In',
       'not in': 'NotIn',
       'exists': 'Exists',
-      'does not exist': 'DoesNotExist'
+      'does not exist': 'DoesNotExist',
     };
     if (selector) {
       if (selector.matchLabels || selector.matchExpressions) {
@@ -58,7 +58,7 @@ export class LabelSelector {
     let conjunct = {
       key: key,
       operator: operator,
-      values: values
+      values: values,
     };
     const id = this._getIdForConjunct(conjunct);
     this._conjuncts[id] = conjunct;
@@ -151,7 +151,7 @@ export class LabelSelector {
   findConjunctsMatching(operator, key) {
     return _.pickBy(this._conjuncts, _.matches({
       operator: operator,
-      key: key
+      key: key,
     }));
   }
   // Test whether this label selector covers the given selector
@@ -161,7 +161,7 @@ export class LabelSelector {
       // label selector as covering any other label selector
       return false;
     }
-    return _.every(this._conjuncts, function (conjunct) {
+    return _.every(this._conjuncts, function(conjunct) {
       // Return true immediately if we find an exact match for operator/key/values
       if (selector.hasConjunct(conjunct)) {
         return true;
@@ -183,7 +183,7 @@ export class LabelSelector {
           if (_.isEmpty(inConjuncts)) {
             return false;
           }
-          return _.every(inConjuncts, function (inConjunct) {
+          return _.every(inConjuncts, function(inConjunct) {
             return inConjunct.values.length === _.intersection(inConjunct.values, conjunct.values).length;
           });
         case 'not in':
@@ -192,7 +192,7 @@ export class LabelSelector {
           if (_.isEmpty(notInConjuncts)) {
             return false;
           }
-          return _.every(notInConjuncts, function (notInConjunct) {
+          return _.every(notInConjuncts, function(notInConjunct) {
             return conjunct.values.length === _.intersection(notInConjunct.values, conjunct.values).length;
           });
       }
@@ -203,14 +203,14 @@ export class LabelSelector {
   // Exports the labelSelector as a string in the API format, exports as matchExpressions
   exportJSON() {
     let result = {
-      matchExpressions: []
+      matchExpressions: [],
     };
     for (let id in this._conjuncts) {
       const conjunct = this._conjuncts[id];
       const expression = {
         key: conjunct.key,
         operator: this._REVERSE_OPERATOR_MAP[conjunct.operator],
-        values: conjunct.values
+        values: conjunct.values,
       };
       result.matchExpressions.push(expression);
     }

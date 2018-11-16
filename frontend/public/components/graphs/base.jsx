@@ -31,7 +31,7 @@ export class BaseGraph extends SafetyFirst {
     }
   }
 
-  fetch () {
+  fetch() {
     const timeSpan = this.end - this.start || this.timeSpan;
     const end = this.end || Date.now();
     const start = this.start || (end - timeSpan);
@@ -69,18 +69,18 @@ export class BaseGraph extends SafetyFirst {
       }, pollInterval));
   }
 
-  componentWillMount () {
+  componentWillMount() {
     this.fetch();
     window.addEventListener('resize', this.resize);
   }
 
-  componentWillUnmount () {
+  componentWillUnmount() {
     super.componentWillUnmount();
     window.removeEventListener('resize', this.resize);
     clearInterval(this.interval);
   }
 
-  componentDidMount () {
+  componentDidMount() {
     super.componentDidMount();
 
     if (!this.node) {
@@ -98,7 +98,7 @@ export class BaseGraph extends SafetyFirst {
     });
   }
 
-  prometheusURL () {
+  prometheusURL() {
     const base = this.props.urls && this.props.urls[MonitoringRoutes.Prometheus];
     if (!base) {
       return null;
@@ -120,7 +120,7 @@ export class BaseGraph extends SafetyFirst {
     return `${base}/graph?${params.toString()}`;
   }
 
-  render () {
+  render() {
     const url = this.prometheusURL();
     const graph = <div className="graph-wrapper" style={this.style}>
       <h5 className="graph-title">{this.props.title}</h5>

@@ -6,18 +6,18 @@ import {
   List,
   ListPage,
   WorkloadListHeader,
-  WorkloadListRow
+  WorkloadListRow,
 } from './factory';
 import {
   AsyncComponent,
-  Cog,
+  Kebab,
   ContainerTable,
   ResourceSummary,
   SectionHeading,
-  navFactory
+  navFactory,
 } from './utils';
 
-const { EditEnvironment, common } = Cog.factory;
+const { EditEnvironment, common } = Kebab.factory;
 export const menuActions = [EditEnvironment, ...common];
 
 const kind = 'StatefulSet';
@@ -52,7 +52,7 @@ const pages = [
   navFactory.editYaml(),
   navFactory.pods(),
   navFactory.envEditor(environmentComponent),
-  navFactory.events(ResourceEventStream)
+  navFactory.events(ResourceEventStream),
 ];
 
 export const StatefulSetsDetailsPage = props => <DetailsPage

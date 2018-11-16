@@ -14,3 +14,13 @@
 .co-copy-to-clipboard__text {
   padding-right: 50px;
 }
+
+.co-copy-to-clipboard__stacktrace-width-height {
+  display: flex;
+  .co-copy-to-clipboard {
+    width: 100%;
+  }
+  .co-copy-to-clipboard__text {
+    max-height: 25vh;
+  }
+}

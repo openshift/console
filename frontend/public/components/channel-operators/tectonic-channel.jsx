@@ -10,14 +10,14 @@ const componentNames = {
   'kubernetes': 'Kubernetes',
   'tectonic-cluster': 'Tectonic',
   'tectonic-etcd': 'tectonic-etcd',
-  'tectonic-monitoring': 'tectonic-monitoring'
+  'tectonic-monitoring': 'tectonic-monitoring',
 };
 
 const podNames = {
   'kubernetes': 'kube-version-operator',
   'tectonic-cluster': 'tectonic-channel-operator',
   'tectonic-etcd': 'etcd-operator',
-  'tectonic-monitoring': 'tectonic-prometheus-operator'
+  'tectonic-monitoring': 'tectonic-prometheus-operator',
 };
 
 export const clusterAppVersionName = 'tectonic-cluster';
@@ -44,7 +44,7 @@ const generateComponents = (components, pods) => {
         taskStatuses: component.taskStatuses,
         failureStatus: component.failureStatus,
         state,
-        logsUrl
+        logsUrl,
       };
     }
     return finalComponents;
@@ -66,27 +66,27 @@ export class TectonicChannel extends SafetyFirst {
         kind: 'ChannelOperatorConfig',
         namespace: 'tectonic-system',
         isList: true,
-        prop: 'configs'
+        prop: 'configs',
       },
       {
         kind: 'TectonicVersion',
         namespace: 'tectonic-system',
         isList: true,
-        prop: 'tectonicVersions'
+        prop: 'tectonicVersions',
       },
       {
         kind: 'AppVersion',
         namespace: 'tectonic-system',
         isList: true,
-        prop: 'appVersions'
+        prop: 'appVersions',
       },
       {
         kind: 'Pod',
         namespace: 'tectonic-system',
         isList: true,
         prop: 'pods',
-        selector: selector
-      }
+        selector: selector,
+      },
 
     ];
   }
@@ -106,7 +106,7 @@ class TectonicChannelWithData extends React.Component {
 
     if (configs.loadError) {
       return {
-        loadError : configs.loadError
+        loadError : configs.loadError,
       };
     }
 
@@ -120,7 +120,7 @@ class TectonicChannelWithData extends React.Component {
 
     if (versions.loadError) {
       return {
-        loadError : versions.loadError
+        loadError : versions.loadError,
       };
     }
 
@@ -146,7 +146,7 @@ class TectonicChannelWithData extends React.Component {
       pausedSpec: _.get(spec, 'paused'),
       pausedStatus: _.get(status, 'paused'),
       failureStatus: _.get(status, 'failureStatus', null),
-      taskStatuses: _.get(status, 'taskStatuses', [])
+      taskStatuses: _.get(status, 'taskStatuses', []),
     };
 
     return components;

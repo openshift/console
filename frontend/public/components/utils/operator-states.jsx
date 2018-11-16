@@ -7,12 +7,12 @@ export const operatorStates = {
   Complete: {
     suffix: 'complete',
     icon: 'fa-check-circle',
-    statusText: 'Completed'
+    statusText: 'Completed',
   },
   Failed: {
     suffix: 'failed',
     icon: 'fa-ban',
-    statusText: 'Software update failed'
+    statusText: 'Software update failed',
   },
   Loading: {
     suffix: 'loading',
@@ -20,66 +20,66 @@ export const operatorStates = {
   NeedsAttention: {
     suffix: 'needs-attention',
     icon: 'fa-exclamation-triangle',
-    statusText: 'Update Needs Attention'
+    statusText: 'Update Needs Attention',
   },
   Paused: {
     suffix: 'paused',
     icon: 'fa-pause-circle-o',
-    statusText: 'Paused...'
+    statusText: 'Paused...',
   },
   Pausing: {
     suffix: 'pausing',
     icon: 'fa-pause-circle-o',
-    statusText: 'Pausing...'
+    statusText: 'Pausing...',
 
   },
   Requested: {
     suffix: 'requested',
     icon: 'fa-ban',
-    statusText: 'Update Requested...'
+    statusText: 'Update Requested...',
   },
   UpdateAvailable: {
     suffix: 'update-available',
     icon: 'fa-arrow-circle-down',
-    statusText: ' is available'
+    statusText: ' is available',
   },
   Updating: {
     suffix: 'updating',
     icon: 'fa-circle-o-notch fa-spin',
-    statusText: 'Updating'
+    statusText: 'Updating',
   },
   Pending: {
     suffix: 'pending',
     icon: 'fa-circle-o',
-    statusText: 'Updating'
+    statusText: 'Updating',
   },
   UpToDate: {
     suffix: 'up-to-date',
-    statusText: 'Up to date'
-  }
+    statusText: 'Up to date',
+  },
 };
 
 export const taskStatuses = {
   BackOff: {
     suffix:'backoff',
-    icon: 'fa-ban'
+    icon: 'fa-ban',
   },
   Completed: {
     suffix:'completed',
-    icon: 'fa-check-circle'
+    icon: 'fa-check-circle',
   },
   Failed: {
     suffix: 'failed',
-    icon: 'fa-ban'
+    icon: 'fa-ban',
   },
   NotStarted: {
     suffix: 'notstarted',
-    icon: 'fa-circle-o'
+    icon: 'fa-circle-o',
   },
   Running: {
     suffix: 'running',
-    icon: 'fa-circle-o-notch fa-spin'
-  }
+    icon: 'fa-circle-o-notch fa-spin',
+  },
 };
 
 export const orderedTaskStatuses = ['Running', 'Failed', 'BackOff', 'NotStarted', 'Completed'];

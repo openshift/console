@@ -2,9 +2,9 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
-import { Cog, navFactory, LabelList, ResourceCog, SectionHeading, ResourceIcon, ResourceLink, ResourceSummary, Selector } from './utils';
+import { Kebab, navFactory, LabelList, ResourceKebab, SectionHeading, ResourceIcon, ResourceLink, ResourceSummary, Selector } from './utils';
 
-const menuActions = [Cog.factory.ModifyPodSelector, ...Cog.factory.common];
+const menuActions = [Kebab.factory.ModifyPodSelector, ...Kebab.factory.common];
 
 const ServiceIP = ({s}) => {
   const children = _.map(s.spec.ports, (portObj, i) => {
@@ -39,8 +39,8 @@ const ServiceRow = ({obj: s}) => <ResourceRow obj={s}>
   <div className="col-lg-2 hidden-md hidden-sm hidden-xs">
     <ServiceIP s={s} />
   </div>
-  <div className="co-resource-kebab">
-    <ResourceCog actions={menuActions} kind="Service" resource={s} />
+  <div className="co-kebab-wrapper">
+    <ResourceKebab actions={menuActions} kind="Service" resource={s} />
   </div>
 </ResourceRow>;
 

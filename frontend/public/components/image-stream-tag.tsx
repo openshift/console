@@ -4,12 +4,12 @@ import * as _ from 'lodash-es';
 // eslint-disable-next-line no-unused-vars
 import { K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
 import { DetailsPage } from './factory';
-import { Cog, SectionHeading, navFactory, Overflow, ResourceSummary } from './utils';
+import { Kebab, SectionHeading, navFactory, Overflow, ResourceSummary } from './utils';
 import { humanizeMem } from './utils/units';
 
 const ImageStreamTagsReference: K8sResourceKindReference = 'ImageStreamTag';
 
-const { common } = Cog.factory;
+const { common } = Kebab.factory;
 const menuActions = [...common];
 
 // Splits a name/value pair separated by an `=`

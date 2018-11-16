@@ -4,15 +4,25 @@ import { connectToModel } from '../../kinds';
 import { referenceForModel } from '../../module/k8s';
 import {
   AsyncComponent,
+  Kebab,
   ResourceOverviewHeading,
   ResourceSummary,
-  Cog,
 } from '../utils';
 
+import { BuildConfigsOverview } from './build-configs-overview';
+import { NetworkingOverview } from './networking-overview';
+import { OverviewItem } from '.';
 import { resourceOverviewPages } from './resource-overview-pages';
 
-const { common } = Cog.factory;
+const { common } = Kebab.factory;
 const menuActions = [...common];
+
+export const OverviewDetailsResourcesTab: React.SFC<OverviewDetailsResourcesTabProps>= ({item: {buildConfigs, routes, services}}) => (
+  <div className="overview__sidebar-pane-body">
+    <BuildConfigsOverview buildConfigs={buildConfigs} />
+    <NetworkingOverview services={services} routes={routes} />
+  </div>
+);
 
 export const DefaultOverviewPage = connectToModel( ({kindObj: kindObject, item}) =>
   <div className="overview__sidebar-pane resource-overview">
@@ -34,3 +44,9 @@ export const ResourceOverviewPage = connectToModel(({kindObj, item}) => {
   const loader = resourceOverviewPages.get(ref, () => Promise.resolve(DefaultOverviewPage));
   return <AsyncComponent loader={loader} kindObj={kindObj} item={item} />;
 });
+
+/* eslint-disable no-unused-vars, no-undef */
+type OverviewDetailsResourcesTabProps = {
+  item: OverviewItem;
+};
+/* eslint-enable no-unused-vars, no-undef */

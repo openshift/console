@@ -27,7 +27,7 @@ const BuildSummaryStatusIcon: React.SFC<BuildSummaryStatusIconProps> = ({ status
     pending: 'fa-hourglass-half',
     running: 'fa-refresh fa-spin',
     complete: 'fa-check-circle',
-    failed: 'fa-times-circle'
+    failed: 'fa-times-circle',
   })[statusClass];
 
   return icon

@@ -5,7 +5,7 @@ import { ResourceEventStream } from './events';
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import { configureUnschedulableModal } from './modals';
 import { PodsPage } from './pod';
-import { Cog, navFactory, LabelList, ResourceCog, SectionHeading, ResourceLink, Timestamp, units, cloudProviderNames, cloudProviderID, pluralize, containerLinuxUpdateOperator } from './utils';
+import { Kebab, navFactory, LabelList, ResourceKebab, SectionHeading, ResourceLink, Timestamp, units, cloudProviderNames, cloudProviderID, pluralize, containerLinuxUpdateOperator } from './utils';
 import { Line, requirePrometheus } from './graphs';
 import { NodeModel } from '../models';
 import { CamelCaseWrap } from './utils/camel-case-wrap';
@@ -22,10 +22,10 @@ const MarkAsSchedulable = (kind, obj) => ({
   callback: () => makeNodeSchedulable(obj),
 });
 
-const { ModifyLabels, ModifyAnnotations, Edit } = Cog.factory;
+const { ModifyLabels, ModifyAnnotations, Edit } = Kebab.factory;
 const menuActions = [MarkAsSchedulable, MarkAsUnschedulable, ModifyLabels, ModifyAnnotations, Edit];
 
-const NodeCog = ({node}) => <ResourceCog actions={menuActions} kind="Node" resource={node} />;
+const NodeKebab = ({node}) => <ResourceKebab actions={menuActions} kind="Node" resource={node} />;
 
 const NodeIPList = ({ips, expand = false}) => <div>
   {_.sortBy(ips, ['type']).map((ip, i) => <div key={i} className="co-node-ip">
@@ -95,15 +95,14 @@ const NodeRow = ({obj: node, expand}) => {
     {expand && <div className="col-xs-12">
       <LabelList kind="Node" labels={node.metadata.labels} />
     </div>}
-    <div className="co-resource-kebab">
-      <NodeCog node={node} />
+    <div className="co-kebab-wrapper">
+      <NodeKebab node={node} />
     </div>
   </ResourceRow>;
 };
 
 const NodeRowSearch = ({obj: node}) => <div className="row co-resource-list__item">
   <div className="col-lg-2 col-md-3 col-sm-4 col-xs-5">
-    <NodeCog node={node} />
     <ResourceLink kind="Node" name={node.metadata.name} title={node.metadata.uid} />
   </div>
   <div className="col-md-2 hidden-sm hidden-xs">
@@ -114,6 +113,9 @@ const NodeRowSearch = ({obj: node}) => <div className="row co-resource-list__ite
   </div>
   <div className="col-md-2 col-sm-3 hidden-xs">
     <NodeIPList ips={node.status.addresses} />
+  </div>
+  <div className="co-kebab-wrapper">
+    <NodeKebab node={node} />
   </div>
 </div>;
 
@@ -182,7 +184,7 @@ const Details = ({obj: node}) => {
             <dt>Node Labels</dt>
             <dd><LabelList kind="Node" labels={node.metadata.labels} /></dd>
             <dt>Annotations</dt>
-            <dd><a className="co-m-modal-link" onClick={Cog.factory.ModifyAnnotations(NodeModel, node).callback}>{pluralize(_.size(node.metadata.annotations), 'Annotation')}</a></dd>
+            <dd><a className="co-m-modal-link" onClick={Kebab.factory.ModifyAnnotations(NodeModel, node).callback}>{pluralize(_.size(node.metadata.annotations), 'Annotation')}</a></dd>
             <dt>Provider ID</dt>
             <dd>{cloudProviderNames([cloudProviderID(node)])}</dd>
             {_.has(node, 'spec.unschedulable') && <dt>Unschedulable</dt>}

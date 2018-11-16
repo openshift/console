@@ -40,7 +40,7 @@ export const sanitizeForProm_ = (obj, _depth=0) => _.transform(obj, (o, v, k) =>
 });
 
 class PromSettingsModal extends PromiseComponent {
-  constructor (props) {
+  constructor(props) {
     super(props);
     const { title, description, reduxFormWrapper, FormBody} = props;
     // NOTE: redux forms assumes it owns the entire form ...
@@ -65,7 +65,7 @@ class PromSettingsModal extends PromiseComponent {
       </form>
     );
   }
-  _submit (formData) {
+  _submit(formData) {
     const { obj, cancel, getNewConfig} = this.props;
     // PromiseComponent handles submitting the form.
 
@@ -88,7 +88,7 @@ class PromSettingsModal extends PromiseComponent {
     this.handlePromise(promise).then(cancel, () => {});
   }
 
-  render () {
+  render() {
     return <this.Form {...this.state} />;
   }
 }
@@ -114,7 +114,7 @@ const renderField = ({
   meta: {
     // touched,
     error,
-    warning }
+    warning },
 }) => <div>
   <input className={classNames('form-control', {'form-control--invalid': !!error})} style={fieldStyle} {...input} type={type} autoFocus={autoFocus} placeholder={placeholder} />
   {
@@ -216,8 +216,8 @@ const MemCPUModalLink = ({section, type, config, obj}) => {
           limits: {
             [type]: formData.limit,
           },
-        }
-      }
+        },
+      },
     });
 
     return modal({title, description, config, obj, reduxFormWrapper, FormBody, getNewConfig});
@@ -257,13 +257,13 @@ const RetentionModalLink = ({config, obj}) => {
 };
 
 class Expander extends React.PureComponent {
-  constructor (props) {
+  constructor(props) {
     super(props);
     this.state = {expanded: !!props.expanded};
     this.expand = () => this.setState({expanded: !this.state.expanded});
   }
 
-  render () {
+  render() {
     return <div className="co-cluster-updates__component">
       <div className="co-cluster-updates__heading">
         <div className="co-cluster-updates__heading--name-wrapper">
@@ -283,7 +283,7 @@ class Expander extends React.PureComponent {
 }
 
 class ClusterMonitoring_ extends React.PureComponent {
-  render () {
+  render() {
     const { obj } = this.props;
     const config = safeLoad(_.get(obj, ['data', 'config.yaml']));
 
