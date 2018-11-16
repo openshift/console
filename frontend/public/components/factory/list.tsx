@@ -169,7 +169,7 @@ const listFilters = {
 
     const status = getVmStatus(vm);
     return statuses.selected.has(status) || !_.includes(statuses.all, status);
-  }
+  },
 
 };
 

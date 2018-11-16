@@ -39,7 +39,7 @@ class RestartVmModal extends PromiseComponent {
     });
   }
 
-  render () {
+  render() {
     const {resource} = this.props;
     return <form onSubmit={this._submit} name="form">
       <ModalTitle>Restart Virtual Machine</ModalTitle>
@@ -54,7 +54,7 @@ class RestartVmModal extends PromiseComponent {
 RestartVmModal.propTypes = {
   resource: PropTypes.object.isRequired,
   close: PropTypes.func.isRequired,
-  cancel: PropTypes.func.isRequired
+  cancel: PropTypes.func.isRequired,
 };
 
 export const restartVmModal = createModalLauncher(RestartVmModal);

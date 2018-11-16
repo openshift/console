@@ -21,8 +21,8 @@ const menuActionDelete = (vm, nic) => ({
   callback: () => deleteDeviceModal({
     type: NIC,
     device: nic,
-    vm: vm
-  })
+    vm: vm,
+  }),
 });
 
 const getActions = (vm, nic) => {
@@ -71,7 +71,7 @@ export const Nic = ({obj: vm}) => {
     return {
       ...i,
       network,
-      vm: vm
+      vm: vm,
     };
   });
   return <div className="co-m-list">

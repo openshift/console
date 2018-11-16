@@ -32,7 +32,7 @@ Errors.propTypes = {
 export const showErrors = (errors) => {
   if (errors && errors.length > 0) {
     errorModal({
-      error: (<Errors errors={errors} />)
+      error: (<Errors errors={errors} />),
     });
   }
 };

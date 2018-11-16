@@ -13,7 +13,7 @@ import {
   TemplateModel,
   NetworkAttachmentDefinitionModel,
   StorageClassModel,
-  PersistentVolumeClaimModel
+  PersistentVolumeClaimModel,
 } from '../models';
 import { k8sCreate, actions } from '../module/okdk8s';
 
@@ -46,8 +46,8 @@ const menuActionStart = (kind, vm) => ({
   callback: () => startStopVmModal({
     kind: kind,
     resource: vm,
-    start: !_.get(vm, 'spec.running', false)
-  })
+    start: !_.get(vm, 'spec.running', false),
+  }),
 });
 
 const menuActionRestart = (kind, vm) => ({
@@ -55,8 +55,8 @@ const menuActionRestart = (kind, vm) => ({
   label: 'Restart Virtual Machine',
   callback: () => restartVmModal({
     kind: kind,
-    resource: vm
-  })
+    resource: vm,
+  }),
 });
 
 const menuActions = [menuActionStart, menuActionRestart, Cog.factory.Delete];
@@ -261,8 +261,8 @@ const VmiEvents = ({obj: vm}) => {
     kind: VirtualMachineInstanceModel.kind,
     metadata: {
       name: vm.metadata.name,
-      namespace: vm.metadata.namespace
-    }
+      namespace: vm.metadata.namespace,
+    },
   };
   return <ResourceEventStream obj={vmi} />;
 };
@@ -271,19 +271,19 @@ export const VirtualMachinesDetailsPage = props => {
   const consolePage = { // TODO: might be moved based on review; or display conditionally if VM is running?
     href: 'consoles',
     name: 'Consoles',
-    component: VmConsolesConnected
+    component: VmConsolesConnected,
   };
 
   const nicsPage = {
     href: 'nics',
     name: 'Network Interfaces',
-    component: Nic
+    component: Nic,
   };
 
   const disksPage = {
     href: 'disks',
     name: 'Disks',
-    component: Disk
+    component: Disk,
   };
 
   const pages = [
@@ -292,7 +292,7 @@ export const VirtualMachinesDetailsPage = props => {
     consolePage,
     navFactory.events(VmiEvents),
     nicsPage,
-    disksPage
+    disksPage,
   ];
   return (
     <DetailsPage
@@ -307,12 +307,12 @@ export const VirtualMachinesDetailsPage = props => {
 };
 
 const mapStateToProps = ({k8s}) => ({
-  k8s
+  k8s,
 });
 
 const mapDispatchToProps = () => ({
   stopK8sWatch: actions.stopK8sWatch,
-  watchK8sList: actions.watchK8sList
+  watchK8sList: actions.watchK8sList,
 });
 
 const openNewVmWizard = activeNamespace => {
@@ -340,7 +340,7 @@ const openNewVmWizard = activeNamespace => {
       }
 
       return {
-        selectedNamespace
+        selectedNamespace,
       };
     }));
 
@@ -357,8 +357,8 @@ const filters = [{
   reducer: getVmStatus,
   items: [
     { id: 'Running', title: 'Running' },
-    { id: 'Stopped', title: 'Stopped' }
-  ]
+    { id: 'Stopped', title: 'Stopped' },
+  ],
 }];
 
 export const VirtualMachinesPage = connect(
@@ -369,7 +369,7 @@ export const VirtualMachinesPage = connect(
 
     const createItems = {
       wizard: 'Create with Wizard',
-      yaml: 'Create from YAML'
+      yaml: 'Create from YAML',
     };
 
     this.createProps = {
@@ -381,7 +381,7 @@ export const VirtualMachinesPage = connect(
           default:
             return `/k8s/ns/${this.props.namespace || 'default'}/virtualmachines/new/`;
         }
-      }
+      },
     };
   }
 

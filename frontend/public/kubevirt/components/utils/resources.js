@@ -50,6 +50,6 @@ export const getVncConnectionDetails = vmi => {
     encrypt, // whether ws or wss to be used
     host: window.location.hostname,
     port: window.location.port || (encrypt ? '443' : '80'),
-    path: `${context}/${apiPath}/vnc${query}`
+    path: `${context}/${apiPath}/vnc${query}`,
   };
 };

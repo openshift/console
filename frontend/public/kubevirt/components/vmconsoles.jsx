@@ -14,7 +14,7 @@ const VmIsDown = ({ vm }) => {
     <Button bsStyle="link" onClick={() => startStopVmModal({
       kind: VirtualMachineModel,
       resource: vm,
-      start: true
+      start: true,
     })}>
       start
     </Button>);

@@ -29,14 +29,14 @@ class StartStopVmModal extends PromiseComponent {
     patch.push({
       op: 'replace',
       path: '/spec/running',
-      value: this.props.start
+      value: this.props.start,
     });
 
     const promise = k8sPatch(this.props.kind, vm, patch);
     this.handlePromise(promise).then(this.props.close);
   }
 
-  render () {
+  render() {
     const {resource} = this.props;
     const action = this.props.start? 'Start':'Stop';
     return <form onSubmit={this._submit} name="form">
@@ -54,7 +54,7 @@ StartStopVmModal.propTypes = {
   start: PropTypes.bool.isRequired,
   kind: PropTypes.object.isRequired, /* object of model */
   resource: PropTypes.object.isRequired,
-  close: PropTypes.func.isRequired
+  close: PropTypes.func.isRequired,
 };
 
 export const startStopVmModal = createModalLauncher(StartStopVmModal);

@@ -32,8 +32,8 @@ const menuActionDelete = (vm, storage) => ({
   callback: () => deleteDeviceModal({
     type: DISK,
     device: storage,
-    vm: vm
-  })
+    vm: vm,
+  }),
 });
 
 const getActions = (vm, nic) => {
@@ -95,7 +95,7 @@ export const Disk = ({obj: vm}) => {
     return {
       ...disk,
       vm,
-      volume
+      volume,
     };
   });
   return <div className="co-m-list">

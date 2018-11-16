@@ -22,13 +22,13 @@ const checkErrors = (errors, dispose) => {
  */
 export class WithResources extends React.Component {
 
-  constructor (props) {
+  constructor(props) {
     super(props);
     this.state = WithResources.getDerivedStateFromProps(props);
     checkErrors(this.state.errors, props.dispose);
   }
 
-  static getDerivedStateFromProps ({ resourceMap, resources, resourceToProps }) {
+  static getDerivedStateFromProps({ resourceMap, resources, resourceToProps }) {
     const childrenProps = {};
     const errors = [];
     let loaded = true;
@@ -56,18 +56,18 @@ export class WithResources extends React.Component {
     return {
       childrenProps: {
         ...childrenProps,
-        ...(resourceToProps ? resourceToProps(childrenProps) : {})
+        ...(resourceToProps ? resourceToProps(childrenProps) : {}),
       },
       errors,
       loaded,
     };
   }
 
-  componentDidUpdate () {
+  componentDidUpdate() {
     checkErrors(this.state.errors, this.props.dispose);
   }
 
-  render () {
+  render() {
     const { dispose, children } = this.props;
 
     if (!this.state.loaded) {

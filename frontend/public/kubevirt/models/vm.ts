@@ -11,7 +11,7 @@ export const VirtualMachineModel: K8sKind = {
   abbr: 'VM',
   namespaced: true,
   kind: 'VirtualMachine',
-  id: 'virtualmachine'
+  id: 'virtualmachine',
 };
 
 export const VirtualMachineInstanceModel: K8sKind = {
@@ -24,7 +24,7 @@ export const VirtualMachineInstanceModel: K8sKind = {
   abbr: 'VMI',
   namespaced: true,
   kind: 'VirtualMachineInstance',
-  id: 'virtualmachineinstance'
+  id: 'virtualmachineinstance',
 };
 
 export const VirtualMachineInstancePresetModel: K8sKind = {
@@ -37,7 +37,7 @@ export const VirtualMachineInstancePresetModel: K8sKind = {
   abbr: 'VMIP',
   namespaced: true,
   kind: 'VirtualMachineInstancePreset',
-  id: 'virtualmachineinstancepreset'
+  id: 'virtualmachineinstancepreset',
 };
 
 export const TemplateModel: K8sKind = {
@@ -50,7 +50,7 @@ export const TemplateModel: K8sKind = {
   namespaced: true,
   abbr: 'Template',
   kind: 'Template',
-  id: 'template'
+  id: 'template',
 };
 
 export const NetworkAttachmentDefinitionModel: K8sKind = {
@@ -63,5 +63,5 @@ export const NetworkAttachmentDefinitionModel: K8sKind = {
   namespaced: true,
   abbr: 'NAD',
   kind: 'NetworkAttachmentDefinition',
-  id: 'network-attachment-definition'
+  id: 'network-attachment-definition',
 };

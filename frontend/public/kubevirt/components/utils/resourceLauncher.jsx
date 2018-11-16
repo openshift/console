@@ -36,7 +36,7 @@ export const resourceLauncher = (Component, resourceMap, resourceToProps) => (pr
     ReactDOM.render(<Provider store={store}>
       <Router {...{
         history,
-        basename: window.SERVER_FLAGS.basePath
+        basename: window.SERVER_FLAGS.basePath,
       }}>
         <Firehose resources={Object.keys(resourceMap).map(k => resourceMap[k].resource)}>
           <WithResources resourceMap={resourceMap} dispose={closeModal} resourceToProps={resourceToProps}>

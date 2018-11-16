@@ -59,7 +59,7 @@ class DeleteDeviceModal extends PromiseComponent {
       patch.push({
         op,
         path: '/spec/template/spec/domain/devices/autoAttachPodInterface',
-        value: false
+        value: false,
       });
     }
 
@@ -71,7 +71,7 @@ class DeleteDeviceModal extends PromiseComponent {
     }
   }
 
-  render () {
+  render() {
     const {vm, device} = this.props;
     return <Form onSubmit={this._submit}>
       <ModalTitle>Delete {device.name} from {vm.metadata.name}</ModalTitle>
@@ -88,7 +88,7 @@ DeleteDeviceModal.propTypes = {
   device: PropTypes.object.isRequired,
   vm: PropTypes.object.isRequired,
   type: PropTypes.string.isRequired,
-  close: PropTypes.func.isRequired
+  close: PropTypes.func.isRequired,
 };
 
 export const deleteDeviceModal = createModalLauncher(DeleteDeviceModal);

@@ -785,7 +785,7 @@ export const VirtualMachineModel: K8sKind = {
   abbr: 'VM',
   namespaced: true,
   kind: 'VirtualMachine',
-  id: 'virtualmachine'
+  id: 'virtualmachine',
 };
 
 export const VirtualMachineInstanceModel: K8sKind = {
@@ -798,7 +798,7 @@ export const VirtualMachineInstanceModel: K8sKind = {
   abbr: 'VMI',
   namespaced: true,
   kind: 'VirtualMachineInstance',
-  id: 'virtualmachineinstance'
+  id: 'virtualmachineinstance',
 };
 
 export const VirtualMachineInstancePresetModel: K8sKind = {
@@ -811,7 +811,7 @@ export const VirtualMachineInstancePresetModel: K8sKind = {
   abbr: 'VMIP',
   namespaced: true,
   kind: 'VirtualMachineInstancePreset',
-  id: 'virtualmachineinstancepreset'
+  id: 'virtualmachineinstancepreset',
 };
 
 export const LimitRangeModel: K8sKind = {
