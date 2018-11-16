@@ -795,7 +795,7 @@ class SilenceForm_ extends SafetyFirst<SilenceFormProps, SilenceFormState> {
         <div className="form-group">
           <label>Matchers</label> (label selectors)
           <p className="co-help-text">Alerts affected by this silence. Matching alerts must satisfy all of the specified label constraints, though they may have additional labels as well.</p>
-          <div className="row co-m-table-grid__head">
+          <div className="row monitoring-grid-head text-secondary text-uppercase">
             <div className="col-xs-4">Name</div>
             <div className="col-xs-4">Value</div>
           </div>
