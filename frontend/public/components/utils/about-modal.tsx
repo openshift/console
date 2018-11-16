@@ -8,13 +8,11 @@ import { getBrandingDetails } from '../masthead';
 export class AboutModal extends React.Component<AboutModalProps, AboutModalState> {
   /* eslint-disable no-undef */
   state = {
-    showAboutModal: false,
     kubernetesVersion: null,
   };
 
   componentDidMount() {
     this.checkKubernetesVersion();
-    this.setState({ showAboutModal: true });
   }
 
   private checkKubernetesVersion() {
@@ -24,10 +22,10 @@ export class AboutModal extends React.Component<AboutModalProps, AboutModalState
   }
 
   render() {
-    const {kubernetesVersion, showAboutModal} = this.state;
+    const {kubernetesVersion} = this.state;
     const details = getBrandingDetails();
 
-    return <PFAboutModal className={classNames('co-masthead__modal', {'co-masthead__modal--upstream': details.backgroundImg})} logo={details.modalLogoImg} altLogo={details.modalLogoAlt} productTitle={details.productTitle} show={showAboutModal} onHide={this.props.close}>
+    return <PFAboutModal className={classNames('co-masthead__modal', {'co-masthead__modal--upstream': details.backgroundImg})} logo={details.modalLogoImg} altLogo={details.modalLogoAlt} productTitle={details.productTitle} show={true} onHide={this.props.close}>
       <strong>About</strong>
       <p>{details.productTitle === 'OKD' ? 'OKD' : 'OpenShift'} is Red Hat&apos;s container application platform that
       allows developers to quickly develop, host, and scale applications in a cloud environment.</p>
@@ -50,5 +48,4 @@ export type AboutModalProps = {
 
 export type AboutModalState = {
   kubernetesVersion: string,
-  showAboutModal: boolean,
 };
