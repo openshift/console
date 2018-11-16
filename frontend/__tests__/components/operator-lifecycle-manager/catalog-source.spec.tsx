@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import * as _ from 'lodash';
-import { safeDump } from 'js-yaml';
+import { safeLoad } from 'js-yaml';
 
 import { CatalogSourceDetails, CatalogSourceDetailsProps, CatalogSourceDetailsPage, CatalogSourceDetailsPageProps, CreateSubscriptionYAML, CreateSubscriptionYAMLProps } from '../../../public/components/operator-lifecycle-manager/catalog-source';
 import { PackageManifestList } from '../../../public/components/operator-lifecycle-manager/package-manifest';
@@ -83,27 +83,27 @@ describe(CreateSubscriptionYAML.displayName, () => {
     }]);
   });
 
-  xit('renders YAML editor component wrapped by an error boundary component', () => {
+  it('renders YAML editor component wrapped by an error boundary component', () => {
     wrapper = wrapper.setProps({packageManifest: {loaded: true, data: testPackageManifest}} as any);
 
     expect(wrapper.find(Firehose).childAt(0).dive().find(ErrorBoundary).exists()).toBe(true);
     expect(wrapper.find(Firehose).childAt(0).dive().find(ErrorBoundary).childAt(0).dive().find(CreateYAML).exists()).toBe(true);
   });
 
-  xit('passes example YAML templates using the package default channel', () => {
+  it('passes example YAML templates using the package default channel', () => {
     wrapper = wrapper.setProps({packageManifest: {loaded: true, data: testPackageManifest}} as any);
 
     const createYAML = wrapper.find(Firehose).childAt(0).dive().find(ErrorBoundary).childAt(0).dive<CreateYAMLProps, {}>();
-    const subTemplate = safeDump(createYAML.props().template);
+    const subTemplate = safeLoad(createYAML.props().template);
 
     expect(subTemplate.kind).toContain(SubscriptionModel.kind);
     expect(subTemplate.spec.name).toEqual(testPackageManifest.metadata.name);
-    expect(subTemplate.spec.channel).toEqual(testPackageManifest.spec.channels[0].name);
-    expect(subTemplate.spec.startingCSV).toEqual(testPackageManifest.spec.channels[0].currentCSV);
+    expect(subTemplate.spec.channel).toEqual(testPackageManifest.status.channels[0].name);
+    expect(subTemplate.spec.startingCSV).toEqual(testPackageManifest.status.channels[0].currentCSV);
     expect(subTemplate.spec.source).toEqual('ocs');
   });
 
-  xit('does not render YAML editor component if `PackageManifest` has not loaded yet', () => {
+  it('does not render YAML editor component if `PackageManifest` has not loaded yet', () => {
     wrapper = wrapper.setProps({packageManifest: {loaded: false}} as any);
 
     expect(wrapper.find(Firehose).childAt(0).dive().find(CreateYAML).exists()).toBe(false);
