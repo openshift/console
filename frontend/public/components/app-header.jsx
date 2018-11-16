@@ -3,6 +3,7 @@ import * as PropTypes from 'prop-types';
 import { Avatar, Brand, PageHeader } from '@patternfly/react-core';
 
 import AppToolbar from './app-toolbar';
+import openshiftLogoImg from '../imgs/openshift-logo.svg';
 import okdLogoImg from '../imgs/okd-logo.svg';
 import ocpLogoImg from '../imgs/openshift-platform-logo.svg';
 import onlineLogoImg from '../imgs/openshift-online-logo.svg';
@@ -14,6 +15,10 @@ const AppHeader = ({ onNavToggle }) => {
 
   // Webpack won't bundle these images if we don't directly reference them, hence the switch
   switch (window.SERVER_FLAGS.branding) {
+    case 'openshift':
+      logoImg = openshiftLogoImg;
+      logoAlt = 'OpenShift';
+      break;
     case 'ocp':
       logoImg = ocpLogoImg;
       logoAlt = 'OpenShift Container Platform';
