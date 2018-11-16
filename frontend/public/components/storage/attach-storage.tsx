@@ -187,6 +187,7 @@ class AttachStorageForm extends React.Component<
 
   onPVCChange = newPVCObj => {
     this.setState({ newPVCObj });
+    this.updateVolumeName(_.get(newPVCObj, 'metadata.name', ''));
   };
 
   isContainerSelected = ({ name }) => {
@@ -220,8 +221,6 @@ class AttachStorageForm extends React.Component<
     const { kindObj, name, namespace } = this.props;
     const {
       claimName,
-      volumeName,
-      volumeAlreadyMounted,
       mountPath,
       subPath,
       inProgress,
@@ -240,13 +239,7 @@ class AttachStorageForm extends React.Component<
           <h1 className="co-m-pane__heading">{title}</h1>
           {kindObj && (
             <div className="co-m-pane__explanation">
-              Add a persistent volume claim to&nbsp;
-              <ResourceLink
-                kind={kindObj.kind}
-                name={name}
-                namespace={namespace}
-              />
-              .
+              Add a persistent volume claim to <ResourceLink inline kind={kindObj.kind} name={name} namespace={namespace} />
             </div>
           )}
           <label className="control-label co-required" >
@@ -288,28 +281,6 @@ class AttachStorageForm extends React.Component<
 
           {this.state.showCreatePVC === 'new' && <div className="co-form-subsection"><CreatePVCForm onChange={this.onPVCChange} namespace={this.props.namespace} /></div>}
 
-          <div className="form-group">
-            <label className="control-label co-required" htmlFor="volume-name">
-              Volume Name
-            </label>
-            <div>
-              <input
-                className="form-control"
-                type="text"
-                onChange={this.handleChange}
-                aria-describedby="volume-name-help"
-                id="volume-name"
-                name="volumeName"
-                value={volumeName}
-                pattern="[a-z0-9](?:[-a-z0-9]*[a-z0-9])?"
-                readOnly={volumeAlreadyMounted}
-                required
-              />
-              <p className="help-block" id="volume-name-help">
-                Unique name to identify this volume.
-              </p>
-            </div>
-          </div>
           <div className="form-group">
             <label className="control-label co-required" htmlFor="mount-path">
               Mount Path
