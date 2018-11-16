@@ -66,17 +66,25 @@ export default (state, action) => {
     case types.setMonitoringData:
       state = state.setIn(['monitoring', action.key], action.data);
 
-      // For Alerts that are silenced by at least one active Silence, set the Alert's state to indicate that
       if (action.key === 'rules' || action.key === 'silences') {
         const alerts = state.getIn(['monitoring', 'rules']);
-        const silences = state.getIn(['monitoring', 'silences'], {}).data;
+        const firingAlerts = _.filter(_.get(alerts, 'data'), a => [AlertStates.Firing, AlertStates.Silenced].includes(a.state));
+        const silences = state.getIn(['monitoring', 'silences']);
 
-        _.each(_.get(alerts, 'data'), a => {
-          if (a.state === AlertStates.Firing && _.some(silences, s => isSilenced(a, s))) {
+        // For each Alert, store a list of the Silences that are silencing it and set its state to show it is silenced
+        _.each(firingAlerts, a => {
+          a.silencedBy = _.filter(_.get(silences, 'data'), s => isSilenced(a, s));
+          if (a.silencedBy.length) {
             a.state = AlertStates.Silenced;
           }
         });
         state = state.setIn(['monitoring', 'rules'], alerts);
+
+        // For each Silence, store a list of the Alerts it is silencing
+        _.each(_.get(silences, 'data'), s => {
+          s.silencedAlerts = _.filter(firingAlerts, a => a.silencedBy.includes(s));
+        });
+        state = state.setIn(['monitoring', 'silences'], silences);
       }
       return state;
 
