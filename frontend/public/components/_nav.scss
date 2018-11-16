@@ -88,21 +88,12 @@ $active-border: 3px;
   opacity: 0;
   overflow-y: hidden;
   padding-left: 0;
-  transition:
-    max-height 150ms ease-in-out,
-    opacity 150ms 25ms;
-  > li {
-    &:first-child {
-      margin-top: 5px;
-    }
-    &:last-child {
-      margin-bottom: 10px;
-    }
-  }
+  transition: max-height 150ms ease-in-out, opacity 150ms 25ms;
 }
 
 .navigation-container__list--open {
   opacity: 1;
+  margin-bottom: 10px;
 }
 
 .navigation-container__section {

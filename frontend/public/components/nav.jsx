@@ -220,7 +220,7 @@ const NavSection = connect(navSectionStateToProps)(
       // we could use scaleY, but that literally scales along the Y axis, ie shrinks
       // we could use flexbox or the equivalent to get an actual height, but this is the easiest solution :-/
 
-      const maxHeight = !this.state.isOpen ? 0 : 29 * _.get(this.props.children, 'length', 1);
+      const maxHeight = !this.state.isOpen ? 0 : 27 * _.get(this.props.children, 'length', 1);
 
       const iconClassName = 'navigation-container__section__title__icon';
 
