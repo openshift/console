@@ -1,77 +1,56 @@
+/* eslint-disable no-undef, no-unused-vars */
+
 import * as _ from 'lodash-es';
 import * as React from 'react';
 
-import { referenceForModel } from '../module/k8s';
-import { SafetyFirst } from './safety-first';
+import { referenceForModel, K8sResourceKind } from '../module/k8s';
 import { ColHead, List, ListHeader, ListPage, ResourceRow, DetailsPage } from './factory';
 import { SectionHeading, LabelList, navFactory, ResourceLink, Selector, Firehose, LoadingInline, pluralize } from './utils';
-import { SettingsRow, SettingsContent } from './cluster-settings/cluster-settings';
 import { configureReplicaCountModal } from './modals';
 import { AlertmanagerModel } from '../models';
 
-class Details extends SafetyFirst {
-  constructor(props) {
-    super(props);
-    this.state = {
-      desiredCountOutdated: false,
-    };
-    this._openReplicaCountModal = this._openReplicaCountModal.bind(this);
-  }
+const Details: React.SFC<DetailsProps> = (props) => {
+  const alertManager = props.obj;
+  const {metadata, spec} = alertManager;
 
-  componentWillReceiveProps() {
-    this.setState({
-      desiredCountOutdated: false,
-    });
-  }
-
-  _openReplicaCountModal(event) {
+  const openReplicaCountModal = (event) => {
     event.preventDefault();
     event.target.blur();
-    configureReplicaCountModal({
-      resourceKind: AlertmanagerModel,
-      resource: this.props.obj,
-      invalidateState: (isInvalid) => {
-        this.setState({
-          desiredCountOutdated: isInvalid,
-        });
-      },
-    });
-  }
+    configureReplicaCountModal({resourceKind: AlertmanagerModel, resource: alertManager});
+  };
 
-  render() {
-    const alertManager = this.props.obj;
-    const {metadata, spec} = alertManager;
-    return <div>
-      <div className="co-m-pane__body">
-        <SectionHeading text="Alert Manager Overview" />
-        <div className="row">
-          <div className="col-sm-6 col-xs-12">
-            <dl className="co-m-pane__details">
-              <dt>Name</dt>
-              <dd>{metadata.name}</dd>
-              <dt>Labels</dt>
-              <dd><LabelList kind="Alertmanager" labels={metadata.labels} /></dd>
-              {spec.nodeSelector && <dt>Alert Manager Node Selector</dt>}
-              {spec.nodeSelector && <dd><Selector selector={spec.nodeSelector} kind="Node" /></dd>}
-            </dl>
-          </div>
-          <div className="col-sm-6 col-xs-12">
-            <dl className="co-m-pane__details">
-              <dt>Version</dt>
-              <dd>{spec.version}</dd>
-              <dt>Replicas</dt>
-              <dd>{this.state.desiredCountOutdated ? <LoadingInline /> : <a className="co-m-modal-link" href="#"
-                onClick={this._openReplicaCountModal}>{pluralize(spec.replicas, 'pod')}</a>}</dd>
-              <dt>Resource Request</dt>
-              <dd><span className="text-muted">Memory:</span> {_.get(spec, 'resources.requests.memory')}</dd>
-            </dl>
-          </div>
+  return <div>
+    <div className="co-m-pane__body">
+      <SectionHeading text="Alert Manager Overview" />
+      <div className="row">
+        <div className="col-sm-6 col-xs-12">
+          <dl className="co-m-pane__details">
+            <dt>Name</dt>
+            <dd>{metadata.name}</dd>
+            <dt>Labels</dt>
+            <dd><LabelList kind="Alertmanager" labels={metadata.labels} /></dd>
+            {spec.nodeSelector && <dt>Alert Manager Node Selector</dt>}
+            {spec.nodeSelector && <dd><Selector selector={spec.nodeSelector} kind="Node" /></dd>}
+          </dl>
         </div>
-
+        <div className="col-sm-6 col-xs-12">
+          <dl className="co-m-pane__details">
+            <dt>Version</dt>
+            <dd>{spec.version}</dd>
+            <dt>Replicas</dt>
+            <dd>
+              <a className="co-m-modal-link" href="#" onClick={openReplicaCountModal}>{pluralize(spec.replicas, 'pod')}</a>
+            </dd>
+            {_.get(spec, 'resources.requests.memory') && <React.Fragment>
+              <dt>Resource Request</dt>
+              <dd><span className="text-muted">Memory:</span> {spec.resources.requests.memory}</dd>
+            </React.Fragment>}
+          </dl>
+        </div>
       </div>
-    </div>;
-  }
-}
+    </div>
+  </div>;
+};
 
 const {details, editYaml} = navFactory;
 
@@ -87,20 +66,18 @@ const AlertManagersNameList = (props) => {
   if (props.loadError) {
     return null;
   }
-  return <SettingsRow>
-    <SettingsContent>
+  return <div className="row co-m-form-row">
+    <div className="col-sm-8 col-md-9">
       <div className="alert-manager-list">
         {!props.loaded
           ? <LoadingInline />
           : _.map(props.alertmanagers.data, (alertManager, i) => <div className="alert-manager-row" key={i}>
             <ResourceLink kind={referenceForModel(AlertmanagerModel)} name={alertManager.metadata.name} namespace={alertManager.metadata.namespace} title={alertManager.metadata.uid} />
-          </div>)
-        }
+          </div>)}
       </div>
-    </SettingsContent>
-  </SettingsRow>;
+    </div>
+  </div>;
 };
-
 
 export const AlertManagersListContainer = props => <Firehose resources={[{
   kind: referenceForModel(AlertmanagerModel),
@@ -144,3 +121,7 @@ const AlertManagerHeader = props => <ListHeader>
 
 export const AlertManagersList = props => <List {...props} Header={AlertManagerHeader} Row={AlertManagerRow} />;
 export const AlertManagersPage = props => <ListPage {...props} ListComponent={AlertManagersList} canCreate={false} kind={referenceForModel(AlertmanagerModel)} />;
+
+type DetailsProps = {
+  obj: K8sResourceKind;
+};

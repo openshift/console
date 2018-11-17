@@ -2,7 +2,6 @@ package server
 
 import (
 	"bytes"
-	"context"
 	"encoding/base64"
 	"encoding/json"
 	"errors"
@@ -16,16 +15,12 @@ import (
 	"strconv"
 
 	"github.com/coreos/dex/api"
-	"github.com/coreos/dex/connector"
-	"github.com/coreos/dex/connector/ldap"
 	"github.com/coreos/pkg/capnslog"
 	"github.com/coreos/pkg/health"
 
 	"github.com/openshift/console/auth"
 	"github.com/openshift/console/pkg/proxy"
 	"github.com/openshift/console/version"
-
-	"github.com/Sirupsen/logrus"
 )
 
 const (
@@ -226,8 +221,6 @@ func (s *Server) HTTPHandler() http.Handler {
 	}
 
 	handle("/api/tectonic/version", authHandler(s.versionHandler))
-	handle("/api/tectonic/ldap/validate", authHandler(handleLDAPVerification))
-	handle("/api/tectonic/certs", authHandler(s.certsHandler))
 	mux.HandleFunc(s.BaseURL.Path, s.indexHandler)
 
 	return securityHeadersMiddleware(http.Handler(mux))
@@ -339,26 +332,6 @@ func (s *Server) versionHandler(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-type certsInfo struct {
-	CaCert struct {
-		ExpirationDate int64  `json:"expirationDate"`
-		ErrorMessage   string `json:"errorMessage"`
-	} `json:"ca-cert"`
-}
-
-func (s *Server) certsHandler(w http.ResponseWriter, r *http.Request) {
-	info := new(certsInfo)
-	expiration, err := getCertExpiration(s.TectonicCACertFile)
-	info.CaCert.ExpirationDate = expiration
-	if err != nil {
-		info.CaCert.ErrorMessage = err.Error()
-		sendResponse(w, http.StatusInternalServerError, info)
-		return
-	}
-
-	sendResponse(w, http.StatusOK, info)
-}
-
 func notFoundHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotFound)
 	w.Write([]byte("not found"))
@@ -456,89 +429,6 @@ contexts:
 
 current-context: {{ .TectonicClusterName }}-context
 `))
-
-// ldapReq is an attempt to test an LDAP configuration object for dex.
-// It takes a username, password, and config object, then attempts to
-// get user, email, and group information.
-type ldapReq struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
-
-	// A full dex LDAP configuration object. Details can be found in the
-	// dex source code and documentation.
-	//
-	// https://godoc.org/github.com/coreos/dex/connector/ldap#Config
-	// https://github.com/coreos/dex/blob/master/Documentation/ldap-connector.md
-	Config ldap.Config `json:"config"`
-}
-
-// On a successful LDAP verification request, the resulting user is returned.
-type ldapResp struct {
-	Username string   `json:"username"`
-	Email    string   `json:"email"`
-	Groups   []string `json:"groups"`
-}
-
-// If an error was returned, it will be in the following format.
-type ldapError struct {
-	Error  string `json:"error"`
-	Reason string `json:"reason"`
-}
-
-func handleLDAPVerification(w http.ResponseWriter, r *http.Request) {
-	if r.Method != "POST" {
-		sendResponse(w, http.StatusBadRequest, &ldapError{
-			Error:  "Invalid method",
-			Reason: "Endpoint only responses to POSTs.",
-		})
-		return
-	}
-
-	var req ldapReq
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		sendResponse(w, http.StatusBadRequest, &ldapError{
-			Error:  "Malformed request body",
-			Reason: err.Error(),
-		})
-		return
-	}
-
-	resp, err := verifyLDAP(r.Context(), req)
-	if err != nil {
-		sendResponse(w, http.StatusOK, err)
-		return
-	}
-	sendResponse(w, http.StatusOK, resp)
-}
-
-func verifyLDAP(ctx context.Context, req ldapReq) (*ldapResp, *ldapError) {
-	logger := &logrus.Logger{
-		Out:       os.Stderr,
-		Formatter: &logrus.TextFormatter{DisableColors: true},
-		Level:     logrus.DebugLevel,
-	}
-	conn, err := req.Config.OpenConnector(logger)
-	if err != nil {
-		return nil, &ldapError{"Invalid config fields", err.Error()}
-	}
-
-	// Only search for groups if a base dn has been specified.
-	scopes := connector.Scopes{Groups: req.Config.GroupSearch.BaseDN != ""}
-
-	ident, validPassword, err := conn.Login(ctx, scopes, req.Username, req.Password)
-	if err != nil {
-		return nil, &ldapError{"LDAP query failed", err.Error()}
-	}
-	if !validPassword {
-		return nil, &ldapError{"Failed to login", "Invalid username and password combination."}
-	}
-
-	return &ldapResp{
-		Username: ident.Username,
-		Email:    ident.Email,
-		Groups:   ident.Groups,
-	}, nil
-}
 
 func (s *Server) handleTokenRevocation(user *auth.User, w http.ResponseWriter, r *http.Request) {
 	if s.DexClient == nil {
