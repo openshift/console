@@ -678,13 +678,15 @@ const toISODate = (dateStr: string): string => {
 
 const Text = props => <input {...props} type="text" className="form-control form-control--silence-text" />;
 
-const Datetime = props => <Tooltip content={[<span className="co-nowrap" key="co-timestamp">{toISODate(props.value)}</span>]}>
-  <Text
-    {...props}
-    pattern="\d{4}/(0[1-9]|1[012])/(0[1-9]|[12][0-9]|3[01]) ([01]\d|2[0-3]):[0-5]\d(:[0-5]\d)?"
-    placeholder="YYYY/MM/DD hh:mm:ss"
-  />
-</Tooltip>;
+const Datetime = props => <div>
+  <Tooltip content={[<span className="co-nowrap" key="co-timestamp">{toISODate(props.value)}</span>]}>
+    <Text
+      {...props}
+      pattern="\d{4}/(0[1-9]|1[012])/(0[1-9]|[12][0-9]|3[01]) ([01]\d|2[0-3]):[0-5]\d(:[0-5]\d)?"
+      placeholder="YYYY/MM/DD hh:mm:ss"
+    />
+  </Tooltip>
+</div>;
 
 class SilenceForm_ extends SafetyFirst<SilenceFormProps, SilenceFormState> {
   constructor(props) {
