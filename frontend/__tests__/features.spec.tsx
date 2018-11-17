@@ -37,7 +37,6 @@ describe('featureReducer', () => {
     const newState = featureReducer(initialState, action);
 
     expect(newState).toEqual(initialState.merge({
-      [FLAGS.CLUSTER_UPDATES]: false,
       [FLAGS.PROMETHEUS]: false,
       [FLAGS.MULTI_CLUSTER]: false,
       [FLAGS.CHARGEBACK]: false,
