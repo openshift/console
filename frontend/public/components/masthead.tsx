@@ -6,14 +6,87 @@ import * as okdLogoImg from '../imgs/okd-logo.svg';
 import * as ocpLogoImg from '../imgs/openshift-platform-logo.svg';
 import * as onlineLogoImg from '../imgs/openshift-online-logo.svg';
 import * as dedicatedLogoImg from '../imgs/openshift-dedicated-logo.svg';
+import * as rhLogoImg from '../imgs/redhat-logo-modal.svg';
+import * as okdModalImg from '../imgs/okd-logo-modal.svg';
 import { FLAGS, connectToFlags, flagPending } from '../features';
 import { authSvc } from '../module/auth';
-import { Dropdown, ActionsMenu } from './utils';
+import { Dropdown, ActionsMenu, AsyncComponent } from './utils';
+import { openshiftHelpBase } from './utils/documentation';
+import { createModalLauncher } from './factory/modal';
 
 import { coFetchJSON } from '../co-fetch';
 import { SafetyFirst } from './safety-first';
 
+const AboutModal = (props) => <AsyncComponent loader={() => import('./utils/about-modal').then(c => c.AboutModal)} {...props} />;
+
 const developerConsoleURL = (window as any).SERVER_FLAGS.developerConsoleURL;
+
+export const getBrandingDetails = () => {
+  let backgroundImg, logoImg, logoAlt, modalLogoImg, modalLogoAlt, productTitle;
+
+  // Webpack won't bundle these images if we don't directly reference them, hence the switch
+  switch ((window as any).SERVER_FLAGS.branding) {
+    case 'ocp':
+      backgroundImg = true;
+      logoImg = ocpLogoImg;
+      logoAlt = 'OpenShift Container Platform';
+      modalLogoImg = rhLogoImg;
+      modalLogoAlt = 'Red Hat';
+      productTitle = <React.Fragment>Red Hat<sup>&reg;</sup> OpenShift Container Platform</React.Fragment>;
+      break;
+    case 'online':
+      backgroundImg = true;
+      logoImg = onlineLogoImg;
+      logoAlt = 'OpenShift Online';
+      modalLogoImg = rhLogoImg;
+      modalLogoAlt = 'Red Hat';
+      productTitle = <React.Fragment>Red Hat<sup>&reg;</sup> OpenShift Online</React.Fragment>;
+      break;
+    case 'dedicated':
+      backgroundImg = true;
+      logoImg = dedicatedLogoImg;
+      logoAlt = 'OpenShift Dedicated';
+      modalLogoImg = rhLogoImg;
+      modalLogoAlt = 'Red Hat';
+      productTitle = <React.Fragment>Red Hat<sup>&reg;</sup> OpenShift Dedicated</React.Fragment>;
+      break;
+    default:
+      backgroundImg = false;
+      logoImg = okdLogoImg;
+      logoAlt = 'OKD';
+      modalLogoImg = okdModalImg;
+      modalLogoAlt = 'OKD';
+      productTitle = 'OKD';
+  }
+
+  return {backgroundImg, logoImg, logoAlt, modalLogoImg, modalLogoAlt, productTitle};
+};
+
+const launchAboutModal = createModalLauncher(AboutModal);
+
+class HelpMenu extends React.Component<{}, {}> {
+  constructor(props) {
+    super(props);
+    this.openDocumentation = this.openDocumentation.bind(this);
+  }
+
+  openDocumentation() {
+    window.open(openshiftHelpBase, '_blank').opener = null;
+  }
+
+  render() {
+    return <React.Fragment>
+      <ActionsMenu
+        actions={[
+          {label: 'Documentation', callback: this.openDocumentation},
+          {label: 'About', callback: launchAboutModal}]}
+        buttonClassName="nav-item-iconic"
+        noButton
+        noCaret
+        title={<i className="fa fa-question-circle-o co-masthead__help-icon" />} />
+    </React.Fragment>;
+  }
+}
 
 const UserMenu: React.StatelessComponent<UserMenuProps> = ({username, actions}) => {
   const title = <React.Fragment>
@@ -21,10 +94,11 @@ const UserMenu: React.StatelessComponent<UserMenuProps> = ({username, actions}) 
     <span className="co-masthead__username">{username}</span>
   </React.Fragment>;
   if (_.isEmpty(actions)) {
-    return title;
+    return <div className="nav-item-iconic no-dropdown">{title}</div>;
   }
 
   return <ActionsMenu actions={actions}
+    buttonClassName="nav-item-iconic"
     title={title}
     noButton={true} />;
 };
@@ -72,10 +146,10 @@ export class OSUserMenu extends SafetyFirst<OSUserMenuProps, OSUserMenuState> {
 
   componentDidMount() {
     super.componentDidMount();
-    this._getUserInfo();
+    this.getUserInfo();
   }
 
-  _getUserInfo() {
+  private getUserInfo() {
     coFetchJSON('api/kubernetes/apis/user.openshift.io/v1/users/~')
       .then((user) => {
         this.setState({ username: _.get(user, 'fullName') || user.metadata.name });
@@ -102,39 +176,28 @@ const ContextSwitcher = () => {
 };
 
 export const LogoImage = () => {
-  let logoImg, logoAlt;
-
-  // Webpack won't bundle these images if we don't directly reference them, hence the switch
-  switch ((window as any).SERVER_FLAGS.branding) {
-    case 'ocp':
-      logoImg = ocpLogoImg;
-      logoAlt = 'OpenShift Container Platform';
-      break;
-    case 'online':
-      logoImg = onlineLogoImg;
-      logoAlt = 'OpenShift Online';
-      break;
-    case 'dedicated':
-      logoImg = dedicatedLogoImg;
-      logoAlt = 'OpenShift Dedicated';
-      break;
-    default:
-      logoImg = okdLogoImg;
-      logoAlt = 'OKD';
-  }
-
+  const details = getBrandingDetails();
   return <div className="co-masthead__logo">
-    <Link to="/" className="co-masthead__logo-link"><img src={logoImg} alt={logoAlt} /></Link>
+    <Link to="/" className="co-masthead__logo-link"><img src={details.logoImg} alt={details.logoAlt} /></Link>
   </div>;
 };
 
-export const Masthead = () => <header role="banner" className="co-masthead">
-  <LogoImage />
-  {developerConsoleURL && <div className="co-masthead__console-picker">
-    <ContextSwitcher />
-  </div>}
-  <div className="co-masthead__user">
-    <UserMenuWrapper />
+export const Masthead = () => <header role="banner" className="navbar navbar-pf-vertical co-masthead">
+  <div className="navbar-header">
+    <LogoImage />
+    {developerConsoleURL && <div className="co-masthead__console-picker">
+      <ContextSwitcher />
+    </div>}
+  </div>
+  <div className="nav navbar-nav navbar-right navbar-iconic navbar-utility">
+    <div className="co-masthead__dropdowns">
+      <div className="co-masthead__help">
+        <HelpMenu />
+      </div>
+      <div className="co-masthead__user">
+        <UserMenuWrapper />
+      </div>
+    </div>
   </div>
 </header>;
 
