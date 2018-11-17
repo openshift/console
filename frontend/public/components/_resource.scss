@@ -54,6 +54,11 @@ $height: 18px;
   background-color: $color-pod-overlord;
 }
 
+.co-m-resource-machine,
+.co-m-resource-machineconfig,
+.co-m-resource-machineconfigpool,
+.co-m-resource-machinedeployment,
+.co-m-resource-machineset,
 .co-m-resource-node,
 .co-m-resource-policy {
   background-color: $color-node-dark;
