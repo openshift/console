@@ -140,6 +140,20 @@ const SilenceState = ({silence}) => {
   return klass ? <React.Fragment><i className={klass} aria-hidden="true"></i> {_.startCase(state)}</React.Fragment> : null;
 };
 
+const StateTimestamp = ({text, timestamp}) => <div className="text-muted monitoring-timestamp">
+  {text}&nbsp;<Timestamp timestamp={timestamp} />
+</div>;
+
+const AlertStateDescription = ({alert}) => {
+  if (alert && !_.isEmpty(alert.silencedBy)) {
+    return <StateTimestamp text="Ends" timestamp={_.max(_.map(alert.silencedBy, 'endsAt'))} />;
+  }
+  if (alert && alert.activeAt) {
+    return <StateTimestamp text="Since" timestamp={alert.activeAt} />;
+  }
+  return null;
+};
+
 const Annotation = ({children, title}) => _.isNil(children)
   ? null
   : <React.Fragment><dt>{title}</dt><dd>{children}</dd></React.Fragment>;
@@ -163,7 +177,7 @@ const alertStateToProps = (state): AlertsDetailsPageProps => {
 
 const AlertsDetailsPage = withFallback(connect(alertStateToProps)((props: AlertsDetailsPageProps) => {
   const {alert, loaded, loadError} = props;
-  const {activeAt = '', annotations = {}, labels = {}, rule = null, silencedBy = []} = alert || {};
+  const {annotations = {}, labels = {}, rule = null, silencedBy = []} = alert || {};
   const {alertname, severity} = labels as any;
   const state = alertState(alert);
 
@@ -202,7 +216,7 @@ const AlertsDetailsPage = withFallback(connect(alertStateToProps)((props: Alerts
                 <dt>State</dt>
                 <dd>
                   <AlertState state={state} />
-                  {activeAt && <div className="text-muted monitoring-timestamp">Active since&nbsp;<Timestamp timestamp={activeAt} /></div>}
+                  <AlertStateDescription alert={alert} />
                 </dd>
                 <dt>Alert Rule</dt>
                 <dd>
@@ -440,7 +454,7 @@ const SilencesDetailsPage = withFallback(connect(silenceParamToProps)((props: Si
 }));
 
 const AlertRow = ({obj}) => {
-  const {activeAt, annotations = {}, labels = {}} = obj;
+  const {annotations = {}, labels = {}} = obj;
   const state = alertState(obj);
 
   return <ResourceRow obj={obj}>
@@ -453,7 +467,7 @@ const AlertRow = ({obj}) => {
     </div>
     <div className="col-xs-3">
       <AlertState state={state} />
-      {activeAt && <div className="text-muted monitoring-timestamp">since&nbsp;<Timestamp timestamp={activeAt} /></div>}
+      <AlertStateDescription alert={obj} />
     </div>
     <div className="col-xs-2">{_.startCase(_.get(labels, 'severity', '-'))}</div>
     <div className="co-kebab-wrapper">
@@ -622,11 +636,9 @@ const SilenceRow = ({obj}) => {
     </div>
     <div className="col-xs-3">
       <SilenceState silence={obj} />
-      <div className="text-muted monitoring-timestamp">
-        {state === SilenceStates.Pending && <React.Fragment>starts&nbsp;<Timestamp timestamp={obj.startsAt} /></React.Fragment>}
-        {state === SilenceStates.Active && <React.Fragment>ends&nbsp;<Timestamp timestamp={obj.endsAt} /></React.Fragment>}
-        {state === SilenceStates.Expired && <React.Fragment>expired&nbsp;<Timestamp timestamp={obj.endsAt} /></React.Fragment>}
-      </div>
+      {state === SilenceStates.Pending && <StateTimestamp text="Starts" timestamp={obj.startsAt} />}
+      {state === SilenceStates.Active && <StateTimestamp text="Ends" timestamp={obj.endsAt} />}
+      {state === SilenceStates.Expired && <StateTimestamp text="Expired" timestamp={obj.endsAt} />}
     </div>
     <div className="col-xs-2">{obj.silencedAlerts.length}</div>
     <div className="co-kebab-wrapper">
