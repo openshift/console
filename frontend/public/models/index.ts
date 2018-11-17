@@ -123,19 +123,6 @@ export const AlertmanagerModel: K8sKind = {
   propagationPolicy : 'Foreground',
 };
 
-export const ClusterModel: K8sKind = {
-  kind: 'Cluster',
-  label: 'Cluster',
-  labelPlural: 'Clusters',
-  apiGroup: 'multicluster.coreos.com',
-  path: 'clusters',
-  apiVersion: 'v1',
-  crd: true,
-  plural: 'clusters',
-  abbr: 'C',
-  namespaced: false,
-};
-
 export const ChargebackReportModel: K8sKind = {
   kind: 'Report',
   label: 'Report',

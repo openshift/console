@@ -12,8 +12,6 @@ import { BuildConfigModel, BuildModel, ClusterServiceVersionModel, DeploymentCon
 import { referenceForModel } from '../module/k8s';
 import { authSvc } from '../module/auth';
 
-import { ClusterPicker } from './cluster-picker';
-
 import * as operatorImg from '../imgs/operator.svg';
 import * as operatorActiveImg from '../imgs/operator-active.svg';
 import * as routingImg from '../imgs/routing.svg';
@@ -266,21 +264,7 @@ const rolesStartsWith = ['roles', 'clusterroles'];
 const rolebindingsStartsWith = ['rolebindings', 'clusterrolebindings'];
 const quotaStartsWith = ['resourcequotas', 'clusterresourcequotas'];
 const imagestreamsStartsWith = ['imagestreams', 'imagestreamtags'];
-const clusterSettingsStartsWith = ['settings/cluster', 'settings/ldap'];
 const monitoringAlertsStartsWith = ['monitoring/alerts', 'monitoring/alertrules'];
-
-const ClusterPickerNavSection = connectToFlags(FLAGS.OPENSHIFT)(({flags}) => {
-  // Hide the cluster picker on OpenShift clusters. Make sure flag detection is
-  // complete before showing the picker.
-  const openshiftFlag = flags[FLAGS.OPENSHIFT];
-  if (flagPending(openshiftFlag) || openshiftFlag) {
-    return null;
-  }
-
-  return <div className="navigation-container__section navigation-container__section--cluster-picker">
-    <ClusterPicker />
-  </div>;
-});
 
 const MonitoringNavSection_ = ({urls, closeMenu}) => {
   const prometheusURL = urls[MonitoringRoutes.Prometheus];
@@ -374,7 +358,6 @@ export class Nav extends React.Component {
         <span className="icon-bar" aria-hidden="true"></span>
       </button>
       <div id="sidebar" className={classNames({'open': isOpen})}>
-        <ClusterPickerNavSection />
         <div ref={this.scroller} onWheel={this.preventScroll} className="navigation-container">
           <NavSection text="Home" icon="pficon pficon-home">
             <ResourceClusterLink resource="projects" name="Projects" onClick={this.close} required={FLAGS.OPENSHIFT} />
@@ -447,7 +430,6 @@ export class Nav extends React.Component {
           <NavSection text="Administration" icon="fa fa-cog">
             <ResourceClusterLink resource="namespaces" name="Namespaces" onClick={this.close} required={FLAGS.CAN_LIST_NS} />
             <ResourceClusterLink resource="nodes" name="Nodes" onClick={this.close} required={FLAGS.CAN_LIST_NODE} />
-            <HrefLink href="/settings/cluster" name="Cluster Settings" onClick={this.close} startsWith={clusterSettingsStartsWith} disallowed={FLAGS.OPENSHIFT} />
             <ResourceNSLink resource="serviceaccounts" name="Service Accounts" onClick={this.close} />
             <ResourceNSLink resource="roles" name="Roles" startsWith={rolesStartsWith} onClick={this.close} />
             <ResourceNSLink resource="rolebindings" name="Role Bindings" onClick={this.close} startsWith={rolebindingsStartsWith} />
