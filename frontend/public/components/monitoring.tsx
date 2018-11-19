@@ -183,7 +183,7 @@ const AlertsDetailsPage = withFallback(connect(alertStateToProps)((props: Alerts
 
   return <React.Fragment>
     <Helmet>
-      <title>{`${alertname} · Details`}</title>
+      <title>{`${alertname || AlertResource.label} · Details`}</title>
     </Helmet>
     <div className="co-m-nav-title co-m-nav-title--detail">
       <h1 className="co-m-pane__heading">
@@ -301,7 +301,7 @@ const AlertRulesDetailsPage = withFallback(connect(ruleStateToProps)((props: Ale
 
   return <React.Fragment>
     <Helmet>
-      <title>{`${name} · Details`}</title>
+      <title>{`${name || AlertRuleResource.label} · Details`}</title>
     </Helmet>
     <div className="co-m-nav-title co-m-nav-title--detail">
       <h1 className="co-m-pane__heading">
@@ -392,7 +392,7 @@ const SilencesDetailsPage = withFallback(connect(silenceParamToProps)((props: Si
 
   return <React.Fragment>
     <Helmet>
-      <title>{`${silence.name} · Details`}</title>
+      <title>{`${silence.name || SilenceResource.label} · Details`}</title>
     </Helmet>
     <div className="co-m-nav-title co-m-nav-title--detail">
       <h1 className="co-m-pane__heading">
