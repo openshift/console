@@ -22,6 +22,7 @@ import {
   MachineSetModel,
   PackageManifestModel,
   SubscriptionModel,
+  VirtualMachineModel,
 } from '../models';
 import { referenceForModel } from '../module/k8s';
 
@@ -338,6 +339,7 @@ export const Navigation = ({ isNavOpen, onNavSelect }) => {
 
         <NavSection title="Workloads">
           <ResourceNSLink resource="pods" name="Pods" />
+          <ResourceNSLink model={VirtualMachineModel} resource={VirtualMachineModel.plural} name={VirtualMachineModel.labelPlural} required={FLAGS.KUBEVIRT} />
           <ResourceNSLink resource="deployments" name="Deployments" />
           <ResourceNSLink resource="deploymentconfigs" name={DeploymentConfigModel.labelPlural} required={FLAGS.OPENSHIFT} />
           <ResourceNSLink resource="statefulsets" name="Stateful Sets" />

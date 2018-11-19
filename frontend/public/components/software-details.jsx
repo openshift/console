@@ -2,9 +2,11 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 
 import { k8sVersion } from '../module/status';
+import { FLAGS, connectToFlags, flagPending } from '../features';
 import { SafetyFirst } from './safety-first';
 import { LoadingInline } from './utils';
 
+import { getKubeVirtVersion } from '../extend/kubevirt/module/status';
 
 const StatusIconRow = ({state, text}) => {
   const iconClasses = {
@@ -56,27 +58,55 @@ const SoftwareDetailRow = ({title, detail, text, children}) => {
   </div>;
 };
 
-export class SoftwareDetails extends SafetyFirst {
-  constructor(props) {
-    super(props);
-    this.state = {
-      kubernetesVersion: null,
-    };
-  }
+export const SoftwareDetails = connectToFlags(FLAGS.KUBEVIRT)(
+  class SoftwareDetails extends SafetyFirst {
+    constructor(props) {
+      super(props);
+      this.state = {
+        kubernetesVersion: null,
+        kubevirtVersion: null,
+      };
+    }
 
-  componentDidMount() {
-    super.componentDidMount();
-    this._checkKubernetesVersion();
-  }
+    componentDidMount() {
+      super.componentDidMount();
+      this._checkKubernetesVersion();
+      this._checkKubeVirtVersion();
+    }
 
-  _checkKubernetesVersion() {
-    k8sVersion()
-      .then((data) => this.setState({kubernetesVersion: data.gitVersion}))
-      .catch(() => this.setState({kubernetesVersion: 'unknown'}));
-  }
+    componentDidUpdate(prevProps) {
+      if (prevProps.flags[FLAGS.KUBEVIRT] !== this.props.flags[FLAGS.KUBEVIRT]) {
+        this._checkKubeVirtVersion();
+      }
+    }
 
-  render() {
-    const {kubernetesVersion} = this.state;
-    return <SoftwareDetailRow title="Kubernetes" detail={kubernetesVersion} text="Kubernetes version could not be determined." />;
+    _checkKubernetesVersion() {
+      k8sVersion()
+        .then((data) => this.setState({kubernetesVersion: data.gitVersion}))
+        .catch(() => this.setState({kubernetesVersion: 'unknown'}));
+    }
+
+    _checkKubeVirtVersion() {
+      const kubevirtFlag = this.props.flags[FLAGS.KUBEVIRT];
+      if (kubevirtFlag) {
+        getKubeVirtVersion()
+          .then((data) => this.setState({kubevirtVersion: data.gitVersion}))
+          .catch(() => this.setState({kubevirtVersion: 'unknown'}));
+      }
+    }
+
+    render() {
+      const {kubernetesVersion, kubevirtVersion} = this.state;
+      const kubevirtFlag = this.props.flags[FLAGS.KUBEVIRT];
+
+      if (flagPending(kubevirtFlag)) {
+        return null;
+      }
+
+      return <React.Fragment>
+        <SoftwareDetailRow title="Kubernetes" detail={kubernetesVersion} text="Kubernetes version could not be determined." />
+        {kubevirtFlag && <SoftwareDetailRow title="KubeVirt" detail={kubevirtVersion} text="KubeVirt version could not be determined." />}
+      </React.Fragment>;
+    }
   }
-}
+);

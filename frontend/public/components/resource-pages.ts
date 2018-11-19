@@ -59,6 +59,7 @@ import {
   StorageClassModel,
   SubscriptionModel,
   PackageManifestModel,
+  VirtualMachineModel,
 } from '../models';
 
 export const resourceDetailPages = ImmutableMap<GroupVersionKind | string, () => Promise<React.ComponentType<any>>>()
@@ -113,7 +114,8 @@ export const resourceDetailPages = ImmutableMap<GroupVersionKind | string, () =>
   .set(referenceForModel(SubscriptionModel), () => import('./operator-lifecycle-manager/subscription' /* webpackChunkName: "subscription" */).then(m => m.SubscriptionDetailsPage))
   .set(referenceForModel(InstallPlanModel), () => import('./operator-lifecycle-manager/install-plan' /* webpackChunkName: "install-plan" */).then(m => m.InstallPlanDetailsPage))
   .set(referenceForModel(ClusterOperatorModel), () => import('./cluster-settings/cluster-operator' /* webpackChunkName: "cluster-operator" */).then(m => m.ClusterOperatorDetailsPage))
-  .set(referenceForModel(OAuthModel), () => import('./cluster-settings/oauth' /* webpackChunkName: "oauth" */).then(m => m.OAuthDetailsPage));
+  .set(referenceForModel(OAuthModel), () => import('./cluster-settings/oauth' /* webpackChunkName: "oauth" */).then(m => m.OAuthDetailsPage))
+  .set(referenceForModel(VirtualMachineModel), () => import('../extend/kubevirt/components/vm-details' /* webpackChunkName: "virtual-machine" */).then(m => m.VirtualMachinesDetailsPage));
 
 export const resourceListPages = ImmutableMap<GroupVersionKind | string, () => Promise<React.ComponentType<any>>>()
   .set(referenceForModel(ClusterServiceClassModel), () => import('./cluster-service-class' /* webpackChunkName: "cluster-service-class" */).then(m => m.ClusterServiceClassPage))
@@ -166,4 +168,5 @@ export const resourceListPages = ImmutableMap<GroupVersionKind | string, () => P
   .set(referenceForModel(PackageManifestModel), () => import('./operator-lifecycle-manager/package-manifest' /* webpackChunkName: "package-manifest" */).then(m => m.PackageManifestsPage))
   .set(referenceForModel(SubscriptionModel), () => import('./operator-lifecycle-manager/subscription' /* webpackChunkName: "subscription" */).then(m => m.SubscriptionsPage))
   .set(referenceForModel(InstallPlanModel), () => import('./operator-lifecycle-manager/install-plan' /* webpackChunkName: "install-plan" */).then(m => m.InstallPlansPage))
-  .set(referenceForModel(ClusterOperatorModel), () => import('./cluster-settings/cluster-operator' /* webpackChunkName: "cluster-operator" */).then(m => m.ClusterOperatorPage));
+  .set(referenceForModel(ClusterOperatorModel), () => import('./cluster-settings/cluster-operator' /* webpackChunkName: "cluster-operator" */).then(m => m.ClusterOperatorPage))
+  .set(referenceForModel(VirtualMachineModel), () => import('../extend/kubevirt/components/vm-list' /* webpackChunkName: "virtual-machine" */).then(m => m.VirtualMachinesPage));

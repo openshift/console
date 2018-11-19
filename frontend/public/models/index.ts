@@ -1,6 +1,8 @@
 // eslint-disable-next-line no-unused-vars
 import { K8sKind } from '../module/k8s';
 
+import { kubevirtApiGroup, kubevirtApiVersion } from '../extend/kubevirt/constants';
+
 export const CatalogSourceConfigModel: K8sKind = {
   kind: 'CatalogSourceConfig',
   label: 'CatalogSourceConfig',
@@ -944,5 +946,49 @@ export const OAuthModel: K8sKind = {
   namespaced: false,
   kind: 'OAuth',
   id: 'oauth',
+  crd: true,
+};
+
+// KubeVirt resources
+// https://github.com/kubevirt/kubevirt
+export const VirtualMachineModel: K8sKind = {
+  label: 'Virtual Machine',
+  labelPlural: 'Virtual Machines',
+  apiVersion: kubevirtApiVersion,
+  path: 'virtualmachines',
+  apiGroup: kubevirtApiGroup,
+  plural: 'virtualmachines',
+  abbr: 'VM',
+  namespaced: true,
+  kind: 'VirtualMachine',
+  id: 'virtualmachine',
+  crd: true,
+};
+
+export const VirtualMachineInstanceModel: K8sKind = {
+  label: 'Virtual Machine Instance',
+  labelPlural: 'Virtual Machine Instances',
+  apiVersion: kubevirtApiVersion,
+  path: 'virtualmachineinstances',
+  apiGroup: kubevirtApiGroup,
+  plural: 'virtualmachineinstances',
+  abbr: 'VMI',
+  namespaced: true,
+  kind: 'VirtualMachineInstance',
+  id: 'virtualmachineinstance',
+  crd: true,
+};
+
+export const VirtualMachineInstancePresetModel: K8sKind = {
+  label: 'Virtual Machine Instance Preset',
+  labelPlural: 'Virtual Machine Instance Presets',
+  apiVersion: kubevirtApiVersion,
+  path: 'virtualmachineinstancepresets',
+  apiGroup: kubevirtApiGroup,
+  plural: 'virtualmachineinstancepresets',
+  abbr: 'VMIP',
+  namespaced: true,
+  kind: 'VirtualMachineInstancePreset',
+  id: 'virtualmachineinstancepreset',
   crd: true,
 };

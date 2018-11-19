@@ -13,7 +13,7 @@
     "test-gui-tap": "TAP=true yarn run test-gui",
     "test-gui-openshift": "yarn run test-suite --suite crud --params.openshift true",
     "test-gui": "yarn run test-suite --suite all",
-    "test-suite": "ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/protractor integration-tests/protractor.conf.ts",
+    "test-suite": "ts-node -O '{\"module\":\"commonjs\"}' -r ./integration-tests/preload.ts ./node_modules/.bin/protractor integration-tests/protractor.conf.ts",
     "analyze": "NODE_ENV=production ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/webpack --mode=production --profile --json | awk '{if(NR>2)print}' > public/dist/stats.json && ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/webpack-bundle-analyzer --mode static -r public/dist/report.html public/dist/stats.json"
   },
   "jest": {
@@ -65,6 +65,7 @@
     "immutable": "3.x",
     "js-base64": "^2.4.5",
     "js-yaml": "3.x",
+    "kubevirt-web-ui-components": "0.1.18",
     "lodash-es": "4.x",
     "murmurhash-js": "1.0.x",
     "openshift-logos-icon": "1.7.1",
@@ -134,7 +135,9 @@
     "jasmine-reporters": "2.x",
     "jest": "21.x",
     "jest-cli": "21.x",
+    "lodash": "4.x",
     "mini-css-extract-plugin": "0.4.x",
+    "module-alias": "^2.1.0",
     "node-sass": "4.8.x",
     "protractor": "5.4.x",
     "protractor-fail-fast": "3.x",

@@ -47,6 +47,9 @@ export * from './k8s-watcher';
 export * from './workload-pause';
 export * from './list-dropdown';
 export * from './status-icon';
+
+import { K8sResourceKind, K8sResourceKindReference, Selector } from '../../module/k8s';
+
 /*
   Add the enum for NameValueEditorPair here and not in its namesake file because the editor should always be
   loaded asynchronously in order not to bloat the vendor file. The enum reference into the editor
@@ -72,3 +75,17 @@ export const enum EnvType {
   ENV = 0,
   ENV_FROM = 1
 }
+
+// Firehose component prop types
+export type FirehoseResource = {
+  kind: K8sResourceKindReference | K8sResourceKind;
+  name?: string;
+  namespace?: string;
+  namespaced?: boolean;
+  prop?: string;
+  selector?: Selector;
+  fieldSelector?: string;
+  className?: string;
+  isList?: boolean;
+  optional?: boolean;
+};

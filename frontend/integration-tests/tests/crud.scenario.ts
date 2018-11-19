@@ -11,13 +11,15 @@ import * as crudView from '../views/crud.view';
 import * as yamlView from '../views/yaml.view';
 import * as namespaceView from '../views/namespace.view';
 import * as createRoleBindingView from '../views/create-role-binding.view';
+import { referenceForModel, kindForReference } from '../../public/module/k8s/k8s';
+import { ClusterServiceBrokerModel, VirtualMachineModel } from '../../public/models';
 
 const K8S_CREATION_TIMEOUT = 15000;
 
 describe('Kubernetes resource CRUD operations', () => {
   const testLabel = 'automatedTestName';
   const leakedResources = new Set<string>();
-  const k8sObjs = OrderedMap<string, {kind: string, namespaced?: boolean}>()
+  const k8sObjs = OrderedMap<string, ObjMapValue>()
     .set('pods', {kind: 'Pod'})
     .set('services', {kind: 'Service'})
     .set('serviceaccounts', {kind: 'ServiceAccount'})
@@ -38,15 +40,18 @@ describe('Kubernetes resource CRUD operations', () => {
     .set('horizontalpodautoscalers', {kind: 'HorizontalPodAutoscaler'})
     .set('networkpolicies', {kind: 'NetworkPolicy'})
     .set('roles', {kind: 'Role'});
-  const openshiftObjs = OrderedMap<string, {kind: string, namespaced?: boolean}>()
+  const openshiftObjs = OrderedMap<string, ObjMapValue>()
     .set('deploymentconfigs', {kind: 'DeploymentConfig'})
     .set('buildconfigs', {kind: 'BuildConfig'})
     .set('imagestreams', {kind: 'ImageStream'})
     .set('routes', {kind: 'Route'});
-  const serviceCatalogObjs = OrderedMap<string, {kind: string, namespaced?: boolean}>()
-    .set('clusterservicebrokers', {kind: 'servicecatalog.k8s.io~v1beta1~ClusterServiceBroker', namespaced: false});
+  const serviceCatalogObjs = OrderedMap<string, ObjMapValue>()
+    .set('clusterservicebrokers', {kind: referenceForModel(ClusterServiceBrokerModel), namespaced: false});
+  const kubevirtObjs = OrderedMap<string, ObjMapValue>()
+    .set('virtualmachines', {kind: referenceForModel(VirtualMachineModel), crd: true});
   let testObjs = browser.params.openshift === 'true' ? k8sObjs.merge(openshiftObjs) : k8sObjs;
   testObjs = browser.params.servicecatalog === 'true' ? testObjs.merge(serviceCatalogObjs) : testObjs;
+  testObjs = browser.params.kubevirt === 'true' ? testObjs.merge(kubevirtObjs) : testObjs;
 
   afterEach(() => {
     checkLogs();
@@ -67,9 +72,11 @@ describe('Kubernetes resource CRUD operations', () => {
       });
   });
 
-  testObjs.forEach(({kind, namespaced = true}, resource) => {
+  testObjs.forEach(({kind, namespaced = true, crd = false}, resource) => {
+    const simpleKind = kindForReference(kind);
+    const suiteDesc = crd ? `${simpleKind} (CRD)` : kind;
 
-    describe(kind, () => {
+    describe(suiteDesc, () => {
       const name = `${testName}-${kind.toLowerCase()}`;
       it('displays a list view for the resource', async() => {
         await browser.get(`${appHost}${namespaced ? `/k8s/ns/${testName}` : '/k8s/cluster'}/${resource}?name=${testName}`);
@@ -138,7 +145,7 @@ describe('Kubernetes resource CRUD operations', () => {
           await browser.get(`${appHost}/search/${namespaced ? `ns/${testName}` : 'all-namespaces'}?kind=${kind}&q=${testLabel}%3d${testName}`);
           await crudView.filterForName(name);
           await crudView.resourceRowsPresent();
-          await crudView.editRow(kind)(name);
+          await crudView.editRow(simpleKind)(name);
         }
       });
 
@@ -148,7 +155,7 @@ describe('Kubernetes resource CRUD operations', () => {
         // Filter by resource name to make sure the resource is on the first page of results.
         // Otherwise the tests fail since we do virtual scrolling and the element isn't found.
         await crudView.filterForName(name);
-        await crudView.deleteRow(kind)(name);
+        await crudView.deleteRow(simpleKind)(name);
         leakedResources.delete(JSON.stringify({name, plural: resource, namespace: namespaced ? testName : undefined}));
       });
     });
@@ -365,3 +372,9 @@ describe('Kubernetes resource CRUD operations', () => {
     });
   });
 });
+
+type ObjMapValue = {
+  kind: string;
+  namespaced?: boolean;
+  crd?: boolean;
+};

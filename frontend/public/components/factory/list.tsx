@@ -51,6 +51,8 @@ import {
   getClusterOperatorVersion,
 } from '../../module/k8s';
 
+import { getVMStatus } from '../../extend/kubevirt/module/k8s/vms';
+
 const fuzzyCaseInsensitive = (a, b) => fuzzy(_.toLower(a), _.toLower(b));
 
 // TODO: Having list filters here is undocumented, stringly-typed, and non-obvious. We can change that
@@ -183,6 +185,15 @@ const listFilters = {
     }
 
     const status = getClusterOperatorStatus(operator);
+    return statuses.selected.has(status) || !_.includes(statuses.all, status);
+  },
+
+  'vm-status': (statuses, vm) => {
+    if (!statuses || !statuses.selected || !statuses.selected.size) {
+      return true;
+    }
+
+    const status = getVMStatus(vm);
     return statuses.selected.has(status) || !_.includes(statuses.all, status);
   },
 };

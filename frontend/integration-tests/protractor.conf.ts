@@ -104,6 +104,7 @@ export const config: Config = {
     performance: ['tests/base.scenario.ts', 'tests/performance.scenario.ts'],
     serviceCatalog: ['tests/base.scenario.ts', 'tests/service-catalog/service-catalog.scenario.ts', 'tests/service-catalog/service-broker.scenario.ts', 'tests/service-catalog/service-class.scenario.ts', 'tests/service-catalog/service-binding.scenario.ts', 'tests/developer-catalog.scenario.ts'],
     overview: ['tests/base.scenario.ts', 'tests/overview/overview.scenario.ts'],
+    kubevirt: ['tests/base.scenario.ts', 'tests/kubevirt/vm.actions.scenario.ts'],
     e2e: [
       'tests/base.scenario.ts',
       'tests/crud.scenario.ts',
