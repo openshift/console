@@ -183,8 +183,15 @@ const filterByGroup = (items, filters) => {
     // Only apply active filters
     const activeFilters = _.filter(group, 'active');
     if (activeFilters.length) {
-      const values = _.map(activeFilters, 'value');
-      filtered[key] = _.filter(items, item => values.includes(item[key]));
+      const values = _.reduce(activeFilters, (filterValues, filter) => {
+        filterValues.push(filter.value, _.get(filter, 'synonyms', []));
+        return filterValues;
+      },
+      []);
+
+      filtered[key] = _.filter(items, item => {
+        return values.includes(item[key]);
+      });
     }
 
     return filtered;
@@ -340,9 +347,17 @@ const getFilterGroupCounts = (items, itemsSorter, filterGroups, selectedCategory
   const newFilterCounts = {};
 
   _.each(filterGroups, filterGroup => {
-    const count = _.countBy(activeItems, filterGroup);
-    _.each(Object.keys(count), valueKey => {
-      _.set(newFilterCounts, [filterGroup, valueKey], (count[valueKey] || 0));
+    _.each(_.keys(filters[filterGroup]), key => {
+      const filterValues = [
+        _.get(filters, [filterGroup, key, 'value']),
+        ..._.get(filters, [filterGroup, key, 'synonyms'], []),
+      ];
+
+      const matchedItems = _.filter(activeItems, item => {
+        return filterValues.includes(item[filterGroup]);
+      });
+
+      _.set(newFilterCounts, [filterGroup, key], _.size(matchedItems));
     });
   });
 

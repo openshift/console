@@ -9,9 +9,11 @@ import {MarketplaceItemModal} from './marketplace-item-modal';
 import {TileViewPage} from '../utils/tile-view-page';
 
 // Filter property white list
-const filterGroups = [
+const marketplaceFilterGroups = [
   'provider',
 ];
+
+const ignoredProviderTails = [', Inc.', ', Inc', ' Inc.', ' Inc', ', LLC', ' LLC'];
 
 export class MarketplaceTileViewPage extends React.Component {
   constructor(props) {
@@ -49,6 +51,45 @@ export class MarketplaceTileViewPage extends React.Component {
     });
 
     return newCategories;
+  }
+
+
+  static getProviderValue(value) {
+    if (!value) {
+      return value;
+    }
+
+    const providerTail = _.find(ignoredProviderTails, tail => value.endsWith(tail));
+    if (providerTail) {
+      return value.substring(0, value.indexOf(providerTail));
+    }
+
+    return value;
+  }
+
+  static determineAvailableFilters(initialFilters, items, filterGroups) {
+    const filters = _.cloneDeep(initialFilters);
+
+    _.each(filterGroups, field => {
+      _.each(items, item => {
+        let value = item[field];
+        let synonyms;
+        if (field === 'provider') {
+          value = MarketplaceTileViewPage.getProviderValue(value);
+          synonyms = _.map(ignoredProviderTails, tail => `${value}${tail}`);
+        }
+        if (value) {
+          _.set(filters, [field, value], {
+            label: value,
+            synonyms,
+            value,
+            active: false,
+          });
+        }
+      });
+    });
+
+    return filters;
   }
 
   static keywordCompare(filterString, item) {
@@ -120,7 +161,8 @@ export class MarketplaceTileViewPage extends React.Component {
           items={items}
           itemsSorter={(itemsToSort) => _.sortBy(itemsToSort, 'name')}
           getAvailableCategories={MarketplaceTileViewPage.determineCategories}
-          filterGroups={filterGroups}
+          getAvailableFilters={MarketplaceTileViewPage.determineAvailableFilters}
+          filterGroups={marketplaceFilterGroups}
           keywordCompare={MarketplaceTileViewPage.keywordCompare}
           renderTile={this.renderTile}
           emptyStateInfo="No marketplace items are being shown due to the filters being applied."
