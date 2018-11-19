@@ -14,7 +14,7 @@ describe(DetailsPage.displayName, () => {
   beforeEach(() => {
     const match = {params: {ns: 'default'}, isExact: true, path: '', url: ''};
 
-    wrapper = shallow(<DetailsPage match={match} name="test-name" namespace="default" kind={referenceForModel(PodModel)} pages={[]} />);
+    wrapper = shallow(<DetailsPage match={match} name="test-name" namespace="default" kind={referenceForModel(PodModel)} pages={[]} />).childAt(0).shallow();
   });
 
   it('renders a `Firehose` using the given props', () => {

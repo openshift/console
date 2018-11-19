@@ -68,7 +68,7 @@ export const ErrorBoundaryFallback: React.SFC<ErrorBoundaryFallbackProps> = (pro
   <div className="co-m-pane__body">
     <h1 className="co-m-pane__heading co-m-pane__heading--center">Oh no! Something went wrong.</h1>
     <div className="row">
-      <ExpandCollapse textCollapsed="Show error details..." textExpanded="Hide error details..." bordered={false}>
+      <ExpandCollapse textCollapsed="Show Details" textExpanded="Hide Details" bordered={false}>
         <h3 className="co-section-heading-tertiary">{props.title}</h3>
         <div className="form-group">
           <label htmlFor="description">Description: </label>

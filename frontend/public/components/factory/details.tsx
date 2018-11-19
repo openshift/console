@@ -6,6 +6,8 @@ import * as _ from 'lodash-es';
 
 import { Firehose, HorizontalNav, PageHeading } from '../utils';
 import { K8sResourceKindReference, K8sResourceKind } from '../../module/k8s';
+import { withFallback } from '../utils/error-boundary';
+import { ErrorBoundaryFallback } from '../error';
 
 export type FirehoseResource = {
   kind: K8sResourceKindReference;
@@ -18,7 +20,7 @@ export type FirehoseResource = {
   prop: string;
 };
 
-export const DetailsPage: React.SFC<DetailsPageProps> = (props) => <Firehose resources={[{
+export const DetailsPage = withFallback<DetailsPageProps>((props) => <Firehose resources={[{
   kind: props.kind,
   name: props.name,
   namespace: props.namespace,
@@ -40,7 +42,7 @@ export const DetailsPage: React.SFC<DetailsPageProps> = (props) => <Firehose res
     match={props.match}
     label={props.label || (props.kind as any).label}
     resourceKeys={_.map(props.resources, 'prop')} />
-</Firehose>;
+</Firehose>, ErrorBoundaryFallback);
 
 type Page = {
   href: string;
