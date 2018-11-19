@@ -24,6 +24,8 @@ $font-size-base: 13px;
 $grid-gutter-width: 30px;
 // Bootstrap font path.
 $icon-font-path: $consoleWebFontPath + '/';
+// Remove top border from .navbar-pf-vertical
+$navbar-pf-vertical-border-width: 0;
 $popover-max-width: 325px;
 $table-border-color: $color-pf-black-200;
 
