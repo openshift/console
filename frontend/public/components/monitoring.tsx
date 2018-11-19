@@ -183,17 +183,17 @@ const AlertsDetailsPage = withFallback(connect(alertStateToProps)((props: Alerts
 
   return <React.Fragment>
     <Helmet>
-      <title>{`${alertname} · Details`}</title>
+      <title>{`${alertname || AlertResource.label} · Details`}</title>
     </Helmet>
-    <div className="co-m-nav-title co-m-nav-title--detail">
-      <h1 className="co-m-pane__heading">
-        <div className="co-m-pane__name"><MonitoringResourceIcon className="co-m-resource-icon--lg pull-left" resource={AlertResource} />{alertname}</div>
-        {(state === AlertStates.Firing || state === AlertStates.Pending) && <div className="co-actions">
-          <ActionsMenu actions={[silenceAlert(alert)]} />
-        </div>}
-      </h1>
-    </div>
-    <StatusBox data={alert} loaded={loaded} loadError={loadError}>
+    <StatusBox data={alert} label={AlertResource.label} loaded={loaded} loadError={loadError}>
+      <div className="co-m-nav-title co-m-nav-title--detail">
+        <h1 className="co-m-pane__heading">
+          <div className="co-m-pane__name"><MonitoringResourceIcon className="co-m-resource-icon--lg pull-left" resource={AlertResource} />{alertname}</div>
+          {(state === AlertStates.Firing || state === AlertStates.Pending) && <div className="co-actions">
+            <ActionsMenu actions={[silenceAlert(alert)]} />
+          </div>}
+        </h1>
+      </div>
       <div className="co-m-pane__body">
         <SectionHeading text="Alert Overview" />
         <div className="co-m-pane__body-group">
@@ -301,14 +301,14 @@ const AlertRulesDetailsPage = withFallback(connect(ruleStateToProps)((props: Ale
 
   return <React.Fragment>
     <Helmet>
-      <title>{`${name} · Details`}</title>
+      <title>{`${name || AlertRuleResource.label} · Details`}</title>
     </Helmet>
-    <div className="co-m-nav-title co-m-nav-title--detail">
-      <h1 className="co-m-pane__heading">
-        <div className="co-m-pane__name"><MonitoringResourceIcon className="co-m-resource-icon--lg pull-left" resource={AlertRuleResource} />{name}</div>
-      </h1>
-    </div>
-    <StatusBox data={rule} loaded={loaded} loadError={loadError}>
+    <StatusBox data={rule} label={AlertRuleResource.label} loaded={loaded} loadError={loadError}>
+      <div className="co-m-nav-title co-m-nav-title--detail">
+        <h1 className="co-m-pane__heading">
+          <div className="co-m-pane__name"><MonitoringResourceIcon className="co-m-resource-icon--lg pull-left" resource={AlertRuleResource} />{name}</div>
+        </h1>
+      </div>
       <div className="co-m-pane__body">
         <div className="monitoring-heading">
           <SectionHeading text="Alert Rule Overview" />
@@ -385,55 +385,52 @@ const silenceParamToProps = (state, {match}) => {
 
 const SilencesDetailsPage = withFallback(connect(silenceParamToProps)((props: SilencesDetailsPageProps) => {
   const {loaded, loadError, silence} = props;
-
-  if (!silence) {
-    return null;
-  }
+  const {createdBy = '', comment = '', endsAt = '', matchers = {}, name = '', silencedAlerts = [], startsAt = '', updatedAt = ''} = silence || {};
 
   return <React.Fragment>
     <Helmet>
-      <title>{`${silence.name} · Details`}</title>
+      <title>{`${name || SilenceResource.label} · Details`}</title>
     </Helmet>
-    <div className="co-m-nav-title co-m-nav-title--detail">
-      <h1 className="co-m-pane__heading">
-        <div className="co-m-pane__name"><MonitoringResourceIcon className="co-m-resource-icon--lg pull-left" resource={SilenceResource} />{silence.name}</div>
-        <SilenceActionsMenu silence={silence} />
-      </h1>
-    </div>
-    <StatusBox data={silence} loaded={loaded} loadError={loadError}>
+    <StatusBox data={silence} label={SilenceResource.label} loaded={loaded} loadError={loadError}>
+      <div className="co-m-nav-title co-m-nav-title--detail">
+        <h1 className="co-m-pane__heading">
+          <div className="co-m-pane__name"><MonitoringResourceIcon className="co-m-resource-icon--lg pull-left" resource={SilenceResource} />{name}</div>
+          <SilenceActionsMenu silence={silence} />
+        </h1>
+      </div>
       <div className="co-m-pane__body">
         <SectionHeading text="Silence Overview" />
         <div className="co-m-pane__body-group">
           <div className="row">
             <div className="col-sm-6">
               <dl className="co-m-pane__details">
-                {silence.name && <React.Fragment>
+                {name && <React.Fragment>
                   <dt>Name</dt>
-                  <dd>{silence.name}</dd>
+                  <dd>{name}</dd>
                 </React.Fragment>}
                 <dt>Matchers</dt>
-                <dd>{_.isEmpty(silence.matchers)
+                <dd>{_.isEmpty(matchers)
                   ? <div className="text-muted">No matchers</div>
                   : <SilenceMatchersList silence={silence} />
                 }</dd>
                 <dt>State</dt>
                 <dd><SilenceState silence={silence} /></dd>
                 <dt>Last Updated At</dt>
-                <dd><Timestamp timestamp={silence.updatedAt} /></dd>
+                <dd><Timestamp timestamp={updatedAt} /></dd>
               </dl>
             </div>
             <div className="col-sm-6">
               <dl className="co-m-pane__details">
                 <dt>Starts At</dt>
-                <dd><Timestamp timestamp={silence.startsAt} /></dd>
+                <dd><Timestamp timestamp={startsAt} /></dd>
                 <dt>Ends At</dt>
-                <dd><Timestamp timestamp={silence.endsAt} /></dd>
+                <dd><Timestamp timestamp={endsAt} /></dd>
                 <dt>Created By</dt>
-                <dd>{silence.createdBy || '-'}</dd>
+                <dd>{createdBy || '-'}</dd>
                 <dt>Comments</dt>
-                <dd>{silence.comment || '-'}</dd>
+                <dd>{comment || '-'}</dd>
                 <dt>Silenced Alerts</dt>
-                <dd>{silence.silencedAlerts.length}</dd>
+                <dd>{silencedAlerts.length}</dd>
               </dl>
             </div>
           </div>
@@ -444,7 +441,7 @@ const SilencesDetailsPage = withFallback(connect(silenceParamToProps)((props: Si
           <SectionHeading text="Silenced Alerts" />
           <div className="row">
             <div className="col-xs-12">
-              <SilencedAlertsList alerts={silence.silencedAlerts} />
+              <SilencedAlertsList alerts={silencedAlerts} />
             </div>
           </div>
         </div>
@@ -847,7 +844,7 @@ const EditSilence = connect(silenceParamToProps)(({loaded, loadError, silence}) 
   const defaults = _.pick(silence, ['comment', 'createdBy', 'endsAt', 'id', 'matchers', 'startsAt']);
   defaults.startsAt = formatDate(new Date(defaults.startsAt));
   defaults.endsAt = formatDate(new Date(defaults.endsAt));
-  return <StatusBox data={silence} loaded={loaded} loadError={loadError}>
+  return <StatusBox data={silence} label={SilenceResource.label} loaded={loaded} loadError={loadError}>
     <SilenceForm defaults={defaults} title="Edit Silence" />
   </StatusBox>;
 });
