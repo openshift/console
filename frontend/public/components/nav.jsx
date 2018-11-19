@@ -267,6 +267,7 @@ const rolebindingsStartsWith = ['rolebindings', 'clusterrolebindings'];
 const quotaStartsWith = ['resourcequotas', 'clusterresourcequotas'];
 const imagestreamsStartsWith = ['imagestreams', 'imagestreamtags'];
 const clusterSettingsStartsWith = ['settings/cluster', 'settings/ldap'];
+const monitoringAlertsStartsWith = ['monitoring/alerts', 'monitoring/alertrules'];
 
 const ClusterPickerNavSection = connectToFlags(FLAGS.OPENSHIFT)(({flags}) => {
   // Hide the cluster picker on OpenShift clusters. Make sure flag detection is
@@ -286,7 +287,7 @@ const MonitoringNavSection_ = ({urls, closeMenu}) => {
   const grafanaURL = urls[MonitoringRoutes.Grafana];
   return window.SERVER_FLAGS.prometheusBaseURL || window.SERVER_FLAGS.alertManagerBaseURL || prometheusURL || grafanaURL
     ? <NavSection text="Monitoring" icon="pficon pficon-screen">
-      {window.SERVER_FLAGS.prometheusBaseURL && <HrefLink href="/monitoring/alerts" name="Alerts" onClick={closeMenu} />}
+      {window.SERVER_FLAGS.prometheusBaseURL && <HrefLink href="/monitoring/alerts" name="Alerts" onClick={closeMenu} startsWith={monitoringAlertsStartsWith} />}
       {window.SERVER_FLAGS.alertManagerBaseURL && <HrefLink href="/monitoring/silences" name="Silences" onClick={closeMenu} />}
       {prometheusURL && <HrefLink href={prometheusURL} target="_blank" name="Metrics" onClick={closeMenu} isExternal={true} />}
       {grafanaURL && <HrefLink href={grafanaURL} target="_blank" name="Dashboards" onClick={closeMenu} isExternal={true} />}
