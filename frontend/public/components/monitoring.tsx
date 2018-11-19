@@ -193,7 +193,7 @@ const AlertsDetailsPage = withFallback(connect(alertStateToProps)((props: Alerts
         </div>}
       </h1>
     </div>
-    <StatusBox data={alert} loaded={loaded} loadError={loadError}>
+    <StatusBox data={alert} label={AlertResource.label} loaded={loaded} loadError={loadError}>
       <div className="co-m-pane__body">
         <SectionHeading text="Alert Overview" />
         <div className="co-m-pane__body-group">
@@ -308,7 +308,7 @@ const AlertRulesDetailsPage = withFallback(connect(ruleStateToProps)((props: Ale
         <div className="co-m-pane__name"><MonitoringResourceIcon className="co-m-resource-icon--lg pull-left" resource={AlertRuleResource} />{name}</div>
       </h1>
     </div>
-    <StatusBox data={rule} loaded={loaded} loadError={loadError}>
+    <StatusBox data={rule} label={AlertRuleResource.label} loaded={loaded} loadError={loadError}>
       <div className="co-m-pane__body">
         <div className="monitoring-heading">
           <SectionHeading text="Alert Rule Overview" />
@@ -400,7 +400,7 @@ const SilencesDetailsPage = withFallback(connect(silenceParamToProps)((props: Si
         <SilenceActionsMenu silence={silence} />
       </h1>
     </div>
-    <StatusBox data={silence} loaded={loaded} loadError={loadError}>
+    <StatusBox data={silence} label={SilenceResource.label} loaded={loaded} loadError={loadError}>
       <div className="co-m-pane__body">
         <SectionHeading text="Silence Overview" />
         <div className="co-m-pane__body-group">
@@ -847,7 +847,7 @@ const EditSilence = connect(silenceParamToProps)(({loaded, loadError, silence}) 
   const defaults = _.pick(silence, ['comment', 'createdBy', 'endsAt', 'id', 'matchers', 'startsAt']);
   defaults.startsAt = formatDate(new Date(defaults.startsAt));
   defaults.endsAt = formatDate(new Date(defaults.endsAt));
-  return <StatusBox data={silence} loaded={loaded} loadError={loadError}>
+  return <StatusBox data={silence} label={SilenceResource.label} loaded={loaded} loadError={loadError}>
     <SilenceForm defaults={defaults} title="Edit Silence" />
   </StatusBox>;
 });
