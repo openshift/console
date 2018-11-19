@@ -1,26 +1,28 @@
 .cluster-picker {
   background-color: $color-os-nav-active;
   border-radius: 1px;
-  color: $color-os-nav-title;
   margin: 7px 10px;
-  padding: 2px 0 2px 10px;
 
   .dropdown {
-    .dropdown__not-btn {
-      white-space: nowrap;
-      text-overflow: ellipsis;
+    .btn-link {
+      color: $color-os-nav-title;
       overflow: hidden;
-      padding-right: 20px;
+      padding: 2px 20px 2px 10px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      width: 100%;
+      &:focus,
+      &:hover {
+        text-decoration: none;
+      }
       .caret {
         position: absolute;
         right: 9px;
-        top: 6px;
+        top: 9px;
       }
     }
     ul.dropdown-menu {
       box-shadow: 0 2px 4px rgba(0,0,0,0.175);
-      margin-left: -10px;
-      margin-top: 2px;
       min-width: 200px;
       @media(max-width: $grid-float-breakpoint-max) {
         width: 200px;
@@ -39,6 +41,7 @@
           }
           &:hover {
             background-color: $color-os-nav-hover;
+            border-color: $color-os-nav-hover;
           }
         }
       }
