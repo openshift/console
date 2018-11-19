@@ -43,6 +43,9 @@ $masthead-z-index: $sidebar-z-index + 1;
 
 // == Colors
 
+$color-error: $color-pf-red-100;
+// TODO (jon) review color usage throughout app and consolidate common colors into this file
+
 $color-alertmanager-dark: $color-pf-orange-500;
 $color-configmap-dark: $color-pf-purple-600;
 $color-container-dark: $color-pf-light-blue-400;

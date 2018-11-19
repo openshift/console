@@ -4,8 +4,8 @@ import * as _ from 'lodash-es';
 import { resourcePath } from './utils';
 import { fromNow } from './utils/datetime';
 import { K8sResourceKind } from '../module/k8s';
+import { getBuildNumber } from '../module/k8s/builds';
 
-const getBuildNumber = (resource: K8sResourceKind): number => _.get(resource, ['metadata', 'annotations', 'openshift.io/build.number']);
 const getStages = (status): any[] => (status && status.stages) || [];
 const getJenkinsStatus = (resource: K8sResourceKind) => {
   const json = _.get(resource, ['metadata', 'annotations', 'openshift.io/jenkins-status-json']);
@@ -39,12 +39,10 @@ const BuildSummaryStatusIcon: React.SFC<BuildSummaryStatusIconProps> = ({ status
     </span>;
 };
 
-const BuildLogLink: React.SFC<BuildLogLinkProps> = ({ obj }) => {
+export const BuildPipelineLogLink: React.SFC<BuildPipelineLogLinkProps> = ({ obj }) => {
   const link = getJenkinsLogURL(obj);
   return link
-    ? <div className="build-pipeline__link">
-      <a href={link} className="build-pipeline__log-link" target="_blank" rel="noopener noreferrer">View Log</a>
-    </div>
+    ? <a href={link} className="build-pipeline__log-link" target="_blank" rel="noopener noreferrer">View Logs</a>
     : null;
 };
 
@@ -65,7 +63,7 @@ const BuildPipelineSummary: React.SFC<BuildPipelineSummaryProps> = ({ obj }) => 
       <BuildSummaryStatusIcon status={obj.status.phase} /> <Link to={path} title={name}>Build {buildNumber}</Link>
     </div>
     <BuildSummaryTimestamp timestamp={obj.metadata.creationTimestamp} />
-    <BuildLogLink obj={obj} />
+    <BuildPipelineLogLink obj={obj} />
   </div>;
 };
 
@@ -131,44 +129,49 @@ export const BuildPipeline: React.SFC<BuildPipelineProps> = ({ obj }) => {
 
 /* eslint-disable no-undef */
 export type BuildPipelineProps = {
-  obj: K8sResourceKind,
+  obj: K8sResourceKind;
 };
 
 export type BuildStageProps = {
-  obj: K8sResourceKind,
-  stage: any,
+  obj: K8sResourceKind;
+  stage: any;
 };
 
 export type BuildAnimationProps = {
-  status: string,
+  status: string;
 };
 
 export type BuildPipelineSummaryProps = {
-  obj: K8sResourceKind,
+  obj: K8sResourceKind;
 };
 
 export type BuildSummaryStatusIconProps = {
-  status: string,
+  status: string;
 };
 
 export type BuildStageTimestampProps = {
-  timestamp: string,
+  timestamp: string;
 };
 
-export type BuildLogLinkProps = {
-  obj: K8sResourceKind,
+export type BuildPipelineLogLinkProps = {
+  obj: K8sResourceKind;
+};
+
+export type BuildPipelineLinkProps = {
+  obj: K8sResourceKind;
+  title: string;
 };
 
 export type BuildSummaryTimestampProps = {
-  timestamp: string,
+  timestamp: string;
 };
 
 export type BuildStageNameProps = {
-  name: string,
+  name: string;
 };
 
 export type JenkinsInputUrlProps = {
-  obj: K8sResourceKind,
-  stage: any,
+  obj: K8sResourceKind;
+  stage: any;
 };
 /* eslint-disable no-undef */
