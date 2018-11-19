@@ -291,9 +291,7 @@ const determineAvailableFilters = (initialFilters, items, filterGroups) => {
   return filters;
 };
 
-const getActiveFilters = (keywordFilter, groupFilters, availableFilters) => {
-  const activeFilters = _.cloneDeep(availableFilters);
-
+const getActiveFilters = (keywordFilter, groupFilters, activeFilters) => {
   activeFilters.keyword.value = keywordFilter || '';
   activeFilters.keyword.active = !!keywordFilter;
 
@@ -307,31 +305,28 @@ const getActiveFilters = (keywordFilter, groupFilters, availableFilters) => {
 };
 
 const updateActiveFilters = (activeFilters, filterType, id, value) => {
-  const updatedFilters = _.cloneDeep(activeFilters);
 
   if (filterType === 'keyword') {
-    _.set(updatedFilters, 'keyword.value', value);
-    _.set(updatedFilters, 'keyword.active', !!value);
+    _.set(activeFilters, 'keyword.value', value);
+    _.set(activeFilters, 'keyword.active', !!value);
   } else {
-    _.set(updatedFilters, [filterType, id, 'active'], value);
+    _.set(activeFilters, [filterType, id, 'active'], value);
   }
 
-  return updatedFilters;
+  return activeFilters;
 };
 
 const clearActiveFilters = (activeFilters, filterGroups) => {
-  const clearedFilters = _.cloneDeep(activeFilters);
-
   // Clear the keyword filter
-  _.set(clearedFilters, 'keyword.value', '');
-  _.set(clearedFilters, 'keyword.active', false);
+  _.set(activeFilters, 'keyword.value', '');
+  _.set(activeFilters, 'keyword.active', false);
 
   // Clear the group filters
   _.each(filterGroups, field => {
-    _.each(_.keys(clearedFilters[field]), key => _.set(clearedFilters, [field, key, 'active'], false));
+    _.each(_.keys(activeFilters[field]), key => _.set(activeFilters, [field, key, 'active'], false));
   });
 
-  return clearedFilters;
+  return activeFilters;
 };
 
 const getFilterGroupCounts = (items, itemsSorter, filterGroups, selectedCategoryId, filters, categories, keywordCompare) => {
@@ -429,25 +424,22 @@ const defaultFilters = {
 export class TileViewPage extends React.Component {
   constructor(props) {
     super(props);
-    const {items, itemsSorter, filterGroups, getAvailableCategories, getAvailableFilters} = this.props;
-
-    // Filters are populated based on white list of item properties
-    const availableFilters = getAvailableFilters(defaultFilters, items, filterGroups);
+    const {items, itemsSorter, getAvailableCategories} = this.props;
 
     const categories = getAvailableCategories(items);
 
     this.state = {
       categories: categorizeItems(items, itemsSorter, categories),
       selectedCategoryId: 'all',
-      availableFilters,
-      activeFilters: availableFilters,
+      activeFilters: defaultFilters,
       filterCounts: null,
     };
   }
 
   componentDidMount() {
-    const {filterGroups} = this.props;
-    const {categories, availableFilters} = this.state;
+    const {items, filterGroups, getAvailableFilters} = this.props;
+    const {categories} = this.state;
+    const availableFilters = getAvailableFilters(defaultFilters, items, filterGroups);
 
     const activeValues = getActiveValuesFromURL(availableFilters, filterGroups);
 
@@ -466,7 +458,26 @@ export class TileViewPage extends React.Component {
       const availableFilters = getAvailableFilters(defaultFilters, items, filterGroups);
       const marketplaceCategories = getAvailableCategories(items);
       const categories = categorizeItems(items, itemsSorter, marketplaceCategories);
-      this.setState({availableFilters, ...this.getUpdatedState(categories, selectedCategoryId, activeFilters)});
+
+      const newActiveFilters = _.reduce(availableFilters, (updatedFilters, filterGroup, filterGroupName) => {
+        if (filterGroupName === 'keyword') {
+          updatedFilters.keyword = activeFilters.keyword;
+          return updatedFilters;
+        }
+
+        _.each(filterGroup, (filterItem, filterItemName) => {
+          updatedFilters[filterGroupName][filterItemName].active = _.get(
+            activeFilters,
+            [filterGroupName, filterItemName, 'active'],
+            false)
+          ;
+        });
+
+        return updatedFilters;
+      },
+      availableFilters);
+
+      this.updateMountedState({...this.getUpdatedState(categories, selectedCategoryId, newActiveFilters)});
     }
   }
 

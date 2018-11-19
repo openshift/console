@@ -4,7 +4,6 @@ import * as PropTypes from 'prop-types';
 import {CatalogTile} from 'patternfly-react-extensions/dist/js/components/CatalogTile';
 import {Modal} from 'patternfly-react/dist/js/components/Modal';
 
-import {history} from '../utils/router';
 import {normalizeIconClass} from './catalog-item-icon';
 import {CatalogTileDetails} from './catalog-item-details';
 import {TileViewPage} from '../utils/tile-view-page';
@@ -130,13 +129,6 @@ export class CatalogTileViewPage extends React.Component {
     return item.tileName.toLowerCase().includes(filterString) ||
       (item.tileDescription && item.tileDescription.toLowerCase().includes(filterString)) ||
       (item.tags && item.tags.includes(filterString));
-  }
-
-  static setURLParams(params) {
-    const url = new URL(window.location);
-    const searchParams = `?${params.toString()}${url.hash}`;
-
-    history.replace(`${url.pathname}${searchParams}`);
   }
 
   openOverlay(detailsItem) {
