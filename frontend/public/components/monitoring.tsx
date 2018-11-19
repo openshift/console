@@ -90,7 +90,7 @@ const editSilence = silence => ({
   href: `${SilenceResource.path}/${silence.id}/edit`,
 });
 
-const cancelSilence = (silence, baseURL) => ({
+const expireSilence = (silence, baseURL) => ({
   label: 'Expire Silence',
   callback: () => confirmModal({
     title: 'Expire Silence',
@@ -104,7 +104,7 @@ const cancelSilence = (silence, baseURL) => ({
 const silenceMenuActions = (silence, urls) =>
   silenceState(silence) === SilenceStates.Expired || !urls[MonitoringRoutes.AlertManager]
     ? [editSilence(silence)]
-    : [editSilence(silence), cancelSilence(silence, urls[MonitoringRoutes.AlertManager])];
+    : [editSilence(silence), expireSilence(silence, urls[MonitoringRoutes.AlertManager])];
 
 const SilenceKebab_ = ({silence, urls}) => <Kebab options={silenceMenuActions(silence, urls)} />;
 const SilenceKebab = connectToURLs(MonitoringRoutes.AlertManager)(SilenceKebab_);
