@@ -8,6 +8,7 @@ import { FLAGS } from '../../features';
 import { NavSection, ClusterPickerNavSection, UserNavSection } from './okdcomponents';
 import { ChargebackReportModel, DeploymentConfigModel } from '../models';
 import { referenceForModel } from '../module/okdk8s';
+import { VmTemplatesPageTitle } from './vm-template';
 
 // With respect to keep changes to OKD codebase at bare minimum,
 // the navigation needs to be reconstructed.
@@ -34,6 +35,7 @@ const Nav = ({ isOpen, onToggle, close, scroller, onWheel, searchStartsWith, Res
 
           <NavSection text="Workloads" icon="fa fa-folder-open-o">
             <ResourceNSLink resource="virtualmachines" name="Virtual Machines" onClick={close} />
+            <ResourceNSLink resource="vmtemplates" name={VmTemplatesPageTitle} onClick={close} />
 
             <ResourceNSLink resource="pods" name="Pods" onClick={close} />
             <ResourceNSLink resource="deployments" name="Deployments" onClick={close} />

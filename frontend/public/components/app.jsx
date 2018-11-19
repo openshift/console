@@ -30,6 +30,7 @@ import '../style.scss';
 
 import { KubevirtDefaultPage } from '../kubevirt/components/app';
 import { isKubevirt } from '../kubevirt/components/utils/selectors';
+import { VirtualMachineTemplatesPage } from '../kubevirt/components/vm-template';
 
 // Edge lacks URLSearchParams
 import 'url-search-params-polyfill';
@@ -178,6 +179,9 @@ class App extends React.PureComponent {
             <Route path="/k8s/ns/:ns/customresourcedefinitions/:plural/:name" component={ResourceDetailsPage} />
             <Route path="/k8s/all-namespaces/customresourcedefinitions/:plural" exact component={ResourceListPage} />
             <Route path="/k8s/all-namespaces/customresourcedefinitions/:plural/:name" component={ResourceDetailsPage} />
+
+            <Route path="/k8s/ns/:ns/vmtemplates" exact component={VirtualMachineTemplatesPage} />
+            <Route path="/k8s/all-namespaces/vmtemplates" exact component={VirtualMachineTemplatesPage} />
 
             {
               // These pages are temporarily disabled. We need to update the safe resources list.

@@ -54,6 +54,7 @@ import {
   SubscriptionModel,
   VirtualMachineModel,
   PackageManifestModel,
+  VmTemplateModel,
 } from '../models';
 
 export const resourceDetailPages = ImmutableMap<GroupVersionKind | string, () => Promise<React.ComponentType<any>>>()
@@ -148,6 +149,7 @@ export const resourceListPages = ImmutableMap<GroupVersionKind | string, () => P
   .set(referenceForModel(StorageClassModel), () => import('./storage-class' /* webpackChunkName: "storage-class" */).then(m => m.StorageClassPage))
   .set(referenceForModel(CustomResourceDefinitionModel), () => import('./custom-resource-definition' /* webpackChunkName: "custom-resource-definition" */).then(m => m.CustomResourceDefinitionsPage))
   .set(referenceForModel(VirtualMachineModel), () => import('../kubevirt/components/vm' /* webpackChunkName: "virtual-machines" */).then(m => m.VirtualMachinesPage))
+  .set(referenceForModel(VmTemplateModel), () => import('../kubevirt/components/vm-template' /* webpackChunkName: "vm-templates" */).then(m => m.VirtualMachineTemplatesPage))
   .set(referenceForModel(ClusterServiceVersionModel), () => import('./operator-lifecycle-manager/clusterserviceversion' /* webpackChunkName: "clusterserviceversion" */).then(m => m.ClusterServiceVersionsPage))
   .set(referenceForModel(PackageManifestModel), () => import('./operator-lifecycle-manager/package-manifest' /* webpackChunkName: "package-manifest" */).then(m => m.PackageManifestsPage))
   .set(referenceForModel(SubscriptionModel), () => import('./operator-lifecycle-manager/subscription' /* webpackChunkName: "subscription" */).then(m => m.SubscriptionsPage))

@@ -1,5 +1,6 @@
 // eslint-disable-next-line no-unused-vars
 import { K8sKind } from '../../module/k8s';
+import { TEMPLATE_TYPE_LABEL } from 'kubevirt-web-ui-components';
 
 export const VirtualMachineModel: K8sKind = {
   label: 'Virtual Machine',
@@ -51,6 +52,22 @@ export const TemplateModel: K8sKind = {
   abbr: 'Template',
   kind: 'Template',
   id: 'template',
+};
+
+export const VmTemplateModel: K8sKind = {
+  label: 'Template',
+  labelPlural: 'Templates',
+  apiVersion: 'v1',
+  path: 'templates',
+  apiGroup: 'template.openshift.io',
+  plural: 'templates',
+  namespaced: true,
+  abbr: 'VMT',
+  kind: 'Template',
+  id: 'vmtemplate',
+  selector: {
+    matchLabels: {[TEMPLATE_TYPE_LABEL]: 'vm'},
+  },
 };
 
 export const NetworkAttachmentDefinitionModel: K8sKind = {
