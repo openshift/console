@@ -8,7 +8,7 @@ import { Link, Redirect, Route, Switch } from 'react-router-dom';
 
 import { coFetchJSON } from '../co-fetch';
 import k8sActions from '../module/k8s/k8s-actions';
-import { AlertStates, connectToURLs, isSilenced, MonitoringRoutes, SilenceStates } from '../monitoring';
+import { AlertStates, connectToURLs, MonitoringRoutes, SilenceStates } from '../monitoring';
 import store from '../redux';
 import { UIActions } from '../ui/ui-actions';
 import { monitoringRulesToProps, monitoringSilencesToProps } from '../ui/ui-reducers';
@@ -140,6 +140,20 @@ const SilenceState = ({silence}) => {
   return klass ? <React.Fragment><i className={klass} aria-hidden="true"></i> {_.startCase(state)}</React.Fragment> : null;
 };
 
+const StateTimestamp = ({text, timestamp}) => <div className="text-muted monitoring-timestamp">
+  {text}&nbsp;<Timestamp timestamp={timestamp} />
+</div>;
+
+const AlertStateDescription = ({alert}) => {
+  if (alert && !_.isEmpty(alert.silencedBy)) {
+    return <StateTimestamp text="Ends" timestamp={_.max(_.map(alert.silencedBy, 'endsAt'))} />;
+  }
+  if (alert && alert.activeAt) {
+    return <StateTimestamp text="Since" timestamp={alert.activeAt} />;
+  }
+  return null;
+};
+
 const Annotation = ({children, title}) => _.isNil(children)
   ? null
   : <React.Fragment><dt>{title}</dt><dd>{children}</dd></React.Fragment>;
@@ -158,15 +172,12 @@ const alertStateToProps = (state): AlertsDetailsPageProps => {
   const {data, loaded, loadError}: Rules = monitoringRulesToProps(state);
   const labels = getURLSearchParams();
   const alert = _.find(data, {labels});
-  const silencedBy = alertState(alert) === AlertStates.Silenced
-    ? _.filter(monitoringSilencesToProps(state).data, s => isSilenced(alert, s))
-    : [];
-  return {alert, loaded, loadError, silencedBy};
+  return {alert, loaded, loadError};
 };
 
 const AlertsDetailsPage = withFallback(connect(alertStateToProps)((props: AlertsDetailsPageProps) => {
-  const {alert, loaded, loadError, silencedBy} = props;
-  const {activeAt = '', annotations = {}, labels = {}, rule = null} = alert || {};
+  const {alert, loaded, loadError} = props;
+  const {annotations = {}, labels = {}, rule = null, silencedBy = []} = alert || {};
   const {alertname, severity} = labels as any;
   const state = alertState(alert);
 
@@ -205,7 +216,7 @@ const AlertsDetailsPage = withFallback(connect(alertStateToProps)((props: Alerts
                 <dt>State</dt>
                 <dd>
                   <AlertState state={state} />
-                  {activeAt && <div className="text-muted monitoring-timestamp">Active since&nbsp;<Timestamp timestamp={activeAt} /></div>}
+                  <AlertStateDescription alert={alert} />
                 </dd>
                 <dt>Alert Rule</dt>
                 <dd>
@@ -221,10 +232,6 @@ const AlertsDetailsPage = withFallback(connect(alertStateToProps)((props: Alerts
                 <Annotation title="Description">{annotations.description}</Annotation>
                 <Annotation title="Summary">{annotations.summary}</Annotation>
                 <Annotation title="Message">{annotations.message}</Annotation>
-                {annotations.runbook_url && <React.Fragment>
-                  <dt>Runbook</dt>
-                  <dd><ExternalLink href={annotations.runbook_url} text={annotations.runbook_url} /></dd>
-                </React.Fragment>}
               </dl>
             </div>
           </div>
@@ -330,10 +337,6 @@ const AlertRulesDetailsPage = withFallback(connect(ruleStateToProps)((props: Ale
                 </React.Fragment>}
                 <dt>Expression</dt>
                 <dd><pre className="monitoring-query">{query}</pre></dd>
-                {annotations.runbook_url && <React.Fragment>
-                  <dt>Runbook</dt>
-                  <dd><ExternalLink href={annotations.runbook_url} text={annotations.runbook_url} /></dd>
-                </React.Fragment>}
               </dl>
             </div>
           </div>
@@ -353,35 +356,26 @@ const AlertRulesDetailsPage = withFallback(connect(ruleStateToProps)((props: Ale
   </React.Fragment>;
 }));
 
-const silencedAlertsToProps = (state, {silence}) => ({
-  alerts: _.filter(_.get(monitoringRulesToProps(state), 'data'), a => alertState(a) === AlertStates.Silenced && isSilenced(a, silence)),
-});
-
-const SilencedAlertsList = connect(silencedAlertsToProps)(
-  ({alerts}) => _.isEmpty(alerts)
-    ? <div className="text-center">None Found</div>
-    : <div className="co-m-table-grid co-m-table-grid--bordered">
-      <div className="row co-m-table-grid__head">
-        <div className="col-xs-9">Name</div>
-        <div className="col-xs-3">Severity</div>
-      </div>
-      <div className="co-m-table-grid__body">
-        {_.sortBy(alerts, alertDescription).map((a, i) => <div className="row co-resource-list__item" key={i}>
-          <div className="col-xs-9">
-            <Link className="co-resource-link" to={alertURL(a)}>{a.labels.alertname}</Link>
-            <div className="monitoring-description">{alertDescription(a)}</div>
-          </div>
-          <div className="col-xs-3">{a.labels.severity}</div>
-          <div className="co-kebab-wrapper">
-            <Kebab options={[viewAlertRule(a)]} />
-          </div>
-        </div>)}
-      </div>
+const SilencedAlertsList = ({alerts}) => _.isEmpty(alerts)
+  ? <div className="text-center">None Found</div>
+  : <div className="co-m-table-grid co-m-table-grid--bordered">
+    <div className="row co-m-table-grid__head">
+      <div className="col-xs-9">Name</div>
+      <div className="col-xs-3">Severity</div>
     </div>
-);
-
-const SilencedAlertsCount_ = ({alerts}) => alerts.length;
-const SilencedAlertsCount = connect(silencedAlertsToProps)(SilencedAlertsCount_);
+    <div className="co-m-table-grid__body">
+      {_.sortBy(alerts, alertDescription).map((a, i) => <div className="row co-resource-list__item" key={i}>
+        <div className="col-xs-9">
+          <Link className="co-resource-link" to={alertURL(a)}>{a.labels.alertname}</Link>
+          <div className="monitoring-description">{alertDescription(a)}</div>
+        </div>
+        <div className="col-xs-3">{a.labels.severity}</div>
+        <div className="co-kebab-wrapper">
+          <Kebab options={[viewAlertRule(a)]} />
+        </div>
+      </div>)}
+    </div>
+  </div>;
 
 const silenceParamToProps = (state, {match}) => {
   const {data: silences, loaded, loadError}: Silences = monitoringSilencesToProps(state);
@@ -439,7 +433,7 @@ const SilencesDetailsPage = withFallback(connect(silenceParamToProps)((props: Si
                 <dt>Comments</dt>
                 <dd>{silence.comment || '-'}</dd>
                 <dt>Silenced Alerts</dt>
-                <dd><SilencedAlertsCount silence={silence} /></dd>
+                <dd>{silence.silencedAlerts.length}</dd>
               </dl>
             </div>
           </div>
@@ -450,7 +444,7 @@ const SilencesDetailsPage = withFallback(connect(silenceParamToProps)((props: Si
           <SectionHeading text="Silenced Alerts" />
           <div className="row">
             <div className="col-xs-12">
-              <SilencedAlertsList silence={silence} />
+              <SilencedAlertsList alerts={silence.silencedAlerts} />
             </div>
           </div>
         </div>
@@ -460,7 +454,7 @@ const SilencesDetailsPage = withFallback(connect(silenceParamToProps)((props: Si
 }));
 
 const AlertRow = ({obj}) => {
-  const {activeAt, annotations = {}, labels = {}} = obj;
+  const {annotations = {}, labels = {}} = obj;
   const state = alertState(obj);
 
   return <ResourceRow obj={obj}>
@@ -473,7 +467,7 @@ const AlertRow = ({obj}) => {
     </div>
     <div className="col-xs-3">
       <AlertState state={state} />
-      {activeAt && <div className="text-muted monitoring-timestamp">since&nbsp;<Timestamp timestamp={activeAt} /></div>}
+      <AlertStateDescription alert={obj} />
     </div>
     <div className="col-xs-2">{_.startCase(_.get(labels, 'severity', '-'))}</div>
     <div className="co-kebab-wrapper">
@@ -624,7 +618,7 @@ const AlertsPage = withFallback(connect(monitoringRulesToProps)(AlertsPage_));
 const SilenceHeader = props => <ListHeader>
   <ColHead {...props} className="col-xs-7" sortField="name">Name</ColHead>
   <ColHead {...props} className="col-xs-3" sortFunc="silenceStateOrder">State</ColHead>
-  <ColHead {...props} className="col-xs-2">Silenced Alerts</ColHead>
+  <ColHead {...props} className="col-xs-2" sortFunc="numSilencedAlerts">Silenced Alerts</ColHead>
 </ListHeader>;
 
 const SilenceRow = ({obj}) => {
@@ -642,13 +636,11 @@ const SilenceRow = ({obj}) => {
     </div>
     <div className="col-xs-3">
       <SilenceState silence={obj} />
-      <div className="text-muted monitoring-timestamp">
-        {state === SilenceStates.Pending && <React.Fragment>starts&nbsp;<Timestamp timestamp={obj.startsAt} /></React.Fragment>}
-        {state === SilenceStates.Active && <React.Fragment>ends&nbsp;<Timestamp timestamp={obj.endsAt} /></React.Fragment>}
-        {state === SilenceStates.Expired && <React.Fragment>expired&nbsp;<Timestamp timestamp={obj.endsAt} /></React.Fragment>}
-      </div>
+      {state === SilenceStates.Pending && <StateTimestamp text="Starts" timestamp={obj.startsAt} />}
+      {state === SilenceStates.Active && <StateTimestamp text="Ends" timestamp={obj.endsAt} />}
+      {state === SilenceStates.Expired && <StateTimestamp text="Expired" timestamp={obj.endsAt} />}
     </div>
-    <div className="col-xs-2"><SilencedAlertsCount silence={obj} /></div>
+    <div className="col-xs-2">{obj.silencedAlerts.length}</div>
     <div className="co-kebab-wrapper">
       <SilenceKebab silence={obj} />
     </div>
@@ -698,13 +690,15 @@ const toISODate = (dateStr: string): string => {
 
 const Text = props => <input {...props} type="text" className="form-control form-control--silence-text" />;
 
-const Datetime = props => <Tooltip content={[<span className="co-nowrap" key="co-timestamp">{toISODate(props.value)}</span>]}>
-  <Text
-    {...props}
-    pattern="\d{4}/(0[1-9]|1[012])/(0[1-9]|[12][0-9]|3[01]) ([01]\d|2[0-3]):[0-5]\d(:[0-5]\d)?"
-    placeholder="YYYY/MM/DD hh:mm:ss"
-  />
-</Tooltip>;
+const Datetime = props => <div>
+  <Tooltip content={[<span className="co-nowrap" key="co-timestamp">{toISODate(props.value)}</span>]}>
+    <Text
+      {...props}
+      pattern="\d{4}/(0[1-9]|1[012])/(0[1-9]|[12][0-9]|3[01]) ([01]\d|2[0-3]):[0-5]\d(:[0-5]\d)?"
+      placeholder="YYYY/MM/DD hh:mm:ss"
+    />
+  </Tooltip>
+</div>;
 
 class SilenceForm_ extends SafetyFirst<SilenceFormProps, SilenceFormState> {
   constructor(props) {
@@ -962,6 +956,8 @@ type Silence = {
   name?: string;
   startsAt: string;
   status?: {state: SilenceStates};
+  // eslint-disable-next-line no-use-before-define
+  silencedAlerts: Alert[];
   updatedAt?: string;
 };
 type Silences = {
@@ -974,6 +970,7 @@ type Alert = {
   annotations: any;
   labels: {[key: string]: string};
   rule?: any;
+  silencedBy: Silence[];
   state: AlertStates;
   value: number;
 };
@@ -998,7 +995,6 @@ export type AlertsDetailsPageProps = {
   alert: Alert;
   loaded: boolean;
   loadError?: string;
-  silencedBy: Silence[];
 };
 export type AlertRulesDetailsPageProps = {
   loaded: boolean;

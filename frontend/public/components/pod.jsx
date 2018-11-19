@@ -87,12 +87,12 @@ export const ContainerRow = ({pod, container}) => {
     <div className="col-sm-2 col-xs-4">
       <ContainerLink pod={pod} name={container.name} />
     </div>
-    <Overflow className="col-md-2 col-sm-3 hidden-xs" value={_.get(cstatus, 'containerID', '-')} />
-    <Overflow className="col-md-2 col-sm-3 col-xs-8" value={container.image} />
-    <div className="col-md-1 col-sm-2 hidden-xs text-nowrap">{_.get(cstate, 'label', '-')}</div>
+    <Overflow className="col-md-3 col-sm-4 col-xs-8" value={container.image} />
+    <div className="col-md-1 col-sm-2 hidden-xs">{_.get(cstate, 'label', '-')}</div>
     <div className="col-md-1 col-sm-2 hidden-xs">{_.get(cstatus, 'restartCount', '0')}</div>
     <div className="col-md-2 hidden-sm hidden-xs"><Timestamp timestamp={startedAt} /></div>
     <div className="col-md-2 hidden-sm hidden-xs"><Timestamp timestamp={finishedAt} /></div>
+    <div className="col-md-1 col-sm-2 hidden-xs">{_.get(cstate, 'exitCode', '-')}</div>
   </div>;
 };
 
@@ -122,12 +122,12 @@ const ContainerTable = ({heading, containers, pod}) => <div className="co-m-pane
     <div className="co-m-table-grid co-m-table-grid--bordered">
       <div className="row co-m-table-grid__head">
         <div className="col-sm-2 col-xs-4">Name</div>
-        <div className="col-md-2 col-sm-3 hidden-xs">Id</div>
-        <div className="col-md-2 col-sm-3 col-xs-8">Image</div>
+        <div className="col-md-3 col-sm-4 col-xs-8">Image</div>
         <div className="col-md-1 col-sm-2 hidden-xs">State</div>
         <div className="col-md-1 col-sm-2 hidden-xs">Restarts</div>
         <div className="col-md-2 hidden-sm hidden-xs">Started</div>
         <div className="col-md-2 hidden-sm hidden-xs">Finished</div>
+        <div className="col-md-1 col-sm-2 hidden-xs">Exit Code</div>
       </div>
       <div className="co-m-table-grid__body">
         {containers.map((c, i) => <ContainerRow key={i} pod={pod} container={c} />)}

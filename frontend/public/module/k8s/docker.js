@@ -37,8 +37,9 @@ export const getContainerState = function(containerStatus) {
   }
 
   const stateKey = keys[0];
-  state.label = stateKey;
   _.assign(state, containerStatus.state[stateKey]);
+  state.label = _.startCase(stateKey);
+  state.value = stateKey;
   return state;
 };
 

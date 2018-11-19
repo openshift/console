@@ -74,45 +74,58 @@ export class AddSecretToWorkloadModal extends React.Component<AddSecretToWorkloa
   getEnvPatches(obj) {
     const { secretName } = this.props;
     const { prefix } = this.state;
+    const envFrom = {
+      secretRef: {
+        name: secretName,
+      },
+      prefix,
+    };
 
     // Add `envFrom` to all containers.
     // TODO: Let use the user pick the container.
     const containers = getContainers(obj);
-    return containers.map((container, i) => ({
-      path: `/spec/template/spec/containers/${i}/envFrom`,
-      op: 'add',
-      value: [{
-        secretRef: {
-          name: secretName,
-        },
-        prefix,
-      }],
-    }));
+    const patches = containers.map((container, i) => {
+      // Create the array if it doesn't exist. Append to the array otherwise.
+      const containerPatch = _.isEmpty(container.envFrom)
+        ? { op: 'add', path: `/spec/template/spec/containers/${i}/envFrom`, value: [envFrom] }
+        : { op: 'add', path: `/spec/template/spec/containers/${i}/envFrom/-`, value: envFrom };
+      return containerPatch;
+    });
+
+    return patches;
   }
 
   getVolumePatches(obj) {
     const { secretName } = this.props;
     const { mountPath } = this.state;
+    const mount = {
+      name: secretName,
+      readOnly: true,
+      mountPath,
+    };
 
     // Add a volume mount to all containers.
     // TODO: Let use the user pick the container.
     const containers = getContainers(obj);
-    return containers.map((container, i) => ({
-      path: `/spec/template/spec/containers/${i}/volumeMounts`,
-      op: 'add',
-      value: [{
-        name: secretName,
-        readOnly: true,
-        mountPath,
-      }],
-    })).concat({
-      path: '/spec/template/spec/volumes',
-      op: 'add',
-      value: [{
-        name: secretName,
-        secret: { secretName },
-      }],
+    const patches = containers.map((container, i) => {
+      // Create the array if it doesn't exist. Append to the array otherwise.
+      const containerPatch = _.isEmpty(container.volumeMounts)
+        ? { op: 'add', path: `/spec/template/spec/containers/${i}/volumeMounts`, value: [mount] }
+        : { op: 'add', path: `/spec/template/spec/containers/${i}/volumeMounts/-`, value: mount };
+      return containerPatch;
     });
+
+    const volume = {
+      name: secretName,
+      secret: { secretName },
+    };
+    const existingVolumes = _.get(obj, 'spec.template.spec.volumes');
+
+    // Create the array if it doesn't exist. Append to the array otherwise.
+    const volumePatch = _.isEmpty(existingVolumes)
+      ? { op: 'add', path: '/spec/template/spec/volumes', value: [volume] }
+      : { op: 'add', path: '/spec/template/spec/volumes/-', value: volume };
+    return [ ...patches, volumePatch ];
   }
 
   getPatches(obj) {

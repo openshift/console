@@ -223,10 +223,6 @@ class App extends React.PureComponent {
             <Route path="/k8s/all-namespaces/:plural" exact component={ResourceListPage} />
             <Route path="/k8s/all-namespaces/:plural/:name" component={ResourceDetailsPage} />
 
-            <LazyRoute path="/settings/profile" exact loader={() => import('./profile').then(m => m.ProfilePage)} />
-            <LazyRoute path="/settings/ldap" exact loader={() => import('./cluster-settings/ldap').then(m => m.LDAPPage)} />
-            <LazyRoute path="/settings/cluster" exact loader={() => import('./cluster-settings/cluster-settings').then(m => m.ClusterSettingsPage)} />
-
             <LazyRoute path="/error" exact loader={() => import('./error').then(m => m.ErrorPage)} />
             <Route path="/" exact component={DefaultPage} />
 

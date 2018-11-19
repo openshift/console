@@ -4,6 +4,7 @@
   color: $color-os-nav-title;
   display: flex;
   height: $masthead-height-mobile;
+  justify-content: space-between;
   left: 0;
   position: fixed;
   right: 0;
@@ -19,6 +20,21 @@
     @media(max-width: $grid-float-breakpoint-max) {
       display: none;
     }
+  }
+  &__dropdowns {
+    display: flex;
+    justify-content: space-between;
+    margin-left: auto;
+    margin-right: 20px;
+  }
+  &__help {
+    display: none;
+    @media (min-width: $grid-float-breakpoint) {
+      display: block;
+    }
+  }
+  &__help-icon {
+    margin: 0 2px 0 5px;
   }
   &__logo {
     align-items: center;
@@ -36,23 +52,52 @@
     display: flex;
     height: 100%;
   }
+  &__modal {
+    padding-top: 40px;
+    h1 {
+      font-size: 24px;
+      margin-bottom: 40px;
+    }
+  }
+  &__modal--upstream {
+    .about-modal-pf {
+      background-color: $color-pf-black;
+      background-image: url('./imgs/bg-modal-about.png');
+      background-size: 300px auto;
+    }
+    .close {
+      opacity: 0.5;
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
+  &__modal--version {
+    margin: 0;
+  }
   &__user {
     display: none;
     @media (min-width: $grid-float-breakpoint) {
       align-items: baseline;
       display: flex;
-      margin-left: auto;
-      margin-right: 20px;
     }
     .dropdown__not-btn,
     .dropdown__not-btn__title {
       align-items: baseline;
       display: flex;
     }
+    .no-dropdown {
+      line-height: normal !important; // override pf style
+      &:hover,
+      &:focus {
+        background-color: $color-pf-black !important; // override pf style
+      }
+    }
   }
   &__user-icon {
-    font-size: 14px;
+    font-size: ($font-size-base + 4);
     margin-right: 5px;
+    padding-right: 0 !important; // override pf style
   }
   &__username {
     font-weight: 300;
@@ -65,6 +110,10 @@
     @media(min-width: $screen-md-min) {
       max-width: 300px;
     }
+  }
+  .co-actions-menu {
+    padding: 0;
+    margin: 0;
   }
 }
 
