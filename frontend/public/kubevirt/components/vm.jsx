@@ -54,7 +54,6 @@ const VMHeader = props => <ListHeader>
   <ColHead {...props} className="col-lg-2 col-md-2 col-sm-2 col-xs-6" sortField="metadata.name">Name</ColHead>
   <ColHead {...props} className="col-lg-2 col-md-2 col-sm-2 col-xs-6" sortField="metadata.namespace">Namespace</ColHead>
   <ColHead {...props} className="col-lg-2 col-md-2 col-sm-2 hidden-xs" sortField="spec.running">State</ColHead>
-  <ColHead {...props} className="col-lg-2 col-md-2 col-sm-2 hidden-xs" sortField="metadata.phase">Phase</ColHead>
   <ColHead {...props} className="col-lg-2 col-md-2 col-sm-2 hidden-xs">Virtual Machine Instance</ColHead>
   <ColHead {...props} className="col-lg-2 col-md-2 col-sm-2 hidden-xs">Pod</ColHead>
 </ListHeader>;
@@ -115,15 +114,6 @@ const StateColumn = props => {
   return DASHES;
 };
 
-const PhaseColumn = props => {
-  if (props.loaded){
-    const resources = props.flatten(props.resources);
-    const vmi = props.filter(resources);
-    return _.get(vmi, 'status.phase', DASHES);
-  }
-  return DASHES;
-};
-
 const FirehoseResourceLink = props => {
   if (props.loaded) {
     const data = props.flatten(props.resources);
@@ -163,11 +153,6 @@ export const VMRow = ({obj: vm}) => {
     </div>
     <div className="col-lg-2 col-md-2 col-sm-2 hidden-xs">
       <Firehose resources={[vmiResources]} flatten={getFlattenForKind(VirtualMachineInstanceModel.kind)}>
-        <PhaseColumn filter={data => findVMI(data, vm.metadata.name)} />
-      </Firehose>
-    </div>
-    <div className="col-lg-2 col-md-2 col-sm-2 hidden-xs">
-      <Firehose resources={[vmiResources]} flatten={getFlattenForKind(VirtualMachineInstanceModel.kind)}>
         <FirehoseResourceLink filter={data => findVMI(data, vm.metadata.name)} />
       </Firehose>
     </div>
@@ -197,12 +182,6 @@ const VMStatus = (props) => {
         <dd>
           <Firehose resources={[vmResource]} flatten={getFlattenForKind(VirtualMachineModel.kind)}>
             <StateColumn />
-          </Firehose>
-        </dd>
-        <dt>Phase:</dt>
-        <dd>
-          <Firehose resources={[vmiResources]} flatten={getFlattenForKind(VirtualMachineInstanceModel.kind)}>
-            <PhaseColumn filter={data => findVMI(data, props.vm.metadata.name)} />
           </Firehose>
         </dd>
         <dt>VM Instance:</dt>
