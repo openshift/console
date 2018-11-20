@@ -189,15 +189,6 @@ spec:
         image: openshift/hello-openshift
         ports:
         - containerPort: 8080
-`).setIn([referenceForModel(k8sModels.ClusterModel), 'default'], `
-apiVersion: multicluster.coreos.com/v1
-kind: Cluster
-metadata:
-  name: example
-  annotations:
-    'multicluster.coreos.com/console-url': 'http://localhost:9000'
-    'multicluster.coreos.com/directory': true
-spec: {}
 `).setIn([referenceForModel(k8sModels.ConfigMapModel), 'default'], `
 apiVersion: v1
 kind: ConfigMap

@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { Map as ImmutableMap } from 'immutable';
 import * as _ from 'lodash-es';
 
-import { SelfSubjectAccessReviewModel, PrometheusModel, ClusterServiceVersionModel, ClusterModel, ChargebackReportModel, ClusterServiceClassModel, PackageManifestModel } from './models';
+import { SelfSubjectAccessReviewModel, PrometheusModel, ClusterServiceVersionModel, ChargebackReportModel, ClusterServiceClassModel, PackageManifestModel } from './models';
 import { k8sBasePath, referenceForModel } from './module/k8s/k8s';
 import { k8sCreate } from './module/k8s/resource';
 import { types } from './module/k8s/k8s-actions';
@@ -15,7 +15,6 @@ import { UIActions } from './ui/ui-actions';
   FLAGS: false,
   AUTH_ENABLED: false,
   PROMETHEUS: false,
-  MULTI_CLUSTER: false,
   OPERATOR_LIFECYCLE_MANAGER: false,
   CALICO: false,
   CHARGEBACK: false,
@@ -32,7 +31,6 @@ import { UIActions } from './ui/ui-actions';
 export enum FLAGS {
   AUTH_ENABLED = 'AUTH_ENABLED',
   PROMETHEUS = 'PROMETHEUS',
-  MULTI_CLUSTER = 'MULTI_CLUSTER',
   OPERATOR_LIFECYCLE_MANAGER = 'OPERATOR_LIFECYCLE_MANAGER',
   CALICO = 'CALICO',
   CHARGEBACK = 'CHARGEBACK',
@@ -55,7 +53,6 @@ export const DEFAULTS_ = _.mapValues(FLAGS, flag => flag === FLAGS.AUTH_ENABLED
 
 export const CRDs = {
   [referenceForModel(PrometheusModel)]: FLAGS.PROMETHEUS,
-  [referenceForModel(ClusterModel)]: FLAGS.MULTI_CLUSTER,
   [referenceForModel(ChargebackReportModel)]: FLAGS.CHARGEBACK,
   [referenceForModel(ClusterServiceClassModel)]: FLAGS.SERVICE_CATALOG,
   [referenceForModel(ClusterServiceVersionModel)]: FLAGS.OPERATOR_LIFECYCLE_MANAGER,
