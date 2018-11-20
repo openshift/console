@@ -6,17 +6,30 @@
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@novnc/novnc/-/novnc-1.0.0.tgz#76b0e89e6f8738ca8154195baf5b8e6a80bc9105"
 
-"@patternfly/react-console@1.5.0":
-  version "1.5.0"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-console/-/react-console-1.5.0.tgz#7a3bddb9813033e75c0a7c3fdbea73115e22476d"
+"@patternfly/react-console@1.7.4":
+  version "1.7.4"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-console/-/react-console-1.7.4.tgz#f8c3971d02771c961fb59695ca2f1d59716ab550"
+  integrity sha512-tPl75WxKlBxTh7GpakC8xxIPZ7U1u/l+zb21sT62xTFmR1BCJskit2y/tkRO2FtBselFHoirqXeyiWUs9Ha4ew==
   dependencies:
     "@novnc/novnc" "^1.0.0"
+    blob-polyfill "^3.0.20180112"
     classnames "^2.2.5"
+    file-saver "^1.3.8"
     xterm "^3.3.0"
+
+blob-polyfill@^3.0.20180112:
+  version "3.0.20180112"
+  resolved "https://registry.yarnpkg.com/blob-polyfill/-/blob-polyfill-3.0.20180112.tgz#7f7c3e235ae298867f8c22b429d33aa9a7cc65b5"
+  integrity sha512-DX/47MXO+hNuEhuZRW9/yykNoCe7E/ywcPKtPVqGPRwLlowN811xi/3yVMQkE2fhTGHfrH8O9BMuhM7IdcRyew==
 
 classnames@^2.2.5:
   version "2.2.6"
   resolved "https://registry.yarnpkg.com/classnames/-/classnames-2.2.6.tgz#43935bffdd291f326dad0a205309b38d00f650ce"
+
+file-saver@^1.3.8:
+  version "1.3.8"
+  resolved "https://registry.yarnpkg.com/file-saver/-/file-saver-1.3.8.tgz#e68a30c7cb044e2fb362b428469feb291c2e09d8"
+  integrity sha512-spKHSBQIxxS81N/O21WmuXA2F6wppUCsutpzenOeZzOCCJ5gEfcbqJP983IrpLXzYmXnMUa6J03SubcNPdKrlg==
 
 kubevirt-web-ui-components@^0.1.6:
   version "0.1.7"
