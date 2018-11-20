@@ -1,0 +1,25 @@
+.build-overview__item {
+  display: flex;
+  flex-direction: column;
+}
+
+.build-overview__item-title {
+  display: flex;
+  justify-content: space-between;
+}
+
+.build-overview__item-reason {
+  border-left: 2px solid $color-error;
+  display: flex;
+  flex-direction: column;
+  margin-left: 6px;
+  padding: 10px 0 10px 13px;
+}
+
+.build-overview__log-snippet {
+  margin: 0;
+}
+
+.build-overview__status-message {
+  margin-bottom: 10px;
+}

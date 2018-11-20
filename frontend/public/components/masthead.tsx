@@ -89,8 +89,7 @@ class HelpMenu extends React.Component<{}, {}> {
         actions={[
           {label: 'Documentation', callback: this.openDocumentation},
           {label: 'About', callback: launchAboutModal}]}
-        buttonClassName="nav-item-iconic"
-        noButton
+        buttonClassName="btn-link nav-item-iconic"
         noCaret
         title={<i className="fa fa-question-circle-o co-masthead__help-icon" />} />
     </React.Fragment>;
@@ -107,9 +106,8 @@ const UserMenu: React.StatelessComponent<UserMenuProps> = ({username, actions}) 
   }
 
   return <ActionsMenu actions={actions}
-    buttonClassName="nav-item-iconic"
     title={title}
-    noButton={true} />;
+    buttonClassName="btn-link nav-item-iconic" />;
 };
 
 const UserMenuWrapper = connectToFlags(FLAGS.AUTH_ENABLED, FLAGS.OPENSHIFT)((props: FlagsProps) => {

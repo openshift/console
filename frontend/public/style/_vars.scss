@@ -24,6 +24,8 @@ $font-size-base: 13px;
 $grid-gutter-width: 30px;
 // Bootstrap font path.
 $icon-font-path: $consoleWebFontPath + '/';
+// Remove top border from .navbar-pf-vertical
+$navbar-pf-vertical-border-width: 0;
 $popover-max-width: 325px;
 $table-border-color: $color-pf-black-200;
 
@@ -42,6 +44,9 @@ $masthead-z-index: $sidebar-z-index + 1;
 
 
 // == Colors
+
+$color-error: $color-pf-red-100;
+// TODO (jon) review color usage throughout app and consolidate common colors into this file
 
 $color-alertmanager-dark: $color-pf-orange-500;
 $color-configmap-dark: $color-pf-purple-600;

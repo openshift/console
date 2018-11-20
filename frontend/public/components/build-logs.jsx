@@ -1,8 +1,9 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { LOG_SOURCE_RUNNING, LOG_SOURCE_TERMINATED, LOG_SOURCE_WAITING, MsgBox, ResourceLog } from './utils';
-import { getJenkinsLogURL } from './build-pipeline';
+import { getJenkinsLogURL, BuildPipelineLogLink } from './build-pipeline';
 import { BuildStrategyType } from './build';
+import { BuildPhase } from '../module/k8s/builds';
 
 const PipelineLogMessage = ({ build }) => {
   const logURL = getJenkinsLogURL(build);
@@ -12,7 +13,7 @@ const PipelineLogMessage = ({ build }) => {
 
   const detail = <React.Fragment>
     <p>{message}</p>
-    { logURL && <a href={logURL} target="_blank" rel="noopener noreferrer">View Log</a> }
+    <BuildPipelineLogLink obj={build} />
   </React.Fragment>;
 
   return <MsgBox title="See Jenkins Log" detail={detail} />;
@@ -21,13 +22,14 @@ const PipelineLogMessage = ({ build }) => {
 const buildPhaseToLogSourceStatus = (phase) => {
   switch (phase) {
 
-    case 'New':
-    case 'Pending':
+    case BuildPhase.New:
+    case BuildPhase.Pending:
       return LOG_SOURCE_WAITING;
-    case 'Cancelled':
-    case 'Complete':
-    case 'Error':
-    case 'Failed':
+
+    case BuildPhase.Cancelled:
+    case BuildPhase.Complete:
+    case BuildPhase.Error:
+    case BuildPhase.Failed:
       return LOG_SOURCE_TERMINATED;
 
     default:

@@ -68,18 +68,25 @@ const CreateNamespaceModal = connect(null, mapDispatchToProps)(class CreateNames
 
   _submit(event) {
     event.preventDefault();
+    const { createProject, close } = this.props;
 
-    let promise = this.props.createProject ? this.createProject() : this.createNamespace();
+    let promise = createProject ? this.createProject() : this.createNamespace();
     if (this.state.np === deny) {
       promise = promise.then(ns => {
         const policy = Object.assign({}, defaultDeny, {metadata: {namespace: ns.metadata.name, name: 'default-deny'}});
-        return k8sCreate(NetworkPolicyModel, policy);
+        // Resolve the promise with the namespace object, not the network policy object, since we want to redirect to the namespace.
+        return k8sCreate(NetworkPolicyModel, policy).then(() => ns);
       });
     }
 
     this.handlePromise(promise).then(obj => {
-      this.props.close();
-      history.push(resourceObjPath(obj, referenceFor(obj)));
+      close();
+      if (createProject) {
+        // Redirect to the overview instead of the project details page.
+        history.push(`/overview/ns/${obj.metadata.name}`);
+      } else {
+        history.push(resourceObjPath(obj, referenceFor(obj)));
+      }
     });
   }
 

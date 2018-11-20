@@ -81,6 +81,7 @@
 @import "components/terminal";
 @import "components/catalog/catalog";
 @import "components/cluster-service-instance";
+@import "components/overview/build-overview";
 @import "components/overview/overview";
 @import "components/overview/project-overview";
 @import "components/list-view";
@@ -89,4 +90,3 @@
 @import "components/source-to-image";
 @import "components/routes/create-route";
 @import "components/storage-class-form";
-@import "components/overview/build-configs-overview";

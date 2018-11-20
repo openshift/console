@@ -33,9 +33,6 @@
       display: block;
     }
   }
-  &__help-icon {
-    margin: 0 2px 0 5px;
-  }
   &__logo {
     align-items: center;
     display: flex;
@@ -81,12 +78,8 @@
       align-items: baseline;
       display: flex;
     }
-    .dropdown__not-btn,
-    .dropdown__not-btn__title {
-      align-items: baseline;
-      display: flex;
-    }
     .no-dropdown {
+      cursor: default !important; // override pf style
       line-height: normal !important; // override pf style
       &:hover,
       &:focus {
@@ -114,6 +107,20 @@
   .co-actions-menu {
     padding: 0;
     margin: 0;
+  }
+}
+
+.co-masthead,
+.co-namespace-bar {
+  .btn-link {
+    border: 0;
+    color: $color-os-nav-title;
+    padding: 0;
+
+    &:focus,
+    &:hover {
+      text-decoration: none;
+    }
   }
 }
 
