@@ -7,11 +7,6 @@ $consoleWebFontPath: $consoleWebDistPath + 'fonts';
 
 // == Overrides of external dependency variables
 
-$contextselector-pf-bootstrap-select-width-desktop: 145px;
-$contextselector-pf-bootstrap-select-width-mobile: $contextselector-pf-bootstrap-select-width-desktop;
-$contextselector-pf-dropdown-toggle-padding-bottom: 20px;
-$contextselector-pf-dropdown-toggle-padding-top: 20px;
-$contextselector-pf-margin-left: 20px;
 // FontAwesome font path.
 $fa-font-path: $consoleWebFontPath;
 // PatternFly font path.
@@ -35,12 +30,6 @@ $table-border-color: $color-pf-black-200;
 $co-m-label-line-height: 19px;
 $masthead-height-desktop: 60px;
 $masthead-height-mobile: 40px;
-// Same value as $zindex-navbar-fixed from Bootstrap.
-// $zindex-navbar-fixed is not available since Bootstrap vars are imported after this file.
-$sidebar-z-index: 1030;
-// -- Depend on vars defined above
-// The z-index of the masthead needs to be greater than the left sidebar so the context selector opens over it.
-$masthead-z-index: $sidebar-z-index + 1;
 
 
 // == Colors

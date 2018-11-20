@@ -8,18 +8,12 @@
   left: 0;
   position: fixed;
   right: 0;
-  z-index: $masthead-z-index;
+  z-index: $zindex-navbar-fixed;
   @media (max-width: $grid-float-breakpoint-max) {
     padding-left: 50px; // make space for .sidebar-toggle
   }
   @media(min-width: $grid-float-breakpoint) {
     height: $masthead-height-desktop;
-  }
-  &__console-picker {
-    margin-left: 10px;
-    @media(max-width: $grid-float-breakpoint-max) {
-      display: none;
-    }
   }
   &__dropdowns {
     display: flex;
@@ -122,17 +116,4 @@
       text-decoration: none;
     }
   }
-}
-
-.contextselector-pf .bootstrap-select > .dropdown-toggle {
-  font-weight: 300;
-  padding-top: 19px;
-  width: 100%;
-  &:focus {
-    outline: 0 !important;
-  }
-}
-
-.contextselector-pf .bootstrap-select > .dropdown-menu {
-  min-width: 100%;
 }
