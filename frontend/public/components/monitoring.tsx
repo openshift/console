@@ -762,7 +762,7 @@ class SilenceForm_ extends SafetyFirst<SilenceFormProps, SilenceFormState> {
         refreshPoller('silences');
         history.push(`${SilenceResource.path}/${encodeURIComponent(_.get(data, 'silenceId'))}`);
       })
-      .catch(err => this.setState({error: err.json.error}))
+      .catch(err => this.setState({error: _.get(err, 'json.error') || err.message || 'Error saving Silence'}))
       .then(() => this.setState({inProgress: false}));
   }
   /* eslint-enable no-undef */
