@@ -21,12 +21,13 @@ import { startStopVmModal } from './modals/start-stop-vm-modal';
 import { restartVmModal } from './modals/restart-vm-modal';
 import { getResourceKind, getLabelMatcher, findVMI, findPod, getFlattenForKind, getVmStatus } from './utils/resources';
 
-import { CreateVmWizard, TEMPLATE_TYPE_LABEL, TEMPLATE_OS_LABEL } from 'kubevirt-web-ui-components';
+import { CreateVmWizard, BasicMigrationDialog, TEMPLATE_TYPE_LABEL, TEMPLATE_OS_LABEL } from 'kubevirt-web-ui-components';
 import VmConsolesConnected from './vmconsoles';
 import { Nic } from './nic';
 import { Disk } from './disk';
 import { DASHES } from './utils/constants';
 import { resourceLauncher } from './utils/resourceLauncher';
+import { showError } from './utils/showErrors';
 
 const VMHeader = props => <ListHeader>
   <ColHead {...props} className="col-lg-2 col-md-2 col-sm-2 col-xs-6" sortField="metadata.name">Name</ColHead>
@@ -59,7 +60,23 @@ const menuActionRestart = (kind, vm) => ({
   }),
 });
 
-const menuActions = [menuActionStart, menuActionRestart, Kebab.factory.Delete];
+const menuActionMigrate = (kind, vm) => ({
+  hidden: !_.get(vm, 'spec.running', false),
+  label: 'Migrate Virtual Machine',
+  callback: () => {
+    return resourceLauncher(BasicMigrationDialog, {
+      virtualMachineInstance: {
+        resource: getResourceKind(VirtualMachineInstanceModel, vm.metadata.name, true, vm.metadata.namespace, false, getLabelMatcher(vm)),
+        required: true,
+      },
+    })({
+      k8sCreate,
+      onMigrationError: showError,
+    });
+  },
+});
+
+const menuActions = [menuActionStart, menuActionRestart, menuActionMigrate, Kebab.factory.Delete];
 
 const StateColumn = props => {
   if (props.loaded){

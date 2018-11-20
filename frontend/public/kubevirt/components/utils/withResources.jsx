@@ -17,6 +17,16 @@ const checkErrors = (errors, dispose) => {
   }
 };
 
+const resolveResource = (data, resource) => {
+  const key = Object.keys(data).find(k => {
+    const value = data[k];
+
+    return value.metadata.name === resource.name && (!resource.namespaced || value.metadata.namespace === resource.namespace);
+  });
+
+  return key ? data[key] : {};
+};
+
 /*
  * Firehose helper
  */
@@ -35,11 +45,12 @@ export class WithResources extends React.Component {
 
     Object.keys(resourceMap).forEach(resourceKey => {
       const resourceConfig = resourceMap[resourceKey];
+      const configResource = resourceConfig.resource;
       const resource = _.get(resources, resourceConfig.resource.kind);
 
       if (resource) {
         if (resource.loaded) {
-          childrenProps[resourceKey] = resource.data;
+          childrenProps[resourceKey] = configResource.isList ? resource.data : resolveResource(resource.data, configResource);
         } else if (resourceConfig.required) {
           loaded = false;
         }
@@ -49,7 +60,7 @@ export class WithResources extends React.Component {
         }
       } else {
         // unknown resources (CRD not created in opeshift, etc..)
-        childrenProps[resourceKey] = resourceConfig.resource.isList ? [] : {};
+        childrenProps[resourceKey] = configResource.isList ? [] : {};
       }
     });
 
