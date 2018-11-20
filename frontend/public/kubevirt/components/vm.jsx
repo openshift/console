@@ -4,20 +4,15 @@ import { connect } from 'react-redux';
 
 import { ResourceEventStream } from './okdcomponents';
 import { ListHeader, ColHead, List, ListPage, ResourceRow, DetailsPage } from './factory/okdfactory';
-import { breadcrumbsForOwnerRefs, Firehose, ResourceLink, navFactory, ResourceKebab, Kebab, units } from './utils/okdutils';
+import { breadcrumbsForOwnerRefs, Firehose, ResourceLink, navFactory, ResourceKebab, Kebab } from './utils/okdutils';
 import {
   VirtualMachineInstanceModel,
   VirtualMachineModel,
   PodModel,
   NamespaceModel,
-  TemplateModel,
-  NetworkAttachmentDefinitionModel,
-  StorageClassModel,
-  PersistentVolumeClaimModel,
   VirtualMachineInstanceMigrationModel,
 } from '../models';
-import { k8sCreate, actions } from '../module/okdk8s';
-
+import { actions, k8sCreate } from '../module/okdk8s';
 import { startStopVmModal } from './modals/start-stop-vm-modal';
 import { restartVmModal } from './modals/restart-vm-modal';
 import {
@@ -27,24 +22,21 @@ import {
   findVMIMigration,
   getFlattenForKind,
 } from './utils/resources';
-
 import {
-  CreateVmWizard,
   BasicMigrationDialog,
-  TEMPLATE_TYPE_LABEL,
   TEMPLATE_OS_LABEL,
   VmStatus,
   getVmStatus,
   VM_STATUS_ALL,
   VM_STATUS_TO_TEXT,
 } from 'kubevirt-web-ui-components';
-
-import VmConsolesConnected from './vmconsoles';
-import { Nic } from './nic';
-import { Disk } from './disk';
 import { DASHES, IMPORTER_DV_POD_PREFIX, VIRT_LAUNCHER_POD_PREFIX } from './utils/constants';
 import { resourceLauncher } from './utils/resourceLauncher';
 import { showError } from './utils/showErrors';
+import VmConsolesConnected from './vmconsoles';
+import { Nic } from './nic';
+import { Disk } from './disk';
+import { openCreateVmWizard } from './modals/create-vm-modal';
 
 const VMHeader = props => <ListHeader>
   <ColHead {...props} className="col-lg-2 col-md-2 col-sm-2 col-xs-6" sortField="metadata.name">Name</ColHead>
@@ -335,42 +327,6 @@ const mapDispatchToProps = () => ({
   watchK8sList: actions.watchK8sList,
 });
 
-const openNewVmWizard = activeNamespace => {
-  const launcher = resourceLauncher(CreateVmWizard, {
-    namespaces: {
-      resource: getResourceKind(NamespaceModel, undefined, true, undefined, true),
-    },
-    templates: {
-      resource: getResourceKind(TemplateModel, undefined, true, undefined, true, undefined, [{key: TEMPLATE_TYPE_LABEL, operator: 'Exists' }]),
-    },
-    networkConfigs: {
-      resource: getResourceKind(NetworkAttachmentDefinitionModel, undefined, true, undefined, true),
-    },
-    storageClasses: {
-      resource: { kind:StorageClassModel.kind, isList: true, prop: StorageClassModel.kind},
-    },
-    persistentVolumeClaims: {
-      resource: { kind:PersistentVolumeClaimModel.kind, isList: true, prop: PersistentVolumeClaimModel.kind},
-    },
-  },(({namespaces}) => {
-      let selectedNamespace;
-
-      if (namespaces && activeNamespace){
-        selectedNamespace = namespaces.find(namespace => namespace.metadata.name === activeNamespace);
-      }
-
-      return {
-        selectedNamespace,
-      };
-    }));
-
-  launcher({
-    k8sCreate,
-    units,
-  });
-
-};
-
 const filters = [{
   type: 'vm-status',
   selected: VM_STATUS_ALL,
@@ -394,7 +350,7 @@ export const VirtualMachinesPage = connect(
       createLink: (type) => {
         switch (type) {
           case 'wizard':
-            return () => openNewVmWizard(this.props.namespace);
+            return () => openCreateVmWizard(this.props.namespace);
           default:
             return `/k8s/ns/${this.props.namespace || 'default'}/virtualmachines/new/`;
         }

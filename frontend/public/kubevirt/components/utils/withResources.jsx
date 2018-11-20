@@ -89,8 +89,12 @@ export class WithResources extends React.Component {
   }
 }
 
+WithResources.defaultProps = {
+  resources: {},
+};
+
 WithResources.propTypes = {
-  resources: PropTypes.array.isRequired,
+  resources: PropTypes.object,
   resourceMap: PropTypes.object.isRequired,
   dispose: PropTypes.func.isRequired,
   resourceToProps: PropTypes.func,
