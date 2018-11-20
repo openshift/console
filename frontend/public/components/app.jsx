@@ -106,13 +106,13 @@ class App extends React.PureComponent {
 
   render() {
     // Needed so we don't pull in the Catalog pages and its dependencies until the user navigates to the page
-    let catalogPageLoader = () =>
+    const catalogPageLoader = () =>
       import('./catalog/catalog-page' /* webpackChunkName: "catalog" */).then(m => {
         this.CatalogPage = m.CatalogPage;
         return m.CatalogPage;
       });
 
-    let renderCatalogRoute = (path) => {
+    const renderCatalogRoute = (path) => {
       if (this.CatalogPage) {
         return <Route path={path} exact component={this.CatalogPage} />;
       }

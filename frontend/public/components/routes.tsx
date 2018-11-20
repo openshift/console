@@ -43,7 +43,7 @@ const getRouteWebURL = (route) => {
 };
 
 const getSubdomain = (route) => {
-  let hostname = _.get(route, 'spec.host', '');
+  const hostname = _.get(route, 'spec.host', '');
   return hostname.replace(/^[a-z0-9]([-a-z0-9]*[a-z0-9])\./, '');
 };
 

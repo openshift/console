@@ -70,7 +70,7 @@ describe(PackageManifestList.displayName, () => {
   let packages: PackageManifestKind[];
 
   beforeEach(() => {
-    let otherPackageManifest = _.cloneDeep(testPackageManifest);
+    const otherPackageManifest = _.cloneDeep(testPackageManifest);
     otherPackageManifest.status.catalogSource = 'another-catalog-source';
     otherPackageManifest.status.catalogSourceDisplayName = 'Another Catalog Source';
     otherPackageManifest.status.catalogSourcePublisher = 'Some Publisher';

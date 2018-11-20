@@ -27,14 +27,14 @@ const parsers = {
       return null;
     }
     // XXX: Kubernetes allows for named ports, but the URL spec says ports must be digits.
-    let scheme, path, port, host, hostname, rest;
+    let scheme, port, host, hostname, rest;
     [scheme, ...rest] = str.split('://');
     if (!scheme) {
       return null;
     }
     str = rest.join();
     [host, ...rest] = str.split('/');
-    path = `/${rest.join()}`;
+    const path = `/${rest.join()}`;
     [hostname, port] = host.split(':');
     if (_.isUndefined(port)) {
       if (scheme === 'http') {

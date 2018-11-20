@@ -52,7 +52,7 @@ export const ExternalLink = ({href, text}) => <a className="co-external-link" hr
 export const getURLSearchParams = () => {
   const all = {};
   const params = new URLSearchParams(window.location.search);
-  for (let [k, v] of params.entries()) {
+  for (const [k, v] of params.entries()) {
     all[k] = v;
   }
   return all;

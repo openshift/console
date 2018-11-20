@@ -529,7 +529,7 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
     const type = this.state.newStorageClass.type;
     const dataParameters = this.getFormParams();
 
-    let data : StorageClass = {
+    const data : StorageClass = {
       metadata: {
         name: this.state.newStorageClass.name,
         annotations: {description: this.state.newStorageClass.description},

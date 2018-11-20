@@ -51,7 +51,7 @@ export const flatten = resources => _.flatMap(resources, resource => _.compact(r
 
 export const ResourceQuotasPage = connectToFlags(FLAGS.OPENSHIFT)(({namespace, flags}) => {
 
-  let resources = [{kind: 'ResourceQuota', namespaced: true}];
+  const resources = [{kind: 'ResourceQuota', namespaced: true}];
   let rowFilters = null;
 
   if (flagPending(flags[FLAGS.OPENSHIFT])) {

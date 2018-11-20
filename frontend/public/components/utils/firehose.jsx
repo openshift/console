@@ -38,7 +38,7 @@ const processReduxId = ({k8s}, props) => {
 
 const worstError = errors => {
   let worst = errors && errors[0];
-  for (let e of errors) {
+  for (const e of errors) {
     if (e.status === 403) {
       return e;
     }

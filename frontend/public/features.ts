@@ -120,7 +120,7 @@ const detectCanCreateProject = dispatch => coFetchJSON(projectRequestPath)
     }
   );
 
-export let featureActions = [
+export const featureActions = [
   detectCalicoFlags,
   detectOpenShift,
   detectProjectsAvailable,

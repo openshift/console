@@ -136,7 +136,7 @@ UpToDateTectonicCluster.propTypes = {
 //Component used when updates are available or in progress.
 const TectonicClusterAppVersion = ({tcAppVersion, secondaryAppVersions, tectonicVersions}) => {
   const {currentVersion, targetVersion, logsUrl, name} = tcAppVersion;
-  let desiredVersion = tcAppVersion.desiredVersion;
+  const desiredVersion = tcAppVersion.desiredVersion;
 
   const headerText = currentVersion === desiredVersion ? <span>{name} {currentVersion}</span> :
     <span className="co-cluster-updates__operator-subheader">{name} {currentVersion} &#10141; {desiredVersion || targetVersion}</span>;

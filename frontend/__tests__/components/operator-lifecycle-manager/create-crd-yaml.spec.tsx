@@ -32,7 +32,7 @@ describe(CreateCRDYAML.displayName, () => {
   });
 
   it('passes example YAML template to `CreateYAML` component using annotations on the ClusterServiceVersion', () => {
-    let data = _.cloneDeep(testClusterServiceVersion);
+    const data = _.cloneDeep(testClusterServiceVersion);
     data.metadata.annotations = {'alm-examples': JSON.stringify([testResourceInstance])};
     wrapper = wrapper.setProps({ClusterServiceVersion: {loaded: true, data}} as any);
 

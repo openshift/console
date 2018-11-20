@@ -379,7 +379,7 @@ export class CatalogTileViewPage extends React.Component {
   onFilterChange(filterType, id, value) {
     const { filters } = this.state;
     const { byType } = filters;
-    let byTypeValues = [];
+    const byTypeValues = [];
 
     if (filterType === 'byKeyword') {
       this.updateURL(KEYWORD_URL_PARAM, value);

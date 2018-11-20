@@ -238,7 +238,7 @@ describe(ClusterServiceVersionDetails.displayName, () => {
   });
 
   it('renders empty state for unfulfilled outputs and metadata', () => {
-    let emptyClusterServiceVersion: ClusterServiceVersionKind = _.cloneDeep(testClusterServiceVersion);
+    const emptyClusterServiceVersion: ClusterServiceVersionKind = _.cloneDeep(testClusterServiceVersion);
     emptyClusterServiceVersion.spec.description = '';
     emptyClusterServiceVersion.spec.provider = undefined;
     emptyClusterServiceVersion.spec.links = [];

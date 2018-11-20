@@ -38,7 +38,7 @@ describe(CreateYAML.displayName, () => {
   });
 
   it('creates sample object using default YAML template for model', () => {
-    let expectedObj = safeLoad(yamlTemplates.getIn([referenceForModel(PodModel), 'default']));
+    const expectedObj = safeLoad(yamlTemplates.getIn([referenceForModel(PodModel), 'default']));
     expectedObj.metadata.namespace = 'default';
 
     expect(wrapper.find(AsyncComponent).props().obj).toEqual(expectedObj);
