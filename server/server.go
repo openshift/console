@@ -54,7 +54,6 @@ type jsGlobals struct {
 	KubeAPIServerURL     string `json:"kubeAPIServerURL"`
 	PrometheusBaseURL    string `json:"prometheusBaseURL"`
 	AlertManagerBaseURL  string `json:"alertManagerBaseURL"`
-	DeveloperConsoleURL  string `json:"developerConsoleURL"`
 	Branding             string `json:"branding"`
 	DocumentationBaseURL string `json:"documentationBaseURL"`
 	ClusterName          string `json:"clusterName"`
@@ -74,7 +73,6 @@ type Server struct {
 	KubectlClientID      string
 	ClusterName          string
 	KubeAPIServerURL     string
-	DeveloperConsoleURL  string
 	DocumentationBaseURL *url.URL
 	Branding             string
 	GoogleTagManagerID   string
@@ -290,7 +288,6 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		LogoutRedirect:       s.LogoutRedirect.String(),
 		ClusterName:          s.ClusterName,
 		KubeAPIServerURL:     s.KubeAPIServerURL,
-		DeveloperConsoleURL:  s.DeveloperConsoleURL,
 		Branding:             s.Branding,
 		DocumentationBaseURL: s.DocumentationBaseURL.String(),
 		GoogleTagManagerID:   s.GoogleTagManagerID,
