@@ -124,11 +124,6 @@ const UserMenuWrapper = connectToFlags(FLAGS.AUTH_ENABLED, FLAGS.OPENSHIFT)((pro
     return <OSUserMenu actions={actions} />;
   }
 
-  actions.unshift({
-    label: 'My Account',
-    href: '/settings/profile',
-  });
-
   return authSvc.userID() ? <UserMenu actions={actions} username={authSvc.name()} /> : null;
 });
 
