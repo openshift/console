@@ -318,7 +318,7 @@ export class Dropdown extends DropdownMixin {
     _.each(items, (v, k) => addItem(k, v));
 
     return <div className={classNames(className)} ref={this.dropdownElement} style={this.props.style}>
-      <div className={classNames('dropdown', dropDownClassName, {'open': active && _.includes(buttonClassName, 'nav-item-iconic')})}>
+      <div className={classNames('dropdown', dropDownClassName)}>
         <button aria-haspopup="true" onClick={this.toggle} onKeyDown={this.onKeyDown} type="button" className={classNames('btn', 'btn-dropdown', 'dropdown-toggle', buttonClassName ? buttonClassName : 'btn-default')} id={this.props.id} aria-describedby={describedBy} >
           <div className="btn-dropdown__content-wrap">
             <span className="btn-dropdown__item">
