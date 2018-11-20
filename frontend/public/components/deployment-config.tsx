@@ -24,6 +24,8 @@ import {
   pluralize,
   ResourceSummary,
   SectionHeading,
+  togglePaused,
+  WorkloadPausedAlert,
 } from './utils';
 
 const DeploymentConfigsReference: K8sResourceKindReference = 'DeploymentConfig';
@@ -52,10 +54,16 @@ const rolloutAction = (kind, obj) => ({
   }),
 });
 
+export const pauseAction = (kind, obj) => ({
+  label: obj.spec.paused ? 'Resume Rollouts' : 'Pause Rollouts',
+  callback: () => togglePaused(kind, obj).catch((err) => errorModal({error: err.message})),
+});
+
 const {ModifyCount, AddStorage, EditEnvironment, common} = Kebab.factory;
 
 export const menuActions = [
   rolloutAction,
+  pauseAction,
   ModifyCount,
   AddStorage,
   EditEnvironment,
@@ -97,6 +105,7 @@ export const DeploymentConfigsDetails: React.SFC<{obj: any}> = ({obj: dc}) => {
   return <React.Fragment>
     <div className="co-m-pane__body">
       <SectionHeading text="Deployment Config Overview" />
+      {dc.spec.paused && <WorkloadPausedAlert obj={dc} model={DeploymentConfigModel} />}
       <DeploymentPodCounts resource={dc} resourceKind={DeploymentConfigModel} />
       <div className="co-m-pane__body-group">
         <div className="row">
