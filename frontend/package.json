@@ -116,7 +116,7 @@
     "@types/webpack": "^4.1.1",
     "bootstrap-sass": "^3.3.7",
     "cache-loader": "1.x",
-    "chromedriver": "2.x",
+    "chromedriver": "^2.43.3",
     "css-loader": "0.28.x",
     "enzyme": "3.x",
     "enzyme-adapter-react-16": "1.x",
