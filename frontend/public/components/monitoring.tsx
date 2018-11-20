@@ -90,28 +90,26 @@ const editSilence = silence => ({
   href: `${SilenceResource.path}/${silence.id}/edit`,
 });
 
-const cancelSilence = (silence, urls) => ({
+const cancelSilence = (silence) => ({
   label: 'Expire Silence',
   callback: () => confirmModal({
     title: 'Expire Silence',
     message: 'Are you sure you want to expire this silence?',
     btnText: 'Expire Silence',
-    executeFn: () => coFetchJSON.delete(`${urls[MonitoringRoutes.AlertManager]}/api/v1/silence/${silence.id}`)
+    executeFn: () => coFetchJSON.delete(`${(window as any).SERVER_FLAGS.alertManagerBaseURL}/api/v1/silence/${silence.id}`)
       .then(() => refreshPoller('silences')),
   }),
 });
 
-const silenceMenuActions = (silence, urls) => silenceState(silence) === SilenceStates.Expired
+const silenceMenuActions = (silence) => silenceState(silence) === SilenceStates.Expired
   ? [editSilence(silence)]
-  : [editSilence(silence), cancelSilence(silence, urls)];
+  : [editSilence(silence), cancelSilence(silence)];
 
-const SilenceKebab_ = ({silence, urls}) => <Kebab options={silenceMenuActions(silence, urls)} />;
-const SilenceKebab = connectToURLs(MonitoringRoutes.AlertManager)(SilenceKebab_);
+const SilenceKebab = ({silence}) => <Kebab options={silenceMenuActions(silence)} />;
 
-const SilenceActionsMenu_ = ({silence, urls}) => <div className="co-actions">
-  <ActionsMenu actions={silenceMenuActions(silence, urls)} />
+const SilenceActionsMenu = ({silence}) => <div className="co-actions">
+  <ActionsMenu actions={silenceMenuActions(silence)} />
 </div>;
-const SilenceActionsMenu = connectToURLs(MonitoringRoutes.AlertManager)(SilenceActionsMenu_);
 
 const MonitoringResourceIcon = props => {
   const {className, resource} = props;
@@ -744,8 +742,8 @@ class SilenceForm_ extends SafetyFirst<SilenceFormProps, SilenceFormState> {
   onSubmit = (e): void => {
     e.preventDefault();
 
-    const alertManagerURL = this.props.urls[MonitoringRoutes.AlertManager];
-    if (!alertManagerURL) {
+    const {alertManagerBaseURL} = (window as any).SERVER_FLAGS;
+    if (!alertManagerBaseURL) {
       this.setState({error: 'Alertmanager URL not set'});
       return;
     }
@@ -756,7 +754,7 @@ class SilenceForm_ extends SafetyFirst<SilenceFormProps, SilenceFormState> {
     body.startsAt = toISODate(body.startsAt);
     body.endsAt = toISODate(body.endsAt);
 
-    coFetchJSON.post(`${alertManagerURL}/api/v1/silences`, body)
+    coFetchJSON.post(`${alertManagerBaseURL}/api/v1/silences`, body)
       .then(({data}) => {
         this.setState({error: undefined});
         refreshPoller('silences');
@@ -838,7 +836,7 @@ class SilenceForm_ extends SafetyFirst<SilenceFormProps, SilenceFormState> {
     </div>;
   }
 }
-const SilenceForm = withFallback(connectToURLs(MonitoringRoutes.AlertManager)<SilenceFormProps>(SilenceForm_));
+const SilenceForm = withFallback(SilenceForm_);
 
 const EditSilence = connect(silenceParamToProps)(({loaded, loadError, silence}) => {
   const defaults = _.pick(silence, ['comment', 'createdBy', 'endsAt', 'id', 'matchers', 'startsAt']);
@@ -871,8 +869,7 @@ export class MonitoringUI extends React.Component<null, null> {
       poller();
     };
 
-    const {alertManagerBaseURL, prometheusBaseURL} = (window as any).SERVER_FLAGS;
-
+    const {prometheusBaseURL} = (window as any).SERVER_FLAGS;
     if (prometheusBaseURL) {
       poll(`${prometheusBaseURL}/api/v1/rules`, 'rules', data => {
         // Flatten the rules data to make it easier to work with, discard non-alerting rules since those are the only
@@ -903,6 +900,7 @@ export class MonitoringUI extends React.Component<null, null> {
       store.dispatch(UIActions.monitoringErrored('rules', new Error('prometheusBaseURL not set')));
     }
 
+    const {alertManagerBaseURL} = (window as any).SERVER_FLAGS;
     if (!alertManagerBaseURL) {
       const e = new Error('alertManagerBaseURL not set');
       store.dispatch(UIActions.monitoringErrored('alerts', e));
