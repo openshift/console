@@ -8163,15 +8163,16 @@ patternfly-react-extensions@2.12.8:
     patternfly-react "^2.23.0"
     react-virtualized "9.x"
 
-patternfly-react@^2.22.0:
-  version "2.22.0"
-  resolved "https://registry.yarnpkg.com/patternfly-react/-/patternfly-react-2.22.0.tgz#78527be85520089b76f57f0eb7676bb8e1d5afcd"
+patternfly-react@2.24.3:
+  version "2.24.3"
+  resolved "https://registry.yarnpkg.com/patternfly-react/-/patternfly-react-2.24.3.tgz#ed287fb6bf691add70c8b82ef76ee395065382ea"
+  integrity sha512-RyMkN79vWFq5aZLKNEOwKRtZCrElCduD9redU/+c1aAwfoyQbni1zGr1pURZ4FFlZvtB5ul/qRThZtspwc7XfA==
   dependencies:
     bootstrap-slider-without-jquery "^10.0.0"
     breakjs "^1.0.0"
     classnames "^2.2.5"
     css-element-queries "^1.0.1"
-    patternfly "^3.52.4"
+    patternfly "^3.58.0"
     react-bootstrap "^0.32.1"
     react-bootstrap-switch "^15.5.3"
     react-bootstrap-typeahead "^3.1.3"
@@ -8212,6 +8213,38 @@ patternfly-react@^2.23.0:
 patternfly@^3.52.1, patternfly@^3.52.4, patternfly@^3.54.8:
   version "3.54.8"
   resolved "https://registry.yarnpkg.com/patternfly/-/patternfly-3.54.8.tgz#fd6c69714dc460575d2534c9f29017a58b442a83"
+  dependencies:
+    bootstrap "~3.3.7"
+    font-awesome "^4.7.0"
+    jquery "~3.2.1"
+  optionalDependencies:
+    "@types/c3" "^0.6.0"
+    bootstrap-datepicker "^1.7.1"
+    bootstrap-sass "^3.3.7"
+    bootstrap-select "1.12.2"
+    bootstrap-slider "^9.9.0"
+    bootstrap-switch "~3.3.4"
+    bootstrap-touchspin "~3.1.1"
+    c3 "~0.4.11"
+    d3 "~3.5.17"
+    datatables.net "^1.10.15"
+    datatables.net-colreorder "^1.4.1"
+    datatables.net-colreorder-bs "~1.3.2"
+    datatables.net-select "~1.2.0"
+    drmonty-datatables-colvis "~1.1.2"
+    eonasdan-bootstrap-datetimepicker "^4.17.47"
+    font-awesome-sass "^4.7.0"
+    google-code-prettify "~1.0.5"
+    jquery-match-height "^0.7.2"
+    moment "^2.19.1"
+    moment-timezone "^0.4.1"
+    patternfly-bootstrap-combobox "~1.1.7"
+    patternfly-bootstrap-treeview "~2.1.0"
+
+patternfly@^3.58.0:
+  version "3.58.0"
+  resolved "https://registry.yarnpkg.com/patternfly/-/patternfly-3.58.0.tgz#c94516a9fbf2b645b63a53e58fcf39c45bf66a8b"
+  integrity sha512-geY0cbSFXoi9qv9cXCZe0OPCZBuLCuPKfEPXk0usTHjYSk5oUv3KMMuAJidbsbtXqc6vnDYjGfngepIlJ99rfg==
   dependencies:
     bootstrap "~3.3.7"
     font-awesome "^4.7.0"
