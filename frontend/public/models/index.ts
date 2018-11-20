@@ -816,3 +816,32 @@ export const MachineModel: K8sKind = {
   id: 'machine',
   crd: true,
 };
+
+// Openshift cluster resources
+export const ClusterOperatorModel: K8sKind = {
+  label: 'Cluster Operator',
+  labelPlural: 'Cluster Operators',
+  apiVersion: 'v1',
+  path: 'clusteroperators',
+  apiGroup: 'config.openshift.io',
+  plural: 'clusteroperators',
+  abbr: 'CO',
+  namespaced: false,
+  kind: 'ClusterOperator',
+  id: 'clusteroperator',
+  crd: true,
+};
+
+export const ClusterVersionModel: K8sKind = {
+  label: 'Cluster Version',
+  labelPlural: 'Cluster Versions',
+  apiVersion: 'v1',
+  path: 'clusterversions',
+  apiGroup: 'config.openshift.io',
+  plural: 'clusterversions',
+  abbr: 'CV',
+  namespaced: false,
+  kind: 'ClusterVersion',
+  id: 'clusterversion',
+  crd: true,
+};

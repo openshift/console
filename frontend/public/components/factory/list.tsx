@@ -19,6 +19,7 @@ import { UIActions } from '../../ui/ui-actions';
 import { ingressValidHosts } from '../ingress';
 import { alertState, silenceState } from '../monitoring';
 import { routeStatus } from '../routes';
+import { getClusterOperatorStatus } from '../cluster-settings/cluster-operator';
 import { secretTypeFilterReducer } from '../secret';
 import { bindingType, roleType } from '../RBAC';
 import {
@@ -161,6 +162,14 @@ const listFilters = {
     return fuzzyCaseInsensitive(str, displayName);
   },
 
+  'cluster-operator-status': (statuses, operator) => {
+    if (!statuses || !statuses.selected || !statuses.selected.size) {
+      return true;
+    }
+
+    const status = getClusterOperatorStatus(operator);
+    return statuses.selected.has(status) || !_.includes(statuses.all, status);
+  },
 };
 
 const getFilteredRows = (_filters, objects) => {
