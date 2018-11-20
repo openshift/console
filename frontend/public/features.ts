@@ -4,7 +4,15 @@ import { connect } from 'react-redux';
 import { Map as ImmutableMap } from 'immutable';
 import * as _ from 'lodash-es';
 
-import { SelfSubjectAccessReviewModel, PrometheusModel, ClusterServiceVersionModel, ChargebackReportModel, ClusterServiceClassModel, PackageManifestModel } from './models';
+import {
+  ChargebackReportModel,
+  ClusterServiceClassModel,
+  ClusterServiceVersionModel,
+  MachineModel,
+  PackageManifestModel,
+  PrometheusModel,
+  SelfSubjectAccessReviewModel,
+} from './models';
 import { k8sBasePath, referenceForModel } from './module/k8s/k8s';
 import { k8sCreate } from './module/k8s/resource';
 import { types } from './module/k8s/k8s-actions';
@@ -27,6 +35,7 @@ import { UIActions } from './ui/ui-actions';
   CAN_CREATE_PROJECT: false,
   PROJECTS_AVAILABLE: false,
   SERVICE_CATALOG: false,
+  CLUSTER_API false,
  */
 export enum FLAGS {
   AUTH_ENABLED = 'AUTH_ENABLED',
@@ -44,6 +53,7 @@ export enum FLAGS {
   PROJECTS_AVAILABLE = 'PROJECTS_AVAILABLE',
   SERVICE_CATALOG = 'SERVICE_CATALOG',
   KUBERNETES_MARKETPLACE = 'KUBERNETES_MARKETPLACE',
+  CLUSTER_API = 'CLUSTER_API',
 }
 
 export const DEFAULTS_ = _.mapValues(FLAGS, flag => flag === FLAGS.AUTH_ENABLED
@@ -57,6 +67,7 @@ export const CRDs = {
   [referenceForModel(ClusterServiceClassModel)]: FLAGS.SERVICE_CATALOG,
   [referenceForModel(ClusterServiceVersionModel)]: FLAGS.OPERATOR_LIFECYCLE_MANAGER,
   [referenceForModel(PackageManifestModel)]: FLAGS.KUBERNETES_MARKETPLACE,
+  [referenceForModel(MachineModel)]: FLAGS.CLUSTER_API,
 };
 
 const SET_FLAG = 'SET_FLAG';

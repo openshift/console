@@ -42,6 +42,7 @@ describe('featureReducer', () => {
       [FLAGS.SERVICE_CATALOG]: false,
       [FLAGS.OPERATOR_LIFECYCLE_MANAGER]: true,
       [FLAGS.KUBERNETES_MARKETPLACE]: false,
+      [FLAGS.CLUSTER_API]: false,
     }));
   });
 });

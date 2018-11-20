@@ -8,7 +8,19 @@ import * as PropTypes from 'prop-types';
 import { FLAGS, connectToFlags, featureReducerName, flagPending } from '../features';
 import { MonitoringRoutes, connectToURLs } from '../monitoring';
 import { formatNamespacedRouteForResource } from '../ui/ui-actions';
-import { BuildConfigModel, BuildModel, ClusterServiceVersionModel, DeploymentConfigModel, ImageStreamModel, SubscriptionModel, InstallPlanModel, PackageManifestModel, ChargebackReportModel } from '../models';
+import {
+  BuildConfigModel,
+  BuildModel,
+  ChargebackReportModel,
+  ClusterServiceVersionModel,
+  DeploymentConfigModel,
+  ImageStreamModel,
+  InstallPlanModel,
+  MachineModel,
+  MachineSetModel,
+  PackageManifestModel,
+  SubscriptionModel,
+} from '../models';
 import { referenceForModel } from '../module/k8s';
 import { authSvc } from '../module/auth';
 
@@ -423,6 +435,8 @@ export class Nav extends React.Component {
           <NavSection text="Administration" icon="fa fa-cog">
             <ResourceClusterLink resource="namespaces" name="Namespaces" onClick={this.close} required={FLAGS.CAN_LIST_NS} />
             <ResourceClusterLink resource="nodes" name="Nodes" onClick={this.close} required={FLAGS.CAN_LIST_NODE} />
+            <ResourceNSLink resource={referenceForModel(MachineSetModel)} name="Machine Sets" onClick={this.close} required={FLAGS.CLUSTER_API} />
+            <ResourceNSLink resource={referenceForModel(MachineModel)} name="Machines" onClick={this.close} required={FLAGS.CLUSTER_API} />
             <ResourceNSLink resource="serviceaccounts" name="Service Accounts" onClick={this.close} />
             <ResourceNSLink resource="roles" name="Roles" startsWith={rolesStartsWith} onClick={this.close} />
             <ResourceNSLink resource="rolebindings" name="Role Bindings" onClick={this.close} startsWith={rolebindingsStartsWith} />

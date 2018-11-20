@@ -70,6 +70,52 @@ export type CustomResourceDefinitionKind = {
   }
 } & K8sResourceKind;
 
+export type MachineSpec = {
+  providerConfig: {
+    value: K8sResourceKind;
+  };
+  versions: {
+    kubelet: string;
+  };
+  [key: string]: any;
+};
+
+export type MachineKind = {
+  spec: MachineSpec;
+  status?: {
+    addresses: {
+      address?: string;
+      type: string;
+    };
+    lastUpdated: string;
+    nodeRef: {
+      kind: string;
+      name: string;
+      uid: string;
+    };
+    providerStatus: {
+      kind: string;
+      conditions?: any[];
+      [key: string]: any;
+    };
+  };
+} & K8sResourceKind;
+
+export type MachineSetKind = {
+  spec: {
+    replicas: number;
+    template: {
+      spec: MachineSpec;
+    };
+  };
+  status?: {
+    availableReplicas: number;
+    fullyLabeledReplicas: number;
+    readyReplicas: number;
+    replicas: number;
+  };
+} & K8sResourceKind;
+
 export type K8sKind = {
   abbr: string;
   kind: string;
