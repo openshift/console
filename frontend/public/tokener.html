@@ -13,6 +13,10 @@
     <title>OpenShift Online</title>
     <meta name="application-name" content="OpenShift Online">
     [[ end ]]
+    [[ if eq .Branding "dedicated" ]]
+    <title>OpenShift Dedicated</title>
+    <meta name="application-name" content="OpenShift Dedicated">
+    [[ end ]]
 
     [[ if eq .Branding "okd" ]]
     <link rel="shortcut icon" href="<%= require('./imgs/okd-favicon.png') %>">
