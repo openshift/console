@@ -402,7 +402,7 @@ export const ActionsMenu = (props) => {
 ActionsMenu.propTypes = {
   actions: PropTypes.arrayOf(
     PropTypes.shape({
-      label: PropTypes.string.isRequired,
+      label: PropTypes.node.isRequired,
       href: PropTypes.string,
       callback: PropTypes.func,
     })).isRequired,
