@@ -57,14 +57,16 @@ describe(CatalogTileViewPage.displayName, () => {
 
   it('categorizes catalog items', () => {
     const categories = categorizeItems(catalogItems, itemsToSort => _.sortBy(itemsToSort, 'tileName'), initCatalogCategories);
-    expect(categories.length).toEqual(catalogCategories.length);
-    _.each(categories, (category, i) => {
-      expect(category.numItems).toEqual(catalogCategories[i].numItems);
+    expect(_.keys(categories).length).toEqual(_.keys(catalogCategories).length);
+    _.each(_.keys(categories), key => {
+      const category = categories[key];
+      expect(category.numItems).toEqual(catalogCategories[key].numItems);
       if (category.subcategories) {
-        expect(category.subcategories.length).toEqual(catalogCategories[i].subcategories.length);
+        expect(category.subcategories.length).toEqual(catalogCategories[key].subcategories.length);
       }
-      _.each(category.subcategories, (subcategory, s) => {
-        expect(subcategory.numItems).toEqual(catalogCategories[i].subcategories[s].numItems);
+      _.each(_.keys(category.subcategories), subKey => {
+        const subcategory = category.subcategories[subKey];
+        expect(subcategory.numItems).toEqual(catalogCategories[key].subcategories[subKey].numItems);
       });
     });
   });

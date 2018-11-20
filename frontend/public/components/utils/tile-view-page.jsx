@@ -13,7 +13,7 @@ const CATEGORY_URL_PARAM = 'category';
 const KEYWORD_URL_PARAM = 'keyword';
 
 const filterSubcategories = (category, item) => {
-  if (!_.size(category.subcategories)) {
+  if (!category.subcategories) {
     if (!category.values) {
       return [];
     }
@@ -29,16 +29,17 @@ const filterSubcategories = (category, item) => {
 
     return [];
   }
-  const matchedSubcategories = [];
 
-  _.each(category.subcategories, subCat => {
+  const matchedSubcategories = [];
+  _.forOwn(category.subcategories, subCategory => {
     let values = _.get(item, category.field);
+
     if (!Array.isArray(values)) {
       values = [values];
     }
-    if (!_.isEmpty(_.intersection(subCat.values, values))) {
-      matchedSubcategories.push(subCat);
-      matchedSubcategories.push(...filterSubcategories(subCat, item));
+
+    if (!_.isEmpty(_.intersection(subCategory.values, values))) {
+      matchedSubcategories.push(subCategory, ...filterSubcategories(subCategory, item));
     }
   });
 
@@ -67,27 +68,34 @@ const addItem = (item, category, subcategory = null) => {
 const isCategoryEmpty = ({ items }) => _.isEmpty(items);
 
 const pruneCategoriesWithNoItems = categories => {
-  _.remove(categories, isCategoryEmpty);
-  _.each(categories, category =>
-    _.remove(category.subcategories, isCategoryEmpty)
-  );
+  if (!categories) {
+    return;
+  }
+
+  _.forOwn(categories, (category, key) => {
+    if (isCategoryEmpty(category)) {
+      delete categories[key];
+    } else {
+      pruneCategoriesWithNoItems(category.subcategories);
+    }
+  });
 };
 
 const processSubCategories = (category, itemsSorter) => {
-  _.each(category.subcategories, subcategory => {
+  _.forOwn(category.subcategories, subcategory => {
     if (subcategory.items) {
       subcategory.numItems = _.size(subcategory.items);
       subcategory.items = itemsSorter(subcategory.items);
       processSubCategories(subcategory, itemsSorter);
     }
-    if (_.size(category.subcategories)) {
+    if (category.subcategories) {
       _.each(category.items, item => {
-        const included = _.find(category.subcategories, subcat => _.includes(subcat.items, item));
+        const included = _.find(_.keys(category.subcategories), subcat => _.includes(category.subcategories[subcat].items, item));
         if (!included) {
-          let otherCategory = _.find(category.subcategories, {id: 'other'});
+          let otherCategory = _.get(category.subcategories, 'other');
           if (!otherCategory) {
-            otherCategory = {id: 'other', label: 'Other', items: []};
-            category.subcategories.push(otherCategory);
+            otherCategory = {id: `${category.id}-other`, label: 'Other', items: []};
+            category.subcategories.other = otherCategory;
           }
           otherCategory.items.push(item);
         }
@@ -98,7 +106,7 @@ const processSubCategories = (category, itemsSorter) => {
 
 // calculate numItems per Category and subcategories, sort items
 const processCategories = (categories, itemsSorter) => {
-  _.each(categories, (category) => {
+  _.forOwn(categories, category => {
     if (category.items) {
       category.numItems = _.size(category.items);
       category.items = itemsSorter(category.items);
@@ -108,12 +116,6 @@ const processCategories = (categories, itemsSorter) => {
 };
 
 const categorize = (items, categories) => {
-  let otherCategory = _.find(categories, { id: 'other' });
-  if (!otherCategory) {
-    otherCategory = {id: 'other', label: 'Other'};
-    categories.push(otherCategory);
-  }
-
   // Categorize each item
   _.each(items, item => {
     let itemCategorized = false;
@@ -126,18 +128,12 @@ const categorize = (items, categories) => {
       });
     });
     if (!itemCategorized) {
-      addItem(item, otherCategory); // add to Other category
+      addItem(item, categories.other); // add to Other category
     }
   });
 
-  let allCategory = _.find(categories, { id: 'all' });
-  if (!allCategory) {
-    allCategory = {id: 'all', label: 'All Items'};
-    categories.unshift(allCategory);
-  }
-
-  allCategory.numItems = _.size(items);
-  allCategory.items = items;
+  categories.all.numItems = _.size(items);
+  categories.all.items = items;
 };
 
 /**
@@ -146,7 +142,14 @@ const categorize = (items, categories) => {
  * (exported for test purposes)
  */
 export const categorizeItems = (items, itemsSorter, initCategories) => {
-  const categories = _.cloneDeep(initCategories);
+  const allCategory = {id: 'all', label: 'All Items'};
+  const otherCategory = {id: 'other', label: 'Other'};
+
+  const categories = {
+    all: allCategory,
+    ..._.cloneDeep(initCategories),
+    other: otherCategory,
+  };
 
   categorize(items, categories);
   pruneCategoriesWithNoItems(categories);
@@ -156,7 +159,7 @@ export const categorizeItems = (items, itemsSorter, initCategories) => {
 };
 
 const clearItemsFromCategories = categories => {
-  _.each(categories, category => {
+  _.forOwn(categories, category => {
     category.numItems = 0;
     category.items = [];
     clearItemsFromCategories(category.subcategories);
@@ -231,51 +234,30 @@ const recategorizeItems = (items, itemsSorter, filters, keywordCompare, categori
 };
 
 const isActiveTab = (activeId, category) => {
-  if (_.size(category.subcategories)) {
-    return !!_.find(category.subcategories, {id: activeId});
-  }
-  return false;
+  return _.has(category.subcategories, activeId);
 };
 
 const hasActiveDescendant = (activeId, category) => {
-  if (_.size(category.subcategories)) {
-    return !!_.find(category.subcategories, (subcategory) => {
-      return (subcategory.id === activeId || hasActiveDescendant(activeId, subcategory));
-    });
+  if (_.has(category.subcategories, activeId)) {
+    return true;
   }
-  return false;
-};
 
-
-const findActiveSubCategory = (activeId, category) => {
-  let activeCategory = null;
-  _.each(category.subcategories, subcategory => {
-    if (subcategory.id === activeId) {
-      activeCategory = subcategory;
-    } else {
-      const activeSubCategory = findActiveSubCategory(activeId, subcategory);
-      if (activeSubCategory) {
-        activeCategory = activeSubCategory;
-      }
-    }
-  });
-
-  return activeCategory;
+  return _.some(_.forOwn(category.subcategories), subcategory => hasActiveDescendant (activeId, subcategory));
 };
 
 const findActiveCategory = (activeId, categories) => {
   let activeCategory = null;
-  _.each(categories, category => {
+  _.forOwn(categories, category => {
+    if (activeCategory) {
+      return;
+    }
+
     if (category.id === activeId) {
       activeCategory = category;
     } else {
-      const activeSubCategory = findActiveSubCategory(activeId, category);
-      if (activeSubCategory) {
-        activeCategory = activeSubCategory;
-      }
+      activeCategory = findActiveCategory(activeId, category.subcategories);
     }
   });
-
   return activeCategory;
 };
 
@@ -537,7 +519,6 @@ export class TileViewPage extends React.Component {
     const { activeFilters, categories } = this.state;
 
     updateURLParams (CATEGORY_URL_PARAM, categoryId);
-    updateURLParams (CATEGORY_URL_PARAM, categoryId);
     this.updateMountedState(this.getUpdatedState(categories, categoryId, activeFilters));
   }
 
@@ -575,18 +556,18 @@ export class TileViewPage extends React.Component {
       onActivate={() => this.selectCategory(id)}
       hasActiveDescendant={hasActiveDescendant(selectedCategoryId, category)}
       shown={shown}>
-      {!_.isEmpty(subcategories) && <VerticalTabs restrictTabs activeTab={isActiveTab(selectedCategoryId, category)}>
-        {_.map(subcategories, subcategory => this.renderTabs(subcategory, selectedCategoryId))}
+      {subcategories && <VerticalTabs restrictTabs activeTab={isActiveTab(selectedCategoryId, category)}>
+        {_.map(_.values(subcategories), subcategory => this.renderTabs(subcategory, selectedCategoryId))}
       </VerticalTabs>}
     </VerticalTabs.Tab>;
   }
 
   renderCategoryTabs(selectedCategoryId) {
     const { categories } = this.state;
-    const activeTab = !!_.find(categories, {id: selectedCategoryId});
+    const activeTab = _.has(categories, selectedCategoryId);
 
     return <VerticalTabs restrictTabs activeTab={activeTab} shown="true">
-      {_.map(categories, (category) => this.renderTabs(category, selectedCategoryId))}
+      {_.map(_.values(categories), category => this.renderTabs(category, selectedCategoryId))}
     </VerticalTabs>;
   }
 

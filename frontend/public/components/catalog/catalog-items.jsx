@@ -4,66 +4,67 @@ import * as PropTypes from 'prop-types';
 import {CatalogTile} from 'patternfly-react-extensions/dist/js/components/CatalogTile';
 import {Modal} from 'patternfly-react/dist/js/components/Modal';
 
+import {history} from '../utils/router';
 import {normalizeIconClass} from './catalog-item-icon';
 import {CatalogTileDetails} from './catalog-item-details';
 import {TileViewPage} from '../utils/tile-view-page';
 
-export const catalogCategories = [
-  {
+export const catalogCategories = {
+  languages: {
     id: 'languages',
     label: 'Languages',
     field: 'tags',
-    subcategories: [
-      {id: 'java', label: 'Java', values: ['java']},
-      {id: 'javascript', field: 'tags', values: ['javascript', 'nodejs', 'js'], label: 'JavaScript'},
-      {id: 'dotnet', label: '.NET', field: 'tags', values: ['dotnet']},
-      {id: 'perl', label: 'Perl', field: 'tags', values: ['perl']},
-      {id: 'ruby', label: 'Ruby', field: 'tags', values: ['ruby']},
-      {id: 'php', label: 'PHP', field: 'tags', values: ['php']},
-      {id: 'python', label: 'Python', field: 'tags', values: ['python']},
-      {id: 'golang', label: 'Go', field: 'tags', values: ['golang', 'go']},
-    ],
+    subcategories: {
+      java: {id: 'java', label: 'Java', values: ['java']},
+      javascript: {id: 'javascript', label: 'JavaScript', field: 'tags', values: ['javascript', 'nodejs', 'js']},
+      dotnet: {id: 'dotnet', label: '.NET', field: 'tags', values: ['dotnet']},
+      perl: {id: 'perl', label: 'Perl', field: 'tags', values: ['perl']},
+      ruby: {id: 'ruby', label: 'Ruby', field: 'tags', values: ['ruby']},
+      php: {id: 'php', label: 'PHP', field: 'tags', values: ['php']},
+      python: {id: 'python', label: 'Python', field: 'tags', values: ['python']},
+      golang: {id: 'golang', label: 'Go', field: 'tags', values: ['golang', 'go']},
+    },
   },
-  {
+  databases: {
     id: 'databases',
     label: 'Databases',
     field: 'tags',
-    subcategories: [
-      {id: 'mongodb', label: 'Mongo', field: 'tags', values: ['mongodb']},
-      {id: 'mysql', label: 'MySQL', field: 'tags', values: ['mysql']},
-      {id: 'postgresql', label: 'Postgres', field: 'tags', values: ['postgresql']},
-      {id: 'mariadb', label: 'MariaDB', field: 'tags', values: ['mariadb']},
-    ],
+    subcategories: {
+      mongodb: {id: 'mongodb', label: 'Mongo', field: 'tags', values: ['mongodb']},
+      mysql: {id: 'mysql', label: 'MySQL', field: 'tags', values: ['mysql']},
+      postgresql: {id: 'postgresql', label: 'Postgres', field: 'tags', values: ['postgresql']},
+      mariadb: {id: 'mariadb', label: 'MariaDB', field: 'tags', values: ['mariadb']},
+    },
   },
-  {
+  middleware: {
     id: 'middleware',
     label: 'Middleware',
     field: 'tags',
-    subcategories: [
-      {id: 'integration', label: 'Integration', field: 'tags', values: ['amq', 'fuse', 'jboss-fuse', 'sso', '3scale']},
-      {id: 'process-automation', label: 'Process Automation', field: 'tags', values: ['decisionserver', 'processserver']},
-      {id: 'analytics-data', label: 'Analytics & Data', field: 'tags', values: ['datagrid', 'datavirt']},
-      {id: 'runtimes', label: 'Runtimes & Frameworks', field: 'tags', values: ['eap', 'httpd', 'tomcat']},
-    ],
+    subcategories: {
+      integration: {id: 'integration', label: 'Integration', field: 'tags', values: ['amq', 'fuse', 'jboss-fuse', 'sso', '3scale']},
+      processAutomation: {id: 'processAutomation', label: 'Process Automation', field: 'tags', values: ['decisionserver', 'processserver']},
+      analyticsData: {id: 'analyticsData', label: 'Analytics & Data', field: 'tags', values: ['datagrid', 'datavirt']},
+      runtimes: {id: 'runtimes', label: 'Runtimes & Frameworks', field: 'tags', values: ['eap', 'httpd', 'tomcat']},
+    },
   },
-  {
+  cicd: {
     id: 'cicd',
     label: 'CI/CD',
     field: 'tags',
-    subcategories: [
-      {id: 'jenkins', label: 'Jenkins', field: 'tags', values: ['jenkins']},
-      {id: 'pipelines', label: 'Pipelines', field: 'tags', values: ['pipelines']},
-    ],
+    subcategories: {
+      jenkins: {id: 'jenkins', label: 'Jenkins', field: 'tags', values: ['jenkins']},
+      pipelines: {id: 'pipelines', label: 'Pipelines', field: 'tags', values: ['pipelines']},
+    },
   },
-  {
+  virtualization: {
     id: 'virtualization',
     label: 'Virtualization',
     field: 'tags',
-    subcategories: [
-      {id: 'vms', label: 'Virtual Machines', field: 'tags', values: ['virtualmachine']},
-    ],
+    subcategories: {
+      vms: {id: 'vms', label: 'Virtual Machines', field: 'tags', values: ['virtualmachine']},
+    },
   },
-];
+};
 
 // Filter property white list
 const filterGroups = [
@@ -112,8 +113,8 @@ export class CatalogTileViewPage extends React.Component {
   componentDidMount() {
     const {items} = this.props;
     const searchParams = new URLSearchParams(window.location.search);
-    const detailsItemId = searchParams.get('details-item');
-    const detailsItem = detailsItemId && _.find(items, item => detailsItemId === _.get(item, 'obj.metadata.uid'));
+    const detailsItemID = searchParams.get('details-item');
+    const detailsItem = detailsItemID && _.find(items, item => detailsItemID === _.get(item, 'obj.metadata.uid'));
 
     this.setState({detailsItem});
   }
@@ -129,6 +130,13 @@ export class CatalogTileViewPage extends React.Component {
     return item.tileName.toLowerCase().includes(filterString) ||
       (item.tileDescription && item.tileDescription.toLowerCase().includes(filterString)) ||
       (item.tags && item.tags.includes(filterString));
+  }
+
+  static setURLParams(params) {
+    const url = new URL(window.location);
+    const searchParams = `?${params.toString()}${url.hash}`;
+
+    history.replace(`${url.pathname}${searchParams}`);
   }
 
   openOverlay(detailsItem) {

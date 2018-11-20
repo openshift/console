@@ -29,23 +29,23 @@ export class MarketplaceTileViewPage extends React.Component {
   componentDidMount() {
     const {items} = this.props;
     const searchParams = new URLSearchParams(window.location.search);
-    const detailsItemId = searchParams.get('details-item');
-    const detailsItem = detailsItemId && _.find(items, {uid: detailsItemId});
+    const detailsItemID = searchParams.get('details-item');
+    const detailsItem = detailsItemID && _.find(items, {uid: detailsItemID});
 
     this.setState({detailsItem});
   }
 
   static determineCategories(items) {
-    const newCategories = [];
+    const newCategories = {};
     _.each(items, item => {
       _.each(item.categories, category => {
-        if (!_.find(newCategories, { id: category })) {
-          newCategories.push({
+        if (!newCategories[category]) {
+          newCategories[category] = {
             id: category,
             label: category,
             field: 'categories',
             values: [category],
-          });
+          };
         }
       });
     });
