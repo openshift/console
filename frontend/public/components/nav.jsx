@@ -248,7 +248,7 @@ const NavSection = connect(navSectionStateToProps)(
               : <Link className="navigation-container__section__title__link" to={href} onClick={this.open}>{text}</Link>
             }
           </div>
-          <i className={classNames('icon fa fa-angle-right', isOpen ? 'navigation-container__section--open' : '')} aria-hidden="true" />
+          {children && <i className={classNames('icon fa fa-angle-right', isOpen ? 'navigation-container__section--open' : '')} aria-hidden="true" />}
         </div>
         {Children && <ul className={classNames('navigation-container__list', {'navigation-container__list--open': isOpen})} style={{maxHeight}}>{Children}</ul>}
       </div>;
@@ -280,7 +280,7 @@ const MonitoringNavSection_ = ({urls, closeMenu}) => {
 };
 const MonitoringNavSection = connectToURLs(MonitoringRoutes.Prometheus, MonitoringRoutes.Grafana)(MonitoringNavSection_);
 
-const UserNavSection = connectToFlags(FLAGS.AUTH_ENABLED, FLAGS.OPENSHIFT)(({flags, closeMenu}) => {
+const UserNavSection = connectToFlags(FLAGS.AUTH_ENABLED, FLAGS.OPENSHIFT)(({flags}) => {
   if (!flags[FLAGS.AUTH_ENABLED] || flagPending(flags[FLAGS.OPENSHIFT])) {
     return null;
   }
@@ -294,14 +294,7 @@ const UserNavSection = connectToFlags(FLAGS.AUTH_ENABLED, FLAGS.OPENSHIFT)(({fla
     }
   };
 
-  if (flags[FLAGS.OPENSHIFT]) {
-    return <NavSection text="Logout" icon="pficon pficon-user" klass="visible-xs-block" onClick={logout} />;
-  }
-
-  return <NavSection text="User" icon="pficon pficon-user" klass="visible-xs-block">
-    <HrefLink href="/settings/profile" name="My Account" onClick={closeMenu} key="myAccount" />
-    <HrefLink href="#" name="Logout" onClick={logout} key="logout" />
-  </NavSection>;
+  return <NavSection text="Logout" icon="pficon pficon-user" klass="visible-xs-block" onClick={logout} />;
 });
 
 export class Nav extends React.Component {
