@@ -32,15 +32,10 @@ import {
   BasicMigrationDialog,
   TEMPLATE_TYPE_LABEL,
   TEMPLATE_OS_LABEL,
-
   VmStatus,
   getVmStatus,
-  VM_STATUS_RUNNING,
-  VM_STATUS_STARTING,
-  VM_STATUS_OFF,
-  VM_STATUS_ERROR,
-  VM_STATUS_POD_ERROR,
-  VM_STATUS_UNKNOWN,
+  VM_STATUS_ALL,
+  VM_STATUS_TO_TEXT,
 } from 'kubevirt-web-ui-components';
 
 import VmConsolesConnected from './vmconsoles';
@@ -373,16 +368,6 @@ const openNewVmWizard = activeNamespace => {
   });
 
 };
-
-const VM_STATUS_TO_TEXT = {
-  [VM_STATUS_RUNNING]: 'Running',
-  [VM_STATUS_STARTING]: 'Starting',
-  [VM_STATUS_OFF]: 'Off',
-  [VM_STATUS_ERROR]: 'VM Error',
-  [VM_STATUS_POD_ERROR]: 'Pod Error',
-  [VM_STATUS_UNKNOWN]: 'Unknown',
-};
-const VM_STATUS_ALL = [VM_STATUS_RUNNING, VM_STATUS_STARTING, VM_STATUS_OFF, VM_STATUS_ERROR, VM_STATUS_POD_ERROR, VM_STATUS_UNKNOWN ];
 
 const filters = [{
   type: 'vm-status',
