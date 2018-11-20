@@ -1,12 +1,18 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import * as PropTypes from 'prop-types';
+import {Helmet} from 'react-helmet';
 import {CatalogTile} from 'patternfly-react-extensions/dist/esm/components/CatalogTile';
 
+import {PageHeading} from '../utils';
 import {history} from '../utils/router';
 import {normalizeIconClass} from '../catalog/catalog-item-icon';
 import {MarketplaceItemModal} from './marketplace-item-modal';
 import {TileViewPage} from '../utils/tile-view-page';
+import {k8sCreate} from '../../module/k8s';
+import {CatalogSourceConfigModel} from '../../models';
+import {AdminSubscribe} from './kubernetes-marketplace-subscribe'
+
 
 // Filter property white list
 const marketplaceFilterGroups = [
@@ -19,7 +25,10 @@ export class MarketplaceTileViewPage extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = { detailsItem: null };
+    this.state = {
+      detailsItem: null,
+      showSubscribe: null 
+    };
 
     this.openOverlay = this.openOverlay.bind(this);
     this.closeOverlay = this.closeOverlay.bind(this);
@@ -128,6 +137,41 @@ export class MarketplaceTileViewPage extends React.Component {
     this.setState({detailsItem: null});
   }
 
+  showSubscribePage() {
+    this.setState({
+      showSubscribe : true
+    })
+  }
+  
+  hideSubscribePage() {
+    this.setState({
+      showSubscribe : null,
+      detailsItem: null
+    })
+  }
+
+  subscribe(targetNamespace) {
+    // Subscribe to operator by creating catalogSourceConfig in a given namespace
+    const {name} = this.state.detailsItem;
+    const catalogSourceConfig = {
+      apiVersion: 'marketplace.redhat.com/v1alpha1',
+      kind: 'CatalogSourceConfig',
+      metadata: {
+        name: `${name}`,
+        namespace: "marketplace",
+      },
+      spec: {
+        targetNamespace: `${targetNamespace}`,
+        packages: `${name}`,
+      },
+    };
+
+    // This returns a promise, should add some error checking on this
+    k8sCreate(CatalogSourceConfigModel, catalogSourceConfig);
+
+    this.hideSubscribePage();
+  }
+
   renderTile(item) {
     if (!item) {
       return null;
@@ -153,22 +197,31 @@ export class MarketplaceTileViewPage extends React.Component {
 
   render() {
     const { items } = this.props;
-    const { detailsItem } = this.state;
+    const { detailsItem, showSubscribe } = this.state;
 
     return (
+      !showSubscribe ?
       <React.Fragment>
-        <TileViewPage
-          items={items}
-          itemsSorter={(itemsToSort) => _.sortBy(itemsToSort, 'name')}
-          getAvailableCategories={MarketplaceTileViewPage.determineCategories}
-          getAvailableFilters={MarketplaceTileViewPage.determineAvailableFilters}
-          filterGroups={marketplaceFilterGroups}
-          keywordCompare={MarketplaceTileViewPage.keywordCompare}
-          renderTile={this.renderTile}
-          emptyStateInfo="No marketplace items are being shown due to the filters being applied."
-        />
-        <MarketplaceItemModal show={!!detailsItem} item={detailsItem} close={() => this.closeOverlay()} openSubscribe={/* TODO */} />
+        <Helmet>
+          <title>Kubernetes Marketplace</title>
+        </Helmet>
+        <div className="co-catalog">
+          <PageHeading title="Kubernetes Marketplace" />
+          <TileViewPage
+            items={items}
+            itemsSorter={(itemsToSort) => _.sortBy(itemsToSort, 'name')}
+            getAvailableCategories={MarketplaceTileViewPage.determineCategories}
+            getAvailableFilters={MarketplaceTileViewPage.determineAvailableFilters}
+            filterGroups={marketplaceFilterGroups}
+            keywordCompare={MarketplaceTileViewPage.keywordCompare}
+            renderTile={this.renderTile}
+            emptyStateInfo="No marketplace items are being shown due to the filters being applied."
+          />
+          <MarketplaceItemModal show={!!detailsItem} item={detailsItem} close={() => this.closeOverlay()} openSubscribe={() => this.showSubscribePage()} />
+        </div>
       </React.Fragment>
+      :
+      <AdminSubscribe item={detailsItem} close={() => this.hideSubscribePage()} subscribe={(targetNamespace) => this.subscribe(targetNamespace)}/>
     );
   }
 }

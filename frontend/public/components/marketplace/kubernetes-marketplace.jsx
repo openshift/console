@@ -103,7 +103,7 @@ export const Marketplace = () => {
   resources.push({
     isList: true,
     kind: referenceForModel(PackageManifestModel),
-    namespace: undefined, // shows operators from all-namespaces - when backend is hooked up we will use 'marketplace'
+    namespace: 'marketplace',
     prop: 'packagemanifests',
   });
   return <Firehose resources={resources}>
@@ -113,13 +113,5 @@ export const Marketplace = () => {
 Marketplace.displayName = 'Marketplace';
 
 export const MarketplacePage = () => {
-  return <React.Fragment>
-    <Helmet>
-      <title>Kubernetes Marketplace</title>
-    </Helmet>
-    <div className="co-catalog">
-      <PageHeading title="Kubernetes Marketplace" />
-      <Marketplace />
-    </div>
-  </React.Fragment>;
+  return <Marketplace />
 };

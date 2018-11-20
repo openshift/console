@@ -7,7 +7,7 @@ import {PropertiesSidePanel, PropertyItem} from 'patternfly-react-extensions/dis
 import {MarkdownView} from '../operator-lifecycle-manager/clusterserviceversion';
 
 const MarketplaceItemModal = (props) => {
-  const { item, show, close /* openSubscribe */ } = props;
+  const { item, show, close, openSubscribe } = props;
 
   if (!item) {
     return null;
@@ -33,7 +33,7 @@ const MarketplaceItemModal = (props) => {
       <Modal.Body>
         <div className="co-catalog-page__overlay-body">
           <PropertiesSidePanel>
-            <Button bsStyle="primary" className="co-catalog-page__overlay-create" /* onClick={ openSubscribe }*/ >
+            <Button bsStyle="primary" className="co-catalog-page__overlay-create" onClick={() => openSubscribe()} >
                 Subscribe
             </Button>
             <MarketplaceProperty label="Operator Version" value={version} />

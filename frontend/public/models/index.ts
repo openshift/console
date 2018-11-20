@@ -67,6 +67,19 @@ export const SubscriptionModel: K8sKind = {
   plural: 'subscriptions',
 };
 
+export const CatalogSourceConfigModel: K8sKind = {
+  kind: 'CatalogSourceConfig',
+  label: 'CatalogSourceConfig',
+  labelPlural: 'CatalogSourceConfigs',
+  apiGroup: 'marketplace.redhat.com',
+  apiVersion: 'v1alpha1',
+  path: 'catalogsourceconfigs',
+  abbr: 'CSC',
+  namespaced: true,
+  crd: true,
+  plural: 'catalogsourceconfigs',
+};
+
 export const EtcdClusterModel: K8sKind = {
   kind: 'EtcdCluster',
   label: 'etcd Cluster',
