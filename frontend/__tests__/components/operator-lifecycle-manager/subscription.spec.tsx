@@ -175,7 +175,7 @@ describe(SubscriptionDetails.displayName, () => {
   });
 
   it('renders link to `ClusterServiceVersion` if installed', () => {
-    let obj = _.cloneDeep(testSubscription);
+    const obj = _.cloneDeep(testSubscription);
     obj.status = {installedCSV: testClusterServiceVersion.metadata.name};
     wrapper = wrapper.setProps({obj, installedCSV: testClusterServiceVersion});
 

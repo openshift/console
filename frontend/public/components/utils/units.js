@@ -49,8 +49,8 @@ const getType = (name) => {
 };
 
 const convertBaseValueToUnits = (value, unitArray, divisor, initialUnit) => {
-  let sliceIndex = initialUnit ? unitArray.indexOf(initialUnit) : 0;
-  let units_ = unitArray.slice(sliceIndex);
+  const sliceIndex = initialUnit ? unitArray.indexOf(initialUnit) : 0;
+  const units_ = unitArray.slice(sliceIndex);
   let unit = units_.shift();
   while (value >= divisor && units_.length > 0) {
     value = value / divisor;
@@ -69,7 +69,7 @@ const convertValueWithUnitsToBaseValue = (value, unitArray, divisor) => {
 
   // find which unit we're given
   let truncateStringAt = -1;
-  let startingUnitIndex = _.findIndex(units_, function(currentUnitValue) {
+  const startingUnitIndex = _.findIndex(units_, function(currentUnitValue) {
     const index = value.indexOf(currentUnitValue);
     if (index > -1) {
       truncateStringAt = index;

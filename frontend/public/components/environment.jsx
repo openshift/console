@@ -31,7 +31,7 @@ const EnvFromEditorComponent = (props) => <AsyncComponent loader={() => import('
  * @private
  */
 const getPairsFromObject = (element = {}) => {
-  let returnedPairs = {};
+  const returnedPairs = {};
   if ( _.isEmpty(element.env)) {
     returnedPairs.env = [['', '', 0]];
   } else {

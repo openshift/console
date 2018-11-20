@@ -55,7 +55,7 @@ export class LabelSelector {
   }
 
   addConjunct(key, operator, values) {
-    let conjunct = {
+    const conjunct = {
       key: key,
       operator: operator,
       values: values,
@@ -105,7 +105,7 @@ export class LabelSelector {
     if (resource.metadata) {
       labels = resource.metadata.labels || {};
     }
-    for (let id in this._conjuncts) {
+    for (const id in this._conjuncts) {
       const conjunct = this._conjuncts[id];
       switch (conjunct.operator) {
         case 'exists':
@@ -202,10 +202,10 @@ export class LabelSelector {
 
   // Exports the labelSelector as a string in the API format, exports as matchExpressions
   exportJSON() {
-    let result = {
+    const result = {
       matchExpressions: [],
     };
-    for (let id in this._conjuncts) {
+    for (const id in this._conjuncts) {
       const conjunct = this._conjuncts[id];
       const expression = {
         key: conjunct.key,

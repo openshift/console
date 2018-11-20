@@ -24,7 +24,7 @@ export class InstallPlanApprovalModal extends PromiseComponent {
   private submit(event): void {
     event.preventDefault();
 
-    let updatedObj = _.cloneDeep(this.props.obj);
+    const updatedObj = _.cloneDeep(this.props.obj);
     if (referenceFor(updatedObj) === referenceForModel(SubscriptionModel)) {
       (updatedObj as SubscriptionKind).spec.installPlanApproval = this.state.selectedApprovalStrategy;
     } else if (referenceFor(updatedObj) === referenceForModel(InstallPlanModel)) {

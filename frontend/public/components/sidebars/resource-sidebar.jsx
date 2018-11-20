@@ -63,7 +63,7 @@ export const ResourceSidebar = props => {
   }
 
   const {kind, label} = kindObj;
-  let SidebarComponent = resourceSidebars.get(kind);
+  const SidebarComponent = resourceSidebars.get(kind);
   if (SidebarComponent) {
     return <ResourceSidebarWrapper label={label} style={{height: height}}>
       <SidebarComponent {...props} />

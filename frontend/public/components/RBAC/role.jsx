@@ -132,7 +132,7 @@ const BindingsListComponent = props => <BindingsList {...props} Header={BindingH
 
 export const BindingsForRolePage = (props) => {
   const {match: {params: {name, ns}}, obj:{kind}} = props;
-  let resources = [{kind: 'RoleBinding', namespaced: true}];
+  const resources = [{kind: 'RoleBinding', namespaced: true}];
   if (!ns) {
     resources.push({kind: 'ClusterRoleBinding', namespaced: false, optional: true});
   }
