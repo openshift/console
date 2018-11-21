@@ -104,13 +104,13 @@ export const NavBar: React.SFC<NavBarProps> = ({pages, basePath}) => {
   const divider = <li className="co-m-horizontal-nav__menu-item co-m-horizontal-nav__menu-item--divider" key="_divider" />;
   basePath = basePath.replace(/\/$/, '');
 
-  const primaryTabs = <ul className="co-m-horizontal-nav__menu__primary">{
+  const primaryTabs = <ul className="co-m-horizontal-nav__menu-primary">{
     pages.filter(({href}, i, all) => before.includes(href) || before.includes(_.get(all[i + 1], 'href'))).map(({name, href}) => {
       const klass = classNames('co-m-horizontal-nav__menu-item', {'co-m-horizontal-nav-item--active': location.pathname.replace(basePath, '/').endsWith(`/${href}`)});
       return <li className={klass} key={name}><Link to={`${basePath}/${href}`}>{name}</Link></li>;
     })}{divider}</ul>;
 
-  const secondaryTabs = <ul className="co-m-horizontal-nav__menu__secondary">{
+  const secondaryTabs = <ul className="co-m-horizontal-nav__menu-secondary">{
     pages.slice(React.Children.count(primaryTabs.props.children) - 1).map(({name, href}) => {
       const klass = classNames('co-m-horizontal-nav__menu-item', {'co-m-horizontal-nav-item--active': location.pathname.replace(basePath, '/').endsWith(`/${href}`)});
       return <li className={klass} key={name}><Link to={`${basePath}/${href}`}>{name}</Link></li>;
