@@ -12,7 +12,6 @@ import { Toolbar } from 'patternfly-react';
 import { coFetchJSON } from '../../co-fetch';
 import { getBuildNumber } from '../../module/k8s/builds';
 import { prometheusBasePath } from '../graphs';
-import { SafetyFirst } from '../safety-first';
 import { TextFilter } from '../factory';
 import { UIActions } from '../../ui/ui-actions';
 import {
@@ -277,7 +276,7 @@ const sortBuilds = (builds: K8sResourceKind[]): K8sResourceKind[] => {
 };
 
 const headingStateToProps = ({UI}): OverviewHeadingPropsFromState => {
-  const selectedView = UI.getIn(['overview', 'selectedView'], View.Resources);
+  const selectedView = UI.getIn(['overview', 'selectedView']);
   return { selectedView };
 };
 
@@ -357,17 +356,18 @@ const OverviewHeading_: React.SFC<OverviewHeadingProps> = ({disabled, firstLabel
 const OverviewHeading = connect<OverviewHeadingPropsFromState, OverviewHeadingPropsFromDispatch, OverviewHeadingOwnProps>(headingStateToProps, headingDispatchToProps)(OverviewHeading_);
 
 const mainContentStateToProps = ({UI}): OverviewMainContentPropsFromState => {
-  const selectedView = UI.getIn(['overview', 'selectedView'], View.Resources);
-  return { selectedView };
+  const metrics = UI.getIn(['overview', 'metrics']);
+  const selectedView = UI.getIn(['overview', 'selectedView']);
+  return { metrics, selectedView };
 };
 
 const mainContentDispatchToProps = (dispatch): OverviewMainContentPropsFromDispatch => ({
-  updateResources: (items: any[]) => dispatch(UIActions.updateOverviewResources(items)),
+  updateMetrics: (metrics: OverviewMetrics) => dispatch(UIActions.updateOverviewMetrics(metrics)),
+  updateResources: (items: OverviewItem[]) => dispatch(UIActions.updateOverviewResources(items)),
 });
 
-class OverviewMainContent_ extends SafetyFirst<OverviewMainContentProps, OverviewMainContentState> {
-  /* eslint-disable-next-line no-undef */
-  metricsInterval_: any;
+class OverviewMainContent_ extends React.Component<OverviewMainContentProps, OverviewMainContentState> {
+  private metricsInterval: any = null;
 
   readonly state: OverviewMainContentState = {
     filterValue: '',
@@ -376,18 +376,15 @@ class OverviewMainContent_ extends SafetyFirst<OverviewMainContentProps, Overvie
     groupedItems: [],
     firstLabel: '',
     groupOptions: {},
-    metrics: {},
     selectedGroup: '',
   };
 
   componentDidMount(): void {
-    super.componentDidMount();
     this.fetchMetrics();
   }
 
   componentWillUnmount(): void {
-    super.componentWillUnmount();
-    clearInterval(this.metricsInterval_);
+    clearInterval(this.metricsInterval);
   }
 
   componentDidUpdate(prevProps: OverviewMainContentProps, prevState: OverviewMainContentState): void {
@@ -441,13 +438,12 @@ class OverviewMainContent_ extends SafetyFirst<OverviewMainContentProps, Overvie
   }
 
   fetchMetrics(): void {
-    if (!this.isMounted_ || !prometheusBasePath) {
+    if (!prometheusBasePath) {
       // Component is not mounted or proxy has not been set up.
       return;
     }
 
-    const { namespace } = this.props;
-    const { metrics: previousMetrics } = this.state;
+    const { metrics: previousMetrics, namespace } = this.props;
     const queries = {
       memory: `pod_name:container_memory_usage_bytes:sum{namespace="${namespace}"}`,
       cpu: `pod_name:container_cpu_usage:sum{namespace="${namespace}"}`,
@@ -466,7 +462,7 @@ class OverviewMainContent_ extends SafetyFirst<OverviewMainContentProps, Overvie
 
     Promise.all(promises).then((data) => {
       const metrics = data.reduce((acc: OverviewMetrics, metric): OverviewMetrics => _.assign(acc, metric), {});
-      this.setState({metrics});
+      this.props.updateMetrics(metrics);
     }).catch(res => {
       const status = _.get(res, 'response.status');
       // eslint-disable-next-line no-console
@@ -476,7 +472,7 @@ class OverviewMainContent_ extends SafetyFirst<OverviewMainContentProps, Overvie
         throw new Error(`Could not fetch metrics, status: ${status}`);
       }
     }).then(() => {
-      this.metricsInterval_ = setTimeout(this.fetchMetrics, METRICS_POLL_INTERVAL);
+      this.metricsInterval = setTimeout(this.fetchMetrics, METRICS_POLL_INTERVAL);
     });
   }
 
@@ -797,7 +793,7 @@ class OverviewMainContent_ extends SafetyFirst<OverviewMainContentProps, Overvie
 
   render() {
     const {loaded, loadError, mock, title, project = {}, selectedView} = this.props;
-    const {filteredItems, groupedItems, firstLabel, groupOptions, metrics, selectedGroup} = this.state;
+    const {filteredItems, groupedItems, firstLabel, groupOptions, selectedGroup} = this.state;
     return <div className="co-m-pane">
       <OverviewHeading
         disabled={mock}
@@ -817,7 +813,7 @@ class OverviewMainContent_ extends SafetyFirst<OverviewMainContentProps, Overvie
           loaded={loaded}
           loadError={loadError}
         >
-          {selectedView === View.Resources && <ProjectOverview groups={groupedItems} metrics={metrics} />}
+          {selectedView === View.Resources && <ProjectOverview groups={groupedItems} />}
           {selectedView === View.Dashboard && <OverviewNamespaceDashboard obj={project.data} />}
         </StatusBox>
       </div>
@@ -1022,6 +1018,15 @@ export type OverviewGroup = {
   items: OverviewItem[];
 };
 
+type MetricValuesByPod = {
+  [podName: string]: number,
+};
+
+export type OverviewMetrics = {
+  cpu?: MetricValuesByPod;
+  memory?: MetricValuesByPod;
+};
+
 type OverviewHeadingPropsFromState = {
   selectedView: View;
 };
@@ -1045,11 +1050,13 @@ type OverviewHeadingOwnProps = {
 type OverviewHeadingProps = OverviewHeadingPropsFromState & OverviewHeadingPropsFromDispatch & OverviewHeadingOwnProps;
 
 type OverviewMainContentPropsFromState = {
+  metrics: OverviewMetrics;
   selectedView: View;
 };
 
 type OverviewMainContentPropsFromDispatch = {
-  updateResources: (items: any[]) => void;
+  updateMetrics: (metrics: OverviewMetrics) => void;
+  updateResources: (items: OverviewItem[]) => void;
 };
 
 type OverviewMainContentOwnProps = {
@@ -1075,15 +1082,6 @@ type OverviewMainContentOwnProps = {
 
 type OverviewMainContentProps = OverviewMainContentPropsFromState & OverviewMainContentPropsFromDispatch & OverviewMainContentOwnProps;
 
-type MetricValuesByPod = {
-  [podName: string]: number,
-};
-
-export type OverviewMetrics = {
-  cpu?: MetricValuesByPod;
-  memory?: MetricValuesByPod;
-};
-
 type OverviewMainContentState = {
   readonly filterValue: string;
   readonly items: any[];
@@ -1091,7 +1089,6 @@ type OverviewMainContentState = {
   readonly groupedItems: any[];
   readonly firstLabel: string;
   readonly groupOptions: any;
-  readonly metrics: any;
   readonly selectedGroup: string;
 };
 
