@@ -19,6 +19,7 @@ import {
 import {
   OverviewGroup,
   OverviewItem,
+  OverviewMetrics,
   PodControllerOverviewItem,
 } from '.';
 
@@ -342,16 +343,16 @@ type ProjectOverviewListItemProps = ProjectOverviewListItemOwnProps & ProjectOve
 
 type ProjectOverviewListProps = {
   items: OverviewItem[];
-  metrics: any;
+  metrics: OverviewMetrics;
 };
 
 type ProjectOverviewGroupProps = {
   heading: string;
   items: OverviewItem[];
-  metrics: any;
+  metrics: OverviewMetrics;
 };
 
 type ProjectOverviewProps = {
   groups: OverviewGroup[];
-  metrics: any;
+  metrics: OverviewMetrics;
 };

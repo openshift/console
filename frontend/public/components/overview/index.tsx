@@ -369,23 +369,16 @@ class OverviewMainContent_ extends SafetyFirst<OverviewMainContentProps, Overvie
   /* eslint-disable-next-line no-undef */
   metricsInterval_: any;
 
-  constructor(props: OverviewMainContentProps) {
-    super(props);
-    this.handleFilterChange = this.handleFilterChange.bind(this);
-    this.handleGroupChange = this.handleGroupChange.bind(this);
-    this.clearFilter = this.clearFilter.bind(this);
-
-    this.state = {
-      filterValue: '',
-      items: [],
-      filteredItems: [],
-      groupedItems: [],
-      firstLabel: '',
-      groupOptions: {},
-      metrics: {},
-      selectedGroup: '',
-    };
-  }
+  readonly state: OverviewMainContentState = {
+    filterValue: '',
+    items: [],
+    filteredItems: [],
+    groupedItems: [],
+    firstLabel: '',
+    groupOptions: {},
+    metrics: {},
+    selectedGroup: '',
+  };
 
   componentDidMount(): void {
     super.componentDidMount();
@@ -463,7 +456,7 @@ class OverviewMainContent_ extends SafetyFirst<OverviewMainContentProps, Overvie
     const promises = _.map(queries, (query, name) => {
       const url = `${prometheusBasePath}/api/v1/query?query=${encodeURIComponent(query)}`;
       return coFetchJSON(url).then(({ data: {result} }) => {
-        const byPod = result.reduce((acc, { metric, value }) => {
+        const byPod: MetricValuesByPod = result.reduce((acc, { metric, value }) => {
           acc[metric.pod_name] = Number(value[1]);
           return acc;
         }, {});
@@ -471,8 +464,8 @@ class OverviewMainContent_ extends SafetyFirst<OverviewMainContentProps, Overvie
       });
     });
 
-    Promise.all(promises).then(data => {
-      const metrics = data.reduce((acc, metric) => _.assign(acc, metric), {});
+    Promise.all(promises).then((data) => {
+      const metrics = data.reduce((acc: OverviewMetrics, metric): OverviewMetrics => _.assign(acc, metric), {});
       this.setState({metrics});
     }).catch(res => {
       const status = _.get(res, 'response.status');
@@ -790,17 +783,17 @@ class OverviewMainContent_ extends SafetyFirst<OverviewMainContentProps, Overvie
     });
   }
 
-  handleFilterChange(event: any): void {
+  handleFilterChange = (event: any): void => {
     this.setState({filterValue: event.target.value});
-  }
+  };
 
-  handleGroupChange(selectedGroup: string): void {
+  handleGroupChange = (selectedGroup: string): void => {
     this.setState({selectedGroup});
-  }
+  };
 
-  clearFilter(): void {
+  clearFilter = (): void => {
     this.setState({filterValue: ''});
-  }
+  };
 
   render() {
     const {loaded, loadError, mock, title, project = {}, selectedView} = this.props;
@@ -977,7 +970,16 @@ export const OverviewPage = withStartGuide(
   }
 );
 
-/* eslint-disable no-unused-vars, no-undef */
+type FirehoseItem = {
+  data?: K8sResourceKind;
+  [key: string]: any;
+};
+
+type FirehoseList = {
+  data?: K8sResourceKind[];
+  [key: string]: any;
+};
+
 type OverviewItemAlerts = {
   [key: string]: {
     message: string;
@@ -1051,37 +1053,46 @@ type OverviewMainContentPropsFromDispatch = {
 };
 
 type OverviewMainContentOwnProps = {
-  builds?: any;
-  buildConfigs?: any;
-  daemonSets?: any;
-  deploymentConfigs?: any;
-  deployments?: any;
+  builds?: FirehoseList;
+  buildConfigs?: FirehoseList;
+  daemonSets?: FirehoseList;
+  deploymentConfigs?: FirehoseList;
+  deployments?: FirehoseList;
   mock: boolean;
   loaded?: boolean;
   loadError?: any;
   namespace: string;
-  pods?: any;
-  project?: any;
-  replicationControllers?: any;
-  replicaSets?: any;
-  routes?: any;
-  services?: any;
-  selectedItem: any;
-  statefulSets?: any;
+  pods?: FirehoseList;
+  project?: FirehoseItem;
+  replicationControllers?: FirehoseList;
+  replicaSets?: FirehoseList;
+  routes?: FirehoseList;
+  services?: FirehoseList;
+  selectedItem: OverviewItem;
+  statefulSets?: FirehoseList;
   title?: string;
 };
 
 type OverviewMainContentProps = OverviewMainContentPropsFromState & OverviewMainContentPropsFromDispatch & OverviewMainContentOwnProps;
 
+type MetricValuesByPod = {
+  [podName: string]: number,
+};
+
+export type OverviewMetrics = {
+  cpu?: MetricValuesByPod;
+  memory?: MetricValuesByPod;
+};
+
 type OverviewMainContentState = {
-  filterValue: string;
-  items: any[];
-  filteredItems: any[];
-  groupedItems: any[];
-  firstLabel: string;
-  groupOptions: any;
-  metrics: any;
-  selectedGroup: string;
+  readonly filterValue: string;
+  readonly items: any[];
+  readonly filteredItems: any[];
+  readonly groupedItems: any[];
+  readonly firstLabel: string;
+  readonly groupOptions: any;
+  readonly metrics: any;
+  readonly selectedGroup: string;
 };
 
 type OverviewPropsFromState = {
