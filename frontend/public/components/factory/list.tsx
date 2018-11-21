@@ -494,7 +494,7 @@ export const WorkloadListRow: React.SFC<WorkloadListRowProps> = ({kind, actions,
   <div className="col-lg-3 hidden-md hidden-sm hidden-xs">
     <Selector selector={o.spec.selector} namespace={o.metadata.namespace} />
   </div>
-  <div className="co-kebab-wrapper">
+  <div className="dropdown-kebab-pf">
     <ResourceKebab actions={actions} kind={kind} resource={o} />
   </div>
 </ResourceRow>;

@@ -2,6 +2,12 @@
   height: 100%;
   transition: all 0.25s;
   position: relative;
+
+  .dropdown-kebab-pf {
+    position: absolute;
+    right: 15px;
+    top: 7px;
+  }
 }
 
 .compaction-btn {

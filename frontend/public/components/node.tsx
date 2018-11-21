@@ -99,7 +99,7 @@ const NodeRow = ({obj: node, expand}) => {
     {expand && <div className="col-xs-12">
       <LabelList kind="Node" labels={node.metadata.labels} />
     </div>}
-    <div className="co-kebab-wrapper">
+    <div className="dropdown-kebab-pf">
       <NodeKebab node={node} />
     </div>
   </ResourceRow>;
@@ -118,7 +118,7 @@ const NodeRowSearch = ({obj: node}) => <div className="row co-resource-list__ite
   <div className="col-md-2 col-sm-3 hidden-xs">
     <NodeIPList ips={node.status.addresses} />
   </div>
-  <div className="co-kebab-wrapper">
+  <div className="dropdown-kebab-pf">
     <NodeKebab node={node} />
   </div>
 </div>;

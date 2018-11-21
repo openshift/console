@@ -59,7 +59,7 @@ export const SubscriptionRow: React.SFC<SubscriptionRowProps> = (props) => {
     <div className="hidden-xs hidden-sm hidden-md col-lg-2">
       {props.obj.spec.installPlanApproval || 'Automatic'}
     </div>
-    <div className="co-kebab-wrapper">
+    <div className="dropdown-kebab-pf">
       <ResourceKebab actions={_.get(props.obj.status, 'installedCSV') ? menuActions : menuActions.slice(0, -1)} kind={referenceForModel(SubscriptionModel)} resource={props.obj} />
     </div>
   </div>;

@@ -226,7 +226,7 @@ const BuildsRow: React.SFC<BuildsRowProps> = ({ obj }) => <div className="row co
   <div className="col-sm-3 hidden-xs">
     {fromNow(obj.metadata.creationTimestamp)}
   </div>
-  <div className="co-kebab-wrapper">
+  <div className="dropdown-kebab-pf">
     <ResourceKebab actions={menuActions} kind={BuildsReference} resource={obj} />
   </div>
 </div>;

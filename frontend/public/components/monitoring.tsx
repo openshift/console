@@ -280,7 +280,7 @@ const ActiveAlerts = ({alerts}) => <div className="co-m-table-grid co-m-table-gr
       <div className="col-sm-2 hidden-xs"><Timestamp timestamp={a.activeAt} /></div>
       <div className="col-sm-2 col-xs-3"><AlertState state={a.state} /></div>
       <div className="col-sm-2 col-xs-3 co-break-word">{a.value}</div>
-      <div className="co-kebab-wrapper"><Kebab options={[silenceAlert(a)]} /></div>
+      <div className="dropdown-kebab-pf"><Kebab options={[silenceAlert(a)]} /></div>
     </ResourceRow>)}
   </div>
 </div>;
@@ -368,7 +368,7 @@ const SilencedAlertsList = ({alerts}) => _.isEmpty(alerts)
           <div className="monitoring-description">{alertDescription(a)}</div>
         </div>
         <div className="col-xs-3">{a.labels.severity}</div>
-        <div className="co-kebab-wrapper">
+        <div className="dropdown-kebab-pf">
           <Kebab options={[viewAlertRule(a)]} />
         </div>
       </div>)}
@@ -465,7 +465,7 @@ const AlertRow = ({obj}) => {
       <AlertStateDescription alert={obj} />
     </div>
     <div className="col-xs-2">{_.startCase(_.get(labels, 'severity', '-'))}</div>
-    <div className="co-kebab-wrapper">
+    <div className="dropdown-kebab-pf">
       <Kebab options={state === AlertStates.Firing || state === AlertStates.Pending ? [silenceAlert(obj), viewAlertRule(obj)] : [viewAlertRule(obj)]} />
     </div>
   </ResourceRow>;
@@ -636,7 +636,7 @@ const SilenceRow = ({obj}) => {
       {state === SilenceStates.Expired && <StateTimestamp text="Expired" timestamp={obj.endsAt} />}
     </div>
     <div className="col-xs-2">{obj.silencedAlerts.length}</div>
-    <div className="co-kebab-wrapper">
+    <div className="dropdown-kebab-pf">
       <SilenceKebab silence={obj} />
     </div>
   </ResourceRow>;

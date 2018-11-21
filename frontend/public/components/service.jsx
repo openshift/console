@@ -39,7 +39,7 @@ const ServiceRow = ({obj: s}) => <ResourceRow obj={s}>
   <div className="col-lg-2 hidden-md hidden-sm hidden-xs">
     <ServiceIP s={s} />
   </div>
-  <div className="co-kebab-wrapper">
+  <div className="dropdown-kebab-pf">
     <ResourceKebab actions={menuActions} kind="Service" resource={s} />
   </div>
 </ResourceRow>;

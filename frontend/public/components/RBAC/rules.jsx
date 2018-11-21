@@ -125,7 +125,7 @@ const Rule = ({resources, nonResourceURLs, verbs, apiGroups, name, namespace, i}
   <div className="col-xs-7 col-sm-4 col-md-6 col-lg-7">
     <Resources resources={resources} nonResourceURLs={nonResourceURLs} />
   </div>
-  <div className="co-kebab-wrapper">
+  <div className="dropdown-kebab-pf">
     <RuleKebab name={name} namespace={namespace} i={i} />
   </div>
 </div>;

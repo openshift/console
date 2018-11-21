@@ -31,7 +31,7 @@ const Row = ({obj: np}) => <div className="row co-resource-list__item">
         <Selector selector={np.spec.podSelector} namespace={np.metadata.namespace} />
     }
   </div>
-  <div className="co-kebab-wrapper">
+  <div className="dropdown-kebab-pf">
     <ResourceKebab actions={menuActions} kind={kind} resource={np} />
   </div>
 </div>;

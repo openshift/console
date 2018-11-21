@@ -45,7 +45,7 @@ const CRDRow = ({obj: crd}) => <div className="row co-resource-list__item">
         : <span className="node-not-ready"><i className="fa fa-minus-circle"></i></span>
     }
   </div>
-  <div className="co-kebab-wrapper">
+  <div className="dropdown-kebab-pf">
     <ResourceKebab actions={menuActions} kind="CustomResourceDefinition" resource={crd} />
   </div>
 </div>;

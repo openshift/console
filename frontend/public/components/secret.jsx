@@ -56,7 +56,7 @@ const SecretRow = ({obj: secret}) => {
     <div className="col-md-3 col-sm-4 hidden-xs co-break-word">{secret.type}</div>
     <div className="col-md-1 hidden-sm hidden-xs">{data}</div>
     <div className="col-md-2 hidden-sm hidden-xs">{age}</div>
-    <div className="co-kebab-wrapper">
+    <div className="dropdown-kebab-pf">
       <ResourceKebab actions={menuActions} kind="Secret" resource={secret} />
     </div>
   </ResourceRow>;

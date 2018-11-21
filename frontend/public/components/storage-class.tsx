@@ -35,7 +35,7 @@ const StorageClassRow: React.SFC<StorageClassRowProps> = ({obj}) => {
     <div className="col-sm-2 hidden-xs">
       {isDefaultClass(obj)}
     </div>
-    <div className="co-kebab-wrapper">
+    <div className="dropdown-kebab-pf">
       <ResourceKebab actions={menuActions} kind={StorageClassReference} resource={obj} />
     </div>
   </div>;

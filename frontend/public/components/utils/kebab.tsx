@@ -12,7 +12,7 @@ import { connectToModel } from '../../kinds';
 
 const KebabItems: React.SFC<KebabItemsProps> = ({options, onClick}) => {
   const visibleOptions = _.reject(options, o => _.get(o, 'hidden', false));
-  const lis = _.map(visibleOptions, (o, i) => <li key={i}><a onClick={e => onClick(e, o)}>{o.label}</a></li>);
+  const lis = _.map(visibleOptions, (o, i) => <li key={i}><a href="#" onClick={e => onClick(e, o)}>{o.label}</a></li>);
   return <ul className="dropdown-menu dropdown-menu-right dropdown-menu--block co-kebab__dropdown">
     {lis}
   </ul>;

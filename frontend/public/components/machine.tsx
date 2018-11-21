@@ -47,7 +47,7 @@ const MachineRow: React.SFC<MachineRowProps> = ({obj}: {obj: MachineKind}) => {
     <div className="col-sm-2 hidden-xs">
       {availabilityZone || '-'}
     </div>
-    <div className="co-kebab-wrapper">
+    <div className="dropdown-kebab-pf">
       <ResourceKebab actions={menuActions} kind={machineReference} resource={obj} />
     </div>
   </div>;

@@ -131,7 +131,7 @@ const Row = ({obj: binding}) => <ResourceRow obj={binding}>
   <OverflowYFade className="col-md-2 col-sm-4 col-xs-6 co-break-word">
     {binding.metadata.namespace ? <ResourceLink kind="Namespace" name={binding.metadata.namespace} /> : 'all'}
   </OverflowYFade>
-  <div className="co-kebab-wrapper">
+  <div className="dropdown-kebab-pf">
     <BindingKebab binding={binding} />
   </div>
 </ResourceRow>;

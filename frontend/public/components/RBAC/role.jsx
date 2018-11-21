@@ -40,7 +40,7 @@ const Row = ({obj: role}) => <div className="row co-resource-list__item">
   <div className="col-xs-6 co-break-word">
     {role.metadata.namespace ? <ResourceLink kind="Namespace" name={role.metadata.namespace} /> : 'all'}
   </div>
-  <div className="co-kebab-wrapper">
+  <div className="dropdown-kebab-pf">
     <ResourceKebab actions={menuActions} kind={roleKind(role)} resource={role} />
   </div>
 </div>;

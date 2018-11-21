@@ -25,7 +25,7 @@ const Row = ({obj: rq}) => <div className="row co-resource-list__item">
   <div className="col-md-7 col-xs-6 co-break-word">
     {rq.metadata.namespace ? <ResourceLink kind="Namespace" name={rq.metadata.namespace} title={rq.metadata.namespace} /> : 'all'}
   </div>
-  <div className="co-kebab-wrapper">
+  <div className="dropdown-kebab-pf">
     <ResourceKebab actions={menuActions} kind={quotaKind(rq)} resource={rq} />
   </div>
 </div>;

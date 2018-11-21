@@ -51,7 +51,7 @@ const DaemonSetRow = ({obj: daemonset}) => <ResourceRow obj={daemonset}>
   <div className="col-lg-3 hidden-md hidden-sm hidden-xs">
     <Selector selector={daemonset.spec.selector} namespace={daemonset.metadata.namespace} />
   </div>
-  <div className="co-kebab-wrapper">
+  <div className="dropdown-kebab-pf">
     <ResourceKebab actions={menuActions} kind="DaemonSet" resource={daemonset} />
   </div>
 </ResourceRow>;

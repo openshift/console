@@ -45,7 +45,7 @@ const MachineSetRow: React.SFC<MachineSetRowProps> = ({obj}: {obj: MachineSetKin
       {obj.status.readyReplicas} of {obj.spec.replicas} machines
     </Link>
   </div>
-  <div className="co-kebab-wrapper">
+  <div className="dropdown-kebab-pf">
     <ResourceKebab actions={menuActions} kind={machineSetReference} resource={obj} />
   </div>
 </div>;
