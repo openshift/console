@@ -26,6 +26,9 @@
     @media (min-width: $grid-float-breakpoint) {
       display: block;
     }
+    .nav-item-iconic {
+      padding-bottom: 22px !important;
+    }
   }
   &__logo {
     align-items: center;
@@ -72,9 +75,16 @@
       align-items: baseline;
       display: flex;
     }
+    .btn-dropdown__item {
+      align-items: baseline;
+      display: flex; // so .co-masthead__username truncates
+    }
     .no-dropdown {
+      align-items: baseline;
       cursor: default !important; // override pf style
+      display: flex; // so .co-masthead__username truncates
       line-height: normal !important; // override pf style
+      margin-right: -12px !important;
       &:hover,
       &:focus {
         background-color: $color-pf-black !important; // override pf style
@@ -99,8 +109,7 @@
     }
   }
   .co-actions-menu {
-    padding: 0;
-    margin: 0;
+    margin-left: 0;
   }
 }
 
