@@ -30,6 +30,7 @@ import {
   InstallPlanModel,
   JobModel,
   LimitRangeModel,
+  MachineAutoscalerModel,
   MachineConfigModel,
   MachineConfigPoolModel,
   MachineDeploymentModel,
@@ -84,6 +85,7 @@ export const resourceDetailPages = ImmutableMap<GroupVersionKind | string, () =>
   .set(referenceForModel(NamespaceModel), () => import('./namespace' /* webpackChunkName: "namespace" */).then(m => m.NamespacesDetailsPage))
   .set(referenceForModel(NetworkPolicyModel), () => import('./network-policy' /* webpackChunkName: "network-policy" */).then(m => m.NetworkPoliciesDetailsPage))
   .set(referenceForModel(NodeModel), () => import('./node' /* webpackChunkName: "node" */).then(m => m.NodesDetailsPage))
+  .set(referenceForModel(MachineAutoscalerModel), () => import('./machine-autoscaler' /* webpackChunkName: "machine-autoscaler" */).then(m => m.MachineAutoscalerDetailsPage))
   .set(referenceForModel(MachineConfigModel), () => import('./machine-config' /* webpackChunkName: "machine-config" */).then(m => m.MachineConfigDetailsPage))
   .set(referenceForModel(MachineConfigPoolModel), () => import('./machine-config-pool' /* webpackChunkName: "machine-config-pool" */).then(m => m.MachineConfigPoolDetailsPage))
   .set(referenceForModel(MachineModel), () => import('./machine' /* webpackChunkName: "machine" */).then(m => m.MachineDetailsPage))
@@ -143,6 +145,7 @@ export const resourceListPages = ImmutableMap<GroupVersionKind | string, () => P
   .set(referenceForModel(NamespaceModel), () => import('./namespace' /* webpackChunkName: "namespace" */).then(m => m.NamespacesPage))
   .set(referenceForModel(NetworkPolicyModel), () => import('./network-policy' /* webpackChunkName: "network-policy" */).then(m => m.NetworkPoliciesPage))
   .set(referenceForModel(NodeModel), () => import('./node' /* webpackChunkName: "node" */).then(m => m.NodesPage))
+  .set(referenceForModel(MachineAutoscalerModel), () => import('./machine-autoscaler' /* webpackChunkName: "machine-autoscaler" */).then(m => m.MachineAutoscalerPage))
   .set(referenceForModel(MachineConfigModel), () => import('./machine-config' /* webpackChunkName: "machine-config" */).then(m => m.MachineConfigPage))
   .set(referenceForModel(MachineConfigPoolModel), () => import('./machine-config-pool' /* webpackChunkName: "machine-config-pool" */).then(m => m.MachineConfigPoolPage))
   .set(referenceForModel(MachineModel), () => import('./machine' /* webpackChunkName: "machine" */).then(m => m.MachinePage))

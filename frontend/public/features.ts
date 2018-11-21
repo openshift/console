@@ -8,13 +8,14 @@ import {
   ChargebackReportModel,
   ClusterServiceClassModel,
   ClusterServiceVersionModel,
-  MachineModel,
+  MachineAutoscalerModel,
   MachineConfigModel,
+  MachineModel,
+  OperatorGroupModel,
   OperatorSourceModel,
+  PackageManifestModel,
   PrometheusModel,
   SelfSubjectAccessReviewModel,
-  PackageManifestModel,
-  OperatorGroupModel,
 } from './models';
 import { k8sBasePath, referenceForModel, ClusterVersionKind } from './module/k8s';
 import { k8sCreate } from './module/k8s/resource';
@@ -44,6 +45,7 @@ export enum FLAGS {
   CLUSTER_API = 'CLUSTER_API',
   CLUSTER_VERSION = 'CLUSTER_VERSION',
   MACHINE_CONFIG = 'MACHINE_CONFIG',
+  MACHINE_AUTOSCALER = 'MACHINE_AUTOSCALER',
 }
 
 export const DEFAULTS_ = _.mapValues(FLAGS, flag => flag === FLAGS.AUTH_ENABLED
@@ -60,6 +62,7 @@ export const CRDs = {
   'marketplace.redhat.com~v1alpha1~OperatorSource': FLAGS.OPERATOR_HUB,
   [referenceForModel(MachineModel)]: FLAGS.CLUSTER_API,
   [referenceForModel(MachineConfigModel)]: FLAGS.MACHINE_CONFIG,
+  [referenceForModel(MachineAutoscalerModel)]: FLAGS.MACHINE_AUTOSCALER,
 };
 
 const SET_FLAG = 'SET_FLAG';

@@ -877,6 +877,20 @@ export const MachineConfigModel: K8sKind = {
   crd: true,
 };
 
+export const MachineAutoscalerModel: K8sKind = {
+  label: 'Machine Autoscaler',
+  labelPlural: 'Machine Autoscalers',
+  apiVersion: 'v1beta1',
+  path: 'machineautoscalers',
+  apiGroup: 'autoscaling.openshift.io',
+  plural: 'machineautoscalers',
+  abbr: 'MA',
+  namespaced: true,
+  kind: 'MachineAutoscaler',
+  id: 'machineautoscaler',
+  crd: true,
+};
+
 // Openshift cluster resources
 export const ClusterOperatorModel: K8sKind = {
   label: 'Cluster Operator',
