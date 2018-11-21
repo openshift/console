@@ -1,6 +1,6 @@
 import * as _ from 'lodash-es';
 
-import { units, validate } from '../public/components/utils/units';
+import { units, validate, convertToBaseValue } from '../public/components/utils/units';
 
 describe('units', () => {
   describe('round', () => {
@@ -291,11 +291,11 @@ describe('validate', () => {
   });
 
   it('cpu', () => {
-    ['32', '32m', '32K'].forEach(v => {
+    ['32', '32m'].forEach(v => {
       expect(validate.CPU(v)).toEqual(undefined);
     });
 
-    ['-1', '32mi','32 m', ' 32m', '32mm', '32e6', '32m4'].forEach(v => {
+    ['-1', '32mi','32 m', ' 32m', '32mm', '32e6', '32m4', '32M', '32Mi'].forEach(v => {
       expect(_.isString(validate.CPU(v))).toEqual(true);
     });
   });
@@ -310,3 +310,60 @@ describe('validate', () => {
   });
 });
 
+describe('convert to base value', () => {
+  const test_ = (value, expected) => {
+    it(`${value} into ${expected}`, () => {
+      expect(convertToBaseValue(value)).toEqual(expected);
+    });
+  };
+
+  // invalid values
+  test_(null, null);
+  test_(undefined, null);
+  test_(100, null);
+  test_('', null);
+  test_('banana', null);
+  test_(NaN, null);
+  test_('100mm', null);
+  test_('100MiB', null);
+  test_('100MB', null);
+  test_('invalid100Mi', null);
+  test_('10Mi10Mi', null);
+
+  // unit-less values
+  test_('0', 0);
+  test_('93', 93);
+  test_('10485', 10485);
+
+  // CPU units (millicores)
+  test_('1m', 0.001);
+  test_('10m', 0.01);
+  test_('100m', 0.1);
+  test_('1321m', 1.321);
+
+  // binary memory units
+  test_('3857916Ki', 3950505984);
+  test_('101Ki', 103424);
+  test_('1.01Ki', 1034.24);
+  test_('5.12Ki', 5242.88);
+  test_('10Ki', 10240);
+  test_('10.23Ki', 10475.52);
+  test_('100Ki', 102400);
+  test_('1Mi', 1048576);
+  test_('10Mi', 10485760);
+  test_('100Mi', 104857600);
+  test_('1Gi', 1073741824);
+  test_('1Ti', 1099511627776);
+  test_('1Pi', 1125899906842624);
+
+  // decimal memory units
+  test_('1k', 1000);
+  test_('1.01k', 1010);
+  test_('5.12k', 5120);
+  test_('1M', 1000000);
+  test_('10M', 10000000);
+  test_('100M', 100000000);
+  test_('1G', 1000000000);
+  test_('1T', 1000000000000);
+  test_('1P', 1000000000000000);
+});
