@@ -49,7 +49,7 @@ export const InstallPlanRow: React.SFC<InstallPlanRowProps> = (props) => {
     <div className="hidden-xs hidden-sm hidden-md col-lg-2">
       {phaseFor(_.get(props.obj.status, 'phase')) || 'Unknown'}
     </div>
-    <div className="co-kebab-wrapper">
+    <div className="dropdown-kebab-pf">
       <ResourceKebab actions={Kebab.factory.common} kind={referenceForModel(InstallPlanModel)} resource={props.obj} />
     </div>
   </ResourceRow>;

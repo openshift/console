@@ -55,7 +55,7 @@ export const PodRow = ({obj: pod}) => {
     </div>
     <div className="col-lg-2 col-md-2 hidden-sm hidden-xs">{status}</div>
     <div className="col-lg-2 hidden-md hidden-sm hidden-xs"><Readiness pod={pod} /></div>
-    <div className="co-kebab-wrapper">
+    <div className="dropdown-kebab-pf">
       <ResourceKebab actions={menuActions} kind="Pod" resource={pod} isDisabled={phase === 'Terminating'} />
     </div>
   </ResourceRow>;

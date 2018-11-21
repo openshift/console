@@ -61,7 +61,7 @@ const NamespaceRow = ({obj: ns}) => <ResourceRow obj={ns}>
   <div className="col-sm-4 hidden-xs">
     <LabelList kind="Namespace" labels={ns.metadata.labels} />
   </div>
-  <div className="co-kebab-wrapper">
+  <div className="dropdown-kebab-pf">
     <ResourceKebab actions={nsMenuActions} kind="Namespace" resource={ns} />
   </div>
 </ResourceRow>;
@@ -96,7 +96,7 @@ const ProjectRow = ({obj: project}) => {
     <div className="col-md-3 hidden-sm hidden-xs">
       <LabelList kind="Project" labels={project.metadata.labels} />
     </div>
-    <div className="co-kebab-wrapper">
+    <div className="dropdown-kebab-pf">
       <ResourceKebab actions={projectMenuActions} kind="Project" resource={project} />
     </div>
   </ResourceRow>;

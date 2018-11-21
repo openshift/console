@@ -88,7 +88,7 @@ const ServiceAccountRow = ({obj: serviceaccount}) => {
       <div className="col-sm-2 hidden-xs">
         {fromNow(creationTimestamp)}
       </div>
-      <div className="co-kebab-wrapper">
+      <div className="dropdown-kebab-pf">
         <ResourceKebab actions={menuActions} kind="ServiceAccount" resource={serviceaccount} />
       </div>
     </ResourceRow>

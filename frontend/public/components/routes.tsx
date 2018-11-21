@@ -140,7 +140,7 @@ const RouteListRow: React.SFC<RoutesRowProps> = ({obj: route}) => <ResourceRow o
     <ResourceLink kind="Service" name={route.spec.to.name} namespace={route.metadata.namespace} title={route.spec.to.name} />
   </div>
   <div className="col-lg-2 hidden-md hidden-sm hidden-xs"><RouteStatus obj={route} /></div>
-  <div className="co-kebab-wrapper">
+  <div className="dropdown-kebab-pf">
     <ResourceKebab actions={menuActions} kind="Route" resource={route} />
   </div>
 </ResourceRow>;

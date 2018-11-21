@@ -33,7 +33,7 @@ const Row = ({obj: cronjob}) => <div className="row co-resource-list__item">
   <div className="col-lg-2 hidden-md hidden-sm hidden-xs">
     {_.get(cronjob.spec, 'startingDeadlineSeconds', '-')}
   </div>
-  <div className="co-kebab-wrapper">
+  <div className="dropdown-kebab-pf">
     <ResourceKebab actions={menuActions} kind={kind} resource={cronjob} />
   </div>
 </div>;

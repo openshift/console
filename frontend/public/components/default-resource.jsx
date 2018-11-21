@@ -37,7 +37,7 @@ const RowForKind = kind => function RowForKind_({obj}) {
     <div className="col-xs-6 col-sm-4 hidden-xs">
       { fromNow(obj.metadata.creationTimestamp) }
     </div>
-    <div className="co-kebab-wrapper">
+    <div className="dropdown-kebab-pf">
       <ResourceKebab actions={menuActions} kind={referenceFor(obj) || kind} resource={obj} />
     </div>
   </div>;

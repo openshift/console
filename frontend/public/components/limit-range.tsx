@@ -22,7 +22,7 @@ const LimitRangeRow: React.SFC<LimitRangeProps> = ({obj}) =>
     <div className="col-xs-4">
       <Timestamp timestamp={obj.metadata.creationTimestamp} />
     </div>
-    <div className="co-kebab-wrapper">
+    <div className="dropdown-kebab-pf">
       <ResourceKebab actions={menuActions} kind={LimitRangeReference} resource={obj} />
     </div>
   </div>;

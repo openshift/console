@@ -23,7 +23,7 @@ const Row = ({obj}) => <div className="row co-resource-list__item">
   <div className="col-sm-4 hidden-xs">
     <Timestamp timestamp={obj.metadata.creationTimestamp} />
   </div>
-  <div className="co-kebab-wrapper">
+  <div className="dropdown-kebab-pf">
     <ResourceKebab actions={menuActions} kind={kind} resource={obj} />
   </div>
 </div>;

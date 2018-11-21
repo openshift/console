@@ -45,7 +45,7 @@ const JobRow = ({obj: job}) => {
       <div className="col-lg-2 hidden-md hidden-sm hidden-xs">
         {type}
       </div>
-      <div className="co-kebab-wrapper">
+      <div className="dropdown-kebab-pf">
         <ResourceKebab actions={menuActions} kind="Job" resource={job} />
       </div>
     </ResourceRow>

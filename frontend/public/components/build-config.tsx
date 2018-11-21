@@ -85,7 +85,7 @@ const BuildConfigsRow: React.SFC<BuildConfigsRowProps> = ({obj}) => <div classNa
   <div className="col-sm-3 hidden-xs">
     { fromNow(obj.metadata.creationTimestamp) }
   </div>
-  <div className="co-kebab-wrapper">
+  <div className="dropdown-kebab-pf">
     <ResourceKebab actions={menuActions} kind={BuildConfigsReference} resource={obj} />
   </div>
 </div>;

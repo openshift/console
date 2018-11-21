@@ -59,7 +59,7 @@ export const ClusterServiceVersionResourceRow: React.SFC<ClusterServiceVersionRe
     <div className="col-xs-2">
       <Timestamp timestamp={obj.metadata.creationTimestamp} />
     </div>
-    <div className="co-kebab-wrapper">
+    <div className="dropdown-kebab-pf">
       <ResourceKebab actions={Kebab.factory.common} kind={referenceFor(obj)} resource={obj} />
     </div>
   </div>;

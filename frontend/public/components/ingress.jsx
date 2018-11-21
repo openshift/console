@@ -50,7 +50,7 @@ const IngressListRow = ({obj: ingress}) => <ResourceRow obj={ingress}>
     <LabelList kind="Ingress" labels={ingress.metadata.labels} />
   </div>
   <div className="col-md-3 hidden-sm hidden-xs">{getHosts(ingress)}</div>
-  <div className="co-kebab-wrapper">
+  <div className="dropdown-kebab-pf">
     <ResourceKebab actions={menuActions} kind="Ingress" resource={ingress} />
   </div>
 </ResourceRow>;

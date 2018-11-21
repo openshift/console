@@ -24,7 +24,7 @@ const ConfigMapRow = ({obj: configMap}) => <ResourceRow obj={configMap}>
   </div>
   <div className="col-sm-2 hidden-xs">{_.size(configMap.data)}</div>
   <div className="col-sm-2 hidden-xs">{fromNow(configMap.metadata.creationTimestamp)}</div>
-  <div className="co-kebab-wrapper">
+  <div className="dropdown-kebab-pf">
     <ResourceKebab actions={menuActions} kind="ConfigMap" resource={configMap} />
   </div>
 </ResourceRow>;

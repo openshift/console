@@ -95,7 +95,7 @@ const ServiceBindingsRow: React.SFC<ServiceBindingsRowProps> = ({obj}) => <div c
   <div className="col-md-2 hidden-sm hidden-xs co-break-word">
     <StatusWithIcon obj={obj} />
   </div>
-  <div className="co-kebab-wrapper">
+  <div className="dropdown-kebab-pf">
     <ResourceKebab actions={menuActions} kind={ServiceBindingsReference} resource={obj} />
   </div>
 </div>;
