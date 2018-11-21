@@ -11,7 +11,7 @@ describe('Installing a service from a Catalog Source', () => {
 
   beforeAll(async() => {
     browser.get(`${appHost}/status/ns/${testName}`);
-    await browser.wait(until.presenceOf($('#sidebar')));
+    await browser.wait(until.presenceOf($('.pf-c-nav')));
   });
 
   afterEach(() => {

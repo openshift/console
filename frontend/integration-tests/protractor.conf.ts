@@ -134,3 +134,10 @@ export const checkErrors = async() => await browser.executeScript(hasError).then
     fail(`omg js error: ${err}`);
   }
 });
+
+export const waitForCount = (elementArrayFinder, expectedCount) => {
+  return async() => {
+    const actualCount = await elementArrayFinder.count();
+    return expectedCount >= actualCount;
+  };
+};
