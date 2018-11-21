@@ -285,7 +285,7 @@ const headingDispatchToProps = (dispatch): OverviewHeadingPropsFromDispatch => (
 });
 
 const OverviewHeading_: React.SFC<OverviewHeadingProps> = ({disabled, firstLabel = '', groupOptions, handleFilterChange = _.noop, handleGroupChange = _.noop, selectedGroup = '', selectView, selectedView, title, project}) => (
-  <div className="co-m-nav-title co-m-nav-title--overview">
+  <div className={classnames('co-m-nav-title co-m-nav-title--overview', { 'overview-filter-group': selectedView === View.Resources })}>
     {
       title &&
       <h1 className="co-m-pane__heading co-m-pane__heading--overview">
@@ -320,14 +320,13 @@ const OverviewHeading_: React.SFC<OverviewHeadingProps> = ({disabled, firstLabel
       <Toolbar.RightContent>
         {selectedView === View.Resources && <React.Fragment>
           <div className="form-group overview-toolbar__form-group">
-            <label className="overview-toolbar__label co-no-bold">
-              Group by
-            </label>
             <Dropdown
               className="overview-toolbar__dropdown"
+              menuClassName="dropdown-menu--text-wrap"
               disabled={disabled}
               items={groupOptions}
               onChange={handleGroupChange}
+              titlePrefix="Group by"
               title={groupOptions[selectedGroup]}
               spacerBefore={new Set([firstLabel])}
               headerBefore={{[firstLabel]: 'Label'}}
@@ -345,7 +344,7 @@ const OverviewHeading_: React.SFC<OverviewHeadingProps> = ({disabled, firstLabel
             </div>
           </div>
         </React.Fragment>}
-        {selectedView === View.Dashboard && !_.isEmpty(project) && <div className="form-group overview-toolbar__form-group">
+        {selectedView === View.Dashboard && !_.isEmpty(project) && <div className="form-group">
           <ActionsMenu actions={overviewMenuActions.map((a: KebabAction) => a(ProjectModel, project))} />
         </div>}
       </Toolbar.RightContent>
