@@ -41,7 +41,7 @@ import {
 import VmConsolesConnected from './vmconsoles';
 import { Nic } from './nic';
 import { Disk } from './disk';
-import { DASHES } from './utils/constants';
+import { DASHES, IMPORTER_DV_POD_PREFIX, VIRT_LAUNCHER_POD_PREFIX } from './utils/constants';
 import { resourceLauncher } from './utils/resourceLauncher';
 import { showError } from './utils/showErrors';
 
@@ -93,17 +93,17 @@ const menuActionMigrate = (kind, vm) => ({
 
 const menuActions = [menuActionStart, menuActionRestart, menuActionMigrate, Kebab.factory.Delete];
 
-const getPod = (vm, resources) => {
+const getPod = (vm, resources, podNamePrefix) => {
   const podFlatten = getFlattenForKind(PodModel.kind);
   const podData = podFlatten(resources);
-  return findPod(podData, vm.metadata.name);
+  return findPod(podData, vm.metadata.name, podNamePrefix);
 };
 
 const StateColumn = props => {
   if (props.loaded){
     const vm = props.flatten(props.resources);
     if (vm) {
-      return <VmStatus vm={vm} pod={getPod(vm, props.resources)} />;
+      return <VmStatus vm={vm} launcherPod={getPod(vm, props.resources, VIRT_LAUNCHER_POD_PREFIX)} importerPod={getPod(vm, props.resources, IMPORTER_DV_POD_PREFIX)} />;
     }
   }
   return DASHES;

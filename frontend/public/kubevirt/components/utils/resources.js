@@ -20,11 +20,12 @@ export const getResourceKind = (model, name, namespaced, namespace, isList, matc
 
 export const getLabelMatcher = (vm) => _.get(vm, 'spec.template.metadata.labels');
 
-export const findPod = (data, name) => {
+/** Finds VM Launcher pod */
+export const findPod = (data, vmName, podNamePrefix) => {
   if (!data) {
     return null;
   }
-  const pods = data.filter(p => p.metadata.name.startsWith(`virt-launcher-${name}-`));
+  const pods = data.filter(p => p.metadata.name.startsWith(`${podNamePrefix}${vmName}-`));
   const runningPod = pods.find(p => _.get(p, 'status.phase') === 'Running' || _.get(p, 'status.phase') === 'Pending');
   return runningPod ? runningPod : pods.find(p => _.get(p, 'status.phase') === 'Failed' || _.get(p, 'status.phase') === 'Unknown');
 };

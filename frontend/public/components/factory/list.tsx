@@ -168,6 +168,7 @@ const listFilters = {
       return true;
     }
 
+    // TODO: figure out how to get VM pods here
     const status = getVmStatus(vm);
     return statuses.selected.has(status) || !_.includes(statuses.all, status);
   },
