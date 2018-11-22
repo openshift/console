@@ -163,7 +163,7 @@ const Label = ({k, v}) => <div className="co-m-label co-m-label--expand" key={k}
 </div>;
 
 const SilenceMatchersList = ({silence}) => <div className={`co-text-${SilenceResource.kind.toLowerCase()}`}>
-  {_.map(silence.matchers, ({name, isRegex, value}) => <Label key={name} k={name} v={isRegex ? `~${value}` : value} />)}
+  {_.map(silence.matchers, ({name, isRegex, value}, i) => <Label key={i} k={name} v={isRegex ? `~${value}` : value} />)}
 </div>;
 
 const alertStateToProps = (state): AlertsDetailsPageProps => {
