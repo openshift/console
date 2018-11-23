@@ -43,6 +43,19 @@ export const VirtualMachineInstancePresetModel: K8sKind = {
   id: 'virtualmachineinstancepreset',
 };
 
+export const VirtualMachineInstanceReplicaSetModel: K8sKind = {
+  label: 'Virtual Machine Instance Replica Set',
+  labelPlural: 'Virtual Machine Instance Replica Sets',
+  apiVersion: 'v1alpha2',
+  path: 'virtualmachineinstancereplicaset',
+  apiGroup: 'kubevirt.io',
+  plural: 'virtualmachineinstancereplicasets',
+  abbr: 'VMIRS',
+  namespaced: true,
+  kind: 'VirtualMachineInstanceReplicaSet',
+  id: 'virtualmachineinstancereplicaset',
+};
+
 export const TemplateModel: K8sKind = {
   label: 'Template',
   labelPlural: 'Templates',
@@ -96,4 +109,17 @@ export const VirtualMachineInstanceMigrationModel: K8sKind = {
   namespaced: true,
   kind: 'VirtualMachineInstanceMigration',
   id: 'virtualmachineinstancemigration',
+};
+
+export const DataVolumeModel: K8sKind = {
+  label: 'Data Volume',
+  labelPlural: 'Data Volumes',
+  apiVersion: 'v1alpha1',
+  path: 'datavolumes',
+  apiGroup: 'cdi.kubevirt.io',
+  plural: 'datavolumes',
+  abbr: 'DV',
+  namespaced: true,
+  kind: 'DataVolume',
+  id: 'datavolume',
 };
