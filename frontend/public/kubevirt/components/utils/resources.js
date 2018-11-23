@@ -20,7 +20,6 @@ export const getResourceKind = (model, name, namespaced, namespace, isList, matc
 
 export const getLabelMatcher = (vm) => _.get(vm, 'spec.template.metadata.labels');
 
-/** Finds VM Launcher pod */
 export const findPod = (data, vmName, podNamePrefix) => {
   if (!data) {
     return null;
@@ -28,6 +27,14 @@ export const findPod = (data, vmName, podNamePrefix) => {
   const pods = data.filter(p => p.metadata.name.startsWith(`${podNamePrefix}${vmName}-`));
   const runningPod = pods.find(p => _.get(p, 'status.phase') === 'Running' || _.get(p, 'status.phase') === 'Pending');
   return runningPod ? runningPod : pods.find(p => _.get(p, 'status.phase') === 'Failed' || _.get(p, 'status.phase') === 'Unknown');
+};
+
+export const findVMIMigration = (data, vmiName) => {
+  if (!data || !data.items) {
+    return null;
+  }
+  const migrations = data.items.filter(m => m.spec.vmiName === vmiName);
+  return migrations.find(m => !_.get(m, 'status.completed') && !_.get(m, 'status.failed') );
 };
 
 export const findVMI = (data, name) => data.find(vmi => vmi.metadata.name === name);
