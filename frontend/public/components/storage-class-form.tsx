@@ -41,6 +41,13 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
   }
 
   storageTypes = Object.freeze({
+    local: {
+      title: 'Local',
+      provisioner: 'kubernetes.io/no-provisioner',
+      documentationLink: 'https://kubernetes.io/docs/concepts/storage/storage-classes/#local',
+      parameters: {},
+      volumeBindingMode: 'WaitForFirstConsumer',
+    },
     aws: {
       title: 'AWS Elastic Block Storage',
       provisioner: 'kubernetes.io/aws-ebs',
@@ -544,6 +551,11 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
       data.reclaimPolicy = this.state.newStorageClass.reclaim;
     }
 
+    const volumeBindingMode = _.get(this.storageTypes[type], 'volumeBindingMode', null);
+    if (volumeBindingMode) {
+      data.volumeBindingMode = volumeBindingMode;
+    }
+
     k8sCreate(StorageClassModel, data)
       .then(() => {
         this.setState({loading: false});
@@ -683,9 +695,14 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
   };
 
   getProvisionerElements = () => {
-    const dynamicContent = Object.keys(this.storageTypes[this.state.newStorageClass.type].parameters).map(key => {
-      const parameter = this.storageTypes[this.state.newStorageClass.type].parameters[key];
-      const validationMsg = _.get(this.state.newStorageClass.parameters[key], 'validationMsg', null);
+    const parameters = this.storageTypes[this.state.newStorageClass.type].parameters;
+
+    if (_.isEmpty(parameters)) {
+      return null;
+    }
+
+    const dynamicContent = _.map(parameters, (parameter, key) => {
+      const validationMsg = _.get(parameter, 'validationMsg', null);
       const isCheckbox = parameter.type === 'checkbox';
 
       if (parameter.visible && !parameter.visible(this.state.newStorageClass.parameters)) {
@@ -866,40 +883,41 @@ const mapDispatchToProps = () => ({
 });
 
 export type StorageClassFormProps = {
-  onClose: () => void,
-  watchK8sList: (id: string, query: object, kind: object) => void,
-  stopK8sWatch: (id: string) => void,
-  k8s: any
+  onClose: () => void;
+  watchK8sList: (id: string, query: object, kind: object) => void;
+  stopK8sWatch: (id: string) => void;
+  k8s: any;
 };
 
 export type StorageClassData = {
-  name: string,
-  type: string,
-  description: string,
-  parameters: any,
-  reclaim: string
+  name: string;
+  type: string;
+  description: string;
+  parameters: any;
+  reclaim: string;
 };
 
 export type StorageClass = {
-  metadata: object,
-  provisioner: string,
-  parameters: object,
-  reclaimPolicy?: string
+  metadata: object;
+  provisioner: string;
+  parameters: object;
+  reclaimPolicy?: string;
+  volumeBindingMode?: string;
 };
 
 export type StorageClassFormState = {
-  newStorageClass: StorageClassData,
-  customParams: string[][],
-  validationSuccessful: boolean,
-  loading: boolean,
-  error: any,
-  fieldErrors: {[k: string]: any}
+  newStorageClass: StorageClassData;
+  customParams: string[][];
+  validationSuccessful: boolean;
+  loading: boolean;
+  error: any;
+  fieldErrors: {[k: string]: any};
 };
 
 export type Resources = {
-  loaded: boolean,
-  data: any[],
-  loadError: string
+  loaded: boolean;
+  data: any[];
+  loadError: string;
 };
 
 export const ConnectedStorageClassForm = connect(mapStateToProps, mapDispatchToProps)(StorageClassForm_);
