@@ -162,7 +162,7 @@ export const VMRow = ({obj: vm}) => {
     </div>
     <div className="col-lg-2 col-md-2 col-sm-2 hidden-xs">
       <Firehose resources={[podResources]} flatten={getFlattenForKind(PodModel.kind)}>
-        <FirehoseResourceLink filter={data => findPod(data, vm.metadata.name)} />
+        <FirehoseResourceLink filter={data => findPod(data, vm.metadata.name, VIRT_LAUNCHER_POD_PREFIX)} />
       </Firehose>
     </div>
     <div className="co-kebab-wrapper">
@@ -197,7 +197,7 @@ const VMStatus = (props) => {
         <dt>Pod:</dt>
         <dd>
           <Firehose resources={[podResources]} flatten={getFlattenForKind(PodModel.kind)}>
-            <FirehoseResourceLink filter={data => findPod(data, props.vm.metadata.name)} />
+            <FirehoseResourceLink filter={data => findPod(data, props.vm.metadata.name, VIRT_LAUNCHER_POD_PREFIX)} />
           </Firehose>
         </dd>
       </dl>
