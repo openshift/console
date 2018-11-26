@@ -1,8 +1,13 @@
-import {createEquals, requirementFromString, requirementToString} from './selector-requirement';
+/* eslint-disable no-undef, no-unused-vars */
 
-const isOldFormat = selector => !selector.matchLabels && !selector.matchExpressions;
+import { createEquals, requirementFromString, requirementToString } from './selector-requirement';
+import { Selector, MatchExpression } from './index';
 
-export const fromRequirements = (requirements, options) => {
+const isOldFormat = (selector: Selector) => !selector.matchLabels && !selector.matchExpressions;
+
+type Options = {undefinedWhenEmpty?: boolean, basic?: boolean};
+
+export const fromRequirements = (requirements: MatchExpression[], options = {} as Options) => {
   options = options || {};
   const selector = {
     matchLabels:      {},
@@ -13,7 +18,7 @@ export const fromRequirements = (requirements, options) => {
     return;
   }
 
-  requirements.forEach(function(r) {
+  requirements.forEach((r) => {
     if (r.operator === 'Equals') {
       selector.matchLabels[r.key] = r.values[0];
     } else {
@@ -29,10 +34,9 @@ export const fromRequirements = (requirements, options) => {
   return selector;
 };
 
-export const split = string => string.trim() ? string.split(/,(?![^(]*\))/) : []; // [''] -> []
+export const split = (str: string) => str.trim() ? str.split(/,(?![^(]*\))/) : []; // [''] -> []
 
-export const toRequirements = selector => {
-  selector = selector || {};
+export const toRequirements = (selector: Selector = {}) => {
   const requirements = [];
   const matchLabels = isOldFormat(selector) ? selector : selector.matchLabels;
   const matchExpressions = selector.matchExpressions;
@@ -48,12 +52,12 @@ export const toRequirements = selector => {
   return requirements;
 };
 
-export const selectorFromString = string => {
-  const requirements = split(string || '').map(requirementFromString);
+export const selectorFromString = (str: string) => {
+  const requirements = split(str || '').map(requirementFromString) as MatchExpression[];
   return fromRequirements(requirements);
 };
 
-export const selectorToString = selector => {
+export const selectorToString = (selector: Selector) => {
   const requirements = toRequirements(selector);
   return requirements.map(requirementToString).join(',');
 };
