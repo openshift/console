@@ -76,6 +76,7 @@ export const types = {
   sortList: 'sortList',
   startImpersonate: 'startImpersonate',
   stopImpersonate: 'stopImpersonate',
+  updateOverviewMetrics: 'updateOverviewMetrics',
   updateOverviewResources: 'updateOverviewResources',
 };
 
@@ -167,6 +168,8 @@ export const UIActions = {
   [types.selectOverviewItem]: uid => ({type: types.selectOverviewItem, uid}),
 
   [types.selectOverviewDetailsTab]: tab => ({type: types.selectOverviewDetailsTab, tab}),
+
+  [types.updateOverviewMetrics]: metrics => ({type: types.updateOverviewMetrics, metrics}),
 
   [types.updateOverviewResources]: resources => ({type: types.updateOverviewResources, resources}),
 

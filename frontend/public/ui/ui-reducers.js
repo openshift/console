@@ -27,9 +27,11 @@ export default (state, action) => {
       activeNamespace: activeNamespace || 'default',
       createProjectMessage: '',
       overview: new ImmutableMap({
+        metrics: {},
         resources: new ImmutableMap({}),
         selectedDetailsTab: '',
         selectedUID: '',
+        selectedView: 'resources',
       }),
     });
   }
@@ -100,10 +102,14 @@ export default (state, action) => {
     case types.dismissOverviewDetails:
       return state.mergeIn(['overview'], {selectedUID: '', selectedDetailsTab: ''});
 
+    case types.updateOverviewMetrics:
+      return state.setIn(['overview', 'metrics'], action.metrics);
+
     case types.updateOverviewResources: {
       const newResources = new ImmutableMap(_.keyBy(action.resources, 'obj.metadata.uid'));
       return state.setIn(['overview', 'resources'], newResources);
     }
+
     default:
       break;
   }
