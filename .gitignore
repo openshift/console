@@ -1,6 +1,7 @@
 .env
 .idea
 .vscode
+.protractor-fail-fast
 /bin
 /gopath
 /Godeps/_workspace/src/github.com/openshift/console
