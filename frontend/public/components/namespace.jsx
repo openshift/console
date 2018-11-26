@@ -84,8 +84,10 @@ const ProjectRow = ({obj: project}) => {
   const requester = getRequester(project);
   return <ResourceRow obj={project}>
     <div className="col-md-3 col-sm-6 col-xs-8">
-      <ResourceIcon kind="Project" />
-      <Link to={`/overview/ns/${name}`} title={displayName} className="co-resource-link__resource-name">{project.metadata.name}</Link>
+      <span className="co-resource-link">
+        <ResourceIcon kind="Project" />
+        <Link to={`/overview/ns/${name}`} title={displayName} className="co-resource-link__resource-name">{project.metadata.name}</Link>
+      </span>
     </div>
     <div className="col-md-3 col-sm-3 col-xs-4">
       {project.status.phase}
