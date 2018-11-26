@@ -33,7 +33,7 @@ import { UIActions } from './ui/ui-actions';
   CAN_LIST_STORE: false,
   CAN_LIST_CRD: false,
   CAN_CREATE_PROJECT: false,
-  PROJECTS_AVAILABLE: false,
+  SHOW_OPENSHIFT_START_GUIDE: false,
   SERVICE_CATALOG: false,
   CLUSTER_API false,
  */
@@ -50,7 +50,7 @@ export enum FLAGS {
   CAN_LIST_STORE = 'CAN_LIST_STORE',
   CAN_LIST_CRD = 'CAN_LIST_CRD',
   CAN_CREATE_PROJECT = 'CAN_CREATE_PROJECT',
-  PROJECTS_AVAILABLE = 'PROJECTS_AVAILABLE',
+  SHOW_OPENSHIFT_START_GUIDE = 'SHOW_OPENSHIFT_START_GUIDE',
   SERVICE_CATALOG = 'SERVICE_CATALOG',
   KUBERNETES_MARKETPLACE = 'KUBERNETES_MARKETPLACE',
   CLUSTER_API = 'CLUSTER_API',
@@ -104,15 +104,6 @@ const detectOpenShift = dispatch => coFetchJSON(openshiftPath)
       : handleError(err, FLAGS.OPENSHIFT, dispatch, detectOpenShift)
   );
 
-const projectListPath = `${k8sBasePath}/apis/project.openshift.io/v1/projects?limit=1`;
-const detectProjectsAvailable = dispatch => coFetchJSON(projectListPath)
-  .then(
-    res => setFlag(dispatch, FLAGS.PROJECTS_AVAILABLE, !_.isEmpty(res.items)),
-    err => _.get(err, 'response.status') === 404
-      ? setFlag(dispatch, FLAGS.PROJECTS_AVAILABLE, false)
-      : handleError(err, FLAGS.PROJECTS_AVAILABLE, dispatch, detectProjectsAvailable)
-  );
-
 const projectRequestPath = `${k8sBasePath}/apis/project.openshift.io/v1/projectrequests`;
 const detectCanCreateProject = dispatch => coFetchJSON(projectRequestPath)
   .then(
@@ -131,30 +122,65 @@ const detectCanCreateProject = dispatch => coFetchJSON(projectRequestPath)
 export const featureActions = [
   detectCalicoFlags,
   detectOpenShift,
-  detectProjectsAvailable,
   detectCanCreateProject,
 ];
 
-// generate additional featureActions
-[
-  [FLAGS.CAN_LIST_NS, { resource: 'namespaces', verb: 'list' }],
-  [FLAGS.CAN_LIST_NODE, { resource: 'nodes', verb: 'list' }],
-  [FLAGS.CAN_LIST_PV, { resource: 'persistentvolumes', verb: 'list' }],
-  [FLAGS.CAN_LIST_STORE, { group: 'storage.k8s.io', resource: 'storageclasses', verb: 'list' }],
-  [FLAGS.CAN_LIST_CRD, { group: 'apiextensions.k8s.io', resource: 'customresourcedefinitions', verb: 'list' }],
-].forEach(_.spread((FLAG, resourceAttributes) => {
+const projectListPath = `${k8sBasePath}/apis/project.openshift.io/v1/projects?limit=1`;
+const detectShowOpenShiftStartGuide = (dispatch, canListNS: boolean = false) => {
+  // Skip the project check if we know the user can list all namespaces. This
+  // avoids potentially listing thousands of projects more than once (projects
+  // dropdown and flag check). Even though we only ask for one project, the
+  // projects API currently doesn't support paging.
+  //
+  // TODO: Consider adding a global watch for projects / namespaces, which
+  // could remove the need for this flag entirely. It would also prevent us
+  // from re-listing projects when switching from a namespace-scoped resource
+  // to a cluster-scoped resource and back.
+  if (canListNS) {
+    setFlag(dispatch, FLAGS.SHOW_OPENSHIFT_START_GUIDE, false);
+    return;
+  }
+
+  coFetchJSON(projectListPath)
+    .then(
+      res => setFlag(dispatch, FLAGS.SHOW_OPENSHIFT_START_GUIDE, _.isEmpty(res.items)),
+      err => _.get(err, 'response.status') === 404
+        ? setFlag(dispatch, FLAGS.SHOW_OPENSHIFT_START_GUIDE, false)
+        : handleError(err, FLAGS.SHOW_OPENSHIFT_START_GUIDE, dispatch, detectShowOpenShiftStartGuide)
+    );
+};
+
+// Check the user's access to some resources.
+const ssarChecks = [{
+  flag: FLAGS.CAN_LIST_NS,
+  resourceAttributes: { resource: 'namespaces', verb: 'list' },
+  after: detectShowOpenShiftStartGuide,
+}, {
+  flag: FLAGS.CAN_LIST_NODE,
+  resourceAttributes: { resource: 'nodes', verb: 'list' },
+}, {
+  flag: FLAGS.CAN_LIST_PV,
+  resourceAttributes: { resource: 'persistentvolumes', verb: 'list' },
+}, {
+  flag: FLAGS.CAN_LIST_CRD,
+  resourceAttributes:{ group: 'apiextensions.k8s.io', resource: 'customresourcedefinitions', verb: 'list' },
+}];
+
+ssarChecks.forEach(({flag, resourceAttributes, after}) => {
   const req = {
     spec: { resourceAttributes },
   };
   const fn = (dispatch) => {
-    return k8sCreate(SelfSubjectAccessReviewModel, req)
-      .then(
-        (res) => setFlag(dispatch, FLAG, res.status.allowed),
-        (err) => handleError(err, FLAG, dispatch, fn)
-      );
+    return k8sCreate(SelfSubjectAccessReviewModel, req) .then((res) => {
+      const allowed: boolean = res.status.allowed;
+      setFlag(dispatch, flag, allowed);
+      if (after) {
+        after(dispatch, allowed);
+      }
+    }, (err) => handleError(err, flag, dispatch, fn));
   };
   featureActions.push(fn);
-}));
+});
 
 export const featureReducerName = 'FLAGS';
 export const featureReducer = (state: ImmutableMap<string, any>, action) => {

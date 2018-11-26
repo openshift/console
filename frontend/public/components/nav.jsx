@@ -414,7 +414,7 @@ export class Nav extends React.Component {
           <NavSection text="Storage" icon="pficon pficon-container-node">
             <ResourceClusterLink resource="persistentvolumes" name="Persistent Volumes" onClick={this.close} required={FLAGS.CAN_LIST_PV} />
             <ResourceNSLink resource="persistentvolumeclaims" name="Persistent Volume Claims" onClick={this.close} />
-            <ResourceClusterLink resource="storageclasses" name="Storage Classes" onClick={this.close} required={FLAGS.CAN_LIST_STORE} />
+            <ResourceClusterLink resource="storageclasses" name="Storage Classes" onClick={this.close} />
           </NavSection>
 
           <NavSection text="Builds" icon="pficon pficon-build" required={FLAGS.OPENSHIFT}>

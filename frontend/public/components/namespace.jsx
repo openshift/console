@@ -248,8 +248,8 @@ class NamespaceBarDropdowns_ extends React.Component {
   componentDidUpdate() {
     const { namespace, dispatch } = this.props;
     if (namespace.loaded) {
-      const projectsAvailable = !_.isEmpty(namespace.data);
-      setFlag(dispatch, FLAGS.PROJECTS_AVAILABLE, projectsAvailable);
+      const noProjects = _.isEmpty(namespace.data);
+      setFlag(dispatch, FLAGS.SHOW_OPENSHIFT_START_GUIDE, noProjects);
     }
   }
 
