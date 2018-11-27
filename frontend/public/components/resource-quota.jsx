@@ -13,16 +13,9 @@ const menuActions = [...common];
 
 const quotaKind = quota => quota.metadata.namespace ? referenceForModel(ResourceQuotaModel) : referenceForModel(ClusterResourceQuotaModel);
 
-const compareResourceType = (left, right) => {
-  const regex = /\.|\//; //find object types delimited by '.' or '/'. Ex: '.cpu', '.memory', or '/persistentvolumeclaims'
-  left = left.match(regex) ? left.split(regex).reverse().join('') : left;
-  right = right.match(regex) ? right.split(regex).reverse().join('') : right;
-  return left.localeCompare(right, 'en', {sensitivity: 'base'});
-};
-
 const getResourceTypes = (quota) => {
   const specHard = _.get(quota, 'spec.hard');
-  return _.keys(specHard).sort(compareResourceType);
+  return _.keys(specHard).sort();
 };
 
 const Header = props => <ListHeader>
@@ -42,41 +35,41 @@ const Row = ({obj: rq}) => <div className="row co-resource-list__item">
   </div>
 </div>;
 
-const UsageIcon = ({capacity}) => {
-  let capacityIconClass = 'pficon pficon-unknown';
-  if (capacity === 0) {
-    capacityIconClass = 'fa fa-circle-thin co-resource-quota-empty';
-  } else if (capacity > 0 && capacity < .5) {
-    capacityIconClass = 'pficon pficon-resources-almost-empty';
-  } else if (capacity >= .5 && capacity < 1){
-    capacityIconClass = 'pficon pficon-resources-almost-full';
-  } else if (capacity === 1) {
-    capacityIconClass = 'pficon pficon-resources-full';
-  } else if (capacity > 1) {
-    capacityIconClass = 'pficon pficon-warning-triangle-o';
+const ProportionIcon = ({proportion}) => {
+  let proportionIconClass = 'pficon pficon-unknown';
+  if (proportion === 0) {
+    proportionIconClass = 'fa fa-circle-thin co-resource-quota-empty';
+  } else if (proportion > 0 && proportion < .5) {
+    proportionIconClass = 'pficon pficon-resources-almost-empty';
+  } else if (proportion >= .5 && proportion < 1){
+    proportionIconClass = 'pficon pficon-resources-almost-full';
+  } else if (proportion === 1) {
+    proportionIconClass = 'pficon pficon-resources-full';
+  } else if (proportion > 1) {
+    proportionIconClass = 'pficon pficon-warning-triangle-o';
   }
-  return <i className={capacityIconClass} aria-hidden="true" />;
+  return <i className={proportionIconClass} aria-hidden="true" />;
 };
 
-const getDecimalUsage = (used, max) => {
-  let capacity = 0;
-  if (max && used) {
-    const usedNum = convertToBaseValue(used);
-    const maxNum = convertToBaseValue(max);
-    capacity = usedNum / maxNum;
+const getProportionUsed = (used, max) => {
+  if (!max || !used) {
+    return 0;
   }
-  return capacity;
+
+  const usedNum = convertToBaseValue(used);
+  const maxNum = convertToBaseValue(max);
+  return usedNum / maxNum;
 };
 
 const ResourceUsageRow = ({quota, resourceType}) => {
   const max = _.get(quota, ['status', 'hard', resourceType]) || _.get(quota, ['spec', 'hard', resourceType]);
   const used = _.get(quota, ['status', 'used', resourceType]);
-  const capacity = getDecimalUsage(used, max);
-  return <div className="row">
-    <div className="col-xs-4">{resourceType}</div>
-    <div className="col-xs-2 co-resource-quota-icon"><UsageIcon capacity={capacity} /></div>
-    <div className="col-xs-3">{used}</div>
-    <div className="col-xs-3">{max}</div>
+  const proportionUsed = getProportionUsed(used, max);
+  return <div className="row co-m-row">
+    <div className="col-sm-4 col-xs-6 co-break-word">{resourceType}</div>
+    <div className="col-sm-2 hidden-xs co-resource-quota-icon"><ProportionIcon proportion={proportionUsed} /></div>
+    <div className="col-sm-3 col-xs-3">{used}</div>
+    <div className="col-sm-3 col-xs-3">{max}</div>
   </div>;
 };
 
@@ -87,17 +80,15 @@ const Details = ({obj: rq}) => <React.Fragment>
   </div>
   <div className="co-m-pane__body">
     <SectionHeading text="Resource Usage" />
-    <div className="row">
-      <div className="co-m-table-grid co-m-table-grid--bordered">
-        <div className="row co-m-table-grid__head">
-          <div className="col-xs-4">Resource Type</div>
-          <div className="col-xs-2">Capacity</div>
-          <div className="col-xs-3">Used</div>
-          <div className="col-xs-3">Max</div>
-        </div>
-        <div className="co-m-table-grid__body">
-          {getResourceTypes(rq).map(type => <ResourceUsageRow key={type} quota={rq} resourceType={type} />)}
-        </div>
+    <div className="co-m-table-grid co-m-table-grid--bordered">
+      <div className="row co-m-table-grid__head">
+        <div className="col-sm-4 col-xs-6">Resource Type</div>
+        <div className="col-sm-2 hidden-xs">Capacity</div>
+        <div className="col-sm-3 col-xs-3">Used</div>
+        <div className="col-sm-3 col-xs-3">Max</div>
+      </div>
+      <div className="co-m-table-grid__body">
+        {getResourceTypes(rq).map(type => <ResourceUsageRow key={type} quota={rq} resourceType={type} />)}
       </div>
     </div>
   </div>
