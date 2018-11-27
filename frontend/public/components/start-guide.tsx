@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import { createProjectMessageStateToProps } from '../ui/ui-reducers';
 import { SafetyFirst } from './safety-first';
 import { DocumentationSidebar, Disabled } from './utils';
-import { FLAGS, connectToFlags, flagPending } from '../features';
+import { FLAGS, connectToFlags } from '../features';
 import { ProjectModel, RoleModel, StorageClassModel } from '../models';
 
 const WHITELIST = [RoleModel.kind, StorageClassModel.kind];
@@ -70,7 +70,7 @@ export const OpenShiftGettingStarted = connect(createProjectMessageStateToProps)
 );
 
 export const withStartGuide = (WrappedComponent, doNotDisable: boolean = false) =>
-  connectToFlags(FLAGS.OPENSHIFT, FLAGS.PROJECTS_AVAILABLE)(
+  connectToFlags(FLAGS.SHOW_OPENSHIFT_START_GUIDE)(
     ({flags, ...rest}: any) => {
       const {kindObj} = rest;
       const kind = _.get(kindObj, 'kind', rest.kind);
@@ -80,11 +80,7 @@ export const withStartGuide = (WrappedComponent, doNotDisable: boolean = false) 
         return <WrappedComponent {...rest} />;
       }
 
-      if (flagPending(flags.OPENSHIFT) || flagPending(flags)) {
-        return null;
-      }
-
-      if (flags.OPENSHIFT && !flags.PROJECTS_AVAILABLE) {
+      if (flags.SHOW_OPENSHIFT_START_GUIDE) {
         return <React.Fragment>
           <StartGuide />
           {
