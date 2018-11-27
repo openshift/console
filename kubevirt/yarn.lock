@@ -28,9 +28,10 @@ file-saver@^1.3.8:
   version "1.3.8"
   resolved "https://registry.yarnpkg.com/file-saver/-/file-saver-1.3.8.tgz#e68a30c7cb044e2fb362b428469feb291c2e09d8"
 
-kubevirt-web-ui-components@0.1.9:
-  version "0.1.9"
-  resolved "https://registry.yarnpkg.com/kubevirt-web-ui-components/-/kubevirt-web-ui-components-0.1.9.tgz#02f913456b0a3e4fc92b3f5bd8779fc3c9ebd0b7"
+kubevirt-web-ui-components@0.1.10:
+  version "0.1.10"
+  resolved "https://registry.yarnpkg.com/kubevirt-web-ui-components/-/kubevirt-web-ui-components-0.1.10.tgz#fc14e908a18227636a7b3fb199b1c20923554ee5"
+  integrity sha512-ponbLzU0HFK5kxb3cr73dEk8utXDA74UPHp/sg4rIGx+s0pUJN8rKsmbOZ5aXFmKWJWhLgItzlqpqPYiiFu3kg==
 
 reactabular-dnd@^8.16.0:
   version "8.16.0"
