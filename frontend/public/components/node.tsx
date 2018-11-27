@@ -8,7 +8,7 @@ import { ResourceEventStream } from './events';
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import { configureUnschedulableModal } from './modals';
 import { PodsPage } from './pod';
-import { Kebab, navFactory, LabelList, ResourceKebab, SectionHeading, ResourceLink, Timestamp, units, cloudProviderNames, cloudProviderID, pluralize, containerLinuxUpdateOperator } from './utils';
+import { Kebab, navFactory, LabelList, ResourceKebab, SectionHeading, ResourceLink, Timestamp, units, cloudProviderNames, cloudProviderID, pluralize, containerLinuxUpdateOperator, StatusIcon } from './utils';
 import { Line, requirePrometheus } from './graphs';
 import { K8sResourceKind, referenceForModel } from '../module/k8s';
 import { MachineModel, NodeModel } from '../models';
@@ -59,7 +59,7 @@ const HeaderSearch = props => <ListHeader>
   <ColHead {...props} className="col-md-2 col-sm-3 hidden-xs" sortField="status.addresses">Node Addresses</ColHead>
 </ListHeader>;
 
-const NodeStatus = ({node}) => isNodeReady(node) ? <span className="node-ready"><i className="fa fa-check"></i> Ready</span> : <span className="node-not-ready"><i className="fa fa-minus-circle"></i> Not Ready</span>;
+const NodeStatus = ({node}) => isNodeReady(node) ? <StatusIcon status="Ready" /> : <StatusIcon status="Not Ready" />;
 
 const NodeCLUpdateStatus = ({node}) => {
   const updateStatus = containerLinuxUpdateOperator.getUpdateStatus(node);

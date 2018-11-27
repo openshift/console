@@ -23,9 +23,9 @@ export const SubscriptionHeader: React.SFC<SubscriptionHeaderProps> = (props) =>
 
 const subscriptionState = (state: SubscriptionState) => {
   switch (state) {
-    case SubscriptionState.SubscriptionStateUpgradeAvailable: return <span><i className="fa fa-exclamation-triangle text-warning" /> Upgrade available</span>;
-    case SubscriptionState.SubscriptionStateUpgradePending: return <span><i className="fa fa-spin fa-circle-o-notch text-primary" /> Upgrading</span>;
-    case SubscriptionState.SubscriptionStateAtLatest: return <span><i className="fa fa-check-circle co-m-status--ok" /> Up to date</span>;
+    case SubscriptionState.SubscriptionStateUpgradeAvailable: return <span><i className="pficon pficon-warning-triangle-o text-warning" /> Upgrade available</span>;
+    case SubscriptionState.SubscriptionStateUpgradePending: return <span><i className="pficon pficon-in-progress text-primary" /> Upgrading</span>;
+    case SubscriptionState.SubscriptionStateAtLatest: return <span><i className="pficon pficon-ok co-m-status--ok" /> Up to date</span>;
     default: return <span className={_.isEmpty(state) && 'text-muted'}>{state || 'Unknown'}</span>;
   }
 };

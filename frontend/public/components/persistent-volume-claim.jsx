@@ -3,7 +3,7 @@ import * as _ from 'lodash-es';
 
 import { FLAGS, connectToFlags } from '../features';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
-import { Kebab, navFactory, ResourceKebab, SectionHeading, ResourceLink, ResourceSummary, Selector } from './utils';
+import { Kebab, navFactory, ResourceKebab, SectionHeading, ResourceLink, ResourceSummary, Selector, StatusIcon } from './utils';
 import { ResourceEventStream } from './events';
 
 const pvcPhase = pvc => pvc.status.phase;
@@ -13,20 +13,7 @@ const menuActions = [...common];
 
 const PVCStatus = ({pvc}) => {
   const phase = pvcPhase(pvc);
-  if (!phase) {
-    return '-';
-  }
-
-  switch (phase) {
-    case 'Pending':
-      return <span className="text-muted"><i className="fa fa-hourglass-half" aria-hidden="true"></i> Pending</span>;
-    case 'Bound':
-      return <span className="pvc-bound"><i className="fa fa-check" aria-hidden="true"></i> Bound</span>;
-    case 'Lost':
-      return <span className="pvc-lost"><i className="fa fa-minus-circle" aria-hidden="true"></i> Lost</span>;
-    default:
-      return phase;
-  }
+  return <StatusIcon status={phase} />;
 };
 
 const Header = props => <ListHeader>

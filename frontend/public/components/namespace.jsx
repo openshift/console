@@ -10,7 +10,7 @@ import { k8sGet } from '../module/k8s';
 import { formatNamespacedRouteForResource, UIActions } from '../ui/ui-actions';
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import { SafetyFirst } from './safety-first';
-import { ActionsMenu, Kebab, Dropdown, Firehose, LabelList, LoadingInline, navFactory, ResourceKebab, SectionHeading, ResourceIcon, ResourceLink, ResourceSummary, humanizeMem, MsgBox } from './utils';
+import { ActionsMenu, Kebab, Dropdown, Firehose, LabelList, LoadingInline, navFactory, ResourceKebab, SectionHeading, ResourceIcon, ResourceLink, ResourceSummary, humanizeMem, MsgBox, StatusIcon } from './utils';
 import { createNamespaceModal, createProjectModal, deleteNamespaceModal, configureNamespacePullSecretModal } from './modals';
 import { RoleBindingsPage } from './RBAC';
 import { Bar, Line, requirePrometheus } from './graphs';
@@ -56,7 +56,7 @@ const NamespaceRow = ({obj: ns}) => <ResourceRow obj={ns}>
     <ResourceLink kind="Namespace" name={ns.metadata.name} title={ns.metadata.uid} />
   </div>
   <div className="col-sm-4 col-xs-6 co-break-word">
-    {ns.status.phase}
+    <StatusIcon status={ns.status.phase} />
   </div>
   <div className="col-sm-4 hidden-xs">
     <LabelList kind="Namespace" labels={ns.metadata.labels} />
@@ -90,7 +90,7 @@ const ProjectRow = ({obj: project}) => {
       </span>
     </div>
     <div className="col-md-3 col-sm-3 col-xs-4">
-      {project.status.phase}
+      <StatusIcon status={project.status.phase} />
     </div>
     <div className="col-md-3 col-sm-3 hidden-xs">
       {requester || <span className="text-muted">No requester</span>}
@@ -210,7 +210,7 @@ export const NamespaceSummary = ({ns}) => {
     <div className="col-sm-6 col-xs-12">
       <dl className="co-m-pane__details">
         <dt>Status</dt>
-        <dd>{ns.status.phase}</dd>
+        <dd><StatusIcon status={ns.status.phase} /></dd>
         <dt>Default Pull Secret</dt>
         <dd><PullSecret namespace={ns} /></dd>
         <dt>Network Policies</dt>

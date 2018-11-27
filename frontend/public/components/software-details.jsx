@@ -11,14 +11,14 @@ import { FLAGS, connectToFlags, flagPending } from '../features';
 
 const StatusIconRow = ({state, text}) => {
   const iconClasses = {
-    ok: 'fa-check',
-    warning: 'fa-warning',
-    critical: 'fa-warning',
-    unknown: 'fa-question-circle',
+    ok: 'pficon-ok',
+    warning: 'pficon-warning-triangle-o',
+    critical: 'pficon-error-circle-o',
+    unknown: 'pficon-unknown',
     'access-denied': 'fa-ban',
   };
   return <div className={classNames('co-m-status', [`co-m-status--${state}`])}>
-    <i className={classNames('co-m-status__icon', 'fa', iconClasses[state])}></i>
+    <i className={classNames('co-m-status__icon', 'pficon', iconClasses[state])}></i>
     <span className="co-m-status__text">{text}</span>
   </div>;
 };

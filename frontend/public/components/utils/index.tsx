@@ -49,6 +49,7 @@ export * from './name-value-editor';
 export * from './k8s-watcher';
 export * from './workload-pause';
 export * from './list-dropdown';
+export * from './status-icon';
 
 /*
   Add the enum for NameValueEditorPair here and not in its namesake file because the editor should always be

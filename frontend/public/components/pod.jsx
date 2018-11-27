@@ -6,7 +6,7 @@ import { getVolumeType, getVolumeLocation, getVolumeMountPermissions, getVolumeM
 import { getContainerState, getContainerStatus } from '../module/k8s/docker';
 import { ResourceEventStream } from './events';
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
-import { SectionHeading, Kebab, LabelList, navFactory, NodeLink, Overflow, ResourceKebab, ResourceIcon, ResourceLink, ResourceSummary, ScrollToTopOnMount, Selector, Timestamp, VolumeIcon, units, AsyncComponent } from './utils';
+import { SectionHeading, Kebab, LabelList, navFactory, NodeLink, Overflow, ResourceKebab, ResourceIcon, ResourceLink, ResourceSummary, ScrollToTopOnMount, Selector, Timestamp, VolumeIcon, units, AsyncComponent, StatusIcon } from './utils';
 import { PodLogs } from './pod-logs';
 import { Line, requirePrometheus } from './graphs';
 import { breadcrumbsForOwnerRefs } from './utils/breadcrumbs';
@@ -15,7 +15,6 @@ import { CamelCaseWrap } from './utils/camel-case-wrap';
 
 const menuActions = [Kebab.factory.EditEnvironment, ...Kebab.factory.common];
 const validReadinessStates = new Set(['ContainersNotReady', 'Ready', 'PodCompleted']);
-const validStatuses = new Set(['ContainerCreating', 'Running', 'Completed']);
 
 /** @type {React.SFC.<{pod: string}>} */
 export const Readiness = ({pod}) => {
@@ -36,9 +35,6 @@ Readiness.displayName = 'Readiness';
 
 export const PodRow = ({obj: pod}) => {
   const phase = podPhase(pod);
-  const status = validStatuses.has(phase)
-    ? <CamelCaseWrap value={phase} />
-    : <span className="co-error co-icon-and-text"><i className="fa fa-times-circle co-icon-and-text__icon" aria-hidden="true" /><CamelCaseWrap value={phase} /></span>;
 
   return <ResourceRow obj={pod}>
     <div className="col-lg-2 col-md-3 col-sm-4 col-xs-6">
@@ -53,7 +49,7 @@ export const PodRow = ({obj: pod}) => {
     <div className="col-lg-2 col-md-2 hidden-sm hidden-xs">
       <NodeLink name={pod.spec.nodeName} />
     </div>
-    <div className="col-lg-2 col-md-2 hidden-sm hidden-xs">{status}</div>
+    <div className="col-lg-2 col-md-2 hidden-sm hidden-xs"><StatusIcon status={phase} /></div>
     <div className="col-lg-2 hidden-md hidden-sm hidden-xs"><Readiness pod={pod} /></div>
     <div className="dropdown-kebab-pf">
       <ResourceKebab actions={menuActions} kind="Pod" resource={pod} isDisabled={phase === 'Terminating'} />
@@ -88,7 +84,7 @@ export const ContainerRow = ({pod, container}) => {
       <ContainerLink pod={pod} name={container.name} />
     </div>
     <Overflow className="col-md-3 col-sm-4 col-xs-8" value={container.image} />
-    <div className="col-md-1 col-sm-2 hidden-xs">{_.get(cstate, 'label', '-')}</div>
+    <div className="col-md-1 col-sm-2 hidden-xs"><StatusIcon status={cstate.label} /></div>
     <div className="col-md-1 col-sm-2 hidden-xs">{_.get(cstatus, 'restartCount', '0')}</div>
     <div className="col-md-2 hidden-sm hidden-xs"><Timestamp timestamp={startedAt} /></div>
     <div className="col-md-2 hidden-sm hidden-xs"><Timestamp timestamp={finishedAt} /></div>
@@ -183,7 +179,7 @@ const Details = ({obj: pod}) => {
         <div className="col-sm-6">
           <dl className="co-m-pane__details">
             <dt>Status</dt>
-            <dd>{podPhase(pod)}</dd>
+            <dd><StatusIcon status={podPhase(pod)} /></dd>
             <dt>Restart Policy</dt>
             <dd>{getRestartPolicyLabel(pod)}</dd>
             {

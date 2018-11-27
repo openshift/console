@@ -43,8 +43,8 @@ const CRDRow = ({obj: crd}) => <div className="row co-resource-list__item">
   <div className="col-lg-1 hidden-md hidden-sm hidden-xs">
     {
       isEstablished(crd.status.conditions)
-        ? <span className="node-ready"><i className="fa fa-check-circle"></i></span>
-        : <span className="node-not-ready"><i className="fa fa-minus-circle"></i></span>
+        ? <span><i className="pficon pficon-ok" aria-hidden="true"></i></span>
+        : <span><i className="fa fa-ban" aria-hidden="true"></i></span>
     }
   </div>
   <div className="dropdown-kebab-pf">

@@ -16,6 +16,7 @@ import {
   ResourceLink,
   ScrollToTopOnMount,
   SectionHeading,
+  StatusIcon,
   Timestamp,
 } from './utils';
 
@@ -171,7 +172,7 @@ const Details = (props) => {
         <SectionHeading text="Container Overview" />
         <dl className="co-m-pane__details">
           <dt>State</dt>
-          <dd>{stateValue}</dd>
+          <dd><StatusIcon status={stateValue} /></dd>
           <dt>ID</dt>
           <dd><Overflow value={status.containerID} /></dd>
           <dt>Restarts</dt>

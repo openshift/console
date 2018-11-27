@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 
 import * as React from 'react';
-import { shallow } from 'enzyme';
+import { shallow, mount } from 'enzyme';
 
 import { RouteLocation, RouteStatus } from '../../public/components/routes';
 import { K8sResourceKind } from '../../public/module/k8s';
@@ -196,9 +196,9 @@ describe(RouteStatus.displayName, () => {
       },
     };
 
-    const wrapper = shallow(<RouteStatus obj={route} />);
-    expect(wrapper.find('.fa-check').exists()).toBe(true);
-    expect(wrapper.text()).toEqual('Accepted');
+    const wrapper = mount(<RouteStatus obj={route} />);
+    expect(wrapper.find('.pficon-ok').exists()).toBe(true);
+    expect(wrapper.text()).toEqual(' Accepted');
   });
 
   it('renders Rejected status', () => {
@@ -223,9 +223,9 @@ describe(RouteStatus.displayName, () => {
       },
     };
 
-    const wrapper = shallow(<RouteStatus obj={route} />);
-    expect(wrapper.find('.fa-times-circle').exists()).toBe(true);
-    expect(wrapper.text()).toEqual('Rejected');
+    const wrapper = mount(<RouteStatus obj={route} />);
+    expect(wrapper.find('.pficon-error-circle-o').exists()).toBe(true);
+    expect(wrapper.text()).toEqual(' Rejected');
   });
 
   it('renders Pending status', () => {
@@ -237,8 +237,8 @@ describe(RouteStatus.displayName, () => {
       },
     };
 
-    const wrapper = shallow(<RouteStatus obj={route} />);
+    const wrapper = mount(<RouteStatus obj={route} />);
     expect(wrapper.find('.fa-hourglass-half').exists()).toBe(true);
-    expect(wrapper.text()).toEqual('Pending');
+    expect(wrapper.text()).toEqual(' Pending');
   });
 });

@@ -131,8 +131,8 @@ const AlertState: React.SFC<AlertStateProps> = ({state}) => {
 const SilenceState = ({silence}) => {
   const state = silenceState(silence);
   const klass = {
-    [SilenceStates.Active]: 'fa fa-check-circle-o silence-active',
-    [SilenceStates.Pending]: 'fa fa-hourglass-half silence-pending',
+    [SilenceStates.Active]: 'pficon pficon-ok',
+    [SilenceStates.Pending]: 'fa fa-hourglass-half',
     [SilenceStates.Expired]: 'fa fa-ban text-muted',
   }[state];
   return klass ? <React.Fragment><i className={klass} aria-hidden="true"></i> {_.startCase(state)}</React.Fragment> : null;
