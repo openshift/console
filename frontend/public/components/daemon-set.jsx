@@ -23,7 +23,7 @@ import {
   Selector,
 } from './utils';
 
-export const menuActions = [Kebab.factory.EditEnvironment, ...Kebab.factory.common];
+export const menuActions = [Kebab.factory.AddStorage, Kebab.factory.EditEnvironment, ...Kebab.factory.common];
 
 const DaemonSetHeader = props => <ListHeader>
   <ColHead {...props} className="col-lg-2 col-md-3 col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
