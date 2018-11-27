@@ -71,6 +71,8 @@ class AttachStorageForm extends React.Component<
       'DeploymentConfig',
       'ReplicaSet',
       'ReplicationController',
+      'StatefulSet',
+      'DaemonSet',
     ];
 
     if (!kindObj || !_.includes(supportedKinds, kindObj.kind)) {
