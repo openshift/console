@@ -34,7 +34,7 @@ let config: webpack.Configuration = {
       { test: /\.glsl$/, loader: 'raw!glslify' },
       {
         test: /(\.jsx?)|(\.tsx?)$/,
-        exclude: /node_modules/,
+        exclude: /node_modules\/(?!(@novnc)\/).*/,
         use: [
           { loader: 'cache-loader' },
           {

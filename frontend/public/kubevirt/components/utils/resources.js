@@ -56,7 +56,7 @@ export const getVncConnectionDetails = vmi => {
   const encrypt = window.location.protocol === 'https:';
   // the novnc library requires protocol to be specified so the URL must be absolute - including host:port
   return {
-    encrypt, // whether ws or wss to be used
+    encrypt: isEncrypted(), // whether ws or wss to be used
     host: window.location.hostname,
     port: window.location.port || (encrypt ? '443' : '80'),
     path: `${context}/${apiPath}/vnc${query}`,

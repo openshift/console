@@ -33,14 +33,15 @@
       ".(ts|tsx|js|jsx)": "./node_modules/ts-jest/preprocessor.js"
     },
     "transformIgnorePatterns": [
-      "<rootDir>/node_modules/(?!lodash-es/.*)"
+      "<rootDir>/node_modules/(?!(lodash-es|@novnc)/.*)"
     ],
     "testRegex": "/__tests__/.*\\.(ts|tsx|js|jsx)$",
     "setupFiles": [
       "./__mocks__/requestAnimationFrame.js",
       "./__mocks__/localStorage.ts",
       "./__mocks__/matchMedia.js",
-      "./before-tests.js"
+      "./before-tests.js",
+      "./polyfills-kubevirt.js"
     ],
     "coverageDirectory": "__coverage__",
     "coverageReporters": [
