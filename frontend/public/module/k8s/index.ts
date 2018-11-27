@@ -27,14 +27,19 @@ export type ObjectMetadata = {
   [key: string]: any,
 };
 
+export type MatchExpression = {key: string, operator: 'Exists' | 'DoesNotExist'} | {key: string, operator: 'In' | 'NotIn' | 'Equals' | 'NotEquals', values: string[]};
+
+export type Selector = {
+  matchLabels?: {[key: string]: string};
+  matchExpressions?: MatchExpression[];
+};
+
 export type K8sResourceKind = {
   apiVersion: string;
   kind: string;
   metadata: ObjectMetadata;
   spec?: {
-    selector?: {
-      matchLabels?: {[key: string]: any},
-    },
+    selector?: Selector;
     [key: string]: any
   };
   status?: {[key: string]: any};
@@ -130,7 +135,7 @@ export type K8sKind = {
   apiVersion: string;
   apiGroup?: string;
   namespaced?: boolean;
-  selector?: {matchLabels?: {[key: string]: string}};
+  selector?: Selector;
   labels?: {[key: string]: string};
   annotations?: {[key: string]: string};
   verbs?: string[];

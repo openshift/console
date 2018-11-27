@@ -199,6 +199,7 @@ export type PackageManifestKind = {
 
 // TODO(alecmerdler): Shouldn't be needed anymore
 export const olmNamespace = 'operator-lifecycle-manager';
+export const visibilityLabel = 'olm-visibility';
 
 export const isEnabled = (namespace: K8sResourceKind) => _.has(namespace, ['metadata', 'annotations', 'alm-manager']);
 

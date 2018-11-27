@@ -5,7 +5,7 @@ import * as _ from 'lodash-es';
 import { Link } from 'react-router-dom';
 
 import { referenceForModel, K8sResourceKind } from '../../module/k8s';
-import { PackageManifestKind, SubscriptionKind, CatalogSourceKind, ClusterServiceVersionLogo } from './index';
+import { PackageManifestKind, SubscriptionKind, CatalogSourceKind, ClusterServiceVersionLogo, visibilityLabel } from './index';
 import { PackageManifestModel, SubscriptionModel, CatalogSourceModel } from '../../models';
 import { StatusBox, MsgBox } from '../utils';
 import { List, ListHeader, ColHead, MultiListPage } from '../factory';
@@ -98,7 +98,7 @@ export const PackageManifestsPage: React.SFC<PackageManifestsPageProps> = (props
     filterLabel="Packages by name"
     flatten={flatten}
     resources={[
-      {kind: referenceForModel(PackageManifestModel), isList: true, namespaced: true, prop: 'packageManifest'},
+      {kind: referenceForModel(PackageManifestModel), isList: true, namespaced: true, prop: 'packageManifest', selector: {matchExpressions: [{key: visibilityLabel, operator: 'DoesNotExist'}]}},
       {kind: referenceForModel(CatalogSourceModel), isList: true, namespaced: true, prop: 'catalogSource'},
       {kind: referenceForModel(SubscriptionModel), isList: true, namespaced: true, prop: 'subscription'},
     ]} />;
