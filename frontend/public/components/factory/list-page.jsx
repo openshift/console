@@ -75,6 +75,7 @@ export class ListPageWrapper_ extends React.PureComponent {
         key={i}
         applyFilter={this.props.applyFilter}
         items={_.isFunction(items) ? items(_.pick(this.props, kinds)) : items}
+        itemCount={_.size(data)}
         numbers={count || _.countBy(data, reducer)}
         selected={selected}
         type={type}
