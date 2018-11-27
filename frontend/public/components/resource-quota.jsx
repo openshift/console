@@ -2,7 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 
 import { ColHead, DetailsPage, List, ListHeader, MultiListPage } from './factory';
-import { Kebab, SectionHeading, navFactory, ResourceKebab, ResourceLink, ResourceSummary } from './utils';
+import { Kebab, SectionHeading, navFactory, ResourceKebab, ResourceLink, ResourceSummary, convertToBaseValue } from './utils';
 import { FLAGS, connectToFlags, flagPending } from '../features';
 import { LoadingBox } from './utils/status-box';
 import { referenceForModel } from '../module/k8s';
@@ -12,6 +12,11 @@ const { common } = Kebab.factory;
 const menuActions = [...common];
 
 const quotaKind = quota => quota.metadata.namespace ? referenceForModel(ResourceQuotaModel) : referenceForModel(ClusterResourceQuotaModel);
+
+const getResourceTypes = (quota) => {
+  const specHard = _.get(quota, 'spec.hard');
+  return _.keys(specHard).sort();
+};
 
 const Header = props => <ListHeader>
   <ColHead {...props} className="col-md-5 col-xs-6" sortField="metadata.name">Name</ColHead>
@@ -30,10 +35,62 @@ const Row = ({obj: rq}) => <div className="row co-resource-list__item">
   </div>
 </div>;
 
+const ProportionIcon = ({proportion}) => {
+  let proportionIconClass = 'pficon pficon-unknown';
+  if (proportion === 0) {
+    proportionIconClass = 'fa fa-circle-thin co-resource-quota-empty';
+  } else if (proportion > 0 && proportion < .5) {
+    proportionIconClass = 'pficon pficon-resources-almost-empty';
+  } else if (proportion >= .5 && proportion < 1){
+    proportionIconClass = 'pficon pficon-resources-almost-full';
+  } else if (proportion === 1) {
+    proportionIconClass = 'pficon pficon-resources-full';
+  } else if (proportion > 1) {
+    proportionIconClass = 'pficon pficon-warning-triangle-o';
+  }
+  return <i className={proportionIconClass} aria-hidden="true" />;
+};
+
+const getProportionUsed = (used, max) => {
+  if (!max || !used) {
+    return 0;
+  }
+
+  const usedNum = convertToBaseValue(used);
+  const maxNum = convertToBaseValue(max);
+  return usedNum / maxNum;
+};
+
+const ResourceUsageRow = ({quota, resourceType}) => {
+  const max = _.get(quota, ['status', 'hard', resourceType]) || _.get(quota, ['spec', 'hard', resourceType]);
+  const used = _.get(quota, ['status', 'used', resourceType]);
+  const proportionUsed = getProportionUsed(used, max);
+  return <div className="row co-m-row">
+    <div className="col-sm-4 col-xs-6 co-break-word">{resourceType}</div>
+    <div className="col-sm-2 hidden-xs co-resource-quota-icon"><ProportionIcon proportion={proportionUsed} /></div>
+    <div className="col-sm-3 col-xs-3">{used}</div>
+    <div className="col-sm-3 col-xs-3">{max}</div>
+  </div>;
+};
+
 const Details = ({obj: rq}) => <React.Fragment>
   <div className="co-m-pane__body">
     <SectionHeading text="Resource Quota Overview" />
     <ResourceSummary resource={rq} podSelector="spec.podSelector" showNodeSelector={false} />
+  </div>
+  <div className="co-m-pane__body">
+    <SectionHeading text="Resource Usage" />
+    <div className="co-m-table-grid co-m-table-grid--bordered">
+      <div className="row co-m-table-grid__head">
+        <div className="col-sm-4 col-xs-6">Resource Type</div>
+        <div className="col-sm-2 hidden-xs">Capacity</div>
+        <div className="col-sm-3 col-xs-3">Used</div>
+        <div className="col-sm-3 col-xs-3">Max</div>
+      </div>
+      <div className="co-m-table-grid__body">
+        {getResourceTypes(rq).map(type => <ResourceUsageRow key={type} quota={rq} resourceType={type} />)}
+      </div>
+    </div>
   </div>
 </React.Fragment>;
 
