@@ -31,7 +31,8 @@ const chunkedRoutes = OrderedMap<string, {section: string, name: string}>()
   .set('resource-quota', {section: 'Administration', name: 'Resource Quotas'})
   .set('limit-range', {section: 'Administration', name: 'Limit Ranges'})
   .set('custom-resource-definition', {section: 'Administration', name: 'CRDs'})
-  .set('catalog', {section: 'Home', name: 'Catalog'});
+  .set('catalog', {section: 'Home', name: 'Catalog'})
+  .set('marketplace', {section: 'Operators', name: 'Kubernetes Marketplace'});
 
 describe('Performance test', () => {
 
@@ -74,18 +75,6 @@ describe('Performance test', () => {
     expect(initialChunks.length).toBeLessThan(postChunks.length);
   });
 
-  // TODO: Move this to `chunkedRoutes` once nav item is exposed
-  it('downloads new bundle for Kubernetes marketplace', async() => {
-    await browser.get(`${appHost}/marketplace`);
-    await browser.wait(until.presenceOf(crudView.resourceTitle));
-
-    const marketplaceChunk = await browser.executeScript<any>(() => performance.getEntriesByType('resource')
-      .find(({name}) => name.endsWith('.js') && name.indexOf('marketplace') > -1));
-
-    expect(marketplaceChunk).not.toBeNull();
-    expect(marketplaceChunk.decodedBodySize).toBeLessThan(166300);
-  });
-
   chunkedRoutes.forEach((route, routeName) => {
     const chunkLimit = 15000;
 
@@ -106,8 +95,8 @@ describe('Performance test', () => {
 
       expect(routeChunk).not.toBeNull();
       // FIXME: Really need to address this chunk size
-      if (routeName === 'catalog') {
-        expect((routeChunk as any).decodedBodySize).toBeLessThan(148100);
+      if (routeName === 'catalog' || routeName === 'marketplace') {
+        expect((routeChunk as any).decodedBodySize).toBeLessThan(200000);
       } else {
         expect((routeChunk as any).decodedBodySize).toBeLessThan(chunkLimit);
       }
