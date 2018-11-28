@@ -17,6 +17,7 @@ import { k8sBasePath, referenceForModel } from './module/k8s/k8s';
 import { k8sCreate } from './module/k8s/resource';
 import { types } from './module/k8s/k8s-actions';
 import { coFetchJSON } from './co-fetch';
+import { MonitoringRoutes, setMonitoringURL } from './monitoring';
 import { UIActions } from './ui/ui-actions';
 
 /* global
@@ -128,11 +129,34 @@ const detectCanCreateProject = dispatch => coFetchJSON(projectRequestPath)
     }
   );
 
+const monitoringConfigMapPath = `${k8sBasePath}/api/v1/namespaces/openshift-monitoring/configmaps/sharing-config`;
+const detectMonitoringURLs = dispatch => coFetchJSON(monitoringConfigMapPath)
+  .then(
+    res => {
+      const {alertmanagerURL, grafanaURL, prometheusURL} = res.data;
+      if (!_.isEmpty(alertmanagerURL)) {
+        dispatch(setMonitoringURL(MonitoringRoutes.AlertManager, alertmanagerURL));
+      }
+      if (!_.isEmpty(grafanaURL)) {
+        dispatch(setMonitoringURL(MonitoringRoutes.Grafana, grafanaURL));
+      }
+      if (!_.isEmpty(prometheusURL)) {
+        dispatch(setMonitoringURL(MonitoringRoutes.Prometheus, prometheusURL));
+      }
+    },
+    err => {
+      if (!_.includes([401, 403, 404, 500], _.get(err, 'response.status'))) {
+        setTimeout(() => detectMonitoringURLs(dispatch), 15000);
+      }
+    },
+  );
+
 export const featureActions = [
   detectCalicoFlags,
   detectOpenShift,
   detectProjectsAvailable,
   detectCanCreateProject,
+  detectMonitoringURLs,
 ];
 
 // generate additional featureActions
