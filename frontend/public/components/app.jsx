@@ -10,7 +10,6 @@ import store from '../redux';
 import { productName } from '../branding';
 import { ALL_NAMESPACES_KEY } from '../const';
 import { connectToFlags, featureActions, flagPending, FLAGS } from '../features';
-import { detectMonitoringURLs } from '../monitoring';
 import { analyticsSvc } from '../module/analytics';
 import { MonitoringUI } from './monitoring';
 import { GlobalNotifications } from './global-notifications';
@@ -226,7 +225,6 @@ getCachedResources().then(resources => {
 }).catch(startDiscovery);
 
 _.each(featureActions, store.dispatch);
-store.dispatch(detectMonitoringURLs);
 
 analyticsSvc.push({tier: 'tectonic'});
 
