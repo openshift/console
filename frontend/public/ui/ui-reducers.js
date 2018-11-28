@@ -68,8 +68,8 @@ export default (state, action) => {
     case types.setMonitoringData:
       state = state.setIn(['monitoring', action.key], action.data);
 
-      if (action.key === 'rules' || action.key === 'silences') {
-        const alerts = state.getIn(['monitoring', 'rules']);
+      if (action.key === 'alerts' || action.key === 'silences') {
+        const alerts = state.getIn(['monitoring', 'alerts']);
         const firingAlerts = _.filter(_.get(alerts, 'data'), a => [AlertStates.Firing, AlertStates.Silenced].includes(a.state));
         const silences = state.getIn(['monitoring', 'silences']);
 
@@ -80,7 +80,7 @@ export default (state, action) => {
             a.state = AlertStates.Silenced;
           }
         });
-        state = state.setIn(['monitoring', 'rules'], alerts);
+        state = state.setIn(['monitoring', 'alerts'], alerts);
 
         // For each Silence, store a list of the Alerts it is silencing
         _.each(_.get(silences, 'data'), s => {
@@ -119,7 +119,3 @@ export default (state, action) => {
 export const createProjectMessageStateToProps = ({UI}) => {
   return {createProjectMessage: UI.get('createProjectMessage')};
 };
-
-export const monitoringAlertsToProps = ({UI}) => UI.getIn(['monitoring', 'alerts'], {});
-export const monitoringRulesToProps = ({UI}) => UI.getIn(['monitoring', 'rules'], {});
-export const monitoringSilencesToProps = ({UI}) => UI.getIn(['monitoring', 'silences'], {});
