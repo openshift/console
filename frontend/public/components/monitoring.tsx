@@ -889,7 +889,6 @@ export class MonitoringUI extends React.Component<null, null> {
         return _.flatMap(rules, rule => _.isEmpty(rule.alerts)
           ? {
             annotations: rule.annotations,
-            id: rule.id,
             labels: {alertname: rule.name, ...rule.labels},
             rule,
           }
