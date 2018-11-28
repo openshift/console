@@ -11,7 +11,6 @@ import k8sActions from '../module/k8s/k8s-actions';
 import { AlertStates, connectToURLs, MonitoringRoutes, SilenceStates } from '../monitoring';
 import store from '../redux';
 import { UIActions } from '../ui/ui-actions';
-import { monitoringRulesToProps, monitoringSilencesToProps } from '../ui/ui-reducers';
 import { ColHead, List, ListHeader, ResourceRow, TextFilter } from './factory';
 import { confirmModal } from './modals';
 import { CheckBoxes } from './row-filter';
@@ -65,6 +64,9 @@ const alertDescription = alert => {
 };
 
 export const silenceState = s => _.get(s, 'status.state');
+
+const alertsToProps = ({UI}) => UI.getIn(['monitoring', 'alerts'], {});
+const silencesToProps = ({UI}) => UI.getIn(['monitoring', 'silences'], {});
 
 const pollers = {};
 const pollerTimeouts = {};
@@ -167,7 +169,7 @@ const SilenceMatchersList = ({silence}) => <div className={`co-text-${SilenceRes
 </div>;
 
 const alertStateToProps = (state): AlertsDetailsPageProps => {
-  const {data, loaded, loadError}: Rules = monitoringRulesToProps(state);
+  const {data, loaded, loadError}: Rules = alertsToProps(state);
   const labels = getURLSearchParams();
   const alert = _.find(data, {labels});
   return {alert, loaded, loadError};
@@ -286,7 +288,7 @@ const ActiveAlerts = ({alerts}) => <div className="co-m-table-grid co-m-table-gr
 </div>;
 
 const ruleStateToProps = (state, {match}): AlertRulesDetailsPageProps => {
-  const {data, loaded, loadError}: Rules = monitoringRulesToProps(state);
+  const {data, loaded, loadError}: Rules = alertsToProps(state);
   const id = _.get(match, 'params.id');
   const alert = _.find(data, a => a.rule.id === id);
   return {loaded, loadError, rule: _.get(alert, 'rule')};
@@ -376,7 +378,7 @@ const SilencedAlertsList = ({alerts}) => _.isEmpty(alerts)
   </div>;
 
 const silenceParamToProps = (state, {match}) => {
-  const {data: silences, loaded, loadError}: Silences = monitoringSilencesToProps(state);
+  const {data: silences, loaded, loadError}: Silences = silencesToProps(state);
   const silence = _.find(silences, {id: _.get(match, 'params.id')});
   return {loaded, loadError, silence};
 };
@@ -608,7 +610,7 @@ const AlertsPage_ = props => <MonitoringListPage
   Row={AlertRow}
   rowFilter={alertsRowFilter}
 />;
-const AlertsPage = withFallback(connect(monitoringRulesToProps)(AlertsPage_));
+const AlertsPage = withFallback(connect(alertsToProps)(AlertsPage_));
 
 const SilenceHeader = props => <ListHeader>
   <ColHead {...props} className="col-xs-7" sortField="name">Name</ColHead>
@@ -673,7 +675,7 @@ const SilencesPage_ = props => <MonitoringListPage
   Row={SilenceRow}
   rowFilter={silencesRowFilter}
 />;
-const SilencesPage = withFallback(connect(monitoringSilencesToProps)(SilencesPage_));
+const SilencesPage = withFallback(connect(silencesToProps)(SilencesPage_));
 
 const pad = i => i < 10 ? `0${i}` : i;
 const formatDate = (d: Date): string => `${d.getFullYear()}/${pad(d.getMonth() + 1)}/${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
@@ -871,7 +873,7 @@ export class MonitoringUI extends React.Component<null, null> {
 
     const {prometheusBaseURL} = (window as any).SERVER_FLAGS;
     if (prometheusBaseURL) {
-      poll(`${prometheusBaseURL}/api/v1/rules`, 'rules', data => {
+      poll(`${prometheusBaseURL}/api/v1/rules`, 'alerts', data => {
         // Flatten the rules data to make it easier to work with, discard non-alerting rules since those are the only
         // ones we will be using and add a unique ID to each rule.
         const groups = _.get(data, 'groups');
@@ -896,7 +898,7 @@ export class MonitoringUI extends React.Component<null, null> {
         );
       });
     } else {
-      store.dispatch(UIActions.monitoringErrored('rules', new Error('prometheusBaseURL not set')));
+      store.dispatch(UIActions.monitoringErrored('alerts', new Error('prometheusBaseURL not set')));
     }
 
     const {alertManagerBaseURL} = (window as any).SERVER_FLAGS;
