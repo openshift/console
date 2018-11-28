@@ -24,7 +24,6 @@ import { UIActions } from './ui/ui-actions';
   AUTH_ENABLED: false,
   PROMETHEUS: false,
   OPERATOR_LIFECYCLE_MANAGER: false,
-  CALICO: false,
   CHARGEBACK: false,
   OPENSHIFT: false,
   CAN_LIST_NS: false,
@@ -41,7 +40,6 @@ export enum FLAGS {
   AUTH_ENABLED = 'AUTH_ENABLED',
   PROMETHEUS = 'PROMETHEUS',
   OPERATOR_LIFECYCLE_MANAGER = 'OPERATOR_LIFECYCLE_MANAGER',
-  CALICO = 'CALICO',
   CHARGEBACK = 'CHARGEBACK',
   OPENSHIFT = 'OPENSHIFT',
   CAN_LIST_NS = 'CAN_LIST_NS',
@@ -87,13 +85,6 @@ const handleError = (res, flag, dispatch, cb) => {
   }
 };
 
-const calicoDaemonSetPath = `${k8sBasePath}/apis/apps/v1/daemonsets?fieldSelector=metadata.name%3Dkube-calico`;
-const detectCalicoFlags = dispatch => coFetchJSON(calicoDaemonSetPath)
-  .then(
-    res => setFlag(dispatch, FLAGS.CALICO, _.size(res.items) > 0),
-    err => handleError(err, FLAGS.CALICO, dispatch, detectCalicoFlags)
-  );
-
 // FIXME: /oapi is deprecated. What else can we use to detect OpenShift?
 const openshiftPath = `${k8sBasePath}/oapi/v1`;
 const detectOpenShift = dispatch => coFetchJSON(openshiftPath)
@@ -120,7 +111,6 @@ const detectCanCreateProject = dispatch => coFetchJSON(projectRequestPath)
   );
 
 export const featureActions = [
-  detectCalicoFlags,
   detectOpenShift,
   detectCanCreateProject,
 ];
