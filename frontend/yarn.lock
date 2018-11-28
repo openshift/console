@@ -86,24 +86,24 @@
   version "0.8.2"
   resolved "https://registry.yarnpkg.com/@emotion/utils/-/utils-0.8.2.tgz#576ff7fb1230185b619a75d258cbc98f0867a8dc"
 
-"@patternfly/patternfly-next@^1.0.66":
-  version "1.0.69"
-  resolved "https://registry.yarnpkg.com/@patternfly/patternfly-next/-/patternfly-next-1.0.69.tgz#58184574f6f884bf3d5270a3a7474c0fe6057ddb"
+"@patternfly/patternfly-next@^1.0.87":
+  version "1.0.87"
+  resolved "https://registry.yarnpkg.com/@patternfly/patternfly-next/-/patternfly-next-1.0.87.tgz#72e844a20f2875319ffcaf9fe1787a462e6c4e77"
 
-"@patternfly/react-core@^1.32.2":
-  version "1.32.2"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-core/-/react-core-1.32.2.tgz#f9143335474c106eebd016d3bc1b2e316cb9fb56"
+"@patternfly/react-core@^1.38.1":
+  version "1.38.1"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-core/-/react-core-1.38.1.tgz#b688601ceac2e37aa0fd2ac3ac7a70fee35ccf0b"
   dependencies:
-    "@patternfly/react-icons" "^2.7.1"
+    "@patternfly/react-icons" "^2.9.2"
     "@patternfly/react-styles" "^2.3.0"
     exenv "^1.2.2"
     focus-trap-react "^4.0.1"
   optionalDependencies:
     "@patternfly/react-tokens" "^1.0.0"
 
-"@patternfly/react-icons@^2.7.1":
-  version "2.7.1"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-icons/-/react-icons-2.7.1.tgz#6ae562e914a7f0485c35302647f0000050895752"
+"@patternfly/react-icons@^2.9.2":
+  version "2.9.2"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-icons/-/react-icons-2.9.2.tgz#c0ce843bc813df8ae6653d1b2693ce13377be0b2"
 
 "@patternfly/react-styles@^2.3.0":
   version "2.3.0"
@@ -8738,40 +8738,16 @@ patternfly-bootstrap-treeview@~2.1.0:
     bootstrap "3.3.x"
     jquery ">= 2.1.x"
 
-patternfly-react-extensions@2.13.11:
-  version "2.13.11"
-  resolved "https://registry.yarnpkg.com/patternfly-react-extensions/-/patternfly-react-extensions-2.13.11.tgz#9c45c5e79dc08b9583c87f08eaf0f5d6b8675d17"
+patternfly-react-extensions@2.13.9:
+  version "2.13.9"
+  resolved "https://registry.yarnpkg.com/patternfly-react-extensions/-/patternfly-react-extensions-2.13.9.tgz#3e0c1927562bf316f32ce40ff73bc13b74a2f49c"
   dependencies:
     breakjs "^1.0.0"
     classnames "^2.2.5"
     css-element-queries "^1.0.1"
     patternfly "^3.58.0"
     patternfly-react "^2.25.1"
-    react-bootstrap "^0.32.1"
     react-virtualized "9.x"
-
-patternfly-react@^2.22.0:
-  version "2.22.0"
-  resolved "https://registry.yarnpkg.com/patternfly-react/-/patternfly-react-2.22.0.tgz#78527be85520089b76f57f0eb7676bb8e1d5afcd"
-  dependencies:
-    bootstrap-slider-without-jquery "^10.0.0"
-    breakjs "^1.0.0"
-    classnames "^2.2.5"
-    css-element-queries "^1.0.1"
-    patternfly "^3.52.4"
-    react-bootstrap "^0.32.1"
-    react-bootstrap-switch "^15.5.3"
-    react-bootstrap-typeahead "^3.1.3"
-    react-c3js "^0.1.20"
-    react-click-outside "^3.0.1"
-    react-collapse "^4.0.3"
-    react-fontawesome "^1.6.1"
-    react-motion "^0.5.2"
-    reactabular-table "^8.14.0"
-    recompose "^0.26.0"
-  optionalDependencies:
-    sortabular "^1.5.1"
-    table-resolver "^3.2.0"
 
 patternfly-react@^2.25.1:
   version "2.25.1"
@@ -8796,7 +8772,7 @@ patternfly-react@^2.25.1:
     sortabular "^1.5.1"
     table-resolver "^3.2.0"
 
-patternfly@^3.52.4, patternfly@^3.54.8:
+patternfly@^3.54.8:
   version "3.54.8"
   resolved "https://registry.yarnpkg.com/patternfly/-/patternfly-3.54.8.tgz#fd6c69714dc460575d2534c9f29017a58b442a83"
   dependencies:
