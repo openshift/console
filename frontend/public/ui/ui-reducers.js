@@ -120,6 +120,5 @@ export const createProjectMessageStateToProps = ({UI}) => {
   return {createProjectMessage: UI.get('createProjectMessage')};
 };
 
-export const monitoringAlertsToProps = ({UI}) => UI.getIn(['monitoring', 'alerts'], {});
 export const monitoringRulesToProps = ({UI}) => UI.getIn(['monitoring', 'rules'], {});
 export const monitoringSilencesToProps = ({UI}) => UI.getIn(['monitoring', 'silences'], {});

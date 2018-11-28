@@ -907,8 +907,6 @@ export class MonitoringUI extends React.Component<null, null> {
       return;
     }
 
-    poll(`${alertManagerBaseURL}/api/v1/alerts`, 'alerts', data => data);
-
     poll(`${alertManagerBaseURL}/api/v1/silences`, 'silences', data => {
       // Set a name field on the Silence to make things easier
       _.each(data, s => {
