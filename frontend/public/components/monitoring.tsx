@@ -53,7 +53,7 @@ const SilenceResource = {
 
 const labelsToParams = labels => _.map(labels, (v, k) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`).join('&');
 
-const alertURL = alert => `${AlertResource.path}/${_.get(alert.labels, 'alertname')}?${labelsToParams(alert.labels)}`;
+const alertURL = (alert, ruleID) => `${AlertResource.path}/${ruleID}?${labelsToParams(alert.labels)}`;
 const ruleURL = rule => `${AlertRuleResource.path}/${_.get(rule, 'id')}`;
 
 export const alertState = a => _.get(a, 'state', AlertStates.NotFiring);
@@ -168,16 +168,30 @@ const SilenceMatchersList = ({silence}) => <div className={`co-text-${SilenceRes
   {_.map(silence.matchers, ({name, isRegex, value}, i) => <Label key={i} k={name} v={isRegex ? `~${value}` : value} />)}
 </div>;
 
-const alertStateToProps = (state): AlertsDetailsPageProps => {
+const alertStateToProps = (state, {match}): AlertsDetailsPageProps => {
   const {data, loaded, loadError}: Rules = alertsToProps(state);
+  const ruleID = _.get(match, 'params.ruleID');
   const labels = getURLSearchParams();
-  const alert = _.find(data, {labels});
-  return {alert, loaded, loadError};
+  const alerts = _.filter(data, a => a.rule.id === ruleID);
+  const rule = _.get(alerts, '[0].rule');
+  let alert = _.find(alerts, a => _.isEqual(a.labels, labels));
+  if (rule && !alert) {
+    // No Alert with the exact label set was found, so display a "fake" Alert based on the Rule
+    const alertStates = _.map(alerts, alertState);
+    alert = {
+      annotations: rule.annotations,
+      labels,
+      rule,
+      // Set the state to the most significant state of all the Rule's Alerts
+      state: _.find([AlertStates.Firing, AlertStates.Silenced, AlertStates.Pending], s => alertStates.includes(s)) || AlertStates.NotFiring,
+    };
+  }
+  return {alert, loaded, loadError, rule};
 };
 
 const AlertsDetailsPage = withFallback(connect(alertStateToProps)((props: AlertsDetailsPageProps) => {
-  const {alert, loaded, loadError} = props;
-  const {annotations = {}, labels = {}, rule = null, silencedBy = []} = alert || {};
+  const {alert, loaded, loadError, rule} = props;
+  const {annotations = {}, labels = {}, silencedBy = []} = alert || {};
   const {alertname, severity} = labels as any;
   const state = alertState(alert);
 
@@ -267,7 +281,7 @@ const ViewInPrometheusLink_ = ({rule, urls}) => {
 };
 const ViewInPrometheusLink = connectToURLs(MonitoringRoutes.Prometheus)(ViewInPrometheusLink_);
 
-const ActiveAlerts = ({alerts}) => <div className="co-m-table-grid co-m-table-grid--bordered">
+const ActiveAlerts = ({alerts, ruleID}) => <div className="co-m-table-grid co-m-table-grid--bordered">
   <div className="row co-m-table-grid__head">
     <div className="col-xs-6">Description</div>
     <div className="col-sm-2 hidden-xs">Active Since</div>
@@ -277,7 +291,7 @@ const ActiveAlerts = ({alerts}) => <div className="co-m-table-grid co-m-table-gr
   <div className="co-m-table-grid__body">
     {_.sortBy(alerts, alertDescription).map((a, i) => <ResourceRow key={i} obj={a}>
       <div className="col-xs-6">
-        <Link className="co-resource-link" to={alertURL(a)}>{alertDescription(a)}</Link>
+        <Link className="co-resource-link" to={alertURL(a, ruleID)}>{alertDescription(a)}</Link>
       </div>
       <div className="col-sm-2 hidden-xs"><Timestamp timestamp={a.activeAt} /></div>
       <div className="col-sm-2 col-xs-3"><AlertState state={a.state} /></div>
@@ -347,7 +361,7 @@ const AlertRulesDetailsPage = withFallback(connect(ruleStateToProps)((props: Ale
           <SectionHeading text="Active Alerts" />
           <div className="row">
             <div className="col-xs-12">
-              {_.isEmpty(alerts) ? <div className="text-center">None Found</div> : <ActiveAlerts alerts={alerts} />}
+              {_.isEmpty(alerts) ? <div className="text-center">None Found</div> : <ActiveAlerts alerts={alerts} ruleID={rule.id} />}
             </div>
           </div>
         </div>
@@ -366,7 +380,7 @@ const SilencedAlertsList = ({alerts}) => _.isEmpty(alerts)
     <div className="co-m-table-grid__body">
       {_.sortBy(alerts, alertDescription).map((a, i) => <div className="row co-resource-list__item" key={i}>
         <div className="col-xs-9">
-          <Link className="co-resource-link" to={alertURL(a)}>{a.labels.alertname}</Link>
+          <Link className="co-resource-link" to={alertURL(a, a.rule.id)}>{a.labels.alertname}</Link>
           <div className="monitoring-description">{alertDescription(a)}</div>
         </div>
         <div className="col-xs-3">{a.labels.severity}</div>
@@ -458,7 +472,7 @@ const AlertRow = ({obj}) => {
     <div className="col-xs-7">
       <div className="co-resource-link">
         <MonitoringResourceIcon resource={AlertResource} />
-        <Link to={alertURL(obj)} className="co-resource-link__resource-name">{labels.alertname}</Link>
+        <Link to={alertURL(obj, obj.rule.id)} className="co-resource-link__resource-name">{labels.alertname}</Link>
       </div>
       <div className="monitoring-description">{annotations.description || annotations.message}</div>
     </div>
@@ -930,7 +944,7 @@ export class MonitoringUI extends React.Component<null, null> {
     return <Switch>
       <Redirect from="/monitoring" exact to="/monitoring/alerts" />
       <Route path="/monitoring/alerts" exact component={AlertsPage} />
-      <Route path="/monitoring/alerts/:name" exact component={AlertsDetailsPage} />
+      <Route path="/monitoring/alerts/:ruleID" exact component={AlertsDetailsPage} />
       <Route path="/monitoring/alertrules/:id" exact component={AlertRulesDetailsPage} />
       <Route path="/monitoring/silences" exact component={SilencesPage} />
       <Route path="/monitoring/silences/new" exact component={CreateSilence} />
@@ -960,13 +974,13 @@ type Silences = {
   loadError?: string;
 };
 type Alert = {
-  activeAt: string;
+  activeAt?: string;
   annotations: any;
   labels: {[key: string]: string};
-  rule?: any;
-  silencedBy: Silence[];
+  rule: any;
+  silencedBy?: Silence[];
   state: AlertStates;
-  value: number;
+  value?: number;
 };
 type Rule = {
   alerts: Alert[];
@@ -989,6 +1003,7 @@ export type AlertsDetailsPageProps = {
   alert: Alert;
   loaded: boolean;
   loadError?: string;
+  rule: Rule;
 };
 export type AlertRulesDetailsPageProps = {
   loaded: boolean;
