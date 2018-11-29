@@ -2,7 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import * as classNames from 'classnames';
 import * as fuzzy from 'fuzzysearch';
-import * as _ from 'lodash';
+import * as _ from 'lodash-es';
 import { Form, FormControl, FormGroup, HelpBlock } from 'patternfly-react';
 
 import { Dropdown, ButtonBar, history, NameValueEditorPair } from './utils';
