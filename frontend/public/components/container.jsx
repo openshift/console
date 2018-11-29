@@ -105,7 +105,7 @@ const Env = ({env}) => {
   }
 
   const value = (e) => {
-    let v = e.valueFrom;
+    const v = e.valueFrom;
     if (_.has(v, 'fieldRef')) {
       return `field: ${v.fieldRef.fieldPath}`;
     } else if (_.has(v, 'resourceFieldRef')) {

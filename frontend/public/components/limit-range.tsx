@@ -13,25 +13,25 @@ const LimitRangeReference: K8sResourceKindReference = 'LimitRange';
 
 const LimitRangeRow: React.SFC<LimitRangeProps> = ({obj}) =>
   <div className="row co-resource-list__item">
-    <div className="col-xs-4">
+    <div className="col-sm-4 col-xs-6">
       <ResourceLink kind={LimitRangeReference} name={obj.metadata.name} namespace={obj.metadata.namespace} />
     </div>
-    <div className="col-xs-4">
+    <div className="col-sm-4 col-xs-6">
       <ResourceLink kind="Namespace" name={obj.metadata.namespace} title={obj.metadata.namespace} />
     </div>
-    <div className="col-xs-4">
+    <div className="col-sm-4 hidden-xs">
       <Timestamp timestamp={obj.metadata.creationTimestamp} />
     </div>
-    <div className="co-kebab-wrapper">
+    <div className="dropdown-kebab-pf">
       <ResourceKebab actions={menuActions} kind={LimitRangeReference} resource={obj} />
     </div>
   </div>;
 
 const LimitRangeHeader: React.SFC<LimitRangeHeaderProps> = props =>
   <ListHeader>
-    <ColHead {...props} className="col-xs-4" sortField="metadata.name">Name</ColHead>
-    <ColHead {...props} className="col-xs-4" sortField="metadata.namespace">Namespace</ColHead>
-    <ColHead {...props} className="col-xs-4" sortField="metadata.creationTimestamp">Created</ColHead>
+    <ColHead {...props} className="col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
+    <ColHead {...props} className="col-sm-4 col-xs-6" sortField="metadata.namespace">Namespace</ColHead>
+    <ColHead {...props} className="col-sm-4 hidden-xs" sortField="metadata.creationTimestamp">Created</ColHead>
   </ListHeader>;
 
 export const LimitRangeList: React.SFC = props =>

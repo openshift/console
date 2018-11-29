@@ -5,7 +5,7 @@ import { match } from 'react-router-dom';
 import * as _ from 'lodash-es';
 
 import { Firehose, HorizontalNav, PageHeading } from '../utils';
-import { K8sResourceKindReference, K8sResourceKind } from '../../module/k8s';
+import { K8sResourceKindReference, K8sResourceKind, Selector } from '../../module/k8s';
 import { withFallback } from '../utils/error-boundary';
 import { ErrorBoundaryFallback } from '../error';
 
@@ -14,9 +14,7 @@ export type FirehoseResource = {
   name?: string;
   namespace: string;
   isList?: boolean;
-  selector?: {
-    matchLabels?: {[label: string]: string};
-  };
+  selector?: Selector;
   prop: string;
 };
 

@@ -123,19 +123,6 @@ export const AlertmanagerModel: K8sKind = {
   propagationPolicy : 'Foreground',
 };
 
-export const ClusterModel: K8sKind = {
-  kind: 'Cluster',
-  label: 'Cluster',
-  labelPlural: 'Clusters',
-  apiGroup: 'multicluster.coreos.com',
-  path: 'clusters',
-  apiVersion: 'v1',
-  crd: true,
-  plural: 'clusters',
-  abbr: 'C',
-  namespaced: false,
-};
-
 export const ChargebackReportModel: K8sKind = {
   kind: 'Report',
   label: 'Report',
@@ -802,3 +789,32 @@ export const APIServiceModel: K8sKind = {
   crd: true,
 };
 
+// Cluster API resources
+// https://github.com/kubernetes-sigs/cluster-api
+export const MachineSetModel: K8sKind = {
+  label: 'Machine Set',
+  labelPlural: 'Machine Sets',
+  apiVersion: 'v1alpha1',
+  path: 'machinesets',
+  apiGroup: 'cluster.k8s.io',
+  plural: 'machinesets',
+  abbr: 'MS',
+  namespaced: true,
+  kind: 'MachineSet',
+  id: 'machineset',
+  crd: true,
+};
+
+export const MachineModel: K8sKind = {
+  label: 'Machine',
+  labelPlural: 'Machine',
+  apiVersion: 'v1alpha1',
+  path: 'machines',
+  apiGroup: 'cluster.k8s.io',
+  plural: 'machines',
+  abbr: 'M',
+  namespaced: true,
+  kind: 'Machine',
+  id: 'machine',
+  crd: true,
+};

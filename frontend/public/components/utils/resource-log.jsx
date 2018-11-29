@@ -84,7 +84,7 @@ export class ResourceLog extends SafetyFirst {
 
   static getDerivedStateFromProps(nextProps, prevState) {
     if (nextProps.resourceStatus !== prevState.resourcStatus) {
-      let newState = {};
+      const newState = {};
       newState.resourceStatus = nextProps.resourceStatus;
       // Container changed from non-running to running state, so currently displayed logs are stale
       if (prevState.resourceStatus === LOG_SOURCE_RESTARTING && newState.resourceStatus !== LOG_SOURCE_RESTARTING) {
@@ -202,7 +202,7 @@ export class ResourceLog extends SafetyFirst {
   // Updates log status
   _updateStatus(newStatus) {
     const {status} = this.state;
-    let newState = {status: newStatus};
+    const newState = {status: newStatus};
 
     // Reset linesBehind when transitioning out of paused state
     if (status !== STREAM_ACTIVE && newStatus === STREAM_ACTIVE) {

@@ -81,14 +81,14 @@ const getUpdateCompletedIconClass = (nodeListUpdateStatus) => {
 };
 
 const getNodeListUpdateStatus = (nodeList) => {
-  let downloading = [];
-  let verifying = [];
-  let finalizing = [];
+  const downloading = [];
+  const verifying = [];
+  const finalizing = [];
 
-  let upToDate = [];
-  let rebooting = [];
-  let updatedNeedsReboot = [];
-  let updateAvailable = [];
+  const upToDate = [];
+  const rebooting = [];
+  const updatedNeedsReboot = [];
+  const updateAvailable = [];
   let versions = [];
 
   _.each(nodeList, (node) => {

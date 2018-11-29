@@ -1,5 +1,8 @@
+/* eslint-disable no-unused-vars */
+
 import * as _ from 'lodash-es';
 import * as React from 'react';
+
 import { isNodeReady, makeNodeSchedulable } from '../module/k8s/node';
 import { ResourceEventStream } from './events';
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
@@ -7,7 +10,8 @@ import { configureUnschedulableModal } from './modals';
 import { PodsPage } from './pod';
 import { Kebab, navFactory, LabelList, ResourceKebab, SectionHeading, ResourceLink, Timestamp, units, cloudProviderNames, cloudProviderID, pluralize, containerLinuxUpdateOperator } from './utils';
 import { Line, requirePrometheus } from './graphs';
-import { NodeModel } from '../models';
+import { K8sResourceKind, referenceForModel } from '../module/k8s';
+import { MachineModel, NodeModel } from '../models';
 import { CamelCaseWrap } from './utils/camel-case-wrap';
 
 const MarkAsUnschedulable = (kind, obj) => ({
@@ -27,8 +31,8 @@ const menuActions = [MarkAsSchedulable, MarkAsUnschedulable, ModifyLabels, Modif
 
 const NodeKebab = ({node}) => <ResourceKebab actions={menuActions} kind="Node" resource={node} />;
 
-const NodeIPList = ({ips, expand = false}) => <div>
-  {_.sortBy(ips, ['type']).map((ip, i) => <div key={i} className="co-node-ip">
+export const NodeIPList = ({ips, expand = false}) => <div>
+  {_.sortBy(ips, ['type']).map((ip, i) => ip.address && <div key={i} className="co-node-ip">
     {(expand || ip.type === 'InternalIP') && <p>
       <span className="co-ip-type">{ip.type.replace(/([a-z])([A-Z])/g, '$1 $2')}: </span>
       <span className="co-ip-addr">{ip.address}</span>
@@ -95,7 +99,7 @@ const NodeRow = ({obj: node, expand}) => {
     {expand && <div className="col-xs-12">
       <LabelList kind="Node" labels={node.metadata.labels} />
     </div>}
-    <div className="co-kebab-wrapper">
+    <div className="dropdown-kebab-pf">
       <NodeKebab node={node} />
     </div>
   </ResourceRow>;
@@ -114,7 +118,7 @@ const NodeRowSearch = ({obj: node}) => <div className="row co-resource-list__ite
   <div className="col-md-2 col-sm-3 hidden-xs">
     <NodeIPList ips={node.status.addresses} />
   </div>
-  <div className="co-kebab-wrapper">
+  <div className="dropdown-kebab-pf">
     <NodeKebab node={node} />
   </div>
 </div>;
@@ -166,8 +170,19 @@ const NodeGraphs = requirePrometheus(({node}) => {
   </React.Fragment>;
 });
 
+const getMachine = (node: K8sResourceKind) => {
+  const machine = _.get(node, 'metadata.annotations.machine');
+  if (!machine) {
+    return null;
+  }
+
+  const [namespace, name] = machine.split('/');
+  return { namespace, name };
+};
+
 const Details = ({obj: node}) => {
   const images = _.filter(node.status.images, 'names');
+  const machine = getMachine(node);
   return <React.Fragment>
     <div className="co-m-pane__body">
       <SectionHeading text="Node Overview" />
@@ -185,6 +200,10 @@ const Details = ({obj: node}) => {
             <dd><LabelList kind="Node" labels={node.metadata.labels} /></dd>
             <dt>Annotations</dt>
             <dd><a className="co-m-modal-link" onClick={Kebab.factory.ModifyAnnotations(NodeModel, node).callback}>{pluralize(_.size(node.metadata.annotations), 'Annotation')}</a></dd>
+            {machine && <React.Fragment>
+              <dt>Machine</dt>
+              <dd><ResourceLink kind={referenceForModel(MachineModel)} name={machine.name} namespace={machine.namespace} /></dd>
+            </React.Fragment>}
             <dt>Provider ID</dt>
             <dd>{cloudProviderNames([cloudProviderID(node)])}</dd>
             {_.has(node, 'spec.unschedulable') && <dt>Unschedulable</dt>}

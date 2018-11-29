@@ -18,7 +18,7 @@ export class LineBuffer {
     const lines = text.match(LINE_PATTERN);
     let lineCount = 0;
     lines.forEach((line) => {
-      let next = `${this._tail}${line}`;
+      const next = `${this._tail}${line}`;
       if (/\n$/.test(line)) {
         if (this._buffer.length === this._maxSize) {
           this._buffer.shift();

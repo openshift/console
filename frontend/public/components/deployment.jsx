@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 
 import { DeploymentModel } from '../models';
-import { configureUpdateStrategyModal } from './modals';
+import {configureUpdateStrategyModal, errorModal} from './modals';
 import { Conditions } from './conditions';
 import { ResourceEventStream } from './events';
 import { formatDuration } from './utils/datetime';
@@ -23,6 +23,8 @@ import {
   pluralize,
   ResourceSummary,
   SectionHeading,
+  togglePaused,
+  WorkloadPausedAlert,
 } from './utils';
 
 const {ModifyCount, AddStorage, EditEnvironment, common} = Kebab.factory;
@@ -32,8 +34,14 @@ const UpdateStrategy = (kind, deployment) => ({
   callback: () => configureUpdateStrategyModal({deployment}),
 });
 
+export const pauseAction = (kind, obj) => ({
+  label: obj.spec.paused ? 'Resume Rollouts' : 'Pause Rollouts',
+  callback: () => togglePaused(kind, obj).catch((err) => errorModal({error: err.message})),
+});
+
 export const menuActions = [
   ModifyCount,
+  pauseAction,
   AddStorage,
   UpdateStrategy,
   EditEnvironment,
@@ -61,6 +69,7 @@ const DeploymentDetails = ({obj: deployment}) => {
   return <React.Fragment>
     <div className="co-m-pane__body">
       <SectionHeading text="Deployment Overview" />
+      {deployment.spec.paused && <WorkloadPausedAlert obj={deployment} model={DeploymentModel} />}
       <DeploymentPodCounts resource={deployment} resourceKind={DeploymentModel} />
       <div className="co-m-pane__body-group">
         <div className="row">

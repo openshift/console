@@ -19,6 +19,7 @@ import {
 import {
   OverviewGroup,
   OverviewItem,
+  OverviewMetrics,
   PodControllerOverviewItem,
 } from '.';
 
@@ -204,6 +205,7 @@ const Alerts: React.SFC<AlertsProps> = ({item}) => {
 };
 
 const projectOverviewListItemStateToProps = ({UI}): ProjectOverviewListItemPropsFromState => ({
+  metrics: UI.getIn(['overview', 'metrics']),
   selectedUID: UI.getIn(['overview', 'selectedUID']),
 });
 
@@ -260,12 +262,11 @@ const ProjectOverviewListItem = connect<ProjectOverviewListItemPropsFromState, P
   }
 );
 
-const ProjectOverviewList: React.SFC<ProjectOverviewListProps> = ({items, metrics}) => {
+const ProjectOverviewList: React.SFC<ProjectOverviewListProps> = ({items}) => {
   const listItems = _.map(items, (item) =>
     <ProjectOverviewListItem
       item={item}
       key={item.obj.metadata.uid}
-      metrics={metrics}
     />
   );
   return <ListView className="project-overview__list">
@@ -273,23 +274,21 @@ const ProjectOverviewList: React.SFC<ProjectOverviewListProps> = ({items, metric
   </ListView>;
 };
 
-const ProjectOverviewGroup: React.SFC<ProjectOverviewGroupProps> = ({heading, items, metrics}) =>
+const ProjectOverviewGroup: React.SFC<ProjectOverviewGroupProps> = ({heading, items}) =>
   <div className="project-overview__group">
     <h2 className="project-overview__group-heading">{heading}</h2>
     <ProjectOverviewList
       items={items}
-      metrics={metrics}
     />
   </div>;
 
-export const ProjectOverview: React.SFC<ProjectOverviewProps> = ({groups, metrics}) =>
+export const ProjectOverview: React.SFC<ProjectOverviewProps> = ({groups}) =>
   <div className="project-overview">
     {_.map(groups, ({name, items}, index) =>
       <ProjectOverviewGroup
         key={name || `_${index}`}
         heading={name}
         items={items}
-        metrics={metrics}
       />
     )}
   </div>;
@@ -325,6 +324,7 @@ type AlertsProps = {
 };
 
 type ProjectOverviewListItemPropsFromState = {
+  metrics: OverviewMetrics;
   selectedUID: string;
 };
 
@@ -335,23 +335,19 @@ type ProjectOverviewListItemPropsFromDispatch = {
 
 type ProjectOverviewListItemOwnProps= {
   item: OverviewItem;
-  metrics: any;
 };
 
 type ProjectOverviewListItemProps = ProjectOverviewListItemOwnProps & ProjectOverviewListItemPropsFromDispatch & ProjectOverviewListItemPropsFromState;
 
 type ProjectOverviewListProps = {
   items: OverviewItem[];
-  metrics: any;
 };
 
 type ProjectOverviewGroupProps = {
   heading: string;
   items: OverviewItem[];
-  metrics: any;
 };
 
 type ProjectOverviewProps = {
   groups: OverviewGroup[];
-  metrics: any;
 };

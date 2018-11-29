@@ -23,7 +23,7 @@ RUN tar fx yarn-offline.tar
 RUN container-entrypoint npm install ./yarn-1.9.4.tgz
 
 # prevent download of chromedriver, sass binary, and node headers as part of module installs
-ENV CHROMEDRIVER_FILEPATH=$HOME/fake_chromedriver.zip \
+ENV CHROMEDRIVER_SKIP_DOWNLOAD=true \
     SKIP_SASS_BINARY_DOWNLOAD_FOR_CI=true \
     NPM_CONFIG_TARBALL=$HOME/node-v8.9.4-headers.tar.gz
 

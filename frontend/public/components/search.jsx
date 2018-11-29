@@ -21,8 +21,8 @@ import {
   SelectorInput,
 } from './utils';
 
-const ResourceList = connectToModel(({kindObj, kindsInFlight, mock, namespace, selector}) => {
-  if (!kindObj && kindsInFlight) {
+const ResourceList = connectToModel(({kindObj, mock, namespace, selector}) => {
+  if (!kindObj) {
     return <LoadingBox />;
   }
 

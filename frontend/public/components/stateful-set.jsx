@@ -17,8 +17,8 @@ import {
   navFactory,
 } from './utils';
 
-const { EditEnvironment, common } = Kebab.factory;
-export const menuActions = [EditEnvironment, ...common];
+const { AddStorage, EditEnvironment, common } = Kebab.factory;
+export const menuActions = [AddStorage, EditEnvironment, ...common];
 
 const kind = 'StatefulSet';
 const Row = props => <WorkloadListRow {...props} kind={kind} actions={menuActions} />;

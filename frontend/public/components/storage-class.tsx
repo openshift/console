@@ -11,7 +11,7 @@ export const StorageClassReference: K8sResourceKindReference = 'StorageClass';
 const { common } = Kebab.factory;
 const menuActions = [...common];
 
-const defaultClassAnnotation = 'storageclass.beta.kubernetes.io/is-default-class';
+const defaultClassAnnotation = 'storageclass.kubernetes.io/is-default-class';
 const isDefaultClass = (storageClass: K8sResourceKind) => _.get(storageClass, ['metadata', 'annotations', defaultClassAnnotation], 'false');
 
 const StorageClassHeader = props => <ListHeader>
@@ -35,7 +35,7 @@ const StorageClassRow: React.SFC<StorageClassRowProps> = ({obj}) => {
     <div className="col-sm-2 hidden-xs">
       {isDefaultClass(obj)}
     </div>
-    <div className="co-kebab-wrapper">
+    <div className="dropdown-kebab-pf">
       <ResourceKebab actions={menuActions} kind={StorageClassReference} resource={obj} />
     </div>
   </div>;

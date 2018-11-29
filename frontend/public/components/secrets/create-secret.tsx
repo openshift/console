@@ -131,7 +131,7 @@ const withSecretForm = (SubForm) => class SecretFormComponent extends React.Comp
     });
   }
   onNameChanged(event) {
-    let secret = {...this.state.secret};
+    const secret = {...this.state.secret};
     secret.metadata.name = event.target.value;
     this.setState({secret});
   }

@@ -73,7 +73,7 @@ export const ClusterServiceVersionRow = withFallback<ClusterServiceVersionRowPro
       </div>)}
       { obj.spec.customresourcedefinitions.owned.length > 4 && <Link to={`${route}/instances`} title={`View ${obj.spec.customresourcedefinitions.owned.length - 4} more...`}>{`View ${obj.spec.customresourcedefinitions.owned.length - 4} more...`}</Link>}
     </div>
-    <div className="co-kebab-wrapper">
+    <div className="dropdown-kebab-pf">
       <ResourceKebab resource={obj} kind={referenceFor(obj)} actions={menuActions} />
     </div>
   </div>;

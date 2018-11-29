@@ -12,7 +12,7 @@ const NODE_ENV = process.env.NODE_ENV;
 /* Helpers */
 const extractCSS = new MiniCssExtractPlugin({filename: 'app-bundle.css'});
 
-let config: webpack.Configuration = {
+const config: webpack.Configuration = {
   entry: [
     './polyfills.js',
     './public/components/app.jsx',

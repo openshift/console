@@ -31,7 +31,7 @@ const ClusterServiceBrokerListRow: React.SFC<ClusterServiceBrokerRowProps> = ({o
   <div className="col-sm-3 hidden-xs">
     <Timestamp timestamp={serviceBroker.status.lastCatalogRetrievalTime} />
   </div>
-  <div className="co-kebab-wrapper">
+  <div className="dropdown-kebab-pf">
     <ResourceKebab actions={menuActions} kind="ClusterServiceBroker" resource={serviceBroker} />
   </div>
 </ResourceRow>;

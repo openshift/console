@@ -11,7 +11,7 @@ let interval;
 
 const updateTimestamps = () => {
   const now = new Date();
-  for (let cb of intervalCBs) {
+  for (const cb of intervalCBs) {
     try {
       cb(now);
     } catch (e) {

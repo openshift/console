@@ -8,11 +8,21 @@ import * as PropTypes from 'prop-types';
 import { FLAGS, connectToFlags, featureReducerName, flagPending } from '../features';
 import { MonitoringRoutes, connectToURLs } from '../monitoring';
 import { formatNamespacedRouteForResource } from '../ui/ui-actions';
-import { BuildConfigModel, BuildModel, ClusterServiceVersionModel, DeploymentConfigModel, ImageStreamModel, SubscriptionModel, InstallPlanModel, PackageManifestModel, ChargebackReportModel } from '../models';
+import {
+  BuildConfigModel,
+  BuildModel,
+  ChargebackReportModel,
+  ClusterServiceVersionModel,
+  DeploymentConfigModel,
+  ImageStreamModel,
+  InstallPlanModel,
+  MachineModel,
+  MachineSetModel,
+  PackageManifestModel,
+  SubscriptionModel,
+} from '../models';
 import { referenceForModel } from '../module/k8s';
 import { authSvc } from '../module/auth';
-
-import { ClusterPicker } from './cluster-picker';
 
 import * as operatorImg from '../imgs/operator.svg';
 import * as operatorActiveImg from '../imgs/operator-active.svg';
@@ -253,7 +263,7 @@ const NavSection = connect(navSectionStateToProps)(
               : <Link className="navigation-container__section__title__link" to={href} onClick={this.open}>{text}</Link>
             }
           </div>
-          <i className={classNames('icon fa fa-angle-right', isOpen ? 'navigation-container__section--open' : '')} aria-hidden="true" />
+          {children && <i className={classNames('icon fa fa-angle-right', isOpen ? 'navigation-container__section--open' : '')} aria-hidden="true" />}
         </div>
         {Children && <ul className={classNames('navigation-container__list', {'navigation-container__list--open': isOpen})} style={{maxHeight}}>{Children}</ul>}
       </div>;
@@ -269,21 +279,7 @@ const rolesStartsWith = ['roles', 'clusterroles'];
 const rolebindingsStartsWith = ['rolebindings', 'clusterrolebindings'];
 const quotaStartsWith = ['resourcequotas', 'clusterresourcequotas'];
 const imagestreamsStartsWith = ['imagestreams', 'imagestreamtags'];
-const clusterSettingsStartsWith = ['settings/cluster', 'settings/ldap'];
 const monitoringAlertsStartsWith = ['monitoring/alerts', 'monitoring/alertrules'];
-
-const ClusterPickerNavSection = connectToFlags(FLAGS.OPENSHIFT)(({flags}) => {
-  // Hide the cluster picker on OpenShift clusters. Make sure flag detection is
-  // complete before showing the picker.
-  const openshiftFlag = flags[FLAGS.OPENSHIFT];
-  if (flagPending(openshiftFlag) || openshiftFlag) {
-    return null;
-  }
-
-  return <div className="navigation-container__section navigation-container__section--cluster-picker">
-    <ClusterPicker />
-  </div>;
-});
 
 const MonitoringNavSection_ = ({urls, closeMenu}) => {
   const prometheusURL = urls[MonitoringRoutes.Prometheus];
@@ -299,7 +295,7 @@ const MonitoringNavSection_ = ({urls, closeMenu}) => {
 };
 const MonitoringNavSection = connectToURLs(MonitoringRoutes.Prometheus, MonitoringRoutes.Grafana)(MonitoringNavSection_);
 
-const UserNavSection = connectToFlags(FLAGS.AUTH_ENABLED, FLAGS.OPENSHIFT)(({flags, closeMenu}) => {
+const UserNavSection = connectToFlags(FLAGS.AUTH_ENABLED, FLAGS.OPENSHIFT)(({flags}) => {
   if (!flags[FLAGS.AUTH_ENABLED] || flagPending(flags[FLAGS.OPENSHIFT])) {
     return null;
   }
@@ -313,14 +309,7 @@ const UserNavSection = connectToFlags(FLAGS.AUTH_ENABLED, FLAGS.OPENSHIFT)(({fla
     }
   };
 
-  if (flags[FLAGS.OPENSHIFT]) {
-    return <NavSection text="Logout" icon="pficon pficon-user" klass="visible-xs-block" onClick={logout} />;
-  }
-
-  return <NavSection text="User" icon="pficon pficon-user" klass="visible-xs-block">
-    <HrefLink href="/settings/profile" name="My Account" onClick={closeMenu} key="myAccount" />
-    <HrefLink href="#" name="Logout" onClick={logout} key="logout" />
-  </NavSection>;
+  return <NavSection text="Logout" icon="pficon pficon-user" klass="visible-xs-block" onClick={logout} />;
 });
 
 export class Nav extends React.Component {
@@ -381,7 +370,6 @@ export class Nav extends React.Component {
         <span className="icon-bar" aria-hidden="true"></span>
       </button>
       <div id="sidebar" className={classNames({'open': isOpen})}>
-        <ClusterPickerNavSection />
         <div ref={this.scroller} onWheel={this.preventScroll} className="navigation-container">
           <NavSection text="Home" icon="pficon pficon-home">
             <ResourceClusterLink resource="projects" name="Projects" onClick={this.close} required={FLAGS.OPENSHIFT} />
@@ -397,9 +385,7 @@ export class Nav extends React.Component {
           </NavSection>
 
           <NavSection required={FLAGS.OPERATOR_LIFECYCLE_MANAGER} text="Operators" img={operatorImg} activeImg={operatorActiveImg} >
-            {
-              // <HrefLink required={FLAGS.KUBERNETES_MARKETPLACE} href="/marketplace" name="Kubernetes Marketplace" activePath="/marketplace/" onClick={this.close} />
-            }
+            <HrefLink required={FLAGS.KUBERNETES_MARKETPLACE} href="/marketplace" name="Kubernetes Marketplace" activePath="/marketplace/" onClick={this.close} />
             <ResourceNSLink model={ClusterServiceVersionModel} resource={ClusterServiceVersionModel.plural} name="Cluster Service Versions" onClick={this.close} />
             <Sep />
             <ResourceNSLink model={PackageManifestModel} resource={PackageManifestModel.plural} name="Package Manifests" onClick={this.close} />
@@ -433,7 +419,7 @@ export class Nav extends React.Component {
           <NavSection text="Storage" icon="pficon pficon-container-node">
             <ResourceClusterLink resource="persistentvolumes" name="Persistent Volumes" onClick={this.close} required={FLAGS.CAN_LIST_PV} />
             <ResourceNSLink resource="persistentvolumeclaims" name="Persistent Volume Claims" onClick={this.close} />
-            <ResourceClusterLink resource="storageclasses" name="Storage Classes" onClick={this.close} required={FLAGS.CAN_LIST_STORE} />
+            <ResourceClusterLink resource="storageclasses" name="Storage Classes" onClick={this.close} />
           </NavSection>
 
           <NavSection text="Builds" icon="pficon pficon-build" required={FLAGS.OPENSHIFT}>
@@ -454,7 +440,8 @@ export class Nav extends React.Component {
           <NavSection text="Administration" icon="fa fa-cog">
             <ResourceClusterLink resource="namespaces" name="Namespaces" onClick={this.close} required={FLAGS.CAN_LIST_NS} />
             <ResourceClusterLink resource="nodes" name="Nodes" onClick={this.close} required={FLAGS.CAN_LIST_NODE} />
-            <HrefLink href="/settings/cluster" name="Cluster Settings" onClick={this.close} startsWith={clusterSettingsStartsWith} disallowed={FLAGS.OPENSHIFT} />
+            <ResourceNSLink resource={referenceForModel(MachineSetModel)} name="Machine Sets" onClick={this.close} required={FLAGS.CLUSTER_API} />
+            <ResourceNSLink resource={referenceForModel(MachineModel)} name="Machines" onClick={this.close} required={FLAGS.CLUSTER_API} />
             <ResourceNSLink resource="serviceaccounts" name="Service Accounts" onClick={this.close} />
             <ResourceNSLink resource="roles" name="Roles" startsWith={rolesStartsWith} onClick={this.close} />
             <ResourceNSLink resource="rolebindings" name="Role Bindings" onClick={this.close} startsWith={rolebindingsStartsWith} />

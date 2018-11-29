@@ -27,9 +27,11 @@ export default (state, action) => {
       activeNamespace: activeNamespace || 'default',
       createProjectMessage: '',
       overview: new ImmutableMap({
+        metrics: {},
         resources: new ImmutableMap({}),
         selectedDetailsTab: '',
         selectedUID: '',
+        selectedView: 'resources',
       }),
     });
   }
@@ -66,8 +68,8 @@ export default (state, action) => {
     case types.setMonitoringData:
       state = state.setIn(['monitoring', action.key], action.data);
 
-      if (action.key === 'rules' || action.key === 'silences') {
-        const alerts = state.getIn(['monitoring', 'rules']);
+      if (action.key === 'alerts' || action.key === 'silences') {
+        const alerts = state.getIn(['monitoring', 'alerts']);
         const firingAlerts = _.filter(_.get(alerts, 'data'), a => [AlertStates.Firing, AlertStates.Silenced].includes(a.state));
         const silences = state.getIn(['monitoring', 'silences']);
 
@@ -76,9 +78,15 @@ export default (state, action) => {
           a.silencedBy = _.filter(_.get(silences, 'data'), s => isSilenced(a, s));
           if (a.silencedBy.length) {
             a.state = AlertStates.Silenced;
+            // Also set the state of Alerts in `rule.alerts`
+            _.each(a.rule.alerts, ruleAlert => {
+              if (_.some(a.silencedBy, s => isSilenced(ruleAlert, s))) {
+                ruleAlert.state = AlertStates.Silenced;
+              }
+            });
           }
         });
-        state = state.setIn(['monitoring', 'rules'], alerts);
+        state = state.setIn(['monitoring', 'alerts'], alerts);
 
         // For each Silence, store a list of the Alerts it is silencing
         _.each(_.get(silences, 'data'), s => {
@@ -100,10 +108,14 @@ export default (state, action) => {
     case types.dismissOverviewDetails:
       return state.mergeIn(['overview'], {selectedUID: '', selectedDetailsTab: ''});
 
+    case types.updateOverviewMetrics:
+      return state.setIn(['overview', 'metrics'], action.metrics);
+
     case types.updateOverviewResources: {
       const newResources = new ImmutableMap(_.keyBy(action.resources, 'obj.metadata.uid'));
       return state.setIn(['overview', 'resources'], newResources);
     }
+
     default:
       break;
   }
@@ -113,7 +125,3 @@ export default (state, action) => {
 export const createProjectMessageStateToProps = ({UI}) => {
   return {createProjectMessage: UI.get('createProjectMessage')};
 };
-
-export const monitoringAlertsToProps = ({UI}) => UI.getIn(['monitoring', 'alerts'], {});
-export const monitoringRulesToProps = ({UI}) => UI.getIn(['monitoring', 'rules'], {});
-export const monitoringSilencesToProps = ({UI}) => UI.getIn(['monitoring', 'silences'], {});

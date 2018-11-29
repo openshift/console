@@ -189,7 +189,7 @@ describe(InstallPlanDetails.displayName, () => {
   });
 
   it('renders link to "Components" tab if install plan needs approval', () => {
-    let installPlan = _.cloneDeep(testInstallPlan);
+    const installPlan = _.cloneDeep(testInstallPlan);
     installPlan.spec.approval = InstallPlanApproval.Manual;
     installPlan.spec.approved = false;
     wrapper = wrapper.setProps({obj: installPlan});

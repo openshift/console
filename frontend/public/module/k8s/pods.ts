@@ -159,8 +159,8 @@ export const getVolumeMountsByPermissions = pod => {
   const m = {};
   _.forEach(pod.spec.containers, (c: any) => {
     _.forEach(c.volumeMounts, (v: any) => {
-      let k = `${v.name}_${v.readOnly ? 'ro' : 'rw'}`;
-      let mount = {container: c.name, mountPath: v.mountPath};
+      const k = `${v.name}_${v.readOnly ? 'ro' : 'rw'}`;
+      const mount = {container: c.name, mountPath: v.mountPath};
       if (k in m) {
         return m[k].mounts.push(mount);
       }

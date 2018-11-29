@@ -22,7 +22,7 @@ export class SubscriptionChannelModal extends PromiseComponent {
   private submit(event): void {
     event.preventDefault();
 
-    let updatedSub = _.cloneDeep(this.props.subscription);
+    const updatedSub = _.cloneDeep(this.props.subscription);
     updatedSub.spec.channel = this.state.selectedChannel;
     this.handlePromise(this.props.k8sUpdate(SubscriptionModel, updatedSub)).then(() => this.props.close());
   }

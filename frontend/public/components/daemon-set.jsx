@@ -23,7 +23,7 @@ import {
   Selector,
 } from './utils';
 
-export const menuActions = [Kebab.factory.EditEnvironment, ...Kebab.factory.common];
+export const menuActions = [Kebab.factory.AddStorage, Kebab.factory.EditEnvironment, ...Kebab.factory.common];
 
 const DaemonSetHeader = props => <ListHeader>
   <ColHead {...props} className="col-lg-2 col-md-3 col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
@@ -51,7 +51,7 @@ const DaemonSetRow = ({obj: daemonset}) => <ResourceRow obj={daemonset}>
   <div className="col-lg-3 hidden-md hidden-sm hidden-xs">
     <Selector selector={daemonset.spec.selector} namespace={daemonset.metadata.namespace} />
   </div>
-  <div className="co-kebab-wrapper">
+  <div className="dropdown-kebab-pf">
     <ResourceKebab actions={menuActions} kind="DaemonSet" resource={daemonset} />
   </div>
 </ResourceRow>;

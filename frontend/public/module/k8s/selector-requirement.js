@@ -31,9 +31,9 @@ export const requirementFromString = string => {
 
   // "key=value" OR "key==value"
   if (/^[0-9A-Za-z/\-_.]+\s*==?\s*[0-9A-Za-z/\-_.]+$/.test(string)) {
-    let parts = string.split(/\s*==?\s*/);
-    let key = parts[0];
-    let value = parts[1];
+    const parts = string.split(/\s*==?\s*/);
+    const key = parts[0];
+    const value = parts[1];
     return createEquals(key, value);
   }
 
@@ -48,9 +48,9 @@ export const requirementFromString = string => {
 
   // "key in (value1[,value2,...])"
   if (/^[0-9A-Za-z/\-_.]+\s+in\s+\([0-9A-Za-z/\-_.,\s]+\)$/.test(string)) {
-    let parts = string.split(/\s+in\s+/);
-    let key = parts[0];
-    let values = parts[1].slice(1, -1).split(',').map(_.trim);
+    const parts = string.split(/\s+in\s+/);
+    const key = parts[0];
+    const values = parts[1].slice(1, -1).split(',').map(_.trim);
 
     return {
       key:      key,
@@ -61,9 +61,9 @@ export const requirementFromString = string => {
 
   // "key notin (value1[,value2,...])"
   if (/^[0-9A-Za-z/\-_.]+\s+notin\s+\([0-9A-Za-z/\-_.,\s]+\)$/.test(string)) {
-    let parts = string.split(/\s+notin\s+/);
-    let key = parts[0];
-    let values = parts[1].slice(1, -1).split(',').map(_.trim);
+    const parts = string.split(/\s+notin\s+/);
+    const key = parts[0];
+    const values = parts[1].slice(1, -1).split(',').map(_.trim);
 
     return {
       key:      key,
@@ -74,9 +74,9 @@ export const requirementFromString = string => {
 
   // "key > value1"
   if (/^[0-9A-Za-z/\-_.]+\s+>\s+[0-9.]+$/.test(string)) {
-    let parts = string.split(/\s+>\s+/);
-    let key = parts[0];
-    let value = parts[1];
+    const parts = string.split(/\s+>\s+/);
+    const key = parts[0];
+    const value = parts[1];
 
     return {
       key:      key,
@@ -87,9 +87,9 @@ export const requirementFromString = string => {
 
   // "key < value1"
   if (/^[0-9A-Za-z/\-_.]+\s+<\s+[0-9.]+$/.test(string)) {
-    let parts = string.split(/\s+<\s+/);
-    let key = parts[0];
-    let value = parts[1];
+    const parts = string.split(/\s+<\s+/);
+    const key = parts[0];
+    const value = parts[1];
 
     return {
       key:      key,

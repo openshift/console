@@ -19,6 +19,11 @@ const TYPES = {
     space: true,
     divisor: 1000,
   },
+  decimalBytesWithoutB: {
+    units: ['', 'k', 'M', 'G', 'T', 'P', 'E'],
+    space: true,
+    divisor: 1000,
+  },
   binaryBytes: {
     units: ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB'],
     space: true,
@@ -49,8 +54,8 @@ const getType = (name) => {
 };
 
 const convertBaseValueToUnits = (value, unitArray, divisor, initialUnit) => {
-  let sliceIndex = initialUnit ? unitArray.indexOf(initialUnit) : 0;
-  let units_ = unitArray.slice(sliceIndex);
+  const sliceIndex = initialUnit ? unitArray.indexOf(initialUnit) : 0;
+  const units_ = unitArray.slice(sliceIndex);
   let unit = units_.shift();
   while (value >= divisor && units_.length > 0) {
     value = value / divisor;
@@ -69,7 +74,7 @@ const convertValueWithUnitsToBaseValue = (value, unitArray, divisor) => {
 
   // find which unit we're given
   let truncateStringAt = -1;
-  let startingUnitIndex = _.findIndex(units_, function(currentUnitValue) {
+  const startingUnitIndex = _.findIndex(units_, function(currentUnitValue) {
     const index = value.indexOf(currentUnitValue);
     if (index > -1) {
       truncateStringAt = index;
@@ -138,7 +143,6 @@ const humanize = units.humanize = (value, typeName, useRound = false) => {
 };
 
 export const humanizeMem = v => humanize(v, 'binaryBytes', true).string;
-export const humanizeCPU = v => humanize(v, 'numeric', true).string;
 export const humanizeNumber = v => humanize(v, 'numeric', true).string;
 
 units.dehumanize = (value, typeName) => {
@@ -176,7 +180,7 @@ const validateNumber = (float='') => {
     return 'must be a number';
   }
 };
-const validCPUUnits = new Set(['p', 'm', 'c', 'd', 'n', 'K', 'M', 'G']);
+const validCPUUnits = new Set(['m', '']);
 const validateCPUUnit = (value='') => {
   if (validCPUUnits.has(value)) {
     return;
@@ -254,4 +258,40 @@ validate.memory = (value='') => {
   return validateNumber(number) || validateMemUnit(unit);
 };
 
+// Convert k8s compute resources values to a base value for comparison.
+// If the value has no unit, it just returns the number, so this function
+// can be used for any quota resource (resource counts). `units.dehumanize`
+// is problematic for comparing quota resources because you need to know
+// what unit you're dealing with already (e.g. decimal vs binary). Returns
+// null if value isn't recognized as valid.
+export const convertToBaseValue = (value) => {
+  if (!_.isString(value)) {
+    return null;
+  }
 
+  const [number, unit] = validate.split(value);
+  const validationError = validateNumber(number);
+  if (validationError) {
+    return null;
+  }
+
+  if (!unit) {
+    return number;
+  }
+
+  // Handle CPU millicores specifically.
+  if (unit === 'm') {
+    return number / 1000;
+  }
+
+  if (TYPES.binaryBytesWithoutB.units.includes(unit)) {
+    return units.dehumanize(value, 'binaryBytesWithoutB').value;
+  }
+
+  if (TYPES.decimalBytesWithoutB.units.includes(unit)) {
+    return units.dehumanize(value, 'decimalBytesWithoutB').value;
+  }
+
+  // Unrecognized unit.
+  return null;
+};

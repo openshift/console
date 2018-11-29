@@ -199,7 +199,7 @@ const HorizontalPodAutoscalersRow: React.SFC<HorizontalPodAutoscalersRowProps> =
   <div className="col-lg-1 hidden-md hidden-sm hidden-xs">
     {obj.spec.maxReplicas}
   </div>
-  <div className="co-kebab-wrapper">
+  <div className="dropdown-kebab-pf">
     <ResourceKebab actions={menuActions} kind={HorizontalPodAutoscalersReference} resource={obj} />
   </div>
 </div>;

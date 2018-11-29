@@ -10,7 +10,7 @@ import { CONST } from '../../const';
 
 const parseExisitingPullSecret = (pullSecret) => {
   let invalidData = false;
-  let invalidJson = false;
+  const invalidJson = false;
   let username, email, password, address;
 
   try {
@@ -60,7 +60,7 @@ const generateSecretData = (formData) => {
     auths: {},
   };
 
-  let authParts = [];
+  const authParts = [];
 
   if (_.trim(formData.username).length >= 1) {
     authParts.push(formData.username);

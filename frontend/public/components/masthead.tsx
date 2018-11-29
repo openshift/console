@@ -11,7 +11,7 @@ import * as rhLogoImg from '../imgs/redhat-logo-modal.svg';
 import * as okdModalImg from '../imgs/okd-logo-modal.svg';
 import { FLAGS, connectToFlags, flagPending } from '../features';
 import { authSvc } from '../module/auth';
-import { Dropdown, ActionsMenu, AsyncComponent } from './utils';
+import { ActionsMenu, AsyncComponent } from './utils';
 import { openshiftHelpBase } from './utils/documentation';
 import { createModalLauncher } from './factory/modal';
 
@@ -19,8 +19,6 @@ import { coFetchJSON } from '../co-fetch';
 import { SafetyFirst } from './safety-first';
 
 const AboutModal = (props) => <AsyncComponent loader={() => import('./utils/about-modal').then(c => c.AboutModal)} {...props} />;
-
-const developerConsoleURL = (window as any).SERVER_FLAGS.developerConsoleURL;
 
 export const getBrandingDetails = () => {
   let backgroundImg, logoImg, logoAlt, modalLogoImg, modalLogoAlt, productTitle;
@@ -135,11 +133,6 @@ const UserMenuWrapper = connectToFlags(FLAGS.AUTH_ENABLED, FLAGS.OPENSHIFT)((pro
     return <OSUserMenu actions={actions} />;
   }
 
-  actions.unshift({
-    label: 'My Account',
-    href: '/settings/profile',
-  });
-
   return authSvc.userID() ? <UserMenu actions={actions} username={authSvc.name()} /> : null;
 });
 
@@ -169,19 +162,6 @@ export class OSUserMenu extends SafetyFirst<OSUserMenuProps, OSUserMenuState> {
   }
 }
 
-const ContextSwitcher = () => {
-  const items = {
-    [`${developerConsoleURL}catalog`]: 'Service Catalog',
-    [`${developerConsoleURL}projects`]: 'Application Console',
-    [(window as any).SERVER_FLAGS.basePath]: 'Cluster Console',
-  };
-
-  return <div className="contextselector-pf">
-    <Dropdown title="Cluster Console" items={items} selectedKey={(window as any).SERVER_FLAGS.basePath}
-      dropDownClassName="bootstrap-select btn-group" onChange={url => window.location.href = url} />
-  </div>;
-};
-
 export const LogoImage = () => {
   const details = getBrandingDetails();
   return <div className="co-masthead__logo">
@@ -192,9 +172,6 @@ export const LogoImage = () => {
 export const Masthead = () => <header role="banner" className="navbar navbar-pf-vertical co-masthead">
   <div className="navbar-header">
     <LogoImage />
-    {developerConsoleURL && <div className="co-masthead__console-picker">
-      <ContextSwitcher />
-    </div>}
   </div>
   <div className="nav navbar-nav navbar-right navbar-iconic navbar-utility">
     <div className="co-masthead__dropdowns">

@@ -127,7 +127,7 @@ const listFilters = {
       return true;
     }
 
-    let status = routeStatus(route);
+    const status = routeStatus(route);
     return statuses.selected.has(status) || !_.includes(statuses.all, status);
   },
 
@@ -136,7 +136,7 @@ const listFilters = {
       return true;
     }
 
-    let status = serviceCatalogStatus(catalog);
+    const status = serviceCatalogStatus(catalog);
     return statuses.selected.has(status) || !_.includes(statuses.all, status);
   },
 
@@ -195,7 +195,7 @@ const filterPropType = (props, propName, componentName) => {
     return;
   }
 
-  for (let key of _.keys(props[propName])) {
+  for (const key of _.keys(props[propName])) {
     if (key in listFilters || key === 'loadTest') {
       continue;
     }
@@ -467,7 +467,7 @@ export class ResourceRow extends React.Component<ResourceRowProps> {
     if (_.size(nextProps) !== _.size(this.props)) {
       return true;
     }
-    for (let key of Object.keys(nextProps)) {
+    for (const key of Object.keys(nextProps)) {
       if (key === 'obj') {
         const oldVersion = _.get(this.props.obj, 'metadata.resourceVersion');
         const newVersion = _.get(nextProps.obj, 'metadata.resourceVersion');
@@ -506,7 +506,7 @@ export const WorkloadListRow: React.SFC<WorkloadListRowProps> = ({kind, actions,
   <div className="col-lg-3 hidden-md hidden-sm hidden-xs">
     <Selector selector={o.spec.selector} namespace={o.metadata.namespace} />
   </div>
-  <div className="co-kebab-wrapper">
+  <div className="dropdown-kebab-pf">
     <ResourceKebab actions={actions} kind={kind} resource={o} />
   </div>
 </ResourceRow>;

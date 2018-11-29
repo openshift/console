@@ -175,7 +175,7 @@ export default (state: ImmutableMap<string, any>, action) => {
     case types.updateListFromWS:
       newList = list;
       // k8sObjects is an array of k8s WS Events
-      for (let {type, object} of k8sObjects) {
+      for (const {type, object} of k8sObjects) {
         switch (type) {
           case 'DELETED':
             newList = removeFromList(newList, object);

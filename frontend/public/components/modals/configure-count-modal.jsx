@@ -79,7 +79,7 @@ ConfigureCountModal.propTypes = {
 export const configureCountModal = createModalLauncher(ConfigureCountModal);
 
 export const configureReplicaCountModal = (props) => {
-  return configureCountModal(_.defaults({}, {
+  return configureCountModal(_.assign({}, {
     defaultValue: 0,
     title: 'Edit Count',
     message: `${props.resourceKind.labelPlural} maintain the desired number of healthy pods.`,

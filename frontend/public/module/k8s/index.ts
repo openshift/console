@@ -27,14 +27,19 @@ export type ObjectMetadata = {
   [key: string]: any,
 };
 
+export type MatchExpression = {key: string, operator: 'Exists' | 'DoesNotExist'} | {key: string, operator: 'In' | 'NotIn' | 'Equals' | 'NotEquals', values: string[]};
+
+export type Selector = {
+  matchLabels?: {[key: string]: string};
+  matchExpressions?: MatchExpression[];
+};
+
 export type K8sResourceKind = {
   apiVersion: string;
   kind: string;
   metadata: ObjectMetadata;
   spec?: {
-    selector?: {
-      matchLabels?: {[key: string]: any},
-    },
+    selector?: Selector;
     [key: string]: any
   };
   status?: {[key: string]: any};
@@ -70,6 +75,52 @@ export type CustomResourceDefinitionKind = {
   }
 } & K8sResourceKind;
 
+export type MachineSpec = {
+  providerConfig: {
+    value: K8sResourceKind;
+  };
+  versions: {
+    kubelet: string;
+  };
+  [key: string]: any;
+};
+
+export type MachineKind = {
+  spec: MachineSpec;
+  status?: {
+    addresses: {
+      address?: string;
+      type: string;
+    };
+    lastUpdated: string;
+    nodeRef: {
+      kind: string;
+      name: string;
+      uid: string;
+    };
+    providerStatus: {
+      kind: string;
+      conditions?: any[];
+      [key: string]: any;
+    };
+  };
+} & K8sResourceKind;
+
+export type MachineSetKind = {
+  spec: {
+    replicas: number;
+    template: {
+      spec: MachineSpec;
+    };
+  };
+  status?: {
+    availableReplicas: number;
+    fullyLabeledReplicas: number;
+    readyReplicas: number;
+    replicas: number;
+  };
+} & K8sResourceKind;
+
 export type K8sKind = {
   abbr: string;
   kind: string;
@@ -84,7 +135,7 @@ export type K8sKind = {
   apiVersion: string;
   apiGroup?: string;
   namespaced?: boolean;
-  selector?: {matchLabels?: {[key: string]: string}};
+  selector?: Selector;
   labels?: {[key: string]: string};
   annotations?: {[key: string]: string};
   verbs?: string[];

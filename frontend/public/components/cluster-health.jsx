@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 
-import { humanizeCPU, humanizeMem, PageHeading } from './utils';
+import { humanizeMem, humanizeNumber, PageHeading } from './utils';
 import { Bar, Gauge, Line, Scalar } from './graphs';
 
 const multiLoadQueries = [
@@ -65,7 +65,7 @@ export const ClusterHealth = () => <div>
         <Line title="Cluster Load Average" query={multiLoadQueries} />
       </div>
       <div className="col-lg-3 col-md-6">
-        <Bar title="CPU Usage by Namespace" query={'sort(topk(10, sum by (namespace) (namespace:container_cpu_usage:sum)))'} humanize={humanizeCPU} metric="namespace" />
+        <Bar title="CPU Usage by Namespace" query={'sort(topk(10, sum by (namespace) (namespace:container_cpu_usage:sum)))'} humanize={humanizeNumber} metric="namespace" />
       </div>
     </div>
     <div className="row">
@@ -130,10 +130,10 @@ export const ClusterHealth = () => <div>
     </div>
     <div className="row">
       <div className="col-lg-9">
-        <Bar title="API Writes Req/sec (Top 10 Clients)" query={'sort(topk(10, sum by (client)(rate(apiserver_request_count{verb!="GET", verb!="LIST", verb!="WATCH"}[5m]))))'} humanize={humanizeCPU} metric="client" />
+        <Bar title="API Writes Req/sec (Top 10 Clients)" query={'sort(topk(10, sum by (client)(rate(apiserver_request_count{verb!="GET", verb!="LIST", verb!="WATCH"}[5m]))))'} humanize={humanizeNumber} metric="client" />
       </div>
       <div className="col-lg-9">
-        <Bar title="API Reads Req/sec (Top 10 Clients)" query={'sort(topk(10, sum by (client)(rate(apiserver_request_count{verb!="POST", verb!="PUT", verb!="PATCH"}[5m]))))'} humanize={humanizeCPU} metric="client" />
+        <Bar title="API Reads Req/sec (Top 10 Clients)" query={'sort(topk(10, sum by (client)(rate(apiserver_request_count{verb!="POST", verb!="PUT", verb!="PATCH"}[5m]))))'} humanize={humanizeNumber} metric="client" />
       </div>
       <div className="col-lg-9">
         <Bar title="Top 10 Pod Memory" query={'sort(topk(10, sum by (pod_name) (container_memory_usage_bytes{pod_name!=""})))'} humanize={humanizeMem} metric="pod_name" />

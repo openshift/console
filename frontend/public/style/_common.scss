@@ -568,7 +568,6 @@
   }
   &__icon {
     color: $color-pf-black-700;
-    padding: 0 7px;
     &--disabled {
       color: $color-pf-black-300;
     }
@@ -576,11 +575,6 @@
   &--disabled {
     pointer-events: none;
   }
-}
-
-.co-kebab-wrapper {
-  position: absolute;
-  right: 0;
 }
 
 .no-margin {

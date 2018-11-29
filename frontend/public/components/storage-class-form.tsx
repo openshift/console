@@ -521,7 +521,9 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
     runValidation ? this.setState({newStorageClass: newParams}, this.validateForm) : this.setState({newStorageClass: newParams});
   };
 
-  createStorageClass = () => {
+  createStorageClass = (e: React.FormEvent<EventTarget>) => {
+    e.preventDefault();
+
     this.setState({
       loading: true,
     });
@@ -529,7 +531,7 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
     const type = this.state.newStorageClass.type;
     const dataParameters = this.getFormParams();
 
-    let data : StorageClass = {
+    const data : StorageClass = {
       metadata: {
         name: this.state.newStorageClass.name,
         annotations: {description: this.state.newStorageClass.description},
@@ -836,7 +838,7 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
               className="btn btn-primary"
               id="save-changes"
               disabled={!this.state.validationSuccessful}
-              onClick={() => this.createStorageClass()}>
+              onClick={this.createStorageClass}>
               Create
             </button>
             <button

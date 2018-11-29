@@ -1,53 +1,48 @@
-$co-m-horizontal-nav__menu-item-link-padding-lr-desktop: 17px;
-$co-m-horizontal-nav__menu-item-link-padding-lr-mobile: 15px;
-
-.co-m-horizontal-nav {
-  display: flex;
-  flex-direction: column;
-}
+$co-m-horizontal-nav__menu-item-link-padding-lr: 15px;
 
 .co-m-horizontal-nav__menu {
   border-bottom: 1px solid $color-grey-background-border;
   display: flex;
-  list-style: none;
-  margin: 0;
-  padding: 0;
   white-space: nowrap;
   @media (min-width: $grid-float-breakpoint) {
-    margin-left: (-$co-m-horizontal-nav__menu-item-link-padding-lr-desktop);
+    margin-left: (-$co-m-horizontal-nav__menu-item-link-padding-lr);
     padding: 0 30px;
   }
 }
 
-.co-m-horizontal-nav__menu__primary {
+.co-m-horizontal-nav__menu-primary {
   display: flex;
   list-style: none;
   margin: 0;
   padding: 0;
-  white-space: nowrap;
 }
 
-.co-m-horizontal-nav__menu__secondary {
+.co-m-horizontal-nav__menu-secondary {
   display: flex;
   list-style: none;
-  margin: 0;
+  margin: 0 0 -1px; // -1px bottom so co-m-horizontal-nav__menu-item *::after are fully visible
   overflow-x: auto;
+  overflow-y: hidden;
   padding: 0;
-  white-space: nowrap;
+  -webkit-overflow-scrolling: touch;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
-.co-m-horizontal-nav__menu__secondary::-webkit-scrollbar {
-  display: none;
-}
 
 .co-m-horizontal-nav__menu-item {
   font-size: 18px;
-  margin: 0;
-  text-align: center;
   a,
   button {
+    background: transparent;
+    border: 0;
     color: $color-pf-black-700;
+    display: block;
+    padding: 6px $co-m-horizontal-nav__menu-item-link-padding-lr 8px;
     position: relative;
+    text-decoration: none;
     &:hover,
     &:focus {
       color: #252525;
@@ -60,13 +55,9 @@ $co-m-horizontal-nav__menu-item-link-padding-lr-mobile: 15px;
       content: "";
       display: block;
       height: 2px;
-      left: $co-m-horizontal-nav__menu-item-link-padding-lr-mobile;
+      left: $co-m-horizontal-nav__menu-item-link-padding-lr;
       position: absolute;
-      right: $co-m-horizontal-nav__menu-item-link-padding-lr-mobile;
-      @media (min-width: $grid-float-breakpoint) {
-        left: $co-m-horizontal-nav__menu-item-link-padding-lr-desktop;
-        right: $co-m-horizontal-nav__menu-item-link-padding-lr-desktop;
-      }
+      right: $co-m-horizontal-nav__menu-item-link-padding-lr;
     }
   }
   &.co-m-horizontal-nav-item--active {
@@ -76,18 +67,6 @@ $co-m-horizontal-nav__menu-item-link-padding-lr-mobile: 15px;
       &::after {
         background: $color-pf-blue-400;
       }
-    }
-  }
-  a,
-  button {
-    background: none;
-    border: none;
-    display: block;
-    padding: 6px $co-m-horizontal-nav__menu-item-link-padding-lr-mobile 8px;
-    text-decoration: none;
-    @media (min-width: $grid-float-breakpoint) {
-      padding-left: $co-m-horizontal-nav__menu-item-link-padding-lr-desktop;
-      padding-right: $co-m-horizontal-nav__menu-item-link-padding-lr-desktop;
     }
   }
 }

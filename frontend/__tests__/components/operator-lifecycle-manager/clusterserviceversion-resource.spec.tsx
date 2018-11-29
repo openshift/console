@@ -106,7 +106,7 @@ describe(ClusterServiceVersionResourceRow.displayName, () => {
   });
 
   it('renders column for resource status if unknown', () => {
-    let obj = _.cloneDeep(testResourceInstance);
+    const obj = _.cloneDeep(testResourceInstance);
     obj.status = null;
     wrapper.setProps({obj});
     const col = wrapper.childAt(3);
@@ -212,7 +212,7 @@ describe(ClusterServiceVersionResourceDetails.displayName, () => {
   });
 
   it('does not render any spec descriptor fields if there are none defined on the `ClusterServiceVersion`', () => {
-    let clusterServiceVersion = _.cloneDeep(testClusterServiceVersion);
+    const clusterServiceVersion = _.cloneDeep(testClusterServiceVersion);
     clusterServiceVersion.spec.customresourcedefinitions.owned = [];
     wrapper = wrapper.setProps({clusterServiceVersion});
 
@@ -224,7 +224,7 @@ describe(ClusterServiceVersionResourceDetails.displayName, () => {
   });
 
   it('renders spec descriptor fields if the custom resource is `required`', () => {
-    let clusterServiceVersion = _.cloneDeep(testClusterServiceVersion);
+    const clusterServiceVersion = _.cloneDeep(testClusterServiceVersion);
     clusterServiceVersion.spec.customresourcedefinitions.required = _.cloneDeep(clusterServiceVersion.spec.customresourcedefinitions.owned);
     clusterServiceVersion.spec.customresourcedefinitions.owned = [];
     wrapper = wrapper.setProps({clusterServiceVersion});
@@ -351,7 +351,7 @@ describe(ProvidedAPIsPage.displayName, () => {
   });
 
   it('renders a `StatusBox` if given app has no owned or required custom resources', () => {
-    let obj = _.cloneDeep(testClusterServiceVersion);
+    const obj = _.cloneDeep(testClusterServiceVersion);
     obj.spec.customresourcedefinitions = {};
     wrapper.setProps({obj});
 
@@ -376,7 +376,7 @@ describe(ProvidedAPIsPage.displayName, () => {
   });
 
   it('passes `createProps` for dropdown create button if app has multiple owned CRDs', () => {
-    let obj = _.cloneDeep(testClusterServiceVersion);
+    const obj = _.cloneDeep(testClusterServiceVersion);
     obj.spec.customresourcedefinitions.owned.push({name: 'foobars.testapp.coreos.com', displayName: 'Foo Bars', version: 'v1', kind: 'FooBar'});
     wrapper.setProps({obj});
     const listPage = wrapper.find(MultiListPage);
@@ -397,7 +397,7 @@ describe(ProvidedAPIsPage.displayName, () => {
   });
 
   it('passes `flatten` function which removes `required` resources with owner references to items not in the same list', () => {
-    let otherResourceInstance = _.cloneDeep(testOwnedResourceInstance);
+    const otherResourceInstance = _.cloneDeep(testOwnedResourceInstance);
     otherResourceInstance.metadata.ownerReferences[0].uid = 'abfcd938-b991-11e7-845d-0eb774f2814a';
     const resources = {
       TestOwnedResource: {

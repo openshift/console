@@ -25,7 +25,7 @@ const PrometheusRow = ({obj: instance}) => {
     <div className="col-lg-2 hidden-md hidden-sm hidden-xs">
       <Selector selector={spec.serviceMonitorSelector} kind="ServiceMonitor" namespace={metadata.namespace} />
     </div>
-    <div className="co-kebab-wrapper">
+    <div className="dropdown-kebab-pf">
       <ResourceKebab actions={menuActions} kind={referenceForModel(PrometheusModel)} resource={instance} />
     </div>
   </ResourceRow>;

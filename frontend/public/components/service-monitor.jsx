@@ -43,7 +43,7 @@ const ServiceMonitorRow = ({obj: sm}) => {
         { namespaceSelectorLinks(sm) }
       </p>
     </div>
-    <div className="co-kebab-wrapper">
+    <div className="dropdown-kebab-pf">
       <ResourceKebab actions={menuActions} kind={referenceForModel(ServiceMonitorModel)} resource={sm} />
     </div>
   </ResourceRow>;

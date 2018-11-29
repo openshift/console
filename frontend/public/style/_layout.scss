@@ -35,7 +35,7 @@ body,
   position: fixed;
   top: $masthead-height-mobile;
   width: $sidebar-width;
-  z-index: $sidebar-z-index;
+  z-index: $zindex-navbar-fixed;
   @media (max-width: $grid-float-breakpoint-max) {
     left: -($sidebar-width);
     &.open {
@@ -56,7 +56,7 @@ body,
   margin: 4px 5px;
   padding: 9px 10px;
   position: fixed;
-  z-index: $masthead-z-index;
+  z-index: $zindex-navbar-fixed;
   @media (min-width: $grid-float-breakpoint) {
     display: none;
   }

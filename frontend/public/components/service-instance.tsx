@@ -187,7 +187,7 @@ const ServiceInstancesRow: React.SFC<ServiceInstancesRowProps> = ({obj}) => {
     <div className="col-md-2 hidden-sm hidden-xs co-break-word">
       <Timestamp timestamp={obj.metadata.creationTimestamp} />
     </div>
-    <div className="co-kebab-wrapper">
+    <div className="dropdown-kebab-pf">
       <ResourceKebab actions={menuActions} kind={ServiceInstancesReference} resource={obj} />
     </div>
   </div>;

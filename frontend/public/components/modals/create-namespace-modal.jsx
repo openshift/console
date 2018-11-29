@@ -19,7 +19,7 @@ const defaultDeny = {
 };
 
 const mapDispatchToProps = dispatch => ({
-  setProjectsAvailable: () => setFlag(dispatch, FLAGS.PROJECTS_AVAILABLE, true),
+  hideStartGuide: () => setFlag(dispatch, FLAGS.SHOW_OPENSHIFT_START_GUIDE, false),
 });
 
 const CreateNamespaceModal = connect(null, mapDispatchToProps)(class CreateNamespaceModal extends PromiseComponent {
@@ -50,7 +50,7 @@ const CreateNamespaceModal = connect(null, mapDispatchToProps)(class CreateNames
   }
 
   createProject() {
-    const {setProjectsAvailable} = this.props;
+    const {hideStartGuide} = this.props;
     const {name, displayName, description} = this.state;
     const project = {
       metadata: {
@@ -60,8 +60,9 @@ const CreateNamespaceModal = connect(null, mapDispatchToProps)(class CreateNames
       description,
     };
     return k8sCreate(ProjectRequestModel, project).then(obj => {
-      // Immediately update the projects available flag to avoid the empty state message from displaying when projects watch is slow.
-      setProjectsAvailable();
+      // Immediately update the start guide flag to avoid the empty state
+      // message from displaying when projects watch is slow.
+      hideStartGuide();
       return obj;
     });
   }

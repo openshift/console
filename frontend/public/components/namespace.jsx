@@ -61,7 +61,7 @@ const NamespaceRow = ({obj: ns}) => <ResourceRow obj={ns}>
   <div className="col-sm-4 hidden-xs">
     <LabelList kind="Namespace" labels={ns.metadata.labels} />
   </div>
-  <div className="co-kebab-wrapper">
+  <div className="dropdown-kebab-pf">
     <ResourceKebab actions={nsMenuActions} kind="Namespace" resource={ns} />
   </div>
 </ResourceRow>;
@@ -84,8 +84,10 @@ const ProjectRow = ({obj: project}) => {
   const requester = getRequester(project);
   return <ResourceRow obj={project}>
     <div className="col-md-3 col-sm-6 col-xs-8">
-      <ResourceIcon kind="Project" />
-      <Link to={`/overview/ns/${name}`} title={displayName} className="co-resource-link__resource-name">{project.metadata.name}</Link>
+      <span className="co-resource-link">
+        <ResourceIcon kind="Project" />
+        <Link to={`/overview/ns/${name}`} title={displayName} className="co-resource-link__resource-name">{project.metadata.name}</Link>
+      </span>
     </div>
     <div className="col-md-3 col-sm-3 col-xs-4">
       {project.status.phase}
@@ -96,7 +98,7 @@ const ProjectRow = ({obj: project}) => {
     <div className="col-md-3 hidden-sm hidden-xs">
       <LabelList kind="Project" labels={project.metadata.labels} />
     </div>
-    <div className="co-kebab-wrapper">
+    <div className="dropdown-kebab-pf">
       <ResourceKebab actions={projectMenuActions} kind="Project" resource={project} />
     </div>
   </ResourceRow>;
@@ -248,8 +250,8 @@ class NamespaceBarDropdowns_ extends React.Component {
   componentDidUpdate() {
     const { namespace, dispatch } = this.props;
     if (namespace.loaded) {
-      const projectsAvailable = !_.isEmpty(namespace.data);
-      setFlag(dispatch, FLAGS.PROJECTS_AVAILABLE, projectsAvailable);
+      const noProjects = _.isEmpty(namespace.data);
+      setFlag(dispatch, FLAGS.SHOW_OPENSHIFT_START_GUIDE, noProjects);
     }
   }
 
