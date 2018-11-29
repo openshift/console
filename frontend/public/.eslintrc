@@ -1,0 +1,11 @@
+{
+  "extends": [
+    "../.eslintrc"
+  ],
+  "rules": {
+    "no-restricted-imports": ["error", {
+      "name": "lodash",
+      "message": "Use lodash-es instead.",
+    }],
+  }
+}
