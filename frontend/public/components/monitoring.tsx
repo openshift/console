@@ -917,9 +917,7 @@ export class MonitoringUI extends React.Component<null, null> {
 
     const {alertManagerBaseURL} = (window as any).SERVER_FLAGS;
     if (!alertManagerBaseURL) {
-      const e = new Error('alertManagerBaseURL not set');
-      store.dispatch(UIActions.monitoringErrored('alerts', e));
-      store.dispatch(UIActions.monitoringErrored('silences', e));
+      store.dispatch(UIActions.monitoringErrored('silences', new Error('alertManagerBaseURL not set')));
       return;
     }
 
