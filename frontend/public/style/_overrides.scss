@@ -210,3 +210,56 @@ tags-input .autocomplete .suggestion-item em {
 .modal-title {
   font-size: $font-size-base;
 }
+
+// PatternFly 4 nav overrides
+
+$pf-l-page__active-sidebar--BackgroundColor: rgba(255,255,255,.07);
+
+.pf-c-nav__link {
+  --pf-c-nav__list-link--Color: #{$color-pf-black-300};
+}
+
+.pf-c-nav__list {
+  .pf-c-nav__link {
+    &:active {
+      --pf-c-nav__list-link--active--Color: #{$color-pf-white};
+    }
+    &:focus {
+      --pf-c-nav__list-link--focus--Color: #{$color-pf-white};
+    }
+    &:hover {
+      --pf-c-nav__list-link--hover--Color: #{$color-pf-white};
+    }
+  }
+  .pf-m-current > .pf-c-nav__link {
+    --pf-c-nav__list-link--m-current--Color: #{$color-pf-white};
+  }
+}
+
+.pf-c-nav__simple-list .pf-c-nav__link {
+  --pf-c-nav__simple-list-link--Color: #{$color-pf-black-300};
+  &:focus {
+    --pf-c-nav__simple-list-link--focus--BackgroundColor: #{$pf-l-page__active-sidebar--BackgroundColor};
+    --pf-c-nav__simple-list-link--focus--Color: #{$color-pf-white};
+  }
+  &:hover {
+    --pf-c-nav__simple-list-link--active--BackgroundColor: #{$pf-l-page__active-sidebar--BackgroundColor};
+    --pf-c-nav__simple-list-link--active--Color: #{$color-pf-white};
+  }
+  &.pf-m-current {
+    --pf-c-nav__simple-list-link--m-current--BackgroundColor: #{$pf-l-page__active-sidebar--BackgroundColor};
+    --pf-c-nav__simple-list-link--m-current--Color: #{$color-pf-white};
+  }
+}
+
+.pf-c-nav__toggle svg {
+  fill: $color-pf-black-300;
+}
+
+.pf-l-page__sidebar {
+  --pf-l-page__sidebar--BackgroundColor: #121212;
+  @media(min-width: $grid-float-breakpoint) {
+    --pf-l-page__sidebar--BackgroundColor: var(--pf-l-page__header-brand--md--BackgroundColor);
+  }
+  --pf-l-page__sidebar--BoxShadow: none;
+}
