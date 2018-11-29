@@ -590,6 +590,7 @@ const MonitoringListPage = connect(filtersToProps)(class InnerMonitoringListPage
         <div className="row">
           <CheckBoxes
             items={rowFilter.items}
+            itemCount={_.size(data)}
             numbers={_.countBy(data, rowFilter.reducer)}
             reduxIDs={[reduxID]}
             selected={rowFilter.selected}
@@ -1029,6 +1030,7 @@ export type ListPageProps = {
   data: Rule[] | Silence[];
   filters: {[key: string]: any};
   Header: React.ComponentType<any>;
+  itemCount: number;
   kindPlural: string;
   loaded: boolean;
   loadError?: string;
