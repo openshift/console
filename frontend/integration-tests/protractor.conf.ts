@@ -90,6 +90,7 @@ export const config: Config = {
     environment: ['tests/base.scenario.ts', 'tests/environment.scenario.ts'],
     secrets: ['tests/base.scenario.ts', 'tests/secrets.scenario.ts'],
     crud: ['tests/base.scenario.ts', 'tests/crud.scenario.ts', 'tests/secrets.scenario.ts', 'tests/filter.scenario.ts', 'tests/modal-annotations.scenario.ts', 'tests/environment.scenario.ts'],
+    monitoring: ['tests/base.scenario.ts', 'tests/monitoring.scenario.ts'],
     newApp: ['tests/base.scenario.ts', 'tests/source-to-image.scenario.ts', 'tests/deploy-image.scenario.ts'],
     olm: ['tests/base.scenario.ts', 'tests/olm/descriptors.scenario.ts', 'tests/olm/catalog.scenario.ts', 'tests/olm/etcd.scenario.ts', 'tests/olm/prometheus.scenario.ts'],
     olmUpgrade: ['tests/base.scenario.ts', 'tests/olm/update-channel-approval.scenario.ts'],
