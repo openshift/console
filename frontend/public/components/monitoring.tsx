@@ -885,7 +885,8 @@ export class MonitoringUI extends React.Component<null, null> {
       poller();
     };
 
-    const {prometheusBaseURL} = (window as any).SERVER_FLAGS;
+    const {alertManagerBaseURL, prometheusBaseURL} = (window as any).SERVER_FLAGS;
+
     if (prometheusBaseURL) {
       poll(`${prometheusBaseURL}/api/v1/rules`, 'alerts', data => {
         // Flatten the rules data to make it easier to work with, discard non-alerting rules since those are the only
@@ -915,25 +916,21 @@ export class MonitoringUI extends React.Component<null, null> {
       store.dispatch(UIActions.monitoringErrored('alerts', new Error('prometheusBaseURL not set')));
     }
 
-    const {alertManagerBaseURL} = (window as any).SERVER_FLAGS;
-    if (!alertManagerBaseURL) {
-      const e = new Error('alertManagerBaseURL not set');
-      store.dispatch(UIActions.monitoringErrored('alerts', e));
-      store.dispatch(UIActions.monitoringErrored('silences', e));
-      return;
-    }
-
-    poll(`${alertManagerBaseURL}/api/v1/silences`, 'silences', data => {
-      // Set a name field on the Silence to make things easier
-      _.each(data, s => {
-        s.name = _.get(_.find(s.matchers, {name: 'alertname'}), 'value');
-        if (!s.name) {
-          // No alertname, so fall back to displaying the other matchers
-          s.name = s.matchers.map(m => `${m.name}${m.isRegex ? '=~' : '='}${m.value}`).join(', ');
-        }
+    if (alertManagerBaseURL) {
+      poll(`${alertManagerBaseURL}/api/v1/silences`, 'silences', data => {
+        // Set a name field on the Silence to make things easier
+        _.each(data, s => {
+          s.name = _.get(_.find(s.matchers, {name: 'alertname'}), 'value');
+          if (!s.name) {
+            // No alertname, so fall back to displaying the other matchers
+            s.name = s.matchers.map(m => `${m.name}${m.isRegex ? '=~' : '='}${m.value}`).join(', ');
+          }
+        });
+        return data;
       });
-      return data;
-    });
+    } else {
+      store.dispatch(UIActions.monitoringErrored('silences', new Error('alertManagerBaseURL not set')));
+    }
   }
 
   componentWillUnmount() {
