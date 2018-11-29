@@ -78,6 +78,12 @@ export default (state, action) => {
           a.silencedBy = _.filter(_.get(silences, 'data'), s => isSilenced(a, s));
           if (a.silencedBy.length) {
             a.state = AlertStates.Silenced;
+            // Also set the state of Alerts in `rule.alerts`
+            _.each(a.rule.alerts, ruleAlert => {
+              if (_.some(a.silencedBy, s => isSilenced(ruleAlert, s))) {
+                ruleAlert.state = AlertStates.Silenced;
+              }
+            });
           }
         });
         state = state.setIn(['monitoring', 'alerts'], alerts);
