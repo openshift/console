@@ -10,21 +10,21 @@ const { common } = Kebab.factory;
 const menuActions = [...common];
 
 const Header = props => <ListHeader>
-  <ColHead {...props} className="col-xs-4" sortField="metadata.name">Name</ColHead>
-  <ColHead {...props} className="col-xs-3" sortField="metadata.namespace">Namespace</ColHead>
-  <ColHead {...props} className="col-xs-5" sortField="spec.podSelector">Pod Selector</ColHead>
+  <ColHead {...props} className="col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
+  <ColHead {...props} className="col-sm-4 col-xs-6" sortField="metadata.namespace">Namespace</ColHead>
+  <ColHead {...props} className="col-sm-4 hidden-xs" sortField="spec.podSelector">Pod Selector</ColHead>
 </ListHeader>;
 
 const kind = 'NetworkPolicy';
 const Row = ({obj: np}) => <div className="row co-resource-list__item">
-  <div className="col-xs-4">
+  <div className="col-sm-4 col-xs-6">
     <ResourceLink kind={kind} name={np.metadata.name} namespace={np.metadata.namespace} title={np.metadata.name} />
   </div>
-  <div className="col-xs-3 co-break-word">
+  <div className="col-sm-4 col-xs-6 co-break-word">
     <ResourceLink kind={'Namespace'} name={np.metadata.namespace} title={np.metadata.namespace} />
   </div>
 
-  <div className="col-xs-5 co-break-word">
+  <div className="col-sm-4 hidden-xs co-break-word">
     {
       _.isEmpty(np.spec.podSelector) ?
         <Link to={`/search/ns/${np.metadata.namespace}?kind=Pod`}>{`All pods within ${np.metadata.namespace}`}</Link> :
