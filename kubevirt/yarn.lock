@@ -28,9 +28,9 @@ file-saver@^1.3.8:
   version "1.3.8"
   resolved "https://registry.yarnpkg.com/file-saver/-/file-saver-1.3.8.tgz#e68a30c7cb044e2fb362b428469feb291c2e09d8"
 
-kubevirt-web-ui-components@0.1.10:
-  version "0.1.10"
-  resolved "https://registry.yarnpkg.com/kubevirt-web-ui-components/-/kubevirt-web-ui-components-0.1.10.tgz#fc14e908a18227636a7b3fb199b1c20923554ee5"
+kubevirt-web-ui-components@0.1.11:
+  version "0.1.11"
+  resolved "https://registry.yarnpkg.com/kubevirt-web-ui-components/-/kubevirt-web-ui-components-0.1.11.tgz#85a97b8fbc190961c4aa97c285cb3ae9237cc0b8"
 
 reactabular-dnd@^8.16.0:
   version "8.16.0"
