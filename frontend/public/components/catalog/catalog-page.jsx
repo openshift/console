@@ -170,7 +170,7 @@ export const Catalog = connectToFlags(FLAGS.OPENSHIFT, FLAGS.SERVICE_CATALOG)(({
       prop: 'imagestreams',
     });
   }
-  return <Firehose resources={mock ? [] : resources}>
+  return <Firehose resources={mock ? [] : resources} className="co-catalog-connect">
     <CatalogListPage namespace={namespace} />
   </Firehose>;
 });

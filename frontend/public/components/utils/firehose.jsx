@@ -167,7 +167,7 @@ export const Firehose = connect(
       ]));
 
       return this.props.loaded || this.firehoses.length > 0
-        ? <ConnectToState reduxes={reduxes}> {children} </ConnectToState>
+        ? <ConnectToState reduxes={reduxes} className={this.props.className}> {children} </ConnectToState>
         : null;
     }
   }

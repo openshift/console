@@ -19,9 +19,23 @@ $catalog-item-icon-size-sm: 24px;
 
 .co-catalog {
   background: $color-pf-black-150;
+  display: flex;
+  flex-direction: column;
   min-height: 100%;
   min-width: 465px; // in order to accommodate filters and tiles at mobile
   padding: 0 0 ($grid-gutter-width / 2);
+}
+
+.co-catalog-connect {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+
+  .loading-box {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+  }
 }
 
 .co-catalog-item-details {
@@ -84,15 +98,15 @@ $catalog-item-icon-size-sm: 24px;
 }
 
 .co-catalog-page {
-  background: #fff;
+  background: $color-pf-white;
   box-shadow: 0 0.0625rem 0.125rem 0 rgba(3,3,3,.2);
   display: flex;
+  flex:1;
   margin: 0 ($grid-gutter-width / 2);
   padding: ($grid-gutter-width / 2) 0 0;
 
   &__content {
     flex: 1 1 auto;
-    margin: 0 ($grid-gutter-width / 2);
   }
 
   &__heading {

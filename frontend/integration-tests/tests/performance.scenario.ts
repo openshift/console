@@ -96,7 +96,7 @@ describe('Performance test', () => {
       expect(routeChunk).not.toBeNull();
       // FIXME: Really need to address this chunk size
       if (routeName === 'catalog' || routeName === 'marketplace') {
-        expect((routeChunk as any).decodedBodySize).toBeLessThan(200000);
+        expect((routeChunk as any).decodedBodySize).toBeLessThan(100000);
       } else {
         expect((routeChunk as any).decodedBodySize).toBeLessThan(chunkLimit);
       }

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import * as PropTypes from 'prop-types';
-import {CatalogTileView, FilterSidePanel, VerticalTabs} from 'patternfly-react-extensions';
+import {FilterSidePanel, VerticalTabs} from 'patternfly-react-extensions';
 import {EmptyState, FormControl} from 'patternfly-react';
 
 import {history} from './router';
@@ -20,7 +20,8 @@ const filterSubcategories = (category, item) => {
       values = [values];
     }
 
-    if (!_.isEmpty(_.intersection(category.values, values))) {
+    const intersection = [category.values, values].reduce((a, b) => a.filter(c => b.includes(c)));
+    if (!_.isEmpty(intersection)) {
       return [category];
     }
 
@@ -35,7 +36,8 @@ const filterSubcategories = (category, item) => {
       values = [values];
     }
 
-    if (!_.isEmpty(_.intersection(subCategory.values, values))) {
+    const valuesIntersection = [subCategory.values, values].reduce((a, b) => a.filter(c => b.includes(c)));
+    if (!_.isEmpty(valuesIntersection)) {
       matchedSubcategories.push(subCategory, ...filterSubcategories(subCategory, item));
     }
   });
@@ -215,7 +217,7 @@ const filterItems = (items, filters, keywordCompare) => {
 
   // Intersection of individually applied filters is all filters
   // In the case no filters are active, returns items filteredByKeyword
-  return _.intersection(..._.values(filteredByGroup), filteredByKeyword);
+  return [..._.values(filteredByGroup), filteredByKeyword].reduce((a, b) => a.filter(c => b.includes(c)));
 };
 
 const recategorizeItems = (items, itemsSorter, filters, keywordCompare, categories) => {
@@ -610,19 +612,6 @@ export class TileViewPage extends React.Component {
     );
   }
 
-  renderCategoryTiles(category) {
-    const { renderTile } = this.props;
-    if (!_.size(category.items)) {
-      return null;
-    }
-
-    return (
-      <CatalogTileView.Category>
-        {_.map(category.items, item => renderTile(item))}
-      </CatalogTileView.Category>
-    );
-  }
-
   renderEmptyState() {
     const { emptyStateTitle, emptyStateInfo } = this.props;
     return (
@@ -641,6 +630,7 @@ export class TileViewPage extends React.Component {
   }
 
   render() {
+    const { renderTile } = this.props;
     const { selectedCategoryId, categories } = this.state;
     let activeCategory = findActiveCategory(selectedCategoryId, categories);
     if (!activeCategory) {
@@ -658,7 +648,11 @@ export class TileViewPage extends React.Component {
             <div className="co-catalog-page__heading text-capitalize">{activeCategory.label}</div>
             <div className="co-catalog-page__num-items">{activeCategory.numItems} items</div>
           </div>
-          {activeCategory.numItems > 0 && <CatalogTileView>{this.renderCategoryTiles(activeCategory)}</CatalogTileView>}
+          {activeCategory.numItems > 0 && (
+            <div className="catalog-tile-view-pf catalog-tile-view-pf-no-categories">
+              {_.map(activeCategory.items, item => renderTile(item))}
+            </div>
+          )}
           {activeCategory.numItems === 0 && this.renderEmptyState()}
         </div>
       </div>
