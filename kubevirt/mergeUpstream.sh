@@ -31,7 +31,7 @@ Now resolve all merge conflicts in following directory:
 
 Then push changes to kubevirt-web-ui HEAD:master by
 
-  cd ${ROOT} && ./build.sh && cd frontend && yarn run test && \\
+  cd ${ROOT} && ./build.sh && cd frontend && yarn run lint && yarn run test && \\
   git status && git push origin HEAD:master
 
 To see kubevirt/web-ui diference to upstream
