@@ -102,10 +102,8 @@ export const BindingName = ({binding}) => {
 };
 
 export const BindingKebab = connect(null, {startImpersonate: UIActions.startImpersonate})(
-  ({binding, startImpersonate}) => <React.Fragment>
-    {binding.subjects &&
-      <ResourceKebab actions={menuActions(binding, startImpersonate)} kind={bindingKind(binding)} resource={binding} />}
-  </React.Fragment>);
+  ({binding, startImpersonate}) => binding.subjects ? <ResourceKebab actions={menuActions(binding, startImpersonate)} kind={bindingKind(binding)} resource={binding} /> : null
+);
 
 export const RoleLink = ({binding}) => {
   const kind = binding.roleRef.kind;
