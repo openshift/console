@@ -4,10 +4,19 @@ import * as React from 'react';
 import { Helmet } from 'react-helmet';
 
 import { k8sCreate, K8sResourceKind, referenceFor } from '../../module/k8s';
-import { ButtonBar, history, ListDropdown, NameValueEditor, resourceObjPath, RequestSizeInput } from '../utils';
+import {
+  AsyncComponent,
+  ButtonBar,
+  ListDropdown,
+  RequestSizeInput,
+  history,
+  resourceObjPath,
+} from '../utils';
 import { RadioInput } from '../radio';
 import { Checkbox } from '../checkbox';
 import { PersistentVolumeClaimModel } from '../../models/index';
+
+const NameValueEditorComponent = (props) => <AsyncComponent loader={() => import('../utils/name-value-editor').then(c => c.NameValueEditor)} {...props} />;
 
 const StorageClassDropdown: React.SFC<StorageClassDropdownProps> = props => {
   const kind = 'StorageClass';
@@ -224,7 +233,7 @@ export class CreatePVCForm extends React.Component<CreatePVCFormProps, CreatePVC
         />
         <div className="form-group">
           {useSelector && (
-            <NameValueEditor
+            <NameValueEditorComponent
               nameValuePairs={nameValuePairs}
               valueString="Selector"
               nameString="Label"

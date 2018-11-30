@@ -13,8 +13,8 @@ import { ConfigMapModel, SecretModel } from '../models';
  * Set up an AsyncComponent to wrap the name-value-editor to allow on demand loading to reduce the
  * vendor footprint size.
  */
-const NameValueEditorComponent = (props) => <AsyncComponent loader={() => import('./utils/name-value-editor.jsx').then(c => c.NameValueEditor)} {...props} />;
-const EnvFromEditorComponent = (props) => <AsyncComponent loader={() => import('./utils/name-value-editor.jsx').then(c => c.EnvFromEditor)} {...props} />;
+const NameValueEditorComponent = (props) => <AsyncComponent loader={() => import('./utils/name-value-editor').then(c => c.NameValueEditor)} {...props} />;
+const EnvFromEditorComponent = (props) => <AsyncComponent loader={() => import('./utils/name-value-editor').then(c => c.EnvFromEditor)} {...props} />;
 
 /**
  * Set up initial value for the environment vars state. Use this in constructor or cancelChanges.

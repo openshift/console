@@ -5,12 +5,19 @@ import * as fuzzy from 'fuzzysearch';
 import * as _ from 'lodash-es';
 import { Form, FormControl, FormGroup, HelpBlock } from 'patternfly-react';
 
-import { Dropdown, ButtonBar, history, NameValueEditorPair } from './utils';
+import {
+  AsyncComponent,
+  ButtonBar,
+  Dropdown,
+  NameValueEditorPair,
+  history,
+} from './utils';
 import { Firehose } from './utils/firehose';
 import { k8sCreate } from './../module/k8s';
 import actions from './../module/k8s/k8s-actions';
 import { StorageClassModel } from './../models';
-import { NameValueEditor } from './utils/name-value-editor';
+
+const NameValueEditorComponent = (props) => <AsyncComponent loader={() => import('./utils/name-value-editor').then(c => c.NameValueEditor)} {...props} />;
 
 const defaultState = {
   newStorageClass: {
@@ -774,7 +781,7 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
               What should I enter here?
             </a>
           </p>
-          <NameValueEditor
+          <NameValueEditorComponent
             nameValuePairs={this.state.customParams}
             nameString="Parameter"
             valueString="Value"

@@ -45,7 +45,6 @@ export * from './close-button';
 export * from './container-table';
 export * from './simple-tab-nav';
 export * from './request-size-input';
-export * from './name-value-editor';
 export * from './k8s-watcher';
 export * from './workload-pause';
 export * from './list-dropdown';
