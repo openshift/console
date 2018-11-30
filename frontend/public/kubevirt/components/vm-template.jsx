@@ -21,7 +21,7 @@ const VmTemplateRow = ({obj: template}) => <ResourceRow obj={template}>
   <div className={descriptionRowStyle}>
     {_.get(template.metadata, 'annotations.description', DASHES)}
   </div>
-  <div className="co-kebab-wrapper">
+  <div className="dropdown-kebab-pf">
     <ResourceKebab actions={menuActions} kind={VmTemplateModel.kind} resource={template} />
   </div>
 </ResourceRow>;

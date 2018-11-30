@@ -165,7 +165,7 @@ export const VMRow = ({obj: vm}) => {
         <FirehoseResourceLink filter={data => findPod(data, vm.metadata.name, VIRT_LAUNCHER_POD_PREFIX)} />
       </Firehose>
     </div>
-    <div className="co-kebab-wrapper">
+    <div className="dropdown-kebab-pf">
       <ResourceKebab actions={menuActions} kind={VirtualMachineModel.kind} resource={vm} />
     </div>
   </ResourceRow>;

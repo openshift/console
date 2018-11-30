@@ -76,7 +76,7 @@ export const DiskRow = ({obj: storage}) => {
     <div className={hiddenRowStyle}>
       {storageRow}
     </div>
-    <div className="co-kebab-wrapper">
+    <div className="dropdown-kebab-pf">
       <Kebab
         options={getActions(storage.vm, storage)}
         key={`delete-disk-${storage.name}`}

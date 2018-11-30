@@ -53,7 +53,7 @@ export const NicRow = ({obj: nic}) => <ResourceRow obj={nic}>
   <div className={hiddenRowStyle}>
     {nic.macAddress || DASHES}
   </div>
-  <div className="co-kebab-wrapper">
+  <div className="dropdown-kebab-pf">
     <Kebab
       options={getActions(nic.vm, nic)}
       key={`delete-nic-${nic.name}`}
