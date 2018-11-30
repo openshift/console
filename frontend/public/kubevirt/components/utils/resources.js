@@ -5,7 +5,7 @@ import { k8sBasePath } from '../../module/okdk8s';
 import { VirtualMachineInstanceModel } from '../../models';
 
 export const getResourceKind = (model, name, namespaced, namespace, isList, matchLabels, matchExpressions) => {
-  let res = { kind:model.kind, namespaced, namespace, isList, prop: model.kind};
+  const res = { kind:model.kind, namespaced, namespace, isList, prop: model.kind};
   if (name) {
     res.name = name;
   }
