@@ -257,7 +257,7 @@ $pf-l-page__active-sidebar--BackgroundColor: rgba(255,255,255,.07);
 }
 
 .pf-l-page__sidebar {
-  --pf-l-page__sidebar--BackgroundColor: #121212;
+  --pf-l-page__sidebar--BackgroundColor: #151515;
   @media(min-width: $grid-float-breakpoint) {
     --pf-l-page__sidebar--BackgroundColor: var(--pf-l-page__header-brand--md--BackgroundColor);
   }
