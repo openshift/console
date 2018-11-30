@@ -74,22 +74,27 @@ export const navFactory: NavFactory = {
   envEditor: (component) => ({
     href: 'environment',
     name: 'Environment',
-    component: component,
+    component,
   }),
   clusterServiceClasses: component => ({
     href: 'serviceclasses',
     name: 'Service Classes',
-    component: component,
+    component,
   }),
   clusterServicePlans: component => ({
     href: 'serviceplans',
     name: 'Service Plans',
-    component: component,
+    component,
   }),
   serviceBindings: component => ({
     href: 'servicebindings',
     name: 'Service Bindings',
-    component: component,
+    component,
+  }),
+  clusterOperators: component => ({
+    href: 'clusteroperators',
+    name: 'Cluster Operators',
+    component,
   }),
   machines: component => ({
     href: 'machines',
@@ -98,7 +103,7 @@ export const navFactory: NavFactory = {
   }),
 };
 
-export const NavBar: React.SFC<NavBarProps> = ({pages, basePath}) => {
+export const NavBar: React.SFC<NavBarProps> = ({pages, basePath, hideDivider}) => {
   // These tabs go before the divider
   const before = ['', 'edit', 'yaml'];
   const divider = <li className="co-m-horizontal-nav__menu-item co-m-horizontal-nav__menu-item--divider" key="_divider" />;
@@ -108,7 +113,7 @@ export const NavBar: React.SFC<NavBarProps> = ({pages, basePath}) => {
     pages.filter(({href}, i, all) => before.includes(href) || before.includes(_.get(all[i + 1], 'href'))).map(({name, href}) => {
       const klass = classNames('co-m-horizontal-nav__menu-item', {'co-m-horizontal-nav-item--active': location.pathname.replace(basePath, '/').endsWith(`/${href}`)});
       return <li className={klass} key={name}><Link to={`${basePath}/${href}`}>{name}</Link></li>;
-    })}{divider}</ul>;
+    })}{!hideDivider && divider}</ul>;
 
   const secondaryTabs = <ul className="co-m-horizontal-nav__menu-secondary">{
     pages.slice(React.Children.count(primaryTabs.props.children) - 1).map(({name, href}) => {
@@ -133,6 +138,7 @@ export class HorizontalNav extends React.PureComponent<HorizontalNavProps> {
     pagesFor: PropTypes.func,
     className: PropTypes.string,
     hideNav: PropTypes.bool,
+    hideDivider: PropTypes.bool,
     match: PropTypes.shape({
       path: PropTypes.string,
     }),
@@ -155,7 +161,7 @@ export class HorizontalNav extends React.PureComponent<HorizontalNavProps> {
 
     return <div className={props.className}>
       <div className="co-m-horizontal-nav">
-        {!props.hideNav && <NavBar pages={pages} basePath={props.match.url} />}
+        {!props.hideNav && <NavBar pages={pages} basePath={props.match.url} hideDivider={props.hideDivider} />}
         <StatusBox {...props.obj} EmptyMsg={props.EmptyMsg} label={props.label}>
           <Switch> {routes} </Switch>
         </StatusBox>
@@ -171,6 +177,7 @@ export type PodsComponentProps = {
 export type NavBarProps = {
   pages: Page[];
   basePath: string;
+  hideDivider?: boolean;
 };
 
 export type HorizontalNavProps = {
@@ -182,5 +189,6 @@ export type HorizontalNavProps = {
   match: any;
   resourceKeys?: string[];
   hideNav?: boolean;
+  hideDivider?: boolean;
   EmptyMsg?: React.ComponentType<any>;
 };

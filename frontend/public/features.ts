@@ -35,7 +35,10 @@ import { UIActions } from './ui/ui-actions';
   CAN_CREATE_PROJECT: false,
   SHOW_OPENSHIFT_START_GUIDE: false,
   SERVICE_CATALOG: false,
+  KUBERNETES_MARKETPLACE: false,
   CLUSTER_API false,
+  CLUSTER_VERSION: false,
+  CLUSTER_UPDATES_AVAILABLE: false,
  */
 export enum FLAGS {
   AUTH_ENABLED = 'AUTH_ENABLED',
@@ -53,6 +56,8 @@ export enum FLAGS {
   SERVICE_CATALOG = 'SERVICE_CATALOG',
   KUBERNETES_MARKETPLACE = 'KUBERNETES_MARKETPLACE',
   CLUSTER_API = 'CLUSTER_API',
+  CLUSTER_VERSION = 'CLUSTER_VERSION',
+  CLUSTER_UPDATES_AVAILABLE = 'CLUSTER_UPDATES_AVAILABLE',
 }
 
 export const DEFAULTS_ = _.mapValues(FLAGS, flag => flag === FLAGS.AUTH_ENABLED
@@ -96,6 +101,23 @@ const detectOpenShift = dispatch => coFetchJSON(openshiftPath)
       : handleError(err, FLAGS.OPENSHIFT, dispatch, detectOpenShift)
   );
 
+const clusterVersionPath = `${k8sBasePath}/apis/config.openshift.io/v1/clusterversions/version`;
+const detectClusterVersion = dispatch => coFetchJSON(clusterVersionPath)
+  .then(
+    clusterVersion => {
+      setFlag(dispatch, FLAGS.CLUSTER_VERSION, !_.isEmpty(clusterVersion));
+      const availableUpdates = _.get(clusterVersion, 'status.availableUpdates');
+      setFlag(dispatch, FLAGS.CLUSTER_UPDATES_AVAILABLE, !_.isEmpty(availableUpdates));
+    },
+    err => {
+      if (_.includes([403, 404], _.get(err, 'response.status'))) {
+        setFlag(dispatch, FLAGS.CLUSTER_VERSION, false);
+        setFlag(dispatch, FLAGS.CLUSTER_UPDATES_AVAILABLE, false);
+      } else {
+        handleError(err, FLAGS.OPENSHIFT, dispatch, detectOpenShift);
+      }
+    });
+
 const projectRequestPath = `${k8sBasePath}/apis/project.openshift.io/v1/projectrequests`;
 const detectCanCreateProject = dispatch => coFetchJSON(projectRequestPath)
   .then(
@@ -137,6 +159,7 @@ export const featureActions = [
   detectOpenShift,
   detectCanCreateProject,
   detectMonitoringURLs,
+  detectClusterVersion,
 ];
 
 const projectListPath = `${k8sBasePath}/apis/project.openshift.io/v1/projects?limit=1`;

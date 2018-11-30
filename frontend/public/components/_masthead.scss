@@ -69,12 +69,15 @@
   &__modal--version {
     margin: 0;
   }
+  &__updates,
   &__user {
     display: none;
     @media (min-width: $grid-float-breakpoint) {
       align-items: baseline;
       display: flex;
     }
+  }
+  &__user {
     .btn-dropdown__item {
       align-items: baseline;
       display: flex; // so .co-masthead__username truncates
