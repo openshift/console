@@ -13,7 +13,7 @@ import { VmTemplatesPageTitle } from './vm-template';
 // With respect to keep changes to OKD codebase at bare minimum,
 // the navigation needs to be reconstructed.
 // The ResourceNSLink, HrefLink, Sep, MonitoringNavSection components are passed as props to eliminate the need for additional changes in OKD core code. Ugly anti-pattern, but serves its purpose.
-const Nav = ({ isOpen, onToggle, close, scroller, onWheel, searchStartsWith, ResourceNSLink, HrefLink, Sep, ResourceClusterLink, MonitoringNavSection, clusterSettingsStartsWith, rolesStartsWith, rolebindingsStartsWith, quotaStartsWith }) => {
+const Nav = ({ isOpen, onToggle, close, scroller, onWheel, searchStartsWith, ResourceNSLink, HrefLink, Sep, ResourceClusterLink, MonitoringNavSection, rolesStartsWith, rolebindingsStartsWith, quotaStartsWith }) => {
   return (
     <React.Fragment>
       <button type="button" className="sidebar-toggle" aria-controls="sidebar" aria-expanded={isOpen} onClick={onToggle}>
@@ -70,7 +70,7 @@ const Nav = ({ isOpen, onToggle, close, scroller, onWheel, searchStartsWith, Res
             <ResourceClusterLink resource="projects" name="Projects" onClick={close} required={FLAGS.OPENSHIFT} />
             <ResourceClusterLink resource="namespaces" name="Namespaces" onClick={close} required={FLAGS.CAN_LIST_NS} />
             <ResourceClusterLink resource="nodes" name="Nodes" onClick={close} required={FLAGS.CAN_LIST_NODE} />
-            <HrefLink href="/settings/cluster" name="Cluster Settings" onClick={close} startsWith={clusterSettingsStartsWith} disallowed={FLAGS.OPENSHIFT} />
+            <HrefLink href="/settings/cluster" name="Cluster Settings" onClick={close} disallowed={FLAGS.OPENSHIFT} />
             <ResourceNSLink resource="serviceaccounts" name="Service Accounts" onClick={close} />
             <ResourceNSLink resource="roles" name="Roles" startsWith={rolesStartsWith} onClick={close} />
             <ResourceNSLink resource="rolebindings" name="Role Bindings" onClick={close} startsWith={rolebindingsStartsWith} />

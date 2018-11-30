@@ -359,7 +359,7 @@ export class Nav extends React.Component {
 
     if (isKubevirt()) {
       // The ResourceNSLink, HrefLink, Sep components are passed as props to eliminate the need for additional changes in OKD core code. Ugly anti-pattern, but serves its purpose.
-      return <KubevirtNav isOpen={isOpen} onToggle={this.toggle} close={this.close} scroller={this.scroller} onWheel={this.preventScroll} searchStartsWith={searchStartsWith} ResourceNSLink={ResourceNSLink} HrefLink={HrefLink} Sep={Sep} ResourceClusterLink={ResourceClusterLink} MonitoringNavSection={MonitoringNavSection} clusterSettingsStartsWith={clusterSettingsStartsWith} rolesStartsWith={rolesStartsWith} rolebindingsStartsWith={rolebindingsStartsWith} quotaStartsWith={quotaStartsWith} />;
+      return <KubevirtNav isOpen={isOpen} onToggle={this.toggle} close={this.close} scroller={this.scroller} onWheel={this.preventScroll} searchStartsWith={searchStartsWith} ResourceNSLink={ResourceNSLink} HrefLink={HrefLink} Sep={Sep} ResourceClusterLink={ResourceClusterLink} MonitoringNavSection={MonitoringNavSection} rolesStartsWith={rolesStartsWith} rolebindingsStartsWith={rolebindingsStartsWith} quotaStartsWith={quotaStartsWith} />;
     }
 
     return <React.Fragment>
