@@ -10,6 +10,7 @@ import { configureReplicaCountModal } from './modals';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
 import {
   Kebab,
+  KebabAction,
   ResourceKebab,
   ResourceLink,
   ResourceSummary,
@@ -21,8 +22,19 @@ import {
 } from './utils';
 import { Tooltip } from './utils/tooltip';
 
+const machineReplicasModal = (resource: MachineSetKind) => configureReplicaCountModal({
+  resourceKind: MachineSetModel,
+  resource,
+  message: 'Machine sets maintain the proper number of healthy machines.',
+});
+
+const editCountAction: KebabAction = (kind, resource: MachineSetKind) => ({
+  label: 'Edit Count',
+  callback: () => machineReplicasModal(resource),
+});
+
 const { common } = Kebab.factory;
-const menuActions = [...common];
+const menuActions = [editCountAction, ...common];
 const machineReference = referenceForModel(MachineModel);
 const machineSetReference = referenceForModel(MachineSetModel);
 const getAWSPlacement = (machine: MachineSetKind) => _.get(machine, 'spec.template.spec.providerConfig.value.placement') || {};
@@ -53,13 +65,9 @@ const MachineSetRow: React.SFC<MachineSetRowProps> = ({obj}: {obj: MachineSetKin
 const MachineSetCounts: React.SFC<MachineSetCountsProps> = ({resource}: {resource: MachineSetKind}) => {
   const { spec, status } = resource;
 
-  const openReplicaCountModal = (event) => {
+  const editReplicas = (event) => {
     event.preventDefault();
-    configureReplicaCountModal({
-      resourceKind: MachineSetModel,
-      resource,
-      message: 'Machine sets maintain the proper number of healthy machines.',
-    });
+    machineReplicasModal(resource);
   };
 
   return <div className="co-m-pane__body-group">
@@ -69,7 +77,7 @@ const MachineSetCounts: React.SFC<MachineSetCountsProps> = ({resource}: {resourc
           <dl className="co-m-pane__details">
             <dt className="co-detail-table__section-header">Desired Count</dt>
             <dd>
-              <button type="button" className="btn btn-link co-m-modal-link" onClick={openReplicaCountModal}>
+              <button type="button" className="btn btn-link co-m-modal-link" onClick={editReplicas}>
                 {pluralize(spec.replicas, 'machine')}
               </button>
             </dd>

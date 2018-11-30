@@ -805,7 +805,7 @@ export const MachineSetModel: K8sKind = {
 
 export const MachineModel: K8sKind = {
   label: 'Machine',
-  labelPlural: 'Machine',
+  labelPlural: 'Machines',
   apiVersion: 'v1alpha1',
   path: 'machines',
   apiGroup: 'cluster.k8s.io',
