@@ -5,7 +5,7 @@ import * as routingImg from '../../imgs/routing.svg';
 import * as routingActiveImg from '../../imgs/routing-active.svg';
 import { FLAGS } from '../../features';
 
-import { NavSection, ClusterPickerNavSection, UserNavSection } from './okdcomponents';
+import { NavSection, UserNavSection } from './okdcomponents';
 import { ChargebackReportModel, DeploymentConfigModel } from '../models';
 import { referenceForModel } from '../module/okdk8s';
 import { VmTemplatesPageTitle } from './vm-template';
@@ -23,7 +23,6 @@ const Nav = ({ isOpen, onToggle, close, scroller, onWheel, searchStartsWith, Res
         <span className="icon-bar" aria-hidden="true"></span>
       </button>
       <div id="sidebar" className={classNames({'open': isOpen})}>
-        <ClusterPickerNavSection />
         <div ref={scroller} onWheel={onWheel} className="navigation-container">
           <NavSection text="Home" icon="pficon pficon-home">
             <HrefLink href="/overview" name="Overview" activePath="/overview/" onClick={close} />

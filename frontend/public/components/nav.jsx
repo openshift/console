@@ -459,4 +459,4 @@ export class Nav extends React.Component {
 }
 
 // For reuse by kubevirt
-export { ClusterPickerNavSection, NavSection, UserNavSection };
+export { NavSection, UserNavSection };
