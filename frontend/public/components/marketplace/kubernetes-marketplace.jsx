@@ -106,7 +106,7 @@ export const Marketplace = () => {
     namespace: undefined, // shows operators from all-namespaces - when backend is hooked up we will use 'marketplace'
     prop: 'packagemanifests',
   });
-  return <Firehose resources={resources}>
+  return <Firehose resources={resources} className="co-catalog-connect">
     <MarketplaceListPage />
   </Firehose>;
 };
