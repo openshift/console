@@ -43,11 +43,6 @@ export const getFlattenForKind = (kind) => {
   return resources => _.get(resources, kind, {}).data;
 };
 
-// TODO: move following to web-ui-components
-export const isVmiRunning = (vmi) => _.get(vmi, 'status.phase') === 'Running';
-export const isVmStarting = (vm, vmi) => _.get(vm, 'spec.running') && !isVmiRunning(vmi);
-export const getVmStatus = vm => _.get(vm, 'spec.running', false) ? 'Running' : 'Stopped';
-
 const getApiConsoleApiBase = () => {
   let base = k8sBasePath;
   base = base[0] === '/' ? base.substring(1) : base; // avoid the extra slash when compose the URL by VncConsole
