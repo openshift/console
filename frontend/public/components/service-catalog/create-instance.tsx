@@ -76,18 +76,6 @@ class CreateInstance extends React.Component<CreateInstanceProps, CreateInstance
     this.setState({plan: event.currentTarget.value});
   }
 
-  asParameters = (formData: any): any => {
-    // Omit parameters values that are the empty string. These are always
-    // optional parameters since you can't submit the form when it's missing
-    // required values. The template broker will not generate values for
-    // "generated" parameters that are there, even if the value is empty
-    // string, which breaks many templates.
-    //
-    // Check specifically for the empty string rather than truthiness so that
-    // we don't omit other values like `false` for boolean parameters.
-    return _.omitBy(formData, value => value === '');
-  }
-
   createInstance = (secretName: string): Promise<K8sResourceKind> => {
     const parametersFrom = secretName ? [{ secretKeyRef: { name: secretName, key: PARAMETERS_SECRET_KEY } }] : [];
     const serviceInstance: K8sResourceKind = {
@@ -117,12 +105,11 @@ class CreateInstance extends React.Component<CreateInstanceProps, CreateInstance
     }
 
     this.setState({inProgress: true});
-    const parameters = this.asParameters(formData);
-    const secretName = _.isEmpty(parameters) ? null : `${this.state.name}-parameters`;
+    const secretName = _.isEmpty(formData) ? null : `${this.state.name}-parameters`;
 
     // Create the instance first so we can set an ownerRef from the parameters secret to the instance.
     this.createInstance(secretName)
-      .then(instance => secretName ? createParametersSecret(secretName, PARAMETERS_SECRET_KEY, parameters, instance) : null)
+      .then(instance => secretName ? createParametersSecret(secretName, PARAMETERS_SECRET_KEY, formData, instance) : null)
       .then(() => {
         this.setState({inProgress: false});
         history.push(resourcePathFromModel(ServiceInstanceModel, name, namespace));

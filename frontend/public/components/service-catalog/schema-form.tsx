@@ -102,6 +102,49 @@ const CustomFieldTemplate: React.SFC<FieldTemplateProps> = ({id, classNames: kla
   {errors}
 </div>;
 
+// Override the base input `onChange` handler to return an empty string instead of undefined when a user clears a string input.
+// https://github.com/mozilla-services/react-jsonschema-form#customizing-widgets-text-input
+// https://github.com/mozilla-services/react-jsonschema-form/blob/master/src/components/widgets/BaseInput.js
+const CustomBaseInput = (props) => {
+  // Note: since React 15.2.0 we can't forward unknown element attributes, so we
+  // exclude the "options" and "schema" ones here.
+  if (!props.id) {
+    // eslint-disable-next-line no-console
+    console.log('No id for', props);
+    throw new Error(`no id for props ${JSON.stringify(props)}`);
+  }
+  const {
+    value,
+    readonly,
+    disabled,
+    autofocus,
+    onChange,
+    onBlur,
+    onFocus,
+    options,
+    schema,
+    formContext,
+    registry,
+    rawErrors,
+    ...inputProps
+  } = props;
+  inputProps.type = options.inputType || inputProps.type || 'text';
+
+  return (
+    <input
+      className="form-control"
+      readOnly={readonly}
+      disabled={disabled}
+      autoFocus={autofocus}
+      value={value == null ? '' : value}
+      {...inputProps}
+      onChange={(event) => onChange(event.target.value)}
+      onBlur={onBlur && (event => onBlur(inputProps.id, event.target.value))}
+      onFocus={onFocus && (event => onFocus(inputProps.id, event.target.value))}
+    />
+  );
+};
+
 // Create a custom checkbox widget to prevent any checkbox from receiving a `required` attribute.
 // With HTML5 form validation, a required checkbox has to be checked to submit the form.
 const CustomCheckbox = ({onChange, label, value}) => <div className="checkbox">
@@ -112,6 +155,7 @@ const CustomCheckbox = ({onChange, label, value}) => <div className="checkbox">
 </div>;
 
 const widgets: any = {
+  BaseInput: CustomBaseInput,
   CheckboxWidget: CustomCheckbox,
 };
 
