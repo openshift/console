@@ -135,7 +135,7 @@ export const ClusterSettingsPage: React.SFC<ClusterSettingsPageProps> = ({match}
       <h1 className="co-m-pane__heading">{title}</h1>
     </div>
     <Firehose resources={resources}>
-      <HorizontalNav pages={pages} match={match} hideDivider />;
+      <HorizontalNav pages={pages} match={match} hideDivider />
     </Firehose>
   </React.Fragment>;
 };
