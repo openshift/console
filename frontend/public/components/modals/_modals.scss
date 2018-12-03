@@ -6,3 +6,10 @@
   font-size: 30px;
   margin-right: 15px;
 }
+
+.cluster-update-modal__dropdown {
+  .btn-dropdown,
+  .dropdown-menu {
+    width: 100%;
+  }
+}

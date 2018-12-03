@@ -149,7 +149,7 @@ const Masthead_ = ({ flags }) => <header role="banner" className="navbar navbar-
     <div className="co-masthead__dropdowns">
       {flags[FLAGS.CLUSTER_UPDATES_AVAILABLE] && <div className="co-masthead__updates">
         <Link to="/settings/cluster" title="Cluster Updates Available" className="nav-item-iconic">
-          <i className="fa fa-arrow-circle-up" aria-hidden="true" />
+          <i className="fa fa-arrow-circle-o-up" aria-hidden="true" />
           <span className="sr-only">Cluster Updates Available</span>
         </Link>
       </div>}
@@ -162,6 +162,7 @@ const Masthead_ = ({ flags }) => <header role="banner" className="navbar navbar-
     </div>
   </div>
 </header>;
+
 export const Masthead = connectToFlags(FLAGS.CLUSTER_UPDATES_AVAILABLE)(Masthead_);
 
 /* eslint-disable no-undef */
