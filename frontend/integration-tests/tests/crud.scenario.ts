@@ -94,6 +94,10 @@ describe('Kubernetes resource CRUD operations', () => {
         } else {
           await crudView.createYAMLButton.click();
         }
+        const formToYamlExists = await crudView.createYAMLLink.isPresent();
+        if (formToYamlExists) {
+          crudView.createYAMLLink.click();
+        }
         await yamlView.isLoaded();
 
         const content = await yamlView.editorContent.getText();

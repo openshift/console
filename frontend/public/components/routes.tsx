@@ -310,21 +310,15 @@ const filters = [{
 }];
 
 export const RoutesPage: React.SFC<RoutesPageProps> = props => {
-  const createItems = {
-    form: 'From Form',
-    yaml: 'From YAML',
-  };
 
   const createProps = {
-    items: createItems,
-    createLink: (type) => `/k8s/ns/${props.namespace || 'default'}/routes/new/${type !== 'yaml' ? type : ''}`,
+    to: `/k8s/ns/${props.namespace || 'default'}/routes/new/form`,
   };
 
   return <ListPage
     ListComponent={RoutesList}
     kind={RoutesReference}
     canCreate={true}
-    createButtonText="Create"
     createProps={createProps}
     rowFilters={filters}
     {...props}
