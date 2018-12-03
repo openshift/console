@@ -160,7 +160,7 @@ const withSecretForm = (SubForm) => class SecretFormComponent extends React.Comp
       <Helmet>
         <title>{title}</title>
       </Helmet>
-      <form className="co-m-pane__body-group co-create-secret-form" onSubmit={this.save}>
+      <form className="co-m-pane__body-group co-create-secret-form co-m-pane__form" onSubmit={this.save}>
         <h1 className="co-m-pane__heading">{title}</h1>
         <p className="co-m-pane__explanation">{this.props.explanation}</p>
 
@@ -266,7 +266,7 @@ class ImageSecretForm extends React.Component<ImageSecretFormProps, ImageSecretF
       {this.props.isCreate && <div className="form-group">
         <label className="control-label" htmlFor="secret-type">Authentication Type</label>
         <div className="co-create-secret__dropdown">
-          <Dropdown title="Image Registry Credential" items={authTypes} dropDownClassName="dropdown--full-width" id="dropdown-selectbox" onChange={this.changeFormType} />
+          <Dropdown items={authTypes} dropDownClassName="dropdown--full-width" id="dropdown-selectbox" selectedKey={this.state.authType} onChange={this.changeFormType} />
         </div>
       </div>
       }
@@ -584,6 +584,7 @@ class SourceSecretForm extends React.Component<SourceSecretFormProps, SourceSecr
     this.state = {
       type: this.props.secretType,
       stringData: this.props.stringData || {},
+      authType: SecretType.basicAuth,
     };
     this.changeAuthenticationType = this.changeAuthenticationType.bind(this);
     this.onDataChanged = this.onDataChanged.bind(this);
@@ -608,7 +609,7 @@ class SourceSecretForm extends React.Component<SourceSecretFormProps, SourceSecr
         ? <div className="form-group">
           <label className="control-label" htmlFor="secret-type">Authentication Type</label>
           <div className="co-create-secret__dropdown">
-            <Dropdown title="Basic Authentication" items={authTypes} dropDownClassName="dropdown--full-width" id="dropdown-selectbox" onChange={this.changeAuthenticationType} />
+            <Dropdown items={authTypes} dropDownClassName="dropdown--full-width" id="dropdown-selectbox" selectedKey={this.state.authType} onChange={this.changeAuthenticationType} />
           </div>
         </div>
         : null
@@ -907,112 +908,113 @@ export const EditSecret = ({match: {params}, kind}) => <Firehose resources={[{ki
 </Firehose>;
 
 export type BaseEditSecretState_ = {
-  secretTypeAbstraction?: SecretTypeAbstraction,
-  secret: K8sResourceKind,
-  inProgress: boolean,
-  type: SecretType,
+  secretTypeAbstraction?: SecretTypeAbstraction;
+  secret: K8sResourceKind;
+  inProgress: boolean;
+  type: SecretType;
   stringData: {
-    [key: string]: string
-  },
-  error?: any,
-  disableForm: boolean,
+    [key: string]: string;
+  };
+  error?: any;
+  disableForm: boolean;
 };
 
 export type BaseEditSecretProps_ = {
-  obj?: K8sResourceKind,
-  fixed: any,
-  kind?: string,
-  isCreate: boolean,
-  titleVerb: string,
-  secretTypeAbstraction?: SecretTypeAbstraction,
-  saveButtonText?: string,
-  explanation: string,
+  obj?: K8sResourceKind;
+  fixed: any;
+  kind?: string;
+  isCreate: boolean;
+  titleVerb: string;
+  secretTypeAbstraction?: SecretTypeAbstraction;
+  saveButtonText?: string;
+  explanation: string;
 };
 
 export type BasicAuthSubformProps = {
-  onChange: Function,
+  onChange: Function;
   stringData: {
-    [key: string]: string
-  },
+    [key: string]: string;
+  };
 };
 
 export type ImageSecretFormState = {
-  type: SecretType,
+  type: SecretType;
   stringData: {
-    [key: string]: any
-  },
-  authType: string,
-  dataKey: string,
+    [key: string]: any;
+  };
+  authType: string;
+  dataKey: string;
 };
 
 export type ImageSecretFormProps = {
-  onChange: Function,
-  onError: Function,
-  onFormDisable: Function,
+  onChange: Function;
+  onError: Function;
+  onFormDisable: Function;
   stringData: {
-    [key: string]: string,
-  },
-  secretType: SecretType,
-  isCreate: boolean,
+    [key: string]: string;
+  };
+  secretType: SecretType;
+  isCreate: boolean;
 };
 
 export type CreateConfigSubformProps = {
-  onChange: Function,
+  onChange: Function;
   stringData: {
-    [key: string]: any,
-  },
+    [key: string]: any;
+  };
 };
 
 export type UploadConfigSubformState = {
-  parseError: boolean,
-  configFile: string,
+  parseError: boolean;
+  configFile: string;
 };
 
 export type UploadConfigSubformProps = {
-  onChange: Function,
-  onDisable: Function,
+  onChange: Function;
+  onDisable: Function;
   stringData: {
-    [key: string]: Object,
-  },
+    [key: string]: Object;
+  };
 };
 
 export type SSHAuthSubformState = {
-  'ssh-privatekey': string,
+  'ssh-privatekey': string;
 };
 
 export type SSHAuthSubformProps = {
-  onChange: Function,
+  onChange: Function;
   stringData: {
-    [key: string]: string
-  },
+    [key: string]: string;
+  };
 };
 
 export type SourceSecretFormState = {
-  type: SecretType,
+  type: SecretType;
   stringData: {
-    [key: string]: string
-  },
+    [key: string]: string;
+  };
+  authType: SecretType.basicAuth | SecretType.sshAuth;
 };
 
 export type SourceSecretFormProps = {
-  onChange: Function,
+  onChange: Function;
   stringData: {
-    [key: string]: string
-  },
-  secretType: SecretType,
-  isCreate: boolean,
+    [key: string]: string;
+  };
+  secretType: SecretType;
+  isCreate: boolean;
 };
 
 export type WebHookSecretFormState = {
   stringData: {
-    [key: string]: string
-  },
+    [key: string]: string;
+  };
 };
 
 export type WebHookSecretFormProps = {
-  onChange: Function,
+  onChange: Function;
   stringData: {
-    WebHookSecretKey: string
-  },
+    WebHookSecretKey: string;
+  };
 };
 /* eslint-enable no-undef */

@@ -1,7 +1,6 @@
 /* eslint-disable no-undef */
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 
 import { ButtonBar, Dropdown, history, resourcePathFromModel, ResourceName } from '../utils';
@@ -218,10 +217,7 @@ export class CreateRoute extends React.Component<null, CreateRouteState> {
     };
 
     return <React.Fragment>
-      <Helmet>
-        <title>{title}</title>
-      </Helmet>
-      <div className="co-m-nav-title">
+      <div className="co-m-pane__body co-m-pane__form">
         <h1 className="co-m-pane__heading co-m-pane__heading--baseline">
           <div className="co-m-pane__name">
             {title}
@@ -230,8 +226,6 @@ export class CreateRoute extends React.Component<null, CreateRouteState> {
             <Link to={`/k8s/ns/${this.state.namespace}/routes/new`} id="yaml-link" replace>Edit YAML</Link>
           </div>
         </h1>
-      </div>
-      <div className="co-m-pane__body">
         <p className="co-m-pane__explanation">
           Routing is a way to make your application publicly visible.
         </p>
@@ -297,7 +291,7 @@ export class CreateRoute extends React.Component<null, CreateRouteState> {
               Target port for traffic.
             </div>
           </div>
-          <h2 className="h3">Security</h2>
+          <label className="control-label">Security</label>
           <div className="checkbox">
             <label>
               <input type="checkbox"

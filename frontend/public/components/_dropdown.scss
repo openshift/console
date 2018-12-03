@@ -282,6 +282,11 @@ $color-bookmarker: #DDD;
   }
 }
 
+.btn-dropdown__item--placeholder {
+  color: $color-pf-black-500;
+  font-style: italic;
+}
+
 .btn-dropdown__content-wrap {
   align-items: baseline;
   display: flex;

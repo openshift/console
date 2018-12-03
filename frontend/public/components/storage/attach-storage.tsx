@@ -235,7 +235,7 @@ class AttachStorageForm extends React.Component<
           <title>{title}</title>
         </Helmet>
         <form
-          className="co-m-pane__body-group co-create-secret-form"
+          className="co-m-pane__body-group co-m-pane__form"
           onSubmit={this.save}
         >
           <h1 className="co-m-pane__heading">{title}</h1>

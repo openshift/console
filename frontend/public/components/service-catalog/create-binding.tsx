@@ -134,7 +134,7 @@ class CreateBindingForm extends React.Component<CreateBindingProps, CreateBindin
         <div className="row">
           <div className="col-md-5">
             <p>Create a binding for <strong>{serviceInstance.metadata.name}</strong> in <strong>{serviceInstance.metadata.namespace}</strong>.</p>
-            <form className="co-create-service-binding">
+            <form className="co-create-service-binding co-m-pane__form">
               <div className="form-group co-create-service-binding__name">
                 <label className="control-label co-required" htmlFor="name">Service Binding Name</label>
                 <input className="form-control"
