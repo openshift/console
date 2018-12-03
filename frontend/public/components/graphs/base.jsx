@@ -2,6 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as PropTypes from 'prop-types';
 import { plot, Plots } from 'plotly.js/lib/core';
+import * as classNames from 'classnames';
 
 import { coFetchJSON } from '../../co-fetch';
 import { SafetyFirst } from '../safety-first';
@@ -127,9 +128,10 @@ export class BaseGraph extends SafetyFirst {
   }
 
   render() {
+    const { title, className } = this.props;
     const url = this.props.query ? this.prometheusURL() : null;
-    const graph = <div className="graph-wrapper" style={this.style}>
-      <h5 className="graph-title">{this.props.title}</h5>
+    const graph = <div className={classNames('graph-wrapper', className)} style={this.style}>
+      <h5 className="graph-title">{title}</h5>
       <div ref={this.setNode} style={{width: '100%'}} />
     </div>;
 
@@ -149,6 +151,7 @@ BaseGraph.propTypes = {
       })),
   ]),
   percent: PropTypes.number, // for gauge charts
+  className: PropTypes.string,
   title: PropTypes.string.isRequired,
   timeSpan: PropTypes.number,
   basePath: PropTypes.string,

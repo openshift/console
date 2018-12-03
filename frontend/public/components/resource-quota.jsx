@@ -1,5 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
+import * as classNames from 'classnames';
 import { FieldLevelHelp } from 'patternfly-react';
 
 import { ColHead, DetailsPage, List, ListHeader, MultiListPage } from './factory';
@@ -23,7 +24,7 @@ const quotaScopes = Object.freeze({
   'NotBestEffort': {label: 'Not Best Effort', description: 'Affects pods that have at least one resource limit set. These pods do not have a best effort quality of service.'},
 });
 
-const getResourceTypes = (quota) => {
+export const getQuotaResourceTypes = (quota) => {
   const specHard = _.get(quota, 'spec.hard');
   return _.keys(specHard).sort();
 };
@@ -82,66 +83,67 @@ const ResourceUsageRow = ({quota, resourceType}) => {
   </div>;
 };
 
-const QuotaScopes = ({quota}) => {
-  const scopes = _.get(quota, ['spec', 'scopes']);
-  if (_.isEmpty(scopes)) {
-    return <dd>-</dd>;
-  }
+export const QuotaGaugeCharts = ({quota, resourceTypes, compact}) => {
+  const resourceTypesSet = new Set(resourceTypes);
+  return <div className={classNames('co-resource-quota-chart-row', {'co-resource-quota-chart-row--compact': compact})} >
+    {(resourceTypesSet.has('requests.cpu') || resourceTypesSet.has('cpu')) &&
+    <div className="co-resource-quota-gauge-chart">
+      <Gauge title="CPU Request" thresholds={gaugeChartThresholds} className={classNames({'graph-wrapper--compact': compact})}
+        percent={getResourceUsage(quota, resourceTypesSet.has('requests.cpu') ? 'requests.cpu' : 'cpu').percent} />
+    </div>}
+    {resourceTypesSet.has('limits.cpu') &&
+    <div className="co-resource-quota-gauge-chart">
+      <Gauge title="CPU Limit" thresholds={gaugeChartThresholds} className={classNames({'graph-wrapper--compact': compact})}
+        percent={getResourceUsage(quota, 'limits.cpu').percent} />
+    </div>}
+    {(resourceTypesSet.has('requests.memory') || resourceTypesSet.has('memory')) &&
+    <div className="co-resource-quota-gauge-chart">
+      <Gauge title="Memory Request" thresholds={gaugeChartThresholds} className={classNames({'graph-wrapper--compact': compact})}
+        percent={getResourceUsage(quota, resourceTypesSet.has('requests.memory') ? 'requests.memory' : 'memory').percent} />
+    </div>}
+    {resourceTypesSet.has('limits.memory') &&
+    <div className="co-resource-quota-gauge-chart">
+      <Gauge title="Memory Limit" thresholds={gaugeChartThresholds} className={classNames({'graph-wrapper--compact': compact})}
+        percent={getResourceUsage(quota, 'limits.memory').percent} />
+    </div>}
+  </div>;
+};
+
+export const QuotaScopes = ({scopes, compact}) => {
   return scopes.map(scope => {
     const scopeObj = _.get(quotaScopes, scope);
     return scopeObj ?
-      <dd key={scope}>
-        <div className="co-resource-quota-scope__label">{scopeObj.label}</div>
-        <div className="co-resource-quota-scope__description">{scopeObj.description}</div>
+      <dd key={scope} className={classNames({'quota-dashboard-scopes--compact': compact})}>
+        <div className={classNames('co-resource-quota-scope__label', {'co-resource-quota-scope__label--compact': compact})}>{scopeObj.label}</div>
+        <div className={classNames('co-resource-quota-scope__description', {'co-resource-quota-scope__description--compact': compact})}>{scopeObj.description}</div>
       </dd>
       : <dd key={scope} className="co-resource-quota-scope__label">{scope}</dd>;
   });
 };
 
-const showCharts = resourceTypes => {
+export const hasComputeResources = resourceTypes => {
   const chartResourceTypes = ['requests.cpu', 'cpu', 'limits.cpu', 'requests.memory', 'memory', 'limits.memory'];
   return _.intersection(resourceTypes, chartResourceTypes).length > 0;
 };
 
 const Details = ({obj: rq}) => {
-  const resourceTypes = getResourceTypes(rq);
-  const resourceTypesSet = new Set(resourceTypes);
-  const showChartRow = showCharts(resourceTypes);
+  const resourceTypes = getQuotaResourceTypes(rq);
+  const showChartRow = hasComputeResources(resourceTypes);
+  const scopes = _.get(rq, ['spec', 'scopes']);
   return <React.Fragment>
     <div className="co-m-pane__body">
       <SectionHeading text="Resource Quota Overview" />
-      {showChartRow && <div className="co-resource-quota-chart-row">
-        {(resourceTypesSet.has('requests.cpu') || resourceTypesSet.has('cpu')) &&
-          <div className="co-resource-quota-chart">
-            <Gauge title="CPU Request" thresholds={gaugeChartThresholds}
-              percent={getResourceUsage(rq, resourceTypesSet.has('requests.cpu') ? 'requests.cpu' : 'cpu').percent} />
-          </div>}
-        {resourceTypesSet.has('limits.cpu') &&
-          <div className="co-resource-quota-chart">
-            <Gauge title="CPU Limit" thresholds={gaugeChartThresholds}
-              percent={getResourceUsage(rq, 'limits.cpu').percent} />
-          </div>}
-        {(resourceTypesSet.has('requests.memory') || resourceTypesSet.has('memory')) &&
-          <div className="co-resource-quota-chart">
-            <Gauge title="Memory Request" thresholds={gaugeChartThresholds}
-              percent={getResourceUsage(rq, resourceTypesSet.has('requests.memory') ? 'requests.memory' : 'memory').percent} />
-          </div>}
-        {resourceTypesSet.has('limits.memory') &&
-          <div className="co-resource-quota-chart">
-            <Gauge title="Memory Limit" thresholds={gaugeChartThresholds}
-              percent={getResourceUsage(rq, 'limits.memory').percent} />
-          </div>}
-      </div>}
+      {showChartRow && <QuotaGaugeCharts quota={rq} resourceTypes={resourceTypes} />}
       <div className="row">
         <div className="col-sm-6">
           <ResourceSummary resource={rq} showPodSelector={false} showNodeSelector={false} />
         </div>
-        <div className="col-sm-6">
+        {scopes && <div className="col-sm-6">
           <dl className="co-m-pane__details">
             <dt>Scopes</dt>
-            <QuotaScopes quota={rq} />
+            <QuotaScopes scopes={scopes} />
           </dl>
-        </div>
+        </div>}
       </div>
     </div>
     <div className="co-m-pane__body">
