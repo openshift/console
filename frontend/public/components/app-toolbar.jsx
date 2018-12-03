@@ -8,8 +8,8 @@ import { coFetchJSON } from '../co-fetch';
 import { history } from './utils';
 import { openshiftHelpBase } from './utils/documentation';
 
-import { Dropdown, DropdownToggle, DropdownItem, KebabToggle, Toolbar, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
-import { QuestionCircleIcon } from '@patternfly/react-icons';
+import { Button, Dropdown, DropdownToggle, DropdownItem, KebabToggle, Toolbar, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
+import { ArrowCircleUpIcon, QuestionCircleIcon } from '@patternfly/react-icons';
 import AboutModal from './about-modal';
 
 class AppToolbar extends React.Component {
@@ -29,6 +29,7 @@ class AppToolbar extends React.Component {
     this._onKebabDropdownSelect = this._onKebabDropdownSelect.bind(this);
     this._renderMenu = this._renderMenu.bind(this);
     this._renderMenuDropdown = this._renderMenuDropdown.bind(this);
+    this._onClusterUpdatesAvailable = this._onClusterUpdatesAvailable.bind(this);
     this._onSettingsDropdownSelect = this._onSettingsDropdownSelect.bind(this);
     this._onSettingsDropdownToggle = this._onSettingsDropdownToggle.bind(this);
     this._onAboutModal = this._onAboutModal.bind(this);
@@ -84,6 +85,10 @@ class AppToolbar extends React.Component {
     this.setState({
       isKebabDropdownOpen: !this.state.isKebabDropdownOpen,
     });
+  }
+
+  _onClusterUpdatesAvailable() {
+    history.push('/settings/cluster');
   }
 
   _onSettingsDropdownSelect() {
@@ -213,12 +218,18 @@ class AppToolbar extends React.Component {
 
   render() {
     const { isSettingsDropdownOpen, showAboutModal } = this.state;
+    const { flags } = this.props;
     return (
       <React.Fragment>
         <Toolbar>
-          <ToolbarGroup>
+          <ToolbarGroup className={classNames('pf-u-sr-only', 'pf-u-visible-on-md')}>
             {/* desktop settings /cog dropdown */}
-            <ToolbarItem className={classNames('pf-u-sr-only', 'pf-u-visible-on-md')}>
+            {flags[FLAGS.CLUSTER_UPDATES_AVAILABLE] && <ToolbarItem>
+              <Button variant="plain" aria-label="Cluster Updates Available" onClick={this._onClusterUpdatesAvailable}>
+                <ArrowCircleUpIcon />
+              </Button>
+            </ToolbarItem>}
+            <ToolbarItem>
               <Dropdown
                 isPlain
                 onSelect={this._onSettingsDropdownSelect}
@@ -251,5 +262,5 @@ class AppToolbar extends React.Component {
     );
   }
 }
-const AppToolbarConnected = connectToFlags(FLAGS.AUTH_ENABLED, FLAGS.OPENSHIFT)(AppToolbar);
+const AppToolbarConnected = connectToFlags(FLAGS.AUTH_ENABLED, FLAGS.OPENSHIFT, FLAGS.CLUSTER_UPDATES_AVAILABLE)(AppToolbar);
 export default AppToolbarConnected;
