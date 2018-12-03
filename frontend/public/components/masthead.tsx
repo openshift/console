@@ -1,5 +1,4 @@
 import * as React from 'react';
-
 import * as _ from 'lodash-es';
 import { Link } from 'react-router-dom';
 import * as okdLogoImg from '../imgs/okd-logo.svg';
@@ -8,6 +7,7 @@ import * as onlineLogoImg from '../imgs/openshift-online-logo.svg';
 import * as dedicatedLogoImg from '../imgs/openshift-dedicated-logo.svg';
 import * as rhLogoImg from '../imgs/redhat-logo-modal.svg';
 import * as okdModalImg from '../imgs/okd-logo-modal.svg';
+import { connect } from 'react-redux';
 import { FLAGS, connectToFlags, flagPending } from '../features';
 import { authSvc } from '../module/auth';
 import { ActionsMenu, AsyncComponent } from './utils';
@@ -127,6 +127,7 @@ const UserMenuWrapper = connectToFlags(FLAGS.AUTH_ENABLED, FLAGS.OPENSHIFT)((pro
   return authSvc.userID() ? <UserMenu actions={actions} username={authSvc.name()} /> : null;
 });
 
+
 export class OSUserMenu extends SafetyFirst<OSUserMenuProps, OSUserMenuState> {
   constructor(props) {
     super(props);
@@ -160,15 +161,15 @@ export const LogoImage = () => {
   </div>;
 };
 
-const Masthead_ = ({ flags }) => <header role="banner" className="navbar navbar-pf-vertical co-masthead">
+const Masthead_ = ({ mockStatus }) => <header role="banner" className="navbar navbar-pf-vertical co-masthead">
   <div className="navbar-header">
     <LogoImage />
   </div>
   <div className="nav navbar-nav navbar-right navbar-iconic navbar-utility">
     <div className="co-masthead__dropdowns">
-      {flags[FLAGS.CLUSTER_UPDATES_AVAILABLE] && <div className="co-masthead__updates">
+      {mockStatus === 'Updates Available' && <div className="co-masthead__updates">
         <Link to="/settings/cluster" title="Cluster Updates Available" className="nav-item-iconic">
-          <i className="fa fa-arrow-circle-up" aria-hidden="true" />
+          <i className="fa fa-arrow-circle-o-up" aria-hidden="true" />
           <span className="sr-only">Cluster Updates Available</span>
         </Link>
       </div>}
@@ -181,7 +182,13 @@ const Masthead_ = ({ flags }) => <header role="banner" className="navbar navbar-
     </div>
   </div>
 </header>;
-export const Masthead = connectToFlags(FLAGS.CLUSTER_UPDATES_AVAILABLE)(Masthead_);
+
+// FOR DEMO PURPOSES ONLY
+const connectToMockClusterUpdate = ({UI}) => ({
+  mockStatus: UI.getIn(['mockClusterUpdate', 'status']),
+});
+
+export const Masthead = connect(connectToMockClusterUpdate)(Masthead_);
 
 /* eslint-disable no-undef */
 export type FlagsProps = {

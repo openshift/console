@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars, no-undef */
 import * as React from 'react';
 import * as _ from 'lodash-es';
+import { connect } from 'react-redux';
 
 import { K8sResourceKind, K8sResourceKindReference, referenceForModel } from '../../module/k8s';
 import { ClusterOperatorModel } from '../../models';
@@ -49,7 +50,7 @@ export const getClusterOperatorStatus = (operator: K8sResourceKind) => {
 const getIconClass = (status: OperatorStatus) => {
   return {
     [OperatorStatus.Available]: 'pficon pficon-ok text-success',
-    [OperatorStatus.Updating]: 'pficon pficon-in-progress',
+    [OperatorStatus.Updating]: 'fa-spin pficon pficon-in-progress',
     [OperatorStatus.Failing]: 'pficon pficon-error-circle-o text-danger',
   }[status];
 };
@@ -68,23 +69,31 @@ const ClusterOperatorHeader = props => <ListHeader>
   <ColHead {...props} className="col-md-3 col-sm-3 hidden-xs" sortField="status.version">Version</ColHead>
 </ListHeader>;
 
-const ClusterOperatorRow: React.SFC<ClusterOperatorRowProps> = ({obj}) => {
-  const { status, message } = getStatusAndMessage(obj);
-  return <div className="row co-resource-list__item">
-    <div className="col-md-3 col-sm-3 col-xs-6">
-      <ResourceLink kind={clusterOperatorReference} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
-    </div>
-    <div className="col-md-2 col-sm-3 col-xs-6">
-      <OperatorStatusIconAndLabel status={status} />
-    </div>
-    <div className="col-md-4 col-sm-3 hidden-xs">
-      {message ? _.truncate(message, { length: 256, separator: ' ' }) : '-'}
-    </div>
-    <div className="col-md-3 col-sm-3 hidden-xs">
-      {obj.status.version || <span className="text-muted">Unknown</span>}
-    </div>
-  </div>;
+const connectToMockClusterUpgrade = ({UI}) => {
+  const mockStatus = UI.getIn(['mockClusterUpdate', 'status']) === OperatorStatus.Updating ? OperatorStatus.Updating : undefined;
+  const mockTargetVersion = UI.getIn(['mockClusterUpdate', 'targetVersion']);
+  return { mockStatus, mockTargetVersion };
 };
+
+const ClusterOperatorRow = connect(connectToMockClusterUpgrade)(
+  ({obj, mockStatus, mockTargetVersion}: ClusterOperatorRowProps & PropsFromMockUpdgrade) => {
+    const mockMessage = mockTargetVersion ? `Progressing to ${mockTargetVersion}` : undefined;
+    const { status, message } = getStatusAndMessage(obj);
+    return <div className="row co-resource-list__item">
+      <div className="col-md-3 col-sm-3 col-xs-6">
+        <ResourceLink kind={clusterOperatorReference} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
+      </div>
+      <div className="col-md-2 col-sm-3 col-xs-6">
+        <OperatorStatusIconAndLabel status={mockStatus || status} />
+      </div>
+      <div className="col-md-4 col-sm-3 hidden-xs">
+        {mockMessage || message ? _.truncate(mockMessage || message, { length: 256, separator: ' ' }) : '-'}
+      </div>
+      <div className="col-md-3 col-sm-3 hidden-xs">
+        {obj.status.version || <span className="text-muted">Unknown</span>}
+      </div>
+    </div>;
+  });
 
 export const ClusterOperatorList: React.SFC = props => <List {...props} Header={ClusterOperatorHeader} Row={ClusterOperatorRow} />;
 
@@ -115,18 +124,20 @@ export const ClusterOperatorPage: React.SFC<ClusterOperatorPageProps> = props =>
     rowFilters={filters}
   />;
 
-const ClusterOperatorDetails: React.SFC<ClusterOperatorDetailsProps> = ({obj}) => {
-  const { status, message } = getStatusAndMessage(obj);
-  return <div className="co-m-pane__body">
-    <SectionHeading text="Cluster Operator Overview" />
-    <ResourceSummary resource={obj} showPodSelector={false} showNodeSelector={false}>
-      <dt>Status</dt>
-      <dd><OperatorStatusIconAndLabel status={status} /></dd>
-      <dt>Message</dt>
-      <dd>{message || '-'}</dd>
-    </ResourceSummary>
-  </div>;
-};
+const ClusterOperatorDetails = connect(connectToMockClusterUpgrade)(
+  ({obj, mockStatus, mockTargetVersion}: ClusterOperatorDetailsProps & PropsFromMockUpdgrade) => {
+    const { status, message } = getStatusAndMessage(obj);
+    const mockMessage = mockTargetVersion ? `Progressing to ${mockTargetVersion}` : undefined;
+    return <div className="co-m-pane__body">
+      <SectionHeading text="Cluster Operator Overview" />
+      <ResourceSummary resource={obj} showPodSelector={false} showNodeSelector={false}>
+        <dt>Status</dt>
+        <dd><OperatorStatusIconAndLabel status={mockStatus || status} /></dd>
+        <dt>Message</dt>
+        <dd>{mockMessage || message || '-'}</dd>
+      </ResourceSummary>
+    </div>;
+  });
 
 export const ClusterOperatorDetailsPage: React.SFC<ClusterOperatorDetailsPageProps> = props =>
   <DetailsPage
@@ -134,6 +145,11 @@ export const ClusterOperatorDetailsPage: React.SFC<ClusterOperatorDetailsPagePro
     kind={clusterOperatorReference}
     pages={[navFactory.details(ClusterOperatorDetails), navFactory.editYaml()]}
   />;
+
+type PropsFromMockUpdgrade = {
+  mockStatus: OperatorStatus;
+  mockTargetVersion: string;
+};
 
 type OperatorStatusIconAndLabelProps = {
   status: OperatorStatus;

@@ -78,6 +78,8 @@ export const types = {
   stopImpersonate: 'stopImpersonate',
   updateOverviewMetrics: 'updateOverviewMetrics',
   updateOverviewResources: 'updateOverviewResources',
+  startMockClusterUpgrade: 'startMockClusterUpgrade',
+  completeMockClusterUpgrade: 'completeMockClusterUpgrade',
 };
 
 /** @type {{[key: string]: function}} */
@@ -174,6 +176,10 @@ export const UIActions = {
   [types.updateOverviewResources]: resources => ({type: types.updateOverviewResources, resources}),
 
   [types.dismissOverviewDetails]: () => ({type: types.dismissOverviewDetails}),
+
+  [types.startMockClusterUpgrade]: (version) => ({type: types.startMockClusterUpgrade, version}),
+
+  [types.completeMockClusterUpgrade]: (version) => ({type: types.completeMockClusterUpgrade, version}),
 
   monitoringLoading: key => ({type: types.setMonitoringData, key, data: {loaded: false, loadError: null, data: null}}),
 

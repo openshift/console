@@ -33,6 +33,11 @@ export default (state, action) => {
         selectedUID: '',
         selectedView: 'resources',
       }),
+      mockClusterUpdate: new ImmutableMap({
+        status: 'Updates Available',
+        currentVersion: '',
+        targetVersion: '',
+      }),
     });
   }
 
@@ -114,6 +119,14 @@ export default (state, action) => {
     case types.updateOverviewResources: {
       const newResources = new ImmutableMap(_.keyBy(action.resources, 'obj.metadata.uid'));
       return state.setIn(['overview', 'resources'], newResources);
+    }
+
+    case types.startMockClusterUpgrade : {
+      return state.mergeIn(['mockClusterUpdate'], { status: 'Updating', targetVersion: action.version });
+    }
+
+    case types.completeMockClusterUpgrade : {
+      return state.mergeIn(['mockClusterUpdate'], {status: 'Up to Date', targetVersion: '', currentVersion: action.version });
     }
 
     default:
