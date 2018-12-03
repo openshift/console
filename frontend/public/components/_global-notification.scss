@@ -12,8 +12,13 @@ $global-notification-text: #fff;
   }
 }
 
+.co-global-notification + .co-global-notification {
+  border-top: 1px solid #00659c;
+}
+
 .co-global-notification__text {
   margin: 0;
+  padding: 5px 10px;
 }
 
 .co-global-notification__impersonate-name {
