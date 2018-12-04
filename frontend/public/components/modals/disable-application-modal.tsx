@@ -4,7 +4,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
-import { PromiseComponent } from '../utils';
+import { PromiseComponent, history } from '../utils';
 import { ClusterServiceVersionKind, SubscriptionKind } from '../operator-lifecycle-manager';
 import { K8sKind, K8sResourceKind } from '../../module/k8s';
 import { ClusterServiceVersionModel, SubscriptionModel } from '../../models';
@@ -27,7 +27,12 @@ export class DisableApplicationModal extends PromiseComponent {
         ? k8sKill(ClusterServiceVersionModel, {metadata: {name: subscription.status.installedCSV, namespace: subscription.metadata.namespace}} as ClusterServiceVersionKind, {}, deleteOptions)
         : []);
 
-    this.handlePromise(Promise.all(killPromises)).then(() => this.props.close());
+    this.handlePromise(Promise.all(killPromises)).then(() => {
+      this.props.close();
+      if (new RegExp(`/${subscription.metadata.name}(/|$)`).test(window.location.pathname)) {
+        history.push(window.location.pathname.replace(subscription.metadata.name, ''));
+      }
+    });
   }
 
   render() {
