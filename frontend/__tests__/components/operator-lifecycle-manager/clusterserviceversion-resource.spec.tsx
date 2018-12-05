@@ -7,7 +7,7 @@ import * as _ from 'lodash-es';
 
 import { ClusterServiceVersionResourceList, ClusterServiceVersionResourceListProps, ProvidedAPIsPage, ProvidedAPIsPageProps, ClusterServiceVersionResourceHeaderProps, ClusterServiceVersionResourcesDetailsState, ClusterServiceVersionResourceRowProps, ClusterServiceVersionResourceHeader, ClusterServiceVersionResourceRow, ClusterServiceVersionResourceDetails, ClusterServiceVersionResourcesDetailsPageProps, ClusterServiceVersionResourcesDetailsProps, ClusterServiceVersionResourcesDetailsPage, ClusterServiceVersionResourceLink } from '../../../public/components/operator-lifecycle-manager/clusterserviceversion-resource';
 import { Resources } from '../../../public/components/operator-lifecycle-manager/k8s-resource';
-import { ClusterServiceVersionResourceKind, referenceForCRDDesc } from '../../../public/components/operator-lifecycle-manager';
+import { ClusterServiceVersionResourceKind, referenceForProvidedAPI } from '../../../public/components/operator-lifecycle-manager';
 import { StatusDescriptor } from '../../../public/components/operator-lifecycle-manager/descriptors/status';
 import { SpecDescriptor } from '../../../public/components/operator-lifecycle-manager/descriptors/spec';
 import { testCRD, testResourceInstance, testClusterServiceVersion, testOwnedResourceInstance } from '../../../__mocks__/k8sResourcesMocks';
@@ -368,7 +368,7 @@ describe(ProvidedAPIsPage.displayName, () => {
     expect(listPage.props().filterLabel).toEqual('Resources by name');
     expect(listPage.props().canCreate).toBe(true);
     expect(listPage.props().resources).toEqual(owned.concat(required).map((crdDesc) => ({
-      kind: referenceForCRDDesc(crdDesc),
+      kind: referenceForProvidedAPI(crdDesc),
       namespaced: true,
       prop: crdDesc.kind,
     })));
