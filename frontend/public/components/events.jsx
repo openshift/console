@@ -422,7 +422,7 @@ class EventStream extends SafetyFirst {
       sysEventStatus = (
         <Box className="co-sysevent-stream__status-box-empty">
           <div className="text-center cos-status-box__detail">
-          No Events in the past hour
+          No events in the past hour
           </div>
         </Box>
       );
@@ -430,7 +430,7 @@ class EventStream extends SafetyFirst {
     if (noMatches && !resourceEventStream) {
       sysEventStatus = (
         <Box className="co-sysevent-stream__status-box-empty">
-          <div className="cos-status-box__title">No Matching Events</div>
+          <div className="cos-status-box__title">No matching events</div>
           <div className="text-center cos-status-box__detail">
             {allCount}{allCount >= maxMessages && '+'} events exist, but none match the current filter
           </div>
@@ -442,7 +442,7 @@ class EventStream extends SafetyFirst {
       statusBtnTxt = <span className="co-sysevent-stream__connection-error">Error connecting to event stream{_.isString(error) && `: ${error}`}</span>;
       sysEventStatus = (
         <Box>
-          <div className="cos-status-box__title cos-error-title">Error Loading Events</div>
+          <div className="cos-status-box__title cos-error-title">Error loading events</div>
           <div className="cos-status-box__detail text-center">An error occurred during event retrieval. Attempting to reconnect...</div>
         </Box>
       );
