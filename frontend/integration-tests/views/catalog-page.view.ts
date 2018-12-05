@@ -19,5 +19,5 @@ export const filterCheckboxCount = (name: string) => filterCheckboxFor(name).$('
 export const activeFilterCheckboxes = filterCheckboxes.filter((filterItem) => filterItem.$('input').isSelected()
   .then(bool => bool));
 export const filterTextbox = $$('.filter-panel-pf-category').first().$('input');
-export const filterByName = (filter: string) => filterTextbox.sendKeys(filter);
+export const filterByKeyword = (filter: string) => filterTextbox.sendKeys(filter);
 export const clearFiltersText = $('.co-catalog-page__no-filter-results').$('.blank-slate-pf-helpLink').$('button');
