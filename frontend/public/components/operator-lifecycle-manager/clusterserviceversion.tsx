@@ -20,7 +20,8 @@ import {
   ClusterServiceVersionLogo,
   ClusterServiceVersionPhase,
   CRDDescription,
-  referenceForCRDDesc,
+  referenceForProvidedAPI,
+  APIServiceDefinition,
 } from './index';
 import {
   Kebab,
@@ -36,6 +37,10 @@ import {
   ResourceSummary,
   ScrollToTopOnMount,
 } from '../utils';
+
+type ProvidedAPIsFor = (csv: ClusterServiceVersionKind) => (CRDDescription | APIServiceDefinition)[];
+const providedAPIsFor: ProvidedAPIsFor = csv => _.get(csv.spec, 'customresourcedefinitions.owned', [])
+  .concat(_.get(csv.spec, 'apiservicedefinitions.owned', []));
 
 export const ClusterServiceVersionHeader: React.SFC = () => <ListHeader>
   <ColHead className="col-lg-3 col-md-4 col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
@@ -68,10 +73,10 @@ export const ClusterServiceVersionRow = withFallback<ClusterServiceVersionRowPro
     </div>
     <div className="col-lg-2 col-md-3 col-sm-4 hidden-xs">{obj.metadata.deletionTimestamp ? 'Disabling' : installStatus}</div>
     <div className="col-lg-3 col-md-3 hidden-sm hidden-xs">
-      { _.take(obj.spec.customresourcedefinitions.owned, 4).map(desc => <div key={desc.name}>
-        <Link to={`${route}/${referenceForCRDDesc(desc)}`} title={desc.name}>{desc.displayName}</Link>
+      { _.take(providedAPIsFor(obj), 4).map((desc, i) => <div key={i}>
+        <Link to={`${route}/${referenceForProvidedAPI(desc)}`} title={desc.name}>{desc.displayName}</Link>
       </div>)}
-      { obj.spec.customresourcedefinitions.owned.length > 4 && <Link to={`${route}/instances`} title={`View ${obj.spec.customresourcedefinitions.owned.length - 4} more...`}>{`View ${obj.spec.customresourcedefinitions.owned.length - 4} more...`}</Link>}
+      { providedAPIsFor(obj).length > 4 && <Link to={`${route}/instances`} title={`View ${providedAPIsFor(obj).length - 4} more...`}>{`View ${providedAPIsFor(obj).length - 4} more...`}</Link>}
     </div>
     <div className="dropdown-kebab-pf">
       <ResourceKebab resource={obj} kind={referenceFor(obj)} actions={menuActions} />
@@ -119,12 +124,12 @@ export const MarkdownView = (props: {content: string}) => {
 };
 
 export const CRDCard: React.SFC<CRDCardProps> = ({crd, csv}) => {
-  const createRoute = `/k8s/ns/${csv.metadata.namespace}/${ClusterServiceVersionModel.plural}/${csv.metadata.name}/${referenceForCRDDesc(crd)}/new`;
+  const createRoute = `/k8s/ns/${csv.metadata.namespace}/${ClusterServiceVersionModel.plural}/${csv.metadata.name}/${referenceForProvidedAPI(crd)}/new`;
 
   return <div className="co-crd-card">
     <div className="co-crd-card__title">
       <div style={{display: 'flex', alignItems: 'center', fontWeight: 600}}>
-        <ResourceLink kind={referenceForCRDDesc(crd)} title={crd.name} linkTo={false} displayName={crd.displayName} />
+        <ResourceLink kind={referenceForProvidedAPI(crd)} title={crd.name} linkTo={false} displayName={crd.displayName} />
       </div>
     </div>
     <div className="co-crd-card__body" style={{margin: '0'}}>
@@ -139,7 +144,7 @@ export const CRDCard: React.SFC<CRDCardProps> = ({crd, csv}) => {
 };
 
 export const CRDCardRow: React.SFC<CRDCardRowProps> = (props) => <div className="co-crd-card-row">
-  {props.crdDescs.map(desc => <CRDCard key={desc.name} crd={desc} csv={props.csv} />)}
+  {props.crdDescs.map((desc, i) => <CRDCard key={i} crd={desc} csv={props.csv} />)}
 </div>;
 
 export const ClusterServiceVersionDetails: React.SFC<ClusterServiceVersionDetailsProps> = (props) => {
@@ -178,7 +183,7 @@ export const ClusterServiceVersionDetails: React.SFC<ClusterServiceVersionDetail
           <div className="col-sm-9">
             {status.phase !== ClusterServiceVersionPhase.CSVPhaseSucceeded && <Alert type="error"><strong>{status.phase}</strong>: {status.message}</Alert>}
             <SectionHeading text="Provided APIs" />
-            <CRDCardRow csv={props.obj} crdDescs={spec.customresourcedefinitions.owned} />
+            <CRDCardRow csv={props.obj} crdDescs={providedAPIsFor(props.obj)} />
             <SectionHeading text="Description" />
             <MarkdownView content={spec.description || 'Not available'} />
           </div>
@@ -199,8 +204,10 @@ export const ClusterServiceVersionDetails: React.SFC<ClusterServiceVersionDetail
             <dd>{status.message}</dd>
             <dt>Operator Deployments</dt>
             {spec.install.spec.deployments.map(({name}, i) => <dd key={i}><ResourceLink name={name} kind="Deployment" namespace={metadata.namespace} /></dd>)}
-            <dt>Operator Service Accounts</dt>
-            {spec.install.spec.permissions.map(({serviceAccountName}, i) => <dd key={i}><ResourceLink name={serviceAccountName} kind="ServiceAccount" namespace={metadata.namespace} /></dd>)}
+            { _.get(spec.install.spec, 'permissions') && <React.Fragment>
+              <dt>Operator Service Accounts</dt>
+              {spec.install.spec.permissions.map(({serviceAccountName}, i) => <dd key={i}><ResourceLink name={serviceAccountName} kind="ServiceAccount" namespace={metadata.namespace} /></dd>)}
+            </React.Fragment> }
           </div>
         </div>
       </div>
@@ -221,10 +228,10 @@ export const ClusterServiceVersionsDetailsPage: React.StatelessComponent<Cluster
     const ownedCRDs = _.get(obj, 'spec.customresourcedefinitions.owned', []);
 
     return (ownedCRDs.length > 1 ? [{href: 'instances', name: 'All Instances', component: AllInstances}] : []).concat(ownedCRDs.map((desc: CRDDescription) => ({
-      href: referenceForCRDDesc(desc),
+      href: referenceForProvidedAPI(desc),
       name: desc.displayName,
       /* eslint-disable-next-line react/display-name */
-      component: (instancesProps) => <ProvidedAPIPage {...instancesProps} csv={obj} kind={referenceForCRDDesc(desc)} namespace={props.match.params.ns} />,
+      component: (instancesProps) => <ProvidedAPIPage {...instancesProps} csv={obj} kind={referenceForProvidedAPI(desc)} namespace={props.match.params.ns} />,
     })));
   };
 
@@ -257,12 +264,12 @@ export type ClusterServiceVersionListProps = {
 };
 
 export type CRDCardProps = {
-  crd: CRDDescription;
+  crd: CRDDescription | APIServiceDefinition;
   csv: ClusterServiceVersionKind;
 };
 
 export type CRDCardRowProps = {
-  crdDescs: CRDDescription[];
+  crdDescs: (CRDDescription | APIServiceDefinition)[];
   csv: ClusterServiceVersionKind;
 };
 
