@@ -87,16 +87,18 @@ const BuildGraphs = requirePrometheus(({build}) => {
     return null;
   }
 
+  const namespace = build.metadata.namespace;
+
   return <React.Fragment>
     <div className="row">
       <div className="col-md-4">
-        <Line title="Memory Usage" query={`pod_name:container_memory_usage_bytes:sum{pod_name='${podName}',container_name='',namespace='${build.metadata.namespace}'}`} />
+        <Line title="Memory Usage" namespace={namespace} query={`pod_name:container_memory_usage_bytes:sum{pod_name='${podName}',container_name='',namespace='${namespace}'}`} />
       </div>
       <div className="col-md-4">
-        <Line title="CPU Usage" query={`pod_name:container_cpu_usage:sum{pod_name='${podName}',container_name='',namespace='${build.metadata.namespace}'} * 1000`} />
+        <Line title="CPU Usage" namespace={namespace} query={`pod_name:container_cpu_usage:sum{pod_name='${podName}',container_name='',namespace='${namespace}'} * 1000`} />
       </div>
       <div className="col-md-4">
-        <Line title="Filesystem (bytes)" query={`pod_name:container_fs_usage_bytes:sum{pod_name='${podName}',container_name='',namespace='${build.metadata.namespace}'}`} />
+        <Line title="Filesystem (bytes)" namespace={namespace} query={`pod_name:container_fs_usage_bytes:sum{pod_name='${podName}',container_name='',namespace='${namespace}'}`} />
       </div>
     </div>
 

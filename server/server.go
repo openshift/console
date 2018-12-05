@@ -23,14 +23,15 @@ const (
 	indexPageTemplateName     = "index.html"
 	tokenizerPageTemplateName = "tokener.html"
 
-	authLoginEndpoint         = "/auth/login"
-	AuthLoginCallbackEndpoint = "/auth/callback"
-	AuthLoginSuccessEndpoint  = "/"
-	AuthLoginErrorEndpoint    = "/error"
-	authLogoutEndpoint        = "/auth/logout"
-	k8sProxyEndpoint          = "/api/kubernetes/"
-	prometheusProxyEndpoint   = "/api/prometheus"
-	alertManagerProxyEndpoint = "/api/alertmanager"
+	authLoginEndpoint              = "/auth/login"
+	AuthLoginCallbackEndpoint      = "/auth/callback"
+	AuthLoginSuccessEndpoint       = "/"
+	AuthLoginErrorEndpoint         = "/error"
+	authLogoutEndpoint             = "/auth/logout"
+	k8sProxyEndpoint               = "/api/kubernetes/"
+	prometheusProxyEndpoint        = "/api/prometheus"
+	prometheusTenancyProxyEndpoint = "/api/prometheus-tenancy"
+	alertManagerProxyEndpoint      = "/api/alertmanager"
 )
 
 var (
@@ -38,23 +39,24 @@ var (
 )
 
 type jsGlobals struct {
-	ConsoleVersion       string `json:"consoleVersion"`
-	AuthDisabled         bool   `json:"authDisabled"`
-	KubectlClientID      string `json:"kubectlClientID"`
-	BasePath             string `json:"basePath"`
-	LoginURL             string `json:"loginURL"`
-	LoginSuccessURL      string `json:"loginSuccessURL"`
-	LoginErrorURL        string `json:"loginErrorURL"`
-	LogoutURL            string `json:"logoutURL"`
-	LogoutRedirect       string `json:"logoutRedirect"`
-	KubeAPIServerURL     string `json:"kubeAPIServerURL"`
-	PrometheusBaseURL    string `json:"prometheusBaseURL"`
-	AlertManagerBaseURL  string `json:"alertManagerBaseURL"`
-	Branding             string `json:"branding"`
-	DocumentationBaseURL string `json:"documentationBaseURL"`
-	ClusterName          string `json:"clusterName"`
-	GoogleTagManagerID   string `json:"googleTagManagerID"`
-	LoadTestFactor       int    `json:"loadTestFactor"`
+	ConsoleVersion           string `json:"consoleVersion"`
+	AuthDisabled             bool   `json:"authDisabled"`
+	KubectlClientID          string `json:"kubectlClientID"`
+	BasePath                 string `json:"basePath"`
+	LoginURL                 string `json:"loginURL"`
+	LoginSuccessURL          string `json:"loginSuccessURL"`
+	LoginErrorURL            string `json:"loginErrorURL"`
+	LogoutURL                string `json:"logoutURL"`
+	LogoutRedirect           string `json:"logoutRedirect"`
+	KubeAPIServerURL         string `json:"kubeAPIServerURL"`
+	PrometheusBaseURL        string `json:"prometheusBaseURL"`
+	PrometheusTenancyBaseURL string `json:"prometheusTenancyBaseURL"`
+	AlertManagerBaseURL      string `json:"alertManagerBaseURL"`
+	Branding                 string `json:"branding"`
+	DocumentationBaseURL     string `json:"documentationBaseURL"`
+	ClusterName              string `json:"clusterName"`
+	GoogleTagManagerID       string `json:"googleTagManagerID"`
+	LoadTestFactor           int    `json:"loadTestFactor"`
 }
 
 type Server struct {
@@ -75,9 +77,10 @@ type Server struct {
 	LoadTestFactor       int
 	DexClient            api.DexClient
 	// A client with the correct TLS setup for communicating with the API server.
-	K8sClient               *http.Client
-	PrometheusProxyConfig   *proxy.Config
-	AlertManagerProxyConfig *proxy.Config
+	K8sClient                    *http.Client
+	PrometheusProxyConfig        *proxy.Config
+	PrometheusTenancyProxyConfig *proxy.Config
+	AlertManagerProxyConfig      *proxy.Config
 }
 
 func (s *Server) authDisabled() bool {
@@ -85,7 +88,7 @@ func (s *Server) authDisabled() bool {
 }
 
 func (s *Server) prometheusProxyEnabled() bool {
-	return s.PrometheusProxyConfig != nil
+	return s.PrometheusProxyConfig != nil && s.PrometheusTenancyProxyConfig != nil
 }
 
 func (s *Server) alertManagerProxyEnabled() bool {
@@ -189,6 +192,15 @@ func (s *Server) HTTPHandler() http.Handler {
 				prometheusProxy.ServeHTTP(w, r)
 			})),
 		)
+		prometheusTenancyProxyAPIPath := prometheusTenancyProxyEndpoint + "/api/"
+		prometheusTenancyProxy := proxy.NewProxy(s.PrometheusTenancyProxyConfig)
+		handle(prometheusTenancyProxyAPIPath, http.StripPrefix(
+			proxy.SingleJoiningSlash(s.BaseURL.Path, prometheusTenancyProxyAPIPath),
+			authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
+				r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
+				prometheusTenancyProxy.ServeHTTP(w, r)
+			})),
+		)
 	}
 
 	if s.alertManagerProxyEnabled() {
@@ -251,6 +263,7 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 
 	if s.prometheusProxyEnabled() {
 		jsg.PrometheusBaseURL = proxy.SingleJoiningSlash(s.BaseURL.Path, prometheusProxyEndpoint)
+		jsg.PrometheusTenancyBaseURL = proxy.SingleJoiningSlash(s.BaseURL.Path, prometheusTenancyProxyEndpoint)
 	}
 
 	if s.alertManagerProxyEnabled() {
