@@ -1,5 +1,6 @@
 import * as React from 'react';
 
+import { connect } from 'react-redux';
 import * as _ from 'lodash-es';
 import { Link } from 'react-router-dom';
 import * as okdLogoImg from '../imgs/okd-logo.svg';
@@ -13,9 +14,8 @@ import { authSvc } from '../module/auth';
 import { ActionsMenu, AsyncComponent } from './utils';
 import { openshiftHelpBase } from './utils/documentation';
 import { createModalLauncher } from './factory/modal';
-
-import { coFetchJSON } from '../co-fetch';
-import { SafetyFirst } from './safety-first';
+import { userStateToProps } from '../ui/ui-reducers';
+import { K8sResourceKind } from '../module/k8s';
 
 const AboutModal = (props) => <AsyncComponent loader={() => import('./utils/about-modal').then(c => c.AboutModal)} {...props} />;
 
@@ -99,6 +99,13 @@ const UserMenu: React.StatelessComponent<UserMenuProps> = ({username, actions}) 
     buttonClassName="btn-link nav-item-iconic" />;
 };
 
+const OSUserMenu_: React.SFC<OSUserMenuProps> = ({user, actions}) => {
+  const username = _.get(user, 'fullName') || _.get(user, 'metadata.name');
+  return username ? <UserMenu actions={actions} username={username} /> : null;
+};
+
+const OSUserMenu = connect(userStateToProps)(OSUserMenu_);
+
 const UserMenuWrapper = connectToFlags(FLAGS.AUTH_ENABLED, FLAGS.OPENSHIFT)((props: FlagsProps) => {
   if (flagPending(props.flags[FLAGS.OPENSHIFT]) || flagPending(props.flags[FLAGS.AUTH_ENABLED])) {
     return null;
@@ -126,32 +133,6 @@ const UserMenuWrapper = connectToFlags(FLAGS.AUTH_ENABLED, FLAGS.OPENSHIFT)((pro
 
   return authSvc.userID() ? <UserMenu actions={actions} username={authSvc.name()} /> : null;
 });
-
-export class OSUserMenu extends SafetyFirst<OSUserMenuProps, OSUserMenuState> {
-  constructor(props) {
-    super(props);
-    this.state = {
-      username: undefined,
-    };
-  }
-
-  componentDidMount() {
-    super.componentDidMount();
-    this.getUserInfo();
-  }
-
-  private getUserInfo() {
-    coFetchJSON('api/kubernetes/apis/user.openshift.io/v1/users/~')
-      .then((user) => {
-        this.setState({ username: _.get(user, 'fullName') || user.metadata.name });
-      }).catch(() => this.setState({ username: null }));
-  }
-
-  render() {
-    const username = this.state.username;
-    return username ? <UserMenu actions={this.props.actions} username={username} /> : null;
-  }
-}
 
 export const LogoImage = () => {
   const details = getBrandingDetails();
@@ -197,8 +178,5 @@ export type UserMenuProps = {
 
 export type OSUserMenuProps = {
   actions: Actions,
-};
-
-export type OSUserMenuState = {
-  username: string,
+  user?: K8sResourceKind,
 };
