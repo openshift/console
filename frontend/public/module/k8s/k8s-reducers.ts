@@ -107,6 +107,7 @@ export default (state: ImmutableMap<string, any>, action) => {
         .setIn(['RESOURCES', 'allResources'], action.resources.allResources)
         .setIn(['RESOURCES', 'safeResources'], action.resources.safeResources)
         .setIn(['RESOURCES', 'adminResources'], action.resources.adminResources)
+        .setIn(['RESOURCES', 'configResources'], action.resources.configResources)
         .setIn(['RESOURCES', 'namespacedSet'], action.resources.namespacedSet)
         .setIn(['RESOURCES', 'preferredVersions'], action.resources.preferredVersions)
         .setIn(['RESOURCES', 'inFlight'], false);

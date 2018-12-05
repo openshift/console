@@ -13,6 +13,7 @@ import { K8sResourceKind, referenceForModel } from '../../module/k8s';
 import { ClusterAutoscalerModel, ClusterVersionModel } from '../../models';
 import { ClusterOperatorPage } from './cluster-operator';
 import { clusterUpdateModal } from '../modals';
+import { GlobalConfigPage } from './global-config';
 
 enum ClusterUpdateStatus {
   UpToDate = 'Up to Date',
@@ -196,6 +197,10 @@ const pages = [{
   href: '',
   name: 'Overview',
   component: ClusterVersionDetailsTable,
+}, {
+  href: 'globalconfig',
+  name: 'Global Config',
+  component: GlobalConfigPage,
 }, {
   href: 'clusteroperators',
   name: 'Cluster Operators',
