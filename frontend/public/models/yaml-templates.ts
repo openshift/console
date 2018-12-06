@@ -740,4 +740,31 @@ spec:
     secrets: "10"
     services: "10"
     services.loadbalancers: "2"
+`).setIn([referenceForModel(k8sModels.ClusterAutoscalerModel), 'default'], `
+apiVersion: "autoscaling.openshift.io/v1alpha1"
+kind: "ClusterAutoscaler"
+metadata:
+  name: "default"
+spec:
+  podPriorityThreshold: -10
+  resourceLimits:
+    maxNodesTotal: 24
+    cores:
+      min: 8
+      max: 128
+    memory:
+      min: 4
+      max: 256
+    gpus:
+      - type: nvidia.com/gpu
+        min: 0
+        max: 16
+      - type: amd.com/gpu
+        min: 0
+        max: 4
+  scaleDown:
+    enabled: true
+    delayAfterAdd: 10s
+    delayAfterDelete: 10s
+    delayAfterFailure: 10s
 `);

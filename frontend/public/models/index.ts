@@ -845,3 +845,17 @@ export const ClusterVersionModel: K8sKind = {
   id: 'clusterversion',
   crd: true,
 };
+
+export const ClusterAutoscalerModel: K8sKind = {
+  label: 'Cluster Autoscaler',
+  labelPlural: 'Cluster Autoscalers',
+  apiVersion: 'v1alpha1',
+  path: 'clusterautoscalers',
+  apiGroup: 'autoscaling.openshift.io',
+  plural: 'clusterautoscalers',
+  abbr: 'CA',
+  namespaced: false,
+  kind: 'ClusterAutoscaler',
+  id: 'clusterautoscaler',
+  crd: true,
+};
