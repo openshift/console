@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import * as _ from 'lodash-es';
 import { Link } from 'react-router-dom';
 import * as okdLogoImg from '../imgs/okd-logo.svg';
+import * as openshiftLogoImg from '../imgs/openshift-logo.svg';
 import * as ocpLogoImg from '../imgs/openshift-platform-logo.svg';
 import * as onlineLogoImg from '../imgs/openshift-online-logo.svg';
 import * as dedicatedLogoImg from '../imgs/openshift-dedicated-logo.svg';
@@ -24,6 +25,14 @@ export const getBrandingDetails = () => {
 
   // Webpack won't bundle these images if we don't directly reference them, hence the switch
   switch ((window as any).SERVER_FLAGS.branding) {
+    case 'openshift':
+      backgroundImg = true;
+      logoImg = openshiftLogoImg;
+      logoAlt = 'OpenShift';
+      modalLogoImg = rhLogoImg;
+      modalLogoAlt = 'Red Hat';
+      productTitle = <React.Fragment>Red Hat<sup>&reg;</sup> OpenShift</React.Fragment>;
+      break;
     case 'ocp':
       backgroundImg = true;
       logoImg = ocpLogoImg;
