@@ -104,7 +104,7 @@ export const Marketplace = () => {
   resources.push({
     isList: true,
     kind: referenceForModel(PackageManifestModel),
-    namespace: undefined, // shows operators from all-namespaces - when backend is hooked up we will use 'marketplace'
+    namespace: 'openshift-marketplace',
     prop: 'packagemanifests',
   });
   return <Firehose resources={resources} className="co-catalog-connect">
