@@ -399,7 +399,7 @@ const silenceParamToProps = (state, {match}) => {
 
 const SilencesDetailsPage = withFallback(connect(silenceParamToProps)((props: SilencesDetailsPageProps) => {
   const {loaded, loadError, silence} = props;
-  const {createdBy = '', comment = '', endsAt = '', matchers = {}, name = '', silencedAlerts = [], startsAt = '', updatedAt = ''} = silence || {};
+  const {createdBy = '', comment = '', endsAt = '', firingAlerts = [], matchers = {}, name = '', startsAt = '', updatedAt = ''} = silence || {};
 
   return <React.Fragment>
     <Helmet>
@@ -443,8 +443,8 @@ const SilencesDetailsPage = withFallback(connect(silenceParamToProps)((props: Si
                 <dd>{createdBy || '-'}</dd>
                 <dt>Comments</dt>
                 <dd>{comment || '-'}</dd>
-                <dt>Silenced Alerts</dt>
-                <dd>{silencedAlerts.length}</dd>
+                <dt>Firing Alerts</dt>
+                <dd>{firingAlerts.length}</dd>
               </dl>
             </div>
           </div>
@@ -452,10 +452,10 @@ const SilencesDetailsPage = withFallback(connect(silenceParamToProps)((props: Si
       </div>
       <div className="co-m-pane__body">
         <div className="co-m-pane__body-group">
-          <SectionHeading text="Silenced Alerts" />
+          <SectionHeading text="Firing Alerts" />
           <div className="row">
             <div className="col-xs-12">
-              <SilencedAlertsList alerts={silencedAlerts} />
+              <SilencedAlertsList alerts={firingAlerts} />
             </div>
           </div>
         </div>
@@ -630,7 +630,7 @@ const AlertsPage = withFallback(connect(alertsToProps)(AlertsPage_));
 const SilenceHeader = props => <ListHeader>
   <ColHead {...props} className="col-xs-7" sortField="name">Name</ColHead>
   <ColHead {...props} className="col-xs-3" sortFunc="silenceStateOrder">State</ColHead>
-  <ColHead {...props} className="col-xs-2" sortFunc="numSilencedAlerts">Silenced Alerts</ColHead>
+  <ColHead {...props} className="col-xs-2" sortField="firingAlerts.length">Firing Alerts</ColHead>
 </ListHeader>;
 
 const SilenceRow = ({obj}) => {
@@ -652,7 +652,7 @@ const SilenceRow = ({obj}) => {
       {state === SilenceStates.Active && <StateTimestamp text="Ends" timestamp={obj.endsAt} />}
       {state === SilenceStates.Expired && <StateTimestamp text="Expired" timestamp={obj.endsAt} />}
     </div>
-    <div className="col-xs-2">{obj.silencedAlerts.length}</div>
+    <div className="col-xs-2">{obj.firingAlerts.length}</div>
     <div className="dropdown-kebab-pf">
       <SilenceKebab silence={obj} />
     </div>
@@ -957,13 +957,13 @@ type Silence = {
   comment: string;
   createdBy: string;
   endsAt: string;
+  // eslint-disable-next-line no-use-before-define
+  firingAlerts: Alert[];
   id?: string;
   matchers: {name: string, value: string, isRegex: boolean}[];
   name?: string;
   startsAt: string;
   status?: {state: SilenceStates};
-  // eslint-disable-next-line no-use-before-define
-  silencedAlerts: Alert[];
   updatedAt?: string;
 };
 type Silences = {

@@ -215,7 +215,6 @@ const sorts = {
   },
   nodeUpdateStatus: node => _.get(containerLinuxUpdateOperator.getUpdateStatus(node), 'text'),
   numReplicas: resource => _.toInteger(_.get(resource, 'status.replicas')),
-  numSilencedAlerts: silence => silence.silencedAlerts.length,
   planExternalName,
   podPhase,
   podReadiness,
