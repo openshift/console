@@ -8,9 +8,9 @@ import { Helmet } from 'react-helmet';
 import { Button } from 'patternfly-react';
 import { Link } from 'react-router-dom';
 
-import { Firehose, HorizontalNav } from '../utils';
+import { Firehose, HorizontalNav, ResourceLink, resourcePathFromModel } from '../utils';
 import { K8sResourceKind, referenceForModel } from '../../module/k8s';
-import { ClusterVersionModel } from '../../models';
+import { ClusterAutoscalerModel, ClusterVersionModel } from '../../models';
 import { ClusterOperatorPage } from './cluster-operator';
 import { clusterUpdateModal } from '../modals';
 
@@ -26,6 +26,7 @@ enum ClusterUpdateStatus {
 const MOCK_CLUSTER_UPDATE = localStorage.getItem('MOCK_CLUSTER_UPDATE');
 // END MOCK CODE
 
+const clusterAutoscalerReference = referenceForModel(ClusterAutoscalerModel);
 const clusterVersionReference = referenceForModel(ClusterVersionModel);
 
 export const getAvailableClusterUpdates = (cv) => {
@@ -132,7 +133,7 @@ const CurrentVersion: React.SFC<CurrentVersionProps> = ({cv}) => {
 
 
 
-const ClusterVersionDetailsTable: React.SFC<ClusterVersionDetailsTableProps> = ({obj: cv}) => {
+const ClusterVersionDetailsTable: React.SFC<ClusterVersionDetailsTableProps> = ({obj: cv, autoscalers}) => {
   const conditions = _.get(cv, 'status.conditions', []);
 
   // TODO - REMOVE MOCK CODE
@@ -176,6 +177,14 @@ const ClusterVersionDetailsTable: React.SFC<ClusterVersionDetailsTableProps> = (
         <dd>{cv.spec.clusterID}</dd>
         <dt>Current Payload</dt>
         <dd>{_.get(cv, 'status.current.payload')}</dd>
+        <dt>Cluster Autoscaler</dt>
+        <dd>
+          {_.isEmpty(autoscalers)
+            ? <Link to={`${resourcePathFromModel(ClusterAutoscalerModel)}/new`}>
+              <i className="pficon pficon-add-circle-o" aria-hidden="true" /> Create Autoscaler
+            </Link>
+            : autoscalers.map(autoscaler => <div key={autoscaler.metadata.uid}><ResourceLink kind={clusterAutoscalerReference} name={autoscaler.metadata.name} /></div>)}
+        </dd>
       </dl>
     </div>
   </div>;
@@ -197,7 +206,9 @@ export const ClusterSettingsPage: React.SFC<ClusterSettingsPageProps> = ({match}
   const title = 'Cluster Settings';
   const resources = [
     {kind: clusterVersionReference, name: 'version', isList: false, prop: 'obj'},
+    {kind: clusterAutoscalerReference, isList: true, prop: 'autoscalers', optional: true},
   ];
+  const resourceKeys = _.map(resources, 'prop');
   return <React.Fragment>
     <Helmet>
       <title>{title}</title>
@@ -206,7 +217,7 @@ export const ClusterSettingsPage: React.SFC<ClusterSettingsPageProps> = ({match}
       <h1 className="co-m-pane__heading">{title}</h1>
     </div>
     <Firehose forceUpdate resources={resources}>
-      <HorizontalNav pages={pages} match={match} hideDivider />
+      <HorizontalNav pages={pages} match={match} resourceKeys={resourceKeys} hideDivider />
     </Firehose>
   </React.Fragment>;
 };
@@ -221,6 +232,7 @@ type CurrentVersionProps = {
 
 type ClusterVersionDetailsTableProps = {
   obj: K8sResourceKind;
+  autoscalers: K8sResourceKind[];
 };
 
 type ClusterSettingsPageProps = {
