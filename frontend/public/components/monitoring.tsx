@@ -21,10 +21,11 @@ import { Tooltip } from './utils/tooltip';
 import {
   ActionsMenu,
   ButtonBar,
-  Kebab,
   ExternalLink,
   getURLSearchParams,
   history,
+  Kebab,
+  LoadingInline,
   SectionHeading,
   StatusBox,
   Timestamp,
@@ -170,6 +171,7 @@ const SilenceMatchersList = ({silence}) => <div className={`co-text-${SilenceRes
 
 const alertStateToProps = (state, {match}): AlertsDetailsPageProps => {
   const {data, loaded, loadError}: Alerts = alertsToProps(state);
+  const {loaded: silencesLoaded}: Silences = silencesToProps(state);
   const ruleID = _.get(match, 'params.ruleID');
   const labels = getURLSearchParams();
   const alerts = _.filter(data, a => a.rule.id === ruleID);
@@ -186,11 +188,11 @@ const alertStateToProps = (state, {match}): AlertsDetailsPageProps => {
       state: _.find([AlertStates.Firing, AlertStates.Silenced, AlertStates.Pending], s => alertStates.includes(s)) || AlertStates.NotFiring,
     };
   }
-  return {alert, loaded, loadError, rule};
+  return {alert, loaded, loadError, rule, silencesLoaded};
 };
 
 const AlertsDetailsPage = withFallback(connect(alertStateToProps)((props: AlertsDetailsPageProps) => {
-  const {alert, loaded, loadError, rule} = props;
+  const {alert, loaded, loadError, rule, silencesLoaded} = props;
   const {annotations = {}, labels = {}, silencedBy = []} = alert || {};
   const {alertname, severity} = labels as any;
   const state = alertState(alert);
@@ -251,7 +253,7 @@ const AlertsDetailsPage = withFallback(connect(alertStateToProps)((props: Alerts
           </div>
         </div>
       </div>
-      {!_.isEmpty(silencedBy) && <div className="co-m-pane__body">
+      {silencesLoaded && !_.isEmpty(silencedBy) && <div className="co-m-pane__body">
         <div className="co-m-pane__body-group">
           <SectionHeading text="Silenced By" />
           <div className="row">
@@ -393,12 +395,13 @@ const SilencedAlertsList = ({alerts}) => _.isEmpty(alerts)
 
 const silenceParamToProps = (state, {match}) => {
   const {data: silences, loaded, loadError}: Silences = silencesToProps(state);
+  const {loaded: alertsLoaded}: Alerts = alertsToProps(state);
   const silence = _.find(silences, {id: _.get(match, 'params.id')});
-  return {loaded, loadError, silence};
+  return {alertsLoaded, loaded, loadError, silence};
 };
 
 const SilencesDetailsPage = withFallback(connect(silenceParamToProps)((props: SilencesDetailsPageProps) => {
-  const {loaded, loadError, silence} = props;
+  const {alertsLoaded, loaded, loadError, silence} = props;
   const {createdBy = '', comment = '', endsAt = '', firingAlerts = [], matchers = {}, name = '', startsAt = '', updatedAt = ''} = silence || {};
 
   return <React.Fragment>
@@ -444,7 +447,7 @@ const SilencesDetailsPage = withFallback(connect(silenceParamToProps)((props: Si
                 <dt>Comments</dt>
                 <dd>{comment || '-'}</dd>
                 <dt>Firing Alerts</dt>
-                <dd>{firingAlerts.length}</dd>
+                <dd>{alertsLoaded ? firingAlerts.length : <LoadingInline />}</dd>
               </dl>
             </div>
           </div>
@@ -455,7 +458,7 @@ const SilencesDetailsPage = withFallback(connect(silenceParamToProps)((props: Si
           <SectionHeading text="Firing Alerts" />
           <div className="row">
             <div className="col-xs-12">
-              <SilencedAlertsList alerts={firingAlerts} />
+              {alertsLoaded ? <SilencedAlertsList alerts={firingAlerts} /> : <LoadingInline />}
             </div>
           </div>
         </div>
@@ -1002,6 +1005,7 @@ export type AlertsDetailsPageProps = {
   loaded: boolean;
   loadError?: string;
   rule: Rule;
+  silencesLoaded: boolean;
 };
 export type AlertRulesDetailsPageProps = {
   loaded: boolean;
@@ -1009,6 +1013,7 @@ export type AlertRulesDetailsPageProps = {
   rule: Rule;
 };
 export type SilencesDetailsPageProps = {
+  alertsLoaded: boolean;
   loaded: boolean;
   loadError?: string;
   silence: Silence;
