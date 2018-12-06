@@ -154,7 +154,7 @@ describe(ClusterServiceVersionsPage.displayName, () => {
   let wrapper: ShallowWrapper<ClusterServiceVersionsPageProps>;
 
   beforeEach(() => {
-    wrapper = shallow(<ClusterServiceVersionsPage.WrappedComponent kind={referenceForModel(ClusterServiceVersionModel)} resourceDescriptions={[]} match={{params: {ns: 'foo'}, isExact: true, path: '', url: ''}} />);
+    wrapper = shallow(<ClusterServiceVersionsPage.WrappedComponent kind={referenceForModel(ClusterServiceVersionModel)} resourceDescriptions={[]} namespace="foo" />);
   });
 
   it('renders a `ListPage` with correct props', () => {
