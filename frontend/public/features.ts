@@ -107,7 +107,10 @@ const detectClusterVersion = dispatch => coFetchJSON(clusterVersionPath)
     clusterVersion => {
       setFlag(dispatch, FLAGS.CLUSTER_VERSION, !_.isEmpty(clusterVersion));
       const availableUpdates = _.get(clusterVersion, 'status.availableUpdates');
-      setFlag(dispatch, FLAGS.CLUSTER_UPDATES_AVAILABLE, !_.isEmpty(availableUpdates));
+
+      // TODO - REMOVE MOCK CODE
+      setFlag(dispatch, FLAGS.CLUSTER_UPDATES_AVAILABLE, localStorage.getItem('MOCK_CLUSTER_UPDATE') || !_.isEmpty(availableUpdates));
+      // END MOCK CODE
     },
     err => {
       if (_.includes([403, 404], _.get(err, 'response.status'))) {

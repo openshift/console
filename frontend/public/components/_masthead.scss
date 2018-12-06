@@ -77,6 +77,12 @@
       display: flex;
     }
   }
+
+  &__updates .fa
+  {
+    color: $color-primary !important;
+  }
+
   &__user {
     .btn-dropdown__item {
       align-items: baseline;
