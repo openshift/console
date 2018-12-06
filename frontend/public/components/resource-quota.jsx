@@ -76,7 +76,7 @@ const ResourceUsageRow = ({quota, resourceType}) => {
 const Details = ({obj: rq}) => <React.Fragment>
   <div className="co-m-pane__body">
     <SectionHeading text="Resource Quota Overview" />
-    <ResourceSummary resource={rq} podSelector="spec.podSelector" showNodeSelector={false} />
+    <ResourceSummary resource={rq} showPodSelector={false} showNodeSelector={false} />
   </div>
   <div className="co-m-pane__body">
     <SectionHeading text="Resource Usage" />
