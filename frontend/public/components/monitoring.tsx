@@ -169,7 +169,7 @@ const SilenceMatchersList = ({silence}) => <div className={`co-text-${SilenceRes
 </div>;
 
 const alertStateToProps = (state, {match}): AlertsDetailsPageProps => {
-  const {data, loaded, loadError}: Rules = alertsToProps(state);
+  const {data, loaded, loadError}: Alerts = alertsToProps(state);
   const ruleID = _.get(match, 'params.ruleID');
   const labels = getURLSearchParams();
   const alerts = _.filter(data, a => a.rule.id === ruleID);
@@ -302,7 +302,7 @@ const ActiveAlerts = ({alerts, ruleID}) => <div className="co-m-table-grid co-m-
 </div>;
 
 const ruleStateToProps = (state, {match}): AlertRulesDetailsPageProps => {
-  const {data, loaded, loadError}: Rules = alertsToProps(state);
+  const {data, loaded, loadError}: Alerts = alertsToProps(state);
   const id = _.get(match, 'params.id');
   const alert = _.find(data, a => a.rule.id === id);
   return {loaded, loadError, rule: _.get(alert, 'rule')};
@@ -989,7 +989,7 @@ type Rule = {
   name: string;
   query: string;
 };
-type Rules = {
+type Alerts = {
   data: Alert[];
   loaded: boolean;
   loadError?: string;
