@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 import * as classNames from 'classnames';
 import * as fuzzy from 'fuzzysearch';
 import * as _ from 'lodash-es';
@@ -802,8 +803,14 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
     return (
       <div className="co-m-pane__body">
         <Form className="wizard-form">
-          <h1 className="co-m-pane__heading">Create Storage Class</h1>
-
+          <h1 className="co-m-pane__heading co-m-pane__heading--baseline">
+            <div className="co-m-pane__name">
+              Create Storage Class
+            </div>
+            <div className="co-m-pane__heading-link">
+              <Link to="/k8s/cluster/storageclasses/new" id="yaml-link" replace>Edit YAML</Link>
+            </div>
+          </h1>
           <FormGroup controlId={'basic-settings-name'} validationState={fieldErrors.nameValidationMsg ? 'error': null}>
             <label className="control-label co-required" htmlFor="storage-class-name">Name</label>
             <FormControl

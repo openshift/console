@@ -60,14 +60,8 @@ StorageClassList.displayName = 'StorageClassList';
 
 /* eslint-disable no-undef */
 export const StorageClassPage: React.SFC<StorageClassPageProps> = props => {
-  const createItems = {
-    form: 'From Form',
-    yaml: 'From YAML',
-  };
-
   const createProps = {
-    items: createItems,
-    createLink: (type) => `/k8s/cluster/storageclasses/new/${type !== 'yaml' ? type : ''}`,
+    to: '/k8s/cluster/storageclasses/new/form',
   };
 
   return <ListPage

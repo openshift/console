@@ -2,6 +2,7 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
+import { Link } from 'react-router-dom';
 
 import { k8sCreate, K8sResourceKind, referenceFor } from '../../module/k8s';
 import {
@@ -285,7 +286,14 @@ class CreatePVCPage extends React.Component<CreatePVCPageProps, CreatePVCPageSta
         <Helmet>
           <title>{title}</title>
         </Helmet>
-        <h1 className="co-m-pane__heading">{title}</h1>
+        <h1 className="co-m-pane__heading co-m-pane__heading--baseline">
+          <div className="co-m-pane__name">
+            {title}
+          </div>
+          <div className="co-m-pane__heading-link">
+            <Link to={`/k8s/ns/${namespace}/persistentvolumeclaims/new`} id="yaml-link" replace>Edit YAML</Link>
+          </div>
+        </h1>
         <form className="co-m-pane__body-group " onSubmit={this.save}>
           <CreatePVCForm onChange={this.onChange} namespace={namespace} />
           <ButtonBar errorMessage={error} inProgress={inProgress}>
