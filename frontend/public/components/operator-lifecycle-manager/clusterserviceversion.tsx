@@ -110,7 +110,7 @@ export const ClusterServiceVersionsPage = connect(stateToProps)((props: ClusterS
     <PageHeading title="Cluster Service Versions" />
     <ListPage
       {...props}
-      namespace={props.match.params.ns}
+      namespace={props.namespace}
       kind={referenceForModel(ClusterServiceVersionModel)}
       ListComponent={ClusterServiceVersionList}
       helpText={helpText}
@@ -253,7 +253,7 @@ export const ClusterServiceVersionsDetailsPage: React.StatelessComponent<Cluster
 export type ClusterServiceVersionsPageProps = {
   kind: string;
   loading?: boolean;
-  match: RouterMatch<{ns?: string}>;
+  namespace: string;
   resourceDescriptions: CRDDescription[];
 };
 
