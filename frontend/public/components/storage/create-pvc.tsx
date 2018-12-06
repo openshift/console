@@ -25,6 +25,7 @@ const StorageClassDropdown: React.SFC<StorageClassDropdownProps> = props => {
   return (
     <ListDropdown
       {...props}
+      dropDownClassName="dropdown--full-width"
       desc="Storage Classes"
       resources={resources}
       selectedKeyKind={kind}

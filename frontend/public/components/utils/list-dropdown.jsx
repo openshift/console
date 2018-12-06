@@ -86,7 +86,7 @@ class ListDropdown_ extends React.Component {
   }
 
   render() {
-    const {desc, fixed, placeholder, id, loaded} = this.props;
+    const {desc, fixed, placeholder, id, loaded, dropDownClassName} = this.props;
     const items = {};
     const sortedItems = _.keys(this.state.items).sort();
 
@@ -105,7 +105,8 @@ class ListDropdown_ extends React.Component {
         title={this.state.title}
         onChange={this.onChange}
         id={id}
-        menuClassName="dropdown-menu--text-wrap" />;
+        menuClassName="dropdown-menu--text-wrap"
+        dropDownClassName={dropDownClassName} />;
 
     return <div>
       { Component }
