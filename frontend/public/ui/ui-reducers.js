@@ -68,37 +68,36 @@ export default (state, action) => {
     case types.setUser:
       return state.set('user', action.user);
 
-    case types.setMonitoringData:
+    case types.setMonitoringData: {
       state = state.setIn(['monitoring', action.key], action.data);
 
-      if (action.key === 'alerts' || action.key === 'silences') {
-        const alerts = state.getIn(['monitoring', 'alerts']);
-        const firingAlerts = _.filter(_.get(alerts, 'data'), a => [AlertStates.Firing, AlertStates.Silenced].includes(a.state));
-        const silences = state.getIn(['monitoring', 'silences']);
+      const isFiring = alert => [AlertStates.Firing, AlertStates.Silenced].includes(alert.state);
 
-        // For each Alert, store a list of the Silences that are silencing it and set its state to show it is silenced
-        _.each(firingAlerts, a => {
-          a.silencedBy = _.filter(_.get(silences, 'data'), s => isSilenced(a, s));
-          if (a.silencedBy.length) {
-            a.state = AlertStates.Silenced;
-            // Also set the state of Alerts in `rule.alerts`
-            _.each(a.rule.alerts, ruleAlert => {
-              if (_.some(a.silencedBy, s => isSilenced(ruleAlert, s))) {
-                ruleAlert.state = AlertStates.Silenced;
-              }
-            });
-          }
-        });
-        state = state.setIn(['monitoring', 'alerts'], alerts);
+      const alerts = state.getIn(['monitoring', 'alerts']);
+      const firingAlerts = _.filter(_.get(alerts, 'data'), isFiring);
+      const silences = state.getIn(['monitoring', 'silences']);
 
-        // For each Silence, store a list of the Alerts it is silencing
-        _.each(_.get(silences, 'data'), s => {
-          s.silencedAlerts = _.filter(firingAlerts, a => a.silencedBy.includes(s));
-        });
-        state = state.setIn(['monitoring', 'silences'], silences);
-      }
-      return state;
+      // For each Alert, store a list of the Silences that are silencing it and set its state to show it is silenced
+      _.each(firingAlerts, a => {
+        a.silencedBy = _.filter(_.get(silences, 'data'), s => isSilenced(a, s));
+        if (a.silencedBy.length) {
+          a.state = AlertStates.Silenced;
+          // Also set the state of Alerts in `rule.alerts`
+          _.each(a.rule.alerts, ruleAlert => {
+            if (_.some(a.silencedBy, s => isFiring(ruleAlert) && isSilenced(ruleAlert, s))) {
+              ruleAlert.state = AlertStates.Silenced;
+            }
+          });
+        }
+      });
+      state = state.setIn(['monitoring', 'alerts'], alerts);
 
+      // For each Silence, store a list of the Alerts it is silencing
+      _.each(_.get(silences, 'data'), s => {
+        s.silencedAlerts = _.filter(firingAlerts, a => a.silencedBy.includes(s));
+      });
+      return state.setIn(['monitoring', 'silences'], silences);
+    }
     case types.selectOverviewView:
       return state.setIn(['overview', 'selectedView'], action.view);
 
