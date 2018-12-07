@@ -11,7 +11,7 @@ export const KubeAdminNotifier = connect(userStateToProps)(({user}) => {
     ? <div className="co-global-notification">
       <div className="co-global-notification__content">
         <p className="co-global-notification__text">
-          You are logged in as temporary administrative user. Set up an identity provider to allow others to log in.
+          You are logged in as a temporary administrative user. Set up an identity provider to allow others to log in.
         </p>
       </div>
     </div>
