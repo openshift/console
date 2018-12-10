@@ -258,11 +258,31 @@ const ConnectedVmDetails = ({ obj: vm }) => {
   const resources = [vmResource, vmiResources, podResources, migrationResources];
 
   return (
-    <Firehose resources={resources}>
-      <VmDetails vm={vm} ResourceLink={ResourceLink} NodeLink={NodeLink} />
+    <Firehose resources={resources} flatten={getFlattenForKind(VirtualMachineModel.kind)}>
+      <VmDetails_ vm={vm} />
     </Firehose>
-
   );
+};
+
+const VmDetails_ = props => {
+  const { flatten, loaded, vm, resources } = props;
+  if (loaded){
+    const vm = flatten(props.resources);
+    if (vm) {
+      return (
+        <VmDetails
+          {...props}
+          vm={vm}
+          ResourceLink={ResourceLink}
+          NodeLink={NodeLink}
+          launcherPod={getPod(vm, resources, VIRT_LAUNCHER_POD_PREFIX)}
+          importerPod={getPod(vm, resources, IMPORTER_DV_POD_PREFIX)}
+          migration={getMigration(vm, resources)}
+        />);
+    }
+  }
+
+  return <VmDetails {...props} vm={vm} ResourceLink={ResourceLink} NodeLink={NodeLink} />
 };
 
 const filters = [{
