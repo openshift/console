@@ -11,6 +11,10 @@ $width: 35px;
     top: 0;
     pointer-events: none;
     width: $width;
+
+    .co-m-row:hover & {
+      background: linear-gradient(to left, $color-co-m-row-hover 0%, $color-co-m-row-hover 31%,rgba(255,255,255,0) 100%);
+    }
   }
 
   &__input:active ~ &__gradient, &__input:focus ~ &__gradient {
