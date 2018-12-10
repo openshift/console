@@ -101,7 +101,7 @@ const Volume = ({pod, volume}) => {
   const loc = getVolumeLocation(volume.volume);
   const mountPermissions = getVolumeMountPermissions(volume);
 
-  return <div>
+  return <div className="row">
     <Overflow className="col-sm-3 col-xs-4 co-truncate" value={volume.name} />
     <div className="col-sm-3 col-xs-4">
       <VolumeIcon kind={kind} />
