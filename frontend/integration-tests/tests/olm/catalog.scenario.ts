@@ -1,5 +1,6 @@
 /* eslint-disable no-undef, no-unused-vars */
 
+import { execSync } from 'child_process';
 import { browser, $, ExpectedConditions as until } from 'protractor';
 
 import { appHost, checkLogs, checkErrors, testName } from '../../protractor.conf';
@@ -7,9 +8,17 @@ import * as catalogView from '../../views/olm-catalog.view';
 import * as sidenavView from '../../views/sidenav.view';
 
 describe('Installing a service from a Catalog Source', () => {
-  const openCloudServices = new Set(['etcd', 'Prometheus Operator']);
+  const openCloudServices = new Set(['etcd', 'Prometheus Operator', 'AMQ Streams', 'Service Catalog', 'FederationV2']);
 
   beforeAll(async() => {
+    const operatorGroup = {
+      apiVersion: 'operators.coreos.com/v1alpha2',
+      kind: 'OperatorGroup',
+      metadata: {name: 'test-operatorgroup'},
+      spec: {selector: {matchLabels: {'test-name': testName}}},
+    };
+    execSync(`echo '${JSON.stringify(operatorGroup)}' | kubectl create -n ${testName} -f -`);
+
     browser.get(`${appHost}/status/ns/${testName}`);
     await browser.wait(until.presenceOf($('#sidebar')));
   });

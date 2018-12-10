@@ -35,7 +35,7 @@ describe(PackageManifestRow.displayName, () => {
   let wrapper: ShallowWrapper<PackageManifestRowProps>;
 
   beforeEach(() => {
-    wrapper = shallow(<PackageManifestRow obj={testPackageManifest} catalogSourceNamespace={testCatalogSource.metadata.namespace} catalogSourceName={testCatalogSource.metadata.name} subscription={testSubscription} />);
+    wrapper = shallow(<PackageManifestRow obj={testPackageManifest} catalogSourceNamespace={testCatalogSource.metadata.namespace} catalogSourceName={testCatalogSource.metadata.name} subscription={testSubscription} defaultNS="default" />);
   });
 
   it('renders column for package name and logo', () => {
@@ -76,7 +76,7 @@ describe(PackageManifestList.displayName, () => {
     otherPackageManifest.status.catalogSourcePublisher = 'Some Publisher';
     packages = [testPackageManifest, otherPackageManifest];
 
-    wrapper = shallow(<PackageManifestList loaded={true} data={packages} catalogSource={{}} subscription={{}} />);
+    wrapper = shallow(<PackageManifestList.WrappedComponent loaded={true} data={packages} operatorGroup={null} subscription={null} />);
   });
 
   it('renders a section for each unique `CatalogSource` for the given packages', () => {

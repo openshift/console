@@ -5,8 +5,9 @@ import * as _ from 'lodash-es';
 import { Link } from 'react-router-dom';
 
 import { referenceForModel, K8sResourceKind } from '../../module/k8s';
-import { PackageManifestKind, SubscriptionKind, CatalogSourceKind, ClusterServiceVersionLogo, visibilityLabel } from './index';
-import { PackageManifestModel, SubscriptionModel, CatalogSourceModel } from '../../models';
+import { requireOperatorGroup } from './operator-group';
+import { PackageManifestKind, SubscriptionKind, ClusterServiceVersionLogo, visibilityLabel, OperatorGroupKind } from './index';
+import { PackageManifestModel, SubscriptionModel, CatalogSourceModel, OperatorGroupModel } from '../../models';
 import { StatusBox, MsgBox } from '../utils';
 import { List, ListHeader, ColHead, MultiListPage } from '../factory';
 import { getActiveNamespace } from '../../ui/ui-actions';
@@ -19,7 +20,7 @@ export const PackageManifestHeader: React.SFC<PackageManifestHeaderProps> = (pro
 </ListHeader>;
 
 export const PackageManifestRow: React.SFC<PackageManifestRowProps> = (props) => {
-  const {obj, catalogSourceName, catalogSourceNamespace, subscription} = props;
+  const {obj, catalogSourceName, catalogSourceNamespace, subscription, defaultNS} = props;
   const ns = getActiveNamespace();
   const channel = !_.isEmpty(obj.status.defaultChannel) ? obj.status.channels.find(ch => ch.name === obj.status.defaultChannel) : obj.status.channels[0];
   const {displayName, icon = [], version, provider} = channel.currentCSVDesc;
@@ -28,13 +29,13 @@ export const PackageManifestRow: React.SFC<PackageManifestRowProps> = (props) =>
     ? <Link to={`/k8s/ns/${ns}/${SubscriptionModel.plural}/${subscription.metadata.name}`}>View subscription</Link>
     : <Link to={`/k8s/all-namespaces/${SubscriptionModel.plural}?name=${obj.metadata.name}`}>View subscriptions</Link>;
 
-  const createSubscriptionLink = () => `/k8s/ns/${ns === ALL_NAMESPACES_KEY ? 'default' : ns}/${SubscriptionModel.plural}/new?pkg=${obj.metadata.name}&catalog=${catalogSourceName}&catalogNamespace=${catalogSourceNamespace}`;
+  const createSubscriptionLink = () => `/k8s/ns/${ns === ALL_NAMESPACES_KEY ? defaultNS : ns}/${SubscriptionModel.plural}/new?pkg=${obj.metadata.name}&catalog=${catalogSourceName}&catalogNamespace=${catalogSourceNamespace}`;
 
   return <div className="row co-resource-list__item co-package-row">
     <div className="col-sm-4 col-xs-6">
       <ClusterServiceVersionLogo displayName={displayName} icon={_.get(icon, '[0]')} provider={provider.name} />
     </div>
-    <div className="col-xs-4 hidden-xs">{version} ({channel.name})</div>
+    <div className="col-sm-4 hidden-xs">{version} ({channel.name})</div>
     <div className="col-sm-4 col-xs-6 co-package-row__actions">
       { subscription
         ? subscriptionLink()
@@ -46,7 +47,7 @@ export const PackageManifestRow: React.SFC<PackageManifestRowProps> = (props) =>
   </div>;
 };
 
-export const PackageManifestList: React.SFC<PackageManifestListProps> = (props) => {
+export const PackageManifestList = requireOperatorGroup((props: PackageManifestListProps) => {
   type CatalogSourceInfo = {displayName: string, name: string, publisher: string, namespace: string};
   const catalogs = (props.data || []).reduce((allCatalogs, {status}) => allCatalogs.set(status.catalogSource, {
     displayName: status.catalogSourceDisplayName,
@@ -55,34 +56,37 @@ export const PackageManifestList: React.SFC<PackageManifestListProps> = (props) 
     namespace: status.catalogSourceNamespace,
   }), new Map<string, CatalogSourceInfo>());
 
-  return props.loaded
-    ? <React.Fragment>
-      { _.isEmpty(props.data) && <MsgBox title="No Package Manifests Found" detail="Package Manifests are packaged Operators which can be subscribed to for automatic upgrades." /> }
-      { [...catalogs.values()].map(catalog => <div key={catalog.name} className="co-catalogsource-list__section">
-        <div className="co-catalogsource-list__section__packages">
-          <div>
-            <h3>{catalog.displayName}</h3>
-            <span className="text-muted">Packaged by {catalog.publisher}</span>
-          </div>
-          <Link to={`/k8s/ns/${catalog.namespace}/${referenceForModel(CatalogSourceModel)}/${catalog.name}`}>View catalog details</Link>
+  return <StatusBox
+    loaded={props.loaded}
+    loadError={props.loadError}
+    label={PackageManifestModel.labelPlural}
+    data={props.data}
+    EmptyMsg={() => <MsgBox title="No Package Manifests Found" detail="Package Manifests are packaged Operators which can be subscribed to for automatic upgrades." />}>
+    { [...catalogs.values()].map(catalog => <div key={catalog.name} className="co-catalogsource-list__section">
+      <div className="co-catalogsource-list__section__packages">
+        <div>
+          <h3>{catalog.displayName}</h3>
+          <span className="text-muted">Packaged by {catalog.publisher}</span>
         </div>
-        <List
-          loaded={true}
-          data={props.data.filter(pkg => pkg.status.catalogSource === catalog.name)}
-          filters={props.filters}
-          virtualize={false}
-          Header={PackageManifestHeader}
-          Row={(rowProps: {obj: PackageManifestKind}) => <PackageManifestRow
-            obj={rowProps.obj}
-            catalogSourceName={catalog.name}
-            catalogSourceNamespace={catalog.namespace}
-            subscription={props.subscription.data.find(sub => sub.spec.name === rowProps.obj.metadata.name)} />}
-          label="Package Manifests"
-          EmptyMsg={() => <MsgBox title="No PackageManifests Found" detail="The catalog author has not added any packages." />} />
-      </div>) }
-    </React.Fragment>
-    : <StatusBox loaded={props.loaded} loadError={props.loadError} label={PackageManifestModel.labelPlural} />;
-};
+        <Link to={`/k8s/ns/${catalog.namespace}/${referenceForModel(CatalogSourceModel)}/${catalog.name}`}>View catalog details</Link>
+      </div>
+      <List
+        loaded={true}
+        data={props.data.filter(pkg => pkg.status.catalogSource === catalog.name)}
+        filters={props.filters}
+        virtualize={false}
+        Header={PackageManifestHeader}
+        Row={(rowProps: {obj: PackageManifestKind}) => <PackageManifestRow
+          obj={rowProps.obj}
+          catalogSourceName={catalog.name}
+          catalogSourceNamespace={catalog.namespace}
+          subscription={props.subscription.data.find(sub => sub.spec.name === rowProps.obj.metadata.name)}
+          defaultNS={_.get(props.operatorGroup.data, '[0].metadata.namespace')} />}
+        label="Package Manifests"
+        EmptyMsg={() => <MsgBox title="No PackageManifests Found" detail="The catalog author has not added any packages." />} />
+    </div>) }
+  </StatusBox>;
+});
 
 export const PackageManifestsPage: React.SFC<PackageManifestsPageProps> = (props) => {
   type Flatten = (resources: {[kind: string]: {data: K8sResourceKind[]}}) => K8sResourceKind[];
@@ -101,6 +105,7 @@ export const PackageManifestsPage: React.SFC<PackageManifestsPageProps> = (props
       {kind: referenceForModel(PackageManifestModel), isList: true, namespaced: true, prop: 'packageManifest', selector: {matchExpressions: [{key: visibilityLabel, operator: 'DoesNotExist'}]}},
       {kind: referenceForModel(CatalogSourceModel), isList: true, namespaced: true, prop: 'catalogSource'},
       {kind: referenceForModel(SubscriptionModel), isList: true, namespaced: true, prop: 'subscription'},
+      {kind: referenceForModel(OperatorGroupModel), isList: true, namespaced: true, prop: 'operatorGroup'},
     ]} />;
 };
 
@@ -111,8 +116,8 @@ export type PackageManifestsPageProps = {
 export type PackageManifestListProps = {
   data: PackageManifestKind[];
   filters?: {[name: string]: string};
-  catalogSource: {loaded?: boolean, data?: CatalogSourceKind[]};
-  subscription: {loaded?: boolean, data?: SubscriptionKind[]}
+  subscription: {loaded: boolean, data?: SubscriptionKind[]};
+  operatorGroup: {loaded: boolean, data?: OperatorGroupKind[]};
   loaded: boolean;
   loadError?: string | Object;
 };
@@ -126,6 +131,7 @@ export type PackageManifestRowProps = {
   catalogSourceName: string;
   catalogSourceNamespace: string;
   subscription?: SubscriptionKind;
+  defaultNS: string;
 };
 
 PackageManifestHeader.displayName = 'PackageHeader';

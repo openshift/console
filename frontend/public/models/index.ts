@@ -67,18 +67,17 @@ export const SubscriptionModel: K8sKind = {
   plural: 'subscriptions',
 };
 
-export const EtcdClusterModel: K8sKind = {
-  kind: 'EtcdCluster',
-  label: 'etcd Cluster',
-  labelPlural: 'Etcd Clusters',
-  apiGroup: 'etcd.database.coreos.com',
-  apiVersion: 'v1beta2',
-  path: 'etcdclusters',
-  abbr: 'EC',
+export const OperatorGroupModel: K8sKind = {
+  kind: 'OperatorGroup',
+  label: 'OperatorGroup',
+  labelPlural: 'OperatorGroups',
+  apiGroup: 'operators.coreos.com',
+  apiVersion: 'v1alpha2',
+  path: 'operatorgroups',
+  abbr: 'OG',
   namespaced: true,
   crd: true,
-  plural: 'etcdclusters',
-  propagationPolicy : 'Foreground',
+  plural: 'operatorgroups',
 };
 
 export const PrometheusModel: K8sKind = {

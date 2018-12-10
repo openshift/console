@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import * as _ from 'lodash-es';
 
 import { ClusterServiceVersionsDetailsPage, ClusterServiceVersionsDetailsPageProps, ClusterServiceVersionDetails, ClusterServiceVersionDetailsProps, ClusterServiceVersionsPage, ClusterServiceVersionsPageProps, ClusterServiceVersionList, ClusterServiceVersionHeader, ClusterServiceVersionRow, ClusterServiceVersionRowProps, CRDCard, CRDCardRow } from '../../../public/components/operator-lifecycle-manager/clusterserviceversion';
-import { ClusterServiceVersionKind, ClusterServiceVersionLogo, ClusterServiceVersionLogoProps, referenceForProvidedAPI } from '../../../public/components/operator-lifecycle-manager';
+import { ClusterServiceVersionKind, ClusterServiceVersionLogo, ClusterServiceVersionLogoProps, referenceForProvidedAPI, CSVConditionReason } from '../../../public/components/operator-lifecycle-manager';
 import { DetailsPage, ListPage, ListHeader, ColHead, List, ListInnerProps } from '../../../public/components/factory';
 import { testClusterServiceVersion } from '../../../__mocks__/k8sResourcesMocks';
 import { Timestamp, OverflowLink, MsgBox, ResourceLink, ResourceKebab, ErrorBoundary, LoadingBox, ScrollToTopOnMount, SectionHeading } from '../../../public/components/utils';
@@ -90,7 +90,7 @@ describe(ClusterServiceVersionRow.displayName, () => {
   it('renders column for app status', () => {
     const col = wrapper.find('.row').childAt(3);
 
-    expect(col.childAt(0).text()).toEqual('Enabled');
+    expect(col.childAt(0).text()).toEqual(CSVConditionReason.CSVReasonInstallSuccessful);
   });
 
   it('renders "disabling" status if CSV has `deletionTimestamp`', () => {
