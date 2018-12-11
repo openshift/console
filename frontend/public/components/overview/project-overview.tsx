@@ -137,8 +137,10 @@ const Metrics: React.SFC<MetricsProps> = ({metrics, item}) => {
 };
 
 const Status: React.SFC<StatusProps> = ({item}) => {
-  const {isRollingOut, readiness, obj} = item;
+  const {isRollingOut, readiness, obj, current} = item;
   const {namespace, name} = obj.metadata;
+  const podLink = current ? `${resourcePath(_.get(current, 'obj.kind'), _.get(current, 'obj.metadata.name'), namespace)}/pods`
+    : `${resourcePath(obj.kind, name, namespace)}/pods`;
   if (isRollingOut) {
     // TODO: Show pod status for previous and next revisions.
     return <div className="project-overview__detail project-overview__detail--status text-muted">
@@ -148,7 +150,7 @@ const Status: React.SFC<StatusProps> = ({item}) => {
 
   if (readiness) {
     return <div className="project-overview__detail project-overview__detail--status">
-      <Link to={`${resourcePath(obj.kind, name, namespace)}/pods`}>
+      <Link to={podLink}>
         {readiness.ready} of {readiness.desired} pods
       </Link>
     </div>;
