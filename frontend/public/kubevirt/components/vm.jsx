@@ -23,7 +23,6 @@ import { restartVmModal } from './modals/restart-vm-modal';
 import {
   getResourceKind,
   getLabelMatcher,
-  findVMI,
   findPod,
   findVMIMigration,
   getFlattenForKind,
@@ -107,41 +106,35 @@ const getMigration = (vm, resources) => {
   return findVMIMigration(migrationData, vm.metadata.name);
 };
 
-const StateColumn = props => {
-  if (props.loaded){
-    const vm = props.flatten(props.resources);
-    if (vm) {
-      return <VmStatus vm={vm} launcherPod={getPod(vm, props.resources, VIRT_LAUNCHER_POD_PREFIX)} importerPod={getPod(vm, props.resources, IMPORTER_DV_POD_PREFIX)} migration={getMigration(vm, props.resources)} />;
-    }
-  }
-  return DASHES;
+const StateColumn = ({ loaded, vm, resources }) => {
+  return loaded
+    ? <VmStatus
+      vm={vm}
+      launcherPod={getPod(vm, resources, VIRT_LAUNCHER_POD_PREFIX)}
+      importerPod={getPod(vm, resources, IMPORTER_DV_POD_PREFIX)}
+      migration={getMigration(vm, resources)}
+    />
+    : DASHES;
 };
 
 const FirehoseResourceLink = props => {
-  if (props.loaded) {
+  if (props.loaded && !props.loadError) {
     const data = props.flatten(props.resources);
-    if (data) {
-      let resource = data[0];
-      if (props.filter) {
-        resource = props.filter(data);
-      }
-      if (resource) {
-        const name = resource.metadata.name;
-        const namespace = resource.metadata.namespace;
-        const title = resource.metadata.uid;
-        const kind = resource.kind || PodModel.kind;
-        return <ResourceLink kind={kind} name={name} namespace={namespace} title={title} />;
-      }
+    const resource = props.filter ? props.filter(data) : data;
+    if (resource) {
+      const { name, namespace, uid } = resource.metadata;
+      const kind = resource.kind || PodModel.kind;
+      return <ResourceLink kind={kind} name={name} namespace={namespace} title={uid} />;
     }
   }
   return DASHES;
 };
 
 export const VMRow = ({obj: vm}) => {
-  const vmResource = getResourceKind(VirtualMachineModel, vm.metadata.name, true, vm.metadata.namespace, false);
-  const vmiResources = getResourceKind(VirtualMachineInstanceModel, vm.metadata.name, true, vm.metadata.namespace, true, getLabelMatcher(vm));
+  const vmiResource = getResourceKind(VirtualMachineInstanceModel, vm.metadata.name, true, vm.metadata.namespace, false);
   const podResources = getResourceKind(PodModel, undefined, true, vm.metadata.namespace, true, getLabelMatcher(vm));
-  const migrationResources = getResourceKind(VirtualMachineInstanceMigrationModel, undefined, true, vm.metadata.namespace, false); // https://kubevirt.io/api-reference/master/definitions.html#_v1_virtualmachineinstancemigration
+  // https://kubevirt.io/api-reference/master/definitions.html#_v1_virtualmachineinstancemigration
+  const migrationResources = getResourceKind(VirtualMachineInstanceMigrationModel, undefined, true, vm.metadata.namespace, false);
 
   return <ResourceRow obj={vm}>
     <div className="col-lg-2 col-md-2 col-sm-2 col-xs-6">
@@ -151,13 +144,13 @@ export const VMRow = ({obj: vm}) => {
       <ResourceLink kind={NamespaceModel.kind} name={vm.metadata.namespace} title={vm.metadata.namespace} />
     </div>
     <div className="col-lg-2 col-md-2 col-sm-2 hidden-xs">
-      <Firehose resources={[vmResource, podResources, migrationResources]} flatten={getFlattenForKind(VirtualMachineModel.kind)}>
-        <StateColumn />
+      <Firehose resources={[podResources, migrationResources]}>
+        <StateColumn vm={vm} />
       </Firehose>
     </div>
     <div className="col-lg-2 col-md-2 col-sm-2 hidden-xs">
-      <Firehose resources={[vmiResources]} flatten={getFlattenForKind(VirtualMachineInstanceModel.kind)}>
-        <FirehoseResourceLink filter={data => findVMI(data, vm.metadata.name)} />
+      <Firehose resources={[vmiResource]} flatten={getFlattenForKind(VirtualMachineInstanceModel.kind)}>
+        <FirehoseResourceLink />
       </Firehose>
     </div>
     <div className="col-lg-2 col-md-2 col-sm-2 hidden-xs">
@@ -171,33 +164,34 @@ export const VMRow = ({obj: vm}) => {
   </ResourceRow>;
 };
 
-const VMStatus = (props) => {
-  const vmResource = getResourceKind(VirtualMachineModel, props.vm.metadata.name, true, props.vm.metadata.namespace, false);
-  const vmiResources = getResourceKind(VirtualMachineInstanceModel, props.vm.metadata.name, true, props.vm.metadata.namespace, true, getLabelMatcher(props.vm));
-  const podResources = getResourceKind(PodModel, undefined, true, props.vm.metadata.namespace, true, getLabelMatcher(props.vm));
+const VMStatus = ({ vm }) => {
+  const vmiResource = getResourceKind(VirtualMachineInstanceModel, vm.metadata.name, true, vm.metadata.namespace, false);
+  const podResources = getResourceKind(PodModel, undefined, true, vm.metadata.namespace, true, getLabelMatcher(vm));
+  // https://kubevirt.io/api-reference/master/definitions.html#_v1_virtualmachineinstancemigration
+  const migrationResources = getResourceKind(VirtualMachineInstanceMigrationModel, undefined, true, vm.metadata.namespace, false);
 
   return <div className="row">
     <div className="col-lg-12">
       <h3 className="overview-section-title">Status</h3>
       <dl className="dl-horizontal dl-left">
         <dt>Name:</dt>
-        <dd>{props.vm.metadata.name}</dd>
+        <dd>{vm.metadata.name}</dd>
         <dt>State:</dt>
         <dd>
-          <Firehose resources={[vmResource]} flatten={getFlattenForKind(VirtualMachineModel.kind)}>
-            <StateColumn />
+          <Firehose resources={[podResources, migrationResources]}>
+            <StateColumn vm={vm} />
           </Firehose>
         </dd>
         <dt>VM Instance:</dt>
         <dd>
-          <Firehose resources={[vmiResources]} flatten={getFlattenForKind(VirtualMachineInstanceModel.kind)}>
-            <FirehoseResourceLink filter={data => findVMI(data, props.vm.metadata.name)} />
+          <Firehose resources={[vmiResource]} flatten={getFlattenForKind(VirtualMachineInstanceModel.kind)}>
+            <FirehoseResourceLink />
           </Firehose>
         </dd>
         <dt>Pod:</dt>
         <dd>
           <Firehose resources={[podResources]} flatten={getFlattenForKind(PodModel.kind)}>
-            <FirehoseResourceLink filter={data => findPod(data, props.vm.metadata.name, VIRT_LAUNCHER_POD_PREFIX)} />
+            <FirehoseResourceLink filter={data => findPod(data, vm.metadata.name, VIRT_LAUNCHER_POD_PREFIX)} />
           </Firehose>
         </dd>
       </dl>
@@ -227,8 +221,7 @@ class VMResourceConfiguration extends Component {
 
   getVMConfiguration() {
     const configuration = {};
-    const data = this.props.flatten(this.props.resources);
-    const vmi = this.props.filter(data);
+    const vmi = this.props.flatten(this.props.resources);
     if (vmi) {
       configuration.cpu = this.getCpu(vmi);
       configuration.memory = this.getMemory(vmi);
@@ -263,7 +256,7 @@ class VMResourceConfiguration extends Component {
 export const VMList = (props) => <List {...props} Header={VMHeader} Row={VMRow} />;
 
 const Details = ({obj: vm}) => {
-  const vmiResources = getResourceKind(VirtualMachineInstanceModel, vm.metadata.name, true, vm.metadata.namespace, true, getLabelMatcher(vm));
+  const vmiResource = getResourceKind(VirtualMachineInstanceModel, vm.metadata.name, true, vm.metadata.namespace, false);
   return <Fragment>
     <div className="co-m-pane__body">
       <h1 className="co-m-pane__heading">Virtual Machine Overview</h1>
@@ -273,8 +266,8 @@ const Details = ({obj: vm}) => {
             <VMStatus vm={vm} />
           </div>
           <div className="col-lg-6">
-            <Firehose resources={[vmiResources]} flatten={getFlattenForKind(VirtualMachineInstanceModel.kind)}>
-              <VMResourceConfiguration vm={vm} filter={data => findVMI(data, vm.metadata.name)} />
+            <Firehose resources={[vmiResource]} flatten={getFlattenForKind(VirtualMachineInstanceModel.kind)}>
+              <VMResourceConfiguration vm={vm} />
             </Firehose>
           </div>
         </div>
