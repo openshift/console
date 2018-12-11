@@ -22,7 +22,7 @@ describe(CatalogSourceDetails.displayName, () => {
   beforeEach(() => {
     obj = _.cloneDeep(testCatalogSource);
 
-    wrapper = shallow(<CatalogSourceDetails obj={obj} packageManifests={[testPackageManifest]} subscriptions={[]} />);
+    wrapper = shallow(<CatalogSourceDetails obj={obj} packageManifests={[testPackageManifest]} subscriptions={[]} operatorGroups={[]} />);
   });
 
   it('renders nothing if not all resources are loaded', () => {
@@ -59,6 +59,7 @@ describe(CatalogSourceDetailsPage.displayName, () => {
     expect(wrapper.find(DetailsPage).props().resources).toEqual([
       {kind: referenceForModel(PackageManifestModel), isList: true, namespace: match.params.ns, selector, prop: 'packageManifests'},
       {kind: referenceForModel(SubscriptionModel), isList: true, namespace: match.params.ns, prop: 'subscriptions'},
+      {kind: referenceForModel(OperatorGroupModel), isList: true, namespace: match.params.ns, prop: 'operatorGroups'},
     ]);
   });
 });

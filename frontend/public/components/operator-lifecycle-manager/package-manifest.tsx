@@ -68,11 +68,11 @@ export const PackageManifestList = requireOperatorGroup((props: PackageManifestL
           <h3>{catalog.displayName}</h3>
           <span className="text-muted">Packaged by {catalog.publisher}</span>
         </div>
-        <Link to={`/k8s/ns/${catalog.namespace}/${referenceForModel(CatalogSourceModel)}/${catalog.name}`}>View catalog details</Link>
+        {props.showDetailsLink && <Link to={`/k8s/ns/${catalog.namespace}/${referenceForModel(CatalogSourceModel)}/${catalog.name}`}>View catalog details</Link>}
       </div>
       <List
         loaded={true}
-        data={props.data.filter(pkg => pkg.status.catalogSource === catalog.name)}
+        data={(props.data || []).filter(pkg => pkg.status.catalogSource === catalog.name)}
         filters={props.filters}
         virtualize={false}
         Header={PackageManifestHeader}
@@ -80,8 +80,8 @@ export const PackageManifestList = requireOperatorGroup((props: PackageManifestL
           obj={rowProps.obj}
           catalogSourceName={catalog.name}
           catalogSourceNamespace={catalog.namespace}
-          subscription={props.subscription.data.find(sub => sub.spec.name === rowProps.obj.metadata.name)}
-          defaultNS={_.get(props.operatorGroup.data, '[0].metadata.namespace')} />}
+          subscription={(props.subscription.data || []).find(sub => sub.spec.name === rowProps.obj.metadata.name)}
+          defaultNS={_.get(props.operatorGroup, 'data[0].metadata.namespace')} />}
         label="Package Manifests"
         EmptyMsg={() => <MsgBox title="No PackageManifests Found" detail="The catalog author has not added any packages." />} />
     </div>) }
@@ -98,7 +98,7 @@ export const PackageManifestsPage: React.SFC<PackageManifestsPageProps> = (props
     title="Operator Catalog Sources"
     showTitle={true}
     helpText={HelpText}
-    ListComponent={PackageManifestList}
+    ListComponent={(listProps: PackageManifestListProps) => <PackageManifestList {...listProps} showDetailsLink={true} />}
     filterLabel="Packages by name"
     flatten={flatten}
     resources={[
@@ -120,6 +120,7 @@ export type PackageManifestListProps = {
   operatorGroup: {loaded: boolean, data?: OperatorGroupKind[]};
   loaded: boolean;
   loadError?: string | Object;
+  showDetailsLink?: boolean;
 };
 
 export type PackageManifestHeaderProps = {
@@ -134,6 +135,6 @@ export type PackageManifestRowProps = {
   defaultNS: string;
 };
 
-PackageManifestHeader.displayName = 'PackageHeader';
-PackageManifestRow.displayName = 'PackageRow';
-PackageManifestList.displayName = 'PackageList';
+PackageManifestHeader.displayName = 'PackageManifestHeader';
+PackageManifestRow.displayName = 'PackageManifestRow';
+PackageManifestList.displayName = 'PackageManifestList';
