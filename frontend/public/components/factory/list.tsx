@@ -419,7 +419,7 @@ export const List = connect(stateToProps, {sortList: UIActions.sortList})(
       staticFilters: PropTypes.array,
       virtualize: PropTypes.bool,
       currentSortField: PropTypes.string,
-      currentSortFunc: PropTypes.func,
+      currentSortFunc: PropTypes.string,
       currentSortOrder: PropTypes.any,
       defaultSortField: PropTypes.string,
       defaultSortFunc: PropTypes.string,
@@ -521,7 +521,7 @@ export type ColHeadProps = {
 
 export type ListInnerProps = {
   currentSortField?: string;
-  currentSortFunc?: Function;
+  currentSortFunc?: string;
   currentSortOrder?: any;
   data?: any[];
   defaultSortField?: string;
