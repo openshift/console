@@ -12,7 +12,7 @@ import { WithResources } from './withResources';
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
 
-export const resourceLauncher = (Component, resourceMap, resourceToProps) => (props) => {
+export const modalResourceLauncher = (Component, resourceMap, resourceToProps) => (props) => {
   const modalContainer = document.getElementById('modal-container');
 
   const result = new Promise(resolve => {

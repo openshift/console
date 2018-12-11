@@ -1,4 +1,4 @@
-import { resourceLauncher } from '../utils/resourceLauncher';
+import { modalResourceLauncher } from '../utils/modalResourceLauncher';
 import { CreateVmWizard, TEMPLATE_TYPE_LABEL } from 'kubevirt-web-ui-components';
 import { k8sCreate } from '../../module/okdk8s';
 import {
@@ -12,7 +12,7 @@ import { getResourceKind } from '../utils/resources';
 import { units } from '../utils/okdutils';
 
 export const openCreateVmWizard = ( activeNamespace, createTemplate = false ) => {
-  const launcher = resourceLauncher(CreateVmWizard, {
+  const launcher = modalResourceLauncher(CreateVmWizard, {
     namespaces: {
       resource: getResourceKind(NamespaceModel, undefined, true, undefined, true),
     },

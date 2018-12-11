@@ -31,7 +31,7 @@ import {
   VM_STATUS_TO_TEXT,
 } from 'kubevirt-web-ui-components';
 import { DASHES, IMPORTER_DV_POD_PREFIX, VIRT_LAUNCHER_POD_PREFIX } from './utils/constants';
-import { resourceLauncher } from './utils/resourceLauncher';
+import { modalResourceLauncher } from './utils/modalResourceLauncher';
 import { showError } from './utils/showErrors';
 import VmConsolesConnected from './vmconsoles';
 import { Nic } from './nic';
@@ -75,7 +75,7 @@ const menuActionMigrate = (kind, vm) => ({
   hidden: !_.get(vm, 'spec.running', false),
   label: 'Migrate Virtual Machine',
   callback: () => {
-    return resourceLauncher(BasicMigrationDialog, {
+    return modalResourceLauncher(BasicMigrationDialog, {
       virtualMachineInstance: {
         resource: getResourceKind(VirtualMachineInstanceModel, vm.metadata.name, true, vm.metadata.namespace, false, getLabelMatcher(vm)),
         required: true,

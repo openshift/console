@@ -81,7 +81,7 @@ export class WithResources extends React.Component {
   render() {
     const { dispose, children } = this.props;
 
-    if (!this.state.loaded) {
+    if (!this.state.loaded && this.props.showLoader) {
       return <Loader onExit={dispose} />;
     }
 
@@ -96,6 +96,14 @@ WithResources.defaultProps = {
 WithResources.propTypes = {
   resources: PropTypes.object,
   resourceMap: PropTypes.object.isRequired,
-  dispose: PropTypes.func.isRequired,
+  dispose: PropTypes.func,
   resourceToProps: PropTypes.func,
+  showLoader: PropTypes.bool,
+};
+
+WithResources.defaultProps = {
+  showLoader: true,
+  resourceToProps: null,
+  dispose: null,
+  resource: undefined,
 };
