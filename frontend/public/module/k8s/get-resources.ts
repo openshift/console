@@ -101,8 +101,9 @@ export const getResources = () => coFetchJSON('api/kubernetes/apis')
 
         const models = _.flatten(data.filter(d => d.resources).map(defineModels));
         allResources.forEach(r => ADMIN_RESOURCES.has(r.split('/')[0]) ? adminResources.push(r) : safeResources.push(r));
+        const configResources = _.filter(models, m => m.apiGroup === 'config.openshift.io' && m.kind !== 'ClusterOperator');
 
-        return {allResources, safeResources, adminResources, namespacedSet, models, preferredVersions};
+        return {allResources, safeResources, adminResources, configResources, namespacedSet, models, preferredVersions};
       });
   });
 
