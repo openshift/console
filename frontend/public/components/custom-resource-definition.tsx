@@ -52,5 +52,16 @@ const CRDRow = ({obj: crd}) => <div className="row co-resource-list__item">
   </div>
 </div>;
 
-export const CustomResourceDefinitionsList = props => <List {...props} Header={CRDHeader} Row={CRDRow} />;
-export const CustomResourceDefinitionsPage = props => <ListPage {...props} ListComponent={CustomResourceDefinitionsList} kind="CustomResourceDefinition" canCreate={true} filterLabel="CRDs by name" />;
+export const CustomResourceDefinitionsList: React.SFC<CustomResourceDefinitionsListProps> = props => <List {...props} Header={CRDHeader} Row={CRDRow} />;
+export const CustomResourceDefinitionsPage: React.SFC<CustomResourceDefinitionsPageProps> = props => <ListPage {...props} ListComponent={CustomResourceDefinitionsList} kind="CustomResourceDefinition" canCreate={true} filterLabel="CRDs by name" />;
+
+export type CustomResourceDefinitionsListProps = {
+
+};
+
+export type CustomResourceDefinitionsPageProps = {
+
+};
+
+CustomResourceDefinitionsList.displayName = 'CustomResourceDefinitionsList';
+CustomResourceDefinitionsPage.displayName = 'CustomResourceDefinitionsPage';

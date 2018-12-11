@@ -109,7 +109,7 @@ describe(InstallPlansList.displayName, () => {
     const msgWrapper = shallow(<EmptyMsg />);
 
     expect(msgWrapper.find(MsgBox).props().title).toEqual('No Install Plans Found');
-    expect(msgWrapper.find(MsgBox).props().detail).toEqual('Install Plans are created automatically by subscriptions or manually using kubectl.');
+    expect(msgWrapper.find(MsgBox).props().detail).toEqual('Install Plans are created automatically by subscriptions or manually using the CLI.');
   });
 });
 

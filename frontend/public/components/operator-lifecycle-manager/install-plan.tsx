@@ -56,7 +56,7 @@ export const InstallPlanRow: React.SFC<InstallPlanRowProps> = (props) => {
   </ResourceRow>;
 };
 export const InstallPlansList = requireOperatorGroup((props: InstallPlansListProps) => {
-  const EmptyMsg = () => <MsgBox title="No Install Plans Found" detail="Install Plans are created automatically by subscriptions or manually using kubectl." />;
+  const EmptyMsg = () => <MsgBox title="No Install Plans Found" detail="Install Plans are created automatically by subscriptions or manually using the CLI." />;
   return <List {...props} Header={InstallPlanHeader} Row={InstallPlanRow} EmptyMsg={EmptyMsg} />;
 });
 

@@ -11,31 +11,35 @@ import { CatalogSourceKind, SubscriptionKind, PackageManifestKind, visibilityLab
 import { requireOperatorGroup } from './operator-group';
 import { PackageManifestList } from './package-manifest';
 import { SubscriptionModel, CatalogSourceModel, PackageManifestModel, OperatorGroupModel } from '../../models';
-import { referenceForModel } from '../../module/k8s';
+import { referenceForModel, K8sResourceKind } from '../../module/k8s';
 import { DetailsPage } from '../factory';
 
-export const CatalogSourceDetails: React.SFC<CatalogSourceDetailsProps> = ({obj, packageManifests, subscriptions}) => !_.isEmpty(obj)
-  ? <div className="co-catalog-details co-m-pane">
-    <div className="co-m-pane__body">
-      <div className="col-xs-4">
-        <dl className="co-m-pane__details">
-          <dt>Name</dt>
-          <dd>{obj.spec.displayName}</dd>
-        </dl>
+export const CatalogSourceDetails: React.SFC<CatalogSourceDetailsProps> = ({obj, packageManifests, subscriptions, operatorGroups}) => {
+  const toData = <T extends K8sResourceKind>(data: T[]) => ({loaded: true, data});
+
+  return !_.isEmpty(obj)
+    ? <div className="co-catalog-details co-m-pane">
+      <div className="co-m-pane__body">
+        <div className="col-xs-4">
+          <dl className="co-m-pane__details">
+            <dt>Name</dt>
+            <dd>{obj.spec.displayName}</dd>
+          </dl>
+        </div>
+        <div className="col-xs-4">
+          <dl className="co-m-pane__details">
+            <dt>Publisher</dt>
+            <dd>{obj.spec.publisher}</dd>
+          </dl>
+        </div>
       </div>
-      <div className="col-xs-4">
-        <dl className="co-m-pane__details">
-          <dt>Publisher</dt>
-          <dd>{obj.spec.publisher}</dd>
-        </dl>
+      <div className="co-m-pane__body">
+        <SectionHeading text="Packages" />
+        <PackageManifestList loaded={true} data={packageManifests} operatorGroup={toData(operatorGroups)} subscription={toData(subscriptions)} />
       </div>
     </div>
-    <div className="co-m-pane__body">
-      <SectionHeading text="Packages" />
-      <PackageManifestList loaded={true} data={packageManifests} operatorGroup={null} subscription={{loaded: true, data: subscriptions}} />
-    </div>
-  </div>
-  : <div />;
+    : <div />;
+};
 
 export const CatalogSourceDetailsPage: React.SFC<CatalogSourceDetailsPageProps> = (props) => <DetailsPage
   {...props}
@@ -58,6 +62,11 @@ export const CatalogSourceDetailsPage: React.SFC<CatalogSourceDetailsPageProps> 
     isList: true,
     namespace: props.match.params.ns,
     prop: 'subscriptions',
+  }, {
+    kind: referenceForModel(OperatorGroupModel),
+    isList: true,
+    namespace: props.match.params.ns,
+    prop: 'operatorGroups',
   }]}
 />;
 
@@ -112,6 +121,7 @@ export type CatalogSourceDetailsProps = {
   obj: CatalogSourceKind;
   subscriptions: SubscriptionKind[];
   packageManifests: PackageManifestKind[];
+  operatorGroups: OperatorGroupKind[];
 };
 
 export type CatalogSourceDetailsPageProps = {
