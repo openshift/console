@@ -798,7 +798,6 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
   render() {
     const { newStorageClass, fieldErrors } = this.state;
     const reclaimPolicyKey = newStorageClass.reclaim === null ? this.reclaimPolicies.Delete : newStorageClass.reclaim;
-    const sortedProvisionerKeys = _.keys(_.mapValues(this.storageTypes, 'provisioner')).sort();
 
     return (
       <div className="co-m-pane__body">
@@ -851,7 +850,6 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
               autocompleteFilter={this.autocompleteFilter}
               autocompletePlaceholder={'Select Provisioner'}
               items={_.mapValues(this.storageTypes, 'provisioner')}
-              sortedItemKeys={sortedProvisionerKeys}
               dropDownClassName="dropdown--full-width"
               menuClassName="dropdown-menu--text-wrap"
               selectedKey={_.get(this.state, 'newStorageClass.type')}
