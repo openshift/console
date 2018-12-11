@@ -65,8 +65,8 @@ const alertDescription = alert => {
 
 export const silenceState = s => _.get(s, 'status.state');
 
-const alertsToProps = ({UI}) => UI.getIn(['monitoring', 'alerts'], {});
-const silencesToProps = ({UI}) => UI.getIn(['monitoring', 'silences'], {});
+const alertsToProps = ({UI}) => UI.getIn(['monitoring', 'alerts']) || {};
+const silencesToProps = ({UI}) => UI.getIn(['monitoring', 'silences']) || {};
 
 const pollers = {};
 const pollerTimeouts = {};
