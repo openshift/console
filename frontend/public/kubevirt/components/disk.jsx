@@ -1,5 +1,5 @@
 import React from 'react';
-import * as _ from 'lodash';
+import * as _ from 'lodash-es';
 import { List, ColHead, ListHeader, ResourceRow } from './factory/okdfactory';
 import { PersistentVolumeClaimModel } from '../models';
 import { Loading, Firehose, Kebab } from './utils/okdutils';

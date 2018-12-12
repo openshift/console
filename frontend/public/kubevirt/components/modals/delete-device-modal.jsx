@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import * as _ from 'lodash';
+import * as _ from 'lodash-es';
 import { Form } from 'patternfly-react';
 
 import { PromiseComponent } from '../utils/okdutils';

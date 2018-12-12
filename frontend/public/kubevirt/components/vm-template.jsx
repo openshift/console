@@ -1,5 +1,5 @@
 import React from 'react';
-import * as _ from 'lodash';
+import * as _ from 'lodash-es';
 import { VmTemplateModel } from '../models';
 import { ListPage, List, ResourceRow, ListHeader, ColHead } from './factory/okdfactory';
 import { ResourceLink, ResourceKebab, Kebab } from './utils/okdutils';

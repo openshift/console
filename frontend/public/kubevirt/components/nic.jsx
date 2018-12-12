@@ -1,5 +1,5 @@
 import React from 'react';
-import * as _ from 'lodash';
+import * as _ from 'lodash-es';
 import { Kebab } from './utils/okdutils';
 import { List, ColHead, ListHeader, ResourceRow } from './factory/okdfactory';
 import { DASHES, BUS_VIRTIO, NETWORK_TYPE_MULTUS, NETWORK_TYPE_POD, NIC } from './utils/constants';
