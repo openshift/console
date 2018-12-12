@@ -1,8 +1,13 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 
-import { Kebab, kindObj, LabelList, ResourceLink, Selector, Timestamp } from './index';
-import { referenceForOwnerRef, K8sResourceKind } from '../../module/k8s';
+import { Kebab, LabelList, ResourceLink, Selector, Timestamp } from './index';
+import {
+  K8sResourceKind,
+  modelFor,
+  referenceFor,
+  referenceForOwnerRef,
+} from '../../module/k8s';
 
 export const pluralize = (i: number, singular: string, plural: string = `${singular}s`) => `${i || 0} ${i === 1 ? singular : plural}`;
 
@@ -12,6 +17,8 @@ export const detailsPage = <T extends {}>(Component: React.ComponentType<T>) => 
 
 export const ResourceSummary: React.SFC<ResourceSummaryProps> = ({children, resource, showPodSelector = true, showNodeSelector = true, showAnnotations = true, podSelector = 'spec.selector'}) => {
   const { metadata, type, kind } = resource;
+  const reference = referenceFor(resource);
+  const model = modelFor(reference);
   const owners = (_.get(metadata, 'ownerReferences') || [])
     .map((o, i) => <ResourceLink key={i} kind={referenceForOwnerRef(o)} name={o.name} namespace={metadata.namespace} title={o.uid} />);
 
@@ -29,7 +36,7 @@ export const ResourceSummary: React.SFC<ResourceSummaryProps> = ({children, reso
     {showNodeSelector && <dt>Node Selector</dt>}
     {showNodeSelector && <dd><Selector kind="Node" selector={_.get(resource, 'spec.template.spec.nodeSelector')} /></dd>}
     {showAnnotations && <dt>Annotations</dt>}
-    {showAnnotations && <dd><a className="co-m-modal-link" onClick={Kebab.factory.ModifyAnnotations(kindObj(kind), resource).callback}>{pluralize(_.size(metadata.annotations), 'Annotation')}</a></dd>}
+    {showAnnotations && <dd><a className="co-m-modal-link" onClick={Kebab.factory.ModifyAnnotations(model, resource).callback}>{pluralize(_.size(metadata.annotations), 'Annotation')}</a></dd>}
     {children}
     <dt>Created At</dt>
     <dd><Timestamp timestamp={metadata.creationTimestamp} /></dd>

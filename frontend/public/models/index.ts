@@ -67,18 +67,17 @@ export const SubscriptionModel: K8sKind = {
   plural: 'subscriptions',
 };
 
-export const EtcdClusterModel: K8sKind = {
-  kind: 'EtcdCluster',
-  label: 'etcd Cluster',
-  labelPlural: 'Etcd Clusters',
-  apiGroup: 'etcd.database.coreos.com',
-  apiVersion: 'v1beta2',
-  path: 'etcdclusters',
-  abbr: 'EC',
+export const OperatorGroupModel: K8sKind = {
+  kind: 'OperatorGroup',
+  label: 'OperatorGroup',
+  labelPlural: 'OperatorGroups',
+  apiGroup: 'operators.coreos.com',
+  apiVersion: 'v1alpha2',
+  path: 'operatorgroups',
+  abbr: 'OG',
   namespaced: true,
   crd: true,
-  plural: 'etcdclusters',
-  propagationPolicy : 'Foreground',
+  plural: 'operatorgroups',
 };
 
 export const PrometheusModel: K8sKind = {
@@ -807,7 +806,7 @@ export const MachineSetModel: K8sKind = {
 
 export const MachineModel: K8sKind = {
   label: 'Machine',
-  labelPlural: 'Machine',
+  labelPlural: 'Machines',
   apiVersion: 'v1alpha1',
   path: 'machines',
   apiGroup: 'cluster.k8s.io',
@@ -816,5 +815,48 @@ export const MachineModel: K8sKind = {
   namespaced: true,
   kind: 'Machine',
   id: 'machine',
+  crd: true,
+};
+
+// Openshift cluster resources
+export const ClusterOperatorModel: K8sKind = {
+  label: 'Cluster Operator',
+  labelPlural: 'Cluster Operators',
+  apiVersion: 'v1',
+  path: 'clusteroperators',
+  apiGroup: 'config.openshift.io',
+  plural: 'clusteroperators',
+  abbr: 'CO',
+  namespaced: false,
+  kind: 'ClusterOperator',
+  id: 'clusteroperator',
+  crd: true,
+};
+
+export const ClusterVersionModel: K8sKind = {
+  label: 'Cluster Version',
+  labelPlural: 'Cluster Versions',
+  apiVersion: 'v1',
+  path: 'clusterversions',
+  apiGroup: 'config.openshift.io',
+  plural: 'clusterversions',
+  abbr: 'CV',
+  namespaced: false,
+  kind: 'ClusterVersion',
+  id: 'clusterversion',
+  crd: true,
+};
+
+export const ClusterAutoscalerModel: K8sKind = {
+  label: 'Cluster Autoscaler',
+  labelPlural: 'Cluster Autoscalers',
+  apiVersion: 'v1alpha1',
+  path: 'clusterautoscalers',
+  apiGroup: 'autoscaling.openshift.io',
+  plural: 'clusterautoscalers',
+  abbr: 'CA',
+  namespaced: false,
+  kind: 'ClusterAutoscaler',
+  id: 'clusterautoscaler',
   crd: true,
 };

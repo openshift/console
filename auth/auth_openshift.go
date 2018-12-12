@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
 	"strings"
 	"time"
 
@@ -23,6 +24,19 @@ type openShiftConfig struct {
 	issuerURL     string
 	cookiePath    string
 	secureCookies bool
+}
+
+func validateAbsURL(value string) error {
+	ur, err := url.Parse(value)
+	if err != nil {
+		return err
+	}
+
+	if ur == nil || ur.String() == "" || ur.Scheme == "" || ur.Host == "" {
+		return fmt.Errorf("url is not absolute: %v", ur)
+	}
+
+	return nil
 }
 
 func newOpenShiftAuth(ctx context.Context, c *openShiftConfig) (oauth2.Endpoint, *openShiftAuth, error) {
@@ -47,13 +61,26 @@ func newOpenShiftAuth(ctx context.Context, c *openShiftConfig) (oauth2.Endpoint,
 	}
 
 	var metadata struct {
-		Auth  string `json:"authorization_endpoint"`
-		Token string `json:"token_endpoint"`
+		Issuer string `json:"issuer"`
+		Auth   string `json:"authorization_endpoint"`
+		Token  string `json:"token_endpoint"`
 	}
 
 	if err := json.NewDecoder(resp.Body).Decode(&metadata); err != nil {
 		return oauth2.Endpoint{}, nil, fmt.Errorf("discovery through endpoint %s failed to decode body: %v",
 			wellKnownURL, err)
+	}
+
+	if err := validateAbsURL(metadata.Issuer); err != nil {
+		return oauth2.Endpoint{}, nil, err
+	}
+
+	if err := validateAbsURL(metadata.Auth); err != nil {
+		return oauth2.Endpoint{}, nil, err
+	}
+
+	if err := validateAbsURL(metadata.Token); err != nil {
+		return oauth2.Endpoint{}, nil, err
 	}
 
 	return oauth2.Endpoint{

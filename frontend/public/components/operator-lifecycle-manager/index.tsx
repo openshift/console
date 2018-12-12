@@ -3,14 +3,14 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 
-import { K8sResourceKind, GroupVersionKind, OwnerReference } from '../../module/k8s';
+import { K8sResourceKind, GroupVersionKind, OwnerReference, Selector } from '../../module/k8s';
 import { Descriptor } from './descriptors/types';
-import * as operatorLogo from '../../imgs/operator.svg';
-
 export { ClusterServiceVersionsDetailsPage, ClusterServiceVersionsPage } from './clusterserviceversion';
 export { ClusterServiceVersionResourcesDetailsPage, ClusterServiceVersionResourceLink } from './clusterserviceversion-resource';
 export { CatalogSourceDetailsPage, CreateSubscriptionYAML } from './catalog-source';
 export { SubscriptionsPage } from './subscription';
+
+import * as operatorLogo from '../../imgs/operator.svg';
 
 export const appCatalogLabel = 'alm-catalog';
 export enum AppCatalog {
@@ -42,6 +42,7 @@ export enum CSVConditionReason {
   CSVReasonComponentUnhealthy = 'ComponentUnhealthy',
   CSVReasonBeingReplaced = 'BeingReplaced',
   CSVReasonReplaced = 'Replaced',
+  CSVReasonCopied = 'Copied',
 }
 
 export enum InstallPlanApproval {
@@ -61,6 +62,24 @@ export type CRDDescription = {
   name: string;
   version: string;
   kind: string;
+  displayName: string;
+  description?: string;
+  specDescriptors?: Descriptor[];
+  statusDescriptors?: Descriptor[];
+  resources?: {
+    name?: string;
+    version: string;
+    kind: string;
+  }[];
+};
+
+export type APIServiceDefinition = {
+  name: string;
+  group: string;
+  version: string;
+  kind: string;
+  deploymentName: string;
+  containerPort: number;
   displayName: string;
   description?: string;
   specDescriptors?: Descriptor[];
@@ -93,7 +112,8 @@ export type ClusterServiceVersionKind = {
         deployments: {name: string, spec: any}[];
       };
     };
-    customresourcedefinitions: {owned?: CRDDescription[], required?: CRDDescription[]};
+    customresourcedefinitions?: {owned?: CRDDescription[], required?: CRDDescription[]};
+    apiservicedefinitions?: {owned?: APIServiceDefinition[], required?: APIServiceDefinition[]};
     replaces?: string;
   };
   status?: {
@@ -197,13 +217,22 @@ export type PackageManifestKind = {
   };
 } & K8sResourceKind;
 
+export type OperatorGroupKind = {
+  apiVersion: 'operators.coreos.com/v1alpha2';
+  kind: 'OperatorGroup';
+  spec: {selector: Selector};
+  status?: {namespaces: K8sResourceKind[]};
+} & K8sResourceKind;
+
 // TODO(alecmerdler): Shouldn't be needed anymore
 export const olmNamespace = 'operator-lifecycle-manager';
 export const visibilityLabel = 'olm-visibility';
 
 export const isEnabled = (namespace: K8sResourceKind) => _.has(namespace, ['metadata', 'annotations', 'alm-manager']);
 
-export const referenceForCRDDesc = (desc: CRDDescription): GroupVersionKind => `${desc.name.slice(desc.name.indexOf('.') + 1)}~${desc.version}~${desc.kind}`;
+export const referenceForProvidedAPI = (desc: CRDDescription | APIServiceDefinition): GroupVersionKind => _.get(desc, 'group')
+  ? `${(desc as APIServiceDefinition).group}~${desc.version}~${desc.kind}`
+  : `${(desc as CRDDescription).name.slice(desc.name.indexOf('.') + 1)}~${desc.version}~${desc.kind}`;
 
 export const ClusterServiceVersionLogo: React.SFC<ClusterServiceVersionLogoProps> = (props) => {
   const {icon, displayName, provider, version} = props;

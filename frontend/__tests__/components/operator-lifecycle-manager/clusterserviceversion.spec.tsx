@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import * as _ from 'lodash-es';
 
 import { ClusterServiceVersionsDetailsPage, ClusterServiceVersionsDetailsPageProps, ClusterServiceVersionDetails, ClusterServiceVersionDetailsProps, ClusterServiceVersionsPage, ClusterServiceVersionsPageProps, ClusterServiceVersionList, ClusterServiceVersionHeader, ClusterServiceVersionRow, ClusterServiceVersionRowProps, CRDCard, CRDCardRow } from '../../../public/components/operator-lifecycle-manager/clusterserviceversion';
-import { ClusterServiceVersionKind, ClusterServiceVersionLogo, ClusterServiceVersionLogoProps, referenceForCRDDesc } from '../../../public/components/operator-lifecycle-manager';
+import { ClusterServiceVersionKind, ClusterServiceVersionLogo, ClusterServiceVersionLogoProps, referenceForProvidedAPI, CSVConditionReason } from '../../../public/components/operator-lifecycle-manager';
 import { DetailsPage, ListPage, ListHeader, ColHead, List, ListInnerProps } from '../../../public/components/factory';
 import { testClusterServiceVersion } from '../../../__mocks__/k8sResourcesMocks';
 import { Timestamp, OverflowLink, MsgBox, ResourceLink, ResourceKebab, ErrorBoundary, LoadingBox, ScrollToTopOnMount, SectionHeading } from '../../../public/components/utils';
@@ -90,7 +90,7 @@ describe(ClusterServiceVersionRow.displayName, () => {
   it('renders column for app status', () => {
     const col = wrapper.find('.row').childAt(3);
 
-    expect(col.childAt(0).text()).toEqual('Enabled');
+    expect(col.childAt(0).text()).toEqual(CSVConditionReason.CSVReasonInstallSuccessful);
   });
 
   it('renders "disabling" status if CSV has `deletionTimestamp`', () => {
@@ -104,7 +104,7 @@ describe(ClusterServiceVersionRow.displayName, () => {
     const col = wrapper.find('.row').childAt(4);
     testClusterServiceVersion.spec.customresourcedefinitions.owned.forEach((desc, i) => {
       expect(col.find(Link).at(i).props().title).toEqual(desc.name);
-      expect(col.find(Link).at(i).props().to).toEqual(`/k8s/ns/default/clusterserviceversions/testapp/${referenceForCRDDesc(desc)}`);
+      expect(col.find(Link).at(i).props().to).toEqual(`/k8s/ns/default/clusterserviceversions/testapp/${referenceForProvidedAPI(desc)}`);
     });
   });
 });
@@ -154,7 +154,7 @@ describe(ClusterServiceVersionsPage.displayName, () => {
   let wrapper: ShallowWrapper<ClusterServiceVersionsPageProps>;
 
   beforeEach(() => {
-    wrapper = shallow(<ClusterServiceVersionsPage.WrappedComponent kind={referenceForModel(ClusterServiceVersionModel)} resourceDescriptions={[]} match={{params: {ns: 'foo'}, isExact: true, path: '', url: ''}} />);
+    wrapper = shallow(<ClusterServiceVersionsPage.WrappedComponent kind={referenceForModel(ClusterServiceVersionModel)} resourceDescriptions={[]} namespace="foo" />);
   });
 
   it('renders a `ListPage` with correct props', () => {
@@ -191,7 +191,7 @@ describe(CRDCard.displayName, () => {
   it('renders a link to create a new instance', () => {
     const wrapper = shallow(<CRDCard crd={crd} csv={testClusterServiceVersion} />);
 
-    expect(wrapper.find('.co-crd-card__footer').find(Link).props().to).toEqual(`/k8s/ns/${testClusterServiceVersion.metadata.namespace}/${ClusterServiceVersionModel.plural}/${testClusterServiceVersion.metadata.name}/${referenceForCRDDesc(crd)}/new`);
+    expect(wrapper.find('.co-crd-card__footer').find(Link).props().to).toEqual(`/k8s/ns/${testClusterServiceVersion.metadata.namespace}/${ClusterServiceVersionModel.plural}/${testClusterServiceVersion.metadata.name}/${referenceForProvidedAPI(crd)}/new`);
   });
 });
 
@@ -302,7 +302,7 @@ describe(ClusterServiceVersionsDetailsPage.displayName, () => {
     expect(detailsPage.props().pagesFor(csv)[3].href).toEqual('instances');
     csv.spec.customresourcedefinitions.owned.forEach((desc, i) => {
       expect(detailsPage.props().pagesFor(csv)[4 + i].name).toEqual(desc.displayName);
-      expect(detailsPage.props().pagesFor(csv)[4 + i].href).toEqual(referenceForCRDDesc(desc));
+      expect(detailsPage.props().pagesFor(csv)[4 + i].href).toEqual(referenceForProvidedAPI(desc));
     });
   });
 

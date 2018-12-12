@@ -5,12 +5,13 @@ import * as _ from 'lodash-es';
 import { match, Link } from 'react-router-dom';
 import { Map as ImmutableMap } from 'immutable';
 
-import { ListPage, List, ListHeader, ColHead, ResourceRow, DetailsPage } from '../factory';
+import { MultiListPage, List, ListHeader, ColHead, ResourceRow, DetailsPage } from '../factory';
 import { SectionHeading, MsgBox, ResourceLink, ResourceKebab, Kebab, ResourceIcon, navFactory, ResourceSummary } from '../utils';
 import { InstallPlanKind, InstallPlanApproval, olmNamespace, Step } from './index';
 import { referenceForModel, referenceForOwnerRef, k8sUpdate } from '../../module/k8s';
-import { SubscriptionModel, ClusterServiceVersionModel, InstallPlanModel, CatalogSourceModel } from '../../models';
+import { SubscriptionModel, ClusterServiceVersionModel, InstallPlanModel, CatalogSourceModel, OperatorGroupModel } from '../../models';
 import { breadcrumbsForOwnerRefs } from '../utils/breadcrumbs';
+import { requireOperatorGroup } from './operator-group';
 
 export const InstallPlanHeader: React.SFC<InstallPlanHeaderProps> = (props) => <ListHeader>
   <ColHead {...props} className="col-xs-6 col-sm-4 col-md-3" sortField="metadata.name">Name</ColHead>
@@ -54,18 +55,22 @@ export const InstallPlanRow: React.SFC<InstallPlanRowProps> = (props) => {
     </div>
   </ResourceRow>;
 };
-export const InstallPlansList: React.SFC<InstallPlansListProps> = (props) => {
-  const EmptyMsg = () => <MsgBox title="No Install Plans Found" detail="Install Plans are created automatically by subscriptions or manually using kubectl." />;
+export const InstallPlansList = requireOperatorGroup((props: InstallPlansListProps) => {
+  const EmptyMsg = () => <MsgBox title="No Install Plans Found" detail="Install Plans are created automatically by subscriptions or manually using the CLI." />;
   return <List {...props} Header={InstallPlanHeader} Row={InstallPlanRow} EmptyMsg={EmptyMsg} />;
-};
+});
 
-export const InstallPlansPage: React.SFC<InstallPlansPageProps> = (props) => <ListPage
+export const InstallPlansPage: React.SFC<InstallPlansPageProps> = (props) => <MultiListPage
   {...props}
+  resources={[
+    {kind: referenceForModel(InstallPlanModel), namespace: props.namespace, namespaced: true, prop: 'installPlan'},
+    {kind: referenceForModel(OperatorGroupModel), namespace: props.namespace, namespaced: true, prop: 'operatorGroup'},
+  ]}
+  flatten={resources => _.get(resources.subscription, 'data', [])}
   title="Install Plans"
   showTitle={true}
   ListComponent={InstallPlansList}
-  filterLabel="Install Plans by name"
-  kind={referenceForModel(InstallPlanModel)} />;
+  filterLabel="Install Plans by name" />;
 
 export const InstallPlanDetails: React.SFC<InstallPlanDetailsProps> = ({obj}) => {
   const needsApproval = obj.spec.approval === InstallPlanApproval.Manual && obj.spec.approved === false;
@@ -206,7 +211,7 @@ export type InstallPlansListProps = {
 };
 
 export type InstallPlansPageProps = {
-
+  namespace?: string;
 };
 
 export type InstallPlanDetailsProps = {

@@ -31,7 +31,7 @@ describe(ConnectedStorageClassForm.displayName, () => {
   });
 
   it('renders the proper header', () => {
-    expect(wrapper.find('.co-m-pane__heading').text()).toEqual('Create Storage Class');
+    expect(wrapper.find('.co-m-pane__name').text()).toEqual('Create Storage Class');
   });
 
   it('renders a form', () => {

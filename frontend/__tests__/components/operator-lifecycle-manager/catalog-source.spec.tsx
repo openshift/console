@@ -9,7 +9,7 @@ import { CatalogSourceDetails, CatalogSourceDetailsProps, CatalogSourceDetailsPa
 import { PackageManifestList } from '../../../public/components/operator-lifecycle-manager/package-manifest';
 import { visibilityLabel } from '../../../public/components/operator-lifecycle-manager';
 import { referenceForModel } from '../../../public/module/k8s';
-import { SubscriptionModel, CatalogSourceModel, PackageManifestModel } from '../../../public/models';
+import { SubscriptionModel, CatalogSourceModel, PackageManifestModel, OperatorGroupModel } from '../../../public/models';
 import { DetailsPage } from '../../../public/components/factory';
 import { Firehose, LoadingBox, ErrorBoundary } from '../../../public/components/utils';
 import { CreateYAML, CreateYAMLProps } from '../../../public/components/create-yaml';
@@ -22,7 +22,7 @@ describe(CatalogSourceDetails.displayName, () => {
   beforeEach(() => {
     obj = _.cloneDeep(testCatalogSource);
 
-    wrapper = shallow(<CatalogSourceDetails obj={obj} packageManifests={[testPackageManifest]} subscriptions={[]} />);
+    wrapper = shallow(<CatalogSourceDetails obj={obj} packageManifests={[testPackageManifest]} subscriptions={[]} operatorGroups={[]} />);
   });
 
   it('renders nothing if not all resources are loaded', () => {
@@ -38,7 +38,6 @@ describe(CatalogSourceDetails.displayName, () => {
 
   it('renders a `PackageManifestList` component', () => {
     expect(wrapper.find(PackageManifestList).props().data).toEqual([testPackageManifest]);
-    expect(wrapper.find(PackageManifestList).props().catalogSource).toEqual(obj);
   });
 });
 
@@ -60,6 +59,7 @@ describe(CatalogSourceDetailsPage.displayName, () => {
     expect(wrapper.find(DetailsPage).props().resources).toEqual([
       {kind: referenceForModel(PackageManifestModel), isList: true, namespace: match.params.ns, selector, prop: 'packageManifests'},
       {kind: referenceForModel(SubscriptionModel), isList: true, namespace: match.params.ns, prop: 'subscriptions'},
+      {kind: referenceForModel(OperatorGroupModel), isList: true, namespace: match.params.ns, prop: 'operatorGroups'},
     ]);
   });
 });
@@ -81,20 +81,26 @@ describe(CreateSubscriptionYAML.displayName, () => {
       namespace: 'default',
       isList: false,
       prop: 'packageManifest',
+    }, {
+      kind: referenceForModel(OperatorGroupModel),
+      isList: true,
+      namespace: 'default',
+      prop: 'operatorGroup',
     }]);
   });
 
   it('renders YAML editor component wrapped by an error boundary component', () => {
     wrapper = wrapper.setProps({packageManifest: {loaded: true, data: testPackageManifest}} as any);
+    const createYAML = wrapper.find(Firehose).childAt(0).dive().dive();
 
-    expect(wrapper.find(Firehose).childAt(0).dive().find(ErrorBoundary).exists()).toBe(true);
-    expect(wrapper.find(Firehose).childAt(0).dive().find(ErrorBoundary).childAt(0).dive().find(CreateYAML).exists()).toBe(true);
+    expect(createYAML.find(ErrorBoundary).exists()).toBe(true);
+    expect(createYAML.find(ErrorBoundary).childAt(0).dive().find(CreateYAML).exists()).toBe(true);
   });
 
   it('passes example YAML templates using the package default channel', () => {
     wrapper = wrapper.setProps({packageManifest: {loaded: true, data: testPackageManifest}} as any);
 
-    const createYAML = wrapper.find(Firehose).childAt(0).dive().find(ErrorBoundary).childAt(0).dive<CreateYAMLProps, {}>();
+    const createYAML = wrapper.find(Firehose).childAt(0).dive().dive().find(ErrorBoundary).childAt(0).dive<CreateYAMLProps, {}>();
     const subTemplate = safeLoad(createYAML.props().template);
 
     expect(subTemplate.kind).toContain(SubscriptionModel.kind);
@@ -106,8 +112,9 @@ describe(CreateSubscriptionYAML.displayName, () => {
 
   it('does not render YAML editor component if `PackageManifest` has not loaded yet', () => {
     wrapper = wrapper.setProps({packageManifest: {loaded: false}} as any);
+    const createYAML = wrapper.find(Firehose).childAt(0).dive().dive();
 
-    expect(wrapper.find(Firehose).childAt(0).dive().find(CreateYAML).exists()).toBe(false);
-    expect(wrapper.find(Firehose).childAt(0).dive().find(ErrorBoundary).childAt(0).dive().find(LoadingBox).exists()).toBe(true);
+    expect(createYAML.find(CreateYAML).exists()).toBe(false);
+    expect(createYAML.find(ErrorBoundary).childAt(0).dive().find(LoadingBox).exists()).toBe(true);
   });
 });

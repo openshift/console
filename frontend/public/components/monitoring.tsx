@@ -65,8 +65,8 @@ const alertDescription = alert => {
 
 export const silenceState = s => _.get(s, 'status.state');
 
-const alertsToProps = ({UI}) => UI.getIn(['monitoring', 'alerts'], {});
-const silencesToProps = ({UI}) => UI.getIn(['monitoring', 'silences'], {});
+const alertsToProps = ({UI}) => UI.getIn(['monitoring', 'alerts']) || {};
+const silencesToProps = ({UI}) => UI.getIn(['monitoring', 'silences']) || {};
 
 const pollers = {};
 const pollerTimeouts = {};
@@ -169,7 +169,7 @@ const SilenceMatchersList = ({silence}) => <div className={`co-text-${SilenceRes
 </div>;
 
 const alertStateToProps = (state, {match}): AlertsDetailsPageProps => {
-  const {data, loaded, loadError}: Rules = alertsToProps(state);
+  const {data, loaded, loadError}: Alerts = alertsToProps(state);
   const ruleID = _.get(match, 'params.ruleID');
   const labels = getURLSearchParams();
   const alerts = _.filter(data, a => a.rule.id === ruleID);
@@ -302,7 +302,7 @@ const ActiveAlerts = ({alerts, ruleID}) => <div className="co-m-table-grid co-m-
 </div>;
 
 const ruleStateToProps = (state, {match}): AlertRulesDetailsPageProps => {
-  const {data, loaded, loadError}: Rules = alertsToProps(state);
+  const {data, loaded, loadError}: Alerts = alertsToProps(state);
   const id = _.get(match, 'params.id');
   const alert = _.find(data, a => a.rule.id === id);
   return {loaded, loadError, rule: _.get(alert, 'rule')};
@@ -590,6 +590,7 @@ const MonitoringListPage = connect(filtersToProps)(class InnerMonitoringListPage
         <div className="row">
           <CheckBoxes
             items={rowFilter.items}
+            itemCount={_.size(data)}
             numbers={_.countBy(data, rowFilter.reducer)}
             reduxIDs={[reduxID]}
             selected={rowFilter.selected}
@@ -701,15 +702,15 @@ const toISODate = (dateStr: string): string => {
 
 const Text = props => <input {...props} type="text" className="form-control form-control--silence-text" />;
 
-const Datetime = props => <div>
-  <Tooltip content={[<span className="co-nowrap" key="co-timestamp">{toISODate(props.value)}</span>]}>
-    <Text
-      {...props}
-      pattern="\d{4}/(0[1-9]|1[012])/(0[1-9]|[12][0-9]|3[01]) ([01]\d|2[0-3]):[0-5]\d(:[0-5]\d)?"
-      placeholder="YYYY/MM/DD hh:mm:ss"
-    />
-  </Tooltip>
-</div>;
+const Datetime = props => {
+  const pattern = '\\d{4}/(0?[1-9]|1[012])/(0?[1-9]|[12]\\d|3[01]) (0?\\d|1\\d|2[0-3]):[0-5]\\d(:[0-5]\\d)?';
+  const tooltip = (new RegExp(`^${pattern}$`)).test(props.value) ? toISODate(props.value) : 'Invalid date / time';
+  return <div>
+    <Tooltip content={[<span className="co-nowrap" key="co-timestamp">{tooltip}</span>]}>
+      <Text {...props} pattern={pattern} placeholder="YYYY/MM/DD hh:mm:ss" />
+    </Tooltip>
+  </div>;
+};
 
 class SilenceForm_ extends SafetyFirst<SilenceFormProps, SilenceFormState> {
   constructor(props) {
@@ -845,7 +846,7 @@ class SilenceForm_ extends SafetyFirst<SilenceFormProps, SilenceFormState> {
         <hr />
 
         <ButtonBar errorMessage={error} inProgress={inProgress}>
-          <button type="submit" className="btn btn-primary" id="yaml-create">{this.props.saveButtonText || 'Save'}</button>
+          <button type="submit" className="btn btn-primary">{this.props.saveButtonText || 'Save'}</button>
           <Link to={data.id ? `${SilenceResource.path}/${data.id}` : SilenceResource.path} className="btn btn-default">Cancel</Link>
         </ButtonBar>
       </form>
@@ -988,7 +989,7 @@ type Rule = {
   name: string;
   query: string;
 };
-type Rules = {
+type Alerts = {
   data: Alert[];
   loaded: boolean;
   loadError?: string;
@@ -1029,6 +1030,7 @@ export type ListPageProps = {
   data: Rule[] | Silence[];
   filters: {[key: string]: any};
   Header: React.ComponentType<any>;
+  itemCount: number;
   kindPlural: string;
   loaded: boolean;
   loadError?: string;

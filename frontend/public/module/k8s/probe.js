@@ -86,7 +86,11 @@ const flatteners = {
     }
 
     if (cmd.path) {
-      c += cmd.path;
+      if (cmd.path.startsWith('/')) {
+        c += cmd.path;
+      } else {
+        c += `/${cmd.path}`;
+      }
     }
     return c;
   },

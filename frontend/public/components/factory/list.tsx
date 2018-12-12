@@ -19,6 +19,7 @@ import { UIActions } from '../../ui/ui-actions';
 import { ingressValidHosts } from '../ingress';
 import { alertState, silenceState } from '../monitoring';
 import { routeStatus } from '../routes';
+import { getClusterOperatorStatus } from '../cluster-settings/cluster-operator';
 import { secretTypeFilterReducer } from '../secret';
 import { bindingType, roleType } from '../RBAC';
 import {
@@ -164,15 +165,19 @@ const listFilters = {
   },
 
   'vm-status' : (statuses, vm) => {
-    if (!statuses || !statuses.selected || !statuses.selected.size) {
-      return true;
-    }
-
     // TODO: figure out how to get VM pods here
     const status = getVmStatus(vm);
     return statuses.selected.has(status) || !_.includes(statuses.all, status);
   },
 
+  'cluster-operator-status': (statuses, operator) => {
+    if (!statuses || !statuses.selected || !statuses.selected.size) {
+      return true;
+    }
+
+    const status = getClusterOperatorStatus(operator);
+    return statuses.selected.has(status) || !_.includes(statuses.all, status);
+  },
 };
 
 const getFilteredRows = (_filters, objects) => {
@@ -422,7 +427,7 @@ export const List = connect(stateToProps, {sortList: UIActions.sortList})(
       staticFilters: PropTypes.array,
       virtualize: PropTypes.bool,
       currentSortField: PropTypes.string,
-      currentSortFunc: PropTypes.func,
+      currentSortFunc: PropTypes.string,
       currentSortOrder: PropTypes.any,
       defaultSortField: PropTypes.string,
       defaultSortFunc: PropTypes.string,
@@ -524,7 +529,7 @@ export type ColHeadProps = {
 
 export type ListInnerProps = {
   currentSortField?: string;
-  currentSortFunc?: Function;
+  currentSortFunc?: string;
   currentSortOrder?: any;
   data?: any[];
   defaultSortField?: string;

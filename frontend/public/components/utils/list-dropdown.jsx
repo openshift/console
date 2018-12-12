@@ -88,9 +88,11 @@ class ListDropdown_ extends React.Component {
   render() {
     const {desc, fixed, placeholder, id, loaded} = this.props;
     const items = {};
-    const sortedItems = _.keys(this.state.items).sort();
 
-    _.each(this.state.items, (v, key) => items[key] = <ResourceName kind={v.kindLabel} name={v.name} />);
+    _.keys(this.state.items).sort().forEach(key => {
+      const item = this.state.items[key];
+      items[key] = <ResourceName kind={item.kindLabel} name={item.name} />;
+    });
 
     const {selectedKey} = this.state;
 
@@ -100,7 +102,6 @@ class ListDropdown_ extends React.Component {
         autocompleteFilter={this.autocompleteFilter}
         autocompletePlaceholder={placeholder}
         items={items}
-        sortedItemKeys={sortedItems}
         selectedKey={selectedKey}
         title={this.state.title}
         onChange={this.onChange}

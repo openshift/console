@@ -1,6 +1,6 @@
 import * as React from 'react';
-import PropTypes from 'prop-types';
-import {Button, Modal} from 'patternfly-react/';
+import * as PropTypes from 'prop-types';
+import {Button, Modal} from 'patternfly-react';
 import {CatalogItemHeader, PropertiesSidePanel, PropertyItem} from 'patternfly-react-extensions';
 import {MarkdownView} from '../operator-lifecycle-manager/clusterserviceversion';
 
@@ -55,6 +55,8 @@ const MarketplaceItemModal = (props) => {
     </Modal>
   );
 };
+
+MarketplaceItemModal.displayName = 'MarketplaceModal';
 
 MarketplaceItemModal.propTypes = {
   item: PropTypes.object,

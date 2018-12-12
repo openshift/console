@@ -7,8 +7,8 @@ import * as _ from 'lodash';
 import { SubscriptionHeader, SubscriptionHeaderProps, SubscriptionRow, SubscriptionRowProps, SubscriptionsList, SubscriptionsListProps, SubscriptionsPage, SubscriptionsPageProps, SubscriptionDetails, SubscriptionDetailsPage, SubscriptionDetailsProps, SubscriptionUpdates, SubscriptionUpdatesProps, SubscriptionUpdatesState } from '../../../public/components/operator-lifecycle-manager/subscription';
 import { SubscriptionKind, SubscriptionState } from '../../../public/components/operator-lifecycle-manager';
 import { referenceForModel } from '../../../public/module/k8s';
-import { SubscriptionModel, ClusterServiceVersionModel, PackageManifestModel } from '../../../public/models';
-import { ListHeader, ColHead, List, ListPage, DetailsPage } from '../../../public/components/factory';
+import { SubscriptionModel, ClusterServiceVersionModel, PackageManifestModel, OperatorGroupModel } from '../../../public/models';
+import { ListHeader, ColHead, List, MultiListPage, DetailsPage } from '../../../public/components/factory';
 import { ResourceKebab, ResourceLink, Kebab } from '../../../public/components/utils';
 import { testSubscription, testClusterServiceVersion, testPackageManifest } from '../../../__mocks__/k8sResourcesMocks';
 
@@ -114,7 +114,7 @@ describe(SubscriptionsList.displayName, () => {
   let wrapper: ShallowWrapper<SubscriptionsListProps>;
 
   beforeEach(() => {
-    wrapper = shallow(<SubscriptionsList data={[]} loaded={true} {...{[referenceForModel(ClusterServiceVersionModel)]: {data: []}}} />);
+    wrapper = shallow(<SubscriptionsList.WrappedComponent data={[]} loaded={true} {...{[referenceForModel(ClusterServiceVersionModel)]: {data: []}}} operatorGroup={null} />);
   });
 
   it('renders a `List` component with correct props', () => {
@@ -131,15 +131,18 @@ describe(SubscriptionsPage.displayName, () => {
     wrapper = shallow(<SubscriptionsPage match={match} namespace="default" />);
   });
 
-  it('renders a `ListPage` component with the correct props', () => {
-    expect(wrapper.find(ListPage).props().ListComponent).toEqual(SubscriptionsList);
-    expect(wrapper.find(ListPage).props().title).toEqual('Subscriptions');
-    expect(wrapper.find(ListPage).props().showTitle).toBe(true);
-    expect(wrapper.find(ListPage).props().canCreate).toBe(true);
-    expect(wrapper.find(ListPage).props().createProps).toEqual({to: `/k8s/ns/default/${referenceForModel(PackageManifestModel)}`});
-    expect(wrapper.find(ListPage).props().createButtonText).toEqual('Create Subscription');
-    expect(wrapper.find(ListPage).props().filterLabel).toEqual('Subscriptions by package');
-    expect(wrapper.find(ListPage).props().kind).toEqual(referenceForModel(SubscriptionModel));
+  it('renders a `MultiListPage` component with the correct props', () => {
+    expect(wrapper.find(MultiListPage).props().ListComponent).toEqual(SubscriptionsList);
+    expect(wrapper.find(MultiListPage).props().title).toEqual('Subscriptions');
+    expect(wrapper.find(MultiListPage).props().showTitle).toBe(true);
+    expect(wrapper.find(MultiListPage).props().canCreate).toBe(true);
+    expect(wrapper.find(MultiListPage).props().createProps).toEqual({to: `/k8s/ns/default/${referenceForModel(PackageManifestModel)}`});
+    expect(wrapper.find(MultiListPage).props().createButtonText).toEqual('Create Subscription');
+    expect(wrapper.find(MultiListPage).props().filterLabel).toEqual('Subscriptions by package');
+    expect(wrapper.find(MultiListPage).props().resources).toEqual([
+      {kind: referenceForModel(SubscriptionModel), namespace: 'default', namespaced: true, prop: 'subscription'},
+      {kind: referenceForModel(OperatorGroupModel), namespace: 'default', namespaced: true, prop: 'operatorGroup'},
+    ]);
   });
 });
 
@@ -186,7 +189,7 @@ describe(SubscriptionDetails.displayName, () => {
   });
 
   it('renders link to catalog source', () => {
-    const link = wrapper.findWhere(node => node.equals(<dt>Catalog</dt>)).parents().at(0).find('dd').find(ResourceLink).at(0);
+    const link = wrapper.findWhere(node => node.equals(<dt>Catalog Source</dt>)).parents().at(0).find('dd').find(ResourceLink).at(0);
 
     expect(link.props().name).toEqual(testSubscription.spec.source);
   });

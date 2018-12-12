@@ -69,7 +69,7 @@ const getItems = (props) => {
   return _.sortBy([...packageManifestItems], 'name');
 };
 
-class MarketplaceListPage extends React.Component {
+export class MarketplaceListPage extends React.Component {
   constructor() {
     super();
     this.state = {
@@ -83,6 +83,7 @@ class MarketplaceListPage extends React.Component {
       const items = getItems(props);
       return {items, packagemanifests};
     }
+    return {};
   }
 
   render() {
@@ -103,10 +104,10 @@ export const Marketplace = () => {
   resources.push({
     isList: true,
     kind: referenceForModel(PackageManifestModel),
-    namespace: undefined, // shows operators from all-namespaces - when backend is hooked up we will use 'marketplace'
+    namespace: 'openshift-marketplace',
     prop: 'packagemanifests',
   });
-  return <Firehose resources={resources}>
+  return <Firehose resources={resources} className="co-catalog-connect">
     <MarketplaceListPage />
   </Firehose>;
 };

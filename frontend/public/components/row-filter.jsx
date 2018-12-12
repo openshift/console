@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import * as classNames from 'classnames';
 
 import k8sActions from '../module/k8s/k8s-actions';
-import { getQueryArgument, setQueryArgument } from './utils';
+import { getQueryArgument, pluralize, setQueryArgument } from './utils';
 
 const CheckBox = ({title, active, number, toggle}) => {
   const klass = classNames('row-filter__box', {
@@ -22,6 +22,7 @@ class CheckBoxes_ extends React.Component {
   constructor(props) {
     super(props);
     this.state = {selected: []};
+    this.selectAll = this.selectAll.bind(this);
     this.toggle = this.toggle.bind(this);
   }
 
@@ -41,7 +42,9 @@ class CheckBoxes_ extends React.Component {
       selected = this.props.selected || [];
     }
 
-    this.setState({selected}, () => this.applyFilter());
+    const allSelected = _.isEmpty(_.xor(selected, _.map(this.props.items, 'id')));
+
+    this.setState({allSelected, selected}, () => this.applyFilter());
   }
 
   componentDidUpdate(prevProps) {
@@ -58,11 +61,7 @@ class CheckBoxes_ extends React.Component {
     }
   }
 
-  toggle(event, itemId) {
-    event.preventDefault();
-
-    const selected = _.xor(this.state.selected, [itemId]);
-
+  setQueryParameters(selected) {
     // Ensure something is always active
     if (!_.isEmpty(selected)) {
       try {
@@ -71,12 +70,34 @@ class CheckBoxes_ extends React.Component {
       } catch (ignored) {
         // ignore
       }
-
-      this.setState({selected}, () => this.applyFilter());
+      const allSelected = _.isEmpty(_.xor(selected, _.map(this.props.items, 'id')));
+      this.setState({allSelected, selected}, () => this.applyFilter());
     }
   }
 
+  toggle(event, itemId) {
+    event.preventDefault();
+    const selected = _.xor(this.state.selected, [itemId]);
+    this.setQueryParameters(selected);
+  }
+
+  selectAll() {
+    const selected = _.map(this.props.items, 'id');
+    this.setQueryParameters(selected);
+  }
+
+  countNumItems() {
+    const selectedCheckboxCounts = _.map(this.state.selected, (id) => {
+      return this.props.numbers[id] || 0;
+    });
+    const numSelectedItems = _.sum(selectedCheckboxCounts);
+    const allSelected = _.isEmpty(_.xor(this.state.selected, _.map(this.props.items, 'id')));
+    const totalItems = pluralize(this.props.itemCount, 'Item');
+    return allSelected ? totalItems : `${numSelectedItems} of ${totalItems}`;
+  }
+
   render() {
+    const {allSelected} = this.state;
     const checkboxes = _.map(this.props.items, ({id, title}) => {
       return <CheckBox
         key={id}
@@ -86,12 +107,19 @@ class CheckBoxes_ extends React.Component {
         toggle={event => this.toggle(event, id)}
       />;
     });
+    const count = this.countNumItems();
 
     return <div className="col-xs-12">
-      <div className="row-filter">{checkboxes}</div>
+      <div className="row-filter">
+        {checkboxes}
+        <div className="co-m-row-filter__controls">
+          <button className="btn btn-link co-m-row-filter__selector" disabled={allSelected} type="button" onClick={this.selectAll}>Select All Filters</button>
+          <span className="co-m-row-filter__items">{count}</span>
+        </div>
+      </div>
     </div>;
   }
 }
 
-/** @type {React.SFC<{items: Array, numbers: any, reduxIDs: Array, selected?: Array, type: string}>} */
+/** @type {React.SFC<{items: Array, itemCount: number, numbers: any, reduxIDs: Array, selected?: Array, type: string}>} */
 export const CheckBoxes = connect(null, {filterList: k8sActions.filterList})(CheckBoxes_);

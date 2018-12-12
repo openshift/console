@@ -33,7 +33,7 @@ const determineCategories = items => {
   return newCategories;
 };
 
-const getProviderValue = value => {
+export const getProviderValue = value => {
   if (!value) {
     return value;
   }
@@ -71,7 +71,7 @@ const determineAvailableFilters = (initialFilters, items, filterGroups) => {
   return filters;
 };
 
-const keywordCompare = (filterString, item) => {
+export const keywordCompare = (filterString, item) => {
   if (!filterString) {
     return true;
   }
@@ -91,7 +91,7 @@ const setURLParams = params => {
   history.replace(`${url.pathname}${searchParams}`);
 };
 
-export class MarketplaceTileViewPage extends React.Component {
+class MarketplaceTileViewPage extends React.Component {
   constructor(props) {
     super(props);
 
@@ -176,3 +176,5 @@ MarketplaceTileViewPage.displayName = 'MarketplaceTileViewPage';
 MarketplaceTileViewPage.propTypes = {
   items: PropTypes.array,
 };
+
+export {MarketplaceTileViewPage};

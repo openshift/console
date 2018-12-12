@@ -442,6 +442,7 @@ export class Nav extends React.Component {
             <ResourceClusterLink resource="nodes" name="Nodes" onClick={this.close} required={FLAGS.CAN_LIST_NODE} />
             <ResourceNSLink resource={referenceForModel(MachineSetModel)} name="Machine Sets" onClick={this.close} required={FLAGS.CLUSTER_API} />
             <ResourceNSLink resource={referenceForModel(MachineModel)} name="Machines" onClick={this.close} required={FLAGS.CLUSTER_API} />
+            <HrefLink href="/settings/cluster" activePath="/settings/cluster/" name="Cluster Settings" onClick={this.close} required={FLAGS.CLUSTER_VERSION} />
             <ResourceNSLink resource="serviceaccounts" name="Service Accounts" onClick={this.close} />
             <ResourceNSLink resource="roles" name="Roles" startsWith={rolesStartsWith} onClick={this.close} />
             <ResourceNSLink resource="rolebindings" name="Role Bindings" onClick={this.close} startsWith={rolebindingsStartsWith} />

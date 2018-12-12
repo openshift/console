@@ -54,3 +54,6 @@ export const tokenInfoModal = (props) => import('./token-info-modal' /* webpackC
 
 export const deleteModal = (props) => import('./delete-modal' /* webpackChunkName: "delete-modal" */)
   .then(m => m.deleteModal(props));
+
+export const clusterUpdateModal = (props) => import('./cluster-update-modal' /* webpackChunkName: "cluster-update-modal" */)
+  .then(m => m.clusterUpdateModal(props));

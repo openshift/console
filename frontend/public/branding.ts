@@ -1,5 +1,7 @@
 const getProductName = () => {
   switch ((window as any).SERVER_FLAGS.branding) {
+    case 'openshift':
+      return 'OpenShift';
     case 'ocp':
       return 'OpenShift Container Platform';
     case 'online':

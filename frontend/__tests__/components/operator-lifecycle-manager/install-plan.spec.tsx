@@ -7,10 +7,10 @@ import { Link } from 'react-router-dom';
 
 import { InstallPlanHeader, InstallPlanHeaderProps, InstallPlanRow, InstallPlanRowProps, InstallPlansList, InstallPlansListProps, InstallPlansPage, InstallPlansPageProps, InstallPlanDetailsPage, InstallPlanPreview, InstallPlanPreviewProps, InstallPlanPreviewState, InstallPlanDetailsPageProps, InstallPlanDetails, InstallPlanDetailsProps } from '../../../public/components/operator-lifecycle-manager/install-plan';
 import { InstallPlanKind, InstallPlanApproval } from '../../../public/components/operator-lifecycle-manager';
-import { ListHeader, ColHead, ResourceRow, List, ListPage, DetailsPage } from '../../../public/components/factory';
+import { ListHeader, ColHead, ResourceRow, List, MultiListPage, DetailsPage } from '../../../public/components/factory';
 import { ResourceKebab, ResourceLink, ResourceIcon, Kebab, MsgBox } from '../../../public/components/utils';
 import { testInstallPlan } from '../../../__mocks__/k8sResourcesMocks';
-import { InstallPlanModel, ClusterServiceVersionModel } from '../../../public/models';
+import { InstallPlanModel, ClusterServiceVersionModel, OperatorGroupModel } from '../../../public/models';
 import * as k8s from '../../../public/module/k8s';
 
 describe(InstallPlanHeader.displayName, () => {
@@ -96,7 +96,7 @@ describe(InstallPlansList.displayName, () => {
   let wrapper: ShallowWrapper<InstallPlansListProps>;
 
   beforeEach(() => {
-    wrapper = shallow(<InstallPlansList />);
+    wrapper = shallow(<InstallPlansList.WrappedComponent operatorGroup={null} />);
   });
 
   it('renders a `List` component with the correct props', () => {
@@ -109,7 +109,7 @@ describe(InstallPlansList.displayName, () => {
     const msgWrapper = shallow(<EmptyMsg />);
 
     expect(msgWrapper.find(MsgBox).props().title).toEqual('No Install Plans Found');
-    expect(msgWrapper.find(MsgBox).props().detail).toEqual('Install Plans are created automatically by subscriptions or manually using kubectl.');
+    expect(msgWrapper.find(MsgBox).props().detail).toEqual('Install Plans are created automatically by subscriptions or manually using the CLI.');
   });
 });
 
@@ -117,15 +117,18 @@ describe(InstallPlansPage.displayName, () => {
   let wrapper: ShallowWrapper<InstallPlansPageProps>;
 
   beforeEach(() => {
-    wrapper = shallow(<InstallPlansPage />);
+    wrapper = shallow(<InstallPlansPage namespace="default" />);
   });
 
-  it('renders a `ListPage` with the correct props', () => {
-    expect(wrapper.find(ListPage).props().title).toEqual('Install Plans');
-    expect(wrapper.find(ListPage).props().showTitle).toBe(true);
-    expect(wrapper.find(ListPage).props().ListComponent).toEqual(InstallPlansList);
-    expect(wrapper.find(ListPage).props().filterLabel).toEqual('Install Plans by name');
-    expect(wrapper.find(ListPage).props().kind).toEqual(k8s.referenceForModel(InstallPlanModel));
+  it('renders a `MultiListPage` with the correct props', () => {
+    expect(wrapper.find(MultiListPage).props().title).toEqual('Install Plans');
+    expect(wrapper.find(MultiListPage).props().showTitle).toBe(true);
+    expect(wrapper.find(MultiListPage).props().ListComponent).toEqual(InstallPlansList);
+    expect(wrapper.find(MultiListPage).props().filterLabel).toEqual('Install Plans by name');
+    expect(wrapper.find(MultiListPage).props().resources).toEqual([
+      {kind: k8s.referenceForModel(InstallPlanModel), namespace: 'default', namespaced: true, prop: 'installPlan'},
+      {kind: k8s.referenceForModel(OperatorGroupModel), namespace: 'default', namespaced: true, prop: 'operatorGroup'},
+    ]);
   });
 });
 

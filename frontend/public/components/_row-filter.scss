@@ -1,8 +1,29 @@
 $color-row-filter-border: $color-pf-black-300;
 $color-row-filter-border--active: $color-pf-blue-300;
 
+.co-m-row-filter__controls {
+  display: flex;
+  flex: 1;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+}
+
+.co-m-row-filter__items {
+  font-weight: bold;
+  padding: 7px 10px;
+  white-space: nowrap;
+}
+
+.co-m-row-filter__selector {
+  border: 0;
+  padding: 7px 10px;
+  white-space: nowrap;
+}
+
 .row-filter {
-  background-color: $color-pf-black-150;
+  background-color: #fff;
+  display: flex;
+  flex-wrap: wrap;
   margin-bottom: 30px;
   margin-top: 3px;
   outline: 1px solid $color-row-filter-border;

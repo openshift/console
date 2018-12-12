@@ -1,9 +1,11 @@
 import * as React from 'react';
 
+import { connect } from 'react-redux';
 import * as _ from 'lodash-es';
 import { Link } from 'react-router-dom';
 import * as okdLogoImg from '../imgs/okd-logo.svg';
 import * as okdvirtLogoImg from '../imgs/okdvirt-logo.svg';
+import * as openshiftLogoImg from '../imgs/openshift-logo.svg';
 import * as ocpLogoImg from '../imgs/openshift-platform-logo.svg';
 import * as onlineLogoImg from '../imgs/openshift-online-logo.svg';
 import * as dedicatedLogoImg from '../imgs/openshift-dedicated-logo.svg';
@@ -14,9 +16,8 @@ import { authSvc } from '../module/auth';
 import { ActionsMenu, AsyncComponent } from './utils';
 import { openshiftHelpBase } from './utils/documentation';
 import { createModalLauncher } from './factory/modal';
-
-import { coFetchJSON } from '../co-fetch';
-import { SafetyFirst } from './safety-first';
+import { userStateToProps } from '../ui/ui-reducers';
+import { K8sResourceKind } from '../module/k8s';
 
 const AboutModal = (props) => <AsyncComponent loader={() => import('./utils/about-modal').then(c => c.AboutModal)} {...props} />;
 
@@ -25,6 +26,14 @@ export const getBrandingDetails = () => {
 
   // Webpack won't bundle these images if we don't directly reference them, hence the switch
   switch ((window as any).SERVER_FLAGS.branding) {
+    case 'openshift':
+      backgroundImg = true;
+      logoImg = openshiftLogoImg;
+      logoAlt = 'OpenShift';
+      modalLogoImg = rhLogoImg;
+      modalLogoAlt = 'Red Hat';
+      productTitle = <React.Fragment>Red Hat<sup>&reg;</sup> OpenShift</React.Fragment>;
+      break;
     case 'ocp':
       backgroundImg = true;
       logoImg = ocpLogoImg;
@@ -108,6 +117,13 @@ const UserMenu: React.StatelessComponent<UserMenuProps> = ({username, actions}) 
     buttonClassName="btn-link nav-item-iconic" />;
 };
 
+const OSUserMenu_: React.SFC<OSUserMenuProps> = ({user, actions}) => {
+  const username = _.get(user, 'fullName') || _.get(user, 'metadata.name');
+  return username ? <UserMenu actions={actions} username={username} /> : null;
+};
+
+const OSUserMenu = connect(userStateToProps)(OSUserMenu_);
+
 const UserMenuWrapper = connectToFlags(FLAGS.AUTH_ENABLED, FLAGS.OPENSHIFT)((props: FlagsProps) => {
   if (flagPending(props.flags[FLAGS.OPENSHIFT]) || flagPending(props.flags[FLAGS.AUTH_ENABLED])) {
     return null;
@@ -136,32 +152,6 @@ const UserMenuWrapper = connectToFlags(FLAGS.AUTH_ENABLED, FLAGS.OPENSHIFT)((pro
   return authSvc.userID() ? <UserMenu actions={actions} username={authSvc.name()} /> : null;
 });
 
-export class OSUserMenu extends SafetyFirst<OSUserMenuProps, OSUserMenuState> {
-  constructor(props) {
-    super(props);
-    this.state = {
-      username: undefined,
-    };
-  }
-
-  componentDidMount() {
-    super.componentDidMount();
-    this.getUserInfo();
-  }
-
-  private getUserInfo() {
-    coFetchJSON('api/kubernetes/apis/user.openshift.io/v1/users/~')
-      .then((user) => {
-        this.setState({ username: _.get(user, 'fullName') || user.metadata.name });
-      }).catch(() => this.setState({ username: null }));
-  }
-
-  render() {
-    const username = this.state.username;
-    return username ? <UserMenu actions={this.props.actions} username={username} /> : null;
-  }
-}
-
 export const LogoImage = () => {
   const details = getBrandingDetails();
   return <div className="co-masthead__logo">
@@ -169,12 +159,18 @@ export const LogoImage = () => {
   </div>;
 };
 
-export const Masthead = () => <header role="banner" className="navbar navbar-pf-vertical co-masthead">
+const Masthead_ = ({ flags }) => <header role="banner" className="navbar navbar-pf-vertical co-masthead">
   <div className="navbar-header">
     <LogoImage />
   </div>
   <div className="nav navbar-nav navbar-right navbar-iconic navbar-utility">
     <div className="co-masthead__dropdowns">
+      {flags[FLAGS.CLUSTER_UPDATES_AVAILABLE] && <div className="co-masthead__updates">
+        <Link to="/settings/cluster" title="Cluster Updates Available" className="nav-item-iconic">
+          <i className="fa fa-arrow-circle-o-up" aria-hidden="true" />
+          <span className="sr-only">Cluster Updates Available</span>
+        </Link>
+      </div>}
       <div className="co-masthead__help">
         <HelpMenu />
       </div>
@@ -184,6 +180,8 @@ export const Masthead = () => <header role="banner" className="navbar navbar-pf-
     </div>
   </div>
 </header>;
+
+export const Masthead = connectToFlags(FLAGS.CLUSTER_UPDATES_AVAILABLE)(Masthead_);
 
 /* eslint-disable no-undef */
 export type FlagsProps = {
@@ -199,8 +197,5 @@ export type UserMenuProps = {
 
 export type OSUserMenuProps = {
   actions: Actions,
-};
-
-export type OSUserMenuState = {
-  username: string,
+  user?: K8sResourceKind,
 };

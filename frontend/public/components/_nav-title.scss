@@ -27,13 +27,4 @@
   &--logo {
     padding-top: ($grid-gutter-width / 2);
   }
-  &--overview {
-    display: flex;
-    flex-direction: column;
-    flex-wrap: wrap;
-    @media (min-width: $screen-md-min) {
-      flex-direction: row;
-    }
-    justify-content: space-between;
-  }
 }

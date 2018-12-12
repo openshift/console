@@ -10,6 +10,7 @@ import { configureReplicaCountModal } from './modals';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
 import {
   Kebab,
+  KebabAction,
   ResourceKebab,
   ResourceLink,
   ResourceSummary,
@@ -21,11 +22,32 @@ import {
 } from './utils';
 import { Tooltip } from './utils/tooltip';
 
+const machineReplicasModal = (resource: MachineSetKind) => configureReplicaCountModal({
+  resourceKind: MachineSetModel,
+  resource,
+  message: 'Machine sets maintain the proper number of healthy machines.',
+});
+
+const editCountAction: KebabAction = (kind, resource: MachineSetKind) => ({
+  label: 'Edit Count',
+  callback: () => machineReplicasModal(resource),
+});
+
 const { common } = Kebab.factory;
-const menuActions = [...common];
+const menuActions = [editCountAction, ...common];
 const machineReference = referenceForModel(MachineModel);
 const machineSetReference = referenceForModel(MachineSetModel);
-const getAWSPlacement = (machine: MachineSetKind) => _.get(machine, 'spec.template.spec.providerConfig.value.placement') || {};
+const getAWSPlacement = (machineSet: MachineSetKind) => _.get(machineSet, 'spec.template.spec.providerConfig.value.placement') || {};
+
+// `spec.replicas` defaults to 1 if not specified. Make sure to differentiate between undefined and 0.
+const getDesiredReplicas = (machineSet: MachineSetKind) => {
+  const replicas = _.get(machineSet, 'spec.replicas');
+  return _.isNil(replicas) ? 1 : replicas;
+};
+
+const getReplicas = (machineSet: MachineSetKind) => _.get(machineSet, 'status.replicas', 0);
+const getReadyReplicas = (machineSet: MachineSetKind) => _.get(machineSet, 'status.readyReplicas', 0);
+const getAvailableReplicas = (machineSet: MachineSetKind) => _.get(machineSet, 'status.availableReplicas', 0);
 
 const MachineSetHeader: React.SFC = props => <ListHeader>
   <ColHead {...props} className="col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
@@ -42,7 +64,7 @@ const MachineSetRow: React.SFC<MachineSetRowProps> = ({obj}: {obj: MachineSetKin
   </div>
   <div className="col-sm-4 hidden-xs">
     <Link to={`${resourcePath(machineSetReference, obj.metadata.name, obj.metadata.namespace)}/machines`}>
-      {obj.status.readyReplicas} of {obj.spec.replicas} machines
+      {getReadyReplicas(obj)} of {getDesiredReplicas(obj)} machines
     </Link>
   </div>
   <div className="dropdown-kebab-pf">
@@ -51,16 +73,15 @@ const MachineSetRow: React.SFC<MachineSetRowProps> = ({obj}: {obj: MachineSetKin
 </div>;
 
 const MachineSetCounts: React.SFC<MachineSetCountsProps> = ({resource}: {resource: MachineSetKind}) => {
-  const { spec, status } = resource;
-
-  const openReplicaCountModal = (event) => {
+  const editReplicas = (event) => {
     event.preventDefault();
-    configureReplicaCountModal({
-      resourceKind: MachineSetModel,
-      resource,
-      message: 'Machine sets maintain the proper number of healthy machines.',
-    });
+    machineReplicasModal(resource);
   };
+
+  const desiredReplicas = getDesiredReplicas(resource);
+  const replicas = getReplicas(resource);
+  const readyReplicas = getReadyReplicas(resource);
+  const availableReplicas = getAvailableReplicas(resource);
 
   return <div className="co-m-pane__body-group">
     <div className="co-detail-table">
@@ -69,8 +90,8 @@ const MachineSetCounts: React.SFC<MachineSetCountsProps> = ({resource}: {resourc
           <dl className="co-m-pane__details">
             <dt className="co-detail-table__section-header">Desired Count</dt>
             <dd>
-              <button type="button" className="btn btn-link co-m-modal-link" onClick={openReplicaCountModal}>
-                {pluralize(spec.replicas, 'machine')}
+              <button type="button" className="btn btn-link co-m-modal-link" onClick={editReplicas}>
+                {pluralize(desiredReplicas, 'machine')}
               </button>
             </dd>
           </dl>
@@ -80,7 +101,7 @@ const MachineSetCounts: React.SFC<MachineSetCountsProps> = ({resource}: {resourc
             <dt className="co-detail-table__section-header">Current Count</dt>
             <dd>
               <Tooltip content="The most recently observed number of replicas.">
-                {pluralize(status.replicas, 'machine')}
+                {pluralize(replicas, 'machine')}
               </Tooltip>
             </dd>
           </dl>
@@ -90,7 +111,7 @@ const MachineSetCounts: React.SFC<MachineSetCountsProps> = ({resource}: {resourc
             <dt className="co-detail-table__section-header">Ready Count</dt>
             <dd>
               <Tooltip content="The number of ready replicas for this MachineSet. A machine is considered ready when the node has been created and is ready.">
-                {pluralize(status.readyReplicas, 'machine')}
+                {pluralize(readyReplicas, 'machine')}
               </Tooltip>
             </dd>
           </dl>
@@ -100,7 +121,7 @@ const MachineSetCounts: React.SFC<MachineSetCountsProps> = ({resource}: {resourc
             <dt className="co-detail-table__section-header">Available Count</dt>
             <dd>
               <Tooltip content="The number of available replicas (ready for at least minReadySeconds) for this MachineSet.">
-                {pluralize(status.availableReplicas, 'machine')}
+                {pluralize(availableReplicas, 'machine')}
               </Tooltip>
             </dd>
           </dl>
