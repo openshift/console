@@ -158,6 +158,22 @@ const detectMonitoringURLs = dispatch => coFetchJSON(monitoringConfigMapPath)
     },
   );
 
+const loggingConfigMapPath = `${k8sBasePath}/api/v1/namespaces/openshift-logging/configmaps/sharing-config`;
+const detectLoggingURL = dispatch => coFetchJSON(loggingConfigMapPath)
+  .then(
+    res => {
+      const {kibanaAppHost} = res.data;
+      if (!_.isEmpty(kibanaAppHost)) {
+        dispatch(setMonitoringURL(MonitoringRoutes.Kibana, kibanaAppHost));
+      }
+    },
+    err => {
+      if (!_.includes([401, 403, 404, 500], _.get(err, 'response.status'))) {
+        setTimeout(() => detectLoggingURL(dispatch), 15000);
+      }
+    },
+  );
+
 const detectUser = dispatch => coFetchJSON('api/kubernetes/apis/user.openshift.io/v1/users/~')
   .then(
     (user) => {
@@ -176,6 +192,7 @@ export const featureActions = [
   detectMonitoringURLs,
   detectClusterVersion,
   detectUser,
+  detectLoggingURL,
 ];
 
 const projectListPath = `${k8sBasePath}/apis/project.openshift.io/v1/projects?limit=1`;

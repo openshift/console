@@ -21,6 +21,7 @@ export enum MonitoringRoutes {
   Prometheus = 'prometheus-k8s',
   AlertManager = 'alertmanager-main',
   Grafana = 'grafana',
+  Kibana = 'kibana',
 }
 
 const SET_MONITORING_URL = 'setMonitoringURL';
