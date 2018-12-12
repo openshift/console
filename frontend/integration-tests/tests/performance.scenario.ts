@@ -31,8 +31,8 @@ const chunkedRoutes = OrderedMap<string, {section: string, name: string}>()
   .set('resource-quota', {section: 'Administration', name: 'Resource Quotas'})
   .set('limit-range', {section: 'Administration', name: 'Limit Ranges'})
   .set('custom-resource-definition', {section: 'Administration', name: 'CRDs'})
-  .set('catalog', {section: 'Home', name: 'Catalog'});
-// .set('marketplace', {section: 'Operators', name: 'Kubernetes Marketplace'});
+  .set('catalog', {section: 'Home', name: 'Catalog'})
+  .set('marketplace', {section: 'Operators', name: 'Kubernetes Marketplace'});
 
 describe('Performance test', () => {
 

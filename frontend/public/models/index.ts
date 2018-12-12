@@ -1,6 +1,32 @@
 // eslint-disable-next-line no-unused-vars
 import { K8sKind } from '../module/k8s';
 
+export const CatalogSourceConfigModel: K8sKind = {
+  kind: 'CatalogSourceConfig',
+  label: 'CatalogSourceConfig',
+  labelPlural: 'CatalogSourceConfigs',
+  apiGroup: 'marketplace.redhat.com',
+  apiVersion: 'v1alpha1',
+  path: 'catalogsourceconfigs',
+  abbr: 'CSC',
+  namespaced: true,
+  crd: true,
+  plural: 'catalogsourceconfigs',
+};
+
+export const OperatorSourceModel: K8sKind = {
+  kind: 'OperatorSource',
+  label: 'OperatorSource',
+  labelPlural: 'OperatorSource',
+  apiGroup: 'marketplace.redhat.com',
+  apiVersion: 'v1alpha1',
+  path: 'operatorsources',
+  abbr: 'OSRC',
+  namespaced: true,
+  crd: true,
+  plural: 'operatorsources',
+};
+
 export const CatalogSourceModel: K8sKind = {
   kind: 'CatalogSource',
   label: 'CatalogSource',
