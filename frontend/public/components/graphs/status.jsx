@@ -1,5 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
+import { Link } from 'react-router-dom';
 
 import { SafetyFirst } from '../safety-first';
 import { coFetchJSON } from '../../co-fetch';
@@ -117,10 +118,10 @@ export class Status extends SafetyFirst {
         <div className="text-muted" style={{fontSize: 14, lineHeight: 1.3}}>{long}</div>
       </div>
     </div>;
-    const props = _.pick(this.props, ['href', 'rel', 'target']);
+    const props = _.pick(this.props, ['rel', 'target', 'to']);
     if (_.isEmpty(props)) {
       return statusElem;
     }
-    return <a {...props} style={{textDecoration: 'none'}}>{statusElem}</a>;
+    return <Link {...props} style={{textDecoration: 'none'}}>{statusElem}</Link>;
   }
 }
