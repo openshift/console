@@ -38,12 +38,15 @@ import { Nic } from './nic';
 import { Disk } from './disk';
 import { openCreateVmWizard } from './modals/create-vm-modal';
 
+const mainRowSize = 'col-lg-3 col-md-3 col-sm-6 col-xs-6';
+const otherRowSize = 'col-lg-2 col-md-2 hidden-sm hidden-xs';
+
 const VMHeader = props => <ListHeader>
-  <ColHead {...props} className="col-lg-2 col-md-2 col-sm-2 col-xs-6" sortField="metadata.name">Name</ColHead>
-  <ColHead {...props} className="col-lg-2 col-md-2 col-sm-2 col-xs-6" sortField="metadata.namespace">Namespace</ColHead>
-  <ColHead {...props} className="col-lg-2 col-md-2 col-sm-2 hidden-xs" sortField="spec.running">State</ColHead>
-  <ColHead {...props} className="col-lg-2 col-md-2 col-sm-2 hidden-xs">Virtual Machine Instance</ColHead>
-  <ColHead {...props} className="col-lg-2 col-md-2 col-sm-2 hidden-xs">Pod</ColHead>
+  <ColHead {...props} className={mainRowSize} sortField="metadata.name">Name</ColHead>
+  <ColHead {...props} className={otherRowSize} sortField="metadata.namespace">Namespace</ColHead>
+  <ColHead {...props} className={mainRowSize} sortField="spec.running">State</ColHead>
+  <ColHead {...props} className={otherRowSize}>Virtual Machine Instance</ColHead>
+  <ColHead {...props} className={otherRowSize}>Pod</ColHead>
 </ListHeader>;
 
 const getAction = (vm) => {
@@ -129,23 +132,23 @@ export const VMRow = ({obj: vm}) => {
   const migrationResources = getResourceKind(VirtualMachineInstanceMigrationModel, undefined, true, vm.metadata.namespace, false);
 
   return <ResourceRow obj={vm}>
-    <div className="col-lg-2 col-md-2 col-sm-2 col-xs-6">
+    <div className={mainRowSize}>
       <ResourceLink kind={VirtualMachineModel.kind} name={vm.metadata.name} namespace={vm.metadata.namespace} title={vm.metadata.uid} />
     </div>
-    <div className="col-lg-2 col-md-2 col-sm-2 col-xs-6 co-break-word">
+    <div className={otherRowSize}>
       <ResourceLink kind={NamespaceModel.kind} name={vm.metadata.namespace} title={vm.metadata.namespace} />
     </div>
-    <div className="col-lg-2 col-md-2 col-sm-2 hidden-xs">
+    <div className={mainRowSize}>
       <Firehose resources={[podResources, migrationResources]}>
         <StateColumn vm={vm} />
       </Firehose>
     </div>
-    <div className="col-lg-2 col-md-2 col-sm-2 hidden-xs">
+    <div className={otherRowSize}>
       <Firehose resources={[vmiResource]} flatten={getFlattenForKind(VirtualMachineInstanceModel.kind)}>
         <FirehoseResourceLink />
       </Firehose>
     </div>
-    <div className="col-lg-2 col-md-2 col-sm-2 hidden-xs">
+    <div className={otherRowSize}>
       <Firehose resources={[podResources]} flatten={getFlattenForKind(PodModel.kind)}>
         <FirehoseResourceLink filter={data => findPod(data, vm.metadata.name, VIRT_LAUNCHER_POD_PREFIX)} />
       </Firehose>
