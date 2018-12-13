@@ -67,7 +67,7 @@ const ConnectToState = connect(({k8s}, {reduxes}) => {
   });
 
   const required = _.filter(resources, r => !r.optional);
-  const loaded = _.every(required, 'loaded');
+  const loaded = _.every(resources, resource => (resource.optional ? resource.loaded || !_.isEmpty(resource.loadError) : resource.loaded));
   const loadError = worstError(_.map(required, 'loadError').filter(Boolean));
 
   return Object.assign({}, resources, {
