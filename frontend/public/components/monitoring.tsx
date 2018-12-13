@@ -89,7 +89,7 @@ const viewAlertRule = alert => ({
 });
 
 const editSilence = silence => ({
-  label: 'Edit Silence',
+  label: silenceState(silence) === SilenceStates.Expired ? 'Recreate Silence' : 'Edit Silence',
   href: `${SilenceResource.path}/${silence.id}/edit`,
 });
 
@@ -859,11 +859,12 @@ class SilenceForm_ extends SafetyFirst<SilenceFormProps, SilenceFormState> {
 const SilenceForm = withFallback(SilenceForm_);
 
 const EditSilence = connect(silenceParamToProps)(({loaded, loadError, silence}) => {
+  const isExpired = silenceState(silence) === SilenceStates.Expired;
   const defaults = _.pick(silence, ['comment', 'createdBy', 'endsAt', 'id', 'matchers', 'startsAt']);
-  defaults.startsAt = formatDate(new Date(defaults.startsAt));
-  defaults.endsAt = formatDate(new Date(defaults.endsAt));
+  defaults.startsAt = isExpired ? undefined : formatDate(new Date(defaults.startsAt));
+  defaults.endsAt = isExpired ? undefined : formatDate(new Date(defaults.endsAt));
   return <StatusBox data={silence} label={SilenceResource.label} loaded={loaded} loadError={loadError}>
-    <SilenceForm defaults={defaults} title="Edit Silence" />
+    <SilenceForm defaults={defaults} title={isExpired ? 'Recreate Silence' : 'Edit Silence'} />
   </StatusBox>;
 });
 
