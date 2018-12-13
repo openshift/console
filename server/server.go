@@ -73,7 +73,7 @@ type Server struct {
 	Branding             string
 	GoogleTagManagerID   string
 	LoadTestFactor       int
-	DexClient      api.DexClient
+	DexClient            api.DexClient
 	// A client with the correct TLS setup for communicating with the API server.
 	K8sClient               *http.Client
 	PrometheusProxyConfig   *proxy.Config
