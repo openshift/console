@@ -83,7 +83,7 @@ func main() {
 	fK8sPublicEndpoint := fs.String("k8s-public-endpoint", "", "Endpoint to use when rendering kubeconfigs for clients. Useful for when bridge uses an internal endpoint clients can't access for communicating with the API server.")
 
 	fDexAPIHost := fs.String("dex-api-host", "", "Target host and port of the Dex API service.")
-	fBranding := fs.String("branding", "okd", "Console branding for the masthead logo and title. One of okd, openshift, okdvirt, ocp, online, or dedicated. Defaults to okd.")
+	fBranding := fs.String("branding", "okd", "Console branding for the masthead logo and title. One of okd, openshift, okdvirt, openshiftvirt, ocp, online, or dedicated. Defaults to okd.")
 	fDocumentationBaseURL := fs.String("documentation-base-url", "", "The base URL for documentation links.")
 	fGoogleTagManagerID := fs.String("google-tag-manager-id", "", "Google Tag Manager ID. External analytics are disabled if this is not set.")
 
@@ -148,12 +148,13 @@ func main() {
 	switch branding {
 	case "okd":
 	case "okdvirt":
+	case "openshiftvirt":
 	case "openshift":
 	case "ocp":
 	case "online":
 	case "dedicated":
 	default:
-		flagFatalf("branding", "value must be one of okd, openshift, okdvirt, ocp, or online")
+		flagFatalf("branding", "value must be one of okd, okdvirt, openshiftvirt, openshift, okdvirt, ocp, or online")
 	}
 
 	srv := &server.Server{

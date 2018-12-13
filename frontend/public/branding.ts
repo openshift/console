@@ -8,6 +8,8 @@ const getProductName = () => {
       return 'OpenShift Online';
     case 'okdvirt':
       return 'OKD Virtualization';
+    case 'openshiftvirt':
+      return 'OpenShift Virtualization';
     default:
       return 'OKD';
   }

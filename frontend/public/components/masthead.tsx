@@ -5,6 +5,7 @@ import * as _ from 'lodash-es';
 import { Link } from 'react-router-dom';
 import * as okdLogoImg from '../imgs/okd-logo.svg';
 import * as okdvirtLogoImg from '../imgs/okdvirt-logo.svg';
+import * as openshiftvirtLogoImg from '../imgs/openshiftvirt-logo.svg';
 import * as openshiftLogoImg from '../imgs/openshift-logo.svg';
 import * as ocpLogoImg from '../imgs/openshift-platform-logo.svg';
 import * as onlineLogoImg from '../imgs/openshift-online-logo.svg';
@@ -59,12 +60,20 @@ export const getBrandingDetails = () => {
       productTitle = <React.Fragment>Red Hat<sup>&reg;</sup> OpenShift Dedicated</React.Fragment>;
       break;
     case 'okdvirt':
-      backgroundImg = true;
+      backgroundImg = false;
       logoImg = okdvirtLogoImg;
       logoAlt = 'OKD Virtualization';
       modalLogoImg = rhLogoImg;
+      modalLogoAlt = 'OKD';
+      productTitle = 'OKD';
+      break;
+    case 'openshiftvirt':
+      backgroundImg = true;
+      logoImg = openshiftvirtLogoImg;
+      logoAlt = 'OpenShift Virtualization';
+      modalLogoImg = rhLogoImg;
       modalLogoAlt = 'Red Hat';
-      productTitle = <React.Fragment>Red Hat<sup>&reg;</sup> OpenShift Dedicated</React.Fragment>;
+      productTitle = <React.Fragment>Red Hat<sup>&reg;</sup> OpenShift</React.Fragment>;
       break;
     default:
       backgroundImg = false;
