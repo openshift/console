@@ -3,7 +3,7 @@ import { Map as ImmutableMap } from 'immutable';
 
 import { types } from './ui-actions';
 import { ALL_NAMESPACES_KEY, LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY, NAMESPACE_LOCAL_STORAGE_KEY } from '../const';
-import { AlertStates, isSilenced } from '../monitoring';
+import { AlertStates, isSilenced, SilenceStates } from '../monitoring';
 import { legalNamePattern, getNamespace } from '../components/utils/link';
 
 export default (state, action) => {
@@ -69,22 +69,18 @@ export default (state, action) => {
       return state.set('user', action.user);
 
     case types.setMonitoringData: {
-      state = state.setIn(['monitoring', action.key], action.data);
-
-      const isFiring = alert => [AlertStates.Firing, AlertStates.Silenced].includes(alert.state);
-
-      const alerts = state.getIn(['monitoring', 'alerts']);
-      const firingAlerts = _.filter(_.get(alerts, 'data'), isFiring);
-      const silences = state.getIn(['monitoring', 'silences']);
+      const alerts = action.key === 'alerts' ? action.data : state.getIn(['monitoring', 'alerts']);
+      const firingAlerts = _.filter(_.get(alerts, 'data'), a => [AlertStates.Firing, AlertStates.Silenced].includes(a.state));
+      const silences = action.key === 'silences' ? action.data : state.getIn(['monitoring', 'silences']);
 
       // For each Alert, store a list of the Silences that are silencing it and set its state to show it is silenced
       _.each(firingAlerts, a => {
-        a.silencedBy = _.filter(_.get(silences, 'data'), s => isSilenced(a, s));
+        a.silencedBy = _.filter(_.get(silences, 'data'), s => _.get(s, 'status.state') === SilenceStates.Active && isSilenced(a, s));
         if (a.silencedBy.length) {
           a.state = AlertStates.Silenced;
           // Also set the state of Alerts in `rule.alerts`
           _.each(a.rule.alerts, ruleAlert => {
-            if (_.some(a.silencedBy, s => isFiring(ruleAlert) && isSilenced(ruleAlert, s))) {
+            if (_.some(a.silencedBy, s => isSilenced(ruleAlert, s))) {
               ruleAlert.state = AlertStates.Silenced;
             }
           });
@@ -94,7 +90,7 @@ export default (state, action) => {
 
       // For each Silence, store a list of the Alerts it is silencing
       _.each(_.get(silences, 'data'), s => {
-        s.silencedAlerts = _.filter(firingAlerts, a => a.silencedBy.includes(s));
+        s.firingAlerts = _.filter(firingAlerts, a => isSilenced(a, s));
       });
       return state.setIn(['monitoring', 'silences'], silences);
     }

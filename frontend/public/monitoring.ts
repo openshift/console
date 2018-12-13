@@ -51,7 +51,7 @@ const stateToProps = (desiredURLs: string[], state) => {
 export const connectToURLs = (...urls) => connect(state => stateToProps(urls, state));
 
 // Determine if an Alert is silenced by a Silence (if all of the Silence's matchers match one of the Alert's labels)
-export const isSilenced = (alert, silence) => _.get(silence, 'status.state') === SilenceStates.Active &&
+export const isSilenced = (alert, silence) => [AlertStates.Firing, AlertStates.Silenced].includes(alert.state) &&
   _.every(silence.matchers, m => {
     const alertValue = _.get(alert.labels, m.name);
     return alertValue !== undefined &&
