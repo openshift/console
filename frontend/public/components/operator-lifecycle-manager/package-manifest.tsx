@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 import { referenceForModel, K8sResourceKind } from '../../module/k8s';
 import { requireOperatorGroup } from './operator-group';
 import { PackageManifestKind, SubscriptionKind, ClusterServiceVersionLogo, visibilityLabel, OperatorGroupKind } from './index';
+import { marketplaceLabel } from '../marketplace/kubernetes-marketplace';
 import { PackageManifestModel, SubscriptionModel, CatalogSourceModel, OperatorGroupModel } from '../../models';
 import { StatusBox, MsgBox } from '../utils';
 import { List, ListHeader, ColHead, MultiListPage } from '../factory';
@@ -102,7 +103,7 @@ export const PackageManifestsPage: React.SFC<PackageManifestsPageProps> = (props
     filterLabel="Packages by name"
     flatten={flatten}
     resources={[
-      {kind: referenceForModel(PackageManifestModel), isList: true, namespaced: true, prop: 'packageManifest', selector: {matchExpressions: [{key: visibilityLabel, operator: 'DoesNotExist'}]}},
+      {kind: referenceForModel(PackageManifestModel), isList: true, namespaced: true, prop: 'packageManifest', selector: {matchExpressions: [{key: visibilityLabel, operator: 'DoesNotExist'}, {key: marketplaceLabel, operator: 'DoesNotExist'}]}},
       {kind: referenceForModel(CatalogSourceModel), isList: true, namespaced: true, prop: 'catalogSource'},
       {kind: referenceForModel(SubscriptionModel), isList: true, namespaced: true, prop: 'subscription'},
       {kind: referenceForModel(OperatorGroupModel), isList: true, namespaced: true, prop: 'operatorGroup'},
