@@ -32,7 +32,7 @@ export const ResourceListPage = connectToPlural(withStartGuide(
       const missingType = isGroupVersionKind(plural) ? `"${kindForReference(plural)}" in "${apiVersionForReference(plural)}"` : `"${plural}"`;
       return <ErrorPage404 message={`The server doesn't have a resource type ${missingType}. Try refreshing the page if it was recently added.`} />;
     }
-    const ref = props.match.path.indexOf('customresourcedefinitions') === -1 ? referenceForModel(kindObj) : null;
+    const ref = referenceForModel(kindObj);
     const componentLoader = resourceListPages.get(ref, () => Promise.resolve(DefaultPage));
 
     return <div className="co-m-list">

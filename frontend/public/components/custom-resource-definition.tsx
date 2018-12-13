@@ -28,7 +28,7 @@ const CRDRow = ({obj: crd}) => <div className="row co-resource-list__item">
   <div className="col-lg-4 col-md-4 col-sm-4 col-xs-6">
     <span className="co-resource-link">
       <ResourceIcon kind="CustomResourceDefinition" />
-      <Link className="co-resource-link__resource-name" to={`/k8s/all-namespaces/customresourcedefinitions/${referenceForCRD(crd)}`}>{_.get(crd, 'spec.names.kind', crd.metadata.name)}</Link>
+      <Link className="co-resource-link__resource-name" to={`/k8s/all-namespaces/${referenceForCRD(crd)}`}>{_.get(crd, 'spec.names.kind', crd.metadata.name)}</Link>
     </span>
   </div>
   <div className="col-lg-3 col-md-4 col-sm-4 col-xs-6 co-break-word">
