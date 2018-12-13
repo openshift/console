@@ -9,6 +9,8 @@ import {PackageManifestModel} from '../../models';
 import {MarketplaceTileViewPage} from './kubernetes-marketplace-items';
 import * as operatorImg from '../../imgs/operator.svg';
 
+export const marketplaceLabel = 'openshift-marketplace';
+
 const normalizePackageManifests = (packageManifests, kind) => {
   const activePackageManifests = _.filter(packageManifests, packageManifest => {
     return !packageManifest.status.removedFromBrokerCatalog;
