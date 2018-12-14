@@ -59,6 +59,10 @@ TextFilter.displayName = 'TextFilter';
 // TODO (jon) make this into "withListPageFilters" HOC
 /** @augments {React.PureComponent<{ListComponent: React.ComponentType<any>, kinds: string[], flatten?: function, data?: any[], rowFilters?: any[]}>} */
 export class ListPageWrapper_ extends React.PureComponent {
+  getFilteredRows(filter, objects) {
+    return _.filter(objects, o => o.metadata.name.includes(filter));
+  }
+
   render() {
     const {
       flatten,
@@ -68,6 +72,8 @@ export class ListPageWrapper_ extends React.PureComponent {
       rowFilters,
     } = this.props;
     const data = flatten ? flatten(this.props.resources) : [];
+    const filteredData = this.getFilteredRows(this.props.filters.name, data);
+    const intersection = _.intersection(data, filteredData);
 
     const RowsOfRowFilters = rowFilters && _.map(rowFilters, ({items, reducer, selected, type, numbers}, i) => {
       const count = _.isFunction(numbers) ? numbers(data) : undefined;
@@ -75,8 +81,8 @@ export class ListPageWrapper_ extends React.PureComponent {
         key={i}
         applyFilter={this.props.applyFilter}
         items={_.isFunction(items) ? items(_.pick(this.props, kinds)) : items}
-        itemCount={_.size(data)}
-        numbers={count || _.countBy(data, reducer)}
+        itemCount={_.size(filteredData) > 0 ? _.size(intersection) : _.size(data)}
+        numbers={count || _.size(filteredData) > 0 ? _.countBy(intersection, reducer) : _.countBy(data, reducer)}
         selected={selected}
         type={type}
         reduxIDs={reduxIDs}
