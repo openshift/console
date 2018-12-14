@@ -10,10 +10,10 @@ $global-notification-text: #fff;
     cursor: pointer;
     text-decoration: underline;
   }
-}
 
-.co-global-notification + .co-global-notification {
-  border-top: 1px solid #00659c;
+  +  .co-global-notification {
+    box-shadow: inset 0 10px 10px -10px rgba(0,34,53,0.7);
+  }
 }
 
 .co-global-notification__text {
