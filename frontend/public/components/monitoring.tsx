@@ -179,14 +179,7 @@ const alertStateToProps = (state, {match}): AlertsDetailsPageProps => {
   let alert = _.find(alerts, a => _.isEqual(a.labels, labels));
   if (rule && !alert) {
     // No Alert with the exact label set was found, so display a "fake" Alert based on the Rule
-    const alertStates = _.map(alerts, alertState);
-    alert = {
-      annotations: rule.annotations,
-      labels,
-      rule,
-      // Set the state to the most significant state of all the Rule's Alerts
-      state: _.find([AlertStates.Firing, AlertStates.Silenced, AlertStates.Pending], s => alertStates.includes(s)) || AlertStates.NotFiring,
-    };
+    alert = {annotations: rule.annotations, labels, rule, state: AlertStates.NotFiring};
   }
   return {alert, loaded, loadError, rule, silencesLoaded};
 };
