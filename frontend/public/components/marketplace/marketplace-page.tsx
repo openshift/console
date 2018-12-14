@@ -89,10 +89,10 @@ export const MarketplaceList: React.SFC<MarketplaceListProps> = (props) => {
 export const MarketplacePage: React.SFC<MarketplacePageProps> = (props) => {
   return <React.Fragment>
     <Helmet>
-      <title>Kubernetes Marketplace</title>
+      <title>Marketplace</title>
     </Helmet>
     <div className="co-catalog">
-      <PageHeading title="Kubernetes Marketplace" />
+      <PageHeading title="Marketplace" />
       <div className="co-catalog-connect">
         <Firehose resources={[{
           isList: true,

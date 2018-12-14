@@ -11,14 +11,11 @@ import {
   BuildConfigModel,
   BuildModel,
   ChargebackReportModel,
-  ClusterServiceVersionModel,
   DeploymentConfigModel,
   ImageStreamModel,
-  InstallPlanModel,
   MachineModel,
   MachineSetModel,
-  PackageManifestModel,
-  SubscriptionModel,
+  ClusterServiceVersionModel,
 } from '../models';
 import { referenceForModel } from '../module/k8s';
 
@@ -294,17 +291,17 @@ export const Navigation = ({ isNavOpen, onNavSelect }) => {
           }
           <HrefLink href="/overview" name="Status" activePath="/overview/" required={FLAGS.OPENSHIFT} />
           <HrefLink href="/status" name="Status" activePath="/status/" disallowed={FLAGS.OPENSHIFT} />
-          <HrefLink href="/catalog" name="Catalog" activePath="/catalog/" />
           <HrefLink href="/search" name="Search" startsWith={searchStartsWith} />
           <ResourceNSLink resource="events" name="Events" />
         </NavSection>
 
-        <NavSection required={FLAGS.OPERATOR_LIFECYCLE_MANAGER} title="Operators">
-          <HrefLink required={FLAGS.KUBERNETES_MARKETPLACE} href="/marketplace" name="Kubernetes Marketplace" activePath="/marketplace/" />
-          <ResourceNSLink model={ClusterServiceVersionModel} resource={ClusterServiceVersionModel.plural} name="Cluster Service Versions" />
-          <ResourceNSLink model={PackageManifestModel} resource={PackageManifestModel.plural} name="Package Manifests" />
-          <ResourceNSLink model={SubscriptionModel} resource={SubscriptionModel.plural} name="Subscriptions" />
-          <ResourceNSLink model={InstallPlanModel} resource={InstallPlanModel.plural} name="Install Plans" />
+        <NavSection title="Catalog">
+          <HrefLink href="/catalog" name="Developer Catalog" activePath="/catalog/" />
+          <ResourceNSLink model={ClusterServiceVersionModel} resource={ClusterServiceVersionModel.plural} name="Operators" />
+          <HrefLink href="/provisionedservices" name="Provisioned Services" activePath="/provisionedservices/" />
+          <HrefLink required={FLAGS.KUBERNETES_MARKETPLACE} href="/marketplace" name="Marketplace" activePath="/marketplace/" />
+          <HrefLink href="/operatormanagement" name="Operator Management" activePath="/operatormanagement/" />
+          <HrefLink href="/brokermanagement" name="Broker Management" activePath="/brokermanagement/" />
         </NavSection>
 
         <NavSection title="Workloads">
@@ -339,13 +336,6 @@ export const Navigation = ({ isNavOpen, onNavSelect }) => {
           <ResourceNSLink resource="buildconfigs" name={BuildConfigModel.labelPlural} />
           <ResourceNSLink resource="builds" name={BuildModel.labelPlural} />
           <ResourceNSLink resource="imagestreams" name={ImageStreamModel.labelPlural} startsWith={imagestreamsStartsWith} />
-        </NavSection>
-
-        <NavSection title="Service Catalog" required={FLAGS.SERVICE_CATALOG}>
-          <ResourceClusterLink resource="clusterservicebrokers" name="Service Brokers" />
-          <ResourceClusterLink resource="clusterserviceclasses" name="Service Classes" />
-          <ResourceNSLink resource="serviceinstances" name="Service Instances" />
-          <ResourceNSLink resource="servicebindings" name="Service Bindings" />
         </NavSection>
 
         <MonitoringNavSection />

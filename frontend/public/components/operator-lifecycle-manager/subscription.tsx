@@ -81,7 +81,7 @@ export const SubscriptionsPage: React.SFC<SubscriptionsPageProps> = (props) => {
     ]}
     flatten={resources => _.get(resources.subscription, 'data', [])}
     title="Subscriptions"
-    showTitle={true}
+    showTitle={false}
     canCreate={true}
     createProps={{to: props.namespace ? `/k8s/ns/${props.namespace}/${referenceForModel(PackageManifestModel)}` : `/k8s/all-namespaces/${referenceForModel(PackageManifestModel)}`}}
     createButtonText="Create Subscription"

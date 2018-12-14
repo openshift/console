@@ -91,6 +91,7 @@ export const ClusterServiceBrokerPage: React.SFC<ClusterServiceBrokerPageProps> 
     ListComponent={ClusterServiceBrokerList}
     kind={ClusterServiceBrokerReference}
     canCreate={true}
+    showTitle={false}
     {...props}
   />;
 

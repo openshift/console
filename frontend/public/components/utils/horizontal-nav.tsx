@@ -142,7 +142,23 @@ export class HorizontalNav extends React.PureComponent<HorizontalNavProps> {
     match: PropTypes.shape({
       path: PropTypes.string,
     }),
+    noStatusBox: PropTypes.bool,
   };
+
+  renderContent(routes: any) {
+    const {noStatusBox, obj, EmptyMsg, label} = this.props;
+    const content = <Switch> {routes} </Switch>;
+
+    if (noStatusBox) {
+      return content;
+    }
+
+    return (
+      <StatusBox {...obj} EmptyMsg={EmptyMsg} label={label} >
+        {content}
+      </StatusBox>
+    );
+  }
 
   render() {
     const props = this.props;
@@ -162,9 +178,7 @@ export class HorizontalNav extends React.PureComponent<HorizontalNavProps> {
     return <div className={props.className}>
       <div className="co-m-horizontal-nav">
         {!props.hideNav && <NavBar pages={pages} basePath={props.match.url} hideDivider={props.hideDivider} />}
-        <StatusBox {...props.obj} EmptyMsg={props.EmptyMsg} label={props.label}>
-          <Switch> {routes} </Switch>
-        </StatusBox>
+        {this.renderContent(routes)}
       </div>
     </div>;
   }
@@ -191,4 +205,5 @@ export type HorizontalNavProps = {
   hideNav?: boolean;
   hideDivider?: boolean;
   EmptyMsg?: React.ComponentType<any>;
+  noStatusBox?: boolean;
 };
