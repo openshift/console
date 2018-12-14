@@ -7,13 +7,14 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { CSSTransition } from 'react-transition-group';
 import { Helmet } from 'react-helmet';
-import { Toolbar } from 'patternfly-react';
+import { Link } from 'react-router-dom';
+import { Toolbar, EmptyState } from 'patternfly-react';
 
 import { coFetchJSON } from '../../co-fetch';
 import { getBuildNumber } from '../../module/k8s/builds';
 import { prometheusBasePath } from '../graphs';
 import { TextFilter } from '../factory';
-import { UIActions } from '../../ui/ui-actions';
+import { UIActions, formatNamespacedRouteForResource } from '../../ui/ui-actions';
 import {
   K8sResourceKind,
   LabelSelector,
@@ -38,6 +39,7 @@ import {
   Dropdown,
   Firehose,
   StatusBox,
+  EmptyBox,
 } from '../utils';
 
 import { overviewMenuActions, OverviewNamespaceDashboard } from './namespace-overview';
@@ -274,6 +276,38 @@ const sortBuilds = (builds: K8sResourceKind[]): K8sResourceKind[] => {
 
   return builds.sort(byBuildNumber);
 };
+
+const overviewEmptyStateToProps = ({UI}) => ({
+  activeNamespace: UI.get('activeNamespace'),
+  resources: UI.getIn(['overview', 'resources']),
+});
+
+const OverviewEmptyState = connect(overviewEmptyStateToProps)(({activeNamespace, resources}) => {
+  if (resources.isEmpty()) {
+    return <EmptyState>
+      <EmptyState.Title>
+        Get started with your project.
+      </EmptyState.Title>
+      <EmptyState.Info>
+        Add content to your project from the catalog of web frameworks, databases, and other components. You may also deploy an existing image or create resources using YAML definitions.
+      </EmptyState.Info>
+      <EmptyState.Action>
+        <Link to="/catalog" className="btn btn-lg btn-primary">
+          Browse Catalog
+        </Link>
+      </EmptyState.Action>
+      <EmptyState.Action secondary>
+        <Link className="btn btn-default" to={`/deploy-image?preselected-ns=${activeNamespace}`} title="Deploy Image">
+          Deploy Image
+        </Link>
+        <Link className="btn btn-default" to={formatNamespacedRouteForResource('import', activeNamespace)} title="Perform an action">
+          Import YAML
+        </Link>
+      </EmptyState.Action>
+    </EmptyState>;
+  }
+  return <EmptyBox label="Resources" />;
+});
 
 const headingStateToProps = ({UI}): OverviewHeadingPropsFromState => {
   const selectedView = UI.getIn(['overview', 'selectedView']);
@@ -811,6 +845,7 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
           label="Resources"
           loaded={loaded}
           loadError={loadError}
+          EmptyMsg={OverviewEmptyState}
         >
           {selectedView === View.Resources && <ProjectOverview groups={groupedItems} />}
           {selectedView === View.Dashboard && <OverviewNamespaceDashboard obj={project.data} />}
