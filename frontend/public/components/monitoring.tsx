@@ -8,7 +8,7 @@ import { Link, Redirect, Route, Switch } from 'react-router-dom';
 
 import { coFetchJSON } from '../co-fetch';
 import k8sActions from '../module/k8s/k8s-actions';
-import { AlertStates, connectToURLs, MonitoringRoutes, SilenceStates } from '../monitoring';
+import { alertState, AlertStates, connectToURLs, MonitoringRoutes, silenceState, SilenceStates } from '../monitoring';
 import store from '../redux';
 import { UIActions } from '../ui/ui-actions';
 import { ColHead, List, ListHeader, ResourceRow, TextFilter } from './factory';
@@ -57,14 +57,10 @@ const labelsToParams = labels => _.map(labels, (v, k) => `${encodeURIComponent(k
 const alertURL = (alert, ruleID) => `${AlertResource.path}/${ruleID}?${labelsToParams(alert.labels)}`;
 const ruleURL = rule => `${AlertRuleResource.path}/${_.get(rule, 'id')}`;
 
-export const alertState = a => _.get(a, 'state', AlertStates.NotFiring);
-
 const alertDescription = alert => {
   const {annotations = {}, labels = {}} = alert;
   return annotations.description || annotations.message || labels.alertname;
 };
-
-export const silenceState = s => _.get(s, 'status.state');
 
 const alertsToProps = ({UI}) => UI.getIn(['monitoring', 'alerts']) || {};
 const silencesToProps = ({UI}) => UI.getIn(['monitoring', 'silences']) || {};
