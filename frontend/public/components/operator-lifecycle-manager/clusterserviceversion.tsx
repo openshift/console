@@ -232,14 +232,13 @@ export const ClusterServiceVersionsDetailsPage: React.StatelessComponent<Cluster
   AllInstances.displayName = 'AllInstances';
 
   const instancePagesFor = (obj: ClusterServiceVersionKind) => {
-    const ownedCRDs = _.get(obj, 'spec.customresourcedefinitions.owned', []);
-
-    return (ownedCRDs.length > 1 ? [{href: 'instances', name: 'All Instances', component: AllInstances}] : []).concat(ownedCRDs.map((desc: CRDDescription) => ({
-      href: referenceForProvidedAPI(desc),
-      name: desc.displayName,
-      /* eslint-disable-next-line react/display-name */
-      component: (instancesProps) => <ProvidedAPIPage {...instancesProps} csv={obj} kind={referenceForProvidedAPI(desc)} namespace={props.match.params.ns} />,
-    })));
+    return (providedAPIsFor(obj).length > 1 ? [{href: 'instances', name: 'All Instances', component: AllInstances}] : [])
+      .concat(providedAPIsFor(obj).map((desc: CRDDescription) => ({
+        href: referenceForProvidedAPI(desc),
+        name: desc.displayName,
+        /* eslint-disable-next-line react/display-name */
+        component: (instancesProps) => <ProvidedAPIPage {...instancesProps} csv={obj} kind={referenceForProvidedAPI(desc)} namespace={props.match.params.ns} />,
+      })));
   };
 
   return <DetailsPage
