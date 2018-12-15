@@ -54,10 +54,10 @@ class MarketplaceItemModal extends React.Component {
       },
     };
     if (!previousPackages){
-      k8sCreate(CatalogSourceConfigModel, catalogSourceConfig).then(close());
+      k8sCreate(CatalogSourceConfigModel, catalogSourceConfig).then(() => close());
       return;
     }
-    k8sKill(CatalogSourceConfigModel, catalogSourceConfig).then(k8sCreate(CatalogSourceConfigModel, catalogSourceConfig)).then(close()); // TODO: link to OLM subscription page
+    k8sKill(CatalogSourceConfigModel, catalogSourceConfig).then(() => k8sCreate(CatalogSourceConfigModel, catalogSourceConfig)).then(() => close()); // TODO: link to OLM subscription page
   }
 
   render() {
