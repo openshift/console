@@ -20,6 +20,7 @@ import {
   getResourceKind,
   getLabelMatcher,
   findPod,
+  findVmi,
   findVMIMigration,
   getFlattenForKind,
 } from './utils/resources';
@@ -120,15 +121,22 @@ const getMigration = (vm, resources) => {
   return findVMIMigration(migrationData, vm.metadata.name);
 };
 
-const StateColumn = ({ loaded, vm, resources }) => {
+const getVmi = (vm, resources) => {
+  const flatten = getFlattenForKind(VirtualMachineInstanceModel.kind);
+  const vmiData = flatten(resources);
+  return findVmi(vmiData, vm.metadata.name);
+};
+
+const StateColumn = props => {
+  const { loaded, resources, vm } = props;
   return loaded
-    ? <VmStatus
+  ? <VmStatus
       vm={vm}
       launcherPod={getPod(vm, resources, VIRT_LAUNCHER_POD_PREFIX)}
       importerPod={getPod(vm, resources, IMPORTER_DV_POD_PREFIX)}
       migration={getMigration(vm, resources)}
     />
-    : DASHES;
+  : DASHES;
 };
 
 const FirehoseResourceLink = props => {
@@ -268,16 +276,31 @@ const VmDetails_ = props => {
   const { flatten, loaded, vm, resources } = props;
   if (loaded){
     const vm = flatten(props.resources);
+
     if (vm) {
+      const namespaceResourceLink = (
+        <ResourceLink kind={NamespaceModel.kind} name={vm.metadata.namespace} title={vm.metadata.namespace} />
+      );
+
+      const podResourceLink = (
+        <FirehoseResourceLink
+          {...props}
+          flatten={getFlattenForKind(PodModel.kind)}
+          filter={data => findPod(data, vm.metadata.name, VIRT_LAUNCHER_POD_PREFIX)}
+        />);
+
       return (
         <VmDetails
           {...props}
           vm={vm}
           ResourceLink={ResourceLink}
           NodeLink={NodeLink}
+          NamespaceResourceLink={namespaceResourceLink}
+          PodResourceLink={podResourceLink}
           launcherPod={getPod(vm, resources, VIRT_LAUNCHER_POD_PREFIX)}
           importerPod={getPod(vm, resources, IMPORTER_DV_POD_PREFIX)}
           migration={getMigration(vm, resources)}
+          vmi={getVmi(vm, resources)}
         />);
     }
   }
