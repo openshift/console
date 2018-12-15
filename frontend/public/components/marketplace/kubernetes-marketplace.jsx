@@ -3,9 +3,9 @@ import * as _ from 'lodash-es';
 import * as PropTypes from 'prop-types';
 import {Helmet} from 'react-helmet';
 
-import {Firehose, PageHeading, StatusBox} from '../utils';
+import {Firehose, PageHeading, StatusBox, MsgBox} from '../utils';
 import {referenceForModel} from '../../module/k8s';
-import {PackageManifestModel} from '../../models';
+import {PackageManifestModel, OperatorGroupModel, CatalogSourceConfigModel} from '../../models';
 import {MarketplaceTileViewPage} from './kubernetes-marketplace-items';
 import * as operatorImg from '../../imgs/operator.svg';
 
@@ -16,7 +16,7 @@ const normalizePackageManifests = (packageManifests, kind) => {
   return _.map(activePackageManifests, packageManifest => {
     const name = packageManifest.metadata.name;
     const uid = `${name}/${packageManifest.status.catalogSourceNamespace}`;
-    const defaultIconClass = 'fa fa-clone'; // TODO: get this info from the packagemanifest
+    const defaultIconClass = 'fa fa-clone';
     const iconObj = _.get(packageManifest, 'status.channels[0].currentCSVDesc.icon[0]');
     const imgUrl = iconObj ? `data:${iconObj.mediatype};base64,${iconObj.base64data}` : operatorImg;
     const iconClass = imgUrl ? null : defaultIconClass;
@@ -24,7 +24,7 @@ const normalizePackageManifests = (packageManifests, kind) => {
     const tags = packageManifest.metadata.tags;
     const version = _.get(packageManifest, 'status.channels[0].currentCSVDesc.version');
     const currentCSVAnnotations = _.get(packageManifest, 'status.channels[0].currentCSVDesc.annotations', {});
-    const {
+    let {
       description,
       certifiedLevel,
       healthIndex,
@@ -36,6 +36,9 @@ const normalizePackageManifests = (packageManifests, kind) => {
       categories,
     } = currentCSVAnnotations;
     const categoryArray = categories && _.map(categories.split(','), category => category.trim());
+    longDescription = longDescription ? longDescription : _.get(packageManifest, 'status.channels[0].currentCSVDesc.description');
+    const catalogSource = _.get(packageManifest, 'status.catalogSource');
+    const catalogSourceNamespace = _.get(packageManifest, 'status.catalogSourceNamespace');
     return {
       obj: packageManifest,
       kind,
@@ -55,17 +58,18 @@ const normalizePackageManifests = (packageManifests, kind) => {
       support,
       longDescription,
       categories: categoryArray,
+      catalogSource,
+      catalogSourceNamespace,
     };
   });
 };
 
 const getItems = (props) => {
   const {packagemanifests, loaded} = props;
-  let packageManifestItems = null;
-  if (!loaded || !packagemanifests) {
+  if (!loaded || !packagemanifests){
     return [];
   }
-  packageManifestItems = normalizePackageManifests(packagemanifests.data, 'PackageManifest');
+  const packageManifestItems = normalizePackageManifests(packagemanifests.data, 'PackageManifest');
   return _.sortBy([...packageManifestItems], 'name');
 };
 
@@ -87,10 +91,10 @@ export class MarketplaceListPage extends React.Component {
   }
 
   render() {
-    const {loaded, loadError} = this.props;
+    const {catalogsourceconfigs, loaded, loadError} = this.props;
     const {items} = this.state;
-    return <StatusBox data={items} loaded={loaded} loadError={loadError} label="Resources">
-      <MarketplaceTileViewPage items={items} />
+    return <StatusBox data={items} loaded={loaded} loadError={loadError} label="Resources" EmptyMsg={() => <MsgBox title="No Marketplace Items Found" detail="Please check that the marketplace operator is running. If you are using your own quay.io appregistry, please ensure your operators are properly documented. For more information visit https://github.com/operator-framework/operator-marketplace" />} >
+      <MarketplaceTileViewPage items={items} catalogsourceconfigs={catalogsourceconfigs} />
     </StatusBox>;
   }
 }
@@ -103,9 +107,21 @@ export const Marketplace = () => {
   const resources = [];
   resources.push({
     isList: true,
+    kind: referenceForModel(CatalogSourceConfigModel),
+    namespace: 'openshift-operators',
+    prop: 'catalogsourceconfigs',
+  });
+  resources.push({
+    isList: true,
+    kind: referenceForModel(OperatorGroupModel),
+    prop: 'operatorgroups',
+  });
+  resources.push({
+    isList: true,
     kind: referenceForModel(PackageManifestModel),
-    namespace: 'openshift-marketplace',
+    namespace: 'openshift-operators',
     prop: 'packagemanifests',
+    selector: {matchLabels: {'openshift-marketplace':'true'}},
   });
   return <Firehose resources={resources} className="co-catalog-connect">
     <MarketplaceListPage />
