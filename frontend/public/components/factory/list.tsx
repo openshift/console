@@ -14,10 +14,9 @@ import {
   WindowScroller,
 } from 'react-virtualized';
 
-import { AlertStates, SilenceStates } from '../../monitoring';
+import { alertState, AlertStates, silenceState, SilenceStates } from '../../monitoring';
 import { UIActions } from '../../ui/ui-actions';
 import { ingressValidHosts } from '../ingress';
-import { alertState, silenceState } from '../monitoring';
 import { routeStatus } from '../routes';
 import { getClusterOperatorStatus } from '../cluster-settings/cluster-operator';
 import { secretTypeFilterReducer } from '../secret';
