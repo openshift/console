@@ -1,5 +1,8 @@
+import * as _ from 'lodash';
+import { safeDump, safeLoad } from 'js-yaml';
 import { $, $$, browser, by, element, ExpectedConditions as until } from 'protractor';
 
+import * as yamlView from './yaml.view';
 import { appHost, testName } from '../protractor.conf';
 
 export const createYAMLButton = $('#yaml-create');
@@ -119,6 +122,21 @@ export const deleteResource = async(resource: string, kind: string, name: string
   await actionsDropdownMenu.element(by.partialLinkText('Delete ')).click();
   await browser.wait(until.presenceOf($('#confirm-action')));
   await $('#confirm-action').click();
+};
+
+// Navigates to create new resource page, creates an example resource of the specified kind,
+// then navigates back to the original url.
+export const createNamespacedTestResource = async(kindModel) => {
+  const next = await browser.getCurrentUrl();
+  await browser.get(`${appHost}/k8s/ns/${testName}/${kindModel.plural}/new`);
+  await yamlView.isLoaded();
+  const content = await yamlView.editorContent.getText();
+  const newContent = _.defaultsDeep({}, {metadata: {name: testName, labels: {automatedTestName: testName}}}, safeLoad(content));
+  await yamlView.setContent(safeDump(newContent));
+  await browser.wait(until.textToBePresentInElement(yamlView.editorContent, testName));
+  await yamlView.saveButton.click();
+  await browser.wait(until.presenceOf($(`.co-m-${kindModel.kind}`)));
+  await browser.get(next);
 };
 
 export const checkResourceExists = async(resource: string, name: string) => {
