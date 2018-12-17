@@ -17,16 +17,6 @@ const checkErrors = (errors, dispose) => {
   }
 };
 
-const resolveResource = (data, resource) => {
-  const key = Object.keys(data).find(k => {
-    const value = data[k];
-
-    return value.metadata.name === resource.name && (!resource.namespaced || value.metadata.namespace === resource.namespace);
-  });
-
-  return key ? data[key] : {};
-};
-
 /*
  * Firehose helper
  */
@@ -50,7 +40,7 @@ export class WithResources extends React.Component {
 
       if (resource) {
         if (resource.loaded) {
-          childrenProps[resourceKey] = configResource.isList ? resource.data : resolveResource(resource.data, configResource);
+          childrenProps[resourceKey] = resource.data;
         } else if (resourceConfig.required) {
           loaded = false;
         }
@@ -94,7 +84,7 @@ WithResources.defaultProps = {
 };
 
 WithResources.propTypes = {
-  resources: PropTypes.object,
+  resources: PropTypes.oneOfType([PropTypes.object, PropTypes.array]), // firehose injects its props which are array at first, but array is not passed down
   resourceMap: PropTypes.object.isRequired,
   dispose: PropTypes.func,
   resourceToProps: PropTypes.func,
