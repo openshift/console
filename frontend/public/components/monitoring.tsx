@@ -287,7 +287,7 @@ const ActiveAlerts = ({alerts, ruleID}) => <div className="co-m-table-grid co-m-
       <div className="col-sm-2 hidden-xs"><Timestamp timestamp={a.activeAt} /></div>
       <div className="col-sm-2 col-xs-3"><AlertState state={a.state} /></div>
       <div className="col-sm-2 col-xs-3 co-break-word">{a.value}</div>
-      <div className="dropdown-kebab-pf"><Kebab options={[silenceAlert(a)]} /></div>
+      {a.state !== AlertStates.Silenced && <div className="dropdown-kebab-pf"><Kebab options={[silenceAlert(a)]} /></div>}
     </ResourceRow>)}
   </div>
 </div>;
