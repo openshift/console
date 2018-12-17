@@ -5,9 +5,9 @@ import { CatalogTile, FilterSidePanel, VerticalTabs } from 'patternfly-react-ext
 import { Modal } from 'patternfly-react';
 
 import { MarkdownView } from '../../../public/components/operator-lifecycle-manager/clusterserviceversion';
-import { MarketplaceTileViewPage, getProviderValue, keywordCompare } from '../../../public/components/marketplace/kubernetes-marketplace-items';
+import { MarketplaceTileViewPage, getProviderValue, keywordCompare } from '../../../public/components/marketplace/marketplace-items';
 import { MarketplaceItemModal } from '../../../public/components/marketplace/marketplace-item-modal';
-import { MarketplaceListPage } from '../../../public/components/marketplace/kubernetes-marketplace';
+import { MarketplaceListPage } from '../../../public/components/marketplace/marketplace-page';
 import {
   marketplaceListPageProps,
   marketplaceTileViewPageProps,
