@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 
 import { ResourceEventStream } from './okdcomponents';
 import { ListHeader, ColHead, List, ListPage, ResourceRow, DetailsPage } from './factory/okdfactory';
-import { breadcrumbsForOwnerRefs, Firehose, ResourceLink, navFactory, ResourceKebab, Kebab } from './utils/okdutils';
+import { breadcrumbsForOwnerRefs, Firehose, ResourceLink, navFactory, Kebab, ResourceKebab } from './utils/okdutils';
 import {
   VirtualMachineInstanceModel,
   VirtualMachineModel,
@@ -15,6 +15,7 @@ import {
 import { actions, k8sCreate } from '../module/okdk8s';
 import { startStopVmModal } from './modals/start-stop-vm-modal';
 import { restartVmModal } from './modals/restart-vm-modal';
+import { cancelVmiMigrationModal } from './modals/cancel-vmi-migration-modal';
 import {
   getResourceKind,
   getLabelMatcher,
@@ -27,6 +28,7 @@ import {
   TEMPLATE_OS_LABEL,
   VmStatus,
   getVmStatus,
+  isBeingMigrated,
   VM_STATUS_ALL,
   VM_STATUS_TO_TEXT,
 } from 'kubevirt-web-ui-components';
@@ -71,23 +73,38 @@ const menuActionRestart = (kind, vm) => ({
   }),
 });
 
-const menuActionMigrate = (kind, vm) => ({
-  hidden: !_.get(vm, 'spec.running', false),
-  label: 'Migrate Virtual Machine',
-  callback: () => {
-    return modalResourceLauncher(BasicMigrationDialog, {
-      virtualMachineInstance: {
-        resource: getResourceKind(VirtualMachineInstanceModel, vm.metadata.name, true, vm.metadata.namespace, false, getLabelMatcher(vm)),
-        required: true,
-      },
-    })({
-      k8sCreate,
-      onMigrationError: showError,
-    });
-  },
-});
+const menuActionCancelMigration = (kind, vm, actionArgs) => {
+  const migration = findVMIMigration(actionArgs[VirtualMachineInstanceMigrationModel.kind], _.get(actionArgs[VirtualMachineInstanceModel.kind], 'metadata.name'));
+  return {
+    hidden: !isBeingMigrated(vm, migration),
+    label: 'Cancel Virtual Machine Migration',
+    callback: () => cancelVmiMigrationModal({
+      migration,
+    }),
+  };
+};
 
-const menuActions = [menuActionStart, menuActionRestart, menuActionMigrate, Kebab.factory.Delete];
+const menuActionMigrate = (kind, vm, actionArgs) => {
+  const migration = findVMIMigration(actionArgs[VirtualMachineInstanceMigrationModel.kind], _.get(actionArgs[VirtualMachineInstanceModel.kind], 'metadata.name'));
+  return {
+    hidden: !_.get(vm, 'spec.running', false) || isBeingMigrated(vm, migration),
+    label: 'Migrate Virtual Machine',
+    callback: () => {
+      return modalResourceLauncher(BasicMigrationDialog, {
+        virtualMachineInstance: {
+          resource: getResourceKind(VirtualMachineInstanceModel, vm.metadata.name, true, vm.metadata.namespace, false, getLabelMatcher(vm)),
+          required: true,
+        },
+      })({
+        k8sCreate,
+        onMigrationError: showError,
+        virtualMachineInstance: {}, // initial - is required
+      });
+    },
+  };
+};
+
+const menuActions = [menuActionStart, menuActionRestart, menuActionMigrate, menuActionCancelMigration, Kebab.factory.Delete];
 
 const getPod = (vm, resources, podNamePrefix) => {
   const podFlatten = getFlattenForKind(PodModel.kind);
@@ -154,7 +171,13 @@ export const VMRow = ({obj: vm}) => {
       </Firehose>
     </div>
     <div className="dropdown-kebab-pf">
-      <ResourceKebab actions={menuActions} kind={VirtualMachineModel.kind} resource={vm} />
+      <ResourceKebab actions={menuActions}
+        kind={VirtualMachineModel.kind}
+        resource={vm}
+        resources={[
+          getResourceKind(VirtualMachineInstanceModel, vm.metadata.name, true, vm.metadata.namespace, false),
+          getResourceKind(VirtualMachineInstanceMigrationModel, undefined, true, vm.metadata.namespace, false),
+        ]} />
     </div>
   </ResourceRow>;
 };
@@ -309,6 +332,7 @@ export const VirtualMachinesDetailsPage = props => {
     nicsPage,
     disksPage,
   ];
+
   return (
     <DetailsPage
       {...props}
@@ -318,6 +342,10 @@ export const VirtualMachinesDetailsPage = props => {
       })}
       menuActions={menuActions}
       pages={pages}
+      resources={[
+        getResourceKind(VirtualMachineInstanceModel, props.name, true, props.namespace, false),
+        getResourceKind(VirtualMachineInstanceMigrationModel, undefined, true, props.namespace, false),
+      ]}
     />);
 };
 
