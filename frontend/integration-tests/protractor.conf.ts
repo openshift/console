@@ -4,7 +4,7 @@ import { Config, browser, logging } from 'protractor';
 import { execSync } from 'child_process';
 import * as HtmlScreenshotReporter from 'protractor-jasmine2-screenshot-reporter';
 import * as _ from 'lodash';
-import { TapReporter } from 'jasmine-reporters';
+import { TapReporter, JUnitXmlReporter } from 'jasmine-reporters';
 import * as ConsoleReporter from 'jasmine-console-reporter';
 import * as failFast from 'protractor-fail-fast';
 
@@ -14,6 +14,7 @@ export const appHost = `${process.env.BRIDGE_BASE_ADDRESS || 'http://localhost:9
 export const testName = `test-${Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5)}`;
 
 const htmlReporter = new HtmlScreenshotReporter({dest: './gui_test_screenshots', inlineImages: true, captureOnlyFailedSpecs: true, filename: 'test-gui-report.html'});
+const junitReporter = new JUnitXmlReporter({savePath: './gui_test_screenshots', consolidateAll: true});
 const browserLogs: logging.Entry[] = [];
 
 export const config: Config = {
@@ -49,6 +50,7 @@ export const config: Config = {
   onPrepare: () => {
     browser.waitForAngularEnabled(false);
     jasmine.getEnv().addReporter(htmlReporter);
+    jasmine.getEnv().addReporter(junitReporter);
     if (tap) {
       jasmine.getEnv().addReporter(new TapReporter());
     } else {
