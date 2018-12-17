@@ -374,7 +374,7 @@ const SilencedAlertsList = ({alerts}) => _.isEmpty(alerts)
           <Link className="co-resource-link" to={alertURL(a, a.rule.id)}>{a.labels.alertname}</Link>
           <div className="monitoring-description">{alertDescription(a)}</div>
         </div>
-        <div className="col-xs-3">{a.labels.severity}</div>
+        <div className="col-xs-3">{a.labels.severity || '-'}</div>
         <div className="dropdown-kebab-pf">
           <Kebab options={[viewAlertRule(a)]} />
         </div>
@@ -472,7 +472,7 @@ const AlertRow = ({obj}) => {
       <AlertState state={state} />
       <AlertStateDescription alert={obj} />
     </div>
-    <div className="col-xs-2">{_.startCase(_.get(labels, 'severity', '-'))}</div>
+    <div className="col-xs-2">{_.startCase(_.get(labels, 'severity')) || '-'}</div>
     <div className="dropdown-kebab-pf">
       <Kebab options={state === AlertStates.Firing || state === AlertStates.Pending ? [silenceAlert(obj), viewAlertRule(obj)] : [viewAlertRule(obj)]} />
     </div>
