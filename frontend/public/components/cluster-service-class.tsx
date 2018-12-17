@@ -7,14 +7,12 @@ import * as _ from 'lodash-es';
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import { history, SectionHeading, detailsPage, navFactory, ResourceSummary, resourcePathFromModel, ResourceLink } from './utils';
 import { viewYamlComponent } from './utils/horizontal-nav';
-import { ClusterServiceClassModel } from '../models';
+import { ClusterServiceClassModel, ClusterServiceBrokerModel } from '../models';
 // eslint-disable-next-line no-unused-vars
-import { K8sResourceKind, K8sResourceKindReference, serviceClassDisplayName } from '../module/k8s';
+import { K8sResourceKind, referenceForModel, serviceClassDisplayName } from '../module/k8s';
 import { ClusterServiceClassIcon } from './catalog/catalog-item-icon';
 import { ClusterServicePlanPage } from './cluster-service-plan';
 import { ClusterServiceClassInfo } from './cluster-service-class-info';
-
-const ClusterServiceClassReference: K8sResourceKindReference = 'ClusterServiceClass';
 
 const createInstance = (kindObj, serviceClass) => {
   if (!_.get(serviceClass, 'status.removedFromBrokerCatalog')) {
@@ -49,7 +47,7 @@ const ClusterServiceClassListRow: React.SFC<ClusterServiceClassRowProps> = ({obj
       {serviceClass.spec.externalName}
     </div>
     <div className="col-sm-3 hidden-xs co-break-word">
-      <ResourceLink kind="ClusterServiceBroker" name={serviceClass.spec.clusterServiceBrokerName} />
+      <ResourceLink kind={referenceForModel(ClusterServiceBrokerModel)} name={serviceClass.spec.clusterServiceBrokerName} />
     </div>
   </ResourceRow>;
 };
@@ -77,7 +75,7 @@ export const ClusterServiceClassDetailsPage: React.SFC<ClusterServiceClassDetail
   {...props}
   buttonActions={actionButtons}
   titleFunc={serviceClassDisplayName}
-  kind={ClusterServiceClassReference}
+  kind={referenceForModel(ClusterServiceClassModel)}
   pages={[navFactory.details(detailsPage(ClusterServiceClassDetails)),
     navFactory.editYaml(viewYamlComponent),
     navFactory.clusterServicePlans(({obj}) => <ClusterServicePlanPage showTitle={false}
@@ -88,13 +86,13 @@ export const ClusterServiceClassList: React.SFC = props => <List {...props} Head
 
 export const ClusterServiceClassPage: React.SFC<ClusterServiceClassPageProps> = props =>
   <ListPage
+    {...props}
     showTitle={false}
     ListComponent={ClusterServiceClassList}
-    kind={ClusterServiceClassReference}
+    kind={referenceForModel(ClusterServiceClassModel)}
     filterLabel="Service Classes by display name"
     textFilter="service-class"
     canCreate={false}
-    {...props}
   />;
 
 export type ClusterServiceClassRowProps = {

@@ -9,12 +9,13 @@ import { Alert } from 'patternfly-react';
 import { ProvidedAPIsPage, ProvidedAPIPage } from './clusterserviceversion-resource';
 import { DetailsPage, ListHeader, ColHead, List, ListPage } from '../factory';
 import { withFallback } from '../utils/error-boundary';
-import { referenceForModel, referenceFor } from '../../module/k8s';
+import { referenceForModel, referenceFor, K8sKind } from '../../module/k8s';
 import { ClusterServiceVersionModel } from '../../models';
 import { AsyncComponent } from '../utils/async';
 import { FLAGS as featureFlags } from '../../features';
 import { ResourceEventStream } from '../events';
 import { Conditions } from '../conditions';
+import { connectToModel } from '../../kinds';
 import {
   ClusterServiceVersionKind,
   ClusterServiceVersionLogo,
@@ -123,7 +124,8 @@ export const MarkdownView = (props: {content: string}) => {
   return <AsyncComponent loader={() => import('./markdown-view').then(c => c.SyncMarkdownView)} {...props} />;
 };
 
-export const CRDCard: React.SFC<CRDCardProps> = ({crd, csv}) => {
+export const CRDCard = connectToModel((props: CRDCardProps) => {
+  const {csv, crd, kindObj} = props;
   const createRoute = `/k8s/ns/${csv.metadata.namespace}/${ClusterServiceVersionModel.plural}/${csv.metadata.name}/${referenceForProvidedAPI(crd)}/new`;
 
   return <div className="co-crd-card">
@@ -136,15 +138,15 @@ export const CRDCard: React.SFC<CRDCardProps> = ({crd, csv}) => {
       <p>{crd.description}</p>
     </div>
     <div className="co-crd-card__footer">
-      <Link className="co-crd-card__link" to={createRoute}>
+      { (kindObj.verbs || []).some(v => v === 'create') && <Link className="co-crd-card__link" to={createRoute}>
         <span className="pficon pficon-add-circle-o" aria-hidden="true"></span> Create New
-      </Link>
+      </Link> }
     </div>
   </div>;
-};
+});
 
 export const CRDCardRow: React.SFC<CRDCardRowProps> = (props) => <div className="co-crd-card-row">
-  {props.crdDescs.map((desc, i) => <CRDCard key={i} crd={desc} csv={props.csv} />)}
+  {props.crdDescs.map((desc, i) => <CRDCard key={i} crd={desc} csv={props.csv} kind={referenceForProvidedAPI(desc)} />)}
 </div>;
 
 export const ClusterServiceVersionDetails: React.SFC<ClusterServiceVersionDetailsProps> = (props) => {
@@ -181,7 +183,7 @@ export const ClusterServiceVersionDetails: React.SFC<ClusterServiceVersionDetail
             </dl>
           </div>
           <div className="col-sm-9">
-            {status.phase !== ClusterServiceVersionPhase.CSVPhaseSucceeded && <Alert type="error"><strong>{status.phase}</strong>: {status.message}</Alert>}
+            {status.phase === ClusterServiceVersionPhase.CSVPhaseFailed && <Alert type="error"><strong>{status.phase}</strong>: {status.message}</Alert>}
             <SectionHeading text="Provided APIs" />
             <CRDCardRow csv={props.obj} crdDescs={providedAPIsFor(props.obj)} />
             <SectionHeading text="Description" />
@@ -269,6 +271,7 @@ export type ClusterServiceVersionListProps = {
 export type CRDCardProps = {
   crd: CRDDescription | APIServiceDefinition;
   csv: ClusterServiceVersionKind;
+  kindObj: K8sKind;
 };
 
 export type CRDCardRowProps = {

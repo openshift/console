@@ -5,13 +5,13 @@ import { match as RouterMatch } from 'react-router-dom';
 import { shallow, ShallowWrapper } from 'enzyme';
 import * as _ from 'lodash-es';
 
-import { ClusterServiceVersionResourceList, ClusterServiceVersionResourceListProps, ProvidedAPIsPage, ProvidedAPIsPageProps, ClusterServiceVersionResourceHeaderProps, ClusterServiceVersionResourcesDetailsState, ClusterServiceVersionResourceRowProps, ClusterServiceVersionResourceHeader, ClusterServiceVersionResourceRow, ClusterServiceVersionResourceDetails, ClusterServiceVersionResourcesDetailsPageProps, ClusterServiceVersionResourcesDetailsProps, ClusterServiceVersionResourcesDetailsPage, ClusterServiceVersionResourceLink } from '../../../public/components/operator-lifecycle-manager/clusterserviceversion-resource';
+import { ClusterServiceVersionResourceList, ClusterServiceVersionResourceListProps, ProvidedAPIsPage, ProvidedAPIsPageProps, ClusterServiceVersionResourceHeaderProps, ClusterServiceVersionResourcesDetailsState, ClusterServiceVersionResourceRowProps, ClusterServiceVersionResourceHeader, ClusterServiceVersionResourceRow, ClusterServiceVersionResourceDetails, ClusterServiceVersionResourcesDetailsPageProps, ClusterServiceVersionResourcesDetailsProps, ClusterServiceVersionResourcesDetailsPage, ClusterServiceVersionResourceLink, ProvidedAPIPage, ProvidedAPIPageProps } from '../../../public/components/operator-lifecycle-manager/clusterserviceversion-resource';
 import { Resources } from '../../../public/components/operator-lifecycle-manager/k8s-resource';
 import { ClusterServiceVersionResourceKind, referenceForProvidedAPI } from '../../../public/components/operator-lifecycle-manager';
 import { StatusDescriptor } from '../../../public/components/operator-lifecycle-manager/descriptors/status';
 import { SpecDescriptor } from '../../../public/components/operator-lifecycle-manager/descriptors/spec';
-import { testCRD, testResourceInstance, testClusterServiceVersion, testOwnedResourceInstance } from '../../../__mocks__/k8sResourcesMocks';
-import { List, ColHead, ListHeader, DetailsPage, MultiListPage } from '../../../public/components/factory';
+import { testCRD, testResourceInstance, testClusterServiceVersion, testOwnedResourceInstance, testModel } from '../../../__mocks__/k8sResourcesMocks';
+import { List, ColHead, ListHeader, DetailsPage, MultiListPage, ListPage } from '../../../public/components/factory';
 import { Timestamp, LabelList, ResourceSummary, StatusBox, ResourceKebab, Kebab } from '../../../public/components/utils';
 import { referenceFor, K8sKind, referenceForModel } from '../../../public/module/k8s';
 import { ClusterServiceVersionModel } from '../../../public/models';
@@ -412,5 +412,17 @@ describe(ProvidedAPIsPage.displayName, () => {
     const data = flatten(resources);
 
     expect(data.length).toEqual(2);
+  });
+});
+
+describe(ProvidedAPIPage.displayName, () => {
+  let wrapper: ShallowWrapper<ProvidedAPIPageProps>;
+
+  it('does not allow creation if "create" not included in the verbs for the model', () => {
+    const readonlyModel = _.cloneDeep(testModel);
+    readonlyModel.verbs = ['get'];
+    wrapper = shallow(<ProvidedAPIPage.WrappedComponent kindObj={readonlyModel} kind={referenceForModel(readonlyModel)} csv={testClusterServiceVersion} />);
+
+    expect(wrapper.find(ListPage).props().canCreate).toBe(false);
   });
 });

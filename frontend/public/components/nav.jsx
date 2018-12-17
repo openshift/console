@@ -104,7 +104,7 @@ ResourceNSLink.propTypes = {
 
 class ResourceClusterLink extends NavLink {
   static isActive(props, resourcePath) {
-    return resourcePath === props.resource || _.startsWith(resourcePath, `${props.resource}/`);
+    return resourcePath === props.resource || _.startsWith(resourcePath, `${props.resource}/`) || matchesModel(resourcePath, props.model);
   }
 
   get to() {
@@ -116,6 +116,7 @@ ResourceClusterLink.propTypes = {
   name: PropTypes.string.isRequired,
   startsWith: PropTypes.arrayOf(PropTypes.string),
   resource: PropTypes.string.isRequired,
+  model: PropTypes.object,
 };
 
 class HrefLink extends NavLink {

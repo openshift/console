@@ -40,8 +40,12 @@ export const filterForName = async(name: string) => {
   await textFilter.sendKeys(name);
 };
 
-export const editHumanizedKind = (kind) => {
-  const humanizedKind = kind.split(/(?=[A-Z])/).join(' ');
+export const editHumanizedKind = (kind: string) => {
+  const humanizedKind = (kind.includes('~')
+    ? kind.split('~')[2]
+    : kind
+  ).split(/(?=[A-Z])/).join(' ');
+
   return `Edit ${humanizedKind}`;
 };
 
