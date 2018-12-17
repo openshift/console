@@ -404,7 +404,6 @@ export const MultiListPage = props => {
         kinds={_.map(resources, 'kind')}
         label={label}
         ListComponent={ListComponent}
-        mock={mock}
         rowFilters={rowFilters}
         staticFilters={staticFilters}
       />
