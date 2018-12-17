@@ -93,7 +93,7 @@ export class MarketplaceListPage extends React.Component {
   render() {
     const {catalogsourceconfigs, loaded, loadError} = this.props;
     const {items} = this.state;
-    return <StatusBox data={items} loaded={loaded} loadError={loadError} label="Resources" EmptyMsg={() => <MsgBox title="No Marketplace Items Found" detail="Please check that the marketplace operator is running. If you are using your own quay.io appregistry, please ensure your operators are properly documented. For more information visit https://github.com/operator-framework/operator-marketplace" />} >
+    return <StatusBox data={items} loaded={loaded} loadError={loadError} label="Resources" EmptyMsg={() => <MsgBox title="No Marketplace Items Found" detail={<span>Please check that the Marketplace operator is running and that you have created a valid OperatorSource. For more information about Marketplace, please click <a href="https://github.com/operator-framework/operator-marketplace">here</a>.</span>} />} >
       <MarketplaceTileViewPage items={items} catalogsourceconfigs={catalogsourceconfigs} />
     </StatusBox>;
   }
