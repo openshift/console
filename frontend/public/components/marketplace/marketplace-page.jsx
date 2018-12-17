@@ -6,7 +6,7 @@ import {Helmet} from 'react-helmet';
 import {Firehose, PageHeading, StatusBox, MsgBox} from '../utils';
 import {referenceForModel} from '../../module/k8s';
 import {PackageManifestModel, OperatorGroupModel, CatalogSourceConfigModel} from '../../models';
-import {MarketplaceTileViewPage} from './kubernetes-marketplace-items';
+import {MarketplaceTileViewPage} from './marketplace-items';
 import * as operatorImg from '../../imgs/operator.svg';
 
 const normalizePackageManifests = (packageManifests, kind) => {
