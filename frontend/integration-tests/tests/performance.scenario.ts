@@ -9,7 +9,7 @@ import * as crudView from '../views/crud.view';
 import * as yamlView from '../views/yaml.view';
 
 const chunkedRoutes = OrderedMap<string, {section: string, name: string}>()
-  .set('install-plan', {section: 'Operators', name: 'Install Plans'})
+  .set('operator-management', {section: 'Catalog', name: 'Operator Management'})
   .set('daemon-set', {section: 'Workloads', name: 'Daemon Sets'})
   .set('deployment', {section: 'Workloads', name: 'Deployments'})
   .set('deployment-config', {section: 'Workloads', name: 'Deployment Configs'})
@@ -31,8 +31,8 @@ const chunkedRoutes = OrderedMap<string, {section: string, name: string}>()
   .set('resource-quota', {section: 'Administration', name: 'Resource Quotas'})
   .set('limit-range', {section: 'Administration', name: 'Limit Ranges'})
   .set('custom-resource-definition', {section: 'Administration', name: 'CRDs'})
-  .set('catalog', {section: 'Home', name: 'Catalog'})
-  .set('marketplace', {section: 'Operators', name: 'Kubernetes Marketplace'});
+  .set('catalog', {section: 'Catalog', name: 'Developer Catalog'})
+  .set('marketplace', {section: 'Catalog', name: 'Marketplace'});
 
 describe('Performance test', () => {
 
@@ -86,8 +86,8 @@ describe('Performance test', () => {
     it(`downloads new bundle for ${routeName}`, async() => {
       await browser.get(`${appHost}/status/all-namespaces`);
       await browser.wait(until.presenceOf(crudView.resourceTitle));
-      // Avoid problems where the Operators nav section appears where Workloads was at the moment the tests try to click.
-      await browser.wait(until.visibilityOf(sidenavView.navSectionFor('Operators')));
+      // Avoid problems where the Catalog nav section appears where Workloads was at the moment the tests try to click.
+      await browser.wait(until.visibilityOf(sidenavView.navSectionFor('Catalog')));
       await sidenavView.clickNavLink([route.section, route.name]);
       await crudView.isLoaded();
 

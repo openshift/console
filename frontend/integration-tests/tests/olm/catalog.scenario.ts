@@ -28,14 +28,14 @@ describe('Installing a service from a Catalog Source', () => {
     checkErrors();
   });
 
-  it('displays `Operators` tab in navigation sidebar', async() => {
-    await browser.wait(until.presenceOf(sidenavView.navSectionFor('Operators')));
+  it('displays `Catalog` tab in navigation sidebar', async() => {
+    await browser.wait(until.presenceOf(sidenavView.navSectionFor('Catalog')));
 
-    expect(sidenavView.navSectionFor('Operators').isDisplayed()).toBe(true);
+    expect(sidenavView.navSectionFor('Catalog').isDisplayed()).toBe(true);
   });
 
   it('displays Catalog Source with expected available packages', async() => {
-    await sidenavView.clickNavLink(['Operators', 'Package Manifests']);
+    await sidenavView.clickNavLink(['Catalog', 'Operator Management']);
     await catalogView.isLoaded();
 
     openCloudServices.forEach(name => {

@@ -7,6 +7,7 @@ import { appHost, checkLogs, checkErrors, testName } from '../../protractor.conf
 import * as srvCatalogView from '../../views/service-catalog.view';
 import * as sidenavView from '../../views/sidenav.view';
 import * as crudView from '../../views/crud.view';
+import * as horizontalnavView from '../../views/horizontal-nav.view';
 
 describe('Test for Cluster Service Binding', () => {
   beforeAll(async() => {
@@ -20,8 +21,9 @@ describe('Test for Cluster Service Binding', () => {
   });
 
   it('creates a new binding for new service instance `mysql-persistent`', async() => {
-    await sidenavView.clickNavLink(['Service Catalog', 'Service Classes']);
+    await sidenavView.clickNavLink(['Catalog', 'Broker Management']);
     await crudView.isLoaded();
+    await horizontalnavView.clickHorizontalTab('Service Classes');
 
     // Filter by service class name to make sure it is on the first page of results.
     // Otherwise the tests fail since we do virtual scrolling and the element isn't found.
