@@ -20,7 +20,7 @@ describe('Installing a service from a Catalog Source', () => {
     execSync(`echo '${JSON.stringify(operatorGroup)}' | kubectl create -n ${testName} -f -`);
 
     browser.get(`${appHost}/status/ns/${testName}`);
-    await browser.wait(until.presenceOf($('#sidebar')));
+    await browser.wait(until.presenceOf($('.pf-c-nav')));
   });
 
   afterEach(() => {

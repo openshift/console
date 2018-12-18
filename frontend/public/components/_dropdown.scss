@@ -1,8 +1,9 @@
-$co-namespace-selector-desktop: 40px;
-$co-namespace-selector-mobile: 27px;
+$co-namespace-selector-desktop: 47px;
+$co-namespace-selector-mobile: 35px;
 $color-dropdown-hover: rgba(0, 0, 0, .05);
 $color-bookmarker--hover: #AAA;
 $color-bookmarker: #DDD;
+$masthead-height: 76px;
 
 .dropdown {
   position: relative;
@@ -34,7 +35,7 @@ $color-bookmarker: #DDD;
 .dropdown-menu__header {
   color: $color-pf-black-600;
   flex-grow: 1;
-  font-size: 11px;
+  font-size: ($font-size-base - 1);
   padding: 3px 10px;
   text-transform: uppercase;
 }
@@ -134,14 +135,13 @@ $color-bookmarker: #DDD;
 }
 
 .co-namespace-bar {
-  background-color: #292E34;
-  height: $co-namespace-selector-mobile;
+  border-bottom: 1px solid $color-grey-background-border;
   padding: 0 15px;
   white-space: nowrap;
 
   @media (min-width: $grid-float-breakpoint) {
-    border-left: 1px solid $color-os-nav-border-bottom;
-    height: $co-namespace-selector-desktop;
+    padding-left: 30px;
+    padding-right: 30px;
   }
 
   &__dropdowns {
@@ -149,11 +149,17 @@ $color-bookmarker: #DDD;
     justify-content: space-between;
 
     .btn-link {
+      color: inherit;
       padding: 4px 0 2px !important;
 
       @media(min-width: $grid-float-breakpoint) {
-        padding-bottom: 7px !important;
-        padding-top: 12px !important;
+        padding-bottom: 10px !important;
+        padding-top: 11px !important;
+      }
+
+      &:hover,
+      &:focus {
+        text-decoration: none;
       }
     }
   }
@@ -167,9 +173,9 @@ $color-bookmarker: #DDD;
     padding: 2px 0 !important;
 
     @media (min-width: $grid-float-breakpoint) {
-      font-size: ($font-size-base + 3);
-      padding-bottom: 7px !important;
-      padding-top: 7px !important;
+      font-size: ($font-size-base + 2);
+      padding-bottom: 9px !important;
+      padding-top: 9px !important;
     }
 
     &__titlePrefix {
@@ -179,13 +185,14 @@ $color-bookmarker: #DDD;
 }
 
 .co-namespace-selector__menu.dropdown-menu {
-  max-height: calc(100vh - (#{$masthead-height-mobile} + #{$co-namespace-selector-mobile}));
+  max-height: calc(100vh - (#{$masthead-height} + #{$co-namespace-selector-mobile}));
   max-width: 100%;
   min-width: 210px;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 
   @media (min-width: $grid-float-breakpoint) {
-    max-height: calc(100vh - (#{$masthead-height-desktop} + #{$co-namespace-selector-desktop}));
+    max-height: calc(100vh - (#{$masthead-height} + #{$co-namespace-selector-desktop}));
     min-width: 250px;
   }
 

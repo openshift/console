@@ -10,7 +10,7 @@ import * as srvCatalogView from '../../views/service-catalog.view';
 describe('Test for existence of Service Catalog nav items', () => {
   beforeAll(async() => {
     browser.get(`${appHost}/status/ns/${testName}`);
-    await browser.wait(until.presenceOf($('#sidebar')));
+    await browser.wait(until.presenceOf($('.pf-c-nav')));
   });
 
   afterEach(() => {

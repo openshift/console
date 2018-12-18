@@ -1,9 +1,15 @@
-$global-notification-text: #fff;
+$global-notification-text: $color-pf-white;
 
 .co-global-notification {
-  background-color: #0088ce;
+  background-color: $color-pf-blue-400;
   color: $global-notification-text;
+  font-weight: 300;
+  padding: 4px ($grid-gutter-width / 2);
   text-align: center;
+
+  @media(min-width: $grid-float-breakpoint) {
+    padding: 6px $grid-gutter-width;
+  }
 
   a {
     color: $global-notification-text;
@@ -22,10 +28,10 @@ $global-notification-text: #fff;
 }
 
 .co-global-notification__impersonate-name {
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .co-global-notification__impersonate-kind {
-  font-weight: 500;
+  font-weight: 600;
   padding-right: 20px;
 }

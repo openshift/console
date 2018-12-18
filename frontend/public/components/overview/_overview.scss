@@ -179,7 +179,7 @@
   .overview__sidebar {
     background: #fff;
     bottom: 0;
-    box-shadow: -5px 0 3px 2px rgba(0,0,0,0.05), -1px 0px 3px 2px rgba(0,0,0,0.2);
+    box-shadow: var(--pf-global--BoxShadow--lg-left);
     display: none;
     position: absolute;
     right: 0;
@@ -227,8 +227,6 @@
   }
 
   .overview__sidebar-dismiss {
-    background: $color-pf-black-150;
-    box-shadow: 0px 1px 0px 0px $color-grey-background-border;
     padding: 0 5px;
 
     .close {
@@ -253,7 +251,6 @@
 }
 
 .overview__sidebar-pane-head {
-  background-color: $color-pf-black-150;
   border-bottom: 1px solid $color-grey-background-border;
   padding-top: 5px;
 

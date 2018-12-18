@@ -27,7 +27,6 @@ tags-input .tags {
   // Style to look like .form-control
   min-height: $input-height-base; // Make inputs at least the height of their button counterpart (base line-height + padding + border)
   padding: 0 $padding-base-horizontal;
-  font-size: $font-size-base;
   line-height: $co-m-label-line-height;
   color: $input-color;
   background-color: $input-bg;
@@ -152,8 +151,8 @@ tags-input .autocomplete .suggestion-item em {
 
 .breadcrumb {
   margin-bottom: 0;
-  padding-bottom: 15px;
-  padding-top: 15px;
+  padding-bottom: 12px;
+  padding-top: 25px;
 }
 
 .modal-footer .alert {
@@ -176,7 +175,7 @@ tags-input .autocomplete .suggestion-item em {
   padding-top: 0;
 
   .overview-view-selector {
-    padding: 4px 0 0 15px;
+    padding: 0 0 0 15px;
   }
 }
 
@@ -208,6 +207,147 @@ tags-input .autocomplete .suggestion-item em {
   background-color: transparent;
   border: none;
   .blank-slate-pf-secondary-action a+a.btn:before {
+    list-style: none;
+  }
+}
+
+.modal-title {
+  font-size: $font-size-base;
+}
+
+// PatternFly 4 overrides
+
+.pf-l-page {
+  &__header {
+    background-color: var(--pf-global--BackgroundColor--dark-200);
+    background-image: url("../imgs/pfbg_2000.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+
+  // `.pf-l-page` specificity required
+  .pf-l-page__main-section {
+    --pf-l-page__main-section--Padding: 0;
+
+    @media screen and (min-width: $grid-float-breakpoint) {
+      --pf-l-page__main-section--Padding: 0;
+    }
+  }
+}
+
+.pf-l-page__sidebar {
+  --pf-l-page__sidebar--BackgroundColor: #{$color-pf-black-900};
+  --pf-l-page__sidebar--BoxShadow: none;
+  --pf-l-page__sidebar--PaddingBottom: 0;
+  --pf-l-page__sidebar--PaddingTop: 0;
+
+  .pf-c-nav {
+    // List link
+    --pf-c-nav__list-link--active--after--BackgroundColor: var(--pf-c-nav__list-link--hover--after--BackgroundColor);
+    --pf-c-nav__list-link--active--BackgroundColor: var(--pf-c-nav__list-link--hover--BackgroundColor);
+    --pf-c-nav__list-link--active--Color: var(--pf-c-nav__list-link--hover--Color);
+    --pf-c-nav__list-link--after--Height: 100%;
+    --pf-c-nav__list-link--after--Left: 0;
+    --pf-c-nav__list-link--after--md--Left: var(--pf-c-nav__list-link--after--Left);
+    --pf-c-nav__list-link--after--Width: 3px;
+    --pf-c-nav__list-link--Color: #{$color-pf-black-300};
+    --pf-c-nav__list-link--focus--after--BackgroundColor: var(--pf-c-nav__list-link--hover--after--BackgroundColor);
+    --pf-c-nav__list-link--focus--BackgroundColor: var(--pf-c-nav__list-link--hover--BackgroundColor);
+    --pf-c-nav__list-link--focus--Color: var(--pf-c-nav__list-link--hover--Color);
+    --pf-c-nav__list-link--hover--after--BackgroundColor: transparent;
+    --pf-c-nav__list-link--hover--BackgroundColor: #{$color-pf-black-700};
+    --pf-c-nav__list-link--hover--Color: #{$color-pf-white};
+    --pf-c-nav__list-link--m-current--after--BackgroundColor: #{$color-pf-blue-300};
+    --pf-c-nav__list-link--m-current--Color: var(--pf-c-nav__list-link--hover--Color);
+    --pf-c-nav__list-link--md--PaddingLeft: 32px;
+    --pf-c-nav__list-link--PaddingBottom: var(--pf-c-nav__list-link--PaddingTop);
+    --pf-c-nav__list-link--PaddingLeft: 16px;
+    --pf-c-nav__list-link--PaddingTop: 17px;
+    // Simple List
+    --pf-c-nav__simple-list-link--active--BackgroundColor: var(--pf-c-nav__list-link--hover--BackgroundColor);
+    --pf-c-nav__simple-list-link--active--Color: var(--pf-c-nav__list-link--hover--Color);
+    --pf-c-nav__simple-list-link--Color: var(--pf-c-nav__list-link--Color);
+    --pf-c-nav__simple-list-link--focus--BackgroundColor: var(--pf-c-nav__list-link--hover--BackgroundColor);
+    --pf-c-nav__simple-list-link--focus--Color: var(--pf-c-nav__list-link--hover--Color);
+    --pf-c-nav__simple-list-link--focus--FontWeight: var(--pf-global--FontWeight--normal);
+    --pf-c-nav__simple-list-link--m-current--BackgroundColor: var(--pf-c-nav__list-link--hover--BackgroundColor);
+    --pf-c-nav__simple-list-link--m-current--Color: var(--pf-c-nav__simple-list-link--active--Color);
+    --pf-c-nav__simple-list-link--PaddingBottom: 2px;
+    --pf-c-nav__simple-list-link--PaddingRight: 5px;
+    --pf-c-nav__simple-list-link--PaddingTop: 4px;
+    // Subnav
+    --pf-c-nav__subnav--MarginTop: 0;
+    --pf-c-nav__subnav--MaxHeight: 100%;
+    // Toggle
+    --pf-c-nav__list-toggle--PaddingRight: 0;
+  }
+
+  .pf-c-nav__item .pf-c-nav__simple-list .pf-c-nav__link {
+    --pf-c-nav__subnav-item--PaddingLeft: var(--pf-c-nav__list-link--PaddingLeft);
+
+    @media screen and (min-width: $grid-float-breakpoint) {
+      --pf-c-nav__subnav-item--PaddingLeft: var(--pf-c-nav__list-link--md--PaddingLeft);
+    }
+  }
+
+  .pf-c-nav__list {
+    > .pf-c-nav__item {
+      border-bottom: 1px solid #{$color-pf-black};
+      font-size: 14px;
+      margin-top: 0;
+
+      &.pf-m-current {
+        background-color: #{$color-pf-black-800};
+
+        &:hover {
+          --pf-c-nav__list-link--m-current--BackgroundColor: var(--pf-c-nav__list-link--hover--BackgroundColor);
+        }
+
+        &:not(.pf-m-expanded) {
+          .pf-c-nav__link {
+            &::after {
+              display: block;
+            }
+          }
+        }
+      }
+
+      &.pf-m-expanded,
+      .pf-c-nav__link:hover {
+        .pf-c-nav__toggle {
+          display: block;
+        }
+      }
+    }
+
+    .pf-c-nav__link {
+      align-items: center;
+
+      &::after {
+        display: none;
+      }
+    }
+  }
+
+  .pf-c-nav__simple-list {
+    .pf-c-nav__link {
+      font-size: 14px;
+      line-height: 25px;
+
+      &.pf-m-current {
+        &::after {
+          display: block;
+        }
+      }
+    }
+  }
+
+  .pf-c-nav__subnav {
+    margin-bottom: 16px;
+  }
+
+  .pf-c-nav__toggle {
+    color: var(--pf-c-nav__list-link--Color);
     display: none;
   }
 }

@@ -90,6 +90,7 @@
 
 .co-m-pane__heading {
   display: flex;
+  font-size: 22px;
   justify-content: space-between;
   margin: 0 0 $grid-gutter-width;
   &--baseline {
@@ -130,7 +131,6 @@
 .co-section-heading {
   display: flex;
   font-size: 20px;
-  font-weight: 600;
   justify-content: space-between;
   margin: 0 0 20px 0;
 }
@@ -172,7 +172,6 @@
     margin-bottom: 0;
   }
   dd {
-    font-size: 14px;
     @include co-break-word;
   }
 }
@@ -247,7 +246,6 @@
   }
 }
 
-
 // Prevent iOS phones from zooming on form inputs
 @supports (-webkit-overflow-scrolling: touch) { // Target mobile Safari
   @media (max-width: $grid-float-breakpoint-max) { // Target phones
@@ -272,7 +270,6 @@
 
 .error-message {
   color: #fff;
-  font-size: 14px;
   padding: 2px 12px;
   background-color: #D64456;
 }
@@ -298,6 +295,10 @@
   margin-right: -25px; // width + margin-left
   top:0;
   width: 20px;
+
+  .pf-c-nav__link & {
+    color: $color-pf-black-500;
+  }
 }
 .co-external-link {
   display: inline-block;
@@ -362,7 +363,7 @@
 .co-component-label {
   color: $color-pf-black-600;
   text-transform: uppercase;
-  font-size: $font-size-small;
+  font-size: ($font-size-base - 1);
 }
 
 .co-legend {
@@ -457,7 +458,7 @@
   }
   &__head {
     color: $color-text-secondary;
-    font-size: 12px;
+    font-size: ($font-size-base - 1);
     padding: 0 20px 10px 0; // right padding to maintain alignment with __body .row
     text-transform: uppercase;
     a {

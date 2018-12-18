@@ -1,18 +1,18 @@
 $height: 18px;
 
 .co-m-resource-icon {
+  background-color: $color-container-dark;
+  border-radius: 10px;
+  color: #fff;
   display: inline-block;
   font-size: $font-size-base - 1;
   font-weight: normal;
-  text-align: center;
-  border-radius: 10px;
   height: $height;
+  line-height: $height;
+  margin-right: 4px;
   min-width: $height;
   padding: 0 4px;
-  line-height: $height;
-  color: #fff;
-  margin-right: 4px;
-  background-color: $color-container-dark;
+  text-align: center;
   &--lg {
     border-radius: 12px;
     font-size: 16px;
@@ -23,7 +23,7 @@ $height: 18px;
     min-width: 24px;
     padding: 0 7px;
     position: relative;
-    top: 4px;
+    top: 2px;
   }
 }
 
