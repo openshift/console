@@ -38,7 +38,7 @@ const ActionButtons: React.SFC<ActionButtonsProps> = ({actionButtons}) => <div c
 </div>;
 
 export const PageHeading = connectToModel((props: PageHeadingProps) => {
-  const {kind, kindObj, detail, title, menuActions, buttonActions, obj, breadcrumbsFor, titleFunc, style} = props;
+  const {kind, kindObj, detail, title, menuActions, buttonActions, obj, breadcrumbsFor, titleFunc, style, resourceKeys} = props;
   const data = _.get(obj, 'data');
   const resourceTitle = (titleFunc && data) ? titleFunc(data) : title;
   const isCSV = kind === referenceForModel(ClusterServiceVersionModel);
@@ -53,13 +53,15 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
   const hasMenuActions = !_.isEmpty(menuActions);
   const showActions = (hasButtonActions || hasMenuActions) && !_.isEmpty(data) && !_.get(data, 'deletionTimestamp');
 
+  const extraResources = _.reduce(resourceKeys, (extraObjs, key) => ({...extraObjs, [key]: props[key].data}), {});
+
   return <div className={classNames('co-m-nav-title', {'co-m-nav-title--detail': detail}, {'co-m-nav-title--logo': isCSV}, {'co-m-nav-title--breadcrumbs': breadcrumbsFor && !_.isEmpty(data)})} style={style}>
     { breadcrumbsFor && !_.isEmpty(data) && <BreadCrumbs breadcrumbs={breadcrumbsFor(data)} /> }
     <h1 className={classNames('co-m-pane__heading', {'co-m-pane__heading--logo': isCSV})}>
       { logo }
       { showActions && <div className="co-actions">
-        { hasButtonActions && <ActionButtons actionButtons={buttonActions.map(a => a(kindObj, data))} /> }
-        { hasMenuActions && <ActionsMenu actions={menuActions.map(a => a(kindObj, data))} /> }
+        { hasButtonActions && <ActionButtons actionButtons={buttonActions.map(a => a(kindObj, data, extraResources))} /> }
+        { hasMenuActions && <ActionsMenu actions={menuActions.map(a => a(kindObj, data, extraResources))} /> }
       </div> }
     </h1>
     {props.children}
@@ -103,6 +105,7 @@ export type PageHeadingProps = {
   style?: object;
   title?: string | JSX.Element;
   titleFunc?: (obj: K8sResourceKind) => string | JSX.Element;
+  resourceKeys?: string[];
 };
 
 export type ResourceOverviewHeadingProps = {

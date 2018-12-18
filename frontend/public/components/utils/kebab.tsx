@@ -8,6 +8,8 @@ import { DropdownMixin } from './dropdown';
 import { history, resourceObjPath } from './index';
 import { referenceForModel, K8sResourceKind, K8sResourceKindReference, K8sKind } from '../../module/k8s';
 import { connectToModel } from '../../kinds';
+import {FirehoseResource} from '../factory';
+import { Firehose } from './firehose';
 
 const KebabItems: React.SFC<KebabItemsProps> = ({options, onClick}) => {
   const visibleOptions = _.reject(options, o => _.get(o, 'hidden', false));
@@ -72,15 +74,28 @@ kebabFactory.common = [kebabFactory.ModifyLabels, kebabFactory.ModifyAnnotations
 
 export const ResourceKebab = connectToModel((props: ResourceKebabProps) => {
   const {actions, kindObj, resource, isDisabled} = props;
+  const resources = props.resources || [];
 
   if (!kindObj) {
     return null;
   }
-  return <Kebab
-    options={actions.map(a => a(kindObj, resource))}
-    key={resource.metadata.uid}
-    isDisabled={isDisabled !== undefined ? isDisabled : _.get(resource.metadata, 'deletionTimestamp')}
-  />;
+
+  const resourceKeys = _.map(resources, 'prop');
+
+  const Wrapper = (wrapperProps) => {
+    const extraResources = _.reduce(resourceKeys, (extraObjs, key) => ({...extraObjs, [key]: wrapperProps[key].data}), {});
+    return <Kebab
+      options={actions.map(a => a(kindObj, resource, extraResources))}
+      key={resource.metadata.uid}
+      isDisabled={isDisabled !== undefined ? isDisabled : _.get(resource.metadata, 'deletionTimestamp')}
+    />;
+  };
+
+  return (
+    <Firehose resources={resources}>
+      <Wrapper />
+    </Firehose>
+  );
 });
 
 export class Kebab extends DropdownMixin {
@@ -117,7 +132,7 @@ export type KebabOption = {
   label: string;
   href?: string, callback?: () => any;
 };
-export type KebabAction = (kind, obj: K8sResourceKind) => KebabOption;
+export type KebabAction = (kind, obj: K8sResourceKind, object?) => KebabOption;
 
 export type ResourceKebabProps = {
   kindObj: K8sKind;
@@ -125,6 +140,7 @@ export type ResourceKebabProps = {
   kind: K8sResourceKindReference;
   resource: K8sResourceKind;
   isDisabled?: boolean;
+  resources?: FirehoseResource[];
 };
 
 export type KebabItemsProps = {
