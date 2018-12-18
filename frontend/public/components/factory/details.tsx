@@ -32,7 +32,8 @@ export const DetailsPage = withFallback<DetailsPageProps>((props) => <Firehose r
     menuActions={props.menuActions}
     buttonActions={props.buttonActions}
     kind={props.kind}
-    breadcrumbsFor={props.breadcrumbsFor} />
+    breadcrumbsFor={props.breadcrumbsFor}
+    resourceKeys={_.map(props.resources, 'prop')} />
   <HorizontalNav
     pages={props.pages}
     pagesFor={props.pagesFor}
