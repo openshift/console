@@ -207,7 +207,7 @@ tags-input .autocomplete .suggestion-item em {
   background-color: transparent;
   border: none;
   .blank-slate-pf-secondary-action a+a.btn:before {
-    list-style: none;
+    display: none;
   }
 }
 
