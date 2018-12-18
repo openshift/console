@@ -298,10 +298,10 @@ export const Navigation = ({ isNavOpen, onNavSelect }) => {
         <NavSection title="Catalog">
           <HrefLink href="/catalog" name="Developer Catalog" activePath="/catalog/" />
           <ResourceNSLink model={ClusterServiceVersionModel} resource={ClusterServiceVersionModel.plural} name="Operators" />
-          <HrefLink href="/provisionedservices" name="Provisioned Services" activePath="/provisionedservices/" />
+          <HrefLink required={FLAGS.SERVICE_CATALOG} href="/provisionedservices" name="Provisioned Services" activePath="/provisionedservices/" />
           <HrefLink required={FLAGS.KUBERNETES_MARKETPLACE} href="/marketplace" name="Marketplace" activePath="/marketplace/" />
           <HrefLink href="/operatormanagement" name="Operator Management" activePath="/operatormanagement/" />
-          <HrefLink href="/brokermanagement" name="Broker Management" activePath="/brokermanagement/" />
+          <HrefLink required={FLAGS.SERVICE_CATALOG} href="/brokermanagement" name="Broker Management" activePath="/brokermanagement/" />
         </NavSection>
 
         <NavSection title="Workloads">
