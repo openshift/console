@@ -1,11 +1,18 @@
-import * as _ from 'lodash-es';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import {
+  VmDetails,
+  VmStatus,
+  getVmStatus,
+  VM_STATUS_ALL,
+  VM_STATUS_TO_TEXT,
+} from 'kubevirt-web-ui-components';
 
 import { ResourceEventStream } from '../okdcomponents';
 import { ListHeader, ColHead, List, ListPage, ResourceRow, DetailsPage } from '../factory/okdfactory';
-import { breadcrumbsForOwnerRefs, Firehose, ResourceLink, navFactory, Kebab, ResourceKebab } from '../utils/okdutils';
+import { breadcrumbsForOwnerRefs, Firehose, ResourceLink, navFactory, ResourceKebab } from '../utils/okdutils';
 import { WithResources } from '../utils/withResources';
+import { actions } from '../../module/okdk8s';
 import {
   VirtualMachineInstanceModel,
   VirtualMachineModel,
@@ -13,36 +20,22 @@ import {
   NamespaceModel,
   VirtualMachineInstanceMigrationModel,
 } from '../../models/index';
-import { actions, k8sCreate } from '../../module/okdk8s';
-import { startStopVmModal } from '../modals/start-stop-vm-modal';
-import { restartVmModal } from '../modals/restart-vm-modal';
-import { cancelVmiMigrationModal } from '../modals/cancel-vmi-migration-modal';
 import {
   getResourceKind,
   getLabelMatcher,
   findPod,
-  findVMIMigration,
   getFlattenForKind,
   findVmPod,
   findVmMigration,
+  findVMIMigration,
 } from '../utils/resources';
-import {
-  BasicMigrationDialog,
-  VmDetails,
-  VmStatus,
-  getVmStatus,
-  isBeingMigrated,
-  VM_STATUS_ALL,
-  VM_STATUS_TO_TEXT,
-} from 'kubevirt-web-ui-components';
 import { DASHES, IMPORTER_DV_POD_PREFIX, VIRT_LAUNCHER_POD_PREFIX } from '../utils/constants';
-import { modalResourceLauncher } from '../utils/modalResourceLauncher';
-import { showError } from '../utils/showErrors';
 import VmConsolesConnected from '../vmconsoles';
 import { Nic } from '../nic';
 import { Disk } from '../disk';
 import { openCreateVmWizard } from '../modals/create-vm-modal';
 import { NodeLink } from '../../../components/utils';
+import { menuActions } from './menu-actions';
 
 const mainRowSize = 'col-lg-3 col-md-3 col-sm-6 col-xs-6';
 const otherRowSize = 'col-lg-2 col-md-2 hidden-sm hidden-xs';
@@ -55,64 +48,7 @@ const VMHeader = props => <ListHeader>
   <ColHead {...props} className={otherRowSize}>Pod</ColHead>
 </ListHeader>;
 
-const getAction = (vm) => {
-  return _.get(vm, 'spec.running', false) ? 'Stop Virtual Machine' : 'Start Virtual Machine';
-};
-
-const menuActionStart = (kind, vm) => ({
-  label: getAction(vm),
-  callback: () => startStopVmModal({
-    kind,
-    resource: vm,
-    start: !_.get(vm, 'spec.running', false),
-  }),
-});
-
-const menuActionRestart = (kind, vm) => ({
-  hidden: !_.get(vm, 'spec.running', false),
-  label: 'Restart Virtual Machine',
-  callback: () => restartVmModal({
-    kind,
-    resource: vm,
-  }),
-});
-
-const menuActionCancelMigration = (kind, vm, actionArgs) => {
-  const migration = findVMIMigration(actionArgs[VirtualMachineInstanceMigrationModel.kind], _.get(actionArgs[VirtualMachineInstanceModel.kind], 'metadata.name'));
-  return {
-    hidden: !isBeingMigrated(vm, migration),
-    label: 'Cancel Virtual Machine Migration',
-    callback: () => cancelVmiMigrationModal({
-      migration,
-    }),
-  };
-};
-
-const menuActionMigrate = (kind, vm, actionArgs) => {
-  const migration = findVMIMigration(actionArgs[VirtualMachineInstanceMigrationModel.kind], _.get(actionArgs[VirtualMachineInstanceModel.kind], 'metadata.name'));
-  return {
-    hidden: !_.get(vm, 'spec.running', false) || isBeingMigrated(vm, migration),
-    label: 'Migrate Virtual Machine',
-    callback: () => {
-      return modalResourceLauncher(BasicMigrationDialog, {
-        virtualMachineInstance: {
-          resource: getResourceKind(VirtualMachineInstanceModel, vm.metadata.name, true, vm.metadata.namespace, false, getLabelMatcher(vm)),
-          required: true,
-        },
-      })({
-        k8sCreate,
-        onMigrationError: showError,
-        virtualMachineInstance: {}, // initial - is required
-      });
-    },
-  };
-};
-
-const menuActions = [menuActionStart, menuActionRestart, menuActionMigrate, menuActionCancelMigration, Kebab.factory.Delete];
-
-
-const StateColumn = props => {
-  const { loaded, resources, vm } = props;
+const StateColumn = ({ loaded, vm, resources }) => {
   return loaded
     ? <VmStatus
       vm={vm}
