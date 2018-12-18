@@ -14,10 +14,9 @@ import {
   WindowScroller,
 } from 'react-virtualized';
 
-import { AlertStates, SilenceStates } from '../../monitoring';
+import { alertState, alertStateOrder, silenceState, silenceStateOrder } from '../../monitoring';
 import { UIActions } from '../../ui/ui-actions';
 import { ingressValidHosts } from '../ingress';
-import { alertState, silenceState } from '../monitoring';
 import { routeStatus } from '../routes';
 import { getClusterOperatorStatus } from '../cluster-settings/cluster-operator';
 import { secretTypeFilterReducer } from '../secret';
@@ -209,7 +208,7 @@ const filterPropType = (props, propName, componentName) => {
 };
 
 const sorts = {
-  alertStateOrder: alert => [AlertStates.Firing, AlertStates.Silenced, AlertStates.Pending, AlertStates.NotFiring].indexOf(alertState(alert)),
+  alertStateOrder,
   daemonsetNumScheduled: daemonset => _.toInteger(_.get(daemonset, 'status.currentNumberScheduled')),
   dataSize: resource => _.size(_.get(resource, 'data')),
   ingressValidHosts,
@@ -223,12 +222,11 @@ const sorts = {
   },
   nodeUpdateStatus: node => _.get(containerLinuxUpdateOperator.getUpdateStatus(node), 'text'),
   numReplicas: resource => _.toInteger(_.get(resource, 'status.replicas')),
-  numSilencedAlerts: silence => silence.silencedAlerts.length,
   planExternalName,
   podPhase,
   podReadiness,
   serviceClassDisplayName,
-  silenceStateOrder: silence => [SilenceStates.Active, SilenceStates.Pending, SilenceStates.Expired].indexOf(silenceState(silence)),
+  silenceStateOrder,
   string: val => JSON.stringify(val),
 };
 

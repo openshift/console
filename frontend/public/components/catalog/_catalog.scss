@@ -170,8 +170,6 @@ $catalog-item-icon-size-sm: 24px;
   }
 
   &__no-filter-results {
-    background-color: transparent;
-    border: none;
     padding: 0;
     &-title {
       color: $color-pf-black-800;
@@ -184,4 +182,3 @@ $catalog-item-icon-size-sm: 24px;
   font-weight: lighter;
   color: $color-pf-black-600;
 }
-

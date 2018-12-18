@@ -70,7 +70,9 @@ export class BaseGraph extends SafetyFirst {
   }
 
   componentWillMount() {
-    this.fetch();
+    if (this.props.query) {
+      this.fetch();
+    }
     window.addEventListener('resize', this.resize);
   }
 
@@ -96,6 +98,10 @@ export class BaseGraph extends SafetyFirst {
       // eslint-disable-next-line no-console
       console.error('error initializing graph:', e);
     });
+
+    if (!this.props.query) {
+      this.updateGraph();
+    }
   }
 
   prometheusURL() {
@@ -121,7 +127,7 @@ export class BaseGraph extends SafetyFirst {
   }
 
   render() {
-    const url = this.prometheusURL();
+    const url = this.props.query ? this.prometheusURL() : null;
     const graph = <div className="graph-wrapper" style={this.style}>
       <h5 className="graph-title">{this.props.title}</h5>
       <div ref={this.setNode} style={{width: '100%'}} />
@@ -141,7 +147,8 @@ BaseGraph.propTypes = {
         name: PropTypes.string,
         query: PropTypes.string,
       })),
-  ]).isRequired,
+  ]),
+  percent: PropTypes.number, // for gauge charts
   title: PropTypes.string.isRequired,
   timeSpan: PropTypes.number,
   basePath: PropTypes.string,

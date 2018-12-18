@@ -37,45 +37,45 @@ class ListDropdown_ extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     const {loaded, loadError} = nextProps;
-
-    if (loadError) {
-      this.setState({
-        title: <div className="cos-error-title">Error Loading {nextProps.desc}</div>,
-      });
-      return;
-    }
-
     if (!loaded) {
       return;
     }
-    const state = {};
-    const { resources, dataFilter } = nextProps;
 
-    state.items = {};
-    _.each(resources, ({data}, kindLabel) => {
-      _.reduce(data, (acc, resource) => {
-        if (!dataFilter || dataFilter(resource)) {
-          acc[`${resource.metadata.name}-${kindLabel}`] = {kindLabel, name: resource.metadata.name};
-        }
-        return acc;
-      }, state.items);
-    });
-
-    const { selectedKey } = this.state;
-    // did we switch from !loaded -> loaded ?
-    if (!this.props.loaded && !selectedKey) {
-      state.title = <span className="text-muted">{nextProps.placeholder}</span>;
-    }
-
-    if (selectedKey) {
-      const item = state.items[selectedKey];
-      // item may not exist if selectedKey is a role and then user switches to creating a ClusterRoleBinding
-      if (item) {
-        state.title = <ResourceName kind={item.kindLabel} name={item.name} />;
+    this.setState(({selectedKey}) => {
+      if (loadError) {
+        return {
+          title: <div className="cos-error-title">Error Loading {nextProps.desc}</div>,
+        };
       }
-    }
 
-    this.setState(state);
+      const state = {};
+      const { resources, dataFilter } = nextProps;
+
+      state.items = {};
+      _.each(resources, ({data}, kindLabel) => {
+        _.reduce(data, (acc, resource) => {
+          if (!dataFilter || dataFilter(resource)) {
+            acc[`${resource.metadata.name}-${kindLabel}`] = {kindLabel, name: resource.metadata.name};
+          }
+          return acc;
+        }, state.items);
+      });
+
+      // did we switch from !loaded -> loaded ?
+      if (!this.props.loaded && !selectedKey) {
+        state.title = <span className="text-muted">{nextProps.placeholder}</span>;
+      }
+
+      if (selectedKey) {
+        const item = state.items[selectedKey];
+        // item may not exist if selectedKey is a role and then user switches to creating a ClusterRoleBinding
+        if (item) {
+          state.title = <ResourceName kind={item.kindLabel} name={item.name} />;
+        }
+      }
+
+      return state;
+    });
   }
 
   shouldComponentUpdate(nextProps, nextState) {

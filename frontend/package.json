@@ -11,7 +11,7 @@
     "coverage": "jest --coverage .",
     "lint": "eslint --ext .js,.jsx,.ts,.tsx --color .",
     "test": "jest",
-    "webdriver-update": "webdriver-manager update --versions.chrome=2.38",
+    "webdriver-update": "webdriver-manager update --versions.chrome=2.38 --gecko=false",
     "test-gui-tap": "TAP=true yarn run test-gui",
     "test-gui-openshift": "yarn run test-suite --suite crud --params.openshift true",
     "test-gui": "yarn run test-suite --suite all",

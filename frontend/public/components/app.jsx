@@ -11,7 +11,6 @@ import { productName } from '../branding';
 import { ALL_NAMESPACES_KEY } from '../const';
 import { connectToFlags, featureActions, flagPending, FLAGS } from '../features';
 import { analyticsSvc } from '../module/analytics';
-import { MonitoringUI } from './monitoring';
 import { ClusterSettingsPage } from './cluster-settings/cluster-settings';
 import { GlobalNotifications } from './global-notifications';
 import { Masthead } from './masthead';
@@ -198,7 +197,7 @@ class App extends React.PureComponent {
 
             <LazyRoute path="/k8s/ns/:ns/persistentvolumeclaims/new/form" exact kind="PersistentVolumeClaim" loader={() => import('./storage/create-pvc' /* webpackChunkName: "create-pvc" */).then(m => m.CreatePVC)} />
 
-            <Route path="/monitoring" component={MonitoringUI} />
+            <LazyRoute path="/monitoring" loader={() => import('./monitoring' /* webpackChunkName: "monitoring" */).then(m => m.MonitoringUI)} />
 
             <Route path="/settings/cluster" component={ClusterSettingsPage} />
 

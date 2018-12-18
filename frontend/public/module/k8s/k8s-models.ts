@@ -30,12 +30,12 @@ export const modelFor = (ref: K8sResourceKindReference) => {
   if (m) {
     return m;
   }
-  m = k8sModels.get(kindForReference(ref));
+  // FIXME: Remove synchronous `store.getState()` call here, should be using `connectToModels` instead, only here for backwards-compatibility
+  m = store.getState().k8s.getIn(['RESOURCES', 'models']).get(ref);
   if (m) {
     return m;
   }
-  // FIXME: Remove synchronous `store.getState()` call here, should be using `connectToModels` instead, only here for backwards-compatibility
-  m = store.getState().k8s.getIn(['RESOURCES', 'models']).get(ref);
+  m = k8sModels.get(kindForReference(ref));
   if (m) {
     return m;
   }

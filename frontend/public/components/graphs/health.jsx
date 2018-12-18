@@ -30,7 +30,7 @@ const AlertsFiring = ({namespace}) => (
     title="Alerts Firing"
     name="Alerts"
     query={`sum(ALERTS{alertstate="firing", alertname!="DeadMansSwitch" ${namespace ? `, namespace="${namespace}"` : ''}})`}
-    href="/monitoring"
+    to="/monitoring"
   />
 );
 
@@ -39,7 +39,7 @@ const CrashloopingPods = ({namespace}) => (
     title="Crashlooping Pods"
     name="Pods"
     query={`count(increase(kube_pod_container_status_restarts_total${namespace ? `{namespace="${namespace}"}` : ''}[1h]) > 5 )`}
-    href={`/k8s/${namespace ? `ns/${namespace}` : 'all-namespaces'}/pods?rowFilter-pod-status=CrashLoopBackOff`}
+    to={`/k8s/${namespace ? `ns/${namespace}` : 'all-namespaces'}/pods?rowFilter-pod-status=CrashLoopBackOff`}
   />
 );
 

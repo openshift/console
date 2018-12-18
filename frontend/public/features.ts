@@ -9,7 +9,7 @@ import {
   ClusterServiceClassModel,
   ClusterServiceVersionModel,
   MachineModel,
-  PackageManifestModel,
+  OperatorSourceModel,
   PrometheusModel,
   SelfSubjectAccessReviewModel,
   VirtualMachineModel,
@@ -74,7 +74,7 @@ export const CRDs = {
   [referenceForModel(VirtualMachineModel)]: FLAGS.KUBEVIRT,
   [referenceForModel(ClusterServiceClassModel)]: FLAGS.SERVICE_CATALOG,
   [referenceForModel(ClusterServiceVersionModel)]: FLAGS.OPERATOR_LIFECYCLE_MANAGER,
-  [referenceForModel(PackageManifestModel)]: FLAGS.KUBERNETES_MARKETPLACE,
+  [referenceForModel(OperatorSourceModel)]: FLAGS.KUBERNETES_MARKETPLACE,
   [referenceForModel(MachineModel)]: FLAGS.CLUSTER_API,
 };
 

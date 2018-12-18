@@ -8,7 +8,7 @@ import { Link, Redirect, Route, Switch } from 'react-router-dom';
 
 import { coFetchJSON } from '../co-fetch';
 import k8sActions from '../module/k8s/k8s-actions';
-import { AlertStates, connectToURLs, MonitoringRoutes, SilenceStates } from '../monitoring';
+import { alertState, AlertStates, connectToURLs, MonitoringRoutes, silenceState, SilenceStates } from '../monitoring';
 import store from '../redux';
 import { UIActions } from '../ui/ui-actions';
 import { ColHead, List, ListHeader, ResourceRow, TextFilter } from './factory';
@@ -21,10 +21,11 @@ import { Tooltip } from './utils/tooltip';
 import {
   ActionsMenu,
   ButtonBar,
-  Kebab,
   ExternalLink,
   getURLSearchParams,
   history,
+  Kebab,
+  LoadingInline,
   SectionHeading,
   StatusBox,
   Timestamp,
@@ -56,14 +57,10 @@ const labelsToParams = labels => _.map(labels, (v, k) => `${encodeURIComponent(k
 const alertURL = (alert, ruleID) => `${AlertResource.path}/${ruleID}?${labelsToParams(alert.labels)}`;
 const ruleURL = rule => `${AlertRuleResource.path}/${_.get(rule, 'id')}`;
 
-export const alertState = a => _.get(a, 'state', AlertStates.NotFiring);
-
 const alertDescription = alert => {
   const {annotations = {}, labels = {}} = alert;
   return annotations.description || annotations.message || labels.alertname;
 };
-
-export const silenceState = s => _.get(s, 'status.state');
 
 const alertsToProps = ({UI}) => UI.getIn(['monitoring', 'alerts']) || {};
 const silencesToProps = ({UI}) => UI.getIn(['monitoring', 'silences']) || {};
@@ -88,7 +85,7 @@ const viewAlertRule = alert => ({
 });
 
 const editSilence = silence => ({
-  label: 'Edit Silence',
+  label: silenceState(silence) === SilenceStates.Expired ? 'Recreate Silence' : 'Edit Silence',
   href: `${SilenceResource.path}/${silence.id}/edit`,
 });
 
@@ -170,6 +167,7 @@ const SilenceMatchersList = ({silence}) => <div className={`co-text-${SilenceRes
 
 const alertStateToProps = (state, {match}): AlertsDetailsPageProps => {
   const {data, loaded, loadError}: Alerts = alertsToProps(state);
+  const {loaded: silencesLoaded}: Silences = silencesToProps(state);
   const ruleID = _.get(match, 'params.ruleID');
   const labels = getURLSearchParams();
   const alerts = _.filter(data, a => a.rule.id === ruleID);
@@ -177,20 +175,13 @@ const alertStateToProps = (state, {match}): AlertsDetailsPageProps => {
   let alert = _.find(alerts, a => _.isEqual(a.labels, labels));
   if (rule && !alert) {
     // No Alert with the exact label set was found, so display a "fake" Alert based on the Rule
-    const alertStates = _.map(alerts, alertState);
-    alert = {
-      annotations: rule.annotations,
-      labels,
-      rule,
-      // Set the state to the most significant state of all the Rule's Alerts
-      state: _.find([AlertStates.Firing, AlertStates.Silenced, AlertStates.Pending], s => alertStates.includes(s)) || AlertStates.NotFiring,
-    };
+    alert = {annotations: rule.annotations, labels, rule, state: AlertStates.NotFiring};
   }
-  return {alert, loaded, loadError, rule};
+  return {alert, loaded, loadError, rule, silencesLoaded};
 };
 
 const AlertsDetailsPage = withFallback(connect(alertStateToProps)((props: AlertsDetailsPageProps) => {
-  const {alert, loaded, loadError, rule} = props;
+  const {alert, loaded, loadError, rule, silencesLoaded} = props;
   const {annotations = {}, labels = {}, silencedBy = []} = alert || {};
   const {alertname, severity} = labels as any;
   const state = alertState(alert);
@@ -251,7 +242,7 @@ const AlertsDetailsPage = withFallback(connect(alertStateToProps)((props: Alerts
           </div>
         </div>
       </div>
-      {!_.isEmpty(silencedBy) && <div className="co-m-pane__body">
+      {silencesLoaded && !_.isEmpty(silencedBy) && <div className="co-m-pane__body">
         <div className="co-m-pane__body-group">
           <SectionHeading text="Silenced By" />
           <div className="row">
@@ -383,7 +374,7 @@ const SilencedAlertsList = ({alerts}) => _.isEmpty(alerts)
           <Link className="co-resource-link" to={alertURL(a, a.rule.id)}>{a.labels.alertname}</Link>
           <div className="monitoring-description">{alertDescription(a)}</div>
         </div>
-        <div className="col-xs-3">{a.labels.severity}</div>
+        <div className="col-xs-3">{a.labels.severity || '-'}</div>
         <div className="dropdown-kebab-pf">
           <Kebab options={[viewAlertRule(a)]} />
         </div>
@@ -393,13 +384,14 @@ const SilencedAlertsList = ({alerts}) => _.isEmpty(alerts)
 
 const silenceParamToProps = (state, {match}) => {
   const {data: silences, loaded, loadError}: Silences = silencesToProps(state);
+  const {loaded: alertsLoaded}: Alerts = alertsToProps(state);
   const silence = _.find(silences, {id: _.get(match, 'params.id')});
-  return {loaded, loadError, silence};
+  return {alertsLoaded, loaded, loadError, silence};
 };
 
 const SilencesDetailsPage = withFallback(connect(silenceParamToProps)((props: SilencesDetailsPageProps) => {
-  const {loaded, loadError, silence} = props;
-  const {createdBy = '', comment = '', endsAt = '', matchers = {}, name = '', silencedAlerts = [], startsAt = '', updatedAt = ''} = silence || {};
+  const {alertsLoaded, loaded, loadError, silence} = props;
+  const {createdBy = '', comment = '', endsAt = '', firingAlerts = [], matchers = {}, name = '', startsAt = '', updatedAt = ''} = silence || {};
 
   return <React.Fragment>
     <Helmet>
@@ -443,8 +435,8 @@ const SilencesDetailsPage = withFallback(connect(silenceParamToProps)((props: Si
                 <dd>{createdBy || '-'}</dd>
                 <dt>Comments</dt>
                 <dd>{comment || '-'}</dd>
-                <dt>Silenced Alerts</dt>
-                <dd>{silencedAlerts.length}</dd>
+                <dt>Firing Alerts</dt>
+                <dd>{alertsLoaded ? firingAlerts.length : <LoadingInline />}</dd>
               </dl>
             </div>
           </div>
@@ -452,10 +444,10 @@ const SilencesDetailsPage = withFallback(connect(silenceParamToProps)((props: Si
       </div>
       <div className="co-m-pane__body">
         <div className="co-m-pane__body-group">
-          <SectionHeading text="Silenced Alerts" />
+          <SectionHeading text="Firing Alerts" />
           <div className="row">
             <div className="col-xs-12">
-              <SilencedAlertsList alerts={silencedAlerts} />
+              {alertsLoaded ? <SilencedAlertsList alerts={firingAlerts} /> : <LoadingInline />}
             </div>
           </div>
         </div>
@@ -480,7 +472,7 @@ const AlertRow = ({obj}) => {
       <AlertState state={state} />
       <AlertStateDescription alert={obj} />
     </div>
-    <div className="col-xs-2">{_.startCase(_.get(labels, 'severity', '-'))}</div>
+    <div className="col-xs-2">{_.startCase(_.get(labels, 'severity')) || '-'}</div>
     <div className="dropdown-kebab-pf">
       <Kebab options={state === AlertStates.Firing || state === AlertStates.Pending ? [silenceAlert(obj), viewAlertRule(obj)] : [viewAlertRule(obj)]} />
     </div>
@@ -630,7 +622,7 @@ const AlertsPage = withFallback(connect(alertsToProps)(AlertsPage_));
 const SilenceHeader = props => <ListHeader>
   <ColHead {...props} className="col-xs-7" sortField="name">Name</ColHead>
   <ColHead {...props} className="col-xs-3" sortFunc="silenceStateOrder">State</ColHead>
-  <ColHead {...props} className="col-xs-2" sortFunc="numSilencedAlerts">Silenced Alerts</ColHead>
+  <ColHead {...props} className="col-xs-2" sortField="firingAlerts.length">Firing Alerts</ColHead>
 </ListHeader>;
 
 const SilenceRow = ({obj}) => {
@@ -652,7 +644,7 @@ const SilenceRow = ({obj}) => {
       {state === SilenceStates.Active && <StateTimestamp text="Ends" timestamp={obj.endsAt} />}
       {state === SilenceStates.Expired && <StateTimestamp text="Expired" timestamp={obj.endsAt} />}
     </div>
-    <div className="col-xs-2">{obj.silencedAlerts.length}</div>
+    <div className="col-xs-2">{obj.firingAlerts.length}</div>
     <div className="dropdown-kebab-pf">
       <SilenceKebab silence={obj} />
     </div>
@@ -856,11 +848,12 @@ class SilenceForm_ extends SafetyFirst<SilenceFormProps, SilenceFormState> {
 const SilenceForm = withFallback(SilenceForm_);
 
 const EditSilence = connect(silenceParamToProps)(({loaded, loadError, silence}) => {
+  const isExpired = silenceState(silence) === SilenceStates.Expired;
   const defaults = _.pick(silence, ['comment', 'createdBy', 'endsAt', 'id', 'matchers', 'startsAt']);
-  defaults.startsAt = formatDate(new Date(defaults.startsAt));
-  defaults.endsAt = formatDate(new Date(defaults.endsAt));
+  defaults.startsAt = isExpired ? undefined : formatDate(new Date(defaults.startsAt));
+  defaults.endsAt = isExpired ? undefined : formatDate(new Date(defaults.endsAt));
   return <StatusBox data={silence} label={SilenceResource.label} loaded={loaded} loadError={loadError}>
-    <SilenceForm defaults={defaults} title="Edit Silence" />
+    <SilenceForm defaults={defaults} title={isExpired ? 'Recreate Silence' : 'Edit Silence'} />
   </StatusBox>;
 });
 
@@ -957,13 +950,13 @@ type Silence = {
   comment: string;
   createdBy: string;
   endsAt: string;
+  // eslint-disable-next-line no-use-before-define
+  firingAlerts: Alert[];
   id?: string;
   matchers: {name: string, value: string, isRegex: boolean}[];
   name?: string;
   startsAt: string;
   status?: {state: SilenceStates};
-  // eslint-disable-next-line no-use-before-define
-  silencedAlerts: Alert[];
   updatedAt?: string;
 };
 type Silences = {
@@ -1002,6 +995,7 @@ export type AlertsDetailsPageProps = {
   loaded: boolean;
   loadError?: string;
   rule: Rule;
+  silencesLoaded: boolean;
 };
 export type AlertRulesDetailsPageProps = {
   loaded: boolean;
@@ -1009,6 +1003,7 @@ export type AlertRulesDetailsPageProps = {
   rule: Rule;
 };
 export type SilencesDetailsPageProps = {
+  alertsLoaded: boolean;
   loaded: boolean;
   loadError?: string;
   silence: Silence;

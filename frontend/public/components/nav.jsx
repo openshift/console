@@ -41,6 +41,10 @@ const stripNS = href => {
   return href.replace(/^\/?k8s\//, '').replace(/^\/?(cluster|all-namespaces|ns\/[^/]*)/, '').replace(/^\//, '');
 };
 
+const ExternalLink = ({href, name, onClick}) => <li className="co-m-nav-link co-m-nav-link__external">
+  <a className="co-external-link" href={href} onClick={onClick} target="_blank">{name}</a>
+</li>;
+
 class NavLink extends React.PureComponent {
   static isActive() {
     throw new Error('not implemented');
@@ -55,10 +59,10 @@ class NavLink extends React.PureComponent {
   }
 
   render() {
-    const { isActive, isExternal, id, name, target, onClick } = this.props;
+    const { isActive, id, name, onClick } = this.props;
 
-    return <li className={classNames('co-m-nav-link', { active: isActive, 'co-m-nav-link__external': isExternal })}>
-      <Link id={id} to={this.to} target={target} onClick={onClick} className={classNames({'co-external-link': isExternal})}>{name}</Link>
+    return <li className={classNames('co-m-nav-link', {active: isActive})}>
+      <Link id={id} to={this.to} onClick={onClick}>{name}</Link>
     </li>;
   }
 }
@@ -288,8 +292,8 @@ const MonitoringNavSection_ = ({urls, closeMenu}) => {
     ? <NavSection text="Monitoring" icon="pficon pficon-screen">
       {window.SERVER_FLAGS.prometheusBaseURL && <HrefLink href="/monitoring/alerts" name="Alerts" onClick={closeMenu} startsWith={monitoringAlertsStartsWith} />}
       {window.SERVER_FLAGS.alertManagerBaseURL && <HrefLink href="/monitoring/silences" name="Silences" onClick={closeMenu} />}
-      {prometheusURL && <HrefLink href={prometheusURL} target="_blank" name="Metrics" onClick={closeMenu} isExternal={true} />}
-      {grafanaURL && <HrefLink href={grafanaURL} target="_blank" name="Dashboards" onClick={closeMenu} isExternal={true} />}
+      {prometheusURL && <ExternalLink href={prometheusURL} name="Metrics" onClick={closeMenu} />}
+      {grafanaURL && <ExternalLink href={grafanaURL} name="Dashboards" onClick={closeMenu} />}
     </NavSection>
     : null;
 };

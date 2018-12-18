@@ -203,3 +203,11 @@ tags-input .autocomplete .suggestion-item em {
     border-bottom: 1px solid $table-border-color;
   }
 }
+
+.blank-slate-pf {
+  background-color: transparent;
+  border: none;
+  .blank-slate-pf-secondary-action a+a.btn:before {
+    display: none;
+  }
+}

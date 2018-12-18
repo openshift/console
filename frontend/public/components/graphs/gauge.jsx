@@ -128,29 +128,40 @@ class Gauge_ extends BaseGraph {
       relayout(this.node, this.layout);
       return;
     }
-    data = parseFloat(_.get(data, '[0].data.result[0].value[1]'), 10);
-    if (isNaN(data)) {
-      // eslint-disable-next-line no-console
-      console.warn(`Graph error: No data from query ${this.props.query}`);
-      return;
+
+    const {query, percent} = this.props;
+    if (query) {
+      data = parseFloat(_.get(data, '[0].data.result[0].value[1]'), 10);
+      if (!_.isFinite(data)) {
+        // eslint-disable-next-line no-console
+        console.warn(`Graph error: No data from query ${this.props.query}`);
+        return;
+      }
+    } else if (!_.isUndefined(percent)){
+      data = percent;
+      if (!_.isFinite(data)) {
+        // eslint-disable-next-line no-console
+        console.warn('Graph error: must provide query string or percent number');
+        return;
+      }
     }
-    const percent = Math.min(data, 100);
-    this.data[0].values[1] = percent / 100;
-    this.data[0].values[2] = (100 - percent) / 100;
+    const percentValue = Math.min(data, 100);
+    this.data[0].values[1] = percentValue / 100;
+    this.data[0].values[2] = (100 - percentValue) / 100;
 
     const { invert, thresholds } = this.props;
 
     let errorState = 'ok';
     if (invert) {
-      if (percent <= 100 - thresholds.error) {
+      if (data <= 100 - thresholds.error) {
         errorState = 'error';
-      } else if (percent <= 100 - thresholds.warn) {
+      } else if (data <= 100 - thresholds.warn) {
         errorState = 'warn';
       }
     } else {
-      if (percent >= thresholds.error) {
+      if (data >= thresholds.error) {
         errorState = 'error';
-      } else if (percent >= thresholds.warn) {
+      } else if (data >= thresholds.warn) {
         errorState = 'warn';
       }
     }
@@ -159,7 +170,7 @@ class Gauge_ extends BaseGraph {
     const fontColor = fontColors[errorState];
 
     this.data[0].marker.colors[1] = color;
-    if (data < 1) {
+    if (data > 0 && data < 1) {
       data = data.toFixed(1);
     } else {
       data = Math.round(data);
