@@ -2,21 +2,21 @@ import * as _ from 'lodash-es';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { ResourceEventStream } from './okdcomponents';
-import { ListHeader, ColHead, List, ListPage, ResourceRow, DetailsPage } from './factory/okdfactory';
-import { breadcrumbsForOwnerRefs, Firehose, ResourceLink, navFactory, Kebab, ResourceKebab } from './utils/okdutils';
-import { WithResources } from './utils/withResources';
+import { ResourceEventStream } from '../okdcomponents';
+import { ListHeader, ColHead, List, ListPage, ResourceRow, DetailsPage } from '../factory/okdfactory';
+import { breadcrumbsForOwnerRefs, Firehose, ResourceLink, navFactory, Kebab, ResourceKebab } from '../utils/okdutils';
+import { WithResources } from '../utils/withResources';
 import {
   VirtualMachineInstanceModel,
   VirtualMachineModel,
   PodModel,
   NamespaceModel,
   VirtualMachineInstanceMigrationModel,
-} from '../models';
-import { actions, k8sCreate } from '../module/okdk8s';
-import { startStopVmModal } from './modals/start-stop-vm-modal';
-import { restartVmModal } from './modals/restart-vm-modal';
-import { cancelVmiMigrationModal } from './modals/cancel-vmi-migration-modal';
+} from '../../models/index';
+import { actions, k8sCreate } from '../../module/okdk8s';
+import { startStopVmModal } from '../modals/start-stop-vm-modal';
+import { restartVmModal } from '../modals/restart-vm-modal';
+import { cancelVmiMigrationModal } from '../modals/cancel-vmi-migration-modal';
 import {
   getResourceKind,
   getLabelMatcher,
@@ -25,7 +25,7 @@ import {
   getFlattenForKind,
   findVmPod,
   findVmMigration,
-} from './utils/resources';
+} from '../utils/resources';
 import {
   BasicMigrationDialog,
   VmDetails,
@@ -35,14 +35,14 @@ import {
   VM_STATUS_ALL,
   VM_STATUS_TO_TEXT,
 } from 'kubevirt-web-ui-components';
-import { DASHES, IMPORTER_DV_POD_PREFIX, VIRT_LAUNCHER_POD_PREFIX } from './utils/constants';
-import { modalResourceLauncher } from './utils/modalResourceLauncher';
-import { showError } from './utils/showErrors';
-import VmConsolesConnected from './vmconsoles';
-import { Nic } from './nic';
-import { Disk } from './disk';
-import { openCreateVmWizard } from './modals/create-vm-modal';
-import { NodeLink } from '../../components/utils';
+import { DASHES, IMPORTER_DV_POD_PREFIX, VIRT_LAUNCHER_POD_PREFIX } from '../utils/constants';
+import { modalResourceLauncher } from '../utils/modalResourceLauncher';
+import { showError } from '../utils/showErrors';
+import VmConsolesConnected from '../vmconsoles';
+import { Nic } from '../nic';
+import { Disk } from '../disk';
+import { openCreateVmWizard } from '../modals/create-vm-modal';
+import { NodeLink } from '../../../components/utils';
 
 const mainRowSize = 'col-lg-3 col-md-3 col-sm-6 col-xs-6';
 const otherRowSize = 'col-lg-2 col-md-2 hidden-sm hidden-xs';
