@@ -30,6 +30,7 @@ import {
   findVMIMigration,
 } from '../utils/resources';
 import { DASHES, IMPORTER_DV_POD_PREFIX, VIRT_LAUNCHER_POD_PREFIX } from '../utils/constants';
+import FirehoseResourceLink from '../utils/firehoseResourceLink';
 import VmConsolesConnected from '../vmconsoles';
 import { Nic } from '../nic';
 import { Disk } from '../disk';
@@ -57,19 +58,6 @@ const StateColumn = ({ loaded, vm, resources }) => {
       migration={findVmMigration(vm, resources)}
     />
     : DASHES;
-};
-
-const FirehoseResourceLink = props => {
-  if (props.loaded && !props.loadError) {
-    const data = props.flatten(props.resources);
-    const resource = props.filter ? props.filter(data) : data;
-    if (resource) {
-      const { name, namespace, uid } = resource.metadata;
-      const kind = resource.kind || PodModel.kind;
-      return <ResourceLink kind={kind} name={name} namespace={namespace} title={uid} />;
-    }
-  }
-  return DASHES;
 };
 
 export const VMRow = ({obj: vm}) => {
