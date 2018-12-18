@@ -131,13 +131,14 @@ class MastheadToolbar_ extends React.Component {
     }
 
     if (mobile) {
-      actions.push([{
+      actions.push({
         label: 'Documentation',
         callback: this._onDocumentation,
       },{
         label: 'About',
         callback: this._onAboutModal,
-      }]);
+      });
+
       return (
         <Dropdown
           isPlain
