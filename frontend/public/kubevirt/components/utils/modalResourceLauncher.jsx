@@ -3,7 +3,6 @@ import * as ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { Router } from 'react-router-dom';
 
-import { Firehose } from '../utils/okdutils';
 import { history } from '../../../components/utils';
 import store from '../../../redux';
 
@@ -38,11 +37,9 @@ export const modalResourceLauncher = (Component, resourceMap, resourceToProps) =
         history,
         basename: window.SERVER_FLAGS.basePath,
       }}>
-        <Firehose resources={Object.keys(resourceMap).map(k => resourceMap[k].resource)}>
-          <WithResources resourceMap={resourceMap} dispose={closeModal} resourceToProps={resourceToProps}>
-            <Component {...props} {...emptyResources} onClose={closeModal} onCancel={closeModal} onHide={closeModal} />
-          </WithResources>
-        </Firehose>
+        <WithResources resourceMap={resourceMap} dispose={closeModal} resourceToProps={resourceToProps} showLoader={true}>
+          <Component {...props} {...emptyResources} onClose={closeModal} onCancel={closeModal} onHide={closeModal} />
+        </WithResources>
       </Router>
     </Provider>, modalContainer);
   });

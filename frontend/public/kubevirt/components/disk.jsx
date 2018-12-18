@@ -104,17 +104,15 @@ export const DiskRow = (onChange, onAccept, onCancel) => ({obj: storage}) => {
       return <VmDiskRow storage={storage} />;
     case STORAGE_TYPE_CREATE:
       return <div className="row co-resource-list__item">
-        <Firehose resources={[storageClasses.resource]}>
-          <WithResources resourceMap={{storageClasses}}>
-            <CreateDiskRow
-              storage={storage}
-              onAccept={onAccept}
-              onCancel={onCancel}
-              onChange={onChange}
-              LoadingComponent={LoadingInline}
-            />
-          </WithResources>
-        </Firehose>
+        <WithResources resourceMap={{storageClasses}}>
+          <CreateDiskRow
+            storage={storage}
+            onAccept={onAccept}
+            onCancel={onCancel}
+            onChange={onChange}
+            LoadingComponent={LoadingInline}
+          />
+        </WithResources>
       </div>;
     default:
       // eslint-disable-next-line

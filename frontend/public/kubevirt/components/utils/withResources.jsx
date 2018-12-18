@@ -2,6 +2,7 @@ import * as React from 'react';
 import PropTypes from 'prop-types';
 import * as _ from 'lodash-es';
 
+import { Firehose } from '../utils/okdutils';
 import { inject } from '../../../components/utils';
 
 import { Loader } from '../modals/loader';
@@ -10,7 +11,9 @@ import { showErrors } from './showErrors';
 
 const checkErrors = (errors, dispose) => {
   if (errors.length > 0) {
-    dispose();
+    if (dispose) {
+      dispose();
+    }
     setTimeout(() => {
       showErrors(errors);
     }, 0);
@@ -20,11 +23,11 @@ const checkErrors = (errors, dispose) => {
 /*
  * Firehose helper
  */
-export class WithResources extends React.Component {
+class Resources extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = WithResources.getDerivedStateFromProps(props);
+    this.state = Resources.getDerivedStateFromProps(props);
     checkErrors(this.state.errors, props.dispose);
   }
 
@@ -45,7 +48,7 @@ export class WithResources extends React.Component {
           loaded = false;
         }
 
-        if (resource.loadError) {
+        if (!resourceConfig.ignoreErrors && resource.loadError) {
           errors.push(resource.loadError);
         }
       } else {
@@ -57,7 +60,7 @@ export class WithResources extends React.Component {
     return {
       childrenProps: {
         ...childrenProps,
-        ...(resourceToProps ? resourceToProps(childrenProps) : {}),
+        ...(resourceToProps && loaded ? resourceToProps(childrenProps) : {}),
       },
       errors,
       loaded,
@@ -69,21 +72,24 @@ export class WithResources extends React.Component {
   }
 
   render() {
-    const { dispose, children } = this.props;
+    const { dispose, children, showLoader } = this.props;
 
-    if (!this.state.loaded && this.props.showLoader) {
-      return <Loader onExit={dispose} />;
+    if (!this.state.loaded) {
+      return showLoader && dispose ? <Loader onExit={dispose} /> : null;
     }
 
     return inject(children, this.state.childrenProps);
   }
 }
 
-WithResources.defaultProps = {
+Resources.defaultProps = {
   resources: {},
+  showLoader: false,
+  resourceToProps: null,
+  dispose: null,
 };
 
-WithResources.propTypes = {
+Resources.propTypes = {
   resources: PropTypes.oneOfType([PropTypes.object, PropTypes.array]), // firehose injects its props which are array at first, but array is not passed down
   resourceMap: PropTypes.object.isRequired,
   dispose: PropTypes.func,
@@ -91,9 +97,24 @@ WithResources.propTypes = {
   showLoader: PropTypes.bool,
 };
 
+
+export const WithResources = ({resourceMap, children, ...rest}) => (
+  <Firehose resources={Object.keys(resourceMap).map(k => resourceMap[k].resource)}>
+    <Resources resourceMap={resourceMap} {...rest}>
+      {children}
+    </Resources>
+  </Firehose>
+);
+
 WithResources.defaultProps = {
-  showLoader: true,
+  showLoader: false,
   resourceToProps: null,
   dispose: null,
-  resource: undefined,
+};
+
+WithResources.propTypes = {
+  resourceMap: PropTypes.object.isRequired,
+  dispose: PropTypes.func,
+  resourceToProps: PropTypes.func,
+  showLoader: PropTypes.bool,
 };
