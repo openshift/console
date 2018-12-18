@@ -51,7 +51,6 @@ export class CatalogTileDetails extends React.Component {
 
     const vendor = tileProvider ? `Provided by ${tileProvider}` : null;
     const iconClass = tileIconClass ? normalizeIconClass(tileIconClass) : null;
-    const createLabel = `Create ${kind === 'ImageStream' ? 'Application' : 'Service Instance'}`;
     const creationTimestamp = _.get(obj, 'metadata.creationTimestamp');
 
     const supportUrlLink = <a href={supportUrl} target="_blank" className="co-external-link" rel="noopener noreferrer">Get Support</a>;
@@ -72,7 +71,7 @@ export class CatalogTileDetails extends React.Component {
         <Modal.Body>
           <div className="co-catalog-page__overlay-body">
             <PropertiesSidePanel>
-              <Link className="btn btn-primary co-catalog-page__overlay-create" to={href} role="button">{createLabel}</Link>
+              <Link className="btn btn-primary co-catalog-page__overlay-create" to={href} role="button">{this.props.item.createLabel}</Link>
               {tileProvider && <PropertyItem label="Provider" value={tileProvider} />}
               {supportUrl && <PropertyItem label="Support" value={supportUrlLink} />}
               {creationTimestamp && <PropertyItem label="Created At" value={<Timestamp timestamp={creationTimestamp} />} />}

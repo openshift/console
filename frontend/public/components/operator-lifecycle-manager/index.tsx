@@ -230,6 +230,10 @@ export const visibilityLabel = 'olm-visibility';
 
 export const isEnabled = (namespace: K8sResourceKind) => _.has(namespace, ['metadata', 'annotations', 'alm-manager']);
 
+type ProvidedAPIsFor = (csv: ClusterServiceVersionKind) => (CRDDescription | APIServiceDefinition)[];
+export const providedAPIsFor: ProvidedAPIsFor = csv => _.get(csv.spec, 'customresourcedefinitions.owned', [])
+  .concat(_.get(csv.spec, 'apiservicedefinitions.owned', []));
+
 export const referenceForProvidedAPI = (desc: CRDDescription | APIServiceDefinition): GroupVersionKind => _.get(desc, 'group')
   ? `${(desc as APIServiceDefinition).group}~${desc.version}~${desc.kind}`
   : `${(desc as CRDDescription).name.slice(desc.name.indexOf('.') + 1)}~${desc.version}~${desc.kind}`;
