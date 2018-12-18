@@ -23,6 +23,8 @@ import {
   findPod,
   findVMIMigration,
   getFlattenForKind,
+  findVmPod,
+  findVmMigration,
 } from './utils/resources';
 import {
   BasicMigrationDialog,
@@ -108,26 +110,15 @@ const menuActionMigrate = (kind, vm, actionArgs) => {
 
 const menuActions = [menuActionStart, menuActionRestart, menuActionMigrate, menuActionCancelMigration, Kebab.factory.Delete];
 
-const getPod = (vm, resources, podNamePrefix) => {
-  const podFlatten = getFlattenForKind(PodModel.kind);
-  const podData = podFlatten(resources);
-  return findPod(podData, vm.metadata.name, podNamePrefix);
-};
-
-const getMigration = (vm, resources) => {
-  const flatten = getFlattenForKind(VirtualMachineInstanceMigrationModel.kind);
-  const migrationData = flatten(resources);
-  return findVMIMigration(migrationData, vm.metadata.name);
-};
 
 const StateColumn = props => {
   const { loaded, resources, vm } = props;
   return loaded
     ? <VmStatus
       vm={vm}
-      launcherPod={getPod(vm, resources, VIRT_LAUNCHER_POD_PREFIX)}
-      importerPod={getPod(vm, resources, IMPORTER_DV_POD_PREFIX)}
-      migration={getMigration(vm, resources)}
+      launcherPod={findVmPod(vm, resources, VIRT_LAUNCHER_POD_PREFIX)}
+      importerPod={findVmPod(vm, resources, IMPORTER_DV_POD_PREFIX)}
+      migration={findVmMigration(vm, resources)}
     />
     : DASHES;
 };

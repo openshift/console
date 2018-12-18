@@ -2,7 +2,7 @@ import * as _ from 'lodash-es';
 import { getCSRFToken } from '../../../co-fetch';
 import { k8sBasePath } from '../../module/okdk8s';
 
-import { VirtualMachineInstanceModel } from '../../models';
+import { VirtualMachineInstanceMigrationModel, VirtualMachineInstanceModel, PodModel } from '../../models';
 
 export const getResourceKind = (model, name, namespaced, namespace, isList, matchLabels, matchExpressions) => {
   const res = { kind:model.kind, namespaced, namespace, isList, prop: model.kind};
@@ -39,6 +39,18 @@ export const findVMIMigration = (data, vmiName) => {
 
 export const getFlattenForKind = (kind) => {
   return resources => _.get(resources, kind, {}).data;
+};
+
+export const findVmPod = (vm, resources, podNamePrefix) => {
+  const podFlatten = getFlattenForKind(PodModel.kind);
+  const podData = podFlatten(resources);
+  return findPod(podData, vm.metadata.name, podNamePrefix);
+};
+
+export const findVmMigration = (vm, resources) => {
+  const flatten = getFlattenForKind(VirtualMachineInstanceMigrationModel.kind);
+  const migrationData = flatten(resources);
+  return findVMIMigration(migrationData, vm.metadata.name);
 };
 
 const getApiConsoleApiBase = () => {
