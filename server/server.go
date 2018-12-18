@@ -173,7 +173,7 @@ func (s *Server) HTTPHandler() http.Handler {
 	handleFunc("/api/", notFoundHandler)
 
 	staticHandler := http.StripPrefix(proxy.SingleJoiningSlash(s.BaseURL.Path, "/static/"), http.FileServer(http.Dir(s.PublicDir)))
-	handle("/static/", securityHeadersMiddleware(staticHandler))
+	handle("/static/", gzipHandler(securityHeadersMiddleware(staticHandler)))
 
 	// Scope of Service Worker needs to be higher than the requests it is intercepting (https://stackoverflow.com/a/35780776/6909941)
 	handleFunc("/load-test.sw.js", func(w http.ResponseWriter, r *http.Request) {
