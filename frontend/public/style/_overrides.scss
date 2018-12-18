@@ -299,10 +299,6 @@ tags-input .autocomplete .suggestion-item em {
       &.pf-m-current {
         background-color: #{$color-pf-black-800};
 
-        &:hover {
-          --pf-c-nav__list-link--m-current--BackgroundColor: var(--pf-c-nav__list-link--hover--BackgroundColor);
-        }
-
         &:not(.pf-m-expanded) {
           .pf-c-nav__link {
             &::after {
