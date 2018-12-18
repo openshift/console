@@ -277,13 +277,17 @@ const sortBuilds = (builds: K8sResourceKind[]): K8sResourceKind[] => {
   return builds.sort(byBuildNumber);
 };
 
+const reservedNSPrefixes = ['openshift-', 'kube-', 'kubernetes-'];
+const isReservedNamespace = (ns: string) => ns === 'default' || ns === 'openshift' || reservedNSPrefixes.some(prefix => _.startsWith(ns, prefix));
+
 const overviewEmptyStateToProps = ({UI}) => ({
   activeNamespace: UI.get('activeNamespace'),
   resources: UI.getIn(['overview', 'resources']),
 });
 
 const OverviewEmptyState = connect(overviewEmptyStateToProps)(({activeNamespace, resources}) => {
-  if (resources.isEmpty()) {
+  // Don't encourage users to add content to system namespaces.
+  if (resources.isEmpty() && !isReservedNamespace(activeNamespace)) {
     return <EmptyState>
       <EmptyState.Title>
         Get started with your project.
