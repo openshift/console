@@ -282,7 +282,7 @@ class CreatePVCPage extends React.Component<CreatePVCPageProps, CreatePVCPageSta
     const { title, error, inProgress } = this.state;
     const { namespace } = this.props;
     return (
-      <div className="co-m-pane__body">
+      <div className="co-m-pane__body co-m-pane__form">
         <Helmet>
           <title>{title}</title>
         </Helmet>
@@ -294,7 +294,7 @@ class CreatePVCPage extends React.Component<CreatePVCPageProps, CreatePVCPageSta
             <Link to={`/k8s/ns/${namespace}/persistentvolumeclaims/new`} id="yaml-link" replace>Edit YAML</Link>
           </div>
         </h1>
-        <form className="co-m-pane__body-group " onSubmit={this.save}>
+        <form className="co-m-pane__body-group" onSubmit={this.save}>
           <CreatePVCForm onChange={this.onChange} namespace={namespace} />
           <ButtonBar errorMessage={error} inProgress={inProgress}>
             <button type="submit" className="btn btn-primary" id="save-changes">

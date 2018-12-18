@@ -315,14 +315,14 @@ export class DeployImage extends React.Component<DeployImageProps, DeployImageSt
       </Helmet>
       <PageHeading title={title} />
       <div className="co-m-pane__body">
-        <form onSubmit={this.save} className="co-deploy-image">
+        <form onSubmit={this.save} className="co-deploy-image co-m-pane__form">
           <div className="form-group co-deploy-image__namespace">
             <label className="control-label co-required" htmlFor="dropdown-selectbox">Namespace</label>
             <NsDropdown selectedKey={this.state.namespace} onChange={this.onNamespaceChange} id="dropdown-selectbox" />
           </div>
           <p>Deploy an existing image from an {/*image stream tag or */} image registry.</p>
           <div className="form-group co-deploy-image__image-name">
-            <label htmlFor="image-name">Image Name</label>
+            <label className="control-label co-required" htmlFor="image-name">Image Name</label>
             <div className="input-group">
               <input className="form-control"
                 type="search"

@@ -144,7 +144,10 @@ export class Dropdown extends DropdownMixin {
 
     this.state.items = Object.assign({}, bookmarks, props.items);
 
-    this.state.title = props.noSelection ? props.title : _.get(props.items, props.selectedKey, props.title);
+    this.state.title = props.noSelection
+      ? props.title
+      : _.get(props.items, props.selectedKey, <span className="btn-dropdown__item--placeholder">{props.title}</span>);
+
     this.onKeyDown = e => this.onKeyDown_(e);
     this.changeTextFilter = e => this.applyTextFilter_(e.target.value, this.props.items);
     const { shortCut } = this.props;

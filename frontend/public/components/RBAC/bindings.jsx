@@ -231,13 +231,9 @@ const subjectKinds = [
   {value: 'ServiceAccount', title: 'Service Account'},
 ];
 
-const Section = ({label, children}) => <div className="row">
-  <div className="col-xs-2">
-    <strong>{label}</strong>
-  </div>
-  <div className="col-xs-10">
-    {children}
-  </div>
+const Section = ({label, children}) => <div>
+  <div className="co-form-section__label">{label}</div>
+  <div className="co-form-subsection">{children}</div>
 </div>;
 
 const BaseEditRoleBinding = connect(null, {setActiveNamespace: UIActions.setActiveNamespace})(
@@ -334,59 +330,66 @@ const BaseEditRoleBinding = connect(null, {setActiveNamespace: UIActions.setActi
       const RoleDropdown = kind === 'RoleBinding' ? NsRoleDropdown : ClusterRoleDropdown;
       const title = `${this.props.titleVerb} ${kindObj(kind).label}`;
 
-      return <div className="rbac-edit-binding co-m-pane__body">
+      return <div className="co-m-pane__body">
         <Helmet>
           <title>{title}</title>
         </Helmet>
-        <form className="co-m-pane__body-group" onSubmit={this.save}>
+        <form className="co-m-pane__body-group co-m-pane__form" onSubmit={this.save}>
           <h1 className="co-m-pane__heading">{title}</h1>
           <p className="co-m-pane__explanation">Associate a user/group to the selected role to define the type of access and resources that are allowed.</p>
 
-          {!_.get(fixed, 'kind') && <RadioGroup currentValue={kind} items={bindingKinds} onChange={this.setKind} />}
+          <Section label="Binding Type">
+            {!_.get(fixed, 'kind') && <RadioGroup currentValue={kind} items={bindingKinds} onChange={this.setKind} />}
+          </Section>
 
-          <div className="separator"></div>
+          <div className="co-form-section__separator"></div>
 
           <Section label="Role Binding">
-            <label htmlFor="role-binding-name" className="rbac-edit-binding__input-label co-required">Name</label>
-            {_.get(fixed, 'metadata.name')
-              ? <ResourceName kind={kind} name={metadata.name} />
-              : <input className="form-control" type="text" onChange={this.changeName} placeholder="Role binding name" value={metadata.name} required id="role-binding-name" />}
-            {kind === 'RoleBinding' && <div>
-              <div className="separator"></div>
-              <label htmlFor="ns-dropdown" className="rbac-edit-binding__input-label co-required">Namespace</label>
+            <div className="form-group">
+              <label htmlFor="role-binding-name" className="co-required">Name</label>
+              {_.get(fixed, 'metadata.name')
+                ? <ResourceName kind={kind} name={metadata.name} />
+                : <input className="form-control" type="text" onChange={this.changeName} placeholder="Role binding name" value={metadata.name} required id="role-binding-name" />}
+            </div>
+            {kind === 'RoleBinding' && <div className="form-group">
+              <label htmlFor="ns-dropdown" className="co-required">Namespace</label>
               <NsDropdown fixed={!!_.get(fixed, 'metadata.namespace')} selectedKey={metadata.namespace} onChange={this.changeNamespace} id="ns-dropdown" />
             </div>}
           </Section>
 
-          <div className="separator"></div>
+          <div className="co-form-section__separator"></div>
 
           <Section label="Role">
-            <label htmlFor="role-dropdown" className="rbac-edit-binding__input-label co-required">Role Name</label>
-            <RoleDropdown
-              fixed={!!_.get(fixed, 'roleRef.name')}
-              namespace={metadata.namespace}
-              onChange={this.changeRoleRef}
-              selectedKey={_.get(fixed, 'roleRef.name') || roleRef.name}
-              selectedKeyKind={_.get(fixed, 'roleRef.kind') || roleRef.kind}
-              id="role-dropdown"
-            />
+            <div className="form-group">
+              <label htmlFor="role-dropdown" className="co-required">Role Name</label>
+              <RoleDropdown
+                fixed={!!_.get(fixed, 'roleRef.name')}
+                namespace={metadata.namespace}
+                onChange={this.changeRoleRef}
+                selectedKey={_.get(fixed, 'roleRef.name') || roleRef.name}
+                selectedKeyKind={_.get(fixed, 'roleRef.kind') || roleRef.kind}
+                id="role-dropdown"
+              />
+            </div>
           </Section>
 
-          <div className="separator"></div>
+          <div className="co-form-section__separator"></div>
 
           <Section label="Subject">
-            <RadioGroup currentValue={subject.kind} items={subjectKinds} onChange={this.changeSubjectKind} />
-            {subject.kind === 'ServiceAccount' && <div>
-              <div className="separator"></div>
-              <label htmlFor="subject-namespace" className="rbac-edit-binding__input-label co-required">Subject Namespace</label>
+            <div className="form-group">
+              <RadioGroup currentValue={subject.kind} items={subjectKinds} onChange={this.changeSubjectKind} />
+            </div>
+            {subject.kind === 'ServiceAccount' && <div className="form-group">
+              <label htmlFor="subject-namespace" className="co-required">Subject Namespace</label>
               <NsDropdown id="subject-namespace" selectedKey={subject.namespace} onChange={this.changeSubjectNamespace} />
             </div>}
-            <div className="separator"></div>
-            <label htmlFor="subject-name" className="rbac-edit-binding__input-label co-required">Subject Name</label>
-            <input className="form-control" type="text" onChange={this.changeSubjectName} placeholder="Subject name" value={subject.name} required id="subject-name" />
+            <div className="form-group">
+              <label htmlFor="subject-name" className="co-required">Subject Name</label>
+              <input className="form-control" type="text" onChange={this.changeSubjectName} placeholder="Subject name" value={subject.name} required id="subject-name" />
+            </div>
           </Section>
 
-          <div className="separator"></div>
+          <div className="co-form-section__separator"></div>
 
           <ButtonBar errorMessage={this.state.error} inProgress={this.state.inProgress}>
             <button type="submit" className="btn btn-primary" id="save-changes">{saveButtonText || 'Create'}</button>

@@ -781,23 +781,22 @@ class SilenceForm_ extends SafetyFirst<SilenceFormProps, SilenceFormState> {
       <Helmet>
         <title>{this.props.title}</title>
       </Helmet>
-      <form className="co-m-pane__body-group silence-form" onSubmit={this.onSubmit}>
+      <form className="co-m-pane__body-group silence-form co-m-pane__form" onSubmit={this.onSubmit}>
         <SectionHeading text={this.props.title} />
         <p className="co-m-pane__explanation">A silence is configured based on matchers (label selectors). No notification will be sent out for alerts that match all the values or regular expressions.</p>
-        <hr />
 
         <div className="form-group">
-          <label>Start</label>
+          <label className="co-required">Start</label>
           <Datetime onChange={this.onFieldChange('startsAt')} value={data.startsAt} required />
         </div>
         <div className="form-group">
-          <label>End</label>
+          <label className="co-required">End</label>
           <Datetime onChange={this.onFieldChange('endsAt')} value={data.endsAt} required />
         </div>
-        <hr />
+        <div className="co-form-section__separator"></div>
 
         <div className="form-group">
-          <label>Matchers</label> (label selectors)
+          <label className="co-required">Matchers</label> (label selectors)
           <p className="co-help-text">Alerts affected by this silence. Matching alerts must satisfy all of the specified label constraints, though they may have additional labels as well.</p>
           <div className="row monitoring-grid-head text-secondary text-uppercase">
             <div className="col-xs-4">Name</div>
@@ -825,7 +824,7 @@ class SilenceForm_ extends SafetyFirst<SilenceFormProps, SilenceFormState> {
             <i className="fa fa-plus-circle" aria-hidden="true" /> Add More
           </button>
         </div>
-        <hr />
+        <div className="co-form-section__separator"></div>
 
         <div className="form-group">
           <label>Creator</label>
@@ -835,7 +834,6 @@ class SilenceForm_ extends SafetyFirst<SilenceFormProps, SilenceFormState> {
           <label>Comment</label>
           <textarea className="form-control" onChange={this.onFieldChange('comment')} value={data.comment} />
         </div>
-        <hr />
 
         <ButtonBar errorMessage={error} inProgress={inProgress}>
           <button type="submit" className="btn btn-primary">{this.props.saveButtonText || 'Save'}</button>

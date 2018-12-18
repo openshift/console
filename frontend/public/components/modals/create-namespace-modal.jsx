@@ -105,7 +105,7 @@ const CreateNamespaceModal = connect(null, mapDispatchToProps)(class CreateNames
       <ModalTitle>Create {label}</ModalTitle>
       <ModalBody>
         <div className="form-group">
-          <label htmlFor="input-name" className="control-label">Name</label>
+          <label htmlFor="input-name" className="control-label co-required">Name</label>
           <div className="modal-body__field">
             <input id="input-name" name="name" type="text" className="form-control" onChange={this.handleChange} value={this.state.name || ''} autoFocus required />
           </div>
@@ -131,7 +131,7 @@ const CreateNamespaceModal = connect(null, mapDispatchToProps)(class CreateNames
         {!this.props.createProject && <div className="form-group">
           <label htmlFor="network-policy" className="control-label">Default Network Policy</label>
           <div className="modal-body__field ">
-            <Dropdown title="No restrictions (default)" items={defaultNetworkPolicies} dropDownClassName="dropdown--full-width" id="dropdown-selectbox" onChange={np => this.setState({np: np})} />
+            <Dropdown selectedKey={this.state.np} items={defaultNetworkPolicies} dropDownClassName="dropdown--full-width" id="dropdown-selectbox" onChange={np => this.setState({np})} />
           </div>
         </div>}
       </ModalBody>
