@@ -28,10 +28,6 @@ const (
 	k8sInClusterCA          = "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
 	k8sInClusterBearerToken = "/var/run/secrets/kubernetes.io/serviceaccount/token"
 
-	// CA bundle for cluster-created certificates in OpenShift
-	// https://docs.openshift.org/latest/dev_guide/secrets.html#service-serving-certificate-secrets
-	openshiftInClusterServiceCA = "/var/run/secrets/kubernetes.io/serviceaccount/service-ca.crt"
-
 	// Well-known location of Prometheus service for OpenShift. This is only accessible in-cluster.
 	openshiftPrometheusHost = "prometheus-k8s.openshift-monitoring.svc:9091"
 
@@ -49,6 +45,9 @@ func main() {
 	fBaseAddress := fs.String("base-address", "", "Format: <http | https>://domainOrIPAddress[:port]. Example: https://tectonic.example.com.")
 	fBasePath := fs.String("base-path", "/", "")
 	fConfig := fs.String("config", "", "The YAML config file.")
+
+	// See https://github.com/openshift/service-serving-cert-signer
+	fServiceCAFile := fs.String("service-ca-file", "", "CA bundle for OpenShift services signed with the service signing certificates.")
 
 	fTectonicClusterName := fs.String("tectonic-cluster-name", "tectonic", "The Tectonic cluster name.")
 
@@ -257,8 +256,8 @@ func main() {
 		k8sAuthServiceAccountBearerToken = string(bearerToken)
 
 		// If running in an OpenShift cluster, set up a proxy to the prometheus-k8s serivce running in the openshift-monitoring namespace.
-		if _, err := os.Stat(openshiftInClusterServiceCA); err == nil {
-			serviceCertPEM, err := ioutil.ReadFile(openshiftInClusterServiceCA)
+		if *fServiceCAFile != "" {
+			serviceCertPEM, err := ioutil.ReadFile(*fServiceCAFile)
 			if err != nil {
 				log.Fatalf("failed to read service-ca.crt file: %v", err)
 			}
@@ -277,9 +276,6 @@ func main() {
 				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
 				Endpoint:        &url.URL{Scheme: "https", Host: openshiftAlertManagerHost, Path: "/api"},
 			}
-		} else if !os.IsNotExist(err) {
-			// Ignore errors when the file does not exist, which is the case if not running on OpenShift. Fail on other errors.
-			log.Fatalf("failed to stat service-ca.crt file: %v", err)
 		}
 
 	case "off-cluster":
