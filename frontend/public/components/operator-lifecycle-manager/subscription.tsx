@@ -192,7 +192,7 @@ export class SubscriptionUpdates extends React.Component<SubscriptionUpdatesProp
 
 export const SubscriptionDetailsPage: React.SFC<SubscriptionDetailsPageProps> = (props) => {
   type PkgFor = (pkgs: PackageManifestKind[]) => (obj: SubscriptionKind) => PackageManifestKind;
-  const pkgFor: PkgFor = pkgs => obj => pkgs.find(pkg => pkg.metadata.name === obj.spec.name && pkg.status.catalogSource === obj.spec.source);
+  const pkgFor: PkgFor = pkgs => obj => _.find(pkgs, (pkg => pkg.metadata.name === obj.spec.name && pkg.status.catalogSource === obj.spec.source));
 
   type InstalledCSV = (clusterServiceVersions?: ClusterServiceVersionKind[]) => (obj: SubscriptionKind) => ClusterServiceVersionKind;
   const installedCSV: InstalledCSV = clusterServiceVersions => obj => clusterServiceVersions.find(csv => csv.metadata.name === _.get(obj, 'status.installedCSV'));

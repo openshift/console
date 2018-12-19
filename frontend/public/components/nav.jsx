@@ -11,11 +11,14 @@ import {
   BuildConfigModel,
   BuildModel,
   ChargebackReportModel,
+  ClusterServiceVersionModel,
   DeploymentConfigModel,
   ImageStreamModel,
+  InstallPlanModel,
   MachineModel,
   MachineSetModel,
-  ClusterServiceVersionModel,
+  PackageManifestModel,
+  SubscriptionModel,
 } from '../models';
 import { referenceForModel } from '../module/k8s';
 
@@ -186,7 +189,10 @@ const NavSection = connect(navSectionStateToProps)(
           return false;
         }
         if (c.props.startsWith) {
-          return c.type.startsWith(resourcePath, c.props.startsWith);
+          const active = c.type.startsWith(resourcePath, c.props.startsWith, activeNamespace);
+          if (active || !c.props.activePath) {
+            return active;
+          }
         }
         return c.type.isActive && c.type.isActive(c.props, resourcePath, activeNamespace);
       }).map(c => c.props.name)[0];
@@ -257,6 +263,9 @@ const NavSection = connect(navSectionStateToProps)(
 );
 
 const searchStartsWith = ['search'];
+const operatorManagementStartsWith = [referenceForModel(PackageManifestModel), referenceForModel(SubscriptionModel), referenceForModel(InstallPlanModel)];
+const provisionedServicesStartsWith = ['serviceinstances', 'servicebindings'];
+const brokerManagementStartsWith = ['clusterservicebrokers', 'clusterserviceclasses'];
 const rolesStartsWith = ['roles', 'clusterroles'];
 const rolebindingsStartsWith = ['rolebindings', 'clusterrolebindings'];
 const quotaStartsWith = ['resourcequotas', 'clusterresourcequotas'];
@@ -298,10 +307,27 @@ export const Navigation = ({ isNavOpen, onNavSelect }) => {
         <NavSection title="Catalog">
           <HrefLink href="/catalog" name="Developer Catalog" activePath="/catalog/" />
           <ResourceNSLink model={ClusterServiceVersionModel} resource={ClusterServiceVersionModel.plural} name="Operators" />
-          <HrefLink required={FLAGS.SERVICE_CATALOG} href="/provisionedservices" name="Provisioned Services" activePath="/provisionedservices/" />
+          <HrefLink
+            href="/provisionedservices"
+            name="Provisioned Services"
+            activePath="/provisionedservices/"
+            startsWith={provisionedServicesStartsWith}
+            required={FLAGS.SERVICE_CATALOG}
+          />
           <HrefLink required={FLAGS.KUBERNETES_MARKETPLACE} href="/marketplace" name="Marketplace" activePath="/marketplace/" />
-          <HrefLink href="/operatormanagement" name="Operator Management" activePath="/operatormanagement/" />
-          <HrefLink required={FLAGS.SERVICE_CATALOG} href="/brokermanagement" name="Broker Management" activePath="/brokermanagement/" />
+          <HrefLink
+            href="/operatormanagement"
+            name="Operator Management"
+            activePath="/operatormanagement/"
+            startsWith={operatorManagementStartsWith}
+          />
+          <HrefLink
+            href="/brokermanagement"
+            name="Broker Management"
+            activePath="/brokermanagement/"
+            startsWith={brokerManagementStartsWith}
+            required={FLAGS.SERVICE_CATALOG}
+          />
         </NavSection>
 
         <NavSection title="Workloads">

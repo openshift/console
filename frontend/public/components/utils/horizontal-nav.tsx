@@ -163,9 +163,9 @@ export class HorizontalNav extends React.PureComponent<HorizontalNavProps> {
   render() {
     const props = this.props;
 
-    const componentProps = {..._.pick(props, ['filters', 'selected', 'match']), obj: props.obj.data};
-    const extraResources = _.reduce(props.resourceKeys, (extraObjs, key) => ({...extraObjs, [key]: props[key].data}), {});
-    const pages = props.pages || props.pagesFor(props.obj.data);
+    const componentProps = {..._.pick(props, ['filters', 'selected', 'match']), obj: _.get(props.obj, 'data')};
+    const extraResources = _.reduce(props.resourceKeys, (extraObjs, key) => ({...extraObjs, [key]: _.get(props[key], 'data')}), {});
+    const pages = props.pages || props.pagesFor(_.get(props.obj, 'data'));
 
     const routes = pages.map(p => {
       const path = `${props.match.url}/${p.href}`;
