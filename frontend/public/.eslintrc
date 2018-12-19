@@ -7,5 +7,9 @@
       "name": "lodash",
       "message": "Use lodash-es instead.",
     }],
+    "prefer-const": ["error", {
+        "destructuring": "all",
+        "ignoreReadBeforeAssign": false,
+    }],
   }
 }
