@@ -37,8 +37,6 @@ export const findVMIMigration = (data, vmiName) => {
   return migrations.find(m => !_.get(m, 'status.completed') && !_.get(m, 'status.failed') );
 };
 
-export const findVmi = (data, name) => data.find(vmi => vmi.metadata.name === name);
-
 export const getFlattenForKind = (kind) => {
   return resources => _.get(resources, kind, {}).data;
 };
