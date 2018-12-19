@@ -179,7 +179,7 @@ class App extends React.PureComponent {
                   <LazyRoute path="/cluster-health" exact loader={() => import('./cluster-health' /* webpackChunkName: "cluster-health" */).then(m => m.ClusterHealth)} />
                   <LazyRoute path="/start-guide" exact loader={() => import('./start-guide' /* webpackChunkName: "start-guide" */).then(m => m.StartGuidePage)} />
 
-                  <LazyRoute path="/marketplace" exact loader={() => import('./marketplace/kubernetes-marketplace' /* webpackChunkName: "marketplace" */).then(m => m.MarketplacePage)} />
+                  <LazyRoute path="/marketplace" exact loader={() => import('./marketplace/marketplace-page' /* webpackChunkName: "marketplace" */).then(m => m.MarketplacePage)} />
 
                   <LazyRoute path={`/k8s/ns/:ns/${SubscriptionModel.plural}/new`} exact loader={() => import('./operator-lifecycle-manager' /* webpackChunkName: "create-subscription-yaml" */).then(m => NamespaceFromURL(m.CreateSubscriptionYAML))} />
 
