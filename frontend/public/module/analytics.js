@@ -29,7 +29,7 @@ export const analyticsSvc = {
     analyticsSvc.push({
       event: 'tectonicRouteChange',
       attributes: {
-        route: route,
+        route,
       },
     });
   },

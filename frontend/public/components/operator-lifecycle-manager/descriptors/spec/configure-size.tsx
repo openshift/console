@@ -7,7 +7,7 @@ import { Descriptor } from '../types';
 export const configureSizeModal = ({kindObj, resource, specDescriptor, specValue}: ConfigureSizeModalProps) => {
   return configureCountModal({
     resourceKind: kindObj,
-    resource: resource,
+    resource,
     defaultValue: specValue || 0,
     title: `Modify ${specDescriptor.displayName}`,
     message: specDescriptor.description,

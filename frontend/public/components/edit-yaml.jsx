@@ -119,7 +119,7 @@ export const EditYAML = connect(stateToProps)(
     componentWillReceiveProps(nextProps) {
       const newVersion = _.get(nextProps.obj, 'metadata.resourceVersion');
       const stale = this.displayedVersion !== newVersion;
-      this.setState({stale: stale });
+      this.setState({stale});
       if (nextProps.sampleObj) {
         this.loadYaml(!_.isEqual(this.state.sampleObj, nextProps.sampleObj), nextProps.sampleObj);
       } else {

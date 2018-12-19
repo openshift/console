@@ -54,7 +54,7 @@ export const navFactory: NavFactory = {
   editYaml: (component = editYamlComponent) => ({
     href: 'yaml',
     name: 'YAML',
-    component: component,
+    component,
   }),
   pods: component => ({
     href: 'pods',
@@ -99,7 +99,7 @@ export const navFactory: NavFactory = {
   machines: component => ({
     href: 'machines',
     name: 'Machines',
-    component: component,
+    component,
   }),
 };
 

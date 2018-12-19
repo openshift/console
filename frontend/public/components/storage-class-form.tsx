@@ -493,7 +493,7 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
         this.resources = {
           data: data && data.toArray().map(p => p.toJSON()),
           loadError: this.props.k8s.getIn([StorageClassModel.plural, 'loadError']),
-          loaded: loaded,
+          loaded,
         };
 
         this.validateForm();
@@ -569,7 +569,7 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
         this.setState({loading: false});
         history.push('/k8s/cluster/storageclasses');
       })
-      .catch(error => this.setState({loading: false, error: error}));
+      .catch(error => this.setState({loading: false, error}));
   };
 
   getFormParams = () => {
@@ -885,8 +885,8 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
 }
 
 const mapStateToProps = ({k8s}, {onClose}) => ({
-  k8s: k8s,
-  onClose: onClose,
+  k8s,
+  onClose,
 });
 
 const mapDispatchToProps = () => ({

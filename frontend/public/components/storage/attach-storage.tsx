@@ -95,7 +95,7 @@ class AttachStorageForm extends React.Component<
     const volumes = _.get(resourceObj, 'spec.template.spec.volumes');
     const volume = _.find(volumes, {
       persistentVolumeClaim: {
-        claimName: claimName,
+        claimName,
       },
     }) as any;
 
