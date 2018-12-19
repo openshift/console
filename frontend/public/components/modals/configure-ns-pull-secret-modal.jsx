@@ -155,7 +155,7 @@ class ConfigureNamespacePullSecret extends PromiseComponent {
           name: event.target.elements['namespace-pull-secret-name'].value,
           namespace: namespace.metadata.name,
         },
-        data: data,
+        data,
         type: CONST.PULL_SECRET_TYPE,
       };
       promise = k8sCreate(SecretModel, secret);

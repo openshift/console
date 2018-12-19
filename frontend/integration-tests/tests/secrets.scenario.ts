@@ -214,8 +214,8 @@ describe('Interacting with the create secret forms', () => {
     const configFile = {
       auths:{
         'https://index.openshift.io/v1':{
-          username: username,
-          password: password,
+          username,
+          password,
           auth: secretsView.encode(username, password),
           email: 'test@secret.com',
         },

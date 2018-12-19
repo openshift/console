@@ -111,7 +111,7 @@ export class LogWindow extends React.PureComponent {
       </div>
       <div className="log-window__body">
         <div className="log-window__scroll-pane" ref={this._setScrollPane}>
-          <div className="log-window__contents" ref={this._setLogContents} style={{ height: height }}>
+          <div className="log-window__contents" ref={this._setLogContents} style={{ height }}>
             <div className="log-window__contents__text">
               {content}
             </div>

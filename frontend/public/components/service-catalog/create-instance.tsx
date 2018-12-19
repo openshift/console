@@ -65,7 +65,7 @@ class CreateInstance extends React.Component<CreateInstanceProps, CreateInstance
   }
 
   onNamespaceChange = (namespace: string) => {
-    this.setState({namespace: namespace});
+    this.setState({namespace});
   }
 
   onNameChange: React.ReactEventHandler<HTMLInputElement> = event => {

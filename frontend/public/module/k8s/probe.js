@@ -48,7 +48,7 @@ const parsers = {
     }
     return {
       host: [scheme, '://', hostname].join(''),
-      path: path,
+      path,
       port: parseInt(port, 10) || port,
     };
   },

@@ -104,7 +104,7 @@ const withSecretForm = (SubForm) => class SecretFormComponent extends React.Comp
 
     this.state = {
       secretTypeAbstraction: this.props.secretTypeAbstraction,
-      secret: secret,
+      secret,
       inProgress: false,
       type: defaultSecretType,
       stringData: _.mapValues(_.get(props.obj, 'data'), (value) => {
@@ -250,7 +250,7 @@ class ImageSecretForm extends React.Component<ImageSecretFormProps, ImageSecretF
   }
   changeFormType(authType) {
     this.setState({
-      authType: authType,
+      authType,
     });
   }
   onFormDisable(disable) {
@@ -591,7 +591,7 @@ class SourceSecretForm extends React.Component<SourceSecretFormProps, SourceSecr
   }
   changeAuthenticationType(type: SecretType) {
     this.setState({
-      type: type,
+      type,
     }, () => this.props.onChange(this.state));
   }
   onDataChanged(secretsData) {
@@ -753,8 +753,8 @@ class GenericSecretForm extends React.Component<GenericSecretFormProps, GenericS
     return _.map(genericSecretObject, (value, key) => ({
       uid: _.uniqueId(),
       entry: {
-        key: key,
-        value: value,
+        key,
+        value,
       },
     }));
   }
@@ -903,7 +903,7 @@ export const CreateSecret = ({match: {params}}) => {
   />;
 };
 
-export const EditSecret = ({match: {params}, kind}) => <Firehose resources={[{kind: kind, name: params.name, namespace: params.ns, isList: false, prop: 'obj'}]}>
+export const EditSecret = ({match: {params}, kind}) => <Firehose resources={[{kind, name: params.name, namespace: params.ns, isList: false, prop: 'obj'}]}>
   <SecretLoadingWrapper fixedKeys={['kind', 'metadata']} titleVerb="Edit" saveButtonText="Save" />
 </Firehose>;
 

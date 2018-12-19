@@ -25,6 +25,5 @@
 ## JavaScript
 
 - Run the linter and follow all rules defined in .eslintrc
-- Prefer ES6 `const` over `let` or `var` when values do not change.
 - Never use absolute paths in code. The app should be able to run behind a proxy under an arbitrary path.
 - TESTS: Should follow a similar "test tables" convention as used in Go where applicable.

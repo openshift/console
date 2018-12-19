@@ -22,7 +22,7 @@ const kebabFactory: KebabFactory = {
   Delete: (kind, obj) => ({
     label: `Delete ${kind.label}`,
     callback: () => deleteModal({
-      kind: kind,
+      kind,
       resource: obj,
     }),
   }),
@@ -33,21 +33,21 @@ const kebabFactory: KebabFactory = {
   ModifyLabels: (kind, obj) => ({
     label: 'Edit Labels',
     callback: () => labelsModal({
-      kind: kind,
+      kind,
       resource: obj,
     }),
   }),
   ModifyPodSelector: (kind, obj) => ({
     label: 'Edit Pod Selector',
     callback: () => podSelectorModal({
-      kind: kind,
+      kind,
       resource:  obj,
     }),
   }),
   ModifyAnnotations: (kind, obj) => ({
     label: 'Edit Annotations',
     callback: () => annotationsModal({
-      kind: kind,
+      kind,
       resource: obj,
     }),
   }),

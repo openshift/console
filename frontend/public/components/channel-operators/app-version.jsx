@@ -141,7 +141,7 @@ const TectonicClusterAppVersion = ({tcAppVersion, secondaryAppVersions, tectonic
   const headerText = currentVersion === desiredVersion ? <span>{name} {currentVersion}</span> :
     <span className="co-cluster-updates__operator-subheader">{name} {currentVersion} &#10141; {desiredVersion || targetVersion}</span>;
 
-  const state = determineOperatorState(_.defaults({desiredVersion: desiredVersion}, tcAppVersion));
+  const state = determineOperatorState(_.defaults({desiredVersion}, tcAppVersion));
   const groupedTaskStatuses = groupTaskStatuses(tcAppVersion.taskStatuses);
 
   return <div className="row"><div className="co-cluster-updates__operator-component col-xs-12">
@@ -179,7 +179,7 @@ const SecondaryAppVersion = ({appVersion, tcAppVersion, tectonicVersions}) => {
     }
   }
 
-  const state = determineOperatorState(_.defaults({desiredVersion: desiredVersion}, appVersion));
+  const state = determineOperatorState(_.defaults({desiredVersion}, appVersion));
 
   return <div className="co-cluster-updates__operator-component">
     <div className="co-cluster-updates__operator-step">

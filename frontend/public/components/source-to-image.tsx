@@ -269,7 +269,7 @@ class BuildSource extends React.Component<BuildSourceProps, BuildSourceState> {
           },
           spec: {
             containers: [{
-              name: name,
+              name,
               image: `${name}:latest`,
               ports,
               env: [],

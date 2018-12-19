@@ -56,9 +56,9 @@ export class LabelSelector {
 
   addConjunct(key, operator, values) {
     const conjunct = {
-      key: key,
-      operator: operator,
-      values: values,
+      key,
+      operator,
+      values,
     };
     const id = this._getIdForConjunct(conjunct);
     this._conjuncts[id] = conjunct;
@@ -150,8 +150,8 @@ export class LabelSelector {
   }
   findConjunctsMatching(operator, key) {
     return _.pickBy(this._conjuncts, _.matches({
-      operator: operator,
-      key: key,
+      operator,
+      key,
     }));
   }
   // Test whether this label selector covers the given selector

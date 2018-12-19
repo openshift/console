@@ -431,10 +431,10 @@ const BindingLoadingWrapper = props => {
   </StatusBox>;
 };
 
-export const EditRoleBinding = ({match: {params}, kind}) => <Firehose resources={[{kind: kind, name: params.name, namespace: params.ns, isList: false, prop: 'obj'}]}>
+export const EditRoleBinding = ({match: {params}, kind}) => <Firehose resources={[{kind, name: params.name, namespace: params.ns, isList: false, prop: 'obj'}]}>
   <BindingLoadingWrapper fixedKeys={['kind', 'metadata', 'roleRef']} subjectIndex={getSubjectIndex()} titleVerb="Edit" saveButtonText="Save" />
 </Firehose>;
 
-export const CopyRoleBinding = ({match: {params}, kind}) => <Firehose resources={[{kind: kind, name: params.name, namespace: params.ns, isList: false, prop: 'obj'}]}>
+export const CopyRoleBinding = ({match: {params}, kind}) => <Firehose resources={[{kind, name: params.name, namespace: params.ns, isList: false, prop: 'obj'}]}>
   <BindingLoadingWrapper isCreate={true} subjectIndex={getSubjectIndex()} titleVerb="Duplicate" />
 </Firehose>;

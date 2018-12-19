@@ -85,7 +85,7 @@ export class TectonicChannel extends SafetyFirst {
         namespace: 'tectonic-system',
         isList: true,
         prop: 'pods',
-        selector: selector,
+        selector,
       },
 
     ];
