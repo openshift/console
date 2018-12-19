@@ -27,7 +27,7 @@ const subscriptionState = (state: SubscriptionState) => {
     case SubscriptionState.SubscriptionStateUpgradeAvailable: return <span><i className="pficon pficon-warning-triangle-o text-warning" /> Upgrade available</span>;
     case SubscriptionState.SubscriptionStateUpgradePending: return <span><i className="pficon pficon-in-progress text-primary" /> Upgrading</span>;
     case SubscriptionState.SubscriptionStateAtLatest: return <span><i className="pficon pficon-ok co-m-status--ok" /> Up to date</span>;
-    default: return <span className={_.isEmpty(state) && 'text-muted'}>{state || 'Unknown'}</span>;
+    default: return <span className={_.isEmpty(state) ? 'text-muted' : ''}>{state || 'Unknown'}</span>;
   }
 };
 

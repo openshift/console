@@ -5,9 +5,9 @@ import { CatalogTile, FilterSidePanel, VerticalTabs } from 'patternfly-react-ext
 import { Modal } from 'patternfly-react';
 
 import { MarkdownView } from '../../../public/components/operator-lifecycle-manager/clusterserviceversion';
-import { MarketplaceTileViewPage, getProviderValue, keywordCompare } from '../../../public/components/marketplace/marketplace-items';
+import { MarketplaceTileView, getProviderValue, keywordCompare } from '../../../public/components/marketplace/marketplace-items';
 import { MarketplaceItemModal } from '../../../public/components/marketplace/marketplace-item-modal';
-import { MarketplaceListPage } from '../../../public/components/marketplace/marketplace-page';
+import { MarketplaceList } from '../../../public/components/marketplace/marketplace-page';
 import {
   marketplaceListPageProps,
   marketplaceTileViewPageProps,
@@ -19,11 +19,11 @@ import {
   filterCounts,
 } from '../../../__mocks__/marketplaceItemsMocks';
 
-describe(MarketplaceListPage.displayName, () => {
+describe(MarketplaceList.displayName, () => {
   let wrapper;
 
   beforeEach(() => {
-    wrapper = mount(<MarketplaceListPage {...marketplaceListPageProps} />);
+    wrapper = mount(<MarketplaceList {...marketplaceListPageProps} subscription={{loaded: false, data: []}} />);
   });
 
   it('renders the correct number of tiles from props', () => {
@@ -37,7 +37,7 @@ describe(MarketplaceListPage.displayName, () => {
     expect(tiles.exists()).toBe(true);
 
     const amqTileProps = tiles.at(0).props();
-    const amqPackageManifest = marketplaceListPageProps.packagemanifests.data[0];
+    const amqPackageManifest = marketplaceListPageProps.packageManifest.data[0];
     const amqIcon = (amqPackageManifest.status.channels[0].currentCSVDesc as any).icon[0];
     expect(amqTileProps.title).toEqual(amqPackageManifest.metadata.name);
     expect(amqTileProps.iconImg).toEqual(`data:${amqIcon.mediatype};base64,${amqIcon.base64data}`);
@@ -51,7 +51,7 @@ describe(MarketplaceListPage.displayName, () => {
     expect(tiles.exists()).toBe(true);
 
     const prometheusTileProps = tiles.at(3).props();
-    const prometheusPackageManifest = marketplaceListPageProps.packagemanifests.data[3];
+    const prometheusPackageManifest = marketplaceListPageProps.packageManifest.data[3];
     const prometheusIcon = (prometheusPackageManifest.status.channels[0].currentCSVDesc as any).icon[0];
     expect(prometheusTileProps.title).toEqual(prometheusPackageManifest.metadata.name);
     expect(prometheusTileProps.iconImg).toEqual(`data:${prometheusIcon.mediatype};base64,${prometheusIcon.base64data}`);
@@ -70,7 +70,7 @@ describe(MarketplaceListPage.displayName, () => {
     expect(modal.props().show).toBe(true);
 
     const modalItem = modal.at(0).props().item;
-    const amqPackageManifest = marketplaceListPageProps.packagemanifests.data[0];
+    const amqPackageManifest = marketplaceListPageProps.packageManifest.data[0];
     const amqIcon = (amqPackageManifest.status.channels[0].currentCSVDesc as any).icon[0];
     expect(modalItem.name).toEqual(amqPackageManifest.metadata.name);
     expect(modalItem.imgUrl).toEqual(`data:${amqIcon.mediatype};base64,${amqIcon.base64data}`);
@@ -87,11 +87,11 @@ describe(MarketplaceListPage.displayName, () => {
 
 });
 
-describe(MarketplaceTileViewPage.displayName, () => {
+describe(MarketplaceTileView.displayName, () => {
   let wrapper;
 
   beforeEach(() => {
-    wrapper = mount(<MarketplaceTileViewPage {...marketplaceTileViewPageProps} />);
+    wrapper = mount(<MarketplaceTileView.WrappedComponent {...marketplaceTileViewPageProps} />);
   });
 
   it('renders item filter controls', () => {

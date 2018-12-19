@@ -206,7 +206,7 @@ export type PackageManifestKind = {
       currentCSV: string;
       currentCSVDesc: {
         displayName: string;
-        icon: {mediatype: string, data: string}[];
+        icon: {mediatype: string, base64data: string}[];
         version: string;
         provider: {
           name: string;

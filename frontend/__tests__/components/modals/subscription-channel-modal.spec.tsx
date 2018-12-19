@@ -32,7 +32,7 @@ describe(SubscriptionChannelModal.name, () => {
       currentCSV: 'testapp',
       currentCSVDesc: {
         displayName: 'Test App',
-        icon: [{mediatype: 'image/png', data: ''}],
+        icon: [{mediatype: 'image/png', base64data: ''}],
         version: '0.0.1',
         provider: {
           name: 'CoreOS, Inc',
@@ -43,7 +43,7 @@ describe(SubscriptionChannelModal.name, () => {
       currentCSV: 'testapp-nightly',
       currentCSVDesc: {
         displayName: 'Test App',
-        icon: [{mediatype: 'image/png', data: ''}],
+        icon: [{mediatype: 'image/png', base64data: ''}],
         version: '0.0.1',
         provider: {
           name: 'CoreOS, Inc',
