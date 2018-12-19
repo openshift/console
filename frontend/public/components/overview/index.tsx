@@ -292,15 +292,15 @@ const OverviewEmptyState = connect(overviewEmptyStateToProps)(({activeNamespace,
         Add content to your project from the catalog of web frameworks, databases, and other components. You may also deploy an existing image or create resources using YAML definitions.
       </EmptyState.Info>
       <EmptyState.Action>
-        <Link to="/catalog" className="btn btn-lg btn-primary">
+        <Link to="/catalog" className="btn btn-primary">
           Browse Catalog
         </Link>
       </EmptyState.Action>
       <EmptyState.Action secondary>
-        <Link className="btn btn-default" to={`/deploy-image?preselected-ns=${activeNamespace}`} title="Deploy Image">
+        <Link className="btn btn-default" to={`/deploy-image?preselected-ns=${activeNamespace}`}>
           Deploy Image
         </Link>
-        <Link className="btn btn-default" to={formatNamespacedRouteForResource('import', activeNamespace)} title="Perform an action">
+        <Link className="btn btn-default" to={formatNamespacedRouteForResource('import', activeNamespace)}>
           Import YAML
         </Link>
       </EmptyState.Action>
