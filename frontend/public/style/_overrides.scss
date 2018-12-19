@@ -206,8 +206,15 @@ tags-input .autocomplete .suggestion-item em {
 .blank-slate-pf {
   background-color: transparent;
   border: none;
-  .blank-slate-pf-secondary-action a+a.btn:before {
-    display: none;
+  .blank-slate-pf-secondary-action {
+    a.btn {
+      // Patternfly assumes this is a plain link and adds extra padding, which makes the buttons too large.
+      padding: 2px 6px;
+    }
+    a + a.btn:before {
+      // Hide the separator between links when they're buttons.
+      display: none;
+    }
   }
 }
 
