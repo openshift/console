@@ -164,6 +164,7 @@ export const Firehose = connect(
       const children = inject(this.props.children, _.omit(this.props, [
         'children',
         'className',
+        'resources',
       ]));
 
       return this.props.loaded || this.firehoses.length > 0
