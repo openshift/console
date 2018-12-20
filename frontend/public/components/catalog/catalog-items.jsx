@@ -1,13 +1,13 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import * as PropTypes from 'prop-types';
-import {CatalogTile} from 'patternfly-react-extensions';
-import {Modal} from 'patternfly-react';
+import { CatalogTile } from 'patternfly-react-extensions';
+import { Modal } from 'patternfly-react';
 
-import {history} from '../utils/router';
-import {normalizeIconClass} from './catalog-item-icon';
-import {CatalogTileDetails} from './catalog-item-details';
-import {TileViewPage} from '../utils/tile-view-page';
+import { history } from '../utils/router';
+import { normalizeIconClass } from './catalog-item-icon';
+import { CatalogTileDetails } from './catalog-item-details';
+import { TileViewPage } from '../utils/tile-view-page';
 
 export const catalogCategories = {
   languages: {
@@ -187,6 +187,7 @@ export class CatalogTileViewPage extends React.Component {
           items={items}
           itemsSorter={itemsToSort => _.sortBy(itemsToSort, 'tileName')}
           getAvailableCategories={() => catalogCategories}
+          // TODO(alecmerdler): Dynamic filters for each Operator and its provided APIs
           getAvailableFilters={getAvailableFilters}
           filterGroups={filterGroups}
           filterGroupNameMap={filterGroupNameMap}

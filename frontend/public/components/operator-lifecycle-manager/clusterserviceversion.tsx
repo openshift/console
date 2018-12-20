@@ -23,6 +23,7 @@ import {
   referenceForProvidedAPI,
   APIServiceDefinition,
   CSVConditionReason,
+  providedAPIsFor,
 } from './index';
 import {
   Kebab,
@@ -39,10 +40,6 @@ import {
   ScrollToTopOnMount,
 } from '../utils';
 import { operatorGroupFor, operatorNamespaceFor } from './operator-group';
-
-type ProvidedAPIsFor = (csv: ClusterServiceVersionKind) => (CRDDescription | APIServiceDefinition)[];
-const providedAPIsFor: ProvidedAPIsFor = csv => _.get(csv.spec, 'customresourcedefinitions.owned', [])
-  .concat(_.get(csv.spec, 'apiservicedefinitions.owned', []));
 
 export const ClusterServiceVersionHeader: React.SFC = () => <ListHeader>
   <ColHead className="col-lg-3 col-md-4 col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
