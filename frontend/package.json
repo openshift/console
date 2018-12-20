@@ -70,7 +70,7 @@
     "openshift-logos-icon": "1.7.1",
     "patternfly": "^3.54.8",
     "patternfly-react": "^2.25.5",
-    "patternfly-react-extensions": "2.13.15",
+    "patternfly-react-extensions": "2.14.1",
     "plotly.js": "1.28.x",
     "prop-types": "15.6.x",
     "react": "16.6.3",

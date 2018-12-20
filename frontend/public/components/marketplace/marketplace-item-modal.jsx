@@ -26,16 +26,6 @@ class MarketplaceItemModal extends React.Component {
     super(props);
   }
 
-  isAlreadyEnabled() {
-    const {item, catalogsourceconfigs} = this.props;
-    const previousPackages = getPackages(catalogsourceconfigs);
-    const packageArray = _.map(previousPackages.split(','), pkg => pkg.trim());
-    if (_.includes(packageArray, item.name)) {
-      return true;
-    }
-    return false;
-  }
-
   enable() {
     const {item, catalogsourceconfigs, close} = this.props;
     const {name} = item;
@@ -66,7 +56,7 @@ class MarketplaceItemModal extends React.Component {
     if (!item) {
       return null;
     }
-    const { name, iconClass, imgUrl, provider, longDescription, description, version, certifiedLevel, healthIndex, repository, containerImage, createdAt, support } = item;
+    const { name, iconClass, imgUrl, provider, longDescription, description, version, certifiedLevel, healthIndex, repository, containerImage, createdAt, support, enabled } = item;
     const notAvailable = <span className="properties-side-panel-pf-property-label">N/A</span>;
     const MarketplaceProperty = ({label, value}) => {
       return <PropertyItem label={label} value={value || notAvailable} />;
@@ -86,7 +76,7 @@ class MarketplaceItemModal extends React.Component {
         <Modal.Body>
           <div className="co-catalog-page__overlay-body">
             <PropertiesSidePanel>
-              <Button bsStyle="primary" className="co-catalog-page__overlay-create" disabled={this.isAlreadyEnabled()} onClick={() => this.enable()} >
+              <Button bsStyle="primary" className="co-catalog-page__overlay-create" disabled={enabled} onClick={() => this.enable()} >
                   Enable
               </Button>
               <MarketplaceProperty label="Operator Version" value={version} />

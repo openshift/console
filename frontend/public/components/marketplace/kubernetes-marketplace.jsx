@@ -9,7 +9,23 @@ import {PackageManifestModel, OperatorGroupModel, CatalogSourceConfigModel} from
 import {MarketplaceTileViewPage} from './kubernetes-marketplace-items';
 import * as operatorImg from '../../imgs/operator.svg';
 
-const normalizePackageManifests = (packageManifests, kind) => {
+const MARKETPLACE_CSC_NAME = 'marketplace-enabled-operators';
+
+const getPackages = (catalogsourceconfigs) => {
+  const marketplaceCSC = catalogsourceconfigs ? _.filter(catalogsourceconfigs.data, (csc) => {
+    const name = _.get(csc, 'metadata.name', false);
+    return name === MARKETPLACE_CSC_NAME;
+  }) : [];
+  if (_.isEmpty(marketplaceCSC)) {
+    return '';
+  }
+  const packages = _.get(marketplaceCSC[0], 'spec.packages');
+
+  return _.map(packages.split(','), pkg => pkg.trim());
+};
+
+const normalizePackageManifests = (packageManifests, kind, catalogsourceconfigs) => {
+  const enabledPackages = getPackages(catalogsourceconfigs);
   const activePackageManifests = _.filter(packageManifests, packageManifest => {
     return !packageManifest.status.removedFromBrokerCatalog;
   });
@@ -24,6 +40,7 @@ const normalizePackageManifests = (packageManifests, kind) => {
     const tags = packageManifest.metadata.tags;
     const version = _.get(packageManifest, 'status.channels[0].currentCSVDesc.version');
     const currentCSVAnnotations = _.get(packageManifest, 'status.channels[0].currentCSVDesc.annotations', {});
+    const enabled = _.includes(enabledPackages, name);
     let {
       description,
       certifiedLevel,
@@ -60,16 +77,17 @@ const normalizePackageManifests = (packageManifests, kind) => {
       categories: categoryArray,
       catalogSource,
       catalogSourceNamespace,
+      enabled,
     };
   });
 };
 
 const getItems = (props) => {
-  const {packagemanifests, loaded} = props;
+  const {packagemanifests, catalogsourceconfigs, loaded} = props;
   if (!loaded || !packagemanifests){
     return [];
   }
-  const packageManifestItems = normalizePackageManifests(packagemanifests.data, 'PackageManifest');
+  const packageManifestItems = normalizePackageManifests(packagemanifests.data, 'PackageManifest', catalogsourceconfigs);
   return _.sortBy([...packageManifestItems], 'name');
 };
 

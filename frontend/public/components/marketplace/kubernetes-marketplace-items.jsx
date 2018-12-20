@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import * as PropTypes from 'prop-types';
+import {Icon} from 'patternfly-react';
 import {CatalogTile} from 'patternfly-react-extensions';
 
 import {history} from '../utils/router';
@@ -133,7 +134,7 @@ class MarketplaceTileView extends React.Component {
       return null;
     }
 
-    const { uid, name, imgUrl, iconClass, provider, description } = item;
+    const { uid, name, imgUrl, iconClass, provider, description, enabled } = item;
     const normalizedIconClass = iconClass && `icon ${normalizeIconClass(iconClass)}`;
     const vendor = provider ? `provided by ${provider}` : null;
 
@@ -147,6 +148,7 @@ class MarketplaceTileView extends React.Component {
         vendor={vendor}
         description={description}
         onClick={() => this.openOverlay(item)}
+        footer={enabled ? <span><Icon type="pf" name="ok" /> Enabled</span> : null}
       />
     );
   }
