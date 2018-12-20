@@ -543,20 +543,20 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
       loading: true,
     });
 
-    const type = this.state.newStorageClass.type;
+    const { description, type, reclaim } = this.state.newStorageClass;
     const dataParameters = this.getFormParams();
-
+    const annotations = description ? { description } : {};
     const data : StorageClass = {
       metadata: {
         name: this.state.newStorageClass.name,
-        annotations: {description: this.state.newStorageClass.description},
+        annotations,
       },
       provisioner: this.storageTypes[type].provisioner,
       parameters: dataParameters,
     };
 
-    if (this.state.newStorageClass.reclaim) {
-      data.reclaimPolicy = this.state.newStorageClass.reclaim;
+    if (reclaim) {
+      data.reclaimPolicy = reclaim;
     }
 
     const volumeBindingMode = _.get(this.storageTypes[type], 'volumeBindingMode', null);
