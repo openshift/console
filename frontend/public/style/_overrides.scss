@@ -232,6 +232,11 @@ tags-input .autocomplete .suggestion-item em {
     background-size: cover;
   }
 
+  &__main {
+    // `z-index: auto` is required for fullscreen terminal
+    --pf-l-page__main--ZIndex: auto;
+  }
+
   // `.pf-l-page` specificity required
   .pf-l-page__main-section {
     --pf-l-page__main-section--Padding: 0;
