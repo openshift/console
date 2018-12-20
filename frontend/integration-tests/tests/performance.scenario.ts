@@ -60,13 +60,13 @@ describe('Performance test', () => {
   });
 
   it('downloads new bundle for YAML editor route', async() => {
-    await browser.get(`${appHost}/k8s/ns/openshift-console/deployments`);
+    await browser.get(`${appHost}/k8s/ns/openshift-console/configmaps`);
     await crudView.isLoaded();
 
     const initialChunks = await browser.executeScript<{name: string, size: number}[]>(() => performance.getEntriesByType('resource')
       .filter(({name}) => name.endsWith('.js')));
 
-    await crudView.selectOptionFromGear('console', 'Edit Deployment');
+    await crudView.selectOptionFromGear('console-config', 'Edit Config Map');
     await yamlView.isLoaded();
 
     const postChunks = await browser.executeScript<{name: string, size: number}[]>(() => performance.getEntriesByType('resource')
