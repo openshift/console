@@ -312,7 +312,7 @@ export class CreateRoute extends React.Component<null, CreateRouteState> {
               <Dropdown items={terminationTypes} title="Select termination type" dropDownClassName="dropdown--full-width" id="tls-termination" onChange={this.changeTermination} />
             </div>
             <div className="form-group co-create-route__insecure-traffic">
-              <label className="co-required" htmlFor="insecure-traffic">Insecure Traffic</label>
+              <label htmlFor="insecure-traffic">Insecure Traffic</label>
               <Dropdown items={termination === 'passthrough' ? passthroughInsecureTrafficTypes : insecureTrafficTypes} title="Select insecure traffic type" dropDownClassName="dropdown--full-width" id="insecure-traffic" onChange={this.changeInsecureTraffic} describedBy="insecure-traffic-help" />
               <div className="help-block" id="insecure-traffic-help">
                 Policy for traffic on insecure schemes like HTTP.
@@ -358,7 +358,7 @@ export class CreateRoute extends React.Component<null, CreateRouteState> {
           </div> }
           <ButtonBar errorMessage={this.state.error} inProgress={this.state.inProgress}>
             <button type="submit"
-              disabled={(!this.state.name || !this.state.service || !this.state.targetPort || this.state.secure && (!this.state.termination || !this.state.insecureEdgeTerminationPolicy))}
+              disabled={(!this.state.name || !this.state.service || !this.state.targetPort || (this.state.secure && !this.state.termination))}
               className="btn btn-primary"
               id="save-changes">Create</button>
             <Link to={formatNamespacedRouteForResource('routes')} className="btn btn-default" id="cancel">Cancel</Link>
