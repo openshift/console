@@ -19,13 +19,13 @@ import {
   Kebab,
   ContainerTable,
   DeploymentPodCounts,
-  LoadingInline,
   navFactory,
   pluralize,
   ResourceSummary,
   SectionHeading,
   togglePaused,
   WorkloadPausedAlert,
+  StatusIcon,
 } from './utils';
 
 const DeploymentConfigsReference: K8sResourceKindReference = 'DeploymentConfig';
@@ -112,7 +112,7 @@ export const DeploymentConfigsDetails: React.SFC<{obj: any}> = ({obj: dc}) => {
           <div className="col-sm-6">
             <ResourceSummary resource={dc}>
               <dt>Status</dt>
-              <dd>{dc.status.availableReplicas === dc.status.updatedReplicas ? <span>Active</span> : <div><span className="co-icon-space-r"><LoadingInline /></span> Updating</div>}</dd>
+              <dd>{dc.status.availableReplicas === dc.status.updatedReplicas ? <StatusIcon status="Active" /> : <StatusIcon status="Updating" />}</dd>
             </ResourceSummary>
           </div>
           <div className="col-sm-6">

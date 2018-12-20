@@ -11,26 +11,10 @@
   width: 16px;
 }
 
-.node-ready,
-.pvc-bound,
-.route-accepted,
-.status-ready,
-.silence-active {
-  color: $color-pf-green-400;
-}
-
-.alert-firing,
-.node-not-ready,
-.pvc-lost,
-.route-rejected,
-.status-failed {
+.alert-firing {
   color: $color-pf-red;
 }
 
 .alert-pending {
   color: $color-pf-orange-300;
-}
-
-.silence-pending {
-  color: $color-pf-black-700;
 }

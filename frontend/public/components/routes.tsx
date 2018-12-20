@@ -2,7 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
-import { Kebab, CopyToClipboard, SectionHeading, ResourceKebab, detailsPage, navFactory, ResourceLink, ResourceSummary } from './utils';
+import { Kebab, CopyToClipboard, SectionHeading, ResourceKebab, detailsPage, navFactory, ResourceLink, ResourceSummary, StatusIcon } from './utils';
 import { MaskedData } from './configmap-and-secret-data';
 // eslint-disable-next-line no-unused-vars
 import { K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
@@ -94,26 +94,7 @@ export const routeStatus = (route) => {
 
 export const RouteStatus: React.SFC<RouteStatusProps> = ({obj: route}) => {
   const status: string = routeStatus(route);
-
-  switch (status) {
-    case 'Pending':
-      return <span>
-        <span className="fa fa-hourglass-half co-status-icon" aria-hidden="true"></span>
-        Pending
-      </span>;
-    case 'Accepted':
-      return <span className="route-accepted">
-        <span className="fa fa-check co-status-icon" aria-hidden="true"></span>
-        Accepted
-      </span>;
-    case 'Rejected':
-      return <span className="route-rejected">
-        <span className="fa fa-times-circle co-status-icon" aria-hidden="true"></span>
-        Rejected
-      </span>;
-    default:
-      break;
-  }
+  return <StatusIcon status={status} />;
 };
 RouteStatus.displayName = 'RouteStatus';
 
