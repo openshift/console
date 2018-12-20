@@ -6,9 +6,4 @@
   p {
     color: var(--pf-global--Color--dark-200);
   }
-  // hide trademark and logo-image as they are not optional, but should be
-  .pf-c-about-modal-box__header-strapline,
-  .pf-c-about-modal-box__logo-image {
-    display:none;
-  }
 }

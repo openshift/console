@@ -3,7 +3,7 @@ body,
 #app,
 #content,
 #content-scrollable,
-.pf-l-page__main-section {
+.pf-c-page__main-section {
   height: 100%; // so .co-p-has-sidebar, .yaml-editor are full height
 }
 
@@ -19,7 +19,7 @@ body,
   -webkit-overflow-scrolling: touch;
 }
 
-.pf-l-page__main-section {
+.pf-c-page__main-section {
   --pf-global--FontSize--md: #{$font-size-base};
 }
 
