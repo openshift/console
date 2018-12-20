@@ -269,16 +269,18 @@ const monitoringAlertsStartsWith = ['monitoring/alerts', 'monitoring/alertrules'
 const MonitoringNavSection_ = ({ urls }) => {
   const prometheusURL = urls[MonitoringRoutes.Prometheus];
   const grafanaURL = urls[MonitoringRoutes.Grafana];
-  return window.SERVER_FLAGS.prometheusBaseURL || prometheusURL || grafanaURL
+  const kibanaURL = urls[MonitoringRoutes.Kibana];
+  return window.SERVER_FLAGS.prometheusBaseURL || prometheusURL || grafanaURL || kibanaURL
     ? <NavSection title="Monitoring">
       {window.SERVER_FLAGS.prometheusBaseURL && <HrefLink href="/monitoring/alerts" name="Alerts" startsWith={monitoringAlertsStartsWith} />}
       {window.SERVER_FLAGS.alertManagerBaseURL && <HrefLink href="/monitoring/silences" name="Silences" />}
       {prometheusURL && <ExternalLink href={prometheusURL} name="Metrics" />}
       {grafanaURL && <ExternalLink href={grafanaURL} name="Dashboards" />}
+      {kibanaURL && <ExternalLink href={kibanaURL} name="Logging" />}
     </NavSection>
     : null;
 };
-const MonitoringNavSection = connectToURLs(MonitoringRoutes.Prometheus, MonitoringRoutes.Grafana)(MonitoringNavSection_);
+const MonitoringNavSection = connectToURLs(MonitoringRoutes.Prometheus, MonitoringRoutes.Grafana, MonitoringRoutes.Kibana)(MonitoringNavSection_);
 
 export const Navigation = ({ isNavOpen, onNavSelect }) => {
   const PageNav = (
