@@ -90,7 +90,7 @@ Resources.defaultProps = {
 };
 
 Resources.propTypes = {
-  resources: PropTypes.oneOfType([PropTypes.object, PropTypes.array]), // firehose injects its props which are array at first, but array is not passed down
+  resources: PropTypes.object,
   resourceMap: PropTypes.object.isRequired,
   dispose: PropTypes.func,
   resourceToProps: PropTypes.func,
