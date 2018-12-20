@@ -105,7 +105,13 @@ const clusterVersionPath = `${k8sBasePath}/apis/config.openshift.io/v1/clusterve
 const detectClusterVersion = dispatch => coFetchJSON(clusterVersionPath)
   .then(
     clusterVersion => {
-      setFlag(dispatch, FLAGS.CLUSTER_VERSION, !_.isEmpty(clusterVersion));
+      const hasClusterVersion = !_.isEmpty(clusterVersion);
+      setFlag(dispatch, FLAGS.CLUSTER_VERSION, hasClusterVersion);
+
+      if (hasClusterVersion && !_.isEmpty(clusterVersion.spec)) {
+        dispatch(UIActions.setClusterID(clusterVersion.spec.clusterID));
+      }
+
       const availableUpdates = _.get(clusterVersion, 'status.availableUpdates');
 
       // TODO - REMOVE MOCK CODE
