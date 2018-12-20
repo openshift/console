@@ -3,6 +3,7 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import * as PropTypes from 'prop-types';
+import {Icon} from 'patternfly-react';
 import {CatalogTile} from 'patternfly-react-extensions';
 
 import {history} from '../utils/router';
@@ -144,7 +145,7 @@ export const MarketplaceTileView = requireOperatorGroup(
       const { uid, name, imgUrl, iconClass, provider, description } = item;
       const normalizedIconClass = iconClass && `icon ${normalizeIconClass(iconClass)}`;
       const vendor = provider ? `provided by ${provider}` : null;
-
+      const enabled = (this.props.subscriptions || []).find(sub => sub.spec.name === _.get(item, 'obj.status.packageName'));
       return (
         <CatalogTile
           id={uid}
@@ -155,6 +156,7 @@ export const MarketplaceTileView = requireOperatorGroup(
           vendor={vendor}
           description={description}
           onClick={() => this.openOverlay(item)}
+          footer={enabled ? <span><Icon type="pf" name="ok" /> Enabled</span> : null}
         />
       );
     }
