@@ -775,15 +775,18 @@ class SilenceForm_ extends SafetyFirst<SilenceFormProps, SilenceFormState> {
   /* eslint-enable no-undef */
 
   render() {
+    const {Info, saveButtonText, title} = this.props;
     const {data, error, inProgress} = this.state;
 
     return <div className="co-m-pane__body">
       <Helmet>
-        <title>{this.props.title}</title>
+        <title>{title}</title>
       </Helmet>
       <form className="co-m-pane__body-group silence-form co-m-pane__form" onSubmit={this.onSubmit}>
-        <SectionHeading text={this.props.title} />
+        <SectionHeading text={title} />
         <p className="co-m-pane__explanation">A silence is configured based on matchers (label selectors). No notification will be sent out for alerts that match all the values or regular expressions.</p>
+        <hr />
+        {Info && <Info />}
 
         <div className="form-group">
           <label className="co-required">Start</label>
@@ -836,7 +839,7 @@ class SilenceForm_ extends SafetyFirst<SilenceFormProps, SilenceFormState> {
         </div>
 
         <ButtonBar errorMessage={error} inProgress={inProgress}>
-          <button type="submit" className="btn btn-primary">{this.props.saveButtonText || 'Save'}</button>
+          <button type="submit" className="btn btn-primary">{saveButtonText || 'Save'}</button>
           <Link to={data.id ? `${SilenceResource.path}/${data.id}` : SilenceResource.path} className="btn btn-default">Cancel</Link>
         </ButtonBar>
       </form>
@@ -845,13 +848,18 @@ class SilenceForm_ extends SafetyFirst<SilenceFormProps, SilenceFormState> {
 }
 const SilenceForm = withFallback(SilenceForm_);
 
+const EditInfo = () => <div className="alert alert-info">
+  <span className="pficon pficon-info"></span>
+  When changes are saved, the currently existing silence will be expired and a new silence with the new configuration will take its place.
+</div>;
+
 const EditSilence = connect(silenceParamToProps)(({loaded, loadError, silence}) => {
   const isExpired = silenceState(silence) === SilenceStates.Expired;
   const defaults = _.pick(silence, ['comment', 'createdBy', 'endsAt', 'id', 'matchers', 'startsAt']);
   defaults.startsAt = isExpired ? undefined : formatDate(new Date(defaults.startsAt));
   defaults.endsAt = isExpired ? undefined : formatDate(new Date(defaults.endsAt));
   return <StatusBox data={silence} label={SilenceResource.label} loaded={loaded} loadError={loadError}>
-    <SilenceForm defaults={defaults} title={isExpired ? 'Recreate Silence' : 'Edit Silence'} />
+    <SilenceForm defaults={defaults} Info={isExpired ? null : EditInfo} title={isExpired ? 'Recreate Silence' : 'Edit Silence'} />
   </StatusBox>;
 });
 
@@ -1008,6 +1016,7 @@ export type SilencesDetailsPageProps = {
 };
 export type SilenceFormProps = {
   defaults?: any;
+  Info: React.ComponentType<any>;
   saveButtonText?: string;
   title: string;
   urls: {key: string}[];
