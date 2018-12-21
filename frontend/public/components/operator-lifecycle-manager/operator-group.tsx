@@ -4,8 +4,10 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 
 import { MsgBox } from '../utils/status-box';
-import { K8sResourceKind } from '../../module/k8s';
+import { K8sResourceKind, referenceForModel, GroupVersionKind } from '../../module/k8s';
 import { OperatorGroupKind } from './index';
+import { AsyncComponent } from '../utils/async';
+import { OperatorGroupModel } from '../../models';
 
 export const targetNamespacesFor = (obj: K8sResourceKind) => _.get(obj, ['metadata', 'annotations', 'olm.targetNamespaces']);
 export const operatorNamespaceFor = (obj: K8sResourceKind) => _.get(obj, ['metadata', 'annotations', 'olm.operatorNamespace']);
@@ -20,6 +22,16 @@ type RequireOperatorGroupProps = {
   operatorGroup: {loaded: boolean, data?: OperatorGroupKind[]};
 };
 
+export const OperatorGroupSelector: React.SFC<OperatorGroupSelectorProps> = (props) => <AsyncComponent
+  loader={() => import('../utils/list-dropdown').then(m => m.ListDropdown)}
+  onChange={props.onChange || function() {
+    return null;
+  }}
+  desc="OperatorGroups"
+  placeholder="Select Operator Group"
+  selectedKeyKind={referenceForModel(OperatorGroupModel)}
+  resources={[{kind: referenceForModel(OperatorGroupModel)}]} />;
+
 export const requireOperatorGroup = <P extends RequireOperatorGroupProps>(Component: React.ComponentType<P>) => {
   return class RequireOperatorGroup extends React.Component<P> {
     static WrappedComponent = Component;
@@ -32,6 +44,10 @@ export const requireOperatorGroup = <P extends RequireOperatorGroupProps>(Compon
         : <NoOperatorGroupMsg />;
     }
   } as React.ComponentClass<P> & {WrappedComponent: React.ComponentType<P>};
+};
+
+export type OperatorGroupSelectorProps = {
+  onChange?: (name: string, kind: GroupVersionKind) => void;
 };
 
 NoOperatorGroupMsg.displayName = 'NoOperatorGroupMsg';
