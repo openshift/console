@@ -223,10 +223,10 @@ export const CatalogPage = withStartGuide(({match, noProjectsAvailable}) => {
   const namespace = _.get(match, 'params.ns');
   return <React.Fragment>
     <Helmet>
-      <title>Catalog</title>
+      <title>Developer Catalog</title>
     </Helmet>
     <div className="co-catalog">
-      <PageHeading title="Catalog" />
+      <PageHeading title="Developer Catalog" />
       <Catalog namespace={namespace} mock={noProjectsAvailable} />
     </div>
   </React.Fragment>;

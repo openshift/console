@@ -214,6 +214,7 @@ export const ServiceInstancesPage: React.SFC<ServiceInstancesPageProps> = props 
     ListComponent={ServiceInstancesList}
     filterLabel="Service Instances by name"
     rowFilters={filters}
+    showTitle={false}
   />;
 ServiceInstancesPage.displayName = 'ServiceInstancesListPage';
 

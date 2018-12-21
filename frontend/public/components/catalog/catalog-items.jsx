@@ -194,7 +194,7 @@ export class CatalogTileViewPage extends React.Component {
           filterValueMap={filterValueMap}
           keywordCompare={keywordCompare}
           renderTile={this.renderTile}
-          emptyStateInfo="No catalog items are being shown due to the filters being applied."
+          emptyStateInfo="No developer catalog items are being shown due to the filters being applied."
         />
         <Modal show={!!detailsItem} onHide={this.closeOverlay} bsSize={'lg'} className="co-catalog-page__overlay right-side-modal-pf">
           {detailsItem && <CatalogTileDetails item={detailsItem} closeOverlay={this.closeOverlay} />}

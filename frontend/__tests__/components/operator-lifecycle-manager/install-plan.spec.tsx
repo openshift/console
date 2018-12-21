@@ -122,7 +122,7 @@ describe(InstallPlansPage.displayName, () => {
 
   it('renders a `MultiListPage` with the correct props', () => {
     expect(wrapper.find(MultiListPage).props().title).toEqual('Install Plans');
-    expect(wrapper.find(MultiListPage).props().showTitle).toBe(true);
+    expect(wrapper.find(MultiListPage).props().showTitle).toBe(false);
     expect(wrapper.find(MultiListPage).props().ListComponent).toEqual(InstallPlansList);
     expect(wrapper.find(MultiListPage).props().filterLabel).toEqual('Install Plans by name');
     expect(wrapper.find(MultiListPage).props().resources).toEqual([

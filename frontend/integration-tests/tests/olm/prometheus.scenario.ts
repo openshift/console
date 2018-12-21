@@ -20,7 +20,7 @@ describe('Interacting with the Prometheus OCS', () => {
 
   beforeAll(async() => {
     await browser.get(`${appHost}/status/all-namespaces`);
-    await browser.wait(until.presenceOf(sidenavView.navSectionFor('Operators')));
+    await browser.wait(until.presenceOf(sidenavView.navSectionFor('Catalog')));
   });
 
   afterEach(() => {
@@ -29,7 +29,7 @@ describe('Interacting with the Prometheus OCS', () => {
   });
 
   it('can be enabled from the Catalog Source', async() => {
-    await sidenavView.clickNavLink(['Operators', 'Package Manifests']);
+    await sidenavView.clickNavLink(['Catalog', 'Operator Management']);
     await catalogView.isLoaded();
     await catalogView.createSubscriptionFor('Prometheus');
     await browser.wait(until.presenceOf($('.ace_text-input')));
@@ -38,7 +38,7 @@ describe('Interacting with the Prometheus OCS', () => {
     await yamlView.setContent(safeDump(newContent));
     await $('#save-changes').click();
     await crudView.isLoaded();
-    await sidenavView.clickNavLink(['Operators', 'Package Manifests']);
+    await sidenavView.clickNavLink(['Catalog', 'Operator Management']);
     await catalogView.isLoaded();
 
     expect(catalogView.hasSubscription('Prometheus')).toBe(true);

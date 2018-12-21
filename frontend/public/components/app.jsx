@@ -168,10 +168,6 @@ class App extends React.PureComponent {
                   <LazyRoute path="/overview/ns/:ns" exact loader={() => import('./overview' /* webpackChunkName: "overview" */).then(m => m.OverviewPage)} />
                   <Route path="/overview" exact component={NamespaceRedirect} />
 
-                  <LazyRoute path="/catalog/all-namespaces" exact loader={() => import('./catalog/catalog-page' /* webpackChunkName: "catalog" */).then(m => m.CatalogPage)} />
-                  <LazyRoute path="/catalog/ns/:ns" exact loader={() => import('./catalog/catalog-page' /* webpackChunkName: "catalog" */).then(m => m.CatalogPage)} />
-                  <Route path="/catalog" exact component={NamespaceRedirect} />
-
                   <LazyRoute path="/status/all-namespaces" exact loader={() => import('./cluster-overview' /* webpackChunkName: "cluster-overview" */).then(m => m.ClusterOverviewPage)} />
                   <LazyRoute path="/status/ns/:ns" exact loader={() => import('./cluster-overview' /* webpackChunkName: "cluster-overview" */).then(m => m.ClusterOverviewPage)} />
                   <Route path="/status" exact component={NamespaceRedirect} />
@@ -181,6 +177,19 @@ class App extends React.PureComponent {
 
                   <LazyRoute path="/marketplace" exact loader={() => import('./marketplace/marketplace-page' /* webpackChunkName: "marketplace" */).then(m => m.MarketplacePage)} />
                   <LazyRoute path="/marketplace/subscribe" exact loader={() => import('./marketplace/marketplace-subscribe' /* webpackChunkName: "marketplace-subscribe" */).then(m => m.MarketplaceSubscribePage)} />
+                  <LazyRoute path="/catalog/all-namespaces" exact loader={() => import('./catalog/catalog-page' /* webpackChunkName: "catalog" */).then(m => m.CatalogPage)} />
+                  <LazyRoute path="/catalog/ns/:ns" exact loader={() => import('./catalog/catalog-page' /* webpackChunkName: "catalog" */).then(m => m.CatalogPage)} />
+                  <Route path="/catalog" exact component={NamespaceRedirect} />
+
+                  <LazyRoute path="/provisionedservices/all-namespaces" loader={() => import('./provisioned-services' /* webpackChunkName: "provisionedservices" */).then(m => m.ProvisionedServicesPage)} />
+                  <LazyRoute path="/provisionedservices/ns/:ns" loader={() => import('./provisioned-services' /* webpackChunkName: "provisionedservices" */).then(m => m.ProvisionedServicesPage)} />
+                  <Route path="/provisionedservices" component={NamespaceRedirect} />
+
+                  <LazyRoute path="/operatormanagement/all-namespaces" loader={() => import('./operator-management' /* webpackChunkName: "operator-management" */).then(m => m.OperatorManagementPage)} />
+                  <LazyRoute path="/operatormanagement/ns/:ns" loader={() => import('./operator-management' /* webpackChunkName: "operator-management" */).then(m => m.OperatorManagementPage)} />
+                  <Route path="/operatormanagement" component={NamespaceRedirect} />
+
+                  <LazyRoute path="/brokermanagement" loader={() => import('./broker-management' /* webpackChunkName: "brokermanagment" */).then(m => m.BrokerManagementPage)} />
 
                   <LazyRoute path={`/k8s/ns/:ns/${SubscriptionModel.plural}/new`} exact loader={() => import('./operator-lifecycle-manager' /* webpackChunkName: "create-subscription-yaml" */).then(m => NamespaceFromURL(m.CreateSubscriptionYAML))} />
 

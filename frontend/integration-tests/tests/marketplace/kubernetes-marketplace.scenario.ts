@@ -23,7 +23,7 @@ describe('Viewing the operators in Kubernetes Marketplace', () => {
   });
 
   it('displays Kubernetes Marketplace with expected available operators', async() => {
-    await sidenavView.clickNavLink(['Operators', 'Kubernetes Marketplace']);
+    await sidenavView.clickNavLink(['Catalog', 'Marketplace']);
     await crudView.isLoaded();
 
     openCloudServices.forEach(name => {

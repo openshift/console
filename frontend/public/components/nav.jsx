@@ -189,7 +189,10 @@ const NavSection = connect(navSectionStateToProps)(
           return false;
         }
         if (c.props.startsWith) {
-          return c.type.startsWith(resourcePath, c.props.startsWith);
+          const active = c.type.startsWith(resourcePath, c.props.startsWith, activeNamespace);
+          if (active || !c.props.activePath) {
+            return active;
+          }
         }
         return c.type.isActive && c.type.isActive(c.props, resourcePath, activeNamespace);
       }).map(c => c.props.name)[0];
@@ -260,6 +263,9 @@ const NavSection = connect(navSectionStateToProps)(
 );
 
 const searchStartsWith = ['search'];
+const operatorManagementStartsWith = [referenceForModel(PackageManifestModel), referenceForModel(SubscriptionModel), referenceForModel(InstallPlanModel)];
+const provisionedServicesStartsWith = ['serviceinstances', 'servicebindings'];
+const brokerManagementStartsWith = ['clusterservicebrokers', 'clusterserviceclasses'];
 const rolesStartsWith = ['roles', 'clusterroles'];
 const rolebindingsStartsWith = ['rolebindings', 'clusterrolebindings'];
 const quotaStartsWith = ['resourcequotas', 'clusterresourcequotas'];
@@ -294,17 +300,34 @@ export const Navigation = ({ isNavOpen, onNavSelect }) => {
           }
           <HrefLink href="/overview" name="Status" activePath="/overview/" required={FLAGS.OPENSHIFT} />
           <HrefLink href="/status" name="Status" activePath="/status/" disallowed={FLAGS.OPENSHIFT} />
-          <HrefLink href="/catalog" name="Catalog" activePath="/catalog/" />
           <HrefLink href="/search" name="Search" startsWith={searchStartsWith} />
           <ResourceNSLink resource="events" name="Events" />
         </NavSection>
 
-        <NavSection required={FLAGS.OPERATOR_LIFECYCLE_MANAGER} title="Operators">
-          <HrefLink required={FLAGS.KUBERNETES_MARKETPLACE} href="/marketplace" name="Kubernetes Marketplace" activePath="/marketplace/" />
-          <ResourceNSLink model={ClusterServiceVersionModel} resource={ClusterServiceVersionModel.plural} name="Cluster Service Versions" />
-          <ResourceNSLink model={PackageManifestModel} resource={PackageManifestModel.plural} name="Package Manifests" />
-          <ResourceNSLink model={SubscriptionModel} resource={SubscriptionModel.plural} name="Subscriptions" />
-          <ResourceNSLink model={InstallPlanModel} resource={InstallPlanModel.plural} name="Install Plans" />
+        <NavSection title="Catalog">
+          <HrefLink href="/catalog" name="Developer Catalog" activePath="/catalog/" />
+          <ResourceNSLink model={ClusterServiceVersionModel} resource={ClusterServiceVersionModel.plural} name="Operators" />
+          <HrefLink
+            href="/provisionedservices"
+            name="Provisioned Services"
+            activePath="/provisionedservices/"
+            startsWith={provisionedServicesStartsWith}
+            required={FLAGS.SERVICE_CATALOG}
+          />
+          <HrefLink required={FLAGS.KUBERNETES_MARKETPLACE} href="/marketplace" name="Marketplace" activePath="/marketplace/" />
+          <HrefLink
+            href="/operatormanagement"
+            name="Operator Management"
+            activePath="/operatormanagement/"
+            startsWith={operatorManagementStartsWith}
+          />
+          <HrefLink
+            href="/brokermanagement"
+            name="Broker Management"
+            activePath="/brokermanagement/"
+            startsWith={brokerManagementStartsWith}
+            required={FLAGS.SERVICE_CATALOG}
+          />
         </NavSection>
 
         <NavSection title="Workloads">
@@ -339,13 +362,6 @@ export const Navigation = ({ isNavOpen, onNavSelect }) => {
           <ResourceNSLink resource="buildconfigs" name={BuildConfigModel.labelPlural} />
           <ResourceNSLink resource="builds" name={BuildModel.labelPlural} />
           <ResourceNSLink resource="imagestreams" name={ImageStreamModel.labelPlural} startsWith={imagestreamsStartsWith} />
-        </NavSection>
-
-        <NavSection title="Service Catalog" required={FLAGS.SERVICE_CATALOG}>
-          <ResourceClusterLink resource="clusterservicebrokers" name="Service Brokers" />
-          <ResourceClusterLink resource="clusterserviceclasses" name="Service Classes" />
-          <ResourceNSLink resource="serviceinstances" name="Service Instances" />
-          <ResourceNSLink resource="servicebindings" name="Service Bindings" />
         </NavSection>
 
         <MonitoringNavSection />
