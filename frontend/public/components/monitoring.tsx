@@ -65,6 +65,9 @@ const alertDescription = alert => {
 const alertsToProps = ({UI}) => UI.getIn(['monitoring', 'alerts']) || {};
 const silencesToProps = ({UI}) => UI.getIn(['monitoring', 'silences']) || {};
 
+// Inject a boolean that indicates whether any of the alerts has a "severity" label
+const withHasSeverity = connect(state => ({hasSeverity: _.some(alertsToProps(state as any).data, 'labels.severity')}));
+
 const pollers = {};
 const pollerTimeouts = {};
 
@@ -361,26 +364,27 @@ const AlertRulesDetailsPage = withFallback(connect(ruleStateToProps)((props: Ale
   </React.Fragment>;
 }));
 
-const SilencedAlertsList = ({alerts}) => _.isEmpty(alerts)
+const SilencedAlertsList_ = ({alerts, hasSeverity}) => _.isEmpty(alerts)
   ? <div className="text-center">None Found</div>
   : <div className="co-m-table-grid co-m-table-grid--bordered">
     <div className="row co-m-table-grid__head">
-      <div className="col-xs-9">Name</div>
-      <div className="col-xs-3">Severity</div>
+      <div className={`col-xs-${hasSeverity ? 9 : 12}`}>Name</div>
+      {hasSeverity && <div className="col-xs-3">Severity</div>}
     </div>
     <div className="co-m-table-grid__body">
       {_.sortBy(alerts, alertDescription).map((a, i) => <div className="row co-resource-list__item" key={i}>
-        <div className="col-xs-9">
+        <div className={`col-xs-${hasSeverity ? 9 : 12}`}>
           <Link className="co-resource-link" to={alertURL(a, a.rule.id)}>{a.labels.alertname}</Link>
           <div className="monitoring-description">{alertDescription(a)}</div>
         </div>
-        <div className="col-xs-3">{a.labels.severity || '-'}</div>
+        {hasSeverity && <div className="col-xs-3">{a.labels.severity || '-'}</div>}
         <div className="dropdown-kebab-pf">
           <Kebab options={[viewAlertRule(a)]} />
         </div>
       </div>)}
     </div>
   </div>;
+const SilencedAlertsList = withHasSeverity(SilencedAlertsList_);
 
 const silenceParamToProps = (state, {match}) => {
   const {data: silences, loaded, loadError}: Silences = silencesToProps(state);
@@ -456,12 +460,12 @@ const SilencesDetailsPage = withFallback(connect(silenceParamToProps)((props: Si
   </React.Fragment>;
 }));
 
-const AlertRow = ({obj}) => {
+const AlertRow_ = ({hasSeverity, obj}) => {
   const {annotations = {}, labels = {}} = obj;
   const state = alertState(obj);
 
   return <ResourceRow obj={obj}>
-    <div className="col-xs-7">
+    <div className={`col-xs-${hasSeverity ? 7 : 9}`}>
       <div className="co-resource-link">
         <MonitoringResourceIcon resource={AlertResource} />
         <Link to={alertURL(obj, obj.rule.id)} className="co-resource-link__resource-name">{labels.alertname}</Link>
@@ -472,18 +476,19 @@ const AlertRow = ({obj}) => {
       <AlertState state={state} />
       <AlertStateDescription alert={obj} />
     </div>
-    <div className="col-xs-2">{_.startCase(_.get(labels, 'severity')) || '-'}</div>
+    {hasSeverity && <div className="col-xs-2">{_.startCase(labels.severity) || '-'}</div>}
     <div className="dropdown-kebab-pf">
       <Kebab options={state === AlertStates.Firing || state === AlertStates.Pending ? [silenceAlert(obj), viewAlertRule(obj)] : [viewAlertRule(obj)]} />
     </div>
   </ResourceRow>;
 };
+const AlertRow = withHasSeverity(AlertRow_);
 
-const AlertHeader = props => <ListHeader>
-  <ColHead {...props} className="col-xs-7" sortField="labels.alertname">Name</ColHead>
+const AlertHeader = withHasSeverity(props => <ListHeader>
+  <ColHead {...props} className={`col-xs-${props.hasSeverity ? 7 : 9}`} sortField="labels.alertname">Name</ColHead>
   <ColHead {...props} className="col-xs-3" sortFunc="alertStateOrder">State</ColHead>
-  <ColHead {...props} className="col-xs-2" sortField="labels.severity">Severity</ColHead>
-</ListHeader>;
+  {props.hasSeverity && <ColHead {...props} className="col-xs-2" sortField="labels.severity">Severity</ColHead>}
+</ListHeader>);
 
 const AlertsPageDescription = () => <p className="co-help-text">
   Alerts help notify you when certain conditions in your environment are met. <ExternalLink href="https://prometheus.io/docs/prometheus/latest/configuration/alerting_rules/" text="Learn more about how alerts are configured." />
