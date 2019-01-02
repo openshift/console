@@ -167,6 +167,7 @@ describe('Using OLM descriptor components', () => {
   });
 
   it('displays list containing custom resource', async() => {
+    await crudView.resourceRowsPresent();
     expect(crudView.rowForName(testCR.metadata.name).isDisplayed()).toBe(true);
   });
 

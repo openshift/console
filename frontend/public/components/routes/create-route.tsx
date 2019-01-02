@@ -1,7 +1,6 @@
 /* eslint-disable no-undef */
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 
 import { ButtonBar, Dropdown, history, resourcePathFromModel, ResourceName } from '../utils';
@@ -218,10 +217,7 @@ export class CreateRoute extends React.Component<null, CreateRouteState> {
     };
 
     return <React.Fragment>
-      <Helmet>
-        <title>{title}</title>
-      </Helmet>
-      <div className="co-m-nav-title">
+      <div className="co-m-pane__body co-m-pane__form">
         <h1 className="co-m-pane__heading co-m-pane__heading--baseline">
           <div className="co-m-pane__name">
             {title}
@@ -230,8 +226,6 @@ export class CreateRoute extends React.Component<null, CreateRouteState> {
             <Link to={`/k8s/ns/${this.state.namespace}/routes/new`} id="yaml-link" replace>Edit YAML</Link>
           </div>
         </h1>
-      </div>
-      <div className="co-m-pane__body">
         <p className="co-m-pane__explanation">
           Routing is a way to make your application publicly visible.
         </p>
@@ -297,7 +291,7 @@ export class CreateRoute extends React.Component<null, CreateRouteState> {
               Target port for traffic.
             </div>
           </div>
-          <h2 className="h3">Security</h2>
+          <label className="control-label">Security</label>
           <div className="checkbox">
             <label>
               <input type="checkbox"
@@ -318,7 +312,7 @@ export class CreateRoute extends React.Component<null, CreateRouteState> {
               <Dropdown items={terminationTypes} title="Select termination type" dropDownClassName="dropdown--full-width" id="tls-termination" onChange={this.changeTermination} />
             </div>
             <div className="form-group co-create-route__insecure-traffic">
-              <label className="co-required" htmlFor="insecure-traffic">Insecure Traffic</label>
+              <label htmlFor="insecure-traffic">Insecure Traffic</label>
               <Dropdown items={termination === 'passthrough' ? passthroughInsecureTrafficTypes : insecureTrafficTypes} title="Select insecure traffic type" dropDownClassName="dropdown--full-width" id="insecure-traffic" onChange={this.changeInsecureTraffic} describedBy="insecure-traffic-help" />
               <div className="help-block" id="insecure-traffic-help">
                 Policy for traffic on insecure schemes like HTTP.
@@ -364,7 +358,7 @@ export class CreateRoute extends React.Component<null, CreateRouteState> {
           </div> }
           <ButtonBar errorMessage={this.state.error} inProgress={this.state.inProgress}>
             <button type="submit"
-              disabled={(!this.state.name || !this.state.service || !this.state.targetPort || this.state.secure && (!this.state.termination || !this.state.insecureEdgeTerminationPolicy))}
+              disabled={(!this.state.name || !this.state.service || !this.state.targetPort || (this.state.secure && !this.state.termination))}
               className="btn btn-primary"
               id="save-changes">Create</button>
             <Link to={formatNamespacedRouteForResource('routes')} className="btn btn-default" id="cancel">Cancel</Link>

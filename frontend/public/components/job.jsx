@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { getJobTypeAndCompletions } from '../module/k8s';
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import { configureJobParallelismModal } from './modals';
-import { Kebab, ContainerTable, SectionHeading, LabelList, ResourceKebab, ResourceLink, ResourceSummary, Timestamp, navFactory } from './utils';
+import { Kebab, ContainerTable, SectionHeading, LabelList, ResourceKebab, ResourceLink, ResourceSummary, Timestamp, navFactory, StatusIcon } from './utils';
 import { ResourceEventStream } from './events';
 
 const ModifyJobParallelism = (kind, obj) => ({
@@ -70,7 +70,7 @@ const Details = ({obj: job}) => <React.Fragment>
         <SectionHeading text="Job Status" />
         <dl className="co-m-pane__details">
           <dt>Status</dt>
-          <dd>{job.status.conditions ? job.status.conditions[0].type : 'In Progress'}</dd>
+          <dd>{job.status.conditions ? <StatusIcon status={job.status.conditions[0].type} /> : <StatusIcon status="In Progress" />}</dd>
           <dt>Start Time</dt>
           <dd><Timestamp timestamp={job.status.startTime} /></dd>
           <dt>Completion Time</dt>

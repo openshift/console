@@ -277,13 +277,17 @@ const sortBuilds = (builds: K8sResourceKind[]): K8sResourceKind[] => {
   return builds.sort(byBuildNumber);
 };
 
+const reservedNSPrefixes = ['openshift-', 'kube-', 'kubernetes-'];
+const isReservedNamespace = (ns: string) => ns === 'default' || ns === 'openshift' || reservedNSPrefixes.some(prefix => _.startsWith(ns, prefix));
+
 const overviewEmptyStateToProps = ({UI}) => ({
   activeNamespace: UI.get('activeNamespace'),
   resources: UI.getIn(['overview', 'resources']),
 });
 
 const OverviewEmptyState = connect(overviewEmptyStateToProps)(({activeNamespace, resources}) => {
-  if (resources.isEmpty()) {
+  // Don't encourage users to add content to system namespaces.
+  if (resources.isEmpty() && !isReservedNamespace(activeNamespace)) {
     return <EmptyState>
       <EmptyState.Title>
         Get started with your project.
@@ -292,15 +296,15 @@ const OverviewEmptyState = connect(overviewEmptyStateToProps)(({activeNamespace,
         Add content to your project from the catalog of web frameworks, databases, and other components. You may also deploy an existing image or create resources using YAML definitions.
       </EmptyState.Info>
       <EmptyState.Action>
-        <Link to="/catalog" className="btn btn-lg btn-primary">
+        <Link to="/catalog" className="btn btn-primary">
           Browse Catalog
         </Link>
       </EmptyState.Action>
       <EmptyState.Action secondary>
-        <Link className="btn btn-default" to={`/deploy-image?preselected-ns=${activeNamespace}`} title="Deploy Image">
+        <Link className="btn btn-default" to={`/deploy-image?preselected-ns=${activeNamespace}`}>
           Deploy Image
         </Link>
-        <Link className="btn btn-default" to={formatNamespacedRouteForResource('import', activeNamespace)} title="Perform an action">
+        <Link className="btn btn-default" to={formatNamespacedRouteForResource('import', activeNamespace)}>
           Import YAML
         </Link>
       </EmptyState.Action>

@@ -54,7 +54,7 @@ export const navFactory: NavFactory = {
   editYaml: (component = editYamlComponent) => ({
     href: 'yaml',
     name: 'YAML',
-    component: component,
+    component,
   }),
   pods: component => ({
     href: 'pods',
@@ -99,7 +99,7 @@ export const navFactory: NavFactory = {
   machines: component => ({
     href: 'machines',
     name: 'Machines',
-    component: component,
+    component,
   }),
 };
 
@@ -142,14 +142,30 @@ export class HorizontalNav extends React.PureComponent<HorizontalNavProps> {
     match: PropTypes.shape({
       path: PropTypes.string,
     }),
+    noStatusBox: PropTypes.bool,
   };
+
+  renderContent(routes: any) {
+    const {noStatusBox, obj, EmptyMsg, label} = this.props;
+    const content = <Switch> {routes} </Switch>;
+
+    if (noStatusBox) {
+      return content;
+    }
+
+    return (
+      <StatusBox {...obj} EmptyMsg={EmptyMsg} label={label} >
+        {content}
+      </StatusBox>
+    );
+  }
 
   render() {
     const props = this.props;
 
-    const componentProps = {..._.pick(props, ['filters', 'selected', 'match']), obj: props.obj.data};
-    const extraResources = _.reduce(props.resourceKeys, (extraObjs, key) => ({...extraObjs, [key]: props[key].data}), {});
-    const pages = props.pages || props.pagesFor(props.obj.data);
+    const componentProps = {..._.pick(props, ['filters', 'selected', 'match']), obj: _.get(props.obj, 'data')};
+    const extraResources = _.reduce(props.resourceKeys, (extraObjs, key) => ({...extraObjs, [key]: _.get(props[key], 'data')}), {});
+    const pages = props.pages || props.pagesFor(_.get(props.obj, 'data'));
 
     const routes = pages.map(p => {
       const path = `${props.match.url}/${p.href}`;
@@ -162,9 +178,7 @@ export class HorizontalNav extends React.PureComponent<HorizontalNavProps> {
     return <div className={props.className}>
       <div className="co-m-horizontal-nav">
         {!props.hideNav && <NavBar pages={pages} basePath={props.match.url} hideDivider={props.hideDivider} />}
-        <StatusBox {...props.obj} EmptyMsg={props.EmptyMsg} label={props.label}>
-          <Switch> {routes} </Switch>
-        </StatusBox>
+        {this.renderContent(routes)}
       </div>
     </div>;
   }
@@ -191,4 +205,5 @@ export type HorizontalNavProps = {
   hideNav?: boolean;
   hideDivider?: boolean;
   EmptyMsg?: React.ComponentType<any>;
+  noStatusBox?: boolean;
 };

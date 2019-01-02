@@ -3,7 +3,7 @@ import * as _ from 'lodash-es';
 const toArray = value => Array.isArray(value) ? value : [value];
 
 export const createEquals = (key, value) => ({
-  key:      key,
+  key,
   operator: 'Equals',
   values:   [value],
 });
@@ -53,9 +53,9 @@ export const requirementFromString = string => {
     const values = parts[1].slice(1, -1).split(',').map(_.trim);
 
     return {
-      key:      key,
+      key,
       operator: 'In',
-      values:   values,
+      values,
     };
   }
 
@@ -66,9 +66,9 @@ export const requirementFromString = string => {
     const values = parts[1].slice(1, -1).split(',').map(_.trim);
 
     return {
-      key:      key,
+      key,
       operator: 'NotIn',
-      values:   values,
+      values,
     };
   }
 
@@ -79,7 +79,7 @@ export const requirementFromString = string => {
     const value = parts[1];
 
     return {
-      key:      key,
+      key,
       operator: 'GreaterThan',
       values:   [value],
     };
@@ -92,7 +92,7 @@ export const requirementFromString = string => {
     const value = parts[1];
 
     return {
-      key:      key,
+      key,
       operator: 'LessThan',
       values:   [value],
     };

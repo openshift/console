@@ -5,7 +5,7 @@ import * as routingImg from '../../imgs/routing.svg';
 import * as routingActiveImg from '../../imgs/routing-active.svg';
 import { FLAGS } from '../../features';
 
-import { NavSection, UserNavSection } from './okdcomponents';
+import { NavSection } from './okdcomponents';
 import { ChargebackReportModel, DeploymentConfigModel } from '../models';
 import { referenceForModel } from '../module/okdk8s';
 import { VmTemplatesPageTitle } from './vm-template';
@@ -80,7 +80,6 @@ const Nav = ({ isOpen, onToggle, close, scroller, onWheel, searchStartsWith, Res
             <ResourceClusterLink resource="customresourcedefinitions" name="CRDs" onClick={close} required={FLAGS.CAN_LIST_CRD} />
           </NavSection>
 
-          <UserNavSection closeMenu={close} />
         </div>
       </div>
     </React.Fragment>

@@ -68,7 +68,7 @@ export const InstallPlansPage: React.SFC<InstallPlansPageProps> = (props) => <Mu
   ]}
   flatten={resources => _.get(resources.subscription, 'data', [])}
   title="Install Plans"
-  showTitle={true}
+  showTitle={false}
   ListComponent={InstallPlansList}
   filterLabel="Install Plans by name" />;
 
@@ -129,8 +129,8 @@ export class InstallPlanPreview extends React.Component<InstallPlanPreviewProps,
       .catch((error) => this.setState({error}));
 
     const stepStatus = (status: Step['status']) => <React.Fragment>
-      {status === 'Present' && <i className="fa fa-check-circle co-icon-space-r" aria-hidden="true" />}
-      {status === 'Created' && <i className="fa fa-plus-circle co-icon-space-r" aria-hidden="true" />}
+      {status === 'Present' && <i className="pficon pficon-ok co-icon-space-r" aria-hidden="true" />}
+      {status === 'Created' && <i className="pficon pficon-add-circle-o co-icon-space-r" aria-hidden="true" />}
       {status}
     </React.Fragment>;
 

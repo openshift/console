@@ -34,7 +34,7 @@ export class DetailStatus extends SafetyFirst {
       resource = { metadata: { namespace: 'tectonic-system', name: 'tectonic-cluster' } };
     }
 
-    const patch = [{ op: 'replace', path: `/${field}`, value: value }];
+    const patch = [{ op: 'replace', path: `/${field}`, value }];
     k8sPatch(k8skind, resource, patch)
       .catch((error) => {
         this.setState({

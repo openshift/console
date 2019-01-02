@@ -35,7 +35,7 @@ class ConfigureOperatorModal extends PromiseComponent {
       value = value === 'true';
     }
 
-    const patch = [{ op: 'replace', path: this.props.path, value: value }];
+    const patch = [{ op: 'replace', path: this.props.path, value }];
 
     this.handlePromise(
       k8sPatch(ChannelOperatorConfigModel, this.props.config, patch)

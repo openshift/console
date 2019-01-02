@@ -130,8 +130,8 @@ const AlertState: React.SFC<AlertStateProps> = ({state}) => {
 const SilenceState = ({silence}) => {
   const state = silenceState(silence);
   const klass = {
-    [SilenceStates.Active]: 'fa fa-check-circle-o silence-active',
-    [SilenceStates.Pending]: 'fa fa-hourglass-half silence-pending',
+    [SilenceStates.Active]: 'pficon pficon-ok',
+    [SilenceStates.Pending]: 'fa fa-hourglass-half',
     [SilenceStates.Expired]: 'fa fa-ban text-muted',
   }[state];
   return klass ? <React.Fragment><i className={klass} aria-hidden="true"></i> {_.startCase(state)}</React.Fragment> : null;
@@ -287,7 +287,7 @@ const ActiveAlerts = ({alerts, ruleID}) => <div className="co-m-table-grid co-m-
       <div className="col-sm-2 hidden-xs"><Timestamp timestamp={a.activeAt} /></div>
       <div className="col-sm-2 col-xs-3"><AlertState state={a.state} /></div>
       <div className="col-sm-2 col-xs-3 co-break-word">{a.value}</div>
-      <div className="dropdown-kebab-pf"><Kebab options={[silenceAlert(a)]} /></div>
+      {a.state !== AlertStates.Silenced && <div className="dropdown-kebab-pf"><Kebab options={[silenceAlert(a)]} /></div>}
     </ResourceRow>)}
   </div>
 </div>;
@@ -775,29 +775,31 @@ class SilenceForm_ extends SafetyFirst<SilenceFormProps, SilenceFormState> {
   /* eslint-enable no-undef */
 
   render() {
+    const {Info, saveButtonText, title} = this.props;
     const {data, error, inProgress} = this.state;
 
     return <div className="co-m-pane__body">
       <Helmet>
-        <title>{this.props.title}</title>
+        <title>{title}</title>
       </Helmet>
-      <form className="co-m-pane__body-group silence-form" onSubmit={this.onSubmit}>
-        <SectionHeading text={this.props.title} />
+      <form className="co-m-pane__body-group silence-form co-m-pane__form" onSubmit={this.onSubmit}>
+        <SectionHeading text={title} />
         <p className="co-m-pane__explanation">A silence is configured based on matchers (label selectors). No notification will be sent out for alerts that match all the values or regular expressions.</p>
         <hr />
+        {Info && <Info />}
 
         <div className="form-group">
-          <label>Start</label>
+          <label className="co-required">Start</label>
           <Datetime onChange={this.onFieldChange('startsAt')} value={data.startsAt} required />
         </div>
         <div className="form-group">
-          <label>End</label>
+          <label className="co-required">End</label>
           <Datetime onChange={this.onFieldChange('endsAt')} value={data.endsAt} required />
         </div>
-        <hr />
+        <div className="co-form-section__separator"></div>
 
         <div className="form-group">
-          <label>Matchers</label> (label selectors)
+          <label className="co-required">Matchers</label> (label selectors)
           <p className="co-help-text">Alerts affected by this silence. Matching alerts must satisfy all of the specified label constraints, though they may have additional labels as well.</p>
           <div className="row monitoring-grid-head text-secondary text-uppercase">
             <div className="col-xs-4">Name</div>
@@ -825,7 +827,7 @@ class SilenceForm_ extends SafetyFirst<SilenceFormProps, SilenceFormState> {
             <i className="fa fa-plus-circle" aria-hidden="true" /> Add More
           </button>
         </div>
-        <hr />
+        <div className="co-form-section__separator"></div>
 
         <div className="form-group">
           <label>Creator</label>
@@ -835,10 +837,9 @@ class SilenceForm_ extends SafetyFirst<SilenceFormProps, SilenceFormState> {
           <label>Comment</label>
           <textarea className="form-control" onChange={this.onFieldChange('comment')} value={data.comment} />
         </div>
-        <hr />
 
         <ButtonBar errorMessage={error} inProgress={inProgress}>
-          <button type="submit" className="btn btn-primary">{this.props.saveButtonText || 'Save'}</button>
+          <button type="submit" className="btn btn-primary">{saveButtonText || 'Save'}</button>
           <Link to={data.id ? `${SilenceResource.path}/${data.id}` : SilenceResource.path} className="btn btn-default">Cancel</Link>
         </ButtonBar>
       </form>
@@ -847,13 +848,18 @@ class SilenceForm_ extends SafetyFirst<SilenceFormProps, SilenceFormState> {
 }
 const SilenceForm = withFallback(SilenceForm_);
 
+const EditInfo = () => <div className="alert alert-info">
+  <span className="pficon pficon-info"></span>
+  When changes are saved, the currently existing silence will be expired and a new silence with the new configuration will take its place.
+</div>;
+
 const EditSilence = connect(silenceParamToProps)(({loaded, loadError, silence}) => {
   const isExpired = silenceState(silence) === SilenceStates.Expired;
   const defaults = _.pick(silence, ['comment', 'createdBy', 'endsAt', 'id', 'matchers', 'startsAt']);
   defaults.startsAt = isExpired ? undefined : formatDate(new Date(defaults.startsAt));
   defaults.endsAt = isExpired ? undefined : formatDate(new Date(defaults.endsAt));
   return <StatusBox data={silence} label={SilenceResource.label} loaded={loaded} loadError={loadError}>
-    <SilenceForm defaults={defaults} title={isExpired ? 'Recreate Silence' : 'Edit Silence'} />
+    <SilenceForm defaults={defaults} Info={isExpired ? null : EditInfo} title={isExpired ? 'Recreate Silence' : 'Edit Silence'} />
   </StatusBox>;
 });
 
@@ -1010,6 +1016,7 @@ export type SilencesDetailsPageProps = {
 };
 export type SilenceFormProps = {
   defaults?: any;
+  Info: React.ComponentType<any>;
   saveButtonText?: string;
   title: string;
   urls: {key: string}[];

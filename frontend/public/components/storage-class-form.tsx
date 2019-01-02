@@ -493,7 +493,7 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
         this.resources = {
           data: data && data.toArray().map(p => p.toJSON()),
           loadError: this.props.k8s.getIn([StorageClassModel.plural, 'loadError']),
-          loaded: loaded,
+          loaded,
         };
 
         this.validateForm();
@@ -543,20 +543,20 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
       loading: true,
     });
 
-    const type = this.state.newStorageClass.type;
+    const { description, type, reclaim } = this.state.newStorageClass;
     const dataParameters = this.getFormParams();
-
+    const annotations = description ? { description } : {};
     const data : StorageClass = {
       metadata: {
         name: this.state.newStorageClass.name,
-        annotations: {description: this.state.newStorageClass.description},
+        annotations,
       },
       provisioner: this.storageTypes[type].provisioner,
       parameters: dataParameters,
     };
 
-    if (this.state.newStorageClass.reclaim) {
-      data.reclaimPolicy = this.state.newStorageClass.reclaim;
+    if (reclaim) {
+      data.reclaimPolicy = reclaim;
     }
 
     const volumeBindingMode = _.get(this.storageTypes[type], 'volumeBindingMode', null);
@@ -569,7 +569,7 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
         this.setState({loading: false});
         history.push('/k8s/cluster/storageclasses');
       })
-      .catch(error => this.setState({loading: false, error: error}));
+      .catch(error => this.setState({loading: false, error}));
   };
 
   getFormParams = () => {
@@ -800,16 +800,16 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
     const reclaimPolicyKey = newStorageClass.reclaim === null ? this.reclaimPolicies.Delete : newStorageClass.reclaim;
 
     return (
-      <div className="co-m-pane__body">
-        <Form className="wizard-form">
-          <h1 className="co-m-pane__heading co-m-pane__heading--baseline">
-            <div className="co-m-pane__name">
-              Create Storage Class
-            </div>
-            <div className="co-m-pane__heading-link">
-              <Link to="/k8s/cluster/storageclasses/new" id="yaml-link" replace>Edit YAML</Link>
-            </div>
-          </h1>
+      <div className="co-m-pane__body co-m-pane__form">
+        <h1 className="co-m-pane__heading co-m-pane__heading--baseline">
+          <div className="co-m-pane__name">
+            Create Storage Class
+          </div>
+          <div className="co-m-pane__heading-link">
+            <Link to="/k8s/cluster/storageclasses/new" id="yaml-link" replace>Edit YAML</Link>
+          </div>
+        </h1>
+        <Form>
           <FormGroup controlId={'basic-settings-name'} validationState={fieldErrors.nameValidationMsg ? 'error': null}>
             <label className="control-label co-required" htmlFor="storage-class-name">Name</label>
             <FormControl
@@ -831,7 +831,7 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
           </FormGroup>
 
           <FormGroup controlId={'basic-settings-reclaim-policy'}>
-            <label className="control-label">Reclaim Policy</label>
+            <label className="control-label co-required">Reclaim Policy</label>
             <Dropdown
               title="Select Reclaim Policy"
               items={this.reclaimPolicies}
@@ -885,8 +885,8 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
 }
 
 const mapStateToProps = ({k8s}, {onClose}) => ({
-  k8s: k8s,
-  onClose: onClose,
+  k8s,
+  onClose,
 });
 
 const mapDispatchToProps = () => ({

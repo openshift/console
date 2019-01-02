@@ -9,18 +9,20 @@ $consoleWebFontPath: $consoleWebDistPath + 'fonts';
 
 // FontAwesome font path.
 $fa-font-path: $consoleWebFontPath;
-// PatternFly font path.
+// Use PatternFly 4 font family in PatternFly 3.
+$font-family-base: var(--pf-global--FontFamily--sans-serif);
+// PatternFly 3 font path for PatternFly 3 icons.
 $font-path: '~patternfly/dist/fonts/';
-// PatternFly image path.
-$img-path: '~patternfly/dist/img/';
-// Patternfly defaults to 12px, which is too small in many cases.
-$font-size-base: 13px;
-// Patternfly defaults to 40px, which leaves a lot more whitespace than we're used to.
+// Patternfly 3 defaults to 12px, which is too small in many cases.
+$font-size-base: 14px;
+// Patternfly 3 defaults to 40px, which leaves a lot more whitespace than we're used to.
 $grid-gutter-width: 30px;
 // Bootstrap font path.
 $icon-font-path: $consoleWebFontPath + '/';
-// Remove top border from .navbar-pf-vertical
-$navbar-pf-vertical-border-width: 0;
+// Disable PatternFly 4 reset.
+$pf-global--enable-reset: false;
+// PatternFly 4 font path.
+$pf-global--font-path: '~@patternfly/patternfly-next/assets/fonts';
 $popover-max-width: 325px;
 $table-border-color: $color-pf-black-200;
 
@@ -28,8 +30,6 @@ $table-border-color: $color-pf-black-200;
 // == Custom variables
 
 $co-m-label-line-height: 19px;
-$masthead-height-desktop: 60px;
-$masthead-height-mobile: 40px;
 
 
 // == Colors
@@ -46,14 +46,6 @@ $color-grey-background-border: #ccc;
 $color-ingress-dark: $color-pf-purple-700;
 $color-namespace-dark: $color-pf-green-500;
 $color-node-dark: $color-pf-purple-400;
-$color-os-nav-active: $color-pf-black-800;
-$color-os-nav-background-active: $color-pf-black-700;
-$color-os-nav-background: $color-pf-black-900;
-$color-os-nav-border-bottom: #050505;
-$color-os-nav-border-left-active: $color-pf-blue-300;
-$color-os-nav-icon: $color-pf-black-600;
-$color-os-nav-separator: $color-pf-black-900;
-$color-os-nav-title: $color-pf-black-300;
 $color-pod-dark: $color-pf-cyan-400;
 $color-pod-overlord: $color-pf-blue-600;
 $color-rbac-binding-dark: $color-pf-cyan-500;
@@ -69,7 +61,6 @@ $color-controller-dark: $color-pod-overlord;
 $color-deployment-dark: $color-controller-dark;
 $color-deploymentconfig-dark: $color-controller-dark;
 $color-job-dark: $color-controller-dark;
-$color-os-nav-hover: lighten($color-os-nav-active, 8%);
 $color-petset-dark: $color-controller-dark;
 $color-replicaset-dark: $color-controller-dark;
 $color-serviceaccount-dark: $color-configmap-dark;

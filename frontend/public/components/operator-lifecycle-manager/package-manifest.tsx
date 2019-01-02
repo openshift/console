@@ -95,8 +95,7 @@ export const PackageManifestsPage: React.SFC<PackageManifestsPageProps> = (props
 
   return <MultiListPage
     {...props}
-    title="Operator Catalog Sources"
-    showTitle={true}
+    showTitle={false}
     helpText={HelpText}
     ListComponent={(listProps: PackageManifestListProps) => <PackageManifestList {...listProps} showDetailsLink={true} />}
     filterLabel="Packages by name"

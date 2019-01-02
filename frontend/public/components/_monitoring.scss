@@ -4,7 +4,7 @@
 }
 
 .monitoring-header-link {
-  font-size: 13px;
+  font-size: $font-size-base;
   margin-left: 14px;
 }
 
@@ -33,7 +33,7 @@ $monitoring-line-height: 18px;
 .monitoring-timestamp {
   display: flex;
   flex-flow: row wrap;
-  font-size: 11px;
+  font-size: ($font-size-base - 1);
 }
 
 .monitoring-query {

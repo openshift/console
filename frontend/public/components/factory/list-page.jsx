@@ -294,6 +294,7 @@ export const ListPage = withFallback(props => {
     selector,
     showTitle = true,
     textFilter,
+    match,
   } = props;
   let { createProps } = props;
   const ko = kindObj(kind);
@@ -304,11 +305,13 @@ export const ListPage = withFallback(props => {
     plural,
   } = ko;
   const title = props.title || labelPlural;
-  let href = namespaced ? `/k8s/ns/${namespace || 'default'}/${plural}/new` : `/k8s/cluster/${plural}/new`;
+  const usedNamespace = !namespace && namespaced ? _.get(match, 'params.ns') : namespace;
+
+  let href = usedNamespace ? `/k8s/ns/${usedNamespace || 'default'}/${plural}/new` : `/k8s/cluster/${plural}/new`;
   if (ko.crd) {
     try {
       const ref = referenceForModel(ko);
-      href = namespaced ? `/k8s/ns/${namespace || 'default'}/${ref}/new` : `/k8s/cluster/${ref}/new`;
+      href = usedNamespace ? `/k8s/ns/${usedNamespace || 'default'}/${ref}/new` : `/k8s/cluster/${ref}/new`;
     } catch (unused) { /**/ }
   }
 
@@ -326,7 +329,7 @@ export const ListPage = withFallback(props => {
   // Don't show row filters if props.filters were passed. The content is already filtered and the row filters will have incorrect counts.
   const rowFilters = _.isEmpty(filters) ? props.rowFilters : null;
 
-  if (!namespaced && namespace) {
+  if (!namespaced && usedNamespace) {
     return <ErrorPage404 />;
   }
 
@@ -343,7 +346,7 @@ export const ListPage = withFallback(props => {
     label={labelPlural}
     ListComponent={ListComponent}
     mock={mock}
-    namespace={namespace}
+    namespace={usedNamespace}
     resources={resources}
     rowFilters={rowFilters}
     selectorFilterLabel="Filter by selector (app=nginx) ..."

@@ -39,6 +39,7 @@
 @import "components/utils/selector";
 @import "components/utils/log-window";
 @import "components/utils/resource-log";
+@import "components/about-modal";
 @import "components/build-pipeline";
 @import "components/chargeback";
 @import "components/cluster-overview";
@@ -71,8 +72,6 @@
 @import "components/operator-lifecycle-manager/operator-lifecycle-manager";
 @import "components/graphs/graphs";
 @import "components/modals/modals";
-@import "components/masthead";
-@import "components/nav";
 @import "components/environment";
 @import "components/utils/name-value-editor";
 @import "components/utils/value-from-pair";

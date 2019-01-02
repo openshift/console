@@ -9,7 +9,7 @@ import { K8sResourceKindReference, referenceFor, K8sResourceKind } from '../modu
 import { cloneBuild, formatBuildDuration, BuildPhase, getBuildNumber } from '../module/k8s/builds';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
 import { errorModal } from './modals';
-import { BuildHooks, BuildStrategy, Kebab, SectionHeading, history, navFactory, ResourceKebab, ResourceLink, resourceObjPath, ResourceSummary, Timestamp, AsyncComponent, resourcePath } from './utils';
+import { BuildHooks, BuildStrategy, Kebab, SectionHeading, history, navFactory, ResourceKebab, ResourceLink, resourceObjPath, ResourceSummary, Timestamp, AsyncComponent, resourcePath, StatusIcon } from './utils';
 import { BuildPipeline, BuildPipelineLogLink } from './build-pipeline';
 import { breadcrumbsForOwnerRefs } from './utils/breadcrumbs';
 import { fromNow } from './utils/datetime';
@@ -221,7 +221,7 @@ const BuildsRow: React.SFC<BuildsRowProps> = ({ obj }) => <div className="row co
     <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
   </div>
   <div className="col-sm-3 hidden-xs">
-    {obj.status.phase}
+    <StatusIcon status={obj.status.phase} />
   </div>
   <div className="col-sm-3 hidden-xs">
     {fromNow(obj.metadata.creationTimestamp)}

@@ -14,7 +14,7 @@ export const planExternalName = (serviceInstance: K8sResourceKind): string =>
   _.get(serviceInstance, 'spec.clusterServicePlanExternalName') || _.get(serviceInstance, 'spec.servicePlanExternalName');
 
 const statusCondition = (obj: K8sResourceKind, type: string) => {
-  return _.find(_.get(obj, 'status.conditions'), {type: type});
+  return _.find(_.get(obj, 'status.conditions'), {type});
 };
 
 const isStatusReady = (obj: K8sResourceKind) => {

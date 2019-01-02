@@ -115,7 +115,7 @@ describe(ListPageWrapper_.displayName, () => {
         {id: 'loadbalancer', title: 'Load Balancers'},
       ],
     }];
-    wrapper.setProps({rowFilters: rowFilters});
+    wrapper.setProps({rowFilters});
     const checkboxes = wrapper.find(CheckBoxes) as any;
 
     expect(checkboxes.length).toEqual(rowFilters.length);

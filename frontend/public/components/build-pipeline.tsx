@@ -23,19 +23,19 @@ export const getJenkinsBuildURL = (resource: K8sResourceKind): string => _.get(r
 const BuildSummaryStatusIcon: React.SFC<BuildSummaryStatusIconProps> = ({ status }) => {
   const statusClass = _.lowerCase(status);
   const icon = ({
-    new: 'fa-hourglass-o',
-    pending: 'fa-hourglass-half',
-    running: 'fa-refresh fa-spin',
-    complete: 'fa-check-circle',
-    failed: 'fa-times-circle',
+    new: '',
+    pending: 'pficon pficon-pending',
+    running: 'fa fa-refresh fa-fw',
+    complete: 'pficon pficon-ok',
+    failed: 'pficon pficon-error-circle-o',
   })[statusClass];
 
   return icon
     ? <span className={`build-pipeline__status-icon build-pipeline__status-icon--${statusClass}`}>
-      <span className={`fa ${icon} fa-fw`} aria-hidden="true"></span>
+      <span className={icon} aria-hidden="true"></span>
     </span>
     : <span className="build-pipeline__status-icon">
-      <span className="fa fa-refresh fa-spin" aria-hidden="true"></span>
+      <span className="fa fa-refresh" aria-hidden="true"></span>
     </span>;
 };
 

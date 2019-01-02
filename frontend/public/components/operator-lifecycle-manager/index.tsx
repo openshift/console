@@ -206,7 +206,7 @@ export type PackageManifestKind = {
       currentCSV: string;
       currentCSVDesc: {
         displayName: string;
-        icon: {mediatype: string, data: string}[];
+        icon: {mediatype: string, base64data: string}[];
         version: string;
         provider: {
           name: string;
@@ -229,6 +229,10 @@ export const olmNamespace = 'operator-lifecycle-manager';
 export const visibilityLabel = 'olm-visibility';
 
 export const isEnabled = (namespace: K8sResourceKind) => _.has(namespace, ['metadata', 'annotations', 'alm-manager']);
+
+type ProvidedAPIsFor = (csv: ClusterServiceVersionKind) => (CRDDescription | APIServiceDefinition)[];
+export const providedAPIsFor: ProvidedAPIsFor = csv => _.get(csv.spec, 'customresourcedefinitions.owned', [])
+  .concat(_.get(csv.spec, 'apiservicedefinitions.owned', []));
 
 export const referenceForProvidedAPI = (desc: CRDDescription | APIServiceDefinition): GroupVersionKind => _.get(desc, 'group')
   ? `${(desc as APIServiceDefinition).group}~${desc.version}~${desc.kind}`

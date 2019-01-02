@@ -5,13 +5,14 @@ import {browser, $, $$, ExpectedConditions as until, by} from 'protractor';
 import { appHost, checkLogs, checkErrors, testName } from '../../protractor.conf';
 import * as srvCatalogView from '../../views/service-catalog.view';
 import * as sidenavView from '../../views/sidenav.view';
+import * as horizontalnavView from '../../views/horizontal-nav.view';
 import * as crudView from '../../views/crud.view';
 import {execSync} from 'child_process';
 
 describe('Test for Cluster Service Class', () => {
   beforeAll(async() => {
     browser.get(`${appHost}/status/ns/${testName}`);
-    await browser.wait(until.presenceOf($('#sidebar')));
+    await browser.wait(until.presenceOf($('.pf-c-nav')));
   });
 
   afterEach(() => {
@@ -20,8 +21,10 @@ describe('Test for Cluster Service Class', () => {
   });
 
   it('displays `default` service plan for service class `MariaDB`', async() => {
-    await sidenavView.clickNavLink(['Service Catalog', 'Service Classes']);
+    await sidenavView.clickNavLink(['Catalog', 'Broker Management']);
     await crudView.isLoaded();
+    await horizontalnavView.clickHorizontalTab('Service Classes');
+
 
     // Filter by service class name to make sure it is on the first page of results.
     // Otherwise the tests fail since we do virtual scrolling and the element isn't found.
@@ -41,8 +44,9 @@ describe('Test for Cluster Service Class', () => {
   });
 
   it('creates a new instance for service class `MariaDB`', async() => {
-    await sidenavView.clickNavLink(['Service Catalog', 'Service Classes']);
+    await sidenavView.clickNavLink(['Catalog', 'Broker Management']);
     await crudView.isLoaded();
+    await horizontalnavView.clickHorizontalTab('Service Classes');
 
     // Filter by service class name to make sure it is on the first page of results.
     // Otherwise the tests fail since we do virtual scrolling and the element isn't found.

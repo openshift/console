@@ -56,6 +56,7 @@
     "no-unused-vars": ["error", {"varsIgnorePattern": "React"}],
     "no-use-before-define": 2,
     "no-var": 2,
+    "object-shorthand": ["error", "properties"],
     "prefer-const": ["error", {"destructuring": "all"}],
     "prefer-template": 2,
     "quotes": [2, "single"],

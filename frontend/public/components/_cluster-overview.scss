@@ -43,7 +43,6 @@
 }
 
 .cluster-overview-cell {
-  margin-top: -($grid-gutter-width / 2);
   @media(min-width: $screen-lg-min) {
     .col-lg-8 {
       padding-right: 0;

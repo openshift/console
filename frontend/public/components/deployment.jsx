@@ -18,11 +18,11 @@ import {
   Kebab,
   ContainerTable,
   DeploymentPodCounts,
-  LoadingInline,
   navFactory,
   pluralize,
   ResourceSummary,
   SectionHeading,
+  StatusIcon,
   togglePaused,
   WorkloadPausedAlert,
 } from './utils';
@@ -76,7 +76,7 @@ const DeploymentDetails = ({obj: deployment}) => {
           <div className="col-sm-6">
             <ResourceSummary resource={deployment}>
               <dt>Status</dt>
-              <dd>{deployment.status.availableReplicas === deployment.status.updatedReplicas ? <span>Active</span> : <div><span className="co-icon-space-r"><LoadingInline /></span> Updating</div>}</dd>
+              <dd>{deployment.status.availableReplicas === deployment.status.updatedReplicas ? <StatusIcon status="Active" /> : <StatusIcon status="Updating" />}</dd>
             </ResourceSummary>
           </div>
           <div className="col-sm-6">

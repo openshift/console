@@ -24,10 +24,10 @@ export const SubscriptionHeader: React.SFC<SubscriptionHeaderProps> = (props) =>
 
 const subscriptionState = (state: SubscriptionState) => {
   switch (state) {
-    case SubscriptionState.SubscriptionStateUpgradeAvailable: return <span><i className="fa fa-exclamation-triangle text-warning" /> Upgrade available</span>;
-    case SubscriptionState.SubscriptionStateUpgradePending: return <span><i className="fa fa-spin fa-circle-o-notch text-primary" /> Upgrading</span>;
-    case SubscriptionState.SubscriptionStateAtLatest: return <span><i className="fa fa-check-circle co-m-status--ok" /> Up to date</span>;
-    default: return <span className={_.isEmpty(state) && 'text-muted'}>{state || 'Unknown'}</span>;
+    case SubscriptionState.SubscriptionStateUpgradeAvailable: return <span><i className="pficon pficon-warning-triangle-o text-warning" /> Upgrade available</span>;
+    case SubscriptionState.SubscriptionStateUpgradePending: return <span><i className="pficon pficon-in-progress text-primary" /> Upgrading</span>;
+    case SubscriptionState.SubscriptionStateAtLatest: return <span><i className="pficon pficon-ok co-m-status--ok" /> Up to date</span>;
+    default: return <span className={_.isEmpty(state) ? 'text-muted' : ''}>{state || 'Unknown'}</span>;
   }
 };
 
@@ -81,7 +81,7 @@ export const SubscriptionsPage: React.SFC<SubscriptionsPageProps> = (props) => {
     ]}
     flatten={resources => _.get(resources.subscription, 'data', [])}
     title="Subscriptions"
-    showTitle={true}
+    showTitle={false}
     canCreate={true}
     createProps={{to: props.namespace ? `/k8s/ns/${props.namespace}/${referenceForModel(PackageManifestModel)}` : `/k8s/all-namespaces/${referenceForModel(PackageManifestModel)}`}}
     createButtonText="Create Subscription"
@@ -192,7 +192,7 @@ export class SubscriptionUpdates extends React.Component<SubscriptionUpdatesProp
 
 export const SubscriptionDetailsPage: React.SFC<SubscriptionDetailsPageProps> = (props) => {
   type PkgFor = (pkgs: PackageManifestKind[]) => (obj: SubscriptionKind) => PackageManifestKind;
-  const pkgFor: PkgFor = pkgs => obj => pkgs.find(pkg => pkg.metadata.name === obj.spec.name && pkg.status.catalogSource === obj.spec.source);
+  const pkgFor: PkgFor = pkgs => obj => _.find(pkgs, (pkg => pkg.metadata.name === obj.spec.name && pkg.status.catalogSource === obj.spec.source));
 
   type InstalledCSV = (clusterServiceVersions?: ClusterServiceVersionKind[]) => (obj: SubscriptionKind) => ClusterServiceVersionKind;
   const installedCSV: InstalledCSV = clusterServiceVersions => obj => clusterServiceVersions.find(csv => csv.metadata.name === _.get(obj, 'status.installedCSV'));

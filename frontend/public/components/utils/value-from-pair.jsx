@@ -109,7 +109,7 @@ export const NameKeyDropdownPair = ({name, key, configMaps, secrets, onChange, k
       items={itemKeys}
       selectedKey={key}
       title={keyTitle}
-      onChange={val => onChange({[refProperty]:{'name': name, 'key': val}})}
+      onChange={val => onChange({[refProperty]:{name, 'key': val}})}
     />}
   </React.Fragment>;
 };

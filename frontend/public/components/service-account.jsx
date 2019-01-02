@@ -48,7 +48,7 @@ const KubeConfigify = (kind, sa) => ({
         'users': [{
           name,
           user: {
-            token: token,
+            token,
           },
         }],
       };

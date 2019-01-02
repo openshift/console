@@ -4,7 +4,7 @@ import * as PropTypes from 'prop-types';
 import { Helmet } from 'react-helmet';
 
 import { CatalogTileViewPage } from './catalog-items';
-import { serviceClassDisplayName } from '../../module/k8s';
+import { serviceClassDisplayName, referenceForModel } from '../../module/k8s';
 import { withStartGuide } from '../start-guide';
 import { FLAGS, connectToFlags, flagPending } from '../../features';
 import { Firehose, PageHeading, StatusBox } from '../utils';
@@ -19,6 +19,9 @@ import {
   getServiceClassIcon,
   getServiceClassImage,
 } from './catalog-item-icon';
+import { ClusterServiceVersionModel } from '../../models';
+import { providedAPIsFor, referenceForProvidedAPI } from '../operator-lifecycle-manager';
+import * as operatorLogo from '../../imgs/operator.svg';
 
 export class CatalogListPage extends React.Component {
   constructor(props) {
@@ -39,8 +42,10 @@ export class CatalogListPage extends React.Component {
   }
 
   getItems() {
-    const {clusterserviceclasses, imagestreams, loaded} = this.props;
-    let clusterServiceClassItems = [], imageStreamsItems = [];
+    const {clusterserviceclasses, imagestreams, clusterServiceVersions, loaded} = this.props;
+    let clusterServiceClassItems = [];
+    let imageStreamsItems = [];
+    let operatorProvidedAPIs = [];
 
     if (!loaded) {
       return [];
@@ -54,7 +59,32 @@ export class CatalogListPage extends React.Component {
       imageStreamsItems = this.normalizeImagestreams(imagestreams.data, 'ImageStream');
     }
 
-    return _.sortBy([...clusterServiceClassItems, ...imageStreamsItems], 'tileName');
+    if (clusterServiceVersions) {
+      const imgFor = (desc) => _.get(desc.csv, 'spec.icon')
+        ? `data:${_.get(desc.csv, 'spec.icon', [])[0].mediatype};base64,${_.get(desc.csv, 'spec.icon', [])[0].base64data}`
+        : operatorLogo;
+
+      operatorProvidedAPIs = _.flatten(clusterServiceVersions.data.map(csv => providedAPIsFor(csv).map(desc => ({...desc, csv}))))
+        .reduce((all, cur) => all.find(v => referenceForProvidedAPI(v) === referenceForProvidedAPI(cur)) ? all : all.concat([cur]), [])
+        .map((desc, i) => ({
+          // NOTE: Faking a real k8s object to avoid fetching all CRDs
+          obj: {metadata: {uid: 1000000 + i, creationTimestamp: desc.csv.metadata.creationTimestamp}, ...desc},
+          kind: referenceForProvidedAPI(desc),
+          tileName: desc.displayName,
+          tileIconClass: null,
+          tileImgUrl: imgFor(desc),
+          tileDescription: desc.description,
+          tileProvider: desc.csv.spec.provider.name,
+          tags: desc.csv.spec.keywords,
+          createLabel: `Create ${desc.displayName}`,
+          href: `/ns/${this.props.namespace || desc.csv.metadata.namespace}/clusterserviceversions/${desc.csv.metadata.name}/${referenceForProvidedAPI(desc)}/new`,
+          supportUrl: null,
+          longDescription: `This resource is provided by ${desc.csv.spec.displayName}, a Kubernetes Operator enabled by the Operator Lifecycle Manager.`,
+          documentationUrl: _.get((desc.csv.spec.links || []).find(({name}) => name === 'Documentation'), 'url'),
+        }));
+    }
+
+    return _.sortBy([...clusterServiceClassItems, ...imageStreamsItems, ...operatorProvidedAPIs], 'tileName');
   }
 
   normalizeClusterServiceClasses(serviceClasses, kind) {
@@ -72,6 +102,7 @@ export class CatalogListPage extends React.Component {
       const tileDescription = _.get(serviceClass, 'spec.description');
       const tileProvider = _.get(serviceClass, 'spec.externalMetadata.providerDisplayName');
       const tags = _.get(serviceClass, 'spec.tags');
+      const createLabel = 'Create Service Instance';
       const href = `/catalog/create-service-instance?cluster-service-class=${serviceClass.metadata.name}&preselected-ns=${namespace}`;
       const supportUrl = _.get(serviceClass, 'spec.externalMetadata.supportUrl');
       const longDescription = _.get(serviceClass, 'spec.externalMetadata.longDescription');
@@ -86,6 +117,7 @@ export class CatalogListPage extends React.Component {
         tileDescription,
         tileProvider,
         tags,
+        createLabel,
         href,
         supportUrl,
         longDescription,
@@ -108,6 +140,7 @@ export class CatalogListPage extends React.Component {
       const tileIconClass = tileImgUrl ? null : iconClass;
       const tileDescription = _.get(tag, 'annotations.description');
       const tags = getAnnotationTags(tag);
+      const createLabel = 'Create Application';
       const tileProvider = _.get(tag, 'annotations.openshift.io/provider-display-name');
       const { name, namespace } = imageStream.metadata;
       const href = `/catalog/source-to-image?imagestream=${name}&imagestream-ns=${namespace}&preselected-ns=${currentNamespace}`;
@@ -121,6 +154,7 @@ export class CatalogListPage extends React.Component {
         tileImgUrl,
         tileDescription,
         tags,
+        createLabel,
         tileProvider,
         href,
         sampleRepo,
@@ -147,29 +181,33 @@ CatalogListPage.propTypes = {
 
 // eventually may use namespace
 // eslint-disable-next-line no-unused-vars
-export const Catalog = connectToFlags(FLAGS.OPENSHIFT, FLAGS.SERVICE_CATALOG)(({flags, mock, namespace}) => {
+export const Catalog = connectToFlags(FLAGS.OPENSHIFT, FLAGS.SERVICE_CATALOG, FLAGS.OPERATOR_LIFECYCLE_MANAGER)(({flags, mock, namespace}) => {
 
   if (flagPending(flags.OPENSHIFT) || flagPending(flags.SERVICE_CATALOG)) {
     return null;
   }
 
-  const resources = [];
-  if (flags.SERVICE_CATALOG) {
-    resources.push({
+  const resources = [
+    ...(flags.SERVICE_CATALOG ? [{
       isList: true,
       kind: 'ClusterServiceClass',
       namespaced: false,
       prop: 'clusterserviceclasses',
-    });
-  }
-  if (flags.OPENSHIFT) {
-    resources.push({
+    }] : []),
+    ...(flags.OPENSHIFT ? [{
       isList: true,
       kind: 'ImageStream',
       namespace: 'openshift',
       prop: 'imagestreams',
-    });
-  }
+    }] : []),
+    ...(flags.OPERATOR_LIFECYCLE_MANAGER ? [{
+      isList: true,
+      kind: referenceForModel(ClusterServiceVersionModel),
+      namespaced: true,
+      prop: 'clusterServiceVersions',
+    }] : []),
+  ];
+
   return <Firehose resources={mock ? [] : resources} className="co-catalog-connect">
     <CatalogListPage namespace={namespace} />
   </Firehose>;
@@ -185,10 +223,10 @@ export const CatalogPage = withStartGuide(({match, noProjectsAvailable}) => {
   const namespace = _.get(match, 'params.ns');
   return <React.Fragment>
     <Helmet>
-      <title>Catalog</title>
+      <title>Developer Catalog</title>
     </Helmet>
     <div className="co-catalog">
-      <PageHeading title="Catalog" />
+      <PageHeading title="Developer Catalog" />
       <Catalog namespace={namespace} mock={noProjectsAvailable} />
     </div>
   </React.Fragment>;

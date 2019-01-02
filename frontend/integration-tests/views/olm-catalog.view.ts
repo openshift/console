@@ -1,12 +1,12 @@
 /* eslint-disable no-undef, no-unused-vars */
 
-import { browser, $, $$, by, ExpectedConditions as until } from 'protractor';
+import { browser, $, $$, by, element, ExpectedConditions as until } from 'protractor';
 
 import * as crudView from './crud.view';
 
-export const entryRows = $$('.co-resource-list__item');
-export const entryRowFor = (name: string) => entryRows.filter((row) => row.$('.co-clusterserviceversion-logo__name__clusterserviceversion').getText()
-  .then(text => text === name || text.startsWith(name))).first();
+const rowSelector = '.co-resource-list__item';
+export const entryRows = $$(rowSelector);
+export const entryRowFor = (name: string) => element(by.cssContainingText(rowSelector, name));
 
 export const isLoaded = () => browser.wait(until.presenceOf($('.loading-box__loaded')), 10000).then(() => browser.sleep(500));
 

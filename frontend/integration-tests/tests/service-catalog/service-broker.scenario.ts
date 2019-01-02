@@ -10,7 +10,7 @@ import * as crudView from '../../views/crud.view';
 describe('Test for Cluster Service Broker', () => {
   beforeAll(async() => {
     browser.get(`${appHost}/status/ns/${testName}`);
-    await browser.wait(until.presenceOf($('#sidebar')));
+    await browser.wait(until.presenceOf($('.pf-c-nav')));
   });
 
   afterEach(() => {
@@ -19,7 +19,7 @@ describe('Test for Cluster Service Broker', () => {
   });
 
   it('displays `MariaDB` service class for `template-service-broker`', async() => {
-    await sidenavView.clickNavLink(['Service Catalog', 'Service Brokers']);
+    await sidenavView.clickNavLink(['Catalog', 'Broker Management']);
     await crudView.isLoaded();
 
     await crudView.rowForName('template-service-broker').element(by.linkText('template-service-broker')).click();
