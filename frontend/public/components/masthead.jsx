@@ -46,8 +46,6 @@ export const getBrandingDetails = () => {
       backgroundImg = pfBg992;
       logoImg = okdvirtLogoImg;
       logoAlt = 'OKD Virtualization';
-      modalLogoImg = rhLogoImg;
-      modalLogoAlt = 'OKD';
       productTitle = 'OKD';
       break;
     case 'openshiftvirt':
@@ -55,8 +53,6 @@ export const getBrandingDetails = () => {
       backgroundImg = pfBg992;
       logoImg = openshiftvirtLogoImg;
       logoAlt = 'OpenShift Virtualization';
-      modalLogoImg = rhLogoImg;
-      modalLogoAlt = 'Red Hat';
       productTitle = <React.Fragment>Red Hat<sup>&reg;</sup> OpenShift</React.Fragment>;
       break;
     default:
