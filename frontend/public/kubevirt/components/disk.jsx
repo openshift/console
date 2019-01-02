@@ -36,7 +36,7 @@ const menuActionDelete = (vm, storage) => ({
   callback: () => deleteDeviceModal({
     type: DISK,
     device: storage,
-    vm: vm,
+    vm,
   }),
 });
 

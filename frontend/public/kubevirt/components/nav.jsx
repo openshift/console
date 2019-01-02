@@ -1,88 +1,85 @@
 import * as React from 'react';
-import * as classNames from 'classnames';
 
-import * as routingImg from '../../imgs/routing.svg';
-import * as routingActiveImg from '../../imgs/routing-active.svg';
 import { FLAGS } from '../../features';
 
 import { NavSection } from './okdcomponents';
-import { ChargebackReportModel, DeploymentConfigModel } from '../models';
+import {
+  ChargebackReportModel,
+  DeploymentConfigModel, MachineModel, MachineSetModel
+} from '../models';
 import { referenceForModel } from '../module/okdk8s';
 import { VmTemplatesPageTitle } from './vm-template';
+
+import { Nav, NavList } from '@patternfly/react-core';
 
 // With respect to keep changes to OKD codebase at bare minimum,
 // the navigation needs to be reconstructed.
 // The ResourceNSLink, HrefLink, MonitoringNavSection components are passed as props to eliminate the need for additional changes in OKD core code. Ugly anti-pattern, but serves its purpose.
-const Nav = ({ isOpen, onToggle, close, scroller, onWheel, searchStartsWith, ResourceNSLink, HrefLink, ResourceClusterLink, MonitoringNavSection, rolesStartsWith, rolebindingsStartsWith, quotaStartsWith }) => {
-  return (
-    <React.Fragment>
-      <button type="button" className="sidebar-toggle" aria-controls="sidebar" aria-expanded={isOpen} onClick={onToggle}>
-        <span className="sr-only">Toggle navigation</span>
-        <span className="icon-bar" aria-hidden="true"></span>
-        <span className="icon-bar" aria-hidden="true"></span>
-        <span className="icon-bar" aria-hidden="true"></span>
-      </button>
-      <div id="sidebar" className={classNames({'open': isOpen})}>
-        <div ref={scroller} onWheel={onWheel} className="navigation-container">
-          <NavSection text="Home" icon="pficon pficon-home">
-            <HrefLink href="/overview" name="Overview" activePath="/overview/" onClick={close} />
-            <HrefLink href="/status" name="Status" activePath="/status/" onClick={close} />
-            {/*<HrefLink href="/catalog" name="Catalog" activePath="/catalog/" onClick={close} />*/}
-            <HrefLink href="/search" name="Search" onClick={close} startsWith={searchStartsWith} />
-            <ResourceNSLink resource="events" name="Events" onClick={close} />
-          </NavSection>
 
-          <NavSection text="Workloads" icon="fa fa-folder-open-o">
-            <ResourceNSLink resource="virtualmachines" name="Virtual Machines" onClick={close} />
-            <ResourceNSLink resource="vmtemplates" name={VmTemplatesPageTitle} onClick={close} />
+const PageNav = ({ onNavSelect, ResourceClusterLink, HrefLink, ResourceNSLink, MonitoringNavSection, searchStartsWith, rolesStartsWith, rolebindingsStartsWith, quotaStartsWith }) => (
+  <Nav aria-label="Nav" onSelect={onNavSelect}>
+    <NavList>
+      <NavSection title="Home">
+        <ResourceClusterLink resource="projects" name="Projects" required={FLAGS.OPENSHIFT} />
+        {
+          // Show different status pages based on OpenShift vs native Kubernetes.
+          // TODO: Make Overview work on native Kubernetes. It currently assumes OpenShift resources.
+        }
+        <HrefLink href="/overview" name="Status" activePath="/overview/" required={FLAGS.OPENSHIFT} />
+        <HrefLink href="/status" name="Status" activePath="/status/" disallowed={FLAGS.OPENSHIFT} />
+        <HrefLink href="/search" name="Search" startsWith={searchStartsWith} />
+        <ResourceNSLink resource="events" name="Events" />
+      </NavSection>
 
-            <ResourceNSLink resource="pods" name="Pods" onClick={close} />
-            <ResourceNSLink resource="deployments" name="Deployments" onClick={close} />
-            <ResourceNSLink resource="deploymentconfigs" name={DeploymentConfigModel.labelPlural} onClick={close} required={FLAGS.OPENSHIFT} />
-            <ResourceNSLink resource="statefulsets" name="Stateful Sets" onClick={close} />
-            <ResourceNSLink resource="secrets" name="Secrets" onClick={close} />
-            <ResourceNSLink resource="configmaps" name="Config Maps" onClick={close} />
-            <ResourceNSLink resource="cronjobs" name="Cron Jobs" onClick={close} />
-            <ResourceNSLink resource="jobs" name="Jobs" onClick={close} />
-            <ResourceNSLink resource="daemonsets" name="Daemon Sets" onClick={close} />
-            <ResourceNSLink resource="replicasets" name="Replica Sets" onClick={close} />
-            <ResourceNSLink resource="replicationcontrollers" name="Replication Controllers" onClick={close} />
-            <ResourceNSLink resource="horizontalpodautoscalers" name="HPAs" onClick={close} />
-          </NavSection>
+      <NavSection title="Workloads">
+        <ResourceNSLink resource="virtualmachines" name="Virtual Machines" />
+        <ResourceNSLink resource="vmtemplates" name={VmTemplatesPageTitle} />
 
-          <NavSection text="Networking" img={routingImg} activeImg={routingActiveImg} >
-            <ResourceNSLink resource="services" name="Services" onClick={close} />
-            <ResourceNSLink resource="routes" name="Routes" onClick={close} required={FLAGS.OPENSHIFT} />
-            <ResourceNSLink resource="ingresses" name="Ingress" onClick={close} />
-            <ResourceNSLink resource="networkpolicies" name="Network Policies" onClick={close} />
-          </NavSection>
+        <ResourceNSLink resource="pods" name="Pods" />
+        <ResourceNSLink resource="deployments" name="Deployments" />
+        <ResourceNSLink resource="deploymentconfigs" name={DeploymentConfigModel.labelPlural} required={FLAGS.OPENSHIFT} />
+        <ResourceNSLink resource="statefulsets" name="Stateful Sets" />
+        <ResourceNSLink resource="secrets" name="Secrets" />
+        <ResourceNSLink resource="configmaps" name="Config Maps" />
+        <ResourceNSLink resource="cronjobs" name="Cron Jobs" />
+        <ResourceNSLink resource="jobs" name="Jobs" />
+        <ResourceNSLink resource="daemonsets" name="Daemon Sets" />
+        <ResourceNSLink resource="replicasets" name="Replica Sets" />
+        <ResourceNSLink resource="replicationcontrollers" name="Replication Controllers" />
+        <ResourceNSLink resource="horizontalpodautoscalers" name="HPAs" />
+      </NavSection>
 
-          <NavSection text="Storage" icon="pficon pficon-container-node">
-            <ResourceClusterLink resource="persistentvolumes" name="Persistent Volumes" onClick={close} required={FLAGS.CAN_LIST_PV} />
-            <ResourceNSLink resource="persistentvolumeclaims" name="Persistent Volume Claims" onClick={close} />
-            <ResourceClusterLink resource="storageclasses" name="Storage Classes" onClick={close} required={FLAGS.CAN_LIST_STORE} />
-          </NavSection>
+      <NavSection title="Networking">
+        <ResourceNSLink resource="services" name="Services" />
+        <ResourceNSLink resource="routes" name="Routes" required={FLAGS.OPENSHIFT} />
+        <ResourceNSLink resource="ingresses" name="Ingress" />
+        <ResourceNSLink resource="networkpolicies" name="Network Policies" />
+      </NavSection>
 
-          <MonitoringNavSection closeMenu={close} />
+      <NavSection title="Storage">
+        <ResourceClusterLink resource="persistentvolumes" name="Persistent Volumes" required={FLAGS.CAN_LIST_PV} />
+        <ResourceNSLink resource="persistentvolumeclaims" name="Persistent Volume Claims" />
+        <ResourceClusterLink resource="storageclasses" name="Storage Classes" />
+      </NavSection>
 
-          <NavSection text="Administration" icon="fa fa-cog">
-            <ResourceClusterLink resource="projects" name="Projects" onClick={close} required={FLAGS.OPENSHIFT} />
-            <ResourceClusterLink resource="namespaces" name="Namespaces" onClick={close} required={FLAGS.CAN_LIST_NS} />
-            <ResourceClusterLink resource="nodes" name="Nodes" onClick={close} required={FLAGS.CAN_LIST_NODE} />
-            <HrefLink href="/settings/cluster" name="Cluster Settings" onClick={close} disallowed={FLAGS.OPENSHIFT} />
-            <ResourceNSLink resource="serviceaccounts" name="Service Accounts" onClick={close} />
-            <ResourceNSLink resource="roles" name="Roles" startsWith={rolesStartsWith} onClick={close} />
-            <ResourceNSLink resource="rolebindings" name="Role Bindings" onClick={close} startsWith={rolebindingsStartsWith} />
-            <ResourceNSLink resource="resourcequotas" name="Resource Quotas" onClick={close} startsWith={quotaStartsWith} />
-            <ResourceNSLink resource="limitranges" name="Limit Ranges" onClick={close} />
-            <ResourceNSLink resource={referenceForModel(ChargebackReportModel)} name="Chargeback" onClick={close} disallowed={FLAGS.OPENSHIFT} />
-            <ResourceClusterLink resource="customresourcedefinitions" name="CRDs" onClick={close} required={FLAGS.CAN_LIST_CRD} />
-          </NavSection>
+      <MonitoringNavSection />
 
-        </div>
-      </div>
-    </React.Fragment>
-  );
-};
+      <NavSection title="Administration">
+        <ResourceClusterLink resource="namespaces" name="Namespaces" required={FLAGS.CAN_LIST_NS} />
+        <ResourceClusterLink resource="nodes" name="Nodes" required={FLAGS.CAN_LIST_NODE} />
+        <ResourceNSLink resource={referenceForModel(MachineSetModel)} name="Machine Sets" required={FLAGS.CLUSTER_API} />
+        <ResourceNSLink resource={referenceForModel(MachineModel)} name="Machines" required={FLAGS.CLUSTER_API} />
+        <HrefLink href="/settings/cluster" activePath="/settings/cluster/" name="Cluster Settings" required={FLAGS.CLUSTER_VERSION} />
+        <ResourceNSLink resource="serviceaccounts" name="Service Accounts" />
+        <ResourceNSLink resource="roles" name="Roles" startsWith={rolesStartsWith} />
+        <ResourceNSLink resource="rolebindings" name="Role Bindings" startsWith={rolebindingsStartsWith} />
+        <ResourceNSLink resource="resourcequotas" name="Resource Quotas" startsWith={quotaStartsWith} />
+        <ResourceNSLink resource="limitranges" name="Limit Ranges" />
+        <ResourceNSLink resource={referenceForModel(ChargebackReportModel)} name="Chargeback" disallowed={FLAGS.OPENSHIFT} />
+        <ResourceClusterLink resource="customresourcedefinitions" name="CRDs" required={FLAGS.CAN_LIST_CRD} />
+      </NavSection>
+    </NavList>
+  </Nav>
+);
 
-export default Nav;
+export default PageNav;

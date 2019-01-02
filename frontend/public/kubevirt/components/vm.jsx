@@ -58,7 +58,7 @@ const getAction = (vm) => {
 const menuActionStart = (kind, vm) => ({
   label: getAction(vm),
   callback: () => startStopVmModal({
-    kind: kind,
+    kind,
     resource: vm,
     start: !_.get(vm, 'spec.running', false),
   }),
@@ -68,7 +68,7 @@ const menuActionRestart = (kind, vm) => ({
   hidden: !_.get(vm, 'spec.running', false),
   label: 'Restart Virtual Machine',
   callback: () => restartVmModal({
-    kind: kind,
+    kind,
     resource: vm,
   }),
 });

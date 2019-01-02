@@ -294,7 +294,15 @@ const MonitoringNavSection = connectToURLs(MonitoringRoutes.Prometheus, Monitori
 export const Navigation = ({ isNavOpen, onNavSelect }) => {
   if (isKubevirt()) {
     // The ResourceNSLink, HrefLink components are passed as props to eliminate the need for additional changes in OKD core code. Ugly anti-pattern, but serves its purpose.
-    const PageNav = <KubevirtNav isOpen={isNavOpen} onToggle={this.toggle} close={this.close} scroller={this.scroller} onWheel={this.preventScroll} searchStartsWith={searchStartsWith} ResourceNSLink={ResourceNSLink} HrefLink={HrefLink} ResourceClusterLink={ResourceClusterLink} MonitoringNavSection={MonitoringNavSection} rolesStartsWith={rolesStartsWith} rolebindingsStartsWith={rolebindingsStartsWith} quotaStartsWith={quotaStartsWith} />;
+    const PageNav = <KubevirtNav onNavSelect={onNavSelect}
+      ResourceClusterLink={ResourceClusterLink}
+                                 HrefLink={HrefLink}
+                                 ResourceNSLink={ResourceNSLink}
+                                 MonitoringNavSection={MonitoringNavSection}
+                                 searchStartsWith={searchStartsWith}
+                                 rolesStartsWith={rolesStartsWith}
+                                 rolebindingsStartsWith={rolebindingsStartsWith}
+                                 quotaStartsWith={quotaStartsWith} />;
     return <PageSidebar nav={PageNav} isNavOpen={isNavOpen} />;
   }
 
