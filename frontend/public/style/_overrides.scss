@@ -173,10 +173,6 @@ tags-input .autocomplete .suggestion-item em {
   box-shadow: none;
   min-width: 0; // enable text-overflow: ellipsis
   padding-top: 0;
-
-  .overview-view-selector {
-    padding: 0 0 0 15px;
-  }
 }
 
 @media (max-width: $screen-md-max) {

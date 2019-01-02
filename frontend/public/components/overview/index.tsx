@@ -328,65 +328,67 @@ const OverviewHeading_: React.SFC<OverviewHeadingProps> = ({disabled, firstLabel
       title &&
       <h1 className="co-m-pane__heading co-m-pane__heading--overview">
         <div className="co-m-pane__name co-m-pane__name--overview">{title}</div>
-        <div className="toolbar-pf">
-          <div className="form-group toolbar-pf-view-selector overview-view-selector">
-            <button
-              type="button"
-              className={classnames('btn btn-link', { active: selectedView === View.Resources })}
-              aria-label="Resources"
-              title="Resources"
-              disabled={disabled}
-              onClick={() => selectView(View.Resources)}
-            >
-              <i className="fa fa-list-ul" aria-hidden="true" />
-            </button>
-            <button
-              type="button"
-              className={classnames('btn btn-link', { active: selectedView === View.Dashboard })}
-              aria-label="Dashboard"
-              title="Dashboard"
-              disabled={disabled}
-              onClick={() => selectView(View.Dashboard)}
-            >
-              <i className="fa fa-dashboard" aria-hidden="true" />
-            </button>
-          </div>
-        </div>
       </h1>
     }
-    <Toolbar className="overview-toolbar">
-      <Toolbar.RightContent>
-        {selectedView === View.Resources && <React.Fragment>
-          <div className="form-group overview-toolbar__form-group">
-            <Dropdown
-              className="overview-toolbar__dropdown"
-              menuClassName="dropdown-menu--text-wrap"
-              disabled={disabled}
-              items={groupOptions}
-              onChange={handleGroupChange}
-              titlePrefix="Group by"
-              title={groupOptions[selectedGroup]}
-              spacerBefore={new Set([firstLabel])}
-              headerBefore={{[firstLabel]: 'Label'}}
-            />
-          </div>
-          <div className="form-group overview-toolbar__form-group">
-            <div className="overview-toolbar__text-filter">
-              <TextFilter
-                autoFocus={!disabled}
-                defaultValue={''}
+    <div className={classnames('overview-view-selector', {'selected-view__resources': selectedView === View.Resources })}>
+      <div className="form-group btn-group">
+        <button
+          type="button"
+          className={classnames('btn btn-default', { 'btn-primary': selectedView === View.Resources })}
+          aria-label="Resources"
+          title="Resources"
+          disabled={disabled}
+          onClick={() => selectView(View.Resources)}
+        >
+          <i className="fa fa-list-ul" aria-hidden="true" />
+          Resources
+        </button>
+        <button
+          type="button"
+          className={classnames('btn btn-default', { 'btn-primary': selectedView === View.Dashboard })}
+          aria-label="Dashboard"
+          title="Dashboard"
+          disabled={disabled}
+          onClick={() => selectView(View.Dashboard)}
+        >
+          <i className="fa fa-dashboard" aria-hidden="true" />
+          Dashboard
+        </button>
+      </div>
+      <Toolbar className="overview-toolbar">
+        <Toolbar.RightContent>
+          {selectedView === View.Resources && <React.Fragment>
+            <div className="form-group overview-toolbar__form-group">
+              <Dropdown
+                className="overview-toolbar__dropdown"
+                menuClassName="dropdown-menu--text-wrap"
                 disabled={disabled}
-                label="Resources by name"
-                onChange={handleFilterChange}
+                items={groupOptions}
+                onChange={handleGroupChange}
+                titlePrefix="Group by"
+                title={groupOptions[selectedGroup]}
+                spacerBefore={new Set([firstLabel])}
+                headerBefore={{[firstLabel]: 'Label'}}
               />
             </div>
-          </div>
-        </React.Fragment>}
-        {selectedView === View.Dashboard && !_.isEmpty(project) && <div className="form-group">
-          <ActionsMenu actions={overviewMenuActions.map((a: KebabAction) => a(ProjectModel, project))} />
-        </div>}
-      </Toolbar.RightContent>
-    </Toolbar>
+            <div className="form-group overview-toolbar__form-group">
+              <div className="overview-toolbar__text-filter">
+                <TextFilter
+                  autoFocus={!disabled}
+                  defaultValue={''}
+                  disabled={disabled}
+                  label="by name"
+                  onChange={handleFilterChange}
+                />
+              </div>
+            </div>
+          </React.Fragment>}
+          {selectedView === View.Dashboard && !_.isEmpty(project) && <div className="form-group">
+            <ActionsMenu actions={overviewMenuActions.map((a: KebabAction) => a(ProjectModel, project))} />
+          </div>}
+        </Toolbar.RightContent>
+      </Toolbar>
+    </div>
   </div>
 );
 
