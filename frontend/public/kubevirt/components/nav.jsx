@@ -12,8 +12,8 @@ import { VmTemplatesPageTitle } from './vm-template';
 
 // With respect to keep changes to OKD codebase at bare minimum,
 // the navigation needs to be reconstructed.
-// The ResourceNSLink, HrefLink, Sep, MonitoringNavSection components are passed as props to eliminate the need for additional changes in OKD core code. Ugly anti-pattern, but serves its purpose.
-const Nav = ({ isOpen, onToggle, close, scroller, onWheel, searchStartsWith, ResourceNSLink, HrefLink, Sep, ResourceClusterLink, MonitoringNavSection, rolesStartsWith, rolebindingsStartsWith, quotaStartsWith }) => {
+// The ResourceNSLink, HrefLink, MonitoringNavSection components are passed as props to eliminate the need for additional changes in OKD core code. Ugly anti-pattern, but serves its purpose.
+const Nav = ({ isOpen, onToggle, close, scroller, onWheel, searchStartsWith, ResourceNSLink, HrefLink, ResourceClusterLink, MonitoringNavSection, rolesStartsWith, rolebindingsStartsWith, quotaStartsWith }) => {
   return (
     <React.Fragment>
       <button type="button" className="sidebar-toggle" aria-controls="sidebar" aria-expanded={isOpen} onClick={onToggle}>
@@ -42,7 +42,6 @@ const Nav = ({ isOpen, onToggle, close, scroller, onWheel, searchStartsWith, Res
             <ResourceNSLink resource="statefulsets" name="Stateful Sets" onClick={close} />
             <ResourceNSLink resource="secrets" name="Secrets" onClick={close} />
             <ResourceNSLink resource="configmaps" name="Config Maps" onClick={close} />
-            <Sep />
             <ResourceNSLink resource="cronjobs" name="Cron Jobs" onClick={close} />
             <ResourceNSLink resource="jobs" name="Jobs" onClick={close} />
             <ResourceNSLink resource="daemonsets" name="Daemon Sets" onClick={close} />
