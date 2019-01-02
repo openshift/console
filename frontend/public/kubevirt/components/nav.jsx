@@ -5,7 +5,7 @@ import { FLAGS } from '../../features';
 import { NavSection } from './okdcomponents';
 import {
   ChargebackReportModel,
-  DeploymentConfigModel, MachineModel, MachineSetModel
+  DeploymentConfigModel, MachineModel, MachineSetModel,
 } from '../models';
 import { referenceForModel } from '../module/okdk8s';
 import { VmTemplatesPageTitle } from './vm-template';

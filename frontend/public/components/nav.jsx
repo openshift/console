@@ -296,13 +296,13 @@ export const Navigation = ({ isNavOpen, onNavSelect }) => {
     // The ResourceNSLink, HrefLink components are passed as props to eliminate the need for additional changes in OKD core code. Ugly anti-pattern, but serves its purpose.
     const PageNav = <KubevirtNav onNavSelect={onNavSelect}
       ResourceClusterLink={ResourceClusterLink}
-                                 HrefLink={HrefLink}
-                                 ResourceNSLink={ResourceNSLink}
-                                 MonitoringNavSection={MonitoringNavSection}
-                                 searchStartsWith={searchStartsWith}
-                                 rolesStartsWith={rolesStartsWith}
-                                 rolebindingsStartsWith={rolebindingsStartsWith}
-                                 quotaStartsWith={quotaStartsWith} />;
+      HrefLink={HrefLink}
+      ResourceNSLink={ResourceNSLink}
+      MonitoringNavSection={MonitoringNavSection}
+      searchStartsWith={searchStartsWith}
+      rolesStartsWith={rolesStartsWith}
+      rolebindingsStartsWith={rolebindingsStartsWith}
+      quotaStartsWith={quotaStartsWith} />;
     return <PageSidebar nav={PageNav} isNavOpen={isNavOpen} />;
   }
 
