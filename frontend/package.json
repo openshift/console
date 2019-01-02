@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "preinstall": "cd ../kubevirt && yarn install",
-    "postinstall": "cd ../kubevirt/node_modules && (for i in * ; do if [ ! -d ../../frontend/node_modules/$i ] ; then cp -rv $i ../../frontend/node_modules/ ; else echo Skipping $i ; fi ; done)",
+    "postinstall": "cd ../kubevirt/node_modules && (for i in * ; do if [ ! -d ../../frontend/node_modules/$i ] ; then cp -rv $i ../../frontend/node_modules/ ; else echo Skipping $i ; fi ; done) ; cp -rv @patternfly/react-console ../../frontend/node_modules/@patternfly/",
     "dev": "rm -rf ./public/dist/ && ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/webpack --mode development --watch --progress",
     "build": "rm -rf ./public/dist && NODE_ENV=production ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/webpack --mode=production",
     "coverage": "jest --coverage .",
