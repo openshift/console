@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { ResourceEventStream } from './okdcomponents';
 import { ListHeader, ColHead, List, ListPage, ResourceRow, DetailsPage } from './factory/okdfactory';
 import { breadcrumbsForOwnerRefs, Firehose, ResourceLink, navFactory, Kebab, ResourceKebab } from './utils/okdutils';
+import { WithResources } from './utils/withResources';
 import {
   VirtualMachineInstanceModel,
   VirtualMachineModel,
@@ -119,13 +120,6 @@ const getMigration = (vm, resources) => {
   return findVMIMigration(migrationData, vm.metadata.name);
 };
 
-const getLoadedResource = (resource, defaultValue = []) => {
-  if (!resource.loaded) {
-    return defaultValue;
-  }
-  return resource.loadError ? defaultValue : resource.data;
-};
-
 const StateColumn = props => {
   const { loaded, resources, vm } = props;
   return loaded
@@ -154,7 +148,6 @@ const FirehoseResourceLink = props => {
 export const VMRow = ({obj: vm}) => {
   const vmiResource = getResourceKind(VirtualMachineInstanceModel, vm.metadata.name, true, vm.metadata.namespace, false);
   const podResources = getResourceKind(PodModel, undefined, true, vm.metadata.namespace, true, getLabelMatcher(vm));
-  // https://kubevirt.io/api-reference/master/definitions.html#_v1_virtualmachineinstancemigration
   const migrationResources = getResourceKind(VirtualMachineInstanceMigrationModel, undefined, true, vm.metadata.namespace, false);
 
   return <ResourceRow obj={vm}>
@@ -205,37 +198,44 @@ const VmiEvents = ({obj: vm}) => {
 };
 
 const ConnectedVmDetails = ({ obj: vm }) => {
-  const vmiResources = getResourceKind(VirtualMachineInstanceModel, vm.metadata.name, true, vm.metadata.namespace, false);
-  const podResources = getResourceKind(PodModel, undefined, true, vm.metadata.namespace, true, getLabelMatcher(vm));
-  // https://kubevirt.io/api-reference/master/definitions.html#_v1_virtualmachineinstancemigration
-  const migrationResources = getResourceKind(VirtualMachineInstanceMigrationModel, undefined, true, vm.metadata.namespace, false);
-  const resources = [vmiResources, podResources, migrationResources];
+  const resourceMap = {
+    vmi: {
+      resource: getResourceKind(VirtualMachineInstanceModel, vm.metadata.name, true, vm.metadata.namespace, false),
+      ignoreErrors: true,
+    },
+    pods: {
+      resource: getResourceKind(PodModel, undefined, true, vm.metadata.namespace, true, getLabelMatcher(vm)),
+    },
+    migrations: {
+      resource: getResourceKind(VirtualMachineInstanceMigrationModel, undefined, true, vm.metadata.namespace, false),
+    },
+  };
 
   return (
-    <Firehose resources={resources}>
+    <WithResources resourceMap={resourceMap}>
       <VmDetails_ vm={vm} />
-    </Firehose>
+    </WithResources>
   );
 };
 
 const VmDetails_ = props => {
-  const { vm, resources } = props;
+  const { vm, pods, migrations, vmi } = props;
 
-  const pods = getLoadedResource(resources[PodModel.kind]);
-  const migrations = getLoadedResource(resources[VirtualMachineInstanceMigrationModel.kind]);
-  const vmi = getLoadedResource(resources[VirtualMachineInstanceModel.kind], null);
+  const vmPod = findPod(pods, vm.metadata.name, VIRT_LAUNCHER_POD_PREFIX);
+
   const migration = vmi ? findVMIMigration(migrations, vmi.metadata.name) : null;
 
-  const namespaceResourceLink = (
-    <ResourceLink kind={NamespaceModel.kind} name={vm.metadata.namespace} title={vm.metadata.namespace} />
-  );
+  const namespaceResourceLink = () =>
+    <ResourceLink kind={NamespaceModel.kind} name={vm.metadata.namespace} title={vm.metadata.namespace} />;
 
-  const podResourceLink = (
-    <FirehoseResourceLink
-      {...props}
-      flatten={getFlattenForKind(PodModel.kind)}
-      filter={data => findPod(data, vm.metadata.name, VIRT_LAUNCHER_POD_PREFIX)}
-    />);
+  const podResourceLink = () =>
+    vmPod ? <ResourceLink
+      kind={PodModel.kind}
+      name={vmPod.metadata.name}
+      namespace={vmPod.metadata.namespace}
+      uid={vmPod.metadata.uid}
+    />
+      : DASHES;
 
   return (
     <VmDetails
