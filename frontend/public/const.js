@@ -29,5 +29,5 @@ export const API_DISCOVERY_RESOURCES_LOCAL_STORAGE_KEY = `${STORAGE_PREFIX}/api-
 // Bootstrap user for OpenShift 4.0 clusters
 export const KUBE_ADMIN_USERNAME = 'kube:admin';
 
-// Package manfiests for the Kubernetes Marketplace use this label.
-export const MARKETPLACE_LABEL = 'openshift-marketplace';
+// Package manifests for the Operator Hub use this label.
+export const OPERATOR_HUB_LABEL = 'openshift-marketplace';

@@ -452,8 +452,8 @@ export class TileViewPage extends React.Component {
 
     if (!_.isEqual(items, prevProps.items)) {
       const availableFilters = getAvailableFilters(defaultFilters, items, filterGroups);
-      const marketplaceCategories = getAvailableCategories(items);
-      const categories = categorizeItems(items, itemsSorter, marketplaceCategories);
+      const availableCategories = getAvailableCategories(items);
+      const categories = categorizeItems(items, itemsSorter, availableCategories);
 
       const newActiveFilters = _.reduce(availableFilters, (updatedFilters, filterGroup, filterGroupName) => {
         if (filterGroupName === 'keyword') {

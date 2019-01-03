@@ -5,25 +5,25 @@ import { CatalogTile, FilterSidePanel, VerticalTabs } from 'patternfly-react-ext
 import { Modal } from 'patternfly-react';
 
 import { MarkdownView } from '../../../public/components/operator-lifecycle-manager/clusterserviceversion';
-import { MarketplaceTileView, getProviderValue, keywordCompare } from '../../../public/components/marketplace/marketplace-items';
-import { MarketplaceItemModal } from '../../../public/components/marketplace/marketplace-item-modal';
-import { MarketplaceList } from '../../../public/components/marketplace/marketplace-page';
+import { OperatorHubTileView, getProviderValue, keywordCompare } from '../../../public/components/operator-hub/operator-hub-items';
+import { OperatorHubItemModal } from '../../../public/components/operator-hub/operator-hub-item-modal';
+import { OperatorHubList } from '../../../public/components/operator-hub/operator-hub-page';
 import {
-  marketplaceListPageProps,
-  marketplaceTileViewPageProps,
-  marketplaceTileViewPagePropsWithDummy,
+  operatorHubListPageProps,
+  operatorHubTileViewPageProps,
+  operatorHubTileViewPagePropsWithDummy,
   mockFilterStrings,
   mockProviderStrings,
-  marketplaceModalProps,
+  operatorHubModalProps,
   itemWithLongDescription,
   filterCounts,
-} from '../../../__mocks__/marketplaceItemsMocks';
+} from '../../../__mocks__/operatorHubItemsMocks';
 
-describe(MarketplaceList.displayName, () => {
+describe(OperatorHubList.displayName, () => {
   let wrapper;
 
   beforeEach(() => {
-    wrapper = mount(<MarketplaceList {...marketplaceListPageProps} subscription={{loaded: false, data: []}} />);
+    wrapper = mount(<OperatorHubList {...operatorHubListPageProps} subscription={{loaded: false, data: []}} />);
   });
 
   it('renders the correct number of tiles from props', () => {
@@ -37,7 +37,7 @@ describe(MarketplaceList.displayName, () => {
     expect(tiles.exists()).toBe(true);
 
     const amqTileProps = tiles.at(0).props();
-    const amqPackageManifest = marketplaceListPageProps.packageManifest.data[0];
+    const amqPackageManifest = operatorHubListPageProps.packageManifest.data[0];
     const amqIcon = (amqPackageManifest.status.channels[0].currentCSVDesc as any).icon[0];
     expect(amqTileProps.title).toEqual(amqPackageManifest.metadata.name);
     expect(amqTileProps.iconImg).toEqual(`data:${amqIcon.mediatype};base64,${amqIcon.base64data}`);
@@ -51,7 +51,7 @@ describe(MarketplaceList.displayName, () => {
     expect(tiles.exists()).toBe(true);
 
     const prometheusTileProps = tiles.at(3).props();
-    const prometheusPackageManifest = marketplaceListPageProps.packageManifest.data[3];
+    const prometheusPackageManifest = operatorHubListPageProps.packageManifest.data[3];
     const prometheusIcon = (prometheusPackageManifest.status.channels[0].currentCSVDesc as any).icon[0];
     expect(prometheusTileProps.title).toEqual(prometheusPackageManifest.metadata.name);
     expect(prometheusTileProps.iconImg).toEqual(`data:${prometheusIcon.mediatype};base64,${prometheusIcon.base64data}`);
@@ -65,12 +65,12 @@ describe(MarketplaceList.displayName, () => {
     expect(tiles.exists()).toBe(true);
 
     tiles.at(0).simulate('click');
-    const modal = wrapper.find(MarketplaceItemModal);
+    const modal = wrapper.find(OperatorHubItemModal);
     expect(modal.exists()).toBe(true);
     expect(modal.props().show).toBe(true);
 
     const modalItem = modal.at(0).props().item;
-    const amqPackageManifest = marketplaceListPageProps.packageManifest.data[0];
+    const amqPackageManifest = operatorHubListPageProps.packageManifest.data[0];
     const amqIcon = (amqPackageManifest.status.channels[0].currentCSVDesc as any).icon[0];
     expect(modalItem.name).toEqual(amqPackageManifest.metadata.name);
     expect(modalItem.imgUrl).toEqual(`data:${amqIcon.mediatype};base64,${amqIcon.base64data}`);
@@ -80,18 +80,18 @@ describe(MarketplaceList.displayName, () => {
 
     const closeButton = modal.find(Modal.CloseButton);
     closeButton.simulate('click');
-    const noShowModal = wrapper.find(MarketplaceItemModal);
+    const noShowModal = wrapper.find(OperatorHubItemModal);
     expect(noShowModal.exists()).toBe(true);
     expect(noShowModal.props().show).toBe(false);
   });
 
 });
 
-describe(MarketplaceTileView.displayName, () => {
+describe(OperatorHubTileView.displayName, () => {
   let wrapper;
 
   beforeEach(() => {
-    wrapper = mount(<MarketplaceTileView.WrappedComponent {...marketplaceTileViewPageProps} />);
+    wrapper = mount(<OperatorHubTileView.WrappedComponent {...operatorHubTileViewPageProps} />);
   });
 
   it('renders item filter controls', () => {
@@ -105,14 +105,14 @@ describe(MarketplaceTileView.displayName, () => {
   });
 
   it('updates filter counts on item changes', () => {
-    wrapper.setProps(marketplaceTileViewPagePropsWithDummy);
+    wrapper.setProps(operatorHubTileViewPagePropsWithDummy);
     wrapper.update();
     const filterItemsChanged = wrapper.find(FilterSidePanel.CategoryItem);
     expect(filterItemsChanged.exists()).toBe(true);
 
     expect(filterItemsChanged.length).toEqual(3); // Filter by Provider
 
-    wrapper.setProps(marketplaceTileViewPageProps);
+    wrapper.setProps(operatorHubTileViewPageProps);
     wrapper.update();
     const filterItemsFinal = wrapper.find(FilterSidePanel.CategoryItem);
     expect(filterItemsFinal.exists()).toBe(true);
@@ -129,7 +129,7 @@ describe(MarketplaceTileView.displayName, () => {
   it('filters items by keyword correctly', () => {
     _.each(mockFilterStrings, filterTest => {
       const {filter, resultLength} = filterTest;
-      const results = _.reduce(marketplaceTileViewPageProps.items, (matches, item) => {
+      const results = _.reduce(operatorHubTileViewPageProps.items, (matches, item) => {
         if (keywordCompare(filter, item)) {
           matches.push(item);
         }
@@ -151,11 +151,11 @@ describe(MarketplaceTileView.displayName, () => {
 
 });
 
-describe(MarketplaceItemModal.displayName, () => {
+describe(OperatorHubItemModal.displayName, () => {
   let wrapper;
 
   beforeEach(() => {
-    wrapper = mount(<MarketplaceItemModal {...marketplaceModalProps} />);
+    wrapper = mount(<OperatorHubItemModal {...operatorHubModalProps} />);
   });
 
   it('renders longDescription with a MarkdownView component', () => {

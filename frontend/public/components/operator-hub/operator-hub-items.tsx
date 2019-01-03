@@ -9,7 +9,7 @@ import {CatalogTile} from 'patternfly-react-extensions';
 import {history} from '../utils/router';
 import {K8sResourceKind} from '../../module/k8s';
 import {normalizeIconClass} from '../catalog/catalog-item-icon';
-import {MarketplaceItemModal} from './marketplace-item-modal';
+import {OperatorHubItemModal} from './operator-hub-item-modal';
 import {TileViewPage} from '../utils/tile-view-page';
 import {requireOperatorGroup} from '../operator-lifecycle-manager/operator-group';
 import { SubscriptionKind } from '../operator-lifecycle-manager';
@@ -17,7 +17,7 @@ import { SubscriptionKind } from '../operator-lifecycle-manager';
 /**
  * Filter property white list
  */
-const marketplaceFilterGroups = [
+const operatorHubFilterGroups = [
   'provider',
 ];
 
@@ -99,9 +99,9 @@ const setURLParams = params => {
   history.replace(`${url.pathname}${searchParams}`);
 };
 
-export const MarketplaceTileView = requireOperatorGroup(
+export const OperatorHubTileView = requireOperatorGroup(
   // TODO: Can be functional stateless component
-  class MarketplaceTileView extends React.Component<MarketplaceTileViewProps, MarketplaceTileViewState> {
+  class OperatorHubTileView extends React.Component<OperatorHubTileViewProps, OperatorHubTileViewState> {
     constructor(props) {
       super(props);
 
@@ -171,12 +171,12 @@ export const MarketplaceTileView = requireOperatorGroup(
           itemsSorter={(itemsToSort) => _.sortBy(itemsToSort, 'name')}
           getAvailableCategories={determineCategories}
           getAvailableFilters={determineAvailableFilters}
-          filterGroups={marketplaceFilterGroups}
+          filterGroups={operatorHubFilterGroups}
           keywordCompare={keywordCompare}
           renderTile={this.renderTile}
-          emptyStateInfo="No marketplace items are being shown due to the filters being applied."
+          emptyStateInfo="No Operator Hub items are being shown due to the filters being applied."
         />
-        <MarketplaceItemModal
+        <OperatorHubItemModal
           show={!!detailsItem}
           item={detailsItem}
           close={() => this.closeOverlay()}
@@ -187,19 +187,19 @@ export const MarketplaceTileView = requireOperatorGroup(
   }
 );
 
-MarketplaceTileView.propTypes = {
+OperatorHubTileView.propTypes = {
   items: PropTypes.array,
   catalogSourceConfig: PropTypes.object,
 };
 
-export type MarketplaceTileViewProps = {
+export type OperatorHubTileViewProps = {
   items: any[];
   catalogSourceConfig: K8sResourceKind;
   subscriptions: SubscriptionKind[];
 };
 
-export type MarketplaceTileViewState = {
+export type OperatorHubTileViewState = {
   detailsItem: any;
 };
 
-MarketplaceTileView.displayName = 'MarketplaceTileView';
+OperatorHubTileView.displayName = 'OperatorHubTileView';

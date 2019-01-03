@@ -8,10 +8,10 @@ import {CatalogItemHeader, PropertiesSidePanel, PropertyItem} from 'patternfly-r
 import {K8sResourceKind} from '../../module/k8s';
 import {MarkdownView} from '../operator-lifecycle-manager/clusterserviceversion';
 import {history} from '../utils';
-import { MARKETPLACE_CSC_NAME } from './index';
+import { OPERATOR_HUB_CSC_NAME } from './index';
 import { SubscriptionKind } from '../operator-lifecycle-manager';
 
-export const MarketplaceItemModal: React.SFC<MarketplaceItemModalProps> = (props) => {
+export const OperatorHubItemModal: React.SFC<OperatorHubItemModalProps> = (props) => {
   const {item, show, close} = props;
 
   if (!item) {
@@ -37,7 +37,7 @@ export const MarketplaceItemModal: React.SFC<MarketplaceItemModalProps> = (props
             bsStyle="primary"
             className="co-catalog-page__overlay-create"
             disabled={!_.isEmpty(props.subscription)}
-            onClick={() => history.push(`/marketplace/subscribe?pkg=${item.name}&catalog=${MARKETPLACE_CSC_NAME}&catalogNamespace=${'openshift-operators'}`)}>
+            onClick={() => history.push(`/operatorhub/subscribe?pkg=${item.name}&catalog=${OPERATOR_HUB_CSC_NAME}&catalogNamespace=${'openshift-operators'}`)}>
             Enable
           </Button>
           <PropertyItem label="Operator Version" value={version || notAvailable} />
@@ -59,14 +59,14 @@ export const MarketplaceItemModal: React.SFC<MarketplaceItemModalProps> = (props
   </Modal>;
 };
 
-MarketplaceItemModal.defaultProps = {
+OperatorHubItemModal.defaultProps = {
   item: null,
   size: 'default',
   show: false,
   catalogSourceConfig: null,
 };
 
-export type MarketplaceItemModalProps = {
+export type OperatorHubItemModalProps = {
   item: any;
   size?: string;
   show: boolean;
@@ -75,4 +75,4 @@ export type MarketplaceItemModalProps = {
   subscription?: SubscriptionKind;
 };
 
-MarketplaceItemModal.displayName = 'MarketplaceItemModal';
+OperatorHubItemModal.displayName = 'OperatorHubItemModal';

@@ -7,9 +7,9 @@ import {Helmet} from 'react-helmet';
 import {Firehose, PageHeading, StatusBox, MsgBox} from '../utils';
 import {referenceForModel, K8sResourceKind} from '../../module/k8s';
 import {PackageManifestModel, OperatorGroupModel, CatalogSourceConfigModel, SubscriptionModel} from '../../models';
-import {MarketplaceTileView} from './marketplace-items';
+import {OperatorHubTileView} from './operator-hub-items';
 import {PackageManifestKind, OperatorGroupKind, SubscriptionKind} from '../operator-lifecycle-manager';
-import {MARKETPLACE_CSC_NAME} from './index';
+import {OPERATOR_HUB_CSC_NAME} from './index';
 import * as operatorImg from '../../imgs/operator.svg';
 
 const normalizePackageManifests = (packageManifests: PackageManifestKind[] = []) => {
@@ -68,9 +68,9 @@ const normalizePackageManifests = (packageManifests: PackageManifestKind[] = [])
   });
 };
 
-export const MarketplaceList: React.SFC<MarketplaceListProps> = (props) => {
+export const OperatorHubList: React.SFC<OperatorHubListProps> = (props) => {
   const {catalogSourceConfig, packageManifest, loaded, loadError} = props;
-  const sourceConfigs = _.find(_.get(catalogSourceConfig, 'data'), csc => csc.metadata.name === MARKETPLACE_CSC_NAME);
+  const sourceConfigs = _.find(_.get(catalogSourceConfig, 'data'), csc => csc.metadata.name === OPERATOR_HUB_CSC_NAME);
   const items = loaded
     ? _.sortBy(normalizePackageManifests(_.get(packageManifest, 'data')), 'name')
     : [];
@@ -81,19 +81,19 @@ export const MarketplaceList: React.SFC<MarketplaceListProps> = (props) => {
     loadError={loadError}
     label="Resources"
     EmptyMsg={() => <MsgBox
-      title="No Marketplace Items Found"
-      detail={<span>Please check that the Marketplace operator is running and that you have created a valid OperatorSource. For more information about Marketplace, please click <a href="https://github.com/operator-framework/operator-marketplace">here</a>.</span>} />}>
-    <MarketplaceTileView items={items} catalogSourceConfig={sourceConfigs} subscriptions={props.subscription.data} />
+      title="No Operator Hub Items Found"
+      detail={<span>Please check that the OperatorHub is running and that you have created a valid OperatorSource. For more information about Operator Hub, please click <a href="https://github.com/operator-framework/operator-marketplace">here</a>.</span>} />}>
+    <OperatorHubTileView items={items} catalogSourceConfig={sourceConfigs} subscriptions={props.subscription.data} />
   </StatusBox>;
 };
 
-export const MarketplacePage: React.SFC<MarketplacePageProps> = (props) => {
+export const OperatorHubPage: React.SFC<OperatorHubPageProps> = (props) => {
   return <React.Fragment>
     <Helmet>
-      <title>Marketplace</title>
+      <title>Operator Hub</title>
     </Helmet>
     <div className="co-catalog">
-      <PageHeading title="Marketplace" />
+      <PageHeading title="Operator Hub" />
       <div className="co-catalog-connect">
         <Firehose resources={[{
           isList: true,
@@ -118,18 +118,18 @@ export const MarketplacePage: React.SFC<MarketplacePageProps> = (props) => {
           prop: 'subscription',
         }]}>
           {/* FIXME(alecmerdler): Hack because `Firehose` injects props without TypeScript knowing about it */}
-          <MarketplaceList {...props as any} />
+          <OperatorHubList {...props as any} />
         </Firehose>
       </div>
     </div>
   </React.Fragment>;
 };
 
-export type MarketplacePageProps = {
+export type OperatorHubPageProps = {
 
 };
 
-export type MarketplaceListProps = {
+export type OperatorHubListProps = {
   catalogSourceConfig: {loaded: boolean, data?: K8sResourceKind[]};
   operatorGroup: {loaded: boolean, data?: OperatorGroupKind[]};
   packageManifest: {loaded: boolean, data?: PackageManifestKind[]};
@@ -138,5 +138,5 @@ export type MarketplaceListProps = {
   loadError?: string;
 };
 
-MarketplacePage.displayName = 'MarketplacePage';
-MarketplaceList.displayName = 'MarketplaceList';
+OperatorHubPage.displayName = 'OperatorHubPage';
+OperatorHubList.displayName = 'OperatorHubList';

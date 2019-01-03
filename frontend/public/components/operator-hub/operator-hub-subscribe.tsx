@@ -10,7 +10,7 @@ import { SubscriptionModel, CatalogSourceConfigModel, OperatorGroupModel, Packag
 import { OperatorGroupKind, PackageManifestKind, ClusterServiceVersionLogo, SubscriptionKind, InstallPlanApproval } from '../operator-lifecycle-manager';
 import { OperatorGroupSelector } from '../operator-lifecycle-manager/operator-group';
 import { RadioGroup } from '../radio';
-import { MARKETPLACE_CSC_NAME } from './index';
+import { OPERATOR_HUB_CSC_NAME } from './index';
 
 // TODO: Use `redux-form` instead of stateful component
 const withFormState = (Component) => {
@@ -44,7 +44,7 @@ const withFormState = (Component) => {
   };
 };
 
-export const MarketplaceSubscribeForm = withFormState((props: MarketplaceSubscribeFormProps) => {
+export const OperatorHubSubscribeForm = withFormState((props: OperatorHubSubscribeFormProps) => {
   if (!props.packageManifest.loaded) {
     return <LoadingBox />;
   }
@@ -52,7 +52,7 @@ export const MarketplaceSubscribeForm = withFormState((props: MarketplaceSubscri
   const {provider, channels = [], packageName} = props.packageManifest.data.status;
 
   const submit = () => {
-    const catalogSourceConfig = props.catalogSourceConfig.data.find(csc => csc.metadata.name === MARKETPLACE_CSC_NAME);
+    const catalogSourceConfig = props.catalogSourceConfig.data.find(csc => csc.metadata.name === OPERATOR_HUB_CSC_NAME);
     const packages = _.isEmpty(catalogSourceConfig)
       ? packageName
       : _.uniq(catalogSourceConfig.spec.packages.split(',').concat([packageName])).join(',');
@@ -61,7 +61,7 @@ export const MarketplaceSubscribeForm = withFormState((props: MarketplaceSubscri
       apiVersion: `${CatalogSourceConfigModel.apiGroup}/${CatalogSourceConfigModel.apiVersion}`,
       kind: CatalogSourceConfigModel.kind,
       metadata: {
-        name: MARKETPLACE_CSC_NAME,
+        name: OPERATOR_HUB_CSC_NAME,
         namespace: 'openshift-operators',
       },
       spec: {
@@ -78,7 +78,7 @@ export const MarketplaceSubscribeForm = withFormState((props: MarketplaceSubscri
         namespace: props.operatorGroup.data.find(og => og.metadata.name === props.formState().target).metadata.namespace,
       },
       spec: {
-        source: MARKETPLACE_CSC_NAME,
+        source: OPERATOR_HUB_CSC_NAME,
         sourceNamespace: 'openshift-operators',
         name: packageName,
         startingCSV: channels.find(ch => ch.name === props.formState().updateChannel).currentCSV,
@@ -88,10 +88,10 @@ export const MarketplaceSubscribeForm = withFormState((props: MarketplaceSubscri
     };
 
     return (!_.isEmpty(catalogSourceConfig)
-      ? k8sUpdate(CatalogSourceConfigModel, {...catalogSourceConfig, spec: {targetNamespace: 'openshift-operators', packages}}, 'openshift-operators', MARKETPLACE_CSC_NAME)
+      ? k8sUpdate(CatalogSourceConfigModel, {...catalogSourceConfig, spec: {targetNamespace: 'openshift-operators', packages}}, 'openshift-operators', OPERATOR_HUB_CSC_NAME)
       : k8sCreate(CatalogSourceConfigModel, newCatalogSourceConfig)
     ).then(() => k8sCreate(SubscriptionModel, subscription))
-      .then(() => history.push('/marketplace'));
+      .then(() => history.push('/operatorhub'));
   };
 
   return <div>
@@ -122,7 +122,7 @@ export const MarketplaceSubscribeForm = withFormState((props: MarketplaceSubscri
       <div className="co-form-section__separator"></div>
       <div>
         <button className="btn btn-primary" onClick={() => submit()} disabled={_.values(props.formState()).some(v => _.isNil(v))}>Subscribe</button>
-        <button className="btn btn-default" onClick={() => history.push('/marketplace')}>Cancel</button>
+        <button className="btn btn-default" onClick={() => history.push('/operatorhub')}>Cancel</button>
       </div>
     </div>
     <div className="col-xs-6">
@@ -131,10 +131,10 @@ export const MarketplaceSubscribeForm = withFormState((props: MarketplaceSubscri
   </div>;
 });
 
-export const MarketplaceSubscribePage: React.SFC<MarketplaceSubscribePageProps> = (props) => {
+export const OperatorHubSubscribePage: React.SFC<OperatorHubSubscribePageProps> = (props) => {
   return <div className="co-m-pane__body">
     <Helmet>
-      <title>Kubernetes Marketplace Subscription</title>
+      <title>Operator Hub Subscription</title>
     </Helmet>
     <div>
       <h1>Create Operator Subscription</h1>
@@ -162,12 +162,12 @@ export const MarketplaceSubscribePage: React.SFC<MarketplaceSubscribePageProps> 
       prop: 'subscription',
     }]}>
       {/* FIXME(alecmerdler): Hack because `Firehose` injects props without TypeScript knowing about it */}
-      <MarketplaceSubscribeForm {...props as any} />
+      <OperatorHubSubscribeForm {...props as any} />
     </Firehose>
   </div>;
 };
 
-export type MarketplaceSubscribeFormProps = {
+export type OperatorHubSubscribeFormProps = {
   loaded: boolean;
   loadError?: any;
   operatorGroup: {loaded: boolean, data: OperatorGroupKind[]};
@@ -178,8 +178,8 @@ export type MarketplaceSubscribeFormProps = {
   formState: () => {target?: string, updateChannel?: string, approval?: InstallPlanApproval};
 };
 
-export type MarketplaceSubscribePageProps = {
+export type OperatorHubSubscribePageProps = {
 
 };
 
-MarketplaceSubscribePage.displayName = 'MarketplaceSubscribePage';
+OperatorHubSubscribePage.displayName = 'OperatorHubSubscribePage';

@@ -6,10 +6,10 @@ import { appHost, checkLogs, checkErrors, testName } from '../../protractor.conf
 import * as crudView from '../../views/crud.view';
 import * as catalogView from '../../views/catalog.view';
 import * as catalogPageView from '../../views/catalog-page.view';
-import * as marketplaceView from '../../views/kubernetes-marketplace.view';
+import * as operatorHubView from '../../views/operator-hub.view';
 import * as sidenavView from '../../views/sidenav.view';
 
-describe('Viewing the operators in Kubernetes Marketplace', () => {
+describe('Viewing the operators in Operator Hub', () => {
   const openCloudServices = new Set(['etcd', 'prometheus']);
 
   beforeAll(async() => {
@@ -22,8 +22,8 @@ describe('Viewing the operators in Kubernetes Marketplace', () => {
     checkErrors();
   });
 
-  it('displays Kubernetes Marketplace with expected available operators', async() => {
-    await sidenavView.clickNavLink(['Catalog', 'Marketplace']);
+  it('displays Operator Hub with expected available operators', async() => {
+    await sidenavView.clickNavLink(['Catalog', 'Operator Hub']);
     await crudView.isLoaded();
 
     openCloudServices.forEach(name => {
@@ -74,15 +74,15 @@ describe('Viewing the operators in Kubernetes Marketplace', () => {
   });
 
   openCloudServices.forEach(name => {
-    it(`displays MarketplaceModalOverlay with correct content when ${name} operator is clicked`, async() => {
+    it(`displays OperatorHubModalOverlay with correct content when ${name} operator is clicked`, async() => {
       catalogPageView.catalogTileFor(name).click();
-      await marketplaceView.operatorModalIsLoaded();
+      await operatorHubView.operatorModalIsLoaded();
 
-      expect(marketplaceView.operatorModal.isDisplayed()).toBe(true);
-      expect(marketplaceView.operatorModalTitle.getText()).toEqual(name);
+      expect(operatorHubView.operatorModal.isDisplayed()).toBe(true);
+      expect(operatorHubView.operatorModalTitle.getText()).toEqual(name);
 
-      await marketplaceView.closeOperatorModal();
-      await marketplaceView.operatorModalIsClosed();
+      await operatorHubView.closeOperatorModal();
+      await operatorHubView.operatorModalIsClosed();
     });
   });
 

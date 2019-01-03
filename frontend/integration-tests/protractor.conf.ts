@@ -97,7 +97,7 @@ export const config: Config = {
     performance: ['tests/base.scenario.ts', 'tests/performance.scenario.ts'],
     serviceCatalog: ['tests/base.scenario.ts', 'tests/service-catalog/service-catalog.scenario.ts', 'tests/service-catalog/service-broker.scenario.ts', 'tests/service-catalog/service-class.scenario.ts', 'tests/service-catalog/service-binding.scenario.ts'],
     catalog: ['tests/base.scenario.ts', 'tests/catalog.scenario.ts'],
-    marketplace: ['tests/base.scenario.ts', 'tests/marketplace/kubernetes-marketplace.scenario.ts'],
+    operatorHub: ['tests/base.scenario.ts', 'tests/operator-hub/operator-hub.scenario.ts'],
     overview: ['tests/base.scenario.ts', 'tests/overview/overview.scenario.ts'],
     all: ['tests/base.scenario.ts',
       'tests/crud.scenario.ts',
@@ -109,7 +109,7 @@ export const config: Config = {
       'tests/modal-annotations.scenario.ts',
       'tests/source-to-image.scenario.ts',
       'tests/deploy-image.scenario.ts',
-      'tests/marketplace/kubernetes-marketplace.scenario.ts',
+      'tests/operator-hub/operator-hub.scenario.ts',
       'tests/catalog.scenario.ts'],
   },
   params: {
