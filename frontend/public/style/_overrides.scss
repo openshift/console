@@ -229,6 +229,9 @@ tags-input .autocomplete .suggestion-item em {
 }
 
 .pf-c-page {
+  // TEMP fix until https://github.com/patternfly/patternfly-next/issues/1174 is fixed upstream
+  height: 100% !important;
+
   &__header {
     background-color: var(--pf-global--BackgroundColor--dark-200);
     background-image: url("../imgs/pfbg_2000.jpg");
@@ -256,6 +259,8 @@ tags-input .autocomplete .suggestion-item em {
   --pf-c-page__sidebar--PaddingBottom: 0;
   --pf-c-page__sidebar--PaddingTop: 0;
   position: relative; // fix z-index bug in Edge
+  // TEMP fix until https://github.com/patternfly/patternfly-next/issues/1175 is fixed upstream
+  -webkit-overflow-scrolling: touch;
 
   @media screen and (min-width: $grid-float-breakpoint) {
     --pf-c-page__sidebar--BoxShadow: none;
