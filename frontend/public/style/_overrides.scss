@@ -218,6 +218,10 @@ tags-input .autocomplete .suggestion-item em {
   }
 }
 
+.modal.right-side-modal-pf .modal-dialog {
+  margin-top: 76px; // since PatternFly 4's masthead is taller than PatternFly 3's
+}
+
 .modal-title {
   font-size: $font-size-base;
 }
