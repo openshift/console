@@ -39,7 +39,8 @@ const normalizePackageManifests = (packageManifests: PackageManifestKind[] = [])
       categories,
     } = currentCSVAnnotations;
     const categoryArray = categories && _.map(categories.split(','), category => category.trim());
-    longDescription = longDescription ? longDescription : _.get(packageManifest, 'status.channels[0].currentCSVDesc.description');
+    description = description || _.get(packageManifest, 'status.channels[0].currentCSVDesc.description');
+    longDescription = longDescription || _.get(packageManifest, 'status.channels[0].currentCSVDesc.description');
     const catalogSource = _.get(packageManifest, 'status.catalogSource');
     const catalogSourceNamespace = _.get(packageManifest, 'status.catalogSourceNamespace');
     return {
@@ -68,8 +69,8 @@ const normalizePackageManifests = (packageManifests: PackageManifestKind[] = [])
 };
 
 export const MarketplaceList: React.SFC<MarketplaceListProps> = (props) => {
-  const {packageManifest, loaded, loadError} = props;
-  const catalogSourceConfig = _.find(props.catalogSourceConfig.data, csc => csc.metadata.name === MARKETPLACE_CSC_NAME);
+  const {catalogSourceConfig, packageManifest, loaded, loadError} = props;
+  const sourceConfigs = _.find(_.get(catalogSourceConfig, 'data'), csc => csc.metadata.name === MARKETPLACE_CSC_NAME);
   const items = loaded
     ? _.sortBy(normalizePackageManifests(_.get(packageManifest, 'data')), 'name')
     : [];
@@ -82,7 +83,7 @@ export const MarketplaceList: React.SFC<MarketplaceListProps> = (props) => {
     EmptyMsg={() => <MsgBox
       title="No Marketplace Items Found"
       detail={<span>Please check that the Marketplace operator is running and that you have created a valid OperatorSource. For more information about Marketplace, please click <a href="https://github.com/operator-framework/operator-marketplace">here</a>.</span>} />}>
-    <MarketplaceTileView items={items} catalogSourceConfig={catalogSourceConfig} subscriptions={props.subscription.data} />
+    <MarketplaceTileView items={items} catalogSourceConfig={sourceConfigs} subscriptions={props.subscription.data} />
   </StatusBox>;
 };
 
