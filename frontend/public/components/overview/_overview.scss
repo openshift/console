@@ -186,7 +186,7 @@
     top: 0;
     width: calc(100% - 15px);
     @media(min-width: $screen-sm-min) {
-      width: 550px;
+      max-width: 550px;
     }
     z-index: 5;
   }
