@@ -17,8 +17,8 @@ const isDefaultClass = (storageClass: K8sResourceKind) => _.get(storageClass, ['
 const StorageClassHeader = props => <ListHeader>
   <ColHead {...props} className="col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
   <ColHead {...props} className="col-sm-4 col-xs-6" sortField="provisioner">Provisioner</ColHead>
-  <ColHead {...props} className="col-sm-2 hidden-xs" sortField="reclaimPolicy">Reclaim Policy</ColHead>
-  <ColHead {...props} className="col-sm-2 hidden-xs" sortField={`metadata.annotations['${defaultClassAnnotation}']`}>Default Class</ColHead>
+  <ColHead {...props} className="col-sm-2 hidden-xs" sortField="reclaimPolicy">Reclaim <span className="hidden-sm">Policy</span></ColHead>
+  <ColHead {...props} className="col-sm-2 hidden-xs" sortField={`metadata.annotations['${defaultClassAnnotation}']`}>Default <span className="hidden-sm">Class</span></ColHead>
 </ListHeader>;
 
 const StorageClassRow: React.SFC<StorageClassRowProps> = ({obj}) => {
