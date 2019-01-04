@@ -24,13 +24,11 @@ import {
   getResourceKind,
   getLabelMatcher,
   findPod,
-  getFlattenForKind,
   findVmPod,
   findVmMigration,
   findVMIMigration,
 } from '../utils/resources';
 import { DASHES, IMPORTER_DV_POD_PREFIX, VIRT_LAUNCHER_POD_PREFIX } from '../utils/constants';
-import FirehoseResourceLink from '../utils/firehoseResourceLink';
 import VmConsolesConnected from '../vmconsoles';
 import { Nic } from '../nic';
 import { Disk } from '../disk';
@@ -38,15 +36,13 @@ import { openCreateVmWizard } from '../modals/create-vm-modal';
 import { NodeLink } from '../../../components/utils';
 import { menuActions } from './menu-actions';
 
-const mainRowSize = 'col-lg-3 col-md-3 col-sm-6 col-xs-6';
-const otherRowSize = 'col-lg-2 col-md-2 hidden-sm hidden-xs';
+const mainRowSize = 'col-lg-4 col-md-4 col-sm-6 col-xs-6';
+const otherRowSize = 'col-lg-4 col-md-4 hidden-sm hidden-xs';
 
 const VMHeader = props => <ListHeader>
   <ColHead {...props} className={mainRowSize} sortField="metadata.name">Name</ColHead>
   <ColHead {...props} className={otherRowSize} sortField="metadata.namespace">Namespace</ColHead>
   <ColHead {...props} className={mainRowSize} sortField="spec.running">State</ColHead>
-  <ColHead {...props} className={otherRowSize}>Virtual Machine Instance</ColHead>
-  <ColHead {...props} className={otherRowSize}>Pod</ColHead>
 </ListHeader>;
 
 const StateColumn = ({ loaded, vm, resources }) => {
@@ -61,7 +57,6 @@ const StateColumn = ({ loaded, vm, resources }) => {
 };
 
 export const VMRow = ({obj: vm}) => {
-  const vmiResource = getResourceKind(VirtualMachineInstanceModel, vm.metadata.name, true, vm.metadata.namespace, false);
   const podResources = getResourceKind(PodModel, undefined, true, vm.metadata.namespace, true, getLabelMatcher(vm));
   const migrationResources = getResourceKind(VirtualMachineInstanceMigrationModel, undefined, true, vm.metadata.namespace, false);
 
@@ -75,16 +70,6 @@ export const VMRow = ({obj: vm}) => {
     <div className={mainRowSize}>
       <Firehose resources={[podResources, migrationResources]}>
         <StateColumn vm={vm} />
-      </Firehose>
-    </div>
-    <div className={otherRowSize}>
-      <Firehose resources={[vmiResource]} flatten={getFlattenForKind(VirtualMachineInstanceModel.kind)}>
-        <FirehoseResourceLink />
-      </Firehose>
-    </div>
-    <div className={otherRowSize}>
-      <Firehose resources={[podResources]} flatten={getFlattenForKind(PodModel.kind)}>
-        <FirehoseResourceLink filter={data => findPod(data, vm.metadata.name, VIRT_LAUNCHER_POD_PREFIX)} />
       </Firehose>
     </div>
     <div className="dropdown-kebab-pf">
