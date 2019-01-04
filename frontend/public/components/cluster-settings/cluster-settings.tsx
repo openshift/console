@@ -175,9 +175,9 @@ const ClusterVersionDetailsTable: React.SFC<ClusterVersionDetailsTableProps> = (
     <div className="co-m-pane__body-group">
       <dl className="co-m-pane__details">
         <dt>Cluster ID</dt>
-        <dd>{cv.spec.clusterID}</dd>
+        <dd className="co-break-all">{cv.spec.clusterID}</dd>
         <dt>Current Payload</dt>
-        <dd>{_.get(cv, 'status.current.payload')}</dd>
+        <dd className="co-break-all">{_.get(cv, 'status.current.payload')}</dd>
         <dt>Cluster Autoscaler</dt>
         <dd>
           {_.isEmpty(autoscalers)
@@ -199,7 +199,7 @@ const pages = [{
   component: ClusterVersionDetailsTable,
 }, {
   href: 'globalconfig',
-  name: 'Global Config',
+  name: 'Global Configuration',
   component: GlobalConfigPage,
 }, {
   href: 'clusteroperators',

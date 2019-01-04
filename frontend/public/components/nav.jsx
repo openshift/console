@@ -271,6 +271,7 @@ const rolebindingsStartsWith = ['rolebindings', 'clusterrolebindings'];
 const quotaStartsWith = ['resourcequotas', 'clusterresourcequotas'];
 const imagestreamsStartsWith = ['imagestreams', 'imagestreamtags'];
 const monitoringAlertsStartsWith = ['monitoring/alerts', 'monitoring/alertrules'];
+const clusterSettingsStartsWith = ['settings/cluster', 'config.openshift.io'];
 
 const MonitoringNavSection_ = ({ urls }) => {
   const prometheusURL = urls[MonitoringRoutes.Prometheus];
@@ -371,7 +372,7 @@ export const Navigation = ({ isNavOpen, onNavSelect }) => {
           <ResourceClusterLink resource="nodes" name="Nodes" required={FLAGS.CAN_LIST_NODE} />
           <ResourceNSLink resource={referenceForModel(MachineSetModel)} name="Machine Sets" required={FLAGS.CLUSTER_API} />
           <ResourceNSLink resource={referenceForModel(MachineModel)} name="Machines" required={FLAGS.CLUSTER_API} />
-          <HrefLink href="/settings/cluster" activePath="/settings/cluster/" name="Cluster Settings" required={FLAGS.CLUSTER_VERSION} />
+          <HrefLink href="/settings/cluster" activePath="/settings/cluster/" name="Cluster Settings" required={FLAGS.CLUSTER_VERSION} startsWith={clusterSettingsStartsWith} />
           <ResourceNSLink resource="serviceaccounts" name="Service Accounts" />
           <ResourceNSLink resource="roles" name="Roles" startsWith={rolesStartsWith} />
           <ResourceNSLink resource="rolebindings" name="Role Bindings" startsWith={rolebindingsStartsWith} />
