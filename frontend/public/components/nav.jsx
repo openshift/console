@@ -265,7 +265,7 @@ const rolebindingsStartsWith = ['rolebindings', 'clusterrolebindings'];
 const quotaStartsWith = ['resourcequotas', 'clusterresourcequotas'];
 const imagestreamsStartsWith = ['imagestreams', 'imagestreamtags'];
 const monitoringAlertsStartsWith = ['monitoring/alerts', 'monitoring/alertrules'];
-const clusterSettingsStartsWith = ['settings/cluster', 'config.openshift.io'];
+const clusterSettingsStartsWith = ['settings/cluster', 'settings/idp', 'config.openshift.io'];
 
 const monitoringNavSectionStateToProps = (state) => ({
   canAccess: !!state[featureReducerName].get(FLAGS.CAN_GET_NS),
