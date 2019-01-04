@@ -1,5 +1,11 @@
 .co-empty__header {
-  width: auto;
+  padding: 0;
+  width: 28px;
+}
+
+.pairs-list__action {
+  padding: 0;
+  width: 28px;
 }
 
 .pairs-list__row {
@@ -43,11 +49,11 @@
 
 .pairs-list__side-btn {
   cursor: pointer;
-  padding-right: 8px;
 }
 
 .pairs-list__action-icon {
-  padding-right: 0;
+  color: $color-pf-black-900;
+  margin-left: 8px;
   width: auto;
 }
 
@@ -65,5 +71,7 @@
 }
 
 .pairs-list__span-btns {
+  color: $color-pf-black-900;
+  margin-left: -8px;
   white-space: pre;
 }
