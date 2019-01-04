@@ -198,7 +198,7 @@ describe(RouteStatus.displayName, () => {
 
     const wrapper = mount(<RouteStatus obj={route} />);
     expect(wrapper.find('.pficon-ok').exists()).toBe(true);
-    expect(wrapper.text()).toEqual(' Accepted');
+    expect(wrapper.text()).toEqual('Accepted');
   });
 
   it('renders Rejected status', () => {
@@ -225,7 +225,7 @@ describe(RouteStatus.displayName, () => {
 
     const wrapper = mount(<RouteStatus obj={route} />);
     expect(wrapper.find('.pficon-error-circle-o').exists()).toBe(true);
-    expect(wrapper.text()).toEqual(' Rejected');
+    expect(wrapper.text()).toEqual('Rejected');
   });
 
   it('renders Pending status', () => {
@@ -239,6 +239,6 @@ describe(RouteStatus.displayName, () => {
 
     const wrapper = mount(<RouteStatus obj={route} />);
     expect(wrapper.find('.fa-hourglass-half').exists()).toBe(true);
-    expect(wrapper.text()).toEqual(' Pending');
+    expect(wrapper.text()).toEqual('Pending');
   });
 });
