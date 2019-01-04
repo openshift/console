@@ -1,7 +1,8 @@
+/* eslint-disable no-undef, no-unused-vars */
+
 import * as React from 'react';
 import * as classNames from 'classnames';
 import { NativeTypes } from 'react-dnd-html5-backend';
-// eslint-disable-next-line no-unused-vars
 import { DropTarget, ConnectDropTarget, DropTargetMonitor } from 'react-dnd';
 import withDragDropContext from './drag-drop-context';
 
@@ -41,7 +42,7 @@ export class FileInput extends React.Component<FileInputProps, FileInputState> {
     this.readFile(event.target.files[0]);
   }
   render() {
-    const { connectDropTarget, isOver, canDrop, id, isRequired } = this.props;
+    const { connectDropTarget, errorMessage, hideContents, isOver, canDrop, id, isRequired } = this.props;
     const klass = classNames('co-file-dropzone-container', {'co-file-dropzone--drop-over': isOver});
     return (
       connectDropTarget(
@@ -66,14 +67,14 @@ export class FileInput extends React.Component<FileInputProps, FileInputState> {
                 </span>
               </div>
               <p className="help-block" id={`${id}-help`}>{this.props.inputFieldHelpText}</p>
-              <textarea className="form-control co-file-dropzone__textarea"
+              {!hideContents && <textarea className="form-control co-file-dropzone__textarea"
                 onChange={this.onDataChange}
                 value={this.props.inputFileData}
                 aria-describedby={`${id}-textarea-help`}
                 required={isRequired}>
-              </textarea>
+              </textarea>}
               <p className="help-block" id={`${id}-textarea-help`}>{this.props.textareaFieldHelpText}</p>
-              { this.props.errorMessage && <div className="text-danger">{this.props.errorMessage}</div> }
+              { errorMessage && <div className="text-danger">{errorMessage}</div> }
             </div>
           </div>
         </div>
@@ -148,38 +149,42 @@ export const DroppableFileInput = withDragDropContext(class DroppableFileInput e
       inputFileName={this.state.inputFileName} />;
   }
 });
-/* eslint-disable no-undef */
+
 export type DroppableFileInputProps = {
-  inputFileData: string,
-  onChange: Function,
-  label: string,
-  id: string,
-  inputFieldHelpText: string,
-  textareaFieldHelpText: string,
-  isRequired: boolean,
+  inputFileData: string;
+  onChange: Function;
+  label: string;
+  id: string;
+  inputFieldHelpText: string;
+  textareaFieldHelpText: string;
+  isRequired: boolean;
+  hideContents?: boolean;
 };
+
 export type DroppableFileInputState = {
-  inputFileData: string,
-  inputFileName: string,
-  errorMessage?: any,
+  inputFileData: string;
+  inputFileName: string;
+  errorMessage?: any;
 };
+
 export type FileInputState = {
-  inputFileData: string,
-  inputFileName: string,
+  inputFileData: string;
+  inputFileName: string;
 };
+
 export type FileInputProps = {
-  errorMessage: string,
-  connectDropTarget?: ConnectDropTarget,
-  isOver?: boolean,
-  canDrop?: boolean,
-  onDrop: (props: FileInputProps, monitor: DropTargetMonitor) => void,
-  inputFileData: string,
-  inputFileName: string,
-  onChange: Function,
-  label: string,
-  id: string,
-  inputFieldHelpText: string,
-  textareaFieldHelpText: string,
-  isRequired: boolean,
+  errorMessage: string;
+  connectDropTarget?: ConnectDropTarget;
+  isOver?: boolean;
+  canDrop?: boolean;
+  onDrop: (props: FileInputProps, monitor: DropTargetMonitor) => void;
+  inputFileData: string;
+  inputFileName: string;
+  onChange: Function;
+  label: string;
+  id: string;
+  inputFieldHelpText: string;
+  textareaFieldHelpText: string;
+  isRequired: boolean;
+  hideContents?: boolean;
 };
-/* eslint-enable no-undef */

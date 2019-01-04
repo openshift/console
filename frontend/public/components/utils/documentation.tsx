@@ -8,14 +8,16 @@ export const openshiftHelpBase = (window as any).SERVER_FLAGS.documentationBaseU
 
 /* global
   HELP_TOPICS: false,
+  COMPUTE_RESOURCES_QUOTA: false,
+  CONFIGURING_AUTHENTICATION: false,
   GET_STARTED_CLI: false,
   NETWORK_POLICY_GUIDE: false,
-  COMPUTE_RESOURCES_QUOTA: false,
  */
 export enum HELP_TOPICS {
+  COMPUTE_RESOURCES_QUOTA = 'dev_guide/compute_resources.html#dev-compute-resources',
+  CONFIGURING_AUTHENTICATION = 'install_config/configuring_authentication.html',
   GET_STARTED_CLI = 'cli_reference/get_started_cli.html',
   NETWORK_POLICY_GUIDE = 'admin_guide/managing_networking.html#admin-guide-networking-networkpolicy',
-  COMPUTE_RESOURCES_QUOTA = 'dev_guide/compute_resources.html#dev-compute-resources',
 }
 
 export const helpLink = (topic: HELP_TOPICS) => `${openshiftHelpBase}${topic}`;

@@ -884,3 +884,17 @@ export const ClusterAutoscalerModel: K8sKind = {
   id: 'clusterautoscaler',
   crd: true,
 };
+
+export const OAuthModel: K8sKind = {
+  label: 'OAuth',
+  labelPlural: 'OAuths',
+  apiVersion: 'v1',
+  path: 'oauths',
+  apiGroup: 'config.openshift.io',
+  plural: 'oauths',
+  abbr: 'OA',
+  namespaced: false,
+  kind: 'OAuth',
+  id: 'oauth',
+  crd: true,
+};

@@ -57,3 +57,6 @@ export const deleteModal = (props) => import('./delete-modal' /* webpackChunkNam
 
 export const clusterUpdateModal = (props) => import('./cluster-update-modal' /* webpackChunkName: "cluster-update-modal" */)
   .then(m => m.clusterUpdateModal(props));
+
+export const addIDPModal = (props) => import('./add-idp-modal' /* webpackChunkName: "add-idp-modal" */)
+  .then(m => m.addIDPModal(props));

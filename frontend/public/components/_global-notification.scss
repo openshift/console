@@ -11,7 +11,7 @@ $global-notification-text: $color-pf-white;
     padding: 6px $grid-gutter-width;
   }
 
-  a {
+  a, .btn-link {
     color: $global-notification-text;
     cursor: pointer;
     text-decoration: underline;

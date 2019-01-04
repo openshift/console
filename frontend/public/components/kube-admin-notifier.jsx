@@ -4,6 +4,12 @@ import { connect } from 'react-redux';
 
 import { userStateToProps } from '../ui/ui-reducers';
 import { KUBE_ADMIN_USERNAME } from '../const';
+import { addIDPModal } from './modals';
+
+const addIDP = (e) => {
+  e.preventDefault();
+  addIDPModal({});
+};
 
 export const KubeAdminNotifier = connect(userStateToProps)(({user}) => {
   const username = _.get(user, 'metadata.name');
@@ -11,7 +17,9 @@ export const KubeAdminNotifier = connect(userStateToProps)(({user}) => {
     ? <div className="co-global-notification">
       <div className="co-global-notification__content">
         <p className="co-global-notification__text">
-          You are logged in as a temporary administrative user. Set up an identity provider to allow others to log in.
+          You are logged in as a temporary administrative user.
+          Add an identity provider to allow others to log in.
+          <button className="btn btn-link" type="button" onClick={addIDP}>Add Identity Provider</button>
         </p>
       </div>
     </div>
