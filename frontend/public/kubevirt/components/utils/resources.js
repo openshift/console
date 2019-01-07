@@ -1,8 +1,10 @@
+/* eslint-disable no-console */
 import * as _ from 'lodash-es';
 import { getCSRFToken } from '../../../co-fetch';
 import { k8sBasePath } from '../../module/okdk8s';
 
 import { VirtualMachineInstanceMigrationModel, VirtualMachineInstanceModel, PodModel } from '../../models';
+import { TEMPLATE_VM_NAME_LABEL, DEFAULT_RDP_PORT } from 'kubevirt-web-ui-components';
 
 export const getResourceKind = (model, name, namespaced, namespace, isList, matchLabels, matchExpressions) => {
   const res = { kind:model.kind, namespaced, namespace, isList, prop: model.kind};
@@ -37,6 +39,18 @@ export const findVMIMigration = (data, vmiName) => {
   return migrations.find(m => !_.get(m, 'status.completed') && !_.get(m, 'status.failed') );
 };
 
+const findPortOfService = (service, targetPort) => _.get(service, ['spec', 'ports'], [])
+  .find(servicePort => targetPort === servicePort.targetPort);
+
+/*
+ See web-ui-components, request.js:addMetadata() for automatic VM name label addition to match the selector
+ */
+const findVMServiceWithPort = (vmi, allServices, targetPort) => (allServices || [])
+  .find(service =>
+    _.get(vmi, 'metadata.name') === _.get(service, ['spec', 'selector', TEMPLATE_VM_NAME_LABEL])
+    && !!findPortOfService(service, targetPort)
+  );
+
 export const getFlattenForKind = (kind) => {
   return resources => _.get(resources, kind, {}).data;
 };
@@ -65,6 +79,10 @@ const getConsoleApiQuery = () => `?x-csrf-token=${encodeURIComponent(getCSRFToke
 const isEncrypted = () => window.location.protocol === 'https:';
 
 export const getVncConnectionDetails = vmi => {
+  if (!vmi) {
+    return undefined;
+  }
+
   // the novnc library requires protocol to be specified so the URL must be absolute - including host:port
   return {
     encrypt: isEncrypted(), // whether ws or wss to be used
@@ -73,10 +91,23 @@ export const getVncConnectionDetails = vmi => {
 
     // Example: ws://localhost:9000/api/kubernetes/apis/subresources.kubevirt.io/v1alpha2/namespaces/kube-system/virtualmachineinstances/vm-cirros1/vnc
     path: `${getConsoleApiContext()}/${getConsoleApiPath(vmi)}/vnc${getConsoleApiQuery()}`,
+
+    manual: undefined, // so far unsupported
+    /* TODO: Desktop viewer connection needs general agreement by the Kubevirt community how to expose the VNC port for clients without WS
+      {
+      address: 'Service not exposed',
+      port: undefined,
+      tlsPort: undefined,
+    },
+    */
   };
 };
 
 export const getSerialConsoleConnectionDetails = vmi => {
+  if (!vmi) {
+    return undefined;
+  }
+
   const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
   return {
     vmi,
@@ -84,3 +115,73 @@ export const getSerialConsoleConnectionDetails = vmi => {
     path: `/${getConsoleApiContext()}/${getConsoleApiPath(vmi)}/console`, // CSRF Token will be added in WSFactory
   };
 };
+
+const getRdpAddressPort = (rdpService, launcherPod) => {
+  const rdpPortObj = findPortOfService(rdpService, DEFAULT_RDP_PORT);
+  if (!rdpPortObj) {
+    return null;
+  }
+
+  const port = _.get(rdpPortObj, 'port');
+  let address;
+  switch (_.get(rdpService, 'spec.type')) {
+    case 'LoadBalancer':
+      address = _.get(rdpService, 'spec.externalIPs[0]');
+      if (!address) {
+        console.warn('External IP is not defined for the LoadBalancer RDP Service: ', rdpService);
+      }
+      break;
+    case 'ClusterIP':
+      address = _.get(rdpService, 'spec.clusterIP');
+      if (!address) {
+        console.warn('Cluster IP is not defined for the ClusterIP RDP Service: ', rdpService);
+      }
+      break;
+    case 'NodePort':
+      if (launcherPod) {
+        address = _.get(launcherPod, 'status.hostIP');
+      }
+      if (!address) {
+        console.warn('Node IP (launcherpod.status.hostIP) is not yet known for NodePort RDP Service: ', rdpService);
+      }
+      break;
+    default:
+      console.error('Unrecognized Service type: ', rdpService);
+  }
+
+  if (!address) {
+    return null;
+  }
+
+  console.log('RDP requested for: ', address, port);
+  return {
+    address,
+    port,
+  };
+};
+
+/**
+ * Finds Service for the VM/VMI which is exposing the RDP port.
+ * Returns undefined or single first match.
+ *
+ * To pair service with VM, selector must be set on the Service object:
+ *   spec:
+ *     selector:
+ *       vm.cnv.io/name: VM_NAME
+ *
+ * https://kubevirt.io/user-guide/docs/latest/using-virtual-machines/expose-service.html
+ * virtctl expose virtualmachine [VM_NAME] --name [MY_SERVICE_NAME] --port 27017 --target-port 3389
+ */
+export const findRDPService = (vmi, allServices) => findVMServiceWithPort(vmi, allServices, DEFAULT_RDP_PORT);
+
+export const getRdpConnectionDetails = (vmi, rdpService, launcherPod) => {
+  if (!vmi || !rdpService) {
+    return undefined;
+  }
+
+  return {
+    vmi,
+    manual: getRdpAddressPort(rdpService, launcherPod),
+  };
+};
+

@@ -1,42 +1,74 @@
 import React from 'react';
 
-import { getResourceKind, getVncConnectionDetails, getSerialConsoleConnectionDetails, getFlattenForKind } from './utils/resources';
+import {
+  getResourceKind,
+  getVncConnectionDetails,
+  getSerialConsoleConnectionDetails,
+  getRdpConnectionDetails,
+  findRDPService, getLabelMatcher, findPod,
+} from './utils/resources';
 
-import { Firehose } from './utils/okdutils';
+import { VmConsoles, isWindows } from 'kubevirt-web-ui-components';
 import { LoadingInline } from './okdcomponents';
 import { WSFactory } from '../module/okdk8s';
-
-import { VirtualMachineInstanceModel, VirtualMachineModel } from '../models';
 import { startStopVmModal } from './modals/start-stop-vm-modal';
+import { WithResources } from './utils/withResources';
 
-import { VmConsoles } from 'kubevirt-web-ui-components';
+import {
+  VirtualMachineInstanceModel,
+  VirtualMachineModel,
+  ServiceModel, PodModel,
+} from '../models';
+import { VIRT_LAUNCHER_POD_PREFIX } from './utils/constants';
 
-/**
- * Helper component to keep VmConsoles dependent on VMI only.
- */
-const FirehoseVmConsoles = props => {
-  const vmi = props.flatten(props.resources);
-  const vm = props.vm;
-
+const VmConsoles_ = ({ vm, vmi, services, pods }) => {
   const onStartVm = () => startStopVmModal({
     kind: VirtualMachineModel,
     resource: vm,
     start: true,
   });
 
-  return <VmConsoles vm={vm} vmi={vmi} onStartVm={onStartVm} getVncConnectionDetails={getVncConnectionDetails} getSerialConsoleConnectionDetails={getSerialConsoleConnectionDetails} LoadingComponent={LoadingInline} WSFactory={WSFactory} />;
+  let rdp;
+  if (isWindows(vm)) {
+    const rdpService = findRDPService(vmi, services);
+    const launcherPod = findPod(pods, vm.metadata.name, VIRT_LAUNCHER_POD_PREFIX);
+    rdp = getRdpConnectionDetails(vmi, rdpService, launcherPod);
+  }
+
+  return <VmConsoles vm={vm}
+    vmi={vmi}
+    onStartVm={onStartVm}
+    vnc={getVncConnectionDetails(vmi)}
+    serial={getSerialConsoleConnectionDetails(vmi)}
+    rdp={rdp}
+    LoadingComponent={LoadingInline}
+    WSFactory={WSFactory} />;
 };
 
 /**
  * Wrapper for VmConsoles performing asynchronous loading of API resources.
  */
-const VmConsolesConnected = ({ obj: vm }) => {
-  const vmiResource = getResourceKind(VirtualMachineInstanceModel, vm.metadata.name, true, vm.metadata.namespace, false);
+const ConnectedVmConsoles = ({ obj: vm }) => {
+  const resourceMap = {
+    vmi: {
+      resource: getResourceKind(VirtualMachineInstanceModel, vm.metadata.name, true, vm.metadata.namespace, false),
+      ignoreErrors: true,
+    },
+    services: {
+      // We probably can not simply match on labels but on Service's spec.selector.[kubevirt/vm] to achieve robust pairing VM-Service.
+      // So read all services and filter on frontend.
+      resource: getResourceKind(ServiceModel, undefined, true, vm.metadata.namespace, true),
+    },
+    pods: {
+      resource: getResourceKind(PodModel, undefined, true, vm.metadata.namespace, true, getLabelMatcher(vm)),
+    },
+  };
+
   return (
-    <Firehose resources={[vmiResource]} flatten={getFlattenForKind(VirtualMachineInstanceModel.kind)}>
-      <FirehoseVmConsoles vm={vm} />
-    </Firehose>
+    <WithResources resourceMap={resourceMap}>
+      <VmConsoles_ vm={vm} />
+    </WithResources>
   );
 };
 
-export default VmConsolesConnected;
+export default ConnectedVmConsoles;
