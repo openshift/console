@@ -12,7 +12,7 @@ import { ResourceEventStream } from '../okdcomponents';
 import { ListHeader, ColHead, List, ListPage, ResourceRow, DetailsPage } from '../factory/okdfactory';
 import { breadcrumbsForOwnerRefs, Firehose, ResourceLink, navFactory, ResourceKebab } from '../utils/okdutils';
 import { WithResources } from '../utils/withResources';
-import { actions } from '../../module/okdk8s';
+import { actions, k8sPatch, k8sGet } from '../../module/okdk8s';
 import {
   VirtualMachineInstanceModel,
   VirtualMachineModel,
@@ -33,7 +33,7 @@ import VmConsolesConnected from '../vmconsoles';
 import { Nic } from '../nic';
 import { Disk } from '../disk';
 import { openCreateVmWizard } from '../modals/create-vm-modal';
-import { NodeLink } from '../../../components/utils';
+import { NodeLink, LoadingInline } from '../../../components/utils';
 import { menuActions } from './menu-actions';
 
 const mainRowSize = 'col-lg-4 col-md-4 col-sm-6 col-xs-6';
@@ -150,6 +150,9 @@ const VmDetails_ = props => {
       migration={migration}
       pods={pods}
       vmi={vmi}
+      k8sPatch={k8sPatch}
+      k8sGet={k8sGet}
+      LoadingComponent={LoadingInline}
     />);
 };
 
