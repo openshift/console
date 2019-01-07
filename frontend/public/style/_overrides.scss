@@ -251,6 +251,7 @@ tags-input .autocomplete .suggestion-item em {
   --pf-l-page__sidebar--BackgroundColor: #{$color-pf-black-900};
   --pf-l-page__sidebar--PaddingBottom: 0;
   --pf-l-page__sidebar--PaddingTop: 0;
+  position: relative; // fix z-index bug in Edge
 
   @media screen and (min-width: $grid-float-breakpoint) {
     --pf-l-page__sidebar--BoxShadow: none;
@@ -306,6 +307,7 @@ tags-input .autocomplete .suggestion-item em {
   }
 
   .pf-c-nav__list {
+    list-style: none; // turn off list-styles to fix bug in Edge
     > .pf-c-nav__item {
       border-bottom: 1px solid #{$color-pf-black};
       font-size: 14px;
