@@ -2,12 +2,12 @@ import React from 'react';
 import * as _ from 'lodash-es';
 import { VmTemplateModel, NamespaceModel } from '../../models/index';
 import { ListPage, List, ResourceRow, ListHeader, ColHead } from '../factory/okdfactory';
-import { ResourceLink, ResourceKebab, Kebab } from '../utils/okdutils';
+import { ResourceLink, ResourceKebab } from '../utils/okdutils';
 import { DASHES } from '../utils/constants';
 import { openCreateVmWizard } from '../modals/create-vm-modal';
 import { TemplateSource, getTemplateOperatingSystems, getTemplateFlavors } from 'kubevirt-web-ui-components';
+import { menuActions } from './menu-actions';
 
-const menuActions = [Kebab.factory.Delete];
 const mainRowStyle = 'col-lg-2 col-sm-4 col-xs-4';
 const otherRowStyle = 'col-lg-2 hidden-sm hidden-xs';
 
