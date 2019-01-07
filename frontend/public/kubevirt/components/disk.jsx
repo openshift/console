@@ -229,18 +229,16 @@ export class Disk extends React.Component {
     const vm = this.props.obj;
     const storages = this.getStorages(vm);
     const alert = _.get(this.state.newStorage, 'error') && <Alert onDismiss={this._errorDismissHandler}>{this.state.newStorage.error}</Alert>;
-    return <React.Fragment>
-      <div className="co-m-list">
-        <div className="co-m-pane__filter-bar">
-          <div className="co-m-pane__filter-bar-group">
-            <Button bsStyle="primary" id="create-disk-btn" onClick={this._createStorageHandler} disabled={!!this.state.newStorage}>Create Disk</Button>
-          </div>
-        </div>
-        <div className="co-m-pane__body">
-          {alert}
-          <List data={storages} Header={DiskHeader} Row={this.DiskRow} loaded={true} />
+    return <div className="co-m-list">
+      <div className="co-m-pane__filter-bar">
+        <div className="co-m-pane__filter-bar-group">
+          <Button bsStyle="primary" id="create-disk-btn" onClick={this._createStorageHandler} disabled={!!this.state.newStorage}>Create Disk</Button>
         </div>
       </div>
-    </React.Fragment>;
+      <div className="co-m-pane__body">
+        {alert}
+        <List data={storages} Header={DiskHeader} Row={this.DiskRow} loaded={true} />
+      </div>
+    </div>;
   }
 }

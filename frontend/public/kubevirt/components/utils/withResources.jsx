@@ -1,6 +1,8 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
 import * as _ from 'lodash-es';
+import { connect } from 'react-redux';
+import { Map as ImmutableMap } from 'immutable';
 
 import { Firehose } from '../utils/okdutils';
 import { inject } from '../../../components/utils';
@@ -97,14 +99,25 @@ Resources.propTypes = {
   showLoader: PropTypes.bool,
 };
 
+const stateToProps = ({k8s}, {resourceMap}) => {
+  const resources = Object.keys(resourceMap).map(k => resourceMap[k].resource);
+  return {
+    k8sModels: resources.reduce((models, {kind}) => models.set(kind, k8s.getIn(['RESOURCES', 'models', kind])), ImmutableMap()),
+  };
+};
 
-export const WithResources = ({resourceMap, children, ...rest}) => (
-  <Firehose resources={Object.keys(resourceMap).map(k => resourceMap[k].resource)}>
-    <Resources resourceMap={resourceMap} {...rest}>
-      {children}
-    </Resources>
-  </Firehose>
-);
+
+export const WithResources = connect(stateToProps)(({ resourceMap, k8sModels, children, ...rest }) => {
+  const kindExists = Object.keys(resourceMap).some(key => k8sModels.get(resourceMap[key].resource.kind));
+
+  const resourceComponent = <Resources resourceMap={resourceMap} {...rest}>{children}</Resources>;
+  // firehose renders null if kind does not exist
+  return kindExists
+    ? (<Firehose resources={Object.keys(resourceMap).map(k => resourceMap[k].resource)}>
+      {resourceComponent}
+    </Firehose>)
+    : resourceComponent;
+});
 
 WithResources.defaultProps = {
   showLoader: false,
