@@ -145,6 +145,8 @@ $catalog-item-icon-size-sm: 24px;
 
   &__overlay-create {
     margin-bottom: 20px;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
     width: 100%;
   }
 
