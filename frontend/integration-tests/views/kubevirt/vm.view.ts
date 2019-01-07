@@ -12,9 +12,8 @@ export const namespaceMenu = $('#namespace-dropdown + ul');
 export const provisionSourceButton = $('#image-source-type-dropdown');
 export const provisionSourceMenu = $('#image-source-type-dropdown + ul');
 
-export const provisionSourceURL = $('.wizard-pf-row .form-group:nth-child(5) input');
-export const diskSize = $('.wizard-pf-row .form-group:nth-child(6) input');
-export const registryImage = $('.wizard-pf-row .form-group:nth-child(5) input');
+export const provisionSourceURL = $('#provision-source-url');
+export const provisionSourceContainerImage = $('#provision-source-container');
 
 export const templateButton = $('#template-dropdown');
 export const templateMenu = $('#template-dropdown + ul');
