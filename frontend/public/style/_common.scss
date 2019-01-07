@@ -63,7 +63,7 @@
 
 .co-m-pane__filter-bar-group--filter {
   @media(min-width: $screen-xs-min) {
-    flex: 1 1 auto;
+    flex: 1 0 auto;
     justify-content: flex-end;
   }
 }
