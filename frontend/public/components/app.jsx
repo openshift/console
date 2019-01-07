@@ -29,7 +29,7 @@ import '../style.scss';
 
 import { KubevirtDefaultPage } from '../kubevirt/components/app';
 import { isKubevirt } from '../kubevirt/components/utils/selectors';
-import { VirtualMachineTemplatesPage } from '../kubevirt/components/vm-template';
+import { VirtualMachineTemplatesPage } from '../kubevirt/components/vm-template/vm-template';
 
 //PF4 Imports
 import {

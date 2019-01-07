@@ -1,10 +1,10 @@
 import React from 'react';
 import * as _ from 'lodash-es';
-import { VmTemplateModel, NamespaceModel } from '../models';
-import { ListPage, List, ResourceRow, ListHeader, ColHead } from './factory/okdfactory';
-import { ResourceLink, ResourceKebab, Kebab } from './utils/okdutils';
-import { DASHES } from './utils/constants';
-import { openCreateVmWizard } from './modals/create-vm-modal';
+import { VmTemplateModel, NamespaceModel } from '../../models/index';
+import { ListPage, List, ResourceRow, ListHeader, ColHead } from '../factory/okdfactory';
+import { ResourceLink, ResourceKebab, Kebab } from '../utils/okdutils';
+import { DASHES } from '../utils/constants';
+import { openCreateVmWizard } from '../modals/create-vm-modal';
 import { TemplateSource, getTemplateOperatingSystems, getTemplateFlavors } from 'kubevirt-web-ui-components';
 
 const menuActions = [Kebab.factory.Delete];
