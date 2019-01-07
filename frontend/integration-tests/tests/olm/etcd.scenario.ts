@@ -10,7 +10,7 @@ import * as catalogView from '../../views/olm-catalog.view';
 import * as sidenavView from '../../views/sidenav.view';
 import * as yamlView from '../../views/yaml.view';
 
-describe('Interacting with the etcd OCS', () => {
+xdescribe('Interacting with the etcd OCS', () => {
   const etcdClusterResources = new Set(['Service', 'Pod']);
   const deleteRecoveryTime = 60000;
   const etcdOperatorName = 'etcd-operator';

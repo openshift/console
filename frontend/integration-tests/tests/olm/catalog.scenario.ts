@@ -7,7 +7,7 @@ import { appHost, checkLogs, checkErrors, testName } from '../../protractor.conf
 import * as catalogView from '../../views/olm-catalog.view';
 import * as sidenavView from '../../views/sidenav.view';
 
-describe('Installing a service from a Catalog Source', () => {
+xdescribe('Installing a service from a Catalog Source', () => {
   const openCloudServices = new Set(['etcd', 'Prometheus Operator', 'AMQ Streams', 'Service Catalog', 'FederationV2']);
 
   beforeAll(async() => {

@@ -10,7 +10,7 @@ import * as catalogView from '../../views/olm-catalog.view';
 import * as sidenavView from '../../views/sidenav.view';
 import * as yamlView from '../../views/yaml.view';
 
-describe('Interacting with the Prometheus OCS', () => {
+xdescribe('Interacting with the Prometheus OCS', () => {
   const prometheusResources = new Set(['StatefulSet', 'Pod']);
   const alertmanagerResources = new Set(['StatefulSet', 'Pod']);
   const serviceMonitorResources = new Set(['Pod']);
