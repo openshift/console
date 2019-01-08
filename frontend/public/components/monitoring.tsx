@@ -120,9 +120,9 @@ const AlertState: React.SFC<AlertStateProps> = ({state}) => {
     return <span className="text-muted">Not Firing</span>;
   }
   const klass = {
-    [AlertStates.Firing]: 'fa fa-bell alert-firing',
-    [AlertStates.Silenced]: 'fa fa-bell-slash text-muted',
-    [AlertStates.Pending]: 'fa fa-bell-o alert-pending',
+    [AlertStates.Firing]: 'fa fa-fw fa-bell alert-firing',
+    [AlertStates.Silenced]: 'fa fa-fw fa-bell-slash text-muted',
+    [AlertStates.Pending]: 'fa fa-fw fa-bell-o alert-pending',
   }[state];
   return klass ? <React.Fragment><i className={klass} aria-hidden="true"></i> {_.startCase(state)}</React.Fragment> : null;
 };
@@ -130,9 +130,9 @@ const AlertState: React.SFC<AlertStateProps> = ({state}) => {
 const SilenceState = ({silence}) => {
   const state = silenceState(silence);
   const klass = {
-    [SilenceStates.Active]: 'pficon pficon-ok',
-    [SilenceStates.Pending]: 'fa fa-hourglass-half',
-    [SilenceStates.Expired]: 'fa fa-ban text-muted',
+    [SilenceStates.Active]: 'pficon pficon-ok fa-fw',
+    [SilenceStates.Pending]: 'fa fa-fw fa-hourglass-half monitoring-state-icon--pending',
+    [SilenceStates.Expired]: 'fa fa-fw fa-ban text-muted',
   }[state];
   return klass ? <React.Fragment><i className={klass} aria-hidden="true"></i> {_.startCase(state)}</React.Fragment> : null;
 };
