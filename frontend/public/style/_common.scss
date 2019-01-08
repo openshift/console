@@ -292,10 +292,10 @@
   font-size: 75%;
   height: 16px;
   position:relative;
-  margin-left: 5px;
-  margin-right: -25px; // width + margin-left
+  margin-left: 3px;
+  margin-right: -15px; // width + margin-left
   top:0;
-  width: 20px;
+  width: 12px;
 
   .pf-c-nav__link & {
     color: $color-pf-black-500;
@@ -303,7 +303,7 @@
 }
 .co-external-link {
   display: inline-block;
-  padding-right: 25px;
+  padding-right: 15px;
 }
 // Enable break word within co-m-table-grid
 .co-external-link--block {
