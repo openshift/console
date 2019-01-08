@@ -54,8 +54,8 @@ export class CatalogTileDetails extends React.Component {
     const creationTimestamp = _.get(obj, 'metadata.creationTimestamp');
 
     const supportUrlLink = <a href={supportUrl} target="_blank" className="co-external-link" rel="noopener noreferrer">Get Support</a>;
-    const documentationUrlLink = <a href={documentationUrl} target="_blank" className="co-external-link" rel="noopener noreferrer">{documentationUrl}</a>;
-    const sampleRepoLink = <a href={sampleRepo} target="_blank" className="co-external-link" rel="noopener noreferrer">{sampleRepo}</a>;
+    const documentationUrlLink = <a href={documentationUrl} target="_blank" className="co-external-link co-break-all" rel="noopener noreferrer">{documentationUrl}</a>;
+    const sampleRepoLink = <a href={sampleRepo} target="_blank" className="co-external-link co-break-all" rel="noopener noreferrer">{sampleRepo}</a>;
     const planItems = _.map(plans, plan => <li key={plan.metadata.uid}>{plan.spec.description || plan.spec.externalName}</li>);
 
     return (
