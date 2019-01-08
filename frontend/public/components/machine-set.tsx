@@ -4,7 +4,7 @@ import * as _ from 'lodash-es';
 import { Link } from 'react-router-dom';
 
 import { MachineModel, MachineSetModel } from '../models';
-import { MachineSetKind, referenceForModel } from '../module/k8s';
+import { K8sKind, MachineDeploymentKind, MachineSetKind, referenceForModel } from '../module/k8s';
 import { getMachineRole, MachinePage } from './machine';
 import { configureReplicaCountModal } from './modals';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
@@ -20,34 +20,35 @@ import {
   pluralize,
   resourcePath,
 } from './utils';
+import { breadcrumbsForOwnerRefs } from './utils/breadcrumbs';
 import { Tooltip } from './utils/tooltip';
 
-const machineReplicasModal = (resource: MachineSetKind) => configureReplicaCountModal({
-  resourceKind: MachineSetModel,
+const machineReplicasModal = (resourceKind: K8sKind, resource: MachineSetKind | MachineDeploymentKind) => configureReplicaCountModal({
+  resourceKind,
   resource,
-  message: 'Machine sets maintain the proper number of healthy machines.',
+  message: `${resourceKind.labelPlural} maintain the proper number of healthy machines.`,
 });
 
-const editCountAction: KebabAction = (kind, resource: MachineSetKind) => ({
+export const editCountAction: KebabAction = (kind: K8sKind, resource: MachineSetKind | MachineDeploymentKind) => ({
   label: 'Edit Count',
-  callback: () => machineReplicasModal(resource),
+  callback: () => machineReplicasModal(kind, resource),
 });
 
 const { common } = Kebab.factory;
 const menuActions = [editCountAction, ...common];
 const machineReference = referenceForModel(MachineModel);
 const machineSetReference = referenceForModel(MachineSetModel);
-const getAWSPlacement = (machineSet: MachineSetKind) => _.get(machineSet, 'spec.template.spec.providerSpec.value.placement') || {};
+export const getAWSPlacement = (machineSet: MachineSetKind | MachineDeploymentKind) => _.get(machineSet, 'spec.template.spec.providerSpec.value.placement') || {};
 
 // `spec.replicas` defaults to 1 if not specified. Make sure to differentiate between undefined and 0.
-const getDesiredReplicas = (machineSet: MachineSetKind) => {
+export const getDesiredReplicas = (machineSet: MachineSetKind | MachineDeploymentKind) => {
   const replicas = _.get(machineSet, 'spec.replicas');
   return _.isNil(replicas) ? 1 : replicas;
 };
 
-const getReplicas = (machineSet: MachineSetKind) => _.get(machineSet, 'status.replicas', 0);
-const getReadyReplicas = (machineSet: MachineSetKind) => _.get(machineSet, 'status.readyReplicas', 0);
-const getAvailableReplicas = (machineSet: MachineSetKind) => _.get(machineSet, 'status.availableReplicas', 0);
+const getReplicas = (machineSet: MachineSetKind | MachineDeploymentKind) => _.get(machineSet, 'status.replicas', 0);
+export const getReadyReplicas = (machineSet: MachineSetKind | MachineDeploymentKind) => _.get(machineSet, 'status.readyReplicas', 0);
+export const getAvailableReplicas = (machineSet: MachineSetKind | MachineDeploymentKind) => _.get(machineSet, 'status.availableReplicas', 0);
 
 const MachineSetHeader: React.SFC = props => <ListHeader>
   <ColHead {...props} className="col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
@@ -72,10 +73,10 @@ const MachineSetRow: React.SFC<MachineSetRowProps> = ({obj}: {obj: MachineSetKin
   </div>
 </div>;
 
-const MachineSetCounts: React.SFC<MachineSetCountsProps> = ({resource}: {resource: MachineSetKind}) => {
+export const MachineCounts: React.SFC<MachineCountsProps> = ({resourceKind, resource}: {resourceKind: K8sKind, resource: MachineSetKind | MachineDeploymentKind}) => {
   const editReplicas = (event) => {
     event.preventDefault();
-    machineReplicasModal(resource);
+    machineReplicasModal(resourceKind, resource);
   };
 
   const desiredReplicas = getDesiredReplicas(resource);
@@ -131,7 +132,7 @@ const MachineSetCounts: React.SFC<MachineSetCountsProps> = ({resource}: {resourc
   </div>;
 };
 
-const MachineTabPage: React.SFC<MachineTabPageProps> = ({obj}: {obj: MachineSetKind}) =>
+export const MachineTabPage: React.SFC<MachineTabPageProps> = ({obj}: {obj: MachineSetKind}) =>
   <MachinePage namespace={obj.metadata.namespace} showTitle={false} selector={obj.spec.selector} />;
 
 const MachineSetDetails: React.SFC<MachineSetDetailsProps> = ({obj}) => {
@@ -140,7 +141,7 @@ const MachineSetDetails: React.SFC<MachineSetDetailsProps> = ({obj}) => {
   return <React.Fragment>
     <div className="co-m-pane__body">
       <SectionHeading text="Machine Set Overview" />
-      <MachineSetCounts resource={obj} />
+      <MachineCounts resourceKind={MachineSetModel} resource={obj} />
       <ResourceSummary resource={obj} showPodSelector={false} showNodeSelector={false}>
         <dt>Selector</dt>
         <dd>
@@ -179,38 +180,43 @@ export const MachineSetPage: React.SFC<MachineSetPageProps> = props =>
     {...props}
     ListComponent={MachineSetList}
     kind={machineSetReference}
-    canCreate={false}
+    canCreate
   />;
 
 export const MachineSetDetailsPage: React.SFC<MachineSetDetailsPageProps> = props => <DetailsPage
   {...props}
+  breadcrumbsFor={obj => breadcrumbsForOwnerRefs(obj).concat({
+    name: 'Machine Set Details',
+    path: props.match.url,
+  })}
   menuActions={menuActions}
   kind={machineSetReference}
   pages={[navFactory.details(MachineSetDetails), navFactory.editYaml(), navFactory.machines(MachineTabPage)]}
 />;
 
 export type MachineSetRowProps = {
-  obj: MachineSetKind,
+  obj: MachineSetKind;
 };
 
-export type MachineSetCountsProps = {
-  resource: MachineSetKind,
+export type MachineCountsProps = {
+  resourceKind: K8sKind;
+  resource: MachineSetKind | MachineDeploymentKind;
 };
 
 export type MachineTabPageProps = {
-  obj: MachineSetKind,
+  obj: MachineSetKind;
 };
 
 export type MachineSetDetailsProps = {
-  obj: MachineSetKind,
+  obj: MachineSetKind;
 };
 
 export type MachineSetPageProps = {
-  showTitle?: boolean,
-  namespace?: string,
-  selector?: any,
+  showTitle?: boolean;
+  namespace?: string;
+  selector?: any;
 };
 
 export type MachineSetDetailsPageProps = {
-  match: any,
+  match: any;
 };

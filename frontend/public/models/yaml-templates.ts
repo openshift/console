@@ -767,4 +767,40 @@ spec:
     delayAfterAdd: 10s
     delayAfterDelete: 10s
     delayAfterFailure: 10s
+`).setIn([referenceForModel(k8sModels.MachineDeploymentModel), 'default'], `
+apiVersion: "cluster.k8s.io/v1alpha1"
+kind: MachineDeployment
+metadata:
+  name: example
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      foo: bar
+  template:
+    metadata:
+      labels:
+        foo: bar
+    spec:
+      providerSpec: {}
+      versions:
+        kubelet: ""
+`).setIn([referenceForModel(k8sModels.MachineSetModel), 'default'], `
+apiVersion: "cluster.k8s.io/v1alpha1"
+kind: MachineSet
+metadata:
+  name: example
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      foo: bar
+  template:
+    metadata:
+      labels:
+        foo: bar
+    spec:
+      providerSpec: {}
+      versions:
+        kubelet: ""
 `);

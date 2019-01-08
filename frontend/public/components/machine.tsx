@@ -3,7 +3,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 
 import { MachineModel } from '../models';
-import { MachineKind, MachineSetKind, referenceForModel } from '../module/k8s';
+import { MachineDeploymentKind, MachineKind, MachineSetKind, referenceForModel } from '../module/k8s';
 import { Conditions } from './conditions';
 import { NodeIPList } from './node';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
@@ -23,7 +23,7 @@ const menuActions = [...common];
 const machineReference = referenceForModel(MachineModel);
 const getAWSPlacement = (machine: MachineKind) => _.get(machine, 'spec.providerSpec.value.placement') || {};
 
-export const getMachineRole = (obj: MachineKind | MachineSetKind) => _.get(obj, ['metadata', 'labels', 'sigs.k8s.io/cluster-api-machine-role']);
+export const getMachineRole = (obj: MachineKind | MachineSetKind | MachineDeploymentKind) => _.get(obj, ['metadata', 'labels', 'sigs.k8s.io/cluster-api-machine-role']);
 
 const MachineHeader = props => <ListHeader>
   <ColHead {...props} className="col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
@@ -116,19 +116,19 @@ export const MachineDetailsPage: React.SFC<MachineDetailsPageProps> = props =>
   />;
 
 export type MachineRowProps = {
-  obj: MachineKind,
+  obj: MachineKind;
 };
 
 export type MachineDetailsProps = {
-  obj: MachineKind,
+  obj: MachineKind;
 };
 
 export type MachinePageProps = {
-  showTitle?: boolean,
-  namespace?: string,
-  selector?: any,
+  showTitle?: boolean;
+  namespace?: string;
+  selector?: any;
 };
 
 export type MachineDetailsPageProps = {
-  match: any,
+  match: any;
 };
