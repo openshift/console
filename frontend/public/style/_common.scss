@@ -554,28 +554,13 @@
 }
 
 .co-kebab {
-  position: relative;
   &__button {
+    border: 0; // remove so that dropdown-kebab-pf <button class="btn-link"> are aligned whether disabled or not
     padding: 0;
-    &:active,
-    &:focus,
-    &:hover {
-      .co-kebab__icon {
-        color: $color-pf-blue-400;
-      }
+
+    &[disabled] {
+      color: $color-pf-black-300 !important;
     }
-  }
-  &__dropdown {
-    margin-bottom: 10px;
-  }
-  &__icon {
-    color: $color-pf-black-700;
-    &--disabled {
-      color: $color-pf-black-300;
-    }
-  }
-  &--disabled {
-    pointer-events: none;
   }
 }
 

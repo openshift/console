@@ -2,7 +2,6 @@
 
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import { Tooltip } from './tooltip';
 
 import { annotationsModal, configureReplicaCountModal, labelsModal, podSelectorModal, deleteModal } from '../modals';
 import { DropdownMixin } from './dropdown';
@@ -81,7 +80,6 @@ export const ResourceKebab = connectToModel((props: ResourceKebabProps) => {
     options={actions.map(a => a(kindObj, resource))}
     key={resource.metadata.uid}
     isDisabled={isDisabled !== undefined ? isDisabled : _.get(resource.metadata, 'deletionTimestamp')}
-    id={`kebab-for-${resource.metadata.uid}`}
   />;
 });
 
@@ -104,24 +102,13 @@ export class Kebab extends DropdownMixin {
   }
 
   render() {
-    const {options, isDisabled, id} = this.props;
+    const {options, isDisabled} = this.props;
 
-    return <div id={id}>
-      { isDisabled ?
-        <Tooltip content="disabled">
-          <div ref={this.dropdownElement} className="co-kebab co-kebab--disabled" >
-            <span className="fa fa-ellipsis-v co-kebab__icon co-kebab__icon--disabled" aria-hidden="true"></span>
-            <span className="sr-only">Actions</span>
-          </div>
-        </Tooltip> :
-        <div ref={this.dropdownElement} className="co-kebab" >
-          <button type="button" aria-label="Actions" aria-haspopup="true" className="btn btn-link co-kebab__button" onClick={this.toggle}>
-            <span className="fa fa-ellipsis-v co-kebab__icon" aria-hidden="true"></span>
-          </button>
-          <span className="sr-only">Actions</span>
-          { this.state.active && <KebabItems options={options} onClick={this.onClick} /> }
-        </div>
-      }
+    return <div ref={this.dropdownElement} className="co-kebab">
+      <button type="button" aria-label="Actions" disabled={isDisabled} aria-haspopup="true" className="btn btn-link co-kebab__button" onClick={this.toggle}>
+        <span className="fa fa-ellipsis-v co-kebab__icon" aria-hidden="true"></span>
+      </button>
+      {(!isDisabled && this.state.active) && <KebabItems options={options} onClick={this.onClick} />}
     </div>;
   }
 }
