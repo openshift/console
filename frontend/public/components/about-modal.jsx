@@ -32,7 +32,6 @@ export class AboutModal extends React.Component {
         isOpen={isOpen}
         onClose={closeAboutModal}
         productName={details.productTitle}
-        trademark=""
         brandImageSrc={details.logoImg}
         brandImageAlt={details.logoAlt}
         logoImageSrc={details.logoImg}
