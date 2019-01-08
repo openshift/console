@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
+import { match } from 'react-router-dom';
 
 // eslint-disable-next-line no-unused-vars
 import { K8sResourceKindReference, serviceCatalogStatus } from '../module/k8s';
@@ -106,6 +107,7 @@ ServiceBindingsList.displayName = 'ServiceBindingsList';
 export const ServiceBindingsPage: React.SFC<ServiceBindingsPageProps> = props =>
   <ListPage
     {...props}
+    namespace={_.get(props.match, 'params.ns')}
     showTitle={false}
     kind={ServiceBindingsReference}
     ListComponent={ServiceBindingsList}
@@ -128,6 +130,7 @@ export type ServiceBindingsPageProps = {
   createHandler?: any,
   filters?: any,
   namespace?: string,
+  match?: match<{ns?: string}>,
   selector?: any,
   showTitle?: boolean,
 };

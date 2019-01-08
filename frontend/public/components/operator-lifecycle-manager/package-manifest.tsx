@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import { Link } from 'react-router-dom';
+import { Link, match } from 'react-router-dom';
 
 import { referenceForModel, K8sResourceKind } from '../../module/k8s';
 import { requireOperatorGroup } from './operator-group';
@@ -89,12 +89,14 @@ export const PackageManifestList = requireOperatorGroup((props: PackageManifestL
 });
 
 export const PackageManifestsPage: React.SFC<PackageManifestsPageProps> = (props) => {
+  const namespace = _.get(props.match, 'params.ns');
   type Flatten = (resources: {[kind: string]: {data: K8sResourceKind[]}}) => K8sResourceKind[];
   const flatten: Flatten = resources => _.get(resources.packageManifest, 'data', []);
   const HelpText = <p className="co-help-text">Catalogs are groups of Operators you can make available on the cluster. Subscribe and grant a namespace access to use the installed Operators.</p>;
 
   return <MultiListPage
     {...props}
+    namespace={namespace}
     showTitle={false}
     helpText={HelpText}
     ListComponent={(listProps: PackageManifestListProps) => <PackageManifestList {...listProps} showDetailsLink={true} />}
@@ -110,6 +112,7 @@ export const PackageManifestsPage: React.SFC<PackageManifestsPageProps> = (props
 
 export type PackageManifestsPageProps = {
   namespace?: string;
+  match?: match<{ns?: string}>;
 };
 
 export type PackageManifestListProps = {

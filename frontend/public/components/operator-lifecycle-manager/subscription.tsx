@@ -73,17 +73,19 @@ export const SubscriptionsList = requireOperatorGroup((props: SubscriptionsListP
   EmptyMsg={() => <MsgBox title="No Subscriptions Found" detail="Each namespace can subscribe to a single channel of a package for automatic updates." />} />);
 
 export const SubscriptionsPage: React.SFC<SubscriptionsPageProps> = (props) => {
+  const namespace = _.get(props.match, 'params.ns');
   return <MultiListPage
     {...props}
+    namespace={namespace}
     resources={[
-      {kind: referenceForModel(SubscriptionModel), namespace: props.namespace, namespaced: true, prop: 'subscription'},
-      {kind: referenceForModel(OperatorGroupModel), namespace: props.namespace, namespaced: true, prop: 'operatorGroup'},
+      {kind: referenceForModel(SubscriptionModel), namespace, namespaced: true, prop: 'subscription'},
+      {kind: referenceForModel(OperatorGroupModel), namespace, namespaced: true, prop: 'operatorGroup'},
     ]}
     flatten={resources => _.get(resources.subscription, 'data', [])}
     title="Subscriptions"
     showTitle={false}
     canCreate={true}
-    createProps={{to: props.namespace ? `/k8s/ns/${props.namespace}/${referenceForModel(PackageManifestModel)}` : `/k8s/all-namespaces/${referenceForModel(PackageManifestModel)}`}}
+    createProps={{to: namespace ? `/k8s/ns/${namespace}/${referenceForModel(PackageManifestModel)}` : `/k8s/all-namespaces/${referenceForModel(PackageManifestModel)}`}}
     createButtonText="Create Subscription"
     ListComponent={SubscriptionsList}
     filterLabel="Subscriptions by package" />;
