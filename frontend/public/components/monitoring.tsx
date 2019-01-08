@@ -227,7 +227,7 @@ const AlertsDetailsPage = withFallback(connect(alertStateToProps)((props: Alerts
                 <dd>
                   <div className="co-resource-link">
                     <MonitoringResourceIcon resource={AlertRuleResource} />
-                    <Link to={ruleURL(rule)} className="co-resource-link__resource-name">{alertname}</Link>
+                    <Link to={ruleURL(rule)} className="co-resource-link__resource-name">{_.get(rule, 'name')}</Link>
                   </div>
                 </dd>
               </dl>
