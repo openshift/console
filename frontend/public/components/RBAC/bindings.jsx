@@ -17,7 +17,6 @@ import {
   ListDropdown,
   MsgBox,
   NsDropdown,
-  OverflowYFade,
   ResourceKebab,
   ResourceLink,
   ResourceName,
@@ -117,18 +116,18 @@ const Row = ({obj: binding}) => <ResourceRow obj={binding}>
   <div className="col-md-3 col-sm-4 col-xs-6">
     <ResourceLink kind={bindingKind(binding)} name={binding.metadata.name} namespace={binding.metadata.namespace} className="co-resource-link__resource-name" />
   </div>
-  <OverflowYFade className="col-md-3 col-sm-4 hidden-xs">
+  <div className="col-md-3 col-sm-4 hidden-xs co-break-word">
     <RoleLink binding={binding} />
-  </OverflowYFade>
-  <OverflowYFade className="col-md-2 hidden-sm hidden-xs">
+  </div>
+  <div className="col-md-2 hidden-sm hidden-xs co-break-word">
     {binding.subject.kind}
-  </OverflowYFade>
-  <OverflowYFade className="col-md-2 hidden-sm hidden-xs">
+  </div>
+  <div className="col-md-2 hidden-sm hidden-xs co-break-word">
     {binding.subject.name}
-  </OverflowYFade>
-  <OverflowYFade className="col-md-2 col-sm-4 col-xs-6 co-break-word">
+  </div>
+  <div className="col-md-2 col-sm-4 col-xs-6 co-break-word">
     {binding.metadata.namespace ? <ResourceLink kind="Namespace" name={binding.metadata.namespace} /> : 'all'}
-  </OverflowYFade>
+  </div>
   <div className="dropdown-kebab-pf">
     <BindingKebab binding={binding} />
   </div>

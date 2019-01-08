@@ -185,6 +185,9 @@ tags-input .autocomplete .suggestion-item em {
 
 .table {
   margin-bottom: 0;
+  &--layout-fixed {
+    table-layout: fixed;
+  }
   td {
     vertical-align: middle !important;
   }
