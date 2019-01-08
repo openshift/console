@@ -10,6 +10,7 @@ import { formatNamespacedRouteForResource } from '../ui/ui-actions';
 import {
   BuildConfigModel,
   BuildModel,
+  CatalogSourceModel,
   ChargebackReportModel,
   ClusterServiceVersionModel,
   DeploymentConfigModel,
@@ -263,7 +264,13 @@ const NavSection = connect(navSectionStateToProps)(
 );
 
 const searchStartsWith = ['search'];
-const operatorManagementStartsWith = [referenceForModel(PackageManifestModel), referenceForModel(SubscriptionModel), referenceForModel(InstallPlanModel)];
+const operatorManagementStartsWith = [
+  referenceForModel(PackageManifestModel),
+  referenceForModel(SubscriptionModel),
+  SubscriptionModel.path,
+  referenceForModel(InstallPlanModel),
+  referenceForModel(CatalogSourceModel),
+];
 const provisionedServicesStartsWith = ['serviceinstances', 'servicebindings'];
 const brokerManagementStartsWith = ['clusterservicebrokers', 'clusterserviceclasses'];
 const rolesStartsWith = ['roles', 'clusterroles'];
