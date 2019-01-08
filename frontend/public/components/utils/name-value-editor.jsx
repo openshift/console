@@ -67,8 +67,8 @@ export const NameValueEditor = withDragDropContext(class NameValueEditor extends
     return <React.Fragment>
       <div className="row">
         {!readOnly && allowSorting && <div className="col-xs-1 co-empty__header"></div>}
-        <div className="col-xs-5 text-secondary text-uppercase co-full__header">{nameString}</div>
-        <div className="col-xs-5 text-secondary text-uppercase co-full__header">{valueString}</div>
+        <div className="col-xs-5 text-secondary text-uppercase">{nameString}</div>
+        <div className="col-xs-5 text-secondary text-uppercase">{valueString}</div>
         <div className="col-xs-1 co-empty__header"></div>
       </div>
       {pairElems}
@@ -180,8 +180,8 @@ export const EnvFromEditor = withDragDropContext(class EnvFromEditor extends Rea
     return <React.Fragment>
       <div className="row">
         {!readOnly && <div className="col-xs-1 co-empty__header"></div>}
-        <div className="col-xs-5 text-secondary text-uppercase co-full__header">Config Map/Secret</div>
-        <div className="col-xs-5 text-secondary text-uppercase co-full__header">Prefix (Optional)</div>
+        <div className="col-xs-5 text-secondary text-uppercase">Config Map/Secret</div>
+        <div className="col-xs-5 text-secondary text-uppercase">Prefix (Optional)</div>
         <div className="col-xs-1 co-empty__header"></div>
       </div>
       {pairElems}

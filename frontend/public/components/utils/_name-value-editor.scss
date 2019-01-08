@@ -1,11 +1,14 @@
+$drag-column-width: 28px;
+$drag-row-margin: 8px;
+
 .co-empty__header {
   padding: 0;
-  width: 28px;
+  width: $drag-column-width;
 }
 
 .pairs-list__action {
   padding: 0;
-  width: 28px;
+  width: $drag-column-width;
 }
 
 .pairs-list__row {
@@ -53,7 +56,7 @@
 
 .pairs-list__action-icon {
   color: $color-pf-black-900;
-  margin-left: 8px;
+  margin-left: $drag-row-margin;
   width: auto;
 }
 
@@ -72,6 +75,6 @@
 
 .pairs-list__span-btns {
   color: $color-pf-black-900;
-  margin-left: -8px;
+  margin-left: -$drag-row-margin;
   white-space: pre;
 }
