@@ -422,7 +422,7 @@ export const EnvironmentPage = connect(stateToProps)(
       const resourceName = _.get(obj.metadata, 'name', '');
       const containerVars =
         <React.Fragment>
-          { readOnly &&
+          { (readOnly && !_.isEmpty(owners)) &&
             <div className="co-toolbar__group co-toolbar__group--left">
               <Alert className="col-md-11 col-xs-10" type="info">Environment variables for {resourceName} were set from the resource {owners.length > 1 ? 'owners' : 'owner'}: <span className="environment-resource-link">{owners}</span>
               </Alert>
