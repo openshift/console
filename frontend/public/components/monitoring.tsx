@@ -54,6 +54,13 @@ const SilenceResource = {
 
 const labelsToParams = labels => _.map(labels, (v, k) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`).join('&');
 
+const buildNotFiringAlert = (rule: Rule): Alert => ({
+  annotations: rule.annotations,
+  labels: {alertname: rule.name, ...rule.labels},
+  rule,
+  state: AlertStates.NotFiring,
+});
+
 const alertURL = (alert, ruleID) => `${AlertResource.path}/${ruleID}?${labelsToParams(alert.labels)}`;
 const ruleURL = rule => `${AlertRuleResource.path}/${_.get(rule, 'id')}`;
 
@@ -175,7 +182,8 @@ const alertStateToProps = (state, {match}): AlertsDetailsPageProps => {
   let alert = _.find(alerts, a => _.isEqual(a.labels, labels));
   if (rule && !alert) {
     // No Alert with the exact label set was found, so display a "fake" Alert based on the Rule
-    alert = {annotations: rule.annotations, labels, rule, state: AlertStates.NotFiring};
+    alert = buildNotFiringAlert(rule);
+    alert.labels = labels as any;
   }
   return {alert, loaded, loadError, rule, silencesLoaded};
 };
@@ -188,7 +196,7 @@ const AlertsDetailsPage = withFallback(connect(alertStateToProps)((props: Alerts
 
   return <React.Fragment>
     <Helmet>
-      <title>{`${alertname || AlertResource.label} · Details`}</title>
+      <title>{`${alertname} · Details`}</title>
     </Helmet>
     <StatusBox data={alert} label={AlertResource.label} loaded={loaded} loadError={loadError}>
       <div className="co-m-nav-title co-m-nav-title--detail">
@@ -904,11 +912,7 @@ export class MonitoringUI extends React.Component<null, null> {
 
         // If a rule is has no active alerts, create a "fake" alert
         return _.flatMap(rules, rule => _.isEmpty(rule.alerts)
-          ? {
-            annotations: rule.annotations,
-            labels: {alertname: rule.name, ...rule.labels},
-            rule,
-          }
+          ? buildNotFiringAlert(rule)
           : rule.alerts.map(a => ({rule, ...a}))
         );
       });
@@ -973,7 +977,10 @@ type Silences = {
 type Alert = {
   activeAt?: string;
   annotations: any;
-  labels: {[key: string]: string};
+  labels: {
+    alertname: string,
+    [key: string]: string,
+  };
   rule: any;
   silencedBy?: Silence[];
   state: AlertStates;
