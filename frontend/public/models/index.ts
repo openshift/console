@@ -861,7 +861,7 @@ export const MachineDeploymentModel: K8sKind = {
   crd: true,
 };
 
-// Openshift cluster resources
+// OpenShift cluster resources
 export const ClusterOperatorModel: K8sKind = {
   label: 'Cluster Operator',
   labelPlural: 'Cluster Operators',
@@ -901,5 +901,20 @@ export const ClusterAutoscalerModel: K8sKind = {
   namespaced: false,
   kind: 'ClusterAutoscaler',
   id: 'clusterautoscaler',
+  crd: true,
+};
+
+// OpenShift global configuration
+export const OAuthModel: K8sKind = {
+  label: 'OAuth',
+  labelPlural: 'OAuths',
+  apiVersion: 'v1',
+  path: 'oauths',
+  apiGroup: 'config.openshift.io',
+  plural: 'oauths',
+  abbr: 'OA',
+  namespaced: false,
+  kind: 'OAuth',
+  id: 'oauth',
   crd: true,
 };
