@@ -57,15 +57,18 @@ export const MarketplaceSubscribeForm = withFormState((props: MarketplaceSubscri
       ? packageName
       : _.uniq(catalogSourceConfig.spec.packages.split(',').concat([packageName])).join(',');
 
+    const operatorGroupNamespace = props.operatorGroup.data.find(og => og.metadata.name === props.formState().target).metadata.namespace;
+    const marketplaceCscName = `${MARKETPLACE_CSC_NAME}-${operatorGroupNamespace}`;
+
     const newCatalogSourceConfig = {
       apiVersion: `${CatalogSourceConfigModel.apiGroup}/${CatalogSourceConfigModel.apiVersion}`,
       kind: CatalogSourceConfigModel.kind,
       metadata: {
-        name: MARKETPLACE_CSC_NAME,
+        name: marketplaceCscName,
         namespace: 'openshift-operators',
       },
       spec: {
-        targetNamespace: 'openshift-operators',
+        targetNamespace: operatorGroupNamespace,
         packages: `${packages}`,
       },
     };
@@ -75,11 +78,11 @@ export const MarketplaceSubscribeForm = withFormState((props: MarketplaceSubscri
       kind: 'Subscription',
       metadata: {
         name: packageName,
-        namespace: props.operatorGroup.data.find(og => og.metadata.name === props.formState().target).metadata.namespace,
+        namespace: operatorGroupNamespace,
       },
       spec: {
-        source: MARKETPLACE_CSC_NAME,
-        sourceNamespace: 'openshift-operators',
+        source: marketplaceCscName,
+        sourceNamespace: operatorGroupNamespace,
         name: packageName,
         startingCSV: channels.find(ch => ch.name === props.formState().updateChannel).currentCSV,
         channel: props.formState().updateChannel,
@@ -88,7 +91,7 @@ export const MarketplaceSubscribeForm = withFormState((props: MarketplaceSubscri
     };
 
     return (!_.isEmpty(catalogSourceConfig)
-      ? k8sUpdate(CatalogSourceConfigModel, {...catalogSourceConfig, spec: {targetNamespace: 'openshift-operators', packages}}, 'openshift-operators', MARKETPLACE_CSC_NAME)
+      ? k8sUpdate(CatalogSourceConfigModel, {...catalogSourceConfig, spec: {targetNamespace: operatorGroupNamespace, packages}}, operatorGroupNamespace, marketplaceCscName)
       : k8sCreate(CatalogSourceConfigModel, newCatalogSourceConfig)
     ).then(() => k8sCreate(SubscriptionModel, subscription))
       .then(() => history.push('/marketplace'));
@@ -99,7 +102,7 @@ export const MarketplaceSubscribeForm = withFormState((props: MarketplaceSubscri
       <div>
         <div className="form-group">
           <label className="co-required">Target</label>
-          <OperatorGroupSelector onChange={(target) => props.updateFormState({target})} />
+          <OperatorGroupSelector onChange={(target) => props.updateFormState({target})} namespace={'openshift-operators'} />
         </div>
         <div className="form-group">
           <label className="co-required">Update Channel</label>

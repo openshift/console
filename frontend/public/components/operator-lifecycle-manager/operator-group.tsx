@@ -30,7 +30,9 @@ export const OperatorGroupSelector: React.SFC<OperatorGroupSelectorProps> = (pro
   desc="OperatorGroups"
   placeholder="Select Operator Group"
   selectedKeyKind={referenceForModel(OperatorGroupModel)}
-  resources={[{kind: referenceForModel(OperatorGroupModel)}]} />;
+  resources={props.namespace ?
+    [{kind: referenceForModel(OperatorGroupModel), namespace: props.namespace}]
+    : [{kind: referenceForModel(OperatorGroupModel)}]} />;
 
 export const requireOperatorGroup = <P extends RequireOperatorGroupProps>(Component: React.ComponentType<P>) => {
   return class RequireOperatorGroup extends React.Component<P> {
@@ -48,6 +50,7 @@ export const requireOperatorGroup = <P extends RequireOperatorGroupProps>(Compon
 
 export type OperatorGroupSelectorProps = {
   onChange?: (name: string, kind: GroupVersionKind) => void;
+  namespace?: string;
 };
 
 NoOperatorGroupMsg.displayName = 'NoOperatorGroupMsg';

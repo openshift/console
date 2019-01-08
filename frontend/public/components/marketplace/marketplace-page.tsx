@@ -82,7 +82,7 @@ export const MarketplaceList: React.SFC<MarketplaceListProps> = (props) => {
     label="Resources"
     EmptyMsg={() => <MsgBox
       title="No Marketplace Items Found"
-      detail={<span>Please check that the Marketplace operator is running and that you have created a valid OperatorSource. For more information about Marketplace, please click <a href="https://github.com/operator-framework/operator-marketplace">here</a>.</span>} />}>
+      detail={<span>Please check that the Marketplace operator is running and that you have created a valid OperatorSource. For more information about Marketplace, please click <a href="https://github.com/operator-framework/operator-marketplace" target="_blank" className="co-external-link" rel="noopener noreferrer">here</a>.</span>} />}>
     <MarketplaceTileView items={items} catalogSourceConfig={sourceConfigs} subscriptions={props.subscription.data} />
   </StatusBox>;
 };
