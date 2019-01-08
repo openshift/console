@@ -8,7 +8,7 @@ import {
   DeploymentConfigModel, MachineModel, MachineSetModel,
 } from '../models';
 import { referenceForModel } from '../module/okdk8s';
-import { VmTemplatesPageTitle } from './vm-template/vm-template';
+import { VmTemplatesPageTitle } from './vm-template';
 
 import { Nav, NavList } from '@patternfly/react-core';
 

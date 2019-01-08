@@ -47,7 +47,7 @@ const StateColumn = ({ loaded, vm, resources }) => {
     : DASHES;
 };
 
-export const VMRow = ({obj: vm}) => {
+const VMRow = ({obj: vm}) => {
   const podResources = getResourceKind(PodModel, undefined, true, vm.metadata.namespace, true, getLabelMatcher(vm));
   const migrationResources = getResourceKind(VirtualMachineInstanceMigrationModel, undefined, true, vm.metadata.namespace, false);
 
@@ -75,7 +75,7 @@ export const VMRow = ({obj: vm}) => {
   </ResourceRow>;
 };
 
-export const VMList = (props) => <List {...props} Header={VMHeader} Row={VMRow} />;
+const VMList = (props) => <List {...props} Header={VMHeader} Row={VMRow} />;
 
 const mapStateToProps = ({k8s}) => ({
   k8s,
