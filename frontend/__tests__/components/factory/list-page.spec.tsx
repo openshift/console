@@ -3,7 +3,7 @@ import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 
 import { TextFilter, ListPageWrapper_, FireMan_, MultiListPage } from '../../../public/components/factory/list-page';
-import { Dropdown, Firehose, PageHeading } from '../../../public/components/utils';
+import { Firehose, PageHeading } from '../../../public/components/utils';
 import { CheckBoxes } from '../../../public/components/row-filter';
 
 describe(TextFilter.displayName, () => {
@@ -57,27 +57,6 @@ describe(FireMan_.displayName, () => {
 
     Object.keys(createProps).forEach((key) => {
       expect(createProps[key] === button.props()[key]).toBe(true);
-    });
-  });
-
-  it('renders dropdown filters if given `dropdownFilters`', () => {
-    const dropdownFilters = [{
-      type: 'app-status',
-      items: {
-        all: 'Status: All',
-        ready: 'Status: Ready',
-        notReady: 'Status: Not Ready',
-      },
-      title: 'Ready Status',
-    }];
-    wrapper.setProps({dropdownFilters});
-
-    const dropdowns = wrapper.find(Dropdown);
-
-    expect(dropdowns.length).toEqual(dropdownFilters.length);
-    dropdowns.forEach((dropdown, i) => {
-      expect(dropdown.props().items).toEqual(dropdownFilters[i].items);
-      expect(dropdown.props().title).toEqual(dropdownFilters[i].title);
     });
   });
 

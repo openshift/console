@@ -33,7 +33,7 @@ import {
 } from '../utils';
 import {
   getJobTypeAndCompletions,
-  isNodeReady,
+  nodeStatus,
   K8sKind,
   K8sResourceKind,
   K8sResourceKindReference,
@@ -90,9 +90,13 @@ const listFilters = {
     return phases.selected.has(phase) || !_.includes(phases.all, phase);
   },
 
-  'node-status': (status, node) => {
-    const isReady = isNodeReady(node);
-    return status === 'all' || (status === 'ready' && isReady) || (status === 'notReady' && !isReady);
+  'node-status': (statuses, node) => {
+    if (!statuses || !statuses.selected || !statuses.selected.size) {
+      return true;
+    }
+
+    const status = nodeStatus(node);
+    return statuses.selected.has(status) || !_.includes(statuses.all, status);
   },
 
   'clusterserviceversion-resource-kind': (filters, resource) => {
