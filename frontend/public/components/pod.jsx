@@ -80,15 +80,15 @@ export const ContainerRow = ({pod, container}) => {
   const finishedAt = _.get(cstate, 'finishedAt');
 
   return <div className="row">
-    <div className="col-sm-2 col-xs-4">
+    <div className="col-lg-2 col-md-3 col-sm-4 col-xs-5">
       <ContainerLink pod={pod} name={container.name} />
     </div>
-    <Overflow className="col-md-3 col-sm-4 col-xs-8" value={container.image} />
-    <div className="col-md-1 col-sm-2 hidden-xs"><StatusIcon status={cstate.label} /></div>
-    <div className="col-md-1 col-sm-2 hidden-xs">{_.get(cstatus, 'restartCount', '0')}</div>
-    <div className="col-md-2 hidden-sm hidden-xs"><Timestamp timestamp={startedAt} /></div>
-    <div className="col-md-2 hidden-sm hidden-xs"><Timestamp timestamp={finishedAt} /></div>
-    <div className="col-md-1 col-sm-2 hidden-xs">{_.get(cstate, 'exitCode', '-')}</div>
+    <Overflow className="col-lg-2 col-md-3 col-sm-5 col-xs-7" value={container.image} />
+    <div className="col-lg-2 col-md-2 col-sm-3 hidden-xs"><StatusIcon status={cstate.label} /></div>
+    <div className="col-lg-1 col-md-2 hidden-sm hidden-xs">{_.get(cstatus, 'restartCount', '0')}</div>
+    <div className="col-lg-2 col-md-2 hidden-sm hidden-xs"><Timestamp timestamp={startedAt} /></div>
+    <div className="col-lg-2 hidden-md hidden-sm hidden-xs"><Timestamp timestamp={finishedAt} /></div>
+    <div className="col-lg-1 hidden-md hidden-sm hidden-xs">{_.get(cstate, 'exitCode', '-')}</div>
   </div>;
 };
 
@@ -116,13 +116,13 @@ const ContainerTable = ({heading, containers, pod}) => <div className="co-m-pane
   <SectionHeading text={heading} />
   <div className="co-m-table-grid co-m-table-grid--bordered">
     <div className="row co-m-table-grid__head">
-      <div className="col-sm-2 col-xs-4">Name</div>
-      <div className="col-md-3 col-sm-4 col-xs-8">Image</div>
-      <div className="col-md-1 col-sm-2 hidden-xs">State</div>
-      <div className="col-md-1 col-sm-2 hidden-xs">Restarts</div>
-      <div className="col-md-2 hidden-sm hidden-xs">Started</div>
-      <div className="col-md-2 hidden-sm hidden-xs">Finished</div>
-      <div className="col-md-1 col-sm-2 hidden-xs">Exit Code</div>
+      <div className="col-lg-2 col-md-3 col-sm-4 col-xs-5">Name</div>
+      <div className="col-lg-2 col-md-3 col-sm-5 col-xs-7">Image</div>
+      <div className="col-lg-2 col-md-2 col-sm-3 hidden-xs">State</div>
+      <div className="col-lg-1 col-md-2 hidden-sm hidden-xs">Restarts</div>
+      <div className="col-lg-2 col-md-2 hidden-sm hidden-xs">Started</div>
+      <div className="col-lg-2 hidden-md hidden-sm hidden-xs">Finished</div>
+      <div className="col-lg-1 hidden-md hidden-sm hidden-xs">Exit Code</div>
     </div>
     <div className="co-m-table-grid__body">
       {containers.map((c, i) => <ContainerRow key={i} pod={pod} container={c} />)}
