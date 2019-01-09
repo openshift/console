@@ -37,7 +37,7 @@ const { common } = Kebab.factory;
 const menuActions = [editCountAction, ...common];
 const machineReference = referenceForModel(MachineModel);
 const machineSetReference = referenceForModel(MachineSetModel);
-const getAWSPlacement = (machineSet: MachineSetKind) => _.get(machineSet, 'spec.template.spec.providerConfig.value.placement') || {};
+const getAWSPlacement = (machineSet: MachineSetKind) => _.get(machineSet, 'spec.template.spec.providerSpec.value.placement') || {};
 
 // `spec.replicas` defaults to 1 if not specified. Make sure to differentiate between undefined and 0.
 const getDesiredReplicas = (machineSet: MachineSetKind) => {
