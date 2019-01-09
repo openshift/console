@@ -21,15 +21,15 @@ import { breadcrumbsForOwnerRefs } from './utils/breadcrumbs';
 const { common } = Kebab.factory;
 const menuActions = [...common];
 const machineReference = referenceForModel(MachineModel);
-const getAWSPlacement = (machine: MachineKind) => _.get(machine, 'spec.providerConfig.value.placement') || {};
+const getAWSPlacement = (machine: MachineKind) => _.get(machine, 'spec.providerSpec.value.placement') || {};
 
 export const getMachineRole = (obj: MachineKind | MachineSetKind) => _.get(obj, ['metadata', 'labels', 'sigs.k8s.io/cluster-api-machine-role']);
 
 const MachineHeader = props => <ListHeader>
   <ColHead {...props} className="col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
   <ColHead {...props} className="col-sm-4 col-xs-6" sortField="metadata.namespace">Namespace</ColHead>
-  <ColHead {...props} className="col-sm-2 hidden-xs" sortField="spec.providerConfig.value.placement.region">Region</ColHead>
-  <ColHead {...props} className="col-sm-2 hidden-xs" sortField="spec.providerConfig.value.placement.availabilityZone">Availability Zone</ColHead>
+  <ColHead {...props} className="col-sm-2 hidden-xs" sortField="spec.providerSpec.value.placement.region">Region</ColHead>
+  <ColHead {...props} className="col-sm-2 hidden-xs" sortField="spec.providerSpec.value.placement.availabilityZone">Availability Zone</ColHead>
 </ListHeader>;
 
 const MachineRow: React.SFC<MachineRowProps> = ({obj}: {obj: MachineKind}) => {

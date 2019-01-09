@@ -76,7 +76,7 @@ export type CustomResourceDefinitionKind = {
 } & K8sResourceKind;
 
 export type MachineSpec = {
-  providerConfig: {
+  providerSpec: {
     value: K8sResourceKind;
   };
   versions: {
