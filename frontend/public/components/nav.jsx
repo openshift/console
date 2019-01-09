@@ -55,13 +55,13 @@ class NavLink extends React.PureComponent {
   }
 
   render() {
-    const { isActive, id, name, onClick } = this.props;
+    const { isActive, isSeparated, id, name, onClick } = this.props;
 
     // onClick is now handled globally by the Nav's onSelect,
     // however onClick can still be passed if desired in certain cases
 
     return (
-      <NavItem isActive={isActive}>
+      <NavItem isActive={isActive} isSeparated={isSeparated}>
         <Link
           id={id}
           to={this.to}
@@ -155,6 +155,7 @@ const NavSection = connect(navSectionStateToProps)(
   class NavSection extends React.Component {
     constructor(props) {
       super(props);
+      this.toggle = (e, val) => this.toggle_(e, val);
       this.state = { isOpen: false, activeChild: null };
 
       const activeChild = this.getActiveChild();
@@ -215,6 +216,10 @@ const NavSection = connect(navSectionStateToProps)(
       this.setState(state);
     }
 
+    toggle_(e, expandState) {
+      this.setState({isOpen: expandState});
+    }
+
     render() {
       if (!this.props.canRender) {
         return null;
@@ -239,7 +244,7 @@ const NavSection = connect(navSectionStateToProps)(
       });
 
       return Children ? (
-        <NavExpandable title={title} isActive={isActive} isExpanded={isOpen}>
+        <NavExpandable title={title} isActive={isActive} isExpanded={isOpen} onExpand={this.toggle}>
           {Children}
         </NavExpandable>
       ) : null;
@@ -339,7 +344,7 @@ export const Navigation = ({ isNavOpen, onNavSelect }) => {
           <ResourceNSLink resource="deploymentconfigs" name={DeploymentConfigModel.labelPlural} required={FLAGS.OPENSHIFT} />
           <ResourceNSLink resource="statefulsets" name="Stateful Sets" />
           <ResourceNSLink resource="secrets" name="Secrets" />
-          <ResourceNSLink resource="configmaps" name="Config Maps" />
+          <ResourceNSLink resource="configmaps" name="Config Maps" isSeparated />
           <ResourceNSLink resource="cronjobs" name="Cron Jobs" />
           <ResourceNSLink resource="jobs" name="Jobs" />
           <ResourceNSLink resource="daemonsets" name="Daemon Sets" />

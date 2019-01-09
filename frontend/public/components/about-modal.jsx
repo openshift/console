@@ -39,7 +39,6 @@ class AboutModal_ extends React.Component {
         brandImageAlt={details.logoAlt}
         logoImageSrc={details.logoImg}
         logoImageAlt={details.logoAlt}
-        heroImageSrc={details.backgroundImg}
       >
         <p>OpenShift is Red Hat&apos;s container application platform that allows developers to quickly develop, host,
           and scale applications in a cloud environment.</p>
