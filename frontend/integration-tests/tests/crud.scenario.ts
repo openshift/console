@@ -142,10 +142,10 @@ describe('Kubernetes resource CRUD operations', () => {
 
       it('deletes the resource instance', async() => {
         await browser.get(`${appHost}${namespaced ? `/k8s/ns/${testName}` : '/k8s/cluster'}/${resource}`);
+        await crudView.resourceRowsPresent();
         // Filter by resource name to make sure the resource is on the first page of results.
         // Otherwise the tests fail since we do virtual scrolling and the element isn't found.
         await crudView.filterForName(testName);
-        await crudView.resourceRowsPresent();
         await crudView.deleteRow(kind)(testName);
 
         leakedResources.delete(JSON.stringify({name: testName, plural: resource, namespace: namespaced ? testName : undefined}));
@@ -175,10 +175,10 @@ describe('Kubernetes resource CRUD operations', () => {
 
     it('search view displays created RoleBinding', async() => {
       await browser.get(`${appHost}/k8s/ns/${testName}/rolebindings`);
+      await crudView.resourceRowsPresent();
       // Filter by resource name to make sure the resource is on the first page of results.
       // Otherwise the tests fail since we do virtual scrolling and the element isn't found.
       await crudView.filterForName(bindingName);
-      await crudView.resourceRowsPresent();
       expect(crudView.rowForName(bindingName).isPresent()).toBe(true);
     });
 
