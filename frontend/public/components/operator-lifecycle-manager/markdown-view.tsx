@@ -24,7 +24,7 @@ const markdownConvert = (markdown) => {
   });
 };
 
-export class SyncMarkdownView extends React.Component<{content: string}, {}> {
+export class SyncMarkdownView extends React.Component<{content: string, outerScroll: boolean}, {}> {
   private frame: any;
 
   constructor(props) {
@@ -41,6 +41,9 @@ export class SyncMarkdownView extends React.Component<{content: string}, {}> {
       return;
     }
     this.frame.style.height = `${this.frame.contentWindow.document.body.firstChild.offsetHeight + 50}px`;
+    if (this.props.outerScroll) {
+      this.frame.contentWindow.document.firstChild.style.height = 'inherit';
+    }
   }
 
   render() {

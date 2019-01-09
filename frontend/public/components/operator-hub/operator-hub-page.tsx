@@ -9,10 +9,10 @@ import {referenceForModel, K8sResourceKind} from '../../module/k8s';
 import {PackageManifestModel, OperatorGroupModel, CatalogSourceConfigModel, SubscriptionModel} from '../../models';
 import {OperatorHubTileView} from './operator-hub-items';
 import {PackageManifestKind, OperatorGroupKind, SubscriptionKind} from '../operator-lifecycle-manager';
-import {OPERATOR_HUB_CSC_NAME} from './index';
+import {OPERATOR_HUB_CSC_NAME} from '../../const';
 import * as operatorImg from '../../imgs/operator.svg';
 
-const normalizePackageManifests = (packageManifests: PackageManifestKind[] = []) => {
+const normalizePackageManifests = (packageManifests: PackageManifestKind[] = [], subscriptions: SubscriptionKind[]) => {
   const activePackageManifests = _.filter(packageManifests, packageManifest => {
     return !packageManifest.status.removedFromBrokerCatalog;
   });
@@ -24,9 +24,12 @@ const normalizePackageManifests = (packageManifests: PackageManifestKind[] = [])
     const imgUrl = iconObj ? `data:${iconObj.mediatype};base64,${iconObj.base64data}` : operatorImg;
     const iconClass = imgUrl ? null : defaultIconClass;
     const provider = _.get(packageManifest, 'metadata.labels.provider');
+    const srcProvider = _.get(packageManifest, 'metadata.labels.opsrc-provider');
     const tags = packageManifest.metadata.tags;
     const version = _.get(packageManifest, 'status.channels[0].currentCSVDesc.version');
     const currentCSVAnnotations = _.get(packageManifest, 'status.channels[0].currentCSVDesc.annotations', {});
+    const installed = (subscriptions || []).some(sub => sub.spec.name === _.get(packageManifest, 'status.packageName'));
+
     let {
       description,
       certifiedLevel,
@@ -43,15 +46,32 @@ const normalizePackageManifests = (packageManifests: PackageManifestKind[] = [])
     longDescription = longDescription || _.get(packageManifest, 'status.channels[0].currentCSVDesc.description');
     const catalogSource = _.get(packageManifest, 'status.catalogSource');
     const catalogSourceNamespace = _.get(packageManifest, 'status.catalogSourceNamespace');
+    let providerType;
+    switch (srcProvider) {
+      case 'redhat':
+        providerType = 'Red Hat';
+        break;
+      case 'redhat-partner':
+        providerType = 'Red Hat Partner';
+        break;
+      case 'community':
+        providerType = 'Community';
+        break;
+      default:
+        providerType = 'Custom';
+    }
     return {
       obj: packageManifest,
       kind: PackageManifestModel.kind,
       name,
       uid,
+      installed,
+      installState: installed ? 'Installed' : 'Not Installed',
       iconClass,
       imgUrl,
       description,
       provider,
+      providerType,
       tags,
       version,
       certifiedLevel,
@@ -69,10 +89,10 @@ const normalizePackageManifests = (packageManifests: PackageManifestKind[] = [])
 };
 
 export const OperatorHubList: React.SFC<OperatorHubListProps> = (props) => {
-  const {catalogSourceConfig, packageManifest, loaded, loadError} = props;
+  const {catalogSourceConfig, packageManifest, subscription, loaded, loadError} = props;
   const sourceConfigs = _.find(_.get(catalogSourceConfig, 'data'), csc => csc.metadata.name === OPERATOR_HUB_CSC_NAME);
   const items = loaded
-    ? _.sortBy(normalizePackageManifests(_.get(packageManifest, 'data')), 'name')
+    ? _.sortBy(normalizePackageManifests(_.get(packageManifest, 'data'), subscription.data), 'name')
     : [];
 
   return <StatusBox
@@ -80,10 +100,18 @@ export const OperatorHubList: React.SFC<OperatorHubListProps> = (props) => {
     loaded={loaded}
     loadError={loadError}
     label="Resources"
-    EmptyMsg={() => <MsgBox
-      title="No Operator Hub Items Found"
-      detail={<span>Please check that the OperatorHub is running and that you have created a valid OperatorSource. For more information about Operator Hub, please click <a href="https://github.com/operator-framework/operator-marketplace">here</a>.</span>} />}>
-    <OperatorHubTileView items={items} catalogSourceConfig={sourceConfigs} subscriptions={props.subscription.data} />
+    EmptyMsg={() => (
+      <MsgBox
+        title="No Operator Hub Items Found"
+        detail={
+          <span>
+            Please check that the OperatorHub is running and that you have created a valid OperatorSource. For more information about Operator Hub,
+            please click <a href="https://github.com/operator-framework/operator-marketplace">here</a>.
+          </span>
+        }
+      />
+    )}>
+    <OperatorHubTileView items={items} catalogSourceConfig={sourceConfigs} />
   </StatusBox>;
 };
 
