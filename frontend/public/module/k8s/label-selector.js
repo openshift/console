@@ -101,10 +101,7 @@ export class LabelSelector {
     if (this.isEmpty()) {
       return this._emptySelectsAll;
     }
-    let labels = resource.labels || {};
-    if (resource.metadata) {
-      labels = resource.metadata.labels || {};
-    }
+    const labels = resource.metadata.labels || {};
     for (const id in this._conjuncts) {
       const conjunct = this._conjuncts[id];
       switch (conjunct.operator) {
