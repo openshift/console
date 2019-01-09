@@ -86,25 +86,26 @@
   version "0.8.2"
   resolved "https://registry.yarnpkg.com/@emotion/utils/-/utils-0.8.2.tgz#576ff7fb1230185b619a75d258cbc98f0867a8dc"
 
-"@patternfly/patternfly-next@^1.0.109":
-  version "1.0.109"
-  resolved "https://registry.yarnpkg.com/@patternfly/patternfly-next/-/patternfly-next-1.0.109.tgz#5c1a8ca29ca48d030324d3d588af9954e2f36cea"
+"@patternfly/patternfly-next@^1.0.117":
+  version "1.0.119"
+  resolved "https://registry.yarnpkg.com/@patternfly/patternfly-next/-/patternfly-next-1.0.119.tgz#1d9a42c311f8673453a4c0837604c9505c22d6c5"
+  integrity sha512-78xSaGAlUmt/UVr+nvKuBJPARk4jgUoA2UCKCl/HNLProL/JEF97cIqMtT4OAReUa0jJU0DFfAtSxMjS9szNgQ==
 
-"@patternfly/react-core@^1.43.5":
-  version "1.43.5"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-core/-/react-core-1.43.5.tgz#b66e8915785aecde621663b1c719cf965d9d5bd4"
+"@patternfly/react-core@^1.44.8":
+  version "1.44.8"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-core/-/react-core-1.44.8.tgz#f35930630db0147d579ec1ebe5695e2da1c79661"
+  integrity sha512-Mmtd2ncYEg8DV28s5aR9f1Pi3CZG0T6DtKnlmaWqykhQf4Ur+0jYqiFcYye1htiNhHgzQMOgIvfd4bZinH7fdg==
   dependencies:
-    "@patternfly/react-icons" "^2.9.5"
+    "@patternfly/react-icons" "^2.9.6"
     "@patternfly/react-styles" "^2.3.0"
     "@tippy.js/react" "^1.1.1"
     exenv "^1.2.2"
     focus-trap-react "^4.0.1"
-  optionalDependencies:
-    "@patternfly/react-tokens" "^1.0.0"
 
-"@patternfly/react-icons@^2.9.5":
-  version "2.9.5"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-icons/-/react-icons-2.9.5.tgz#abccb6b151f965cb1370a1e0210bc650e202ce97"
+"@patternfly/react-icons@^2.9.6":
+  version "2.9.6"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-icons/-/react-icons-2.9.6.tgz#9b244474539aec7342f6ce5cccf35515e7640aa1"
+  integrity sha512-gVdDpiXWzd/Xse8s7ldDGfb3RqXBbreC+pLRDuhxpbbe20NbElTwjpifyYlcqPbbCBMu5YlzV7smegbdPXQRhg==
 
 "@patternfly/react-styles@^2.3.0":
   version "2.3.0"
@@ -122,10 +123,6 @@
     jsdom "^11.11.0"
     relative "^3.0.2"
     resolve-from "^4.0.0"
-
-"@patternfly/react-tokens@^1.0.0":
-  version "1.5.2"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-tokens/-/react-tokens-1.5.2.tgz#0b8c84524d018ad92979a07494ce75a8d4304d32"
 
 "@plotly/d3-sankey@^0.5.0":
   version "0.5.0"
