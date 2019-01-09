@@ -283,6 +283,12 @@
   @include co-break-word;
 }
 
+// Prefer `co-break-word` in most cases. `co-break-all` should generally be reserved for URLs and long,
+// unbroken identifiers.
+.co-break-all {
+  word-break: break-all;
+}
+
 // append external-link icon to <a> so that it doesn't wrap without text
 // there must be no white space between the text and the closing </a> tag holding the pseudo element
 .co-external-link:after {
