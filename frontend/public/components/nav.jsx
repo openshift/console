@@ -313,7 +313,7 @@ export const Navigation = ({ isNavOpen, onNavSelect }) => {
 
         <NavSection title="Catalog">
           <HrefLink href="/catalog" name="Developer Catalog" activePath="/catalog/" />
-          <ResourceNSLink model={ClusterServiceVersionModel} resource={ClusterServiceVersionModel.plural} name="Operators" />
+          <ResourceNSLink model={ClusterServiceVersionModel} resource={ClusterServiceVersionModel.plural} name="Installed Operators" />
           <HrefLink
             href="/provisionedservices"
             name="Provisioned Services"
@@ -321,7 +321,7 @@ export const Navigation = ({ isNavOpen, onNavSelect }) => {
             startsWith={provisionedServicesStartsWith}
             required={FLAGS.SERVICE_CATALOG}
           />
-          <HrefLink required={FLAGS.KUBERNETES_MARKETPLACE} href="/marketplace" name="Marketplace" activePath="/marketplace/" />
+          <HrefLink required={FLAGS.OPERATOR_HUB} href="/operatorhub" name="Operator Hub" activePath="/operatorhub/" />
           <HrefLink
             href="/operatormanagement"
             name="Operator Management"

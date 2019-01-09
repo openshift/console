@@ -286,7 +286,7 @@ const dummyPackageManifest = {
   },
 };
 
-export const marketplaceListPageProps = {
+export const operatorHubListPageProps = {
   loaded: true,
   loadError: null,
   operatorGroup: {loaded: false},
@@ -303,7 +303,7 @@ export const marketplaceListPageProps = {
   },
 };
 
-export const marketplaceTileViewPageProps = {
+export const operatorHubTileViewPageProps = {
   items: [
     {
       obj: amqPackageManifest,
@@ -406,13 +406,13 @@ export const marketplaceTileViewPageProps = {
   openOverlay: null,
 };
 
-export const marketplaceTileViewPagePropsWithDummy = {
+export const operatorHubTileViewPagePropsWithDummy = {
   items: [
-    marketplaceTileViewPageProps.items[0],
-    marketplaceTileViewPageProps.items[1],
-    marketplaceTileViewPageProps.items[2],
-    marketplaceTileViewPageProps.items[3],
-    marketplaceTileViewPageProps.items[4],
+    operatorHubTileViewPageProps.items[0],
+    operatorHubTileViewPageProps.items[1],
+    operatorHubTileViewPageProps.items[2],
+    operatorHubTileViewPageProps.items[3],
+    operatorHubTileViewPageProps.items[4],
     {
       obj: dummyPackageManifest,
       kind: 'PackageManifest',
@@ -442,7 +442,7 @@ export const filterCounts = {
   'Red Hat': 4,
 };
 
-export const marketplaceCategories = [
+export const operatorHubCategories = [
   {
     id: 'all',
     numItems: 8,
@@ -515,8 +515,8 @@ export const mockProviderStrings = [
   },
 ];
 
-export const marketplaceModalProps = {
-  item: marketplaceTileViewPageProps.items[0],
+export const operatorHubModalProps = {
+  item: operatorHubTileViewPageProps.items[0],
   show: true,
   close: null,
 };

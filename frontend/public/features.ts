@@ -35,7 +35,7 @@ import { UIActions } from './ui/ui-actions';
   CAN_CREATE_PROJECT: false,
   SHOW_OPENSHIFT_START_GUIDE: false,
   SERVICE_CATALOG: false,
-  KUBERNETES_MARKETPLACE: false,
+  OPERATOR_HUB: false,
   CLUSTER_API false,
   CLUSTER_VERSION: false,
   CLUSTER_UPDATES_AVAILABLE: false,
@@ -54,7 +54,7 @@ export enum FLAGS {
   CAN_CREATE_PROJECT = 'CAN_CREATE_PROJECT',
   SHOW_OPENSHIFT_START_GUIDE = 'SHOW_OPENSHIFT_START_GUIDE',
   SERVICE_CATALOG = 'SERVICE_CATALOG',
-  KUBERNETES_MARKETPLACE = 'KUBERNETES_MARKETPLACE',
+  OPERATOR_HUB = 'OPERATOR_HUB',
   CLUSTER_API = 'CLUSTER_API',
   CLUSTER_VERSION = 'CLUSTER_VERSION',
   CLUSTER_UPDATES_AVAILABLE = 'CLUSTER_UPDATES_AVAILABLE',
@@ -70,7 +70,7 @@ export const CRDs = {
   [referenceForModel(ChargebackReportModel)]: FLAGS.CHARGEBACK,
   [referenceForModel(ClusterServiceClassModel)]: FLAGS.SERVICE_CATALOG,
   [referenceForModel(ClusterServiceVersionModel)]: FLAGS.OPERATOR_LIFECYCLE_MANAGER,
-  [referenceForModel(OperatorSourceModel)]: FLAGS.KUBERNETES_MARKETPLACE,
+  [referenceForModel(OperatorSourceModel)]: FLAGS.OPERATOR_HUB,
   [referenceForModel(MachineModel)]: FLAGS.CLUSTER_API,
 };
 
