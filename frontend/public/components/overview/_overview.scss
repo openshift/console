@@ -211,20 +211,23 @@
   }
 
   .overview__sidebar-dismiss {
-    padding: 0 5px;
+    background-color: $color-pf-black-150;
+    border-bottom: 1px solid $color-grey-background-border;
 
     .close {
       // adjustments to increase click target and default color contrast because it's on a grey background
       opacity: .3;
-      padding: 10px 15px;
+      padding: 4px 20px;
 
       &:hover, &:focus {
         opacity: .6;
       }
     }
 
-    .pficon-close {
-      font-size: 16px;
+    .pficon-close::before {
+      position: relative;
+      font-size: 14px;
+      top: -2px;
     }
   }
 }
@@ -235,15 +238,10 @@
 }
 
 .overview__sidebar-pane-head {
-  border-bottom: 1px solid $color-grey-background-border;
-  padding-top: 5px;
+  padding-top: 15px;
 
   .co-m-pane__heading {
-    margin: 0 20px 25px;
-  }
-
-  .co-actions-menu {
-    margin-top: -3px;
+    margin: 0 20px 10px;
   }
 }
 
