@@ -52,7 +52,10 @@ export const OperatorHubSubscribeForm = withFormState((props: OperatorHubSubscri
   const {provider, channels = [], packageName} = props.packageManifest.data.status;
 
   const submit = () => {
-    const catalogSourceConfig = props.catalogSourceConfig.data.find(csc => csc.metadata.name === OPERATOR_HUB_CSC_NAME);
+    const operatorGroupNamespace = props.operatorGroup.data.find(og => og.metadata.name === props.formState().target).metadata.namespace;
+    const operatorHubCscName = `${OPERATOR_HUB_CSC_NAME}-${operatorGroupNamespace}`;
+
+    const catalogSourceConfig = props.catalogSourceConfig.data.find(csc => csc.metadata.name === operatorHubCscName);
     const packages = _.isEmpty(catalogSourceConfig)
       ? packageName
       : _.uniq(catalogSourceConfig.spec.packages.split(',').concat([packageName])).join(',');
@@ -61,11 +64,11 @@ export const OperatorHubSubscribeForm = withFormState((props: OperatorHubSubscri
       apiVersion: `${CatalogSourceConfigModel.apiGroup}/${CatalogSourceConfigModel.apiVersion}`,
       kind: CatalogSourceConfigModel.kind,
       metadata: {
-        name: OPERATOR_HUB_CSC_NAME,
-        namespace: 'openshift-operators',
+        name: operatorHubCscName,
+        namespace: 'openshift-marketplace',
       },
       spec: {
-        targetNamespace: 'openshift-operators',
+        targetNamespace: operatorGroupNamespace,
         packages: `${packages}`,
       },
     };
@@ -78,8 +81,8 @@ export const OperatorHubSubscribeForm = withFormState((props: OperatorHubSubscri
         namespace: props.operatorGroup.data.find(og => og.metadata.name === props.formState().target).metadata.namespace,
       },
       spec: {
-        source: OPERATOR_HUB_CSC_NAME,
-        sourceNamespace: 'openshift-operators',
+        source: operatorHubCscName,
+        sourceNamespace: operatorGroupNamespace,
         name: packageName,
         startingCSV: channels.find(ch => ch.name === props.formState().updateChannel).currentCSV,
         channel: props.formState().updateChannel,
@@ -88,7 +91,7 @@ export const OperatorHubSubscribeForm = withFormState((props: OperatorHubSubscri
     };
 
     return (!_.isEmpty(catalogSourceConfig)
-      ? k8sUpdate(CatalogSourceConfigModel, {...catalogSourceConfig, spec: {targetNamespace: 'openshift-operators', packages}}, 'openshift-operators', OPERATOR_HUB_CSC_NAME)
+      ? k8sUpdate(CatalogSourceConfigModel, {...catalogSourceConfig, spec: {targetNamespace: operatorGroupNamespace, packages}}, 'openshift-marketplace', operatorHubCscName)
       : k8sCreate(CatalogSourceConfigModel, newCatalogSourceConfig)
     ).then(() => k8sCreate(SubscriptionModel, subscription))
       .then(() => history.push('/operatorhub'));
@@ -143,7 +146,7 @@ export const OperatorHubSubscribePage: React.SFC<OperatorHubSubscribePageProps> 
     <Firehose resources={[{
       isList: true,
       kind: referenceForModel(CatalogSourceConfigModel),
-      namespace: 'openshift-operators',
+      namespace: 'openshift-marketplace',
       prop: 'catalogSourceConfig',
     }, {
       isList: true,
