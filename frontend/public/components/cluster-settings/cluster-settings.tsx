@@ -21,6 +21,7 @@ enum ClusterUpdateStatus {
   Updating = 'Updating',
   Failing = 'Failing',
   ErrorRetrieving = 'Error Retrieving',
+  FeatureUnavailable = '-',
 }
 
 // TODO - REMOVE MOCK CODE
@@ -50,30 +51,33 @@ const launchUpdateModal = (cv) => {
 };
 
 const getClusterUpdateStatus = (cv: K8sResourceKind): ClusterUpdateStatus => {
+  // TODO Remove this line and uncomment the rest of this function once update feature is available
+  return ClusterUpdateStatus.FeatureUnavailable;
+
   // TODO - REMOVE MOCK CODE
-  if (MOCK_CLUSTER_UPDATE) {
-    return ClusterUpdateStatus.UpdatesAvailable;
-  }
-  // END MOCK CODE
+  // if (MOCK_CLUSTER_UPDATE) {
+  //   return ClusterUpdateStatus.UpdatesAvailable;
+  // }
+  // // END MOCK CODE
 
-  const conditions = _.get(cv, 'status.conditions', []);
-  const isFailingCondition = _.find(conditions, { type: 'Failing', status: 'True' });
-  if (isFailingCondition) {
-    return ClusterUpdateStatus.Failing;
-  }
+  // const conditions = _.get(cv, 'status.conditions', []);
+  // const isFailingCondition = _.find(conditions, { type: 'Failing', status: 'True' });
+  // if (isFailingCondition) {
+  //   return ClusterUpdateStatus.Failing;
+  // }
 
-  const retrievedUpdatesFailedCondition = _.find(conditions, { type: 'RetrievedUpdates', status: 'False' });
-  if (retrievedUpdatesFailedCondition) {
-    return ClusterUpdateStatus.ErrorRetrieving;
-  }
+  // const retrievedUpdatesFailedCondition = _.find(conditions, { type: 'RetrievedUpdates', status: 'False' });
+  // if (retrievedUpdatesFailedCondition) {
+  //   return ClusterUpdateStatus.ErrorRetrieving;
+  // }
 
-  const isProgressingCondition = _.find(conditions, { type: 'Progressing', status: 'True' });
-  if (isProgressingCondition) {
-    return ClusterUpdateStatus.Updating;
-  }
+  // const isProgressingCondition = _.find(conditions, { type: 'Progressing', status: 'True' });
+  // if (isProgressingCondition) {
+  //   return ClusterUpdateStatus.Updating;
+  // }
 
-  const updates = _.get(cv, 'status.availableUpdates');
-  return _.isEmpty(updates) ? ClusterUpdateStatus.UpToDate : ClusterUpdateStatus.UpdatesAvailable;
+  // const updates = _.get(cv, 'status.availableUpdates');
+  // return _.isEmpty(updates) ? ClusterUpdateStatus.UpToDate : ClusterUpdateStatus.UpdatesAvailable;
 };
 
 const getIconClass = (status: ClusterUpdateStatus) => {
@@ -107,6 +111,11 @@ const UpdatesAvailableAlert = ({cv}) => <div className="alert alert-info">
   </Button>
 </div>;
 
+const FeatureUnavailableAlert = () => <div className="alert alert-info">
+  <i className="pficon pficon-info" aria-hidden="true"></i>
+  Cluster updates are not supported in beta 1.
+</div>;
+
 const UpdateStatus: React.SFC<UpdateStatusProps> = ({cv}) => {
   const status = getClusterUpdateStatus(cv);
   const iconClass = getIconClass(status);
@@ -119,7 +128,7 @@ const UpdateStatus: React.SFC<UpdateStatusProps> = ({cv}) => {
           {status}
         </Button>
         : <span>
-          <i className={iconClass} aria-hidden={true}></i>
+          {iconClass && <i className={iconClass} aria-hidden={true}></i>}
           &nbsp;
           {status}
         </span>
@@ -132,23 +141,24 @@ const CurrentVersion: React.SFC<CurrentVersionProps> = ({cv}) => {
   return currentVersion || <React.Fragment><i className="pficon pficon-warning-triangle-o" aria-hidden="true" />&nbsp;Unknown</React.Fragment>;
 };
 
-
-
 const ClusterVersionDetailsTable: React.SFC<ClusterVersionDetailsTableProps> = ({obj: cv, autoscalers}) => {
   const conditions = _.get(cv, 'status.conditions', []);
+  const status = getClusterUpdateStatus(cv);
 
   // TODO - REMOVE MOCK CODE
-  const retrievedUpdatesFailedCondition = !MOCK_CLUSTER_UPDATE && _.find(conditions, { type: 'RetrievedUpdates', status: 'False' });
-  const isFailingCondition = !MOCK_CLUSTER_UPDATE && _.find(conditions, { type: 'Failing', status: 'True' });
+  const disableErrors = MOCK_CLUSTER_UPDATE || status === ClusterUpdateStatus.FeatureUnavailable;
+  const retrievedUpdatesFailedCondition = !disableErrors && _.find(conditions, { type: 'RetrievedUpdates', status: 'False' });
+  const isFailingCondition = !disableErrors && _.find(conditions, { type: 'Failing', status: 'True' });
   // END MOCK CODE
 
-  const status = getClusterUpdateStatus(cv);
+
   return <div className="co-m-pane__body">
     <div className="co-m-pane__body-group">
       { status === ClusterUpdateStatus.Updating && <UpdateInProgressAlert /> }
       { status === ClusterUpdateStatus.UpdatesAvailable && <UpdatesAvailableAlert cv={cv} /> }
-      { isFailingCondition && <FailedConditionAlert message="Upgrade is failing." condition={isFailingCondition} />}
-      { retrievedUpdatesFailedCondition && <FailedConditionAlert message="Could not retrieve updates." condition={retrievedUpdatesFailedCondition} />}
+      { status === ClusterUpdateStatus.FeatureUnavailable && <FeatureUnavailableAlert /> }
+      { isFailingCondition && <FailedConditionAlert message="Update is failing." condition={isFailingCondition} /> }
+      { retrievedUpdatesFailedCondition && <FailedConditionAlert message="Could not retrieve updates." condition={retrievedUpdatesFailedCondition} /> }
       <div className="co-detail-table">
         <div className="co-detail-table__row row">
           <div className="co-detail-table__section">
