@@ -6,9 +6,9 @@
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@novnc/novnc/-/novnc-1.0.0.tgz#76b0e89e6f8738ca8154195baf5b8e6a80bc9105"
 
-"@patternfly/react-console@1.10.5":
-  version "1.10.5"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-console/-/react-console-1.10.5.tgz#9b30d1441c3999da5dfc089ff336bd4ea3dbf8e3"
+"@patternfly/react-console@1.9.1":
+  version "1.9.1"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-console/-/react-console-1.9.1.tgz#b11c8b2dca03bb7b024229c5fa47b9c12df7c8b6"
   dependencies:
     "@novnc/novnc" "^1.0.0"
     blob-polyfill "^3.0.20180112"
@@ -16,9 +16,9 @@
     file-saver "^1.3.8"
     xterm "^3.3.0"
 
-"@patternfly/react-console@1.9.1":
-  version "1.9.1"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-console/-/react-console-1.9.1.tgz#b11c8b2dca03bb7b024229c5fa47b9c12df7c8b6"
+"@patternfly/react-console@1.x":
+  version "1.10.8"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-console/-/react-console-1.10.8.tgz#b2617001b033b28f570c9c7cb805f8c01c4511f8"
   dependencies:
     "@novnc/novnc" "^1.0.0"
     blob-polyfill "^3.0.20180112"
@@ -44,7 +44,7 @@ blob-polyfill@^3.0.20180112:
   version "3.0.20180112"
   resolved "https://registry.yarnpkg.com/blob-polyfill/-/blob-polyfill-3.0.20180112.tgz#7f7c3e235ae298867f8c22b429d33aa9a7cc65b5"
 
-classnames@^2.2.5:
+classnames@2.x, classnames@^2.2.5:
   version "2.2.6"
   resolved "https://registry.yarnpkg.com/classnames/-/classnames-2.2.6.tgz#43935bffdd291f326dad0a205309b38d00f650ce"
 
@@ -99,11 +99,12 @@ js-yaml@3.x:
     argparse "^1.0.7"
     esprima "^4.0.0"
 
-kubevirt-web-ui-components@0.1.14:
-  version "0.1.14"
-  resolved "https://registry.yarnpkg.com/kubevirt-web-ui-components/-/kubevirt-web-ui-components-0.1.14.tgz#885487dea48e7373f8e35366c1fa959bc65067eb"
+kubevirt-web-ui-components@0.1.15:
+  version "0.1.15"
+  resolved "https://registry.yarnpkg.com/kubevirt-web-ui-components/-/kubevirt-web-ui-components-0.1.15.tgz#338dc8c32835db7ac0192b8efc03a8b71087bfc2"
   dependencies:
-    "@patternfly/react-console" "1.10.5"
+    "@patternfly/react-console" "1.x"
+    classnames "2.x"
     js-yaml "3.x"
     lodash "4.x"
     react-dnd "2.6.x"
