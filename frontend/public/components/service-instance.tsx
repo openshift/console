@@ -1,7 +1,7 @@
 /* eslint-disable no-undef, no-unused-vars */
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import { Link, withRouter, RouteComponentProps } from 'react-router-dom';
+import { Link, withRouter, RouteComponentProps, match } from 'react-router-dom';
 
 import { k8sList, K8sResourceKind, K8sResourceKindReference, planExternalName, serviceCatalogStatus } from '../module/k8s';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
@@ -210,6 +210,7 @@ const filters = [{
 export const ServiceInstancesPage: React.SFC<ServiceInstancesPageProps> = props =>
   <ListPage
     {...props}
+    namespace={_.get(props.match, 'params.ns')}
     kind={ServiceInstancesReference}
     ListComponent={ServiceInstancesList}
     filterLabel="Service Instances by name"
@@ -251,6 +252,7 @@ export type ServiceBindingsDetailsProps = {
 export type ServiceInstancesPageProps = {
   showTitle?: boolean,
   namespace?: string,
+  match?: match<{ns?: string}>,
   selector?: any,
 };
 
