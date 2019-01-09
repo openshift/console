@@ -35,6 +35,7 @@ describe('Visiting Overview page', () => {
 
       it(`displays a ${kindModel.id} in the project overview list`, async() => {
         await browser.wait(until.presenceOf(overviewView.projectOverview));
+        await overviewView.itemsAreVisible();
         await expect(overviewView.getProjectOverviewListItemsOfKind(kindModel).count()).toEqual(1);
         await expect(overviewView.getProjectOverviewListItem(kindModel, testName).isPresent()).toBeTruthy();
       });
