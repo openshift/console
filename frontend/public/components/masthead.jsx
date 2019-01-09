@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as PropTypes from 'prop-types';
-import { Avatar, Brand, PageHeader } from '@patternfly/react-core';
+import { Brand, PageHeader } from '@patternfly/react-core';
 
 import { MastheadToolbar } from './masthead-toolbar';
 import okdLogoImg from '../imgs/okd-logo.svg';
@@ -8,7 +8,6 @@ import openshiftLogoImg from '../imgs/openshift-logo.svg';
 import ocpLogoImg from '../imgs/openshift-platform-logo.svg';
 import onlineLogoImg from '../imgs/openshift-online-logo.svg';
 import dedicatedLogoImg from '../imgs/openshift-dedicated-logo.svg';
-import avatarImg from '../imgs/avatar.svg';
 import * as pfBg992 from '../../public/imgs/pfbg_992.jpg';
 
 export const getBrandingDetails = () => {
@@ -55,7 +54,6 @@ export const Masthead = ({ onNavToggle }) => {
     <PageHeader
       logo={<Brand src={details.logoImg} alt={details.logoAlt} />}
       toolbar={<MastheadToolbar />}
-      avatar={<Avatar src={avatarImg} alt="" className="pf-u-sr-only pf-u-visible-on-md" />}
       showNavToggle
       onNavToggle={onNavToggle}
     />
