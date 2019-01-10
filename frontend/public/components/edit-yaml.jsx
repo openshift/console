@@ -1,5 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
+import * as classNames from 'classnames';
 import { safeLoad, safeDump } from 'js-yaml';
 import { saveAs } from 'file-saver';
 import { connect } from 'react-redux';
@@ -65,6 +66,10 @@ export const EditYAML = connect(stateToProps)(
       this.loadSampleYaml_ = this.loadSampleYaml_.bind(this);
       this.downloadSampleYaml_ = this.downloadSampleYaml_.bind(this);
 
+      if (this.props.error) {
+        this.handleError(this.props.error);
+      }
+
       // Retrieve k8s API spec for autocompletion
       if (!window.sessionStorage.getItem(`${window.SERVER_FLAGS.consoleVersion}--swagger.json`)) {
         coFetchJSON('api/kubernetes/swagger.json')
@@ -117,13 +122,19 @@ export const EditYAML = connect(stateToProps)(
     }
 
     componentWillReceiveProps(nextProps) {
+      if (nextProps.isOver) {
+        return;
+      }
       const newVersion = _.get(nextProps.obj, 'metadata.resourceVersion');
       const stale = this.displayedVersion !== newVersion;
       this.setState({stale});
+      if (nextProps.error) {
+        this.handleError(nextProps.error);
+      }
       if (nextProps.sampleObj) {
         this.loadYaml(!_.isEqual(this.state.sampleObj, nextProps.sampleObj), nextProps.sampleObj);
       } else {
-        this.loadYaml();
+        this.loadYaml(true, nextProps.obj);
       }
     }
 
@@ -164,7 +175,11 @@ export const EditYAML = connect(stateToProps)(
 
       if (obj) {
         try {
-          yaml = safeDump(obj);
+          if (!_.isString(obj)){
+            yaml = safeDump(obj);
+          } else {
+            yaml = obj;
+          }
         } catch (e) {
           yaml = `Error dumping YAML: ${e}`;
         }
@@ -303,40 +318,52 @@ export const EditYAML = connect(stateToProps)(
         The current solution uses divs that are relative -> absolute -> flexbox pinning the button row with margin-top: auto
       */
 
+      const { connectDropTarget, isOver, canDrop } = this.props;
+      const klass = classNames('co-file-dropzone-container', {'co-file-dropzone--drop-over': isOver});
+
       const {error, success, stale} = this.state;
-      const {create, obj, download = true, showHeader, readOnly} = this.props;
+      const {create, obj, download = true, readOnly, header} = this.props;
       const kind = obj && obj.kind;
       const model = this.getModel(obj);
+      const label = _.get(model, 'label', kind);
 
-      return <div>
-        {showHeader && <div className="yaml-editor__header">
-          {`${create ? 'Create' : 'Edit'} ${_.get(model, 'label', kind)}`}
-        </div>}
-        <div className="co-p-has-sidebar">
-          <div className="co-p-has-sidebar__body">
-            <div className="yaml-editor" ref={r => this.editor = r} style={{height: this.state.height}}>
-              <div className="absolute-zero">
-                <div className="full-width-and-height yaml-editor__flexbox">
-                  <div id={this.id} key={this.id} className="yaml-editor__acebox" />
-                  <div className="yaml-editor__buttons">
-                    {error && <p className="alert alert-danger"><span className="pficon pficon-error-circle-o"></span>{error}</p>}
-                    {success && <p className="alert alert-success"><span className="pficon pficon-ok"></span>{success}</p>}
-                    {stale && <p className="alert alert-info">
-                      <span className="pficon pficon-info"></span>This object has been updated. Click reload to see the new version.
-                    </p>}
-                    {create && <button type="submit" className="btn btn-primary" id="save-changes" onClick={() => this.save()}>Create</button>}
-                    {!create && !readOnly && <button type="submit" className="btn btn-primary" id="save-changes" onClick={() => this.save()}>Save</button>}
-                    {!create && <button type="submit" className="btn btn-default" id="reload-object" onClick={() => this.reload()}>Reload</button>}
-                    <button className="btn btn-default" id="cancel" onClick={() => this.onCancel()}>Cancel</button>
-                    {download && <button type="submit" className="btn btn-default pull-right hidden-sm hidden-xs" onClick={() => this.download()}><i className="fa fa-download"></i>&nbsp;Download</button>}
+      const editYamlComponent = <div className="co-file-dropzone">
+        { canDrop && <div className={klass}><p className="co-file-dropzone__drop-text">Drop file here</p></div> }
+
+        <div>
+          <div className="yaml-editor__header">
+            {create && <div>{header}</div>}
+            {create && <div className="yaml-editor__subheader">Create by manually entering YAML or JSON definitions, or by dragging and dropping a file into the editor.</div>}
+            {!create && <div>Edit {label}</div>}
+          </div>
+          <div className="co-p-has-sidebar">
+            <div className="co-p-has-sidebar__body">
+              <div className="yaml-editor" ref={r => this.editor = r} style={{height: this.state.height}}>
+                <div className="absolute-zero">
+                  <div className="full-width-and-height yaml-editor__flexbox">
+                    <div id={this.id} key={this.id} className="yaml-editor__acebox" />
+                    <div className="yaml-editor__buttons">
+                      {error && <p className="alert alert-danger"><span className="pficon pficon-error-circle-o"></span>{error}</p>}
+                      {success && <p className="alert alert-success"><span className="pficon pficon-ok"></span>{success}</p>}
+                      {stale && <p className="alert alert-info">
+                        <span className="pficon pficon-info"></span>This object has been updated. Click reload to see the new version.
+                      </p>}
+                      {create && <button type="submit" className="btn btn-primary" id="save-changes" onClick={() => this.save()}>Create</button>}
+                      {!create && !readOnly && <button type="submit" className="btn btn-primary" id="save-changes" onClick={() => this.save()}>Save</button>}
+                      {!create && <button type="submit" className="btn btn-default" id="reload-object" onClick={() => this.reload()}>Reload</button>}
+                      <button className="btn btn-default" id="cancel" onClick={() => this.onCancel()}>Cancel</button>
+                      {download && <button type="submit" className="btn btn-default pull-right hidden-sm hidden-xs" onClick={() => this.download()}><i className="fa fa-download"></i>&nbsp;Download</button>}
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
+            <ResourceSidebar isCreateMode={create} kindObj={model} height={this.state.height} loadSampleYaml={this.loadSampleYaml_} downloadSampleYaml={this.downloadSampleYaml_} />
           </div>
-          <ResourceSidebar isCreateMode={create} kindObj={model} height={this.state.height} loadSampleYaml={this.loadSampleYaml_} downloadSampleYaml={this.downloadSampleYaml_} />
         </div>
       </div>;
+
+      return _.isFunction(connectDropTarget) ? connectDropTarget(editYamlComponent) : editYamlComponent;
     }
   }
 );
