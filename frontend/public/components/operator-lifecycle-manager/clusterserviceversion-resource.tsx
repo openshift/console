@@ -66,9 +66,16 @@ export const ClusterServiceVersionResourceRow: React.SFC<ClusterServiceVersionRe
 };
 
 export const ClusterServiceVersionResourceList: React.SFC<ClusterServiceVersionResourceListProps> = (props) => {
+  const ensureKind = (data: K8sResourceKind[]) => data.map(obj => ({kind: obj.kind || props.kinds[0], ...obj}));
   const EmptyMsg = () => <MsgBox title="No Application Resources Found" detail="Application resources are declarative components used to define the behavior of the application." />;
 
-  return <List {...props} EmptyMsg={EmptyMsg} Header={ClusterServiceVersionResourceHeader} Row={ClusterServiceVersionResourceRow} label="Application Resources" />;
+  return <List
+    {...props}
+    data={ensureKind(props.data)}
+    EmptyMsg={EmptyMsg}
+    Header={ClusterServiceVersionResourceHeader}
+    Row={ClusterServiceVersionResourceRow}
+    label="Application Resources" />;
 };
 
 const inFlightStateToProps = ({k8s}) => ({inFlight: k8s.getIn(['RESOURCES', 'inFlight'])});
@@ -116,17 +123,17 @@ export const ProvidedAPIsPage = connect(inFlightStateToProps)(
       : <StatusBox loaded={true} EmptyMsg={EmptyMsg} />;
   });
 
-export const ProvidedAPIPage = connect(inFlightStateToProps)((props: ProvidedAPIPageProps) => {
-  const {namespace, kind, inFlight, csv} = props;
+export const ProvidedAPIPage = connectToModel((props: ProvidedAPIPageProps) => {
+  const {namespace, kind, kindObj, kindsInFlight, csv} = props;
 
-  return inFlight
+  return kindsInFlight
     ? null
     : <ListPage
       kind={kind}
       ListComponent={ClusterServiceVersionResourceList}
-      canCreate={true}
+      canCreate={(kindObj.verbs || []).some(v => v === 'create')}
       createProps={{to: `/k8s/ns/${csv.metadata.namespace}/${ClusterServiceVersionModel.plural}/${csv.metadata.name}/${kind}/new`}}
-      namespace={namespace} />;
+      namespace={kindObj.namespaced ? namespace : null} />;
 });
 
 export const ClusterServiceVersionResourceDetails = connectToModel(
@@ -234,6 +241,7 @@ export const ClusterServiceVersionResourcesDetailsPage: React.SFC<ClusterService
 
 export type ClusterServiceVersionResourceListProps = {
   loaded: boolean;
+  kinds?: GroupVersionKind[];
   data: ClusterServiceVersionResourceKind[];
   filters: {[key: string]: any};
   reduxID?: string;
@@ -257,8 +265,9 @@ export type ProvidedAPIsPageProps = {
 
 export type ProvidedAPIPageProps = {
   csv: ClusterServiceVersionKind;
-  inFlight?: boolean;
+  kindsInFlight?: boolean;
   kind: GroupVersionKind;
+  kindObj: K8sKind;
   namespace: string;
 };
 

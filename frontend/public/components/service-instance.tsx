@@ -3,16 +3,14 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { Link, withRouter, RouteComponentProps, match } from 'react-router-dom';
 
-import { k8sList, K8sResourceKind, K8sResourceKindReference, planExternalName, serviceCatalogStatus } from '../module/k8s';
+import { k8sList, K8sResourceKind, planExternalName, serviceCatalogStatus, referenceForModel } from '../module/k8s';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
 import { Kebab, history, navFactory, ResourceKebab, ResourceIcon, ResourceLink, ResourceSummary, SectionHeading, StatusWithIcon, Timestamp } from './utils';
 import { ResourceEventStream } from './events';
 import { Conditions } from './conditions';
 import { ServiceCatalogParameters, ServiceCatalogParametersSecrets } from './service-catalog-parameters';
 import { ServiceBindingsPage } from './service-binding';
-import { ServiceBindingModel } from '../models';
-
-const ServiceInstancesReference: K8sResourceKindReference = 'ServiceInstance';
+import { ServiceBindingModel, ServiceInstanceModel, ClusterServiceClassModel } from '../models';
 
 const goToCreateBindingPage = (serviceInstance: K8sResourceKind) => {
   history.push(`/k8s/ns/${serviceInstance.metadata.namespace}/serviceinstances/${serviceInstance.metadata.name}/create-binding`);
@@ -33,7 +31,7 @@ const menuActions = [
 ];
 
 export const ServiceBindingDescription: React.SFC<ServiceBindingDescriptionProps> = ({instanceName, className}) => <p className={className}>
-  Service bindings create a secret containing the necessary information for a workload to use <ResourceIcon kind="ServiceInstance" />{instanceName}.
+  Service bindings create a secret containing the necessary information for a workload to use <ResourceIcon kind={referenceForModel(ServiceInstanceModel)} />{instanceName}.
   Once the binding is ready, add the secret to your workload&apos;s environment variables or volumes.
 </p>;
 
@@ -113,7 +111,7 @@ const ServiceInstanceDetails: React.SFC<ServiceInstanceDetailsProps> = ({obj: si
             <dt>Service Class</dt>
             <dd>
               {clusterServiceClassName
-                ? <ResourceLink kind="ClusterServiceClass" displayName={classDisplayName} title={classDisplayName} name={clusterServiceClassName} />
+                ? <ResourceLink kind={referenceForModel(ClusterServiceClassModel)} displayName={classDisplayName} title={classDisplayName} name={clusterServiceClassName} />
                 : classDisplayName}
             </dd>
             <dt>Status</dt>
@@ -149,7 +147,7 @@ const pages = [
 export const ServiceInstanceDetailsPage: React.SFC<ServiceInstanceDetailsPageProps> = props =>
   <DetailsPage
     {...props}
-    kind={ServiceInstancesReference}
+    kind={referenceForModel(ServiceInstanceModel)}
     menuActions={menuActions}
     pages={pages} />;
 ServiceInstanceDetailsPage.displayName = 'ServiceInstanceDetailsPage';
@@ -168,14 +166,14 @@ const ServiceInstancesRow: React.SFC<ServiceInstancesRowProps> = ({obj}) => {
 
   return <div className="row co-resource-list__item">
     <div className="col-md-2 col-sm-4 col-xs-6">
-      <ResourceLink kind={ServiceInstancesReference} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
+      <ResourceLink kind={referenceForModel(ServiceInstanceModel)} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
     </div>
     <div className="col-md-2 col-sm-3 col-xs-6 co-break-word">
       <ResourceLink kind="Namespace" name={obj.metadata.namespace} title={obj.metadata.namespace} />
     </div>
     <div className="col-md-2 col-sm-3 hidden-xs co-break-word">
       {clusterServiceClassRefName
-        ? <ResourceLink kind="ClusterServiceClass" displayName={obj.spec.clusterServiceClassExternalName} title={obj.spec.clusterServiceClassExternalName} name={obj.spec.clusterServiceClassRef.name} />
+        ? <ResourceLink kind={referenceForModel(ClusterServiceClassModel)} displayName={obj.spec.clusterServiceClassExternalName} title={obj.spec.clusterServiceClassExternalName} name={obj.spec.clusterServiceClassRef.name} />
         : obj.spec.clusterServiceClassExternalName }
     </div>
     <div className="col-md-2 col-sm-2 hidden-xs">
@@ -188,7 +186,7 @@ const ServiceInstancesRow: React.SFC<ServiceInstancesRowProps> = ({obj}) => {
       <Timestamp timestamp={obj.metadata.creationTimestamp} />
     </div>
     <div className="dropdown-kebab-pf">
-      <ResourceKebab actions={menuActions} kind={ServiceInstancesReference} resource={obj} />
+      <ResourceKebab actions={menuActions} kind={referenceForModel(ServiceInstanceModel)} resource={obj} />
     </div>
   </div>;
 };
@@ -211,7 +209,7 @@ export const ServiceInstancesPage: React.SFC<ServiceInstancesPageProps> = props 
   <ListPage
     {...props}
     namespace={_.get(props.match, 'params.ns')}
-    kind={ServiceInstancesReference}
+    kind={referenceForModel(ServiceInstanceModel)}
     ListComponent={ServiceInstancesList}
     filterLabel="Service Instances by name"
     rowFilters={filters}

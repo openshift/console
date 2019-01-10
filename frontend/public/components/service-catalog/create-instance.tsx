@@ -6,12 +6,13 @@ import { Helmet } from 'react-helmet';
 import { IChangeEvent, ISubmitEvent } from 'react-jsonschema-form';
 
 import { LoadingBox } from '../utils/status-box';
-import { ServiceInstanceModel } from '../../models';
+import { ServiceInstanceModel, ClusterServiceClassModel, ClusterServicePlanModel } from '../../models';
 import { ClusterServiceClassInfo } from '../cluster-service-class-info';
 import { ButtonBar } from '../utils/button-bar';
 import {
   k8sCreate,
   K8sResourceKind,
+  referenceForModel,
 } from '../../module/k8s';
 import {
   createParametersSecret,
@@ -192,8 +193,8 @@ export const CreateInstancePage = (props) => {
   const name = searchParams.get('cluster-service-class');
   const preselectedNamespace = searchParams.get('preselected-ns');
   const resources = [
-    {kind: 'ClusterServiceClass', name, isList: false, prop: 'obj'},
-    {kind: 'ClusterServicePlan', isList: true, prop: 'plans', fieldSelector: `spec.clusterServiceClassRef.name=${name}`},
+    {kind: referenceForModel(ClusterServiceClassModel), name, isList: false, prop: 'obj'},
+    {kind: referenceForModel(ClusterServicePlanModel), isList: true, prop: 'plans', fieldSelector: `spec.clusterServiceClassRef.name=${name}`},
   ];
   return <Firehose resources={resources}>
     <CreateInstance preselectedNamespace={preselectedNamespace} {...props as any} />

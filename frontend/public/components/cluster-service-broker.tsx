@@ -4,11 +4,11 @@ import * as React from 'react';
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import { Kebab, SectionHeading, detailsPage, navFactory, ResourceLink, ResourceKebab, ResourceSummary, StatusWithIcon, Timestamp } from './utils';
 // eslint-disable-next-line no-unused-vars
-import { K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
+import { K8sResourceKind, referenceForModel } from '../module/k8s';
+import { ClusterServiceBrokerModel } from '../models';
 import { Conditions } from './conditions';
 import { ClusterServiceClassPage } from './cluster-service-class';
 
-const ClusterServiceBrokerReference: K8sResourceKindReference = 'ClusterServiceBroker';
 const menuActions = Kebab.factory.common;
 
 const ClusterServiceBrokerHeader: React.SFC<ClusterServiceBrokerHeaderProps> = props => <ListHeader>
@@ -20,7 +20,7 @@ const ClusterServiceBrokerHeader: React.SFC<ClusterServiceBrokerHeaderProps> = p
 
 const ClusterServiceBrokerListRow: React.SFC<ClusterServiceBrokerRowProps> = ({obj: serviceBroker}) => <ResourceRow obj={serviceBroker}>
   <div className="col-sm-3 col-xs-6">
-    <ResourceLink kind="ClusterServiceBroker" name={serviceBroker.metadata.name} />
+    <ResourceLink kind={referenceForModel(ClusterServiceBrokerModel)} name={serviceBroker.metadata.name} />
   </div>
   <div className="col-sm-3 col-xs-6 co-break-word">
     <StatusWithIcon obj={serviceBroker} />
@@ -32,7 +32,7 @@ const ClusterServiceBrokerListRow: React.SFC<ClusterServiceBrokerRowProps> = ({o
     <Timestamp timestamp={serviceBroker.status.lastCatalogRetrievalTime} />
   </div>
   <div className="dropdown-kebab-pf">
-    <ResourceKebab actions={menuActions} kind="ClusterServiceBroker" resource={serviceBroker} />
+    <ResourceKebab actions={menuActions} kind={referenceForModel(ClusterServiceBrokerModel)} resource={serviceBroker} />
   </div>
 </ResourceRow>;
 
@@ -76,7 +76,7 @@ const ClusterServiceBrokerDetails: React.SFC<ClusterServiceBrokerDetailsProps> =
 const ServiceClassTabPage = ({obj}) => <ClusterServiceClassPage showTitle={false} fieldSelector={`spec.clusterServiceBrokerName=${obj.metadata.name}`} />;
 export const ClusterServiceBrokerDetailsPage: React.SFC<ClusterServiceBrokerDetailsPageProps> = props => <DetailsPage
   {...props}
-  kind={ClusterServiceBrokerReference}
+  kind={referenceForModel(ClusterServiceBrokerModel)}
   menuActions={menuActions}
   pages={[
     navFactory.details(detailsPage(ClusterServiceBrokerDetails)),
@@ -88,11 +88,11 @@ export const ClusterServiceBrokerList: React.SFC = props => <List {...props} Hea
 
 export const ClusterServiceBrokerPage: React.SFC<ClusterServiceBrokerPageProps> = props =>
   <ListPage
+    {...props}
     ListComponent={ClusterServiceBrokerList}
-    kind={ClusterServiceBrokerReference}
+    kind={referenceForModel(ClusterServiceBrokerModel)}
     canCreate={true}
     showTitle={false}
-    {...props}
   />;
 
 export type ClusterServiceBrokerRowProps = {

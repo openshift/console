@@ -732,6 +732,7 @@ export const ClusterServiceBrokerModel: K8sKind = {
   namespaced: false,
   kind: 'ClusterServiceBroker',
   id: 'clusterservicebroker',
+  crd: true,
 };
 
 export const ClusterServiceClassModel: K8sKind = {
@@ -745,6 +746,7 @@ export const ClusterServiceClassModel: K8sKind = {
   namespaced: false,
   kind: 'ClusterServiceClass',
   id: 'clusterserviceclass',
+  crd: true,
 };
 
 export const ClusterServicePlanModel: K8sKind = {
@@ -758,6 +760,7 @@ export const ClusterServicePlanModel: K8sKind = {
   namespaced: false,
   kind: 'ClusterServicePlan',
   id: 'clusterserviceplan',
+  crd: true,
 };
 
 export const ServiceInstanceModel: K8sKind = {
@@ -771,6 +774,7 @@ export const ServiceInstanceModel: K8sKind = {
   namespaced: true,
   kind: 'ServiceInstance',
   id: 'serviceinstance',
+  crd: true,
 };
 
 export const ServiceBindingModel: K8sKind = {
@@ -784,6 +788,7 @@ export const ServiceBindingModel: K8sKind = {
   namespaced: true,
   kind: 'ServiceBinding',
   id: 'servicebinding',
+  crd: true,
 };
 
 export const LimitRangeModel: K8sKind = {

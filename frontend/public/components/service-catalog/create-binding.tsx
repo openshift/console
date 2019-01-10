@@ -8,8 +8,8 @@ import { IChangeEvent, ISubmitEvent } from 'react-jsonschema-form';
 import { JSONSchema6 } from 'json-schema';
 
 import { LoadingBox } from '../utils/status-box';
-import { ServiceInstanceModel, ServiceBindingModel } from '../../models';
-import { k8sCreate, K8sResourceKind } from '../../module/k8s';
+import { ServiceInstanceModel, ServiceBindingModel, ClusterServicePlanModel } from '../../models';
+import { k8sCreate, K8sResourceKind, referenceForModel } from '../../module/k8s';
 import { ButtonBar } from '../utils/button-bar';
 import {
   createParametersSecret,
@@ -45,7 +45,7 @@ const BindingParameters: React.SFC<BindingParametersProps> = props => {
   }
 
   const resources = [
-    {kind: 'ClusterServicePlan', name: planName, prop: 'plan'},
+    {kind: referenceForModel(ClusterServicePlanModel), name: planName, prop: 'plan'},
   ];
   return <Firehose resources={resources}>
     <BindingParametersForm {...props as any} />
@@ -160,7 +160,7 @@ class CreateBindingForm extends React.Component<CreateBindingProps, CreateBindin
 
 export const CreateBindingPage: React.SFC<CreateBindingPageProps> = (props) => {
   const resources = [
-    {kind: 'ServiceInstance', name: props.match.params.name, namespace: props.match.params.ns, isList: false, prop: 'obj'},
+    {kind: referenceForModel(ServiceInstanceModel), name: props.match.params.name, namespace: props.match.params.ns, isList: false, prop: 'obj'},
   ];
   return <Firehose resources={resources}>
     <CreateBindingForm {...props as any} />

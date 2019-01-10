@@ -43,7 +43,7 @@ describe('Kubernetes resource CRUD operations', () => {
     .set('imagestreams', {kind: 'ImageStream'})
     .set('routes', {kind: 'Route'});
   const serviceCatalogObjs = OrderedMap<string, {kind: string, namespaced?: boolean}>()
-    .set('clusterservicebrokers', {kind: 'ClusterServiceBroker', namespaced: false});
+    .set('clusterservicebrokers', {kind: 'servicecatalog.k8s.io~v1beta1~ClusterServiceBroker', namespaced: false});
   let testObjs = browser.params.openshift === 'true' ? k8sObjs.merge(openshiftObjs) : k8sObjs;
   testObjs = browser.params.servicecatalog === 'true' ? testObjs.merge(serviceCatalogObjs) : testObjs;
 
