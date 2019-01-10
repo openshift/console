@@ -9,28 +9,28 @@ const { common } = Kebab.factory;
 const menuActions = [...common];
 
 const Header = props => <ListHeader>
-  <ColHead {...props} className="col-lg-3 col-md-3 col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
-  <ColHead {...props} className="col-lg-3 col-md-3 col-sm-4 col-xs-6" sortField="metadata.namespace">Namespace</ColHead>
+  <ColHead {...props} className="col-lg-2 col-md-3 col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
+  <ColHead {...props} className="col-lg-2 col-md-3 col-sm-4 col-xs-6" sortField="metadata.namespace">Namespace</ColHead>
   <ColHead {...props} className="col-lg-2 col-md-3 col-sm-4 hidden-xs" sortField="spec.schedule">Schedule</ColHead>
-  <ColHead {...props} className="col-lg-2 col-md-3 hidden-sm hidden-xs" sortField="spec.schedule">Concurrency Policy</ColHead>
-  <ColHead {...props} className="col-lg-2 hidden-md hidden-sm hidden-xs" sortField="spec.schedule">Starting Deadline Seconds</ColHead>
+  <ColHead {...props} className="col-lg-3 col-md-3 hidden-sm hidden-xs" sortField="spec.schedule">Concurrency Policy</ColHead>
+  <ColHead {...props} className="col-lg-3 hidden-md hidden-sm hidden-xs" sortField="spec.schedule">Starting Deadline Seconds</ColHead>
 </ListHeader>;
 
 const kind = 'CronJob';
 const Row = ({obj: cronjob}) => <div className="row co-resource-list__item">
-  <div className="col-lg-3 col-md-3 col-sm-4 col-xs-6">
+  <div className="col-lg-2 col-md-3 col-sm-4 col-xs-6">
     <ResourceLink kind={kind} name={cronjob.metadata.name} title={cronjob.metadata.name} namespace={cronjob.metadata.namespace} />
   </div>
-  <div className="col-lg-3 col-md-3 col-sm-4 col-xs-6 co-break-word">
+  <div className="col-lg-2 col-md-3 col-sm-4 col-xs-6 co-break-word">
     <ResourceLink kind="Namespace" name={cronjob.metadata.namespace} title={cronjob.metadata.namespace} />
   </div>
   <div className="col-lg-2 col-md-3 col-sm-4 hidden-xs">
     {cronjob.spec.schedule}
   </div>
-  <div className="col-lg-2 col-md-3 hidden-sm hidden-xs">
+  <div className="col-lg-3 col-md-3 hidden-sm hidden-xs">
     {_.get(cronjob.spec, 'concurrencyPolicy', '-')}
   </div>
-  <div className="col-lg-2 hidden-md hidden-sm hidden-xs">
+  <div className="col-lg-3 hidden-md hidden-sm hidden-xs">
     {_.get(cronjob.spec, 'startingDeadlineSeconds', '-')}
   </div>
   <div className="dropdown-kebab-pf">
