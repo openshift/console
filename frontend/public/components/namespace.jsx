@@ -92,7 +92,7 @@ const ProjectRow = ({obj: project}) => {
     <div className="col-md-3 col-sm-3 col-xs-4">
       <StatusIcon status={project.status.phase} />
     </div>
-    <div className="col-md-3 col-sm-3 hidden-xs co-truncate">
+    <div className="col-md-3 col-sm-3 hidden-xs co-break-word">
       {requester || <span className="text-muted">No requester</span>}
     </div>
     <div className="col-md-3 hidden-sm hidden-xs">
