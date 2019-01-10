@@ -355,7 +355,7 @@ const OverviewHeading_: React.SFC<OverviewHeadingProps> = ({disabled, firstLabel
           Dashboard
         </button>
       </div>
-      <Toolbar className="overview-toolbar">
+      <Toolbar className="overview-toolbar" preventSubmit>
         <Toolbar.RightContent>
           {selectedView === View.Resources && <React.Fragment>
             <div className="form-group overview-toolbar__form-group">
