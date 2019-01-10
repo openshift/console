@@ -3,14 +3,13 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 
-import { isNodeReady, makeNodeSchedulable } from '../module/k8s/node';
+import { nodeStatus, makeNodeSchedulable, K8sResourceKind, referenceForModel } from '../module/k8s';
 import { ResourceEventStream } from './events';
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import { configureUnschedulableModal } from './modals';
 import { PodsPage } from './pod';
 import { Kebab, navFactory, LabelList, ResourceKebab, SectionHeading, ResourceLink, Timestamp, units, cloudProviderNames, cloudProviderID, pluralize, containerLinuxUpdateOperator, StatusIcon } from './utils';
 import { Line, requirePrometheus } from './graphs';
-import { K8sResourceKind, referenceForModel } from '../module/k8s';
 import { MachineModel, NodeModel } from '../models';
 import { CamelCaseWrap } from './utils/camel-case-wrap';
 
@@ -59,7 +58,7 @@ const HeaderSearch = props => <ListHeader>
   <ColHead {...props} className="col-md-2 col-sm-3 hidden-xs" sortField="status.addresses">Node Addresses</ColHead>
 </ListHeader>;
 
-const NodeStatus = ({node}) => isNodeReady(node) ? <StatusIcon status="Ready" /> : <StatusIcon status="Not Ready" />;
+const NodeStatus = ({node}) => <StatusIcon status={nodeStatus(node)} />;
 
 const NodeCLUpdateStatus = ({node}) => {
   const updateStatus = containerLinuxUpdateOperator.getUpdateStatus(node);
@@ -127,16 +126,16 @@ const NodeRowSearch = ({obj: node}) => <div className="row co-resource-list__ite
 const NodesList = props => <List {...props} Header={Header} Row={NodeRow} />;
 export const NodesListSearch = props => <List {...props} Header={HeaderSearch} Row={NodeRowSearch} kind="node" />;
 
-const dropdownFilters = [{
+const filters = [{
   type: 'node-status',
-  items: {
-    all: 'Status: All',
-    ready: 'Status: Ready',
-    notReady: 'Status: Not Ready',
-  },
-  title: 'Ready Status',
+  selected: ['Ready', 'Not Ready'],
+  reducer: nodeStatus,
+  items: [
+    {id: 'Ready', title: 'Ready'},
+    {id: 'Not Ready', title: 'Not Ready'},
+  ],
 }];
-export const NodesPage = props => <ListPage {...props} ListComponent={NodesList} dropdownFilters={dropdownFilters} canExpand={true} />;
+export const NodesPage = props => <ListPage {...props} ListComponent={NodesList} rowFilters={filters} canExpand={true} />;
 
 const NodeGraphs = requirePrometheus(({node}) => {
   const nodeIp = _.find<{type: string, address: string}>(node.status.addresses, {type: 'InternalIP'});
