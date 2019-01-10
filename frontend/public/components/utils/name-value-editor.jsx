@@ -310,14 +310,16 @@ const PairElement = DragSource(DRAGGABLE_TYPE.ENV_ROW, pairSource, collectSource
 
   render() {
     const {isDragging, connectDragSource, connectDragPreview, connectDropTarget, nameString, valueString, allowSorting, readOnly, pair, configMaps, secrets} = this.props;
-    const deleteButton = <React.Fragment><i className="fa fa-minus-circle pairs-list__side-btn pairs-list__delete-icon" aria-hidden="true" onClick={this._onRemove}></i><span className="sr-only">Delete</span></React.Fragment>;
+    const deleteButton = <React.Fragment><i className="fa fa-minus-circle pairs-list__side-btn pairs-list__delete-icon" aria-hidden="true"></i><span className="sr-only">Delete</span></React.Fragment>;
 
     return connectDropTarget(
       connectDragPreview(
         <div className={classNames('row', isDragging ? 'pairs-list__row-dragging' : 'pairs-list__row')} ref={node => this.node = node}>
           {allowSorting && !readOnly &&
-            <div className="col-xs-1 pairs-list__action-icon">
-              {connectDragSource(<i className="pficon pficon-drag-drop pairs-list__action-icon--reorder" />)}
+            <div className="col-xs-1 pairs-list__action">
+              {connectDragSource(<button type="button" className="btn btn-link pairs-list__action-icon" tabIndex="-1">
+                <i className="pficon pficon-drag-drop pairs-list__action-icon--reorder" />
+              </button>)}
             </div>
           }
           <div className="col-xs-5 pairs-list__name-field">
@@ -336,9 +338,9 @@ const PairElement = DragSource(DRAGGABLE_TYPE.ENV_ROW, pairSource, collectSource
           {
             !readOnly &&
               <div className="col-xs-1">
-                <span className={classNames(allowSorting ? 'pairs-list__span-btns' : null)}>
+                <button type="button" className={classNames('btn', 'btn-link', {'pairs-list__span-btns': allowSorting})} onClick={this._onRemove}>
                   {deleteButton}
-                </span>
+                </button>
               </div>
           }
         </div>)
@@ -392,14 +394,16 @@ const EnvFromPairElement = DragSource(DRAGGABLE_TYPE.ENV_FROM_ROW, pairSource, c
 
   render() {
     const {isDragging, connectDragSource, connectDragPreview, connectDropTarget, valueString, readOnly, pair, configMaps, secrets} = this.props;
-    const deleteButton = <React.Fragment><i className="fa fa-minus-circle pairs-list__side-btn pairs-list__delete-icon" aria-hidden="true" onClick={this._onRemove}></i><span className="sr-only">Delete</span></React.Fragment>;
+    const deleteButton = <React.Fragment><i className="fa fa-minus-circle pairs-list__side-btn pairs-list__delete-icon" aria-hidden="true"></i><span className="sr-only">Delete</span></React.Fragment>;
 
     return connectDropTarget(
       connectDragPreview(
         <div className={classNames('row', isDragging ? 'pairs-list__row-dragging' : 'pairs-list__row')} ref={node => this.node = node}>
           { !readOnly &&
-            <div className="col-xs-1 pairs-list__action-icon">
-              {connectDragSource(<i className="pficon pficon-drag-drop pairs-list__action-icon--reorder" />)}
+            <div className="col-xs-1 pairs-list__action">
+              {connectDragSource(<button type="button" className="btn btn-link pairs-list__action-icon" tabIndex="-1">
+                <i className="pficon pficon-drag-drop pairs-list__action-icon--reorder" />
+              </button>)}
             </div>
           }
           <div className="col-xs-5 pairs-list__value-pair-field">
@@ -411,9 +415,9 @@ const EnvFromPairElement = DragSource(DRAGGABLE_TYPE.ENV_FROM_ROW, pairSource, c
           {
             readOnly ? null :
               <div className="col-xs-1">
-                <span className="pairs-list__span-btns">
+                <button type="button" className="btn btn-link pairs-list__span-btns" onClick={this._onRemove}>
                   {deleteButton}
-                </span>
+                </button>
               </div>
           }
         </div>)
