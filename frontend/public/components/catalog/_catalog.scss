@@ -116,7 +116,7 @@ $catalog-item-icon-size-sm: 24px;
   &__num-items {
     border-bottom: 1px solid $color-pf-black-200;
     font-weight: 700;
-    margin: 0 0 $grid-gutter-width 0;
+    margin: 0 ($grid-gutter-width / 2) $grid-gutter-width 0;
     padding: 0 0 20px;
   }
 
