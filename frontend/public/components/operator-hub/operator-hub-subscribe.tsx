@@ -10,7 +10,7 @@ import { SubscriptionModel, CatalogSourceConfigModel, OperatorGroupModel, Packag
 import { OperatorGroupKind, PackageManifestKind, ClusterServiceVersionLogo, SubscriptionKind, InstallPlanApproval } from '../operator-lifecycle-manager';
 import { OperatorGroupSelector } from '../operator-lifecycle-manager/operator-group';
 import { RadioGroup } from '../radio';
-import { OPERATOR_HUB_CSC_NAME } from './index';
+import { OPERATOR_HUB_CSC_BASE } from './index';
 
 // TODO: Use `redux-form` instead of stateful component
 const withFormState = (Component) => {
@@ -53,9 +53,9 @@ export const OperatorHubSubscribeForm = withFormState((props: OperatorHubSubscri
 
   const submit = () => {
     const operatorGroupNamespace = props.operatorGroup.data.find(og => og.metadata.name === props.formState().target).metadata.namespace;
-    const operatorHubCscName = `${OPERATOR_HUB_CSC_NAME}-${operatorGroupNamespace}`;
+    const OPERATOR_HUB_CSC_NAME = `${OPERATOR_HUB_CSC_BASE}-${operatorGroupNamespace}`;
 
-    const catalogSourceConfig = props.catalogSourceConfig.data.find(csc => csc.metadata.name === operatorHubCscName);
+    const catalogSourceConfig = props.catalogSourceConfig.data.find(csc => csc.metadata.name === OPERATOR_HUB_CSC_NAME);
     const packages = _.isEmpty(catalogSourceConfig)
       ? packageName
       : _.uniq(catalogSourceConfig.spec.packages.split(',').concat([packageName])).join(',');
@@ -64,7 +64,7 @@ export const OperatorHubSubscribeForm = withFormState((props: OperatorHubSubscri
       apiVersion: `${CatalogSourceConfigModel.apiGroup}/${CatalogSourceConfigModel.apiVersion}`,
       kind: CatalogSourceConfigModel.kind,
       metadata: {
-        name: operatorHubCscName,
+        name: OPERATOR_HUB_CSC_NAME,
         namespace: 'openshift-marketplace',
       },
       spec: {
@@ -81,7 +81,7 @@ export const OperatorHubSubscribeForm = withFormState((props: OperatorHubSubscri
         namespace: props.operatorGroup.data.find(og => og.metadata.name === props.formState().target).metadata.namespace,
       },
       spec: {
-        source: operatorHubCscName,
+        source: OPERATOR_HUB_CSC_NAME,
         sourceNamespace: operatorGroupNamespace,
         name: packageName,
         startingCSV: channels.find(ch => ch.name === props.formState().updateChannel).currentCSV,
@@ -91,7 +91,7 @@ export const OperatorHubSubscribeForm = withFormState((props: OperatorHubSubscri
     };
 
     return (!_.isEmpty(catalogSourceConfig)
-      ? k8sUpdate(CatalogSourceConfigModel, {...catalogSourceConfig, spec: {targetNamespace: operatorGroupNamespace, packages}}, 'openshift-marketplace', operatorHubCscName)
+      ? k8sUpdate(CatalogSourceConfigModel, {...catalogSourceConfig, spec: {targetNamespace: operatorGroupNamespace, packages}}, 'openshift-marketplace', OPERATOR_HUB_CSC_NAME)
       : k8sCreate(CatalogSourceConfigModel, newCatalogSourceConfig)
     ).then(() => k8sCreate(SubscriptionModel, subscription))
       .then(() => history.push('/operatorhub'));
@@ -102,7 +102,7 @@ export const OperatorHubSubscribeForm = withFormState((props: OperatorHubSubscri
       <div>
         <div className="form-group">
           <label className="co-required">Target</label>
-          <OperatorGroupSelector onChange={(target) => props.updateFormState({target})} />
+          <OperatorGroupSelector onChange={(target) => props.updateFormState({target})} excludeName={'olm-operators'} />
         </div>
         <div className="form-group">
           <label className="co-required">Update Channel</label>

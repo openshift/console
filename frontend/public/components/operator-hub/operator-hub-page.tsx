@@ -9,7 +9,7 @@ import {referenceForModel, K8sResourceKind} from '../../module/k8s';
 import {PackageManifestModel, OperatorGroupModel, CatalogSourceConfigModel, SubscriptionModel} from '../../models';
 import {OperatorHubTileView} from './operator-hub-items';
 import {PackageManifestKind, OperatorGroupKind, SubscriptionKind} from '../operator-lifecycle-manager';
-import {OPERATOR_HUB_CSC_NAME} from './index';
+import {OPERATOR_HUB_CSC_BASE} from './index';
 import * as operatorImg from '../../imgs/operator.svg';
 
 const normalizePackageManifests = (packageManifests: PackageManifestKind[] = []) => {
@@ -70,7 +70,7 @@ const normalizePackageManifests = (packageManifests: PackageManifestKind[] = [])
 
 export const OperatorHubList: React.SFC<OperatorHubListProps> = (props) => {
   const {catalogSourceConfig, packageManifest, loaded, loadError} = props;
-  const sourceConfigs = _.find(_.get(catalogSourceConfig, 'data'), csc => csc.metadata.name === OPERATOR_HUB_CSC_NAME);
+  const sourceConfigs = _.find(_.get(catalogSourceConfig, 'data'), csc => _.startsWith(csc.metadata.name, OPERATOR_HUB_CSC_BASE));
   const items = loaded
     ? _.sortBy(normalizePackageManifests(_.get(packageManifest, 'data')), 'name')
     : [];
@@ -103,7 +103,6 @@ export const OperatorHubPage: React.SFC<OperatorHubPageProps> = (props) => {
         }, {
           isList: true,
           kind: referenceForModel(OperatorGroupModel),
-          namespace: 'openshift-operators',
           prop: 'operatorGroup',
         }, {
           isList: true,
@@ -114,7 +113,6 @@ export const OperatorHubPage: React.SFC<OperatorHubPageProps> = (props) => {
         }, {
           isList: true,
           kind: referenceForModel(SubscriptionModel),
-          namespace: 'openshift-operators',
           prop: 'subscription',
         }]}>
           {/* FIXME(alecmerdler): Hack because `Firehose` injects props without TypeScript knowing about it */}
