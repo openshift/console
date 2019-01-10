@@ -20,31 +20,36 @@ const VmTemplateHeader = props => <ListHeader>
   <ColHead {...props} className={otherRowStyle}>Flavor</ColHead>
 </ListHeader>;
 
-const VmTemplateRow = ({obj: template}) => <ResourceRow obj={template}>
-  <div className={mainRowStyle}>
-    <ResourceLink kind={VmTemplateModel.kind} name={template.metadata.name} namespace={template.metadata.namespace} title={template.metadata.uid} />
-  </div>
-  <div className={mainRowStyle}>
-    <ResourceLink kind={NamespaceModel.kind} name={template.metadata.namespace} title={template.metadata.namespace} />
-  </div>
-  <div className={mainRowStyle}>
-    {_.get(template.metadata, 'annotations.description', DASHES)}
-  </div>
-  <div className="dropdown-kebab-pf">
-    <ResourceKebab actions={menuActions} kind={VmTemplateModel.kind} resource={template} />
-  </div>
-  <div className={otherRowStyle}>
-    <div className="co-resource-list__item--templateSource">
-      <TemplateSource template={template} />
+const VmTemplateRow = ({obj: template}) => {
+
+  const os = getTemplateOperatingSystems([template])[0];
+
+  return ( <ResourceRow obj={template}>
+    <div className={mainRowStyle}>
+      <ResourceLink kind={VmTemplateModel.kind} name={template.metadata.name} namespace={template.metadata.namespace} title={template.metadata.uid} />
     </div>
-  </div>
-  <div className={otherRowStyle}>
-    {getTemplateOperatingSystems([template])[0]}
-  </div>
-  <div className={otherRowStyle}>
-    {getTemplateFlavors([template])[0]}
-  </div>
-</ResourceRow>;
+    <div className={mainRowStyle}>
+      <ResourceLink kind={NamespaceModel.kind} name={template.metadata.namespace} title={template.metadata.namespace} />
+    </div>
+    <div className={mainRowStyle}>
+      {_.get(template.metadata, 'annotations.description', DASHES)}
+    </div>
+    <div className="dropdown-kebab-pf">
+      <ResourceKebab actions={menuActions} kind={VmTemplateModel.kind} resource={template} />
+    </div>
+    <div className={otherRowStyle}>
+      <div className="co-resource-list__item--templateSource">
+        <TemplateSource template={template} />
+      </div>
+    </div>
+    <div className={otherRowStyle}>
+      {os ? os.name || os.id : DASHES}
+    </div>
+    <div className={otherRowStyle}>
+      {getTemplateFlavors([template])[0]}
+    </div>
+  </ResourceRow>);
+};
 
 
 const VmTemplateList = props => <List {...props} Header={VmTemplateHeader} Row={VmTemplateRow} />;
