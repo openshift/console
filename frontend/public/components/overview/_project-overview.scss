@@ -86,10 +86,13 @@
     white-space: nowrap;
   }
 
-  .project-overview__item {
-    cursor: pointer;
+  .project-overview__item.list-group-item {
+    background-clip: initial;
+    border-bottom: 1px solid $color-pf-black-200;
     border-left: 0;
     border-right: 0;
+    border-top: 1px solid $color-pf-black-200;
+    cursor: pointer;
     position: relative;
     &::after {
       align-self: center;
