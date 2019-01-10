@@ -11,25 +11,25 @@ export const StatusIcon: React.FunctionComponent<StatusIconProps> = ({status}) =
   switch (status) {
 
     case 'Pending':
-      return <span><Icon type="fa" name="hourglass-half" /> <CamelCaseWrap value={status} /></span>;
+      return <span className="co-icon-and-text"><Icon type="fa" name="hourglass-half" className="co-icon-and-text__icon" /><CamelCaseWrap value={status} /></span>;
 
     case 'Expired':
     case 'Cancelled':
     case 'Not Ready':
     case 'Terminating':
-      return <span><Icon type="fa" name="ban" /> <CamelCaseWrap value={status} /></span>;
+      return <span className="co-icon-and-text"><Icon type="fa" name="ban" className="co-icon-and-text__icon" /><CamelCaseWrap value={status} /></span>;
 
     case 'Warning':
-      return <span><Icon type="pf" name="warning-triangle-o" /> <CamelCaseWrap value={status} /></span>;
+      return <span className="co-icon-and-text"><Icon type="pf" name="warning-triangle-o" className="co-icon-and-text__icon" /><CamelCaseWrap value={status} /></span>;
 
     case 'Running':
-      return <span><Icon type="fa" name="refresh" /> <CamelCaseWrap value={status} /></span>;
+      return <span className="co-icon-and-text"><Icon type="fa" name="refresh" className="co-icon-and-text__icon" /><CamelCaseWrap value={status} /></span>;
 
     case 'ContainerCreating':
     case 'Updating':
     case 'Upgrading':
     case 'In Progress':
-      return <span><Icon type="pf" name="in-progress" /> <CamelCaseWrap value={status} /></span>;
+      return <span className="co-icon-and-text"><Icon type="pf" name="in-progress" className="co-icon-and-text__icon" /><CamelCaseWrap value={status} /></span>;
 
     case 'ContainerCannotRun':
     case 'CrashLoopBackOff':
@@ -39,7 +39,7 @@ export const StatusIcon: React.FunctionComponent<StatusIconProps> = ({status}) =
     case 'InstallCheckFailed':
     case 'Lost':
     case 'Rejected':
-      return <span><Icon type="pf" name="error-circle-o" /> <CamelCaseWrap value={status} /></span>;
+      return <span className="co-icon-and-text"><Icon type="pf" name="error-circle-o" className="co-icon-and-text__icon" /><CamelCaseWrap value={status} /></span>;
 
     case 'Accepted':
     case 'Active':
@@ -49,13 +49,13 @@ export const StatusIcon: React.FunctionComponent<StatusIconProps> = ({status}) =
     case 'Enabled':
     case 'Ready':
     case 'Up to date':
-      return <span><Icon type="pf" name="ok" /> <CamelCaseWrap value={status} /></span>;
+      return <span className="co-icon-and-text"><Icon type="pf" name="ok" className="co-icon-and-text__icon" /><CamelCaseWrap value={status} /></span>;
 
     case 'Unknown':
-      return <span><Icon type="pf" name="unknown" /> <CamelCaseWrap value={status} /></span>;
+      return <span className="co-icon-and-text"><Icon type="pf" name="unknown" className="co-icon-and-text__icon" /><CamelCaseWrap value={status} /></span>;
 
     case 'New':
-      return <span><Icon type="fa" name="hourglass-1" /> <CamelCaseWrap value={status} /></span>;
+      return <span className="co-icon-and-text"><Icon type="fa" name="hourglass-1" className="co-icon-and-text__icon" /><CamelCaseWrap value={status} /></span>;
 
     default:
       return <span><CamelCaseWrap value={status} /></span>;
