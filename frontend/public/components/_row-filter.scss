@@ -6,6 +6,7 @@ $color-row-filter-border--active: $color-pf-blue-300;
   flex: 1;
   flex-wrap: nowrap;
   justify-content: space-between;
+  z-index: 1;
 }
 
 .co-m-row-filter__items {
@@ -24,29 +25,36 @@ $color-row-filter-border--active: $color-pf-blue-300;
   background-color: #fff;
   display: flex;
   flex-wrap: wrap;
-  margin-bottom: 30px;
-  margin-top: 3px;
-  outline: 1px solid $color-row-filter-border;
+  margin-bottom: $grid-gutter-width;
+  // use pseudo element for border so .row-filter__box-es can overlaps
+  &::before {
+    border: 1px solid $color-row-filter-border;
+    bottom: ($grid-gutter-width - 1);
+    content: '';
+    left: ($grid-gutter-width / 2);
+    position: absolute;
+    right: ($grid-gutter-width / 2);
+    top: 0;
+  }
 }
 
 .row-filter__box {
   background: $color-pf-black-150;
   display: inline-block;
+  margin: 0 -1px -1px 0;
   padding: 7px 10px;
   //  relative is to trigger z-index
   position: relative;
   &,
   &:focus,
   &:hover {
+    border: 1px solid $color-row-filter-border;
     color: inherit;
-    outline: 1px solid;
-    outline-color: $color-row-filter-border;
     text-decoration: none;
   }
   &:focus {
-    outline-offset: 0;
-    outline: 1px dotted;
-    outline-color: darken($color-row-filter-border, 40%);
+    border-color: darken($color-row-filter-border, 40%);
+    border-style: dotted;
     z-index: 2;
   }
   &:hover {
@@ -56,11 +64,11 @@ $color-row-filter-border--active: $color-pf-blue-300;
 
 .row-filter__box--active {
   background: $color-pf-blue-50;
-  outline-color: $color-row-filter-border--active !important;
+  border-color: $color-row-filter-border--active !important;
   // z-index is because latter blocks overlap the joining outline of former blocks
   z-index: 1;
   &:focus {
-    outline-color: darken($color-row-filter-border--active, 25%) !important;
+    border-color: darken($color-row-filter-border--active, 25%) !important;
   }
 }
 
