@@ -814,6 +814,20 @@ export const APIServiceModel: K8sKind = {
 
 // Cluster API resources
 // https://github.com/kubernetes-sigs/cluster-api
+export const MachineModel: K8sKind = {
+  label: 'Machine',
+  labelPlural: 'Machines',
+  apiVersion: 'v1alpha1',
+  path: 'machines',
+  apiGroup: 'cluster.k8s.io',
+  plural: 'machines',
+  abbr: 'M',
+  namespaced: true,
+  kind: 'Machine',
+  id: 'machine',
+  crd: true,
+};
+
 export const MachineSetModel: K8sKind = {
   label: 'Machine Set',
   labelPlural: 'Machine Sets',
@@ -828,17 +842,17 @@ export const MachineSetModel: K8sKind = {
   crd: true,
 };
 
-export const MachineModel: K8sKind = {
-  label: 'Machine',
-  labelPlural: 'Machines',
+export const MachineDeploymentModel: K8sKind = {
+  label: 'Machine Deployment',
+  labelPlural: 'Machine Deployments',
   apiVersion: 'v1alpha1',
-  path: 'machines',
+  path: 'machinedeployments',
   apiGroup: 'cluster.k8s.io',
-  plural: 'machines',
-  abbr: 'M',
+  plural: 'machinedeployments',
+  abbr: 'MD',
   namespaced: true,
-  kind: 'Machine',
-  id: 'machine',
+  kind: 'MachineDeployment',
+  id: 'machinedeployment',
   crd: true,
 };
 
