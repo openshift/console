@@ -1,7 +1,11 @@
 .yaml-editor__header {
   border-bottom: 1px solid #ddd;
-  font-size: 16px;
-  padding: 10px 20px;
+  font-size: 20px;
+  font-weight: 300;
+  padding: 10px 15px;
+  @media(min-width: $screen-sm-min) {
+    padding: 10px 31px; // left alignment with namespace selector text
+  }
 }
 
 .yaml-editor__subheader {
