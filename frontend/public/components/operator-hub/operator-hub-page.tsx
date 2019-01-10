@@ -82,7 +82,7 @@ export const OperatorHubList: React.SFC<OperatorHubListProps> = (props) => {
     label="Resources"
     EmptyMsg={() => <MsgBox
       title="No Operator Hub Items Found"
-      detail={<span>Please check that the OperatorHub is running and that you have created a valid OperatorSource. For more information about Operator Hub, please click <a href="https://github.com/operator-framework/operator-marketplace">here</a>.</span>} />}>
+      detail={<span>Please check that the OperatorHub is running and that you have created a valid OperatorSource. For more information about Operator Hub, please click <a href="https://github.com/operator-framework/operator-marketplace" target="_blank" className="co-external-link" rel="noopener noreferrer">here</a>.</span>} />}>
     <OperatorHubTileView items={items} catalogSourceConfig={sourceConfigs} subscriptions={props.subscription.data} />
   </StatusBox>;
 };
@@ -98,7 +98,7 @@ export const OperatorHubPage: React.SFC<OperatorHubPageProps> = (props) => {
         <Firehose resources={[{
           isList: true,
           kind: referenceForModel(CatalogSourceConfigModel),
-          namespace: 'openshift-operators',
+          namespace: 'openshift-marketplace',
           prop: 'catalogSourceConfig',
         }, {
           isList: true,
@@ -108,7 +108,7 @@ export const OperatorHubPage: React.SFC<OperatorHubPageProps> = (props) => {
         }, {
           isList: true,
           kind: referenceForModel(PackageManifestModel),
-          namespace: 'openshift-operators',
+          namespace: 'openshift-marketplace',
           prop: 'packageManifest',
           selector: {matchLabels: {'openshift-marketplace': 'true'}},
         }, {
