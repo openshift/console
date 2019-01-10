@@ -10,7 +10,7 @@ import { SubscriptionModel, CatalogSourceConfigModel, OperatorGroupModel, Packag
 import { OperatorGroupKind, PackageManifestKind, ClusterServiceVersionLogo, SubscriptionKind, InstallPlanApproval } from '../operator-lifecycle-manager';
 import { OperatorGroupSelector } from '../operator-lifecycle-manager/operator-group';
 import { RadioGroup } from '../radio';
-import { OPERATOR_HUB_CSC_BASE } from './index';
+import { OPERATOR_HUB_CSC_BASE } from '../../const';
 
 // TODO: Use `redux-form` instead of stateful component
 const withFormState = (Component) => {

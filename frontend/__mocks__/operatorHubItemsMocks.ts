@@ -515,10 +515,9 @@ export const mockProviderStrings = [
   },
 ];
 
-export const operatorHubModalProps = {
+export const operatorHubDetailsProps = {
   item: operatorHubTileViewPageProps.items[0],
-  show: true,
-  close: null,
+  closeOverlay: null,
 };
 
 export const itemWithLongDescription = {

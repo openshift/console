@@ -86,7 +86,7 @@ export const ClusterServiceVersionRow = withFallback<ClusterServiceVersionRowPro
 });
 
 const helpText = <p className="co-help-text">
-  Cluster Service Versions are installed per namespace from Catalog Sources. For more information, see the <a href="https://github.com/operator-framework/operator-lifecycle-manager/blob/master/Documentation/design/architecture.md" target="_blank" className="co-external-link" rel="noopener noreferrer">Operator Lifecycle Manager documentation</a>.
+  Installed Operators are represented by Cluster Service Versions within this namespace. For more information, see the <a href="https://github.com/operator-framework/operator-lifecycle-manager/blob/master/Documentation/design/architecture.md" target="_blank" className="co-external-link" rel="noopener noreferrer">Operator Lifecycle Manager documentation</a>.
 
   Or create an Operator and Cluster Service Version using the <a href="https://github.com/operator-framework/operator-sdk" target="_blank" className="co-external-link" rel="noopener noreferrer">Operator SDK</a>.
 </p>;
@@ -108,7 +108,7 @@ export const ClusterServiceVersionsPage = connect(stateToProps)((props: ClusterS
   }
 
   return <React.Fragment>
-    <PageHeading title="Cluster Service Versions" />
+    <PageHeading title="Installed Operators" />
     <ListPage
       {...props}
       namespace={props.namespace}
@@ -120,7 +120,7 @@ export const ClusterServiceVersionsPage = connect(stateToProps)((props: ClusterS
   </React.Fragment>;
 });
 
-export const MarkdownView = (props: {content: string}) => {
+export const MarkdownView = (props: {content: string, outerScroll: boolean}) => {
   return <AsyncComponent loader={() => import('./markdown-view').then(c => c.SyncMarkdownView)} {...props} />;
 };
 
@@ -187,7 +187,7 @@ export const ClusterServiceVersionDetails: React.SFC<ClusterServiceVersionDetail
             <SectionHeading text="Provided APIs" />
             <CRDCardRow csv={props.obj} crdDescs={providedAPIsFor(props.obj)} />
             <SectionHeading text="Description" />
-            <MarkdownView content={spec.description || 'Not available'} />
+            <MarkdownView content={spec.description || 'Not available'} outerScroll={false} />
           </div>
         </div>
       </div>

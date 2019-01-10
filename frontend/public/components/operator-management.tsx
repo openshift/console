@@ -6,11 +6,11 @@ import {InstallPlansPage} from './operator-lifecycle-manager/install-plan';
 
 const pages = [{
   href: '',
-  name: 'Enabled Operators',
+  name: 'Operator Catalogs',
   component: PackageManifestsPage,
 }, {
   href: 'subscriptions',
-  name: 'Subscriptions',
+  name: 'Operator Subscriptions',
   component: SubscriptionsPage,
 }, {
   href: 'installplans',

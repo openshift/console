@@ -6,7 +6,7 @@ import { Modal } from 'patternfly-react';
 
 import { MarkdownView } from '../../../public/components/operator-lifecycle-manager/clusterserviceversion';
 import { OperatorHubTileView, getProviderValue, keywordCompare } from '../../../public/components/operator-hub/operator-hub-items';
-import { OperatorHubItemModal } from '../../../public/components/operator-hub/operator-hub-item-modal';
+import { OperatorHubItemDetails } from '../../../public/components/operator-hub/operator-hub-item-details';
 import { OperatorHubList } from '../../../public/components/operator-hub/operator-hub-page';
 import {
   operatorHubListPageProps,
@@ -14,12 +14,12 @@ import {
   operatorHubTileViewPagePropsWithDummy,
   mockFilterStrings,
   mockProviderStrings,
-  operatorHubModalProps,
+  operatorHubDetailsProps,
   itemWithLongDescription,
   filterCounts,
 } from '../../../__mocks__/operatorHubItemsMocks';
 
-describe(OperatorHubList.displayName, () => {
+describe('OperatorHubList', () => {
   let wrapper;
 
   beforeEach(() => {
@@ -65,11 +65,10 @@ describe(OperatorHubList.displayName, () => {
     expect(tiles.exists()).toBe(true);
 
     tiles.at(0).simulate('click');
-    const modal = wrapper.find(OperatorHubItemModal);
-    expect(modal.exists()).toBe(true);
-    expect(modal.props().show).toBe(true);
+    const details = wrapper.find(OperatorHubItemDetails);
+    expect(details.exists()).toBe(true);
 
-    const modalItem = modal.at(0).props().item;
+    const modalItem = details.at(0).props().item;
     const amqPackageManifest = operatorHubListPageProps.packageManifest.data[0];
     const amqIcon = (amqPackageManifest.status.channels[0].currentCSVDesc as any).icon[0];
     expect(modalItem.name).toEqual(amqPackageManifest.metadata.name);
@@ -78,11 +77,10 @@ describe(OperatorHubList.displayName, () => {
     expect(modalItem.provider).toEqual(amqPackageManifest.metadata.labels.provider);
     expect(modalItem.description.startsWith('**Red Hat AMQ Streams** is a massively scalable, distributed, and high performance data streaming platform based on the Apache Kafka project.')).toBe(true);
 
-    const closeButton = modal.find(Modal.CloseButton);
+    const closeButton = details.find(Modal.CloseButton);
     closeButton.simulate('click');
-    const noShowModal = wrapper.find(OperatorHubItemModal);
-    expect(noShowModal.exists()).toBe(true);
-    expect(noShowModal.props().show).toBe(false);
+    const noShowDetails = wrapper.find(OperatorHubItemDetails);
+    expect(noShowDetails.exists()).toBe(false);
   });
 
 });
@@ -151,11 +149,11 @@ describe(OperatorHubTileView.displayName, () => {
 
 });
 
-describe(OperatorHubItemModal.displayName, () => {
+describe(OperatorHubItemDetails.displayName, () => {
   let wrapper;
 
   beforeEach(() => {
-    wrapper = mount(<OperatorHubItemModal {...operatorHubModalProps} />);
+    wrapper = mount(<OperatorHubItemDetails {...operatorHubDetailsProps} />);
   });
 
   it('renders longDescription with a MarkdownView component', () => {
