@@ -4,7 +4,6 @@ import * as classNames from 'classnames';
 import * as PropTypes from 'prop-types';
 import { CSSTransition } from 'react-transition-group';
 import { Link } from 'react-router-dom';
-import { Helmet } from 'react-helmet';
 import {
   AutoSizer,
   List as VirtualList,
@@ -190,9 +189,6 @@ export class EventsList extends React.Component {
 
 export const EventStreamPage = withStartGuide(({noProjectsAvailable, ...rest}) =>
   <React.Fragment>
-    <Helmet>
-      <title>Events</title>
-    </Helmet>
     <PageHeading title="Events" />
     <EventsList {...rest} autoFocus={!noProjectsAvailable} mock={noProjectsAvailable} />
   </React.Fragment>

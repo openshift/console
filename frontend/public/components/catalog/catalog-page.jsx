@@ -1,7 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import * as PropTypes from 'prop-types';
-import { Helmet } from 'react-helmet';
 
 import { CatalogTileViewPage } from './catalog-items';
 import { serviceClassDisplayName, referenceForModel } from '../../module/k8s';
@@ -222,9 +221,6 @@ Catalog.propTypes = {
 export const CatalogPage = withStartGuide(({match, noProjectsAvailable}) => {
   const namespace = _.get(match, 'params.ns');
   return <React.Fragment>
-    <Helmet>
-      <title>Developer Catalog</title>
-    </Helmet>
     <div className="co-catalog">
       <PageHeading title="Developer Catalog" />
       <Catalog namespace={namespace} mock={noProjectsAvailable} />

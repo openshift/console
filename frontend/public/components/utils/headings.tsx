@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
+import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 
 import { ActionsMenu, ResourceIcon, KebabAction } from './index';
@@ -54,6 +55,9 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
   const showActions = (hasButtonActions || hasMenuActions) && !_.isEmpty(data) && !_.get(data, 'deletionTimestamp');
 
   return <div className={classNames('co-m-nav-title', {'co-m-nav-title--detail': detail}, {'co-m-nav-title--logo': isCSV}, {'co-m-nav-title--breadcrumbs': breadcrumbsFor && !_.isEmpty(data)})} style={style}>
+    <Helmet>
+      <title>{title}</title>
+    </Helmet>
     { breadcrumbsFor && !_.isEmpty(data) && <BreadCrumbs breadcrumbs={breadcrumbsFor(data)} /> }
     <h1 className={classNames('co-m-pane__heading', {'co-m-pane__heading--logo': isCSV})}>
       { logo }

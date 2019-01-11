@@ -2,7 +2,6 @@
 
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 import { IChangeEvent, ISubmitEvent } from 'react-jsonschema-form';
 import { JSONSchema6 } from 'json-schema';
@@ -118,9 +117,6 @@ class CreateBindingForm extends React.Component<CreateBindingProps, CreateBindin
     }
 
     return <React.Fragment>
-      <Helmet>
-        <title>{title}</title>
-      </Helmet>
       <PageHeading
         title={title}
         obj={obj}

@@ -1,6 +1,7 @@
 /* eslint-disable no-undef */
 import * as _ from 'lodash-es';
 import * as React from 'react';
+import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 
 import { ButtonBar, Dropdown, history, resourcePathFromModel, ResourceName } from '../utils';
@@ -218,6 +219,9 @@ export class CreateRoute extends React.Component<null, CreateRouteState> {
 
     return <React.Fragment>
       <div className="co-m-pane__body co-m-pane__form">
+        <Helmet>
+          <title>{title}</title>
+        </Helmet>
         <h1 className="co-m-pane__heading co-m-pane__heading--baseline">
           <div className="co-m-pane__name">
             {title}

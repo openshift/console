@@ -3,6 +3,7 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 import { safeLoad, safeDump } from 'js-yaml';
 import { saveAs } from 'file-saver';
+import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
 
 import * as ace from 'brace';
@@ -324,11 +325,15 @@ export const EditYAML = connect(stateToProps)(
       const {error, success, stale} = this.state;
       const {create, obj, download = true, readOnly, header} = this.props;
       const model = this.getModel(obj);
+      const title = create ? header : `Edit ${_.get(model, 'label')}`;
 
       const editYamlComponent = <div className="co-file-dropzone">
         { canDrop && <div className={klass}><p className="co-file-dropzone__drop-text">Drop file here</p></div> }
 
         <div>
+          <Helmet>
+            <title>{title}</title>
+          </Helmet>
           {create && <div className="yaml-editor__header">
             <h1 className="yaml-editor__header-text">{header}</h1>
             <p className="help-block">Create by manually entering YAML or JSON definitions, or by dragging and dropping a file into the editor.</p>

@@ -2,7 +2,6 @@
 
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import { Helmet } from 'react-helmet';
 import { IChangeEvent, ISubmitEvent } from 'react-jsonschema-form';
 
 import { ServiceInstanceModel, ClusterServiceClassModel, ClusterServicePlanModel } from '../../models';
@@ -141,9 +140,6 @@ class CreateInstance extends React.Component<CreateInstanceProps, CreateInstance
     });
 
     return <React.Fragment>
-      <Helmet>
-        <title>{title}</title>
-      </Helmet>
       <StatusBox data={serviceClass} loaded={loaded} loadError={loadError} label="Service Class">
         <PageHeading title={title} />
         <div className="co-m-pane__body co-create-service-instance">

@@ -2,7 +2,6 @@ import * as _ from 'lodash-es';
 import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Helmet } from 'react-helmet';
 
 import { AsyncComponent } from './utils/async';
 import { connectToModel } from '../kinds';
@@ -71,9 +70,6 @@ class SearchPage_ extends React.PureComponent {
     const labelClassName = `co-text-${_.toLower(kindForReference(kind))}`;
 
     return <React.Fragment>
-      <Helmet>
-        <title>Search</title>
-      </Helmet>
       <PageHeading detail={true} title="Search" >
         <div className="co-search">
           <div className="input-group input-group-select">

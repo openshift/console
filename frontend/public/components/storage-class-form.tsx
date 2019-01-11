@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import * as classNames from 'classnames';
@@ -798,12 +799,16 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
   render() {
     const { newStorageClass, fieldErrors } = this.state;
     const reclaimPolicyKey = newStorageClass.reclaim === null ? this.reclaimPolicies.Delete : newStorageClass.reclaim;
+    const title = 'Create Storage Class';
 
     return (
       <div className="co-m-pane__body co-m-pane__form">
+        <Helmet>
+          <title>{title}</title>
+        </Helmet>
         <h1 className="co-m-pane__heading co-m-pane__heading--baseline">
           <div className="co-m-pane__name">
-            Create Storage Class
+            {title}
           </div>
           <div className="co-m-pane__heading-link">
             <Link to="/k8s/cluster/storageclasses/new" id="yaml-link" replace>Edit YAML</Link>

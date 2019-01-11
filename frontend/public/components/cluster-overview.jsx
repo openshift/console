@@ -1,7 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as classNames from 'classnames';
-import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 
 import { EventsList } from './events';
@@ -194,9 +193,6 @@ export const ClusterOverviewPage = withStartGuide(({match, noProjectsAvailable})
   const namespace = _.get(match, 'params.ns');
   const title = namespace ? `Status of ${ namespace }` : 'Cluster Status';
   return <React.Fragment>
-    <Helmet>
-      <title>{noProjectsAvailable ? 'Overview' : title}</title>
-    </Helmet>
     <PageHeading title={noProjectsAvailable ? 'Overview' : title} />
     <div className="cluster-overview-cell container-fluid">
       <AsyncComponent namespace={namespace} loader={permissionedLoader} mock={noProjectsAvailable} />

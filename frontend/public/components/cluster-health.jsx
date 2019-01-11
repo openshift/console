@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Helmet } from 'react-helmet';
 
 import { humanizeMem, humanizeNumber, PageHeading } from './utils';
 import { Bar, Gauge, Line, Scalar } from './graphs';
@@ -42,10 +41,6 @@ const diskQueries = [
 ];
 
 export const ClusterHealth = () => <div>
-  <Helmet>
-    <title>Cluster Health</title>
-  </Helmet>
-
   <PageHeading title="Cluster Health" />
 
   <div className="cluster-overview-cell container-fluid">

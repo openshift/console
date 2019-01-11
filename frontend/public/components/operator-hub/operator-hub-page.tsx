@@ -2,7 +2,6 @@
 
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import {Helmet} from 'react-helmet';
 
 import { Firehose, PageHeading, StatusBox, MsgBox } from '../utils';
 import { referenceForModel, K8sResourceKind } from '../../module/k8s';
@@ -128,9 +127,6 @@ export class OperatorHubList extends React.Component<OperatorHubListProps, Opera
 
 export const OperatorHubPage: React.SFC<OperatorHubPageProps> = (props) => {
   return <React.Fragment>
-    <Helmet>
-      <title>Operator Hub</title>
-    </Helmet>
     <div className="co-catalog">
       <PageHeading title="Operator Hub" />
       <div className="co-catalog-connect">

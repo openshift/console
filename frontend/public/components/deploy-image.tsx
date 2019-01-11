@@ -2,7 +2,6 @@
 
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 
 import { FieldLevelHelp } from 'patternfly-react';
@@ -310,9 +309,6 @@ export class DeployImage extends React.Component<DeployImageProps, DeployImageSt
     const ports = getPorts(isi);
 
     return <React.Fragment>
-      <Helmet>
-        <title>{title}</title>
-      </Helmet>
       <PageHeading title={title} />
       <div className="co-m-pane__body">
         <form onSubmit={this.save} className="co-deploy-image co-m-pane__form">
