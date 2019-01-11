@@ -1,4 +1,5 @@
 // Use this file to override styles from 3rd party dependencies
+$pf-4-nav-bar-height: 76px; // Height of the PatternFly 4 masthead
 
 .text-secondary {
   color: $color-text-secondary;
@@ -215,7 +216,10 @@ tags-input .autocomplete .suggestion-item em {
 }
 
 .modal.right-side-modal-pf .modal-dialog {
-  margin-top: 76px; // since PatternFly 4's masthead is taller than PatternFly 3's
+  margin-top: $pf-4-nav-bar-height; // since PatternFly 4's masthead is taller than PatternFly 3's
+  .modal-content {
+    height: calc(100vh - #{$pf-4-nav-bar-height});
+  }
 }
 
 .modal-title {
