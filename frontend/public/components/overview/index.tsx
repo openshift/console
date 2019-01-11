@@ -330,7 +330,7 @@ const OverviewHeading_: React.SFC<OverviewHeadingProps> = ({disabled, firstLabel
         <div className="co-m-pane__name co-m-pane__name--overview">{title}</div>
       </h1>
     }
-    <div className={classnames('overview-view-selector', {'selected-view__resources': selectedView === View.Resources })}>
+    {!_.isEmpty(project) && <div className={classnames('overview-view-selector', {'selected-view__resources': selectedView === View.Resources })}>
       <div className="form-group btn-group">
         <button
           type="button"
@@ -362,7 +362,6 @@ const OverviewHeading_: React.SFC<OverviewHeadingProps> = ({disabled, firstLabel
               <Dropdown
                 className="overview-toolbar__dropdown"
                 menuClassName="dropdown-menu--text-wrap"
-                disabled={disabled}
                 items={groupOptions}
                 onChange={handleGroupChange}
                 titlePrefix="Group by"
@@ -376,7 +375,6 @@ const OverviewHeading_: React.SFC<OverviewHeadingProps> = ({disabled, firstLabel
                 <TextFilter
                   autoFocus={!disabled}
                   defaultValue={''}
-                  disabled={disabled}
                   label="by name"
                   onChange={handleFilterChange}
                 />
@@ -388,7 +386,7 @@ const OverviewHeading_: React.SFC<OverviewHeadingProps> = ({disabled, firstLabel
           </div>}
         </Toolbar.RightContent>
       </Toolbar>
-    </div>
+    </div>}
   </div>
 );
 
