@@ -1,6 +1,11 @@
 $catalog-item-icon-size-lg: 40px;
 $catalog-item-icon-size-sm: 24px;
 
+// Until Patternfly-React-Extensions is updated: https://github.com/patternfly/patternfly-react/issues/1146
+.catalog-tile-pf-title {
+  @include co-break-word;
+}
+
 // reset font size back to 13px since console h5 font size is 15px
 .catalog-item-header-pf-subtitle {
   font-size: 13px;
