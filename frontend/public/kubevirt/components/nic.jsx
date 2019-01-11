@@ -6,7 +6,7 @@ import { Kebab, LoadingInline } from './utils/okdutils';
 import { List, ColHead, ListHeader, ResourceRow } from './factory/okdfactory';
 import { DASHES, BUS_VIRTIO, NIC } from './utils/constants';
 import { deleteDeviceModal } from './modals/delete-device-modal';
-import { getNetworks, CreateNicRow, getAddNicPatch, POD_NETWORK } from 'kubevirt-web-ui-components';
+import { getNetworks, CreateNicRow, getAddNicPatch, POD_NETWORK, settingsValue } from 'kubevirt-web-ui-components';
 import { NetworkAttachmentDefinitionModel, VirtualMachineModel } from '../models';
 import { getResourceKind } from './utils/resources';
 import { WithResources } from './utils/withResources';
@@ -149,13 +149,12 @@ export class Nic extends React.Component {
   }
 
   onChange(value, key) {
-    const newNic = {
-      ...this.state.newNic,
-      [key]: value,
-    };
-    this.setState({
-      newNic,
-    });
+    this.setState(state => ({
+      newNic: {
+        ...state.newNic,
+        [key]: value,
+      },
+    }));
   }
 
   onAccept() {
@@ -165,10 +164,10 @@ export class Nic extends React.Component {
       creating: true,
     };
     const nic = {
-      name: _.get(newNic, 'name.value'),
-      model: _.get(newNic, 'model.value'),
-      network: _.get(newNic, 'network.value'),
-      mac: _.get(newNic, 'mac.value'),
+      name: settingsValue(newNic, 'name'),
+      model: settingsValue(newNic, 'model'),
+      network: settingsValue(newNic, 'network'),
+      mac: settingsValue(newNic, 'mac'),
     };
 
     const addNicPatch = getAddNicPatch(this.props.obj, nic);
