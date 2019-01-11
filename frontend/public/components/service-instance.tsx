@@ -5,7 +5,19 @@ import { Link, withRouter, RouteComponentProps, match } from 'react-router-dom';
 
 import { k8sList, K8sResourceKind, planExternalName, serviceCatalogStatus, referenceForModel } from '../module/k8s';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
-import { Kebab, history, navFactory, ResourceKebab, ResourceIcon, ResourceLink, ResourceSummary, SectionHeading, StatusWithIcon, Timestamp } from './utils';
+import {
+  ExternalLink,
+  Kebab,
+  ResourceIcon,
+  ResourceKebab,
+  ResourceLink,
+  ResourceSummary,
+  SectionHeading,
+  StatusWithIcon,
+  Timestamp,
+  history,
+  navFactory,
+} from './utils';
 import { ResourceEventStream } from './events';
 import { Conditions } from './conditions';
 import { ServiceCatalogParameters, ServiceCatalogParametersSecrets } from './service-catalog-parameters';
@@ -97,6 +109,7 @@ const ServiceInstanceDetails: React.SFC<ServiceInstanceDetailsProps> = ({obj: si
   const parameters = _.get(si, 'status.externalProperties.parameters', {});
   const classDisplayName = si.spec.clusterServiceClassExternalName || si.spec.serviceClassExternalName;
   const clusterServiceClassName = _.get(si, 'spec.clusterServiceClassRef.name');
+  const dashboardURL = _.get(si, 'status.dashboardURL');
 
   return <React.Fragment>
     <ServiceInstanceMessage obj={si} />
@@ -118,6 +131,10 @@ const ServiceInstanceDetails: React.SFC<ServiceInstanceDetailsProps> = ({obj: si
             <dd><StatusWithIcon obj={si} /></dd>
             <dt>Plan</dt>
             <dd>{plan || '-'}</dd>
+            {dashboardURL && <React.Fragment>
+              <dt>Dashboard</dt>
+              <dd><ExternalLink href={dashboardURL} text="View Dashboard" /></dd>
+            </React.Fragment>}
           </dl>
         </div>
       </div>
