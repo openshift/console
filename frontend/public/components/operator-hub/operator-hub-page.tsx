@@ -4,15 +4,16 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import {Helmet} from 'react-helmet';
 
-import {Firehose, PageHeading, StatusBox, MsgBox} from '../utils';
-import {referenceForModel, K8sResourceKind} from '../../module/k8s';
-import {PackageManifestModel, OperatorGroupModel, CatalogSourceConfigModel, SubscriptionModel} from '../../models';
-import {OperatorHubTileView} from './operator-hub-items';
-import {PackageManifestKind, OperatorGroupKind, SubscriptionKind} from '../operator-lifecycle-manager';
-import {OPERATOR_HUB_CSC_BASE} from './index';
+import { Firehose, PageHeading, StatusBox, MsgBox } from '../utils';
+import { referenceForModel, K8sResourceKind } from '../../module/k8s';
+import { PackageManifestModel, OperatorGroupModel, CatalogSourceConfigModel, SubscriptionModel } from '../../models';
+import { getOperatorProviderType } from './operator-hub-utils';
+import { OperatorHubTileView } from './operator-hub-items';
+import { PackageManifestKind, OperatorGroupKind, SubscriptionKind } from '../operator-lifecycle-manager';
+import { OPERATOR_HUB_CSC_BASE } from '../../const';
 import * as operatorImg from '../../imgs/operator.svg';
 
-const normalizePackageManifests = (packageManifests: PackageManifestKind[] = []) => {
+const normalizePackageManifests = (packageManifests: PackageManifestKind[] = [], subscriptions: SubscriptionKind[]) => {
   const activePackageManifests = _.filter(packageManifests, packageManifest => {
     return !packageManifest.status.removedFromBrokerCatalog;
   });
@@ -27,6 +28,8 @@ const normalizePackageManifests = (packageManifests: PackageManifestKind[] = [])
     const tags = packageManifest.metadata.tags;
     const version = _.get(packageManifest, 'status.channels[0].currentCSVDesc.version');
     const currentCSVAnnotations = _.get(packageManifest, 'status.channels[0].currentCSVDesc.annotations', {});
+    const installed = (subscriptions || []).some(sub => sub.spec.name === _.get(packageManifest, 'status.packageName'));
+
     let {
       description,
       certifiedLevel,
@@ -43,15 +46,19 @@ const normalizePackageManifests = (packageManifests: PackageManifestKind[] = [])
     longDescription = longDescription || _.get(packageManifest, 'status.channels[0].currentCSVDesc.description');
     const catalogSource = _.get(packageManifest, 'status.catalogSource');
     const catalogSourceNamespace = _.get(packageManifest, 'status.catalogSourceNamespace');
+    const providerType = getOperatorProviderType(packageManifest);
     return {
       obj: packageManifest,
       kind: PackageManifestModel.kind,
       name,
       uid,
+      installed,
+      installState: installed ? 'Installed' : 'Not Installed',
       iconClass,
       imgUrl,
       description,
       provider,
+      providerType,
       tags,
       version,
       certifiedLevel,
@@ -68,24 +75,56 @@ const normalizePackageManifests = (packageManifests: PackageManifestKind[] = [])
   });
 };
 
-export const OperatorHubList: React.SFC<OperatorHubListProps> = (props) => {
-  const {catalogSourceConfig, packageManifest, loaded, loadError} = props;
-  const sourceConfigs = _.find(_.get(catalogSourceConfig, 'data'), csc => _.startsWith(csc.metadata.name, OPERATOR_HUB_CSC_BASE));
-  const items = loaded
-    ? _.sortBy(normalizePackageManifests(_.get(packageManifest, 'data')), 'name')
-    : [];
+export class OperatorHubList extends React.Component<OperatorHubListProps, OperatorHubListState> {
+  state = {items: []};
 
-  return <StatusBox
-    data={items}
-    loaded={loaded}
-    loadError={loadError}
-    label="Resources"
-    EmptyMsg={() => <MsgBox
-      title="No Operator Hub Items Found"
-      detail={<span>Please check that the OperatorHub is running and that you have created a valid OperatorSource. For more information about Operator Hub, please click <a href="https://github.com/operator-framework/operator-marketplace" target="_blank" className="co-external-link" rel="noopener noreferrer">here</a>.</span>} />}>
-    <OperatorHubTileView items={items} catalogSourceConfig={sourceConfigs} subscriptions={props.subscription.data} />
-  </StatusBox>;
-};
+  componentDidMount() {
+    const {packageManifest, subscription, loaded} = this.props;
+
+    if (loaded) {
+      const items = _.sortBy(normalizePackageManifests(_.get(packageManifest, 'data'), subscription.data), 'name');
+      this.setState({items});
+    }
+  }
+
+  componentDidUpdate(prevProps: OperatorHubListProps) {
+    const {packageManifest, subscription, loaded} = this.props;
+
+    if (loaded && !prevProps.loaded ||
+      !_.isEqual(subscription.data, prevProps.subscription.data) ||
+      !_.isEqual(packageManifest.data, prevProps.packageManifest.data)) {
+      const items = _.sortBy(normalizePackageManifests(_.get(packageManifest, 'data'), subscription.data), 'name');
+      this.setState({items});
+    }
+  }
+
+  render() {
+    const {catalogSourceConfig, loaded, loadError} = this.props;
+    const {items} = this.state;
+    const sourceConfigs = _.find(_.get(catalogSourceConfig, 'data'), csc => _.startsWith(csc.metadata.name, OPERATOR_HUB_CSC_BASE));
+
+    return (
+      <StatusBox
+        data={items}
+        loaded={loaded}
+        loadError={loadError}
+        label="Resources"
+        EmptyMsg={() => (
+          <MsgBox
+            title="No Operator Hub Items Found"
+            detail={
+              <span>
+                Please check that the OperatorHub is running and that you have created a valid OperatorSource. For more information about Operator Hub,
+                please click <a href="https://github.com/operator-framework/operator-marketplace" target="_blank" className="co-external-link" rel="noopener noreferrer">here</a>.
+              </span>
+            }
+          />
+        )}>
+        <OperatorHubTileView items={items} catalogSourceConfig={sourceConfigs} />
+      </StatusBox>
+    );
+  }
+}
 
 export const OperatorHubPage: React.SFC<OperatorHubPageProps> = (props) => {
   return <React.Fragment>
@@ -136,5 +175,8 @@ export type OperatorHubListProps = {
   loadError?: string;
 };
 
+export type OperatorHubListState = {
+  items: any[];
+};
+
 OperatorHubPage.displayName = 'OperatorHubPage';
-OperatorHubList.displayName = 'OperatorHubList';

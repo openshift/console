@@ -50,7 +50,7 @@ export const OperatorHubItemModal: React.SFC<OperatorHubItemModalProps> = (props
         </PropertiesSidePanel>
         <div className="co-catalog-page__overlay-description">
           { longDescription
-            ? <MarkdownView content={longDescription} />
+            ? <MarkdownView content={longDescription} outerScroll={true} />
             : description }
         </div>
       </div>

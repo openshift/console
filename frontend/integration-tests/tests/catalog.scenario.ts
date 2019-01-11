@@ -38,15 +38,6 @@ describe('Catalog', () => {
     expect(catalogView.pageHeading.getText()).toEqual('Languages');
     const numLanguagesItems = await catalogView.pageHeadingNumberOfItems();
     expect(numLanguagesItems).toBeLessThan(origNumItems);
-
-    // test 'View All' category filtering
-    expect(catalogView.categoryViewAllLinks.isPresent()).toBe(true);
-    await catalogView.categoryViewAllLinks.get(0).click(); // View All Java
-    expect(catalogView.pageHeading.getText()).toEqual('Java');
-    const numJavaItems = await catalogView.pageHeadingNumberOfItems();
-    expect(numJavaItems).toBeLessThan(numLanguagesItems);
-    // since viewing all tiles, # catalog items visible should equal header count label
-    expect(catalogPageView.catalogTiles.count()).toEqual(numJavaItems);
   });
 
   it('displays ".NET Core" catalog tile when filter by name: "net"', async() => {

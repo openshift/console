@@ -112,6 +112,19 @@ $catalog-item-icon-size-sm: 24px;
     flex: 1 1 auto;
   }
 
+  &__description {
+    margin-top: -10px;
+    padding: 0 ($grid-gutter-width / 2) 10px;
+    @media (min-width: $grid-float-breakpoint) {
+      padding-left: $grid-gutter-width;
+      padding-right: $grid-gutter-width;
+    }
+  }
+
+  &__filter-toggle {
+    margin-top: 5px;
+  }
+
   &__heading {
     font-size: 16px;
     font-weight: 400;
@@ -131,6 +144,10 @@ $catalog-item-icon-size-sm: 24px;
       flex: 1 1 auto;
       overflow-y: auto;
       -webkit-overflow-scrolling: touch;
+
+      .hint-block-pf {
+        margin-bottom: 10px;
+      }
     }
     .modal-content {
       display: flex;
@@ -170,7 +187,7 @@ $catalog-item-icon-size-sm: 24px;
   }
 
   &__tabs {
-    flex: 0 0 170px;
+    flex: 0 0 220px;
     margin: 0 ($grid-gutter-width / 2) 0 0;
   }
 
@@ -186,6 +203,24 @@ $catalog-item-icon-size-sm: 24px;
 .co-catalog-tab__empty {
   font-weight: lighter;
   color: $color-pf-black-600;
+}
+
+.co-modal-ignore-warning {
+  &__checkbox.checkbox {
+    margin-bottom: 0;
+    padding-top: 15px;
+  }
+  &__link {
+    display: block;
+    margin: 10px 0;
+    .fa {
+      font-size: inherit !important;
+      margin-left: 5px;
+    }
+  }
+  .modal-footer {
+    margin-top: 0;
+  }
 }
 
 .properties-side-panel-pf-property-label {

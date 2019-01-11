@@ -1,20 +1,19 @@
 /* eslint-disable no-undef, no-unused-vars */
 
-import { browser, $, ExpectedConditions as until } from 'protractor';
+import { browser } from 'protractor';
 
-import { appHost, checkLogs, checkErrors, testName } from '../../protractor.conf';
+import { appHost, checkLogs, checkErrors } from '../../protractor.conf';
 import * as crudView from '../../views/crud.view';
 import * as catalogView from '../../views/catalog.view';
 import * as catalogPageView from '../../views/catalog-page.view';
 import * as operatorHubView from '../../views/operator-hub.view';
-import * as sidenavView from '../../views/sidenav.view';
 
 describe('Viewing the operators in Operator Hub', () => {
   const openCloudServices = new Set(['etcd', 'prometheus']);
 
-  beforeAll(async() => {
-    browser.get(`${appHost}/status/ns/${testName}`);
-    await browser.wait(until.presenceOf($('#sidebar')));
+  beforeEach(async() => {
+    await browser.get(`${appHost}/operatorhub`);
+    await crudView.isLoaded();
   });
 
   afterEach(() => {
@@ -23,8 +22,6 @@ describe('Viewing the operators in Operator Hub', () => {
   });
 
   it('displays Operator Hub with expected available operators', async() => {
-    await sidenavView.clickNavLink(['Catalog', 'Operator Hub']);
-    await crudView.isLoaded();
 
     openCloudServices.forEach(name => {
       expect(catalogPageView.catalogTileFor(name).isDisplayed()).toBe(true);
@@ -63,6 +60,7 @@ describe('Viewing the operators in Operator Hub', () => {
   });
 
   it('clears all filters when "Clear All Filters" text is clicked', async() => {
+    await catalogPageView.filterByKeyword('NoOperatorsTest');
     await catalogPageView.clearFiltersText.click();
 
     expect(catalogPageView.filterTextbox.getAttribute('value')).toEqual('');
@@ -86,7 +84,7 @@ describe('Viewing the operators in Operator Hub', () => {
     });
   });
 
-  it('filters markteplace tiles by Category', async() => {
+  it('filters Operator Hub tiles by Category', async() => {
     expect(catalogPageView.catalogTiles.isPresent()).toBe(true);
     expect(catalogView.categoryTabs.isPresent()).toBe(true);
   });

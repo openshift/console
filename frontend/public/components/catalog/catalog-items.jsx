@@ -66,6 +66,9 @@ export const catalogCategories = {
   },
 };
 
+const pageDescription = 'Add shared apps, services, or source-to-image builders to your project from the Developer ' +
+  'Catalog. Cluster admins can install additional apps which will show up here automatically.';
+
 // Filter property white list
 const filterGroups = [
   'kind',
@@ -82,6 +85,11 @@ const getAvailableFilters = initialFilters => {
     ImageStream: {
       label: 'Source-to-Image',
       value: 'ImageStream',
+      active: false,
+    },
+    ClusterServiceVersion: {
+      label: 'Installed Operators',
+      value: 'InstalledOperator',
       active: false,
     },
   };
@@ -194,6 +202,7 @@ export class CatalogTileViewPage extends React.Component {
           filterValueMap={filterValueMap}
           keywordCompare={keywordCompare}
           renderTile={this.renderTile}
+          pageDescription={pageDescription}
           emptyStateInfo="No developer catalog items are being shown due to the filters being applied."
         />
         <Modal show={!!detailsItem} onHide={this.closeOverlay} bsSize={'lg'} className="co-catalog-page__overlay right-side-modal-pf">
