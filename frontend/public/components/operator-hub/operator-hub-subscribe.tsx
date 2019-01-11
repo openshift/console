@@ -56,6 +56,7 @@ export const OperatorHubSubscribeForm = withFormState((props: OperatorHubSubscri
     const OPERATOR_HUB_CSC_NAME = `${OPERATOR_HUB_CSC_BASE}-${operatorGroupNamespace}`;
 
     const catalogSourceConfig = props.catalogSourceConfig.data.find(csc => csc.metadata.name === OPERATOR_HUB_CSC_NAME);
+    const hasBeenEnabled = !_.isEmpty(catalogSourceConfig) && _.includes(catalogSourceConfig.spec.packages.split(','), packageName);
     const packages = _.isEmpty(catalogSourceConfig)
       ? packageName
       : _.uniq(catalogSourceConfig.spec.packages.split(',').concat([packageName])).join(',');
@@ -90,7 +91,7 @@ export const OperatorHubSubscribeForm = withFormState((props: OperatorHubSubscri
       },
     };
 
-    return (!_.isEmpty(catalogSourceConfig)
+    return (!_.isEmpty(catalogSourceConfig) || hasBeenEnabled
       ? k8sUpdate(CatalogSourceConfigModel, {...catalogSourceConfig, spec: {targetNamespace: operatorGroupNamespace, packages}}, 'openshift-marketplace', OPERATOR_HUB_CSC_NAME)
       : k8sCreate(CatalogSourceConfigModel, newCatalogSourceConfig)
     ).then(() => k8sCreate(SubscriptionModel, subscription))
