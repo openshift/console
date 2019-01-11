@@ -8,7 +8,7 @@ import {CatalogItemHeader, PropertiesSidePanel, PropertyItem} from 'patternfly-r
 import {K8sResourceKind} from '../../module/k8s';
 import {MarkdownView} from '../operator-lifecycle-manager/clusterserviceversion';
 import {history} from '../utils';
-import { OPERATOR_HUB_CSC_NAME } from './index';
+import { OPERATOR_HUB_CSC_BASE } from './index';
 import { SubscriptionKind } from '../operator-lifecycle-manager';
 
 export const OperatorHubItemModal: React.SFC<OperatorHubItemModalProps> = (props) => {
@@ -37,7 +37,7 @@ export const OperatorHubItemModal: React.SFC<OperatorHubItemModalProps> = (props
             bsStyle="primary"
             className="co-catalog-page__overlay-create"
             disabled={!_.isEmpty(props.subscription)}
-            onClick={() => history.push(`/operatorhub/subscribe?pkg=${item.name}&catalog=${OPERATOR_HUB_CSC_NAME}&catalogNamespace=${'openshift-operators'}`)}>
+            onClick={() => history.push(`/operatorhub/subscribe?pkg=${item.name}&catalog=${OPERATOR_HUB_CSC_BASE}&catalogNamespace=${'openshift-operators'}`)}>
             Enable
           </Button>
           <PropertyItem label="Operator Version" value={version || notAvailable} />
