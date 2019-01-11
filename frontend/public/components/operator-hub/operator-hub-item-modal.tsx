@@ -8,7 +8,6 @@ import {CatalogItemHeader, PropertiesSidePanel, PropertyItem} from 'patternfly-r
 import {K8sResourceKind} from '../../module/k8s';
 import {MarkdownView} from '../operator-lifecycle-manager/clusterserviceversion';
 import {history} from '../utils';
-import { OPERATOR_HUB_CSC_BASE } from './index';
 import { SubscriptionKind } from '../operator-lifecycle-manager';
 
 export const OperatorHubItemModal: React.SFC<OperatorHubItemModalProps> = (props) => {
@@ -17,7 +16,7 @@ export const OperatorHubItemModal: React.SFC<OperatorHubItemModalProps> = (props
   if (!item) {
     return null;
   }
-  const { name, iconClass, imgUrl, provider, longDescription, description, version, certifiedLevel, healthIndex, repository, containerImage, createdAt, support } = item;
+  const { name, iconClass, imgUrl, provider, longDescription, description, version, certifiedLevel, healthIndex, repository, containerImage, createdAt, support, catalogSource, catalogSourceNamespace } = item;
   const notAvailable = <span className="properties-side-panel-pf-property-label">N/A</span>;
 
   return <Modal show={show} backdrop={true} onHide={close} className="co-catalog-page__overlay right-side-modal-pf" bsSize={'lg'}>
@@ -37,7 +36,7 @@ export const OperatorHubItemModal: React.SFC<OperatorHubItemModalProps> = (props
             bsStyle="primary"
             className="co-catalog-page__overlay-create"
             disabled={!_.isEmpty(props.subscription)}
-            onClick={() => history.push(`/operatorhub/subscribe?pkg=${item.name}&catalog=${OPERATOR_HUB_CSC_BASE}&catalogNamespace=${'openshift-operators'}`)}>
+            onClick={() => history.push(`/operatorhub/subscribe?pkg=${item.name}&catalog=${catalogSource}&catalogNamespace=${catalogSourceNamespace}`)}>
             Enable
           </Button>
           <PropertyItem label="Operator Version" value={version || notAvailable} />
