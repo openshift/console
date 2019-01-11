@@ -1,9 +1,6 @@
-$co-namespace-selector-desktop: 47px;
-$co-namespace-selector-mobile: 35px;
 $color-dropdown-hover: rgba(0, 0, 0, .05);
 $color-bookmarker--hover: #AAA;
 $color-bookmarker: #DDD;
-$masthead-height: 76px;
 
 .dropdown {
   position: relative;
@@ -185,14 +182,13 @@ $masthead-height: 76px;
 }
 
 .co-namespace-selector__menu.dropdown-menu {
-  max-height: calc(100vh - (#{$masthead-height} + #{$co-namespace-selector-mobile}));
+  max-height: 60vh;
   max-width: 100%;
   min-width: 210px;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 
   @media (min-width: $grid-float-breakpoint) {
-    max-height: calc(100vh - (#{$masthead-height} + #{$co-namespace-selector-desktop}));
     min-width: 250px;
   }
 
