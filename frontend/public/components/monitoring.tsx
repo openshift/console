@@ -256,7 +256,11 @@ const AlertsDetailsPage = withFallback(connect(alertStateToProps)((props: Alerts
           <div className="row">
             <div className="col-xs-12">
               <div className="co-m-table-grid co-m-table-grid--bordered">
-                <SilenceHeader />
+                <div className="row co-m-table-grid__head">
+                  <div className="col-xs-7">Name</div>
+                  <div className="col-xs-3">State</div>
+                  <div className="col-xs-2">Firing Alerts</div>
+                </div>
                 <div className="co-m-table-grid__body">
                   {_.map(silencedBy, s => <SilenceRow key={s.id} obj={s} />)}
                 </div>
