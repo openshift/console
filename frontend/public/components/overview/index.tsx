@@ -27,6 +27,7 @@ import {
   DaemonSetModel,
   DeploymentModel,
   DeploymentConfigModel,
+  PodModel,
   ProjectModel,
   ReplicationControllerModel,
   ReplicaSetModel,
@@ -40,11 +41,13 @@ import {
   Firehose,
   StatusBox,
   EmptyBox,
+  resourceObjPath,
 } from '../utils';
 
 import { overviewMenuActions, OverviewNamespaceDashboard } from './namespace-overview';
 import { ProjectOverview } from './project-overview';
 import { ResourceOverviewPage } from './resource-overview-page';
+import { PodStatus } from '../pod';
 
 enum View {
   Resources = 'resources',
@@ -279,6 +282,12 @@ const sortBuilds = (builds: K8sResourceKind[]): K8sResourceKind[] => {
 
 const reservedNSPrefixes = ['openshift-', 'kube-', 'kubernetes-'];
 const isReservedNamespace = (ns: string) => ns === 'default' || ns === 'openshift' || reservedNSPrefixes.some(prefix => _.startsWith(ns, prefix));
+
+const OverviewItemReadiness: React.SFC<OverviewItemReadinessProps> = ({desired = 0, href, ready = 0}) => (
+  <Link to={href}>
+    {ready} of {desired} pods
+  </Link>
+);
 
 const overviewEmptyStateToProps = ({UI}) => ({
   activeNamespace: UI.get('activeNamespace'),
@@ -562,7 +571,7 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
 
   getServicesForResource(resource: K8sResourceKind): K8sResourceKind[] {
     const {services} = this.props;
-    const template = _.get(resource, 'spec.template');
+    const template = resource.kind === 'Pod' ? resource : _.get(resource, 'spec.template');
     return _.filter(services.data, service => {
       const selector = new LabelSelector(_.get(service, 'spec.selector', {}));
       return selector.matches(template);
@@ -677,19 +686,19 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
         ...ds,
         kind: DaemonSetModel.kind,
       };
-      const readiness = {
-        desired: ds.status.desiredNumberScheduled || 0,
-        ready: ds.status.currentNumberScheduled || 0,
-      };
-
+      const status = <OverviewItemReadiness
+        desired={ds.status.desiredNumberScheduled}
+        href={`${resourceObjPath(obj, obj.kind)}/pods`}
+        ready={ds.status.currentNumberScheduled}
+      />;
       return {
         alerts,
         buildConfigs,
         obj,
         pods,
-        readiness,
         routes,
         services,
+        status,
       };
     });
   }
@@ -708,10 +717,14 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
         ...d,
         kind: DeploymentModel.kind,
       };
-      const readiness = {
-        desired: d.spec.replicas || 0,
-        ready: d.status.replicas || 0,
-      };
+      // TODO: Show pod status for previous and next revisions.
+      const status = isRollingOut
+        ? <span className="text-muted">Rollout in progress...</span>
+        : <OverviewItemReadiness
+          desired={d.spec.replicas}
+          href={`${resourceObjPath(current.obj, _.get(current, 'obj.kind'))}/pods`}
+          ready={d.status.replicas}
+        />;
 
       return {
         buildConfigs,
@@ -719,9 +732,9 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
         isRollingOut,
         obj,
         previous,
-        readiness,
         routes,
         services,
+        status,
       };
     });
   }
@@ -740,20 +753,24 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
         ...dc,
         kind: DeploymentConfigModel.kind,
       };
-      const readiness = {
-        desired: dc.spec.replicas || 0,
-        ready: dc.status.replicas || 0,
-      };
 
+      // TODO: Show pod status for previous and next revisions.
+      const status = isRollingOut
+        ? <span className="text-muted">Rollout in progress...</span>
+        : <OverviewItemReadiness
+          desired={dc.spec.replicas}
+          href={`${resourceObjPath(current.obj, _.get(current, 'obj.kind'))}/pods`}
+          ready={dc.status.replicas}
+        />;
       return {
         buildConfigs,
         current,
         isRollingOut,
         obj,
         previous,
-        readiness,
         routes,
         services,
+        status,
       };
     });
   }
@@ -762,28 +779,60 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
     const {statefulSets} = this.props;
     return _.map(statefulSets.data, (ss) => {
       const buildConfigs = this.getBuildConfigsForResource(ss);
-      const obj = {
-        ...ss,
-        kind: StatefulSetModel.kind,
-      };
-      const readiness = {
-        desired: ss.spec.replicas || 0,
-        ready: ss.status.replicas || 0,
-      };
       const pods = this.getPodsForResource(ss);
       const alerts = combinePodAlerts(pods);
       const services = this.getServicesForResource(ss);
       const routes = this.getRoutesForServices(services);
+      const obj = {
+        ...ss,
+        kind: StatefulSetModel.kind,
+      };
+      const status = <OverviewItemReadiness
+        desired={ss.spec.replicas}
+        href={`${resourceObjPath(obj, obj.kind)}/pods`}
+        ready={ss.status.replicas}
+      />;
+
       return {
         alerts,
         buildConfigs,
         obj,
         pods,
-        readiness,
         routes,
         services,
+        status,
       };
     });
+  }
+
+  createPodItems(): OverviewItem[] {
+    const {pods} = this.props;
+    return _.reduce(pods.data, (acc, pod) => {
+      const owners = _.get(pod, 'metadata.ownerReferences');
+      const phase = _.get(pod, 'status.phase');
+      if (!_.isEmpty(owners) || ['Succeeded', 'Failed'].includes(phase)) {
+        return acc;
+      }
+
+      const obj = {
+        ...pod,
+        kind: PodModel.kind,
+      };
+      const alerts = getPodAlerts(pod);
+      const services = this.getServicesForResource(obj);
+      const routes = this.getRoutesForServices(services);
+      const status = <PodStatus pod={pod} />;
+      return [
+        ...acc,
+        {
+          alerts,
+          obj,
+          routes,
+          services,
+          status,
+        },
+      ];
+    }, []);
   }
 
   createOverviewData(): void {
@@ -798,6 +847,7 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
       ...this.createDeploymentItems(),
       ...this.createDeploymentConfigItems(),
       ...this.createStatefulSetItems(),
+      ...this.createPodItems(),
     ];
 
     updateResources(items);
@@ -1029,11 +1079,6 @@ export type PodControllerOverviewItem = {
   pods: K8sResourceKind[];
 };
 
-type OverviewItemReadiness = {
-  desired: string | number;
-  ready: string | number;
-};
-
 export type BuildConfigOverviewItem = K8sResourceKind & {
   builds: K8sResourceKind[];
 };
@@ -1046,9 +1091,9 @@ export type OverviewItem = {
   obj: K8sResourceKind;
   pods?: K8sResourceKind[];
   previous?: PodControllerOverviewItem;
-  readiness: OverviewItemReadiness;
   routes: K8sResourceKind[];
   services: K8sResourceKind[];
+  status?: React.ReactNode;
 };
 
 export type OverviewGroup = {
@@ -1063,6 +1108,12 @@ type MetricValuesByPod = {
 export type OverviewMetrics = {
   cpu?: MetricValuesByPod;
   memory?: MetricValuesByPod;
+};
+
+type OverviewItemReadinessProps = {
+  desired: number;
+  href: string;
+  ready: number;
 };
 
 type OverviewHeadingPropsFromState = {

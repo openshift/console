@@ -13,7 +13,7 @@ import { breadcrumbsForOwnerRefs } from './utils/breadcrumbs';
 import { formatDuration } from './utils/datetime';
 import { CamelCaseWrap } from './utils/camel-case-wrap';
 
-const menuActions = [Kebab.factory.EditEnvironment, ...Kebab.factory.common];
+export const menuActions = [Kebab.factory.EditEnvironment, ...Kebab.factory.common];
 const validReadinessStates = new Set(['ContainersNotReady', 'Ready', 'PodCompleted']);
 
 /** @type {React.SFC.<{pod: string}>} */
@@ -112,7 +112,7 @@ const Volume = ({pod, volume}) => {
   </div>;
 };
 
-const ContainerTable = ({heading, containers, pod}) => <div className="co-m-pane__body">
+export const PodContainerTable = ({heading, containers, pod}) => <React.Fragment>
   <SectionHeading text={heading} />
   <div className="co-m-table-grid co-m-table-grid--bordered">
     <div className="row co-m-table-grid__head">
@@ -128,7 +128,7 @@ const ContainerTable = ({heading, containers, pod}) => <div className="co-m-pane
       {containers.map((c, i) => <ContainerRow key={i} pod={pod} container={c} />)}
     </div>
   </div>
-</div>;
+</React.Fragment>;
 
 const PodGraphs = requirePrometheus(({pod}) => <React.Fragment>
   <div className="row">
@@ -146,6 +146,54 @@ const PodGraphs = requirePrometheus(({pod}) => <React.Fragment>
   <br />
 </React.Fragment>);
 
+export const PodStatus = ({pod}) => <StatusIcon status={podPhase(pod)} />;
+
+export const PodDetailsList = ({pod}) => {
+  const activeDeadlineSeconds = _.get(pod, 'spec.activeDeadlineSeconds');
+  return <dl className="co-m-pane__details">
+    <dt>Status</dt>
+    <dd><PodStatus pod={pod} /></dd>
+    <dt>Restart Policy</dt>
+    <dd>{getRestartPolicyLabel(pod)}</dd>
+    {
+      activeDeadlineSeconds &&
+        <React.Fragment>
+          <dt>Active Deadline</dt>
+          {/* Convert to ms for formatDuration */}
+          <dd>{formatDuration(activeDeadlineSeconds * 1000)}</dd>
+        </React.Fragment>
+    }
+    <dt>Pod IP</dt>
+    <dd>{pod.status.podIP || '-'}</dd>
+    <dt>Node</dt>
+    <dd><NodeLink name={pod.spec.nodeName} /></dd>
+  </dl>;
+};
+
+export const PodResourceSummary = ({pod}) => (
+  <ResourceSummary resource={pod} showPodSelector={false} showNodeSelector={false}>
+    <dt>Node Selector</dt>
+    <dd><Selector kind="Node" selector={pod.spec.nodeSelector} /></dd>
+  </ResourceSummary>
+);
+
+export const PodVolumeTable = ({heading, pod}) => (
+  <React.Fragment>
+    {heading && <SectionHeading text={heading} />}
+    <div className="co-m-table-grid co-m-table-grid--bordered">
+      <div className="row co-m-table-grid__head">
+        <div className="col-sm-3 col-xs-4">Name</div>
+        <div className="col-sm-3 col-xs-4">Type</div>
+        <div className="col-sm-3 hidden-xs">Permissions</div>
+        <div className="col-sm-3 col-xs-4">Utilized By</div>
+      </div>
+      <div className="co-m-table-grid__body">
+        {getVolumeMountsByPermissions(pod).map((v, i) => <Volume key={i} pod={pod} volume={v} />)}
+      </div>
+    </div>
+  </React.Fragment>
+);
+
 const Details = ({obj: pod}) => {
   const limits = {
     cpu: null,
@@ -159,61 +207,32 @@ const Details = ({obj: pod}) => {
     const value = units.dehumanize(_.get(container, 'resources.limits.memory', 0), 'binaryBytesWithoutB').value;
     return sum + value;
   }, 0);
-  const activeDeadlineSeconds = _.get(pod, 'spec.activeDeadlineSeconds');
 
   return <React.Fragment>
     <ScrollToTopOnMount />
-
     <div className="co-m-pane__body">
       <SectionHeading text="Pod Overview" />
       <PodGraphs pod={pod} />
       <div className="row">
         <div className="col-sm-6">
-          <ResourceSummary resource={pod} showPodSelector={false} showNodeSelector={false}>
-            <dt>Node Selector</dt>
-            <dd><Selector kind="Node" selector={pod.spec.nodeSelector} /></dd>
-          </ResourceSummary>
+          <PodResourceSummary pod={pod} />
         </div>
         <div className="col-sm-6">
-          <dl className="co-m-pane__details">
-            <dt>Status</dt>
-            <dd><StatusIcon status={podPhase(pod)} /></dd>
-            <dt>Restart Policy</dt>
-            <dd>{getRestartPolicyLabel(pod)}</dd>
-            {
-              activeDeadlineSeconds &&
-                <React.Fragment>
-                  <dt>Active Deadline</dt>
-                  {/* Convert to ms for formatDuration */}
-                  <dd>{formatDuration(activeDeadlineSeconds * 1000)}</dd>
-                </React.Fragment>
-            }
-            <dt>Pod IP</dt>
-            <dd>{pod.status.podIP || '-'}</dd>
-            <dt>Node</dt>
-            <dd><NodeLink name={pod.spec.nodeName} /></dd>
-          </dl>
+          <PodDetailsList pod={pod} />
         </div>
       </div>
-
     </div>
-
-    {pod.spec.initContainers && <ContainerTable key="initContainerTable" heading="Init Containers" containers={pod.spec.initContainers} pod={pod} />}
-    <ContainerTable key="containerTable" heading="Containers" containers={pod.spec.containers} pod={pod} />
-
-    <div className="co-m-pane__body">
-      <SectionHeading text="Pod Volumes" />
-      <div className="co-m-table-grid co-m-table-grid--bordered">
-        <div className="row co-m-table-grid__head">
-          <div className="col-sm-3 col-xs-4">Name</div>
-          <div className="col-sm-3 col-xs-4">Type</div>
-          <div className="col-sm-3 hidden-xs">Permissions</div>
-          <div className="col-sm-3 col-xs-4">Utilized By</div>
-        </div>
-        <div className="co-m-table-grid__body">
-          {getVolumeMountsByPermissions(pod).map((v, i) => <Volume key={i} pod={pod} volume={v} />)}
-        </div>
+    {
+      pod.spec.initContainers &&
+      <div className="co-m-pane__body">
+        <PodContainerTable key="initContainerTable" heading="Init Containers" containers={pod.spec.initContainers} pod={pod} />
       </div>
+    }
+    <div className="co-m-pane__body">
+      <PodContainerTable key="containerTable" heading="Containers" containers={pod.spec.containers} pod={pod} />
+    </div>
+    <div className="co-m-pane__body">
+      <PodVolumeTable heading="Pod Volumes" pod={pod} />
     </div>
   </React.Fragment>;
 };
