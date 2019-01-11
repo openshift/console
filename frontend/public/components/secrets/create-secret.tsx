@@ -22,6 +22,8 @@ const secretDisplayType = (abstraction: SecretTypeAbstraction) => {
   switch (abstraction) {
     case 'generic':
       return 'Key/Value';
+    case 'image':
+      return 'Image Pull';
     default:
       return _.upperFirst(abstraction);
   }
@@ -47,7 +49,7 @@ export type BasicAuthSubformState = {
 const secretFormExplanation = {
   [SecretTypeAbstraction.generic]: 'Key/value secrets let you inject sensitive data into your application as files or environment variables.',
   [SecretTypeAbstraction.source]: 'Source secrets let you authenticate against a Git server.',
-  [SecretTypeAbstraction.image]: 'Image secrets let you authenticate against a private image registry.',
+  [SecretTypeAbstraction.image]: 'Image pull secrets let you authenticate against a private image registry.',
   [SecretTypeAbstraction.webhook]: 'Webhook secrets let you authenticate a webhook trigger.',
 };
 
