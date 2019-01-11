@@ -83,7 +83,7 @@ export const deleteRow = (kind: string) => (name: string) => rowForName(name).$$
 
     await $('#confirm-action').click();
 
-    const kebabIsDisabled = until.presenceOf(rowForName(name).$('.co-kebab--disabled'));
+    const kebabIsDisabled = until.not(until.elementToBeClickable(rowForName(name).$('.co-kebab__button')));
     const listIsEmpty = until.textToBePresentInElement($('.cos-status-box > .text-center'), 'No ');
     const rowIsGone = until.not(until.presenceOf(rowForName(name).$('.co-kebab')));
     return browser.wait(until.or(kebabIsDisabled, until.or(listIsEmpty, rowIsGone)));
