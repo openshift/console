@@ -861,7 +861,35 @@ export const MachineDeploymentModel: K8sKind = {
   crd: true,
 };
 
-// OpenShift cluster resources
+export const MachineConfigPoolModel: K8sKind = {
+  label: 'Machine Config Pool',
+  labelPlural: 'Machine Config Pools',
+  apiVersion: 'v1',
+  path: 'machineconfigpools',
+  apiGroup: 'machineconfiguration.openshift.io',
+  plural: 'machineconfigpools',
+  abbr: 'MCP',
+  namespaced: false,
+  kind: 'MachineConfigPool',
+  id: 'machineconfigpool',
+  crd: true,
+};
+
+export const MachineConfigModel: K8sKind = {
+  label: 'Machine Config',
+  labelPlural: 'Machine Configs',
+  apiVersion: 'v1',
+  path: 'machineconfigs',
+  apiGroup: 'machineconfiguration.openshift.io',
+  plural: 'machineconfigs',
+  abbr: 'MC',
+  namespaced: false,
+  kind: 'MachineConfig',
+  id: 'machineconfigpool',
+  crd: true,
+};
+
+// Openshift cluster resources
 export const ClusterOperatorModel: K8sKind = {
   label: 'Cluster Operator',
   labelPlural: 'Cluster Operators',

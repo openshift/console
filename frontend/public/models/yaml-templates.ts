@@ -702,7 +702,7 @@ apiVersion: v1
 kind: ResourceQuota
 metadata:
   name: compute-quota
-  namespace: 
+  namespace:
 spec:
   hard:
     requests.cpu: '1'
@@ -714,7 +714,7 @@ apiVersion: v1
 kind: ResourceQuota
 metadata:
   name: storage-class-quota
-  namespace: 
+  namespace:
 spec:
   hard:
     requests.storage: 100Gi
@@ -731,7 +731,7 @@ apiVersion: v1
 kind: ResourceQuota
 metadata:
   name: object-counts
-  namespace: 
+  namespace:
 spec:
   hard:
     configmaps: "10"
@@ -789,4 +789,16 @@ metadata:
   name: example
 spec:
   providerSpec: {}
+`).setIn([referenceForModel(k8sModels.MachineConfigPoolModel), 'default'], `
+apiVersion: machineconfiguration.openshift.io/v1
+kind: MachineConfigPool
+metadata:
+  name: example
+spec:
+  machineConfigSelector:
+    matchLabels:
+      machineconfiguration.openshift.io/role: master
+  machineSelector:
+    matchLabels:
+      node-role.kubernetes.io/master: ""
 `);
