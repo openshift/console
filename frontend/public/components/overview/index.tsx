@@ -283,11 +283,12 @@ const sortBuilds = (builds: K8sResourceKind[]): K8sResourceKind[] => {
 const reservedNSPrefixes = ['openshift-', 'kube-', 'kubernetes-'];
 const isReservedNamespace = (ns: string) => ns === 'default' || ns === 'openshift' || reservedNSPrefixes.some(prefix => _.startsWith(ns, prefix));
 
-const OverviewItemReadiness: React.SFC<OverviewItemReadinessProps> = ({desired = 0, href, ready = 0}) => (
-  <Link to={href}>
+const OverviewItemReadiness: React.SFC<OverviewItemReadinessProps> = ({desired = 0, ready = 0, resource}) => {
+  const href = `${resourceObjPath(resource, resource.kind)}/pods`;
+  return <Link to={href}>
     {ready} of {desired} pods
-  </Link>
-);
+  </Link>;
+};
 
 const overviewEmptyStateToProps = ({UI}) => ({
   activeNamespace: UI.get('activeNamespace'),
@@ -688,8 +689,8 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
       };
       const status = <OverviewItemReadiness
         desired={ds.status.desiredNumberScheduled}
-        href={`${resourceObjPath(obj, obj.kind)}/pods`}
         ready={ds.status.currentNumberScheduled}
+        resource={obj}
       />;
       return {
         alerts,
@@ -722,8 +723,8 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
         ? <span className="text-muted">Rollout in progress...</span>
         : <OverviewItemReadiness
           desired={d.spec.replicas}
-          href={`${resourceObjPath(current.obj, _.get(current, 'obj.kind'))}/pods`}
           ready={d.status.replicas}
+          resource={current ? current.obj : obj}
         />;
 
       return {
@@ -759,8 +760,8 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
         ? <span className="text-muted">Rollout in progress...</span>
         : <OverviewItemReadiness
           desired={dc.spec.replicas}
-          href={`${resourceObjPath(current.obj, _.get(current, 'obj.kind'))}/pods`}
           ready={dc.status.replicas}
+          resource={current ? current.obj : obj}
         />;
       return {
         buildConfigs,
@@ -789,8 +790,8 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
       };
       const status = <OverviewItemReadiness
         desired={ss.spec.replicas}
-        href={`${resourceObjPath(obj, obj.kind)}/pods`}
         ready={ss.status.replicas}
+        resource={obj}
       />;
 
       return {
@@ -1112,7 +1113,7 @@ export type OverviewMetrics = {
 
 type OverviewItemReadinessProps = {
   desired: number;
-  href: string;
+  resource: K8sResourceKind;
   ready: number;
 };
 
