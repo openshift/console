@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
-import { Kebab, SectionHeading, detailsPage, navFactory, ResourceLink, ResourceKebab, ResourceSummary, StatusWithIcon, Timestamp } from './utils';
+import { Kebab, SectionHeading, detailsPage, navFactory, ResourceLink, ResourceKebab, ResourceSummary, StatusWithIcon, Timestamp, ExternalLink } from './utils';
 // eslint-disable-next-line no-unused-vars
 import { K8sResourceKind, referenceForModel } from '../module/k8s';
 import { ClusterServiceBrokerModel } from '../models';
@@ -54,7 +54,7 @@ const ClusterServiceBrokerDetails: React.SFC<ClusterServiceBrokerDetailsProps> =
             <dd><StatusWithIcon obj={serviceBroker} /></dd>
             <dt>Broker URL</dt>
             <dd>
-              <a href={serviceBroker.spec.url} target="_blank" rel="noopener noreferrer">{serviceBroker.spec.url}</a>
+              <ExternalLink href={serviceBroker.spec.url} text={serviceBroker.spec.url} />
             </dd>
             <dt>Relist Behavior</dt>
             <dd>{serviceBroker.spec.relistBehavior}</dd>

@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 
 import { FLAGS, connectToFlags } from '../features';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
-import { Kebab, navFactory, ResourceKebab, SectionHeading, ResourceLink, ResourceSummary, Selector, helpLink, HELP_TOPICS } from './utils';
+import { Kebab, navFactory, ResourceKebab, SectionHeading, ResourceLink, ResourceSummary, Selector, helpLink, HELP_TOPICS, ExternalLink } from './utils';
 
 const { common } = Kebab.factory;
 const menuActions = [...common];
@@ -107,7 +107,7 @@ const Details_ = ({flags, obj: np}) => {
         Pods accept all traffic by default.
         They can be isolated via Network Policies which specify a whitelist of ingress rules.
         When a Pod is selected by a Network Policy, it will reject all traffic not explicitly allowed via a Network Policy.
-        See more details in <a target="_blank" rel="noopener noreferrer" href={networkPolicyDocs}>Network Policies Documentation</a>.
+        See more details in <ExternalLink href={networkPolicyDocs} text="Network Policies Documentation" />.
       </p>
       {
         _.isEmpty(_.get(np, 'spec.ingress[0]', [])) ?

@@ -4,7 +4,7 @@ import * as classNames from 'classnames';
 import { FieldLevelHelp } from 'patternfly-react';
 
 import { ColHead, DetailsPage, List, ListHeader, MultiListPage } from './factory';
-import { Kebab, SectionHeading, navFactory, ResourceKebab, ResourceLink, ResourceSummary, convertToBaseValue, helpLink, HELP_TOPICS } from './utils';
+import { Kebab, SectionHeading, navFactory, ResourceKebab, ResourceLink, ResourceSummary, convertToBaseValue, helpLink, HELP_TOPICS, ExternalLink } from './utils';
 import { FLAGS, connectToFlags, flagPending } from '../features';
 import { Gauge } from './graphs';
 import { LoadingBox } from './utils/status-box';
@@ -152,8 +152,7 @@ const Details = ({obj: rq}) => {
           <div>
             <p>Requests are the amount of resources you expect to use. These are used when establishing if the cluster can fulfill your Request.</p>
             <p>Limits are a maximum amount of a resource you can consume. Applications consuming more than the Limit may be terminated.</p>
-            <p>A cluster administrator can establish limits on both the amount you can Request and your Limits with a &nbsp;
-              <a href={helpLink(HELP_TOPICS.COMPUTE_RESOURCES_QUOTA)} target="_blank" rel="noopener">Resource Quota</a>.</p>
+            <p>A cluster administrator can establish limits on both the amount you can Request and your Limits with a <ExternalLink href={helpLink(HELP_TOPICS.COMPUTE_RESOURCES_QUOTA)} text="Resource Quota" />.</p>
           </div>
         } />
       </SectionHeading>

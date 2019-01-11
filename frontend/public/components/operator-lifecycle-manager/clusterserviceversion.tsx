@@ -39,6 +39,7 @@ import {
   SectionHeading,
   ResourceSummary,
   ScrollToTopOnMount,
+  ExternalLink,
 } from '../utils';
 import { operatorGroupFor, operatorNamespaceFor } from './operator-group';
 
@@ -85,12 +86,6 @@ export const ClusterServiceVersionRow = withFallback<ClusterServiceVersionRowPro
   </div>;
 });
 
-const helpText = <p className="co-help-text">
-  Installed Operators are represented by Cluster Service Versions within this namespace. For more information, see the <a href="https://github.com/operator-framework/operator-lifecycle-manager/blob/master/Documentation/design/architecture.md" target="_blank" className="co-external-link" rel="noopener noreferrer">Operator Lifecycle Manager documentation</a>.
-
-  Or create an Operator and Cluster Service Version using the <a href="https://github.com/operator-framework/operator-sdk" target="_blank" className="co-external-link" rel="noopener noreferrer">Operator SDK</a>.
-</p>;
-
 export const ClusterServiceVersionList: React.SFC<ClusterServiceVersionListProps> = (props) => {
   const EmptyMsg = () => <MsgBox title="No Cluster Service Versions Found" detail="" />;
 
@@ -106,6 +101,10 @@ export const ClusterServiceVersionsPage = connect(stateToProps)((props: ClusterS
   if (props.loading) {
     return <LoadingBox />;
   }
+
+  const helpText = <p className="co-help-text">
+    Installed Operators are represented by Cluster Service Versions within this namespace. For more information, see the <ExternalLink href="https://github.com/operator-framework/operator-lifecycle-manager/blob/master/Documentation/design/architecture.md" text="Operator Lifecycle Manager documentation" />. Or create an Operator and Cluster Service Version using the <ExternalLink href="https://github.com/operator-framework/operator-sdk" text="Operator SDK" />.
+  </p>;
 
   return <React.Fragment>
     <PageHeading title="Installed Operators" />

@@ -2,7 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
-import { Kebab, CopyToClipboard, SectionHeading, ResourceKebab, detailsPage, navFactory, ResourceLink, ResourceSummary, StatusIcon } from './utils';
+import { Kebab, CopyToClipboard, SectionHeading, ResourceKebab, detailsPage, navFactory, ResourceLink, ResourceSummary, StatusIcon, ExternalLink } from './utils';
 import { MaskedData } from './configmap-and-secret-data';
 // eslint-disable-next-line no-unused-vars
 import { K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
@@ -68,8 +68,9 @@ const getRouteLabel = (route) => {
 };
 
 export const RouteLocation: React.SFC<RouteHostnameProps> = ({obj}) => <div>
-  {isWebRoute(obj) ? <a href={getRouteWebURL(obj)} target="_blank" className="co-external-link co-external-link--block" rel="noopener noreferrer">
-    {getRouteLabel(obj)}</a> : getRouteLabel(obj)
+  {isWebRoute(obj)
+    ? <ExternalLink href={getRouteWebURL(obj)} additionalClassName="co-external-link--block" text={getRouteLabel(obj)} />
+    : getRouteLabel(obj)
   }
 </div>;
 RouteLocation.displayName = 'RouteLocation';
