@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { connect } from 'react-redux';
-import { ArrowCircleUpIcon, QuestionCircleIcon } from '@patternfly/react-icons';
-import { Button, Dropdown, DropdownToggle, DropdownItem, KebabToggle, Toolbar, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
+import { ArrowCircleUpIcon, QuestionCircleIcon, ThIcon } from '@patternfly/react-icons';
+import { Button, Dropdown, DropdownToggle, DropdownSeparator, DropdownItem, KebabToggle, Toolbar, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
 
 import { FLAGS, stateToProps as flagStateToProps, flagPending } from '../features';
 import { authSvc } from '../module/auth';
@@ -14,6 +14,7 @@ class MastheadToolbar_ extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      isApplicationLauncherDropdownOpen: false,
       isUserDropdownOpen: false,
       isKebabDropdownOpen: false,
       username: null,
@@ -25,8 +26,11 @@ class MastheadToolbar_ extends React.Component {
     this._onUserDropdownSelect = this._onUserDropdownSelect.bind(this);
     this._onKebabDropdownToggle = this._onKebabDropdownToggle.bind(this);
     this._onKebabDropdownSelect = this._onKebabDropdownSelect.bind(this);
+    this._renderMenuItems = this._renderMenuItems.bind(this);
     this._renderMenu = this._renderMenu.bind(this);
     this._onClusterUpdatesAvailable = this._onClusterUpdatesAvailable.bind(this);
+    this._onApplicationLauncherDropdownSelect = this._onApplicationLauncherDropdownSelect.bind(this);
+    this._onApplicationLauncherDropdownToggle = this._onApplicationLauncherDropdownToggle.bind(this);
     this._onHelpDropdownSelect = this._onHelpDropdownSelect.bind(this);
     this._onHelpDropdownToggle = this._onHelpDropdownToggle.bind(this);
     this._onAboutModal = this._onAboutModal.bind(this);
@@ -80,6 +84,18 @@ class MastheadToolbar_ extends React.Component {
     history.push('/settings/cluster');
   }
 
+  _onApplicationLauncherDropdownSelect() {
+    this.setState({
+      isApplicationLauncherDropdownOpen: !this.state.isApplicationLauncherDropdownOpen,
+    });
+  }
+
+  _onApplicationLauncherDropdownToggle(isApplicationLauncherDropdownOpen) {
+    this.setState({
+      isApplicationLauncherDropdownOpen,
+    });
+  }
+
   _onHelpDropdownSelect() {
     this.setState({
       isHelpDropdownOpen: !this.state.isHelpDropdownOpen,
@@ -90,6 +106,11 @@ class MastheadToolbar_ extends React.Component {
     this.setState({
       isHelpDropdownOpen,
     });
+  }
+
+  _onClusterManager(e) {
+    e.preventDefault();
+    window.open('https://cloud.openshift.com', '_blank').opener = null;
   }
 
   _onAboutModal(e) {
@@ -104,6 +125,13 @@ class MastheadToolbar_ extends React.Component {
   _onDocumentation(e) {
     e.preventDefault();
     window.open(openshiftHelpBase, '_blank').opener = null;
+  }
+
+  _renderMenuItems(actions) {
+    return actions.map((action, i) => action.separator
+      ? <DropdownSeparator key={i} />
+      : <DropdownItem key={i} onClick={action.callback}>{action.label}</DropdownItem>
+    );
   }
 
   _renderMenu(mobile) {
@@ -124,20 +152,36 @@ class MastheadToolbar_ extends React.Component {
           authSvc.logout();
         }
       };
+
+      if (mobile) {
+        actions.push({
+          separator: true,
+        });
+      }
+
       actions.push({
-        label: 'Logout',
+        label: 'Log out',
         callback: logout,
       });
     }
 
     if (mobile) {
-      actions.push({
+      actions.unshift({
         label: 'Documentation',
         callback: this._onDocumentation,
       },{
         label: 'About',
         callback: this._onAboutModal,
       });
+
+      if (flags[FLAGS.OPENSHIFT]) {
+        actions.unshift({
+          label: 'Cluster Manager',
+          callback: this._onClusterManager,
+        },{
+          separator: true,
+        });
+      }
 
       return (
         <Dropdown
@@ -146,13 +190,7 @@ class MastheadToolbar_ extends React.Component {
           onSelect={this._onKebabDropdownSelect}
           toggle={<KebabToggle onToggle={this._onKebabDropdownToggle} />}
           isOpen={isKebabDropdownOpen}
-          dropdownItems={actions.map((action, i) => {
-            return (
-              <DropdownItem key={i} onClick={action.callback}>
-                {action.label}
-              </DropdownItem>
-            );
-          })}
+          dropdownItems={this._renderMenuItems(actions)}
         />
       );
     }
@@ -168,31 +206,42 @@ class MastheadToolbar_ extends React.Component {
         onSelect={this._onUserDropdownSelect}
         isOpen={isUserDropdownOpen}
         toggle={<DropdownToggle onToggle={this._onUserDropdownToggle}>{username}</DropdownToggle>}
-        dropdownItems={actions.map((action, i) => {
-          return (
-            <DropdownItem key={i} onClick={action.callback}>
-              {action.label}
-            </DropdownItem>
-          );
-        })}
+        dropdownItems={this._renderMenuItems(actions)}
       />
     );
   }
 
   render() {
-    const { isHelpDropdownOpen, showAboutModal } = this.state;
+    const { isApplicationLauncherDropdownOpen, isHelpDropdownOpen, showAboutModal } = this.state;
     const { flags } = this.props;
     return (
       <React.Fragment>
         <Toolbar>
           <ToolbarGroup className="pf-u-sr-only pf-u-visible-on-md">
-            {/* desktop -- updates button */}
+            {/* desktop -- (updates button) */}
             {flags[FLAGS.CLUSTER_UPDATES_AVAILABLE] && <ToolbarItem>
               <Button variant="plain" aria-label="Cluster Updates Available" onClick={this._onClusterUpdatesAvailable}>
                 <ArrowCircleUpIcon />
               </Button>
             </ToolbarItem>}
-            {/* desktop -- help dropdown [documentation, about] */}
+            {/* desktop -- (application launcher dropdown), help dropdown [documentation, about] */}
+            {flags[FLAGS.OPENSHIFT] && <ToolbarItem>
+              <Dropdown
+                isPlain
+                onSelect={this._onApplicationLauncherDropdownSelect}
+                toggle={
+                  <DropdownToggle aria-label="Application Launcher" iconComponent={null} onToggle={this._onApplicationLauncherDropdownToggle}>
+                    <ThIcon />
+                  </DropdownToggle>
+                }
+                isOpen={isApplicationLauncherDropdownOpen}
+                dropdownItems={[
+                  <DropdownItem key="clustermanager" onClick={this._onClusterManager}>
+                    Cluster Manager
+                  </DropdownItem>,
+                ]}
+              />
+            </ToolbarItem>}
             <ToolbarItem>
               <Dropdown
                 isPlain
@@ -215,7 +264,7 @@ class MastheadToolbar_ extends React.Component {
             </ToolbarItem>
           </ToolbarGroup>
           <ToolbarGroup >
-            {/* mobile -- kebab dropdown [documentation, about, (logout)] */}
+            {/* mobile -- kebab dropdown [(cluster manager |) documentation, about (| logout)] */}
             <ToolbarItem className="pf-u-hidden-on-md pf-u-mr-0">{this._renderMenu(true)}</ToolbarItem>
             {/* desktop -- (user dropdown [logout]) */}
             <ToolbarItem className="pf-u-sr-only pf-u-visible-on-md">{this._renderMenu(false)}</ToolbarItem>
