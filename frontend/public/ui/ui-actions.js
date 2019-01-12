@@ -71,6 +71,7 @@ export const types = {
   selectOverviewView: 'selectOverviewView',
   setActiveNamespace: 'setActiveNamespace',
   setCreateProjectMessage: 'setCreateProjectMessage',
+  setClusterID: 'setClusterID',
   setCurrentLocation: 'setCurrentLocation',
   setMonitoringData: 'setMonitoringData',
   setUser: 'setUser',
@@ -84,6 +85,8 @@ export const types = {
 /** @type {{[key: string]: function}} */
 export const UIActions = {
   [types.setCurrentLocation]: location => ({location, type: types.setCurrentLocation}),
+
+  [types.setClusterID]: clusterID => ({clusterID, type: types.setClusterID}),
 
   [types.setActiveNamespace]: (namespace) => {
     if (namespace) {

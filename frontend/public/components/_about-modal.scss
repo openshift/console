@@ -1,9 +1,15 @@
 .pf-c-about-modal-box {
   dt {
+    color: var(--pf-global--color--100);
     font-size: var(--pf-c-content--FontSize);
+    margin-bottom: var(--pf-global--spacer--md);
     text-transform: none;
   }
+  dd {
+    margin-bottom: var(--pf-global--spacer--md);
+  }
   p {
-    color: var(--pf-global--Color--dark-200);
+    color: var(--pf-global--color--100);
+    margin-bottom: var(--pf-global--spacer--xl);
   }
 }

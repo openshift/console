@@ -3,12 +3,16 @@ import { AboutModal as PfAboutModal, TextContent, TextList, TextListItem } from 
 import { k8sVersion } from '../module/status';
 
 import { getBrandingDetails } from './masthead';
+import { connect } from 'react-redux';
+import { clusterIDStateToProps } from '../ui/ui-reducers';
 
-export class AboutModal extends React.Component {
+
+class AboutModal_ extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       kubernetesVersion: null,
+      clusterName: null,
     };
   }
 
@@ -18,13 +22,13 @@ export class AboutModal extends React.Component {
 
   _checkKubernetesVersion() {
     k8sVersion()
-      .then(data => this.setState({ kubernetesVersion: data.gitVersion }))
-      .catch(() => this.setState({ kubernetesVersion: 'unknown' }));
+      .then(data => this.setState({kubernetesVersion: data.gitVersion}))
+      .catch(() => this.setState({kubernetesVersion: 'unknown'}));
   }
 
   render() {
-    const { isOpen, closeAboutModal } = this.props;
-    const { kubernetesVersion } = this.state;
+    const {isOpen, closeAboutModal} = this.props;
+    const {kubernetesVersion} = this.state;
     const details = getBrandingDetails();
 
     return (
@@ -38,13 +42,16 @@ export class AboutModal extends React.Component {
         logoImageAlt={details.logoAlt}
         heroImageSrc={details.backgroundImg}
       >
-        <h2>About</h2>
-        <p>OpenShift is Red Hat&apos;s container application platform that allows developers to quickly develop, host, and scale applications in a cloud environment.</p>
+        <p>OpenShift is Red Hat&apos;s container application platform that allows developers to quickly develop, host,
+          and scale applications in a cloud environment.</p>
         <br />
-        <h2>Version</h2>
         <TextContent>
           <TextList component="dl">
-            <TextListItem component="dt">Kubernetes Master</TextListItem>
+            {this.props.clusterID &&
+            <TextListItem component="dt">Cluster ID</TextListItem>}
+            {this.props.clusterID &&
+            <TextListItem component="dd">{this.props.clusterID}</TextListItem>}
+            <TextListItem component="dt">Kubernetes Master Version</TextListItem>
             <TextListItem component="dd">{kubernetesVersion}</TextListItem>
           </TextList>
         </TextContent>
@@ -52,3 +59,5 @@ export class AboutModal extends React.Component {
     );
   }
 }
+
+export const AboutModal = connect(clusterIDStateToProps)(AboutModal_);
