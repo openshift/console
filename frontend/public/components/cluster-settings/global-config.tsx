@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 
 import { K8sKind, k8sList } from '../../module/k8s';
 import { resourcePathFromModel } from '../utils/resource-link';
+import { LoadingBox } from '../utils/status-box';
 
 const globalConfigListStateToProps = ({k8s}) => ({
   configResources: k8s.getIn(['RESOURCES', 'configResources']),
@@ -27,6 +28,7 @@ class GlobalConfigPage_ extends React.Component<GlobalConfigPageProps, GlobalCon
   readonly state: GlobalConfigPageState = {
     errorMessage: '',
     items: [],
+    loading: true,
   }
 
   componentDidMount() {
@@ -40,27 +42,33 @@ class GlobalConfigPage_ extends React.Component<GlobalConfigPageProps, GlobalCon
         }).then(items => items.map(i => ({...i, model})));
     })).then((responses) => {
       const items = _.sortBy(_.flatten(responses), 'kind', 'asc');
-      this.setState({items});
+      this.setState({
+        items,
+        loading: false,
+      });
     });
   }
 
   render() {
-    const { errorMessage, items } = this.state;
+    const { errorMessage, items, loading } = this.state;
 
     return <div className="co-m-pane__body">
       {errorMessage && <div className="alert alert-danger"><span className="pficon pficon-error-circle-o" aria-hidden="true" />{errorMessage}</div>}
-      <p className="co-m-pane__explanation">
-        Edit the following resources to manage the configuration of your cluster.
-      </p>
-      <div className="co-m-table-grid co-m-table-grid--bordered">
-        <div className="row co-m-table-grid__head">
-          <div className="col-sm-10 col-xs-12">Configuration Resource</div>
-          <div className="col-sm-2 hidden-xs"></div>
+      {loading && <LoadingBox />}
+      {!loading && <React.Fragment>
+        <p className="co-m-pane__explanation">
+          Edit the following resources to manage the configuration of your cluster.
+        </p>
+        <div className="co-m-table-grid co-m-table-grid--bordered">
+          <div className="row co-m-table-grid__head">
+            <div className="col-sm-10 col-xs-12">Configuration Resource</div>
+            <div className="col-sm-2 hidden-xs"></div>
+          </div>
+          <div className="co-m-table-grid__body">
+            { _.map(items, item => <ItemRow item={item} key={item.metadata.uid} />)}
+          </div>
         </div>
-        <div className="co-m-table-grid__body">
-          { _.map(items, item => <ItemRow item={item} key={item.metadata.uid} />)}
-        </div>
-      </div>
+      </React.Fragment>}
     </div>;
   }
 }
@@ -74,4 +82,5 @@ type GlobalConfigPageProps = {
 type GlobalConfigPageState = {
   errorMessage: string,
   items: any,
+  loading: boolean,
 };
