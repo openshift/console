@@ -42,7 +42,7 @@ export const getAvailableClusterUpdates = (cv) => {
 };
 
 export const getCurrentClusterVersion = (cv) => {
-  return _.get(cv, 'status.current.version');
+  return _.get(cv, 'status.desired.version');
 };
 
 
