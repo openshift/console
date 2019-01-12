@@ -6,7 +6,7 @@ import { FieldLevelHelp, Alert } from 'patternfly-react';
 import * as classNames from 'classnames';
 
 import { k8sPatch, k8sGet, referenceFor, referenceForOwnerRef } from '../module/k8s';
-import { PromiseComponent, NameValueEditorPair, EnvType, EnvFromPair, LoadingBox, AsyncComponent, ContainerDropdown, ResourceLink } from './utils';
+import { PromiseComponent, NameValueEditorPair, EnvType, EnvFromPair, LoadingInline, LoadingBox, AsyncComponent, ContainerDropdown, ResourceLink } from './utils';
 import { ConfigMapModel, SecretModel } from '../models';
 
 /**
@@ -83,7 +83,7 @@ const getContainersObjectForDropdown = (containerArray) => {
   }, {});
 };
 
-/** @type {(state: any, props: {obj?: object, rawEnvData?: any, readOnly: boolean, envPath: any, onChange?: (env: any) => void, addConfigMapSecret?: boolean}) => {model: K8sKind}} */
+/** @type {(state: any, props: {obj?: object, rawEnvData?: any, readOnly: boolean, envPath: any, onChange?: (env: any) => void, addConfigMapSecret?: boolean, useLoadingInline?: boolean}) => {model: K8sKind}} */
 const stateToProps = ({k8s}, {obj}) => ({
   model: k8s.getIn(['RESOURCES', 'models', referenceFor(obj)]) || k8s.getIn(['RESOURCES', 'models', obj.kind]),
 });
@@ -404,9 +404,12 @@ export const EnvironmentPage = connect(stateToProps)(
 
     render() {
       const {errorMessage, success, inProgress, currentEnvVars, stale, configMaps, secrets, containerIndex, containerType} = this.state;
-      const {rawEnvData, readOnly, obj, addConfigMapSecret} = this.props;
+      const {rawEnvData, readOnly, obj, addConfigMapSecret, useLoadingInline} = this.props;
 
       if (!configMaps || !currentEnvVars || !secrets) {
+        if (useLoadingInline) {
+          return <LoadingInline />;
+        }
         return <LoadingBox />;
       }
 
@@ -479,6 +482,7 @@ EnvironmentPage.propTypes = {
   readOnly: PropTypes.bool.isRequired,
   onChange: PropTypes.func,
   addConfigMapSecret: PropTypes.bool,
+  useLoadingInline: PropTypes.bool,
 };
 EnvironmentPage.defaultProps = {
   obj: {},

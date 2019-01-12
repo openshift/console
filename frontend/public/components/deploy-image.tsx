@@ -406,7 +406,8 @@ export class DeployImage extends React.Component<DeployImageProps, DeployImageSt
                     envPath={['spec','template','spec','containers']}
                     readOnly={false}
                     onChange={this.onEnvironmentChange}
-                    addConfigMapSecret={false} />
+                    addConfigMapSecret={false}
+                    useLoadingInline={true} />
                 </div>
               </div>
             </React.Fragment>}
