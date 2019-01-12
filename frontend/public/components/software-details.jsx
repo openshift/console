@@ -1,12 +1,9 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
 
-import { productName } from '../branding';
 import { k8sVersion } from '../module/status';
-import { coFetchJSON } from '../co-fetch';
 import { SafetyFirst } from './safety-first';
 import { LoadingInline } from './utils';
-import { FLAGS, connectToFlags, flagPending } from '../features';
 
 
 const StatusIconRow = ({state, text}) => {
@@ -59,56 +56,27 @@ const SoftwareDetailRow = ({title, detail, text, children}) => {
   </div>;
 };
 
-export const SoftwareDetails = connectToFlags(FLAGS.OPENSHIFT)(
-  class SoftwareDetails extends SafetyFirst {
-    constructor(props) {
-      super(props);
-      this.state = {
-        openshiftVersion: null,
-        kubernetesVersion: null,
-        openshiftVersionObj: null,
-      };
-    }
+export class SoftwareDetails extends SafetyFirst {
+  constructor(props) {
+    super(props);
+    this.state = {
+      kubernetesVersion: null,
+    };
+  }
 
-    componentDidMount() {
-      super.componentDidMount();
-      this._checkKubernetesVersion();
-      this._checkOpenShiftVersion();
-    }
+  componentDidMount() {
+    super.componentDidMount();
+    this._checkKubernetesVersion();
+  }
 
-    componentDidUpdate(prevProps) {
-      if (prevProps.flags[FLAGS.OPENSHIFT] !== this.props.flags[FLAGS.OPENSHIFT]) {
-        this._checkOpenShiftVersion();
-      }
-    }
+  _checkKubernetesVersion() {
+    k8sVersion()
+      .then((data) => this.setState({kubernetesVersion: data.gitVersion}))
+      .catch(() => this.setState({kubernetesVersion: 'unknown'}));
+  }
 
-    _checkOpenShiftVersion() {
-      const openshiftFlag = this.props.flags[FLAGS.OPENSHIFT];
-      if (openshiftFlag) {
-        coFetchJSON('api/kubernetes/version/openshift')
-          .then((data) => {
-            this.setState({openshiftVersion: data.gitVersion, openshiftVersionObj: data});
-          }).catch(() => this.setState({openshiftVersion: 'unknown'}));
-      }
-    }
-
-    _checkKubernetesVersion() {
-      k8sVersion()
-        .then((data) => this.setState({kubernetesVersion: data.gitVersion}))
-        .catch(() => this.setState({kubernetesVersion: 'unknown'}));
-    }
-
-    render() {
-      const {openshiftVersion, kubernetesVersion} = this.state;
-      const openshiftFlag = this.props.flags[FLAGS.OPENSHIFT];
-
-      if (flagPending(openshiftFlag)) {
-        return null;
-      }
-
-      return <React.Fragment>
-        <SoftwareDetailRow title="Kubernetes" detail={kubernetesVersion} text="Kubernetes version could not be determined." />
-        {openshiftFlag && <SoftwareDetailRow title={productName} detail={openshiftVersion} text={`${productName} version could not be determined.`} />}
-      </React.Fragment>;
-    }
-  });
+  render() {
+    const {kubernetesVersion} = this.state;
+    return <SoftwareDetailRow title="Kubernetes" detail={kubernetesVersion} text="Kubernetes version could not be determined." />;
+  }
+}
