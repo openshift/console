@@ -152,7 +152,7 @@ const podAlertKey = (alert: any, pod: K8sResourceKind, containerName: string = '
   return `${alert}--${id}--${containerName}`;
 };
 
-const getPodAlerts = (pod: K8sResourceKind): any => {
+const getPodAlerts = (pod: K8sResourceKind): OverviewItemAlerts => {
   const alerts = {};
   const statuses = [
     ..._.get(pod, 'status.initContainerStatuses', []),
@@ -182,12 +182,12 @@ const getPodAlerts = (pod: K8sResourceKind): any => {
   return alerts;
 };
 
-const combinePodAlerts = (pods: K8sResourceKind[]): any => _.reduce(pods, (acc, pod) => ({
+const combinePodAlerts = (pods: K8sResourceKind[]): OverviewItemAlerts => _.reduce(pods, (acc, pod) => ({
   ...acc,
   ...getPodAlerts(pod),
 }), {});
 
-const getReplicationControllerAlerts = (rc: K8sResourceKind): any => {
+const getReplicationControllerAlerts = (rc: K8sResourceKind): OverviewItemAlerts => {
   const phase = getDeploymentPhase(rc);
   const version = getDeploymentConfigVersion(rc);
   const label = _.isFinite(version) ? `#${version}` : rc.metadata.name;
@@ -210,6 +210,18 @@ const getReplicationControllerAlerts = (rc: K8sResourceKind): any => {
     default:
       return {};
   }
+};
+
+const getResourcePausedAlert = (resource): OverviewItemAlerts => {
+  if (!resource.spec.paused) {
+    return {};
+  }
+  return {
+    [`${resource.metadata.uid}--Paused`]: {
+      severity: 'info',
+      message: `${resource.metadata.name} is paused.`,
+    },
+  };
 };
 
 const getOwnedResources = ({metadata:{uid}}: K8sResourceKind, resources: K8sResourceKind[]): K8sResourceKind[] => {
@@ -707,6 +719,7 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
   createDeploymentItems(): OverviewItem[] {
     const {deployments} = this.props;
     return _.map(deployments.data, d => {
+      const alerts = getResourcePausedAlert(d);
       const replicaSets = this.getReplicaSetsForResource(d);
       const current = _.head(replicaSets);
       const previous = _.nth(replicaSets, 1);
@@ -728,6 +741,7 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
         />;
 
       return {
+        alerts,
         buildConfigs,
         current,
         isRollingOut,
@@ -743,6 +757,7 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
   createDeploymentConfigItems(): OverviewItem[] {
     const {deploymentConfigs} = this.props;
     return _.map(deploymentConfigs.data, dc => {
+      const alerts = getResourcePausedAlert(dc);
       const replicationControllers = this.getReplicationControllersForResource(dc);
       const current = _.head(replicationControllers);
       const previous = _.nth(replicationControllers, 1);
@@ -764,6 +779,7 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
           resource={current ? current.obj : obj}
         />;
       return {
+        alerts,
         buildConfigs,
         current,
         isRollingOut,
