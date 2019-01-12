@@ -11,6 +11,7 @@ import { OperatorGroupKind, PackageManifestKind, ClusterServiceVersionLogo, Subs
 import { OperatorGroupSelector } from '../operator-lifecycle-manager/operator-group';
 import { RadioGroup } from '../radio';
 import { OPERATOR_HUB_CSC_BASE } from '../../const';
+import { getOperatorProviderType } from './operator-hub-utils';
 
 // TODO: Use `redux-form` instead of stateful component
 const withFormState = (Component) => {
@@ -50,10 +51,12 @@ export const OperatorHubSubscribeForm = withFormState((props: OperatorHubSubscri
   }
 
   const {provider, channels = [], packageName} = props.packageManifest.data.status;
+  const srcProvider = _.get(props.packageManifest.data, 'metadata.labels.opsrc-provider');
+  const providerType = getOperatorProviderType(props.packageManifest.data);
 
   const submit = () => {
     const operatorGroupNamespace = props.operatorGroup.data.find(og => og.metadata.name === props.formState().target).metadata.namespace;
-    const OPERATOR_HUB_CSC_NAME = `${OPERATOR_HUB_CSC_BASE}-${operatorGroupNamespace}`;
+    const OPERATOR_HUB_CSC_NAME = `${OPERATOR_HUB_CSC_BASE}-${srcProvider}`;
 
     const catalogSourceConfig = props.catalogSourceConfig.data.find(csc => csc.metadata.name === OPERATOR_HUB_CSC_NAME);
     const hasBeenEnabled = !_.isEmpty(catalogSourceConfig) && _.includes(catalogSourceConfig.spec.packages.split(','), packageName);
@@ -71,6 +74,8 @@ export const OperatorHubSubscribeForm = withFormState((props: OperatorHubSubscri
       spec: {
         targetNamespace: operatorGroupNamespace,
         packages: `${packages}`,
+        csDisplayName: `${providerType} Operators`,
+        csPublisher: `${providerType}`,
       },
     };
 
@@ -79,7 +84,7 @@ export const OperatorHubSubscribeForm = withFormState((props: OperatorHubSubscri
       kind: 'Subscription',
       metadata: {
         name: packageName,
-        namespace: props.operatorGroup.data.find(og => og.metadata.name === props.formState().target).metadata.namespace,
+        namespace: operatorGroupNamespace,
       },
       spec: {
         source: OPERATOR_HUB_CSC_NAME,

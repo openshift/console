@@ -6,7 +6,7 @@ import { CatalogItemHeader, PropertiesSidePanel, PropertyItem } from 'patternfly
 
 import { MarkdownView } from '../operator-lifecycle-manager/clusterserviceversion';
 import { history, ExternalLink } from '../utils';
-import { OPERATOR_HUB_CSC_BASE, RH_OPERATOR_SUPPORT_POLICY_LINK } from '../../const';
+import { RH_OPERATOR_SUPPORT_POLICY_LINK } from '../../const';
 
 export const OperatorHubItemDetails: React.SFC<OperatorHubItemDetailsProps> = ({item, closeOverlay}) => {
   if (!item) {
@@ -26,6 +26,8 @@ export const OperatorHubItemDetails: React.SFC<OperatorHubItemDetailsProps> = ({
     containerImage,
     createdAt,
     support,
+    catalogSource,
+    catalogSourceNamespace,
   } = item;
   const notAvailable = <span className="properties-side-panel-pf-property-label">N/A</span>;
 
@@ -68,7 +70,7 @@ export const OperatorHubItemDetails: React.SFC<OperatorHubItemDetailsProps> = ({
 
   const onActionClick = () => {
     if (!installed) {
-      history.push(`/operatorhub/subscribe?pkg=${item.name}&catalog=${OPERATOR_HUB_CSC_BASE}&catalogNamespace=${'openshift-operators'}`);
+      history.push(`/operatorhub/subscribe?pkg=${item.name}&catalog=${catalogSource}&catalogNamespace=${catalogSourceNamespace}`);
       return;
     }
 
