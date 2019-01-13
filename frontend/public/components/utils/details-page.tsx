@@ -16,7 +16,7 @@ export const detailsPage = <T extends {}>(Component: React.ComponentType<T>) => 
 };
 
 export const ResourceSummary: React.SFC<ResourceSummaryProps> = ({children, resource, showPodSelector = true, showNodeSelector = true, showAnnotations = true, podSelector = 'spec.selector'}) => {
-  const { metadata, type, kind } = resource;
+  const { metadata, type } = resource;
   const reference = referenceFor(resource);
   const model = modelFor(reference);
   const owners = (_.get(metadata, 'ownerReferences') || [])
@@ -30,7 +30,7 @@ export const ResourceSummary: React.SFC<ResourceSummaryProps> = ({children, reso
     { type ? <dt>Type</dt> : null }
     { type ? <dd>{type}</dd> : null }
     <dt>Labels</dt>
-    <dd><LabelList kind={kind} labels={metadata.labels} /></dd>
+    <dd><LabelList kind={reference} labels={metadata.labels} /></dd>
     {showPodSelector && <dt>Pod Selector</dt>}
     {showPodSelector && <dd><Selector selector={_.get(resource, podSelector)} namespace={_.get(resource, 'metadata.namespace')} /></dd>}
     {showNodeSelector && <dt>Node Selector</dt>}

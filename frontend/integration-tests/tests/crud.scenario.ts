@@ -322,7 +322,7 @@ describe('Kubernetes resource CRUD operations', () => {
 
     it('sees if label links still work', async() => {
       await $$('.co-m-label').first().click();
-      await browser.wait(until.urlContains(`/search/ns/${testName}?kind=ConfigMap&q=${labelValue}`));
+      await browser.wait(until.urlContains(`/search/ns/${testName}?kind=core~v1~ConfigMap&q=${labelValue}`));
 
       expect($('.co-text-configmap').isDisplayed()).toBe(true);
     });
