@@ -8,8 +8,8 @@ export const detailsSidebarOverviewTab = detailsSidebar.element(by.buttonText('O
 export const detailsSidebarResourcesTab = detailsSidebar.element(by.buttonText('Resources'));
 export const detailsSidebarTitle = $('.resource-overview__heading .co-m-pane__name');
 
-export const itemsAreVisible = () => {
-  return browser.wait(until.presenceOf($(projectOverviewItemSelector)));
+export const itemsAreVisible = async() => {
+  return await browser.wait(until.presenceOf($(projectOverviewItemSelector)));
 };
 
 export const getProjectOverviewListItemsOfKind = (kindModel) => {
