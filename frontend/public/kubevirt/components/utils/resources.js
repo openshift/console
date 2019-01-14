@@ -9,7 +9,10 @@ import {
   DEFAULT_RDP_PORT,
   CDI_KUBEVIRT_IO,
   STORAGE_IMPORT_PVC_NAME,
+  isBeingMigrated,
 } from 'kubevirt-web-ui-components';
+
+const MOCK_EMPTY_VM = null;
 
 export const getResourceKind = (model, name, namespaced, namespace, isList, matchLabels, matchExpressions) => {
   const res = { kind:model.kind, namespaced, namespace, isList, prop: model.kind};
@@ -53,8 +56,9 @@ export const findVMIMigration = (migrations, vmiName) => {
   if (!migrations) {
     return null;
   }
-  const vmiMigrations = migrations.filter(m => m.spec.vmiName === vmiName);
-  return vmiMigrations.find(m => !_.get(m, 'status.completed') && !_.get(m, 'status.failed') );
+
+  return migrations.filter(m => m.spec.vmiName === vmiName)
+    .find(m => isBeingMigrated(MOCK_EMPTY_VM, m) );
 };
 
 const findPortOfService = (service, targetPort) => _.get(service, ['spec', 'ports'], [])
