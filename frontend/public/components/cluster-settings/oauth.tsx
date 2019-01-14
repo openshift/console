@@ -20,7 +20,7 @@ const menuActions = [...common];
 const oAuthReference = referenceForModel(OAuthModel);
 
 // Convert to ms for formatDuration
-const tokenDuration = (seconds: number) => _.isNil(seconds * 1000) ? '-' : formatDuration(seconds);
+const tokenDuration = (seconds: number) => _.isNil(seconds) ? '-' : formatDuration(seconds * 1000);
 
 const IdentityProviders: React.SFC<IdentityProvidersProps> = ({identityProviders}) => {
   return _.isEmpty(identityProviders)
@@ -51,15 +51,12 @@ const IdentityProviders: React.SFC<IdentityProvidersProps> = ({identityProviders
 
 const OAuthDetails: React.SFC<OAuthDetailsProps> = ({obj}: {obj: K8sResourceKind}) => {
   const { identityProviders, tokenConfig = {} } = obj.spec;
-  const { accessTokenMaxAgeSeconds, authorizeTokenMaxAgeSeconds } = tokenConfig;
   return <React.Fragment>
     <div className="co-m-pane__body">
       <SectionHeading text="OAuth Overview" />
       <ResourceSummary resource={obj} showPodSelector={false} showNodeSelector={false}>
-        <dt>Max Age: Access Token</dt>
-        <dd>{tokenDuration(accessTokenMaxAgeSeconds)}</dd>
-        <dt>Max Age: Authorize Token</dt>
-        <dd>{tokenDuration(authorizeTokenMaxAgeSeconds)}</dd>
+        <dt>Access Token Max Age</dt>
+        <dd>{tokenDuration(tokenConfig.accessTokenMaxAgeSeconds)}</dd>
       </ResourceSummary>
     </div>
     <div className="co-m-pane__body">
