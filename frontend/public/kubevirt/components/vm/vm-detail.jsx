@@ -54,7 +54,7 @@ const ConnectedVmDetails = ({ obj: vm }) => {
       resource: getResourceKind(PodModel, undefined, true, vm.metadata.namespace, true, {[CDI_KUBEVIRT_IO]: 'importer'}),
     },
     migrations: {
-      resource: getResourceKind(VirtualMachineInstanceMigrationModel, undefined, true, vm.metadata.namespace, false),
+      resource: getResourceKind(VirtualMachineInstanceMigrationModel, undefined, true, vm.metadata.namespace, true),
     },
   };
 
@@ -142,7 +142,7 @@ export const VirtualMachinesDetailsPage = props => {
       pages={pages}
       resources={[
         getResourceKind(VirtualMachineInstanceModel, props.name, true, props.namespace, false),
-        getResourceKind(VirtualMachineInstanceMigrationModel, undefined, true, props.namespace, false),
+        getResourceKind(VirtualMachineInstanceMigrationModel, undefined, true, props.namespace, true),
       ]}
     />);
 };

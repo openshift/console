@@ -38,6 +38,7 @@ const VMHeader = props => <ListHeader>
 </ListHeader>;
 
 const VMRow = ({obj: vm}) => {
+  const migrationResources = getResourceKind(VirtualMachineInstanceMigrationModel, undefined, true, vm.metadata.namespace, true);
   const resourceMap = {
     pods: {
       resource: getResourceKind(PodModel, undefined, true, vm.metadata.namespace, true, getLabelMatcher(vm)),
@@ -46,7 +47,7 @@ const VMRow = ({obj: vm}) => {
       resource: getResourceKind(PodModel, undefined, true, vm.metadata.namespace, true, {[CDI_KUBEVIRT_IO]: 'importer'}),
     },
     migrations: {
-      resource: getResourceKind(VirtualMachineInstanceMigrationModel, undefined, true, vm.metadata.namespace, false),
+      resource: migrationResources,
     },
   };
 
@@ -77,7 +78,7 @@ const VMRow = ({obj: vm}) => {
         resource={vm}
         resources={[
           getResourceKind(VirtualMachineInstanceModel, vmName, true, vmNamespace, false),
-          getResourceKind(VirtualMachineInstanceMigrationModel, undefined, true, vmNamespace, false),
+          migrationResources,
         ]} />
     </div>
   </ResourceRow>;

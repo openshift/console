@@ -49,12 +49,12 @@ export const findImporterPods = (data, vm) => {
   return data.filter(p => datavolumeNames.find(name => p.metadata.labels[`${CDI_KUBEVIRT_IO}/${STORAGE_IMPORT_PVC_NAME}`] === name ) );
 };
 
-export const findVMIMigration = (data, vmiName) => {
-  if (!data || !data.items) {
+export const findVMIMigration = (migrations, vmiName) => {
+  if (!migrations) {
     return null;
   }
-  const migrations = data.items.filter(m => m.spec.vmiName === vmiName);
-  return migrations.find(m => !_.get(m, 'status.completed') && !_.get(m, 'status.failed') );
+  const vmiMigrations = migrations.filter(m => m.spec.vmiName === vmiName);
+  return vmiMigrations.find(m => !_.get(m, 'status.completed') && !_.get(m, 'status.failed') );
 };
 
 const findPortOfService = (service, targetPort) => _.get(service, ['spec', 'ports'], [])
