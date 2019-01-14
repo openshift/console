@@ -17,7 +17,7 @@ import {
   VirtualMachineInstanceMigrationModel,
 } from '../../models/index';
 import {
-  getResourceKind,
+  getResource,
   getLabelMatcher,
   findPod,
   findImporterPods,
@@ -42,19 +42,20 @@ const VmiEvents = ({obj: vm}) => {
 };
 
 const ConnectedVmDetails = ({ obj: vm }) => {
+  const { name, namespace } = vm.metadata;
   const resourceMap = {
     vmi: {
-      resource: getResourceKind(VirtualMachineInstanceModel, vm.metadata.name, true, vm.metadata.namespace, false),
+      resource: getResource(VirtualMachineInstanceModel, {name, namespace, isList: false}),
       ignoreErrors: true,
     },
     pods: {
-      resource: getResourceKind(PodModel, undefined, true, vm.metadata.namespace, true, getLabelMatcher(vm)),
+      resource: getResource(PodModel, {namespace, matchLabels: getLabelMatcher(vm)}),
     },
     importerPods: {
-      resource: getResourceKind(PodModel, undefined, true, vm.metadata.namespace, true, {[CDI_KUBEVIRT_IO]: 'importer'}),
+      resource: getResource(PodModel, {namespace, matchLabels: {[CDI_KUBEVIRT_IO]: 'importer'}}),
     },
     migrations: {
-      resource: getResourceKind(VirtualMachineInstanceMigrationModel, undefined, true, vm.metadata.namespace, true),
+      resource: getResource(VirtualMachineInstanceMigrationModel, {namespace}),
     },
   };
 
@@ -104,6 +105,7 @@ const VmDetails_ = props => {
 };
 
 export const VirtualMachinesDetailsPage = props => {
+  const { name, namespace } = props;
   const consolePage = { // TODO: might be moved based on review; or display conditionally if VM is running?
     href: 'consoles',
     name: 'Consoles',
@@ -141,8 +143,8 @@ export const VirtualMachinesDetailsPage = props => {
       menuActions={menuActions}
       pages={pages}
       resources={[
-        getResourceKind(VirtualMachineInstanceModel, props.name, true, props.namespace, false),
-        getResourceKind(VirtualMachineInstanceMigrationModel, undefined, true, props.namespace, true),
+        getResource(VirtualMachineInstanceModel, {name, namespace, isList: false}),
+        getResource(VirtualMachineInstanceMigrationModel, {namespace}),
       ]}
     />);
 };

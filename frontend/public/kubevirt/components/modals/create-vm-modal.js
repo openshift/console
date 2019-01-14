@@ -8,25 +8,25 @@ import {
   StorageClassModel,
   PersistentVolumeClaimModel,
 } from '../../models';
-import { getResourceKind } from '../utils/resources';
+import { getResource } from '../utils/resources';
 import { units } from '../utils/okdutils';
 
 export const openCreateVmWizard = ( activeNamespace, createTemplate = false ) => {
   const launcher = modalResourceLauncher(CreateVmWizard, {
     namespaces: {
-      resource: getResourceKind(NamespaceModel, undefined, true, undefined, true),
+      resource: getResource(NamespaceModel),
     },
     templates: {
-      resource: getResourceKind(TemplateModel, undefined, true, undefined, true, undefined, [{key: TEMPLATE_TYPE_LABEL, operator: 'Exists' }]),
+      resource: getResource(TemplateModel, {matchExpressions: [{key: TEMPLATE_TYPE_LABEL, operator: 'Exists' }]}),
     },
     networkConfigs: {
-      resource: getResourceKind(NetworkAttachmentDefinitionModel, undefined, true, undefined, true),
+      resource: getResource(NetworkAttachmentDefinitionModel),
     },
     storageClasses: {
-      resource: { kind:StorageClassModel.kind, isList: true, prop: StorageClassModel.kind},
+      resource:  getResource(StorageClassModel),
     },
     persistentVolumeClaims: {
-      resource: { kind:PersistentVolumeClaimModel.kind, isList: true, prop: PersistentVolumeClaimModel.kind},
+      resource:  getResource(PersistentVolumeClaimModel),
     },
   },(({namespaces}) => {
       let selectedNamespace;

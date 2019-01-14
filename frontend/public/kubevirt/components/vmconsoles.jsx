@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {
-  getResourceKind,
+  getResource,
   getVncConnectionDetails,
   getSerialConsoleConnectionDetails,
   getRdpConnectionDetails,
@@ -49,18 +49,19 @@ const VmConsoles_ = ({ vm, vmi, services, pods }) => {
  * Wrapper for VmConsoles performing asynchronous loading of API resources.
  */
 const ConnectedVmConsoles = ({ obj: vm }) => {
+  const { name, namespace } = vm.metadata;
   const resourceMap = {
     vmi: {
-      resource: getResourceKind(VirtualMachineInstanceModel, vm.metadata.name, true, vm.metadata.namespace, false),
+      resource: getResource(VirtualMachineInstanceModel, {name, namespace, isList: false}),
       ignoreErrors: true,
     },
     services: {
       // We probably can not simply match on labels but on Service's spec.selector.[kubevirt/vm] to achieve robust pairing VM-Service.
       // So read all services and filter on frontend.
-      resource: getResourceKind(ServiceModel, undefined, true, vm.metadata.namespace, true),
+      resource: getResource(ServiceModel, {namespace}),
     },
     pods: {
-      resource: getResourceKind(PodModel, undefined, true, vm.metadata.namespace, true, getLabelMatcher(vm)),
+      resource: getResource(PodModel, {namespace, matchLabels: getLabelMatcher(vm)}),
     },
   };
 

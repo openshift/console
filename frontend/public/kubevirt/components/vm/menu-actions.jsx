@@ -15,7 +15,7 @@ import { startStopVmModal } from '../modals/start-stop-vm-modal';
 import { restartVmModal } from '../modals/restart-vm-modal';
 import { cancelVmiMigrationModal } from '../modals/cancel-vmi-migration-modal';
 import {
-  getResourceKind,
+  getResource,
   getLabelMatcher,
   findVMIMigration,
 } from '../utils/resources';
@@ -57,13 +57,14 @@ const menuActionCancelMigration = (kind, vm, actionArgs) => {
 
 const menuActionMigrate = (kind, vm, actionArgs) => {
   const migration = findVMIMigration(actionArgs[VirtualMachineInstanceMigrationModel.kind], _.get(actionArgs[VirtualMachineInstanceModel.kind], 'metadata.name'));
+  const { name, namespace } = vm.metadata;
   return {
     hidden: !_.get(vm, 'spec.running', false) || isBeingMigrated(vm, migration),
     label: 'Migrate Virtual Machine',
     callback: () => {
       return modalResourceLauncher(BasicMigrationDialog, {
         virtualMachineInstance: {
-          resource: getResourceKind(VirtualMachineInstanceModel, vm.metadata.name, true, vm.metadata.namespace, false, getLabelMatcher(vm)),
+          resource: getResource(VirtualMachineInstanceModel, {name, namespace, isList: false, matchLabels: getLabelMatcher(vm)}),
           required: true,
         },
       })({

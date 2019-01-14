@@ -14,8 +14,15 @@ import {
 
 const MOCK_EMPTY_VM = null;
 
-export const getResourceKind = (model, name, namespaced, namespace, isList, matchLabels, matchExpressions) => {
-  const res = { kind:model.kind, namespaced, namespace, isList, prop: model.kind};
+export const getResource = (model, {
+  name,
+  namespaced=true,
+  namespace,
+  isList=true,
+  matchLabels,
+  matchExpressions } = { namespaced:true, isList:true }) => {
+  const res = { kind: model.kind, namespaced, namespace, isList, prop: model.kind};
+
   if (name) {
     res.name = name;
   }
@@ -25,6 +32,7 @@ export const getResourceKind = (model, name, namespaced, namespace, isList, matc
   if (matchExpressions) {
     res.selector = {matchExpressions};
   }
+
   return res;
 };
 

@@ -8,7 +8,7 @@ import { DASHES, BUS_VIRTIO, NIC } from './utils/constants';
 import { deleteDeviceModal } from './modals/delete-device-modal';
 import { getNetworks, CreateNicRow, getAddNicPatch, POD_NETWORK, settingsValue } from 'kubevirt-web-ui-components';
 import { NetworkAttachmentDefinitionModel, VirtualMachineModel } from '../models';
-import { getResourceKind } from './utils/resources';
+import { getResource } from './utils/resources';
 import { WithResources } from './utils/withResources';
 import { k8sPatch } from '../module/okdk8s';
 
@@ -80,7 +80,7 @@ const NIC_TYPE_CREATE = 'nic-type-create';
 
 export const NicRow = (onChange, onAccept, onCancel) => ({obj: nic}) => {
   const networks = {
-    resource: getResourceKind(NetworkAttachmentDefinitionModel, undefined, true, undefined, true),
+    resource: getResource(NetworkAttachmentDefinitionModel),
   };
   switch (nic.nicType) {
     case NIC_TYPE_VM:

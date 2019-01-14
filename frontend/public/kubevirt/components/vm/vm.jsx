@@ -19,7 +19,7 @@ import {
   VirtualMachineInstanceMigrationModel,
 } from '../../models/index';
 import {
-  getResourceKind,
+  getResource,
   getLabelMatcher,
   findImporterPods, findVMIMigration, findPod,
 } from '../utils/resources';
@@ -38,35 +38,34 @@ const VMHeader = props => <ListHeader>
 </ListHeader>;
 
 const VMRow = ({obj: vm}) => {
-  const migrationResources = getResourceKind(VirtualMachineInstanceMigrationModel, undefined, true, vm.metadata.namespace, true);
+
+  const { name, namespace } = vm.metadata;
+  const migrationResources = getResource(VirtualMachineInstanceMigrationModel, {namespace});
   const resourceMap = {
     pods: {
-      resource: getResourceKind(PodModel, undefined, true, vm.metadata.namespace, true, getLabelMatcher(vm)),
+      resource: getResource(PodModel, {namespace, matchLabels: getLabelMatcher(vm)}),
     },
     importerPods: {
-      resource: getResourceKind(PodModel, undefined, true, vm.metadata.namespace, true, {[CDI_KUBEVIRT_IO]: 'importer'}),
+      resource: getResource(PodModel, {namespace, matchLabels: {[CDI_KUBEVIRT_IO]: 'importer'}}),
     },
     migrations: {
       resource: migrationResources,
     },
   };
 
-  const vmName = vm.metadata.name;
-  const vmNamespace = vm.metadata.namespace;
-
   return <ResourceRow obj={vm}>
     <div className={mainRowSize}>
-      <ResourceLink kind={VirtualMachineModel.kind} name={vmName} namespace={vmNamespace} title={vm.metadata.uid} />
+      <ResourceLink kind={VirtualMachineModel.kind} name={name} namespace={namespace} title={vm.metadata.uid} />
     </div>
     <div className={otherRowSize}>
-      <ResourceLink kind={NamespaceModel.kind} name={vmNamespace} title={vmNamespace} />
+      <ResourceLink kind={NamespaceModel.kind} name={namespace} title={namespace} />
     </div>
     <div className={mainRowSize}>
       <WithResources resourceMap={resourceMap}
         resourceToProps={({ pods, importerPods, migrations }) => ({
-          launcherPod: findPod(pods, vmName, VIRT_LAUNCHER_POD_PREFIX),
+          launcherPod: findPod(pods, name, VIRT_LAUNCHER_POD_PREFIX),
           importerPods: findImporterPods(importerPods, vm),
-          migration: findVMIMigration(migrations, vmName),
+          migration: findVMIMigration(migrations, name),
         })}
         loaderComponent={() => DASHES}>
         <VmStatus vm={vm} />
@@ -77,7 +76,7 @@ const VMRow = ({obj: vm}) => {
         kind={VirtualMachineModel.kind}
         resource={vm}
         resources={[
-          getResourceKind(VirtualMachineInstanceModel, vmName, true, vmNamespace, false),
+          getResource(VirtualMachineInstanceModel, {name, namespace, isList: false}),
           migrationResources,
         ]} />
     </div>

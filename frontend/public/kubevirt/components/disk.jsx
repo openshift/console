@@ -4,7 +4,7 @@ import { Button, Alert } from 'patternfly-react';
 import { List, ColHead, ListHeader, ResourceRow } from './factory/okdfactory';
 import { PersistentVolumeClaimModel, StorageClassModel, VirtualMachineModel } from '../models';
 import { Loading, Firehose, Kebab } from './utils/okdutils';
-import { getResourceKind, getFlattenForKind } from './utils/resources';
+import { getResource, getFlattenForKind } from './utils/resources';
 import { DASHES, BUS_VIRTIO, DISK } from './utils/constants';
 import { deleteDeviceModal } from './modals/delete-device-modal';
 import { CreateDiskRow, getAddDiskPatch, getDisks } from 'kubevirt-web-ui-components';
@@ -51,7 +51,7 @@ const VmDiskRow = ({ storage }) => {
   let storageColumn;
 
   if (pvcName) {
-    const pvcs = getResourceKind(PersistentVolumeClaimModel, pvcName, true, storage.vm.metadata.namespace, false);
+    const pvcs = getResource(PersistentVolumeClaimModel, {name: pvcName, namespace: storage.vm.metadata.namespace, isList: false});
     sizeColumn = <Firehose resources={[pvcs]} flatten={getFlattenForKind(PersistentVolumeClaimModel.kind)}>
       <PvcColumn pvcPath={'spec.resources.requests.storage'} />
     </Firehose>;
@@ -97,7 +97,7 @@ const STORAGE_TYPE_CREATE = 'storage-type-create';
 
 export const DiskRow = (onChange, onAccept, onCancel) => ({obj: storage}) => {
   const storageClasses = {
-    resource: getResourceKind(StorageClassModel, undefined, false, undefined, true),
+    resource: getResource(StorageClassModel, {namespaced: false}),
   };
   switch (storage.storageType) {
     case STORAGE_TYPE_VM:
