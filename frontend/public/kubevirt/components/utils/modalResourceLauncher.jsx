@@ -7,6 +7,7 @@ import { history } from '../../../components/utils';
 import store from '../../../redux';
 
 import { WithResources } from './withResources';
+import { Loader } from '../modals/loader';
 
 const EMPTY_LIST = [];
 const EMPTY_OBJECT = {};
@@ -24,6 +25,7 @@ export const modalResourceLauncher = (Component, resourceMap, resourceToProps) =
     };
 
     const emptyResources = {};
+    const LoaderComponent = () => <Loader onExit={closeModal} />;
 
     // to skip react required warnings - because we are injecting (and overwriting) them later in WithResources
     Object.keys(resourceMap).forEach(k => {
@@ -37,7 +39,7 @@ export const modalResourceLauncher = (Component, resourceMap, resourceToProps) =
         history,
         basename: window.SERVER_FLAGS.basePath,
       }}>
-        <WithResources resourceMap={resourceMap} dispose={closeModal} resourceToProps={resourceToProps} showLoader={true}>
+        <WithResources resourceMap={resourceMap} resourceToProps={resourceToProps} onError={closeModal} loaderComponent={LoaderComponent}>
           <Component {...props} {...emptyResources} onClose={closeModal} onCancel={closeModal} onHide={closeModal} />
         </WithResources>
       </Router>

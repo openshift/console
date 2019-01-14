@@ -5,10 +5,11 @@ import {
   getVmStatus,
   VM_STATUS_ALL,
   VM_STATUS_TO_TEXT,
+  CDI_KUBEVIRT_IO,
 } from 'kubevirt-web-ui-components';
 
 import { ListHeader, ColHead, List, ListPage, ResourceRow } from '../factory/okdfactory';
-import { Firehose, ResourceLink, ResourceKebab } from '../utils/okdutils';
+import { ResourceLink, ResourceKebab } from '../utils/okdutils';
 import { actions } from '../../module/okdk8s';
 import {
   VirtualMachineInstanceModel,
@@ -20,12 +21,12 @@ import {
 import {
   getResourceKind,
   getLabelMatcher,
-  findVmPod,
-  findVmMigration,
+  findImporterPods, findVMIMigration, findPod,
 } from '../utils/resources';
-import { DASHES, IMPORTER_DV_POD_PREFIX, VIRT_LAUNCHER_POD_PREFIX } from '../utils/constants';
+import { DASHES, VIRT_LAUNCHER_POD_PREFIX } from '../utils/constants';
 import { openCreateVmWizard } from '../modals/create-vm-modal';
 import { menuActions } from './menu-actions';
+import { WithResources } from '../utils/withResources';
 
 const mainRowSize = 'col-lg-4 col-md-4 col-sm-6 col-xs-6';
 const otherRowSize = 'col-lg-4 col-md-4 hidden-sm hidden-xs';
@@ -36,40 +37,47 @@ const VMHeader = props => <ListHeader>
   <ColHead {...props} className={mainRowSize} sortField="spec.running">State</ColHead>
 </ListHeader>;
 
-const StateColumn = ({ loaded, vm, resources }) => {
-  return loaded
-    ? <VmStatus
-      vm={vm}
-      launcherPod={findVmPod(vm, resources, VIRT_LAUNCHER_POD_PREFIX)}
-      importerPod={findVmPod(vm, resources, IMPORTER_DV_POD_PREFIX)}
-      migration={findVmMigration(vm, resources)}
-    />
-    : DASHES;
-};
-
 const VMRow = ({obj: vm}) => {
-  const podResources = getResourceKind(PodModel, undefined, true, vm.metadata.namespace, true, getLabelMatcher(vm));
-  const migrationResources = getResourceKind(VirtualMachineInstanceMigrationModel, undefined, true, vm.metadata.namespace, false);
+  const resourceMap = {
+    pods: {
+      resource: getResourceKind(PodModel, undefined, true, vm.metadata.namespace, true, getLabelMatcher(vm)),
+    },
+    importerPods: {
+      resource: getResourceKind(PodModel, undefined, true, vm.metadata.namespace, true, {[CDI_KUBEVIRT_IO]: 'importer'}),
+    },
+    migrations: {
+      resource: getResourceKind(VirtualMachineInstanceMigrationModel, undefined, true, vm.metadata.namespace, false),
+    },
+  };
+
+  const vmName = vm.metadata.name;
+  const vmNamespace = vm.metadata.namespace;
 
   return <ResourceRow obj={vm}>
     <div className={mainRowSize}>
-      <ResourceLink kind={VirtualMachineModel.kind} name={vm.metadata.name} namespace={vm.metadata.namespace} title={vm.metadata.uid} />
+      <ResourceLink kind={VirtualMachineModel.kind} name={vmName} namespace={vmNamespace} title={vm.metadata.uid} />
     </div>
     <div className={otherRowSize}>
-      <ResourceLink kind={NamespaceModel.kind} name={vm.metadata.namespace} title={vm.metadata.namespace} />
+      <ResourceLink kind={NamespaceModel.kind} name={vmNamespace} title={vmNamespace} />
     </div>
     <div className={mainRowSize}>
-      <Firehose resources={[podResources, migrationResources]}>
-        <StateColumn vm={vm} />
-      </Firehose>
+      <WithResources resourceMap={resourceMap}
+        resourceToProps={({ pods, importerPods, migrations }) => ({
+          launcherPod: findPod(pods, vmName, VIRT_LAUNCHER_POD_PREFIX),
+          importerPods: findImporterPods(importerPods, vm),
+          migration: findVMIMigration(migrations, vmName),
+        })}
+        loaderComponent={() => DASHES}>
+        <VmStatus vm={vm} />
+      </WithResources>
     </div>
     <div className="dropdown-kebab-pf">
       <ResourceKebab actions={menuActions}
         kind={VirtualMachineModel.kind}
         resource={vm}
         resources={[
-          getResourceKind(VirtualMachineInstanceModel, vm.metadata.name, true, vm.metadata.namespace, false),
-          getResourceKind(VirtualMachineInstanceMigrationModel, undefined, true, vm.metadata.namespace, false),
+          getResourceKind(VirtualMachineInstanceModel, vmName, true, vmNamespace, false),
+          getResourceKind(VirtualMachineInstanceMigrationModel, undefined, true, vmNamespace, false),
         ]} />
     </div>
   </ResourceRow>;

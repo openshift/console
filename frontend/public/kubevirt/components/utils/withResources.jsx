@@ -7,14 +7,13 @@ import { Map as ImmutableMap } from 'immutable';
 import { Firehose } from '../utils/okdutils';
 import { inject } from '../../../components/utils';
 
-import { Loader } from '../modals/loader';
 import { showErrors } from './showErrors';
 
 
-const checkErrors = (errors, dispose) => {
+const checkErrors = (errors, onError) => {
   if (errors.length > 0) {
-    if (dispose) {
-      dispose();
+    if (onError) {
+      onError();
     }
     setTimeout(() => {
       showErrors(errors);
@@ -30,7 +29,7 @@ class Resources extends React.Component {
   constructor(props) {
     super(props);
     this.state = Resources.getDerivedStateFromProps(props);
-    checkErrors(this.state.errors, props.dispose);
+    checkErrors(this.state.errors, props.onError);
   }
 
   static getDerivedStateFromProps({ resourceMap, resources, resourceToProps }) {
@@ -70,33 +69,33 @@ class Resources extends React.Component {
   }
 
   componentDidUpdate() {
-    checkErrors(this.state.errors, this.props.dispose);
+    checkErrors(this.state.errors, this.props.onError);
   }
 
   render() {
-    const { dispose, children, showLoader } = this.props;
+    const LoaderComponent = this.props.loaderComponent;
 
     if (!this.state.loaded) {
-      return showLoader && dispose ? <Loader onExit={dispose} /> : null;
+      return LoaderComponent ? <LoaderComponent /> : null;
     }
 
-    return inject(children, this.state.childrenProps);
+    return inject(this.props.children, this.state.childrenProps);
   }
 }
 
 Resources.defaultProps = {
   resources: {},
-  showLoader: false,
+  loaderComponent: null,
   resourceToProps: null,
-  dispose: null,
+  onError: null,
 };
 
 Resources.propTypes = {
   resources: PropTypes.object,
   resourceMap: PropTypes.object.isRequired,
-  dispose: PropTypes.func,
+  onError: PropTypes.func,
   resourceToProps: PropTypes.func,
-  showLoader: PropTypes.bool,
+  loaderComponent: PropTypes.element,
 };
 
 const stateToProps = ({k8s}, {resourceMap}) => {
@@ -120,14 +119,14 @@ export const WithResources = connect(stateToProps)(({ resourceMap, k8sModels, ch
 });
 
 WithResources.defaultProps = {
-  showLoader: false,
+  loaderComponent: null,
   resourceToProps: null,
-  dispose: null,
+  onError: null,
 };
 
 WithResources.propTypes = {
   resourceMap: PropTypes.object.isRequired,
-  dispose: PropTypes.func,
+  onError: PropTypes.func,
   resourceToProps: PropTypes.func,
-  showLoader: PropTypes.bool,
+  loaderComponent: PropTypes.element,
 };

@@ -3,8 +3,13 @@ import * as _ from 'lodash-es';
 import { getCSRFToken } from '../../../co-fetch';
 import { k8sBasePath } from '../../module/okdk8s';
 
-import { VirtualMachineInstanceMigrationModel, VirtualMachineInstanceModel, PodModel } from '../../models';
-import { TEMPLATE_VM_NAME_LABEL, DEFAULT_RDP_PORT } from 'kubevirt-web-ui-components';
+import { VirtualMachineInstanceModel } from '../../models';
+import {
+  TEMPLATE_VM_NAME_LABEL,
+  DEFAULT_RDP_PORT,
+  CDI_KUBEVIRT_IO,
+  STORAGE_IMPORT_PVC_NAME,
+} from 'kubevirt-web-ui-components';
 
 export const getResourceKind = (model, name, namespaced, namespace, isList, matchLabels, matchExpressions) => {
   const res = { kind:model.kind, namespaced, namespace, isList, prop: model.kind};
@@ -31,6 +36,19 @@ export const findPod = (data, vmName, podNamePrefix) => {
   return runningPod ? runningPod : pods.find(p => _.get(p, 'status.phase') === 'Failed' || _.get(p, 'status.phase') === 'Unknown');
 };
 
+export const findImporterPods = (data, vm) => {
+  if (!data) {
+    return null;
+  }
+
+  const dataVolumeTemplates = _.get(vm, 'spec.dataVolumeTemplates', []);
+
+  const datavolumeNames = dataVolumeTemplates.map(dataVolumeTemplate => _.get(dataVolumeTemplate, 'metadata.name', null))
+    .filter(dataVolumeTemplate => dataVolumeTemplate);
+
+  return data.filter(p => datavolumeNames.find(name => p.metadata.labels[`${CDI_KUBEVIRT_IO}/${STORAGE_IMPORT_PVC_NAME}`] === name ) );
+};
+
 export const findVMIMigration = (data, vmiName) => {
   if (!data || !data.items) {
     return null;
@@ -53,18 +71,6 @@ const findVMServiceWithPort = (vmi, allServices, targetPort) => (allServices || 
 
 export const getFlattenForKind = (kind) => {
   return resources => _.get(resources, kind, {}).data;
-};
-
-export const findVmPod = (vm, resources, podNamePrefix) => {
-  const podFlatten = getFlattenForKind(PodModel.kind);
-  const podData = podFlatten(resources);
-  return findPod(podData, vm.metadata.name, podNamePrefix);
-};
-
-export const findVmMigration = (vm, resources) => {
-  const flatten = getFlattenForKind(VirtualMachineInstanceMigrationModel.kind);
-  const migrationData = flatten(resources);
-  return findVMIMigration(migrationData, vm.metadata.name);
 };
 
 const getApiConsoleApiBase = () => {

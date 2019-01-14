@@ -1,6 +1,7 @@
 import React from 'react';
 import {
   VmDetails,
+  CDI_KUBEVIRT_IO,
 } from 'kubevirt-web-ui-components';
 
 
@@ -19,9 +20,10 @@ import {
   getResourceKind,
   getLabelMatcher,
   findPod,
+  findImporterPods,
   findVMIMigration,
 } from '../utils/resources';
-import { DASHES, IMPORTER_DV_POD_PREFIX, VIRT_LAUNCHER_POD_PREFIX } from '../utils/constants';
+import { DASHES, VIRT_LAUNCHER_POD_PREFIX } from '../utils/constants';
 import VmConsolesConnected from '../vmconsoles';
 import { Nic } from '../nic';
 import { Disk } from '../disk';
@@ -48,6 +50,9 @@ const ConnectedVmDetails = ({ obj: vm }) => {
     pods: {
       resource: getResourceKind(PodModel, undefined, true, vm.metadata.namespace, true, getLabelMatcher(vm)),
     },
+    importerPods: {
+      resource: getResourceKind(PodModel, undefined, true, vm.metadata.namespace, true, {[CDI_KUBEVIRT_IO]: 'importer'}),
+    },
     migrations: {
       resource: getResourceKind(VirtualMachineInstanceMigrationModel, undefined, true, vm.metadata.namespace, false),
     },
@@ -61,7 +66,7 @@ const ConnectedVmDetails = ({ obj: vm }) => {
 };
 
 const VmDetails_ = props => {
-  const { vm, pods, migrations, vmi } = props;
+  const { vm, pods, importerPods, migrations, vmi } = props;
 
   const vmPod = findPod(pods, vm.metadata.name, VIRT_LAUNCHER_POD_PREFIX);
 
@@ -88,7 +93,7 @@ const VmDetails_ = props => {
       NamespaceResourceLink={namespaceResourceLink}
       PodResourceLink={podResourceLink}
       launcherPod={findPod(pods, vm.metadata.name, VIRT_LAUNCHER_POD_PREFIX)}
-      importerPod={findPod(pods, vm.metadata.name, IMPORTER_DV_POD_PREFIX)}
+      importerPods={findImporterPods(importerPods, vm)}
       migration={migration}
       pods={pods}
       vmi={vmi}
