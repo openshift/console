@@ -24,9 +24,6 @@ import {
 const DashboardLink = ({to, id}) => <Link id={id} className="co-external-link" target="_blank" to={to}>View Grafana Dashboard</Link>;
 
 const Graphs = requirePrometheus(({namespace, isOpenShift}) => {
-  // TODO: Revert this change in OpenShift 4.0. In OpenShift 3.11, the scheduler and controller manager is a single component.
-  const controllerManagerJob = isOpenShift ? 'kube-controllers' : 'kube-controller-manager';
-  const schedulerJob = isOpenShift ? 'kube-controllers' : 'kube-scheduler';
   return <React.Fragment>
     <div className="group">
       <div className="group__title">
@@ -49,10 +46,10 @@ const Graphs = requirePrometheus(({namespace, isOpenShift}) => {
               <Gauge title="API Servers Up" query={'(sum(up{job="apiserver"} == 1) / count(up{job="apiserver"})) * 100'} invert={true} thresholds={{warn: 15, error: 50}} />
             </div>
             <div className="col-md-3 col-sm-6">
-              <Gauge title="Controller Managers Up" query={`(sum(up{job="${controllerManagerJob}"} == 1) / count(up{job="${controllerManagerJob}"})) * 100`} invert={true} thresholds={{warn: 15, error: 50}} />
+              <Gauge title="Controller Managers Up" query={'(sum(up{job="kube-controller-manager"} == 1) / count(up{job="kube-controller-manager"})) * 100'} invert={true} thresholds={{warn: 15, error: 50}} />
             </div>
             <div className="col-md-3 col-sm-6">
-              <Gauge title="Schedulers Up" query={`(sum(up{job="${schedulerJob}"} == 1) / count(up{job="${schedulerJob}"})) * 100`} invert={true} thresholds={{warn: 15, error: 50}} />
+              <Gauge title="Schedulers Up" query={'(sum(up{job="scheduler"} == 1) / count(up{job="scheduler"})) * 100'} invert={true} thresholds={{warn: 15, error: 50}} />
             </div>
             <div className="col-md-3 col-sm-6">
               <Gauge title="API Request Success Rate" query={'sum(rate(apiserver_request_count{code=~"2.."}[5m])) / sum(rate(apiserver_request_count[5m])) * 100'} invert={true} thresholds={{warn: 15, error: 30}} />
@@ -70,13 +67,13 @@ const Graphs = requirePrometheus(({namespace, isOpenShift}) => {
         <div className="container-fluid group__body group__graphs">
           <div className="row">
             <div className="col-md-3 col-sm-6">
-              <Gauge title="CPU Usage" query={'100 - (sum(rate(node_cpu{job="node-exporter",mode="idle"}[2m])) / count(node_cpu{job="node-exporter", mode="idle"})) * 100'} />
+              <Gauge title="CPU Usage" query={'(sum(node:node_cpu_utilisation:avg1m) / count(node:node_cpu_utilisation:avg1m)) * 100'} />
             </div>
             <div className="col-md-3 col-sm-6">
-              <Gauge title="Memory Usage" query={'((sum(node_memory_MemTotal) - sum(node_memory_MemFree) - sum(node_memory_Buffers) - sum(node_memory_Cached)) / sum(node_memory_MemTotal)) * 100'} />
+              <Gauge title="Memory Usage" query={'(sum(node:node_memory_utilisation:)) / count(node:node_memory_utilisation:) * 100'} />
             </div>
             <div className="col-md-3 col-sm-6">
-              <Gauge title="Disk Usage" query={'(sum(node_filesystem_size{device!="rootfs"}) - sum(node_filesystem_free{device!="rootfs"})) / sum(node_filesystem_size{device!="rootfs"}) * 100'} />
+              <Gauge title="Disk Usage" query={'(sum(node:node_filesystem_usage:)) / count(node:node_filesystem_usage:) * 100'} />
             </div>
             <div className="col-md-3 col-sm-6">
               <Gauge title="Pod Usage" query={'100 - (sum(kube_node_status_capacity_pods) - sum(kube_pod_info)) / sum(kube_node_status_capacity_pods) * 100'} />
