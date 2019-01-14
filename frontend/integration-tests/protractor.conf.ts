@@ -7,6 +7,7 @@ import * as _ from 'lodash';
 import { TapReporter } from 'jasmine-reporters';
 import * as ConsoleReporter from 'jasmine-console-reporter';
 import * as failFast from 'protractor-fail-fast';
+import * as fs from 'fs';
 
 const tap = !!process.env.TAP;
 
@@ -37,6 +38,7 @@ export const config: Config = {
         '--disable-background-timer-throttling',
         '--disable-renderer-backgrounding',
         '--disable-raf-throttling',
+        'incognito',
       ],
       prefs: {
         'profile.password_manager_enabled': false,
@@ -142,4 +144,12 @@ export const waitForCount = (elementArrayFinder, expectedCount) => {
     const actualCount = await elementArrayFinder.count();
     return expectedCount >= actualCount;
   };
+};
+
+export const saveScreenshot = (filename) => {
+  return browser.takeScreenshot().then((image) => {
+    const stream = fs.createWriteStream(`${__dirname}/../gui_test_screenshots/${filename}`);
+    stream.write(new Buffer(image, 'base64'));
+    stream.end();
+  });
 };
