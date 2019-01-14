@@ -61,7 +61,7 @@ class ConfigureUpdateStrategyModal extends PromiseComponent {
     const maxUnavailable = _.get(this.deployment.spec, 'strategy.rollingUpdate.maxUnavailable', '');
     const maxSurge = _.get(this.deployment.spec, 'strategy.rollingUpdate.maxSurge', '');
 
-    return <form onSubmit={this._submit} name="form">
+    return <form onSubmit={this._submit} name="form" className="modal-content modal-content--large">
       <ModalTitle>Edit Update Strategy</ModalTitle>
       <ModalBody>
         <div className="co-m-form-row">

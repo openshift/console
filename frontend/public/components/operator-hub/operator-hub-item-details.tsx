@@ -88,29 +88,33 @@ export const OperatorHubItemDetails: React.SFC<OperatorHubItemDetailsProps> = ({
       />
     </Modal.Header>
     <Modal.Body>
-      <div className="co-catalog-page__overlay-body">
-        <PropertiesSidePanel>
-          <Button
-            bsStyle="primary"
-            className="co-catalog-page__overlay-create"
-            disabled={installed}
-            title={installed ? 'This Operator has been installed on the cluster.' : null}
-            onClick={onActionClick}>
-            Install
-          </Button>
-          <PropertyItem label="Operator Version" value={version || notAvailable} />
-          <PropertyItem label="Provider Type" value={providerType || notAvailable} />
-          <PropertyItem label="Provider" value={provider || notAvailable} />
-          <PropertyItem label="Repository" value={repository || notAvailable} />
-          <PropertyItem label="Container Image" value={containerImage || notAvailable} />
-          <PropertyItem label="Created At" value={createdAt || notAvailable} />
-          <PropertyItem label="Support" value={support || notAvailable} />
-        </PropertiesSidePanel>
-        <div className="co-catalog-page__overlay-description">
-          {getHintBlock()}
-          {longDescription
-            ? <MarkdownView content={longDescription} outerScroll={true} />
-            : description}
+      <div className="modal-body-content">
+        <div className="modal-body-inner-shadow-covers">
+          <div className="co-catalog-page__overlay-body">
+            <PropertiesSidePanel>
+              <Button
+                bsStyle="primary"
+                className="co-catalog-page__overlay-create"
+                disabled={installed}
+                title={installed ? 'This Operator has been installed on the cluster.' : null}
+                onClick={onActionClick}>
+                Install
+              </Button>
+              <PropertyItem label="Operator Version" value={version || notAvailable} />
+              <PropertyItem label="Provider Type" value={providerType || notAvailable} />
+              <PropertyItem label="Provider" value={provider || notAvailable} />
+              <PropertyItem label="Repository" value={repository || notAvailable} />
+              <PropertyItem label="Container Image" value={containerImage || notAvailable} />
+              <PropertyItem label="Created At" value={createdAt || notAvailable} />
+              <PropertyItem label="Support" value={support || notAvailable} />
+            </PropertiesSidePanel>
+            <div className="co-catalog-page__overlay-description">
+              {getHintBlock()}
+              {longDescription
+                ? <MarkdownView content={longDescription} outerScroll={true} />
+                : description}
+            </div>
+          </div>
         </div>
       </div>
     </Modal.Body>

@@ -38,7 +38,12 @@ tags-input .tags {
   @include transition(border-color ease-in-out .15s, box-shadow ease-in-out .15s);
 }
 .modal-body tags-input .tags {
-  min-height: 200px;
+  background-color: rgba(255, 255, 255, 0.5); // enable scroll-shadows to be seen
+  margin-bottom: ($grid-gutter-width / 2);
+  min-height: 120px;
+  .tag-item {
+    background-color: rgba(235,235,235,.5); // enable scroll-shadows to be seen
+  }
 }
 tags-input .tags.focused,
 tags-input .tags:focus {
@@ -218,10 +223,19 @@ tags-input .autocomplete .suggestion-item em {
   }
 }
 
-.modal.right-side-modal-pf .modal-dialog {
-  margin-top: $pf-4-nav-bar-height; // since PatternFly 4's masthead is taller than PatternFly 3's
-  .modal-content {
-    height: calc(100vh - #{$pf-4-nav-bar-height});
+
+
+.modal.right-side-modal-pf {
+  top: 76px; // since PatternFly 4's masthead is taller than PatternFly 3's
+
+  .modal-dialog {
+    height: 100%; // Entend panel to bottom
+    margin-top: 0; // parent is positioned: fixed so margin isn't needed for positioning
+
+    .modal-content {
+      height: 100%; // Use % instead of vh so that scroll-shadows can be used
+      max-height: none;
+    }
   }
 }
 

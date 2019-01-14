@@ -163,7 +163,7 @@ export class AddSecretToWorkloadModal extends React.Component<AddSecretToWorkloa
     const addAsVolume = addAs === 'volume';
     const selectWorkloadPlaceholder = 'Select a workload';
 
-    return <form onSubmit={this.submit} name="co-add-secret-to-workload" className="co-add-secret-to-workload">
+    return <form onSubmit={this.submit} name="co-add-secret-to-workload" className="co-add-secret-to-workload modal-content">
       <ModalTitle>Add Secret to Workload</ModalTitle>
       <ModalBody>
         <p>
