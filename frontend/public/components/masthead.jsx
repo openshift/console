@@ -3,6 +3,7 @@ import * as PropTypes from 'prop-types';
 import { Brand, PageHeader } from '@patternfly/react-core';
 
 import { MastheadToolbar } from './masthead-toolbar';
+import { history } from './utils';
 import okdLogoImg from '../imgs/okd-logo.svg';
 import openshiftLogoImg from '../imgs/openshift-logo.svg';
 import ocpLogoImg from '../imgs/openshift-platform-logo.svg';
@@ -49,10 +50,20 @@ export const getBrandingDetails = () => {
 
 export const Masthead = ({ onNavToggle }) => {
   const details = getBrandingDetails();
+  const defaultRoute = '/';
+  const logoProps = {
+    href: defaultRoute,
+    // use onClick to prevent browser reload
+    onClick: e => {
+      e.preventDefault();
+      history.push(defaultRoute);
+    },
+  };
 
   return (
     <PageHeader
       logo={<Brand src={details.logoImg} alt={details.logoAlt} />}
+      logoProps={logoProps}
       toolbar={<MastheadToolbar />}
       showNavToggle
       onNavToggle={onNavToggle}
