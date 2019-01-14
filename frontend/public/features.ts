@@ -168,9 +168,9 @@ const loggingConfigMapPath = `${k8sBasePath}/api/v1/namespaces/openshift-logging
 const detectLoggingURL = dispatch => coFetchJSON(loggingConfigMapPath)
   .then(
     res => {
-      const {kibanaAppHost} = res.data;
-      if (!_.isEmpty(kibanaAppHost)) {
-        dispatch(setMonitoringURL(MonitoringRoutes.Kibana, kibanaAppHost));
+      const {kibanaAppURL} = res.data;
+      if (!_.isEmpty(kibanaAppURL)) {
+        dispatch(setMonitoringURL(MonitoringRoutes.Kibana, kibanaAppURL));
       }
     },
     err => {
