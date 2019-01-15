@@ -5,9 +5,9 @@ button:focus,
 a:focus {
   outline-style: none;
 
-  // restore outline-style to buttons, a in .pf-l-page__header
+  // restore outline-style to buttons, a in .pf-c-page__header
   // so there is a visual indicator for keyboard users
-  .pf-l-page__header & {
+  .pf-c-page__header & {
     outline-style: auto;
   }
 }
