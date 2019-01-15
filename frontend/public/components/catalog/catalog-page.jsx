@@ -19,7 +19,7 @@ import {
   getServiceClassIcon,
   getServiceClassImage,
 } from './catalog-item-icon';
-import { ClusterServiceVersionModel } from '../../models';
+import { ClusterServiceClassModel, ClusterServiceVersionModel } from '../../models';
 import { providedAPIsFor, referenceForProvidedAPI } from '../operator-lifecycle-manager';
 import * as operatorLogo from '../../imgs/operator.svg';
 
@@ -190,7 +190,7 @@ export const Catalog = connectToFlags(FLAGS.OPENSHIFT, FLAGS.SERVICE_CATALOG, FL
   const resources = [
     ...(flags.SERVICE_CATALOG ? [{
       isList: true,
-      kind: 'ClusterServiceClass',
+      kind: referenceForModel(ClusterServiceClassModel),
       namespaced: false,
       prop: 'clusterserviceclasses',
     }] : []),
