@@ -47,11 +47,17 @@ export class SyncMarkdownView extends React.Component<{content: string, outerScr
   }
 
   render() {
-    // Find the app's stylesheet and inject it into the frame to ensure consistent styling.
+    // Find the app's stylesheets and inject them into the frame to ensure consistent styling.
     const filteredLinks = Array.from(document.getElementsByTagName('link')).filter((l) => _.includes(l.href, 'app-bundle'));
 
+    const linkRefs = _.reduce(
+      filteredLinks,
+      (refs, link) => `${refs}
+        <link rel="stylesheet" href="${link.href}">`,
+      '');
+
     const contents = `
-      <link rel="stylesheet" href="${filteredLinks[0].href}">
+      ${linkRefs}
       <style type="text/css">
       body {
           color: ${this.props.content ? '#333' : '#999'};
