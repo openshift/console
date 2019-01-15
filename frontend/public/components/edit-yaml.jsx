@@ -323,19 +323,16 @@ export const EditYAML = connect(stateToProps)(
 
       const {error, success, stale} = this.state;
       const {create, obj, download = true, readOnly, header} = this.props;
-      const kind = obj && obj.kind;
       const model = this.getModel(obj);
-      const label = _.get(model, 'label', kind);
 
       const editYamlComponent = <div className="co-file-dropzone">
         { canDrop && <div className={klass}><p className="co-file-dropzone__drop-text">Drop file here</p></div> }
 
         <div>
-          <div className="yaml-editor__header">
-            {create && <div>{header}</div>}
-            {create && <div className="yaml-editor__subheader">Create by manually entering YAML or JSON definitions, or by dragging and dropping a file into the editor.</div>}
-            {!create && <div>Edit {label}</div>}
-          </div>
+          {create && <div className="yaml-editor__header">
+            <h1 className="yaml-editor__header-text">{header}</h1>
+            <p className="help-block">Create by manually entering YAML or JSON definitions, or by dragging and dropping a file into the editor.</p>
+          </div>}
           <div className="co-p-has-sidebar">
             <div className="co-p-has-sidebar__body">
               <div className="yaml-editor" ref={r => this.editor = r} style={{height: this.state.height}}>
