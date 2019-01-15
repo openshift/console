@@ -164,10 +164,10 @@ class PullSecret extends SafetyFirst {
 
 export const NamespaceLineCharts = ({ns}) => <div className="row">
   <div className="col-sm-6 col-xs-12">
-    <Line title="CPU Shares" query={[
+    <Line title="CPU Usage" query={[
       {
         name: 'Used',
-        query: `namespace:container_spec_cpu_shares:sum{namespace='${ns.metadata.name}'}`,
+        query: `namespace:container_cpu_usage:sum{namespace='${ns.metadata.name}'}`,
       },
     ]} />
   </div>
