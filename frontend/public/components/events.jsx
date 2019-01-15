@@ -323,7 +323,7 @@ class EventStream extends SafetyFirst {
       if (kind && !kindFilter(kind, obj)) {
         return false;
       }
-      if (filter && !_.isMatch(obj.involvedObject, filter)) {
+      if (filter && !filter.some(flt => flt(obj.involvedObject))) {
         return false;
       }
       if (!textMatches(obj)) {
@@ -516,7 +516,7 @@ EventStream.defaultProps = {
 
 EventStream.propTypes = {
   category: PropTypes.string,
-  filter: PropTypes.object,
+  filter: PropTypes.array,
   kind: PropTypes.string.isRequired,
   mock: PropTypes.bool,
   namespace: namespaceProptype,
@@ -525,4 +525,6 @@ EventStream.propTypes = {
 };
 
 
-export const ResourceEventStream = ({obj: {kind, metadata: {name, namespace}}}) => <EventStream filter={{name, kind}} namespace={namespace} resourceEventStream />;
+export const ResourceEventStream = ({obj: {kind, metadata: {name, namespace}}}) =>
+  <EventStream filter={[obj => _.isMatch(obj, {name, kind})]} namespace={namespace} resourceEventStream />;
+export const ResourcesEventStream = ({ filters, namespace }) => <EventStream filter={filters} resourceEventStream namespace={namespace} />;
