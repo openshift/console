@@ -1,10 +1,13 @@
 /* eslint-disable no-unused-vars, no-undef */
 
+import * as _ from 'lodash-es';
+
 import { cacheResources, getResources as getResources_ } from './get-resources';
 import { k8sList, k8sWatch, k8sGet } from './resource';
 import { makeReduxID } from '../../components/utils/k8s-watcher';
 import { APIServiceModel } from '../../models';
 import { coFetchJSON } from '../../co-fetch';
+import { referenceForModel } from './k8s';
 
 const types = {
   resources: 'resources',
@@ -106,6 +109,12 @@ const actions = {
     POLLs[id] = setInterval(poller, 30 * 1000);
     poller();
 
+    if (!_.get(k8sType, 'verbs', ['watch']).includes('watch')) {
+      // eslint-disable-next-line no-console
+      console.warn(`${referenceForModel(k8sType)} does not support watching`);
+      return;
+    }
+
     const {subprotocols} = getState().UI.get('impersonate', {});
 
     WS[id] = k8sWatch(k8sType, {...query, subprotocols}).onbulkmessage(events =>
@@ -188,6 +197,12 @@ const actions = {
         if (WS[id]) {
           // eslint-disable-next-line no-console
           console.warn(`Attempted to create multiple websockets for ${id}.  This should never happen.`);
+          return;
+        }
+
+        if (!_.get(k8skind, 'verbs', ['watch']).includes('watch')) {
+          // eslint-disable-next-line no-console
+          console.warn(`${referenceForModel(k8skind)} does not support watching`);
           return;
         }
 
