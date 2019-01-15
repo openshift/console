@@ -42,7 +42,7 @@ describe('Visiting Overview page', () => {
         await expect(overviewView.getProjectOverviewListItemsOfKind(kindModel).count()).toEqual(1);
         saveScreenshot(`overview-${kindModel.id}-4.png`);
         /* eslint-disable-next-line max-nested-callbacks */
-        await expect(overviewView.getProjectOverviewListItem(kindModel, testName).isPresent()).toBeTruthy().catch(() => domDump(`overview-${kindModel.id}--dom-dump.html`));
+        await expect(overviewView.getProjectOverviewListItem(kindModel, testName).isDisplayed()).toBeTruthy().catch(() => domDump(`overview-${kindModel.id}--dom-dump.html`));
         saveScreenshot(`overview-${kindModel.id}-5.png`);
       });
 
