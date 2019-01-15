@@ -32,10 +32,11 @@ export class CatalogListPage extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    const {clusterserviceclasses, imagestreams, namespace} = this.props;
-    if (namespace !== prevProps.namespace ||
-      clusterserviceclasses !== prevProps.clusterserviceclasses ||
-      imagestreams !== prevProps.imagestreams) {
+    const {clusterserviceclasses, imagestreams, clusterServiceVersions, namespace} = this.props;
+    if (!_.isEqual(namespace, prevProps.namespace) ||
+      !_.isEqual(clusterserviceclasses, prevProps.clusterserviceclasses) ||
+      !_.isEqual(imagestreams, prevProps.imagestreams) ||
+      !_.isEqual(clusterServiceVersions, prevProps.clusterServiceVersions)) {
       const items = this.getItems();
       this.setState({items});
     }

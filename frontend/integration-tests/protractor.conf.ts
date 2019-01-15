@@ -95,8 +95,7 @@ export const config: Config = {
     olm: ['tests/base.scenario.ts', 'tests/olm/descriptors.scenario.ts', 'tests/olm/catalog.scenario.ts', 'tests/olm/etcd.scenario.ts'],
     olmUpgrade: ['tests/base.scenario.ts', 'tests/olm/update-channel-approval.scenario.ts'],
     performance: ['tests/base.scenario.ts', 'tests/performance.scenario.ts'],
-    serviceCatalog: ['tests/base.scenario.ts', 'tests/service-catalog/service-catalog.scenario.ts', 'tests/service-catalog/service-broker.scenario.ts', 'tests/service-catalog/service-class.scenario.ts', 'tests/service-catalog/service-binding.scenario.ts'],
-    catalog: ['tests/base.scenario.ts', 'tests/catalog.scenario.ts'],
+    serviceCatalog: ['tests/base.scenario.ts', 'tests/service-catalog/service-catalog.scenario.ts', 'tests/service-catalog/service-broker.scenario.ts', 'tests/service-catalog/service-class.scenario.ts', 'tests/service-catalog/service-binding.scenario.ts', 'tests/developer-catalog.scenario.ts'],
     operatorHub: ['tests/base.scenario.ts', 'tests/operator-hub/operator-hub.scenario.ts'],
     overview: ['tests/base.scenario.ts', 'tests/overview/overview.scenario.ts'],
     e2e: ['tests/base.scenario.ts',
@@ -123,7 +122,7 @@ export const config: Config = {
       'tests/source-to-image.scenario.ts',
       'tests/deploy-image.scenario.ts',
       'tests/operator-hub/operator-hub.scenario.ts',
-      'tests/catalog.scenario.ts'],
+      'tests/developer-catalog.scenario.ts'],
   },
   params: {
     // Set to 'true' to enable OpenShift resources in the crud scenario.
