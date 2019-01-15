@@ -48,7 +48,7 @@ export const flatten = resources => _.flatMap(resources, resource => {
       ret.push(Object.assign({}, binding, {
         subject,
         subjectIndex,
-        rowKey: `${getQN(binding)}|${subject.kind}|${subject.name}`,
+        rowKey: `${getQN(binding)}|${subject.kind}|${subject.name}${subject.namespace ? `|${subject.namespace}` : ''}`,
       }));
     });
   });
