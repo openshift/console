@@ -147,7 +147,7 @@ export class Disk extends React.Component {
     const disks = _.get(vm, 'spec.template.spec.domain.devices.disks',[]);
     const volumes = _.get(vm,'spec.template.spec.volumes',[]);
     storages.push(...disks.map(disk => {
-      const volume = volumes.find(v => v.name === disk.volumeName);
+      const volume = volumes.find(v => v.name === disk.name);
       return {
         ...disk,
         vm,

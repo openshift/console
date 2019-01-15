@@ -7,7 +7,7 @@ import { TEMPLATE_TYPE_LABEL } from 'kubevirt-web-ui-components';
 export const VirtualMachineModel: K8sKind = {
   label: 'Virtual Machine',
   labelPlural: 'Virtual Machines',
-  apiVersion: 'v1alpha2',
+  apiVersion: 'v1alpha3',
   path: 'virtualmachines',
   apiGroup: 'kubevirt.io',
   plural: 'virtualmachines',
@@ -20,7 +20,7 @@ export const VirtualMachineModel: K8sKind = {
 export const VirtualMachineInstanceModel: K8sKind = {
   label: 'Virtual Machine Instance',
   labelPlural: 'Virtual Machine Instances',
-  apiVersion: 'v1alpha2',
+  apiVersion: 'v1alpha3',
   path: 'virtualmachineinstances',
   apiGroup: 'kubevirt.io',
   plural: 'virtualmachineinstances',
@@ -33,7 +33,7 @@ export const VirtualMachineInstanceModel: K8sKind = {
 export const VirtualMachineInstancePresetModel: K8sKind = {
   label: 'Virtual Machine Instance Preset',
   labelPlural: 'Virtual Machine Instance Presets',
-  apiVersion: 'v1alpha2',
+  apiVersion: 'v1alpha3',
   path: 'virtualmachineinstancepresets',
   apiGroup: 'kubevirt.io',
   plural: 'virtualmachineinstancepresets',
@@ -46,7 +46,7 @@ export const VirtualMachineInstancePresetModel: K8sKind = {
 export const VirtualMachineInstanceReplicaSetModel: K8sKind = {
   label: 'Virtual Machine Instance Replica Set',
   labelPlural: 'Virtual Machine Instance Replica Sets',
-  apiVersion: 'v1alpha2',
+  apiVersion: 'v1alpha3',
   path: 'virtualmachineinstancereplicaset',
   apiGroup: 'kubevirt.io',
   plural: 'virtualmachineinstancereplicasets',
@@ -101,7 +101,7 @@ export const NetworkAttachmentDefinitionModel: K8sKind = {
 export const VirtualMachineInstanceMigrationModel: K8sKind = {
   label: 'Virtual Machine Instance Migration',
   labelPlural: 'Virtual Machine Instance Migrations',
-  apiVersion: 'v1alpha2',
+  apiVersion: 'v1alpha3',
   path: 'virtualmachineinstancemigrations',
   apiGroup: 'kubevirt.io',
   plural: 'virtualmachineinstancemigrations',

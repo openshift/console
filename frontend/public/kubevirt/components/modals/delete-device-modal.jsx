@@ -24,7 +24,7 @@ class DeleteDeviceModal extends PromiseComponent {
     const devices = _.get(vm, `spec.template.spec.domain.devices.${deviceType.type}`, []);
 
     const deviceIndex = devices.findIndex(d => d.name === device.name);
-    const specIndex = _.get(vm, `spec.template.spec.${deviceType.spec}`,[]).findIndex(spec => spec.name === device.name || spec.name === device.volumeName);
+    const specIndex = _.get(vm, `spec.template.spec.${deviceType.spec}`,[]).findIndex(spec => spec.name === device.name);
 
     const patch = [];
 

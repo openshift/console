@@ -107,7 +107,7 @@ export const getVncConnectionDetails = vmi => {
     host: window.location.hostname,
     port: window.location.port || (isEncrypted() ? '443' : '80'),
 
-    // Example: ws://localhost:9000/api/kubernetes/apis/subresources.kubevirt.io/v1alpha2/namespaces/kube-system/virtualmachineinstances/vm-cirros1/vnc
+    // Example: ws://localhost:9000/api/kubernetes/apis/subresources.kubevirt.io/v1alpha3/namespaces/kube-system/virtualmachineinstances/vm-cirros1/vnc
     path: `${getConsoleApiContext()}/${getConsoleApiPath(vmi)}/vnc${getConsoleApiQuery()}`,
 
     manual: undefined, // so far unsupported
