@@ -2,7 +2,7 @@ $catalog-item-icon-size-lg: 40px;
 $catalog-item-icon-size-sm: 24px;
 
 // Until Patternfly-React-Extensions is updated: https://github.com/patternfly/patternfly-react/issues/1146
-.catalog-tile-pf-title {
+.catalog-tile-pf-title, .properties-side-panel-pf-property-value {
   @include co-break-word;
 }
 
