@@ -13,6 +13,7 @@ const tap = !!process.env.TAP;
 
 export const appHost = `${process.env.BRIDGE_BASE_ADDRESS || 'http://localhost:9000'}${(process.env.BRIDGE_BASE_PATH || '/').replace(/\/$/, '')}`;
 export const testName = `test-${Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5)}`;
+const screenshotDir = `${__dirname}/../gui_test_screenshots`;
 
 const htmlReporter = new HtmlScreenshotReporter({dest: './gui_test_screenshots', inlineImages: true, captureOnlyFailedSpecs: true, filename: 'test-gui-report.html'});
 const browserLogs: logging.Entry[] = [];
@@ -148,8 +149,14 @@ export const waitForCount = (elementArrayFinder, expectedCount) => {
 
 export const saveScreenshot = (filename) => {
   return browser.takeScreenshot().then((image) => {
-    const stream = fs.createWriteStream(`${__dirname}/../gui_test_screenshots/${filename}`);
+    const stream = fs.createWriteStream(`${screenshotDir}/${filename}`);
     stream.write(new Buffer(image, 'base64'));
     stream.end();
+  });
+};
+
+export const domDump = (filename) => {
+  return browser.getPageSource().then((source) => {
+    fs.writeFile(`${screenshotDir}/${filename}`, source, (err) => console.error(err));
   });
 };

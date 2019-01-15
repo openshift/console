@@ -1,7 +1,7 @@
 import { browser, ExpectedConditions as until } from 'protractor';
 import { Set as ImmutableSet } from 'immutable';
 
-import { appHost, testName, checkErrors, checkLogs, saveScreenshot } from '../../protractor.conf';
+import { appHost, testName, checkErrors, checkLogs, saveScreenshot, domDump } from '../../protractor.conf';
 import * as overviewView from '../../views/overview.view';
 import * as crudView from '../../views/crud.view';
 import { DeploymentModel, StatefulSetModel, DeploymentConfigModel, DaemonSetModel } from '../../../public/models';
@@ -41,7 +41,8 @@ describe('Visiting Overview page', () => {
         saveScreenshot(`overview-${kindModel.id}-3.png`);
         await expect(overviewView.getProjectOverviewListItemsOfKind(kindModel).count()).toEqual(1);
         saveScreenshot(`overview-${kindModel.id}-4.png`);
-        await expect(overviewView.getProjectOverviewListItem(kindModel, testName).isPresent()).toBeTruthy();
+        /* eslint-disable-next-line max-nested-callbacks */
+        await expect(overviewView.getProjectOverviewListItem(kindModel, testName).isPresent()).toBeTruthy().catch(() => domDump(`overview-${kindModel.id}--dom-dump.html`));
         saveScreenshot(`overview-${kindModel.id}-5.png`);
       });
 
