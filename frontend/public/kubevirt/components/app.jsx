@@ -1,11 +1,10 @@
 import './init';
 
 import * as React from 'react';
-import {Redirect} from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 
 import { connectToFlags, flagPending, FLAGS } from '../../features';
-import {NamespaceRedirect} from './okdcomponents';
-import {Loading} from './utils/okdutils';
+import { Loading } from './utils/okdutils';
 
 export const KubevirtDefaultPage = connectToFlags(FLAGS.KUBEVIRT)(({ flags }) => {
   const kubevirtFlag = flags[FLAGS.KUBEVIRT];
@@ -17,5 +16,5 @@ export const KubevirtDefaultPage = connectToFlags(FLAGS.KUBEVIRT)(({ flags }) =>
     return <Redirect to="/k8s/all-namespaces/virtualmachines" />;
   }
 
-  return <NamespaceRedirect />;
+  return <Redirect to={'/status/all-namespaces'} />;
 });
