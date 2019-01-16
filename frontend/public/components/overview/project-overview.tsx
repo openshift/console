@@ -215,7 +215,7 @@ const ProjectOverviewListItem = connect<ProjectOverviewListItemPropsFromState, P
     // Hide metrics when a selection is active.
     const hasSelection = !!selectedUID;
     const isSelected = uid === selectedUID;
-    const className = classnames('project-overview__item', {'project-overview__item--selected': isSelected});
+    const className = classnames(`project-overview__item project-overview__item--${kind}`, {'project-overview__item--selected': isSelected});
     const heading = <h3 className="project-overview__item-heading">
       <span className="co-resource-link co-resource-link-truncate">
         <ResourceIcon kind={kind} />
