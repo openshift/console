@@ -100,7 +100,7 @@ export const MachinePage: React.SFC<MachinePageProps> = props =>
     {...props}
     ListComponent={MachineList}
     kind={machineReference}
-    canCreate={false}
+    canCreate
   />;
 
 export const MachineDetailsPage: React.SFC<MachineDetailsPageProps> = props =>
