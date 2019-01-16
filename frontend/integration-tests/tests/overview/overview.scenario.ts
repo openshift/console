@@ -35,15 +35,24 @@ describe('Visiting Overview page', () => {
 
       it(`displays a ${kindModel.id} in the project overview list`, async() => {
         saveScreenshot(`overview-${kindModel.id}-1.png`);
+        domDump(`overview-${kindModel.id}-1.html`);
+
         await browser.wait(until.presenceOf(overviewView.projectOverview));
         saveScreenshot(`overview-${kindModel.id}-2.png`);
+        domDump(`overview-${kindModel.id}-2.html`);
+
         await overviewView.itemsAreVisible();
         saveScreenshot(`overview-${kindModel.id}-3.png`);
+        domDump(`overview-${kindModel.id}-3.html`);
+
         await expect(overviewView.getProjectOverviewListItemsOfKind(kindModel).count()).toEqual(1);
         saveScreenshot(`overview-${kindModel.id}-4.png`);
+        domDump(`overview-${kindModel.id}-4.html`);
+
         /* eslint-disable-next-line max-nested-callbacks */
-        await expect(overviewView.getProjectOverviewListItem(kindModel, testName).isDisplayed()).toBeTruthy().catch(() => domDump(`overview-${kindModel.id}--dom-dump.html`));
+        await expect(overviewView.getProjectOverviewListItem(kindModel, testName).isDisplayed()).toBeTruthy();
         saveScreenshot(`overview-${kindModel.id}-5.png`);
+        domDump(`overview-${kindModel.id}-5.html`);
       });
 
       it(`shows ${kindModel.id} details sidebar when item is clicked`, async() => {
