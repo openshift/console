@@ -28,11 +28,12 @@ export const DroppableEditYAML = withDragDropContext(class DroppableEditYAML ext
   constructor(props) {
     super(props);
     this.state = {
-      obj: this.props.obj || '',
+      fileUpload: '',
       error: '',
     };
     this.handleFileDrop = this.handleFileDrop.bind(this);
   }
+
   handleFileDrop(item, monitor) {
     if (!monitor) {
       return;
@@ -44,7 +45,7 @@ export const DroppableEditYAML = withDragDropContext(class DroppableEditYAML ext
       reader.onload = () => {
         const input = reader.result;
         this.setState({
-          obj: input,
+          fileUpload: input,
         });
       };
       reader.readAsText(file, 'UTF-8');
@@ -53,13 +54,16 @@ export const DroppableEditYAML = withDragDropContext(class DroppableEditYAML ext
         error: fileSizeErrorMsg,
       });
     }
-
   }
+
   render() {
+    const { obj } = this.props;
+    const { fileUpload, error } = this.state;
     return <EditYAMLComponent
       {...this.props}
-      obj={this.state.obj}
-      error={this.state.error}
+      obj={obj}
+      fileUpload={fileUpload}
+      error={error}
       onDrop={this.handleFileDrop} />;
   }
 });
@@ -69,6 +73,6 @@ export type DroppableEditYAMLProps = {
   obj: string,
 };
 export type DroppableEditYAMLState = {
-  obj: string,
+  fileUpload: string,
   error: string,
 };
