@@ -286,7 +286,7 @@ const MonitoringNavSection_ = ({ urls }) => {
   const prometheusURL = urls[MonitoringRoutes.Prometheus];
   const grafanaURL = urls[MonitoringRoutes.Grafana];
   const kibanaURL = urls[MonitoringRoutes.Kibana];
-  return window.SERVER_FLAGS.prometheusBaseURL || prometheusURL || grafanaURL || kibanaURL
+  return window.SERVER_FLAGS.prometheusBaseURL || window.SERVER_FLAGS.alertManagerBaseURL || prometheusURL || grafanaURL || kibanaURL
     ? <NavSection title="Monitoring">
       {window.SERVER_FLAGS.prometheusBaseURL && <HrefLink href="/monitoring/alerts" name="Alerts" startsWith={monitoringAlertsStartsWith} />}
       {window.SERVER_FLAGS.alertManagerBaseURL && <HrefLink href="/monitoring/silences" name="Silences" />}
