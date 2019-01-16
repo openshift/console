@@ -85,7 +85,7 @@ export const SubscriptionsPage: React.SFC<SubscriptionsPageProps> = (props) => {
     title="Subscriptions"
     showTitle={false}
     canCreate={true}
-    createProps={{to: namespace ? `/k8s/ns/${namespace}/${referenceForModel(PackageManifestModel)}` : `/k8s/all-namespaces/${referenceForModel(PackageManifestModel)}`}}
+    createProps={{to: namespace ? `/operatormanagement/ns/${namespace}` : '/operatormanagement/all-namespaces'}}
     createButtonText="Create Subscription"
     ListComponent={SubscriptionsList}
     filterLabel="Subscriptions by package" />;
