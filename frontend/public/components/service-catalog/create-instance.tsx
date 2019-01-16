@@ -5,7 +5,6 @@ import * as _ from 'lodash-es';
 import { Helmet } from 'react-helmet';
 import { IChangeEvent, ISubmitEvent } from 'react-jsonschema-form';
 
-import { LoadingBox } from '../utils/status-box';
 import { ServiceInstanceModel, ClusterServiceClassModel, ClusterServicePlanModel } from '../../models';
 import { ClusterServiceClassInfo } from '../cluster-service-class-info';
 import { ButtonBar } from '../utils/button-bar';
@@ -27,6 +26,7 @@ import {
   NsDropdown,
   PageHeading,
   resourcePathFromModel,
+  StatusBox,
 } from '../utils';
 
 const PARAMETERS_SECRET_KEY = 'parameters';
@@ -118,10 +118,7 @@ class CreateInstance extends React.Component<CreateInstanceProps, CreateInstance
   }
 
   render() {
-    const { obj, plans } = this.props;
-    if (!obj.loaded) {
-      return <LoadingBox />;
-    }
+    const { obj, plans, loaded, loadError } = this.props;
 
     const serviceClass = _.get(obj, 'data');
     const title = 'Create Service Instance';
@@ -147,43 +144,45 @@ class CreateInstance extends React.Component<CreateInstanceProps, CreateInstance
       <Helmet>
         <title>{title}</title>
       </Helmet>
-      <PageHeading title={title} />
-      <div className="co-m-pane__body co-create-service-instance">
-        <div className="row">
-          <div className="col-md-7 col-md-push-5 co-catalog-item-info">
-            <ClusterServiceClassInfo obj={serviceClass} />
-          </div>
-          <div className="col-md-5 col-md-pull-7">
-            <form className="co-create-service-instance">
-              <div className="form-group co-create-service-instance__namespace">
-                <label className="control-label co-required" htmlFor="dropdown-selectbox">Namespace</label>
-                <NsDropdown selectedKey={this.state.namespace} onChange={this.onNamespaceChange} id="dropdown-selectbox" />
-              </div>
-              <div className="form-group co-create-service-instance__name">
-                <label className="control-label co-required" htmlFor="name">Service Instance Name</label>
-                <input className="form-control"
-                  type="text"
-                  onChange={this.onNameChange}
-                  value={this.state.name}
-                  id="name"
-                  required />
-              </div>
-              <div className="form-group co-create-service-instance__plans">
-                <label className="control-label">Plans</label>
-                {_.isEmpty(availablePlans)
-                  ? <p>There are no plans currently available for this service.</p>
-                  : planOptions}
-              </div>
-            </form>
-            <ServiceCatalogParametersForm schema={schema} uiSchema={uiSchema} onSubmit={this.save} formData={this.state.formData} onChange={this.onFormChange}>
-              <ButtonBar errorMessage={this.state.error} inProgress={this.state.inProgress}>
-                <button type="submit" className="btn btn-primary">Create</button>
-                <button type="button" className="btn btn-default" onClick={history.goBack}>Cancel</button>
-              </ButtonBar>
-            </ServiceCatalogParametersForm>
+      <StatusBox data={serviceClass} loaded={loaded} loadError={loadError} label="Service Class">
+        <PageHeading title={title} />
+        <div className="co-m-pane__body co-create-service-instance">
+          <div className="row">
+            <div className="col-md-7 col-md-push-5 co-catalog-item-info">
+              <ClusterServiceClassInfo obj={serviceClass} />
+            </div>
+            <div className="col-md-5 col-md-pull-7">
+              <form className="co-create-service-instance">
+                <div className="form-group co-create-service-instance__namespace">
+                  <label className="control-label co-required" htmlFor="dropdown-selectbox">Namespace</label>
+                  <NsDropdown selectedKey={this.state.namespace} onChange={this.onNamespaceChange} id="dropdown-selectbox" />
+                </div>
+                <div className="form-group co-create-service-instance__name">
+                  <label className="control-label co-required" htmlFor="name">Service Instance Name</label>
+                  <input className="form-control"
+                    type="text"
+                    onChange={this.onNameChange}
+                    value={this.state.name}
+                    id="name"
+                    required />
+                </div>
+                <div className="form-group co-create-service-instance__plans">
+                  <label className="control-label">Plans</label>
+                  {_.isEmpty(availablePlans)
+                    ? <p>There are no plans currently available for this service.</p>
+                    : planOptions}
+                </div>
+              </form>
+              <ServiceCatalogParametersForm schema={schema} uiSchema={uiSchema} onSubmit={this.save} formData={this.state.formData} onChange={this.onFormChange}>
+                <ButtonBar errorMessage={this.state.error} inProgress={this.state.inProgress}>
+                  <button type="submit" className="btn btn-primary">Create</button>
+                  <button type="button" className="btn btn-default" onClick={history.goBack}>Cancel</button>
+                </ButtonBar>
+              </ServiceCatalogParametersForm>
+            </div>
           </div>
         </div>
-      </div>
+      </StatusBox>
     </React.Fragment>;
   }
 }
@@ -204,6 +203,8 @@ export const CreateInstancePage = (props) => {
 export type CreateInstanceProps = {
   obj: any,
   plans: any,
+  loaded: any,
+  loadError: boolean,
   match: any,
   preselectedNamespace: string,
 };
