@@ -782,4 +782,11 @@ spec:
       providerSpec: {}
       versions:
         kubelet: ""
+`).setIn([referenceForModel(k8sModels.MachineModel), 'default'], `
+apiVersion: "cluster.k8s.io/v1alpha1"
+kind: Machine
+metadata:
+  name: example
+spec:
+  providerSpec: {}
 `);
