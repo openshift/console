@@ -92,7 +92,7 @@ export class OperatorHubList extends React.Component<OperatorHubListProps, Opera
 
     if (loaded && !prevProps.loaded ||
       !_.isEqual(subscription.data, prevProps.subscription.data) ||
-      !_.isEqual(packageManifest.data, prevProps.packageManifest.data)) {
+      !_.isEqual(_.get(packageManifest, 'data'), _.get(prevProps.packageManifest, 'data'))) {
       const items = _.sortBy(normalizePackageManifests(_.get(packageManifest, 'data'), subscription.data), 'name');
       this.setState({items});
     }
