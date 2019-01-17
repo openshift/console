@@ -212,6 +212,34 @@ export type MachineConfigPoolKind = {
   status: MachineConfigPoolStatus;
 } & K8sResourceKind;
 
+type ClusterUpdate = {
+  image: string;
+  version: string;
+};
+
+type UpdateHistory = {
+  state: 'Completed' | 'Partial';
+  startedTime: string;
+  completionTime: string;
+  version: string;
+  image: string;
+};
+
+export type ClusterVersionKind = {
+  spec: {
+    channel: string;
+    clusterID: string;
+    desiredUpdate: ClusterUpdate;
+    upstream: string;
+  };
+  status: {
+    availableUpdates: ClusterUpdate[];
+    conditions: any[];
+    desired: ClusterUpdate;
+    history: UpdateHistory[];
+  };
+} & K8sResourceKind;
+
 export type K8sKind = {
   abbr: string;
   kind: string;

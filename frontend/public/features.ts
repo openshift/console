@@ -13,6 +13,7 @@ import {
   PrometheusModel,
   SelfSubjectAccessReviewModel,
 } from './models';
+import { ClusterVersionKind } from './module/k8s';
 import { k8sBasePath, referenceForModel } from './module/k8s/k8s';
 import { k8sCreate } from './module/k8s/resource';
 import { types } from './module/k8s/k8s-actions';
@@ -105,7 +106,7 @@ const detectOpenShift = dispatch => coFetchJSON(openshiftPath)
 const clusterVersionPath = `${k8sBasePath}/apis/config.openshift.io/v1/clusterversions/version`;
 const detectClusterVersion = dispatch => coFetchJSON(clusterVersionPath)
   .then(
-    clusterVersion => {
+    (clusterVersion: ClusterVersionKind) => {
       const hasClusterVersion = !_.isEmpty(clusterVersion);
       setFlag(dispatch, FLAGS.CLUSTER_VERSION, hasClusterVersion);
 
