@@ -70,7 +70,7 @@ export const InstallPlansPage: React.SFC<InstallPlansPageProps> = (props) => {
         {kind: referenceForModel(InstallPlanModel), namespace, namespaced: true, prop: 'installPlan'},
         {kind: referenceForModel(OperatorGroupModel), namespace, namespaced: true, prop: 'operatorGroup'},
       ]}
-      flatten={resources => _.get(resources.subscription, 'data', [])}
+      flatten={resources => _.get(resources.installPlan, 'data', [])}
       title="Install Plans"
       showTitle={false}
       ListComponent={InstallPlansList}
