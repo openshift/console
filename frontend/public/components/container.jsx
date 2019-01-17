@@ -19,6 +19,7 @@ import {
   StatusIcon,
   Timestamp,
 } from './utils';
+import { resourcePath } from './utils/resource-link';
 
 const formatComputeResources = resources => _.map(resources, (v, k) => `${k}: ${v}`).join(', ');
 
@@ -251,14 +252,6 @@ const Details = (props) => {
 };
 
 export const ContainersDetailsPage = (props) => <div>
-  <PageHeading
-    detail={true}
-    title={props.match.params.name}
-    kind="Container"
-    breadcrumbsFor={() => [
-      {name: props.match.params.podName, path: `${props.match.url.split('/').filter((v, i) => i <= props.match.path.split('/').indexOf(':podName')).join('/')}`},
-      {name: 'Container Details', path: `${props.match.url}`},
-    ]} />
   <Firehose resources={[{
     name: props.match.params.podName,
     namespace: props.match.params.ns,
@@ -266,6 +259,14 @@ export const ContainersDetailsPage = (props) => <div>
     isList: false,
     prop: 'obj',
   }]}>
+    <PageHeading
+      detail={true}
+      title={props.match.params.name}
+      kind="Container"
+      breadcrumbsFor={() => [
+        {name: props.match.params.podName, path: resourcePath('Pod', props.match.params.podName, props.match.params.ns)},
+        {name: 'Container Details', path: `${props.match.url}`},
+      ]} />
     <HorizontalNav hideNav={true} pages={[{name: 'container', href: '', component: Details}]} match={props.match} />
   </Firehose>
 </div>;
