@@ -13,6 +13,8 @@ export const saveChangesBtn = $('#save-changes');
 export const reloadBtn = $('#reload-object');
 export const cancelBtn = $('#cancel');
 
+export const confirmAction = () => browser.wait(until.presenceOf($('#confirm-action'))).then(() => $('#confirm-action').click());
+
 /**
  * Returns a promise that resolves after the loading spinner is not present.
  */

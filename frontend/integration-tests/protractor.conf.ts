@@ -101,7 +101,7 @@ export const config: Config = {
     catalog: ['tests/base.scenario.ts', 'tests/catalog.scenario.ts'],
     marketplace: ['tests/base.scenario.ts', 'tests/marketplace/kubernetes-marketplace.scenario.ts'],
     overview: ['tests/base.scenario.ts', 'tests/overview/overview.scenario.ts'],
-    kubevirt: ['tests/base.scenario.ts', 'tests/kubevirt/vm.wizard.scenario.ts'],
+    kubevirt: ['tests/base.scenario.ts', 'tests/kubevirt/vm.wizard.scenario.ts', 'tests/kubevirt/vm.actions.scenario.ts'],
     all: ['tests/base.scenario.ts',
       'tests/crud.scenario.ts',
       'tests/overview/overview.scenareio.ts',
