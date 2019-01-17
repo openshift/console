@@ -57,6 +57,9 @@ const Resources = connect(({k8s}) => ({allModels: k8s.getIn(['RESOURCES', 'model
   ({resources, nonResourceURLs, allModels}) => {
     let allResources = [];
     resources && _.each([...new Set(resources)].sort(), r => {
+      if (r === '') {
+        return false;
+      }
       if (r === '*') {
         allResources = [<span key={r} className="rbac-rule-resource rbac-rule-row">All Resources</span>];
         return false;
