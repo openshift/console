@@ -195,7 +195,6 @@ export const OperatorHubTileView = requireOperatorGroup(
 
     componentDidMount() {
       const {items} = this.props;
-      localStorage.setItem(COMMUNITY_PROVIDERS_WARNING_LOCAL_STORAGE_KEY, 'false');
       const searchParams = new URLSearchParams(window.location.search);
       const detailsItemID = searchParams.get('details-item');
       const includeCommunityOperators = searchParams.get('community-operators') === 'true';
