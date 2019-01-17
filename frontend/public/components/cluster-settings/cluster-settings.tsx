@@ -187,7 +187,7 @@ const ClusterVersionDetailsTable: React.SFC<ClusterVersionDetailsTableProps> = (
         <dt>Cluster ID</dt>
         <dd className="co-break-all">{cv.spec.clusterID}</dd>
         <dt>Current Payload</dt>
-        <dd className="co-break-all">{_.get(cv, 'status.current.payload')}</dd>
+        <dd className="co-break-all">{_.get(cv, 'status.desired.payload') || '-'}</dd>
         <dt>Cluster Autoscaler</dt>
         <dd>
           {_.isEmpty(autoscalers)
