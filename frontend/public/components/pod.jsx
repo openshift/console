@@ -133,7 +133,7 @@ export const PodContainerTable = ({heading, containers, pod}) => <React.Fragment
 const PodGraphs = requirePrometheus(({pod}) => <React.Fragment>
   <div className="row">
     <div className="col-md-4">
-      <Line title="RAM" query={`pod_name:container_memory_usage_bytes:sum{pod_name='${pod.metadata.name}',namespace='${pod.metadata.namespace}'}`} />
+      <Line title="Memory Usage" query={`pod_name:container_memory_usage_bytes:sum{pod_name='${pod.metadata.name}',namespace='${pod.metadata.namespace}'}`} />
     </div>
     <div className="col-md-4">
       <Line title="CPU Usage" query={`pod_name:container_cpu_usage:sum{pod_name='${pod.metadata.name}',namespace='${pod.metadata.namespace}'} * 1000`} />
