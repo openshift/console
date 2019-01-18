@@ -1,7 +1,7 @@
 /* eslint-disable no-undef, no-unused-vars */
 
 import { execSync } from 'child_process';
-import { browser, $$ } from 'protractor';
+import { browser, by, element } from 'protractor';
 import { safeDump } from 'js-yaml';
 
 import { appHost, testName, checkLogs, checkErrors } from '../../protractor.conf';
@@ -180,7 +180,7 @@ describe('Using OLM descriptor components', () => {
   });
 
   testCSV.spec.customresourcedefinitions.owned[0].specDescriptors.forEach(descriptor => {
-    const label = $$('dt').filter(dt => dt.getText().then(text => text.toLowerCase() === descriptor.displayName.toLowerCase())).first();
+    const label = element(by.xpath(`//dt[text()='${descriptor.displayName}']`));
 
     it(`displays spec descriptor for ${descriptor.displayName}`, () => {
       expect(label.isDisplayed()).toBe(true);
@@ -188,7 +188,7 @@ describe('Using OLM descriptor components', () => {
   });
 
   testCSV.spec.customresourcedefinitions.owned[0].statusDescriptors.forEach(descriptor => {
-    const label = $$('dt').filter(dt => dt.getText().then(text => text.toLowerCase() === descriptor.displayName.toLowerCase())).first();
+    const label = element(by.xpath(`//dt[text()='${descriptor.displayName}']`));
 
     it(`displays status descriptor for ${descriptor.displayName}`, () => {
       expect(label.isDisplayed()).toBe(true);
