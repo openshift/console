@@ -70,7 +70,12 @@ const Inner = connectToFlags(FLAGS.CAN_LIST_NODE)(class Inner extends React.Pure
               name={obj.name}
               title={obj.uid}
             />
-            <Timestamp timestamp={lastTimestamp} />
+            {obj.namespace && <ResourceLink
+              className="co-sysevent__resourcelink hidden-xs"
+              kind="Namespace"
+              name={obj.namespace}
+            />}
+            <Timestamp className="co-sysevent__timestamp" timestamp={lastTimestamp} />
           </div>
           <div className="co-sysevent__details">
             <small className="co-sysevent__source">
