@@ -18,12 +18,12 @@ import { kindForReference, K8sResourceKind, OwnerReference, K8sKind, referenceFo
 import { ClusterServiceVersionModel } from '../../models';
 
 export const ClusterServiceVersionResourceHeader: React.SFC<ClusterServiceVersionResourceHeaderProps> = (props) => <ListHeader>
-  <ColHead {...props} className="col-xs-2" sortField="metadata.name">Name</ColHead>
-  <ColHead {...props} className="col-xs-2" sortField="metadata.labels">Labels</ColHead>
-  <ColHead {...props} className="col-xs-2" sortField="kind">Type</ColHead>
-  <ColHead {...props} className="col-xs-2">Status</ColHead>
-  <ColHead {...props} className="col-xs-2">Version</ColHead>
-  <ColHead {...props} className="col-xs-2">Last Updated</ColHead>
+  <ColHead {...props} className="col-xs-6 col-sm-4 col-md-3 col-lg-2" sortField="metadata.name">Name</ColHead>
+  <ColHead {...props} className="col-xs-6 col-sm-4 col-md-3 col-lg-2" sortField="metadata.labels">Labels</ColHead>
+  <ColHead {...props} className="hidden-xs col-sm-4 col-md-3 col-lg-2" sortField="kind">Type</ColHead>
+  <ColHead {...props} className="hidden-xs hidden-sm col-md-3 col-lg-2">Status</ColHead>
+  <ColHead {...props} className="hidden-xs hidden-sm hidden-md col-lg-2">Version</ColHead>
+  <ColHead {...props} className="hidden-xs hidden-sm hidden-md col-lg-2">Last Updated</ColHead>
 </ListHeader>;
 
 export const ClusterServiceVersionResourceLink: React.SFC<ClusterServiceVersionResourceLinkProps> = (props) => {
@@ -41,22 +41,22 @@ export const ClusterServiceVersionResourceRow: React.SFC<ClusterServiceVersionRe
   const {obj} = props;
 
   return <div className="row co-resource-list__item">
-    <div className="col-xs-2">
+    <div className="col-xs-6 col-sm-4 col-md-3 col-lg-2">
       <ClusterServiceVersionResourceLink obj={obj} />
     </div>
-    <div className="col-xs-2">
+    <div className="col-xs-6 col-sm-4 col-md-3 col-lg-2">
       <LabelList kind={obj.kind} labels={obj.metadata.labels} />
     </div>
-    <div className="col-xs-2">
+    <div className="hidden-xs col-sm-4 col-md-3 col-lg-2 co-break-word">
       {obj.kind}
     </div>
-    <div className="col-xs-2">
+    <div className="hidden-xs hidden-sm col-md-3 col-lg-2">
       {_.get(obj.status, 'phase') || <div className="text-muted">Unknown</div>}
     </div>
-    <div className="col-xs-2">
+    <div className="hidden-xs hidden-sm hidden-md col-lg-2">
       {_.get(obj.spec, 'version') || <div className="text-muted">Unknown</div>}
     </div>
-    <div className="col-xs-2">
+    <div className="hidden-xs hidden-sm hidden-md col-lg-2">
       <Timestamp timestamp={obj.metadata.creationTimestamp} />
     </div>
     <div className="dropdown-kebab-pf">
