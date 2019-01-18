@@ -50,8 +50,8 @@ describe('Interacting with the Prometheus OCS', () => {
     await browser.wait(until.textToBePresentInElement(crudView.rowForName(prometheusOperatorName).$('a[title=pods]'), '1 of 1 pods'));
 
     expect(crudView.rowForName(prometheusOperatorName).isDisplayed()).toBe(true);
-    expect(crudView.labelsForRow(prometheusOperatorName).filter(l => l.getText().then(t => t === `alm-owner-name=${prometheusOperatorName}`)).first()).toBeDefined();
-    expect(crudView.labelsForRow(prometheusOperatorName).filter(l => l.getText().then(t => t === `alm-owner-namespace=${testName}`)).first()).toBeDefined();
+    expect(crudView.labelsForRow(prometheusOperatorName).filter(l => l.getText().then(t => t === `olm.owner=${prometheusOperatorName}`)).first()).toBeDefined();
+    expect(crudView.labelsForRow(prometheusOperatorName).filter(l => l.getText().then(t => t === `olm.owner.namespace=${testName}`)).first()).toBeDefined();
   });
 
   xit('recreates Prometheus Operator `Deployment` if manually deleted', async() => {
