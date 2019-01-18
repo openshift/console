@@ -54,6 +54,7 @@ export const EditYAML = connect(stateToProps)(
         initialized: false,
         stale: false,
         sampleObj: props.sampleObj,
+        fileUpload: props.fileUpload,
       };
       this.id = `edit-yaml-${++id}`;
       this.ace = null;
@@ -133,8 +134,10 @@ export const EditYAML = connect(stateToProps)(
       }
       if (nextProps.sampleObj) {
         this.loadYaml(!_.isEqual(this.state.sampleObj, nextProps.sampleObj), nextProps.sampleObj);
+      } else if (nextProps.fileUpload) {
+        this.loadYaml(!_.isEqual(this.state.fileUpload, nextProps.fileUpload), nextProps.fileUpload);
       } else {
-        this.loadYaml(true, nextProps.obj);
+        this.loadYaml();
       }
     }
 
