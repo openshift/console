@@ -16,6 +16,7 @@ import { prometheusBasePath } from '../graphs';
 import { TextFilter } from '../factory';
 import { UIActions, formatNamespacedRouteForResource } from '../../ui/ui-actions';
 import {
+  apiVersionForModel,
   K8sResourceKind,
   LabelSelector,
 } from '../../module/k8s';
@@ -601,6 +602,7 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
     const revision = getDeploymentConfigVersion(rc);
     const obj = {
       ...rc,
+      apiVersion: apiVersionForModel(ReplicationControllerModel),
       kind: ReplicationControllerModel.kind,
     };
     return {
@@ -627,6 +629,7 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
   toReplicaSetItem(rs: K8sResourceKind): PodControllerOverviewItem {
     const obj = {
       ...rs,
+      apiVersion: apiVersionForModel(ReplicaSetModel),
       kind: ReplicaSetModel.kind,
     };
     const pods = this.getPodsForResource(rs);
@@ -697,6 +700,7 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
       const alerts = combinePodAlerts(pods);
       const obj = {
         ...ds,
+        apiVersion: apiVersionForModel(DaemonSetModel),
         kind: DaemonSetModel.kind,
       };
       const status = <OverviewItemReadiness
@@ -729,6 +733,7 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
       const routes = this.getRoutesForServices(services);
       const obj = {
         ...d,
+        apiVersion: apiVersionForModel(DeploymentModel),
         kind: DeploymentModel.kind,
       };
       // TODO: Show pod status for previous and next revisions.
@@ -767,6 +772,7 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
       const routes = this.getRoutesForServices(services);
       const obj = {
         ...dc,
+        apiVersion: apiVersionForModel(DeploymentConfigModel),
         kind: DeploymentConfigModel.kind,
       };
 
@@ -802,6 +808,7 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
       const routes = this.getRoutesForServices(services);
       const obj = {
         ...ss,
+        apiVersion: apiVersionForModel(StatefulSetModel),
         kind: StatefulSetModel.kind,
       };
       const status = <OverviewItemReadiness
@@ -833,6 +840,7 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
 
       const obj = {
         ...pod,
+        apiVersion: apiVersionForModel(PodModel),
         kind: PodModel.kind,
       };
       const alerts = getPodAlerts(pod);
