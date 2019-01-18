@@ -50,7 +50,7 @@ const Row = ({obj: rq}) => <div className="row co-resource-list__item">
     <ResourceLink kind={quotaKind(rq)} name={rq.metadata.name} namespace={rq.metadata.namespace} className="co-resource-link__resource-name" />
   </div>
   <div className="col-md-7 col-xs-6 co-break-word">
-    {rq.metadata.namespace ? <ResourceLink kind="Namespace" name={rq.metadata.namespace} title={rq.metadata.namespace} /> : 'all'}
+    {rq.metadata.namespace ? <ResourceLink kind="Namespace" name={rq.metadata.namespace} title={rq.metadata.namespace} /> : 'None'}
   </div>
   <div className="dropdown-kebab-pf">
     <ResourceKebab actions={menuActions} kind={quotaKind(rq)} resource={rq} />
