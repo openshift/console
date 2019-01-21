@@ -3,13 +3,18 @@ import React from 'react';
 import {
   BasicMigrationDialog,
   isBeingMigrated,
+  CloneDialog,
 } from 'kubevirt-web-ui-components';
 
-import { Kebab } from '../utils/okdutils';
-import { k8sCreate } from '../../module/okdk8s';
+import { Kebab, units, LoadingInline } from '../utils/okdutils';
+import { k8sCreate, k8sPatch } from '../../module/okdk8s';
 import {
   VirtualMachineInstanceModel,
   VirtualMachineInstanceMigrationModel,
+  NamespaceModel,
+  PersistentVolumeClaimModel,
+  VirtualMachineModel,
+  DataVolumeModel,
 } from '../../models/index';
 import { startStopVmModal } from '../modals/start-stop-vm-modal';
 import { restartVmModal } from '../modals/restart-vm-modal';
@@ -42,6 +47,30 @@ const menuActionRestart = (kind, vm) => ({
     kind,
     resource: vm,
   }),
+});
+
+const menuActionClone = (kind, vm) => ({
+  label: 'Clone Virtual Machine',
+  callback: () => {
+    return modalResourceLauncher(CloneDialog, {
+      namespaces: {
+        resource: getResource(NamespaceModel),
+        required: true,
+      },
+      persistentVolumeClaims: {
+        resource: getResource(PersistentVolumeClaimModel),
+        required: true,
+      },
+      virtualMachines: {
+        resource: getResource(VirtualMachineModel),
+        required: true,
+      },
+      dataVolumes: {
+        resource: getResource(DataVolumeModel),
+        required: true,
+      },
+    })({ vm, units, k8sCreate, k8sPatch, LoadingComponent: LoadingInline });
+  },
 });
 
 // eslint-disable-next-line no-unused-vars
@@ -78,5 +107,4 @@ const menuActionMigrate = (kind, vm, actionArgs) => {
   };
 };
 
-
-export const menuActions = [menuActionStart, menuActionRestart, Kebab.factory.Delete];
+export const menuActions = [menuActionStart, menuActionRestart, menuActionClone, Kebab.factory.Delete];

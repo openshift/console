@@ -29,7 +29,7 @@ export const modalResourceLauncher = (Component, resourceMap, resourceToProps) =
 
     // to skip react required warnings - because we are injecting (and overwriting) them later in WithResources
     Object.keys(resourceMap).forEach(k => {
-      if (resourceMap[k].isRequired) {
+      if (resourceMap[k].required) {
         emptyResources[k] = resourceMap[k].resource.isList ? EMPTY_LIST : EMPTY_OBJECT;
       }
     });
