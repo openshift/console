@@ -172,7 +172,7 @@ export const NamespaceLineCharts = ({ns}) => <div className="row">
     ]} />
   </div>
   <div className="col-sm-6 col-xs-12">
-    <Line title="RAM" query={[
+    <Line title="Memory Usage" query={[
       {
         name: 'Used',
         query: `namespace:container_memory_usage_bytes:sum{namespace='${ns.metadata.name}'}`,

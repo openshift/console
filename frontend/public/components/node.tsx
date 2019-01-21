@@ -146,10 +146,10 @@ const NodeGraphs = requirePrometheus(({node}) => {
   return <React.Fragment>
     <div className="row">
       <div className="col-md-4">
-        <Line title="RAM" query={ipQuery && `node_memory_Active${ipQuery}`} units="binaryBytes" limit={memoryLimit} />
+        <Line title="Memory Usage" query={ipQuery && `node_memory_Active${ipQuery}`} units="binaryBytes" limit={memoryLimit} />
       </div>
       <div className="col-md-4">
-        <Line title="CPU" query={ipQuery && `instance:node_cpu:rate:sum${ipQuery}`} units="numeric" limit={integerLimit(node.status.allocatable.cpu)} />
+        <Line title="CPU Usage" query={ipQuery && `instance:node_cpu:rate:sum${ipQuery}`} units="numeric" limit={integerLimit(node.status.allocatable.cpu)} />
       </div>
       <div className="col-md-4">
         <Line title="Number of Pods" query={ipQuery && `kubelet_running_pod_count${ipQuery}`} units="numeric" limit={integerLimit(node.status.allocatable.pods)} />
@@ -161,7 +161,7 @@ const NodeGraphs = requirePrometheus(({node}) => {
         <Line title="Network Out" query={ipQuery && `instance:node_network_transmit_bytes:rate:sum${ipQuery}`} units="decimalBytes" />
       </div>
       <div className="col-md-4">
-        <Line title="Filesystem" query={ipQuery && `instance:node_filesystem_usage:sum${ipQuery}`} units="decimalBytes" />
+        <Line title="Filesystem (bytes)" query={ipQuery && `instance:node_filesystem_usage:sum${ipQuery}`} units="decimalBytes" />
       </div>
     </div>
 
