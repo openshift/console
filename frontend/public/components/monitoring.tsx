@@ -353,7 +353,7 @@ const AlertRulesDetailsPage = withFallback(connect(ruleStateToProps)((props: Ale
                   <dd>{formatDuration(duration * 1000)}</dd>
                 </React.Fragment>}
                 <dt>Expression</dt>
-                <dd><pre className="monitoring-query">{query}</pre></dd>
+                <dd><pre className="co-pre-wrap monitoring-query">{query}</pre></dd>
               </dl>
             </div>
           </div>
