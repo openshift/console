@@ -51,8 +51,8 @@ describe('Interacting with the etcd OCS', () => {
     await browser.wait(until.textToBePresentInElement(crudView.rowForName(etcdOperatorName).$('a[title=pods]'), '1 of 1 pods'));
 
     expect(crudView.rowForName(etcdOperatorName).isDisplayed()).toBe(true);
-    expect(crudView.labelsForRow(etcdOperatorName).filter(l => l.getText().then(t => t === `alm-owner-name=${etcdOperatorName}`)).first()).toBeDefined();
-    expect(crudView.labelsForRow(etcdOperatorName).filter(l => l.getText().then(t => t === `alm-owner-namespace=${testName}`)).first()).toBeDefined();
+    expect(crudView.labelsForRow(etcdOperatorName).filter(l => l.getText().then(t => t === `olm.owner=${etcdOperatorName}`)).first()).toBeDefined();
+    expect(crudView.labelsForRow(etcdOperatorName).filter(l => l.getText().then(t => t === `olm.owner.namespace=${testName}`)).first()).toBeDefined();
   });
 
   xit('recreates etcd Operator `Deployment` if manually deleted', async() => {
