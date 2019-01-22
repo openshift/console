@@ -7,9 +7,61 @@
   margin-right: 15px;
 }
 
+.co-overlay {
+  background: rgba(0, 0, 0, 0.5);
+  bottom: 0;
+  left: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  position: fixed;
+  right: 0;
+  top: 0;
+  z-index: $zindex-modal;
+}
+
 .cluster-update-modal__dropdown {
   .btn-dropdown,
   .dropdown-menu {
     width: 100%;
+  }
+}
+
+.modal-body {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch; // enable momentum scrolling in mobile Safari
+
+  @media(max-width: $screen-xs-max) {
+    bottom: 75px;
+    height: auto;
+    left: 11px;
+    position: fixed;
+    right: 11px;
+    top: 54px;
+    width: auto;
+  }
+
+  @media(min-width: $screen-sm-min) {
+    max-height: calc(100vh - 165px); // 165px = 30 (margin-top) + 44 (modal-header) + 15 (modal-footer margin-top) + 44 (modal-footer) + 30 (margin-bottom) + 2px (top/bottom border)
+    min-height: 200px;
+  }
+
+}
+
+.modal-dialog {
+  @media(max-width: $screen-xs-max) {
+    height: calc(100% - 20px);
+  }
+}
+
+.modal-footer {
+  bottom: 0;
+  left: 0;
+  padding-top: 0;
+  position: absolute;
+  right: 0;
+  @media(min-width: $screen-sm-min) {
+    position: relative;
   }
 }
