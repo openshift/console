@@ -18,59 +18,36 @@ const normalizePackageManifests = (packageManifests: PackageManifestKind[] = [],
     return !packageManifest.status.removedFromBrokerCatalog;
   });
   return _.map(activePackageManifests, packageManifest => {
-    const name = packageManifest.metadata.name;
-    const uid = `${name}/${packageManifest.status.catalogSourceNamespace}`;
-    const defaultIconClass = 'fa fa-clone';
-    const iconObj = _.get(packageManifest, 'status.channels[0].currentCSVDesc.icon[0]');
-    const imgUrl = iconObj ? `data:${iconObj.mediatype};base64,${iconObj.base64data}` : operatorImg;
-    const iconClass = imgUrl ? null : defaultIconClass;
-    const provider = _.get(packageManifest, 'metadata.labels.provider');
-    const tags = packageManifest.metadata.tags;
-    const version = _.get(packageManifest, 'status.channels[0].currentCSVDesc.version');
-    const currentCSVAnnotations = _.get(packageManifest, 'status.channels[0].currentCSVDesc.annotations', {});
+    const currentCSVDesc = _.get(packageManifest, 'status.channels[0].currentCSVDesc', {});
+    const currentCSVAnnotations = _.get(currentCSVDesc, 'annotations', {});
+    const iconObj = _.get(currentCSVDesc, 'icon[0]');
     const installed = (subscriptions || []).some(sub => sub.spec.name === _.get(packageManifest, 'status.packageName'));
 
-    let {
-      description,
-      certifiedLevel,
-      healthIndex,
-      repository,
-      containerImage,
-      createdAt,
-      support,
-      longDescription,
-      categories,
-    } = currentCSVAnnotations;
-    const categoryArray = categories && _.map(categories.split(','), category => category.trim());
-    description = description || _.get(packageManifest, 'status.channels[0].currentCSVDesc.description');
-    longDescription = longDescription || _.get(packageManifest, 'status.channels[0].currentCSVDesc.description');
-    const catalogSource = _.get(packageManifest, 'status.catalogSource');
-    const catalogSourceNamespace = _.get(packageManifest, 'status.catalogSourceNamespace');
-    const providerType = getOperatorProviderType(packageManifest);
     return {
       obj: packageManifest,
       kind: PackageManifestModel.kind,
-      name,
-      uid,
+      name: _.get(currentCSVDesc, 'displayName', packageManifest.metadata.name),
+      uid: `${packageManifest.metadata.name}/${packageManifest.status.catalogSourceNamespace}`,
       installed,
       installState: installed ? 'Installed' : 'Not Installed',
-      iconClass,
-      imgUrl,
-      description,
-      provider,
-      providerType,
-      tags,
-      version,
-      certifiedLevel,
-      healthIndex,
-      repository,
-      containerImage,
-      createdAt,
-      support,
-      longDescription,
-      categories: categoryArray,
-      catalogSource,
-      catalogSourceNamespace,
+      imgUrl: iconObj ? `data:${iconObj.mediatype};base64,${iconObj.base64data}` : operatorImg,
+      description: currentCSVAnnotations.description || currentCSVDesc.description,
+      longDescription: currentCSVDesc.description || currentCSVAnnotations.description,
+      provider: _.get(packageManifest, 'metadata.labels.provider'),
+      providerType: getOperatorProviderType(packageManifest),
+      tags: packageManifest.metadata.tags,
+      version: _.get(currentCSVDesc, 'version'),
+      categories: currentCSVAnnotations.categories && _.map(currentCSVAnnotations.categories.split(','), category => category.trim()),
+      catalogSource: _.get(packageManifest, 'status.catalogSource'),
+      catalogSourceNamespace: _.get(packageManifest, 'status.catalogSourceNamespace'),
+      ..._.pick(currentCSVAnnotations, [
+        'certifiedLevel',
+        'healthIndex',
+        'repository',
+        'containerImage',
+        'createdAt',
+        'support',
+      ]),
     };
   });
 };

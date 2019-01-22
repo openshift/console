@@ -39,7 +39,7 @@ describe('OperatorHubList', () => {
     const amqTileProps = tiles.at(0).props();
     const amqPackageManifest = operatorHubListPageProps.packageManifest.data[0];
     const amqIcon = (amqPackageManifest.status.channels[0].currentCSVDesc as any).icon[0];
-    expect(amqTileProps.title).toEqual(amqPackageManifest.metadata.name);
+    expect(amqTileProps.title).toEqual(amqPackageManifest.status.channels[0].currentCSVDesc.displayName);
     expect(amqTileProps.iconImg).toEqual(`data:${amqIcon.mediatype};base64,${amqIcon.base64data}`);
     expect(amqTileProps.iconClass).toBe(null);
     expect(amqTileProps.vendor).toEqual(`provided by ${amqPackageManifest.metadata.labels.provider}`);
@@ -50,10 +50,10 @@ describe('OperatorHubList', () => {
     const tiles = wrapper.find(CatalogTile);
     expect(tiles.exists()).toBe(true);
 
-    const prometheusTileProps = tiles.at(3).props();
+    const prometheusTileProps = tiles.at(2).props(); // Sorting makes this 2
     const prometheusPackageManifest = operatorHubListPageProps.packageManifest.data[3];
     const prometheusIcon = (prometheusPackageManifest.status.channels[0].currentCSVDesc as any).icon[0];
-    expect(prometheusTileProps.title).toEqual(prometheusPackageManifest.metadata.name);
+    expect(prometheusTileProps.title).toEqual(prometheusPackageManifest.status.channels[0].currentCSVDesc.displayName);
     expect(prometheusTileProps.iconImg).toEqual(`data:${prometheusIcon.mediatype};base64,${prometheusIcon.base64data}`);
     expect(prometheusTileProps.iconClass).toBe(null);
     expect(prometheusTileProps.vendor).toEqual(`provided by ${prometheusPackageManifest.metadata.labels.provider}`);
@@ -71,9 +71,8 @@ describe('OperatorHubList', () => {
     const modalItem = details.at(0).props().item;
     const amqPackageManifest = operatorHubListPageProps.packageManifest.data[0];
     const amqIcon = (amqPackageManifest.status.channels[0].currentCSVDesc as any).icon[0];
-    expect(modalItem.name).toEqual(amqPackageManifest.metadata.name);
+    expect(modalItem.name).toEqual(amqPackageManifest.status.channels[0].currentCSVDesc.displayName);
     expect(modalItem.imgUrl).toEqual(`data:${amqIcon.mediatype};base64,${amqIcon.base64data}`);
-    expect(modalItem.iconClass).toBe(null);
     expect(modalItem.provider).toEqual(amqPackageManifest.metadata.labels.provider);
     expect(modalItem.description.startsWith('**Red Hat AMQ Streams** is a massively scalable, distributed, and high performance data streaming platform based on the Apache Kafka project.')).toBe(true);
 
