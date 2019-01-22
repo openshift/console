@@ -40,7 +40,7 @@ class Resources extends React.Component {
     Object.keys(resourceMap).forEach(resourceKey => {
       const resourceConfig = resourceMap[resourceKey];
       const configResource = resourceConfig.resource;
-      const resource = _.get(resources, resourceConfig.resource.kind);
+      const resource = _.get(resources, resourceKey);
 
       if (resource) {
         if (resource.loaded) {
@@ -99,7 +99,11 @@ Resources.propTypes = {
 };
 
 const stateToProps = ({k8s}, {resourceMap}) => {
-  const resources = Object.keys(resourceMap).map(k => resourceMap[k].resource);
+  const resources = Object.keys(resourceMap).map(k => {
+    // We can have more queries for the same kind so lets set resource.prop to key to make sure its unique
+    resourceMap[k].resource.prop = k;
+    return resourceMap[k].resource;
+  });
   return {
     k8sModels: resources.reduce((models, {kind}) => models.set(kind, k8s.getIn(['RESOURCES', 'models', kind])), ImmutableMap()),
   };

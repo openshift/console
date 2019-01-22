@@ -22,7 +22,6 @@ import {
 } from '../../models/index';
 import {
   getResource,
-  getLabelMatcher,
   findPod,
   findImporterPods,
   findVMIMigration,
@@ -69,7 +68,7 @@ const ConnectedVmDetails = ({ obj: vm }) => {
       ignoreErrors: true,
     },
     pods: {
-      resource: getResource(PodModel, {namespace, matchLabels: getLabelMatcher(vm)}),
+      resource: getResource(PodModel, { namespace, matchExpressions: [{key: 'kubevirt.io', operator: 'Exists' }] }),
     },
     importerPods: {
       resource: getResource(PodModel, {namespace, matchLabels: {[CDI_KUBEVIRT_IO]: 'importer'}}),
