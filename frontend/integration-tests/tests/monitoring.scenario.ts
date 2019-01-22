@@ -42,21 +42,21 @@ describe('Monitoring: Alerts', () => {
     await monitoringView.wait(until.elementToBeClickable(monitoringView.firstListLink));
     expect(monitoringView.firstListLink.getText()).toContain(testAlertName);
     await monitoringView.firstListLink.click();
-    await monitoringView.wait(until.presenceOf(monitoringView.detailsHeading));
+    await monitoringView.wait(until.presenceOf(monitoringView.detailsHeadingAlertIcon));
     testDetailsPage('Alert Overview', testAlertName);
   });
 
   it('links to the Alert Rule details page', async() => {
     expect(monitoringView.ruleLink.getText()).toContain(testAlertName);
     await monitoringView.ruleLink.click();
-    await monitoringView.wait(until.presenceOf(monitoringView.detailsHeading));
+    await monitoringView.wait(until.presenceOf(monitoringView.detailsHeadingRuleIcon));
     testDetailsPage('Alert Rule Overview', testAlertName, false);
 
     // Active Alerts list should contain a link back to the Alert details page
     await monitoringView.wait(until.elementToBeClickable(monitoringView.firstAlertsListLink));
     expect(monitoringView.firstAlertsListLink.getText()).toContain(testAlertName);
     await monitoringView.firstAlertsListLink.click();
-    await monitoringView.wait(until.presenceOf(monitoringView.detailsHeading));
+    await monitoringView.wait(until.presenceOf(monitoringView.detailsHeadingAlertIcon));
     testDetailsPage('Alert Overview', testAlertName);
   });
 
@@ -67,7 +67,7 @@ describe('Monitoring: Alerts', () => {
     expect(crudView.errorMessage.isPresent()).toBe(false);
 
     // After creating the Silence, should be redirected to its details page
-    await monitoringView.wait(until.presenceOf(monitoringView.detailsHeading));
+    await monitoringView.wait(until.presenceOf(monitoringView.detailsHeadingSilenceIcon));
     testDetailsPage('Silence Overview', testAlertName);
   });
 
@@ -77,7 +77,7 @@ describe('Monitoring: Alerts', () => {
 
     // Click the link to navigate back to the Alert details link
     await monitoringView.firstAlertsListLink.click();
-    await monitoringView.wait(until.presenceOf(monitoringView.detailsHeading));
+    await monitoringView.wait(until.presenceOf(monitoringView.detailsHeadingAlertIcon));
     testDetailsPage('Alert Overview', testAlertName);
   });
 
@@ -87,7 +87,7 @@ describe('Monitoring: Alerts', () => {
 
     // Click the link to navigate back to the Silence details page
     await monitoringView.firstListLink.click();
-    await monitoringView.wait(until.presenceOf(monitoringView.detailsHeading));
+    await monitoringView.wait(until.presenceOf(monitoringView.detailsHeadingSilenceIcon));
     testDetailsPage('Silence Overview', testAlertName);
   });
 
@@ -126,7 +126,7 @@ describe('Monitoring: Silences', () => {
 
   // After creating the Silence, should be redirected to its details page
   it('displays detail view for new Silence', async() => {
-    await monitoringView.wait(until.presenceOf(monitoringView.detailsHeading));
+    await monitoringView.wait(until.presenceOf(monitoringView.detailsHeadingSilenceIcon));
     testDetailsPage('Silence Overview', testAlertName);
   });
 
@@ -142,7 +142,7 @@ describe('Monitoring: Silences', () => {
     await monitoringView.wait(until.elementToBeClickable(monitoringView.firstListLink));
     expect(monitoringView.firstListLink.getText()).toContain(testAlertName);
     await monitoringView.firstListLink.click();
-    await monitoringView.wait(until.presenceOf(monitoringView.detailsHeading));
+    await monitoringView.wait(until.presenceOf(monitoringView.detailsHeadingSilenceIcon));
     testDetailsPage('Silence Overview', testAlertName);
   });
 
@@ -154,7 +154,7 @@ describe('Monitoring: Silences', () => {
     expect(crudView.errorMessage.isPresent()).toBe(false);
 
     // After editing the Silence, should be redirected to its details page, where we check that the edit is reflected
-    await monitoringView.wait(until.presenceOf(monitoringView.detailsHeading));
+    await monitoringView.wait(until.presenceOf(monitoringView.detailsHeadingSilenceIcon));
     testDetailsPage('Silence Overview', testAlertName);
     expect(monitoringView.silenceComment.getText()).toEqual('Test Comment');
   });
