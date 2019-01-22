@@ -204,6 +204,7 @@ export const Catalog = connectToFlags(FLAGS.OPENSHIFT, FLAGS.SERVICE_CATALOG, FL
       isList: true,
       kind: referenceForModel(ClusterServiceVersionModel),
       namespaced: true,
+      namespace,
       prop: 'clusterServiceVersions',
     }] : []),
   ];
@@ -231,3 +232,5 @@ export const CatalogPage = withStartGuide(({match, noProjectsAvailable}) => {
     </div>
   </React.Fragment>;
 });
+
+CatalogPage.displayName = 'CatalogPage';
