@@ -30,7 +30,7 @@ export const COMMUNITY_PROVIDERS_WARNING_LOCAL_STORAGE_KEY = `${STORAGE_PREFIX}/
 // Bootstrap user for OpenShift 4.0 clusters
 export const KUBE_ADMIN_USERNAME = 'kube:admin';
 
-export const OPERATOR_HUB_CSC_BASE = 'marketplace-enabled-operators';
+export const OPERATOR_HUB_CSC_BASE = 'installed';
 // TODO: Update this once we have the support link
 export const RH_OPERATOR_SUPPORT_POLICY_LINK = 'https://access.redhat.com/articles/1067';
 
