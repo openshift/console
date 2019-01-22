@@ -5,7 +5,7 @@ import * as _ from 'lodash-es';
 import * as PropTypes from 'prop-types';
 
 import { FLAGS, featureReducerName, flagPending } from '../features';
-import { MonitoringRoutes, connectToURLs } from '../monitoring';
+import { monitoringReducerName, MonitoringRoutes } from '../monitoring';
 import { formatNamespacedRouteForResource } from '../ui/ui-actions';
 import {
   BuildConfigModel,
@@ -285,21 +285,29 @@ const imagestreamsStartsWith = ['imagestreams', 'imagestreamtags'];
 const monitoringAlertsStartsWith = ['monitoring/alerts', 'monitoring/alertrules'];
 const clusterSettingsStartsWith = ['settings/cluster', 'config.openshift.io'];
 
-const MonitoringNavSection_ = ({ urls }) => {
-  const prometheusURL = urls[MonitoringRoutes.Prometheus];
-  const grafanaURL = urls[MonitoringRoutes.Grafana];
-  const kibanaURL = urls[MonitoringRoutes.Kibana];
-  return window.SERVER_FLAGS.prometheusBaseURL || window.SERVER_FLAGS.alertManagerBaseURL || prometheusURL || grafanaURL || kibanaURL
+const monitoringNavSectionStateToProps = (state) => ({
+  canAccess: !!state[featureReducerName].get(FLAGS.CAN_GET_NS),
+  grafanaURL: state[monitoringReducerName].get(MonitoringRoutes.Grafana),
+  kibanaURL: state[monitoringReducerName].get(MonitoringRoutes.Kibana),
+  prometheusURL: state[monitoringReducerName].get(MonitoringRoutes.Prometheus),
+});
+
+const MonitoringNavSection_ = ({grafanaURL, canAccess, kibanaURL, prometheusURL}) => {
+  const showAlerts = canAccess && !!window.SERVER_FLAGS.prometheusBaseURL;
+  const showSilences = canAccess && !!window.SERVER_FLAGS.alertManagerBaseURL;
+  const showPrometheus = canAccess && !!prometheusURL;
+  const showGrafana = canAccess && !!grafanaURL;
+  return showAlerts || showSilences || showPrometheus || showGrafana || kibanaURL
     ? <NavSection title="Monitoring">
-      {window.SERVER_FLAGS.prometheusBaseURL && <HrefLink href="/monitoring/alerts" name="Alerts" startsWith={monitoringAlertsStartsWith} />}
-      {window.SERVER_FLAGS.alertManagerBaseURL && <HrefLink href="/monitoring/silences" name="Silences" />}
-      {prometheusURL && <ExternalLink href={prometheusURL} name="Metrics" />}
-      {grafanaURL && <ExternalLink href={grafanaURL} name="Dashboards" />}
+      {showAlerts && <HrefLink href="/monitoring/alerts" name="Alerts" startsWith={monitoringAlertsStartsWith} />}
+      {showSilences && <HrefLink href="/monitoring/silences" name="Silences" />}
+      {showPrometheus && <ExternalLink href={prometheusURL} name="Metrics" />}
+      {showGrafana && <ExternalLink href={grafanaURL} name="Dashboards" />}
       {kibanaURL && <ExternalLink href={kibanaURL} name="Logging" />}
     </NavSection>
     : null;
 };
-const MonitoringNavSection = connectToURLs(MonitoringRoutes.Prometheus, MonitoringRoutes.Grafana, MonitoringRoutes.Kibana)(MonitoringNavSection_);
+const MonitoringNavSection = connect(monitoringNavSectionStateToProps)(MonitoringNavSection_);
 
 export const Navigation = ({ isNavOpen, onNavSelect }) => {
   const PageNav = (

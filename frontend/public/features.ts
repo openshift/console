@@ -27,6 +27,7 @@ import { UIActions } from './ui/ui-actions';
   OPERATOR_LIFECYCLE_MANAGER: false,
   CHARGEBACK: false,
   OPENSHIFT: false,
+  CAN_GET_NS: false,
   CAN_LIST_NS: false,
   CAN_LIST_NODE: false,
   CAN_LIST_PV: false,
@@ -46,6 +47,7 @@ export enum FLAGS {
   OPERATOR_LIFECYCLE_MANAGER = 'OPERATOR_LIFECYCLE_MANAGER',
   CHARGEBACK = 'CHARGEBACK',
   OPENSHIFT = 'OPENSHIFT',
+  CAN_GET_NS = 'CAN_GET_NS',
   CAN_LIST_NS = 'CAN_LIST_NS',
   CAN_LIST_NODE = 'CAN_LIST_NODE',
   CAN_LIST_PV = 'CAN_LIST_PV',
@@ -228,6 +230,9 @@ const detectShowOpenShiftStartGuide = (dispatch, canListNS: boolean = false) => 
 
 // Check the user's access to some resources.
 const ssarChecks = [{
+  flag: FLAGS.CAN_GET_NS,
+  resourceAttributes: { resource: 'namespaces', verb: 'get' },
+}, {
   flag: FLAGS.CAN_LIST_NS,
   resourceAttributes: { resource: 'namespaces', verb: 'list' },
   after: detectShowOpenShiftStartGuide,
