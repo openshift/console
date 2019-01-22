@@ -48,11 +48,9 @@ describe('Interacting with the etcd OCS', () => {
   it('creates etcd Operator `Deployment`', async() => {
     await browser.get(`${appHost}/k8s/ns/${testName}/deployments`);
     await crudView.isLoaded();
-    await browser.wait(until.textToBePresentInElement(crudView.rowForName(etcdOperatorName).$('a[title=pods]'), '1 of 1 pods'));
+    await browser.wait(until.textToBePresentInElement(crudView.rowForName(etcdOperatorName).$('a[title=pods]'), '1 of 1 pods'), 100000);
 
     expect(crudView.rowForName(etcdOperatorName).isDisplayed()).toBe(true);
-    expect(crudView.labelsForRow(etcdOperatorName).filter(l => l.getText().then(t => t === `olm.owner=${etcdOperatorName}`)).first()).toBeDefined();
-    expect(crudView.labelsForRow(etcdOperatorName).filter(l => l.getText().then(t => t === `olm.owner.namespace=${testName}`)).first()).toBeDefined();
   });
 
   xit('recreates etcd Operator `Deployment` if manually deleted', async() => {
