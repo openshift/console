@@ -54,7 +54,7 @@ describe(PackageManifestRow.displayName, () => {
   });
 
   it('renders column with link to subscriptions', () => {
-    expect(wrapper.find('.co-resource-list__item').childAt(2).find(Link).at(0).props().to).toEqual(`/k8s/ns/default/${SubscriptionModel.plural}/${testSubscription.metadata.name}`);
+    expect(wrapper.find('.co-resource-list__item').childAt(2).find(Link).at(0).props().to).toEqual(`/operatormanagement/ns/default/${SubscriptionModel.plural}?name=${testSubscription.metadata.name}`);
     expect(wrapper.find('.co-resource-list__item').childAt(2).find(Link).at(0).childAt(0).text()).toEqual('View subscription');
   });
 

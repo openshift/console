@@ -268,10 +268,13 @@ const NavSection = connect(navSectionStateToProps)(
 const searchStartsWith = ['search'];
 const operatorManagementStartsWith = [
   referenceForModel(PackageManifestModel),
+  PackageManifestModel.path,
   referenceForModel(SubscriptionModel),
   SubscriptionModel.path,
   referenceForModel(InstallPlanModel),
+  InstallPlanModel.path,
   referenceForModel(CatalogSourceModel),
+  CatalogSourceModel.path,
 ];
 const provisionedServicesStartsWith = ['serviceinstances', 'servicebindings'];
 const brokerManagementStartsWith = ['clusterservicebrokers', 'clusterserviceclasses'];
