@@ -8,8 +8,7 @@ import * as sidenavView from '../views/sidenav.view';
 
 const testAlertName = 'DeadMansSwitch';
 
-const testDetailsPage = async(subTitle, alertName, expectLabel = true) => {
-  await monitoringView.wait(until.presenceOf(monitoringView.detailsHeading));
+const testDetailsPage = (subTitle, alertName, expectLabel = true) => {
   expect(monitoringView.detailsHeading.getText()).toContain(alertName);
   expect(monitoringView.detailsSubHeadings.first().getText()).toEqual(subTitle);
   if (expectLabel) {
@@ -43,19 +42,22 @@ describe('Monitoring: Alerts', () => {
     await monitoringView.wait(until.elementToBeClickable(monitoringView.firstListLink));
     expect(monitoringView.firstListLink.getText()).toContain(testAlertName);
     await monitoringView.firstListLink.click();
-    await testDetailsPage('Alert Overview', testAlertName);
+    await monitoringView.wait(until.presenceOf(monitoringView.detailsHeadingAlertIcon));
+    testDetailsPage('Alert Overview', testAlertName);
   });
 
   it('links to the Alert Rule details page', async() => {
     expect(monitoringView.ruleLink.getText()).toContain(testAlertName);
     await monitoringView.ruleLink.click();
-    await testDetailsPage('Alert Rule Overview', testAlertName, false);
+    await monitoringView.wait(until.presenceOf(monitoringView.detailsHeadingRuleIcon));
+    testDetailsPage('Alert Rule Overview', testAlertName, false);
 
     // Active Alerts list should contain a link back to the Alert details page
     await monitoringView.wait(until.elementToBeClickable(monitoringView.firstAlertsListLink));
     expect(monitoringView.firstAlertsListLink.getText()).toContain(testAlertName);
     await monitoringView.firstAlertsListLink.click();
-    await testDetailsPage('Alert Overview', testAlertName);
+    await monitoringView.wait(until.presenceOf(monitoringView.detailsHeadingAlertIcon));
+    testDetailsPage('Alert Overview', testAlertName);
   });
 
   it('creates a new Silence from an existing alert', async() => {
@@ -65,7 +67,8 @@ describe('Monitoring: Alerts', () => {
     expect(crudView.errorMessage.isPresent()).toBe(false);
 
     // After creating the Silence, should be redirected to its details page
-    await testDetailsPage('Silence Overview', testAlertName);
+    await monitoringView.wait(until.presenceOf(monitoringView.detailsHeadingSilenceIcon));
+    testDetailsPage('Silence Overview', testAlertName);
   });
 
   it('shows the silenced Alert in the Silenced Alerts list', async() => {
@@ -74,7 +77,8 @@ describe('Monitoring: Alerts', () => {
 
     // Click the link to navigate back to the Alert details link
     await monitoringView.firstAlertsListLink.click();
-    await testDetailsPage('Alert Overview', testAlertName);
+    await monitoringView.wait(until.presenceOf(monitoringView.detailsHeadingAlertIcon));
+    testDetailsPage('Alert Overview', testAlertName);
   });
 
   it('shows the newly created Silence in the Silenced By list', async() => {
@@ -83,7 +87,8 @@ describe('Monitoring: Alerts', () => {
 
     // Click the link to navigate back to the Silence details page
     await monitoringView.firstListLink.click();
-    await testDetailsPage('Silence Overview', testAlertName);
+    await monitoringView.wait(until.presenceOf(monitoringView.detailsHeadingSilenceIcon));
+    testDetailsPage('Silence Overview', testAlertName);
   });
 
   it('expires the Silence', async() => {
@@ -121,7 +126,8 @@ describe('Monitoring: Silences', () => {
 
   // After creating the Silence, should be redirected to its details page
   it('displays detail view for new Silence', async() => {
-    await testDetailsPage('Silence Overview', testAlertName);
+    await monitoringView.wait(until.presenceOf(monitoringView.detailsHeadingSilenceIcon));
+    testDetailsPage('Silence Overview', testAlertName);
   });
 
   it('filters Silences by name', async() => {
@@ -136,7 +142,8 @@ describe('Monitoring: Silences', () => {
     await monitoringView.wait(until.elementToBeClickable(monitoringView.firstListLink));
     expect(monitoringView.firstListLink.getText()).toContain(testAlertName);
     await monitoringView.firstListLink.click();
-    await testDetailsPage('Silence Overview', testAlertName);
+    await monitoringView.wait(until.presenceOf(monitoringView.detailsHeadingSilenceIcon));
+    testDetailsPage('Silence Overview', testAlertName);
   });
 
   it('edits the Silence', async() => {
@@ -147,7 +154,8 @@ describe('Monitoring: Silences', () => {
     expect(crudView.errorMessage.isPresent()).toBe(false);
 
     // After editing the Silence, should be redirected to its details page, where we check that the edit is reflected
-    await testDetailsPage('Silence Overview', testAlertName);
+    await monitoringView.wait(until.presenceOf(monitoringView.detailsHeadingSilenceIcon));
+    testDetailsPage('Silence Overview', testAlertName);
     expect(monitoringView.silenceComment.getText()).toEqual('Test Comment');
   });
 
