@@ -8,7 +8,7 @@ import { ResourceEventStream } from './events';
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import { configureUnschedulableModal } from './modals';
 import { PodsPage } from './pod';
-import { Kebab, navFactory, LabelList, ResourceKebab, SectionHeading, ResourceLink, Timestamp, units, cloudProviderNames, cloudProviderID, pluralize, containerLinuxUpdateOperator, StatusIcon } from './utils';
+import { Kebab, navFactory, LabelList, ResourceKebab, SectionHeading, ResourceLink, Timestamp, units, cloudProviderNames, cloudProviderID, pluralize, StatusIcon } from './utils';
 import { Line, requirePrometheus } from './graphs';
 import { MachineModel, NodeModel } from '../models';
 import { CamelCaseWrap } from './utils/camel-case-wrap';
@@ -44,10 +44,9 @@ const Header = props => {
     return null;
   }
   return <ListHeader>
-    <ColHead {...props} className="col-md-4 col-sm-4 col-xs-6" sortField="metadata.name">Node Name</ColHead>
-    <ColHead {...props} className="col-md-2 col-sm-4 col-xs-6" sortFunc="nodeReadiness">Status</ColHead>
-    <ColHead {...props} className="col-md-3 col-sm-4 hidden-xs" sortFunc="nodeUpdateStatus">OS Update</ColHead>
-    <ColHead {...props} className="col-md-3 hidden-sm hidden-xs" sortField="status.addresses">Node Addresses</ColHead>
+    <ColHead {...props} className="col-md-5 col-sm-6 col-xs-8" sortField="metadata.name">Node Name</ColHead>
+    <ColHead {...props} className="col-md-2 col-sm-6 col-xs-4" sortFunc="nodeReadiness">Status</ColHead>
+    <ColHead {...props} className="col-md-5 hidden-sm hidden-xs" sortField="status.addresses">Node Addresses</ColHead>
   </ListHeader>;
 };
 
@@ -60,41 +59,14 @@ const HeaderSearch = props => <ListHeader>
 
 const NodeStatus = ({node}) => <StatusIcon status={nodeStatus(node)} />;
 
-const NodeCLUpdateStatus = ({node}) => {
-  const updateStatus = containerLinuxUpdateOperator.getUpdateStatus(node);
-  const newVersion = containerLinuxUpdateOperator.getNewVersion(node);
-  const lastCheckedDate = containerLinuxUpdateOperator.getLastCheckedTime(node);
-
-  return <div>
-    {updateStatus ? <span>{updateStatus.className && <span><i className={updateStatus.className}></i>&nbsp;&nbsp;</span>}{updateStatus.text}</span> : null}
-    {!_.isEmpty(newVersion) && !containerLinuxUpdateOperator.isSoftwareUpToDate(node) &&
-      <div>
-        <small className="">Container Linux {containerLinuxUpdateOperator.getVersion(node)} &#10141; {newVersion}</small>
-      </div>}
-    {lastCheckedDate && containerLinuxUpdateOperator.isSoftwareUpToDate(node) &&
-      <div>
-        <small className="">Last checked on <div className="co-inline-block">{<Timestamp timestamp={lastCheckedDate} isUnix={true} />}</div></small>
-      </div>}
-  </div>;
-};
-
-const NodeCLStatusRow = ({node}) => {
-  const updateStatus = containerLinuxUpdateOperator.getUpdateStatus(node);
-  return updateStatus ? <span>{updateStatus.className && <span><i className={updateStatus.className}></i>&nbsp;&nbsp;</span>}{updateStatus.text}</span> : null;
-};
-
 const NodeRow = ({obj: node, expand}) => {
-  const isOperatorInstalled = containerLinuxUpdateOperator.isOperatorInstalled(node);
 
   return <ResourceRow obj={node}>
-    <div className="col-md-4 col-sm-4 col-xs-6">
+    <div className="col-md-5 col-sm-6 col-xs-8">
       <ResourceLink kind="Node" name={node.metadata.name} title={node.metadata.uid} />
     </div>
-    <div className="col-md-2 col-sm-4 col-xs-6"><NodeStatus node={node} /></div>
-    <div className="col-md-3 col-sm-4 hidden-xs">
-      {isOperatorInstalled ? <NodeCLStatusRow node={node} /> : <span className="text-muted">Not configured</span>}
-    </div>
-    <div className="col-md-3 hidden-sm hidden-xs"><NodeIPList ips={node.status.addresses} expand={expand} /></div>
+    <div className="col-md-2 col-sm-6 col-xs-4"><NodeStatus node={node} /></div>
+    <div className="col-md-5 hidden-sm hidden-xs"><NodeIPList ips={node.status.addresses} expand={expand} /></div>
     {expand && <div className="col-xs-12">
       <LabelList kind="Node" labels={node.metadata.labels} />
     </div>}
@@ -232,26 +204,6 @@ const Details = ({obj: node}) => {
         </div>
       </div>
     </div>
-
-    { containerLinuxUpdateOperator.isOperatorInstalled(node) && <div className="co-m-pane__body">
-      <SectionHeading text="Container Linux" />
-      <div className="row">
-        <div className="col-md-6 col-xs-12">
-          <dl className="co-m-pane__details">
-            <dt>Current Version</dt>
-            <dd>{containerLinuxUpdateOperator.getVersion(node)}</dd>
-            <dt>Channel</dt>
-            <dd className="text-capitalize">{containerLinuxUpdateOperator.getChannel(node)}</dd>
-          </dl>
-        </div>
-        <div className="col-md-6 col-xs-12">
-          <dl className="co-m-pane__details">
-            <dt>Update Status</dt>
-            <dd><NodeCLUpdateStatus node={node} /></dd>
-          </dl>
-        </div>
-      </div>
-    </div> }
 
     <div className="co-m-pane__body">
       <SectionHeading text="Node Conditions" />
