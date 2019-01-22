@@ -98,7 +98,7 @@
     "url-polyfill": "^1.0.12",
     "url-search-params-polyfill": "2.x",
     "whatwg-fetch": "2.x",
-    "xterm": "^3.3.0"
+    "xterm": "~3.8.1"
   },
   "devDependencies": {
     "@types/enzyme": "3.x",
