@@ -53,12 +53,12 @@ class DeleteDeviceModal extends PromiseComponent {
       }
     }
 
-    // if pod network is deleted, we need to set autoAttachPodInterface to false
+    // if pod network is deleted, we need to set autoattachPodInterface to false
     if (type === NIC && _.get(device, 'network.pod')) {
-      const op = _.has(vm, 'spec.domain.devices.autoAttachPodInterface') ? 'replace' : 'add';
+      const op = _.has(vm, 'spec.domain.devices.autoattachPodInterface') ? 'replace' : 'add';
       patch.push({
         op,
-        path: '/spec/template/spec/domain/devices/autoAttachPodInterface',
+        path: '/spec/template/spec/domain/devices/autoattachPodInterface',
         value: false,
       });
     }
