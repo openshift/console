@@ -51,12 +51,12 @@ export const OperatorHubSubscribeForm = withFormState((props: OperatorHubSubscri
   }
 
   const {provider, channels = [], packageName} = props.packageManifest.data.status;
-  const srcProvider = _.get(props.packageManifest.data, 'metadata.labels.opsrc-provider');
+  const srcProvider = _.get(props.packageManifest.data, 'metadata.labels.opsrc-provider', 'custom');
   const providerType = getOperatorProviderType(props.packageManifest.data);
 
   const submit = () => {
     const operatorGroupNamespace = props.operatorGroup.data.find(og => og.metadata.name === props.formState().target).metadata.namespace;
-    const OPERATOR_HUB_CSC_NAME = `${OPERATOR_HUB_CSC_BASE}-${srcProvider}`;
+    const OPERATOR_HUB_CSC_NAME = `${OPERATOR_HUB_CSC_BASE}-${srcProvider}-${props.formState().target}`;
 
     const catalogSourceConfig = props.catalogSourceConfig.data.find(csc => csc.metadata.name === OPERATOR_HUB_CSC_NAME);
     const hasBeenEnabled = !_.isEmpty(catalogSourceConfig) && _.includes(catalogSourceConfig.spec.packages.split(','), packageName);
