@@ -6,7 +6,7 @@ import { getVolumeType, getVolumeLocation, getVolumeMountPermissions, getVolumeM
 import { getContainerState, getContainerStatus } from '../module/k8s/docker';
 import { ResourceEventStream } from './events';
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
-import { SectionHeading, Kebab, LabelList, navFactory, NodeLink, Overflow, ResourceKebab, ResourceIcon, ResourceLink, ResourceSummary, ScrollToTopOnMount, Selector, Timestamp, VolumeIcon, units, AsyncComponent, StatusIcon } from './utils';
+import { SectionHeading, Kebab, LabelList, navFactory, NodeLink, ResourceKebab, ResourceIcon, ResourceLink, ResourceSummary, ScrollToTopOnMount, Selector, Timestamp, VolumeIcon, units, AsyncComponent, StatusIcon } from './utils';
 import { PodLogs } from './pod-logs';
 import { Line, requirePrometheus } from './graphs';
 import { breadcrumbsForOwnerRefs } from './utils/breadcrumbs';
@@ -83,7 +83,7 @@ export const ContainerRow = ({pod, container}) => {
     <div className="col-lg-2 col-md-3 col-sm-4 col-xs-5">
       <ContainerLink pod={pod} name={container.name} />
     </div>
-    <Overflow className="col-lg-2 col-md-3 col-sm-5 col-xs-7" value={container.image} />
+    <div className="col-lg-2 col-md-3 col-sm-5 col-xs-7 co-break-all">{container.image || '-'}</div>
     <div className="col-lg-2 col-md-2 col-sm-3 hidden-xs"><StatusIcon status={cstate.label} /></div>
     <div className="col-lg-1 col-md-2 hidden-sm hidden-xs">{_.get(cstatus, 'restartCount', '0')}</div>
     <div className="col-lg-2 col-md-2 hidden-sm hidden-xs"><Timestamp timestamp={startedAt} /></div>
@@ -98,7 +98,7 @@ const Volume = ({pod, volume}) => {
   const mountPermissions = getVolumeMountPermissions(volume);
 
   return <div className="row">
-    <Overflow className="col-sm-3 col-xs-4 co-truncate" value={volume.name} />
+    <div className="col-sm-3 col-xs-4 co-break-word">{volume.name || '-'}</div>
     <div className="col-sm-3 col-xs-4">
       <VolumeIcon kind={kind} />
       <span className="co-break-word">{loc && ` (${loc})`}</span>

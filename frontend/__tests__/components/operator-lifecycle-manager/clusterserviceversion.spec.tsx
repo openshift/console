@@ -9,7 +9,7 @@ import { ClusterServiceVersionsDetailsPage, ClusterServiceVersionsDetailsPagePro
 import { ClusterServiceVersionKind, ClusterServiceVersionLogo, ClusterServiceVersionLogoProps, referenceForProvidedAPI, CSVConditionReason } from '../../../public/components/operator-lifecycle-manager';
 import { DetailsPage, ListPage, ListHeader, ColHead, List, ListInnerProps } from '../../../public/components/factory';
 import { testClusterServiceVersion, testModel } from '../../../__mocks__/k8sResourcesMocks';
-import { Timestamp, OverflowLink, MsgBox, ResourceLink, ResourceKebab, ErrorBoundary, LoadingBox, ScrollToTopOnMount, SectionHeading } from '../../../public/components/utils';
+import { Timestamp, MsgBox, ResourceLink, ResourceKebab, ErrorBoundary, LoadingBox, ScrollToTopOnMount, SectionHeading } from '../../../public/components/utils';
 import { referenceForModel } from '../../../public/module/k8s';
 import { ClusterServiceVersionModel } from '../../../public/models';
 
@@ -233,8 +233,8 @@ describe(ClusterServiceVersionDetails.displayName, () => {
 
     testClusterServiceVersion.spec.maintainers.forEach((maintainer, i) => {
       expect(maintainers.at(i).text()).toContain(maintainer.name);
-      expect(maintainers.at(i).find(OverflowLink).props().value).toEqual(maintainer.email);
-      expect(maintainers.at(i).find(OverflowLink).props().href).toEqual(`mailto:${maintainer.email}`);
+      expect(maintainers.at(i).find('.co-break-all').text()).toEqual(maintainer.email);
+      expect(maintainers.at(i).find('.co-break-all').props().href).toEqual(`mailto:${maintainer.email}`);
     });
   });
 

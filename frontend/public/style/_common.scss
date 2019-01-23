@@ -241,11 +241,6 @@
   white-space: nowrap;
 }
 
-.co-overflow-y-fade {
-  overflow: hidden;
-  white-space: nowrap;
-}
-
 .error-message {
   color: #fff;
   padding: 2px 12px;
@@ -414,16 +409,6 @@
   }
   &:hover:after {
     color: $color-pf-black-700;
-  }
-}
-
-.co-m-invisible-input {
-  background: none;
-  border: 0;
-  outline: 0;
-  width: 100%;
-  &:hover {
-    cursor: copy;
   }
 }
 

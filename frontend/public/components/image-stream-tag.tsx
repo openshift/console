@@ -4,7 +4,7 @@ import * as _ from 'lodash-es';
 // eslint-disable-next-line no-unused-vars
 import { K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
 import { DetailsPage } from './factory';
-import { Kebab, SectionHeading, navFactory, Overflow, ResourceSummary } from './utils';
+import { Kebab, SectionHeading, navFactory, ResourceSummary } from './utils';
 import { humanizeMem } from './utils/units';
 
 const ImageStreamTagsReference: K8sResourceKindReference = 'ImageStreamTag';
@@ -60,13 +60,13 @@ export const ImageStreamTagsDetails: React.SFC<ImageStreamTagsDetailsProps> = ({
           <SectionHeading text="Configuration" />
           <dl className="co-m-pane__details">
             {entrypoint && <dt>Entrypoint</dt>}
-            {entrypoint && <dd><Overflow value={entrypoint} /></dd>}
+            {entrypoint && <dd className="co-break-word">{entrypoint}</dd>}
             {cmd && <dt>Command</dt>}
-            {cmd && <dd><Overflow value={cmd} /></dd>}
+            {cmd && <dd className="co-break-word">{cmd}</dd>}
             {config.WorkingDir && <dt>Working Dir</dt>}
-            {config.WorkingDir && <dd><Overflow value={config.WorkingDir} /></dd>}
+            {config.WorkingDir && <dd className="co-break-all">{config.WorkingDir}</dd>}
             {exposedPorts && <dt>Exposed Ports</dt>}
-            {exposedPorts && <dd><Overflow value={exposedPorts} /></dd>}
+            {exposedPorts && <dd className="co-break-word">{exposedPorts}</dd>}
             {config.User && <dt>User</dt>}
             {config.User && <dd>{config.User}</dd>}
             {architecture && <dt>Architecture</dt>}

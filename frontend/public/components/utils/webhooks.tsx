@@ -5,7 +5,6 @@ import * as _ from 'lodash-es';
 
 import { K8sResourceKind } from '../../module/k8s';
 import { SectionHeading, ResourceLink } from '.';
-import { Overflow } from './overflow';
 
 const kubeAPIServerURL = (window as any).SERVER_FLAGS.kubeAPIServerURL || 'https://<api-server>';
 enum TriggerTypes {
@@ -48,7 +47,7 @@ export const WebhookTriggers: React.SFC<WebhookTriggersProps> = ({ resource }) =
   return <div className="co-m-pane__body">
     <SectionHeading text="Webhooks" />
     <div className="co-table-container">
-      <table className="table">
+      <table className="table table--layout-fixed">
         <colgroup>
           <col className="col-sm-2" />
           <col className="col-sm-7" />
@@ -67,7 +66,7 @@ export const WebhookTriggers: React.SFC<WebhookTriggersProps> = ({ resource }) =
             const secretReference = getSecretReference(trigger);
             return <tr key={i}>
               <td>{trigger.type}</td>
-              <td><Overflow value={webhookURL} /></td>
+              <td className="co-break-all">{webhookURL || '-'}</td>
               <td>{secretReference}</td>
             </tr>;
           })}

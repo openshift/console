@@ -11,7 +11,6 @@ import { DetailsPage, ListHeader, ColHead, List, ListPage } from '../factory';
 import { withFallback } from '../utils/error-boundary';
 import { referenceForModel, referenceFor, K8sKind } from '../../module/k8s';
 import { ClusterServiceVersionModel } from '../../models';
-import { AsyncComponent } from '../utils/async';
 import { FLAGS as featureFlags } from '../../features';
 import { ResourceEventStream } from '../events';
 import { Conditions } from '../conditions';
@@ -31,7 +30,6 @@ import {
   LoadingBox,
   MsgBox,
   navFactory,
-  OverflowLink,
   PageHeading,
   ResourceKebab,
   ResourceLink,
@@ -39,6 +37,7 @@ import {
   SectionHeading,
   ResourceSummary,
   ScrollToTopOnMount,
+  AsyncComponent,
   ExternalLink,
 } from '../utils';
 import { operatorGroupFor, operatorNamespaceFor } from './operator-group';
@@ -168,7 +167,7 @@ export const ClusterServiceVersionDetails: React.SFC<ClusterServiceVersionDetail
               <dt>Links</dt>
               { spec.links && spec.links.length > 0
                 ? spec.links.map((link, i) => <dd key={i} style={{display: 'flex', flexDirection: 'column'}}>
-                  {link.name} <OverflowLink value={link.url} href={link.url} />
+                  {link.name} <ExternalLink href={link.url} text={link.url || '-'} additionalClassName="co-break-all" />
                 </dd>)
                 : <dd>Not available</dd> }
             </dl>
@@ -176,7 +175,7 @@ export const ClusterServiceVersionDetails: React.SFC<ClusterServiceVersionDetail
               <dt>Maintainers</dt>
               { spec.maintainers && spec.maintainers.length > 0
                 ? spec.maintainers.map((maintainer, i) => <dd key={i} style={{display: 'flex', flexDirection: 'column'}}>
-                  {maintainer.name} <OverflowLink value={maintainer.email} href={`mailto:${maintainer.email}`} />
+                  {maintainer.name} <a href={`mailto:${maintainer.email}`} className="co-break-all" >{maintainer.email || '-'}</a>
                 </dd>)
                 : <dd>Not available</dd> }
             </dl>
