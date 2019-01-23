@@ -70,7 +70,7 @@ export const OperatorHubItemDetails: React.SFC<OperatorHubItemDetailsProps> = ({
 
   const onActionClick = () => {
     if (!installed) {
-      history.push(`/operatorhub/subscribe?pkg=${item.name}&catalog=${catalogSource}&catalogNamespace=${catalogSourceNamespace}`);
+      history.push(`/operatorhub/subscribe?pkg=${item.obj.metadata.name}&catalog=${catalogSource}&catalogNamespace=${catalogSourceNamespace}`);
       return;
     }
 
