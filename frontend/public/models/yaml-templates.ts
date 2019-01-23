@@ -5,6 +5,8 @@ import { Map as ImmutableMap } from 'immutable';
 import { GroupVersionKind, referenceForModel } from '../module/k8s';
 import * as k8sModels from '../models';
 
+import { vmYamlTemplate } from '../kubevirt/models/vm-yaml-templates';
+
 /**
  * Sample YAML manifests for some of the statically-defined Kubernetes models.
  */
@@ -767,4 +769,4 @@ spec:
     delayAfterAdd: 10s
     delayAfterDelete: 10s
     delayAfterFailure: 10s
-`);
+`).setIn([referenceForModel(k8sModels.VirtualMachineModel), 'default'], vmYamlTemplate);
