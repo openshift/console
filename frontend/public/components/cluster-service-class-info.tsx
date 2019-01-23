@@ -6,6 +6,7 @@ import * as _ from 'lodash-es';
 // eslint-disable-next-line no-unused-vars
 import { K8sResourceKind, serviceClassDisplayName } from '../module/k8s';
 import { ClusterServiceClassIcon } from './catalog/catalog-item-icon';
+import { ExternalLink } from './utils';
 
 export const ClusterServiceClassInfo: React.SFC<ClusterServiceClassInfoProps> = ({obj: serviceClass}) => {
   const displayName = serviceClassDisplayName(serviceClass);
@@ -25,10 +26,10 @@ export const ClusterServiceClassInfo: React.SFC<ClusterServiceClassInfoProps> = 
         {tags && <p className="co-catalog-item-details__tags">{_.map(tags, (tag, i) => <span className="co-catalog-item-details__tag" key={i}>{tag}</span>)}</p>}
         {(documentationURL || supportURL) && <ul className="list-inline">
           {documentationURL && <li className="co-break-word">
-            <a href={documentationURL} target="_blank" rel="noopener noreferrer" className="co-external-link">View Documentation</a>
+            <ExternalLink href={documentationURL} text="View Documentation" />
           </li>}
           {supportURL && <li className="co-break-word">
-            <a href={supportURL} target="_blank" rel="noopener noreferrer" className="co-external-link">Get Support</a>
+            <ExternalLink href={supportURL} text="Get Support" />
           </li>}
         </ul>}
       </div>

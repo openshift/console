@@ -4,7 +4,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import {Helmet} from 'react-helmet';
 
-import { Firehose, PageHeading, StatusBox, MsgBox } from '../utils';
+import { Firehose, PageHeading, StatusBox, MsgBox, ExternalLink } from '../utils';
 import { referenceForModel, K8sResourceKind } from '../../module/k8s';
 import { PackageManifestModel, OperatorGroupModel, CatalogSourceConfigModel, SubscriptionModel } from '../../models';
 import { getOperatorProviderType } from './operator-hub-utils';
@@ -89,12 +89,7 @@ export class OperatorHubList extends React.Component<OperatorHubListProps, Opera
         EmptyMsg={() => (
           <MsgBox
             title="No Operator Hub Items Found"
-            detail={
-              <span>
-                Please check that the OperatorHub is running and that you have created a valid OperatorSource. For more information about Operator Hub,
-                please click <a href="https://github.com/operator-framework/operator-marketplace" target="_blank" className="co-external-link" rel="noopener noreferrer">here</a>.
-              </span>
-            }
+            detail={<span>Please check that the OperatorHub is running and that you have created a valid OperatorSource. For more information about Operator Hub, please click <ExternalLink href="https://github.com/operator-framework/operator-marketplace" text="here" />.</span>}
           />
         )}>
         <OperatorHubTileView items={items} catalogSourceConfig={sourceConfigs} />

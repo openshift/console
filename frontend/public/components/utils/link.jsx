@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as classNames from 'classnames';
 
 import { ALL_NAMESPACES_KEY } from '../../const';
 
@@ -47,7 +48,7 @@ export const getNamespace = path => {
   return match && match.length > 0 && match[0];
 };
 
-export const ExternalLink = ({href, text}) => <a className="co-external-link" href={href} target="_blank" rel="noopener noreferrer">{text}</a>;
+export const ExternalLink = ({href, text, additionalClassName=''}) => <a className={classNames('co-external-link', additionalClassName)} href={href} target="_blank" rel="noopener noreferrer">{text}</a>;
 
 export const getURLSearchParams = () => {
   const all = {};

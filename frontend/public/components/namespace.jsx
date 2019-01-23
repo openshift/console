@@ -10,7 +10,7 @@ import { k8sGet } from '../module/k8s';
 import { formatNamespacedRouteForResource, UIActions } from '../ui/ui-actions';
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import { SafetyFirst } from './safety-first';
-import { ActionsMenu, Kebab, Dropdown, Firehose, LabelList, LoadingInline, navFactory, ResourceKebab, SectionHeading, ResourceIcon, ResourceLink, ResourceSummary, humanizeMem, MsgBox, StatusIcon } from './utils';
+import { ActionsMenu, Kebab, Dropdown, Firehose, LabelList, LoadingInline, navFactory, ResourceKebab, SectionHeading, ResourceIcon, ResourceLink, ResourceSummary, humanizeMem, MsgBox, StatusIcon, ExternalLink } from './utils';
 import { createNamespaceModal, createProjectModal, deleteNamespaceModal, configureNamespacePullSecretModal } from './modals';
 import { RoleBindingsPage } from './RBAC';
 import { Bar, Line, requirePrometheus } from './graphs';
@@ -110,7 +110,7 @@ const ProjectList_ = props => {
       {props.createProjectMessage || 'Create a project for your application.'}
     </p>
     <p>
-      To learn more, visit the OpenShift <a href={openshiftHelpBase} target="_blank" rel="noopener noreferrer">documentation</a>.
+      To learn more, visit the OpenShift <ExternalLink href={openshiftHelpBase} text="documentation" />.
     </p>
   </React.Fragment>;
   const ProjectEmptyMessage = () => <MsgBox title="Welcome to OpenShift" detail={ProjectEmptyMessageDetail} />;
