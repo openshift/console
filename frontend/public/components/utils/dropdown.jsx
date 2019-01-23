@@ -447,7 +447,8 @@ export class ContainerDropdown extends React.PureComponent {
       items={dropdownItems}
       spacerBefore={spacerBefore}
       title={title}
-      onChange={onChange} />;
+      onChange={onChange}
+      selectedKey={currentKey} />;
   }
 }
 
