@@ -96,7 +96,7 @@ export const PodExec = connectToFlags(FLAGS.OPENSHIFT)(class PodExec extends Rea
         if (!evt || evt.wasClean === true) {
           return;
         }
-        const error = evt.reason || 'Connection did not close cleanly.';
+        const error = evt.reason || 'The terminal connection has closed.';
         this.setState({error});
         this.terminal.current && this.terminal.current.onConnectionClosed(error);
         this.ws.destroy();
