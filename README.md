@@ -1,9 +1,9 @@
-OpenShift Console
+KubeVirt Web User Interface
 =========================
 
-Codename: "Bridge"
-
 [![Build Status](https://travis-ci.org/kubevirt/web-ui.svg?branch=master)](https://travis-ci.org/kubevirt/web-ui)
+
+Extension of the [OpenShift Console](https://github.com/openshift/console/) for Virtualization View.
 
 The console is a more friendly `kubectl` in the form of a single page webapp.  It also integrates with other services like monitoring, chargeback, and OLM.  Some things that go on behind the scenes include:
 
@@ -13,6 +13,13 @@ The console is a more friendly `kubectl` in the form of a single page webapp.  I
 - User Authentication
 
 ## Quickstart
+
+### Deployment
+The best way to deploy a released version of the KubeVirt Web UI is to use
+- either [KubeVirt Web UI Operator](https://github.com/kubevirt/web-ui-operator)
+- or the [kubevirt-ansible](https://github.com/kubevirt/kubevirt-ansible/) for complete deployment including KubeVirt.
+
+Please refer the README files there for detailed information.
 
 ### Dependencies:
 
