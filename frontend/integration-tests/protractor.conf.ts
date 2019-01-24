@@ -99,7 +99,10 @@ export const config: Config = {
     catalog: ['tests/base.scenario.ts', 'tests/catalog.scenario.ts'],
     operatorHub: ['tests/base.scenario.ts', 'tests/operator-hub/operator-hub.scenario.ts'],
     overview: ['tests/base.scenario.ts', 'tests/overview/overview.scenario.ts'],
-    e2e: ['tests/base.scenario.ts',
+    // e2e runs as ci/prow/console-e2e against pull requests and gates merges
+    // See https://github.com/openshift/release/blob/master/ci-operator/config/openshift/console/openshift-console-master.yaml
+    e2e: [
+      'tests/base.scenario.ts',
       'tests/crud.scenario.ts',
       'tests/secrets.scenario.ts',
       'tests/filter.scenario.ts',
@@ -111,19 +114,26 @@ export const config: Config = {
       'tests/performance.scenario.ts',
       'tests/olm/descriptors.scenario.ts',
       'tests/olm/catalog.scenario.ts',
-      'tests/olm/etcd.scenario.ts'],
-    all: ['tests/base.scenario.ts',
+      'tests/olm/etcd.scenario.ts',
+      'tests/monitoring.scenario.ts',
+    ],
+    // all test scenarios (requires OpenShift resources, OLM, Operator Hub, k8s service catalog, template service broker, and monitoring)
+    all: [
+      'tests/base.scenario.ts',
       'tests/crud.scenario.ts',
-      'tests/overview/overview.scenareio.ts',
       'tests/secrets.scenario.ts',
-      'tests/olm/**/*.scenario.ts',
-      'tests/service-catalog/**/*.scenario.ts',
       'tests/filter.scenario.ts',
       'tests/modal-annotations.scenario.ts',
+      'tests/environment.scenario.ts',
+      'tests/overview/overview.scenario.ts',
       'tests/source-to-image.scenario.ts',
       'tests/deploy-image.scenario.ts',
+      'tests/performance.scenario.ts',
+      'tests/monitoring.scenario.ts',
+      'tests/olm/**/*.scenario.ts',
       'tests/operator-hub/operator-hub.scenario.ts',
-      'tests/catalog.scenario.ts'],
+      'tests/service-catalog/**/*.scenario.ts',
+    ],
   },
   params: {
     // Set to 'true' to enable OpenShift resources in the crud scenario.
