@@ -257,9 +257,9 @@ const AlertsDetailsPage = withFallback(connect(alertStateToProps)((props: Alerts
             <div className="col-xs-12">
               <div className="co-m-table-grid co-m-table-grid--bordered">
                 <div className="row co-m-table-grid__head">
-                  <div className="col-xs-7">Name</div>
-                  <div className="col-xs-3">State</div>
-                  <div className="col-xs-2">Firing Alerts</div>
+                  <div className="col-sm-7 col-xs-8">Name</div>
+                  <div className="col-sm-3 col-xs-4">State</div>
+                  <div className="col-sm-2 hidden-xs">Firing Alerts</div>
                 </div>
                 <div className="co-m-table-grid__body">
                   {_.map(silencedBy, s => <SilenceRow key={s.id} obj={s} />)}
@@ -473,18 +473,18 @@ const AlertRow = ({obj}) => {
   const state = alertState(obj);
 
   return <ResourceRow obj={obj}>
-    <div className="col-xs-7">
+    <div className="col-sm-7 col-xs-8">
       <div className="co-resource-link">
         <MonitoringResourceIcon resource={AlertResource} />
         <Link to={alertURL(obj, obj.rule.id)} className="co-resource-link__resource-name">{labels.alertname}</Link>
       </div>
       <div className="monitoring-description">{annotations.description || annotations.message}</div>
     </div>
-    <div className="col-xs-3">
+    <div className="col-sm-3 col-xs-4">
       <AlertState state={state} />
       <AlertStateDescription alert={obj} />
     </div>
-    <div className="col-xs-2">{_.startCase(_.get(labels, 'severity')) || '-'}</div>
+    <div className="col-sm-2 hidden-xs">{_.startCase(_.get(labels, 'severity')) || '-'}</div>
     <div className="dropdown-kebab-pf">
       <Kebab options={state === AlertStates.Firing || state === AlertStates.Pending ? [silenceAlert(obj), viewAlertRule(obj)] : [viewAlertRule(obj)]} />
     </div>
@@ -492,9 +492,9 @@ const AlertRow = ({obj}) => {
 };
 
 const AlertHeader = props => <ListHeader>
-  <ColHead {...props} className="col-xs-7" sortField="labels.alertname">Name</ColHead>
-  <ColHead {...props} className="col-xs-3" sortFunc="alertStateOrder">State</ColHead>
-  <ColHead {...props} className="col-xs-2" sortField="labels.severity">Severity</ColHead>
+  <ColHead {...props} className="col-sm-7 col-xs-8" sortField="labels.alertname">Name</ColHead>
+  <ColHead {...props} className="col-sm-3 col-xs-4" sortFunc="alertStateOrder">State</ColHead>
+  <ColHead {...props} className="col-sm-2 hidden-xs" sortField="labels.severity">Severity</ColHead>
 </ListHeader>;
 
 const AlertsPageDescription = () => <p className="co-help-text">
@@ -632,16 +632,16 @@ const AlertsPage_ = props => <MonitoringListPage
 const AlertsPage = withFallback(connect(alertsToProps)(AlertsPage_));
 
 const SilenceHeader = props => <ListHeader>
-  <ColHead {...props} className="col-xs-7" sortField="name">Name</ColHead>
-  <ColHead {...props} className="col-xs-3" sortFunc="silenceStateOrder">State</ColHead>
-  <ColHead {...props} className="col-xs-2" sortField="firingAlerts.length">Firing Alerts</ColHead>
+  <ColHead {...props} className="col-sm-7 col-xs-8" sortField="name">Name</ColHead>
+  <ColHead {...props} className="col-sm-3 col-xs-4" sortFunc="silenceStateOrder">State</ColHead>
+  <ColHead {...props} className="col-sm-2 hidden-xs" sortField="firingAlerts.length">Firing Alerts</ColHead>
 </ListHeader>;
 
 const SilenceRow = ({obj}) => {
   const state = silenceState(obj);
 
   return <ResourceRow obj={obj}>
-    <div className="col-xs-7">
+    <div className="col-sm-7 col-xs-8">
       <div className="co-resource-link">
         <MonitoringResourceIcon resource={SilenceResource} />
         <Link className="co-resource-link__resource-name" title={obj.id} to={`${SilenceResource.path}/${obj.id}`}>{obj.name}</Link>
@@ -650,13 +650,13 @@ const SilenceRow = ({obj}) => {
         <SilenceMatchersList silence={obj} />
       </div>
     </div>
-    <div className="col-xs-3">
+    <div className="col-sm-3 col-xs-4">
       <SilenceState silence={obj} />
       {state === SilenceStates.Pending && <StateTimestamp text="Starts" timestamp={obj.startsAt} />}
       {state === SilenceStates.Active && <StateTimestamp text="Ends" timestamp={obj.endsAt} />}
       {state === SilenceStates.Expired && <StateTimestamp text="Expired" timestamp={obj.endsAt} />}
     </div>
-    <div className="col-xs-2">{obj.firingAlerts.length}</div>
+    <div className="col-sm-2 hidden-xs">{obj.firingAlerts.length}</div>
     <div className="dropdown-kebab-pf">
       <SilenceKebab silence={obj} />
     </div>
