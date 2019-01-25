@@ -51,15 +51,22 @@ class ListDropdown_ extends React.Component {
       const state = {};
       const { resources, dataFilter } = nextProps;
 
-      state.items = {};
+      const unsortedList = {};
       _.each(resources, ({data}, kindLabel) => {
         _.reduce(data, (acc, resource) => {
           if (!dataFilter || dataFilter(resource)) {
             acc[`${resource.metadata.name}-${kindLabel}`] = {kindLabel, name: resource.metadata.name};
           }
           return acc;
-        }, state.items);
+        }, unsortedList);
       });
+
+      const sortedList= {};
+      _.keys(unsortedList).sort().forEach(key => {
+        sortedList[key] = unsortedList[key];
+      });
+
+      state.items = sortedList;
 
       // did we switch from !loaded -> loaded ?
       if (!this.props.loaded && !selectedKey) {
@@ -89,7 +96,7 @@ class ListDropdown_ extends React.Component {
     const {desc, fixed, placeholder, id, loaded} = this.props;
     const items = {};
 
-    _.keys(this.state.items).sort().forEach(key => {
+    _.keys(this.state.items).forEach(key => {
       const item = this.state.items[key];
       items[key] = <ResourceName kind={item.kindLabel} name={item.name} />;
     });
