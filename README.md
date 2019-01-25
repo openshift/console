@@ -20,6 +20,7 @@ The console is a more friendly `kubectl` in the form of a single page webapp.  I
 
 1. [node.js](https://nodejs.org/) >= 8 & [yarn](https://yarnpkg.com/en/docs/install) >= 1.3.2
 2. [go](https://golang.org/) >= 1.8 & [glide](https://glide.sh/) >= 0.12.0 (`go get github.com/Masterminds/glide`) & [glide-vc](https://github.com/sgotti/glide-vc)
+2a. `bridge` (`go get github.com/openshift/console/cmd/bridge`)
 3. [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/) and a k8s cluster
 4. `jq` (for `contrib/environment.sh`)
 5. Google Chrome/Chromium >= 60 (needs --headless flag) for integration tests
