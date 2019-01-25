@@ -105,6 +105,12 @@ const listFilters = {
     }
     return filters.selected.has(resource.kind);
   },
+  'clusterserviceversion-status': (filters, csv) => {
+    if (!filters || !filters.selected || !filters.selected.size) {
+      return true;
+    }
+    return filters.selected.has(_.get(csv.status, 'reason')) || !_.includes(filters.all, _.get(csv.status, 'reason'));
+  },
 
   'build-status': (phases, build) => {
     if (!phases || !phases.selected || !phases.selected.size) {

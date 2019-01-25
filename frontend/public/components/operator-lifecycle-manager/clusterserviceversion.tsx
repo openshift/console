@@ -9,12 +9,11 @@ import { Alert } from 'patternfly-react';
 import { ProvidedAPIsPage, ProvidedAPIPage } from './clusterserviceversion-resource';
 import { DetailsPage, ListHeader, ColHead, List, ListPage } from '../factory';
 import { withFallback } from '../utils/error-boundary';
-import { referenceForModel, referenceFor, K8sKind } from '../../module/k8s';
+import { referenceForModel, referenceFor, GroupVersionKind, K8sKind } from '../../module/k8s';
 import { ClusterServiceVersionModel } from '../../models';
 import { FLAGS as featureFlags } from '../../features';
 import { ResourceEventStream } from '../events';
 import { Conditions } from '../conditions';
-import { connectToModel } from '../../kinds';
 import {
   ClusterServiceVersionKind,
   ClusterServiceVersionLogo,
@@ -105,6 +104,13 @@ export const ClusterServiceVersionsPage = connect(stateToProps)((props: ClusterS
     Installed Operators are represented by Cluster Service Versions within this namespace. For more information, see the <ExternalLink href="https://github.com/operator-framework/operator-lifecycle-manager/blob/master/Documentation/design/architecture.md" text="Operator Lifecycle Manager documentation" />. Or create an Operator and Cluster Service Version using the <ExternalLink href="https://github.com/operator-framework/operator-sdk" text="Operator SDK" />.
   </p>;
 
+  const rowFilters = [{
+    type: 'clusterserviceversion-status',
+    selected: [CSVConditionReason.CSVReasonInstallSuccessful],
+    reducer: (csv: ClusterServiceVersionKind) => _.get(csv.status, 'reason'),
+    items: [CSVConditionReason.CSVReasonInstallSuccessful, CSVConditionReason.CSVReasonCopied].map(status => ({id: status, title: status})),
+  }];
+
   return <React.Fragment>
     <PageHeading title="Installed Operators" />
     <ListPage
@@ -114,6 +120,7 @@ export const ClusterServiceVersionsPage = connect(stateToProps)((props: ClusterS
       ListComponent={ClusterServiceVersionList}
       helpText={helpText}
       filterLabel="Cluster Service Versions by name"
+      rowFilters={rowFilters}
       showTitle={false} />
   </React.Fragment>;
 });
@@ -122,8 +129,8 @@ export const MarkdownView = (props: {content: string, outerScroll: boolean}) => 
   return <AsyncComponent loader={() => import('./markdown-view').then(c => c.SyncMarkdownView)} {...props} />;
 };
 
-export const CRDCard = connectToModel((props: CRDCardProps) => {
-  const {csv, crd, kindObj} = props;
+export const CRDCard: React.SFC<CRDCardProps> = (props) => {
+  const {csv, crd, canCreate} = props;
   const createRoute = `/k8s/ns/${csv.metadata.namespace}/${ClusterServiceVersionModel.plural}/${csv.metadata.name}/${referenceForProvidedAPI(crd)}/new`;
 
   return <div className="co-crd-card">
@@ -135,17 +142,27 @@ export const CRDCard = connectToModel((props: CRDCardProps) => {
     <div className="co-crd-card__body" style={{margin: '0'}}>
       <p>{crd.description}</p>
     </div>
-    <div className="co-crd-card__footer">
-      { (kindObj.verbs || []).some(v => v === 'create') && <Link className="co-crd-card__link" to={createRoute}>
+    { canCreate && <div className="co-crd-card__footer">
+      <Link className="co-crd-card__link" to={createRoute}>
         <span className="pficon pficon-add-circle-o" aria-hidden="true"></span> Create New
-      </Link> }
-    </div>
+      </Link>
+    </div> }
   </div>;
-});
+};
 
-export const CRDCardRow: React.SFC<CRDCardRowProps> = (props) => <div className="co-crd-card-row">
-  {props.crdDescs.map((desc, i) => <CRDCard key={i} crd={desc} csv={props.csv} kind={referenceForProvidedAPI(desc)} />)}
-</div>;
+const crdCardRowStateToProps = ({k8s}, {crdDescs}) => {
+  const models: K8sKind[] = crdDescs.map(desc => k8s.getIn(['RESOURCES', 'models', referenceForProvidedAPI(desc)]));
+  return {
+    crdDescs: crdDescs.filter(desc => models.find(m => referenceForModel(m) === referenceForProvidedAPI(desc))),
+    createable: models.filter(m => (m.verbs || []).includes('create')).map(m => referenceForModel(m)),
+  };
+};
+
+export const CRDCardRow = connect(crdCardRowStateToProps)(
+  (props: CRDCardRowProps) => <div className="co-crd-card-row">
+    {props.crdDescs.map((desc, i) => <CRDCard key={i} crd={desc} csv={props.csv} canCreate={props.createable.includes(referenceForProvidedAPI(desc))} />)}
+  </div>
+);
 
 export const ClusterServiceVersionDetails: React.SFC<ClusterServiceVersionDetailsProps> = (props) => {
   const {spec, metadata, status = {} as ClusterServiceVersionKind['status']} = props.obj;
@@ -269,12 +286,13 @@ export type ClusterServiceVersionListProps = {
 export type CRDCardProps = {
   crd: CRDDescription | APIServiceDefinition;
   csv: ClusterServiceVersionKind;
-  kindObj: K8sKind;
+  canCreate: boolean;
 };
 
 export type CRDCardRowProps = {
   crdDescs: (CRDDescription | APIServiceDefinition)[];
   csv: ClusterServiceVersionKind;
+  createable: GroupVersionKind[];
 };
 
 export type CRDCardRowState = {
