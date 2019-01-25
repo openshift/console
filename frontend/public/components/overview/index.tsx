@@ -466,7 +466,7 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
     } = this.props;
     const {filterValue, selectedGroup} = this.state;
 
-    if (!_.isEqual(namespace, prevProps.namespace)
+    if (namespace !== prevProps.namespace
       || loaded !== prevProps.loaded
       || !_.isEqual(buildConfigs, prevProps.buildConfigs)
       || !_.isEqual(builds, prevProps.builds)
@@ -495,9 +495,15 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
       // OverviewHeading doesn't keep the value in state.
       this.setState({ filterValue: '' });
     }
+
+    // Fetch new metrics when the namespace changes.
+    if (namespace !== prevProps.namespace) {
+      clearInterval(this.metricsInterval);
+      this.fetchMetrics();
+    }
   }
 
-  fetchMetrics(): void {
+  fetchMetrics = (): void => {
     if (!prometheusBasePath) {
       // Component is not mounted or proxy has not been set up.
       return;
