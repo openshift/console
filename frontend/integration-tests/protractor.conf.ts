@@ -111,6 +111,7 @@ export const config: Config = {
       'tests/performance.scenario.ts',
       'tests/olm/descriptors.scenario.ts',
       'tests/olm/catalog.scenario.ts',
+      'tests/operator-hub/operator-hub.scenario.ts',
       'tests/olm/etcd.scenario.ts'],
     all: ['tests/base.scenario.ts',
       'tests/crud.scenario.ts',

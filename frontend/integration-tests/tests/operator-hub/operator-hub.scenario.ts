@@ -9,7 +9,7 @@ import * as catalogPageView from '../../views/catalog-page.view';
 import * as operatorHubView from '../../views/operator-hub.view';
 
 describe('Viewing the operators in Operator Hub', () => {
-  const openCloudServices = new Set(['etcd', 'prometheus']);
+  const openCloudServices = new Set(['AMQ Streams', 'MongoDB']);
 
   beforeEach(async() => {
     await browser.get(`${appHost}/operatorhub`);
@@ -28,26 +28,26 @@ describe('Viewing the operators in Operator Hub', () => {
     });
   });
 
-  it('displays etcd operator when filter "CoreOS" is active', async() => {
-    await catalogPageView.clickFilterCheckbox('CoreOS');
+  it('displays Couchbase Operator operator when filter "MongoDB" is active', async() => {
+    await catalogPageView.clickFilterCheckbox('MongoDB');
 
-    expect(catalogPageView.catalogTileFor('etcd').isDisplayed()).toBe(true);
+    expect(catalogPageView.catalogTileFor('Couchbase Operator').isDisplayed()).toBe(true);
 
-    await catalogPageView.clickFilterCheckbox('CoreOS');
+    await catalogPageView.clickFilterCheckbox('MongoDB');
   });
 
-  it('does not display etcd operator when filter "Red Hat" is active', async() => {
+  it('does not display Couchbase Operator operator when filter "Red Hat" is active', async() => {
     await catalogPageView.clickFilterCheckbox('Red Hat');
 
-    expect(catalogPageView.catalogTileCount('etcd')).toBe(0);
+    expect(catalogPageView.catalogTileCount('Couchbase Operator')).toBe(0);
 
     await catalogPageView.clickFilterCheckbox('Red Hat');
   });
 
-  it('displays "prometheus" as an operator when using the filter "p"', async() => {
-    await catalogPageView.filterByKeyword('p');
+  it('displays "Dynatrace OneAgent" as an operator when using the filter "dy"', async() => {
+    await catalogPageView.filterByKeyword('dy');
 
-    expect(catalogPageView.catalogTileFor('prometheus').isDisplayed()).toBe(true);
+    expect(catalogPageView.catalogTileFor('Dynatrace OneAgent').isDisplayed()).toBe(true);
 
     await catalogPageView.filterByKeyword('');
   });
@@ -73,7 +73,7 @@ describe('Viewing the operators in Operator Hub', () => {
 
   openCloudServices.forEach(name => {
     it(`displays OperatorHubModalOverlay with correct content when ${name} operator is clicked`, async() => {
-      catalogPageView.catalogTileFor(name).click();
+      await(catalogPageView.catalogTileFor(name).click());
       await operatorHubView.operatorModalIsLoaded();
 
       expect(operatorHubView.operatorModal.isDisplayed()).toBe(true);
@@ -82,6 +82,28 @@ describe('Viewing the operators in Operator Hub', () => {
       await operatorHubView.closeOperatorModal();
       await operatorHubView.operatorModalIsClosed();
     });
+  });
+
+  it('shows the warning dialog when "Show Community Operators" is clicked', async() => {
+    await(operatorHubView.clickShowCommunityToggle());
+    await operatorHubView.operatorCommunityWarningIsLoaded();
+    await operatorHubView.closeCommunityWarningModal();
+    await operatorHubView.operatorCommunityWarningIsClosed();
+  });
+
+  it('shows community operators when "Show Community Operators" is accepted', async() => {
+    await(operatorHubView.clickShowCommunityToggle());
+    await operatorHubView.operatorCommunityWarningIsLoaded();
+    await operatorHubView.acceptCommunityWarningModal();
+    await operatorHubView.operatorCommunityWarningIsClosed();
+
+    await catalogPageView.clickFilterCheckbox('Community');
+    expect(catalogPageView.catalogTileCount('etcd')).toBe(1);
+
+    await catalogPageView.clickFilterCheckbox('Community');
+
+    await(operatorHubView.clickShowCommunityToggle());
+    expect(catalogPageView.catalogTileCount('etcd')).toBe(0);
   });
 
   it('filters Operator Hub tiles by Category', async() => {
