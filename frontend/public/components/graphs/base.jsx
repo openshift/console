@@ -7,7 +7,7 @@ import * as classNames from 'classnames';
 import { coFetchJSON } from '../../co-fetch';
 import { SafetyFirst } from '../safety-first';
 
-import { prometheusBasePath } from './index';
+import { prometheusBasePath, prometheusTenancyBasePath } from './index';
 import { MonitoringRoutes } from '../../monitoring';
 
 export class BaseGraph extends SafetyFirst {
@@ -44,13 +44,14 @@ export class BaseGraph extends SafetyFirst {
       }];
     }
 
-    const basePath = this.props.basePath || prometheusBasePath;
+    const basePath = this.props.basePath || (this.props.namespace ? prometheusTenancyBasePath : prometheusBasePath);
     const pollInterval = timeSpan / 120 || 15000;
     const stepSize = pollInterval / 1000;
     const promises = queries.map(q => {
+      const nsParam = this.props.namespace ? `&namespace=${encodeURIComponent(this.props.namespace)}` : '';
       const url = this.timeSpan
-        ? `${basePath}/api/v1/query_range?query=${encodeURIComponent(q.query)}&start=${start / 1000}&end=${end / 1000}&step=${stepSize}`
-        : `${basePath}/api/v1/query?query=${encodeURIComponent(q.query)}`;
+        ? `${basePath}/api/v1/query_range?query=${encodeURIComponent(q.query)}&start=${start / 1000}&end=${end / 1000}&step=${stepSize}${nsParam}`
+        : `${basePath}/api/v1/query?query=${encodeURIComponent(q.query)}${nsParam}`;
       return coFetchJSON(url);
     });
     Promise.all(promises)
@@ -142,6 +143,7 @@ export class BaseGraph extends SafetyFirst {
 }
 
 BaseGraph.propTypes = {
+  namespace: PropTypes.string,
   query: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.arrayOf(

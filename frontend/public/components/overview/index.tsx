@@ -12,7 +12,7 @@ import { Toolbar, EmptyState } from 'patternfly-react';
 
 import { coFetchJSON } from '../../co-fetch';
 import { getBuildNumber } from '../../module/k8s/builds';
-import { prometheusBasePath } from '../graphs';
+import { prometheusTenancyBasePath } from '../graphs';
 import { TextFilter } from '../factory';
 import { UIActions, formatNamespacedRouteForResource } from '../../ui/ui-actions';
 import {
@@ -504,8 +504,7 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
   }
 
   fetchMetrics = (): void => {
-    if (!prometheusBasePath) {
-      // Component is not mounted or proxy has not been set up.
+    if (!prometheusTenancyBasePath) {
       return;
     }
 
@@ -516,7 +515,7 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
     };
 
     const promises = _.map(queries, (query, name) => {
-      const url = `${prometheusBasePath}/api/v1/query?query=${encodeURIComponent(query)}`;
+      const url = `${prometheusTenancyBasePath}/api/v1/query?namespace=${namespace}&query=${encodeURIComponent(query)}`;
       return coFetchJSON(url).then(({ data: {result} }) => {
         const byPod: MetricValuesByPod = result.reduce((acc, { metric, value }) => {
           acc[metric.pod_name] = Number(value[1]);

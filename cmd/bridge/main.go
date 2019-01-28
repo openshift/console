@@ -31,6 +31,9 @@ const (
 	// Well-known location of Prometheus service for OpenShift. This is only accessible in-cluster.
 	openshiftPrometheusHost = "prometheus-k8s.openshift-monitoring.svc:9091"
 
+	// The tenancy service port (9092) performs RBAC checks for namespace-specific queries.
+	openshiftPrometheusTenancyHost = "prometheus-k8s.openshift-monitoring.svc:9092"
+
 	// Well-known location of Alert Manager service for OpenShift. This is only accessible in-cluster.
 	openshiftAlertManagerHost = "alertmanager-main.openshift-monitoring.svc:9094"
 )
@@ -261,6 +264,11 @@ func main() {
 				TLSClientConfig: monitoringProxyTLSConfig,
 				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
 				Endpoint:        &url.URL{Scheme: "https", Host: openshiftPrometheusHost, Path: "/api"},
+			}
+			srv.PrometheusTenancyProxyConfig = &proxy.Config{
+				TLSClientConfig: monitoringProxyTLSConfig,
+				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
+				Endpoint:        &url.URL{Scheme: "https", Host: openshiftPrometheusTenancyHost, Path: "/api"},
 			}
 			srv.AlertManagerProxyConfig = &proxy.Config{
 				TLSClientConfig: monitoringProxyTLSConfig,

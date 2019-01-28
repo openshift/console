@@ -2,7 +2,6 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as classNames from 'classnames';
 import { Helmet } from 'react-helmet';
-import { Link } from 'react-router-dom';
 
 import { EventsList } from './events';
 import { SoftwareDetails } from './software-details';
@@ -20,15 +19,11 @@ import {
   StatusBox,
 } from './utils';
 
-
-const DashboardLink = ({to, id}) => <Link id={id} className="co-external-link" target="_blank" to={to}>View Grafana Dashboard</Link>;
-
-const Graphs = requirePrometheus(({namespace, isOpenShift}) => {
+const Graphs = requirePrometheus(({namespace}) => {
   return <React.Fragment>
     <div className="group">
       <div className="group__title">
         <h2 className="h3">Health</h2>
-        {!isOpenShift && <DashboardLink id="qa_dashboard_k8s_health" to="/grafana/dashboard/db/kubernetes-cluster-health?orgId=1" />}
       </div>
       <div className="container-fluid group__body">
         <Health namespace={namespace} />
@@ -38,7 +33,6 @@ const Graphs = requirePrometheus(({namespace, isOpenShift}) => {
       <div className="group">
         <div className="group__title">
           <h2 className="h3">Control Plane Status</h2>
-          {!isOpenShift && <DashboardLink to="/grafana/dashboard/db/kubernetes-control-plane-status?orgId=1" />}
         </div>
         <div className="container-fluid group__body group__graphs">
           <div className="row">
@@ -62,7 +56,6 @@ const Graphs = requirePrometheus(({namespace, isOpenShift}) => {
       <div className="group">
         <div className="group__title">
           <h2 className="h3">Capacity Planning</h2>
-          {!isOpenShift && <DashboardLink to="/grafana/dashboard/db/kubernetes-capacity-planning?orgId=1" />}
         </div>
         <div className="container-fluid group__body group__graphs">
           <div className="row">
