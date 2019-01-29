@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 
 import { productName } from '../../branding';
+import { ExternalLink } from '../utils';
 
 // Prefer the documentation base URL passed as a flag, but fall back to the latest docs if none was specified.
 export const openshiftHelpBase = (window as any).SERVER_FLAGS.documentationBaseURL || 'https://docs.okd.io/latest/';
@@ -22,12 +23,12 @@ export const helpLink = (topic: HELP_TOPICS) => `${openshiftHelpBase}${topic}`;
 
 /* eslint-disable react/jsx-no-target-blank */
 export const DocumentationLinks = () => <dl className="co-documentation-links">
-  <dt className="co-documentation-links__title"><a href={openshiftHelpBase} target="_blank" rel="noopener">Full Documentation</a></dt>
+  <dt className="co-documentation-links__title"><ExternalLink href={openshiftHelpBase} text="Full Documentation" /></dt>
   <dd className="co-documentation-links__description">
     From getting started with creating your first application, to trying out more advanced build and deployment techniques, these resources
     provide what you need to set up and manage your environment as a cluster administrator or an application developer.
   </dd>
-  <dt className="co-documentation-links__title"><a href={helpLink(HELP_TOPICS.GET_STARTED_CLI)} target="_blank" rel="noopener">Get Started with the CLI</a></dt>
+  <dt className="co-documentation-links__title"><ExternalLink href={helpLink(HELP_TOPICS.GET_STARTED_CLI)} text="Get Started with the CLI" /></dt>
   <dd className="co-documentation-links__description">
     With the {productName} command line interface (CLI), you can create applications and manage projects from a terminal. Learn how to install
     and use the oc client tool.
@@ -50,7 +51,7 @@ const supportLinks = [{
 
 export const AdditionalSupportLinks = () => <ul className="co-additional-support-links">
   {_.map(supportLinks, (link, i) => <li key={i}>
-    <a href={link.href} target="_blank" rel="noopener" className="co-additional-support-links__link">{link.title}</a>
+    <ExternalLink href={link.href} text={link.title} additionalClassName="co-additional-support-links__link" />
   </li>)}
 </ul>;
 /* eslint-enable react/jsx-no-target-blank */

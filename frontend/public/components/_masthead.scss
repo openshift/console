@@ -1,0 +1,6 @@
+.co-username {
+  max-width: 230px; // PF4 does not limit username length (upstream bug)
+  overflow-x: hidden;
+  padding: 0 8px; // so sizing is consistent with .pf-c-dropdown__toggle
+  text-overflow: ellipsis;
+}

@@ -5,7 +5,7 @@ import * as semver from 'semver';
 // eslint-disable-next-line no-unused-vars
 import { K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
-import { Kebab, SectionHeading, LabelList, navFactory, Overflow, ResourceKebab, ResourceLink, ResourceSummary, history, Timestamp } from './utils';
+import { Kebab, SectionHeading, LabelList, navFactory, ResourceKebab, ResourceLink, ResourceSummary, history, Timestamp } from './utils';
 import { fromNow } from './utils/datetime';
 
 const ImageStreamsReference: K8sResourceKindReference = 'ImageStream';
@@ -91,13 +91,13 @@ const ImageStreamTagsRow: React.SFC<ImageStreamTagsRowProps> = ({imageStream, sp
     <div className="col-md-2 col-sm-4 col-xs-4 co-break-word">
       <ResourceLink kind={ImageStreamTagsReference} name={getImageStreamTagName(imageStream.metadata.name, statusTag.tag)} namespace={imageStream.metadata.namespace} title={statusTag.tag} />
     </div>
-    <span className="col-md-3 col-sm-4 col-xs-8 co-break-word">
+    <span className="col-md-3 col-sm-4 col-xs-8 co-break-all">
       {from && referencesTag && <ResourceLink kind={ImageStreamTagsReference} name={getImageStreamTagName(imageStream.metadata.name, from.name)} namespace={imageStream.metadata.namespace} title={from.name} />}
-      {from && !referencesTag && <Overflow value={from.name} />}
+      {from && !referencesTag && <React.Fragment>{from.name}</React.Fragment>}
       {!from && <span className="text-muted">pushed image</span>}
     </span>
-    <span className="col-md-4 col-sm-4 hidden-xs">
-      {image && <Overflow value={image} />}
+    <span className="col-md-4 col-sm-4 hidden-xs co-break-all">
+      {image && <React.Fragment>{image}</React.Fragment>}
       {!image && '-'}
     </span>
     <div className="col-md-3 hidden-sm hidden-xs">

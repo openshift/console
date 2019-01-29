@@ -4,6 +4,7 @@ import * as React from 'react';
 import { shallow, mount } from 'enzyme';
 
 import { RouteLocation, RouteStatus } from '../../public/components/routes';
+import { ExternalLink } from '../../public/components/utils';
 import { K8sResourceKind } from '../../public/module/k8s';
 
 describe(RouteLocation.displayName, () => {
@@ -38,8 +39,8 @@ describe(RouteLocation.displayName, () => {
     };
 
     const wrapper = shallow(<RouteLocation obj={route} />);
-    expect(wrapper.find('a').exists()).toBe(true);
-    expect(wrapper.find('a').props().href).toContain('https:');
+    expect(wrapper.find(ExternalLink).exists()).toBe(true);
+    expect(wrapper.find(ExternalLink).props().href).toContain('https:');
   });
 
   it('renders a http link when no TLS Settings', () => {
@@ -70,8 +71,8 @@ describe(RouteLocation.displayName, () => {
     };
 
     const wrapper = shallow(<RouteLocation obj={route} />);
-    expect(wrapper.find('a').exists()).toBe(true);
-    expect(wrapper.find('a').props().href).toContain('http:');
+    expect(wrapper.find(ExternalLink).exists()).toBe(true);
+    expect(wrapper.find(ExternalLink).props().href).toContain('http:');
   });
 
   it('renders additional path in url', () => {
@@ -103,8 +104,8 @@ describe(RouteLocation.displayName, () => {
     };
 
     const wrapper = shallow(<RouteLocation obj={route} />);
-    expect(wrapper.find('a').exists()).toBe(true);
-    expect(wrapper.find('a').props().href).toContain('\\mypath');
+    expect(wrapper.find(ExternalLink).exists()).toBe(true);
+    expect(wrapper.find(ExternalLink).props().href).toContain('\\mypath');
   });
 
   it('renders Subdomain', () => {
@@ -135,7 +136,7 @@ describe(RouteLocation.displayName, () => {
     };
 
     const wrapper = shallow(<RouteLocation obj={route} />);
-    expect(wrapper.find('a').exists()).toBe(false);
+    expect(wrapper.find(ExternalLink).exists()).toBe(false);
     expect(wrapper.find('div').text()).toEqual('*.example.com');
   });
 
@@ -198,7 +199,7 @@ describe(RouteStatus.displayName, () => {
 
     const wrapper = mount(<RouteStatus obj={route} />);
     expect(wrapper.find('.pficon-ok').exists()).toBe(true);
-    expect(wrapper.text()).toEqual(' Accepted');
+    expect(wrapper.text()).toEqual('Accepted');
   });
 
   it('renders Rejected status', () => {
@@ -225,7 +226,7 @@ describe(RouteStatus.displayName, () => {
 
     const wrapper = mount(<RouteStatus obj={route} />);
     expect(wrapper.find('.pficon-error-circle-o').exists()).toBe(true);
-    expect(wrapper.text()).toEqual(' Rejected');
+    expect(wrapper.text()).toEqual('Rejected');
   });
 
   it('renders Pending status', () => {
@@ -239,6 +240,6 @@ describe(RouteStatus.displayName, () => {
 
     const wrapper = mount(<RouteStatus obj={route} />);
     expect(wrapper.find('.fa-hourglass-half').exists()).toBe(true);
-    expect(wrapper.text()).toEqual(' Pending');
+    expect(wrapper.text()).toEqual('Pending');
   });
 });

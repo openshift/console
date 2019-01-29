@@ -32,7 +32,7 @@ const chunkedRoutes = OrderedMap<string, {section: string, name: string}>()
   .set('limit-range', {section: 'Administration', name: 'Limit Ranges'})
   .set('custom-resource-definition', {section: 'Administration', name: 'CRDs'})
   .set('catalog', {section: 'Catalog', name: 'Developer Catalog'})
-  .set('marketplace', {section: 'Catalog', name: 'Marketplace'});
+  .set('operator-hub', {section: 'Catalog', name: 'Operator Hub'});
 
 describe('Performance test', () => {
 
@@ -60,13 +60,13 @@ describe('Performance test', () => {
   });
 
   it('downloads new bundle for YAML editor route', async() => {
-    await browser.get(`${appHost}/k8s/ns/openshift-console/deployments`);
+    await browser.get(`${appHost}/k8s/ns/openshift-console/configmaps`);
     await crudView.isLoaded();
 
     const initialChunks = await browser.executeScript<{name: string, size: number}[]>(() => performance.getEntriesByType('resource')
       .filter(({name}) => name.endsWith('.js')));
 
-    await crudView.selectOptionFromGear('console', 'Edit Deployment');
+    await crudView.selectOptionFromGear('console-config', 'Edit Config Map');
     await yamlView.isLoaded();
 
     const postChunks = await browser.executeScript<{name: string, size: number}[]>(() => performance.getEntriesByType('resource')
@@ -95,7 +95,7 @@ describe('Performance test', () => {
 
       expect(routeChunk).not.toBeNull();
       // FIXME: Really need to address this chunk size
-      if (routeName === 'catalog' || routeName === 'marketplace') {
+      if (routeName === 'catalog' || routeName === 'operator-hub') {
         expect((routeChunk as any).decodedBodySize).toBeLessThan(100000);
       } else {
         expect((routeChunk as any).decodedBodySize).toBeLessThan(chunkLimit);

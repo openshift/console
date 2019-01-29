@@ -60,17 +60,23 @@ export const InstallPlansList = requireOperatorGroup((props: InstallPlansListPro
   return <List {...props} Header={InstallPlanHeader} Row={InstallPlanRow} EmptyMsg={EmptyMsg} />;
 });
 
-export const InstallPlansPage: React.SFC<InstallPlansPageProps> = (props) => <MultiListPage
-  {...props}
-  resources={[
-    {kind: referenceForModel(InstallPlanModel), namespace: props.namespace, namespaced: true, prop: 'installPlan'},
-    {kind: referenceForModel(OperatorGroupModel), namespace: props.namespace, namespaced: true, prop: 'operatorGroup'},
-  ]}
-  flatten={resources => _.get(resources.subscription, 'data', [])}
-  title="Install Plans"
-  showTitle={false}
-  ListComponent={InstallPlansList}
-  filterLabel="Install Plans by name" />;
+export const InstallPlansPage: React.SFC<InstallPlansPageProps> = (props) => {
+  const namespace = _.get(props.match, 'params.ns');
+  return (
+    <MultiListPage
+      {...props}
+      namespace={namespace}
+      resources={[
+        {kind: referenceForModel(InstallPlanModel), namespace, namespaced: true, prop: 'installPlan'},
+        {kind: referenceForModel(OperatorGroupModel), namespace, namespaced: true, prop: 'operatorGroup'},
+      ]}
+      flatten={resources => _.get(resources.installPlan, 'data', [])}
+      title="Install Plans"
+      showTitle={false}
+      ListComponent={InstallPlansList}
+      filterLabel="Install Plans by name" />
+  );
+};
 
 export const InstallPlanDetails: React.SFC<InstallPlanDetailsProps> = ({obj}) => {
   const needsApproval = obj.spec.approval === InstallPlanApproval.Manual && obj.spec.approved === false;
@@ -212,6 +218,7 @@ export type InstallPlansListProps = {
 
 export type InstallPlansPageProps = {
   namespace?: string;
+  match?: match<{ns?: string}>;
 };
 
 export type InstallPlanDetailsProps = {

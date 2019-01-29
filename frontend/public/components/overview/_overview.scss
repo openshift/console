@@ -1,27 +1,20 @@
 .co-m-nav-title--overview {
   display: flex;
+  flex-direction: column;
   flex-wrap: wrap;
   justify-content: space-between;
-
-  @media (max-width: $screen-sm-max) {
-    &.overview-filter-group {
-      flex-direction: column;
-    }
-  }
-
-  // Keep the flex child elements in a column, when <1200 && when the sidebar is open,
-  // so that the stacked filter group fields are displayed beneath the <h1>
-  @media (max-width: $screen-md-max) {
-    .overview--sidebar-shown & {
-      flex-direction: column;
-    }
-  }
 }
 
 .overview-toolbar {
   margin: 0 0 ($grid-gutter-width / 2) 0;
   min-width: 0;
   padding: 0;
+  @media (max-width: $screen-xs-max) {
+    // Stack toggle buttons above resource filter options at mobile
+    .selected-view__resources & {
+      width: 100%;
+    }
+  }
 
   .toolbar-pf-actions {
     margin: 0;
@@ -79,11 +72,6 @@
 .overview-toolbar__form-group {
   flex: 1 1 auto;
   min-width: 0; // enable truncation
-  padding-right: 8px;
-
-  @media (max-width: $screen-sm-max) {
-    flex: 1 1 50%;
-  }
 
   @media (min-width: $screen-xs-min) {
     padding-right: 15px;
@@ -93,6 +81,7 @@
     border-right: 0;
     margin-bottom: 0;
     padding-left: 0;
+    padding-right: 10px;
 
     @media (max-width: $screen-md-max) {
       .overview--sidebar-shown & {
@@ -102,17 +91,14 @@
 
     @media (min-width: $screen-lg-min) and (max-width: ($screen-lg-min + 200)) {
       .overview--sidebar-shown & {
-        max-width: 250px; // prevents long group by select from pushing filter input behind sidebar
+        max-width: 200px; // prevents group by select from pushing filter input behind the sidebar
       }
     }
   }
 
   + .overview-toolbar__form-group {
     border-left: 1px solid $color-pf-black-300;
-    padding-left: 8px;
-    @media (min-width: $screen-xs-min) {
-      padding-left: 15px;
-    }
+    padding-left: 10px;
 
     .overview--sidebar-shown & {
       @media (max-width: $screen-md-max) {
@@ -155,9 +141,6 @@
   .overview--sidebar-shown & {
     width: auto;
   }
-  @media (min-width: $screen-md-min) {
-    width: 250px;
-  }
 }
 
 .overview {
@@ -179,14 +162,15 @@
   .overview__sidebar {
     background: #fff;
     bottom: 0;
-    box-shadow: var(--pf-global--BoxShadow--lg-left);
+    box-shadow: var(--pf-global--BoxShadow--md);
     display: none;
+    padding-bottom: 30px;
     position: absolute;
     right: 0;
     top: 0;
     width: calc(100% - 15px);
     @media(min-width: $screen-sm-min) {
-      width: 550px;
+      max-width: 550px;
     }
     z-index: 5;
   }
@@ -260,6 +244,27 @@
 
   .co-actions-menu {
     margin-top: -3px;
+  }
+}
+
+.overview-view-selector {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+
+  @media (max-width: $screen-md-max) {
+    .overview--sidebar-shown & {
+      flex-direction: column;
+    }
+  }
+
+  .btn-group {
+    button+button {
+      margin-left: 0;
+    }
+    i.fa {
+      margin-right: 6px;
+    }
   }
 }
 

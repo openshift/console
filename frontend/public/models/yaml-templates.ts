@@ -747,26 +747,49 @@ apiVersion: "autoscaling.openshift.io/v1alpha1"
 kind: "ClusterAutoscaler"
 metadata:
   name: "default"
+spec: {}
+`).setIn([referenceForModel(k8sModels.MachineDeploymentModel), 'default'], `
+apiVersion: "cluster.k8s.io/v1alpha1"
+kind: MachineDeployment
+metadata:
+  name: example
 spec:
-  podPriorityThreshold: -10
-  resourceLimits:
-    maxNodesTotal: 24
-    cores:
-      min: 8
-      max: 128
-    memory:
-      min: 4
-      max: 256
-    gpus:
-      - type: nvidia.com/gpu
-        min: 0
-        max: 16
-      - type: amd.com/gpu
-        min: 0
-        max: 4
-  scaleDown:
-    enabled: true
-    delayAfterAdd: 10s
-    delayAfterDelete: 10s
-    delayAfterFailure: 10s
+  replicas: 3
+  selector:
+    matchLabels:
+      foo: bar
+  template:
+    metadata:
+      labels:
+        foo: bar
+    spec:
+      providerSpec: {}
+      versions:
+        kubelet: ""
+`).setIn([referenceForModel(k8sModels.MachineSetModel), 'default'], `
+apiVersion: "cluster.k8s.io/v1alpha1"
+kind: MachineSet
+metadata:
+  name: example
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      foo: bar
+  template:
+    metadata:
+      labels:
+        foo: bar
+    spec:
+      providerSpec: {}
+      versions:
+        kubelet: ""
+`).setIn([referenceForModel(k8sModels.MachineModel), 'default'], `
+apiVersion: "cluster.k8s.io/v1alpha1"
+kind: Machine
+metadata:
+  name: example
+spec:
+  providerSpec: {}
 `).setIn([referenceForModel(k8sModels.VirtualMachineModel), 'default'], vmYamlTemplate);
+

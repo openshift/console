@@ -8,40 +8,23 @@ import { k8sCreate, K8sResourceKind, referenceFor } from '../../module/k8s';
 import {
   AsyncComponent,
   ButtonBar,
-  ListDropdown,
   RequestSizeInput,
   history,
   resourceObjPath,
 } from '../utils';
+import { StorageClassDropdown } from '../utils/storage-class-dropdown';
 import { RadioInput } from '../radio';
 import { Checkbox } from '../checkbox';
 import { PersistentVolumeClaimModel } from '../../models/index';
 
 const NameValueEditorComponent = (props) => <AsyncComponent loader={() => import('../utils/name-value-editor').then(c => c.NameValueEditor)} {...props} />;
 
-const StorageClassDropdown: React.SFC<StorageClassDropdownProps> = props => {
-  const kind = 'StorageClass';
-  const resources = [{ kind }];
-  const { selectedKey, required, namespace } = props;
-  return (
-    <ListDropdown
-      {...props}
-      desc="Storage Classes"
-      resources={resources}
-      selectedKeyKind={kind}
-      placeholder="Select storage class"
-      selectedKey={selectedKey}
-      required={required}
-      namespace={namespace}
-      name={name}
-    />
-  );
-};
 // This form is done a little odd since it is used in both its own page and as
 // a sub form inside the attach storage page.
 export class CreatePVCForm extends React.Component<CreatePVCFormProps, CreatePVCFormState> {
   state = {
     storageClass: '',
+    storageClassAccessMode: '',
     pvcName: '',
     accessMode: 'ReadWriteOnce',
     requestSizeValue: '',
@@ -70,7 +53,6 @@ export class CreatePVCForm extends React.Component<CreatePVCFormProps, CreatePVC
     },
   };
 
-
   handleChange: React.ReactEventHandler<HTMLInputElement> = event => {
     // this handles pvcName, accessMode, size
     const { name, value } = event.currentTarget;
@@ -82,16 +64,12 @@ export class CreatePVCForm extends React.Component<CreatePVCFormProps, CreatePVC
   };
 
   handleStorageClass = storageClass => {
-    this.setState({ storageClass }, this.onChange);
+    this.setState({ storageClass: _.get(storageClass, 'metadata.name'), storageClassAccessMode: _.get(storageClass, ['metadata', 'annotations', 'storage.alpha.openshift.io/access-mode'])}, this.onChange);
   };
 
   handleRequestSizeInputChange = obj => {
     this.setState({ requestSizeValue: obj.value, requestSizeUnit: obj.unit }, this.onChange);
   }
-
-  clearStorageClass = () => {
-    this.setState({ storageClass: '' }, this.onChange);
-  };
 
   handleUseSelector: React.ReactEventHandler<HTMLInputElement> = (event) => {
     this.setState({ useSelector: event.currentTarget.checked }, this.onChange);
@@ -116,7 +94,7 @@ export class CreatePVCForm extends React.Component<CreatePVCFormProps, CreatePVC
 
   updatePVC = () => {
     const { namespace } = this.props;
-    const { pvcName, accessMode, requestSizeValue, requestSizeUnit, storageClass } = this.state;
+    const { pvcName, accessMode, requestSizeValue, requestSizeUnit, storageClass, storageClassAccessMode } = this.state;
     const obj: K8sResourceKind = {
       apiVersion: 'v1',
       kind: 'PersistentVolumeClaim',
@@ -125,7 +103,7 @@ export class CreatePVCForm extends React.Component<CreatePVCFormProps, CreatePVC
         namespace,
       },
       spec: {
-        accessModes: [accessMode],
+        accessModes: storageClassAccessMode ? [storageClassAccessMode] : [accessMode],
         resources: {
           requests: {
             storage: `${requestSizeValue}${requestSizeUnit}`,
@@ -148,30 +126,21 @@ export class CreatePVCForm extends React.Component<CreatePVCFormProps, CreatePVC
   };
 
   render() {
-    const { dropdownUnits, useSelector, nameValuePairs, requestSizeUnit, requestSizeValue, storageClass } = this.state;
-    const { namespace } = this.props;
+    const { accessMode, dropdownUnits, useSelector, nameValuePairs, requestSizeUnit, requestSizeValue, storageClassAccessMode } = this.state;
+
     return (
       <div>
-        <label className="control-label" htmlFor="storageclass-dropdown">
-          Storage Class
-        </label>
         <div className="form-group">
           <StorageClassDropdown
             onChange={this.handleStorageClass}
             id="storageclass-dropdown"
-            selectedKey={storageClass}
-            namespace={namespace}
+            describedBy="storageclass-dropdown-help"
             required={false}
             name="storageClass"
-            placeholder="Select storage class"
           />
-          {storageClass && <button className="btn btn-link" type="button" onClick={this.clearStorageClass}>Clear Selection</button>}
-          <p className="help-block" id="storageclass-dropdown-help">
-            Optional storage class for the new claim.
-          </p>
         </div>
         <label className="control-label co-required" htmlFor="pvc-name">
-          Name
+          Persistent Volume Claim Name
         </label>
         <div className="form-group">
           <input
@@ -194,13 +163,15 @@ export class CreatePVCForm extends React.Component<CreatePVCFormProps, CreatePVC
         </label>
         <div className="form-group">
           {this.state.accessModeRadios.map(radio => {
-            const checked = radio.value === this.state.accessMode;
+            const disabled = !!storageClassAccessMode;
+            const checked = !disabled ? radio.value === accessMode : radio.value === storageClassAccessMode;
             return (
               <RadioInput
                 {...radio}
                 key={radio.value}
                 onChange={this.handleChange}
                 inline={true}
+                disabled={disabled}
                 checked={checked}
                 aria-describedby="access-mode-help"
                 name="accessMode"
@@ -208,7 +179,7 @@ export class CreatePVCForm extends React.Component<CreatePVCFormProps, CreatePVC
             );
           })}
           <p className="help-block" id="access-mode-help">
-            Permissions to the mounted drive.
+            {storageClassAccessMode ? 'Access mode is set by storage class and cannot be changed.' : 'Permissions to the mounted drive.'}
           </p>
         </div>
         <label className="control-label co-required" htmlFor="request-size-input">
@@ -258,7 +229,7 @@ class CreatePVCPage extends React.Component<CreatePVCPageProps, CreatePVCPageSta
   state = {
     error: '',
     inProgress: false,
-    title: 'Create Storage',
+    title: 'Create Persistent Volume Claim',
     pvcObj: null,
   };
 
@@ -331,6 +302,7 @@ export type CreatePVCFormProps = {
 
 export type CreatePVCFormState = {
   storageClass: string;
+  storageClassAccessMode: string;
   pvcName: string;
   accessMode: string;
   requestSizeValue: string;

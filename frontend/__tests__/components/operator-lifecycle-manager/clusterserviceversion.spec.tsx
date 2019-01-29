@@ -8,8 +8,8 @@ import * as _ from 'lodash-es';
 import { ClusterServiceVersionsDetailsPage, ClusterServiceVersionsDetailsPageProps, ClusterServiceVersionDetails, ClusterServiceVersionDetailsProps, ClusterServiceVersionsPage, ClusterServiceVersionsPageProps, ClusterServiceVersionList, ClusterServiceVersionHeader, ClusterServiceVersionRow, ClusterServiceVersionRowProps, CRDCard, CRDCardRow } from '../../../public/components/operator-lifecycle-manager/clusterserviceversion';
 import { ClusterServiceVersionKind, ClusterServiceVersionLogo, ClusterServiceVersionLogoProps, referenceForProvidedAPI, CSVConditionReason } from '../../../public/components/operator-lifecycle-manager';
 import { DetailsPage, ListPage, ListHeader, ColHead, List, ListInnerProps } from '../../../public/components/factory';
-import { testClusterServiceVersion } from '../../../__mocks__/k8sResourcesMocks';
-import { Timestamp, OverflowLink, MsgBox, ResourceLink, ResourceKebab, ErrorBoundary, LoadingBox, ScrollToTopOnMount, SectionHeading } from '../../../public/components/utils';
+import { testClusterServiceVersion, testModel } from '../../../__mocks__/k8sResourcesMocks';
+import { Timestamp, MsgBox, ResourceLink, ResourceKebab, ErrorBoundary, LoadingBox, ScrollToTopOnMount, SectionHeading } from '../../../public/components/utils';
 import { referenceForModel } from '../../../public/module/k8s';
 import { ClusterServiceVersionModel } from '../../../public/models';
 
@@ -181,7 +181,7 @@ describe(CRDCard.displayName, () => {
   const crd = testClusterServiceVersion.spec.customresourcedefinitions.owned[0];
 
   it('renders a card with title, body, and footer', () => {
-    const wrapper = shallow(<CRDCard crd={crd} csv={testClusterServiceVersion} />);
+    const wrapper = shallow(<CRDCard.WrappedComponent crd={crd} csv={testClusterServiceVersion} kindObj={testModel} />);
 
     expect(wrapper.find('.co-crd-card__title').exists()).toBe(true);
     expect(wrapper.find('.co-crd-card__body').exists()).toBe(true);
@@ -189,9 +189,16 @@ describe(CRDCard.displayName, () => {
   });
 
   it('renders a link to create a new instance', () => {
-    const wrapper = shallow(<CRDCard crd={crd} csv={testClusterServiceVersion} />);
+    const kindObj = _.cloneDeep({...testModel, verbs: ['create']});
+    const wrapper = shallow(<CRDCard.WrappedComponent crd={crd} csv={testClusterServiceVersion} kindObj={kindObj} />);
 
     expect(wrapper.find('.co-crd-card__footer').find(Link).props().to).toEqual(`/k8s/ns/${testClusterServiceVersion.metadata.namespace}/${ClusterServiceVersionModel.plural}/${testClusterServiceVersion.metadata.name}/${referenceForProvidedAPI(crd)}/new`);
+  });
+
+  it('does not render link to create new instance if "create" not included in verbs for the model', () => {
+    const wrapper = shallow(<CRDCard.WrappedComponent crd={crd} csv={testClusterServiceVersion} kindObj={testModel} />);
+
+    expect(wrapper.find('.co-crd-card__footer').find(Link).exists()).toBe(false);
   });
 });
 
@@ -226,8 +233,8 @@ describe(ClusterServiceVersionDetails.displayName, () => {
 
     testClusterServiceVersion.spec.maintainers.forEach((maintainer, i) => {
       expect(maintainers.at(i).text()).toContain(maintainer.name);
-      expect(maintainers.at(i).find(OverflowLink).props().value).toEqual(maintainer.email);
-      expect(maintainers.at(i).find(OverflowLink).props().href).toEqual(`mailto:${maintainer.email}`);
+      expect(maintainers.at(i).find('.co-break-all').text()).toEqual(maintainer.email);
+      expect(maintainers.at(i).find('.co-break-all').props().href).toEqual(`mailto:${maintainer.email}`);
     });
   });
 

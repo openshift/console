@@ -86,24 +86,25 @@
   version "0.8.2"
   resolved "https://registry.yarnpkg.com/@emotion/utils/-/utils-0.8.2.tgz#576ff7fb1230185b619a75d258cbc98f0867a8dc"
 
-"@patternfly/patternfly-next@^1.0.101":
-  version "1.0.101"
-  resolved "https://registry.yarnpkg.com/@patternfly/patternfly-next/-/patternfly-next-1.0.101.tgz#1017ca79437811d48540f0a5ab0afb997db4f074"
+"@patternfly/patternfly-next@^1.0.109":
+  version "1.0.109"
+  resolved "https://registry.yarnpkg.com/@patternfly/patternfly-next/-/patternfly-next-1.0.109.tgz#5c1a8ca29ca48d030324d3d588af9954e2f36cea"
 
-"@patternfly/react-core@^1.40.0":
-  version "1.40.0"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-core/-/react-core-1.40.0.tgz#1fbbd395ba41e7bd0adc48ec62309adbca1eb30e"
+"@patternfly/react-core@^1.43.5":
+  version "1.43.5"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-core/-/react-core-1.43.5.tgz#b66e8915785aecde621663b1c719cf965d9d5bd4"
   dependencies:
-    "@patternfly/react-icons" "^2.9.3"
+    "@patternfly/react-icons" "^2.9.5"
     "@patternfly/react-styles" "^2.3.0"
+    "@tippy.js/react" "^1.1.1"
     exenv "^1.2.2"
     focus-trap-react "^4.0.1"
   optionalDependencies:
     "@patternfly/react-tokens" "^1.0.0"
 
-"@patternfly/react-icons@^2.9.3":
-  version "2.9.3"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-icons/-/react-icons-2.9.3.tgz#39f29c4084daeb681ceaea6ad530baae83dd62e2"
+"@patternfly/react-icons@^2.9.5":
+  version "2.9.5"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-icons/-/react-icons-2.9.5.tgz#abccb6b151f965cb1370a1e0210bc650e202ce97"
 
 "@patternfly/react-styles@^2.3.0":
   version "2.3.0"
@@ -137,6 +138,13 @@
 "@sindresorhus/is@^0.7.0":
   version "0.7.0"
   resolved "https://registry.yarnpkg.com/@sindresorhus/is/-/is-0.7.0.tgz#9a06f4f137ee84d7df0460c1fdb1135ffa6c50fd"
+
+"@tippy.js/react@^1.1.1":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@tippy.js/react/-/react-1.1.1.tgz#91476726529e31d4c9f9074d995d0fa31f3b6e2d"
+  dependencies:
+    prop-types "^15.6.2"
+    tippy.js "^3.2.0"
 
 "@types/c3@^0.6.0":
   version "0.6.2"
@@ -2011,6 +2019,10 @@ bootstrap-sass@^3.3.7:
   version "3.3.7"
   resolved "https://registry.yarnpkg.com/bootstrap-sass/-/bootstrap-sass-3.3.7.tgz#6596c7ab40f6637393323ab0bc80d064fc630498"
 
+bootstrap-sass@^3.4.0:
+  version "3.4.0"
+  resolved "https://registry.yarnpkg.com/bootstrap-sass/-/bootstrap-sass-3.4.0.tgz#b1c330a56782347f626d31d497fa4aea16b3f99b"
+
 bootstrap-select@1.12.2:
   version "1.12.2"
   resolved "https://registry.yarnpkg.com/bootstrap-select/-/bootstrap-select-1.12.2.tgz#58d095b3fd584b31443866fbe39b6fdd4e4e12a4"
@@ -2036,6 +2048,10 @@ bootstrap-touchspin@~3.1.1:
 bootstrap@3.3.x, bootstrap@^3.3, bootstrap@~3.3.7:
   version "3.3.7"
   resolved "https://registry.yarnpkg.com/bootstrap/-/bootstrap-3.3.7.tgz#5a389394549f23330875a3b150656574f8a9eb71"
+
+bootstrap@~3.4.0:
+  version "3.4.0"
+  resolved "https://registry.yarnpkg.com/bootstrap/-/bootstrap-3.4.0.tgz#f8d77540dd3062283d2ae7687e21c1e691961640"
 
 bops@0.0.6:
   version "0.0.6"
@@ -8772,29 +8788,6 @@ patternfly-react-extensions@2.14.1:
     react-bootstrap "^0.32.1"
     react-virtualized "9.x"
 
-patternfly-react@^2.25.5:
-  version "2.25.5"
-  resolved "https://registry.yarnpkg.com/patternfly-react/-/patternfly-react-2.25.5.tgz#05d7df2680113807e3069fdcf3e21c8c82a53113"
-  dependencies:
-    bootstrap-slider-without-jquery "^10.0.0"
-    breakjs "^1.0.0"
-    classnames "^2.2.5"
-    css-element-queries "^1.0.1"
-    patternfly "^3.58.0"
-    react-bootstrap "^0.32.1"
-    react-bootstrap-switch "^15.5.3"
-    react-bootstrap-typeahead "^3.1.3"
-    react-c3js "^0.1.20"
-    react-click-outside "^3.0.1"
-    react-collapse "^4.0.3"
-    react-fontawesome "^1.6.1"
-    react-motion "^0.5.2"
-    reactabular-table "^8.14.0"
-    recompose "^0.26.0"
-  optionalDependencies:
-    sortabular "^1.5.1"
-    table-resolver "^3.2.0"
-
 patternfly-react@^2.28.1:
   version "2.28.2"
   resolved "https://registry.yarnpkg.com/patternfly-react/-/patternfly-react-2.28.2.tgz#aca060da08bfe5dae1643ddbe5f2aaa24f4949df"
@@ -8820,9 +8813,34 @@ patternfly-react@^2.28.1:
     sortabular "^1.5.1"
     table-resolver "^3.2.0"
 
-patternfly@^3.54.8:
-  version "3.54.8"
-  resolved "https://registry.yarnpkg.com/patternfly/-/patternfly-3.54.8.tgz#fd6c69714dc460575d2534c9f29017a58b442a83"
+patternfly-react@^2.29.1:
+  version "2.29.1"
+  resolved "https://registry.yarnpkg.com/patternfly-react/-/patternfly-react-2.29.1.tgz#3def482e4ca48b0c0b0ccad13b32a6eb49d4e9c4"
+  dependencies:
+    bootstrap-slider-without-jquery "^10.0.0"
+    breakjs "^1.0.0"
+    classnames "^2.2.5"
+    css-element-queries "^1.0.1"
+    lodash "^4.17.11"
+    patternfly "^3.58.0"
+    react-bootstrap "^0.32.1"
+    react-bootstrap-switch "^15.5.3"
+    react-bootstrap-typeahead "^3.1.3"
+    react-c3js "^0.1.20"
+    react-click-outside "^3.0.1"
+    react-collapse "^4.0.3"
+    react-fontawesome "^1.6.1"
+    react-motion "^0.5.2"
+    reactabular-table "^8.14.0"
+    recompose "^0.26.0"
+    uuid "^3.3.2"
+  optionalDependencies:
+    sortabular "^1.5.1"
+    table-resolver "^3.2.0"
+
+patternfly@^3.58.0:
+  version "3.58.0"
+  resolved "https://registry.yarnpkg.com/patternfly/-/patternfly-3.58.0.tgz#c94516a9fbf2b645b63a53e58fcf39c45bf66a8b"
   dependencies:
     bootstrap "~3.3.7"
     font-awesome "^4.7.0"
@@ -8851,17 +8869,17 @@ patternfly@^3.54.8:
     patternfly-bootstrap-combobox "~1.1.7"
     patternfly-bootstrap-treeview "~2.1.0"
 
-patternfly@^3.58.0:
-  version "3.58.0"
-  resolved "https://registry.yarnpkg.com/patternfly/-/patternfly-3.58.0.tgz#c94516a9fbf2b645b63a53e58fcf39c45bf66a8b"
+patternfly@^3.59.0:
+  version "3.59.1"
+  resolved "https://registry.yarnpkg.com/patternfly/-/patternfly-3.59.1.tgz#4adea89223e7386551bc9560ad5bed99e37df904"
   dependencies:
-    bootstrap "~3.3.7"
+    bootstrap "~3.4.0"
     font-awesome "^4.7.0"
     jquery "~3.2.1"
   optionalDependencies:
     "@types/c3" "^0.6.0"
     bootstrap-datepicker "^1.7.1"
-    bootstrap-sass "^3.3.7"
+    bootstrap-sass "^3.4.0"
     bootstrap-select "1.12.2"
     bootstrap-slider "^9.9.0"
     bootstrap-switch "~3.3.4"
@@ -9071,6 +9089,10 @@ polytope-closest-point@^1.0.0:
 popper.js@^1.14.1:
   version "1.14.4"
   resolved "https://registry.yarnpkg.com/popper.js/-/popper.js-1.14.4.tgz#8eec1d8ff02a5a3a152dd43414a15c7b79fd69b6"
+
+popper.js@^1.14.6:
+  version "1.14.6"
+  resolved "https://registry.yarnpkg.com/popper.js/-/popper.js-1.14.6.tgz#ab20dd4edf9288b8b3b6531c47c361107b60b4b0"
 
 posix-character-classes@^0.1.0:
   version "0.1.1"
@@ -10744,9 +10766,9 @@ scoped-regex@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/scoped-regex/-/scoped-regex-1.0.0.tgz#a346bb1acd4207ae70bd7c0c7ca9e566b6baddb8"
 
-screenfull@^3.3.2:
-  version "3.3.2"
-  resolved "https://registry.yarnpkg.com/screenfull/-/screenfull-3.3.2.tgz#a6adf3b3f5556da812725385880600f5b39fbf25"
+screenfull@4.x:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/screenfull/-/screenfull-4.0.0.tgz#86f3c26a2e516c8143884d8af16d07f0cb653394"
 
 scss-tokenizer@^0.2.3:
   version "0.2.3"
@@ -11682,6 +11704,12 @@ tiny-sdf@^1.0.2:
 tinycolor2@^1.3.0:
   version "1.4.1"
   resolved "https://registry.yarnpkg.com/tinycolor2/-/tinycolor2-1.4.1.tgz#f4fad333447bc0b07d4dc8e9209d8f39a8ac77e8"
+
+tippy.js@^3.2.0:
+  version "3.3.0"
+  resolved "https://registry.yarnpkg.com/tippy.js/-/tippy.js-3.3.0.tgz#90d4f90be9c80fdc0d0025f49378e3d9f60508d3"
+  dependencies:
+    popper.js "^1.14.6"
 
 tmp@0.0.30:
   version "0.0.30"
@@ -12655,9 +12683,9 @@ xtend@~2.1.1:
   dependencies:
     object-keys "~0.4.0"
 
-xterm@^3.3.0:
-  version "3.3.0"
-  resolved "https://registry.yarnpkg.com/xterm/-/xterm-3.3.0.tgz#b09a19fc2cd5decd21112e5c9dab0b61991f6cf3"
+xterm@~3.8.1:
+  version "3.8.1"
+  resolved "https://registry.yarnpkg.com/xterm/-/xterm-3.8.1.tgz#0beabaccdc23bd3ab2397c5129ed9b06b0abb167"
 
 y18n@^3.2.1:
   version "3.2.1"

@@ -6,7 +6,7 @@ import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 
 import { LoadingBox, LoadError } from './utils/status-box';
-import { Dropdown, Firehose, history, MsgBox, NsDropdown, ResourceName } from './utils';
+import { Dropdown, Firehose, history, MsgBox, NsDropdown, ResourceName, ExternalLink } from './utils';
 import { BuildConfigModel, DeploymentConfigModel, ImageStreamModel, ImageStreamTagModel, RouteModel, ServiceModel } from '../models';
 import { ContainerPort, k8sCreate, k8sGet, K8sResourceKind } from '../module/k8s';
 import { ImageStreamIcon } from './catalog/catalog-item-icon';
@@ -79,7 +79,7 @@ const ImageStreamInfo: React.SFC<ImageStreamInfoProps> = ({imageStream, tag}) =>
       </div>
     </div>
     {description && <p className="co-catalog-item-details__description">{description}</p>}
-    {sampleRepo && <p>Sample repository: <a href={sampleRepo} target="_blank" rel="noopener noreferrer">{sampleRepo}</a></p>}
+    {sampleRepo && <p>Sample repository: <ExternalLink href={sampleRepo} text={sampleRepo} /></p>}
     <SourceToImageResourceDetails />
   </div>;
 };

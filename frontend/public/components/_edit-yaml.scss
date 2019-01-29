@@ -1,20 +1,5 @@
-.yaml-editor__header {
-  border-bottom: 1px solid #ddd;
-  font-size: 16px;
-  padding: 10px 20px;
-}
-
-.yaml-editor__subheader {
-  font-size: $font-size-base;
-}
-
 .yaml-editor {
   position: relative;
-}
-
-.yaml-editor__flexbox {
-  display: flex;
-  flex-direction: column;
 }
 
 .yaml-editor__acebox {
@@ -31,4 +16,23 @@
     padding-left: $grid-gutter-width;
     padding-right: $grid-gutter-width;
   }
+}
+
+.yaml-editor__flexbox {
+  display: flex;
+  flex-direction: column;
+}
+
+.yaml-editor__header {
+  border-bottom: 1px solid #ddd;
+  padding: 10px 15px;
+  @media(min-width: $screen-sm-min) {
+    padding: 10px 31px; // left alignment with namespace selector text
+  }
+}
+
+.yaml-editor__header-text {
+  font-size: 20px;
+  font-weight: 300;
+  margin: 0;
 }

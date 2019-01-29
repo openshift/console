@@ -1,4 +1,5 @@
 // Use this file to override styles from 3rd party dependencies
+$pf-4-nav-bar-height: 76px; // Height of the PatternFly 4 masthead
 
 .text-secondary {
   color: $color-text-secondary;
@@ -173,10 +174,6 @@ tags-input .autocomplete .suggestion-item em {
   box-shadow: none;
   min-width: 0; // enable text-overflow: ellipsis
   padding-top: 0;
-
-  .overview-view-selector {
-    padding: 0 0 0 15px;
-  }
 }
 
 @media (max-width: $screen-md-max) {
@@ -188,6 +185,9 @@ tags-input .autocomplete .suggestion-item em {
 
 .table {
   margin-bottom: 0;
+  &--layout-fixed {
+    table-layout: fixed;
+  }
   td {
     vertical-align: middle !important;
   }
@@ -218,13 +218,27 @@ tags-input .autocomplete .suggestion-item em {
   }
 }
 
+.modal.right-side-modal-pf .modal-dialog {
+  margin-top: $pf-4-nav-bar-height; // since PatternFly 4's masthead is taller than PatternFly 3's
+  .modal-content {
+    height: calc(100vh - #{$pf-4-nav-bar-height});
+  }
+}
+
 .modal-title {
   font-size: $font-size-base;
 }
 
 // PatternFly 4 overrides
 
-.pf-l-page {
+.pf-c-dropdown__menu {
+  list-style: none;
+}
+
+.pf-c-page {
+  // TEMP fix until https://github.com/patternfly/patternfly-next/issues/1174 is fixed upstream
+  height: 100% !important;
+
   &__header {
     background-color: var(--pf-global--BackgroundColor--dark-200);
     background-image: url("../imgs/pfbg_2000.jpg");
@@ -234,26 +248,27 @@ tags-input .autocomplete .suggestion-item em {
 
   &__main {
     // `z-index: auto` is required for fullscreen terminal
-    --pf-l-page__main--ZIndex: auto;
+    --pf-c-page__main--ZIndex: auto;
   }
 
-  // `.pf-l-page` specificity required
-  .pf-l-page__main-section {
-    --pf-l-page__main-section--Padding: 0;
+  // `.pf-c-page` specificity required
+  .pf-c-page__main-section {
+    --pf-c-page__main-section--Padding: 0;
 
     @media screen and (min-width: $grid-float-breakpoint) {
-      --pf-l-page__main-section--Padding: 0;
+      --pf-c-page__main-section--Padding: 0;
     }
   }
 }
 
-.pf-l-page__sidebar {
-  --pf-l-page__sidebar--BackgroundColor: #{$color-pf-black-900};
-  --pf-l-page__sidebar--PaddingBottom: 0;
-  --pf-l-page__sidebar--PaddingTop: 0;
+.pf-c-page__sidebar {
+  --pf-c-page__sidebar--BackgroundColor: #{$color-pf-black-900};
+  --pf-c-page__sidebar--PaddingBottom: 0;
+  --pf-c-page__sidebar--PaddingTop: 0;
+  position: relative; // fix z-index bug in Edge
 
   @media screen and (min-width: $grid-float-breakpoint) {
-    --pf-l-page__sidebar--BoxShadow: none;
+    --pf-c-page__sidebar--BoxShadow: none;
   }
 
   .pf-c-nav {
@@ -306,6 +321,7 @@ tags-input .autocomplete .suggestion-item em {
   }
 
   .pf-c-nav__list {
+    list-style: none; // turn off list-styles to fix bug in Edge
     > .pf-c-nav__item {
       border-bottom: 1px solid #{$color-pf-black};
       font-size: 14px;

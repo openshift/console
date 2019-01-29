@@ -2,11 +2,12 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as PropTypes from 'prop-types';
 import { plot, Plots } from 'plotly.js/lib/core';
+import * as classNames from 'classnames';
 
 import { coFetchJSON } from '../../co-fetch';
 import { SafetyFirst } from '../safety-first';
 
-import { prometheusBasePath } from './index';
+import { prometheusBasePath, prometheusTenancyBasePath } from './index';
 import { MonitoringRoutes } from '../../monitoring';
 
 export class BaseGraph extends SafetyFirst {
@@ -43,13 +44,14 @@ export class BaseGraph extends SafetyFirst {
       }];
     }
 
-    const basePath = this.props.basePath || prometheusBasePath;
+    const basePath = this.props.basePath || (this.props.namespace ? prometheusTenancyBasePath : prometheusBasePath);
     const pollInterval = timeSpan / 120 || 15000;
     const stepSize = pollInterval / 1000;
     const promises = queries.map(q => {
+      const nsParam = this.props.namespace ? `&namespace=${encodeURIComponent(this.props.namespace)}` : '';
       const url = this.timeSpan
-        ? `${basePath}/api/v1/query_range?query=${encodeURIComponent(q.query)}&start=${start / 1000}&end=${end / 1000}&step=${stepSize}`
-        : `${basePath}/api/v1/query?query=${encodeURIComponent(q.query)}`;
+        ? `${basePath}/api/v1/query_range?query=${encodeURIComponent(q.query)}&start=${start / 1000}&end=${end / 1000}&step=${stepSize}${nsParam}`
+        : `${basePath}/api/v1/query?query=${encodeURIComponent(q.query)}${nsParam}`;
       return coFetchJSON(url);
     });
     Promise.all(promises)
@@ -127,9 +129,10 @@ export class BaseGraph extends SafetyFirst {
   }
 
   render() {
+    const { title, className } = this.props;
     const url = this.props.query ? this.prometheusURL() : null;
-    const graph = <div className="graph-wrapper" style={this.style}>
-      <h5 className="graph-title">{this.props.title}</h5>
+    const graph = <div className={classNames('graph-wrapper', className)} style={this.style}>
+      <h5 className="graph-title">{title}</h5>
       <div ref={this.setNode} style={{width: '100%'}} />
     </div>;
 
@@ -140,6 +143,7 @@ export class BaseGraph extends SafetyFirst {
 }
 
 BaseGraph.propTypes = {
+  namespace: PropTypes.string,
   query: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.arrayOf(
@@ -149,6 +153,7 @@ BaseGraph.propTypes = {
       })),
   ]),
   percent: PropTypes.number, // for gauge charts
+  className: PropTypes.string,
   title: PropTypes.string.isRequired,
   timeSpan: PropTypes.number,
   basePath: PropTypes.string,

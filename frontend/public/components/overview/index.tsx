@@ -12,10 +12,11 @@ import { Toolbar, EmptyState } from 'patternfly-react';
 
 import { coFetchJSON } from '../../co-fetch';
 import { getBuildNumber } from '../../module/k8s/builds';
-import { prometheusBasePath } from '../graphs';
+import { prometheusTenancyBasePath } from '../graphs';
 import { TextFilter } from '../factory';
 import { UIActions, formatNamespacedRouteForResource } from '../../ui/ui-actions';
 import {
+  apiVersionForModel,
   K8sResourceKind,
   LabelSelector,
 } from '../../module/k8s';
@@ -27,6 +28,7 @@ import {
   DaemonSetModel,
   DeploymentModel,
   DeploymentConfigModel,
+  PodModel,
   ProjectModel,
   ReplicationControllerModel,
   ReplicaSetModel,
@@ -40,11 +42,13 @@ import {
   Firehose,
   StatusBox,
   EmptyBox,
+  resourceObjPath,
 } from '../utils';
 
 import { overviewMenuActions, OverviewNamespaceDashboard } from './namespace-overview';
 import { ProjectOverview } from './project-overview';
 import { ResourceOverviewPage } from './resource-overview-page';
+import { PodStatus } from '../pod';
 
 enum View {
   Resources = 'resources',
@@ -149,7 +153,7 @@ const podAlertKey = (alert: any, pod: K8sResourceKind, containerName: string = '
   return `${alert}--${id}--${containerName}`;
 };
 
-const getPodAlerts = (pod: K8sResourceKind): any => {
+const getPodAlerts = (pod: K8sResourceKind): OverviewItemAlerts => {
   const alerts = {};
   const statuses = [
     ..._.get(pod, 'status.initContainerStatuses', []),
@@ -179,12 +183,12 @@ const getPodAlerts = (pod: K8sResourceKind): any => {
   return alerts;
 };
 
-const combinePodAlerts = (pods: K8sResourceKind[]): any => _.reduce(pods, (acc, pod) => ({
+const combinePodAlerts = (pods: K8sResourceKind[]): OverviewItemAlerts => _.reduce(pods, (acc, pod) => ({
   ...acc,
   ...getPodAlerts(pod),
 }), {});
 
-const getReplicationControllerAlerts = (rc: K8sResourceKind): any => {
+const getReplicationControllerAlerts = (rc: K8sResourceKind): OverviewItemAlerts => {
   const phase = getDeploymentPhase(rc);
   const version = getDeploymentConfigVersion(rc);
   const label = _.isFinite(version) ? `#${version}` : rc.metadata.name;
@@ -207,6 +211,18 @@ const getReplicationControllerAlerts = (rc: K8sResourceKind): any => {
     default:
       return {};
   }
+};
+
+const getResourcePausedAlert = (resource): OverviewItemAlerts => {
+  if (!resource.spec.paused) {
+    return {};
+  }
+  return {
+    [`${resource.metadata.uid}--Paused`]: {
+      severity: 'info',
+      message: `${resource.metadata.name} is paused.`,
+    },
+  };
 };
 
 const getOwnedResources = ({metadata:{uid}}: K8sResourceKind, resources: K8sResourceKind[]): K8sResourceKind[] => {
@@ -280,6 +296,13 @@ const sortBuilds = (builds: K8sResourceKind[]): K8sResourceKind[] => {
 const reservedNSPrefixes = ['openshift-', 'kube-', 'kubernetes-'];
 const isReservedNamespace = (ns: string) => ns === 'default' || ns === 'openshift' || reservedNSPrefixes.some(prefix => _.startsWith(ns, prefix));
 
+const OverviewItemReadiness: React.SFC<OverviewItemReadinessProps> = ({desired = 0, ready = 0, resource}) => {
+  const href = `${resourceObjPath(resource, resource.kind)}/pods`;
+  return <Link to={href}>
+    {ready} of {desired} pods
+  </Link>;
+};
+
 const overviewEmptyStateToProps = ({UI}) => ({
   activeNamespace: UI.get('activeNamespace'),
   resources: UI.getIn(['overview', 'resources']),
@@ -328,65 +351,65 @@ const OverviewHeading_: React.SFC<OverviewHeadingProps> = ({disabled, firstLabel
       title &&
       <h1 className="co-m-pane__heading co-m-pane__heading--overview">
         <div className="co-m-pane__name co-m-pane__name--overview">{title}</div>
-        <div className="toolbar-pf">
-          <div className="form-group toolbar-pf-view-selector overview-view-selector">
-            <button
-              type="button"
-              className={classnames('btn btn-link', { active: selectedView === View.Resources })}
-              aria-label="Resources"
-              title="Resources"
-              disabled={disabled}
-              onClick={() => selectView(View.Resources)}
-            >
-              <i className="fa fa-list-ul" aria-hidden="true" />
-            </button>
-            <button
-              type="button"
-              className={classnames('btn btn-link', { active: selectedView === View.Dashboard })}
-              aria-label="Dashboard"
-              title="Dashboard"
-              disabled={disabled}
-              onClick={() => selectView(View.Dashboard)}
-            >
-              <i className="fa fa-dashboard" aria-hidden="true" />
-            </button>
-          </div>
-        </div>
       </h1>
     }
-    <Toolbar className="overview-toolbar">
-      <Toolbar.RightContent>
-        {selectedView === View.Resources && <React.Fragment>
-          <div className="form-group overview-toolbar__form-group">
-            <Dropdown
-              className="overview-toolbar__dropdown"
-              menuClassName="dropdown-menu--text-wrap"
-              disabled={disabled}
-              items={groupOptions}
-              onChange={handleGroupChange}
-              titlePrefix="Group by"
-              title={groupOptions[selectedGroup]}
-              spacerBefore={new Set([firstLabel])}
-              headerBefore={{[firstLabel]: 'Label'}}
-            />
-          </div>
-          <div className="form-group overview-toolbar__form-group">
-            <div className="overview-toolbar__text-filter">
-              <TextFilter
-                autoFocus={!disabled}
-                defaultValue={''}
-                disabled={disabled}
-                label="Resources by name"
-                onChange={handleFilterChange}
+    {!_.isEmpty(project) && <div className={classnames('overview-view-selector', {'selected-view__resources': selectedView === View.Resources })}>
+      <div className="form-group btn-group">
+        <button
+          type="button"
+          className={classnames('btn btn-default', { 'btn-primary': selectedView === View.Resources })}
+          aria-label="Resources"
+          title="Resources"
+          disabled={disabled}
+          onClick={() => selectView(View.Resources)}
+        >
+          <i className="fa fa-list-ul" aria-hidden="true" />
+          Resources
+        </button>
+        <button
+          type="button"
+          className={classnames('btn btn-default', { 'btn-primary': selectedView === View.Dashboard })}
+          aria-label="Dashboard"
+          title="Dashboard"
+          disabled={disabled}
+          onClick={() => selectView(View.Dashboard)}
+        >
+          <i className="fa fa-dashboard" aria-hidden="true" />
+          Dashboard
+        </button>
+      </div>
+      <Toolbar className="overview-toolbar" preventSubmit>
+        <Toolbar.RightContent>
+          {selectedView === View.Resources && <React.Fragment>
+            <div className="form-group overview-toolbar__form-group">
+              <Dropdown
+                className="overview-toolbar__dropdown"
+                menuClassName="dropdown-menu--text-wrap"
+                items={groupOptions}
+                onChange={handleGroupChange}
+                titlePrefix="Group by"
+                title={groupOptions[selectedGroup]}
+                spacerBefore={new Set([firstLabel])}
+                headerBefore={{[firstLabel]: 'Label'}}
               />
             </div>
-          </div>
-        </React.Fragment>}
-        {selectedView === View.Dashboard && !_.isEmpty(project) && <div className="form-group">
-          <ActionsMenu actions={overviewMenuActions.map((a: KebabAction) => a(ProjectModel, project))} />
-        </div>}
-      </Toolbar.RightContent>
-    </Toolbar>
+            <div className="form-group overview-toolbar__form-group">
+              <div className="overview-toolbar__text-filter">
+                <TextFilter
+                  autoFocus={!disabled}
+                  defaultValue={''}
+                  label="by name"
+                  onChange={handleFilterChange}
+                />
+              </div>
+            </div>
+          </React.Fragment>}
+          {selectedView === View.Dashboard && !_.isEmpty(project) && <div className="form-group">
+            <ActionsMenu actions={overviewMenuActions.map((a: KebabAction) => a(ProjectModel, project))} />
+          </div>}
+        </Toolbar.RightContent>
+      </Toolbar>
+    </div>}
   </div>
 );
 
@@ -443,7 +466,7 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
     } = this.props;
     const {filterValue, selectedGroup} = this.state;
 
-    if (!_.isEqual(namespace, prevProps.namespace)
+    if (namespace !== prevProps.namespace
       || loaded !== prevProps.loaded
       || !_.isEqual(buildConfigs, prevProps.buildConfigs)
       || !_.isEqual(builds, prevProps.builds)
@@ -472,11 +495,16 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
       // OverviewHeading doesn't keep the value in state.
       this.setState({ filterValue: '' });
     }
+
+    // Fetch new metrics when the namespace changes.
+    if (namespace !== prevProps.namespace) {
+      clearInterval(this.metricsInterval);
+      this.fetchMetrics();
+    }
   }
 
-  fetchMetrics(): void {
-    if (!prometheusBasePath) {
-      // Component is not mounted or proxy has not been set up.
+  fetchMetrics = (): void => {
+    if (!prometheusTenancyBasePath) {
       return;
     }
 
@@ -487,7 +515,7 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
     };
 
     const promises = _.map(queries, (query, name) => {
-      const url = `${prometheusBasePath}/api/v1/query?query=${encodeURIComponent(query)}`;
+      const url = `${prometheusTenancyBasePath}/api/v1/query?namespace=${namespace}&query=${encodeURIComponent(query)}`;
       return coFetchJSON(url).then(({ data: {result} }) => {
         const byPod: MetricValuesByPod = result.reduce((acc, { metric, value }) => {
           acc[metric.pod_name] = Number(value[1]);
@@ -562,7 +590,7 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
 
   getServicesForResource(resource: K8sResourceKind): K8sResourceKind[] {
     const {services} = this.props;
-    const template = _.get(resource, 'spec.template');
+    const template = resource.kind === 'Pod' ? resource : _.get(resource, 'spec.template');
     return _.filter(services.data, service => {
       const selector = new LabelSelector(_.get(service, 'spec.selector', {}));
       return selector.matches(template);
@@ -579,6 +607,7 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
     const revision = getDeploymentConfigVersion(rc);
     const obj = {
       ...rc,
+      apiVersion: apiVersionForModel(ReplicationControllerModel),
       kind: ReplicationControllerModel.kind,
     };
     return {
@@ -605,6 +634,7 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
   toReplicaSetItem(rs: K8sResourceKind): PodControllerOverviewItem {
     const obj = {
       ...rs,
+      apiVersion: apiVersionForModel(ReplicaSetModel),
       kind: ReplicaSetModel.kind,
     };
     const pods = this.getPodsForResource(rs);
@@ -675,21 +705,22 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
       const alerts = combinePodAlerts(pods);
       const obj = {
         ...ds,
+        apiVersion: apiVersionForModel(DaemonSetModel),
         kind: DaemonSetModel.kind,
       };
-      const readiness = {
-        desired: ds.status.desiredNumberScheduled || 0,
-        ready: ds.status.currentNumberScheduled || 0,
-      };
-
+      const status = <OverviewItemReadiness
+        desired={ds.status.desiredNumberScheduled}
+        ready={ds.status.currentNumberScheduled}
+        resource={obj}
+      />;
       return {
         alerts,
         buildConfigs,
         obj,
         pods,
-        readiness,
         routes,
         services,
+        status,
       };
     });
   }
@@ -697,6 +728,7 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
   createDeploymentItems(): OverviewItem[] {
     const {deployments} = this.props;
     return _.map(deployments.data, d => {
+      const alerts = getResourcePausedAlert(d);
       const replicaSets = this.getReplicaSetsForResource(d);
       const current = _.head(replicaSets);
       const previous = _.nth(replicaSets, 1);
@@ -706,22 +738,28 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
       const routes = this.getRoutesForServices(services);
       const obj = {
         ...d,
+        apiVersion: apiVersionForModel(DeploymentModel),
         kind: DeploymentModel.kind,
       };
-      const readiness = {
-        desired: d.spec.replicas || 0,
-        ready: d.status.replicas || 0,
-      };
+      // TODO: Show pod status for previous and next revisions.
+      const status = isRollingOut
+        ? <span className="text-muted">Rollout in progress...</span>
+        : <OverviewItemReadiness
+          desired={d.spec.replicas}
+          ready={d.status.replicas}
+          resource={current ? current.obj : obj}
+        />;
 
       return {
+        alerts,
         buildConfigs,
         current,
         isRollingOut,
         obj,
         previous,
-        readiness,
         routes,
         services,
+        status,
       };
     });
   }
@@ -729,6 +767,7 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
   createDeploymentConfigItems(): OverviewItem[] {
     const {deploymentConfigs} = this.props;
     return _.map(deploymentConfigs.data, dc => {
+      const alerts = getResourcePausedAlert(dc);
       const replicationControllers = this.getReplicationControllersForResource(dc);
       const current = _.head(replicationControllers);
       const previous = _.nth(replicationControllers, 1);
@@ -738,22 +777,28 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
       const routes = this.getRoutesForServices(services);
       const obj = {
         ...dc,
+        apiVersion: apiVersionForModel(DeploymentConfigModel),
         kind: DeploymentConfigModel.kind,
       };
-      const readiness = {
-        desired: dc.spec.replicas || 0,
-        ready: dc.status.replicas || 0,
-      };
 
+      // TODO: Show pod status for previous and next revisions.
+      const status = isRollingOut
+        ? <span className="text-muted">Rollout in progress...</span>
+        : <OverviewItemReadiness
+          desired={dc.spec.replicas}
+          ready={dc.status.replicas}
+          resource={current ? current.obj : obj}
+        />;
       return {
+        alerts,
         buildConfigs,
         current,
         isRollingOut,
         obj,
         previous,
-        readiness,
         routes,
         services,
+        status,
       };
     });
   }
@@ -762,28 +807,62 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
     const {statefulSets} = this.props;
     return _.map(statefulSets.data, (ss) => {
       const buildConfigs = this.getBuildConfigsForResource(ss);
-      const obj = {
-        ...ss,
-        kind: StatefulSetModel.kind,
-      };
-      const readiness = {
-        desired: ss.spec.replicas || 0,
-        ready: ss.status.replicas || 0,
-      };
       const pods = this.getPodsForResource(ss);
       const alerts = combinePodAlerts(pods);
       const services = this.getServicesForResource(ss);
       const routes = this.getRoutesForServices(services);
+      const obj = {
+        ...ss,
+        apiVersion: apiVersionForModel(StatefulSetModel),
+        kind: StatefulSetModel.kind,
+      };
+      const status = <OverviewItemReadiness
+        desired={ss.spec.replicas}
+        ready={ss.status.replicas}
+        resource={obj}
+      />;
+
       return {
         alerts,
         buildConfigs,
         obj,
         pods,
-        readiness,
         routes,
         services,
+        status,
       };
     });
+  }
+
+  createPodItems(): OverviewItem[] {
+    const {pods} = this.props;
+    return _.reduce(pods.data, (acc, pod) => {
+      const owners = _.get(pod, 'metadata.ownerReferences');
+      const phase = _.get(pod, 'status.phase');
+      if (!_.isEmpty(owners) || ['Succeeded', 'Failed'].includes(phase)) {
+        return acc;
+      }
+
+      const obj = {
+        ...pod,
+        apiVersion: apiVersionForModel(PodModel),
+        kind: PodModel.kind,
+      };
+      const alerts = getPodAlerts(pod);
+      const services = this.getServicesForResource(obj);
+      const routes = this.getRoutesForServices(services);
+      const status = <PodStatus pod={pod} />;
+      return [
+        ...acc,
+        {
+          alerts,
+          obj,
+          routes,
+          services,
+          status,
+        },
+      ];
+    }, []);
   }
 
   createOverviewData(): void {
@@ -798,6 +877,7 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
       ...this.createDeploymentItems(),
       ...this.createDeploymentConfigItems(),
       ...this.createStatefulSetItems(),
+      ...this.createPodItems(),
     ];
 
     updateResources(items);
@@ -1029,11 +1109,6 @@ export type PodControllerOverviewItem = {
   pods: K8sResourceKind[];
 };
 
-type OverviewItemReadiness = {
-  desired: string | number;
-  ready: string | number;
-};
-
 export type BuildConfigOverviewItem = K8sResourceKind & {
   builds: K8sResourceKind[];
 };
@@ -1046,9 +1121,9 @@ export type OverviewItem = {
   obj: K8sResourceKind;
   pods?: K8sResourceKind[];
   previous?: PodControllerOverviewItem;
-  readiness: OverviewItemReadiness;
   routes: K8sResourceKind[];
   services: K8sResourceKind[];
+  status?: React.ReactNode;
 };
 
 export type OverviewGroup = {
@@ -1063,6 +1138,12 @@ type MetricValuesByPod = {
 export type OverviewMetrics = {
   cpu?: MetricValuesByPod;
   memory?: MetricValuesByPod;
+};
+
+type OverviewItemReadinessProps = {
+  desired: number;
+  resource: K8sResourceKind;
+  ready: number;
 };
 
 type OverviewHeadingPropsFromState = {

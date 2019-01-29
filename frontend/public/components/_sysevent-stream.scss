@@ -1,7 +1,6 @@
 $color-dark-border: #ddd;
 
 .co-sysevent-stream {
-  overflow-y: hidden;
   padding: 60px 0 50px 0;
   position: relative;
 }
@@ -93,6 +92,7 @@ $color-dark-border: #ddd;
 
 .co-sysevent__resourcelink {
   display: block;
+  flex: 2 0 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -109,6 +109,11 @@ $color-dark-border: #ddd;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.co-sysevent__timestamp {
+  flex: 1 0 0;
+  justify-content: flex-end;
 }
 
 .co-sysevent__message {

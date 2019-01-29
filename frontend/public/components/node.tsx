@@ -3,14 +3,13 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 
-import { isNodeReady, makeNodeSchedulable } from '../module/k8s/node';
+import { nodeStatus, makeNodeSchedulable, K8sResourceKind, referenceForModel } from '../module/k8s';
 import { ResourceEventStream } from './events';
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import { configureUnschedulableModal } from './modals';
 import { PodsPage } from './pod';
-import { Kebab, navFactory, LabelList, ResourceKebab, SectionHeading, ResourceLink, Timestamp, units, cloudProviderNames, cloudProviderID, pluralize, containerLinuxUpdateOperator, StatusIcon } from './utils';
+import { Kebab, navFactory, LabelList, ResourceKebab, SectionHeading, ResourceLink, Timestamp, units, cloudProviderNames, cloudProviderID, pluralize, StatusIcon } from './utils';
 import { Line, requirePrometheus } from './graphs';
-import { K8sResourceKind, referenceForModel } from '../module/k8s';
 import { MachineModel, NodeModel } from '../models';
 import { CamelCaseWrap } from './utils/camel-case-wrap';
 
@@ -45,10 +44,9 @@ const Header = props => {
     return null;
   }
   return <ListHeader>
-    <ColHead {...props} className="col-xs-4" sortField="metadata.name">Node Name</ColHead>
-    <ColHead {...props} className="col-sm-2 col-xs-4" sortFunc="nodeReadiness">Status</ColHead>
-    <ColHead {...props} className="col-sm-3 col-xs-4" sortFunc="nodeUpdateStatus">OS Update</ColHead>
-    <ColHead {...props} className="col-sm-3 hidden-xs" sortField="status.addresses">Node Addresses</ColHead>
+    <ColHead {...props} className="col-md-5 col-sm-6 col-xs-8" sortField="metadata.name">Node Name</ColHead>
+    <ColHead {...props} className="col-md-2 col-sm-6 col-xs-4" sortFunc="nodeReadiness">Status</ColHead>
+    <ColHead {...props} className="col-md-5 hidden-sm hidden-xs" sortField="status.addresses">Node Addresses</ColHead>
   </ListHeader>;
 };
 
@@ -59,43 +57,16 @@ const HeaderSearch = props => <ListHeader>
   <ColHead {...props} className="col-md-2 col-sm-3 hidden-xs" sortField="status.addresses">Node Addresses</ColHead>
 </ListHeader>;
 
-const NodeStatus = ({node}) => isNodeReady(node) ? <StatusIcon status="Ready" /> : <StatusIcon status="Not Ready" />;
-
-const NodeCLUpdateStatus = ({node}) => {
-  const updateStatus = containerLinuxUpdateOperator.getUpdateStatus(node);
-  const newVersion = containerLinuxUpdateOperator.getNewVersion(node);
-  const lastCheckedDate = containerLinuxUpdateOperator.getLastCheckedTime(node);
-
-  return <div>
-    {updateStatus ? <span>{updateStatus.className && <span><i className={updateStatus.className}></i>&nbsp;&nbsp;</span>}{updateStatus.text}</span> : null}
-    {!_.isEmpty(newVersion) && !containerLinuxUpdateOperator.isSoftwareUpToDate(node) &&
-      <div>
-        <small className="">Container Linux {containerLinuxUpdateOperator.getVersion(node)} &#10141; {newVersion}</small>
-      </div>}
-    {lastCheckedDate && containerLinuxUpdateOperator.isSoftwareUpToDate(node) &&
-      <div>
-        <small className="">Last checked on <div className="co-inline-block">{<Timestamp timestamp={lastCheckedDate} isUnix={true} />}</div></small>
-      </div>}
-  </div>;
-};
-
-const NodeCLStatusRow = ({node}) => {
-  const updateStatus = containerLinuxUpdateOperator.getUpdateStatus(node);
-  return updateStatus ? <span>{updateStatus.className && <span><i className={updateStatus.className}></i>&nbsp;&nbsp;</span>}{updateStatus.text}</span> : null;
-};
+const NodeStatus = ({node}) => <StatusIcon status={nodeStatus(node)} />;
 
 const NodeRow = ({obj: node, expand}) => {
-  const isOperatorInstalled = containerLinuxUpdateOperator.isOperatorInstalled(node);
 
   return <ResourceRow obj={node}>
-    <div className="col-xs-4">
+    <div className="col-md-5 col-sm-6 col-xs-8">
       <ResourceLink kind="Node" name={node.metadata.name} title={node.metadata.uid} />
     </div>
-    <div className="col-sm-2 col-xs-4"><NodeStatus node={node} /></div>
-    <div className="col-sm-3 col-xs-4">
-      {isOperatorInstalled ? <NodeCLStatusRow node={node} /> : <span className="text-muted">Not configured</span>}
-    </div>
-    <div className="col-sm-3 hidden-xs"><NodeIPList ips={node.status.addresses} expand={expand} /></div>
+    <div className="col-md-2 col-sm-6 col-xs-4"><NodeStatus node={node} /></div>
+    <div className="col-md-5 hidden-sm hidden-xs"><NodeIPList ips={node.status.addresses} expand={expand} /></div>
     {expand && <div className="col-xs-12">
       <LabelList kind="Node" labels={node.metadata.labels} />
     </div>}
@@ -127,16 +98,16 @@ const NodeRowSearch = ({obj: node}) => <div className="row co-resource-list__ite
 const NodesList = props => <List {...props} Header={Header} Row={NodeRow} />;
 export const NodesListSearch = props => <List {...props} Header={HeaderSearch} Row={NodeRowSearch} kind="node" />;
 
-const dropdownFilters = [{
+const filters = [{
   type: 'node-status',
-  items: {
-    all: 'Status: All',
-    ready: 'Status: Ready',
-    notReady: 'Status: Not Ready',
-  },
-  title: 'Ready Status',
+  selected: ['Ready', 'Not Ready'],
+  reducer: nodeStatus,
+  items: [
+    {id: 'Ready', title: 'Ready'},
+    {id: 'Not Ready', title: 'Not Ready'},
+  ],
 }];
-export const NodesPage = props => <ListPage {...props} ListComponent={NodesList} dropdownFilters={dropdownFilters} canExpand={true} />;
+export const NodesPage = props => <ListPage {...props} ListComponent={NodesList} rowFilters={filters} canExpand={true} />;
 
 const NodeGraphs = requirePrometheus(({node}) => {
   const nodeIp = _.find<{type: string, address: string}>(node.status.addresses, {type: 'InternalIP'});
@@ -147,10 +118,10 @@ const NodeGraphs = requirePrometheus(({node}) => {
   return <React.Fragment>
     <div className="row">
       <div className="col-md-4">
-        <Line title="RAM" query={ipQuery && `node_memory_Active${ipQuery}`} units="binaryBytes" limit={memoryLimit} />
+        <Line title="Memory Usage" query={ipQuery && `node_memory_Active${ipQuery}`} units="binaryBytes" limit={memoryLimit} />
       </div>
       <div className="col-md-4">
-        <Line title="CPU" query={ipQuery && `instance:node_cpu:rate:sum${ipQuery}`} units="numeric" limit={integerLimit(node.status.allocatable.cpu)} />
+        <Line title="CPU Usage" query={ipQuery && `instance:node_cpu:rate:sum${ipQuery}`} units="numeric" limit={integerLimit(node.status.allocatable.cpu)} />
       </div>
       <div className="col-md-4">
         <Line title="Number of Pods" query={ipQuery && `kubelet_running_pod_count${ipQuery}`} units="numeric" limit={integerLimit(node.status.allocatable.pods)} />
@@ -162,7 +133,7 @@ const NodeGraphs = requirePrometheus(({node}) => {
         <Line title="Network Out" query={ipQuery && `instance:node_network_transmit_bytes:rate:sum${ipQuery}`} units="decimalBytes" />
       </div>
       <div className="col-md-4">
-        <Line title="Filesystem" query={ipQuery && `instance:node_filesystem_usage:sum${ipQuery}`} units="decimalBytes" />
+        <Line title="Filesystem (bytes)" query={ipQuery && `instance:node_filesystem_usage:sum${ipQuery}`} units="decimalBytes" />
       </div>
     </div>
 
@@ -233,26 +204,6 @@ const Details = ({obj: node}) => {
         </div>
       </div>
     </div>
-
-    { containerLinuxUpdateOperator.isOperatorInstalled(node) && <div className="co-m-pane__body">
-      <SectionHeading text="Container Linux" />
-      <div className="row">
-        <div className="col-md-6 col-xs-12">
-          <dl className="co-m-pane__details">
-            <dt>Current Version</dt>
-            <dd>{containerLinuxUpdateOperator.getVersion(node)}</dd>
-            <dt>Channel</dt>
-            <dd className="text-capitalize">{containerLinuxUpdateOperator.getChannel(node)}</dd>
-          </dl>
-        </div>
-        <div className="col-md-6 col-xs-12">
-          <dl className="co-m-pane__details">
-            <dt>Update Status</dt>
-            <dd><NodeCLUpdateStatus node={node} /></dd>
-          </dl>
-        </div>
-      </div>
-    </div> }
 
     <div className="co-m-pane__body">
       <SectionHeading text="Node Conditions" />

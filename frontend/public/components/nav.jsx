@@ -5,16 +5,18 @@ import * as _ from 'lodash-es';
 import * as PropTypes from 'prop-types';
 
 import { FLAGS, featureReducerName, flagPending } from '../features';
-import { MonitoringRoutes, connectToURLs } from '../monitoring';
+import { monitoringReducerName, MonitoringRoutes } from '../monitoring';
 import { formatNamespacedRouteForResource } from '../ui/ui-actions';
 import {
   BuildConfigModel,
   BuildModel,
+  CatalogSourceModel,
   ChargebackReportModel,
   ClusterServiceVersionModel,
   DeploymentConfigModel,
   ImageStreamModel,
   InstallPlanModel,
+  MachineDeploymentModel,
   MachineModel,
   MachineSetModel,
   PackageManifestModel,
@@ -106,7 +108,7 @@ ResourceNSLink.propTypes = {
 
 class ResourceClusterLink extends NavLink {
   static isActive(props, resourcePath) {
-    return resourcePath === props.resource || _.startsWith(resourcePath, `${props.resource}/`);
+    return resourcePath === props.resource || _.startsWith(resourcePath, `${props.resource}/`) || matchesModel(resourcePath, props.model);
   }
 
   get to() {
@@ -118,6 +120,7 @@ ResourceClusterLink.propTypes = {
   name: PropTypes.string.isRequired,
   startsWith: PropTypes.arrayOf(PropTypes.string),
   resource: PropTypes.string.isRequired,
+  model: PropTypes.object,
 };
 
 class HrefLink extends NavLink {
@@ -266,7 +269,16 @@ const NavSection = connect(navSectionStateToProps)(
 );
 
 const searchStartsWith = ['search'];
-const operatorManagementStartsWith = [referenceForModel(PackageManifestModel), referenceForModel(SubscriptionModel), referenceForModel(InstallPlanModel)];
+const operatorManagementStartsWith = [
+  referenceForModel(PackageManifestModel),
+  PackageManifestModel.path,
+  referenceForModel(SubscriptionModel),
+  SubscriptionModel.path,
+  referenceForModel(InstallPlanModel),
+  InstallPlanModel.path,
+  referenceForModel(CatalogSourceModel),
+  CatalogSourceModel.path,
+];
 const provisionedServicesStartsWith = ['serviceinstances', 'servicebindings'];
 const brokerManagementStartsWith = ['clusterservicebrokers', 'clusterserviceclasses'];
 const rolesStartsWith = ['roles', 'clusterroles'];
@@ -274,22 +286,31 @@ const rolebindingsStartsWith = ['rolebindings', 'clusterrolebindings'];
 const quotaStartsWith = ['resourcequotas', 'clusterresourcequotas'];
 const imagestreamsStartsWith = ['imagestreams', 'imagestreamtags'];
 const monitoringAlertsStartsWith = ['monitoring/alerts', 'monitoring/alertrules'];
+const clusterSettingsStartsWith = ['settings/cluster', 'config.openshift.io'];
 
-const MonitoringNavSection_ = ({ urls }) => {
-  const prometheusURL = urls[MonitoringRoutes.Prometheus];
-  const grafanaURL = urls[MonitoringRoutes.Grafana];
-  const kibanaURL = urls[MonitoringRoutes.Kibana];
-  return window.SERVER_FLAGS.prometheusBaseURL || prometheusURL || grafanaURL || kibanaURL
+const monitoringNavSectionStateToProps = (state) => ({
+  canAccess: !!state[featureReducerName].get(FLAGS.CAN_GET_NS),
+  grafanaURL: state[monitoringReducerName].get(MonitoringRoutes.Grafana),
+  kibanaURL: state[monitoringReducerName].get(MonitoringRoutes.Kibana),
+  prometheusURL: state[monitoringReducerName].get(MonitoringRoutes.Prometheus),
+});
+
+const MonitoringNavSection_ = ({grafanaURL, canAccess, kibanaURL, prometheusURL}) => {
+  const showAlerts = canAccess && !!window.SERVER_FLAGS.prometheusBaseURL;
+  const showSilences = canAccess && !!window.SERVER_FLAGS.alertManagerBaseURL;
+  const showPrometheus = canAccess && !!prometheusURL;
+  const showGrafana = canAccess && !!grafanaURL;
+  return showAlerts || showSilences || showPrometheus || showGrafana || kibanaURL
     ? <NavSection title="Monitoring">
-      {window.SERVER_FLAGS.prometheusBaseURL && <HrefLink href="/monitoring/alerts" name="Alerts" startsWith={monitoringAlertsStartsWith} />}
-      {window.SERVER_FLAGS.alertManagerBaseURL && <HrefLink href="/monitoring/silences" name="Silences" />}
-      {prometheusURL && <ExternalLink href={prometheusURL} name="Metrics" />}
-      {grafanaURL && <ExternalLink href={grafanaURL} name="Dashboards" />}
+      {showAlerts && <HrefLink href="/monitoring/alerts" name="Alerts" startsWith={monitoringAlertsStartsWith} />}
+      {showSilences && <HrefLink href="/monitoring/silences" name="Silences" />}
+      {showPrometheus && <ExternalLink href={prometheusURL} name="Metrics" />}
+      {showGrafana && <ExternalLink href={grafanaURL} name="Dashboards" />}
       {kibanaURL && <ExternalLink href={kibanaURL} name="Logging" />}
     </NavSection>
     : null;
 };
-const MonitoringNavSection = connectToURLs(MonitoringRoutes.Prometheus, MonitoringRoutes.Grafana, MonitoringRoutes.Kibana)(MonitoringNavSection_);
+const MonitoringNavSection = connect(monitoringNavSectionStateToProps)(MonitoringNavSection_);
 
 export const Navigation = ({ isNavOpen, onNavSelect }) => {
   if (isKubevirt()) {
@@ -323,7 +344,7 @@ export const Navigation = ({ isNavOpen, onNavSelect }) => {
 
         <NavSection title="Catalog">
           <HrefLink href="/catalog" name="Developer Catalog" activePath="/catalog/" />
-          <ResourceNSLink model={ClusterServiceVersionModel} resource={ClusterServiceVersionModel.plural} name="Operators" />
+          <ResourceNSLink model={ClusterServiceVersionModel} resource={ClusterServiceVersionModel.plural} name="Installed Operators" />
           <HrefLink
             href="/provisionedservices"
             name="Provisioned Services"
@@ -331,7 +352,7 @@ export const Navigation = ({ isNavOpen, onNavSelect }) => {
             startsWith={provisionedServicesStartsWith}
             required={FLAGS.SERVICE_CATALOG}
           />
-          <HrefLink required={FLAGS.KUBERNETES_MARKETPLACE} href="/marketplace" name="Marketplace" activePath="/marketplace/" />
+          <HrefLink required={FLAGS.OPERATOR_HUB} href="/operatorhub" name="Operator Hub" activePath="/operatorhub/" />
           <HrefLink
             href="/operatormanagement"
             name="Operator Management"
@@ -384,11 +405,12 @@ export const Navigation = ({ isNavOpen, onNavSelect }) => {
         <MonitoringNavSection />
 
         <NavSection title="Administration">
+          <HrefLink href="/settings/cluster" activePath="/settings/cluster/" name="Cluster Settings" required={FLAGS.CLUSTER_VERSION} startsWith={clusterSettingsStartsWith} />
           <ResourceClusterLink resource="namespaces" name="Namespaces" required={FLAGS.CAN_LIST_NS} />
           <ResourceClusterLink resource="nodes" name="Nodes" required={FLAGS.CAN_LIST_NODE} />
+          <ResourceNSLink resource={referenceForModel(MachineDeploymentModel)} name="Machine Deployments" required={FLAGS.CLUSTER_API} />
           <ResourceNSLink resource={referenceForModel(MachineSetModel)} name="Machine Sets" required={FLAGS.CLUSTER_API} />
           <ResourceNSLink resource={referenceForModel(MachineModel)} name="Machines" required={FLAGS.CLUSTER_API} />
-          <HrefLink href="/settings/cluster" activePath="/settings/cluster/" name="Cluster Settings" required={FLAGS.CLUSTER_VERSION} />
           <ResourceNSLink resource="serviceaccounts" name="Service Accounts" />
           <ResourceNSLink resource="roles" name="Roles" startsWith={rolesStartsWith} />
           <ResourceNSLink resource="rolebindings" name="Role Bindings" startsWith={rolebindingsStartsWith} />

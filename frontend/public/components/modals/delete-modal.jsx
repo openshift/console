@@ -45,18 +45,20 @@ class DeleteModal extends PromiseComponent {
     const {kind, resource} = this.props;
     return <form onSubmit={this._submit} name="form">
       <ModalTitle>Delete {kind.label}</ModalTitle>
-      <ModalBody className="modal-body co-delete-modal">
-        <span aria-hidden="true" className="co-delete-modal__icon pficon pficon-warning-triangle-o"></span>
-        <div>
-          <p className="lead">Delete {resource.metadata.name}?</p>
-          <div>Are you sure you want to delete <strong>{resource.metadata.name}</strong>
-            {_.has(resource.metadata, 'namespace') && <span> in namespace <strong>{ resource.metadata.namespace }</strong>?</span>}
-            {_.has(kind, 'propagationPolicy') && <div className="checkbox">
-              <label className="control-label">
-                <input type="checkbox" onChange={() => this.setState({isChecked: !this.state.isChecked})} checked={!!this.state.isChecked} />
-                Delete dependent objects of this resource
-              </label>
-            </div>}
+      <ModalBody className="modal-body">
+        <div className="co-delete-modal">
+          <span aria-hidden="true" className="co-delete-modal__icon pficon pficon-warning-triangle-o"></span>
+          <div>
+            <p className="lead">Delete {resource.metadata.name}?</p>
+            <div>Are you sure you want to delete <strong>{resource.metadata.name}</strong>
+              {_.has(resource.metadata, 'namespace') && <span> in namespace <strong>{ resource.metadata.namespace }</strong>?</span>}
+              {_.has(kind, 'propagationPolicy') && <div className="checkbox">
+                <label className="control-label">
+                  <input type="checkbox" onChange={() => this.setState({isChecked: !this.state.isChecked})} checked={!!this.state.isChecked} />
+                  Delete dependent objects of this resource
+                </label>
+              </div>}
+            </div>
           </div>
         </div>
       </ModalBody>

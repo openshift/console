@@ -104,13 +104,13 @@ export const SpecDescriptor: React.SFC<DescriptorProps> = (props) => {
   const capability = _.get(descriptor, ['x-descriptors', 0], null) as SpecCapability;
   const Capability = capabilityFor(capability);
 
-  return <dl>
+  return <dl className="olm-descriptor">
     <div style={{width: 'max-content'}}>
       <Tooltip content={descriptor.description}>
-        <dt>{descriptor.displayName}</dt>
+        <dt className="olm-descriptor__title">{descriptor.displayName}</dt>
       </Tooltip>
     </div>
-    <dd><Capability descriptor={descriptor} capability={capability} value={value} namespace={namespace} model={model} obj={obj} /></dd>
+    <dd className="olm-descriptor__value"><Capability descriptor={descriptor} capability={capability} value={value} namespace={namespace} model={model} obj={obj} /></dd>
   </dl>;
 };
 

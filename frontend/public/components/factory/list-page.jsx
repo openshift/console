@@ -173,21 +173,11 @@ export const FireMan_ = connect(null, {filterList: k8sActions.filterList})(
         canExpand,
         createButtonText,
         createProps,
-        dropdownFilters,
         filterLabel,
         helpText,
         resources,
         textFilter,
       } = this.props;
-
-      const DropdownFilters = dropdownFilters && dropdownFilters.map(({type, items, title}) => {
-        return <Dropdown
-          items={items}
-          key={title}
-          onChange={v => this.applyFilter(type, v)}
-          title={title}
-        />;
-      });
 
       let createLink;
       if (canCreate) {
@@ -219,10 +209,7 @@ export const FireMan_ = connect(null, {filterList: k8sActions.filterList})(
           {canExpand && <div className="co-m-pane__filter-bar-group">
             <CompactExpandButtons expand={this.state.expand} onExpandChange={this.onExpandChange} />
           </div>}
-          <div className={classNames('co-m-pane__filter-bar-group', DropdownFilters ? 'co-m-pane__filter-bar-group--filters' : 'co-m-pane__filter-bar-group--filter')}>
-            {DropdownFilters && <div className="btn-group">
-              {DropdownFilters}
-            </div>}
+          <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--filter">
             <TextFilter label={filterLabel} onChange={e => this.applyFilter(textFilter, e.target.value)} defaultValue={this.defaultValue} tabIndex={1} autoFocus={autoFocus} />
           </div>
         </div>
@@ -272,7 +259,7 @@ FireMan_.propTypes = {
   title: PropTypes.string,
 };
 
-/** @type {React.SFC<{ListComponent: React.ComponentType<any>, kind: string, helpText?: any, namespace?: string, filterLabel?: string, textFilter?: string, title?: string, showTitle?: boolean, dropdownFilters?: any[], rowFilters?: any[], selector?: any, fieldSelector?: string, canCreate?: boolean, createButtonText?: string, createProps?: any, mock?: boolean}>} */
+/** @type {React.SFC<{ListComponent: React.ComponentType<any>, kind: string, helpText?: any, namespace?: string, filterLabel?: string, textFilter?: string, title?: string, showTitle?: boolean, rowFilters?: any[], selector?: any, fieldSelector?: string, canCreate?: boolean, createButtonText?: string, createProps?: any, mock?: boolean}>} */
 export const ListPage = withFallback(props => {
   const {
     autoFocus,
@@ -280,7 +267,6 @@ export const ListPage = withFallback(props => {
     canExpand,
     createButtonText,
     createHandler,
-    dropdownFilters,
     fieldSelector,
     filterLabel,
     filters,
@@ -339,7 +325,6 @@ export const ListPage = withFallback(props => {
     canExpand={canExpand}
     createButtonText={createButtonText || `Create ${label}`}
     createProps={createProps}
-    dropdownFilters={dropdownFilters}
     filterLabel={filterLabel || `${labelPlural} by name`}
     flatten={_resources => _.get(_resources, (name || kind), {}).data}
     helpText={helpText}
@@ -358,7 +343,7 @@ export const ListPage = withFallback(props => {
 
 ListPage.displayName = 'ListPage';
 
-/** @type {React.SFC<{canCreate?: boolean, createButtonText?: string, createProps?: any, flatten?: Function, title?: string, showTitle?: boolean, helpText?: any, dropdownFilters?: any[], filterLabel?: string, rowFilters?: any[], resources: any[], ListComponent: React.ComponentType<any>, namespace?: string}>} */
+/** @type {React.SFC<{canCreate?: boolean, createButtonText?: string, createProps?: any, flatten?: Function, title?: string, showTitle?: boolean, helpText?: any, filterLabel?: string, rowFilters?: any[], resources: any[], ListComponent: React.ComponentType<any>, namespace?: string}>} */
 export const MultiListPage = props => {
   const {
     autoFocus,
@@ -366,7 +351,6 @@ export const MultiListPage = props => {
     canExpand,
     createButtonText,
     createProps,
-    dropdownFilters,
     filterLabel,
     flatten,
     helpText,
@@ -395,7 +379,6 @@ export const MultiListPage = props => {
     canExpand={canExpand}
     createButtonText={createButtonText || 'Create'}
     createProps={createProps}
-    dropdownFilters={dropdownFilters}
     filterLabel={filterLabel}
     helpText={helpText}
     resources={mock ? [] : resources}

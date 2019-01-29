@@ -12,6 +12,9 @@ export const rowMenuButton = row => row.$('.co-kebab__button');
 
 // Details pages
 export const detailsHeading = $('.co-m-nav-title .co-m-pane__name');
+export const detailsHeadingAlertIcon = $('.co-m-nav-title .co-m-resource-alert');
+export const detailsHeadingRuleIcon = $('.co-m-nav-title .co-m-resource-alertrule');
+export const detailsHeadingSilenceIcon = $('.co-m-nav-title .co-m-resource-silence');
 export const detailsSubHeadings = $$('.co-m-pane__body h2');
 export const labels = $$('.co-m-label');
 export const expiredSilenceIcon = $('.co-m-pane__details .fa-ban');

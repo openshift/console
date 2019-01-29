@@ -47,6 +47,6 @@ describe('Installing a service from a Catalog Source', () => {
     await catalogView.createSubscriptionFor('Prometheus');
     await browser.wait(until.presenceOf($('.ace_text-input')));
 
-    expect($('.yaml-editor__header').getText()).toEqual('Create Subscription');
+    expect($('.yaml-editor__header').getText()).toContain('Create Subscription');
   });
 });

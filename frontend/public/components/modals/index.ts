@@ -29,9 +29,6 @@ export const deleteNamespaceModal = (props) => import('./delete-namespace-modal'
 export const errorModal = (props) => import('./error-modal' /* webpackChunkName: "error-modal" */)
   .then(m => m.errorModal(props));
 
-export const kubectlConfigModal = (props) => import('./kubectl-config' /* webpackChunkName: "kubectl-config" */)
-  .then(m => m.kubectlConfigModal(props));
-
 export const configureUnschedulableModal = (props) => import('./configure-unschedulable-modal' /* webpackChunkName: "configure-unschedulable-modal" */)
   .then(m => m.configureUnschedulableModal(props));
 

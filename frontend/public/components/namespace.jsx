@@ -10,7 +10,7 @@ import { k8sGet } from '../module/k8s';
 import { formatNamespacedRouteForResource, UIActions } from '../ui/ui-actions';
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import { SafetyFirst } from './safety-first';
-import { ActionsMenu, Kebab, Dropdown, Firehose, LabelList, LoadingInline, navFactory, ResourceKebab, SectionHeading, ResourceIcon, ResourceLink, ResourceSummary, humanizeMem, MsgBox, StatusIcon } from './utils';
+import { ActionsMenu, Kebab, Dropdown, Firehose, LabelList, LoadingInline, navFactory, ResourceKebab, SectionHeading, ResourceIcon, ResourceLink, ResourceSummary, humanizeMem, MsgBox, StatusIcon, ExternalLink } from './utils';
 import { createNamespaceModal, createProjectModal, deleteNamespaceModal, configureNamespacePullSecretModal } from './modals';
 import { RoleBindingsPage } from './RBAC';
 import { Bar, Line, requirePrometheus } from './graphs';
@@ -92,7 +92,7 @@ const ProjectRow = ({obj: project}) => {
     <div className="col-md-3 col-sm-3 col-xs-4">
       <StatusIcon status={project.status.phase} />
     </div>
-    <div className="col-md-3 col-sm-3 hidden-xs">
+    <div className="col-md-3 col-sm-3 hidden-xs co-break-word">
       {requester || <span className="text-muted">No requester</span>}
     </div>
     <div className="col-md-3 hidden-sm hidden-xs">
@@ -110,7 +110,7 @@ const ProjectList_ = props => {
       {props.createProjectMessage || 'Create a project for your application.'}
     </p>
     <p>
-      To learn more, visit the OpenShift <a href={openshiftHelpBase} target="_blank" rel="noopener noreferrer">documentation</a>.
+      To learn more, visit the OpenShift <ExternalLink href={openshiftHelpBase} text="documentation" />.
     </p>
   </React.Fragment>;
   const ProjectEmptyMessage = () => <MsgBox title="Welcome to OpenShift" detail={ProjectEmptyMessageDetail} />;
@@ -164,15 +164,15 @@ class PullSecret extends SafetyFirst {
 
 export const NamespaceLineCharts = ({ns}) => <div className="row">
   <div className="col-sm-6 col-xs-12">
-    <Line title="CPU Shares" query={[
+    <Line title="CPU Usage" namespace={ns.metadata.name} query={[
       {
         name: 'Used',
-        query: `namespace:container_spec_cpu_shares:sum{namespace='${ns.metadata.name}'}`,
+        query: `namespace:container_cpu_usage:sum{namespace='${ns.metadata.name}'}`,
       },
     ]} />
   </div>
   <div className="col-sm-6 col-xs-12">
-    <Line title="RAM" query={[
+    <Line title="Memory Usage" namespace={ns.metadata.name} query={[
       {
         name: 'Used',
         query: `namespace:container_memory_usage_bytes:sum{namespace='${ns.metadata.name}'}`,
@@ -184,6 +184,7 @@ export const NamespaceLineCharts = ({ns}) => <div className="row">
 export const TopPodsBarChart = ({ns}) => (
   <Bar
     title="Memory Usage by Pod (Top 10)"
+    namespace={ns.metadata.name}
     query={`sort(topk(10, sum by (pod_name)(container_memory_usage_bytes{pod_name!="", namespace="${ns.metadata.name}"})))`}
     humanize={humanizeMem}
     metric="pod_name" />

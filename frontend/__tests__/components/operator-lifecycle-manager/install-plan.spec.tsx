@@ -115,9 +115,14 @@ describe(InstallPlansList.displayName, () => {
 
 describe(InstallPlansPage.displayName, () => {
   let wrapper: ShallowWrapper<InstallPlansPageProps>;
+  const match:any = {
+    params: {
+      ns: 'default',
+    },
+  };
 
   beforeEach(() => {
-    wrapper = shallow(<InstallPlansPage namespace="default" />);
+    wrapper = shallow(<InstallPlansPage match={match} />);
   });
 
   it('renders a `MultiListPage` with the correct props', () => {

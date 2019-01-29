@@ -1,9 +1,10 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
+import * as classNames from 'classnames';
 import { FieldLevelHelp } from 'patternfly-react';
 
 import { ColHead, DetailsPage, List, ListHeader, MultiListPage } from './factory';
-import { Kebab, SectionHeading, navFactory, ResourceKebab, ResourceLink, ResourceSummary, convertToBaseValue, helpLink, HELP_TOPICS } from './utils';
+import { Kebab, SectionHeading, navFactory, ResourceKebab, ResourceLink, ResourceSummary, convertToBaseValue, helpLink, HELP_TOPICS, ExternalLink } from './utils';
 import { FLAGS, connectToFlags, flagPending } from '../features';
 import { Gauge } from './graphs';
 import { LoadingBox } from './utils/status-box';
@@ -23,7 +24,7 @@ const quotaScopes = Object.freeze({
   'NotBestEffort': {label: 'Not Best Effort', description: 'Affects pods that have at least one resource limit set. These pods do not have a best effort quality of service.'},
 });
 
-const getResourceTypes = (quota) => {
+export const getQuotaResourceTypes = (quota) => {
   const specHard = _.get(quota, 'spec.hard');
   return _.keys(specHard).sort();
 };
@@ -49,7 +50,7 @@ const Row = ({obj: rq}) => <div className="row co-resource-list__item">
     <ResourceLink kind={quotaKind(rq)} name={rq.metadata.name} namespace={rq.metadata.namespace} className="co-resource-link__resource-name" />
   </div>
   <div className="col-md-7 col-xs-6 co-break-word">
-    {rq.metadata.namespace ? <ResourceLink kind="Namespace" name={rq.metadata.namespace} title={rq.metadata.namespace} /> : 'all'}
+    {rq.metadata.namespace ? <ResourceLink kind="Namespace" name={rq.metadata.namespace} title={rq.metadata.namespace} /> : 'None'}
   </div>
   <div className="dropdown-kebab-pf">
     <ResourceKebab actions={menuActions} kind={quotaKind(rq)} resource={rq} />
@@ -82,66 +83,67 @@ const ResourceUsageRow = ({quota, resourceType}) => {
   </div>;
 };
 
-const QuotaScopes = ({quota}) => {
-  const scopes = _.get(quota, ['spec', 'scopes']);
-  if (_.isEmpty(scopes)) {
-    return <dd>-</dd>;
-  }
+export const QuotaGaugeCharts = ({quota, resourceTypes, compact}) => {
+  const resourceTypesSet = new Set(resourceTypes);
+  return <div className={classNames('co-resource-quota-chart-row', {'co-resource-quota-chart-row--compact': compact})} >
+    {(resourceTypesSet.has('requests.cpu') || resourceTypesSet.has('cpu')) &&
+    <div className="co-resource-quota-gauge-chart">
+      <Gauge title="CPU Request" thresholds={gaugeChartThresholds} className={classNames({'graph-wrapper--compact': compact})}
+        percent={getResourceUsage(quota, resourceTypesSet.has('requests.cpu') ? 'requests.cpu' : 'cpu').percent} />
+    </div>}
+    {resourceTypesSet.has('limits.cpu') &&
+    <div className="co-resource-quota-gauge-chart">
+      <Gauge title="CPU Limit" thresholds={gaugeChartThresholds} className={classNames({'graph-wrapper--compact': compact})}
+        percent={getResourceUsage(quota, 'limits.cpu').percent} />
+    </div>}
+    {(resourceTypesSet.has('requests.memory') || resourceTypesSet.has('memory')) &&
+    <div className="co-resource-quota-gauge-chart">
+      <Gauge title="Memory Request" thresholds={gaugeChartThresholds} className={classNames({'graph-wrapper--compact': compact})}
+        percent={getResourceUsage(quota, resourceTypesSet.has('requests.memory') ? 'requests.memory' : 'memory').percent} />
+    </div>}
+    {resourceTypesSet.has('limits.memory') &&
+    <div className="co-resource-quota-gauge-chart">
+      <Gauge title="Memory Limit" thresholds={gaugeChartThresholds} className={classNames({'graph-wrapper--compact': compact})}
+        percent={getResourceUsage(quota, 'limits.memory').percent} />
+    </div>}
+  </div>;
+};
+
+export const QuotaScopes = ({scopes, compact}) => {
   return scopes.map(scope => {
     const scopeObj = _.get(quotaScopes, scope);
     return scopeObj ?
-      <dd key={scope}>
-        <div className="co-resource-quota-scope__label">{scopeObj.label}</div>
-        <div className="co-resource-quota-scope__description">{scopeObj.description}</div>
+      <dd key={scope} className={classNames({'quota-dashboard-scopes--compact': compact})}>
+        <div className={classNames('co-resource-quota-scope__label', {'co-resource-quota-scope__label--compact': compact})}>{scopeObj.label}</div>
+        <div className={classNames('co-resource-quota-scope__description', {'co-resource-quota-scope__description--compact': compact})}>{scopeObj.description}</div>
       </dd>
       : <dd key={scope} className="co-resource-quota-scope__label">{scope}</dd>;
   });
 };
 
-const showCharts = resourceTypes => {
+export const hasComputeResources = resourceTypes => {
   const chartResourceTypes = ['requests.cpu', 'cpu', 'limits.cpu', 'requests.memory', 'memory', 'limits.memory'];
   return _.intersection(resourceTypes, chartResourceTypes).length > 0;
 };
 
 const Details = ({obj: rq}) => {
-  const resourceTypes = getResourceTypes(rq);
-  const resourceTypesSet = new Set(resourceTypes);
-  const showChartRow = showCharts(resourceTypes);
+  const resourceTypes = getQuotaResourceTypes(rq);
+  const showChartRow = hasComputeResources(resourceTypes);
+  const scopes = _.get(rq, ['spec', 'scopes']);
   return <React.Fragment>
     <div className="co-m-pane__body">
       <SectionHeading text="Resource Quota Overview" />
-      {showChartRow && <div className="co-resource-quota-chart-row">
-        {(resourceTypesSet.has('requests.cpu') || resourceTypesSet.has('cpu')) &&
-          <div className="co-resource-quota-chart">
-            <Gauge title="CPU Request" thresholds={gaugeChartThresholds}
-              percent={getResourceUsage(rq, resourceTypesSet.has('requests.cpu') ? 'requests.cpu' : 'cpu').percent} />
-          </div>}
-        {resourceTypesSet.has('limits.cpu') &&
-          <div className="co-resource-quota-chart">
-            <Gauge title="CPU Limit" thresholds={gaugeChartThresholds}
-              percent={getResourceUsage(rq, 'limits.cpu').percent} />
-          </div>}
-        {(resourceTypesSet.has('requests.memory') || resourceTypesSet.has('memory')) &&
-          <div className="co-resource-quota-chart">
-            <Gauge title="Memory Request" thresholds={gaugeChartThresholds}
-              percent={getResourceUsage(rq, resourceTypesSet.has('requests.memory') ? 'requests.memory' : 'memory').percent} />
-          </div>}
-        {resourceTypesSet.has('limits.memory') &&
-          <div className="co-resource-quota-chart">
-            <Gauge title="Memory Limit" thresholds={gaugeChartThresholds}
-              percent={getResourceUsage(rq, 'limits.memory').percent} />
-          </div>}
-      </div>}
+      {showChartRow && <QuotaGaugeCharts quota={rq} resourceTypes={resourceTypes} />}
       <div className="row">
         <div className="col-sm-6">
           <ResourceSummary resource={rq} showPodSelector={false} showNodeSelector={false} />
         </div>
-        <div className="col-sm-6">
+        {scopes && <div className="col-sm-6">
           <dl className="co-m-pane__details">
             <dt>Scopes</dt>
-            <QuotaScopes quota={rq} />
+            <QuotaScopes scopes={scopes} />
           </dl>
-        </div>
+        </div>}
       </div>
     </div>
     <div className="co-m-pane__body">
@@ -150,8 +152,7 @@ const Details = ({obj: rq}) => {
           <div>
             <p>Requests are the amount of resources you expect to use. These are used when establishing if the cluster can fulfill your Request.</p>
             <p>Limits are a maximum amount of a resource you can consume. Applications consuming more than the Limit may be terminated.</p>
-            <p>A cluster administrator can establish limits on both the amount you can Request and your Limits with a &nbsp;
-              <a href={helpLink(HELP_TOPICS.COMPUTE_RESOURCES_QUOTA)} target="_blank" rel="noopener">Resource Quota</a>.</p>
+            <p>A cluster administrator can establish limits on both the amount you can Request and your Limits with a <ExternalLink href={helpLink(HELP_TOPICS.COMPUTE_RESOURCES_QUOTA)} text="Resource Quota" />.</p>
           </div>
         } />
       </SectionHeading>

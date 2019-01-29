@@ -54,6 +54,13 @@ const SilenceResource = {
 
 const labelsToParams = labels => _.map(labels, (v, k) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`).join('&');
 
+const buildNotFiringAlert = (rule: Rule): Alert => ({
+  annotations: rule.annotations,
+  labels: {alertname: rule.name, ...rule.labels},
+  rule,
+  state: AlertStates.NotFiring,
+});
+
 const alertURL = (alert, ruleID) => `${AlertResource.path}/${ruleID}?${labelsToParams(alert.labels)}`;
 const ruleURL = rule => `${AlertRuleResource.path}/${_.get(rule, 'id')}`;
 
@@ -120,9 +127,9 @@ const AlertState: React.SFC<AlertStateProps> = ({state}) => {
     return <span className="text-muted">Not Firing</span>;
   }
   const klass = {
-    [AlertStates.Firing]: 'fa fa-bell alert-firing',
-    [AlertStates.Silenced]: 'fa fa-bell-slash text-muted',
-    [AlertStates.Pending]: 'fa fa-bell-o alert-pending',
+    [AlertStates.Firing]: 'fa fa-fw fa-bell alert-firing',
+    [AlertStates.Silenced]: 'fa fa-fw fa-bell-slash text-muted',
+    [AlertStates.Pending]: 'fa fa-fw fa-bell-o alert-pending',
   }[state];
   return klass ? <React.Fragment><i className={klass} aria-hidden="true"></i> {_.startCase(state)}</React.Fragment> : null;
 };
@@ -130,9 +137,9 @@ const AlertState: React.SFC<AlertStateProps> = ({state}) => {
 const SilenceState = ({silence}) => {
   const state = silenceState(silence);
   const klass = {
-    [SilenceStates.Active]: 'pficon pficon-ok',
-    [SilenceStates.Pending]: 'fa fa-hourglass-half',
-    [SilenceStates.Expired]: 'fa fa-ban text-muted',
+    [SilenceStates.Active]: 'pficon pficon-ok fa-fw',
+    [SilenceStates.Pending]: 'fa fa-fw fa-hourglass-half monitoring-state-icon--pending',
+    [SilenceStates.Expired]: 'fa fa-fw fa-ban text-muted',
   }[state];
   return klass ? <React.Fragment><i className={klass} aria-hidden="true"></i> {_.startCase(state)}</React.Fragment> : null;
 };
@@ -175,7 +182,8 @@ const alertStateToProps = (state, {match}): AlertsDetailsPageProps => {
   let alert = _.find(alerts, a => _.isEqual(a.labels, labels));
   if (rule && !alert) {
     // No Alert with the exact label set was found, so display a "fake" Alert based on the Rule
-    alert = {annotations: rule.annotations, labels, rule, state: AlertStates.NotFiring};
+    alert = buildNotFiringAlert(rule);
+    alert.labels = labels as any;
   }
   return {alert, loaded, loadError, rule, silencesLoaded};
 };
@@ -188,7 +196,7 @@ const AlertsDetailsPage = withFallback(connect(alertStateToProps)((props: Alerts
 
   return <React.Fragment>
     <Helmet>
-      <title>{`${alertname || AlertResource.label} · Details`}</title>
+      <title>{`${alertname} · Details`}</title>
     </Helmet>
     <StatusBox data={alert} label={AlertResource.label} loaded={loaded} loadError={loadError}>
       <div className="co-m-nav-title co-m-nav-title--detail">
@@ -227,7 +235,7 @@ const AlertsDetailsPage = withFallback(connect(alertStateToProps)((props: Alerts
                 <dd>
                   <div className="co-resource-link">
                     <MonitoringResourceIcon resource={AlertRuleResource} />
-                    <Link to={ruleURL(rule)} className="co-resource-link__resource-name">{alertname}</Link>
+                    <Link to={ruleURL(rule)} className="co-resource-link__resource-name">{_.get(rule, 'name')}</Link>
                   </div>
                 </dd>
               </dl>
@@ -248,7 +256,11 @@ const AlertsDetailsPage = withFallback(connect(alertStateToProps)((props: Alerts
           <div className="row">
             <div className="col-xs-12">
               <div className="co-m-table-grid co-m-table-grid--bordered">
-                <SilenceHeader />
+                <div className="row co-m-table-grid__head">
+                  <div className="col-sm-7 col-xs-8">Name</div>
+                  <div className="col-sm-3 col-xs-4">State</div>
+                  <div className="col-sm-2 hidden-xs">Firing Alerts</div>
+                </div>
                 <div className="co-m-table-grid__body">
                   {_.map(silencedBy, s => <SilenceRow key={s.id} obj={s} />)}
                 </div>
@@ -341,7 +353,7 @@ const AlertRulesDetailsPage = withFallback(connect(ruleStateToProps)((props: Ale
                   <dd>{formatDuration(duration * 1000)}</dd>
                 </React.Fragment>}
                 <dt>Expression</dt>
-                <dd><pre className="monitoring-query">{query}</pre></dd>
+                <dd><pre className="co-pre-wrap monitoring-query">{query}</pre></dd>
               </dl>
             </div>
           </div>
@@ -461,18 +473,18 @@ const AlertRow = ({obj}) => {
   const state = alertState(obj);
 
   return <ResourceRow obj={obj}>
-    <div className="col-xs-7">
+    <div className="col-sm-7 col-xs-8">
       <div className="co-resource-link">
         <MonitoringResourceIcon resource={AlertResource} />
         <Link to={alertURL(obj, obj.rule.id)} className="co-resource-link__resource-name">{labels.alertname}</Link>
       </div>
       <div className="monitoring-description">{annotations.description || annotations.message}</div>
     </div>
-    <div className="col-xs-3">
+    <div className="col-sm-3 col-xs-4">
       <AlertState state={state} />
       <AlertStateDescription alert={obj} />
     </div>
-    <div className="col-xs-2">{_.startCase(_.get(labels, 'severity')) || '-'}</div>
+    <div className="col-sm-2 hidden-xs">{_.startCase(_.get(labels, 'severity')) || '-'}</div>
     <div className="dropdown-kebab-pf">
       <Kebab options={state === AlertStates.Firing || state === AlertStates.Pending ? [silenceAlert(obj), viewAlertRule(obj)] : [viewAlertRule(obj)]} />
     </div>
@@ -480,9 +492,9 @@ const AlertRow = ({obj}) => {
 };
 
 const AlertHeader = props => <ListHeader>
-  <ColHead {...props} className="col-xs-7" sortField="labels.alertname">Name</ColHead>
-  <ColHead {...props} className="col-xs-3" sortFunc="alertStateOrder">State</ColHead>
-  <ColHead {...props} className="col-xs-2" sortField="labels.severity">Severity</ColHead>
+  <ColHead {...props} className="col-sm-7 col-xs-8" sortField="labels.alertname">Name</ColHead>
+  <ColHead {...props} className="col-sm-3 col-xs-4" sortFunc="alertStateOrder">State</ColHead>
+  <ColHead {...props} className="col-sm-2 hidden-xs" sortField="labels.severity">Severity</ColHead>
 </ListHeader>;
 
 const AlertsPageDescription = () => <p className="co-help-text">
@@ -620,16 +632,16 @@ const AlertsPage_ = props => <MonitoringListPage
 const AlertsPage = withFallback(connect(alertsToProps)(AlertsPage_));
 
 const SilenceHeader = props => <ListHeader>
-  <ColHead {...props} className="col-xs-7" sortField="name">Name</ColHead>
-  <ColHead {...props} className="col-xs-3" sortFunc="silenceStateOrder">State</ColHead>
-  <ColHead {...props} className="col-xs-2" sortField="firingAlerts.length">Firing Alerts</ColHead>
+  <ColHead {...props} className="col-sm-7 col-xs-8" sortField="name">Name</ColHead>
+  <ColHead {...props} className="col-sm-3 col-xs-4" sortFunc="silenceStateOrder">State</ColHead>
+  <ColHead {...props} className="col-sm-2 hidden-xs" sortField="firingAlerts.length">Firing Alerts</ColHead>
 </ListHeader>;
 
 const SilenceRow = ({obj}) => {
   const state = silenceState(obj);
 
   return <ResourceRow obj={obj}>
-    <div className="col-xs-7">
+    <div className="col-sm-7 col-xs-8">
       <div className="co-resource-link">
         <MonitoringResourceIcon resource={SilenceResource} />
         <Link className="co-resource-link__resource-name" title={obj.id} to={`${SilenceResource.path}/${obj.id}`}>{obj.name}</Link>
@@ -638,13 +650,13 @@ const SilenceRow = ({obj}) => {
         <SilenceMatchersList silence={obj} />
       </div>
     </div>
-    <div className="col-xs-3">
+    <div className="col-sm-3 col-xs-4">
       <SilenceState silence={obj} />
       {state === SilenceStates.Pending && <StateTimestamp text="Starts" timestamp={obj.startsAt} />}
       {state === SilenceStates.Active && <StateTimestamp text="Ends" timestamp={obj.endsAt} />}
       {state === SilenceStates.Expired && <StateTimestamp text="Expired" timestamp={obj.endsAt} />}
     </div>
-    <div className="col-xs-2">{obj.firingAlerts.length}</div>
+    <div className="col-sm-2 hidden-xs">{obj.firingAlerts.length}</div>
     <div className="dropdown-kebab-pf">
       <SilenceKebab silence={obj} />
     </div>
@@ -904,11 +916,7 @@ export class MonitoringUI extends React.Component<null, null> {
 
         // If a rule is has no active alerts, create a "fake" alert
         return _.flatMap(rules, rule => _.isEmpty(rule.alerts)
-          ? {
-            annotations: rule.annotations,
-            labels: {alertname: rule.name, ...rule.labels},
-            rule,
-          }
+          ? buildNotFiringAlert(rule)
           : rule.alerts.map(a => ({rule, ...a}))
         );
       });
@@ -973,7 +981,10 @@ type Silences = {
 type Alert = {
   activeAt?: string;
   annotations: any;
-  labels: {[key: string]: string};
+  labels: {
+    alertname: string,
+    [key: string]: string,
+  };
   rule: any;
   silencedBy?: Silence[];
   state: AlertStates;

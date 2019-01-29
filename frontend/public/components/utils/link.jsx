@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as classNames from 'classnames';
 
 import { ALL_NAMESPACES_KEY } from '../../const';
 
@@ -17,7 +18,7 @@ export const legalNamePattern = /[a-z0-9](?:[-a-z0-9]*[a-z0-9])?/;
 
 const basePathPattern = new RegExp(`^/?${window.SERVER_FLAGS.basePath}`);
 
-export const namespacedPrefixes = ['/search', '/status', '/k8s', '/overview', '/catalog', '/provisionedservices', '/operators'];
+export const namespacedPrefixes = ['/search', '/status', '/k8s', '/overview', '/catalog', '/provisionedservices', '/operators', '/operatormanagement'];
 
 export const stripBasePath = path => path.replace(basePathPattern, '/');
 
@@ -47,7 +48,7 @@ export const getNamespace = path => {
   return match && match.length > 0 && match[0];
 };
 
-export const ExternalLink = ({href, text}) => <a className="co-external-link" href={href} target="_blank" rel="noopener noreferrer">{text}</a>;
+export const ExternalLink = ({href, text, additionalClassName=''}) => <a className={classNames('co-external-link', additionalClassName)} href={href} target="_blank" rel="noopener noreferrer">{text}</a>;
 
 export const getURLSearchParams = () => {
   const all = {};

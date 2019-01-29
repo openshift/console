@@ -19,29 +19,28 @@ describe('Visiting Overview page', () => {
     checkLogs();
   });
 
-  it('shows an emtpy list when no resources exist', async() => {
+  beforeAll(async() => {
     await browser.get(`${appHost}/overview/ns/${testName}`);
     await crudView.isLoaded();
-    await expect(overviewView.projectOverviewListItems.count()).toEqual(0);
   });
 
   overviewResources.forEach((kindModel) => {
     describe(kindModel.labelPlural, () => {
       beforeAll(async()=>{
-        await expect(overviewView.getProjectOverviewListItemsOfKind(kindModel).count()).toEqual(0);
-        await expect(overviewView.getProjectOverviewListItem(kindModel, testName).isPresent()).toBeFalsy();
         await crudView.createNamespacedTestResource(kindModel);
       });
 
       it(`displays a ${kindModel.id} in the project overview list`, async() => {
         await browser.wait(until.presenceOf(overviewView.projectOverview));
-        await expect(overviewView.getProjectOverviewListItemsOfKind(kindModel).count()).toEqual(1);
+        await overviewView.itemsAreVisible();
         await expect(overviewView.getProjectOverviewListItem(kindModel, testName).isPresent()).toBeTruthy();
       });
 
       it(`shows ${kindModel.id} details sidebar when item is clicked`, async() => {
+        const overviewListItem = overviewView.getProjectOverviewListItem(kindModel, testName);
         await expect(overviewView.detailsSidebar.isPresent()).toBeFalsy();
-        await overviewView.getProjectOverviewListItem(kindModel, testName).click();
+        await browser.wait(until.elementToBeClickable(overviewListItem));
+        await overviewListItem.click();
         await overviewView.sidebarIsLoaded();
         await expect(overviewView.detailsSidebar.isDisplayed()).toBeTruthy();
         const title = await overviewView.detailsSidebarTitle.getText();

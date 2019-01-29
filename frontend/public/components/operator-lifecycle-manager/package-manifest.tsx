@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import { Link } from 'react-router-dom';
+import { Link, match } from 'react-router-dom';
 
 import { referenceForModel, K8sResourceKind } from '../../module/k8s';
 import { requireOperatorGroup } from './operator-group';
@@ -11,12 +11,12 @@ import { PackageManifestModel, SubscriptionModel, CatalogSourceModel, OperatorGr
 import { StatusBox, MsgBox } from '../utils';
 import { List, ListHeader, ColHead, MultiListPage } from '../factory';
 import { getActiveNamespace } from '../../ui/ui-actions';
-import { ALL_NAMESPACES_KEY, MARKETPLACE_LABEL } from '../../const';
+import { ALL_NAMESPACES_KEY, OPERATOR_HUB_LABEL } from '../../const';
 
 export const PackageManifestHeader: React.SFC<PackageManifestHeaderProps> = (props) => <ListHeader>
-  <ColHead {...props} className="col-sm-4 col-xs-6">Name</ColHead>
-  <ColHead {...props} className="col-sm-4 hidden-xs">Latest Version</ColHead>
-  <ColHead {...props} className="col-sm-4 col-xs-6">Subscriptions</ColHead>
+  <ColHead {...props} className="col-md-4 col-sm-4 col-xs-6">Name</ColHead>
+  <ColHead {...props} className="col-md-3 col-sm-4 hidden-xs">Latest Version</ColHead>
+  <ColHead {...props} className="col-md-5 col-sm-4 col-xs-6">Subscriptions</ColHead>
 </ListHeader>;
 
 export const PackageManifestRow: React.SFC<PackageManifestRowProps> = (props) => {
@@ -26,22 +26,22 @@ export const PackageManifestRow: React.SFC<PackageManifestRowProps> = (props) =>
   const {displayName, icon = [], version, provider} = channel.currentCSVDesc;
 
   const subscriptionLink = () => ns !== ALL_NAMESPACES_KEY
-    ? <Link to={`/k8s/ns/${ns}/${SubscriptionModel.plural}/${subscription.metadata.name}`}>View subscription</Link>
-    : <Link to={`/k8s/all-namespaces/${SubscriptionModel.plural}?name=${obj.metadata.name}`}>View subscriptions</Link>;
+    ? <Link to={`/operatormanagement/ns/${ns}/${SubscriptionModel.plural}?name=${subscription.metadata.name}`}>View<span className="visible-lg-inline"> subscription</span></Link>
+    : <Link to={`/operatormanagement/all-namespaces/${SubscriptionModel.plural}?name=${obj.metadata.name}`}>View<span className="visible-lg-inline"> subscriptions</span></Link>;
 
   const createSubscriptionLink = () => `/k8s/ns/${ns === ALL_NAMESPACES_KEY ? defaultNS : ns}/${SubscriptionModel.plural}/new?pkg=${obj.metadata.name}&catalog=${catalogSourceName}&catalogNamespace=${catalogSourceNamespace}`;
 
   return <div className="row co-resource-list__item co-package-row">
-    <div className="col-sm-4 col-xs-6">
+    <div className="col-md-4 col-sm-4 col-xs-6">
       <ClusterServiceVersionLogo displayName={displayName} icon={_.get(icon, '[0]')} provider={provider.name} />
     </div>
-    <div className="col-sm-4 hidden-xs">{version} ({channel.name})</div>
-    <div className="col-sm-4 col-xs-6 co-package-row__actions">
+    <div className="col-md-3 col-sm-4 hidden-xs">{version} ({channel.name})</div>
+    <div className="col-md-5 col-sm-4 col-xs-6 co-package-row__actions">
       { subscription
         ? subscriptionLink()
-        : <span className="text-muted">Not subscribed</span> }
+        : <span className="text-muted">None</span> }
       { (!subscription || ns === ALL_NAMESPACES_KEY) && <Link to={createSubscriptionLink()}>
-        <button className="btn btn-primary">Create Subscription</button>
+        <button className="btn btn-primary">Create<span className="visible-lg-inline"> Subscription</span></button>
       </Link> }
     </div>
   </div>;
@@ -89,19 +89,21 @@ export const PackageManifestList = requireOperatorGroup((props: PackageManifestL
 });
 
 export const PackageManifestsPage: React.SFC<PackageManifestsPageProps> = (props) => {
+  const namespace = _.get(props.match, 'params.ns');
   type Flatten = (resources: {[kind: string]: {data: K8sResourceKind[]}}) => K8sResourceKind[];
   const flatten: Flatten = resources => _.get(resources.packageManifest, 'data', []);
   const HelpText = <p className="co-help-text">Catalogs are groups of Operators you can make available on the cluster. Subscribe and grant a namespace access to use the installed Operators.</p>;
 
   return <MultiListPage
     {...props}
+    namespace={namespace}
     showTitle={false}
     helpText={HelpText}
     ListComponent={(listProps: PackageManifestListProps) => <PackageManifestList {...listProps} showDetailsLink={true} />}
     filterLabel="Packages by name"
     flatten={flatten}
     resources={[
-      {kind: referenceForModel(PackageManifestModel), isList: true, namespaced: true, prop: 'packageManifest', selector: {matchExpressions: [{key: visibilityLabel, operator: 'DoesNotExist'}, {key: MARKETPLACE_LABEL, operator: 'DoesNotExist'}]}},
+      {kind: referenceForModel(PackageManifestModel), isList: true, namespaced: true, prop: 'packageManifest', selector: {matchExpressions: [{key: visibilityLabel, operator: 'DoesNotExist'}, {key: OPERATOR_HUB_LABEL, operator: 'DoesNotExist'}]}},
       {kind: referenceForModel(CatalogSourceModel), isList: true, namespaced: true, prop: 'catalogSource'},
       {kind: referenceForModel(SubscriptionModel), isList: true, namespaced: true, prop: 'subscription'},
       {kind: referenceForModel(OperatorGroupModel), isList: true, namespaced: true, prop: 'operatorGroup'},
@@ -110,6 +112,7 @@ export const PackageManifestsPage: React.SFC<PackageManifestsPageProps> = (props
 
 export type PackageManifestsPageProps = {
   namespace?: string;
+  match?: match<{ns?: string}>;
 };
 
 export type PackageManifestListProps = {

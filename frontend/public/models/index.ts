@@ -732,6 +732,7 @@ export const ClusterServiceBrokerModel: K8sKind = {
   namespaced: false,
   kind: 'ClusterServiceBroker',
   id: 'clusterservicebroker',
+  crd: true,
 };
 
 export const ClusterServiceClassModel: K8sKind = {
@@ -745,6 +746,7 @@ export const ClusterServiceClassModel: K8sKind = {
   namespaced: false,
   kind: 'ClusterServiceClass',
   id: 'clusterserviceclass',
+  crd: true,
 };
 
 export const ClusterServicePlanModel: K8sKind = {
@@ -758,6 +760,7 @@ export const ClusterServicePlanModel: K8sKind = {
   namespaced: false,
   kind: 'ClusterServicePlan',
   id: 'clusterserviceplan',
+  crd: true,
 };
 
 export const ServiceInstanceModel: K8sKind = {
@@ -771,6 +774,7 @@ export const ServiceInstanceModel: K8sKind = {
   namespaced: true,
   kind: 'ServiceInstance',
   id: 'serviceinstance',
+  crd: true,
 };
 
 export const ServiceBindingModel: K8sKind = {
@@ -784,6 +788,7 @@ export const ServiceBindingModel: K8sKind = {
   namespaced: true,
   kind: 'ServiceBinding',
   id: 'servicebinding',
+  crd: true,
 };
 
 export * from '../kubevirt/models/vm'; // needed when setting features and resource pages
@@ -816,20 +821,6 @@ export const APIServiceModel: K8sKind = {
 
 // Cluster API resources
 // https://github.com/kubernetes-sigs/cluster-api
-export const MachineSetModel: K8sKind = {
-  label: 'Machine Set',
-  labelPlural: 'Machine Sets',
-  apiVersion: 'v1alpha1',
-  path: 'machinesets',
-  apiGroup: 'cluster.k8s.io',
-  plural: 'machinesets',
-  abbr: 'MS',
-  namespaced: true,
-  kind: 'MachineSet',
-  id: 'machineset',
-  crd: true,
-};
-
 export const MachineModel: K8sKind = {
   label: 'Machine',
   labelPlural: 'Machines',
@@ -844,7 +835,35 @@ export const MachineModel: K8sKind = {
   crd: true,
 };
 
-// Openshift cluster resources
+export const MachineSetModel: K8sKind = {
+  label: 'Machine Set',
+  labelPlural: 'Machine Sets',
+  apiVersion: 'v1alpha1',
+  path: 'machinesets',
+  apiGroup: 'cluster.k8s.io',
+  plural: 'machinesets',
+  abbr: 'MS',
+  namespaced: true,
+  kind: 'MachineSet',
+  id: 'machineset',
+  crd: true,
+};
+
+export const MachineDeploymentModel: K8sKind = {
+  label: 'Machine Deployment',
+  labelPlural: 'Machine Deployments',
+  apiVersion: 'v1alpha1',
+  path: 'machinedeployments',
+  apiGroup: 'cluster.k8s.io',
+  plural: 'machinedeployments',
+  abbr: 'MD',
+  namespaced: true,
+  kind: 'MachineDeployment',
+  id: 'machinedeployment',
+  crd: true,
+};
+
+// OpenShift cluster resources
 export const ClusterOperatorModel: K8sKind = {
   label: 'Cluster Operator',
   labelPlural: 'Cluster Operators',
@@ -884,5 +903,20 @@ export const ClusterAutoscalerModel: K8sKind = {
   namespaced: false,
   kind: 'ClusterAutoscaler',
   id: 'clusterautoscaler',
+  crd: true,
+};
+
+// OpenShift global configuration
+export const OAuthModel: K8sKind = {
+  label: 'OAuth',
+  labelPlural: 'OAuths',
+  apiVersion: 'v1',
+  path: 'oauths',
+  apiGroup: 'config.openshift.io',
+  plural: 'oauths',
+  abbr: 'OA',
+  namespaced: false,
+  kind: 'OAuth',
+  id: 'oauth',
   crd: true,
 };

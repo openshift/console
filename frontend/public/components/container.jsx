@@ -11,7 +11,6 @@ import {
   Firehose,
   HorizontalNav,
   MsgBox,
-  Overflow,
   PageHeading,
   ResourceLink,
   ScrollToTopOnMount,
@@ -19,6 +18,7 @@ import {
   StatusIcon,
   Timestamp,
 } from './utils';
+import { resourcePath } from './utils/resource-link';
 
 const formatComputeResources = resources => _.map(resources, (v, k) => `${k}: ${v}`).join(', ');
 
@@ -82,7 +82,7 @@ const Volumes = ({volumes}) => {
     return <MsgBox className="co-sysevent-stream__status-box-empty" title="No volumes have been mounted" detail="Volumes allow data to be shared as files with the pod" />;
   }
 
-  return <table className="table">
+  return <table className="table table--layout-fixed">
     <thead>
       <tr>
         <th>Access</th>
@@ -94,7 +94,7 @@ const Volumes = ({volumes}) => {
       {volumes.map((v, i) => <tr key={i}>
         <td>{v.readOnly === true ? 'Read Only' : 'Read / Write'}</td>
         <td>{v.name}</td>
-        <td><Overflow value={v.mountPath} /></td>
+        <td className="co-break-all">{v.mountPath || '-'}</td>
       </tr>)}
     </tbody>
   </table>;
@@ -174,7 +174,7 @@ const Details = (props) => {
           <dt>State</dt>
           <dd><StatusIcon status={stateValue} /></dd>
           <dt>ID</dt>
-          <dd><Overflow value={status.containerID} /></dd>
+          <dd className="co-break-all">{status.containerID || '-'}</dd>
           <dt>Restarts</dt>
           <dd>{status.restartCount}</dd>
           <dt>Resource Requests</dt>
@@ -200,9 +200,9 @@ const Details = (props) => {
         <SectionHeading text="Image Details" />
         <dl className="co-m-pane__details">
           <dt>Image</dt>
-          <dd><Overflow value={imageName || '-'} /></dd>
+          <dd className="co-break-all">{imageName || '-'}</dd>
           <dt>Image Version/Tag</dt>
-          <dd><Overflow value={imageTag || '-'} /></dd>
+          <dd className="co-break-word">{imageTag || '-'}</dd>
           <dt>Command</dt>
           <dd>{container.command ? <pre><code>{container.command.join(' ')}</code></pre> : <span>-</span>}</dd>
           <dt>Args</dt>
@@ -251,14 +251,6 @@ const Details = (props) => {
 };
 
 export const ContainersDetailsPage = (props) => <div>
-  <PageHeading
-    detail={true}
-    title={props.match.params.name}
-    kind="Container"
-    breadcrumbsFor={() => [
-      {name: props.match.params.podName, path: `${props.match.url.split('/').filter((v, i) => i <= props.match.path.split('/').indexOf(':podName')).join('/')}`},
-      {name: 'Container Details', path: `${props.match.url}`},
-    ]} />
   <Firehose resources={[{
     name: props.match.params.podName,
     namespace: props.match.params.ns,
@@ -266,6 +258,14 @@ export const ContainersDetailsPage = (props) => <div>
     isList: false,
     prop: 'obj',
   }]}>
+    <PageHeading
+      detail={true}
+      title={props.match.params.name}
+      kind="Container"
+      breadcrumbsFor={() => [
+        {name: props.match.params.podName, path: resourcePath('Pod', props.match.params.podName, props.match.params.ns)},
+        {name: 'Container Details', path: `${props.match.url}`},
+      ]} />
     <HorizontalNav hideNav={true} pages={[{name: 'container', href: '', component: Details}]} match={props.match} />
   </Firehose>
 </div>;

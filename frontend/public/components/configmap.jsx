@@ -11,8 +11,8 @@ const menuActions = Kebab.factory.common;
 const ConfigMapHeader = props => <ListHeader>
   <ColHead {...props} className="col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
   <ColHead {...props} className="col-sm-4 col-xs-6" sortField="metadata.namespace">Namespace</ColHead>
-  <ColHead {...props} className="col-sm-2 hidden-xs" sortFunc="dataSize">Size</ColHead>
-  <ColHead {...props} className="col-sm-2 hidden-xs" sortField="metadata.creationTimestamp">Created</ColHead>
+  <ColHead {...props} className="col-sm-1 hidden-xs" sortFunc="dataSize">Size</ColHead>
+  <ColHead {...props} className="col-sm-3 hidden-xs" sortField="metadata.creationTimestamp">Created</ColHead>
 </ListHeader>;
 
 const ConfigMapRow = ({obj: configMap}) => <ResourceRow obj={configMap}>
@@ -22,8 +22,8 @@ const ConfigMapRow = ({obj: configMap}) => <ResourceRow obj={configMap}>
   <div className="col-sm-4 col-xs-6 co-break-word">
     <ResourceLink kind="Namespace" name={configMap.metadata.namespace} title={configMap.metadata.namespace} />
   </div>
-  <div className="col-sm-2 hidden-xs">{_.size(configMap.data)}</div>
-  <div className="col-sm-2 hidden-xs">{fromNow(configMap.metadata.creationTimestamp)}</div>
+  <div className="col-sm-1 hidden-xs">{_.size(configMap.data)}</div>
+  <div className="col-sm-3 hidden-xs">{fromNow(configMap.metadata.creationTimestamp)}</div>
   <div className="dropdown-kebab-pf">
     <ResourceKebab actions={menuActions} kind="ConfigMap" resource={configMap} />
   </div>

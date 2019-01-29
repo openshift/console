@@ -1,0 +1,53 @@
+/* eslint-disable no-unused-vars, no-undef */
+import * as React from 'react';
+import { OverviewItem } from '.';
+import { PodResourceSummary, PodDetailsList, menuActions } from '../pod';
+import { PodModel } from '../../models';
+import { ResourceOverviewDetails } from './resource-overview-details';
+import { NetworkingOverview } from './networking-overview';
+
+const PodOverviewDetails: React.SFC<PodOverviewDetailsProps> = ({item:{obj: pod}}) => {
+  return <div className="overview__sidebar-pane-body resource-overview__body">
+    <div className="resource-overview__summary">
+      <PodResourceSummary pod={pod} />
+    </div>
+    <div className="resource-overview__details">
+      <PodDetailsList pod={pod} />
+    </div>
+  </div>;
+};
+
+const PodResourcesTab: React.SFC<PodResourcesTabProps> = ({item: {routes , services}}) => <div className="overview__sidebar-pane-body">
+  <NetworkingOverview services={services} routes={routes} />
+</div>;
+
+const tabs = [
+  {
+    name: 'Overview',
+    component: PodOverviewDetails,
+  },
+  {
+    name: 'Resources',
+    component: PodResourcesTab,
+  },
+];
+
+export const PodOverviewPage: React.SFC<PodOverviewPageProps> = ({item}) =>
+  <ResourceOverviewDetails
+    item={item}
+    kindObj={PodModel}
+    menuActions={menuActions}
+    tabs={tabs}
+  />;
+
+type PodOverviewDetailsProps = {
+  item: OverviewItem;
+};
+
+type PodResourcesTabProps = {
+  item: OverviewItem;
+};
+
+type PodOverviewPageProps = {
+  item: OverviewItem;
+};

@@ -13,7 +13,7 @@ export const makeNodeSchedulable = resource => {
   return k8sPatch(NodeModel, resource, [{ op, path: '/spec/unschedulable', value: false }]);
 };
 
-export const isNodeReady = (node) => {
+const isNodeReady = (node) => {
   if (!node || !node.status || !node.status.conditions || !node.status.conditions.length) {
     return false;
   }
@@ -25,3 +25,5 @@ export const isNodeReady = (node) => {
 
   return readyState.status === 'True';
 };
+
+export const nodeStatus = (node) => isNodeReady(node) ? 'Ready' : 'Not Ready';

@@ -19,7 +19,7 @@ import {
   getServiceClassIcon,
   getServiceClassImage,
 } from './catalog-item-icon';
-import { ClusterServiceVersionModel } from '../../models';
+import { ClusterServiceClassModel, ClusterServiceVersionModel } from '../../models';
 import { providedAPIsFor, referenceForProvidedAPI } from '../operator-lifecycle-manager';
 import * as operatorLogo from '../../imgs/operator.svg';
 
@@ -66,17 +66,17 @@ export class CatalogListPage extends React.Component {
 
       operatorProvidedAPIs = _.flatten(clusterServiceVersions.data.map(csv => providedAPIsFor(csv).map(desc => ({...desc, csv}))))
         .reduce((all, cur) => all.find(v => referenceForProvidedAPI(v) === referenceForProvidedAPI(cur)) ? all : all.concat([cur]), [])
-        .map((desc, i) => ({
+        .map(desc => ({
           // NOTE: Faking a real k8s object to avoid fetching all CRDs
-          obj: {metadata: {uid: 1000000 + i, creationTimestamp: desc.csv.metadata.creationTimestamp}, ...desc},
-          kind: referenceForProvidedAPI(desc),
+          obj: {metadata: {uid: `${desc.csv.metadata.uid}-${desc.displayName}`, creationTimestamp: desc.csv.metadata.creationTimestamp}, ...desc},
+          kind: 'InstalledOperator',
           tileName: desc.displayName,
           tileIconClass: null,
           tileImgUrl: imgFor(desc),
           tileDescription: desc.description,
           tileProvider: desc.csv.spec.provider.name,
           tags: desc.csv.spec.keywords,
-          createLabel: `Create ${desc.displayName}`,
+          createLabel: 'Create',
           href: `/ns/${this.props.namespace || desc.csv.metadata.namespace}/clusterserviceversions/${desc.csv.metadata.name}/${referenceForProvidedAPI(desc)}/new`,
           supportUrl: null,
           longDescription: `This resource is provided by ${desc.csv.spec.displayName}, a Kubernetes Operator enabled by the Operator Lifecycle Manager.`,
@@ -190,7 +190,7 @@ export const Catalog = connectToFlags(FLAGS.OPENSHIFT, FLAGS.SERVICE_CATALOG, FL
   const resources = [
     ...(flags.SERVICE_CATALOG ? [{
       isList: true,
-      kind: 'ClusterServiceClass',
+      kind: referenceForModel(ClusterServiceClassModel),
       namespaced: false,
       prop: 'clusterserviceclasses',
     }] : []),
@@ -204,6 +204,7 @@ export const Catalog = connectToFlags(FLAGS.OPENSHIFT, FLAGS.SERVICE_CATALOG, FL
       isList: true,
       kind: referenceForModel(ClusterServiceVersionModel),
       namespaced: true,
+      namespace,
       prop: 'clusterServiceVersions',
     }] : []),
   ];
@@ -231,3 +232,5 @@ export const CatalogPage = withStartGuide(({match, noProjectsAvailable}) => {
     </div>
   </React.Fragment>;
 });
+
+CatalogPage.displayName = 'CatalogPage';

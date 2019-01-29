@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import * as _ from 'lodash-es';
-import { resourcePath } from './utils';
+import { resourcePath, ExternalLink } from './utils';
 import { fromNow } from './utils/datetime';
 import { K8sResourceKind } from '../module/k8s';
 import { getBuildNumber } from '../module/k8s/builds';
@@ -42,7 +42,7 @@ const BuildSummaryStatusIcon: React.SFC<BuildSummaryStatusIconProps> = ({ status
 export const BuildPipelineLogLink: React.SFC<BuildPipelineLogLinkProps> = ({ obj }) => {
   const link = getJenkinsLogURL(obj);
   return link
-    ? <a href={link} className="build-pipeline__log-link" target="_blank" rel="noopener noreferrer">View Logs</a>
+    ? <ExternalLink href={link} text="View Logs" additionalClassName="build-pipeline__log-link" />
     : null;
 };
 
@@ -87,7 +87,7 @@ const JenkinsInputUrl: React.SFC<JenkinsInputUrlProps> = ({ obj, stage }) => {
 
   const buildUrl = getJenkinsBuildURL(obj);
   return <div className="build-pipeline__stage-actions text-muted">
-    <a href={buildUrl} target="_blank" rel="noopener noreferrer">Input Required</a>
+    <ExternalLink href={buildUrl} text="Input Required" />
   </div>;
 };
 

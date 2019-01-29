@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars, no-undef */
 import * as React from 'react';
 
 import { connectToModel } from '../../kinds';
@@ -45,8 +46,6 @@ export const ResourceOverviewPage = connectToModel(({kindObj, item}) => {
   return <AsyncComponent loader={loader} kindObj={kindObj} item={item} />;
 });
 
-/* eslint-disable no-unused-vars, no-undef */
 type OverviewDetailsResourcesTabProps = {
   item: OverviewItem;
 };
-/* eslint-enable no-unused-vars, no-undef */

@@ -70,7 +70,12 @@ const Inner = connectToFlags(FLAGS.CAN_LIST_NODE)(class Inner extends React.Pure
               name={obj.name}
               title={obj.uid}
             />
-            <Timestamp timestamp={lastTimestamp} />
+            {obj.namespace && <ResourceLink
+              className="co-sysevent__resourcelink hidden-xs"
+              kind="Namespace"
+              name={obj.namespace}
+            />}
+            <Timestamp className="co-sysevent__timestamp" timestamp={lastTimestamp} />
           </div>
           <div className="co-sysevent__details">
             <small className="co-sysevent__source">
@@ -460,7 +465,7 @@ class EventStream extends SafetyFirst {
     });
     const messageCount = count < maxMessages ? `Showing ${pluralize(count, 'event')}` : `Showing ${count} of ${allCount}+ events`;
 
-    return <div className="co-m-pane__body">
+    return <div className="co-m-pane__body co-m-pane__body--alt">
       <div className="co-sysevent-stream">
         <div className="co-sysevent-stream__status">
           <div className="co-sysevent-stream__timeline__btn-text">

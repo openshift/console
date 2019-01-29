@@ -50,12 +50,12 @@ describe(PackageManifestRow.displayName, () => {
   it('does not render link if no subscriptions exist in the current namespace', () => {
     wrapper = wrapper.setProps({subscription: null});
 
-    expect(wrapper.find('.co-resource-list__item').childAt(2).text()).toContain('Not subscribed');
+    expect(wrapper.find('.co-resource-list__item').childAt(2).text()).toContain('None');
   });
 
   it('renders column with link to subscriptions', () => {
-    expect(wrapper.find('.co-resource-list__item').childAt(2).find(Link).at(0).props().to).toEqual(`/k8s/ns/default/${SubscriptionModel.plural}/${testSubscription.metadata.name}`);
-    expect(wrapper.find('.co-resource-list__item').childAt(2).find(Link).at(0).childAt(0).text()).toEqual('View subscription');
+    expect(wrapper.find('.co-resource-list__item').childAt(2).find(Link).at(0).props().to).toEqual(`/operatormanagement/ns/default/${SubscriptionModel.plural}?name=${testSubscription.metadata.name}`);
+    expect(wrapper.find('.co-resource-list__item').childAt(2).find(Link).at(0).childAt(0).text()).toEqual('View');
   });
 
   it('renders button to create new subscription', () => {

@@ -10,11 +10,11 @@ const { common } = Kebab.factory;
 const menuActions = [...common];
 
 const CRDHeader = props => <ListHeader>
-  <ColHead {...props} className="col-lg-4 col-md-4 col-sm-4 col-xs-6" sortField="spec.names.kind">Name</ColHead>
+  <ColHead {...props} className="col-lg-3 col-md-4 col-sm-4 col-xs-6" sortField="spec.names.kind">Name</ColHead>
   <ColHead {...props} className="col-lg-3 col-md-4 col-sm-4 col-xs-6" sortField="spec.group">Group</ColHead>
   <ColHead {...props} className="col-lg-2 col-md-2 col-sm-4 hidden-xs" sortField="spec.version">Version</ColHead>
   <ColHead {...props} className="col-lg-2 col-md-2 hidden-sm hidden-xs" sortField="spec.scope">Namespaced</ColHead>
-  <ColHead {...props} className="col-lg-1 hidden-md hidden-sm hidden-xs">Established</ColHead>
+  <ColHead {...props} className="col-lg-2 hidden-md hidden-sm hidden-xs">Established</ColHead>
 </ListHeader>;
 
 const isEstablished = conditions => {
@@ -25,7 +25,7 @@ const isEstablished = conditions => {
 const namespaced = crd => crd.spec.scope === 'Namespaced';
 
 const CRDRow = ({obj: crd}) => <div className="row co-resource-list__item">
-  <div className="col-lg-4 col-md-4 col-sm-4 col-xs-6">
+  <div className="col-lg-3 col-md-4 col-sm-4 col-xs-6">
     <span className="co-resource-link">
       <ResourceIcon kind="CustomResourceDefinition" />
       <Link className="co-resource-link__resource-name" to={`/k8s/all-namespaces/${referenceForCRD(crd)}`}>{_.get(crd, 'spec.names.kind', crd.metadata.name)}</Link>
@@ -40,7 +40,7 @@ const CRDRow = ({obj: crd}) => <div className="row co-resource-list__item">
   <div className="col-lg-2 col-md-2 hidden-sm hidden-xs">
     { namespaced(crd) ? 'Yes' : 'No' }
   </div>
-  <div className="col-lg-1 hidden-md hidden-sm hidden-xs">
+  <div className="col-lg-2 hidden-md hidden-sm hidden-xs">
     {
       isEstablished(crd.status.conditions)
         ? <span><i className="pficon pficon-ok" aria-hidden="true"></i></span>

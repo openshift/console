@@ -51,7 +51,6 @@
 @import "components/monitoring";
 @import "components/nav-title";
 @import "components/node-ip-list";
-@import "components/overflow";
 @import "components/RBAC/rbac";
 @import "components/secrets/create-secret";
 @import "components/resource";
@@ -67,10 +66,10 @@
 @import "components/volume-icon";
 @import "components/horizontal-nav";
 @import "components/edit-yaml";
-@import "components/factory/modal-wrapper";
 @import "components/sidebars/resource-sidebar";
 @import "components/operator-lifecycle-manager/operator-lifecycle-manager";
 @import "components/graphs/graphs";
+@import "components/masthead";
 @import "components/modals/modals";
 @import "components/environment";
 @import "components/utils/name-value-editor";

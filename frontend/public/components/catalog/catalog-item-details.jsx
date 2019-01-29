@@ -10,7 +10,7 @@ import {normalizeIconClass} from './catalog-item-icon';
 import {ClusterServicePlanModel} from '../../models';
 import {SourceToImageResourceDetails} from '../source-to-image';
 import {k8sGet} from '../../module/k8s';
-import {Timestamp} from '../utils';
+import {Timestamp, ExternalLink} from '../utils';
 
 export class CatalogTileDetails extends React.Component {
   state = {
@@ -53,9 +53,9 @@ export class CatalogTileDetails extends React.Component {
     const iconClass = tileIconClass ? normalizeIconClass(tileIconClass) : null;
     const creationTimestamp = _.get(obj, 'metadata.creationTimestamp');
 
-    const supportUrlLink = <a href={supportUrl} target="_blank" className="co-external-link" rel="noopener noreferrer">Get Support</a>;
-    const documentationUrlLink = <a href={documentationUrl} target="_blank" className="co-external-link" rel="noopener noreferrer">{documentationUrl}</a>;
-    const sampleRepoLink = <a href={sampleRepo} target="_blank" className="co-external-link" rel="noopener noreferrer">{sampleRepo}</a>;
+    const supportUrlLink = <ExternalLink href={supportUrl} text="Get Support" />;
+    const documentationUrlLink = <ExternalLink href={documentationUrl} additionalClassName="co-break-all" text={documentationUrl} />;
+    const sampleRepoLink = <ExternalLink href={sampleRepo} additionalClassName="co-break-all" text={sampleRepo} />;
     const planItems = _.map(plans, plan => <li key={plan.metadata.uid}>{plan.spec.description || plan.spec.externalName}</li>);
 
     return (
@@ -71,7 +71,7 @@ export class CatalogTileDetails extends React.Component {
         <Modal.Body>
           <div className="co-catalog-page__overlay-body">
             <PropertiesSidePanel>
-              <Link className="btn btn-primary co-catalog-page__overlay-create" to={href} role="button">{this.props.item.createLabel}</Link>
+              <Link className="btn btn-primary co-catalog-page__overlay-create" to={href} role="button" title={this.props.item.createLabel}>{this.props.item.createLabel}</Link>
               {tileProvider && <PropertyItem label="Provider" value={tileProvider} />}
               {supportUrl && <PropertyItem label="Support" value={supportUrlLink} />}
               {creationTimestamp && <PropertyItem label="Created At" value={<Timestamp timestamp={creationTimestamp} />} />}

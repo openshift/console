@@ -24,7 +24,7 @@ const markdownConvert = (markdown) => {
   });
 };
 
-export class SyncMarkdownView extends React.Component<{content: string}, {}> {
+export class SyncMarkdownView extends React.Component<{content: string, outerScroll: boolean}, {}> {
   private frame: any;
 
   constructor(props) {
@@ -41,14 +41,23 @@ export class SyncMarkdownView extends React.Component<{content: string}, {}> {
       return;
     }
     this.frame.style.height = `${this.frame.contentWindow.document.body.firstChild.offsetHeight + 50}px`;
+    if (this.props.outerScroll) {
+      this.frame.contentWindow.document.firstChild.style.height = 'inherit';
+    }
   }
 
   render() {
-    // Find the app's stylesheet and inject it into the frame to ensure consistent styling.
+    // Find the app's stylesheets and inject them into the frame to ensure consistent styling.
     const filteredLinks = Array.from(document.getElementsByTagName('link')).filter((l) => _.includes(l.href, 'app-bundle'));
 
+    const linkRefs = _.reduce(
+      filteredLinks,
+      (refs, link) => `${refs}
+        <link rel="stylesheet" href="${link.href}">`,
+      '');
+
     const contents = `
-      <link rel="stylesheet" href="${filteredLinks[0].href}">
+      ${linkRefs}
       <style type="text/css">
       body {
           color: ${this.props.content ? '#333' : '#999'};

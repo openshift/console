@@ -85,17 +85,24 @@ const MetricsTooltip: React.SFC<MetricsTooltipProps> = ({metricLabel, byPod, chi
   return <Tooltip content={content} styles={overviewTooltipStyles} disableOnMobile>{children}</Tooltip>;
 };
 
+
 const Metrics: React.SFC<MetricsProps> = ({metrics, item}) => {
+  const getPods = () => {
+    if (item.obj.kind === 'Pod') {
+      return [item.obj];
+    }
+    return item.current ? item.current.pods : item.pods;
+  };
+
   if (_.isEmpty(metrics)) {
     return null;
   }
 
-  const pods = item.current ? item.current.pods : item.pods;
   let totalBytes = 0;
   let totalCores = 0;
   const memoryByPod = [];
   const cpuByPod = [];
-  _.each(pods, ({ metadata: { name } }: K8sResourceKind) => {
+  _.each(getPods(), ({ metadata: { name } }: K8sResourceKind) => {
     const bytes = _.get(metrics, ['memory', name]);
     if (_.isFinite(bytes)) {
       totalBytes += bytes;
@@ -137,25 +144,10 @@ const Metrics: React.SFC<MetricsProps> = ({metrics, item}) => {
 };
 
 const Status: React.SFC<StatusProps> = ({item}) => {
-  const {isRollingOut, readiness, obj, current} = item;
-  if (isRollingOut) {
-    // TODO: Show pod status for previous and next revisions.
-    return <div className="project-overview__detail project-overview__detail--status text-muted">
-      Rollout in progress...
-    </div>;
-  }
-
-  if (readiness) {
-    const podLink = current ? `${resourceObjPath(current.obj, _.get(current, 'obj.kind'))}/pods`
-      : `${resourceObjPath(obj, obj.kind)}/pods`;
-    return <div className="project-overview__detail project-overview__detail--status">
-      <Link to={podLink}>
-        {readiness.ready} of {readiness.desired} pods
-      </Link>
-    </div>;
-  }
-
-  return null;
+  const {status} = item;
+  return status ? <div className="project-overview__detail project-overview__detail--status">
+    {status}
+  </div> : null;
 };
 
 const iconClassBySeverity = Object.freeze({
@@ -223,7 +215,7 @@ const ProjectOverviewListItem = connect<ProjectOverviewListItemPropsFromState, P
     // Hide metrics when a selection is active.
     const hasSelection = !!selectedUID;
     const isSelected = uid === selectedUID;
-    const className = classnames('project-overview__item', {'project-overview__item--selected': isSelected});
+    const className = classnames(`project-overview__item project-overview__item--${kind}`, {'project-overview__item--selected': isSelected});
     const heading = <h3 className="project-overview__item-heading">
       <span className="co-resource-link co-resource-link-truncate">
         <ResourceIcon kind={kind} />

@@ -1,8 +1,9 @@
 import * as React from 'react';
 import * as PropTypes from 'prop-types';
-import { Avatar, Brand, PageHeader } from '@patternfly/react-core';
+import { Brand, PageHeader } from '@patternfly/react-core';
 
 import { MastheadToolbar } from './masthead-toolbar';
+import { history } from './utils';
 import okdLogoImg from '../imgs/okd-logo.svg';
 import okdvirtLogoImg from '../imgs/okdvirt-logo.svg';
 import openshiftvirtLogoImg from '../imgs/openshiftvirt-logo.svg';
@@ -10,7 +11,6 @@ import openshiftLogoImg from '../imgs/openshift-logo.svg';
 import ocpLogoImg from '../imgs/openshift-platform-logo.svg';
 import onlineLogoImg from '../imgs/openshift-online-logo.svg';
 import dedicatedLogoImg from '../imgs/openshift-dedicated-logo.svg';
-import avatarImg from '../imgs/avatar.svg';
 import * as pfBg992 from '../../public/imgs/pfbg_992.jpg';
 
 export const getBrandingDetails = () => {
@@ -66,12 +66,21 @@ export const getBrandingDetails = () => {
 
 export const Masthead = ({ onNavToggle }) => {
   const details = getBrandingDetails();
+  const defaultRoute = '/';
+  const logoProps = {
+    href: defaultRoute,
+    // use onClick to prevent browser reload
+    onClick: e => {
+      e.preventDefault();
+      history.push(defaultRoute);
+    },
+  };
 
   return (
     <PageHeader
       logo={<Brand src={details.logoImg} alt={details.logoAlt} />}
+      logoProps={logoProps}
       toolbar={<MastheadToolbar />}
-      avatar={<Avatar src={avatarImg} alt="" className="pf-u-sr-only pf-u-visible-on-md" />}
       showNavToggle
       onNavToggle={onNavToggle}
     />

@@ -76,7 +76,7 @@ export type CustomResourceDefinitionKind = {
 } & K8sResourceKind;
 
 export type MachineSpec = {
-  providerConfig: {
+  providerSpec: {
     value: K8sResourceKind;
   };
   versions: {
@@ -116,6 +116,32 @@ export type MachineSetKind = {
   status?: {
     availableReplicas: number;
     fullyLabeledReplicas: number;
+    readyReplicas: number;
+    replicas: number;
+  };
+} & K8sResourceKind;
+
+export type MachineDeploymentKind = {
+  spec: {
+    replicas: number;
+    selector: Selector;
+    template: {
+      spec: MachineSpec;
+    };
+    paused?: boolean;
+    minReadySeconds?: number;
+    progressDeadlineSeconds?: number;
+    strategy: {
+      type: string;
+      rollingUpdate?: {
+        maxUnavailable?: number | string;
+        maxSurge?: number | string;
+      }
+    };
+  };
+  status?: {
+    availableReplicas: number;
+    unavailableReplicas: number;
     readyReplicas: number;
     replicas: number;
   };

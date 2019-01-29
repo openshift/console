@@ -12,6 +12,7 @@ import {
   Dropdown,
   NameValueEditorPair,
   history,
+  ExternalLink,
 } from './utils';
 import { Firehose } from './utils/firehose';
 import { k8sCreate } from './../module/k8s';
@@ -775,12 +776,7 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
           <label className="control-label">Additional Parameters</label>
           <p>
             Specific fields for the selected provisioner. &nbsp;
-            <a href={this.storageTypes[this.state.newStorageClass.type].documentationLink}
-              target="_blank"
-              className="co-external-link"
-              rel="noopener noreferrer">
-              What should I enter here?
-            </a>
+            <ExternalLink href={this.storageTypes[this.state.newStorageClass.type].documentationLink} text="What should I enter here?" />
           </p>
           <NameValueEditorComponent
             nameValuePairs={this.state.customParams}

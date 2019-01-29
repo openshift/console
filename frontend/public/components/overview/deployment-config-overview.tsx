@@ -9,6 +9,7 @@ import {
   DeploymentPodCounts,
   LoadingInline,
   ResourceSummary,
+  WorkloadPausedAlert,
 } from '../utils';
 
 import { OverviewDetailsResourcesTab } from './resource-overview-page';
@@ -17,6 +18,7 @@ import { ResourceOverviewDetails } from './resource-overview-details';
 
 const DeploymentConfigOverviewDetails: React.SFC<DeploymentConfigOverviewDetailsProps> = ({item: {obj: dc}}) => {
   return <div className="overview__sidebar-pane-body resource-overview__body">
+    {dc.spec.paused && <WorkloadPausedAlert obj={dc} model={DeploymentConfigModel} />}
     <div className="resource-overview__pod-counts">
       <DeploymentPodCounts resource={dc} resourceKind={DeploymentConfigModel} />
     </div>

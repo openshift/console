@@ -33,6 +33,7 @@ export default (state, action) => {
         selectedView: 'resources',
       }),
       user: {},
+      clusterID: '',
     });
   }
 
@@ -67,6 +68,9 @@ export default (state, action) => {
 
     case types.setUser:
       return state.set('user', action.user);
+
+    case types.setClusterID:
+      return state.set('clusterID', action.clusterID);
 
     case types.setMonitoringData: {
       const alerts = action.key === 'alerts' ? action.data : state.getIn(['monitoring', 'alerts']);
@@ -118,6 +122,10 @@ export default (state, action) => {
       break;
   }
   return state;
+};
+
+export const clusterIDStateToProps = ({UI}) => {
+  return {clusterID: UI.get('clusterID')};
 };
 
 export const createProjectMessageStateToProps = ({UI}) => {

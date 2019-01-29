@@ -43,7 +43,7 @@ describe('Kubernetes resource CRUD operations', () => {
     .set('imagestreams', {kind: 'ImageStream'})
     .set('routes', {kind: 'Route'});
   const serviceCatalogObjs = OrderedMap<string, {kind: string, namespaced?: boolean}>()
-    .set('clusterservicebrokers', {kind: 'ClusterServiceBroker', namespaced: false});
+    .set('clusterservicebrokers', {kind: 'servicecatalog.k8s.io~v1beta1~ClusterServiceBroker', namespaced: false});
   let testObjs = browser.params.openshift === 'true' ? k8sObjs.merge(openshiftObjs) : k8sObjs;
   testObjs = browser.params.servicecatalog === 'true' ? testObjs.merge(serviceCatalogObjs) : testObjs;
 
@@ -142,10 +142,10 @@ describe('Kubernetes resource CRUD operations', () => {
 
       it('deletes the resource instance', async() => {
         await browser.get(`${appHost}${namespaced ? `/k8s/ns/${testName}` : '/k8s/cluster'}/${resource}`);
+        await crudView.resourceRowsPresent();
         // Filter by resource name to make sure the resource is on the first page of results.
         // Otherwise the tests fail since we do virtual scrolling and the element isn't found.
         await crudView.filterForName(testName);
-        await crudView.resourceRowsPresent();
         await crudView.deleteRow(kind)(testName);
 
         leakedResources.delete(JSON.stringify({name: testName, plural: resource, namespace: namespaced ? testName : undefined}));
@@ -175,10 +175,10 @@ describe('Kubernetes resource CRUD operations', () => {
 
     it('search view displays created RoleBinding', async() => {
       await browser.get(`${appHost}/k8s/ns/${testName}/rolebindings`);
+      await crudView.resourceRowsPresent();
       // Filter by resource name to make sure the resource is on the first page of results.
       // Otherwise the tests fail since we do virtual scrolling and the element isn't found.
       await crudView.filterForName(bindingName);
-      await crudView.resourceRowsPresent();
       expect(crudView.rowForName(bindingName).isPresent()).toBe(true);
     });
 
@@ -322,7 +322,7 @@ describe('Kubernetes resource CRUD operations', () => {
 
     it('sees if label links still work', async() => {
       await $$('.co-m-label').first().click();
-      await browser.wait(until.urlContains(`/search/ns/${testName}?kind=ConfigMap&q=${labelValue}`));
+      await browser.wait(until.urlContains(`/search/ns/${testName}?kind=core~v1~ConfigMap&q=${labelValue}`));
 
       expect($('.co-text-configmap').isDisplayed()).toBe(true);
     });

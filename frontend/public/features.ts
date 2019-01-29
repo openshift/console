@@ -28,6 +28,7 @@ import { UIActions } from './ui/ui-actions';
   OPERATOR_LIFECYCLE_MANAGER: false,
   CHARGEBACK: false,
   OPENSHIFT: false,
+  CAN_GET_NS: false,
   CAN_LIST_NS: false,
   CAN_LIST_NODE: false,
   CAN_LIST_PV: false,
@@ -37,7 +38,7 @@ import { UIActions } from './ui/ui-actions';
   KUBEVIRT: false,
   SHOW_OPENSHIFT_START_GUIDE: false,
   SERVICE_CATALOG: false,
-  KUBERNETES_MARKETPLACE: false,
+  OPERATOR_HUB: false,
   CLUSTER_API false,
   CLUSTER_VERSION: false,
   CLUSTER_UPDATES_AVAILABLE: false,
@@ -48,6 +49,7 @@ export enum FLAGS {
   OPERATOR_LIFECYCLE_MANAGER = 'OPERATOR_LIFECYCLE_MANAGER',
   CHARGEBACK = 'CHARGEBACK',
   OPENSHIFT = 'OPENSHIFT',
+  CAN_GET_NS = 'CAN_GET_NS',
   CAN_LIST_NS = 'CAN_LIST_NS',
   CAN_LIST_NODE = 'CAN_LIST_NODE',
   CAN_LIST_PV = 'CAN_LIST_PV',
@@ -57,7 +59,7 @@ export enum FLAGS {
   KUBEVIRT = 'KUBEVIRT',
   SHOW_OPENSHIFT_START_GUIDE = 'SHOW_OPENSHIFT_START_GUIDE',
   SERVICE_CATALOG = 'SERVICE_CATALOG',
-  KUBERNETES_MARKETPLACE = 'KUBERNETES_MARKETPLACE',
+  OPERATOR_HUB = 'OPERATOR_HUB',
   CLUSTER_API = 'CLUSTER_API',
   CLUSTER_VERSION = 'CLUSTER_VERSION',
   CLUSTER_UPDATES_AVAILABLE = 'CLUSTER_UPDATES_AVAILABLE',
@@ -74,7 +76,7 @@ export const CRDs = {
   [referenceForModel(VirtualMachineModel)]: FLAGS.KUBEVIRT,
   [referenceForModel(ClusterServiceClassModel)]: FLAGS.SERVICE_CATALOG,
   [referenceForModel(ClusterServiceVersionModel)]: FLAGS.OPERATOR_LIFECYCLE_MANAGER,
-  [referenceForModel(OperatorSourceModel)]: FLAGS.KUBERNETES_MARKETPLACE,
+  [referenceForModel(OperatorSourceModel)]: FLAGS.OPERATOR_HUB,
   [referenceForModel(MachineModel)]: FLAGS.CLUSTER_API,
 };
 
@@ -109,7 +111,13 @@ const clusterVersionPath = `${k8sBasePath}/apis/config.openshift.io/v1/clusterve
 const detectClusterVersion = dispatch => coFetchJSON(clusterVersionPath)
   .then(
     clusterVersion => {
-      setFlag(dispatch, FLAGS.CLUSTER_VERSION, !_.isEmpty(clusterVersion));
+      const hasClusterVersion = !_.isEmpty(clusterVersion);
+      setFlag(dispatch, FLAGS.CLUSTER_VERSION, hasClusterVersion);
+
+      if (hasClusterVersion && !_.isEmpty(clusterVersion.spec)) {
+        dispatch(UIActions.setClusterID(clusterVersion.spec.clusterID));
+      }
+
       const availableUpdates = _.get(clusterVersion, 'status.availableUpdates');
 
       // TODO - REMOVE MOCK CODE
@@ -166,9 +174,9 @@ const loggingConfigMapPath = `${k8sBasePath}/api/v1/namespaces/openshift-logging
 const detectLoggingURL = dispatch => coFetchJSON(loggingConfigMapPath)
   .then(
     res => {
-      const {kibanaAppHost} = res.data;
-      if (!_.isEmpty(kibanaAppHost)) {
-        dispatch(setMonitoringURL(MonitoringRoutes.Kibana, kibanaAppHost));
+      const {kibanaAppURL} = res.data;
+      if (!_.isEmpty(kibanaAppURL)) {
+        dispatch(setMonitoringURL(MonitoringRoutes.Kibana, kibanaAppURL));
       }
     },
     err => {
@@ -226,6 +234,9 @@ const detectShowOpenShiftStartGuide = (dispatch, canListNS: boolean = false) => 
 
 // Check the user's access to some resources.
 const ssarChecks = [{
+  flag: FLAGS.CAN_GET_NS,
+  resourceAttributes: { resource: 'namespaces', verb: 'get' },
+}, {
   flag: FLAGS.CAN_LIST_NS,
   resourceAttributes: { resource: 'namespaces', verb: 'list' },
   after: detectShowOpenShiftStartGuide,

@@ -48,11 +48,9 @@ describe('Interacting with the etcd OCS', () => {
   it('creates etcd Operator `Deployment`', async() => {
     await browser.get(`${appHost}/k8s/ns/${testName}/deployments`);
     await crudView.isLoaded();
-    await browser.wait(until.textToBePresentInElement(crudView.rowForName(etcdOperatorName).$('a[title=pods]'), '1 of 1 pods'));
+    await browser.wait(until.textToBePresentInElement(crudView.rowForName(etcdOperatorName).$('a[title=pods]'), '1 of 1 pods'), 100000);
 
     expect(crudView.rowForName(etcdOperatorName).isDisplayed()).toBe(true);
-    expect(crudView.labelsForRow(etcdOperatorName).filter(l => l.getText().then(t => t === `alm-owner-name=${etcdOperatorName}`)).first()).toBeDefined();
-    expect(crudView.labelsForRow(etcdOperatorName).filter(l => l.getText().then(t => t === `alm-owner-namespace=${testName}`)).first()).toBeDefined();
   });
 
   xit('recreates etcd Operator `Deployment` if manually deleted', async() => {
@@ -100,7 +98,7 @@ describe('Interacting with the etcd OCS', () => {
     const newContent = defaultsDeep({}, {metadata: {name: `${testName}-etcdcluster`, labels: {[testLabel]: testName}}}, safeLoad(content));
     await yamlView.setContent(safeDump(newContent));
 
-    expect($('.yaml-editor__header').getText()).toEqual('Create Etcd Cluster');
+    expect($('.yaml-editor__header').getText()).toContain('Create Etcd Cluster');
   });
 
   it('displays new `EtcdCluster` that was created from YAML editor', async() => {
@@ -150,7 +148,7 @@ describe('Interacting with the etcd OCS', () => {
     const newContent = defaultsDeep({}, {metadata: {name: `${testName}-etcdbackup`, labels: {[testLabel]: testName}}}, safeLoad(content));
     await yamlView.setContent(safeDump(newContent));
 
-    expect($('.yaml-editor__header').getText()).toEqual('Create Etcd Backup');
+    expect($('.yaml-editor__header').getText()).toContain('Create Etcd Backup');
   });
 
   it('displays new `EtcdBackup` that was created from YAML editor', async() => {
@@ -200,7 +198,7 @@ describe('Interacting with the etcd OCS', () => {
     const newContent = defaultsDeep({}, {metadata: {name: `${testName}-etcdrestore`, labels: {[testLabel]: testName}}}, safeLoad(content));
     await yamlView.setContent(safeDump(newContent));
 
-    expect($('.yaml-editor__header').getText()).toEqual('Create Etcd Restore');
+    expect($('.yaml-editor__header').getText()).toContain('Create Etcd Restore');
   });
 
   it('displays new `EtcdRestore` that was created from YAML editor', async() => {

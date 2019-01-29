@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Tooltip } from './tooltip';
+import * as classNames from 'classnames';
 
 import {SafetyFirst} from '../safety-first';
 import * as dateTime from './datetime';
@@ -119,6 +120,7 @@ export class Timestamp extends SafetyFirst {
 
   render() {
     const { mdate, timestamp } = this.state;
+    const { className } = this.props;
 
     if (!dateTime.isValid(mdate)) {
       return <div className="co-timestamp">-</div>;
@@ -128,7 +130,7 @@ export class Timestamp extends SafetyFirst {
       return timestamp;
     }
 
-    return <div className="co-timestamp co-icon-and-text">
+    return <div className={classNames('co-timestamp co-icon-and-text', className)}>
       <i className="fa fa-globe co-icon-and-text__icon" aria-hidden="true" />
       <Tooltip content={[<span className="co-nowrap" key="co-timestamp">{ mdate.toISOString() }</span>]}>
         { timestamp }
