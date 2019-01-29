@@ -1,16 +1,21 @@
 /* eslint-disable no-undef, no-unused-vars */
-
 import { $, $$, by, Key, browser, ExpectedConditions as until } from 'protractor';
+import { waitForNone } from '../protractor.conf';
 
 export const saveButton = $('.yaml-editor__buttons').$('#save-changes');
 export const cancelButton = $('.yaml-editor__buttons').element(by.buttonText('Cancel'));
-
-export const isLoaded = () => browser.wait(until.visibilityOf(saveButton));
-
-export const editorInput = $$('textarea.ace_text-input').get(0);
+export const editorInput = $('textarea.ace_text-input');
 export const editorContent = $('div.ace_content');
+export const isLoaded = () => browser.wait(until.and(waitForNone($$('.co-m-loader')), until.visibilityOf(saveButton)));
+const insertLine = (line) => editorInput.sendKeys(line, Key.ENTER, Key.HOME);
+export const setContent = async(text: string) => {
+  const lines = text.split(/\n/g);
+  await editorContent.click();
+  await editorInput.sendKeys(Key.chord(Key.CONTROL, 'a'), Key.BACK_SPACE);
+  await editorInput.sendKeys(Key.chord(Key.COMMAND, 'a'), Key.BACK_SPACE); // For those OSX users...
 
-export const setContent = (text: string) => editorContent.click()
-  .then(() => editorInput.sendKeys(Key.chord(Key.CONTROL, 'a'), Key.BACK_SPACE))
-  .then(() => editorInput.sendKeys(Key.chord(Key.COMMAND, 'a'), Key.BACK_SPACE)) // For those OSX users...
-  .then(() => text.split(/\n/g).map(line => editorInput.sendKeys(line, Key.ENTER, Key.HOME)));
+  // Lines should be inserted sychronously and sequentially
+  for (const line of lines) {
+    await insertLine(line);
+  }
+};

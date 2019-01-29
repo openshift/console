@@ -1,6 +1,6 @@
 /* eslint-disable no-undef, no-unused-vars, no-console */
 
-import { browser, $, $$, by, ExpectedConditions as until, Key } from 'protractor';
+import { browser, $, $$, by, ExpectedConditions as until, Key, element } from 'protractor';
 import { safeLoad, safeDump } from 'js-yaml';
 import * as _ from 'lodash';
 import { execSync } from 'child_process';
@@ -10,6 +10,7 @@ import { appHost, testName, checkLogs, checkErrors } from '../protractor.conf';
 import * as crudView from '../views/crud.view';
 import * as yamlView from '../views/yaml.view';
 import * as namespaceView from '../views/namespace.view';
+import * as createRoleBindingView from '../views/create-role-binding.view';
 
 const K8S_CREATION_TIMEOUT = 15000;
 
@@ -69,7 +70,7 @@ describe('Kubernetes resource CRUD operations', () => {
   testObjs.forEach(({kind, namespaced = true}, resource) => {
 
     describe(kind, () => {
-
+      const name = `${testName}-${kind.toLowerCase()}`;
       it('displays a list view for the resource', async() => {
         await browser.get(`${appHost}${namespaced ? `/k8s/ns/${testName}` : '/k8s/cluster'}/${resource}?name=${testName}`);
         await crudView.isLoaded();
@@ -77,7 +78,7 @@ describe('Kubernetes resource CRUD operations', () => {
 
       if (namespaced) {
         it('has a working namespace dropdown on namespaced objects', async() => {
-          expect(namespaceView.namespaceSelector.isPresent()).toBe(true);
+          await browser.wait(until.presenceOf(namespaceView.namespaceSelector));
           expect(namespaceView.selectedNamespace.getText()).toEqual(testName);
         });
       } else {
@@ -87,28 +88,30 @@ describe('Kubernetes resource CRUD operations', () => {
       }
 
       it('displays a YAML editor for creating a new resource instance', async() => {
-        const exists = await crudView.createItemButton.isPresent();
-        if (exists) {
+        const createDropdownIsPresent = await crudView.createItemButton.isPresent();
+        if (createDropdownIsPresent) {
           await crudView.createItemButton.click();
           await crudView.createYAMLLink.click();
         } else {
           await crudView.createYAMLButton.click();
         }
-        const formToYamlExists = await crudView.createYAMLLink.isPresent();
-        if (formToYamlExists) {
-          crudView.createYAMLLink.click();
+        browser.wait(until.and(crudView.untilNoLoadersPresent, until.presenceOf(element(by.cssContainingText('h1', 'Create')))));
+
+        const yamlLinkIsPresent = await crudView.createYAMLLink.isPresent();
+        if (yamlLinkIsPresent) {
+          await crudView.createYAMLLink.click();
         }
         await yamlView.isLoaded();
 
         const content = await yamlView.editorContent.getText();
-        const newContent = _.defaultsDeep({}, {metadata: {name: testName, labels: {[testLabel]: testName}}}, safeLoad(content));
+        const newContent = _.defaultsDeep({}, {metadata: {name, labels: {[testLabel]: testName}}}, safeLoad(content));
         await yamlView.setContent(safeDump(newContent));
 
-        expect(yamlView.editorContent.getText()).toContain(testName);
+        expect(yamlView.editorContent.getText()).toContain(name);
       });
 
       it('creates a new resource instance', async() => {
-        leakedResources.add(JSON.stringify({name: testName, plural: resource, namespace: namespaced ? testName : undefined}));
+        leakedResources.add(JSON.stringify({name, plural: resource, namespace: namespaced ? testName : undefined}));
         await yamlView.saveButton.click();
 
         expect(crudView.errorMessage.isPresent()).toBe(false);
@@ -117,26 +120,25 @@ describe('Kubernetes resource CRUD operations', () => {
       it('displays detail view for new resource instance', async() => {
         await browser.wait(until.presenceOf(crudView.actionsDropdown));
 
-        expect(browser.getCurrentUrl()).toContain(`/${testName}`);
-        expect(crudView.resourceTitle.getText()).toEqual(testName);
+        expect(browser.getCurrentUrl()).toContain(`/${name}`);
+        expect(crudView.resourceTitle.getText()).toEqual(name);
       });
 
       it('search view displays created resource instance', async() => {
         await browser.get(`${appHost}/search/${namespaced ? `ns/${testName}` : 'all-namespaces'}?kind=${kind}&q=${testLabel}%3d${testName}`);
         await crudView.resourceRowsPresent();
-        await crudView.filterForName(testName);
-        await crudView.rowForName(testName).element(by.linkText(testName)).click();
-        await browser.wait(until.urlContains(`/${testName}`));
-
-        expect(crudView.resourceTitle.getText()).toEqual(testName);
+        await crudView.filterForName(name);
+        await crudView.rowForName(name).element(by.linkText(name)).click();
+        await browser.wait(until.urlContains(`/${name}`));
+        expect(crudView.resourceTitle.getText()).toEqual(name);
       });
 
       it('edit the resource instance', async() => {
         if (kind !== 'ServiceAccount') {
           await browser.get(`${appHost}/search/${namespaced ? `ns/${testName}` : 'all-namespaces'}?kind=${kind}&q=${testLabel}%3d${testName}`);
-          await crudView.filterForName(testName);
+          await crudView.filterForName(name);
           await crudView.resourceRowsPresent();
-          await crudView.editRow(kind)(testName);
+          await crudView.editRow(kind)(name);
         }
       });
 
@@ -145,18 +147,17 @@ describe('Kubernetes resource CRUD operations', () => {
         await crudView.resourceRowsPresent();
         // Filter by resource name to make sure the resource is on the first page of results.
         // Otherwise the tests fail since we do virtual scrolling and the element isn't found.
-        await crudView.filterForName(testName);
-        await crudView.deleteRow(kind)(testName);
-
-        leakedResources.delete(JSON.stringify({name: testName, plural: resource, namespace: namespaced ? testName : undefined}));
+        await crudView.filterForName(name);
+        await crudView.deleteRow(kind)(name);
+        leakedResources.delete(JSON.stringify({name, plural: resource, namespace: namespaced ? testName : undefined}));
       });
     });
   });
 
-  describe('Bindings', () => {
+  describe('Role Bindings', () => {
     const bindingName = `${testName}-cluster-admin`;
-
-    it('clicks on the `create bindings` button', async() => {
+    const roleName = 'cluster-admin';
+    it('displays "Create Role Binding" page', async() => {
       await browser.get(`${appHost}/k8s/all-namespaces/rolebindings`);
       await crudView.isLoaded();
       await crudView.createYAMLButton.click();
@@ -164,17 +165,25 @@ describe('Kubernetes resource CRUD operations', () => {
     });
 
     it('creates a RoleBinding', async() => {
-      await $('#role-binding-name').sendKeys(bindingName);
-      await $('#ns-dropdown').click().then(() => browser.actions().sendKeys(testName, Key.ARROW_DOWN, Key.ENTER).perform());
-      await $('#role-dropdown').click().then(() => browser.actions().sendKeys('cluster-admin', Key.ARROW_DOWN, Key.ENTER).perform());
-      await $('#subject-name').sendKeys('subject-name');
-      leakedResources.add(JSON.stringify({name: bindingName, plural: 'rolebindings', namespace: testName}));
+      await browser.wait(crudView.untilNoLoadersPresent);
+
+      // Role Binding specific actions
+      await createRoleBindingView.inputName(bindingName);
+      await createRoleBindingView.selectNamespace(testName);
+      expect(createRoleBindingView.getSelectedNamespace()).toEqual(testName);
+      await createRoleBindingView.selectRole(roleName);
+      expect(createRoleBindingView.getSelectedRole()).toEqual(roleName);
+      await createRoleBindingView.inputSubject('subject-name');
+
       await crudView.saveChangesBtn.click();
       expect(crudView.errorMessage.isPresent()).toBe(false);
+      await browser.wait(until.presenceOf(element(by.cssContainingText('h1.co-m-pane__heading', bindingName))));
+      leakedResources.add(JSON.stringify({name: bindingName, plural: 'rolebindings', namespace: testName}));
     });
 
-    it('search view displays created RoleBinding', async() => {
+    it('displays created RoleBinding in list view', async() => {
       await browser.get(`${appHost}/k8s/ns/${testName}/rolebindings`);
+      await crudView.isLoaded();
       await crudView.resourceRowsPresent();
       // Filter by resource name to make sure the resource is on the first page of results.
       // Otherwise the tests fail since we do virtual scrolling and the element isn't found.
@@ -247,7 +256,6 @@ describe('Kubernetes resource CRUD operations', () => {
     it('displays `CustomResourceDefinitions` list view', async() => {
       await browser.get(`${appHost}/k8s/cluster/customresourcedefinitions`);
       await crudView.isLoaded();
-
       expect(crudView.resourceRows.count()).not.toEqual(0);
     });
 
@@ -257,7 +265,6 @@ describe('Kubernetes resource CRUD operations', () => {
       await yamlView.setContent(safeDump(crd));
       await yamlView.saveButton.click();
       await browser.wait(until.urlContains(name), K8S_CREATION_TIMEOUT);
-
       expect(crudView.errorMessage.isPresent()).toBe(false);
     });
 
@@ -268,14 +275,12 @@ describe('Kubernetes resource CRUD operations', () => {
       await crudView.isLoaded();
       await crudView.createYAMLButton.click();
       await yamlView.isLoaded();
-
       expect(yamlView.editorContent.getText()).toContain(`kind: CRD${testName}`);
     });
 
     xit('creates a new custom resource instance', async() => {
       leakedResources.add(JSON.stringify({name, plural: 'customresourcedefinitions'}));
       await yamlView.saveButton.click();
-
       expect(crudView.errorMessage.isPresent()).toBe(false);
     });
 
@@ -295,7 +300,6 @@ describe('Kubernetes resource CRUD operations', () => {
     beforeAll(async() => {
       await browser.get(`${appHost}/k8s/ns/${testName}/${plural}/new`);
       await yamlView.isLoaded();
-
       const content = await yamlView.editorContent.getText();
       const newContent = _.defaultsDeep({}, {metadata: {name, namespace: testName}}, safeLoad(content));
       await yamlView.setContent(safeDump(newContent));
@@ -306,9 +310,9 @@ describe('Kubernetes resource CRUD operations', () => {
     it('displays modal for editing resource instance labels', async() => {
       await browser.wait(until.presenceOf(crudView.actionsDropdown));
       await crudView.actionsDropdown.click();
-      await browser.wait(until.presenceOf(crudView.actionsDropdownMenu), 500);
+      await browser.wait(until.presenceOf(crudView.actionsDropdownMenu));
       await crudView.actionsDropdownMenu.element(by.linkText('Edit Labels')).click();
-      await browser.wait(until.presenceOf($('.tags input')), 500);
+      await browser.wait(until.presenceOf($('.tags input')));
       await $('.tags input').sendKeys(labelValue, Key.ENTER);
       // This only works because there's only one label
       await browser.wait(until.textToBePresentInElement($('.tags .tag-item'), labelValue), 1000);

@@ -158,3 +158,10 @@ export const waitForCount = (elementArrayFinder, expectedCount) => {
     return expectedCount >= actualCount;
   };
 };
+
+export const waitForNone = (elementArrayFinder) => {
+  return async() => {
+    const count = await elementArrayFinder.count();
+    return count === 0;
+  };
+};
