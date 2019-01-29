@@ -67,7 +67,7 @@ const NamespaceRow = ({obj: ns}) => <ResourceRow obj={ns}>
 </ResourceRow>;
 
 export const NamespacesList = props => <List {...props} Header={NamespaceHeader} Row={NamespaceRow} />;
-export const NamespacesPage = props => <ListPage {...props} ListComponent={NamespacesList} canCreate={true} createHandler={createNamespaceModal} />;
+export const NamespacesPage = props => <ListPage {...props} ListComponent={NamespacesList} canCreate={true} createHandler={() => createNamespaceModal({})} />;
 
 const projectMenuActions = [Kebab.factory.Edit, deleteModal];
 
@@ -120,7 +120,7 @@ export const ProjectList = connect(createProjectMessageStateToProps)(ProjectList
 
 const ProjectsPage_ = props => {
   const canCreate = props.flags.CAN_CREATE_PROJECT;
-  return <ListPage {...props} ListComponent={ProjectList} canCreate={canCreate} createHandler={createProjectModal} />;
+  return <ListPage {...props} ListComponent={ProjectList} canCreate={canCreate} createHandler={() => createProjectModal({})} />;
 };
 export const ProjectsPage = connectToFlags(FLAGS.CAN_CREATE_PROJECT)(ProjectsPage_);
 
