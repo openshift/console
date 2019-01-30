@@ -319,6 +319,7 @@ export class Dropdown extends DropdownMixin {
     };
 
     _.each(items, (v, k) => addItem(k, v));
+    const sortedRows = _.sortBy(rows, ['props', 'content']);
 
     return <div className={classNames(className)} ref={this.dropdownElement} style={this.props.style}>
       <div className={classNames('dropdown', dropDownClassName)}>
@@ -350,7 +351,7 @@ export class Dropdown extends DropdownMixin {
             }
             { bookMarkRows }
             {_.size(bookMarkRows) ? <li className="co-namespace-selector__divider"><div className="dropdown-menu__divider" /></li> : null}
-            {rows}
+            {sortedRows}
           </ul>
         }
       </div>
