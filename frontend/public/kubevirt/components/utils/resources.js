@@ -14,28 +14,6 @@ import {
 
 const MOCK_EMPTY_VM = null;
 
-export const getResource = (model, {
-  name,
-  namespaced=true,
-  namespace,
-  isList=true,
-  matchLabels,
-  matchExpressions } = { namespaced:true, isList:true }) => {
-  const res = { kind: model.kind, namespaced, namespace, isList, prop: model.kind};
-
-  if (name) {
-    res.name = name;
-  }
-  if (matchLabels) {
-    res.selector = {matchLabels};
-  }
-  if (matchExpressions) {
-    res.selector = {matchExpressions};
-  }
-
-  return res;
-};
-
 export const getLabelMatcher = (vm) => _.get(vm, 'spec.template.metadata.labels');
 
 export const findPod = (data, vmName, podNamePrefix) => {

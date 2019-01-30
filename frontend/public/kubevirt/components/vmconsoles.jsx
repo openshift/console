@@ -1,14 +1,13 @@
 import React from 'react';
 
 import {
-  getResource,
   getVncConnectionDetails,
   getSerialConsoleConnectionDetails,
   getRdpConnectionDetails,
   findRDPService, getLabelMatcher, findPod,
 } from './utils/resources';
 
-import { VmConsoles, isWindows } from 'kubevirt-web-ui-components';
+import { VmConsoles, isWindows, getResource } from 'kubevirt-web-ui-components';
 import { LoadingInline } from './okdcomponents';
 import { WSFactory } from '../module/okdk8s';
 import { startStopVmModal } from './modals/start-stop-vm-modal';

@@ -1,5 +1,5 @@
 import { modalResourceLauncher } from '../utils/modalResourceLauncher';
-import { CreateVmWizard, TEMPLATE_TYPE_LABEL } from 'kubevirt-web-ui-components';
+import { CreateVmWizard, TEMPLATE_TYPE_LABEL, getResource } from 'kubevirt-web-ui-components';
 import { k8sCreate } from '../../module/okdk8s';
 import {
   NamespaceModel,
@@ -8,7 +8,6 @@ import {
   StorageClassModel,
   PersistentVolumeClaimModel,
 } from '../../models';
-import { getResource } from '../utils/resources';
 import { units } from '../utils/okdutils';
 
 export const openCreateVmWizard = ( activeNamespace, createTemplate = false ) => {

@@ -4,6 +4,7 @@ import {
   BasicMigrationDialog,
   isBeingMigrated,
   CloneDialog,
+  getResource,
 } from 'kubevirt-web-ui-components';
 
 import { Kebab, units, LoadingInline } from '../utils/okdutils';
@@ -20,7 +21,6 @@ import { startStopVmModal } from '../modals/start-stop-vm-modal';
 import { restartVmModal } from '../modals/restart-vm-modal';
 import { cancelVmiMigrationModal } from '../modals/cancel-vmi-migration-modal';
 import {
-  getResource,
   getLabelMatcher,
   findVMIMigration,
 } from '../utils/resources';

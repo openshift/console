@@ -6,6 +6,7 @@ import {
   VM_STATUS_ALL,
   VM_STATUS_TO_TEXT,
   CDI_KUBEVIRT_IO,
+  getResource,
 } from 'kubevirt-web-ui-components';
 
 import { ListHeader, ColHead, List, ListPage, ResourceRow } from '../factory/okdfactory';
@@ -19,7 +20,6 @@ import {
   VirtualMachineInstanceMigrationModel,
 } from '../../models/index';
 import {
-  getResource,
   getLabelMatcher,
   findImporterPods, findVMIMigration, findPod,
 } from '../utils/resources';

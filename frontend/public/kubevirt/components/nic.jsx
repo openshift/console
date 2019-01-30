@@ -6,9 +6,8 @@ import { Kebab, LoadingInline } from './utils/okdutils';
 import { List, ColHead, ListHeader, ResourceRow } from './factory/okdfactory';
 import { DASHES, BUS_VIRTIO, NIC } from './utils/constants';
 import { deleteDeviceModal } from './modals/delete-device-modal';
-import { getNetworks, CreateNicRow, getAddNicPatch, POD_NETWORK, settingsValue } from 'kubevirt-web-ui-components';
+import { getNetworks, CreateNicRow, getAddNicPatch, POD_NETWORK, settingsValue, getResource } from 'kubevirt-web-ui-components';
 import { NetworkAttachmentDefinitionModel, VirtualMachineModel } from '../models';
-import { getResource } from './utils/resources';
 import { WithResources } from './utils/withResources';
 import { k8sPatch } from '../module/okdk8s';
 

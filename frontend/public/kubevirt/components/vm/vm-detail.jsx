@@ -5,8 +5,8 @@ import {
   CDI_KUBEVIRT_IO,
   getName,
   getNamespace,
+  getResource,
 } from 'kubevirt-web-ui-components';
-
 
 import { k8sPatch, k8sGet } from '../../module/okdk8s';
 import { ResourcesEventStream } from '../okdcomponents';
@@ -21,7 +21,6 @@ import {
   VirtualMachineModel,
 } from '../../models/index';
 import {
-  getResource,
   findPod,
   findImporterPods,
   findVMIMigration,
