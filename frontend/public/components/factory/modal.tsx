@@ -35,7 +35,7 @@ export const createModalLauncher: CreateModalLauncher = (Component) => (props) =
           isOpen={true}
           contentLabel="Modal"
           onRequestClose={closeModal}
-          className="modal-dialog modal-content"
+          className="modal-dialog"
           overlayClassName="co-overlay"
           shouldCloseOnOverlayClick={!props.blocking}>
           <Component {...props} cancel={closeModal} close={closeModal} />
@@ -48,7 +48,14 @@ export const createModalLauncher: CreateModalLauncher = (Component) => (props) =
 
 export const ModalTitle: React.SFC<ModalTitleProps> = ({children, className = 'modal-header'}) => <div className={className}><h4 className="modal-title">{children}</h4></div>;
 
-export const ModalBody: React.SFC<ModalBodyProps> = ({children, className= 'modal-body'}) => <div className={className}>{children}</div>;
+export const ModalBody: React.SFC<ModalBodyProps> = ({children, className= 'modal-body'}) => (
+  <div className={className}>
+    <div className="modal-body-content">
+      <div className="modal-body-inner-shadow-covers">{children}</div>
+    </div>
+  </div>
+);
+
 
 export const ModalFooter: React.SFC<ModalFooterProps> = ({message, errorMessage, inProgress, children}) => {
   return <ButtonBar className="modal-footer" errorMessage={errorMessage} infoMessage={message} inProgress={inProgress}>

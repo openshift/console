@@ -69,28 +69,32 @@ export class CatalogTileDetails extends React.Component {
             iconImg={tileImgUrl} />
         </Modal.Header>
         <Modal.Body>
-          <div className="co-catalog-page__overlay-body">
-            <PropertiesSidePanel>
-              <Link className="btn btn-primary co-catalog-page__overlay-create" to={href} role="button" title={this.props.item.createLabel} onClick={closeOverlay}>{this.props.item.createLabel}</Link>
-              {tileProvider && <PropertyItem label="Provider" value={tileProvider} />}
-              {supportUrl && <PropertyItem label="Support" value={supportUrlLink} />}
-              {creationTimestamp && <PropertyItem label="Created At" value={<Timestamp timestamp={creationTimestamp} />} />}
-            </PropertiesSidePanel>
-            <div className="co-catalog-page__overlay-description">
-              {tileDescription && <p>{tileDescription}</p>}
-              {longDescription && <p>{longDescription}</p>}
-              {sampleRepo && <p>Sample repository: {sampleRepoLink}</p>}
-              {documentationUrl && <React.Fragment>
-                <h2 className="h5">Documentation</h2>
-                <p>{documentationUrlLink}</p>
-              </React.Fragment>}
-              {!_.isEmpty(plans) && <React.Fragment>
-                <h2 className="h5">Service Plans</h2>
-                <ul>
-                  {planItems}
-                </ul>
-              </React.Fragment>}
-              {kind === 'ImageStream' && <SourceToImageResourceDetails />}
+          <div className="modal-body-content">
+            <div className="modal-body-inner-shadow-covers">
+              <div className="co-catalog-page__overlay-body">
+                <PropertiesSidePanel>
+                  <Link className="btn btn-primary co-catalog-page__overlay-create" to={href} role="button" title={this.props.item.createLabel} onClick={closeOverlay}>{this.props.item.createLabel}</Link>
+                  {tileProvider && <PropertyItem label="Provider" value={tileProvider} />}
+                  {supportUrl && <PropertyItem label="Support" value={supportUrlLink} />}
+                  {creationTimestamp && <PropertyItem label="Created At" value={<Timestamp timestamp={creationTimestamp} />} />}
+                </PropertiesSidePanel>
+                <div className="co-catalog-page__overlay-description">
+                  {tileDescription && <p>{tileDescription}</p>}
+                  {longDescription && <p>{longDescription}</p>}
+                  {sampleRepo && <p>Sample repository: {sampleRepoLink}</p>}
+                  {documentationUrl && <React.Fragment>
+                    <h2 className="h5">Documentation</h2>
+                    <p>{documentationUrlLink}</p>
+                  </React.Fragment>}
+                  {!_.isEmpty(plans) && <React.Fragment>
+                    <h2 className="h5">Service Plans</h2>
+                    <ul>
+                      {planItems}
+                    </ul>
+                  </React.Fragment>}
+                  {kind === 'ImageStream' && <SourceToImageResourceDetails />}
+                </div>
+              </div>
             </div>
           </div>
         </Modal.Body>

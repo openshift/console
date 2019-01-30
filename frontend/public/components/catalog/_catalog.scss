@@ -140,19 +140,10 @@ $catalog-item-icon-size-sm: 24px;
 
   // Enable scrolling on the modal
   &__overlay {
-    .modal-body {
-      flex: 1 1 auto;
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
-
-      .hint-block-pf {
+    .modal-body .hint-block-pf {
         margin-bottom: 10px;
-      }
     }
-    .modal-content {
-      display: flex;
-      flex-direction: column;
-    }
+
     .properties-side-panel-pf {
       flex: 0 0 auto;
     }

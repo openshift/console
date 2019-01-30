@@ -26,7 +26,7 @@ export class ResourceRequirementsModal extends PromiseComponent {
   }
 
   render() {
-    return <form onSubmit={e => this.submit(e)}>
+    return <form onSubmit={e => this.submit(e)} className="modal-content">
       <ModalTitle>{this.props.title}</ModalTitle>
       <ModalBody>
         <div className="row co-m-form-row">

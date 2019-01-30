@@ -43,7 +43,7 @@ class ConfigureOperatorModal extends PromiseComponent {
   }
 
   render() {
-    return <form onSubmit={this._submit} name="form">
+    return <form onSubmit={this._submit} name="form" className="modal-content">
       <ModalTitle>{this.props.title}</ModalTitle>
       <ModalBody>
         <div className="co-m-form-row">{this.props.message}</div>
