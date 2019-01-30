@@ -120,8 +120,6 @@ describe(ClusterServiceVersionLogo.displayName, () => {
   it('renders logo image from given base64 encoded image string', () => {
     const image: ReactWrapper<React.ImgHTMLAttributes<any>> = wrapper.find('img');
 
-    expect(image.props().height).toEqual('40');
-    expect(image.props().width).toEqual('40');
     expect(image.props().src).toEqual(`data:${testClusterServiceVersion.spec.icon.mediatype};base64,${testClusterServiceVersion.spec.icon.base64data}`);
   });
 
@@ -130,8 +128,6 @@ describe(ClusterServiceVersionLogo.displayName, () => {
     const fallbackImg: ReactWrapper<React.ImgHTMLAttributes<any>> = wrapper.find('img');
 
     expect(fallbackImg.props().src).toEqual(operatorLogo);
-    expect(fallbackImg.props().height).toEqual('40');
-    expect(fallbackImg.props().width).toEqual('40');
   });
 
   it('renders ClusterServiceVersion name and provider from given spec', () => {
