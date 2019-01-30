@@ -59,13 +59,10 @@ export const config: Config = {
   },
   onComplete: async() => {
     const consoleLogStream = createWriteStream('gui_test_screenshots/browser.log', { flags: 'a' });
-    this.logToFile = function() {
-      consoleLogStream.write(`${format.apply(null, arguments)}\n`);
-    };
     browserLogs.forEach(log => {
       const {level, message} = log;
       const messageStr = _.isArray(message) ? message.join(' ') : message;
-      this.logToFile(`[${level.name}]`, messageStr);
+      consoleLogStream.write(`${format.apply(null, [`[${level.name}]`, messageStr])}\n`);
     });
 
     // Use projects if OpenShift so non-admin users can run tests. We need the fully-qualified name
