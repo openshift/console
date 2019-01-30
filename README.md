@@ -5,6 +5,8 @@ KubeVirt Web User Interface
 
 Extension of the [OpenShift Console](https://github.com/openshift/console/) for Virtualization View.
 
+[![Walk-through video](https://imgur.com/ouqSr52)](https://youtu.be/ouqiFeQN6cs)
+
 The console is a more friendly `kubectl` in the form of a single page webapp.  It also integrates with other services like monitoring, chargeback, and OLM.  Some things that go on behind the scenes include:
 
 - Proxying the Kubernetes API under `/api/kubernetes`
