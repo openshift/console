@@ -86,7 +86,7 @@ $catalog-item-icon-size-sm: 24px;
     max-width: $catalog-item-icon-size-sm;
 
     &[src$=".svg"] {
-      height: $catalog-item-icon-size-sm;
+      width: $catalog-item-icon-size-sm;
     }
 
     &--large {
@@ -94,7 +94,7 @@ $catalog-item-icon-size-sm: 24px;
       max-width: $catalog-item-icon-size-lg;
 
       &[src$=".svg"] {
-        height: $catalog-item-icon-size-lg;
+        width: $catalog-item-icon-size-lg;
       }
     }
   }
