@@ -95,7 +95,7 @@ describe(OperatorHubTileView.displayName, () => {
     const filterItems = wrapper.find(FilterSidePanel.CategoryItem);
     expect(filterItems.exists()).toBe(true);
 
-    expect(filterItems.length).toBe(2); // Filter by Provider
+    expect(filterItems.length).toBe(4); // Filter by Provider and Install State
     filterItems.forEach((filter) => {
       expect(filter.props().count).toBe(filterCounts[_.split(filter.childAt(0).text(), '(')[0]]);
     });
@@ -107,14 +107,14 @@ describe(OperatorHubTileView.displayName, () => {
     const filterItemsChanged = wrapper.find(FilterSidePanel.CategoryItem);
     expect(filterItemsChanged.exists()).toBe(true);
 
-    expect(filterItemsChanged.length).toEqual(3); // Filter by Provider
+    expect(filterItemsChanged.length).toEqual(5); // Filter by Provider and Install State
 
     wrapper.setProps(operatorHubTileViewPageProps);
     wrapper.update();
     const filterItemsFinal = wrapper.find(FilterSidePanel.CategoryItem);
     expect(filterItemsFinal.exists()).toBe(true);
 
-    expect(filterItemsFinal.length).toEqual(2); // Filter by Provider
+    expect(filterItemsFinal.length).toEqual(4); // Filter by Provider and Install State
   });
 
   it('renders category tabs', () => {

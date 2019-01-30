@@ -126,6 +126,20 @@ const sortFilterValues = (values, field) => {
 const determineAvailableFilters = (initialFilters, items, filterGroups) => {
   const filters = _.cloneDeep(initialFilters);
 
+  // Always show both install state filters
+  filters.installState = {
+    Installed: {
+      label: 'Installed',
+      value: 'Installed',
+      active: false,
+    },
+    'Not Installed': {
+      label: 'Not Installed',
+      value: 'Not Installed',
+      active: false,
+    },
+  };
+
   _.each(filterGroups, field => {
     const values = [];
     _.each(items, item => {
@@ -162,6 +176,7 @@ export const keywordCompare = (filterString, item) => {
   }
 
   return item.name.toLowerCase().includes(filterString) ||
+    _.get(item, 'obj.metadata.name', '').toLowerCase().includes(filterString) ||
     (item.description && item.description.toLowerCase().includes(filterString)) ||
     (item.tags && item.tags.includes(filterString));
 };
