@@ -13,7 +13,7 @@ import { requireOperatorGroup } from '../operator-lifecycle-manager/operator-gro
 import { normalizeIconClass } from '../catalog/catalog-item-icon';
 import { TileViewPage, updateURLParams, getFilterSearchParam, updateActiveFilters } from '../utils/tile-view-page';
 import { OperatorHubItemDetails } from './operator-hub-item-details';
-import { OperatorHubCommunityProviderModal } from './operator-hub-community-provider-modal';
+import { communityOperatorWarningModal } from './operator-hub-community-provider-modal';
 
 const pageDescription = (
   <span>
@@ -262,11 +262,11 @@ export const OperatorHubTileView = requireOperatorGroup(
       if (!includeCommunityOperators) {
         const ignoreWarning = localStorage.getItem(COMMUNITY_PROVIDERS_WARNING_LOCAL_STORAGE_KEY);
         if (ignoreWarning === 'true') {
-          this.showCommunityOperators(true);
+          this.showCommunityOperators();
           return;
         }
 
-        this.setState({ communityModalShown: true });
+        communityOperatorWarningModal({ showCommunityOperators: this.showCommunityOperators });
         return;
       }
 
@@ -288,20 +288,16 @@ export const OperatorHubTileView = requireOperatorGroup(
       this.setState({items: stateItems, includeCommunityOperators: false});
     };
 
-    showCommunityOperators = (show: boolean, ignoreWarning: boolean = false) => {
-      if (show) {
-        const { items } = this.props;
-        const params = new URLSearchParams(window.location.search);
-        params.set('community-operators', 'true');
-        setURLParams(params);
+    showCommunityOperators = (ignoreWarning: boolean = false) => {
+      const { items } = this.props;
+      const params = new URLSearchParams(window.location.search);
+      params.set('community-operators', 'true');
+      setURLParams(params);
 
-        this.setState({items, includeCommunityOperators: true, communityModalShown: false});
+      this.setState({items, includeCommunityOperators: true});
 
-        if (ignoreWarning) {
-          localStorage.setItem(COMMUNITY_PROVIDERS_WARNING_LOCAL_STORAGE_KEY, 'true');
-        }
-      } else {
-        this.setState({communityModalShown: false} );
+      if (ignoreWarning) {
+        localStorage.setItem(COMMUNITY_PROVIDERS_WARNING_LOCAL_STORAGE_KEY, 'true');
       }
     };
 
@@ -355,7 +351,7 @@ export const OperatorHubTileView = requireOperatorGroup(
     }
 
     render() {
-      const { items, detailsItem, communityModalShown } = this.state;
+      const { items, detailsItem } = this.state;
 
       return <React.Fragment>
         <TileViewPage
@@ -373,7 +369,6 @@ export const OperatorHubTileView = requireOperatorGroup(
         <Modal show={!!detailsItem} onHide={this.closeOverlay} bsSize={'lg'} className="co-catalog-page__overlay right-side-modal-pf">
           {detailsItem && <OperatorHubItemDetails item={detailsItem} closeOverlay={this.closeOverlay} />}
         </Modal>
-        <OperatorHubCommunityProviderModal show={communityModalShown} close={this.showCommunityOperators} />
       </React.Fragment>;
     }
   }
