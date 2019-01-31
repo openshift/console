@@ -48,7 +48,6 @@ export enum CSVConditionReason {
 export enum InstallPlanApproval {
   Automatic = 'Automatic',
   Manual = 'Manual',
-  UpdateOnly = 'Update-Only',
 }
 
 export enum SubscriptionState {
