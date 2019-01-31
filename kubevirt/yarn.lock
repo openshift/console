@@ -99,9 +99,9 @@ js-yaml@3.x:
     argparse "^1.0.7"
     esprima "^4.0.0"
 
-kubevirt-web-ui-components@0.1.17-1:
-  version "0.1.17-1"
-  resolved "https://registry.yarnpkg.com/kubevirt-web-ui-components/-/kubevirt-web-ui-components-0.1.17-1.tgz#1c220b87f9209797b95c3163aa2f13541a824024"
+kubevirt-web-ui-components@0.1.18:
+  version "0.1.18"
+  resolved "https://registry.yarnpkg.com/kubevirt-web-ui-components/-/kubevirt-web-ui-components-0.1.18.tgz#59324d079235806342d15d18a5b4e3316e36c87a"
   dependencies:
     "@patternfly/react-console" "1.x"
     classnames "2.x"
