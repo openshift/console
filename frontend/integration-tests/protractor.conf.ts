@@ -7,6 +7,8 @@ import * as _ from 'lodash';
 import { TapReporter, JUnitXmlReporter } from 'jasmine-reporters';
 import * as ConsoleReporter from 'jasmine-console-reporter';
 import * as failFast from 'protractor-fail-fast';
+import { createWriteStream} from 'fs';
+import { format } from 'util';
 
 const tap = !!process.env.TAP;
 
@@ -58,23 +60,12 @@ export const config: Config = {
     }
   },
   onComplete: async() => {
-    console.log('BEGIN BROWSER LOGS');
+    const consoleLogStream = createWriteStream('gui_test_screenshots/browser.log', { flags: 'a' });
     browserLogs.forEach(log => {
       const {level, message} = log;
       const messageStr = _.isArray(message) ? message.join(' ') : message;
-      switch (level.name) {
-        case 'DEBUG':
-          console.log(level, messageStr);
-          break;
-        case 'SEVERE':
-          console.warn(level, messageStr);
-          break;
-        case 'INFO':
-        default:
-          console.info(level, messageStr);
-      }
+      consoleLogStream.write(`${format.apply(null, [`[${level.name}]`, messageStr])}\n`);
     });
-    console.log('END BROWSER LOGS');
 
     // Use projects if OpenShift so non-admin users can run tests. We need the fully-qualified name
     // since we're using kubectl instead of oc.
