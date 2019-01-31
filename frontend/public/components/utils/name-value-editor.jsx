@@ -317,7 +317,7 @@ const PairElement = DragSource(DRAGGABLE_TYPE.ENV_ROW, pairSource, collectSource
         <div className={classNames('row', isDragging ? 'pairs-list__row-dragging' : 'pairs-list__row')} ref={node => this.node = node}>
           {allowSorting && !readOnly &&
             <div className="col-xs-1 pairs-list__action">
-              {connectDragSource(<button type="button" className="btn btn-link pairs-list__action-icon" tabIndex="-1">
+              {connectDragSource(<button type="button" className="btn btn-link btn-link--inherit-color pairs-list__action-icon" tabIndex="-1">
                 <i className="pficon pficon-drag-drop pairs-list__action-icon--reorder" />
               </button>)}
             </div>
@@ -338,7 +338,7 @@ const PairElement = DragSource(DRAGGABLE_TYPE.ENV_ROW, pairSource, collectSource
           {
             !readOnly &&
               <div className="col-xs-1">
-                <button type="button" className={classNames('btn', 'btn-link', {'pairs-list__span-btns': allowSorting})} onClick={this._onRemove}>
+                <button type="button" className={classNames('btn', 'btn-link', 'btn-link--inherit-color', {'pairs-list__span-btns': allowSorting})} onClick={this._onRemove}>
                   {deleteButton}
                 </button>
               </div>
@@ -401,7 +401,7 @@ const EnvFromPairElement = DragSource(DRAGGABLE_TYPE.ENV_FROM_ROW, pairSource, c
         <div className={classNames('row', isDragging ? 'pairs-list__row-dragging' : 'pairs-list__row')} ref={node => this.node = node}>
           { !readOnly &&
             <div className="col-xs-1 pairs-list__action">
-              {connectDragSource(<button type="button" className="btn btn-link pairs-list__action-icon" tabIndex="-1">
+              {connectDragSource(<button type="button" className="btn btn-link btn-link--inherit-color pairs-list__action-icon" tabIndex="-1">
                 <i className="pficon pficon-drag-drop pairs-list__action-icon--reorder" />
               </button>)}
             </div>
@@ -415,7 +415,7 @@ const EnvFromPairElement = DragSource(DRAGGABLE_TYPE.ENV_FROM_ROW, pairSource, c
           {
             readOnly ? null :
               <div className="col-xs-1">
-                <button type="button" className="btn btn-link pairs-list__span-btns" onClick={this._onRemove}>
+                <button type="button" className="btn btn-link btn-link--inherit-color pairs-list__span-btns" onClick={this._onRemove}>
                   {deleteButton}
                 </button>
               </div>
