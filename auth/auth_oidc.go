@@ -131,3 +131,7 @@ func (o *oidcAuth) authenticate(r *http.Request) (*User, error) {
 		Token:    ls.rawToken,
 	}, nil
 }
+
+func (o *oidcAuth) getKubeAdminLogoutURL() string {
+	return ""
+}
