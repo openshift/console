@@ -747,7 +747,7 @@ metadata:
   name: "default"
 spec: {}
 `).setIn([referenceForModel(k8sModels.MachineDeploymentModel), 'default'], `
-apiVersion: "cluster.k8s.io/v1alpha1"
+apiVersion: "machine.openshift.io/v1beta1"
 kind: MachineDeployment
 metadata:
   name: example
@@ -765,7 +765,7 @@ spec:
       versions:
         kubelet: ""
 `).setIn([referenceForModel(k8sModels.MachineSetModel), 'default'], `
-apiVersion: "cluster.k8s.io/v1alpha1"
+apiVersion: "machine.openshift.io/v1beta1"
 kind: MachineSet
 metadata:
   name: example
@@ -783,7 +783,7 @@ spec:
       versions:
         kubelet: ""
 `).setIn([referenceForModel(k8sModels.MachineModel), 'default'], `
-apiVersion: "cluster.k8s.io/v1alpha1"
+apiVersion: "machine.openshift.io/v1beta1"
 kind: Machine
 metadata:
   name: example
