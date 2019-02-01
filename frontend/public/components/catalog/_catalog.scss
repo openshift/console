@@ -1,5 +1,6 @@
 $catalog-item-icon-size-lg: 40px;
 $catalog-item-icon-size-sm: 24px;
+$co-modal-ignore-warning-icon-width: 30px;
 
 // Until Patternfly-React-Extensions is updated: https://github.com/patternfly/patternfly-react/issues/1146
 .catalog-tile-pf-title, .properties-side-panel-pf-property-value {
@@ -201,6 +202,15 @@ $catalog-item-icon-size-sm: 24px;
     margin-bottom: 0;
     padding-top: 15px;
   }
+  &__content {
+    display: flex;
+  }
+  &__icon {
+    font-size: $co-modal-ignore-warning-icon-width;
+    margin-right: 15px;
+    // Avoid the dialog shifting when the icon loads.
+    min-width: $co-modal-ignore-warning-icon-width;
+  }
   &__link {
     display: block;
     margin: 10px 0;
@@ -208,9 +218,6 @@ $catalog-item-icon-size-sm: 24px;
       font-size: inherit !important;
       margin-left: 5px;
     }
-  }
-  .modal-footer {
-    margin-top: 0;
   }
 }
 
