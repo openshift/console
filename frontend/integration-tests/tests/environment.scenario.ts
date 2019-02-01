@@ -100,7 +100,7 @@ describe('Interacting with the environment variable editor', () => {
 
       await environmentEditor(Actions.add, key, value);
       await environmentView.isLoaded();
-      await validateKeyAndValue(key, value, true);
+      await validateKeyAndValue(key, value, false);
     });
   });
 
