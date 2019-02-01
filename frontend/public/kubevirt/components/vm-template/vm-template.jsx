@@ -71,6 +71,6 @@ export const VirtualMachineTemplatesPage = props => <ListPage
   selector={VmTemplateModel.selector}
   kind={VmTemplateModel.kind}
   ListComponent={VmTemplateList}
-  createProps={createProps(props.namespace)}
+  createProps={createProps(_.get(props, 'match.params.ns'))}
   canCreate={true}
 />;

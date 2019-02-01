@@ -27,8 +27,6 @@ import k8sActions, { types } from '../module/k8s/k8s-actions';
 import '../vendor.scss';
 import '../style.scss';
 
-import { KubevirtDefaultPage } from '../kubevirt/components/app';
-import { isKubevirt } from '../kubevirt/components/utils/selectors';
 import { VirtualMachineTemplatesPage } from '../kubevirt/components/vm-template';
 
 //PF4 Imports
@@ -150,7 +148,6 @@ class App extends React.PureComponent {
 
   render() {
     const { isNavOpen } = this.state;
-    let DefaultPage = isKubevirt() ? KubevirtDefaultPage : DefaultPage; // eslint-disable-line
 
     return (
       <React.Fragment>

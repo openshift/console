@@ -1,5 +1,5 @@
 import { modalResourceLauncher } from '../utils/modalResourceLauncher';
-import { CreateVmWizard, TEMPLATE_TYPE_LABEL, getResource } from 'kubevirt-web-ui-components';
+import { CreateVmWizard, TEMPLATE_TYPE_LABEL, getResource, TEMPLATE_TYPE_VM, TEMPLATE_TYPE_BASE } from 'kubevirt-web-ui-components';
 import { k8sCreate } from '../../module/okdk8s';
 import {
   NamespaceModel,
@@ -7,6 +7,7 @@ import {
   NetworkAttachmentDefinitionModel,
   StorageClassModel,
   PersistentVolumeClaimModel,
+  VmTemplateModel,
 } from '../../models';
 import { units } from '../utils/okdutils';
 
@@ -15,27 +16,36 @@ export const openCreateVmWizard = ( activeNamespace, createTemplate = false ) =>
     namespaces: {
       resource: getResource(NamespaceModel),
     },
-    templates: {
-      resource: getResource(TemplateModel, {matchExpressions: [{key: TEMPLATE_TYPE_LABEL, operator: 'Exists' }]}),
+    userTemplates: {
+      resource: getResource(TemplateModel, {namespace: activeNamespace, prop: 'userTemplates', matchLabels: {[TEMPLATE_TYPE_LABEL]: TEMPLATE_TYPE_VM}}),
+    },
+    commonTemplates: {
+      resource: getResource(VmTemplateModel, {namespace: 'openshift', prop: 'commonTemplates', matchLabels: {[TEMPLATE_TYPE_LABEL]: TEMPLATE_TYPE_BASE}}),
     },
     networkConfigs: {
-      resource: getResource(NetworkAttachmentDefinitionModel),
+      resource: getResource(NetworkAttachmentDefinitionModel, {namespace: activeNamespace}),
     },
     storageClasses: {
       resource:  getResource(StorageClassModel),
     },
     persistentVolumeClaims: {
-      resource:  getResource(PersistentVolumeClaimModel),
+      resource:  getResource(PersistentVolumeClaimModel, {namespace: activeNamespace}),
     },
-  },(({namespaces}) => {
+  },(({namespaces, userTemplates, commonTemplates}) => {
       let selectedNamespace;
 
       if (namespaces && activeNamespace){
         selectedNamespace = namespaces.find(namespace => namespace.metadata.name === activeNamespace);
       }
 
+      let templates;
+      if (userTemplates && commonTemplates) {
+        templates = userTemplates.concat(commonTemplates);
+      }
+
       return {
         selectedNamespace,
+        templates,
       };
     }));
 

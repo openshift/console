@@ -7,17 +7,18 @@ import { Map as ImmutableMap } from 'immutable';
 import { Firehose } from '../utils/okdutils';
 import { inject } from '../../../components/utils';
 
-import { showErrors } from './showErrors';
 
-
-const checkErrors = (errors, onError) => {
-  if (errors.length > 0) {
+const checkErrors = (resources, onError) => {
+  if (resources.length > 0) {
     if (onError) {
-      onError();
+      onError(resources);
     }
-    setTimeout(() => {
-      showErrors(errors);
-    }, 0);
+    resources.forEach(resource => {
+      const errorMessage = _.get(resource.error, 'json.message',`Error occured while loading ${resource.resourceConfig.resource.kind}`);
+      const errorCode = _.get(resource.error, 'json.code', '');
+      const error = errorCode ? `${errorCode}: ${errorMessage}` : errorMessage;
+      console.warn(error);// eslint-disable-line
+    });
   }
 };
 
@@ -49,8 +50,9 @@ class Resources extends React.Component {
           loaded = false;
         }
 
-        if (!resourceConfig.ignoreErrors && resource.loadError) {
-          errors.push(resource.loadError);
+        if (!resourceConfig.ignoreErrors && resource.loadError ) {
+          childrenProps[resourceKey] = configResource.isList ? [] : {};
+          errors.push({error: resource.loadError, resourceConfig});
         }
       } else {
         // unknown resources (CRD not created in opeshift, etc..)
