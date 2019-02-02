@@ -26,7 +26,7 @@ export const createImageSecretLink = $('#image-link');
 export const createGenericSecretLink = $('#generic-link');
 
 export const addSecretEntryLink = $('.co-create-secret-form__link--add-entry');
-export const removeSecretEntryLink = $('.co-create-secret-form__link--remove-entry .btn-link');
+export const removeSecretEntryLink = $$('.co-create-secret-form__link--remove-entry .btn-link').first();
 export const imageSecretForm = $$('.co-create-image-secret__form');
 export const genericSecretForm = $$('.co-create-generic-secret__form');
 
@@ -69,10 +69,10 @@ export const checkSecret = async(ns: string, name: string, keyValuesToCheck: Obj
 
 export const editSecret = async(ns: string, name: string, updateForm: Function) => {
   await crudView.actionsDropdown.click();
-  await browser.wait(until.presenceOf(crudView.actionsDropdownMenu), 500);
+  await browser.wait(until.presenceOf(crudView.actionsDropdownMenu));
   await crudView.actionsDropdownMenu.element(by.linkText('Edit Secret')).click();
   await browser.wait(until.urlContains(`/k8s/ns/${ns}/secrets/${name}/edit`));
-  await browser.wait(until.presenceOf(secretNameInput));
+  await browser.wait(until.and(crudView.untilNoLoadersPresent, until.presenceOf(secretNameInput)));
   await updateForm();
   await saveButton.click();
   expect(crudView.errorMessage.isPresent()).toBe(false);

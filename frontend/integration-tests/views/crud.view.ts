@@ -3,7 +3,7 @@ import { safeDump, safeLoad } from 'js-yaml';
 import { $, $$, browser, by, ExpectedConditions as until } from 'protractor';
 
 import * as yamlView from './yaml.view';
-import { appHost, testName } from '../protractor.conf';
+import { appHost, testName, waitForNone } from '../protractor.conf';
 
 export const createYAMLButton = $('#yaml-create');
 export const createItemButton = $('#item-create');
@@ -16,7 +16,9 @@ export const cancelBtn = $('#cancel');
 /**
  * Returns a promise that resolves after the loading spinner is not present.
  */
-export const isLoaded = () => browser.wait(until.presenceOf($('.loading-box__loaded')), 10000).then(() => browser.sleep(1000));
+export const untilLoadingBoxLoaded = until.presenceOf($('.loading-box__loaded'));
+export const untilNoLoadersPresent = waitForNone($$('.co-m-loader'));
+export const isLoaded = () => browser.wait(until.and(untilNoLoadersPresent, untilLoadingBoxLoaded)).then(() => browser.sleep(1000));
 export const resourceRowsPresent = () => browser.wait(until.presenceOf($('.co-m-resource-icon + a')), 10000);
 
 export const resourceRows = $$('.co-resource-list__item');
@@ -130,14 +132,14 @@ export const deleteResource = async(resource: string, kind: string, name: string
 
 // Navigates to create new resource page, creates an example resource of the specified kind,
 // then navigates back to the original url.
-export const createNamespacedTestResource = async(kindModel) => {
+export const createNamespacedTestResource = async(kindModel, name) => {
   const next = await browser.getCurrentUrl();
   await browser.get(`${appHost}/k8s/ns/${testName}/${kindModel.plural}/new`);
   await yamlView.isLoaded();
   const content = await yamlView.editorContent.getText();
-  const newContent = _.defaultsDeep({}, {metadata: {name: testName, labels: {automatedTestName: testName}}}, safeLoad(content));
+  const newContent = _.defaultsDeep({}, {metadata: {name, labels: {automatedTestName: testName}}}, safeLoad(content));
   await yamlView.setContent(safeDump(newContent));
-  await browser.wait(until.textToBePresentInElement(yamlView.editorContent, testName));
+  await browser.wait(until.textToBePresentInElement(yamlView.editorContent, name));
   await yamlView.saveButton.click();
   await browser.wait(until.presenceOf($(`.co-m-${kindModel.kind}`)));
   await browser.get(next);
