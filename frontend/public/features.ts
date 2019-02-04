@@ -93,8 +93,7 @@ const handleError = (res, flag, dispatch, cb) => {
   }
 };
 
-// FIXME: /oapi is deprecated. What else can we use to detect OpenShift?
-const openshiftPath = `${k8sBasePath}/oapi/v1`;
+const openshiftPath = `${k8sBasePath}/apis/apps.openshift.io/v1`;
 const detectOpenShift = dispatch => coFetchJSON(openshiftPath)
   .then(
     res => setFlag(dispatch, FLAGS.OPENSHIFT, _.size(res.resources) > 0),
