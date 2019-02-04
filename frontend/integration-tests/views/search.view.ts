@@ -1,11 +1,11 @@
-import { $, $$, browser, by, element, ExpectedConditions as until } from 'protractor';
+import { $, $$, browser, ExpectedConditions as until } from 'protractor';
 
 const BROWSER_TIMEOUT = 15000;
 
 export const dropdown = $('.co-type-selector .btn-dropdown');
 export const dropdownLinks = $$('.dropdown-menu a');
 export const labelFilter = $('.co-m-selector-input input');
-export const linkForType = type => element(by.partialLinkText(type));
+export const linkForType = type => $(`#${type}-link`);
 
 export const selectSearchType = async(objectType: string) => {
   const isPresent = await dropdownLinks.isPresent();

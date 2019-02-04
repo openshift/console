@@ -444,6 +444,7 @@ export class TileViewPage extends React.Component {
     const activeValues = getActiveValuesFromURL(availableFilters, filterGroups);
 
     this.setState({...this.getUpdatedState(categories, activeValues.selectedCategoryId, activeValues.activeFilters) });
+    this.filterByKeywordInput.focus({preventScroll: true});
   }
 
   componentWillUnmount() {
@@ -515,7 +516,7 @@ export class TileViewPage extends React.Component {
 
     this.updateMountedState(this.getUpdatedState(categories, selectedCategoryId, clearedFilters));
 
-    this.filterByKeywordInput.focus();
+    this.filterByKeywordInput.focus({preventScroll: true});
   }
 
   selectCategory(categoryId) {
@@ -616,7 +617,6 @@ export class TileViewPage extends React.Component {
           <FormControl
             type="text"
             inputRef={(ref) => this.filterByKeywordInput = ref}
-            autoFocus={true}
             placeholder="Filter by keyword..."
             bsClass="form-control"
             value={activeFilters.keyword.value}

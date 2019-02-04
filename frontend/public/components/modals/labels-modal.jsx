@@ -50,7 +50,7 @@ class BaseLabelsModal extends PromiseComponent {
   render() {
     const { kind, resource, description, message, labelClassName } = this.props;
 
-    return <form onSubmit={this._submit} name="form">
+    return <form onSubmit={this._submit} name="form" className="modal-content">
       <ModalTitle>Edit {description || 'Labels'}</ModalTitle>
       <ModalBody>
         <div className="row co-m-form-row">

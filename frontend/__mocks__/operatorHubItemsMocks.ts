@@ -307,6 +307,7 @@ export const operatorHubTileViewPageProps = {
   items: [
     {
       obj: amqPackageManifest,
+      installState: 'Installed',
       kind: 'PackageManifest',
       name: 'amq-streams',
       uid: 'amq-streams/openshift-operator-lifecycle-manager',
@@ -327,6 +328,7 @@ export const operatorHubTileViewPageProps = {
     },
     {
       obj: etcdPackageManifest,
+      installState: 'Not Installed',
       kind: 'PackageManifest',
       name: 'etcd',
       uid: 'etcd/openshift-operator-lifecycle-manager',
@@ -346,6 +348,7 @@ export const operatorHubTileViewPageProps = {
       categories: ['database'],
     },
     { obj: federationv2PackageManifest,
+      installState: 'Not Installed',
       kind: 'PackageManifest',
       name: 'federationv2',
       uid: 'federationv2/openshift-operator-lifecycle-manager',
@@ -365,6 +368,7 @@ export const operatorHubTileViewPageProps = {
       categories: [],
     },
     { obj: prometheusPackageManifest,
+      installState: 'Not Installed',
       kind: 'PackageManifest',
       name: 'prometheus',
       uid: 'prometheus/openshift-operator-lifecycle-manager',
@@ -384,6 +388,7 @@ export const operatorHubTileViewPageProps = {
       categories: ['monitoring', 'alerting'],
     },
     { obj: svcatPackageManifest,
+      installState: 'Not Installed',
       kind: 'PackageManifest',
       name: 'svcat',
       uid: 'svcat/openshift-operator-lifecycle-manager',
@@ -440,6 +445,8 @@ export const operatorHubTileViewPagePropsWithDummy = {
 export const filterCounts = {
   CoreOS: 1,
   'Red Hat': 4,
+  Installed: 1,
+  'Not Installed': 4,
 };
 
 export const operatorHubCategories = [

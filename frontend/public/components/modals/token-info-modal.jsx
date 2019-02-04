@@ -34,7 +34,7 @@ class TokenInfoModal extends PromiseComponent {
       e.stopPropagation();
       this.props.close(e);
     };
-    return <div>
+    return <div className="modal-content">
       <ModalTitle>Token Information</ModalTitle>
       <ModalBody><pre style={{whiteSpace: 'pre-wrap'}}>{this.state.tokenReview}</pre></ModalBody>
       <ModalFooter inProgress={this.state.inProgress} errorMessage={this.state.errorMessage}>

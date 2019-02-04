@@ -26,42 +26,75 @@
   }
 }
 
+// Modal modifications to enable vertical scrolling with shadow overlays
 .modal-body {
   display: flex;
+  flex: 1 1 auto;
   flex-direction: column;
+  height: 100%;
   overflow-y: auto;
-  -webkit-overflow-scrolling: touch; // enable momentum scrolling in mobile Safari
-
-  @media(max-width: $screen-xs-max) {
-    bottom: 75px;
-    height: auto;
-    left: 11px;
-    position: fixed;
-    right: 11px;
-    top: 54px;
-    width: auto;
-  }
-
-  @media(min-width: $screen-sm-min) {
-    max-height: calc(100vh - 165px); // 165px = 30 (margin-top) + 44 (modal-header) + 15 (modal-footer margin-top) + 44 (modal-footer) + 30 (margin-bottom) + 2px (top/bottom border)
-    min-height: 200px;
-  }
-
+  padding: 0;
+  @include scroll-shadows-vertical;
+  -webkit-overflow-scrolling: touch;
 }
 
+.modal-body-content {
+  height: 100%;
+}
+
+.modal-body-inner-shadow-covers {
+  min-height: 100%;
+  padding: ($grid-gutter-width / 2) $modal-title-padding-horizontal;
+  @include scroll-shadows-vertical-covers;
+  width: 100%;
+
+  // so that input, textarea, button, and input-group-addon don't mask the inner scroll shadows
+  input, textarea {
+    &.form-control {
+      background-color: transparent;
+      &[disabled],
+      &[readonly] {
+        background-color: rgba(234, 234, 234, 0.5);
+      }
+    }
+  }
+
+  .input-group-addon {
+    background-color: rgba(227, 227, 227, 0.5);
+  }
+}
+
+.modal-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  @media(min-width: $screen-sm-min) {
+    max-height: 415px;
+  }
+  min-height: 250px;
+  position: relative;
+}
+
+@media(min-width: $screen-sm-min) {
+  .modal-content--large {
+    max-height: 530px;
+  }
+
+  .modal-content--small {
+    max-height: 300px;
+  }
+}
+
+// setting a height on modal-dialog enables flex child height to shrink and become scrollable
 .modal-dialog {
-  @media(max-width: $screen-xs-max) {
-    height: calc(100% - 20px);
+  height: calc(100% - 20px); // subtract height margin-top 10px + margin-bottom 10px
+  outline: 0;
+
+  @media(min-width: $screen-sm-min) {
+    height: calc(100% - 60px); // subtract height margin-top 30px + margin-bottom 30px
   }
 }
 
 .modal-footer {
-  bottom: 0;
-  left: 0;
-  padding-top: 0;
-  position: absolute;
-  right: 0;
-  @media(min-width: $screen-sm-min) {
-    position: relative;
-  }
+  margin-top: 0;
 }

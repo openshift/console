@@ -157,6 +157,6 @@
     "webpack-cli": "^2.0.12"
   },
   "engines": {
-    "node": ">=8.x <=10.x"
+    "node": ">=8.x"
   }
 }

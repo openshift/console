@@ -26,26 +26,25 @@ describe('Visiting Overview page', () => {
 
   overviewResources.forEach((kindModel) => {
     describe(kindModel.labelPlural, () => {
+      const resourceName = `${testName}-${kindModel.kind.toLowerCase()}`;
       beforeAll(async()=>{
-        await crudView.createNamespacedTestResource(kindModel);
+        await crudView.createNamespacedTestResource(kindModel, resourceName);
       });
 
       it(`displays a ${kindModel.id} in the project overview list`, async() => {
         await browser.wait(until.presenceOf(overviewView.projectOverview));
         await overviewView.itemsAreVisible();
-        await expect(overviewView.getProjectOverviewListItem(kindModel, testName).isPresent()).toBeTruthy();
+        await expect(overviewView.getProjectOverviewListItem(kindModel, resourceName).isPresent()).toBeTruthy();
       });
 
       it(`shows ${kindModel.id} details sidebar when item is clicked`, async() => {
-        const overviewListItem = overviewView.getProjectOverviewListItem(kindModel, testName);
+        const overviewListItem = overviewView.getProjectOverviewListItem(kindModel, resourceName);
         await expect(overviewView.detailsSidebar.isPresent()).toBeFalsy();
         await browser.wait(until.elementToBeClickable(overviewListItem));
         await overviewListItem.click();
         await overviewView.sidebarIsLoaded();
         await expect(overviewView.detailsSidebar.isDisplayed()).toBeTruthy();
-        const title = await overviewView.detailsSidebarTitle.getText();
-        await expect(title).toContain(kindModel.kind);
-        await expect(title).toContain(testName);
+        await expect(overviewView.detailsSidebarTitle.getText()).toContain(resourceName);
       });
     });
   });

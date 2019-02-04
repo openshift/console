@@ -144,21 +144,6 @@ Must set env vars `DOCKER_USER` and `DOCKER_PASSWORD` or have a valid `.dockercf
 ./build-docker-push.sh
 ```
 
-### Jenkins automation
-
-Master branch:
-
-* Runs a build, pushes an image to Quay tagged with the commit sha
-
-Pull requests:
-
-* Runs a build when PRs are created or PR commits are pushed
-* Comment with `Jenkins rebuild` to manually trigger a re-build
-* Comment with `Jenkins push` to push an image to Quay, tagged with:
-    `pr_[pr #]_build_[jenkins build #]`
-
-If changes are ever required for the Jenkins job configuration, apply them to both the [regular console job](https://jenkins-tectonic.prod.coreos.systems/job/console-build/) and [PR image job](https://jenkins-tectonic.prod.coreos.systems/job/console-pr-image/).
-
 ## Hacking
 
 See [CONTRIBUTING](CONTRIBUTING.md) for workflow & convention details.

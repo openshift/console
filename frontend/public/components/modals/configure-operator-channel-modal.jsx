@@ -38,7 +38,7 @@ class ConfigureOperatorChannel extends PromiseComponent {
       'tectonic-1.9-preproduction': 'Tectonic-1.9-preproduction',
       'tectonic-1.9-production': 'Tectonic-1.9-production',
     };
-    return <form onSubmit={this._submit} name="form">
+    return <form onSubmit={this._submit} name="form" className="modal-content">
       <ModalTitle>Update Channel</ModalTitle>
       <ModalBody>
         <div className="co-m-form-row">
