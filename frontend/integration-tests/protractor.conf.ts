@@ -18,7 +18,6 @@ export const testName = `test-${Math.random().toString(36).replace(/[^a-z]+/g, '
 const htmlReporter = new HtmlScreenshotReporter({dest: './gui_test_screenshots', inlineImages: true, captureOnlyFailedSpecs: true, filename: 'test-gui-report.html'});
 const junitReporter = new JUnitXmlReporter({savePath: './gui_test_screenshots', consolidateAll: true});
 const browserLogs: logging.Entry[] = [];
-// TODO: verify after upstrem merge: const junitReporter = new JUnitXmlReporter({savePath: 'xunit_results.xml', consolidateAll: true});
 
 export const config: Config = {
   framework: 'jasmine',
