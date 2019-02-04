@@ -169,7 +169,7 @@ describe('Interacting with the create secret forms', () => {
 
     it('creates registry credentials image secret', async() => {
       await secretsView.createSecret(secretsView.createImageSecretLink, testName, credentialsImageSecretName, async() => {
-        await browser.wait(until.presenceOf(secretsView.addSecretEntryLink));
+        await browser.wait(until.and(crudView.untilNoLoadersPresent, until.presenceOf(secretsView.addSecretEntryLink)));
         await secretsView.addSecretEntryLink.click();
         await secretsView.imageSecretForm.each(async(el, index) => {
           await el.$('input[name=address]').sendKeys(address + index);
@@ -256,7 +256,7 @@ describe('Interacting with the create secret forms', () => {
 
     it('creates Key/Value secret', async() => {
       await secretsView.createSecret(secretsView.createGenericSecretLink, testName, keyValueSecretName, async() => {
-        await browser.wait(until.presenceOf(secretsView.addSecretEntryLink));
+        await browser.wait(until.and(crudView.untilNoLoadersPresent, until.presenceOf(secretsView.addSecretEntryLink)));
         await secretsView.addSecretEntryLink.click();
         await browser.wait(waitForCount($$('.co-file-dropzone__textarea'), 2));
         await secretsView.genericSecretForm.each(async(el, index) => {

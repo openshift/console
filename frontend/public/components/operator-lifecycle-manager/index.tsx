@@ -48,7 +48,6 @@ export enum CSVConditionReason {
 export enum InstallPlanApproval {
   Automatic = 'Automatic',
   Manual = 'Manual',
-  UpdateOnly = 'Update-Only',
 }
 
 export enum SubscriptionState {
@@ -240,11 +239,11 @@ export const referenceForProvidedAPI = (desc: CRDDescription | APIServiceDefinit
 
 export const ClusterServiceVersionLogo: React.SFC<ClusterServiceVersionLogoProps> = (props) => {
   const {icon, displayName, provider, version} = props;
+  const imgSrc = _.isEmpty(icon) ? operatorLogo : `data:${icon.mediatype};base64,${icon.base64data}`;
 
   return <div className="co-clusterserviceversion-logo">
-    <div className="co-clusterserviceversion-logo__icon">{ _.isEmpty(icon)
-      ? <img src={operatorLogo} height="40" width="40" />
-      : <img src={`data:${icon.mediatype};base64,${icon.base64data}`} height="40" width="40" /> }
+    <div className="co-clusterserviceversion-logo__icon">
+      <img className="co-catalog-item-icon__img co-catalog-item-icon__img--large" src={imgSrc} />
     </div>
     <div className="co-clusterserviceversion-logo__name">
       <h1 className="co-clusterserviceversion-logo__name__clusterserviceversion">{displayName}</h1>

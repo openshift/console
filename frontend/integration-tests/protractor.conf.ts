@@ -4,9 +4,11 @@ import { Config, browser, logging } from 'protractor';
 import { execSync } from 'child_process';
 import * as HtmlScreenshotReporter from 'protractor-jasmine2-screenshot-reporter';
 import * as _ from 'lodash';
-import { TapReporter } from 'jasmine-reporters';
+import { TapReporter, JUnitXmlReporter } from 'jasmine-reporters';
 import * as ConsoleReporter from 'jasmine-console-reporter';
 import * as failFast from 'protractor-fail-fast';
+import { createWriteStream} from 'fs';
+import { format } from 'util';
 
 const tap = !!process.env.TAP;
 
@@ -14,6 +16,7 @@ export const appHost = `${process.env.BRIDGE_BASE_ADDRESS || 'http://localhost:9
 export const testName = `test-${Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5)}`;
 
 const htmlReporter = new HtmlScreenshotReporter({dest: './gui_test_screenshots', inlineImages: true, captureOnlyFailedSpecs: true, filename: 'test-gui-report.html'});
+const junitReporter = new JUnitXmlReporter({savePath: './gui_test_screenshots', consolidateAll: true});
 const browserLogs: logging.Entry[] = [];
 
 export const config: Config = {
@@ -49,6 +52,7 @@ export const config: Config = {
   onPrepare: () => {
     browser.waitForAngularEnabled(false);
     jasmine.getEnv().addReporter(htmlReporter);
+    jasmine.getEnv().addReporter(junitReporter);
     if (tap) {
       jasmine.getEnv().addReporter(new TapReporter());
     } else {
@@ -56,23 +60,12 @@ export const config: Config = {
     }
   },
   onComplete: async() => {
-    console.log('BEGIN BROWSER LOGS');
+    const consoleLogStream = createWriteStream('gui_test_screenshots/browser.log', { flags: 'a' });
     browserLogs.forEach(log => {
       const {level, message} = log;
       const messageStr = _.isArray(message) ? message.join(' ') : message;
-      switch (level.name) {
-        case 'DEBUG':
-          console.log(level, messageStr);
-          break;
-        case 'SEVERE':
-          console.warn(level, messageStr);
-          break;
-        case 'INFO':
-        default:
-          console.info(level, messageStr);
-      }
+      consoleLogStream.write(`${format.apply(null, [`[${level.name}]`, messageStr])}\n`);
     });
-    console.log('END BROWSER LOGS');
 
     // Use projects if OpenShift so non-admin users can run tests. We need the fully-qualified name
     // since we're using kubectl instead of oc.
@@ -95,8 +88,7 @@ export const config: Config = {
     olm: ['tests/base.scenario.ts', 'tests/olm/descriptors.scenario.ts', 'tests/olm/catalog.scenario.ts', 'tests/olm/etcd.scenario.ts'],
     olmUpgrade: ['tests/base.scenario.ts', 'tests/olm/update-channel-approval.scenario.ts'],
     performance: ['tests/base.scenario.ts', 'tests/performance.scenario.ts'],
-    serviceCatalog: ['tests/base.scenario.ts', 'tests/service-catalog/service-catalog.scenario.ts', 'tests/service-catalog/service-broker.scenario.ts', 'tests/service-catalog/service-class.scenario.ts', 'tests/service-catalog/service-binding.scenario.ts'],
-    catalog: ['tests/base.scenario.ts', 'tests/catalog.scenario.ts'],
+    serviceCatalog: ['tests/base.scenario.ts', 'tests/service-catalog/service-catalog.scenario.ts', 'tests/service-catalog/service-broker.scenario.ts', 'tests/service-catalog/service-class.scenario.ts', 'tests/service-catalog/service-binding.scenario.ts', 'tests/developer-catalog.scenario.ts'],
     operatorHub: ['tests/base.scenario.ts', 'tests/operator-hub/operator-hub.scenario.ts'],
     overview: ['tests/base.scenario.ts', 'tests/overview/overview.scenario.ts'],
     e2e: ['tests/base.scenario.ts',
@@ -124,7 +116,7 @@ export const config: Config = {
       'tests/source-to-image.scenario.ts',
       'tests/deploy-image.scenario.ts',
       'tests/operator-hub/operator-hub.scenario.ts',
-      'tests/catalog.scenario.ts'],
+      'tests/developer-catalog.scenario.ts'],
   },
   params: {
     // Set to 'true' to enable OpenShift resources in the crud scenario.
@@ -155,5 +147,12 @@ export const waitForCount = (elementArrayFinder, expectedCount) => {
   return async() => {
     const actualCount = await elementArrayFinder.count();
     return expectedCount >= actualCount;
+  };
+};
+
+export const waitForNone = (elementArrayFinder) => {
+  return async() => {
+    const count = await elementArrayFinder.count();
+    return count === 0;
   };
 };

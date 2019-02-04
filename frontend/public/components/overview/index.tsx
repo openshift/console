@@ -12,7 +12,7 @@ import { Toolbar, EmptyState } from 'patternfly-react';
 
 import { coFetchJSON } from '../../co-fetch';
 import { getBuildNumber } from '../../module/k8s/builds';
-import { prometheusBasePath } from '../graphs';
+import { prometheusTenancyBasePath } from '../graphs';
 import { TextFilter } from '../factory';
 import { UIActions, formatNamespacedRouteForResource } from '../../ui/ui-actions';
 import {
@@ -466,7 +466,7 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
     } = this.props;
     const {filterValue, selectedGroup} = this.state;
 
-    if (!_.isEqual(namespace, prevProps.namespace)
+    if (namespace !== prevProps.namespace
       || loaded !== prevProps.loaded
       || !_.isEqual(buildConfigs, prevProps.buildConfigs)
       || !_.isEqual(builds, prevProps.builds)
@@ -495,11 +495,16 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
       // OverviewHeading doesn't keep the value in state.
       this.setState({ filterValue: '' });
     }
+
+    // Fetch new metrics when the namespace changes.
+    if (namespace !== prevProps.namespace) {
+      clearInterval(this.metricsInterval);
+      this.fetchMetrics();
+    }
   }
 
-  fetchMetrics(): void {
-    if (!prometheusBasePath) {
-      // Component is not mounted or proxy has not been set up.
+  fetchMetrics = (): void => {
+    if (!prometheusTenancyBasePath) {
       return;
     }
 
@@ -510,7 +515,7 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
     };
 
     const promises = _.map(queries, (query, name) => {
-      const url = `${prometheusBasePath}/api/v1/query?query=${encodeURIComponent(query)}`;
+      const url = `${prometheusTenancyBasePath}/api/v1/query?namespace=${namespace}&query=${encodeURIComponent(query)}`;
       return coFetchJSON(url).then(({ data: {result} }) => {
         const byPod: MetricValuesByPod = result.reduce((acc, { metric, value }) => {
           acc[metric.pod_name] = Number(value[1]);

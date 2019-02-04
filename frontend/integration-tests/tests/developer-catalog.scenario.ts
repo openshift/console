@@ -40,9 +40,9 @@ describe('Catalog', () => {
     expect(numLanguagesItems).toBeLessThan(origNumItems);
   });
 
-  it('displays ".NET Core" catalog tile when filter by name: "net"', async() => {
-    await catalogPageView.filterByKeyword('net');
-    expect(catalogPageView.catalogTileFor('.NET Core').isDisplayed()).toBe(true);
+  it('displays "Jenkins" catalog tile when filter by name: "jenkins"', async() => {
+    await catalogPageView.filterByKeyword('jenkins');
+    expect(catalogPageView.catalogTileFor('Jenkins').isDisplayed()).toBe(true);
   });
 
   it('displays "No Filter Results" page correctly', async() => {
@@ -60,28 +60,36 @@ describe('Catalog', () => {
     expect(catalogPageView.catalogTiles.isPresent()).toBe(true);
 
     const srvClassFilterCount = await catalogPageView.filterCheckboxCount('Service Class');
-    // '.NET Core' is source-to-image
-    expect(catalogPageView.catalogTileFor('.NET Core').isDisplayed()).toBe(true);
+
+    // 'Node.js' is source-to-image and should be shown initially
+    expect(catalogPageView.catalogTileFor('Node.js').isDisplayed()).toBe(true);
 
     await catalogPageView.clickFilterCheckbox('Service Class');
+    // 'Jenkins' is service-class and should be shown
+    expect(catalogPageView.catalogTileFor('Jenkins').isDisplayed()).toBe(true);
+    // 'Node.js' is s-2-i and should not be shown
+    expect(catalogPageView.catalogTileFor('Node.js').isPresent()).toBe(false);
+
     const numCatalogTiles = await catalogView.pageHeadingNumberOfItems();
-    // after checking '[X] Service Class (12)', the number of tiles should equal the 'Service Class' filter count
+    // after checking '[X] Service Class', the number of tiles should equal the 'Service Class' filter count
     expect(srvClassFilterCount).toEqual(numCatalogTiles);
-    // // '.NET Core' is s-t-i and should not be shown
-    expect(catalogPageView.catalogTileFor('.NET Core').isPresent()).toBe(false);
   });
 
   it('filters catalog tiles by \'Source-To-Image\' Type correctly', async() => {
     expect(catalogPageView.catalogTiles.isPresent()).toBe(true);
 
     const srvClassFilterCount = await catalogPageView.filterCheckboxCount('Source-To-Image');
-    // '.NET Core Example' is service class
-    expect(catalogPageView.catalogTileFor('.NET Core Example').isDisplayed()).toBe(true);
+
+    // 'Jenkins' is service class and should be shown initially
+    expect(catalogPageView.catalogTileFor('Jenkins').isDisplayed()).toBe(true);
 
     await catalogPageView.clickFilterCheckbox('Source-To-Image');
+    // 'Node.js' is s-2-i and should be shown
+    expect(catalogPageView.catalogTileFor('Node.js').isPresent()).toBe(true);
+    // 'Jenkins' is service-class and should not be shown
+    expect(catalogPageView.catalogTileFor('Jenkins').isPresent()).toBe(false);
+
     const numCatalogTiles = await catalogView.pageHeadingNumberOfItems();
     expect(srvClassFilterCount).toEqual(numCatalogTiles);
-    // // '.NET Core Example' is service-class and should not be shown
-    expect(catalogPageView.catalogTileFor('.NET Core Example').isPresent()).toBe(false);
   });
 });

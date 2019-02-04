@@ -34,7 +34,7 @@ export class InstallPlanApprovalModal extends PromiseComponent {
   }
 
   render() {
-    return <form onSubmit={this.submit.bind(this)} name="form">
+    return <form onSubmit={this.submit.bind(this)} name="form" className="modal-content">
       <ModalTitle className="modal-header">Change Update Approval Strategy</ModalTitle>
       <ModalBody>
         <div className="co-m-form-row">

@@ -1,5 +1,6 @@
 $catalog-item-icon-size-lg: 40px;
 $catalog-item-icon-size-sm: 24px;
+$co-modal-ignore-warning-icon-width: 30px;
 
 // Until Patternfly-React-Extensions is updated: https://github.com/patternfly/patternfly-react/issues/1146
 .catalog-tile-pf-title, .properties-side-panel-pf-property-value {
@@ -86,7 +87,7 @@ $catalog-item-icon-size-sm: 24px;
     max-width: $catalog-item-icon-size-sm;
 
     &[src$=".svg"] {
-      height: $catalog-item-icon-size-sm;
+      width: $catalog-item-icon-size-sm;
     }
 
     &--large {
@@ -94,7 +95,7 @@ $catalog-item-icon-size-sm: 24px;
       max-width: $catalog-item-icon-size-lg;
 
       &[src$=".svg"] {
-        height: $catalog-item-icon-size-lg;
+        width: $catalog-item-icon-size-lg;
       }
     }
   }
@@ -140,19 +141,10 @@ $catalog-item-icon-size-sm: 24px;
 
   // Enable scrolling on the modal
   &__overlay {
-    .modal-body {
-      flex: 1 1 auto;
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
-
-      .hint-block-pf {
+    .modal-body .hint-block-pf {
         margin-bottom: 10px;
-      }
     }
-    .modal-content {
-      display: flex;
-      flex-direction: column;
-    }
+
     .properties-side-panel-pf {
       flex: 0 0 auto;
     }
@@ -210,6 +202,15 @@ $catalog-item-icon-size-sm: 24px;
     margin-bottom: 0;
     padding-top: 15px;
   }
+  &__content {
+    display: flex;
+  }
+  &__icon {
+    font-size: $co-modal-ignore-warning-icon-width;
+    margin-right: 15px;
+    // Avoid the dialog shifting when the icon loads.
+    min-width: $co-modal-ignore-warning-icon-width;
+  }
   &__link {
     display: block;
     margin: 10px 0;
@@ -217,9 +218,6 @@ $catalog-item-icon-size-sm: 24px;
       font-size: inherit !important;
       margin-left: 5px;
     }
-  }
-  .modal-footer {
-    margin-top: 0;
   }
 }
 

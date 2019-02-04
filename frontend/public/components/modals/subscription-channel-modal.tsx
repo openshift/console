@@ -28,7 +28,7 @@ export class SubscriptionChannelModal extends PromiseComponent {
   }
 
   render() {
-    return <form onSubmit={this.submit.bind(this)} name="form">
+    return <form onSubmit={this.submit.bind(this)} name="form" className="modal-content">
       <ModalTitle className="modal-header">Change Subscription Update Channel</ModalTitle>
       <ModalBody>
         <div className="co-m-form-row">

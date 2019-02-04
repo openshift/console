@@ -219,10 +219,10 @@ class BuildSource extends React.Component<BuildSourceProps, BuildSourceState> {
           },
         },
         source: {
+          contextDir,
           git: {
             uri: repository,
             ref,
-            contextDir,
             type: 'Git',
           },
         },

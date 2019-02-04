@@ -1,0 +1,15 @@
+@mixin scroll-shadows-vertical($shadow-width: 90%, $shadow-opacity: 0.25) {
+  background-attachment: scroll;
+  background-image: radial-gradient(ellipse at top, rgba(0, 0, 0, $shadow-opacity) 0%, rgba(0, 0, 0, 0) $shadow-width), radial-gradient(ellipse at bottom, rgba(0, 0, 0, $shadow-opacity) 0%, rgba(0, 0, 0, 0) $shadow-width);
+  background-position: 0 0, 0 100%;
+  background-repeat: no-repeat;
+  background-size: 100% 5px;
+}
+
+@mixin scroll-shadows-vertical-covers($shadow-cover-bg-color: rgba(255,255,255,1), $shadow-cover-bg-color-transparent: rgba(255,255,255,0)) {
+  background-attachment: local;
+  background-image: linear-gradient($shadow-cover-bg-color 30%, $shadow-cover-bg-color-transparent), linear-gradient($shadow-cover-bg-color-transparent, $shadow-cover-bg-color 70%);
+  background-position: 0 0, 0 100%;
+  background-repeat: no-repeat;
+  background-size: 100% 12px;
+}

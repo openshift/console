@@ -465,7 +465,7 @@ class EventStream extends SafetyFirst {
     });
     const messageCount = count < maxMessages ? `Showing ${pluralize(count, 'event')}` : `Showing ${count} of ${allCount}+ events`;
 
-    return <div className="co-m-pane__body">
+    return <div className="co-m-pane__body co-m-pane__body--alt">
       <div className="co-sysevent-stream">
         <div className="co-sysevent-stream__status">
           <div className="co-sysevent-stream__timeline__btn-text">

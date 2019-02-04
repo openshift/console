@@ -22,7 +22,7 @@ class ConfirmModal extends PromiseComponent {
   }
 
   render() {
-    return <form onSubmit={this._submit} name="form">
+    return <form onSubmit={this._submit} name="form" className="modal-content">
       <ModalTitle>{this.props.title}</ModalTitle>
       <ModalBody>{this.props.message}</ModalBody>
       <ModalSubmitFooter errorMessage={this.state.errorMessage} inProgress={this.state.inProgress} submitText={this.props.btnText || 'Confirm'} cancel={this._cancel} />
