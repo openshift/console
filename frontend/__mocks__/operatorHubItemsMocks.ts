@@ -65,6 +65,7 @@ const etcdPackageManifest = {
       'catalog-namespace': 'openshift-operator-lifecycle-manager',
       provider: 'CoreOS, Inc',
       'provider-url': '',
+      'opsrc-provider': 'community',
     },
   },
   spec: {},

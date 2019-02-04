@@ -198,6 +198,8 @@ $co-modal-ignore-warning-icon-width: 30px;
 }
 
 .co-modal-ignore-warning {
+  height: initial;
+
   &__checkbox.checkbox {
     margin-bottom: 0;
     padding-top: 15px;
