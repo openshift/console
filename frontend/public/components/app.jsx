@@ -104,10 +104,20 @@ class App extends React.PureComponent {
     this._onNavToggle = this._onNavToggle.bind(this);
     this._onNavSelect = this._onNavSelect.bind(this);
     this._isDesktop = this._isDesktop.bind(this);
+    this._onResize = this._onResize.bind(this);
+    this.previousDesktopState = this._isDesktop();
 
     this.state = {
       isNavOpen: this._isDesktop(),
     };
+  }
+
+  componentWillMount() {
+    window.addEventListener('resize', this._onResize);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this._onResize);
   }
 
   componentDidUpdate(prevProps) {
@@ -140,6 +150,14 @@ class App extends React.PureComponent {
     //close nav on mobile nav selects
     if (!this._isDesktop()) {
       this.setState({isNavOpen: false});
+    }
+  }
+
+  _onResize() {
+    const isDesktop = this._isDesktop();
+    if (this.previousDesktopState !== isDesktop) {
+      this.setState({isNavOpen: isDesktop});
+      this.previousDesktopState = isDesktop;
     }
   }
 
