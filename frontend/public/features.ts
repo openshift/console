@@ -9,6 +9,7 @@ import {
   ClusterServiceClassModel,
   ClusterServiceVersionModel,
   MachineModel,
+  MachineConfigModel,
   OperatorSourceModel,
   PrometheusModel,
   SelfSubjectAccessReviewModel,
@@ -38,9 +39,10 @@ import { UIActions } from './ui/ui-actions';
   SHOW_OPENSHIFT_START_GUIDE: false,
   SERVICE_CATALOG: false,
   OPERATOR_HUB: false,
-  CLUSTER_API false,
+  CLUSTER_API: false,
   CLUSTER_VERSION: false,
   CLUSTER_UPDATES_AVAILABLE: false,
+  MACHINE_CONFIG: false,
  */
 export enum FLAGS {
   AUTH_ENABLED = 'AUTH_ENABLED',
@@ -54,6 +56,7 @@ export enum FLAGS {
   CAN_LIST_PV = 'CAN_LIST_PV',
   CAN_LIST_STORE = 'CAN_LIST_STORE',
   CAN_LIST_CRD = 'CAN_LIST_CRD',
+  CAN_LIST_MACHINE_CONFIG = 'CAN_LIST_MACHINE_CONFIG',
   CAN_CREATE_PROJECT = 'CAN_CREATE_PROJECT',
   SHOW_OPENSHIFT_START_GUIDE = 'SHOW_OPENSHIFT_START_GUIDE',
   SERVICE_CATALOG = 'SERVICE_CATALOG',
@@ -61,6 +64,7 @@ export enum FLAGS {
   CLUSTER_API = 'CLUSTER_API',
   CLUSTER_VERSION = 'CLUSTER_VERSION',
   CLUSTER_UPDATES_AVAILABLE = 'CLUSTER_UPDATES_AVAILABLE',
+  MACHINE_CONFIG = 'MACHINE_CONFIG',
 }
 
 export const DEFAULTS_ = _.mapValues(FLAGS, flag => flag === FLAGS.AUTH_ENABLED
@@ -75,6 +79,7 @@ export const CRDs = {
   [referenceForModel(ClusterServiceVersionModel)]: FLAGS.OPERATOR_LIFECYCLE_MANAGER,
   [referenceForModel(OperatorSourceModel)]: FLAGS.OPERATOR_HUB,
   [referenceForModel(MachineModel)]: FLAGS.CLUSTER_API,
+  [referenceForModel(MachineConfigModel)]: FLAGS.MACHINE_CONFIG,
 };
 
 const SET_FLAG = 'SET_FLAG';
@@ -242,6 +247,9 @@ const ssarChecks = [{
 }, {
   flag: FLAGS.CAN_LIST_CRD,
   resourceAttributes:{ group: 'apiextensions.k8s.io', resource: 'customresourcedefinitions', verb: 'list' },
+}, {
+  flag: FLAGS.CAN_LIST_MACHINE_CONFIG,
+  resourceAttributes:{ group: MachineConfigModel.apiGroup, resource: MachineConfigModel.plural, verb: 'list' },
 }];
 
 ssarChecks.forEach(({flag, resourceAttributes, after}) => {
