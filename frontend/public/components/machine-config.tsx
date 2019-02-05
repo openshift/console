@@ -89,12 +89,12 @@ const MachineConfigList: React.SFC<any> = props => (
   />
 );
 
-export const MachineConfigPage: React.SFC<any> = props => (
+export const MachineConfigPage: React.SFC<any> = ({canCreate = true, ...rest}) => (
   <ListPage
-    {...props}
+    {...rest}
+    canCreate={canCreate}
     ListComponent={MachineConfigList}
     kind={machineConfigReference}
-    canCreate
   />
 );
 
