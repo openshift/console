@@ -19,10 +19,12 @@ export const CreateCRDYAML: React.SFC<CreateCRDYAMLProps> = (props) => {
 
   const Create = (createProps: {ClusterServiceVersion: {loaded: boolean, data: ClusterServiceVersionKind}}) => {
     if (createProps.ClusterServiceVersion.loaded && createProps.ClusterServiceVersion.data) {
-      const templates = _.get(createProps.ClusterServiceVersion.data.metadata.annotations, annotationKey, '[]');
-      const templateObj = (JSON.parse(templates) as K8sResourceKind[])
-        .find(obj => referenceFor(obj) === props.match.params.plural);
-      const template = templateObj ? _.attempt(() => safeDump(templateObj)) : null;
+      const templatesJSON = _.get(createProps.ClusterServiceVersion.data.metadata.annotations, annotationKey, '[]');
+      const template = _.attempt(() => safeDump((JSON.parse(templatesJSON) as K8sResourceKind[]).find(obj => referenceFor(obj) === props.match.params.plural)));
+      if (_.isError(template)) {
+        // eslint-disable-next-line no-console
+        console.error('Error parsing example JSON from annotation. Falling back to default.');
+      }
 
       return <CreateYAML {...props as any} template={!_.isError(template) ? template : null} />;
     }
