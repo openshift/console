@@ -2,13 +2,6 @@
 
 set -euo pipefail
 
-ARTIFACT_DIR=/tmp/artifacts
-export ARTIFACT_DIR
-
-function copyArtifacts {
-  echo "Copying artifacts..."
-  cp -rv ../frontend/gui_test_screenshots "${ARTIFACT_DIR}/gui_test_screenshots"
-}
 
 BRIDGE_K8S_AUTH_BEARER_TOKEN=$(kubectl config view -o json | jq '{myctx: .["current-context"], ctxs: .contexts[], users: .users[]}' | jq 'select(.myctx == .ctxs.name)' | jq 'select(.ctxs.context.user ==  .users.name)' | jq '.users.user.token' -r)
 export BRIDGE_K8S_AUTH_BEARER_TOKEN
@@ -49,7 +42,5 @@ then
 else
   yarn run test-gui --params.openshift true --params.servicecatalog true
 fi
-
-trap copyArtifacts EXIT
 
 kill "$(cat ../bridge.pid)"
