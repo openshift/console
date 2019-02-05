@@ -16,6 +16,8 @@ import {
   DeploymentConfigModel,
   ImageStreamModel,
   InstallPlanModel,
+  MachineConfigModel,
+  MachineConfigPoolModel,
   MachineDeploymentModel,
   MachineModel,
   MachineSetModel,
@@ -387,13 +389,18 @@ export const Navigation = ({ isNavOpen, onNavSelect }) => {
 
         <MonitoringNavSection />
 
+        <NavSection title="Machines" required={FLAGS.CLUSTER_API}>
+          <ResourceNSLink resource={referenceForModel(MachineModel)} name="Machines" required={FLAGS.CLUSTER_API} />
+          <ResourceNSLink resource={referenceForModel(MachineSetModel)} name="Machine Sets" required={FLAGS.CLUSTER_API} />
+          <ResourceNSLink resource={referenceForModel(MachineDeploymentModel)} name="Machine Deployments" required={FLAGS.CLUSTER_API} />
+          <ResourceClusterLink resource={referenceForModel(MachineConfigModel)} name="Machine Configs" required={FLAGS.CLUSTER_API} />
+          <ResourceClusterLink resource={referenceForModel(MachineConfigPoolModel)} name="Machine Config Pools" required={FLAGS.CLUSTER_API} />
+        </NavSection>
+
         <NavSection title="Administration">
           <HrefLink href="/settings/cluster" activePath="/settings/cluster/" name="Cluster Settings" required={FLAGS.CLUSTER_VERSION} startsWith={clusterSettingsStartsWith} />
           <ResourceClusterLink resource="namespaces" name="Namespaces" required={FLAGS.CAN_LIST_NS} />
           <ResourceClusterLink resource="nodes" name="Nodes" required={FLAGS.CAN_LIST_NODE} />
-          <ResourceNSLink resource={referenceForModel(MachineDeploymentModel)} name="Machine Deployments" required={FLAGS.CLUSTER_API} />
-          <ResourceNSLink resource={referenceForModel(MachineSetModel)} name="Machine Sets" required={FLAGS.CLUSTER_API} />
-          <ResourceNSLink resource={referenceForModel(MachineModel)} name="Machines" required={FLAGS.CLUSTER_API} />
           <ResourceNSLink resource="serviceaccounts" name="Service Accounts" />
           <ResourceNSLink resource="roles" name="Roles" startsWith={rolesStartsWith} />
           <ResourceNSLink resource="rolebindings" name="Role Bindings" startsWith={rolebindingsStartsWith} />

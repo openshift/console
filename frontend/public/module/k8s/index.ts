@@ -18,6 +18,16 @@ export type OwnerReference = {
   apiVersion: string;
 };
 
+export type ObjectReference = {
+  kind?: string;
+  namespace?: string;
+  name?: string;
+  uid?: string;
+  apiVersion?: string;
+  resourceVersion?: string;
+  fieldPath?: string;
+};
+
 export type ObjectMetadata = {
   annotations?: {[key: string]: string},
   name: string,
@@ -25,6 +35,20 @@ export type ObjectMetadata = {
   labels?: {[key: string]: string},
   ownerReferences?: OwnerReference[],
   [key: string]: any,
+};
+
+export enum K8sResourceConditionStatus {
+  ConditionTrue = 'True',
+  ConditionFalse = 'False',
+  ConditionUnknown = 'Unknown',
+}
+
+export type K8sResourceCondition<T> = {
+  type: T;
+  status: K8sResourceConditionStatus;
+  lastTransitionTime: string;
+  reason: string;
+  message: string;
 };
 
 export type MatchExpression = {key: string, operator: 'Exists' | 'DoesNotExist'} | {key: string, operator: 'In' | 'NotIn' | 'Equals' | 'NotEquals', values: string[]};
@@ -45,6 +69,7 @@ export type K8sResourceKind = {
   status?: {[key: string]: any};
   type?: {[key: string]: any};
 };
+
 
 export type ConfigMapKind = {
   apiVersion: string;
@@ -136,7 +161,7 @@ export type MachineDeploymentKind = {
       rollingUpdate?: {
         maxUnavailable?: number | string;
         maxSurge?: number | string;
-      }
+      };
     };
   };
   status?: {
@@ -145,6 +170,46 @@ export type MachineDeploymentKind = {
     readyReplicas: number;
     replicas: number;
   };
+} & K8sResourceKind;
+
+export type MachineConfigKind = {
+  spec: {
+    osImageURL: string;
+    config: any;
+  };
+} & K8sResourceKind;
+
+export enum MachineConfigPoolConditionType {
+  MachineConfigPoolUpdated = 'Updated',
+  MachineConfigPoolUpdating = 'Updating',
+  MachineConfigPoolDegraded = 'Degraded',
+}
+
+export type MachineConfigPoolCondition = K8sResourceCondition<MachineConfigPoolConditionType>;
+
+export type MachineConfigPoolStatus = {
+  observedGeneration?: number;
+  configuration:{
+    name: string;
+    source: ObjectReference[];
+  };
+  machineCount: number;
+  updatedMachineCount: number;
+  readyMachineCount: number;
+  unavailableMachineCount: number;
+  conditions: MachineConfigPoolCondition[];
+};
+
+export type MachineConfigPoolSpec = {
+  machineConfigSelector?: Selector;
+  machineSelector?: Selector;
+  paused: boolean;
+  maxUnavailable: number | string;
+};
+
+export type MachineConfigPoolKind = {
+  spec: MachineConfigPoolSpec;
+  status: MachineConfigPoolStatus;
 } & K8sResourceKind;
 
 export type K8sKind = {

@@ -29,6 +29,8 @@ import {
   InstallPlanModel,
   JobModel,
   LimitRangeModel,
+  MachineConfigPoolModel,
+  MachineConfigModel,
   MachineDeploymentModel,
   MachineModel,
   MachineSetModel,
@@ -78,6 +80,8 @@ export const resourceDetailPages = ImmutableMap<GroupVersionKind | string, () =>
   .set(referenceForModel(NamespaceModel), () => import('./namespace' /* webpackChunkName: "namespace" */).then(m => m.NamespacesDetailsPage))
   .set(referenceForModel(NetworkPolicyModel), () => import('./network-policy' /* webpackChunkName: "network-policy" */).then(m => m.NetworkPoliciesDetailsPage))
   .set(referenceForModel(NodeModel), () => import('./node' /* webpackChunkName: "node" */).then(m => m.NodesDetailsPage))
+  .set(referenceForModel(MachineConfigModel), () => import('./machine-config' /* webpackChunkName: "machine-config" */).then(m => m.MachineConfigDetailsPage))
+  .set(referenceForModel(MachineConfigPoolModel), () => import('./machine-config-pool' /* webpackChunkName: "machine-config-pool" */).then(m => m.MachineConfigPoolDetailsPage))
   .set(referenceForModel(MachineModel), () => import('./machine' /* webpackChunkName: "machine" */).then(m => m.MachineDetailsPage))
   .set(referenceForModel(MachineSetModel), () => import('./machine-set' /* webpackChunkName: "machine-set" */).then(m => m.MachineSetDetailsPage))
   .set(referenceForModel(MachineDeploymentModel), () => import('./machine-deployment' /* webpackChunkName: "machine-deployment" */).then(m => m.MachineDeploymentDetailsPage))
@@ -127,6 +131,8 @@ export const resourceListPages = ImmutableMap<GroupVersionKind | string, () => P
   .set(referenceForModel(NamespaceModel), () => import('./namespace' /* webpackChunkName: "namespace" */).then(m => m.NamespacesPage))
   .set(referenceForModel(NetworkPolicyModel), () => import('./network-policy' /* webpackChunkName: "network-policy" */).then(m => m.NetworkPoliciesPage))
   .set(referenceForModel(NodeModel), () => import('./node' /* webpackChunkName: "node" */).then(m => m.NodesPage))
+  .set(referenceForModel(MachineConfigModel), () => import('./machine-config' /* webpackChunkName: "machine-config" */).then(m => m.MachineConfigPage))
+  .set(referenceForModel(MachineConfigPoolModel), () => import('./machine-config-pool' /* webpackChunkName: "machine-config-pool" */).then(m => m.MachineConfigPoolPage))
   .set(referenceForModel(MachineModel), () => import('./machine' /* webpackChunkName: "machine" */).then(m => m.MachinePage))
   .set(referenceForModel(MachineDeploymentModel), () => import('./machine-deployment' /* webpackChunkName: "machine-deployment" */).then(m => m.MachineDeploymentPage))
   .set(referenceForModel(MachineSetModel), () => import('./machine-set' /* webpackChunkName: "machine-set" */).then(m => m.MachineSetPage))
