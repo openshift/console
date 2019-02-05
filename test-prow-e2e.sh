@@ -5,6 +5,10 @@ set -exuo pipefail
 ARTIFACT_DIR=/tmp/artifacts
 export ARTIFACT_DIR
 
+function copyArtifacts {
+  echo "Copying artifacts..."
+  cp -rv ./frontend/gui_test_screenshots "${ARTIFACT_DIR}/gui_test_screenshots"
+}
 ./build.sh
 
 oc login -u kubeadmin -p $(cat "${ARTIFACT_DIR}/installer/auth/kubeadmin-password")
@@ -16,4 +20,4 @@ kubectl create -f https://raw.githubusercontent.com/operator-framework/operator-
 
 ./test-gui.sh e2e
 
-cp -rv ./frontend/gui_test_screenshots "${ARTIFACT_DIR}/gui_test_screenshots"
+trap copyArtifacts EXIT
