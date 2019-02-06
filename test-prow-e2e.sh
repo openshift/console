@@ -6,7 +6,7 @@ ARTIFACT_DIR=/tmp/artifacts
 export ARTIFACT_DIR
 
 function copyArtifacts {
-  echo "Copying artifacts..."
+  echo "Copying artifacts from $(pwd)..."
   cp -rv ./frontend/gui_test_screenshots "${ARTIFACT_DIR}/gui_test_screenshots"
 }
 
