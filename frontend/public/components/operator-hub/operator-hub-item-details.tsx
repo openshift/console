@@ -7,8 +7,9 @@ import { CatalogItemHeader, PropertiesSidePanel, PropertyItem } from 'patternfly
 import { MarkdownView } from '../operator-lifecycle-manager/clusterserviceversion';
 import { history, ExternalLink } from '../utils';
 import { RH_OPERATOR_SUPPORT_POLICY_LINK } from '../../const';
+import { Link } from 'react-router-dom';
 
-export const OperatorHubItemDetails: React.SFC<OperatorHubItemDetailsProps> = ({item, closeOverlay}) => {
+export const OperatorHubItemDetails: React.SFC<OperatorHubItemDetailsProps> = ({item, closeOverlay, namespace}) => {
   if (!item) {
     return null;
   }
@@ -38,7 +39,7 @@ export const OperatorHubItemDetails: React.SFC<OperatorHubItemDetailsProps> = ({
           title="Installed Operator"
           body={
             <span>
-              This Operator has been installed on the cluster.
+              This Operator has been installed on the cluster. <Link to={`/k8s/${namespace ? `ns/${namespace}` : 'all-namespaces'}/clusterserviceversions?rowFilter-clusterserviceversion-status=Copied%2CInstallSucceeded&name=${item.obj.metadata.name}`}>View it here.</Link>
             </span>
           }
         />
@@ -68,14 +69,7 @@ export const OperatorHubItemDetails: React.SFC<OperatorHubItemDetailsProps> = ({
     return null;
   };
 
-  const onActionClick = () => {
-    if (!installed) {
-      history.push(`/operatorhub/subscribe?pkg=${item.obj.metadata.name}&catalog=${catalogSource}&catalogNamespace=${catalogSourceNamespace}`);
-      return;
-    }
-
-    // TODO: Allow for Manage button to navigate to the CSV details for the item
-  };
+  const createLink = `/operatorhub/subscribe?pkg=${item.obj.metadata.name}&catalog=${catalogSource}&catalogNamespace=${catalogSourceNamespace}&targetNamespace=${namespace}`;
 
   return <React.Fragment>
     <Modal.Header>
@@ -97,7 +91,7 @@ export const OperatorHubItemDetails: React.SFC<OperatorHubItemDetailsProps> = ({
                 className="co-catalog-page__overlay-create"
                 disabled={installed}
                 title={installed ? 'This Operator has been installed on the cluster.' : null}
-                onClick={onActionClick}>
+                onClick={() => !installed ? history.push(createLink) : null}>
                 Install
               </Button>
               <PropertyItem label="Operator Version" value={version || notAvailable} />
@@ -126,6 +120,7 @@ OperatorHubItemDetails.defaultProps = {
 };
 
 export type OperatorHubItemDetailsProps = {
+  namespace?: string;
   item: any;
   closeOverlay: () => void;
 };

@@ -37,8 +37,8 @@ const tooltipOverrides = Object.freeze({
 // Consider this mobile if the device screen width is less than 768. (This value shouldn't change.)
 const isMobile = window.screen.width < 768;
 
-export const Tooltip: React.SFC<TooltipProps> = ({ content, children, styles, disableOnMobile }) => {
-  if (disableOnMobile && isMobile) {
+export const Tooltip: React.SFC<TooltipProps> = ({ content, children, styles, disableOnMobile, hidden = false }) => {
+  if (disableOnMobile && isMobile || hidden) {
     return <React.Fragment>{children}</React.Fragment>;
   }
   const mergedStyles = styles ? _.merge({}, tooltipOverrides, styles) : tooltipOverrides;
@@ -47,6 +47,7 @@ export const Tooltip: React.SFC<TooltipProps> = ({ content, children, styles, di
 
 type TooltipProps = {
   content: React.ReactNode;
+  hidden?: boolean;
   styles?: any;
   disableOnMobile?: boolean;
 };

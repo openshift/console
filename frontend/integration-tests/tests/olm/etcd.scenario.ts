@@ -3,6 +3,7 @@
 import { browser, $, $$, element, ExpectedConditions as until, by } from 'protractor';
 import { safeDump, safeLoad } from 'js-yaml';
 import { defaultsDeep } from 'lodash';
+import { execSync } from 'child_process';
 
 import { appHost, testName, checkLogs, checkErrors } from '../../protractor.conf';
 import * as crudView from '../../views/crud.view';
@@ -10,7 +11,7 @@ import * as catalogView from '../../views/olm-catalog.view';
 import * as sidenavView from '../../views/sidenav.view';
 import * as yamlView from '../../views/yaml.view';
 
-xdescribe('Interacting with the etcd OCS', () => {
+describe('Interacting with the etcd Operator (all-namespaces install mode)', () => {
   const etcdClusterResources = new Set(['Service', 'Pod']);
   const deleteRecoveryTime = 60000;
   const etcdOperatorName = 'etcd-operator';
@@ -18,9 +19,17 @@ xdescribe('Interacting with the etcd OCS', () => {
   const etcdcluster = `${testName}-etcdcluster`;
   const etcdbackup = `${testName}-etcdbackup`;
   const etcdrestore = `${testName}-etcdrestore`;
+  const operatorGroupName = 'test-global-operatorgroup';
 
   beforeAll(async() => {
-    await browser.get(`${appHost}/status/all-namespaces`);
+    const operatorGroup = {
+      apiVersion: 'operators.coreos.com/v1alpha2',
+      kind: 'OperatorGroup',
+      metadata: {name: operatorGroupName},
+    };
+    execSync(`echo '${JSON.stringify(operatorGroup)}' | kubectl create -n ${testName} -f -`);
+
+    await browser.get(`${appHost}/status/ns/${testName}`);
     await browser.wait(until.presenceOf(sidenavView.navSectionFor('Catalog')));
   });
 
@@ -29,13 +38,19 @@ xdescribe('Interacting with the etcd OCS', () => {
     checkErrors();
   });
 
+  afterAll(() => {
+    execSync(`kubectl delete operatorgroup -n ${testName} ${operatorGroupName}`);
+    execSync(`kubectl delete subscriptions -n ${testName} --all`);
+    execSync(`kubectl delete clusterserviceversions -n ${testName} --all`);
+  });
+
   it('can be enabled from the Catalog Source', async() => {
     await sidenavView.clickNavLink(['Catalog', 'Operator Management']);
     await catalogView.isLoaded();
     await catalogView.createSubscriptionFor('etcd');
     await browser.wait(until.presenceOf($('.ace_text-input')));
     const content = await yamlView.editorContent.getText();
-    const newContent = defaultsDeep({}, {metadata: {generateName: `${testName}-etcd-`, namespace: testName, labels: {[testLabel]: testName}}, spec: {channel: 'alpha', source: 'rh-operators', name: 'etcd'}}, safeLoad(content));
+    const newContent = defaultsDeep({}, {metadata: {generateName: `${testName}-etcd-`, namespace: testName, labels: {[testLabel]: testName}}}, safeLoad(content));
     await yamlView.setContent(safeDump(newContent));
     await $('#save-changes').click();
     await crudView.isLoaded();
@@ -66,7 +81,7 @@ xdescribe('Interacting with the etcd OCS', () => {
     await crudView.isLoaded();
     await browser.sleep(500);
 
-    browser.wait(until.visibilityOf(crudView.rowForOperator('etcd')), 5000);
+    await browser.wait(until.visibilityOf(crudView.rowForOperator('etcd')), 5000);
   });
 
   it('displays metadata about etcd OCS in the "Overview" section', async() => {
