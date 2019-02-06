@@ -14,6 +14,7 @@ import {
   SelfSubjectAccessReviewModel,
   VirtualMachineModel,
 } from './models';
+import { ClusterVersionKind } from './module/k8s';
 import { k8sBasePath, referenceForModel } from './module/k8s/k8s';
 import { k8sCreate } from './module/k8s/resource';
 import { types } from './module/k8s/k8s-actions';
@@ -97,8 +98,7 @@ const handleError = (res, flag, dispatch, cb) => {
   }
 };
 
-// FIXME: /oapi is deprecated. What else can we use to detect OpenShift?
-const openshiftPath = `${k8sBasePath}/oapi/v1`;
+const openshiftPath = `${k8sBasePath}/apis/apps.openshift.io/v1`;
 const detectOpenShift = dispatch => coFetchJSON(openshiftPath)
   .then(
     res => setFlag(dispatch, FLAGS.OPENSHIFT, _.size(res.resources) > 0),
@@ -110,7 +110,7 @@ const detectOpenShift = dispatch => coFetchJSON(openshiftPath)
 const clusterVersionPath = `${k8sBasePath}/apis/config.openshift.io/v1/clusterversions/version`;
 const detectClusterVersion = dispatch => coFetchJSON(clusterVersionPath)
   .then(
-    clusterVersion => {
+    (clusterVersion: ClusterVersionKind) => {
       const hasClusterVersion = !_.isEmpty(clusterVersion);
       setFlag(dispatch, FLAGS.CLUSTER_VERSION, hasClusterVersion);
 

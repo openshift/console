@@ -21,6 +21,7 @@ export class LogWindow extends React.PureComponent {
       content: '',
       height: '',
     };
+    this.prevScrollLeft = null;
   }
 
   static getDerivedStateFromProps(nextProps) {
@@ -50,8 +51,16 @@ export class LogWindow extends React.PureComponent {
   }
 
   _handleScroll() {
+    const scrollLeftChanged = this.prevScrollLeft !== this.scrollPane.scrollLeft;
+
     // Stream is finished, take no action on scroll
     if (this.props.status === STREAM_EOF) {
+      return;
+    }
+
+    // If horizontal scrolling, take no action
+    if (scrollLeftChanged) {
+      this.prevScrollLeft = this.scrollPane.scrollLeft;
       return;
     }
 
@@ -73,6 +82,7 @@ export class LogWindow extends React.PureComponent {
 
     const targetHeight = Math.floor(window.innerHeight - this.scrollPane.getBoundingClientRect().top -
       (this.props.isFullscreen ? FULLSCREEN_FUDGE_FACTOR : FUDGE_FACTOR));
+    this.prevScrollLeft = this.scrollPane.scrollLeft;
     this.setState({
       height: targetHeight,
     });

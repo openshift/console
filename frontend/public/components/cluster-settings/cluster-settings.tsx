@@ -8,12 +8,20 @@ import { Helmet } from 'react-helmet';
 import { Button } from 'patternfly-react';
 import { Link } from 'react-router-dom';
 
-import { Firehose, HorizontalNav, ResourceLink, resourcePathFromModel } from '../utils';
-import { K8sResourceKind, referenceForModel } from '../../module/k8s';
+import { ClusterVersionKind, K8sResourceKind, referenceForModel } from '../../module/k8s';
 import { ClusterAutoscalerModel, ClusterVersionModel } from '../../models';
 import { ClusterOperatorPage } from './cluster-operator';
 import { clusterUpdateModal } from '../modals';
 import { GlobalConfigPage } from './global-config';
+import {
+  EmptyBox,
+  Firehose,
+  HorizontalNav,
+  ResourceLink,
+  resourcePathFromModel,
+  SectionHeading,
+  Timestamp,
+} from '../utils';
 
 enum ClusterUpdateStatus {
   UpToDate = 'Up to Date',
@@ -26,20 +34,19 @@ enum ClusterUpdateStatus {
 const clusterAutoscalerReference = referenceForModel(ClusterAutoscalerModel);
 const clusterVersionReference = referenceForModel(ClusterVersionModel);
 
-export const getAvailableClusterUpdates = (cv) => {
+export const getAvailableClusterUpdates = (cv: ClusterVersionKind) => {
   return _.get(cv, 'status.availableUpdates');
 };
 
-export const getCurrentClusterVersion = (cv) => {
+export const getDesiredClusterVersion = (cv: ClusterVersionKind) => {
   return _.get(cv, 'status.desired.version');
 };
 
-
-const launchUpdateModal = (cv) => {
+const launchUpdateModal = (cv: ClusterVersionKind) => {
   clusterUpdateModal({cv});
 };
 
-const getClusterUpdateStatus = (cv: K8sResourceKind): ClusterUpdateStatus => {
+const getClusterUpdateStatus = (cv: ClusterVersionKind): ClusterUpdateStatus => {
   const conditions = _.get(cv, 'status.conditions', []);
   const isFailingCondition = _.find(conditions, { type: 'Failing', status: 'True' });
   if (isFailingCondition) {
@@ -111,63 +118,91 @@ const UpdateStatus: React.SFC<UpdateStatusProps> = ({cv}) => {
   </React.Fragment>;
 };
 
-const CurrentVersion: React.SFC<CurrentVersionProps> = ({cv}) => {
-  const currentVersion = getCurrentClusterVersion(cv);
-  return currentVersion || <React.Fragment><i className="pficon pficon-warning-triangle-o" aria-hidden="true" />&nbsp;Unknown</React.Fragment>;
+const DesiredVersion: React.SFC<DesiredVersionProps> = ({cv}) => {
+  const version = getDesiredClusterVersion(cv);
+  return version
+    ? <React.Fragment>{version}</React.Fragment>
+    : <React.Fragment><i className="pficon pficon-warning-triangle-o" aria-hidden="true" />&nbsp;Unknown</React.Fragment>;
 };
 
 const ClusterVersionDetailsTable: React.SFC<ClusterVersionDetailsTableProps> = ({obj: cv, autoscalers}) => {
-  const conditions = _.get(cv, 'status.conditions', []);
+  const { history, conditions } = cv.status;
   const status = getClusterUpdateStatus(cv);
   const retrievedUpdatesFailedCondition = _.find(conditions, { type: 'RetrievedUpdates', status: 'False' });
   const isFailingCondition = _.find(conditions, { type: 'Failing', status: 'True' });
 
-  return <div className="co-m-pane__body">
-    <div className="co-m-pane__body-group">
-      { status === ClusterUpdateStatus.Updating && <UpdateInProgressAlert /> }
-      { status === ClusterUpdateStatus.UpdatesAvailable && <UpdatesAvailableAlert cv={cv} /> }
-      { isFailingCondition && <FailedConditionAlert message="Update is failing." condition={isFailingCondition} /> }
-      { retrievedUpdatesFailedCondition && <FailedConditionAlert message="Could not retrieve updates." condition={retrievedUpdatesFailedCondition} /> }
-      <div className="co-detail-table">
-        <div className="co-detail-table__row row">
-          <div className="co-detail-table__section">
-            <dl className="co-m-pane__details">
-              <dt className="co-detail-table__section-header">Channel</dt>
-              <dd>{cv.spec.channel}</dd>
-            </dl>
-          </div>
-          <div className="co-detail-table__section">
-            <dl className="co-m-pane__details">
-              <dt className="co-detail-table__section-header">Update Status</dt>
-              <dd><UpdateStatus cv={cv} /></dd>
-            </dl>
-          </div>
-          <div className="co-detail-table__section">
-            <dl className="co-m-pane__details">
-              <dt className="co-detail-table__section-header">Current Version</dt>
-              <dd><CurrentVersion cv={cv} /></dd>
-            </dl>
+  return <React.Fragment>
+    <div className="co-m-pane__body">
+      <div className="co-m-pane__body-group">
+        { status === ClusterUpdateStatus.Updating && <UpdateInProgressAlert /> }
+        { status === ClusterUpdateStatus.UpdatesAvailable && <UpdatesAvailableAlert cv={cv} /> }
+        { isFailingCondition && <FailedConditionAlert message="Update is failing." condition={isFailingCondition} /> }
+        { retrievedUpdatesFailedCondition && <FailedConditionAlert message="Could not retrieve updates." condition={retrievedUpdatesFailedCondition} /> }
+        <div className="co-detail-table">
+          <div className="co-detail-table__row row">
+            <div className="co-detail-table__section">
+              <dl className="co-m-pane__details">
+                <dt className="co-detail-table__section-header">Channel</dt>
+                <dd>{cv.spec.channel}</dd>
+              </dl>
+            </div>
+            <div className="co-detail-table__section">
+              <dl className="co-m-pane__details">
+                <dt className="co-detail-table__section-header">Update Status</dt>
+                <dd><UpdateStatus cv={cv} /></dd>
+              </dl>
+            </div>
+            <div className="co-detail-table__section">
+              <dl className="co-m-pane__details">
+                <dt className="co-detail-table__section-header">Desired Version</dt>
+                <dd><DesiredVersion cv={cv} /></dd>
+              </dl>
+            </div>
           </div>
         </div>
       </div>
+      <div className="co-m-pane__body-group">
+        <dl className="co-m-pane__details">
+          <dt>Cluster ID</dt>
+          <dd className="co-break-all">{cv.spec.clusterID}</dd>
+          <dt>Desired Release Image</dt>
+          <dd className="co-break-all">{_.get(cv, 'status.desired.image') || '-'}</dd>
+          <dt>Cluster Autoscaler</dt>
+          <dd>
+            {_.isEmpty(autoscalers)
+              ? <Link to={`${resourcePathFromModel(ClusterAutoscalerModel)}/new`}>
+                <i className="pficon pficon-add-circle-o" aria-hidden="true" /> Create Autoscaler
+              </Link>
+              : autoscalers.map(autoscaler => <div key={autoscaler.metadata.uid}><ResourceLink kind={clusterAutoscalerReference} name={autoscaler.metadata.name} /></div>)}
+          </dd>
+        </dl>
+      </div>
     </div>
-    <div className="co-m-pane__body-group">
-      <dl className="co-m-pane__details">
-        <dt>Cluster ID</dt>
-        <dd className="co-break-all">{cv.spec.clusterID}</dd>
-        <dt>Current Payload</dt>
-        <dd className="co-break-all">{_.get(cv, 'status.desired.payload') || '-'}</dd>
-        <dt>Cluster Autoscaler</dt>
-        <dd>
-          {_.isEmpty(autoscalers)
-            ? <Link to={`${resourcePathFromModel(ClusterAutoscalerModel)}/new`}>
-              <i className="pficon pficon-add-circle-o" aria-hidden="true" /> Create Autoscaler
-            </Link>
-            : autoscalers.map(autoscaler => <div key={autoscaler.metadata.uid}><ResourceLink kind={clusterAutoscalerReference} name={autoscaler.metadata.name} /></div>)}
-        </dd>
-      </dl>
+    <div className="co-m-pane__body">
+      <SectionHeading text="Update History" />
+      <div className="co-table-container">
+        <table className="table">
+          <thead>
+            <tr>
+              <th>Version</th>
+              <th>State</th>
+              <th>Started</th>
+              <th>Completed</th>
+            </tr>
+          </thead>
+          <tbody>
+            {_.isEmpty(history) && <EmptyBox label="History" />}
+            {history.map((update, i) => <tr key={i}>
+              <td className="co-break-all">{update.version || '-'}</td>
+              <td>{update.state || '-'}</td>
+              <td><Timestamp timestamp={update.startedTime} /></td>
+              <td>{update.completionTime ? <Timestamp timestamp={update.completionTime} /> : '-'}</td>
+            </tr>)}
+          </tbody>
+        </table>
+      </div>
     </div>
-  </div>;
+  </React.Fragment>;
 };
 
 const ClusterOperatorTabPage: React.SFC = () => <ClusterOperatorPage autoFocus={false} showTitle={false} />;
@@ -207,15 +242,15 @@ export const ClusterSettingsPage: React.SFC<ClusterSettingsPageProps> = ({match}
 };
 
 type UpdateStatusProps = {
-  cv: K8sResourceKind;
+  cv: ClusterVersionKind;
 };
 
-type CurrentVersionProps = {
-  cv: K8sResourceKind;
+type DesiredVersionProps = {
+  cv: ClusterVersionKind;
 };
 
 type ClusterVersionDetailsTableProps = {
-  obj: K8sResourceKind;
+  obj: ClusterVersionKind;
   autoscalers: K8sResourceKind[];
 };
 
