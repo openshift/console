@@ -1,12 +1,13 @@
 import React from 'react';
 import * as _ from 'lodash-es';
-import { VmTemplateModel, NamespaceModel } from '../../models/index';
+import { VmTemplateModel, NamespaceModel, DataVolumeModel } from '../../models/index';
 import { ListPage, List, ResourceRow, ListHeader, ColHead } from '../factory/okdfactory';
 import { ResourceLink, ResourceKebab } from '../utils/okdutils';
 import { DASHES } from '../utils/constants';
 import { openCreateVmWizard } from '../modals/create-vm-modal';
-import { TemplateSource, getTemplateOperatingSystems, getTemplateFlavors } from 'kubevirt-web-ui-components';
+import { TemplateSource, getTemplateOperatingSystems, getTemplateFlavors, getResource } from 'kubevirt-web-ui-components';
 import { menuActions } from './menu-actions';
+import { WithResources } from '../utils/withResources';
 
 const mainRowStyle = 'col-lg-2 col-sm-4 col-xs-4';
 const otherRowStyle = 'col-lg-2 hidden-sm hidden-xs';
@@ -20,9 +21,17 @@ const VmTemplateHeader = props => <ListHeader>
   <ColHead {...props} className={otherRowStyle}>Flavor</ColHead>
 </ListHeader>;
 
-const VmTemplateRow = ({obj: template}) => {
+const VmTemplateRow = props => {
+
+  const template = props.obj;
 
   const os = getTemplateOperatingSystems([template])[0];
+
+  const resourceMap = {
+    dataVolumes: {
+      resource:  getResource(DataVolumeModel, {namespace: _.get(props, 'match.params.ns')}),
+    },
+  };
 
   return ( <ResourceRow obj={template}>
     <div className={mainRowStyle}>
@@ -39,7 +48,9 @@ const VmTemplateRow = ({obj: template}) => {
     </div>
     <div className={otherRowStyle}>
       <div className="co-resource-list__item--templateSource">
-        <TemplateSource template={template} />
+        <WithResources resourceMap={resourceMap}>
+          <TemplateSource template={template} />
+        </WithResources>
       </div>
     </div>
     <div className={otherRowStyle}>

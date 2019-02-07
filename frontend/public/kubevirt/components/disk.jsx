@@ -2,12 +2,21 @@ import React from 'react';
 import * as _ from 'lodash-es';
 import { Button, Alert } from 'patternfly-react';
 import { List, ColHead, ListHeader, ResourceRow } from './factory/okdfactory';
-import { PersistentVolumeClaimModel, StorageClassModel, VirtualMachineModel } from '../models';
+import { PersistentVolumeClaimModel, StorageClassModel, VirtualMachineModel, DataVolumeModel } from '../models';
 import { Loading, Firehose, Kebab } from './utils/okdutils';
 import { getFlattenForKind } from './utils/resources';
 import { DASHES, BUS_VIRTIO, DISK } from './utils/constants';
 import { deleteDeviceModal } from './modals/delete-device-modal';
-import { CreateDiskRow, getAddDiskPatch, getDisks, getResource } from 'kubevirt-web-ui-components';
+import {
+  CreateDiskRow,
+  getAddDiskPatch,
+  getDisks,
+  getResource,
+  getDataVolumeTemplates,
+  getName,
+  getDataVolumeStorageClassName,
+  getDataVolumeStorageSize,
+} from 'kubevirt-web-ui-components';
 import { k8sPatch } from '../module/okdk8s';
 import { LoadingInline } from './okdcomponents';
 import { WithResources } from './utils/withResources';
@@ -21,12 +30,12 @@ const DiskHeader = props => <ListHeader>
   <ColHead {...props} className={columnStyle}>Storage Class</ColHead>
 </ListHeader>;
 
-const PvcColumn = props => {
+const ResourceColumn = props => {
   if (props.loadError) {
     return DASHES;
   } else if (props.loaded){
     const pvc = props.flatten(props.resources);
-    return _.get(pvc, props.pvcPath, DASHES);
+    return _.get(pvc, props.path, DASHES);
   }
   return <Loading className="kubevirt-disk__loading" />;
 };
@@ -53,17 +62,25 @@ const VmDiskRow = ({ storage }) => {
   if (pvcName) {
     const pvcs = getResource(PersistentVolumeClaimModel, {name: pvcName, namespace: storage.vm.metadata.namespace, isList: false});
     sizeColumn = <Firehose resources={[pvcs]} flatten={getFlattenForKind(PersistentVolumeClaimModel.kind)}>
-      <PvcColumn pvcPath={'spec.resources.requests.storage'} />
+      <ResourceColumn path={'spec.resources.requests.storage'} />
     </Firehose>;
     storageColumn = <Firehose resources={[pvcs]} flatten={getFlattenForKind(PersistentVolumeClaimModel.kind)}>
-      <PvcColumn pvcPath={'spec.storageClassName'} />
+      <ResourceColumn path={'spec.storageClassName'} />
     </Firehose>;
   } else {
     const dataVolumeName = _.get(storage.volume, 'dataVolume.name');
-    const dataVolume = _.get(storage.vm, 'spec.dataVolumeTemplates', []).find(dv => _.get(dv,'metadata.name') === dataVolumeName);
-    if (dataVolume) {
-      sizeColumn = _.get(dataVolume,'spec.pvc.resources.requests.storage');
-      storageColumn = _.get(dataVolume,'spec.pvc.storageClassName');
+    const dataVolumeTemplate = getDataVolumeTemplates(storage.vm).find(dv => getName(dv) === dataVolumeName);
+    if (dataVolumeTemplate) {
+      sizeColumn = getDataVolumeStorageSize(dataVolumeTemplate);
+      storageColumn = getDataVolumeStorageClassName(dataVolumeTemplate);
+    } else {
+      const dvs = getResource(DataVolumeModel, {name: dataVolumeName, namespace: storage.vm.metadata.namespace, isList: false});
+      sizeColumn = <Firehose resources={[dvs]} flatten={getFlattenForKind(DataVolumeModel.kind)}>
+        <ResourceColumn path={'spec.pvc.resources.requests.storage'} />
+      </Firehose>;
+      storageColumn = <Firehose resources={[dvs]} flatten={getFlattenForKind(DataVolumeModel.kind)}>
+        <ResourceColumn path={'spec.pvc.storageClassName'} />
+      </Firehose>;
     }
   }
 

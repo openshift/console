@@ -8,6 +8,7 @@ import {
   StorageClassModel,
   PersistentVolumeClaimModel,
   VmTemplateModel,
+  DataVolumeModel,
 } from '../../models';
 import { units } from '../utils/okdutils';
 
@@ -30,6 +31,9 @@ export const openCreateVmWizard = ( activeNamespace, createTemplate = false ) =>
     },
     persistentVolumeClaims: {
       resource:  getResource(PersistentVolumeClaimModel, {namespace: activeNamespace}),
+    },
+    dataVolumes: {
+      resource:  getResource(DataVolumeModel, {namespace: activeNamespace}),
     },
   },(({namespaces, userTemplates, commonTemplates}) => {
       let selectedNamespace;
