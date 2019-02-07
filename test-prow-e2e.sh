@@ -7,7 +7,7 @@ export ARTIFACT_DIR
 
 function copyArtifacts {
   echo "Copying artifacts from $(pwd)..."
-  cp -rv .frontend/gui_test_screenshots "${ARTIFACT_DIR}/gui_test_screenshots"
+  cp -rv ./frontend/gui_test_screenshots "${ARTIFACT_DIR}/gui_test_screenshots"
 }
 
 trap copyArtifacts EXIT
