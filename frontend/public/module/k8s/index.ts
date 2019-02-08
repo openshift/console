@@ -10,6 +10,7 @@ export * from './autocomplete';
 export * from './get-resources';
 export * from './k8s-models';
 export * from './label-selector';
+export * from './cluster-operator';
 
 export type OwnerReference = {
   name: string;
