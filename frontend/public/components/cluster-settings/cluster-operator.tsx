@@ -62,7 +62,7 @@ const ClusterOperatorRow: React.SFC<ClusterOperatorRowProps> = ({obj}) => {
       {message ? _.truncate(message, { length: 256, separator: ' ' }) : '-'}
     </div>
     <div className="col-md-3 col-sm-3 hidden-xs">
-      {obj.status.version || <span className="text-muted">Unknown</span>}
+      {_.get(obj, 'status.version') || <span className="text-muted">Unknown</span>}
     </div>
   </div>;
 };
