@@ -3,11 +3,21 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 
-import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter, ModalComponentProps } from '../factory/modal';
-import { Dropdown, PromiseComponent, ExternalLink } from '../utils';
-import { ClusterVersionKind, k8sPatch } from '../../module/k8s';
 import { ClusterVersionModel } from '../../models';
-import { getAvailableClusterUpdates, getDesiredClusterVersion } from '../cluster-settings/cluster-settings';
+import { Dropdown, PromiseComponent } from '../utils';
+import {
+  ClusterVersionKind,
+  getAvailableClusterUpdates,
+  getDesiredClusterVersion,
+  k8sPatch,
+} from '../../module/k8s';
+import {
+  createModalLauncher,
+  ModalBody,
+  ModalComponentProps,
+  ModalSubmitFooter,
+  ModalTitle,
+} from '../factory/modal';
 
 class ClusterUpdateModal extends PromiseComponent {
   readonly state: ClusterUpdateModalState;
@@ -42,10 +52,9 @@ class ClusterUpdateModal extends PromiseComponent {
     return <form onSubmit={this._submit} name="form" className="modal-content">
       <ModalTitle>Update Cluster</ModalTitle>
       <ModalBody>
-        <p>
-          For more detailed documentation on specific versions, &nbsp;
-          <ExternalLink href="https://github.com/openshift/origin/releases" text="view release notes." />
-        </p>
+        {/* <p>
+          // TODO: Determine what content goes here.
+        </p> */}
         <div className="form-group">
           <label>Current Version</label>
           <p>{currentVersion}</p>
