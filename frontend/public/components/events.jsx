@@ -17,14 +17,13 @@ import { namespaceProptype } from '../propTypes';
 import { ResourceListDropdown } from './resource-dropdown';
 import { SafetyFirst } from './safety-first';
 import { TextFilter } from './factory';
-import { watchURL } from '../module/k8s';
 import { withStartGuide } from './start-guide';
-import { WSFactory } from '../module/ws-factory';
-import { EventModel, NodeModel } from '../models';
+import { NodeModel } from '../models';
 import { connectToFlags, FLAGS } from '../features';
 import {
   Box,
   Dropdown,
+  Firehose,
   Loading,
   PageHeading,
   pluralize,
@@ -35,7 +34,6 @@ import {
 } from './utils';
 
 const maxMessages = 500;
-const flushInterval = 500;
 
 // Predicate function to filter by event "category" (info, error, or all)
 const categoryFilter = (category, {reason}) => {
@@ -208,17 +206,19 @@ const measurementCache = new CellMeasurerCache({
   minHeight: 109, /* height of event with a one-line event message on desktop */
 });
 
-class EventStream extends SafetyFirst {
+class EventStream_ extends SafetyFirst {
   constructor(props) {
     super(props);
     this.messages = {};
+    this.unprocessedMessages = {};
     this.state = {
       active: true,
-      sortedMessages: [],
-      filteredEvents: [],
       error: null,
+      filteredEvents: [],
+      loadedEventList: false,
       loading: true,
       oldestTimestamp: new Date(),
+      sortedMessages: [],
     };
     this.toggleStream = this.toggleStream_.bind(this);
     this.rowRenderer = function rowRenderer({index, style, key, parent}) {
@@ -236,72 +236,8 @@ class EventStream extends SafetyFirst {
     }.bind(this);
   }
 
-  wsInit(ns) {
-    const params = {
-      ns,
-      fieldSelector: this.props.fieldSelector,
-    };
-
-    this.ws = new WSFactory(`${ns || 'all'}-sysevents`, {
-      host: 'auto',
-      reconnect: true,
-      path: watchURL(EventModel, params),
-      jsonParse: true,
-      bufferFlushInterval: flushInterval,
-      bufferMax: maxMessages,
-    })
-      .onbulkmessage(events => {
-        events.forEach(({object, type}) => {
-          const uid = object.metadata.uid;
-
-          switch (type) {
-            case 'ADDED':
-            case 'MODIFIED':
-              if (this.messages[uid] && this.messages[uid].count > object.count) {
-                // We already have a more recent version of this message stored, so skip this one
-                return;
-              }
-              this.messages[uid] = object;
-              break;
-            case 'DELETED':
-              delete this.messages[uid];
-              break;
-            default:
-              // eslint-disable-next-line no-console
-              console.error(`UNHANDLED EVENT: ${type}`);
-              return;
-          }
-        });
-        this.flushMessages();
-        this.resizeEvents();
-      })
-      .onopen(() => {
-        this.messages = {};
-        this.setState({error: false, loading: false, sortedMessages: [], filteredEvents: []});
-      })
-      .onclose(evt => {
-        if (evt && evt.wasClean === false) {
-          this.setState({error: evt.reason || 'Connection did not close cleanly.'});
-        }
-        this.messages = {};
-        this.setState({sortedMessages: [], filteredEvents: []});
-      })
-      .onerror(() => {
-        this.messages = {};
-        this.setState({error: true, sortedMessages: [], filteredEvents: []});
-      });
-  }
-
-  componentDidMount() {
-    super.componentDidMount();
-    if (!this.props.mock) {
-      this.wsInit(this.props.namespace);
-    }
-  }
-
-  componentWillUnmount() {
-    super.componentWillUnmount();
-    this.ws && this.ws.destroy();
+  toggleStream_() {
+    this.setState({active: !this.state.active});
   }
 
   static filterEvents(messages, {kind, category, filter, textFilter}) {
@@ -340,6 +276,75 @@ class EventStream extends SafetyFirst {
     return _.filter(messages, f);
   }
 
+  componentDidUpdate(prevProps) {
+    if (prevProps.namespace !== this.props.namespace) {
+      this.messages = {};
+      this.unprocessedMessages = {};
+      this.setState({
+        filteredEvents: [],
+        loadedEventList: false,
+        loading: true,
+        sortedMessages: [],
+      });
+    }
+    if (prevProps.obj.data.loadError !== this.props.obj.data.loadError) {
+      this.setState({error: this.props.data.loadError.message});
+    }
+    if (prevProps.obj.data.kind !== this.props.obj.data.kind) {
+      if (this.state.active) {
+        if (!_.isEmpty(this.unprocessedMessages)) {
+          this.messages = Object.assign(this.messages, this.unprocessedMessages);
+          this.unprocessedMessages = {};
+        }
+        if (this.props.obj.data.kind === 'Event') {
+          const uid = this.props.obj.data.metadata.uid;
+          if (this.messages[uid] && this.messages[uid].count > this.props.obj.data.count) {
+            // We already have a more recent version of this message stored, so skip this one
+            return;
+          }
+          this.messages[uid] = this.props.obj.data;
+          this.flushMessages();
+          this.resizeEvents();
+        }
+        if (this.props.obj.data.kind === 'EventList' && !this.state.loadedEventList) {
+          if (this.props.obj.data.items.length === 0) {
+            this.setState({
+              filteredMessages: [],
+              loadedEventList: true,
+              loading: false,
+              sortedMessages: [],
+            });
+          } else {
+            // map through events and remove duplicates
+            for (let i = 0; i < this.props.obj.data.items.length; i++) {
+              const uid = this.props.obj.data.items[i].metadata.uid;
+              if (this.messages[uid] && this.messages[uid].count > this.props.obj.data.items[i].count) {
+                // We already have a more recent version of this message stored, so skip this one
+                return;
+              }
+              this.messages[uid] = this.props.obj.data.items[i];
+            }
+            this.flushMessages();
+            this.resizeEvents();
+            this.setState({loadedEventList: true, loading: false});
+          }
+        }
+      } else {
+        if (this.props.obj.data.kind === 'Event') {
+          const uid = this.props.obj.data.metadata.uid;
+          if (this.unprocessedMessages[uid] && this.unprocessedMessages[uid].count > this.props.obj.data.count) {
+            // We already have a more recent version of this message stored, so skip this one
+            return;
+          }
+          this.unprocessedMessages[uid] = this.props.obj.data;
+        }
+      }
+    }
+    if ((prevProps.textFilter !== this.props.textFilter) || (prevProps.kind !== this.props.kind) || (prevProps.category !== this.props.category)) {
+      this.resizeEvents();
+    }
+  }
+
   static getDerivedStateFromProps(nextProps, prevState) {
     const {filter, kind, category, textFilter, loading} = prevState;
 
@@ -354,35 +359,13 @@ class EventStream extends SafetyFirst {
       active: !nextProps.mock,
       loading: !nextProps.mock && loading,
       // update the filteredEvents
-      filteredEvents: EventStream.filterEvents(prevState.sortedMessages, nextProps),
+      filteredEvents: EventStream_.filterEvents(prevState.sortedMessages, nextProps),
       // we need these for bookkeeping because getDerivedStateFromProps doesn't get prevProps
       textFilter: nextProps.textFilter,
       kind: nextProps.kind,
       category: nextProps.category,
       filter: nextProps.filter,
     };
-  }
-
-  componentDidUpdate(prevProps) {
-    // If the namespace has changed, created a new WebSocket with the new namespace
-    if (prevProps.namespace !== this.props.namespace) {
-      this.ws && this.ws.destroy();
-      this.wsInit(this.props.namespace);
-    }
-    if ((prevProps.textFilter !== this.props.textFilter) || (prevProps.kind !== this.props.kind) || (prevProps.category !== this.props.category)) {
-      this.resizeEvents();
-    }
-  }
-
-  onResize() {
-    measurementCache.clearAll();
-  }
-
-  resizeEvents() {
-    measurementCache.clearAll();
-    if (this.list) {
-      this.list.recomputeRowHeights();
-    }
   }
 
   // Messages can come in extremely fast when the buffer flushes.
@@ -397,31 +380,33 @@ class EventStream extends SafetyFirst {
     this.setState({
       oldestTimestamp,
       sortedMessages: sorted,
-      filteredEvents: EventStream.filterEvents(sorted, this.props),
+      filteredEvents: EventStream_.filterEvents(sorted, this.props),
     });
 
     // Shrink this.messages back to maxMessages messages, to stop it growing indefinitely
     this.messages = _.keyBy(sorted, 'metadata.uid');
   }
 
-  toggleStream_() {
-    this.setState({active: !this.state.active}, () => {
-      if (this.state.active) {
-        this.ws && this.ws.unpause();
-      } else {
-        this.ws && this.ws.pause();
-      }
-    });
+  onResize() {
+    measurementCache.clearAll();
+  }
+
+  resizeEvents() {
+    measurementCache.clearAll();
+    if (this.list) {
+      this.list.recomputeRowHeights();
+    }
   }
 
   render() {
+    let sysEventStatus, statusBtnTxt;
     const { mock, resourceEventStream } = this.props;
     const {active, error, loading, filteredEvents, sortedMessages} = this.state;
+
     const count = filteredEvents.length;
     const allCount = sortedMessages.length;
-    const noEvents = allCount === 0 && this.ws && this.ws.bufferSize() === 0;
+    const noEvents = allCount === 0;
     const noMatches = allCount > 0 && count === 0;
-    let sysEventStatus, statusBtnTxt;
 
     if (noEvents || mock || (noMatches && resourceEventStream)) {
       sysEventStatus = (
@@ -444,7 +429,7 @@ class EventStream extends SafetyFirst {
     }
 
     if (error) {
-      statusBtnTxt = <span className="co-sysevent-stream__connection-error">Error connecting to event stream{_.isString(error) && `: ${error}`}</span>;
+      statusBtnTxt = <span className="co-sysevent-stream__connection-error">Error connecting to event stream{_.isString(this.props.obj.data.loadError.message) && `: ${this.props.obj.data.loadError.stack}`}</span>;
       sysEventStatus = (
         <Box>
           <div className="cos-status-box__title cos-error-title">Error loading events</div>
@@ -510,6 +495,19 @@ class EventStream extends SafetyFirst {
         { sysEventStatus }
       </div>
     </div>;
+  }
+}
+
+class EventStream extends React.Component {
+  render() {
+    return <Firehose resources={[{
+      kind: 'Event',
+      namespace: this.props.namespace,
+      fieldSelector: this.props.fieldSelector,
+      prop: 'obj',
+    }]}>
+      <EventStream_ {...this.props} />
+    </Firehose>;
   }
 }
 
