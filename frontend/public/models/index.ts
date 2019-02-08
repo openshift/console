@@ -818,13 +818,13 @@ export const APIServiceModel: K8sKind = {
 };
 
 // Cluster API resources
-// https://github.com/kubernetes-sigs/cluster-api
+// https://github.com/openshift/cluster-api
 export const MachineModel: K8sKind = {
   label: 'Machine',
   labelPlural: 'Machines',
-  apiVersion: 'v1alpha1',
+  apiVersion: 'v1beta1',
   path: 'machines',
-  apiGroup: 'cluster.k8s.io',
+  apiGroup: 'machine.openshift.io',
   plural: 'machines',
   abbr: 'M',
   namespaced: true,
@@ -836,9 +836,9 @@ export const MachineModel: K8sKind = {
 export const MachineSetModel: K8sKind = {
   label: 'Machine Set',
   labelPlural: 'Machine Sets',
-  apiVersion: 'v1alpha1',
+  apiVersion: 'v1beta1',
   path: 'machinesets',
-  apiGroup: 'cluster.k8s.io',
+  apiGroup: 'machine.openshift.io',
   plural: 'machinesets',
   abbr: 'MS',
   namespaced: true,
@@ -850,9 +850,9 @@ export const MachineSetModel: K8sKind = {
 export const MachineDeploymentModel: K8sKind = {
   label: 'Machine Deployment',
   labelPlural: 'Machine Deployments',
-  apiVersion: 'v1alpha1',
+  apiVersion: 'v1beta1',
   path: 'machinedeployments',
-  apiGroup: 'cluster.k8s.io',
+  apiGroup: 'machine.openshift.io',
   plural: 'machinedeployments',
   abbr: 'MD',
   namespaced: true,
