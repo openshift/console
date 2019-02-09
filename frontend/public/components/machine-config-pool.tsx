@@ -149,7 +149,7 @@ const MachineConfigPoolSummary: React.SFC<MachineConfigPoolSummaryProps> = ({obj
 };
 
 const MachineConfigList: React.SFC<MachineConfigListProps> = ({obj}) => (
-  <MachineConfigPage showTitle={false} selector={obj.spec.machineConfigSelector} />
+  <MachineConfigPage canCreate={false} showTitle={false} selector={obj.spec.machineConfigSelector} />
 );
 
 const MachineConfigPoolDetails: React.SFC<MachineConfigPoolDetailsProps> = ({obj}) => {
