@@ -18,6 +18,7 @@ class MastheadToolbar_ extends React.Component {
       isUserDropdownOpen: false,
       isKebabDropdownOpen: false,
       username: null,
+      isKubeAdmin: false,
       showAboutModal: false,
     };
 
@@ -53,7 +54,10 @@ class MastheadToolbar_ extends React.Component {
     if (!flags[FLAGS.OPENSHIFT]) {
       this.setState({ username: authSvc.name() });
     }
-    this.setState({ username: _.get(user, 'fullName') || _.get(user, 'metadata.name', '') });
+    this.setState({
+      username: _.get(user, 'fullName') || _.get(user, 'metadata.name', ''),
+      isKubeAdmin: _.get(user, 'metadata.name') === 'kube:admin',
+    });
   }
 
   _onUserDropdownToggle(isUserDropdownOpen) {
@@ -147,7 +151,7 @@ class MastheadToolbar_ extends React.Component {
       const logout = e => {
         e.preventDefault();
         if (flags[FLAGS.OPENSHIFT]) {
-          authSvc.deleteOpenShiftToken().then(() => authSvc.logout());
+          authSvc.logoutOpenShift(this.state.isKubeAdmin);
         } else {
           authSvc.logout();
         }
