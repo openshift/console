@@ -1,15 +1,18 @@
 /* eslint-disable no-undef, no-unused-vars */
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import { Link } from 'react-router-dom';
 
-import { MachineConfigPoolModel } from '../models';
-import { referenceForModel, MachineConfigPoolKind } from '../module/k8s';
-import { machineConfigReference, MachineConfigPage } from './machine-config';
-import { Tooltip } from './utils/tooltip';
 import { Conditions } from './conditions';
 import { errorModal } from './modals';
-import { machineReference, MachinePage } from './machine';
+import { Tooltip } from './utils/tooltip';
+import { MachineConfigPoolModel, NodeModel } from '../models';
+import { machineConfigReference, MachineConfigPage } from './machine-config';
+import {
+  K8sResourceConditionStatus,
+  MachineConfigPoolConditionType,
+  MachineConfigPoolKind,
+  referenceForModel,
+} from '../module/k8s';
 import {
   ColHead,
   DetailsPage,
@@ -23,7 +26,6 @@ import {
   pluralize,
   ResourceKebab,
   ResourceLink,
-  resourcePath,
   ResourceSummary,
   SectionHeading,
   Selector,
@@ -37,7 +39,13 @@ const pauseAction = (kind, obj) => ({
 });
 
 const machineConfigPoolReference = referenceForModel(MachineConfigPoolModel);
+const nodeReference = referenceForModel(NodeModel);
 const machineConfigPoolMenuActions = [pauseAction, ...Kebab.factory.common];
+const getConditionStatus = (mcp: MachineConfigPoolKind, type: MachineConfigPoolConditionType): K8sResourceConditionStatus => {
+  const {conditions} = mcp.status;
+  const condition = _.find(conditions, {type});
+  return condition ? condition.status : K8sResourceConditionStatus.Unknown;
+};
 
 const MachineConfigPoolCharacteristics: React.SFC<MachineConfigPoolCharacteristicsProps> = ({obj}) => {
   const { maxUnavailable } = obj.spec;
@@ -59,8 +67,8 @@ const MachineConfigPoolCharacteristics: React.SFC<MachineConfigPoolCharacteristi
         <dd>
           {
             configuration.source
-              ? _.map(configuration.source, mc =>
-                <ResourceLink kind={machineConfigReference} name={mc.name} title={mc.name} />
+              ? _.map(configuration.source, ({apiVersion, kind, name}) =>
+                <ResourceLink key={`${apiVersion}-${kind}-${name}`} kind={machineConfigReference} name={name} title={name} />
               )
               : '-'
           }
@@ -133,19 +141,15 @@ const MachineConfigPoolSummary: React.SFC<MachineConfigPoolSummaryProps> = ({obj
     <dt>Machine Selector</dt>
     <dd>
       <Selector
-        kind={machineReference}
+        kind={nodeReference}
         selector={machineSelector}
       />
     </dd>
   </ResourceSummary>;
 };
 
-const MachineList: React.SFC<MachineListProps> = ({obj}) => (
-  <MachinePage showTitle={false} selector={obj.spec.machineSelector} />
-);
-
 const MachineConfigList: React.SFC<MachineConfigListProps> = ({obj}) => (
-  <MachineConfigPage showTitle={false} selector={obj.spec.machineConfigSelector} />
+  <MachineConfigPage canCreate={false} showTitle={false} selector={obj.spec.machineConfigSelector} />
 );
 
 const MachineConfigPoolDetails: React.SFC<MachineConfigPoolDetailsProps> = ({obj}) => {
@@ -174,7 +178,6 @@ const MachineConfigPoolDetails: React.SFC<MachineConfigPoolDetailsProps> = ({obj
 const pages = [
   navFactory.details(MachineConfigPoolDetails),
   navFactory.editYaml(),
-  navFactory.machines(MachineList),
   navFactory.machineConfigs(MachineConfigList),
 ];
 
@@ -188,23 +191,30 @@ export const MachineConfigPoolDetailsPage: React.SFC<any> = props => (
 );
 
 const MachineConfigPoolHeader: React.SFC<any> = props => <ListHeader>
-  <ColHead {...props} className="col-xs-6 col-sm-4" sortField="metadata.name">Name</ColHead>
-  <ColHead {...props} className="hidden-xs col-sm-5" sortField="status.configuration.name">Configuration</ColHead>
-  <ColHead {...props} className="col-xs-6 col-sm-3" sortField="status.readyMachines">Machines</ColHead>
+  <ColHead {...props} className="col-xs-6 col-lg-4" sortField="metadata.name">Name</ColHead>
+  <ColHead {...props} className="hidden-xs hidden-sm hidden-md col-lg-5" sortField="status.configuration.name">Configuration</ColHead>
+  <ColHead {...props} className="col-xs-3  col-sm-2 col-lg-1">Updated</ColHead>
+  <ColHead {...props} className="hidden-xs col-sm-2 col-lg-1">Updating</ColHead>
+  <ColHead {...props} className="col-xs-3  col-sm-2 col-lg-1">Degraded</ColHead>
 </ListHeader>;
 
 const MachineConfigPoolRow: React.SFC<MachineConfigPoolRowProps> = ({obj}) => <div className="row co-resource-list__item">
-  <div className="col-xs-6 col-sm-4 co-break-word">
+  <div className="col-xs-6 col-lg-4 co-break-word">
     <ResourceLink kind={machineConfigPoolReference} name={obj.metadata.name} title={obj.metadata.name} />
   </div>
-  <div className="hidden-xs col-sm-5 co-break-word">
+  <div className="hidden-xs hidden-sm hidden-md col-lg-5 co-break-word">
     {_.get(obj, 'status.configuration.name') ? <ResourceLink kind={machineConfigReference} name={obj.status.configuration.name} title={obj.status.configuration.name} /> : '-'}
   </div>
-  <div className="col-xs-6 col-sm-3">
-    <Link to={`${resourcePath(machineConfigPoolReference, obj.metadata.name)}/machines`}>
-      {obj.status.readyMachineCount} of {obj.status.machineCount} machines
-    </Link>
+  <div className="col-xs-3  col-sm-2 col-lg-1">
+    {getConditionStatus(obj, MachineConfigPoolConditionType.Updated)}
   </div>
+  <div className="hidden-xs col-sm-2 col-lg-1">
+    {getConditionStatus(obj, MachineConfigPoolConditionType.Updating)}
+  </div>
+  <div className="col-xs-3  col-sm-2 col-lg-1">
+    {getConditionStatus(obj, MachineConfigPoolConditionType.Degraded)}
+  </div>
+
   <div className="dropdown-kebab-pf">
     <ResourceKebab actions={machineConfigPoolMenuActions} kind={machineConfigPoolReference} resource={obj} />
   </div>
@@ -232,10 +242,6 @@ type MachineConfigPoolCountsProps = {
 };
 
 type MachineConfigPoolDetailsProps = {
-  obj: MachineConfigPoolKind;
-};
-
-type MachineListProps = {
   obj: MachineConfigPoolKind;
 };
 

@@ -70,6 +70,9 @@ type loginMethod interface {
 	logout(http.ResponseWriter, *http.Request)
 	// authenticate fetches the bearer token from the cookie of a request.
 	authenticate(*http.Request) (*User, error)
+	// getKubeAdminLogoutURL returns the logout URL for the special
+	// kube:admin user in OpenShift
+	getKubeAdminLogoutURL() string
 }
 
 // AuthSource allows callers to switch between Tectonic and OpenShift login support.
@@ -272,6 +275,11 @@ func (a *Authenticator) LoginFunc(w http.ResponseWriter, r *http.Request) {
 // LogoutFunc cleans up session cookies.
 func (a *Authenticator) LogoutFunc(w http.ResponseWriter, r *http.Request) {
 	a.loginMethod.logout(w, r)
+}
+
+// GetKubeAdminLogoutURL returns the logout URL for the special kube:admin user in OpenShift
+func (a *Authenticator) GetKubeAdminLogoutURL() string {
+	return a.loginMethod.getKubeAdminLogoutURL()
 }
 
 // ExchangeAuthCode allows callers to return a raw token response given a OAuth2

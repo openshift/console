@@ -10,6 +10,7 @@ export * from './autocomplete';
 export * from './get-resources';
 export * from './k8s-models';
 export * from './label-selector';
+export * from './cluster-operator';
 
 export type OwnerReference = {
   name: string;
@@ -38,9 +39,9 @@ export type ObjectMetadata = {
 };
 
 export enum K8sResourceConditionStatus {
-  ConditionTrue = 'True',
-  ConditionFalse = 'False',
-  ConditionUnknown = 'Unknown',
+  True = 'True',
+  False = 'False',
+  Unknown = 'Unknown',
 }
 
 export type K8sResourceCondition<T> = {
@@ -180,9 +181,9 @@ export type MachineConfigKind = {
 } & K8sResourceKind;
 
 export enum MachineConfigPoolConditionType {
-  MachineConfigPoolUpdated = 'Updated',
-  MachineConfigPoolUpdating = 'Updating',
-  MachineConfigPoolDegraded = 'Degraded',
+  Updated = 'Updated',
+  Updating = 'Updating',
+  Degraded = 'Degraded',
 }
 
 export type MachineConfigPoolCondition = K8sResourceCondition<MachineConfigPoolConditionType>;

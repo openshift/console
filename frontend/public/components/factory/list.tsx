@@ -14,13 +14,17 @@ import {
   WindowScroller,
 } from 'react-virtualized';
 
-import { alertState, alertStateOrder, silenceState, silenceStateOrder } from '../../monitoring';
 import { UIActions } from '../../ui/ui-actions';
 import { ingressValidHosts } from '../ingress';
 import { routeStatus } from '../routes';
-import { getClusterOperatorStatus } from '../cluster-settings/cluster-operator';
 import { secretTypeFilterReducer } from '../secret';
 import { bindingType, roleType } from '../RBAC';
+import {
+  alertState,
+  alertStateOrder,
+  silenceState,
+  silenceStateOrder,
+} from '../../monitoring';
 import {
   containerLinuxUpdateOperator,
   EmptyBox,
@@ -43,6 +47,7 @@ import {
   podReadiness,
   serviceCatalogStatus,
   serviceClassDisplayName,
+  getClusterOperatorStatus,
 } from '../../module/k8s';
 
 import { getVmStatus } from 'kubevirt-web-ui-components';
@@ -238,6 +243,7 @@ const sorts = {
   serviceClassDisplayName,
   silenceStateOrder,
   string: val => JSON.stringify(val),
+  getClusterOperatorStatus,
 };
 
 export class ColHead extends React.Component<ColHeadProps> {
@@ -451,9 +457,7 @@ export const List = connect(stateToProps, {sortList: UIActions.sortList})(
     render() {
       const {currentSortField, currentSortFunc, currentSortOrder, expand, Header, label, listId, mock, Row, sortList} = this.props;
       const componentProps: any = _.pick(this.props, ['data', 'filters', 'selected', 'match', 'kindObj']);
-
       const ListRows = this.props.virtualize ? VirtualRows : Rows;
-
       const children = <React.Fragment>
         <Header
           {...componentProps}
