@@ -36,11 +36,9 @@ class ClusterUpdateModal extends PromiseComponent {
 
   render() {
     const {cv} = this.props;
-    const {selectedVersion} = this.state;
     const availableUpdates = getAvailableClusterUpdates(cv);
     const currentVersion = getDesiredClusterVersion(cv);
     const dropdownItems = _.map(availableUpdates, 'version');
-    const dropdownTitle = _.get(availableUpdates[selectedVersion], 'version');
     return <form onSubmit={this._submit} name="form" className="modal-content">
       <ModalTitle>Update Cluster</ModalTitle>
       <ModalBody>
@@ -53,13 +51,13 @@ class ClusterUpdateModal extends PromiseComponent {
           <p>{currentVersion}</p>
         </div>
         <div className="form-group">
-          <label htmlFor="version_dropdown">Select New Version</label>
+          <label htmlFor="version_dropdown">New Version</label>
           <Dropdown
             className="cluster-update-modal__dropdown"
-            id="version_dropdwon"
+            id="version_dropdown"
             items={dropdownItems}
             onChange={this._change}
-            title={dropdownTitle}
+            title="Select Version"
           />
         </div>
       </ModalBody>

@@ -19,14 +19,6 @@
   z-index: $zindex-modal;
 }
 
-.cluster-update-modal__dropdown {
-  .btn-dropdown,
-  .dropdown-menu {
-    width: 100%;
-  }
-}
-
-// Modal modifications to enable vertical scrolling with shadow overlays
 .modal-body {
   display: flex;
   flex: 1 1 auto;
