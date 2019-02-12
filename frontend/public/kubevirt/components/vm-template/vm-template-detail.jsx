@@ -1,23 +1,42 @@
 import React from 'react';
-import { TEMPLATE_TYPE_LABEL } from 'kubevirt-web-ui-components';
+import * as _ from 'lodash-es';
+import { VmTemplateDetails, TEMPLATE_TYPE_LABEL, getNamespace, getResource } from 'kubevirt-web-ui-components';
 
 import { DetailsPage } from '../factory/okdfactory';
-import { breadcrumbsForOwnerRefs, navFactory, SectionHeading, ResourceSummary } from '../utils/okdutils';
+import { breadcrumbsForOwnerRefs, navFactory, ResourceLink } from '../utils/okdutils';
 import { menuActions } from './menu-actions';
-import { kindForReference, LabelSelector } from '../../module/okdk8s';
+import { k8sGet, k8sPatch, LabelSelector } from '../../module/okdk8s';
+import { DataVolumeModel, NamespaceModel } from '../../models';
+import { LoadingInline } from '../../../components/utils';
+import { WithResources } from '../utils/withResources';
 
-const DetailsForKind = kind => function DetailsForKind_({obj}) {
+
+const VmTemplateDetails_ = ( { obj: vmTemplate, match }) => {
+
+  const namespaceResourceLink = () =>
+    <ResourceLink kind={NamespaceModel.kind} name={getNamespace(vmTemplate)} title={getNamespace(vmTemplate)} />;
+
+  const resourceMap = {
+    dataVolumes: {
+      resource:  getResource(DataVolumeModel, {namespace: _.get(match, 'params.ns')}),
+    },
+  };
+
   return (
-    <div className="co-m-pane__body">
-      <SectionHeading text={`${kindForReference(kind)} Overview`} />
-      <ResourceSummary resource={obj} podSelector="spec.podSelector" showNodeSelector={false} />
-    </div>
-  );
+    <WithResources resourceMap={resourceMap}>
+      <VmTemplateDetails
+        vmTemplate={vmTemplate}
+        NamespaceResourceLink={namespaceResourceLink}
+        k8sPatch={k8sPatch}
+        k8sGet={k8sGet}
+        LoadingComponent={LoadingInline}
+      />
+    </WithResources>);
 };
 
 export const VirtualMachineTemplateDetailsPage = props => {
   const pages = [
-    navFactory.details(DetailsForKind(props.kind)),
+    navFactory.details(VmTemplateDetails_),
     navFactory.editYaml(),
   ];
 

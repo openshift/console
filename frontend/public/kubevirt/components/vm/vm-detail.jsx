@@ -106,7 +106,6 @@ const VmDetails_ = props => {
     <VmDetails
       {...props}
       vm={vm}
-      ResourceLink={ResourceLink}
       NodeLink={NodeLink}
       NamespaceResourceLink={namespaceResourceLink}
       PodResourceLink={podResourceLink}
