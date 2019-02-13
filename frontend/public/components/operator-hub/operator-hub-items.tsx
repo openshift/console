@@ -23,6 +23,9 @@ const pageDescription = (
     providing a self-service experience.
   </span>
 );
+
+const communityOperatorBadge = <span key="1" className="pf-c-badge pf-m-read">Community</span>;
+
 /**
  * Filter property white list
  */
@@ -56,7 +59,12 @@ const determineCategories = items => {
     });
   });
 
-  return newCategories;
+  const sortedKeys = _.keys(newCategories).sort((key1, key2) => key1.toLowerCase().localeCompare(key2.toLowerCase()));
+
+  return _.reduce(sortedKeys, (categories, key) => {
+    categories[key] = newCategories[key];
+    return categories;
+  }, {});
 };
 
 export const getProviderValue = value => {
@@ -260,11 +268,14 @@ export const OperatorHubTileView = requireOperatorGroup(
       const normalizedIconClass = iconClass && `icon ${normalizeIconClass(iconClass)}`;
       const vendor = provider ? `provided by ${provider}` : null;
 
+      const badges = item.providerType === COMMUNITY_PROVIDER_TYPE ? [communityOperatorBadge] : [];
+
       return (
         <CatalogTile
           id={uid}
           key={uid}
           title={name}
+          badges={badges}
           iconImg={imgUrl}
           iconClass={normalizedIconClass}
           vendor={vendor}
