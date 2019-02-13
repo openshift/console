@@ -132,7 +132,7 @@ const DesiredVersion: React.SFC<DesiredVersionProps> = ({cv}) => {
 };
 
 const ClusterVersionDetailsTable: React.SFC<ClusterVersionDetailsTableProps> = ({obj: cv, autoscalers}) => {
-  const { history, conditions } = cv.status;
+  const { history = [], conditions = [] } = cv.status;
   const status = getClusterUpdateStatus(cv);
   const retrievedUpdatesFailedCondition = _.find(conditions, { type: 'RetrievedUpdates', status: 'False' });
   const isFailingCondition = _.find(conditions, { type: 'Failing', status: 'True' });
@@ -186,27 +186,29 @@ const ClusterVersionDetailsTable: React.SFC<ClusterVersionDetailsTableProps> = (
     </div>
     <div className="co-m-pane__body">
       <SectionHeading text="Update History" />
-      <div className="co-table-container">
-        <table className="table">
-          <thead>
-            <tr>
-              <th>Version</th>
-              <th>State</th>
-              <th>Started</th>
-              <th>Completed</th>
-            </tr>
-          </thead>
-          <tbody>
-            {_.isEmpty(history) && <EmptyBox label="History" />}
-            {history.map((update, i) => <tr key={i}>
-              <td className="co-break-all">{update.version || '-'}</td>
-              <td>{update.state || '-'}</td>
-              <td><Timestamp timestamp={update.startedTime} /></td>
-              <td>{update.completionTime ? <Timestamp timestamp={update.completionTime} /> : '-'}</td>
-            </tr>)}
-          </tbody>
-        </table>
-      </div>
+      {_.isEmpty(history)
+        ? <EmptyBox label="History" />
+        : <div className="co-table-container">
+          <table className="table">
+            <thead>
+              <tr>
+                <th>Version</th>
+                <th>State</th>
+                <th>Started</th>
+                <th>Completed</th>
+              </tr>
+            </thead>
+            <tbody>
+              {_.map(history, (update, i) => <tr key={i}>
+                <td className="co-break-all">{update.version || '-'}</td>
+                <td>{update.state || '-'}</td>
+                <td><Timestamp timestamp={update.startedTime} /></td>
+                <td>{update.completionTime ? <Timestamp timestamp={update.completionTime} /> : '-'}</td>
+              </tr>)}
+            </tbody>
+          </table>
+        </div>
+      }
     </div>
   </React.Fragment>;
 };
