@@ -32,7 +32,7 @@ enum ClusterUpdateStatus {
 }
 
 const clusterAutoscalerReference = referenceForModel(ClusterAutoscalerModel);
-const clusterVersionReference = referenceForModel(ClusterVersionModel);
+export const clusterVersionReference = referenceForModel(ClusterVersionModel);
 
 export const getAvailableClusterChannels = () => ({'nightly-4.0': 'nightly-4.0', 'pre-release-4.0': 'pre-release-4.0', 'stable-4.0': 'stable-4.0'});
 

@@ -41,7 +41,6 @@ import { UIActions } from './ui/ui-actions';
   OPERATOR_HUB: false,
   CLUSTER_API: false,
   CLUSTER_VERSION: false,
-  CLUSTER_UPDATES_AVAILABLE: false,
   MACHINE_CONFIG: false,
  */
 export enum FLAGS {
@@ -63,7 +62,6 @@ export enum FLAGS {
   OPERATOR_HUB = 'OPERATOR_HUB',
   CLUSTER_API = 'CLUSTER_API',
   CLUSTER_VERSION = 'CLUSTER_VERSION',
-  CLUSTER_UPDATES_AVAILABLE = 'CLUSTER_UPDATES_AVAILABLE',
   MACHINE_CONFIG = 'MACHINE_CONFIG',
 }
 
@@ -118,14 +116,10 @@ const detectClusterVersion = dispatch => coFetchJSON(clusterVersionPath)
       if (hasClusterVersion && !_.isEmpty(clusterVersion.spec)) {
         dispatch(UIActions.setClusterID(clusterVersion.spec.clusterID));
       }
-
-      const availableUpdates = _.get(clusterVersion, 'status.availableUpdates');
-      setFlag(dispatch, FLAGS.CLUSTER_UPDATES_AVAILABLE, !_.isEmpty(availableUpdates));
     },
     err => {
       if (_.includes([403, 404], _.get(err, 'response.status'))) {
         setFlag(dispatch, FLAGS.CLUSTER_VERSION, false);
-        setFlag(dispatch, FLAGS.CLUSTER_UPDATES_AVAILABLE, false);
       } else {
         handleError(err, FLAGS.OPENSHIFT, dispatch, detectOpenShift);
       }
