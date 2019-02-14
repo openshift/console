@@ -32,7 +32,7 @@ const chunkedRoutes = OrderedMap<string, {section: string, name: string}>()
   .set('limit-range', {section: 'Administration', name: 'Limit Ranges'})
   .set('custom-resource-definition', {section: 'Administration', name: 'CRDs'})
   .set('catalog', {section: 'Catalog', name: 'Developer Catalog'})
-  .set('operator-hub', {section: 'Catalog', name: 'Operator Hub'});
+  .set('operator-hub', {section: 'Catalog', name: 'OperatorHub'});
 
 describe('Performance test', () => {
 

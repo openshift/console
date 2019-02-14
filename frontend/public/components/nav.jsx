@@ -317,7 +317,7 @@ export const Navigation = ({ isNavOpen, onNavSelect }) => {
             startsWith={provisionedServicesStartsWith}
             required={FLAGS.SERVICE_CATALOG}
           />
-          <HrefLink required={FLAGS.OPERATOR_HUB} href="/operatorhub" name="Operator Hub" activePath="/operatorhub/" />
+          <HrefLink required={FLAGS.OPERATOR_HUB} href="/operatorhub" name="OperatorHub" activePath="/operatorhub/" />
           <HrefLink
             href="/operatormanagement"
             name="Operator Management"
