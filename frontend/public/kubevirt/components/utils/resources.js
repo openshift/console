@@ -118,7 +118,7 @@ const getRdpAddressPort = (rdpService, launcherPod) => {
     return null;
   }
 
-  const port = _.get(rdpPortObj, 'port');
+  let port = _.get(rdpPortObj, 'port');
   let address;
   switch (_.get(rdpService, 'spec.type')) {
     case 'LoadBalancer':
@@ -134,6 +134,7 @@ const getRdpAddressPort = (rdpService, launcherPod) => {
       }
       break;
     case 'NodePort':
+      port = _.get(rdpPortObj, 'nodePort');
       if (launcherPod) {
         address = _.get(launcherPod, 'status.hostIP');
       }
@@ -145,7 +146,7 @@ const getRdpAddressPort = (rdpService, launcherPod) => {
       console.error('Unrecognized Service type: ', rdpService);
   }
 
-  if (!address) {
+  if (!address || !port) {
     return null;
   }
 
