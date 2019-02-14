@@ -19,12 +19,29 @@ import { PersistentVolumeClaimModel } from '../../models/index';
 
 const NameValueEditorComponent = (props) => <AsyncComponent loader={() => import('../utils/name-value-editor').then(c => c.NameValueEditor)} {...props} />;
 
+//See https://kubernetes.io/docs/concepts/storage/persistent-volumes/#types-of-persistent-volumes for more details
+const provisionerAccessModeMapping = {
+  'kubernetes.io/no-provisioner': ['ReadWriteOnce'],
+  'kubernetes.io/aws-ebs' : ['ReadWriteOnce'],
+  'kubernetes.io/gce-pd' : ['ReadWriteOnce', 'ReadOnlyMany'],
+  'kubernetes.io/glusterfs' : ['ReadWriteOnce', 'ReadWriteMany', 'ReadOnlyMany'],
+  'kubernetes.io/cinder' : ['ReadWriteOnce'],
+  'kubernetes.io/azure-file' : ['ReadWriteOnce', 'ReadWriteMany', 'ReadOnlyMany'],
+  'kubernetes.io/azure-disk' : ['ReadWriteOnce'],
+  'kubernetes.io/quobyte' : ['ReadWriteOnce', 'ReadWriteMany', 'ReadOnlyMany'],
+  'kubernetes.io/rbd' : ['ReadWriteOnce', 'ReadOnlyMany'],
+  'kubernetes.io/vsphere-volume' : ['ReadWriteOnce', 'ReadWriteMany'],
+  'kubernetes.io/portworx-volume' : ['ReadWriteOnce', 'ReadWriteMany'],
+  'kubernetes.io/scaleio' : ['ReadWriteOnce', 'ReadOnlyMany'],
+  'kubernetes.io/storageos' : ['ReadWriteOnce'],
+};
+
 // This form is done a little odd since it is used in both its own page and as
 // a sub form inside the attach storage page.
 export class CreatePVCForm extends React.Component<CreatePVCFormProps, CreatePVCFormState> {
   state = {
     storageClass: '',
-    storageClassAccessMode: '',
+    allowedAccessModes: ['ReadWriteOnce', 'ReadWriteMany', 'ReadOnlyMany'],
     pvcName: '',
     accessMode: 'ReadWriteOnce',
     requestSizeValue: '',
@@ -32,6 +49,7 @@ export class CreatePVCForm extends React.Component<CreatePVCFormProps, CreatePVC
     disableForm: false,
     useSelector: false,
     nameValuePairs: [['', '']],
+    accessModeHelp: 'Permissions to the mounted drive.',
     accessModeRadios: [
       {
         value: 'ReadWriteOnce',
@@ -64,7 +82,14 @@ export class CreatePVCForm extends React.Component<CreatePVCFormProps, CreatePVC
   };
 
   handleStorageClass = storageClass => {
-    this.setState({ storageClass: _.get(storageClass, 'metadata.name'), storageClassAccessMode: _.get(storageClass, ['metadata', 'annotations', 'storage.alpha.openshift.io/access-mode'])}, this.onChange);
+    //if the provisioner is unknown or no storage class selected, user should be able to set any access mode
+    const modes = storageClass && storageClass.provisioner && provisionerAccessModeMapping[storageClass.provisioner] ? provisionerAccessModeMapping[storageClass.provisioner] : ['ReadWriteOnce', 'ReadWriteMany', 'ReadOnlyMany'];
+    //setting message to display for various modes when a storage class of a know provisioner is selected
+    const displayMessage = storageClass && provisionerAccessModeMapping[storageClass.provisioner] ? 'Access mode is set by storage class and cannot be changed.': 'Permissions to the mounted drive.';
+    this.setState({ accessModeHelp: displayMessage }, this.onChange);
+
+    //setting accessMode to default with the change to Storage Class selection
+    this.setState({ storageClass: _.get(storageClass, 'metadata.name'), allowedAccessModes: modes, accessMode: 'ReadWriteOnce'}, this.onChange);
   };
 
   handleRequestSizeInputChange = obj => {
@@ -94,7 +119,7 @@ export class CreatePVCForm extends React.Component<CreatePVCFormProps, CreatePVC
 
   updatePVC = () => {
     const { namespace } = this.props;
-    const { pvcName, accessMode, requestSizeValue, requestSizeUnit, storageClass, storageClassAccessMode } = this.state;
+    const { pvcName, accessMode, requestSizeValue, requestSizeUnit, storageClass } = this.state;
     const obj: K8sResourceKind = {
       apiVersion: 'v1',
       kind: 'PersistentVolumeClaim',
@@ -103,7 +128,7 @@ export class CreatePVCForm extends React.Component<CreatePVCFormProps, CreatePVC
         namespace,
       },
       spec: {
-        accessModes: storageClassAccessMode ? [storageClassAccessMode] : [accessMode],
+        accessModes: [accessMode],
         resources: {
           requests: {
             storage: `${requestSizeValue}${requestSizeUnit}`,
@@ -126,7 +151,7 @@ export class CreatePVCForm extends React.Component<CreatePVCFormProps, CreatePVC
   };
 
   render() {
-    const { accessMode, dropdownUnits, useSelector, nameValuePairs, requestSizeUnit, requestSizeValue, storageClassAccessMode } = this.state;
+    const { accessMode, dropdownUnits, useSelector, nameValuePairs, requestSizeUnit, requestSizeValue, allowedAccessModes } = this.state;
 
     return (
       <div>
@@ -163,23 +188,29 @@ export class CreatePVCForm extends React.Component<CreatePVCFormProps, CreatePVC
         </label>
         <div className="form-group">
           {this.state.accessModeRadios.map(radio => {
-            const disabled = !!storageClassAccessMode;
-            const checked = !disabled ? radio.value === accessMode : radio.value === storageClassAccessMode;
-            return (
-              <RadioInput
-                {...radio}
-                key={radio.value}
-                onChange={this.handleChange}
-                inline={true}
-                disabled={disabled}
-                checked={checked}
-                aria-describedby="access-mode-help"
-                name="accessMode"
-              />
-            );
+            let radioObj = null;
+            const disabled = !allowedAccessModes.includes(radio.value);
+
+            allowedAccessModes.forEach(mode => {
+              const checked = !disabled ? radio.value === accessMode : radio.value === mode;
+              radioObj = (
+                <RadioInput
+                  {...radio}
+                  key={radio.value}
+                  onChange={this.handleChange}
+                  inline={true}
+                  disabled={disabled}
+                  checked={checked}
+                  aria-describedby="access-mode-help"
+                  name="accessMode"
+                />
+              );
+            });
+
+            return radioObj;
           })}
           <p className="help-block" id="access-mode-help">
-            {storageClassAccessMode ? 'Access mode is set by storage class and cannot be changed.' : 'Permissions to the mounted drive.'}
+            {this.state.accessModeHelp }
           </p>
         </div>
         <label className="control-label co-required" htmlFor="request-size-input">
@@ -310,7 +341,7 @@ export type CreatePVCFormProps = {
 
 export type CreatePVCFormState = {
   storageClass: string;
-  storageClassAccessMode: string;
+  allowedAccessModes: string[];
   pvcName: string;
   accessMode: string;
   requestSizeValue: string;
@@ -320,6 +351,7 @@ export type CreatePVCFormState = {
   dropdownUnits: { [key: string]: string };
   useSelector: boolean;
   nameValuePairs: string[][];
+  accessModeHelp: string;
 };
 
 export type CreatePVCPageProps = {
