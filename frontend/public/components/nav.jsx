@@ -16,6 +16,8 @@ import {
   DeploymentConfigModel,
   ImageStreamModel,
   InstallPlanModel,
+  MachineConfigModel,
+  MachineConfigPoolModel,
   MachineDeploymentModel,
   MachineModel,
   MachineSetModel,
@@ -139,7 +141,9 @@ HrefLink.propTypes = {
 
 const navSectionStateToProps = (state, {required}) => {
   const flags = state[featureReducerName];
-  const canRender = required ? flags.get(required) : true;
+  // `required` can either be a single flag or array. Cast to an array when it's a single value.
+  const requiredArray = required ? _.castArray(required) : [];
+  const canRender = _.every(requiredArray, flag => flags.get(flag));
 
   return {
     flags, canRender,
@@ -387,13 +391,18 @@ export const Navigation = ({ isNavOpen, onNavSelect }) => {
 
         <MonitoringNavSection />
 
+        <NavSection title="Machines" required={[FLAGS.CLUSTER_API, FLAGS.MACHINE_CONFIG, FLAGS.CAN_LIST_MACHINE_CONFIG]}>
+          <ResourceNSLink resource={referenceForModel(MachineModel)} name="Machines" />
+          <ResourceNSLink resource={referenceForModel(MachineSetModel)} name="Machine Sets" />
+          <ResourceNSLink resource={referenceForModel(MachineDeploymentModel)} name="Machine Deployments" />
+          <ResourceClusterLink resource={referenceForModel(MachineConfigModel)} name="Machine Configs" />
+          <ResourceClusterLink resource={referenceForModel(MachineConfigPoolModel)} name="Machine Config Pools" />
+        </NavSection>
+
         <NavSection title="Administration">
           <HrefLink href="/settings/cluster" activePath="/settings/cluster/" name="Cluster Settings" required={FLAGS.CLUSTER_VERSION} startsWith={clusterSettingsStartsWith} />
           <ResourceClusterLink resource="namespaces" name="Namespaces" required={FLAGS.CAN_LIST_NS} />
           <ResourceClusterLink resource="nodes" name="Nodes" required={FLAGS.CAN_LIST_NODE} />
-          <ResourceNSLink resource={referenceForModel(MachineDeploymentModel)} name="Machine Deployments" required={FLAGS.CLUSTER_API} />
-          <ResourceNSLink resource={referenceForModel(MachineSetModel)} name="Machine Sets" required={FLAGS.CLUSTER_API} />
-          <ResourceNSLink resource={referenceForModel(MachineModel)} name="Machines" required={FLAGS.CLUSTER_API} />
           <ResourceNSLink resource="serviceaccounts" name="Service Accounts" />
           <ResourceNSLink resource="roles" name="Roles" startsWith={rolesStartsWith} />
           <ResourceNSLink resource="rolebindings" name="Role Bindings" startsWith={rolebindingsStartsWith} />

@@ -10,13 +10,16 @@ import (
 	"time"
 
 	"golang.org/x/oauth2"
+
+	"github.com/openshift/console/pkg/proxy"
 )
 
 // openShiftAuth implements OpenShift Authentication as defined in:
 // https://docs.openshift.com/container-platform/3.9/architecture/additional_concepts/authentication.html
 type openShiftAuth struct {
-	cookiePath    string
-	secureCookies bool
+	cookiePath         string
+	secureCookies      bool
+	kubeAdminLogoutURL string
 }
 
 type openShiftConfig struct {
@@ -83,10 +86,11 @@ func newOpenShiftAuth(ctx context.Context, c *openShiftConfig) (oauth2.Endpoint,
 		return oauth2.Endpoint{}, nil, err
 	}
 
+	kubeAdminLogoutURL := proxy.SingleJoiningSlash(metadata.Issuer, "/logout")
 	return oauth2.Endpoint{
 		AuthURL:  metadata.Auth,
 		TokenURL: metadata.Token,
-	}, &openShiftAuth{c.cookiePath, c.secureCookies}, nil
+	}, &openShiftAuth{c.cookiePath, c.secureCookies, kubeAdminLogoutURL}, nil
 
 }
 
@@ -156,4 +160,8 @@ func (o *openShiftAuth) authenticate(r *http.Request) (*User, error) {
 	return &User{
 		Token: cookie.Value,
 	}, nil
+}
+
+func (o *openShiftAuth) getKubeAdminLogoutURL() string {
+	return o.kubeAdminLogoutURL
 }

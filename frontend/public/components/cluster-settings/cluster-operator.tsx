@@ -2,49 +2,30 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 
-import { K8sResourceKind, K8sResourceKindReference, referenceForModel } from '../../module/k8s';
 import { ClusterOperatorModel } from '../../models';
-import { ColHead, DetailsPage, List, ListHeader, ListPage } from '../factory';
 import {
+  ColHead,
+  DetailsPage,
+  List,
+  ListHeader,
+  ListPage,
+} from '../factory';
+import {
+  getClusterOperatorStatus,
+  getStatusAndMessage,
+  K8sResourceKind,
+  K8sResourceKindReference,
+  OperatorStatus,
+  referenceForModel,
+} from '../../module/k8s';
+import {
+  navFactory,
   ResourceLink,
   ResourceSummary,
   SectionHeading,
-  navFactory,
 } from '../utils';
 
-enum OperatorStatus {
-  Available = 'Available',
-  Updating = 'Updating',
-  Failing = 'Failing',
-  Unknown = 'Unknown',
-}
-
 export const clusterOperatorReference: K8sResourceKindReference = referenceForModel(ClusterOperatorModel);
-
-const getStatusAndMessage = (operator: K8sResourceKind) => {
-  const conditions = _.get(operator, 'status.conditions');
-  const failing: any = _.find(conditions, { type: 'Failing', status: 'True' });
-  if (failing) {
-    return { status: OperatorStatus.Failing, message: failing.message };
-  }
-
-  const progressing: any = _.find(conditions, { type: 'Progressing', status: 'True' });
-  if (progressing) {
-    return { status: OperatorStatus.Updating, message: progressing.message };
-  }
-
-  const available: any = _.find(conditions, { type: 'Available', status: 'True' });
-  if (available) {
-    return { status: OperatorStatus.Available, message: available.message };
-  }
-
-  return { status: OperatorStatus.Unknown, message: '' };
-};
-
-export const getClusterOperatorStatus = (operator: K8sResourceKind) => {
-  const { status } = getStatusAndMessage(operator);
-  return status;
-};
 
 const getIconClass = (status: OperatorStatus) => {
   return {
@@ -81,7 +62,7 @@ const ClusterOperatorRow: React.SFC<ClusterOperatorRowProps> = ({obj}) => {
       {message ? _.truncate(message, { length: 256, separator: ' ' }) : '-'}
     </div>
     <div className="col-md-3 col-sm-3 hidden-xs">
-      {obj.status.version || <span className="text-muted">Unknown</span>}
+      {_.get(obj, 'status.version') || <span className="text-muted">Unknown</span>}
     </div>
   </div>;
 };

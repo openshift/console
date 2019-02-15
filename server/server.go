@@ -48,6 +48,7 @@ type jsGlobals struct {
 	LoginErrorURL            string `json:"loginErrorURL"`
 	LogoutURL                string `json:"logoutURL"`
 	LogoutRedirect           string `json:"logoutRedirect"`
+	KubeAdminLogoutURL       string `json:"kubeAdminLogoutURL"`
 	KubeAPIServerURL         string `json:"kubeAPIServerURL"`
 	PrometheusBaseURL        string `json:"prometheusBaseURL"`
 	PrometheusTenancyBaseURL string `json:"prometheusTenancyBaseURL"`
@@ -259,6 +260,10 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		DocumentationBaseURL: s.DocumentationBaseURL.String(),
 		GoogleTagManagerID:   s.GoogleTagManagerID,
 		LoadTestFactor:       s.LoadTestFactor,
+	}
+
+	if !s.authDisabled() {
+		jsg.KubeAdminLogoutURL = s.Auther.GetKubeAdminLogoutURL()
 	}
 
 	if s.prometheusProxyEnabled() {

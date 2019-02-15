@@ -96,9 +96,9 @@ export const navFactory: NavFactory = {
     name: 'Cluster Operators',
     component,
   }),
-  machines: component => ({
-    href: 'machines',
-    name: 'Machines',
+  machineConfigs: component => ({
+    href: 'machineconfigs',
+    name: 'Machine Configs',
     component,
   }),
 };

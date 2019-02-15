@@ -20,7 +20,7 @@ import { breadcrumbsForOwnerRefs } from './utils/breadcrumbs';
 
 const { common } = Kebab.factory;
 const menuActions = [...common];
-const machineReference = referenceForModel(MachineModel);
+export const machineReference = referenceForModel(MachineModel);
 const getAWSPlacement = (machine: MachineKind) => _.get(machine, 'spec.providerSpec.value.placement') || {};
 
 export const getMachineRole = (obj: MachineKind | MachineSetKind | MachineDeploymentKind) => _.get(obj, ['metadata', 'labels', 'sigs.k8s.io/cluster-api-machine-role']);

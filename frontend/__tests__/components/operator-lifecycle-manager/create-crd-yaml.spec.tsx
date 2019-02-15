@@ -41,6 +41,16 @@ describe(CreateCRDYAML.displayName, () => {
     expect(createYAML.props().template).toEqual(safeDump(testResourceInstance));
   });
 
+  it('handles invalid JSON example object on annotation', () => {
+    const data = _.cloneDeep(testClusterServiceVersion);
+    data.metadata.annotations = {'alm-examples': 'invalid === true'};
+    wrapper = wrapper.setProps({ClusterServiceVersion: {loaded: true, data}} as any);
+
+    const createYAML = wrapper.find(Firehose).childAt(0).dive<CreateYAMLProps, {}>();
+
+    expect(createYAML.props().template).toEqual(null);
+  });
+
   it('does not render YAML editor component if ClusterServiceVersion has not loaded yet', () => {
     wrapper = wrapper.setProps({ClusterServiceVersion: {loaded: false}} as any);
 

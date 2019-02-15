@@ -10,12 +10,23 @@ export * from './autocomplete';
 export * from './get-resources';
 export * from './k8s-models';
 export * from './label-selector';
+export * from './cluster-operator';
 
 export type OwnerReference = {
   name: string;
   kind: string;
   uid: string;
   apiVersion: string;
+};
+
+export type ObjectReference = {
+  kind?: string;
+  namespace?: string;
+  name?: string;
+  uid?: string;
+  apiVersion?: string;
+  resourceVersion?: string;
+  fieldPath?: string;
 };
 
 export type ObjectMetadata = {
@@ -25,6 +36,20 @@ export type ObjectMetadata = {
   labels?: {[key: string]: string},
   ownerReferences?: OwnerReference[],
   [key: string]: any,
+};
+
+export enum K8sResourceConditionStatus {
+  True = 'True',
+  False = 'False',
+  Unknown = 'Unknown',
+}
+
+export type K8sResourceCondition<T> = {
+  type: T;
+  status: K8sResourceConditionStatus;
+  lastTransitionTime: string;
+  reason: string;
+  message: string;
 };
 
 export type MatchExpression = {key: string, operator: 'Exists' | 'DoesNotExist'} | {key: string, operator: 'In' | 'NotIn' | 'Equals' | 'NotEquals', values: string[]};
@@ -45,6 +70,7 @@ export type K8sResourceKind = {
   status?: {[key: string]: any};
   type?: {[key: string]: any};
 };
+
 
 export type ConfigMapKind = {
   apiVersion: string;
@@ -136,7 +162,7 @@ export type MachineDeploymentKind = {
       rollingUpdate?: {
         maxUnavailable?: number | string;
         maxSurge?: number | string;
-      }
+      };
     };
   };
   status?: {
@@ -144,6 +170,74 @@ export type MachineDeploymentKind = {
     unavailableReplicas: number;
     readyReplicas: number;
     replicas: number;
+  };
+} & K8sResourceKind;
+
+export type MachineConfigKind = {
+  spec: {
+    osImageURL: string;
+    config: any;
+  };
+} & K8sResourceKind;
+
+export enum MachineConfigPoolConditionType {
+  Updated = 'Updated',
+  Updating = 'Updating',
+  Degraded = 'Degraded',
+}
+
+export type MachineConfigPoolCondition = K8sResourceCondition<MachineConfigPoolConditionType>;
+
+export type MachineConfigPoolStatus = {
+  observedGeneration?: number;
+  configuration:{
+    name: string;
+    source: ObjectReference[];
+  };
+  machineCount: number;
+  updatedMachineCount: number;
+  readyMachineCount: number;
+  unavailableMachineCount: number;
+  conditions: MachineConfigPoolCondition[];
+};
+
+export type MachineConfigPoolSpec = {
+  machineConfigSelector?: Selector;
+  machineSelector?: Selector;
+  paused: boolean;
+  maxUnavailable: number | string;
+};
+
+export type MachineConfigPoolKind = {
+  spec: MachineConfigPoolSpec;
+  status: MachineConfigPoolStatus;
+} & K8sResourceKind;
+
+type ClusterUpdate = {
+  image: string;
+  version: string;
+};
+
+type UpdateHistory = {
+  state: 'Completed' | 'Partial';
+  startedTime: string;
+  completionTime: string;
+  version: string;
+  image: string;
+};
+
+export type ClusterVersionKind = {
+  spec: {
+    channel: string;
+    clusterID: string;
+    desiredUpdate: ClusterUpdate;
+    upstream: string;
+  };
+  status: {
+    availableUpdates: ClusterUpdate[];
+    conditions: any[];
+    desired: ClusterUpdate;
+    history: UpdateHistory[];
   };
 } & K8sResourceKind;
 
