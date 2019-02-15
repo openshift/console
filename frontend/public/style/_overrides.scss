@@ -284,9 +284,14 @@ tags-input .autocomplete .suggestion-item em {
   --pf-c-page__sidebar--PaddingBottom: 0;
   --pf-c-page__sidebar--PaddingTop: 0;
   position: relative; // fix z-index bug in Edge
+  width: 0 !important; // only set size when expanded (.pf-m-expanded is added)
 
   @media screen and (min-width: $grid-float-breakpoint) {
     --pf-c-page__sidebar--BoxShadow: none;
+  }
+
+  &.pf-m-expanded {
+    width: var(--pf-c-page__sidebar--md--Width) !important; // maintain desktop width so size doesn't animate before hiding when resizing to mobile
   }
 
   .pf-c-nav {

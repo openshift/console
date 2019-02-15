@@ -44,10 +44,10 @@ describe('Viewing the operators in Operator Hub', () => {
     await catalogPageView.clickFilterCheckbox('Red Hat');
   });
 
-  it('displays "Dynatrace OneAgent" as an operator when using the filter "dy"', async() => {
-    await catalogPageView.filterByKeyword('dy');
+  it('displays "AMQ Streams" as an operator when using the filter "stre"', async() => {
+    await catalogPageView.filterByKeyword('stre');
 
-    expect(catalogPageView.catalogTileFor('Dynatrace OneAgent').isDisplayed()).toBe(true);
+    expect(catalogPageView.catalogTileFor('AMQ Streams').isDisplayed()).toBe(true);
 
     await catalogPageView.filterByKeyword('');
   });

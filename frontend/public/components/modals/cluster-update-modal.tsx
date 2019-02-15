@@ -5,9 +5,9 @@ import * as React from 'react';
 
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter, ModalComponentProps } from '../factory/modal';
 import { Dropdown, PromiseComponent, ExternalLink } from '../utils';
-import { k8sPatch, K8sResourceKind } from '../../module/k8s';
+import { ClusterVersionKind, k8sPatch } from '../../module/k8s';
 import { ClusterVersionModel } from '../../models';
-import { getAvailableClusterUpdates, getCurrentClusterVersion } from '../cluster-settings/cluster-settings';
+import { getAvailableClusterUpdates, getDesiredClusterVersion } from '../cluster-settings/cluster-settings';
 
 class ClusterUpdateModal extends PromiseComponent {
   readonly state: ClusterUpdateModalState;
@@ -36,11 +36,9 @@ class ClusterUpdateModal extends PromiseComponent {
 
   render() {
     const {cv} = this.props;
-    const {selectedVersion} = this.state;
     const availableUpdates = getAvailableClusterUpdates(cv);
-    const currentVersion = getCurrentClusterVersion(cv);
+    const currentVersion = getDesiredClusterVersion(cv);
     const dropdownItems = _.map(availableUpdates, 'version');
-    const dropdownTitle = _.get(availableUpdates[selectedVersion], 'version');
     return <form onSubmit={this._submit} name="form" className="modal-content">
       <ModalTitle>Update Cluster</ModalTitle>
       <ModalBody>
@@ -53,13 +51,13 @@ class ClusterUpdateModal extends PromiseComponent {
           <p>{currentVersion}</p>
         </div>
         <div className="form-group">
-          <label htmlFor="version_dropdown">Select New Version</label>
+          <label htmlFor="version_dropdown">New Version</label>
           <Dropdown
             className="cluster-update-modal__dropdown"
-            id="version_dropdwon"
+            id="version_dropdown"
             items={dropdownItems}
             onChange={this._change}
-            title={dropdownTitle}
+            title="Select Version"
           />
         </div>
       </ModalBody>
@@ -71,7 +69,7 @@ class ClusterUpdateModal extends PromiseComponent {
 export const clusterUpdateModal = createModalLauncher(ClusterUpdateModal);
 
 type ClusterUpdateModalProps = {
-  cv: K8sResourceKind;
+  cv: ClusterVersionKind;
 } & ModalComponentProps;
 
 type ClusterUpdateModalState = {

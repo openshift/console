@@ -6,9 +6,21 @@ import { Button, Dropdown, DropdownToggle, DropdownSeparator, DropdownItem, Keba
 
 import { FLAGS, stateToProps as flagStateToProps, flagPending } from '../features';
 import { authSvc } from '../module/auth';
-import { history } from './utils';
+import { history, Firehose } from './utils';
 import { openshiftHelpBase } from './utils/documentation';
 import { AboutModal } from './about-modal';
+import { getAvailableClusterUpdates, clusterVersionReference } from './cluster-settings/cluster-settings';
+
+const UpdatesAvailableButton = ({obj, onClick}) => {
+  const updatesAvailable = !_.isEmpty(getAvailableClusterUpdates(obj.data));
+  return updatesAvailable
+    ? <ToolbarItem>
+      <Button variant="plain" aria-label="Cluster Updates Available" onClick={onClick}>
+        <ArrowCircleUpIcon />
+      </Button>
+    </ToolbarItem>
+    : null;
+};
 
 class MastheadToolbar_ extends React.Component {
   constructor(props) {
@@ -18,6 +30,7 @@ class MastheadToolbar_ extends React.Component {
       isUserDropdownOpen: false,
       isKebabDropdownOpen: false,
       username: null,
+      isKubeAdmin: false,
       showAboutModal: false,
     };
 
@@ -53,7 +66,10 @@ class MastheadToolbar_ extends React.Component {
     if (!flags[FLAGS.OPENSHIFT]) {
       this.setState({ username: authSvc.name() });
     }
-    this.setState({ username: _.get(user, 'fullName') || _.get(user, 'metadata.name', '') });
+    this.setState({
+      username: _.get(user, 'fullName') || _.get(user, 'metadata.name', ''),
+      isKubeAdmin: _.get(user, 'metadata.name') === 'kube:admin',
+    });
   }
 
   _onUserDropdownToggle(isUserDropdownOpen) {
@@ -147,7 +163,7 @@ class MastheadToolbar_ extends React.Component {
       const logout = e => {
         e.preventDefault();
         if (flags[FLAGS.OPENSHIFT]) {
-          authSvc.deleteOpenShiftToken().then(() => authSvc.logout());
+          authSvc.logoutOpenShift(this.state.isKubeAdmin);
         } else {
           authSvc.logout();
         }
@@ -214,16 +230,20 @@ class MastheadToolbar_ extends React.Component {
   render() {
     const { isApplicationLauncherDropdownOpen, isHelpDropdownOpen, showAboutModal } = this.state;
     const { flags } = this.props;
+    const resources = [{
+      kind: clusterVersionReference,
+      name: 'version',
+      isList: false,
+      prop: 'obj',
+    }];
     return (
       <React.Fragment>
         <Toolbar>
           <ToolbarGroup className="pf-u-sr-only pf-u-visible-on-md">
             {/* desktop -- (updates button) */}
-            {flags[FLAGS.CLUSTER_UPDATES_AVAILABLE] && <ToolbarItem>
-              <Button variant="plain" aria-label="Cluster Updates Available" onClick={this._onClusterUpdatesAvailable}>
-                <ArrowCircleUpIcon />
-              </Button>
-            </ToolbarItem>}
+            <Firehose resources={resources}>
+              <UpdatesAvailableButton onClick={this._onClusterUpdatesAvailable} />
+            </Firehose>
             {/* desktop -- (application launcher dropdown), help dropdown [documentation, about] */}
             {flags[FLAGS.OPENSHIFT] && <ToolbarItem>
               <Dropdown
@@ -277,7 +297,7 @@ class MastheadToolbar_ extends React.Component {
 }
 
 const mastheadToolbarStateToProps = state => {
-  const desiredFlags = [FLAGS.AUTH_ENABLED, FLAGS.OPENSHIFT, FLAGS.CLUSTER_UPDATES_AVAILABLE];
+  const desiredFlags = [FLAGS.AUTH_ENABLED, FLAGS.OPENSHIFT];
   const flagProps = flagStateToProps(desiredFlags, state);
   const user = state.UI.get('user');
   return { ...flagProps, user };
