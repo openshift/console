@@ -118,7 +118,7 @@ const NodeGraphs = requirePrometheus(({node}) => {
   return <React.Fragment>
     <div className="row">
       <div className="col-md-4">
-        <Line title="Memory Usage" query={ipQuery && `node_memory_Active${ipQuery}`} units="binaryBytes" limit={memoryLimit} />
+        <Line title="Memory Usage" query={ipQuery && `node_memory_Active_bytes${ipQuery}`} units="binaryBytes" limit={memoryLimit} />
       </div>
       <div className="col-md-4">
         <Line title="CPU Usage" query={ipQuery && `instance:node_cpu:rate:sum${ipQuery}`} units="numeric" limit={integerLimit(node.status.allocatable.cpu)} />
