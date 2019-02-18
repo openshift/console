@@ -8,11 +8,6 @@ const BROWSER_TIMEOUT = 15000;
 
 describe('Basic console test', () => {
 
-  afterAll(async() => {
-    // Clears HTTP 401 errors for subsequent tests
-    await browser.manage().logs().get('browser');
-  });
-
   it('logs into console if necessary', async() => {
     await browser.get(appHost);
 
@@ -22,7 +17,7 @@ describe('Basic console test', () => {
       await loginView.nameInput.sendKeys(BRIDGE_AUTH_USERNAME);
       await loginView.passwordInput.sendKeys(BRIDGE_AUTH_PASSWORD);
       await loginView.submitButton.click();
-      await browser.wait(until.visibilityOf($('#header-logo')), BROWSER_TIMEOUT);
+      await browser.wait(until.visibilityOf($('.pf-c-page__header')), BROWSER_TIMEOUT);
     }
 
     expect(browser.getCurrentUrl()).toContain(appHost);
