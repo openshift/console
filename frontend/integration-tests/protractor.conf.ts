@@ -31,6 +31,7 @@ export const config: Config = {
   plugins: [failFast.init()],
   capabilities: {
     browserName: 'chrome',
+    acceptInsecureCerts : true,
     chromeOptions: {
       args: [
         '--disable-gpu',
@@ -66,6 +67,9 @@ export const config: Config = {
       const messageStr = _.isArray(message) ? message.join(' ') : message;
       consoleLogStream.write(`${format.apply(null, [`[${level.name}]`, messageStr])}\n`);
     });
+
+    const url = await browser.getCurrentUrl();
+    console.log('Last browser URL', url);
 
     // Use projects if OpenShift so non-admin users can run tests. We need the fully-qualified name
     // since we're using kubectl instead of oc.
