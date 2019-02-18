@@ -241,6 +241,15 @@ tags-input .autocomplete .suggestion-item em {
       max-height: none;
     }
   }
+
+  &.fade {
+    .modal-dialog {
+      transition-duration: 200ms;
+    }
+    &:not(.in) .modal-dialog {
+      transform: translate3d(15px, 0, 0);
+    }
+  }
 }
 
 .modal-title {
@@ -276,6 +285,10 @@ tags-input .autocomplete .suggestion-item em {
     @media screen and (min-width: $grid-float-breakpoint) {
       --pf-c-page__main-section--Padding: 0;
     }
+  }
+
+  .pf-c-page__sidebar {
+    --pf-c-page__sidebar--Transition: all 100ms ease;
   }
 }
 
