@@ -21,13 +21,17 @@ source ./contrib/oc-environment.sh
 kubectl create -f https://raw.githubusercontent.com/operator-framework/operator-lifecycle-manager/master/deploy/okd/manifests/0.8.0/0000_30_06-rh-operators.configmap.yaml
 kubectl create -f https://raw.githubusercontent.com/operator-framework/operator-lifecycle-manager/master/deploy/okd/manifests/0.8.0/0000_30_09-rh-operators.catalogsource.yaml
 
-echo "Checking for dist files:"
-while [ ! -f ./frontend/public/dist/index.html ]
-do
- echo "#"
- sleep 2
-done
+pwd
+ls -la ./frontend/public/dist/
 
+count=1
+echo "Waiting for dist files..."
+while [ ! -f ./frontend/public/dist/index.html && $count -le 10 ]
+do
+ echo "Waiting $(count) times..."
+ count=$(($count+1))
+ sleep 30
+done
 echo "Build complete and dist folder ready...running e2e tests"
 
 ./test-gui.sh e2e
