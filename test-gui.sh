@@ -22,6 +22,9 @@ fi
 BRIDGE_BASE_PATH="/path-$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c10)/"
 export BRIDGE_BASE_PATH
 
+pwd
+ls -la ./frontend/public/dist/
+
 # TODO: eventually test auth
 ./bin/bridge \
   --k8s-mode="off-cluster" \

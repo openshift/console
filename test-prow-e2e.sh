@@ -14,6 +14,9 @@ trap copyArtifacts EXIT
 
 ./build.sh
 
+pwd
+ls -la ./frontend/public/dist/
+
 oc login -u kubeadmin -p $(cat "${ARTIFACT_DIR}/installer/auth/kubeadmin-password")
 
 source ./contrib/oc-environment.sh
