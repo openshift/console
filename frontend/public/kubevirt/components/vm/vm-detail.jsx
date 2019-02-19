@@ -120,6 +120,10 @@ const VmDetails_ = props => {
     />);
 };
 
+const VmDisk = ({obj: vm}) => <Disk vm={vm} />;
+
+const VmNic = ({obj: vm}) => <Nic vm={vm} />;
+
 export const VirtualMachinesDetailsPage = props => {
   const { name, namespace } = props;
   const consolePage = { // TODO: might be moved based on review; or display conditionally if VM is running?
@@ -131,13 +135,13 @@ export const VirtualMachinesDetailsPage = props => {
   const nicsPage = {
     href: 'nics',
     name: 'Network Interfaces',
-    component: Nic,
+    component: VmNic,
   };
 
   const disksPage = {
     href: 'disks',
     name: 'Disks',
-    component: Disk,
+    component: VmDisk,
   };
 
   const pages = [

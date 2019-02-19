@@ -1,6 +1,6 @@
 import React from 'react';
 import * as _ from 'lodash-es';
-import { VmTemplateDetails, TEMPLATE_TYPE_LABEL, getNamespace, getResource } from 'kubevirt-web-ui-components';
+import { VmTemplateDetails, TEMPLATE_TYPE_LABEL, getNamespace, getResource, selectVm } from 'kubevirt-web-ui-components';
 
 import { DetailsPage } from '../factory/okdfactory';
 import { breadcrumbsForOwnerRefs, navFactory, ResourceLink } from '../utils/okdutils';
@@ -9,6 +9,8 @@ import { k8sGet, k8sPatch, LabelSelector } from '../../module/okdk8s';
 import { DataVolumeModel, NamespaceModel } from '../../models';
 import { LoadingInline } from '../../../components/utils';
 import { WithResources } from '../utils/withResources';
+import { Nic } from '../nic';
+import { Disk } from '../disk';
 
 
 const VmTemplateDetails_ = ( { obj: vmTemplate, match }) => {
@@ -33,11 +35,37 @@ const VmTemplateDetails_ = ( { obj: vmTemplate, match }) => {
       />
     </WithResources>);
 };
+const templatify = Component => {
+  const ComponentWithTemplate = ({ obj: vmTemplate }) => {
+    const vm = selectVm(vmTemplate.objects);
+    const vmIndex = vmTemplate.objects.indexOf(vm);
+
+    return (
+      <Component vm={vm} vmTemplate={vmTemplate} patchPrefix={`/objects/${vmIndex}`} />
+    );
+  };
+  return ComponentWithTemplate;
+};
+
 
 export const VirtualMachineTemplateDetailsPage = props => {
+  const nicsPage = {
+    href: 'nics',
+    name: 'Network Interfaces',
+    component: templatify(Nic),
+  };
+
+  const disksPage = {
+    href: 'disks',
+    name: 'Disks',
+    component: templatify(Disk),
+  };
+
   const pages = [
     navFactory.details(VmTemplateDetails_),
     navFactory.editYaml(),
+    nicsPage,
+    disksPage,
   ];
 
   const resolveBreadcrumbs = template => {

@@ -1,8 +1,11 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import * as _ from 'lodash-es';
 import { Button, Alert } from 'patternfly-react';
 import { List, ColHead, ListHeader, ResourceRow } from './factory/okdfactory';
-import { PersistentVolumeClaimModel, StorageClassModel, VirtualMachineModel, DataVolumeModel } from '../models';
+import {
+  PersistentVolumeClaimModel, StorageClassModel, VirtualMachineModel, DataVolumeModel, VmTemplateModel,
+} from '../models';
 import { Loading, Firehose, Kebab } from './utils/okdutils';
 import { getFlattenForKind } from './utils/resources';
 import { DASHES, BUS_VIRTIO, DISK } from './utils/constants';
@@ -16,6 +19,7 @@ import {
   getName,
   getDataVolumeStorageClassName,
   getDataVolumeStorageSize,
+  addPrefixToPatch,
 } from 'kubevirt-web-ui-components';
 import { k8sPatch } from '../module/okdk8s';
 import { LoadingInline } from './okdcomponents';
@@ -40,18 +44,20 @@ const ResourceColumn = props => {
   return <Loading className="kubevirt-disk__loading" />;
 };
 
-const menuActionDelete = (vm, storage) => ({
+const menuActionDelete = (vm, storage, vmTemplate, patchPrefix) => ({
   label: 'Delete',
   callback: () => deleteDeviceModal({
     type: DISK,
     device: storage,
     vm,
+    vmTemplate,
+    patchPrefix,
   }),
 });
 
-const getActions = (vm, nic) => {
+const getActions = (vm, nic, vmTemplate, patchPrefix) => {
   const actions = [menuActionDelete];
-  return actions.map(a => a(vm, nic));
+  return actions.map(a => a(vm, nic, vmTemplate, patchPrefix));
 };
 
 const VmDiskRow = ({ storage }) => {
@@ -99,7 +105,7 @@ const VmDiskRow = ({ storage }) => {
     </div>
     <div className="dropdown-kebab-pf">
       <Kebab
-        options={getActions(storage.vm, storage)}
+        options={getActions(storage.vm, storage, storage.vmTemplate, storage.patchPrefix)}
         key={`kebab-for--${storage.name}`}
         isDisabled={_.get(storage.vm.metadata, 'deletionTimestamp')}
         id={`kebab-for-${storage.name}`}
@@ -170,6 +176,8 @@ export class Disk extends React.Component {
         vm,
         volume,
         storageType: STORAGE_TYPE_VM,
+        vmTemplate: this.props.vmTemplate,
+        patchPrefix: this.props.patchPrefix,
       };
     }));
     return storages;
@@ -180,7 +188,7 @@ export class Disk extends React.Component {
       newStorage: {
         storageType: STORAGE_TYPE_CREATE,
         bus: {
-          value: getVmDiskBus(this.props.obj),
+          value: getVmDiskBus(this.props.vm),
         },
       },
     });
@@ -197,6 +205,7 @@ export class Disk extends React.Component {
   }
 
   onAccept() {
+    const { vm, vmTemplate, patchPrefix } = this.props;
     const newStorage = {
       ...this.state.newStorage,
       error: null,
@@ -209,8 +218,12 @@ export class Disk extends React.Component {
       storageClass: _.get(newStorage, 'storageClass.value'),
     };
 
-    const addDiskPatch = getAddDiskPatch(this.props.obj, storage);
-    const patch = k8sPatch(VirtualMachineModel, this.props.obj, addDiskPatch);
+    const addDiskPatch = getAddDiskPatch(vm, storage).map(patch => addPrefixToPatch(patchPrefix, patch));
+
+    const model = vmTemplate ? VmTemplateModel : VirtualMachineModel;
+    const obj = vmTemplate || vm;
+
+    const patch = k8sPatch(model, obj, addDiskPatch);
     patch.then(() => {
       this.setState({newStorage: null});
     }).catch(error => {
@@ -243,7 +256,7 @@ export class Disk extends React.Component {
   }
 
   render() {
-    const vm = this.props.obj;
+    const { vm } = this.props;
     const storages = this.getStorages(vm);
     const alert = _.get(this.state.newStorage, 'error') && <Alert onDismiss={this._errorDismissHandler}>{this.state.newStorage.error}</Alert>;
     return <div className="co-m-list">
@@ -259,3 +272,15 @@ export class Disk extends React.Component {
     </div>;
   }
 }
+
+
+Disk.propTypes = {
+  vm: PropTypes.object.isRequired,
+  vmTemplate: PropTypes.object, // the template of the vm
+  patchPrefix: PropTypes.string, // path to the vm in the template
+};
+
+Disk.defaultProps = {
+  vmTemplate: null,
+  patchPrefix: '',
+};

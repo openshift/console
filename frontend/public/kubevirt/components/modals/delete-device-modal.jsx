@@ -2,11 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import * as _ from 'lodash-es';
 import { Form } from 'patternfly-react';
+import { addPrefixToPatch, getName } from 'kubevirt-web-ui-components';
 
 import { PromiseComponent } from '../utils/okdutils';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/okdfactory';
 import { k8sPatch } from '../../module/okdk8s';
-import { VirtualMachineModel } from '../../models';
+import { VirtualMachineModel, VmTemplateModel } from '../../models';
 import { NIC, DISK } from '../utils/constants';
 
 class DeleteDeviceModal extends PromiseComponent {
@@ -18,7 +19,7 @@ class DeleteDeviceModal extends PromiseComponent {
 
   submit(event) {
     event.preventDefault();
-    const { vm, type, device } = this.props;
+    const { vm, vmTemplate, type, device, patchPrefix } = this.props;
 
     const deviceType = type === NIC ? {type: 'interfaces', spec: 'networks'} : { type: 'disks', spec: 'volumes'};
     const devices = _.get(vm, `spec.template.spec.domain.devices.${deviceType.type}`, []);
@@ -66,18 +67,25 @@ class DeleteDeviceModal extends PromiseComponent {
     if (patch.length === 0) {
       this.props.close();
     } else {
-      const promise = k8sPatch(VirtualMachineModel, vm, patch);
+      const model = vmTemplate ? VmTemplateModel : VirtualMachineModel;
+      const obj = vmTemplate || vm;
+      const finalPatch = patch.map(p => addPrefixToPatch(patchPrefix, p));
+
+      const promise = k8sPatch(model, obj, finalPatch);
       this.handlePromise(promise).then(this.props.close);
     }
   }
 
   render() {
-    const {vm, device} = this.props;
+    const {vm, vmTemplate, device} = this.props;
+    const deviceName = device.name;
+    const entityName = getName(vmTemplate || vm);
+
     return <Form onSubmit={this._submit}>
-      <ModalTitle>Delete {device.name} from {vm.metadata.name}</ModalTitle>
+      <ModalTitle>Delete {deviceName} from {entityName}</ModalTitle>
       <ModalBody>
-        Are you sure you want to delete <strong>{device.name}</strong>
-        <span> from  <strong>{vm.metadata.name} </strong>?</span>
+        Are you sure you want to delete <strong>{deviceName}</strong>
+        <span> from  <strong>{entityName} </strong>?</span>
       </ModalBody>
       <ModalSubmitFooter errorMessage={this.state.errorMessage} inProgress={this.state.inProgress} submitText={'Delete'} cancel={this._cancel} />
     </Form>;
@@ -87,8 +95,15 @@ class DeleteDeviceModal extends PromiseComponent {
 DeleteDeviceModal.propTypes = {
   device: PropTypes.object.isRequired,
   vm: PropTypes.object.isRequired,
+  vmTemplate: PropTypes.object, // the template of the vm
   type: PropTypes.string.isRequired,
   close: PropTypes.func.isRequired,
+  patchPrefix: PropTypes.string, // path to the vm in the template
+};
+
+DeleteDeviceModal.defaultProps = {
+  vmTemplate: null,
+  patchPrefix: '',
 };
 
 export const deleteDeviceModal = createModalLauncher(DeleteDeviceModal);

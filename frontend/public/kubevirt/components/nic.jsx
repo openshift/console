@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import * as _ from 'lodash-es';
 import { Alert, Button } from 'patternfly-react';
 
@@ -6,8 +7,8 @@ import { Kebab, LoadingInline } from './utils/okdutils';
 import { List, ColHead, ListHeader, ResourceRow } from './factory/okdfactory';
 import { DASHES, BUS_VIRTIO, NIC } from './utils/constants';
 import { deleteDeviceModal } from './modals/delete-device-modal';
-import { getNetworks, CreateNicRow, getAddNicPatch, POD_NETWORK, settingsValue, getResource } from 'kubevirt-web-ui-components';
-import { NetworkAttachmentDefinitionModel, VirtualMachineModel } from '../models';
+import { getNetworks, CreateNicRow, getAddNicPatch, POD_NETWORK, settingsValue, getResource, addPrefixToPatch } from 'kubevirt-web-ui-components';
+import { NetworkAttachmentDefinitionModel, VirtualMachineModel, VmTemplateModel } from '../models';
 import { WithResources } from './utils/withResources';
 import { k8sPatch } from '../module/okdk8s';
 
@@ -22,18 +23,20 @@ const getNetworkName = network => {
   return DASHES;
 };
 
-const menuActionDelete = (vm, nic) => ({
+const menuActionDelete = (vm, nic, vmTemplate, patchPrefix) => ({
   label: 'Delete',
   callback: () => deleteDeviceModal({
     type: NIC,
     device: nic,
     vm,
+    vmTemplate,
+    patchPrefix,
   }),
 });
 
-const getActions = (vm, nic) => {
+const getActions = (vm, nic, vmTemplate, patchPrefix) => {
   const actions = [menuActionDelete];
-  return actions.map(a => a(vm, nic));
+  return actions.map(a => a(vm, nic, vmTemplate, patchPrefix));
 };
 
 const visibleRowStyle = 'col-lg-3 col-md-3 col-sm-3 col-xs-4';
@@ -66,7 +69,7 @@ export const VmNicRow = ({ nic }) => <ResourceRow obj={nic}>
   </div>
   <div className="dropdown-kebab-pf">
     <Kebab
-      options={getActions(nic.vm, nic)}
+      options={getActions(nic.vm, nic, nic.vmTemplate, nic.patchPrefix)}
       key={`delete-nic-${nic.name}`}
       isDisabled={_.get(nic.vm.metadata, 'deletionTimestamp')}
       id={`kebab-for-${nic.name}`}
@@ -130,6 +133,8 @@ export class Nic extends React.Component {
         vm,
         network,
         nicType: NIC_TYPE_VM,
+        vmTemplate: this.props.vmTemplate,
+        patchPrefix: this.props.patchPrefix,
       };
     }));
     return nics;
@@ -140,9 +145,9 @@ export class Nic extends React.Component {
       newNic: {
         nicType: NIC_TYPE_CREATE,
         model: {
-          value: getVmNicModel(this.props.obj),
+          value: getVmNicModel(this.props.vm),
         },
-        vm: this.props.obj,
+        vm: this.props.vm,
       },
     });
   }
@@ -157,6 +162,7 @@ export class Nic extends React.Component {
   }
 
   onAccept() {
+    const { vm, vmTemplate, patchPrefix } = this.props;
     const newNic = {
       ...this.state.newNic,
       error: null,
@@ -169,8 +175,12 @@ export class Nic extends React.Component {
       mac: settingsValue(newNic, 'mac'),
     };
 
-    const addNicPatch = getAddNicPatch(this.props.obj, nic);
-    const patch = k8sPatch(VirtualMachineModel, this.props.obj, addNicPatch);
+    const addNicPatch = getAddNicPatch(vm, nic).map(patch => addPrefixToPatch(patchPrefix, patch));
+
+    const model = vmTemplate ? VmTemplateModel : VirtualMachineModel;
+    const obj = vmTemplate || vm;
+
+    const patch = k8sPatch(model, obj, addNicPatch);
     patch.then(() => {
       this.setState({newNic: null});
     }).catch(error => {
@@ -203,7 +213,7 @@ export class Nic extends React.Component {
   }
 
   render() {
-    const vm = this.props.obj;
+    const { vm } = this.props;
     const nics = this.getNics(vm);
     const alert = _.get(this.state.newNic, 'error') && <Alert onDismiss={this._errorDismissHandler}>{this.state.newNic.error}</Alert>;
     return <div className="co-m-list">
@@ -219,3 +229,14 @@ export class Nic extends React.Component {
     </div>;
   }
 }
+
+Nic.propTypes = {
+  vm: PropTypes.object.isRequired,
+  vmTemplate: PropTypes.object, // the template of the vm
+  patchPrefix: PropTypes.string, // path to the vm in the template
+};
+
+Nic.defaultProps = {
+  vmTemplate: null,
+  patchPrefix: '',
+};
