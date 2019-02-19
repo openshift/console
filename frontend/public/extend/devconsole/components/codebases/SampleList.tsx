@@ -1,11 +1,10 @@
 import * as React from 'react';
-import './List.scss';
 
-export interface CodebasesListProps {
+export interface CodebasesSampleListProps {
   codebases: Array<string>,
 }
 
-const CodebasesList: React.SFC<CodebasesListProps> = ({ codebases }: CodebasesListProps) => {
+const CodebasesSampleList: React.SFC<CodebasesSampleListProps> = ({ codebases }: CodebasesSampleListProps) => {
   const listItems = codebases.map(
     (codebase, index) => <li key={index}>{codebase}</li>
   );
@@ -14,4 +13,4 @@ const CodebasesList: React.SFC<CodebasesListProps> = ({ codebases }: CodebasesLi
   );
 }
 
-export default CodebasesList;
+export default CodebasesSampleList;
