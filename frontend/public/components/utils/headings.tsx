@@ -3,7 +3,7 @@ import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
 import { Link } from 'react-router-dom';
 
-import { ActionsMenu, ResourceIcon, KebabAction } from './index';
+import { ActionsMenu, ResourceIcon, KebabAction, resourcePath } from './index';
 import { ClusterServiceVersionLogo } from '../operator-lifecycle-manager';
 import { connectToModel } from '../../kinds';
 import { ClusterServiceVersionModel } from '../../models';
@@ -48,7 +48,7 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
 
   const logo = isCSV
     ? csvLogo()
-    : <div className="co-m-pane__name">{ kind && <ResourceIcon kind={kind} className="co-m-resource-icon--lg pull-left" /> } <span id="resource-title">{resourceTitle}</span></div>;
+    : <div className="co-m-pane__name">{ kind && <ResourceIcon kind={kind} className="co-m-resource-icon--lg" /> } <span id="resource-title">{resourceTitle}</span></div>;
   const hasButtonActions = !_.isEmpty(buttonActions);
   const hasMenuActions = !_.isEmpty(menuActions);
   const showActions = (hasButtonActions || hasMenuActions) && !_.isEmpty(data) && !_.get(data, 'deletionTimestamp');
@@ -73,8 +73,10 @@ export const SidebarSectionHeading: React.SFC<SidebarSectionHeadingProps> = ({te
 export const ResourceOverviewHeading: React.SFC<ResourceOverviewHeadingProps> = ({kindObj, actions, resource}) => <div className="overview__sidebar-pane-head resource-overview__heading">
   <h1 className="co-m-pane__heading">
     <div className="co-m-pane__name">
-      <ResourceIcon className="co-m-resource-icon--lg pull-left" kind={kindObj.kind} />
-      {resource.metadata.name}
+      <ResourceIcon className="co-m-resource-icon--lg" kind={kindObj.kind} />
+      <Link to={resourcePath(resource.kind, resource.metadata.name, resource.metadata.namespace)} className="co-resource-link__resource-name">
+        {resource.metadata.name}
+      </Link>
     </div>
     <div className="co-actions">
       <ActionsMenu actions={actions.map(a => a(kindObj, resource))} />

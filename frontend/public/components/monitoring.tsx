@@ -201,7 +201,7 @@ const AlertsDetailsPage = withFallback(connect(alertStateToProps)((props: Alerts
     <StatusBox data={alert} label={AlertResource.label} loaded={loaded} loadError={loadError}>
       <div className="co-m-nav-title co-m-nav-title--detail">
         <h1 className="co-m-pane__heading">
-          <div className="co-m-pane__name"><MonitoringResourceIcon className="co-m-resource-icon--lg pull-left" resource={AlertResource} />{alertname}</div>
+          <div className="co-m-pane__name"><MonitoringResourceIcon className="co-m-resource-icon--lg" resource={AlertResource} />{alertname}</div>
           {(state === AlertStates.Firing || state === AlertStates.Pending) && <div className="co-actions">
             <ActionsMenu actions={[silenceAlert(alert)]} />
           </div>}
@@ -323,7 +323,7 @@ const AlertRulesDetailsPage = withFallback(connect(ruleStateToProps)((props: Ale
     <StatusBox data={rule} label={AlertRuleResource.label} loaded={loaded} loadError={loadError}>
       <div className="co-m-nav-title co-m-nav-title--detail">
         <h1 className="co-m-pane__heading">
-          <div className="co-m-pane__name"><MonitoringResourceIcon className="co-m-resource-icon--lg pull-left" resource={AlertRuleResource} />{name}</div>
+          <div className="co-m-pane__name"><MonitoringResourceIcon className="co-m-resource-icon--lg" resource={AlertRuleResource} />{name}</div>
         </h1>
       </div>
       <div className="co-m-pane__body">
@@ -412,7 +412,7 @@ const SilencesDetailsPage = withFallback(connect(silenceParamToProps)((props: Si
     <StatusBox data={silence} label={SilenceResource.label} loaded={loaded} loadError={loadError}>
       <div className="co-m-nav-title co-m-nav-title--detail">
         <h1 className="co-m-pane__heading">
-          <div className="co-m-pane__name"><MonitoringResourceIcon className="co-m-resource-icon--lg pull-left" resource={SilenceResource} />{name}</div>
+          <div className="co-m-pane__name"><MonitoringResourceIcon className="co-m-resource-icon--lg" resource={SilenceResource} />{name}</div>
           <SilenceActionsMenu silence={silence} />
         </h1>
       </div>
