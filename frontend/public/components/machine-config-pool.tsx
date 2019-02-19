@@ -48,11 +48,11 @@ const getConditionStatus = (mcp: MachineConfigPoolKind, type: MachineConfigPoolC
 };
 
 const MachineConfigPoolCharacteristics: React.SFC<MachineConfigPoolCharacteristicsProps> = ({obj}) => {
-  const { maxUnavailable } = obj.spec;
-  const { configuration } = obj.status;
+  const configuration = _.get(obj, 'status.configuration');
+  const maxUnavailable = _.get(obj, 'spec.maxUnavailable', 1);
   return <dl className="co-m-pane__details">
     <dt>Max Unavailable Machines</dt>
-    <dd>{maxUnavailable || 1}</dd>
+    <dd>{maxUnavailable}</dd>
     { configuration &&
       <React.Fragment>
         <dt>Current Configuration</dt>
@@ -79,7 +79,7 @@ const MachineConfigPoolCharacteristics: React.SFC<MachineConfigPoolCharacteristi
 };
 
 const MachineConfigPoolCounts: React.SFC<MachineConfigPoolCountsProps> = ({obj}) => {
-  const { machineCount, readyMachineCount, updatedMachineCount, unavailableMachineCount } = obj.status;
+
   return <div className="co-m-pane__body-group">
     <div className="co-detail-table">
       <div className="co-detail-table__row row">
@@ -88,7 +88,7 @@ const MachineConfigPoolCounts: React.SFC<MachineConfigPoolCountsProps> = ({obj})
             <dt className="co-detail-table__section-header">Total Machine Count</dt>
             <dd>
               <Tooltip content="Total number of machines in the machine pool.">
-                {pluralize(machineCount, 'machine')}
+                {pluralize(_.get(obj, 'status.machineCount', 0), 'machine')}
               </Tooltip>
             </dd>
           </dl>
@@ -98,7 +98,7 @@ const MachineConfigPoolCounts: React.SFC<MachineConfigPoolCountsProps> = ({obj})
             <dt className="co-detail-table__section-header">Ready Machines</dt>
             <dd>
               <Tooltip content="Total number of ready machines targeted by the pool.">
-                {pluralize(readyMachineCount, 'machine')}
+                {pluralize(_.get(obj, 'status.readyMachineCount', 0), 'machine')}
               </Tooltip>
             </dd>
           </dl>
@@ -108,7 +108,7 @@ const MachineConfigPoolCounts: React.SFC<MachineConfigPoolCountsProps> = ({obj})
             <dt className="co-detail-table__section-header">Updated Count</dt>
             <dd>
               <Tooltip content="Total number of machines targeted by the pool that have the CurrentMachineConfig as their config.">
-                {pluralize(updatedMachineCount, 'machine')}
+                {pluralize(_.get(obj, 'status.updatedMachineCount', 0), 'machine')}
               </Tooltip>
             </dd>
           </dl>
@@ -118,7 +118,7 @@ const MachineConfigPoolCounts: React.SFC<MachineConfigPoolCountsProps> = ({obj})
             <dt className="co-detail-table__section-header">Unavailable Count</dt>
             <dd>
               <Tooltip content="Total number of unavailable (non-ready) machines targeted by the pool. A node is marked unavailable if it is in updating state or NodeReady condition is false.">
-                {pluralize(unavailableMachineCount, 'machine')}
+                {pluralize(_.get(obj, 'status.unavailableMachineCount', 0), 'machine')}
               </Tooltip>
             </dd>
           </dl>
@@ -129,7 +129,8 @@ const MachineConfigPoolCounts: React.SFC<MachineConfigPoolCountsProps> = ({obj})
 };
 
 const MachineConfigPoolSummary: React.SFC<MachineConfigPoolSummaryProps> = ({obj}) => {
-  const { machineConfigSelector, machineSelector } = obj.spec;
+  const machineConfigSelector = _.get(obj, 'spec.machineConfigSelector');
+  const machineSelector = _.get(obj, 'spec.machineSelector');
   return <ResourceSummary resource={obj} showPodSelector={false} showNodeSelector={false}>
     <dt>Machine Config Selector</dt>
     <dd>
@@ -149,11 +150,11 @@ const MachineConfigPoolSummary: React.SFC<MachineConfigPoolSummaryProps> = ({obj
 };
 
 const MachineConfigList: React.SFC<MachineConfigListProps> = ({obj}) => (
-  <MachineConfigPage canCreate={false} showTitle={false} selector={obj.spec.machineConfigSelector} />
+  <MachineConfigPage canCreate={false} showTitle={false} selector={_.get(obj, 'spec.machineConfigSelector')} />
 );
 
 const MachineConfigPoolDetails: React.SFC<MachineConfigPoolDetailsProps> = ({obj}) => {
-  const { paused } = obj.spec;
+  const paused = _.get(obj, 'spec.paused');
   return <React.Fragment>
     <div className="co-m-pane__body">
       <SectionHeading text="Machine Config Pool Overview " />
