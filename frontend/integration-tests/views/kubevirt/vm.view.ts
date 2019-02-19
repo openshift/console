@@ -45,6 +45,7 @@ export const storageButton = $('#name-attach-edit-1-row');
 export const storageMenu = $('#name-attach-edit-1-row + ul');
 
 // Wizard Common
+export const wizardContent = $('.wizard-pf-contents');
 export const wizardHeader = $('.modal-header');
 export const provisionResult = $('.wizard-pf-body h3');
 export const nextButton = $('.wizard-pf-footer > button:last-child');

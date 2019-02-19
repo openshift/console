@@ -11,6 +11,7 @@ import {detailViewAction, detailViewVMmStatus, listViewAction, listViewVMmStatus
 
 const VM_BOOTUP_TIMEOUT = 60000;
 const VM_ACTIONS_TIMEOUT = 90000;
+const VM_STOP_TIMEOUT = 3000;
 
 describe('Test VM actions', () => {
   const leakedResources = new Set<string>();
@@ -49,7 +50,7 @@ describe('Test VM actions', () => {
 
     it('Stops VM', async() => {
       await listViewAction(vmName)('Stop');
-      await browser.wait(until.textToBePresentInElement(listViewVMmStatus(vmName), 'Off'), 10000);
+      await browser.wait(until.textToBePresentInElement(listViewVMmStatus(vmName), 'Off'), VM_STOP_TIMEOUT);
     });
 
     it('Deletes VM', async() => {
@@ -85,7 +86,7 @@ describe('Test VM actions', () => {
 
     it('Stops VM', async() => {
       await detailViewAction('Stop');
-      await browser.wait(until.textToBePresentInElement(detailViewVMmStatus, 'Off'), 10000);
+      await browser.wait(until.textToBePresentInElement(detailViewVMmStatus, 'Off'), VM_STOP_TIMEOUT);
     });
 
     it('Deletes VM', async() => {

@@ -10,15 +10,19 @@ import { removeLeakedResources } from './utils';
 import { testNAD } from './mocks';
 import * as vmView from '../../views/kubevirt/vm.view';
 
+const VM_BOOTUP_TIMEOUT = 90000;
+const PAGE_LOAD_TIMEOUT = 5000;
+const VM_WIZARD_LOAD_TIMEOUT = 10000;
+
 describe('Kubevirt create VM using wizard', () => {
   const leakedResources = new Set<string>();
   const vmName = `vm-${testName}`;
-  const operatingSystem = 'fedora28';
+  const operatingSystem = 'Red Hat Enterprise Linux 7.6';
   const flavor = 'small';
   const workloadProfile = 'generic';
   const sourceURL = 'https://download.cirros-cloud.net/0.4.0/cirros-0.4.0-x86_64-disk.img';
   const sourceContainer = 'kubevirt/cirros-registry-disk-demo:latest';
-  const pxeInterface = 'eth1';
+  const pxeInterface = 'nic1';
   const provisionMethods = OrderedMap<string, (provisionSource: string) => void>()
     .set('PXE', async function(provisionSource) {
       await vmView.provisionSourceButton.click();
@@ -38,7 +42,7 @@ describe('Kubevirt create VM using wizard', () => {
     });
 
   async function fillBasicSettings(provisionMethod: (provisionSource: string) => void, provisionSourceName: string){
-    await browser.wait(until.presenceOf(vmView.nameInput), 10000);
+    await browser.wait(until.presenceOf(vmView.nameInput), VM_WIZARD_LOAD_TIMEOUT);
     await vmView.nameInput.sendKeys(vmName);
 
     await vmView.namespaceButton.click();
@@ -90,20 +94,21 @@ describe('Kubevirt create VM using wizard', () => {
       await createItemButton.click().then(() => vmView.createWithWizardLink.click());
       await fillBasicSettings(provisionMethod, methodName);
       await fillVMNetworking(methodName);
-      // Use default storage settings
+      // Use default storage settings and create VM
       await vmView.nextButton.click();
-      // Confirm to create VM
-      await browser.wait(until.elementToBeClickable(vmView.nextButton), 5000).then(() => vmView.nextButton.click());
+      await browser.wait(until.not(until.textToBePresentInElement(vmView.wizardContent, 'Creation of VM in progress')), PAGE_LOAD_TIMEOUT);
+      // Check for error and close wizard
       expect(errorMessage.isPresent()).toBe(false);
+      await browser.wait(until.elementToBeClickable(vmView.nextButton), PAGE_LOAD_TIMEOUT).then(() => vmView.nextButton.click());
       leakedResources.add(JSON.stringify({name: vmName, namespace: testName, kind: 'vm'}));
       // Verify VM is created and running
-      await browser.wait(until.invisibilityOf(vmView.wizardHeader), 5000);
+      await browser.wait(until.invisibilityOf(vmView.wizardHeader), PAGE_LOAD_TIMEOUT);
       await filterForName(vmName);
       await resourceRowsPresent();
-      await browser.wait(until.textToBePresentInElement(vmView.firstRowVMStatus, 'Running'), 20000);
+      await browser.wait(until.textToBePresentInElement(vmView.firstRowVMStatus, 'Running'), VM_BOOTUP_TIMEOUT);
       // Delete VM
       await deleteRow('VirtualMachine')(vmName);
       leakedResources.delete(JSON.stringify({name: vmName, namespace: testName, kind: 'vm'}));
-    });
+    }, VM_BOOTUP_TIMEOUT);
   });
 });

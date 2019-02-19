@@ -4,7 +4,7 @@ import { testName } from '../../protractor.conf';
 const testLabel = 'automatedTestName';
 
 export const testVM = {
-  apiVersion: 'kubevirt.io/v1alpha2',
+  apiVersion: 'kubevirt.io/v1alpha3',
   kind: 'VirtualMachine',
   metadata: {
     name: `vm-${testName}`,
@@ -27,7 +27,6 @@ export const testVM = {
                   bus: 'virtio',
                 },
                 name: 'rootdisk',
-                volumeName: 'rootdisk',
               },
             ],
             interfaces: [
