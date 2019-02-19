@@ -11,7 +11,7 @@ import { Link } from 'react-router-dom';
 import { ClusterVersionKind, K8sResourceKind, referenceForModel } from '../../module/k8s';
 import { ClusterAutoscalerModel, ClusterVersionModel } from '../../models';
 import { ClusterOperatorPage } from './cluster-operator';
-import { clusterUpdateModal } from '../modals';
+import { clusterChannelModal, clusterUpdateModal } from '../modals';
 import { GlobalConfigPage } from './global-config';
 import {
   EmptyBox,
@@ -32,7 +32,9 @@ enum ClusterUpdateStatus {
 }
 
 const clusterAutoscalerReference = referenceForModel(ClusterAutoscalerModel);
-const clusterVersionReference = referenceForModel(ClusterVersionModel);
+export const clusterVersionReference = referenceForModel(ClusterVersionModel);
+
+export const getAvailableClusterChannels = () => ({'nightly-4.0': 'nightly-4.0', 'pre-release-4.0': 'pre-release-4.0', 'stable-4.0': 'stable-4.0'});
 
 export const getAvailableClusterUpdates = (cv: ClusterVersionKind) => {
   return _.get(cv, 'status.availableUpdates');
@@ -45,6 +47,10 @@ export const getDesiredClusterVersion = (cv: ClusterVersionKind) => {
 const launchUpdateModal = (cv: ClusterVersionKind) => {
   clusterUpdateModal({cv});
 };
+
+const CurrentChannel: React.SFC<CurrentChannelProps> = ({cv}) => <button className="btn btn-link co-m-modal-link" onClick={() => (clusterChannelModal({cv}))}>
+  {cv.spec.channel || '-'}
+</button>;
 
 const getClusterUpdateStatus = (cv: ClusterVersionKind): ClusterUpdateStatus => {
   const conditions = _.get(cv, 'status.conditions', []);
@@ -126,7 +132,7 @@ const DesiredVersion: React.SFC<DesiredVersionProps> = ({cv}) => {
 };
 
 const ClusterVersionDetailsTable: React.SFC<ClusterVersionDetailsTableProps> = ({obj: cv, autoscalers}) => {
-  const { history, conditions } = cv.status;
+  const { history = [], conditions = [] } = cv.status;
   const status = getClusterUpdateStatus(cv);
   const retrievedUpdatesFailedCondition = _.find(conditions, { type: 'RetrievedUpdates', status: 'False' });
   const isFailingCondition = _.find(conditions, { type: 'Failing', status: 'True' });
@@ -143,7 +149,7 @@ const ClusterVersionDetailsTable: React.SFC<ClusterVersionDetailsTableProps> = (
             <div className="co-detail-table__section">
               <dl className="co-m-pane__details">
                 <dt className="co-detail-table__section-header">Channel</dt>
-                <dd>{cv.spec.channel}</dd>
+                <dd><CurrentChannel cv={cv} /></dd>
               </dl>
             </div>
             <div className="co-detail-table__section">
@@ -180,27 +186,29 @@ const ClusterVersionDetailsTable: React.SFC<ClusterVersionDetailsTableProps> = (
     </div>
     <div className="co-m-pane__body">
       <SectionHeading text="Update History" />
-      <div className="co-table-container">
-        <table className="table">
-          <thead>
-            <tr>
-              <th>Version</th>
-              <th>State</th>
-              <th>Started</th>
-              <th>Completed</th>
-            </tr>
-          </thead>
-          <tbody>
-            {_.isEmpty(history) && <EmptyBox label="History" />}
-            {history.map((update, i) => <tr key={i}>
-              <td className="co-break-all">{update.version || '-'}</td>
-              <td>{update.state || '-'}</td>
-              <td><Timestamp timestamp={update.startedTime} /></td>
-              <td>{update.completionTime ? <Timestamp timestamp={update.completionTime} /> : '-'}</td>
-            </tr>)}
-          </tbody>
-        </table>
-      </div>
+      {_.isEmpty(history)
+        ? <EmptyBox label="History" />
+        : <div className="co-table-container">
+          <table className="table">
+            <thead>
+              <tr>
+                <th>Version</th>
+                <th>State</th>
+                <th>Started</th>
+                <th>Completed</th>
+              </tr>
+            </thead>
+            <tbody>
+              {_.map(history, (update, i) => <tr key={i}>
+                <td className="co-break-all">{update.version || '-'}</td>
+                <td>{update.state || '-'}</td>
+                <td><Timestamp timestamp={update.startedTime} /></td>
+                <td>{update.completionTime ? <Timestamp timestamp={update.completionTime} /> : '-'}</td>
+              </tr>)}
+            </tbody>
+          </table>
+        </div>
+      }
     </div>
   </React.Fragment>;
 };
@@ -243,6 +251,10 @@ export const ClusterSettingsPage: React.SFC<ClusterSettingsPageProps> = ({match}
 
 type UpdateStatusProps = {
   cv: ClusterVersionKind;
+};
+
+type CurrentChannelProps = {
+  cv: K8sResourceKind;
 };
 
 type DesiredVersionProps = {

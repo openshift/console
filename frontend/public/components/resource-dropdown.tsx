@@ -46,7 +46,7 @@ const DropdownItem: React.SFC<DropdownItemProps> = ({model, showGroup}) => <Reac
     </span>
     <span className="co-resource-link__resource-name">
       {model.kind}
-      {showGroup && <React.Fragment>&nbsp;<small className="text-muted">&ndash; {model.apiGroup || 'core'}/{model.apiVersion}</small></React.Fragment>}
+      {showGroup && <React.Fragment>&nbsp;<div className="text-muted co-truncate show co-nowrap small">{model.apiGroup || 'core'}/{model.apiVersion}</div></React.Fragment>}
     </span>
   </span>
 </React.Fragment>;
