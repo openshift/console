@@ -93,9 +93,9 @@ type Config struct {
 	ClientSecret string
 	Scope        []string
 
-	// DiscoveryCA is required for OpenShift OAuth metadata discovery. This is the CA
+	// K8sCA is required for OpenShift OAuth metadata discovery. This is the CA
 	// used to talk to the master, which might be different than the issuer CA.
-	DiscoveryCA string
+	K8sCA string
 
 	SuccessURL  string
 	ErrorURL    string
@@ -140,33 +140,39 @@ func newHTTPClient(issuerCA string, includeSystemRoots bool) (*http.Client, erro
 // NewAuthenticator initializes an Authenticator struct. It blocks until the authenticator is
 // able to contact the provider.
 func NewAuthenticator(ctx context.Context, c *Config) (*Authenticator, error) {
-	a, err := newUnstartedAuthenticator(c)
-	if err != nil {
-		return nil, err
-	}
-
 	// Retry connecting to the identity provider a few times
 	backoff := time.Second * 2
-	maxSteps := 5
+	maxSteps := 7
 	steps := 0
 
 	for {
 		var (
+			a        *Authenticator
 			lm       loginMethod
 			endpoint oauth2.Endpoint
 			err      error
 		)
+
+		// Create a new authenticator for each retry to re-read the ca.crt file in
+		// case it's changed (common immediately after an install).
+		a, err = newUnstartedAuthenticator(c)
+		if err != nil {
+			return nil, err
+		}
+
 		switch c.AuthSource {
 		case AuthSourceOpenShift:
 			// Use the k8s CA for OAuth metadata discovery.
-			var client *http.Client
-			client, err = newHTTPClient(c.DiscoveryCA, false)
+			var k8sClient *http.Client
+			// Don't include system roots when talking to the API server.
+			k8sClient, err = newHTTPClient(c.K8sCA, false)
 			if err != nil {
 				return nil, err
 			}
 
 			endpoint, lm, err = newOpenShiftAuth(ctx, &openShiftConfig{
-				client:        client,
+				k8sClient:     k8sClient,
+				oauthClient:   a.client,
 				issuerURL:     c.IssuerURL,
 				cookiePath:    c.CookiePath,
 				secureCookies: c.SecureCookies,
@@ -183,11 +189,11 @@ func NewAuthenticator(ctx context.Context, c *Config) (*Authenticator, error) {
 		if err != nil {
 			steps++
 			if steps > maxSteps {
-				log.Errorf("error contacting openid connect provider: %v", err)
+				log.Errorf("error contacting auth provider: %v", err)
 				return nil, err
 			}
 
-			log.Errorf("error contacting openid connect provider (retrying in %s): %v", backoff, err)
+			log.Errorf("error contacting auth provider (retrying in %s): %v", backoff, err)
 
 			time.Sleep(backoff)
 			backoff *= 2
