@@ -366,7 +366,7 @@ func main() {
 
 			// Use the k8s CA file for OpenShift OAuth metadata discovery.
 			// This might be different than IssuerCA.
-			DiscoveryCA: caCertFilePath,
+			K8sCA: caCertFilePath,
 
 			ErrorURL:   authLoginErrorEndpoint,
 			SuccessURL: authLoginSuccessEndpoint,
@@ -394,7 +394,7 @@ func main() {
 		}
 
 		if srv.Auther, err = auth.NewAuthenticator(context.Background(), oidcClientConfig); err != nil {
-			log.Fatalf("Error initializing OIDC authenticator: %v", err)
+			log.Fatalf("Error initializing authenticator: %v", err)
 		}
 	case "disabled":
 		log.Warningf("running with AUTHENTICATION DISABLED!")
