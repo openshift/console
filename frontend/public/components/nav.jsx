@@ -18,7 +18,6 @@ import {
   InstallPlanModel,
   MachineConfigModel,
   MachineConfigPoolModel,
-  MachineDeploymentModel,
   MachineModel,
   MachineSetModel,
   PackageManifestModel,
@@ -394,7 +393,6 @@ export const Navigation = ({ isNavOpen, onNavSelect }) => {
         <NavSection title="Machines" required={[FLAGS.CLUSTER_API, FLAGS.MACHINE_CONFIG, FLAGS.CAN_LIST_MACHINE_CONFIG]}>
           <ResourceNSLink resource={referenceForModel(MachineModel)} name="Machines" />
           <ResourceNSLink resource={referenceForModel(MachineSetModel)} name="Machine Sets" />
-          <ResourceNSLink resource={referenceForModel(MachineDeploymentModel)} name="Machine Deployments" />
           <ResourceClusterLink resource={referenceForModel(MachineConfigModel)} name="Machine Configs" />
           <ResourceClusterLink resource={referenceForModel(MachineConfigPoolModel)} name="Machine Config Pools" />
         </NavSection>
