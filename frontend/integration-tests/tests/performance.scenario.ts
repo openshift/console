@@ -85,6 +85,7 @@ describe('Performance test', () => {
 
     it(`downloads new bundle for ${routeName}`, async() => {
       await browser.get(`${appHost}/status/all-namespaces`);
+      await browser.executeScript(() => performance.setResourceTimingBufferSize(1000));
       await browser.wait(until.presenceOf(crudView.resourceTitle));
       // Avoid problems where the Catalog nav section appears where Workloads was at the moment the tests try to click.
       await browser.wait(until.visibilityOf(sidenavView.navSectionFor('Catalog')));
