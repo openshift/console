@@ -23,7 +23,8 @@ type openShiftAuth struct {
 }
 
 type openShiftConfig struct {
-	client        *http.Client
+	k8sClient     *http.Client
+	oauthClient   *http.Client
 	issuerURL     string
 	cookiePath    string
 	secureCookies bool
@@ -52,7 +53,7 @@ func newOpenShiftAuth(ctx context.Context, c *openShiftConfig) (oauth2.Endpoint,
 		return oauth2.Endpoint{}, nil, err
 	}
 
-	resp, err := c.client.Do(req.WithContext(ctx))
+	resp, err := c.k8sClient.Do(req.WithContext(ctx))
 	if err != nil {
 		return oauth2.Endpoint{}, nil, err
 	}
@@ -85,6 +86,19 @@ func newOpenShiftAuth(ctx context.Context, c *openShiftConfig) (oauth2.Endpoint,
 	if err := validateAbsURL(metadata.Token); err != nil {
 		return oauth2.Endpoint{}, nil, err
 	}
+
+	// Make sure we can talk to the token endpoint.
+	req, err = http.NewRequest(http.MethodHead, metadata.Token, nil)
+	if err != nil {
+		return oauth2.Endpoint{}, nil, err
+	}
+
+	resp, err = c.oauthClient.Do(req.WithContext(ctx))
+	if err != nil {
+		return oauth2.Endpoint{}, nil, fmt.Errorf("request to OAuth token endpoint %s failed: %v",
+			metadata.Token, err)
+	}
+	defer resp.Body.Close()
 
 	kubeAdminLogoutURL := proxy.SingleJoiningSlash(metadata.Issuer, "/logout")
 	return oauth2.Endpoint{
