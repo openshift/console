@@ -29,6 +29,7 @@ const AlertsFiring = ({namespace}) => (
   <Status
     title="Alerts Firing"
     name="Alerts"
+    namespace={namespace}
     query={`sum(ALERTS{alertstate="firing", alertname!="DeadMansSwitch" ${namespace ? `, namespace="${namespace}"` : ''}})`}
     to="/monitoring"
   />
@@ -38,6 +39,7 @@ const CrashloopingPods = ({namespace}) => (
   <Status
     title="Crashlooping Pods"
     name="Pods"
+    namespace={namespace}
     query={`count(increase(kube_pod_container_status_restarts_total${namespace ? `{namespace="${namespace}"}` : ''}[1h]) > 5 )`}
     to={`/k8s/${namespace ? `ns/${namespace}` : 'all-namespaces'}/pods?rowFilter-pod-status=CrashLoopBackOff`}
   />
