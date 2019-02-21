@@ -7,7 +7,7 @@ import {
   getResource,
 } from 'kubevirt-web-ui-components';
 
-import { Kebab, units, LoadingInline } from '../utils/okdutils';
+import { Kebab, LoadingInline } from '../utils/okdutils';
 import { k8sCreate, k8sPatch } from '../../module/okdk8s';
 import {
   VirtualMachineInstanceModel,
@@ -69,7 +69,7 @@ const menuActionClone = (kind, vm) => ({
         resource: getResource(DataVolumeModel),
         required: true,
       },
-    })({ vm, units, k8sCreate, k8sPatch, LoadingComponent: LoadingInline });
+    })({ vm, k8sCreate, k8sPatch, LoadingComponent: LoadingInline });
   },
 });
 
