@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import * as PropTypes from 'prop-types';
+import * as catalogImg from '../../imgs/logos/catalog-icon.svg';
 import { CatalogTile } from 'patternfly-react-extensions';
 import { Modal } from 'patternfly-react';
 
@@ -172,13 +173,14 @@ export class CatalogTileViewPage extends React.Component {
     const uid = obj.metadata.uid;
     const iconClass = tileIconClass ? normalizeIconClass(tileIconClass) : null;
     const vendor = tileProvider ? `provided by ${tileProvider}` : null;
+    const iconImgUrl = tileImgUrl || catalogImg;
     return (
       <CatalogTile
         id={uid}
         key={uid}
         onClick={() => this.openOverlay(item)}
         title={tileName}
-        iconImg={tileImgUrl}
+        iconImg={iconImgUrl}
         iconClass={iconClass}
         vendor={vendor}
         description={tileDescription} />

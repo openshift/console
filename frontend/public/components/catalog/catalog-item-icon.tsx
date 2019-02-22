@@ -14,6 +14,7 @@ import * as ansibleImg from '../../imgs/logos/ansible.svg';
 import * as apacheImg from '../../imgs/logos/apache.svg';
 import * as beakerImg from '../../imgs/logos/beaker.svg';
 import * as capedwarfImg from '../../imgs/logos/capedwarf.svg';
+import * as catalogImg from '../../imgs/logos/catalog-icon.svg';
 import * as cassandraImg from '../../imgs/logos/cassandra.svg';
 import * as clojureImg from '../../imgs/logos/clojure.svg';
 import * as codeigniterImg from '../../imgs/logos/codeigniter.svg';
@@ -98,6 +99,7 @@ const logos = new Map()
   .set('icon-apache', apacheImg)
   .set('icon-beaker', beakerImg)
   .set('icon-capedwarf', capedwarfImg)
+  .set('icon-catalog', catalogImg)
   .set('icon-cassandra', cassandraImg)
   .set('icon-clojure', clojureImg)
   .set('icon-codeigniter', codeigniterImg)
@@ -184,7 +186,7 @@ export const getImageForIconClass = (iconClass) => {
 };
 
 export const getServiceClassIcon = (serviceClass) => {
-  return _.get(serviceClass, ['spec', 'externalMetadata', 'console.openshift.io/iconClass'], 'fa fa-clone');
+  return _.get(serviceClass, ['spec', 'externalMetadata', 'console.openshift.io/iconClass'], logos.get('icon-catalog'));
 };
 
 export const getServiceClassImage = (serviceClass) => {
