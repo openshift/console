@@ -88,7 +88,7 @@ func newOpenShiftAuth(ctx context.Context, c *openShiftConfig) (oauth2.Endpoint,
 	}
 
 	// Make sure we can talk to the token endpoint.
-	req, err = http.NewRequest(http.MethodHead, metadata.Token, nil)
+	req, err = http.NewRequest(http.MethodHead, metadata.Token + "/implicit", nil)
 	if err != nil {
 		return oauth2.Endpoint{}, nil, err
 	}
