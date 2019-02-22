@@ -11,6 +11,7 @@ export { CatalogSourceDetailsPage, CreateSubscriptionYAML } from './catalog-sour
 export { SubscriptionsPage } from './subscription';
 
 import * as operatorLogo from '../../imgs/operator.svg';
+import { InstallModeType } from './operator-group';
 
 export const appCatalogLabel = 'alm-catalog';
 export enum AppCatalog {
@@ -114,6 +115,7 @@ export type ClusterServiceVersionKind = {
     customresourcedefinitions?: {owned?: CRDDescription[], required?: CRDDescription[]};
     apiservicedefinitions?: {owned?: APIServiceDefinition[], required?: APIServiceDefinition[]};
     replaces?: string;
+    installModes: {type: InstallModeType, supported: boolean}[];
   };
   status?: {
     phase: ClusterServiceVersionPhase;
@@ -210,6 +212,7 @@ export type PackageManifestKind = {
         provider: {
           name: string;
         };
+        installModes: {type: InstallModeType, supported: boolean}[];
       }
     }[];
     defaultChannel: string;
@@ -219,8 +222,15 @@ export type PackageManifestKind = {
 export type OperatorGroupKind = {
   apiVersion: 'operators.coreos.com/v1alpha2';
   kind: 'OperatorGroup';
-  spec: {selector: Selector};
-  status?: {namespaces: K8sResourceKind[]};
+  spec?: {
+    selector?: Selector;
+    targetNamespaces?: string[];
+    serviceAccount?: K8sResourceKind;
+  };
+  status?: {
+    namespaces?: string[];
+    lastUpdated: string;
+  };
 } & K8sResourceKind;
 
 // TODO(alecmerdler): Shouldn't be needed anymore
@@ -232,6 +242,9 @@ export const isEnabled = (namespace: K8sResourceKind) => _.has(namespace, ['meta
 type ProvidedAPIsFor = (csv: ClusterServiceVersionKind) => (CRDDescription | APIServiceDefinition)[];
 export const providedAPIsFor: ProvidedAPIsFor = csv => _.get(csv.spec, 'customresourcedefinitions.owned', [])
   .concat(_.get(csv.spec, 'apiservicedefinitions.owned', []));
+
+export const defaultChannelFor = (pkg: PackageManifestKind) => pkg.status.defaultChannel || pkg.status.channels[0].name;
+export const installModesFor = (pkg: PackageManifestKind) => (channel: string) => pkg.status.channels.find(ch => ch.name === channel).currentCSVDesc.installModes;
 
 export const referenceForProvidedAPI = (desc: CRDDescription | APIServiceDefinition): GroupVersionKind => _.get(desc, 'group')
   ? `${(desc as APIServiceDefinition).group}~${desc.version}~${desc.kind}`
