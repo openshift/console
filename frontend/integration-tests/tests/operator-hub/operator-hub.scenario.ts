@@ -111,7 +111,7 @@ describe('Subscribing to an Operator from Operator Hub', () => {
     await operatorHubView.operatorModalInstallBtn.click();
 
     expect(browser.getCurrentUrl()).toContain('/operatorhub/subscribe?pkg=etcd&catalog=community-operators&catalogNamespace=openshift-marketplace&targetNamespace=');
-    expect(operatorHubView.createSubscriptionFormTitle.isDisplayed()).toBe(true);
+    await operatorHubView.createSubscriptionFormTitleIsPresent();
   });
 
   it('selects target namespace for Operator subscription', async() => {
@@ -128,7 +128,7 @@ describe('Subscribing to an Operator from Operator Hub', () => {
     expect(catalogPageView.catalogTileFor('etcd').$('.catalog-tile-pf-footer').getText()).toContain('Installed');
   });
 
-  it('displays Operator in "Cluster Service Versions" view for "default" namespace', async() => {
+  xit('displays Operator in "Cluster Service Versions" view for "default" namespace', async() => {
     await browser.get(`${appHost}/operatorhub/ns/${testName}`);
     await crudView.isLoaded();
     await operatorHubView.showCommunityOperators();

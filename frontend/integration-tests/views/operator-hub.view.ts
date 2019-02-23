@@ -22,3 +22,5 @@ export const showCommunityOperators = async() => {
   await $('.co-modal-ignore-warning').$('.btn-primary').click();
   await browser.wait(until.not(until.presenceOf($('.co-modal-ignore-warning'))), 1000).then(() => browser.sleep(500));
 };
+
+export const createSubscriptionFormTitleIsPresent = () => browser.wait(until.presenceOf(createSubscriptionFormTitle));
