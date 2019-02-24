@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 
 import { SafetyFirst } from '../safety-first';
 import { coFetchJSON } from '../../co-fetch';
-import { prometheusBasePath } from './index';
+import { prometheusBasePath, prometheusTenancyBasePath } from './index';
 
 const colors = {
   ok: 'rgb(57,200,143)',
@@ -29,16 +29,20 @@ export const errorStatus = err => {
   };
 };
 
-const fetchQuery = (q, long) => coFetchJSON(`${prometheusBasePath}/api/v1/query?query=${encodeURIComponent(q)}`)
-  .then(res => {
-    const short = parseInt(_.get(res, 'data.result[0].value[1]'), 10) || 0;
-    return {
-      short,
-      long,
-      status: short === 0 ? 'OK' : 'WARN',
-    };
-  })
-  .catch(errorStatus);
+const fetchQuery = (q, long, namespace) => {
+  const nsParam = namespace ? `&namespace=${encodeURIComponent(namespace)}` : '';
+  const basePath = namespace ? prometheusTenancyBasePath : prometheusBasePath;
+  return coFetchJSON(`${basePath}/api/v1/query?query=${encodeURIComponent(q)}${nsParam}`)
+    .then(res => {
+      const short = parseInt(_.get(res, 'data.result[0].value[1]'), 10) || 0;
+      return {
+        short,
+        long,
+        status: short === 0 ? 'OK' : 'WARN',
+      };
+    })
+    .catch(errorStatus);
+};
 
 /** @augments {React.Component<{fetch?: () => Promise<any>, query?: string, title: string, href?: string, rel?: string, target?: string}}>} */
 export class Status extends SafetyFirst {
@@ -53,7 +57,7 @@ export class Status extends SafetyFirst {
 
   fetch(props=this.props) {
     const clock = this.clock;
-    const promise = props.query ? fetchQuery(props.query, props.name) : props.fetch();
+    const promise = props.query ? fetchQuery(props.query, props.name, props.namespace) : props.fetch();
 
     const ignorePromise = cb => (...args) => {
       if (clock !== this.clock) {
