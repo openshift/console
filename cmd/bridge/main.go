@@ -143,10 +143,6 @@ func main() {
 	if branding == "origin" {
 		branding = "okd"
 	}
-	// Temporarily default okd to openshift
-	if branding == "okd" {
-		branding = "openshift"
-	}
 	switch branding {
 	case "okd":
 	case "openshift":
