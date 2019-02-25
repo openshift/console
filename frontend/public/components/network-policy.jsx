@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 
 import { FLAGS, connectToFlags } from '../features';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
-import { Kebab, navFactory, ResourceKebab, SectionHeading, ResourceLink, ResourceSummary, Selector, helpLink, HELP_TOPICS, ExternalLink } from './utils';
+import { Kebab, navFactory, ResourceKebab, SectionHeading, ResourceLink, ResourceSummary, Selector, ExternalLink } from './utils';
 
 const { common } = Kebab.factory;
 const menuActions = [...common];
@@ -92,10 +92,8 @@ const IngressRow = ({ingress, namespace, podSelector}) => {
   </div>;
 };
 
-const Details_ = ({flags, obj: np}) => {
-  const networkPolicyDocs = flags[FLAGS.OPENSHIFT]
-    ? helpLink(HELP_TOPICS.NETWORK_POLICY_GUIDE)
-    : 'https://kubernetes.io/docs/concepts/services-networking/network-policies/';
+const Details_ = ({obj: np}) => {
+  const networkPolicyDocs = 'https://kubernetes.io/docs/concepts/services-networking/network-policies/';
   return <React.Fragment>
     <div className="co-m-pane__body">
       <SectionHeading text="Namespace Overview" />
