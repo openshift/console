@@ -87,15 +87,15 @@ func newOpenShiftAuth(ctx context.Context, c *openShiftConfig) (oauth2.Endpoint,
 		return oauth2.Endpoint{}, nil, err
 	}
 
-	// Make sure we can talk to the token endpoint.
-	req, err = http.NewRequest(http.MethodHead, metadata.Token, nil)
+	// Make sure we can talk to the issuer endpoint.
+	req, err = http.NewRequest(http.MethodHead, metadata.Issuer, nil)
 	if err != nil {
 		return oauth2.Endpoint{}, nil, err
 	}
 
 	resp, err = c.oauthClient.Do(req.WithContext(ctx))
 	if err != nil {
-		return oauth2.Endpoint{}, nil, fmt.Errorf("request to OAuth token endpoint %s failed: %v",
+		return oauth2.Endpoint{}, nil, fmt.Errorf("request to OAuth issuer endpoint %s failed: %v",
 			metadata.Token, err)
 	}
 	defer resp.Body.Close()
