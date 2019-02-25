@@ -363,15 +363,14 @@ class ConfigEntryForm extends React.Component<ConfigEntryFormProps, ConfigEntryF
         </div>
       </div>
       <div className="form-group">
-        <label className="control-label co-required" htmlFor={`${this.props.id}-email`}>Email</label>
+        <label className="control-label" htmlFor={`${this.props.id}-email`}>Email</label>
         <div>
           <input className="form-control"
             id={`${this.props.id}-email`}
             type="text"
             name="email"
             onChange={this.changeData}
-            value={this.state.email}
-            required />
+            value={this.state.email} />
         </div>
       </div>
     </div>;
