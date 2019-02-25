@@ -97,7 +97,7 @@ Resources.propTypes = {
   resourceMap: PropTypes.object.isRequired,
   onError: PropTypes.func,
   resourceToProps: PropTypes.func,
-  loaderComponent: PropTypes.element,
+  loaderComponent: PropTypes.oneOfType([PropTypes.element, PropTypes.func]),
 };
 
 const stateToProps = ({k8s}, {resourceMap}) => {
@@ -134,5 +134,5 @@ WithResources.propTypes = {
   resourceMap: PropTypes.object.isRequired,
   onError: PropTypes.func,
   resourceToProps: PropTypes.func,
-  loaderComponent: PropTypes.element,
+  loaderComponent: PropTypes.oneOfType([PropTypes.element, PropTypes.func]),
 };

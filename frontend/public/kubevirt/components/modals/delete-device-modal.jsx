@@ -81,14 +81,16 @@ class DeleteDeviceModal extends PromiseComponent {
     const deviceName = device.name;
     const entityName = getName(vmTemplate || vm);
 
-    return <Form onSubmit={this._submit}>
-      <ModalTitle>Delete {deviceName} from {entityName}</ModalTitle>
-      <ModalBody>
+    return (
+      <Form onSubmit={this._submit}>
+        <ModalTitle>Delete {deviceName} from {entityName}</ModalTitle>
+        <ModalBody>
         Are you sure you want to delete <strong>{deviceName}</strong>
-        <span> from  <strong>{entityName} </strong>?</span>
-      </ModalBody>
-      <ModalSubmitFooter errorMessage={this.state.errorMessage} inProgress={this.state.inProgress} submitText={'Delete'} cancel={this._cancel} />
-    </Form>;
+          <span> from  <strong>{entityName} </strong>?</span>
+        </ModalBody>
+        <ModalSubmitFooter errorMessage={this.state.errorMessage} inProgress={this.state.inProgress} submitText={'Delete'} cancel={this._cancel} />
+      </Form>
+    );
   }
 }
 
