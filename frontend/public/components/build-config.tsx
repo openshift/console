@@ -36,7 +36,7 @@ export const BuildConfigsDetails: React.SFC<BuildConfigsDetailsProps> = ({obj: b
     <SectionHeading text="Build Config Overview" />
     <div className="row">
       <div className="col-sm-6">
-        <ResourceSummary resource={buildConfig} showPodSelector={false} showNodeSelector={false} />
+        <ResourceSummary resource={buildConfig} showNodeSelector={false} />
       </div>
       <div className="col-sm-6">
         <BuildStrategy resource={buildConfig} />

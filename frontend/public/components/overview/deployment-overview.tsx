@@ -23,7 +23,7 @@ const DeploymentOverviewDetails: React.SFC<DeploymentOverviewDetailsProps> = ({i
       <DeploymentPodCounts resource={item.obj} resourceKind={DeploymentModel} />
     </div>
     <div className="resource-overview__summary">
-      <ResourceSummary resource={item.obj}>
+      <ResourceSummary resource={item.obj} showPodSelector={true}>
         <dt>Status</dt>
         <dd>
           {

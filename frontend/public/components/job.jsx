@@ -57,7 +57,7 @@ const Details = ({obj: job}) => <React.Fragment>
     <div className="row">
       <div className="col-md-6">
         <SectionHeading text="Job Overview" />
-        <ResourceSummary resource={job} showNodeSelector={false}>
+        <ResourceSummary resource={job} showNodeSelector={false} showPodSelector={true}>
           <dt>Desired Completions</dt>
           <dd>{job.spec.completions || '-'}</dd>
           <dt>Parallelism</dt>

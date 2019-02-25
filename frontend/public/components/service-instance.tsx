@@ -117,7 +117,7 @@ const ServiceInstanceDetails: React.SFC<ServiceInstanceDetailsProps> = ({obj: si
       <SectionHeading text="Service Instance Overview" />
       <div className="row">
         <div className="col-sm-6">
-          <ResourceSummary resource={si} showPodSelector={false} showNodeSelector={false} />
+          <ResourceSummary resource={si} showNodeSelector={false} />
         </div>
         <div className="col-sm-6">
           <dl className="co-m-pane__details">

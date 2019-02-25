@@ -19,7 +19,7 @@ const Details = ({obj: replicaSet}) => {
       <SectionHeading text="Replica Set Overview" />
       <div className="row">
         <div className="col-md-6">
-          <ResourceSummary resource={replicaSet}>
+          <ResourceSummary resource={replicaSet} showPodSelector={true}>
             {revision && <React.Fragment>
               <dt>Deployment Revision</dt>
               <dd>{revision}</dd>

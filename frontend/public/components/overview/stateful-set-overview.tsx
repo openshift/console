@@ -10,7 +10,7 @@ import { ResourceOverviewDetails } from './resource-overview-details';
 
 const StatefulSetOverviewDetails: React.SFC<StatefulSetOverviewDetailsProps> = ({item}) =>
   <div className="overview__sidebar-pane-body resource-overview__body">
-    <ResourceSummary resource={item.obj} />
+    <ResourceSummary resource={item.obj} showPodSelector={true} />
   </div>;
 
 const tabs = [

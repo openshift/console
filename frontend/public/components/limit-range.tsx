@@ -101,7 +101,7 @@ export const LimitRangeDetailsList = (resource) => {
 const Details = ({obj: rq}) => <React.Fragment>
   <div className="co-m-pane__body">
     <SectionHeading text="Limit Range Overview" />
-    <ResourceSummary resource={rq} showPodSelector={false} showNodeSelector={false} />
+    <ResourceSummary resource={rq} showNodeSelector={false} />
   </div>
   <LimitRangeDetailsList resource={rq} />
 </React.Fragment>;

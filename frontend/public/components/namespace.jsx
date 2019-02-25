@@ -201,7 +201,7 @@ export const NamespaceSummary = ({ns}) => {
   const requester = getRequester(ns);
   return <div className="row">
     <div className="col-sm-6 col-xs-12">
-      <ResourceSummary resource={ns} showPodSelector={false} showNodeSelector={false}>
+      <ResourceSummary resource={ns} showNodeSelector={false}>
         {displayName && <dt>Display Name</dt>}
         {displayName && <dd>{displayName}</dd>}
         {requester && <dt>Requester</dt>}

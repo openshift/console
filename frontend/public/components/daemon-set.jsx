@@ -70,7 +70,7 @@ const Details = ({obj: daemonset}) => <React.Fragment>
     <SectionHeading text="Daemon Set Overview" />
     <div className="row">
       <div className="col-lg-6">
-        <ResourceSummary resource={daemonset} />
+        <ResourceSummary resource={daemonset} showPodSelector={true} />
       </div>
       <div className="col-lg-6">
         <DaemonSetDetailsList ds={daemonset} />

@@ -214,7 +214,7 @@ export const ClusterServiceVersionDetails: React.SFC<ClusterServiceVersionDetail
       <div className="co-m-pane__body-group">
         <div className="row">
           <div className="col-sm-6">
-            <ResourceSummary resource={props.obj} showNodeSelector={false} showPodSelector={false} />
+            <ResourceSummary resource={props.obj} showNodeSelector={false} />
           </div>
           <div className="col-sm-6">
             <dt>Status</dt>

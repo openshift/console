@@ -101,7 +101,7 @@ class ReportsDetails extends React.Component<ReportsDetailsProps> {
         <SectionHeading text="Report Overview" />
         <div className="row">
           <div className="col-sm-6 col-xs-12">
-            <ResourceSummary resource={obj} showNodeSelector={false} showPodSelector={false} showAnnotations={true} />
+            <ResourceSummary resource={obj} showNodeSelector={false} showAnnotations={true} />
           </div>
           <div className="col-sm-6 col-xs-12">
             <dl className="co-m-pane__details">
@@ -439,7 +439,7 @@ const ReportGenerationQueriesDetails: React.SFC<ReportGenerationQueriesDetailsPr
   return <div>
     <div className="co-m-pane__body">
       <SectionHeading text="Chargeback Report Generation Query" />
-      <ResourceSummary resource={obj} showNodeSelector={false} showPodSelector={false} showAnnotations={true}>
+      <ResourceSummary resource={obj} showNodeSelector={false} showAnnotations={true}>
         <dt>Query</dt>
         <dd><pre><code>{_.get(obj, ['spec', 'query'])}</code></pre></dd>
         <div className="row">

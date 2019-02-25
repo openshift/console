@@ -189,7 +189,7 @@ export const PodDetailsList = ({pod}) => {
 };
 
 export const PodResourceSummary = ({pod}) => (
-  <ResourceSummary resource={pod} showPodSelector={false} showNodeSelector={false}>
+  <ResourceSummary resource={pod} showNodeSelector={false}>
     <dt>Node Selector</dt>
     <dd><Selector kind="Node" selector={pod.spec.nodeSelector} /></dd>
   </ResourceSummary>
