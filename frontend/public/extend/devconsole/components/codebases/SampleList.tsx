@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 export interface CodebasesSampleListProps {
-  codebases: Array<string>,
+  codebases: string[],
 }
 
 const CodebasesSampleList: React.SFC<CodebasesSampleListProps> = ({ codebases }: CodebasesSampleListProps) => {
@@ -11,6 +11,6 @@ const CodebasesSampleList: React.SFC<CodebasesSampleListProps> = ({ codebases }:
   return (
     <ul>{listItems}</ul>
   );
-}
+};
 
 export default CodebasesSampleList;
