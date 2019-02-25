@@ -1,14 +1,6 @@
 # How to Contribute
 
-This document outlines some of the conventions on
-development workflow, commit message formatting, contact points and other
-resources to make it easier to get your contribution accepted.
-
-# Email and Chat
-
-The project currently uses the general Tectonic Team email list and Slack channel:
-- Email: team-tectonic@coreos.com
-- Slack: #team-tectonic
+This document outlines some of the conventions on development workflow.
 
 ## Getting Started
 
@@ -35,25 +27,52 @@ questions: what changed and why. The subject line should feature the what and
 the body of the commit should describe the why.
 
 ```
-scripts: add the test-cluster command
+Add the test-cluster command
 
-this uses tmux to setup a test cluster that you can easily kill and
+This uses tmux to setup a test cluster that you can easily kill and
 start for debugging.
-
-Fixes #38
 ```
 
-The format can be described more formally as follows:
+Commits that fix a Bugzilla bug should add the bug number like `Bug 12345: ` to
+the first line of the commit and to the pull request title. To help others
+quickly go to the bug, also add a link to the bug in the body of the commit
+message. This allows automated tooling to generate links to bugs in release
+notes and will eventually allow us to automatically transition bugs to `ON_QA`
+when the fix is available in a nightly build. Here's an example commit message
+for a change that fixes a Bugzilla bug:
 
 ```
-<subsystem>: <what changed>
-<BLANK LINE>
-<why this change was made>
-<BLANK LINE>
-<footer>
+Bug 1679272: Validate console can talk to OAuth token URL
+
+Make sure we can successfully talk to the OAuth token URL after
+discovering metadata before marking the console pod as ready.
+
+Fixes https://bugzilla.redhat.com/show_bug.cgi?id=1679272
 ```
 
-The first line is the subject and should be no longer than 70 characters, the
-second line is always blank, and other lines should be wrapped at 80 characters.
-This allows the message to be easier to read on GitHub as well as in various
-git tools.
+Pull requests that close GitHub issues should add text to the pull request
+description in the format `Closes #123`. GitHub will automatically link each
+issue to its pull request and close the issue when the pull request merges.
+
+While we don't have automated tooling for JIRA issues, you should still include
+a link to the issue in the commit description to make it easy to get to the issue.
+
+### Pull Requests Against Other Branches
+
+Pull requests opened against branches other than master should start the pull
+request title with the branch name in brackets like `[release-3.11]` to make it
+obvious. Include the bug as well when appropriate. For instance,
+
+```
+[release-3.11] Bug 1643948: Fix crashlooping pods query
+```
+
+If you use the `/cherrypick` command, the bot will automatically append the
+branch to the pull request title. For instance, adding a comment to a PR like
+
+```
+/cherrypick release-3.11
+```
+
+will create a new pull request against the release-3.11 branch when the current
+pull request merges as long as there are no merge conflicts.
