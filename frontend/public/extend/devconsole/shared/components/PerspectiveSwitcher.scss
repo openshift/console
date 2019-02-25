@@ -1,0 +1,13 @@
+.devops-perspective-switcher {
+  &.pf-c-modal-box {
+    position: fixed;
+    left: 0px;
+    top: 76px;
+    height: calc(100vh - 76px);
+    width: 290px;
+  }
+
+  &__active-link {
+    color: black;
+  }
+}
