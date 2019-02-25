@@ -30,7 +30,7 @@ const AlertsFiring = ({namespace}) => (
     title="Alerts Firing"
     name="Alerts"
     namespace={namespace}
-    query={`sum(ALERTS{alertstate="firing", alertname!="DeadMansSwitch" ${namespace ? `, namespace="${namespace}"` : ''}})`}
+    query={`sum(ALERTS{alertstate="firing", alertname!="Watchdog" ${namespace ? `, namespace="${namespace}"` : ''}})`}
     to="/monitoring"
   />
 );
