@@ -6,7 +6,25 @@ import { getVolumeType, getVolumeLocation, getVolumeMountPermissions, getVolumeM
 import { getContainerState, getContainerStatus } from '../module/k8s/docker';
 import { ResourceEventStream } from './events';
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
-import { SectionHeading, Kebab, LabelList, navFactory, NodeLink, ResourceKebab, ResourceIcon, ResourceLink, ResourceSummary, ScrollToTopOnMount, Selector, Timestamp, VolumeIcon, units, AsyncComponent, StatusIcon } from './utils';
+import {
+  AsyncComponent,
+  EmptyBox,
+  Kebab,
+  LabelList,
+  NodeLink,
+  ResourceIcon,
+  ResourceKebab,
+  ResourceLink,
+  ResourceSummary,
+  ScrollToTopOnMount,
+  SectionHeading,
+  Selector,
+  StatusIcon,
+  Timestamp,
+  VolumeIcon,
+  navFactory,
+  units,
+} from './utils';
 import { PodLogs } from './pod-logs';
 import { Line, requirePrometheus } from './graphs';
 import { breadcrumbsForOwnerRefs } from './utils/breadcrumbs';
@@ -180,17 +198,21 @@ export const PodResourceSummary = ({pod}) => (
 export const PodVolumeTable = ({heading, pod}) => (
   <React.Fragment>
     {heading && <SectionHeading text={heading} />}
-    <div className="co-m-table-grid co-m-table-grid--bordered">
-      <div className="row co-m-table-grid__head">
-        <div className="col-sm-3 col-xs-4">Name</div>
-        <div className="col-sm-3 col-xs-4">Type</div>
-        <div className="col-sm-3 hidden-xs">Permissions</div>
-        <div className="col-sm-3 col-xs-4">Utilized By</div>
-      </div>
-      <div className="co-m-table-grid__body">
-        {getVolumeMountsByPermissions(pod).map((v, i) => <Volume key={i} pod={pod} volume={v} />)}
-      </div>
-    </div>
+    {_.isEmpty(pod.spec.volumes)
+      ? <EmptyBox label="Volumes" />
+      : (
+        <div className="co-m-table-grid co-m-table-grid--bordered">
+          <div className="row co-m-table-grid__head">
+            <div className="col-sm-3 col-xs-4">Name</div>
+            <div className="col-sm-3 col-xs-4">Type</div>
+            <div className="col-sm-3 hidden-xs">Permissions</div>
+            <div className="col-sm-3 col-xs-4">Utilized By</div>
+          </div>
+          <div className="co-m-table-grid__body">
+            {getVolumeMountsByPermissions(pod).map((v, i) => <Volume key={i} pod={pod} volume={v} />)}
+          </div>
+        </div>
+      )}
   </React.Fragment>
 );
 
