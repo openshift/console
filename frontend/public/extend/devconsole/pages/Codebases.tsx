@@ -8,7 +8,7 @@ const CodebasesPage: React.SFC = () => {
       <h1>This is Codebase Component.</h1>
       <CodebasesSampleList codebases={mockCodebases} />
     </React.Fragment>
-  )
-}
+  );
+};
 
 export default CodebasesPage;
