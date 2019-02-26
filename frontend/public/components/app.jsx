@@ -193,8 +193,11 @@ class App extends React.PureComponent {
                   <LazyRoute path="/cluster-health" exact loader={() => import('./cluster-health' /* webpackChunkName: "cluster-health" */).then(m => m.ClusterHealth)} />
                   <LazyRoute path="/start-guide" exact loader={() => import('./start-guide' /* webpackChunkName: "start-guide" */).then(m => m.StartGuidePage)} />
 
-                  <LazyRoute path="/operatorhub" exact loader={() => import('./operator-hub/operator-hub-page' /* webpackChunkName: "operator-hub" */).then(m => m.OperatorHubPage)} />
+                  <LazyRoute path="/operatorhub/all-namespaces" exact loader={() => import('./operator-hub/operator-hub-page' /* webpackChunkName: "operator-hub" */).then(m => m.OperatorHubPage)} />
+                  <LazyRoute path="/operatorhub/ns/:ns" exact loader={() => import('./operator-hub/operator-hub-page' /* webpackChunkName: "operator-hub" */).then(m => m.OperatorHubPage)} />
+                  <Route path="/operatorhub" exact component={NamespaceRedirect} />
                   <LazyRoute path="/operatorhub/subscribe" exact loader={() => import('./operator-hub/operator-hub-subscribe' /* webpackChunkName: "operator-hub-subscribe" */).then(m => m.OperatorHubSubscribePage)} />
+
                   <LazyRoute path="/catalog/all-namespaces" exact loader={() => import('./catalog/catalog-page' /* webpackChunkName: "catalog" */).then(m => m.CatalogPage)} />
                   <LazyRoute path="/catalog/ns/:ns" exact loader={() => import('./catalog/catalog-page' /* webpackChunkName: "catalog" */).then(m => m.CatalogPage)} />
                   <Route path="/catalog" exact component={NamespaceRedirect} />

@@ -30,8 +30,9 @@ export type ObjectReference = {
 };
 
 export type ObjectMetadata = {
+  name?: string;
+  generateName?: string;
   annotations?: {[key: string]: string},
-  name: string,
   namespace?: string,
   labels?: {[key: string]: string},
   ownerReferences?: OwnerReference[],

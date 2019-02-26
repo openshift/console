@@ -37,6 +37,7 @@ describe(SubscriptionChannelModal.name, () => {
         provider: {
           name: 'CoreOS, Inc',
         },
+        installModes: [],
       },
     }, {
       name: 'nightly',
@@ -48,6 +49,7 @@ describe(SubscriptionChannelModal.name, () => {
         provider: {
           name: 'CoreOS, Inc',
         },
+        installModes: [],
       },
     }];
 

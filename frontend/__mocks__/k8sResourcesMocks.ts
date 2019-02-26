@@ -58,6 +58,7 @@ export const testClusterServiceVersion: ClusterServiceVersionKind = {
         'alm-owner-testapp': 'testapp.clusterserviceversions.operators.coreos.com.v1alpha1',
       },
     },
+    installModes: [],
     install: {
       strategy: 'Deployment',
       spec: {
@@ -129,6 +130,7 @@ export const localClusterServiceVersion: ClusterServiceVersionKind = {
         'alm-owner-local-testapp': 'local-testapp.clusterserviceversions.operators.coreos.com.v1alpha1',
       },
     },
+    installModes: [],
     install: {
       strategy: 'Deployment',
       spec: {
@@ -268,6 +270,7 @@ export const testPackageManifest: PackageManifestKind = {
         provider: {
           name: 'CoreOS, Inc',
         },
+        installModes: [],
       },
     }],
     defaultChannel: 'alpha',

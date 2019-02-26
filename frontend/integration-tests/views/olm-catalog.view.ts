@@ -17,6 +17,8 @@ export const hasSubscription = (name: string) => browser.getCurrentUrl().then(ur
   return entryRowFor(name).element(by.buttonText('Create Subscription')).isPresent();
 }).then(canSubscribe => !canSubscribe);
 
+export const viewSubscriptionsFor = (name: string) => entryRowFor(name).element(by.partialButtonText('View subscription')).click();
+
 export const viewCatalogDetail = (name: string) => $$('.co-catalogsource-list__section').filter(section => section.$('h3').getText()
   .then(text => text === name)).first().element(by.linkText('View catalog details'))
   .click();

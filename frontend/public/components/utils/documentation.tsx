@@ -1,25 +1,10 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 
-import { productName } from '../../branding';
 import { ExternalLink } from '../utils';
 
 // Prefer the documentation base URL passed as a flag, but fall back to the latest docs if none was specified.
 export const openshiftHelpBase = (window as any).SERVER_FLAGS.documentationBaseURL || 'https://docs.okd.io/latest/';
-
-/* global
-  HELP_TOPICS: false,
-  GET_STARTED_CLI: false,
-  NETWORK_POLICY_GUIDE: false,
-  COMPUTE_RESOURCES_QUOTA: false,
- */
-export enum HELP_TOPICS {
-  GET_STARTED_CLI = 'cli_reference/get_started_cli.html',
-  NETWORK_POLICY_GUIDE = 'admin_guide/managing_networking.html#admin-guide-networking-networkpolicy',
-  COMPUTE_RESOURCES_QUOTA = 'dev_guide/compute_resources.html#dev-compute-resources',
-}
-
-export const helpLink = (topic: HELP_TOPICS) => `${openshiftHelpBase}${topic}`;
 
 /* eslint-disable react/jsx-no-target-blank */
 export const DocumentationLinks = () => <dl className="co-documentation-links">
@@ -27,11 +12,6 @@ export const DocumentationLinks = () => <dl className="co-documentation-links">
   <dd className="co-documentation-links__description">
     From getting started with creating your first application, to trying out more advanced build and deployment techniques, these resources
     provide what you need to set up and manage your environment as a cluster administrator or an application developer.
-  </dd>
-  <dt className="co-documentation-links__title"><ExternalLink href={helpLink(HELP_TOPICS.GET_STARTED_CLI)} text="Get Started with the CLI" /></dt>
-  <dd className="co-documentation-links__description">
-    With the {productName} command line interface (CLI), you can create applications and manage projects from a terminal. Learn how to install
-    and use the oc client tool.
   </dd>
 </dl>;
 

@@ -335,6 +335,7 @@ export const OperatorHubTileView = requireOperatorGroup(
       const { uid, name, imgUrl, iconClass, provider, description, installed } = item;
       const normalizedIconClass = iconClass && `icon ${normalizeIconClass(iconClass)}`;
       const vendor = provider ? `provided by ${provider}` : null;
+
       return (
         <CatalogTile
           id={uid}
@@ -366,8 +367,8 @@ export const OperatorHubTileView = requireOperatorGroup(
           pageDescription={pageDescription}
           emptyStateInfo="No Operator Hub items are being shown due to the filters being applied."
         />
-        <Modal show={!!detailsItem} onHide={this.closeOverlay} bsSize={'lg'} className="co-catalog-page__overlay right-side-modal-pf">
-          {detailsItem && <OperatorHubItemDetails item={detailsItem} closeOverlay={this.closeOverlay} />}
+        <Modal show={!!detailsItem} onHide={this.closeOverlay} bsSize="lg" className="co-catalog-page__overlay right-side-modal-pf">
+          {detailsItem && <OperatorHubItemDetails namespace={this.props.namespace} item={detailsItem} closeOverlay={this.closeOverlay} />}
         </Modal>
       </React.Fragment>;
     }
@@ -380,6 +381,7 @@ OperatorHubTileView.propTypes = {
 };
 
 export type OperatorHubTileViewProps = {
+  namespace?: string;
   items: any[];
   catalogSourceConfig: K8sResourceKind;
 };
