@@ -85,22 +85,20 @@ describe('getCompletions', () => {
   });
 
   it('invokes callback with appropriate completions for properties', (done) => {
-    const swagger = {
-      definitions: {
-        'io.k8s.api.apps.v1.Deployment': {},
-        'io.k8s.api.apps.v1.DeploymentSpec': {
-          properties: {
-            minReadySeconds: {
-              description: 'Dummy property',
-              type: 'integer',
-              format: 'int32',
-            },
+    const definitions = {
+      'io.k8s.api.apps.v1.Deployment': {},
+      'io.k8s.api.apps.v1.DeploymentSpec': {
+        properties: {
+          minReadySeconds: {
+            description: 'Dummy property',
+            type: 'integer',
+            format: 'int32',
           },
         },
       },
     };
     sessionMock.getLines = jasmine.createSpy('getLinesSpy').and.returnValue(['kind: Deployment', 'apiVersion: apps/v1']);
-    spyOn(window.localStorage, 'getItem').and.returnValue(JSON.stringify(swagger));
+    spyOn(window.sessionStorage, 'getItem').and.returnValue(JSON.stringify(definitions));
 
     getCompletions(editorMock, sessionMock, position, '', (error, results) => {
       expect(results.length).toEqual(1);
@@ -116,7 +114,7 @@ describe('getCompletions', () => {
 
   it('does not provide completion for properties if k8s API spec cannot be retrieved', (done) => {
     sessionMock.getLines = jasmine.createSpy('getLinesSpy').and.returnValue(['kind: Deployment', 'apiVersion: apps/v1']);
-    spyOn(window.localStorage, 'getItem').and.returnValue(null);
+    spyOn(window.sessionStorage, 'getItem').and.returnValue(null);
 
     getCompletions(editorMock, sessionMock, position, '', (error, results) => {
       fail('Should not have been called');
