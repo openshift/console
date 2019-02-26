@@ -183,7 +183,7 @@ class ConfigureNamespacePullSecret extends PromiseComponent {
             <label>Namespace</label>
           </div>
           <div className="col-xs-9">
-            <ResourceIcon kind="Namespace" className="co-m-resource-icon--align-left" /> &nbsp;{namespace.metadata.name}
+            <ResourceIcon kind="Namespace" /> &nbsp;{namespace.metadata.name}
           </div>
         </div>
 
@@ -193,7 +193,7 @@ class ConfigureNamespacePullSecret extends PromiseComponent {
           </div>
           { pullSecret ?
             <div className="col-xs-9">
-              <ResourceIcon kind="Secret" className="co-m-resource-icon--align-left" />
+              <ResourceIcon kind="Secret" />
                 &nbsp;{_.get(pullSecret, 'metadata.name')}
             </div> : <div className="col-xs-9">
               <input type="text" className="form-control" id="namespace-pull-secret-name" aria-describedby="namespace-pull-secret-name-help" required />
