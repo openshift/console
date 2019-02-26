@@ -17,6 +17,10 @@
     <title>OpenShift Dedicated</title>
     <meta name="application-name" content="OpenShift Dedicated">
     [[ end ]]
+    [[ if eq .Branding "azure" ]]
+    <title>Azure Red Hat OpenShift</title>
+    <meta name="application-name" content="Azure Red Hat OpenShift">
+    [[ end ]]
 
     [[ if eq .Branding "okd" ]]
     <link rel="shortcut icon" href="<%= require('./imgs/okd-favicon.png') %>">
