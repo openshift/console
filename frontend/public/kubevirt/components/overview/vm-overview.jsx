@@ -1,7 +1,7 @@
-import * as React from 'react';
+import React from 'react';
 
 import { VirtualMachineModel } from '../../../models';
-import { NetworkingOverview, ResourceOverviewDetails, OverviewItem } from '../okdcomponents';
+import { ResourceOverviewDetails } from '../okdcomponents';
 
 import { menuActions } from '../vm/menu-actions';
 import { ConnectedVmDetails } from '../vm';

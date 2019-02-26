@@ -34,6 +34,7 @@ import {
   ReplicaSetModel,
   StatefulSetModel,
   VirtualMachineModel,
+  VirtualMachineInstanceMigrationModel,
 } from '../../models';
 import {
   ActionsMenu,
@@ -51,6 +52,10 @@ import { ProjectOverview } from './project-overview';
 import { ResourceOverviewPage } from './resource-overview-page';
 import { PodStatus } from '../pod';
 import { FLAGS, featureReducerName } from '../../features';
+
+import { VmStatus } from 'kubevirt-web-ui-components';
+import { findImporterPods, findPod, findVMIMigration } from '../../kubevirt/components/utils/resources';
+import { VIRT_LAUNCHER_POD_PREFIX } from '../../kubevirt/components/utils/constants';
 
 enum View {
   Resources = 'resources',
@@ -879,12 +884,16 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
       const pods = this.getPodsForResource(vm);
       const services = this.getServicesForResource(vm);
       const routes = this.getRoutesForServices(services);
-      // TODO: const status = <VirtualMachineStatus vm={vm} />;
+      const launcherPod = findPod(_.get(this.props.pods, 'data', []), vm.metadata.name, VIRT_LAUNCHER_POD_PREFIX);
+      const importerPods = findImporterPods(_.get(this.props.pods, 'data', []), vm);
+      const migration = findVMIMigration(_.get(this.props.vmMigrations, 'data', []), vm.metadata.name);
+      const status = <VmStatus vm={vm} launcherPod={launcherPod} importerPods={importerPods} migration={migration} />;
       return {
         obj,
         pods,
         routes,
         services,
+        status,
       };
     });
   }
@@ -1066,6 +1075,12 @@ const Overview_: React.SFC<OverviewProps> = (({mock, namespace, selectedItem, se
         namespace,
         prop: 'virtualMachines',
       },
+      {
+        isList: true,
+        kind: VirtualMachineInstanceMigrationModel.kind,
+        namespace,
+        prop: 'vmMigrations',
+      },
     ] || []),
   ];
 
@@ -1233,6 +1248,7 @@ type OverviewMainContentOwnProps = {
   statefulSets?: FirehoseList;
   title?: string;
   virtualMachines?: FirehoseList;
+  vmMigrations?: FirehoseList;
 };
 
 type OverviewMainContentProps = OverviewMainContentPropsFromState & OverviewMainContentPropsFromDispatch & OverviewMainContentOwnProps;
