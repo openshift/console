@@ -123,3 +123,16 @@ export const DataVolumeModel: K8sKind = {
   kind: 'DataVolume',
   id: 'datavolume',
 };
+
+export const V2VVMwareModel: K8sKind = {
+  label: 'V2V VMWare Provider',
+  labelPlural: 'V2V VMWare Providers',
+  apiVersion: 'v1alpha1',
+  path: 'v2vvmwares',
+  apiGroup: 'kubevirt.io',
+  plural: 'v2vvmwares',
+  abbr: 'v2vVmw',
+  namespaced: true,
+  kind: 'V2VVmware',
+  id: 'v2vvmware',
+};
