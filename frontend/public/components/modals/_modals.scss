@@ -82,8 +82,8 @@
   height: calc(100% - 20px); // subtract height margin-top 10px + margin-bottom 10px
   outline: 0;
 
-  @media(min-width: $screen-sm-min) {
-    height: calc(100% - 60px); // subtract height margin-top 30px + margin-bottom 30px
+  @media(min-width: $screen-sm-min), (max-width: $screen-xs-max) and (orientation: landscape) {
+    height: calc(100% - 60px); // At desktop, subtract margin-top 30px + margin-bottom 30px OR in the case of mobile landscape orientation, subtract the height of ios url control bar, since its height is not taken into account when the viewport height is calculated on initial page load. This causes the modal to extend below the viewport and hide modal-footer buttons.
   }
 }
 
