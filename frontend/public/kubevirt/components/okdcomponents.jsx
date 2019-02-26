@@ -11,3 +11,6 @@ export * from '../../components/resource-list';
 export * from '../../components/events';
 export * from '../../components/utils/status-box'; // TODO: move to utils/okdutils.jsx
 export * from '../../components/modals/error-modal';
+export * from '../../components/overview/networking-overview';
+export * from '../../components/overview/resource-overview-details';
+export * from '../../components/overview';

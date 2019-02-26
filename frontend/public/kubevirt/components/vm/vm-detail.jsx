@@ -59,7 +59,7 @@ const VmEvents = ({ obj: vm }) => {
   return <ResourcesEventStream filters={[vmiFilter, vmFilter, launcherPodFilter, importerPodFilter, migrationsFilter]} namespace={getNamespace(vm)} />;
 };
 
-const ConnectedVmDetails = ({ obj: vm }) => {
+export const ConnectedVmDetails = ({ obj: vm, ...rest }) => {
   const { name, namespace } = vm.metadata;
   const resourceMap = {
     vmi: {
@@ -79,7 +79,7 @@ const ConnectedVmDetails = ({ obj: vm }) => {
 
   return (
     <WithResources resourceMap={resourceMap}>
-      <VmDetails_ vm={vm} />
+      <VmDetails_ vm={vm} {...rest} />
     </WithResources>
   );
 };
@@ -145,7 +145,7 @@ export const VirtualMachinesDetailsPage = props => {
   };
 
   const pages = [
-    navFactory.details(ConnectedVmDetails),
+    navFactory.details(p => <div className="co-m-pane__body"><ConnectedVmDetails {...p} /></div>),
     navFactory.editYaml(),
     consolePage,
     navFactory.events(VmEvents),

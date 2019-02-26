@@ -33,6 +33,7 @@ import {
   ReplicationControllerModel,
   ReplicaSetModel,
   StatefulSetModel,
+  VirtualMachineModel,
 } from '../../models';
 import {
   ActionsMenu,
@@ -49,6 +50,7 @@ import { overviewMenuActions, OverviewNamespaceDashboard } from './namespace-ove
 import { ProjectOverview } from './project-overview';
 import { ResourceOverviewPage } from './resource-overview-page';
 import { PodStatus } from '../pod';
+import { FLAGS, featureReducerName } from '../../features';
 
 enum View {
   Resources = 'resources',
@@ -463,6 +465,7 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
       services,
       statefulSets,
       selectedView,
+      virtualMachines,
     } = this.props;
     const {filterValue, selectedGroup} = this.state;
 
@@ -478,7 +481,8 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
       || !_.isEqual(replicationControllers, prevProps.replicationControllers)
       || !_.isEqual(routes, prevProps.routes)
       || !_.isEqual(services, prevProps.services)
-      || !_.isEqual(statefulSets, prevProps.statefulSets)) {
+      || !_.isEqual(statefulSets, prevProps.statefulSets)
+      || !_.isEqual(virtualMachines, prevProps.virtualMachines)) {
       this.createOverviewData();
     } else if (filterValue !== prevState.filterValue) {
       const filteredItems = this.filterItems(this.state.items);
@@ -865,6 +869,26 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
     }, []);
   }
 
+  createVirtualMachineItems(): OverviewItem[] {
+    const {virtualMachines} = this.props;
+    return _.map(virtualMachines.data, vm => {
+      const obj = {
+        ...vm,
+        kind: VirtualMachineModel.kind,
+      };
+      const pods = this.getPodsForResource(vm);
+      const services = this.getServicesForResource(vm);
+      const routes = this.getRoutesForServices(services);
+      // TODO: const status = <VirtualMachineStatus vm={vm} />;
+      return {
+        obj,
+        pods,
+        routes,
+        services,
+      };
+    });
+  }
+
   createOverviewData(): void {
     const {loaded, updateResources} = this.props;
 
@@ -878,6 +902,7 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
       ...this.createDeploymentConfigItems(),
       ...this.createStatefulSetItems(),
       ...this.createPodItems(),
+      ...this.createVirtualMachineItems(),
     ];
 
     updateResources(items);
@@ -941,12 +966,14 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
 
 const OverviewMainContent = connect<OverviewMainContentPropsFromState, OverviewMainContentPropsFromDispatch, OverviewMainContentOwnProps>(mainContentStateToProps, mainContentDispatchToProps)(OverviewMainContent_);
 
-const overviewStateToProps = ({UI}): OverviewPropsFromState => {
+const overviewStateToProps = (state): OverviewPropsFromState => {
+  const { UI } = state;
   const selectedUID = UI.getIn(['overview', 'selectedUID']);
   const resources = UI.getIn(['overview', 'resources']);
   const selectedItem = !!resources && resources.get(selectedUID);
   const selectedView = UI.getIn(['overview', 'selectedView'], View.Resources);
-  return { selectedItem, selectedView };
+  const kubevirtFlag = state[featureReducerName].get(FLAGS.KUBEVIRT);
+  return { selectedItem, selectedView, kubevirtFlag };
 };
 
 const overviewDispatchToProps = (dispatch) => {
@@ -955,7 +982,7 @@ const overviewDispatchToProps = (dispatch) => {
   };
 };
 
-const Overview_: React.SFC<OverviewProps> = (({mock, namespace, selectedItem, selectedView, title, dismissDetails}) => {
+const Overview_: React.SFC<OverviewProps> = (({mock, namespace, selectedItem, selectedView, title, dismissDetails, kubevirtFlag}) => {
   const sidebarOpen = !_.isEmpty(selectedItem) && selectedView !== View.Dashboard;
   const className = classnames('overview', {'overview--sidebar-shown': sidebarOpen});
   // TODO: Update resources for native Kubernetes clusters.
@@ -1032,6 +1059,14 @@ const Overview_: React.SFC<OverviewProps> = (({mock, namespace, selectedItem, se
       namespace,
       prop: 'statefulSets',
     },
+    ...(kubevirtFlag && [
+      {
+        isList: true,
+        kind: VirtualMachineModel.kind,
+        namespace,
+        prop: 'virtualMachines',
+      },
+    ] || []),
   ];
 
   return <div className={className}>
@@ -1115,7 +1150,7 @@ export type BuildConfigOverviewItem = K8sResourceKind & {
 
 export type OverviewItem = {
   alerts?: OverviewItemAlerts;
-  buildConfigs: BuildConfigOverviewItem[];
+  buildConfigs?: BuildConfigOverviewItem[];
   current?: PodControllerOverviewItem;
   isRollingOut?: boolean;
   obj: K8sResourceKind;
@@ -1197,6 +1232,7 @@ type OverviewMainContentOwnProps = {
   selectedItem: OverviewItem;
   statefulSets?: FirehoseList;
   title?: string;
+  virtualMachines?: FirehoseList;
 };
 
 type OverviewMainContentProps = OverviewMainContentPropsFromState & OverviewMainContentPropsFromDispatch & OverviewMainContentOwnProps;
@@ -1214,6 +1250,7 @@ type OverviewMainContentState = {
 type OverviewPropsFromState = {
   selectedItem: any;
   selectedView: View;
+  kubevirtFlag?: boolean;
 };
 
 type OverviewPropsFromDispatch = {
