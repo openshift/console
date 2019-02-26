@@ -99,6 +99,9 @@ $color-dark-border: #ddd;
   display: flex;
   justify-content: space-between;
   white-space: pre;
+  > *:not(:first-child) {
+    margin-left: 8px;
+  }
 }
 
 .co-sysevent__source {
