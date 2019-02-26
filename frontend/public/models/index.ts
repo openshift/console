@@ -792,6 +792,7 @@ export const ServiceBindingModel: K8sKind = {
 };
 
 export * from '../kubevirt/models/vm'; // needed when setting features and resource pages
+export * from '../metalkube/models/host'; // needed when setting features and resource pages
 
 export const LimitRangeModel: K8sKind = {
   label: 'Limit Range',

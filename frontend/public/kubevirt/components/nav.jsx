@@ -78,6 +78,7 @@ const PageNav = ({ onNavSelect, ResourceClusterLink, HrefLink, ResourceNSLink, M
       <NavSection title="Administration">
         <ResourceClusterLink resource="namespaces" name="Namespaces" required={FLAGS.CAN_LIST_NS} />
         <ResourceClusterLink resource="nodes" name="Nodes" required={FLAGS.CAN_LIST_NODE} />
+        <ResourceNSLink resource="baremetalhosts" name="Bare Metal Hosts" required={FLAGS.METALKUBE} />
         <ResourceNSLink resource={referenceForModel(MachineSetModel)} name="Machine Sets" required={FLAGS.CLUSTER_API} />
         <ResourceNSLink resource={referenceForModel(MachineModel)} name="Machines" required={FLAGS.CLUSTER_API} />
         <HrefLink href="/settings/cluster" activePath="/settings/cluster/" name="Cluster Settings" required={FLAGS.CLUSTER_VERSION} />

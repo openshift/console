@@ -14,6 +14,7 @@ import {
   PrometheusModel,
   SelfSubjectAccessReviewModel,
   VirtualMachineModel,
+  BaremetalHostModel,
 } from './models';
 import { ClusterVersionKind } from './module/k8s';
 import { k8sBasePath, referenceForModel } from './module/k8s/k8s';
@@ -44,6 +45,7 @@ import { UIActions } from './ui/ui-actions';
   CLUSTER_API: false,
   CLUSTER_VERSION: false,
   MACHINE_CONFIG: false,
+  METALKUBE: false,
  */
 export enum FLAGS {
   AUTH_ENABLED = 'AUTH_ENABLED',
@@ -60,6 +62,7 @@ export enum FLAGS {
   CAN_LIST_MACHINE_CONFIG = 'CAN_LIST_MACHINE_CONFIG',
   CAN_CREATE_PROJECT = 'CAN_CREATE_PROJECT',
   KUBEVIRT = 'KUBEVIRT',
+  METALKUBE = 'METALKUBE',
   SHOW_OPENSHIFT_START_GUIDE = 'SHOW_OPENSHIFT_START_GUIDE',
   SERVICE_CATALOG = 'SERVICE_CATALOG',
   OPERATOR_HUB = 'OPERATOR_HUB',
@@ -82,6 +85,7 @@ export const CRDs = {
   [referenceForModel(OperatorSourceModel)]: FLAGS.OPERATOR_HUB,
   [referenceForModel(MachineModel)]: FLAGS.CLUSTER_API,
   [referenceForModel(MachineConfigModel)]: FLAGS.MACHINE_CONFIG,
+  [referenceForModel(BaremetalHostModel)]: FLAGS.METALKUBE,
 };
 
 const SET_FLAG = 'SET_FLAG';
