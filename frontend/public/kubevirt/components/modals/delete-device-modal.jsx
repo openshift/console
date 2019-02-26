@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import * as _ from 'lodash-es';
 import { Form } from 'patternfly-react';
-import { addPrefixToPatch, getName } from 'kubevirt-web-ui-components';
+import { addPrefixToPatch, getName, getDeviceBootOrderPatch } from 'kubevirt-web-ui-components';
 
 import { PromiseComponent } from '../utils/okdutils';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/okdfactory';
@@ -27,7 +27,7 @@ class DeleteDeviceModal extends PromiseComponent {
     const deviceIndex = devices.findIndex(d => d.name === device.name);
     const specIndex = _.get(vm, `spec.template.spec.${deviceType.spec}`,[]).findIndex(spec => spec.name === device.name);
 
-    const patch = [];
+    let patch = [];
 
     if (deviceIndex !== -1) {
       patch.push({
@@ -62,6 +62,11 @@ class DeleteDeviceModal extends PromiseComponent {
         path: '/spec/template/spec/domain/devices/autoattachPodInterface',
         value: false,
       });
+    }
+
+    const bootOrderIndex = _.get(device, 'bootOrder', -1);
+    if (bootOrderIndex !== -1) {
+      patch = patch.concat(getDeviceBootOrderPatch(vm, deviceType.type, device.name));
     }
 
     if (patch.length === 0) {
