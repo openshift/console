@@ -33,12 +33,12 @@ describe('Subscribing to an Operator from Operator Hub', () => {
     });
   });
 
-  it('displays Couchbase Operator operator when filter "MongoDB" is active', async() => {
-    await catalogPageView.clickFilterCheckbox('MongoDB');
+  it('displays Couchbase Operator operator when filter "Couchbase" is active', async() => {
+    await catalogPageView.clickFilterCheckbox('Couchbase');
 
     expect(catalogPageView.catalogTileFor('Couchbase Operator').isDisplayed()).toBe(true);
 
-    await catalogPageView.clickFilterCheckbox('MongoDB');
+    await catalogPageView.clickFilterCheckbox('Couchbase');
   });
 
   it('does not display Couchbase Operator operator when filter "Red Hat" is active', async() => {
