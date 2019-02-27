@@ -25,7 +25,8 @@ describe('Source-to-Image', () => {
     });
   });
 
-  describe('Node.js app', () => {
+  // Disabling for now due to flake https://jira.coreos.com/browse/CONSOLE-1293
+  xdescribe('CONSOLE-1293 - Node.js app', () => {
     const appName = 'test-nodejs';
     const resources = {
       'buildconfigs': {kind: 'BuildConfig'},
