@@ -11,7 +11,7 @@ import {detailViewAction, detailViewVMmStatus, listViewAction, listViewVMmStatus
 
 const VM_BOOTUP_TIMEOUT = 60000;
 const VM_ACTIONS_TIMEOUT = 90000;
-const VM_STOP_TIMEOUT = 3000;
+const VM_STOP_TIMEOUT = 6000;
 
 describe('Test VM actions', () => {
   const leakedResources = new Set<string>();

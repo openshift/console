@@ -1,4 +1,12 @@
-import { $ } from 'protractor';
+import { $, $$ } from 'protractor';
+
+// Wizard Common
+export const wizardContent = $('.wizard-pf-contents');
+export const wizardHeader = $('.modal-header');
+export const provisionResult = $('.wizard-pf-body h3');
+export const nextButton = $('.wizard-pf-footer > button:last-child');
+export const applyButton = $('.inline-edit-buttons > button:first-child');
+export const cancelButton = $('.inline-edit-buttons > button:last-child');
 
 // Basic Settings tab
 export const createWithWizardLink = $('#wizard-link');
@@ -40,17 +48,24 @@ export const networkDefinitionButton = $('#network-edit-2-row');
 export const networkDefinitionMenu = $('#network-edit-2-row + ul');
 
 // Storage tab
-export const attachStorage = $('#attach-storage-btn');
-export const storageButton = $('#name-attach-edit-1-row');
-export const storageMenu = $('#name-attach-edit-1-row + ul');
+export const attachDisk = $('#attach-disk-btn');
+export const createDisk = $('#create-storage-btn');
 
-// Wizard Common
-export const wizardContent = $('.wizard-pf-contents');
-export const wizardHeader = $('.modal-header');
-export const provisionResult = $('.wizard-pf-body h3');
-export const nextButton = $('.wizard-pf-footer > button:last-child');
-export const applyButton = $('.inline-edit-buttons > button:first-child');
-export const cancelButton = $('.inline-edit-buttons > button:last-child');
+const activateTableRow = (rowNumber: number) => $$('.kubevirt-editable-table tbody tr').get(rowNumber).click();
+/**
+ * Sets an attribute of a disk (name, size) on a given row
+ * @param {number}    rowNumber     Number of row to select, indexed from 0 for the first row.
+ * @param {string}    attribute     Attribute name - size or name
+ * @param {string}    value         Value to set.
+ */
+export const setDiskAttribute = async(rowNumber: number, attribute: string, value: string) => {
+  await activateTableRow(rowNumber);
+  const attributeField = $(`#${attribute}-edit-${rowNumber + 1}-row`);
+  await attributeField.clear().then(() => attributeField.sendKeys(value));
+  await applyButton.click();
+};
+export const diskStorageClassButton = (row: string) => $(`#storage-edit-${row}-row`);
+export const diskStorageClassMenu = (row: string) => $(`#storage-edit-${row}-row + ul`);
 
 // VMs List view
 export const firstRowVMStatus = $('div.co-m-row:first-child > div:first-child > div:nth-child(3)');
