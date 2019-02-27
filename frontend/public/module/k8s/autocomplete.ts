@@ -8,6 +8,7 @@ import { ServiceAccountModel, SecretModel, ServiceModel, ConfigMapModel, Alertma
 import { K8sKind, K8sResourceKind } from '../../module/k8s';
 import { k8sListPartialMetadata } from '../../module/k8s/resource';
 import { getActiveNamespace } from '../../ui/ui-actions';
+import { SWAGGER_SESSION_STORAGE_KEY } from '../../const';
 
 export type AceSnippet = {
   content: string;
@@ -139,11 +140,11 @@ export const getPropertyCompletions = async(state: Editor, session: IEditSession
 
   const kind = valueFor('kind');
   const apiVersion = valueFor('apiVersion');
-  const swagger: SwaggerAPISpec = JSON.parse(window.sessionStorage.getItem(`${(window as any).SERVER_FLAGS.consoleVersion}--swagger.json`));
+  const swaggerDefinitions: SwaggerDefinitions = JSON.parse(window.sessionStorage.getItem(SWAGGER_SESSION_STORAGE_KEY));
 
-  if (kind.length && apiVersion.length && swagger) {
-    const defKey = Object.keys(swagger.definitions).find(key => key.endsWith(`${apiVersion.replace('/', '.')}.${kind}`));
-    const results = Object.keys(_.get(swagger.definitions, [`${defKey}Spec`, 'properties'], {})).map(prop => ({
+  if (kind.length && apiVersion.length && swaggerDefinitions) {
+    const defKey = Object.keys(swaggerDefinitions).find(key => key.endsWith(`${apiVersion.replace('/', '.')}.${kind}`));
+    const results = Object.keys(_.get(swaggerDefinitions, [`${defKey}Spec`, 'properties'], {})).map(prop => ({
       name: prop,
       score: 10000,
       value: prop,
@@ -205,14 +206,18 @@ export const getCompletions: Completer['getCompletions'] = (editor, session, pos
   }
 };
 
+export type SwaggerDefinitions = {
+  [name: string]: {
+    description: string;
+    properties: {[prop: string]: {description: string, type: string}};
+  }
+};
+
 export type SwaggerAPISpec = {
   swagger: string;
   info: {title: string, version: string};
   paths: {[path: string]: any};
-  definitions: {[name: string]: {
-    description: string;
-    properties: {[prop: string]: {description: string, type: string}};
-  }};
+  definitions: SwaggerDefinitions;
 };
 
 // TODO: Remove once https://github.com/DefinitelyTyped/DefinitelyTyped/pull/25337 is merged
