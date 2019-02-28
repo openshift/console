@@ -52,8 +52,6 @@ func main() {
 	// See https://github.com/openshift/service-serving-cert-signer
 	fServiceCAFile := fs.String("service-ca-file", "", "CA bundle for OpenShift services signed with the service signing certificates.")
 
-	fTectonicClusterName := fs.String("tectonic-cluster-name", "tectonic", "The Tectonic cluster name.")
-
 	fUserAuth := fs.String("user-auth", "disabled", "disabled | oidc | openshift")
 	fUserAuthOIDCIssuerURL := fs.String("user-auth-oidc-issuer-url", "", "The OIDC/OAuth2 issuer URL.")
 	fUserAuthOIDCCAFile := fs.String("user-auth-oidc-ca-file", "", "PEM file for the OIDC/OAuth2 issuer.")
@@ -159,7 +157,6 @@ func main() {
 		BaseURL:              baseURL,
 		LogoutRedirect:       logoutRedirect,
 		TectonicCACertFile:   caCertFilePath,
-		ClusterName:          *fTectonicClusterName,
 		Branding:             branding,
 		DocumentationBaseURL: documentationBaseURL,
 		GoogleTagManagerID:   *fGoogleTagManagerID,

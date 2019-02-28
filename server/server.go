@@ -55,7 +55,6 @@ type jsGlobals struct {
 	AlertManagerBaseURL      string `json:"alertManagerBaseURL"`
 	Branding                 string `json:"branding"`
 	DocumentationBaseURL     string `json:"documentationBaseURL"`
-	ClusterName              string `json:"clusterName"`
 	GoogleTagManagerID       string `json:"googleTagManagerID"`
 	LoadTestFactor           int    `json:"loadTestFactor"`
 }
@@ -70,7 +69,6 @@ type Server struct {
 	Auther               *auth.Authenticator
 	StaticUser           *auth.User
 	KubectlClientID      string
-	ClusterName          string
 	KubeAPIServerURL     string
 	DocumentationBaseURL *url.URL
 	Branding             string
@@ -254,7 +252,6 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		LoginErrorURL:        proxy.SingleJoiningSlash(s.BaseURL.String(), AuthLoginErrorEndpoint),
 		LogoutURL:            proxy.SingleJoiningSlash(s.BaseURL.String(), authLogoutEndpoint),
 		LogoutRedirect:       s.LogoutRedirect.String(),
-		ClusterName:          s.ClusterName,
 		KubeAPIServerURL:     s.KubeAPIServerURL,
 		Branding:             s.Branding,
 		DocumentationBaseURL: s.DocumentationBaseURL.String(),

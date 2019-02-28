@@ -9,7 +9,7 @@ import { deleteModal, NamespaceLineCharts, NamespaceSummary, TopPodsBarChart } f
 import { Firehose, LoadingInline, ResourceLink, resourceListPathFromModel, StatusBox } from '../utils';
 import { RoleBindingModel } from '../../models';
 import { K8sResourceKind } from '../../module/k8s';
-import { getQuotaResourceTypes, hasComputeResources, QuotaGaugeCharts, QuotaScopes } from '../resource-quota';
+import { getQuotaResourceTypes, hasComputeResources, QuotaGaugeCharts, QuotaScopesInline } from '../resource-quota';
 
 const editRoleBindings = (kind, obj) => ({
   label: 'Edit Role Bindings',
@@ -46,27 +46,23 @@ const OverviewNamespaceSummary = ({ns}) => <div className="group">
   </div>
 </div>;
 
-const QuotaBox = ({quota, resourceTypes}) => {
+const ResourceQuotaCharts = ({quota, resourceTypes}) => {
   const scopes = _.get(quota, 'spec.scopes');
-  return <div className="col-xs-6 quota-dashboard-column">
-    <div className="group group__body full-width-and-height" key={quota.metadata.name}>
-      <div className="group__title group__title--no-side-borders">
-        <h2 className="h3 full-width-and-height">
-          <ResourceLink kind="ResourceQuota" name={quota.metadata.name} className="co-resource-link-truncate"
-            namespace={quota.metadata.namespace} title={quota.metadata.name} />
-        </h2>
-      </div>
-      <div className="container-fluid group__graphs">
-        <QuotaGaugeCharts quota={quota} resourceTypes={resourceTypes} compact />
-        {scopes && <dl className="co-m-pane__details quota-dashboard-scopes">
-          <QuotaScopes scopes={scopes} compact />
-        </dl>}
-      </div>
+  return <div className="group">
+    <div className="group__title">
+      <h2 className="h3">
+        <ResourceLink kind="ResourceQuota" name={quota.metadata.name} className="co-resource-link-truncate"
+          namespace={quota.metadata.namespace} inline="true" title={quota.metadata.name} />
+        {scopes && <QuotaScopesInline className="co-resource-quota-dashboard-scopes" scopes={scopes} />}
+      </h2>
+    </div>
+    <div className="group__body group__graphs">
+      <QuotaGaugeCharts quota={quota} resourceTypes={resourceTypes} />
     </div>
   </div>;
 };
 
-const QuotaBoxes: React.SFC<QuotaBoxesProps> = ({resourceQuotas}) => {
+const ResourceQuotas: React.SFC<QuotaBoxesProps> = ({resourceQuotas}) => {
   const { loaded, loadError, data: quotas } = resourceQuotas;
 
   if (!loaded) {
@@ -75,20 +71,20 @@ const QuotaBoxes: React.SFC<QuotaBoxesProps> = ({resourceQuotas}) => {
   if (loadError) {
     <StatusBox loadError={loadError} />;
   }
-  const quotaBoxes = _.reduce(quotas, (accumulator, quota: K8sResourceKind) => {
+  const resourceQuotaRows = _.reduce(quotas, (accumulator, quota: K8sResourceKind) => {
     const resourceTypes = getQuotaResourceTypes(quota);
     if (hasComputeResources(resourceTypes)) {
-      accumulator.push(<QuotaBox key={quota.metadata.uid} quota={quota} resourceTypes={resourceTypes} />);
+      accumulator.push(<ResourceQuotaCharts key={quota.metadata.uid} quota={quota} resourceTypes={resourceTypes} />);
     }
     return accumulator;
   }, []);
-  const rows = _.chunk(quotaBoxes, 2);
+
   return <React.Fragment>
-    {_.map(rows, (row, index) => <div key={index} className="row quota-dashboard-row">{row}</div>)}
+    {_.map(resourceQuotaRows, (quotaRow, index) => <div key={index}>{quotaRow}</div>)}
   </React.Fragment>;
 };
 
-const NamespaceQuotas = ({ns}) => {
+const OverviewResourceQuotas = ({ns}) => {
   const quotaResources = [
     {
       kind: 'ResourceQuota',
@@ -98,13 +94,13 @@ const NamespaceQuotas = ({ns}) => {
     },
   ];
   return <Firehose forceUpdate resources={quotaResources}>
-    <QuotaBoxes />
+    <ResourceQuotas />
   </Firehose>;
 };
 
 export const OverviewNamespaceDashboard = ({obj: ns}) => <React.Fragment>
   <OverviewHealth ns={ns} />
-  <NamespaceQuotas ns={ns} />
+  <OverviewResourceQuotas ns={ns} />
   <OverviewResourceUsage ns={ns} />
   <OverviewNamespaceSummary ns={ns} />
 </React.Fragment>;

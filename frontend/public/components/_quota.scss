@@ -1,12 +1,12 @@
 .co-resource-quota-chart-row {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
-  margin-bottom: 20px;
+  justify-content: space-evenly;
 }
 
-.co-resource-quota-chart-row--compact {
-  margin-bottom: 2px;
+.co-resource-quota-dashboard-scopes {
+  font-size: $font-size-h5;
+  font-weight: 300;
 }
 
 .co-resource-quota-empty {
@@ -26,36 +26,6 @@
   font-weight: 300;
 }
 
-.co-resource-quota-scope__description--compact {
-  display: inline;
-  padding-left: 6px;
-}
-
 .co-resource-quota-scope__label {
   font-weight: 500;
-}
-
-.co-resource-quota-scope__label--compact {
-  display: inline;
-  font-size: $font-size-small;
-}
-
-
-.quota-dashboard-column {
-  display: flex;
-  flex-direction: column;
-}
-
-.quota-dashboard-row {
-  display: flex;
-}
-
-.quota-dashboard-scopes {
-  padding-left: 24px;
-  padding-right: 24px;
-}
-
-.quota-dashboard-scopes--compact {
-  line-height: ($line-height-base - .2);
-  margin-bottom: 2px;
 }

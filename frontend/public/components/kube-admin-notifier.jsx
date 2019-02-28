@@ -1,14 +1,14 @@
 import * as React from 'react';
-// import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import * as _ from 'lodash-es';
 
-// import { OAuthModel } from '../models';
+import { OAuthModel } from '../models';
 import { userStateToProps } from '../ui/ui-reducers';
 import { KUBE_ADMIN_USERNAME } from '../const';
-// import { resourcePathFromModel } from './utils/resource-link';
+import { resourcePathFromModel } from './utils/resource-link';
 
-// const oAuthResourcePath = resourcePathFromModel(OAuthModel, 'cluster');
+const oAuthResourcePath = resourcePathFromModel(OAuthModel, 'cluster');
 
 export const KubeAdminNotifier = connect(userStateToProps)(({user}) => {
   const username = _.get(user, 'metadata.name');
@@ -17,8 +17,7 @@ export const KubeAdminNotifier = connect(userStateToProps)(({user}) => {
       <div className="co-global-notification__content">
         <p className="co-global-notification__text">
           You are logged in as a temporary administrative user.
-          {/* Temporarily disable the link since it's not yet possible to add identity providers. */}
-          {/* Update the <Link to={oAuthResourcePath}>cluster OAuth configuration</Link> to allow others to log in. */}
+          Update the <Link to={oAuthResourcePath}>cluster OAuth configuration</Link> to allow others to log in.
         </p>
       </div>
     </div>

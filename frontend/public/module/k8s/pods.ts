@@ -151,7 +151,7 @@ export const getVolumeMountsByPermissions = pod => {
     return [];
   }
 
-  const volumes = pod.spec.volumes.reduce((p, v) => {
+  const volumes = (pod.spec.volumes || []).reduce((p, v) => {
     p[v.name] = v;
     return p;
   }, {});
