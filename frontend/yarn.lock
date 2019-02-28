@@ -6409,6 +6409,11 @@ isarray@1.0.0, isarray@^1.0.0, isarray@~1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/isarray/-/isarray-1.0.0.tgz#bb935d48582cba168c06834957a54a3e07124f11"
 
+isemail@2.x.x:
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/isemail/-/isemail-2.2.1.tgz#0353d3d9a62951080c262c2aa0a42b8ea8e9e2a6"
+  integrity sha1-A1PT2aYpUQgMJiwqoKQrjqjp4qY=
+
 isexe@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/isexe/-/isexe-2.0.0.tgz#e8fbf374dc556ff8947a10dcb0572d633f2cfa10"
@@ -6787,6 +6792,16 @@ jest@21.x:
   resolved "https://registry.yarnpkg.com/jest/-/jest-21.2.1.tgz#c964e0b47383768a1438e3ccf3c3d470327604e1"
   dependencies:
     jest-cli "^21.2.1"
+
+joi@^8.0.4:
+  version "8.4.2"
+  resolved "https://registry.yarnpkg.com/joi/-/joi-8.4.2.tgz#bd7774658fe99058d8994ed1d4b9962484ebb859"
+  integrity sha1-vXd0ZY/pkFjYmU7R1LmWJITruFk=
+  dependencies:
+    hoek "4.x.x"
+    isemail "2.x.x"
+    moment "2.x.x"
+    topo "2.x.x"
 
 jquery-match-height@^0.7.2:
   version "0.7.2"
@@ -7378,7 +7393,7 @@ lodash@^4.0.0, lodash@^4.13.1, lodash@^4.14.0, lodash@^4.15.0, lodash@^4.17.3, l
   version "4.17.5"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.5.tgz#99a92d65c0272debe8c96b6057bc8fbfa3bed511"
 
-lodash@^4.17.10, lodash@^4.17.11, lodash@^4.17.2, lodash@^4.17.4:
+lodash@^4.17.10, lodash@^4.17.11, lodash@^4.17.2, lodash@^4.17.4, lodash@^4.6.0:
   version "4.17.11"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.11.tgz#b39ea6229ef607ecd89e2c8df12536891cac9b8d"
 
@@ -7861,6 +7876,11 @@ moment-timezone@^0.4.0, moment-timezone@^0.4.1:
   dependencies:
     moment ">= 2.6.0"
 
+moment@2.x.x:
+  version "2.24.0"
+  resolved "https://registry.yarnpkg.com/moment/-/moment-2.24.0.tgz#0d055d53f5052aa653c9f6eb68bb5d12bf5c2b5b"
+  integrity sha512-bV7f+6l2QigeBBZSM/6yTNq4P2fNpSWj/0e7jQcy87A8e7o2nAfP/34/2ky5Vw4B9S446EtIhodAzkFCcR4dQg==
+
 "moment@>= 2.6.0", moment@^2.10, moment@^2.19.1:
   version "2.22.2"
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.22.2.tgz#3c257f9839fc0e93ff53149632239eb90783ff66"
@@ -8215,6 +8235,11 @@ node-sass@4.8.x:
     sass-graph "^2.2.4"
     stdout-stream "^1.4.0"
     "true-case-path" "^1.0.2"
+
+node-uuid@^1.4.3:
+  version "1.4.8"
+  resolved "https://registry.yarnpkg.com/node-uuid/-/node-uuid-1.4.8.tgz#b040eb0923968afabf8d32fb1f17f1167fdab907"
+  integrity sha1-sEDrCSOWivq/jTL7HxfxFn/auQc=
 
 "nomnom@>= 1.5.x", nomnom@^1.8.1:
   version "1.8.1"
@@ -9454,6 +9479,19 @@ protractor-jasmine2-screenshot-reporter@0.5.x:
     rimraf "^2.4.3"
     string.prototype.startswith "^0.2.0"
     uuid "^2.0.0"
+
+protractor-video-reporter@^0.3.0:
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/protractor-video-reporter/-/protractor-video-reporter-0.3.0.tgz#a80788c871be8adb066ae7d54e4f7d98f535b6e9"
+  integrity sha1-qAeIyHG+itsGaufVTk99mPU1tuk=
+  dependencies:
+    debug "^2.2.0"
+    joi "^8.0.4"
+    lodash "^4.6.0"
+    mkdirp "^0.5.1"
+    node-uuid "^1.4.3"
+    sanitize-filename "^1.6.1"
+    subtitles-parser "0.0.2"
 
 protractor@5.4.x:
   version "5.4.1"
@@ -10698,6 +10736,13 @@ sane@^2.0.0:
   optionalDependencies:
     fsevents "^1.1.1"
 
+sanitize-filename@^1.6.1:
+  version "1.6.1"
+  resolved "https://registry.yarnpkg.com/sanitize-filename/-/sanitize-filename-1.6.1.tgz#612da1c96473fa02dccda92dcd5b4ab164a6772a"
+  integrity sha1-YS2hyWRz+gLczaktzVtKsWSmdyo=
+  dependencies:
+    truncate-utf8-bytes "^1.0.0"
+
 sanitize-html@1.x:
   version "1.18.2"
   resolved "https://registry.yarnpkg.com/sanitize-html/-/sanitize-html-1.18.2.tgz#61877ba5a910327e42880a28803c2fbafa8e4642"
@@ -11462,6 +11507,11 @@ subarg@^1.0.0:
   dependencies:
     minimist "^1.1.0"
 
+subtitles-parser@0.0.2:
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/subtitles-parser/-/subtitles-parser-0.0.2.tgz#cf2fcc3e397b1c7f831e1365f6b3ce37d3155194"
+  integrity sha1-zy/MPjl7HH+DHhNl9rPON9MVUZQ=
+
 supercluster@^2.0.1:
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/supercluster/-/supercluster-2.3.0.tgz#87ab56081bbea9a1d724df5351ee9e8c3af2f48b"
@@ -11775,6 +11825,13 @@ toggle-selection@^1.0.3:
   version "1.0.6"
   resolved "https://registry.yarnpkg.com/toggle-selection/-/toggle-selection-1.0.6.tgz#6e45b1263f2017fa0acc7d89d78b15b8bf77da32"
 
+topo@2.x.x:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/topo/-/topo-2.0.2.tgz#cd5615752539057c0dc0491a621c3bc6fbe1d182"
+  integrity sha1-zVYVdSU5BXwNwEkaYhw7xvvh0YI=
+  dependencies:
+    hoek "4.x.x"
+
 topojson-client@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/topojson-client/-/topojson-client-2.1.0.tgz#ff9f7bf38991185e0b4284c2b06ae834f0eac6c8"
@@ -11841,6 +11898,13 @@ trim-right@^1.0.1:
   resolved "https://registry.yarnpkg.com/true-case-path/-/true-case-path-1.0.2.tgz#7ec91130924766c7f573be3020c34f8fdfd00d62"
   dependencies:
     glob "^6.0.4"
+
+truncate-utf8-bytes@^1.0.0:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/truncate-utf8-bytes/-/truncate-utf8-bytes-1.0.2.tgz#405923909592d56f78a5818434b0b78489ca5f2b"
+  integrity sha1-QFkjkJWS1W94pYGENLC3hInKXys=
+  dependencies:
+    utf8-byte-length "^1.0.1"
 
 tryer@^1.0.0:
   version "1.0.1"
@@ -12166,6 +12230,11 @@ use@^3.1.0:
   resolved "https://registry.yarnpkg.com/use/-/use-3.1.0.tgz#14716bf03fdfefd03040aef58d8b4b85f3a7c544"
   dependencies:
     kind-of "^6.0.2"
+
+utf8-byte-length@^1.0.1:
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/utf8-byte-length/-/utf8-byte-length-1.0.4.tgz#f45f150c4c66eee968186505ab93fcbb8ad6bf61"
+  integrity sha1-9F8VDExm7uloGGUFq5P8u4rWv2E=
 
 util-deprecate@~1.0.1:
   version "1.0.2"

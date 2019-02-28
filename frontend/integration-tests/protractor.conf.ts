@@ -9,6 +9,7 @@ import * as ConsoleReporter from 'jasmine-console-reporter';
 import * as failFast from 'protractor-fail-fast';
 import { createWriteStream} from 'fs';
 import { format } from 'util';
+import * as VideoReporter from 'protractor-video-reporter';
 
 const tap = !!process.env.TAP;
 
@@ -17,6 +18,27 @@ export const testName = `test-${Math.random().toString(36).replace(/[^a-z]+/g, '
 
 const htmlReporter = new HtmlScreenshotReporter({dest: './gui_test_screenshots', inlineImages: true, captureOnlyFailedSpecs: true, filename: 'test-gui-report.html'});
 const junitReporter = new JUnitXmlReporter({savePath: './gui_test_screenshots', consolidateAll: true});
+const videoReporter = new VideoReporter({
+  baseDirectory: './gui_test_screenshots',
+  // for Mac with a single monitor and --headless disabled
+  // ffmpegArgs: [
+  //   '-y',
+  //   '-r', '30',
+  //   '-f', 'avfoundation',
+  //   '-i', '1',
+  //   '-g', '300',
+  //   '-vcodec', 'mpeg4',
+  // ],
+  ffmpegArgs: [
+    '-y',
+    '-r', '30',
+    '-f', 'x11grab',
+    '-s', '1024x768',
+    '-i', process.env.DISPLAY,
+    '-g', '300',
+    '-vcodec', 'qtrle',
+  ],
+});
 const browserLogs: logging.Entry[] = [];
 
 export const config: Config = {
@@ -54,6 +76,7 @@ export const config: Config = {
     browser.waitForAngularEnabled(false);
     jasmine.getEnv().addReporter(htmlReporter);
     jasmine.getEnv().addReporter(junitReporter);
+    jasmine.getEnv().addReporter(videoReporter);
     if (tap) {
       jasmine.getEnv().addReporter(new TapReporter());
     } else {

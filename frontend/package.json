@@ -139,6 +139,7 @@
     "protractor": "5.4.x",
     "protractor-fail-fast": "3.x",
     "protractor-jasmine2-screenshot-reporter": "0.5.x",
+    "protractor-video-reporter": "^0.3.0",
     "react-test-renderer": "16.x",
     "resolve-url-loader": "2.x",
     "sass-loader": "6.x",
