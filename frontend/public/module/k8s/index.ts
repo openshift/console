@@ -242,6 +242,27 @@ export type ClusterVersionKind = {
   };
 } & K8sResourceKind;
 
+export type OperandVersion = {
+  name: string;
+  version: string;
+};
+
+type ClusterOperatorObjectReference = {
+  group: string;
+  resource: string;
+  namespace?: string;
+  name: string;
+};
+
+export type ClusterOperator = {
+  spec: {};
+  status: {
+    conditions?: any[];
+    versions?: OperandVersion[];
+    relatedObjects?: ClusterOperatorObjectReference[];
+  };
+} & K8sResourceKind;
+
 export type K8sKind = {
   abbr: string;
   kind: string;
