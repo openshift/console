@@ -30,7 +30,7 @@ export const clusterOperatorReference: K8sResourceKindReference = referenceForMo
 const getIconClass = (status: OperatorStatus) => {
   return {
     [OperatorStatus.Available]: 'pficon pficon-ok text-success',
-    [OperatorStatus.Updating]: 'pficon pficon-in-progress',
+    [OperatorStatus.Updating]: 'fa fa-refresh',
     [OperatorStatus.Failing]: 'pficon pficon-error-circle-o text-danger',
   }[status];
 };
