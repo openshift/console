@@ -234,7 +234,11 @@ const Details = ({obj: node}) => {
     <div className="co-m-pane__body">
       <SectionHeading text="Images" />
       <div className="co-table-container">
-        <table className="table">
+        <table className="table table--layout-fixed">
+          <colgroup>
+            <col className="col-sm-10 col-xs-9"></col>
+            <col className="col-sm-2 col-xs-3"></col>
+          </colgroup>
           <thead>
             <tr>
               <th>Name</th>
@@ -243,7 +247,7 @@ const Details = ({obj: node}) => {
           </thead>
           <tbody>
             {_.map(images, (image, i) => <tr key={i}>
-              <td>{image.names.find(name => !name.includes('@')) || image.names[0]}</td>
+              <td className="co-break-all">{image.names.find(name => !name.includes('@')) || image.names[0]}</td>
               <td>{units.humanize(image.sizeBytes, 'decimalBytes', true).string || '-'}</td>
             </tr>)}
           </tbody>
