@@ -15,7 +15,8 @@ const { common } = Kebab.factory;
 const menuActions = [...common];
 
 const quotaKind = quota => quota.metadata.namespace ? referenceForModel(ResourceQuotaModel) : referenceForModel(ClusterResourceQuotaModel);
-const gaugeChartThresholds = {warn: 90,error: 101};
+const gaugeChartThresholds = {warn: 90, error: 101};
+const gaugeChartNoThresholds = {warn: 100, error: 100};
 
 const quotaScopes = Object.freeze({
   'Terminating': {label: 'Terminating', description: 'Affects pods that have an active deadline. These pods usually include builds, deployers, and jobs.'},
@@ -83,39 +84,68 @@ const ResourceUsageRow = ({quota, resourceType}) => {
   </div>;
 };
 
-export const QuotaGaugeCharts = ({quota, resourceTypes, compact}) => {
+export const QuotaGaugeCharts = ({quota, resourceTypes}) => {
   const resourceTypesSet = new Set(resourceTypes);
-  return <div className={classNames('co-resource-quota-chart-row', {'co-resource-quota-chart-row--compact': compact})} >
-    {(resourceTypesSet.has('requests.cpu') || resourceTypesSet.has('cpu')) &&
-    <div className="co-resource-quota-gauge-chart">
-      <Gauge title="CPU Request" thresholds={gaugeChartThresholds} className={classNames({'graph-wrapper--compact': compact})}
-        percent={getResourceUsage(quota, resourceTypesSet.has('requests.cpu') ? 'requests.cpu' : 'cpu').percent} />
-    </div>}
-    {resourceTypesSet.has('limits.cpu') &&
-    <div className="co-resource-quota-gauge-chart">
-      <Gauge title="CPU Limit" thresholds={gaugeChartThresholds} className={classNames({'graph-wrapper--compact': compact})}
-        percent={getResourceUsage(quota, 'limits.cpu').percent} />
-    </div>}
-    {(resourceTypesSet.has('requests.memory') || resourceTypesSet.has('memory')) &&
-    <div className="co-resource-quota-gauge-chart">
-      <Gauge title="Memory Request" thresholds={gaugeChartThresholds} className={classNames({'graph-wrapper--compact': compact})}
-        percent={getResourceUsage(quota, resourceTypesSet.has('requests.memory') ? 'requests.memory' : 'memory').percent} />
-    </div>}
-    {resourceTypesSet.has('limits.memory') &&
-    <div className="co-resource-quota-gauge-chart">
-      <Gauge title="Memory Limit" thresholds={gaugeChartThresholds} className={classNames({'graph-wrapper--compact': compact})}
-        percent={getResourceUsage(quota, 'limits.memory').percent} />
-    </div>}
+  return <div className="co-resource-quota-chart-row">
+    {(resourceTypesSet.has('requests.cpu') || resourceTypesSet.has('cpu')) ?
+      <div className="co-resource-quota-gauge-chart">
+        <Gauge title="CPU Request" thresholds={gaugeChartThresholds}
+          percent={getResourceUsage(quota, resourceTypesSet.has('requests.cpu') ? 'requests.cpu' : 'cpu').percent} />
+      </div>
+      :
+      <div className="co-resource-quota-gauge-chart">
+        <Gauge title="CPU Request" thresholds={gaugeChartNoThresholds} centerText="No Request" />
+      </div>
+    }
+    {resourceTypesSet.has('limits.cpu') ?
+      <div className="co-resource-quota-gauge-chart">
+        <Gauge title="CPU Limit" thresholds={gaugeChartThresholds}
+          percent={getResourceUsage(quota, 'limits.cpu').percent} />
+      </div>
+      :
+      <div className="co-resource-quota-gauge-chart">
+        <Gauge title="CPU Limit" thresholds={gaugeChartNoThresholds} centerText="No Limit" />
+      </div>
+    }
+    {(resourceTypesSet.has('requests.memory') || resourceTypesSet.has('memory')) ?
+      <div className="co-resource-quota-gauge-chart">
+        <Gauge title="Memory Request" thresholds={gaugeChartThresholds}
+          percent={getResourceUsage(quota, resourceTypesSet.has('requests.memory') ? 'requests.memory' : 'memory').percent} />
+      </div>
+      :
+      <div className="co-resource-quota-gauge-chart">
+        <Gauge title="Memory Request" thresholds={gaugeChartNoThresholds} centerText="No Request" />
+      </div>
+    }
+    {resourceTypesSet.has('limits.memory') ?
+      <div className="co-resource-quota-gauge-chart">
+        <Gauge title="Memory Limit" thresholds={gaugeChartThresholds}
+          percent={getResourceUsage(quota, 'limits.memory').percent} />
+      </div>
+      :
+      <div className="co-resource-quota-gauge-chart">
+        <Gauge title="Memory Limit" thresholds={gaugeChartNoThresholds} centerText="No Limit" />
+      </div>
+    }
   </div>;
 };
 
-export const QuotaScopes = ({scopes, compact}) => {
+export const QuotaScopesInline = ({scopes, className}) => {
+  return <span className={classNames(className)}>(
+    {scopes.map(scope => {
+      const scopeObj = _.get(quotaScopes, scope);
+      return scopeObj ? scopeObj.label : scope;
+    }).join(',')})
+  </span>;
+};
+
+export const QuotaScopesList = ({scopes}) => {
   return scopes.map(scope => {
     const scopeObj = _.get(quotaScopes, scope);
     return scopeObj ?
-      <dd key={scope} className={classNames({'quota-dashboard-scopes--compact': compact})}>
-        <div className={classNames('co-resource-quota-scope__label', {'co-resource-quota-scope__label--compact': compact})}>{scopeObj.label}</div>
-        <div className={classNames('co-resource-quota-scope__description', {'co-resource-quota-scope__description--compact': compact})}>{scopeObj.description}</div>
+      <dd key={scope}>
+        <div className="co-resource-quota-scope__label">{scopeObj.label}</div>
+        <div className="co-resource-quota-scope__description">{scopeObj.description}</div>
       </dd>
       : <dd key={scope} className="co-resource-quota-scope__label">{scope}</dd>;
   });
@@ -141,7 +171,7 @@ const Details = ({obj: rq}) => {
         {scopes && <div className="col-sm-6">
           <dl className="co-m-pane__details">
             <dt>Scopes</dt>
-            <QuotaScopes scopes={scopes} />
+            <QuotaScopesList scopes={scopes} />
           </dl>
         </div>}
       </div>
