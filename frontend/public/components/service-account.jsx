@@ -20,7 +20,8 @@ const KubeConfigify = (kind, sa) => ({
 
     k8sGet(SecretModel, name, namespace).then(({data}) => {
       const server = window.SERVER_FLAGS.kubeAPIServerURL;
-      const clusterName = window.SERVER_FLAGS.clusterName;
+      const url = new URL(server);
+      const clusterName = url.host;
 
       const token = atob(data.token);
       const cert = data['ca.crt'];
