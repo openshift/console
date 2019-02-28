@@ -15,7 +15,7 @@ const tap = !!process.env.TAP;
 export const appHost = `${process.env.BRIDGE_BASE_ADDRESS || 'http://localhost:9000'}${(process.env.BRIDGE_BASE_PATH || '/').replace(/\/$/, '')}`;
 export const testName = `test-${Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5)}`;
 
-const htmlReporter = new HtmlScreenshotReporter({dest: './gui_test_screenshots', inlineImages: true, captureOnlyFailedSpecs: true, filename: 'test-gui-report.html'});
+const htmlReporter = new HtmlScreenshotReporter({dest: './gui_test_screenshots', inlineImages: true, filename: 'test-gui-report.html'});
 const junitReporter = new JUnitXmlReporter({savePath: './gui_test_screenshots', consolidateAll: true});
 const browserLogs: logging.Entry[] = [];
 
