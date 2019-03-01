@@ -5,6 +5,7 @@
   "private": true,
   "scripts": {
     "dev": "rm -rf ./public/dist/ && ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/webpack --mode development --watch --progress",
+    "devconsole": "rm -rf ./public/dist/ && ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/webpack --mode development --config webpack.devconsole.config.ts --env.devconsole=true --watch --progress",
     "build": "rm -rf ./public/dist && NODE_ENV=production ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/webpack --mode=production",
     "coverage": "jest --coverage .",
     "lint": "eslint --ext .js,.jsx,.ts,.tsx --color .",
