@@ -134,7 +134,7 @@ func (o *openShiftAuth) login(w http.ResponseWriter, token *oauth2.Token) (*logi
 		Name:     openshiftSessionCookieName,
 		Value:    ls.rawToken,
 		MaxAge:   int(expiresIn),
-		HttpOnly: true,
+		HttpOnly: false,
 		Path:     o.cookiePath,
 		Secure:   o.secureCookies,
 	}
@@ -150,8 +150,8 @@ func (o *openShiftAuth) logout(w http.ResponseWriter, r *http.Request) {
 	cookie := http.Cookie{
 		Name:     openshiftSessionCookieName,
 		Value:    "",
+		HttpOnly: false,
 		MaxAge:   0,
-		HttpOnly: true,
 		Path:     o.cookiePath,
 		Secure:   o.secureCookies,
 	}

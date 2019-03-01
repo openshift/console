@@ -84,11 +84,13 @@ export class TimeoutError extends Error {
   }
 }
 
-const cookiePrefix = 'csrf-token=';
-export const getCSRFToken = () => document && document.cookie && document.cookie.split(';')
+export const getCookie = cookiePrefix => document && document.cookie && document.cookie.split(';')
   .map(c => _.trim(c))
   .filter(c => c.startsWith(cookiePrefix))
   .map(c => c.slice(cookiePrefix.length)).pop();
+
+const csrfCookiePrefix = 'csrf-token=';
+export const getCSRFToken = () => getCookie(csrfCookiePrefix);
 
 export const coFetch = (url, options = {}, timeout=20000) => {
   const allOptions = _.defaultsDeep({}, initDefaults, options);

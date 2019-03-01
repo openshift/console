@@ -74,7 +74,7 @@ func (o *oidcAuth) login(w http.ResponseWriter, token *oauth2.Token) (*loginStat
 		Name:     openshiftSessionCookieName,
 		Value:    ls.sessionToken,
 		MaxAge:   maxAge(ls.exp, time.Now()),
-		HttpOnly: true,
+		HttpOnly: false,
 		Path:     o.cookiePath,
 		Secure:   o.secureCookies,
 	}
@@ -94,7 +94,7 @@ func (o *oidcAuth) logout(w http.ResponseWriter, r *http.Request) {
 		Name:     openshiftSessionCookieName,
 		Value:    "",
 		MaxAge:   0,
-		HttpOnly: true,
+		HttpOnly: false,
 		Path:     o.cookiePath,
 		Secure:   o.secureCookies,
 	}

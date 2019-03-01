@@ -10,6 +10,9 @@ import { history, Firehose } from './utils';
 import { openshiftHelpBase } from './utils/documentation';
 import { AboutModal } from './about-modal';
 import { getAvailableClusterUpdates, clusterVersionReference } from '../module/k8s/cluster-settings';
+import { CopyLoginCommandModal } from './modals/copy-login-command-modal';
+
+const apiServerURL = window.SERVER_FLAGS.kubeAPIServerURL;
 
 const UpdatesAvailableButton = ({obj, onClick}) => {
   const updatesAvailable = !_.isEmpty(getAvailableClusterUpdates(obj.data));
@@ -32,6 +35,7 @@ class MastheadToolbar_ extends React.Component {
       username: null,
       isKubeAdmin: false,
       showAboutModal: false,
+      showCopyLoginCommand: false,
     };
 
     this._updateUser = this._updateUser.bind(this);
@@ -48,6 +52,8 @@ class MastheadToolbar_ extends React.Component {
     this._onHelpDropdownToggle = this._onHelpDropdownToggle.bind(this);
     this._onAboutModal = this._onAboutModal.bind(this);
     this._closeAboutModal = this._closeAboutModal.bind(this);
+    this._onCopyLoginCommand = this._onCopyLoginCommand.bind(this);
+    this._closeCopyLoginCommand = this._closeCopyLoginCommand.bind(this);
   }
 
   componentDidMount() {
@@ -138,6 +144,15 @@ class MastheadToolbar_ extends React.Component {
     this.setState({ showAboutModal: false });
   }
 
+  _onCopyLoginCommand(e) {
+    e.preventDefault();
+    this.setState({ showCopyLoginCommand: true });
+  }
+
+  _closeCopyLoginCommand() {
+    this.setState({ showCopyLoginCommand: false });
+  }
+
   _onDocumentation(e) {
     e.preventDefault();
     window.open(openshiftHelpBase, '_blank').opener = null;
@@ -168,6 +183,13 @@ class MastheadToolbar_ extends React.Component {
           authSvc.logout();
         }
       };
+
+      if (flags[FLAGS.OPENSHIFT] && apiServerURL) {
+        actions.push({
+          label: 'Copy Login Command',
+          callback: this._onCopyLoginCommand,
+        });
+      }
 
       if (mobile) {
         actions.push({
@@ -228,7 +250,7 @@ class MastheadToolbar_ extends React.Component {
   }
 
   render() {
-    const { isApplicationLauncherDropdownOpen, isHelpDropdownOpen, showAboutModal } = this.state;
+    const { isApplicationLauncherDropdownOpen, isHelpDropdownOpen, showAboutModal, showCopyLoginCommand, username } = this.state;
     const { flags } = this.props;
     const resources = [{
       kind: clusterVersionReference,
@@ -291,6 +313,7 @@ class MastheadToolbar_ extends React.Component {
           </ToolbarGroup>
         </Toolbar>
         {showAboutModal && <AboutModal isOpen={showAboutModal} closeAboutModal={this._closeAboutModal} />}
+        {showCopyLoginCommand && <CopyLoginCommandModal isOpen={showCopyLoginCommand} closeCopyLoginCommand={this._closeCopyLoginCommand} username={username} />}
       </React.Fragment>
     );
   }
