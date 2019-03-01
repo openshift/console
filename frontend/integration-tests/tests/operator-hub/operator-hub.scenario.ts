@@ -89,15 +89,24 @@ describe('Subscribing to an Operator from Operator Hub', () => {
     });
   });
 
-  it('hides community Operators when "Show Community Operators" is not accepted', async() => {
-    expect(catalogPageView.catalogTileCount('etcd')).toBe(0);
+  it('shows the warning dialog when a community operator is clicked', async() => {
+    await(catalogPageView.catalogTileFor('etcd').click());
+    await operatorHubView.operatorCommunityWarningIsLoaded();
+    await operatorHubView.closeCommunityWarningModal();
+    await operatorHubView.operatorCommunityWarningIsClosed();
   });
 
-  it('shows community operators when "Show Community Operators" is accepted', async() => {
-    await operatorHubView.showCommunityOperators();
-    await catalogPageView.clickFilterCheckbox('Community');
+  it('shows the community operator when "Show Community Operators" is accepted', async() => {
+    await(catalogPageView.catalogTileFor('etcd').click());
+    await operatorHubView.operatorCommunityWarningIsLoaded();
+    await operatorHubView.acceptCommunityWarningModal();
+    await operatorHubView.operatorCommunityWarningIsClosed();
 
-    expect(catalogPageView.catalogTileCount('etcd')).toBe(1);
+    expect(operatorHubView.operatorModal.isDisplayed()).toBe(true);
+    expect(operatorHubView.operatorModalTitle.getText()).toEqual('etcd');
+
+    await operatorHubView.closeOperatorModal();
+    await operatorHubView.operatorModalIsClosed();
   });
 
   it('filters Operator Hub tiles by Category', async() => {
@@ -107,6 +116,8 @@ describe('Subscribing to an Operator from Operator Hub', () => {
 
   it('displays subscription creation form for selected Operator', async() => {
     await catalogPageView.catalogTileFor('etcd').click();
+    await operatorHubView.operatorCommunityWarningIsLoaded();
+    await operatorHubView.acceptCommunityWarningModal();
     await operatorHubView.operatorModalIsLoaded();
     await operatorHubView.operatorModalInstallBtn.click();
 
@@ -123,7 +134,6 @@ describe('Subscribing to an Operator from Operator Hub', () => {
   it('displays Operator as subscribed in Operator Hub', async() => {
     await operatorHubView.createSubscriptionFormBtn.click();
     await crudView.isLoaded();
-    await operatorHubView.showCommunityOperators();
 
     expect(catalogPageView.catalogTileFor('etcd').$('.catalog-tile-pf-footer').getText()).toContain('Installed');
   });
@@ -131,8 +141,9 @@ describe('Subscribing to an Operator from Operator Hub', () => {
   it('displays Operator in "Cluster Service Versions" view for "default" namespace', async() => {
     await browser.get(`${appHost}/operatorhub/ns/${testName}`);
     await crudView.isLoaded();
-    await operatorHubView.showCommunityOperators();
     await catalogPageView.catalogTileFor('etcd').click();
+    await operatorHubView.operatorCommunityWarningIsLoaded();
+    await operatorHubView.acceptCommunityWarningModal();
     await operatorHubView.operatorModalIsLoaded();
     await operatorHubView.viewInstalledOperator();
     await crudView.isLoaded();

@@ -27,9 +27,9 @@ export class OperatorHubCommunityProviderModal extends React.Component<OperatorH
 
   render() {
     const { ignoreWarnings } = this.state;
-    const submitButtonContent = <React.Fragment>Show<span className="hidden-xs"> Community Operators</span></React.Fragment>;
+    const submitButtonContent = <React.Fragment>Continue</React.Fragment>;
     return <form onSubmit={this.submit} className="modal-content co-modal-ignore-warning">
-      <ModalTitle>Show Community Operators</ModalTitle>
+      <ModalTitle>Show Community Operator</ModalTitle>
       <ModalBody className="modal-body">
         <div className="co-modal-ignore-warning__content">
           <div className="co-modal-ignore-warning__icon">
@@ -37,14 +37,13 @@ export class OperatorHubCommunityProviderModal extends React.Component<OperatorH
           </div>
           <div>
             <p>
-              These are operators which have not been vetted or verified by Red Hat.  Community Operators should be used with
+              Community Operators are operators which have not been vetted or verified by Red Hat.  Community Operators should be used with
               caution because their stability is unknown.  Red Hat provides no support for Community Operators.
               {RH_OPERATOR_SUPPORT_POLICY_LINK && (
                 <span className="co-modal-ignore-warning__link">
                   <ExternalLink href={RH_OPERATOR_SUPPORT_POLICY_LINK} text="Learn more about Red Hat’s third party software support policy" />
                 </span>
               )}
-              Do you want to show Community Operators in the Operator Hub?
             </p>
             <Checkbox className="co-modal-ignore-warning__checkbox" onChange={this.onIgnoreChange} checked={ignoreWarnings}>
               Do not show this warning again
