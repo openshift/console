@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { ArrowCircleUpIcon, QuestionCircleIcon, ThIcon } from '@patternfly/react-icons';
 import { Button, Dropdown, DropdownToggle, DropdownSeparator, DropdownItem, KebabToggle, Toolbar, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
 
+import { CLI_DOWNLOAD_LINK } from '../const';
 import { FLAGS, stateToProps as flagStateToProps, flagPending } from '../features';
 import { authSvc } from '../module/auth';
 import { history, Firehose } from './utils';
@@ -143,6 +144,11 @@ class MastheadToolbar_ extends React.Component {
     window.open(openshiftHelpBase, '_blank').opener = null;
   }
 
+  _onCLIDownload(e) {
+    e.preventDefault();
+    window.open(CLI_DOWNLOAD_LINK, '_blank').opener = null;
+  }
+
   _launchActions() {
     return [{
       label: 'Multi-Cluster Manager',
@@ -154,7 +160,10 @@ class MastheadToolbar_ extends React.Component {
     return [{
       label: 'Documentation',
       callback: this._onDocumentation,
-    },{
+    }, {
+      label: 'CLI Download',
+      callback: this._onCLIDownload,
+    }, {
       label: 'About',
       callback: this._onAboutModal,
     }];
