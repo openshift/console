@@ -1,6 +1,7 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { safeDump } from 'js-yaml';
+import { Base64 } from 'js-base64';
 
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import { Kebab, SectionHeading, navFactory, ResourceKebab, ResourceLink, ResourceSummary } from './utils';
@@ -22,7 +23,7 @@ const KubeConfigify = (kind, sa) => ({
       const server = window.SERVER_FLAGS.kubeAPIServerURL;
       const clusterName = window.SERVER_FLAGS.clusterName;
 
-      const token = atob(data.token);
+      const token = Base64.decode(data.token);
       const cert = data['ca.crt'];
 
       const config = {

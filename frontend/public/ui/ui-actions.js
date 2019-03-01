@@ -1,3 +1,5 @@
+import { Base64 } from 'js-base64';
+
 import store from '../redux';
 import { history } from '../components/utils/router';
 import { ALL_NAMESPACES_KEY, LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY } from '../const';
@@ -136,7 +138,7 @@ export const UIActions = {
      * and "/" aren't allowed, so base64 but replace illegal chars.
      */
     let encodedName = textEncoder.encode(name);
-    encodedName = window.btoa(String.fromCharCode.apply(String, encodedName));
+    encodedName = Base64.encode(String.fromCharCode.apply(String, encodedName));
     encodedName = encodedName.replace(/=/g, '_').replace(/\//g, '-');
 
     let subprotocols;
