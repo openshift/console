@@ -124,10 +124,11 @@ const actions = {
 
       if (!continueToken) {
         dispatch(actions.loaded(id, response.items));
+      } else {
+        dispatch(actions.bulkAddToList(id, response.items));
       }
 
       if (response.metadata.continue) {
-        dispatch(actions.bulkAddToList(id, response.items));
         return incrementallyLoad(response.metadata.continue);
       }
       return response.metadata.resourceVersion;
