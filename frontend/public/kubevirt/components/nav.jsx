@@ -5,7 +5,11 @@ import { FLAGS } from '../../features';
 import { NavSection } from './okdcomponents';
 import {
   ChargebackReportModel,
-  DeploymentConfigModel, MachineModel, MachineSetModel,
+  DeploymentConfigModel,
+  MachineModel,
+  MachineSetModel,
+  MachineConfigModel,
+  MachineConfigPoolModel,
 } from '../models';
 import { referenceForModel } from '../module/okdk8s';
 import { VmTemplatesPageTitle } from './vm-template';
@@ -63,6 +67,13 @@ const PageNav = ({ onNavSelect, ResourceClusterLink, HrefLink, ResourceNSLink, M
       </NavSection>
 
       <MonitoringNavSection />
+
+      <NavSection title="Machines" required={[FLAGS.CLUSTER_API, FLAGS.MACHINE_CONFIG, FLAGS.CAN_LIST_MACHINE_CONFIG]}>
+        <ResourceNSLink resource={referenceForModel(MachineModel)} name="Machines" />
+        <ResourceNSLink resource={referenceForModel(MachineSetModel)} name="Machine Sets" />
+        <ResourceClusterLink resource={referenceForModel(MachineConfigModel)} name="Machine Configs" />
+        <ResourceClusterLink resource={referenceForModel(MachineConfigPoolModel)} name="Machine Config Pools" />
+      </NavSection>
 
       <NavSection title="Administration">
         <ResourceClusterLink resource="namespaces" name="Namespaces" required={FLAGS.CAN_LIST_NS} />
