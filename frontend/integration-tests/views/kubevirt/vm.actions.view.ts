@@ -1,8 +1,16 @@
 import { $, $$, browser, ExpectedConditions as until } from 'protractor';
 import { rowForName, confirmAction } from '../crud.view';
 
-export const detailViewVMmStatus = $('#details-column-1 .kubevirt-vm-status__link');
-export const listViewVMmStatus = (name: string) => rowForName(name).$('.kubevirt-vm-status__link');
+export const detailViewVmStatus = $('#details-column-1 .kubevirt-vm-status__link');
+export const detailViewVmIcon = (statusIcon: string) => $('#details-column-1').$(statusIcon);
+
+export const listViewVmStatus = (name: string) => rowForName(name).$('.kubevirt-vm-status__link');
+export const listViewVmIcon = (name: string, statusIcon: string) => rowForName(name).$(statusIcon);
+
+export const statusIcon = 'kubevirt-vm-status__icon';
+export const runningIcon = '.pficon-on-running';
+export const offIcon = '.pficon-off';
+export const pendingIcon = '.pficon-pending';
 
 const listViewKebabDropdown = '.co-kebab__button';
 const listViewKebabDropdownMenu = '.co-kebab__dropdown';

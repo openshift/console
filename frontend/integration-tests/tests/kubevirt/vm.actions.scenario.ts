@@ -4,9 +4,15 @@ import { browser, ExpectedConditions as until } from 'protractor';
 
 import { appHost, testName } from '../../protractor.conf';
 import { filterForName, isLoaded, resourceRowsPresent } from '../../views/crud.view';
-import { detailViewAction, detailViewVMmStatus, listViewAction, listViewVMmStatus } from '../../views/kubevirt/vm.actions.view';
 import { testVM } from './mocks';
-import { removeLeakedResources, VM_BOOTUP_TIMEOUT, VM_STOP_TIMEOUT, VM_ACTIONS_TIMEOUT } from './utils';
+import { removeLeakedResources } from './utils';
+import { detailViewAction, detailViewVmStatus, listViewAction, listViewVmStatus,
+  listViewVmIcon, detailViewVmIcon, runningIcon, offIcon, pendingIcon, statusIcon } from '../../views/kubevirt/vm.actions.view';
+
+
+const VM_BOOTUP_TIMEOUT = 60000;
+const VM_ACTIONS_TIMEOUT = 90000;
+const VM_STOP_TIMEOUT = 6000;
 
 describe('Test VM actions', () => {
   const leakedResources = new Set<string>();
@@ -34,23 +40,34 @@ describe('Test VM actions', () => {
 
     it('Starts VM', async() => {
       await listViewAction(vmName)('Start');
-      await browser.wait(until.textToBePresentInElement(listViewVMmStatus(vmName), 'Running'), VM_BOOTUP_TIMEOUT);
+      await browser.wait(
+        until.and(
+          until.presenceOf(listViewVmIcon(vmName, runningIcon)),
+          until.textToBePresentInElement(listViewVmStatus(vmName), 'Running')
+        ), VM_BOOTUP_TIMEOUT);
     });
 
     it('Restarts VM', async() => {
       await listViewAction(vmName)('Restart');
-      await browser.wait(until.textToBePresentInElement(listViewVMmStatus(vmName), 'Starting'), VM_BOOTUP_TIMEOUT);
-      await browser.wait(until.textToBePresentInElement(listViewVMmStatus(vmName), 'Running'), VM_BOOTUP_TIMEOUT);
+      await browser.wait(
+        until.and(
+          until.presenceOf(listViewVmIcon(vmName, pendingIcon)),
+          until.textToBePresentInElement(listViewVmStatus(vmName), 'Starting')
+        ), VM_BOOTUP_TIMEOUT);
+      await browser.wait(until.and(
+        until.presenceOf(listViewVmIcon(vmName, runningIcon)),
+        until.textToBePresentInElement(listViewVmStatus(vmName), 'Running'))
+        , VM_BOOTUP_TIMEOUT);
     }, VM_ACTIONS_TIMEOUT);
 
     it('Stops VM', async() => {
       await listViewAction(vmName)('Stop');
-      await browser.wait(until.textToBePresentInElement(listViewVMmStatus(vmName), 'Off'), VM_STOP_TIMEOUT);
+      await browser.wait(until.presenceOf(listViewVmIcon(vmName, offIcon)), VM_STOP_TIMEOUT);
     });
 
     it('Deletes VM', async() => {
       await listViewAction(vmName)('Delete');
-      await browser.wait(until.not(until.presenceOf(listViewVMmStatus(vmName))));
+      await browser.wait(until.not(until.presenceOf(listViewVmIcon(vmName, statusIcon))));
       leakedResources.delete(JSON.stringify({name: vmName, namespace: testName, kind: 'vm'}));
     });
   });
@@ -70,18 +87,30 @@ describe('Test VM actions', () => {
 
     it('Starts VM', async() => {
       await detailViewAction('Start');
-      await browser.wait(until.textToBePresentInElement(detailViewVMmStatus, 'Running'), VM_BOOTUP_TIMEOUT);
+      await browser.wait(
+        until.and(
+          until.presenceOf(detailViewVmIcon(runningIcon)),
+          until.textToBePresentInElement(detailViewVmStatus, 'Running')
+        ), VM_BOOTUP_TIMEOUT);
     });
 
     it('Restarts VM', async() => {
       await detailViewAction('Restart');
-      await browser.wait(until.textToBePresentInElement(detailViewVMmStatus, 'Starting'), VM_BOOTUP_TIMEOUT);
-      await browser.wait(until.textToBePresentInElement(detailViewVMmStatus, 'Running'), VM_BOOTUP_TIMEOUT);
+      await browser.wait(
+        until.and(
+          until.presenceOf(detailViewVmIcon(pendingIcon)),
+          until.textToBePresentInElement(detailViewVmStatus, 'Starting')
+        ), VM_BOOTUP_TIMEOUT);
+      await browser.wait(
+        until.and(
+          until.presenceOf(detailViewVmIcon(runningIcon)),
+          until.textToBePresentInElement(detailViewVmStatus, 'Running')
+        ), VM_BOOTUP_TIMEOUT);
     }, VM_ACTIONS_TIMEOUT);
 
     it('Stops VM', async() => {
       await detailViewAction('Stop');
-      await browser.wait(until.textToBePresentInElement(detailViewVMmStatus, 'Off'), VM_STOP_TIMEOUT);
+      await browser.wait(until.and(until.presenceOf(detailViewVmIcon(offIcon))), VM_STOP_TIMEOUT);
     });
 
     it('Deletes VM', async() => {
