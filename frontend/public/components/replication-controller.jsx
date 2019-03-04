@@ -4,7 +4,14 @@ import * as _ from 'lodash-es';
 import { ResourceEventStream } from './events';
 import { DetailsPage, List, ListPage, WorkloadListHeader, WorkloadListRow } from './factory';
 import { replicaSetMenuActions } from './replicaset';
-import { ContainerTable, navFactory, SectionHeading, ResourceSummary, ResourcePodCount, AsyncComponent} from './utils';
+import {
+  ContainerTable,
+  navFactory,
+  SectionHeading,
+  ResourceSummary,
+  ResourcePodCount,
+  AsyncComponent,
+} from './utils';
 import { breadcrumbsForOwnerRefs } from './utils/breadcrumbs';
 import { MountedVolumes } from './mounted-vol';
 
@@ -15,7 +22,7 @@ const Details = ({obj: replicationController}) => {
       <SectionHeading text="Replication Controller Overview" />
       <div className="row">
         <div className="col-md-6">
-          <ResourceSummary resource={replicationController} showPodSelector showNodeSelector>
+          <ResourceSummary resource={replicationController} showPodSelector showNodeSelector showTolerations>
             {revision && <React.Fragment>
               <dt>Deployment Revision</dt>
               <dd>{revision}</dd>

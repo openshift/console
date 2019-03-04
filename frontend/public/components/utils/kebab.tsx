@@ -3,7 +3,7 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 
-import { annotationsModal, configureReplicaCountModal, labelsModal, podSelectorModal, deleteModal } from '../modals';
+import { annotationsModal, configureReplicaCountModal, taintsModal, tolerationsModal, labelsModal, podSelectorModal, deleteModal } from '../modals';
 import { DropdownMixin } from './dropdown';
 import { history, resourceObjPath } from './index';
 import { referenceForModel, K8sResourceKind, K8sResourceKindReference, K8sKind } from '../../module/k8s';
@@ -58,6 +58,22 @@ const kebabFactory: KebabFactory = {
     callback: () => configureReplicaCountModal({
       resourceKind: kind,
       resource: obj,
+    }),
+  }),
+  ModifyTaint: (kind, obj) => ({
+    label: 'Edit Taints',
+    callback: () => taintsModal({
+      resourceKind: kind,
+      resource: obj,
+      modalClassName: 'modal-lg',
+    }),
+  }),
+  ModifyToleration: (kind, obj) => ({
+    label: 'Edit Tolerations',
+    callback: () => tolerationsModal({
+      resourceKind: kind,
+      resource: obj,
+      modalClassName: 'modal-lg',
     }),
   }),
   EditEnvironment: (kind, obj) => ({

@@ -15,12 +15,13 @@ export const detailsPage = <T extends {}>(Component: React.ComponentType<T>) => 
   return <Component {...props} />;
 };
 
-export const ResourceSummary: React.SFC<ResourceSummaryProps> = ({children, resource, showPodSelector = false, showNodeSelector = false, showAnnotations = true, podSelector = 'spec.selector'}) => {
+export const ResourceSummary: React.SFC<ResourceSummaryProps> = ({children, resource, showPodSelector = false, showNodeSelector = false, showAnnotations = true, showTolerations = false, podSelector = 'spec.selector'}) => {
   const { metadata, type } = resource;
   const reference = referenceFor(resource);
   const model = modelFor(reference);
   const owners = (_.get(metadata, 'ownerReferences') || [])
     .map((o, i) => <ResourceLink key={i} kind={referenceForOwnerRef(o)} name={o.name} namespace={metadata.namespace} title={o.uid} />);
+  const tolerations = showTolerations ? (resource.spec.tolerations ? resource.spec.tolerations : resource.spec.template.spec.tolerations) : [];
 
   return <dl className="co-m-pane__details">
     <dt>Name</dt>
@@ -38,6 +39,8 @@ export const ResourceSummary: React.SFC<ResourceSummaryProps> = ({children, reso
     {showAnnotations && <dt>Annotations</dt>}
     {showAnnotations && <dd><a className="co-m-modal-link" onClick={Kebab.factory.ModifyAnnotations(model, resource).callback}>{pluralize(_.size(metadata.annotations), 'Annotation')}</a></dd>}
     {children}
+    {showTolerations && <dt>Tolerations</dt>}
+    {showTolerations && <dd><a className="co-m-modal-link" onClick={Kebab.factory.ModifyToleration(model, resource).callback}>{pluralize(_.size(tolerations), 'Toleration')}</a></dd>}
     <dt>Created At</dt>
     <dd><Timestamp timestamp={metadata.creationTimestamp} /></dd>
     { owners.length ? <dt>{pluralize(owners.length, 'Owner')}</dt> : null }
@@ -58,6 +61,7 @@ export type ResourceSummaryProps = {
   showPodSelector?: boolean;
   showNodeSelector?: boolean;
   showAnnotations?: boolean;
+  showTolerations?: boolean;
   podSelector?: string;
   children?: React.ReactNode;
 };

@@ -176,6 +176,8 @@ const Details = ({obj: node}) => {
             <dd>{_.get(node, 'status.nodeInfo.kubeletVersion', '-')}</dd>
             <dt>Kube-Proxy Version</dt>
             <dd>{_.get(node, 'status.nodeInfo.kubeProxyVersion', '-')}</dd>
+            <dt>Taints</dt>
+            <dd><a className="co-m-modal-link" onClick={Kebab.factory.ModifyTaint(NodeModel, node).callback}>{pluralize(_.size(node.spec.taints), 'Taint')}</a></dd>
           </dl>
         </div>
       </div>
