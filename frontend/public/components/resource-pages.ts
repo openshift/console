@@ -111,6 +111,7 @@ export const resourceDetailPages = ImmutableMap<GroupVersionKind | string, () =>
   .set(ReportGenerationQueryReference, () => import('./chargeback' /* webpackChunkName: "chargeback" */).then(m => m.ReportGenerationQueriesDetailsPage))
   .set(referenceForModel(StorageClassModel), () => import('./storage-class' /* webpackChunkName: "storage-class" */).then(m => m.StorageClassDetailsPage))
   .set(referenceForModel(VirtualMachineModel), () => import('../kubevirt/components/vm' /* webpackChunkName: "virtual-machines" */).then(m => m.VirtualMachinesDetailsPage))
+  .set(referenceForModel(BaremetalHostModel), () => import('../metalkube/components/host' /* webpackChunkName: "baremetal-hosts" */).then(m => m.BaremetalHostsDetailPage))
   .set(referenceForModel(VmTemplateModel), () => import('../kubevirt/components/vm-template' /* webpackChunkName: "vm-templates" */).then(m => m.VirtualMachineTemplateDetailsPage))
   .set(referenceForModel(ClusterServiceVersionModel), () => import('./operator-lifecycle-manager/clusterserviceversion' /* webpackChunkName: "clusterserviceversion" */).then(m => m.ClusterServiceVersionsDetailsPage))
   .set(referenceForModel(CatalogSourceModel), () => import('./operator-lifecycle-manager/catalog-source' /* webpackChunkName: "catalog-source" */).then(m => m.CatalogSourceDetailsPage))
