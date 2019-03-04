@@ -3,10 +3,10 @@ import { execSync } from 'child_process';
 import { $, by, ElementFinder } from 'protractor';
 
 export const PAGE_LOAD_TIMEOUT = 5000;
-export const VM_WIZARD_LOAD_TIMEOUT = 10000;
-export const VM_BOOTUP_TIMEOUT = 60000;
+export const WIZARD_LOAD_TIMEOUT = 10000;
+export const VM_ACTIONS_TIMEOUT = 120000;
+export const VM_BOOTUP_TIMEOUT = 90000;
 export const VM_STOP_TIMEOUT = 6000;
-export const VM_ACTIONS_TIMEOUT = 90000;
 
 export type provision = {
   method: string,

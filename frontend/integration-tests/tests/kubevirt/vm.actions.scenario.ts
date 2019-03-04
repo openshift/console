@@ -4,15 +4,10 @@ import { browser, ExpectedConditions as until } from 'protractor';
 
 import { appHost, testName } from '../../protractor.conf';
 import { filterForName, isLoaded, resourceRowsPresent } from '../../views/crud.view';
+import { detailViewAction, listViewAction, detailViewVmStatus, detailViewVmIcon, listViewVmStatus, listViewVmIcon,
+  runningIcon, pendingIcon, statusIcon, offIcon } from '../../views/kubevirt/vm.actions.view';
 import { testVM } from './mocks';
-import { removeLeakedResources } from './utils';
-import { detailViewAction, detailViewVmStatus, listViewAction, listViewVmStatus,
-  listViewVmIcon, detailViewVmIcon, runningIcon, offIcon, pendingIcon, statusIcon } from '../../views/kubevirt/vm.actions.view';
-
-
-const VM_BOOTUP_TIMEOUT = 60000;
-const VM_ACTIONS_TIMEOUT = 90000;
-const VM_STOP_TIMEOUT = 6000;
+import { removeLeakedResources, VM_BOOTUP_TIMEOUT, VM_STOP_TIMEOUT, VM_ACTIONS_TIMEOUT } from './utils';
 
 describe('Test VM actions', () => {
   const leakedResources = new Set<string>();
@@ -110,7 +105,7 @@ describe('Test VM actions', () => {
 
     it('Stops VM', async() => {
       await detailViewAction('Stop');
-      await browser.wait(until.and(until.presenceOf(detailViewVmIcon(offIcon))), VM_STOP_TIMEOUT);
+      await browser.wait(until.presenceOf(detailViewVmIcon(offIcon)), VM_STOP_TIMEOUT);
     });
 
     it('Deletes VM', async() => {

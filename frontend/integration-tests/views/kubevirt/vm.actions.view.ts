@@ -7,7 +7,7 @@ export const detailViewVmIcon = (statusIcon: string) => $('#details-column-1').$
 export const listViewVmStatus = (name: string) => rowForName(name).$('.kubevirt-vm-status__link');
 export const listViewVmIcon = (name: string, statusIcon: string) => rowForName(name).$(statusIcon);
 
-export const statusIcon = 'kubevirt-vm-status__icon';
+export const statusIcon = '.kubevirt-vm-status__icon';
 export const runningIcon = '.pficon-on-running';
 export const offIcon = '.pficon-off';
 export const pendingIcon = '.pficon-pending';
