@@ -1,17 +1,12 @@
 /* eslint-disable no-undef */
-
 import { execSync } from 'child_process';
 import { browser, ExpectedConditions as until } from 'protractor';
 
 import { appHost, testName } from '../../protractor.conf';
-import { resourceRowsPresent, filterForName, isLoaded } from '../../views/crud.view';
+import { filterForName, isLoaded, resourceRowsPresent } from '../../views/crud.view';
+import { detailViewAction, detailViewVMmStatus, listViewAction, listViewVMmStatus } from '../../views/kubevirt/vm.actions.view';
 import { testVM } from './mocks';
-import { removeLeakedResources } from './utils';
-import {detailViewAction, detailViewVMmStatus, listViewAction, listViewVMmStatus} from '../../views/kubevirt/vm.actions.view';
-
-const VM_BOOTUP_TIMEOUT = 60000;
-const VM_ACTIONS_TIMEOUT = 90000;
-const VM_STOP_TIMEOUT = 6000;
+import { removeLeakedResources, VM_BOOTUP_TIMEOUT, VM_STOP_TIMEOUT, VM_ACTIONS_TIMEOUT } from './utils';
 
 describe('Test VM actions', () => {
   const leakedResources = new Set<string>();

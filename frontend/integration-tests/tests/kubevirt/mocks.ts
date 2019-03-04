@@ -65,11 +65,37 @@ export const testNAD = {
   apiVersion: 'k8s.cni.cncf.io/v1',
   kind: 'NetworkAttachmentDefinition',
   metadata: {
-    name: `ovs-net-1${testName}-${testName}`,
+    name: `ovs-net-1-${testName}`,
     namespace: testName,
     labels: {[testLabel]: testName},
   },
   spec: {
     config: '{ "cniVersion": "0.3.1", "type": "ovs", "bridge": "br0" }',
   },
+};
+
+export const basicVmConfig = {
+  operatingSystem: 'Red Hat Enterprise Linux 7.6',
+  flavor: 'small',
+  workloadProfile: 'generic',
+  sourceURL: 'https://download.cirros-cloud.net/0.4.0/cirros-0.4.0-x86_64-disk.img',
+  sourceContainer: 'kubevirt/cirros-registry-disk-demo:latest',
+};
+
+export const networkInterface = {
+  name: `nic1-${testName}`,
+  mac: 'fe:fe:fe:fe:fe:fe',
+  networkDefinition: testNAD.metadata.name,
+};
+
+export const hddDisk = {
+  name: `disk-hdd-${testName}`,
+  size: '2',
+  StorageClass: 'hdd',
+};
+
+export const glusterfsDisk = {
+  name: `disk-glusterfs-${testName}`,
+  size: '1',
+  StorageClass: 'glusterfs-storage',
 };

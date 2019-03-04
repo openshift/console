@@ -19,6 +19,11 @@ const htmlReporter = new HtmlScreenshotReporter({dest: './gui_test_screenshots',
 const junitReporter = new JUnitXmlReporter({savePath: './gui_test_screenshots', consolidateAll: true});
 const browserLogs: logging.Entry[] = [];
 
+const plugins = [];
+if (process.env.FAIL_FAST === 'true') {
+  plugins.push(failFast.init());
+}
+
 export const config: Config = {
   framework: 'jasmine',
   directConnect: true,
@@ -28,7 +33,7 @@ export const config: Config = {
     defaultTimeoutInterval: 40000,
   },
   logLevel: tap ? 'ERROR' : 'INFO',
-  plugins: [failFast.init()],
+  plugins,
   capabilities: {
     browserName: 'chrome',
     acceptInsecureCerts: true,
