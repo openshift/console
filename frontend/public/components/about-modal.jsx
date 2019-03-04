@@ -12,7 +12,6 @@ class AboutModal_ extends React.Component {
     super(props);
     this.state = {
       kubernetesVersion: null,
-      clusterName: null,
     };
   }
 

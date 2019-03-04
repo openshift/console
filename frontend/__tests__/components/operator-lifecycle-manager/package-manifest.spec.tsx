@@ -35,7 +35,7 @@ describe(PackageManifestRow.displayName, () => {
   let wrapper: ShallowWrapper<PackageManifestRowProps>;
 
   beforeEach(() => {
-    wrapper = shallow(<PackageManifestRow obj={testPackageManifest} catalogSourceNamespace={testCatalogSource.metadata.namespace} catalogSourceName={testCatalogSource.metadata.name} subscription={testSubscription} defaultNS="default" />);
+    wrapper = shallow(<PackageManifestRow obj={testPackageManifest} catalogSourceNamespace={testCatalogSource.metadata.namespace} catalogSourceName={testCatalogSource.metadata.name} subscription={testSubscription} defaultNS="default" canSubscribe={true} />);
   });
 
   it('renders column for package name and logo', () => {
@@ -58,10 +58,14 @@ describe(PackageManifestRow.displayName, () => {
     expect(wrapper.find('.co-resource-list__item').childAt(2).find(Link).at(0).childAt(0).text()).toEqual('View');
   });
 
-  it('renders button to create new subscription', () => {
-    wrapper = wrapper.setProps({subscription: null});
-
+  it('renders button to create new subscription if `canSubscribe` is true', () => {
     expect(wrapper.find('.co-resource-list__item').childAt(2).find('button').text()).toEqual('Create Subscription');
+  });
+
+  it('does not render button to create new subscription if `canSubscribe` is false', () => {
+    wrapper = wrapper.setProps({canSubscribe: false});
+
+    expect(wrapper.find('.co-resource-list__item').childAt(2).find('button').exists()).toBe(false);
   });
 });
 
@@ -74,7 +78,7 @@ describe(PackageManifestList.displayName, () => {
     otherPackageManifest.status.catalogSource = 'another-catalog-source';
     otherPackageManifest.status.catalogSourceDisplayName = 'Another Catalog Source';
     otherPackageManifest.status.catalogSourcePublisher = 'Some Publisher';
-    packages = [testPackageManifest, otherPackageManifest];
+    packages = [otherPackageManifest, testPackageManifest];
 
     wrapper = shallow(<PackageManifestList.WrappedComponent loaded={true} data={packages} operatorGroup={null} subscription={null} />);
   });
@@ -82,7 +86,6 @@ describe(PackageManifestList.displayName, () => {
   it('renders a section for each unique `CatalogSource` for the given packages', () => {
     expect(wrapper.find('.co-catalogsource-list__section').length).toEqual(2);
     packages.forEach(({status}, i) => {
-      expect(wrapper.find('.co-catalogsource-list__section').at(i).find('h3').text()).toEqual(status.catalogSourceDisplayName);
       expect(wrapper.find('.co-catalogsource-list__section').at(i).find('h3').text()).toEqual(status.catalogSourceDisplayName);
     });
   });

@@ -26,7 +26,7 @@ const getTLSCert = (ingress) => {
   const certs = _.map(ingress.spec.tls, 'secretName');
 
   return <div>
-    <ResourceIcon kind="Secret" className="co-m-resource-icon--align-left" />
+    <ResourceIcon kind="Secret" />
     <span>{certs.join(', ')}</span>
   </div>;
 };

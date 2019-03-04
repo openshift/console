@@ -40,6 +40,7 @@ const amqPackageManifest = {
         provider: {
           name: 'Red Hat',
         },
+        installModes: [],
         annotations: {
           'alm-examples': '[{"apiVersion":"kafka.strimzi.io/v1alpha1","kind":"Kafka","metadata":{"name":"my-cluster"},"spec":{"kafka":{"replicas":3,"listeners":{"plain":{},"tls":{}},"config":{"offsets.topic.replication.factor":3,"transaction.state.log.replication.factor":3,"transaction.state.log.min.isr":2},"storage":{"type":"ephemeral"}},"zookeeper":{"replicas":3,"storage":{"type":"ephemeral"}},"entityOperator":{"topicOperator":{},"userOperator":{}}}}, {"apiVersion":"kafka.strimzi.io/v1alpha1","kind":"KafkaConnect","metadata":{"name":"my-connect-cluster"},"spec":{"replicas":1,"bootstrapServers":"my-cluster-kafka-bootstrap:9093","tls":{"trustedCertificates":[{"secretName":"my-cluster-cluster-ca-cert","certificate":"ca.crt"}]}}}, {"apiVersion":"kafka.strimzi.io/v1alpha1","kind":"KafkaConnectS2I","metadata":{"name":"my-connect-cluster"},"spec":{"replicas":1,"bootstrapServers":"my-cluster-kafka-bootstrap:9093","tls":{"trustedCertificates":[{"secretName":"my-cluster-cluster-ca-cert","certificate":"ca.crt"}]}}}, {"apiVersion":"kafka.strimzi.io/v1alpha1","kind":"KafkaTopic","metadata":{"name":"my-topic","labels":{"strimzi.io/cluster":"my-cluster"}},"spec":{"partitions":10,"replicas":3,"config":{"retention.ms":604800000,"segment.bytes":1073741824}}}, {"apiVersion":"kafka.strimzi.io/v1alpha1","kind":"KafkaUser","metadata":{"name":"my-user","labels":{"strimzi.io/cluster":"my-cluster"}},"spec":{"authentication":{"type":"tls"},"authorization":{"type":"simple","acls":[{"resource":{"type":"topic","name":"my-topic","patternType":"literal"},"operation":"Read","host":"*"},{"resource":{"type":"topic","name":"my-topic","patternType":"literal"},"operation":"Describe","host":"*"},{"resource":{"type":"group","name":"my-group","patternType":"literal"},"operation":"Read","host":"*"},{"resource":{"type":"topic","name":"my-topic","patternType":"literal"},"operation":"Write","host":"*"},{"resource":{"type":"topic","name":"my-topic","patternType":"literal"},"operation":"Create","host":"*"},{"resource":{"type":"topic","name":"my-topic","patternType":"literal"},"operation":"Describe","host":"*"}]}}}]',
           description: '**Red Hat AMQ Streams** is a massively scalable, distributed, and high performance data streaming platform based on the Apache Kafka project. \nAMQ Streams provides an event streaming backbone that allows microservices and other application components to exchange data with extremely high throughput and low latency.\n\n**The core capabilities include**\n* A pub/sub messaging model, similar to a traditional enterprise messaging system, in which application components publish and consume events to/from an ordered stream\n* The long term, fault-tolerant storage of events\n* The ability for a consumer to replay streams of events\n* The ability to partition topics for horizontal scalability\n\n# Before you start\n\n1. Create AMQ Streams Cluster Roles\n```\n$ oc apply -f http://amq.io/amqstreams/rbac.yaml\n```\n2. Create following bindings\n```\n$ oc adm policy add-cluster-role-to-user strimzi-cluster-operator -z strimzi-cluster-operator --namespace <namespace>\n$ oc adm policy add-cluster-role-to-user strimzi-kafka-broker -z strimzi-cluster-operator --namespace <namespace>\n```',
@@ -64,6 +65,7 @@ const etcdPackageManifest = {
       'catalog-namespace': 'openshift-operator-lifecycle-manager',
       provider: 'CoreOS, Inc',
       'provider-url': '',
+      'opsrc-provider': 'community',
     },
   },
   spec: {},
@@ -89,6 +91,7 @@ const etcdPackageManifest = {
         provider: {
           name: 'CoreOS, Inc',
         },
+        installModes: [],
         annotations: {
           'alm-examples': '[{"apiVersion":"etcd.database.coreos.com/v1beta2","kind":"EtcdCluster","metadata":{"name":"example","namespace":"default"},"spec":{"size":3,"version":"3.2.13"}},{"apiVersion":"etcd.database.coreos.com/v1beta2","kind":"EtcdRestore","metadata":{"name":"example-etcd-cluster"},"spec":{"etcdCluster":{"name":"example-etcd-cluster"},"backupStorageType":"S3","s3":{"path":"<full-s3-path>","awsSecret":"<aws-secret>"}}},{"apiVersion":"etcd.database.coreos.com/v1beta2","kind":"EtcdBackup","metadata":{"name":"example-etcd-cluster-backup"},"spec":{"etcdEndpoints":["<etcd-cluster-endpoints>"],"storageType":"S3","s3":{"path":"<full-s3-path>","awsSecret":"<aws-secret>"}}}]',
           'tectonic-visibility': 'ocs',
@@ -136,6 +139,7 @@ const federationv2PackageManifest = {
         provider: {
           name: 'Red Hat',
         },
+        installModes: [],
         annotations: {
           description: 'Kubernetes Federation V2 namespace-scoped installation',
           categories: '',
@@ -184,6 +188,7 @@ const prometheusPackageManifest = {
         provider: {
           name: 'Red Hat',
         },
+        installModes: [],
         annotations: {
           'alm-examples': '[{"apiVersion":"monitoring.coreos.com/v1","kind":"Prometheus","metadata":{"name":"example","labels":{"prometheus":"k8s"}},"spec":{"replicas":2,"version":"v2.3.2","serviceAccountName":"prometheus-k8s","securityContext": {}, "serviceMonitorSelector":{"matchExpressions":[{"key":"k8s-app","operator":"Exists"}]},"ruleSelector":{"matchLabels":{"role":"prometheus-rulefiles","prometheus":"k8s"}},"alerting":{"alertmanagers":[{"namespace":"monitoring","name":"alertmanager-main","port":"web"}]}}},{"apiVersion":"monitoring.coreos.com/v1","kind":"ServiceMonitor","metadata":{"name":"example","labels":{"k8s-app":"prometheus"}},"spec":{"selector":{"matchLabels":{"k8s-app":"prometheus"}},"endpoints":[{"port":"web","interval":"30s"}]}},{"apiVersion":"monitoring.coreos.com/v1","kind":"Alertmanager","metadata":{"name":"alertmanager-main"},"spec":{"replicas":3, "securityContext": {}}}]',
           description: 'The Prometheus Operator for Kubernetes provides easy monitoring definitions for Kubernetes services and deployment and management of Prometheus instances.',
@@ -230,6 +235,7 @@ const svcatPackageManifest = {
         provider: {
           name: 'Red Hat',
         },
+        installModes: [],
         annotations: {
           description: 'Service Catalog lets you provision cloud services directly from the comfort of native Kubernetes tooling.',
           categories: 'catalog',
@@ -276,6 +282,7 @@ const dummyPackageManifest = {
         provider: {
           name: 'Dummy',
         },
+        installModes: [],
         annotations: {
           description: 'Dummy is not a real operator',
           categories: 'dummy',

@@ -2,11 +2,9 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
-import { Link } from 'react-router-dom';
 
 import { k8sCreate, k8sUpdate, K8sResourceKind, referenceFor } from '../../module/k8s';
 import { ButtonBar, Firehose, history, StatusBox, LoadingBox, Dropdown, resourceObjPath } from '../utils';
-import { formatNamespacedRouteForResource } from '../../ui/ui-actions';
 import { AsyncComponent } from '../utils/async';
 import { SecretModel } from '../../models';
 import { WebHookSecretKey } from '../secret';
@@ -157,6 +155,7 @@ const withSecretForm = (SubForm) => class SecretFormComponent extends React.Comp
   }
   render() {
     const { secretTypeAbstraction } = this.state;
+    const { onCancel = history.goBack } = this.props;
     const title = `${this.props.titleVerb} ${secretDisplayType(secretTypeAbstraction)} Secret`;
     return <div className="co-m-pane__body">
       <Helmet>
@@ -191,7 +190,7 @@ const withSecretForm = (SubForm) => class SecretFormComponent extends React.Comp
         />
         <ButtonBar errorMessage={this.state.error} inProgress={this.state.inProgress}>
           <button type="submit" disabled={this.state.disableForm} className="btn btn-primary" id="save-changes">{this.props.saveButtonText || 'Create'}</button>
-          <Link to={formatNamespacedRouteForResource('secrets')} className="btn btn-default" id="cancel">Cancel</Link>
+          <button type="button" className="btn btn-default" id="cancel" onClick={onCancel}>Cancel</button>
         </ButtonBar>
       </form>
     </div>;
@@ -363,15 +362,14 @@ class ConfigEntryForm extends React.Component<ConfigEntryFormProps, ConfigEntryF
         </div>
       </div>
       <div className="form-group">
-        <label className="control-label co-required" htmlFor={`${this.props.id}-email`}>Email</label>
+        <label className="control-label" htmlFor={`${this.props.id}-email`}>Email</label>
         <div>
           <input className="form-control"
             id={`${this.props.id}-email`}
             type="text"
             name="email"
             onChange={this.changeData}
-            value={this.state.email}
-            required />
+            value={this.state.email} />
         </div>
       </div>
     </div>;
@@ -930,6 +928,7 @@ export type BaseEditSecretProps_ = {
   secretTypeAbstraction?: SecretTypeAbstraction;
   saveButtonText?: string;
   explanation: string;
+  onCancel?: () => null;
 };
 
 export type BasicAuthSubformProps = {

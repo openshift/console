@@ -151,7 +151,7 @@ export const CRDCard: React.SFC<CRDCardProps> = (props) => {
 };
 
 const crdCardRowStateToProps = ({k8s}, {crdDescs}) => {
-  const models: K8sKind[] = crdDescs.map(desc => k8s.getIn(['RESOURCES', 'models', referenceForProvidedAPI(desc)]));
+  const models: K8sKind[] = _.compact(crdDescs.map(desc => k8s.getIn(['RESOURCES', 'models', referenceForProvidedAPI(desc)])));
   return {
     crdDescs: crdDescs.filter(desc => models.find(m => referenceForModel(m) === referenceForProvidedAPI(desc))),
     createable: models.filter(m => (m.verbs || []).includes('create')).map(m => referenceForModel(m)),
@@ -160,7 +160,9 @@ const crdCardRowStateToProps = ({k8s}, {crdDescs}) => {
 
 export const CRDCardRow = connect(crdCardRowStateToProps)(
   (props: CRDCardRowProps) => <div className="co-crd-card-row">
-    {props.crdDescs.map((desc, i) => <CRDCard key={i} crd={desc} csv={props.csv} canCreate={props.createable.includes(referenceForProvidedAPI(desc))} />)}
+    { _.isEmpty(props.crdDescs)
+      ? <span className="text-muted">No Kubernetes APIs are being provided by this Operator.</span>
+      : props.crdDescs.map((desc, i) => <CRDCard key={i} crd={desc} csv={props.csv} canCreate={props.createable.includes(referenceForProvidedAPI(desc))} />) }
   </div>
 );
 

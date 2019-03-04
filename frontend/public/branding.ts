@@ -10,6 +10,8 @@ const getProductName = () => {
       return 'OKD Virtualization';
     case 'openshiftvirt':
       return 'OpenShift Virtualization';
+    case 'dedicated':
+      return 'OpenShift Dedicated';
     default:
       return 'OKD';
   }

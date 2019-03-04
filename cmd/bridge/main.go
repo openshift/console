@@ -52,8 +52,6 @@ func main() {
 	// See https://github.com/openshift/service-serving-cert-signer
 	fServiceCAFile := fs.String("service-ca-file", "", "CA bundle for OpenShift services signed with the service signing certificates.")
 
-	fTectonicClusterName := fs.String("tectonic-cluster-name", "tectonic", "The Tectonic cluster name.")
-
 	fUserAuth := fs.String("user-auth", "disabled", "disabled | oidc | openshift")
 	fUserAuthOIDCIssuerURL := fs.String("user-auth-oidc-issuer-url", "", "The OIDC/OAuth2 issuer URL.")
 	fUserAuthOIDCCAFile := fs.String("user-auth-oidc-ca-file", "", "PEM file for the OIDC/OAuth2 issuer.")
@@ -143,10 +141,6 @@ func main() {
 	if branding == "origin" {
 		branding = "okd"
 	}
-	// Temporarily default okd to openshift
-	if branding == "okd" {
-		branding = "openshift"
-	}
 	switch branding {
 	case "okd":
 	case "okdvirt":
@@ -165,7 +159,6 @@ func main() {
 		BaseURL:              baseURL,
 		LogoutRedirect:       logoutRedirect,
 		TectonicCACertFile:   caCertFilePath,
-		ClusterName:          *fTectonicClusterName,
 		Branding:             branding,
 		DocumentationBaseURL: documentationBaseURL,
 		GoogleTagManagerID:   *fGoogleTagManagerID,
@@ -368,7 +361,7 @@ func main() {
 
 			// Use the k8s CA file for OpenShift OAuth metadata discovery.
 			// This might be different than IssuerCA.
-			DiscoveryCA: caCertFilePath,
+			K8sCA: caCertFilePath,
 
 			ErrorURL:   authLoginErrorEndpoint,
 			SuccessURL: authLoginSuccessEndpoint,
@@ -396,7 +389,7 @@ func main() {
 		}
 
 		if srv.Auther, err = auth.NewAuthenticator(context.Background(), oidcClientConfig); err != nil {
-			log.Fatalf("Error initializing OIDC authenticator: %v", err)
+			log.Fatalf("Error initializing authenticator: %v", err)
 		}
 	case "disabled":
 		log.Warningf("running with AUTHENTICATION DISABLED!")

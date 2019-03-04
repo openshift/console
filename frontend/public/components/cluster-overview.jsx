@@ -170,7 +170,7 @@ const permissionedLoader = () => {
   }
 
   // Show events list if user lacks permission to view graphs.
-  const q = 'sum(ALERTS{alertstate="firing", alertname!="DeadMansSwitch"})';
+  const q = 'sum(ALERTS{alertstate="firing", alertname!="Watchdog"})';
   return coFetchJSON(`${prometheusBasePath}/api/v1/query?query=${encodeURIComponent(q)}`)
     .then(
       () => AllGraphs,

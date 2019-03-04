@@ -22,6 +22,7 @@ import {
   SectionHeading,
   Selector,
 } from './utils';
+import { ResourceEventStream } from './events';
 
 export const menuActions = [Kebab.factory.AddStorage, Kebab.factory.EditEnvironment, ...Kebab.factory.common];
 
@@ -92,14 +93,14 @@ const environmentComponent = (props) => <EnvironmentPage
   readOnly={false}
 />;
 
-const {details, pods, editYaml, envEditor} = navFactory;
+const {details, pods, editYaml, envEditor, events} = navFactory;
 
 const DaemonSets = props => <List {...props} Header={DaemonSetHeader} Row={DaemonSetRow} />;
 const DaemonSetsPage = props => <ListPage canCreate={true} ListComponent={DaemonSets} {...props} />;
 const DaemonSetsDetailsPage = props => <DetailsPage
   {...props}
   menuActions={menuActions}
-  pages={[details(detailsPage(Details)), editYaml(), pods(), envEditor(environmentComponent)]}
+  pages={[details(detailsPage(Details)), editYaml(), pods(), envEditor(environmentComponent), events(ResourceEventStream)]}
 />;
 
 export {DaemonSets, DaemonSetsPage, DaemonSetsDetailsPage};
