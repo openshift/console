@@ -100,7 +100,7 @@ export const config: Config = {
     serviceCatalog: ['tests/base.scenario.ts', 'tests/service-catalog/service-catalog.scenario.ts', 'tests/service-catalog/service-broker.scenario.ts', 'tests/service-catalog/service-class.scenario.ts', 'tests/service-catalog/service-binding.scenario.ts', 'tests/developer-catalog.scenario.ts'],
     operatorHub: ['tests/base.scenario.ts', 'tests/operator-hub/operator-hub.scenario.ts'],
     overview: ['tests/base.scenario.ts', 'tests/overview/overview.scenario.ts'],
-    kubevirt: ['tests/base.scenario.ts', 'tests/kubevirt/vm.wizard.scenario.ts', 'tests/kubevirt/vm.actions.scenario.ts'],
+    kubevirt: ['tests/base.scenario.ts', 'tests/kubevirt/vm.wizard.scenario.ts', 'tests/kubevirt/vm.actions.scenario.ts', 'tests/kubevirt/template.wizard.scenario.ts'],
     e2e: ['tests/base.scenario.ts',
       'tests/crud.scenario.ts',
       'tests/secrets.scenario.ts',
