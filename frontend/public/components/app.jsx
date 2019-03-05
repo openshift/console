@@ -24,6 +24,7 @@ import { UIActions, getActiveNamespace } from '../ui/ui-actions';
 import { ClusterServiceVersionModel, SubscriptionModel, AlertmanagerModel } from '../models';
 import { getCachedResources, referenceForModel } from '../module/k8s';
 import k8sActions, { types } from '../module/k8s/k8s-actions';
+import DevConsoleNavigation from '../extend/devconsole/components/DevConsoleNav';
 import '../vendor.scss';
 import '../style.scss';
 
@@ -165,6 +166,10 @@ class App extends React.PureComponent {
     }
   }
 
+  _sidebarNav() {
+    return ((this.props.location.pathname).startsWith('/devops')) ? <DevConsoleNavigation isNavOpen={true} onNavSelect={this._onNavSelect} /> : <Navigation isNavOpen={true} onNavSelect={this._onNavSelect} />;
+  }
+
   render() {
     const { isNavOpen } = this.state;
 
@@ -180,7 +185,7 @@ class App extends React.PureComponent {
         />
         <Page
           header={<Masthead onNavToggle={this._onNavToggle} />}
-          sidebar={<Navigation isNavOpen={true} onNavSelect={this._onNavSelect} />}
+          sidebar={this._sidebarNav()}
         >
           <PageSection variant={PageSectionVariants.light}>
             <div id="content">
