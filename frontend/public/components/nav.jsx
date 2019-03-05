@@ -130,7 +130,7 @@ ResourceClusterLink.propTypes = {
   model: PropTypes.object,
 };
 
-class HrefLink extends NavLink {
+export class HrefLink extends NavLink {
   static isActive(props, resourcePath) {
     const noNSHref = stripNS(props.href);
     return resourcePath === noNSHref || _.startsWith(resourcePath, `${noNSHref}/`);
@@ -158,7 +158,7 @@ const navSectionStateToProps = (state, {required}) => {
   };
 };
 
-const NavSection = connect(navSectionStateToProps)(
+export const NavSection = connect(navSectionStateToProps)(
   class NavSection extends React.Component {
     constructor(props) {
       super(props);
