@@ -19,21 +19,32 @@ const PVCStatus = ({pvc}) => {
 };
 
 const Header = props => <ListHeader>
-  <ColHead {...props} className="col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
-  <ColHead {...props} className="col-sm-4 col-xs-6" sortField="metadata.namespace">Namespace</ColHead>
-  <ColHead {...props} className="col-sm-4 hidden-xs" sortField="status.phase">Status</ColHead>
+  <ColHead {...props} className="col-lg-2 col-md-2 col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
+  <ColHead {...props} className="col-lg-2 col-md-2 col-sm-4 col-xs-6" sortField="metadata.namespace">Namespace</ColHead>
+  <ColHead {...props} className="col-lg-2 col-md-2 col-sm-4 hidden-xs" sortField="status.phase">Status</ColHead>
+  <ColHead {...props} className="col-lg-3 col-md-3 hidden-sm hidden-xs" sortField="spec.volumeName">Persistent Volume</ColHead>
+  <ColHead {...props} className="col-lg-3 col-md-3 hidden-sm hidden-xs" sortField="spec.resources.requests.storage">Requested</ColHead>
 </ListHeader>;
 
 const kind = 'PersistentVolumeClaim';
 const Row = ({obj}) => <div className="row co-resource-list__item">
-  <div className="col-sm-4 col-xs-6">
+  <div className="col-lg-2 col-md-2 col-sm-4 col-xs-6">
     <ResourceLink kind={kind} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
   </div>
-  <div className="col-sm-4 col-xs-4 co-break-word">
+  <div className="col-lg-2 col-md-2 col-sm-4 col-xs-6 co-break-word">
     <ResourceLink kind="Namespace" name={obj.metadata.namespace} title={obj.metadata.namespace} />
   </div>
-  <div className="col-sm-4 hidden-xs">
+  <div className="col-lg-2 col-md-2 col-sm-4 hidden-xs">
     <PVCStatus pvc={obj} />
+  </div>
+  <div className="col-lg-3 col-md-3 hidden-sm hidden-xs">
+    { _.get(obj, 'spec.volumeName') ?
+      <ResourceLink kind="PersistentVolume" name={obj.spec.volumeName} title={obj.spec.volumeName} />:
+      <div className="text-muted">No Persistent Volume</div>
+    }
+  </div>
+  <div className="col-lg-3 col-md-3 hidden-sm hidden-xs">
+    {_.get(obj, 'spec.resources.requests.storage', '-')}
   </div>
   <div className="dropdown-kebab-pf">
     <ResourceKebab actions={menuActions} kind={kind} resource={obj} />
