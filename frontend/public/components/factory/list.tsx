@@ -51,7 +51,7 @@ import {
   getClusterOperatorVersion,
 } from '../../module/k8s';
 
-import { getSimpleVmStatus } from 'kubevirt-web-ui-components';
+import { getSimpleVmStatus, getHostStatus } from 'kubevirt-web-ui-components';
 
 const fuzzyCaseInsensitive = (a, b) => fuzzy(_.toLower(a), _.toLower(b));
 
@@ -186,6 +186,11 @@ const listFilters = {
   'vm-status' : (statuses, vm) => {
     // TODO: figure out how to get VM pods here
     const status = getSimpleVmStatus(vm);
+    return statuses.selected.has(status) || !_.includes(statuses.all, status);
+  },
+
+  'baremetalhost-status': (statuses, host) => {
+    const status = getHostStatus(host);
     return statuses.selected.has(status) || !_.includes(statuses.all, status);
   },
 

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { getHostStatus } from 'kubevirt-web-ui-components';
 
 import {
   ListHeader,
@@ -55,6 +56,8 @@ const HostRow = ({ obj: host }) => {
     },
   } = host;
 
+  const status = getHostStatus(host);
+
   return (
     <ResourceRow obj={host}>
       <div className={mainColumnClasses}>
@@ -72,7 +75,7 @@ const HostRow = ({ obj: host }) => {
           title={namespace}
         />
       </div>
-      <div className={statusColumnClasses}>-</div>
+      <div className={statusColumnClasses}>{status}</div>
       <div className={hideableColumnClasses}>-</div>
       <div className={roleColumnClasses}>-</div>
       <div className={hideableColumnClasses}>{address}</div>
@@ -82,12 +85,25 @@ const HostRow = ({ obj: host }) => {
 
 const HostList = props => <List {...props} Header={HostHeader} Row={HostRow} />;
 
+const filters = [
+  {
+    type: 'baremetalhost-status',
+    selected: ['online', 'offline'],
+    reducer: getHostStatus,
+    items: [
+      { id: 'online', title: 'online' },
+      { id: 'offline', title: 'offline' },
+    ],
+  },
+];
+
 export class BaremetalHostsPage extends React.Component {
   render() {
     return (
       <ListPage
         {...this.props}
         canCreate={true}
+        rowFilters={filters}
         createButtonText="Create Host"
         kind={BaremetalHostModel.kind}
         ListComponent={HostList}
