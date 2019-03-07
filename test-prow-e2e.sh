@@ -14,11 +14,9 @@ trap copyArtifacts EXIT
 
 ./build.sh
 
-oc login -u kubeadmin -p $(cat "${ARTIFACT_DIR}/installer/auth/kubeadmin-password")
-
+oc login -u system:admin
+oc adm policy add-cluster-role-to-user cluster-admin admin
+oc login -u admin
 source ./contrib/oc-environment.sh
 
-kubectl create -f https://raw.githubusercontent.com/operator-framework/operator-lifecycle-manager/master/deploy/okd/manifests/0.8.0/0000_30_06-rh-operators.configmap.yaml
-kubectl create -f https://raw.githubusercontent.com/operator-framework/operator-lifecycle-manager/master/deploy/okd/manifests/0.8.0/0000_30_09-rh-operators.catalogsource.yaml
-
-./test-gui.sh e2e
+./test-gui.sh crud
