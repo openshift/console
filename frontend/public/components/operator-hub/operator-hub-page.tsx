@@ -34,7 +34,7 @@ export const OperatorHubList: React.SFC<OperatorHubListProps> = (props) => {
       imgUrl: iconObj ? `data:${iconObj.mediatype};base64,${iconObj.base64data}` : operatorImg,
       description: currentCSVAnnotations.description || currentCSVDesc.description,
       longDescription: currentCSVDesc.description || currentCSVAnnotations.description,
-      provider: _.get(pkg, 'metadata.labels.provider'),
+      provider: _.get(pkg, 'status.provider.name', _.get(pkg, 'metadata.labels.provider')),
       providerType: getOperatorProviderType(pkg),
       tags: pkg.metadata.tags,
       version: _.get(currentCSVDesc, 'version'),
