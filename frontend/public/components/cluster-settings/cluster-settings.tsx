@@ -99,7 +99,7 @@ const UpdateInProgressAlert = () => <div className="alert alert-info">
 const UpdatesAvailableAlert = ({cv}) => <div className="alert alert-info">
   <i className="pficon pficon-info" aria-hidden={true} />
   Cluster update is available.
-  <Button bsStyle="link" onClick={()=> (launchUpdateModal(cv))}>
+  <Button bsStyle="link" className="co-m-modal-link" onClick={()=> (launchUpdateModal(cv))}>
     Update Now
   </Button>
 </div>;
@@ -110,7 +110,7 @@ const UpdateStatus: React.SFC<UpdateStatusProps> = ({cv}) => {
   return <React.Fragment>
     {
       status === ClusterUpdateStatus.UpdatesAvailable
-        ? <Button bsStyle="link" onClick={() => (launchUpdateModal(cv))}>
+        ? <Button bsStyle="link" className="co-m-modal-link" onClick={() => (launchUpdateModal(cv))}>
           <i className={iconClass} aria-hidden={true}></i>
           &nbsp;
           {status}
