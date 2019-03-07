@@ -43,13 +43,16 @@ describe('Kubevirt create VM template using wizard', () => {
 
   afterAll(async() => {
     execSync(`kubectl delete -n ${testName} net-attach-def ${testNAD.metadata.name}`);
-    removeLeakedResources(leakedResources);
   });
 
   beforeEach(async() => {
     await browser.get(`${appHost}/k8s/ns/${testName}/vmtemplates`);
     await isLoaded();
     await wizard.openWizard();
+  });
+
+  afterEach(async() => {
+    removeLeakedResources(leakedResources);
   });
 
   provisionConfigs.forEach((provisionConfig, configName) => {
