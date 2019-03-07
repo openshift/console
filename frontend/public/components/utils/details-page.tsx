@@ -15,7 +15,7 @@ export const detailsPage = <T extends {}>(Component: React.ComponentType<T>) => 
   return <Component {...props} />;
 };
 
-export const ResourceSummary: React.SFC<ResourceSummaryProps> = ({children, resource, showPodSelector = false, showNodeSelector = true, showAnnotations = true, podSelector = 'spec.selector'}) => {
+export const ResourceSummary: React.SFC<ResourceSummaryProps> = ({children, resource, showPodSelector = false, showNodeSelector = false, showAnnotations = true, podSelector = 'spec.selector'}) => {
   const { metadata, type } = resource;
   const reference = referenceFor(resource);
   const model = modelFor(reference);

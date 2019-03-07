@@ -38,7 +38,7 @@ const ServiceBindingDetails: React.SFC<ServiceBindingDetailsProps> = ({obj: sb})
       <SectionHeading text="Service Binding Overview" />
       <div className="row">
         <div className="col-sm-6">
-          <ResourceSummary resource={sb} showNodeSelector={false} />
+          <ResourceSummary resource={sb} />
         </div>
         <div className="col-sm-6">
           <dl className="co-m-pane__details">

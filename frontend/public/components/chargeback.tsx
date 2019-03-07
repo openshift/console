@@ -101,7 +101,7 @@ class ReportsDetails extends React.Component<ReportsDetailsProps> {
         <SectionHeading text="Report Overview" />
         <div className="row">
           <div className="col-sm-6 col-xs-12">
-            <ResourceSummary resource={obj} showNodeSelector={false} showAnnotations={true} />
+            <ResourceSummary resource={obj} showAnnotations={true} />
           </div>
           <div className="col-sm-6 col-xs-12">
             <dl className="co-m-pane__details">

@@ -213,7 +213,7 @@ const RouteDetails: React.SFC<RoutesDetailsProps> = ({obj: route}) => <React.Fra
     <SectionHeading text="Route Overview" />
     <div className="row">
       <div className="col-sm-6">
-        <ResourceSummary resource={route} showNodeSelector={false}>
+        <ResourceSummary resource={route}>
           <dt>{route.spec.to.kind}</dt>
           <dd><ResourceLink kind={route.spec.to.kind} name={route.spec.to.name} namespace={route.metadata.namespace}
             title={route.spec.to.name} />

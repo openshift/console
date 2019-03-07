@@ -112,7 +112,7 @@ const Details = ({obj: serviceaccount}) => {
     <React.Fragment>
       <div className="co-m-pane__body">
         <SectionHeading text="Service Account Overview" />
-        <ResourceSummary resource={serviceaccount} showNodeSelector={false} />
+        <ResourceSummary resource={serviceaccount} />
       </div>
       <div className="co-m-pane__body co-m-pane__body--alt">
         <SectionHeading text="Secrets" style={{marginBottom: '-20px'}} />

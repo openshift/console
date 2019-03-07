@@ -118,7 +118,7 @@ const RulesRows = (props) => {
 const Details = ({obj: ingress}) => <React.Fragment>
   <div className="co-m-pane__body">
     <SectionHeading text="Ingress Overview" />
-    <ResourceSummary resource={ingress} showNodeSelector={false}>
+    <ResourceSummary resource={ingress}>
       <dt>TLS Certificate</dt>
       <dd>{getTLSCert(ingress)}</dd>
     </ResourceSummary>

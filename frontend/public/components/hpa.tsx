@@ -131,7 +131,7 @@ export const HorizontalPodAutoscalersDetails: React.SFC<HorizontalPodAutoscalers
     <SectionHeading text="Horizontal Pod Autoscaler Overview" />
     <div className="row">
       <div className="col-sm-6">
-        <ResourceSummary resource={hpa} showNodeSelector={false} />
+        <ResourceSummary resource={hpa} />
       </div>
       <div className="col-sm-6">
         <dl className="co-m-pane__details">

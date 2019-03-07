@@ -42,7 +42,7 @@ const ClusterServiceBrokerDetails: React.SFC<ClusterServiceBrokerDetailsProps> =
       <SectionHeading text="Service Broker Overview" />
       <div className="row">
         <div className="col-md-6">
-          <ResourceSummary resource={serviceBroker} showNodeSelector={false} />
+          <ResourceSummary resource={serviceBroker} />
           <dt>Last Catalog Retrieval Time</dt>
           <dd><Timestamp timestamp={serviceBroker.status.lastCatalogRetrievalTime} /></dd>
           {serviceBroker.spec.insecureSkipTLSVerify && <dt>Insecure Skip TLS Verify</dt>}

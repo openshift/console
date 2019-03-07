@@ -131,7 +131,7 @@ const MachineConfigPoolCounts: React.SFC<MachineConfigPoolCountsProps> = ({obj})
 const MachineConfigPoolSummary: React.SFC<MachineConfigPoolSummaryProps> = ({obj}) => {
   const machineConfigSelector = _.get(obj, 'spec.machineConfigSelector');
   const machineSelector = _.get(obj, 'spec.machineSelector');
-  return <ResourceSummary resource={obj} showNodeSelector={false}>
+  return <ResourceSummary resource={obj}>
     <dt>Machine Config Selector</dt>
     <dd>
       <Selector

@@ -59,7 +59,7 @@ const ClusterServiceClassDetails: React.SFC<ClusterServiceClassDetailsProps> = (
     </div>
     <div className="col-md-5 col-md-pull-7">
       <SectionHeading text="Service Class Overview" />
-      <ResourceSummary resource={serviceClass} showNodeSelector={false}>
+      <ResourceSummary resource={serviceClass}>
         <dt>External Name</dt>
         <dd>{serviceClass.spec.externalName || '-'}</dd>
       </ResourceSummary>

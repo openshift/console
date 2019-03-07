@@ -26,7 +26,7 @@ export const machineConfigReference = referenceForModel(MachineConfigModel);
 const machineConfigMenuActions = [...Kebab.factory.common];
 
 const MachineConfigSummary: React.SFC<MachineConfigSummaryProps> = ({obj}) => (
-  <ResourceSummary resource={obj} showNodeSelector={false}>
+  <ResourceSummary resource={obj}>
     <dt>OS Image URL</dt>
     <dd>{obj.spec.osImageURL || '-'}</dd>
   </ResourceSummary>

@@ -33,7 +33,7 @@ const ConfigMapDetails = ({obj: configMap}) => {
   return <React.Fragment>
     <div className="co-m-pane__body">
       <SectionHeading text="Config Map Overview" />
-      <ResourceSummary resource={configMap} showNodeSelector={false} />
+      <ResourceSummary resource={configMap} />
     </div>
     <div className="co-m-pane__body">
       <SectionHeading text="Data" />

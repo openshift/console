@@ -15,7 +15,7 @@ import { ResourceOverviewDetails } from './resource-overview-details';
 const DaemonSetOverviewDetails: React.SFC<DaemonSetOverviewDetailsProps> = ({item}) =>
   <div className="co-m-pane__body resource-overview__body">
     <div className="resource-overview__summary">
-      <ResourceSummary resource={item.obj} showPodSelector={true} />
+      <ResourceSummary resource={item.obj} showPodSelector={true} showNodeSelector={true} />
     </div>
     <div className="resource-overview__details">
       <DaemonSetDetailsList ds={item.obj} />

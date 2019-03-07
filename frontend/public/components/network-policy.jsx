@@ -97,7 +97,7 @@ const Details_ = ({obj: np}) => {
   return <React.Fragment>
     <div className="co-m-pane__body">
       <SectionHeading text="Namespace Overview" />
-      <ResourceSummary resource={np} podSelector={'spec.podSelector'} showNodeSelector={false} showPodSelector={true} />
+      <ResourceSummary resource={np} podSelector={'spec.podSelector'} showPodSelector={true} />
     </div>
     <div className="co-m-pane__body">
       <SectionHeading text="Ingress Rules" />
