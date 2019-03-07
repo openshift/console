@@ -2,6 +2,7 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
+import { Base64 } from 'js-base64';
 
 import { k8sCreate, k8sUpdate, K8sResourceKind, referenceFor } from '../../module/k8s';
 import { ButtonBar, Firehose, history, StatusBox, LoadingBox, Dropdown, resourceObjPath } from '../utils';
@@ -108,7 +109,7 @@ const withSecretForm = (SubForm) => class SecretFormComponent extends React.Comp
       inProgress: false,
       type: defaultSecretType,
       stringData: _.mapValues(_.get(props.obj, 'data'), (value) => {
-        return value ? window.atob(value) : '';
+        return value ? Base64.decode(value) : '';
       }),
       disableForm: false,
     };
@@ -310,7 +311,7 @@ class ConfigEntryForm extends React.Component<ConfigEntryFormProps, ConfigEntryF
   // If 'username' or 'password' fields are updated, 'auth' field has to be updated as well, else stays the same.
   updateAuth(updatedFieldName) {
     return _.includes(['username', 'password'], updatedFieldName)
-      ? window.btoa(`${this.state.username}:${this.state.password}`)
+      ? Base64.encode(`${this.state.username}:${this.state.password}`)
       : this.state.auth;
   }
   changeData(event) {
@@ -421,7 +422,7 @@ class CreateConfigSubform extends React.Component<CreateConfigSubformProps, Crea
     }
     _.each(imageSecretObject, (v, k) => {
       // Decode and parse 'auth' in case 'username' and 'password' are not part of the secret.
-      const decodedAuth = window.atob(_.get(v, 'auth', ''));
+      const decodedAuth = Base64.decode(_.get(v, 'auth', ''));
       const parsedAuth = _.isEmpty(decodedAuth) ? _.fill(Array(2), '') : _.split(decodedAuth, ':');
       imageSecretArray.push({
         entry: {
