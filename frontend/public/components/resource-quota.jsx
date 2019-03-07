@@ -213,7 +213,7 @@ export const quotaType = quota => {
 // Split each resource quota into one row per subject
 export const flatten = resources => _.flatMap(resources, resource => _.compact(resource.data));
 
-export const ResourceQuotasPage = connectToFlags(FLAGS.OPENSHIFT)(({namespace, flags}) => {
+export const ResourceQuotasPage = connectToFlags(FLAGS.OPENSHIFT)(({namespace, flags, mock}) => {
 
   const resources = [{kind: 'ResourceQuota', namespaced: true}];
   let rowFilters = null;
@@ -245,6 +245,7 @@ export const ResourceQuotasPage = connectToFlags(FLAGS.OPENSHIFT)(({namespace, f
     flatten={flatten}
     title="Resource Quotas"
     rowFilters={rowFilters}
+    mock={mock}
   />;
 });
 
