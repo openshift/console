@@ -17,6 +17,8 @@ import (
 	"github.com/openshift/console/auth"
 	"github.com/openshift/console/pkg/proxy"
 	"github.com/openshift/console/version"
+
+	"github.com/gorilla/handlers"
 )
 
 const (
@@ -217,7 +219,9 @@ func (s *Server) HTTPHandler() http.Handler {
 	handle("/api/tectonic/version", authHandler(s.versionHandler))
 	mux.HandleFunc(s.BaseURL.Path, s.indexHandler)
 
-	return securityHeadersMiddleware(http.Handler(mux))
+	// TODO: control this via a high log level to ensure that we don't leak tokens
+	return handlers.LoggingHandler(os.Stdout, securityHeadersMiddleware(http.Handler(mux)))
+	// return securityHeadersMiddleware(http.Handler(mux))
 }
 
 func sendResponse(rw http.ResponseWriter, code int, resp interface{}) {
