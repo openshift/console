@@ -6,8 +6,11 @@ import { appHost, testName } from '../../protractor.conf';
 import { filterForName, isLoaded, resourceRowsPresent } from '../../views/crud.view';
 import { detailViewAction, listViewAction, detailViewVmStatus, detailViewVmIcon, listViewVmStatus, listViewVmIcon,
   runningIcon, pendingIcon, statusIcon, offIcon } from '../../views/kubevirt/vm.actions.view';
-import { testVM } from './mocks';
+import { testVM, testNAD, hddDisk, networkInterface } from './mocks';
+import { yamlTab, overviewTab, disksTab, nicsTab } from '../../views/kubevirt/virtualMachine.view';
 import { removeLeakedResources, VM_BOOTUP_TIMEOUT, VM_STOP_TIMEOUT, VM_ACTIONS_TIMEOUT } from './utils';
+import { VirtualMachine } from './models/virtualMachine';
+
 
 describe('Test VM actions', () => {
   const leakedResources = new Set<string>();
@@ -113,4 +116,63 @@ describe('Test VM actions', () => {
       leakedResources.delete(JSON.stringify({name: vmName, namespace: testName, kind: 'vm'}));
     });
   });
+});
+
+describe('Add/remove disks and NICs on respective VM pages', () => {
+  const vmName = `vm-disk-nic-${testName}`;
+  const vm = new VirtualMachine(vmName, testName);
+
+  beforeAll(async() => {
+    testVM.metadata.name = vmName;
+    execSync(`echo '${JSON.stringify(testNAD)}' | kubectl create -f -`);
+    execSync(`echo '${JSON.stringify(testVM)}' | kubectl create -f -`);
+    await vm.action('Start');
+  });
+
+  afterAll(async() => {
+    execSync(`echo '${JSON.stringify(testVM)}' | kubectl delete -f -`);
+    execSync(`echo '${JSON.stringify(testNAD)}' | kubectl delete -f -`);
+  });
+
+  it('Add/remove disk on VM disks page', async() => {
+    await vm.addDisk(hddDisk.name, hddDisk.size, hddDisk.StorageClass);
+    expect((await vm.getAttachedResources(disksTab)).includes(hddDisk.name)).toBe(true);
+
+    let vmi = await vm.navigateToVmi(overviewTab);
+    expect((await vmi.getVolumes()).includes(hddDisk.name)).toBe(false);
+
+    await vm.action('Restart');
+
+    vmi = await vm.navigateToVmi(overviewTab);
+    expect((await vmi.getVolumes()).includes(hddDisk.name)).toBe(true);
+
+    await vm.removeDisk(hddDisk.name);
+    expect((await vm.getAttachedResources(disksTab)).includes(hddDisk.name)).toBe(false);
+
+    await vm.action('Restart');
+
+    vmi = await vm.navigateToVmi(overviewTab);
+    expect((await vmi.getVolumes()).includes(hddDisk.name)).toBe(false);
+  }, VM_ACTIONS_TIMEOUT * 2);
+
+  it('Add/remove nic on VM Network Interfaces page', async() => {
+    await vm.addNic(networkInterface.name, networkInterface.mac, networkInterface.networkDefinition);
+
+    expect((await vm.getAttachedResources(nicsTab)).includes(networkInterface.name)).toBe(true);
+    let vmi = await vm.navigateToVmi(yamlTab);
+    expect((await vmi.searchYAML(networkInterface.networkDefinition))).toBe(false);
+
+    await vm.action('Restart');
+
+    vmi = await vm.navigateToVmi(yamlTab);
+    expect((await vmi.searchYAML(networkInterface.networkDefinition))).toBe(true);
+
+    await vm.removeNic(networkInterface.name);
+    expect((await vm.getAttachedResources(nicsTab)).includes(networkInterface.name)).toBe(false);
+
+    await vm.action('Restart');
+
+    vmi = await vm.navigateToVmi(yamlTab);
+    expect((await vmi.searchYAML(networkInterface.networkDefinition))).toBe(false);
+  }, VM_ACTIONS_TIMEOUT * 2);
 });

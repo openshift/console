@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars, no-undef */
 import { execSync } from 'child_process';
-import { $, by, ElementFinder } from 'protractor';
+import { $, by, ElementFinder, browser, ExpectedConditions as until } from 'protractor';
 
 export const PAGE_LOAD_TIMEOUT = 5000;
 export const WIZARD_LOAD_TIMEOUT = 10000;
@@ -41,7 +41,8 @@ export function removeLeakedResources(leakedResources: Set<string>) {
 }
 
 export async function selectDropdownOption(dropdownId: string, option: string) {
-  await $(dropdownId).click();
+  await browser.wait(until.elementToBeClickable($(dropdownId)))
+    .then(() => $(dropdownId).click());
   await $(`${dropdownId} + ul`).element(by.linkText(option)).click();
 }
 
