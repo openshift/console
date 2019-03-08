@@ -171,6 +171,7 @@ class App extends React.PureComponent {
 
   render() {
     const { isNavOpen } = this.state;
+    const devconsoleEnabled = this.props.flags.SHOW_DEV_CONSOLE;
 
     return (
       <React.Fragment>
@@ -292,7 +293,7 @@ class App extends React.PureComponent {
                   <Route path="/k8s/all-namespaces/:plural" exact component={ResourceListPage} />
                   <Route path="/k8s/all-namespaces/:plural/:name" component={ResourceDetailsPage} />
 
-                  {devConsoleRoutes.map(r => <Route key={r.path} {...r} />)}
+                  { devconsoleEnabled && devConsoleRoutes.map(r => <Route key={r.path} {...r} />)}
 
                   <LazyRoute path="/error" exact loader={() => import('./error' /* webpackChunkName: "error" */).then(m => m.ErrorPage)} />
                   <Route path="/" exact component={DefaultPage} />
@@ -368,11 +369,11 @@ if ('serviceWorker' in navigator) {
       .catch(e => console.warn('Error unregistering service workers', e));
   }
 }
-
+const AppComponent = connectToFlags(FLAGS.SHOW_DEV_CONSOLE)(App);
 render((
   <Provider store={store}>
     <Router history={history} basename={window.SERVER_FLAGS.basePath}>
-      <Route path="/" component={App} />
+      <Route path="/" component={AppComponent} />
     </Router>
   </Provider>
 ), document.getElementById('app'));
