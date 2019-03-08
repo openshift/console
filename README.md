@@ -146,6 +146,12 @@ yarn install
 ```
 You must run this command once, and every time the dependencies change. `node_modules` are not committed to git.
 
+To install dependencies for the backend:
+
+```
+glide update --strip-vendor
+```
+
 #### Interactive Development
 
 The following build task will watch the source code for changes and compile automatically.  You must reload the page in your browser!
