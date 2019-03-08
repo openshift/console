@@ -6,7 +6,7 @@ import { getResource } from 'kubevirt-web-ui-components';
 import { BaremetalHostModel } from '../../models/host';
 import { navFactory } from '../utils/okdutils';
 import { WithResources } from '../../../kubevirt/components/utils/withResources';
-import { DetailsPage } from '../factory/okdfactory';
+import { DetailsPage, List, ListHeader, ColHead, ResourceRow } from '../factory/okdfactory';
 
 
 const BaremetalHostDetails = props => {
@@ -64,11 +64,104 @@ const ConnectedBmDetails = ({ obj: bmh }) => {
   );
 };
 
+const rowStyle = 'col-lg-2 col-md-3 col-sm-3 col-xs-4';
+
+const NicHeader = props => <ListHeader>
+  <ColHead {...props} className={rowStyle} sortField="name">Name</ColHead>
+  <ColHead {...props} className={rowStyle} sortField="model">Model</ColHead>
+  <ColHead {...props} className={rowStyle} sortField="network">Network</ColHead>
+  <ColHead {...props} className={rowStyle} sortField="ip">IP</ColHead>
+  <ColHead {...props} className={rowStyle} sortField="speedGbps">Speed</ColHead>
+  <ColHead {...props} className={rowStyle} sortField="mac">MAC Address</ColHead>
+</ListHeader>;
+
+const DiskHeader = props => <ListHeader>
+  <ColHead {...props} className={rowStyle} sortField="name">Disk name</ColHead>
+  <ColHead {...props} className={rowStyle} sortField="model">Model</ColHead>
+  <ColHead {...props} className={rowStyle} sortField="status">Status</ColHead>
+  <ColHead {...props} className={rowStyle} sortField="type">Type</ColHead>
+  <ColHead {...props} className={rowStyle} sortField="sizeGiB">Size (GB)</ColHead>
+</ListHeader>;
+
+const NicRow = ({ obj: nic }) => (
+  <ResourceRow obj={nic}>
+    <div className={rowStyle}>
+      {nic.name}
+    </div>
+    <div className={rowStyle}>
+      {nic.model}
+    </div>
+    <div className={rowStyle}>
+      {nic.network}
+    </div>
+    <div className={rowStyle}>
+      {nic.ip}
+    </div>
+    <div className={rowStyle}>
+      {nic.speedGbps} Gbps
+    </div>
+    <div className={rowStyle}>
+      {nic.mac}
+    </div>
+  </ResourceRow>
+);
+
+const DiskRow = ({ obj: disk }) => (
+  <ResourceRow obj={disk}>
+    <div className={rowStyle}>
+      {disk.name}
+    </div>
+    <div className={rowStyle}>
+      {disk.model}
+    </div>
+    <div className={rowStyle}>
+      <span className="fa fa-icon fa-refresh" /> Running
+    </div>
+    <div className={rowStyle}>
+      {disk.type}
+    </div>
+    <div className={rowStyle}>
+      {disk.sizeGiB}
+    </div>
+  </ResourceRow>
+);
+
+const BaremetalHostNic = ({obj: bmo}) => (
+  <div className="co-m-list">
+    <div className="co-m-pane__body">
+      <List data={bmo.status.hardware.nics} Header={NicHeader} Row={NicRow} loaded={true} />
+    </div>
+  </div>
+);
+
+const BaremetalHostDisk = ({obj: bmo}) => (
+  <div className="co-m-list">
+    <div className="co-m-pane__body">
+      <List data={bmo.status.hardware.storage} Header={DiskHeader} Row={DiskRow} loaded={true} />
+    </div>
+  </div>
+);
 
 export const BaremetalHostsDetailPage = props => {
   const { name, namespace } = props;
+
+  const nicsPage = {
+    href: 'nics',
+    name: 'Network Interfaces',
+    component: BaremetalHostNic,
+  };
+
+  const disksPage = {
+    href: 'disks',
+    name: 'Disks',
+    component: BaremetalHostDisk,
+  };
+
   const pages = [
     navFactory.details(ConnectedBmDetails),
+    navFactory.editYaml(),
+    nicsPage,
+    disksPage,
   ];
   return (
     <DetailsPage
