@@ -1,5 +1,5 @@
-hash: 5b04f39ec1744e13afe09352201ffd09aa45396e0bcd673db06fb777f092173e
-updated: 2018-05-17T13:34:32.404729-04:00
+hash: 7fd6a334b1948b68058a290164db1045d0169a5aab12c5b96b59ac918248f07f
+updated: 2019-03-08T14:21:00.943588-05:00
 imports:
 - name: github.com/coreos/dex
   version: 6e50c18458842b8eec2f5219e3588fec918d5663
@@ -23,6 +23,8 @@ imports:
   subpackages:
   - proto
   - protoc-gen-go
+- name: github.com/gorilla/handlers
+  version: ac6d24f88de4584385a0cb3a88f953d08a2f7a05
 - name: github.com/gorilla/websocket
   version: 4ac909741dfa57448bfadfdbca0cf7eeaa68f0e2
 - name: github.com/jonboulle/clockwork
@@ -36,8 +38,6 @@ imports:
   version: c97913dcbd76de40b051a9b4cd827f7eaeb7a868
   subpackages:
   - cacheobject
-- name: github.com/Sirupsen/logrus
-  version: d26492970760ca5d33129d2d799e34be5c4782eb
 - name: golang.org/x/net
   version: 6a513affb38dc9788b449d59ffed099b8de18fa0
   subpackages:
@@ -52,10 +52,6 @@ imports:
   version: 921ae394b9430ed4fb549668d7b087601bd60a81
   subpackages:
   - internal
-- name: golang.org/x/sys
-  version: 833a04a10549a95dc34458c195cbad61bbb6cb4d
-  subpackages:
-  - unix
 - name: google.golang.org/appengine
   version: 267c27e7492265b84fc6719503b14a1e17975d79
   subpackages:
