@@ -6,6 +6,7 @@ import * as okdLogoImg from '../imgs/okd-logo.svg';
 import * as ocpLogoImg from '../imgs/openshift-platform-logo.svg';
 import * as onlineLogoImg from '../imgs/openshift-online-logo.svg';
 import * as dedicatedLogoImg from '../imgs/openshift-dedicated-logo.svg';
+import * as azureLogoImg from '../imgs/azure-red-hat-openshift-logo.svg';
 import { FLAGS, connectToFlags, flagPending } from '../features';
 import { authSvc } from '../module/auth';
 import { Dropdown, ActionsMenu } from './utils';
@@ -117,6 +118,10 @@ export const LogoImage = () => {
     case 'dedicated':
       logoImg = dedicatedLogoImg;
       logoAlt = 'OpenShift Dedicated';
+      break;
+    case 'azure':
+      logoImg = azureLogoImg;
+      logoAlt = 'Azure Red Hat OpenShift';
       break;
     default:
       logoImg = okdLogoImg;
