@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars, no-undef */
 import * as _ from 'lodash-es';
-import { K8sResourceKind } from '.';
+import { ClusterOperator, OperandVersion } from '.';
 
 export enum OperatorStatus {
   Available = 'Available',
@@ -9,7 +9,7 @@ export enum OperatorStatus {
   Unknown = 'Unknown',
 }
 
-export const getStatusAndMessage = (operator: K8sResourceKind) => {
+export const getStatusAndMessage = (operator: ClusterOperator) => {
   const conditions = _.get(operator, 'status.conditions');
   const failing: any = _.find(conditions, { type: 'Failing', status: 'True' });
   if (failing) {
@@ -29,7 +29,13 @@ export const getStatusAndMessage = (operator: K8sResourceKind) => {
   return { status: OperatorStatus.Unknown, message: '' };
 };
 
-export const getClusterOperatorStatus = (operator: K8sResourceKind) => {
+export const getClusterOperatorStatus = (operator: ClusterOperator) => {
   const { status } = getStatusAndMessage(operator);
   return status;
+};
+
+export const getClusterOperatorVersion = (operator: ClusterOperator) => {
+  const versions: OperandVersion[] = _.get(operator, 'status.versions', []);
+  const operatorVersion = _.find(versions, v => v.name === 'operator');
+  return operatorVersion ? operatorVersion.version : '';
 };
