@@ -14,9 +14,10 @@ describe('Subscribing to an Operator from Operator Hub', () => {
 
   afterAll(() => {
     // FIXME: Don't hardcode namespace for running tests against upstream k8s
-    execSync('kubectl delete catalogsourceconfig -n openshift-marketplace installed-community-openshift-operators');
-    execSync('kubectl delete subscription -n openshift-operators --all');
-    execSync('kubectl delete clusterserviceversion -n openshift-operators --all');
+    execSync(`kubectl delete catalogsourceconfig -n openshift-marketplace installed-community-${testName}`);
+    execSync(`kubectl delete subscription -n ${testName} --all`);
+    execSync(`kubectl delete clusterserviceversion -n ${testName} --all`);
+    execSync(`kubectl delete operatorgroup -n ${testName} --all`);
   });
 
   afterEach(() => {
@@ -25,7 +26,7 @@ describe('Subscribing to an Operator from Operator Hub', () => {
   });
 
   it('displays Operator Hub with expected available operators', async() => {
-    await browser.get(`${appHost}/operatorhub`);
+    await browser.get(`${appHost}/operatorhub/ns/${testName}`);
     await crudView.isLoaded();
 
     openCloudServices.forEach(name => {
@@ -33,12 +34,12 @@ describe('Subscribing to an Operator from Operator Hub', () => {
     });
   });
 
-  it('displays Couchbase Operator operator when filter "MongoDB" is active', async() => {
-    await catalogPageView.clickFilterCheckbox('MongoDB');
+  it('displays Couchbase Operator operator when filter "Couchbase" is active', async() => {
+    await catalogPageView.clickFilterCheckbox('Couchbase');
 
     expect(catalogPageView.catalogTileFor('Couchbase Operator').isDisplayed()).toBe(true);
 
-    await catalogPageView.clickFilterCheckbox('MongoDB');
+    await catalogPageView.clickFilterCheckbox('Couchbase');
   });
 
   it('does not display Couchbase Operator operator when filter "Red Hat" is active', async() => {
@@ -128,17 +129,21 @@ describe('Subscribing to an Operator from Operator Hub', () => {
   it('selects target namespace for Operator subscription', async() => {
     await browser.wait(until.visibilityOf(operatorHubView.createSubscriptionFormInstallMode));
 
-    expect($('input[value="AllNamespaces"]').getAttribute('disabled')).toBe(null);
+    expect($('input[value="OwnNamespace"]').getAttribute('disabled')).toBe(null);
   });
 
   it('displays Operator as subscribed in Operator Hub', async() => {
+    await operatorHubView.installNamespaceDropdownBtn.click();
+    await operatorHubView.installNamespaceDropdownFilter(testName);
+    await operatorHubView.installNamespaceDropdownSelect(testName).click();
+
     await operatorHubView.createSubscriptionFormBtn.click();
     await crudView.isLoaded();
 
     expect(catalogPageView.catalogTileFor('etcd').$('.catalog-tile-pf-footer').getText()).toContain('Installed');
   });
 
-  it('displays Operator in "Cluster Service Versions" view for "default" namespace', async() => {
+  it(`displays Operator in "Cluster Service Versions" view for "${testName}" namespace`, async() => {
     await browser.get(`${appHost}/operatorhub/ns/${testName}`);
     await crudView.isLoaded();
     await catalogPageView.catalogTileFor('etcd').click();

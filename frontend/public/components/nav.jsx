@@ -25,7 +25,7 @@ import {
 } from '../models';
 import { referenceForModel } from '../module/k8s';
 
-import { history, stripBasePath } from './utils';
+import { stripBasePath } from './utils';
 
 import KubevirtNav from '../kubevirt/components/nav';
 import { isKubevirt } from '../kubevirt/components/utils/selectors';
@@ -158,8 +158,6 @@ const NavSection = connect(navSectionStateToProps)(
   class NavSection extends React.Component {
     constructor(props) {
       super(props);
-      this.toggle = e => this.toggle_(e);
-      this.open = () => this.open_();
       this.state = { isOpen: false, activeChild: null };
 
       const activeChild = this.getActiveChild();
@@ -218,25 +216,6 @@ const NavSection = connect(navSectionStateToProps)(
         state.isOpen = true;
       }
       this.setState(state);
-    }
-
-    open_() {
-      this.setState({isOpen: true});
-    }
-
-    toggle_(e) {
-      const { href, onClick } = this.props;
-
-      if (href) {
-        e && e.stopPropagation();
-        history.push(href);
-      }
-
-      if (onClick) {
-        onClick();
-      }
-
-      this.setState({isOpen: !this.state.isOpen});
     }
 
     render() {

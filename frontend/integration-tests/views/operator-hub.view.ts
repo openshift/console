@@ -16,6 +16,13 @@ export const createSubscriptionFormTitle = element(by.cssContainingText('h1', 'C
 export const createSubscriptionFormBtn = element(by.buttonText('Subscribe'));
 export const createSubscriptionFormInstallMode = element(by.cssContainingText('label', 'Installation Mode'));
 
+export const installNamespaceDropdown = $('.dropdown--full-width');
+export const installNamespaceDropdownBtn = installNamespaceDropdown.$('.dropdown-toggle');
+export const installNamespaceDropdownFilter = (filter: string) => installNamespaceDropdown
+  .$('.dropdown-menu__filter').$('input').sendKeys(filter);
+export const installNamespaceDropdownSelect = (namespace: string) => installNamespaceDropdown
+  .$(`#${namespace}-Project-link`);
+
 export const communityWarningModal = $('.co-modal-ignore-warning');
 export const operatorCommunityWarningIsLoaded = () => browser.wait(until.presenceOf(communityWarningModal), 1000)
   .then(() => browser.sleep(500));

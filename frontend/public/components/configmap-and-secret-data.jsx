@@ -1,7 +1,9 @@
 import * as React from 'react';
 import * as PropTypes from 'prop-types';
+import { Base64 } from 'js-base64';
 
 import { CopyToClipboard, EmptyBox, SectionHeading } from './utils';
+
 
 export const MaskedData = () => <React.Fragment>
   <span className="sr-only">Value hidden</span>
@@ -35,7 +37,7 @@ export class SecretData extends React.PureComponent {
     }
 
     const { showSecret } = this.state;
-    const decodedValue = window.atob(rawValue);
+    const decodedValue = Base64.decode(rawValue);
     const visibleValue = showSecret ? decodedValue : <MaskedData />;
     return <CopyToClipboard value={decodedValue} visibleValue={visibleValue} />;
   }

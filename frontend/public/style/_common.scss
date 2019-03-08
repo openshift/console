@@ -396,18 +396,17 @@
   outline: none;
   padding-right:  20px;
   position: relative;
-  &:after {
+  &::after {
     color: $color-pf-black-600;
     content: $pficon-var-edit;
     font-family: $icon-font-name-pf;
+    line-height: 1;
     pointer-events: none;
     position: absolute;
     right: 0;
+    top: 0;
   }
-  &:focus {
-    outline: none;
-  }
-  &:hover:after {
+  &:hover::after {
     color: $color-pf-black-700;
   }
 }

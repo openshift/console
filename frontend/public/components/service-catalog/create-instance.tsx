@@ -134,7 +134,7 @@ class CreateInstance extends React.Component<CreateInstanceProps, CreateInstance
       return <div className="radio co-create-service-instance__plan" key={plan.spec.externalName}>
         <label>
           <input type="radio" name="plan" id="plan" value={plan.spec.externalName} checked={selectedPlanName === plan.spec.externalName} onChange={this.onPlanChange} />
-          {plan.spec.externalMetadata.displayName || plan.spec.externalName}
+          {_.get(plan.spec, ['externalMetadata', 'displayName']) || plan.spec.externalName}
           {plan.spec.description && <div className="text-muted">{plan.spec.description}</div>}
         </label>
       </div>;
