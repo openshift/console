@@ -115,7 +115,7 @@ const Details = ({obj: s}) => <div className="co-m-pane__body">
   <div className="row">
     <div className="col-sm-6">
       <SectionHeading text="Service Overview" />
-      <ResourceSummary resource={s} showPodSelector={true}>
+      <ResourceSummary resource={s} showPodSelector>
         <dt>Session Affinity</dt>
         <dd>{s.spec.sessionAffinity || '-'}</dd>
       </ResourceSummary>

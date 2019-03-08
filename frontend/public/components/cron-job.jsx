@@ -45,7 +45,7 @@ const Details = ({obj: cronjob}) => {
       <div className="row">
         <div className="col-md-6">
           <SectionHeading text="CronJob Overview" />
-          <ResourceSummary resource={cronjob} showAnnotations={false}>
+          <ResourceSummary resource={cronjob}>
             <dt>Schedule</dt>
             <dd>{cronjob.spec.schedule}</dd>
             <dt>Concurrency Policy</dt>
