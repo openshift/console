@@ -173,7 +173,12 @@ func main() {
 		os.Exit(1)
 	}
 
-	capnslog.SetGlobalLogLevel(capnslog.INFO)
+	// console needs to output better logs...
+	// flag takes this format:
+	//    --log-level=<package>=VALUE
+	// log all packages at TRACE level:
+	//    --log-level=*=TRACE
+	capnslog.SetGlobalLogLevel(capnslog.TRACE)
 	if *fLogLevel != "" {
 		llc, err := rl.ParseLogLevelConfig(*fLogLevel)
 		if err != nil {
