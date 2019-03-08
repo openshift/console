@@ -77,7 +77,7 @@ const getIconClass = (status: ClusterUpdateStatus) => {
   return {
     [ClusterUpdateStatus.UpToDate]: 'pficon pficon-ok',
     [ClusterUpdateStatus.UpdatesAvailable]: 'fa fa-arrow-circle-o-up',
-    [ClusterUpdateStatus.Updating]: 'fa-spin pficon pficon-in-progress',
+    [ClusterUpdateStatus.Updating]: 'fa-spin fa fa-refresh',
     [ClusterUpdateStatus.Failing]: 'pficon pficon-error-circle-o',
     [ClusterUpdateStatus.ErrorRetrieving]: 'pficon pficon-error-circle-o',
   }[status];
