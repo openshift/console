@@ -67,7 +67,7 @@ const MachineDeploymentDetails: React.SFC<MachineDeploymentDetailsProps> = ({obj
       <MachineCounts resourceKind={MachineDeploymentModel} resource={obj} />
       <div className="row">
         <div className="col-sm-6">
-          <ResourceSummary resource={obj} showPodSelector={false} showNodeSelector={false}>
+          <ResourceSummary resource={obj}>
             <dt>Selector</dt>
             <dd>
               <Selector

@@ -74,7 +74,7 @@ const DeploymentDetails = ({obj: deployment}) => {
       <div className="co-m-pane__body-group">
         <div className="row">
           <div className="col-sm-6">
-            <ResourceSummary resource={deployment}>
+            <ResourceSummary resource={deployment} showPodSelector showNodeSelector>
               <dt>Status</dt>
               <dd>{deployment.status.availableReplicas === deployment.status.updatedReplicas ? <StatusIcon status="Active" /> : <StatusIcon status="Updating" />}</dd>
             </ResourceSummary>

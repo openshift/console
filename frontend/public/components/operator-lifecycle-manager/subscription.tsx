@@ -103,7 +103,7 @@ export const SubscriptionDetails: React.SFC<SubscriptionDetailsProps> = (props) 
     <div className="co-m-pane__body-group">
       <div className="row">
         <div className="col-sm-6">
-          <ResourceSummary resource={obj} showNodeSelector={false} showPodSelector={false} showAnnotations={false} />
+          <ResourceSummary resource={obj} showAnnotations={false} />
         </div>
         <div className="col-sm-6">
           <dl className="co-m-pane__details">

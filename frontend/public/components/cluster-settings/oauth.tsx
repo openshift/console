@@ -59,7 +59,7 @@ const OAuthDetails: React.SFC<OAuthDetailsProps> = ({obj}: {obj: K8sResourceKind
   return <React.Fragment>
     <div className="co-m-pane__body">
       <SectionHeading text="OAuth Overview" />
-      <ResourceSummary resource={obj} showPodSelector={false} showNodeSelector={false}>
+      <ResourceSummary resource={obj}>
         <dt>Access Token Max Age</dt>
         <dd>{tokenDuration(tokenConfig.accessTokenMaxAgeSeconds)}</dd>
       </ResourceSummary>

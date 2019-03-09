@@ -131,7 +131,7 @@ const ClusterOperatorDetails: React.SFC<ClusterOperatorDetailsProps> = ({obj}) =
     <React.Fragment>
       <div className="co-m-pane__body">
         <SectionHeading text="Cluster Operator Overview" />
-        <ResourceSummary resource={obj} showPodSelector={false} showNodeSelector={false}>
+        <ResourceSummary resource={obj}>
           <dt>Status</dt>
           <dd><OperatorStatusIconAndLabel status={status} /></dd>
           <dt>Message</dt>

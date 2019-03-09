@@ -66,7 +66,7 @@ const SecretDetails = ({obj: secret}) => {
   return <React.Fragment>
     <div className="co-m-pane__body">
       <SectionHeading text="Secret Overview" />
-      <ResourceSummary resource={secret} showPodSelector={false} showNodeSelector={false} />
+      <ResourceSummary resource={secret} />
     </div>
     <div className="co-m-pane__body">
       <SecretData data={secret.data} type={secret.type} />
