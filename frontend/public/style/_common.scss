@@ -416,6 +416,9 @@
     right: 0;
     top: 0;
   }
+  &.btn-link::after {
+    top: 5px;
+  }
   &:hover::after {
     color: $color-pf-black-700;
   }
