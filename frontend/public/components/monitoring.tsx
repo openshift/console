@@ -12,6 +12,7 @@ import { alertState, AlertStates, connectToURLs, MonitoringRoutes, silenceState,
 import store from '../redux';
 import { UIActions } from '../ui/ui-actions';
 import { ColHead, List, ListHeader, ResourceRow, TextFilter } from './factory';
+import { QueryBrowser } from './graphs';
 import { confirmModal } from './modals';
 import { CheckBoxes } from './row-filter';
 import { SafetyFirst } from './safety-first';
@@ -168,6 +169,15 @@ const Label = ({k, v}) => <div className="co-m-label co-m-label--expand" key={k}
   <span className="co-m-label__value">{v}</span>
 </div>;
 
+const Graph = ({metric = undefined, numSamples, rule}) => {
+  const {duration = 0, query = ''} = rule || {};
+
+  // 3 times the rule's duration, but not less than 30 minutes
+  const timeSpan = Math.max(3 * duration, 30 * 60) * 1000;
+
+  return <QueryBrowser metric={metric} numSamples={numSamples} query={query} timeSpan={timeSpan} />;
+};
+
 const SilenceMatchersList = ({silence}) => <div className={`co-text-${SilenceResource.kind.toLowerCase()}`}>
   {_.map(silence.matchers, ({name, isRegex, value}, i) => <Label key={i} k={name} v={isRegex ? `~${value}` : value} />)}
 </div>;
@@ -210,6 +220,11 @@ const AlertsDetailsPage = withFallback(connect(alertStateToProps)((props: Alerts
       <div className="co-m-pane__body">
         <SectionHeading text="Alert Overview" />
         <div className="co-m-pane__body-group">
+          <div className="row">
+            <div className="col-sm-12">
+              {state !== AlertStates.NotFiring && <Graph metric={labels} numSamples={600} rule={rule} />}
+            </div>
+          </div>
           <div className="row">
             <div className="col-sm-6">
               <dl className="co-m-pane__details">
@@ -273,17 +288,6 @@ const AlertsDetailsPage = withFallback(connect(alertStateToProps)((props: Alerts
   </React.Fragment>;
 }));
 
-const ViewInPrometheusLink_ = ({rule, urls}) => {
-  const baseUrl = urls[MonitoringRoutes.Prometheus];
-  const query = _.get(rule, 'query');
-  if (!baseUrl || !query) {
-    return null;
-  }
-  const href = `${baseUrl}/graph?g0.expr=${encodeURIComponent(query)}&g0.tab=0`;
-  return <ExternalLink href={href} text="View in Prometheus UI" />;
-};
-const ViewInPrometheusLink = connectToURLs(MonitoringRoutes.Prometheus)(ViewInPrometheusLink_);
-
 const ActiveAlerts = ({alerts, ruleID}) => <div className="co-m-table-grid co-m-table-grid--bordered">
   <div className="row co-m-table-grid__head">
     <div className="col-xs-6">Description</div>
@@ -329,7 +333,6 @@ const AlertRulesDetailsPage = withFallback(connect(ruleStateToProps)((props: Ale
       <div className="co-m-pane__body">
         <div className="monitoring-heading">
           <SectionHeading text="Alert Rule Overview" />
-          <ViewInPrometheusLink rule={rule} />
         </div>
         <div className="co-m-pane__body-group">
           <div className="row">
@@ -362,6 +365,11 @@ const AlertRulesDetailsPage = withFallback(connect(ruleStateToProps)((props: Ale
       <div className="co-m-pane__body">
         <div className="co-m-pane__body-group">
           <SectionHeading text="Active Alerts" />
+          <div className="row">
+            <div className="col-sm-12">
+              <Graph numSamples={300} rule={rule} />
+            </div>
+          </div>
           <div className="row">
             <div className="col-xs-12">
               {_.isEmpty(alerts) ? <div className="text-center">None Found</div> : <ActiveAlerts alerts={alerts} ruleID={rule.id} />}

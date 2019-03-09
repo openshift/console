@@ -9,6 +9,7 @@ export const prometheusBasePath = window.SERVER_FLAGS.prometheusBaseURL;
 export const prometheusTenancyBasePath = window.SERVER_FLAGS.prometheusTenancyBaseURL;
 export const alertManagerBasePath = window.SERVER_FLAGS.alertManagerBaseURL;
 
+export const QueryBrowser = props => <AsyncComponent loader={() => import('./graph-loader').then(c => c.QueryBrowser)} {...props} />;
 export const Bar = props => <AsyncComponent loader={() => import('./graph-loader').then(c => c.Bar)} {...props} />;
 export const Gauge = props => <AsyncComponent loader={() => import('./graph-loader').then(c => c.Gauge)} {...props} />;
 export const Line = props => <AsyncComponent loader={() => import('./graph-loader').then(c => c.Line)} {...props} />;
