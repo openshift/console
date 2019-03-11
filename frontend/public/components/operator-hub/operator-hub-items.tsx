@@ -301,7 +301,7 @@ export const OperatorHubTileView = requireOperatorGroup(
           keywordCompare={keywordCompare}
           renderTile={this.renderTile}
           pageDescription={pageDescription}
-          emptyStateInfo="No Operator Hub items are being shown due to the filters being applied."
+          emptyStateInfo="No OperatorHub items are being shown due to the filters being applied."
         />
         <Modal show={!!detailsItem && showDetails} onHide={this.closeOverlay} bsSize="lg" className="co-catalog-page__overlay right-side-modal-pf">
           {detailsItem && <OperatorHubItemDetails namespace={this.props.namespace} item={detailsItem} closeOverlay={this.closeOverlay} />}

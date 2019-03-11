@@ -9,7 +9,7 @@ import * as catalogView from '../../views/catalog.view';
 import * as catalogPageView from '../../views/catalog-page.view';
 import * as operatorHubView from '../../views/operator-hub.view';
 
-describe('Subscribing to an Operator from Operator Hub', () => {
+describe('Subscribing to an Operator from OperatorHub', () => {
   const openCloudServices = new Set(['AMQ Streams', 'MongoDB']);
 
   afterAll(() => {
@@ -25,7 +25,7 @@ describe('Subscribing to an Operator from Operator Hub', () => {
     checkErrors();
   });
 
-  it('displays Operator Hub with expected available operators', async() => {
+  it('displays OperatorHub with expected available operators', async() => {
     await browser.get(`${appHost}/operatorhub/ns/${testName}`);
     await crudView.isLoaded();
 
@@ -110,7 +110,7 @@ describe('Subscribing to an Operator from Operator Hub', () => {
     await operatorHubView.operatorModalIsClosed();
   });
 
-  it('filters Operator Hub tiles by Category', async() => {
+  it('filters OperatorHub tiles by Category', async() => {
     expect(catalogPageView.catalogTiles.isPresent()).toBe(true);
     expect(catalogView.categoryTabs.isPresent()).toBe(true);
   });
@@ -132,7 +132,7 @@ describe('Subscribing to an Operator from Operator Hub', () => {
     expect($('input[value="OwnNamespace"]').getAttribute('disabled')).toBe(null);
   });
 
-  it('displays Operator as subscribed in Operator Hub', async() => {
+  it('displays Operator as subscribed in OperatorHub', async() => {
     await operatorHubView.installNamespaceDropdownBtn.click();
     await operatorHubView.installNamespaceDropdownFilter(testName);
     await operatorHubView.installNamespaceDropdownSelect(testName).click();
