@@ -1,13 +1,15 @@
 /* eslint-disable no-undef, no-unused-vars */
 
-import { browser, $ } from 'protractor';
+import { browser, $, $$, ExpectedConditions as until } from 'protractor';
+import { execSync } from 'child_process';
 
 import { appHost, checkLogs, checkErrors, testName } from '../protractor.conf';
 import * as crudView from '../views/crud.view';
 import * as catalogView from '../views/catalog.view';
 import * as catalogPageView from '../views/catalog-page.view';
+import * as srvCatalogView from '../views/service-catalog.view';
 
-describe('Catalog', () => {
+describe('Developer Catalog', () => {
   beforeEach(async() => {
     await browser.get(`${appHost}/catalog/ns/${testName}`);
     await crudView.isLoaded();
@@ -91,5 +93,40 @@ describe('Catalog', () => {
 
     const numCatalogTiles = await catalogView.pageHeadingNumberOfItems();
     expect(srvClassFilterCount).toEqual(numCatalogTiles);
+  });
+
+  it('creates a service instance and binding', async() => {
+    expect(catalogPageView.catalogTiles.isPresent()).toBe(true);
+
+    await catalogPageView.clickFilterCheckbox('Service Class');
+    await catalogPageView.filterByKeyword('MongoDB');
+    expect(catalogPageView.catalogTileFor('MongoDB').isDisplayed()).toBe(true);
+
+    await catalogPageView.catalogTileFor('MongoDB').click();
+    await catalogView.catalogDetailsLoaded();
+
+    expect(catalogView.createServiceInstanceButton.isDisplayed()).toBe(true);
+    await catalogView.createServiceInstanceButton.click();
+    await browser.wait(until.and(crudView.untilNoLoadersPresent, until.presenceOf(catalogView.createServiceInstanceForm)));
+
+    await $('#dropdown-selectbox').click();
+    await $$('.dropdown-menu').first().$(`#${testName}-Project-link`).click();
+    await srvCatalogView.createButton.click();
+    await crudView.isLoaded();
+
+    expect(crudView.resourceTitle.getText()).toEqual('mongodb-persistent');
+
+    await catalogView.createServiceBindingButton.click();
+    await browser.wait(crudView.untilNoLoadersPresent);
+    expect($('#resource-title').getText()).toBe('Create Service Binding');
+
+    await srvCatalogView.createButton.click();
+    await crudView.isLoaded();
+
+    expect($('#resource-title').getText()).toBe('mongodb-persistent');
+    expect($$('.co-section-heading').first().getText()).toBe('Service Binding Overview');
+
+    execSync(`kubectl delete -n ${testName} servicebinding mongodb-persistent`);
+    execSync(`kubectl delete -n ${testName} serviceinstance mongodb-persistent`);
   });
 });
