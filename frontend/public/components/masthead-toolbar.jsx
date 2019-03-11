@@ -239,7 +239,7 @@ class MastheadToolbar_ extends React.Component {
     return (
       <React.Fragment>
         <Toolbar>
-          <ToolbarGroup className="pf-u-sr-only pf-u-visible-on-md">
+          <ToolbarGroup className="pf-u-screen-reader pf-u-visible-on-md">
             {/* desktop -- (updates button) */}
             <Firehose resources={resources}>
               <UpdatesAvailableButton onClick={this._onClusterUpdatesAvailable} />
@@ -285,9 +285,9 @@ class MastheadToolbar_ extends React.Component {
           </ToolbarGroup>
           <ToolbarGroup >
             {/* mobile -- kebab dropdown [(cluster manager |) documentation, about (| logout)] */}
-            <ToolbarItem className="pf-u-hidden-on-md pf-u-mr-0">{this._renderMenu(true)}</ToolbarItem>
+            <ToolbarItem className="pf-u-hidden-on-md">{this._renderMenu(true)}</ToolbarItem>
             {/* desktop -- (user dropdown [logout]) */}
-            <ToolbarItem className="pf-u-sr-only pf-u-visible-on-md">{this._renderMenu(false)}</ToolbarItem>
+            <ToolbarItem className="pf-u-screen-reader pf-u-visible-on-md">{this._renderMenu(false)}</ToolbarItem>
           </ToolbarGroup>
         </Toolbar>
         {showAboutModal && <AboutModal isOpen={showAboutModal} closeAboutModal={this._closeAboutModal} />}
