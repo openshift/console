@@ -60,7 +60,7 @@ const MachineDetails: React.SFC<MachineDetailsProps> = ({obj}: {obj: MachineKind
   return <React.Fragment>
     <div className="co-m-pane__body">
       <SectionHeading text="Machine Overview" />
-      <ResourceSummary resource={obj} showPodSelector={false} showNodeSelector={false}>
+      <ResourceSummary resource={obj}>
         {nodeName && <React.Fragment>
           <dt>Node</dt>
           <dd><NodeLink name={nodeName} /></dd>

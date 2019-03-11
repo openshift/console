@@ -11,6 +11,7 @@ import openshiftLogoImg from '../imgs/openshift-logo.svg';
 import ocpLogoImg from '../imgs/openshift-platform-logo.svg';
 import onlineLogoImg from '../imgs/openshift-online-logo.svg';
 import dedicatedLogoImg from '../imgs/openshift-dedicated-logo.svg';
+import azureLogoImg from '../imgs/azure-red-hat-openshift-logo.svg';
 import * as pfBg992 from '../../public/imgs/pfbg_992.jpg';
 
 export const getBrandingDetails = () => {
@@ -54,6 +55,12 @@ export const getBrandingDetails = () => {
       logoImg = openshiftvirtLogoImg;
       logoAlt = 'OpenShift Virtualization';
       productTitle = <React.Fragment>Red Hat<sup>&reg;</sup> OpenShift</React.Fragment>;
+      break;
+    case 'azure':
+      backgroundImg = pfBg992;
+      logoImg = azureLogoImg;
+      logoAlt = 'Azure Red Hat OpenShift';
+      productTitle = 'Azure Red Hat OpenShift';
       break;
     default:
       backgroundImg = pfBg992;

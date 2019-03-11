@@ -48,6 +48,7 @@ import {
   serviceCatalogStatus,
   serviceClassDisplayName,
   getClusterOperatorStatus,
+  getClusterOperatorVersion,
 } from '../../module/k8s';
 
 import { getVmStatus } from 'kubevirt-web-ui-components';
@@ -244,6 +245,7 @@ const sorts = {
   silenceStateOrder,
   string: val => JSON.stringify(val),
   getClusterOperatorStatus,
+  getClusterOperatorVersion,
 };
 
 export class ColHead extends React.Component<ColHeadProps> {

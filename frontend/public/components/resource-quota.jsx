@@ -166,7 +166,7 @@ const Details = ({obj: rq}) => {
       {showChartRow && <QuotaGaugeCharts quota={rq} resourceTypes={resourceTypes} />}
       <div className="row">
         <div className="col-sm-6">
-          <ResourceSummary resource={rq} showPodSelector={false} showNodeSelector={false} />
+          <ResourceSummary resource={rq} />
         </div>
         {scopes && <div className="col-sm-6">
           <dl className="co-m-pane__details">

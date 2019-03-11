@@ -14,3 +14,43 @@
   white-space: nowrap;
   line-height: 1.4; // so descenders don't clip
 }
+
+.query-browser__wrapper {
+  border: 1px solid $color-grey-background-border;
+  margin: 0 0 20px 0;
+  overflow: visible;
+  width: 100%;
+}
+
+.query-browser__header {
+  display: inline-flex;
+  justify-content: space-between;
+  padding: 15px 10px 10px 10px;
+  width: 100%;
+}
+
+.query-browser__controls {
+  display: inline-flex;
+}
+
+.query-browser__span-text {
+  border-bottom-right-radius: 0;
+  border-right: none;
+  border-top-right-radius: 0;
+  width: 100px;
+}
+
+.query-browser__span-text--error {
+  background-color: #fdd;
+}
+
+.query-browser__span-dropdown {
+  border-bottom-left-radius: 0;
+  border-top-left-radius: 0;
+  margin-right: 20px;
+  width: 30px;
+}
+
+.query-browser__span-reset {
+  margin-right: 20px;
+}

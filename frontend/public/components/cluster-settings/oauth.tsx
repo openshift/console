@@ -6,11 +6,13 @@ import { OAuthModel } from '../../models';
 import { K8sResourceKind, referenceForModel } from '../../module/k8s';
 import { DetailsPage } from '../factory';
 import {
+  Dropdown,
   EmptyBox,
   Kebab,
-  navFactory,
-  SectionHeading,
   ResourceSummary,
+  SectionHeading,
+  history,
+  navFactory,
 } from '../utils';
 import { formatDuration } from '../utils/datetime';
 
@@ -51,19 +53,28 @@ const IdentityProviders: React.SFC<IdentityProvidersProps> = ({identityProviders
 
 const OAuthDetails: React.SFC<OAuthDetailsProps> = ({obj}: {obj: K8sResourceKind}) => {
   const { identityProviders, tokenConfig = {} } = obj.spec;
+  const addIDPItems = {
+    htpasswd: 'HTPasswd',
+  };
   return <React.Fragment>
     <div className="co-m-pane__body">
       <SectionHeading text="OAuth Overview" />
-      <ResourceSummary resource={obj} showPodSelector={false} showNodeSelector={false}>
+      <ResourceSummary resource={obj}>
         <dt>Access Token Max Age</dt>
         <dd>{tokenDuration(tokenConfig.accessTokenMaxAgeSeconds)}</dd>
       </ResourceSummary>
     </div>
     <div className="co-m-pane__body">
       <SectionHeading text="Identity Providers" />
-      <p className="co-m-pane__explanation">
+      <p className="co-m-pane__explanation co-m-pane__explanation--alt">
         Identity providers determine how users log into the cluster.
       </p>
+      <Dropdown
+        className="co-m-pane__dropdown"
+        buttonClassName="btn-primary"
+        title="Add"
+        noSelection={true}
+        items={addIDPItems} onChange={(name) => history.push(`/settings/idp/${name}`)} />
       <IdentityProviders identityProviders={identityProviders} />
     </div>
   </React.Fragment>;

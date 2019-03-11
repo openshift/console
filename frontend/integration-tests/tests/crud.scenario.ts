@@ -271,14 +271,16 @@ describe('Kubernetes resource CRUD operations', () => {
     it('displays YAML editor for creating a new custom resource instance', async() => {
       await browser.get(`${appHost}/k8s/cluster/customresourcedefinitions?name=${name}`);
       await crudView.isLoaded();
-      await crudView.resourceRows.first().element(by.linkText(crd.spec.names.kind)).click();
+      await crudView.resourceRows.$$('.co-kebab__button').click();
+      await browser.wait(until.elementToBeClickable($('.co-kebab__dropdown')));
+      await $('.co-kebab__dropdown').$$('a').filter(link => link.getText().then(text => text.startsWith('View Instances'))).first().click();
       await crudView.isLoaded();
       await crudView.createYAMLButton.click();
       await yamlView.isLoaded();
       expect(yamlView.editorContent.getText()).toContain(`kind: CRD${testName}`);
     });
 
-    xit('creates a new custom resource instance', async() => {
+    it('creates a new custom resource instance', async() => {
       leakedResources.add(JSON.stringify({name, plural: 'customresourcedefinitions'}));
       await yamlView.saveButton.click();
       expect(crudView.errorMessage.isPresent()).toBe(false);

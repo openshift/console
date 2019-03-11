@@ -101,6 +101,8 @@
 
 .co-m-pane__name {
   @include co-break-word;
+  align-items: baseline;
+  display: flex;
   flex: 1;
   margin-right: 10px;
   min-width: 0; // necessary for wrapping since its a flex child
@@ -166,9 +168,17 @@
   }
 }
 
+.co-m-pane__dropdown {
+  margin-bottom: 20px;
+}
+
 .co-m-pane__explanation {
   color: $color-pf-black-600;
   margin-bottom: 30px;
+}
+
+.co-m-pane__explanation--alt {
+  margin-bottom: 20px;
 }
 
 .co-help-text {
@@ -405,6 +415,9 @@
     position: absolute;
     right: 0;
     top: 0;
+  }
+  &.btn-link::after {
+    top: 5px;
   }
   &:hover::after {
     color: $color-pf-black-700;

@@ -12,6 +12,8 @@ const getProductName = () => {
       return 'OpenShift Virtualization';
     case 'dedicated':
       return 'OpenShift Dedicated';
+    case 'azure':
+      return 'Azure Red Hat OpenShift';
     default:
       return 'OKD';
   }

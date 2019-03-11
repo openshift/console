@@ -46,7 +46,7 @@ type Authenticator struct {
 
 	oauth2Client *oauth2.Config
 
-	client *http.Client
+	clientFunc func() *http.Client
 
 	errorURL      string
 	successURL    string
@@ -140,9 +140,11 @@ func newHTTPClient(issuerCA string, includeSystemRoots bool) (*http.Client, erro
 // NewAuthenticator initializes an Authenticator struct. It blocks until the authenticator is
 // able to contact the provider.
 func NewAuthenticator(ctx context.Context, c *Config) (*Authenticator, error) {
-	// Retry connecting to the identity provider a few times
-	backoff := time.Second * 2
-	maxSteps := 7
+	// Retry connecting to the identity provider every 10s for 5 minutes
+	const (
+		backoff  = time.Second * 10
+		maxSteps = 30
+	)
 	steps := 0
 
 	for {
@@ -170,14 +172,14 @@ func NewAuthenticator(ctx context.Context, c *Config) (*Authenticator, error) {
 
 			endpoint, lm, err = newOpenShiftAuth(ctx, &openShiftConfig{
 				k8sClient:     k8sClient,
-				oauthClient:   a.client,
+				oauthClient:   a.clientFunc(),
 				issuerURL:     c.IssuerURL,
 				cookiePath:    c.CookiePath,
 				secureCookies: c.SecureCookies,
 			})
 		default:
 			endpoint, lm, err = newOIDCAuth(ctx, &oidcConfig{
-				client:        a.client,
+				client:        a.clientFunc(),
 				issuerURL:     c.IssuerURL,
 				clientID:      c.ClientID,
 				cookiePath:    c.CookiePath,
@@ -194,7 +196,6 @@ func NewAuthenticator(ctx context.Context, c *Config) (*Authenticator, error) {
 			log.Errorf("error contacting auth provider (retrying in %s): %v", backoff, err)
 
 			time.Sleep(backoff)
-			backoff *= 2
 			continue
 		}
 
@@ -205,9 +206,19 @@ func NewAuthenticator(ctx context.Context, c *Config) (*Authenticator, error) {
 }
 
 func newUnstartedAuthenticator(c *Config) (*Authenticator, error) {
-	client, err := newHTTPClient(c.IssuerCA, true)
+	// make sure we get a valid starting client
+	fallbackClient, err := newHTTPClient(c.IssuerCA, true)
 	if err != nil {
 		return nil, err
+	}
+
+	clientFunc := func() *http.Client {
+		currentClient, err := newHTTPClient(c.IssuerCA, true)
+		if err != nil {
+			log.Errorf("failed to get latest http client: %v", err)
+			return fallbackClient
+		}
+		return currentClient
 	}
 
 	oauth2Client := &oauth2.Config{
@@ -238,7 +249,7 @@ func newUnstartedAuthenticator(c *Config) (*Authenticator, error) {
 
 	return &Authenticator{
 		oauth2Client:  oauth2Client,
-		client:        client,
+		clientFunc:    clientFunc,
 		errorURL:      errURL,
 		successURL:    sucURL,
 		cookiePath:    c.CookiePath,
@@ -286,18 +297,6 @@ func (a *Authenticator) GetKubeAdminLogoutURL() string {
 	return a.loginMethod.getKubeAdminLogoutURL()
 }
 
-// ExchangeAuthCode allows callers to return a raw token response given a OAuth2
-// code. This is useful for clients which need to request refresh tokens.
-func (a *Authenticator) ExchangeAuthCode(code string) (idToken, refreshToken string, err error) {
-	ctx := oidc.ClientContext(context.TODO(), a.client)
-	token, err := a.oauth2Client.Exchange(ctx, code)
-	if err != nil {
-		return "", "", fmt.Errorf("request token: %v", err)
-	}
-	rawIDToken, _ := token.Extra("id_token").(string)
-	return rawIDToken, token.RefreshToken, nil
-}
-
 // CallbackFunc handles OAuth2 callbacks and code/token exchange.
 // Requests with unexpected params are redirected to the root route.
 func (a *Authenticator) CallbackFunc(fn func(loginInfo LoginJSON, successURL string, w http.ResponseWriter)) func(w http.ResponseWriter, r *http.Request) {
@@ -331,7 +330,7 @@ func (a *Authenticator) CallbackFunc(fn func(loginInfo LoginJSON, successURL str
 			a.redirectAuthError(w, errorInvalidState, nil)
 			return
 		}
-		ctx := oidc.ClientContext(context.TODO(), a.client)
+		ctx := oidc.ClientContext(context.TODO(), a.clientFunc())
 		token, err := a.oauth2Client.Exchange(ctx, code)
 		if err != nil {
 			log.Infof("unable to verify auth code with issuer: %v", err)

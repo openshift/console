@@ -11,7 +11,6 @@ import { productName } from '../branding';
 import { ALL_NAMESPACES_KEY } from '../const';
 import { connectToFlags, featureActions, flagPending, FLAGS } from '../features';
 import { analyticsSvc } from '../module/analytics';
-import { ClusterSettingsPage } from './cluster-settings/cluster-settings';
 import { GlobalNotifications } from './global-notifications';
 import { Masthead } from './masthead';
 import { NamespaceBar } from './namespace';
@@ -270,7 +269,8 @@ class App extends React.PureComponent {
 
                   <LazyRoute path="/monitoring" loader={() => import('./monitoring' /* webpackChunkName: "monitoring" */).then(m => m.MonitoringUI)} />
 
-                  <Route path="/settings/cluster" component={ClusterSettingsPage} />
+                  <LazyRoute path="/settings/idp/htpasswd" exact loader={() => import('./cluster-settings/htpasswd-idp-form' /* webpackChunkName: "htpasswd-idp-form" */).then(m => m.AddHTPasswdPage)} />
+                  <LazyRoute path="/settings/cluster" loader={() => import('./cluster-settings/cluster-settings' /* webpackChunkName: "cluster-settings" */).then(m => m.ClusterSettingsPage)} />
 
                   <LazyRoute path={'/k8s/cluster/storageclasses/new/form'} exact loader={() => import('./storage-class-form' /* webpackChunkName: "storage-class-form" */).then(m => m.StorageClassForm)} />
 

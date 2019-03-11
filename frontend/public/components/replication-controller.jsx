@@ -14,7 +14,7 @@ const Details = ({obj: replicationController}) => {
       <SectionHeading text="Replication Controller Overview" />
       <div className="row">
         <div className="col-md-6">
-          <ResourceSummary resource={replicationController}>
+          <ResourceSummary resource={replicationController} showPodSelector showNodeSelector>
             {revision && <React.Fragment>
               <dt>Deployment Revision</dt>
               <dd>{revision}</dd>

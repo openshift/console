@@ -32,7 +32,7 @@ export class BaseGraph extends SafetyFirst {
     }
   }
 
-  fetch() {
+  fetch(enablePolling = true) {
     const timeSpan = this.end - this.start || this.timeSpan;
     const end = this.end || Date.now();
     const start = this.start || (end - timeSpan);
@@ -45,8 +45,8 @@ export class BaseGraph extends SafetyFirst {
     }
 
     const basePath = this.props.basePath || (this.props.namespace ? prometheusTenancyBasePath : prometheusBasePath);
-    const pollInterval = timeSpan / 120 || 15000;
-    const stepSize = pollInterval / 1000;
+    const pollInterval = timeSpan ? Math.max(timeSpan / 120, 5000) : 15000;
+    const stepSize = (timeSpan && this.props.numSamples ? timeSpan / this.props.numSamples : pollInterval) / 1000;
     const promises = queries.map(q => {
       const nsParam = this.props.namespace ? `&namespace=${encodeURIComponent(this.props.namespace)}` : '';
       const url = this.timeSpan
@@ -64,11 +64,15 @@ export class BaseGraph extends SafetyFirst {
         }
       })
       .catch(error => this.updateGraph(null, error))
-      .then(() => this.interval = setTimeout(() => {
-        if (this.isMounted_) {
-          this.fetch();
+      .then(() => {
+        if (enablePolling) {
+          this.interval = setTimeout(() => {
+            if (this.isMounted_) {
+              this.fetch();
+            }
+          }, pollInterval);
         }
-      }, pollInterval));
+      });
   }
 
   componentWillMount() {
@@ -132,7 +136,7 @@ export class BaseGraph extends SafetyFirst {
     const { title, className } = this.props;
     const url = this.props.query ? this.prometheusURL() : null;
     const graph = <div className={classNames('graph-wrapper', className)} style={this.style}>
-      <h5 className="graph-title">{title}</h5>
+      {title && <h5 className="graph-title">{title}</h5>}
       <div ref={this.setNode} style={{width: '100%'}} />
     </div>;
 
@@ -154,7 +158,8 @@ BaseGraph.propTypes = {
   ]),
   percent: PropTypes.number, // for gauge charts
   className: PropTypes.string,
-  title: PropTypes.string.isRequired,
+  numSamples: PropTypes.number,
+  title: PropTypes.string,
   timeSpan: PropTypes.number,
   basePath: PropTypes.string,
 };

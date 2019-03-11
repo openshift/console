@@ -123,7 +123,7 @@ export const BuildsDetails: React.SFC<BuildsDetailsProps> = ({ obj: build }) => 
       </div>}
       <div className="row">
         <div className="col-sm-6">
-          <ResourceSummary resource={build} showPodSelector={false} showNodeSelector={false}>
+          <ResourceSummary resource={build}>
             {triggeredBy && <dt>Triggered By</dt>}
             {triggeredBy && <dd>{triggeredBy}</dd>}
             {startTimestamp && <dt>Started</dt>}

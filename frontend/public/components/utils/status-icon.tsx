@@ -9,27 +9,29 @@ export const StatusIcon: React.FunctionComponent<StatusIconProps> = ({status}) =
   }
 
   switch (status) {
+    case 'New':
+      return <span className="co-icon-and-text"><Icon type="fa" name="hourglass-1" className="co-icon-and-text__icon" /><CamelCaseWrap value={status} /></span>;
 
     case 'Pending':
       return <span className="co-icon-and-text"><Icon type="fa" name="hourglass-half" className="co-icon-and-text__icon" /><CamelCaseWrap value={status} /></span>;
 
-    case 'Expired':
+    case 'ContainerCreating':
+      return <span className="co-icon-and-text"><Icon type="pf" name="in-progress" className="co-icon-and-text__icon" /><CamelCaseWrap value={status} /></span>;
+
+    case 'In Progress':
+    case 'Running':
+    case 'Updating':
+    case 'Upgrading':
+      return <span className="co-icon-and-text"><Icon type="fa" name="refresh" className="co-icon-and-text__icon" /><CamelCaseWrap value={status} /></span>;
+
     case 'Cancelled':
+    case 'Expired':
     case 'Not Ready':
     case 'Terminating':
       return <span className="co-icon-and-text"><Icon type="fa" name="ban" className="co-icon-and-text__icon" /><CamelCaseWrap value={status} /></span>;
 
     case 'Warning':
       return <span className="co-icon-and-text"><Icon type="pf" name="warning-triangle-o" className="co-icon-and-text__icon" /><CamelCaseWrap value={status} /></span>;
-
-    case 'Running':
-      return <span className="co-icon-and-text"><Icon type="fa" name="refresh" className="co-icon-and-text__icon" /><CamelCaseWrap value={status} /></span>;
-
-    case 'ContainerCreating':
-    case 'Updating':
-    case 'Upgrading':
-    case 'In Progress':
-      return <span className="co-icon-and-text"><Icon type="pf" name="in-progress" className="co-icon-and-text__icon" /><CamelCaseWrap value={status} /></span>;
 
     case 'ContainerCannotRun':
     case 'CrashLoopBackOff':
@@ -53,9 +55,6 @@ export const StatusIcon: React.FunctionComponent<StatusIconProps> = ({status}) =
 
     case 'Unknown':
       return <span className="co-icon-and-text"><Icon type="pf" name="unknown" className="co-icon-and-text__icon" /><CamelCaseWrap value={status} /></span>;
-
-    case 'New':
-      return <span className="co-icon-and-text"><Icon type="fa" name="hourglass-1" className="co-icon-and-text__icon" /><CamelCaseWrap value={status} /></span>;
 
     default:
       return <span><CamelCaseWrap value={status} /></span>;
