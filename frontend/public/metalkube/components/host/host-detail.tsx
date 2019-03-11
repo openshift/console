@@ -1,9 +1,11 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
+import * as _ from 'lodash-es';
 import { Row, Col } from 'patternfly-react';
-import { getResource } from 'kubevirt-web-ui-components';
+import { getResource, getNamespace, getName } from 'kubevirt-web-ui-components';
 
 import { BaremetalHostModel } from '../../models/host';
+import { ResourcesEventStream } from '../../../kubevirt/components/okdcomponents';
 import { navFactory } from '../utils/okdutils';
 import { WithResources } from '../../../kubevirt/components/utils/withResources';
 import { DetailsPage, List, ListHeader, ColHead, ResourceRow } from '../factory/okdfactory';
@@ -142,6 +144,18 @@ const BaremetalHostDisk = ({obj: bmo}) => (
   </div>
 );
 
+const BaremetalHostEvents = ({ obj: bmo }) => {
+  const ns = getNamespace(bmo);
+  const bmObj = {
+    name: getName(bmo),
+    namespace: getNamespace(bmo),
+  };
+  const hostFilter = obj => _.isMatch(obj, {...bmObj, kind: BaremetalHostModel.kind});
+  return (
+    <ResourcesEventStream filters={[hostFilter]} namespace={ns} />
+  );
+};
+
 export const BaremetalHostsDetailPage = props => {
   const { name, namespace } = props;
 
@@ -162,6 +176,7 @@ export const BaremetalHostsDetailPage = props => {
     navFactory.editYaml(),
     nicsPage,
     disksPage,
+    navFactory.events(BaremetalHostEvents),
   ];
   return (
     <DetailsPage
