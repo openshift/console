@@ -7,9 +7,13 @@ body,
   height: 100%; // so .co-p-has-sidebar, .yaml-editor are full height
 }
 
+#app,
 #content {
   display: flex;
   flex-direction: column;
+}
+
+#content {
   font-size: $font-size-base; // so PatternFly 4's PatternFly 3 shield rules don't override
 }
 

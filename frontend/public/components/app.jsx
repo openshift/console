@@ -12,6 +12,7 @@ import { ALL_NAMESPACES_KEY } from '../const';
 import { connectToFlags, featureActions, flagPending, FLAGS } from '../features';
 import { analyticsSvc } from '../module/analytics';
 import { GlobalNotifications } from './global-notifications';
+import { ConsoleNotifier } from './console-notifier';
 import { Masthead } from './masthead';
 import { NamespaceBar } from './namespace';
 import { Navigation } from './nav';
@@ -169,6 +170,7 @@ class App extends React.PureComponent {
           titleTemplate={`%s · ${productName}`}
           defaultTitle={productName}
         />
+        <ConsoleNotifier position="top" />
         <Page
           header={<Masthead onNavToggle={this._onNavToggle} />}
           sidebar={<Navigation isNavOpen={isNavOpen} onNavSelect={this._onNavSelect} />}
@@ -288,6 +290,7 @@ class App extends React.PureComponent {
             </div>
           </PageSection>
         </Page>
+        <ConsoleNotifier position="bottom" />
       </React.Fragment>
     );
   }

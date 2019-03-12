@@ -276,6 +276,8 @@ tags-input .autocomplete .suggestion-item em {
 }
 
 .pf-c-page {
+  overflow: hidden;
+
   &__header {
     background-color: var(--pf-global--BackgroundColor--dark-200);
     background-image: url("../imgs/pfbg_2000.jpg");

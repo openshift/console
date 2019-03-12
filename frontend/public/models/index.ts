@@ -946,3 +946,17 @@ export const OAuthModel: K8sKind = {
   id: 'oauth',
   crd: true,
 };
+
+export const ConsoleNotificationModel: K8sKind = {
+  label: 'Console Notification',
+  labelPlural: 'Console Notifications',
+  apiVersion: 'v1',
+  path: 'consolenotifications',
+  apiGroup: 'console.openshift.io',
+  plural: 'consolenotifications',
+  abbr: 'CN',
+  namespaced: false,
+  kind: 'ConsoleNotification',
+  id: 'consolenotification',
+  crd: true,
+};

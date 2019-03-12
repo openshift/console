@@ -152,7 +152,8 @@ export const EditYAML = connect(stateToProps)(
 
     get height() {
       return Math.floor(
-        document.body.getBoundingClientRect().bottom - this.editor.getBoundingClientRect().top
+        // notifications can appear above and below .pf-c-page, so calculate height using the bottom of .pf-c-page
+        document.getElementsByClassName('pf-c-page')[0].getBoundingClientRect().bottom - this.editor.getBoundingClientRect().top
       );
     }
 
