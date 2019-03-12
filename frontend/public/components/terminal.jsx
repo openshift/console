@@ -86,13 +86,14 @@ export class Terminal extends React.Component {
       return;
     }
 
+    const pageRect = document.getElementsByClassName('pf-c-page')[0].getBoundingClientRect();
     const bodyRect = document.body.getBoundingClientRect();
     const nodeRect = node.getBoundingClientRect();
 
     const { padding } = this.props;
 
     // This assumes we want to fill everything below and to the right.  In full-screen, fill entire viewport
-    const height = Math.floor(bodyRect.bottom - (this.isFullscreen ? 0 : nodeRect.top) - padding);
+    const height = Math.floor(pageRect.bottom - (this.isFullscreen ? 0 : nodeRect.top) - padding);
     const width = Math.floor(bodyRect.width - (this.isFullscreen ? 0 : nodeRect.left) - (this.isFullscreen ? 10 : padding));
 
     if (height === this.state.height && width === this.state.width) {

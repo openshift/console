@@ -347,7 +347,7 @@ class NamespaceBarDropdowns_ extends React.Component {
 
     const onChange = newNamespace => dispatch(UIActions.setActiveNamespace(newNamespace));
 
-    return <div className="co-namespace-bar__items">
+    return <div className="co-namespace-bar__items" data-test-id="namespace-bar-dropdown">
       <Dropdown
         className="co-namespace-selector"
         menuClassName="co-namespace-selector__menu"

@@ -830,6 +830,19 @@ spec:
     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce a lobortis justo, eu suscipit purus.
   links:
     - href: 'https://www.example.com'
+`).setIn([referenceForModel(k8sModels.ConsoleNotificationModel), 'default'], `
+apiVersion: console.openshift.io/v1
+kind: ConsoleNotification
+metadata:
+  name: example
+spec:
+  text: This is an example notification message with an optional link.
+  location: BannerTop
+  link:
+    href: 'https://www.example.com'
+    text: Optional link text
+  color: '#fff'
+  backgroundColor: '#0088ce'
 `);
 
 const pluginTemplates = ImmutableMap<GroupVersionKind, ImmutableMap<string, string>>()

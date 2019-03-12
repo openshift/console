@@ -3,12 +3,15 @@ $global-notification-text: $color-pf-white;
 .co-global-notification {
   background-color: $color-pf-blue-400;
   color: $global-notification-text;
-  font-weight: 300;
   padding: 4px ($grid-gutter-width / 2);
   text-align: center;
 
   @media(min-width: $grid-float-breakpoint) {
     padding: 6px $grid-gutter-width;
+  }
+
+  + .co-global-notification {
+    margin-top: 1px;
   }
 
   a {
@@ -17,14 +20,13 @@ $global-notification-text: $color-pf-white;
     text-decoration: underline;
   }
 
-  +  .co-global-notification {
-    box-shadow: inset 0 10px 10px -10px rgba(0,34,53,0.7);
+  .close {
+    margin-left: 10px;
   }
 }
 
 .co-global-notification__text {
   margin: 0;
-  padding: 5px 10px;
 }
 
 .co-global-notification__impersonate-name {
