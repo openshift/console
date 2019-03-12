@@ -4,6 +4,7 @@ $global-notification-text: $color-pf-white;
   background-color: $color-pf-blue-400;
   color: $global-notification-text;
   font-weight: 300;
+  margin-bottom: 1px;
   padding: 4px ($grid-gutter-width / 2);
   text-align: center;
 
@@ -15,10 +16,6 @@ $global-notification-text: $color-pf-white;
     color: $global-notification-text;
     cursor: pointer;
     text-decoration: underline;
-  }
-
-  +  .co-global-notification {
-    box-shadow: inset 0 10px 10px -10px rgba(0,34,53,0.7);
   }
 }
 
