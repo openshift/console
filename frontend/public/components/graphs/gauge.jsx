@@ -47,8 +47,8 @@ class Gauge_ extends BaseGraph {
         pad: 10,
       },
       annotations: [{
-        x: 0,
-        y: -0.05,
+        x: 0.5,
+        y: 0.5,
         text: '...',
         showarrow: false,
         ax: 0,
