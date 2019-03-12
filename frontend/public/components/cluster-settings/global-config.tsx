@@ -33,13 +33,13 @@ class GlobalConfigPage_ extends React.Component<GlobalConfigPageProps, GlobalCon
 
   componentDidMount() {
     let errorMessage = '';
-    Promise.all(this.props.configResources.map(model => {
-      return k8sList(model, { fieldSelector: 'metadata.name=cluster' })
+    Promise.all(this.props.configResources.map((model: K8sKind) => {
+      return k8sList(model)
         .catch(err => {
           errorMessage += `${err.message} `;
           this.setState({ errorMessage });
           return [];
-        }).then(items => items.map(i => ({...i, model})));
+        }).then(items => items.map((i: K8sKind) => ({...i, model})));
     })).then((responses) => {
       const items = _.sortBy(_.flatten(responses), 'kind', 'asc');
       this.setState({
