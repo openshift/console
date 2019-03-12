@@ -4,7 +4,7 @@ import * as _ from 'lodash-es';
 import store from '../redux';
 import { featureActions } from '../features';
 import { history } from '../components/utils/router';
-import { ALL_NAMESPACES_KEY, LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY } from '../const';
+import { ALL_NAMESPACES_KEY, LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY, DISMISSED_CONSOLE_NOTIFICATIONS_LOCAL_STORAGE_KEY } from '../const';
 import { getNSPrefix } from '../components/utils/link';
 import { allModels } from '../module/k8s/k8s-models';
 
@@ -77,6 +77,7 @@ export const types = {
   setCreateProjectMessage: 'setCreateProjectMessage',
   setClusterID: 'setClusterID',
   setCurrentLocation: 'setCurrentLocation',
+  setDismissibleConsoleNotification: 'setDismissibleConsoleNotification',
   setMonitoringData: 'setMonitoringData',
   toggleMonitoringGraphs: 'toggleMonitoringGraphs',
   setUser: 'setUser',
@@ -207,4 +208,12 @@ export const UIActions = {
   monitoringErrored: (key, loadError) => ({type: types.setMonitoringData, key, data: {loaded: true, loadError, data: null}}),
 
   [types.toggleMonitoringGraphs]: () => ({type: types.toggleMonitoringGraphs}),
+
+  [types.setDismissibleConsoleNotification]: uid => async(dispatch, getState) => {
+    const dismissedConsoleNotifications = getState().UI.get('dismissedConsoleNotifications');
+    const updatedDismissedConsoleNotifications = [...dismissedConsoleNotifications, uid];
+
+    localStorage.setItem(DISMISSED_CONSOLE_NOTIFICATIONS_LOCAL_STORAGE_KEY, JSON.stringify(updatedDismissedConsoleNotifications));
+    dispatch({updatedDismissedConsoleNotifications, type: types.setDismissibleConsoleNotification});
+  },
 };

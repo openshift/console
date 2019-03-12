@@ -29,6 +29,7 @@ export const LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY = `${STORAGE_PREFIX}/last-nam
 export const API_DISCOVERY_RESOURCES_LOCAL_STORAGE_KEY = `${STORAGE_PREFIX}/api-discovery-resources`;
 export const COMMUNITY_PROVIDERS_WARNING_LOCAL_STORAGE_KEY = `${STORAGE_PREFIX}/community-providers-warning`;
 export const SWAGGER_SESSION_STORAGE_KEY = `${STORAGE_PREFIX}/${window.SERVER_FLAGS.consoleVersion}/swagger-definitions`;
+export const DISMISSED_CONSOLE_NOTIFICATIONS_LOCAL_STORAGE_KEY = `${STORAGE_PREFIX}/dismissed-notifications`;
 
 // Bootstrap user for OpenShift 4.0 clusters
 export const KUBE_ADMIN_USERNAME = 'kube:admin';

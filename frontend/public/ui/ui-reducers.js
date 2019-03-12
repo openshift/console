@@ -2,7 +2,7 @@ import * as _ from 'lodash-es';
 import { Map as ImmutableMap } from 'immutable';
 
 import { types } from './ui-actions';
-import { ALL_NAMESPACES_KEY, LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY, NAMESPACE_LOCAL_STORAGE_KEY } from '../const';
+import { ALL_NAMESPACES_KEY, LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY, NAMESPACE_LOCAL_STORAGE_KEY, DISMISSED_CONSOLE_NOTIFICATIONS_LOCAL_STORAGE_KEY } from '../const';
 import { AlertStates, isSilenced, SilenceStates } from '../monitoring';
 import { legalNamePattern, getNamespace } from '../components/utils/link';
 import { OverviewSpecialGroup } from '../components/overview/constants';
@@ -21,6 +21,8 @@ export default (state, action) => {
       }
     }
 
+    const dismissedConsoleNotifications = JSON.parse(localStorage.getItem(DISMISSED_CONSOLE_NOTIFICATIONS_LOCAL_STORAGE_KEY));
+
     return ImmutableMap({
       activeNavSectionId: 'workloads',
       location: pathname,
@@ -38,6 +40,7 @@ export default (state, action) => {
       }),
       user: {},
       clusterID: '',
+      dismissedConsoleNotifications: dismissedConsoleNotifications || [],
     });
   }
 
@@ -138,6 +141,9 @@ export default (state, action) => {
     }
     case types.updateTimestamps:
       return state.set('lastTick', action.lastTick);
+
+    case types.setDismissibleConsoleNotification:
+      return state.set('dismissedConsoleNotifications', action.updatedDismissedConsoleNotifications);
 
     default:
       break;

@@ -810,4 +810,19 @@ spec:
     apiVersion: machine.openshift.io/v1beta1
     kind: MachineSet
     name: worker
+`).setIn([referenceForModel(k8sModels.ConsoleNotificationModel), 'default'], `
+apiVersion: console.openshift.io/v1
+kind: ConsoleNotification
+metadata:
+  name: example
+spec:
+  text: This is an example notification message with an optional link.
+  position: top
+  link:
+    href: 'http://www.example.com'
+    text: Optional link text
+    opensNewWindow: false
+  color: '#fff'
+  backgroundColor: '#0088ce'
+  dismissible: false
 `);
