@@ -9,7 +9,7 @@ import { authSvc } from '../module/auth';
 import { history, Firehose } from './utils';
 import { openshiftHelpBase } from './utils/documentation';
 import { AboutModal } from './about-modal';
-import { getAvailableClusterUpdates, clusterVersionReference } from './cluster-settings/cluster-settings';
+import { getAvailableClusterUpdates, clusterVersionReference } from '../module/k8s/cluster-settings';
 
 const UpdatesAvailableButton = ({obj, onClick}) => {
   const updatesAvailable = !_.isEmpty(getAvailableClusterUpdates(obj.data));
