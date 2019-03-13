@@ -9,9 +9,10 @@ import {
   ListPage,
   ResourceRow,
 } from '../factory/okdfactory';
-import { ResourceLink } from '../utils/okdutils';
+import { ResourceLink, ResourceKebab } from '../utils/okdutils';
 import { BaremetalHostModel, NamespaceModel } from '../../models';
 import MachineLink from './MachineLink';
+import { menuActions } from './menu-actions';
 
 const mainColumnClasses = 'col-lg-2 col-md-4 col-sm-6 col-xs-6';
 const statusColumnClasses = 'col-lg-2 col-md-4 hidden-sm hidden-xs';
@@ -83,6 +84,13 @@ const HostRow = ({ obj: host }) => {
       </div>
       <div className={roleColumnClasses}>-</div>
       <div className={hideableColumnClasses}>{address}</div>
+      <div className="dropdown-kebab-pf">
+        <ResourceKebab
+          actions={menuActions}
+          kind={BaremetalHostModel.kind}
+          resource={host}
+        />
+      </div>
     </ResourceRow>
   );
 };
@@ -106,7 +114,7 @@ export class BaremetalHostsPage extends React.Component {
     return (
       <ListPage
         {...this.props}
-        canCreate={true}
+        canCreate
         rowFilters={filters}
         createButtonText="Create Host"
         kind={BaremetalHostModel.kind}
