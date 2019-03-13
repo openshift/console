@@ -375,6 +375,11 @@
   text-overflow: ellipsis;
 }
 
+.co-select-to-copy {
+  cursor: copy;
+  user-select: all;
+}
+
 .co-nowrap {
   white-space: nowrap;
 }
