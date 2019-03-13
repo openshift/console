@@ -22,4 +22,4 @@ export BRIDGE_AUTH_PASSWORD="$(cat "${INSTALLER_DIR}/auth/kubeadmin-password")"
 set -x
 export BRIDGE_BASE_ADDRESS="https://$(oc get route console -n openshift-console -o jsonpath='{.spec.host}')"
 
-./test-gui.sh e2e
+./test-gui.sh ${1:-e2e}
