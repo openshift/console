@@ -129,8 +129,8 @@ export const config: Config = {
       'tests/base.scenario.ts',
       'tests/olm/descriptors.scenario.ts',
       'tests/olm/catalog.scenario.ts',
-      'tests/olm/prometheus.scenario.ts',
-      'tests/olm/etcd.scenario.ts',
+      'tests/olm/single-installmode.scenario.ts',
+      'tests/olm/global-installmode.scenario.ts',
     ],
     olmUpgrade: [
       'tests/login.scenario.ts',
@@ -149,8 +149,8 @@ export const config: Config = {
       'tests/operator-hub/operator-hub.scenario.ts',
       'tests/olm/descriptors.scenario.ts',
       'tests/olm/catalog.scenario.ts',
-      'tests/olm/prometheus.scenario.ts',
-      'tests/olm/etcd.scenario.ts',
+      'tests/olm/single-installmode.scenario.ts',
+      'tests/olm/global-installmode.scenario.ts',
     ],
     performance: [
       'tests/login.scenario.ts',

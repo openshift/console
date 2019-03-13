@@ -4,10 +4,10 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
-import { PromiseComponent, history } from '../utils';
+import { PromiseComponent, history, resourceListPathFromModel } from '../utils';
 import { ClusterServiceVersionKind, SubscriptionKind } from '../operator-lifecycle-manager';
-import { K8sKind, K8sResourceKind } from '../../module/k8s';
-import { ClusterServiceVersionModel, SubscriptionModel } from '../../models';
+import { K8sKind, K8sResourceKind, k8sGet, k8sPatch } from '../../module/k8s';
+import { ClusterServiceVersionModel, SubscriptionModel, CatalogSourceConfigModel } from '../../models';
 
 export class DisableApplicationModal extends PromiseComponent {
   public state: DisableApplicationModalState;
@@ -21,17 +21,24 @@ export class DisableApplicationModal extends PromiseComponent {
     event.preventDefault();
 
     const {subscription, k8sKill} = this.props;
+    const {labels = {}} = subscription.metadata;
     const deleteOptions = {kind: 'DeleteOptions', apiVersion: 'v1', propagationPolicy: 'Foreground'};
-    const killPromises = [k8sKill(SubscriptionModel, subscription, {}, deleteOptions)]
+    const promises = [k8sKill(SubscriptionModel, subscription, {}, deleteOptions)]
       .concat(_.get(this.props.subscription, 'status.installedCSV') && this.state.deleteCSV
-        ? k8sKill(ClusterServiceVersionModel, {metadata: {name: subscription.status.installedCSV, namespace: subscription.metadata.namespace}} as ClusterServiceVersionKind, {}, deleteOptions)
+        ? k8sKill(ClusterServiceVersionModel, {metadata: {name: subscription.status.installedCSV, namespace: subscription.metadata.namespace}} as ClusterServiceVersionKind, {}, deleteOptions).catch(() => Promise.resolve())
+        : [])
+      .concat(_.keys(labels).includes('csc-owner-name')
+        ? k8sGet(CatalogSourceConfigModel, labels['csc-owner-name'], labels['csc-owner-namespace']).then((csc: K8sResourceKind) => {
+          const packages = csc.spec.packages.split(',').filter(pkg => pkg !== subscription.spec.name).join(',');
+          return packages.length === 0
+            ? k8sKill(CatalogSourceConfigModel, csc, {}, {})
+            : k8sPatch(CatalogSourceConfigModel, csc, [{op: 'replace', path: '/spec/packages', packages}]);
+        })
         : []);
 
-    this.handlePromise(Promise.all(killPromises)).then(() => {
+    this.handlePromise(Promise.all(promises)).then(() => {
       this.props.close();
-      if (new RegExp(`/${subscription.metadata.name}(/|$)`).test(window.location.pathname)) {
-        history.push(window.location.pathname.replace(subscription.metadata.name, ''));
-      }
+      history.push(resourceListPathFromModel(SubscriptionModel, subscription.metadata.namespace));
     });
   }
 

@@ -14,6 +14,7 @@ import { normalizeIconClass } from '../catalog/catalog-item-icon';
 import { TileViewPage } from '../utils/tile-view-page';
 import { OperatorHubItemDetails } from './operator-hub-item-details';
 import { communityOperatorWarningModal } from './operator-hub-community-provider-modal';
+import { OperatorHubItem } from './index';
 
 const pageDescription = (
   <span>
@@ -205,6 +206,9 @@ export const OperatorHubTileView = requireOperatorGroup(
         detailsItem: null,
         showDetails: false,
         communityModalShown: false,
+        items: [],
+        communityOperatorsExist: false,
+        includeCommunityOperators: false,
       };
 
       this.openOverlay = this.openOverlay.bind(this);
@@ -318,13 +322,16 @@ OperatorHubTileView.propTypes = {
 
 export type OperatorHubTileViewProps = {
   namespace?: string;
-  items: any[];
+  items: OperatorHubItem[];
   catalogSourceConfig: K8sResourceKind;
 };
 
 export type OperatorHubTileViewState = {
   detailsItem: any;
   showDetails: boolean;
+  items: OperatorHubItem[];
+  communityOperatorsExist: boolean;
+  includeCommunityOperators: boolean;
   communityModalShown: boolean;
 };
 
