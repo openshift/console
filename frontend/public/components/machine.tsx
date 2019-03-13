@@ -25,26 +25,34 @@ const getAWSPlacement = (machine: MachineKind) => _.get(machine, 'spec.providerS
 
 export const getMachineRole = (obj: MachineKind | MachineSetKind | MachineDeploymentKind) => _.get(obj, ['metadata', 'labels', 'sigs.k8s.io/cluster-api-machine-role']);
 
+const getNodeName = (obj) => _.get(obj, 'status.nodeRef.name');
+
 const MachineHeader = props => <ListHeader>
-  <ColHead {...props} className="col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
-  <ColHead {...props} className="col-sm-4 col-xs-6" sortField="metadata.namespace">Namespace</ColHead>
-  <ColHead {...props} className="col-sm-2 hidden-xs" sortField="spec.providerSpec.value.placement.region">Region</ColHead>
-  <ColHead {...props} className="col-sm-2 hidden-xs" sortField="spec.providerSpec.value.placement.availabilityZone">Availability Zone</ColHead>
+  <ColHead {...props} className="col-lg-3 col-md-4 col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
+  <ColHead {...props} className="col-lg-2 col-md-4 col-sm-4 col-xs-6" sortField="metadata.namespace">Namespace</ColHead>
+  <ColHead {...props} className="col-lg-3 col-md-4 col-sm-4 hidden-xs" sortField="status.nodeRef.name">Node</ColHead>
+  <ColHead {...props} className="col-lg-2 hidden-md hidden-sm hidden-xs" sortField="spec.providerSpec.value.placement.region">Region</ColHead>
+  <ColHead {...props} className="col-lg-2 hidden-md hidden-sm hidden-xs" sortField="spec.providerSpec.value.placement.availabilityZone">Availability Zone</ColHead>
 </ListHeader>;
 
 const MachineRow: React.SFC<MachineRowProps> = ({obj}: {obj: MachineKind}) => {
   const { availabilityZone, region } = getAWSPlacement(obj);
+  const nodeName = getNodeName(obj);
+
   return <div className="row co-resource-list__item">
-    <div className="col-sm-4 col-xs-6 co-break-word">
+    <div className="col-lg-3 col-md-4 col-sm-4 col-xs-6 co-break-word">
       <ResourceLink kind={machineReference} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
     </div>
-    <div className="col-sm-4 col-xs-6 co-break-word">
+    <div className="col-lg-2 col-md-4 col-sm-4 col-xs-6 co-break-word">
       <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
     </div>
-    <div className="col-sm-2 hidden-xs">
+    <div className="col-lg-3 col-md-4 col-sm-4 hidden-xs">
+      {nodeName ? <NodeLink name={nodeName} /> : '-'}
+    </div>
+    <div className="col-lg-2 hidden-md hidden-sm hidden-xs">
       {region || '-'}
     </div>
-    <div className="col-sm-2 hidden-xs">
+    <div className="col-lg-2 hidden-md hidden-sm hidden-xs">
       {availabilityZone || '-'}
     </div>
     <div className="dropdown-kebab-pf">
@@ -54,7 +62,7 @@ const MachineRow: React.SFC<MachineRowProps> = ({obj}: {obj: MachineKind}) => {
 };
 
 const MachineDetails: React.SFC<MachineDetailsProps> = ({obj}: {obj: MachineKind}) => {
-  const nodeName = _.get(obj, 'status.nodeRef.name');
+  const nodeName = getNodeName(obj);
   const machineRole = getMachineRole(obj);
   const { availabilityZone, region } = getAWSPlacement(obj);
   return <React.Fragment>
