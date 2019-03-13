@@ -30,6 +30,7 @@ const PageNav = ({ onNavSelect, ResourceClusterLink, HrefLink, ResourceNSLink, M
           // TODO: Make Overview work on native Kubernetes. It currently assumes OpenShift resources.
         }
         <HrefLink href="/overview" name="Status" activePath="/overview/" required={FLAGS.OPENSHIFT} />
+        <HrefLink href="/cluster-overview" name="Cluster Status" activePath="/cluster-overview/" required={FLAGS.OPENSHIFT} />
         <HrefLink href="/status" name="Status" activePath="/status/" disallowed={FLAGS.OPENSHIFT} />
         <HrefLink href="/search" name="Search" startsWith={searchStartsWith} />
         <ResourceNSLink resource="events" name="Events" />

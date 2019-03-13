@@ -1,8 +1,14 @@
-@import '~kubevirt-web-ui-components/dist/sass/components';
+@import '~c3/src/scss/main';
+@import '~bootstrap-sass/assets/stylesheets/bootstrap/progress-bars';
 @import '~patternfly/dist/sass/patternfly/wizard';
 @import '~patternfly/dist/sass/patternfly/forms';
 @import '~patternfly/dist/sass/patternfly/spinner';
 @import '~patternfly/dist/sass/patternfly/alerts';
+@import '~patternfly/dist/sass/patternfly/cards';
+@import '~patternfly/dist/sass/patternfly/charts';
+@import '~patternfly/dist/sass/patternfly/progress-bars';
+@import '~patternfly-react/dist/sass/utilization-bar';
+@import '~kubevirt-web-ui-components/dist/sass/components';
 
 @import 'components/vm/vm';
 @import 'components/vmconsoles';

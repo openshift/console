@@ -135,7 +135,7 @@ class SysEvent extends React.Component {
 
     return <div className="co-sysevent--transition" style={style}>
       <CSSTransition mountOnEnter={true} appear={shouldAnimate} in exit={false} timeout={timeout} classNames="slide">
-        {status => <Inner klass={klass} status={status} tooltipMsg={tooltipMsg} obj={obj} firstTimestamp={firstTimestamp} lastTimestamp={lastTimestamp} count={count} message={message} source={source} width={style.width} />}
+        {status => <this.props.InnerComponent type={this.props.type} klass={klass} status={status} tooltipMsg={tooltipMsg} obj={obj} firstTimestamp={firstTimestamp} lastTimestamp={lastTimestamp} count={count} message={message} source={source} width={style.width} />}
       </CSSTransition>
     </div>;
   }
@@ -208,7 +208,7 @@ const measurementCache = new CellMeasurerCache({
   minHeight: 109, /* height of event with a one-line event message on desktop */
 });
 
-class EventStream extends SafetyFirst {
+export class EventStream extends SafetyFirst {
   constructor(props) {
     super(props);
     this.messages = {};
@@ -230,7 +230,7 @@ class EventStream extends SafetyFirst {
         rowIndex={index}
         parent={parent}>
         {({ measure }) =>
-          <SysEvent {...event} onLoad={measure} onEntered={print} src={event} key={key} style={style} index={index} />
+          <SysEvent {...event} InnerComponent={this.props.InnerComponent} onLoad={measure} onEntered={print} src={event} key={key} style={style} index={index} />
         }
       </CellMeasurer>;
     }.bind(this);
@@ -467,14 +467,16 @@ class EventStream extends SafetyFirst {
 
     return <div className="co-m-pane__body co-m-pane__body--alt">
       <div className="co-sysevent-stream">
-        <div className="co-sysevent-stream__status">
-          <div className="co-sysevent-stream__timeline__btn-text">
-            { statusBtnTxt }
+        {!this.props.overview &&
+          <div className="co-sysevent-stream__status">
+            <div className="co-sysevent-stream__timeline__btn-text">
+              { statusBtnTxt }
+            </div>
+            <div className="co-sysevent-stream__totals text-secondary">
+              { messageCount }
+            </div>
           </div>
-          <div className="co-sysevent-stream__totals text-secondary">
-            { messageCount }
-          </div>
-        </div>
+        }
 
         <div className={klass}>
           <TogglePlay active={active} onClick={this.toggleStream} className="co-sysevent-stream__timeline__btn" />
@@ -517,6 +519,8 @@ EventStream.defaultProps = {
   category: 'all',
   kind: 'all',
   mock: false,
+  InnerComponent: Inner,
+  overview: false,
 };
 
 EventStream.propTypes = {
@@ -527,6 +531,8 @@ EventStream.propTypes = {
   namespace: namespaceProptype,
   showTitle: PropTypes.bool,
   textFilter: PropTypes.string,
+  InnerComponent: PropTypes.func,
+  overview: PropTypes.bool,
 };
 
 
