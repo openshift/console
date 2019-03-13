@@ -4,7 +4,7 @@ import * as _ from 'lodash-es';
 import { Row, Col } from 'patternfly-react';
 import { getResource, getNamespace, getName } from 'kubevirt-web-ui-components';
 
-import { BaremetalHostModel } from '../../models/host';
+import { BaremetalHostModel } from '../../models';
 import { ResourcesEventStream } from '../../../kubevirt/components/okdcomponents';
 import { navFactory } from '../utils/okdutils';
 import { WithResources } from '../../../kubevirt/components/utils/withResources';

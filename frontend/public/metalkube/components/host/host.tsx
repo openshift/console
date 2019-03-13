@@ -1,3 +1,4 @@
+import * as _ from 'lodash-es';
 import * as React from 'react';
 import { getHostStatus } from 'kubevirt-web-ui-components';
 
@@ -8,9 +9,9 @@ import {
   ListPage,
   ResourceRow,
 } from '../factory/okdfactory';
-import { BaremetalHostModel } from '../../models/host';
 import { ResourceLink } from '../utils/okdutils';
-import { NamespaceModel } from '../../models/index';
+import { BaremetalHostModel, NamespaceModel } from '../../models';
+import MachineLink from './MachineLink';
 
 const mainColumnClasses = 'col-lg-2 col-md-4 col-sm-6 col-xs-6';
 const statusColumnClasses = 'col-lg-2 col-md-4 hidden-sm hidden-xs';
@@ -57,6 +58,7 @@ const HostRow = ({ obj: host }) => {
   } = host;
 
   const status = getHostStatus(host);
+  const machineName = _.get(host, 'status.machineRef.name');
 
   return (
     <ResourceRow obj={host}>
@@ -76,7 +78,9 @@ const HostRow = ({ obj: host }) => {
         />
       </div>
       <div className={statusColumnClasses}>{status}</div>
-      <div className={hideableColumnClasses}>-</div>
+      <div className={hideableColumnClasses}>
+        <MachineLink name={machineName} />
+      </div>
       <div className={roleColumnClasses}>-</div>
       <div className={hideableColumnClasses}>{address}</div>
     </ResourceRow>
