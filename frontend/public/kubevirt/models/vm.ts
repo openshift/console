@@ -136,3 +136,16 @@ export const V2VVMwareModel: K8sKind = {
   kind: 'V2VVmware',
   id: 'v2vvmware',
 };
+
+export const InfrastructureModel: K8sKind = {
+  label: 'Infrastructure',
+  labelPlural: 'Infrastructures',
+  apiVersion: 'v1',
+  path: 'infrastructures',
+  apiGroup: 'config.openshift.io',
+  plural: 'infrastructures',
+  abbr: 'infra',
+  namespaced: false,
+  kind: 'Infrastructure',
+  id: 'infrastructure',
+};
