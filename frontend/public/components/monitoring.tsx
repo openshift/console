@@ -41,7 +41,7 @@ const AlertResource = {
 
 const AlertRuleResource = {
   kind: 'AlertRule',
-  label: 'Alert Rule',
+  label: 'Alerting Rule',
   path: '/monitoring/alertrules',
   abbr: 'AR',
 };
@@ -88,7 +88,7 @@ const silenceAlert = alert => ({
 });
 
 const viewAlertRule = alert => ({
-  label: 'View Alert Rule',
+  label: 'View Alerting Rule',
   href: ruleURL(alert.rule),
 });
 
@@ -246,7 +246,7 @@ const AlertsDetailsPage = withFallback(connect(alertStateToProps)((props: Alerts
                   <AlertState state={state} />
                   <AlertStateDescription alert={alert} />
                 </dd>
-                <dt>Alert Rule</dt>
+                <dt>Alerting Rule</dt>
                 <dd>
                   <div className="co-resource-link">
                     <MonitoringResourceIcon resource={AlertRuleResource} />
@@ -332,7 +332,7 @@ const AlertRulesDetailsPage = withFallback(connect(ruleStateToProps)((props: Ale
       </div>
       <div className="co-m-pane__body">
         <div className="monitoring-heading">
-          <SectionHeading text="Alert Rule Overview" />
+          <SectionHeading text="Alerting Rule Overview" />
         </div>
         <div className="co-m-pane__body-group">
           <div className="row">
