@@ -348,7 +348,7 @@ export const Navigation = ({ isNavOpen, onNavSelect }) => {
           <ResourceNSLink resource="daemonsets" name="Daemon Sets" />
           <ResourceNSLink resource="replicasets" name="Replica Sets" />
           <ResourceNSLink resource="replicationcontrollers" name="Replication Controllers" />
-          <ResourceNSLink resource="horizontalpodautoscalers" name="HPAs" />
+          <ResourceNSLink resource="horizontalpodautoscalers" name="Horizontal Pod Autoscalers" />
         </NavSection>
 
         <NavSection title="Networking">
@@ -389,7 +389,7 @@ export const Navigation = ({ isNavOpen, onNavSelect }) => {
           <ResourceNSLink resource="resourcequotas" name="Resource Quotas" startsWith={quotaStartsWith} />
           <ResourceNSLink resource="limitranges" name="Limit Ranges" />
           <ResourceNSLink resource={referenceForModel(ChargebackReportModel)} name="Chargeback" disallowed={FLAGS.OPENSHIFT} />
-          <ResourceClusterLink resource="customresourcedefinitions" name="CRDs" required={FLAGS.CAN_LIST_CRD} />
+          <ResourceClusterLink resource="customresourcedefinitions" name="Custom Resource Definitions" required={FLAGS.CAN_LIST_CRD} />
         </NavSection>
       </NavList>
     </Nav>
