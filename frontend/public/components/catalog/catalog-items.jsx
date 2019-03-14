@@ -168,20 +168,21 @@ export class CatalogTileViewPage extends React.Component {
       return null;
     }
 
-    const { obj, tileName, tileImgUrl, tileIconClass, tileProvider, tileDescription } = item;
+    const { obj, tileName, tileImgUrl, tileIconClass, tileProvider, tileDescription, kind } = item;
     const uid = obj.metadata.uid;
     const iconClass = tileIconClass ? normalizeIconClass(tileIconClass) : null;
     const vendor = tileProvider ? `provided by ${tileProvider}` : null;
     return (
       <CatalogTile
-        id={uid}
         key={uid}
         onClick={() => this.openOverlay(item)}
         title={tileName}
         iconImg={tileImgUrl}
         iconClass={iconClass}
         vendor={vendor}
-        description={tileDescription} />
+        description={tileDescription}
+        data-test={`${kind}-${obj.metadata.name}`}
+      />
     );
   }
 
