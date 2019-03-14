@@ -272,7 +272,6 @@ export const OperatorHubTileView = requireOperatorGroup(
 
       return (
         <CatalogTile
-          id={uid}
           key={uid}
           title={name}
           badges={badges}
@@ -282,6 +281,7 @@ export const OperatorHubTileView = requireOperatorGroup(
           description={description}
           onClick={() => this.openOverlay(item)}
           footer={installed ? <span><Icon type="pf" name="ok" /> Installed</span> : null}
+          data-test={uid}
         />
       );
     }

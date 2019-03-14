@@ -28,7 +28,7 @@ export const OperatorHubList: React.SFC<OperatorHubListProps> = (props) => {
       obj: pkg,
       kind: PackageManifestModel.kind,
       name: _.get(currentCSVDesc, 'displayName', pkg.metadata.name),
-      uid: `${pkg.metadata.name}/${pkg.status.catalogSourceNamespace}`,
+      uid: `${pkg.metadata.name}-${pkg.status.catalogSourceNamespace}`,
       installed: installedFor(subscription.data)(operatorGroup.data)(pkg.status.packageName)(namespace),
       installState: installedFor(subscription.data)(operatorGroup.data)(pkg.status.packageName)(namespace) ? 'Installed' : 'Not Installed',
       imgUrl: iconObj ? `data:${iconObj.mediatype};base64,${iconObj.base64data}` : operatorImg,

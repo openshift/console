@@ -10,7 +10,10 @@ import * as catalogPageView from '../../views/catalog-page.view';
 import * as operatorHubView from '../../views/operator-hub.view';
 
 describe('Subscribing to an Operator from OperatorHub', () => {
-  const openCloudServices = new Set(['AMQ Streams', 'MongoDB']);
+  const openCloudServices = new Set([
+    {id: 'amq-streams-openshift-marketplace', name: 'AMQ Streams'},
+    {id: 'mongodb-enterprise-openshift-marketplace', name: 'MongoDB'},
+  ]);
 
   afterAll(() => {
     // FIXME: Don't hardcode namespace for running tests against upstream k8s
@@ -29,36 +32,37 @@ describe('Subscribing to an Operator from OperatorHub', () => {
     await browser.get(`${appHost}/operatorhub/ns/${testName}`);
     await crudView.isLoaded();
 
-    openCloudServices.forEach(name => {
-      expect(catalogPageView.catalogTileFor(name).isDisplayed()).toBe(true);
+    openCloudServices.forEach(operator => {
+      expect(catalogPageView.catalogTileById(operator.id).isDisplayed()).toBe(true);
     });
   });
 
   it('displays Couchbase Operator operator when filter "Couchbase" is active', async() => {
-    await catalogPageView.clickFilterCheckbox('Couchbase');
+    await catalogPageView.clickFilterCheckbox('provider-couchbase');
 
-    expect(catalogPageView.catalogTileFor('Couchbase Operator').isDisplayed()).toBe(true);
+    expect(catalogPageView.catalogTileById('couchbase-enterprise-openshift-marketplace').isDisplayed()).toBe(true);
 
-    await catalogPageView.clickFilterCheckbox('Couchbase');
+    await catalogPageView.clickFilterCheckbox('provider-couchbase');
   });
 
   it('does not display Couchbase Operator operator when filter "Red Hat" is active', async() => {
-    await catalogPageView.clickFilterCheckbox('Red Hat');
+    await catalogPageView.clickFilterCheckbox('provider-red-hat');
 
-    expect(catalogPageView.catalogTileCount('Couchbase Operator')).toBe(0);
+    expect(catalogPageView.catalogTileById('couchbase-enterprise-openshift-marketplace').isPresent()).toBe(false);
 
-    await catalogPageView.clickFilterCheckbox('Red Hat');
+    await catalogPageView.clickFilterCheckbox('provider-red-hat');
   });
 
   it('displays "AMQ Streams" as an operator when using the filter "stre"', async() => {
     await catalogPageView.filterByKeyword('stre');
 
-    expect(catalogPageView.catalogTileFor('AMQ Streams').isDisplayed()).toBe(true);
+    expect(catalogPageView.catalogTileById('amq-streams-openshift-marketplace').isDisplayed()).toBe(true);
 
     await catalogPageView.filterByKeyword('');
   });
 
   it('displays "Clear All Filters" text when filters remove all operators from display', async() => {
+    await catalogPageView.clickFilterCheckbox('provider-red-hat');
     await catalogPageView.filterByKeyword('NoOperatorsTest');
 
     expect(catalogPageView.catalogTiles.count()).toBe(0);
@@ -67,23 +71,24 @@ describe('Subscribing to an Operator from OperatorHub', () => {
 
   it('clears all filters when "Clear All Filters" text is clicked', async() => {
     await catalogPageView.filterByKeyword('NoOperatorsTest');
+    expect(catalogPageView.filterCheckboxFor('provider-red-hat').isSelected()).toBe(true);
     await catalogPageView.clearFiltersText.click();
 
     expect(catalogPageView.filterTextbox.getAttribute('value')).toEqual('');
-    expect(catalogPageView.activeFilterCheckboxes.count()).toBe(0);
+    expect(catalogPageView.filterCheckboxFor('provider-red-hat').isSelected()).toBe(false);
 
-    openCloudServices.forEach(name => {
-      expect(catalogPageView.catalogTileFor(name).isDisplayed()).toBe(true);
+    openCloudServices.forEach(operator => {
+      expect(catalogPageView.catalogTileById(operator.id).isDisplayed()).toBe(true);
     });
   });
 
-  openCloudServices.forEach(name => {
-    it(`displays OperatorHubModalOverlay with correct content when ${name} operator is clicked`, async() => {
-      await catalogPageView.catalogTileFor(name).click();
+  openCloudServices.forEach(operator => {
+    it(`displays OperatorHubModalOverlay with correct content when ${operator.name} operator is clicked`, async() => {
+      await catalogPageView.catalogTileById(operator.id).click();
       await operatorHubView.operatorModalIsLoaded();
 
       expect(operatorHubView.operatorModal.isDisplayed()).toBe(true);
-      expect(operatorHubView.operatorModalTitle.getText()).toEqual(name);
+      expect(operatorHubView.operatorModalTitle.getText()).toEqual(operator.name);
 
       await operatorHubView.closeOperatorModal();
       await operatorHubView.operatorModalIsClosed();
@@ -91,14 +96,14 @@ describe('Subscribing to an Operator from OperatorHub', () => {
   });
 
   it('shows the warning dialog when a community operator is clicked', async() => {
-    await(catalogPageView.catalogTileFor('etcd').click());
+    await(catalogPageView.catalogTileById('etcd-openshift-marketplace').click());
     await operatorHubView.operatorCommunityWarningIsLoaded();
     await operatorHubView.closeCommunityWarningModal();
     await operatorHubView.operatorCommunityWarningIsClosed();
   });
 
   it('shows the community operator when "Show Community Operators" is accepted', async() => {
-    await(catalogPageView.catalogTileFor('etcd').click());
+    await(catalogPageView.catalogTileById('etcd-openshift-marketplace').click());
     await operatorHubView.operatorCommunityWarningIsLoaded();
     await operatorHubView.acceptCommunityWarningModal();
     await operatorHubView.operatorCommunityWarningIsClosed();
@@ -116,7 +121,7 @@ describe('Subscribing to an Operator from OperatorHub', () => {
   });
 
   it('displays subscription creation form for selected Operator', async() => {
-    await catalogPageView.catalogTileFor('etcd').click();
+    await catalogPageView.catalogTileById('etcd-openshift-marketplace').click();
     await operatorHubView.operatorCommunityWarningIsLoaded();
     await operatorHubView.acceptCommunityWarningModal();
     await operatorHubView.operatorModalIsLoaded();
@@ -140,13 +145,13 @@ describe('Subscribing to an Operator from OperatorHub', () => {
     await operatorHubView.createSubscriptionFormBtn.click();
     await crudView.isLoaded();
 
-    expect(catalogPageView.catalogTileFor('etcd').$('.catalog-tile-pf-footer').getText()).toContain('Installed');
+    expect(catalogPageView.catalogTileById('etcd-openshift-marketplace').$('.catalog-tile-pf-footer').getText()).toContain('Installed');
   });
 
   it(`displays Operator in "Cluster Service Versions" view for "${testName}" namespace`, async() => {
     await browser.get(`${appHost}/operatorhub/ns/${testName}`);
     await crudView.isLoaded();
-    await catalogPageView.catalogTileFor('etcd').click();
+    await catalogPageView.catalogTileById('etcd-openshift-marketplace').click();
     await operatorHubView.operatorCommunityWarningIsLoaded();
     await operatorHubView.acceptCommunityWarningModal();
     await operatorHubView.operatorModalIsLoaded();

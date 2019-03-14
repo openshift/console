@@ -49,24 +49,27 @@ describe('Developer Catalog', () => {
 
   it('displays "No Filter Results" page correctly', async() => {
     await catalogPageView.filterByKeyword('NoFilterResultsTest');
+    await catalogPageView.clickFilterCheckbox('kind-ImageStream');
     expect(catalogPageView.catalogTiles.count()).toBe(0);
+    expect(catalogPageView.filterCheckboxFor('kind-ImageStream').isSelected()).toBe(true);
     expect(catalogPageView.clearFiltersText.isDisplayed()).toBe(true);
 
     await catalogPageView.clearFiltersText.click();
     expect(catalogPageView.filterTextbox.getAttribute('value')).toEqual('');
-    expect(catalogPageView.activeFilterCheckboxes.count()).toBe(0);
+
+    expect(catalogPageView.filterCheckboxFor('kind-ImageStream').isSelected()).toBe(false);
     expect(catalogPageView.catalogTiles.count()).toBeGreaterThan(0);
   });
 
   it('filters catalog tiles by \'Service Class\' Type correctly', async() => {
     expect(catalogPageView.catalogTiles.isPresent()).toBe(true);
 
-    const srvClassFilterCount = await catalogPageView.filterCheckboxCount('Service Class');
+    const srvClassFilterCount = await catalogPageView.filterCheckboxCount('kind-ClusterServiceClass');
 
     // 'Node.js' is source-to-image and should be shown initially
     expect(catalogPageView.catalogTileFor('Node.js').isDisplayed()).toBe(true);
 
-    await catalogPageView.clickFilterCheckbox('Service Class');
+    await catalogPageView.clickFilterCheckbox('kind-ClusterServiceClass');
     // 'Jenkins' is service-class and should be shown
     expect(catalogPageView.catalogTileFor('Jenkins').isDisplayed()).toBe(true);
     // 'Node.js' is s-2-i and should not be shown
@@ -80,12 +83,12 @@ describe('Developer Catalog', () => {
   it('filters catalog tiles by \'Source-To-Image\' Type correctly', async() => {
     expect(catalogPageView.catalogTiles.isPresent()).toBe(true);
 
-    const srvClassFilterCount = await catalogPageView.filterCheckboxCount('Source-To-Image');
+    const srvClassFilterCount = await catalogPageView.filterCheckboxCount('kind-ImageStream');
 
     // 'Jenkins' is service class and should be shown initially
     expect(catalogPageView.catalogTileFor('Jenkins').isDisplayed()).toBe(true);
 
-    await catalogPageView.clickFilterCheckbox('Source-To-Image');
+    await catalogPageView.clickFilterCheckbox('kind-ImageStream');
     // 'Node.js' is s-2-i and should be shown
     expect(catalogPageView.catalogTileFor('Node.js').isPresent()).toBe(true);
     // 'Jenkins' is service-class and should not be shown
@@ -98,7 +101,7 @@ describe('Developer Catalog', () => {
   it('creates a service instance and binding', async() => {
     expect(catalogPageView.catalogTiles.isPresent()).toBe(true);
 
-    await catalogPageView.clickFilterCheckbox('Service Class');
+    await catalogPageView.clickFilterCheckbox('kind-ClusterServiceClass');
     await catalogPageView.filterByKeyword('MongoDB');
     expect(catalogPageView.catalogTileFor('MongoDB').isDisplayed()).toBe(true);
 
