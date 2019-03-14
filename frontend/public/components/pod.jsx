@@ -101,7 +101,7 @@ export const ContainerRow = ({pod, container}) => {
     <div className="col-lg-2 col-md-3 col-sm-4 col-xs-5">
       <ContainerLink pod={pod} name={container.name} />
     </div>
-    <div className="col-lg-2 col-md-3 col-sm-5 col-xs-7 co-truncate co-nowrap">{container.image || '-'}</div>
+    <div className="col-lg-2 col-md-3 col-sm-5 col-xs-7 co-truncate co-nowrap co-select-to-copy">{container.image || '-'}</div>
     <div className="col-lg-2 col-md-2 col-sm-3 hidden-xs"><StatusIcon status={cstate.label} /></div>
     <div className="col-lg-1 col-md-2 hidden-sm hidden-xs">{_.get(cstatus, 'restartCount', '0')}</div>
     <div className="col-lg-2 col-md-2 hidden-sm hidden-xs"><Timestamp timestamp={startedAt} /></div>
