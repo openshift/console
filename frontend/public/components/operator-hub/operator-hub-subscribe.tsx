@@ -223,7 +223,7 @@ export const OperatorHubSubscribeForm = withFormState((props: OperatorHubSubscri
 
 export const OperatorHubSubscribePage: React.SFC<OperatorHubSubscribePageProps> = (props) => <div className="co-m-pane__body">
   <Helmet>
-    <title>Operator Hub Subscription</title>
+    <title>OperatorHub Subscription</title>
   </Helmet>
   <div>
     <h1>Create Operator Subscription</h1>

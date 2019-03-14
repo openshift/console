@@ -3,8 +3,6 @@ OpenShift Console
 
 Codename: "Bridge"
 
-[![Build Status](https://jenkins-tectonic.prod.coreos.systems/buildStatus/icon?job=console-build)](https://jenkins-tectonic.prod.coreos.systems/job/console-build/)
-
 [quay.io/openshift/origin-console](https://quay.io/repository/openshift/origin-console?tab=tags)
 
 The console is a more friendly `kubectl` in the form of a single page webapp.  It also integrates with other services like monitoring, chargeback, and OLM.  Some things that go on behind the scenes include:
@@ -35,22 +33,53 @@ Backend binaries are output to `/bin`.
 
 ### Configure the application
 
-#### OpenShift
+The following instructions assume you have an existing cluster you can connect
+to. OpenShift 4.0 clusters can be installed using the
+[OpenShift Installer](https://github.com/openshift/installer).
+You can also use [CodeReady Containers](https://github.com/code-ready/osp4)
+for local installs. More information about installing OpenShift can be found at
+<https://try.openshift.com/>.
 
-Registering an OpenShift OAuth client requires administrative privileges for the entire cluster, not just a local project. Run the following command to log in as cluster admin:
+
+#### OpenShift (no authentication)
+
+For local development, you can disable OAuth and run bridge with an OpenShift
+user's access token. If you've installed OpenShift 4.0, run the following
+commands to login as the kubeadmin user and start a local console for
+development. Make sure to replace `/path/to/install-dir` with the directory you
+used to install OpenShift.
 
 ```
-oc login -u system:admin
+oc login -u kubeadmin -p $(cat /path/to/install-dir/auth/kubeadmin-password)
+source ./contrib/oc-environment.sh
+./bin/bridge
 ```
 
-To run bridge locally connected to an OpenShift cluster, create an `OAuthClient` resource with a generated secret and read that secret:
+The console will be running at [localhost:9000](http://localhost:9000).
+
+If you don't have `kubeadmin` access, you can use any user's API token,
+although you will be limited to that user's access and might not be able to run
+the full integration test suite.
+
+#### OpenShift (with authentication)
+
+If you need to work on the backend code for authentication or you need to test
+different users, you can set up authentication in your development environment.
+Registering an OpenShift OAuth client requires administrative privileges for
+the entire cluster, not just a local project. You must be logged in as a
+cluster admin such as `system:admin` or `kubeadmin`.
+
+To run bridge locally connected to an OpenShift cluster, create an
+`OAuthClient` resource with a generated secret and read that secret:
 
 ```
 oc process -f examples/console-oauth-client.yaml | oc apply -f -
 oc get oauthclient console-oauth-client -o jsonpath='{.secret}' > examples/console-client-secret
 ```
 
-If the CA bundle of the OpenShift API server is unavailable, fetch the CA certificates from a service account secret. Otherwise copy the CA bundle to `examples/ca.crt`:
+If the CA bundle of the OpenShift API server is unavailable, fetch the CA
+certificates from a service account secret. Otherwise copy the CA bundle to
+`examples/ca.crt`:
 
 ```
 oc get secrets -n default --field-selector type=kubernetes.io/service-account-token -o json | \
@@ -58,30 +87,10 @@ oc get secrets -n default --field-selector type=kubernetes.io/service-account-to
 # Note: use "openssl base64" because the "base64" tool is different between mac and linux
 ```
 
-Set the `OPENSHIFT_API` environment variable to tell the script the API endpoint:
-
-```
-export OPENSHIFT_API="https://127.0.0.1:8443"
-```
-
 Finally run the console and visit [localhost:9000](http://localhost:9000):
 
 ```
 ./examples/run-bridge.sh
-```
-
-#### OpenShift (without OAuth)
-
-For local development, you can also disable OAuth and run bridge with an
-OpenShift user's access token. Run the following commands to create an admin
-user and start bridge for a cluster up environment:
-
-```
-oc login -u system:admin
-oc adm policy add-cluster-role-to-user cluster-admin admin
-oc login -u admin
-source ./contrib/oc-environment.sh
-./bin/bridge
 ```
 
 #### Native Kubernetes
@@ -110,32 +119,10 @@ kubectl describe secrets/<secret-id-obtained-previously>
 
 Use this token value to set the `BRIDGE_K8S_BEARER_TOKEN` environment variable when running Bridge.
 
-## Images
+## Operator
 
-The `builder-run.sh` script will run any command from a docker container to ensure a consistent build environment.
-For example to build with docker run:
-```
-./builder-run.sh ./build.sh
-```
-
-The docker image used by builder-run is itself built and pushed by the
-script `push-builder`, which uses the file `Dockerfile-builder` to
-define an image. To update the builder-run build environment, first make
-your changes to `Dockerfile-builder`, then run `push-builder`, and
-then update the BUILDER_VERSION variable in `builder-run` to point to
-your new image. Our practice is to manually tag images builder images in the form
-`Builder-v$SEMVER` once we're happy with the state of the push.
-
-### Compile, Build, & Push Image
-
-(Almost no reason to ever do this manually, Jenkins handles this automation)
-
-Build an image, tag it with the current git sha, and pushes it to the `quay.io/coreos/tectonic-console` repo.
-
-Must set env vars `DOCKER_USER` and `DOCKER_PASSWORD` or have a valid `.dockercfg` file.
-```
-./build-docker-push.sh
-```
+In OpenShift 4.x, the console is installed and managed by the
+[console operator](https://github.com/openshift/console-operator/).
 
 ## Hacking
 
@@ -206,12 +193,34 @@ Run integration tests on an OpenShift cluster:
 yarn run test-gui-openshift
 ```
 This will include the normal k8s CRUD tests and CRUD tests for OpenShift
-resources. It doesn't include ALM tests since it assumes ALM is not
-set up on an OpenShift cluster.
+resources.
+
+#### How the Integration Tests Run in CI
+
+The end-to-end tests run against pull requests using [ci-operator](https://github.com/openshift/ci-operator/).
+The tests are defined in [this manifest](https://github.com/openshift/release/blob/master/ci-operator/jobs/openshift/console/openshift-console-master-presubmits.yaml)
+in the [openshift/release](https://github.com/openshift/release) repo and were generated with [ci-operator-prowgen](https://github.com/openshift/ci-operator-prowgen).
+
+CI runs the [test-prow-e2e.sh](test-prow-e2e.sh) script, which uses the `e2e` suite defined in [protractor.conf.ts](frontend/integration-tests/protractor.conf.ts).
+
+You can simulate an e2e run against an existing 4.0 cluster with the following commands (replace `/path/to/install-dir` with your OpenShift 4.0 install directory):
+
+```
+$ export BRIDGE_AUTH_USERNAME=kubeadmin
+$ export BRIDGE_BASE_ADDRESS="https://$(oc get route console -n openshift-console -o jsonpath='{.spec.host}')"
+$ export BRIDGE_AUTH_PASSWORD=$(cat "/path/to/install-dir/auth/kubeadmin-password")
+$ ./test-gui.sh e2e
+```
+
+If you don't want to run the entire e2e tests, you can use a different suite from [protractor.conf.ts](frontend/integration-tests/protractor.conf.ts). For instance,
+
+```
+$ ./test-gui.sh olm
+```
 
 #### Hacking Integration Tests
 
-Remove the `--headless` flag to Chrome (chromeOptions) in `frontend/integration-tests/protractor.conf.ts` to see what the tests are actually doing.
+Remove the `--headless` flag to Chrome (chromeOptions) in [protractor.conf.ts](frontend/integration-tests/protractor.conf.ts) to see what the tests are actually doing.
 
 ### Dependency Management
 
@@ -244,7 +253,6 @@ Update existing frontend dependencies:
 ```
 yarn upgrade <package@version>
 ```
-
 
 #### Supported Browsers
 

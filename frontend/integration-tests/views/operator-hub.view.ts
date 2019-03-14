@@ -1,6 +1,6 @@
 /* eslint-disable no-undef, no-unused-vars */
 
-import { browser, $, ExpectedConditions as until, $$, by, element } from 'protractor';
+import { browser, $, ExpectedConditions as until, by, element } from 'protractor';
 
 export const operatorModal = $('.modal-content');
 export const operatorModalIsLoaded = () => browser.wait(until.presenceOf(operatorModal), 1000)
@@ -16,9 +16,17 @@ export const createSubscriptionFormTitle = element(by.cssContainingText('h1', 'C
 export const createSubscriptionFormBtn = element(by.buttonText('Subscribe'));
 export const createSubscriptionFormInstallMode = element(by.cssContainingText('label', 'Installation Mode'));
 
-export const showCommunityOperators = async() => {
-  await $$('.co-catalog-page__filter-toggle').click();
-  await browser.wait(until.presenceOf($('.co-modal-ignore-warning')), 1000).then(() => browser.sleep(500));
-  await $('.co-modal-ignore-warning').$('.btn-primary').click();
-  await browser.wait(until.not(until.presenceOf($('.co-modal-ignore-warning'))), 1000).then(() => browser.sleep(500));
-};
+export const installNamespaceDropdown = $('.dropdown--full-width');
+export const installNamespaceDropdownBtn = installNamespaceDropdown.$('.dropdown-toggle');
+export const installNamespaceDropdownFilter = (filter: string) => installNamespaceDropdown
+  .$('.dropdown-menu__filter').$('input').sendKeys(filter);
+export const installNamespaceDropdownSelect = (namespace: string) => installNamespaceDropdown
+  .$(`#${namespace}-Project-link`);
+
+export const communityWarningModal = $('.co-modal-ignore-warning');
+export const operatorCommunityWarningIsLoaded = () => browser.wait(until.presenceOf(communityWarningModal), 1000)
+  .then(() => browser.sleep(500));
+export const operatorCommunityWarningIsClosed = () => browser.wait(until.not(until.presenceOf(communityWarningModal)), 1000)
+  .then(() => browser.sleep(500));
+export const closeCommunityWarningModal = () => communityWarningModal.$('.btn-default').click();
+export const acceptCommunityWarningModal = () => communityWarningModal.$('.btn-primary').click();

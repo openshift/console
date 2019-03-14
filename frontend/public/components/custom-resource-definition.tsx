@@ -1,13 +1,22 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import { Link } from 'react-router-dom';
 
-import { ColHead, List, ListHeader, ListPage } from './factory';
-import { Kebab, ResourceKebab, ResourceIcon } from './utils';
+import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
+import { Kebab, navFactory, ResourceKebab, ResourceLink, ResourceSummary, SectionHeading } from './utils';
 import { referenceForCRD } from '../module/k8s';
 
 const { common } = Kebab.factory;
-const menuActions = [...common];
+
+const crdInstancesPath = crd => _.get(crd, 'spec.scope') === 'Namespaced'
+  ? `/k8s/all-namespaces/${referenceForCRD(crd)}`
+  : `/k8s/cluster/${referenceForCRD(crd)}`;
+
+const instances = (kind, obj) => ({
+  label: 'View Instances',
+  href: crdInstancesPath(obj),
+});
+
+const menuActions = [instances, ...common];
 
 const CRDHeader = props => <ListHeader>
   <ColHead {...props} className="col-lg-3 col-md-4 col-sm-4 col-xs-6" sortField="spec.names.kind">Name</ColHead>
@@ -27,8 +36,7 @@ const namespaced = crd => crd.spec.scope === 'Namespaced';
 const CRDRow = ({obj: crd}) => <div className="row co-resource-list__item">
   <div className="col-lg-3 col-md-4 col-sm-4 col-xs-6">
     <span className="co-resource-link">
-      <ResourceIcon kind="CustomResourceDefinition" />
-      <Link className="co-resource-link__resource-name" to={`/k8s/all-namespaces/${referenceForCRD(crd)}`}>{_.get(crd, 'spec.names.kind', crd.metadata.name)}</Link>
+      <ResourceLink kind="CustomResourceDefinition" name={crd.metadata.name} namespace={crd.metadata.namespace} displayName={_.get(crd, 'spec.names.kind')} />
     </span>
   </div>
   <div className="col-lg-3 col-md-4 col-sm-4 col-xs-6 co-break-word">
@@ -52,8 +60,16 @@ const CRDRow = ({obj: crd}) => <div className="row co-resource-list__item">
   </div>
 </div>;
 
+const Details = ({obj: crd}) => {
+  return <div className="co-m-pane__body">
+    <SectionHeading text="Custom Resource Definition Overview" />
+    <ResourceSummary showPodSelector={false} showNodeSelector={false} resource={crd} />
+  </div>;
+};
+
 export const CustomResourceDefinitionsList: React.SFC<CustomResourceDefinitionsListProps> = props => <List {...props} Header={CRDHeader} Row={CRDRow} />;
 export const CustomResourceDefinitionsPage: React.SFC<CustomResourceDefinitionsPageProps> = props => <ListPage {...props} ListComponent={CustomResourceDefinitionsList} kind="CustomResourceDefinition" canCreate={true} filterLabel="CRDs by name" />;
+export const CustomResourceDefinitionsDetailsPage = props => <DetailsPage {...props} menuActions={menuActions} pages={[navFactory.details(Details), navFactory.editYaml()]} />;
 
 export type CustomResourceDefinitionsListProps = {
 

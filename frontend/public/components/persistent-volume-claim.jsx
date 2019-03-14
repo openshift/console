@@ -50,7 +50,7 @@ const Details_ = ({flags, obj: pvc}) => {
     <SectionHeading text="PersistentVolumeClaim Overview" />
     <div className="row">
       <div className="col-sm-6">
-        <ResourceSummary resource={pvc} showPodSelector={false} showNodeSelector={false}>
+        <ResourceSummary resource={pvc}>
           <dt>Label Selector</dt>
           <dd><Selector selector={labelSelector} /></dd>
         </ResourceSummary>

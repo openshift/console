@@ -47,9 +47,9 @@ export class CreatePVCForm extends React.Component<CreatePVCFormProps, CreatePVC
       },
     ],
     dropdownUnits: {
-      Mi: 'MiB',
-      Gi: 'GiB',
-      Ti: 'TiB',
+      Mi: 'Mi',
+      Gi: 'Gi',
+      Ti: 'Ti',
     },
   };
 

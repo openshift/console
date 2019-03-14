@@ -34,7 +34,7 @@ export const OperatorHubList: React.SFC<OperatorHubListProps> = (props) => {
       imgUrl: iconObj ? `data:${iconObj.mediatype};base64,${iconObj.base64data}` : operatorImg,
       description: currentCSVAnnotations.description || currentCSVDesc.description,
       longDescription: currentCSVDesc.description || currentCSVAnnotations.description,
-      provider: _.get(pkg, 'metadata.labels.provider'),
+      provider: _.get(pkg, 'status.provider.name', _.get(pkg, 'metadata.labels.provider')),
       providerType: getOperatorProviderType(pkg),
       tags: pkg.metadata.tags,
       version: _.get(currentCSVDesc, 'version'),
@@ -59,8 +59,8 @@ export const OperatorHubList: React.SFC<OperatorHubListProps> = (props) => {
     label="Resources"
     EmptyMsg={() => (
       <MsgBox
-        title="No Operator Hub Items Found"
-        detail={<span>Please check that the OperatorHub is running and that you have created a valid OperatorSource. For more information about Operator Hub, please click <ExternalLink href="https://github.com/operator-framework/operator-marketplace" text="here" />.</span>}
+        title="No OperatorHub Items Found"
+        detail={<span>Please check that the OperatorHub is running and that you have created a valid OperatorSource. For more information about OperatorHub, please click <ExternalLink href="https://github.com/operator-framework/operator-marketplace" text="here" />.</span>}
       />
     )}>
     <OperatorHubTileView items={items} catalogSourceConfig={sourceConfigs} namespace={namespace} />
@@ -69,10 +69,10 @@ export const OperatorHubList: React.SFC<OperatorHubListProps> = (props) => {
 
 export const OperatorHubPage = withFallback((props: OperatorHubPageProps) => <React.Fragment>
   <Helmet>
-    <title>Operator Hub</title>
+    <title>OperatorHub</title>
   </Helmet>
   <div className="co-catalog">
-    <PageHeading title="Operator Hub" />
+    <PageHeading title="OperatorHub" />
     <div className="co-catalog-connect">
       <Firehose resources={[{
         isList: true,

@@ -191,7 +191,7 @@ export const ClusterServiceVersionResourceDetails = connectToModel(
             <div className="row">
               <div className="col-xs-6">
                 { this.state.expanded
-                  ? <ResourceSummary resource={this.props.obj} showPodSelector={false} />
+                  ? <ResourceSummary resource={this.props.obj} />
                   : <dl className="co-m-pane__details">
                     <dt>Name</dt>
                     <dd>{metadata.name}</dd>

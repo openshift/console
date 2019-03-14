@@ -26,7 +26,7 @@ const Row = props => <WorkloadListRow {...props} kind={kind} actions={menuAction
 const Details = ({obj: ss}) => <React.Fragment>
   <div className="co-m-pane__body">
     <SectionHeading text="StatefulSet Overview" />
-    <ResourceSummary resource={ss} showNodeSelector={false} />
+    <ResourceSummary resource={ss} showPodSelector showNodeSelector />
   </div>
   <div className="co-m-pane__body">
     <SectionHeading text="Containers" />

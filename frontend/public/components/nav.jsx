@@ -25,7 +25,7 @@ import {
 } from '../models';
 import { referenceForModel } from '../module/k8s';
 
-import { history, stripBasePath } from './utils';
+import { stripBasePath } from './utils';
 
 export const matchesPath = (resourcePath, prefix) => resourcePath === prefix || _.startsWith(resourcePath, `${prefix}/`);
 export const matchesModel = (resourcePath, model) => model && matchesPath(resourcePath, referenceForModel(model));
@@ -55,13 +55,13 @@ class NavLink extends React.PureComponent {
   }
 
   render() {
-    const { isActive, id, name, onClick } = this.props;
+    const { isActive, isSeparated, id, name, onClick } = this.props;
 
     // onClick is now handled globally by the Nav's onSelect,
     // however onClick can still be passed if desired in certain cases
 
     return (
-      <NavItem isActive={isActive}>
+      <NavItem isActive={isActive} isSeparated={isSeparated}>
         <Link
           id={id}
           to={this.to}
@@ -140,9 +140,7 @@ HrefLink.propTypes = {
 
 const navSectionStateToProps = (state, {required}) => {
   const flags = state[featureReducerName];
-  // `required` can either be a single flag or array. Cast to an array when it's a single value.
-  const requiredArray = required ? _.castArray(required) : [];
-  const canRender = _.every(requiredArray, flag => flags.get(flag));
+  const canRender = required ? flags.get(required) : true;
 
   return {
     flags, canRender,
@@ -155,8 +153,7 @@ const NavSection = connect(navSectionStateToProps)(
   class NavSection extends React.Component {
     constructor(props) {
       super(props);
-      this.toggle = e => this.toggle_(e);
-      this.open = () => this.open_();
+      this.toggle = (e, val) => this.toggle_(e, val);
       this.state = { isOpen: false, activeChild: null };
 
       const activeChild = this.getActiveChild();
@@ -217,23 +214,8 @@ const NavSection = connect(navSectionStateToProps)(
       this.setState(state);
     }
 
-    open_() {
-      this.setState({isOpen: true});
-    }
-
-    toggle_(e) {
-      const { href, onClick } = this.props;
-
-      if (href) {
-        e && e.stopPropagation();
-        history.push(href);
-      }
-
-      if (onClick) {
-        onClick();
-      }
-
-      this.setState({isOpen: !this.state.isOpen});
+    toggle_(e, expandState) {
+      this.setState({isOpen: expandState});
     }
 
     render() {
@@ -260,7 +242,7 @@ const NavSection = connect(navSectionStateToProps)(
       });
 
       return Children ? (
-        <NavExpandable title={title} isActive={isActive} isExpanded={isOpen}>
+        <NavExpandable title={title} isActive={isActive} isExpanded={isOpen} onExpand={this.toggle}>
           {Children}
         </NavExpandable>
       ) : null;
@@ -286,7 +268,7 @@ const rolebindingsStartsWith = ['rolebindings', 'clusterrolebindings'];
 const quotaStartsWith = ['resourcequotas', 'clusterresourcequotas'];
 const imagestreamsStartsWith = ['imagestreams', 'imagestreamtags'];
 const monitoringAlertsStartsWith = ['monitoring/alerts', 'monitoring/alertrules'];
-const clusterSettingsStartsWith = ['settings/cluster', 'config.openshift.io'];
+const clusterSettingsStartsWith = ['settings/cluster', 'settings/idp', 'config.openshift.io'];
 
 const monitoringNavSectionStateToProps = (state) => ({
   canAccess: !!state[featureReducerName].get(FLAGS.CAN_GET_NS),
@@ -338,7 +320,7 @@ export const Navigation = ({ isNavOpen, onNavSelect }) => {
             startsWith={provisionedServicesStartsWith}
             required={FLAGS.SERVICE_CATALOG}
           />
-          <HrefLink required={FLAGS.OPERATOR_HUB} href="/operatorhub" name="Operator Hub" activePath="/operatorhub/" />
+          <HrefLink required={FLAGS.OPERATOR_HUB} href="/operatorhub" name="OperatorHub" activePath="/operatorhub/" />
           <HrefLink
             href="/operatormanagement"
             name="Operator Management"
@@ -360,7 +342,7 @@ export const Navigation = ({ isNavOpen, onNavSelect }) => {
           <ResourceNSLink resource="deploymentconfigs" name={DeploymentConfigModel.labelPlural} required={FLAGS.OPENSHIFT} />
           <ResourceNSLink resource="statefulsets" name="Stateful Sets" />
           <ResourceNSLink resource="secrets" name="Secrets" />
-          <ResourceNSLink resource="configmaps" name="Config Maps" />
+          <ResourceNSLink resource="configmaps" name="Config Maps" isSeparated />
           <ResourceNSLink resource="cronjobs" name="Cron Jobs" />
           <ResourceNSLink resource="jobs" name="Jobs" />
           <ResourceNSLink resource="daemonsets" name="Daemon Sets" />
@@ -390,17 +372,17 @@ export const Navigation = ({ isNavOpen, onNavSelect }) => {
 
         <MonitoringNavSection />
 
-        <NavSection title="Machines" required={[FLAGS.CLUSTER_API, FLAGS.MACHINE_CONFIG, FLAGS.CAN_LIST_MACHINE_CONFIG]}>
-          <ResourceNSLink resource={referenceForModel(MachineModel)} name="Machines" />
-          <ResourceNSLink resource={referenceForModel(MachineSetModel)} name="Machine Sets" />
-          <ResourceClusterLink resource={referenceForModel(MachineConfigModel)} name="Machine Configs" />
-          <ResourceClusterLink resource={referenceForModel(MachineConfigPoolModel)} name="Machine Config Pools" />
+        <NavSection title="Compute" required={FLAGS.CAN_LIST_NODE}>
+          <ResourceClusterLink resource="nodes" name="Nodes" />
+          <ResourceNSLink resource={referenceForModel(MachineModel)} name="Machines" required={FLAGS.CLUSTER_API} />
+          <ResourceNSLink resource={referenceForModel(MachineSetModel)} name="Machine Sets" required={FLAGS.CLUSTER_API} isSeparated />
+          <ResourceClusterLink resource={referenceForModel(MachineConfigModel)} name="Machine Configs" required={FLAGS.MACHINE_CONFIG} />
+          <ResourceClusterLink resource={referenceForModel(MachineConfigPoolModel)} name="Machine Config Pools" required={FLAGS.MACHINE_CONFIG} />
         </NavSection>
 
         <NavSection title="Administration">
           <HrefLink href="/settings/cluster" activePath="/settings/cluster/" name="Cluster Settings" required={FLAGS.CLUSTER_VERSION} startsWith={clusterSettingsStartsWith} />
           <ResourceClusterLink resource="namespaces" name="Namespaces" required={FLAGS.CAN_LIST_NS} />
-          <ResourceClusterLink resource="nodes" name="Nodes" required={FLAGS.CAN_LIST_NODE} />
           <ResourceNSLink resource="serviceaccounts" name="Service Accounts" />
           <ResourceNSLink resource="roles" name="Roles" startsWith={rolesStartsWith} />
           <ResourceNSLink resource="rolebindings" name="Role Bindings" startsWith={rolebindingsStartsWith} />

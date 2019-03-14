@@ -30,6 +30,16 @@ const menuActions = [MarkAsSchedulable, MarkAsUnschedulable, ModifyLabels, Modif
 
 const NodeKebab = ({node}) => <ResourceKebab actions={menuActions} kind="Node" resource={node} />;
 
+const getMachine = (node: K8sResourceKind) => {
+  const machine = _.get(node, 'metadata.annotations["machine.openshift.io/machine"]');
+  if (!machine) {
+    return null;
+  }
+
+  const [namespace, name] = machine.split('/');
+  return { namespace, name };
+};
+
 export const NodeIPList = ({ips, expand = false}) => <div>
   {_.sortBy(ips, ['type']).map((ip, i) => ip.address && <div key={i} className="co-node-ip">
     {(expand || ip.type === 'InternalIP') && <p>
@@ -44,29 +54,25 @@ const Header = props => {
     return null;
   }
   return <ListHeader>
-    <ColHead {...props} className="col-md-5 col-sm-6 col-xs-8" sortField="metadata.name">Node Name</ColHead>
-    <ColHead {...props} className="col-md-2 col-sm-6 col-xs-4" sortFunc="nodeReadiness">Status</ColHead>
-    <ColHead {...props} className="col-md-5 hidden-sm hidden-xs" sortField="status.addresses">Node Addresses</ColHead>
+    <ColHead {...props} className="col-md-4 col-sm-5 col-xs-8" sortField="metadata.name">Node Name</ColHead>
+    <ColHead {...props} className="col-md-2 col-sm-3 col-xs-4" sortFunc="nodeReadiness">Status</ColHead>
+    <ColHead {...props} className="col-md-3 col-sm-4 hidden-xs" sortField="metadata.annotations['machine.openshift.io/machine']">Machine</ColHead>
+    <ColHead {...props} className="col-md-3 hidden-sm hidden-xs" sortField="status.addresses">Node Addresses</ColHead>
   </ListHeader>;
 };
-
-const HeaderSearch = props => <ListHeader>
-  <ColHead {...props} className="col-lg-2 col-md-3 col-sm-4 col-xs-5" sortField="metadata.name">Node Name</ColHead>
-  <ColHead {...props} className="col-md-2 hidden-sm hidden-xs" sortFunc="nodeReadiness">Status</ColHead>
-  <ColHead {...props} className="col-sm-5 col-xs-7" sortField="metadata.labels">Node Labels</ColHead>
-  <ColHead {...props} className="col-md-2 col-sm-3 hidden-xs" sortField="status.addresses">Node Addresses</ColHead>
-</ListHeader>;
 
 const NodeStatus = ({node}) => <StatusIcon status={nodeStatus(node)} />;
 
 const NodeRow = ({obj: node, expand}) => {
+  const machine = getMachine(node);
 
   return <ResourceRow obj={node}>
-    <div className="col-md-5 col-sm-6 col-xs-8">
+    <div className="col-md-4 col-sm-5 col-xs-8">
       <ResourceLink kind="Node" name={node.metadata.name} title={node.metadata.uid} />
     </div>
-    <div className="col-md-2 col-sm-6 col-xs-4"><NodeStatus node={node} /></div>
-    <div className="col-md-5 hidden-sm hidden-xs"><NodeIPList ips={node.status.addresses} expand={expand} /></div>
+    <div className="col-md-2 col-sm-3 col-xs-4"><NodeStatus node={node} /></div>
+    <div className="col-md-3 col-sm-4 hidden-xs"><ResourceLink kind={referenceForModel(MachineModel)} name={machine.name} namespace={machine.namespace} /></div>
+    <div className="col-md-3 hidden-sm hidden-xs"><NodeIPList ips={node.status.addresses} expand={expand} /></div>
     {expand && <div className="col-xs-12">
       <LabelList kind="Node" labels={node.metadata.labels} />
     </div>}
@@ -76,27 +82,7 @@ const NodeRow = ({obj: node, expand}) => {
   </ResourceRow>;
 };
 
-const NodeRowSearch = ({obj: node}) => <div className="row co-resource-list__item">
-  <div className="col-lg-2 col-md-3 col-sm-4 col-xs-5">
-    <ResourceLink kind="Node" name={node.metadata.name} title={node.metadata.uid} />
-  </div>
-  <div className="col-md-2 hidden-sm hidden-xs">
-    <NodeStatus node={node} />
-  </div>
-  <div className="col-sm-5 col-xs-7">
-    <LabelList kind="Node" labels={node.metadata.labels} expand={false} />
-  </div>
-  <div className="col-md-2 col-sm-3 hidden-xs">
-    <NodeIPList ips={node.status.addresses} />
-  </div>
-  <div className="dropdown-kebab-pf">
-    <NodeKebab node={node} />
-  </div>
-</div>;
-
-// We have different list layouts for the Nodes page list and the Search page list
 const NodesList = props => <List {...props} Header={Header} Row={NodeRow} />;
-export const NodesListSearch = props => <List {...props} Header={HeaderSearch} Row={NodeRowSearch} kind="node" />;
 
 const filters = [{
   type: 'node-status',
@@ -140,16 +126,6 @@ const NodeGraphs = requirePrometheus(({node}) => {
     <br />
   </React.Fragment>;
 });
-
-const getMachine = (node: K8sResourceKind) => {
-  const machine = _.get(node, 'metadata.annotations.machine');
-  if (!machine) {
-    return null;
-  }
-
-  const [namespace, name] = machine.split('/');
-  return { namespace, name };
-};
 
 const Details = ({obj: node}) => {
   const images = _.filter(node.status.images, 'names');
@@ -234,7 +210,11 @@ const Details = ({obj: node}) => {
     <div className="co-m-pane__body">
       <SectionHeading text="Images" />
       <div className="co-table-container">
-        <table className="table">
+        <table className="table table--layout-fixed">
+          <colgroup>
+            <col className="col-sm-10 col-xs-9"></col>
+            <col className="col-sm-2 col-xs-3"></col>
+          </colgroup>
           <thead>
             <tr>
               <th>Name</th>
@@ -243,7 +223,7 @@ const Details = ({obj: node}) => {
           </thead>
           <tbody>
             {_.map(images, (image, i) => <tr key={i}>
-              <td>{image.names.find(name => !name.includes('@')) || image.names[0]}</td>
+              <td className="co-break-all">{image.names.find(name => !name.includes('@')) || image.names[0]}</td>
               <td>{units.humanize(image.sizeBytes, 'decimalBytes', true).string || '-'}</td>
             </tr>)}
           </tbody>

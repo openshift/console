@@ -26,13 +26,13 @@ const chunkedRoutes = OrderedMap<string, {section: string, name: string}>()
   .set('storage-class', {section: 'Storage', name: 'Storage Classes'})
   .set('build-config', {section: 'Builds', name: 'Build Configs'})
   .set('image-stream', {section: 'Builds', name: 'Image Streams'})
-  .set('node', {section: 'Administration', name: 'Nodes'})
+  .set('node', {section: 'Compute', name: 'Nodes'})
   .set('service-account', {section: 'Administration', name: 'Service Accounts'})
   .set('resource-quota', {section: 'Administration', name: 'Resource Quotas'})
   .set('limit-range', {section: 'Administration', name: 'Limit Ranges'})
   .set('custom-resource-definition', {section: 'Administration', name: 'CRDs'})
   .set('catalog', {section: 'Catalog', name: 'Developer Catalog'})
-  .set('operator-hub', {section: 'Catalog', name: 'Operator Hub'});
+  .set('operator-hub', {section: 'Catalog', name: 'OperatorHub'});
 
 describe('Performance test', () => {
 

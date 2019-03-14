@@ -101,6 +101,8 @@
 
 .co-m-pane__name {
   @include co-break-word;
+  align-items: baseline;
+  display: flex;
   flex: 1;
   margin-right: 10px;
   min-width: 0; // necessary for wrapping since its a flex child
@@ -166,9 +168,17 @@
   }
 }
 
+.co-m-pane__dropdown {
+  margin-bottom: 20px;
+}
+
 .co-m-pane__explanation {
   color: $color-pf-black-600;
   margin-bottom: 30px;
+}
+
+.co-m-pane__explanation--alt {
+  margin-bottom: 20px;
 }
 
 .co-help-text {
@@ -365,6 +375,11 @@
   text-overflow: ellipsis;
 }
 
+.co-select-to-copy {
+  cursor: copy;
+  user-select: all;
+}
+
 .co-nowrap {
   white-space: nowrap;
 }
@@ -396,18 +411,20 @@
   outline: none;
   padding-right:  20px;
   position: relative;
-  &:after {
+  &::after {
     color: $color-pf-black-600;
     content: $pficon-var-edit;
     font-family: $icon-font-name-pf;
+    line-height: 1;
     pointer-events: none;
     position: absolute;
     right: 0;
+    top: 0;
   }
-  &:focus {
-    outline: none;
+  &.btn-link::after {
+    top: 5px;
   }
-  &:hover:after {
+  &:hover::after {
     color: $color-pf-black-700;
   }
 }

@@ -34,5 +34,5 @@ export const KUBE_ADMIN_USERNAME = 'kube:admin';
 export const OPERATOR_HUB_CSC_BASE = 'installed';
 export const RH_OPERATOR_SUPPORT_POLICY_LINK = 'https://access.redhat.com/third-party-software-support';
 
-// Package manifests for the Operator Hub use this label.
+// Package manifests for the OperatorHub use this label.
 export const OPERATOR_HUB_LABEL = 'openshift-marketplace';

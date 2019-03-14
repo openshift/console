@@ -2,11 +2,20 @@
 
 import * as React from 'react';
 
-import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter, ModalComponentProps } from '../factory/modal';
-import { Dropdown, PromiseComponent } from '../utils';
-import { k8sPatch, K8sResourceKind } from '../../module/k8s';
 import { ClusterVersionModel } from '../../models';
-import { getAvailableClusterChannels } from '../cluster-settings/cluster-settings';
+import { Dropdown, PromiseComponent } from '../utils';
+import {
+  createModalLauncher,
+  ModalBody,
+  ModalComponentProps,
+  ModalSubmitFooter,
+  ModalTitle,
+} from '../factory/modal';
+import {
+  getAvailableClusterChannels,
+  k8sPatch,
+  K8sResourceKind,
+} from '../../module/k8s';
 
 class ClusterChannelModal extends PromiseComponent {
   readonly state: ClusterChannelModalState;
@@ -48,6 +57,7 @@ class ClusterChannelModal extends PromiseComponent {
             items={availableChannels}
             onChange={this._change}
             selectedKey={cv.spec.channel}
+            title="Select Channel"
           />
         </div>
       </ModalBody>

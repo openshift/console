@@ -9,14 +9,15 @@ import * as catalogView from '../../views/catalog.view';
 import * as catalogPageView from '../../views/catalog-page.view';
 import * as operatorHubView from '../../views/operator-hub.view';
 
-describe('Subscribing to an Operator from Operator Hub', () => {
+describe('Subscribing to an Operator from OperatorHub', () => {
   const openCloudServices = new Set(['AMQ Streams', 'MongoDB']);
 
   afterAll(() => {
     // FIXME: Don't hardcode namespace for running tests against upstream k8s
-    execSync('kubectl delete catalogsourceconfig -n openshift-marketplace installed-community-openshift-operators');
-    execSync('kubectl delete subscription -n openshift-operators --all');
-    execSync('kubectl delete clusterserviceversion -n openshift-operators --all');
+    execSync(`kubectl delete catalogsourceconfig -n openshift-marketplace installed-community-${testName}`);
+    execSync(`kubectl delete subscription -n ${testName} --all`);
+    execSync(`kubectl delete clusterserviceversion -n ${testName} --all`);
+    execSync(`kubectl delete operatorgroup -n ${testName} --all`);
   });
 
   afterEach(() => {
@@ -24,8 +25,8 @@ describe('Subscribing to an Operator from Operator Hub', () => {
     checkErrors();
   });
 
-  it('displays Operator Hub with expected available operators', async() => {
-    await browser.get(`${appHost}/operatorhub`);
+  it('displays OperatorHub with expected available operators', async() => {
+    await browser.get(`${appHost}/operatorhub/ns/${testName}`);
     await crudView.isLoaded();
 
     openCloudServices.forEach(name => {
@@ -33,12 +34,12 @@ describe('Subscribing to an Operator from Operator Hub', () => {
     });
   });
 
-  it('displays Couchbase Operator operator when filter "MongoDB" is active', async() => {
-    await catalogPageView.clickFilterCheckbox('MongoDB');
+  it('displays Couchbase Operator operator when filter "Couchbase" is active', async() => {
+    await catalogPageView.clickFilterCheckbox('Couchbase');
 
     expect(catalogPageView.catalogTileFor('Couchbase Operator').isDisplayed()).toBe(true);
 
-    await catalogPageView.clickFilterCheckbox('MongoDB');
+    await catalogPageView.clickFilterCheckbox('Couchbase');
   });
 
   it('does not display Couchbase Operator operator when filter "Red Hat" is active', async() => {
@@ -89,24 +90,35 @@ describe('Subscribing to an Operator from Operator Hub', () => {
     });
   });
 
-  it('hides community Operators when "Show Community Operators" is not accepted', async() => {
-    expect(catalogPageView.catalogTileCount('etcd')).toBe(0);
+  it('shows the warning dialog when a community operator is clicked', async() => {
+    await(catalogPageView.catalogTileFor('etcd').click());
+    await operatorHubView.operatorCommunityWarningIsLoaded();
+    await operatorHubView.closeCommunityWarningModal();
+    await operatorHubView.operatorCommunityWarningIsClosed();
   });
 
-  it('shows community operators when "Show Community Operators" is accepted', async() => {
-    await operatorHubView.showCommunityOperators();
-    await catalogPageView.clickFilterCheckbox('Community');
+  it('shows the community operator when "Show Community Operators" is accepted', async() => {
+    await(catalogPageView.catalogTileFor('etcd').click());
+    await operatorHubView.operatorCommunityWarningIsLoaded();
+    await operatorHubView.acceptCommunityWarningModal();
+    await operatorHubView.operatorCommunityWarningIsClosed();
 
-    expect(catalogPageView.catalogTileCount('etcd')).toBe(1);
+    expect(operatorHubView.operatorModal.isDisplayed()).toBe(true);
+    expect(operatorHubView.operatorModalTitle.getText()).toEqual('etcd');
+
+    await operatorHubView.closeOperatorModal();
+    await operatorHubView.operatorModalIsClosed();
   });
 
-  it('filters Operator Hub tiles by Category', async() => {
+  it('filters OperatorHub tiles by Category', async() => {
     expect(catalogPageView.catalogTiles.isPresent()).toBe(true);
     expect(catalogView.categoryTabs.isPresent()).toBe(true);
   });
 
   it('displays subscription creation form for selected Operator', async() => {
     await catalogPageView.catalogTileFor('etcd').click();
+    await operatorHubView.operatorCommunityWarningIsLoaded();
+    await operatorHubView.acceptCommunityWarningModal();
     await operatorHubView.operatorModalIsLoaded();
     await operatorHubView.operatorModalInstallBtn.click();
 
@@ -117,22 +129,26 @@ describe('Subscribing to an Operator from Operator Hub', () => {
   it('selects target namespace for Operator subscription', async() => {
     await browser.wait(until.visibilityOf(operatorHubView.createSubscriptionFormInstallMode));
 
-    expect($('input[value="AllNamespaces"]').getAttribute('disabled')).toBe(null);
+    expect($('input[value="OwnNamespace"]').getAttribute('disabled')).toBe(null);
   });
 
-  it('displays Operator as subscribed in Operator Hub', async() => {
+  it('displays Operator as subscribed in OperatorHub', async() => {
+    await operatorHubView.installNamespaceDropdownBtn.click();
+    await operatorHubView.installNamespaceDropdownFilter(testName);
+    await operatorHubView.installNamespaceDropdownSelect(testName).click();
+
     await operatorHubView.createSubscriptionFormBtn.click();
     await crudView.isLoaded();
-    await operatorHubView.showCommunityOperators();
 
     expect(catalogPageView.catalogTileFor('etcd').$('.catalog-tile-pf-footer').getText()).toContain('Installed');
   });
 
-  it('displays Operator in "Cluster Service Versions" view for "default" namespace', async() => {
+  it(`displays Operator in "Cluster Service Versions" view for "${testName}" namespace`, async() => {
     await browser.get(`${appHost}/operatorhub/ns/${testName}`);
     await crudView.isLoaded();
-    await operatorHubView.showCommunityOperators();
     await catalogPageView.catalogTileFor('etcd').click();
+    await operatorHubView.operatorCommunityWarningIsLoaded();
+    await operatorHubView.acceptCommunityWarningModal();
     await operatorHubView.operatorModalIsLoaded();
     await operatorHubView.viewInstalledOperator();
     await crudView.isLoaded();
