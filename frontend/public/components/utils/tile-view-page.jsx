@@ -609,6 +609,7 @@ export class TileViewPage extends React.Component {
             checked={active}
             onChange={e => onFilterChange(groupName, filterName, e.target.checked)}
             title={label}
+            data-test={`${groupName}-${_.kebabCase(filterName)}`}
           >
             {label}
           </FilterSidePanel.CategoryItem>;
