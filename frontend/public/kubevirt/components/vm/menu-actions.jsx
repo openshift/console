@@ -73,7 +73,6 @@ const menuActionClone = (kind, vm) => ({
   },
 });
 
-// eslint-disable-next-line no-unused-vars
 const menuActionCancelMigration = (kind, vm, actionArgs) => {
   const migration = findVMIMigration(actionArgs[VirtualMachineInstanceMigrationModel.kind], _.get(actionArgs[VirtualMachineInstanceModel.kind], 'metadata.name'));
   return {
@@ -85,7 +84,6 @@ const menuActionCancelMigration = (kind, vm, actionArgs) => {
   };
 };
 
-// eslint-disable-next-line no-unused-vars
 const menuActionMigrate = (kind, vm, actionArgs) => {
   const migration = findVMIMigration(actionArgs[VirtualMachineInstanceMigrationModel.kind], _.get(actionArgs[VirtualMachineInstanceModel.kind], 'metadata.name'));
   const { name, namespace } = vm.metadata;
@@ -107,4 +105,4 @@ const menuActionMigrate = (kind, vm, actionArgs) => {
   };
 };
 
-export const menuActions = [menuActionStart, menuActionRestart, menuActionClone, Kebab.factory.Delete];
+export const menuActions = [menuActionStart, menuActionRestart, menuActionMigrate, menuActionCancelMigration, menuActionClone, Kebab.factory.Delete];
