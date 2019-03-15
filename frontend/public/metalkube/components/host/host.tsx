@@ -1,6 +1,8 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { getHostStatus } from 'kubevirt-web-ui-components';
+import { connect } from 'react-redux';
+import { actions } from '../../../kubevirt/module/okdk8s';
 
 import {
   ListHeader,
@@ -13,6 +15,7 @@ import { ResourceLink, ResourceKebab } from '../utils/okdutils';
 import { BaremetalHostModel, NamespaceModel } from '../../models';
 import MachineLink from './MachineLink';
 import { menuActions } from './menu-actions';
+import { openCreateBaremetalHostModal } from '../modals/create-host-modal';
 
 const mainColumnClasses = 'col-lg-2 col-md-4 col-sm-6 col-xs-6';
 const statusColumnClasses = 'col-lg-2 col-md-4 hidden-sm hidden-xs';
@@ -109,17 +112,39 @@ const filters = [
   },
 ];
 
-export class BaremetalHostsPage extends React.Component {
+const createProps = ns => ({
+  onClick: () => openCreateBaremetalHostModal(ns),
+});
+
+const mapStateToProps = ({k8s}) => ({
+  k8s,
+});
+
+const mapDispatchToProps = () => ({
+  stopK8sWatch: actions.stopK8sWatch,
+  watchK8sList: actions.watchK8sList,
+});
+
+/* eslint-disable no-unused-vars, no-undef */
+export type BaremetalHostsPageProps = {
+  namespace: string;
+};
+/* eslint-enable no-unused-vars, no-undef */
+
+class BaremetalHostsPage_ extends React.Component<BaremetalHostsPageProps> {
   render() {
     return (
       <ListPage
         {...this.props}
         canCreate
         rowFilters={filters}
-        createButtonText="Create Host"
+        createProps={createProps(this.props.namespace)}
+        createButtonText="Add Host"
         kind={BaremetalHostModel.kind}
         ListComponent={HostList}
       />
     );
   }
 }
+
+export const BaremetalHostsPage = connect(mapStateToProps, mapDispatchToProps)(BaremetalHostsPage_);
