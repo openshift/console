@@ -1,6 +1,12 @@
 .co-type-selector {
   margin-right: -2px;
   min-width: 0;
+  .btn-dropdown .show {
+    display: inline !important;
+    &::before {
+      content: " - "
+    }
+  }
   .dropdown-menu {
     max-height: 75vh;
     min-width: 290px;
