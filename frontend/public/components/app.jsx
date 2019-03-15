@@ -26,8 +26,6 @@ import k8sActions, { types } from '../module/k8s/k8s-actions';
 import '../vendor.scss';
 import '../style.scss';
 
-import { VirtualMachineTemplatesPage } from '../kubevirt/components/vm-template';
-
 //PF4 Imports
 import {
   Page,
@@ -236,9 +234,6 @@ class App extends React.PureComponent {
 
                   <LazyRoute path="/k8s/all-namespaces/import" exact loader={() => import('./import-yaml' /* webpackChunkName: "import-yaml" */).then(m => NamespaceFromURL(m.ImportYamlPage))} />
                   <LazyRoute path="/k8s/ns/:ns/import/" exact loader={() => import('./import-yaml' /* webpackChunkName: "import-yaml" */).then(m => NamespaceFromURL(m.ImportYamlPage))} />
-
-                  <Route path="/k8s/ns/:ns/vmtemplates" exact component={VirtualMachineTemplatesPage} />
-                  <Route path="/k8s/all-namespaces/vmtemplates" exact component={VirtualMachineTemplatesPage} />
 
                   {
                     // These pages are temporarily disabled. We need to update the safe resources list.

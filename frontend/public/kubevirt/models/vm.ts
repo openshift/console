@@ -75,7 +75,7 @@ export const VmTemplateModel: K8sKind = {
   apiVersion: 'v1',
   path: 'templates',
   apiGroup: 'template.openshift.io',
-  plural: 'templates',
+  plural: 'vmtemplates',
   namespaced: true,
   abbr: 'VMT',
   kind: 'Template',
