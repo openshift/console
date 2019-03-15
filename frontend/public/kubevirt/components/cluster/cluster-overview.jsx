@@ -2,17 +2,17 @@ import React from 'react';
 import * as _ from 'lodash-es';
 import {
   ClusterOverview as KubevirtClusterOverview,
-  detailsData,
+  getResource,
+  ClusterOverviewContext,
+
   complianceData,
   utilizationStats,
   capacityStats,
-  getResource,
 } from 'kubevirt-web-ui-components';
 
 import { NodeModel, PodModel, PersistentVolumeClaimModel, VirtualMachineModel, InfrastructureModel } from '../../../models';
-import { LoadingInline } from '../utils/okdutils';
 import { WithResources } from '../utils/withResources';
-import { k8sBasePath, k8sGet } from '../..//module/okdk8s';
+import { k8sBasePath, k8sGet } from '../../module/okdk8s';
 import { coFetch, coFetchJSON } from '../../../co-fetch';
 
 import { EventStream } from '../../../components/events';
@@ -20,13 +20,6 @@ import { EventsInnerOverview } from './events-inner-overview';
 
 const CONSUMERS_CPU_QUERY = 'sort(topk(10, sum by (pod_name)(container_cpu_usage_seconds_total{pod_name!=""})))';
 const CONSUMERS_MEMORY_QUERY = 'sort(topk(10, sum by (pod_name)(container_memory_usage_bytes{pod_name!=""})))';
-
-const mockedData = {
-  detailsData,
-  complianceData,
-  utilizationStats,
-  capacityStats,
-};
 
 const REFRESH_TIMEOUT = 30000;
 
@@ -45,9 +38,7 @@ const inventoryResourceMap = {
   },
 };
 
-const inventoryResourceMapToProps = resources => {
-  const props = {};
-
+const getInventoryData = resources => {
   const inventory = {};
   if (resources.nodes) {
     inventory.nodes = {
@@ -77,17 +68,20 @@ const inventoryResourceMapToProps = resources => {
       kind: VirtualMachineModel.kind,
     };
   }
-  props.inventoryData = {
+
+  return {
     inventory,
     loaded: !!inventory,
   };
-  return props;
 };
+
+const OverviewEventStream = () => <EventStream InnerComponent={EventsInnerOverview} overview={true} />; // TODO FIX: the "namespace" is required prop
 
 export class ClusterOverview extends React.Component {
   constructor(props){
     super(props);
     this.messages = {};
+
     this.state = {
       healthData: {
         data: {},
@@ -107,9 +101,9 @@ export class ClusterOverview extends React.Component {
         loaded: false,
       },
     };
+
     this.setConsumersData = this._setConsumersData.bind(this);
     this.setHealthData = this._setHealthData.bind(this);
-    this.OverviewEventStream = () => <EventStream InnerComponent={EventsInnerOverview} overview={true} />;
   }
 
   _setConsumersData(key, title, response) {
@@ -180,7 +174,7 @@ export class ClusterOverview extends React.Component {
     this.fetchPrometheusQuery(CONSUMERS_CPU_QUERY, response => this.setConsumersData('cpu', 'CPU', response));
     this.fetchPrometheusQuery(CONSUMERS_MEMORY_QUERY, response => this.setConsumersData('memory', 'Memory', response));
     this.fetchHealth(this.setHealthData);
-    k8sGet(InfrastructureModel, 'cluster').then(model => {
+    k8sGet(InfrastructureModel, 'cluster').then(model => { // TODO: move to WithResources
       const provider = _.get(model, 'status.platform');
       this.setState({
         detailsData: {
@@ -198,16 +192,33 @@ export class ClusterOverview extends React.Component {
   }
 
   render() {
+    const inventoryResourceMapToProps = resources => {
+      return {
+        value: {
+          detailsData: this.state.detailsData,
+          inventoryData: getInventoryData(resources), // k8s object loaded via WithResources
+          healthData: this.state.healthData,
+
+          complianceData, // TODO: mock, replace by real data and remove from web-ui-components
+          capacityStats, // TODO: mock, replace by real data and remove from web-ui-components
+          utilizationStats, // TODO: mock, replace by real data and remove from web-ui-components
+
+          eventsData: {
+            Component: OverviewEventStream,
+            loaded: true,
+          },
+
+          consumersData: this.state.consumersData,
+        },
+      };
+    };
+
+
     return (
       <WithResources resourceMap={inventoryResourceMap} resourceToProps={inventoryResourceMapToProps}>
-        <KubevirtClusterOverview
-          {...mockedData}
-          consumersData={this.state.consumersData}
-          eventsData={{Component: this.OverviewEventStream, loaded: true}}
-          inventoryData={{loaded: false}}
-          healthData={this.state.healthData}
-          LoadingComponent={LoadingInline}
-          detailsData={this.state.detailsData} />
+        <ClusterOverviewContext.Provider>
+          <KubevirtClusterOverview />
+        </ClusterOverviewContext.Provider>
       </WithResources>
     );
   }
