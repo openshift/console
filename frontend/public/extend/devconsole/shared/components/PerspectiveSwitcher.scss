@@ -7,7 +7,14 @@
     width: 290px;
   }
 
-  &__active-link {
-    color: black;
+  .pf-c-nav__link {
+    text-align: center;
+  }
+
+  &__openshift-logo {
+    width: 20px;
+    height: 20px;
+    padding: 2px;
+    margin-bottom: 4px;
   }
 }
