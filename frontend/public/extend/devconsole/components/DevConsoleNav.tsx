@@ -13,7 +13,7 @@ interface DevConsoleNavigationProps {
 
 const DevNavSection = NavSection as React.ComponentClass<any>;
 
-const PageNav = (props: DevConsoleNavigationProps) => {
+export const PageNav = (props: DevConsoleNavigationProps) => {
   const isActive = (path: string) => {
     return props.location.endsWith(path);
   };
@@ -62,7 +62,7 @@ const PageNav = (props: DevConsoleNavigationProps) => {
   );
 };
 
-const DevConsoleNavigation: React.FunctionComponent<DevConsoleNavigationProps> = (
+export const DevConsoleNavigation: React.FunctionComponent<DevConsoleNavigationProps> = (
   props: DevConsoleNavigationProps,
 ) => {
   return <PageSidebar nav={<PageNav {...props} />} isNavOpen={props.isNavOpen} />;
