@@ -67,7 +67,7 @@ const NamespaceRow = ({obj: ns}) => <ResourceRow obj={ns}>
 </ResourceRow>;
 
 export const NamespacesList = props => <List {...props} Header={NamespaceHeader} Row={NamespaceRow} />;
-export const NamespacesPage = props => <ListPage {...props} ListComponent={NamespacesList} canCreate={true} createHandler={() => createNamespaceModal({})} />;
+export const NamespacesPage = props => <ListPage {...props} ListComponent={NamespacesList} canCreate={true} createHandler={() => createNamespaceModal({blocking: true})} />;
 
 const projectMenuActions = [Kebab.factory.Edit, deleteModal];
 
