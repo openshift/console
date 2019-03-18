@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import * as _ from 'lodash-es';
+import * as classNames from 'classnames';
 
 import {
   getVolumeType,
@@ -30,8 +31,10 @@ const Volume = ({volumeMounts, pod}) => {
     {volumeMounts.mounts.map((m, i) => <React.Fragment key={i}>
       <div className="row">
         <div className="col-lg-2 col-md-3 col-sm-4 col-xs-5">{name}</div>
-        <div className="col-lg-2 col-md-3 col-sm-5 col-xs-7 co-break-word">{_.get(m, 'mountPath', '-')} </div>
-        <div className="col-lg-2 col-md-2 col-sm-3 hidden-xs co-break-word">{_.get(m, 'subPath', '-')} </div>
+        <div className="col-lg-2 col-md-3 col-sm-5 col-xs-7 co-break-all co-select-to-copy">{_.get(m, 'mountPath', '-')} </div>
+        <div className={classNames('col-lg-2 col-md-2 col-sm-3 hidden-xs co-break-all', { 'co-select-to-copy': _.get(m, 'subPath') })}>
+          {_.get(m, 'subPath', '-')}
+        </div>
         <div className="col-lg-2 col-md-2 hidden-sm hidden-xs">
           <VolumeIcon kind={kind} />
           <span className="co-break-word">{loc && ` (${loc})`}</span>
