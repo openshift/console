@@ -1,6 +1,5 @@
 /* eslint-disable no-undef, no-unused-vars */
 
-import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
@@ -18,10 +17,6 @@ export const createModalLauncher: CreateModalLauncher = (Component) => (props) =
 
   const result = new Promise(resolve => {
     const closeModal = e => {
-      // Disable closing the modal with the escape key for "blocking" modals
-      if (props.blocking && _.get(e, 'type') === 'keydown') {
-        return;
-      }
       if (e && e.stopPropagation) {
         e.stopPropagation();
       }
