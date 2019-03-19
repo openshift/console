@@ -120,7 +120,7 @@ export const ProjectList = connect(createProjectMessageStateToProps)(ProjectList
 
 const ProjectsPage_ = props => {
   const canCreate = props.flags.CAN_CREATE_PROJECT;
-  return <ListPage {...props} ListComponent={ProjectList} canCreate={canCreate} createHandler={() => createProjectModal({})} />;
+  return <ListPage {...props} ListComponent={ProjectList} canCreate={canCreate} createHandler={() => createProjectModal({ blocking: true })} />;
 };
 export const ProjectsPage = connectToFlags(FLAGS.CAN_CREATE_PROJECT)(ProjectsPage_);
 
