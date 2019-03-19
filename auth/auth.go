@@ -107,6 +107,11 @@ type Config struct {
 
 func newHTTPClient(issuerCA string, includeSystemRoots bool) (*http.Client, error) {
 	if issuerCA == "" {
+		// TODO: need to wrap transport here if we want to improve logging of our
+		// requests.
+		// 	https://github.com/openshift/origin/pull/22104/files
+		// but we use capnslog, which isn't glog, so won't work exactly
+		// we will have to find something else...
 		return http.DefaultClient, nil
 	}
 	data, err := ioutil.ReadFile(issuerCA)
@@ -127,6 +132,7 @@ func newHTTPClient(issuerCA string, includeSystemRoots bool) (*http.Client, erro
 	if !certPool.AppendCertsFromPEM(data) {
 		return nil, fmt.Errorf("file %s contained no CA data", issuerCA)
 	}
+	// TODO: wrap this transport in a logger
 	return &http.Client{
 		Transport: &http.Transport{
 			TLSClientConfig: &tls.Config{
