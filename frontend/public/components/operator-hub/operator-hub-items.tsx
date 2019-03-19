@@ -272,7 +272,6 @@ export const OperatorHubTileView = requireOperatorGroup(
 
       return (
         <CatalogTile
-          id={uid}
           key={uid}
           title={name}
           badges={badges}
@@ -282,6 +281,7 @@ export const OperatorHubTileView = requireOperatorGroup(
           description={description}
           onClick={() => this.openOverlay(item)}
           footer={installed ? <span><Icon type="pf" name="ok" /> Installed</span> : null}
+          data-test={uid}
         />
       );
     }
@@ -301,7 +301,7 @@ export const OperatorHubTileView = requireOperatorGroup(
           keywordCompare={keywordCompare}
           renderTile={this.renderTile}
           pageDescription={pageDescription}
-          emptyStateInfo="No Operator Hub items are being shown due to the filters being applied."
+          emptyStateInfo="No OperatorHub items are being shown due to the filters being applied."
         />
         <Modal show={!!detailsItem && showDetails} onHide={this.closeOverlay} bsSize="lg" className="co-catalog-page__overlay right-side-modal-pf">
           {detailsItem && <OperatorHubItemDetails namespace={this.props.namespace} item={detailsItem} closeOverlay={this.closeOverlay} />}

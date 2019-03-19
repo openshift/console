@@ -15,6 +15,8 @@ import {
   SelfSubjectAccessReviewModel,
   VirtualMachineModel,
   BaremetalHostModel,
+  PackageManifestModel,
+  OperatorGroupModel,
 } from './models';
 import { ClusterVersionKind } from './module/k8s';
 import { k8sBasePath, referenceForModel } from './module/k8s/k8s';
@@ -59,7 +61,8 @@ export enum FLAGS {
   CAN_LIST_PV = 'CAN_LIST_PV',
   CAN_LIST_STORE = 'CAN_LIST_STORE',
   CAN_LIST_CRD = 'CAN_LIST_CRD',
-  CAN_LIST_MACHINE_CONFIG = 'CAN_LIST_MACHINE_CONFIG',
+  CAN_LIST_PACKAGE_MANIFEST = 'CAN_LIST_PACKAGE_MANIFEST',
+  CAN_LIST_OPERATOR_GROUP = 'CAN_LIST_OPERATOR_GROUP',
   CAN_CREATE_PROJECT = 'CAN_CREATE_PROJECT',
   KUBEVIRT = 'KUBEVIRT',
   METALKUBE = 'METALKUBE',
@@ -250,8 +253,11 @@ const ssarChecks = [{
   flag: FLAGS.CAN_LIST_CRD,
   resourceAttributes:{ group: 'apiextensions.k8s.io', resource: 'customresourcedefinitions', verb: 'list' },
 }, {
-  flag: FLAGS.CAN_LIST_MACHINE_CONFIG,
-  resourceAttributes:{ group: MachineConfigModel.apiGroup, resource: MachineConfigModel.plural, verb: 'list' },
+  flag: FLAGS.CAN_LIST_PACKAGE_MANIFEST,
+  resourceAttributes:{ group: PackageManifestModel.apiGroup, resource: PackageManifestModel.plural, verb: 'list'},
+}, {
+  flag: FLAGS.CAN_LIST_OPERATOR_GROUP,
+  resourceAttributes:{ group: OperatorGroupModel.apiGroup, resource: OperatorGroupModel.plural, verb: 'list' },
 }];
 
 ssarChecks.forEach(({flag, resourceAttributes, after}) => {

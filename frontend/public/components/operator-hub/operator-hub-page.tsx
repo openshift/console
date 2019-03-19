@@ -28,7 +28,7 @@ export const OperatorHubList: React.SFC<OperatorHubListProps> = (props) => {
       obj: pkg,
       kind: PackageManifestModel.kind,
       name: _.get(currentCSVDesc, 'displayName', pkg.metadata.name),
-      uid: `${pkg.metadata.name}/${pkg.status.catalogSourceNamespace}`,
+      uid: `${pkg.metadata.name}-${pkg.status.catalogSourceNamespace}`,
       installed: installedFor(subscription.data)(operatorGroup.data)(pkg.status.packageName)(namespace),
       installState: installedFor(subscription.data)(operatorGroup.data)(pkg.status.packageName)(namespace) ? 'Installed' : 'Not Installed',
       imgUrl: iconObj ? `data:${iconObj.mediatype};base64,${iconObj.base64data}` : operatorImg,
@@ -59,8 +59,8 @@ export const OperatorHubList: React.SFC<OperatorHubListProps> = (props) => {
     label="Resources"
     EmptyMsg={() => (
       <MsgBox
-        title="No Operator Hub Items Found"
-        detail={<span>Please check that the OperatorHub is running and that you have created a valid OperatorSource. For more information about Operator Hub, please click <ExternalLink href="https://github.com/operator-framework/operator-marketplace" text="here" />.</span>}
+        title="No OperatorHub Items Found"
+        detail={<span>Please check that the OperatorHub is running and that you have created a valid OperatorSource. For more information about OperatorHub, please click <ExternalLink href="https://github.com/operator-framework/operator-marketplace" text="here" />.</span>}
       />
     )}>
     <OperatorHubTileView items={items} catalogSourceConfig={sourceConfigs} namespace={namespace} />
@@ -69,10 +69,10 @@ export const OperatorHubList: React.SFC<OperatorHubListProps> = (props) => {
 
 export const OperatorHubPage = withFallback((props: OperatorHubPageProps) => <React.Fragment>
   <Helmet>
-    <title>Operator Hub</title>
+    <title>OperatorHub</title>
   </Helmet>
   <div className="co-catalog">
-    <PageHeading title="Operator Hub" />
+    <PageHeading title="OperatorHub" />
     <div className="co-catalog-connect">
       <Firehose resources={[{
         isList: true,

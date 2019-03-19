@@ -2,13 +2,12 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import * as _ from 'lodash-es';
 
-import { getVolumeType, getVolumeLocation, getVolumeMountPermissions, getVolumeMountsByPermissions, getRestartPolicyLabel, podPhase, podPhaseFilterReducer, podReadiness } from '../module/k8s/pods';
+import { getRestartPolicyLabel, podPhase, podPhaseFilterReducer, podReadiness } from '../module/k8s/pods';
 import { getContainerState, getContainerStatus } from '../module/k8s/docker';
 import { ResourceEventStream } from './events';
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import {
   AsyncComponent,
-  EmptyBox,
   Kebab,
   LabelList,
   NodeLink,
@@ -21,7 +20,6 @@ import {
   Selector,
   StatusIcon,
   Timestamp,
-  VolumeIcon,
   navFactory,
   units,
 } from './utils';
@@ -30,6 +28,7 @@ import { Line, requirePrometheus } from './graphs';
 import { breadcrumbsForOwnerRefs } from './utils/breadcrumbs';
 import { formatDuration } from './utils/datetime';
 import { CamelCaseWrap } from './utils/camel-case-wrap';
+import { MountedVolumes } from './mounted-vol';
 
 export const menuActions = [Kebab.factory.EditEnvironment, ...Kebab.factory.common];
 const validReadinessStates = new Set(['ContainersNotReady', 'Ready', 'PodCompleted']);
@@ -101,32 +100,12 @@ export const ContainerRow = ({pod, container}) => {
     <div className="col-lg-2 col-md-3 col-sm-4 col-xs-5">
       <ContainerLink pod={pod} name={container.name} />
     </div>
-    <div className="col-lg-2 col-md-3 col-sm-5 col-xs-7 co-truncate co-nowrap">{container.image || '-'}</div>
+    <div className="col-lg-2 col-md-3 col-sm-5 col-xs-7 co-truncate co-nowrap co-select-to-copy">{container.image || '-'}</div>
     <div className="col-lg-2 col-md-2 col-sm-3 hidden-xs"><StatusIcon status={cstate.label} /></div>
     <div className="col-lg-1 col-md-2 hidden-sm hidden-xs">{_.get(cstatus, 'restartCount', '0')}</div>
     <div className="col-lg-2 col-md-2 hidden-sm hidden-xs"><Timestamp timestamp={startedAt} /></div>
     <div className="col-lg-2 hidden-md hidden-sm hidden-xs"><Timestamp timestamp={finishedAt} /></div>
     <div className="col-lg-1 hidden-md hidden-sm hidden-xs">{_.get(cstate, 'exitCode', '-')}</div>
-  </div>;
-};
-
-const Volume = ({pod, volume}) => {
-  const kind = _.get(getVolumeType(volume.volume), 'id', '');
-  const loc = getVolumeLocation(volume.volume);
-  const mountPermissions = getVolumeMountPermissions(volume);
-
-  return <div className="row">
-    <div className="col-sm-3 col-xs-4 co-break-word">{volume.name || '-'}</div>
-    <div className="col-sm-3 col-xs-4">
-      <VolumeIcon kind={kind} />
-      <span className="co-break-word">{loc && ` (${loc})`}</span>
-    </div>
-    <div className="col-sm-3 hidden-xs">{mountPermissions}</div>
-    <div className="col-sm-3 col-xs-4">
-      {volume.mounts.map((m, i) => <React.Fragment key={i}>
-        <ContainerLink pod={pod} name={m.container} />
-      </React.Fragment>)}
-    </div>
   </div>;
 };
 
@@ -195,27 +174,6 @@ export const PodResourceSummary = ({pod}) => (
   </ResourceSummary>
 );
 
-export const PodVolumeTable = ({heading, pod}) => (
-  <React.Fragment>
-    {heading && <SectionHeading text={heading} />}
-    {_.isEmpty(pod.spec.volumes)
-      ? <EmptyBox label="Volumes" />
-      : (
-        <div className="co-m-table-grid co-m-table-grid--bordered">
-          <div className="row co-m-table-grid__head">
-            <div className="col-sm-3 col-xs-4">Name</div>
-            <div className="col-sm-3 col-xs-4">Type</div>
-            <div className="col-sm-3 hidden-xs">Permissions</div>
-            <div className="col-sm-3 col-xs-4">Utilized By</div>
-          </div>
-          <div className="co-m-table-grid__body">
-            {getVolumeMountsByPermissions(pod).map((v, i) => <Volume key={i} pod={pod} volume={v} />)}
-          </div>
-        </div>
-      )}
-  </React.Fragment>
-);
-
 const Details = ({obj: pod}) => {
   const limits = {
     cpu: null,
@@ -254,7 +212,7 @@ const Details = ({obj: pod}) => {
       <PodContainerTable key="containerTable" heading="Containers" containers={pod.spec.containers} pod={pod} />
     </div>
     <div className="co-m-pane__body">
-      <PodVolumeTable heading="Pod Volumes" pod={pod} />
+      <MountedVolumes podTemplate={pod} heading="Mounted Volumes" />
     </div>
   </React.Fragment>;
 };

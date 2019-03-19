@@ -58,13 +58,22 @@ class NavLink extends React.PureComponent {
   }
 
   render() {
-    const { isActive, id, name, onClick } = this.props;
+    const { isActive, isSeparated, separatorConditions, flags, id, name, onClick } = this.props;
+    let showSeparator = isSeparated;
+    const separatorConditionsArray = separatorConditions ? _.castArray(separatorConditions) : [];
+    _.forEach(separatorConditionsArray, required => {
+      const requiredArray = required ? _.castArray(required) : [];
+      const notAllowed = _.some(requiredArray, flag => (
+        flag && (flagPending(flags.get(flag)) || !flags.get(flag))
+      ));
+      showSeparator = showSeparator || !notAllowed;
+    });
 
     // onClick is now handled globally by the Nav's onSelect,
     // however onClick can still be passed if desired in certain cases
 
     return (
-      <NavItem isActive={isActive}>
+      <NavItem isActive={isActive} isSeparated={showSeparator}>
         <Link
           id={id}
           to={this.to}
@@ -143,9 +152,7 @@ HrefLink.propTypes = {
 
 const navSectionStateToProps = (state, {required}) => {
   const flags = state[featureReducerName];
-  // `required` can either be a single flag or array. Cast to an array when it's a single value.
-  const requiredArray = required ? _.castArray(required) : [];
-  const canRender = _.every(requiredArray, flag => flags.get(flag));
+  const canRender = required ? flags.get(required) : true;
 
   return {
     flags, canRender,
@@ -158,6 +165,7 @@ const NavSection = connect(navSectionStateToProps)(
   class NavSection extends React.Component {
     constructor(props) {
       super(props);
+      this.toggle = (e, val) => this.toggle_(e, val);
       this.state = { isOpen: false, activeChild: null };
 
       const activeChild = this.getActiveChild();
@@ -218,6 +226,10 @@ const NavSection = connect(navSectionStateToProps)(
       this.setState(state);
     }
 
+    toggle_(e, expandState) {
+      this.setState({isOpen: expandState});
+    }
+
     render() {
       if (!this.props.canRender) {
         return null;
@@ -232,17 +244,21 @@ const NavSection = connect(navSectionStateToProps)(
           return null;
         }
         const {name, required, disallowed} = c.props;
-        if (required && (flagPending(flags.get(required)) || !flags.get(required))) {
+        const requiredArray = required ? _.castArray(required) : [];
+        const requirementMissing = _.some(requiredArray, flag => (
+          flag && (flagPending(flags.get(flag)) || !flags.get(flag))
+        ));
+        if (requirementMissing) {
           return null;
         }
         if (disallowed && (flagPending(flags.get(disallowed)) || flags.get(disallowed))) {
           return null;
         }
-        return React.cloneElement(c, {key: name, isActive: name === this.state.activeChild, activeNamespace});
+        return React.cloneElement(c, {key: name, isActive: name === this.state.activeChild, activeNamespace, flags});
       });
 
       return Children ? (
-        <NavExpandable title={title} isActive={isActive} isExpanded={isOpen}>
+        <NavExpandable title={title} isActive={isActive} isExpanded={isOpen} onExpand={this.toggle}>
           {Children}
         </NavExpandable>
       ) : null;
@@ -326,7 +342,6 @@ export const Navigation = ({ isNavOpen, onNavSelect }) => {
 
         <NavSection title="Catalog">
           <HrefLink href="/catalog" name="Developer Catalog" activePath="/catalog/" />
-          <ResourceNSLink model={ClusterServiceVersionModel} resource={ClusterServiceVersionModel.plural} name="Installed Operators" />
           <HrefLink
             href="/provisionedservices"
             name="Provisioned Services"
@@ -334,8 +349,24 @@ export const Navigation = ({ isNavOpen, onNavSelect }) => {
             startsWith={provisionedServicesStartsWith}
             required={FLAGS.SERVICE_CATALOG}
           />
-          <HrefLink required={FLAGS.OPERATOR_HUB} href="/operatorhub" name="Operator Hub" activePath="/operatorhub/" />
+          <ResourceNSLink
+            model={ClusterServiceVersionModel}
+            resource={ClusterServiceVersionModel.plural}
+            name="Installed Operators"
+            separatorConditions={[
+              [FLAGS.CAN_LIST_PACKAGE_MANIFEST, FLAGS.CAN_LIST_OPERATOR_GROUP, FLAGS.OPERATOR_HUB],
+              [FLAGS.CAN_LIST_PACKAGE_MANIFEST, FLAGS.CAN_LIST_OPERATOR_GROUP],
+              FLAGS.SERVICE_CATALOG,
+            ]}
+          />
           <HrefLink
+            required={[FLAGS.CAN_LIST_PACKAGE_MANIFEST, FLAGS.CAN_LIST_OPERATOR_GROUP, FLAGS.OPERATOR_HUB]}
+            href="/operatorhub"
+            name="OperatorHub"
+            activePath="/operatorhub/"
+          />
+          <HrefLink
+            required={[FLAGS.CAN_LIST_PACKAGE_MANIFEST, FLAGS.CAN_LIST_OPERATOR_GROUP]}
             href="/operatormanagement"
             name="Operator Management"
             activePath="/operatormanagement/"
@@ -356,13 +387,13 @@ export const Navigation = ({ isNavOpen, onNavSelect }) => {
           <ResourceNSLink resource="deploymentconfigs" name={DeploymentConfigModel.labelPlural} required={FLAGS.OPENSHIFT} />
           <ResourceNSLink resource="statefulsets" name="Stateful Sets" />
           <ResourceNSLink resource="secrets" name="Secrets" />
-          <ResourceNSLink resource="configmaps" name="Config Maps" />
+          <ResourceNSLink resource="configmaps" name="Config Maps" isSeparated />
           <ResourceNSLink resource="cronjobs" name="Cron Jobs" />
           <ResourceNSLink resource="jobs" name="Jobs" />
           <ResourceNSLink resource="daemonsets" name="Daemon Sets" />
           <ResourceNSLink resource="replicasets" name="Replica Sets" />
           <ResourceNSLink resource="replicationcontrollers" name="Replication Controllers" />
-          <ResourceNSLink resource="horizontalpodautoscalers" name="HPAs" />
+          <ResourceNSLink resource="horizontalpodautoscalers" name="Horizontal Pod Autoscalers" />
         </NavSection>
 
         <NavSection title="Networking">
@@ -386,24 +417,24 @@ export const Navigation = ({ isNavOpen, onNavSelect }) => {
 
         <MonitoringNavSection />
 
-        <NavSection title="Machines" required={[FLAGS.CLUSTER_API, FLAGS.MACHINE_CONFIG, FLAGS.CAN_LIST_MACHINE_CONFIG]}>
-          <ResourceNSLink resource={referenceForModel(MachineModel)} name="Machines" />
-          <ResourceNSLink resource={referenceForModel(MachineSetModel)} name="Machine Sets" />
-          <ResourceClusterLink resource={referenceForModel(MachineConfigModel)} name="Machine Configs" />
-          <ResourceClusterLink resource={referenceForModel(MachineConfigPoolModel)} name="Machine Config Pools" />
+        <NavSection title="Compute" required={FLAGS.CAN_LIST_NODE}>
+          <ResourceClusterLink resource="nodes" name="Nodes" />
+          <ResourceNSLink resource={referenceForModel(MachineModel)} name="Machines" required={FLAGS.CLUSTER_API} />
+          <ResourceNSLink resource={referenceForModel(MachineSetModel)} name="Machine Sets" required={FLAGS.CLUSTER_API} isSeparated />
+          <ResourceClusterLink resource={referenceForModel(MachineConfigModel)} name="Machine Configs" required={FLAGS.MACHINE_CONFIG} />
+          <ResourceClusterLink resource={referenceForModel(MachineConfigPoolModel)} name="Machine Config Pools" required={FLAGS.MACHINE_CONFIG} />
         </NavSection>
 
         <NavSection title="Administration">
           <HrefLink href="/settings/cluster" activePath="/settings/cluster/" name="Cluster Settings" required={FLAGS.CLUSTER_VERSION} startsWith={clusterSettingsStartsWith} />
           <ResourceClusterLink resource="namespaces" name="Namespaces" required={FLAGS.CAN_LIST_NS} />
-          <ResourceClusterLink resource="nodes" name="Nodes" required={FLAGS.CAN_LIST_NODE} />
           <ResourceNSLink resource="serviceaccounts" name="Service Accounts" />
           <ResourceNSLink resource="roles" name="Roles" startsWith={rolesStartsWith} />
           <ResourceNSLink resource="rolebindings" name="Role Bindings" startsWith={rolebindingsStartsWith} />
           <ResourceNSLink resource="resourcequotas" name="Resource Quotas" startsWith={quotaStartsWith} />
           <ResourceNSLink resource="limitranges" name="Limit Ranges" />
           <ResourceNSLink resource={referenceForModel(ChargebackReportModel)} name="Chargeback" disallowed={FLAGS.OPENSHIFT} />
-          <ResourceClusterLink resource="customresourcedefinitions" name="CRDs" required={FLAGS.CAN_LIST_CRD} />
+          <ResourceClusterLink resource="customresourcedefinitions" name="Custom Resource Definitions" required={FLAGS.CAN_LIST_CRD} />
         </NavSection>
       </NavList>
     </Nav>

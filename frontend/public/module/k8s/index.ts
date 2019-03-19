@@ -11,6 +11,7 @@ export * from './get-resources';
 export * from './k8s-models';
 export * from './label-selector';
 export * from './cluster-operator';
+export * from './cluster-settings';
 
 export type OwnerReference = {
   name: string;
@@ -214,7 +215,7 @@ export type MachineConfigPoolKind = {
   status: MachineConfigPoolStatus;
 } & K8sResourceKind;
 
-type ClusterUpdate = {
+export type ClusterUpdate = {
   image: string;
   version: string;
 };
@@ -227,19 +228,32 @@ type UpdateHistory = {
   image: string;
 };
 
+export enum ClusterVersionConditionType {
+  Available = 'Available',
+  Failing = 'Failing',
+  Progressing = 'Progressing',
+  RetrievedUpdates = 'RetrievedUpdates',
+}
+
+export type ClusterVersionCondition = K8sResourceCondition<ClusterVersionConditionType>;
+
+type ClusterVersionStatus = {
+  availableUpdates: ClusterUpdate[];
+  conditions: ClusterVersionCondition[];
+  desired: ClusterUpdate;
+  history: UpdateHistory[];
+};
+
+type ClusterVersionSpec = {
+  channel: string;
+  clusterID: string;
+  desiredUpdate: ClusterUpdate;
+  upstream: string;
+};
+
 export type ClusterVersionKind = {
-  spec: {
-    channel: string;
-    clusterID: string;
-    desiredUpdate: ClusterUpdate;
-    upstream: string;
-  };
-  status: {
-    availableUpdates: ClusterUpdate[];
-    conditions: any[];
-    desired: ClusterUpdate;
-    history: UpdateHistory[];
-  };
+  spec: ClusterVersionSpec;
+  status: ClusterVersionStatus;
 } & K8sResourceKind;
 
 export type OperandVersion = {

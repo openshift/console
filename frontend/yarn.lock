@@ -130,46 +130,52 @@
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/@mapbox/whoots-js/-/whoots-js-3.1.0.tgz#497c67a1cef50d1a2459ba60f315e448d2ad87fe"
 
-"@patternfly/patternfly-next@^1.0.109":
-  version "1.0.109"
-  resolved "https://registry.yarnpkg.com/@patternfly/patternfly-next/-/patternfly-next-1.0.109.tgz#5c1a8ca29ca48d030324d3d588af9954e2f36cea"
+"@patternfly/patternfly@1.0.219":
+  version "1.0.219"
+  resolved "https://registry.yarnpkg.com/@patternfly/patternfly/-/patternfly-1.0.219.tgz#3fb57ca7ec88437d78cd84f6e9563979f1081469"
+  integrity sha512-1HWy1T51G5KgqhmDV9FRXlaxHiQqS0e3vqS3EuAqrlszKh2TChMi1u6kxMGtp/m9VuDziuGiue3V/0+U1mKnRQ==
 
-"@patternfly/react-core@^1.43.5":
-  version "1.43.5"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-core/-/react-core-1.43.5.tgz#b66e8915785aecde621663b1c719cf965d9d5bd4"
+"@patternfly/react-core@2.4.1":
+  version "2.4.1"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-core/-/react-core-2.4.1.tgz#3f2fedb160ed9451be5126b906bb8ec493146540"
+  integrity sha512-vWhgD9TGtZwiywcpQQqEv4mtpac3BVfLfviebPdGYqAVde9ZhV+ODcnJcgNGWmPRd+LKVlCJSzpIvbpqYPJ1Wg==
   dependencies:
-    "@patternfly/react-icons" "^2.9.5"
-    "@patternfly/react-styles" "^2.3.0"
+    "@patternfly/react-icons" "^3.2.0"
+    "@patternfly/react-styles" "^2.3.6"
+    "@patternfly/react-tokens" "^2.0.6"
     "@tippy.js/react" "^1.1.1"
+    emotion "^9.2.9"
     exenv "^1.2.2"
     focus-trap-react "^4.0.1"
-  optionalDependencies:
-    "@patternfly/react-tokens" "^1.0.0"
+    tippy.js "^3.4.1"
 
-"@patternfly/react-icons@^2.9.5":
-  version "2.9.5"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-icons/-/react-icons-2.9.5.tgz#abccb6b151f965cb1370a1e0210bc650e202ce97"
+"@patternfly/react-icons@^3.2.0":
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-icons/-/react-icons-3.2.0.tgz#ad7e121d43d4d2c857a61c89baef81da38716a55"
+  integrity sha512-DBmddOWqfEcMEn5G1gXv3L53aiwjW95U/mIafBS186xf5ZnVOSZpdzSEMT8NjNyj6AXsIZ965iAY8nO4ryR+VQ==
 
-"@patternfly/react-styles@^2.3.0":
-  version "2.3.0"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-styles/-/react-styles-2.3.0.tgz#e6041a22c8ad11f622e6ca280075aaf482879d7e"
+"@patternfly/react-styles@^2.3.6":
+  version "2.3.6"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-styles/-/react-styles-2.3.6.tgz#8b5712d9c414ebc27d748985106781520a54f215"
+  integrity sha512-IGhq3KE4bSNrjaIq9ELYZGfabavWtzDlD+9q4mWVKjfXd7Fn0814+MK3dGb8GfjES84bDStiwCAcMGRftcssbQ==
   dependencies:
     "@babel/helper-plugin-utils" "^7.0.0-beta.48"
     camel-case "^3.0.0"
     css "^2.2.3"
     cssom "^0.3.4"
     cssstyle "^0.3.1"
-    emotion "^9.2.6"
-    emotion-server "^9.2.6"
+    emotion "^9.2.9"
+    emotion-server "^9.2.9"
     fbjs-scripts "^0.8.3"
     fs-extra "^6.0.1"
     jsdom "^11.11.0"
     relative "^3.0.2"
     resolve-from "^4.0.0"
 
-"@patternfly/react-tokens@^1.0.0":
-  version "1.5.2"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-tokens/-/react-tokens-1.5.2.tgz#0b8c84524d018ad92979a07494ce75a8d4304d32"
+"@patternfly/react-tokens@^2.0.6":
+  version "2.0.6"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-tokens/-/react-tokens-2.0.6.tgz#40f42a1e176541053478e5c462e22f5412bf2356"
+  integrity sha512-nf6/UpOZNF8B0cKlKR00/IoX3pR9C7srAXlQFBbVevdqjSG2RPLUZaCAPr0ZPN3+XH8WLaPJgY2NrYrlgnsoUw==
 
 "@plotly/d3-sankey@^0.5.1":
   version "0.5.1"
@@ -2642,7 +2648,7 @@ classnames@2.x:
   version "2.2.5"
   resolved "https://registry.yarnpkg.com/classnames/-/classnames-2.2.5.tgz#fb3801d453467649ef3603c7d61a02bd129bde6d"
 
-classnames@^2.2.0, classnames@^2.2.3, classnames@^2.2.5:
+classnames@^2.2.0, classnames@^2.2.3, classnames@^2.2.5, classnames@^2.2.6:
   version "2.2.6"
   resolved "https://registry.yarnpkg.com/classnames/-/classnames-2.2.6.tgz#43935bffdd291f326dad0a205309b38d00f650ce"
 
@@ -3163,7 +3169,7 @@ create-hmac@^1.1.0, create-hmac@^1.1.2, create-hmac@^1.1.4:
     safe-buffer "^5.0.1"
     sha.js "^2.4.8"
 
-create-react-context@^0.2.1:
+create-react-context@^0.2.1, create-react-context@^0.2.3:
   version "0.2.3"
   resolved "https://registry.yarnpkg.com/create-react-context/-/create-react-context-0.2.3.tgz#9ec140a6914a22ef04b8b09b7771de89567cb6f3"
   dependencies:
@@ -3713,6 +3719,11 @@ detect-libc@^1.0.2:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/detect-libc/-/detect-libc-1.0.3.tgz#fa137c4bd698edf55cd5cd02ac559f91a4c4ba9b"
 
+diff@^2.2.2:
+  version "2.2.3"
+  resolved "https://registry.yarnpkg.com/diff/-/diff-2.2.3.tgz#60eafd0d28ee906e4e8ff0a52c1229521033bf99"
+  integrity sha1-YOr9DSjukG5Oj/ClLBIpUhAzv5k=
+
 diff@^3.1.0, diff@^3.2.0, diff@^3.3.1, diff@^3.5.0:
   version "3.5.0"
   resolved "https://registry.yarnpkg.com/diff/-/diff-3.5.0.tgz#800c0dd1e0a8bfbc95835c202ad220fe317e5a12"
@@ -3945,15 +3956,17 @@ emojis-list@^2.0.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/emojis-list/-/emojis-list-2.1.0.tgz#4daa4d9db00f9819880c79fa457ae5b09a1fd389"
 
-emotion-server@^9.2.6:
+emotion-server@^9.2.9:
   version "9.2.12"
   resolved "https://registry.yarnpkg.com/emotion-server/-/emotion-server-9.2.12.tgz#aaaaa04843108943d1ce5a796e0bc40b06a3223e"
+  integrity sha512-Bhjdl7eNoIeiAVa2QPP5d+1nP/31SiO/K1P/qI9cdXCydg91NwGYmteqhhge8u7PF8fLGTEVQfcPwj21815eBw==
   dependencies:
     create-emotion-server "^9.2.12"
 
-emotion@^9.2.6:
+emotion@^9.2.9:
   version "9.2.12"
   resolved "https://registry.yarnpkg.com/emotion/-/emotion-9.2.12.tgz#53925aaa005614e65c6e43db8243c843574d1ea9"
+  integrity sha512-hcx7jppaI8VoXxIWEhxpDW7I+B4kq9RNzQLmsrF6LY8BGKqe2N+gFAQr0EfuFucFlPs2A9HM4+xNj4NeqEWIOQ==
   dependencies:
     babel-plugin-emotion "^9.2.11"
     create-emotion "^9.2.12"
@@ -5082,6 +5095,11 @@ gh-got@^6.0.0:
   dependencies:
     got "^7.0.0"
     is-plain-obj "^1.1.0"
+
+gitdiff-parser@^0.1.2:
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/gitdiff-parser/-/gitdiff-parser-0.1.2.tgz#26a256e05e9c2d5016b512a96c1dacb40862b92a"
+  integrity sha512-glDM6E1AwLYYTOPyI0CqamNEUSuwwAkmwULWpE2sHMpMZNzGJwErt7+eV+yIZcsbDza0pVSlwlBHFWbTf2Wu7A==
 
 github-username@^4.0.0:
   version "4.1.0"
@@ -7577,9 +7595,19 @@ lodash.endswith@^4.2.1:
   version "4.2.1"
   resolved "https://registry.yarnpkg.com/lodash.endswith/-/lodash.endswith-4.2.1.tgz#fed59ac1738ed3e236edd7064ec456448b37bc09"
 
+lodash.escape@^4.0.1:
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/lodash.escape/-/lodash.escape-4.0.1.tgz#c9044690c21e04294beaa517712fded1fa88de98"
+  integrity sha1-yQRGkMIeBClL6qUXcS/e0fqI3pg=
+
 lodash.escaperegexp@^4.1.2:
   version "4.1.2"
   resolved "https://registry.yarnpkg.com/lodash.escaperegexp/-/lodash.escaperegexp-4.1.2.tgz#64762c48618082518ac3df4ccf5d5886dae20347"
+
+lodash.findlastindex@^4.6.0:
+  version "4.6.0"
+  resolved "https://registry.yarnpkg.com/lodash.findlastindex/-/lodash.findlastindex-4.6.0.tgz#b8375ac0f02e9b926375cdf8dc3ea814abf9c6ac"
+  integrity sha1-uDdawPAum5Jjdc343D6oFKv5xqw=
 
 lodash.flattendeep@^4.4.0:
   version "4.4.0"
@@ -7612,6 +7640,11 @@ lodash.keys@^3.0.0:
     lodash._getnative "^3.0.0"
     lodash.isarguments "^3.0.0"
     lodash.isarray "^3.0.0"
+
+lodash.mapvalues@^4.6.0:
+  version "4.6.0"
+  resolved "https://registry.yarnpkg.com/lodash.mapvalues/-/lodash.mapvalues-4.6.0.tgz#1bafa5005de9dd6f4f26668c30ca37230cc9689c"
+  integrity sha1-G6+lAF3p3W9PJmaMMMo3IwzJaJw=
 
 lodash.memoize@^4.1.2:
   version "4.1.2"
@@ -9069,21 +9102,25 @@ patternfly-bootstrap-treeview@~2.1.0:
     bootstrap "3.3.x"
     jquery ">= 2.1.x"
 
-patternfly-react-extensions@2.14.1:
-  version "2.14.1"
-  resolved "https://registry.yarnpkg.com/patternfly-react-extensions/-/patternfly-react-extensions-2.14.1.tgz#86690c80ed8af055649bf8c3de9087ca69c4a8f3"
+patternfly-react-extensions@2.16.19:
+  version "2.16.19"
+  resolved "https://registry.yarnpkg.com/patternfly-react-extensions/-/patternfly-react-extensions-2.16.19.tgz#233c1e70dbe6b7bb68117830ea056a59672d0677"
+  integrity sha512-Wg7HyZnx/WBbdZtMkdBlsLqAe0HYH8lgpAzvgpD5Cvg/20cVUaOBozU/SMnTjj2IG0DNVwnN8IAR6M/GSmIt/g==
   dependencies:
     breakjs "^1.0.0"
     classnames "^2.2.5"
     css-element-queries "^1.0.1"
     patternfly "^3.58.0"
-    patternfly-react "^2.28.1"
+    patternfly-react "^2.29.17"
     react-bootstrap "^0.32.1"
+    react-diff-view "^1.8.1"
     react-virtualized "9.x"
+    unidiff "^1.0.1"
 
-patternfly-react@^2.28.1:
-  version "2.28.2"
-  resolved "https://registry.yarnpkg.com/patternfly-react/-/patternfly-react-2.28.2.tgz#aca060da08bfe5dae1643ddbe5f2aaa24f4949df"
+patternfly-react@2.29.17, patternfly-react@^2.29.17:
+  version "2.29.17"
+  resolved "https://registry.yarnpkg.com/patternfly-react/-/patternfly-react-2.29.17.tgz#e6d11a8dde35a7c9ba15383c3c6e74b7db10f75e"
+  integrity sha512-/lq9rVYM+wDVXdudPMNluymnPaSrj1djiEpm+MzNdj95unnlkW4SKtr6uND2IWIvSscKWPF+1Dvkjwsi7hZ2Kg==
   dependencies:
     bootstrap-slider-without-jquery "^10.0.0"
     breakjs "^1.0.0"
@@ -9093,32 +9130,7 @@ patternfly-react@^2.28.1:
     patternfly "^3.58.0"
     react-bootstrap "^0.32.1"
     react-bootstrap-switch "^15.5.3"
-    react-bootstrap-typeahead "^3.1.3"
-    react-c3js "^0.1.20"
-    react-click-outside "^3.0.1"
-    react-collapse "^4.0.3"
-    react-fontawesome "^1.6.1"
-    react-motion "^0.5.2"
-    reactabular-table "^8.14.0"
-    recompose "^0.26.0"
-    uuid "^3.3.2"
-  optionalDependencies:
-    sortabular "^1.5.1"
-    table-resolver "^3.2.0"
-
-patternfly-react@^2.29.1:
-  version "2.29.1"
-  resolved "https://registry.yarnpkg.com/patternfly-react/-/patternfly-react-2.29.1.tgz#3def482e4ca48b0c0b0ccad13b32a6eb49d4e9c4"
-  dependencies:
-    bootstrap-slider-without-jquery "^10.0.0"
-    breakjs "^1.0.0"
-    classnames "^2.2.5"
-    css-element-queries "^1.0.1"
-    lodash "^4.17.11"
-    patternfly "^3.58.0"
-    react-bootstrap "^0.32.1"
-    react-bootstrap-switch "^15.5.3"
-    react-bootstrap-typeahead "^3.1.3"
+    react-bootstrap-typeahead "^3.4.1"
     react-c3js "^0.1.20"
     react-click-outside "^3.0.1"
     react-collapse "^4.0.3"
@@ -10007,17 +10019,18 @@ react-bootstrap-switch@^15.5.3:
   version "15.5.3"
   resolved "https://registry.yarnpkg.com/react-bootstrap-switch/-/react-bootstrap-switch-15.5.3.tgz#97287791d4ec0d1892d142542e7e5248002b1251"
 
-react-bootstrap-typeahead@^3.1.3:
-  version "3.2.3"
-  resolved "https://registry.yarnpkg.com/react-bootstrap-typeahead/-/react-bootstrap-typeahead-3.2.3.tgz#ef93c9afbcc43335c6c77c90e160a3abad95732c"
+react-bootstrap-typeahead@^3.4.1:
+  version "3.4.1"
+  resolved "https://registry.yarnpkg.com/react-bootstrap-typeahead/-/react-bootstrap-typeahead-3.4.1.tgz#484c3c1be635c49898ca8dce59a6c71f2fce5888"
+  integrity sha512-Isutst1PaIO+GSlyDfoAskCdvp5biyUIL/VdDjfSYFaFmZ89W8pSCJ6rALowkvTlCVxoRHJMrmhxb/5KOTAPzQ==
   dependencies:
     classnames "^2.2.0"
+    create-react-context "^0.2.3"
     escape-string-regexp "^1.0.5"
     invariant "^2.2.1"
     lodash "^4.17.2"
     prop-types "^15.5.8"
     prop-types-extra "^1.0.1"
-    react-onclickoutside "^6.1.1"
     react-overlays "^0.8.1"
     react-popper "^1.0.0"
     warning "^4.0.1"
@@ -10063,6 +10076,19 @@ react-copy-to-clipboard@5.x:
   dependencies:
     copy-to-clipboard "^3"
     prop-types "^15.5.8"
+
+react-diff-view@^1.8.1:
+  version "1.8.1"
+  resolved "https://registry.yarnpkg.com/react-diff-view/-/react-diff-view-1.8.1.tgz#0b9b4adcb92de6730d28177d68654dfcc2097f73"
+  integrity sha512-+soJL85Xnsak/VOdxSgiDKhhaFiOkckiswwrXdiWVCxV3LP9POyJR4AqGVFGdkntJ3YT63mtwTYuunFeId+XSA==
+  dependencies:
+    classnames "^2.2.6"
+    gitdiff-parser "^0.1.2"
+    leven "^2.1.0"
+    lodash.escape "^4.0.1"
+    lodash.findlastindex "^4.6.0"
+    lodash.mapvalues "^4.6.0"
+    warning "^4.0.1"
 
 react-dnd-html5-backend@^2.6.0:
   version "2.6.0"
@@ -10142,10 +10168,6 @@ react-motion@^0.5.2:
     performance-now "^0.2.0"
     prop-types "^15.5.8"
     raf "^3.1.0"
-
-react-onclickoutside@^6.1.1:
-  version "6.7.1"
-  resolved "https://registry.yarnpkg.com/react-onclickoutside/-/react-onclickoutside-6.7.1.tgz#6a5b5b8b4eae6b776259712c89c8a2b36b17be93"
 
 react-overlays@^0.8.0, react-overlays@^0.8.1:
   version "0.8.3"
@@ -12230,6 +12252,13 @@ tippy.js@^3.2.0:
   dependencies:
     popper.js "^1.14.6"
 
+tippy.js@^3.4.1:
+  version "3.4.1"
+  resolved "https://registry.yarnpkg.com/tippy.js/-/tippy.js-3.4.1.tgz#f0eb3081824ad6c5d364336451ad77ae2f543da8"
+  integrity sha512-ZiyGP9WZyCCcjxKM4G88cm4U1r1ytjeMDGa5FSKPaPzwc/3yZJVZsb1ffcmqUMCpryRp5LNxRNGKLzbs11sb/Q==
+  dependencies:
+    popper.js "^1.14.6"
+
 tmp@0.0.30:
   version "0.0.30"
   resolved "https://registry.yarnpkg.com/tmp/-/tmp-0.0.30.tgz#72419d4a8be7d6ce75148fd8b324e593a711c2ed"
@@ -12582,6 +12611,13 @@ unicode-match-property-value-ecmascript@^1.0.2:
 unicode-property-aliases-ecmascript@^1.0.4:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/unicode-property-aliases-ecmascript/-/unicode-property-aliases-ecmascript-1.0.4.tgz#5a533f31b4317ea76f17d807fa0d116546111dd0"
+
+unidiff@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/unidiff/-/unidiff-1.0.1.tgz#2ff8da0710a9abb4e1133e9da4c87747fb5ff508"
+  integrity sha512-n9pCo9OKQE+QWsUa45BdSy7Y0hpHpyPHwNxcEgqFgPqxb1Y8DH4d9WTepcJpmLsnDEWDch6hxh2g/sM0bvyxMA==
+  dependencies:
+    diff "^2.2.2"
 
 union-find@^1.0.0, union-find@^1.0.2:
   version "1.0.2"

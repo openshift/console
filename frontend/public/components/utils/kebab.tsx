@@ -36,6 +36,7 @@ const kebabFactory: KebabFactory = {
     callback: () => labelsModal({
       kind,
       resource: obj,
+      blocking: true,
     }),
   }),
   ModifyPodSelector: (kind, obj) => ({
@@ -43,6 +44,7 @@ const kebabFactory: KebabFactory = {
     callback: () => podSelectorModal({
       kind,
       resource:  obj,
+      blocking: true,
     }),
   }),
   ModifyAnnotations: (kind, obj) => ({
@@ -50,6 +52,7 @@ const kebabFactory: KebabFactory = {
     callback: () => annotationsModal({
       kind,
       resource: obj,
+      blocking: true,
     }),
   }),
   ModifyCount: (kind, obj) => ({

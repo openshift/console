@@ -7,6 +7,7 @@ import { DetailsPage, List, ListPage, WorkloadListHeader, WorkloadListRow } from
 import { Kebab, ContainerTable, navFactory, SectionHeading, ResourceSummary, ResourcePodCount, AsyncComponent } from './utils';
 import { breadcrumbsForOwnerRefs } from './utils/breadcrumbs';
 import { ResourceEventStream } from './events';
+import { MountedVolumes } from './mounted-vol';
 
 const {ModifyCount, AddStorage, EditEnvironment, common} = Kebab.factory;
 
@@ -34,6 +35,9 @@ const Details = ({obj: replicaSet}) => {
     <div className="co-m-pane__body">
       <SectionHeading text="Containers" />
       <ContainerTable containers={replicaSet.spec.template.spec.containers} />
+    </div>
+    <div className="co-m-pane__body">
+      <MountedVolumes podTemplate={replicaSet.spec.template} heading="Mounted Volumes" />
     </div>
   </React.Fragment>;
 };

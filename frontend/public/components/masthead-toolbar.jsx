@@ -9,7 +9,7 @@ import { authSvc } from '../module/auth';
 import { history, Firehose } from './utils';
 import { openshiftHelpBase } from './utils/documentation';
 import { AboutModal } from './about-modal';
-import { getAvailableClusterUpdates, clusterVersionReference } from './cluster-settings/cluster-settings';
+import { getAvailableClusterUpdates, clusterVersionReference } from '../module/k8s/cluster-settings';
 
 const UpdatesAvailableButton = ({obj, onClick}) => {
   const updatesAvailable = !_.isEmpty(getAvailableClusterUpdates(obj.data));
@@ -126,7 +126,7 @@ class MastheadToolbar_ extends React.Component {
 
   _onClusterManager(e) {
     e.preventDefault();
-    window.open('https://cloud.openshift.com', '_blank').opener = null;
+    window.open('https://cloud.openshift.com/clusters', '_blank').opener = null;
   }
 
   _onAboutModal(e) {
@@ -192,7 +192,7 @@ class MastheadToolbar_ extends React.Component {
 
       if (flags[FLAGS.OPENSHIFT]) {
         actions.unshift({
-          label: 'Cluster Manager',
+          label: 'Multi-Cluster Manager',
           callback: this._onClusterManager,
         },{
           separator: true,
@@ -239,7 +239,7 @@ class MastheadToolbar_ extends React.Component {
     return (
       <React.Fragment>
         <Toolbar>
-          <ToolbarGroup className="pf-u-sr-only pf-u-visible-on-md">
+          <ToolbarGroup className="pf-u-screen-reader pf-u-visible-on-md">
             {/* desktop -- (updates button) */}
             <Firehose resources={resources}>
               <UpdatesAvailableButton onClick={this._onClusterUpdatesAvailable} />
@@ -257,7 +257,7 @@ class MastheadToolbar_ extends React.Component {
                 isOpen={isApplicationLauncherDropdownOpen}
                 dropdownItems={[
                   <DropdownItem key="clustermanager" onClick={this._onClusterManager}>
-                    Cluster Manager
+                    Multi-Cluster Manager
                   </DropdownItem>,
                 ]}
               />
@@ -285,9 +285,9 @@ class MastheadToolbar_ extends React.Component {
           </ToolbarGroup>
           <ToolbarGroup >
             {/* mobile -- kebab dropdown [(cluster manager |) documentation, about (| logout)] */}
-            <ToolbarItem className="pf-u-hidden-on-md pf-u-mr-0">{this._renderMenu(true)}</ToolbarItem>
+            <ToolbarItem className="pf-u-hidden-on-md">{this._renderMenu(true)}</ToolbarItem>
             {/* desktop -- (user dropdown [logout]) */}
-            <ToolbarItem className="pf-u-sr-only pf-u-visible-on-md">{this._renderMenu(false)}</ToolbarItem>
+            <ToolbarItem className="pf-u-screen-reader pf-u-visible-on-md">{this._renderMenu(false)}</ToolbarItem>
           </ToolbarGroup>
         </Toolbar>
         {showAboutModal && <AboutModal isOpen={showAboutModal} closeAboutModal={this._closeAboutModal} />}
