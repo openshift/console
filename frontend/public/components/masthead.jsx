@@ -39,14 +39,14 @@ export const getBrandingDetails = () => {
       break;
     case 'okdvirt':
       // backgroundImg = false;
-      backgroundImg = pfBg992;
+      // backgroundImg = pfBg992;
       logoImg = okdvirtLogoImg;
       logoAlt = 'OKD Virtualization';
       productTitle = 'OKD';
       break;
     case 'openshiftvirt':
       // backgroundImg = true;
-      backgroundImg = pfBg992;
+      // backgroundImg = pfBg992;
       logoImg = openshiftvirtLogoImg;
       logoAlt = 'OpenShift Virtualization';
       productTitle = <React.Fragment>Red Hat<sup>&reg;</sup> OpenShift</React.Fragment>;
