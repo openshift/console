@@ -4,7 +4,6 @@ import {
   ClusterOverview as KubevirtClusterOverview,
   getResource,
   ClusterOverviewContext,
-
   complianceData,
   utilizationStats,
   capacityStats,
@@ -12,18 +11,20 @@ import {
 
 import { NodeModel, PodModel, PersistentVolumeClaimModel, VirtualMachineModel, InfrastructureModel } from '../../../models';
 import { WithResources } from '../utils/withResources';
-import { k8sBasePath, k8sGet } from '../../module/okdk8s';
+import { k8sBasePath } from '../../module/okdk8s';
 import { coFetch, coFetchJSON } from '../../../co-fetch';
 
 import { EventStream } from '../../../components/events';
 import { EventsInnerOverview } from './events-inner-overview';
+import { LoadingInline } from '../utils/okdutils';
 
 const CONSUMERS_CPU_QUERY = 'sort(topk(10, sum by (pod_name)(container_cpu_usage_seconds_total{pod_name!=""})))';
 const CONSUMERS_MEMORY_QUERY = 'sort(topk(10, sum by (pod_name)(container_memory_usage_bytes{pod_name!=""})))';
+const OPENSHIFT_VERSION_QUERY = 'openshift_build_info{job="apiserver"}';
 
 const REFRESH_TIMEOUT = 30000;
 
-const inventoryResourceMap = {
+const resourceMap = {
   nodes: {
     resource: getResource(NodeModel, {namespaced: false}),
   },
@@ -35,6 +36,9 @@ const inventoryResourceMap = {
   },
   vms: {
     resource: getResource(VirtualMachineModel),
+  },
+  infrastructure: {
+    resource: getResource(InfrastructureModel, { namespaced: false, name: 'cluster', isList: false }),
   },
 };
 
@@ -96,14 +100,11 @@ export class ClusterOverview extends React.Component {
         },
         loaded: false,
       },
-      detailsData: {
-        data: {},
-        loaded: false,
-      },
     };
 
     this.setConsumersData = this._setConsumersData.bind(this);
     this.setHealthData = this._setHealthData.bind(this);
+    this.setDetailsOpenshiftResponse = this._setDetailsOpenshiftResponse.bind(this);
   }
 
   _setConsumersData(key, title, response) {
@@ -136,6 +137,15 @@ export class ClusterOverview extends React.Component {
         loaded: true,
       },
     });
+  }
+
+  _setDetailsOpenshiftResponse(response) {
+    this.setState(state => ({
+      detailsData: {
+        ...state.detailsData,
+        openshiftVersionResponse: response,
+      },
+    }));
   }
 
   fetchPrometheusQuery(query, callback) {
@@ -174,17 +184,7 @@ export class ClusterOverview extends React.Component {
     this.fetchPrometheusQuery(CONSUMERS_CPU_QUERY, response => this.setConsumersData('cpu', 'CPU', response));
     this.fetchPrometheusQuery(CONSUMERS_MEMORY_QUERY, response => this.setConsumersData('memory', 'Memory', response));
     this.fetchHealth(this.setHealthData);
-    k8sGet(InfrastructureModel, 'cluster').then(model => { // TODO: move to WithResources
-      const provider = _.get(model, 'status.platform');
-      this.setState({
-        detailsData: {
-          loaded: true,
-          data: {
-            provider,
-          },
-        },
-      });
-    });
+    this.fetchPrometheusQuery(OPENSHIFT_VERSION_QUERY, response => this.setDetailsOpenshiftResponse(response));
   }
 
   componentWillUnmount() {
@@ -195,7 +195,11 @@ export class ClusterOverview extends React.Component {
     const inventoryResourceMapToProps = resources => {
       return {
         value: {
-          detailsData: this.state.detailsData,
+          detailsData: {
+            LoadingComponent: LoadingInline,
+            infrastructure: resources.infrastructure,
+            ...this.state.detailsData,
+          },
           inventoryData: getInventoryData(resources), // k8s object loaded via WithResources
           healthData: this.state.healthData,
 
@@ -215,7 +219,7 @@ export class ClusterOverview extends React.Component {
 
 
     return (
-      <WithResources resourceMap={inventoryResourceMap} resourceToProps={inventoryResourceMapToProps}>
+      <WithResources resourceMap={resourceMap} resourceToProps={inventoryResourceMapToProps}>
         <ClusterOverviewContext.Provider>
           <KubevirtClusterOverview />
         </ClusterOverviewContext.Provider>
