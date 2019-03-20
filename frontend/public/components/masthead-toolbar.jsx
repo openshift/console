@@ -217,6 +217,7 @@ class MastheadToolbar_ extends React.Component {
 
     return (
       <Dropdown
+        data-test="user-dropdown"
         isPlain
         position="right"
         onSelect={this._onUserDropdownSelect}
