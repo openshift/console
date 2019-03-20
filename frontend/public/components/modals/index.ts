@@ -46,9 +46,6 @@ export const configureUpdateStrategyModal = (props) => import('./configure-updat
 export const annotationsModal = (props) => import('./tags' /* webpackChunkName: "tags" */)
   .then(m => m.annotationsModal(props));
 
-export const tokenInfoModal = (props) => import('./token-info-modal' /* webpackChunkName: "token-info-modal" */)
-  .then(m => m.tokenInfoModal(props));
-
 export const deleteModal = (props) => import('./delete-modal' /* webpackChunkName: "delete-modal" */)
   .then(m => m.deleteModal(props));
 
