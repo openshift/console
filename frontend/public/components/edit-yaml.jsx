@@ -350,7 +350,7 @@ export const EditYAML = connect(stateToProps)(
               <div className="yaml-editor" ref={r => this.editor = r} style={{height: this.state.height}}>
                 <div className="absolute-zero">
                   <div className="full-width-and-height yaml-editor__flexbox">
-                    <div id={this.id} key={this.id} className="yaml-editor__acebox" />
+                    <div id={this.id} key={this.id} className={classNames('yaml-editor__acebox', {'yaml-editor__acebox--readonly': readOnly})} />
                     <div className="yaml-editor__buttons">
                       {error && <p className="alert alert-danger"><span className="pficon pficon-error-circle-o"></span>{error}</p>}
                       {success && <p className="alert alert-success"><span className="pficon pficon-ok"></span>{success}</p>}
