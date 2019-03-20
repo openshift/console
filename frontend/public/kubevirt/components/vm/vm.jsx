@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import {
   VmStatus,
-  getVmStatus,
+  getSimpleVmStatus,
   VM_STATUS_ALL,
   VM_STATUS_TO_TEXT,
   CDI_KUBEVIRT_IO,
@@ -97,7 +97,7 @@ const mapDispatchToProps = () => ({
 const filters = [{
   type: 'vm-status',
   selected: VM_STATUS_ALL,
-  reducer: getVmStatus,
+  reducer: getSimpleVmStatus,
   items: VM_STATUS_ALL.map(status => ({ id: status, title: VM_STATUS_TO_TEXT[status] }) ),
 }];
 

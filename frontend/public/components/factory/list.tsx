@@ -51,7 +51,7 @@ import {
   getClusterOperatorVersion,
 } from '../../module/k8s';
 
-import { getVmStatus } from 'kubevirt-web-ui-components';
+import { getSimpleVmStatus } from 'kubevirt-web-ui-components';
 
 const fuzzyCaseInsensitive = (a, b) => fuzzy(_.toLower(a), _.toLower(b));
 
@@ -181,7 +181,7 @@ const listFilters = {
 
   'vm-status' : (statuses, vm) => {
     // TODO: figure out how to get VM pods here
-    const status = getVmStatus(vm);
+    const status = getSimpleVmStatus(vm);
     return statuses.selected.has(status) || !_.includes(statuses.all, status);
   },
 

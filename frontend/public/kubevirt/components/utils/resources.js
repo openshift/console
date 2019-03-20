@@ -9,10 +9,8 @@ import {
   DEFAULT_RDP_PORT,
   CDI_KUBEVIRT_IO,
   STORAGE_IMPORT_PVC_NAME,
-  isBeingMigrated,
+  isMigrating,
 } from 'kubevirt-web-ui-components';
-
-const MOCK_EMPTY_VM = null;
 
 export const getLabelMatcher = (vm) => _.get(vm, 'spec.template.metadata.labels');
 
@@ -44,7 +42,7 @@ export const findVMIMigration = (migrations, vmiName) => {
   }
 
   return migrations.filter(m => m.spec.vmiName === vmiName)
-    .find(m => isBeingMigrated(MOCK_EMPTY_VM, m) );
+    .find(isMigrating);
 };
 
 const findPortOfService = (service, targetPort) => _.get(service, ['spec', 'ports'], [])
