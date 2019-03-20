@@ -43,7 +43,7 @@ class DeleteModal extends PromiseComponent {
 
   render() {
     const {kind, resource} = this.props;
-    return <form onSubmit={this._submit} name="form" className="modal-content modal-content--small">
+    return <form onSubmit={this._submit} name="form" className="modal-content ">
       <ModalTitle>Delete {kind.label}</ModalTitle>
       <ModalBody className="modal-body">
         <div className="co-delete-modal">
