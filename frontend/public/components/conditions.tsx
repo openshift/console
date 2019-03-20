@@ -15,7 +15,7 @@ export const Conditions: React.SFC<ConditionsProps> = ({conditions}) => {
     <div className="hidden-xs hidden-sm col-md-2">
       <Timestamp timestamp={condition.lastUpdateTime || condition.lastTransitionTime} />
     </div>
-    <div className="col-xs-4 col-sm-3 col-md-2">
+    <div className="col-xs-4 col-sm-3 col-md-2 co-break-word">
       <CamelCaseWrap value={condition.reason} />
     </div>
     {/* remove initial newline which appears in route messages */}
