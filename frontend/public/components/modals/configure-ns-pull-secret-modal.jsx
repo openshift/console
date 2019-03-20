@@ -170,7 +170,7 @@ class ConfigureNamespacePullSecret extends PromiseComponent {
 
     const existingData = parseExisitingPullSecret(pullSecret);
 
-    return <form onSubmit={this._submit} name="form" className="modal-content modal-content--large">
+    return <form onSubmit={this._submit} name="form" className="modal-content">
       <ModalTitle>Default Pull Secret</ModalTitle>
       <ModalBody>
         <p>

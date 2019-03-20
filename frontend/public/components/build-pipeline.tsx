@@ -28,15 +28,14 @@ const BuildSummaryStatusIcon: React.SFC<BuildSummaryStatusIconProps> = ({ status
     running: 'fa fa-refresh fa-fw',
     complete: 'pficon pficon-ok',
     failed: 'pficon pficon-error-circle-o',
+    cancelled: 'fa fa-ban',
   })[statusClass];
 
   return icon
     ? <span className={`build-pipeline__status-icon build-pipeline__status-icon--${statusClass}`}>
       <span className={icon} aria-hidden="true"></span>
     </span>
-    : <span className="build-pipeline__status-icon">
-      <span className="fa fa-refresh" aria-hidden="true"></span>
-    </span>;
+    : null;
 };
 
 export const BuildPipelineLogLink: React.SFC<BuildPipelineLogLinkProps> = ({ obj }) => {

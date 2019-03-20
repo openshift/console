@@ -259,8 +259,8 @@ export const EnvironmentPage = connect(stateToProps)(
     componentDidMount() {
       super.componentDidMount();
 
-      const {readOnly} = this.props;
-      if (readOnly) {
+      const {addConfigMapSecret, readOnly} = this.props;
+      if (!addConfigMapSecret || readOnly) {
         const configMaps = {}, secrets = {};
         this.setState({configMaps, secrets});
         return;

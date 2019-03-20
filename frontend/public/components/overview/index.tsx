@@ -866,9 +866,13 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
   }
 
   createOverviewData(): void {
-    const {loaded, updateResources} = this.props;
+    const {loaded, mock, updateResources} = this.props;
 
     if (!loaded) {
+      return;
+    }
+    // keeps deleted bookmarked projects from attempting to generate data
+    if (mock) {
       return;
     }
 
