@@ -213,6 +213,9 @@ export type PackageManifestKind = {
           name: string;
         };
         installModes: {type: InstallModeType, supported: boolean}[];
+        // FIXME(alecmerdler): Requires https://github.com/operator-framework/operator-lifecycle-manager/pull/754
+        customresourcedefinitions?: {owned?: CRDDescription[], required?: CRDDescription[]};
+        apiservicedefinitions?: {owned?: APIServiceDefinition[], required?: APIServiceDefinition[]};
       }
     }[];
     defaultChannel: string;
@@ -236,8 +239,6 @@ export type OperatorGroupKind = {
 // TODO(alecmerdler): Shouldn't be needed anymore
 export const olmNamespace = 'operator-lifecycle-manager';
 export const visibilityLabel = 'olm-visibility';
-
-export const isEnabled = (namespace: K8sResourceKind) => _.has(namespace, ['metadata', 'annotations', 'alm-manager']);
 
 type ProvidedAPIsFor = (csv: ClusterServiceVersionKind) => (CRDDescription | APIServiceDefinition)[];
 export const providedAPIsFor: ProvidedAPIsFor = csv => _.get(csv.spec, 'customresourcedefinitions.owned', [])

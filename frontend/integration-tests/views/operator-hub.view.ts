@@ -7,6 +7,7 @@ export const operatorModalIsLoaded = () => browser.wait(until.presenceOf(operato
   .then(() => browser.sleep(500));
 export const operatorModalTitle = operatorModal.$('.catalog-item-header-pf-title');
 export const operatorModalInstallBtn = operatorModal.element(by.buttonText('Install'));
+export const operatorModalUninstallBtn = operatorModal.element(by.buttonText('Uninstall'));
 export const closeOperatorModal = () => operatorModal.$('.close').click();
 export const operatorModalIsClosed = () => browser.wait(until.not(until.presenceOf(operatorModal)), 1000)
   .then(() => browser.sleep(500));
