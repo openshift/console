@@ -42,11 +42,14 @@ const (
 var log = capnslog.NewPackageLogger("github.com/openshift/console", "auth")
 
 type Authenticator struct {
-	tokenVerifier func(string) (*loginState, error)
-
 	authFunc func() (*oauth2.Config, loginMethod)
 
 	clientFunc func() *http.Client
+
+	// userFunc returns the User associated with the cookie from a request.
+	// This is not part of loginMethod to avoid creating an unnecessary
+	// HTTP client for every call.
+	userFunc func(*http.Request) (*User, error)
 
 	errorURL      string
 	successURL    string
@@ -66,8 +69,6 @@ type loginMethod interface {
 	login(http.ResponseWriter, *oauth2.Token) (*loginState, error)
 	// logout deletes any cookies associated with the user.
 	logout(http.ResponseWriter, *http.Request)
-	// authenticate fetches the bearer token from the cookie of a request.
-	authenticate(*http.Request) (*User, error)
 	// getKubeAdminLogoutURL returns the logout URL for the special
 	// kube:admin user in OpenShift
 	getKubeAdminLogoutURL() string
@@ -154,6 +155,7 @@ func NewAuthenticator(ctx context.Context, c *Config) (*Authenticator, error) {
 		var authSourceFunc func() (oauth2.Endpoint, loginMethod, error)
 		switch c.AuthSource {
 		case AuthSourceOpenShift:
+			a.userFunc = getOpenShiftUser
 			authSourceFunc = func() (oauth2.Endpoint, loginMethod, error) {
 				// Use the k8s CA for OAuth metadata discovery.
 				// Don't include system roots when talking to the API server.
@@ -171,14 +173,22 @@ func NewAuthenticator(ctx context.Context, c *Config) (*Authenticator, error) {
 				})
 			}
 		default:
+			// OIDC auth source is stateful, so only create it once.
+			endpoint, oidcAuthSource, err := newOIDCAuth(ctx, &oidcConfig{
+				client:        a.clientFunc(),
+				issuerURL:     c.IssuerURL,
+				clientID:      c.ClientID,
+				cookiePath:    c.CookiePath,
+				secureCookies: c.SecureCookies,
+			})
+			a.userFunc = func(r *http.Request) (*User, error) {
+				if oidcAuthSource == nil {
+					return nil, fmt.Errorf("OIDC auth source is not intialized")
+				}
+				return oidcAuthSource.authenticate(r)
+			}
 			authSourceFunc = func() (oauth2.Endpoint, loginMethod, error) {
-				return newOIDCAuth(ctx, &oidcConfig{
-					client:        a.clientFunc(),
-					issuerURL:     c.IssuerURL,
-					clientID:      c.ClientID,
-					cookiePath:    c.CookiePath,
-					secureCookies: c.SecureCookies,
-				})
+				return endpoint, oidcAuthSource, err
 			}
 		}
 
@@ -273,7 +283,7 @@ type User struct {
 }
 
 func (a *Authenticator) Authenticate(r *http.Request) (*User, error) {
-	return a.getLoginMethod().authenticate(r)
+	return a.userFunc(r)
 }
 
 // LoginFunc redirects to the OIDC provider for user login.
