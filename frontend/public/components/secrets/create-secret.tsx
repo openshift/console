@@ -877,22 +877,41 @@ const secretFormFactory = (secretType: SecretTypeAbstraction) => {
   }
 };
 
-const SecretLoadingWrapper = props => {
-  if (!props.obj.loaded) {
-    return <LoadingBox />;
+class SecretLoadingWrapper extends React.Component<SecretLoadingWrapperProps, SecretLoadingWrapperState> {
+  readonly state: SecretLoadingWrapperState = {
+    formComponent: null,
+    secretTypeAbstraction: SecretTypeAbstraction.generic,
+  };
+  componentDidUpdate() {
+    // Set the proper secret form component, once the secret is received by Firehose.
+    // 'formComponent' needs to be set only once, to avoid losing form state,
+    // caused by component mounting/unmounting.
+    if (!this.state.formComponent && !_.isEmpty(this.props.obj.data)) {
+      const secretTypeAbstraction = toTypeAbstraction(this.props.obj.data);
+      this.setState({
+        formComponent: secretFormFactory(secretTypeAbstraction),
+        secretTypeAbstraction,
+      });
+    }
   }
-  const secretTypeAbstraction = toTypeAbstraction(props.obj.data);
-  const SecretFormComponent = secretFormFactory(secretTypeAbstraction);
-  const fixed = _.reduce(props.fixedKeys, (acc, k) => ({...acc, k: _.get(props.obj.data, k)}), {});
-  return <StatusBox {...props.obj}>
-    <SecretFormComponent {...props}
-      secretTypeAbstraction={secretTypeAbstraction}
-      obj={props.obj.data}
-      fixed={fixed}
-      explanation={secretFormExplanation[secretTypeAbstraction]}
-    />
-  </StatusBox>;
-};
+  render() {
+    const { obj, fixedKeys} = this.props;
+    const { secretTypeAbstraction } = this.state;
+    if (!this.state.formComponent) {
+      return <LoadingBox />;
+    }
+    const SecretFormComponent = this.state.formComponent;
+    const fixed = _.reduce(fixedKeys, (acc, k) => ({...acc, k: _.get(obj.data, k)}), {});
+    return <StatusBox {...obj}>
+      <SecretFormComponent {...this.props}
+        secretTypeAbstraction={secretTypeAbstraction}
+        obj={obj.data}
+        fixed={fixed}
+        explanation={secretFormExplanation[secretTypeAbstraction]}
+      />
+    </StatusBox>;
+  }
+}
 
 export const CreateSecret = ({match: {params}}) => {
   const SecretFormComponent = secretFormFactory(params.type);
@@ -907,6 +926,21 @@ export const CreateSecret = ({match: {params}}) => {
 export const EditSecret = ({match: {params}, kind}) => <Firehose resources={[{kind, name: params.name, namespace: params.ns, isList: false, prop: 'obj'}]}>
   <SecretLoadingWrapper fixedKeys={['kind', 'metadata']} titleVerb="Edit" saveButtonText="Save" />
 </Firehose>;
+
+export type SecretLoadingWrapperProps = {
+  obj?: {
+    data?: K8sResourceKind;
+    [key: string]: any;
+  };
+  fixedKeys: string[];
+  titleVerb: string;
+  saveButtonText: string;
+};
+
+export type SecretLoadingWrapperState = {
+  formComponent: React.ReactType;
+  secretTypeAbstraction: SecretTypeAbstraction;
+};
 
 export type BaseEditSecretState_ = {
   secretTypeAbstraction?: SecretTypeAbstraction;

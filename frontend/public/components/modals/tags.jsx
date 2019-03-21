@@ -56,7 +56,7 @@ class TagsModal extends PromiseComponent {
   render() {
     const {tags} = this.state;
 
-    return <form onSubmit={this._submit} className="modal-content modal-content--large">
+    return <form onSubmit={this._submit} className="modal-content">
       <ModalTitle>{this.props.title}</ModalTitle>
       <ModalBody>
         <NameValueEditorComponent nameValuePairs={tags} submit={this._submit} updateParentData={this._updateTags} />

@@ -6,6 +6,7 @@ import { DetailsPage, List, ListPage, WorkloadListHeader, WorkloadListRow } from
 import { replicaSetMenuActions } from './replicaset';
 import { ContainerTable, navFactory, SectionHeading, ResourceSummary, ResourcePodCount, AsyncComponent} from './utils';
 import { breadcrumbsForOwnerRefs } from './utils/breadcrumbs';
+import { MountedVolumes } from './mounted-vol';
 
 const Details = ({obj: replicationController}) => {
   const revision = _.get(replicationController, ['metadata', 'annotations', 'openshift.io/deployment-config.latest-version']);
@@ -29,6 +30,9 @@ const Details = ({obj: replicationController}) => {
     <div className="co-m-pane__body">
       <SectionHeading text="Containers" />
       <ContainerTable containers={replicationController.spec.template.spec.containers} />
+    </div>
+    <div className="co-m-pane__body">
+      <MountedVolumes podTemplate={replicationController.spec.template} heading="Mounted Volumes" />
     </div>
   </React.Fragment>;
 };

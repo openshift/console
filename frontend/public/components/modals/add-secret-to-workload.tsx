@@ -227,6 +227,7 @@ export type AddSecretToWorkloadModalProps = {
   close: () => void;
   secretName: string;
   namespace: string;
+  blocking?: boolean;
 };
 
 export type AddSecretToWorkloadModalState = {

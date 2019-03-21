@@ -7,6 +7,7 @@ import { errorModal } from './modals';
 import { DeploymentConfigModel } from '../models';
 import { Conditions } from './conditions';
 import { ResourceEventStream } from './events';
+import { MountedVolumes } from './mounted-vol';
 import {
   DetailsPage,
   List,
@@ -124,6 +125,9 @@ export const DeploymentConfigsDetails: React.SFC<{obj: any}> = ({obj: dc}) => {
     <div className="co-m-pane__body">
       <SectionHeading text="Containers" />
       <ContainerTable containers={dc.spec.template.spec.containers} />
+    </div>
+    <div className="co-m-pane__body">
+      <MountedVolumes podTemplate={dc.spec.template} heading="Mounted Volumes" />
     </div>
     <div className="co-m-pane__body">
       <SectionHeading text="Conditions" />

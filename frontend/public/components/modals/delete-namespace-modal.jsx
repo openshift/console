@@ -28,7 +28,7 @@ class DeleteNamespaceModal extends PromiseComponent {
   }
 
   render() {
-    return <form onSubmit={this._submit} name="form" className="modal-content modal-content--small">
+    return <form onSubmit={this._submit} name="form" className="modal-content ">
       <ModalTitle>Delete {this.props.kind.label}</ModalTitle>
       <ModalBody className="modal-body">
         <div className="co-delete-modal">

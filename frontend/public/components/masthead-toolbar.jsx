@@ -126,7 +126,7 @@ class MastheadToolbar_ extends React.Component {
 
   _onClusterManager(e) {
     e.preventDefault();
-    window.open('https://cloud.openshift.com', '_blank').opener = null;
+    window.open('https://cloud.openshift.com/clusters', '_blank').opener = null;
   }
 
   _onAboutModal(e) {
@@ -192,7 +192,7 @@ class MastheadToolbar_ extends React.Component {
 
       if (flags[FLAGS.OPENSHIFT]) {
         actions.unshift({
-          label: 'Cluster Manager',
+          label: 'Multi-Cluster Manager',
           callback: this._onClusterManager,
         },{
           separator: true,
@@ -257,7 +257,7 @@ class MastheadToolbar_ extends React.Component {
                 isOpen={isApplicationLauncherDropdownOpen}
                 dropdownItems={[
                   <DropdownItem key="clustermanager" onClick={this._onClusterManager}>
-                    Cluster Manager
+                    Multi-Cluster Manager
                   </DropdownItem>,
                 ]}
               />
