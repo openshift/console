@@ -1,17 +1,20 @@
-/* eslint-disable no-unused-vars */
+/* eslint-disable no-unused-vars, no-undef */
 
 import * as React from 'react';
 import * as _ from 'lodash';
 import { shallow, ShallowWrapper } from 'enzyme';
 import { Link } from 'react-router-dom';
+import Spy = jasmine.Spy;
 
 import { InstallPlanHeader, InstallPlanHeaderProps, InstallPlanRow, InstallPlanRowProps, InstallPlansList, InstallPlansListProps, InstallPlansPage, InstallPlansPageProps, InstallPlanDetailsPage, InstallPlanPreview, InstallPlanPreviewProps, InstallPlanPreviewState, InstallPlanDetailsPageProps, InstallPlanDetails, InstallPlanDetailsProps } from '../../../public/components/operator-lifecycle-manager/install-plan';
-import { InstallPlanKind, InstallPlanApproval } from '../../../public/components/operator-lifecycle-manager';
+import { InstallPlanKind, InstallPlanApproval, referenceForStepResource } from '../../../public/components/operator-lifecycle-manager';
 import { ListHeader, ColHead, ResourceRow, List, MultiListPage, DetailsPage } from '../../../public/components/factory';
 import { ResourceKebab, ResourceLink, ResourceIcon, Kebab, MsgBox } from '../../../public/components/utils';
 import { testInstallPlan } from '../../../__mocks__/k8sResourcesMocks';
-import { InstallPlanModel, ClusterServiceVersionModel, OperatorGroupModel } from '../../../public/models';
+import { InstallPlanModel, ClusterServiceVersionModel, OperatorGroupModel, CustomResourceDefinitionModel } from '../../../public/models';
 import * as k8s from '../../../public/module/k8s';
+import * as modals from '../../../public/components/modals';
+
 
 describe(InstallPlanHeader.displayName, () => {
   let wrapper: ShallowWrapper<InstallPlanHeaderProps>;
@@ -141,6 +144,11 @@ describe(InstallPlanPreview.name, () => {
   let wrapper: ShallowWrapper<InstallPlanPreviewProps, InstallPlanPreviewState>;
   let installPlan: InstallPlanKind;
 
+  const spyAndExpect = (spy: Spy) => (returnValue: any) => new Promise(resolve => spy.and.callFake((...args) => {
+    resolve(args);
+    return returnValue;
+  }));
+
   beforeEach(() => {
     installPlan = _.cloneDeep(testInstallPlan);
     installPlan.status.plan = [
@@ -152,6 +160,17 @@ describe(InstallPlanPreview.name, () => {
           version: ClusterServiceVersionModel.apiVersion,
           kind: ClusterServiceVersionModel.kind,
           name: 'testoperator.v1.0.0',
+          manifest: '',
+        },
+      },
+      {
+        resolving: 'testoperator.v1.0.0',
+        status: 'Unknown',
+        resource: {
+          group: CustomResourceDefinitionModel.apiGroup,
+          version: CustomResourceDefinitionModel.apiVersion,
+          kind: CustomResourceDefinitionModel.kind,
+          name: 'test-crds.test.com',
           manifest: '',
         },
       },
@@ -170,22 +189,47 @@ describe(InstallPlanPreview.name, () => {
   it('renders button to approve install plan if requires approval', () => {
     wrapper = wrapper.setState({needsApproval: true});
 
-    expect(wrapper.find('.co-well').find('button').text()).toEqual('Approve');
+    expect(wrapper.find('.co-well').find('button').at(0).text()).toEqual('Approve');
   });
 
   it('calls `k8sUpdate` to set `approved: true` when button is clicked', (done) => {
-    spyOn(k8s, 'k8sUpdate').and.callFake((model, obj) => {
+    spyAndExpect(spyOn(k8s, 'k8sUpdate'))(Promise.resolve(testInstallPlan)).then(([model, obj]) => {
       expect(obj.spec.approved).toBe(true);
-
-      return Promise.resolve(testInstallPlan).then(() => done());
+      done();
     });
 
     wrapper = wrapper.setState({needsApproval: true});
-    wrapper.find('.co-well').find('button').simulate('click');
+    wrapper.find('.co-well').find('button').at(0).simulate('click');
+  });
+
+  it('renders button to deny install plan if requires approval', () => {
+    wrapper = wrapper.setState({needsApproval: true});
+
+    expect(wrapper.find('.co-well').find('button').at(1).text()).toEqual('Deny');
   });
 
   it('renders section for each resolving `ClusterServiceVersion`', () => {
-    expect(wrapper.find('.co-m-pane__body').length).toEqual(installPlan.status.plan.length);
+    expect(wrapper.find('.co-m-pane__body').length).toEqual(1);
+    wrapper.find('.co-m-pane__body').forEach(section => {
+      expect(section.find('tbody').find('tr').length).toEqual(2);
+    });
+  });
+
+  it('renders link to view install plan component if it exists', () => {
+    const row = wrapper.find('.co-m-pane__body').find('tbody').find('tr').at(0);
+
+    expect(row.find('td').at(0).find(ResourceLink).props().name).toEqual(installPlan.status.plan[0].resource.name);
+  });
+
+  it('renders link to open preview modal for install plan component if not created yet', () => {
+    const row = wrapper.find('.co-m-pane__body').find('tbody').find('tr').at(1);
+    const modalSpy = spyOn(modals, 'installPlanPreviewModal').and.returnValue(null);
+
+    expect(row.find('td').at(0).find(ResourceIcon).props().kind).toEqual(referenceForStepResource(installPlan.status.plan[1].resource));
+
+    row.find('td').at(0).find('.btn-link').simulate('click');
+
+    expect(modalSpy.calls.argsFor(0)[0].stepResource).toEqual(installPlan.status.plan[1].resource);
   });
 });
 
