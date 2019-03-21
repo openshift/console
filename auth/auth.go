@@ -13,6 +13,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/coreos/dex/api"
@@ -39,7 +40,16 @@ const (
 	errorInvalidState = "invalid_state"
 )
 
-var log = capnslog.NewPackageLogger("github.com/openshift/console", "auth")
+var (
+	log = capnslog.NewPackageLogger("github.com/openshift/console", "auth")
+
+	// Cache HTTP clients to avoid recreating them for each request to the
+	// OAuth server. The key is the ca.crt bytes cast to a string and the
+	// value is a pointer to the http.Client. Keep two maps: one that
+	// incldues system roots and one that doesn't.
+	httpClientCache            sync.Map
+	httpClientCacheSystemRoots sync.Map
+)
 
 type Authenticator struct {
 	authFunc func() (*oauth2.Config, loginMethod)
@@ -113,27 +123,43 @@ func newHTTPClient(issuerCA string, includeSystemRoots bool) (*http.Client, erro
 		return nil, fmt.Errorf("load issuer CA file %s: %v", issuerCA, err)
 	}
 
+	caKey := string(data)
 	var certPool *x509.CertPool
 	if includeSystemRoots {
+		if httpClient, ok := httpClientCacheSystemRoots.Load(caKey); ok {
+			return httpClient.(*http.Client), nil
+		}
 		certPool, err = x509.SystemCertPool()
 		if err != nil {
 			log.Errorf("error copying system cert pool: %v", err)
 			certPool = x509.NewCertPool()
 		}
 	} else {
+		if httpClient, ok := httpClientCache.Load(caKey); ok {
+			return httpClient.(*http.Client), nil
+		}
 		certPool = x509.NewCertPool()
 	}
 	if !certPool.AppendCertsFromPEM(data) {
 		return nil, fmt.Errorf("file %s contained no CA data", issuerCA)
 	}
-	return &http.Client{
+
+	httpClient := &http.Client{
 		Transport: &http.Transport{
 			TLSClientConfig: &tls.Config{
 				RootCAs: certPool,
 			},
 		},
 		Timeout: time.Second * 5,
-	}, nil
+	}
+
+	if includeSystemRoots {
+		httpClientCacheSystemRoots.Store(caKey, httpClient)
+	} else {
+		httpClientCache.Store(caKey, httpClient)
+	}
+
+	return httpClient, nil
 }
 
 // NewAuthenticator initializes an Authenticator struct. It blocks until the authenticator is
