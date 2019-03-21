@@ -1,6 +1,6 @@
 import React from 'react';
 
-import * as dashboardMockup from '../../../imgs/storage-dashboard.jpg';
+import * as dashboardMockup from '../../../imgs/ocs-dashboard.png';
 
 export class StorageOverview extends React.Component {
   constructor(props){
@@ -10,7 +10,7 @@ export class StorageOverview extends React.Component {
 
   render() {
     return (
-      <img src={dashboardMockup} />
+      <img className="storage-dashboard-mockup" src={dashboardMockup} />
     );
   }
 }
