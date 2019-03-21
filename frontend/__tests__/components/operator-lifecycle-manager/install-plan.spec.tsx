@@ -132,7 +132,7 @@ describe(InstallPlansPage.displayName, () => {
     expect(wrapper.find(MultiListPage).props().filterLabel).toEqual('Install Plans by name');
     expect(wrapper.find(MultiListPage).props().resources).toEqual([
       {kind: k8s.referenceForModel(InstallPlanModel), namespace: 'default', namespaced: true, prop: 'installPlan'},
-      {kind: k8s.referenceForModel(OperatorGroupModel), namespace: 'default', namespaced: true, prop: 'operatorGroup'},
+      {kind: k8s.referenceForModelCompatible(OperatorGroupModel)('operators.coreos.com~v1alpha2~OperatorGroup'), namespace: 'default', namespaced: true, prop: 'operatorGroup'},
     ]);
   });
 });

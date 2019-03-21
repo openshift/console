@@ -6,7 +6,7 @@ import { Helmet } from 'react-helmet';
 import { Alert } from 'patternfly-react';
 
 import { Firehose, LoadingBox, history, NsDropdown, resourcePathFromModel } from '../utils';
-import { referenceForModel, K8sResourceKind, k8sUpdate, k8sCreate } from '../../module/k8s';
+import { referenceForModel, K8sResourceKind, k8sUpdate, k8sCreate, apiVersionForModel, referenceForModelCompatible, apiVersionForModelCompatible, modelForCompatible } from '../../module/k8s';
 import { SubscriptionModel, CatalogSourceConfigModel, OperatorGroupModel, PackageManifestModel } from '../../models';
 import { OperatorGroupKind, PackageManifestKind, ClusterServiceVersionLogo, SubscriptionKind, InstallPlanApproval, installModesFor, defaultChannelFor } from '../operator-lifecycle-manager';
 import { InstallModeType, isGlobal, installedFor, supports } from '../operator-lifecycle-manager/operator-group';
@@ -78,7 +78,7 @@ export const OperatorHubSubscribeForm = withFormState((props: OperatorHubSubscri
       : _.uniq(catalogSourceConfig.spec.packages.split(',').concat([packageName])).join(',');
 
     const newCatalogSourceConfig = {
-      apiVersion: `${CatalogSourceConfigModel.apiGroup}/${CatalogSourceConfigModel.apiVersion}`,
+      apiVersion: apiVersionForModelCompatible(CatalogSourceConfigModel)('marketplace.redhat.com~v1alpha1~CatalogSourceConfig'),
       kind: CatalogSourceConfigModel.kind,
       metadata: {
         name: OPERATOR_HUB_CSC_NAME,
@@ -93,7 +93,7 @@ export const OperatorHubSubscribeForm = withFormState((props: OperatorHubSubscri
     };
 
     const operatorGroup: OperatorGroupKind = {
-      apiVersion: 'operators.coreos.com/v1alpha2',
+      apiVersion: apiVersionForModelCompatible(OperatorGroupModel)('operators.coreos.com~v1alpha2~OperatorGroup') as OperatorGroupKind['apiVersion'],
       kind: 'OperatorGroup',
       metadata: {
         generateName: `${props.formState().targetNamespace}-`,
@@ -105,7 +105,7 @@ export const OperatorHubSubscribeForm = withFormState((props: OperatorHubSubscri
     };
 
     const subscription: SubscriptionKind = {
-      apiVersion: 'operators.coreos.com/v1alpha1',
+      apiVersion: apiVersionForModel(SubscriptionModel) as SubscriptionKind['apiVersion'],
       kind: 'Subscription',
       metadata: {
         name: packageName,
@@ -125,13 +125,16 @@ export const OperatorHubSubscribeForm = withFormState((props: OperatorHubSubscri
       },
     };
 
+    const catalogSourceConfigModelCompat = modelForCompatible(referenceForModel(CatalogSourceConfigModel))('marketplace.redhat.com~v1alpha1~CatalogSourceConfig');
+    const operatorGroupModelCompat = modelForCompatible(referenceForModel(OperatorGroupModel))('operators.coreos.com~v1alpha2~OperatorGroup');
+
     // TODO(alecmerdler): Handle and display error from creating kube objects...
     return (!_.isEmpty(catalogSourceConfig) || hasBeenEnabled
-      ? k8sUpdate(CatalogSourceConfigModel, {...catalogSourceConfig, spec: {...catalogSourceConfig.spec, packages}}, 'openshift-marketplace', OPERATOR_HUB_CSC_NAME)
-      : k8sCreate(CatalogSourceConfigModel, newCatalogSourceConfig)
+      ? k8sUpdate(catalogSourceConfigModelCompat, {...catalogSourceConfig, spec: {...catalogSourceConfig.spec, packages}}, 'openshift-marketplace', OPERATOR_HUB_CSC_NAME)
+      : k8sCreate(catalogSourceConfigModelCompat, newCatalogSourceConfig)
     ).then(() => props.operatorGroup.data.some(group => group.metadata.namespace === props.formState().targetNamespace)
       ? Promise.resolve()
-      : k8sCreate(OperatorGroupModel, operatorGroup))
+      : k8sCreate(operatorGroupModelCompat, operatorGroup))
       .then(() => k8sCreate(SubscriptionModel, subscription))
       .then(() => history.push(resourcePathFromModel(SubscriptionModel, packageName, subscription.metadata.namespace)));
   };
@@ -204,7 +207,7 @@ export const OperatorHubSubscribeForm = withFormState((props: OperatorHubSubscri
           <RadioGroup
             currentValue={props.formState().updateChannel}
             items={channels.map(ch => ({value: ch.name, title: ch.name}))}
-            onChange={(e) => props.updateFormState({updateChannel: e.currentTarget.value})} />
+            onChange={(e) => props.updateFormState({updateChannel: e.currentTarget.value, installMode: null, targetNamespace: null})} />
         </div>
         <div className="form-group">
           <label className="co-required">Approval Strategy</label>
@@ -250,16 +253,16 @@ export const OperatorHubSubscribePage: React.SFC<OperatorHubSubscribePageProps> 
   </div>
   <Firehose resources={[{
     isList: true,
-    kind: referenceForModel(CatalogSourceConfigModel),
+    kind: referenceForModelCompatible(CatalogSourceConfigModel)('marketplace.redhat.com~v1alpha1~CatalogSourceConfig'),
     namespace: 'openshift-marketplace',
     prop: 'catalogSourceConfig',
   }, {
     isList: true,
-    kind: referenceForModel(OperatorGroupModel),
+    kind: referenceForModelCompatible(OperatorGroupModel)('operators.coreos.com~v1alpha2~OperatorGroup'),
     prop: 'operatorGroup',
   }, {
     isList: false,
-    kind: referenceForModel(PackageManifestModel),
+    kind: referenceForModelCompatible(PackageManifestModel)('packages.apps.redhat.com~v1alpha1~PackageManifest'),
     namespace: new URLSearchParams(window.location.search).get('catalogNamespace'),
     name: new URLSearchParams(window.location.search).get('pkg'),
     prop: 'packageManifest',

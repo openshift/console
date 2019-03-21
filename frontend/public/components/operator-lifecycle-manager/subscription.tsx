@@ -9,7 +9,7 @@ import { requireOperatorGroup } from './operator-group';
 import { MsgBox, ResourceLink, ResourceKebab, navFactory, Kebab, ResourceSummary, LoadingInline, SectionHeading } from '../utils';
 import { removeQueryArgument } from '../utils/router';
 import { SubscriptionKind, SubscriptionState, PackageManifestKind, InstallPlanApproval, ClusterServiceVersionKind, olmNamespace, OperatorGroupKind } from './index';
-import { referenceForModel, k8sKill, k8sUpdate } from '../../module/k8s';
+import { referenceForModel, k8sKill, k8sUpdate, referenceForModelCompatible } from '../../module/k8s';
 import { SubscriptionModel, ClusterServiceVersionModel, CatalogSourceModel, InstallPlanModel, PackageManifestModel, OperatorGroupModel } from '../../models';
 import { createDisableApplicationModal } from '../modals/disable-application-modal';
 import { createSubscriptionChannelModal } from '../modals/subscription-channel-modal';
@@ -80,7 +80,7 @@ export const SubscriptionsPage: React.SFC<SubscriptionsPageProps> = (props) => {
     namespace={namespace}
     resources={[
       {kind: referenceForModel(SubscriptionModel), namespace, namespaced: true, prop: 'subscription'},
-      {kind: referenceForModel(OperatorGroupModel), namespace, namespaced: true, prop: 'operatorGroup'},
+      {kind: referenceForModelCompatible(OperatorGroupModel)('operators.coreos.com~v1alpha2~OperatorGroup'), namespace, namespaced: true, prop: 'operatorGroup'},
     ]}
     flatten={resources => _.get(resources.subscription, 'data', [])}
     title="Subscriptions"
@@ -229,7 +229,7 @@ export const SubscriptionDetailsPage: React.SFC<SubscriptionDetailsPageProps> = 
       // TODO(alecmerdler): List install plans created by the subscription
     ]}
     resources={[
-      {kind: referenceForModel(PackageManifestModel), isList: true, namespace: props.namespace, prop: 'packageManifests'},
+      {kind: referenceForModelCompatible(PackageManifestModel)('packages.apps.redhat.com~v1alpha1~PackageManifest'), isList: true, namespace: props.namespace, prop: 'packageManifests'},
       {kind: referenceForModel(ClusterServiceVersionModel), namespace: props.namespace, isList: true, prop: 'clusterServiceVersions'},
     ]}
     menuActions={menuActions} />;

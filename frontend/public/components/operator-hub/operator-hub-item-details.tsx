@@ -37,7 +37,7 @@ export const OperatorHubItemDetails: React.SFC<OperatorHubItemDetailsProps> = ({
 
   const getHintBlock = () => {
     if (installed) {
-      const filterName = _.get(item.obj, 'status.channels[0].currentCSV', item.obj.metadata.name);
+      const filterName = _.get(item.obj, 'status.packageName', item.obj.metadata.name);
       return (
         <HintBlock
           title="Installed Operator"
