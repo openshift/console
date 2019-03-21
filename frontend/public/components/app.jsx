@@ -187,7 +187,7 @@ class App extends React.PureComponent {
                   <Route path="/overview" exact component={NamespaceRedirect} />
 
                   <LazyRoute path="/cluster-overview" exact loader={() => import('../kubevirt/components/cluster/cluster-overview' /* webpackChunkName: "cluster-overview" */).then(m => m.ClusterOverview)} />
-
+                  <LazyRoute path="/storage-overview" exact loader={() => import('../storage/components/storage-overview/storage-overview' /* webpackChunkName: "storage-overview" */).then(m => m.StorageOverview)} />
                   <LazyRoute path="/status/all-namespaces" exact loader={() => import('./cluster-overview' /* webpackChunkName: "cluster-overview" */).then(m => m.ClusterOverviewPage)} />
                   <LazyRoute path="/status/ns/:ns" exact loader={() => import('./cluster-overview' /* webpackChunkName: "cluster-overview" */).then(m => m.ClusterOverviewPage)} />
                   <Route path="/status" exact component={NamespaceRedirect} />
