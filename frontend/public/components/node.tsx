@@ -98,28 +98,26 @@ export const NodesPage = props => <ListPage {...props} ListComponent={NodesList}
 const NodeGraphs = requirePrometheus(({node}) => {
   const nodeIp = _.find<{type: string, address: string}>(node.status.addresses, {type: 'InternalIP'});
   const ipQuery = nodeIp && `{instance=~'.*${nodeIp.address}.*'}`;
-  const memoryLimit = units.dehumanize(node.status.allocatable.memory, 'binaryBytesWithoutB').value;
-  const integerLimit = input => parseInt(input, 10);
 
   return <React.Fragment>
     <div className="row">
       <div className="col-md-4">
-        <Line title="Memory Usage" query={ipQuery && `node_memory_Active_bytes${ipQuery}`} units="binaryBytes" limit={memoryLimit} />
+        <Line title="Memory Usage" query={ipQuery && `node_memory_Active_bytes${ipQuery}`} />
       </div>
       <div className="col-md-4">
-        <Line title="CPU Usage" query={ipQuery && `instance:node_cpu:rate:sum${ipQuery}`} units="numeric" limit={integerLimit(node.status.allocatable.cpu)} />
+        <Line title="CPU Usage" query={ipQuery && `instance:node_cpu:rate:sum${ipQuery}`} />
       </div>
       <div className="col-md-4">
-        <Line title="Number of Pods" query={ipQuery && `kubelet_running_pod_count${ipQuery}`} units="numeric" limit={integerLimit(node.status.allocatable.pods)} />
+        <Line title="Number of Pods" query={ipQuery && `kubelet_running_pod_count${ipQuery}`} />
       </div>
       <div className="col-md-4">
-        <Line title="Network In" query={ipQuery && `instance:node_network_receive_bytes:rate:sum${ipQuery}`} units="decimalBytes" />
+        <Line title="Network In" query={ipQuery && `instance:node_network_receive_bytes:rate:sum${ipQuery}`} />
       </div>
       <div className="col-md-4">
-        <Line title="Network Out" query={ipQuery && `instance:node_network_transmit_bytes:rate:sum${ipQuery}`} units="decimalBytes" />
+        <Line title="Network Out" query={ipQuery && `instance:node_network_transmit_bytes:rate:sum${ipQuery}`} />
       </div>
       <div className="col-md-4">
-        <Line title="Filesystem (bytes)" query={ipQuery && `instance:node_filesystem_usage:sum${ipQuery}`} units="decimalBytes" />
+        <Line title="Filesystem" query={ipQuery && `instance:node_filesystem_usage:sum${ipQuery}`} />
       </div>
     </div>
 

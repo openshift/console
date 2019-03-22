@@ -30,6 +30,9 @@ export class Line_ extends BaseGraph {
         rangemode: 'tozero',
         zeroline: false,
         ticks: '',
+        // Use SI prefixes with 2 signficant digits
+        // https://github.com/d3/d3-format/blob/master/README.md#locale_format
+        tickformat: '.2s',
         showline: false,
         fixedrange: true,
       },
@@ -47,10 +50,10 @@ export class Line_ extends BaseGraph {
         orientation: 'h',
       },
       margin: {
-        l: 30,
+        l: 40,
         b: 30,
-        r: 10,
-        t: 0,
+        r: 20,
+        t: 10,
         pad: 0,
       },
       shapes: [],

@@ -95,10 +95,10 @@ const BuildGraphs = requirePrometheus(({build}) => {
         <Line title="Memory Usage" namespace={namespace} query={`pod_name:container_memory_usage_bytes:sum{pod_name='${podName}',container_name='',namespace='${namespace}'}`} />
       </div>
       <div className="col-md-4">
-        <Line title="CPU Usage" namespace={namespace} query={`pod_name:container_cpu_usage:sum{pod_name='${podName}',container_name='',namespace='${namespace}'} * 1000`} />
+        <Line title="CPU Usage" namespace={namespace} query={`pod_name:container_cpu_usage:sum{pod_name='${podName}',container_name='',namespace='${namespace}'}`} />
       </div>
       <div className="col-md-4">
-        <Line title="Filesystem (bytes)" namespace={namespace} query={`pod_name:container_fs_usage_bytes:sum{pod_name='${podName}',container_name='',namespace='${namespace}'}`} />
+        <Line title="Filesystem" namespace={namespace} query={`pod_name:container_fs_usage_bytes:sum{pod_name='${podName}',container_name='',namespace='${namespace}'}`} />
       </div>
     </div>
 
