@@ -106,7 +106,7 @@ ServiceBindingsList.displayName = 'ServiceBindingsList';
 export const ServiceBindingsPage: React.SFC<ServiceBindingsPageProps> = props =>
   <ListPage
     {...props}
-    namespace={_.get(props.match, 'params.ns')}
+    namespace={props.namespace ||_.get(props.match, 'params.ns')}
     showTitle={false}
     kind={referenceForModel(ServiceBindingModel)}
     ListComponent={ServiceBindingsList}

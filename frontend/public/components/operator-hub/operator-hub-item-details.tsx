@@ -4,11 +4,13 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { Button, HintBlock, Modal } from 'patternfly-react';
 import { CatalogItemHeader, PropertiesSidePanel, PropertyItem } from 'patternfly-react-extensions';
+import { Link } from 'react-router-dom';
 
 import { MarkdownView } from '../operator-lifecycle-manager/clusterserviceversion';
 import { history, ExternalLink } from '../utils';
 import { RH_OPERATOR_SUPPORT_POLICY_LINK } from '../../const';
-import { Link } from 'react-router-dom';
+import { OperatorHubItem } from './index';
+import { SubscriptionModel } from '../../models';
 
 export const OperatorHubItemDetails: React.SFC<OperatorHubItemDetailsProps> = ({item, closeOverlay, namespace}) => {
   if (!item) {
@@ -77,6 +79,7 @@ export const OperatorHubItemDetails: React.SFC<OperatorHubItemDetailsProps> = ({
   };
 
   const createLink = `/operatorhub/subscribe?pkg=${item.obj.metadata.name}&catalog=${catalogSource}&catalogNamespace=${catalogSourceNamespace}&targetNamespace=${namespace}`;
+  const uninstallLink = () => `/k8s/ns/${item.subscription.metadata.namespace}/${SubscriptionModel.plural}/${item.subscription.metadata.name}?showDelete=true`;
 
   return <React.Fragment>
     <Modal.Header>
@@ -93,14 +96,20 @@ export const OperatorHubItemDetails: React.SFC<OperatorHubItemDetailsProps> = ({
         <div className="modal-body-inner-shadow-covers">
           <div className="co-catalog-page__overlay-body">
             <PropertiesSidePanel>
-              <Button
-                bsStyle="primary"
-                className="co-catalog-page__overlay-create"
-                disabled={installed}
-                title={installed ? 'This Operator has been installed on the cluster.' : null}
-                onClick={() => !installed ? history.push(createLink) : null}>
-                Install
-              </Button>
+              { !installed
+                ? <Button
+                  bsStyle="primary"
+                  className="co-catalog-page__overlay-create"
+                  onClick={() => history.push(createLink)}>
+                  Install
+                </Button>
+                : <Button
+                  bsStyle="default"
+                  className="co-catalog-page__overlay-create"
+                  disabled={!installed}
+                  onClick={() => history.push(uninstallLink())}>
+                  Uninstall
+                </Button> }
               <PropertyItem label="Operator Version" value={version || notAvailable} />
               <PropertyItem label="Provider Type" value={providerType || notAvailable} />
               <PropertyItem label="Provider" value={provider || notAvailable} />
@@ -128,7 +137,7 @@ OperatorHubItemDetails.defaultProps = {
 
 export type OperatorHubItemDetailsProps = {
   namespace?: string;
-  item: any;
+  item: OperatorHubItem;
   closeOverlay: () => void;
 };
 

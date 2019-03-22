@@ -7,6 +7,7 @@ import { match, Link } from 'react-router-dom';
 import { List, ListHeader, ColHead, DetailsPage, MultiListPage } from '../factory';
 import { requireOperatorGroup } from './operator-group';
 import { MsgBox, ResourceLink, ResourceKebab, navFactory, Kebab, ResourceSummary, LoadingInline, SectionHeading } from '../utils';
+import { removeQueryArgument } from '../utils/router';
 import { SubscriptionKind, SubscriptionState, PackageManifestKind, InstallPlanApproval, ClusterServiceVersionKind, olmNamespace, OperatorGroupKind } from './index';
 import { referenceForModel, k8sKill, k8sUpdate } from '../../module/k8s';
 import { SubscriptionModel, ClusterServiceVersionModel, CatalogSourceModel, InstallPlanModel, PackageManifestModel, OperatorGroupModel } from '../../models';
@@ -95,7 +96,14 @@ export const SubscriptionDetails: React.SFC<SubscriptionDetailsProps> = (props) 
   const {obj, installedCSV, pkg} = props;
   const catalogNS = obj.spec.sourceNamespace || olmNamespace;
 
+  const Effect: React.SFC<{promise: () => Promise<any>}> = ({promise}) => {
+    promise();
+    return null;
+  };
+
   return <div className="co-m-pane__body">
+    <Effect promise={props.showDelete ? () => createDisableApplicationModal({k8sKill, subscription: obj}).result.then(() => removeQueryArgument('showDelete')) : () => null} />
+
     <SectionHeading text="Subscription Overview" />
     <div className="co-m-pane__body-group">
       <SubscriptionUpdates pkg={pkg} obj={obj} installedCSV={installedCSV} />
@@ -215,6 +223,7 @@ export const SubscriptionDetailsPage: React.SFC<SubscriptionDetailsPageProps> = 
         obj={detailsProps.obj}
         pkg={pkgFor(detailsProps.packageManifests)(detailsProps.obj)}
         installedCSV={installedCSV(detailsProps.clusterServiceVersions)(detailsProps.obj)}
+        showDelete={new URLSearchParams(window.location.search).has('showDelete')}
       />),
       navFactory.editYaml(),
       // TODO(alecmerdler): List install plans created by the subscription
@@ -262,6 +271,7 @@ export type SubscriptionDetailsProps = {
   obj: SubscriptionKind;
   pkg: PackageManifestKind;
   installedCSV?: ClusterServiceVersionKind;
+  showDelete?: boolean;
 };
 
 export type SubscriptionDetailsPageProps = {

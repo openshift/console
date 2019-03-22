@@ -19,7 +19,7 @@ describe(DisableApplicationModal.name, () => {
   let subscription: SubscriptionKind;
 
   beforeEach(() => {
-    k8sKill = jasmine.createSpy('k8sKill');
+    k8sKill = jasmine.createSpy('k8sKill').and.returnValue(Promise.resolve());
     close = jasmine.createSpy('close');
     cancel = jasmine.createSpy('cancel');
     subscription = {..._.cloneDeep(testSubscription), status: {installedCSV: 'testapp.v1.0.0'}};

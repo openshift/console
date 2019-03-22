@@ -1,6 +1,6 @@
 /* eslint-disable no-undef, no-unused-vars */
 
-import { browser, $, ExpectedConditions as until } from 'protractor';
+import { browser, $, ExpectedConditions as until, element, by } from 'protractor';
 import { execSync } from 'child_process';
 
 import { appHost, checkLogs, checkErrors, testName } from '../../protractor.conf';
@@ -16,8 +16,6 @@ describe('Subscribing to an Operator from OperatorHub', () => {
   ]);
 
   afterAll(() => {
-    // FIXME: Don't hardcode namespace for running tests against upstream k8s
-    execSync(`kubectl delete catalogsourceconfig -n openshift-marketplace installed-community-${testName}`);
     execSync(`kubectl delete subscription -n ${testName} --all`);
     execSync(`kubectl delete clusterserviceversion -n ${testName} --all`);
     execSync(`kubectl delete operatorgroup -n ${testName} --all`);
@@ -134,7 +132,7 @@ describe('Subscribing to an Operator from OperatorHub', () => {
   it('selects target namespace for Operator subscription', async() => {
     await browser.wait(until.visibilityOf(operatorHubView.createSubscriptionFormInstallMode));
 
-    expect($('input[value="OwnNamespace"]').getAttribute('disabled')).toBe(null);
+    expect($('input[value="SingleNamespace"]').getAttribute('disabled')).toBe(null);
   });
 
   it('displays Operator as subscribed in OperatorHub', async() => {
@@ -144,6 +142,9 @@ describe('Subscribing to an Operator from OperatorHub', () => {
 
     await operatorHubView.createSubscriptionFormBtn.click();
     await crudView.isLoaded();
+    await browser.get(`${appHost}/operatorhub/ns/${testName}`);
+    await crudView.isLoaded();
+    await catalogPageView.clickFilterCheckbox('installState-installed');
 
     expect(catalogPageView.catalogTileById('etcd-openshift-marketplace').$('.catalog-tile-pf-footer').getText()).toContain('Installed');
   });
@@ -159,5 +160,26 @@ describe('Subscribing to an Operator from OperatorHub', () => {
     await crudView.isLoaded();
 
     await browser.wait(until.visibilityOf(crudView.rowForOperator('etcd')), 30000);
+  });
+
+  it('displays button to uninstall the Operator', async() => {
+    await browser.get(`${appHost}/operatorhub/ns/${testName}`);
+    await crudView.isLoaded();
+    await catalogPageView.clickFilterCheckbox('installState-installed');
+    await catalogPageView.catalogTileFor('etcd').click();
+    await operatorHubView.operatorCommunityWarningIsLoaded();
+    await operatorHubView.acceptCommunityWarningModal();
+    await operatorHubView.operatorModalIsLoaded();
+    await operatorHubView.operatorModalUninstallBtn.click();
+
+    expect(browser.getCurrentUrl()).toContain(`/ns/${testName}/subscriptions/etcd?showDelete=true`);
+  });
+
+  it('uninstalls Operator from the cluster', async() => {
+    await browser.wait(until.visibilityOf($('.co-catalog-install-modal')));
+    await element(by.cssContainingText('#confirm-action', 'Remove')).click();
+    await crudView.isLoaded();
+
+    expect(crudView.rowForName('etcd').isPresent()).toBe(false);
   });
 });

@@ -159,7 +159,7 @@ func (o *openShiftAuth) logout(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNoContent)
 }
 
-func (o *openShiftAuth) authenticate(r *http.Request) (*User, error) {
+func getOpenShiftUser(r *http.Request) (*User, error) {
 	// TODO: This doesn't do any validation of the cookie with the assumption that the
 	// API server will reject tokens it doesn't recognize. If we want to keep some backend
 	// state we should sign this cookie. If not there's not much we can do.
