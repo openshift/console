@@ -19,13 +19,14 @@
   border: 1px solid $color-grey-background-border;
   margin: 0 0 20px 0;
   overflow: visible;
+  padding: 10px;
   width: 100%;
 }
 
 .query-browser__header {
   display: inline-flex;
   justify-content: space-between;
-  padding: 15px 10px 10px 10px;
+  padding: 10px;
   width: 100%;
 }
 
