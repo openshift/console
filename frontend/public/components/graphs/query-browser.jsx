@@ -96,6 +96,12 @@ class QueryBrowser_ extends Line_ {
     if (!_.isEmpty(newData)) {
       this.data = newData;
       let traceIndex = 0;
+
+      // Work out which labels have different values for different metrics
+      const allLabels = _.map(newData, 'metric');
+      const allLabelKeys = _.uniq(_.flatMap(allLabels, _.keys));
+      const differingLabelKeys = _.filter(allLabelKeys, k => _.uniqBy(allLabels, k).length > 1);
+
       _.each(newData, ({metric, values}) => {
         // If props.metric is specified, ignore all other metrics
         const labels = _.omit(metric, '__name__');
@@ -114,11 +120,14 @@ class QueryBrowser_ extends Line_ {
           }
         });
 
+        // Just show labels that differ between metrics to keep the name shorter
+        const name = _.map(_.pick(labels, differingLabelKeys), (v, k) => `${k}="${v}"`).join(',');
+
         const update = {
           line: {
             width: 1,
           },
-          name: _.map(labels, (v, k) => `${k}=${v}`).join(','),
+          name,
           x: [values.map(v => new Date(v[0] * 1000))],
           y: [values.map(v => v[1])],
         };
