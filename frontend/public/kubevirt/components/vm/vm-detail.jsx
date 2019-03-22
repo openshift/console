@@ -158,6 +158,7 @@ export const VirtualMachinesDetailsPage = props => {
       resources={[
         getResource(VirtualMachineInstanceModel, {name, namespace, isList: false}),
         getResource(VirtualMachineInstanceMigrationModel, {namespace}),
+        getResource(PodModel, {namespace, matchLabels: {[CDI_KUBEVIRT_IO]: 'importer'}}),
       ]}
     />);
 };

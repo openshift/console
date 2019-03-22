@@ -69,6 +69,7 @@ const VMRow = ({obj: vm}) => {
         resources={[
           getResource(VirtualMachineInstanceModel, {name, namespace, isList: false}),
           migrationResources,
+          getResource(PodModel, {namespace, matchLabels: {[CDI_KUBEVIRT_IO]: 'importer'}}),
         ]} />
     </div>
   </ResourceRow>;
