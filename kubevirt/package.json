@@ -1,7 +1,7 @@
 {
   "dependencies": {
     "@patternfly/react-console": "1.9.1",
-    "kubevirt-web-ui-components": "0.1.21",
+    "kubevirt-web-ui-components": "0.1.22",
     "reactabular-dnd": "^8.16.0"
   }
 }
