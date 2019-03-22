@@ -180,7 +180,7 @@ export const config: Config = {
       'tests/base.scenario.ts',
       'tests/kubevirt/vm.wizard.scenario.ts',
       'tests/kubevirt/vm.actions.scenario.ts',
-      'tests/kubevirt/template.wizard.scenario.ts'
+      'tests/kubevirt/template.wizard.scenario.ts',
     ],
     e2e: [
       'tests/login.scenario.ts',
