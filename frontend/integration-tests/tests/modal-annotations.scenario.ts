@@ -114,6 +114,7 @@ describe('Modal Annotations', () => {
     isPresent: boolean
   ) {
     await crudAnnotationFromDetail(action, annotationKey, annotationValue);
+    await browser.get(`${appHost}/k8s/ns/${testName}/deployments/${WORKLOAD_NAME}`);
     await clickModalAnnotationsLink();
     await modalAnnotationsView.isLoaded();
     await validateKeyAndValue(annotationKey, annotationValue, isPresent);
@@ -132,12 +133,15 @@ describe('Modal Annotations', () => {
     const annotationValue = 'delete';
 
     await crudAnnotationFromDetail(Actions.add, annotationKey, annotationValue);
+    await browser.get(`${appHost}/k8s/ns/${testName}/deployments/${WORKLOAD_NAME}`);
+    await browser.wait(until.textToBePresentInElement(crudView.modalAnnotationsLink, '2'), BROWSER_TIMEOUT);
     await clickModalAnnotationsLink();
     await modalAnnotationsView.isLoaded();
-    await browser.wait(until.textToBePresentInElement(crudView.modalAnnotationsLink, '2'), BROWSER_TIMEOUT);
     await validateKeyAndValue(annotationKey, annotationValue, true);
 
     await crudAnnotationFromDetail(Actions.delete, annotationKey, annotationValue);
+    await browser.get(`${appHost}/k8s/ns/${testName}/deployments/${WORKLOAD_NAME}`);
+    await browser.wait(until.textToBePresentInElement(crudView.modalAnnotationsLink, '1'), BROWSER_TIMEOUT);
     await clickModalAnnotationsLink();
     await modalAnnotationsView.isLoaded();
     await validateKeyAndValue(annotationKey, annotationValue, false);
@@ -165,11 +169,11 @@ describe('Modal Annotations', () => {
     await modalAnnotationsView.addAnnotation(annotationKey,annotationValue);
     await modalAnnotationsView.isLoaded();
     await modalAnnotationsView.confirmActionBtn.click();
+    await browser.get(`${appHost}/k8s/ns/${testName}/deployments`);
     await crudView.isLoaded();
     await crudView.selectOptionFromGear(WORKLOAD_NAME, crudView.gearOptions.annotations);
     await modalAnnotationsView.isLoaded();
     await validateKeyAndValue(annotationKey, annotationValue, true);
-
     await browser.get(`${appHost}/k8s/ns/${testName}/deployments/${WORKLOAD_NAME}/yaml`);
     await yamlView.isLoaded();
     expect(yamlView.editorContent.getText()).toContain(annotationYAML);
