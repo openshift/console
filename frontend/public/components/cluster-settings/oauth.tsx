@@ -53,6 +53,7 @@ const OAuthDetails: React.SFC<OAuthDetailsProps> = ({obj}: {obj: K8sResourceKind
   const { identityProviders, tokenConfig = {} } = obj.spec;
   const addIDPItems = {
     htpasswd: 'HTPasswd',
+    oidconnect: 'OpenID Connect',
   };
   return <React.Fragment>
     <div className="co-m-pane__body">
