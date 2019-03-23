@@ -6,7 +6,7 @@ import * as _ from 'lodash-es';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
 import { PromiseComponent, history, resourceListPathFromModel } from '../utils';
 import { ClusterServiceVersionKind, SubscriptionKind } from '../operator-lifecycle-manager';
-import { K8sKind, K8sResourceKind, k8sGet, k8sPatch } from '../../module/k8s';
+import { K8sKind, K8sResourceKind, k8sGet, k8sPatch, modelForCompatible, referenceForModel } from '../../module/k8s';
 import { ClusterServiceVersionModel, SubscriptionModel, CatalogSourceConfigModel } from '../../models';
 
 export class DisableApplicationModal extends PromiseComponent {
@@ -20,6 +20,8 @@ export class DisableApplicationModal extends PromiseComponent {
   private submit(event): void {
     event.preventDefault();
 
+    const catalogSourceConfigModelCompat = modelForCompatible(referenceForModel(CatalogSourceConfigModel))('marketplace.redhat.com~v1alpha1~CatalogSourceConfig');
+
     const {subscription, k8sKill} = this.props;
     const {labels = {}} = subscription.metadata;
     const deleteOptions = {kind: 'DeleteOptions', apiVersion: 'v1', propagationPolicy: 'Foreground'};
@@ -28,11 +30,11 @@ export class DisableApplicationModal extends PromiseComponent {
         ? k8sKill(ClusterServiceVersionModel, {metadata: {name: subscription.status.installedCSV, namespace: subscription.metadata.namespace}} as ClusterServiceVersionKind, {}, deleteOptions).catch(() => Promise.resolve())
         : [])
       .concat(_.keys(labels).includes('csc-owner-name')
-        ? k8sGet(CatalogSourceConfigModel, labels['csc-owner-name'], labels['csc-owner-namespace']).then((csc: K8sResourceKind) => {
+        ? k8sGet(catalogSourceConfigModelCompat, labels['csc-owner-name'], labels['csc-owner-namespace']).then((csc: K8sResourceKind) => {
           const packages = csc.spec.packages.split(',').filter(pkg => pkg !== subscription.spec.name).join(',');
           return packages.length === 0
-            ? k8sKill(CatalogSourceConfigModel, csc, {}, {})
-            : k8sPatch(CatalogSourceConfigModel, csc, [{op: 'replace', path: '/spec/packages', packages}]);
+            ? k8sKill(catalogSourceConfigModelCompat, csc, {}, {})
+            : k8sPatch(catalogSourceConfigModelCompat, csc, [{op: 'replace', path: '/spec/packages', packages}]);
         })
         : []);
 

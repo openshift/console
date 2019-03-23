@@ -131,11 +131,14 @@ describe('Subscribing to an Operator from OperatorHub', () => {
 
   it('selects target namespace for Operator subscription', async() => {
     await browser.wait(until.visibilityOf(operatorHubView.createSubscriptionFormInstallMode));
+    await $('input[value="singlenamespace-alpha"]').click();
 
     expect($('input[value="SingleNamespace"]').getAttribute('disabled')).toBe(null);
   });
 
   it('displays Operator as subscribed in OperatorHub', async() => {
+    await $('input[value="SingleNamespace"]').click();
+    await browser.wait(until.visibilityOf(operatorHubView.installNamespaceDropdownBtn));
     await operatorHubView.installNamespaceDropdownBtn.click();
     await operatorHubView.installNamespaceDropdownFilter(testName);
     await operatorHubView.installNamespaceDropdownSelect(testName).click();

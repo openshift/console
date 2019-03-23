@@ -8,7 +8,7 @@ import { Map as ImmutableMap } from 'immutable';
 import { MultiListPage, List, ListHeader, ColHead, ResourceRow, DetailsPage } from '../factory';
 import { SectionHeading, MsgBox, ResourceLink, ResourceKebab, Kebab, ResourceIcon, navFactory, ResourceSummary } from '../utils';
 import { InstallPlanKind, InstallPlanApproval, olmNamespace, Step } from './index';
-import { referenceForModel, referenceForOwnerRef, k8sUpdate } from '../../module/k8s';
+import { referenceForModel, referenceForOwnerRef, k8sUpdate, referenceForModelCompatible } from '../../module/k8s';
 import { SubscriptionModel, ClusterServiceVersionModel, InstallPlanModel, CatalogSourceModel, OperatorGroupModel } from '../../models';
 import { breadcrumbsForOwnerRefs } from '../utils/breadcrumbs';
 import { requireOperatorGroup } from './operator-group';
@@ -68,7 +68,7 @@ export const InstallPlansPage: React.SFC<InstallPlansPageProps> = (props) => {
       namespace={namespace}
       resources={[
         {kind: referenceForModel(InstallPlanModel), namespace, namespaced: true, prop: 'installPlan'},
-        {kind: referenceForModel(OperatorGroupModel), namespace, namespaced: true, prop: 'operatorGroup'},
+        {kind: referenceForModelCompatible(OperatorGroupModel)('operators.coreos.com~v1alpha2~OperatorGroup'), namespace, namespaced: true, prop: 'operatorGroup'},
       ]}
       flatten={resources => _.get(resources.installPlan, 'data', [])}
       title="Install Plans"

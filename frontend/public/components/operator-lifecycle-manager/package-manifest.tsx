@@ -4,7 +4,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { Link, match } from 'react-router-dom';
 
-import { referenceForModel, K8sResourceKind } from '../../module/k8s';
+import { referenceForModel, K8sResourceKind, referenceForModelCompatible } from '../../module/k8s';
 import { requireOperatorGroup, installedFor, supports } from './operator-group';
 import { PackageManifestKind, SubscriptionKind, ClusterServiceVersionLogo, visibilityLabel, OperatorGroupKind, installModesFor, defaultChannelFor } from './index';
 import { PackageManifestModel, SubscriptionModel, CatalogSourceModel, OperatorGroupModel } from '../../models';
@@ -109,10 +109,10 @@ export const PackageManifestsPage: React.SFC<PackageManifestsPageProps> = (props
     textFilter="packagemanifest-name"
     flatten={flatten}
     resources={[
-      {kind: referenceForModel(PackageManifestModel), isList: true, namespaced: true, prop: 'packageManifest', selector: {matchExpressions: [{key: visibilityLabel, operator: 'DoesNotExist'}, {key: OPERATOR_HUB_LABEL, operator: 'DoesNotExist'}]}},
+      {kind: referenceForModelCompatible(PackageManifestModel)('packages.apps.redhat.com~v1alpha1~PackageManifest'), isList: true, namespaced: true, prop: 'packageManifest', selector: {matchExpressions: [{key: visibilityLabel, operator: 'DoesNotExist'}, {key: OPERATOR_HUB_LABEL, operator: 'DoesNotExist'}]}},
       {kind: referenceForModel(CatalogSourceModel), isList: true, namespaced: true, prop: 'catalogSource'},
       {kind: referenceForModel(SubscriptionModel), isList: true, prop: 'subscription'},
-      {kind: referenceForModel(OperatorGroupModel), isList: true, prop: 'operatorGroup'},
+      {kind: referenceForModelCompatible(OperatorGroupModel)('operators.coreos.com~v1alpha2~OperatorGroup'), isList: true, prop: 'operatorGroup'},
     ]} />;
 };
 
