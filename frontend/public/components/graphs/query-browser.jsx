@@ -37,6 +37,9 @@ class QueryBrowser_ extends Line_ {
         tickformat: null, // Use Plotly's default datetime labels
         type: 'date',
       },
+      yaxis: {
+        fixedrange: false,
+      },
     });
 
     this.onPlotlyRelayout = e => {
