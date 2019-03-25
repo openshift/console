@@ -259,7 +259,7 @@ class ConfigureNamespacePullSecret extends PromiseComponent {
               <label htmlFor="namespace-pull-secret-password">Password</label>
             </div>
             <div className="col-xs-9">
-              <input type="text" defaultValue={existingData.password} className="form-control" id="namespace-pull-secret-password" required />
+              <input type="password" defaultValue={existingData.password} className="form-control" id="namespace-pull-secret-password" required />
             </div>
           </div>
         </div> }
