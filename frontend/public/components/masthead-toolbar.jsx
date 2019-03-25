@@ -9,6 +9,7 @@ import { authSvc } from '../module/auth';
 import { history, Firehose } from './utils';
 import { openshiftHelpBase } from './utils/documentation';
 import { AboutModal } from './about-modal';
+import { ALL_NAMESPACES_KEY } from '../const';
 import { getAvailableClusterUpdates, clusterVersionReference } from '../module/k8s/cluster-settings';
 
 const UpdatesAvailableButton = ({obj, onClick}) => {
@@ -20,6 +21,25 @@ const UpdatesAvailableButton = ({obj, onClick}) => {
       </Button>
     </ToolbarItem>
     : null;
+};
+
+const onServiceMesh = (url, name, e) => {
+  e.preventDefault();
+  window.open(`${url}?namespace=${name}`, '_blank').opener = null;
+};
+
+const ServiceMeshItem = ({namespace}) => {
+  if (namespace.loaded) {
+    const ns = namespace.data;
+    const serviceMeshUrl = _.get(ns, 'metadata.annotations["openshift.servicemesh/url"]');
+    const name = ns.metadata.name;
+    return serviceMeshUrl ?
+      <DropdownItem key="servicemesh" onClick={(e) => onServiceMesh(serviceMeshUrl, name, e)}>
+        OpenShift ServiceMesh
+      </DropdownItem>
+      : null;
+  }
+  return null;
 };
 
 class MastheadToolbar_ extends React.Component {
@@ -160,11 +180,17 @@ class MastheadToolbar_ extends React.Component {
     }];
   }
 
-  _renderMenuItems(actions) {
-    return actions.map((action, i) => action.separator
+  _renderMenuItems(actions, appendItem) {
+    const menuItems = actions.map((action, i) => action.separator
       ? <DropdownSeparator key={i} />
       : <DropdownItem key={i} onClick={action.callback}>{action.label}</DropdownItem>
     );
+
+    if (appendItem) {
+      menuItems.push(appendItem);
+    }
+
+    return menuItems;
   }
 
   _renderMenu(mobile) {
@@ -225,6 +251,7 @@ class MastheadToolbar_ extends React.Component {
 
     return (
       <Dropdown
+        key="users"
         data-test="user-dropdown"
         isPlain
         position="right"
@@ -238,13 +265,21 @@ class MastheadToolbar_ extends React.Component {
 
   render() {
     const { isApplicationLauncherDropdownOpen, isHelpDropdownOpen, showAboutModal } = this.state;
-    const { flags } = this.props;
+    const { flags, activeNamespace } = this.props;
     const resources = [{
       kind: clusterVersionReference,
       name: 'version',
       isList: false,
       prop: 'obj',
     }];
+
+    let serviceMeshItem;
+    if (activeNamespace && activeNamespace !== ALL_NAMESPACES_KEY) {
+      serviceMeshItem = <Firehose key="firehose" resources={[{kind: 'Namespace', name: activeNamespace, prop: 'namespace', isList: false}]}>
+        <ServiceMeshItem key="serviceMeshItem" />
+      </Firehose>;
+    }
+
     return (
       <React.Fragment>
         <Toolbar>
@@ -260,6 +295,7 @@ class MastheadToolbar_ extends React.Component {
             {flags[FLAGS.OPENSHIFT] && <ToolbarItem>
               <Dropdown
                 isPlain
+                key="applauncher"
                 onSelect={this._onApplicationLauncherDropdownSelect}
                 toggle={
                   <DropdownToggle aria-label="Application Launcher" iconComponent={null} onToggle={this._onApplicationLauncherDropdownToggle}>
@@ -267,12 +303,13 @@ class MastheadToolbar_ extends React.Component {
                   </DropdownToggle>
                 }
                 isOpen={isApplicationLauncherDropdownOpen}
-                dropdownItems={this._renderMenuItems(this._launchActions())}
+                dropdownItems={this._renderMenuItems(this._launchActions(), serviceMeshItem)}
               />
             </ToolbarItem>}
             <ToolbarItem>
               <Dropdown
                 isPlain
+                key="help"
                 onSelect={this._onHelpDropdownSelect}
                 toggle={
                   <DropdownToggle aria-label="Help" iconComponent={null} onToggle={this._onHelpDropdownToggle}>
@@ -301,7 +338,8 @@ const mastheadToolbarStateToProps = state => {
   const desiredFlags = [FLAGS.AUTH_ENABLED, FLAGS.OPENSHIFT, FLAGS.CLUSTER_VERSION];
   const flagProps = flagStateToProps(desiredFlags, state);
   const user = state.UI.get('user');
-  return { ...flagProps, user };
+  const activeNamespace = state.UI.get('activeNamespace');
+  return { ...flagProps, user, activeNamespace };
 };
 
 export const MastheadToolbar = connect(mastheadToolbarStateToProps)(MastheadToolbar_);
