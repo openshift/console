@@ -9,7 +9,7 @@ import { requireOperatorGroup } from './operator-group';
 import { MsgBox, ResourceLink, ResourceKebab, navFactory, Kebab, ResourceSummary, LoadingInline, SectionHeading } from '../utils';
 import { removeQueryArgument } from '../utils/router';
 import { SubscriptionKind, SubscriptionState, PackageManifestKind, InstallPlanApproval, ClusterServiceVersionKind, olmNamespace, OperatorGroupKind, InstallPlanKind, InstallPlanPhase } from './index';
-import { referenceForModel, k8sKill, k8sUpdate, referenceForModelCompatible } from '../../module/k8s';
+import { referenceForModel, k8sGet, k8sPatch, k8sKill, k8sUpdate } from '../../module/k8s';
 import { SubscriptionModel, ClusterServiceVersionModel, CatalogSourceModel, InstallPlanModel, PackageManifestModel, OperatorGroupModel } from '../../models';
 import { createDisableApplicationModal } from '../modals/disable-application-modal';
 import { createSubscriptionChannelModal } from '../modals/subscription-channel-modal';
@@ -36,7 +36,7 @@ const menuActions = [
   Kebab.factory.Edit,
   (kind, obj) => ({
     label: 'Remove Subscription...',
-    callback: () => createDisableApplicationModal({k8sKill, subscription: obj}),
+    callback: () => createDisableApplicationModal({k8sKill, k8sGet, k8sPatch, subscription: obj}),
   }),
   (kind, obj) => ({
     label: `View ${ClusterServiceVersionModel.kind}...`,
@@ -80,7 +80,7 @@ export const SubscriptionsPage: React.SFC<SubscriptionsPageProps> = (props) => {
     namespace={namespace}
     resources={[
       {kind: referenceForModel(SubscriptionModel), namespace, namespaced: true, prop: 'subscription'},
-      {kind: referenceForModelCompatible(OperatorGroupModel)('operators.coreos.com~v1alpha2~OperatorGroup'), namespace, namespaced: true, prop: 'operatorGroup'},
+      {kind: referenceForModel(OperatorGroupModel), namespace, namespaced: true, prop: 'operatorGroup'},
     ]}
     flatten={resources => _.get(resources.subscription, 'data', [])}
     title="Subscriptions"
@@ -102,7 +102,7 @@ export const SubscriptionDetails: React.SFC<SubscriptionDetailsProps> = (props) 
   };
 
   return <div className="co-m-pane__body">
-    <Effect promise={props.showDelete ? () => createDisableApplicationModal({k8sKill, subscription: obj}).result.then(() => removeQueryArgument('showDelete')) : () => null} />
+    <Effect promise={props.showDelete ? () => createDisableApplicationModal({k8sKill, k8sGet, k8sPatch, subscription: obj}).result.then(() => removeQueryArgument('showDelete')) : () => null} />
 
     <SectionHeading text="Subscription Overview" />
     <div className="co-m-pane__body-group">
@@ -239,7 +239,7 @@ export const SubscriptionDetailsPage: React.SFC<SubscriptionDetailsPageProps> = 
       navFactory.editYaml(),
     ]}
     resources={[
-      {kind: referenceForModelCompatible(PackageManifestModel)('packages.apps.redhat.com~v1alpha1~PackageManifest'), isList: true, namespace: props.namespace, prop: 'packageManifests'},
+      {kind: referenceForModel(PackageManifestModel), isList: true, namespace: props.namespace, prop: 'packageManifests'},
       {kind: referenceForModel(InstallPlanModel), isList: true, namespace: props.namespace, prop: 'installPlans'},
       {kind: referenceForModel(ClusterServiceVersionModel), namespace: props.namespace, isList: true, prop: 'clusterServiceVersions'},
     ]}

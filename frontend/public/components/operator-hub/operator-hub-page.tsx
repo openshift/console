@@ -7,7 +7,7 @@ import { match } from 'react-router';
 
 import { Firehose, PageHeading, StatusBox, MsgBox, ExternalLink, withFallback } from '../utils';
 import { ErrorBoundaryFallback } from '../error';
-import { referenceForModel, K8sResourceKind, referenceForModelCompatible } from '../../module/k8s';
+import { referenceForModel, K8sResourceKind } from '../../module/k8s';
 import { PackageManifestModel, OperatorGroupModel, CatalogSourceConfigModel, SubscriptionModel } from '../../models';
 import { getOperatorProviderType } from './operator-hub-utils';
 import { OperatorHubTileView } from './operator-hub-items';
@@ -80,16 +80,16 @@ export const OperatorHubPage = withFallback((props: OperatorHubPageProps) => <Re
     <div className="co-catalog-connect">
       <Firehose resources={[{
         isList: true,
-        kind: referenceForModelCompatible(CatalogSourceConfigModel)('marketplace.redhat.com~v1alpha1~CatalogSourceConfig'),
+        kind: referenceForModel(CatalogSourceConfigModel),
         namespace: 'openshift-marketplace',
         prop: 'catalogSourceConfig',
       }, {
         isList: true,
-        kind: referenceForModelCompatible(OperatorGroupModel)('operators.coreos.com~v1alpha2~OperatorGroup'),
+        kind: referenceForModel(OperatorGroupModel),
         prop: 'operatorGroup',
       }, {
         isList: true,
-        kind: referenceForModelCompatible(PackageManifestModel)('packages.apps.redhat.com~v1alpha1~PackageManifest'),
+        kind: referenceForModel(PackageManifestModel),
         namespace: 'openshift-marketplace',
         prop: 'packageManifest',
         selector: {matchLabels: {'openshift-marketplace': 'true'}},
