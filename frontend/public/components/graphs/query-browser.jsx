@@ -170,6 +170,7 @@ class QueryBrowser_ extends Line_ {
           <Dropdown
             buttonClassName="btn-default form-control query-browser__span-dropdown"
             items={dropdownItems}
+            menuClassName="dropdown-menu-right query-browser__span-dropdown-menu"
             noSelection={true}
             onChange={v => this.showLatest(parsePrometheusDuration(v))}
           />
