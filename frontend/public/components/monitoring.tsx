@@ -175,7 +175,7 @@ const Graph = ({metric = undefined, numSamples, rule}) => {
   // 3 times the rule's duration, but not less than 30 minutes
   const timeSpan = Math.max(3 * duration, 30 * 60) * 1000;
 
-  return <QueryBrowser metric={metric} numSamples={numSamples} query={query} timeSpan={timeSpan} />;
+  return <QueryBrowser metric={metric} numSamples={numSamples} query={query} timeSpan={timeSpan} timeout="5s" />;
 };
 
 const SilenceMatchersList = ({silence}) => <div className={`co-text-${SilenceResource.kind.toLowerCase()}`}>
