@@ -82,6 +82,9 @@ export const types = {
   stopImpersonate: 'stopImpersonate',
   updateOverviewMetrics: 'updateOverviewMetrics',
   updateOverviewResources: 'updateOverviewResources',
+  updateOverviewSelectedGroup: 'updateOverviewSelectedGroup',
+  updateOverviewGroupOptions: 'updateOverviewGroupOptions',
+  updateOverviewFilterValue: 'updateOverviewFilterValue',
 };
 
 /** @type {{[key: string]: function}} */
@@ -182,6 +185,12 @@ export const UIActions = {
   [types.updateOverviewResources]: resources => ({type: types.updateOverviewResources, resources}),
 
   [types.dismissOverviewDetails]: () => ({type: types.dismissOverviewDetails}),
+
+  [types.updateOverviewSelectedGroup]: (group) => ({type: types.updateOverviewSelectedGroup, group}),
+
+  [types.updateOverviewGroupOptions]: (groups) => ({type: types.updateOverviewGroupOptions, groups}),
+
+  [types.updateOverviewFilterValue]: (value) => ({type: types.updateOverviewFilterValue, value}),
 
   monitoringLoading: key => ({type: types.setMonitoringData, key, data: {loaded: false, loadError: null, data: null}}),
 
