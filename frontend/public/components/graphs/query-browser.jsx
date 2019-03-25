@@ -15,10 +15,13 @@ class QueryBrowser_ extends Line_ {
   constructor(props) {
     super(props);
 
+    // For the default time span, use the first of the suggested span options that is at least as long as props.timeSpan
+    this.defaultSpan = spans.map(parsePrometheusDuration).find(s => s >= props.timeSpan);
+
     _.assign(this.state, {
       isSpanValid: true,
-      spanText: formatPrometheusDuration(props.timeSpan),
-      span: props.timeSpan,
+      spanText: formatPrometheusDuration(this.defaultSpan),
+      span: this.defaultSpan,
       updating: true,
     });
 
@@ -148,7 +151,7 @@ class QueryBrowser_ extends Line_ {
   }
 
   render() {
-    const {query, timeSpan, urls} = this.props;
+    const {query, urls} = this.props;
     const {spanText, isSpanValid, updating} = this.state;
     const baseUrl = urls[MonitoringRoutes.Prometheus];
 
@@ -169,7 +172,7 @@ class QueryBrowser_ extends Line_ {
           />
           <button
             className="btn btn-default query-browser__span-reset"
-            onClick={() => this.showLatest(timeSpan)}
+            onClick={() => this.showLatest(this.defaultSpan)}
             type="button"
           >Reset Zoom</button>
           {updating && <LoadingInline />}
