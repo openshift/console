@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import * as classNames from 'classnames';
 import { addTraces, relayout, restyle } from 'plotly.js/lib/core';
 
 import { connectToURLs, MonitoringRoutes } from '../../monitoring';
@@ -161,12 +160,14 @@ class QueryBrowser_ extends Line_ {
     return <div className="query-browser__wrapper">
       <div className="query-browser__header">
         <div className="query-browser__controls">
-          <input
-            className={classNames('form-control query-browser__span-text', {'query-browser__span-text--error': !isSpanValid})}
-            onChange={this.onSpanTextChange}
-            type="text"
-            value={spanText}
-          />
+          <div className={isSpanValid ? '' : 'has-error'}>
+            <input
+              className="form-control query-browser__span-text"
+              onChange={this.onSpanTextChange}
+              type="text"
+              value={spanText}
+            />
+          </div>
           <Dropdown
             buttonClassName="btn-default form-control query-browser__span-dropdown"
             items={dropdownItems}
