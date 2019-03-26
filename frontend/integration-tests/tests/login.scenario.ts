@@ -36,7 +36,7 @@ describe('Auth test', () => {
       it('logs in via htpasswd identity provider', async() => {
         await loginView.login(HTPASSWD_IDP, HTPASSWD_USERNAME, HTPASSWD_PASSWORD);
         expect(browser.getCurrentUrl()).toContain(appHost);
-        expect(loginView.userDropdown.getText()).toContain('test');
+        expect(loginView.userDropdown.getText()).toContain(HTPASSWD_USERNAME);
       });
 
       it('logs out htpasswd user', async() => {
