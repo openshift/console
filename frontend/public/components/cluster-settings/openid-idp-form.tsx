@@ -10,6 +10,7 @@ import {
   AsyncComponent,
   ButtonBar,
   Dropdown,
+  ListInput,
   PromiseComponent,
   history,
   resourceObjPath,
@@ -22,15 +23,16 @@ const DroppableFileInput = (props) => <AsyncComponent loader={() => import('../u
 
 export class AddOpenIDPage extends PromiseComponent {
   readonly state: AddOpenIDIDPPageState = {
-    name: 'openidconnect',
+    name: 'openid',
     mappingMethod: 'claim',
     clientID: '',
     clientSecretFileContent: '',
-    preferredUserName: 'preferred_username',
-    claimName: 'name',
-    claimEmail: 'email',
+    claimPreferredUsernames: [],
+    claimNames: [],
+    claimEmails: [],
     issuer: '',
     caFileContent: '',
+    extraScopes: [],
     inProgress: false,
     errorMessage: '',
   };
@@ -39,7 +41,7 @@ export class AddOpenIDPage extends PromiseComponent {
     return this.handlePromise(k8sGet(OAuthModel, oauthResourceName));
   }
 
-  createOIDClientSecret(): Promise<K8sResourceKind> {
+  createClientSecret(): Promise<K8sResourceKind> {
     const secret = {
       apiVersion: 'v1',
       kind: 'Secret',
@@ -55,61 +57,54 @@ export class AddOpenIDPage extends PromiseComponent {
     return this.handlePromise(k8sCreate(SecretModel, secret));
   }
 
-  createOIDCA(): Promise<K8sResourceKind> {
+  createCAConfigMap(): Promise<K8sResourceKind> {
+    const { caFileContent } = this.state;
+    if (!caFileContent) {
+      return Promise.resolve(null);
+    }
+
     const ca = {
       apiVersion: 'v1',
       kind: 'ConfigMap',
       metadata: {
-        generateName: 'openid-config-map-',
+        generateName: 'openid-ca-',
         namespace: 'openshift-config',
       },
       stringData: {
-        ca: this.state.caFileContent,
+        ca: caFileContent,
       },
     };
 
     return this.handlePromise(k8sCreate(ConfigMapModel, ca));
   }
 
-  addOpenIDIDP(oauth: K8sResourceKind, secretName: string, caName: string): Promise<K8sResourceKind> {
-    const { name, mappingMethod, clientID, issuer, preferredUserName, claimName, claimEmail } = this.state;
-    const openID = _.isEmpty(caName) ? {
+  addOpenIDIDP(oauth: K8sResourceKind, clientSecretName: string, caName: string): Promise<K8sResourceKind> {
+    const { name, mappingMethod, clientID, issuer, extraScopes, claimPreferredUsernames, claimNames, claimEmails } = this.state;
+    const openID: any = {
       name,
       type: 'OpenID',
       mappingMethod,
       openID: {
         clientID,
         clientSecret: {
-          name: secretName,
+          name: clientSecretName,
         },
         issuer,
+        extraScopes,
         claims: {
-          preferredUsername: [preferredUserName],
-          name: [claimName],
-          email: [claimEmail],
+          preferredUsername: claimPreferredUsernames,
+          name: claimNames,
+          email: claimEmails,
         },
       },
-    } : {
-      name,
-      type: 'OpenID',
-      mappingMethod,
-      openID: {
-        clientID,
-        clientSecret: {
-          name: secretName,
-        },
-        ca: {
-          name: caName,
-        },
-        issuer,
-        claims: {
-          preferredUsername: [preferredUserName],
-          name: [claimName],
-          email: [claimEmail],
-        },
-      },
+    };
+
+    if (caName) {
+      openID.ca = {
+        name: caName,
+      };
     }
-    ;
+
     const patch = _.isEmpty(oauth.spec.identityProviders)
       ? { op: 'add', path: '/spec/identityProviders', value: [openID] }
       : { op: 'add', path: '/spec/identityProviders/-', value: openID };
@@ -126,32 +121,46 @@ export class AddOpenIDPage extends PromiseComponent {
     // Clear any previous errors.
     this.setState({errorMessage: ''});
     this.getOAuthResource().then((oauth: K8sResourceKind) => {
-      if (_.isEmpty(this.state.caFileContent)) {
-        return this.createOIDClientSecret()
-          .then((secret: K8sResourceKind) => this.addOpenIDIDP(oauth, secret.metadata.name, ''))
-          .then(() => {
-            history.push(resourceObjPath(oauth, referenceFor(oauth)));
-          });
-      }
-      let secretValue;
-      return this.createOIDClientSecret()
-        .then((secret: K8sResourceKind) => {
-          secretValue = secret;
-          this.createOIDCA()
-            .then((ca:K8sResourceKind) => this.addOpenIDIDP(oauth, secretValue.metadata.name, ca.metadata.name));
-        })
-        .then(() => {
-          history.push(resourceObjPath(oauth, referenceFor(oauth)));
-        });
+      const promises = [
+        this.createClientSecret(),
+        this.createCAConfigMap(),
+      ];
+
+      Promise.all(promises).then(([secret, configMap]) => {
+        const caName = configMap ? configMap.metadata.name : '';
+        return this.addOpenIDIDP(oauth, secret.metadata.name, caName);
+      }).then(() => {
+        history.push(resourceObjPath(oauth, referenceFor(oauth)));
+      });
     });
   };
 
-  oidTextValueChanged: React.ReactEventHandler<HTMLInputElement> = (event) => {
-    this.setState({[event.currentTarget.id]: event.currentTarget.value});
+  nameChanged: React.ReactEventHandler<HTMLInputElement> = (event) => {
+    this.setState({name: event.currentTarget.value});
   };
 
-  oidCBValueChanged: React.ReactEventHandler<HTMLInputElement> = event => {
-    this.setState({[event.currentTarget.id]: event.currentTarget.checked});
+  clientIDChanged: React.ReactEventHandler<HTMLInputElement> = (event) => {
+    this.setState({clientID: event.currentTarget.value});
+  };
+
+  issuerChanged: React.ReactEventHandler<HTMLInputElement> = (event) => {
+    this.setState({issuer: event.currentTarget.value});
+  };
+
+  claimPreferredUsernamesChanged = (claimPreferredUsernames: string[]) => {
+    this.setState({claimPreferredUsernames});
+  };
+
+  claimNamesChanged = (claimNames: string[]) => {
+    this.setState({claimNames});
+  };
+
+  claimEmailsChanged = (claimEmails: string[]) => {
+    this.setState({claimEmails});
+  };
+
+  extraScopesChanged = (extraScopes: string[]) => {
+    this.setState({extraScopes});
   };
 
   mappingMethodChanged = (mappingMethod: string) => {
@@ -167,7 +176,7 @@ export class AddOpenIDPage extends PromiseComponent {
   };
 
   render() {
-    const { name, mappingMethod, clientID, clientSecretFileContent, preferredUserName, claimName, claimEmail, issuer, caFileContent } = this.state;
+    const { name, mappingMethod, clientID, clientSecretFileContent, issuer, caFileContent } = this.state;
     const title = 'Add Identity Provider: OpenID Connect';
     const mappingMethods = {
       'claim': 'Claim',
@@ -187,7 +196,7 @@ export class AddOpenIDPage extends PromiseComponent {
           <label className="control-label co-required" htmlFor="name">Name</label>
           <input className="form-control"
             type="text"
-            onChange={this.oidTextValueChanged}
+            onChange={this.nameChanged}
             value={name}
             aria-describedby="oid-name-help"
             id="name"
@@ -208,9 +217,8 @@ export class AddOpenIDPage extends PromiseComponent {
           <label className="control-label co-required" htmlFor="clientID">ClientID</label>
           <input className="form-control"
             type="text"
-            onChange={this.oidTextValueChanged}
+            onChange={this.clientIDChanged}
             value={clientID}
-            aria-describedby="idp-clientid-help"
             id="clientID"
             required />
         </div>
@@ -227,42 +235,17 @@ export class AddOpenIDPage extends PromiseComponent {
           <label className="control-label co-required" htmlFor="issuer">Issuer URL</label>
           <input className="form-control"
             type="text"
-            onChange={this.oidTextValueChanged}
+            onChange={this.issuerChanged}
             value={issuer}
-            aria-describedby="idp-issuer-help"
             id="issuer"
             required />
         </div>
         <div className="co-form-section__separator"></div>
         <h3>Claims</h3>
         <p className="co-help-text">The first non-empty claim is used. At least one claim is required.</p>
-        <div className="form-group">
-          <label className="control-label" htmlFor="preferredUserName">Preferred username</label>
-          <input className="form-control"
-            type="text"
-            onChange={this.oidTextValueChanged}
-            value={preferredUserName}
-            aria-describedby="idp-claimusername-help"
-            id="preferredUserName" />
-        </div>
-        <div className="form-group">
-          <label className="control-label" htmlFor="claimName">Name</label>
-          <input className="form-control"
-            type="text"
-            onChange={this.oidTextValueChanged}
-            value={claimName}
-            aria-describedby="idp-claimname-help"
-            id="claimName" />
-        </div>
-        <div className="form-group">
-          <label className="control-label" htmlFor="claimEmail">Email</label>
-          <input className="form-control"
-            type="text"
-            onChange={this.oidTextValueChanged}
-            value={claimEmail}
-            aria-describedby="idp-claimemail-help"
-            id="claimEmail" />
-        </div>
+        <ListInput label="Preferred Username" onChange={this.claimPreferredUsernamesChanged} />
+        <ListInput label="Name" onChange={this.claimNamesChanged} />
+        <ListInput label="Email" onChange={this.claimEmailsChanged} />
         <div className="co-form-section__separator"></div>
         <h3>More options</h3>
         <div className="form-group">
@@ -270,9 +253,10 @@ export class AddOpenIDPage extends PromiseComponent {
             onChange={this.caFileChanged}
             inputFileData={caFileContent}
             id="caFileContent"
-            label="CA"
+            label="CA File"
             hideContents />
         </div>
+        <ListInput label="Extra Scopes" onChange={this.extraScopesChanged} />
         <ButtonBar errorMessage={this.state.errorMessage} inProgress={this.state.inProgress}>
           <button type="submit" className="btn btn-primary">Add</button>
           <button type="button" className="btn btn-default" onClick={history.goBack}>Cancel</button>
@@ -287,11 +271,12 @@ type AddOpenIDIDPPageState = {
   mappingMethod: 'claim' | 'lookup' | 'add';
   clientID: string;
   clientSecretFileContent: string;
-  preferredUserName: string;
-  claimName: string;
-  claimEmail: string;
+  claimPreferredUsernames: string[];
+  claimNames: string[];
+  claimEmails: string[];
   issuer: string;
   caFileContent: string;
+  extraScopes: string[];
   inProgress: boolean;
   errorMessage: string;
 };
