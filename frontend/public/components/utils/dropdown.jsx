@@ -191,13 +191,10 @@ export class Dropdown extends DropdownMixin {
     super.componentWillReceiveProps(nextProps);
     const props = this.props;
 
-    if (_.isEqual(nextProps.items, props.items) && nextProps.title === props.title && nextProps.selectedKey === props.selectedKey) {
+    if (_.isEqual(nextProps.items, props.items) && nextProps.title === props.title) {
       return;
     }
-    const title = nextProps.noSelection
-      ? nextProps.title
-      : _.get(nextProps.items, nextProps.selectedKey, <span className="btn-dropdown__item--placeholder">{nextProps.title}</span>);
-
+    const title = nextProps.title || props.title;
     this.setState({title});
 
     this.applyTextFilter_(this.state.autocompleteText, nextProps.items);

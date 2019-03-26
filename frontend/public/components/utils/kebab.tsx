@@ -60,7 +60,7 @@ const kebabFactory: KebabFactory = {
       resource: obj,
     }),
   }),
-  ModifyTaint: (kind, obj) => ({
+  ModifyTaints: (kind, obj) => ({
     label: 'Edit Taints',
     callback: () => taintsModal({
       resourceKind: kind,
@@ -68,7 +68,7 @@ const kebabFactory: KebabFactory = {
       modalClassName: 'modal-lg',
     }),
   }),
-  ModifyToleration: (kind, obj) => ({
+  ModifyTolerations: (kind, obj) => ({
     label: 'Edit Tolerations',
     callback: () => tolerationsModal({
       resourceKind: kind,

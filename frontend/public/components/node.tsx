@@ -145,6 +145,8 @@ const Details = ({obj: node}) => {
             <dd><NodeIPList ips={_.get(node, 'status.addresses')} expand={true} /></dd>
             <dt>Node Labels</dt>
             <dd><LabelList kind="Node" labels={node.metadata.labels} /></dd>
+            <dt>Taints</dt>
+            <dd><a className="co-m-modal-link" onClick={Kebab.factory.ModifyTaints(NodeModel, node).callback}>{pluralize(_.size(node.spec.taints), 'Taint')}</a></dd>
             <dt>Annotations</dt>
             <dd><a className="co-m-modal-link" onClick={Kebab.factory.ModifyAnnotations(NodeModel, node).callback}>{pluralize(_.size(node.metadata.annotations), 'Annotation')}</a></dd>
             {machine && <React.Fragment>
@@ -176,8 +178,6 @@ const Details = ({obj: node}) => {
             <dd>{_.get(node, 'status.nodeInfo.kubeletVersion', '-')}</dd>
             <dt>Kube-Proxy Version</dt>
             <dd>{_.get(node, 'status.nodeInfo.kubeProxyVersion', '-')}</dd>
-            <dt>Taints</dt>
-            <dd><a className="co-m-modal-link" onClick={Kebab.factory.ModifyTaint(NodeModel, node).callback}>{pluralize(_.size(node.spec.taints), 'Taint')}</a></dd>
           </dl>
         </div>
       </div>
