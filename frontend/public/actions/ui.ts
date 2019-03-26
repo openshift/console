@@ -35,6 +35,7 @@ export enum ActionType {
   UpdateOverviewGroupOptions = 'updateOverviewGroupOptions',
   UpdateOverviewFilterValue = 'updateOverviewFilterValue',
   UpdateTimestamps = 'updateTimestamps',
+  SetConsoleLinks = 'setConsoleLinks',
 }
 
 // URL routes that can be namespaced
@@ -194,6 +195,7 @@ export const monitoringLoading = (key: 'alerts' | 'silences') => action(ActionTy
 export const monitoringLoaded = (key: 'alerts' | 'silences', data: any) => action(ActionType.SetMonitoringData, {key, data: {loaded: true, loadError: null, data}});
 export const monitoringErrored = (key: 'alerts' | 'silences', loadError: any) => action(ActionType.SetMonitoringData, {key, data: {loaded: true, loadError, data: null}});
 export const monitoringToggleGraphs = () => action(ActionType.ToggleMonitoringGraphs);
+export const setConsoleLinks = (consoleLinks: string[]) => action(ActionType.SetConsoleLinks, {consoleLinks});
 
 // TODO(alecmerdler): Implement all actions using `typesafe-actions` and add them to this export
 const uiActions = {
@@ -218,6 +220,7 @@ const uiActions = {
   monitoringLoaded,
   monitoringErrored,
   monitoringToggleGraphs,
+  setConsoleLinks,
 };
 
 export type UIAction = Action<typeof uiActions>;

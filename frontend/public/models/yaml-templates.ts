@@ -808,6 +808,15 @@ spec:
     apiVersion: machine.openshift.io/v1beta1
     kind: MachineSet
     name: worker
+`).setIn([referenceForModel(k8sModels.ConsoleLinkModel), 'default'], `
+apiVersion: console.openshift.io/v1
+kind: ConsoleLink
+metadata:
+  name: example
+spec:
+  href: 'https://www.example.com'
+  location: HelpMenu
+  text: Additional help menu link
 `);
 
 const pluginTemplates = ImmutableMap<GroupVersionKind, ImmutableMap<string, string>>()
