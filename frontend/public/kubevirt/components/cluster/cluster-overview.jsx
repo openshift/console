@@ -94,7 +94,7 @@ const getInventoryData = resources => {
   };
 };
 
-const OverviewEventStream = () => <EventStream InnerComponent={EventsInnerOverview} overview={true} />; // TODO FIX: the "namespace" is required prop
+const OverviewEventStream = () => <EventStream scrollableElementId="events-body" InnerComponent={EventsInnerOverview} overview={true} namespace={undefined} />;
 
 export class ClusterOverview extends React.Component {
   constructor(props){

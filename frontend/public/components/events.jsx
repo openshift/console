@@ -486,7 +486,7 @@ export class EventStream extends SafetyFirst {
         </div>
         { /* Default `height` to 0 to avoid console errors from https://github.com/bvaughn/react-virtualized/issues/1158 */}
         { count > 0 &&
-            <WindowScroller scrollElement={document.getElementById('content-scrollable')}>
+            <WindowScroller scrollElement={document.getElementById(this.props.scrollableElementId)}>
               {({height, isScrolling, registerChild, onChildScroll, scrollTop}) =>
                 <AutoSizer disableHeight onResize={this.onResize}>
                   {({width}) => <div ref={registerChild}>
@@ -521,6 +521,7 @@ EventStream.defaultProps = {
   mock: false,
   InnerComponent: Inner,
   overview: false,
+  scrollableElementId: 'content-scrollable',
 };
 
 EventStream.propTypes = {
@@ -533,6 +534,7 @@ EventStream.propTypes = {
   textFilter: PropTypes.string,
   InnerComponent: PropTypes.func,
   overview: PropTypes.bool,
+  scrollableElementId: PropTypes.string,
 };
 
 
