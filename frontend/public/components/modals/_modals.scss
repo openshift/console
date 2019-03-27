@@ -83,3 +83,35 @@
 .modal-footer {
   margin-top: 0;
 }
+
+.toleration-modal, .taint-modal {
+  &__field {
+    padding-top: 5px;
+    padding-right: 0;
+  }
+
+  &__delete-icon {
+    height: 29px;
+    @media(max-width: $screen-sm-max) {
+      padding: 0;
+    }
+  }
+
+  &__dropdown {
+    .btn {
+      height: 29px;
+    }
+    li {
+      height: 23px;
+    }
+  }
+
+  .row {
+    margin-bottom: 16px;
+  }
+  @media(max-width: $screen-sm-max) {
+    .row {
+      margin-bottom: 24px;
+    }
+  }
+}

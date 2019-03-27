@@ -30,7 +30,7 @@ export const createModalLauncher: CreateModalLauncher = (Component) => (props) =
           isOpen={true}
           contentLabel="Modal"
           onRequestClose={closeModal}
-          className="modal-dialog"
+          className={classNames('modal-dialog', props.modalClassName)}
           overlayClassName="co-overlay"
           shouldCloseOnOverlayClick={!props.blocking}>
           <Component {...props} cancel={closeModal} close={closeModal} />
@@ -87,6 +87,7 @@ export type CreateModalLauncherProps = {
 export type ModalComponentProps = {
   cancel: (e?: Event) => void;
   close: (e?: Event) => void;
+  modalClassName?: string;
 };
 
 export type ModalTitleProps = {

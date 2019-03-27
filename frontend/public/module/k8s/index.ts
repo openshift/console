@@ -61,6 +61,23 @@ export type Selector = {
   matchExpressions?: MatchExpression[];
 };
 
+export type TaintEffect = '' | 'NoSchedule' | 'PreferNoSchedule' | 'NoExecute';
+
+export type Taint = {
+  key: string;
+  value: string;
+  effect: TaintEffect;
+};
+
+export type TolerationOperator = 'Exists' | 'Equal';
+
+export type Toleration = {
+  key?: string;
+  operator: TolerationOperator;
+  value?: string;
+  effect: TaintEffect;
+};
+
 export type K8sResourceKind = {
   apiVersion: string;
   kind: string;
@@ -73,6 +90,11 @@ export type K8sResourceKind = {
   type?: {[key: string]: any};
 };
 
+export type NodeKind = {
+  spec?: {
+    taints?: Taint[];
+  };
+} & K8sResourceKind;
 
 export type ConfigMapKind = {
   apiVersion: string;
