@@ -169,7 +169,20 @@ const Label = ({k, v}) => <div className="co-m-label co-m-label--expand" key={k}
   <span className="co-m-label__value">{v}</span>
 </div>;
 
-const Graph = ({metric = undefined, numSamples, rule}) => {
+const graphStateToProps = ({UI}) => ({hideGraphs: !!UI.getIn(['monitoring', 'hideGraphs'])});
+
+const ToggleGraph_ = ({hideGraphs, toggle}) => {
+  const iconClass = `fa fa-${hideGraphs ? 'line-chart' : 'compress'}`;
+  return <button type="button" className="btn btn-link" onClick={toggle}>
+    {hideGraphs ? 'Show' : 'Hide'} Graph <i className={iconClass} aria-hidden="true" />
+  </button>;
+};
+const ToggleGraph = connect(graphStateToProps, {toggle: UIActions.toggleMonitoringGraphs})(ToggleGraph_);
+
+const Graph_ = ({hideGraphs, metric = undefined, numSamples, rule}) => {
+  if (hideGraphs) {
+    return null;
+  }
   const {duration = 0, query = ''} = rule || {};
 
   // 3 times the rule's duration, but not less than 30 minutes
@@ -177,6 +190,7 @@ const Graph = ({metric = undefined, numSamples, rule}) => {
 
   return <QueryBrowser metric={metric} numSamples={numSamples} query={query} timeSpan={timeSpan} timeout="5s" />;
 };
+const Graph = connect(graphStateToProps)(Graph_);
 
 const SilenceMatchersList = ({silence}) => <div className={`co-text-${SilenceResource.kind.toLowerCase()}`}>
   {_.map(silence.matchers, ({name, isRegex, value}, i) => <Label key={i} k={name} v={isRegex ? `~${value}` : value} />)}
@@ -218,7 +232,9 @@ const AlertsDetailsPage = withFallback(connect(alertStateToProps)((props: Alerts
         </h1>
       </div>
       <div className="co-m-pane__body">
-        <SectionHeading text="Alert Overview" />
+        <SectionHeading text="Alert Overview">
+          {state !== AlertStates.NotFiring && <ToggleGraph />}
+        </SectionHeading>
         <div className="co-m-pane__body-group">
           <div className="row">
             <div className="col-sm-12">
@@ -364,7 +380,9 @@ const AlertRulesDetailsPage = withFallback(connect(ruleStateToProps)((props: Ale
       </div>
       <div className="co-m-pane__body">
         <div className="co-m-pane__body-group">
-          <SectionHeading text="Active Alerts" />
+          <SectionHeading text="Active Alerts">
+            <ToggleGraph />
+          </SectionHeading>
           <div className="row">
             <div className="col-sm-12">
               <Graph numSamples={300} rule={rule} />
