@@ -242,9 +242,12 @@ class MastheadToolbar_ extends React.Component {
         <Toolbar>
           <ToolbarGroup className="pf-u-screen-reader pf-u-visible-on-md">
             {/* desktop -- (updates button) */}
-            <Firehose resources={resources}>
-              <UpdatesAvailableButton onClick={this._onClusterUpdatesAvailable} />
-            </Firehose>
+            {
+              flags[FLAGS.CLUSTER_VERSION] &&
+                <Firehose resources={resources}>
+                  <UpdatesAvailableButton onClick={this._onClusterUpdatesAvailable} />
+                </Firehose>
+            }
             {/* desktop -- (application launcher dropdown), help dropdown [documentation, about] */}
             {flags[FLAGS.OPENSHIFT] && <ToolbarItem>
               <Dropdown
@@ -298,7 +301,7 @@ class MastheadToolbar_ extends React.Component {
 }
 
 const mastheadToolbarStateToProps = state => {
-  const desiredFlags = [FLAGS.AUTH_ENABLED, FLAGS.OPENSHIFT];
+  const desiredFlags = [FLAGS.AUTH_ENABLED, FLAGS.OPENSHIFT, FLAGS.CLUSTER_VERSION];
   const flagProps = flagStateToProps(desiredFlags, state);
   const user = state.UI.get('user');
   return { ...flagProps, user };
