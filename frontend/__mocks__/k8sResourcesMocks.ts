@@ -9,7 +9,8 @@ import {
   CatalogSourceKind,
   InstallPlanApproval,
   PackageManifestKind,
-  OperatorGroupKind } from '../public/components/operator-lifecycle-manager';
+  OperatorGroupKind,
+  InstallPlanPhase } from '../public/components/operator-lifecycle-manager';
 import { StatusCapability, SpecCapability } from '../public/components/operator-lifecycle-manager/descriptors/types';
 import { CustomResourceDefinitionKind, K8sResourceKind, K8sKind } from '../public/module/k8s';
 /* eslint-enable no-unused-vars */
@@ -307,7 +308,7 @@ export const testInstallPlan: InstallPlanKind = {
     approval: InstallPlanApproval.Automatic,
   },
   status: {
-    phase: 'Complete',
+    phase: InstallPlanPhase.InstallPlanPhaseComplete,
     catalogSources: ['test-catalog'],
     plan: [],
   },
