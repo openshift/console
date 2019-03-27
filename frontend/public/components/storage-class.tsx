@@ -44,14 +44,20 @@ const StorageClassRow: React.SFC<StorageClassRowProps> = ({obj}) => {
 const StorageClassDetails: React.SFC<StorageClassDetailsProps> = ({obj}) => <React.Fragment>
   <div className="co-m-pane__body">
     <SectionHeading text="StorageClass Overview" />
-    <ResourceSummary resource={obj}>
-      <dt>Provisioner</dt>
-      <dd>{obj.provisioner || '-'}</dd>
-      <dt>Reclaim Policy</dt>
-      <dd>{obj.reclaimPolicy || '-'}</dd>
-      <dt>Default Class</dt>
-      <dd>{isDefaultClass(obj)}</dd>
-    </ResourceSummary>
+    <div className="row">
+      <div className="col-sm-6">
+        <ResourceSummary resource={obj}>
+          <dt>Provisioner</dt>
+          <dd>{obj.provisioner || '-'}</dd>
+        </ResourceSummary>
+      </div>
+      <div className="col-sm-6">
+        <dt>Reclaim Policy</dt>
+        <dd>{obj.reclaimPolicy || '-'}</dd>
+        <dt>Default Class</dt>
+        <dd>{isDefaultClass(obj)}</dd>
+      </div>
+    </div>
   </div>
 </React.Fragment>;
 
