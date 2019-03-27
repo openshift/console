@@ -168,7 +168,7 @@ class TolerationsModal extends PromiseComponent {
                 </div>
                 <div className="col-md-1">
                   {this._isEditable(t) && (
-                    <button type="button" className="btn btn-link toleration-modal__delete-icon" onClick={() => this._remove(i)} aria-label="Delete">
+                    <button type="button" className="btn btn-link btn-link--inherit-color toleration-modal__delete-icon" onClick={() => this._remove(i)} aria-label="Delete">
                       <i className="fa fa-minus-circle pairs-list__side-btn pairs-list__delete-icon" aria-hidden="true" />
                     </button>
                   )}
