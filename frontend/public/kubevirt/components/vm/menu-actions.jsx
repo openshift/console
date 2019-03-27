@@ -75,9 +75,9 @@ const menuActionClone = (kind, vm) => ({
 });
 
 const menuActionCancelMigration = (kind, vm, actionArgs) => {
-  const migration = findVMIMigration(actionArgs[VirtualMachineInstanceMigrationModel.kind], _.get(actionArgs[VirtualMachineInstanceModel.kind], 'metadata.name'));
+  const migration = actionArgs && findVMIMigration(actionArgs[VirtualMachineInstanceMigrationModel.kind], _.get(actionArgs[VirtualMachineInstanceModel.kind], 'metadata.name'));
   return {
-    hidden: !isMigrating(migration),
+    hidden: !actionArgs || !isMigrating(migration),
     label: 'Cancel Virtual Machine Migration',
     callback: () => cancelVmiMigrationModal({
       migration,
@@ -86,10 +86,10 @@ const menuActionCancelMigration = (kind, vm, actionArgs) => {
 };
 
 const menuActionMigrate = (kind, vm, actionArgs) => {
-  const migration = findVMIMigration(actionArgs[VirtualMachineInstanceMigrationModel.kind], _.get(actionArgs[VirtualMachineInstanceModel.kind], 'metadata.name'));
+  const migration = actionArgs && findVMIMigration(actionArgs[VirtualMachineInstanceMigrationModel.kind], _.get(actionArgs[VirtualMachineInstanceModel.kind], 'metadata.name'));
   const { name, namespace } = vm.metadata;
   return {
-    hidden: !isVmRunning(vm) || isMigrating(vm, migration),
+    hidden: !actionArgs || !isVmRunning(vm) || isMigrating(vm, migration),
     label: 'Migrate Virtual Machine',
     callback: () => {
       return modalResourceLauncher(BasicMigrationDialog, {
