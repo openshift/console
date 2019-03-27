@@ -37,7 +37,7 @@ const CAPACITY_STORAGE_USED_DEFAULT_QUERY = 'sum(node_filesystem_avail_bytes) - 
 const CAPACITY_NETWORK_TOTAL_QUERY = 'sum(avg by(instance)(node_network_speed_bytes))'; // TODO: needs to be refined
 const CAPACITY_NETWORK_USED_QUERY = 'sum(node:node_net_utilisation:sum_irate)';
 
-const REFRESH_TIMEOUT = 30000;
+const REFRESH_TIMEOUT = 5000;
 
 const resourceMap = {
   nodes: {
