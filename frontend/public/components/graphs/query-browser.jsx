@@ -15,10 +15,13 @@ class QueryBrowser_ extends Line_ {
   constructor(props) {
     super(props);
 
+    // For the default time span, use the first of the suggested span options that is at least as long as props.timeSpan
+    this.defaultSpan = spans.map(parsePrometheusDuration).find(s => s >= props.timeSpan);
+
     _.assign(this.state, {
       isSpanValid: true,
-      spanText: formatPrometheusDuration(props.timeSpan),
-      span: props.timeSpan,
+      spanText: formatPrometheusDuration(this.defaultSpan),
+      span: this.defaultSpan,
       updating: true,
     });
 
@@ -36,6 +39,9 @@ class QueryBrowser_ extends Line_ {
         fixedrange: false,
         tickformat: null, // Use Plotly's default datetime labels
         type: 'date',
+      },
+      yaxis: {
+        fixedrange: false,
       },
     });
 
@@ -96,6 +102,12 @@ class QueryBrowser_ extends Line_ {
     if (!_.isEmpty(newData)) {
       this.data = newData;
       let traceIndex = 0;
+
+      // Work out which labels have different values for different metrics
+      const allLabels = _.map(newData, 'metric');
+      const allLabelKeys = _.uniq(_.flatMap(allLabels, _.keys));
+      const differingLabelKeys = _.filter(allLabelKeys, k => _.uniqBy(allLabels, k).length > 1);
+
       _.each(newData, ({metric, values}) => {
         // If props.metric is specified, ignore all other metrics
         const labels = _.omit(metric, '__name__');
@@ -114,11 +126,14 @@ class QueryBrowser_ extends Line_ {
           }
         });
 
+        // Just show labels that differ between metrics to keep the name shorter
+        const name = _.map(_.pick(labels, differingLabelKeys), (v, k) => `${k}="${v}"`).join(',');
+
         const update = {
           line: {
             width: 1,
           },
-          name: _.map(labels, (v, k) => `${k}=${v}`).join(','),
+          name,
           x: [values.map(v => new Date(v[0] * 1000))],
           y: [values.map(v => v[1])],
         };
@@ -139,7 +154,7 @@ class QueryBrowser_ extends Line_ {
   }
 
   render() {
-    const {query, timeSpan, urls} = this.props;
+    const {query, urls} = this.props;
     const {spanText, isSpanValid, updating} = this.state;
     const baseUrl = urls[MonitoringRoutes.Prometheus];
 
@@ -155,12 +170,13 @@ class QueryBrowser_ extends Line_ {
           <Dropdown
             buttonClassName="btn-default form-control query-browser__span-dropdown"
             items={dropdownItems}
+            menuClassName="dropdown-menu-right query-browser__span-dropdown-menu"
             noSelection={true}
             onChange={v => this.showLatest(parsePrometheusDuration(v))}
           />
           <button
             className="btn btn-default query-browser__span-reset"
-            onClick={() => this.showLatest(timeSpan)}
+            onClick={() => this.showLatest(this.defaultSpan)}
             type="button"
           >Reset Zoom</button>
           {updating && <LoadingInline />}

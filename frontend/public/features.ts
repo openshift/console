@@ -18,8 +18,7 @@ import {
   PackageManifestModel,
   OperatorGroupModel,
 } from './models';
-import { ClusterVersionKind } from './module/k8s';
-import { k8sBasePath, referenceForModel } from './module/k8s/k8s';
+import { k8sBasePath, referenceForModel, ClusterVersionKind } from './module/k8s';
 import { k8sCreate } from './module/k8s/resource';
 import { types } from './module/k8s/k8s-actions';
 import { coFetchJSON } from './co-fetch';
@@ -86,6 +85,7 @@ export const CRDs = {
   [referenceForModel(ClusterServiceClassModel)]: FLAGS.SERVICE_CATALOG,
   [referenceForModel(ClusterServiceVersionModel)]: FLAGS.OPERATOR_LIFECYCLE_MANAGER,
   [referenceForModel(OperatorSourceModel)]: FLAGS.OPERATOR_HUB,
+  'marketplace.redhat.com~v1alpha1~OperatorSource': FLAGS.OPERATOR_HUB,
   [referenceForModel(MachineModel)]: FLAGS.CLUSTER_API,
   [referenceForModel(MachineConfigModel)]: FLAGS.MACHINE_CONFIG,
   [referenceForModel(BaremetalHostModel)]: FLAGS.METALKUBE,
@@ -255,6 +255,10 @@ const ssarChecks = [{
 }, {
   flag: FLAGS.CAN_LIST_PACKAGE_MANIFEST,
   resourceAttributes:{ group: PackageManifestModel.apiGroup, resource: PackageManifestModel.plural, verb: 'list'},
+}, {
+  flag: FLAGS.CAN_LIST_PACKAGE_MANIFEST,
+  // FIXME: Hack for backwards compatibility
+  resourceAttributes:{ group: 'packages.apps.redhat.com', resource: PackageManifestModel.plural, verb: 'list'},
 }, {
   flag: FLAGS.CAN_LIST_OPERATOR_GROUP,
   resourceAttributes:{ group: OperatorGroupModel.apiGroup, resource: OperatorGroupModel.plural, verb: 'list' },

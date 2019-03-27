@@ -16,7 +16,7 @@ import { QueryBrowser } from './graphs';
 import { confirmModal } from './modals';
 import { CheckBoxes } from './row-filter';
 import { SafetyFirst } from './safety-first';
-import { formatDuration } from './utils/datetime';
+import { formatPrometheusDuration } from './utils/datetime';
 import { withFallback } from './utils/error-boundary';
 import { Tooltip } from './utils/tooltip';
 import {
@@ -175,7 +175,7 @@ const Graph = ({metric = undefined, numSamples, rule}) => {
   // 3 times the rule's duration, but not less than 30 minutes
   const timeSpan = Math.max(3 * duration, 30 * 60) * 1000;
 
-  return <QueryBrowser metric={metric} numSamples={numSamples} query={query} timeSpan={timeSpan} />;
+  return <QueryBrowser metric={metric} numSamples={numSamples} query={query} timeSpan={timeSpan} timeout="5s" />;
 };
 
 const SilenceMatchersList = ({silence}) => <div className={`co-text-${SilenceResource.kind.toLowerCase()}`}>
@@ -353,7 +353,7 @@ const AlertRulesDetailsPage = withFallback(connect(ruleStateToProps)((props: Ale
               <dl className="co-m-pane__details">
                 {_.isInteger(duration) && <React.Fragment>
                   <dt>For</dt>
-                  <dd>{formatDuration(duration * 1000)}</dd>
+                  <dd>{formatPrometheusDuration(duration * 1000)}</dd>
                 </React.Fragment>}
                 <dt>Expression</dt>
                 <dd><pre className="co-pre-wrap monitoring-query">{query}</pre></dd>

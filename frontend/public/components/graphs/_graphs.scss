@@ -48,10 +48,13 @@
 .query-browser__span-dropdown {
   border-bottom-left-radius: 0;
   border-top-left-radius: 0;
-  margin-right: 20px;
   width: 30px;
 }
 
+.query-browser__span-dropdown-menu {
+  min-width: 130px;
+}
+
 .query-browser__span-reset {
-  margin-right: 20px;
+  margin: 0 20px;
 }

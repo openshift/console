@@ -43,7 +43,7 @@ const categoryFilter = (category, {reason}) => {
     return true;
   }
   const errorSubstrings = ['error', 'failed', 'unhealthy', 'nodenotready'];
-  const isError = errorSubstrings.find(substring => reason.toLowerCase().includes(substring));
+  const isError = reason && errorSubstrings.find(substring => reason.toLowerCase().includes(substring));
   return category === 'error' ? isError : !isError;
 };
 
@@ -123,7 +123,7 @@ class SysEvent extends React.Component {
   render() {
     const { index, style, reason, message, source, metadata, firstTimestamp, lastTimestamp, count, involvedObject: obj} = this.props;
     const klass = classNames('co-sysevent', {'co-sysevent--error': categoryFilter('error', this.props)});
-    const tooltipMsg = `${reason} (${obj.kind.toLowerCase()})`;
+    const tooltipMsg = `${reason} (${obj.kind})`;
 
     let shouldAnimate;
     const key = metadata.uid;

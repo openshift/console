@@ -6,7 +6,7 @@ import * as _ from 'lodash';
 
 import { SubscriptionHeader, SubscriptionHeaderProps, SubscriptionRow, SubscriptionRowProps, SubscriptionsList, SubscriptionsListProps, SubscriptionsPage, SubscriptionsPageProps, SubscriptionDetails, SubscriptionDetailsPage, SubscriptionDetailsProps, SubscriptionUpdates, SubscriptionUpdatesProps, SubscriptionUpdatesState } from '../../../public/components/operator-lifecycle-manager/subscription';
 import { SubscriptionKind, SubscriptionState } from '../../../public/components/operator-lifecycle-manager';
-import { referenceForModel } from '../../../public/module/k8s';
+import { referenceForModel, referenceForModelCompatible } from '../../../public/module/k8s';
 import { SubscriptionModel, ClusterServiceVersionModel, PackageManifestModel, OperatorGroupModel } from '../../../public/models';
 import { ListHeader, ColHead, List, MultiListPage, DetailsPage } from '../../../public/components/factory';
 import { ResourceKebab, ResourceLink, Kebab } from '../../../public/components/utils';
@@ -141,7 +141,7 @@ describe(SubscriptionsPage.displayName, () => {
     expect(wrapper.find(MultiListPage).props().filterLabel).toEqual('Subscriptions by package');
     expect(wrapper.find(MultiListPage).props().resources).toEqual([
       {kind: referenceForModel(SubscriptionModel), namespace: 'default', namespaced: true, prop: 'subscription'},
-      {kind: referenceForModel(OperatorGroupModel), namespace: 'default', namespaced: true, prop: 'operatorGroup'},
+      {kind: referenceForModelCompatible(OperatorGroupModel)('operators.coreos.com~v1alpha2~OperatorGroup'), namespace: 'default', namespaced: true, prop: 'operatorGroup'},
     ]);
   });
 });
@@ -214,7 +214,7 @@ describe(SubscriptionDetailsPage.displayName, () => {
     const wrapper = shallow(<SubscriptionDetailsPage match={match} namespace="default" />);
 
     expect(wrapper.find(DetailsPage).props().resources).toEqual([
-      {kind: referenceForModel(PackageManifestModel), namespace: 'default', isList: true, prop: 'packageManifests'},
+      {kind: referenceForModelCompatible(PackageManifestModel)('packages.apps.redhat.com~v1alpha1~PackageManifest'), namespace: 'default', isList: true, prop: 'packageManifests'},
       {kind: referenceForModel(ClusterServiceVersionModel), namespace: 'default', isList: true, prop: 'clusterServiceVersions'},
     ]);
   });
