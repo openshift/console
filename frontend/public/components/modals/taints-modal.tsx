@@ -13,7 +13,7 @@ class TaintsModal extends PromiseComponent {
   constructor(public props: TaintsModalProps) {
     super(props);
     // Add an empty row for editing if no taints exist.
-    this.state.taints = this._defaultFirstRow(this.props.resource.spec.taints);
+    this.state.taints = this.props.resource.spec.taints;
   }
 
   _submit = (e: React.FormEvent<EventTarget>) => {
@@ -52,12 +52,6 @@ class TaintsModal extends PromiseComponent {
       return { taints };
     });
   };
-
-  _defaultFirstRow(taints: Taint[]): Taint[] {
-    return _.isEmpty(taints)
-      ? [this._newTaint()]
-      : taints;
-  }
 
   _newTaint(): Taint {
     return {key: '', value: '', effect: 'NoSchedule'};

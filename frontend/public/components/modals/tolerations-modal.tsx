@@ -12,9 +12,7 @@ class TolerationsModal extends PromiseComponent {
 
   constructor(public props: TolerationsModalProps) {
     super(props);
-    const tolerations = this._getTolerationsFromResource();
-    // Add an empty row for editing if no tolerations exist.
-    this.state.tolerations = this._defaultFirstRow(tolerations);
+    this.state.tolerations = this._getTolerationsFromResource() || [];
   }
 
   _getTolerationsFromResource = (): Toleration[] => {
@@ -82,12 +80,6 @@ class TolerationsModal extends PromiseComponent {
 
   _newToleration(): TolerationModalItem {
     return {key: '', operator: 'Exists', value: '', effect: '', isNew: true};
-  }
-
-  _defaultFirstRow(tolerations: TolerationModalItem[]): TolerationModalItem[] {
-    return _.isEmpty(tolerations)
-      ? [this._newToleration()]
-      : tolerations;
   }
 
   _addRow = () => {
