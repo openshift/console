@@ -12,6 +12,9 @@
     min-width: 290px;
     overflow-x: hidden;
     overflow-y: auto;
+    @media (min-width: 480px) {
+      min-width: 350px;
+    }
     a {
       padding: 4px 20px 4px 6px;
     }
