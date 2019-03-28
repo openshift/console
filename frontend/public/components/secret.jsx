@@ -127,7 +127,7 @@ const SecretsPage = props => {
     image: 'Image Pull Secret',
     source: 'Source Secret',
     webhook: 'Webhook Secret',
-    yaml: 'Secret from YAML',
+    yaml: 'From YAML',
   };
 
   const createProps = {
