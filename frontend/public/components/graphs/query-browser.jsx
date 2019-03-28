@@ -66,13 +66,8 @@ class QueryBrowser_ extends Line_ {
       }
     };
 
-    this.relayout = () => {
-      const now = new Date();
-      const end = this.end || now;
-      const start = this.start || new Date(end - this.state.span);
-      // eslint-disable-next-line no-console
-      relayout(this.node, {'xaxis.range': [start, end]}).catch(e => console.error(e));
-    };
+    // eslint-disable-next-line no-console
+    this.relayout = layout => relayout(this.node, layout).catch(e => console.error(e));
 
     this.showLatest = span => {
       this.start = null;
@@ -81,7 +76,10 @@ class QueryBrowser_ extends Line_ {
       this.setState({isSpanValid: true, span, spanText: formatPrometheusDuration(span), updating: true}, () => {
         clearInterval(this.interval);
         this.fetch();
-        this.relayout();
+
+        const end = new Date();
+        const start = new Date(end - span);
+        this.relayout({'xaxis.range': [start, end], 'yaxis.autorange': true});
       });
     };
 
@@ -147,7 +145,11 @@ class QueryBrowser_ extends Line_ {
         traceIndex += 1;
       });
 
-      this.relayout();
+      if (!this.start && !this.end) {
+        const end = new Date();
+        const start = new Date(end - this.state.span);
+        this.relayout({'xaxis.range': [start, end]});
+      }
     }
     this.setState({updating: false});
   }
