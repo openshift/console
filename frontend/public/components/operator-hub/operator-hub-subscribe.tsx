@@ -5,17 +5,17 @@ import * as _ from 'lodash-es';
 import { Helmet } from 'react-helmet';
 import { Alert } from 'patternfly-react';
 
-import { Firehose, LoadingBox, history, NsDropdown } from '../utils';
-import { referenceForModel, K8sResourceKind, k8sUpdate, k8sCreate } from '../../module/k8s';
+import { Firehose, LoadingBox, history, NsDropdown, resourcePathFromModel } from '../utils';
+import { referenceForModel, K8sResourceKind, k8sUpdate, k8sCreate, apiVersionForModel } from '../../module/k8s';
 import { SubscriptionModel, CatalogSourceConfigModel, OperatorGroupModel, PackageManifestModel } from '../../models';
 import { OperatorGroupKind, PackageManifestKind, ClusterServiceVersionLogo, SubscriptionKind, InstallPlanApproval, installModesFor, defaultChannelFor } from '../operator-lifecycle-manager';
-import { InstallModeType, isGlobal, installedFor, isSingle } from '../operator-lifecycle-manager/operator-group';
+import { InstallModeType, isGlobal, installedFor, supports } from '../operator-lifecycle-manager/operator-group';
 import { RadioGroup, RadioInput } from '../radio';
 import { OPERATOR_HUB_CSC_BASE } from '../../const';
 import { getOperatorProviderType } from './operator-hub-utils';
 import { Tooltip } from '../utils/tooltip';
 
-// TODO: Use `redux-form` instead of stateful component
+// TODO: Use `redux-form` or React hooks instead of stateful component
 const withFormState = <P extends WithFormStateProps>(Component: React.ComponentType<P>) => {
   /**
    * Controlled component which holds form state (https://reactjs.org/docs/forms.html#controlled-components).
@@ -32,19 +32,19 @@ const withFormState = <P extends WithFormStateProps>(Component: React.ComponentT
 
     static getDerivedStateFromProps(nextProps, prevState) {
       const updateChannel = !_.isEmpty(_.get(nextProps.packageManifest, 'data')) ? defaultChannelFor(nextProps.packageManifest.data) : null;
-      const installMode = !_.isEmpty(_.get(nextProps.packageManifest, 'data'))
+      const installMode = prevState.installMode || !_.isEmpty(_.get(nextProps.packageManifest, 'data'))
         ? installModesFor(nextProps.packageManifest.data)(updateChannel)
           .filter(({supported}) => supported)
           .reduce((acc, mode) => mode.type === InstallModeType.InstallModeTypeAllNamespaces
             ? InstallModeType.InstallModeTypeAllNamespaces
             : acc,
-          InstallModeType.InstallModeTypeOwnNamespace)
+          InstallModeType.InstallModeTypeSingleNamespace)
         : null;
-      const targetNamespace = installMode === InstallModeType.InstallModeTypeOwnNamespace
-        ? _.get(nextProps.operatorGroup, 'data', [])
-          .some(group => group.metadata.namespace === nextProps.targetNamespace && !isSingle(group)) ? null : nextProps.targetNamespace
-        : _.get(nextProps.operatorGroup, 'data', [])
-          .reduce((ns, group) => isGlobal(group) ? group.metadata.namespace : ns, prevState.targetNamespace || nextProps.targetNamespace);
+      let targetNamespace = prevState.targetNamespace || nextProps.targetNamespace;
+      if (installMode === InstallModeType.InstallModeTypeAllNamespaces) {
+        // FIXME(alecmerdler): Will throw error if no global `OperatorGroup`
+        targetNamespace = _.get(nextProps.operatorGroup, 'data', []).find(og => isGlobal(og)).metadata.namespace;
+      }
 
       return {
         targetNamespace,
@@ -78,7 +78,7 @@ export const OperatorHubSubscribeForm = withFormState((props: OperatorHubSubscri
       : _.uniq(catalogSourceConfig.spec.packages.split(',').concat([packageName])).join(',');
 
     const newCatalogSourceConfig = {
-      apiVersion: `${CatalogSourceConfigModel.apiGroup}/${CatalogSourceConfigModel.apiVersion}`,
+      apiVersion: apiVersionForModel(CatalogSourceConfigModel),
       kind: CatalogSourceConfigModel.kind,
       metadata: {
         name: OPERATOR_HUB_CSC_NAME,
@@ -93,7 +93,7 @@ export const OperatorHubSubscribeForm = withFormState((props: OperatorHubSubscri
     };
 
     const operatorGroup: OperatorGroupKind = {
-      apiVersion: 'operators.coreos.com/v1alpha2',
+      apiVersion: apiVersionForModel(OperatorGroupModel) as OperatorGroupKind['apiVersion'],
       kind: 'OperatorGroup',
       metadata: {
         generateName: `${props.formState().targetNamespace}-`,
@@ -105,11 +105,15 @@ export const OperatorHubSubscribeForm = withFormState((props: OperatorHubSubscri
     };
 
     const subscription: SubscriptionKind = {
-      apiVersion: 'operators.coreos.com/v1alpha1',
+      apiVersion: apiVersionForModel(SubscriptionModel) as SubscriptionKind['apiVersion'],
       kind: 'Subscription',
       metadata: {
         name: packageName,
         namespace: props.formState().targetNamespace,
+        labels: {
+          'csc-owner-name': OPERATOR_HUB_CSC_NAME,
+          'csc-owner-namespace': 'openshift-marketplace',
+        },
       },
       spec: {
         source: OPERATOR_HUB_CSC_NAME,
@@ -121,6 +125,7 @@ export const OperatorHubSubscribeForm = withFormState((props: OperatorHubSubscri
       },
     };
 
+    // TODO(alecmerdler): Handle and display error from creating kube objects...
     return (!_.isEmpty(catalogSourceConfig) || hasBeenEnabled
       ? k8sUpdate(CatalogSourceConfigModel, {...catalogSourceConfig, spec: {...catalogSourceConfig.spec, packages}}, 'openshift-marketplace', OPERATOR_HUB_CSC_NAME)
       : k8sCreate(CatalogSourceConfigModel, newCatalogSourceConfig)
@@ -128,21 +133,29 @@ export const OperatorHubSubscribeForm = withFormState((props: OperatorHubSubscri
       ? Promise.resolve()
       : k8sCreate(OperatorGroupModel, operatorGroup))
       .then(() => k8sCreate(SubscriptionModel, subscription))
-      .then(() => history.push('/operatorhub'));
+      .then(() => history.push(resourcePathFromModel(SubscriptionModel, packageName, subscription.metadata.namespace)));
   };
 
   const installModes = channels.find(ch => ch.name === props.formState().updateChannel).currentCSVDesc.installModes;
-  const isGlobalOperator = installModes.find(m => m.type === InstallModeType.InstallModeTypeAllNamespaces).supported;
+  const supportsSingle = installModes.find(m => m.type === InstallModeType.InstallModeTypeSingleNamespace).supported;
+  const supportsGlobal = installModes.find(m => m.type === InstallModeType.InstallModeTypeAllNamespaces).supported;
   const descFor = (mode: InstallModeType) => {
-    if (mode === InstallModeType.InstallModeTypeAllNamespaces && isGlobalOperator) {
+    if (mode === InstallModeType.InstallModeTypeAllNamespaces && supportsGlobal) {
       return 'Operator will be available in all namespaces.';
     }
-    if (mode === InstallModeType.InstallModeTypeOwnNamespace && !isGlobalOperator) {
+    if (mode === InstallModeType.InstallModeTypeSingleNamespace && supportsSingle) {
       return 'Operator will be available in a single namespace only.';
     }
     return 'This mode is not supported by this Operator';
   };
   const subscriptionExists = (ns: string) => installedFor(props.subscription.data)(props.operatorGroup.data)(props.packageManifest.data.status.packageName)(ns);
+  const namespaceSupports = (ns: string) => (mode: InstallModeType) => {
+    const operatorGroup = props.operatorGroup.data.find(og => og.metadata.namespace === ns);
+    if (!operatorGroup || !ns) {
+      return true;
+    }
+    return supports([{type: mode, supported: true}])(operatorGroup);
+  };
 
   return <React.Fragment>
     <div className="col-xs-6">
@@ -150,12 +163,12 @@ export const OperatorHubSubscribeForm = withFormState((props: OperatorHubSubscri
         <div className="form-group">
           <label className="co-required">Installation Mode</label>
           <div>
-            <Tooltip content={descFor(InstallModeType.InstallModeTypeAllNamespaces)} hidden={isGlobalOperator}>
+            <Tooltip content={descFor(InstallModeType.InstallModeTypeAllNamespaces)} hidden={!supportsGlobal}>
               <RadioInput
-                onChange={e => props.updateFormState({installMode: e.target.value})}
+                onChange={e => props.updateFormState({installMode: e.target.value, targetNamespace: null})}
                 value={InstallModeType.InstallModeTypeAllNamespaces}
                 checked={props.formState().installMode === InstallModeType.InstallModeTypeAllNamespaces}
-                disabled={!isGlobalOperator}
+                disabled={!supportsGlobal}
                 title="All namespaces on the cluster"
                 subTitle="(default)">
                 <div className="co-m-radio-desc">
@@ -165,21 +178,21 @@ export const OperatorHubSubscribeForm = withFormState((props: OperatorHubSubscri
             </Tooltip>
           </div>
           <div>
-            <Tooltip content={descFor(InstallModeType.InstallModeTypeOwnNamespace)} hidden={!isGlobalOperator}>
+            <Tooltip content={descFor(InstallModeType.InstallModeTypeSingleNamespace)} hidden={!supportsSingle}>
               <RadioInput
-                onChange={e => props.updateFormState({installMode: e.target.value})}
-                value={InstallModeType.InstallModeTypeOwnNamespace}
-                checked={props.formState().installMode === InstallModeType.InstallModeTypeOwnNamespace}
-                disabled={isGlobalOperator}
+                onChange={e => props.updateFormState({installMode: e.target.value, targetNamespace: null})}
+                value={InstallModeType.InstallModeTypeSingleNamespace}
+                checked={props.formState().installMode === InstallModeType.InstallModeTypeSingleNamespace}
+                disabled={!supportsSingle}
                 title="A specific namespace on the cluster">
                 <div className="co-m-radio-desc">
-                  <p className="text-muted">{descFor(InstallModeType.InstallModeTypeOwnNamespace)}</p>
+                  <p className="text-muted">{descFor(InstallModeType.InstallModeTypeSingleNamespace)}</p>
                 </div>
-                { props.formState().installMode !== InstallModeType.InstallModeTypeAllNamespaces && <div style={{marginLeft: '20px'}}>
+                { props.formState().installMode === InstallModeType.InstallModeTypeSingleNamespace && <div style={{marginLeft: '20px'}}>
                   <NsDropdown
                     id="dropdown-selectbox"
                     selectedKey={props.formState().targetNamespace}
-                    dataFilter={(ns: K8sResourceKind) => _.isNil(props.operatorGroup.data.find(og => og.metadata.namespace === ns.metadata.name && !isSingle(og)))}
+                    // TODO(alecmerdler): We can check the `olm.providedAPIs` annotation to filter instead (when it's implemented)!
                     onChange={(ns: string) => props.updateFormState({targetNamespace: ns})} />
                 </div> }
               </RadioInput>
@@ -191,7 +204,7 @@ export const OperatorHubSubscribeForm = withFormState((props: OperatorHubSubscri
           <RadioGroup
             currentValue={props.formState().updateChannel}
             items={channels.map(ch => ({value: ch.name, title: ch.name}))}
-            onChange={(e) => props.updateFormState({updateChannel: e.currentTarget.value})} />
+            onChange={(e) => props.updateFormState({updateChannel: e.currentTarget.value, installMode: null, targetNamespace: null})} />
         </div>
         <div className="form-group">
           <label className="co-required">Approval Strategy</label>
@@ -205,9 +218,15 @@ export const OperatorHubSubscribeForm = withFormState((props: OperatorHubSubscri
         </div>
       </React.Fragment>
       <div className="co-form-section__separator" />
-      { subscriptionExists(props.formState().targetNamespace) && <Alert type="error">Operator subscription in namespace &quot;{props.formState().targetNamespace}&quot; already exists</Alert> }
+      { !namespaceSupports(props.formState().targetNamespace)(props.formState().installMode) && <Alert type="error">Namespace does not support install modes for this Operator.</Alert> }
+      { subscriptionExists(props.formState().targetNamespace) && <Alert type="error">Operator subscription for namespace &quot;{props.formState().targetNamespace}&quot; already exists.</Alert> }
       <React.Fragment>
-        <button className="btn btn-primary" onClick={() => submit()} disabled={_.values(props.formState()).some(v => _.isNil(v)) || subscriptionExists(props.formState().targetNamespace)}>
+        <button
+          className="btn btn-primary"
+          onClick={() => submit()}
+          disabled={_.values(props.formState()).some(v => _.isNil(v))
+            || subscriptionExists(props.formState().targetNamespace)
+            || !namespaceSupports(props.formState().targetNamespace)(props.formState().installMode)}>
           Subscribe
         </button>
         <button className="btn btn-default" onClick={() => history.push('/operatorhub')}>

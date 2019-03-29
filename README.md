@@ -154,7 +154,7 @@ yarn run dev
 ```
 If changes aren't detected, you might need to increase `fs.inotify.max_user_watches`. See <https://webpack.js.org/configuration/watch/#not-enough-watchers>.
 
-### Tests
+### Unit Tests
 
 Run all unit tests:
 ```
@@ -171,6 +171,14 @@ Run frontend tests:
 ./test-frontend.sh
 ```
 
+#### Debugging Unit Tests
+
+1. `cd frontend; yarn run build`
+2. Add `debugger;` statements to any unit test
+3. `yarn debug-test route-pages`
+4. Chrome browser URL: 'chrome://inspect/#devices', click on the 'inspect' link in **Target (v10...)** section.
+5. Launches chrome-dev tools, click Resume button to continue
+6. Will break on any `debugger;` statements
 
 ### Integration Tests
 
@@ -221,6 +229,16 @@ $ ./test-gui.sh olm
 #### Hacking Integration Tests
 
 Remove the `--headless` flag to Chrome (chromeOptions) in [protractor.conf.ts](frontend/integration-tests/protractor.conf.ts) to see what the tests are actually doing.
+
+##### Debugging Integration Tests
+
+1. `cd frontend; yarn run build`
+2. Add `debugger;` statements to any e2e test
+3. `yarn run debug-test-suite --suite overview`
+4. Chrome browser URL: 'chrome://inspect/#devices', click on the 'inspect' link in **Target (v10...)** section.
+5. Launches chrome-dev tools, click Resume button to continue
+6. Will break on any `debugger;` statements
+7. Pauses browser when not using `--headless` argument!
 
 ### Dependency Management
 

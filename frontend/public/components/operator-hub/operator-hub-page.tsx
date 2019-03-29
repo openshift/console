@@ -12,8 +12,10 @@ import { PackageManifestModel, OperatorGroupModel, CatalogSourceConfigModel, Sub
 import { getOperatorProviderType } from './operator-hub-utils';
 import { OperatorHubTileView } from './operator-hub-items';
 import { PackageManifestKind, OperatorGroupKind, SubscriptionKind } from '../operator-lifecycle-manager';
-import { installedFor } from '../operator-lifecycle-manager/operator-group';
+import { installedFor, subscriptionFor } from '../operator-lifecycle-manager/operator-group';
 import { OPERATOR_HUB_CSC_BASE } from '../../const';
+import { OperatorHubItem } from './index';
+
 import * as operatorImg from '../../imgs/operator.svg';
 
 export const OperatorHubList: React.SFC<OperatorHubListProps> = (props) => {
@@ -30,6 +32,8 @@ export const OperatorHubList: React.SFC<OperatorHubListProps> = (props) => {
       name: _.get(currentCSVDesc, 'displayName', pkg.metadata.name),
       uid: `${pkg.metadata.name}-${pkg.status.catalogSourceNamespace}`,
       installed: installedFor(subscription.data)(operatorGroup.data)(pkg.status.packageName)(namespace),
+      subscription: subscriptionFor(subscription.data)(operatorGroup.data)(pkg.status.packageName)(namespace),
+      // FIXME: Just use `installed`
       installState: installedFor(subscription.data)(operatorGroup.data)(pkg.status.packageName)(namespace) ? 'Installed' : 'Not Installed',
       imgUrl: iconObj ? `data:${iconObj.mediatype};base64,${iconObj.base64data}` : operatorImg,
       description: currentCSVAnnotations.description || currentCSVDesc.description,
@@ -49,7 +53,7 @@ export const OperatorHubList: React.SFC<OperatorHubListProps> = (props) => {
         'createdAt',
         'support',
       ]),
-    };
+    } as OperatorHubItem;
   });
 
   return <StatusBox

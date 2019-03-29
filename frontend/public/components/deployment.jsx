@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 
 import { DeploymentModel } from '../models';
-import {configureUpdateStrategyModal, errorModal} from './modals';
+import { configureUpdateStrategyModal, errorModal } from './modals';
 import { Conditions } from './conditions';
 import { ResourceEventStream } from './events';
 import { formatDuration } from './utils/datetime';
@@ -75,7 +75,7 @@ const DeploymentDetails = ({obj: deployment}) => {
       <div className="co-m-pane__body-group">
         <div className="row">
           <div className="col-sm-6">
-            <ResourceSummary resource={deployment} showPodSelector showNodeSelector>
+            <ResourceSummary resource={deployment} showPodSelector showNodeSelector showTolerations>
               <dt>Status</dt>
               <dd>{deployment.status.availableReplicas === deployment.status.updatedReplicas ? <StatusIcon status="Active" /> : <StatusIcon status="Updating" />}</dd>
             </ResourceSummary>

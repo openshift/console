@@ -378,6 +378,8 @@
 .co-select-to-copy {
   cursor: copy;
   user-select: all;
+  -moz-user-select: all;
+  -webkit-user-select: all;
 }
 
 .co-nowrap {

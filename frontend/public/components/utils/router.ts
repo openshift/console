@@ -1,3 +1,5 @@
+/* eslint-disable no-undef, no-unused-vars */
+
 import * as _ from 'lodash-es';
 import { createBrowserHistory, createMemoryHistory } from 'history';
 
@@ -15,10 +17,10 @@ try {
   createHistory = createBrowserHistory;
 }
 
-export const history = createHistory({basename: window.SERVER_FLAGS.basePath});
+export const history = createHistory({basename: (window as any).SERVER_FLAGS.basePath});
 
-const removeBasePath = (url = '/') => _.startsWith(url, window.SERVER_FLAGS.basePath)
-  ? url.slice(window.SERVER_FLAGS.basePath.length - 1)
+const removeBasePath = (url = '/') => _.startsWith(url, (window as any).SERVER_FLAGS.basePath)
+  ? url.slice((window as any).SERVER_FLAGS.basePath.length - 1)
   : url;
 
 // Monkey patch history to slice off the base path
@@ -29,11 +31,18 @@ history.__push__ = history.push;
 history.push = url => history.__push__(removeBasePath(url));
 history.pushPath = path => history.__push__(path);
 
-export const getQueryArgument = arg => new URLSearchParams(window.location.search).get(arg);
+export const getQueryArgument = (arg: string) => new URLSearchParams(window.location.search).get(arg);
 
-export const setQueryArgument = (k, v) => {
+export const setQueryArgument = (k: string, v: string) => {
   const params = new URLSearchParams(window.location.search);
   params.set(k, v);
-  const url = new URL(window.location);
+  const url = new URL(window.location.href);
+  history.replace(`${url.pathname}?${params.toString()}${url.hash}`);
+};
+
+export const removeQueryArgument = (k: string) => {
+  const params = new URLSearchParams(window.location.search);
+  params.delete(k);
+  const url = new URL(window.location.href);
   history.replace(`${url.pathname}?${params.toString()}${url.hash}`);
 };

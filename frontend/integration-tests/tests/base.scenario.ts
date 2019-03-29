@@ -2,27 +2,10 @@ import { browser, ExpectedConditions as until, $, $$ } from 'protractor';
 
 import { appHost, testName } from '../protractor.conf';
 import * as crudView from '../views/crud.view';
-import * as loginView from '../views/login.view';
 
 const BROWSER_TIMEOUT = 15000;
 
-describe('Basic console test', () => {
-
-  it('logs into console if necessary', async() => {
-    await browser.get(appHost);
-
-    const {BRIDGE_AUTH_USERNAME, BRIDGE_AUTH_PASSWORD} = process.env;
-    if (BRIDGE_AUTH_USERNAME && BRIDGE_AUTH_PASSWORD) {
-      await browser.wait(until.visibilityOf(loginView.nameInput), BROWSER_TIMEOUT);
-      await loginView.nameInput.sendKeys(BRIDGE_AUTH_USERNAME);
-      await loginView.passwordInput.sendKeys(BRIDGE_AUTH_PASSWORD);
-      await loginView.submitButton.click();
-      await browser.wait(until.visibilityOf($('.pf-c-page__header')), BROWSER_TIMEOUT);
-    }
-
-    expect(browser.getCurrentUrl()).toContain(appHost);
-  });
-
+describe('Create a test namespace', () => {
   it(`creates test namespace ${testName} if necessary`, async() => {
     // Use projects if OpenShift so non-admin users can run tests.
     const resource = browser.params.openshift === 'true' ? 'projects' : 'namespaces';
@@ -37,7 +20,6 @@ describe('Basic console test', () => {
       await $('.modal-content').$('#confirm-action').click();
       await browser.wait(until.urlContains(`/${testName}`), BROWSER_TIMEOUT);
     }
-
     expect(browser.getCurrentUrl()).toContain(appHost);
   });
 });

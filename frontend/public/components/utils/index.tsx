@@ -47,6 +47,8 @@ export * from './k8s-watcher';
 export * from './workload-pause';
 export * from './list-dropdown';
 export * from './status-icon';
+export * from './list-input';
+
 /*
   Add the enum for NameValueEditorPair here and not in its namesake file because the editor should always be
   loaded asynchronously in order not to bloat the vendor file. The enum reference into the editor

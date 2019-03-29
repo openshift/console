@@ -13,6 +13,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/coreos/dex/api"
@@ -39,14 +40,26 @@ const (
 	errorInvalidState = "invalid_state"
 )
 
-var log = capnslog.NewPackageLogger("github.com/openshift/console", "auth")
+var (
+	log = capnslog.NewPackageLogger("github.com/openshift/console", "auth")
+
+	// Cache HTTP clients to avoid recreating them for each request to the
+	// OAuth server. The key is the ca.crt bytes cast to a string and the
+	// value is a pointer to the http.Client. Keep two maps: one that
+	// incldues system roots and one that doesn't.
+	httpClientCache            sync.Map
+	httpClientCacheSystemRoots sync.Map
+)
 
 type Authenticator struct {
-	tokenVerifier func(string) (*loginState, error)
-
 	authFunc func() (*oauth2.Config, loginMethod)
 
 	clientFunc func() *http.Client
+
+	// userFunc returns the User associated with the cookie from a request.
+	// This is not part of loginMethod to avoid creating an unnecessary
+	// HTTP client for every call.
+	userFunc func(*http.Request) (*User, error)
 
 	errorURL      string
 	successURL    string
@@ -66,8 +79,6 @@ type loginMethod interface {
 	login(http.ResponseWriter, *oauth2.Token) (*loginState, error)
 	// logout deletes any cookies associated with the user.
 	logout(http.ResponseWriter, *http.Request)
-	// authenticate fetches the bearer token from the cookie of a request.
-	authenticate(*http.Request) (*User, error)
 	// getKubeAdminLogoutURL returns the logout URL for the special
 	// kube:admin user in OpenShift
 	getKubeAdminLogoutURL() string
@@ -112,27 +123,43 @@ func newHTTPClient(issuerCA string, includeSystemRoots bool) (*http.Client, erro
 		return nil, fmt.Errorf("load issuer CA file %s: %v", issuerCA, err)
 	}
 
+	caKey := string(data)
 	var certPool *x509.CertPool
 	if includeSystemRoots {
+		if httpClient, ok := httpClientCacheSystemRoots.Load(caKey); ok {
+			return httpClient.(*http.Client), nil
+		}
 		certPool, err = x509.SystemCertPool()
 		if err != nil {
 			log.Errorf("error copying system cert pool: %v", err)
 			certPool = x509.NewCertPool()
 		}
 	} else {
+		if httpClient, ok := httpClientCache.Load(caKey); ok {
+			return httpClient.(*http.Client), nil
+		}
 		certPool = x509.NewCertPool()
 	}
 	if !certPool.AppendCertsFromPEM(data) {
 		return nil, fmt.Errorf("file %s contained no CA data", issuerCA)
 	}
-	return &http.Client{
+
+	httpClient := &http.Client{
 		Transport: &http.Transport{
 			TLSClientConfig: &tls.Config{
 				RootCAs: certPool,
 			},
 		},
 		Timeout: time.Second * 5,
-	}, nil
+	}
+
+	if includeSystemRoots {
+		httpClientCacheSystemRoots.Store(caKey, httpClient)
+	} else {
+		httpClientCache.Store(caKey, httpClient)
+	}
+
+	return httpClient, nil
 }
 
 // NewAuthenticator initializes an Authenticator struct. It blocks until the authenticator is
@@ -154,6 +181,7 @@ func NewAuthenticator(ctx context.Context, c *Config) (*Authenticator, error) {
 		var authSourceFunc func() (oauth2.Endpoint, loginMethod, error)
 		switch c.AuthSource {
 		case AuthSourceOpenShift:
+			a.userFunc = getOpenShiftUser
 			authSourceFunc = func() (oauth2.Endpoint, loginMethod, error) {
 				// Use the k8s CA for OAuth metadata discovery.
 				// Don't include system roots when talking to the API server.
@@ -171,14 +199,22 @@ func NewAuthenticator(ctx context.Context, c *Config) (*Authenticator, error) {
 				})
 			}
 		default:
+			// OIDC auth source is stateful, so only create it once.
+			endpoint, oidcAuthSource, err := newOIDCAuth(ctx, &oidcConfig{
+				client:        a.clientFunc(),
+				issuerURL:     c.IssuerURL,
+				clientID:      c.ClientID,
+				cookiePath:    c.CookiePath,
+				secureCookies: c.SecureCookies,
+			})
+			a.userFunc = func(r *http.Request) (*User, error) {
+				if oidcAuthSource == nil {
+					return nil, fmt.Errorf("OIDC auth source is not intialized")
+				}
+				return oidcAuthSource.authenticate(r)
+			}
 			authSourceFunc = func() (oauth2.Endpoint, loginMethod, error) {
-				return newOIDCAuth(ctx, &oidcConfig{
-					client:        a.clientFunc(),
-					issuerURL:     c.IssuerURL,
-					clientID:      c.ClientID,
-					cookiePath:    c.CookiePath,
-					secureCookies: c.SecureCookies,
-				})
+				return endpoint, oidcAuthSource, err
 			}
 		}
 
@@ -273,7 +309,7 @@ type User struct {
 }
 
 func (a *Authenticator) Authenticate(r *http.Request) (*User, error) {
-	return a.getLoginMethod().authenticate(r)
+	return a.userFunc(r)
 }
 
 // LoginFunc redirects to the OIDC provider for user login.

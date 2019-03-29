@@ -4,7 +4,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { shallow } from 'enzyme';
 
-import { requireOperatorGroup, NoOperatorGroupMsg, supports, InstallModeSet, InstallModeType, installedFor } from '../../../public/components/operator-lifecycle-manager/operator-group';
+import { requireOperatorGroup, NoOperatorGroupMsg, supports, InstallModeSet, InstallModeType, installedFor, subscriptionFor } from '../../../public/components/operator-lifecycle-manager/operator-group';
 import { OperatorGroupKind, SubscriptionKind } from '../../../public/components/operator-lifecycle-manager';
 import { testOperatorGroup, testSubscription } from '../../../__mocks__/k8sResourcesMocks';
 
@@ -33,6 +33,53 @@ describe('requireOperatorGroup', () => {
 
     expect(wrapper.find(SomeComponent).exists()).toBe(true);
     expect(wrapper.find(NoOperatorGroupMsg).exists()).toBe(false);
+  });
+});
+
+describe('subscriptionFor', () => {
+  const pkgName = testSubscription.spec.name;
+  const ns = testSubscription.metadata.namespace;
+  let subscriptions: SubscriptionKind[];
+  let operatorGroups: OperatorGroupKind[];
+
+  beforeEach(() => {
+    subscriptions = [];
+    operatorGroups = [];
+  });
+
+  it('returns nothing if no `Subscriptions` exist for the given package', () => {
+    subscriptions = [testSubscription];
+    operatorGroups = [{...testOperatorGroup, status: {namespaces: [ns], lastUpdated: null}}];
+
+    expect(subscriptionFor(subscriptions)(operatorGroups)('new-operator')(ns)).toBeUndefined();
+  });
+
+  it('returns noting if no `OperatorGroups` target the given namespace', () => {
+    subscriptions = [testSubscription];
+    operatorGroups = [{...testOperatorGroup, status: {namespaces: ['prod-a', 'prod-b'], lastUpdated: null}}];
+
+    expect(subscriptionFor(subscriptions)(operatorGroups)(pkgName)(ns)).toBeUndefined();
+  });
+
+  it('returns nothing if checking for `all-namespaces`', () => {
+    subscriptions = [testSubscription];
+    operatorGroups = [{...testOperatorGroup, status: {namespaces: [ns], lastUpdated: null}}];
+
+    expect(subscriptionFor(subscriptions)(operatorGroups)(pkgName)('')).toBeUndefined();
+  });
+
+  it('returns `Subscription` when it exists in the "global" `OperatorGroup`', () => {
+    subscriptions = [testSubscription];
+    operatorGroups = [{...testOperatorGroup, status: {namespaces: [''], lastUpdated: null}}];
+
+    expect(subscriptionFor(subscriptions)(operatorGroups)(pkgName)(ns)).toEqual(testSubscription);
+  });
+
+  it('returns `Subscription` when it exists in an `OperatorGroup` that targets given namespace', () => {
+    subscriptions = [testSubscription];
+    operatorGroups = [{...testOperatorGroup, status: {namespaces: [ns], lastUpdated: null}}];
+
+    expect(subscriptionFor(subscriptions)(operatorGroups)(pkgName)(ns)).toEqual(testSubscription);
   });
 });
 

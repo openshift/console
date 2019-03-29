@@ -9,11 +9,11 @@ import { k8sCreate, k8sGet, k8sPatch, K8sResourceKind, referenceFor } from '../.
 import {
   AsyncComponent,
   ButtonBar,
-  Dropdown,
   PromiseComponent,
   history,
   resourceObjPath,
 } from '../utils';
+import { MappingMethod, MappingMethodType } from './mapping-method';
 
 // The name of the cluster-scoped OAuth configuration resource.
 const oauthResourceName = 'cluster';
@@ -23,8 +23,6 @@ const DroppableFileInput = (props) => <AsyncComponent loader={() => import('../u
 export class AddHTPasswdPage extends PromiseComponent {
   readonly state: AddHTPasswdPageState = {
     name: 'htpasswd',
-    challenge: true,
-    login: true,
     mappingMethod: 'claim',
     htpasswdFileContent: '',
     inProgress: false,
@@ -52,12 +50,10 @@ export class AddHTPasswdPage extends PromiseComponent {
   }
 
   addHTPasswdIDP(oauth: K8sResourceKind, secretName: string): Promise<K8sResourceKind> {
-    const { name, challenge, login, mappingMethod } = this.state;
+    const { name, mappingMethod } = this.state;
     const htpasswd = {
       name,
       type: 'HTPasswd',
-      challenge,
-      login,
       mappingMethod,
       htpasswd: {
         fileData: {
@@ -94,14 +90,6 @@ export class AddHTPasswdPage extends PromiseComponent {
     this.setState({name: e.currentTarget.value});
   };
 
-  loginChanged: React.ReactEventHandler<HTMLInputElement> = event => {
-    this.setState({login: event.currentTarget.checked});
-  }
-
-  challengeChanged: React.ReactEventHandler<HTMLInputElement> = event => {
-    this.setState({challenge: event.currentTarget.checked});
-  }
-
   mappingMethodChanged = (mappingMethod: string) => {
     this.setState({mappingMethod});
   }
@@ -111,13 +99,9 @@ export class AddHTPasswdPage extends PromiseComponent {
   };
 
   render() {
-    const { name, login, challenge, mappingMethod, htpasswdFileContent } = this.state;
+    const { name, mappingMethod, htpasswdFileContent } = this.state;
     const title = 'Add Identity Provider: HTPasswd';
-    const mappingMethods = {
-      'claim': 'Claim',
-      'lookup': 'Lookup',
-      'add': 'Add',
-    };
+
     return <div className="co-m-pane__body">
       <Helmet>
         <title>{title}</title>
@@ -140,26 +124,7 @@ export class AddHTPasswdPage extends PromiseComponent {
             Unique name of the new identity provider. This cannot be changed later.
           </p>
         </div>
-        <div className="checkbox">
-          <label className="control-label">
-            <input type="checkbox" onChange={this.loginChanged} checked={login} />
-            Use this identity provider for browser login
-          </label>
-        </div>
-        <div className="checkbox">
-          <label className="control-label">
-            <input type="checkbox" onChange={this.challengeChanged} checked={challenge} />
-            Issue <code>WWW-Authenticate</code> challenges to non-browser clients
-          </label>
-        </div>
-        <div className="form-group">
-          <label className="control-label co-required" htmlFor="tag">Mapping Method</label>
-          <Dropdown dropDownClassName="dropdown--full-width" items={mappingMethods} selectedKey={mappingMethod} title={mappingMethods[mappingMethod]} onChange={this.mappingMethodChanged} />
-          <div className="help-block" id="mapping-method-description">
-            { /* TODO: Add doc link when available in 4.0 docs. */ }
-            Specifies how new identities are mapped to users when they log in.
-          </div>
-        </div>
+        <MappingMethod value={mappingMethod} onChange={this.mappingMethodChanged} />
         <div className="form-group">
           <DroppableFileInput
             onChange={this.htpasswdFileChanged}
@@ -181,9 +146,7 @@ export class AddHTPasswdPage extends PromiseComponent {
 
 type AddHTPasswdPageState = {
   name: string;
-  login: boolean;
-  challenge: boolean;
-  mappingMethod: string;
+  mappingMethod: MappingMethodType;
   htpasswdFileContent: string;
   inProgress: boolean;
   errorMessage: string;

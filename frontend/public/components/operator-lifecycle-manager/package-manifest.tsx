@@ -106,6 +106,7 @@ export const PackageManifestsPage: React.SFC<PackageManifestsPageProps> = (props
     helpText={HelpText}
     ListComponent={(listProps: PackageManifestListProps) => <PackageManifestList {...listProps} showDetailsLink={true} namespace={namespace} />}
     filterLabel="Packages by name"
+    textFilter="packagemanifest-name"
     flatten={flatten}
     resources={[
       {kind: referenceForModel(PackageManifestModel), isList: true, namespaced: true, prop: 'packageManifest', selector: {matchExpressions: [{key: visibilityLabel, operator: 'DoesNotExist'}, {key: OPERATOR_HUB_LABEL, operator: 'DoesNotExist'}]}},

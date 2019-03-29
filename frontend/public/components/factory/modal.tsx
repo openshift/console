@@ -1,6 +1,5 @@
 /* eslint-disable no-undef, no-unused-vars */
 
-import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
@@ -18,10 +17,6 @@ export const createModalLauncher: CreateModalLauncher = (Component) => (props) =
 
   const result = new Promise(resolve => {
     const closeModal = e => {
-      // Disable closing the modal with the escape key for "blocking" modals
-      if (props.blocking && _.get(e, 'type') === 'keydown') {
-        return;
-      }
       if (e && e.stopPropagation) {
         e.stopPropagation();
       }
@@ -35,7 +30,7 @@ export const createModalLauncher: CreateModalLauncher = (Component) => (props) =
           isOpen={true}
           contentLabel="Modal"
           onRequestClose={closeModal}
-          className="modal-dialog"
+          className={classNames('modal-dialog', props.modalClassName)}
           overlayClassName="co-overlay"
           shouldCloseOnOverlayClick={!props.blocking}>
           <Component {...props} cancel={closeModal} close={closeModal} />
@@ -92,6 +87,7 @@ export type CreateModalLauncherProps = {
 export type ModalComponentProps = {
   cancel: (e?: Event) => void;
   close: (e?: Event) => void;
+  modalClassName?: string;
 };
 
 export type ModalTitleProps = {

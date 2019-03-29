@@ -267,6 +267,8 @@ const searchStartsWith = ['search'];
 const operatorManagementStartsWith = [
   referenceForModel(PackageManifestModel),
   PackageManifestModel.path,
+  // FIXME(alecmerdler): Needed for backwards-compatibility with new API groups
+  'packages.apps.redhat.com~v1alpha1~PackageManifest',
   referenceForModel(SubscriptionModel),
   SubscriptionModel.path,
   referenceForModel(InstallPlanModel),
