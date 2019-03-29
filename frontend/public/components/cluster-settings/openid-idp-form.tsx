@@ -26,10 +26,10 @@ export class AddOpenIDPage extends PromiseComponent {
     name: 'openid',
     mappingMethod: 'claim',
     clientID: '',
-    clientSecretFileContent: '',
-    claimPreferredUsernames: [],
-    claimNames: [],
-    claimEmails: [],
+    clientSecret: '',
+    claimPreferredUsernames: ['preferred_username'],
+    claimNames: ['name'],
+    claimEmails: ['email'],
     issuer: '',
     caFileContent: '',
     extraScopes: [],
@@ -42,6 +42,7 @@ export class AddOpenIDPage extends PromiseComponent {
   }
 
   createClientSecret(): Promise<K8sResourceKind> {
+    const { clientSecret } = this.state;
     const secret = {
       apiVersion: 'v1',
       kind: 'Secret',
@@ -50,7 +51,7 @@ export class AddOpenIDPage extends PromiseComponent {
         namespace: 'openshift-config',
       },
       stringData: {
-        clientSecret: this.state.clientSecretFileContent,
+        clientSecret,
       },
     };
 
@@ -113,8 +114,8 @@ export class AddOpenIDPage extends PromiseComponent {
 
   submit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
-    if (!this.state.clientSecretFileContent) {
-      this.setState({errorMessage: 'You must specify a Client Secret file.'});
+    if (!this.state.clientSecret) {
+      this.setState({errorMessage: 'You must specify a client secret.'});
       return;
     }
 
@@ -143,6 +144,10 @@ export class AddOpenIDPage extends PromiseComponent {
     this.setState({clientID: event.currentTarget.value});
   };
 
+  clientSecretChanged: React.ReactEventHandler<HTMLInputElement> = (event) => {
+    this.setState({clientSecret: event.currentTarget.value});
+  };
+
   issuerChanged: React.ReactEventHandler<HTMLInputElement> = (event) => {
     this.setState({issuer: event.currentTarget.value});
   };
@@ -167,16 +172,12 @@ export class AddOpenIDPage extends PromiseComponent {
     this.setState({mappingMethod});
   };
 
-  clientSecretFileChanged = (clientSecretFileContent: string) => {
-    this.setState({clientSecretFileContent});
-  };
-
   caFileChanged = (caFileContent: string) => {
     this.setState({caFileContent});
   };
 
   render() {
-    const { name, mappingMethod, clientID, clientSecretFileContent, issuer, caFileContent } = this.state;
+    const { name, mappingMethod, clientID, clientSecret, issuer, claimPreferredUsernames, claimNames, claimEmails, caFileContent } = this.state;
     const title = 'Add Identity Provider: OpenID Connect';
     return <div className="co-m-pane__body">
       <Helmet>
@@ -202,7 +203,7 @@ export class AddOpenIDPage extends PromiseComponent {
         </div>
         <MappingMethod value={mappingMethod} onChange={this.mappingMethodChanged} />
         <div className="form-group">
-          <label className="control-label co-required" htmlFor="clientID">ClientID</label>
+          <label className="control-label co-required" htmlFor="clientID">Client ID</label>
           <input className="form-control"
             type="text"
             onChange={this.clientIDChanged}
@@ -211,13 +212,13 @@ export class AddOpenIDPage extends PromiseComponent {
             required />
         </div>
         <div className="form-group">
-          <DroppableFileInput
-            onChange={this.clientSecretFileChanged}
-            inputFileData={clientSecretFileContent}
-            id="clientsecret-file"
-            label="Client secret"
-            isRequired
-            hideContents />
+          <label className="control-label co-required" htmlFor="clientSecret">Client Secret</label>
+          <input className="form-control"
+            type="password"
+            onChange={this.clientSecretChanged}
+            value={clientSecret}
+            id="clientSecret"
+            required />
         </div>
         <div className="form-group">
           <label className="control-label co-required" htmlFor="issuer">Issuer URL</label>
@@ -226,14 +227,19 @@ export class AddOpenIDPage extends PromiseComponent {
             onChange={this.issuerChanged}
             value={issuer}
             id="issuer"
-            required />
+            required
+            aria-describedby="issuer-help" />
+          <div className="help-block" id="issuer-help">
+            The URL that the OpenID Provider asserts as its Issuer Identifier.
+            It must use the https scheme with no URL query parameters or fragment.
+          </div>
         </div>
         <div className="co-form-section__separator"></div>
         <h3>Claims</h3>
-        <p className="co-help-text">The first non-empty claim is used. At least one claim is required.</p>
-        <ListInput label="Preferred Username" onChange={this.claimPreferredUsernamesChanged} />
-        <ListInput label="Name" onChange={this.claimNamesChanged} />
-        <ListInput label="Email" onChange={this.claimEmailsChanged} />
+        <p className="co-help-text">Claims map metadata from the OpenID provider to an OpenShift user. The first non-empty claim is used.</p>
+        <ListInput label="Preferred Username" initialValues={claimPreferredUsernames} onChange={this.claimPreferredUsernamesChanged} />
+        <ListInput label="Name" initialValues={claimNames} onChange={this.claimNamesChanged} />
+        <ListInput label="Email" initialValues={claimEmails} onChange={this.claimEmailsChanged} />
         <div className="co-form-section__separator"></div>
         <h3>More options</h3>
         <div className="form-group">
@@ -258,7 +264,7 @@ type AddOpenIDIDPPageState = {
   name: string;
   mappingMethod: MappingMethodType;
   clientID: string;
-  clientSecretFileContent: string;
+  clientSecret: string;
   claimPreferredUsernames: string[];
   claimNames: string[];
   claimEmails: string[];

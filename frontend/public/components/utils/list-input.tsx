@@ -4,9 +4,12 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 
 export class ListInput extends React.Component<ListInputProps, ListInputState> {
-  readonly state: ListInputState = {
-    values: [''],
-  };
+  constructor(props: ListInputProps) {
+    super(props);
+    this.state = {
+      values: props.initialValues || [''],
+    };
+  }
 
   componentDidUpdate(prevProps: ListInputProps, prevState: ListInputState) {
     if (prevState.values !== this.state.values) {
@@ -71,5 +74,6 @@ type ChangeCallback = (values: string[]) => void;
 
 type ListInputProps = {
   label: string;
+  initialValues?: string[];
   onChange: ChangeCallback;
 };
