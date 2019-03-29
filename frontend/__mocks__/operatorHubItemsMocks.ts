@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars, no-undef */
 
 import { PackageManifestKind } from '../public/components/operator-lifecycle-manager';
+import { OperatorHubItem } from '../public/components/operator-hub';
 
 const amqPackageManifest = {
   apiVersion: 'packages.app.redhat.com/v1alpha1',
@@ -315,6 +316,7 @@ export const operatorHubTileViewPageProps = {
     {
       obj: amqPackageManifest,
       installState: 'Installed',
+      installed: false,
       kind: 'PackageManifest',
       name: 'amq-streams',
       uid: 'amq-streams/openshift-operator-lifecycle-manager',
@@ -332,10 +334,13 @@ export const operatorHubTileViewPageProps = {
       support: undefined,
       longDescription: undefined,
       categories: ['messaging', 'streaming'],
+      catalogSource: 'testing',
+      catalogSourceNamespace: 'openshift-marketplace',
     },
     {
       obj: etcdPackageManifest,
       installState: 'Not Installed',
+      installed: false,
       kind: 'PackageManifest',
       name: 'etcd',
       uid: 'etcd/openshift-operator-lifecycle-manager',
@@ -353,9 +358,12 @@ export const operatorHubTileViewPageProps = {
       support: undefined,
       longDescription: undefined,
       categories: ['database'],
+      catalogSource: 'testing',
+      catalogSourceNamespace: 'openshift-marketplace',
     },
     { obj: federationv2PackageManifest,
       installState: 'Not Installed',
+      installed: false,
       kind: 'PackageManifest',
       name: 'federationv2',
       uid: 'federationv2/openshift-operator-lifecycle-manager',
@@ -373,9 +381,12 @@ export const operatorHubTileViewPageProps = {
       support: undefined,
       longDescription: undefined,
       categories: [],
+      catalogSource: 'testing',
+      catalogSourceNamespace: 'openshift-marketplace',
     },
     { obj: prometheusPackageManifest,
       installState: 'Not Installed',
+      installed: false,
       kind: 'PackageManifest',
       name: 'prometheus',
       uid: 'prometheus/openshift-operator-lifecycle-manager',
@@ -393,9 +404,12 @@ export const operatorHubTileViewPageProps = {
       support: undefined,
       longDescription: undefined,
       categories: ['monitoring', 'alerting'],
+      catalogSource: 'testing',
+      catalogSourceNamespace: 'openshift-marketplace',
     },
     { obj: svcatPackageManifest,
       installState: 'Not Installed',
+      installed: false,
       kind: 'PackageManifest',
       name: 'svcat',
       uid: 'svcat/openshift-operator-lifecycle-manager',
@@ -413,8 +427,10 @@ export const operatorHubTileViewPageProps = {
       support: undefined,
       longDescription: undefined,
       categories: ['catalog'],
+      catalogSource: 'testing',
+      catalogSourceNamespace: 'openshift-marketplace',
     },
-  ],
+  ] as OperatorHubItem[],
   openOverlay: null,
 };
 
@@ -427,6 +443,7 @@ export const operatorHubTileViewPagePropsWithDummy = {
     operatorHubTileViewPageProps.items[4],
     {
       obj: dummyPackageManifest,
+      installed: false,
       kind: 'PackageManifest',
       name: 'dummy',
       uid: 'dummy/openshift-operator-lifecycle-manager',
@@ -444,6 +461,8 @@ export const operatorHubTileViewPagePropsWithDummy = {
       support: undefined,
       longDescription: undefined,
       categories: ['dummy'],
+      catalogSource: 'testing',
+      catalogSourceNamespace: 'openshift-marketplace',
     },
   ],
   openOverlay: null,
@@ -553,4 +572,6 @@ export const itemWithLongDescription = {
   support: undefined,
   longDescription: '**Red Hat AMQ Streams** is a massively scalable, distributed, and high performance data streaming platform based on the Apache Kafka project. \nAMQ Streams provides an event streaming backbone that allows microservices and other application components to exchange data with extremely high throughput and low latency.\n\n**The core capabilities include**\n* A pub/sub messaging model, similar to a traditional enterprise messaging system, in which application components publish and consume events to/from an ordered stream\n* The long term, fault-tolerant storage of events\n* The ability for a consumer to replay streams of events\n* The ability to partition topics for horizontal scalability\n\n# Before you start\n\n1. Create AMQ Streams Cluster Roles\n```\n$ oc apply -f http://amq.io/amqstreams/rbac.yaml\n```\n2. Create following bindings\n```\n$ oc adm policy add-cluster-role-to-user strimzi-cluster-operator -z strimzi-cluster-operator --namespace <namespace>\n$ oc adm policy add-cluster-role-to-user strimzi-kafka-broker -z strimzi-cluster-operator --namespace <namespace>\n```',
   categories: ['messaging', 'streaming'],
+  catalogSource: 'testing',
+  catalogSourceNamespace: 'openshift-marketplace',
 };

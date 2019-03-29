@@ -33,8 +33,7 @@ const IdentityProviders: React.SFC<IdentityProvidersProps> = ({identityProviders
           <tr>
             <th>Name</th>
             <th>Type</th>
-            <th>Challenge</th>
-            <th>Login</th>
+            <th>Mapping Method</th>
           </tr>
         </thead>
         <tbody>
@@ -42,8 +41,7 @@ const IdentityProviders: React.SFC<IdentityProvidersProps> = ({identityProviders
             <tr key={idp.name}>
               <td>{idp.name}</td>
               <td>{idp.type}</td>
-              <td>{idp.challenge ? 'true' : 'false'}</td>
-              <td>{idp.login ? 'true' : 'false'}</td>
+              <td>{idp.mappingMethod || 'claim'}</td>
             </tr>
           ))}
         </tbody>
@@ -55,6 +53,7 @@ const OAuthDetails: React.SFC<OAuthDetailsProps> = ({obj}: {obj: K8sResourceKind
   const { identityProviders, tokenConfig = {} } = obj.spec;
   const addIDPItems = {
     htpasswd: 'HTPasswd',
+    oidconnect: 'OpenID Connect',
   };
   return <React.Fragment>
     <div className="co-m-pane__body">

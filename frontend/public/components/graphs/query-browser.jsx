@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import * as classNames from 'classnames';
 import { addTraces, relayout, restyle } from 'plotly.js/lib/core';
 
 import { connectToURLs, MonitoringRoutes } from '../../monitoring';
@@ -15,10 +14,13 @@ class QueryBrowser_ extends Line_ {
   constructor(props) {
     super(props);
 
+    // For the default time span, use the first of the suggested span options that is at least as long as props.timeSpan
+    this.defaultSpan = spans.map(parsePrometheusDuration).find(s => s >= props.timeSpan);
+
     _.assign(this.state, {
       isSpanValid: true,
-      spanText: formatPrometheusDuration(props.timeSpan),
-      span: props.timeSpan,
+      spanText: formatPrometheusDuration(this.defaultSpan),
+      span: this.defaultSpan,
       updating: true,
     });
 
@@ -36,6 +38,9 @@ class QueryBrowser_ extends Line_ {
         fixedrange: false,
         tickformat: null, // Use Plotly's default datetime labels
         type: 'date',
+      },
+      yaxis: {
+        fixedrange: false,
       },
     });
 
@@ -61,13 +66,8 @@ class QueryBrowser_ extends Line_ {
       }
     };
 
-    this.relayout = () => {
-      const now = new Date();
-      const end = this.end || now;
-      const start = this.start || new Date(end - this.state.span);
-      // eslint-disable-next-line no-console
-      relayout(this.node, {'xaxis.range': [start, end]}).catch(e => console.error(e));
-    };
+    // eslint-disable-next-line no-console
+    this.relayout = layout => relayout(this.node, layout).catch(e => console.error(e));
 
     this.showLatest = span => {
       this.start = null;
@@ -76,7 +76,10 @@ class QueryBrowser_ extends Line_ {
       this.setState({isSpanValid: true, span, spanText: formatPrometheusDuration(span), updating: true}, () => {
         clearInterval(this.interval);
         this.fetch();
-        this.relayout();
+
+        const end = new Date();
+        const start = new Date(end - span);
+        this.relayout({'xaxis.range': [start, end], 'yaxis.autorange': true});
       });
     };
 
@@ -96,6 +99,12 @@ class QueryBrowser_ extends Line_ {
     if (!_.isEmpty(newData)) {
       this.data = newData;
       let traceIndex = 0;
+
+      // Work out which labels have different values for different metrics
+      const allLabels = _.map(newData, 'metric');
+      const allLabelKeys = _.uniq(_.flatMap(allLabels, _.keys));
+      const differingLabelKeys = _.filter(allLabelKeys, k => _.uniqBy(allLabels, k).length > 1);
+
       _.each(newData, ({metric, values}) => {
         // If props.metric is specified, ignore all other metrics
         const labels = _.omit(metric, '__name__');
@@ -114,11 +123,14 @@ class QueryBrowser_ extends Line_ {
           }
         });
 
+        // Just show labels that differ between metrics to keep the name shorter
+        const name = _.map(_.pick(labels, differingLabelKeys), (v, k) => `${k}="${v}"`).join(',');
+
         const update = {
           line: {
             width: 1,
           },
-          name: _.map(labels, (v, k) => `${k}=${v}`).join(','),
+          name,
           x: [values.map(v => new Date(v[0] * 1000))],
           y: [values.map(v => v[1])],
         };
@@ -133,34 +145,41 @@ class QueryBrowser_ extends Line_ {
         traceIndex += 1;
       });
 
-      this.relayout();
+      if (!this.start && !this.end) {
+        const end = new Date();
+        const start = new Date(end - this.state.span);
+        this.relayout({'xaxis.range': [start, end]});
+      }
     }
     this.setState({updating: false});
   }
 
   render() {
-    const {query, timeSpan, urls} = this.props;
+    const {query, urls} = this.props;
     const {spanText, isSpanValid, updating} = this.state;
     const baseUrl = urls[MonitoringRoutes.Prometheus];
 
     return <div className="query-browser__wrapper">
       <div className="query-browser__header">
         <div className="query-browser__controls">
-          <input
-            className={classNames('form-control query-browser__span-text', {'query-browser__span-text--error': !isSpanValid})}
-            onChange={this.onSpanTextChange}
-            type="text"
-            value={spanText}
-          />
+          <div className={isSpanValid ? '' : 'has-error'}>
+            <input
+              className="form-control query-browser__span-text"
+              onChange={this.onSpanTextChange}
+              type="text"
+              value={spanText}
+            />
+          </div>
           <Dropdown
             buttonClassName="btn-default form-control query-browser__span-dropdown"
             items={dropdownItems}
+            menuClassName="dropdown-menu-right query-browser__span-dropdown-menu"
             noSelection={true}
             onChange={v => this.showLatest(parsePrometheusDuration(v))}
           />
           <button
             className="btn btn-default query-browser__span-reset"
-            onClick={() => this.showLatest(timeSpan)}
+            onClick={() => this.showLatest(this.defaultSpan)}
             type="button"
           >Reset Zoom</button>
           {updating && <LoadingInline />}

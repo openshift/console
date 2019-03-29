@@ -8,7 +8,7 @@ import * as catalogView from '../../views/olm-catalog.view';
 import * as sidenavView from '../../views/sidenav.view';
 
 describe('Installing a service from a Catalog Source', () => {
-  const openCloudServices = new Set(['etcd', 'Prometheus Operator', 'AMQ Streams', 'Service Catalog', 'FederationV2']);
+  const openCloudServices = new Set(['etcd', 'Prometheus Operator']);
   const operatorGroupName = 'test-operatorgroup';
 
   beforeAll(async() => {
@@ -18,14 +18,20 @@ describe('Installing a service from a Catalog Source', () => {
       metadata: {name: 'console-e2e'},
       spec: {
         sourceType: 'grpc',
-        image: 'quay.io/operatorframework/operator-manifests@sha256:ac3140d9f2d2a3cf5446d82048ddf64ad5cd13b31070d1c4b5c689b7272062dc',
+        image: 'quay.io/operator-framework/upstream-community-operators@sha256:5ae28f6de8affdb2a2119565ea950a2a777280b159f03b6ddddf104740571e25',
         displayName: 'Console E2E Operators',
         publisher: 'Red Hat, Inc',
       },
     };
+
     execSync(`echo '${JSON.stringify(catalogSource)}' | kubectl create -n ${testName} -f -`);
-    // FIXME(alecmerdler): Wait until `PackageManifests` are being served from registry pod
-    browser.sleep(30000);
+    await new Promise(resolve => (function checkForPackages() {
+      const output = execSync(`kubectl get packagemanifests -n ${testName} -o json`);
+      if (JSON.parse(output.toString('utf-8')).items.find(pkg => pkg.status.packageName === 'etcd')) {
+        return resolve();
+      }
+      setTimeout(checkForPackages, 2000);
+    })());
 
     const operatorGroup = {
       apiVersion: 'operators.coreos.com/v1alpha2',

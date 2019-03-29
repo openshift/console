@@ -47,11 +47,12 @@ export class BaseGraph extends SafetyFirst {
     const basePath = this.props.basePath || (this.props.namespace ? prometheusTenancyBasePath : prometheusBasePath);
     const pollInterval = timeSpan ? Math.max(timeSpan / 120, 5000) : 15000;
     const stepSize = (timeSpan && this.props.numSamples ? timeSpan / this.props.numSamples : pollInterval) / 1000;
+    const timeoutParam = this.props.timeout ? `&timeout=${encodeURIComponent(this.props.timeout)}` : '';
     const promises = queries.map(q => {
       const nsParam = this.props.namespace ? `&namespace=${encodeURIComponent(this.props.namespace)}` : '';
       const url = this.timeSpan
-        ? `${basePath}/api/v1/query_range?query=${encodeURIComponent(q.query)}&start=${start / 1000}&end=${end / 1000}&step=${stepSize}${nsParam}`
-        : `${basePath}/api/v1/query?query=${encodeURIComponent(q.query)}${nsParam}`;
+        ? `${basePath}/api/v1/query_range?query=${encodeURIComponent(q.query)}&start=${start / 1000}&end=${end / 1000}&step=${stepSize}${nsParam}${timeoutParam}`
+        : `${basePath}/api/v1/query?query=${encodeURIComponent(q.query)}${nsParam}${timeoutParam}`;
       return coFetchJSON(url);
     });
     Promise.all(promises)

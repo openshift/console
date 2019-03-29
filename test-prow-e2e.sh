@@ -15,11 +15,13 @@ function copyArtifacts {
 
 trap copyArtifacts EXIT
 
-export BRIDGE_AUTH_USERNAME=kubeadmin
 # don't log kubeadmin-password
 set +x
-export BRIDGE_AUTH_PASSWORD="$(cat "${INSTALLER_DIR}/auth/kubeadmin-password")"
+export KUBEADMIN_PASSWORD="$(cat "${INSTALLER_DIR}/auth/kubeadmin-password")"
 set -x
 export BRIDGE_BASE_ADDRESS="$(oc get consoles.config.openshift.io cluster -o jsonpath='{.status.consoleURL}')"
+
+# Add htpasswd IDP
+oc apply -f ./frontend/integration-tests/data/htpasswd-idp.yaml
 
 ./test-gui.sh ${1:-e2e}

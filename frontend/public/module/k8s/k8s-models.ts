@@ -50,3 +50,4 @@ export const modelFor = (ref: K8sResourceKindReference) => {
  * NOTE: This will not work for CRDs defined at runtime, use `connectToModels` instead.
  */
 export const allModels = () => k8sModels;
+
