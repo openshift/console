@@ -9,11 +9,11 @@ import { k8sCreate, k8sGet, k8sPatch, K8sResourceKind, referenceFor } from '../.
 import {
   AsyncComponent,
   ButtonBar,
-  Dropdown,
   PromiseComponent,
   history,
   resourceObjPath,
 } from '../utils';
+import { MappingMethod, MappingMethodType } from './mapping-method';
 
 // The name of the cluster-scoped OAuth configuration resource.
 const oauthResourceName = 'cluster';
@@ -101,11 +101,7 @@ export class AddHTPasswdPage extends PromiseComponent {
   render() {
     const { name, mappingMethod, htpasswdFileContent } = this.state;
     const title = 'Add Identity Provider: HTPasswd';
-    const mappingMethods = {
-      'claim': 'Claim',
-      'lookup': 'Lookup',
-      'add': 'Add',
-    };
+
     return <div className="co-m-pane__body">
       <Helmet>
         <title>{title}</title>
@@ -128,14 +124,7 @@ export class AddHTPasswdPage extends PromiseComponent {
             Unique name of the new identity provider. This cannot be changed later.
           </p>
         </div>
-        <div className="form-group">
-          <label className="control-label co-required" htmlFor="tag">Mapping Method</label>
-          <Dropdown dropDownClassName="dropdown--full-width" items={mappingMethods} selectedKey={mappingMethod} title={mappingMethods[mappingMethod]} onChange={this.mappingMethodChanged} />
-          <div className="help-block" id="mapping-method-description">
-            { /* TODO: Add doc link when available in 4.0 docs. */ }
-            Specifies how new identities are mapped to users when they log in.
-          </div>
-        </div>
+        <MappingMethod value={mappingMethod} onChange={this.mappingMethodChanged} />
         <div className="form-group">
           <DroppableFileInput
             onChange={this.htpasswdFileChanged}
@@ -157,7 +146,7 @@ export class AddHTPasswdPage extends PromiseComponent {
 
 type AddHTPasswdPageState = {
   name: string;
-  mappingMethod: string;
+  mappingMethod: MappingMethodType;
   htpasswdFileContent: string;
   inProgress: boolean;
   errorMessage: string;

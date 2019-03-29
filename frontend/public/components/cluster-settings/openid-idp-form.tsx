@@ -9,12 +9,12 @@ import { k8sCreate, k8sGet, k8sPatch, K8sResourceKind, referenceFor } from '../.
 import {
   AsyncComponent,
   ButtonBar,
-  Dropdown,
   ListInput,
   PromiseComponent,
   history,
   resourceObjPath,
 } from '../utils';
+import { MappingMethod, MappingMethodType } from './mapping-method';
 
 // The name of the cluster-scoped OAuth configuration resource.
 const oauthResourceName = 'cluster';
@@ -178,11 +178,6 @@ export class AddOpenIDPage extends PromiseComponent {
   render() {
     const { name, mappingMethod, clientID, clientSecretFileContent, issuer, caFileContent } = this.state;
     const title = 'Add Identity Provider: OpenID Connect';
-    const mappingMethods = {
-      'claim': 'Claim',
-      'lookup': 'Lookup',
-      'add': 'Add',
-    };
     return <div className="co-m-pane__body">
       <Helmet>
         <title>{title}</title>
@@ -205,14 +200,7 @@ export class AddOpenIDPage extends PromiseComponent {
             Unique name of the new identity provider. This cannot be changed later.
           </p>
         </div>
-        <div className="form-group">
-          <label className="control-label co-required" htmlFor="tag">Mapping Method</label>
-          <Dropdown dropDownClassName="dropdown--full-width" items={mappingMethods} selectedKey={mappingMethod} title={mappingMethods[mappingMethod]} onChange={this.mappingMethodChanged} />
-          <div className="help-block" id="mapping-method-description">
-            { /* TODO: Add doc link when available in 4.0 docs. */ }
-            Specifies how new identities are mapped to users when they log in.
-          </div>
-        </div>
+        <MappingMethod value={mappingMethod} onChange={this.mappingMethodChanged} />
         <div className="form-group">
           <label className="control-label co-required" htmlFor="clientID">ClientID</label>
           <input className="form-control"
@@ -268,7 +256,7 @@ export class AddOpenIDPage extends PromiseComponent {
 
 type AddOpenIDIDPPageState = {
   name: string;
-  mappingMethod: 'claim' | 'lookup' | 'add';
+  mappingMethod: MappingMethodType;
   clientID: string;
   clientSecretFileContent: string;
   claimPreferredUsernames: string[];
