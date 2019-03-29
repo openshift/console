@@ -1,27 +1,29 @@
 /* eslint-disable no-unused-vars, no-undef */
-import { browser, ExpectedConditions as until } from 'protractor';
+import { $, browser, ExpectedConditions as until } from 'protractor';
 
-import { createItemButton } from '../../../views/crud.view';
+import { createItemButton, isLoaded} from '../../../views/crud.view';
 import { fillInput, PAGE_LOAD_TIMEOUT, selectDropdownOption, tickCheckbox } from '../utils';
 import * as wizardView from '../../../views/kubevirt/wizard.view';
 
 export default class Wizard {
   async openWizard() {
     await createItemButton.click().then(() => wizardView.createWithWizardLink.click());
-    await browser.wait(until.presenceOf(wizardView.nameInput));
+    await browser.wait(until.presenceOf(wizardView.nameInput), PAGE_LOAD_TIMEOUT);
   }
 
   async close() {
-    await wizardView.closeWizard.click();
+    await browser.wait(until.elementToBeClickable(wizardView.closeWizard), PAGE_LOAD_TIMEOUT).then(() => wizardView.closeWizard.click());
     await browser.wait(until.invisibilityOf(wizardView.wizardHeader), PAGE_LOAD_TIMEOUT);
+    // Clone VM dialog uses fade in/fade out effect, wait until it disappears
+    await browser.wait(until.invisibilityOf($('div.fade')));
   }
 
   async fillName(name: string) {
     await fillInput(wizardView.nameInput, name);
   }
 
-  async filldescription(description: string) {
-    await fillInput(wizardView.description, description);
+  async fillDescription(description: string) {
+    await fillInput(wizardView.descriptionInput, description);
   }
 
   async selectNamespace(namespace: string) {
@@ -52,7 +54,8 @@ export default class Wizard {
   }
 
   async startOnCreation() {
-    await tickCheckbox(wizardView.startVMOnCreation);
+    await browser.wait(until.elementToBeClickable(wizardView.startVMOnCreation))
+      .then(async() => await tickCheckbox(wizardView.startVMOnCreation));
   }
 
   async useCloudInit(cloudInitOptions) {
@@ -67,7 +70,10 @@ export default class Wizard {
   }
 
   async next() {
-    await wizardView.nextButton.click();
+    await isLoaded();
+    await browser.wait(until.elementToBeClickable(wizardView.nextButton))
+      .then(async() => await wizardView.nextButton.click());
+    await isLoaded();
   }
 
   async addNIC(name: string, mac: string, networkDefinition: string) {
@@ -105,6 +111,7 @@ export default class Wizard {
   }
 
   async waitForCreation() {
+    await browser.wait(until.presenceOf(wizardView.provisionResultIcon));
     await browser.wait(until.elementToBeClickable(wizardView.nextButton), PAGE_LOAD_TIMEOUT);
   }
 }

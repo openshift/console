@@ -1,14 +1,19 @@
 /* eslint-disable no-unused-vars, no-undef */
+import * as _ from 'lodash';
 import { execSync } from 'child_process';
 import { $, by, ElementFinder, browser, ExpectedConditions as until } from 'protractor';
+import { nameInput as loginNameInput, passwordInput as loginPasswordInput, submitButton as loginSubmitButton } from '../../views/login.view';
 
-export const PAGE_LOAD_TIMEOUT = 5000;
-export const WIZARD_LOAD_TIMEOUT = 10000;
-export const VM_ACTIONS_TIMEOUT = 120000;
-export const VM_BOOTUP_TIMEOUT = 90000;
-export const VM_STOP_TIMEOUT = 6000;
+import { appHost } from '../../protractor.conf';
 
-export type provision = {
+const SEC = 1000;
+export const CLONE_VM_TIMEOUT = 300 * SEC;
+export const PAGE_LOAD_TIMEOUT = 15 * SEC;
+export const VM_ACTIONS_TIMEOUT = 120 * SEC;
+export const VM_BOOTUP_TIMEOUT = 90 * SEC;
+export const VM_STOP_TIMEOUT = 6 * SEC;
+
+export type provisionOptions = {
   method: string,
   source?: string,
 };
@@ -38,6 +43,7 @@ export function removeLeakedResources(leakedResources: Set<string>) {
         }
       });
   }
+  leakedResources.clear();
 }
 
 export async function selectDropdownOption(dropdownId: string, option: string) {
@@ -46,10 +52,72 @@ export async function selectDropdownOption(dropdownId: string, option: string) {
   await $(`${dropdownId} + ul`).element(by.linkText(option)).click();
 }
 
-export async function fillInput(element: ElementFinder, value: string) {
-  await element.clear().then(() => element.sendKeys(value));
+export async function fillInput(elem: ElementFinder, value: string) {
+  // Sometimes there seems to be an issue with clear() method not clearing the input
+  let attempts = 3;
+  do {
+    --attempts;
+    await browser.wait(until.elementToBeClickable(elem));
+    await elem.clear();
+    await elem.sendKeys(value);
+  } while (await elem.getAttribute('value') !== value && attempts > 0);
 }
 
-export async function tickCheckbox(element: ElementFinder) {
-  await element.click();
+export async function tickCheckbox(elem: ElementFinder) {
+  await browser.wait(until.elementToBeClickable(elem));
+  await elem.click();
 }
+
+export async function logIn() {
+  await browser.wait(until.presenceOf($('div.co-username')), PAGE_LOAD_TIMEOUT)
+    .catch(async() => {
+      await browser.get(appHost);
+      await browser.sleep(3000); // Wait long enough for the login redirect to complete
+      await fillInput(loginNameInput, process.env.BRIDGE_AUTH_USERNAME);
+      await fillInput(loginPasswordInput, process.env.BRIDGE_AUTH_PASSWORD);
+      await browser.wait(until.elementToBeClickable(loginSubmitButton))
+        .then(() => loginSubmitButton.click());
+    });
+  await browser.wait(until.visibilityOf($('img.pf-c-brand')), PAGE_LOAD_TIMEOUT);
+}
+
+/**
+   * Search YAML manifest for a given string. Return true if found.
+   * @param     {string}    needle    String to search in YAML.
+   * @param     {string}    name      Name of the resource.
+   * @param     {string}    namespace Namespace of the resource.
+   * @param     {string}    kind      Kind of the resource.
+   * @returns   {boolean}             True if found, false otherwise.
+   */
+export function searchYAML(needle: string, name: string, namespace: string, kind: string): boolean {
+  const result = execSync(`oc get -o yaml -n ${namespace} ${kind} ${name}`).toString();
+  return result.search(needle) >= 0;
+}
+
+export function getResourceJSON(name: string, namespace: string, kind: string) {
+  return execSync(`oc get -o json -n ${namespace} ${kind} ${name}`).toString();
+}
+
+/**
+   * Search JSON manifest for a given property and value. Return true if found.
+   * @param     {string}    propertyPath    String representing path to object property.
+   * @param     {string}    value           String representing expected value of searched property.
+   * @param     {string}    name            Name of the resource.
+   * @param     {string}    namespace       Namespace of the resource.
+   * @param     {string}    kind            Kind of the resource.
+   * @returns   {boolean}                   True if found, false otherwise.
+   */
+export function searchJSON(propertyPath: string, value: string, name: string, namespace: string, kind: string): boolean {
+  const resource = JSON.parse(getResourceJSON(name, namespace, kind));
+  const result = _.get(resource, propertyPath, undefined);
+  return result === value;
+}
+
+
+export const waitForCount = (elementArrayFinder, targetCount) => {
+  return async() => {
+    const count = await elementArrayFinder.count();
+    return count === targetCount;
+  };
+};
+

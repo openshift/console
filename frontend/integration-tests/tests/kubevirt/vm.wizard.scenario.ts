@@ -1,15 +1,18 @@
 /* eslint-disable no-undef, max-nested-callbacks */
 import { execSync } from 'child_process';
 import { OrderedMap } from 'immutable';
-import { browser, ExpectedConditions as until } from 'protractor';
+//import { browser, ExpectedConditions as until } from 'protractor';
+import { browser } from 'protractor';
 
 // eslint-disable-next-line no-unused-vars
-import { networkResource, provision as provisionOptions, removeLeakedResources, storageResource, VM_BOOTUP_TIMEOUT } from './utils';
+import { networkResource, provisionOptions, removeLeakedResources, storageResource, VM_BOOTUP_TIMEOUT } from './utils';
 import { appHost, testName } from '../../protractor.conf';
-import { deleteRow, errorMessage, filterForName, isLoaded, resourceRowsPresent } from '../../views/crud.view';
-import { basicVmConfig, glusterfsDisk, hddDisk, networkInterface, testNAD } from './mocks';
-import * as wizardView from '../../views/kubevirt/wizard.view';
+import { errorMessage,isLoaded } from '../../views/crud.view';
+import { statusIcons } from '../../views/kubevirt/virtualMachine.view';
+import { basicVmConfig, glusterfsDisk, hddDisk, networkInterface, testNad } from './mocks';
+//import * as wizardView from '../../views/kubevirt/wizard.view';
 import Wizard from './models/wizard';
+import { VirtualMachine } from './models/virtualMachine';
 
 describe('Kubevirt create VM using wizard', () => {
   const leakedResources = new Set<string>();
@@ -38,11 +41,11 @@ describe('Kubevirt create VM using wizard', () => {
     });
 
   beforeAll(async() => {
-    execSync(`echo '${JSON.stringify(testNAD)}' | kubectl create -f -`);
+    execSync(`echo '${JSON.stringify(testNad)}' | kubectl create -f -`);
   });
 
   afterAll(async() => {
-    execSync(`kubectl delete -n ${testName} net-attach-def ${testNAD.metadata.name}`);
+    execSync(`kubectl delete -n ${testName} net-attach-def ${testNad.metadata.name}`);
     removeLeakedResources(leakedResources);
   });
 
@@ -56,8 +59,9 @@ describe('Kubevirt create VM using wizard', () => {
     it(`Create VM using ${configName}.`, async() => {
       const vmName = `vm-${provisionConfig.provision.method.toLowerCase()}-${testName}`;
       // Basic Settings
+
       await wizard.fillName(vmName);
-      await wizard.filldescription(testName);
+      await wizard.fillDescription(testName);
       await wizard.selectProvisionSource(provisionConfig.provision);
       await wizard.selectFlavor(basicVmConfig.flavor);
       await wizard.selectOperatingSystem(basicVmConfig.operatingSystem);
@@ -79,22 +83,20 @@ describe('Kubevirt create VM using wizard', () => {
         await wizard.addDisk(storageOption.name, storageOption.size, storageOption.StorageClass);
       }
 
-      // Create VM and close wizard
+      // Create VM
       await wizard.next();
       await wizard.waitForCreation();
 
       // Check for errors and close wizard
       expect(errorMessage.isPresent()).toBe(false);
       leakedResources.add(JSON.stringify({name: vmName, namespace: testName, kind: 'vm'}));
-      await wizard.close();
+      await wizard.next();
 
-      // Verify VM is created and running
-      await filterForName(vmName);
-      await resourceRowsPresent();
-      await browser.wait(until.textToBePresentInElement(wizardView.firstRowVMStatus, 'Running'), VM_BOOTUP_TIMEOUT);
+      // Wait for VM to boot up
+      const vm = new VirtualMachine(vmName, testName);
+      await vm.waitForStatusIcon(statusIcons.running, VM_BOOTUP_TIMEOUT);
 
-      // Delete VM
-      await deleteRow('VirtualMachine')(vmName);
+      await vm.action('Delete');
       leakedResources.delete(JSON.stringify({name: vmName, namespace: testName, kind: 'vm'}));
     }, VM_BOOTUP_TIMEOUT);
   });

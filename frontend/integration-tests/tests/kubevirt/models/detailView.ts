@@ -5,7 +5,6 @@ import { appHost } from '../../../protractor.conf';
 import { clickHorizontalTab } from '../../../views/horizontal-nav.view';
 import { isLoaded } from '../../../views/crud.view';
 import * as vmView from '../../../views/kubevirt/virtualMachine.view';
-import { editorContent, isLoaded as isYamlLoaded } from '../../../views/yaml.view';
 
 export class DetailView {
   readonly name: string;
@@ -28,17 +27,5 @@ export class DetailView {
       await isLoaded();
     }
     await clickHorizontalTab(tabName);
-  }
-
-  /**
-   * Search YAML manifest for a given string.
-   * @param     {string}    needle    String to search in YAML.
-   * @returns   {boolean}             True if found, false otherwise.
-   */
-  async searchYAML(needle: string): Promise<boolean> {
-    await this.navigateToTab(vmView.yamlTab);
-    await isYamlLoaded();
-    const yaml = await editorContent.getText();
-    return yaml.search(needle) >= 0;
   }
 }

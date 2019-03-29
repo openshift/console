@@ -2,20 +2,20 @@ import { $, $$ } from 'protractor';
 import { selectDropdownOption } from '../../tests/kubevirt/utils';
 
 // Wizard Common
-export const closeWizard = $('.close');
+export const closeWizard = $('.modal-footer > button.btn-cancel');
 export const wizardContent = $('.wizard-pf-contents');
 export const wizardHeader = $('.modal-header');
-export const provisionResult = $('.wizard-pf-body h3');
-export const nextButton = $('.wizard-pf-footer > button:last-child');
+export const provisionResultIcon = wizardContent.$('.pficon-ok');
+export const nextButton = $('.modal-footer > button.btn-primary');
 export const apply = $('.inline-edit-buttons > button:first-child');
 export const cancelButton = $('.inline-edit-buttons > button:last-child');
-
+export const wizardHelpBlock = $('.modal-body .help-block');
 // Basic Settings tab
 export const createWithWizardLink = $('#wizard-link');
 export const createWithYAMLLink = $('#yaml-link');
 
 export const nameInput = $('#vm-name');
-export const description = $('#vm-description');
+export const descriptionInput = $('#vm-description');
 
 const provisionSourceURL = $('#provision-source-url');
 const provisionSourceContainerImage = $('#provision-source-container');
@@ -74,6 +74,10 @@ export const setTableInputAttribute = async(rowNumber: number, attribute: string
 export const selectTableDropdownAttribute = async(rowNumber: number, tableType: string, value: string) => {
   await selectDropdownOption(`#${tableType}-edit-${rowNumber.toString()}-row`, value);
 };
+
+// Clone VM Wizard
+const cloneVmDialog = $('.kubevirt-clone-dialog__content');
+export const cloneVmWarning = cloneVmDialog.$('.alert-warning');
 
 // VMs List view
 export const firstRowVMStatus = $('div.co-m-row:first-child > div:first-child > div:nth-child(3)');

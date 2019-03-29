@@ -25,7 +25,17 @@ export const diskStorageClassDropdownId = '#disk-storage-class';
 export const cancelBtn = $('button.kubevirt-cancel-accept-buttons.btn-default');
 export const applyBtn = $('button.kubevirt-cancel-accept-buttons.btn-primary');
 
+export const statusIcon = (status) => $(`.kubevirt-vm-status__icon.${status}`);
 export const statusLink = $('a.kubevirt-vm-status__link');
+
+export const statusIcons = {
+  starting: 'pficon-pending',
+  importError: 'pficon-error-circle-o',
+  importing: 'pficon-import',
+  running: 'pficon-on-running',
+  off: 'pficon-off',
+};
+
 export const rowForName = (name: string) => resourceRows
   .filter((row) => row.$$('div').first().getText()
     .then(text => text === name)).first();

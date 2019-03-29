@@ -3,11 +3,13 @@ import { browser, ExpectedConditions as until } from 'protractor';
 
 import { testName } from '../../../protractor.conf';
 import * as vmView from '../../../views/kubevirt/virtualMachine.view';
+import { nameInput } from '../../../views/kubevirt/wizard.view';
 import { confirmAction, resourceRows, isLoaded } from '../../../views/crud.view';
 import { fillInput, PAGE_LOAD_TIMEOUT, selectDropdownOption, VM_BOOTUP_TIMEOUT, VM_STOP_TIMEOUT } from '../utils';
 import { DetailView } from './detailView';
-import { VirtualMachineInstance } from './VirtualMachineInstance';
-import { detailViewVmIcon, detailViewAction, runningIcon, pendingIcon, offIcon } from '../../../views/kubevirt/vm.actions.view';
+import { VirtualMachineInstance } from './virtualMachineInstance';
+import { detailViewAction } from '../../../views/kubevirt/vm.actions.view';
+
 
 export class VirtualMachine extends DetailView {
   constructor(name: string, namespace: string) {
@@ -26,17 +28,27 @@ export class VirtualMachine extends DetailView {
 
   async action(action: string) {
     await this.navigateToTab(vmView.overviewTab);
-    await detailViewAction(action);
+
+    let confirmDialog = true;
+    if (['Clone'].includes(action)) {
+      confirmDialog = false;
+    }
+
+    await detailViewAction(action, confirmDialog);
+
     switch (action) {
       case 'Start':
-        await browser.wait(until.presenceOf(detailViewVmIcon(runningIcon)), VM_BOOTUP_TIMEOUT);
+        await this.waitForStatusIcon(vmView.statusIcons.running, VM_BOOTUP_TIMEOUT);
         break;
       case 'Restart':
-        await browser.wait(until.presenceOf(detailViewVmIcon(pendingIcon)), VM_BOOTUP_TIMEOUT);
-        await browser.wait(until.presenceOf(detailViewVmIcon(runningIcon)), VM_BOOTUP_TIMEOUT);
+        await this.waitForStatusIcon(vmView.statusIcons.starting, VM_BOOTUP_TIMEOUT);
+        await this.waitForStatusIcon(vmView.statusIcons.running, VM_BOOTUP_TIMEOUT);
         break;
       case 'Stop':
-        await browser.wait(until.presenceOf(detailViewVmIcon(offIcon)), VM_STOP_TIMEOUT);
+        await this.waitForStatusIcon(vmView.statusIcons.off, VM_STOP_TIMEOUT);
+        break;
+      case 'Clone':
+        await browser.wait(until.presenceOf(nameInput), PAGE_LOAD_TIMEOUT);
         break;
       case 'Delete':
         // wait for redirect
@@ -57,7 +69,12 @@ export class VirtualMachine extends DetailView {
     return resources;
   }
 
-  async resourceExists(resourceName) {
+  async waitForStatusIcon(statusIcon: string, timeout: number) {
+    await this.navigateToTab(vmView.overviewTab);
+    await browser.wait(until.presenceOf(vmView.statusIcon(statusIcon)), timeout);
+  }
+
+  async resourceExists(resourceName:string) {
     return vmView.rowForName(resourceName).isPresent();
   }
 
@@ -68,6 +85,7 @@ export class VirtualMachine extends DetailView {
     await fillInput(vmView.diskSize, size);
     await selectDropdownOption(vmView.diskStorageClassDropdownId, storageClass);
     await vmView.applyBtn.click();
+    await isLoaded();
   }
 
   async removeDisk(name: string) {
@@ -83,6 +101,7 @@ export class VirtualMachine extends DetailView {
     await fillInput(vmView.macAddress, mac);
     await selectDropdownOption(vmView.networkTypeDropdownId, networkAttachmentDefinition);
     await vmView.applyBtn.click();
+    await isLoaded();
   }
 
   async removeNic(name: string) {

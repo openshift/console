@@ -21,7 +21,7 @@ const junitReporter = new JUnitXmlReporter({ savePath: './gui_test_screenshots',
 const browserLogs: logging.Entry[] = [];
 
 const plugins = [];
-if (process.env.FAIL_FAST === 'true') {
+if (process.env.FAIL_FAST !== 'false') {
   plugins.push(failFast.init());
 }
 
@@ -177,10 +177,12 @@ export const config: Config = {
       'tests/overview/overview.scenario.ts',
     ],
     kubevirt: [
+      'tests/kubevirt/kubevirt.login.scenario.ts',
       'tests/base.scenario.ts',
       'tests/kubevirt/vm.wizard.scenario.ts',
       'tests/kubevirt/vm.actions.scenario.ts',
       'tests/kubevirt/template.wizard.scenario.ts',
+      'tests/kubevirt/clone.vm.scenario.ts',
     ],
     e2e: [
       'tests/login.scenario.ts',

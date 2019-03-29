@@ -1,80 +1,77 @@
 /* eslint-disable no-undef */
 import { execSync } from 'child_process';
-import { browser, ExpectedConditions as until } from 'protractor';
+import { $$, browser, ExpectedConditions as until } from 'protractor';
 
 import { appHost, testName } from '../../protractor.conf';
-import { filterForName, isLoaded, resourceRowsPresent } from '../../views/crud.view';
-import { detailViewAction, listViewAction, detailViewVmStatus, detailViewVmIcon, listViewVmStatus, listViewVmIcon,
-  runningIcon, pendingIcon, statusIcon, offIcon } from '../../views/kubevirt/vm.actions.view';
-import { testVM, testNAD, hddDisk, networkInterface } from './mocks';
-import { yamlTab, overviewTab, disksTab, nicsTab } from '../../views/kubevirt/virtualMachine.view';
-import { removeLeakedResources, VM_BOOTUP_TIMEOUT, VM_STOP_TIMEOUT, VM_ACTIONS_TIMEOUT } from './utils';
+import { isLoaded, resourceRowsPresent, textFilter } from '../../views/crud.view';
+import { listViewAction } from '../../views/kubevirt/vm.actions.view';
+import { testNad, hddDisk, networkInterface, getVmManifest } from './mocks';
+import { overviewTab, disksTab, nicsTab, statusIcon, statusIcons } from '../../views/kubevirt/virtualMachine.view';
+import { removeLeakedResources, fillInput, searchYAML, waitForCount, VM_BOOTUP_TIMEOUT, VM_STOP_TIMEOUT, VM_ACTIONS_TIMEOUT, PAGE_LOAD_TIMEOUT } from './utils';
 import { VirtualMachine } from './models/virtualMachine';
 
 
 describe('Test VM actions', () => {
   const leakedResources = new Set<string>();
+  const testVm = getVmManifest('Container', testName);
+
   afterAll(async() => {
     removeLeakedResources(leakedResources);
   });
 
   describe('Test VM list view kebab actions', () => {
     const vmName = `vm-list-view-actions-${testName}`;
+
     beforeAll(async() => {
-      testVM.metadata.name = vmName;
-      execSync(`echo '${JSON.stringify(testVM)}' | kubectl create -f -`);
+      testVm.metadata.name = vmName;
+      execSync(`echo '${JSON.stringify(testVm)}' | kubectl create -f -`);
       leakedResources.add(JSON.stringify({name: vmName, namespace: testName, kind: 'vm'}));
+
+      // Navigate to Virtual Machines page
+      await browser.get(`${appHost}/k8s/all-namespaces/virtualmachines`);
+      await isLoaded();
+      await fillInput(textFilter, vmName);
+      await resourceRowsPresent();
     });
 
     // Workaround for https://github.com/kubevirt/web-ui/issues/177, remove when resolved
     afterEach(async() => await browser.sleep(1000));
 
-    it('Navigates to VMs', async() => {
-      await browser.get(`${appHost}/k8s/all-namespaces/virtualmachines`);
-      await isLoaded();
-      await filterForName(vmName);
-      await resourceRowsPresent();
-    });
-
     it('Starts VM', async() => {
       await listViewAction(vmName)('Start');
-      await browser.wait(
-        until.and(
-          until.presenceOf(listViewVmIcon(vmName, runningIcon)),
-          until.textToBePresentInElement(listViewVmStatus(vmName), 'Running')
-        ), VM_BOOTUP_TIMEOUT);
-    });
+      await fillInput(textFilter, vmName);
+      await browser.wait(until.presenceOf(statusIcon(statusIcons.running)), VM_BOOTUP_TIMEOUT);
+    }, VM_BOOTUP_TIMEOUT);
 
     it('Restarts VM', async() => {
       await listViewAction(vmName)('Restart');
-      await browser.wait(
-        until.and(
-          until.presenceOf(listViewVmIcon(vmName, pendingIcon)),
-          until.textToBePresentInElement(listViewVmStatus(vmName), 'Starting')
-        ), VM_BOOTUP_TIMEOUT);
-      await browser.wait(until.and(
-        until.presenceOf(listViewVmIcon(vmName, runningIcon)),
-        until.textToBePresentInElement(listViewVmStatus(vmName), 'Running'))
-        , VM_BOOTUP_TIMEOUT);
+      await fillInput(textFilter, vmName);
+      await browser.wait(until.presenceOf(statusIcon(statusIcons.starting)), VM_BOOTUP_TIMEOUT);
+      await browser.wait(until.presenceOf(statusIcon(statusIcons.running)), VM_BOOTUP_TIMEOUT);
     }, VM_ACTIONS_TIMEOUT);
 
     it('Stops VM', async() => {
       await listViewAction(vmName)('Stop');
-      await browser.wait(until.presenceOf(listViewVmIcon(vmName, offIcon)), VM_STOP_TIMEOUT);
+      await fillInput(textFilter, vmName);
+      await browser.wait(until.presenceOf(statusIcon(statusIcons.off)), VM_STOP_TIMEOUT);
     });
 
     it('Deletes VM', async() => {
       await listViewAction(vmName)('Delete');
-      await browser.wait(until.not(until.presenceOf(listViewVmIcon(vmName, statusIcon))));
+      await isLoaded();
+      await fillInput(textFilter, vmName);
+      await browser.wait(until.and(waitForCount($$('.co-resource-list__item'), 0)), PAGE_LOAD_TIMEOUT);
       leakedResources.delete(JSON.stringify({name: vmName, namespace: testName, kind: 'vm'}));
     });
   });
 
   describe('Test VM detail view kebab actions', () => {
     const vmName = `vm-detail-view-actions-${testName}`;
+    const vm = new VirtualMachine(vmName, testName);
+
     beforeAll(async() => {
-      testVM.metadata.name = vmName;
-      execSync(`echo '${JSON.stringify(testVM)}' | kubectl create -f -`);
+      testVm.metadata.name = vmName;
+      execSync(`echo '${JSON.stringify(testVm)}' | kubectl create -f -`);
       leakedResources.add(JSON.stringify({name: vmName, namespace: testName, kind: 'vm'}));
     });
 
@@ -84,54 +81,42 @@ describe('Test VM actions', () => {
     });
 
     it('Starts VM', async() => {
-      await detailViewAction('Start');
-      await browser.wait(
-        until.and(
-          until.presenceOf(detailViewVmIcon(runningIcon)),
-          until.textToBePresentInElement(detailViewVmStatus, 'Running')
-        ), VM_BOOTUP_TIMEOUT);
-    });
+      await vm.action('Start');
+    }, VM_BOOTUP_TIMEOUT);
 
     it('Restarts VM', async() => {
-      await detailViewAction('Restart');
-      await browser.wait(
-        until.and(
-          until.presenceOf(detailViewVmIcon(pendingIcon)),
-          until.textToBePresentInElement(detailViewVmStatus, 'Starting')
-        ), VM_BOOTUP_TIMEOUT);
-      await browser.wait(
-        until.and(
-          until.presenceOf(detailViewVmIcon(runningIcon)),
-          until.textToBePresentInElement(detailViewVmStatus, 'Running')
-        ), VM_BOOTUP_TIMEOUT);
+      await vm.action('Restart');
     }, VM_ACTIONS_TIMEOUT);
 
     it('Stops VM', async() => {
-      await detailViewAction('Stop');
-      await browser.wait(until.presenceOf(detailViewVmIcon(offIcon)), VM_STOP_TIMEOUT);
+      await vm.action('Stop');
     });
 
     it('Deletes VM', async() => {
-      await detailViewAction('Delete');
+      await vm.action('Delete');
+      await isLoaded();
+      await fillInput(textFilter, vmName);
+      await browser.wait(until.and(waitForCount($$('.co-resource-list__item'), 0)), PAGE_LOAD_TIMEOUT);
       leakedResources.delete(JSON.stringify({name: vmName, namespace: testName, kind: 'vm'}));
     });
   });
 });
 
 describe('Add/remove disks and NICs on respective VM pages', () => {
+  const testVm = getVmManifest('Container', testName);
   const vmName = `vm-disk-nic-${testName}`;
   const vm = new VirtualMachine(vmName, testName);
 
   beforeAll(async() => {
-    testVM.metadata.name = vmName;
-    execSync(`echo '${JSON.stringify(testNAD)}' | kubectl create -f -`);
-    execSync(`echo '${JSON.stringify(testVM)}' | kubectl create -f -`);
+    testVm.metadata.name = vmName;
+    execSync(`echo '${JSON.stringify(testNad)}' | kubectl create -f -`);
+    execSync(`echo '${JSON.stringify(testVm)}' | kubectl create -f -`);
     await vm.action('Start');
   });
 
   afterAll(async() => {
-    execSync(`echo '${JSON.stringify(testVM)}' | kubectl delete -f -`);
-    execSync(`echo '${JSON.stringify(testNAD)}' | kubectl delete -f -`);
+    execSync(`echo '${JSON.stringify(testVm)}' | kubectl delete -f -`);
+    execSync(`echo '${JSON.stringify(testNad)}' | kubectl delete -f -`);
   });
 
   it('Add/remove disk on VM disks page', async() => {
@@ -159,20 +144,17 @@ describe('Add/remove disks and NICs on respective VM pages', () => {
     await vm.addNic(networkInterface.name, networkInterface.mac, networkInterface.networkDefinition);
 
     expect((await vm.getAttachedResources(nicsTab)).includes(networkInterface.name)).toBe(true);
-    let vmi = await vm.navigateToVmi(yamlTab);
-    expect((await vmi.searchYAML(networkInterface.networkDefinition))).toBe(false);
+    expect((searchYAML(networkInterface.networkDefinition, vm.name, vm.namespace, 'vmi'))).toBe(false);
 
     await vm.action('Restart');
 
-    vmi = await vm.navigateToVmi(yamlTab);
-    expect((await vmi.searchYAML(networkInterface.networkDefinition))).toBe(true);
+    expect((searchYAML(networkInterface.networkDefinition, vm.name, vm.namespace, 'vmi'))).toBe(true);
 
     await vm.removeNic(networkInterface.name);
     expect((await vm.getAttachedResources(nicsTab)).includes(networkInterface.name)).toBe(false);
 
     await vm.action('Restart');
 
-    vmi = await vm.navigateToVmi(yamlTab);
-    expect((await vmi.searchYAML(networkInterface.networkDefinition))).toBe(false);
+    expect((searchYAML(networkInterface.networkDefinition, vm.name, vm.namespace, 'vmi'))).toBe(false);
   }, VM_ACTIONS_TIMEOUT * 2);
 });
