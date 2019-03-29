@@ -189,7 +189,7 @@ export const EnvFromEditor = withDragDropContext(class EnvFromEditor extends Rea
         <div className="col-xs-12">
           {
             !readOnly &&
-            <button type="button" className="btn-link pairs-list__btn" onClick={this._append}>
+            <button type="button" className="btn-link" onClick={this._append}>
               <i aria-hidden="true" className="fa fa-plus-circle pairs-list__add-icon" />Add All From Config Map or Secret
             </button>
           }
