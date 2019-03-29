@@ -11,7 +11,7 @@ import { CatalogSourceKind, SubscriptionKind, PackageManifestKind, visibilityLab
 import { requireOperatorGroup } from './operator-group';
 import { PackageManifestList } from './package-manifest';
 import { SubscriptionModel, CatalogSourceModel, PackageManifestModel, OperatorGroupModel } from '../../models';
-import { referenceForModel, K8sResourceKind, referenceForModelCompatible } from '../../module/k8s';
+import { referenceForModel, K8sResourceKind } from '../../module/k8s';
 import { DetailsPage } from '../factory';
 
 export const CatalogSourceDetails: React.SFC<CatalogSourceDetailsProps> = ({obj, packageManifests, subscriptions, operatorGroups}) => {
@@ -52,7 +52,7 @@ export const CatalogSourceDetailsPage: React.SFC<CatalogSourceDetailsPageProps> 
   ]}
   menuActions={Kebab.factory.common}
   resources={[{
-    kind: referenceForModelCompatible(PackageManifestModel)('packages.apps.redhat.com~v1alpha1~PackageManifest'),
+    kind: referenceForModel(PackageManifestModel),
     isList: true,
     namespace: props.match.params.ns,
     selector: {matchLabels: {catalog: props.match.params.name}, matchExpressions: [{key: visibilityLabel, operator: 'DoesNotExist'}]},
@@ -63,7 +63,7 @@ export const CatalogSourceDetailsPage: React.SFC<CatalogSourceDetailsPageProps> 
     namespace: props.match.params.ns,
     prop: 'subscriptions',
   }, {
-    kind: referenceForModelCompatible(OperatorGroupModel)('operators.coreos.com~v1alpha2~OperatorGroup'),
+    kind: referenceForModel(OperatorGroupModel),
     isList: true,
     namespace: props.match.params.ns,
     prop: 'operatorGroups',
@@ -101,13 +101,13 @@ export const CreateSubscriptionYAML: React.SFC<CreateSubscriptionYAMLProps> = (p
   );
 
   return <Firehose resources={[{
-    kind: referenceForModelCompatible(PackageManifestModel)('packages.apps.redhat.com~v1alpha1~PackageManifest'),
+    kind: referenceForModel(PackageManifestModel),
     isList: false,
     name: new URLSearchParams(props.location.search).get('pkg'),
     namespace: new URLSearchParams(props.location.search).get('catalogNamespace'),
     prop: 'packageManifest',
   }, {
-    kind: referenceForModelCompatible(OperatorGroupModel)('operators.coreos.com~v1alpha2~OperatorGroup'),
+    kind: referenceForModel(OperatorGroupModel),
     isList: true,
     namespace: props.match.params.ns,
     prop: 'operatorGroup',
