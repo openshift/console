@@ -31,9 +31,9 @@ export const ClusterServiceVersionResourceLink: React.SFC<ClusterServiceVersionR
   // FIXME(alecmerdler): Grab `ClusterServiceVersion` name from Redux instead
   const appName = location.pathname.split('/').slice(-2, -1);
 
-  return <span className="co-resource-link">
+  return <span className="co-resource-item">
     <ResourceIcon kind={referenceFor(props.obj)} />
-    <Link to={`/k8s/ns/${namespace}/${ClusterServiceVersionModel.plural}/${appName}/${referenceFor(props.obj)}/${name}`} className="co-resource-link__resource-name">{name}</Link>
+    <Link to={`/k8s/ns/${namespace}/${ClusterServiceVersionModel.plural}/${appName}/${referenceFor(props.obj)}/${name}`} className="co-resource-item__resource-name">{name}</Link>
   </span>;
 };
 

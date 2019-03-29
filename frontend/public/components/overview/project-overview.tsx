@@ -217,9 +217,9 @@ const ProjectOverviewListItem = connect<ProjectOverviewListItemPropsFromState, P
     const isSelected = uid === selectedUID;
     const className = classnames(`project-overview__item project-overview__item--${kind}`, {'project-overview__item--selected': isSelected});
     const heading = <h3 className="project-overview__item-heading">
-      <span className="co-resource-link co-resource-link-truncate">
+      <span className="co-resource-item co-resource-item--truncate">
         <ResourceIcon kind={kind} />
-        <Link to={resourcePath(kind, name, namespace)} className="co-resource-link__resource-name">
+        <Link to={resourcePath(kind, name, namespace)} className="co-resource-item__resource-name">
           {name}
         </Link>
         {current && <React.Fragment>,&nbsp;<ControllerLink controller={current} /></React.Fragment>}
