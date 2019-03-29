@@ -11,7 +11,14 @@ import {
   formatNetTraffic,
 } from 'kubevirt-web-ui-components';
 
-import { NodeModel, PodModel, PersistentVolumeClaimModel, VirtualMachineModel, InfrastructureModel } from '../../../models';
+import {
+  NodeModel,
+  PodModel,
+  PersistentVolumeClaimModel,
+  VirtualMachineModel,
+  InfrastructureModel,
+  VirtualMachineInstanceMigrationModel,
+} from '../../../models';
 import { WithResources } from '../utils/withResources';
 import { k8sBasePath } from '../../module/okdk8s';
 import { coFetch, coFetchJSON } from '../../../co-fetch';
@@ -55,43 +62,9 @@ const resourceMap = {
   infrastructure: {
     resource: getResource(InfrastructureModel, { namespaced: false, name: 'cluster', isList: false }),
   },
-};
-
-const getInventoryData = resources => {
-  const inventory = {};
-  if (resources.nodes) {
-    inventory.nodes = {
-      data: resources.nodes,
-      title: 'Hosts',
-      kind: NodeModel.kind,
-    };
-  }
-  if (resources.pods) {
-    inventory.pods = {
-      data: resources.pods,
-      title: 'Pods',
-      kind: PodModel.kind,
-    };
-  }
-  if (resources.pvcs) {
-    inventory.pvcs = {
-      data: resources.pvcs,
-      title: 'PVCs',
-      kind: PersistentVolumeClaimModel.kind,
-    };
-  }
-  if (resources.vms) {
-    inventory.vms = {
-      data: resources.vms,
-      title: 'VMs',
-      kind: VirtualMachineModel.kind,
-    };
-  }
-
-  return {
-    inventory,
-    loaded: !!inventory,
-  };
+  migrations: {
+    resource: getResource(VirtualMachineInstanceMigrationModel),
+  },
 };
 
 const OverviewEventStream = () => <EventStream scrollableElementId="events-body" InnerComponent={EventsInnerOverview} overview={true} namespace={undefined} />;
@@ -102,6 +75,7 @@ export class ClusterOverview extends React.Component {
     this.messages = {};
 
     this.state = {
+      openshiftClusterVersions: null,
       healthData: {
         data: {},
         loaded: false,
@@ -116,27 +90,25 @@ export class ClusterOverview extends React.Component {
         loaded: false,
       },
       capacityStats: {
-        stats: {
-          cpu: {
-            title: 'CPU',
-            data: {},
-            formatValue: formatCores,
-          },
-          memory: {
-            title: 'Memory',
-            data: {},
-            formatValue: formatBytes,
-          },
-          storage: {
-            title: 'Storage',
-            data: {},
-            formatValue: formatBytes,
-          },
-          network: {
-            title: 'Network',
-            data: {},
-            formatValue: formatNetTraffic,
-          },
+        cpu: {
+          title: 'CPU',
+          data: {},
+          formatValue: formatCores,
+        },
+        memory: {
+          title: 'Memory',
+          data: {},
+          formatValue: formatBytes,
+        },
+        storage: {
+          title: 'Storage',
+          data: {},
+          formatValue: formatBytes,
+        },
+        network: {
+          title: 'Network',
+          data: {},
+          formatValue: formatNetTraffic,
         },
       },
     };
@@ -180,33 +152,32 @@ export class ClusterOverview extends React.Component {
   }
 
   _setDetailsOpenshiftResponse(response) {
-    this.setState(state => ({
-      detailsData: {
-        ...state.detailsData,
-        openshiftVersionResponse: response,
-      },
-    }));
+    let openshiftClusterVersions = _.get(response, 'data.result', []);
+    if (!Array.isArray(openshiftClusterVersions)){ // only one node
+      openshiftClusterVersions = [openshiftClusterVersions];
+    }
+
+    this.setState({
+      openshiftClusterVersions,
+    });
   }
 
   _setCapacityData(key, dataKey, response) {
     const result = response.data.result;
-    this.setState(state => {
-      const capacityStats = {
-        stats: _.get(state.capacityStats, 'stats', {}),
-      };
+    this.setState(({capacityStats}) => {
 
       const value = Number(_.get(result, '[0].value[1]'));
       if (!Number.isNaN(value)) {
         if (dataKey === 'totalDefault') {
-          if (isNaN(capacityStats.stats[key].data.total)) {
-            capacityStats.stats[key].data.total = value;
+          if (isNaN(capacityStats[key].data.total)) {
+            capacityStats[key].data.total = value;
           }
         } else if (dataKey === 'usedDefault') {
-          if (isNaN(capacityStats.stats[key].data.used)) {
-            capacityStats.stats[key].data.used = value;
+          if (isNaN(capacityStats[key].data.used)) {
+            capacityStats[key].data.used = value;
           }
         } else {
-          capacityStats.stats[key].data[dataKey] = value;
+          capacityStats[key].data[dataKey] = value;
         }
       }
       return { capacityStats };
@@ -270,30 +241,26 @@ export class ClusterOverview extends React.Component {
   }
 
   render() {
+    const { openshiftClusterVersions, healthData, consumersData, capacityStats } = this.state;
+
     const inventoryResourceMapToProps = resources => {
       return {
         value: {
-          detailsData: {
-            LoadingComponent: LoadingInline,
-            infrastructure: resources.infrastructure,
-            ...this.state.detailsData,
-          },
-          inventoryData: getInventoryData(resources), // k8s object loaded via WithResources
-          healthData: this.state.healthData,
-          capacityStats: {
-            LoadingComponent: LoadingInline,
-            ...this.state.capacityStats,
-          },
-
-          complianceData, // TODO: mock, replace by real data and remove from web-ui-components
-          utilizationStats, // TODO: mock, replace by real data and remove from web-ui-components
+          LoadingComponent: LoadingInline,
+          ...resources,
+          openshiftClusterVersions,
+          capacityStats,
 
           eventsData: {
             Component: OverviewEventStream,
             loaded: true,
           },
 
-          consumersData: this.state.consumersData,
+          consumersData,
+          healthData,
+
+          complianceData, // TODO: mock, replace by real data and remove from web-ui-components
+          utilizationStats, // TODO: mock, replace by real data and remove from web-ui-components
         },
       };
     };

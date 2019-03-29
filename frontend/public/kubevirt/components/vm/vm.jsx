@@ -19,11 +19,7 @@ import {
   NamespaceModel,
   VirtualMachineInstanceMigrationModel,
 } from '../../models/index';
-import {
-  getLabelMatcher,
-  findImporterPods, findVMIMigration, findPod,
-} from '../utils/resources';
-import { DASHES, VIRT_LAUNCHER_POD_PREFIX } from '../utils/constants';
+import { DASHES } from '../utils/constants';
 import { openCreateVmWizard } from '../modals/create-vm-modal';
 import { menuActions } from './menu-actions';
 import { WithResources } from '../utils/withResources';
@@ -43,7 +39,7 @@ const VMRow = ({obj: vm}) => {
   const migrationResources = getResource(VirtualMachineInstanceMigrationModel, {namespace});
   const resourceMap = {
     pods: {
-      resource: getResource(PodModel, {namespace, matchLabels: getLabelMatcher(vm)}),
+      resource: getResource(PodModel, { namespace, matchExpressions: [{key: 'kubevirt.io', operator: 'Exists' }] }),
     },
     importerPods: {
       resource: getResource(PodModel, {namespace, matchLabels: {[CDI_KUBEVIRT_IO]: 'importer'}}),
@@ -62,11 +58,6 @@ const VMRow = ({obj: vm}) => {
     </div>
     <div className={mainRowSize}>
       <WithResources resourceMap={resourceMap}
-        resourceToProps={({ pods, importerPods, migrations }) => ({
-          launcherPod: findPod(pods, name, VIRT_LAUNCHER_POD_PREFIX),
-          importerPods: findImporterPods(importerPods, vm),
-          migration: findVMIMigration(migrations, name),
-        })}
         loaderComponent={() => DASHES}>
         <VmStatus vm={vm} />
       </WithResources>

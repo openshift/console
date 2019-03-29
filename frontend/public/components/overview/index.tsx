@@ -54,8 +54,6 @@ import { PodStatus } from '../pod';
 import { FLAGS, featureReducerName } from '../../features';
 
 import { VmStatus } from 'kubevirt-web-ui-components';
-import { findImporterPods, findPod, findVMIMigration } from '../../kubevirt/components/utils/resources';
-import { VIRT_LAUNCHER_POD_PREFIX } from '../../kubevirt/components/utils/constants';
 
 enum View {
   Resources = 'resources',
@@ -884,10 +882,9 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
       const pods = this.getPodsForResource(vm);
       const services = this.getServicesForResource(vm);
       const routes = this.getRoutesForServices(services);
-      const launcherPod = findPod(_.get(this.props.pods, 'data', []), vm.metadata.name, VIRT_LAUNCHER_POD_PREFIX);
-      const importerPods = findImporterPods(_.get(this.props.pods, 'data', []), vm);
-      const migration = findVMIMigration(_.get(this.props.vmMigrations, 'data', []), vm.metadata.name);
-      const status = <VmStatus vm={vm} launcherPod={launcherPod} importerPods={importerPods} migration={migration} />;
+      const resolvedPods = _.get(this.props.pods, 'data', []);
+      const migrations = _.get(this.props.vmMigrations, 'data', []);
+      const status = <VmStatus vm={vm} pods={resolvedPods} migrations={migrations} />;
       return {
         obj,
         pods,

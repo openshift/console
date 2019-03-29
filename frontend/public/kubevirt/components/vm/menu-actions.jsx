@@ -6,6 +6,7 @@ import {
   isVmRunning,
   CloneDialog,
   getResource,
+  findVMIMigration,
 } from 'kubevirt-web-ui-components';
 
 import { Kebab, LoadingInline } from '../utils/okdutils';
@@ -23,7 +24,6 @@ import { restartVmModal } from '../modals/restart-vm-modal';
 import { cancelVmiMigrationModal } from '../modals/cancel-vmi-migration-modal';
 import {
   getLabelMatcher,
-  findVMIMigration,
 } from '../utils/resources';
 import { modalResourceLauncher } from '../utils/modalResourceLauncher';
 import { showError } from '../utils/showErrors';
@@ -75,7 +75,7 @@ const menuActionClone = (kind, vm) => ({
 });
 
 const menuActionCancelMigration = (kind, vm, actionArgs) => {
-  const migration = actionArgs && findVMIMigration(actionArgs[VirtualMachineInstanceMigrationModel.kind], _.get(actionArgs[VirtualMachineInstanceModel.kind], 'metadata.name'));
+  const migration = actionArgs && findVMIMigration(actionArgs[VirtualMachineInstanceMigrationModel.kind], actionArgs[VirtualMachineInstanceModel.kind]);
   return {
     hidden: !actionArgs || !isMigrating(migration),
     label: 'Cancel Virtual Machine Migration',
@@ -86,10 +86,10 @@ const menuActionCancelMigration = (kind, vm, actionArgs) => {
 };
 
 const menuActionMigrate = (kind, vm, actionArgs) => {
-  const migration = actionArgs && findVMIMigration(actionArgs[VirtualMachineInstanceMigrationModel.kind], _.get(actionArgs[VirtualMachineInstanceModel.kind], 'metadata.name'));
+  const migration = actionArgs && findVMIMigration(actionArgs[VirtualMachineInstanceMigrationModel.kind], actionArgs[VirtualMachineInstanceModel.kind]);
   const { name, namespace } = vm.metadata;
   return {
-    hidden: !actionArgs || !isVmRunning(vm) || isMigrating(vm, migration),
+    hidden: !actionArgs || !isVmRunning(vm) || isMigrating(migration),
     label: 'Migrate Virtual Machine',
     callback: () => {
       return modalResourceLauncher(BasicMigrationDialog, {

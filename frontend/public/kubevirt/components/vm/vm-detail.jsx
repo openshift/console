@@ -6,6 +6,7 @@ import {
   getName,
   getNamespace,
   getResource,
+  VIRT_LAUNCHER_POD_PREFIX,
 } from 'kubevirt-web-ui-components';
 
 import { k8sPatch, k8sGet } from '../../module/okdk8s';
@@ -20,12 +21,8 @@ import {
   VirtualMachineInstanceMigrationModel,
   VirtualMachineModel,
 } from '../../models/index';
-import {
-  findPod,
-  findImporterPods,
-  findVMIMigration,
-} from '../utils/resources';
-import { DASHES, VIRT_LAUNCHER_POD_PREFIX } from '../utils/constants';
+
+import { DASHES } from '../utils/constants';
 import VmConsolesConnected from '../vmconsoles';
 import { Nic } from '../nic';
 import { Disk } from '../disk';
@@ -87,18 +84,15 @@ export const ConnectedVmDetails = ({ obj: vm, ...rest }) => {
 const VmDetails_ = props => {
   const { vm, pods, importerPods, migrations, vmi } = props;
 
-  const vmPod = findPod(pods, getName(vm), VIRT_LAUNCHER_POD_PREFIX);
-  const migration = vmi ? findVMIMigration(migrations, getName(vmi)) : null;
-
   const namespaceResourceLink = () =>
     <ResourceLink kind={NamespaceModel.kind} name={getNamespace(vm)} title={getNamespace(vm)} />;
 
-  const podResourceLink = () =>
-    vmPod ? <ResourceLink
+  const podResourceLink = ({pod}) =>
+    pod ? <ResourceLink
       kind={PodModel.kind}
-      name={getName(vmPod)}
-      namespace={getNamespace(vmPod)}
-      uid={vmPod.metadata.uid}
+      name={getName(pod)}
+      namespace={getNamespace(pod)}
+      uid={pod.metadata.uid}
     />
       : DASHES;
 
@@ -109,9 +103,8 @@ const VmDetails_ = props => {
       NodeLink={NodeLink}
       NamespaceResourceLink={namespaceResourceLink}
       PodResourceLink={podResourceLink}
-      launcherPod={findPod(pods, getName(vm), VIRT_LAUNCHER_POD_PREFIX)}
-      importerPods={findImporterPods(importerPods, vm)}
-      migration={migration}
+      importerPods={importerPods}
+      migrations={migrations}
       pods={pods}
       vmi={vmi}
       k8sPatch={k8sPatch}

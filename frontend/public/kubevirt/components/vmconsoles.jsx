@@ -4,10 +4,10 @@ import {
   getVncConnectionDetails,
   getSerialConsoleConnectionDetails,
   getRdpConnectionDetails,
-  findRDPService, getLabelMatcher, findPod,
+  findRDPService,
 } from './utils/resources';
 
-import { VmConsoles, isWindows, getResource } from 'kubevirt-web-ui-components';
+import { VmConsoles, isWindows, getResource, findVmPod, VIRT_LAUNCHER_POD_PREFIX } from 'kubevirt-web-ui-components';
 import { LoadingInline } from './okdcomponents';
 import { WSFactory } from '../module/okdk8s';
 import { startStopVmModal } from './modals/start-stop-vm-modal';
@@ -18,7 +18,6 @@ import {
   VirtualMachineModel,
   ServiceModel, PodModel,
 } from '../models';
-import { VIRT_LAUNCHER_POD_PREFIX } from './utils/constants';
 
 const VmConsoles_ = ({ vm, vmi, services, pods }) => {
   const onStartVm = () => startStopVmModal({
@@ -30,7 +29,7 @@ const VmConsoles_ = ({ vm, vmi, services, pods }) => {
   let rdp;
   if (isWindows(vm)) {
     const rdpService = findRDPService(vmi, services);
-    const launcherPod = findPod(pods, vm.metadata.name, VIRT_LAUNCHER_POD_PREFIX);
+    const launcherPod = findVmPod(pods, vm, VIRT_LAUNCHER_POD_PREFIX);
     rdp = getRdpConnectionDetails(vmi, rdpService, launcherPod);
   }
 
@@ -60,7 +59,7 @@ const ConnectedVmConsoles = ({ obj: vm }) => {
       resource: getResource(ServiceModel, {namespace}),
     },
     pods: {
-      resource: getResource(PodModel, {namespace, matchLabels: getLabelMatcher(vm)}),
+      resource: getResource(PodModel, { namespace, matchExpressions: [{key: 'kubevirt.io', operator: 'Exists' }] }),
     },
   };
 
