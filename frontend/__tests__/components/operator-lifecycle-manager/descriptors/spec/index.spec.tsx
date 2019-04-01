@@ -81,7 +81,7 @@ describe(SpecDescriptor.name, () => {
 
     expect(wrapper.find('dd').childAt(0).shallow().find('dt').at(0).text()).toEqual('Resource Limits');
     expect(wrapper.find('dd').childAt(0).shallow().find(ResourceRequirementsModalLink).at(0).props().type).toEqual('limits');
-    expect(wrapper.find('dd').childAt(0).shallow().find('dt').at(1).text()).toEqual('Request Limits');
+    expect(wrapper.find('dd').childAt(0).shallow().find('dt').at(1).text()).toEqual('Resource Requests');
     expect(wrapper.find('dd').childAt(0).shallow().find(ResourceRequirementsModalLink).at(1).props().type).toEqual('requests');
   });
 
