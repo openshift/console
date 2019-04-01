@@ -73,20 +73,18 @@ const PageNav = ({ onNavSelect, ResourceClusterLink, HrefLink, ResourceNSLink, M
 
       <MonitoringNavSection />
 
-      <NavSection title="Machines" required={[FLAGS.CLUSTER_API, FLAGS.MACHINE_CONFIG, FLAGS.CAN_LIST_MACHINE_CONFIG]}>
-        <ResourceNSLink resource={referenceForModel(MachineModel)} name="Machines" />
-        <ResourceNSLink resource={referenceForModel(MachineSetModel)} name="Machine Sets" />
-        <ResourceClusterLink resource={referenceForModel(MachineConfigModel)} name="Machine Configs" />
-        <ResourceClusterLink resource={referenceForModel(MachineConfigPoolModel)} name="Machine Config Pools" />
+      <NavSection title="Compute" required={FLAGS.CAN_LIST_NODE}>
+        <ResourceClusterLink resource="nodes" name="Nodes" />
+        <ResourceNSLink resource={referenceForModel(MachineModel)} name="Machines" required={FLAGS.CLUSTER_API} />
+        <ResourceNSLink resource={referenceForModel(MachineSetModel)} name="Machine Sets" required={FLAGS.CLUSTER_API} />
+        <ResourceNSLink resource="baremetalhosts" name="Bare Metal Hosts" required={FLAGS.METALKUBE} isSeparated />
+        <ResourceClusterLink resource={referenceForModel(MachineConfigModel)} name="Machine Configs" required={FLAGS.MACHINE_CONFIG} />
+        <ResourceClusterLink resource={referenceForModel(MachineConfigPoolModel)} name="Machine Config Pools" required={FLAGS.MACHINE_CONFIG} />
       </NavSection>
 
       <NavSection title="Administration">
-        <ResourceClusterLink resource="namespaces" name="Namespaces" required={FLAGS.CAN_LIST_NS} />
-        <ResourceClusterLink resource="nodes" name="Nodes" required={FLAGS.CAN_LIST_NODE} />
-        <ResourceNSLink resource="baremetalhosts" name="Bare Metal Hosts" required={FLAGS.METALKUBE} />
-        <ResourceNSLink resource={referenceForModel(MachineSetModel)} name="Machine Sets" required={FLAGS.CLUSTER_API} />
-        <ResourceNSLink resource={referenceForModel(MachineModel)} name="Machines" required={FLAGS.CLUSTER_API} />
         <HrefLink href="/settings/cluster" activePath="/settings/cluster/" name="Cluster Settings" required={FLAGS.CLUSTER_VERSION} />
+        <ResourceClusterLink resource="namespaces" name="Namespaces" required={FLAGS.CAN_LIST_NS} />
         <ResourceNSLink resource="serviceaccounts" name="Service Accounts" />
         <ResourceNSLink resource="roles" name="Roles" startsWith={rolesStartsWith} />
         <ResourceNSLink resource="rolebindings" name="Role Bindings" startsWith={rolebindingsStartsWith} />
