@@ -181,6 +181,10 @@ export const BaremetalHostsDetailPage = props => {
   return (
     <DetailsPage
       {...props}
+      breadcrumbsFor={() => [
+        {name: props.match.params.ns, path: props.match.url.slice(0, props.match.url.lastIndexOf('/'))},
+        {name: 'Baremetal Host Details', path: props.match.url},
+      ]}
       pages={pages}
       resources={[
         getResource(BaremetalHostModel, {name, namespace, isList: false}),
