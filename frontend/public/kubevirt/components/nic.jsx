@@ -7,7 +7,7 @@ import { Kebab, LoadingInline } from './utils/okdutils';
 import { List, ColHead, ListHeader, ResourceRow } from './factory/okdfactory';
 import { DASHES, BUS_VIRTIO, NIC } from './utils/constants';
 import { deleteDeviceModal } from './modals/delete-device-modal';
-import { getNetworks, CreateNicRow, getAddNicPatch, POD_NETWORK, settingsValue, getResource, addPrefixToPatch } from 'kubevirt-web-ui-components';
+import { getNetworks, CreateNicRow, getAddNicPatch, POD_NETWORK, settingsValue, getResource, addPrefixToPatch, getInterfaceBinding } from 'kubevirt-web-ui-components';
 import { NetworkAttachmentDefinitionModel, VirtualMachineModel, VmTemplateModel } from '../models';
 import { WithResources } from './utils/withResources';
 import { k8sPatch } from '../module/okdk8s';
@@ -39,8 +39,8 @@ const getActions = (vm, nic, vmTemplate, patchPrefix) => {
   return actions.map(a => a(vm, nic, vmTemplate, patchPrefix));
 };
 
-const visibleRowStyle = 'col-lg-3 col-md-3 col-sm-3 col-xs-4';
-const hiddenRowStyle = 'col-lg-3 col-md-3 col-sm-3 hidden-xs';
+const mainRowStyle = 'col-lg-3';
+const otherRowStyle = 'col-lg-2';
 
 const getVmNicModel = vm => {
   const networks = getNetworks(vm);
@@ -48,23 +48,27 @@ const getVmNicModel = vm => {
 };
 
 const NicHeader = props => <ListHeader>
-  <ColHead {...props} className={visibleRowStyle} sortField="name">Name</ColHead>
-  <ColHead {...props} className={visibleRowStyle} sortField="model">Model</ColHead>
-  <ColHead {...props} className={visibleRowStyle} sortField="network">Network</ColHead>
-  <ColHead {...props} className={hiddenRowStyle} sortField="macAddress">MAC Address</ColHead>
+  <ColHead {...props} className={mainRowStyle} sortField="name">Name</ColHead>
+  <ColHead {...props} className={mainRowStyle} sortField="model">Model</ColHead>
+  <ColHead {...props} className={otherRowStyle} sortField="network">Network</ColHead>
+  <ColHead {...props} className={otherRowStyle} sortField="macAddress">Binding Method</ColHead>
+  <ColHead {...props} className={otherRowStyle} sortField="macAddress">MAC Address</ColHead>
 </ListHeader>;
 
 export const VmNicRow = ({ nic }) => <ResourceRow obj={nic}>
-  <div className={visibleRowStyle}>
+  <div className={mainRowStyle}>
     {nic.name}
   </div>
-  <div className={visibleRowStyle}>
+  <div className={mainRowStyle}>
     {nic.model || BUS_VIRTIO}
   </div>
-  <div className={visibleRowStyle}>
+  <div className={otherRowStyle}>
     {getNetworkName(nic.network)}
   </div>
-  <div className={hiddenRowStyle}>
+  <div className={otherRowStyle}>
+    {nic.binding || DASHES}
+  </div>
+  <div className={otherRowStyle}>
     {nic.macAddress || DASHES}
   </div>
   <div className="dropdown-kebab-pf">
@@ -135,6 +139,7 @@ export class Nic extends React.Component {
         nicType: NIC_TYPE_VM,
         vmTemplate: this.props.vmTemplate,
         patchPrefix: this.props.patchPrefix,
+        binding: getInterfaceBinding(nic),
       };
     }));
     return nics;
@@ -173,6 +178,7 @@ export class Nic extends React.Component {
       model: settingsValue(newNic, 'model'),
       network: settingsValue(newNic, 'network'),
       mac: settingsValue(newNic, 'mac'),
+      binding: settingsValue(newNic, 'binding'),
     };
 
     const addNicPatch = getAddNicPatch(vm, nic).map(patch => addPrefixToPatch(patchPrefix, patch));
