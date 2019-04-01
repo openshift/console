@@ -52,7 +52,7 @@ const Details_ = ({flags, obj: pvc}) => {
       <div className="col-sm-6">
         <ResourceSummary resource={pvc}>
           <dt>Label Selector</dt>
-          <dd><Selector selector={labelSelector} /></dd>
+          <dd><Selector selector={labelSelector} kind="PersistentVolume" /></dd>
         </ResourceSummary>
       </div>
       <div className="col-sm-6">
