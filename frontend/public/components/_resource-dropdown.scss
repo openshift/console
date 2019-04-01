@@ -12,6 +12,9 @@
     min-width: 290px;
     overflow-x: hidden;
     overflow-y: auto;
+    @media (min-width: 480px) {
+      min-width: 350px;
+    }
     a {
       padding: 4px 20px 4px 6px;
     }
@@ -19,7 +22,7 @@
     .active a,
     .active a:focus,
     .active a:hover {
-      .co-resource-link__resource-api {
+      .co-resource-item__resource-api {
         color: $dropdown-link-active-color;
       }
     }

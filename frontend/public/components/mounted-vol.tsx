@@ -16,7 +16,7 @@ import {
   SectionHeading,
 } from './utils';
 
-const ContainerLink = ({name, pod}) => <span className="co-resource-link co-resource-link--inline">
+const ContainerLink = ({name, pod}) => <span className="co-resource-item co-resource-item--inline">
   <ResourceIcon kind="Container" />
   <Link to={`/k8s/ns/${pod.metadata.namespace}/pods/${pod.metadata.name}/containers/${name}`}>{name}</Link>
 </span>;

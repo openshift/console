@@ -12,8 +12,8 @@ import * as k8s from '../../../../../public/module/k8s';
 
 describe(ResourceRequirementsModal.name, () => {
   let wrapper: ShallowWrapper<ResourceRequirementsModalProps>;
-  const title = 'TestResource Request Limits';
-  const description = 'Define the request limits for this TestResource instance.';
+  const title = 'TestResource Resource Requests';
+  const description = 'Define the resource requests for this TestResource instance.';
   const cancel = jasmine.createSpy('cancelSpy');
 
   beforeEach(() => {

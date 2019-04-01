@@ -98,6 +98,9 @@ export default (state, action) => {
       });
       return state.setIn(['monitoring', 'silences'], silences);
     }
+    case types.toggleMonitoringGraphs:
+      return state.setIn(['monitoring', 'hideGraphs'], !state.getIn(['monitoring', 'hideGraphs']));
+
     case types.selectOverviewView:
       return state.setIn(['overview', 'selectedView'], action.view);
 

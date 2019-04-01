@@ -51,7 +51,7 @@ const ResourceQuotaCharts = ({quota, resourceTypes}) => {
   return <div className="group">
     <div className="group__title">
       <h2 className="h3">
-        <ResourceLink kind="ResourceQuota" name={quota.metadata.name} className="co-resource-link-truncate"
+        <ResourceLink kind="ResourceQuota" name={quota.metadata.name} className="co-resource-item--truncate"
           namespace={quota.metadata.namespace} inline="true" title={quota.metadata.name} />
         {scopes && <QuotaScopesInline className="co-resource-quota-dashboard-scopes" scopes={scopes} />}
       </h2>
