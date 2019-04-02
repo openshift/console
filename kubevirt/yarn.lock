@@ -17,8 +17,8 @@
     xterm "^3.3.0"
 
 "@patternfly/react-console@1.x":
-  version "1.10.35"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-console/-/react-console-1.10.35.tgz#cfb42b1d1b65cec8c8b36ee59821c7979b17740f"
+  version "1.10.37"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-console/-/react-console-1.10.37.tgz#e90d037284389b021d47d77a406e057a02451030"
   dependencies:
     "@novnc/novnc" "^1.0.0"
     blob-polyfill "^3.0.20180112"
@@ -107,9 +107,9 @@ js-yaml@3.x:
     argparse "^1.0.7"
     esprima "^4.0.0"
 
-kubevirt-web-ui-components@0.1.22:
-  version "0.1.22"
-  resolved "https://registry.yarnpkg.com/kubevirt-web-ui-components/-/kubevirt-web-ui-components-0.1.22.tgz#954ed9d18e3d7caecd6aacb063ad45139d2f6055"
+kubevirt-web-ui-components@0.1.23:
+  version "0.1.23"
+  resolved "https://registry.yarnpkg.com/kubevirt-web-ui-components/-/kubevirt-web-ui-components-0.1.23.tgz#9fccf613904c1eb9415cf7bb4cf1fd5580c8bdea"
   dependencies:
     "@patternfly/react-console" "1.x"
     classnames "2.x"
@@ -173,8 +173,8 @@ react-dnd@2.6.x:
     prop-types "^15.5.10"
 
 react-is@^16.8.1:
-  version "16.8.4"
-  resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.8.4.tgz#90f336a68c3a29a096a3d648ab80e87ec61482a2"
+  version "16.8.6"
+  resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.8.6.tgz#5bbc1e2d29141c9fbdfed456343fe2bc430a6a16"
 
 react-responsive@6.1.x:
   version "6.1.1"
