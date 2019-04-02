@@ -5,6 +5,7 @@ import { types } from './ui-actions';
 import { ALL_NAMESPACES_KEY, LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY, NAMESPACE_LOCAL_STORAGE_KEY } from '../const';
 import { AlertStates, isSilenced, SilenceStates } from '../monitoring';
 import { legalNamePattern, getNamespace } from '../components/utils/link';
+import { OverviewSpecialGroup } from '../components/overview/constants';
 
 export default (state, action) => {
   if (!state) {
@@ -31,6 +32,9 @@ export default (state, action) => {
         selectedDetailsTab: '',
         selectedUID: '',
         selectedView: 'resources',
+        selectedGroup: OverviewSpecialGroup.GROUP_BY_APPLICATION,
+        groupOptions: new ImmutableMap(),
+        filterValue: '',
       }),
       user: {},
       clusterID: '',
@@ -119,6 +123,18 @@ export default (state, action) => {
     case types.updateOverviewResources: {
       const newResources = new ImmutableMap(_.keyBy(action.resources, 'obj.metadata.uid'));
       return state.setIn(['overview', 'resources'], newResources);
+    }
+
+    case types.updateOverviewSelectedGroup: {
+      return state.setIn(['overview', 'selectedGroup'], action.group);
+    }
+
+    case types.updateOverviewGroupOptions: {
+      return state.setIn(['overview', 'groupOptions'], new ImmutableMap(action.groups));
+    }
+
+    case types.updateOverviewFilterValue: {
+      return state.setIn(['overview', 'filterValue'], action.value);
     }
 
     default:
