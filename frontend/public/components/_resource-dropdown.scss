@@ -1,6 +1,12 @@
 .co-type-selector {
   margin-right: -2px;
   min-width: 0;
+  .btn-dropdown .show {
+    display: inline !important;
+    &::before {
+      content: "- "
+    }
+  }
   .dropdown-menu {
     max-height: 75vh;
     min-width: 290px;
@@ -8,6 +14,14 @@
     overflow-y: auto;
     a {
       padding: 4px 20px 4px 6px;
+    }
+    &:active,
+    .active a,
+    .active a:focus,
+    .active a:hover {
+      .co-resource-link__resource-api {
+        color: $dropdown-link-active-color;
+      }
     }
   }
 }

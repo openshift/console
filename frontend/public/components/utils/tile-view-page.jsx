@@ -429,11 +429,13 @@ export class TileViewPage extends React.Component {
       selectedCategoryId: 'all',
       activeFilters: defaultFilters,
       filterCounts: null,
+      filterGroupsShowAll: {},
     };
 
     this.onUpdateFilters = this.onUpdateFilters.bind(this);
     this.onFilterChange = this.onFilterChange.bind(this);
     this.renderFilterGroup = this.renderFilterGroup.bind(this);
+    this.onShowAllToggle = this.onShowAllToggle.bind(this);
   }
 
   componentDidMount() {
@@ -551,6 +553,13 @@ export class TileViewPage extends React.Component {
     this.onFilterChange('keyword', null, value);
   }
 
+  onShowAllToggle(groupName) {
+    const { filterGroupsShowAll } = this.state;
+    const updatedShow = _.clone(filterGroupsShowAll);
+    _.set(updatedShow, groupName, !_.get(filterGroupsShowAll, groupName, false));
+    this.setState({filterGroupsShowAll: updatedShow });
+  }
+
   renderTabs(category, selectedCategoryId) {
     const { id, label, subcategories, numItems } = category;
     const active = id === selectedCategoryId;
@@ -583,11 +592,14 @@ export class TileViewPage extends React.Component {
   // eslint-disable-next-line no-unused-vars
   renderFilterGroup(filterGroup, groupName, activeFilters, filterCounts, onFilterChange, onUpdateFilters) {
     const { filterGroupNameMap } = this.props;
+    const { filterGroupsShowAll } = this.state;
 
     return (
       <FilterSidePanel.Category
         key={groupName}
         title={filterGroupNameMap[groupName] || groupName}
+        onShowAllToggle={() => this.onShowAllToggle(groupName)}
+        showAll={_.get(filterGroupsShowAll, groupName, false)}
       >
         {_.map(filterGroup, (filter, filterName) => {
           const { label, active } = filter;
@@ -597,6 +609,7 @@ export class TileViewPage extends React.Component {
             checked={active}
             onChange={e => onFilterChange(groupName, filterName, e.target.checked)}
             title={label}
+            data-test={`${groupName}-${_.kebabCase(filterName)}`}
           >
             {label}
           </FilterSidePanel.CategoryItem>;

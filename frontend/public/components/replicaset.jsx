@@ -4,9 +4,18 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 
 import { DetailsPage, List, ListPage, WorkloadListHeader, WorkloadListRow } from './factory';
-import { Kebab, ContainerTable, navFactory, SectionHeading, ResourceSummary, ResourcePodCount, AsyncComponent } from './utils';
+import {
+  Kebab,
+  ContainerTable,
+  navFactory,
+  SectionHeading,
+  ResourceSummary,
+  ResourcePodCount,
+  AsyncComponent,
+} from './utils';
 import { breadcrumbsForOwnerRefs } from './utils/breadcrumbs';
 import { ResourceEventStream } from './events';
+import { MountedVolumes } from './mounted-vol';
 
 const {ModifyCount, AddStorage, EditEnvironment, common} = Kebab.factory;
 
@@ -19,7 +28,7 @@ const Details = ({obj: replicaSet}) => {
       <SectionHeading text="Replica Set Overview" />
       <div className="row">
         <div className="col-md-6">
-          <ResourceSummary resource={replicaSet}>
+          <ResourceSummary resource={replicaSet} showPodSelector showNodeSelector showTolerations>
             {revision && <React.Fragment>
               <dt>Deployment Revision</dt>
               <dd>{revision}</dd>
@@ -34,6 +43,9 @@ const Details = ({obj: replicaSet}) => {
     <div className="co-m-pane__body">
       <SectionHeading text="Containers" />
       <ContainerTable containers={replicaSet.spec.template.spec.containers} />
+    </div>
+    <div className="co-m-pane__body">
+      <MountedVolumes podTemplate={replicaSet.spec.template} heading="Mounted Volumes" />
     </div>
   </React.Fragment>;
 };

@@ -23,7 +23,8 @@ type openShiftAuth struct {
 }
 
 type openShiftConfig struct {
-	client        *http.Client
+	k8sClient     *http.Client
+	oauthClient   *http.Client
 	issuerURL     string
 	cookiePath    string
 	secureCookies bool
@@ -52,7 +53,7 @@ func newOpenShiftAuth(ctx context.Context, c *openShiftConfig) (oauth2.Endpoint,
 		return oauth2.Endpoint{}, nil, err
 	}
 
-	resp, err := c.client.Do(req.WithContext(ctx))
+	resp, err := c.k8sClient.Do(req.WithContext(ctx))
 	if err != nil {
 		return oauth2.Endpoint{}, nil, err
 	}
@@ -85,6 +86,19 @@ func newOpenShiftAuth(ctx context.Context, c *openShiftConfig) (oauth2.Endpoint,
 	if err := validateAbsURL(metadata.Token); err != nil {
 		return oauth2.Endpoint{}, nil, err
 	}
+
+	// Make sure we can talk to the issuer endpoint.
+	req, err = http.NewRequest(http.MethodHead, metadata.Issuer, nil)
+	if err != nil {
+		return oauth2.Endpoint{}, nil, err
+	}
+
+	resp, err = c.oauthClient.Do(req.WithContext(ctx))
+	if err != nil {
+		return oauth2.Endpoint{}, nil, fmt.Errorf("request to OAuth issuer endpoint %s failed: %v",
+			metadata.Token, err)
+	}
+	defer resp.Body.Close()
 
 	kubeAdminLogoutURL := proxy.SingleJoiningSlash(metadata.Issuer, "/logout")
 	return oauth2.Endpoint{
@@ -145,7 +159,7 @@ func (o *openShiftAuth) logout(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNoContent)
 }
 
-func (o *openShiftAuth) authenticate(r *http.Request) (*User, error) {
+func getOpenShiftUser(r *http.Request) (*User, error) {
 	// TODO: This doesn't do any validation of the cookie with the assumption that the
 	// API server will reject tokens it doesn't recognize. If we want to keep some backend
 	// state we should sign this cookie. If not there's not much we can do.

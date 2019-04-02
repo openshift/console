@@ -19,20 +19,20 @@ const chunkedRoutes = OrderedMap<string, {section: string, name: string}>()
   .set('job', {section: 'Workloads', name: 'Jobs'})
   .set('cron-job', {section: 'Workloads', name: 'Cron Jobs'})
   .set('configmap', {section: 'Workloads', name: 'Config Maps'})
-  .set('hpa', {section: 'Workloads', name: 'HPAs'})
+  .set('hpa', {section: 'Workloads', name: 'Horizontal Pod Autoscalers'})
   .set('service', {section: 'Networking', name: 'Services'})
   .set('persistent-volume', {section: 'Storage', name: 'Persistent Volumes'})
   .set('persistent-volume-claim', {section: 'Storage', name: 'Persistent Volume Claims'})
   .set('storage-class', {section: 'Storage', name: 'Storage Classes'})
   .set('build-config', {section: 'Builds', name: 'Build Configs'})
   .set('image-stream', {section: 'Builds', name: 'Image Streams'})
-  .set('node', {section: 'Administration', name: 'Nodes'})
+  .set('node', {section: 'Compute', name: 'Nodes'})
   .set('service-account', {section: 'Administration', name: 'Service Accounts'})
   .set('resource-quota', {section: 'Administration', name: 'Resource Quotas'})
   .set('limit-range', {section: 'Administration', name: 'Limit Ranges'})
-  .set('custom-resource-definition', {section: 'Administration', name: 'CRDs'})
+  .set('custom-resource-definition', {section: 'Administration', name: 'Custom Resource Definitions'})
   .set('catalog', {section: 'Catalog', name: 'Developer Catalog'})
-  .set('operator-hub', {section: 'Catalog', name: 'Operator Hub'});
+  .set('operator-hub', {section: 'Catalog', name: 'OperatorHub'});
 
 describe('Performance test', () => {
 
@@ -84,7 +84,8 @@ describe('Performance test', () => {
     };
 
     it(`downloads new bundle for ${routeName}`, async() => {
-      await browser.get(`${appHost}/status/all-namespaces`);
+      await browser.get(`${appHost}/k8s/cluster/projects`);
+      await browser.executeScript(() => performance.setResourceTimingBufferSize(1000));
       await browser.wait(until.presenceOf(crudView.resourceTitle));
       // Avoid problems where the Catalog nav section appears where Workloads was at the moment the tests try to click.
       await browser.wait(until.visibilityOf(sidenavView.navSectionFor('Catalog')));

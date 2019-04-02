@@ -147,20 +147,20 @@ export const getVolumeMountPermissions = v => {
 };
 
 export const getVolumeMountsByPermissions = pod => {
-  if (!pod || !pod.spec) {
+  if (!pod || !pod.spec || !pod.spec.volumes) {
     return [];
   }
+  const m = {};
 
-  const volumes = pod.spec.volumes.reduce((p, v) => {
+  const volumes = (pod.spec.volumes || []).reduce((p, v) => {
     p[v.name] = v;
     return p;
   }, {});
 
-  const m = {};
   _.forEach(pod.spec.containers, (c: any) => {
     _.forEach(c.volumeMounts, (v: any) => {
       const k = `${v.name}_${v.readOnly ? 'ro' : 'rw'}`;
-      const mount = {container: c.name, mountPath: v.mountPath};
+      const mount = {container: c.name, mountPath: v.mountPath, subPath: v.subPath};
       if (k in m) {
         return m[k].mounts.push(mount);
       }

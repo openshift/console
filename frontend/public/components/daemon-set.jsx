@@ -22,6 +22,8 @@ import {
   SectionHeading,
   Selector,
 } from './utils';
+import { ResourceEventStream } from './events';
+import { MountedVolumes } from './mounted-vol';
 
 export const menuActions = [Kebab.factory.AddStorage, Kebab.factory.EditEnvironment, ...Kebab.factory.common];
 
@@ -69,7 +71,7 @@ const Details = ({obj: daemonset}) => <React.Fragment>
     <SectionHeading text="Daemon Set Overview" />
     <div className="row">
       <div className="col-lg-6">
-        <ResourceSummary resource={daemonset} />
+        <ResourceSummary resource={daemonset} showPodSelector showNodeSelector showTolerations />
       </div>
       <div className="col-lg-6">
         <DaemonSetDetailsList ds={daemonset} />
@@ -79,6 +81,9 @@ const Details = ({obj: daemonset}) => <React.Fragment>
   <div className="co-m-pane__body">
     <SectionHeading text="Containers" />
     <ContainerTable containers={daemonset.spec.template.spec.containers} />
+  </div>
+  <div className="co-m-pane__body">
+    <MountedVolumes podTemplate={daemonset.spec.template} heading="Mounted Volumes" />
   </div>
 </React.Fragment>;
 
@@ -92,14 +97,14 @@ const environmentComponent = (props) => <EnvironmentPage
   readOnly={false}
 />;
 
-const {details, pods, editYaml, envEditor} = navFactory;
+const {details, pods, editYaml, envEditor, events} = navFactory;
 
 const DaemonSets = props => <List {...props} Header={DaemonSetHeader} Row={DaemonSetRow} />;
 const DaemonSetsPage = props => <ListPage canCreate={true} ListComponent={DaemonSets} {...props} />;
 const DaemonSetsDetailsPage = props => <DetailsPage
   {...props}
   menuActions={menuActions}
-  pages={[details(detailsPage(Details)), editYaml(), pods(), envEditor(environmentComponent)]}
+  pages={[details(detailsPage(Details)), editYaml(), pods(), envEditor(environmentComponent), events(ResourceEventStream)]}
 />;
 
 export {DaemonSets, DaemonSetsPage, DaemonSetsDetailsPage};

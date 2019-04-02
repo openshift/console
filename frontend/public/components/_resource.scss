@@ -1,29 +1,22 @@
-$height: 18px;
-
 .co-m-resource-icon {
   background-color: $color-container-dark;
-  border-radius: 10px;
+  border-radius: 20px;
   color: #fff;
   display: inline-block;
   font-size: $font-size-base - 1;
-  font-weight: normal;
-  height: $height;
-  line-height: $height;
+  font-weight: 300;
+  line-height: 16px;
   margin-right: 4px;
-  min-width: $height;
-  padding: 0 4px;
+  min-width: 18px;
+  padding: 2px 4px 1px;
   text-align: center;
+
   &--lg {
-    border-radius: 12px;
-    font-size: 16px;
-    height: 24px;
-    line-height: 24px;
-    margin-left: 0;
+    font-size: ($font-size-base + 1);
+    line-height: 21px;
     margin-right: 7px;
     min-width: 24px;
     padding: 0 7px;
-    position: relative;
-    top: 2px;
   }
 }
 
@@ -104,18 +97,6 @@ $height: 18px;
 
 .co-m-resource-ingress {
   background-color: $color-ingress-dark;
-}
-
-.co-m-resource-icon--all {
-  background-color: black;
-}
-
-.co-m-resource-icon--align-left {
-  margin-left: 0;
-}
-
-.co-m-resource-icon--flex-child {
-  margin-right: 7px;
 }
 
 .co-resource-link {

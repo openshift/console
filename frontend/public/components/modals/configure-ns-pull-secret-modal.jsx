@@ -1,6 +1,7 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as PropTypes from 'prop-types';
+import { Base64 } from 'js-base64';
 
 import { k8sPatch, k8sCreate } from '../../module/k8s';
 import { SecretModel } from '../../models';
@@ -14,7 +15,7 @@ const parseExisitingPullSecret = (pullSecret) => {
   let username, email, password, address;
 
   try {
-    const existingData = pullSecret && window.atob(pullSecret.data[CONST.PULL_SECRET_DATA]);
+    const existingData = pullSecret && Base64.decode(pullSecret.data[CONST.PULL_SECRET_DATA]);
 
     if (existingData) {
       const data = JSON.parse(existingData);
@@ -35,7 +36,7 @@ const parseExisitingPullSecret = (pullSecret) => {
       }
       address = keys[0];
       email = data.auths[address].email;
-      const auth = window.atob(data.auths[address].auth);
+      const auth = Base64.decode(data.auths[address].auth);
       const authParts = auth.split(':');
 
       if (authParts.length === 1) {
@@ -68,11 +69,11 @@ const generateSecretData = (formData) => {
   authParts.push(formData.password);
 
   config.auths[formData.address] = {
-    auth:  window.btoa(authParts.join(':')),
+    auth:  Base64.encode(authParts.join(':')),
     email: formData.email,
   };
 
-  return window.btoa(JSON.stringify(config));
+  return Base64.encode(JSON.stringify(config));
 };
 
 class ConfigureNamespacePullSecret extends PromiseComponent {
@@ -127,7 +128,7 @@ class ConfigureNamespacePullSecret extends PromiseComponent {
     let secretData;
 
     if (this.state.method === 'upload') {
-      secretData = window.btoa(this.state.fileData);
+      secretData = Base64.encode(this.state.fileData);
     } else {
       const elements = event.target.elements;
       const formData = {
@@ -183,7 +184,7 @@ class ConfigureNamespacePullSecret extends PromiseComponent {
             <label>Namespace</label>
           </div>
           <div className="col-xs-9">
-            <ResourceIcon kind="Namespace" className="co-m-resource-icon--align-left" /> &nbsp;{namespace.metadata.name}
+            <ResourceIcon kind="Namespace" /> &nbsp;{namespace.metadata.name}
           </div>
         </div>
 
@@ -193,7 +194,7 @@ class ConfigureNamespacePullSecret extends PromiseComponent {
           </div>
           { pullSecret ?
             <div className="col-xs-9">
-              <ResourceIcon kind="Secret" className="co-m-resource-icon--align-left" />
+              <ResourceIcon kind="Secret" />
                 &nbsp;{_.get(pullSecret, 'metadata.name')}
             </div> : <div className="col-xs-9">
               <input type="text" className="form-control" id="namespace-pull-secret-name" aria-describedby="namespace-pull-secret-name-help" required />
@@ -258,7 +259,7 @@ class ConfigureNamespacePullSecret extends PromiseComponent {
               <label htmlFor="namespace-pull-secret-password">Password</label>
             </div>
             <div className="col-xs-9">
-              <input type="text" defaultValue={existingData.password} className="form-control" id="namespace-pull-secret-password" required />
+              <input type="password" defaultValue={existingData.password} className="form-control" id="namespace-pull-secret-password" required />
             </div>
           </div>
         </div> }

@@ -32,7 +32,7 @@ const ClusterServicePlanDetails: React.SFC<ClusterServicePlanDetailsProps> = ({o
     <SectionHeading text="Service Plan Overview" />
     <div className="row">
       <div className="col-md-6">
-        <ResourceSummary resource={servicePlan} showPodSelector={false} showNodeSelector={false} />
+        <ResourceSummary resource={servicePlan} />
       </div>
       <div className="col-md-6">
         <dl className="co-m-pane__details">

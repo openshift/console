@@ -116,7 +116,7 @@ export const ImageStreamsDetails: React.SFC<ImageStreamsDetailsProps> = ({obj: i
   return <div>
     <div className="co-m-pane__body">
       <SectionHeading text="Image Stream Overview" />
-      <ResourceSummary resource={imageStream} showPodSelector={false} showNodeSelector={false}>
+      <ResourceSummary resource={imageStream}>
         {imageRepository && <dt>Image Repository</dt>}
         {imageRepository && <dd>{imageRepository}</dd>}
         {publicImageRepository && <dt>Public Image Repository</dt>}

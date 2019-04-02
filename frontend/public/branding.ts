@@ -6,6 +6,10 @@ const getProductName = () => {
       return 'OpenShift Container Platform';
     case 'online':
       return 'OpenShift Online';
+    case 'dedicated':
+      return 'OpenShift Dedicated';
+    case 'azure':
+      return 'Azure Red Hat OpenShift';
     default:
       return 'OKD';
   }

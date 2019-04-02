@@ -9,7 +9,8 @@ import {
   CatalogSourceKind,
   InstallPlanApproval,
   PackageManifestKind,
-  OperatorGroupKind } from '../public/components/operator-lifecycle-manager';
+  OperatorGroupKind,
+  InstallPlanPhase } from '../public/components/operator-lifecycle-manager';
 import { StatusCapability, SpecCapability } from '../public/components/operator-lifecycle-manager/descriptors/types';
 import { CustomResourceDefinitionKind, K8sResourceKind, K8sKind } from '../public/module/k8s';
 /* eslint-enable no-unused-vars */
@@ -58,6 +59,7 @@ export const testClusterServiceVersion: ClusterServiceVersionKind = {
         'alm-owner-testapp': 'testapp.clusterserviceversions.operators.coreos.com.v1alpha1',
       },
     },
+    installModes: [],
     install: {
       strategy: 'Deployment',
       spec: {
@@ -129,6 +131,7 @@ export const localClusterServiceVersion: ClusterServiceVersionKind = {
         'alm-owner-local-testapp': 'local-testapp.clusterserviceversions.operators.coreos.com.v1alpha1',
       },
     },
+    installModes: [],
     install: {
       strategy: 'Deployment',
       spec: {
@@ -268,6 +271,7 @@ export const testPackageManifest: PackageManifestKind = {
         provider: {
           name: 'CoreOS, Inc',
         },
+        installModes: [],
       },
     }],
     defaultChannel: 'alpha',
@@ -304,7 +308,7 @@ export const testInstallPlan: InstallPlanKind = {
     approval: InstallPlanApproval.Automatic,
   },
   status: {
-    phase: 'Complete',
+    phase: InstallPlanPhase.InstallPlanPhaseComplete,
     catalogSources: ['test-catalog'],
     plan: [],
   },

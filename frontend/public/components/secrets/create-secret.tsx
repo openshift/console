@@ -2,11 +2,10 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
-import { Link } from 'react-router-dom';
+import { Base64 } from 'js-base64';
 
 import { k8sCreate, k8sUpdate, K8sResourceKind, referenceFor } from '../../module/k8s';
 import { ButtonBar, Firehose, history, StatusBox, LoadingBox, Dropdown, resourceObjPath } from '../utils';
-import { formatNamespacedRouteForResource } from '../../ui/ui-actions';
 import { AsyncComponent } from '../utils/async';
 import { SecretModel } from '../../models';
 import { WebHookSecretKey } from '../secret';
@@ -110,7 +109,7 @@ const withSecretForm = (SubForm) => class SecretFormComponent extends React.Comp
       inProgress: false,
       type: defaultSecretType,
       stringData: _.mapValues(_.get(props.obj, 'data'), (value) => {
-        return value ? window.atob(value) : '';
+        return value ? Base64.decode(value) : '';
       }),
       disableForm: false,
     };
@@ -157,6 +156,7 @@ const withSecretForm = (SubForm) => class SecretFormComponent extends React.Comp
   }
   render() {
     const { secretTypeAbstraction } = this.state;
+    const { onCancel = history.goBack } = this.props;
     const title = `${this.props.titleVerb} ${secretDisplayType(secretTypeAbstraction)} Secret`;
     return <div className="co-m-pane__body">
       <Helmet>
@@ -191,7 +191,7 @@ const withSecretForm = (SubForm) => class SecretFormComponent extends React.Comp
         />
         <ButtonBar errorMessage={this.state.error} inProgress={this.state.inProgress}>
           <button type="submit" disabled={this.state.disableForm} className="btn btn-primary" id="save-changes">{this.props.saveButtonText || 'Create'}</button>
-          <Link to={formatNamespacedRouteForResource('secrets')} className="btn btn-default" id="cancel">Cancel</Link>
+          <button type="button" className="btn btn-default" id="cancel" onClick={onCancel}>Cancel</button>
         </ButtonBar>
       </form>
     </div>;
@@ -311,7 +311,7 @@ class ConfigEntryForm extends React.Component<ConfigEntryFormProps, ConfigEntryF
   // If 'username' or 'password' fields are updated, 'auth' field has to be updated as well, else stays the same.
   updateAuth(updatedFieldName) {
     return _.includes(['username', 'password'], updatedFieldName)
-      ? window.btoa(`${this.state.username}:${this.state.password}`)
+      ? Base64.encode(`${this.state.username}:${this.state.password}`)
       : this.state.auth;
   }
   changeData(event) {
@@ -363,15 +363,14 @@ class ConfigEntryForm extends React.Component<ConfigEntryFormProps, ConfigEntryF
         </div>
       </div>
       <div className="form-group">
-        <label className="control-label co-required" htmlFor={`${this.props.id}-email`}>Email</label>
+        <label className="control-label" htmlFor={`${this.props.id}-email`}>Email</label>
         <div>
           <input className="form-control"
             id={`${this.props.id}-email`}
             type="text"
             name="email"
             onChange={this.changeData}
-            value={this.state.email}
-            required />
+            value={this.state.email} />
         </div>
       </div>
     </div>;
@@ -423,7 +422,7 @@ class CreateConfigSubform extends React.Component<CreateConfigSubformProps, Crea
     }
     _.each(imageSecretObject, (v, k) => {
       // Decode and parse 'auth' in case 'username' and 'password' are not part of the secret.
-      const decodedAuth = window.atob(_.get(v, 'auth', ''));
+      const decodedAuth = Base64.decode(_.get(v, 'auth', ''));
       const parsedAuth = _.isEmpty(decodedAuth) ? _.fill(Array(2), '') : _.split(decodedAuth, ':');
       imageSecretArray.push({
         entry: {
@@ -878,22 +877,41 @@ const secretFormFactory = (secretType: SecretTypeAbstraction) => {
   }
 };
 
-const SecretLoadingWrapper = props => {
-  if (!props.obj.loaded) {
-    return <LoadingBox />;
+class SecretLoadingWrapper extends React.Component<SecretLoadingWrapperProps, SecretLoadingWrapperState> {
+  readonly state: SecretLoadingWrapperState = {
+    formComponent: null,
+    secretTypeAbstraction: SecretTypeAbstraction.generic,
+  };
+  componentDidUpdate() {
+    // Set the proper secret form component, once the secret is received by Firehose.
+    // 'formComponent' needs to be set only once, to avoid losing form state,
+    // caused by component mounting/unmounting.
+    if (!this.state.formComponent && !_.isEmpty(this.props.obj.data)) {
+      const secretTypeAbstraction = toTypeAbstraction(this.props.obj.data);
+      this.setState({
+        formComponent: secretFormFactory(secretTypeAbstraction),
+        secretTypeAbstraction,
+      });
+    }
   }
-  const secretTypeAbstraction = toTypeAbstraction(props.obj.data);
-  const SecretFormComponent = secretFormFactory(secretTypeAbstraction);
-  const fixed = _.reduce(props.fixedKeys, (acc, k) => ({...acc, k: _.get(props.obj.data, k)}), {});
-  return <StatusBox {...props.obj}>
-    <SecretFormComponent {...props}
-      secretTypeAbstraction={secretTypeAbstraction}
-      obj={props.obj.data}
-      fixed={fixed}
-      explanation={secretFormExplanation[secretTypeAbstraction]}
-    />
-  </StatusBox>;
-};
+  render() {
+    const { obj, fixedKeys} = this.props;
+    const { secretTypeAbstraction } = this.state;
+    if (!this.state.formComponent) {
+      return <LoadingBox />;
+    }
+    const SecretFormComponent = this.state.formComponent;
+    const fixed = _.reduce(fixedKeys, (acc, k) => ({...acc, k: _.get(obj.data, k)}), {});
+    return <StatusBox {...obj}>
+      <SecretFormComponent {...this.props}
+        secretTypeAbstraction={secretTypeAbstraction}
+        obj={obj.data}
+        fixed={fixed}
+        explanation={secretFormExplanation[secretTypeAbstraction]}
+      />
+    </StatusBox>;
+  }
+}
 
 export const CreateSecret = ({match: {params}}) => {
   const SecretFormComponent = secretFormFactory(params.type);
@@ -908,6 +926,21 @@ export const CreateSecret = ({match: {params}}) => {
 export const EditSecret = ({match: {params}, kind}) => <Firehose resources={[{kind, name: params.name, namespace: params.ns, isList: false, prop: 'obj'}]}>
   <SecretLoadingWrapper fixedKeys={['kind', 'metadata']} titleVerb="Edit" saveButtonText="Save" />
 </Firehose>;
+
+export type SecretLoadingWrapperProps = {
+  obj?: {
+    data?: K8sResourceKind;
+    [key: string]: any;
+  };
+  fixedKeys: string[];
+  titleVerb: string;
+  saveButtonText: string;
+};
+
+export type SecretLoadingWrapperState = {
+  formComponent: React.ReactType;
+  secretTypeAbstraction: SecretTypeAbstraction;
+};
 
 export type BaseEditSecretState_ = {
   secretTypeAbstraction?: SecretTypeAbstraction;
@@ -930,6 +963,7 @@ export type BaseEditSecretProps_ = {
   secretTypeAbstraction?: SecretTypeAbstraction;
   saveButtonText?: string;
   explanation: string;
+  onCancel?: () => null;
 };
 
 export type BasicAuthSubformProps = {

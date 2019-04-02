@@ -38,7 +38,7 @@ const ServiceBindingDetails: React.SFC<ServiceBindingDetailsProps> = ({obj: sb})
       <SectionHeading text="Service Binding Overview" />
       <div className="row">
         <div className="col-sm-6">
-          <ResourceSummary resource={sb} showPodSelector={false} showNodeSelector={false} />
+          <ResourceSummary resource={sb} />
         </div>
         <div className="col-sm-6">
           <dl className="co-m-pane__details">
@@ -106,7 +106,7 @@ ServiceBindingsList.displayName = 'ServiceBindingsList';
 export const ServiceBindingsPage: React.SFC<ServiceBindingsPageProps> = props =>
   <ListPage
     {...props}
-    namespace={_.get(props.match, 'params.ns')}
+    namespace={props.namespace ||_.get(props.match, 'params.ns')}
     showTitle={false}
     kind={referenceForModel(ServiceBindingModel)}
     ListComponent={ServiceBindingsList}

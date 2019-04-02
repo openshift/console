@@ -1,11 +1,12 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { safeDump } from 'js-yaml';
+import { Base64 } from 'js-base64';
 
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import { Kebab, SectionHeading, navFactory, ResourceKebab, ResourceLink, ResourceSummary } from './utils';
 import { fromNow } from './utils/datetime';
-import { k8sGet } from '../module/k8s';
+import { k8sList } from '../module/k8s';
 import { SecretModel } from '../models';
 import { SecretsPage } from './secret';
 import { saveAs } from 'file-saver';
@@ -15,36 +16,44 @@ const KubeConfigify = (kind, sa) => ({
   label: 'Download kubeconfig file',
   weight: 200,
   callback: () => {
-    const name = _.get(sa, 'secrets[0].name');
+    const name = sa.metadata.name;
     const namespace = sa.metadata.namespace;
 
-    k8sGet(SecretModel, name, namespace).then(({data}) => {
+    k8sList(SecretModel, {ns: namespace}).then((secrets) => {
       const server = window.SERVER_FLAGS.kubeAPIServerURL;
-      const clusterName = window.SERVER_FLAGS.clusterName;
+      const url = new URL(server);
+      const clusterName = url.host.replace(/\./g, '-');
 
-      const token = atob(data.token);
-      const cert = data['ca.crt'];
+      // Find the secret that is the service account token.
+      const saSecretsByName = _.keyBy(sa.secrets, 'name');
+      const secret = _.find(secrets, s => saSecretsByName[s.metadata.name] && s.type === 'kubernetes.io/service-account-token');
+      if (!secret) {
+        errorModal({error: 'Unable to get service account token.'});
+        return;
+      }
+      const token = Base64.decode(secret.data.token);
+      const cert = secret.data['ca.crt'];
 
       const config = {
         apiVersion: 'v1',
-        'current-context': name,
-        kind: 'Config',
-        preferences: {},
         clusters: [{
-          name: clusterName,
           cluster: {
             'certificate-authority-data': cert,
             server,
           },
+          name: clusterName,
         }],
         contexts: [{
-          name,
           context: {
             cluster: clusterName,
             namespace,
             user: name,
           },
+          name,
         }],
+        'current-context': name,
+        kind: 'Config',
+        preferences: {},
         'users': [{
           name,
           user: {
@@ -103,7 +112,7 @@ const Details = ({obj: serviceaccount}) => {
     <React.Fragment>
       <div className="co-m-pane__body">
         <SectionHeading text="Service Account Overview" />
-        <ResourceSummary resource={serviceaccount} showPodSelector={false} showNodeSelector={false} />
+        <ResourceSummary resource={serviceaccount} />
       </div>
       <div className="co-m-pane__body co-m-pane__body--alt">
         <SectionHeading text="Secrets" style={{marginBottom: '-20px'}} />

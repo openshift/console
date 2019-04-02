@@ -11,7 +11,6 @@ import { productName } from '../branding';
 import { ALL_NAMESPACES_KEY } from '../const';
 import { connectToFlags, featureActions, flagPending, FLAGS } from '../features';
 import { analyticsSvc } from '../module/analytics';
-import { ClusterSettingsPage } from './cluster-settings/cluster-settings';
 import { GlobalNotifications } from './global-notifications';
 import { Masthead } from './masthead';
 import { NamespaceBar } from './namespace';
@@ -207,8 +206,11 @@ class App extends React.PureComponent {
                   <LazyRoute path="/cluster-health" exact loader={() => import('./cluster-health' /* webpackChunkName: "cluster-health" */).then(m => m.ClusterHealth)} />
                   <LazyRoute path="/start-guide" exact loader={() => import('./start-guide' /* webpackChunkName: "start-guide" */).then(m => m.StartGuidePage)} />
 
-                  <LazyRoute path="/operatorhub" exact loader={() => import('./operator-hub/operator-hub-page' /* webpackChunkName: "operator-hub" */).then(m => m.OperatorHubPage)} />
+                  <LazyRoute path="/operatorhub/all-namespaces" exact loader={() => import('./operator-hub/operator-hub-page' /* webpackChunkName: "operator-hub" */).then(m => m.OperatorHubPage)} />
+                  <LazyRoute path="/operatorhub/ns/:ns" exact loader={() => import('./operator-hub/operator-hub-page' /* webpackChunkName: "operator-hub" */).then(m => m.OperatorHubPage)} />
+                  <Route path="/operatorhub" exact component={NamespaceRedirect} />
                   <LazyRoute path="/operatorhub/subscribe" exact loader={() => import('./operator-hub/operator-hub-subscribe' /* webpackChunkName: "operator-hub-subscribe" */).then(m => m.OperatorHubSubscribePage)} />
+
                   <LazyRoute path="/catalog/all-namespaces" exact loader={() => import('./catalog/catalog-page' /* webpackChunkName: "catalog" */).then(m => m.CatalogPage)} />
                   <LazyRoute path="/catalog/ns/:ns" exact loader={() => import('./catalog/catalog-page' /* webpackChunkName: "catalog" */).then(m => m.CatalogPage)} />
                   <Route path="/catalog" exact component={NamespaceRedirect} />
@@ -274,8 +276,9 @@ class App extends React.PureComponent {
                   <LazyRoute path="/k8s/ns/:ns/persistentvolumeclaims/new/form" exact kind="PersistentVolumeClaim" loader={() => import('./storage/create-pvc' /* webpackChunkName: "create-pvc" */).then(m => m.CreatePVC)} />
 
                   <LazyRoute path="/monitoring" loader={() => import('./monitoring' /* webpackChunkName: "monitoring" */).then(m => m.MonitoringUI)} />
-
-                  <Route path="/settings/cluster" component={ClusterSettingsPage} />
+                  <LazyRoute path="/settings/idp/oidconnect" exact loader={() => import('./cluster-settings/openid-idp-form' /* webpackChunkName: "openid-idp-form" */).then(m => m.AddOpenIDPage)} />
+                  <LazyRoute path="/settings/idp/htpasswd" exact loader={() => import('./cluster-settings/htpasswd-idp-form' /* webpackChunkName: "htpasswd-idp-form" */).then(m => m.AddHTPasswdPage)} />
+                  <LazyRoute path="/settings/cluster" loader={() => import('./cluster-settings/cluster-settings' /* webpackChunkName: "cluster-settings" */).then(m => m.ClusterSettingsPage)} />
 
                   <LazyRoute path={'/k8s/cluster/storageclasses/new/form'} exact loader={() => import('./storage-class-form' /* webpackChunkName: "storage-class-form" */).then(m => m.StorageClassForm)} />
 

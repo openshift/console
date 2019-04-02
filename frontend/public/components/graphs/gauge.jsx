@@ -47,8 +47,8 @@ class Gauge_ extends BaseGraph {
         pad: 10,
       },
       annotations: [{
-        x: 0,
-        y: -0.05,
+        x: 0.5,
+        y: 0.5,
         text: '...',
         showarrow: false,
         ax: 0,
@@ -175,8 +175,15 @@ class Gauge_ extends BaseGraph {
     } else {
       data = Math.round(data);
     }
-    this.layout.annotations[0].text = `${data}%`;
-    this.layout.annotations[0].font.color = fontColor;
+
+    if (this.props.centerText){
+      this.layout.annotations[0].text = this.props.centerText;
+      this.layout.annotations[0].font.size = 16;
+    } else {
+      this.layout.annotations[0].text = `${data}%`;
+      this.layout.annotations[0].font.color = fontColor;
+    }
+
     relayout(this.node, this.layout);
   }
 }

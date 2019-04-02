@@ -55,7 +55,7 @@ class ConfigureCountModal extends PromiseComponent {
   }
 
   render() {
-    return <form onSubmit={this._submit} name="form" className="modal-content modal-content--small">
+    return <form onSubmit={this._submit} name="form" className="modal-content ">
       <ModalTitle>{this.props.title}</ModalTitle>
       <ModalBody>
         <p>{this.props.message}</p>

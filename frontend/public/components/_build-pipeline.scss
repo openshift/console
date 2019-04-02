@@ -154,6 +154,9 @@ $pipelineStageScreenSize: (
 .build-pipeline__status-icon--failed{
   color: $pipeline-failed-color;
 }
+.build-pipeline__status-icon--cancelled{
+  color: $pipeline-aborted-color;
+}
 
 .build-pipeline__summary {
   border-bottom: 1px solid $pipeline-border-color;

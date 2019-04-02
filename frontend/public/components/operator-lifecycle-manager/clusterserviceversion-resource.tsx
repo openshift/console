@@ -124,16 +124,16 @@ export const ProvidedAPIsPage = connect(inFlightStateToProps)(
   });
 
 export const ProvidedAPIPage = connectToModel((props: ProvidedAPIPageProps) => {
-  const {namespace, kind, kindObj, kindsInFlight, csv} = props;
+  const {namespace, kind, kindsInFlight, csv} = props;
 
   return kindsInFlight
     ? null
     : <ListPage
       kind={kind}
       ListComponent={ClusterServiceVersionResourceList}
-      canCreate={(kindObj.verbs || []).some(v => v === 'create')}
+      canCreate={_.get(props.kindObj, 'verbs', [] as string[]).some(v => v === 'create')}
       createProps={{to: `/k8s/ns/${csv.metadata.namespace}/${ClusterServiceVersionModel.plural}/${csv.metadata.name}/${kind}/new`}}
-      namespace={kindObj.namespaced ? namespace : null} />;
+      namespace={_.get(props.kindObj, 'namespaced') ? namespace : null} />;
 });
 
 export const ClusterServiceVersionResourceDetails = connectToModel(
@@ -191,7 +191,7 @@ export const ClusterServiceVersionResourceDetails = connectToModel(
             <div className="row">
               <div className="col-xs-6">
                 { this.state.expanded
-                  ? <ResourceSummary resource={this.props.obj} showPodSelector={false} />
+                  ? <ResourceSummary resource={this.props.obj} />
                   : <dl className="co-m-pane__details">
                     <dt>Name</dt>
                     <dd>{metadata.name}</dd>

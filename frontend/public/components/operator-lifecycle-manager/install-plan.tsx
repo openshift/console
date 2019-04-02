@@ -6,12 +6,13 @@ import { match, Link } from 'react-router-dom';
 import { Map as ImmutableMap } from 'immutable';
 
 import { MultiListPage, List, ListHeader, ColHead, ResourceRow, DetailsPage } from '../factory';
-import { SectionHeading, MsgBox, ResourceLink, ResourceKebab, Kebab, ResourceIcon, navFactory, ResourceSummary } from '../utils';
-import { InstallPlanKind, InstallPlanApproval, olmNamespace, Step } from './index';
-import { referenceForModel, referenceForOwnerRef, k8sUpdate } from '../../module/k8s';
+import { SectionHeading, MsgBox, ResourceLink, ResourceKebab, Kebab, ResourceIcon, navFactory, ResourceSummary, history } from '../utils';
+import { InstallPlanKind, InstallPlanApproval, olmNamespace, Step, referenceForStepResource } from './index';
+import { referenceForModel, referenceForOwnerRef, k8sUpdate, apiVersionForReference } from '../../module/k8s';
 import { SubscriptionModel, ClusterServiceVersionModel, InstallPlanModel, CatalogSourceModel, OperatorGroupModel } from '../../models';
 import { breadcrumbsForOwnerRefs } from '../utils/breadcrumbs';
 import { requireOperatorGroup } from './operator-group';
+import { installPlanPreviewModal } from '../modals';
 
 export const InstallPlanHeader: React.SFC<InstallPlanHeaderProps> = (props) => <ListHeader>
   <ColHead {...props} className="col-xs-6 col-sm-4 col-md-3" sortField="metadata.name">Name</ColHead>
@@ -34,18 +35,20 @@ export const InstallPlanRow: React.SFC<InstallPlanRowProps> = (props) => {
       <ResourceLink kind="Namespace" name={props.obj.metadata.namespace} title={props.obj.metadata.namespace} displayName={props.obj.metadata.namespace} />
     </div>
     <div className="hidden-xs col-sm-4 col-md-3 col-lg-2">
-      {props.obj.spec.clusterServiceVersionNames.map((csvName, i) => <span key={i}>
-        { _.get(props, 'obj.status.phase') === 'Complete'
-          ? <ResourceLink kind={referenceForModel(ClusterServiceVersionModel)} name={csvName} namespace={props.obj.metadata.namespace} title={csvName} />
-          : <React.Fragment><ResourceIcon kind={referenceForModel(ClusterServiceVersionModel)} />{csvName}</React.Fragment> }
-      </span>) }
+      <ul className="list-unstyled">
+        { props.obj.spec.clusterServiceVersionNames.map((csvName, i) => <li key={i}>
+          { _.get(props, 'obj.status.phase') === 'Complete'
+            ? <ResourceLink kind={referenceForModel(ClusterServiceVersionModel)} name={csvName} namespace={props.obj.metadata.namespace} title={csvName} />
+            : <React.Fragment><ResourceIcon kind={referenceForModel(ClusterServiceVersionModel)} />{csvName}</React.Fragment> }
+        </li>) }
+      </ul>
     </div>
     <div className="hidden-xs hidden-sm col-md-3 col-lg-2">
       { (props.obj.metadata.ownerReferences || [])
         .filter(ref => referenceForOwnerRef(ref) === referenceForModel(SubscriptionModel))
-        .map(ref => <div key={ref.uid}>
-          <ResourceLink kind={referenceForModel(SubscriptionModel)} name={ref.name} namespace={props.obj.metadata.namespace} title={ref.uid} />
-        </div>) || <span className="text-muted">None</span> }
+        .map(ref => <ul key={ref.uid} className="list-unstyled">
+          <li><ResourceLink kind={referenceForModel(SubscriptionModel)} name={ref.name} namespace={props.obj.metadata.namespace} title={ref.uid} /></li>
+        </ul>) || <span className="text-muted">None</span> }
     </div>
     <div className="hidden-xs hidden-sm hidden-md col-lg-2">
       {phaseFor(_.get(props.obj.status, 'phase')) || 'Unknown'}
@@ -94,7 +97,7 @@ export const InstallPlanDetails: React.SFC<InstallPlanDetailsProps> = ({obj}) =>
       <div className="co-m-pane__body-group">
         <div className="row">
           <div className="col-sm-6">
-            <ResourceSummary resource={obj} showNodeSelector={false} showPodSelector={false} showAnnotations={false} />
+            <ResourceSummary resource={obj} showAnnotations={false} />
           </div>
           <div className="col-sm-6">
             <dl className="co-m-pane__details">
@@ -126,6 +129,7 @@ export class InstallPlanPreview extends React.Component<InstallPlanPreviewProps,
 
   render() {
     const {obj} = this.props;
+    const subscription = obj.metadata.ownerReferences.find(ref => referenceForOwnerRef(ref) === referenceForModel(SubscriptionModel));
 
     const plan = _.get(obj.status, 'plan') || [];
     const stepsByCSV = plan.reduce((acc, step) => acc.update(step.resolving, [], steps => steps.concat([step])), ImmutableMap<string, Step[]>()).toArray();
@@ -145,12 +149,18 @@ export class InstallPlanPreview extends React.Component<InstallPlanPreviewProps,
         { this.state.error && <div className="co-clusterserviceversion-detail__error-box">{this.state.error}</div> }
         { this.state.needsApproval && <div className="co-well">
           <h4>Review Manual Install Plan</h4>
-          <p>Once approved, the following resources will be created in order to satisfy the requirements for the components specified in the plan.</p>
+          <p>Once approved, the following resources will be created in order to satisfy the requirements for the components specified in the plan. Click the resource name to view the resource in detail.</p>
           <button
             className="btn btn-info"
             disabled={!this.state.needsApproval}
             onClick={() => approve()}>
             {this.state.needsApproval ? 'Approve' : 'Approved'}
+          </button>
+          <button
+            className="btn btn-default"
+            disabled={false}
+            onClick={() => history.push(`/k8s/ns/${obj.metadata.namespace}/${referenceForModel(SubscriptionModel)}/${subscription.name}?showDelete=true`)}>
+            Deny
           </button>
         </div> }
         { stepsByCSV.map((steps, i) => <div key={i} className="co-m-pane__body">
@@ -167,15 +177,20 @@ export class InstallPlanPreview extends React.Component<InstallPlanPreviewProps,
               </thead>
               <tbody>
                 { steps.map((step, key) => <tr key={key}>
-                  <td>{step.resource.name}</td>
-                  <td>
-                    <ResourceIcon kind={step.resource.kind === ClusterServiceVersionModel.kind ? referenceForModel(ClusterServiceVersionModel) : step.resource.kind} />
-                    {step.resource.kind}
+                  <td>{ ['Present', 'Created'].includes(step.status)
+                    ? <ResourceLink
+                      kind={referenceForStepResource(step.resource)}
+                      namespace={obj.metadata.namespace}
+                      name={step.resource.name}
+                      title={step.resource.name} />
+                    : <React.Fragment>
+                      <ResourceIcon kind={referenceForStepResource(step.resource)} />
+                      <button className="btn btn-link" onClick={() => installPlanPreviewModal({stepResource: step.resource})}>{step.resource.name}</button>
+                    </React.Fragment>}
                   </td>
-                  <td>{step.resource.group}/{step.resource.version}</td>
-                  <td>
-                    {stepStatus(step.status)}
-                  </td>
+                  <td>{step.resource.kind}</td>
+                  <td>{apiVersionForReference(referenceForStepResource(step.resource))}</td>
+                  <td>{stepStatus(step.status)}</td>
                 </tr>) }
               </tbody>
             </table>

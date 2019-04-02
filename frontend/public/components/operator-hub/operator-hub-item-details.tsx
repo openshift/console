@@ -1,14 +1,18 @@
 /* eslint-disable no-undef, no-unused-vars */
 
 import * as React from 'react';
+import * as _ from 'lodash-es';
 import { Button, HintBlock, Modal } from 'patternfly-react';
 import { CatalogItemHeader, PropertiesSidePanel, PropertyItem } from 'patternfly-react-extensions';
+import { Link } from 'react-router-dom';
 
 import { MarkdownView } from '../operator-lifecycle-manager/clusterserviceversion';
 import { history, ExternalLink } from '../utils';
 import { RH_OPERATOR_SUPPORT_POLICY_LINK } from '../../const';
+import { OperatorHubItem } from './index';
+import { SubscriptionModel } from '../../models';
 
-export const OperatorHubItemDetails: React.SFC<OperatorHubItemDetailsProps> = ({item, closeOverlay}) => {
+export const OperatorHubItemDetails: React.SFC<OperatorHubItemDetailsProps> = ({item, closeOverlay, namespace}) => {
   if (!item) {
     return null;
   }
@@ -33,12 +37,18 @@ export const OperatorHubItemDetails: React.SFC<OperatorHubItemDetailsProps> = ({
 
   const getHintBlock = () => {
     if (installed) {
+      const filterName = _.get(item.obj, 'status.packageName', item.obj.metadata.name);
       return (
         <HintBlock
           title="Installed Operator"
           body={
             <span>
-              This Operator has been installed on the cluster.
+              This Operator has been installed on the cluster.{' '}
+              <Link to={`/k8s/${namespace ?
+                `ns/${namespace}` :
+                'all-namespaces'}/clusterserviceversions?rowFilter-clusterserviceversion-status=Copied%2CInstallSucceeded&name=${filterName}`}>
+                View it here.
+              </Link>
             </span>
           }
         />
@@ -68,14 +78,8 @@ export const OperatorHubItemDetails: React.SFC<OperatorHubItemDetailsProps> = ({
     return null;
   };
 
-  const onActionClick = () => {
-    if (!installed) {
-      history.push(`/operatorhub/subscribe?pkg=${item.obj.metadata.name}&catalog=${catalogSource}&catalogNamespace=${catalogSourceNamespace}`);
-      return;
-    }
-
-    // TODO: Allow for Manage button to navigate to the CSV details for the item
-  };
+  const createLink = `/operatorhub/subscribe?pkg=${item.obj.metadata.name}&catalog=${catalogSource}&catalogNamespace=${catalogSourceNamespace}&targetNamespace=${namespace}`;
+  const uninstallLink = () => `/k8s/ns/${item.subscription.metadata.namespace}/${SubscriptionModel.plural}/${item.subscription.metadata.name}?showDelete=true`;
 
   return <React.Fragment>
     <Modal.Header>
@@ -92,14 +96,20 @@ export const OperatorHubItemDetails: React.SFC<OperatorHubItemDetailsProps> = ({
         <div className="modal-body-inner-shadow-covers">
           <div className="co-catalog-page__overlay-body">
             <PropertiesSidePanel>
-              <Button
-                bsStyle="primary"
-                className="co-catalog-page__overlay-create"
-                disabled={installed}
-                title={installed ? 'This Operator has been installed on the cluster.' : null}
-                onClick={onActionClick}>
-                Install
-              </Button>
+              { !installed
+                ? <Button
+                  bsStyle="primary"
+                  className="co-catalog-page__overlay-create"
+                  onClick={() => history.push(createLink)}>
+                  Install
+                </Button>
+                : <Button
+                  bsStyle="default"
+                  className="co-catalog-page__overlay-create"
+                  disabled={!installed}
+                  onClick={() => history.push(uninstallLink())}>
+                  Uninstall
+                </Button> }
               <PropertyItem label="Operator Version" value={version || notAvailable} />
               <PropertyItem label="Provider Type" value={providerType || notAvailable} />
               <PropertyItem label="Provider" value={provider || notAvailable} />
@@ -126,7 +136,8 @@ OperatorHubItemDetails.defaultProps = {
 };
 
 export type OperatorHubItemDetailsProps = {
-  item: any;
+  namespace?: string;
+  item: OperatorHubItem;
   closeOverlay: () => void;
 };
 

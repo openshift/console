@@ -48,6 +48,7 @@ import {
   serviceCatalogStatus,
   serviceClassDisplayName,
   getClusterOperatorStatus,
+  getClusterOperatorVersion,
 } from '../../module/k8s';
 
 const fuzzyCaseInsensitive = (a, b) => fuzzy(_.toLower(a), _.toLower(b));
@@ -116,6 +117,10 @@ const listFilters = {
     }
     return filters.selected.has(_.get(csv.status, 'reason')) || !_.includes(filters.all, _.get(csv.status, 'reason'));
   },
+
+  'packagemanifest-name': (filter, pkg) => fuzzyCaseInsensitive(filter, (pkg.status.defaultChannel
+    ? pkg.status.channels.find(ch => ch.name === pkg.status.defaultChannel)
+    : pkg.status.channels[0]).currentCSVDesc.displayName),
 
   'build-status': (phases, build) => {
     if (!phases || !phases.selected || !phases.selected.size) {
@@ -236,6 +241,7 @@ const sorts = {
   silenceStateOrder,
   string: val => JSON.stringify(val),
   getClusterOperatorStatus,
+  getClusterOperatorVersion,
 };
 
 export class ColHead extends React.Component<ColHeadProps> {

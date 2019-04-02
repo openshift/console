@@ -135,10 +135,6 @@ kind: BuildConfig
 metadata:
   name: example
 spec:
-  output:
-    to:
-      kind: ImageStreamTag
-      name: example:latest
   source:
     git:
       ref: master

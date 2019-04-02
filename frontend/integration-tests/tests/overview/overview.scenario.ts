@@ -34,17 +34,18 @@ describe('Visiting Overview page', () => {
       it(`displays a ${kindModel.id} in the project overview list`, async() => {
         await browser.wait(until.presenceOf(overviewView.projectOverview));
         await overviewView.itemsAreVisible();
-        await expect(overviewView.getProjectOverviewListItem(kindModel, resourceName).isPresent()).toBeTruthy();
+        expect(overviewView.getProjectOverviewListItem(kindModel, resourceName).isPresent()).toBeTruthy();
       });
 
-      it(`shows ${kindModel.id} details sidebar when item is clicked`, async() => {
+      // Disabling for now due to flake https://jira.coreos.com/browse/CONSOLE-1298
+      xit(`CONSOLE-1298 - shows ${kindModel.id} details sidebar when item is clicked`, async() => {
         const overviewListItem = overviewView.getProjectOverviewListItem(kindModel, resourceName);
-        await expect(overviewView.detailsSidebar.isPresent()).toBeFalsy();
+        expect(overviewView.detailsSidebar.isPresent()).toBeFalsy();
         await browser.wait(until.elementToBeClickable(overviewListItem));
         await overviewListItem.click();
         await overviewView.sidebarIsLoaded();
-        await expect(overviewView.detailsSidebar.isDisplayed()).toBeTruthy();
-        await expect(overviewView.detailsSidebarTitle.getText()).toContain(resourceName);
+        expect(overviewView.detailsSidebar.isDisplayed()).toBeTruthy();
+        expect(overviewView.detailsSidebarTitle.getText()).toContain(resourceName);
       });
     });
   });

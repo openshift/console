@@ -37,7 +37,7 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
     const FallbackComponent = this.props.FallbackComponent || DefaultFallback;
     return hasError
       ? <FallbackComponent title={error.name} componentStack={errorInfo.componentStack} errorMessage={error.message} stack={error.stack} />
-      : <div>{this.props.children}</div>;
+      : <React.Fragment>{this.props.children}</React.Fragment>;
   }
 }
 

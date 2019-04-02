@@ -3,17 +3,18 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import * as PropTypes from 'prop-types';
-import { Button, Icon, Modal } from 'patternfly-react';
-import { CatalogTile, FilterSidePanel } from 'patternfly-react-extensions';
+import { Icon, Modal } from 'patternfly-react';
+import { CatalogTile } from 'patternfly-react-extensions';
 
 import { history } from '../utils/router';
 import { COMMUNITY_PROVIDERS_WARNING_LOCAL_STORAGE_KEY } from '../../const';
 import { K8sResourceKind } from '../../module/k8s';
 import { requireOperatorGroup } from '../operator-lifecycle-manager/operator-group';
 import { normalizeIconClass } from '../catalog/catalog-item-icon';
-import { TileViewPage, updateURLParams, getFilterSearchParam, updateActiveFilters } from '../utils/tile-view-page';
+import { TileViewPage } from '../utils/tile-view-page';
 import { OperatorHubItemDetails } from './operator-hub-item-details';
 import { communityOperatorWarningModal } from './operator-hub-community-provider-modal';
+import { OperatorHubItem } from './index';
 
 const pageDescription = (
   <span>
@@ -23,6 +24,9 @@ const pageDescription = (
     providing a self-service experience.
   </span>
 );
+
+const communityOperatorBadge = <span key="1" className="pf-c-badge pf-m-read">Community</span>;
+
 /**
  * Filter property white list
  */
@@ -56,7 +60,12 @@ const determineCategories = items => {
     });
   });
 
-  return newCategories;
+  const sortedKeys = _.keys(newCategories).sort((key1, key2) => key1.toLowerCase().localeCompare(key2.toLowerCase()));
+
+  return _.reduce(sortedKeys, (categories, key) => {
+    categories[key] = newCategories[key];
+    return categories;
+  }, {});
 };
 
 export const getProviderValue = value => {
@@ -189,22 +198,21 @@ const setURLParams = params => {
 };
 
 export const OperatorHubTileView = requireOperatorGroup(
-  // TODO: Can be functional stateless component
   class OperatorHubTileView extends React.Component<OperatorHubTileViewProps, OperatorHubTileViewState> {
     constructor(props) {
       super(props);
 
       this.state = {
         detailsItem: null,
-        items: props.items,
+        showDetails: false,
+        communityModalShown: false,
+        items: [],
         communityOperatorsExist: false,
         includeCommunityOperators: false,
-        communityModalShown: false,
       };
 
       this.openOverlay = this.openOverlay.bind(this);
       this.closeOverlay = this.closeOverlay.bind(this);
-      this.renderFilterGroup = this.renderFilterGroup.bind(this);
       this.renderTile = this.renderTile.bind(this);
     }
 
@@ -212,39 +220,39 @@ export const OperatorHubTileView = requireOperatorGroup(
       const {items} = this.props;
       const searchParams = new URLSearchParams(window.location.search);
       const detailsItemID = searchParams.get('details-item');
-      const includeCommunityOperators = searchParams.get('community-operators') === 'true';
-      const communityOperatorsExist = _.some(items, item => item.providerType === COMMUNITY_PROVIDER_TYPE);
 
-      let stateItems = items;
-      if (communityOperatorsExist && !includeCommunityOperators) {
-        stateItems = _.filter(items, item => item.providerType !== COMMUNITY_PROVIDER_TYPE);
-      }
+      const detailsItem = detailsItemID && _.find(items, {uid: detailsItemID});
 
-      const detailsItem = detailsItemID && _.find(stateItems, {uid: detailsItemID});
-
-      this.setState({detailsItem, items: stateItems, communityOperatorsExist, includeCommunityOperators});
+      this.setState({detailsItem});
     }
 
-    componentDidUpdate(prevProps, prevState) {
-      const {items} = this.props;
-      const {includeCommunityOperators} = this.state;
+    showCommunityOperator = (ignoreWarning: boolean = false) => {
+      const { detailsItem } = this.state;
 
-      if (!_.isEqual(items, prevProps.items) || includeCommunityOperators !== prevState.includeCommunityOperators) {
-        const communityOperatorsExist = _.some(items, item => item.providerType === COMMUNITY_PROVIDER_TYPE);
-        let stateItems = items;
-        if (communityOperatorsExist && !includeCommunityOperators) {
-          stateItems = _.filter(items, item => item.providerType !== COMMUNITY_PROVIDER_TYPE);
-        }
-        this.setState({items: stateItems, communityOperatorsExist});
+      const params = new URLSearchParams(window.location.search);
+      params.set('details-item', detailsItem.uid);
+      setURLParams(params);
+      this.setState({showDetails: true});
+
+      if (ignoreWarning) {
+        localStorage.setItem(COMMUNITY_PROVIDERS_WARNING_LOCAL_STORAGE_KEY, 'true');
       }
-    }
+    };
 
     openOverlay(detailsItem) {
+      const ignoreWarning = localStorage.getItem(COMMUNITY_PROVIDERS_WARNING_LOCAL_STORAGE_KEY) === 'true';
+
+      if (!ignoreWarning && detailsItem.providerType === COMMUNITY_PROVIDER_TYPE) {
+        this.setState({detailsItem});
+        communityOperatorWarningModal({ showCommunityOperators: this.showCommunityOperator });
+        return;
+      }
+
       const params = new URLSearchParams(window.location.search);
       params.set('details-item', detailsItem.uid);
       setURLParams(params);
 
-      this.setState({detailsItem});
+      this.setState({detailsItem, showDetails: true});
     }
 
     closeOverlay() {
@@ -252,79 +260,7 @@ export const OperatorHubTileView = requireOperatorGroup(
       params.delete('details-item');
       setURLParams(params);
 
-      this.setState({detailsItem: null});
-    }
-
-    onIncludeCommunityOperatorsToggle = (activeFilters, onUpdateFilters) => {
-      const {items} = this.props;
-      const {includeCommunityOperators} = this.state;
-
-      if (!includeCommunityOperators) {
-        const ignoreWarning = localStorage.getItem(COMMUNITY_PROVIDERS_WARNING_LOCAL_STORAGE_KEY);
-        if (ignoreWarning === 'true') {
-          this.showCommunityOperators();
-          return;
-        }
-
-        communityOperatorWarningModal({ showCommunityOperators: this.showCommunityOperators });
-        return;
-      }
-
-      const stateItems = _.filter(items, item => item.providerType !== COMMUNITY_PROVIDER_TYPE);
-      const params = new URLSearchParams(window.location.search);
-      params.delete('community-operators');
-      setURLParams(params);
-
-      /* Clear the community filter if it is active */
-      let updatedFilters = activeFilters;
-      if (_.get(activeFilters, 'providerType.Community.active')) {
-        const groupFilter = _.cloneDeep(activeFilters.providerType);
-        _.set(groupFilter, [COMMUNITY_PROVIDER_TYPE, 'active'], false);
-        updateURLParams('providerType', getFilterSearchParam(groupFilter));
-        updatedFilters = updateActiveFilters(activeFilters, 'providerType', COMMUNITY_PROVIDER_TYPE, false);
-        onUpdateFilters(updatedFilters);
-      }
-
-      this.setState({items: stateItems, includeCommunityOperators: false});
-    };
-
-    showCommunityOperators = (ignoreWarning: boolean = false) => {
-      const { items } = this.props;
-      const params = new URLSearchParams(window.location.search);
-      params.set('community-operators', 'true');
-      setURLParams(params);
-
-      this.setState({items, includeCommunityOperators: true});
-
-      if (ignoreWarning) {
-        localStorage.setItem(COMMUNITY_PROVIDERS_WARNING_LOCAL_STORAGE_KEY, 'true');
-      }
-    };
-
-    renderFilterGroup(filterGroup, groupName, activeFilters, filterCounts, onFilterChange, onUpdateFilters) {
-      const { includeCommunityOperators, communityOperatorsExist } = this.state;
-      return <FilterSidePanel.Category
-        key={groupName}
-        title={operatorHubFilterMap[groupName] || groupName}
-      >
-        {_.map(filterGroup, (filter, filterName) => {
-          const { label, active } = filter;
-          return <FilterSidePanel.CategoryItem
-            key={filterName}
-            count={_.get(filterCounts, [groupName, filterName], 0)}
-            checked={active}
-            onChange={e => onFilterChange(groupName, filterName, e.target.checked)}
-            title={label}
-          >
-            {label}
-          </FilterSidePanel.CategoryItem>;
-        })}
-        {groupName === 'providerType' && communityOperatorsExist && (
-          <Button bsStyle="link" className="co-catalog-page__filter-toggle" onClick={() => this.onIncludeCommunityOperatorsToggle(activeFilters, onUpdateFilters)}>
-            {includeCommunityOperators ? 'Hide Community Operators' : 'Show Community Operators'}
-          </Button>
-        )}
-      </FilterSidePanel.Category>;
+      this.setState({detailsItem: null, showDetails: false});
     }
 
     renderTile(item) {
@@ -335,23 +271,28 @@ export const OperatorHubTileView = requireOperatorGroup(
       const { uid, name, imgUrl, iconClass, provider, description, installed } = item;
       const normalizedIconClass = iconClass && `icon ${normalizeIconClass(iconClass)}`;
       const vendor = provider ? `provided by ${provider}` : null;
+
+      const badges = item.providerType === COMMUNITY_PROVIDER_TYPE ? [communityOperatorBadge] : [];
+
       return (
         <CatalogTile
-          id={uid}
           key={uid}
           title={name}
+          badges={badges}
           iconImg={imgUrl}
           iconClass={normalizedIconClass}
           vendor={vendor}
           description={description}
           onClick={() => this.openOverlay(item)}
           footer={installed ? <span><Icon type="pf" name="ok" /> Installed</span> : null}
+          data-test={uid}
         />
       );
     }
 
     render() {
-      const { items, detailsItem } = this.state;
+      const { detailsItem, showDetails } = this.state;
+      const { items } = this.props;
 
       return <React.Fragment>
         <TileViewPage
@@ -360,14 +301,14 @@ export const OperatorHubTileView = requireOperatorGroup(
           getAvailableCategories={determineCategories}
           getAvailableFilters={determineAvailableFilters}
           filterGroups={operatorHubFilterGroups}
-          renderFilterGroup={this.renderFilterGroup}
+          filterGroupNameMap={operatorHubFilterMap}
           keywordCompare={keywordCompare}
           renderTile={this.renderTile}
           pageDescription={pageDescription}
-          emptyStateInfo="No Operator Hub items are being shown due to the filters being applied."
+          emptyStateInfo="No OperatorHub items are being shown due to the filters being applied."
         />
-        <Modal show={!!detailsItem} onHide={this.closeOverlay} bsSize={'lg'} className="co-catalog-page__overlay right-side-modal-pf">
-          {detailsItem && <OperatorHubItemDetails item={detailsItem} closeOverlay={this.closeOverlay} />}
+        <Modal show={!!detailsItem && showDetails} onHide={this.closeOverlay} bsSize="lg" className="co-catalog-page__overlay right-side-modal-pf">
+          {detailsItem && <OperatorHubItemDetails namespace={this.props.namespace} item={detailsItem} closeOverlay={this.closeOverlay} />}
         </Modal>
       </React.Fragment>;
     }
@@ -380,13 +321,15 @@ OperatorHubTileView.propTypes = {
 };
 
 export type OperatorHubTileViewProps = {
-  items: any[];
+  namespace?: string;
+  items: OperatorHubItem[];
   catalogSourceConfig: K8sResourceKind;
 };
 
 export type OperatorHubTileViewState = {
   detailsItem: any;
-  items: any[];
+  showDetails: boolean;
+  items: OperatorHubItem[];
   communityOperatorsExist: boolean;
   includeCommunityOperators: boolean;
   communityModalShown: boolean;

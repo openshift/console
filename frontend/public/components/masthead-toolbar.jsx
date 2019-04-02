@@ -9,7 +9,7 @@ import { authSvc } from '../module/auth';
 import { history, Firehose } from './utils';
 import { openshiftHelpBase } from './utils/documentation';
 import { AboutModal } from './about-modal';
-import { getAvailableClusterUpdates, clusterVersionReference } from './cluster-settings/cluster-settings';
+import { getAvailableClusterUpdates, clusterVersionReference } from '../module/k8s/cluster-settings';
 
 const UpdatesAvailableButton = ({obj, onClick}) => {
   const updatesAvailable = !_.isEmpty(getAvailableClusterUpdates(obj.data));
@@ -126,7 +126,7 @@ class MastheadToolbar_ extends React.Component {
 
   _onClusterManager(e) {
     e.preventDefault();
-    window.open('https://cloud.openshift.com', '_blank').opener = null;
+    window.open('https://cloud.openshift.com/clusters', '_blank').opener = null;
   }
 
   _onAboutModal(e) {
@@ -143,6 +143,23 @@ class MastheadToolbar_ extends React.Component {
     window.open(openshiftHelpBase, '_blank').opener = null;
   }
 
+  _launchActions() {
+    return [{
+      label: 'Multi-Cluster Manager',
+      callback: this._onClusterManager,
+    }];
+  }
+
+  _helpActions() {
+    return [{
+      label: 'Documentation',
+      callback: this._onDocumentation,
+    },{
+      label: 'About',
+      callback: this._onAboutModal,
+    }];
+  }
+
   _renderMenuItems(actions) {
     return actions.map((action, i) => action.separator
       ? <DropdownSeparator key={i} />
@@ -153,6 +170,8 @@ class MastheadToolbar_ extends React.Component {
   _renderMenu(mobile) {
     const { flags } = this.props;
     const { isUserDropdownOpen, isKebabDropdownOpen, username } = this.state;
+    const helpActions = this._helpActions();
+    const launchActions = this._launchActions();
 
     if (flagPending(flags[FLAGS.OPENSHIFT]) || flagPending(flags[FLAGS.AUTH_ENABLED]) || !username) {
       return null;
@@ -182,21 +201,10 @@ class MastheadToolbar_ extends React.Component {
     }
 
     if (mobile) {
-      actions.unshift({
-        label: 'Documentation',
-        callback: this._onDocumentation,
-      },{
-        label: 'About',
-        callback: this._onAboutModal,
-      });
+      actions.unshift(...helpActions);
 
       if (flags[FLAGS.OPENSHIFT]) {
-        actions.unshift({
-          label: 'Cluster Manager',
-          callback: this._onClusterManager,
-        },{
-          separator: true,
-        });
+        actions.unshift(...launchActions, {separator: true});
       }
 
       return (
@@ -217,6 +225,7 @@ class MastheadToolbar_ extends React.Component {
 
     return (
       <Dropdown
+        data-test="user-dropdown"
         isPlain
         position="right"
         onSelect={this._onUserDropdownSelect}
@@ -239,11 +248,14 @@ class MastheadToolbar_ extends React.Component {
     return (
       <React.Fragment>
         <Toolbar>
-          <ToolbarGroup className="pf-u-sr-only pf-u-visible-on-md">
+          <ToolbarGroup className="pf-u-screen-reader pf-u-visible-on-md">
             {/* desktop -- (updates button) */}
-            <Firehose resources={resources}>
-              <UpdatesAvailableButton onClick={this._onClusterUpdatesAvailable} />
-            </Firehose>
+            {
+              flags[FLAGS.CLUSTER_VERSION] &&
+                <Firehose resources={resources}>
+                  <UpdatesAvailableButton onClick={this._onClusterUpdatesAvailable} />
+                </Firehose>
+            }
             {/* desktop -- (application launcher dropdown), help dropdown [documentation, about] */}
             {flags[FLAGS.OPENSHIFT] && <ToolbarItem>
               <Dropdown
@@ -255,11 +267,7 @@ class MastheadToolbar_ extends React.Component {
                   </DropdownToggle>
                 }
                 isOpen={isApplicationLauncherDropdownOpen}
-                dropdownItems={[
-                  <DropdownItem key="clustermanager" onClick={this._onClusterManager}>
-                    Cluster Manager
-                  </DropdownItem>,
-                ]}
+                dropdownItems={this._renderMenuItems(this._launchActions())}
               />
             </ToolbarItem>}
             <ToolbarItem>
@@ -272,22 +280,15 @@ class MastheadToolbar_ extends React.Component {
                   </DropdownToggle>
                 }
                 isOpen={isHelpDropdownOpen}
-                dropdownItems={[
-                  <DropdownItem key="documentation" onClick={this._onDocumentation}>
-                    Documentation
-                  </DropdownItem>,
-                  <DropdownItem key="about" onClick={this._onAboutModal}>
-                    About
-                  </DropdownItem>,
-                ]}
+                dropdownItems={this._renderMenuItems(this._helpActions())}
               />
             </ToolbarItem>
           </ToolbarGroup>
           <ToolbarGroup >
             {/* mobile -- kebab dropdown [(cluster manager |) documentation, about (| logout)] */}
-            <ToolbarItem className="pf-u-hidden-on-md pf-u-mr-0">{this._renderMenu(true)}</ToolbarItem>
+            <ToolbarItem className="pf-u-hidden-on-md">{this._renderMenu(true)}</ToolbarItem>
             {/* desktop -- (user dropdown [logout]) */}
-            <ToolbarItem className="pf-u-sr-only pf-u-visible-on-md">{this._renderMenu(false)}</ToolbarItem>
+            <ToolbarItem className="pf-u-screen-reader pf-u-visible-on-md">{this._renderMenu(false)}</ToolbarItem>
           </ToolbarGroup>
         </Toolbar>
         {showAboutModal && <AboutModal isOpen={showAboutModal} closeAboutModal={this._closeAboutModal} />}
@@ -297,7 +298,7 @@ class MastheadToolbar_ extends React.Component {
 }
 
 const mastheadToolbarStateToProps = state => {
-  const desiredFlags = [FLAGS.AUTH_ENABLED, FLAGS.OPENSHIFT];
+  const desiredFlags = [FLAGS.AUTH_ENABLED, FLAGS.OPENSHIFT, FLAGS.CLUSTER_VERSION];
   const flagProps = flagStateToProps(desiredFlags, state);
   const user = state.UI.get('user');
   return { ...flagProps, user };

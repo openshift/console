@@ -16,6 +16,7 @@ import {
   SectionHeading,
   navFactory,
 } from './utils';
+import { MountedVolumes } from './mounted-vol';
 
 const { AddStorage, EditEnvironment, common } = Kebab.factory;
 export const menuActions = [AddStorage, EditEnvironment, ...common];
@@ -26,11 +27,14 @@ const Row = props => <WorkloadListRow {...props} kind={kind} actions={menuAction
 const Details = ({obj: ss}) => <React.Fragment>
   <div className="co-m-pane__body">
     <SectionHeading text="StatefulSet Overview" />
-    <ResourceSummary resource={ss} showNodeSelector={false} />
+    <ResourceSummary resource={ss} showPodSelector showNodeSelector showTolerations />
   </div>
   <div className="co-m-pane__body">
     <SectionHeading text="Containers" />
     <ContainerTable containers={ss.spec.template.spec.containers} />
+  </div>
+  <div className="co-m-pane__body">
+    <MountedVolumes podTemplate={ss.spec.template} heading="Mounted Volumes" />
   </div>
 </React.Fragment>;
 

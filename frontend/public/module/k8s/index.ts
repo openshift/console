@@ -11,6 +11,7 @@ export * from './get-resources';
 export * from './k8s-models';
 export * from './label-selector';
 export * from './cluster-operator';
+export * from './cluster-settings';
 
 export type OwnerReference = {
   name: string;
@@ -30,8 +31,9 @@ export type ObjectReference = {
 };
 
 export type ObjectMetadata = {
+  name?: string;
+  generateName?: string;
   annotations?: {[key: string]: string},
-  name: string,
   namespace?: string,
   labels?: {[key: string]: string},
   ownerReferences?: OwnerReference[],
@@ -59,6 +61,23 @@ export type Selector = {
   matchExpressions?: MatchExpression[];
 };
 
+export type TaintEffect = '' | 'NoSchedule' | 'PreferNoSchedule' | 'NoExecute';
+
+export type Taint = {
+  key: string;
+  value: string;
+  effect: TaintEffect;
+};
+
+export type TolerationOperator = 'Exists' | 'Equal';
+
+export type Toleration = {
+  key?: string;
+  operator: TolerationOperator;
+  value?: string;
+  effect: TaintEffect;
+};
+
 export type K8sResourceKind = {
   apiVersion: string;
   kind: string;
@@ -71,6 +90,11 @@ export type K8sResourceKind = {
   type?: {[key: string]: any};
 };
 
+export type NodeKind = {
+  spec?: {
+    taints?: Taint[];
+  };
+} & K8sResourceKind;
 
 export type ConfigMapKind = {
   apiVersion: string;
@@ -213,7 +237,7 @@ export type MachineConfigPoolKind = {
   status: MachineConfigPoolStatus;
 } & K8sResourceKind;
 
-type ClusterUpdate = {
+export type ClusterUpdate = {
   image: string;
   version: string;
 };
@@ -226,18 +250,52 @@ type UpdateHistory = {
   image: string;
 };
 
+export enum ClusterVersionConditionType {
+  Available = 'Available',
+  Failing = 'Failing',
+  Progressing = 'Progressing',
+  RetrievedUpdates = 'RetrievedUpdates',
+}
+
+export type ClusterVersionCondition = K8sResourceCondition<ClusterVersionConditionType>;
+
+type ClusterVersionStatus = {
+  availableUpdates: ClusterUpdate[];
+  conditions: ClusterVersionCondition[];
+  desired: ClusterUpdate;
+  history: UpdateHistory[];
+};
+
+type ClusterVersionSpec = {
+  channel: string;
+  clusterID: string;
+  desiredUpdate: ClusterUpdate;
+  upstream: string;
+};
+
 export type ClusterVersionKind = {
-  spec: {
-    channel: string;
-    clusterID: string;
-    desiredUpdate: ClusterUpdate;
-    upstream: string;
-  };
+  spec: ClusterVersionSpec;
+  status: ClusterVersionStatus;
+} & K8sResourceKind;
+
+export type OperandVersion = {
+  name: string;
+  version: string;
+};
+
+type ClusterOperatorObjectReference = {
+  group: string;
+  resource: string;
+  namespace?: string;
+  name: string;
+};
+
+export type ClusterOperator = {
+  spec: {};
   status: {
-    availableUpdates: ClusterUpdate[];
-    conditions: any[];
-    desired: ClusterUpdate;
-    history: UpdateHistory[];
+    conditions?: any[];
+    versions?: OperandVersion[];
+    relatedObjects?: ClusterOperatorObjectReference[];
   };
 } & K8sResourceKind;
 

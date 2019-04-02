@@ -1,7 +1,9 @@
 import * as React from 'react';
+import { connect } from 'react-redux';
 
 import { Status, errorStatus } from './';
 import { coFetch, coFetchJSON } from '../../co-fetch';
+import { FLAGS, featureReducerName } from '../../features';
 import { k8sBasePath } from '../../module/k8s';
 
 // Use the shorter 'OpenShift Console' instead of 'OpenShift Container Platform Console' since the title appears in the chart.
@@ -25,19 +27,25 @@ export const KubernetesHealth = () => <Status title="Kubernetes API" fetch={fetc
 
 export const ConsoleHealth = () => <Status title={consoleName} fetch={fetchConsoleHealth} />;
 
-const AlertsFiring = ({namespace}) => (
-  <Status
+const alertsFiringStateToProps = (state) => ({canAccessMonitoring: !!state[featureReducerName].get(FLAGS.CAN_GET_NS)});
+
+const AlertsFiring_ = ({canAccessMonitoring, namespace}) => {
+  const toProp = canAccessMonitoring && !!window.SERVER_FLAGS.prometheusBaseURL ? {to: '/monitoring'} : {};
+  return <Status
+    {...toProp}
     title="Alerts Firing"
     name="Alerts"
-    query={`sum(ALERTS{alertstate="firing", alertname!="DeadMansSwitch" ${namespace ? `, namespace="${namespace}"` : ''}})`}
-    to="/monitoring"
-  />
-);
+    namespace={namespace}
+    query={`sum(ALERTS{alertstate="firing", alertname!="Watchdog" ${namespace ? `, namespace="${namespace}"` : ''}})`}
+  />;
+};
+const AlertsFiring = connect(alertsFiringStateToProps)(AlertsFiring_);
 
 const CrashloopingPods = ({namespace}) => (
   <Status
     title="Crashlooping Pods"
     name="Pods"
+    namespace={namespace}
     query={`count(increase(kube_pod_container_status_restarts_total${namespace ? `{namespace="${namespace}"}` : ''}[1h]) > 5 )`}
     to={`/k8s/${namespace ? `ns/${namespace}` : 'all-namespaces'}/pods?rowFilter-pod-status=CrashLoopBackOff`}
   />

@@ -7,7 +7,7 @@ import * as _ from 'lodash';
 import { SubscriptionHeader, SubscriptionHeaderProps, SubscriptionRow, SubscriptionRowProps, SubscriptionsList, SubscriptionsListProps, SubscriptionsPage, SubscriptionsPageProps, SubscriptionDetails, SubscriptionDetailsPage, SubscriptionDetailsProps, SubscriptionUpdates, SubscriptionUpdatesProps, SubscriptionUpdatesState } from '../../../public/components/operator-lifecycle-manager/subscription';
 import { SubscriptionKind, SubscriptionState } from '../../../public/components/operator-lifecycle-manager';
 import { referenceForModel } from '../../../public/module/k8s';
-import { SubscriptionModel, ClusterServiceVersionModel, PackageManifestModel, OperatorGroupModel } from '../../../public/models';
+import { SubscriptionModel, ClusterServiceVersionModel, PackageManifestModel, OperatorGroupModel, InstallPlanModel } from '../../../public/models';
 import { ListHeader, ColHead, List, MultiListPage, DetailsPage } from '../../../public/components/factory';
 import { ResourceKebab, ResourceLink, Kebab } from '../../../public/components/utils';
 import { testSubscription, testClusterServiceVersion, testPackageManifest } from '../../../__mocks__/k8sResourcesMocks';
@@ -215,6 +215,7 @@ describe(SubscriptionDetailsPage.displayName, () => {
 
     expect(wrapper.find(DetailsPage).props().resources).toEqual([
       {kind: referenceForModel(PackageManifestModel), namespace: 'default', isList: true, prop: 'packageManifests'},
+      {kind: referenceForModel(InstallPlanModel), isList: true, namespace: 'default', prop: 'installPlans'},
       {kind: referenceForModel(ClusterServiceVersionModel), namespace: 'default', isList: true, prop: 'clusterServiceVersions'},
     ]);
   });

@@ -2,23 +2,26 @@
 
 set -exuo pipefail
 
-ARTIFACT_DIR=/tmp/artifacts
-export ARTIFACT_DIR
+ARTIFACT_DIR=${ARTIFACT_DIR:=/tmp/artifacts}
+SCREENSHOTS_DIR=frontend/gui_test_screenshots
+INSTALLER_DIR=${INSTALLER_DIR:=${ARTIFACT_DIR}/installer}
 
 function copyArtifacts {
-  echo "Copying artifacts from $(pwd)..."
-  cp -rv ./frontend/gui_test_screenshots "${ARTIFACT_DIR}/gui_test_screenshots"
+  if [ -d "$ARTIFACT_DIR" ] && [ -d "$SCREENSHOTS_DIR" ]; then
+    echo "Copying artifacts from $(pwd)..."
+    cp -rv "$SCREENSHOTS_DIR" "${ARTIFACT_DIR}/gui_test_screenshots"
+  fi
 }
 
 trap copyArtifacts EXIT
 
-./build.sh
+# don't log kubeadmin-password
+set +x
+export KUBEADMIN_PASSWORD="$(cat "${INSTALLER_DIR}/auth/kubeadmin-password")"
+set -x
+export BRIDGE_BASE_ADDRESS="$(oc get consoles.config.openshift.io cluster -o jsonpath='{.status.consoleURL}')"
 
-oc login -u kubeadmin -p $(cat "${ARTIFACT_DIR}/installer/auth/kubeadmin-password")
+# Add htpasswd IDP
+oc apply -f ./frontend/integration-tests/data/htpasswd-idp.yaml
 
-source ./contrib/oc-environment.sh
-
-kubectl create -f https://raw.githubusercontent.com/operator-framework/operator-lifecycle-manager/master/deploy/okd/manifests/0.8.0/0000_30_06-rh-operators.configmap.yaml
-kubectl create -f https://raw.githubusercontent.com/operator-framework/operator-lifecycle-manager/master/deploy/okd/manifests/0.8.0/0000_30_09-rh-operators.catalogsource.yaml
-
-./test-gui.sh e2e
+./test-gui.sh ${1:-e2e}

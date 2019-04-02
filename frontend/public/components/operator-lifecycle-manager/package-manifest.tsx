@@ -5,8 +5,8 @@ import * as _ from 'lodash-es';
 import { Link, match } from 'react-router-dom';
 
 import { referenceForModel, K8sResourceKind } from '../../module/k8s';
-import { requireOperatorGroup } from './operator-group';
-import { PackageManifestKind, SubscriptionKind, ClusterServiceVersionLogo, visibilityLabel, OperatorGroupKind } from './index';
+import { requireOperatorGroup, installedFor, supports } from './operator-group';
+import { PackageManifestKind, SubscriptionKind, ClusterServiceVersionLogo, visibilityLabel, OperatorGroupKind, installModesFor, defaultChannelFor } from './index';
 import { PackageManifestModel, SubscriptionModel, CatalogSourceModel, OperatorGroupModel } from '../../models';
 import { StatusBox, MsgBox } from '../utils';
 import { List, ListHeader, ColHead, MultiListPage } from '../factory';
@@ -20,7 +20,7 @@ export const PackageManifestHeader: React.SFC<PackageManifestHeaderProps> = (pro
 </ListHeader>;
 
 export const PackageManifestRow: React.SFC<PackageManifestRowProps> = (props) => {
-  const {obj, catalogSourceName, catalogSourceNamespace, subscription, defaultNS} = props;
+  const {obj, catalogSourceName, catalogSourceNamespace, subscription, defaultNS, canSubscribe} = props;
   const ns = getActiveNamespace();
   const channel = !_.isEmpty(obj.status.defaultChannel) ? obj.status.channels.find(ch => ch.name === obj.status.defaultChannel) : obj.status.channels[0];
   const {displayName, icon = [], version, provider} = channel.currentCSVDesc;
@@ -36,13 +36,12 @@ export const PackageManifestRow: React.SFC<PackageManifestRowProps> = (props) =>
       <ClusterServiceVersionLogo displayName={displayName} icon={_.get(icon, '[0]')} provider={provider.name} />
     </div>
     <div className="col-md-3 col-sm-4 hidden-xs">{version} ({channel.name})</div>
-    <div className="col-md-5 col-sm-4 col-xs-6 co-package-row__actions">
-      { subscription
-        ? subscriptionLink()
-        : <span className="text-muted">None</span> }
-      { (!subscription || ns === ALL_NAMESPACES_KEY) && <Link to={createSubscriptionLink()}>
-        <button className="btn btn-primary">Create<span className="visible-lg-inline"> Subscription</span></button>
-      </Link> }
+    <div className="col-md-5 col-sm-4 col-xs-6 co-package-row__actions">{ subscription
+      ? subscriptionLink()
+      : <span className="text-muted">None</span> }
+    { canSubscribe && <Link to={createSubscriptionLink()}>
+      <button className="btn btn-primary">Create<span className="visible-lg-inline"> Subscription</span></button>
+    </Link> }
     </div>
   </div>;
 };
@@ -62,7 +61,7 @@ export const PackageManifestList = requireOperatorGroup((props: PackageManifestL
     label={PackageManifestModel.labelPlural}
     data={props.data}
     EmptyMsg={() => <MsgBox title="No Package Manifests Found" detail="Package Manifests are packaged Operators which can be subscribed to for automatic upgrades." />}>
-    { [...catalogs.values()].map(catalog => <div key={catalog.name} className="co-catalogsource-list__section">
+    { _.sortBy([...catalogs.values()], 'displayName').map(catalog => <div key={catalog.name} className="co-catalogsource-list__section">
       <div className="co-catalogsource-list__section__packages">
         <div>
           <h3>{catalog.displayName}</h3>
@@ -80,7 +79,13 @@ export const PackageManifestList = requireOperatorGroup((props: PackageManifestL
           obj={rowProps.obj}
           catalogSourceName={catalog.name}
           catalogSourceNamespace={catalog.namespace}
-          subscription={(props.subscription.data || []).find(sub => sub.spec.name === rowProps.obj.metadata.name)}
+          subscription={(props.subscription.data || [])
+            .filter(sub => _.isEmpty(props.namespace) || sub.metadata.namespace === props.namespace)
+            .find(sub => sub.spec.name === rowProps.obj.metadata.name)}
+          canSubscribe={!installedFor(props.subscription.data)(props.operatorGroup.data)(rowProps.obj.status.packageName)(getActiveNamespace())
+            && props.operatorGroup.data
+              .filter(og => _.isEmpty(props.namespace) || og.metadata.namespace === props.namespace)
+              .some(og => supports(installModesFor(rowProps.obj)(defaultChannelFor(rowProps.obj)))(og))}
           defaultNS={_.get(props.operatorGroup, 'data[0].metadata.namespace')} />}
         label="Package Manifests"
         EmptyMsg={() => <MsgBox title="No PackageManifests Found" detail="The catalog author has not added any packages." />} />
@@ -99,14 +104,15 @@ export const PackageManifestsPage: React.SFC<PackageManifestsPageProps> = (props
     namespace={namespace}
     showTitle={false}
     helpText={HelpText}
-    ListComponent={(listProps: PackageManifestListProps) => <PackageManifestList {...listProps} showDetailsLink={true} />}
+    ListComponent={(listProps: PackageManifestListProps) => <PackageManifestList {...listProps} showDetailsLink={true} namespace={namespace} />}
     filterLabel="Packages by name"
+    textFilter="packagemanifest-name"
     flatten={flatten}
     resources={[
       {kind: referenceForModel(PackageManifestModel), isList: true, namespaced: true, prop: 'packageManifest', selector: {matchExpressions: [{key: visibilityLabel, operator: 'DoesNotExist'}, {key: OPERATOR_HUB_LABEL, operator: 'DoesNotExist'}]}},
       {kind: referenceForModel(CatalogSourceModel), isList: true, namespaced: true, prop: 'catalogSource'},
-      {kind: referenceForModel(SubscriptionModel), isList: true, namespaced: true, prop: 'subscription'},
-      {kind: referenceForModel(OperatorGroupModel), isList: true, namespaced: true, prop: 'operatorGroup'},
+      {kind: referenceForModel(SubscriptionModel), isList: true, prop: 'subscription'},
+      {kind: referenceForModel(OperatorGroupModel), isList: true, prop: 'operatorGroup'},
     ]} />;
 };
 
@@ -116,6 +122,7 @@ export type PackageManifestsPageProps = {
 };
 
 export type PackageManifestListProps = {
+  namespace?: string;
   data: PackageManifestKind[];
   filters?: {[name: string]: string};
   subscription: {loaded: boolean, data?: SubscriptionKind[]};
@@ -135,6 +142,7 @@ export type PackageManifestRowProps = {
   catalogSourceNamespace: string;
   subscription?: SubscriptionKind;
   defaultNS: string;
+  canSubscribe: boolean;
 };
 
 PackageManifestHeader.displayName = 'PackageManifestHeader';

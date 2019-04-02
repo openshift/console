@@ -18,6 +18,7 @@ import { SafetyFirst } from './safety-first';
 import { coFetchJSON } from '../co-fetch';
 import { ResourceSidebar } from './sidebars/resource-sidebar';
 import { yamlTemplates } from '../models/yaml-templates';
+import { SWAGGER_SESSION_STORAGE_KEY } from '../const';
 
 const { snippetManager } = ace.acequire('ace/snippets');
 snippetManager.register([...snippets.values()], 'yaml');
@@ -72,9 +73,17 @@ export const EditYAML = connect(stateToProps)(
       }
 
       // Retrieve k8s API spec for autocompletion
-      if (!window.sessionStorage.getItem(`${window.SERVER_FLAGS.consoleVersion}--swagger.json`)) {
-        coFetchJSON('api/kubernetes/swagger.json')
-          .then(swagger => window.sessionStorage.setItem(`${window.SERVER_FLAGS.consoleVersion}--swagger.json`, JSON.stringify(swagger)));
+      if (!window.sessionStorage.getItem(SWAGGER_SESSION_STORAGE_KEY)) {
+        coFetchJSON('api/kubernetes/swagger.json').then(swagger => {
+          // Only store definitions to reduce the document size.
+          const json = JSON.stringify(swagger.definitions || {});
+          try {
+            window.sessionStorage.setItem(SWAGGER_SESSION_STORAGE_KEY, json);
+          } catch (e) {
+            // eslint-disable-next-line no-console
+            console.error('Could not store swagger.json', e);
+          }
+        });
       }
     }
 
@@ -341,7 +350,7 @@ export const EditYAML = connect(stateToProps)(
               <div className="yaml-editor" ref={r => this.editor = r} style={{height: this.state.height}}>
                 <div className="absolute-zero">
                   <div className="full-width-and-height yaml-editor__flexbox">
-                    <div id={this.id} key={this.id} className="yaml-editor__acebox" />
+                    <div id={this.id} key={this.id} className={classNames('yaml-editor__acebox', {'yaml-editor__acebox--readonly': readOnly})} />
                     <div className="yaml-editor__buttons">
                       {error && <p className="alert alert-danger"><span className="pficon pficon-error-circle-o"></span>{error}</p>}
                       {success && <p className="alert alert-success"><span className="pficon pficon-ok"></span>{success}</p>}

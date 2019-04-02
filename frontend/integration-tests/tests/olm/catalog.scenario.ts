@@ -8,14 +8,36 @@ import * as catalogView from '../../views/olm-catalog.view';
 import * as sidenavView from '../../views/sidenav.view';
 
 describe('Installing a service from a Catalog Source', () => {
-  const openCloudServices = new Set(['etcd', 'Prometheus Operator', 'AMQ Streams', 'Service Catalog', 'FederationV2']);
+  const openCloudServices = new Set(['etcd', 'Prometheus Operator']);
+  const operatorGroupName = 'test-operatorgroup';
 
   beforeAll(async() => {
+    const catalogSource = {
+      apiVersion: 'operators.coreos.com/v1alpha1',
+      kind: 'CatalogSource',
+      metadata: {name: 'console-e2e'},
+      spec: {
+        sourceType: 'grpc',
+        image: 'quay.io/operator-framework/upstream-community-operators@sha256:5ae28f6de8affdb2a2119565ea950a2a777280b159f03b6ddddf104740571e25',
+        displayName: 'Console E2E Operators',
+        publisher: 'Red Hat, Inc',
+      },
+    };
+
+    execSync(`echo '${JSON.stringify(catalogSource)}' | kubectl create -n ${testName} -f -`);
+    await new Promise(resolve => (function checkForPackages() {
+      const output = execSync(`kubectl get packagemanifests -n ${testName} -o json`);
+      if (JSON.parse(output.toString('utf-8')).items.find(pkg => pkg.status.packageName === 'etcd')) {
+        return resolve();
+      }
+      setTimeout(checkForPackages, 2000);
+    })());
+
     const operatorGroup = {
       apiVersion: 'operators.coreos.com/v1alpha2',
       kind: 'OperatorGroup',
-      metadata: {name: 'test-operatorgroup'},
-      spec: {selector: {matchLabels: {'test-name': testName}}},
+      metadata: {name: operatorGroupName},
+      spec: {targetNamespaces: [testName]},
     };
     execSync(`echo '${JSON.stringify(operatorGroup)}' | kubectl create -n ${testName} -f -`);
 
@@ -26,6 +48,10 @@ describe('Installing a service from a Catalog Source', () => {
   afterEach(() => {
     checkLogs();
     checkErrors();
+  });
+
+  afterAll(() => {
+    execSync(`kubectl delete operatorgroup -n ${testName} ${operatorGroupName}`);
   });
 
   it('displays `Catalog` tab in navigation sidebar', async() => {
