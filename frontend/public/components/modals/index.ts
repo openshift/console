@@ -2,10 +2,13 @@
 
 export const configureCountModal = (props) => import('./configure-count-modal' /* webpackChunkName: "configure-count-modal" */)
   .then(m => m.configureCountModal(props));
+
 export const configureReplicaCountModal = (props) => import('./configure-count-modal' /* webpackChunkName: "configure-count-modal" */)
   .then(m => m.configureReplicaCountModal(props));
+
 export const configureJobParallelismModal = (props) => import('./configure-count-modal' /* webpackChunkName: "configure-count-modal" */)
   .then(m => m.configureJobParallelismModal(props));
+
 export const configureClusterSizeModal = (props) => import('./configure-count-modal' /* webpackChunkName: "configure-count-modal" */)
   .then(m => m.configureClusterSizeModal(props));
 
@@ -20,6 +23,7 @@ export const confirmModal = (props) => import('./confirm-modal' /* webpackChunkN
 
 export const createNamespaceModal = (props) => import('./create-namespace-modal' /* webpackChunkName: "create-namespace-modal" */)
   .then(m => m.createNamespaceModal(props));
+
 export const createProjectModal = (props) => import('./create-namespace-modal' /* webpackChunkName: "create-namespace-modal" */)
   .then(m => m.createProjectModal(props));
 
@@ -37,6 +41,7 @@ export const configureNamespacePullSecretModal = (props) => import('./configure-
 
 export const labelsModal = (props) => import('./labels-modal' /* webpackChunkName: "labels-modal" */)
   .then(m => m.labelsModal(props));
+
 export const podSelectorModal = (props) => import('./labels-modal' /* webpackChunkName: "labels-modal" */)
   .then(m => m.podSelectorModal(props));
 
@@ -54,3 +59,12 @@ export const clusterChannelModal = (props) => import('./cluster-channel-modal' /
 
 export const clusterUpdateModal = (props) => import('./cluster-update-modal' /* webpackChunkName: "cluster-update-modal" */)
   .then(m => m.clusterUpdateModal(props));
+
+export const taintsModal = (props) => import('./taints-modal' /* webpackChunkName: "taints-modal" */)
+  .then(m => m.taintsModal(props));
+
+export const tolerationsModal = (props) => import('./tolerations-modal' /* webpackChunkName: "tolerations-modal" */)
+  .then(m => m.tolerationsModal(props));
+
+export const installPlanPreviewModal = (props) => import('./installplan-preview-modal' /* webpackChunkName: "installplan-preview-modal" */)
+  .then(m => m.installPlanPreviewModal(props));

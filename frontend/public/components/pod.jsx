@@ -85,7 +85,7 @@ const PodHeader = props => <ListHeader>
   <ColHead {...props} className="col-lg-2 hidden-md hidden-sm hidden-xs" sortFunc="podReadiness">Readiness</ColHead>
 </ListHeader>;
 
-const ContainerLink = ({pod, name}) => <span className="co-resource-link co-resource-link--inline">
+const ContainerLink = ({pod, name}) => <span className="co-resource-item co-resource-item--inline">
   <ResourceIcon kind="Container" />
   <Link to={`/k8s/ns/${pod.metadata.namespace}/pods/${pod.metadata.name}/containers/${name}`}>{name}</Link>
 </span>;
@@ -168,7 +168,7 @@ export const PodDetailsList = ({pod}) => {
 };
 
 export const PodResourceSummary = ({pod}) => (
-  <ResourceSummary resource={pod} showNodeSelector>
+  <ResourceSummary resource={pod} showNodeSelector showTolerations>
     <dt>Node Selector</dt>
     <dd><Selector kind="Node" selector={pod.spec.nodeSelector} /></dd>
   </ResourceSummary>

@@ -111,7 +111,7 @@ export const DeploymentConfigsDetails: React.SFC<{obj: any}> = ({obj: dc}) => {
       <div className="co-m-pane__body-group">
         <div className="row">
           <div className="col-sm-6">
-            <ResourceSummary resource={dc} showPodSelector showNodeSelector>
+            <ResourceSummary resource={dc} showPodSelector showNodeSelector showTolerations>
               <dt>Status</dt>
               <dd>{dc.status.availableReplicas === dc.status.updatedReplicas ? <StatusIcon status="Active" /> : <StatusIcon status="Updating" />}</dd>
             </ResourceSummary>

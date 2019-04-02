@@ -52,7 +52,7 @@ const Details_ = ({flags, obj: pvc}) => {
       <div className="col-sm-6">
         <ResourceSummary resource={pvc}>
           <dt>Label Selector</dt>
-          <dd><Selector selector={labelSelector} /></dd>
+          <dd><Selector selector={labelSelector} kind="PersistentVolume" /></dd>
         </ResourceSummary>
       </div>
       <div className="col-sm-6">
@@ -94,7 +94,7 @@ const filters = [{
 export const PersistentVolumeClaimsList = props => <List {...props} Header={Header} Row={Row} />;
 export const PersistentVolumeClaimsPage = props => {
   const createProps = {
-    to: `/k8s/ns/${props.namespace}/persistentvolumeclaims/new/form`,
+    to: `/k8s/ns/${props.namespace || 'default'}/persistentvolumeclaims/new/form`,
   };
   return <ListPage {...props} ListComponent={PersistentVolumeClaimsList} kind={kind} canCreate={true} rowFilters={filters} createProps={createProps} />;
 };

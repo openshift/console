@@ -3,7 +3,7 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 
-import { K8sResourceKind, GroupVersionKind, OwnerReference, Selector } from '../../module/k8s';
+import { K8sResourceKind, GroupVersionKind, OwnerReference, Selector, referenceForGroupVersionKind } from '../../module/k8s';
 import { Descriptor } from './descriptors/types';
 export { ClusterServiceVersionsDetailsPage, ClusterServiceVersionsPage } from './clusterserviceversion';
 export { ClusterServiceVersionResourcesDetailsPage, ClusterServiceVersionResourceLink } from './clusterserviceversion-resource';
@@ -143,6 +143,15 @@ export type Step = {
   status: 'Unknown' | 'NotPresent' | 'Present' | 'Created';
 };
 
+export enum InstallPlanPhase {
+  InstallPlanPhaseNone = '',
+  InstallPlanPhasePlanning = 'Planning',
+  InstallPlanPhaseRequiresApproval = 'RequiresApproval',
+  InstallPlanPhaseInstalling = 'Installing',
+  InstallPlanPhaseComplete = 'Complete',
+  InstallPlanPhaseFailed = 'Failed',
+}
+
 export type InstallPlanKind = {
   spec: {
     clusterServiceVersionNames: string[];
@@ -150,7 +159,7 @@ export type InstallPlanKind = {
     approved?: boolean;
   };
   status?: {
-    phase: 'Planning' | 'RequiresApproval' | 'Installing' | 'Complete' | 'Failed';
+    phase: InstallPlanPhase;
     catalogSources: string[];
     plan: Step[];
   }
@@ -248,8 +257,10 @@ export const defaultChannelFor = (pkg: PackageManifestKind) => pkg.status.defaul
 export const installModesFor = (pkg: PackageManifestKind) => (channel: string) => pkg.status.channels.find(ch => ch.name === channel).currentCSVDesc.installModes;
 
 export const referenceForProvidedAPI = (desc: CRDDescription | APIServiceDefinition): GroupVersionKind => _.get(desc, 'group')
-  ? `${(desc as APIServiceDefinition).group}~${desc.version}~${desc.kind}`
-  : `${(desc as CRDDescription).name.slice(desc.name.indexOf('.') + 1)}~${desc.version}~${desc.kind}`;
+  ? referenceForGroupVersionKind((desc as APIServiceDefinition).group)(desc.version)(desc.kind)
+  : referenceForGroupVersionKind((desc as CRDDescription).name.slice(desc.name.indexOf('.') + 1))(desc.version)(desc.kind);
+
+export const referenceForStepResource = (resource: StepResource): GroupVersionKind => referenceForGroupVersionKind(resource.group || 'core')(resource.version)(resource.kind);
 
 export const ClusterServiceVersionLogo: React.SFC<ClusterServiceVersionLogoProps> = (props) => {
   const {icon, displayName, provider, version} = props;

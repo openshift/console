@@ -6,7 +6,7 @@ import { Helmet } from 'react-helmet';
 import { Alert } from 'patternfly-react';
 
 import { Firehose, LoadingBox, history, NsDropdown, resourcePathFromModel } from '../utils';
-import { referenceForModel, K8sResourceKind, k8sUpdate, k8sCreate, apiVersionForModel, referenceForModelCompatible, apiVersionForModelCompatible, modelForCompatible } from '../../module/k8s';
+import { referenceForModel, K8sResourceKind, k8sUpdate, k8sCreate, apiVersionForModel } from '../../module/k8s';
 import { SubscriptionModel, CatalogSourceConfigModel, OperatorGroupModel, PackageManifestModel } from '../../models';
 import { OperatorGroupKind, PackageManifestKind, ClusterServiceVersionLogo, SubscriptionKind, InstallPlanApproval, installModesFor, defaultChannelFor } from '../operator-lifecycle-manager';
 import { InstallModeType, isGlobal, installedFor, supports } from '../operator-lifecycle-manager/operator-group';
@@ -78,7 +78,7 @@ export const OperatorHubSubscribeForm = withFormState((props: OperatorHubSubscri
       : _.uniq(catalogSourceConfig.spec.packages.split(',').concat([packageName])).join(',');
 
     const newCatalogSourceConfig = {
-      apiVersion: apiVersionForModelCompatible(CatalogSourceConfigModel)('marketplace.redhat.com~v1alpha1~CatalogSourceConfig'),
+      apiVersion: apiVersionForModel(CatalogSourceConfigModel),
       kind: CatalogSourceConfigModel.kind,
       metadata: {
         name: OPERATOR_HUB_CSC_NAME,
@@ -93,7 +93,7 @@ export const OperatorHubSubscribeForm = withFormState((props: OperatorHubSubscri
     };
 
     const operatorGroup: OperatorGroupKind = {
-      apiVersion: apiVersionForModelCompatible(OperatorGroupModel)('operators.coreos.com~v1alpha2~OperatorGroup') as OperatorGroupKind['apiVersion'],
+      apiVersion: apiVersionForModel(OperatorGroupModel) as OperatorGroupKind['apiVersion'],
       kind: 'OperatorGroup',
       metadata: {
         generateName: `${props.formState().targetNamespace}-`,
@@ -125,16 +125,13 @@ export const OperatorHubSubscribeForm = withFormState((props: OperatorHubSubscri
       },
     };
 
-    const catalogSourceConfigModelCompat = modelForCompatible(referenceForModel(CatalogSourceConfigModel))('marketplace.redhat.com~v1alpha1~CatalogSourceConfig');
-    const operatorGroupModelCompat = modelForCompatible(referenceForModel(OperatorGroupModel))('operators.coreos.com~v1alpha2~OperatorGroup');
-
     // TODO(alecmerdler): Handle and display error from creating kube objects...
     return (!_.isEmpty(catalogSourceConfig) || hasBeenEnabled
-      ? k8sUpdate(catalogSourceConfigModelCompat, {...catalogSourceConfig, spec: {...catalogSourceConfig.spec, packages}}, 'openshift-marketplace', OPERATOR_HUB_CSC_NAME)
-      : k8sCreate(catalogSourceConfigModelCompat, newCatalogSourceConfig)
+      ? k8sUpdate(CatalogSourceConfigModel, {...catalogSourceConfig, spec: {...catalogSourceConfig.spec, packages}}, 'openshift-marketplace', OPERATOR_HUB_CSC_NAME)
+      : k8sCreate(CatalogSourceConfigModel, newCatalogSourceConfig)
     ).then(() => props.operatorGroup.data.some(group => group.metadata.namespace === props.formState().targetNamespace)
       ? Promise.resolve()
-      : k8sCreate(operatorGroupModelCompat, operatorGroup))
+      : k8sCreate(OperatorGroupModel, operatorGroup))
       .then(() => k8sCreate(SubscriptionModel, subscription))
       .then(() => history.push(resourcePathFromModel(SubscriptionModel, packageName, subscription.metadata.namespace)));
   };
@@ -253,16 +250,16 @@ export const OperatorHubSubscribePage: React.SFC<OperatorHubSubscribePageProps> 
   </div>
   <Firehose resources={[{
     isList: true,
-    kind: referenceForModelCompatible(CatalogSourceConfigModel)('marketplace.redhat.com~v1alpha1~CatalogSourceConfig'),
+    kind: referenceForModel(CatalogSourceConfigModel),
     namespace: 'openshift-marketplace',
     prop: 'catalogSourceConfig',
   }, {
     isList: true,
-    kind: referenceForModelCompatible(OperatorGroupModel)('operators.coreos.com~v1alpha2~OperatorGroup'),
+    kind: referenceForModel(OperatorGroupModel),
     prop: 'operatorGroup',
   }, {
     isList: false,
-    kind: referenceForModelCompatible(PackageManifestModel)('packages.apps.redhat.com~v1alpha1~PackageManifest'),
+    kind: referenceForModel(PackageManifestModel),
     namespace: new URLSearchParams(window.location.search).get('catalogNamespace'),
     name: new URLSearchParams(window.location.search).get('pkg'),
     prop: 'packageManifest',

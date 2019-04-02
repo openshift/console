@@ -4,7 +4,15 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 
 import { DetailsPage, List, ListPage, WorkloadListHeader, WorkloadListRow } from './factory';
-import { Kebab, ContainerTable, navFactory, SectionHeading, ResourceSummary, ResourcePodCount, AsyncComponent } from './utils';
+import {
+  Kebab,
+  ContainerTable,
+  navFactory,
+  SectionHeading,
+  ResourceSummary,
+  ResourcePodCount,
+  AsyncComponent,
+} from './utils';
 import { breadcrumbsForOwnerRefs } from './utils/breadcrumbs';
 import { ResourceEventStream } from './events';
 import { MountedVolumes } from './mounted-vol';
@@ -20,7 +28,7 @@ const Details = ({obj: replicaSet}) => {
       <SectionHeading text="Replica Set Overview" />
       <div className="row">
         <div className="col-md-6">
-          <ResourceSummary resource={replicaSet} showPodSelector showNodeSelector>
+          <ResourceSummary resource={replicaSet} showPodSelector showNodeSelector showTolerations>
             {revision && <React.Fragment>
               <dt>Deployment Revision</dt>
               <dd>{revision}</dd>

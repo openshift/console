@@ -76,6 +76,7 @@ export const types = {
   setClusterID: 'setClusterID',
   setCurrentLocation: 'setCurrentLocation',
   setMonitoringData: 'setMonitoringData',
+  toggleMonitoringGraphs: 'toggleMonitoringGraphs',
   setUser: 'setUser',
   sortList: 'sortList',
   startImpersonate: 'startImpersonate',
@@ -188,4 +189,6 @@ export const UIActions = {
   monitoringLoaded: (key, data) => ({type: types.setMonitoringData, key, data: {loaded: true, loadError: null, data}}),
 
   monitoringErrored: (key, loadError) => ({type: types.setMonitoringData, key, data: {loaded: true, loadError, data: null}}),
+
+  [types.toggleMonitoringGraphs]: () => ({type: types.toggleMonitoringGraphs}),
 };

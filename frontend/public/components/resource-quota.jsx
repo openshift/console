@@ -48,7 +48,7 @@ const Header = props => <ListHeader>
 
 const Row = ({obj: rq}) => <div className="row co-resource-list__item">
   <div className="col-md-5 col-xs-6">
-    <ResourceLink kind={quotaKind(rq)} name={rq.metadata.name} namespace={rq.metadata.namespace} className="co-resource-link__resource-name" />
+    <ResourceLink kind={quotaKind(rq)} name={rq.metadata.name} namespace={rq.metadata.namespace} className="co-resource-item__resource-name" />
   </div>
   <div className="col-md-7 col-xs-6 co-break-word">
     {rq.metadata.namespace ? <ResourceLink kind="Namespace" name={rq.metadata.namespace} title={rq.metadata.namespace} /> : 'None'}

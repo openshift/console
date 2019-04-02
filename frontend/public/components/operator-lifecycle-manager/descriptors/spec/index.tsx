@@ -33,7 +33,7 @@ const NamespaceSelector: React.SFC<SpecCapabilityProps> = ({value}) => <Resource
 const ResourceRequirements: React.SFC<SpecCapabilityProps> = ({obj, descriptor}) => <dl className="co-spec-descriptor--resource-requirements">
   <dt>Resource Limits</dt>
   <dd><ResourceRequirementsModalLink type="limits" obj={obj} path={descriptor.path} /></dd>
-  <dt>Request Limits</dt>
+  <dt>Resource Requests</dt>
   <dd><ResourceRequirementsModalLink type="requests" obj={obj} path={descriptor.path} /></dd>
 </dl>;
 

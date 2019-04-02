@@ -4,9 +4,12 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 
 export class ListInput extends React.Component<ListInputProps, ListInputState> {
-  readonly state: ListInputState = {
-    values: [''],
-  };
+  constructor(props: ListInputProps) {
+    super(props);
+    this.state = {
+      values: props.initialValues || [''],
+    };
+  }
 
   componentDidUpdate(prevProps: ListInputProps, prevState: ListInputState) {
     if (prevState.values !== this.state.values) {
@@ -49,7 +52,7 @@ export class ListInput extends React.Component<ListInputProps, ListInputState> {
               <input className="form-control" type="text" value={v} onChange={(e: React.FormEvent<HTMLInputElement>) => this.valueChanged(i, e.currentTarget.value)} />
             </div>
             <div className="co-list-input__remove-btn">
-              <button type="button" className="btn btn-link" onClick={() => this.removeValue(i)} aria-label="Remove">
+              <button type="button" className="btn btn-link btn-link--inherit-color" onClick={() => this.removeValue(i)} aria-label="Remove">
                 <i className="fa fa-minus-circle pairs-list__side-btn pairs-list__delete-icon" aria-hidden="true" />
               </button>
             </div>
@@ -71,5 +74,6 @@ type ChangeCallback = (values: string[]) => void;
 
 type ListInputProps = {
   label: string;
+  initialValues?: string[];
   onChange: ChangeCallback;
 };

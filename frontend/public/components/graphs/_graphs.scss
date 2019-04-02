@@ -36,19 +36,19 @@
 
 .query-browser__span-text {
   border-bottom-right-radius: 0;
-  border-right: none;
   border-top-right-radius: 0;
   width: 100px;
 }
 
-.query-browser__span-text--error {
-  background-color: #fdd;
-}
-
 .query-browser__span-dropdown {
   border-bottom-left-radius: 0;
+  border-left: none;
   border-top-left-radius: 0;
   width: 30px;
+  .caret {
+    margin-left: 0;
+    margin-right: 1px;
+  }
 }
 
 .query-browser__span-dropdown-menu {

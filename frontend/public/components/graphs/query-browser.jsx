@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import * as classNames from 'classnames';
 import { addTraces, relayout, restyle } from 'plotly.js/lib/core';
 
 import { connectToURLs, MonitoringRoutes } from '../../monitoring';
@@ -67,13 +66,8 @@ class QueryBrowser_ extends Line_ {
       }
     };
 
-    this.relayout = () => {
-      const now = new Date();
-      const end = this.end || now;
-      const start = this.start || new Date(end - this.state.span);
-      // eslint-disable-next-line no-console
-      relayout(this.node, {'xaxis.range': [start, end]}).catch(e => console.error(e));
-    };
+    // eslint-disable-next-line no-console
+    this.relayout = layout => relayout(this.node, layout).catch(e => console.error(e));
 
     this.showLatest = span => {
       this.start = null;
@@ -82,7 +76,10 @@ class QueryBrowser_ extends Line_ {
       this.setState({isSpanValid: true, span, spanText: formatPrometheusDuration(span), updating: true}, () => {
         clearInterval(this.interval);
         this.fetch();
-        this.relayout();
+
+        const end = new Date();
+        const start = new Date(end - span);
+        this.relayout({'xaxis.range': [start, end], 'yaxis.autorange': true});
       });
     };
 
@@ -148,7 +145,11 @@ class QueryBrowser_ extends Line_ {
         traceIndex += 1;
       });
 
-      this.relayout();
+      if (!this.start && !this.end) {
+        const end = new Date();
+        const start = new Date(end - this.state.span);
+        this.relayout({'xaxis.range': [start, end]});
+      }
     }
     this.setState({updating: false});
   }
@@ -161,12 +162,14 @@ class QueryBrowser_ extends Line_ {
     return <div className="query-browser__wrapper">
       <div className="query-browser__header">
         <div className="query-browser__controls">
-          <input
-            className={classNames('form-control query-browser__span-text', {'query-browser__span-text--error': !isSpanValid})}
-            onChange={this.onSpanTextChange}
-            type="text"
-            value={spanText}
-          />
+          <div className={isSpanValid ? '' : 'has-error'}>
+            <input
+              className="form-control query-browser__span-text"
+              onChange={this.onSpanTextChange}
+              type="text"
+              value={spanText}
+            />
+          </div>
           <Dropdown
             buttonClassName="btn-default form-control query-browser__span-dropdown"
             items={dropdownItems}
