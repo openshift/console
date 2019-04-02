@@ -66,7 +66,7 @@ export class DeployImage extends React.Component<DeployImageProps, DeployImageSt
   }
 
   // The EnvironmentPage callback will set env with updates from the editor. env is then referenced in the deployment config onSave.
-  env: object = {};
+  env = [];
 
   onNamespaceChange = (namespace: string) => {
     this.setState({namespace});
@@ -435,5 +435,4 @@ export type DeployImageState = {
   name: string,
   error?: any,
   searchError?: string,
-  env?: any,
 };
