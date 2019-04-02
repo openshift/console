@@ -38,10 +38,14 @@ const menuActions = [
     label: 'Remove Subscription...',
     callback: () => createDisableApplicationModal({k8sKill, k8sGet, k8sPatch, subscription: obj}),
   }),
-  (kind, obj) => ({
-    label: `View ${ClusterServiceVersionModel.kind}...`,
-    href: `/k8s/ns/${obj.metadata.namespace}/${ClusterServiceVersionModel.plural}/${_.get(obj.status, 'installedCSV')}`,
-  }),
+  (kind, obj) => {
+    const installedCSV = _.get(obj, 'status.installedCSV');
+    return {
+      label: `View ${ClusterServiceVersionModel.kind}...`,
+      href: `/k8s/ns/${obj.metadata.namespace}/${ClusterServiceVersionModel.plural}/${installedCSV}`,
+      hidden: !installedCSV,
+    };
+  },
 ];
 
 export const SubscriptionRow: React.SFC<SubscriptionRowProps> = (props) => {
@@ -62,7 +66,7 @@ export const SubscriptionRow: React.SFC<SubscriptionRowProps> = (props) => {
       {props.obj.spec.installPlanApproval || 'Automatic'}
     </div>
     <div className="dropdown-kebab-pf">
-      <ResourceKebab actions={_.get(props.obj.status, 'installedCSV') ? menuActions : menuActions.slice(0, -1)} kind={referenceForModel(SubscriptionModel)} resource={props.obj} />
+      <ResourceKebab actions={menuActions} kind={referenceForModel(SubscriptionModel)} resource={props.obj} />
     </div>
   </div>;
 };

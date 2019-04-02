@@ -379,7 +379,7 @@ Dropdown.propTypes = {
 
 export const ActionsMenu = (props) => {
   const {actions, title = undefined, menuClassName = undefined, buttonClassName = undefined} = props;
-  const shownActions = _.reject(actions, o => _.get(o, 'hidden', false));
+  const shownActions = _.reject(actions, 'hidden');
   const items = _.fromPairs(_.map(shownActions, (v, k) => [k, v.label]));
   const btnTitle = title || <span id="action-dropdown">Actions</span>;
   const onChange = (key, e) => {
