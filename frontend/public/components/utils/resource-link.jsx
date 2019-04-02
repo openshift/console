@@ -64,11 +64,11 @@ export const ResourceLink = connectToModel(
     }
     const path = resourcePath(kind, name, namespace);
     const value = displayName ? displayName : name;
-    const classes = classNames('co-resource-link', className, {'co-resource-link--inline': inline});
+    const classes = classNames('co-resource-item', className, {'co-resource-item--inline': inline});
 
     return <span className={classes}>
       { !hideIcon && <ResourceIcon kind={kind} /> }
-      {(path && linkTo) ? <Link to={path} title={title} className="co-resource-link__resource-name">{value}</Link> : <span className="co-resource-link__resource-name">{value}</span>}
+      {(path && linkTo) ? <Link to={path} title={title} className="co-resource-item__resource-name">{value}</Link> : <span className="co-resource-item__resource-name">{value}</span>}
     </span>;
   });
 

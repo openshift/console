@@ -3,6 +3,7 @@
   border-radius: 20px;
   color: #fff;
   display: inline-block;
+  flex-shrink: 0;
   font-size: $font-size-base - 1;
   font-weight: 300;
   line-height: 16px;
@@ -10,7 +11,6 @@
   min-width: 18px;
   padding: 2px 4px 1px;
   text-align: center;
-
   &--lg {
     font-size: ($font-size-base + 1);
     line-height: 21px;
@@ -24,7 +24,7 @@
   display: flex;
   justify-content: center;
   text-align: center;
-  width: 40px;
+  width: 43px;
 }
 
 .co-m-resource-clusterrole,
@@ -99,7 +99,7 @@
   background-color: $color-ingress-dark;
 }
 
-.co-resource-link {
+.co-resource-item {
   align-items: baseline;
   display: flex;
   min-width: 0; // required so co-break-word works
@@ -111,16 +111,14 @@
   &__resource-name {
     min-width: 0; // required so co-break-word works
   }
-  .co-m-resource-icon {
-    flex-shrink: 0;
-  }
 }
 
-.co-resource-link-truncate {
+.co-resource-item--truncate {
   white-space: nowrap;
-  .co-resource-link__resource-name {
+  .co-resource-item__resource-name {
     line-height: normal;
     overflow: hidden;
     text-overflow: ellipsis;
   }
 }
+

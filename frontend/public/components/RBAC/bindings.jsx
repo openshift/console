@@ -97,7 +97,7 @@ const Header = props => <ListHeader>
 </ListHeader>;
 
 export const BindingName = ({binding}) => {
-  <ResourceLink kind={bindingKind(binding)} name={binding.metadata.name} namespace={binding.metadata.namespace} className="co-resource-link__resource-name" />;
+  <ResourceLink kind={bindingKind(binding)} name={binding.metadata.name} namespace={binding.metadata.namespace} className="co-resource-item__resource-name" />;
 };
 
 export const BindingKebab = connect(null, {startImpersonate: UIActions.startImpersonate})(
@@ -114,7 +114,7 @@ export const RoleLink = ({binding}) => {
 
 const Row = ({obj: binding}) => <ResourceRow obj={binding}>
   <div className="col-md-3 col-sm-4 col-xs-6">
-    <ResourceLink kind={bindingKind(binding)} name={binding.metadata.name} namespace={binding.metadata.namespace} className="co-resource-link__resource-name" />
+    <ResourceLink kind={bindingKind(binding)} name={binding.metadata.name} namespace={binding.metadata.namespace} className="co-resource-item__resource-name" />
   </div>
   <div className="col-md-3 col-sm-4 hidden-xs co-break-word">
     <RoleLink binding={binding} />

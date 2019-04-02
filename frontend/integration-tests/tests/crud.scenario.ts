@@ -273,7 +273,7 @@ describe('Kubernetes resource CRUD operations', () => {
       await crudView.isLoaded();
       await crudView.resourceRows.$$('.co-kebab__button').click();
       await browser.wait(until.elementToBeClickable($('.co-kebab__dropdown')));
-      await $('.co-kebab__dropdown').$$('a').filter(link => link.getText().then(text => text.startsWith('View Instances'))).first().click();
+      await element(by.cssContainingText('.co-kebab__dropdown a', 'View Instances')).click();
       await crudView.isLoaded();
       await crudView.createYAMLButton.click();
       await yamlView.isLoaded();
