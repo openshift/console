@@ -6,9 +6,6 @@ import {
   ClusterOverviewContext,
   complianceData,
   utilizationStats,
-  formatCores,
-  formatBytes,
-  formatNetTraffic,
 } from 'kubevirt-web-ui-components';
 
 import {
@@ -89,28 +86,7 @@ export class ClusterOverview extends React.Component {
         },
         loaded: false,
       },
-      capacityStats: {
-        cpu: {
-          title: 'CPU',
-          data: {},
-          formatValue: formatCores,
-        },
-        memory: {
-          title: 'Memory',
-          data: {},
-          formatValue: formatBytes,
-        },
-        storage: {
-          title: 'Storage',
-          data: {},
-          formatValue: formatBytes,
-        },
-        network: {
-          title: 'Network',
-          data: {},
-          formatValue: formatNetTraffic,
-        },
-      },
+      capacityData: {},
     };
 
     this.setConsumersData = this._setConsumersData.bind(this);
@@ -162,26 +138,19 @@ export class ClusterOverview extends React.Component {
     });
   }
 
-  _setCapacityData(key, dataKey, response) {
-    const result = response.data.result;
-    this.setState(({capacityStats}) => {
+  _setCapacityData(key, response) {
+    this.setState(state => ({
+      capacityData: {
+        ...state.capacityData,
+        [key]: response,
+      },
+    }));
+  }
 
-      const value = Number(_.get(result, '[0].value[1]'));
-      if (!Number.isNaN(value)) {
-        if (dataKey === 'totalDefault') {
-          if (isNaN(capacityStats[key].data.total)) {
-            capacityStats[key].data.total = value;
-          }
-        } else if (dataKey === 'usedDefault') {
-          if (isNaN(capacityStats[key].data.used)) {
-            capacityStats[key].data.used = value;
-          }
-        } else {
-          capacityStats[key].data[dataKey] = value;
-        }
-      }
-      return { capacityStats };
-    });
+  getPrometheusMetrics() {
+    const promURL = window.SERVER_FLAGS.prometheusBaseURL;
+    const url = `${promURL}/api/v1/label/__name__/values`;
+    return coFetchJSON(url);
   }
 
   fetchPrometheusQuery(query, callback) {
@@ -190,6 +159,10 @@ export class ClusterOverview extends React.Component {
     coFetchJSON(url).then(result => {
       if (this._isMounted) {
         callback(result);
+      }
+    }).catch(error => {
+      if (this._isMounted) {
+        callback(error);
       }
     }).then(() => {
       if (this._isMounted) {
@@ -224,16 +197,27 @@ export class ClusterOverview extends React.Component {
     this.fetchHealth(this.setHealthData);
     this.fetchPrometheusQuery(OPENSHIFT_VERSION_QUERY, response => this.setDetailsOpenshiftResponse(response));
 
-    this.fetchPrometheusQuery(CAPACITY_CPU_TOTAL_QUERY, response => this.setCapacityData('cpu', 'total', response));
-    this.fetchPrometheusQuery(CAPACITY_CPU_USED_QUERY, response => this.setCapacityData('cpu', 'used', response));
-    this.fetchPrometheusQuery(CAPACITY_MEMORY_TOTAL_QUERY, response => this.setCapacityData('memory', 'total', response));
-    this.fetchPrometheusQuery(CAPACITY_MEMORY_USED_QUERY, response => this.setCapacityData('memory', 'used', response));
-    this.fetchPrometheusQuery(CAPACITY_STORAGE_TOTAL_QUERY, response => this.setCapacityData('storage', 'total', response));
-    this.fetchPrometheusQuery(CAPACITY_STORAGE_USED_QUERY, response => this.setCapacityData('storage', 'used', response));
-    this.fetchPrometheusQuery(CAPACITY_STORAGE_TOTAL_DEFAULT_QUERY, response => this.setCapacityData('storage', 'totalDefault', response));
-    this.fetchPrometheusQuery(CAPACITY_STORAGE_USED_DEFAULT_QUERY, response => this.setCapacityData('storage', 'usedDefault', response));
-    this.fetchPrometheusQuery(CAPACITY_NETWORK_TOTAL_QUERY, response => this.setCapacityData('network', 'total', response));
-    this.fetchPrometheusQuery(CAPACITY_NETWORK_USED_QUERY, response => this.setCapacityData('network', 'used', response));
+    this.fetchPrometheusQuery(CAPACITY_CPU_TOTAL_QUERY, response => this.setCapacityData('cpuTotal', response));
+    this.fetchPrometheusQuery(CAPACITY_CPU_USED_QUERY, response => this.setCapacityData('cpuUsed', response));
+    this.fetchPrometheusQuery(CAPACITY_MEMORY_TOTAL_QUERY, response => this.setCapacityData('memoryTotal', response));
+    this.fetchPrometheusQuery(CAPACITY_MEMORY_USED_QUERY, response => this.setCapacityData('memoryUsed', response));
+    this.fetchPrometheusQuery(CAPACITY_NETWORK_TOTAL_QUERY, response => this.setCapacityData('networkTotal', response));
+    this.fetchPrometheusQuery(CAPACITY_NETWORK_USED_QUERY, response => this.setCapacityData('networkUsed', response));
+
+    this.getPrometheusMetrics().then(metrics => {
+      if (_.get(metrics, 'data', []).find(metric => metric === 'kubelet_volume_stats_capacity_bytes')) {
+        this.fetchPrometheusQuery(CAPACITY_STORAGE_TOTAL_QUERY, response => this.setCapacityData('storageTotal', response));
+        this.fetchPrometheusQuery(CAPACITY_STORAGE_USED_QUERY, response => this.setCapacityData('storageUsed', response));
+      } else {
+        this.fetchPrometheusQuery(CAPACITY_STORAGE_TOTAL_DEFAULT_QUERY, response => this.setCapacityData('storageTotal', response));
+        this.fetchPrometheusQuery(CAPACITY_STORAGE_USED_DEFAULT_QUERY, response => this.setCapacityData('storageUsed', response));
+      }
+    }).catch(error => {
+      if (this._isMounted) {
+        this.setCapacityData('storageTotal', error);
+        this.setCapacityData('storageUsed', error);
+      }
+    });
   }
 
   componentWillUnmount() {
@@ -241,7 +225,7 @@ export class ClusterOverview extends React.Component {
   }
 
   render() {
-    const { openshiftClusterVersions, healthData, consumersData, capacityStats } = this.state;
+    const { openshiftClusterVersions, healthData, consumersData, capacityData } = this.state;
 
     const inventoryResourceMapToProps = resources => {
       return {
@@ -249,7 +233,7 @@ export class ClusterOverview extends React.Component {
           LoadingComponent: LoadingInline,
           ...resources,
           openshiftClusterVersions,
-          capacityStats,
+          ...capacityData,
 
           eventsData: {
             Component: OverviewEventStream,
