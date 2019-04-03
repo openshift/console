@@ -21,14 +21,13 @@ import { withStartGuide } from './start-guide';
 import { NodeModel } from '../models';
 import { connectToFlags, FLAGS } from '../features';
 import {
-  Box,
   Dropdown,
   Firehose,
-  Loading,
   PageHeading,
   pluralize,
   ResourceLink,
   resourcePathFromModel,
+  StatusBox,
   Timestamp,
   TogglePlay,
 } from './utils';
@@ -216,7 +215,6 @@ class EventStream_ extends SafetyFirst {
       error: null,
       filteredEvents: [],
       loadedEventList: false,
-      loading: true,
       oldestTimestamp: new Date(),
       sortedMessages: [],
     };
@@ -237,6 +235,12 @@ class EventStream_ extends SafetyFirst {
   }
 
   toggleStream_() {
+    if (!_.isEmpty(this.unprocessedMessages)) {
+      this.messages = Object.assign(this.messages, this.unprocessedMessages);
+      this.unprocessedMessages = {};
+      this.flushMessages();
+      this.resizeEvents();
+    }
     this.setState({active: !this.state.active});
   }
 
@@ -283,19 +287,11 @@ class EventStream_ extends SafetyFirst {
       this.setState({
         filteredEvents: [],
         loadedEventList: false,
-        loading: true,
         sortedMessages: [],
       });
     }
-    if (prevProps.obj.data.loadError !== this.props.obj.data.loadError) {
-      this.setState({error: this.props.data.loadError.message});
-    }
     if (prevProps.obj.data.kind !== this.props.obj.data.kind) {
       if (this.state.active) {
-        if (!_.isEmpty(this.unprocessedMessages)) {
-          this.messages = Object.assign(this.messages, this.unprocessedMessages);
-          this.unprocessedMessages = {};
-        }
         if (this.props.obj.data.kind === 'Event') {
           const uid = this.props.obj.data.metadata.uid;
           if (this.messages[uid] && this.messages[uid].count > this.props.obj.data.count) {
@@ -306,12 +302,11 @@ class EventStream_ extends SafetyFirst {
           this.flushMessages();
           this.resizeEvents();
         }
-        if (this.props.obj.data.kind === 'EventList' && !this.state.loadedEventList) {
+        if (this.props.obj.data.kind === 'EventList') {
           if (this.props.obj.data.items.length === 0) {
             this.setState({
               filteredMessages: [],
               loadedEventList: true,
-              loading: false,
               sortedMessages: [],
             });
           } else {
@@ -326,10 +321,9 @@ class EventStream_ extends SafetyFirst {
             }
             this.flushMessages();
             this.resizeEvents();
-            this.setState({loadedEventList: true, loading: false});
           }
         }
-      } else {
+      } else { // state is inactive, so pause message rendering
         if (this.props.obj.data.kind === 'Event') {
           const uid = this.props.obj.data.metadata.uid;
           if (this.unprocessedMessages[uid] && this.unprocessedMessages[uid].count > this.props.obj.data.count) {
@@ -337,6 +331,16 @@ class EventStream_ extends SafetyFirst {
             return;
           }
           this.unprocessedMessages[uid] = this.props.obj.data;
+        } else {
+          // map through events and remove duplicates
+          for (let i = 0; i < this.props.obj.data.items.length; i++) {
+            const uid = this.props.obj.data.items[i].metadata.uid;
+            if (this.messages[uid] && this.messages[uid].count > this.props.obj.data.items[i].count || this.unprocessedMessages[uid] && this.unprocessedMessages[uid].count > this.props.obj.data.items[i].count) {
+              // We already have a more recent version of this message stored in processed or unprocessed messages, so skip this one
+              return;
+            }
+            this.unprocessedMessages[uid] = this.props.obj.data.items[i];
+          }
         }
       }
     }
@@ -346,7 +350,7 @@ class EventStream_ extends SafetyFirst {
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
-    const {filter, kind, category, textFilter, loading} = prevState;
+    const {filter, kind, category, textFilter} = prevState;
 
     if (_.isEqual(filter, nextProps.filter)
       && kind === nextProps.kind
@@ -357,7 +361,6 @@ class EventStream_ extends SafetyFirst {
 
     return {
       active: !nextProps.mock,
-      loading: !nextProps.mock && loading,
       // update the filteredEvents
       filteredEvents: EventStream_.filterEvents(prevState.sortedMessages, nextProps),
       // we need these for bookkeeping because getDerivedStateFromProps doesn't get prevProps
@@ -399,47 +402,14 @@ class EventStream_ extends SafetyFirst {
   }
 
   render() {
-    let sysEventStatus, statusBtnTxt;
-    const { mock, resourceEventStream } = this.props;
-    const {active, error, loading, filteredEvents, sortedMessages} = this.state;
+    let statusBtnTxt;
+    const { loaded, loadError } = this.props;
+    const { active, filteredEvents, sortedMessages } = this.state;
 
     const count = filteredEvents.length;
     const allCount = sortedMessages.length;
-    const noEvents = allCount === 0;
-    const noMatches = allCount > 0 && count === 0;
 
-    if (noEvents || mock || (noMatches && resourceEventStream)) {
-      sysEventStatus = (
-        <Box className="co-sysevent-stream__status-box-empty">
-          <div className="text-center cos-status-box__detail">
-          No events in the past hour
-          </div>
-        </Box>
-      );
-    }
-    if (noMatches && !resourceEventStream) {
-      sysEventStatus = (
-        <Box className="co-sysevent-stream__status-box-empty">
-          <div className="cos-status-box__title">No matching events</div>
-          <div className="text-center cos-status-box__detail">
-            {allCount}{allCount >= maxMessages && '+'} events exist, but none match the current filter
-          </div>
-        </Box>
-      );
-    }
-
-    if (error) {
-      statusBtnTxt = <span className="co-sysevent-stream__connection-error">Error connecting to event stream{_.isString(this.props.obj.data.loadError.message) && `: ${this.props.obj.data.loadError.stack}`}</span>;
-      sysEventStatus = (
-        <Box>
-          <div className="cos-status-box__title cos-error-title">Error loading events</div>
-          <div className="cos-status-box__detail text-center">An error occurred during event retrieval. Attempting to reconnect...</div>
-        </Box>
-      );
-    } else if (loading) {
-      statusBtnTxt = <span>Loading events...</span>;
-      sysEventStatus = <Loading />;
-    } else if (active) {
+    if (active) {
       statusBtnTxt = <span>Streaming events...</span>;
     } else {
       statusBtnTxt = <span>Event stream is paused.</span>;
@@ -464,11 +434,12 @@ class EventStream_ extends SafetyFirst {
         <div className={klass}>
           <TogglePlay active={active} onClick={this.toggleStream} className="co-sysevent-stream__timeline__btn" />
           <div className="co-sysevent-stream__timeline__end-message">
-          There are no events before <Timestamp timestamp={this.state.oldestTimestamp} />
+            There are no events before <Timestamp timestamp={this.state.oldestTimestamp} />
           </div>
         </div>
-        { /* Default `height` to 0 to avoid console errors from https://github.com/bvaughn/react-virtualized/issues/1158 */}
-        { count > 0 &&
+        <StatusBox data={filteredEvents} loaded={loaded} loadError={loadError} label="Events">
+          { /* Default `height` to 0 to avoid console errors from https://github.com/bvaughn/react-virtualized/issues/1158 */}
+          { count > 0 &&
             <WindowScroller scrollElement={document.getElementById('content-scrollable')}>
               {({height, isScrolling, registerChild, onChildScroll, scrollTop}) =>
                 <AutoSizer disableHeight onResize={this.onResize}>
@@ -491,8 +462,8 @@ class EventStream_ extends SafetyFirst {
                   </div>}
                 </AutoSizer> }
             </WindowScroller>
-        }
-        { sysEventStatus }
+          }
+        </StatusBox>
       </div>
     </div>;
   }
@@ -500,14 +471,36 @@ class EventStream_ extends SafetyFirst {
 
 class EventStream extends React.Component {
   render() {
-    return <Firehose resources={[{
-      kind: 'Event',
-      namespace: this.props.namespace,
-      fieldSelector: this.props.fieldSelector,
-      prop: 'obj',
-    }]}>
-      <EventStream_ {...this.props} />
-    </Firehose>;
+    const { mock } = this.props;
+    return mock
+      ? <div className="co-m-pane__body co-m-pane__body--alt">
+        <div className="co-sysevent-stream">
+          <div className="co-sysevent-stream__status">
+            <div className="co-sysevent-stream__timeline__btn-text">
+              <span>Event stream is paused.</span>
+            </div>
+            <div className="co-sysevent-stream__totals text-secondary">
+              Showing 0 of 0 events
+            </div>
+          </div>
+
+          <div className="co-sysevent-stream__timeline co-sysevent-stream__timeline--empty">
+            <TogglePlay className="co-sysevent-stream__timeline__btn" />
+            <div className="co-sysevent-stream__timeline__end-message">
+              There are no events before <Timestamp />
+            </div>
+          </div>
+          <StatusBox loaded label="Events" />
+        </div>
+      </div>
+      : <Firehose resources={[{
+        kind: 'Event',
+        namespace: this.props.namespace,
+        fieldSelector: this.props.fieldSelector,
+        prop: 'obj',
+      }]}>
+        <EventStream_ {...this.props} />
+      </Firehose>;
   }
 }
 
