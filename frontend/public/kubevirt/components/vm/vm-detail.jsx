@@ -20,6 +20,7 @@ import {
   NamespaceModel,
   VirtualMachineInstanceMigrationModel,
   VirtualMachineModel,
+  ServiceModel,
 } from '../../models/index';
 
 import { DASHES } from '../utils/constants';
@@ -72,11 +73,14 @@ export const ConnectedVmDetails = ({ obj: vm, ...rest }) => {
     migrations: {
       resource: getResource(VirtualMachineInstanceMigrationModel, {namespace}),
     },
+    services: {
+      resource: getResource(ServiceModel, {namespace}),
+    },
   };
 
   return (
     <WithResources resourceMap={resourceMap}>
-      <VmDetails_ vm={vm} {...rest} />
+      <VmDetails_ vm={vm} {...rest} ResourceLinkComponent={ResourceLink} />
     </WithResources>
   );
 };
