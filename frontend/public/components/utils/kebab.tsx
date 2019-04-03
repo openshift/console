@@ -95,8 +95,9 @@ export const ResourceKebab = connectToModel((props: ResourceKebabProps) => {
   if (!kindObj) {
     return null;
   }
+  const options = _.reject(actions.map(a => a(kindObj, resource)), 'hidden');
   return <Kebab
-    options={actions.map(a => a(kindObj, resource))}
+    options={options}
     key={resource.metadata.uid}
     isDisabled={isDisabled !== undefined ? isDisabled : _.get(resource.metadata, 'deletionTimestamp')}
   />;
