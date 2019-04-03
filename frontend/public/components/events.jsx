@@ -171,6 +171,7 @@ export class EventsList extends React.Component {
             className="btn-group"
             items={categories}
             onChange={v => this.setState({category: v})}
+            selectedKey={this.state.category}
             title="All Categories"
           />
         </div>
