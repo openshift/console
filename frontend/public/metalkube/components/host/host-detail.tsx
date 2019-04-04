@@ -9,10 +9,15 @@ import { ResourcesEventStream } from '../../../kubevirt/components/okdcomponents
 import { navFactory } from '../utils/okdutils';
 import { WithResources } from '../../../kubevirt/components/utils/withResources';
 import { DetailsPage, List, ListHeader, ColHead, ResourceRow } from '../factory/okdfactory';
+import { getHostSpec, getHostStatus } from '../utils/selectors';
 
 
 const BaremetalHostDetails = props => {
-  const { metadata, spec, status } = props.bmh;
+  const { metadata } = props.bmh;
+
+  const spec = getHostSpec(props.bmh);
+  const status = getHostStatus(props.bmh);
+
   const { name } = metadata;
   const { online } = spec;
   const { hardware } = status;
@@ -128,21 +133,27 @@ const DiskRow = ({ obj: disk }) => (
   </ResourceRow>
 );
 
-const BaremetalHostNic = ({obj: bmo}) => (
-  <div className="co-m-list">
-    <div className="co-m-pane__body">
-      <List data={bmo.status.hardware.nics} Header={NicHeader} Row={NicRow} loaded={true} />
+const BaremetalHostNic = ({obj: bmo}) => {
+  const nics = getHostStatus(bmo).hardware.nics;
+  return (
+    <div className="co-m-list">
+      <div className="co-m-pane__body">
+        <List data={nics} Header={NicHeader} Row={NicRow} loaded={true} />
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
-const BaremetalHostDisk = ({obj: bmo}) => (
-  <div className="co-m-list">
-    <div className="co-m-pane__body">
-      <List data={bmo.status.hardware.storage} Header={DiskHeader} Row={DiskRow} loaded={true} />
+const BaremetalHostDisk = ({obj: bmo}) => {
+  const disks = getHostStatus(bmo).hardware.storage;
+  return (
+    <div className="co-m-list">
+      <div className="co-m-pane__body">
+        <List data={disks} Header={DiskHeader} Row={DiskRow} loaded={true} />
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 const BaremetalHostEvents = ({ obj: bmo }) => {
   const ns = getNamespace(bmo);
