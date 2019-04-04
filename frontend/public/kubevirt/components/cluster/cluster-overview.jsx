@@ -66,6 +66,8 @@ const resourceMap = {
 
 const OverviewEventStream = () => <EventStream scrollableElementId="events-body" InnerComponent={EventsInnerOverview} overview={true} namespace={undefined} />;
 
+const getPrometheusBaseURL = () => window.SERVER_FLAGS.prometheusBaseURL;
+
 export class ClusterOverview extends React.Component {
   constructor(props){
     super(props);
@@ -148,14 +150,12 @@ export class ClusterOverview extends React.Component {
   }
 
   getPrometheusMetrics() {
-    const promURL = window.SERVER_FLAGS.prometheusBaseURL;
-    const url = `${promURL}/api/v1/label/__name__/values`;
+    const url = `${getPrometheusBaseURL()}/api/v1/label/__name__/values`;
     return coFetchJSON(url);
   }
 
   fetchPrometheusQuery(query, callback) {
-    const promURL = window.SERVER_FLAGS.prometheusBaseURL;
-    const url = `${promURL}/api/v1/query?query=${encodeURIComponent(query)}`;
+    const url = `${getPrometheusBaseURL()}/api/v1/query?query=${encodeURIComponent(query)}`;
     coFetchJSON(url).then(result => {
       if (this._isMounted) {
         callback(result);
