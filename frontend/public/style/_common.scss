@@ -151,6 +151,8 @@
 .co-m-pane__details {
   // TODO: refactor so <dl>s have margin-bottom by default
   margin-bottom: 20px;
+  min-width: 0; // enable break-word
+  white-space: normal; // override inheritence from co-detail-table
   .co-detail-table__row & {
     margin-bottom: 0;
   }
@@ -403,27 +405,37 @@
   max-width: 600px;
 }
 
-.co-m-modal-link {
-  cursor: pointer;
+// Enable word-break and append pficon-var-edit icon ::after so that it doesn't wrap without text
+.co-modal-btn-link {
   outline: none;
-  padding-right:  20px;
-  position: relative;
+  padding: 0 20px 0 0;
+  white-space: normal;
+  word-break: break-all; // Firefox
+  word-break: break-word;
   &::after {
     color: $color-pf-black-600;
     content: $pficon-var-edit;
+    display: inline-block;
     font-family: $icon-font-name-pf;
     line-height: 1;
+    margin-left: 5px;
+    margin-right: -20px; // width + margin-left
     pointer-events: none;
-    position: absolute;
+    position: relative;
     right: 0;
-    top: 0;
-  }
-  &.btn-link::after {
-    top: 5px;
+    width: 15px;
   }
   &:hover::after {
     color: $color-pf-black-700;
   }
+}
+
+.co-modal-btn-link--inline {
+  margin: 0 8px;
+}
+
+.co-modal-btn-link--left {
+  text-align: left;
 }
 
 .co-m-pane__body-group {
