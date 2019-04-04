@@ -15,7 +15,7 @@
   },
   "exclude": [
     ".yarn",
-    "node_modules",
+    "**/node_modules",
     "public/dist"
   ],
   "include": [

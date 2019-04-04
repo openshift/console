@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 
-rm -rf frontend/node_modules
+find frontend -type d -name 'node_modules' -prune -exec rm -rf {} \;
 rm -rf frontend/public/dist

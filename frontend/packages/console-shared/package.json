@@ -1,0 +1,10 @@
+{
+  "name": "@console/shared",
+  "version": "0.0.0-fixed",
+  "description": "Console code shared between all packages",
+  "private": true,
+  "main": "src/index.ts",
+  "scripts": {
+    "test": "yarn --cwd ../.. run test packages/console-shared"
+  }
+}

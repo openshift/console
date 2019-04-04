@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # We basically only check anchors that start with https:// to avoid false positives
-URLS=$(git grep 'href="https://[^"]*"' -- 'frontend/public/*' | grep -o 'https://[^"]*"' | sed s'/.$//' | sort | uniq)
+URLS=$(git grep 'href="https://[^"]*"' -- 'frontend/public/*' 'frontend/packages/*' | grep -o 'https://[^"]*"' | sed s'/.$//' | sort | uniq)
 
 for url in $URLS; do
   curl -f -o /dev/null --silent "$url"

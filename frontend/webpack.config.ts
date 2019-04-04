@@ -15,7 +15,7 @@ const extractCSS = new MiniCssExtractPlugin({filename: 'app-bundle.css'});
 const config: webpack.Configuration = {
   entry: [
     './polyfills.js',
-    './public/components/app.jsx',
+    '@console/app',
   ],
   output: {
     path: path.resolve(__dirname, 'public/dist'),
