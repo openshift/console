@@ -96,7 +96,7 @@ export class ClusterOverview extends React.Component {
   }
 
   _setConsumersData(key, title, response) {
-    const result = response.data.result;
+    const result = _.get(response, 'data.result', []);
     this.setState(state => ({
       consumersData: {
         metrics: {
