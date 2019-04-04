@@ -4,8 +4,6 @@ import { execSync } from 'child_process';
 import { $, by, ElementFinder, browser, ExpectedConditions as until } from 'protractor';
 import { nameInput as loginNameInput, passwordInput as loginPasswordInput, submitButton as loginSubmitButton } from '../../views/login.view';
 
-import { appHost } from '../../protractor.conf';
-
 const SEC = 1000;
 export const CLONE_VM_TIMEOUT = 300 * SEC;
 export const PAGE_LOAD_TIMEOUT = 15 * SEC;
@@ -69,15 +67,10 @@ export async function tickCheckbox(elem: ElementFinder) {
 }
 
 export async function logIn() {
-  await browser.wait(until.presenceOf($('div.co-username')), PAGE_LOAD_TIMEOUT)
-    .catch(async() => {
-      await browser.get(appHost);
-      await browser.sleep(3000); // Wait long enough for the login redirect to complete
-      await fillInput(loginNameInput, process.env.BRIDGE_AUTH_USERNAME);
-      await fillInput(loginPasswordInput, process.env.BRIDGE_AUTH_PASSWORD);
-      await browser.wait(until.elementToBeClickable(loginSubmitButton))
-        .then(() => loginSubmitButton.click());
-    });
+  await fillInput(loginNameInput, process.env.BRIDGE_AUTH_USERNAME);
+  await fillInput(loginPasswordInput, process.env.BRIDGE_AUTH_PASSWORD);
+  await browser.wait(until.elementToBeClickable(loginSubmitButton))
+    .then(() => loginSubmitButton.click());
   await browser.wait(until.visibilityOf($('img.pf-c-brand')), PAGE_LOAD_TIMEOUT);
 }
 

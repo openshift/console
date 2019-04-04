@@ -178,3 +178,75 @@ export const cloudInitCustomScriptConfig = {
   useCustomScript: true,
   customScript: basicVmConfig.cloudInitScript,
 };
+
+export const customVMWithNicDisk = `
+apiVersion: kubevirt.io/v1alpha3
+kind: VirtualMachine
+metadata:
+  annotations:
+    name.os.template.cnv.io/rhel7.6: Red Hat Enterprise Linux 7.6
+  name: vm-${testName}
+  namespace: ${testName}
+  labels:
+    flavor.template.cnv.io/small: 'true'
+    os.template.cnv.io/rhel7.6: 'true'
+    template.cnv.ui: openshift_rhel7-generic-small
+    vm.cnv.io/template: rhel7-generic-small
+    workload.template.cnv.io/generic: 'true'
+spec:
+  dataVolumeTemplates:
+    - metadata:
+        name: testdisk-testcnv
+      spec:
+        pvc:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 1Gi
+          storageClassName: hdd
+        source:
+          blank: {}
+  running: false
+  template:
+    metadata:
+      labels:
+        vm.cnv.io/name: testcnv
+    spec:
+      domain:
+        cpu:
+          cores: 1
+          sockets: 1
+          threads: 1
+        devices:
+          disks:
+            - bootOrder: 1
+              disk:
+                bus: virtio
+              name: rootdisk
+            - disk:
+                bus: virtio
+              name: testdisk
+          interfaces:
+            - bridge: {}
+              name: nic0
+            - bridge: {}
+              name: nic1
+          rng: {}
+        resources:
+          requests:
+            memory: 2G
+      networks:
+        - name: nic0
+          pod: {}
+        - multus:
+            networkName: ovs-net-1-${testName}
+          name: nic1
+      terminationGracePeriodSeconds: 0
+      volumes:
+        - containerDisk:
+            image: 'kubevirt/cirros-container-disk-demo:latest'
+          name: rootdisk
+        - dataVolume:
+            name: testdisk-testcnv
+          name: testdisk`;
