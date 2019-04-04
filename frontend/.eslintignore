@@ -1,3 +1,4 @@
+.yarn
 __coverage__
 public/dist
 *.min.js

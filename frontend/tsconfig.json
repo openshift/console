@@ -14,6 +14,7 @@
     "noUnusedLocals": true
   },
   "exclude": [
+    ".yarn",
     "node_modules",
     "public/dist"
   ],
