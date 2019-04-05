@@ -51,7 +51,7 @@
       } catch (e) {
         error = e;
         console.error(e);
-        document.body.append('localStorage must be enabled to use OpenShift Console:');
+        document.body.append('localStorage must be enabled:');
         document.body.append(e.message || e.toString());
       }
       if (!error) {
@@ -71,6 +71,6 @@
     </script>
   </head>
   <body>
-    <noscript>JavaScript must be enabled to use OpenShift Console.</noscript>
+    <noscript>JavaScript must be enabled.</noscript>
   </body>
 </html>
