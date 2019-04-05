@@ -1,4 +1,4 @@
-/* eslint-disable no-undef */
+/* eslint-disable no-undef, no-unused-vars */
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
@@ -132,9 +132,12 @@ const withSecretForm = (SubForm) => class SecretFormComponent extends React.Comp
     });
   }
   onNameChanged(event) {
-    const secret = {...this.state.secret};
-    secret.metadata.name = event.target.value;
-    this.setState({secret});
+    const name = event.target.value;
+    this.setState((state: BaseEditSecretState_) => {
+      const secret = _.cloneDeep(state.secret);
+      secret.metadata.name = name;
+      return {secret};
+    });
   }
   onFormDisable(disable) {
     this.setState({
@@ -280,7 +283,7 @@ class ImageSecretForm extends React.Component<ImageSecretFormProps, ImageSecretF
   }
 }
 
-export type ConfigEntryFormState = {
+type ConfigEntryFormState = {
   address: string,
   username: string,
   password: string,
@@ -289,14 +292,14 @@ export type ConfigEntryFormState = {
   uid: string,
 };
 
-export type ConfigEntryFormProps = {
+type ConfigEntryFormProps = {
   id: number,
   entry: Object,
   onChange: Function,
 };
 
 class ConfigEntryForm extends React.Component<ConfigEntryFormProps, ConfigEntryFormState> {
-  constructor(props) {
+  constructor(props: ConfigEntryFormProps) {
     super(props);
     this.state = {
       address: _.get(this.props.entry, 'address'),
@@ -306,24 +309,37 @@ class ConfigEntryForm extends React.Component<ConfigEntryFormProps, ConfigEntryF
       auth: _.get(this.props.entry, 'auth'),
       uid: _.get(this.props, 'uid'),
     };
-    this.changeData = this.changeData.bind(this);
   }
-  // If 'username' or 'password' fields are updated, 'auth' field has to be updated as well, else stays the same.
-  updateAuth(updatedFieldName) {
-    return _.includes(['username', 'password'], updatedFieldName)
-      ? Base64.encode(`${this.state.username}:${this.state.password}`)
-      : this.state.auth;
-  }
-  changeData(event) {
-    const { name, value } = event.target;
-    this.setState({
-      [name]: value,
-    } as ConfigEntryFormState, () => {
-      this.setState({
-        auth: this.updateAuth(name),
-      } as ConfigEntryFormState, () => this.props.onChange(this.state, this.props.id));
-    });
-  }
+
+  propagateChange = () => {
+    const { onChange, id } = this.props;
+    onChange(this.state, id);
+  };
+
+  onAddressChanged: React.ReactEventHandler<HTMLInputElement> = event => {
+    this.setState({ address: event.currentTarget.value }, this.propagateChange);
+  };
+
+  onUsernameChanged: React.ReactEventHandler<HTMLInputElement> = event => {
+    const username = event.currentTarget.value;
+    this.setState((state: ConfigEntryFormState) => ({
+      username,
+      auth: Base64.encode(`${username}:${state.password}`),
+    }), this.propagateChange);
+  };
+
+  onPasswordChanged: React.ReactEventHandler<HTMLInputElement> = event => {
+    const password = event.currentTarget.value;
+    this.setState((state: ConfigEntryFormState) => ({
+      password,
+      auth: Base64.encode(`${state.username}:${password}`),
+    }), this.propagateChange);
+  };
+
+  onEmailChanged: React.ReactEventHandler<HTMLInputElement> = event => {
+    this.setState({ email: event.currentTarget.value }, this.propagateChange);
+  };
+
   render() {
     return <div className="co-create-image-secret__form">
       <div className="form-group">
@@ -333,7 +349,7 @@ class ConfigEntryForm extends React.Component<ConfigEntryFormProps, ConfigEntryF
             id={`${this.props.id}-address`}
             type="text"
             name="address"
-            onChange={this.changeData}
+            onChange={this.onAddressChanged}
             value={this.state.address}
             required />
         </div>
@@ -345,7 +361,7 @@ class ConfigEntryForm extends React.Component<ConfigEntryFormProps, ConfigEntryF
             id={`${this.props.id}-username`}
             type="text"
             name="username"
-            onChange={this.changeData}
+            onChange={this.onUsernameChanged}
             value={this.state.username}
             required />
         </div>
@@ -357,7 +373,7 @@ class ConfigEntryForm extends React.Component<ConfigEntryFormProps, ConfigEntryF
             id={`${this.props.id}-password`}
             type="password"
             name="password"
-            onChange={this.changeData}
+            onChange={this.onPasswordChanged}
             value={this.state.password}
             required />
         </div>
@@ -369,7 +385,7 @@ class ConfigEntryForm extends React.Component<ConfigEntryFormProps, ConfigEntryF
             id={`${this.props.id}-email`}
             type="text"
             name="email"
-            onChange={this.changeData}
+            onChange={this.onEmailChanged}
             value={this.state.email} />
         </div>
       </div>
@@ -377,7 +393,7 @@ class ConfigEntryForm extends React.Component<ConfigEntryFormProps, ConfigEntryF
   }
 }
 
-export type CreateConfigSubformState = {
+type CreateConfigSubformState = {
   isDockerconfigjson: boolean,
   hasDuplicate: boolean,
   secretEntriesArray: {
@@ -393,7 +409,7 @@ export type CreateConfigSubformState = {
 };
 
 class CreateConfigSubform extends React.Component<CreateConfigSubformProps, CreateConfigSubformState> {
-  constructor(props) {
+  constructor(props: CreateConfigSubformProps) {
     super(props);
     this.state = {
       // If user creates a new image secret by filling out the form a 'kubernetes.io/dockerconfigjson' secret will be created.
@@ -448,27 +464,25 @@ class CreateConfigSubform extends React.Component<CreateConfigSubformProps, Crea
     const imageSecretObject = this.imageSecretArrayToObject(secretEntriesArray);
     this.props.onChange(this.state.isDockerconfigjson ? {[AUTHS_KEY]: imageSecretObject} : imageSecretObject);
   }
-  onDataChanged(updatedEntry, entryID) {
-    const updatedSecretEntriesArray = [...this.state.secretEntriesArray];
-    const updatedEntryData = {
-      uid: updatedSecretEntriesArray[entryID].uid,
-      entry: updatedEntry,
-    };
-    updatedSecretEntriesArray[entryID] = updatedEntryData;
-    this.setState({
-      secretEntriesArray: updatedSecretEntriesArray,
-    }, () => {
-      this.propagateEntryChange(this.state.secretEntriesArray);
-    });
+  onDataChanged(updatedEntry, entryIndex: number) {
+    this.setState((state: CreateConfigSubformState) => {
+      const secretEntriesArray = [...state.secretEntriesArray];
+      const updatedEntryData = {
+        uid: secretEntriesArray[entryIndex].uid,
+        entry: updatedEntry,
+      };
+      secretEntriesArray[entryIndex] = updatedEntryData;
+      return {
+        secretEntriesArray,
+      };
+    }, () => this.propagateEntryChange(this.state.secretEntriesArray));
   }
-  removeEntry(entryID){
-    const updatedSecretEntriesArray = [...this.state.secretEntriesArray];
-    updatedSecretEntriesArray.splice(entryID, 1);
-    this.setState({
-      secretEntriesArray: updatedSecretEntriesArray,
-    }, () => {
-      this.propagateEntryChange(this.state.secretEntriesArray);
-    });
+  removeEntry(entryIndex: number) {
+    this.setState((state: CreateConfigSubformState) => {
+      const secretEntriesArray = [...state.secretEntriesArray];
+      secretEntriesArray.splice(entryIndex, 1);
+      return { secretEntriesArray };
+    }, () => this.propagateEntryChange(this.state.secretEntriesArray));
   }
   addEntry(){
     this.setState({
@@ -703,18 +717,18 @@ class SSHAuthSubform extends React.Component<SSHAuthSubformProps, SSHAuthSubform
   }
 }
 
-export type KeyValueEntryFormState = {
+type KeyValueEntryFormState = {
   key: string,
   value: string,
 };
 
-export type KeyValueEntryFormProps = {
+type KeyValueEntryFormProps = {
   entry: KeyValueEntryFormState
   id: number,
   onChange: Function,
 };
 
-export type GenericSecretFormProps = {
+type GenericSecretFormProps = {
   onChange: Function,
   stringData: {
     [key: string]: string
@@ -723,7 +737,7 @@ export type GenericSecretFormProps = {
   isCreate: boolean,
 };
 
-export type GenericSecretFormState = {
+type GenericSecretFormState = {
   secretEntriesArray: {
     entry: KeyValueEntryFormState,
     uid: string,
@@ -927,7 +941,7 @@ export const EditSecret = ({match: {params}, kind}) => <Firehose resources={[{ki
   <SecretLoadingWrapper fixedKeys={['kind', 'metadata']} titleVerb="Edit" saveButtonText="Save" />
 </Firehose>;
 
-export type SecretLoadingWrapperProps = {
+type SecretLoadingWrapperProps = {
   obj?: {
     data?: K8sResourceKind;
     [key: string]: any;
@@ -937,12 +951,12 @@ export type SecretLoadingWrapperProps = {
   saveButtonText: string;
 };
 
-export type SecretLoadingWrapperState = {
+type SecretLoadingWrapperState = {
   formComponent: React.ReactType;
   secretTypeAbstraction: SecretTypeAbstraction;
 };
 
-export type BaseEditSecretState_ = {
+type BaseEditSecretState_ = {
   secretTypeAbstraction?: SecretTypeAbstraction;
   secret: K8sResourceKind;
   inProgress: boolean;
@@ -954,7 +968,7 @@ export type BaseEditSecretState_ = {
   disableForm: boolean;
 };
 
-export type BaseEditSecretProps_ = {
+type BaseEditSecretProps_ = {
   obj?: K8sResourceKind;
   fixed: any;
   kind?: string;
@@ -966,14 +980,14 @@ export type BaseEditSecretProps_ = {
   onCancel?: () => null;
 };
 
-export type BasicAuthSubformProps = {
+type BasicAuthSubformProps = {
   onChange: Function;
   stringData: {
     [key: string]: string;
   };
 };
 
-export type ImageSecretFormState = {
+type ImageSecretFormState = {
   type: SecretType;
   stringData: {
     [key: string]: any;
@@ -982,7 +996,7 @@ export type ImageSecretFormState = {
   dataKey: string;
 };
 
-export type ImageSecretFormProps = {
+type ImageSecretFormProps = {
   onChange: Function;
   onError: Function;
   onFormDisable: Function;
@@ -993,19 +1007,19 @@ export type ImageSecretFormProps = {
   isCreate: boolean;
 };
 
-export type CreateConfigSubformProps = {
+type CreateConfigSubformProps = {
   onChange: Function;
   stringData: {
     [key: string]: any;
   };
 };
 
-export type UploadConfigSubformState = {
+type UploadConfigSubformState = {
   parseError: boolean;
   configFile: string;
 };
 
-export type UploadConfigSubformProps = {
+type UploadConfigSubformProps = {
   onChange: Function;
   onDisable: Function;
   stringData: {
@@ -1013,18 +1027,18 @@ export type UploadConfigSubformProps = {
   };
 };
 
-export type SSHAuthSubformState = {
+type SSHAuthSubformState = {
   'ssh-privatekey': string;
 };
 
-export type SSHAuthSubformProps = {
+type SSHAuthSubformProps = {
   onChange: Function;
   stringData: {
     [key: string]: string;
   };
 };
 
-export type SourceSecretFormState = {
+type SourceSecretFormState = {
   type: SecretType;
   stringData: {
     [key: string]: string;
@@ -1032,7 +1046,7 @@ export type SourceSecretFormState = {
   authType: SecretType.basicAuth | SecretType.sshAuth;
 };
 
-export type SourceSecretFormProps = {
+type SourceSecretFormProps = {
   onChange: Function;
   stringData: {
     [key: string]: string;
@@ -1041,16 +1055,15 @@ export type SourceSecretFormProps = {
   isCreate: boolean;
 };
 
-export type WebHookSecretFormState = {
+type WebHookSecretFormState = {
   stringData: {
     [key: string]: string;
   };
 };
 
-export type WebHookSecretFormProps = {
+type WebHookSecretFormProps = {
   onChange: Function;
   stringData: {
     WebHookSecretKey: string;
   };
 };
-/* eslint-enable no-undef */
