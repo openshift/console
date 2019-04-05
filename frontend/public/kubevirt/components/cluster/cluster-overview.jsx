@@ -28,8 +28,7 @@ const CONSUMERS_CPU_QUERY = 'sort(topk(10, sum by (pod_name)(container_cpu_usage
 const CONSUMERS_MEMORY_QUERY = 'sort(topk(10, sum by (pod_name)(container_memory_usage_bytes{pod_name!=""})))';
 const OPENSHIFT_VERSION_QUERY = 'openshift_build_info{job="apiserver"}';
 
-const CAPACITY_CPU_TOTAL_QUERY = 'sum(kube_node_status_capacity_cpu_cores)'; // TODO(mlibra): unify metrics with utilization
-const CAPACITY_CPU_USED_QUERY = 'sum(kube_node_status_capacity_cpu_cores) - sum(kube_node_status_allocatable_cpu_cores)';
+const CAPACITY_CPU_USED_QUERY = '(sum(node:node_cpu_utilisation:avg1m) / count(node:node_cpu_utilisation:avg1m)) * 100'; // in '%'
 const CAPACITY_MEMORY_TOTAL_QUERY = 'sum(kube_node_status_capacity_memory_bytes)';
 const CAPACITY_MEMORY_USED_QUERY = 'sum(kube_node_status_capacity_memory_bytes) - sum(kube_node_status_allocatable_memory_bytes)';
 
@@ -214,7 +213,6 @@ export class ClusterOverview extends React.Component {
     this.fetchHealth(this.setHealthData);
     this.fetchPrometheusQuery(OPENSHIFT_VERSION_QUERY, response => this.setDetailsOpenshiftResponse(response));
 
-    this.fetchPrometheusQuery(CAPACITY_CPU_TOTAL_QUERY, response => this.setCapacityData('cpuTotal', response));
     this.fetchPrometheusQuery(CAPACITY_CPU_USED_QUERY, response => this.setCapacityData('cpuUsed', response));
     this.fetchPrometheusQuery(CAPACITY_MEMORY_TOTAL_QUERY, response => this.setCapacityData('memoryTotal', response));
     this.fetchPrometheusQuery(CAPACITY_MEMORY_USED_QUERY, response => this.setCapacityData('memoryUsed', response));
