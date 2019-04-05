@@ -14,6 +14,7 @@ import {
   VirtualMachineModel,
   InfrastructureModel,
   VirtualMachineInstanceMigrationModel,
+  BaremetalHostModel,
 } from '../../../models';
 import { WithResources } from '../utils/withResources';
 import { k8sBasePath } from '../../module/okdk8s';
@@ -62,6 +63,9 @@ const resourceMap = {
   },
   migrations: {
     resource: getResource(VirtualMachineInstanceMigrationModel),
+  },
+  hosts: {
+    resource: getResource(BaremetalHostModel),
   },
 };
 
