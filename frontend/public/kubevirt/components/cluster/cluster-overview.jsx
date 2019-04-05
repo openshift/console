@@ -42,6 +42,7 @@ const CAPACITY_NETWORK_TOTAL_QUERY = 'sum(avg by(instance)(node_network_speed_by
 const CAPACITY_NETWORK_USED_QUERY = 'sum(node:node_net_utilisation:sum_irate)';
 
 const UTILIZATION_CPU_USED_QUERY = '((sum(node:node_cpu_utilisation:avg1m) / count(node:node_cpu_utilisation:avg1m)) * 100)[60m:5m]';
+const UTILIZATION_MEMORY_USED_QUERY = '(sum(kube_node_status_capacity_memory_bytes) - sum(kube_node_status_allocatable_memory_bytes))[60m:5m]'; // TOTAL is reused from CAPACITY_MEMORY_TOTAL_QUERY
 
 const REFRESH_TIMEOUT = 5000;
 
@@ -236,6 +237,7 @@ export class ClusterOverview extends React.Component {
     });
 
     this.fetchPrometheusQuery(UTILIZATION_CPU_USED_QUERY, response => this.setUtilizationData('cpuUtilization', response));
+    this.fetchPrometheusQuery(UTILIZATION_MEMORY_USED_QUERY, response => this.setUtilizationData('memoryUtilization', response));
   }
 
   componentWillUnmount() {
