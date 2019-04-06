@@ -181,7 +181,7 @@ export const FireMan_ = connect(null, {filterList: k8sActions.filterList})(
       if (canCreate) {
         if (createProps.to) {
           createLink = <Link className="co-m-primary-action" {...createProps} tabIndex={-1}>
-            <button className="btn btn-primary" id="yaml-create" tabIndex={-1}>{createButtonText}</button>
+            <button className="btn btn-primary" id="yaml-create">{createButtonText}</button>
           </Link>;
         } else if (createProps.items) {
           createLink = <div className="co-m-primary-action">
@@ -189,7 +189,7 @@ export const FireMan_ = connect(null, {filterList: k8sActions.filterList})(
           </div>;
         } else {
           createLink = <div className="co-m-primary-action">
-            <button className="btn btn-primary" id="yaml-create" tabIndex={-1} {...createProps}>{createButtonText}</button>
+            <button className="btn btn-primary" id="yaml-create" {...createProps}>{createButtonText}</button>
           </div>;
         }
       }
