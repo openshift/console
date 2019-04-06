@@ -47,8 +47,8 @@ export const ResourceRequirementsModalLink: React.SFC<ResourceRequirementsModalL
 
   const onClick = () => {
     const modal = createModalLauncher<ResourceRequirementsModalProps>(ResourceRequirementsModal);
-    const description = `Define the ${type === 'limits' ? 'resource' : 'request'} limits for this ${obj.kind} instance.`;
-    const title = `${obj.kind} ${type === 'limits' ? 'Resource' : 'Request'} Limits`;
+    const description = `Define the resource ${type} for this ${obj.kind} instance.`;
+    const title = `${obj.kind} Resource ${_.capitalize(type)}`;
 
     const ResourceRequirementsForm = () => <div>
       <div className="col-xs-5">
