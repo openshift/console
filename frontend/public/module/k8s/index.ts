@@ -299,6 +299,43 @@ export type ClusterOperator = {
   };
 } & K8sResourceKind;
 
+export type MappingMethodType = 'claim' | 'lookup' | 'add';
+
+type IdentityProviderType = 'BasicAuth' | 'GitHub' | 'GitLab' | 'Google' | 'HTPasswd' | 'Keystone' | 'LDAP' | 'OpenID' | 'RequestHeader';
+
+type IdentityProviderConfig = {
+  [key: string]: any;
+};
+
+export type IdentityProvider = {
+  name: string;
+  mappingMethod: MappingMethodType;
+  type: IdentityProviderType;
+  basicAuth?: IdentityProviderConfig;
+  github?: IdentityProviderConfig;
+  gitlab?: IdentityProviderConfig;
+  google?: IdentityProviderConfig;
+  htpasswd?: IdentityProviderConfig;
+  keystone?: IdentityProviderConfig;
+  ldap?: IdentityProviderConfig;
+  openID?: IdentityProviderConfig;
+  requestHeader?: IdentityProviderConfig;
+};
+
+export type OAuthKind = {
+  spec: {
+    identityProviders: IdentityProvider[];
+    tokenConfig: {
+      accessTokenMaxAgeSeconds: number;
+    };
+    templates: {
+      login: string;
+      providerSelection: string;
+      error: string;
+    };
+  };
+} & K8sResourceKind;
+
 export type K8sKind = {
   abbr: string;
   kind: string;

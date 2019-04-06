@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import * as _ from 'lodash-es';
+import * as classNames from 'classnames';
 
 export class ListInput extends React.Component<ListInputProps, ListInputState> {
   constructor(props: ListInputProps) {
@@ -41,15 +42,21 @@ export class ListInput extends React.Component<ListInputProps, ListInputState> {
   }
 
   render() {
-    const { label } = this.props;
+    const { label, required } = this.props;
     const { values } = this.state;
+    const missingValues = required && (_.isEmpty(values) || _.every(values, v => !v));
     return (
       <div className="form-group">
-        <label className="control-label">{label}</label>
+        <label className={classNames('control-label', { 'co-required': required })}>{label}</label>
         {_.map(values, (v: string, i: number) => (
           <div className="co-list-input__row" key={i}>
             <div className="co-list-input__value">
-              <input className="form-control" type="text" value={v} onChange={(e: React.FormEvent<HTMLInputElement>) => this.valueChanged(i, e.currentTarget.value)} />
+              <input
+                className="form-control"
+                type="text"
+                value={v}
+                onChange={(e: React.FormEvent<HTMLInputElement>) => this.valueChanged(i, e.currentTarget.value)}
+                required={missingValues && i === 0} />
             </div>
             <div className="co-list-input__remove-btn">
               <button type="button" className="btn btn-link btn-link--inherit-color" onClick={() => this.removeValue(i)} aria-label="Remove">
@@ -76,4 +83,5 @@ type ListInputProps = {
   label: string;
   initialValues?: string[];
   onChange: ChangeCallback;
+  required?: boolean;
 };

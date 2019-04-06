@@ -3,7 +3,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 
 import { OAuthModel } from '../../models';
-import { K8sResourceKind, referenceForModel } from '../../module/k8s';
+import { IdentityProvider, OAuthKind, referenceForModel } from '../../module/k8s';
 import { DetailsPage } from '../factory';
 import {
   Dropdown,
@@ -49,10 +49,11 @@ const IdentityProviders: React.SFC<IdentityProvidersProps> = ({identityProviders
     </div>;
 };
 
-const OAuthDetails: React.SFC<OAuthDetailsProps> = ({obj}: {obj: K8sResourceKind}) => {
-  const { identityProviders, tokenConfig = {} } = obj.spec;
+const OAuthDetails: React.SFC<OAuthDetailsProps> = ({obj}: {obj: OAuthKind}) => {
+  const { identityProviders, tokenConfig } = obj.spec;
   const addIDPItems = {
     htpasswd: 'HTPasswd',
+    ldap: 'LDAP',
     oidconnect: 'OpenID Connect',
   };
   return <React.Fragment>
@@ -73,7 +74,8 @@ const OAuthDetails: React.SFC<OAuthDetailsProps> = ({obj}: {obj: K8sResourceKind
         buttonClassName="btn-primary"
         title="Add"
         noSelection={true}
-        items={addIDPItems} onChange={(name) => history.push(`/settings/idp/${name}`)} />
+        items={addIDPItems}
+        onChange={(name: string) => history.push(`/settings/idp/${name}`)} />
       <IdentityProviders identityProviders={identityProviders} />
     </div>
   </React.Fragment>;
@@ -89,11 +91,11 @@ export const OAuthDetailsPage: React.SFC<OAuthDetailsPageProps> = props => (
 );
 
 type IdentityProvidersProps = {
-  identityProviders: any[];
+  identityProviders: IdentityProvider[];
 };
 
 type OAuthDetailsProps = {
-  obj: K8sResourceKind;
+  obj: OAuthKind;
 };
 
 type OAuthDetailsPageProps = {
