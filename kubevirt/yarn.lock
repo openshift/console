@@ -101,15 +101,15 @@ invariant@^2.0.0, invariant@^2.1.0, invariant@^2.2.4:
   resolved "https://registry.yarnpkg.com/js-tokens/-/js-tokens-4.0.0.tgz#19203fb59991df98e3a287050d4647cdeaf32499"
 
 js-yaml@3.x:
-  version "3.13.0"
-  resolved "https://registry.yarnpkg.com/js-yaml/-/js-yaml-3.13.0.tgz#38ee7178ac0eea2c97ff6d96fff4b18c7d8cf98e"
+  version "3.13.1"
+  resolved "https://registry.yarnpkg.com/js-yaml/-/js-yaml-3.13.1.tgz#aff151b30bfdfa8e49e05da22e7415e9dfa37847"
   dependencies:
     argparse "^1.0.7"
     esprima "^4.0.0"
 
-kubevirt-web-ui-components@0.1.23:
-  version "0.1.23"
-  resolved "https://registry.yarnpkg.com/kubevirt-web-ui-components/-/kubevirt-web-ui-components-0.1.23.tgz#9fccf613904c1eb9415cf7bb4cf1fd5580c8bdea"
+kubevirt-web-ui-components@0.1.24:
+  version "0.1.24"
+  resolved "https://registry.yarnpkg.com/kubevirt-web-ui-components/-/kubevirt-web-ui-components-0.1.24.tgz#196379573af47b3d9b98c13b827f979d50c761b1"
   dependencies:
     "@patternfly/react-console" "1.x"
     classnames "2.x"
