@@ -41,6 +41,7 @@ class QueryBrowser_ extends Line_ {
       },
       yaxis: {
         fixedrange: false,
+        tickformat: null, // Use Plotly's default value format
       },
     });
 
