@@ -24,17 +24,13 @@ const PageNav = ({ onNavSelect, ResourceClusterLink, HrefLink, ResourceNSLink, M
   <Nav aria-label="Nav" onSelect={onNavSelect}>
     <NavList>
       <NavSection title="Home">
-        {
-        //overview path is already being used, hence used storage-overview path
-        }
-        <HrefLink href="/storage-overview" name="Overview" activePath="/storage-overview/" required={FLAGS.OPENSHIFT} />
+        <HrefLink href="/dashboards" name="Dashboards" activePath="/dashboards/" required={FLAGS.OPENSHIFT} />
         <ResourceClusterLink resource="projects" name="Projects" required={FLAGS.OPENSHIFT} />
         {
           // Show different status pages based on OpenShift vs native Kubernetes.
           // TODO: Make Overview work on native Kubernetes. It currently assumes OpenShift resources.
         }
         <HrefLink href="/overview" name="Status" activePath="/overview/" required={FLAGS.OPENSHIFT} />
-        <HrefLink href="/cluster-overview" name="Cluster Status" activePath="/cluster-overview/" required={FLAGS.OPENSHIFT} />
         <HrefLink href="/status" name="Status" activePath="/status/" disallowed={FLAGS.OPENSHIFT} />
         <HrefLink href="/search" name="Search" startsWith={searchStartsWith} />
         <ResourceNSLink resource="events" name="Events" />
