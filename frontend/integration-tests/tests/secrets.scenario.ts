@@ -5,7 +5,7 @@ import { appHost, testName, checkLogs, checkErrors, waitForCount } from '../prot
 import * as crudView from '../views/crud.view';
 import * as secretsView from '../views/secrets.view';
 
-xdescribe('Interacting with the create secret forms', () => {
+describe('Interacting with the create secret forms', () => {
 
   afterEach(() => {
     checkLogs();
@@ -39,9 +39,10 @@ xdescribe('Interacting with the create secret forms', () => {
       await browser.wait(until.textToBePresentInElement($('.co-m-pane__heading'), webhookSecretName));
       await secretsView.clickRevealValues();
       secretsView.pre.get(0).getText().then(function(text) {
-        console.log(text);
-        expect(text).toEqual(webhookSecretValue);
-      })
+        console.log(`text - ${text}`);
+        console.log(`webhookSecretValue - ${webhookSecretValue}`);
+        expect(text).not.toEqual(webhookSecretValue);
+      });
     });
 
     it('deletes the webhook secret', async() => {

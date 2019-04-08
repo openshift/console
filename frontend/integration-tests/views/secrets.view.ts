@@ -64,10 +64,10 @@ export const checkSecret = async(ns: string, name: string, keyValuesToCheck: Obj
     acc[key] = jsonOutput ? JSON.parse(value) : value;
     return acc;
   }, {});
-  console.log("----------");
-  console.log(name);
-  console.log(renderedKeyValues);
-  console.log(keyValuesToCheck);
+  console.log('----------');
+  console.log(`name - '${name}'`);
+  console.log(`renderedKeyValues - '${renderedKeyValues}'`);
+  console.log(`keyValuesToCheck - '${keyValuesToCheck}'`);
   expect(renderedKeyValues).toEqual(keyValuesToCheck);
 };
 
