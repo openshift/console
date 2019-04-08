@@ -7,7 +7,17 @@ import { Kebab, LoadingInline } from './utils/okdutils';
 import { List, ColHead, ListHeader, ResourceRow } from './factory/okdfactory';
 import { DASHES, BUS_VIRTIO, NIC } from './utils/constants';
 import { deleteDeviceModal } from './modals/delete-device-modal';
-import { getNetworks, CreateNicRow, getAddNicPatch, POD_NETWORK, settingsValue, getResource, addPrefixToPatch, getInterfaceBinding } from 'kubevirt-web-ui-components';
+import {
+  getNetworks,
+  CreateNicRow,
+  getAddNicPatch,
+  POD_NETWORK,
+  settingsValue,
+  getNamespace,
+  getResource,
+  addPrefixToPatch,
+  getInterfaceBinding,
+} from 'kubevirt-web-ui-components';
 import { NetworkAttachmentDefinitionModel, VirtualMachineModel, VmTemplateModel } from '../models';
 import { WithResources } from './utils/withResources';
 import { k8sPatch } from '../module/okdk8s';
@@ -85,8 +95,9 @@ const NIC_TYPE_VM = 'nic-type-vm';
 const NIC_TYPE_CREATE = 'nic-type-create';
 
 export const NicRow = (onChange, onAccept, onCancel) => ({obj: nic}) => {
+  const namespace = getNamespace(nic.vm || nic.vmTemplate);
   const networks = {
-    resource: getResource(NetworkAttachmentDefinitionModel),
+    resource: getResource(NetworkAttachmentDefinitionModel, {namespace}),
   };
   switch (nic.nicType) {
     case NIC_TYPE_VM:
@@ -153,6 +164,7 @@ export class Nic extends React.Component {
           value: getVmNicModel(this.props.vm),
         },
         vm: this.props.vm,
+        vmTemplate: this.props.vmTemplate,
       },
     });
   }
