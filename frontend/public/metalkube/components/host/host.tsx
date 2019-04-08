@@ -12,32 +12,26 @@ import {
   ResourceRow,
 } from '../factory/okdfactory';
 import { ResourceLink, ResourceKebab } from '../utils/okdutils';
-import { BaremetalHostModel, NamespaceModel } from '../../models';
+import { BaremetalHostModel } from '../../models';
 import MachineLink from './MachineLink';
 import { menuActions } from './menu-actions';
 import { openCreateBaremetalHostModal } from '../modals/create-host-modal';
 
-const mainColumnClasses = 'col-lg-2 col-md-4 col-sm-6 col-xs-6';
-const statusColumnClasses = 'col-lg-2 col-md-4 hidden-sm hidden-xs';
-const roleColumnClasses = 'col-lg-1 visible-lg';
-const hideableColumnClasses = 'col-lg-2 visible-lg';
+const nameColumnClasses = 'col-lg-2 col-md-4 col-sm-6 col-xs-6';
+const statusColumnClasses = 'col-lg-3 col-md-4 hidden-sm hidden-xs';
+const machineColumnClasses = 'col-lg-3 visible-lg';
+const roleColumnClasses = 'col-lg-2 visible-lg';
+const addressColumnClasses = 'col-lg-2 visible-lg';
 
 const HostHeader = props => (
   <ListHeader>
-    <ColHead {...props} className={mainColumnClasses} sortField="metadata.name">
+    <ColHead {...props} className={nameColumnClasses} sortField="metadata.name">
       Name
-    </ColHead>
-    <ColHead
-      {...props}
-      className={mainColumnClasses}
-      sortField="metadata.namespace"
-    >
-      Namespace
     </ColHead>
     <ColHead {...props} className={statusColumnClasses}>
       Status
     </ColHead>
-    <ColHead {...props} className={hideableColumnClasses}>
+    <ColHead {...props} className={machineColumnClasses}>
       Machine
     </ColHead>
     <ColHead {...props} className={roleColumnClasses}>
@@ -45,7 +39,7 @@ const HostHeader = props => (
     </ColHead>
     <ColHead
       {...props}
-      className={hideableColumnClasses}
+      className={addressColumnClasses}
       sortField="spec.bmc.address"
     >
       Management Address
@@ -66,7 +60,7 @@ const HostRow = ({ obj: host }) => {
 
   return (
     <ResourceRow obj={host}>
-      <div className={mainColumnClasses}>
+      <div className={nameColumnClasses}>
         <ResourceLink
           kind={BaremetalHostModel.kind}
           name={name}
@@ -74,19 +68,12 @@ const HostRow = ({ obj: host }) => {
           title={uid}
         />
       </div>
-      <div className={mainColumnClasses}>
-        <ResourceLink
-          kind={NamespaceModel.kind}
-          name={namespace}
-          title={namespace}
-        />
-      </div>
       <div className={statusColumnClasses}>{status}</div>
-      <div className={hideableColumnClasses}>
+      <div className={machineColumnClasses}>
         <MachineLink name={machineName} />
       </div>
       <div className={roleColumnClasses}>-</div>
-      <div className={hideableColumnClasses}>{address}</div>
+      <div className={addressColumnClasses}>{address}</div>
       <div className="dropdown-kebab-pf">
         <ResourceKebab
           actions={menuActions}
