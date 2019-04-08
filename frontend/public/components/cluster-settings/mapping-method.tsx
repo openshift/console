@@ -2,6 +2,7 @@
 import * as React from 'react';
 import { FieldLevelHelp } from 'patternfly-react';
 
+import { MappingMethodType } from '../../module/k8s';
 import { Dropdown } from '../utils';
 
 export const MappingMethod: React.FC<MappingMethodProps> = ({value, onChange}) => {
@@ -44,8 +45,6 @@ export const MappingMethod: React.FC<MappingMethodProps> = ({value, onChange}) =
     </div>
   );
 };
-
-export type MappingMethodType = 'claim' | 'lookup' | 'add';
 
 type MappingMethodProps = {
   value: MappingMethodType;
