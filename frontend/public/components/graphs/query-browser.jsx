@@ -16,6 +16,7 @@ class QueryBrowser_ extends Line_ {
 
     // For the default time span, use the first of the suggested span options that is at least as long as props.timeSpan
     this.defaultSpan = spans.map(parsePrometheusDuration).find(s => s >= props.timeSpan);
+    this.timeSpan = this.defaultSpan;
 
     _.assign(this.state, {
       isSpanValid: true,
