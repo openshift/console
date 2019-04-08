@@ -1,7 +1,7 @@
 .co-resource-list__item {
   height: 100%;
-  transition: all 0.25s;
   position: relative;
+  transition: all 0.25s;
 
   .dropdown-kebab-pf {
     position: absolute;
@@ -10,6 +10,10 @@
   }
 }
 
+.co-resource-list__item--expanded {
+  display: inline-block;
+  margin-top: 10px;
+}
 .compaction-btn {
   margin-right: 0 !important;
 }

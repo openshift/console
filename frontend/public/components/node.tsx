@@ -3,7 +3,7 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 
-import { nodeStatus, makeNodeSchedulable, K8sResourceKind, referenceForModel } from '../module/k8s';
+import { getNodeRoles, nodeStatus, makeNodeSchedulable, K8sResourceKind, referenceForModel } from '../module/k8s';
 import { ResourceEventStream } from './events';
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import { configureUnschedulableModal } from './modals';
@@ -54,10 +54,10 @@ const Header = props => {
     return null;
   }
   return <ListHeader>
-    <ColHead {...props} className="col-md-4 col-sm-5 col-xs-8" sortField="metadata.name">Node Name</ColHead>
+    <ColHead {...props} className="col-md-5 col-sm-5 col-xs-8" sortField="metadata.name">Name</ColHead>
     <ColHead {...props} className="col-md-2 col-sm-3 col-xs-4" sortFunc="nodeReadiness">Status</ColHead>
-    <ColHead {...props} className="col-md-3 col-sm-4 hidden-xs" sortField="metadata.annotations['machine.openshift.io/machine']">Machine</ColHead>
-    <ColHead {...props} className="col-md-3 hidden-sm hidden-xs" sortField="status.addresses">Node Addresses</ColHead>
+    <ColHead {...props} className="col-md-2 col-sm-4 hidden-xs" sortFunc="nodeRoles">Role</ColHead>
+    <ColHead {...props} className="col-md-3 hidden-sm hidden-xs" sortField="metadata.annotations['machine.openshift.io/machine']">Machine</ColHead>
   </ListHeader>;
 };
 
@@ -65,16 +65,22 @@ const NodeStatus = ({node}) => <StatusIcon status={nodeStatus(node)} />;
 
 const NodeRow = ({obj: node, expand}) => {
   const machine = getMachine(node);
+  const roles = getNodeRoles(node).sort();
 
   return <ResourceRow obj={node}>
-    <div className="col-md-4 col-sm-5 col-xs-8">
+    <div className="col-md-5 col-sm-5 col-xs-8">
       <ResourceLink kind="Node" name={node.metadata.name} title={node.metadata.uid} />
     </div>
     <div className="col-md-2 col-sm-3 col-xs-4"><NodeStatus node={node} /></div>
-    <div className="col-md-3 col-sm-4 hidden-xs"><ResourceLink kind={referenceForModel(MachineModel)} name={machine.name} namespace={machine.namespace} /></div>
-    <div className="col-md-3 hidden-sm hidden-xs"><NodeIPList ips={node.status.addresses} expand={expand} /></div>
-    {expand && <div className="col-xs-12">
-      <LabelList kind="Node" labels={node.metadata.labels} />
+    <div className="col-md-2 col-sm-4 hidden-xs">{roles.length ? roles.join(', ') : '-'}</div>
+    <div className="col-md-3 hidden-sm hidden-xs"><ResourceLink kind={referenceForModel(MachineModel)} name={machine.name} namespace={machine.namespace} /></div>
+    {expand && <div className="co-resource-list__item--expanded">
+      <div className="col-xs-5">
+        <NodeIPList ips={node.status.addresses} expand={expand} />
+      </div>
+      <div className="col-xs-7">
+        <LabelList kind="Node" labels={node.metadata.labels} />
+      </div>
     </div>}
     <div className="dropdown-kebab-pf">
       <NodeKebab node={node} />

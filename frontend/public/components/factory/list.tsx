@@ -49,6 +49,7 @@ import {
   serviceClassDisplayName,
   getClusterOperatorStatus,
   getClusterOperatorVersion,
+  getNodeRoles,
 } from '../../module/k8s';
 
 const fuzzyCaseInsensitive = (a, b) => fuzzy(_.toLower(a), _.toLower(b));
@@ -242,6 +243,10 @@ const sorts = {
   string: val => JSON.stringify(val),
   getClusterOperatorStatus,
   getClusterOperatorVersion,
+  nodeRoles: (node: K8sResourceKind): string => {
+    const roles = getNodeRoles(node);
+    return roles.sort().join(', ');
+  },
 };
 
 export class ColHead extends React.Component<ColHeadProps> {
