@@ -24,8 +24,10 @@ import { EventStream } from '../../../components/events';
 import { EventsInnerOverview } from './events-inner-overview';
 import { LoadingInline } from '../utils/okdutils';
 
-const CONSUMERS_CPU_QUERY = 'sort(topk(10, sum by (pod_name)(container_cpu_usage_seconds_total{pod_name!=""})))';
-const CONSUMERS_MEMORY_QUERY = 'sort(topk(10, sum by (pod_name)(container_memory_usage_bytes{pod_name!=""})))';
+const CONSUMERS_CPU_QUERY = 'sort(topk(5, sum by (pod_name)(container_cpu_usage_seconds_total{pod_name!=""})))';
+const CONSUMERS_MEMORY_QUERY = 'sort(topk(5, sum by (pod_name)(container_memory_usage_bytes{pod_name!=""})))';
+const NODE_CONSUMERS_CPU_QUERY = 'sort(topk(5, kube_node_status_capacity_cpu_cores - kube_node_status_allocatable_cpu_cores))';
+const NODE_CONSUMERS_MEMORY_QUERY = 'sort(topk(5, node:node_memory_bytes_total:sum - node:node_memory_bytes_available:sum))';
 const OPENSHIFT_VERSION_QUERY = 'openshift_build_info{job="apiserver"}';
 
 const CAPACITY_MEMORY_TOTAL_QUERY = 'sum(kube_node_status_capacity_memory_bytes)';
@@ -82,15 +84,7 @@ export class ClusterOverview extends React.Component {
         data: {},
         loaded: false,
       },
-      consumersData: {
-        metrics: {
-          cpu: {
-            title: 'CPU',
-            consumers: [],
-          },
-        },
-        loaded: false,
-      },
+      consumersData: {},
       capacityData: {},
       utilizationData: {},
     };
@@ -102,22 +96,11 @@ export class ClusterOverview extends React.Component {
     this.setUtilizationData = this._setUtilizationData.bind(this);
   }
 
-  _setConsumersData(key, title, response) {
-    const result = _.get(response, 'data.result', []);
+  _setConsumersData(key, response) {
     this.setState(state => ({
       consumersData: {
-        metrics: {
-          ...(_.get(state.consumersData, 'metrics', {})),
-          [key]: {
-            title,
-            consumers: result.map(r => ({
-              kind: PodModel.kind,
-              name: r.metric.pod_name,
-              usage: r.value[1],
-            })),
-          },
-        },
-        loaded: true,
+        ...state.consumersData,
+        [key]: response,
       },
     }));
   }
@@ -185,7 +168,6 @@ export class ClusterOverview extends React.Component {
     });
   }
 
-
   fetchHealth(callback) {
     coFetch(`${k8sBasePath}/healthz`)
       .then(response => response.text())
@@ -205,8 +187,10 @@ export class ClusterOverview extends React.Component {
   componentDidMount() {
     this._isMounted = true;
 
-    this.fetchPrometheusQuery(CONSUMERS_CPU_QUERY, response => this.setConsumersData('cpu', 'CPU', response));
-    this.fetchPrometheusQuery(CONSUMERS_MEMORY_QUERY, response => this.setConsumersData('memory', 'Memory', response));
+    this.fetchPrometheusQuery(CONSUMERS_CPU_QUERY, response => this.setConsumersData('workloadCpuResults', response));
+    this.fetchPrometheusQuery(CONSUMERS_MEMORY_QUERY, response => this.setConsumersData('workloadMemoryResults', response));
+    this.fetchPrometheusQuery(NODE_CONSUMERS_MEMORY_QUERY, response => this.setConsumersData('infraMemoryResults', response));
+    this.fetchPrometheusQuery(NODE_CONSUMERS_CPU_QUERY, response => this.setConsumersData('infraCpuResults', response));
 
     this.fetchHealth(this.setHealthData);
     this.fetchPrometheusQuery(OPENSHIFT_VERSION_QUERY, response => this.setDetailsOpenshiftResponse(response));
@@ -248,13 +232,12 @@ export class ClusterOverview extends React.Component {
           ...resources,
           openshiftClusterVersions,
           ...capacityData,
+          ...consumersData,
 
           eventsData: {
             Component: OverviewEventStream,
             loaded: true,
           },
-
-          consumersData,
           healthData,
 
           ...utilizationData,
