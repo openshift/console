@@ -22,7 +22,8 @@ import { coFetch, coFetchJSON } from '../../../co-fetch';
 
 import { EventStream } from '../../../components/events';
 import { EventsInnerOverview } from './events-inner-overview';
-import { LoadingInline } from '../utils/okdutils';
+import { LoadingInline} from '../utils/okdutils';
+import { LazyRenderer } from '../utils/lazyRenderer';
 
 const CONSUMERS_CPU_QUERY = 'sort(topk(5, sum by (pod_name)(container_cpu_usage_seconds_total{pod_name!=""})))';
 const CONSUMERS_MEMORY_QUERY = 'sort(topk(5, sum by (pod_name)(container_memory_usage_bytes{pod_name!=""})))';
@@ -249,9 +250,11 @@ export class ClusterOverview extends React.Component {
 
     return (
       <WithResources resourceMap={resourceMap} resourceToProps={inventoryResourceMapToProps}>
-        <ClusterOverviewContext.Provider>
-          <KubevirtClusterOverview />
-        </ClusterOverviewContext.Provider>
+        <LazyRenderer>
+          <ClusterOverviewContext.Provider>
+            <KubevirtClusterOverview />
+          </ClusterOverviewContext.Provider>
+        </LazyRenderer>
       </WithResources>
     );
   }
