@@ -4,23 +4,18 @@ import { AsyncComponent } from '../utils';
 
 const DroppableFileInput = (props: any) => <AsyncComponent loader={() => import('../utils/file-input').then(c => c.DroppableFileInput)} {...props} />;
 
-export const IDPFileInput: React.FC<IDPFileInputProps> = ({value, onChange, label='CA File', helpText, isRequired=false}) => (
+export const IDPCAFileInput: React.FC<IDPCAFileInputProps> = ({value, onChange}) => (
   <div className="form-group">
     <DroppableFileInput
       onChange={onChange}
       inputFileData={value}
       id="idp-file-input"
-      label={label}
-      inputFieldHelpText={helpText}
-      isRequired={isRequired}
+      label="CA File"
       hideContents />
   </div>
 );
 
-type IDPFileInputProps = {
+type IDPCAFileInputProps = {
   value: string;
   onChange: (value: string) => void;
-  label?: string;
-  helpText?: string;
-  isRequired?: boolean;
 };

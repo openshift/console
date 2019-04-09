@@ -15,7 +15,7 @@ import {
 import { addIDP, getOAuthResource, redirectToOAuthPage } from './';
 import { IDPNameInput } from './idp-name-input';
 import { MappingMethod } from './mapping-method';
-import { IDPFileInput } from './idp-file-input';
+import { IDPCAFileInput } from './idp-cafile-input';
 
 export class AddLDAPPage extends PromiseComponent {
   readonly state: AddLDAPPageState = {
@@ -234,7 +234,7 @@ export class AddLDAPPage extends PromiseComponent {
         <ListInput label="Email" onChange={this.attributesEmailChanged} />
         <div className="co-form-section__separator"></div>
         <h3>More Options</h3>
-        <IDPFileInput value={caFileContent} onChange={this.caFileChanged} />
+        <IDPCAFileInput value={caFileContent} onChange={this.caFileChanged} />
         <ButtonBar errorMessage={this.state.errorMessage} inProgress={this.state.inProgress}>
           <button type="submit" className="btn btn-primary">Add</button>
           <button type="button" className="btn btn-default" onClick={history.goBack}>Cancel</button>

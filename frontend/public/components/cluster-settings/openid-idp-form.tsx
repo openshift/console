@@ -20,7 +20,7 @@ import {
 import { addIDP, getOAuthResource, redirectToOAuthPage } from './';
 import { IDPNameInput } from './idp-name-input';
 import { MappingMethod } from './mapping-method';
-import {IDPFileInput} from './idp-file-input';
+import { IDPCAFileInput } from './idp-cafile-input';
 
 export class AddOpenIDPage extends PromiseComponent {
   readonly state: AddOpenIDIDPPageState = {
@@ -226,7 +226,7 @@ export class AddOpenIDPage extends PromiseComponent {
         <ListInput label="Email" initialValues={claimEmails} onChange={this.claimEmailsChanged} />
         <div className="co-form-section__separator"></div>
         <h3>More Options</h3>
-        <IDPFileInput value={caFileContent} onChange={this.caFileChanged} />
+        <IDPCAFileInput value={caFileContent} onChange={this.caFileChanged} />
         <ListInput label="Extra Scopes" onChange={this.extraScopesChanged} />
         <ButtonBar errorMessage={this.state.errorMessage} inProgress={this.state.inProgress}>
           <button type="submit" className="btn btn-primary">Add</button>

@@ -14,7 +14,7 @@ import {
 import { addIDP, getOAuthResource, redirectToOAuthPage } from './';
 import { IDPNameInput } from './idp-name-input';
 import { MappingMethod } from './mapping-method';
-import {IDPFileInput} from './idp-file-input';
+import { IDPCAFileInput } from './idp-cafile-input';
 
 
 export class AddGitHubPage extends PromiseComponent {
@@ -197,7 +197,7 @@ export class AddGitHubPage extends PromiseComponent {
             Optional domain for use with a hosted instance of GitHub Enterprise.
           </p>
         </div>
-        <IDPFileInput value={caFileContent} onChange={this.caFileChanged} />
+        <IDPCAFileInput value={caFileContent} onChange={this.caFileChanged} />
         <div className="co-form-section__separator"></div>
         <h3>Organizations</h3>
         <p className="co-help-text">Optionally list organizations. If specified, only GitHub users that are members of at least one of the listed organizations will be allowed to log in. Cannot be used in combination with <strong>teams</strong>.</p>
