@@ -6,7 +6,6 @@ import { Helmet } from 'react-helmet';
 import { SecretModel, ConfigMapModel } from '../../models';
 import { IdentityProvider, k8sCreate, K8sResourceKind, MappingMethodType, OAuthKind } from '../../module/k8s';
 import {
-  AsyncComponent,
   ButtonBar,
   ListInput,
   PromiseComponent,
@@ -15,8 +14,8 @@ import {
 import { addIDP, getOAuthResource, redirectToOAuthPage } from './';
 import { IDPNameInput } from './idp-name-input';
 import { MappingMethod } from './mapping-method';
+import {IDPFileInput} from './idp-file-input';
 
-const DroppableFileInput = (props: any) => <AsyncComponent loader={() => import('../utils/file-input').then(c => c.DroppableFileInput)} {...props} />;
 
 export class AddGitHubPage extends PromiseComponent {
   readonly state: AddGitHubPageState = {
@@ -198,14 +197,7 @@ export class AddGitHubPage extends PromiseComponent {
             Optional domain for use with a hosted instance of GitHub Enterprise.
           </p>
         </div>
-        <div className="form-group">
-          <DroppableFileInput
-            onChange={this.caFileChanged}
-            inputFileData={caFileContent}
-            id="ca-file-content"
-            label="CA File"
-            hideContents />
-        </div>
+        <IDPFileInput value={caFileContent} onChange={this.caFileChanged} />
         <div className="co-form-section__separator"></div>
         <h3>Organizations</h3>
         <p className="co-help-text">Optionally list organizations. If specified, only GitHub users that are members of at least one of the listed organizations will be allowed to log in. Cannot be used in combination with <strong>teams</strong>.</p>

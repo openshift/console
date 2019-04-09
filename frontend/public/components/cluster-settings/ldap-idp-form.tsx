@@ -7,7 +7,6 @@ import { Helmet } from 'react-helmet';
 import { ConfigMapModel, SecretModel } from '../../models';
 import { IdentityProvider, k8sCreate, K8sResourceKind, MappingMethodType, OAuthKind } from '../../module/k8s';
 import {
-  AsyncComponent,
   ButtonBar,
   ListInput,
   PromiseComponent,
@@ -16,8 +15,7 @@ import {
 import { addIDP, getOAuthResource, redirectToOAuthPage } from './';
 import { IDPNameInput } from './idp-name-input';
 import { MappingMethod } from './mapping-method';
-
-const DroppableFileInput = (props: any) => <AsyncComponent loader={() => import('../utils/file-input').then(c => c.DroppableFileInput)} {...props} />;
+import { IDPFileInput } from './idp-file-input';
 
 export class AddLDAPPage extends PromiseComponent {
   readonly state: AddLDAPPageState = {
@@ -236,14 +234,7 @@ export class AddLDAPPage extends PromiseComponent {
         <ListInput label="Email" onChange={this.attributesEmailChanged} />
         <div className="co-form-section__separator"></div>
         <h3>More Options</h3>
-        <div className="form-group">
-          <DroppableFileInput
-            onChange={this.caFileChanged}
-            inputFileData={caFileContent}
-            id="caFileContent"
-            label="CA File"
-            hideContents />
-        </div>
+        <IDPFileInput value={caFileContent} onChange={this.caFileChanged} />
         <ButtonBar errorMessage={this.state.errorMessage} inProgress={this.state.inProgress}>
           <button type="submit" className="btn btn-primary">Add</button>
           <button type="button" className="btn btn-default" onClick={history.goBack}>Cancel</button>

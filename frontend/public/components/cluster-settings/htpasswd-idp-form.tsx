@@ -12,7 +12,6 @@ import {
   OAuthKind,
 } from '../../module/k8s';
 import {
-  AsyncComponent,
   ButtonBar,
   PromiseComponent,
   history,
@@ -20,8 +19,7 @@ import {
 import { addIDP, getOAuthResource, redirectToOAuthPage } from './';
 import { IDPNameInput } from './idp-name-input';
 import { MappingMethod } from './mapping-method';
-
-const DroppableFileInput = (props: any) => <AsyncComponent loader={() => import('../utils/file-input').then(c => c.DroppableFileInput)} {...props} />;
+import { IDPFileInput } from './idp-file-input';
 
 export class AddHTPasswdPage extends PromiseComponent {
   readonly state: AddHTPasswdPageState = {
@@ -111,16 +109,12 @@ export class AddHTPasswdPage extends PromiseComponent {
         </p>
         <IDPNameInput value={name} onChange={this.nameChanged} />
         <MappingMethod value={mappingMethod} onChange={this.mappingMethodChanged} />
-        <div className="form-group">
-          <DroppableFileInput
-            onChange={this.htpasswdFileChanged}
-            inputFileData={htpasswdFileContent}
-            id="htpasswd-file"
-            label="HTPasswd File"
-            inputFieldHelpText="Upload an HTPasswd file created using the htpasswd command."
-            isRequired
-            hideContents />
-        </div>
+        <IDPFileInput
+          value={htpasswdFileContent}
+          onChange={this.htpasswdFileChanged}
+          helpText="Upload an HTPasswd file created using the htpasswd command."
+          label="HTPasswd File"
+          isRequired />
         <ButtonBar errorMessage={this.state.errorMessage} inProgress={this.state.inProgress}>
           <button type="submit" className="btn btn-primary">Add</button>
           <button type="button" className="btn btn-default" onClick={history.goBack}>Cancel</button>
