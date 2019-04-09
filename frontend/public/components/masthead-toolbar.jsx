@@ -16,7 +16,7 @@ const UpdatesAvailableButton = ({obj, onClick}) => {
   const updatesAvailable = !_.isEmpty(getAvailableClusterUpdates(obj.data));
   return updatesAvailable
     ? <ToolbarItem>
-      <Button variant="plain" aria-label="Cluster Updates Available" onClick={onClick}>
+      <Button className="co-update-icon" variant="plain" aria-label="Cluster Updates Available" onClick={onClick}>
         <ArrowCircleUpIcon />
       </Button>
     </ToolbarItem>

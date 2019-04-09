@@ -46,8 +46,11 @@ class ClusterChannelModal extends PromiseComponent {
     return <form onSubmit={this._submit} name="form" className="modal-content modal-content--no-inner-scroll">
       <ModalTitle>Update Channel</ModalTitle>
       <ModalBody>
+        <p>
+          Select a channel that reflects your desired version. Critical security updates will be delivered to any vulnerable channels.
+        </p>
         <div className="form-group">
-          <label htmlFor="channel_dropdown">Channel</label>
+          <label htmlFor="channel_dropdown">Select Channel</label>
           <Dropdown
             className="cluster-channel-modal__dropdown"
             id="channel_dropdown"
@@ -58,7 +61,7 @@ class ClusterChannelModal extends PromiseComponent {
           />
         </div>
       </ModalBody>
-      <ModalSubmitFooter errorMessage={this.state.errorMessage} inProgress={this.state.inProgress} submitText="Update" cancel={this._cancel} />
+      <ModalSubmitFooter errorMessage={this.state.errorMessage} inProgress={this.state.inProgress} submitText="Save" cancel={this._cancel} />
     </form>;
   }
 }
