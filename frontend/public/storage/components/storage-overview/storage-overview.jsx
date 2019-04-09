@@ -18,9 +18,11 @@ import { coFetchJSON } from '../../../co-fetch';
 
 const REFRESH_TIMEOUT = 5000;
 
-const CEPH_STATUS = 'ceph_health_status';
+const CEPH_STATUS_QUERY = 'ceph_health_status';
 const STORAGE_CEPH_CAPACITY_TOTAL_QUERY = 'ceph_cluster_total_bytes';
 const STORAGE_CEPH_CAPACITY_USED_QUERY = 'ceph_cluster_total_used_bytes';
+const CEPH_OSD_UP_QUERY = 'sum(ceph_osd_up)';
+const CEPH_OSD_DOWN_QUERY = 'count(ceph_osd_up == 0.0) OR vector(0)';
 
 const resourceMap = {
   nodes: {
@@ -48,9 +50,11 @@ export class StorageOverview extends React.Component {
         loaded: false,
       },
       capacityData: {},
+      diskStats: {},
     };
     this.setHealthData = this._setHealthData.bind(this);
     this.setCapacityData = this._setCapacityData.bind(this);
+    this.setCephDiskStats = this._setCephDiskStats.bind(this);
   }
 
   _setHealthData(healthy) {
@@ -68,6 +72,15 @@ export class StorageOverview extends React.Component {
     this.setState(state => ({
       capacityData: {
         ...state.capacityData,
+        [key]: response,
+      },
+    }));
+  }
+
+  _setCephDiskStats(key, response) {
+    this.setState(state => ({
+      diskStats: {
+        ...state.diskStats,
         [key]: response,
       },
     }));
@@ -92,16 +105,18 @@ export class StorageOverview extends React.Component {
 
   componentDidMount() {
     this._isMounted = true;
-    this.fetchPrometheusQuery(CEPH_STATUS, this.setHealthData);
+    this.fetchPrometheusQuery(CEPH_STATUS_QUERY, this.setHealthData);
     this.fetchPrometheusQuery(STORAGE_CEPH_CAPACITY_TOTAL_QUERY, response => this.setCapacityData('capacityTotal', response));
     this.fetchPrometheusQuery(STORAGE_CEPH_CAPACITY_USED_QUERY, response => this.setCapacityData('capacityUsed', response));
+    this.fetchPrometheusQuery(CEPH_OSD_UP_QUERY, response => this.setCephDiskStats('cephOsdUp', response));
+    this.fetchPrometheusQuery(CEPH_OSD_DOWN_QUERY, response => this.setCephDiskStats('cephOsdDown', response));
   }
   componentWillUnmount() {
     this._isMounted = false;
   }
 
   render() {
-    const { ocsHealthData, capacityData } = this.state;
+    const { ocsHealthData, capacityData, diskStats } = this.state;
     const inventoryResourceMapToProps = resources => {
       return {
         value: {
@@ -109,6 +124,7 @@ export class StorageOverview extends React.Component {
           ...resources,
           ocsHealthData,
           ...capacityData,
+          diskStats,
         },
       };
     };
