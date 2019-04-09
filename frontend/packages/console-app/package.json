@@ -1,0 +1,10 @@
+{
+  "name": "@console/app",
+  "version": "0.0.0-fixed",
+  "description": "Console web application",
+  "private": true,
+  "main": "src/index.ts",
+  "dependencies": {
+    "@console/shared": "0.0.0-fixed"
+  }
+}

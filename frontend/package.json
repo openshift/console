@@ -3,8 +3,11 @@
   "repository": "https://github.com/openshift/console",
   "license": "Apache-2.0",
   "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
-    "dev": "rm -rf ./public/dist/ && ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/webpack --mode development --watch --progress",
+    "dev": "rm -rf ./public/dist && ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/webpack --mode development --watch --progress",
     "build": "rm -rf ./public/dist && NODE_ENV=production ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/webpack --mode=production",
     "coverage": "jest --coverage .",
     "lint": "eslint --ext .js,.jsx,.ts,.tsx --color .",
@@ -51,7 +54,9 @@
     ],
     "collectCoverageFrom": [
       "public/*.{js,jsx,ts,tsx}",
-      "public/{components,module,ui}/**/*.{js,jsx,ts,tsx}"
+      "public/{components,module,ui}/**/*.{js,jsx,ts,tsx}",
+      "packages/*/src/**/*.{js,jsx,ts,tsx}",
+      "!**/node_modules/**"
     ]
   },
   "dependencies": {
