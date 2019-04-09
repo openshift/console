@@ -24,15 +24,27 @@ class ClusterUpdateModal extends PromiseComponent<ClusterUpdateModalProps, Clust
 
   constructor(public props: ClusterUpdateModalProps) {
     super(props);
-    this.state.selectedVersion = 0;
+    const available = getAvailableClusterUpdates(props.cv);
+    this.state.selectedVersion = _.get(available, '[0].version', '');
   }
 
-  _submit = (e) => {
+  _submit = (e: React.FormEvent<EventTarget>) => {
     e.preventDefault();
-    const {cv} = this.props;
     const {selectedVersion} = this.state;
-    const desiredUpdate = getAvailableClusterUpdates(cv)[selectedVersion];
-    const patch = [{ op: 'add', path: '/spec/desiredUpdate', value: desiredUpdate }];
+    if (!selectedVersion) {
+      return;
+    }
+    const {cv} = this.props;
+    const available = getAvailableClusterUpdates(cv);
+    const desired = _.find(available, { version: selectedVersion });
+    if (!desired) {
+      this.setState({errorMessage: `Version ${selectedVersion} not found among the available updates. Select another version.`});
+      return;
+    }
+
+    // Clear any previous error message.
+    this.setState({errorMessage: ''});
+    const patch = [{ op: 'add', path: '/spec/desiredUpdate', value: desired }];
     this.handlePromise(k8sPatch(ClusterVersionModel, cv, patch)).then(this.props.close);
   }
 
@@ -40,7 +52,7 @@ class ClusterUpdateModal extends PromiseComponent<ClusterUpdateModalProps, Clust
     this.props.close();
   }
 
-  _change = (selectedVersion) => {
+  _change = (selectedVersion: string) => {
     this.setState({selectedVersion});
   }
 
@@ -49,7 +61,10 @@ class ClusterUpdateModal extends PromiseComponent<ClusterUpdateModalProps, Clust
     const {selectedVersion} = this.state;
     const availableUpdates = getAvailableClusterUpdates(cv);
     const currentVersion = getDesiredClusterVersion(cv);
-    const dropdownItems = _.map(availableUpdates, 'version');
+    const dropdownItems = _.reduce(availableUpdates, (acc, {version}) => {
+      acc[version] = version;
+      return acc;
+    }, {});
     return <form onSubmit={this._submit} name="form" className="modal-content modal-content--no-inner-scroll">
       <ModalTitle>Update Cluster</ModalTitle>
       <ModalBody>
@@ -84,7 +99,7 @@ type ClusterUpdateModalProps = {
 } & ModalComponentProps;
 
 type ClusterUpdateModalState = {
-  selectedVersion: number;
+  selectedVersion: string;
   inProgress: boolean;
   errorMessage: string;
 };
