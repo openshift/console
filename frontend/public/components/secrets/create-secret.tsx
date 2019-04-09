@@ -927,14 +927,36 @@ class SecretLoadingWrapper extends React.Component<SecretLoadingWrapperProps, Se
   }
 }
 
-export const CreateSecret = ({match: {params}}) => {
-  const SecretFormComponent = secretFormFactory(params.type);
-  return <SecretFormComponent fixed={{ metadata: { namespace: params.ns } }}
-    secretTypeAbstraction={params.type}
-    explanation={secretFormExplanation[params.type]}
-    titleVerb="Create"
-    isCreate={true}
-  />;
+export class CreateSecret extends React.Component<CreateSecretProps, CreateSecretState> {
+  readonly state: CreateSecretState = {
+    formComponent: secretFormFactory(this.props.match.params.type),
+    secretTypeAbstraction: this.props.match.params.type,
+  };
+  render() {
+    const { secretTypeAbstraction, formComponent } = this.state;
+    const { params } = this.props.match;
+    const SecretFormComponent = formComponent;
+    return <SecretFormComponent fixed={{ metadata: { namespace: params.ns } }}
+      secretTypeAbstraction={secretTypeAbstraction}
+      explanation={secretFormExplanation[params.type]}
+      titleVerb="Create"
+      isCreate={true}
+    />;
+  }
+}
+
+type CreateSecretProps = {
+  match: {
+    params: {
+      type: SecretTypeAbstraction;
+      ns: string;
+    };
+  };
+};
+
+type CreateSecretState = {
+  formComponent: React.ReactType;
+  secretTypeAbstraction: SecretTypeAbstraction;
 };
 
 export const EditSecret = ({match: {params}, kind}) => <Firehose resources={[{kind, name: params.name, namespace: params.ns, isList: false, prop: 'obj'}]}>
