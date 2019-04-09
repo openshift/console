@@ -81,6 +81,26 @@ export const OperatorHubItemDetails: React.SFC<OperatorHubItemDetailsProps> = ({
   const createLink = `/operatorhub/subscribe?pkg=${item.obj.metadata.name}&catalog=${catalogSource}&catalogNamespace=${catalogSourceNamespace}&targetNamespace=${namespace}`;
   const uninstallLink = () => `/k8s/ns/${item.subscription.metadata.namespace}/${SubscriptionModel.plural}/${item.subscription.metadata.name}?showDelete=true`;
 
+  const markdownStyles = `
+    table {
+      margin-bottom: 10px;
+    }
+    tr > th {
+      text-align: left;
+    }
+    th, td {
+      padding: 5px 15px;
+      word-break: break-word;
+      border: none;
+      border-bottom: 1px solid #ededed;
+      vertical-align: top;
+    }
+    code {
+      padding: 0;
+      background: transparent;
+      border: 0;
+    }`;
+
   return <React.Fragment>
     <Modal.Header>
       <Modal.CloseButton onClick={closeOverlay} />
@@ -121,7 +141,7 @@ export const OperatorHubItemDetails: React.SFC<OperatorHubItemDetailsProps> = ({
             <div className="co-catalog-page__overlay-description">
               {getHintBlock()}
               {longDescription
-                ? <MarkdownView content={longDescription} outerScroll={true} />
+                ? <MarkdownView content={longDescription} styles={markdownStyles} />
                 : description}
             </div>
           </div>

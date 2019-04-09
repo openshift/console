@@ -5,15 +5,18 @@ import * as _ from 'lodash-es';
 import { Converter } from 'showdown';
 import * as sanitizeHtml from 'sanitize-html';
 
+const tableTags = [ 'table', 'thead', 'tbody', 'tr', 'th', 'td'];
+
 const markdownConvert = (markdown) => {
   const unsafeHtml = new Converter({
+    tables: true,
     openLinksInNewWindow: true,
     strikethrough: true,
     emoji: true,
   }).makeHtml(markdown);
 
   return sanitizeHtml(unsafeHtml, {
-    allowedTags: ['b', 'i', 'strike', 's', 'del', 'em', 'strong', 'a', 'p', 'h1', 'h2', 'h3', 'h4', 'ul', 'ol', 'li', 'code', 'pre'],
+    allowedTags: ['b', 'i', 'strike', 's', 'del', 'em', 'strong', 'a', 'p', 'h1', 'h2', 'h3', 'h4', 'ul', 'ol', 'li', 'code', 'pre', ...tableTags],
     allowedAttributes: {
       'a': ['href', 'target', 'rel'],
     },
@@ -24,7 +27,7 @@ const markdownConvert = (markdown) => {
   });
 };
 
-export class SyncMarkdownView extends React.Component<{content: string, outerScroll: boolean}, {}> {
+export class SyncMarkdownView extends React.Component<{content: string, styles?: string}, {}> {
   private frame: any;
 
   constructor(props) {
@@ -40,10 +43,7 @@ export class SyncMarkdownView extends React.Component<{content: string, outerScr
         !this.frame.contentWindow.document.body.firstChild) {
       return;
     }
-    this.frame.style.height = `${this.frame.contentWindow.document.body.firstChild.offsetHeight + 50}px`;
-    if (this.props.outerScroll) {
-      this.frame.contentWindow.document.firstChild.style.height = 'inherit';
-    }
+    this.frame.style.height = `${this.frame.contentWindow.document.body.firstChild.scrollHeight + 50}px`;
   }
 
   render() {
@@ -65,6 +65,7 @@ export class SyncMarkdownView extends React.Component<{content: string, outerScr
           min-width: auto !important;
           font-family: var(--pf-global--FontFamily--sans-serif);
       }
+      ${this.props.styles ? this.props.styles : ''}
       </style>
       <body><div>${markdownConvert(this.props.content || 'Not available')}</div></body>`;
 
