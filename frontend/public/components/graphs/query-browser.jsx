@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import { addTraces, relayout, restyle } from 'plotly.js/lib/core';
+import { addTraces, deleteTraces, relayout, restyle } from 'plotly.js/lib/core';
 
 import { connectToURLs, MonitoringRoutes } from '../../monitoring';
 import { Dropdown, ExternalLink, LoadingInline } from '../utils';
@@ -25,8 +25,8 @@ class QueryBrowser_ extends Line_ {
       updating: true,
     });
 
-    this.data = [{}];
-    this.traces = [0];
+    this.data = [];
+    this.numTraces = 0;
 
     _.merge(this.layout, {
       dragmode: 'zoom',
@@ -96,17 +96,18 @@ class QueryBrowser_ extends Line_ {
   }
 
   updateGraph(data, error) {
-    const newData = _.get(data, '[0].data.result');
-    if (!_.isEmpty(newData)) {
-      this.data = newData;
-      let traceIndex = 0;
+    deleteTraces(this.node, _.range(this.numTraces));
+    this.numTraces = 0;
 
+    this.data = _.get(data, '[0].data.result');
+
+    if (!_.isEmpty(this.data)) {
       // Work out which labels have different values for different metrics
-      const allLabels = _.map(newData, 'metric');
+      const allLabels = _.map(this.data, 'metric');
       const allLabelKeys = _.uniq(_.flatMap(allLabels, _.keys));
       const differingLabelKeys = _.filter(allLabelKeys, k => _.uniqBy(allLabels, k).length > 1);
 
-      _.each(newData, ({metric, values}) => {
+      _.each(this.data, ({metric, values}) => {
         // If props.metric is specified, ignore all other metrics
         const labels = _.omit(metric, '__name__');
         if (this.props.metric && _.some(labels, (v, k) => _.get(this.props.metric, k) !== v)) {
@@ -136,14 +137,11 @@ class QueryBrowser_ extends Line_ {
           y: [values.map(v => v[1])],
         };
 
-        if (!this.traces.includes(traceIndex)) {
-          // eslint-disable-next-line no-console
-          addTraces(this.node, update, traceIndex).catch(e => console.error(e));
-          this.traces.push(traceIndex);
-        }
         // eslint-disable-next-line no-console
-        restyle(this.node, update, [traceIndex]).catch(e => console.error(e));
-        traceIndex += 1;
+        addTraces(this.node, update, this.numTraces).catch(e => console.error(e));
+        // eslint-disable-next-line no-console
+        restyle(this.node, update, [this.numTraces]).catch(e => console.error(e));
+        this.numTraces++;
       });
 
       if (!this.start && !this.end) {
