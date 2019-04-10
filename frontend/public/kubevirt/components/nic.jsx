@@ -95,7 +95,7 @@ const NIC_TYPE_VM = 'nic-type-vm';
 const NIC_TYPE_CREATE = 'nic-type-create';
 
 export const NicRow = (onChange, onAccept, onCancel) => ({obj: nic}) => {
-  const namespace = getNamespace(nic.vm || nic.vmTemplate);
+  const namespace = getNamespace(nic.vmTemplate || nic.vm); // order matters
   const networks = {
     resource: getResource(NetworkAttachmentDefinitionModel, {namespace}),
   };
@@ -249,7 +249,7 @@ export class Nic extends React.Component {
 }
 
 Nic.propTypes = {
-  vm: PropTypes.object.isRequired,
+  vm: PropTypes.object.isRequired, // vm may be a template vm
   vmTemplate: PropTypes.object, // the template of the vm
   patchPrefix: PropTypes.string, // path to the vm in the template
 };
