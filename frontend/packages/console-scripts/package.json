@@ -1,0 +1,13 @@
+{
+  "name": "@console/scripts",
+  "version": "0.0.0-fixed",
+  "description": "Console scripts available to all packages",
+  "private": true,
+  "bin": {
+    "console-test": "./bin/test.js"
+  },
+  "dependencies": {
+    "cross-spawn": "^6.0.5",
+    "read-pkg-up": "^5.0.0"
+  }
+}

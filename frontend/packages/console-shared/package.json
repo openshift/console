@@ -5,6 +5,9 @@
   "private": true,
   "main": "src/index.ts",
   "scripts": {
-    "test": "yarn --cwd ../.. run test packages/console-shared"
+    "test": "console-test"
+  },
+  "dependencies": {
+    "@console/scripts": "0.0.0-fixed"
   }
 }
