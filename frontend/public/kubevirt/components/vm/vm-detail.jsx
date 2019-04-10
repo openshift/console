@@ -2,7 +2,6 @@ import React from 'react';
 import * as _ from 'lodash-es';
 import {
   VmDetails,
-  CDI_KUBEVIRT_IO,
   getName,
   getNamespace,
   getResource,
@@ -65,10 +64,7 @@ export const ConnectedVmDetails = ({ obj: vm, ...rest }) => {
       ignoreErrors: true,
     },
     pods: {
-      resource: getResource(PodModel, { namespace, matchExpressions: [{key: 'kubevirt.io', operator: 'Exists' }] }),
-    },
-    importerPods: {
-      resource: getResource(PodModel, {namespace, matchLabels: {[CDI_KUBEVIRT_IO]: 'importer'}}),
+      resource: getResource(PodModel, { namespace }),
     },
     migrations: {
       resource: getResource(VirtualMachineInstanceMigrationModel, {namespace}),
@@ -86,7 +82,7 @@ export const ConnectedVmDetails = ({ obj: vm, ...rest }) => {
 };
 
 const VmDetails_ = props => {
-  const { vm, pods, importerPods, migrations, vmi } = props;
+  const { vm, pods, migrations, vmi } = props;
 
   const namespaceResourceLink = () =>
     <ResourceLink kind={NamespaceModel.kind} name={getNamespace(vm)} title={getNamespace(vm)} />;
@@ -107,7 +103,6 @@ const VmDetails_ = props => {
       NodeLink={NodeLink}
       NamespaceResourceLink={namespaceResourceLink}
       PodResourceLink={podResourceLink}
-      importerPods={importerPods}
       migrations={migrations}
       pods={pods}
       vmi={vmi}
@@ -162,7 +157,7 @@ export const VirtualMachinesDetailsPage = props => {
       resources={[
         getResource(VirtualMachineInstanceModel, {name, namespace, isList: false}),
         getResource(VirtualMachineInstanceMigrationModel, {namespace}),
-        getResource(PodModel, {namespace, matchLabels: {[CDI_KUBEVIRT_IO]: 'importer'}}),
+        getResource(PodModel, { namespace }),
       ]}
     />);
 };

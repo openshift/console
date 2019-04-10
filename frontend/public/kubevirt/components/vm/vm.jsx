@@ -5,7 +5,6 @@ import {
   getSimpleVmStatus,
   VM_SIMPLE_STATUS_ALL,
   VM_SIMPLE_STATUS_TO_TEXT,
-  CDI_KUBEVIRT_IO,
   getResource,
 } from 'kubevirt-web-ui-components';
 
@@ -39,10 +38,7 @@ const VMRow = ({obj: vm}) => {
   const migrationResources = getResource(VirtualMachineInstanceMigrationModel, {namespace});
   const resourceMap = {
     pods: {
-      resource: getResource(PodModel, { namespace, matchExpressions: [{key: 'kubevirt.io', operator: 'Exists' }] }),
-    },
-    importerPods: {
-      resource: getResource(PodModel, {namespace, matchLabels: {[CDI_KUBEVIRT_IO]: 'importer'}}),
+      resource: getResource(PodModel, { namespace }),
     },
     migrations: {
       resource: migrationResources,
@@ -69,7 +65,7 @@ const VMRow = ({obj: vm}) => {
         resources={[
           getResource(VirtualMachineInstanceModel, {name, namespace, isList: false}),
           migrationResources,
-          getResource(PodModel, {namespace, matchLabels: {[CDI_KUBEVIRT_IO]: 'importer'}}),
+          getResource(PodModel, { namespace }),
         ]} />
     </div>
   </ResourceRow>;

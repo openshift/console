@@ -7,9 +7,9 @@ import {
   CloneDialog,
   getResource,
   findVMIMigration,
-  getVmImporterPods,
   getVmStatus,
   VM_STATUS_IMPORTING,
+  VM_STATUS_V2V_CONVERSION_IN_PROGRESS,
 } from 'kubevirt-web-ui-components';
 
 import { Kebab, LoadingInline } from '../utils/okdutils';
@@ -38,14 +38,13 @@ const getStatusForVm = (vm, actionArgs) => {
   }
 
   const pods = actionArgs[PodModel.kind];
-  const importerPods= getVmImporterPods(actionArgs[PodModel.kind], vm);
   const migrations = actionArgs[VirtualMachineInstanceMigrationModel.kind];
-  return getVmStatus(vm, pods, migrations, importerPods);
+  return getVmStatus(vm, pods, migrations);
 };
 
 const isImporting = (vm, actionArgs) => {
   const status = getStatusForVm(vm, actionArgs);
-  return status ? status.status === VM_STATUS_IMPORTING : false;
+  return status && [VM_STATUS_IMPORTING, VM_STATUS_V2V_CONVERSION_IN_PROGRESS].includes(status.status);
 };
 
 const getStartStopActionLabel = (vm) => {
