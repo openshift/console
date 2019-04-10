@@ -17,6 +17,7 @@ import { LoadingInline } from '../../../kubevirt/components/utils/okdutils';
 import { coFetchJSON } from '../../../co-fetch';
 import { EventStream } from '../../../components/events';
 import { EventsInnerOverview } from '../../../kubevirt/components/cluster/events-inner-overview';
+import { LazyRenderer } from '../../../kubevirt/components/utils/lazyRenderer';
 
 const REFRESH_TIMEOUT = 5000;
 
@@ -165,9 +166,11 @@ export class StorageOverview extends React.Component {
         resourceMap={resourceMap}
         resourceToProps={inventoryResourceMapToProps}
       >
-        <StorageOverviewContext.Provider>
-          <KubevirtStorageOverview />
-        </StorageOverviewContext.Provider>
+        <LazyRenderer>
+          <StorageOverviewContext.Provider>
+            <KubevirtStorageOverview />
+          </StorageOverviewContext.Provider>
+        </LazyRenderer>
       </WithResources>
     );
   }
