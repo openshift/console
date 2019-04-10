@@ -18,7 +18,7 @@ export const EventsInnerOverview = connectToFlags(FLAGS.CAN_LIST_NODE)(class Eve
       <div className="co-sysevent__box">
         <div className="co-sysevent__header">
           <small>
-            <Timestamp className="kubevirt-events__timestamp text-secondary" timestamp={lastTimestamp} />
+            <Timestamp simple className="kubevirt-events__timestamp text-secondary" timestamp={lastTimestamp} />
             {count > 1 && <div className="co-sysevent__count text-secondary kubevirt-events__timestamp">
               &nbsp;- {count} times in the last <Timestamp timestamp={firstTimestamp} simple={true} omitSuffix={true} />
             </div>}
