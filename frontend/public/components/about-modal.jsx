@@ -34,11 +34,9 @@ class AboutModal_ extends React.Component {
       <PfAboutModal
         isOpen={isOpen}
         onClose={closeAboutModal}
-        productName={details.productTitle}
+        productName=""
         brandImageSrc={details.logoImg}
-        brandImageAlt={details.logoAlt}
-        logoImageSrc={details.logoImg}
-        logoImageAlt={details.logoAlt}
+        brandImageAlt={details.productName}
       >
         <p>OpenShift is Red Hat&apos;s container application platform that allows developers to quickly develop, host,
           and scale applications in a cloud environment.</p>

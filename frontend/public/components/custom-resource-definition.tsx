@@ -35,7 +35,7 @@ const namespaced = crd => crd.spec.scope === 'Namespaced';
 
 const CRDRow = ({obj: crd}) => <div className="row co-resource-list__item">
   <div className="col-lg-3 col-md-4 col-sm-4 col-xs-6">
-    <span className="co-resource-link">
+    <span className="co-resource-item">
       <ResourceLink kind="CustomResourceDefinition" name={crd.metadata.name} namespace={crd.metadata.namespace} displayName={_.get(crd, 'spec.names.kind')} />
     </span>
   </div>

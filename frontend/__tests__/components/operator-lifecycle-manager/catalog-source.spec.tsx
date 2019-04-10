@@ -8,7 +8,7 @@ import { safeLoad } from 'js-yaml';
 import { CatalogSourceDetails, CatalogSourceDetailsProps, CatalogSourceDetailsPage, CatalogSourceDetailsPageProps, CreateSubscriptionYAML, CreateSubscriptionYAMLProps } from '../../../public/components/operator-lifecycle-manager/catalog-source';
 import { PackageManifestList } from '../../../public/components/operator-lifecycle-manager/package-manifest';
 import { visibilityLabel } from '../../../public/components/operator-lifecycle-manager';
-import { referenceForModel, referenceForModelCompatible } from '../../../public/module/k8s';
+import { referenceForModel } from '../../../public/module/k8s';
 import { SubscriptionModel, CatalogSourceModel, PackageManifestModel, OperatorGroupModel } from '../../../public/models';
 import { DetailsPage } from '../../../public/components/factory';
 import { Firehose, LoadingBox, ErrorBoundary } from '../../../public/components/utils';
@@ -57,9 +57,9 @@ describe(CatalogSourceDetailsPage.displayName, () => {
     expect(wrapper.find(DetailsPage).props().pages.map(p => p.name)).toEqual(['Overview', 'YAML']);
     expect(wrapper.find(DetailsPage).props().pages[0].component).toEqual(CatalogSourceDetails);
     expect(wrapper.find(DetailsPage).props().resources).toEqual([
-      {kind: referenceForModelCompatible(PackageManifestModel)('packages.apps.redhat.com~v1alpha1~PackageManifest'), isList: true, namespace: match.params.ns, selector, prop: 'packageManifests'},
+      {kind: referenceForModel(PackageManifestModel), isList: true, namespace: match.params.ns, selector, prop: 'packageManifests'},
       {kind: referenceForModel(SubscriptionModel), isList: true, namespace: match.params.ns, prop: 'subscriptions'},
-      {kind: referenceForModelCompatible(OperatorGroupModel)('operators.coreos.com~v1alpha2~OperatorGroup'), isList: true, namespace: match.params.ns, prop: 'operatorGroups'},
+      {kind: referenceForModel(OperatorGroupModel), isList: true, namespace: match.params.ns, prop: 'operatorGroups'},
     ]);
   });
 });
@@ -76,13 +76,13 @@ describe(CreateSubscriptionYAML.displayName, () => {
 
   it('renders a `Firehose` for the `PackageManfest` specified in the URL', () => {
     expect(wrapper.find<any>(Firehose).props().resources).toEqual([{
-      kind: referenceForModelCompatible(PackageManifestModel)('packages.apps.redhat.com~v1alpha1~PackageManifest'),
+      kind: referenceForModel(PackageManifestModel),
       name: testPackageManifest.metadata.name,
       namespace: 'default',
       isList: false,
       prop: 'packageManifest',
     }, {
-      kind: referenceForModelCompatible(OperatorGroupModel)('operators.coreos.com~v1alpha2~OperatorGroup'),
+      kind: referenceForModel(OperatorGroupModel),
       isList: true,
       namespace: 'default',
       prop: 'operatorGroup',

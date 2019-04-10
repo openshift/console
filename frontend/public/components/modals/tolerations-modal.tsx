@@ -12,9 +12,7 @@ class TolerationsModal extends PromiseComponent {
 
   constructor(public props: TolerationsModalProps) {
     super(props);
-    const tolerations = this._getTolerationsFromResource();
-    // Add an empty row for editing if no tolerations exist.
-    this.state.tolerations = this._defaultFirstRow(tolerations);
+    this.state.tolerations = this._getTolerationsFromResource() || [];
   }
 
   _getTolerationsFromResource = (): Toleration[] => {
@@ -82,12 +80,6 @@ class TolerationsModal extends PromiseComponent {
 
   _newToleration(): TolerationModalItem {
     return {key: '', operator: 'Exists', value: '', effect: '', isNew: true};
-  }
-
-  _defaultFirstRow(tolerations: TolerationModalItem[]): TolerationModalItem[] {
-    return _.isEmpty(tolerations)
-      ? [this._newToleration()]
-      : tolerations;
   }
 
   _addRow = () => {
@@ -168,7 +160,7 @@ class TolerationsModal extends PromiseComponent {
                 </div>
                 <div className="col-md-1">
                   {this._isEditable(t) && (
-                    <button type="button" className="btn btn-link toleration-modal__delete-icon" onClick={() => this._remove(i)} aria-label="Delete">
+                    <button type="button" className="btn btn-link btn-link--inherit-color toleration-modal__delete-icon" onClick={() => this._remove(i)} aria-label="Delete">
                       <i className="fa fa-minus-circle pairs-list__side-btn pairs-list__delete-icon" aria-hidden="true" />
                     </button>
                   )}

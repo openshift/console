@@ -76,12 +76,16 @@ export const types = {
   setClusterID: 'setClusterID',
   setCurrentLocation: 'setCurrentLocation',
   setMonitoringData: 'setMonitoringData',
+  toggleMonitoringGraphs: 'toggleMonitoringGraphs',
   setUser: 'setUser',
   sortList: 'sortList',
   startImpersonate: 'startImpersonate',
   stopImpersonate: 'stopImpersonate',
   updateOverviewMetrics: 'updateOverviewMetrics',
   updateOverviewResources: 'updateOverviewResources',
+  updateOverviewSelectedGroup: 'updateOverviewSelectedGroup',
+  updateOverviewGroupOptions: 'updateOverviewGroupOptions',
+  updateOverviewFilterValue: 'updateOverviewFilterValue',
 };
 
 /** @type {{[key: string]: function}} */
@@ -183,9 +187,17 @@ export const UIActions = {
 
   [types.dismissOverviewDetails]: () => ({type: types.dismissOverviewDetails}),
 
+  [types.updateOverviewSelectedGroup]: (group) => ({type: types.updateOverviewSelectedGroup, group}),
+
+  [types.updateOverviewGroupOptions]: (groups) => ({type: types.updateOverviewGroupOptions, groups}),
+
+  [types.updateOverviewFilterValue]: (value) => ({type: types.updateOverviewFilterValue, value}),
+
   monitoringLoading: key => ({type: types.setMonitoringData, key, data: {loaded: false, loadError: null, data: null}}),
 
   monitoringLoaded: (key, data) => ({type: types.setMonitoringData, key, data: {loaded: true, loadError: null, data}}),
 
   monitoringErrored: (key, loadError) => ({type: types.setMonitoringData, key, data: {loaded: true, loadError, data: null}}),
+
+  [types.toggleMonitoringGraphs]: () => ({type: types.toggleMonitoringGraphs}),
 };

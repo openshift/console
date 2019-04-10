@@ -169,7 +169,20 @@ const Label = ({k, v}) => <div className="co-m-label co-m-label--expand" key={k}
   <span className="co-m-label__value">{v}</span>
 </div>;
 
-const Graph = ({metric = undefined, numSamples, rule}) => {
+const graphStateToProps = ({UI}) => ({hideGraphs: !!UI.getIn(['monitoring', 'hideGraphs'])});
+
+const ToggleGraph_ = ({hideGraphs, toggle}) => {
+  const iconClass = `fa fa-${hideGraphs ? 'line-chart' : 'compress'}`;
+  return <button type="button" className="btn btn-link" onClick={toggle}>
+    {hideGraphs ? 'Show' : 'Hide'} Graph <i className={iconClass} aria-hidden="true" />
+  </button>;
+};
+const ToggleGraph = connect(graphStateToProps, {toggle: UIActions.toggleMonitoringGraphs})(ToggleGraph_);
+
+const Graph_ = ({hideGraphs, metric = undefined, numSamples, rule}) => {
+  if (hideGraphs) {
+    return null;
+  }
   const {duration = 0, query = ''} = rule || {};
 
   // 3 times the rule's duration, but not less than 30 minutes
@@ -177,6 +190,7 @@ const Graph = ({metric = undefined, numSamples, rule}) => {
 
   return <QueryBrowser metric={metric} numSamples={numSamples} query={query} timeSpan={timeSpan} timeout="5s" />;
 };
+const Graph = connect(graphStateToProps)(Graph_);
 
 const SilenceMatchersList = ({silence}) => <div className={`co-text-${SilenceResource.kind.toLowerCase()}`}>
   {_.map(silence.matchers, ({name, isRegex, value}, i) => <Label key={i} k={name} v={isRegex ? `~${value}` : value} />)}
@@ -211,14 +225,16 @@ const AlertsDetailsPage = withFallback(connect(alertStateToProps)((props: Alerts
     <StatusBox data={alert} label={AlertResource.label} loaded={loaded} loadError={loadError}>
       <div className="co-m-nav-title co-m-nav-title--detail">
         <h1 className="co-m-pane__heading">
-          <div className="co-m-pane__name"><MonitoringResourceIcon className="co-m-resource-icon--lg" resource={AlertResource} />{alertname}</div>
+          <div className="co-m-pane__name co-resource-item"><MonitoringResourceIcon className="co-m-resource-icon--lg" resource={AlertResource} />{alertname}</div>
           {(state === AlertStates.Firing || state === AlertStates.Pending) && <div className="co-actions">
             <ActionsMenu actions={[silenceAlert(alert)]} />
           </div>}
         </h1>
       </div>
       <div className="co-m-pane__body">
-        <SectionHeading text="Alert Overview" />
+        <SectionHeading text="Alert Overview">
+          {state !== AlertStates.NotFiring && <ToggleGraph />}
+        </SectionHeading>
         <div className="co-m-pane__body-group">
           <div className="row">
             <div className="col-sm-12">
@@ -248,9 +264,9 @@ const AlertsDetailsPage = withFallback(connect(alertStateToProps)((props: Alerts
                 </dd>
                 <dt>Alerting Rule</dt>
                 <dd>
-                  <div className="co-resource-link">
+                  <div className="co-resource-item">
                     <MonitoringResourceIcon resource={AlertRuleResource} />
-                    <Link to={ruleURL(rule)} className="co-resource-link__resource-name">{_.get(rule, 'name')}</Link>
+                    <Link to={ruleURL(rule)} className="co-resource-item__resource-name">{_.get(rule, 'name')}</Link>
                   </div>
                 </dd>
               </dl>
@@ -298,7 +314,7 @@ const ActiveAlerts = ({alerts, ruleID}) => <div className="co-m-table-grid co-m-
   <div className="co-m-table-grid__body">
     {_.sortBy(alerts, alertDescription).map((a, i) => <ResourceRow key={i} obj={a}>
       <div className="col-xs-6">
-        <Link className="co-resource-link" to={alertURL(a, ruleID)}>{alertDescription(a)}</Link>
+        <Link className="co-resource-item" to={alertURL(a, ruleID)}>{alertDescription(a)}</Link>
       </div>
       <div className="col-sm-2 hidden-xs"><Timestamp timestamp={a.activeAt} /></div>
       <div className="col-sm-2 col-xs-3"><AlertState state={a.state} /></div>
@@ -327,7 +343,7 @@ const AlertRulesDetailsPage = withFallback(connect(ruleStateToProps)((props: Ale
     <StatusBox data={rule} label={AlertRuleResource.label} loaded={loaded} loadError={loadError}>
       <div className="co-m-nav-title co-m-nav-title--detail">
         <h1 className="co-m-pane__heading">
-          <div className="co-m-pane__name"><MonitoringResourceIcon className="co-m-resource-icon--lg" resource={AlertRuleResource} />{name}</div>
+          <div className="co-m-pane__name co-resource-item"><MonitoringResourceIcon className="co-m-resource-icon--lg" resource={AlertRuleResource} />{name}</div>
         </h1>
       </div>
       <div className="co-m-pane__body">
@@ -364,7 +380,9 @@ const AlertRulesDetailsPage = withFallback(connect(ruleStateToProps)((props: Ale
       </div>
       <div className="co-m-pane__body">
         <div className="co-m-pane__body-group">
-          <SectionHeading text="Active Alerts" />
+          <SectionHeading text="Active Alerts">
+            <ToggleGraph />
+          </SectionHeading>
           <div className="row">
             <div className="col-sm-12">
               <Graph numSamples={300} rule={rule} />
@@ -391,7 +409,7 @@ const SilencedAlertsList = ({alerts}) => _.isEmpty(alerts)
     <div className="co-m-table-grid__body">
       {_.sortBy(alerts, alertDescription).map((a, i) => <div className="row co-resource-list__item" key={i}>
         <div className="col-xs-9">
-          <Link className="co-resource-link" to={alertURL(a, a.rule.id)}>{a.labels.alertname}</Link>
+          <Link className="co-resource-item" to={alertURL(a, a.rule.id)}>{a.labels.alertname}</Link>
           <div className="monitoring-description">{alertDescription(a)}</div>
         </div>
         <div className="col-xs-3">{a.labels.severity || '-'}</div>
@@ -420,7 +438,7 @@ const SilencesDetailsPage = withFallback(connect(silenceParamToProps)((props: Si
     <StatusBox data={silence} label={SilenceResource.label} loaded={loaded} loadError={loadError}>
       <div className="co-m-nav-title co-m-nav-title--detail">
         <h1 className="co-m-pane__heading">
-          <div className="co-m-pane__name"><MonitoringResourceIcon className="co-m-resource-icon--lg" resource={SilenceResource} />{name}</div>
+          <div className="co-m-pane__name co-resource-item"><MonitoringResourceIcon className="co-m-resource-icon--lg" resource={SilenceResource} />{name}</div>
           <SilenceActionsMenu silence={silence} />
         </h1>
       </div>
@@ -482,9 +500,9 @@ const AlertRow = ({obj}) => {
 
   return <ResourceRow obj={obj}>
     <div className="col-sm-7 col-xs-8">
-      <div className="co-resource-link">
+      <div className="co-resource-item">
         <MonitoringResourceIcon resource={AlertResource} />
-        <Link to={alertURL(obj, obj.rule.id)} className="co-resource-link__resource-name">{labels.alertname}</Link>
+        <Link to={alertURL(obj, obj.rule.id)} className="co-resource-item__resource-name">{labels.alertname}</Link>
       </div>
       <div className="monitoring-description">{annotations.description || annotations.message}</div>
     </div>
@@ -583,7 +601,7 @@ const MonitoringListPage = connect(filtersToProps)(class InnerMonitoringListPage
       </Helmet>
       <div className="co-m-nav-title">
         <h1 className="co-m-pane__heading">
-          <div className="co-m-pane__name">
+          <div className="co-m-pane__name co-resource-item">
             {kindPlural}
             <HeaderAlertmanagerLink path={alertmanagerLinkPath} />
           </div>
@@ -650,9 +668,9 @@ const SilenceRow = ({obj}) => {
 
   return <ResourceRow obj={obj}>
     <div className="col-sm-7 col-xs-8">
-      <div className="co-resource-link">
+      <div className="co-resource-item">
         <MonitoringResourceIcon resource={SilenceResource} />
-        <Link className="co-resource-link__resource-name" title={obj.id} to={`${SilenceResource.path}/${obj.id}`}>{obj.name}</Link>
+        <Link className="co-resource-item__resource-name" title={obj.id} to={`${SilenceResource.path}/${obj.id}`}>{obj.name}</Link>
       </div>
       <div className="monitoring-label-list">
         <SilenceMatchersList silence={obj} />

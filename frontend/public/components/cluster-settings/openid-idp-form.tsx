@@ -9,12 +9,12 @@ import { k8sCreate, k8sGet, k8sPatch, K8sResourceKind, referenceFor } from '../.
 import {
   AsyncComponent,
   ButtonBar,
-  Dropdown,
   ListInput,
   PromiseComponent,
   history,
   resourceObjPath,
 } from '../utils';
+import { MappingMethod, MappingMethodType } from './mapping-method';
 
 // The name of the cluster-scoped OAuth configuration resource.
 const oauthResourceName = 'cluster';
@@ -26,10 +26,10 @@ export class AddOpenIDPage extends PromiseComponent {
     name: 'openid',
     mappingMethod: 'claim',
     clientID: '',
-    clientSecretFileContent: '',
-    claimPreferredUsernames: [],
-    claimNames: [],
-    claimEmails: [],
+    clientSecret: '',
+    claimPreferredUsernames: ['preferred_username'],
+    claimNames: ['name'],
+    claimEmails: ['email'],
     issuer: '',
     caFileContent: '',
     extraScopes: [],
@@ -42,6 +42,7 @@ export class AddOpenIDPage extends PromiseComponent {
   }
 
   createClientSecret(): Promise<K8sResourceKind> {
+    const { clientSecret } = this.state;
     const secret = {
       apiVersion: 'v1',
       kind: 'Secret',
@@ -50,7 +51,7 @@ export class AddOpenIDPage extends PromiseComponent {
         namespace: 'openshift-config',
       },
       stringData: {
-        clientSecret: this.state.clientSecretFileContent,
+        clientSecret,
       },
     };
 
@@ -71,7 +72,7 @@ export class AddOpenIDPage extends PromiseComponent {
         namespace: 'openshift-config',
       },
       stringData: {
-        ca: caFileContent,
+        'ca.crt': caFileContent,
       },
     };
 
@@ -80,7 +81,7 @@ export class AddOpenIDPage extends PromiseComponent {
 
   addOpenIDIDP(oauth: K8sResourceKind, clientSecretName: string, caName: string): Promise<K8sResourceKind> {
     const { name, mappingMethod, clientID, issuer, extraScopes, claimPreferredUsernames, claimNames, claimEmails } = this.state;
-    const openID: any = {
+    const idp: any = {
       name,
       type: 'OpenID',
       mappingMethod,
@@ -100,21 +101,21 @@ export class AddOpenIDPage extends PromiseComponent {
     };
 
     if (caName) {
-      openID.ca = {
+      idp.openID.ca = {
         name: caName,
       };
     }
 
     const patch = _.isEmpty(oauth.spec.identityProviders)
-      ? { op: 'add', path: '/spec/identityProviders', value: [openID] }
-      : { op: 'add', path: '/spec/identityProviders/-', value: openID };
+      ? { op: 'add', path: '/spec/identityProviders', value: [idp] }
+      : { op: 'add', path: '/spec/identityProviders/-', value: idp };
     return this.handlePromise(k8sPatch(OAuthModel, oauth, [patch]));
   }
 
   submit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
-    if (!this.state.clientSecretFileContent) {
-      this.setState({errorMessage: 'You must specify a Client Secret file.'});
+    if (!this.state.clientSecret) {
+      this.setState({errorMessage: 'You must specify a client secret.'});
       return;
     }
 
@@ -143,6 +144,10 @@ export class AddOpenIDPage extends PromiseComponent {
     this.setState({clientID: event.currentTarget.value});
   };
 
+  clientSecretChanged: React.ReactEventHandler<HTMLInputElement> = (event) => {
+    this.setState({clientSecret: event.currentTarget.value});
+  };
+
   issuerChanged: React.ReactEventHandler<HTMLInputElement> = (event) => {
     this.setState({issuer: event.currentTarget.value});
   };
@@ -167,22 +172,13 @@ export class AddOpenIDPage extends PromiseComponent {
     this.setState({mappingMethod});
   };
 
-  clientSecretFileChanged = (clientSecretFileContent: string) => {
-    this.setState({clientSecretFileContent});
-  };
-
   caFileChanged = (caFileContent: string) => {
     this.setState({caFileContent});
   };
 
   render() {
-    const { name, mappingMethod, clientID, clientSecretFileContent, issuer, caFileContent } = this.state;
+    const { name, mappingMethod, clientID, clientSecret, issuer, claimPreferredUsernames, claimNames, claimEmails, caFileContent } = this.state;
     const title = 'Add Identity Provider: OpenID Connect';
-    const mappingMethods = {
-      'claim': 'Claim',
-      'lookup': 'Lookup',
-      'add': 'Add',
-    };
     return <div className="co-m-pane__body">
       <Helmet>
         <title>{title}</title>
@@ -205,16 +201,9 @@ export class AddOpenIDPage extends PromiseComponent {
             Unique name of the new identity provider. This cannot be changed later.
           </p>
         </div>
+        <MappingMethod value={mappingMethod} onChange={this.mappingMethodChanged} />
         <div className="form-group">
-          <label className="control-label co-required" htmlFor="tag">Mapping Method</label>
-          <Dropdown dropDownClassName="dropdown--full-width" items={mappingMethods} selectedKey={mappingMethod} title={mappingMethods[mappingMethod]} onChange={this.mappingMethodChanged} />
-          <div className="help-block" id="mapping-method-description">
-            { /* TODO: Add doc link when available in 4.0 docs. */ }
-            Specifies how new identities are mapped to users when they log in.
-          </div>
-        </div>
-        <div className="form-group">
-          <label className="control-label co-required" htmlFor="clientID">ClientID</label>
+          <label className="control-label co-required" htmlFor="clientID">Client ID</label>
           <input className="form-control"
             type="text"
             onChange={this.clientIDChanged}
@@ -223,13 +212,13 @@ export class AddOpenIDPage extends PromiseComponent {
             required />
         </div>
         <div className="form-group">
-          <DroppableFileInput
-            onChange={this.clientSecretFileChanged}
-            inputFileData={clientSecretFileContent}
-            id="clientsecret-file"
-            label="Client secret"
-            isRequired
-            hideContents />
+          <label className="control-label co-required" htmlFor="clientSecret">Client Secret</label>
+          <input className="form-control"
+            type="password"
+            onChange={this.clientSecretChanged}
+            value={clientSecret}
+            id="clientSecret"
+            required />
         </div>
         <div className="form-group">
           <label className="control-label co-required" htmlFor="issuer">Issuer URL</label>
@@ -238,14 +227,19 @@ export class AddOpenIDPage extends PromiseComponent {
             onChange={this.issuerChanged}
             value={issuer}
             id="issuer"
-            required />
+            required
+            aria-describedby="issuer-help" />
+          <div className="help-block" id="issuer-help">
+            The URL that the OpenID Provider asserts as its Issuer Identifier.
+            It must use the https scheme with no URL query parameters or fragment.
+          </div>
         </div>
         <div className="co-form-section__separator"></div>
         <h3>Claims</h3>
-        <p className="co-help-text">The first non-empty claim is used. At least one claim is required.</p>
-        <ListInput label="Preferred Username" onChange={this.claimPreferredUsernamesChanged} />
-        <ListInput label="Name" onChange={this.claimNamesChanged} />
-        <ListInput label="Email" onChange={this.claimEmailsChanged} />
+        <p className="co-help-text">Claims map metadata from the OpenID provider to an OpenShift user. The first non-empty claim is used.</p>
+        <ListInput label="Preferred Username" initialValues={claimPreferredUsernames} onChange={this.claimPreferredUsernamesChanged} />
+        <ListInput label="Name" initialValues={claimNames} onChange={this.claimNamesChanged} />
+        <ListInput label="Email" initialValues={claimEmails} onChange={this.claimEmailsChanged} />
         <div className="co-form-section__separator"></div>
         <h3>More options</h3>
         <div className="form-group">
@@ -268,9 +262,9 @@ export class AddOpenIDPage extends PromiseComponent {
 
 type AddOpenIDIDPPageState = {
   name: string;
-  mappingMethod: 'claim' | 'lookup' | 'add';
+  mappingMethod: MappingMethodType;
   clientID: string;
-  clientSecretFileContent: string;
+  clientSecret: string;
   claimPreferredUsernames: string[];
   claimNames: string[];
   claimEmails: string[];

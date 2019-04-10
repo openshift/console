@@ -10,7 +10,7 @@ const selectFromDropdown = async(dropdownButton, text) => {
 
 export const selectNamespace = (namespace) => selectFromDropdown($('#ns-dropdown'), namespace);
 export const selectRole = (role) => selectFromDropdown($('#role-dropdown'), role);
-export const getSelectedNamespace = () => $('#ns-dropdown .co-resource-link__resource-name').getText();
-export const getSelectedRole = () => $('#role-dropdown .co-resource-link__resource-name').getText();
+export const getSelectedNamespace = () => $('#ns-dropdown .co-resource-item__resource-name').getText();
+export const getSelectedRole = () => $('#role-dropdown .co-resource-item__resource-name').getText();
 export const inputName = (name) => $('#role-binding-name').sendKeys(name);
 export const inputSubject = (subject) => $('#subject-name').sendKeys(subject);

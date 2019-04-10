@@ -99,15 +99,6 @@
   font-weight: normal;
 }
 
-.co-m-pane__name {
-  @include co-break-word;
-  align-items: baseline;
-  display: flex;
-  flex: 1;
-  margin-right: 10px;
-  min-width: 0; // necessary for wrapping since its a flex child
-}
-
 .co-inline-block {
   display: inline-block;
 }

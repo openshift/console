@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import * as classNames from 'classnames';
 import { addTraces, relayout, restyle } from 'plotly.js/lib/core';
 
 import { connectToURLs, MonitoringRoutes } from '../../monitoring';
@@ -17,6 +16,7 @@ class QueryBrowser_ extends Line_ {
 
     // For the default time span, use the first of the suggested span options that is at least as long as props.timeSpan
     this.defaultSpan = spans.map(parsePrometheusDuration).find(s => s >= props.timeSpan);
+    this.timeSpan = this.defaultSpan;
 
     _.assign(this.state, {
       isSpanValid: true,
@@ -42,6 +42,7 @@ class QueryBrowser_ extends Line_ {
       },
       yaxis: {
         fixedrange: false,
+        tickformat: null, // Use Plotly's default value format
       },
     });
 
@@ -67,13 +68,8 @@ class QueryBrowser_ extends Line_ {
       }
     };
 
-    this.relayout = () => {
-      const now = new Date();
-      const end = this.end || now;
-      const start = this.start || new Date(end - this.state.span);
-      // eslint-disable-next-line no-console
-      relayout(this.node, {'xaxis.range': [start, end]}).catch(e => console.error(e));
-    };
+    // eslint-disable-next-line no-console
+    this.relayout = layout => relayout(this.node, layout).catch(e => console.error(e));
 
     this.showLatest = span => {
       this.start = null;
@@ -82,7 +78,10 @@ class QueryBrowser_ extends Line_ {
       this.setState({isSpanValid: true, span, spanText: formatPrometheusDuration(span), updating: true}, () => {
         clearInterval(this.interval);
         this.fetch();
-        this.relayout();
+
+        const end = new Date();
+        const start = new Date(end - span);
+        this.relayout({'xaxis.range': [start, end], 'yaxis.autorange': true});
       });
     };
 
@@ -97,7 +96,7 @@ class QueryBrowser_ extends Line_ {
     };
   }
 
-  updateGraph(data) {
+  updateGraph(data, error) {
     const newData = _.get(data, '[0].data.result');
     if (!_.isEmpty(newData)) {
       this.data = newData;
@@ -148,25 +147,31 @@ class QueryBrowser_ extends Line_ {
         traceIndex += 1;
       });
 
-      this.relayout();
+      if (!this.start && !this.end) {
+        const end = new Date();
+        const start = new Date(end - this.state.span);
+        this.relayout({'xaxis.range': [start, end]});
+      }
     }
-    this.setState({updating: false});
+    this.setState({error, updating: false});
   }
 
   render() {
     const {query, urls} = this.props;
-    const {spanText, isSpanValid, updating} = this.state;
+    const {error, isSpanValid, spanText, updating} = this.state;
     const baseUrl = urls[MonitoringRoutes.Prometheus];
 
     return <div className="query-browser__wrapper">
       <div className="query-browser__header">
         <div className="query-browser__controls">
-          <input
-            className={classNames('form-control query-browser__span-text', {'query-browser__span-text--error': !isSpanValid})}
-            onChange={this.onSpanTextChange}
-            type="text"
-            value={spanText}
-          />
+          <div className={isSpanValid ? '' : 'has-error'}>
+            <input
+              className="form-control query-browser__span-text"
+              onChange={this.onSpanTextChange}
+              type="text"
+              value={spanText}
+            />
+          </div>
           <Dropdown
             buttonClassName="btn-default form-control query-browser__span-dropdown"
             items={dropdownItems}
@@ -183,6 +188,9 @@ class QueryBrowser_ extends Line_ {
         </div>
         {baseUrl && query && <ExternalLink href={`${baseUrl}/graph?g0.expr=${encodeURIComponent(query)}&g0.tab=0`} text="View in Prometheus UI" />}
       </div>
+      {error && <div className="alert alert-danger query-browser__error">
+        <span className="pficon pficon-error-circle-o" aria-hidden="true"></span>{error.message}
+      </div>}
       <div ref={this.setNode} style={{width: '100%'}} />
     </div>;
   }

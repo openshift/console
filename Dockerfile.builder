@@ -48,9 +48,8 @@ RUN cd /tmp && \
     ln -s /usr/local/yarn/bin/yarn /usr/local/bin/yarn
 
 # Install Chrome for installer gui tests
-# Use Chrome beta because v60 or higher is needed for headless mode
 RUN wget --quiet -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - && \
     sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list' && \
     apt-get update && \
     apt-get install --no-install-recommends -y -q \
-    google-chrome-beta ca-certificates
+    google-chrome-stable ca-certificates

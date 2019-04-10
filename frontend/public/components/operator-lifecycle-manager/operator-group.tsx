@@ -5,7 +5,7 @@ import * as _ from 'lodash-es';
 import { Link } from 'react-router-dom';
 
 import { MsgBox } from '../utils/status-box';
-import { K8sResourceKind, GroupVersionKind, referenceForModelCompatible } from '../../module/k8s';
+import { K8sResourceKind, GroupVersionKind, referenceForModel } from '../../module/k8s';
 import { OperatorGroupKind, SubscriptionKind } from './index';
 import { AsyncComponent } from '../utils/async';
 import { OperatorGroupModel } from '../../models';
@@ -17,7 +17,7 @@ export const operatorGroupFor = (obj: K8sResourceKind) => _.get(obj, ['metadata'
 
 export const NoOperatorGroupMsg: React.SFC = () => <MsgBox
   title="Namespace Not Enabled"
-  detail={<p>The Operator Lifecycle Manager will not watch this namespace because it is not configured with an OperatorGroup. <Link to={`/ns/${getActiveNamespace()}/${referenceForModelCompatible(OperatorGroupModel)('operators.coreos.com~v1alpha2')}/new`}>Create one here.</Link></p>} />;
+  detail={<p>The Operator Lifecycle Manager will not watch this namespace because it is not configured with an OperatorGroup. <Link to={`/ns/${getActiveNamespace()}/${referenceForModel(OperatorGroupModel)}/new`}>Create one here.</Link></p>} />;
 
 type RequireOperatorGroupProps = {
   operatorGroup: {loaded: boolean, data?: OperatorGroupKind[]};
@@ -30,9 +30,9 @@ export const OperatorGroupSelector: React.SFC<OperatorGroupSelectorProps> = (pro
   }}
   desc="Operator Groups"
   placeholder="Select Operator Group"
-  selectedKeyKind={referenceForModelCompatible(OperatorGroupModel)('operators.coreos.com~v1alpha2')}
+  selectedKeyKind={referenceForModel(OperatorGroupModel)}
   dataFilter={props.dataFilter}
-  resources={[{kind: referenceForModelCompatible(OperatorGroupModel)('operators.coreos.com~v1alpha2'), fieldSelector: `metadata.name!=${props.excludeName}`}]} />;
+  resources={[{kind: referenceForModel(OperatorGroupModel), fieldSelector: `metadata.name!=${props.excludeName}`}]} />;
 
 export const requireOperatorGroup = <P extends RequireOperatorGroupProps>(Component: React.ComponentType<P>) => {
   return class RequireOperatorGroup extends React.Component<P> {
