@@ -4,6 +4,7 @@ import * as _ from 'lodash-es';
 // eslint-disable-next-line no-unused-vars
 import { K8sResourceKind } from '../module/k8s';
 import { SectionHeading, ResourceLink } from './utils';
+import { MaskedData } from './configmap-and-secret-data';
 
 export const ServiceCatalogParametersSecrets: React.SFC<ServiceCatalogParametersSecretsProps> = ({obj: obj}) => {
   const rows = _.map(obj.spec.parametersFrom, ({secretKeyRef}) => <div className="row" key={secretKeyRef.name}>
@@ -35,7 +36,7 @@ export const ServiceCatalogParameters: React.SFC<ServiceCatalogParametersProps> 
   <dl className="co-m-resource__details">
     {_.map(parameters, (v, k) => <React.Fragment key={k}>
       <dt>{k}</dt>
-      <dd>{v}</dd>
+      <dd>{v === '<redacted>' ? <MaskedData /> : v}</dd>
     </React.Fragment>
     )}
   </dl>
