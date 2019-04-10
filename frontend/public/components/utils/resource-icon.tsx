@@ -9,6 +9,10 @@ import { kindToAbbr } from '../../module/k8s/get-resources';
 const MEMO = {};
 
 export const ResourceIcon: React.SFC<ResourceIconProps> = ({className, kind}) => {
+  // if no kind, return null so an empty icon isn't rendered
+  if (!kind) {
+    return null;
+  }
   const memoKey = className ? `${kind}/${className}` : kind;
   if (MEMO[memoKey]) {
     return MEMO[memoKey];
