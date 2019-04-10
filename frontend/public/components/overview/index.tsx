@@ -874,7 +874,7 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
 
   createVirtualMachineItems(): OverviewItem[] {
     const {virtualMachines} = this.props;
-    return _.map(virtualMachines.data, vm => {
+    return _.map(_.get(virtualMachines, 'data'), vm => {
       const obj = {
         ...vm,
         kind: VirtualMachineModel.kind,
