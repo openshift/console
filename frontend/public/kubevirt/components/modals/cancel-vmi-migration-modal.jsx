@@ -32,7 +32,7 @@ class CancelVmiMigrationModal extends PromiseComponent {
 
   render() {
     const {migration} = this.props;
-    return <Form onSubmit={this._submit}>
+    return <Form onSubmit={this._submit} className="modal-content">
       <ModalTitle>Cancel Virtual Machine Migration</ModalTitle>
       <ModalBody>
         Are you sure you want to cancel <strong>{migration.spec.vmiName}</strong> migration

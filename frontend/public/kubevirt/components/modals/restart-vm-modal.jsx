@@ -41,7 +41,7 @@ class RestartVmModal extends PromiseComponent {
 
   render() {
     const {resource} = this.props;
-    return <form onSubmit={this._submit} name="form">
+    return <form onSubmit={this._submit} name="form" className="modal-content">
       <ModalTitle>Restart Virtual Machine</ModalTitle>
       <ModalBody> Are you sure you want to restart <strong>{resource.metadata.name}</strong>
         <span> in namespace <strong>{resource.metadata.namespace}</strong>?</span>

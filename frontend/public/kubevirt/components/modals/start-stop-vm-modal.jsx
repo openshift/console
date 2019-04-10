@@ -39,7 +39,7 @@ class StartStopVmModal extends PromiseComponent {
   render() {
     const {resource} = this.props;
     const action = this.props.start? 'Start':'Stop';
-    return <form onSubmit={this._submit} name="form">
+    return <form onSubmit={this._submit} name="form" className="modal-content">
       <ModalTitle>{action} Virtual Machine</ModalTitle>
       <ModalBody>
         Are you sure you want to {action} <strong>{resource.metadata.name}</strong>
