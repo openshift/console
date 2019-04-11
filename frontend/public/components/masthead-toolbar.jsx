@@ -153,6 +153,7 @@ class MastheadToolbar_ extends React.Component {
     return [{
       label: 'Multi-Cluster Manager',
       callback: this._onClusterManager,
+      externalLink: true,
     }];
   }
 
@@ -160,10 +161,12 @@ class MastheadToolbar_ extends React.Component {
     return [{
       label: 'Documentation',
       callback: this._onDocumentation,
+      externalLink: true,
     }, {
       label: 'CLI Download',
       callback: this._onCLIDownload,
-    }, {
+      externalLink: true,
+    },{
       label: 'About',
       callback: this._onAboutModal,
     }];
@@ -172,7 +175,9 @@ class MastheadToolbar_ extends React.Component {
   _renderMenuItems(actions) {
     return actions.map((action, i) => action.separator
       ? <DropdownSeparator key={i} />
-      : <DropdownItem key={i} onClick={action.callback}>{action.label}</DropdownItem>
+      : <DropdownItem key={i} onClick={action.callback}>
+        {action.label}{action.externalLink && <span className="co-external-link"></span>}
+      </DropdownItem>
     );
   }
 
@@ -282,6 +287,7 @@ class MastheadToolbar_ extends React.Component {
             <ToolbarItem>
               <Dropdown
                 isPlain
+                position="right"
                 onSelect={this._onHelpDropdownSelect}
                 toggle={
                   <DropdownToggle aria-label="Help" iconComponent={null} onToggle={this._onHelpDropdownToggle}>

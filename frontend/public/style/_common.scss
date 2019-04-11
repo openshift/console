@@ -275,9 +275,13 @@
   margin-right: -15px; // width + margin-left
   top:0;
   width: 12px;
-
+  .pf-c-dropdown__menu-item & {
+    color: $color-pf-black-600;
+    margin-left: 5px;
+  }
   .pf-c-nav__link & {
     color: $color-pf-black-500;
+    margin-left: 4px;
   }
 }
 .co-external-link {
