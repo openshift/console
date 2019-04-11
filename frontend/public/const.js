@@ -36,3 +36,5 @@ export const RH_OPERATOR_SUPPORT_POLICY_LINK = 'https://access.redhat.com/third-
 
 // Package manifests for the OperatorHub use this label.
 export const OPERATOR_HUB_LABEL = 'openshift-marketplace';
+
+export const CLI_DOWNLOAD_LINK = 'https://mirror.openshift.com/pub/openshift-v4/clients/oc/4.1';

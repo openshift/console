@@ -60,7 +60,7 @@ export const getCachedResources = () => new Promise<any>((resolve, reject) => {
   resolve(null);
 });
 
-export const getResources = () => coFetchJSON('api/kubernetes/apis')
+const getResources_ = () => coFetchJSON('api/kubernetes/apis')
   .then(res => {
     const preferredVersions = res.groups.map(group => group.preferredVersion);
     const all: Promise<APIResourceList>[] = _.flatten(res.groups
@@ -106,6 +106,11 @@ export const getResources = () => coFetchJSON('api/kubernetes/apis')
         return {allResources, safeResources, adminResources, configResources, namespacedSet, models, preferredVersions};
       });
   });
+
+// Never attemp to re-run API discovery more than once every 30s. This will
+// prevent the console from thrashing when one of the API services is
+// misbehaving, which can cause frequent WebSocket updates.
+export const getResources = _.throttle(getResources_, 30 * 1000);
 
 export type APIResourceList = {
   kind: 'APIResourceList';
