@@ -97,13 +97,3 @@ export const configureJobParallelismModal = (props) => {
     buttonText: 'Save',
   }, props));
 };
-
-export const configureClusterSizeModal = (props) => {
-  return configureCountModal(_.defaults({}, {
-    defaultValue: 0,
-    title: 'Edit Cluster Size',
-    message: `${props.resourceKind.labelPlural} maintain the desired number of healthy pods.`,
-    path: '/spec/size',
-    buttonText: 'Save',
-  }, props));
-};
