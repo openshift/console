@@ -4,6 +4,7 @@ import { $, $$, element, browser, by, ExpectedConditions as until, Key } from 'p
 import { appHost, testName, checkLogs, checkErrors, waitForCount } from '../protractor.conf';
 import * as crudView from '../views/crud.view';
 import * as secretsView from '../views/secrets.view';
+import { execSync } from 'child_process';
 
 xdescribe('Interacting with the create secret forms', () => {
 
@@ -286,6 +287,58 @@ xdescribe('Interacting with the create secret forms', () => {
 
     it('deletes the Key/Value secret', async() => {
       await crudView.deleteResource('secrets', 'Secret', keyValueSecretName);
+    });
+  });
+});
+
+describe('Add Secret to Workloads', () => {
+  const secretName = 'test-secret';
+  const resourceName = 'test-deploy';
+  const resourceKind = 'deployment';
+  const envPrefix = 'env-';
+  const mountPath = '/tmp/testdata';
+
+
+  beforeAll(async()=> {
+    // create deployment and secret
+    execSync(`kubectl run ${resourceName} --image=aosqe/hello-openshift -n ${testName}`);
+    execSync(`kubectl create secret generic ${secretName} --from-literal=key1=supersecret -n ${testName}`);
+  });
+
+  beforeEach(async() => secretsView.visitSecretDetailsPage(appHost, testName, secretName));
+
+  afterEach(() => {
+    checkLogs();
+    checkErrors();
+  });
+
+  describe('Add Secret to Workloads as Enviroment Variables', ()=> {
+    it('Add Secret to Deployment as Env', async() => {
+      await secretsView.addSecretToWorkloadAsEnv(resourceName, envPrefix);
+      await new Promise(resolve => (function checkForValues() {
+        const output = secretsView.getResourceJSON(resourceName, testName, resourceKind);
+        if ( JSON.parse(output).status.observedGeneration === 2 ) {
+          return resolve();
+        }
+        setTimeout(checkForValues, 2000);
+      })());
+      expect(secretsView.isValueInJSONPath('spec.template.spec.containers[0].envFrom[0].secretRef.name', secretName, resourceName, testName, resourceKind)).toBe(true);
+      expect(secretsView.isValueInJSONPath('spec.template.spec.containers[0].envFrom[0].prefix', envPrefix, resourceName, testName, resourceKind)).toBe(true);
+    });
+  });
+
+  describe('Add Secret to Workloads as Volume', ()=> {
+    it('Add Secret to Deployment as Vol', async() => {
+      await secretsView.addSecretToWorkloadAsVol(resourceName, mountPath);
+      await new Promise(resolve => (function checkForValues() {
+        const output = secretsView.getResourceJSON(resourceName, testName, resourceKind);
+        if ( JSON.parse(output).status.observedGeneration === 3 ) {
+          return resolve();
+        }
+        setTimeout(checkForValues, 2000);
+      })());
+      expect(secretsView.isValueInJSONPath('spec.template.spec.containers[0].volumeMounts[0].name', secretName, resourceName, testName, resourceKind)).toBe(true);
+      expect(secretsView.isValueInJSONPath('spec.template.spec.containers[0].volumeMounts[0].mountPath', mountPath, resourceName, testName, resourceKind)).toBe(true);
     });
   });
 });
