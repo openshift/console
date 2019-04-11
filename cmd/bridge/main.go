@@ -377,8 +377,6 @@ func main() {
 			// Assume kubectl is the client ID trusted by kubernetes, not bridge.
 			// These additional flags causes Dex to issue an ID token valid for
 			// both bridge and kubernetes.
-			//
-			// For design see: https://github.com/coreos-inc/tectonic/blob/master/docs-internal/tectonic-identity.md
 			oidcClientConfig.Scope = append(
 				oidcClientConfig.Scope,
 				"audience:server:client_id:"+*fUserAuthOIDCClientID,

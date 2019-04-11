@@ -16,6 +16,7 @@ class QueryBrowser_ extends Line_ {
 
     // For the default time span, use the first of the suggested span options that is at least as long as props.timeSpan
     this.defaultSpan = spans.map(parsePrometheusDuration).find(s => s >= props.timeSpan);
+    this.timeSpan = this.defaultSpan;
 
     _.assign(this.state, {
       isSpanValid: true,
@@ -41,6 +42,7 @@ class QueryBrowser_ extends Line_ {
       },
       yaxis: {
         fixedrange: false,
+        tickformat: null, // Use Plotly's default value format
       },
     });
 
@@ -94,7 +96,7 @@ class QueryBrowser_ extends Line_ {
     };
   }
 
-  updateGraph(data) {
+  updateGraph(data, error) {
     const newData = _.get(data, '[0].data.result');
     if (!_.isEmpty(newData)) {
       this.data = newData;
@@ -151,12 +153,12 @@ class QueryBrowser_ extends Line_ {
         this.relayout({'xaxis.range': [start, end]});
       }
     }
-    this.setState({updating: false});
+    this.setState({error, updating: false});
   }
 
   render() {
     const {query, urls} = this.props;
-    const {spanText, isSpanValid, updating} = this.state;
+    const {error, isSpanValid, spanText, updating} = this.state;
     const baseUrl = urls[MonitoringRoutes.Prometheus];
 
     return <div className="query-browser__wrapper">
@@ -186,6 +188,9 @@ class QueryBrowser_ extends Line_ {
         </div>
         {baseUrl && query && <ExternalLink href={`${baseUrl}/graph?g0.expr=${encodeURIComponent(query)}&g0.tab=0`} text="View in Prometheus UI" />}
       </div>
+      {error && <div className="alert alert-danger query-browser__error">
+        <span className="pficon pficon-error-circle-o" aria-hidden="true"></span>{error.message}
+      </div>}
       <div ref={this.setNode} style={{width: '100%'}} />
     </div>;
   }
