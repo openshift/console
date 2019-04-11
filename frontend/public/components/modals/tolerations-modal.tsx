@@ -104,7 +104,7 @@ class TolerationsModal extends PromiseComponent {
       'NoExecute': 'NoExecute',
     };
     const { tolerations, errorMessage, inProgress } = this.state;
-    return <form onSubmit={this._submit} name="form" className="modal-content toleration-modal">
+    return <form onSubmit={this._submit} name="form" className="modal-content modal-content--accommodate-dropdown toleration-modal">
       <ModalTitle>Edit Tolerations</ModalTitle>
       <ModalBody>
         {_.isEmpty(tolerations)

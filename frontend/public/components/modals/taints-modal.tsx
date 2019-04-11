@@ -70,7 +70,7 @@ class TaintsModal extends PromiseComponent {
       'NoExecute': 'NoExecute',
     };
     const { taints, errorMessage, inProgress } = this.state;
-    return <form onSubmit={this._submit} name="form" className="modal-content taint-modal">
+    return <form onSubmit={this._submit} name="form" className="modal-content modal-content--accommodate-dropdown taint-modal">
       <ModalTitle>Edit Taints</ModalTitle>
       <ModalBody>
         {_.isEmpty(taints)
