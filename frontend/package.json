@@ -4,7 +4,8 @@
   "license": "Apache-2.0",
   "private": true,
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "public"
   ],
   "scripts": {
     "dev": "rm -rf ./public/dist && ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/webpack --mode development --watch --progress",
@@ -36,7 +37,7 @@
       ".(ts|tsx|js|jsx)": "./node_modules/ts-jest/preprocessor.js"
     },
     "transformIgnorePatterns": [
-      "<rootDir>/node_modules/(?!lodash-es/.*)"
+      "<rootDir>/node_modules/(?!lodash-es|@console)"
     ],
     "testRegex": "/__tests__/.*\\.(ts|tsx|js|jsx)$",
     "setupFiles": [
@@ -73,6 +74,7 @@
     "js-base64": "^2.4.5",
     "js-yaml": "3.x",
     "lodash-es": "4.x",
+    "memoize-one": "5.x",
     "murmurhash-js": "1.0.x",
     "openshift-logos-icon": "1.7.1",
     "patternfly": "^3.59.0",
@@ -108,6 +110,7 @@
   },
   "devDependencies": {
     "@types/enzyme": "3.x",
+    "@types/glob": "7.x",
     "@types/immutable": "3.x",
     "@types/jasmine": "2.8.x",
     "@types/jasminewd2": "2.0.x",
@@ -121,7 +124,7 @@
     "@types/react-router-dom": "4.2.7",
     "@types/react-transition-group": "2.x",
     "@types/react-virtualized": "9.x",
-    "@types/webpack": "^4.1.1",
+    "@types/webpack": "4.x",
     "@typescript-eslint/eslint-plugin": "^1.7.0",
     "@typescript-eslint/parser": "^1.7.0",
     "bootstrap-sass": "^3.3.7",
@@ -137,6 +140,7 @@
     "eslint-plugin-react-hooks": "^1.5.1",
     "file-loader": "1.x",
     "fork-ts-checker-webpack-plugin": "0.x",
+    "glob": "7.x",
     "glslify-loader": "1.x",
     "html-webpack-plugin": "3.x",
     "jasmine-console-reporter": "2.x",
@@ -149,6 +153,7 @@
     "protractor": "5.4.x",
     "protractor-fail-fast": "3.x",
     "protractor-jasmine2-screenshot-reporter": "0.5.x",
+    "read-pkg": "5.x",
     "resolve-url-loader": "2.x",
     "sass-loader": "6.x",
     "thread-loader": "1.x",
@@ -158,7 +163,8 @@
     "typescript": "3.4.4",
     "webpack": "4.29.6",
     "webpack-bundle-analyzer": "2.x",
-    "webpack-cli": "^2.0.12"
+    "webpack-cli": "^2.0.12",
+    "webpack-virtual-modules": "^0.1.10"
   },
   "engines": {
     "node": ">=8.x"

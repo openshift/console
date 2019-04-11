@@ -63,6 +63,8 @@ import {
   TemplateInstanceModel,
 } from '../models';
 
+import * as plugins from '../plugins';
+
 export const resourceDetailPages = ImmutableMap<GroupVersionKind | string, () => Promise<React.ComponentType<any>>>()
   .set(referenceForModel(ClusterServiceClassModel), () => import('./cluster-service-class' /* webpackChunkName: "cluster-service-class" */).then(m => m.ClusterServiceClassDetailsPage))
   .set(referenceForModel(ClusterServiceBrokerModel), () => import('./cluster-service-broker' /* webpackChunkName: "cluster-service-broker" */).then(m => m.ClusterServiceBrokerDetailsPage))
@@ -117,7 +119,12 @@ export const resourceDetailPages = ImmutableMap<GroupVersionKind | string, () =>
   .set(referenceForModel(InstallPlanModel), () => import('./operator-lifecycle-manager/install-plan' /* webpackChunkName: "install-plan" */).then(m => m.InstallPlanDetailsPage))
   .set(referenceForModel(ClusterOperatorModel), () => import('./cluster-settings/cluster-operator' /* webpackChunkName: "cluster-operator" */).then(m => m.ClusterOperatorDetailsPage))
   .set(referenceForModel(ClusterVersionModel), () => import('./cluster-settings/cluster-version' /* webpackChunkName: "cluster-version" */).then(m => m.ClusterVersionDetailsPage))
-  .set(referenceForModel(OAuthModel), () => import('./cluster-settings/oauth' /* webpackChunkName: "oauth" */).then(m => m.OAuthDetailsPage));
+  .set(referenceForModel(OAuthModel), () => import('./cluster-settings/oauth' /* webpackChunkName: "oauth" */).then(m => m.OAuthDetailsPage))
+  .withMutations(map => {
+    plugins.registry.getResourcePages().filter(plugins.isResourceDetailPage).forEach(page => {
+      map.set(referenceForModel(page.properties.model), page.properties.loader);
+    });
+  });
 
 export const resourceListPages = ImmutableMap<GroupVersionKind | string, () => Promise<React.ComponentType<any>>>()
   .set(referenceForModel(ClusterServiceClassModel), () => import('./cluster-service-class' /* webpackChunkName: "cluster-service-class" */).then(m => m.ClusterServiceClassPage))
@@ -171,4 +178,9 @@ export const resourceListPages = ImmutableMap<GroupVersionKind | string, () => P
   .set(referenceForModel(PackageManifestModel), () => import('./operator-lifecycle-manager/package-manifest' /* webpackChunkName: "package-manifest" */).then(m => m.PackageManifestsPage))
   .set(referenceForModel(SubscriptionModel), () => import('./operator-lifecycle-manager/subscription' /* webpackChunkName: "subscription" */).then(m => m.SubscriptionsPage))
   .set(referenceForModel(InstallPlanModel), () => import('./operator-lifecycle-manager/install-plan' /* webpackChunkName: "install-plan" */).then(m => m.InstallPlansPage))
-  .set(referenceForModel(ClusterOperatorModel), () => import('./cluster-settings/cluster-operator' /* webpackChunkName: "cluster-operator" */).then(m => m.ClusterOperatorPage));
+  .set(referenceForModel(ClusterOperatorModel), () => import('./cluster-settings/cluster-operator' /* webpackChunkName: "cluster-operator" */).then(m => m.ClusterOperatorPage))
+  .withMutations(map => {
+    plugins.registry.getResourcePages().filter(plugins.isResourceListPage).forEach(page => {
+      map.set(referenceForModel(page.properties.model), page.properties.loader);
+    });
+  });
