@@ -49,6 +49,8 @@ const resourceMap = {
 
 const getPrometheusBaseURL = () => window.SERVER_FLAGS.prometheusBaseURL;
 
+const getAlertManagerBaseURL = () => window.SERVER_FLAGS.alertManagerBaseURL;
+
 const OverviewEventStream = () => <EventStream scrollableElementId="events-body" InnerComponent={EventsInnerOverview} overview={true} namespace={undefined} />;
 
 export class StorageOverview extends React.Component {
@@ -124,6 +126,23 @@ export class StorageOverview extends React.Component {
     });
   }
 
+  async fetchAlerts() {
+    const url = `${getAlertManagerBaseURL()}/api/v2/alerts`;
+    let alertsResponse;
+    try {
+      alertsResponse = await coFetchJSON(url);
+    } catch (error) {
+      alertsResponse = error;
+    } finally {
+      if (this._isMounted) {
+        this.setState({
+          alertsResponse,
+        });
+        setTimeout(() => this.fetchAlerts(), REFRESH_TIMEOUT);
+      }
+    }
+  }
+
   componentDidMount() {
     this._isMounted = true;
 
@@ -136,13 +155,16 @@ export class StorageOverview extends React.Component {
     this.fetchPrometheusQuery(UTILIZATION_IOPS_QUERY, response => this.setUtilizationData('iopsUtilization', response));
     this.fetchPrometheusQuery(UTILIZATION_LATENCY_QUERY, response => this.setUtilizationData('latencyUtilization', response));
     this.fetchPrometheusQuery(UTILIZATION_THROUGHPUT_QUERY, response => this.setUtilizationData('throughputUtilization', response));
+
+    this.fetchAlerts();
   }
+
   componentWillUnmount() {
     this._isMounted = false;
   }
 
   render() {
-    const { ocsHealthData, capacityData, diskStats, utilizationData } = this.state;
+    const { ocsHealthData, capacityData, diskStats, utilizationData, alertsResponse } = this.state;
 
     const inventoryResourceMapToProps = resources => {
       return {
@@ -157,6 +179,7 @@ export class StorageOverview extends React.Component {
             loaded: true,
           },
           ...utilizationData,
+          alertsResponse,
         },
       };
     };
