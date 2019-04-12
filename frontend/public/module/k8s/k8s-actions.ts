@@ -255,7 +255,12 @@ const actions = {
 
           POLLs[id] = setTimeout(pollAndWatch, 15 * 1000);
         })
-        .onbulkmessage(events => [actions.updateListFromWS, extraAction].forEach(f => f && dispatch(f(id, events))));
+        .onbulkmessage(events => [actions.updateListFromWS, extraAction].forEach(f => {
+          // TODO: fix bug when metadata.resourceVersion is updated rapidly in watchAPIServices. This calls getResources (extraAction) and this updates many other objects
+          if (f && events.filter(event => !(_.get(event.object, 'kind') === APIServiceModel.kind && _.get(event.object, 'metadata.name') === 'v1.quota.openshift.io')).length > 0){
+            dispatch(f(id, events));
+          }
+        }));
     };
     pollAndWatch();
   },
