@@ -19,6 +19,7 @@ export type provisionOptions = {
 export type networkResource = {
   name: string,
   mac: string,
+  binding: string,
   networkDefinition: string,
 }[];
 

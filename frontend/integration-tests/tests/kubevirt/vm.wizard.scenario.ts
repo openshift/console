@@ -71,7 +71,7 @@ describe('Kubevirt create VM using wizard', () => {
 
       // Networking
       for (const networkOption of provisionConfig.networkOptions) {
-        await wizard.addNIC(networkOption.name, networkOption.mac, networkOption.networkDefinition);
+        await wizard.addNic(networkOption.name, networkOption.mac, networkOption.networkDefinition, networkOption.binding);
       }
       await wizard.next();
 

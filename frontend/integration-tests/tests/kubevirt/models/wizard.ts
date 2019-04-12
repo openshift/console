@@ -76,11 +76,12 @@ export default class Wizard {
     await isLoaded();
   }
 
-  async addNIC(name: string, mac: string, networkDefinition: string) {
+  async addNic(name: string, mac: string, networkDefinition: string, binding: string) {
     await wizardView.createNIC.click();
     const rowsCount = await this.getTableRowsCount();
     // Dropdown selection needs to be first due to https://github.com/kubevirt/web-ui-components/issues/9
     await wizardView.selectTableDropdownAttribute(rowsCount, 'network', networkDefinition);
+    await wizardView.selectTableDropdownAttribute(rowsCount, 'binding', binding),
     await wizardView.setTableInputAttribute(rowsCount, 'name', name);
     await wizardView.setTableInputAttribute(rowsCount, 'mac', mac);
     await wizardView.apply.click();

@@ -159,6 +159,7 @@ export const basicVmConfig = {
 export const networkInterface = {
   name: `nic1-${testName.slice(-5)}`,
   mac: 'fe:fe:fe:fe:fe:fe',
+  binding: 'bridge',
   networkDefinition: testNad.metadata.name,
 };
 

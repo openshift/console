@@ -17,6 +17,7 @@ export const createDisk = $('#create-disk-btn');
 export const nicName = $('#nic-name');
 export const macAddress = $('#mac-address');
 export const networkTypeDropdownId = '#network-type';
+export const networkBindingId = '#binding';
 
 export const diskName = $('#disk-name');
 export const diskSize = $('#disk-size');

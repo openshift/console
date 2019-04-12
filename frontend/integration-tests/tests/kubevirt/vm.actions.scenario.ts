@@ -141,7 +141,7 @@ describe('Add/remove disks and NICs on respective VM pages', () => {
   }, VM_ACTIONS_TIMEOUT * 2);
 
   it('Add/remove nic on VM Network Interfaces page', async() => {
-    await vm.addNic(networkInterface.name, networkInterface.mac, networkInterface.networkDefinition);
+    await vm.addNic(networkInterface.name, networkInterface.mac, networkInterface.networkDefinition, networkInterface.binding);
 
     expect((await vm.getAttachedResources(nicsTab)).includes(networkInterface.name)).toBe(true);
     expect((searchYAML(networkInterface.networkDefinition, vm.name, vm.namespace, 'vmi'))).toBe(false);

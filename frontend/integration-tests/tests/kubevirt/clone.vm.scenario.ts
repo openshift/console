@@ -136,7 +136,7 @@ describe('Test clone VM.', () => {
     }, VM_BOOTUP_TIMEOUT);
 
     it('Cloned VM has cleared MAC addresses.', async() => {
-      await vm.addNic(networkInterface.name, networkInterface.mac, networkInterface.networkDefinition);
+      await vm.addNic(networkInterface.name, networkInterface.mac, networkInterface.networkDefinition, networkInterface.binding);
       await vm.action('Clone');
       await wizard.next();
 
@@ -146,7 +146,7 @@ describe('Test clone VM.', () => {
 
       await browser.wait(until.and(waitForCount($$('.co-resource-list__item'), 2)), PAGE_LOAD_TIMEOUT);
       // TODO: Add classes/ids to collumn attributes so that divs can be easily selected
-      const mac = await resourceRows.first().$('div:nth-child(4)').getText();
+      const mac = await resourceRows.first().$('div:nth-child(5)').getText();
       expect(mac === '---').toBe(true, 'MAC address should be cleared');
 
       await clonedVm.action('Delete');
