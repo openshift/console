@@ -1,6 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import { getHostStatus } from 'kubevirt-web-ui-components';
+import { BaremetalHostStatus, getHostStatus } from 'kubevirt-web-ui-components';
 import { connect } from 'react-redux';
 import { actions } from '../../../kubevirt/module/okdk8s';
 
@@ -55,7 +55,6 @@ const HostRow = ({ obj: host }) => {
     },
   } = host;
 
-  const status = getHostStatus(host);
   const machineName = _.get(host, 'status.machineRef.name');
 
   return (
@@ -68,7 +67,9 @@ const HostRow = ({ obj: host }) => {
           title={uid}
         />
       </div>
-      <div className={statusColumnClasses}>{status}</div>
+      <div className={statusColumnClasses}>
+        <BaremetalHostStatus host={host} />
+      </div>
       <div className={machineColumnClasses}>
         <MachineLink name={machineName} />
       </div>
@@ -103,7 +104,7 @@ const createProps = ns => ({
   onClick: () => openCreateBaremetalHostModal(ns),
 });
 
-const mapStateToProps = ({k8s}) => ({
+const mapStateToProps = ({ k8s }) => ({
   k8s,
 });
 
@@ -134,4 +135,7 @@ class BaremetalHostsPage_ extends React.Component<BaremetalHostsPageProps> {
   }
 }
 
-export const BaremetalHostsPage = connect(mapStateToProps, mapDispatchToProps)(BaremetalHostsPage_);
+export const BaremetalHostsPage = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(BaremetalHostsPage_);
