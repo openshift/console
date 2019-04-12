@@ -51,7 +51,7 @@ const getPrometheusBaseURL = () => window.SERVER_FLAGS.prometheusBaseURL;
 
 const getAlertManagerBaseURL = () => window.SERVER_FLAGS.alertManagerBaseURL;
 
-const OverviewEventStream = () => <EventStream scrollableElementId="events-body" InnerComponent={EventsInnerOverview} overview={true} namespace={undefined} />;
+const OverviewEventStream = () => <EventStream scrollableElementId="events-body" InnerComponent={EventsInnerOverview} overview={true} namespace={undefined} kind="PersistentVolumeClaim" />;
 
 export class StorageOverview extends React.Component {
   constructor(props) {
