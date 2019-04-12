@@ -128,7 +128,7 @@ const getRdpAddressPort = (rdpService, launcherPod) => {
  * To pair service with VM, selector must be set on the Service object:
  *   spec:
  *     selector:
- *       vm.cnv.io/name: VM_NAME
+ *       vm.kubevirt.io/name: VM_NAME
  *
  * https://kubevirt.io/user-guide/docs/latest/using-virtual-machines/expose-service.html
  * virtctl expose virtualmachine [VM_NAME] --name [MY_SERVICE_NAME] --port 27017 --target-port 3389

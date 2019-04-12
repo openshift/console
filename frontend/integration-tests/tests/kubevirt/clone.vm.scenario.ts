@@ -154,14 +154,14 @@ describe('Test clone VM.', () => {
       await vm.removeNic(networkInterface.name);
     }, VM_BOOTUP_TIMEOUT);
 
-    it('Cloned VM has vm.cnv.io/name label.', async() => {
+    it('Cloned VM has vm.kubevirt.io/name label.', async() => {
       await vm.action('Clone');
       await wizard.next();
 
       const clonedVm = new VirtualMachine(`${vm.name}-clone`, vm.namespace);
       leakedResources.add(JSON.stringify({name: clonedVm.name, namespace: clonedVm.namespace, kind: 'vm'}));
-      expect(searchYAML(`vm.cnv.io/name: ${vm.name}`, clonedVm.name, clonedVm.namespace, 'vm'))
-        .toBeTruthy('Cloned VM should have vm.cnv.io/name label.');
+      expect(searchYAML(`vm.kubevirt.io/name: ${vm.name}`, clonedVm.name, clonedVm.namespace, 'vm'))
+        .toBeTruthy('Cloned VM should have vm.kubevirt.io/name label.');
 
       await clonedVm.action('Delete');
       leakedResources.delete(JSON.stringify({name: clonedVm.name, namespace: clonedVm.namespace, kind: 'vm'}));

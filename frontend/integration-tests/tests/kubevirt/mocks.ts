@@ -5,17 +5,17 @@ export function getVmManifest(provisionSource: string, namespace: string, name?:
   const metadata = {
     name: name ? name : `${provisionSource.toLowerCase()}-${namespace.slice(-5)}`,
     annotations: {
-      'name.os.template.cnv.io/centos7.0': 'CentOS 7.0',
+      'name.os.template.kubevirt.io/centos7.0': 'CentOS 7.0',
       description: namespace,
     },
     namespace,
     labels: {
       'app': `vm-${provisionSource.toLowerCase()}-${namespace}`,
-      'flavor.template.cnv.io/Custom': 'true',
-      'os.template.cnv.io/centos7.0': 'true',
-      'vm.cnv.io/template': 'centos7-generic-medium',
-      'vm.cnv.io/template-namespace': 'openshift',
-      'workload.template.cnv.io/generic': 'true',
+      'flavor.template.kubevirt.io/Custom': 'true',
+      'os.template.kubevirt.io/centos7.0': 'true',
+      'vm.kubevirt.io/template': 'centos7-generic-medium',
+      'vm.kubevirt.io/template-namespace': 'openshift',
+      'workload.template.kubevirt.io/generic': 'true',
     },
   };
   const urlSource = {
@@ -85,7 +85,7 @@ export function getVmManifest(provisionSource: string, namespace: string, name?:
       template: {
         metadata: {
           labels: {
-            'vm.cnv.io/name': metadata.name,
+            'vm.kubevirt.io/name': metadata.name,
           },
         },
         spec : {
@@ -184,15 +184,15 @@ apiVersion: kubevirt.io/v1alpha3
 kind: VirtualMachine
 metadata:
   annotations:
-    name.os.template.cnv.io/rhel7.6: Red Hat Enterprise Linux 7.6
+    name.os.template.kubevirt.io/rhel7.6: Red Hat Enterprise Linux 7.6
   name: vm-${testName}
   namespace: ${testName}
   labels:
-    flavor.template.cnv.io/small: 'true'
-    os.template.cnv.io/rhel7.6: 'true'
-    template.cnv.ui: openshift_rhel7-generic-small
-    vm.cnv.io/template: rhel7-generic-small
-    workload.template.cnv.io/generic: 'true'
+    flavor.template.kubevirt.io/small: 'true'
+    os.template.kubevirt.io/rhel7.6: 'true'
+    template.kubevirt.ui: openshift_rhel7-generic-small
+    vm.kubevirt.io/template: rhel7-generic-small
+    workload.template.kubevirt.io/generic: 'true'
 spec:
   dataVolumeTemplates:
     - metadata:
@@ -211,7 +211,7 @@ spec:
   template:
     metadata:
       labels:
-        vm.cnv.io/name: testcnv
+        vm.kubevirt.io/name: testcnv
     spec:
       domain:
         cpu:
