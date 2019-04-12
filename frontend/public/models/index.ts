@@ -555,45 +555,6 @@ export const SelfSubjectAccessReviewModel: K8sKind = {
   labelPlural: 'Self Subject Access Reviews',
 };
 
-export const TectonicVersionModel: K8sKind = {
-  label: 'Tectonic Version',
-  apiGroup: 'tco.coreos.com',
-  apiVersion: 'v1',
-  path: 'tectonicversions',
-  plural: 'tectonicversions',
-  abbr: 'TV',
-  namespaced: true,
-  kind: 'TectonicVersion',
-  id: 'tectonicversion',
-  labelPlural: 'Tectonic Versions',
-};
-
-export const ChannelOperatorConfigModel: K8sKind = {
-  label: 'Channel Operator Config',
-  apiGroup: 'tco.coreos.com',
-  apiVersion: 'v1',
-  path: 'channeloperatorconfigs',
-  plural: 'channeloperatorconfigs',
-  abbr: 'COC',
-  namespaced: true,
-  kind: 'ChannelOperatorConfig',
-  id: 'channeloperatorconfig',
-  labelPlural: 'Channel Operator Configs',
-};
-
-export const AppVersionModel: K8sKind = {
-  label: 'AppVersion',
-  apiGroup: 'tco.coreos.com',
-  apiVersion: 'v1',
-  path: 'appversions',
-  plural: 'appversions',
-  abbr: 'AV',
-  namespaced: true,
-  kind: 'AppVersion',
-  id: 'appversion',
-  labelPlural: 'AppVersions',
-};
-
 export const PersistentVolumeModel: K8sKind = {
   label: 'Persistent Volume',
   apiVersion: 'v1',

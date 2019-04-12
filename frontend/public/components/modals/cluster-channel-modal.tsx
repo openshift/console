@@ -43,12 +43,9 @@ class ClusterChannelModal extends PromiseComponent {
   render() {
     const {cv} = this.props;
     const availableChannels = getAvailableClusterChannels();
-    return <form onSubmit={this._submit} name="form" className="modal-content modal-content--small">
+    return <form onSubmit={this._submit} name="form" className="modal-content modal-content--no-inner-scroll">
       <ModalTitle>Update Channel</ModalTitle>
       <ModalBody>
-        {/* <p>
-          // TODO: Determine what content goes here.
-        </p> */}
         <div className="form-group">
           <label htmlFor="channel_dropdown">Channel</label>
           <Dropdown
