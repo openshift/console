@@ -101,7 +101,7 @@ const CreateNamespaceModal = connect(null, mapDispatchToProps)(class CreateNames
       [allow]: 'No restrictions (default)',
       [deny]: 'Deny all inbound traffic',
     };
-    return <form onSubmit={this._submit.bind(this)} name="form" className="modal-content co-p-new-user-modal">
+    return <form onSubmit={this._submit.bind(this)} name="form" className="modal-content modal-content--no-inner-scroll co-p-new-user-modal">
       <ModalTitle>Create {label}</ModalTitle>
       <ModalBody>
         <div className="form-group">

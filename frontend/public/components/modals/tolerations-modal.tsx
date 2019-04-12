@@ -104,7 +104,7 @@ class TolerationsModal extends PromiseComponent {
       'NoExecute': 'NoExecute',
     };
     const { tolerations, errorMessage, inProgress } = this.state;
-    return <form onSubmit={this._submit} name="form" className="modal-content toleration-modal">
+    return <form onSubmit={this._submit} name="form" className="modal-content modal-content--accommodate-dropdown toleration-modal">
       <ModalTitle>Edit Tolerations</ModalTitle>
       <ModalBody>
         {_.isEmpty(tolerations)
@@ -120,7 +120,7 @@ class TolerationsModal extends PromiseComponent {
             {_.map(tolerations, (t, i) => {
               const { key, operator, value, effect = '' } = t;
               return <div className="row" key={i}>
-                <div className="col-md-4 col-sm-6 col-xs-6 toleration-modal__field">
+                <div className="col-md-4 col-sm-5 col-xs-5 toleration-modal__field">
                   <div className="hidden-md hidden-lg text-secondary text-uppercase">Key</div>
                   <input type="text" className="form-control" value={key} onChange={(e) => this._change(e, i, 'key')} readOnly={!this._isEditable(t)} />
                 </div>
@@ -137,7 +137,7 @@ class TolerationsModal extends PromiseComponent {
                     : (<input type="text" className="form-control" value={operator} readOnly />)}
                 </div>
                 <div className="clearfix visible-sm visible-xs"></div>
-                <div className="col-md-3 col-sm-6 col-xs-6 toleration-modal__field">
+                <div className="col-md-3 col-sm-5 col-xs-5 toleration-modal__field">
                   <div className="hidden-md hidden-lg text-secondary text-uppercase">Value</div>
                   <input
                     type="text"
@@ -158,7 +158,7 @@ class TolerationsModal extends PromiseComponent {
                       title={effects[effect]} />
                     : <input type="text" className="form-control" value={effects[effect]} readOnly />}
                 </div>
-                <div className="col-md-1">
+                <div className="col-md-1 col-sm-2 col-xs-2">
                   {this._isEditable(t) && (
                     <button type="button" className="btn btn-link btn-link--inherit-color toleration-modal__delete-icon" onClick={() => this._remove(i)} aria-label="Delete">
                       <i className="fa fa-minus-circle pairs-list__side-btn pairs-list__delete-icon" aria-hidden="true" />
