@@ -1,4 +1,3 @@
-import * as _ from 'lodash-es';
 import * as React from 'react';
 import { BaremetalHostStatus, getHostStatus } from 'kubevirt-web-ui-components';
 import { connect } from 'react-redux';
@@ -13,7 +12,7 @@ import {
 } from '../factory/okdfactory';
 import { ResourceLink, ResourceKebab } from '../utils/okdutils';
 import { BaremetalHostModel } from '../../models';
-import MachineLink from './MachineLink';
+import MachineCell from './machine-cell';
 import { menuActions } from './menu-actions';
 import { openCreateBaremetalHostModal } from '../modals/create-host-modal';
 
@@ -55,8 +54,6 @@ const HostRow = ({ obj: host }) => {
     },
   } = host;
 
-  const machineName = _.get(host, 'status.machineRef.name');
-
   return (
     <ResourceRow obj={host}>
       <div className={nameColumnClasses}>
@@ -71,7 +68,7 @@ const HostRow = ({ obj: host }) => {
         <BaremetalHostStatus host={host} />
       </div>
       <div className={machineColumnClasses}>
-        <MachineLink name={machineName} />
+        <MachineCell host={host} />
       </div>
       <div className={roleColumnClasses}>-</div>
       <div className={addressColumnClasses}>{address}</div>
