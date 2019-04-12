@@ -1,7 +1,13 @@
 import * as React from 'react';
-import { BaremetalHostStatus, getHostStatus } from 'kubevirt-web-ui-components';
 import { connect } from 'react-redux';
-import { actions } from '../../../kubevirt/module/okdk8s';
+import {
+  BaremetalHostRole,
+  BaremetalHostStatus,
+  getHostMachineName,
+  getSimpleHostStatus,
+} from 'kubevirt-web-ui-components';
+
+import { actions, referenceForModel } from '../../../kubevirt/module/okdk8s';
 
 import {
   ListHeader,
@@ -11,13 +17,14 @@ import {
   ResourceRow,
 } from '../factory/okdfactory';
 import { ResourceLink, ResourceKebab } from '../utils/okdutils';
-import { BaremetalHostModel } from '../../models';
 import MachineCell from './machine-cell';
+import { WithResources } from '../../../kubevirt/components/utils/withResources';
+import { BaremetalHostModel, MachineModel } from '../../models';
 import { menuActions } from './menu-actions';
 import { openCreateBaremetalHostModal } from '../modals/create-host-modal';
 
 const nameColumnClasses = 'col-lg-2 col-md-4 col-sm-6 col-xs-6';
-const statusColumnClasses = 'col-lg-3 col-md-4 hidden-sm hidden-xs';
+const statusColumnClasses = 'col-lg-2 col-md-4 hidden-sm hidden-xs';
 const machineColumnClasses = 'col-lg-3 visible-lg';
 const roleColumnClasses = 'col-lg-2 visible-lg';
 const addressColumnClasses = 'col-lg-2 visible-lg';
@@ -54,6 +61,22 @@ const HostRow = ({ obj: host }) => {
     },
   } = host;
 
+  const machineName = getHostMachineName(host);
+  const machineResource = {
+    kind: referenceForModel(MachineModel),
+    name: machineName,
+    namespaced: true,
+    namespace,
+    isList: false,
+    prop: 'machine',
+  };
+
+  const hostResourceMap = {
+    machine: {
+      resource: machineResource,
+    },
+  };
+
   return (
     <ResourceRow obj={host}>
       <div className={nameColumnClasses}>
@@ -70,7 +93,11 @@ const HostRow = ({ obj: host }) => {
       <div className={machineColumnClasses}>
         <MachineCell host={host} />
       </div>
-      <div className={roleColumnClasses}>-</div>
+      <div className={roleColumnClasses}>
+        <WithResources resourceMap={machineName ? hostResourceMap : {}}>
+          <BaremetalHostRole />
+        </WithResources>
+      </div>
       <div className={addressColumnClasses}>{address}</div>
       <div className="dropdown-kebab-pf">
         <ResourceKebab
@@ -89,7 +116,7 @@ const filters = [
   {
     type: 'baremetalhost-status',
     selected: ['online', 'offline'],
-    reducer: getHostStatus,
+    reducer: getSimpleHostStatus,
     items: [
       { id: 'online', title: 'online' },
       { id: 'offline', title: 'offline' },
