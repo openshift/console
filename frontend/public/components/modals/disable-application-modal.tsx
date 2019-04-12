@@ -46,7 +46,7 @@ export class DisableApplicationModal extends PromiseComponent {
     const {name} = this.props.subscription.spec;
 
     return <form onSubmit={this.submit.bind(this)} name="form" className="modal-content co-catalog-install-modal">
-      <ModalTitle className="modal-header">Remove Subscription</ModalTitle>
+      <ModalTitle className="modal-header">Remove Operator Subscription</ModalTitle>
       <ModalBody>
         <div>
           <p>

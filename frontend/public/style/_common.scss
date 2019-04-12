@@ -22,12 +22,6 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  margin: 20px ($grid-gutter-width / 2);
-  @media (min-width: $grid-float-breakpoint) {
-    margin-left: $grid-gutter-width;
-    margin-right: $grid-gutter-width;
-    margin-top: $grid-gutter-width;
-  }
   &--alt {
     margin-left: 0;
     margin-right: 0;
@@ -51,6 +45,16 @@
   .btn-group {
     margin-right: 10px;
     min-width: 0; // enables truncation of selected item, if needed
+  }
+}
+
+.co-m-pane__filter-bar,
+.co-m-pane__help-text {
+  margin: 20px ($grid-gutter-width / 2);
+  @media (min-width: $grid-float-breakpoint) {
+    margin-left: $grid-gutter-width;
+    margin-right: $grid-gutter-width;
+    margin-top: $grid-gutter-width;
   }
 }
 
