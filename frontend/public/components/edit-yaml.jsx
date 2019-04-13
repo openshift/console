@@ -74,7 +74,7 @@ export const EditYAML = connect(stateToProps)(
 
       // Retrieve k8s API spec for autocompletion
       if (!window.sessionStorage.getItem(SWAGGER_SESSION_STORAGE_KEY)) {
-        coFetchJSON('api/kubernetes/swagger.json').then(swagger => {
+        coFetchJSON('api/kubernetes/openapi/v2').then(swagger => {
           // Only store definitions to reduce the document size.
           const json = JSON.stringify(swagger.definitions || {});
           try {
