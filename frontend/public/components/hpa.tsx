@@ -1,9 +1,10 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-
-import { K8sResourceKindReference } from '../module/k8s';
+import * as classNames from 'classnames';
+import { sortable } from '@patternfly/react-table';
+import { K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
 import { Conditions } from './conditions';
-import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
+import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
 import { Kebab, SectionHeading, LabelList, navFactory, ResourceKebab, ResourceLink, ResourceSummary, Timestamp } from './utils';
 import { ResourceEventStream } from './events';
 
@@ -170,40 +171,87 @@ export const HorizontalPodAutoscalersDetailsPage: React.SFC<HorizontalPodAutosca
     pages={pages} />;
 HorizontalPodAutoscalersDetailsPage.displayName = 'HorizontalPodAutoscalersDetailsPage';
 
-const HorizontalPodAutoscalersHeader = props => <ListHeader>
-  <ColHead {...props} className="col-lg-3 col-md-3 col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
-  <ColHead {...props} className="col-lg-2 col-md-3 col-sm-4 col-xs-6 " sortField="metadata.namespace">Namespace</ColHead>
-  <ColHead {...props} className="col-lg-3 col-md-3 col-sm-4 hidden-xs" sortField="metadata.labels">Labels</ColHead>
-  <ColHead {...props} className="col-lg-2 col-md-3 hidden-sm hidden-xs" sortField="spec.scaleTargetRef.name">Scale Target</ColHead>
-  <ColHead {...props} className="col-lg-1 hidden-md hidden-sm hidden-xs" sortField="spec.minReplicas">Min Pods</ColHead>
-  <ColHead {...props} className="col-lg-1 hidden-md hidden-sm hidden-xs" sortField="spec.maxReplicas">Max Pods</ColHead>
-</ListHeader>;
+const tableColumnClasses = [
+  classNames('pf-m-2-col-on-xl', 'pf-m-3-col-on-lg', 'pf-m-4-col-on-md', 'pf-m-6-col-on-sm'),
+  classNames('pf-m-2-col-on-xl', 'pf-m-3-col-on-lg', 'pf-m-4-col-on-md', 'pf-m-6-col-on-sm'),
+  classNames('pf-m-2-col-on-xl', 'pf-m-3-col-on-lg', 'pf-m-4-col-on-md', 'pf-m-hidden', 'pf-m-visible-on-md'),
+  classNames('pf-m-2-col-on-xl', 'pf-m-3-col-on-lg', 'pf-m-hidden', 'pf-m-visible-on-lg'),
+  classNames('pf-m-2-col-on-xl', 'pf-m-hidden', 'pf-m-visible-on-xl'),
+  classNames('pf-m-2-col-on-xl', 'pf-m-hidden', 'pf-m-visible-on-xl'),
+  Kebab.columnClass,
+];
 
-const HorizontalPodAutoscalersRow: React.SFC<HorizontalPodAutoscalersRowProps> = ({obj}) => <div className="row co-resource-list__item">
-  <div className="col-lg-3 col-md-3 col-sm-4 col-xs-6">
-    <ResourceLink kind={HorizontalPodAutoscalersReference} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
-  </div>
-  <div className="col-lg-2 col-md-3 col-sm-4 col-xs-6 co-break-word">
-    <ResourceLink kind="Namespace" name={obj.metadata.namespace} title={obj.metadata.namespace} />
-  </div>
-  <div className="col-lg-3 col-md-3 col-sm-4 hidden-xs">
-    <LabelList kind="HorizontalPodAutoscaler" labels={obj.metadata.labels} />
-  </div>
-  <div className="col-lg-2 col-md-3 hidden-sm hidden-xs co-break-word">
-    <ResourceLink kind={obj.spec.scaleTargetRef.kind} name={obj.spec.scaleTargetRef.name} namespace={obj.metadata.namespace} title={obj.spec.scaleTargetRef.name} />
-  </div>
-  <div className="col-lg-1 hidden-md hidden-sm hidden-xs">
-    {obj.spec.minReplicas}
-  </div>
-  <div className="col-lg-1 hidden-md hidden-sm hidden-xs">
-    {obj.spec.maxReplicas}
-  </div>
-  <div className="dropdown-kebab-pf">
-    <ResourceKebab actions={menuActions} kind={HorizontalPodAutoscalersReference} resource={obj} />
-  </div>
-</div>;
+const kind = 'HorizontalPodAutoscaler';
 
-const HorizontalPodAutoscalersList: React.SFC = props => <List {...props} Header={HorizontalPodAutoscalersHeader} Row={HorizontalPodAutoscalersRow} />;
+const HorizontalPodAutoscalersTableHeader = () => {
+  return [
+    {
+      title: 'Name', sortField: 'metadata.name', transforms: [sortable],
+      props: { className: tableColumnClasses[0] },
+    },
+    {
+      title: 'Namespace', sortField: 'metadata.namespace', transforms: [sortable],
+      props: { className: tableColumnClasses[1] },
+    },
+    {
+      title: 'Labels', sortField: 'metadata.labels', transforms: [sortable],
+      props: { className: tableColumnClasses[2] },
+    },
+    {
+      title: 'Scale Target', sortField: 'spec.scaleTargetRef.name', transforms: [sortable],
+      props: { className: tableColumnClasses[3] },
+    },
+    {
+      title: 'Min Pods', sortField: 'spec.minReplicas', transforms: [sortable],
+      props: { className: tableColumnClasses[4] },
+    },
+    {
+      title: 'Max Pods', sortField: 'spec.maxReplicas', transforms: [sortable],
+      props: { className: tableColumnClasses[5] },
+    },
+    {
+      title: '', props: { className: tableColumnClasses[6] },
+    },
+  ];
+};
+HorizontalPodAutoscalersTableHeader.displayName = 'HorizontalPodAutoscalersTableHeader';
+
+const HorizontalPodAutoscalersTableRow: React.FC<HorizontalPodAutoscalersTableRowProps> = ({obj, index, key, style}) => {
+  return (
+    <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+      <TableData className={tableColumnClasses[0]}>
+        <ResourceLink kind={HorizontalPodAutoscalersReference} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
+      </TableData>
+      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+        <ResourceLink kind="Namespace" name={obj.metadata.namespace} title={obj.metadata.namespace} />
+      </TableData>
+      <TableData className={tableColumnClasses[2]}>
+        <LabelList kind={kind} labels={obj.metadata.labels} />
+      </TableData>
+      <TableData className={classNames(tableColumnClasses[3], 'co-break-word')}>
+        <ResourceLink kind={obj.spec.scaleTargetRef.kind} name={obj.spec.scaleTargetRef.name} namespace={obj.metadata.namespace} title={obj.spec.scaleTargetRef.name} />
+      </TableData>
+      <TableData className={tableColumnClasses[4]}>
+        {obj.spec.minReplicas}
+      </TableData>
+      <TableData className={tableColumnClasses[5]}>
+        {obj.spec.maxReplicas}
+      </TableData>
+      <TableData className={tableColumnClasses[6]}>
+        <ResourceKebab actions={menuActions} kind={HorizontalPodAutoscalersReference} resource={obj} />
+      </TableData>
+    </TableRow>
+  );
+};
+HorizontalPodAutoscalersTableRow.displayName = 'HorizontalPodAutoscalersTableRow';
+type HorizontalPodAutoscalersTableRowProps = {
+  obj: K8sResourceKind;
+  index: number;
+  key?: string;
+  style: object;
+};
+
+const HorizontalPodAutoscalersList: React.SFC = props => <Table {...props} aria-label="Horizontal Pod Auto Scalers" Header={HorizontalPodAutoscalersTableHeader} Row={HorizontalPodAutoscalersTableRow} virtualize />;
 HorizontalPodAutoscalersList.displayName = 'HorizontalPodAutoscalersList';
 
 export const HorizontalPodAutoscalersPage: React.SFC<HorizontalPodAutoscalersPageProps> = props =>
@@ -214,10 +262,6 @@ export const HorizontalPodAutoscalersPage: React.SFC<HorizontalPodAutoscalersPag
     canCreate={true}
   />;
 HorizontalPodAutoscalersPage.displayName = 'HorizontalPodAutoscalersListPage';
-
-export type HorizontalPodAutoscalersRowProps = {
-  obj: any,
-};
 
 export type HorizontalPodAutoscalersDetailsProps = {
   obj: any,
@@ -233,11 +277,11 @@ export type HorizontalPodAutoscalersDetailsPageProps = {
   match: any,
 };
 
-export type MetricsTableProps = {
+type MetricsTableProps = {
   obj: any,
 };
 
-export type MetricsRowProps = {
+type MetricsRowProps = {
   type: any,
   current: any,
   target: any,

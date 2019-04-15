@@ -1,42 +1,79 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-
-import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
+import * as classNames from 'classnames';
+import { sortable } from '@patternfly/react-table';
+import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
 import { Kebab, ContainerTable, navFactory, ResourceKebab, SectionHeading, ResourceLink, ResourceSummary, Timestamp } from './utils';
 import { ResourceEventStream } from './events';
 
 const { common } = Kebab.factory;
 const menuActions = [...common];
 
-const Header = props => <ListHeader>
-  <ColHead {...props} className="col-lg-2 col-md-3 col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
-  <ColHead {...props} className="col-lg-2 col-md-3 col-sm-4 col-xs-6" sortField="metadata.namespace">Namespace</ColHead>
-  <ColHead {...props} className="col-lg-2 col-md-3 col-sm-4 hidden-xs" sortField="spec.schedule">Schedule</ColHead>
-  <ColHead {...props} className="col-lg-3 col-md-3 hidden-sm hidden-xs" sortField="spec.schedule">Concurrency Policy</ColHead>
-  <ColHead {...props} className="col-lg-3 hidden-md hidden-sm hidden-xs" sortField="spec.schedule">Starting Deadline Seconds</ColHead>
-</ListHeader>;
-
 const kind = 'CronJob';
-const Row = ({obj: cronjob}) => <div className="row co-resource-list__item">
-  <div className="col-lg-2 col-md-3 col-sm-4 col-xs-6">
-    <ResourceLink kind={kind} name={cronjob.metadata.name} title={cronjob.metadata.name} namespace={cronjob.metadata.namespace} />
-  </div>
-  <div className="col-lg-2 col-md-3 col-sm-4 col-xs-6 co-break-word">
-    <ResourceLink kind="Namespace" name={cronjob.metadata.namespace} title={cronjob.metadata.namespace} />
-  </div>
-  <div className="col-lg-2 col-md-3 col-sm-4 hidden-xs">
-    {cronjob.spec.schedule}
-  </div>
-  <div className="col-lg-3 col-md-3 hidden-sm hidden-xs">
-    {_.get(cronjob.spec, 'concurrencyPolicy', '-')}
-  </div>
-  <div className="col-lg-3 hidden-md hidden-sm hidden-xs">
-    {_.get(cronjob.spec, 'startingDeadlineSeconds', '-')}
-  </div>
-  <div className="dropdown-kebab-pf">
-    <ResourceKebab actions={menuActions} kind={kind} resource={cronjob} />
-  </div>
-</div>;
+
+const tableColumnClasses = [
+  classNames('pf-m-2-col-on-xl', 'pf-m-3-col-on-lg', 'pf-m-4-col-on-md', 'pf-m-6-col-on-sm'),
+  classNames('pf-m-2-col-on-xl', 'pf-m-3-col-on-lg', 'pf-m-4-col-on-md', 'pf-m-6-col-on-sm'),
+  classNames('pf-m-2-col-on-xl', 'pf-m-3-col-on-lg', 'pf-m-4-col-on-md', 'pf-m-hidden', 'pf-m-visible-on-md'),
+  classNames('pf-m-3-col-on-xl', 'pf-m-3-col-on-lg', 'pf-m-hidden', 'pf-m-visible-on-lg'),
+  classNames('pf-m-3-col-on-xl', 'pf-m-hidden', 'pf-m-visible-on-xl'),
+  Kebab.columnClass,
+];
+
+const CronJobTableHeader = () => {
+  return [
+    {
+      title: 'Name', sortField: 'metadata.name', transforms: [sortable],
+      props: { className: tableColumnClasses[0] },
+    },
+    {
+      title: 'Namespace', sortField: 'metadata.namespace', transforms: [sortable],
+      props: { className: tableColumnClasses[1] },
+    },
+    {
+      title: 'Schedule', sortField: 'spec.schedule', transforms: [sortable],
+      props: { className: tableColumnClasses[2] },
+    },
+    {
+      title: 'Concurrency Policy', sortField: 'spec.schedule', transforms: [sortable],
+      props: { className: tableColumnClasses[3] },
+    },
+    {
+      title: 'Starting Deadline Seconds', sortField: 'spec.schedule', transforms: [sortable],
+      props: { className: tableColumnClasses[4] },
+    },
+    {
+      title: '', props: { className: tableColumnClasses[5] },
+    },
+  ];
+};
+CronJobTableHeader.displayName = 'CronJobTableHeader';
+
+const CronJobTableRow = ({obj: cronjob, index, key, style}) => {
+  return (
+    <TableRow id={cronjob.metadata.uid} index={index} trKey={key} style={style}>
+      <TableData className={tableColumnClasses[0]}>
+        <ResourceLink kind={kind} name={cronjob.metadata.name} title={cronjob.metadata.name} namespace={cronjob.metadata.namespace} />
+      </TableData>
+      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+        <ResourceLink kind="Namespace" name={cronjob.metadata.namespace} title={cronjob.metadata.namespace} />
+      </TableData>
+      <TableData className={tableColumnClasses[2]}>
+        {cronjob.spec.schedule}
+      </TableData>
+      <TableData className={tableColumnClasses[3]}>
+        {_.get(cronjob.spec, 'concurrencyPolicy', '-')}
+      </TableData>
+      <TableData className={tableColumnClasses[4]}>
+        {_.get(cronjob.spec, 'startingDeadlineSeconds', '-')}
+      </TableData>
+      <TableData className={tableColumnClasses[5]}>
+        <ResourceKebab actions={menuActions} kind={kind} resource={cronjob} />
+      </TableData>
+    </TableRow>
+  );
+};
+CronJobTableRow.displayName = 'CronJobTableRow';
 
 const Details = ({obj: cronjob}) => {
   const job = cronjob.spec.jobTemplate;
@@ -76,7 +113,8 @@ const Details = ({obj: cronjob}) => {
   </React.Fragment>;
 };
 
-export const CronJobsList = props => <List {...props} Header={Header} Row={Row} />;
+export const CronJobsList = props => <Table {...props} aria-label="Cron Jobs" Header={CronJobTableHeader} Row={CronJobTableRow} virtualize />;
+
 export const CronJobsPage = props => <ListPage {...props} ListComponent={CronJobsList} kind={kind} canCreate={true} />;
 
 export const CronJobsDetailsPage = props => <DetailsPage

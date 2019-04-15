@@ -170,10 +170,11 @@ tags-input .autocomplete .suggestion-item em {
 }
 
 // FIXME: Pass as `style` prop to `List` once this is resolved (https://github.com/bvaughn/react-virtualized/issues/876). This is for the cog menus' overflow.
-.ReactVirtualized__Grid.ReactVirtualized__List {
+.pf-c-window-scroller.ReactVirtualized__VirtualGrid {
   overflow: visible !important;
 }
-.ReactVirtualized__Grid__innerScrollContainer {
+
+.pf-c-window-scroller .ReactVirtualized__VirtualGrid__innerScrollContainer {
   overflow: visible !important;
 }
 
@@ -202,7 +203,8 @@ tags-input .autocomplete .suggestion-item em {
   }
   th {
     padding-top: 0 !important;
-    text-transform: uppercase;
+    color: $color-text-primary;
+    font-weight: var(--pf-global--FontWeight--bold);
   }
   thead > tr > th {
     border-bottom: 0;
@@ -359,6 +361,8 @@ kbd {
 
 .pf-c-page__sidebar {
   --pf-c-page__sidebar--BackgroundColor: #{$color-pf-black-900};
+  --pf-c-page__sidebar-body--PaddingTop: 0;
+  --pf-c-page__sidebar-body--PaddingBottom: 0;
   bottom: 0;
   left: 0;
   position: absolute;
@@ -504,4 +508,428 @@ kbd {
 .pf-c-page__sidebar-body {
   --pf-c-page__sidebar-body--PaddingTop: 0;
   --pf-c-page__sidebar-body--PaddingBottom: 0;
+}
+
+// pf table overrides
+
+//this can go away after Bootstrap 3 - only increases specificty
+.pf-c-table tr>.pf-m-hidden {
+  display: var(--pf-hidden-visible--Display);
+}
+
+.pf-c-table tr > th {
+  color: $color-text-primary;
+  font-weight: var(--pf-global--FontWeight--bold);
+}
+
+// override .co-m-table-grid [class*='col-'], .co-m-table-grid .row
+.pf-c-table.pf-c-virtualized tr> td {
+  vertical-align: top;
+}
+
+.pf-c-table.pf-c-virtualized tr.vertical-align-middle > td {
+  vertical-align: middle;
+}
+
+// operator name alignment adjusted
+.pf-c-table.pf-c-virtualized .co-clusterserviceversion-logo__icon {
+  align-items: flex-start;
+}
+.pf-c-table.pf-c-virtualized .co-clusterserviceversion-logo__name {
+  justify-content: flex-start;
+}
+
+.pf-c-table.pf-c-virtualized tr.vertical-align-middle {
+  .co-clusterserviceversion-logo__icon,
+  .co-clusterserviceversion-logo {
+    align-items: center;
+  }
+}
+
+// pf4 table spacings adjusted to match existing styles
+.pf-c-table tr > * {
+  --pf-c-table-cell--PaddingLeft: 16px;
+  --pf-c-table-cell--PaddingRight: 16px;
+  --pf-c-table--m-compact-cell--first-last-child--PaddingLeft: 16px;
+  --pf-c-table--m-compact-cell--first-last-child--PaddingRight: 16px;
+}
+
+.pf-c-table.pf-m-compact .pf-c-table__action {
+  --pf-c-table__action--PaddingLeft: 16px;
+  --pf-c-table__action--PaddingRight: 16px;
+  --pf-c-table__action--PaddingTop: 8px;
+  --pf-c-table__action--PaddingBottom: 8px;
+
+  .pf-c-dropdown__toggle {
+    font-size: $font-size-base;
+  }
+  .pf-c-dropdown__menu-item {
+    font-size: $font-size-base;
+  }
+}
+
+.pf-c-window-scroller .ReactVirtualized__VirtualGrid {
+  overflow: visible !important;
+}
+
+.pf-c-window-scroller .ReactVirtualized__VirtualGrid__innerScrollContainer {
+  overflow: visible !important;
+}
+
+.pf-c-table {
+  table-layout: fixed;
+}
+
+.pf-c-table.pf-c-virtualized tr {
+  display: table;
+  table-layout: fixed;
+  width: 100%;
+}
+
+.pf-c-table tbody > tr > :first-child::before {
+  content: none;
+  width: 0 !important;
+}
+
+.pf-c-table__check {
+  width: 8.333% !important;
+}
+
+@media screen and (max-width: 768px) {
+  .pf-c-table__check {
+    width: 16.66% !important;
+  }
+}
+
+.pf-c-table__action {
+  width: 5% !important;
+  padding-left: 0px !important;
+}
+
+// legacy classes to support existing dropdown, can be dropped after conversion to PF4
+.pf-c-table__action.dropdown-kebab-pf {
+  .co-kebab {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+  }
+  .co-kebab__button {
+    position: relative;
+    width: 100%;
+    padding-left: 0px;
+    padding-right: 14px; // offset width of the co-kebab-dropdown ::before
+    margin-left: 0px;
+    margin-right: 0px;
+    font-size: 16px;
+    text-align: right;
+
+    --pf-c-dropdown__toggle--m-plain--Color: var(--pf-global--Color--200);
+    --pf-c-dropdown__toggle--m-plain--hover--Color: var(--pf-global--Color--100);
+    --pf-c-dropdown__toggle--m-plain--disabled--Color: var(--pf-global--disabled-color--200);
+
+    color: var(--pf-c-dropdown__toggle--m-plain--Color);
+    &:hover, &:focus {
+      color: var(--pf-global--Color--100);
+      text-decoration: none;
+    }
+  }
+  .dropdown-menu.dropdown-menu-right {
+    left: auto;
+    right: 0px;
+    margin-top: 9px;
+  }
+}
+
+@media screen and (max-width: 992px) {
+  .pf-c-table__action {
+    width: 10% !important;
+  }
+}
+
+@media screen and (min-width: 576px) and (max-width: 768px) {
+  .pf-m-1-col-on-sm {
+    width: 8.333% !important;
+  }
+}
+
+@media screen and (min-width: 768px) and (max-width: 992px) {
+  .pf-m-1-col-on-md {
+    width: 8.33% !important;
+  }
+}
+
+@media screen and (min-width: 992px) and (max-width: 1200px) {
+  .pf-m-1-col-on-lg {
+    width: 8.33% !important;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .pf-m-1-col-on-xl {
+    width: 8.33% !important;
+  }
+}
+
+@media screen and (min-width: 576px) and (max-width: 768px) {
+  .pf-m-2-col-on-sm {
+    width: 16.66% !important;
+  }
+}
+
+@media screen and (min-width: 768px) and (max-width: 992px) {
+  .pf-m-2-col-on-md {
+    width: 16.66% !important;
+  }
+}
+
+@media screen and (min-width: 992px) and (max-width: 1200px) {
+  .pf-m-2-col-on-lg {
+    width: 16.66% !important;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .pf-m-2-col-on-xl {
+    width: 16.66% !important;
+  }
+}
+
+@media screen and (min-width: 576px) and (max-width: 768px) {
+  .pf-m-3-col-on-sm {
+    width: 25% !important;
+  }
+}
+
+@media screen and (min-width: 768px) and (max-width: 992px) {
+  .pf-m-3-col-on-md {
+    width: 25% !important;
+  }
+}
+
+@media screen and (min-width: 992px) and (max-width: 1200px) {
+  .pf-m-3-col-on-lg {
+    width: 25% !important;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .pf-m-3-col-on-xl {
+    width: 25% !important;
+  }
+}
+
+@media screen and (min-width: 576px) and (max-width: 768px) {
+  .pf-m-4-col-on-xl {
+    width: 33.333% !important;
+  }
+}
+
+@media screen and (min-width: 768px) and (max-width: 992px) {
+  .pf-m-4-col-on-md {
+    width: 33.333% !important;
+  }
+}
+
+@media screen and (min-width: 992px) and (max-width: 1200px) {
+  .pf-m-4-col-on-lg {
+    width: 33.333% !important;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .pf-m-4-col-on-xl {
+    width: 33.333% !important;
+  }
+}
+
+@media screen and (min-width: 576px) and (max-width: 768px) {
+  .pf-m-5-col-on-sm {
+    width: 41.67% !important;
+  }
+}
+
+@media screen and (min-width: 768px) and (max-width: 992px) {
+  .pf-m-5-col-on-md {
+    width: 41.67% !important;
+  }
+}
+
+@media screen and (min-width: 992px) and (max-width: 1200px) {
+  .pf-m-5-col-on-lg {
+    width: 41.67% !important;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .pf-m-5-col-on-xl {
+    width: 41.67% !important;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .pf-m-6-col-on-sm {
+    width: 50% !important;
+  }
+}
+
+@media screen and (min-width: 768px) and (max-width: 992px) {
+  .pf-m-6-col-on-md {
+    width: 50% !important;
+  }
+}
+
+@media screen and (min-width: 992px) and (max-width: 1200px) {
+  .pf-m-6-col-on-lg {
+    width: 50% !important;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .pf-m-6-col-on-xl {
+    width: 50% !important;
+  }
+}
+
+@media screen and (min-width: 576px) and (max-width: 768px) {
+  .pf-m-7-col-on-sm {
+    width: 58.333% !important;
+  }
+}
+
+@media screen and (min-width: 768px) and (max-width: 992px) {
+  .pf-m-7-col-on-md {
+    width: 58.333% !important;
+  }
+}
+
+@media screen and (min-width: 992px) and (max-width: 1200px) {
+  .pf-m-7-col-on-lg {
+    width: 58.333% !important;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .pf-m-7-col-on-xl {
+    width: 58.333% !important;
+  }
+}
+
+@media screen and (min-width: 576px) and (max-width: 768px) {
+  .pf-m-8-col-on-sm {
+    width: 66.66% !important;
+  }
+}
+
+@media screen and (min-width: 768px) and (max-width: 992px) {
+  .pf-m-8-col-on-md {
+    width: 66.66% !important;
+  }
+}
+
+@media screen and (min-width: 992px) and (max-width: 1200px) {
+  .pf-m-8-col-on-lg {
+    width: 66.66% !important;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .pf-m-8-col-on-xl {
+    width: 66.66% !important;
+  }
+}
+
+@media screen and (min-width: 576px) and (max-width: 768px) {
+  .pf-m-9-col-on-sm {
+    width: 75% !important;
+  }
+}
+
+@media screen and (min-width: 768px) and (max-width: 992px) {
+  .pf-m-9-col-on-md {
+    width: 75% !important;
+  }
+}
+
+@media screen and (min-width: 992px) and (max-width: 1200px) {
+  .pf-m-9-col-on-lg {
+    width: 75% !important;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .pf-m-9-col-on-xl {
+    width: 75% !important;
+  }
+}
+
+@media screen and (min-width: 576px) and (max-width: 768px) {
+  .pf-m-10-col-on-sm {
+    width: 83.333% !important;
+  }
+}
+
+@media screen and (min-width: 768px) and (max-width: 992px) {
+  .pf-m-10-col-on-md {
+    width: 83.333% !important;
+  }
+}
+
+@media screen and (min-width: 992px) and (max-width: 1200px) {
+  .pf-m-10-col-on-lg {
+    width: 83.333% !important;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .pf-m-10-col-on-xl {
+    width: 83.333% !important;
+  }
+}
+
+@media screen and (min-width: 576px) and (max-width: 768px) {
+  .pf-m-11-col-on-sm {
+    width: 91.67% !important;
+  }
+}
+
+@media screen and (min-width: 768px) and (max-width: 992px) {
+  .pf-m-11-col-on-md {
+    width: 91.67% !important;
+  }
+}
+
+@media screen and (min-width: 992px) and (max-width: 1200px) {
+  .pf-m-11-col-on-lg {
+    width: 91.67% !important;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .pf-m-11-col-on-xl {
+    width: 91.67% !important;
+  }
+}
+
+@media screen and (min-width: 576px) and (max-width: 768px) {
+  .pf-m-12-col-on-sm {
+    width: 100% !important;
+  }
+}
+
+@media screen and (min-width: 768px) and (max-width: 992px) {
+  .pf-m-12-col-on-md {
+    width: 100% !important;
+  }
+}
+
+@media screen and (min-width: 992px) and (max-width: 1200px) {
+  .pf-m-12-col-on-lg {
+    width: 100% !important;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .pf-m-12-col-on-xl {
+    width: 100% !important;
+  }
 }

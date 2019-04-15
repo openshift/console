@@ -55,7 +55,8 @@ $color-rbac-role-dark: $color-pf-orange-600;
 $color-secret-dark: $color-pf-orange-400;
 $color-service-dark: $color-pf-light-green-500;
 $color-text-muted: $color-pf-black-600;
-$color-text-secondary: $color-pf-black-600;
+$color-text-primary: $pf-global--Color--100;
+$color-text-secondary: $pf-global--Color--200;
 // -- Depend on color vars defined above
 $color-alert-dark: $color-container-dark;
 $color-alertrule-dark: $color-configmap-dark;

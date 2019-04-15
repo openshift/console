@@ -1,7 +1,8 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
+// import * as classNames from 'classnames';
 import { connect } from 'react-redux';
-
+// import { EllipsisVIcon } from '@patternfly/react-icons';
 import { annotationsModal, configureReplicaCountModal, taintsModal, tolerationsModal, labelsModal, podSelectorModal, deleteModal, expandPVCModal } from '../modals';
 import { DropdownMixin } from './dropdown';
 import { checkAccess, history, resourceObjPath, useAccessReview } from './index';
@@ -15,11 +16,19 @@ import {
 import { impersonateStateToProps } from '../../reducers/ui';
 import { connectToModel } from '../../kinds';
 
-const KebabItemEnabled: React.FC<KebabItemProps> = ({option, onClick}) => {
+const KebabItemEnabled: React.FC<KebabItemProps> = ({option, onClick, isActionDropdown}) => {
+  if (isActionDropdown) {
+    return <a href="#" onClick={(e) => onClick(e, option)} data-test-action={option.label}>{option.label}</a>;
+  }
+  // return <button className="pf-c-dropdown__menu-item" onClick={(e) => onClick(e, option)} data-test-action={option.label}>{option.label}</button>;
   return <a href="#" onClick={(e) => onClick(e, option)} data-test-action={option.label}>{option.label}</a>;
 };
 
-const KebabItemDisabled: React.FC<{option: KebabOption}> = ({option}) => {
+const KebabItemDisabled: React.FC<KebabItemDisabledProps> = ({option, isActionDropdown}) => {
+  if (isActionDropdown) {
+    return <a className="disabled">{option.label}</a>;
+  }
+  // return <button className="pf-c-dropdown__menu-item pf-m-disabled">{option.label}</button>;
   return <a className="disabled">{option.label}</a>;
 };
 
@@ -28,7 +37,7 @@ const KebabItemAccessReview_ = (props: KebabItemProps & { impersonate: string })
   const isAllowed = useAccessReview(option.accessReview, impersonate);
   return isAllowed
     ? <KebabItemEnabled {...props} />
-    : <KebabItemDisabled option={option} />;
+    : <KebabItemDisabled option={option} isActionDropdown={props.isActionDropdown} />;
 };
 const KebabItemAccessReview = connect(impersonateStateToProps)(KebabItemAccessReview_);
 
@@ -38,11 +47,16 @@ const KebabItem: React.FC<KebabItemProps> = (props) => {
     : <KebabItemEnabled {...props} />;
 };
 
-export const KebabItems: React.SFC<KebabItemsProps> = ({options, onClick}) => {
+export const KebabItems: React.SFC<KebabItemsProps> = ({options, onClick, isActionDropdown = false}) => {
   const visibleOptions = _.reject(options, o => _.get(o, 'hidden', false));
-  return <ul className="dropdown-menu dropdown-menu-right dropdown-menu--block co-kebab__dropdown" data-test-id="action-items">
+  // return <ul className={
+  //   classNames({
+  //     'pf-c-dropdown__menu pf-m-align-right': !isActionDropdown,
+  //     'dropdown-menu dropdown-menu-right dropdown-menu--block co-kebab__dropdown': isActionDropdown,
+  //   })} data-test-id="action-items">
+  return <ul className="dropdown-menu dropdown-menu-right dropdown-menu--block co-kebab__dropdown">
     {_.map(visibleOptions, (o, i) => <li key={i}>
-      <KebabItem option={o} onClick={onClick} />
+      <KebabItem option={o} onClick={onClick} isActionDropdown={isActionDropdown} />
     </li>)}
   </ul>;
 };
@@ -221,6 +235,9 @@ export const ResourceKebab = connectToModel((props: ResourceKebabProps) => {
 export class Kebab extends DropdownMixin {
   static factory: KebabFactory = kebabFactory;
 
+  // public static columnClass: string = 'pf-c-table__action';
+  public static columnClass: string = 'dropdown-kebab-pf pf-c-table__action';
+
   onClick = (event, option: KebabOption) => {
     event.preventDefault();
 
@@ -254,6 +271,12 @@ export class Kebab extends DropdownMixin {
       </button>
       {(!isDisabled && this.state.active) && <KebabItems options={options} onClick={this.onClick} />}
     </div>;
+    // return <div ref={this.dropdownElement} className={classNames({'pf-c-dropdown': true, 'pf-m-expanded': this.state.active})} onFocus={this.onHover}>
+    //   <button type="button" aria-label="Actions" aria-expanded={this.state.active} disabled={isDisabled} aria-haspopup="true" className="pf-c-dropdown__toggle pf-m-plain" onClick={this.toggle} data-test-id="kebab-button">
+    //     <EllipsisVIcon />
+    //   </button>
+    //   {(!isDisabled && this.state.active) && <KebabItems options={options} onClick={this.onClick} />}
+    // </div>;
   }
 }
 
@@ -275,11 +298,18 @@ export type ResourceKebabProps = {
 type KebabItemProps = {
   option: KebabOption;
   onClick: (event: React.MouseEvent<{}>, option: KebabOption) => void;
+  isActionDropdown?: boolean;
 };
+
+type KebabItemDisabledProps = {
+  option: KebabOption;
+  isActionDropdown?: boolean;
+}
 
 export type KebabItemsProps = {
   options: KebabOption[];
   onClick: (event: React.MouseEvent<{}>, option: KebabOption) => void;
+  isActionDropdown?: boolean;
 };
 
 export type KebabFactory = {[name: string]: KebabAction} & {common?: KebabAction[]};

@@ -1,8 +1,9 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-
+import * as classNames from 'classnames';
+import { sortable } from '@patternfly/react-table';
 import { referenceForModel, K8sResourceKind } from '../module/k8s';
-import { ColHead, List, ListHeader, ListPage, ResourceRow, DetailsPage } from './factory';
+import { ListPage, DetailsPage, Table, TableRow, TableData } from './factory';
 import { SectionHeading, LabelList, navFactory, ResourceLink, Selector, Firehose, LoadingInline, pluralize } from './utils';
 import { configureReplicaCountModal } from './modals';
 import { AlertmanagerModel } from '../models';
@@ -83,37 +84,72 @@ export const AlertManagersListContainer = props => <Firehose resources={[{
   <AlertManagersNameList {...props} />
 </Firehose>;
 
-const AlertManagerRow = ({obj: alertManager}) => {
-  const {metadata, spec} = alertManager;
+const tableColumnClasses = [
+  classNames('pf-m-2-col-on-lg', 'pf-m-3-col-on-md', 'pf-m-6-col-on-sm'),
+  classNames('pf-m-2-col-on-lg', 'pf-m-3-col-on-md', 'pf-m-6-col-on-sm'),
+  classNames('pf-m-3-col-on-lg', 'pf-m-3-col-on-md', 'pf-m-hidden', 'pf-m-visible-on-md'),
+  classNames('pf-m-2-col-on-lg', 'pf-m-hidden', 'pf-m-visible-on-lg'),
+  classNames('pf-m-3-col-on-lg', 'pf-m-3-col-on-md', 'pf-m-hidden', 'pf-m-visible-on-md'),
+];
 
-  return <ResourceRow obj={alertManager}>
-    <div className="col-md-2 col-sm-3 col-xs-6">
-      <ResourceLink kind={referenceForModel(AlertmanagerModel)} name={metadata.name} namespace={metadata.namespace} title={metadata.uid} />
-    </div>
-    <div className="col-md-2 col-sm-3 col-xs-6">
-      <ResourceLink kind="Namespace" name={metadata.namespace} title={metadata.namespace} />
-    </div>
-    <div className="col-md-4 col-sm-3 hidden-xs">
-      <LabelList kind={AlertmanagerModel.kind} labels={metadata.labels} />
-    </div>
-    <div className="col-md-1 hidden-sm hidden-xs">{spec.version}</div>
-    <div className="col-md-3 col-sm-3 hidden-xs">
-      <Selector selector={spec.nodeSelector} kind="Node" />
-    </div>
-  </ResourceRow>;
+const AlertManagerTableRow: React.FC<AlertManagerTableRowProps> = ({obj: alertManager, index, key, style}) => {
+  const {metadata, spec} = alertManager;
+  return (
+    <TableRow id={alertManager.metadata.uid} index={index} trKey={key} style={style}>
+      <TableData className={tableColumnClasses[0]}>
+        <ResourceLink kind={referenceForModel(AlertmanagerModel)} name={metadata.name} namespace={metadata.namespace} title={metadata.uid} />
+      </TableData>
+      <TableData className={tableColumnClasses[1]}>
+        <ResourceLink kind="Namespace" name={metadata.namespace} title={metadata.namespace} />
+      </TableData>
+      <TableData className={tableColumnClasses[2]}>
+        <LabelList kind={AlertmanagerModel.kind} labels={metadata.labels} />
+      </TableData>
+      <TableData className={tableColumnClasses[3]}>
+        {spec.version}
+      </TableData>
+      <TableData className={tableColumnClasses[4]}>
+        <Selector selector={spec.nodeSelector} kind="Node" />
+      </TableData>
+    </TableRow>
+  );
+};
+AlertManagerTableRow.displayName = 'AlertManagerTableRow';
+type AlertManagerTableRowProps = {
+  obj: K8sResourceKind;
+  index: number;
+  key?: string;
+  style: object;
 };
 
-const AlertManagerHeader = props => <ListHeader>
-  <ColHead {...props} className="col-md-2 col-sm-3 col-xs-6" sortField="metadata.name">Name</ColHead>
-  <ColHead {...props} className="col-md-2 col-sm-3 col-xs-6" sortField="metadata.namespace">Namespace</ColHead>
-  <ColHead {...props} className="col-md-4 col-sm-3 hidden-xs" sortField="metadata.labels">Labels</ColHead>
-  <ColHead {...props} className="col-md-1 hidden-sm hidden-xs" sortField="spec.version">Version</ColHead>
-  <ColHead {...props} className="col-md-3 col-sm-3 hidden-xs" sortField="spec.nodeSelector">
-    Node Selector
-  </ColHead>
-</ListHeader>;
+const AlertManagerTableHeader = () => {
+  return [
+    {
+      title: 'Name', sortField: 'metadata.name', transforms: [sortable],
+      props: { className: tableColumnClasses[0] },
+    },
+    {
+      title: 'Namespace', sortField: 'metadata.namespace', transforms: [sortable],
+      props: { className: tableColumnClasses[1] },
+    },
+    {
+      title: 'Labels', sortField: 'metadata.labels', transforms: [sortable],
+      props: { className: tableColumnClasses[2] },
+    },
+    {
+      title: 'Version', sortField: 'spec.version', transforms: [sortable],
+      props: { className: tableColumnClasses[3] },
+    },
+    {
+      title: 'Node Selector', sortField: 'spec.nodeSelector', transforms: [sortable],
+      props: { className: tableColumnClasses[4] },
+    },
+  ];
+};
+AlertManagerTableHeader.displayName = 'AlertManagerTableHeader';
 
-export const AlertManagersList = props => <List {...props} Header={AlertManagerHeader} Row={AlertManagerRow} />;
+export const AlertManagersList = props => <Table {...props} aria-label="Alert Managers" Header={AlertManagerTableHeader} Row={AlertManagerTableRow} virtualize />;
+
 export const AlertManagersPage = props => <ListPage {...props} ListComponent={AlertManagersList} canCreate={false} kind={referenceForModel(AlertmanagerModel)} />;
 
 type DetailsProps = {

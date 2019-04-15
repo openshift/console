@@ -1,7 +1,8 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-
-import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
+import * as classNames from 'classnames';
+import { sortable } from '@patternfly/react-table';
+import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
 import { SecretData } from './configmap-and-secret-data';
 import { Kebab, SectionHeading, ResourceKebab, ResourceLink, ResourceSummary, detailsPage, navFactory, resourceObjPath } from './utils';
 import { fromNow } from './utils/datetime';
@@ -41,33 +42,67 @@ const menuActions = [
   Kebab.factory.Delete,
 ];
 
-const SecretHeader = props => <ListHeader>
-  <ColHead {...props} className="col-md-3 col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
-  <ColHead {...props} className="col-md-3 col-sm-4 col-xs-6" sortField="metadata.namespace">Namespace</ColHead>
-  <ColHead {...props} className="col-md-3 col-sm-4 hidden-xs" sortField="type">Type</ColHead>
-  <ColHead {...props} className="col-md-1 hidden-sm hidden-xs" sortFunc="dataSize">Size</ColHead>
-  <ColHead {...props} className="col-md-2 hidden-sm hidden-xs" sortField="metadata.creationTimestamp">Created</ColHead>
-</ListHeader>;
+const kind = 'Secret';
 
-const SecretRow = ({obj: secret}) => {
+const tableColumnClasses = [
+  classNames('pf-m-3-col-on-lg', 'pf-m-4-col-on-md', 'pf-m-6-col-on-sm'),
+  classNames('pf-m-3-col-on-lg', 'pf-m-4-col-on-md', 'pf-m-6-col-on-sm'),
+  classNames('pf-m-3-col-on-lg', 'pf-m-4-col-on-md', 'pf-m-hidden', 'pf-m-visible-on-md'),
+  classNames('pf-m-1-col-on-xl', 'pf-m-hidden', 'pf-m-visible-on-xl'),
+  classNames('pf-m-3-col-on-lg', 'pf-m-hidden', 'pf-m-visible-on-lg'),
+  Kebab.columnClass,
+];
+
+const SecretTableHeader = () => {
+  return [
+    {
+      title: 'Name', sortField: 'metadata.name', transforms: [sortable],
+      props: { className: tableColumnClasses[0] },
+    },
+    {
+      title: 'Namespace', sortField: 'metadata.namespace', transforms: [sortable],
+      props: { className: tableColumnClasses[1] },
+    },
+    {
+      title: 'Type', sortField: 'type', transforms: [sortable],
+      props: { className: tableColumnClasses[2] },
+    },
+    {
+      title: 'Size', sortFunc: 'dataSize', transforms: [sortable],
+      props: { className: tableColumnClasses[3] },
+    },
+    {
+      title: 'Created', sortField: 'metadata.creationTimestamp', transforms: [sortable],
+      props: { className: tableColumnClasses[4] },
+    },
+    {
+      title: '', props: { className: tableColumnClasses[5] },
+    },
+  ];
+};
+SecretTableHeader.displayName = 'SecretTableHeader';
+
+const SecretTableRow = ({obj: secret, index, key, style}) => {
   const data = _.size(secret.data);
   const age = fromNow(secret.metadata.creationTimestamp);
-
-  return <ResourceRow obj={secret}>
-    <div className="col-md-3 col-sm-4 col-xs-6">
-      <ResourceLink kind="Secret" name={secret.metadata.name} namespace={secret.metadata.namespace} title={secret.metadata.uid} />
-    </div>
-    <div className="col-md-3 col-sm-4 col-xs-6 co-break-word">
-      <ResourceLink kind="Namespace" name={secret.metadata.namespace} title={secret.metadata.namespace} />
-    </div>
-    <div className="col-md-3 col-sm-4 hidden-xs co-break-word">{secret.type}</div>
-    <div className="col-md-1 hidden-sm hidden-xs">{data}</div>
-    <div className="col-md-2 hidden-sm hidden-xs">{age}</div>
-    <div className="dropdown-kebab-pf">
-      <ResourceKebab actions={menuActions} kind="Secret" resource={secret} />
-    </div>
-  </ResourceRow>;
+  return (
+    <TableRow id={secret.metadata.uid} index={index} trKey={key} style={style}>
+      <TableData className={tableColumnClasses[0]}>
+        <ResourceLink kind="Secret" name={secret.metadata.name} namespace={secret.metadata.namespace} title={secret.metadata.uid} />
+      </TableData>
+      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+        <ResourceLink kind="Namespace" name={secret.metadata.namespace} title={secret.metadata.namespace} />
+      </TableData>
+      <TableData className={classNames(tableColumnClasses[2], 'co-break-word')}>{secret.type}</TableData>
+      <TableData className={tableColumnClasses[3]}>{data}</TableData>
+      <TableData className={tableColumnClasses[4]}>{age}</TableData>
+      <TableData className={tableColumnClasses[5]}>
+        <ResourceKebab actions={menuActions} kind={kind} resource={secret} />
+      </TableData>
+    </TableRow>
+  );
 };
+SecretTableRow.displayName = 'SecretTableRow';
 
 const SecretDetails = ({obj: secret}) => {
   return <React.Fragment>
@@ -81,7 +116,7 @@ const SecretDetails = ({obj: secret}) => {
   </React.Fragment>;
 };
 
-const SecretsList = props => <List {...props} Header={SecretHeader} Row={SecretRow} />;
+const SecretsList = props => <Table {...props} aria-label="Secrets" Header={SecretTableHeader} Row={SecretTableRow} virtualize />;
 SecretsList.displayName = 'SecretsList';
 
 const IMAGE_FILTER_VALUE = 'Image';

@@ -1,9 +1,10 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-
+import * as classNames from 'classnames';
+import { sortable } from '@patternfly/react-table';
 import { K8sResourceKind, K8sResourceKindReference, referenceFor } from '../module/k8s';
 import { startBuild } from '../module/k8s/builds';
-import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
+import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
 import { errorModal } from './modals';
 import {
   BuildHooks,
@@ -86,30 +87,67 @@ export const BuildConfigsDetailsPage: React.SFC<BuildConfigsDetailsPageProps> = 
     pages={pages} />;
 BuildConfigsDetailsPage.displayName = 'BuildConfigsDetailsPage';
 
-const BuildConfigsHeader = props => <ListHeader>
-  <ColHead {...props} className="col-sm-3 col-xs-6" sortField="metadata.name">Name</ColHead>
-  <ColHead {...props} className="col-sm-3 col-xs-6" sortField="metadata.namespace">Namespace</ColHead>
-  <ColHead {...props} className="col-sm-3 hidden-xs" sortField="metadata.labels">Labels</ColHead>
-  <ColHead {...props} className="col-sm-3 hidden-xs" sortField="metadata.creationTimestamp">Created</ColHead>
-</ListHeader>;
+const tableColumnClasses = [
+  classNames('pf-m-3-col-on-md', 'pf-m-6-col-on-sm'),
+  classNames('pf-m-3-col-on-md', 'pf-m-6-col-on-sm'),
+  classNames('pf-m-3-col-on-md', 'pf-m-hidden', 'pf-m-visible-on-md'),
+  classNames('pf-m-3-col-on-md', 'pf-m-hidden', 'pf-m-visible-on-md'),
+  Kebab.columnClass,
+];
 
-const BuildConfigsRow: React.SFC<BuildConfigsRowProps> = ({obj}) => <div className="row co-resource-list__item">
-  <div className="col-sm-3 col-xs-6">
-    <ResourceLink kind={BuildConfigsReference} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
-  </div>
-  <div className="col-sm-3 col-xs-6 co-break-word">
-    <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
-  </div>
-  <div className="col-sm-3 hidden-xs">
-    <LabelList kind={BuildConfigsReference} labels={obj.metadata.labels} />
-  </div>
-  <div className="col-sm-3 hidden-xs">
-    { fromNow(obj.metadata.creationTimestamp) }
-  </div>
-  <div className="dropdown-kebab-pf">
-    <ResourceKebab actions={menuActions} kind={BuildConfigsReference} resource={obj} />
-  </div>
-</div>;
+const BuildConfigsTableHeader = () => {
+  return [
+    {
+      title: 'Name', sortField: 'metadata.name', transforms: [sortable],
+      props: { className: tableColumnClasses[0] },
+    },
+    {
+      title: 'Namespace', sortField: 'metadata.namespace', transforms: [sortable],
+      props: { className: tableColumnClasses[1] },
+    },
+    {
+      title: 'Labels', sortField: 'metadata.labels', transforms: [sortable],
+      props: { className: tableColumnClasses[2] },
+    },
+    {
+      title: 'Created', sortField: 'metadata.creationTimestamp', transforms: [sortable],
+      props: { className: tableColumnClasses[3] },
+    },
+    {
+      title: '', props: { className: tableColumnClasses[4] },
+    },
+  ];
+};
+BuildConfigsTableHeader.displayName = 'BuildConfigsTableHeader';
+
+const BuildConfigsTableRow: React.FC<BuildConfigsTableRowProps> = ({obj, index, key, style}) => {
+  return (
+    <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+      <TableData className={tableColumnClasses[0]}>
+        <ResourceLink kind={BuildConfigsReference} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
+      </TableData>
+      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+        <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
+      </TableData>
+      <TableData className={tableColumnClasses[2]}>
+        <LabelList kind={BuildConfigsReference} labels={obj.metadata.labels} />
+      </TableData>
+      <TableData className={tableColumnClasses[3]}>
+        { fromNow(obj.metadata.creationTimestamp) }
+      </TableData>
+      <TableData className={tableColumnClasses[4]}>
+        <ResourceKebab actions={menuActions} kind={BuildConfigsReference} resource={obj} />
+      </TableData>
+    </TableRow>
+  );
+};
+BuildConfigsTableRow.displayName = 'BuildConfigsTableRow';
+type BuildConfigsTableRowProps = {
+  obj: K8sResourceKind;
+  index: number;
+  key?: string;
+  style: object;
+};
 
 const buildStrategy = (buildConfig: K8sResourceKind): BuildStrategyType => buildConfig.spec.strategy.type;
 
@@ -124,7 +162,8 @@ const filters = [{
   })),
 }];
 
-export const BuildConfigsList: React.SFC = props => <List {...props} Header={BuildConfigsHeader} Row={BuildConfigsRow} />;
+export const BuildConfigsList: React.SFC = props => <Table {...props} aria-label="Build Configs" Header={BuildConfigsTableHeader} Row={BuildConfigsTableRow} virtualize />;
+
 BuildConfigsList.displayName = 'BuildConfigsList';
 
 export const BuildConfigsPage: React.SFC<BuildConfigsPageProps> = props =>
@@ -137,10 +176,6 @@ export const BuildConfigsPage: React.SFC<BuildConfigsPageProps> = props =>
     filterLabel={props.filterLabel}
     rowFilters={filters} />;
 BuildConfigsPage.displayName = 'BuildConfigsListPage';
-
-export type BuildConfigsRowProps = {
-  obj: any;
-};
 
 export type BuildConfigsDetailsProps = {
   obj: any;

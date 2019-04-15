@@ -3,9 +3,9 @@ import { shallow, ShallowWrapper, mount, ReactWrapper } from 'enzyme';
 import { Link } from 'react-router-dom';
 import * as _ from 'lodash-es';
 
-import { ClusterServiceVersionsDetailsPage, ClusterServiceVersionsDetailsPageProps, ClusterServiceVersionDetails, ClusterServiceVersionDetailsProps, ClusterServiceVersionsPage, ClusterServiceVersionsPageProps, ClusterServiceVersionList, ClusterServiceVersionHeader, ClusterServiceVersionRow, ClusterServiceVersionRowProps, CRDCard, CRDCardRow } from '../../../public/components/operator-lifecycle-manager/clusterserviceversion';
+import { ClusterServiceVersionsDetailsPage, ClusterServiceVersionsDetailsPageProps, ClusterServiceVersionDetails, ClusterServiceVersionDetailsProps, ClusterServiceVersionsPage, ClusterServiceVersionsPageProps, ClusterServiceVersionList, ClusterServiceVersionTableHeader, ClusterServiceVersionTableRow, ClusterServiceVersionTableRowProps, CRDCard, CRDCardRow } from '../../../public/components/operator-lifecycle-manager/clusterserviceversion';
 import { ClusterServiceVersionKind, ClusterServiceVersionLogo, ClusterServiceVersionLogoProps, referenceForProvidedAPI, CSVConditionReason } from '../../../public/components/operator-lifecycle-manager';
-import { DetailsPage, ListPage, ListHeader, ColHead, List, ListInnerProps } from '../../../public/components/factory';
+import { DetailsPage, ListPage, TableInnerProps, Table, TableRow } from '../../../public/components/factory';
 import { testClusterServiceVersion } from '../../../__mocks__/k8sResourcesMocks';
 import { Timestamp, MsgBox, ResourceLink, ResourceKebab, ErrorBoundary, LoadingBox, ScrollToTopOnMount, SectionHeading } from '../../../public/components/utils';
 import { referenceForModel } from '../../../public/module/k8s';
@@ -13,50 +13,27 @@ import { ClusterServiceVersionModel } from '../../../public/models';
 
 import * as operatorLogo from '../../../public/imgs/operator.svg';
 
-describe(ClusterServiceVersionHeader.displayName, () => {
-  let wrapper: ShallowWrapper;
-
-  beforeEach(() => {
-    wrapper = shallow(<ClusterServiceVersionHeader />);
-  });
-
-  it('renders `ListHeader`', () => {
-    expect(wrapper.find(ListHeader).exists()).toBe(true);
-  });
-
-  it('renders column header for app name and logo', () => {
-    expect(wrapper.find(ColHead).at(0).childAt(0).text()).toEqual('Name');
-    expect(wrapper.find(ColHead).at(0).props().sortField).toEqual('metadata.name');
-  });
-
-  it('renders column header for app namespace', () => {
-    expect(wrapper.find(ColHead).at(1).childAt(0).text()).toEqual('Namespace');
-  });
-
-  it('renders column header for Operator deployment', () => {
-    expect(wrapper.find(ColHead).at(2).childAt(0).text()).toEqual('Deployment');
-  });
-
-  it('renders column header for app status', () => {
-    expect(wrapper.find(ColHead).at(3).childAt(0).text()).toEqual('Status');
+describe(ClusterServiceVersionTableHeader.displayName, () => {
+  it('returns column header definition for cluster service version table header', () => {
+    expect(Array.isArray(ClusterServiceVersionTableHeader()));
   });
 });
 
-describe(ClusterServiceVersionRow.displayName, () => {
-  let wrapper: ShallowWrapper<ClusterServiceVersionRowProps>;
+describe(ClusterServiceVersionTableRow.displayName, () => {
+  let wrapper: ShallowWrapper<ClusterServiceVersionTableRowProps>;
 
   beforeEach(() => {
-    wrapper = shallow(<ClusterServiceVersionRow obj={testClusterServiceVersion} />).childAt(0).shallow();
+    wrapper = shallow(<ClusterServiceVersionTableRow obj={testClusterServiceVersion} index={0} style={{}} />).childAt(0).shallow();
   });
 
   it('renders a component wrapped in an `ErrorBoundary', () => {
-    wrapper = shallow(<ClusterServiceVersionRow obj={testClusterServiceVersion} />);
+    wrapper = shallow(<ClusterServiceVersionTableRow obj={testClusterServiceVersion} index={0} style={{}} />);
 
     expect(wrapper.find(ErrorBoundary).exists()).toBe(true);
   });
 
   it('renders `ResourceKebab` with actions', () => {
-    const col = wrapper.find('.row');
+    const col = wrapper.find(TableRow);
 
     expect(col.find(ResourceKebab).props().resource).toEqual(testClusterServiceVersion);
     expect(col.find(ResourceKebab).props().kind).toEqual(referenceForModel(ClusterServiceVersionModel));
@@ -64,14 +41,14 @@ describe(ClusterServiceVersionRow.displayName, () => {
   });
 
   it('renders clickable column for app logo and name', () => {
-    const col = wrapper.find('.row').childAt(0);
+    const col = wrapper.find(TableRow).childAt(0);
 
     expect(col.find(Link).props().to).toEqual(`/k8s/ns/${testClusterServiceVersion.metadata.namespace}/${ClusterServiceVersionModel.plural}/${testClusterServiceVersion.metadata.name}`);
     expect(col.find(Link).find(ClusterServiceVersionLogo).exists()).toBe(true);
   });
 
   it('renders column for app namespace link', () => {
-    const link = wrapper.find('.row').childAt(1).find(ResourceLink);
+    const link = wrapper.find(TableRow).childAt(1).find(ResourceLink);
 
     expect(link.props().kind).toEqual('Namespace');
     expect(link.props().title).toEqual(testClusterServiceVersion.metadata.namespace);
@@ -79,27 +56,27 @@ describe(ClusterServiceVersionRow.displayName, () => {
   });
 
   it('renders column with link to Operator deployment', () => {
-    const col = wrapper.find('.row').childAt(2);
+    const col = wrapper.find(TableRow).childAt(2);
 
     expect(col.find(ResourceLink).props().kind).toEqual('Deployment');
     expect(col.find(ResourceLink).props().name).toEqual(testClusterServiceVersion.spec.install.spec.deployments[0].name);
   });
 
   it('renders column for app status', () => {
-    const col = wrapper.find('.row').childAt(3);
+    const col = wrapper.find(TableRow).childAt(3);
 
     expect(col.childAt(0).text()).toEqual(CSVConditionReason.CSVReasonInstallSuccessful);
   });
 
   it('renders "disabling" status if CSV has `deletionTimestamp`', () => {
     wrapper = wrapper.setProps({obj: _.cloneDeepWith(testClusterServiceVersion, (v, k) => k === 'metadata' ? {...v, deletionTimestamp: Date.now()} : undefined)});
-    const col = wrapper.find('.row').childAt(3);
+    const col = wrapper.find(TableRow).childAt(3);
 
     expect(col.childAt(0).text()).toEqual('Disabling');
   });
 
   it('renders column with each CRD provided by the Operator', () => {
-    const col = wrapper.find('.row').childAt(4);
+    const col = wrapper.find(TableRow).childAt(4);
     testClusterServiceVersion.spec.customresourcedefinitions.owned.forEach((desc, i) => {
       expect(col.find(Link).at(i).props().title).toEqual(desc.name);
       expect(col.find(Link).at(i).props().to).toEqual(`/k8s/ns/default/clusterserviceversions/testapp/${referenceForProvidedAPI(desc)}`);
@@ -138,9 +115,8 @@ describe(ClusterServiceVersionList.displayName, () => {
 
   it('renders `List` with correct props', () => {
     const wrapper = shallow(<ClusterServiceVersionList data={[]} loaded={true} />);
-
-    expect(wrapper.find<ListInnerProps>(List).props().Row).toEqual(ClusterServiceVersionRow);
-    expect(wrapper.find<ListInnerProps>(List).props().Header).toEqual(ClusterServiceVersionHeader);
+    expect(wrapper.find<TableInnerProps>(Table).props().Row).toEqual(ClusterServiceVersionTableRow);
+    expect(wrapper.find<TableInnerProps>(Table).props().Header).toEqual(ClusterServiceVersionTableHeader);
   });
 });
 

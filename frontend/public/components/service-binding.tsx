@@ -1,9 +1,10 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { match } from 'react-router-dom';
-
+import { sortable } from '@patternfly/react-table';
+import * as classNames from 'classnames';
 import { serviceCatalogStatus, referenceForModel, K8sResourceKind } from '../module/k8s';
-import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
+import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
 import { Kebab, SectionHeading, navFactory, ResourceKebab, ResourceLink, ResourceSummary, StatusWithIcon } from './utils';
 import { ResourceEventStream } from './events';
 import { Conditions } from './conditions';
@@ -70,36 +71,78 @@ export const ServiceBindingDetailsPage: React.SFC<ServiceBindingDetailsPageProps
     pages={pages} />;
 ServiceBindingDetailsPage.displayName = 'ServiceBindingDetailsPage';
 
-const ServiceBindingsHeader = props => <ListHeader>
-  <ColHead {...props} className="col-md-3 col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
-  <ColHead {...props} className="col-md-2 col-sm-4 col-xs-6" sortField="metadata.namespace">Namespace</ColHead>
-  <ColHead {...props} className="col-md-2 col-sm-4 hidden-xs" sortField="spec.instanceRef.name">Service Instance</ColHead>
-  <ColHead {...props} className="col-md-3 hidden-sm hidden-xs" sortField="spec.secretName">Secret</ColHead>
-  <ColHead {...props} className="col-md-2 hidden-sm hidden-xs" sortFunc="serviceCatalogStatus">Status</ColHead>
-</ListHeader>;
+const tableColumnClasses = [
+  classNames('pf-m-3-col-on-lg', 'pf-m-4-col-on-md', 'pf-m-6-col-on-sm'),
+  classNames('pf-m-2-col-on-lg', 'pf-m-4-col-on-md', 'pf-m-6-col-on-sm'),
+  classNames('pf-m-2-col-on-lg', 'pf-m-4-col-on-md', 'pf-m-hidden', 'pf-m-visible-on-md'),
+  classNames('pf-m-3-col-on-lg', 'pf-m-hidden', 'pf-m-visible-on-lg'),
+  classNames('pf-m-2-col-on-lg', 'pf-m-hidden', 'pf-m-visible-on-lg'),
+  Kebab.columnClass,
+];
 
-const ServiceBindingsRow: React.SFC<ServiceBindingsRowProps> = ({obj}) => <div className="row co-resource-list__item">
-  <div className="col-md-3 col-sm-4 col-xs-6">
-    <ResourceLink kind={referenceForModel(ServiceBindingModel)} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
-  </div>
-  <div className="col-md-2 col-sm-4 col-xs-6 co-break-word">
-    <ResourceLink kind="Namespace" name={obj.metadata.namespace} title={obj.metadata.namespace} />
-  </div>
-  <div className="col-md-2 col-sm-4 hidden-xs co-break-word">
-    <ResourceLink kind={referenceForModel(ServiceInstanceModel)} name={obj.spec.instanceRef.name} title={obj.spec.instanceRef.name} namespace={obj.metadata.namespace} />
-  </div>
-  <div className="col-md-3 hidden-sm hidden-xs co-break-word">
-    { secretLink(obj) }
-  </div>
-  <div className="col-md-2 hidden-sm hidden-xs co-break-word">
-    <StatusWithIcon obj={obj} />
-  </div>
-  <div className="dropdown-kebab-pf">
-    <ResourceKebab actions={menuActions} kind={referenceForModel(ServiceBindingModel)} resource={obj} />
-  </div>
-</div>;
+const ServiceBindingsTableHeader = () => {
+  return [
+    {
+      title: 'Name', sortField: 'metadata.name', transforms: [sortable],
+      props: { className: tableColumnClasses[0] },
+    },
+    {
+      title: 'Namespace', sortField: 'metadata.namespace', transforms: [sortable],
+      props: { className: tableColumnClasses[1] },
+    },
+    {
+      title: 'Service Instance', sortField: 'spec.instanceRef.name', transforms: [sortable],
+      props: { className: tableColumnClasses[2] },
+    },
+    {
+      title: 'Secret', sortField: 'spec.secretName', transforms: [sortable],
+      props: { className: tableColumnClasses[3] },
+    },
+    {
+      title: 'Status', sortFunc: 'serviceCatalogStatus', transforms: [sortable],
+      props: { className: tableColumnClasses[4] },
+    },
+    {
+      title: '', props: { className: tableColumnClasses[5] },
+    },
+  ];
+};
+ServiceBindingsTableHeader.displayName = 'ServiceBindingsTableHeader';
 
-const ServiceBindingsList: React.SFC = props => <List {...props} Header={ServiceBindingsHeader} Row={ServiceBindingsRow} />;
+const ServiceBindingsTableRow: React.FC<ServiceBindingsTableRowProps> = ({obj, index, key, style}) => {
+  return (
+    <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+      <TableData className={tableColumnClasses[0]}>
+        <ResourceLink kind={referenceForModel(ServiceBindingModel)} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
+      </TableData>
+      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+        <ResourceLink kind="Namespace" name={obj.metadata.namespace} title={obj.metadata.namespace} />
+      </TableData>
+      <TableData className={classNames(tableColumnClasses[2], 'co-break-word')}>
+        <ResourceLink kind={referenceForModel(ServiceInstanceModel)} name={obj.spec.instanceRef.name} title={obj.spec.instanceRef.name} namespace={obj.metadata.namespace} />
+      </TableData>
+      <TableData className={classNames(tableColumnClasses[3], 'co-break-word')}>
+        { secretLink(obj) }
+      </TableData>
+      <TableData className={classNames(tableColumnClasses[4], 'co-break-word')}>
+        <StatusWithIcon obj={obj} />
+      </TableData>
+      <TableData className={tableColumnClasses[5]}>
+        <ResourceKebab actions={menuActions} kind={referenceForModel(ServiceBindingModel)} resource={obj} />
+      </TableData>
+    </TableRow>
+  );
+};
+ServiceBindingsTableRow.displayName = 'ServiceBindingsTableRow';
+type ServiceBindingsTableRowProps = {
+  obj: K8sResourceKind;
+  index: number;
+  key?: string;
+  style: object;
+};
+
+
+const ServiceBindingsList: React.SFC = props => <Table {...props} aria-label="Service Bindings" Header={ServiceBindingsTableHeader} Row={ServiceBindingsTableRow} virtualize />;
 ServiceBindingsList.displayName = 'ServiceBindingsList';
 
 export const ServiceBindingsPage: React.SFC<ServiceBindingsPageProps> = props =>
@@ -110,10 +153,6 @@ export const ServiceBindingsPage: React.SFC<ServiceBindingsPageProps> = props =>
     kind={referenceForModel(ServiceBindingModel)}
     ListComponent={ServiceBindingsList}
   />;
-
-export type ServiceBindingsRowProps = {
-  obj: K8sResourceKind,
-};
 
 export type ServiceBindingDetailsProps = {
   obj: K8sResourceKind,

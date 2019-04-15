@@ -1,7 +1,8 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-
-import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
+import * as classNames from 'classnames';
+import { sortable } from '@patternfly/react-table';
+import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
 import { Kebab, SectionHeading, LabelList, ResourceKebab, ResourceIcon, detailsPage, EmptyBox, navFactory, ResourceLink, ResourceSummary } from './utils';
 
 const menuActions = Kebab.factory.common;
@@ -32,29 +33,64 @@ const getTLSCert = (ingress) => {
   </div>;
 };
 
-const IngressListHeader = props => <ListHeader>
-  <ColHead {...props} className="col-md-3 col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
-  <ColHead {...props} className="col-md-3 col-sm-4 col-xs-6" sortField="metadata.namespace">Namespace</ColHead>
-  <ColHead {...props} className="col-md-3 col-sm-4 hidden-xs" sortField="metadata.labels">Labels</ColHead>
-  <ColHead {...props} className="col-md-3 hidden-sm hidden-xs" sortFunc="ingressValidHosts">Hosts</ColHead>
-</ListHeader>;
+const tableColumnClasses = [
+  classNames('pf-m-3-col-on-lg', 'pf-m-4-col-on-md', 'pf-m-6-col-on-sm'),
+  classNames('pf-m-3-col-on-lg', 'pf-m-4-col-on-md', 'pf-m-6-col-on-sm'),
+  classNames('pf-m-3-col-on-lg', 'pf-m-4-col-on-md', 'pf-m-hidden', 'pf-m-visible-on-md'),
+  classNames('pf-m-3-col-on-lg', 'pf-m-hidden', 'pf-m-visible-on-lg'),
+  Kebab.columnClass,
+];
 
-const IngressListRow = ({obj: ingress}) => <ResourceRow obj={ingress}>
-  <div className="col-md-3 col-sm-4 col-xs-6">
-    <ResourceLink kind="Ingress" name={ingress.metadata.name}
-      namespace={ingress.metadata.namespace} title={ingress.metadata.uid} />
-  </div>
-  <div className="col-md-3 col-sm-4 col-xs-6 co-break-word">
-    <ResourceLink kind="Namespace" name={ingress.metadata.namespace} title={ingress.metadata.namespace} />
-  </div>
-  <div className="col-md-3 col-sm-4 hidden-xs">
-    <LabelList kind="Ingress" labels={ingress.metadata.labels} />
-  </div>
-  <div className="col-md-3 hidden-sm hidden-xs">{getHosts(ingress)}</div>
-  <div className="dropdown-kebab-pf">
-    <ResourceKebab actions={menuActions} kind="Ingress" resource={ingress} />
-  </div>
-</ResourceRow>;
+const kind = 'Ingress';
+
+const IngressTableHeader = () => {
+  return [
+    {
+      title: 'Name', sortField: 'metadata.name', transforms: [sortable],
+      props: { className: tableColumnClasses[0] },
+    },
+    {
+      title: 'Namespace', sortField: 'metadata.namespace', transforms: [sortable],
+      props: { className: tableColumnClasses[1] },
+    },
+    {
+      title: 'Labels', sortField: 'metadata.labels', transforms: [sortable],
+      props: { className: tableColumnClasses[2] },
+    },
+    {
+      title: 'Hosts', sortFunc: 'ingressValidHosts', transforms: [sortable],
+      props: { className: tableColumnClasses[3] },
+    },
+    {
+      title: '', props: { className: tableColumnClasses[4] },
+    },
+  ];
+};
+IngressTableHeader.displayName = 'IngressTableHeader';
+
+const IngressTableRow = ({obj: ingress, index, key, style}) => {
+  return (
+    <TableRow id={ingress.metadata.uid} index={index} trKey={key} style={style}>
+      <TableData className={tableColumnClasses[0]}>
+        <ResourceLink kind={kind} name={ingress.metadata.name}
+          namespace={ingress.metadata.namespace} title={ingress.metadata.uid} />
+      </TableData>
+      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+        <ResourceLink kind="Namespace" name={ingress.metadata.namespace} title={ingress.metadata.namespace} />
+      </TableData>
+      <TableData className={tableColumnClasses[2]}>
+        <LabelList kind={kind} labels={ingress.metadata.labels} />
+      </TableData>
+      <TableData className={tableColumnClasses[3]}>
+        {getHosts(ingress)}
+      </TableData>
+      <TableData className={tableColumnClasses[4]}>
+        <ResourceKebab actions={menuActions} kind={kind} resource={ingress} />
+      </TableData>
+    </TableRow>
+  );
+};
+IngressTableRow.displayName = 'IngressTableRow';
 
 const RulesHeader = () => <div className="row co-m-table-grid__head">
   <div className="col-xs-3">Host</div>
@@ -139,7 +175,8 @@ const IngressesDetailsPage = props => <DetailsPage
   menuActions={menuActions}
   pages={[navFactory.details(detailsPage(Details)), navFactory.editYaml()]}
 />;
-const IngressesList = props => <List {...props} Header={IngressListHeader} Row={IngressListRow} />;
+const IngressesList = props => <Table {...props} aria-label="Ingresses" Header={IngressTableHeader} Row={IngressTableRow} virtualize />;
+
 const IngressesPage = props => <ListPage ListComponent={IngressesList} canCreate={true} {...props} />;
 
 export {IngressesList, IngressesPage, IngressesDetailsPage};

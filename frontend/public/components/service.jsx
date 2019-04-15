@@ -1,7 +1,9 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
+import * as classNames from 'classnames';
+import { sortable } from '@patternfly/react-table';
 
-import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
+import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
 import { Kebab, navFactory, LabelList, ResourceKebab, SectionHeading, ResourceIcon, ResourceLink, ResourceSummary, Selector } from './utils';
 
 const menuActions = [Kebab.factory.ModifyPodSelector, ...Kebab.factory.common];
@@ -15,34 +17,69 @@ const ServiceIP = ({s}) => {
   return children;
 };
 
-const ServiceHeader = props => <ListHeader>
-  <ColHead {...props} className="col-lg-3 col-md-3 col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
-  <ColHead {...props} className="col-lg-2 col-md-3 col-sm-4 col-xs-6" sortField="metadata.namespace">Namespace</ColHead>
-  <ColHead {...props} className="col-lg-3 col-md-3 col-sm-4 hidden-xs" sortField="metadata.labels">Labels</ColHead>
-  <ColHead {...props} className="col-lg-2 col-md-3 hidden-sm hidden-xs" sortField="spec.selector">Pod Selector</ColHead>
-  <ColHead {...props} className="col-lg-2 hidden-md hidden-sm hidden-xs" sortField="spec.clusterIP">Location</ColHead>
-</ListHeader>;
+const kind = 'Service';
 
-const ServiceRow = ({obj: s}) => <ResourceRow obj={s}>
-  <div className="col-lg-3 col-md-3 col-sm-4 col-xs-6">
-    <ResourceLink kind="Service" name={s.metadata.name} namespace={s.metadata.namespace} title={s.metadata.uid} />
-  </div>
-  <div className="col-lg-2 col-md-3 col-sm-4 col-xs-6 co-break-word">
-    <ResourceLink kind="Namespace" name={s.metadata.namespace} title={s.metadata.namespace} />
-  </div>
-  <div className="col-lg-3 col-md-3 col-sm-4 hidden-xs">
-    <LabelList kind="Service" labels={s.metadata.labels} />
-  </div>
-  <div className="col-lg-2 col-md-3 hidden-sm hidden-xs">
-    <Selector selector={s.spec.selector} namespace={s.metadata.namespace} />
-  </div>
-  <div className="col-lg-2 hidden-md hidden-sm hidden-xs">
-    <ServiceIP s={s} />
-  </div>
-  <div className="dropdown-kebab-pf">
-    <ResourceKebab actions={menuActions} kind="Service" resource={s} />
-  </div>
-</ResourceRow>;
+const tableColumnClasses = [
+  classNames('pf-m-3-col-on-xl', 'pf-m-3-col-on-lg', 'pf-m-4-col-on-md', 'pf-m-6-col-on-sm'),
+  classNames('pf-m-2-col-on-xl', 'pf-m-3-col-on-lg', 'pf-m-4-col-on-md', 'pf-m-6-col-on-sm'),
+  classNames('pf-m-3-col-on-xl', 'pf-m-3-col-on-lg', 'pf-m-4-col-on-md', 'pf-m-hidden', 'pf-m-visible-on-md'),
+  classNames('pf-m-2-col-on-xl', 'pf-m-3-col-on-lg', 'pf-m-hidden', 'pf-m-visible-on-lg'),
+  classNames('pf-m-2-col-on-xl', 'pf-m-hidden', 'pf-m-visible-on-xl'),
+  Kebab.columnClass,
+];
+
+const ServiceTableHeader = () => {
+  return [
+    {
+      title: 'Name', sortField: 'metadata.name', transforms: [sortable],
+      props: { className: tableColumnClasses[0] },
+    },
+    {
+      title: 'Namespace', sortField: 'metadata.namespace', transforms: [sortable],
+      props: { className: tableColumnClasses[1] },
+    },
+    {
+      title: 'Labels', sortField: 'metadata.labels', transforms: [sortable],
+      props: { className: tableColumnClasses[2] },
+    },
+    { title: 'Pod Selector', sortField: 'spec.selector', transforms: [sortable],
+      props: { className: tableColumnClasses[3] },
+    },
+    { title: 'Location', sortField: 'spec.clusterIP', transforms: [sortable],
+      props: { className: tableColumnClasses[4] },
+    },
+    {
+      title: '', props: { className: tableColumnClasses[5] },
+    },
+  ];
+};
+ServiceTableHeader.displayName = 'ServiceTableHeader';
+
+const ServiceTableRow = ({obj: s, index, key, style}) => {
+  return (
+    <TableRow id={s.metadata.uid} index={index} trKey={key} style={style}>
+      <TableData className={tableColumnClasses[0]}>
+        <ResourceLink kind={kind} name={s.metadata.name} namespace={s.metadata.namespace} title={s.metadata.uid} />
+      </TableData>
+      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+        <ResourceLink kind="Namespace" name={s.metadata.namespace} title={s.metadata.namespace} />
+      </TableData>
+      <TableData className={tableColumnClasses[2]}>
+        <LabelList kind={kind} labels={s.metadata.labels} />
+      </TableData>
+      <TableData className={tableColumnClasses[3]}>
+        <Selector selector={s.spec.selector} namespace={s.metadata.namespace} />
+      </TableData>
+      <TableData className={tableColumnClasses[4]}>
+        <ServiceIP s={s} />
+      </TableData>
+      <TableData className={tableColumnClasses[5]}>
+        <ResourceKebab actions={menuActions} kind={kind} resource={s} />
+      </TableData>
+    </TableRow>
+  );
+};
+ServiceTableRow.displayName = 'ServiceTableRow';
 
 const ServiceAddress = ({s}) => {
   const ServiceIPsRow = (name, desc, ips, note = null) => <div className="co-ip-row">
@@ -143,7 +180,7 @@ const ServicesDetailsPage = props => <DetailsPage
   pages={[details(Details), editYaml(), pods()]}
 />;
 
-const ServicesList = props => <List {...props} Header={ServiceHeader} Row={ServiceRow} />;
+const ServicesList = props => <Table {...props} aria-label="Services" Header={ServiceTableHeader} Row={ServiceTableRow} virtualize />;
 const ServicesPage = props => <ListPage canCreate={true} ListComponent={ServicesList} {...props} />;
 
 export {ServicesList, ServicesPage, ServicesDetailsPage};

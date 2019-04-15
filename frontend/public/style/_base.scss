@@ -8,11 +8,11 @@ ol {
 dl {
   margin: 0px; }
 
+// match pf4 styling / table col head styling
 dt {
-  text-transform: uppercase;
-  font-weight: 400;
-  color: $color-text-secondary;
-  font-size: ($font-size-base - 1); }
+  color: $color-text-primary;
+  font-weight: var(--pf-global--FontWeight--bold);
+  font-size: $font-size-base; }
 
 dd {
   margin-bottom: 20px; }

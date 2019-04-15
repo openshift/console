@@ -1,12 +1,14 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
+import { sortable } from '@patternfly/react-table';
+import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
 
 import { ContainerSpec, K8sResourceKindReference, PodKind } from '../module/k8s';
 import { getRestartPolicyLabel, podPhase, podPhaseFilterReducer, podReadiness } from '../module/k8s/pods';
 import { getContainerState, getContainerStatus } from '../module/k8s/container';
 import { ResourceEventStream } from './events';
-import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
+import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
 import {
   AsyncComponent,
   Kebab,
@@ -51,39 +53,86 @@ export const Readiness: React.FC<ReadinessProps> = ({pod}) => {
 };
 Readiness.displayName = 'Readiness';
 
-export const PodRow: React.FC<PodRowProps> = ({obj: pod}) => {
+const tableColumnClasses = [
+  classNames('pf-m-2-col-on-xl', 'pf-m-3-col-on-lg', 'pf-m-4-col-on-md', 'pf-m-6-col-on-sm'),
+  classNames('pf-m-2-col-on-xl', 'pf-m-2-col-on-lg', 'pf-m-4-col-on-md', 'pf-m-6-col-on-sm'),
+  classNames('pf-m-2-col-on-xl', 'pf-m-3-col-on-lg', 'pf-m-4-col-on-md', 'pf-m-hidden', 'pf-m-visible-on-md'),
+  classNames('pf-m-2-col-on-xl', 'pf-m-2-col-on-lg', 'pf-m-hidden', 'pf-m-visible-on-lg'),
+  classNames('pf-m-2-col-on-xl', 'pf-m-hidden', 'pf-m-visible-on-xl'),
+  classNames('pf-m-2-col-on-xl', 'pf-m-hidden', 'pf-m-visible-on-xl'),
+  Kebab.columnClass,
+];
+
+const kind = 'Pod';
+
+const PodTableRow: React.FC<PodTableRowProps> = ({obj: pod, index, key, style}) => {
   const phase = podPhase(pod);
-
-  return <ResourceRow obj={pod}>
-    <div className="col-lg-2 col-md-3 col-sm-4 col-xs-6">
-      <ResourceLink kind="Pod" name={pod.metadata.name} namespace={pod.metadata.namespace} title={pod.metadata.uid} />
-    </div>
-    <div className="col-lg-2 col-md-2 col-sm-4 col-xs-6 co-break-word">
-      <ResourceLink kind="Namespace" name={pod.metadata.namespace} title={pod.metadata.namespace} />
-    </div>
-    <div className="col-lg-2 col-md-3 col-sm-4 hidden-xs">
-      <LabelList kind="Pod" labels={pod.metadata.labels} />
-    </div>
-    <div className="col-lg-2 col-md-2 hidden-sm hidden-xs co-break-word">
-      <NodeLink name={pod.spec.nodeName} />
-    </div>
-    <div className="col-lg-2 col-md-2 hidden-sm hidden-xs"><StatusIconAndText status={phase} /></div>
-    <div className="col-lg-2 hidden-md hidden-sm hidden-xs"><Readiness pod={pod} /></div>
-    <div className="dropdown-kebab-pf">
-      <ResourceKebab actions={menuActions} kind="Pod" resource={pod} isDisabled={phase === 'Terminating'} />
-    </div>
-  </ResourceRow>;
+  return (
+    <TableRow id={pod.metadata.uid} index={index} trKey={key} style={style}>
+      <TableData className={tableColumnClasses[0]}>
+        <ResourceLink kind={kind} name={pod.metadata.name} namespace={pod.metadata.namespace} title={pod.metadata.uid} />
+      </TableData>
+      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+        <ResourceLink kind="Namespace" name={pod.metadata.namespace} title={pod.metadata.namespace} />
+      </TableData>
+      <TableData className={tableColumnClasses[2]}>
+        <LabelList kind={kind} labels={pod.metadata.labels} />
+      </TableData>
+      <TableData className={tableColumnClasses[3]}>
+        <NodeLink name={pod.spec.nodeName} />
+      </TableData>
+      <TableData className={tableColumnClasses[4]}>
+        <StatusIconAndText status={phase} />
+      </TableData>
+      <TableData className={tableColumnClasses[5]}>
+        <Readiness pod={pod} />
+      </TableData>
+      <TableData className={tableColumnClasses[6]}>
+        <ResourceKebab actions={menuActions} kind={kind} resource={pod} isDisabled={phase === 'Terminating'} />
+      </TableData>
+    </TableRow>
+  );
 };
-PodRow.displayName = 'PodRow';
+PodTableRow.displayName = 'PodTableRow';
+type PodTableRowProps = {
+  obj: PodKind;
+  index: number;
+  key?: string;
+  style: object;
+};
 
-const PodHeader = props => <ListHeader>
-  <ColHead {...props} className="col-lg-2 col-md-3 col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
-  <ColHead {...props} className="col-lg-2 col-md-2 col-sm-4 col-xs-6" sortField="metadata.namespace">Namespace</ColHead>
-  <ColHead {...props} className="col-lg-2 col-md-3 col-sm-4 hidden-xs" sortField="metadata.labels">Pod Labels</ColHead>
-  <ColHead {...props} className="col-lg-2 col-md-2 hidden-sm hidden-xs" sortField="spec.nodeName">Node</ColHead>
-  <ColHead {...props} className="col-lg-2 col-md-2 hidden-sm hidden-xs" sortFunc="podPhase">Status</ColHead>
-  <ColHead {...props} className="col-lg-2 hidden-md hidden-sm hidden-xs" sortFunc="podReadiness">Readiness</ColHead>
-</ListHeader>;
+const PodTableHeader = () => {
+  return [
+    {
+      title: 'Name', sortField: 'metadata.name', transforms: [sortable],
+      props: { className: tableColumnClasses[0] },
+    },
+    {
+      title: 'Namespace', sortField: 'metadata.namespace', transforms: [sortable],
+      props: { className: tableColumnClasses[1] },
+    },
+    {
+      title: 'Pod Labels', sortField: 'metadata.labels', transforms: [sortable],
+      props: { className: tableColumnClasses[2] },
+    },
+    {
+      title: 'Node', sortField: 'spec.nodeName', transforms: [sortable],
+      props: { className: tableColumnClasses[3] },
+    },
+    {
+      title: 'Status', sortFunc: 'podPhase', transforms: [sortable],
+      props: { className: tableColumnClasses[4] },
+    },
+    {
+      title: 'Readiness', sortFunc: 'podReadiness', transforms: [sortable],
+      props: { className: tableColumnClasses[5] },
+    },
+    {
+      title: '', props: { className: tableColumnClasses[6] },
+    },
+  ];
+};
+PodTableHeader.displayName = 'PodTableHeader';
 
 const ContainerLink: React.FC<ContainerLinkProps> = ({pod, name}) => <span className="co-resource-item co-resource-item--inline">
   <ResourceIcon kind="Container" />
@@ -274,7 +323,7 @@ export const PodsDetailsPage: React.FC<PodDetailsPageProps> = props => <DetailsP
 />;
 PodsDetailsPage.displayName = 'PodsDetailsPage';
 
-export const PodList: React.FC = props => <List {...props} Header={PodHeader} Row={PodRow} />;
+export const PodList: React.FC = props => <Table {...props} aria-label="Pods" Header={PodTableHeader} Row={PodTableRow} virtualize />;
 PodList.displayName = 'PodList';
 
 const filters = [{
@@ -312,10 +361,6 @@ export class PodsPage extends React.Component<PodPageProps> {
 
 type ReadinessProps = {
   pod: PodKind;
-};
-
-type PodRowProps = {
-  obj: PodKind;
 };
 
 type ContainerLinkProps = {

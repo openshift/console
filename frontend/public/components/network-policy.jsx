@@ -1,50 +1,79 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
-
+import { sortable } from '@patternfly/react-table';
+import * as classNames from 'classnames';
 import { connectToFlags } from '../reducers/features';
 import { FLAGS } from '../const';
-import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
+import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
 import { Kebab, navFactory, ResourceKebab, SectionHeading, ResourceLink, ResourceSummary, Selector, ExternalLink } from './utils';
 
 const { common } = Kebab.factory;
 const menuActions = [...common];
 
-const Header = props => <ListHeader>
-  <ColHead {...props} className="col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
-  <ColHead {...props} className="col-sm-4 col-xs-6" sortField="metadata.namespace">Namespace</ColHead>
-  <ColHead {...props} className="col-sm-4 hidden-xs" sortField="spec.podSelector">Pod Selector</ColHead>
-</ListHeader>;
+const tableColumnClasses = [
+  classNames('pf-m-4-col-on-md', 'pf-m-6-col-on-sm'),
+  classNames('pf-m-4-col-on-md', 'pf-m-6-col-on-sm'),
+  classNames('pf-m-4-col-on-md', 'pf-m-hidden', 'pf-m-visible-on-md'),
+  Kebab.columnClass,
+];
+
+const NetworkPolicyTableHeader = () => {
+  return [
+    {
+      title: 'Name', sortField: 'metadata.name', transforms: [sortable],
+      props: { className: tableColumnClasses[0] },
+    },
+    {
+      title: 'Namespace', sortField: 'metadata.namespace', transforms: [sortable],
+      props: { className: tableColumnClasses[1] },
+    },
+    {
+      title: 'Pod Selector', sortField: 'spec.podSelector', transforms: [sortable],
+      props: { className: tableColumnClasses[2] },
+    },
+    {
+      title: '', props: { className: tableColumnClasses[3] },
+    },
+  ];
+};
+NetworkPolicyTableHeader.displayName = 'NetworkPolicyTableHeader';
 
 const kind = 'NetworkPolicy';
-const Row = ({obj: np}) => <div className="row co-resource-list__item">
-  <div className="col-sm-4 col-xs-6">
-    <ResourceLink kind={kind} name={np.metadata.name} namespace={np.metadata.namespace} title={np.metadata.name} />
-  </div>
-  <div className="col-sm-4 col-xs-6 co-break-word">
-    <ResourceLink kind={'Namespace'} name={np.metadata.namespace} title={np.metadata.namespace} />
-  </div>
 
-  <div className="col-sm-4 hidden-xs co-break-word">
-    {
-      _.isEmpty(np.spec.podSelector) ?
-        <Link to={`/search/ns/${np.metadata.namespace}?kind=Pod`}>{`All pods within ${np.metadata.namespace}`}</Link> :
-        <Selector selector={np.spec.podSelector} namespace={np.metadata.namespace} />
-    }
-  </div>
-  <div className="dropdown-kebab-pf">
-    <ResourceKebab actions={menuActions} kind={kind} resource={np} />
-  </div>
-</div>;
+const NetworkPolicyTableRow = ({obj: np, index, key, style}) => {
+  return (
+    <TableRow id={np.metadata.uid} index={index} trKey={key} style={style}>
+      <TableData className={tableColumnClasses[0]}>
+        <ResourceLink kind={kind} name={np.metadata.name} namespace={np.metadata.namespace} title={np.metadata.name} />
+      </TableData>
+      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+        <ResourceLink kind={'Namespace'} name={np.metadata.namespace} title={np.metadata.namespace} />
+      </TableData>
+      <TableData className={classNames(tableColumnClasses[2], 'co-break-word')}>
+        {
+          _.isEmpty(np.spec.podSelector) ?
+            <Link to={`/search/ns/${np.metadata.namespace}?kind=Pod`}>{`All pods within ${np.metadata.namespace}`}</Link> :
+            <Selector selector={np.spec.podSelector} namespace={np.metadata.namespace} />
+        }
+      </TableData>
+      <TableData className={tableColumnClasses[3]}>
+        <ResourceKebab actions={menuActions} kind={kind} resource={np} />
+      </TableData>
+    </TableRow>
+  );
+};
+NetworkPolicyTableRow.displayName = 'NetworkPolicyTableRow';
 
-const NetworkPoliciesList = props => <List {...props} Header={Header} Row={Row} />;
+const NetworkPoliciesList = props => <Table {...props} aria-label="Network Policies" Header={NetworkPolicyTableHeader} Row={NetworkPolicyTableRow} virtualize />;
+
 export const NetworkPoliciesPage = props => <ListPage {...props} ListComponent={NetworkPoliciesList} kind={kind} canCreate={true} />;
 
 
 const IngressHeader = () => <div className="row co-m-table-grid__head">
-  <div className="col-xs-4">target pods</div>
-  <div className="col-xs-5">from</div>
-  <div className="col-xs-3">to ports</div>
+  <div className="col-xs-4">Target Pods</div>
+  <div className="col-xs-5">From</div>
+  <div className="col-xs-3">To Ports</div>
 </div>;
 
 const IngressRow = ({ingress, namespace, podSelector}) => {

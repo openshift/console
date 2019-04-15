@@ -1,9 +1,10 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-
-import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
+import { sortable } from '@patternfly/react-table';
+import * as classNames from 'classnames';
+import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
 import { Kebab, detailsPage, navFactory, ResourceKebab, SectionHeading, ResourceLink, ResourceSummary } from './utils';
-import { K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
+import { StorageClassResourceKind, K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
 
 export const StorageClassReference: K8sResourceKindReference = 'StorageClass';
 
@@ -17,28 +18,60 @@ export const isDefaultClass = (storageClass: K8sResourceKind) => {
   return annotations[defaultClassAnnotation] === 'true' || annotations[betaDefaultStorageClassAnnotation] === 'true';
 };
 
-const StorageClassHeader = props => <ListHeader>
-  <ColHead {...props} className="col-sm-5 col-xs-6" sortField="metadata.name">Name</ColHead>
-  <ColHead {...props} className="col-sm-5 col-xs-6" sortField="provisioner">Provisioner</ColHead>
-  <ColHead {...props} className="col-sm-2 hidden-xs" sortField="reclaimPolicy">Reclaim <span className="hidden-sm">Policy</span></ColHead>
-</ListHeader>;
+const tableColumnClasses = [
+  classNames('pf-m-5-col-on-md', 'pf-m-6-col-on-sm'),
+  classNames('pf-m-5-col-on-md', 'pf-m-6-col-on-sm'),
+  classNames('pf-m-2-col-on-md', 'pf-m-hidden', 'pf-m-visible-on-md'),
+  Kebab.columnClass,
+];
 
-const StorageClassRow: React.SFC<StorageClassRowProps> = ({obj}) => {
-  return <div className="row co-resource-list__item">
-    <div className="col-sm-5 col-xs-6 co-break-word">
-      <ResourceLink inline kind={StorageClassReference} name={obj.metadata.name} />
-      { isDefaultClass(obj) && <span className="small text-muted storage-class-default">&ndash; Default</span> }
-    </div>
-    <div className="col-sm-5 col-xs-6 co-break-word">
-      {obj.provisioner}
-    </div>
-    <div className="col-sm-2 hidden-xs">
-      {obj.reclaimPolicy || '-'}
-    </div>
-    <div className="dropdown-kebab-pf">
-      <ResourceKebab actions={menuActions} kind={StorageClassReference} resource={obj} />
-    </div>
-  </div>;
+const StorageClassTableHeader = () => {
+  return [
+    {
+      title: 'Name', sortField: 'metadata.name', transforms: [sortable],
+      props: { className: tableColumnClasses[0] },
+    },
+    {
+      title: 'Provisioner', sortField: 'provisioner', transforms: [sortable],
+      props: { className: tableColumnClasses[1] },
+    },
+    {
+      title: <React.Fragment>Reclaim <span className="pf-u-display-none-on-md pf-u-display-inline-block-on-lg">Policy</span></React.Fragment>,
+      sortField: 'reclaimPolicy', transforms: [sortable],
+      props: { className: tableColumnClasses[2] },
+    },
+    {
+      title: '', props: { className: tableColumnClasses[3] },
+    },
+  ];
+};
+StorageClassTableHeader.displayName = 'StorageClassTableHeader';
+
+const StorageClassTableRow: React.SFC<StorageClassTableRowProps> = ({obj, index, key, style}) => {
+  return (
+    <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+      <TableData className={classNames(tableColumnClasses[0], 'co-break-word')}>
+        <ResourceLink inline kind={StorageClassReference} name={obj.metadata.name} />
+        { isDefaultClass(obj) && <span className="small text-muted storage-class-default">&ndash; Default</span> }
+      </TableData>
+      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+        {obj.provisioner}
+      </TableData>
+      <TableData className={tableColumnClasses[2]}>
+        {obj.reclaimPolicy || '-'}
+      </TableData>
+      <TableData className={tableColumnClasses[3]}>
+        <ResourceKebab actions={menuActions} kind={StorageClassReference} resource={obj} />
+      </TableData>
+    </TableRow>
+  );
+};
+StorageClassTableRow.displayName = 'StorageClassTableRow';
+type StorageClassTableRowProps = {
+  obj: StorageClassResourceKind;
+  index: number;
+  key?: string;
+  style: object;
 };
 
 const StorageClassDetails: React.SFC<StorageClassDetailsProps> = ({obj}) => <React.Fragment>
@@ -61,7 +94,7 @@ const StorageClassDetails: React.SFC<StorageClassDetailsProps> = ({obj}) => <Rea
   </div>
 </React.Fragment>;
 
-export const StorageClassList: React.SFC = props => <List {...props} Header={StorageClassHeader} Row={StorageClassRow} />;
+export const StorageClassList: React.SFC = props => <Table {...props} aria-label="Storage Classes" Header={StorageClassTableHeader} Row={StorageClassTableRow} virtualize />;
 StorageClassList.displayName = 'StorageClassList';
 
 export const StorageClassPage: React.SFC<StorageClassPageProps> = props => {
@@ -86,10 +119,6 @@ export const StorageClassDetailsPage: React.SFC<StorageClassDetailsPageProps> = 
   return <DetailsPage {...props} kind={StorageClassReference} menuActions={menuActions} pages={pages} />;
 };
 StorageClassDetailsPage.displayName = 'StorageClassDetailsPage';
-
-export type StorageClassRowProps = {
-  obj: any,
-};
 
 export type StorageClassDetailsProps = {
   obj: any,

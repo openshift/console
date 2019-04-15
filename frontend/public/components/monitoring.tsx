@@ -5,13 +5,19 @@ import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
 import { Link, Redirect, Route, Switch } from 'react-router-dom';
-
+import { sortable } from '@patternfly/react-table';
 import { coFetchJSON } from '../co-fetch';
 import * as k8sActions from '../actions/k8s';
-import * as UIActions from '../actions/ui';
 import { alertState, AlertStates, connectToURLs, MonitoringRoutes, silenceState, SilenceStates } from '../reducers/monitoring';
 import store from '../redux';
-import { ColHead, List, ListHeader, ResourceRow, TextFilter } from './factory';
+import * as UIActions from '../actions/ui';
+import {
+  ResourceRow,
+  TextFilter,
+  Table,
+  TableRow,
+  TableData,
+} from './factory';
 import { QueryBrowser } from './graphs';
 import { graphColors } from './graphs/query-browser';
 import { getPrometheusExpressionBrowserURL } from './graphs/prometheus-graph';
@@ -276,7 +282,7 @@ const AlertsDetailsPage = withFallback(connect(alertStateToProps)((props: Alerts
                 <dd>
                   <div className="co-resource-item">
                     <MonitoringResourceIcon resource={AlertRuleResource} />
-                    <Link to={ruleURL(rule)} className="co-resource-item__resource-name">{_.get(rule, 'name')}</Link>
+                    <Link to={ruleURL(rule)} data-test-id="alert-detail-resource-link" className="co-resource-item__resource-name">{_.get(rule, 'name')}</Link>
                   </div>
                 </dd>
               </dl>
@@ -508,34 +514,66 @@ const SilencesDetailsPage = withFallback(connect(silenceParamToProps)((props: Si
   </React.Fragment>;
 }));
 
-const AlertRow = ({obj}) => {
-  const {annotations = {}, labels = {}} = obj;
-  const state = alertState(obj);
+const tableAlertClasses = [
+  classNames('pf-m-7-col-on-md', 'pf-m-8-col-on-sm'),
+  classNames('pf-m-3-col-on-md', 'pf-m-4-col-on-sm'),
+  classNames('pf-m-2-col-on-md', 'pf-m-hidden', 'pf-m-visible-on-md'),
+  Kebab.columnClass,
+];
 
-  return <ResourceRow obj={obj}>
-    <div className="col-sm-7 col-xs-8">
-      <div className="co-resource-item">
-        <MonitoringResourceIcon resource={AlertResource} />
-        <Link to={alertURL(obj, obj.rule.id)} className="co-resource-item__resource-name">{labels.alertname}</Link>
-      </div>
-      <div className="monitoring-description">{annotations.description || annotations.message}</div>
-    </div>
-    <div className="col-sm-3 col-xs-4">
-      <AlertState state={state} />
-      <AlertStateDescription alert={obj} />
-    </div>
-    <div className="col-sm-2 hidden-xs co-truncate">{_.startCase(_.get(labels, 'severity')) || '-'}</div>
-    <div className="dropdown-kebab-pf">
-      <Kebab options={state === AlertStates.Firing || state === AlertStates.Pending ? [silenceAlert(obj), viewAlertRule(obj)] : [viewAlertRule(obj)]} />
-    </div>
-  </ResourceRow>;
+const AlertTableRow: React.FC<AlertTableRowProps> = ({obj, index, key, style}) => {
+  const {annotations = {}, labels} = obj;
+  const state = alertState(obj);
+  return (
+    <TableRow id={obj.rule.id} index={index} trKey={key} style={style}>
+      <TableData className={tableAlertClasses[0]}>
+        <div className="co-resource-item">
+          <MonitoringResourceIcon resource={AlertResource} />
+          <Link to={alertURL(obj, obj.rule.id)} data-test-id="alert-resource-link" className="co-resource-item__resource-name">{labels && labels.alertname}</Link>
+        </div>
+        <div className="monitoring-description">{annotations.description || annotations.message}</div>
+      </TableData>
+      <TableData className={tableAlertClasses[1]}>
+        <AlertState state={state} />
+        <AlertStateDescription alert={obj} />
+      </TableData>
+      <TableData className={classNames(tableAlertClasses[2], 'co-truncate')}>
+        {_.startCase(_.get(labels, 'severity')) || '-'}
+      </TableData>
+      <TableData className={tableAlertClasses[3]}>
+        <Kebab options={state === AlertStates.Firing || state === AlertStates.Pending ? [silenceAlert(obj), viewAlertRule(obj)] : [viewAlertRule(obj)]} />
+      </TableData>
+    </TableRow>
+  );
+};
+AlertTableRow.displayName = 'AlertTableRow';
+type AlertTableRowProps = {
+  obj: Alert;
+  index: number;
+  key?: string;
+  style: object;
 };
 
-const AlertHeader = props => <ListHeader>
-  <ColHead {...props} className="col-sm-7 col-xs-8" sortField="labels.alertname">Name</ColHead>
-  <ColHead {...props} className="col-sm-3 col-xs-4" sortFunc="alertStateOrder">State</ColHead>
-  <ColHead {...props} className="col-sm-2 hidden-xs" sortField="labels.severity">Severity</ColHead>
-</ListHeader>;
+const AlertTableHeader = () => {
+  return [
+    {
+      title: 'Name', sortField: 'metadata.name', transforms: [sortable],
+      props: { className: tableAlertClasses[0]},
+    },
+    {
+      title: 'State', sortFunc: 'alertStateOrder', transforms: [sortable],
+      props: { className: tableAlertClasses[1]},
+    },
+    {
+      title: 'Severity', sortField: 'labels.severity', transforms: [sortable],
+      props: { className: tableAlertClasses[2]},
+    },
+    { title: '',
+      props: { className: tableAlertClasses[3]},
+    },
+  ];
+};
+AlertTableHeader.displayName = 'AlertTableHeader';
 
 const AlertsPageDescription = () => <p className="co-help-text">
   Alerts help notify you when certain conditions in your environment are met. <ExternalLink href="https://prometheus.io/docs/prometheus/latest/configuration/alerting_rules/" text="Learn more about how alerts are configured." />
@@ -648,7 +686,8 @@ const MonitoringListPage = connect(filtersToProps)(class InnerMonitoringListPage
         </div>
         <div className="row">
           <div className="col-xs-12">
-            <List
+            <Table
+              aria-label="Alerts"
               data={data}
               filters={filters}
               Header={Header}
@@ -656,7 +695,7 @@ const MonitoringListPage = connect(filtersToProps)(class InnerMonitoringListPage
               loadError={loadError}
               reduxID={reduxID}
               Row={Row}
-            />
+              virtualize />
           </div>
         </div>
       </div>
@@ -666,21 +705,43 @@ const MonitoringListPage = connect(filtersToProps)(class InnerMonitoringListPage
 
 const AlertsPage_ = props => <MonitoringListPage
   {...props}
-  Header={AlertHeader}
+  Header={AlertTableHeader}
   kindPlural="Alerts"
   nameFilterID="alert-name"
   PageDescription={AlertsPageDescription}
   reduxID="monitoringRules"
-  Row={AlertRow}
+  Row={AlertTableRow}
   rowFilter={alertsRowFilter}
 />;
 const AlertsPage = withFallback(connect(alertsToProps)(AlertsPage_));
 
-const SilenceHeader = props => <ListHeader>
-  <ColHead {...props} className="col-sm-7 col-xs-8" sortField="name">Name</ColHead>
-  <ColHead {...props} className="col-sm-3 col-xs-4" sortFunc="silenceStateOrder">State</ColHead>
-  <ColHead {...props} className="col-sm-2 hidden-xs" sortField="firingAlerts.length">Firing Alerts</ColHead>
-</ListHeader>;
+const tableSilenceClasses = [
+  classNames('pf-m-7-col-on-md', 'pf-m-8-col-on-sm'),
+  classNames('pf-m-3-col-on-md', 'pf-m-4-col-on-sm'),
+  classNames('pf-m-2-col-on-md', 'pf-m-hidden', 'pf-m-visible-on-md'),
+  Kebab.columnClass,
+];
+
+const SilenceTableHeader = () => {
+  return [
+    {
+      title: 'Name', sortField: 'name', transforms: [sortable],
+      props: { className: tableSilenceClasses[0]},
+    },
+    {
+      title: 'State', sortFunc: 'silenceStateOrder', transforms: [sortable],
+      props: { className: tableSilenceClasses[1]},
+    },
+    {
+      title: 'Firing Alerts', sortField: 'firingAlerts.length', transforms: [sortable],
+      props: { className: tableSilenceClasses[2]},
+    },
+    { title: '',
+      props: { className: tableSilenceClasses[3]},
+    },
+  ];
+};
+SilenceTableHeader.displayName = 'SilenceTableHeader';
 
 const SilenceRow = ({obj}) => {
   const state = silenceState(obj);
@@ -689,7 +750,7 @@ const SilenceRow = ({obj}) => {
     <div className="col-sm-7 col-xs-8">
       <div className="co-resource-item">
         <MonitoringResourceIcon resource={SilenceResource} />
-        <Link className="co-resource-item__resource-name" title={obj.id} to={`${SilenceResource.path}/${obj.id}`}>{obj.name}</Link>
+        <Link className="co-resource-item__resource-name" data-test-id="silence-resource-link" title={obj.id} to={`${SilenceResource.path}/${obj.id}`}>{obj.name}</Link>
       </div>
       <div className="monitoring-label-list">
         <SilenceMatchersList silence={obj} />
@@ -707,6 +768,43 @@ const SilenceRow = ({obj}) => {
     </div>
   </ResourceRow>;
 };
+
+const SilenceTableRow: React.FC<SilenceTableRowProps> = ({obj, index, key, style}) => {
+  const state = silenceState(obj);
+  return (
+    <TableRow id={obj.id} index={index} trKey={key} style={style}>
+      <TableData className={tableSilenceClasses[0]}>
+        <div className="co-resource-item">
+          <MonitoringResourceIcon resource={SilenceResource} />
+          <Link className="co-resource-item__resource-name" data-test-id="silence-resource-link" title={obj.id} to={`${SilenceResource.path}/${obj.id}`}>{obj.name}</Link>
+        </div>
+        <div className="monitoring-label-list">
+          <SilenceMatchersList silence={obj} />
+        </div>
+      </TableData>
+      <TableData className={classNames(tableSilenceClasses[1], 'co-break-word')}>
+        <SilenceState silence={obj} />
+        {state === SilenceStates.Pending && <StateTimestamp text="Starts" timestamp={obj.startsAt} />}
+        {state === SilenceStates.Active && <StateTimestamp text="Ends" timestamp={obj.endsAt} />}
+        {state === SilenceStates.Expired && <StateTimestamp text="Expired" timestamp={obj.endsAt} />}
+      </TableData>
+      <TableData className={tableSilenceClasses[2]}>
+        {obj.firingAlerts.length}
+      </TableData>
+      <TableData className={tableSilenceClasses[3]}>
+        <SilenceKebab silence={obj} />
+      </TableData>
+    </TableRow>
+  );
+};
+SilenceTableRow.displayName = 'SilenceTableRow';
+export type SilenceTableRowProps = {
+  obj: Silence;
+  index: number;
+  key?: string;
+  style: object;
+};
+
 
 const SilencesPageDescription = () => <p className="co-help-text">
   Silences temporarily mute alerts based on a set of conditions that you define. Notifications are not sent for alerts that meet the given conditions.
@@ -731,12 +829,12 @@ const SilencesPage_ = props => <MonitoringListPage
   {...props}
   alertmanagerLinkPath="/#/silences"
   CreateButton={CreateButton}
-  Header={SilenceHeader}
+  Header={SilenceTableHeader}
   kindPlural="Silences"
   nameFilterID="silence-name"
   PageDescription={SilencesPageDescription}
   reduxID="monitoringSilences"
-  Row={SilenceRow}
+  Row={SilenceTableRow}
   rowFilter={silencesRowFilter}
 />;
 const SilencesPage = withFallback(connect(silencesToProps)(SilencesPage_));
@@ -1184,7 +1282,8 @@ export type ListPageProps = {
   CreateButton: React.ComponentType<{}>;
   data: Rule[] | Silence[];
   filters: {[key: string]: any};
-  Header: React.ComponentType<any>;
+  // Header: React.ComponentType<any>;
+  Header: (...args) => any[];
   itemCount: number;
   kindPlural: string;
   loaded: boolean;
