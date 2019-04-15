@@ -29,6 +29,9 @@ const STORAGE_CEPH_CAPACITY_USED_QUERY = 'ceph_cluster_total_used_bytes';
 const CEPH_OSD_UP_QUERY = 'sum(ceph_osd_up)';
 const CEPH_OSD_DOWN_QUERY = 'count(ceph_osd_up == 0.0) OR vector(0)';
 
+const CEPH_PG_CLEAN_AND_ACTIVE_QUERY = 'ceph_pg_clean and ceph_pg_active';
+const CEPH_PG_TOTAL_QUERY = 'ceph_pg_total';
+
 const UTILIZATION_IOPS_QUERY = '(sum(rate(ceph_pool_wr[1m])) + sum(rate(ceph_pool_rd[1m])))[360m:5m]';
 //This query only count the latency for all drives in the configuration. Might go with same for the demo
 const UTILIZATION_LATENCY_QUERY = '(quantile(.95,(irate(node_disk_read_time_seconds_total[1m]) + irate(node_disk_write_time_seconds_total[1m]) /  (irate(node_disk_reads_completed_total[1m]) + irate(node_disk_writes_completed_total[1m])))))[360m:5m]';
@@ -71,13 +74,11 @@ export class StorageOverview extends React.Component {
       capacityData: {},
       diskStats: {},
       utilizationData: {},
+      dataResiliencyData: {},
     };
-
     this.setHealthData = this._setHealthData.bind(this);
-    this.setCapacityData = this._setCapacityData.bind(this);
-    this.setCephDiskStats = this._setCephDiskStats.bind(this);
-    this.setUtilizationData = this._setUtilizationData.bind(this);
     this.setTopConsumersData = this._setTopConsumersData.bind(this);
+    this.setData = this._setData.bind(this);
   }
 
   _setHealthData(healthy) {
@@ -91,28 +92,11 @@ export class StorageOverview extends React.Component {
     });
   }
 
-  _setCapacityData(key, response) {
+  _setData(key, responseKey, response) {
     this.setState(state => ({
-      capacityData: {
-        ...state.capacityData,
-        [key]: response,
-      },
-    }));
-  }
-  _setUtilizationData(key, response) {
-    this.setState(state => ({
-      utilizationData: {
-        ...state.utilizationData,
-        [key]: response,
-      },
-    }));
-  }
-
-  _setCephDiskStats(key, response) {
-    this.setState(state => ({
-      diskStats: {
-        ...state.diskStats,
-        [key]: response,
+      [key]: {
+        ...state[key],
+        [responseKey]: response,
       },
     }));
   }
@@ -166,15 +150,16 @@ export class StorageOverview extends React.Component {
 
     this.fetchPrometheusQuery(CEPH_STATUS_QUERY, this.setHealthData);
 
-    this.fetchPrometheusQuery(STORAGE_CEPH_CAPACITY_TOTAL_QUERY, response => this.setCapacityData('capacityTotal', response));
-    this.fetchPrometheusQuery(STORAGE_CEPH_CAPACITY_USED_QUERY, response => this.setCapacityData('capacityUsed', response));
+    this.fetchPrometheusQuery(UTILIZATION_IOPS_QUERY, response => this.setData('utilizationData','iopsUtilization', response));
+    this.fetchPrometheusQuery(UTILIZATION_LATENCY_QUERY, response => this.setData('utilizationData','latencyUtilization', response));
+    this.fetchPrometheusQuery(UTILIZATION_THROUGHPUT_QUERY, response => this.setData('utilizationData','throughputUtilization', response));
 
-    this.fetchPrometheusQuery(CEPH_OSD_UP_QUERY, response => this.setCephDiskStats('cephOsdUp', response));
-    this.fetchPrometheusQuery(CEPH_OSD_DOWN_QUERY, response => this.setCephDiskStats('cephOsdDown', response));
-
-    this.fetchPrometheusQuery(UTILIZATION_IOPS_QUERY, response => this.setUtilizationData('iopsUtilization', response));
-    this.fetchPrometheusQuery(UTILIZATION_LATENCY_QUERY, response => this.setUtilizationData('latencyUtilization', response));
-    this.fetchPrometheusQuery(UTILIZATION_THROUGHPUT_QUERY, response => this.setUtilizationData('throughputUtilization', response));
+    this.fetchPrometheusQuery(STORAGE_CEPH_CAPACITY_TOTAL_QUERY, response => this.setData('capacityData','capacityTotal', response));
+    this.fetchPrometheusQuery(STORAGE_CEPH_CAPACITY_USED_QUERY, response => this.setData('capacityData','capacityUsed', response));
+    this.fetchPrometheusQuery(CEPH_OSD_UP_QUERY, response => this.setData('diskStats','cephOsdUp', response));
+    this.fetchPrometheusQuery(CEPH_OSD_DOWN_QUERY, response => this.setData('diskStats','cephOsdDown', response));
+    this.fetchPrometheusQuery(CEPH_PG_CLEAN_AND_ACTIVE_QUERY, response => this.setData('dataResiliencyData','cleanAndActivePgRaw', response));
+    this.fetchPrometheusQuery(CEPH_PG_TOTAL_QUERY, response => this.setData('dataResiliencyData','totalPgRaw', response));
 
     this.fetchAlerts();
     this.fetchPrometheusQuery(TOP_CONSUMERS_QUERY, response => this.setTopConsumersData(response));
@@ -185,8 +170,7 @@ export class StorageOverview extends React.Component {
   }
 
   render() {
-    const { ocsHealthData, capacityData, diskStats, utilizationData, alertsResponse, topConsumersData } = this.state;
-
+    const { ocsHealthData, capacityData, diskStats, utilizationData, alertsResponse, topConsumersData, dataResiliencyData } = this.state;
     const inventoryResourceMapToProps = resources => {
       return {
         value: {
@@ -202,6 +186,7 @@ export class StorageOverview extends React.Component {
           ...utilizationData,
           alertsResponse,
           ...topConsumersData,
+          ...dataResiliencyData,
         },
       };
     };
