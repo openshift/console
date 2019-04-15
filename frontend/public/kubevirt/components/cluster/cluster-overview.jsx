@@ -6,6 +6,7 @@ import {
   ClusterOverviewContext,
   complianceData,
   getCapacityStats,
+  STORAGE_PROMETHEUS_QUERIES,
 } from 'kubevirt-web-ui-components';
 
 import {
@@ -34,18 +35,21 @@ const OPENSHIFT_VERSION_QUERY = 'openshift_build_info{job="apiserver"}';
 
 const CAPACITY_MEMORY_TOTAL_QUERY = 'sum(kube_node_status_capacity_memory_bytes)';
 
-const CAPACITY_STORAGE_TOTAL_BASE_CEPH_METRIC = 'ceph_cluster_total_bytes'; // available with Ceph only
-const CAPACITY_STORAGE_TOTAL_QUERY = CAPACITY_STORAGE_TOTAL_BASE_CEPH_METRIC;
-const CAPACITY_STORAGE_TOTAL_DEFAULT_QUERY = 'sum(node_filesystem_avail_bytes)';
-
 const CAPACITY_NETWORK_TOTAL_QUERY = 'sum(avg by(instance)(node_network_speed_bytes))'; // TODO(mlibra): needs to be refined
 const CAPACITY_NETWORK_USED_QUERY = 'sum(node:node_net_utilisation:sum_irate)';
 
 const UTILIZATION_CPU_USED_QUERY = '((sum(node:node_cpu_utilisation:avg1m) / count(node:node_cpu_utilisation:avg1m)) * 100)[60m:5m]';
 const UTILIZATION_MEMORY_USED_QUERY = '(sum(kube_node_status_capacity_memory_bytes) - sum(kube_node_status_allocatable_memory_bytes))[60m:5m]'; // TOTAL is reused from CAPACITY_MEMORY_TOTAL_QUERY
 
-const UTILIZATION_STORAGE_USED_QUERY = 'ceph_cluster_total_used_bytes[60m:5m]';
-const UTILIZATION_STORAGE_USED_DEFAULT_QUERY = '(sum(node_filesystem_avail_bytes) - sum(node_filesystem_free_bytes))[60m:5m]';
+const {
+  CEPH_OSD_UP_QUERY,
+  CEPH_OSD_DOWN_QUERY,
+  CAPACITY_STORAGE_TOTAL_BASE_CEPH_METRIC,
+  CAPACITY_STORAGE_TOTAL_QUERY,
+  CAPACITY_STORAGE_TOTAL_DEFAULT_QUERY,
+  UTILIZATION_STORAGE_USED_QUERY,
+  UTILIZATION_STORAGE_USED_DEFAULT_QUERY,
+} = STORAGE_PROMETHEUS_QUERIES;
 
 const REFRESH_TIMEOUT = 5000;
 
@@ -93,6 +97,7 @@ export class ClusterOverview extends React.Component {
       consumersData: {},
       capacityData: {},
       utilizationData: {},
+      diskStats: {},
     };
 
     this.setConsumersData = this._setConsumersData.bind(this);
@@ -101,6 +106,7 @@ export class ClusterOverview extends React.Component {
     this.setCapacityData = this._setCapacityData.bind(this);
     this.setUtilizationData = this._setUtilizationData.bind(this);
     this.getStorageMetrics = this._getStorageMetrics.bind(this);
+    this.setCephDiskStats = this._setCephDiskStats.bind(this);
   }
 
   _setConsumersData(key, response) {
@@ -177,6 +183,15 @@ export class ClusterOverview extends React.Component {
     }
   }
 
+  _setCephDiskStats(key, response) {
+    this.setState(state => ({
+      diskStats: {
+        ...state.diskStates,
+        [key]: response,
+      },
+    }));
+  }
+
   async getPrometheusMetrics() {
     const url = `${getPrometheusBaseURL()}/api/v1/label/__name__/values`;
     return coFetchJSON(url);
@@ -251,6 +266,9 @@ export class ClusterOverview extends React.Component {
     this.fetchPrometheusQuery(CAPACITY_NETWORK_TOTAL_QUERY, response => this.setCapacityData('networkTotal', response));
     this.fetchPrometheusQuery(CAPACITY_NETWORK_USED_QUERY, response => this.setCapacityData('networkUsed', response));
 
+    this.fetchPrometheusQuery(CEPH_OSD_UP_QUERY, response => this.setCephDiskStats('cephOsdUp', response));
+    this.fetchPrometheusQuery(CEPH_OSD_DOWN_QUERY, response => this.setCephDiskStats('cephOsdDown', response));
+
     this.getStorageMetrics();
 
     this.fetchPrometheusQuery(UTILIZATION_CPU_USED_QUERY, response => this.setUtilizationData('cpuUtilization', response));
@@ -263,7 +281,15 @@ export class ClusterOverview extends React.Component {
   }
 
   render() {
-    const { openshiftClusterVersions, healthData, consumersData, capacityData, utilizationData, alertsResponse } = this.state;
+    const {
+      openshiftClusterVersions,
+      healthData,
+      consumersData,
+      capacityData,
+      utilizationData,
+      alertsResponse,
+      diskStats,
+    } = this.state;
 
     const inventoryResourceMapToProps = resources => {
       return {
@@ -283,6 +309,7 @@ export class ClusterOverview extends React.Component {
           ...utilizationData,
           complianceData, // TODO: mock, replace by real data and remove from web-ui-components
           alertsResponse,
+          diskStats,
         },
       };
     };

@@ -5,6 +5,7 @@ import {
   StorageOverview as KubevirtStorageOverview,
   StorageOverviewContext,
   getResource,
+  STORAGE_PROMETHEUS_QUERIES,
 } from 'kubevirt-web-ui-components';
 
 import {
@@ -23,12 +24,6 @@ import { LazyRenderer } from '../../../kubevirt/components/utils/lazyRenderer';
 
 const REFRESH_TIMEOUT = 5000;
 
-const CEPH_STATUS_QUERY = 'ceph_health_status';
-const STORAGE_CEPH_CAPACITY_TOTAL_QUERY = 'ceph_cluster_total_bytes';
-const STORAGE_CEPH_CAPACITY_USED_QUERY = 'ceph_cluster_total_used_bytes';
-const CEPH_OSD_UP_QUERY = 'sum(ceph_osd_up)';
-const CEPH_OSD_DOWN_QUERY = 'count(ceph_osd_up == 0.0) OR vector(0)';
-
 const CEPH_PG_CLEAN_AND_ACTIVE_QUERY = 'ceph_pg_clean and ceph_pg_active';
 const CEPH_PG_TOTAL_QUERY = 'ceph_pg_total';
 
@@ -37,6 +32,15 @@ const UTILIZATION_IOPS_QUERY = '(sum(rate(ceph_pool_wr[1m])) + sum(rate(ceph_poo
 const UTILIZATION_LATENCY_QUERY = '(quantile(.95,(irate(node_disk_read_time_seconds_total[1m]) + irate(node_disk_write_time_seconds_total[1m]) /  (irate(node_disk_reads_completed_total[1m]) + irate(node_disk_writes_completed_total[1m])))))[360m:5m]';
 const UTILIZATION_THROUGHPUT_QUERY = '(sum(rate(ceph_pool_wr_bytes[1m]) + rate(ceph_pool_rd_bytes[1m])))[360m:5m]';
 const TOP_CONSUMERS_QUERY = '(sum((max(kube_persistentvolumeclaim_status_phase{phase="Bound"}) by (namespace,pod,persistentvolumeclaim) ) * max(kube_persistentvolumeclaim_resource_requests_storage_bytes) by (namespace,pod,persistentvolumeclaim)) by (namespace))[360m:60m]';
+
+const {
+  CEPH_STATUS_QUERY,
+  CEPH_OSD_UP_QUERY,
+  CEPH_OSD_DOWN_QUERY,
+  UTILIZATION_STORAGE_USED_QUERY,
+  STORAGE_CEPH_CAPACITY_TOTAL_QUERY,
+  STORAGE_CEPH_CAPACITY_USED_QUERY,
+} = STORAGE_PROMETHEUS_QUERIES;
 
 const resourceMap = {
   nodes: {
