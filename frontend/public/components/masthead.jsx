@@ -34,18 +34,12 @@ export const getBrandingDetails = () => {
       productName = 'Red Hat OpenShift Dedicated';
       break;
     case 'okdvirt':
-      // backgroundImg = false;
-      // backgroundImg = pfBg992;
       logoImg = okdvirtLogoImg;
-      logoAlt = 'OKD Virtualization';
-      productTitle = 'OKD';
+      productName = 'OKD';
       break;
     case 'openshiftvirt':
-      // backgroundImg = true;
-      // backgroundImg = pfBg992;
       logoImg = openshiftvirtLogoImg;
-      logoAlt = 'OpenShift Virtualization';
-      productTitle = <React.Fragment>Red Hat<sup>&reg;</sup> OpenShift</React.Fragment>;
+      productName = 'Red Hat OpenShift';
       break;
     case 'azure':
       logoImg = azureLogoImg;
