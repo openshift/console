@@ -117,9 +117,9 @@ js-yaml@3.x:
     argparse "^1.0.7"
     esprima "^4.0.0"
 
-kubevirt-web-ui-components@0.1.26:
-  version "0.1.26"
-  resolved "https://registry.yarnpkg.com/kubevirt-web-ui-components/-/kubevirt-web-ui-components-0.1.26.tgz#c3cdbc46e29034e38d1d51d65500676eece5a64d"
+kubevirt-web-ui-components@0.1.27:
+  version "0.1.27"
+  resolved "https://registry.yarnpkg.com/kubevirt-web-ui-components/-/kubevirt-web-ui-components-0.1.27.tgz#526f72794108e0fd6d774fc477cec18bac12013c"
   dependencies:
     "@patternfly/react-console" "1.x"
     classnames "2.x"
@@ -188,8 +188,8 @@ react-is@^16.8.1:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.8.6.tgz#5bbc1e2d29141c9fbdfed456343fe2bc430a6a16"
 
 react-measure@2.x:
-  version "2.2.5"
-  resolved "https://registry.yarnpkg.com/react-measure/-/react-measure-2.2.5.tgz#35f6be9a8c31d61a4cf847282f9d54c310eb1624"
+  version "2.2.6"
+  resolved "https://registry.yarnpkg.com/react-measure/-/react-measure-2.2.6.tgz#e20bf4d0d29bd7b3a84ba1ac14d1278f234c39f3"
   dependencies:
     "@babel/runtime" "^7.2.0"
     get-node-dimensions "^1.2.1"
@@ -245,5 +245,5 @@ symbol-observable@^1.0.3, symbol-observable@^1.2.0:
   resolved "https://registry.yarnpkg.com/symbol-observable/-/symbol-observable-1.2.0.tgz#c22688aed4eab3cdc2dfeacbb561660560a00804"
 
 xterm@^3.3.0:
-  version "3.12.0"
-  resolved "https://registry.yarnpkg.com/xterm/-/xterm-3.12.0.tgz#74cc54013140cf0fd38a05a0d5d49e013e8a53bd"
+  version "3.12.2"
+  resolved "https://registry.yarnpkg.com/xterm/-/xterm-3.12.2.tgz#ec8563857c7b098973bab4dbf537f1a7c6a790c8"
