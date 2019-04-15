@@ -51,29 +51,29 @@ describe(ResourceRequirementsModalLink.displayName, () => {
     wrapper = shallow(<ResourceRequirementsModalLink obj={obj} type="limits" path="resources" />);
   });
 
-  it('renders a link with the resource requests limits', () => {
+  it('renders a button link with the resource requests limits', () => {
     const {memory, cpu} = obj.spec.resources.limits;
     wrapper = wrapper.setProps({type: 'requests'});
 
-    expect(wrapper.find('a').text()).toEqual(`CPU: ${cpu}, Memory: ${memory}`);
+    expect(wrapper.find('button').text()).toEqual(`CPU: ${cpu}, Memory: ${memory}`);
   });
 
-  it('renders a link with the resource limits', () => {
+  it('renders a button link with the resource limits', () => {
     const {memory, cpu} = obj.spec.resources.requests;
-    expect(wrapper.find('a').text()).toEqual(`CPU: ${cpu}, Memory: ${memory}`);
+    expect(wrapper.find('button').text()).toEqual(`CPU: ${cpu}, Memory: ${memory}`);
   });
 
   it('renders default values if undefined', () => {
     obj.spec.resources = undefined;
     wrapper.setProps({obj});
 
-    expect(wrapper.find('a').text()).toEqual('CPU: none, Memory: none');
+    expect(wrapper.find('button').text()).toEqual('CPU: none, Memory: none');
   });
 
   it('opens resource requirements modal when clicked', () => {
     const modalSpy = jasmine.createSpy('modalSpy');
     spyOn(modal, 'createModalLauncher').and.returnValue(modalSpy);
-    wrapper.find('a').simulate('click');
+    wrapper.find('button').simulate('click');
 
     expect(modalSpy.calls.count()).toEqual(1);
     expect(modalSpy.calls.argsFor(0)[0].title).toEqual(`${obj.kind} Resource Limits`);

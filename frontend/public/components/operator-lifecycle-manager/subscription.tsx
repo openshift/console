@@ -178,7 +178,7 @@ export class SubscriptionUpdates extends React.Component<SubscriptionUpdatesProp
             <dt className="co-detail-table__section-header">Channel</dt>
             <dd>{ this.state.waitingForUpdate
               ? <LoadingInline />
-              : <a className="co-m-modal-link" onClick={() => channelModal()}>{obj.spec.channel || 'default'}</a>
+              : <button type="button" className="btn btn-link co-modal-btn-link" onClick={() => channelModal()}>{obj.spec.channel || 'default'}</button>
             }</dd>
           </dl>
         </div>
@@ -187,7 +187,7 @@ export class SubscriptionUpdates extends React.Component<SubscriptionUpdatesProp
             <dt className="co-detail-table__section-header">Approval</dt>
             <dd>{ this.state.waitingForUpdate
               ? <LoadingInline />
-              : <a className="co-m-modal-link" onClick={() => approvalModal()}>{obj.spec.installPlanApproval || 'Automatic'}</a>
+              : <button type="button" className="btn btn-link co-modal-btn-link" onClick={() => approvalModal()}>{obj.spec.installPlanApproval || 'Automatic'}</button>
             }</dd>
           </dl>
         </div>

@@ -47,9 +47,9 @@ export const ResourceSummary: React.SFC<ResourceSummaryProps> = ({children, reso
     {showNodeSelector && <dt>Node Selector</dt>}
     {showNodeSelector && <dd><Selector kind="Node" selector={_.get(resource, 'spec.template.spec.nodeSelector')} /></dd>}
     {showTolerations && <dt>Tolerations</dt>}
-    {showTolerations && <dd><a className="co-m-modal-link" onClick={Kebab.factory.ModifyTolerations(model, resource).callback}>{pluralize(_.size(tolerations), 'Toleration')}</a></dd>}
+    {showTolerations && <dd><button type="button" className="btn btn-link co-modal-btn-link co-modal-btn-link--left" onClick={Kebab.factory.ModifyTolerations(model, resource).callback}>{pluralize(_.size(tolerations), 'Toleration')}</button></dd>}
     {showAnnotations && <dt>Annotations</dt>}
-    {showAnnotations && <dd><a className="co-m-modal-link" onClick={Kebab.factory.ModifyAnnotations(model, resource).callback}>{pluralize(_.size(metadata.annotations), 'Annotation')}</a></dd>}
+    {showAnnotations && <dd><button type="button" className="btn btn-link co-modal-btn-link co-modal-btn-link--left" onClick={Kebab.factory.ModifyAnnotations(model, resource).callback}>{pluralize(_.size(metadata.annotations), 'Annotation')}</button></dd>}
     {children}
     <dt>Created At</dt>
     <dd><Timestamp timestamp={metadata.creationTimestamp} /></dd>
