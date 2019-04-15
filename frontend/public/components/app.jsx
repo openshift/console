@@ -7,12 +7,11 @@ import { Redirect, Route, Router, Switch } from 'react-router-dom';
 import * as PropTypes from 'prop-types';
 
 import store from '../redux';
-import { productName } from '../branding';
 import { ALL_NAMESPACES_KEY } from '../const';
 import { connectToFlags, featureActions, flagPending, FLAGS } from '../features';
 import { analyticsSvc } from '../module/analytics';
 import { GlobalNotifications } from './global-notifications';
-import { Masthead } from './masthead';
+import { getBrandingDetails, Masthead } from './masthead';
 import { NamespaceBar } from './namespace';
 import { Navigation } from './nav';
 import { SearchPage } from './search';
@@ -163,6 +162,7 @@ class App extends React.PureComponent {
 
   render() {
     const { isNavOpen } = this.state;
+    const { productName } = getBrandingDetails();
 
     return (
       <React.Fragment>

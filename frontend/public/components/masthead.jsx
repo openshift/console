@@ -14,28 +14,24 @@ import dedicatedLogoImg from '../imgs/openshift-dedicated-logo.svg';
 import azureLogoImg from '../imgs/azure-red-hat-openshift-logo.svg';
 
 export const getBrandingDetails = () => {
-  let logoImg, logoAlt, productTitle;
+  let logoImg, productName;
   // Webpack won't bundle these images if we don't directly reference them, hence the switch
   switch (window.SERVER_FLAGS.branding) {
     case 'openshift':
       logoImg = openshiftLogoImg;
-      logoAlt = 'OpenShift';
-      productTitle = 'Red Hat OpenShift';
+      productName = 'Red Hat OpenShift';
       break;
     case 'ocp':
       logoImg = ocpLogoImg;
-      logoAlt = 'OpenShift Container Platform';
-      productTitle = 'Red Hat OpenShift Container Platform';
+      productName = 'Red Hat OpenShift Container Platform';
       break;
     case 'online':
       logoImg = onlineLogoImg;
-      logoAlt = 'OpenShift Online';
-      productTitle = 'Red Hat OpenShift Online';
+      productName = 'Red Hat OpenShift Online';
       break;
     case 'dedicated':
       logoImg = dedicatedLogoImg;
-      logoAlt = 'OpenShift Dedicated';
-      productTitle = 'Red Hat OpenShift Dedicated';
+      productName = 'Red Hat OpenShift Dedicated';
       break;
     case 'okdvirt':
       // backgroundImg = false;
@@ -53,15 +49,13 @@ export const getBrandingDetails = () => {
       break;
     case 'azure':
       logoImg = azureLogoImg;
-      logoAlt = 'Azure Red Hat OpenShift';
-      productTitle = 'Azure Red Hat OpenShift';
+      productName = 'Azure Red Hat OpenShift';
       break;
     default:
       logoImg = okdLogoImg;
-      logoAlt = 'OKD';
-      productTitle = 'OKD';
+      productName = 'OKD';
   }
-  return { logoImg, logoAlt, productTitle };
+  return { logoImg, productName };
 };
 
 export const Masthead = ({ onNavToggle }) => {
@@ -78,7 +72,7 @@ export const Masthead = ({ onNavToggle }) => {
 
   return (
     <PageHeader
-      logo={<Brand src={details.logoImg} alt={details.logoAlt} />}
+      logo={<Brand src={details.logoImg} alt={details.productName} />}
       logoProps={logoProps}
       toolbar={<MastheadToolbar />}
       showNavToggle

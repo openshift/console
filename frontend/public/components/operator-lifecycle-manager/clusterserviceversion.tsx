@@ -125,7 +125,7 @@ export const ClusterServiceVersionsPage = connect(stateToProps)((props: ClusterS
   </React.Fragment>;
 });
 
-export const MarkdownView = (props: {content: string, outerScroll: boolean}) => {
+export const MarkdownView = (props: {content: string, styles?: string}) => {
   return <AsyncComponent loader={() => import('./markdown-view').then(c => c.SyncMarkdownView)} {...props} />;
 };
 
@@ -204,7 +204,7 @@ export const ClusterServiceVersionDetails: React.SFC<ClusterServiceVersionDetail
             <SectionHeading text="Provided APIs" />
             <CRDCardRow csv={props.obj} crdDescs={providedAPIsFor(props.obj)} />
             <SectionHeading text="Description" />
-            <MarkdownView content={spec.description || 'Not available'} outerScroll={false} />
+            <MarkdownView content={spec.description || 'Not available'} />
           </div>
         </div>
       </div>

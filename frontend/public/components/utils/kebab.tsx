@@ -103,8 +103,9 @@ export const ResourceKebab = connectToModel((props: ResourceKebabProps) => {
 
   const Wrapper = (wrapperProps) => {
     const extraResources = _.reduce(resourceKeys, (extraObjs, key) => ({...extraObjs, [key]: wrapperProps[key].data}), {});
+    const options = _.reject(actions.map(a => a(kindObj, resource, extraResources)), 'hidden');
     return <Kebab
-      options={actions.map(a => a(kindObj, resource, extraResources))}
+      options={options}
       key={resource.metadata.uid}
       isDisabled={isDisabled !== undefined ? isDisabled : _.get(resource.metadata, 'deletionTimestamp')}
       id={`kebab-for-${resource.metadata.uid}`}

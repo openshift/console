@@ -276,16 +276,29 @@ tags-input .autocomplete .suggestion-item em {
 }
 
 .pf-c-page {
+  display: block !important;
+  position: relative;
+
   &__header {
     background-color: var(--pf-global--BackgroundColor--dark-200);
     background-image: url("../imgs/pfbg_2000.jpg");
     background-repeat: no-repeat;
     background-size: cover;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
   }
 
   &__main {
     // `z-index: auto` is required for fullscreen terminal
     --pf-c-page__main--ZIndex: auto;
+    bottom: 0;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: var(--pf-c-page__header--MinHeight);
+    transition: left 100ms ease;
   }
 
   // `.pf-c-page` specificity required
@@ -301,11 +314,20 @@ tags-input .autocomplete .suggestion-item em {
   }
 }
 
+@media screen and (min-width: $grid-float-breakpoint) {
+  .pf-m-expanded + .pf-c-page__main {
+    left: var(--pf-c-page__sidebar--md--Width);
+  }
+}
+
 .pf-c-page__sidebar {
   --pf-c-page__sidebar--BackgroundColor: #{$color-pf-black-900};
   --pf-c-page__sidebar--PaddingBottom: 0;
   --pf-c-page__sidebar--PaddingTop: 0;
-  position: relative; // fix z-index bug in Edge
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  top: var(--pf-c-page__header--MinHeight);
   width: 0 !important; // only set size when expanded (.pf-m-expanded is added)
 
   @media screen and (min-width: $grid-float-breakpoint) {

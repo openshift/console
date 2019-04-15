@@ -9,15 +9,6 @@ export const configureReplicaCountModal = (props) => import('./configure-count-m
 export const configureJobParallelismModal = (props) => import('./configure-count-modal' /* webpackChunkName: "configure-count-modal" */)
   .then(m => m.configureJobParallelismModal(props));
 
-export const configureClusterSizeModal = (props) => import('./configure-count-modal' /* webpackChunkName: "configure-count-modal" */)
-  .then(m => m.configureClusterSizeModal(props));
-
-export const configureOperatorStrategyModal = (props) => import('./configure-operator-modal' /* webpackChunkName: "configure-operator-modal" */)
-  .then(m => m.configureOperatorStrategyModal(props));
-
-export const configureOperatorChannelModal = (props) => import('./configure-operator-channel-modal' /* webpackChunkName: "configure-operator-channel-modal" */)
-  .then(m => m.configureOperatorChannelModal(props));
-
 export const confirmModal = (props) => import('./confirm-modal' /* webpackChunkName: "confirm-modal" */)
   .then(m => m.confirmModal(props));
 

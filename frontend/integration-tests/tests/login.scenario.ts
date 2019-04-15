@@ -9,10 +9,10 @@ const JASMINE_EXTENDED_TIMEOUT_INTERVAL = 1000 * 60 * 3;
 const KUBEADMIN_IDP = 'kube:admin';
 const KUBEADMIN_USERNAME = 'kubeadmin';
 const {
-  HTPASSWD_IDP = 'test',
-  HTPASSWD_USERNAME = 'test',
-  HTPASSWD_PASSWORD = 'test',
-  KUBEADMIN_PASSWORD,
+  BRIDGE_HTPASSWD_IDP = 'test',
+  BRIDGE_HTPASSWD_USERNAME = 'test',
+  BRIDGE_HTPASSWD_PASSWORD = 'test',
+  BRIDGE_KUBEADMIN_PASSWORD,
 } = process.env;
 
 describe('Auth test', () => {
@@ -21,7 +21,7 @@ describe('Auth test', () => {
     await browser.sleep(3000); // Wait long enough for the login redirect to complete
   });
 
-  if (KUBEADMIN_PASSWORD) {
+  if (BRIDGE_KUBEADMIN_PASSWORD) {
     describe('Login test', async() => {
       beforeAll(() => {
         // Extend the default jasmine timeout interval just in case it takes a while for the htpasswd idp to be ready
@@ -34,9 +34,9 @@ describe('Auth test', () => {
       });
 
       it('logs in via htpasswd identity provider', async() => {
-        await loginView.login(HTPASSWD_IDP, HTPASSWD_USERNAME, HTPASSWD_PASSWORD);
+        await loginView.login(BRIDGE_HTPASSWD_IDP, BRIDGE_HTPASSWD_USERNAME, BRIDGE_HTPASSWD_PASSWORD);
         expect(browser.getCurrentUrl()).toContain(appHost);
-        expect(loginView.userDropdown.getText()).toContain(HTPASSWD_USERNAME);
+        expect(loginView.userDropdown.getText()).toContain(BRIDGE_HTPASSWD_USERNAME);
       });
 
       it('logs out htpasswd user', async() => {
@@ -46,7 +46,7 @@ describe('Auth test', () => {
       });
 
       it('logs in as kubeadmin user', async() => {
-        await loginView.login(KUBEADMIN_IDP, KUBEADMIN_USERNAME, KUBEADMIN_PASSWORD);
+        await loginView.login(KUBEADMIN_IDP, KUBEADMIN_USERNAME, BRIDGE_KUBEADMIN_PASSWORD);
         expect(browser.getCurrentUrl()).toContain(appHost);
         expect(loginView.userDropdown.getText()).toContain('kube:admin');
         await browser.wait(until.presenceOf($('.co-global-notification')));
@@ -59,7 +59,7 @@ describe('Auth test', () => {
         expect($('.login-pf').isPresent()).toBeTruthy();
 
         // Log back in so that remaining tests can be run
-        await loginView.login(KUBEADMIN_IDP, KUBEADMIN_USERNAME, KUBEADMIN_PASSWORD);
+        await loginView.login(KUBEADMIN_IDP, KUBEADMIN_USERNAME, BRIDGE_KUBEADMIN_PASSWORD);
         expect(loginView.userDropdown.getText()).toContain('kube:admin');
       });
     });

@@ -70,8 +70,8 @@ func SetFlagsFromConfig(fs *flag.FlagSet, filename string) (err error) {
 		return err
 	}
 
-	if config.APIVersion != "console.openshift.io/v1beta1" || config.Kind != "ConsoleConfig" {
-		return fmt.Errorf("unsupported version (apiVersion: %s, kind: %s), only console.openshift.io/v1beta1 ConsoleConfig is supported", config.APIVersion, config.Kind)
+	if !(config.APIVersion == "console.openshift.io/v1beta1" || config.APIVersion == "console.openshift.io/v1") || config.Kind != "ConsoleConfig" {
+		return fmt.Errorf("unsupported version (apiVersion: %s, kind: %s), only console.openshift.io/v1 ConsoleConfig is supported", config.APIVersion, config.Kind)
 	}
 
 	err = addServingInfo(fs, &config.ServingInfo)

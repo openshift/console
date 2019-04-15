@@ -182,6 +182,10 @@ export const podPhase = (pod): PodPhase => {
     return 'Terminating';
   }
 
+  if (pod.status.reason === 'Evicted') {
+    return 'Evicted';
+  }
+
   let initializing = false;
   let phase = pod.status.phase || pod.status.reason;
 

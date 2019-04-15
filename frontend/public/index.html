@@ -10,20 +10,20 @@
     <meta name="application-name" content="OKD">
     [[ end ]]
     [[ if eq .Branding "openshift" ]]
-    <title>OpenShift</title>
-    <meta name="application-name" content="OpenShift">
+    <title>Red Hat OpenShift</title>
+    <meta name="application-name" content="Red Hat OpenShift">
     [[ end ]]
     [[ if eq .Branding "ocp" ]]
-    <title>OpenShift Container Platform</title>
-    <meta name="application-name" content="OpenShift Container Platform">
+    <title>Red Hat OpenShift Container Platform</title>
+    <meta name="application-name" content="Red Hat OpenShift Container Platform">
     [[ end ]]
     [[ if eq .Branding "online" ]]
-    <title>OpenShift Online</title>
-    <meta name="application-name" content="OpenShift Online">
+    <title>Red Hat OpenShift Online</title>
+    <meta name="application-name" content="Red Hat OpenShift Online">
     [[ end ]]
     [[ if eq .Branding "dedicated" ]]
-    <title>OpenShift Dedicated</title>
-    <meta name="application-name" content="OpenShift Dedicated">
+    <title>Red Hat OpenShift Dedicated</title>
+    <meta name="application-name" content="Red Hat OpenShift Dedicated">
     [[ end ]]
     [[ if eq .Branding "azure" ]]
     <title>Azure Red Hat OpenShift</title>
@@ -52,6 +52,7 @@
   </head>
 
   <body>
+    <noscript>JavaScript must be enabled.</noscript>
     <div id="modal-container"></div>
     [[ if .GoogleTagManagerID ]]
     <% if (htmlWebpackPlugin.options.production) { %>

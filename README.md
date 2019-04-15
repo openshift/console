@@ -224,9 +224,9 @@ CI runs the [test-prow-e2e.sh](test-prow-e2e.sh) script, which uses the `e2e` su
 You can simulate an e2e run against an existing 4.0 cluster with the following commands (replace `/path/to/install-dir` with your OpenShift 4.0 install directory):
 
 ```
-$ export BRIDGE_AUTH_USERNAME=kubeadmin
-$ export BRIDGE_BASE_ADDRESS="https://$(oc get route console -n openshift-console -o jsonpath='{.spec.host}')"
-$ export BRIDGE_AUTH_PASSWORD=$(cat "/path/to/install-dir/auth/kubeadmin-password")
+$ oc apply -f ./frontend/integration-tests/data/htpasswd-idp.yaml
+$ export BRIDGE_BASE_ADDRESS="$(oc get consoles.config.openshift.io cluster -o jsonpath='{.status.consoleURL}')"
+$ export BRIDGE_KUBEADMIN_PASSWORD=$(cat "/path/to/install-dir/auth/kubeadmin-password")
 $ ./test-gui.sh e2e
 ```
 

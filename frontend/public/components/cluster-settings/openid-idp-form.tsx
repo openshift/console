@@ -72,7 +72,7 @@ export class AddOpenIDPage extends PromiseComponent {
         namespace: 'openshift-config',
       },
       stringData: {
-        ca: caFileContent,
+        'ca.crt': caFileContent,
       },
     };
 
@@ -81,7 +81,7 @@ export class AddOpenIDPage extends PromiseComponent {
 
   addOpenIDIDP(oauth: K8sResourceKind, clientSecretName: string, caName: string): Promise<K8sResourceKind> {
     const { name, mappingMethod, clientID, issuer, extraScopes, claimPreferredUsernames, claimNames, claimEmails } = this.state;
-    const openID: any = {
+    const idp: any = {
       name,
       type: 'OpenID',
       mappingMethod,
@@ -101,14 +101,14 @@ export class AddOpenIDPage extends PromiseComponent {
     };
 
     if (caName) {
-      openID.ca = {
+      idp.openID.ca = {
         name: caName,
       };
     }
 
     const patch = _.isEmpty(oauth.spec.identityProviders)
-      ? { op: 'add', path: '/spec/identityProviders', value: [openID] }
-      : { op: 'add', path: '/spec/identityProviders/-', value: openID };
+      ? { op: 'add', path: '/spec/identityProviders', value: [idp] }
+      : { op: 'add', path: '/spec/identityProviders/-', value: idp };
     return this.handlePromise(k8sPatch(OAuthModel, oauth, [patch]));
   }
 

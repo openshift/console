@@ -12,7 +12,7 @@
     "lint": "eslint --ext .js,.jsx,.ts,.tsx --color .",
     "test": "jest",
     "debug-test": "node --inspect-brk node_modules/.bin/jest --runInBand",
-    "webdriver-update": "webdriver-manager update --versions.chrome=2.38 --gecko=false",
+    "webdriver-update": "webdriver-manager update --gecko=false",
     "test-gui-tap": "TAP=true yarn run test-gui",
     "test-gui-openshift": "yarn run test-suite --suite crud --params.openshift true",
     "test-gui": "yarn run test-suite --suite all",

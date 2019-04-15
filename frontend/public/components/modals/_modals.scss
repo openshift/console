@@ -60,11 +60,19 @@
   display: flex;
   flex-direction: column;
   height: 100%;
+  position: relative;
   @media(min-width: $screen-sm-min) {
     // Desktop only responsive max-height allows modal to adjust to content height and enable scroll shadows if needed.
     max-height: calc(100vh - 60px);
+    // Dropdown workaround:  use when modal content can expand (taints, tolerations)
+    &--accommodate-dropdown .modal-body-inner-shadow-covers {
+      padding-bottom: 100px;
+    }
+    // Dropdown workaround: use when modal content is short and cannot expand
+    &--no-inner-scroll .modal-body {
+      overflow-y: visible ;
+    }
   }
-  position: relative;
 }
 
 // setting a height on modal-dialog enables flex child height to shrink and become scrollable
