@@ -4,7 +4,12 @@ import {
   BaremetalHostRole,
   BaremetalHostStatus,
   getHostMachineName,
+  getHostBmcAddress,
+  getName,
+  getNamespace,
+  getResource,
   getSimpleHostStatus,
+  getUid,
 } from 'kubevirt-web-ui-components';
 
 import { actions, referenceForModel } from '../../../kubevirt/module/okdk8s';
@@ -19,7 +24,7 @@ import {
 import { ResourceLink, ResourceKebab } from '../utils/okdutils';
 import MachineCell from './machine-cell';
 import { WithResources } from '../../../kubevirt/components/utils/withResources';
-import { BaremetalHostModel, MachineModel } from '../../models';
+import { BaremetalHostModel, MachineModel, NodeModel } from '../../models';
 import { menuActions } from './menu-actions';
 import { openCreateBaremetalHostModal } from '../modals/create-host-modal';
 
@@ -54,14 +59,12 @@ const HostHeader = props => (
 );
 
 const HostRow = ({ obj: host }) => {
-  const {
-    metadata: { name, namespace, uid },
-    spec: {
-      bmc: { address },
-    },
-  } = host;
-
+  const name = getName(host);
+  const namespace = getNamespace(host);
+  const uid = getUid(host);
   const machineName = getHostMachineName(host);
+  const address = getHostBmcAddress(host);
+
   const machineResource = {
     kind: referenceForModel(MachineModel),
     name: machineName,
@@ -76,6 +79,10 @@ const HostRow = ({ obj: host }) => {
       resource: machineResource,
     },
   };
+
+  const hostResources = machineName
+    ? [machineResource, getResource(NodeModel, { namespaced: false })]
+    : [];
 
   return (
     <ResourceRow obj={host}>
@@ -104,6 +111,7 @@ const HostRow = ({ obj: host }) => {
           actions={menuActions}
           kind={BaremetalHostModel.kind}
           resource={host}
+          resources={hostResources}
         />
       </div>
     </ResourceRow>
