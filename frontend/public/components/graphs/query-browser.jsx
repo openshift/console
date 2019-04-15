@@ -48,7 +48,8 @@ class QueryBrowser_ extends Line_ {
 
     this.onPlotlyRelayout = e => {
       if (e['xaxis.autorange']) {
-        this.showLatest(this.state.span);
+        // Undo zoom
+        this.showLatest(this.zoomUndoSpan || this.defaultSpan);
       } else {
         const start = e['xaxis.range[0]'];
         const end = e['xaxis.range[1]'];
@@ -82,6 +83,9 @@ class QueryBrowser_ extends Line_ {
         const end = new Date();
         const start = new Date(end - span);
         this.relayout({'xaxis.range': [start, end], 'yaxis.autorange': true});
+
+        // Save the current time range so we can use Plotly's "Double-click to zoom back out" feature
+        this.zoomUndoSpan = span;
       });
     };
 
