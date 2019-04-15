@@ -27,10 +27,11 @@ const REFRESH_TIMEOUT = 5000;
 const CEPH_PG_CLEAN_AND_ACTIVE_QUERY = 'ceph_pg_clean and ceph_pg_active';
 const CEPH_PG_TOTAL_QUERY = 'ceph_pg_total';
 
-const UTILIZATION_IOPS_QUERY = '(sum(rate(ceph_pool_wr[1m])) + sum(rate(ceph_pool_rd[1m])))[360m:5m]';
+const UTILIZATION_IOPS_QUERY = '(sum(rate(ceph_pool_wr[1m])) + sum(rate(ceph_pool_rd[1m])))[60m:1m]';
 //This query only count the latency for all drives in the configuration. Might go with same for the demo
-const UTILIZATION_LATENCY_QUERY = '(quantile(.95,(irate(node_disk_read_time_seconds_total[1m]) + irate(node_disk_write_time_seconds_total[1m]) /  (irate(node_disk_reads_completed_total[1m]) + irate(node_disk_writes_completed_total[1m])))))[360m:5m]';
-const UTILIZATION_THROUGHPUT_QUERY = '(sum(rate(ceph_pool_wr_bytes[1m]) + rate(ceph_pool_rd_bytes[1m])))[360m:5m]';
+const UTILIZATION_LATENCY_QUERY = 'quantile(.95,(sum((max(label_replace(ceph_disk_occupation,"node","$1","exported_instance","(.*)")) by (node)) * on (node) group_right() (label_replace(max by(pod_ip,node) (kube_pod_info{pod=~"node-exporter.*"}), "instance", "$1:9100", "pod_ip", "(.*)"))  * on (instance) group_right() (irate(node_disk_read_time_seconds_total[1m]) + irate(node_disk_write_time_seconds_total[1m]) /  (irate(node_disk_reads_completed_total[1m]) + irate(node_disk_writes_completed_total[1m]))))))[60m:1m]';
+const UTILIZATION_THROUGHPUT_QUERY = '(sum(rate(ceph_pool_wr_bytes[1m]) + rate(ceph_pool_rd_bytes[1m])))[60m:1m]';
+const UTILIZATION_RECOVERY_RATE_QUERY = 'sum(ceph_pool_recovering_bytes_per_sec)[60m:1m]';
 const TOP_CONSUMERS_QUERY = '(sum((max(kube_persistentvolumeclaim_status_phase{phase="Bound"}) by (namespace,pod,persistentvolumeclaim) ) * max(kube_persistentvolumeclaim_resource_requests_storage_bytes) by (namespace,pod,persistentvolumeclaim)) by (namespace))[360m:60m]';
 
 const {
@@ -157,6 +158,7 @@ export class StorageOverview extends React.Component {
     this.fetchPrometheusQuery(UTILIZATION_IOPS_QUERY, response => this.setData('utilizationData','iopsUtilization', response));
     this.fetchPrometheusQuery(UTILIZATION_LATENCY_QUERY, response => this.setData('utilizationData','latencyUtilization', response));
     this.fetchPrometheusQuery(UTILIZATION_THROUGHPUT_QUERY, response => this.setData('utilizationData','throughputUtilization', response));
+    this.fetchPrometheusQuery(UTILIZATION_RECOVERY_RATE_QUERY, response => this.setData('utilizationData','recoveryRateUtilization', response));
 
     this.fetchPrometheusQuery(STORAGE_CEPH_CAPACITY_TOTAL_QUERY, response => this.setData('capacityData','capacityTotal', response));
     this.fetchPrometheusQuery(STORAGE_CEPH_CAPACITY_USED_QUERY, response => this.setData('capacityData','capacityUsed', response));
