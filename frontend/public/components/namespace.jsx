@@ -14,7 +14,7 @@ import { ActionsMenu, Kebab, Dropdown, Firehose, LabelList, LoadingInline, navFa
 import { createNamespaceModal, createProjectModal, deleteNamespaceModal, configureNamespacePullSecretModal } from './modals';
 import { RoleBindingsPage } from './RBAC';
 import { Bar, Line, requirePrometheus } from './graphs';
-import { CLI_DOWNLOAD_LINK, ALL_NAMESPACES_KEY, NAMESPACE_LOCAL_STORAGE_KEY } from '../const';
+import { OC_DOWNLOAD_LINK, ALL_NAMESPACES_KEY, NAMESPACE_LOCAL_STORAGE_KEY } from '../const';
 import { FLAGS, featureReducerName, flagPending, setFlag, connectToFlags } from '../features';
 import { openshiftHelpBase } from './utils/documentation';
 import { createProjectMessageStateToProps } from '../ui/ui-reducers';
@@ -113,7 +113,7 @@ const ProjectList_ = props => {
       To learn more, visit the OpenShift <ExternalLink href={openshiftHelpBase} text="documentation" />.
     </p>
     <p>
-      Download the <ExternalLink href={CLI_DOWNLOAD_LINK} text="command-line tools" />.
+      Download the <ExternalLink href={OC_DOWNLOAD_LINK} text="command-line tools" />.
     </p>
   </React.Fragment>;
   const ProjectEmptyMessage = () => <MsgBox title="Welcome to OpenShift" detail={ProjectEmptyMessageDetail} />;

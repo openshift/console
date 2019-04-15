@@ -59,3 +59,6 @@ export const tolerationsModal = (props) => import('./tolerations-modal' /* webpa
 
 export const installPlanPreviewModal = (props) => import('./installplan-preview-modal' /* webpackChunkName: "installplan-preview-modal" */)
   .then(m => m.installPlanPreviewModal(props));
+
+export const commandLineToolsModal = (props) => import('./command-line-tools-modal' /* webpackChunkName: "command-line-tools-modal" */)
+  .then(m => m.commandLineToolsModal(props));
