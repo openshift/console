@@ -1,5 +1,7 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
+import { Popover } from '@patternfly/react-core';
+import { QuestionCircleIcon } from '@patternfly/react-icons';
 
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import { Kebab, CopyToClipboard, SectionHeading, ResourceKebab, detailsPage, navFactory, ResourceLink, ResourceSummary, StatusIcon, ExternalLink } from './utils';
@@ -11,6 +13,16 @@ import { Conditions, conditionProps } from './conditions';
 
 const RoutesReference: K8sResourceKindReference = 'Route';
 const menuActions = Kebab.factory.common;
+
+/* eslint-disable no-undef */
+export type IngressStatusProps = {
+  host: string;
+  routerName: string;
+  conditions: conditionProps[];
+  wildcardPolicy: string;
+  routerCanonicalHostname: string;
+};
+/* eslint-enable no-undef */
 
 const getRouteHost = (route, onlyAdmitted) => {
   let oldestAdmittedIngress = null;
@@ -186,13 +198,47 @@ const calcTrafficPercentage = (weight: number, route: any) => {
   return `${percentage.toFixed(1)}%`;
 };
 
+const getIngressStatusForHost = (hostname, ingresses): IngressStatusProps => {
+  return _.find(ingresses, {host: hostname}) as IngressStatusProps;
+};
+
+const showCustomRouteHelp = (ingress, annotations) => {
+  if (!ingress || !_.some(ingress.conditions, {type: 'Admitted', status: 'True'})) {
+    return false;
+  }
+
+  if (_.get(annotations, 'openshift.io/host.generated') === 'true') {
+    return false;
+  }
+
+  if (!ingress.host || !ingress.routerCanonicalHostname) {
+    return false;
+  }
+
+  return true;
+};
+
 const RouteTargetRow = ({route, target}) => <tr>
   <td><ResourceLink kind={target.kind} name={target.name} namespace={route.metadata.namespace} title={target.name} /></td>
   <td>{target.weight}</td>
   <td>{calcTrafficPercentage(target.weight, route)}</td>
 </tr>;
 
-const RouteIngressStatus: React.SFC<RouteIngressStatusProps> = ({ingresses}) =>
+const CustomRouteHelp: React.SFC<CustomRouteHelpProps> = ({host, routerCanonicalHostname}) =>
+  <Popover
+    headerContent={<React.Fragment>Custom Route</React.Fragment>}
+    bodyContent={
+      <div>
+        <p>To use a custom route, you must update your DNS provider by creating a canonical name (CNAME) record. Your
+        CNAME record should point to your custom domain <strong>{host}</strong>, to the OpenShift canonical router
+        hostname, <strong>{routerCanonicalHostname}</strong>,
+        as the alias.</p>
+      </div>
+    }>
+    <button className="btn btn-link btn-link--no-padding" type="button">Do you need to set up custom DNS? <QuestionCircleIcon /></button>
+  </Popover>;
+
+const RouteIngressStatus: React.SFC<RouteIngressStatusProps> = ({ingresses, annotations}) =>
   <React.Fragment>
     {_.map(ingresses, (ingress) =>
       <div key={ingress.routerName} className="co-m-route-ingress-status">
@@ -202,75 +248,93 @@ const RouteIngressStatus: React.SFC<RouteIngressStatusProps> = ({ingresses}) =>
           <dd>{ingress.host}</dd>
           <dt>Wildcard Policy</dt>
           <dd>{ingress.wildcardPolicy}</dd>
+          <dt>Canonical Router Hostname</dt>
+          <dd>{ingress.routerCanonicalHostname || '-'}</dd>
+          {showCustomRouteHelp(ingress, annotations) &&
+          <CustomRouteHelp host={ingress.host} routerCanonicalHostname={ingress.routerCanonicalHostname}
+          />}
         </dl>
         <h3 className="co-section-heading-secondary">Conditions</h3>
         <Conditions conditions={ingress.conditions} />
       </div>)}
   </React.Fragment>;
 
-const RouteDetails: React.SFC<RoutesDetailsProps> = ({obj: route}) => <React.Fragment>
-  <div className="co-m-pane__body">
-    <SectionHeading text="Route Overview" />
-    <div className="row">
-      <div className="col-sm-6">
-        <ResourceSummary resource={route}>
-          <dt>{route.spec.to.kind}</dt>
-          <dd><ResourceLink kind={route.spec.to.kind} name={route.spec.to.name} namespace={route.metadata.namespace}
-            title={route.spec.to.name} />
-          </dd>
-          <dt>Target Port</dt>
-          <dd>{_.get(route, 'spec.port.targetPort', '-')}</dd>
-        </ResourceSummary>
+const RouteDetails: React.SFC<RoutesDetailsProps> = ({obj: route}) => {
+  const primaryIngressStatus:IngressStatusProps = getIngressStatusForHost(route.spec.host, route.status.ingress);
+  return <React.Fragment>
+    <div className="co-m-pane__body">
+      <SectionHeading text="Route Overview" />
+      <div className="row">
+        <div className="col-sm-6">
+          <ResourceSummary resource={route}>
+            <dt>{route.spec.to.kind}</dt>
+            <dd><ResourceLink kind={route.spec.to.kind} name={route.spec.to.name} namespace={route.metadata.namespace}
+              title={route.spec.to.name} />
+            </dd>
+            <dt>Target Port</dt>
+            <dd>{_.get(route, 'spec.port.targetPort', '-')}</dd>
+          </ResourceSummary>
+        </div>
+        <div className="col-sm-6">
+          <dl className="co-m-pane__details">
+            <dt>Location</dt>
+            <dd><RouteLocation obj={route} /></dd>
+            <dt>Status</dt>
+            <dd>
+              <RouteStatus obj={route} />
+            </dd>
+            <dt>Hostname</dt>
+            <dd>{route.spec.host}</dd>
+            <dt>Path</dt>
+            <dd>{route.spec.path || '-'}</dd>
+            {primaryIngressStatus && <React.Fragment>
+              <dt>Canonical Router Hostname</dt>
+              <dd>{primaryIngressStatus.routerCanonicalHostname || '-'}</dd>
+            </React.Fragment>
+            }
+            {showCustomRouteHelp(primaryIngressStatus, route.metadata.annotations) &&
+            <dd><CustomRouteHelp host={primaryIngressStatus.host}
+              routerCanonicalHostname={primaryIngressStatus.routerCanonicalHostname} />
+            </dd>}
+          </dl>
+        </div>
       </div>
-      <div className="col-sm-6">
-        <dl className="co-m-pane__details">
-          <dt>Location</dt>
-          <dd><RouteLocation obj={route} /></dd>
-          <dt>Status</dt>
-          <dd>
-            <RouteStatus obj={route} />
-          </dd>
-          <dt>Hostname</dt>
-          <dd>{route.spec.host}</dd>
-          <dt>Path</dt>
-          <dd>{route.spec.path || '-'}</dd>
-        </dl>
+    </div>
+    <div className="co-m-pane__body">
+      <SectionHeading text="TLS Settings" />
+      <TLSSettings tls={route.spec.tls} />
+    </div>
+    {!_.isEmpty(route.spec.alternateBackends) && <div className="co-m-pane__body">
+      <SectionHeading text="Traffic" />
+      <p className="co-m-pane__explanation">
+        This route splits traffic across multiple services.
+      </p>
+      <div className="co-table-container">
+        <table className="table">
+          <thead>
+            <tr>
+              <th>Service</th>
+              <th>Weight</th>
+              <th>Percent</th>
+            </tr>
+          </thead>
+          <tbody>
+            <RouteTargetRow route={route} target={route.spec.to} />
+            {_.map(route.spec.alternateBackends, (alternate, i) => <RouteTargetRow key={i} route={route}
+              target={alternate} />)}
+          </tbody>
+        </table>
       </div>
-    </div>
-  </div>
-  <div className="co-m-pane__body">
-    <SectionHeading text="TLS Settings" />
-    <TLSSettings tls={route.spec.tls} />
-  </div>
-  { !_.isEmpty(route.spec.alternateBackends) && <div className="co-m-pane__body">
-    <SectionHeading text="Traffic" />
-    <p className="co-m-pane__explanation">
-      This route splits traffic across multiple services.
-    </p>
-    <div className="co-table-container">
-      <table className="table">
-        <thead>
-          <tr>
-            <th>Service</th>
-            <th>Weight</th>
-            <th>Percent</th>
-          </tr>
-        </thead>
-        <tbody>
-          <RouteTargetRow route={route} target={route.spec.to} />
-          {_.map(route.spec.alternateBackends, (alternate, i) => <RouteTargetRow key={i} route={route} target={alternate} />)}
-        </tbody>
-      </table>
-    </div>
-  </div> }
-  {_.isEmpty(route.status.ingress)
-    ? <div className="cos-status-box">
-      <div className="text-center">No Route Status</div>
-    </div>
-    : <div className="co-m-pane__body">
-      <RouteIngressStatus ingresses={route.status.ingress} />
     </div>}
-</React.Fragment>;
+    {_.isEmpty(route.status.ingress)
+      ? <div className="cos-status-box">
+        <div className="text-center">No Route Status</div>
+      </div>
+      : <div className="co-m-pane__body">
+        <RouteIngressStatus ingresses={route.status.ingress} annotations={route.metadata.annotations} />
+      </div>}
+  </React.Fragment>;
+};
 
 export const RoutesDetailsPage: React.SFC<RoutesDetailsPageProps> = props => <DetailsPage
   {...props}
@@ -309,50 +373,49 @@ export const RoutesPage: React.SFC<RoutesPageProps> = props => {
 
 /* eslint-disable no-undef */
 export type RouteHostnameProps = {
-  obj: K8sResourceKind
+  obj: K8sResourceKind;
 };
 
 export type RouteStatusProps = {
-  obj: K8sResourceKind
+  obj: K8sResourceKind;
 };
 
 export type RoutesRowProps = {
-  obj: K8sResourceKind
+  obj: K8sResourceKind;
 };
 
 export type RouteHeaderProps = {
-  obj: K8sResourceKind
+  obj: K8sResourceKind;
 };
 
 export type RoutesPageProps = {
-  obj: K8sResourceKind,
-  namespace: string
+  obj: K8sResourceKind;
+  namespace: string;
 };
 
 export type RoutesDetailsProps = {
-  obj: K8sResourceKind
+  obj: K8sResourceKind;
 };
 
 export type RoutesDetailsPageProps = {
-  match: any
+  match: any;
 };
 
 export type TLSDataProps = {
-  tls: any
+  tls: any;
 };
 
 export type TLSDataState = {
-  showPrivateKey: boolean
-};
-
-export type IngressStatusProps = {
-  host: string,
-  routerName: string,
-  conditions: conditionProps[],
-  wildcardPolicy: string
+  showPrivateKey: boolean;
 };
 
 export type RouteIngressStatusProps = {
-  ingresses: IngressStatusProps[]
+  ingresses: IngressStatusProps[];
+  annotations: {[key: string]: string};
+};
+
+export type CustomRouteHelpProps = {
+  host: string;
+  routerCanonicalHostname: string;
 };
 /* eslint-enable no-undef */
