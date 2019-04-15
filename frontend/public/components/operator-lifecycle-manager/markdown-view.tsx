@@ -25,7 +25,7 @@ const markdownConvert = (markdown) => {
   });
 };
 
-export class SyncMarkdownView extends React.Component<{content: string, styles?: string}, {}> {
+export class SyncMarkdownView extends React.Component<{content: string, styles?: string, exactHeight?: boolean}, {}> {
   private frame: any;
 
   constructor(props) {
@@ -45,8 +45,12 @@ export class SyncMarkdownView extends React.Component<{content: string, styles?:
 
     // Let the new height take effect, then reset again once we recompute
     setTimeout(() => {
-      // Increase by 15px for the case where a horizontal scrollbar might appear
-      this.frame.style.height = `${this.frame.contentWindow.document.body.firstChild.scrollHeight + 15}px`;
+      if (this.props.exactHeight) {
+        this.frame.style.height = `${this.frame.contentWindow.document.body.firstChild.scrollHeight}px`;
+      } else {
+        // Increase by 15px for the case where a horizontal scrollbar might appear
+        this.frame.style.height = `${this.frame.contentWindow.document.body.firstChild.scrollHeight + 15}px`;
+      }
     });
   }
 
@@ -72,6 +76,6 @@ export class SyncMarkdownView extends React.Component<{content: string, styles?:
       ${this.props.styles ? this.props.styles : ''}
       </style>
       <body><div style="overflow-y: auto;">${markdownConvert(this.props.content || 'Not available')}</div></body>`;
-    return <iframe sandbox="allow-popups allow-same-origin" srcDoc={contents} style={{border: '0px', width: '100%', height: '0'}} ref={(r) => this.frame = r} onLoad={() => this.updateDimensions()} />;
+    return <iframe sandbox="allow-popups allow-same-origin" srcDoc={contents} style={{border: '0px', display: 'block', width: '100%', height: '0'}} ref={(r) => this.frame = r} onLoad={() => this.updateDimensions()} />;
   }
 }

@@ -817,6 +817,19 @@ spec:
   href: 'https://www.example.com'
   location: HelpMenu
   text: Additional help menu link
+`).setIn([referenceForModel(k8sModels.ConsoleCLIDownloadModel), 'default'], `
+apiVersion: console.openshift.io/v1
+kind: ConsoleCLIDownload
+metadata:
+  name: example
+spec:
+  displayName: examplecli
+  description: |
+    This is an example CLI download description that can include markdown such as paragraphs, unordered lists, code, [links](https://www.example.com), etc.
+
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce a lobortis justo, eu suscipit purus.
+  links:
+    - href: 'https://www.example.com'
 `);
 
 const pluginTemplates = ImmutableMap<GroupVersionKind, ImmutableMap<string, string>>()

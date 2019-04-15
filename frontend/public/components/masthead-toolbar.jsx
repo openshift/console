@@ -12,7 +12,6 @@ import { history, Firehose } from './utils';
 import { openshiftHelpBase } from './utils/documentation';
 import { AboutModal } from './about-modal';
 import { getAvailableClusterUpdates, clusterVersionReference } from '../module/k8s/cluster-settings';
-import { commandLineToolsModal } from './modals';
 import * as plugins from '../plugins';
 
 const SystemStatusButton = ({statuspageData, className}) => !_.isEmpty(_.get(statuspageData, 'incidents'))
@@ -168,7 +167,7 @@ class MastheadToolbar_ extends React.Component {
 
   _onCommandLineTools(e) {
     e.preventDefault();
-    commandLineToolsModal({});
+    history.push('/command-line-tools');
   }
 
   _copyLoginCommand(e) {

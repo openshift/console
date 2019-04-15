@@ -899,5 +899,17 @@ export const ConsoleLinkModel: K8sKind = {
   namespaced: false,
   kind: 'ConsoleLink',
   id: 'consolelink',
+};
+
+export const ConsoleCLIDownloadModel: K8sKind = {
+  label: 'Console CLI Download',
+  labelPlural: 'Console CLI Downloads',
+  apiVersion: 'v1',
+  apiGroup: 'console.openshift.io',
+  plural: 'consoleclidownloads',
+  abbr: 'CCD',
+  namespaced: false,
+  kind: 'ConsoleCLIDownload',
+  id: 'consoleclidownload',
   crd: true,
 };

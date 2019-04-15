@@ -11,6 +11,7 @@ import {
   MachineConfigModel,
   OperatorSourceModel,
   PrometheusModel,
+  ConsoleCLIDownloadModel,
 } from '../models';
 import { referenceForModel } from '../module/k8s';
 import { ActionType as K8sActionType } from '../actions/k8s';
@@ -32,6 +33,7 @@ export const baseCRDs = {
   [referenceForModel(MachineModel)]: FLAGS.CLUSTER_API,
   [referenceForModel(MachineConfigModel)]: FLAGS.MACHINE_CONFIG,
   [referenceForModel(MachineAutoscalerModel)]: FLAGS.MACHINE_AUTOSCALER,
+  [referenceForModel(ConsoleCLIDownloadModel)]: FLAGS.CONSOLE_CLI_DOWNLOAD,
 };
 
 const CRDs = { ...baseCRDs };
