@@ -8,7 +8,7 @@ import { removeLeakedResources, waitForCount, searchYAML, searchJSON, getResourc
   CLONE_VM_TIMEOUT, VM_BOOTUP_TIMEOUT, PAGE_LOAD_TIMEOUT, VM_STOP_TIMEOUT } from './utils';
 import { appHost, testName } from '../../protractor.conf';
 import { filterForName, isLoaded, resourceRowsPresent, resourceRows } from '../../views/crud.view';
-import { basicVmConfig, networkInterface, testNad, getVmManifest, hddDisk, cloudInitCustomScriptConfig } from './mocks';
+import { basicVmConfig, networkInterface, testNad, getVmManifest, hddDisk, cloudInitCustomScriptConfig, emptyStr } from './mocks';
 import * as wizardView from '../../views/kubevirt/wizard.view';
 import Wizard from './models/wizard';
 import { VirtualMachine } from './models/virtualMachine';
@@ -147,7 +147,7 @@ describe('Test clone VM.', () => {
       await browser.wait(until.and(waitForCount($$('.co-resource-list__item'), 2)), PAGE_LOAD_TIMEOUT);
       // TODO: Add classes/ids to collumn attributes so that divs can be easily selected
       const mac = await resourceRows.first().$('div:nth-child(5)').getText();
-      expect(mac === '---').toBe(true, 'MAC address should be cleared');
+      expect(mac === emptyStr).toBe(true, 'MAC address should be cleared');
 
       await clonedVm.action('Delete');
       leakedResources.delete(JSON.stringify({name: clonedVm.name, namespace: clonedVm.namespace, kind: 'vm'}));

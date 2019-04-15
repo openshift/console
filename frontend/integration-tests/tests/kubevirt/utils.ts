@@ -115,3 +115,24 @@ export const waitForCount = (elementArrayFinder, targetCount) => {
   };
 };
 
+export function execCommandFromCli(command: string) {
+  try {
+    execSync(command);
+  } catch (error) {
+    console.error(`Failed to run ${command}:\n${error}`);
+  }
+}
+
+export function exposeService(exposeServices: Set<any>) {
+  const srvArray: Array<any> = [...exposeServices];
+  srvArray.forEach(({name, kind, port, targetPort, exposeName, type}) => {
+    execCommandFromCli(`virtctl expose ${kind} ${name} --port=${port} --target-port=${targetPort} --name=${exposeName} --type=${type}`);
+  });
+}
+
+export async function asyncForEach(iterable, callback) {
+  const array = [...iterable];
+  for (let index = 0; index < array.length; index++) {
+    await callback(array[index], index, array);
+  }
+}

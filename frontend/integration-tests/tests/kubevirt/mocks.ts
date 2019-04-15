@@ -1,19 +1,21 @@
 /* eslint-disable no-undef */
 import { testName } from '../../protractor.conf';
 
-export function getVmManifest(provisionSource: string, namespace: string, name?: string) {
+export const emptyStr = '---';
+
+export function getVmManifest(provisionSource: string, namespace: string, name?: string, cloudinit?: string) {
   const metadata = {
     name: name ? name : `${provisionSource.toLowerCase()}-${namespace.slice(-5)}`,
     annotations: {
-      'name.os.template.kubevirt.io/centos7.0': 'CentOS 7.0',
+      'name.os.template.kubevirt.io/rhel7.6': 'Red Hat Enterprise Linux 7.6',
       description: namespace,
     },
     namespace,
     labels: {
       'app': `vm-${provisionSource.toLowerCase()}-${namespace}`,
-      'flavor.template.kubevirt.io/Custom': 'true',
-      'os.template.kubevirt.io/centos7.0': 'true',
-      'vm.kubevirt.io/template': 'centos7-generic-medium',
+      'flavor.template.kubevirt.io/small': 'true',
+      'os.template.kubevirt.io/rhel7.6': 'true',
+      'vm.kubevirt.io/template': 'rhel7-generic-small',
       'vm.kubevirt.io/template-namespace': 'openshift',
       'workload.template.kubevirt.io/generic': 'true',
     },
@@ -53,9 +55,37 @@ export function getVmManifest(provisionSource: string, namespace: string, name?:
     },
     name: 'rootdisk',
   };
+  const cloudInitNoCloud = {
+    cloudInitNoCloud: {
+      userData: cloudinit,
+    },
+    name: 'cloudinitdisk',
+  };
+  const rootdisk = {
+    bootOrder: 1,
+    disk: {
+      bus: 'virtio',
+    },
+    name: 'rootdisk',
+  };
+  const cloudinitdisk = {
+    bootOrder: 3,
+    disk: {
+      bus: 'virtio',
+    },
+    name: 'cloudinitdisk',
+  };
 
   const dataVolumeTemplates = [];
   const volumes = [];
+  const disks = [];
+
+  disks.push(rootdisk);
+
+  if (cloudinit) {
+    volumes.push(cloudInitNoCloud);
+    disks.push(cloudinitdisk);
+  }
 
   switch (provisionSource) {
     case 'URL':
@@ -96,18 +126,11 @@ export function getVmManifest(provisionSource: string, namespace: string, name?:
               threads: 1,
             },
             devices: {
-              disks: [
-                {
-                  bootOrder: 1,
-                  disk: {
-                    bus: 'virtio',
-                  },
-                  name: 'rootdisk',
-                },
-              ],
+              disks,
               interfaces: [
                 {
-                  bridge: {},
+                  bootOrder: 2,
+                  masquerade: {},
                   name: 'nic0',
                 },
               ],
@@ -115,7 +138,7 @@ export function getVmManifest(provisionSource: string, namespace: string, name?:
             },
             resources: {
               requests: {
-                memory: '1G',
+                memory: '2G',
               },
             },
           },
@@ -153,7 +176,7 @@ export const basicVmConfig = {
   workloadProfile: 'generic',
   sourceURL: 'https://download.cirros-cloud.net/0.4.0/cirros-0.4.0-x86_64-disk.img',
   sourceContainer: 'kubevirt/cirros-registry-disk-demo:latest',
-  cloudInitScript: '#cloud-config\nuser: username\npassword: atomic\nchpasswd: {expire: False}',
+  cloudInitScript: `#cloud-config\nuser: cloud-user\npassword: atomic\nchpasswd: {expire: False}\nhostname: vm-${testName}.example.com`,
 };
 
 export const networkInterface = {

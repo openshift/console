@@ -27,5 +27,6 @@ export class DetailView {
       await isLoaded();
     }
     await clickHorizontalTab(tabName);
+    await isLoaded();
   }
 }
