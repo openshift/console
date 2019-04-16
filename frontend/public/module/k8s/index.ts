@@ -90,6 +90,80 @@ export type K8sResourceKind = {
   type?: {[key: string]: any};
 };
 
+export type VolumeMount = {
+  name: string;
+  readOnly: boolean;
+  mountPath: string;
+  subPath?: string;
+  mountPropagation?: 'None' | 'HostToContainer' | 'Bidirectional';
+  subPathExpr?: string;
+};
+
+export type ContainerSpec = {
+  name: string;
+  volumeMounts?: VolumeMount[];
+  env: {
+    name: string;
+    value?: string;
+    [key: string]: any
+  };
+  [key: string]: any;
+};
+
+export type Volume = {
+  name: string;
+  [key: string]: any;
+};
+
+export type PodSpec = {
+  volumes?: Volume[];
+  initContainers?: ContainerSpec[];
+  containers: ContainerSpec[];
+  restartPolicy?: 'Always' | 'OnFailure' | 'Never';
+  terminationGracePeriodSeconds?: number;
+  activeDeadlineSeconds?: number;
+  nodeSelector?: any;
+  serviceAccountName?: string;
+  priorityClassName?: string;
+  tolerations?: Toleration[];
+  [key: string]: any;
+};
+
+type PodPhase = 'Pending' | 'Running' | 'Succeeded' | 'Failed' | 'Unknown';
+
+type ContainerState = {
+  waiting?: any;
+  running?: any;
+  terminated?: any;
+};
+
+type ContainerStatus = {
+  name: string;
+  state?: ContainerState;
+  lastState?: ContainerState;
+  ready: boolean;
+  restartCount: number;
+  image: string;
+  imageID: string;
+  containerID?: string;
+};
+
+export type PodStatus = {
+  phase: PodPhase;
+  conditions?: any[];
+  message?: string;
+  reason?: string;
+  startTime?: string;
+  initContainerStatuses?: ContainerStatus[];
+  containerStatuses?: ContainerStatus[];
+  [key: string]: any;
+};
+
+export type PodKind = {
+  spec: PodSpec;
+  status: PodStatus;
+} & K8sResourceKind;
+
 export type NodeKind = {
   spec?: {
     taints?: Taint[];
@@ -99,15 +173,9 @@ export type NodeKind = {
 export type ConfigMapKind = {
   apiVersion: string;
   kind: string;
-  metadata: {
-    annotations?: {[key: string]: string},
-    name: string,
-    namespace?: string,
-    labels?: {[key: string]: string},
-    ownerReferences?: OwnerReference[],
-    [key: string]: any,
-  };
+  metadata: ObjectMetadata;
   data: {[key: string]: string};
+  binaryData: {[key: string]: string};
 };
 
 export type CustomResourceDefinitionKind = {

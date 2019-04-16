@@ -1,6 +1,9 @@
+/* eslint-disable no-unused-vars */
 import * as _ from 'lodash-es';
 
-const getRestartPolicy = pod => _.find({
+import { ContainerSpec, PodKind, Volume, VolumeMount } from './';
+
+const getRestartPolicy = (pod: PodKind) => _.find({
   Always: {
     // A unique id to identify the type, used as the value when communicating with the API.
     id: 'Always',
@@ -84,7 +87,7 @@ export const VolumeSource = {
   },
 };
 
-export const getVolumeType = volume => {
+export const getVolumeType = (volume: Volume) => {
   if (!volume) {
     return null;
   }
@@ -107,7 +110,7 @@ const genericFormatter = volInfo => {
   return parts.join(' ') || null;
 };
 
-export const getVolumeLocation = volume => {
+export const getVolumeLocation = (volume: Volume) => {
   const vtype = getVolumeType(volume);
   if (!vtype) {
     return null;
@@ -131,14 +134,14 @@ export const getVolumeLocation = volume => {
 };
 
 
-export const getRestartPolicyLabel = pod => _.get(getRestartPolicy(pod), 'label', '');
+export const getRestartPolicyLabel = (pod: PodKind) => _.get(getRestartPolicy(pod), 'label', '');
 
 /* eslint-disable no-undef */
 export type PodReadiness = string;
 export type PodPhase = string;
 /* eslint-enable no-undef */
 
-export const getVolumeMountPermissions = v => {
+export const getVolumeMountPermissions = (v: VolumeMount) => {
   if (!v) {
     return null;
   }
@@ -146,19 +149,19 @@ export const getVolumeMountPermissions = v => {
   return v.readOnly ? 'Read-only' : 'Read/Write';
 };
 
-export const getVolumeMountsByPermissions = pod => {
+export const getVolumeMountsByPermissions = (pod: PodKind) => {
   if (!pod || !pod.spec || !pod.spec.volumes) {
     return [];
   }
   const m = {};
 
-  const volumes = (pod.spec.volumes || []).reduce((p, v) => {
+  const volumes = (pod.spec.volumes || []).reduce((p, v: Volume) => {
     p[v.name] = v;
     return p;
   }, {});
 
-  _.forEach(pod.spec.containers, (c: any) => {
-    _.forEach(c.volumeMounts, (v: any) => {
+  _.forEach(pod.spec.containers, (c: ContainerSpec) => {
+    _.forEach(c.volumeMounts, (v: VolumeMount) => {
       const k = `${v.name}_${v.readOnly ? 'ro' : 'rw'}`;
       const mount = {container: c.name, mountPath: v.mountPath, subPath: v.subPath};
       if (k in m) {
@@ -173,7 +176,7 @@ export const getVolumeMountsByPermissions = pod => {
 
 // This logic is replicated from k8s (at this writing, Kubernetes 1.12)
 // (See https://github.com/kubernetes/kubernetes/blob/v1.12.0-alpha.0/pkg/printers/internalversion/printers.go#L527-L629 )
-export const podPhase = (pod): PodPhase => {
+export const podPhase = (pod: PodKind): PodPhase => {
   if (!pod || !pod.status) {
     return '';
   }
@@ -219,7 +222,7 @@ export const podPhase = (pod): PodPhase => {
   return phase;
 };
 
-export const podPhaseFilterReducer = (pod): PodPhase => {
+export const podPhaseFilterReducer = (pod: PodKind): PodPhase => {
   const status = podPhase(pod);
   if (status === 'Terminating') {
     return status;
@@ -230,7 +233,7 @@ export const podPhaseFilterReducer = (pod): PodPhase => {
   return _.get(pod, 'status.phase', 'Unknown');
 };
 
-export const podReadiness = ({status}): PodReadiness => {
+export const podReadiness = ({status}: PodKind): PodReadiness => {
   if (_.isEmpty(status.conditions)) {
     return null;
   }

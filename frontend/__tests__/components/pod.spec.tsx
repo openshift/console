@@ -55,7 +55,7 @@ describe(PodsDetailsPage.displayName, () => {
         ownerReferences: [{apiVersion: ReplicaSetModel.apiVersion, kind: ReplicaSetModel.kind, name: 'example-rs', uid: '9999'}],
       },
     };
-    wrapper = shallow(<PodsDetailsPage match={{url: '/k8s/ns/default/pods/example', path: '/k8s/ns/:ns/:plural/:name', isExact: true, params: {}}} />);
+    wrapper = shallow(<PodsDetailsPage match={{url: '/k8s/ns/default/pods/example', path: '/k8s/ns/:ns/:plural/:name', isExact: true, params: {}}} kind="Pod" />);
   });
 
   it('renders `DetailsPage` with correct props', () => {

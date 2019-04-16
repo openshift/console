@@ -1,7 +1,9 @@
+/* eslint-disable no-unused-vars, no-undef */
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import * as _ from 'lodash-es';
 
+import { ContainerSpec, K8sResourceKindReference, PodKind } from '../module/k8s';
 import { getRestartPolicyLabel, podPhase, podPhaseFilterReducer, podReadiness } from '../module/k8s/pods';
 import { getContainerState, getContainerStatus } from '../module/k8s/docker';
 import { ResourceEventStream } from './events';
@@ -33,8 +35,7 @@ import { MountedVolumes } from './mounted-vol';
 export const menuActions = [Kebab.factory.EditEnvironment, ...Kebab.factory.common];
 const validReadinessStates = new Set(['ContainersNotReady', 'Ready', 'PodCompleted']);
 
-/** @type {React.SFC.<{pod: string}>} */
-export const Readiness = ({pod}) => {
+export const Readiness: React.FC<ReadinessProps> = ({pod}) => {
   const readiness = podReadiness(pod);
   if (!readiness) {
     return null;
@@ -47,10 +48,9 @@ export const Readiness = ({pod}) => {
     <CamelCaseWrap value={readiness} />
   </span>;
 };
-
 Readiness.displayName = 'Readiness';
 
-export const PodRow = ({obj: pod}) => {
+export const PodRow: React.FC<PodRowProps> = ({obj: pod}) => {
   const phase = podPhase(pod);
 
   return <ResourceRow obj={pod}>
@@ -73,7 +73,6 @@ export const PodRow = ({obj: pod}) => {
     </div>
   </ResourceRow>;
 };
-
 PodRow.displayName = 'PodRow';
 
 const PodHeader = props => <ListHeader>
@@ -85,12 +84,12 @@ const PodHeader = props => <ListHeader>
   <ColHead {...props} className="col-lg-2 hidden-md hidden-sm hidden-xs" sortFunc="podReadiness">Readiness</ColHead>
 </ListHeader>;
 
-const ContainerLink = ({pod, name}) => <span className="co-resource-item co-resource-item--inline">
+const ContainerLink: React.FC<ContainerLinkProps> = ({pod, name}) => <span className="co-resource-item co-resource-item--inline">
   <ResourceIcon kind="Container" />
   <Link to={`/k8s/ns/${pod.metadata.namespace}/pods/${pod.metadata.name}/containers/${name}`}>{name}</Link>
 </span>;
 
-export const ContainerRow = ({pod, container}) => {
+export const ContainerRow: React.FC<ContainerRowProps> = ({pod, container}) => {
   const cstatus = getContainerStatus(pod, container.name);
   const cstate = getContainerState(cstatus);
   const startedAt = _.get(cstate, 'startedAt');
@@ -109,7 +108,7 @@ export const ContainerRow = ({pod, container}) => {
   </div>;
 };
 
-export const PodContainerTable = ({heading, containers, pod}) => <React.Fragment>
+export const PodContainerTable: React.FC<PodContainerTableProps> = ({heading, containers, pod}) => <React.Fragment>
   <SectionHeading text={heading} />
   <div className="co-m-table-grid co-m-table-grid--bordered">
     <div className="row co-m-table-grid__head">
@@ -122,7 +121,7 @@ export const PodContainerTable = ({heading, containers, pod}) => <React.Fragment
       <div className="col-lg-1 hidden-md hidden-sm hidden-xs">Exit Code</div>
     </div>
     <div className="co-m-table-grid__body">
-      {containers.map((c, i) => <ContainerRow key={i} pod={pod} container={c} />)}
+      {containers.map((c: any, i: number) => <ContainerRow key={i} pod={pod} container={c} />)}
     </div>
   </div>
 </React.Fragment>;
@@ -143,9 +142,9 @@ const PodGraphs = requirePrometheus(({pod}) => <React.Fragment>
   <br />
 </React.Fragment>);
 
-export const PodStatus = ({pod}) => <StatusIcon status={podPhase(pod)} />;
+export const PodStatus: React.FC<PodStatusProps> = ({pod}) => <StatusIcon status={podPhase(pod)} />;
 
-export const PodDetailsList = ({pod}) => {
+export const PodDetailsList: React.FC<PodDetailsListProps> = ({pod}) => {
   const activeDeadlineSeconds = _.get(pod, 'spec.activeDeadlineSeconds');
   return <dl className="co-m-pane__details">
     <dt>Status</dt>
@@ -167,14 +166,14 @@ export const PodDetailsList = ({pod}) => {
   </dl>;
 };
 
-export const PodResourceSummary = ({pod}) => (
+export const PodResourceSummary: React.FC<PodResourceSummaryProps> = ({pod}) => (
   <ResourceSummary resource={pod} showNodeSelector showTolerations>
     <dt>Node Selector</dt>
     <dd><Selector kind="Node" selector={pod.spec.nodeSelector} /></dd>
   </ResourceSummary>
 );
 
-const Details = ({obj: pod}) => {
+const Details: React.FC<PodDetailsProps> = ({obj: pod}) => {
   const limits = {
     cpu: null,
     memory: null,
@@ -217,17 +216,17 @@ const Details = ({obj: pod}) => {
   </React.Fragment>;
 };
 
-const EnvironmentPage = (props) => <AsyncComponent loader={() => import('./environment.jsx').then(c => c.EnvironmentPage)} {...props} />;
+const EnvironmentPage = (props: any) => <AsyncComponent loader={() => import('./environment.jsx').then(c => c.EnvironmentPage)} {...props} />;
 
 const envPath = ['spec','containers'];
-const environmentComponent = (props) => <EnvironmentPage
+const PodEnvironmentComponent = props => <EnvironmentPage
   obj={props.obj}
   rawEnvData={props.obj.spec}
   envPath={envPath}
   readOnly={true}
 />;
 
-const PodExecLoader = ({obj}) => <div className="co-m-pane__body">
+const PodExecLoader: React.FC<PodExecLoaderProps> = ({obj}) => <div className="co-m-pane__body">
   <div className="row">
     <div className="col-xs-12">
       <div className="panel-body">
@@ -237,9 +236,7 @@ const PodExecLoader = ({obj}) => <div className="co-m-pane__body">
   </div>
 </div>;
 
-
-/** @type {React.SFC<any>} */
-export const PodsDetailsPage = props => <DetailsPage
+export const PodsDetailsPage: React.FC<PodDetailsPageProps> = props => <DetailsPage
   {...props}
   breadcrumbsFor={obj => breadcrumbsForOwnerRefs(obj).concat({
     name: 'Pod Details',
@@ -249,7 +246,7 @@ export const PodsDetailsPage = props => <DetailsPage
   pages={[
     navFactory.details(Details),
     navFactory.editYaml(),
-    navFactory.envEditor(environmentComponent),
+    navFactory.envEditor(PodEnvironmentComponent),
     navFactory.logs(PodLogs),
     navFactory.events(ResourceEventStream),
     {
@@ -261,7 +258,7 @@ export const PodsDetailsPage = props => <DetailsPage
 />;
 PodsDetailsPage.displayName = 'PodsDetailsPage';
 
-export const PodList = props => <List {...props} Header={PodHeader} Row={PodRow} />;
+export const PodList: React.FC = props => <List {...props} Header={PodHeader} Row={PodRow} />;
 PodList.displayName = 'PodList';
 
 const filters = [{
@@ -281,8 +278,8 @@ const filters = [{
   ],
 }];
 
-export class PodsPage extends React.Component {
-  shouldComponentUpdate(nextProps) {
+export class PodsPage extends React.Component<PodPageProps> {
+  shouldComponentUpdate(nextProps: PodPageProps) {
     return !_.isEqual(nextProps, this.props);
   }
   render() {
@@ -296,3 +293,60 @@ export class PodsPage extends React.Component {
     />;
   }
 }
+
+type ReadinessProps = {
+  pod: PodKind;
+};
+
+type PodRowProps = {
+  obj: PodKind;
+};
+
+type ContainerLinkProps = {
+  pod: PodKind;
+  name: string;
+};
+
+type ContainerRowProps = {
+  pod: PodKind;
+  container: ContainerSpec;
+};
+
+type PodContainerTableProps = {
+  heading: string;
+  containers: ContainerSpec[];
+  pod: PodKind;
+};
+
+type PodStatusProps = {
+  pod: PodKind;
+};
+
+type PodResourceSummaryProps = {
+  pod: PodKind;
+};
+
+type PodDetailsListProps = {
+  pod: PodKind;
+};
+
+type PodExecLoaderProps = {
+  obj: PodKind;
+};
+
+type PodDetailsProps = {
+  obj: PodKind;
+};
+
+type PodPageProps = {
+  canCreate?: boolean;
+  fieldSelector?: any;
+  namespace?: string;
+  selector?: any;
+  showTitle?: boolean;
+};
+
+type PodDetailsPageProps = {
+  kind: K8sResourceKindReference;
+  match: any;
+};
