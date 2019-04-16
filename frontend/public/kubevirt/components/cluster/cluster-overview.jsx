@@ -49,6 +49,7 @@ const {
   CAPACITY_STORAGE_TOTAL_DEFAULT_QUERY,
   UTILIZATION_STORAGE_USED_QUERY,
   UTILIZATION_STORAGE_USED_DEFAULT_QUERY,
+  UTILIZATION_STORAGE_IORW_QUERY,
 } = STORAGE_PROMETHEUS_QUERIES;
 
 const REFRESH_TIMEOUT = 5000;
@@ -124,6 +125,7 @@ export class ClusterOverview extends React.Component {
     } finally {
       this.fetchPrometheusQuery(queryTotal, 'storageTotal');
       this.fetchPrometheusQuery(queryUsed, 'storageUsed');
+      this.fetchPrometheusQuery(UTILIZATION_STORAGE_IORW_QUERY, 'storageIORW'); // Ceph only; will cause error and so the NOT_AVAILABLE state of the component without Cept
     }
   }
 
