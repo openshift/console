@@ -83,6 +83,11 @@ export const config: Config = {
     return new Promise(resolve => htmlReporter.afterLaunch(resolve.bind(this, exitCode)));
   },
   suites: {
+    projectStatus: [
+      'tests/login.scenario.ts',
+      'tests/base.scenario.ts',
+      'tests/project-status.scenario.ts',
+    ],
     filter: [
       'tests/login.scenario.ts',
       'tests/base.scenario.ts',
