@@ -78,6 +78,9 @@ const HostRow = ({ obj: host }) => {
     machine: {
       resource: machineResource,
     },
+    nodes: {
+      resource: getResource(NodeModel, { namespaced: false }),
+    },
   };
 
   const hostResources = machineName
@@ -95,7 +98,9 @@ const HostRow = ({ obj: host }) => {
         />
       </div>
       <div className={statusColumnClasses}>
-        <BaremetalHostStatus host={host} />
+        <WithResources resourceMap={machineName ? hostResourceMap : {}}>
+          <BaremetalHostStatus host={host} />
+        </WithResources>
       </div>
       <div className={machineColumnClasses}>
         <MachineCell host={host} />
