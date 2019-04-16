@@ -4,13 +4,13 @@ import { connect } from 'react-redux';
 import { ArrowCircleUpIcon, QuestionCircleIcon, ThIcon } from '@patternfly/react-icons';
 import { Button, Dropdown, DropdownToggle, DropdownSeparator, DropdownItem, KebabToggle, Toolbar, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
 
-import { CLI_DOWNLOAD_LINK } from '../const';
 import { FLAGS, stateToProps as flagStateToProps, flagPending } from '../features';
 import { authSvc } from '../module/auth';
 import { history, Firehose } from './utils';
 import { openshiftHelpBase } from './utils/documentation';
 import { AboutModal } from './about-modal';
 import { getAvailableClusterUpdates, clusterVersionReference } from '../module/k8s/cluster-settings';
+import { commandLineToolsModal } from './modals';
 
 const UpdatesAvailableButton = ({obj, onClick}) => {
   const updatesAvailable = !_.isEmpty(getAvailableClusterUpdates(obj.data));
@@ -144,9 +144,9 @@ class MastheadToolbar_ extends React.Component {
     window.open(openshiftHelpBase, '_blank').opener = null;
   }
 
-  _onCLIDownload(e) {
+  _onCommandLineTools(e) {
     e.preventDefault();
-    window.open(CLI_DOWNLOAD_LINK, '_blank').opener = null;
+    commandLineToolsModal({});
   }
 
   _launchActions() {
@@ -163,10 +163,9 @@ class MastheadToolbar_ extends React.Component {
       callback: this._onDocumentation,
       externalLink: true,
     }, {
-      label: 'CLI Download',
-      callback: this._onCLIDownload,
-      externalLink: true,
-    },{
+      label: 'Command Line Tools',
+      callback: this._onCommandLineTools,
+    }, {
       label: 'About',
       callback: this._onAboutModal,
     }];
