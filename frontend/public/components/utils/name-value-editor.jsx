@@ -410,7 +410,7 @@ const EnvFromPairElement = DragSource(DRAGGABLE_TYPE.ENV_FROM_ROW, pairSource, c
             <ValueFromPair pair={pair[EnvFromPair.Resource]} configMaps={configMaps} secrets={secrets} onChange={this._onChangeResource} disabled={readOnly} />
           </div>
           <div className="col-xs-5 pairs-list__name-field">
-            <input type="text" className="form-control" placeholder={valueString.toLowerCase()} value={pair[EnvFromPair.Prefix]} onChange={this._onChangePrefix} disabled={readOnly} />
+            <input data-test-id="env-prefix" type="text" className="form-control" placeholder={valueString.toLowerCase()} value={pair[EnvFromPair.Prefix]} onChange={this._onChangePrefix} disabled={readOnly} />
           </div>
           {
             readOnly ? null :

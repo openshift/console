@@ -6,12 +6,14 @@ import { appHost, testName, checkLogs, checkErrors } from '../protractor.conf';
 import * as crudView from '../views/crud.view';
 import * as environmentView from '../views/environment.view';
 import * as yamlView from '../views/yaml.view';
+import {execSync} from 'child_process';
 
 const BROWSER_TIMEOUT = 15000;
 const WORKLOAD_NAME = `env-${testName}`;
 const Actions = {
   add: 'add',
   delete: 'delete',
+  addFrom: 'addFrom',
 };
 
 describe('Interacting with the environment variable editor', () => {
@@ -27,6 +29,8 @@ describe('Interacting with the environment variable editor', () => {
     await crudView.saveChangesBtn.click();
     // Wait until the resource is created and the details page loads before continuing.
     await browser.wait(until.presenceOf(crudView.actionsButton));
+    execSync(`oc create cm my-config --from-literal=cmk1=config1 --from-literal=cmk2=config2 -n ${testName}`);
+    execSync(`oc create secret generic my-secret --from-literal=key1=supersecret --from-literal=key2=topsecret -n ${testName}`);
     checkLogs();
     checkErrors();
   });
@@ -42,6 +46,8 @@ describe('Interacting with the environment variable editor', () => {
     await crudView.nameFilter.sendKeys(WORKLOAD_NAME);
     await browser.wait(until.elementToBeClickable(crudView.resourceRowNamesAndNs.first()), BROWSER_TIMEOUT);
     await crudView.deleteRow('Deployment')(WORKLOAD_NAME);
+    execSync(`oc delete cm my-config -n ${testName}`);
+    execSync(`oc delete secret my-secret -n ${testName}`);
     checkLogs();
     checkErrors();
   });
@@ -68,6 +74,11 @@ describe('Interacting with the environment variable editor', () => {
     }
   };
 
+  const validateValueFrom = async(valueFrom: string, prefix: string) => {
+    expect(environmentView.resources.last().getText()).toEqual(valueFrom);
+    expect(environmentView.prefix.getAttribute('value')).toEqual(prefix);
+  };
+
   const environmentEditor = async(
     action: string,
     key: string,
@@ -84,6 +95,10 @@ describe('Interacting with the environment variable editor', () => {
         await environmentView.deleteVariable();
         break;
       }
+      case Actions.addFrom: {
+        await environmentView.addVariableFrom(key, value);
+        break;
+      }
       default: {
         throw new Error(`Invalid action [${action}]`);
       }
@@ -97,7 +112,6 @@ describe('Interacting with the environment variable editor', () => {
     it('shows the correct variables', async() => {
       const key = 'KEY';
       const value = 'value';
-
       await environmentEditor(Actions.add, key, value);
       await environmentView.isLoaded();
       await validateKeyAndValue(key, value, true);
@@ -111,6 +125,26 @@ describe('Interacting with the environment variable editor', () => {
       await environmentEditor(Actions.delete, key, value);
       await environmentView.isLoaded();
       await validateKeyAndValue(key, value, false);
+    });
+  });
+
+  describe('When a variable is added from a config map', () => {
+    it('shows the correct variables', async() => {
+      const resourceName = 'my-config';
+      const envPrefix = 'testcm';
+      await environmentEditor(Actions.addFrom, resourceName, envPrefix);
+      await environmentView.isLoaded();
+      await validateValueFrom(resourceName, envPrefix);
+    });
+  });
+
+  describe('When a variable is added from a secret', () => {
+    it('shows the correct variables', async() => {
+      const resourceName = 'my-secret';
+      const envPrefix = 'testsecret';
+      await environmentEditor(Actions.addFrom, resourceName, envPrefix);
+      await environmentView.isLoaded();
+      await validateValueFrom(resourceName, envPrefix);
     });
   });
 });
