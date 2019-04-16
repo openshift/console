@@ -4,36 +4,22 @@ import * as React from 'react';
 import { Helmet } from 'react-helmet';
 
 import { SecretModel, ConfigMapModel } from '../../models';
-import {
-  IdentityProvider,
-  k8sCreate,
-  K8sResourceKind,
-  MappingMethodType,
-  OAuthKind,
-} from '../../module/k8s';
-import {
-  ButtonBar,
-  ListInput,
-  PromiseComponent,
-  history,
-} from '../utils';
+import { IdentityProvider, k8sCreate, K8sResourceKind, MappingMethodType, OAuthKind } from '../../module/k8s';
+import { ButtonBar, PromiseComponent, history } from '../utils';
 import { addIDP, getOAuthResource, redirectToOAuthPage } from './';
 import { IDPNameInput } from './idp-name-input';
 import { MappingMethod } from './mapping-method';
 import { IDPCAFileInput } from './idp-cafile-input';
 
-export class AddOpenIDPage extends PromiseComponent {
-  readonly state: AddOpenIDIDPPageState = {
-    name: 'openid',
+
+export class AddGitLabPage extends PromiseComponent {
+  readonly state: AddGitLabPageState = {
+    name: 'gitlab',
     mappingMethod: 'claim',
     clientID: '',
     clientSecret: '',
-    claimPreferredUsernames: ['preferred_username'],
-    claimNames: ['name'],
-    claimEmails: ['email'],
-    issuer: '',
+    url: '',
     caFileContent: '',
-    extraScopes: [],
     inProgress: false,
     errorMessage: '',
   };
@@ -48,7 +34,7 @@ export class AddOpenIDPage extends PromiseComponent {
       apiVersion: 'v1',
       kind: 'Secret',
       metadata: {
-        generateName: 'openid-client-secret-',
+        generateName: 'gitlab-client-secret-',
         namespace: 'openshift-config',
       },
       stringData: {
@@ -69,7 +55,7 @@ export class AddOpenIDPage extends PromiseComponent {
       apiVersion: 'v1',
       kind: 'ConfigMap',
       metadata: {
-        generateName: 'openid-ca-',
+        generateName: 'gitlab-ca-',
         namespace: 'openshift-config',
       },
       stringData: {
@@ -80,29 +66,23 @@ export class AddOpenIDPage extends PromiseComponent {
     return this.handlePromise(k8sCreate(ConfigMapModel, ca));
   }
 
-  addOpenIDIDP(oauth: OAuthKind, clientSecretName: string, caName: string): Promise<K8sResourceKind> {
-    const { name, mappingMethod, clientID, issuer, extraScopes, claimPreferredUsernames, claimNames, claimEmails } = this.state;
+  addGitLabIDP(oauth: OAuthKind, clientSecretName: string, caName: string): Promise<K8sResourceKind> {
+    const { name, mappingMethod, clientID, url } = this.state;
     const idp: IdentityProvider = {
       name,
-      type: 'OpenID',
+      type: 'GitLab',
       mappingMethod,
-      openID: {
+      gitlab: {
+        url,
         clientID,
         clientSecret: {
           name: clientSecretName,
-        },
-        issuer,
-        extraScopes,
-        claims: {
-          preferredUsername: claimPreferredUsernames,
-          name: claimNames,
-          email: claimEmails,
         },
       },
     };
 
     if (caName) {
-      idp.openID.ca = {
+      idp.gitlab.ca = {
         name: caName,
       };
     }
@@ -123,7 +103,7 @@ export class AddOpenIDPage extends PromiseComponent {
 
       Promise.all(promises).then(([secret, configMap]) => {
         const caName = configMap ? configMap.metadata.name : '';
-        return this.addOpenIDIDP(oauth, secret.metadata.name, caName);
+        return this.addGitLabIDP(oauth, secret.metadata.name, caName);
       }).then(redirectToOAuthPage);
     });
   };
@@ -140,24 +120,8 @@ export class AddOpenIDPage extends PromiseComponent {
     this.setState({clientSecret: event.currentTarget.value});
   };
 
-  issuerChanged: React.ReactEventHandler<HTMLInputElement> = (event) => {
-    this.setState({issuer: event.currentTarget.value});
-  };
-
-  claimPreferredUsernamesChanged = (claimPreferredUsernames: string[]) => {
-    this.setState({claimPreferredUsernames});
-  };
-
-  claimNamesChanged = (claimNames: string[]) => {
-    this.setState({claimNames});
-  };
-
-  claimEmailsChanged = (claimEmails: string[]) => {
-    this.setState({claimEmails});
-  };
-
-  extraScopesChanged = (extraScopes: string[]) => {
-    this.setState({extraScopes});
+  urlChanged: React.ReactEventHandler<HTMLInputElement> = (event) => {
+    this.setState({url: event.currentTarget.value});
   };
 
   mappingMethodChanged = (mappingMethod: string) => {
@@ -169,8 +133,8 @@ export class AddOpenIDPage extends PromiseComponent {
   };
 
   render() {
-    const { name, mappingMethod, clientID, clientSecret, issuer, claimPreferredUsernames, claimNames, claimEmails, caFileContent } = this.state;
-    const title = 'Add Identity Provider: OpenID Connect';
+    const { name, mappingMethod, clientID, clientSecret, url, caFileContent } = this.state;
+    const title = 'Add Identity Provider: GitLab';
     return <div className="co-m-pane__body">
       <Helmet>
         <title>{title}</title>
@@ -178,52 +142,42 @@ export class AddOpenIDPage extends PromiseComponent {
       <form onSubmit={this.submit} name="form" className="co-m-pane__body-group co-m-pane__form">
         <h1 className="co-m-pane__heading">{title}</h1>
         <p className="co-m-pane__explanation">
-          Integrate with an OpenID Connect identity provider using an Authorization Code Flow.
+          You can use GitLab integration for users authenticating with GitLab credentials.
         </p>
         <IDPNameInput value={name} onChange={this.nameChanged} />
         <MappingMethod value={mappingMethod} onChange={this.mappingMethodChanged} />
         <div className="form-group">
-          <label className="control-label co-required" htmlFor="clientID">Client ID</label>
+          <label className="control-label co-required" htmlFor="url">URL</label>
+          <input className="form-control"
+            type="text"
+            onChange={this.urlChanged}
+            value={url}
+            id="url"
+            aria-describedby="idp-url-help"
+            required />
+          <p className="help-block" id="idp-url-help">
+            The OAuth server base URL.
+          </p>
+        </div>
+        <div className="form-group">
+          <label className="control-label co-required" htmlFor="client-id">Client ID</label>
           <input className="form-control"
             type="text"
             onChange={this.clientIDChanged}
             value={clientID}
-            id="clientID"
+            id="client-id"
             required />
         </div>
         <div className="form-group">
-          <label className="control-label co-required" htmlFor="clientSecret">Client Secret</label>
+          <label className="control-label co-required" htmlFor="client-secret">Client Secret</label>
           <input className="form-control"
             type="password"
             onChange={this.clientSecretChanged}
             value={clientSecret}
-            id="clientSecret"
+            id="client-secret"
             required />
         </div>
-        <div className="form-group">
-          <label className="control-label co-required" htmlFor="issuer">Issuer URL</label>
-          <input className="form-control"
-            type="text"
-            onChange={this.issuerChanged}
-            value={issuer}
-            id="issuer"
-            required
-            aria-describedby="issuer-help" />
-          <div className="help-block" id="issuer-help">
-            The URL that the OpenID Provider asserts as its Issuer Identifier.
-            It must use the https scheme with no URL query parameters or fragment.
-          </div>
-        </div>
-        <div className="co-form-section__separator"></div>
-        <h3>Claims</h3>
-        <p className="co-help-text">Claims map metadata from the OpenID provider to an OpenShift user. The first non-empty claim is used.</p>
-        <ListInput label="Preferred Username" initialValues={claimPreferredUsernames} onChange={this.claimPreferredUsernamesChanged} />
-        <ListInput label="Name" initialValues={claimNames} onChange={this.claimNamesChanged} />
-        <ListInput label="Email" initialValues={claimEmails} onChange={this.claimEmailsChanged} />
-        <div className="co-form-section__separator"></div>
-        <h3>More Options</h3>
         <IDPCAFileInput value={caFileContent} onChange={this.caFileChanged} />
-        <ListInput label="Extra Scopes" onChange={this.extraScopesChanged} />
         <ButtonBar errorMessage={this.state.errorMessage} inProgress={this.state.inProgress}>
           <button type="submit" className="btn btn-primary">Add</button>
           <button type="button" className="btn btn-default" onClick={history.goBack}>Cancel</button>
@@ -233,17 +187,13 @@ export class AddOpenIDPage extends PromiseComponent {
   }
 }
 
-type AddOpenIDIDPPageState = {
+type AddGitLabPageState = {
   name: string;
   mappingMethod: MappingMethodType;
+  url: string
   clientID: string;
   clientSecret: string;
-  claimPreferredUsernames: string[];
-  claimNames: string[];
-  claimEmails: string[];
-  issuer: string;
   caFileContent: string;
-  extraScopes: string[];
   inProgress: boolean;
   errorMessage: string;
 };
