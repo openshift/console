@@ -68,8 +68,7 @@ export class StorageOverview extends React.Component {
     super(props);
     this.state = {
       ocsHealthData: {
-        data: {},
-        loaded: false,
+        LoadingComponent: LoadingInline,
       },
       topConsumersData: {
         topConsumerStats: [],
@@ -85,14 +84,9 @@ export class StorageOverview extends React.Component {
     this.setData = this._setData.bind(this);
   }
 
-  _setHealthData(healthy) {
+  _setHealthData(response) {
     this.setState({
-      ocsHealthData: {
-        data: {
-          healthy,
-        },
-        loaded: true,
-      },
+      ocsHealthData: response,
     });
   }
 
