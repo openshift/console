@@ -164,7 +164,7 @@ export class SubscriptionUpdates extends React.Component<SubscriptionUpdatesProp
     const channelModal = () => createSubscriptionChannelModal({subscription: obj, pkg, k8sUpdate: k8sUpdateAndWait});
     const approvalModal = () => createInstallPlanApprovalModal({obj, k8sUpdate: k8sUpdateAndWait});
     const installPlanPhase = (installPlan: InstallPlanKind) => {
-      switch (installPlan.status.phase) {
+      switch (_.get(installPlan, 'status.phase') as InstallPlanPhase) {
         case InstallPlanPhase.InstallPlanPhaseRequiresApproval: return '1 requires approval';
         case InstallPlanPhase.InstallPlanPhaseFailed: return '1 failed';
         default: return '1 installing';

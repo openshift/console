@@ -1,8 +1,7 @@
-import { $, $$ } from 'protractor';
+import { $, $$, element, by } from 'protractor';
 
 export const catalogTiles = $$('.catalog-tile-pf');
-export const catalogTileFor = (name: string) => catalogTiles.filter((tile) => tile.$('.catalog-tile-pf-title').getText()
-  .then(text => text === name)).first();
+export const catalogTileFor = (name: string) => element(by.cssContainingText('.catalog-tile-pf-title', name));
 export const catalogTileById = (id: string) => $(`[data-test=${id}]`);
 
 // FilterSidePanel views
