@@ -86,36 +86,15 @@ const getAlertManagerBaseURL = () => window.SERVER_FLAGS.alertManagerBaseURL;
 export class ClusterOverview extends React.Component {
   constructor(props){
     super(props);
-    this.messages = {};
-
     this.state = {
-      openshiftClusterVersions: null,
       healthData: {
         data: {},
         loaded: false,
       },
-      consumersData: {},
-      capacityData: {},
-      utilizationData: {},
-      diskStats: {},
     };
 
-    this.setConsumersData = this._setConsumersData.bind(this);
     this.setHealthData = this._setHealthData.bind(this);
-    this.setDetailsOpenshiftResponse = this._setDetailsOpenshiftResponse.bind(this);
-    this.setCapacityData = this._setCapacityData.bind(this);
-    this.setUtilizationData = this._setUtilizationData.bind(this);
     this.getStorageMetrics = this._getStorageMetrics.bind(this);
-    this.setCephDiskStats = this._setCephDiskStats.bind(this);
-  }
-
-  _setConsumersData(key, response) {
-    this.setState(state => ({
-      consumersData: {
-        ...state.consumersData,
-        [key]: response,
-      },
-    }));
   }
 
   _setHealthData(healthy, message) {
@@ -130,40 +109,10 @@ export class ClusterOverview extends React.Component {
     });
   }
 
-  _setDetailsOpenshiftResponse(response) {
-    let openshiftClusterVersions = _.get(response, 'data.result', []);
-    if (!Array.isArray(openshiftClusterVersions)){ // only one node
-      openshiftClusterVersions = [openshiftClusterVersions];
-    }
-
-    this.setState({
-      openshiftClusterVersions,
-    });
-  }
-
-  _setCapacityData(key, response) {
-    this.setState(state => ({
-      capacityData: {
-        ...state.capacityData,
-        [key]: response,
-      },
-    }));
-  }
-
-  _setUtilizationData(key, response) {
-    this.setState(state => ({
-      utilizationData: {
-        ...state.utilizationData,
-        [key]: response,
-      },
-    }));
-  }
-
   async _getStorageMetrics() {
+    let queryTotal = CAPACITY_STORAGE_TOTAL_DEFAULT_QUERY;
+    let queryUsed = UTILIZATION_STORAGE_USED_DEFAULT_QUERY;
     try {
-      let queryTotal = CAPACITY_STORAGE_TOTAL_DEFAULT_QUERY;
-      let queryUsed = UTILIZATION_STORAGE_USED_DEFAULT_QUERY;
-
       const metrics = await this.getPrometheusMetrics();
       if (_.get(metrics, 'data', []).find(metric => metric === CAPACITY_STORAGE_TOTAL_BASE_CEPH_METRIC)) {
         const cephData = await this.getPrometheusQuery(CAPACITY_STORAGE_TOTAL_QUERY);
@@ -172,24 +121,10 @@ export class ClusterOverview extends React.Component {
           queryUsed = UTILIZATION_STORAGE_USED_QUERY;
         }
       }
-
-      this.fetchPrometheusQuery(queryTotal, response => this.setCapacityData('storageTotal', response));
-      this.fetchPrometheusQuery(queryUsed, response => this.setUtilizationData('storageUsed', response));
-    } catch (error) {
-      if (this._isMounted) {
-        this.setCapacityData('storageTotal', error);
-        this.setUtilizationData('storageUsed', error);
-      }
+    } finally {
+      this.fetchPrometheusQuery(queryTotal, 'storageTotal');
+      this.fetchPrometheusQuery(queryUsed, 'storageUsed');
     }
-  }
-
-  _setCephDiskStats(key, response) {
-    this.setState(state => ({
-      diskStats: {
-        ...state.diskStats,
-        [key]: response,
-      },
-    }));
   }
 
   async getPrometheusMetrics() {
@@ -202,20 +137,9 @@ export class ClusterOverview extends React.Component {
     return coFetchJSON(url);
   }
 
-  fetchPrometheusQuery(query, callback) {
-    this.getPrometheusQuery(query).then(result => {
-      if (this._isMounted) {
-        callback(result);
-      }
-    }).catch(error => {
-      if (this._isMounted) {
-        callback(error);
-      }
-    }).then(() => {
-      if (this._isMounted) {
-        setTimeout(() => this.fetchPrometheusQuery(query, callback), REFRESH_TIMEOUT);
-      }
-    });
+  fetchPrometheusQuery(query, key) {
+    const url = `${getPrometheusBaseURL()}/api/v1/query?query=${encodeURIComponent(query)}`;
+    this.fetchAndStore(url, key);
   }
 
   fetchHealth(callback) {
@@ -234,19 +158,24 @@ export class ClusterOverview extends React.Component {
       });
   }
 
-  async fetchAlerts() {
+  fetchAlerts() {
     const url = `${getAlertManagerBaseURL()}/api/v2/alerts`;
-    let alertsResponse;
+    this.fetchAndStore(url, 'alertsResponse');
+  }
+
+
+  async fetchAndStore(url, key) {
+    let response;
     try {
-      alertsResponse = await coFetchJSON(url);
+      response = await coFetchJSON(url);
     } catch (error) {
-      alertsResponse = error;
+      response = error;
     } finally {
       if (this._isMounted) {
         this.setState({
-          alertsResponse,
+          [key]: response,
         });
-        setTimeout(() => this.fetchAlerts(), REFRESH_TIMEOUT);
+        setTimeout(() => this.fetchAndStore(url, key), REFRESH_TIMEOUT);
       }
     }
   }
@@ -254,25 +183,26 @@ export class ClusterOverview extends React.Component {
   componentDidMount() {
     this._isMounted = true;
 
-    this.fetchPrometheusQuery(CONSUMERS_CPU_QUERY, response => this.setConsumersData('workloadCpuResults', response));
-    this.fetchPrometheusQuery(CONSUMERS_MEMORY_QUERY, response => this.setConsumersData('workloadMemoryResults', response));
-    this.fetchPrometheusQuery(NODE_CONSUMERS_MEMORY_QUERY, response => this.setConsumersData('infraMemoryResults', response));
-    this.fetchPrometheusQuery(NODE_CONSUMERS_CPU_QUERY, response => this.setConsumersData('infraCpuResults', response));
+    this.fetchPrometheusQuery(CONSUMERS_CPU_QUERY, 'workloadCpuResults');
+    this.fetchPrometheusQuery(CONSUMERS_MEMORY_QUERY, 'workloadMemoryResults');
+    this.fetchPrometheusQuery(NODE_CONSUMERS_MEMORY_QUERY, 'infraMemoryResults');
+    this.fetchPrometheusQuery(NODE_CONSUMERS_CPU_QUERY, 'infraCpuResults');
 
     this.fetchHealth(this.setHealthData);
-    this.fetchPrometheusQuery(OPENSHIFT_VERSION_QUERY, response => this.setDetailsOpenshiftResponse(response));
 
-    this.fetchPrometheusQuery(CAPACITY_MEMORY_TOTAL_QUERY, response => this.setCapacityData('memoryTotal', response));
-    this.fetchPrometheusQuery(CAPACITY_NETWORK_TOTAL_QUERY, response => this.setCapacityData('networkTotal', response));
-    this.fetchPrometheusQuery(CAPACITY_NETWORK_USED_QUERY, response => this.setCapacityData('networkUsed', response));
+    this.fetchPrometheusQuery(OPENSHIFT_VERSION_QUERY, 'openshiftClusterVersionResponse');
 
-    this.fetchPrometheusQuery(CEPH_OSD_UP_QUERY, response => this.setCephDiskStats('cephOsdUp', response));
-    this.fetchPrometheusQuery(CEPH_OSD_DOWN_QUERY, response => this.setCephDiskStats('cephOsdDown', response));
+    this.fetchPrometheusQuery(CAPACITY_MEMORY_TOTAL_QUERY, 'memoryTotal');
+    this.fetchPrometheusQuery(CAPACITY_NETWORK_TOTAL_QUERY, 'networkTotal');
+    this.fetchPrometheusQuery(CAPACITY_NETWORK_USED_QUERY, 'networkUsed');
+
+    this.fetchPrometheusQuery(CEPH_OSD_UP_QUERY, 'cephOsdUp');
+    this.fetchPrometheusQuery(CEPH_OSD_DOWN_QUERY, 'cephOsdDown');
 
     this.getStorageMetrics();
 
-    this.fetchPrometheusQuery(UTILIZATION_CPU_USED_QUERY, response => this.setUtilizationData('cpuUtilization', response));
-    this.fetchPrometheusQuery(UTILIZATION_MEMORY_USED_QUERY, response => this.setUtilizationData('memoryUtilization', response));
+    this.fetchPrometheusQuery(UTILIZATION_CPU_USED_QUERY, 'cpuUtilization');
+    this.fetchPrometheusQuery(UTILIZATION_MEMORY_USED_QUERY, 'memoryUtilization');
     this.fetchAlerts();
   }
 
@@ -281,35 +211,18 @@ export class ClusterOverview extends React.Component {
   }
 
   render() {
-    const {
-      openshiftClusterVersions,
-      healthData,
-      consumersData,
-      capacityData,
-      utilizationData,
-      alertsResponse,
-      diskStats,
-    } = this.state;
-
     const inventoryResourceMapToProps = resources => {
       return {
         value: {
           LoadingComponent: LoadingInline,
           ...resources,
-          openshiftClusterVersions,
-          ...capacityData,
-          ...consumersData,
+          ...this.state,
 
           eventsData: {
             Component: OverviewEventStream,
             loaded: true,
           },
-          healthData,
-
-          ...utilizationData,
           complianceData, // TODO: mock, replace by real data and remove from web-ui-components
-          alertsResponse,
-          diskStats,
         },
       };
     };
