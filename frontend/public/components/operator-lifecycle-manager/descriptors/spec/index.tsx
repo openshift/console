@@ -22,7 +22,7 @@ const Default: React.SFC<SpecCapabilityProps> = ({value}) => {
 };
 
 const PodCount: React.SFC<SpecCapabilityProps> = ({model, obj, descriptor, value}) =>
-  <a onClick={() => configureSizeModal({kindObj: model, resource: obj, specDescriptor: descriptor, specValue: value})} className="co-m-modal-link">{value} pods</a>;
+  <button type="button" className="btn btn-link co-modal-btn-link" onClick={() => configureSizeModal({kindObj: model, resource: obj, specDescriptor: descriptor, specValue: value})}>{value} pods</button>;
 
 const Endpoints: React.SFC<SpecCapabilityProps> = ({value}) => <EndpointList endpoints={value} />;
 

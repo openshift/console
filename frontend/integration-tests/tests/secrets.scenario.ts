@@ -5,7 +5,7 @@ import { appHost, testName, checkLogs, checkErrors, waitForCount } from '../prot
 import * as crudView from '../views/crud.view';
 import * as secretsView from '../views/secrets.view';
 
-xdescribe('Interacting with the create secret forms', () => {
+describe('Interacting with the create secret forms', () => {
 
   afterEach(() => {
     checkLogs();

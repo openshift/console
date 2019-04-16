@@ -39,12 +39,8 @@ const Details: React.SFC<DetailsProps> = (props) => {
             <dd>{spec.version}</dd>
             <dt>Replicas</dt>
             <dd>
-              <a className="co-m-modal-link" href="#" onClick={openReplicaCountModal}>{pluralize(spec.replicas, 'pod')}</a>
+              <button type="button" className="btn btn-link co-modal-btn-link co-modal-btn-link--left" onClick={openReplicaCountModal}>{pluralize(spec.replicas, 'pod')}</button>
             </dd>
-            {_.get(spec, 'resources.requests.memory') && <React.Fragment>
-              <dt>Resource Request</dt>
-              <dd><span className="text-muted">Memory:</span> {spec.resources.requests.memory}</dd>
-            </React.Fragment>}
           </dl>
         </div>
       </div>

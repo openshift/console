@@ -150,9 +150,9 @@ const Details = ({obj: node}) => {
             <dt>Node Labels</dt>
             <dd><LabelList kind="Node" labels={node.metadata.labels} /></dd>
             <dt>Taints</dt>
-            <dd><a className="co-m-modal-link" onClick={Kebab.factory.ModifyTaints(NodeModel, node).callback}>{pluralize(_.size(node.spec.taints), 'Taint')}</a></dd>
+            <dd><button type="button" className="btn btn-link co-modal-btn-link co-modal-btn-link--left" onClick={Kebab.factory.ModifyTaints(NodeModel, node).callback}>{pluralize(_.size(node.spec.taints), 'Taint')}</button></dd>
             <dt>Annotations</dt>
-            <dd><a className="co-m-modal-link" onClick={Kebab.factory.ModifyAnnotations(NodeModel, node).callback}>{pluralize(_.size(node.metadata.annotations), 'Annotation')}</a></dd>
+            <dd><button type="button" className="btn btn-link co-modal-btn-link co-modal-btn-link--left" onClick={Kebab.factory.ModifyAnnotations(NodeModel, node).callback}>{pluralize(_.size(node.metadata.annotations), 'Annotation')}</button></dd>
             {machine && <React.Fragment>
               <dt>Machine</dt>
               <dd><ResourceLink kind={referenceForModel(MachineModel)} name={machine.name} namespace={machine.namespace} /></dd>

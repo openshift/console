@@ -35,7 +35,7 @@ describe(SpecDescriptor.name, () => {
     descriptor['x-descriptors'] = [SpecCapability.podCount];
     wrapper = wrapper.setProps({descriptor, value});
 
-    expect(wrapper.find('dd').childAt(0).shallow().find('a.co-m-modal-link').text()).toEqual(`${value} pods`);
+    expect(wrapper.find('dd').childAt(0).shallow().find('button.co-modal-btn-link').text()).toEqual(`${value} pods`);
 
     spyOn(configureSize, 'configureSizeModal').and.callFake((props) => {
       expect(props).toEqual({
@@ -46,7 +46,7 @@ describe(SpecDescriptor.name, () => {
       });
       done();
     });
-    wrapper.find('dd').childAt(0).shallow().find('a.co-m-modal-link').props().onClick(null);
+    wrapper.find('dd').childAt(0).shallow().find('button.co-modal-btn-link').props().onClick(null);
   });
 
   it('renders an endpoints list', () => {

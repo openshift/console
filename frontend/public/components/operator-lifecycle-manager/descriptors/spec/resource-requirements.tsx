@@ -66,7 +66,7 @@ export const ResourceRequirementsModalLink: React.SFC<ResourceRequirementsModalL
     return modal({title, description, obj, Form, type, path});
   };
 
-  return <a className="co-m-modal-link" onClick={onClick}>{`CPU: ${cpu || 'none'}, Memory: ${memory || 'none'}`}</a>;
+  return <button type="button" className="btn btn-link co-modal-btn-link" onClick={onClick}>{`CPU: ${cpu || 'none'}, Memory: ${memory || 'none'}`}</button>;
 };
 
 export type ResourceRequirementsModalProps = {
