@@ -186,7 +186,7 @@ export class ClusterOverview extends React.Component {
   _setCephDiskStats(key, response) {
     this.setState(state => ({
       diskStats: {
-        ...state.diskStates,
+        ...state.diskStats,
         [key]: response,
       },
     }));
