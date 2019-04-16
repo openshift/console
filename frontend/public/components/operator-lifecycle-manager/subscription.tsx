@@ -164,7 +164,7 @@ export class SubscriptionUpdates extends React.Component<SubscriptionUpdatesProp
     const channelModal = () => createSubscriptionChannelModal({subscription: obj, pkg, k8sUpdate: k8sUpdateAndWait});
     const approvalModal = () => createInstallPlanApprovalModal({obj, k8sUpdate: k8sUpdateAndWait});
     const installPlanPhase = (installPlan: InstallPlanKind) => {
-      switch (installPlan.status.phase) {
+      switch (_.get(installPlan, 'status.phase') as InstallPlanPhase) {
         case InstallPlanPhase.InstallPlanPhaseRequiresApproval: return '1 requires approval';
         case InstallPlanPhase.InstallPlanPhaseFailed: return '1 failed';
         default: return '1 installing';
@@ -178,7 +178,7 @@ export class SubscriptionUpdates extends React.Component<SubscriptionUpdatesProp
             <dt className="co-detail-table__section-header">Channel</dt>
             <dd>{ this.state.waitingForUpdate
               ? <LoadingInline />
-              : <a className="co-m-modal-link" onClick={() => channelModal()}>{obj.spec.channel || 'default'}</a>
+              : <button type="button" className="btn btn-link co-modal-btn-link" onClick={() => channelModal()}>{obj.spec.channel || 'default'}</button>
             }</dd>
           </dl>
         </div>
@@ -187,7 +187,7 @@ export class SubscriptionUpdates extends React.Component<SubscriptionUpdatesProp
             <dt className="co-detail-table__section-header">Approval</dt>
             <dd>{ this.state.waitingForUpdate
               ? <LoadingInline />
-              : <a className="co-m-modal-link" onClick={() => approvalModal()}>{obj.spec.installPlanApproval || 'Automatic'}</a>
+              : <button type="button" className="btn btn-link co-modal-btn-link" onClick={() => approvalModal()}>{obj.spec.installPlanApproval || 'Automatic'}</button>
             }</dd>
           </dl>
         </div>

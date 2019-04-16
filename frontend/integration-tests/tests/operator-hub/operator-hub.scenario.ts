@@ -37,16 +37,18 @@ describe('Subscribing to an Operator from OperatorHub', () => {
 
   it('displays Couchbase Operator operator when filter "Couchbase" is active', async() => {
     await catalogPageView.clickFilterCheckbox('provider-couchbase');
+    await browser.wait(until.visibilityOf(catalogPageView.catalogTileById('couchbase-enterprise-certified-openshift-marketplace')));
 
-    expect(catalogPageView.catalogTileById('couchbase-enterprise-openshift-marketplace').isDisplayed()).toBe(true);
+    expect(catalogPageView.catalogTiles.count()).toEqual(1);
 
     await catalogPageView.clickFilterCheckbox('provider-couchbase');
   });
 
   it('does not display Couchbase Operator operator when filter "Red Hat" is active', async() => {
     await catalogPageView.clickFilterCheckbox('provider-red-hat');
+    await browser.wait(until.invisibilityOf(catalogPageView.catalogTileById('couchbase-enterprise-certified-openshift-marketplace')));
 
-    expect(catalogPageView.catalogTileById('couchbase-enterprise-openshift-marketplace').isPresent()).toBe(false);
+    expect(catalogPageView.catalogTiles.count()).toBeGreaterThan(1);
 
     await catalogPageView.clickFilterCheckbox('provider-red-hat');
   });
