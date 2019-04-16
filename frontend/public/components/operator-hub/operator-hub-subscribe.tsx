@@ -246,7 +246,9 @@ export const OperatorHubSubscribePage: React.SFC<OperatorHubSubscribePageProps> 
   </Helmet>
   <div>
     <h1>Create Operator Subscription</h1>
-    <p className="co-help-text">Keep your service up to date by subscribing to a channel and update strategy from which to pull updates.</p>
+    <p className="co-help-text">
+      Keep your service up to date by selecting a channel and approval strategy. The strategy determines either manual or automatic updates.
+    </p>
   </div>
   <Firehose resources={[{
     isList: true,
