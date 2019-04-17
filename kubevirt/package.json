@@ -2,7 +2,7 @@
   "dependencies": {
     "@patternfly/react-charts": "2.x",
     "@patternfly/react-console": "1.9.1",
-    "kubevirt-web-ui-components": "0.1.28",
+    "kubevirt-web-ui-components": "0.1.29",
     "reactabular-dnd": "^8.16.0"
   }
 }
