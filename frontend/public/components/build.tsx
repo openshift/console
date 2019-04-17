@@ -9,13 +9,13 @@ import { K8sResourceKindReference, referenceFor, K8sResourceKind } from '../modu
 import { cloneBuild, formatBuildDuration, BuildPhase, getBuildNumber } from '../module/k8s/builds';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
 import { errorModal } from './modals';
-import { BuildHooks, BuildStrategy, Kebab, SectionHeading, history, navFactory, ResourceKebab, ResourceLink, resourceObjPath, ResourceSummary, Timestamp, AsyncComponent, resourcePath, StatusIcon } from './utils';
+import { BuildHooks, BuildStrategy, Kebab, SectionHeading, history, navFactory, ResourceKebab, ResourceLink, resourceObjPath, ResourceSummary, Timestamp, AsyncComponent, resourcePath, StatusIcon, humanizeDecimalBytes, humanizeCpuCores } from './utils';
 import { BuildPipeline, BuildPipelineLogLink } from './build-pipeline';
 import { breadcrumbsForOwnerRefs } from './utils/breadcrumbs';
 import { fromNow } from './utils/datetime';
 import { BuildLogs } from './build-logs';
 import { ResourceEventStream } from './events';
-import { Line, requirePrometheus } from './graphs';
+import { Area, requirePrometheus } from './graphs';
 
 const BuildsReference: K8sResourceKindReference = 'Build';
 
@@ -92,13 +92,13 @@ const BuildGraphs = requirePrometheus(({build}) => {
   return <React.Fragment>
     <div className="row">
       <div className="col-md-4">
-        <Line title="Memory Usage" namespace={namespace} query={`pod_name:container_memory_usage_bytes:sum{pod_name='${podName}',container_name='',namespace='${namespace}'}`} />
+        <Area title="Memory Usage" humanizeValue={humanizeDecimalBytes} namespace={namespace} query={`pod_name:container_memory_usage_bytes:sum{pod_name='${podName}',container_name='',namespace='${namespace}'}`} />
       </div>
       <div className="col-md-4">
-        <Line title="CPU Usage" namespace={namespace} query={`pod_name:container_cpu_usage:sum{pod_name='${podName}',container_name='',namespace='${namespace}'}`} />
+        <Area title="CPU Usage" humanizeValue={humanizeCpuCores} namespace={namespace} query={`pod_name:container_cpu_usage:sum{pod_name='${podName}',container_name='',namespace='${namespace}'}`} />
       </div>
       <div className="col-md-4">
-        <Line title="Filesystem" namespace={namespace} query={`pod_name:container_fs_usage_bytes:sum{pod_name='${podName}',container_name='',namespace='${namespace}'}`} />
+        <Area title="Filesystem" humanizeValue={humanizeDecimalBytes} namespace={namespace} query={`pod_name:container_fs_usage_bytes:sum{pod_name='${podName}',container_name='',namespace='${namespace}'}`} />
       </div>
     </div>
 

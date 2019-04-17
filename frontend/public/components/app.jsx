@@ -137,6 +137,13 @@ class App extends React.PureComponent {
   }
 
   _onNavToggle() {
+
+    // Some components, like svg charts, need to reflow when nav is toggled.
+    // Fire event after a short delay to allow nav animation to complete.
+    setTimeout(() => {
+      window.dispatchEvent(new Event('nav_toggle'));
+    }, 100);
+
     this.setState(prevState => {
       return {
         isNavOpen: !prevState.isNavOpen,

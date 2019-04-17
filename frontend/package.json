@@ -62,6 +62,7 @@
   },
   "dependencies": {
     "@patternfly/patternfly": "1.0.219",
+    "@patternfly/react-charts": "^3.4.5",
     "@patternfly/react-core": "2.4.1",
     "brace": "0.11.x",
     "classnames": "2.x",
