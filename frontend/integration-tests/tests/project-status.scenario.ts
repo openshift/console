@@ -22,8 +22,8 @@ describe('Status page for all projects', () => {
       var serverVersion = execSync(`oc version | grep 'Server Version' | gawk -F , '{print $3}' | gawk -F '"' '{print $2}'`).toString();
       await browser.wait(until.presenceOf(projectStatusView.softwareInfo));
       await expect(projectStatusView.softwareInfo.getText()).toContain('Software Info');
-      await expect(projectStatusView.kubernetes.getText()).toContain('Kubernetes');
-      await expect(projectStatusView.kubernetesVersion.innerText === serverVersion);
+      await expect(projectStatusView.softwareInfo.getText()).toContain('Kubernetes');
+      await expect(projectStatusView.softwareInfo.innerText === serverVersion);
     });
 
 });
