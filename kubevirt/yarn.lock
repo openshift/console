@@ -876,8 +876,8 @@ cssstyle@^1.0.0:
     cssom "0.3.x"
 
 csstype@^2.2.0, csstype@^2.5.2:
-  version "2.6.3"
-  resolved "https://registry.yarnpkg.com/csstype/-/csstype-2.6.3.tgz#b701e5968245bf9b08d54ac83d00b624e622a9fa"
+  version "2.6.4"
+  resolved "https://registry.yarnpkg.com/csstype/-/csstype-2.6.4.tgz#d585a6062096e324e7187f80e04f92bd0f00e37f"
 
 d3-array@^1.2.0:
   version "1.2.4"
@@ -1392,9 +1392,9 @@ kind-of@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/kind-of/-/kind-of-1.1.0.tgz#140a3d2d41a36d2efcfa9377b62c24f8495a5c44"
 
-kubevirt-web-ui-components@0.1.29:
-  version "0.1.29"
-  resolved "https://registry.yarnpkg.com/kubevirt-web-ui-components/-/kubevirt-web-ui-components-0.1.29.tgz#b15596e5776ce4a45690697824f332682627f28c"
+kubevirt-web-ui-components@0.1.30:
+  version "0.1.30"
+  resolved "https://registry.yarnpkg.com/kubevirt-web-ui-components/-/kubevirt-web-ui-components-0.1.30.tgz#bc3d6b872eefdf5144538925a61d43f31f4c2f6d"
   dependencies:
     "@patternfly/react-console" "1.x"
     classnames "2.x"
