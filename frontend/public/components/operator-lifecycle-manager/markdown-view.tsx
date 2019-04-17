@@ -43,7 +43,13 @@ export class SyncMarkdownView extends React.Component<{content: string, styles?:
         !this.frame.contentWindow.document.body.firstChild) {
       return;
     }
-    this.frame.style.height = `${this.frame.contentWindow.document.body.firstChild.scrollHeight + 50}px`;
+    this.frame.style.height = `${this.frame.contentWindow.document.body.firstChild.scrollHeight}px`;
+
+    // Let the new height take effect, then reset again once we recompute
+    setTimeout(() => {
+      // Increase by 15px for the case where a horizontal scrollbar might appear
+      this.frame.style.height = `${this.frame.contentWindow.document.body.firstChild.scrollHeight + 15}px`;
+    });
   }
 
   render() {
@@ -67,8 +73,7 @@ export class SyncMarkdownView extends React.Component<{content: string, styles?:
       }
       ${this.props.styles ? this.props.styles : ''}
       </style>
-      <body><div>${markdownConvert(this.props.content || 'Not available')}</div></body>`;
-
-    return <iframe sandbox="allow-popups allow-same-origin" srcDoc={contents} style={{border: '0px', width: '100%', height: '100%'}} ref={(r) => this.frame = r} onLoad={() => this.updateDimensions()} />;
+      <body><div style="overflow-y: auto;">${markdownConvert(this.props.content || 'Not available')}</div></body>`;
+    return <iframe sandbox="allow-popups allow-same-origin" srcDoc={contents} style={{border: '0px', width: '100%', height: '0'}} ref={(r) => this.frame = r} onLoad={() => this.updateDimensions()} />;
   }
 }
