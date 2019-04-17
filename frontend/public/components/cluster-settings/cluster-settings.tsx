@@ -38,7 +38,7 @@ import {
 
 const clusterAutoscalerReference = referenceForModel(ClusterAutoscalerModel);
 
-const CurrentChannel: React.SFC<CurrentChannelProps> = ({cv}) => <button className="btn btn-link co-m-modal-link" onClick={() => (clusterChannelModal({cv}))}>
+const CurrentChannel: React.SFC<CurrentChannelProps> = ({cv}) => <button className="btn btn-link co-modal-btn-link" onClick={() => (clusterChannelModal({cv}))}>
   {cv.spec.channel || '-'}
 </button>;
 
@@ -84,7 +84,7 @@ const UpdatesAvailableAlert: React.SFC<UpdatesAvailableAlertProps> = ({cv}) => {
     <strong>
       {titleText}
     </strong>
-    <Button bsStyle="link" className="co-m-modal-link" onClick={()=> (clusterUpdateModal({cv}))}>
+    <Button bsStyle="link" className="btn btn-link co-modal-btn-link co-modal-btn-link--inline" onClick={()=> (clusterUpdateModal({cv}))}>
       {buttonText}
     </Button>
   </div>;
@@ -97,7 +97,7 @@ const UpdateStatus: React.SFC<UpdateStatusProps> = ({cv}) => {
   return <React.Fragment>
     {
       status === ClusterUpdateStatus.UpdatesAvailable
-        ? <Button bsStyle="link" className="co-m-modal-link" onClick={() => (clusterUpdateModal({cv}))}>
+        ? <Button bsStyle="link" className="btn btn-link co-modal-btn-link" onClick={() => (clusterUpdateModal({cv}))}>
           <i className={iconClass} aria-hidden={true}></i>
           &nbsp;
           {status}
@@ -134,19 +134,19 @@ const ClusterVersionDetailsTable: React.SFC<ClusterVersionDetailsTableProps> = (
         { updatesAvailable && <UpdatesAvailableAlert cv={cv} /> }
         <div className="co-detail-table">
           <div className="co-detail-table__row row">
-            <div className="co-detail-table__section">
+            <div className="co-detail-table__section col-sm-4">
               <dl className="co-m-pane__details">
                 <dt className="co-detail-table__section-header">Channel</dt>
                 <dd><CurrentChannel cv={cv} /></dd>
               </dl>
             </div>
-            <div className="co-detail-table__section">
+            <div className="co-detail-table__section col-sm-4">
               <dl className="co-m-pane__details">
                 <dt className="co-detail-table__section-header">Update Status</dt>
                 <dd><UpdateStatus cv={cv} /></dd>
               </dl>
             </div>
-            <div className="co-detail-table__section">
+            <div className="co-detail-table__section col-sm-4">
               <dl className="co-m-pane__details">
                 <dt className="co-detail-table__section-header">Desired Version</dt>
                 <dd><DesiredVersion cv={cv} /></dd>

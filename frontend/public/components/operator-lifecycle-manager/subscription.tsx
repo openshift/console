@@ -88,9 +88,10 @@ export const SubscriptionsPage: React.SFC<SubscriptionsPageProps> = (props) => {
     ]}
     flatten={resources => _.get(resources.subscription, 'data', [])}
     title="Subscriptions"
+    helpText="Operator Subscriptions keep your services up to date by tracking a channel in a package. The approval strategy determines either manual or automatic updates."
     showTitle={false}
     canCreate={true}
-    createProps={{to: namespace ? `/operatormanagement/ns/${namespace}` : '/operatormanagement/all-namespaces'}}
+    createProps={{to: namespace ? `/operatormanagement/ns/${namespace}/catalogsources` : '/operatormanagement/all-namespaces/catalogsources'}}
     createButtonText="Create Subscription"
     ListComponent={SubscriptionsList}
     filterLabel="Subscriptions by package" />;
@@ -164,7 +165,7 @@ export class SubscriptionUpdates extends React.Component<SubscriptionUpdatesProp
     const channelModal = () => createSubscriptionChannelModal({subscription: obj, pkg, k8sUpdate: k8sUpdateAndWait});
     const approvalModal = () => createInstallPlanApprovalModal({obj, k8sUpdate: k8sUpdateAndWait});
     const installPlanPhase = (installPlan: InstallPlanKind) => {
-      switch (installPlan.status.phase) {
+      switch (_.get(installPlan, 'status.phase') as InstallPlanPhase) {
         case InstallPlanPhase.InstallPlanPhaseRequiresApproval: return '1 requires approval';
         case InstallPlanPhase.InstallPlanPhaseFailed: return '1 failed';
         default: return '1 installing';
@@ -178,7 +179,7 @@ export class SubscriptionUpdates extends React.Component<SubscriptionUpdatesProp
             <dt className="co-detail-table__section-header">Channel</dt>
             <dd>{ this.state.waitingForUpdate
               ? <LoadingInline />
-              : <a className="co-m-modal-link" onClick={() => channelModal()}>{obj.spec.channel || 'default'}</a>
+              : <button type="button" className="btn btn-link co-modal-btn-link" onClick={() => channelModal()}>{obj.spec.channel || 'default'}</button>
             }</dd>
           </dl>
         </div>
@@ -187,7 +188,7 @@ export class SubscriptionUpdates extends React.Component<SubscriptionUpdatesProp
             <dt className="co-detail-table__section-header">Approval</dt>
             <dd>{ this.state.waitingForUpdate
               ? <LoadingInline />
-              : <a className="co-m-modal-link" onClick={() => approvalModal()}>{obj.spec.installPlanApproval || 'Automatic'}</a>
+              : <button type="button" className="btn btn-link co-modal-btn-link" onClick={() => approvalModal()}>{obj.spec.installPlanApproval || 'Automatic'}</button>
             }</dd>
           </dl>
         </div>

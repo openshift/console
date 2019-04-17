@@ -90,7 +90,7 @@ describe('Performance test', () => {
       // Avoid problems where the Catalog nav section appears where Workloads was at the moment the tests try to click.
       await browser.wait(until.visibilityOf(sidenavView.navSectionFor('Catalog')));
       await sidenavView.clickNavLink([route.section, route.name]);
-      await crudView.isLoaded();
+      await browser.wait(crudView.untilNoLoadersPresent);
 
       const routeChunk = await browser.executeScript<PerformanceEntry>(routeChunkFor, routeName);
 

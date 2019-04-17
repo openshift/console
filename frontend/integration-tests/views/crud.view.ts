@@ -29,8 +29,15 @@ export const resourceRows = $$('.co-resource-list__item');
 export const resourceRowNamesAndNs = $$('.co-m-resource-icon + a');
 export const rowForName = (name: string) => resourceRows.filter((row) => row.$$('.co-m-resource-icon + a').first().getText().then(text => text === name)).first();
 export const rowForOperator = (name: string) => resourceRows.filter((row) => row.$('.co-clusterserviceversion-logo__name__clusterserviceversion').getText().then(text => text === name)).first();
-export const navTabs = $$('.co-m-horizontal-nav__menu-item > a');
-export const navTabFor = (name: string) => navTabs.filter((tab) => tab.getText().then(text => text === name)).first();
+
+const navMenu = $('.co-m-horizontal-nav__menu');
+const isNavLoaded = () => browser.wait(until.presenceOf(navMenu));
+export const navTabFor = (name: string) => navMenu.element(by.linkText(name));
+export const clickTab = async(name: string) => {
+  await isNavLoaded();
+  await navTabFor(name).click();
+};
+
 
 export const labelsForRow = (name: string) => rowForName(name).$$('.co-m-label');
 export const textFilter = $('.co-m-pane__filter-bar-group--filter input');
@@ -118,7 +125,7 @@ export const resourceTitle = $('#resource-title');
 
 export const nameFilter = $('.form-control.text-filter');
 export const messageLbl = $('.cos-status-box');
-export const modalAnnotationsLink = $('.loading-box__loaded').element(by.partialLinkText('Annotation'));
+export const modalAnnotationsLink = $('.loading-box__loaded').element(by.partialButtonText('Annotation'));
 
 export const visitResource = async(resource: string, name: string) => {
   await browser.get(`${appHost}/k8s/ns/${testName}/${resource}/${name}`);

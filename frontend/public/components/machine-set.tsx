@@ -91,7 +91,7 @@ export const MachineCounts: React.SFC<MachineCountsProps> = ({resourceKind, reso
           <dl className="co-m-pane__details">
             <dt className="co-detail-table__section-header">Desired Count</dt>
             <dd>
-              <button type="button" className="btn btn-link co-m-modal-link" onClick={editReplicas}>
+              <button type="button" className="btn btn-link co-modal-btn-link" onClick={editReplicas}>
                 {pluralize(desiredReplicas, 'machine')}
               </button>
             </dd>

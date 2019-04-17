@@ -199,8 +199,10 @@ export const FireMan_ = connect(null, {filterList: k8sActions.filterList})(
       const {title} = this.props;
       return <React.Fragment>
         {title && <PageHeading title={title} />}
-        <div className={classNames('co-m-pane__filter-bar', {'co-m-pane__filter-bar--with-help-text': helpText})}>
-          {helpText && <div className={classNames('co-m-pane__filter-bar-group', {'co-m-pane__filter-bar-group--help-text': helpText})}>
+        {/* Show help text above the filter bar if there's a create button. */}
+        {helpText && createLink && <p className="co-m-pane__help-text co-help-text">{helpText}</p>}
+        <div className={classNames('co-m-pane__filter-bar', {'co-m-pane__filter-bar--with-help-text': helpText && !createLink})}>
+          {helpText && !createLink && <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--help-text">
             {helpText}
           </div>}
           {createLink && <div className="co-m-pane__filter-bar-group">

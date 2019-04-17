@@ -46,6 +46,7 @@ describe('Interacting with the Prometheus Operator (single-namespace install mod
 
   it('can be enabled from the Catalog Source', async() => {
     await sidenavView.clickNavLink(['Catalog', 'Operator Management']);
+    await catalogView.clickCatalogsTab();
     await catalogView.isLoaded();
     await catalogView.createSubscriptionFor('Prometheus');
     await browser.wait(until.presenceOf($('.ace_text-input')));
@@ -55,6 +56,7 @@ describe('Interacting with the Prometheus Operator (single-namespace install mod
     await $('#save-changes').click();
     await crudView.isLoaded();
     await sidenavView.clickNavLink(['Catalog', 'Operator Management']);
+    await catalogView.clickCatalogsTab();
     await catalogView.isLoaded();
 
     expect(catalogView.hasSubscription('Prometheus')).toBe(true);
