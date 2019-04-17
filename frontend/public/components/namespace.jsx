@@ -9,7 +9,6 @@ import { NamespaceModel, ProjectModel, SecretModel } from '../models';
 import { k8sGet } from '../module/k8s';
 import { formatNamespacedRouteForResource, UIActions } from '../ui/ui-actions';
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
-import { SafetyFirst } from './safety-first';
 import { ActionsMenu, Kebab, Dropdown, Firehose, LabelList, LoadingInline, navFactory, ResourceKebab, SectionHeading, ResourceIcon, ResourceLink, ResourceSummary, humanizeMem, MsgBox, StatusIcon, ExternalLink } from './utils';
 import { createNamespaceModal, createProjectModal, deleteNamespaceModal, configureNamespacePullSecretModal } from './modals';
 import { RoleBindingsPage } from './RBAC';
@@ -127,43 +126,34 @@ const ProjectsPage_ = props => {
 };
 export const ProjectsPage = connectToFlags(FLAGS.CAN_CREATE_PROJECT)(ProjectsPage_);
 
-class PullSecret extends SafetyFirst {
-  constructor(props) {
-    super(props);
-    this.state = {isLoading: true, data: undefined};
-  }
+/** @type {React.SFC<{namespace: K8sResourceKind}>} */
+export const PullSecret = (props) => {
+  const [isLoading, setIsLoading] = React.useState(true);
+  const [data, setData] = React.useState(undefined);
 
-  componentDidMount() {
-    super.componentDidMount();
-    this.load(_.get(this.props, 'namespace.metadata.name'));
-  }
-
-  load(namespaceName) {
-    if (!namespaceName) {
-      return;
-    }
-    k8sGet(SecretModel, null, namespaceName, {queryParams: {fieldSelector: 'type=kubernetes.io/dockerconfigjson'}})
+  React.useEffect(() => {
+    k8sGet(SecretModel, null, props.namespace.metadata.name, {queryParams: {fieldSelector: 'type=kubernetes.io/dockerconfigjson'}})
       .then((pullSecrets) => {
-        this.setState({isLoading: false, data: _.get(pullSecrets, 'items[0]')});
+        setIsLoading(false);
+        setData(_.get(pullSecrets, 'items[0]'));
       })
       .catch((error) => {
-        this.setState({isLoading: false, data: undefined});
-
+        setIsLoading(false);
+        setData(undefined);
         // A 404 just means that no pull secrets exist
         if (error.status !== 404) {
           throw error;
         }
       });
-  }
+  }, [props.namespace.metadata.name]);
 
-  render() {
-    if (this.state.isLoading) {
-      return <LoadingInline />;
-    }
-    const modal = () => configureNamespacePullSecretModal({namespace: this.props.namespace, pullSecret: this.state.data});
-    return <button type="button" className="btn btn-link co-modal-btn-link co-modal-btn-link--left" onClick={modal}>{_.get(this.state.data, 'metadata.name') || 'Not Configured'}</button>;
+  if (isLoading) {
+    return <LoadingInline />;
   }
-}
+  const modal = () => configureNamespacePullSecretModal({namespace: this.props.namespace, pullSecret: data});
+
+  return <button type="button" className="btn btn-link co-modal-btn-link co-modal-btn-link--left" onClick={modal}>{_.get(data, 'metadata.name') || 'Not Configured'}</button>;
+};
 
 export const NamespaceLineCharts = ({ns}) => <div className="row">
   <div className="col-sm-6 col-xs-12">

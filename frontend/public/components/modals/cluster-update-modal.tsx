@@ -19,7 +19,7 @@ import {
   ModalTitle,
 } from '../factory/modal';
 
-class ClusterUpdateModal extends PromiseComponent {
+class ClusterUpdateModal extends PromiseComponent<ClusterUpdateModalProps, ClusterUpdateModalState> {
   readonly state: ClusterUpdateModalState;
 
   constructor(public props: ClusterUpdateModalProps) {

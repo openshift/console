@@ -17,7 +17,7 @@ import {
   K8sResourceKind,
 } from '../../module/k8s';
 
-class ClusterChannelModal extends PromiseComponent {
+class ClusterChannelModal extends PromiseComponent<ClusterChannelModalProps, ClusterChannelModalState> {
   readonly state: ClusterChannelModalState;
 
   constructor(public props: ClusterChannelModalProps) {

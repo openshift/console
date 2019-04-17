@@ -21,6 +21,7 @@
   },
   "plugins": [
     "react",
+    "react-hooks",
   ],
   "rules": {
     "brace-style": 2,
@@ -74,6 +75,8 @@
     "semi": 2,
     "space-before-function-paren": ["error", "never"],
     "wrap-iife": [2, "inside"],
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn",
   },
   "settings": {
     "import/extensions": [".js", ".jsx"],

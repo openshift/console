@@ -309,7 +309,8 @@ getCachedResources().then(resources => {
 
 _.each(featureActions, store.dispatch);
 
-analyticsSvc.push({tier: 'tectonic'});
+// Global timer to ensure all <Timestamp> components update in sync
+setInterval(() => store.dispatch(UIActions.updateTimestamps(Date.now())), 10000);
 
 // Used by GUI tests to check for unhandled exceptions
 window.windowError = false;

@@ -86,6 +86,7 @@ export const types = {
   updateOverviewSelectedGroup: 'updateOverviewSelectedGroup',
   updateOverviewGroupOptions: 'updateOverviewGroupOptions',
   updateOverviewFilterValue: 'updateOverviewFilterValue',
+  updateTimestamps: 'updateTimestamps',
 };
 
 /** @type {{[key: string]: function}} */
@@ -184,6 +185,8 @@ export const UIActions = {
   [types.updateOverviewMetrics]: metrics => ({type: types.updateOverviewMetrics, metrics}),
 
   [types.updateOverviewResources]: resources => ({type: types.updateOverviewResources, resources}),
+
+  [types.updateTimestamps]: (lastTick) => ({type: types.updateTimestamps, lastTick}),
 
   [types.dismissOverviewDetails]: () => ({type: types.dismissOverviewDetails}),
 

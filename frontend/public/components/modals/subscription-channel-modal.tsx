@@ -10,7 +10,7 @@ import { SubscriptionKind, PackageManifestKind } from '../operator-lifecycle-man
 import { SubscriptionModel, ClusterServiceVersionModel } from '../../models';
 import { RadioInput } from '../radio';
 
-export class SubscriptionChannelModal extends PromiseComponent {
+export class SubscriptionChannelModal extends PromiseComponent<SubscriptionChannelModalProps, SubscriptionChannelModalState> {
   public state: SubscriptionChannelModalState;
 
   constructor(public props: SubscriptionChannelModalProps) {

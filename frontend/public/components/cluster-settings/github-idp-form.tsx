@@ -17,7 +17,7 @@ import { MappingMethod } from './mapping-method';
 import { IDPCAFileInput } from './idp-cafile-input';
 
 
-export class AddGitHubPage extends PromiseComponent {
+export class AddGitHubPage extends PromiseComponent<{}, AddGitHubPageState> {
   readonly state: AddGitHubPageState = {
     name: 'github',
     mappingMethod: 'claim',
@@ -145,7 +145,7 @@ export class AddGitHubPage extends PromiseComponent {
     this.setState({team});
   };
 
-  mappingMethodChanged = (mappingMethod: string) => {
+  mappingMethodChanged = (mappingMethod: MappingMethodType) => {
     this.setState({mappingMethod});
   };
 
