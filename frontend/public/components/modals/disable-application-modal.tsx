@@ -56,7 +56,7 @@ export class DisableApplicationModal extends PromiseComponent {
         <div>
           <label className="co-delete-modal-checkbox-label">
             <input type="checkbox" checked={this.state.deleteCSV} onChange={() => this.setState({deleteCSV: !this.state.deleteCSV})} />
-            &nbsp;&nbsp; <strong>Also completely remove the <b>{name}</b> Operator from the selected namespace.</strong>
+            &nbsp;&nbsp; <strong>Also completely remove the Operator from the selected namespace.</strong>
           </label>
         </div>
       </ModalBody>
