@@ -19,6 +19,7 @@ import {
   apiVersionForModel,
   K8sResourceKind,
   LabelSelector,
+  PodKind,
 } from '../../module/k8s';
 import {
   withStartGuide,
@@ -219,7 +220,7 @@ const getReplicationControllerAlerts = (rc: K8sResourceKind): OverviewItemAlerts
   }
 };
 
-const getResourcePausedAlert = (resource): OverviewItemAlerts => {
+const getResourcePausedAlert = (resource: K8sResourceKind): OverviewItemAlerts => {
   if (!resource.spec.paused) {
     return {};
   }
@@ -231,7 +232,7 @@ const getResourcePausedAlert = (resource): OverviewItemAlerts => {
   };
 };
 
-const getOwnedResources = ({metadata:{uid}}: K8sResourceKind, resources: K8sResourceKind[]): K8sResourceKind[] => {
+const getOwnedResources = <T extends K8sResourceKind>({metadata:{uid}}: K8sResourceKind, resources: T[]): T[] => {
   return _.filter(resources, ({metadata:{ownerReferences}}) => {
     return _.some(ownerReferences, {
       uid,
@@ -583,7 +584,7 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
     return { firstLabel, groupOptions };
   }
 
-  getPodsForResource(resource: K8sResourceKind): K8sResourceKind[] {
+  getPodsForResource(resource: K8sResourceKind): PodKind[] {
     const {pods} = this.props;
     return getOwnedResources(resource, pods.data);
   }
@@ -1086,8 +1087,8 @@ type FirehoseItem = {
   [key: string]: any;
 };
 
-type FirehoseList = {
-  data?: K8sResourceKind[];
+type FirehoseList<T extends K8sResourceKind> = {
+  data?: T[];
   [key: string]: any;
 };
 
@@ -1103,7 +1104,7 @@ export type PodControllerOverviewItem = {
   revision: number;
   obj: K8sResourceKind;
   phase?: string;
-  pods: K8sResourceKind[];
+  pods: PodKind[];
 };
 
 export type BuildConfigOverviewItem = K8sResourceKind & {
@@ -1116,12 +1117,16 @@ export type OverviewItem = {
   current?: PodControllerOverviewItem;
   isRollingOut?: boolean;
   obj: K8sResourceKind;
-  pods?: K8sResourceKind[];
+  pods?: PodKind[];
   previous?: PodControllerOverviewItem;
   routes: K8sResourceKind[];
   services: K8sResourceKind[];
   status?: React.ReactNode;
 };
+
+export type PodOverviewItem = {
+  obj: PodKind;
+} & OverviewItem;
 
 export type OverviewGroup = {
   name: string;
@@ -1181,23 +1186,23 @@ type OverviewMainContentPropsFromDispatch = {
 };
 
 type OverviewMainContentOwnProps = {
-  builds?: FirehoseList;
-  buildConfigs?: FirehoseList;
-  daemonSets?: FirehoseList;
-  deploymentConfigs?: FirehoseList;
-  deployments?: FirehoseList;
+  builds?: FirehoseList<K8sResourceKind>;
+  buildConfigs?: FirehoseList<K8sResourceKind>;
+  daemonSets?: FirehoseList<K8sResourceKind>;
+  deploymentConfigs?: FirehoseList<K8sResourceKind>;
+  deployments?: FirehoseList<K8sResourceKind>;
   mock: boolean;
   loaded?: boolean;
   loadError?: any;
   namespace: string;
-  pods?: FirehoseList;
+  pods?: FirehoseList<PodKind>;
   project?: FirehoseItem;
-  replicationControllers?: FirehoseList;
-  replicaSets?: FirehoseList;
-  routes?: FirehoseList;
-  services?: FirehoseList;
+  replicationControllers?: FirehoseList<K8sResourceKind>;
+  replicaSets?: FirehoseList<K8sResourceKind>;
+  routes?: FirehoseList<K8sResourceKind>;
+  services?: FirehoseList<K8sResourceKind>;
   selectedItem: OverviewItem;
-  statefulSets?: FirehoseList;
+  statefulSets?: FirehoseList<K8sResourceKind>;
   title?: string;
 };
 

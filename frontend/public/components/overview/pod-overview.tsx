@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars, no-undef */
 import * as React from 'react';
-import { OverviewItem } from '.';
+import { PodOverviewItem } from '.';
 import { PodResourceSummary, PodDetailsList, menuActions } from '../pod';
 import { PodModel } from '../../models';
 import { ResourceOverviewDetails } from './resource-overview-details';
@@ -41,13 +41,13 @@ export const PodOverviewPage: React.SFC<PodOverviewPageProps> = ({item}) =>
   />;
 
 type PodOverviewDetailsProps = {
-  item: OverviewItem;
+  item: PodOverviewItem;
 };
 
 type PodResourcesTabProps = {
-  item: OverviewItem;
+  item: PodOverviewItem;
 };
 
 type PodOverviewPageProps = {
-  item: OverviewItem;
+  item: PodOverviewItem;
 };
