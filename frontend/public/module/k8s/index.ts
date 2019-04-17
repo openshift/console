@@ -392,11 +392,11 @@ export type IdentityProvider = {
 
 export type OAuthKind = {
   spec: {
-    identityProviders: IdentityProvider[];
-    tokenConfig: {
+    identityProviders?: IdentityProvider[];
+    tokenConfig?: {
       accessTokenMaxAgeSeconds: number;
     };
-    templates: {
+    templates?: {
       login: string;
       providerSelection: string;
       error: string;
