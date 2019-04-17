@@ -35,14 +35,13 @@ const getIconClass = (status: OperatorStatus) => {
     [OperatorStatus.Available]: 'pficon pficon-ok text-success',
     [OperatorStatus.Updating]: 'fa fa-refresh',
     [OperatorStatus.Failing]: 'pficon pficon-error-circle-o text-danger',
+    [OperatorStatus.Unknown]: 'pficon pficon-unknown',
   }[status];
 };
 
 const OperatorStatusIconAndLabel: React.SFC<OperatorStatusIconAndLabelProps> = ({status}) => {
   const iconClass = getIconClass(status);
-  return status === OperatorStatus.Unknown
-    ? <span className="text-muted">Unknown</span>
-    : <React.Fragment><i className={iconClass} aria-hidden="true" /> {status}</React.Fragment>;
+  return <React.Fragment><i className={iconClass} aria-hidden="true" /> {status}</React.Fragment>;
 };
 
 const ClusterOperatorHeader = props => <ListHeader>

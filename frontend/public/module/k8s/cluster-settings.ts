@@ -3,7 +3,7 @@ import * as _ from 'lodash-es';
 
 import { ClusterVersionModel } from '../../models';
 import { referenceForModel } from './k8s';
-import { ClusterVersionKind, ClusterUpdate, ClusterVersionConditionType, K8sResourceConditionStatus, ClusterVersionCondition } from '.';
+import { ClusterVersionKind, ClusterUpdate, ClusterVersionConditionType, K8sResourceConditionStatus, ClusterVersionCondition, UpdateHistory } from '.';
 
 export enum ClusterUpdateStatus {
   UpToDate = 'Up to Date',
@@ -23,6 +23,12 @@ export const getAvailableClusterChannels = () => ({'nightly-4.1': 'nightly-4.1',
 
 export const getDesiredClusterVersion = (cv: ClusterVersionKind): string => {
   return _.get(cv, 'status.desired.version');
+};
+
+export const getLastCompletedUpdate = (cv: ClusterVersionKind): string => {
+  const history: UpdateHistory[] = _.get(cv, 'status.history', []);
+  const lastCompleted: UpdateHistory = history.find(update => update.state === 'Completed');
+  return lastCompleted && lastCompleted.version;
 };
 
 export const getClusterVersionCondition = (cv: ClusterVersionKind, type: ClusterVersionConditionType, status: K8sResourceConditionStatus = undefined): ClusterVersionCondition => {

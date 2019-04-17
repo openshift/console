@@ -4,3 +4,7 @@
   padding: 0 8px; // so sizing is consistent with .pf-c-dropdown__toggle
   text-overflow: ellipsis;
 }
+
+.co-update-icon svg {
+  color: $color-pf-blue-400;
+}
