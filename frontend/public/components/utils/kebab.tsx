@@ -91,9 +91,26 @@ const kebabFactory: KebabFactory = {
 // The common menu actions that most resource share
 kebabFactory.common = [kebabFactory.ModifyLabels, kebabFactory.ModifyAnnotations, kebabFactory.Edit, kebabFactory.Delete];
 
+const ResourceKebabWrapper: React.FC<ResourceKebabWrapperProps> = ({
+  resource,
+  actions,
+  kindObj,
+  resourceKeys,
+  isDisabled,
+  ...wrapperProps
+}) => {
+  const extraResources = _.reduce(resourceKeys, (extraObjs, key) => ({...extraObjs, [key]: wrapperProps[key].data}), {});
+  const options = _.reject(actions.map(a => a(kindObj, resource, extraResources)), 'hidden');
+  return <Kebab
+    options={options}
+    key={resource.metadata.uid}
+    isDisabled={isDisabled !== undefined ? isDisabled : _.get(resource.metadata, 'deletionTimestamp')}
+    id={`kebab-for-${resource.metadata.uid}`}
+  />;
+};
+
 export const ResourceKebab = connectToModel((props: ResourceKebabProps) => {
-  const {actions, kindObj, resource, isDisabled} = props;
-  const resources = props.resources || [];
+  const { kindObj, resources = [] } = props;
 
   if (!kindObj) {
     return null;
@@ -101,20 +118,9 @@ export const ResourceKebab = connectToModel((props: ResourceKebabProps) => {
 
   const resourceKeys = _.map(resources, 'prop');
 
-  const Wrapper = (wrapperProps) => {
-    const extraResources = _.reduce(resourceKeys, (extraObjs, key) => ({...extraObjs, [key]: wrapperProps[key].data}), {});
-    const options = _.reject(actions.map(a => a(kindObj, resource, extraResources)), 'hidden');
-    return <Kebab
-      options={options}
-      key={resource.metadata.uid}
-      isDisabled={isDisabled !== undefined ? isDisabled : _.get(resource.metadata, 'deletionTimestamp')}
-      id={`kebab-for-${resource.metadata.uid}`}
-    />;
-  };
-
   return (
     <Firehose resources={resources}>
-      <Wrapper />
+      <ResourceKebabWrapper resourceKeys={resourceKeys} {...props} />
     </Firehose>
   );
 });
@@ -163,6 +169,10 @@ export type ResourceKebabProps = {
   isDisabled?: boolean;
   resources?: FirehoseResource[];
 };
+
+export interface ResourceKebabWrapperProps extends ResourceKebabProps {
+  resourceKeys: string[];
+}
 
 export type KebabItemsProps = {
   options: KebabOption[];
