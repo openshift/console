@@ -71,7 +71,9 @@ const NodeRow = ({obj: node, expand}) => {
       <ResourceLink kind="Node" name={node.metadata.name} title={node.metadata.uid} />
     </div>
     <div className="col-md-2 col-sm-3 col-xs-4"><NodeStatus node={node} /></div>
-    <div className="col-md-3 col-sm-4 hidden-xs"><ResourceLink kind={referenceForModel(MachineModel)} name={machine.name} namespace={machine.namespace} /></div>
+    <div className="col-md-3 col-sm-4 hidden-xs">
+      {machine && <ResourceLink kind={referenceForModel(MachineModel)} name={machine.name} namespace={machine.namespace} />}
+    </div>
     <div className="col-md-3 hidden-sm hidden-xs"><NodeIPList ips={node.status.addresses} expand={expand} /></div>
     {expand && <div className="col-xs-12">
       <LabelList kind="Node" labels={node.metadata.labels} />
