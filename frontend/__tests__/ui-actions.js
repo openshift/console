@@ -73,7 +73,7 @@ describe('ui-actions', () => {
 
     it('should redirect to list view if current path is "new" and setting to "all-namespaces"', () => {
       const spy = spyOn(router.history, 'pushPath');
-      window.location.pathname = '/k8s/ns/floorwax/pods/new';
+      window.location.pathname = '/k8s/ns/floorwax/pods/~new';
       setActiveNamespace(ALL_NAMESPACES_KEY);
       expect(spy.calls.argsFor(0)[0]).toEqual('/k8s/all-namespaces/pods');
     });
