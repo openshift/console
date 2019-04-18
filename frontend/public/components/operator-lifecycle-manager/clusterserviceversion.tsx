@@ -104,11 +104,12 @@ export const ClusterServiceVersionsPage = connect(stateToProps)((props: ClusterS
     Installed Operators are represented by Cluster Service Versions within this namespace. For more information, see the <ExternalLink href="https://github.com/operator-framework/operator-lifecycle-manager/blob/master/Documentation/design/architecture.md" text="Operator Lifecycle Manager documentation" />. Or create an Operator and Cluster Service Version using the <ExternalLink href="https://github.com/operator-framework/operator-sdk" text="Operator SDK" />.
   </p>;
 
+  const allFilterValues = [CSVConditionReason.CSVReasonInstallSuccessful, CSVConditionReason.CSVReasonCopied];
   const rowFilters = [{
     type: 'clusterserviceversion-status',
-    selected: [CSVConditionReason.CSVReasonInstallSuccessful],
+    selected: allFilterValues,
     reducer: (csv: ClusterServiceVersionKind) => _.get(csv.status, 'reason'),
-    items: [CSVConditionReason.CSVReasonInstallSuccessful, CSVConditionReason.CSVReasonCopied].map(status => ({id: status, title: status})),
+    items: allFilterValues.map(status => ({id: status, title: status})),
   }];
 
   return <React.Fragment>
