@@ -2,26 +2,31 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
 import { Row, Col } from 'patternfly-react';
-import { getResource, getNamespace, getName } from 'kubevirt-web-ui-components';
+import {
+  getResource,
+  getNamespace,
+  getName,
+  isHostOnline,
+  getHostNics,
+  getHostStorage,
+} from 'kubevirt-web-ui-components';
 
 import { BaremetalHostModel } from '../../models';
 import { ResourcesEventStream } from '../../../kubevirt/components/okdcomponents';
 import { navFactory } from '../utils/okdutils';
 import { WithResources } from '../../../kubevirt/components/utils/withResources';
-import { DetailsPage, List, ListHeader, ColHead, ResourceRow } from '../factory/okdfactory';
-import { getHostSpec, getHostStatus } from '../utils/selectors';
+import {
+  DetailsPage,
+  List,
+  ListHeader,
+  ColHead,
+  ResourceRow,
+} from '../factory/okdfactory';
 
-
-const BaremetalHostDetails = props => {
-  const { metadata } = props.bmh;
-
-  const spec = getHostSpec(props.bmh);
-  const status = getHostStatus(props.bmh);
-
-  const { name } = metadata;
-  const { online } = spec;
-  const { hardware } = status;
-  const ips = hardware.nics.map(nic => nic.ip).join(', ');
+const BaremetalHostDetails = ({ host }) => {
+  const nics = getHostNics(host);
+  const online = isHostOnline(host);
+  const ips = nics.map(nic => nic.ip).join(', ');
 
   const statusClasses = classNames({
     fa: true,
@@ -31,14 +36,12 @@ const BaremetalHostDetails = props => {
 
   return (
     <div className="co-m-pane__body">
-      <h1 className="co-m-pane__heading">
-        Baremetal Host Overview
-      </h1>
+      <h1 className="co-m-pane__heading">Baremetal Host Overview</h1>
       <Row>
         <Col lg={4} md={4} sm={4} xs={4} id="name-description-column">
           <dl>
             <dt>Name</dt>
-            <dd>{name}</dd>
+            <dd>{getName(host)}</dd>
             <dt>Status</dt>
             <dd>
               <span className="co-icon-and-text">
@@ -59,82 +62,92 @@ const ConnectedBmDetails = ({ obj: bmh }) => {
   const { name, namespace } = bmh.metadata;
   const resourceMap = {
     bmh: {
-      resource: getResource(BaremetalHostModel, {name, namespace, isList: false}),
+      resource: getResource(BaremetalHostModel, {
+        name,
+        namespace,
+        isList: false,
+      }),
       ignoreErrors: true,
     },
   };
 
   return (
     <WithResources resourceMap={resourceMap}>
-      <BaremetalHostDetails bmh={bmh} />
+      <BaremetalHostDetails host={bmh} />
     </WithResources>
   );
 };
 
 const rowStyle = 'col-lg-2 col-md-3 col-sm-3 col-xs-4';
 
-const NicHeader = props => <ListHeader>
-  <ColHead {...props} className={rowStyle} sortField="name">Name</ColHead>
-  <ColHead {...props} className={rowStyle} sortField="model">Model</ColHead>
-  <ColHead {...props} className={rowStyle} sortField="network">Network</ColHead>
-  <ColHead {...props} className={rowStyle} sortField="ip">IP</ColHead>
-  <ColHead {...props} className={rowStyle} sortField="speedGbps">Speed</ColHead>
-  <ColHead {...props} className={rowStyle} sortField="mac">MAC Address</ColHead>
-</ListHeader>;
+const NicHeader = props => (
+  <ListHeader>
+    <ColHead {...props} className={rowStyle} sortField="name">
+      Name
+    </ColHead>
+    <ColHead {...props} className={rowStyle} sortField="model">
+      Model
+    </ColHead>
+    <ColHead {...props} className={rowStyle} sortField="network">
+      Network
+    </ColHead>
+    <ColHead {...props} className={rowStyle} sortField="ip">
+      IP
+    </ColHead>
+    <ColHead {...props} className={rowStyle} sortField="speedGbps">
+      Speed
+    </ColHead>
+    <ColHead {...props} className={rowStyle} sortField="mac">
+      MAC Address
+    </ColHead>
+  </ListHeader>
+);
 
-const DiskHeader = props => <ListHeader>
-  <ColHead {...props} className={rowStyle} sortField="name">Disk name</ColHead>
-  <ColHead {...props} className={rowStyle} sortField="model">Model</ColHead>
-  <ColHead {...props} className={rowStyle} sortField="status">Status</ColHead>
-  <ColHead {...props} className={rowStyle} sortField="type">Type</ColHead>
-  <ColHead {...props} className={rowStyle} sortField="sizeGiB">Size (GB)</ColHead>
-</ListHeader>;
+const DiskHeader = props => (
+  <ListHeader>
+    <ColHead {...props} className={rowStyle} sortField="name">
+      Disk name
+    </ColHead>
+    <ColHead {...props} className={rowStyle} sortField="model">
+      Model
+    </ColHead>
+    <ColHead {...props} className={rowStyle} sortField="status">
+      Status
+    </ColHead>
+    <ColHead {...props} className={rowStyle} sortField="type">
+      Type
+    </ColHead>
+    <ColHead {...props} className={rowStyle} sortField="sizeGiB">
+      Size (GB)
+    </ColHead>
+  </ListHeader>
+);
 
 const NicRow = ({ obj: nic }) => (
   <ResourceRow obj={nic}>
-    <div className={rowStyle}>
-      {nic.name}
-    </div>
-    <div className={rowStyle}>
-      {nic.model}
-    </div>
-    <div className={rowStyle}>
-      {nic.network}
-    </div>
-    <div className={rowStyle}>
-      {nic.ip}
-    </div>
-    <div className={rowStyle}>
-      {nic.speedGbps} Gbps
-    </div>
-    <div className={rowStyle}>
-      {nic.mac}
-    </div>
+    <div className={rowStyle}>{nic.name}</div>
+    <div className={rowStyle}>{nic.model}</div>
+    <div className={rowStyle}>{nic.network}</div>
+    <div className={rowStyle}>{nic.ip}</div>
+    <div className={rowStyle}>{nic.speedGbps} Gbps</div>
+    <div className={rowStyle}>{nic.mac}</div>
   </ResourceRow>
 );
 
 const DiskRow = ({ obj: disk }) => (
   <ResourceRow obj={disk}>
-    <div className={rowStyle}>
-      {disk.name}
-    </div>
-    <div className={rowStyle}>
-      {disk.model}
-    </div>
+    <div className={rowStyle}>{disk.name}</div>
+    <div className={rowStyle}>{disk.model}</div>
     <div className={rowStyle}>
       <span className="fa fa-icon fa-refresh" /> Running
     </div>
-    <div className={rowStyle}>
-      {disk.type}
-    </div>
-    <div className={rowStyle}>
-      {disk.sizeGiB}
-    </div>
+    <div className={rowStyle}>{disk.type}</div>
+    <div className={rowStyle}>{disk.sizeGiB}</div>
   </ResourceRow>
 );
 
-const BaremetalHostNic = ({obj: bmo}) => {
-  const nics = getHostStatus(bmo).hardware.nics;
+const BaremetalHostNic = ({ obj: host }) => {
+  const nics = getHostNics(host);
   return (
     <div className="co-m-list">
       <div className="co-m-pane__body">
@@ -144,8 +157,8 @@ const BaremetalHostNic = ({obj: bmo}) => {
   );
 };
 
-const BaremetalHostDisk = ({obj: bmo}) => {
-  const disks = getHostStatus(bmo).hardware.storage;
+const BaremetalHostDisk = ({ obj: host }) => {
+  const disks = getHostStorage(host);
   return (
     <div className="co-m-list">
       <div className="co-m-pane__body">
@@ -155,16 +168,15 @@ const BaremetalHostDisk = ({obj: bmo}) => {
   );
 };
 
-const BaremetalHostEvents = ({ obj: bmo }) => {
-  const ns = getNamespace(bmo);
+const BaremetalHostEvents = ({ obj: host }) => {
+  const ns = getNamespace(host);
   const bmObj = {
-    name: getName(bmo),
-    namespace: getNamespace(bmo),
+    name: getName(host),
+    namespace: getNamespace(host),
   };
-  const hostFilter = obj => _.isMatch(obj, {...bmObj, kind: BaremetalHostModel.kind});
-  return (
-    <ResourcesEventStream filters={[hostFilter]} namespace={ns} />
-  );
+  const hostFilter = obj =>
+    _.isMatch(obj, { ...bmObj, kind: BaremetalHostModel.kind });
+  return <ResourcesEventStream filters={[hostFilter]} namespace={ns} />;
 };
 
 export const BaremetalHostsDetailPage = props => {
@@ -193,12 +205,15 @@ export const BaremetalHostsDetailPage = props => {
     <DetailsPage
       {...props}
       breadcrumbsFor={() => [
-        {name: props.match.params.ns, path: props.match.url.slice(0, props.match.url.lastIndexOf('/'))},
-        {name: 'Baremetal Host Details', path: props.match.url},
+        {
+          name: props.match.params.ns,
+          path: props.match.url.slice(0, props.match.url.lastIndexOf('/')),
+        },
+        { name: 'Baremetal Host Details', path: props.match.url },
       ]}
       pages={pages}
       resources={[
-        getResource(BaremetalHostModel, {name, namespace, isList: false}),
+        getResource(BaremetalHostModel, { name, namespace, isList: false }),
       ]}
     />
   );
