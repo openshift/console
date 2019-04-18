@@ -42,6 +42,9 @@ export const config: Config = {
         '--disable-background-timer-throttling',
         '--disable-renderer-backgrounding',
         '--disable-raf-throttling',
+        // Avoid crashes when running in a container due to small /dev/shm size
+        // https://bugs.chromium.org/p/chromium/issues/detail?id=715363
+        '--disable-dev-shm-usage',
       ],
       prefs: {
         'profile.password_manager_enabled': false,

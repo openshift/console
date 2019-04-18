@@ -45,7 +45,7 @@ describe(DisableApplicationModal.name, () => {
 
   it('renders checkbox for setting cascading delete', () => {
     expect(wrapper.find('.co-delete-modal-checkbox-label').find('input').props().checked).toBe(true);
-    expect(wrapper.find('.co-delete-modal-checkbox-label').text()).toContain('Also completely remove the test-package Operator from the selected namespace.');
+    expect(wrapper.find('.co-delete-modal-checkbox-label').text()).toContain('Also completely remove the Operator from the selected namespace.');
   });
 
   it('calls `props.k8sKill` to delete the subscription when form is submitted', (done) => {

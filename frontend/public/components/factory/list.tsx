@@ -371,7 +371,7 @@ VirtualRows.propTypes = {
   data: PropTypes.arrayOf(PropTypes.object),
   expand: PropTypes.bool,
   Row: PropTypes.func.isRequired,
-  kindObj: PropTypes.any.isRequired,
+  kindObj: PropTypes.any,
   label: PropTypes.string,
   mock: PropTypes.bool,
 };
@@ -458,9 +458,9 @@ export const List = connect(stateToProps, {sortList: UIActions.sortList})(
     };
 
     render() {
-      const {currentSortField, currentSortFunc, currentSortOrder, expand, Header, label, listId, mock, Row, sortList} = this.props;
+      const {currentSortField, currentSortFunc, currentSortOrder, expand, Header, label, listId, mock, Row, sortList, virtualize = true} = this.props;
       const componentProps: any = _.pick(this.props, ['data', 'filters', 'selected', 'match', 'kindObj']);
-      const ListRows = this.props.virtualize ? VirtualRows : Rows;
+      const ListRows = virtualize ? VirtualRows : Rows;
       const children = <React.Fragment>
         <Header
           {...componentProps}

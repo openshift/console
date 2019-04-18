@@ -10,6 +10,8 @@ export const entryRowFor = (name: string) => element(by.cssContainingText(rowSel
 
 export const isLoaded = () => browser.wait(until.presenceOf($('.loading-box__loaded')), 10000).then(() => browser.sleep(500));
 
+export const clickCatalogsTab = () => crudView.clickTab('Operator Catalogs');
+
 export const hasSubscription = (name: string) => browser.getCurrentUrl().then(url => {
   if (url.indexOf('all-namespaces') > -1) {
     throw new Error('Cannot call `hasSubscription` for all namespaces');

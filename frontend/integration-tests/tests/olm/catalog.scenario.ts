@@ -62,6 +62,7 @@ describe('Installing a service from a Catalog Source', () => {
 
   it('displays Catalog Source with expected available packages', async() => {
     await sidenavView.clickNavLink(['Catalog', 'Operator Management']);
+    await catalogView.clickCatalogsTab();
     await catalogView.isLoaded();
 
     openCloudServices.forEach(name => {

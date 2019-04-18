@@ -88,9 +88,10 @@ export const SubscriptionsPage: React.SFC<SubscriptionsPageProps> = (props) => {
     ]}
     flatten={resources => _.get(resources.subscription, 'data', [])}
     title="Subscriptions"
+    helpText="Operator Subscriptions keep your services up to date by tracking a channel in a package. The approval strategy determines either manual or automatic updates."
     showTitle={false}
     canCreate={true}
-    createProps={{to: namespace ? `/operatormanagement/ns/${namespace}` : '/operatormanagement/all-namespaces'}}
+    createProps={{to: namespace ? `/operatormanagement/ns/${namespace}/catalogsources` : '/operatormanagement/all-namespaces/catalogsources'}}
     createButtonText="Create Subscription"
     ListComponent={SubscriptionsList}
     filterLabel="Subscriptions by package" />;
