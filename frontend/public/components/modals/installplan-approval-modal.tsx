@@ -10,7 +10,7 @@ import { SubscriptionKind, InstallPlanApproval, InstallPlanKind } from '../opera
 import { RadioInput } from '../radio';
 import { SubscriptionModel, InstallPlanModel } from '../../models';
 
-export class InstallPlanApprovalModal extends PromiseComponent {
+export class InstallPlanApprovalModal extends PromiseComponent<InstallPlanApprovalModalProps, InstallPlanApprovalModalState> {
   public state: InstallPlanApprovalModalState;
 
   constructor(public props: InstallPlanApprovalModalProps) {

@@ -17,7 +17,7 @@ import { IDPNameInput } from './idp-name-input';
 import { MappingMethod } from './mapping-method';
 import { IDPCAFileInput } from './idp-cafile-input';
 
-export class AddLDAPPage extends PromiseComponent {
+export class AddLDAPPage extends PromiseComponent<{}, AddLDAPPageState> {
   readonly state: AddLDAPPageState = {
     name: 'ldap',
     mappingMethod: 'claim',
@@ -138,7 +138,7 @@ export class AddLDAPPage extends PromiseComponent {
     this.setState({name: event.currentTarget.value});
   };
 
-  mappingMethodChanged = (mappingMethod: string) => {
+  mappingMethodChanged = (mappingMethod: MappingMethodType) => {
     this.setState({mappingMethod});
   }
 

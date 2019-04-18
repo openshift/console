@@ -136,6 +136,8 @@ export default (state, action) => {
     case types.updateOverviewFilterValue: {
       return state.setIn(['overview', 'filterValue'], action.value);
     }
+    case types.updateTimestamps:
+      return state.set('lastTick', action.lastTick);
 
     default:
       break;

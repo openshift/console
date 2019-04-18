@@ -10,9 +10,7 @@ import { PromiseComponent } from '../../../utils';
 import { k8sUpdate, referenceFor } from '../../../../module/k8s';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../../../factory/modal';
 
-export class ResourceRequirementsModal extends PromiseComponent {
-  props: ResourceRequirementsModalProps;
-
+export class ResourceRequirementsModal extends PromiseComponent<ResourceRequirementsModalProps, ResourceRequirementsModalState> {
   private submit(e) {
     e.preventDefault();
 
@@ -78,6 +76,11 @@ export type ResourceRequirementsModalProps = {
   path: string;
   cancel: (error: any) => void;
   close: () => void;
+};
+
+export type ResourceRequirementsModalState = {
+  inProgress: boolean;
+  errorMessage: string;
 };
 
 export type ResourceRequirementsModalLinkProps = {

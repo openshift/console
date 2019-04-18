@@ -23,7 +23,7 @@ import { MappingMethod } from './mapping-method';
 
 const DroppableFileInput = (props: any) => <AsyncComponent loader={() => import('../utils/file-input').then(c => c.DroppableFileInput)} {...props} />;
 
-export class AddHTPasswdPage extends PromiseComponent {
+export class AddHTPasswdPage extends PromiseComponent<{}, AddHTPasswdPageState> {
   readonly state: AddHTPasswdPageState = {
     name: 'htpasswd',
     mappingMethod: 'claim',
@@ -88,7 +88,7 @@ export class AddHTPasswdPage extends PromiseComponent {
     this.setState({name: e.currentTarget.value});
   };
 
-  mappingMethodChanged = (mappingMethod: string) => {
+  mappingMethodChanged = (mappingMethod: MappingMethodType) => {
     this.setState({mappingMethod});
   }
 

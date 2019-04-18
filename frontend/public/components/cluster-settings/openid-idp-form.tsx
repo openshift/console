@@ -22,7 +22,7 @@ import { IDPNameInput } from './idp-name-input';
 import { MappingMethod } from './mapping-method';
 import { IDPCAFileInput } from './idp-cafile-input';
 
-export class AddOpenIDPage extends PromiseComponent {
+export class AddOpenIDPage extends PromiseComponent<{}, AddOpenIDIDPPageState> {
   readonly state: AddOpenIDIDPPageState = {
     name: 'openid',
     mappingMethod: 'claim',
@@ -160,7 +160,7 @@ export class AddOpenIDPage extends PromiseComponent {
     this.setState({extraScopes});
   };
 
-  mappingMethodChanged = (mappingMethod: string) => {
+  mappingMethodChanged = (mappingMethod: MappingMethodType) => {
     this.setState({mappingMethod});
   };
 

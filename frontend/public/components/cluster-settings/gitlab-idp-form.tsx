@@ -12,7 +12,7 @@ import { MappingMethod } from './mapping-method';
 import { IDPCAFileInput } from './idp-cafile-input';
 
 
-export class AddGitLabPage extends PromiseComponent {
+export class AddGitLabPage extends PromiseComponent<{}, AddGitLabPageState> {
   readonly state: AddGitLabPageState = {
     name: 'gitlab',
     mappingMethod: 'claim',
@@ -124,7 +124,7 @@ export class AddGitLabPage extends PromiseComponent {
     this.setState({url: event.currentTarget.value});
   };
 
-  mappingMethodChanged = (mappingMethod: string) => {
+  mappingMethodChanged = (mappingMethod: MappingMethodType) => {
     this.setState({mappingMethod});
   };
 

@@ -1,28 +1,28 @@
-import * as React from 'react';
+/* eslint-disable no-unused-vars, no-undef */
 
 import { SafetyFirst } from '../safety-first';
 
-/** @augments {React.Component<any, {inProgress: boolean, errorMessage: string} & any>} */
-export class PromiseComponent extends SafetyFirst {
+// TODO(alecmerdler): Refactor to custom hook with `useSafetyFirst`...
+export class PromiseComponent<P, S extends PromiseComponentState> extends SafetyFirst<P, S> {
   constructor(props) {
     super(props);
     this.state = {
       inProgress: false,
       errorMessage: '',
-    };
+    } as S;
   }
 
-  handlePromise(promise) {
+  handlePromise<T>(promise: Promise<T>): Promise<T> {
     this.setState({
       inProgress: true,
     });
     return promise.then(
-      res => this._then(res),
-      error => this._catch(error)
+      res => this.then(res),
+      error => this.catch(error)
     );
   }
 
-  _then(res) {
+  private then(res) {
     this.setState({
       inProgress: false,
       errorMessage: '',
@@ -30,7 +30,7 @@ export class PromiseComponent extends SafetyFirst {
     return res;
   }
 
-  _catch(error) {
+  private catch(error) {
     const errorMessage = error.message || 'An error occurred. Please try again.';
     this.setState({
       inProgress: false,
@@ -39,3 +39,8 @@ export class PromiseComponent extends SafetyFirst {
     return Promise.reject(errorMessage);
   }
 }
+
+export type PromiseComponentState = {
+  inProgress: boolean;
+  errorMessage: string;
+};
