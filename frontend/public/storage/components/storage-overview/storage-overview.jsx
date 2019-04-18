@@ -85,9 +85,12 @@ export class StorageOverview extends React.Component {
   }
 
   _setHealthData(response) {
-    this.setState({
-      ocsHealthData: response,
-    });
+    this.setState(state => ({
+      ocsHealthData: {
+        ...state.ocsHealthData,
+        response,
+      },
+    }));
   }
 
   _setData(key, responseKey, response) {
