@@ -262,7 +262,7 @@ class CreatePVCPage extends React.Component<CreatePVCPageProps, CreatePVCPageSta
             {title}
           </div>
           <div className="co-m-pane__heading-link">
-            <Link to={`/k8s/ns/${namespace}/persistentvolumeclaims/new`} id="yaml-link" replace>Edit YAML</Link>
+            <Link to={`/k8s/ns/${namespace}/persistentvolumeclaims/~new`} id="yaml-link" replace>Edit YAML</Link>
           </div>
         </h1>
         <form className="co-m-pane__body-group" onSubmit={this.save}>

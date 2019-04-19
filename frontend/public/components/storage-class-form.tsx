@@ -802,7 +802,7 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
             Create Storage Class
           </div>
           <div className="co-m-pane__heading-link">
-            <Link to="/k8s/cluster/storageclasses/new" id="yaml-link" replace>Edit YAML</Link>
+            <Link to="/k8s/cluster/storageclasses/~new" id="yaml-link" replace>Edit YAML</Link>
           </div>
         </h1>
         <Form>

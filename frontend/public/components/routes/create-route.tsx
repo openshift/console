@@ -223,7 +223,7 @@ export class CreateRoute extends React.Component<null, CreateRouteState> {
             {title}
           </div>
           <div className="co-m-pane__heading-link">
-            <Link to={`/k8s/ns/${this.state.namespace}/routes/new`} id="yaml-link" replace>Edit YAML</Link>
+            <Link to={`/k8s/ns/${this.state.namespace}/routes/~new`} id="yaml-link" replace>Edit YAML</Link>
           </div>
         </h1>
         <p className="co-m-pane__explanation">

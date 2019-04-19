@@ -293,11 +293,11 @@ export const ListPage = withFallback(props => {
   const title = props.title || labelPlural;
   const usedNamespace = !namespace && namespaced ? _.get(match, 'params.ns') : namespace;
 
-  let href = usedNamespace ? `/k8s/ns/${usedNamespace || 'default'}/${plural}/new` : `/k8s/cluster/${plural}/new`;
+  let href = usedNamespace ? `/k8s/ns/${usedNamespace || 'default'}/${plural}/~new` : `/k8s/cluster/${plural}/~new`;
   if (ko.crd) {
     try {
       const ref = referenceForModel(ko);
-      href = usedNamespace ? `/k8s/ns/${usedNamespace || 'default'}/${ref}/new` : `/k8s/cluster/${ref}/new`;
+      href = usedNamespace ? `/k8s/ns/${usedNamespace || 'default'}/${ref}/~new` : `/k8s/cluster/${ref}/~new`;
     } catch (unused) { /**/ }
   }
 

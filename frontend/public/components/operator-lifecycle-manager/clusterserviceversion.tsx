@@ -132,7 +132,7 @@ export const MarkdownView = (props: {content: string, styles?: string}) => {
 
 export const CRDCard: React.SFC<CRDCardProps> = (props) => {
   const {csv, crd, canCreate} = props;
-  const createRoute = `/k8s/ns/${csv.metadata.namespace}/${ClusterServiceVersionModel.plural}/${csv.metadata.name}/${referenceForProvidedAPI(crd)}/new`;
+  const createRoute = `/k8s/ns/${csv.metadata.namespace}/${ClusterServiceVersionModel.plural}/${csv.metadata.name}/${referenceForProvidedAPI(crd)}/~new`;
 
   return <div className="co-crd-card">
     <div className="co-crd-card__title">

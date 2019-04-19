@@ -294,7 +294,7 @@ const filters = [{
 export const RoutesPage: React.SFC<RoutesPageProps> = props => {
 
   const createProps = {
-    to: `/k8s/ns/${props.namespace || 'default'}/routes/new/form`,
+    to: `/k8s/ns/${props.namespace || 'default'}/routes/~new/form`,
   };
 
   return <ListPage
