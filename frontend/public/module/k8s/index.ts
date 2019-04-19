@@ -99,14 +99,97 @@ export type VolumeMount = {
   subPathExpr?: string;
 };
 
+type ProbePort = string | number;
+
+export type ExecProbe = {
+  command: string[];
+};
+
+export type HTTPGetProbe = {
+  path?: string;
+  port: ProbePort;
+  host?: string;
+  scheme: 'HTTP' | 'HTTPS';
+  httpHeaders?: any[];
+};
+
+export type TCPSocketProbe = {
+  port: ProbePort;
+  host?: string;
+};
+
+export type Handler = {
+  exec?: ExecProbe;
+  httpGet?: HTTPGetProbe;
+  tcpSocket?: TCPSocketProbe;
+};
+
+export type ContainerProbe = {
+  initialDelaySeconds?: number;
+  timeoutSeconds?: number;
+  periodSeconds?: number;
+  successThreshold?: number;
+  failureThreshold?: number;
+} & Handler;
+
+export type ContainerLifecycleStage = 'postStart' | 'preStop';
+
+export type ContainerLifecycle = {
+  postStart?: Handler;
+  preStop?: Handler;
+};
+
+export type ResourceList = {
+  [resourceName: string]: string;
+};
+
+type EnvVarSource = {
+  fieldRef?: {
+    apiVersion?: string;
+    fieldPath: string;
+  };
+  resourceFieldRef?: {
+    resource: string;
+    containerName?: string;
+    divisor?: string;
+  };
+  configMapKeyRef?: {
+    key: string;
+    name: string;
+  };
+  secretKeyRef?: {
+    key: string;
+    name: string;
+  };
+};
+
+export type EnvVar = {
+  name: string;
+  value?: string;
+  valueFrom?: EnvVarSource;
+};
+
+export type ContainerPort = {
+  name?: string;
+  containerPort: number;
+  protocol: string;
+};
+
+type ImagePullPolicy = 'Always' | 'Never' | 'IfNotPresent';
+
 export type ContainerSpec = {
   name: string;
   volumeMounts?: VolumeMount[];
-  env: {
-    name: string;
-    value?: string;
-    [key: string]: any
+  env?: EnvVar[];
+  livenessProbe?: ContainerProbe;
+  readinessProbe?: ContainerProbe;
+  lifecycle?: ContainerLifecycle;
+  resources?: {
+    limits?: ResourceList;
+    requested?: ResourceList;
   };
+  ports?: ContainerPort[];
+  imagePullPolicy?: ImagePullPolicy;
   [key: string]: any;
 };
 
@@ -131,13 +214,13 @@ export type PodSpec = {
 
 type PodPhase = 'Pending' | 'Running' | 'Succeeded' | 'Failed' | 'Unknown';
 
-type ContainerState = {
+export type ContainerState = {
   waiting?: any;
   running?: any;
   terminated?: any;
 };
 
-type ContainerStatus = {
+export type ContainerStatus = {
   name: string;
   state?: ContainerState;
   lastState?: ContainerState;
@@ -159,10 +242,13 @@ export type PodStatus = {
   [key: string]: any;
 };
 
-export type PodKind = {
+export type PodTemplate = {
   spec: PodSpec;
+};
+
+export type PodKind = {
   status: PodStatus;
-} & K8sResourceKind;
+} & PodTemplate & K8sResourceKind;
 
 export type NodeKind = {
   spec?: {
@@ -422,11 +508,6 @@ export type K8sKind = {
   labels?: {[key: string]: string};
   annotations?: {[key: string]: string};
   verbs?: string[];
-};
-
-export type ContainerPort = {
-  containerPort: number,
-  protocol: string,
 };
 
 /**

@@ -13,7 +13,7 @@ import {
   AsyncComponent,
 } from './utils';
 import { breadcrumbsForOwnerRefs } from './utils/breadcrumbs';
-import { MountedVolumes } from './mounted-vol';
+import { VolumesTable } from './volumes-table';
 
 const Details = ({obj: replicationController}) => {
   const revision = _.get(replicationController, ['metadata', 'annotations', 'openshift.io/deployment-config.latest-version']);
@@ -39,7 +39,7 @@ const Details = ({obj: replicationController}) => {
       <ContainerTable containers={replicationController.spec.template.spec.containers} />
     </div>
     <div className="co-m-pane__body">
-      <MountedVolumes podTemplate={replicationController.spec.template} heading="Mounted Volumes" />
+      <VolumesTable podTemplate={replicationController.spec.template} heading="Volumes" />
     </div>
   </React.Fragment>;
 };
