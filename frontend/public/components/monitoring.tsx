@@ -84,7 +84,7 @@ const refreshPoller = key => {
 
 const silenceAlert = alert => ({
   label: 'Silence Alert',
-  href: `${SilenceResource.path}/new?${labelsToParams(alert.labels)}`,
+  href: `${SilenceResource.path}/~new?${labelsToParams(alert.labels)}`,
 });
 
 const viewAlertRule = alert => ({
@@ -704,7 +704,7 @@ const silencesRowFilter = {
   ],
 };
 
-const CreateButton = () => <Link className="co-m-primary-action" to="/monitoring/silences/new">
+const CreateButton = () => <Link className="co-m-primary-action" to="/monitoring/silences/~new">
   <button className="btn btn-primary">Create Silence</button>
 </Link>;
 
@@ -978,7 +978,7 @@ export class MonitoringUI extends React.Component<null, null> {
       <Route path="/monitoring/alerts/:ruleID" exact component={AlertsDetailsPage} />
       <Route path="/monitoring/alertrules/:id" exact component={AlertRulesDetailsPage} />
       <Route path="/monitoring/silences" exact component={SilencesPage} />
-      <Route path="/monitoring/silences/new" exact component={CreateSilence} />
+      <Route path="/monitoring/silences/~new" exact component={CreateSilence} />
       <Route path="/monitoring/silences/:id" exact component={SilencesDetailsPage} />
       <Route path="/monitoring/silences/:id/edit" exact component={EditSilence} />
     </Switch>;

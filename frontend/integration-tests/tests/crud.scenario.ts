@@ -300,7 +300,7 @@ describe('Kubernetes resource CRUD operations', () => {
     const labelValue = 'appblah';
 
     beforeAll(async() => {
-      await browser.get(`${appHost}/k8s/ns/${testName}/${plural}/new`);
+      await browser.get(`${appHost}/k8s/ns/${testName}/${plural}/~new`);
       await yamlView.isLoaded();
       const content = await yamlView.editorContent.getText();
       const newContent = _.defaultsDeep({}, {metadata: {name, namespace: testName}}, safeLoad(content));

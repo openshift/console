@@ -254,6 +254,12 @@ tags-input .autocomplete .suggestion-item em {
   font-size: $font-size-base;
 }
 
+.xterm .xterm-screen canvas {
+  // workaround bug where 1px white stripe appears atop terminal in Firefox for MacOS
+  // see https://github.com/xtermjs/xterm.js/issues/1974
+  border-right: 1px solid transparent;
+}
+
 // PatternFly 4 overrides
 
 // Webpack will not properly bundle the background-image from PatternFly

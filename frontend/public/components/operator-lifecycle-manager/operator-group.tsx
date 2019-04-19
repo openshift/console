@@ -17,7 +17,7 @@ export const operatorGroupFor = (obj: K8sResourceKind) => _.get(obj, ['metadata'
 
 export const NoOperatorGroupMsg: React.SFC = () => <MsgBox
   title="Namespace Not Enabled"
-  detail={<p>The Operator Lifecycle Manager will not watch this namespace because it is not configured with an OperatorGroup. <Link to={`/ns/${getActiveNamespace()}/${referenceForModel(OperatorGroupModel)}/new`}>Create one here.</Link></p>} />;
+  detail={<p>The Operator Lifecycle Manager will not watch this namespace because it is not configured with an OperatorGroup. <Link to={`/ns/${getActiveNamespace()}/${referenceForModel(OperatorGroupModel)}/~new`}>Create one here.</Link></p>} />;
 
 type RequireOperatorGroupProps = {
   operatorGroup: {loaded: boolean, data?: OperatorGroupKind[]};

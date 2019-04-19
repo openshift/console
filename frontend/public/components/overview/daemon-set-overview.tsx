@@ -13,7 +13,7 @@ import { OverviewItem } from '.';
 import { ResourceOverviewDetails } from './resource-overview-details';
 
 const DaemonSetOverviewDetails: React.SFC<DaemonSetOverviewDetailsProps> = ({item}) =>
-  <div className="co-m-pane__body resource-overview__body">
+  <div className="overview__sidebar-pane-body resource-overview__body">
     <div className="resource-overview__summary">
       <ResourceSummary resource={item.obj} showPodSelector showNodeSelector showTolerations />
     </div>

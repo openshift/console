@@ -104,11 +104,12 @@ export const ClusterServiceVersionsPage = connect(stateToProps)((props: ClusterS
     Installed Operators are represented by Cluster Service Versions within this namespace. For more information, see the <ExternalLink href="https://github.com/operator-framework/operator-lifecycle-manager/blob/master/Documentation/design/architecture.md" text="Operator Lifecycle Manager documentation" />. Or create an Operator and Cluster Service Version using the <ExternalLink href="https://github.com/operator-framework/operator-sdk" text="Operator SDK" />.
   </p>;
 
+  const allFilterValues = [CSVConditionReason.CSVReasonInstallSuccessful, CSVConditionReason.CSVReasonCopied];
   const rowFilters = [{
     type: 'clusterserviceversion-status',
-    selected: [CSVConditionReason.CSVReasonInstallSuccessful],
+    selected: allFilterValues,
     reducer: (csv: ClusterServiceVersionKind) => _.get(csv.status, 'reason'),
-    items: [CSVConditionReason.CSVReasonInstallSuccessful, CSVConditionReason.CSVReasonCopied].map(status => ({id: status, title: status})),
+    items: allFilterValues.map(status => ({id: status, title: status})),
   }];
 
   return <React.Fragment>
@@ -131,7 +132,7 @@ export const MarkdownView = (props: {content: string, styles?: string}) => {
 
 export const CRDCard: React.SFC<CRDCardProps> = (props) => {
   const {csv, crd, canCreate} = props;
-  const createRoute = `/k8s/ns/${csv.metadata.namespace}/${ClusterServiceVersionModel.plural}/${csv.metadata.name}/${referenceForProvidedAPI(crd)}/new`;
+  const createRoute = `/k8s/ns/${csv.metadata.namespace}/${ClusterServiceVersionModel.plural}/${csv.metadata.name}/${referenceForProvidedAPI(crd)}/~new`;
 
   return <div className="co-crd-card">
     <div className="co-crd-card__title">

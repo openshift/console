@@ -164,7 +164,6 @@
     bottom: 0;
     box-shadow: var(--pf-global--BoxShadow--md);
     display: none;
-    padding-bottom: 30px;
     position: absolute;
     right: 0;
     top: 0;
@@ -271,6 +270,7 @@
 .resource-overview {
   height: 100%;
   min-height: 0;
+  padding-bottom: 30px;
   overflow-x: hidden;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
