@@ -1,10 +1,10 @@
-import { getContainerStatus } from '../public/module/k8s/docker';
+import { PodKind } from '../public/module/k8s';
+import { getContainerStatus } from '../public/module/k8s/container';
 
 describe('k8sDocker', () => {
   describe('#getContainerStatus', () => {
     it('returns falsy when pod has no container status with given name', () => {
       expect(getContainerStatus(
-        // pod
         {
           status: {
             containerStatuses: [
@@ -13,7 +13,7 @@ describe('k8sDocker', () => {
               {name: '7AE75BB5-B562-4D5A-B880-F529797CAD5F'},
             ],
           },
-        },
+        } as PodKind,
 
         // container name
         '9242B9F6-A50A-4330-8C0E-B18EA4672A89'
@@ -22,7 +22,6 @@ describe('k8sDocker', () => {
 
     it('returns container status with given name', () => {
       expect(getContainerStatus(
-        // pod
         {
           status: {
             containerStatuses: [
@@ -31,7 +30,7 @@ describe('k8sDocker', () => {
               {name: '7AE75BB5-B562-4D5A-B880-F529797CAD5F'},
             ],
           },
-        },
+        } as PodKind,
 
         // container name
         '9242B9F6-A50A-4330-8C0E-B18EA4672A89'

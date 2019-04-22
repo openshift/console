@@ -1,4 +1,7 @@
+/* eslint-disable no-unused-vars */
 import * as _ from 'lodash-es';
+
+import { ContainerSpec, ContainerStatus, PodKind } from './';
 
 const PullPolicy = {
   Always: {
@@ -23,8 +26,8 @@ const PullPolicy = {
 // Parses the state from k8s container info field of a pod.
 // Returned object will always have a 'label' property,
 // but existence of other properties vary depending on the state.
-export const getContainerState = function(containerStatus) {
-  const state = {
+export const getContainerState = (containerStatus: ContainerStatus): any => {
+  const state: any = {
     label: 'Unknown',
   };
   if (!containerStatus || !containerStatus.state) {
@@ -43,13 +46,13 @@ export const getContainerState = function(containerStatus) {
   return state;
 };
 
-export const getContainerStatus = function(pod, containerName) {
-  const statuses = _.get(pod, 'status.containerStatuses');
-  const initStatuses = _.get(pod, 'status.initContainerStatuses');
-  const identity = { name: containerName };
+export const getContainerStatus = (pod: PodKind, containerName: string): ContainerStatus => {
+  const statuses: ContainerStatus[] = _.get(pod, 'status.containerStatuses');
+  const initStatuses : ContainerStatus[]= _.get(pod, 'status.initContainerStatuses');
+  const identity = (s: ContainerStatus) => s.name === containerName;
   return _.find(statuses, identity) || _.find(initStatuses, identity);
 };
 
-const getPullPolicy = container => _.find(PullPolicy, {id: _.get(container, 'imagePullPolicy')});
+const getPullPolicy = (container: ContainerSpec) => _.find(PullPolicy, {id: _.get(container, 'imagePullPolicy')});
 
-export const getPullPolicyLabel = container => _.get(getPullPolicy(container), 'label', '');
+export const getPullPolicyLabel = (container: ContainerSpec): string => _.get(getPullPolicy(container), 'label', '');

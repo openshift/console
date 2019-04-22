@@ -1,16 +1,30 @@
+/* eslint-disable no-unused-vars, no-undef */
 import * as React from 'react';
 import * as _ from 'lodash-es';
 
+import {
+  ContainerLifecycle,
+  ContainerLifecycleStage,
+  ContainerPort,
+  ContainerProbe,
+  ContainerSpec,
+  ContainerStatus,
+  EnvVar,
+  PodKind,
+  ResourceList,
+  VolumeMount,
+} from '../module/k8s';
 import * as k8sProbe from '../module/k8s/probe';
 import {
   getContainerState,
   getContainerStatus,
   getPullPolicyLabel,
-} from '../module/k8s/docker';
+} from '../module/k8s/container';
 import {
   Firehose,
   HorizontalNav,
   MsgBox,
+  NodeLink,
   PageHeading,
   ResourceLink,
   ScrollToTopOnMount,
@@ -20,43 +34,45 @@ import {
 } from './utils';
 import { resourcePath } from './utils/resource-link';
 
-const formatComputeResources = resources => _.map(resources, (v, k) => `${k}: ${v}`).join(', ');
+const formatComputeResources = (resources: ResourceList) => _.map(resources, (v, k) => `${k}: ${v}`).join(', ');
 
-const getResourceRequestsValue = container => {
-  const requests = _.get(container, 'resources.requests');
+const getResourceRequestsValue = (container: ContainerSpec) => {
+  const requests: ResourceList = _.get(container, 'resources.requests');
   return formatComputeResources(requests);
 };
 
-const getResourceLimitsValue = container => {
-  const limits = _.get(container, 'resources.limits');
+const getResourceLimitsValue = (container: ContainerSpec) => {
+  const limits: ResourceList = _.get(container, 'resources.limits');
   return formatComputeResources(limits);
 };
 
-const Lifecycle = ({lifecycle}) => {
+const Lifecycle: React.FC<LifecycleProps> = ({lifecycle}) => {
   const fields = lifecycle && k8sProbe.mapLifecycleConfigToFields(lifecycle);
   const postStart = _.get(fields, 'postStart.cmd');
   const preStop = _.get(fields, 'preStop.cmd');
 
-  const label = stage => lifecycle && k8sProbe.getLifecycleHookLabel(lifecycle, stage);
+  const label = (stage: ContainerLifecycleStage) => lifecycle && k8sProbe.getLifecycleHookLabel(lifecycle, stage);
   return <div>
     {postStart && <div><span>PostStart: {label('postStart')}</span> <code>{postStart}</code></div>}
     {preStop && <div><span>PreStop: {label('preStop')}</span> <code>{preStop}</code></div>}
-    {!postStart && !preStop && <span>-</span>}
+    {!postStart && !preStop && '-'}
   </div>;
 };
+Lifecycle.displayName = 'Lifecycle';
 
-const Probe = ({probe, podIP}) => {
+const Probe: React.FC<ProbeProps> = ({probe, podIP}) => {
   const label = probe && k8sProbe.getActionLabelFromObject(probe);
   const value = probe && _.get(k8sProbe.mapProbeToFields(probe, podIP), 'cmd');
   if (!value) {
-    return '-';
+    return <>''</>;
   }
   const isMultiline = value.indexOf('\n') !== -1;
   const formattedValue = isMultiline ? <pre>{value}</pre> : <code>{value}</code>;
   return <React.Fragment>{label} {formattedValue}</React.Fragment>;
 };
+Probe.displayName = 'Probe';
 
-const Ports = ({ports}) => {
+const Ports: React.FC<PortsProps> = ({ports}) => {
   if (!ports || !ports.length) {
     return <MsgBox className="co-sysevent-stream__status-box-empty" title="No ports have been exposed" detail="Ports allow for traffic to enter this container" />;
   }
@@ -69,7 +85,7 @@ const Ports = ({ports}) => {
       </tr>
     </thead>
     <tbody>
-      {ports.map((p, i) => <tr key={i}>
+      {ports.map((p: ContainerPort, i: number) => <tr key={i}>
         <td>{p.name || '-'}</td>
         <td>{p.containerPort}</td>
       </tr>)}
@@ -77,8 +93,8 @@ const Ports = ({ports}) => {
   </table>;
 };
 
-const Volumes = ({volumes}) => {
-  if (!volumes || !volumes.length) {
+const VolumeMounts: React.FC<VolumeMountProps> = ({volumeMounts}) => {
+  if (!volumeMounts || !volumeMounts.length) {
     return <MsgBox className="co-sysevent-stream__status-box-empty" title="No volumes have been mounted" detail="Volumes allow data to be shared as files with the pod" />;
   }
 
@@ -91,7 +107,7 @@ const Volumes = ({volumes}) => {
       </tr>
     </thead>
     <tbody>
-      {volumes.map((v, i) => <tr key={i}>
+      {volumeMounts.map((v: VolumeMount) => <tr key={v.name}>
         <td>{v.readOnly === true ? 'Read Only' : 'Read / Write'}</td>
         <td>{v.name}</td>
         <td className="co-break-all">{v.mountPath || '-'}</td>
@@ -99,13 +115,14 @@ const Volumes = ({volumes}) => {
     </tbody>
   </table>;
 };
+VolumeMounts.displayName = 'VolumeMounts';
 
-const Env = ({env}) => {
+const Env: React.FC<EnvProps> = ({env}) => {
   if (!env || !env.length) {
     return <MsgBox className="co-sysevent-stream__status-box-empty" title="No variables have been set" detail="An easy way to pass configuration values" />;
   }
 
-  const value = (e) => {
+  const value = (e: EnvVar) => {
     const v = e.valueFrom;
     if (_.has(v, 'fieldRef')) {
       return `field: ${v.fieldRef.fieldPath}`;
@@ -127,16 +144,17 @@ const Env = ({env}) => {
       </tr>
     </thead>
     <tbody>
-      {env.map((e, i) => <tr key={i}>
+      {env.map((e: EnvVar, i: number) => <tr key={i}>
         <td>{e.name}</td>
         <td>{value(e)}</td>
       </tr>)}
     </tbody>
   </table>;
 };
+Env.displayName = 'Env';
 
 // Split image string into the image name and tag.
-const getImageNameAndTag = image => {
+const getImageNameAndTag = (image: string) => {
   if (!image) {
     return {imageName: null, imageTag: null};
   }
@@ -149,16 +167,17 @@ const getImageNameAndTag = image => {
   return { imageName, imageTag };
 };
 
-const Details = (props) => {
+const ContainerDetails: React.FC<ContainerDetailsProps> = (props) => {
   const pod = props.obj;
-  const container = _.find(pod.spec.containers, {name: props.match.params.name}) ||
-                  _.find(pod.spec.initContainers, {name: props.match.params.name});
+  const container =
+    _.find(pod.spec.containers, {name: props.match.params.name}) as ContainerSpec ||
+    _.find(pod.spec.initContainers, {name: props.match.params.name}) as ContainerSpec;
   if (!container) {
     return null;
   }
 
-  const status = getContainerStatus(pod, container.name) || {};
-  const state = getContainerState(status) || {};
+  const status: ContainerStatus = getContainerStatus(pod, container.name) || {} as ContainerStatus;
+  const state = getContainerState(status);
   const stateValue = state.value === 'terminated' && _.isFinite(state.exitCode)
     ? `${state.label} with exit code ${state.exitCode}`
     : state.label;
@@ -216,7 +235,7 @@ const Details = (props) => {
         <SectionHeading text="Network" />
         <dl className="co-m-pane__details">
           <dt>Node</dt>
-          <dd><ResourceLink kind="Node" name={pod.spec.nodeName} title={pod.spec.nodeName} /></dd>
+          <dd><NodeLink name={pod.spec.nodeName} /></dd>
           <dt>Pod IP</dt>
           <dd>{pod.status.podIP || '-'}</dd>
         </dl>
@@ -236,7 +255,7 @@ const Details = (props) => {
       <div className="col-lg-4">
         <SectionHeading text="Mounted Volumes" />
         <div className="co-table-container">
-          <Volumes volumes={container.volumeMounts} />
+          <VolumeMounts volumeMounts={container.volumeMounts} />
         </div>
       </div>
 
@@ -249,8 +268,9 @@ const Details = (props) => {
     </div>
   </div>;
 };
+ContainerDetails.displayName = 'ContainerDetails';
 
-export const ContainersDetailsPage = (props) => <div>
+export const ContainersDetailsPage: React.FC<ContainerDetailsPageProps> = (props) => <div>
   <Firehose resources={[{
     name: props.match.params.podName,
     namespace: props.match.params.ns,
@@ -266,6 +286,37 @@ export const ContainersDetailsPage = (props) => <div>
         {name: props.match.params.podName, path: resourcePath('Pod', props.match.params.podName, props.match.params.ns)},
         {name: 'Container Details', path: `${props.match.url}`},
       ]} />
-    <HorizontalNav hideNav={true} pages={[{name: 'container', href: '', component: Details}]} match={props.match} />
+    <HorizontalNav hideNav={true} pages={[{name: 'container', href: '', component: ContainerDetails}]} match={props.match} />
   </Firehose>
 </div>;
+ContainersDetailsPage.displayName = 'ContainersDetailsPage';
+
+type LifecycleProps = {
+  lifecycle: ContainerLifecycle;
+};
+
+type ProbeProps = {
+  probe: ContainerProbe;
+  podIP: string;
+};
+
+type PortsProps = {
+  ports: ContainerPort[];
+};
+
+type VolumeMountProps = {
+  volumeMounts: VolumeMount[];
+};
+
+type EnvProps = {
+  env: EnvVar[];
+};
+
+type ContainerDetailsProps = {
+  match: any;
+  obj: PodKind;
+};
+
+type ContainerDetailsPageProps = {
+  match: any;
+};

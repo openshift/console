@@ -1,6 +1,17 @@
+/* eslint-disable no-unused-vars */
 import * as _ from 'lodash-es';
 
-const HookAction = {
+import {
+  ContainerLifecycle,
+  ContainerLifecycleStage,
+  ContainerProbe,
+  ExecProbe,
+  Handler,
+  HTTPGetProbe,
+  TCPSocketProbe,
+} from './';
+
+const HookAction = Object.freeze({
   exec: {
     id: 'exec',
     label: 'Exec Command',
@@ -13,21 +24,21 @@ const HookAction = {
     id: 'tcpSocket',
     label: 'TCP Socket (Port)',
   },
-};
+});
 
 const parsers = {
-  exec: function(str) {
+  exec: function(str: string) {
     return {
       command: str.split(' '),
     };
   },
 
-  httpGet: function(str) {
+  httpGet: function(str: string) {
     if (!str) {
       return null;
     }
     // XXX: Kubernetes allows for named ports, but the URL spec says ports must be digits.
-    let scheme, port, host, hostname, rest;
+    let scheme: string, port: string, host: string, hostname: string, rest: string[];
     [scheme, ...rest] = str.split('://');
     if (!scheme) {
       return null;
@@ -38,9 +49,9 @@ const parsers = {
     [hostname, port] = host.split(':');
     if (_.isUndefined(port)) {
       if (scheme === 'http') {
-        port = 80;
+        port = '80';
       } else if (scheme === 'https') {
-        port = 443;
+        port = '443';
       }
     }
     if (_.isUndefined(port)) {
@@ -53,7 +64,7 @@ const parsers = {
     };
   },
 
-  tcpSocket: function(str) {
+  tcpSocket: function(str: string) {
     if (str == null || str === '') {
       return null;
     }
@@ -67,14 +78,14 @@ const parsers = {
 };
 
 const flatteners = {
-  exec: function(cmd) {
+  exec: function(cmd: ExecProbe): string {
     if (_.isEmpty(cmd) || _.isEmpty(cmd.command)) {
       return '';
     }
     return cmd.command.join(' ');
   },
 
-  httpGet: function(cmd, podIP) {
+  httpGet: function(cmd: HTTPGetProbe, podIP: string): string {
     let c = '';
     if (_.isEmpty(cmd)) {
       return c;
@@ -95,7 +106,7 @@ const flatteners = {
     return c;
   },
 
-  tcpSocket: function(cmd) {
+  tcpSocket: function(cmd: TCPSocketProbe): string {
     if (!cmd || !cmd.port) {
       return '';
     }
@@ -103,7 +114,7 @@ const flatteners = {
   },
 };
 
-function inferAction(obj) {
+function inferAction(obj: Handler) {
   if (_.isEmpty(obj)) {
     return;
   }
@@ -114,27 +125,27 @@ function inferAction(obj) {
   return HookAction[keys[0]];
 }
 
-export function flattenCmd(type, cmd, podIP) {
+export function flattenCmd(type: string, cmd: any, podIP?: string) {
   return flatteners[type](cmd, podIP);
 }
 
-export function parseCmd(type, cmd) {
+export function parseCmd(type: string, cmd: any) {
   return parsers[type](cmd);
 }
 
-function getActionLabel(action) {
+function getActionLabel(action): string {
   if (action) {
     return action.label;
   }
   return '';
 }
 
-export function getActionLabelFromObject(obj) {
+export function getActionLabelFromObject(obj: Handler): string {
   const a = inferAction(obj);
   return getActionLabel(a);
 }
 
-export const getLifecycleHookLabel = function(lifecycle, stage) {
+export const getLifecycleHookLabel = function(lifecycle: ContainerLifecycle, stage: ContainerLifecycleStage) {
   if (!lifecycle || !stage || !lifecycle[stage]) {
     return '';
   }
@@ -142,7 +153,7 @@ export const getLifecycleHookLabel = function(lifecycle, stage) {
 };
 
 // Maps an api config object to a simple flattened type and command field.
-export const mapLifecycleConfigToFields = function(c) {
+export const mapLifecycleConfigToFields = function(lifecycle: ContainerLifecycle) {
   const f = {
     postStart: {
       type: 'exec',
@@ -154,44 +165,39 @@ export const mapLifecycleConfigToFields = function(c) {
     },
   };
 
-  if (!c) {
+  if (!lifecycle) {
     return f;
   }
 
-  if (!_.isEmpty(c.postStart)) {
-    const k = _.keys(c.postStart);
+  if (!_.isEmpty(lifecycle.postStart)) {
+    const k = _.keys(lifecycle.postStart);
     f.postStart.type = k[0];
-    f.postStart.cmd = flattenCmd(k[0], c.postStart[k[0]]);
+    f.postStart.cmd = flattenCmd(k[0], lifecycle.postStart[k[0]]);
   }
 
-  if (!_.isEmpty(c.preStop)) {
-    const k = _.keys(c.preStop);
+  if (!_.isEmpty(lifecycle.preStop)) {
+    const k = _.keys(lifecycle.preStop);
     f.preStop.type = k[0];
-    f.preStop.cmd = flattenCmd(k[0], c.preStop[k[0]]);
+    f.preStop.cmd = flattenCmd(k[0], lifecycle.preStop[k[0]]);
   }
 
   return f;
 };
 
-export const mapProbeToFields = function(c, podIP) {
+export const mapProbeToFields = function(probe: ContainerProbe, podIP: string) {
   const f = {
-    initialDelaySeconds: '',
     type: 'exec',
     cmd: '',
   };
 
-  if (_.isEmpty(c)) {
+  if (_.isEmpty(probe)) {
     return f;
   }
 
-  if (_.isNumber(parseInt(c.initialDelaySeconds, 10))) {
-    f.initialDelaySeconds = c.initialDelaySeconds;
-  }
-
-  const k = _.keys(c);
+  const k = _.keys(probe);
   if (!_.isEmpty(k)) {
     f.type = k[0];
-    f.cmd = flattenCmd(k[0], c[k[0]], podIP);
+    f.cmd = flattenCmd(k[0], probe[k[0]], podIP);
   }
 
   return f;

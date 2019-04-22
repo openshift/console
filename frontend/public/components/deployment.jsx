@@ -6,7 +6,7 @@ import { configureUpdateStrategyModal, errorModal } from './modals';
 import { Conditions } from './conditions';
 import { ResourceEventStream } from './events';
 import { formatDuration } from './utils/datetime';
-import { MountedVolumes } from './mounted-vol';
+import { VolumesTable } from './volumes-table';
 import {
   DetailsPage,
   List,
@@ -91,7 +91,7 @@ const DeploymentDetails = ({obj: deployment}) => {
       <ContainerTable containers={deployment.spec.template.spec.containers} />
     </div>
     <div className="co-m-pane__body">
-      <MountedVolumes podTemplate={deployment.spec.template} heading="Mounted Volumes" />
+      <VolumesTable podTemplate={deployment.spec.template} heading="Volumes" />
     </div>
     <div className="co-m-pane__body">
       <SectionHeading text="Conditions" />

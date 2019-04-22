@@ -5,7 +5,7 @@ import * as _ from 'lodash-es';
 
 import { ContainerSpec, K8sResourceKindReference, PodKind } from '../module/k8s';
 import { getRestartPolicyLabel, podPhase, podPhaseFilterReducer, podReadiness } from '../module/k8s/pods';
-import { getContainerState, getContainerStatus } from '../module/k8s/docker';
+import { getContainerState, getContainerStatus } from '../module/k8s/container';
 import { ResourceEventStream } from './events';
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import {
@@ -30,7 +30,7 @@ import { Line, requirePrometheus } from './graphs';
 import { breadcrumbsForOwnerRefs } from './utils/breadcrumbs';
 import { formatDuration } from './utils/datetime';
 import { CamelCaseWrap } from './utils/camel-case-wrap';
-import { MountedVolumes } from './mounted-vol';
+import { VolumesTable } from './volumes-table';
 
 export const menuActions = [Kebab.factory.EditEnvironment, ...Kebab.factory.common];
 const validReadinessStates = new Set(['ContainersNotReady', 'Ready', 'PodCompleted']);
@@ -211,7 +211,7 @@ const Details: React.FC<PodDetailsProps> = ({obj: pod}) => {
       <PodContainerTable key="containerTable" heading="Containers" containers={pod.spec.containers} pod={pod} />
     </div>
     <div className="co-m-pane__body">
-      <MountedVolumes podTemplate={pod} heading="Mounted Volumes" />
+      <VolumesTable podTemplate={pod} heading="Volumes" />
     </div>
   </React.Fragment>;
 };

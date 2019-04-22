@@ -3,6 +3,8 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 
+import { ContainerSpec } from '../../module/k8s';
+
 const ContainerRow: React.SFC<ContainerRowProps> = ({container}) => {
   const resourceLimits = _.get(container, 'resources.limits');
   const ports = _.get(container, 'ports');
@@ -29,9 +31,9 @@ export const ContainerTable: React.SFC<ContainerTableProps> = ({containers}) => 
 </div>;
 
 export type ContainerRowProps = {
-  container: any,
+  container: ContainerSpec;
 };
 
 export type ContainerTableProps = {
-  containers: any[],
+  containers: ContainerSpec[];
 };
