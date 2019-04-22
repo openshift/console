@@ -71,7 +71,7 @@ export const StorageClassPage: React.SFC<StorageClassPageProps> = props => {
   };
 
   return <ListPage
-    {...props}
+    {..._.omit(props, 'mock')}
     title="Storage Classes"
     kind={StorageClassReference}
     ListComponent={StorageClassList}
