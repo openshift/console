@@ -1,7 +1,6 @@
 import * as _ from 'lodash-es';
 import * as PropTypes from 'prop-types';
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { Helmet } from 'react-helmet';
 
 import { AsyncComponent } from './utils/async';

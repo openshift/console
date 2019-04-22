@@ -57,7 +57,7 @@ const actions = {
 
     k8sList(APIServiceModel, {})
       .then(() => dispatch(actions.watchK8sList(makeReduxID(APIServiceModel, {}), {}, APIServiceModel, actions.getResources)))
-      .catch((e) => {
+      .catch(() => {
         const poller = () => coFetchJSON('api/kubernetes/apis').then(d => {
           if (d.groups.length !== getState().k8s.getIn(['RESOURCES', apiGroups], 0)) {
             dispatch(actions.getResources());

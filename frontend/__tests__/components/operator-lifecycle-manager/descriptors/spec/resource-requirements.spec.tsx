@@ -30,7 +30,7 @@ describe(ResourceRequirementsModal.name, () => {
   });
 
   it('calls function to update resource instance when form is submitted', (done) => {
-    spyOn(k8s, 'k8sUpdate').and.callFake((k8sModel, updatedObj) => Promise.resolve().then(() => {
+    spyOn(k8s, 'k8sUpdate').and.callFake(() => Promise.resolve().then(() => {
       setTimeout(() => {
         expect(cancel).toHaveBeenCalled();
         done();

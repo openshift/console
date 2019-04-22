@@ -1,5 +1,4 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import { Terminal as XTerminal } from 'xterm';
 import * as fit from 'xterm/lib/addons/fit/fit';

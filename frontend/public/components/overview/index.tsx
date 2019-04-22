@@ -461,7 +461,7 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
     clearInterval(this.metricsInterval);
   }
 
-  componentDidUpdate(prevProps: OverviewMainContentProps, prevState: OverviewMainContentState): void {
+  componentDidUpdate(prevProps: OverviewMainContentProps): void {
     const {
       builds,
       buildConfigs,

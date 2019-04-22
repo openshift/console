@@ -11,6 +11,10 @@ import { LoadingBox } from './status-box';
 const sameLoader = (a: () => Promise<React.ComponentType>) => (b: () => Promise<React.ComponentType>) =>
   (a || 'a').toString() === (b || 'b').toString();
 
+enum AsyncComponentError {
+  ComponentNotFound = 'COMPONENT_NOT_FOUND',
+}
+
 export class AsyncComponent extends React.Component<AsyncComponentProps, AsyncComponentState> {
   state: AsyncComponentState = {Component: null, loader: null};
   props: AsyncComponentProps;
@@ -66,10 +70,6 @@ export class AsyncComponent extends React.Component<AsyncComponentProps, AsyncCo
       ? <Component {...rest} />
       : <LoadingBox />;
   }
-}
-
-enum AsyncComponentError {
-  ComponentNotFound = 'COMPONENT_NOT_FOUND',
 }
 
 export type AsyncComponentProps = {loader: () => Promise<React.ComponentType>} & any;

@@ -145,7 +145,7 @@ class BuildSource extends React.Component<BuildSourceProps, BuildSourceState> {
     this.setState({createRoute: event.currentTarget.checked});
   }
 
-  fillSample: React.ReactEventHandler<HTMLButtonElement> = event => {
+  fillSample: React.ReactEventHandler<HTMLButtonElement> = () => {
     const { obj: { data: imageStream } } = this.props;
     const { name: currentName, selectedTag } = this.state;
     const tag = _.find(imageStream.spec.tags, { name: selectedTag });
