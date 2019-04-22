@@ -14,7 +14,6 @@ import {
   history,
   resourceObjPath,
 } from '../utils';
-import { MappingMethod, MappingMethodType } from './mapping-method';
 
 // The name of the cluster-scoped OAuth configuration resource.
 const oauthResourceName = 'cluster';
@@ -24,7 +23,6 @@ const DroppableFileInput = (props) => <AsyncComponent loader={() => import('../u
 export class AddOpenIDPage extends PromiseComponent {
   readonly state: AddOpenIDIDPPageState = {
     name: 'openid',
-    mappingMethod: 'claim',
     clientID: '',
     clientSecret: '',
     claimPreferredUsernames: ['preferred_username'],
@@ -80,11 +78,11 @@ export class AddOpenIDPage extends PromiseComponent {
   }
 
   addOpenIDIDP(oauth: K8sResourceKind, clientSecretName: string, caName: string): Promise<K8sResourceKind> {
-    const { name, mappingMethod, clientID, issuer, extraScopes, claimPreferredUsernames, claimNames, claimEmails } = this.state;
+    const { name, clientID, issuer, extraScopes, claimPreferredUsernames, claimNames, claimEmails } = this.state;
     const idp: any = {
       name,
       type: 'OpenID',
-      mappingMethod,
+      mappingMethod: 'claim',
       openID: {
         clientID,
         clientSecret: {
@@ -168,16 +166,12 @@ export class AddOpenIDPage extends PromiseComponent {
     this.setState({extraScopes});
   };
 
-  mappingMethodChanged = (mappingMethod: string) => {
-    this.setState({mappingMethod});
-  };
-
   caFileChanged = (caFileContent: string) => {
     this.setState({caFileContent});
   };
 
   render() {
-    const { name, mappingMethod, clientID, clientSecret, issuer, claimPreferredUsernames, claimNames, claimEmails, caFileContent } = this.state;
+    const { name, clientID, clientSecret, issuer, claimPreferredUsernames, claimNames, claimEmails, caFileContent } = this.state;
     const title = 'Add Identity Provider: OpenID Connect';
     return <div className="co-m-pane__body">
       <Helmet>
@@ -201,7 +195,6 @@ export class AddOpenIDPage extends PromiseComponent {
             Unique name of the new identity provider. This cannot be changed later.
           </p>
         </div>
-        <MappingMethod value={mappingMethod} onChange={this.mappingMethodChanged} />
         <div className="form-group">
           <label className="control-label co-required" htmlFor="clientID">Client ID</label>
           <input className="form-control"
@@ -262,7 +255,6 @@ export class AddOpenIDPage extends PromiseComponent {
 
 type AddOpenIDIDPPageState = {
   name: string;
-  mappingMethod: MappingMethodType;
   clientID: string;
   clientSecret: string;
   claimPreferredUsernames: string[];
