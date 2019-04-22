@@ -5,15 +5,15 @@ import { ClusterOperator, OperandVersion } from '.';
 export enum OperatorStatus {
   Available = 'Available',
   Updating = 'Updating',
-  Failing = 'Failing',
+  Degraded = 'Degraded',
   Unknown = 'Unknown',
 }
 
 export const getStatusAndMessage = (operator: ClusterOperator) => {
   const conditions = _.get(operator, 'status.conditions');
-  const failing: any = _.find(conditions, { type: 'Failing', status: 'True' });
-  if (failing) {
-    return { status: OperatorStatus.Failing, message: failing.message };
+  const degraded: any = _.find(conditions, { type: 'Degraded', status: 'True' });
+  if (degraded) {
+    return { status: OperatorStatus.Degraded, message: degraded.message };
   }
 
   const progressing: any = _.find(conditions, { type: 'Progressing', status: 'True' });

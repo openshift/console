@@ -10,6 +10,7 @@ import {
   ListHeader,
   ListPage,
 } from '../factory';
+import { Conditions } from '../conditions';
 import {
   getClusterOperatorStatus,
   getClusterOperatorVersion,
@@ -34,7 +35,7 @@ const getIconClass = (status: OperatorStatus) => {
   return {
     [OperatorStatus.Available]: 'pficon pficon-ok text-success',
     [OperatorStatus.Updating]: 'fa fa-refresh',
-    [OperatorStatus.Failing]: 'pficon pficon-error-circle-o text-danger',
+    [OperatorStatus.Degraded]: 'pficon pficon-warning-triangle-o text-warning',
   }[status];
 };
 
@@ -48,8 +49,8 @@ const OperatorStatusIconAndLabel: React.SFC<OperatorStatusIconAndLabelProps> = (
 const ClusterOperatorHeader = props => <ListHeader>
   <ColHead {...props} className="col-md-3 col-sm-3 col-xs-6" sortField="metadata.name">Name</ColHead>
   <ColHead {...props} className="col-md-2 col-sm-3 col-xs-6" sortFunc="getClusterOperatorStatus">Status</ColHead>
-  <ColHead {...props} className="col-md-4 col-sm-3 hidden-xs">Message</ColHead>
   <ColHead {...props} className="col-md-3 col-sm-3 hidden-xs" sortFunc="getClusterOperatorVersion">Version</ColHead>
+  <ColHead {...props} className="col-md-4 col-sm-3 hidden-xs">Message</ColHead>
 </ListHeader>;
 
 const ClusterOperatorRow: React.SFC<ClusterOperatorRowProps> = ({obj}) => {
@@ -62,11 +63,11 @@ const ClusterOperatorRow: React.SFC<ClusterOperatorRowProps> = ({obj}) => {
     <div className="col-md-2 col-sm-3 col-xs-6">
       <OperatorStatusIconAndLabel status={status} />
     </div>
-    <div className="col-md-4 col-sm-3 hidden-xs">
-      {message ? _.truncate(message, { length: 256, separator: ' ' }) : '-'}
-    </div>
     <div className="col-md-3 col-sm-3 hidden-xs">
       {operatorVersion || '-'}
+    </div>
+    <div className="col-md-4 col-sm-3 hidden-xs">
+      {message ? _.truncate(message, { length: 256, separator: ' ' }) : '-'}
     </div>
   </div>;
 };
@@ -76,7 +77,7 @@ export const ClusterOperatorList: React.SFC = props => <List {...props} Header={
 const allStatuses = [
   OperatorStatus.Available,
   OperatorStatus.Updating,
-  OperatorStatus.Failing,
+  OperatorStatus.Degraded,
   OperatorStatus.Unknown,
 ];
 
@@ -127,6 +128,7 @@ const OperandVersions: React.SFC<OperandVersionsProps> = ({versions}) => {
 const ClusterOperatorDetails: React.SFC<ClusterOperatorDetailsProps> = ({obj}) => {
   const { status, message } = getStatusAndMessage(obj);
   const versions: OperandVersion[] = _.get(obj, 'status.versions', []);
+  const conditions = _.get(obj, 'status.conditions', []);
   return (
     <React.Fragment>
       <div className="co-m-pane__body">
@@ -141,6 +143,10 @@ const ClusterOperatorDetails: React.SFC<ClusterOperatorDetailsProps> = ({obj}) =
       <div className="co-m-pane__body">
         <SectionHeading text="Operand Versions" />
         <OperandVersions versions={versions} />
+      </div>
+      <div className="co-m-pane__body">
+        <SectionHeading text="Conditions" />
+        <Conditions conditions={conditions} />
       </div>
     </React.Fragment>
   );
