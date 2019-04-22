@@ -3,7 +3,6 @@ import * as React from 'react';
 import { Tooltip } from './tooltip';
 
 import { K8sKind, K8sResourceKind } from '../../module/k8s';
-import { SafetyFirst } from '../safety-first';
 import { configureReplicaCountModal } from '../modals';
 import { LoadingInline, pluralize } from './';
 
@@ -21,7 +20,7 @@ type DPCState = {
 /* eslint-enable no-undef, no-unused-vars */
 
 // Common representation of desired / up-to-date / matching pods for Deployment like things
-export class DeploymentPodCounts extends SafetyFirst<DPCProps, DPCState> {
+export class DeploymentPodCounts extends React.Component<DPCProps, DPCState> {
   /* eslint-disable no-undef, no-unused-vars */
   openReplicaCountModal: any;
   /* eslint-enable no-undef, no-unused-vars */

@@ -8,7 +8,6 @@ import { Kebab, CopyToClipboard, SectionHeading, ResourceKebab, detailsPage, nav
 import { MaskedData } from './configmap-and-secret-data';
 // eslint-disable-next-line no-unused-vars
 import { K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
-import { SafetyFirst } from './safety-first';
 import { Conditions, conditionProps } from './conditions';
 
 const RoutesReference: K8sResourceKindReference = 'Route';
@@ -139,7 +138,7 @@ const RouteListRow: React.SFC<RoutesRowProps> = ({obj: route}) => <ResourceRow o
   </div>
 </ResourceRow>;
 
-class TLSSettings extends SafetyFirst<TLSDataProps, TLSDataState> {
+class TLSSettings extends React.Component<TLSDataProps, TLSDataState> {
   constructor(props) {
     super(props);
     this.state = { showPrivateKey: false };

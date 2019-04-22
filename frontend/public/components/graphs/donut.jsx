@@ -1,7 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 
-import { SafetyFirst } from '../safety-first';
 import { plot, Plots, relayout } from 'plotly.js/lib/core';
 
 const colors = {
@@ -15,7 +14,7 @@ const colors = {
 };
 
 /** @augments {React.Component<{fetch: () => Promise<any>, kind: string, title: string}}>} */
-export class Donut extends SafetyFirst {
+export class Donut extends React.Component {
   constructor(props) {
     super(props);
     this.interval = null;
@@ -87,14 +86,11 @@ export class Donut extends SafetyFirst {
   }
 
   componentWillUnmount() {
-    super.componentWillUnmount();
     window.removeEventListener('resize', this.resize);
     clearInterval(this.interval);
   }
 
   componentDidMount() {
-    super.componentDidMount();
-
     if (!this.node) {
       return;
     }

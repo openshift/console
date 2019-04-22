@@ -2,7 +2,6 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 
-import { SafetyFirst } from '../safety-first';
 import { coFetchJSON } from '../../co-fetch';
 import { prometheusBasePath, prometheusTenancyBasePath } from './index';
 
@@ -45,7 +44,7 @@ const fetchQuery = (q, long, namespace) => {
 };
 
 /** @augments {React.Component<{fetch?: () => Promise<any>, query?: string, title: string, href?: string, rel?: string, target?: string}}>} */
-export class Status extends SafetyFirst {
+export class Status extends React.Component {
   constructor(props) {
     super(props);
     this.interval = null;
@@ -95,7 +94,6 @@ export class Status extends SafetyFirst {
   }
 
   componentWillUnmount() {
-    super.componentWillUnmount();
     clearInterval(this.interval);
   }
 

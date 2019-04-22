@@ -39,7 +39,7 @@ describe('Performance test', () => {
   it('checks bundle size using ResourceTiming API', async() => {
     const resources = await browser.executeScript<string[]>(() => performance.getEntriesByType('resource')
       .filter(({name}) => name.endsWith('.js') && name.indexOf('main') > -1 && name.indexOf('runtime') === -1)
-      .map(({name, decodedBodySize}) => ({name: name.split('/').slice(-1)[0], size: Math.floor(decodedBodySize / 1024)}))
+      .map(({name, decodedBodySize}: PerformanceResourceTiming) => ({name: name.split('/').slice(-1)[0], size: Math.floor(decodedBodySize / 1024)}))
       .reduce((acc, val) => acc.concat(`${val.name.split('-')[0]}: ${val.size} KB, `), '')
     );
 

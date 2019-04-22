@@ -125,7 +125,6 @@ export const taintsModal = createModalLauncher(TaintsModal);
 type TaintsModalProps = {
   resourceKind: K8sKind;
   resource: NodeKind;
-  modalClassName: string;
 } & ModalComponentProps;
 
 type TaintsModalState = {

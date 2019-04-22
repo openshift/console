@@ -190,7 +190,6 @@ type TolerationsModalProps = {
   resourceKind: K8sKind;
   resource: any;
   existingReadOnly?: boolean;
-  modalClassName: string;
 } & ModalComponentProps;
 
 type TolerationsModalState = {

@@ -5,12 +5,11 @@ import { plot, Plots } from 'plotly.js/lib/core';
 import * as classNames from 'classnames';
 
 import { coFetchJSON } from '../../co-fetch';
-import { SafetyFirst } from '../safety-first';
 
 import { prometheusBasePath, prometheusTenancyBasePath } from './index';
 import { MonitoringRoutes } from '../../monitoring';
 
-export class BaseGraph extends SafetyFirst {
+export class BaseGraph extends React.Component {
   constructor(props) {
     super(props);
     this.interval = null;
@@ -84,14 +83,11 @@ export class BaseGraph extends SafetyFirst {
   }
 
   componentWillUnmount() {
-    super.componentWillUnmount();
     window.removeEventListener('resize', this.resize);
     clearInterval(this.interval);
   }
 
   componentDidMount() {
-    super.componentDidMount();
-
     if (!this.node) {
       return;
     }

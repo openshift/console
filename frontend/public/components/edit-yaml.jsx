@@ -14,7 +14,6 @@ import 'brace/snippets/yaml';
 
 import { k8sCreate, k8sUpdate, referenceFor, getCompletions, groupVersionFor, snippets, referenceForModel } from '../module/k8s';
 import { history, Loading, resourceObjPath } from './utils';
-import { SafetyFirst } from './safety-first';
 import { coFetchJSON } from '../co-fetch';
 import { ResourceSidebar } from './sidebars/resource-sidebar';
 import { yamlTemplates } from '../models/yaml-templates';
@@ -45,7 +44,7 @@ const stateToProps = ({k8s, UI}) => ({
  */
 /** @augments {React.Component<{obj?: any, create: boolean, kind: string, redirectURL?: string}>} */
 export const EditYAML = connect(stateToProps)(
-  class EditYAML extends SafetyFirst {
+  class EditYAML extends React.Component {
     constructor(props) {
       super(props);
       this.state = {
@@ -113,13 +112,11 @@ export const EditYAML = connect(stateToProps)(
     }
 
     componentDidMount() {
-      super.componentDidMount();
       this.loadYaml();
       window.addEventListener('resize', this.resize_);
     }
 
     componentWillUnmount() {
-      super.componentWillUnmount();
       if (this.ace) {
         this.ace.destroy();
         // Avoid the use of .remove() to be compatible with IE 11
