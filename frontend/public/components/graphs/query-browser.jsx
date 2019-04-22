@@ -51,13 +51,25 @@ class QueryBrowser_ extends Line_ {
         // Undo zoom
         this.showLatest(this.zoomUndoSpan || this.defaultSpan);
       } else {
-        const start = e['xaxis.range[0]'];
-        const end = e['xaxis.range[1]'];
-        if (start && end) {
+        const startStr = e['xaxis.range[0]'];
+        const endStr = e['xaxis.range[1]'];
+        if (startStr && endStr) {
           // Zoom to a specific graph time range
-          this.start = new Date(start).getTime();
-          this.end = new Date(end).getTime();
-          const span = this.end - this.start;
+          let start = new Date(startStr).getTime();
+          let end = new Date(endStr).getTime();
+          let span = end - start;
+
+          const minSpan = 1000;
+          if (span < minSpan) {
+            span = minSpan;
+            const middle = (start + end) / 2;
+            start = middle - (span / 2);
+            end = middle + (span / 2);
+            this.relayout({'xaxis.range': [start, end]});
+          }
+
+          this.start = start;
+          this.end = end;
           this.timeSpan = span;
           this.setState({isSpanValid: true, span, spanText: formatPrometheusDuration(span), updating: true}, () => {
             clearInterval(this.interval);
