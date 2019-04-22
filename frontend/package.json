@@ -73,7 +73,7 @@
     "patternfly": "^3.59.0",
     "patternfly-react": "2.29.17",
     "patternfly-react-extensions": "2.16.19",
-    "plotly.js": "1.44.4",
+    "plotly.js": "1.47.3",
     "prop-types": "15.6.x",
     "react": "16.6.3",
     "react-copy-to-clipboard": "5.x",
