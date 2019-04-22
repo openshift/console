@@ -165,7 +165,7 @@ const ClusterVersionDetailsTable: React.SFC<ClusterVersionDetailsTableProps> = (
           <dt>Cluster Autoscaler</dt>
           <dd>
             {_.isEmpty(autoscalers)
-              ? <Link to={`${resourcePathFromModel(ClusterAutoscalerModel)}/new`}>
+              ? <Link to={`${resourcePathFromModel(ClusterAutoscalerModel)}/~new`}>
                 <i className="pficon pficon-add-circle-o" aria-hidden="true" /> Create Autoscaler
               </Link>
               : autoscalers.map(autoscaler => <div key={autoscaler.metadata.uid}><ResourceLink kind={clusterAutoscalerReference} name={autoscaler.metadata.name} /></div>)}

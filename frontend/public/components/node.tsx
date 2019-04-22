@@ -71,9 +71,15 @@ const NodeRow = ({obj: node, expand}) => {
     <div className="col-md-5 col-sm-5 col-xs-8">
       <ResourceLink kind="Node" name={node.metadata.name} title={node.metadata.uid} />
     </div>
-    <div className="col-md-2 col-sm-3 col-xs-4"><NodeStatus node={node} /></div>
-    <div className="col-md-2 col-sm-4 hidden-xs">{roles.length ? roles.join(', ') : '-'}</div>
-    <div className="col-md-3 hidden-sm hidden-xs"><ResourceLink kind={referenceForModel(MachineModel)} name={machine.name} namespace={machine.namespace} /></div>
+    <div className="col-md-2 col-sm-3 col-xs-4">
+      <NodeStatus node={node} />
+    </div>
+    <div className="col-md-2 col-sm-4 hidden-xs">
+      {roles.length ? roles.join(', ') : '-'}
+    </div>
+    <div className="col-md-3 hidden-sm hidden-xs">
+      {machine && <ResourceLink kind={referenceForModel(MachineModel)} name={machine.name} namespace={machine.namespace} />}
+    </div>
     {expand && <div className="co-resource-list__item--expanded">
       <div className="col-xs-5">
         <NodeIPList ips={node.status.addresses} expand={expand} />

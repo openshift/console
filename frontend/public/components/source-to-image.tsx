@@ -457,7 +457,7 @@ class BuildSource extends React.Component<BuildSourceProps, BuildSourceState> {
             </div>}
             <div className="help-block">
               For private Git repositories,
-              create a <Link to={`/k8s/ns/${this.state.namespace || 'default'}/secrets/new/source`}>source secret</Link>.
+              create a <Link to={`/k8s/ns/${this.state.namespace || 'default'}/secrets/~new/source`}>source secret</Link>.
             </div>
           </div>
           {!_.isEmpty(ports) && <div className="form-group">

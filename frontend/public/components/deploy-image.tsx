@@ -340,7 +340,7 @@ export class DeployImage extends React.Component<DeployImageProps, DeployImageSt
               </span>
             </div>
             <div className="help-block" id="image-name-help">
-              To deploy an image from a private repository, you must <Link to={`/k8s/ns/${this.state.namespace || 'default'}/secrets/new/image`}>create an image pull secret</Link> with your image registry credentials.
+              To deploy an image from a private repository, you must <Link to={`/k8s/ns/${this.state.namespace || 'default'}/secrets/~new/image`}>create an image pull secret</Link> with your image registry credentials.
             </div>
           </div>
           <div className="co-image-name-results">

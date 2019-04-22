@@ -67,7 +67,7 @@ StorageClassList.displayName = 'StorageClassList';
 /* eslint-disable no-undef */
 export const StorageClassPage: React.SFC<StorageClassPageProps> = props => {
   const createProps = {
-    to: '/k8s/cluster/storageclasses/new/form',
+    to: '/k8s/cluster/storageclasses/~new/form',
   };
 
   return <ListPage
