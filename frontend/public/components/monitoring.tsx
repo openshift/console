@@ -510,7 +510,7 @@ const AlertRow = ({obj}) => {
       <AlertState state={state} />
       <AlertStateDescription alert={obj} />
     </div>
-    <div className="col-sm-2 hidden-xs">{_.startCase(_.get(labels, 'severity')) || '-'}</div>
+    <div className="col-sm-2 hidden-xs co-break-word">{_.startCase(_.get(labels, 'severity')) || '-'}</div>
     <div className="dropdown-kebab-pf">
       <Kebab options={state === AlertStates.Firing || state === AlertStates.Pending ? [silenceAlert(obj), viewAlertRule(obj)] : [viewAlertRule(obj)]} />
     </div>

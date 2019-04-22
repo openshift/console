@@ -1,8 +1,14 @@
 .co-icon-and-text {
   align-items: baseline;
   display: flex;
+  min-width: 0; // required so co-break-word works
+  @include co-break-word;
 }
 
 .co-icon-and-text__icon {
   margin-right: 5px;
+}
+
+.co-icon-and-text__text {
+  min-width: 0; // enable break-word
 }
