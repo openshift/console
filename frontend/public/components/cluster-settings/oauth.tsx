@@ -54,6 +54,7 @@ const OAuthDetails: React.SFC<OAuthDetailsProps> = ({obj}: {obj: OAuthKind}) => 
   const addIDPItems = {
     github: 'GitHub',
     gitlab: 'GitLab',
+    google: 'Google',
     htpasswd: 'HTPasswd',
     ldap: 'LDAP',
     oidconnect: 'OpenID Connect',
