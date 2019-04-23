@@ -13,7 +13,6 @@ import {
   history,
   resourceObjPath,
 } from '../utils';
-import { MappingMethod, MappingMethodType } from './mapping-method';
 
 // The name of the cluster-scoped OAuth configuration resource.
 const oauthResourceName = 'cluster';
@@ -23,7 +22,6 @@ const DroppableFileInput = (props) => <AsyncComponent loader={() => import('../u
 export class AddHTPasswdPage extends PromiseComponent {
   readonly state: AddHTPasswdPageState = {
     name: 'htpasswd',
-    mappingMethod: 'claim',
     htpasswdFileContent: '',
     inProgress: false,
     errorMessage: '',
@@ -50,11 +48,11 @@ export class AddHTPasswdPage extends PromiseComponent {
   }
 
   addHTPasswdIDP(oauth: K8sResourceKind, secretName: string): Promise<K8sResourceKind> {
-    const { name, mappingMethod } = this.state;
+    const { name } = this.state;
     const htpasswd = {
       name,
       type: 'HTPasswd',
-      mappingMethod,
+      mappingMethod: 'claim',
       htpasswd: {
         fileData: {
           name: secretName,
@@ -90,16 +88,12 @@ export class AddHTPasswdPage extends PromiseComponent {
     this.setState({name: e.currentTarget.value});
   };
 
-  mappingMethodChanged = (mappingMethod: string) => {
-    this.setState({mappingMethod});
-  }
-
   htpasswdFileChanged = (htpasswdFileContent: string) => {
     this.setState({htpasswdFileContent});
   };
 
   render() {
-    const { name, mappingMethod, htpasswdFileContent } = this.state;
+    const { name, htpasswdFileContent } = this.state;
     const title = 'Add Identity Provider: HTPasswd';
 
     return <div className="co-m-pane__body">
@@ -124,7 +118,6 @@ export class AddHTPasswdPage extends PromiseComponent {
             Unique name of the new identity provider. This cannot be changed later.
           </p>
         </div>
-        <MappingMethod value={mappingMethod} onChange={this.mappingMethodChanged} />
         <div className="form-group">
           <DroppableFileInput
             onChange={this.htpasswdFileChanged}
@@ -146,7 +139,6 @@ export class AddHTPasswdPage extends PromiseComponent {
 
 type AddHTPasswdPageState = {
   name: string;
-  mappingMethod: MappingMethodType;
   htpasswdFileContent: string;
   inProgress: boolean;
   errorMessage: string;
