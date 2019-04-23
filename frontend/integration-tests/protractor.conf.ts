@@ -186,6 +186,7 @@ export const config: Config = {
       'tests/source-to-image.scenario.ts',
       'tests/deploy-image.scenario.ts',
       'tests/performance.scenario.ts',
+      'tests/monitoring.scenario.ts',
     ],
     all: [
       'tests/login.scenario.ts',
@@ -201,6 +202,7 @@ export const config: Config = {
       'tests/deploy-image.scenario.ts',
       'tests/operator-hub/operator-hub.scenario.ts',
       'tests/developer-catalog.scenario.ts',
+      'tests/monitoring.scenario.ts',
     ],
     login: [
       'tests/login.scenario.ts',
