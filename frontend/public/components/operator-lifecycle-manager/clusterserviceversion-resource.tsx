@@ -87,7 +87,7 @@ export const ProvidedAPIsPage = connect(inFlightStateToProps)(
     const firehoseResources = owned.map((desc) => ({kind: referenceForProvidedAPI(desc), namespaced: true, prop: desc.kind}));
 
     const EmptyMsg = () => <MsgBox title="No Application Resources Defined" detail="This application was not properly installed or configured." />;
-    const createLink = (name: string) => `/k8s/ns/${obj.metadata.namespace}/${ClusterServiceVersionModel.plural}/${obj.metadata.name}/${referenceForProvidedAPI(_.find(owned, {name}))}/new`;
+    const createLink = (name: string) => `/k8s/ns/${obj.metadata.namespace}/${ClusterServiceVersionModel.plural}/${obj.metadata.name}/${referenceForProvidedAPI(_.find(owned, {name}))}/~new`;
     const createProps = owned.length > 1
       ? {items: owned.reduce((acc, crd) => ({...acc, [crd.name]: crd.displayName}), {}), createLink}
       : {to: owned.length === 1 ? createLink(owned[0].name) : null};
@@ -132,7 +132,7 @@ export const ProvidedAPIPage = connectToModel((props: ProvidedAPIPageProps) => {
       kind={kind}
       ListComponent={ClusterServiceVersionResourceList}
       canCreate={_.get(props.kindObj, 'verbs', [] as string[]).some(v => v === 'create')}
-      createProps={{to: `/k8s/ns/${csv.metadata.namespace}/${ClusterServiceVersionModel.plural}/${csv.metadata.name}/${kind}/new`}}
+      createProps={{to: `/k8s/ns/${csv.metadata.namespace}/${ClusterServiceVersionModel.plural}/${csv.metadata.name}/${kind}/~new`}}
       namespace={_.get(props.kindObj, 'namespaced') ? namespace : null} />;
 });
 

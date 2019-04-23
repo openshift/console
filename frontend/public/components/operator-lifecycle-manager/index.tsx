@@ -255,6 +255,7 @@ export const providedAPIsFor: ProvidedAPIsFor = csv => _.get(csv.spec, 'customre
 
 export const defaultChannelFor = (pkg: PackageManifestKind) => pkg.status.defaultChannel || pkg.status.channels[0].name;
 export const installModesFor = (pkg: PackageManifestKind) => (channel: string) => pkg.status.channels.find(ch => ch.name === channel).currentCSVDesc.installModes;
+export const supportedInstallModesFor = (pkg: PackageManifestKind) => (channel: string) => installModesFor(pkg)(channel).filter(({supported}) => supported);
 
 export const referenceForProvidedAPI = (desc: CRDDescription | APIServiceDefinition): GroupVersionKind => _.get(desc, 'group')
   ? referenceForGroupVersionKind((desc as APIServiceDefinition).group)(desc.version)(desc.kind)

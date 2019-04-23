@@ -118,7 +118,11 @@ $color-dark-border: #ddd;
 
 .co-sysevent__message {
   @include co-break-word;
+  margin-right: -11px; // align with edge if scrollable area is visible (sysevent_box padding + border)
   margin-top: 10px;
+  max-height: 150px;
+  overflow-y: auto;
+  padding-right: 11px;
   position: relative;
 }
 

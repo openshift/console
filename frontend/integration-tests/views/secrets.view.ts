@@ -1,6 +1,8 @@
 /* eslint-disable no-unused-vars */
 import { $, $$, browser, by, ExpectedConditions as until, element, ElementFinder } from 'protractor';
 import { Base64 } from 'js-base64';
+import { execSync } from 'child_process';
+import * as _ from 'lodash';
 
 import * as crudView from '../views/crud.view';
 
@@ -31,10 +33,27 @@ export const imageSecretForm = $$('.co-create-image-secret__form');
 export const genericSecretForm = $$('.co-create-generic-secret__form');
 
 const revealValuesButton = element(by.partialButtonText('Reveal Values'));
+const addSecrettoWorkloadButton = element(by.partialButtonText('Add Secret to Workload'));
+
+const selectWorkloadBtn = $('#co-add-secret-to-workload__workload');
+const addSecretAsEnv = $('#co-add-secret-to-workload__envvars');
+const addSecretAsVol = $('#co-add-secret-to-workload__volume');
+const addSecretAsEnvPrefixInput = $('#co-add-secret-to-workload__prefix');
+const addSecretAsVolMntPathInput = $('#co-add-secret-to-workload__mountpath');
 
 export const visitSecretsPage = async(appHost: string, ns: string) => {
   await browser.get(`${appHost}/k8s/ns/${ns}/secrets`);
   await crudView.isLoaded();
+};
+
+export const visitSecretDetailsPage = async(appHost: string, ns: string, secretname: string) => {
+  await browser.get(`${appHost}/k8s/ns/${ns}/secrets/${secretname}`);
+  await crudView.isLoaded();
+};
+
+export const clickAddSecretToWorkload = async() => {
+  await browser.wait(until.presenceOf(addSecrettoWorkloadButton));
+  await addSecrettoWorkloadButton.click();
 };
 
 export const clickRevealValues = async() => {
@@ -76,4 +95,36 @@ export const editSecret = async(ns: string, name: string, updateForm: Function) 
   await updateForm();
   await saveButton.click();
   expect(crudView.errorMessage.isPresent()).toBe(false);
+};
+
+export const addSecretToWorkloadAsEnv = async(workloadname: string, EnvPrefix: string) => {
+  await clickAddSecretToWorkload();
+  await browser.wait(until.presenceOf(selectWorkloadBtn));
+  await selectWorkloadBtn.click();
+  await browser.wait(until.presenceOf($('li[role=option]')), 5000);
+  await element(by.cssContainingText('li[role=option] a', workloadname)).click();
+  await addSecretAsEnv.click();
+  await addSecretAsEnvPrefixInput.sendKeys(EnvPrefix);
+  await $('#confirm-action').click();
+};
+
+export const addSecretToWorkloadAsVol = async(workloadname: string, MntPath: string) => {
+  await clickAddSecretToWorkload();
+  await browser.wait(until.presenceOf(selectWorkloadBtn));
+  await selectWorkloadBtn.click();
+  await browser.wait(until.presenceOf($('li[role=option]')), 5000);
+  await element(by.cssContainingText('li[role=option] a', workloadname)).click();
+  await addSecretAsVol.click();
+  await addSecretAsVolMntPathInput.sendKeys(MntPath);
+  await $('#confirm-action').click();
+};
+
+export const getResourceJSON = (name: string, namespace: string, kind: string) => {
+  return execSync(`kubectl get -o json -n ${namespace} ${kind} ${name}`).toString();
+};
+
+export const isValueInJSONPath = (propertyPath: string, value: string, name: string, namespace: string, kind: string): boolean => {
+  const resource = JSON.parse(getResourceJSON(name, namespace, kind));
+  const result = _.get(resource, propertyPath, undefined);
+  return result === value;
 };

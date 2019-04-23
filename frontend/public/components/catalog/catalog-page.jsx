@@ -78,7 +78,7 @@ export class CatalogListPage extends React.Component {
           tileProvider: desc.csv.spec.provider.name,
           tags: desc.csv.spec.keywords,
           createLabel: 'Create',
-          href: `/ns/${this.props.namespace || desc.csv.metadata.namespace}/clusterserviceversions/${desc.csv.metadata.name}/${referenceForProvidedAPI(desc)}/new`,
+          href: `/ns/${this.props.namespace || desc.csv.metadata.namespace}/clusterserviceversions/${desc.csv.metadata.name}/${referenceForProvidedAPI(desc)}/~new`,
           supportUrl: null,
           longDescription: `This resource is provided by ${desc.csv.spec.displayName}, a Kubernetes Operator enabled by the Operator Lifecycle Manager.`,
           documentationUrl: _.get((desc.csv.spec.links || []).find(({name}) => name === 'Documentation'), 'url'),

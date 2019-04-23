@@ -55,8 +55,8 @@ export type conditionProps = {
 };
 
 export type ConditionsProps = {
-  conditions: conditionProps[],
-  title?: string,
-  subTitle?: string
+  conditions: conditionProps[];
+  title?: string;
+  subTitle?: string;
 };
 /* eslint-enable no-undef */

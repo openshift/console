@@ -145,7 +145,7 @@ export const deleteResource = async(resource: string, kind: string, name: string
 // then navigates back to the original url.
 export const createNamespacedTestResource = async(kindModel, name) => {
   const next = await browser.getCurrentUrl();
-  await browser.get(`${appHost}/k8s/ns/${testName}/${kindModel.plural}/new`);
+  await browser.get(`${appHost}/k8s/ns/${testName}/${kindModel.plural}/~new`);
   await yamlView.isLoaded();
   const content = await yamlView.editorContent.getText();
   const newContent = _.defaultsDeep({}, {metadata: {name, labels: {automatedTestName: testName}}}, safeLoad(content));
