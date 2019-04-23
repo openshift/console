@@ -5,7 +5,7 @@ import * as _ from 'lodash-es';
 import { Helmet } from 'react-helmet';
 
 import { ConfigMapModel, SecretModel } from '../../models';
-import { IdentityProvider, k8sCreate, K8sResourceKind, MappingMethodType, OAuthKind } from '../../module/k8s';
+import { IdentityProvider, k8sCreate, K8sResourceKind, OAuthKind } from '../../module/k8s';
 import {
   ButtonBar,
   ListInput,
@@ -14,13 +14,11 @@ import {
 } from '../utils';
 import { addIDP, getOAuthResource, redirectToOAuthPage } from './';
 import { IDPNameInput } from './idp-name-input';
-import { MappingMethod } from './mapping-method';
 import { IDPCAFileInput } from './idp-cafile-input';
 
 export class AddLDAPPage extends PromiseComponent<{}, AddLDAPPageState> {
   readonly state: AddLDAPPageState = {
     name: 'ldap',
-    mappingMethod: 'claim',
     url: '',
     bindDN: '',
     bindPassword: '',
@@ -80,10 +78,10 @@ export class AddLDAPPage extends PromiseComponent<{}, AddLDAPPageState> {
   }
 
   addLDAPIDP(oauth: OAuthKind, bindPasswordSecretName: string, caConfigMapName: string): Promise<K8sResourceKind> {
-    const { name, mappingMethod, url, bindDN, attributesID, attributesPreferredUsername, attributesName, attributesEmail } = this.state;
+    const { name, url, bindDN, attributesID, attributesPreferredUsername, attributesName, attributesEmail } = this.state;
     const idp: IdentityProvider = {
       name,
-      mappingMethod,
+      mappingMethod: 'claim',
       type: 'LDAP',
       ldap: {
         url,
@@ -138,10 +136,6 @@ export class AddLDAPPage extends PromiseComponent<{}, AddLDAPPageState> {
     this.setState({name: event.currentTarget.value});
   };
 
-  mappingMethodChanged = (mappingMethod: MappingMethodType) => {
-    this.setState({mappingMethod});
-  }
-
   urlChanged: React.ReactEventHandler<HTMLInputElement> = (event) => {
     this.setState({url: event.currentTarget.value});
   };
@@ -175,7 +169,7 @@ export class AddLDAPPage extends PromiseComponent<{}, AddLDAPPageState> {
   };
 
   render() {
-    const { name, mappingMethod, url, bindDN, bindPassword, attributesID, attributesPreferredUsername, attributesName, caFileContent } = this.state;
+    const { name, url, bindDN, bindPassword, attributesID, attributesPreferredUsername, attributesName, caFileContent } = this.state;
     const title = 'Add Identity Provider: LDAP';
     return <div className="co-m-pane__body">
       <Helmet>
@@ -187,7 +181,6 @@ export class AddLDAPPage extends PromiseComponent<{}, AddLDAPPageState> {
           Integrate with an LDAP identity provider.
         </p>
         <IDPNameInput value={name} onChange={this.nameChanged} />
-        <MappingMethod value={mappingMethod} onChange={this.mappingMethodChanged} />
         <div className="form-group">
           <label className="control-label co-required" htmlFor="url">URL</label>
           <input className="form-control"
@@ -246,7 +239,6 @@ export class AddLDAPPage extends PromiseComponent<{}, AddLDAPPageState> {
 
 type AddLDAPPageState = {
   name: string;
-  mappingMethod: MappingMethodType;
   url: string;
   bindDN: string;
   bindPassword: string;

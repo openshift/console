@@ -4,7 +4,7 @@ import * as React from 'react';
 import { Helmet } from 'react-helmet';
 
 import { SecretModel, ConfigMapModel } from '../../models';
-import { IdentityProvider, k8sCreate, K8sResourceKind, MappingMethodType, OAuthKind } from '../../module/k8s';
+import { IdentityProvider, k8sCreate, K8sResourceKind, OAuthKind } from '../../module/k8s';
 import {
   ButtonBar,
   ListInput,
@@ -13,14 +13,12 @@ import {
 } from '../utils';
 import { addIDP, getOAuthResource, redirectToOAuthPage } from './';
 import { IDPNameInput } from './idp-name-input';
-import { MappingMethod } from './mapping-method';
 import { IDPCAFileInput } from './idp-cafile-input';
 
 
 export class AddGitHubPage extends PromiseComponent<{}, AddGitHubPageState> {
   readonly state: AddGitHubPageState = {
     name: 'github',
-    mappingMethod: 'claim',
     clientID: '',
     clientSecret: '',
     hostname: '',
@@ -74,11 +72,11 @@ export class AddGitHubPage extends PromiseComponent<{}, AddGitHubPageState> {
   }
 
   addGitHubIDP(oauth: OAuthKind, clientSecretName: string, caName: string): Promise<K8sResourceKind> {
-    const { name, mappingMethod, clientID, hostname, organization, team } = this.state;
+    const { name, clientID, hostname, organization, team } = this.state;
     const idp: IdentityProvider = {
       name,
       type: 'GitHub',
-      mappingMethod,
+      mappingMethod: 'claim',
       github: {
         clientID,
         clientSecret: {
@@ -145,16 +143,12 @@ export class AddGitHubPage extends PromiseComponent<{}, AddGitHubPageState> {
     this.setState({team});
   };
 
-  mappingMethodChanged = (mappingMethod: MappingMethodType) => {
-    this.setState({mappingMethod});
-  };
-
   caFileChanged = (caFileContent: string) => {
     this.setState({caFileContent});
   };
 
   render() {
-    const { name, mappingMethod, clientID, clientSecret, hostname, caFileContent } = this.state;
+    const { name, clientID, clientSecret, hostname, caFileContent } = this.state;
     const title = 'Add Identity Provider: GitHub';
     return <div className="co-m-pane__body">
       <Helmet>
@@ -166,7 +160,6 @@ export class AddGitHubPage extends PromiseComponent<{}, AddGitHubPageState> {
           You can use the GitHub integration to connect to either GitHub or GitHub Enterprise. For GitHub Enterprise, you must provide the hostname of your instance and can optionally provide a CA certificate bundle to use in requests to the server.
         </p>
         <IDPNameInput value={name} onChange={this.nameChanged} />
-        <MappingMethod value={mappingMethod} onChange={this.mappingMethodChanged} />
         <div className="form-group">
           <label className="control-label co-required" htmlFor="client-id">Client ID</label>
           <input className="form-control"
@@ -217,7 +210,6 @@ export class AddGitHubPage extends PromiseComponent<{}, AddGitHubPageState> {
 
 type AddGitHubPageState = {
   name: string;
-  mappingMethod: MappingMethodType;
   clientID: string;
   clientSecret: string;
   hostname: string

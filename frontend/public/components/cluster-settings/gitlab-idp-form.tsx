@@ -4,18 +4,16 @@ import * as React from 'react';
 import { Helmet } from 'react-helmet';
 
 import { SecretModel, ConfigMapModel } from '../../models';
-import { IdentityProvider, k8sCreate, K8sResourceKind, MappingMethodType, OAuthKind } from '../../module/k8s';
+import { IdentityProvider, k8sCreate, K8sResourceKind, OAuthKind } from '../../module/k8s';
 import { ButtonBar, PromiseComponent, history } from '../utils';
 import { addIDP, getOAuthResource, redirectToOAuthPage } from './';
 import { IDPNameInput } from './idp-name-input';
-import { MappingMethod } from './mapping-method';
 import { IDPCAFileInput } from './idp-cafile-input';
 
 
 export class AddGitLabPage extends PromiseComponent<{}, AddGitLabPageState> {
   readonly state: AddGitLabPageState = {
     name: 'gitlab',
-    mappingMethod: 'claim',
     clientID: '',
     clientSecret: '',
     url: '',
@@ -67,11 +65,11 @@ export class AddGitLabPage extends PromiseComponent<{}, AddGitLabPageState> {
   }
 
   addGitLabIDP(oauth: OAuthKind, clientSecretName: string, caName: string): Promise<K8sResourceKind> {
-    const { name, mappingMethod, clientID, url } = this.state;
+    const { name, clientID, url } = this.state;
     const idp: IdentityProvider = {
       name,
       type: 'GitLab',
-      mappingMethod,
+      mappingMethod: 'claim',
       gitlab: {
         url,
         clientID,
@@ -124,16 +122,12 @@ export class AddGitLabPage extends PromiseComponent<{}, AddGitLabPageState> {
     this.setState({url: event.currentTarget.value});
   };
 
-  mappingMethodChanged = (mappingMethod: MappingMethodType) => {
-    this.setState({mappingMethod});
-  };
-
   caFileChanged = (caFileContent: string) => {
     this.setState({caFileContent});
   };
 
   render() {
-    const { name, mappingMethod, clientID, clientSecret, url, caFileContent } = this.state;
+    const { name, clientID, clientSecret, url, caFileContent } = this.state;
     const title = 'Add Identity Provider: GitLab';
     return <div className="co-m-pane__body">
       <Helmet>
@@ -145,7 +139,6 @@ export class AddGitLabPage extends PromiseComponent<{}, AddGitLabPageState> {
           You can use GitLab integration for users authenticating with GitLab credentials.
         </p>
         <IDPNameInput value={name} onChange={this.nameChanged} />
-        <MappingMethod value={mappingMethod} onChange={this.mappingMethodChanged} />
         <div className="form-group">
           <label className="control-label co-required" htmlFor="url">URL</label>
           <input className="form-control"
@@ -189,7 +182,6 @@ export class AddGitLabPage extends PromiseComponent<{}, AddGitLabPageState> {
 
 type AddGitLabPageState = {
   name: string;
-  mappingMethod: MappingMethodType;
   url: string
   clientID: string;
   clientSecret: string;

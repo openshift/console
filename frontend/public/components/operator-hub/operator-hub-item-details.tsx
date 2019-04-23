@@ -1,7 +1,6 @@
 /* eslint-disable no-undef, no-unused-vars */
 
 import * as React from 'react';
-import * as _ from 'lodash-es';
 import { Button, HintBlock, Modal } from 'patternfly-react';
 import { CatalogItemHeader, PropertiesSidePanel, PropertyItem } from 'patternfly-react-extensions';
 import { Link } from 'react-router-dom';
@@ -37,16 +36,13 @@ export const OperatorHubItemDetails: React.SFC<OperatorHubItemDetailsProps> = ({
 
   const getHintBlock = () => {
     if (installed) {
-      const filterName = _.get(item.obj, 'status.packageName', item.obj.metadata.name);
       return (
         <HintBlock
           title="Installed Operator"
           body={
             <span>
               This Operator has been installed on the cluster.{' '}
-              <Link to={`/k8s/${namespace ?
-                `ns/${namespace}` :
-                'all-namespaces'}/clusterserviceversions?rowFilter-clusterserviceversion-status=Copied%2CInstallSucceeded&name=${filterName}`}>
+              <Link to={`/k8s/${namespace ? `ns/${namespace}` : 'all-namespaces'}/clusterserviceversions`}>
                 View it here.
               </Link>
             </span>
