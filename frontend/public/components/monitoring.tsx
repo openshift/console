@@ -178,6 +178,11 @@ const ToggleGraph_ = ({hideGraphs, toggle}) => {
 };
 const ToggleGraph = connect(graphStateToProps, {toggle: UIActions.toggleMonitoringGraphs})(ToggleGraph_);
 
+// Plotly default colors:
+const graphColors = [
+  '#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf',
+];
+
 const Graph_ = ({hideGraphs, metric = undefined, numSamples, rule}) => {
   if (hideGraphs) {
     return null;
@@ -187,7 +192,19 @@ const Graph_ = ({hideGraphs, metric = undefined, numSamples, rule}) => {
   // 3 times the rule's duration, but not less than 30 minutes
   const timeSpan = Math.max(3 * duration, 30 * 60) * 1000;
 
-  return <QueryBrowser metric={metric} numSamples={numSamples} query={query} timeSpan={timeSpan} timeout="5s" />;
+  const GraphLink = query
+    ? <Link to={`/monitoring/query-browser?query=${encodeURIComponent(query)}`}>View in Metrics</Link>
+    : null;
+
+  return <QueryBrowser
+    colors={graphColors}
+    GraphLink={GraphLink}
+    metric={metric}
+    numSamples={numSamples}
+    query={query}
+    timeSpan={timeSpan}
+    timeout="5s"
+  />;
 };
 const Graph = connect(graphStateToProps)(Graph_);
 
@@ -371,7 +388,11 @@ const AlertRulesDetailsPage = withFallback(connect(ruleStateToProps)((props: Ale
                   <dd>{formatPrometheusDuration(duration * 1000)}</dd>
                 </React.Fragment>}
                 <dt>Expression</dt>
-                <dd><pre className="co-pre-wrap monitoring-query">{query}</pre></dd>
+                <dd>
+                  <Link to={`/monitoring/query-browser?query=${encodeURIComponent(query)}`}>
+                    <pre className="co-pre-wrap monitoring-query">{query}</pre>
+                  </Link>
+                </dd>
               </dl>
             </div>
           </div>
@@ -907,6 +928,69 @@ const CreateSilence = () => {
     : <SilenceForm defaults={{matchers}} saveButtonText="Create" title="Silence Alert" />;
 };
 
+const MetricsList = ({metrics}) => <div className="co-m-table-grid co-m-table-grid--bordered">
+  <div className="row co-m-table-grid__head">
+    <div className="col-xs-9 query-browser-metric__wrapper">
+      <div className="query-browser-metric__color"></div>
+      Series
+    </div>
+    <div className="col-xs-3">Value</div>
+  </div>
+  <div className="co-m-table-grid__body">
+    {_.map(metrics, (m, i) => <div className="row" key={i}>
+      <div className="col-xs-9 query-browser-metric__wrapper">
+        <div className="query-browser-metric__color" style={{backgroundColor: graphColors[parseInt(i, 10) % graphColors.length]}}></div>
+        <div className="query-browser-metric__labels">
+          {_.map(m.labels, (v, k) => `${k}="${v}"`).join(',')}
+        </div>
+      </div>
+      <div className="col-xs-3">{m.value}</div>
+    </div>)}
+  </div>
+</div>;
+
+const QueryBrowserPage = () => {
+  const [metrics, setMetrics] = React.useState([]);
+  const [query, setQuery] = React.useState(getURLSearchParams().query);
+
+  return <React.Fragment>
+    <div className="co-m-nav-title">
+      <h1 className="co-m-pane__heading">Metrics</h1>
+    </div>
+    <div className="co-m-pane__body">
+      <div className="row">
+        <div className="col-xs-12">
+          <QueryBrowser
+            colors={graphColors}
+            numSamples={600}
+            onDataUpdate={data => setMetrics(_.map(data, d => ({
+              labels: _.omitBy(d.metric, (v, k) => _.startsWith(k, '__')),
+              value: _.get(_.last(d.values), 1),
+            })))}
+            query={query}
+            timeout="5s"
+            timeSpan={30 * 60 * 1000}
+          />
+          <div className="group">
+            <div className="group__title">
+              <input
+                className="form-control"
+                onChange={e => setQuery(e.target.value)}
+                placeholder="Expression (press Shift+Enter for newlines)"
+                type="text"
+                value={query}
+              />
+            </div>
+            <div className="group__body group__body--query-browser">
+              <MetricsList metrics={metrics} />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </React.Fragment>;
+};
+
 export class MonitoringUI extends React.Component<null, null> {
   componentDidMount() {
     const poll = (url: string, key: string, dataHandler: (data: any[]) => any): void => {
@@ -980,6 +1064,7 @@ export class MonitoringUI extends React.Component<null, null> {
       <Route path="/monitoring/silences/~new" exact component={CreateSilence} />
       <Route path="/monitoring/silences/:id" exact component={SilencesDetailsPage} />
       <Route path="/monitoring/silences/:id/edit" exact component={EditSilence} />
+      <Route path="/monitoring/query-browser" exact component={QueryBrowserPage} />
     </Switch>;
   }
 }

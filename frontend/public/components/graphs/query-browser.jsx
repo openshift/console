@@ -2,15 +2,14 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { addTraces, deleteTraces, relayout, restyle } from 'plotly.js/lib/core';
 
-import { connectToURLs, MonitoringRoutes } from '../../monitoring';
-import { Dropdown, ExternalLink, LoadingInline } from '../utils';
+import { Dropdown, LoadingInline } from '../utils';
 import { formatPrometheusDuration, parsePrometheusDuration } from '../utils/datetime';
 import { Line_ } from './line';
 
 const spans = ['5m', '15m', '30m', '1h', '2h', '6h', '12h', '1d', '2d', '1w', '2w'];
 const dropdownItems = _.zipObject(spans, spans);
 
-class QueryBrowser_ extends Line_ {
+export class QueryBrowser extends Line_ {
   constructor(props) {
     super(props);
 
@@ -29,6 +28,7 @@ class QueryBrowser_ extends Line_ {
     this.numTraces = 0;
 
     _.merge(this.layout, {
+      colorway: props.colors,
       dragmode: 'zoom',
       height: 200,
       hoverlabel: {
@@ -112,6 +112,16 @@ class QueryBrowser_ extends Line_ {
     };
   }
 
+  componentDidUpdate(prevProps) {
+    if (this.props.query !== prevProps.query) {
+      this.setState({updating: true}, () => {
+        clearInterval(this.interval);
+        this.fetch();
+        this.relayout();
+      });
+    }
+  }
+
   updateGraph(data, error) {
     deleteTraces(this.node, _.range(this.numTraces));
     this.numTraces = 0;
@@ -167,13 +177,17 @@ class QueryBrowser_ extends Line_ {
         this.relayout({'xaxis.range': [start, end]});
       }
     }
+
+    if (_.isFunction(this.props.onDataUpdate)) {
+      this.props.onDataUpdate(this.data);
+    }
+
     this.setState({error, updating: false});
   }
 
   render() {
-    const {query, urls} = this.props;
+    const {GraphLink} = this.props;
     const {error, isSpanValid, spanText, updating} = this.state;
-    const baseUrl = urls[MonitoringRoutes.Prometheus];
 
     return <div className="query-browser__wrapper">
       <div className="query-browser__header">
@@ -200,7 +214,7 @@ class QueryBrowser_ extends Line_ {
           >Reset Zoom</button>
           {updating && <LoadingInline />}
         </div>
-        {baseUrl && query && <ExternalLink href={`${baseUrl}/graph?g0.expr=${encodeURIComponent(query)}&g0.tab=0`} text="View in Prometheus UI" />}
+        {GraphLink}
       </div>
       {error && <div className="alert alert-danger query-browser__error">
         <span className="pficon pficon-error-circle-o" aria-hidden="true"></span>{error.message}
@@ -209,4 +223,3 @@ class QueryBrowser_ extends Line_ {
     </div>;
   }
 }
-export const QueryBrowser = connectToURLs(MonitoringRoutes.Prometheus)(QueryBrowser_);
