@@ -6,11 +6,11 @@ import * as monitoringView from '../views/monitoring.view';
 import * as namespaceView from '../views/namespace.view';
 import * as sidenavView from '../views/sidenav.view';
 
-const testAlertName = 'DeadMansSwitch';
+const testAlertName = 'Watchdog';
 
 const testDetailsPage = (subTitle, alertName, expectLabel = true) => {
   expect(monitoringView.detailsHeading.getText()).toContain(alertName);
-  expect(monitoringView.detailsSubHeadings.first().getText()).toEqual(subTitle);
+  expect(monitoringView.detailsSubHeadings.first().getText()).toContain(subTitle);
   if (expectLabel) {
     expect(monitoringView.labels.first().getText()).toEqual(`alertname\n=\n${alertName}`);
   }
@@ -46,15 +46,14 @@ describe('Monitoring: Alerts', () => {
     testDetailsPage('Alert Overview', testAlertName);
   });
 
-  it('links to the Alert Rule details page', async() => {
+  it('links to the Alerting Rule details page', async() => {
     expect(monitoringView.ruleLink.getText()).toContain(testAlertName);
     await monitoringView.ruleLink.click();
     await monitoringView.wait(until.presenceOf(monitoringView.detailsHeadingRuleIcon));
-    testDetailsPage('Alert Rule Overview', testAlertName, false);
+    testDetailsPage('Alerting Rule Overview', testAlertName, false);
 
     // Active Alerts list should contain a link back to the Alert details page
     await monitoringView.wait(until.elementToBeClickable(monitoringView.firstAlertsListLink));
-    expect(monitoringView.firstAlertsListLink.getText()).toContain(testAlertName);
     await monitoringView.firstAlertsListLink.click();
     await monitoringView.wait(until.presenceOf(monitoringView.detailsHeadingAlertIcon));
     testDetailsPage('Alert Overview', testAlertName);
