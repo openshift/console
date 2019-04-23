@@ -29,8 +29,8 @@ import {
   InstallPlanModel,
   JobModel,
   LimitRangeModel,
-  MachineConfigPoolModel,
   MachineConfigModel,
+  MachineConfigPoolModel,
   MachineDeploymentModel,
   MachineModel,
   MachineSetModel,
@@ -38,6 +38,7 @@ import {
   NetworkPolicyModel,
   NodeModel,
   OAuthModel,
+  PackageManifestModel,
   PersistentVolumeClaimModel,
   PersistentVolumeModel,
   PodModel,
@@ -58,7 +59,7 @@ import {
   StatefulSetModel,
   StorageClassModel,
   SubscriptionModel,
-  PackageManifestModel,
+  TemplateInstanceModel,
 } from '../models';
 
 export const resourceDetailPages = ImmutableMap<GroupVersionKind | string, () => Promise<React.ComponentType<any>>>()
@@ -107,6 +108,7 @@ export const resourceDetailPages = ImmutableMap<GroupVersionKind | string, () =>
   .set(ReportReference, () => import('./chargeback' /* webpackChunkName: "chargeback" */).then(m => m.ReportsDetailsPage))
   .set(ReportGenerationQueryReference, () => import('./chargeback' /* webpackChunkName: "chargeback" */).then(m => m.ReportGenerationQueriesDetailsPage))
   .set(referenceForModel(StorageClassModel), () => import('./storage-class' /* webpackChunkName: "storage-class" */).then(m => m.StorageClassDetailsPage))
+  .set(referenceForModel(TemplateInstanceModel), () => import('./template-instance' /* webpackChunkName: "template-instance" */).then(m => m.TemplateInstanceDetailsPage))
   .set(referenceForModel(CustomResourceDefinitionModel), () => import('./custom-resource-definition' /* webpackChunkName: "custom-resource-definition" */).then(m => m.CustomResourceDefinitionsDetailsPage))
   .set(referenceForModel(ClusterServiceVersionModel), () => import('./operator-lifecycle-manager/clusterserviceversion' /* webpackChunkName: "clusterserviceversion" */).then(m => m.ClusterServiceVersionsDetailsPage))
   .set(referenceForModel(CatalogSourceModel), () => import('./operator-lifecycle-manager/catalog-source' /* webpackChunkName: "catalog-source" */).then(m => m.CatalogSourceDetailsPage))
@@ -161,6 +163,7 @@ export const resourceListPages = ImmutableMap<GroupVersionKind | string, () => P
   .set(ReportReference, () => import('./chargeback' /* webpackChunkName: "chargeback" */).then(m => m.ReportsPage))
   .set(ReportGenerationQueryReference, () => import('./chargeback' /* webpackChunkName: "chargeback" */).then(m => m.ReportGenerationQueriesPage))
   .set(referenceForModel(StorageClassModel), () => import('./storage-class' /* webpackChunkName: "storage-class" */).then(m => m.StorageClassPage))
+  .set(referenceForModel(TemplateInstanceModel), () => import('./template-instance' /* webpackChunkName: "template-instance" */).then(m => m.TemplateInstancePage))
   .set(referenceForModel(CustomResourceDefinitionModel), () => import('./custom-resource-definition' /* webpackChunkName: "custom-resource-definition" */).then(m => m.CustomResourceDefinitionsPage))
   .set(referenceForModel(ClusterServiceVersionModel), () => import('./operator-lifecycle-manager/clusterserviceversion' /* webpackChunkName: "clusterserviceversion" */).then(m => m.ClusterServiceVersionsPage))
   .set(referenceForModel(PackageManifestModel), () => import('./operator-lifecycle-manager/package-manifest' /* webpackChunkName: "package-manifest" */).then(m => m.PackageManifestsPage))

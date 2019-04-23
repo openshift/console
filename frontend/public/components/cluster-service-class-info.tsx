@@ -8,7 +8,7 @@ import { K8sResourceKind, serviceClassDisplayName } from '../module/k8s';
 import { ClusterServiceClassIcon } from './catalog/catalog-item-icon';
 import { ExternalLink } from './utils';
 
-export const ClusterServiceClassInfo: React.SFC<ClusterServiceClassInfoProps> = ({obj: serviceClass}) => {
+export const ClusterServiceClassInfo: React.FC<ClusterServiceClassInfoProps> = ({obj: serviceClass}) => {
   const displayName = serviceClassDisplayName(serviceClass);
   const description = _.get(serviceClass, 'spec.description');
   const longDescription = _.get(serviceClass, 'spec.externalMetadata.longDescription');
@@ -40,5 +40,5 @@ export const ClusterServiceClassInfo: React.SFC<ClusterServiceClassInfoProps> = 
 };
 
 export type ClusterServiceClassInfoProps = {
-  obj: K8sResourceKind,
+  obj: K8sResourceKind;
 };

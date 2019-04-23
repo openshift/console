@@ -83,6 +83,11 @@ const getAvailableFilters = initialFilters => {
       value: 'ClusterServiceClass',
       active: false,
     },
+    Template: {
+      label: 'Template',
+      value: 'Template',
+      active: false,
+    },
     ImageStream: {
       label: 'Source-to-Image',
       value: 'ImageStream',

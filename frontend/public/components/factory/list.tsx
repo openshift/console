@@ -49,6 +49,7 @@ import {
   serviceClassDisplayName,
   getClusterOperatorStatus,
   getClusterOperatorVersion,
+  getTemplateInstanceStatus,
   getNodeRoles,
 } from '../../module/k8s';
 
@@ -190,6 +191,15 @@ const listFilters = {
     const status = getClusterOperatorStatus(operator);
     return statuses.selected.has(status) || !_.includes(statuses.all, status);
   },
+
+  'template-instance-status': (statuses, instance) => {
+    if (!statuses || !statuses.selected || !statuses.selected.size) {
+      return true;
+    }
+
+    const status = getTemplateInstanceStatus(instance);
+    return statuses.selected.has(status) || !_.includes(statuses.all, status);
+  },
 };
 
 const getFilteredRows = (_filters, objects) => {
@@ -243,6 +253,7 @@ const sorts = {
   string: val => JSON.stringify(val),
   getClusterOperatorStatus,
   getClusterOperatorVersion,
+  getTemplateInstanceStatus,
   nodeRoles: (node: K8sResourceKind): string => {
     const roles = getNodeRoles(node);
     return roles.sort().join(', ');
