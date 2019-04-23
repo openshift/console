@@ -15,7 +15,6 @@ import { ColHead, List, ListHeader, ResourceRow, TextFilter } from './factory';
 import { QueryBrowser } from './graphs';
 import { confirmModal } from './modals';
 import { CheckBoxes } from './row-filter';
-import { SafetyFirst } from './safety-first';
 import { formatPrometheusDuration } from './utils/datetime';
 import { withFallback } from './utils/error-boundary';
 import { Tooltip } from './utils/tooltip';
@@ -742,7 +741,7 @@ const Datetime = props => {
   </div>;
 };
 
-class SilenceForm_ extends SafetyFirst<SilenceFormProps, SilenceFormState> {
+class SilenceForm_ extends React.Component<SilenceFormProps, SilenceFormState> {
   constructor(props) {
     super(props);
 

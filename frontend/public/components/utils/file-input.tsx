@@ -4,6 +4,7 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 import { NativeTypes } from 'react-dnd-html5-backend';
 import { DropTarget, ConnectDropTarget, DropTargetMonitor } from 'react-dnd';
+
 import withDragDropContext from './drag-drop-context';
 
 // Maximal file size, in bytes, that user can upload
@@ -162,7 +163,7 @@ export type DroppableFileInputProps = {
 };
 
 export type DroppableFileInputState = {
-  inputFileData: string;
+  inputFileData: string | ArrayBuffer;
   inputFileName: string;
   errorMessage?: any;
 };

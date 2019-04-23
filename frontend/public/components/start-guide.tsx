@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 import { createProjectMessageStateToProps } from '../ui/ui-reducers';
-import { SafetyFirst } from './safety-first';
 import { DocumentationSidebar, Disabled } from './utils';
 import { FLAGS, connectToFlags } from '../features';
 import { ProjectModel, RoleModel, StorageClassModel } from '../models';
@@ -13,7 +12,7 @@ const WHITELIST = [RoleModel.kind, StorageClassModel.kind];
 
 const seenGuide: string = 'seenGuide';
 
-export class StartGuide extends SafetyFirst<StartGuideProps, StartGuideState> {
+export class StartGuide extends React.Component<StartGuideProps, StartGuideState> {
   constructor(props) {
     super(props);
 

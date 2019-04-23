@@ -23,27 +23,6 @@ import { coFetchJSON } from './co-fetch';
 import { MonitoringRoutes, setMonitoringURL } from './monitoring';
 import { UIActions } from './ui/ui-actions';
 
-/* global
-  FLAGS: false,
-  AUTH_ENABLED: false,
-  PROMETHEUS: false,
-  OPERATOR_LIFECYCLE_MANAGER: false,
-  CHARGEBACK: false,
-  OPENSHIFT: false,
-  CAN_GET_NS: false,
-  CAN_LIST_NS: false,
-  CAN_LIST_NODE: false,
-  CAN_LIST_PV: false,
-  CAN_LIST_STORE: false,
-  CAN_LIST_CRD: false,
-  CAN_CREATE_PROJECT: false,
-  SHOW_OPENSHIFT_START_GUIDE: false,
-  SERVICE_CATALOG: false,
-  OPERATOR_HUB: false,
-  CLUSTER_API: false,
-  CLUSTER_VERSION: false,
-  MACHINE_CONFIG: false,
- */
 export enum FLAGS {
   AUTH_ENABLED = 'AUTH_ENABLED',
   PROMETHEUS = 'PROMETHEUS',

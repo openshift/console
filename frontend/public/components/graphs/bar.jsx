@@ -1,5 +1,4 @@
 import * as _ from 'lodash-es';
-import * as React from 'react';
 import { relayout, restyle, register } from 'plotly.js/lib/core';
 import * as bar from 'plotly.js/lib/bar';
 // Horrible hack to get around plotly vs webpack incompatibility

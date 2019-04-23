@@ -116,7 +116,7 @@ describe('getCompletions', () => {
     sessionMock.getLines = jasmine.createSpy('getLinesSpy').and.returnValue(['kind: Deployment', 'apiVersion: apps/v1']);
     spyOn(window.sessionStorage, 'getItem').and.returnValue(null);
 
-    getCompletions(editorMock, sessionMock, position, '', (error, results) => {
+    getCompletions(editorMock, sessionMock, position, '', () => {
       fail('Should not have been called');
     });
     setTimeout(done, 10);

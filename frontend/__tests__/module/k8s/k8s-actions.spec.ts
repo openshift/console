@@ -105,7 +105,7 @@ describe(types.watchK8sList, () => {
   });
 
   it('incrementally fetches list until `continue` token is no longer returned in response', (done) => {
-    const k8sList = spyOn(k8sResource, 'k8sList').and.callFake((k8sKind, params, raw) => {
+    const k8sList = spyOn(k8sResource, 'k8sList').and.callFake((k8sKind, params) => {
       expect(params.limit).toEqual(250);
 
       if (k8sList.calls.count() === 1 || k8sList.calls.count() === 11) {

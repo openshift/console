@@ -194,6 +194,7 @@ describe(InstallPlanPreview.name, () => {
 
   it('calls `k8sUpdate` to set `approved: true` when button is clicked', (done) => {
     spyAndExpect(spyOn(k8s, 'k8sUpdate'))(Promise.resolve(testInstallPlan)).then(([model, obj]) => {
+      expect(model).toEqual(InstallPlanModel);
       expect(obj.spec.approved).toBe(true);
       done();
     });

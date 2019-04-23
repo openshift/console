@@ -6,7 +6,6 @@ import { saveAs } from 'file-saver';
 import { LoadingInline, LogWindow, TogglePlay } from './';
 import * as classNames from 'classnames';
 import { modelFor, resourceURL } from '../../module/k8s';
-import { SafetyFirst } from '../safety-first';
 import { WSFactory } from '../../module/ws-factory';
 import { LineBuffer } from './line-buffer';
 import * as screenfull from 'screenfull';
@@ -57,7 +56,7 @@ const LogControls = ({dropdown, onDownload, toggleFullscreen, isFullscreen, stat
 };
 
 // Resource agnostic log component
-export class ResourceLog extends SafetyFirst {
+export class ResourceLog extends React.Component {
   constructor(props) {
     super(props);
     this._buffer = new LineBuffer(props.bufferSize);
@@ -96,7 +95,6 @@ export class ResourceLog extends SafetyFirst {
   }
 
   componentDidMount() {
-    super.componentDidMount();
     this._wsInit(this.props);
     if (screenfull.enabled) {
       screenfull.on('change', () => {
@@ -119,7 +117,6 @@ export class ResourceLog extends SafetyFirst {
   }
 
   componentWillUnmount() {
-    super.componentWillUnmount();
     this._wsDestroy();
     screenfull.off('change');
     screenfull.off('error');

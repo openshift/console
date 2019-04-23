@@ -1,9 +1,9 @@
 /* eslint-disable no-unused-vars, no-undef */
 
-import { SafetyFirst } from '../safety-first';
+import * as React from 'react';
 
 // TODO(alecmerdler): Refactor to custom hook with `useSafetyFirst`...
-export class PromiseComponent<P, S extends PromiseComponentState> extends SafetyFirst<P, S> {
+export class PromiseComponent<P, S extends PromiseComponentState> extends React.Component<P, S> {
   constructor(props) {
     super(props);
     this.state = {

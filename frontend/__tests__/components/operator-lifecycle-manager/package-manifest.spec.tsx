@@ -92,7 +92,7 @@ describe(PackageManifestList.displayName, () => {
 
   it('renders `List` component with correct props for each section', () => {
     expect(wrapper.find(List).length).toEqual(2);
-    packages.forEach(({status}, i) => {
+    packages.forEach((pkg, i) => {
       expect(wrapper.find('.co-catalogsource-list__section').at(i).find<ListInnerProps>(List).props().Header).toEqual(PackageManifestHeader);
       expect(wrapper.find('.co-catalogsource-list__section').at(i).find<ListInnerProps>(List).props().data.length).toEqual(1);
       expect(wrapper.find('.co-catalogsource-list__section').at(i).find<ListInnerProps>(List).props().label).toEqual('Package Manifests');

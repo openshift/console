@@ -7,6 +7,7 @@ import * as Modal from 'react-modal';
 import * as PropTypes from 'prop-types';
 import { Router } from 'react-router-dom';
 import * as classNames from 'classnames';
+import * as _ from 'lodash-es';
 
 import store from '../../redux';
 import { ButtonBar } from '../utils/button-bar';
@@ -33,7 +34,7 @@ export const createModalLauncher: CreateModalLauncher = (Component) => (props) =
           className={classNames('modal-dialog', props.modalClassName)}
           overlayClassName="co-overlay"
           shouldCloseOnOverlayClick={!props.blocking}>
-          <Component {...props} cancel={closeModal} close={closeModal} />
+          <Component {..._.omit(props, 'blocking', 'modalClassName') as any} cancel={closeModal} close={closeModal} />
         </Modal>
       </Router>
     </Provider>, modalContainer);
@@ -82,12 +83,12 @@ ModalSubmitFooter.propTypes = {
 
 export type CreateModalLauncherProps = {
   blocking?: boolean;
+  modalClassName?: string;
 };
 
 export type ModalComponentProps = {
   cancel: (e?: Event) => void;
   close: (e?: Event) => void;
-  modalClassName?: string;
 };
 
 export type ModalTitleProps = {

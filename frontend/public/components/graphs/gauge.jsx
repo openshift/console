@@ -1,5 +1,4 @@
 import * as _ from 'lodash-es';
-import * as React from 'react';
 import * as PropTypes from 'prop-types';
 import { relayout, register } from 'plotly.js/lib/core';
 import * as pie from 'plotly.js/lib/pie';

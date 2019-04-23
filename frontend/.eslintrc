@@ -10,8 +10,9 @@
     "plugin:import/warnings",
     "plugin:react/recommended",
   ],
-  "parser": "typescript-eslint-parser",
+  "parser": "@typescript-eslint/parser",
   "parserOptions": {
+    "project": "./tsconfig.json",
     "comment": true,
     "ecmaFeatures": {
       "jsx": true,
@@ -22,6 +23,7 @@
   "plugins": [
     "react",
     "react-hooks",
+    "@typescript-eslint",
   ],
   "rules": {
     "brace-style": 2,
@@ -54,8 +56,8 @@
     "no-shadow": ["error"],
     "no-trailing-spaces": ["error"],
     "no-underscore-dangle": 0,
-    "no-unused-vars": ["error", {"varsIgnorePattern": "React"}],
-    "no-use-before-define": 2,
+    "@typescript-eslint/no-unused-vars": ["error", {"varsIgnorePattern": "React", "args": "after-used"}],
+    "@typescript-eslint/no-use-before-define": 2,
     "no-var": 2,
     "object-shorthand": ["error", "properties"],
     "prefer-const": ["error", {"destructuring": "all"}],

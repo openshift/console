@@ -27,7 +27,7 @@ import { PersistentVolumeClaimModel } from '../../models/index';
 
 const PVCDropdown: React.SFC<PVCDropdownProps> = props => {
   const kind = 'PersistentVolumeClaim';
-  const { namespace, selectedKey, required, name } = props;
+  const { namespace, selectedKey } = props;
   const resources = [{ kind, namespace }];
   return (
     <ListDropdown
@@ -37,9 +37,6 @@ const PVCDropdown: React.SFC<PVCDropdownProps> = props => {
       selectedKeyKind={kind}
       placeholder="Select claim"
       selectedKey={selectedKey}
-      required={required}
-      namespace={namespace}
-      name={name}
     />
   );
 };
@@ -264,9 +261,7 @@ class AttachStorageForm extends React.Component<
                 namespace={namespace}
                 onChange={this.handlePVCChange}
                 id="claimName"
-                name="claimName"
                 selectedKey={claimName}
-                required
               />
             </div>
           }
@@ -365,10 +360,8 @@ export const AttachStorage = connectToPlural(AttachStorage_);
 export type PVCDropdownProps = {
   namespace: string;
   selectedKey: string;
-  required: boolean;
   onChange: (string) => void;
   id: string;
-  name: string;
 };
 
 export type AttachStorageFormState = {

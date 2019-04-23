@@ -90,7 +90,7 @@ export const ClusterServiceVersionList: React.SFC<ClusterServiceVersionListProps
   return <List {...props} Row={ClusterServiceVersionRow} Header={ClusterServiceVersionHeader} EmptyMsg={EmptyMsg} />;
 };
 
-const stateToProps = ({k8s, FLAGS}, {match}) => ({
+const stateToProps = ({k8s, FLAGS}) => ({
   loading: FLAGS.get(featureFlags.OPENSHIFT) === undefined || !k8s.getIn([FLAGS.get(featureFlags.OPENSHIFT) ? 'projects' : 'namespaces', 'loaded']),
 });
 
