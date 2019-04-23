@@ -16,6 +16,7 @@ const AboutModal_: React.FC<AboutModalProps> = ({isOpen, closeAboutModal, cluste
   }, []);
 
   const details = getBrandingDetails();
+  const customBranding = (window as any).SERVER_FLAGS.customLogoURL || (window as any).SERVER_FLAGS.customProductName;
 
   return (
     <PfAboutModal
@@ -25,8 +26,8 @@ const AboutModal_: React.FC<AboutModalProps> = ({isOpen, closeAboutModal, cluste
       brandImageSrc={details.logoImg}
       brandImageAlt={details.productName}
     >
-      <p>OpenShift is Red Hat&apos;s container application platform that allows developers to quickly develop, host,
-        and scale applications in a cloud environment.</p>
+      {!customBranding && <p>OpenShift is Red Hat&apos;s container application platform that allows developers to quickly develop, host,
+        and scale applications in a cloud environment.</p>}
       <br />
       <TextContent>
         <TextList component="dl">

@@ -32,6 +32,7 @@ const (
 	prometheusProxyEndpoint        = "/api/prometheus"
 	prometheusTenancyProxyEndpoint = "/api/prometheus-tenancy"
 	alertManagerProxyEndpoint      = "/api/alertmanager"
+	customLogoEndpoint             = "/custom-logo"
 )
 
 var (
@@ -54,6 +55,8 @@ type jsGlobals struct {
 	PrometheusTenancyBaseURL string `json:"prometheusTenancyBaseURL"`
 	AlertManagerBaseURL      string `json:"alertManagerBaseURL"`
 	Branding                 string `json:"branding"`
+	CustomProductName        string `json:"customProductName"`
+	CustomLogoURL            string `json:"customLogoURL"`
 	DocumentationBaseURL     string `json:"documentationBaseURL"`
 	GoogleTagManagerID       string `json:"googleTagManagerID"`
 	LoadTestFactor           int    `json:"loadTestFactor"`
@@ -72,6 +75,8 @@ type Server struct {
 	KubeAPIServerURL     string
 	DocumentationBaseURL *url.URL
 	Branding             string
+	CustomProductName    string
+	CustomLogoFile       string
 	GoogleTagManagerID   string
 	LoadTestFactor       int
 	DexClient            api.DexClient
@@ -108,13 +113,15 @@ func (s *Server) HTTPHandler() http.Handler {
 
 	fn := func(loginInfo auth.LoginJSON, successURL string, w http.ResponseWriter) {
 		jsg := struct {
-			auth.LoginJSON  `json:",inline"`
-			LoginSuccessURL string `json:"loginSuccessURL"`
-			Branding        string `json:"branding"`
+			auth.LoginJSON    `json:",inline"`
+			LoginSuccessURL   string `json:"loginSuccessURL"`
+			Branding          string `json:"branding"`
+			CustomProductName string `json:"customProductName"`
 		}{
-			LoginJSON:       loginInfo,
-			LoginSuccessURL: successURL,
-			Branding:        s.Branding,
+			LoginJSON:         loginInfo,
+			LoginSuccessURL:   successURL,
+			Branding:          s.Branding,
+			CustomProductName: s.CustomProductName,
 		}
 
 		tpl := template.New(tokenizerPageTemplateName)
@@ -161,6 +168,12 @@ func (s *Server) HTTPHandler() http.Handler {
 
 	staticHandler := http.StripPrefix(proxy.SingleJoiningSlash(s.BaseURL.Path, "/static/"), http.FileServer(http.Dir(s.PublicDir)))
 	handle("/static/", gzipHandler(securityHeadersMiddleware(staticHandler)))
+
+	if s.CustomLogoFile != "" {
+		handleFunc(customLogoEndpoint, func(w http.ResponseWriter, r *http.Request) {
+			http.ServeFile(w, r, s.CustomLogoFile)
+		})
+	}
 
 	// Scope of Service Worker needs to be higher than the requests it is intercepting (https://stackoverflow.com/a/35780776/6909941)
 	handleFunc("/load-test.sw.js", func(w http.ResponseWriter, r *http.Request) {
@@ -254,6 +267,7 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		LogoutRedirect:       s.LogoutRedirect.String(),
 		KubeAPIServerURL:     s.KubeAPIServerURL,
 		Branding:             s.Branding,
+		CustomProductName:    s.CustomProductName,
 		DocumentationBaseURL: s.DocumentationBaseURL.String(),
 		GoogleTagManagerID:   s.GoogleTagManagerID,
 		LoadTestFactor:       s.LoadTestFactor,
@@ -274,6 +288,10 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 
 	if !s.authDisabled() {
 		s.Auther.SetCSRFCookie(s.BaseURL.Path, &w)
+	}
+
+	if s.CustomLogoFile != "" {
+		jsg.CustomLogoURL = proxy.SingleJoiningSlash(s.BaseURL.Path, customLogoEndpoint)
 	}
 
 	tpl := template.New(indexPageTemplateName)
