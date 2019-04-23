@@ -33,7 +33,7 @@ const AboutModal_: React.FC<AboutModalProps> = ({isOpen, closeAboutModal, cluste
           {clusterID && (
             <React.Fragment>
               <TextListItem component="dt">Cluster ID</TextListItem>
-              <TextListItem component="dd">{this.props.clusterID}</TextListItem>
+              <TextListItem component="dd">{clusterID}</TextListItem>
             </React.Fragment>
           )}
           <TextListItem component="dt">Kubernetes Master Version</TextListItem>
