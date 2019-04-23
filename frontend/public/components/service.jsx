@@ -9,7 +9,7 @@ const menuActions = [Kebab.factory.ModifyPodSelector, ...Kebab.factory.common];
 const ServiceIP = ({s}) => {
   const children = _.map(s.spec.ports, (portObj, i) => {
     const clusterIP = s.spec.clusterIP === 'None' ? 'None' : `${s.spec.clusterIP}:${portObj.port}`;
-    return <div key={i}>{clusterIP}</div>;
+    return <div key={i} className="co-truncate co-select-to-copy">{clusterIP}</div>;
   });
 
   return children;
