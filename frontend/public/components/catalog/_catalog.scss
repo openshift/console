@@ -30,18 +30,6 @@ $co-modal-ignore-warning-icon-width: 30px;
   padding: 0 0 ($grid-gutter-width / 2);
 }
 
-.co-catalog-connect {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-
-  .loading-box {
-    display: flex;
-    flex: 1;
-    flex-direction: column;
-  }
-}
-
 .co-catalog-item-details {
   display: flex;
   margin: 0 0 10px;
