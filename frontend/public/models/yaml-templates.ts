@@ -737,7 +737,7 @@ spec:
     services: "10"
     services.loadbalancers: "2"
 `).setIn([referenceForModel(k8sModels.ClusterAutoscalerModel), 'default'], `
-apiVersion: "autoscaling.openshift.io/v1alpha1"
+apiVersion: "autoscaling.openshift.io/v1"
 kind: "ClusterAutoscaler"
 metadata:
   name: "default"
