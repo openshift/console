@@ -55,7 +55,7 @@ const UpdatingMessage: React.SFC<CVStatusMessageProps> = ({cv}) => {
   const updatingCondition = getClusterVersionCondition(cv, ClusterVersionConditionType.Progressing, K8sResourceConditionStatus.True);
   return <React.Fragment>
     {updatingCondition.message && <div><i className="fa-spin fa fa-refresh" aria-hidden={true}></i> {updatingCondition.message}</div>}
-    <Link to="/settings/cluster/clusteroperators">View detailed progress</Link>
+    <Link to="/settings/cluster/clusteroperators">View details</Link>
   </React.Fragment>;
 };
 
@@ -67,7 +67,7 @@ const FailingMessage: React.SFC<StatusMessageProps> = () => <React.Fragment>
   <div>
     <i className="pficon pficon-error-circle-o" aria-hidden={true}></i> Failing
   </div>
-  <Link to="/settings/cluster/clusteroperators">View detailed progress</Link>
+  <Link to="/settings/cluster/clusteroperators">View details</Link>
 </React.Fragment>;
 
 const UpToDateMessage: React.SFC<StatusMessageProps> = () => <span>
