@@ -134,7 +134,7 @@ export class StorageOverview extends React.Component {
   }
 
   async fetchAlerts() {
-    const url = `${getAlertManagerBaseURL()}/api/v2/alerts`;
+    const url = `${getAlertManagerBaseURL()}/api/v2/alerts?silenced=false&inhibited=false`;
     let alertsResponse;
     try {
       alertsResponse = await coFetchJSON(url);

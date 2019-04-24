@@ -141,7 +141,7 @@ export class ClusterOverview extends React.Component {
   }
 
   fetchAlerts() {
-    const url = `${getAlertManagerBaseURL()}/api/v2/alerts`;
+    const url = `${getAlertManagerBaseURL()}/api/v2/alerts?silenced=false&inhibited=false`;
     this.fetchAndStore(url, 'alertsResponse');
   }
 
