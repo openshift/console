@@ -1,5 +1,5 @@
 import { $, $$ } from 'protractor';
-import { selectDropdownOption } from '../../tests/kubevirt/utils';
+import { selectDropdownOption, fillInput } from '../../tests/kubevirt/utils';
 
 // Wizard Common
 export const closeWizard = $('.modal-footer > button.btn-cancel');
@@ -57,11 +57,7 @@ export const activateTableRow = (rowNumber: number) => $$('.kubevirt-editable-ta
  * @throws {Error}                   Will throw an Error when input for selected attribute doesn't exist.
  */
 export const setTableInputAttribute = async(rowNumber: number, attribute: string, value: string) => {
-  const attributeField = `#${attribute}-edit-${rowNumber}-row`;
-  if (!await $(attributeField).isPresent()) {
-    throw new Error(`Element ${attributeField} is not present.`);
-  }
-  await $(attributeField).clear().then(() => $(attributeField).sendKeys(value));
+  await fillInput($(`#${attribute}-edit-${rowNumber}-row`), value);
 };
 
 /**

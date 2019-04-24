@@ -105,9 +105,13 @@ export default class Wizard {
     await wizardView.apply.click();
   }
 
-  async editDisk(rowNumber: number, attribute: string, value: string) {
+  async editDiskAttribute(rowNumber: number, attribute: string, value: string) {
     await wizardView.activateTableRow(rowNumber - 1);
-    await wizardView.setTableInputAttribute(rowNumber, attribute, value);
+    if (attribute === 'storage') {
+      await wizardView.selectTableDropdownAttribute(rowNumber, attribute, value);
+    } else {
+      await wizardView.setTableInputAttribute(rowNumber, attribute, value);
+    }
     await wizardView.apply.click();
   }
 

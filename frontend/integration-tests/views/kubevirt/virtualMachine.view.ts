@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars, no-undef */
-import { $, by, element, browser, ExpectedConditions as until } from 'protractor';
+import { $, $$, by, element, browser, ExpectedConditions as until } from 'protractor';
 
 import { resourceRows } from '../crud.view';
 
@@ -37,6 +37,15 @@ export const statusIcons = {
   running: 'pficon-on-running',
   off: 'pficon-off',
 };
+
+export const consoleSelectorDropdownId = '#console-type-selector';
+export const consoleNetworkInterfaceDropdownId = '#nic-dropdown';
+
+const manualConnectionValues = $$('.manual-connection-pf-value');
+export const rdpIpAddress = manualConnectionValues.first();
+export const rdpPort = manualConnectionValues.last();
+
+export const overviewIpAddresses = (name: string, namespace: string) => $(`#${namespace}-${name}-ip-addresses`);
 
 export const rowForName = (name: string) => resourceRows
   .filter((row) => row.$$('div').first().getText()

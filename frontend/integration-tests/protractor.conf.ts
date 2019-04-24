@@ -189,6 +189,11 @@ export const config: Config = {
       'tests/kubevirt/vm.yaml.scenario.ts',
       'tests/kubevirt/vm.overview.scenario.ts',
     ],
+    kubevirtWindows: [
+      'tests/kubevirt/kubevirt.login.scenario.ts',
+      'tests/base.scenario.ts',
+      'tests/kubevirt/windows.scenario.ts',
+    ],
     e2e: [
       'tests/login.scenario.ts',
       'tests/base.scenario.ts',

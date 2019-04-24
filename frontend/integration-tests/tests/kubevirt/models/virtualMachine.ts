@@ -110,4 +110,20 @@ export class VirtualMachine extends DetailView {
     await vmView.selectKebabOption(name, 'Delete');
     await confirmAction();
   }
+
+  async selectConsole(type: string) {
+    await selectDropdownOption(vmView.consoleSelectorDropdownId, type);
+    await isLoaded();
+  }
+
+  async getConsoleVmIpAddress(): Promise<string> {
+    await browser.wait(until.presenceOf(vmView.rdpIpAddress), PAGE_LOAD_TIMEOUT);
+    return vmView.rdpIpAddress.getText();
+  }
+
+  async getConsoleRdpPort(): Promise<string> {
+    await browser.wait(until.presenceOf(vmView.rdpPort), PAGE_LOAD_TIMEOUT);
+    return vmView.rdpPort.getText();
+  }
+
 }

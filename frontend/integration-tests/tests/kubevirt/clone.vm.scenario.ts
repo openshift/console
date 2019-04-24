@@ -223,7 +223,7 @@ describe('Test clone VM.', () => {
       await wizard.next();
 
       // Storage
-      await wizard.editDisk(1, 'size', '1');
+      await wizard.editDiskAttribute(1, 'size', '1');
       await wizard.addDisk(hddDisk.name, hddDisk.size, hddDisk.StorageClass);
 
       // Create VM

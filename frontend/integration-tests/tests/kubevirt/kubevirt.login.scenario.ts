@@ -5,6 +5,8 @@ import { logIn } from '../kubevirt/utils';
 describe('Authentication', () => {
   it('Logs in.', async() => {
     await browser.get(appHost);
-    await logIn();
+    if (process.env.BRIDGE_BASE_ADDRESS !== undefined) {
+      await logIn();
+    }
   });
 });

@@ -10,6 +10,8 @@ export const PAGE_LOAD_TIMEOUT = 15 * SEC;
 export const VM_ACTIONS_TIMEOUT = 120 * SEC;
 export const VM_BOOTUP_TIMEOUT = 90 * SEC;
 export const VM_STOP_TIMEOUT = 6 * SEC;
+export const VM_IP_ASSIGNMENT_TIMEOUT = 180 * SEC;
+export const WINDOWS_IMPORT_TIMEOUT = 150 * SEC;
 
 export type provisionOptions = {
   method: string,
@@ -56,6 +58,9 @@ export async function fillInput(elem: ElementFinder, value: string) {
   let attempts = 3;
   do {
     --attempts;
+    if (attempts < 0) {
+      throw Error(`Failed to fill input with value: '${value}'.`);
+    }
     await browser.wait(until.elementToBeClickable(elem));
     await elem.clear();
     await elem.sendKeys(value);
@@ -107,7 +112,6 @@ export function searchJSON(propertyPath: string, value: string, name: string, na
   return result === value;
 }
 
-
 export const waitForCount = (elementArrayFinder, targetCount) => {
   return async() => {
     const count = await elementArrayFinder.count();
@@ -136,3 +140,10 @@ export async function asyncForEach(iterable, callback) {
     await callback(array[index], index, array);
   }
 }
+
+export const waitForStringInElement = (element: ElementFinder, needle: string) => {
+  return async() => {
+    const content = await element.getText();
+    return content.includes(needle);
+  };
+};

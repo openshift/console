@@ -76,7 +76,7 @@ describe('Kubevirt create VM template using wizard', () => {
 
       // Storage
       if (await wizard.getTableRowsCount() >= 1 && provisionConfig.provision.method !== 'Container') {
-        await wizard.editDisk(1, 'size', '1'); // Change size of default rootdisk to 1 GB
+        await wizard.editDiskAttribute(1, 'size', '1'); // Change size of default rootdisk to 1 GB
       }
       for (const storageOption of provisionConfig.storageOptions) {
         await wizard.addDisk(storageOption.name, storageOption.size, storageOption.StorageClass);

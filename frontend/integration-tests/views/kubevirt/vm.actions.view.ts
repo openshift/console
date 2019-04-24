@@ -36,9 +36,9 @@ export const detailViewAction = async(action, confirm?) => {
   const getActionsDropdown = () => $$(detailViewDropdown).first();
   const getActionsDropdownMenu = () => $(detailViewDropdownMenu);
   await selectDropdownItem(getActionsDropdown, getActionsDropdownMenu)(action);
+  await browser.wait(until.not(until.presenceOf($(detailViewDropdownMenu))));
   if (confirm === true) {
     await confirmAction();
-    await browser.wait(until.not(until.presenceOf($(detailViewDropdownMenu))));
   }
 };
 

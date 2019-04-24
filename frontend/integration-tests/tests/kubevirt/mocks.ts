@@ -170,6 +170,72 @@ export const testNad = {
   },
 };
 
+export const multusNad = {
+  apiVersion: 'k8s.cni.cncf.io/v1',
+  kind: 'NetworkAttachmentDefinition',
+  metadata: {
+    name: `multus-${testName}`,
+    namespace: testName,
+    labels: {['automatedTest']: testName},
+  },
+  spec: {
+    config: '{ "cniVersion": "0.3.1", "type": "bridge", "bridge": "testbridge", "ipam": {} }',
+  },
+};
+
+export const localStorageClass = {
+  kind: 'StorageClass',
+  apiVersion: 'storage.k8s.io/v1',
+  metadata: {
+    name: `local-storage-${testName}`,
+  },
+  provisioner: 'kubernetes.io/no-provisioner',
+  reclaimPolicy: 'Delete',
+  volumeBindingMode: 'WaitForFirstConsumer',
+};
+
+export const localStoragePersistentVolume = {
+  kind: 'PersistentVolume',
+  apiVersion: 'v1',
+  metadata: {
+    name: `test-pv-${testName}`,
+    finalizers: [
+      'kubernetes.io/pv-protection',
+    ],
+  },
+  spec: {
+    capacity: {
+      storage: '20Gi',
+    },
+    local: {
+      path: '/tmp/mylocalstorage/vol1',
+    },
+    accessModes: [
+      'ReadWriteOnce',
+    ],
+    persistentVolumeReclaimPolicy: 'Retain',
+    storageClassName: `${localStorageClass.metadata.name}`,
+    volumeMode: 'Filesystem',
+    nodeAffinity: {
+      required: {
+        nodeSelectorTerms: [
+          {
+            matchExpressions: [
+              {
+                key: 'kubernetes.io/hostname',
+                operator: 'In',
+                values: [
+                  `${process.env.SLAVE_LABEL}-node1.example.com`,
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    },
+  },
+};
+
 export const basicVmConfig = {
   operatingSystem: 'Red Hat Enterprise Linux 7.6',
   flavor: 'small',
@@ -179,11 +245,25 @@ export const basicVmConfig = {
   cloudInitScript: `#cloud-config\nuser: cloud-user\npassword: atomic\nchpasswd: {expire: False}\nhostname: vm-${testName}.example.com`,
 };
 
+export const windowsVmConfig = {
+  operatingSystem: 'Microsoft Windows Server 2012 R2',
+  flavor: 'medium',
+  workloadProfile: 'generic',
+  sourceURL: `http://${process.env.SERVER_IP}:${process.env.SERVER_PORT}/images/windows2012R2/disk.img`,
+};
+
 export const networkInterface = {
   name: `nic1-${testName.slice(-5)}`,
   mac: 'fe:fe:fe:fe:fe:fe',
   binding: 'bridge',
   networkDefinition: testNad.metadata.name,
+};
+
+export const multusNetworkInterface = {
+  name: `multus-nic-${testName.slice(-5)}`,
+  mac: 'fa:fa:fa:fe:fe:01',
+  binding: 'bridge',
+  networkDefinition: multusNad.metadata.name,
 };
 
 export const hddDisk = {
@@ -198,10 +278,17 @@ export const glusterfsDisk = {
   StorageClass: 'glusterfs-storage',
 };
 
+export const localStorageDisk = {
+  name: `local-storage-${testName.slice(-5)}`,
+  size: '15',
+  storageClass: `${localStorageClass.metadata.name}`,
+};
+
 export const cloudInitCustomScriptConfig = {
   useCustomScript: true,
   customScript: basicVmConfig.cloudInitScript,
 };
+
 
 export const customVMWithNicDisk = `
 apiVersion: kubevirt.io/v1alpha3

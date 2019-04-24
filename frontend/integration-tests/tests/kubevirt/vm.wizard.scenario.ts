@@ -7,7 +7,7 @@ import { browser } from 'protractor';
 // eslint-disable-next-line no-unused-vars
 import { networkResource, provisionOptions, removeLeakedResources, storageResource, VM_BOOTUP_TIMEOUT } from './utils';
 import { appHost, testName } from '../../protractor.conf';
-import { errorMessage,isLoaded } from '../../views/crud.view';
+import { errorMessage, isLoaded } from '../../views/crud.view';
 import { statusIcons } from '../../views/kubevirt/virtualMachine.view';
 import { basicVmConfig, glusterfsDisk, hddDisk, networkInterface, testNad } from './mocks';
 //import * as wizardView from '../../views/kubevirt/wizard.view';
@@ -77,7 +77,7 @@ describe('Kubevirt create VM using wizard', () => {
 
       // Storage
       if (await wizard.getTableRowsCount() >= 1 && provisionConfig.provision.method !== 'Container') {
-        await wizard.editDisk(1, 'size', '1'); // Change size of default rootdisk to 1 GB
+        await wizard.editDiskAttribute(1, 'size', '1'); // Change size of default rootdisk to 1 GB
       }
       for (const storageOption of provisionConfig.storageOptions) {
         await wizard.addDisk(storageOption.name, storageOption.size, storageOption.StorageClass);
