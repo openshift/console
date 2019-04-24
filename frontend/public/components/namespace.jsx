@@ -150,7 +150,7 @@ export const PullSecret = (props) => {
   if (isLoading) {
     return <LoadingInline />;
   }
-  const modal = () => configureNamespacePullSecretModal({namespace: this.props.namespace, pullSecret: data});
+  const modal = () => configureNamespacePullSecretModal({namespace: props.namespace, pullSecret: data});
 
   return <button type="button" className="btn btn-link co-modal-btn-link co-modal-btn-link--left" onClick={modal}>{_.get(data, 'metadata.name') || 'Not Configured'}</button>;
 };
