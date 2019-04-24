@@ -238,6 +238,18 @@
   @media (min-width: $screen-sm-min) {
     margin: $grid-gutter-width;
   }
+
+  .co-well__close-button {
+    float: right;
+  }
+
+  .co-well__close-button {
+    color: $color-pf-blue-600;
+  }
+
+  .co-well__close-button:hover, .co-well__close-button:active {
+    color: $color-pf-blue-400;
+  }
 }
 
 // Prevent iOS phones from zooming on form inputs
