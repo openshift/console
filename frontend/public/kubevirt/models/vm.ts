@@ -149,3 +149,16 @@ export const InfrastructureModel: K8sKind = {
   kind: 'Infrastructure',
   id: 'infrastructure',
 };
+
+export const NodeMaintenance: K8sKind = {
+  label: 'NodeMaintenance',
+  labelPlural: 'NodeMaintenances',
+  apiVersion: 'v1alpha1',
+  path: 'nodemaintenances',
+  apiGroup: 'kubevirt.io',
+  plural: 'nodemaintenances',
+  abbr: 'nm',
+  namespaced: false,
+  kind: 'NodeMaintenance',
+  id: 'nodemaintenance',
+};

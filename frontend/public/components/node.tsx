@@ -8,10 +8,12 @@ import { ResourceEventStream } from './events';
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import { configureUnschedulableModal } from './modals';
 import { PodsPage } from './pod';
-import { Kebab, navFactory, LabelList, ResourceKebab, SectionHeading, ResourceLink, Timestamp, units, cloudProviderNames, cloudProviderID, pluralize, StatusIcon } from './utils';
+import { Kebab, navFactory, LabelList, ResourceKebab, SectionHeading, ResourceLink, Timestamp, units, cloudProviderNames, cloudProviderID, pluralize } from './utils';
 import { Line, requirePrometheus } from './graphs';
-import { MachineModel, NodeModel } from '../models';
+import { MachineModel, NodeModel, NodeMaintenance } from '../models';
 import { CamelCaseWrap } from './utils/camel-case-wrap';
+import { NodeStatusWithMaintenanceConnected, maintenanceActions } from '../kubevirt/components/node/node';
+import { getResource } from 'kubevirt-web-ui-components';
 
 const MarkAsUnschedulable = (kind, obj) => ({
   label: 'Mark as Unschedulable',
@@ -26,9 +28,9 @@ const MarkAsSchedulable = (kind, obj) => ({
 });
 
 const { ModifyLabels, ModifyAnnotations, Edit } = Kebab.factory;
-const menuActions = [MarkAsSchedulable, MarkAsUnschedulable, ModifyLabels, ModifyAnnotations, Edit];
+const menuActions = [MarkAsSchedulable, MarkAsUnschedulable, ModifyLabels, ModifyAnnotations, Edit, ...maintenanceActions];
 
-const NodeKebab = ({node}) => <ResourceKebab actions={menuActions} kind="Node" resource={node} />;
+const NodeKebab = ({node}) => <ResourceKebab actions={menuActions} kind="Node" resource={node} resources={[getResource(NodeMaintenance)]} />;
 
 const getMachine = (node: K8sResourceKind) => {
   const machine = _.get(node, 'metadata.annotations["machine.openshift.io/machine"]');
@@ -61,7 +63,7 @@ const Header = props => {
   </ListHeader>;
 };
 
-const NodeStatus = ({node}) => <StatusIcon status={nodeStatus(node)} />;
+//const NodeStatus = ({node}) => <StatusIcon status={nodeStatus(node)} />;
 
 const NodeRow = ({obj: node, expand}) => {
   const machine = getMachine(node);
@@ -70,7 +72,9 @@ const NodeRow = ({obj: node, expand}) => {
     <div className="col-md-4 col-sm-5 col-xs-8">
       <ResourceLink kind="Node" name={node.metadata.name} title={node.metadata.uid} />
     </div>
-    <div className="col-md-2 col-sm-3 col-xs-4"><NodeStatus node={node} /></div>
+    <div className="col-md-2 col-sm-3 col-xs-4">
+      <NodeStatusWithMaintenanceConnected node={node} />
+    </div>
     <div className="col-md-3 col-sm-4 hidden-xs">
       {machine && <ResourceLink kind={referenceForModel(MachineModel)} name={machine.name} namespace={machine.namespace} />}
     </div>
@@ -247,4 +251,5 @@ export const NodesDetailsPage = props => <DetailsPage
   {...props}
   menuActions={menuActions}
   pages={pages}
+  resources={[getResource(NodeMaintenance)]}
 />;
