@@ -2,24 +2,28 @@
 
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import { shallow, ShallowWrapper } from 'enzyme';
+import { shallow, mount, ShallowWrapper, ReactWrapper } from 'enzyme';
+import Spy = jasmine.Spy;
 
 import { ResourceRequirementsModal, ResourceRequirementsModalProps, ResourceRequirementsModalLink, ResourceRequirementsModalLinkProps } from '../../../../../public/components/operator-lifecycle-manager/descriptors/spec/resource-requirements';
 import { ClusterServiceVersionResourceKind } from '../../../../../public/components/operator-lifecycle-manager';
-import { testResourceInstance } from '../../../../../__mocks__/k8sResourcesMocks';
+import { testResourceInstance, testModel } from '../../../../../__mocks__/k8sResourcesMocks';
 import * as modal from '../../../../../public/components/factory/modal';
 import * as k8s from '../../../../../public/module/k8s';
 
 describe(ResourceRequirementsModal.name, () => {
-  let wrapper: ShallowWrapper<ResourceRequirementsModalProps>;
+  let wrapper: ReactWrapper<ResourceRequirementsModalProps>;
   const title = 'TestResource Resource Requests';
   const description = 'Define the resource requests for this TestResource instance.';
   const cancel = jasmine.createSpy('cancelSpy');
 
+  const spyAndExpect = (spy: Spy) => (returnValue: any) => new Promise(resolve => spy.and.callFake((...args) => {
+    resolve(args);
+    return returnValue;
+  }));
+
   beforeEach(() => {
-    const Form: any = () => <div />;
-    Form.formName = 'ResourceRequirements';
-    wrapper = shallow(<ResourceRequirementsModal title={title} description={description} obj={testResourceInstance} type="requests" cancel={cancel} Form={Form} path="resources" close={null} />);
+    wrapper = mount(<ResourceRequirementsModal title={title} description={description} obj={testResourceInstance} model={testModel} type="requests" cancel={cancel} path="resources" close={null} />);
   });
 
   it('renders a modal form with given title and description', () => {
@@ -30,12 +34,14 @@ describe(ResourceRequirementsModal.name, () => {
   });
 
   it('calls function to update resource instance when form is submitted', (done) => {
-    spyOn(k8s, 'k8sUpdate').and.callFake(() => Promise.resolve().then(() => {
-      setTimeout(() => {
-        expect(cancel).toHaveBeenCalled();
-        done();
-      }, 10);
-    }));
+    wrapper.find('input[name="cpu"]').simulate('change', {target: {value: '200m'}});
+    wrapper.find('input[name="memory"]').simulate('change', {target: {value: '20Mi'}});
+
+    spyAndExpect(spyOn(k8s, 'k8sUpdate'))(Promise.resolve()).then(([model, newObj]: [k8s.K8sKind, k8s.K8sResourceKind]) => {
+      expect(model).toEqual(testModel);
+      expect(newObj.spec.resources.requests).toEqual({cpu: '200m', memory: '20Mi'});
+      done();
+    });
 
     wrapper.find('form').simulate('submit', new Event('submit'));
   });
@@ -48,7 +54,7 @@ describe(ResourceRequirementsModalLink.displayName, () => {
   beforeEach(() => {
     obj = _.cloneDeep(testResourceInstance);
     obj.spec.resources = {limits: {memory: '50Mi', cpu: '500m'}, requests: {memory: '50Mi', cpu: '500m'}};
-    wrapper = shallow(<ResourceRequirementsModalLink obj={obj} type="limits" path="resources" />);
+    wrapper = shallow(<ResourceRequirementsModalLink.WrappedComponent obj={obj} model={testModel} type="limits" path="resources" />);
   });
 
   it('renders a button link with the resource requests limits', () => {
@@ -70,17 +76,18 @@ describe(ResourceRequirementsModalLink.displayName, () => {
     expect(wrapper.find('button').text()).toEqual('CPU: none, Memory: none');
   });
 
-  it('opens resource requirements modal when clicked', () => {
-    const modalSpy = jasmine.createSpy('modalSpy');
+  it('opens resource requirements modal when clicked', (done) => {
+    const modalSpy = jasmine.createSpy('modalSpy').and.callFake((args) => {
+      expect(args.title).toEqual(`${obj.kind} Resource Limits`);
+      expect(args.description).toEqual(`Define the resource limits for this ${obj.kind} instance.`);
+      expect(args.obj).toEqual(obj);
+      expect(args.model).toEqual(testModel);
+      expect(args.type).toEqual('limits');
+      expect(args.path).toEqual('resources');
+      done();
+    });
     spyOn(modal, 'createModalLauncher').and.returnValue(modalSpy);
-    wrapper.find('button').simulate('click');
 
-    expect(modalSpy.calls.count()).toEqual(1);
-    expect(modalSpy.calls.argsFor(0)[0].title).toEqual(`${obj.kind} Resource Limits`);
-    expect(modalSpy.calls.argsFor(0)[0].description).toEqual(`Define the resource limits for this ${obj.kind} instance.`);
-    expect(modalSpy.calls.argsFor(0)[0].obj).toEqual(obj);
-    expect(modalSpy.calls.argsFor(0)[0].Form).toBeDefined();
-    expect(modalSpy.calls.argsFor(0)[0].type).toEqual('limits');
-    expect(modalSpy.calls.argsFor(0)[0].path).toEqual('resources');
+    wrapper.find('button').simulate('click');
   });
 });

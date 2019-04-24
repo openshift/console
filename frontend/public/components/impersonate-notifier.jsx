@@ -2,7 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { connect } from 'react-redux';
 
-import { UIActions } from '../ui/ui-actions';
+import * as UIActions from '../actions/ui';
 
 export const ImpersonateNotifier = connect(
   ({UI}) => ({impersonate: UI.get('impersonate')}),

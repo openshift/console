@@ -3,7 +3,39 @@
 import * as React from 'react';
 import { shallow } from 'enzyme';
 
-import { PromiseComponent, PromiseComponentState } from '../../../public/components/utils/promise-component';
+import { PromiseComponent, PromiseComponentState, withHandlePromise, HandlePromiseProps } from '../../../public/components/utils/promise-component';
+
+describe('withHandlePromise', () => {
+  type TestProps = {
+    promise: Promise<any>;
+  } & HandlePromiseProps;
+
+  const Test = withHandlePromise((props: TestProps) => {
+    return <div>
+      <h1>{props.errorMessage}</h1>
+      { props.inProgress
+        ? <span>Loading...</span>
+        : <button onClick={() => props.handlePromise(props.promise).catch(() => null)}>Click Me</button>}
+    </div>;
+  });
+
+  it('passes `props.inProgress` as true when calling `props.handlePromise()`', () => {
+    const wrapper = shallow(<Test promise={Promise.resolve(42)} />);
+    wrapper.dive().find('button').simulate('click');
+
+    expect(wrapper.dive().text()).toEqual('Loading...');
+  });
+
+  it('passes message if an error is thrown from handling the promise', (done) => {
+    const wrapper = shallow(<Test promise={Promise.reject(42)} />);
+    wrapper.dive().find('button').simulate('click');
+
+    setTimeout(() => {
+      expect(wrapper.dive().find('h1').text()).toEqual('An error occurred. Please try again.');
+      done();
+    }, 10);
+  });
+});
 
 describe(PromiseComponent.name, () => {
   class Test extends PromiseComponent<{promise: Promise<number>}, PromiseComponentState> {

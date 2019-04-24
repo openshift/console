@@ -6,7 +6,7 @@ import * as pie from 'plotly.js/lib/pie';
 register(pie);
 
 import { BaseGraph } from './base';
-import { connectToURLs, MonitoringRoutes } from '../../monitoring';
+import { connectToURLs, MonitoringRoutes } from '../../reducers/monitoring';
 
 const colors = {
   ok: 'rgb(46,201,141)',

@@ -7,16 +7,17 @@ import * as fuzzy from 'fuzzysearch';
 
 import { NamespaceModel, ProjectModel, SecretModel } from '../models';
 import { k8sGet } from '../module/k8s';
-import { formatNamespacedRouteForResource, UIActions } from '../ui/ui-actions';
+import * as UIActions from '../actions/ui';
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import { ActionsMenu, Kebab, Dropdown, Firehose, LabelList, LoadingInline, navFactory, ResourceKebab, SectionHeading, ResourceIcon, ResourceLink, ResourceSummary, humanizeBinaryBytes, MsgBox, StatusIcon, ExternalLink, humanizeCpuCores, humanizeDecimalBytes } from './utils';
 import { createNamespaceModal, createProjectModal, deleteNamespaceModal, configureNamespacePullSecretModal } from './modals';
 import { RoleBindingsPage } from './RBAC';
 import { Bar, Area, requirePrometheus } from './graphs';
-import { OC_DOWNLOAD_LINK, ALL_NAMESPACES_KEY, KEYBOARD_SHORTCUTS, NAMESPACE_LOCAL_STORAGE_KEY } from '../const';
-import { FLAGS, featureReducerName, flagPending, setFlag, connectToFlags } from '../features';
+import { OC_DOWNLOAD_LINK, ALL_NAMESPACES_KEY, KEYBOARD_SHORTCUTS, NAMESPACE_LOCAL_STORAGE_KEY, FLAGS } from '../const';
+import { featureReducerName, flagPending, connectToFlags } from '../reducers/features';
+import { setFlag } from '../actions/features';
 import { openshiftHelpBase } from './utils/documentation';
-import { createProjectMessageStateToProps } from '../ui/ui-reducers';
+import { createProjectMessageStateToProps } from '../reducers/ui';
 
 const getModel = useProjects => useProjects ? ProjectModel : NamespaceModel;
 const getDisplayName = obj => _.get(obj, ['metadata', 'annotations', 'openshift.io/display-name']);
@@ -238,14 +239,16 @@ const namespaceBarDropdownStateToProps = state => {
 
   return { activeNamespace, canListNS };
 };
+const namespaceBarDropdownDispatchToProps = (dispatch) => ({
+  showStartGuide: (show) => dispatch(setFlag(FLAGS.SHOW_OPENSHIFT_START_GUIDE, show)),
+});
 
 class NamespaceBarDropdowns_ extends React.Component {
-
   componentDidUpdate() {
-    const { namespace, dispatch } = this.props;
+    const { namespace, showStartGuide } = this.props;
     if (namespace.loaded) {
       const noProjects = _.isEmpty(namespace.data);
-      setFlag(dispatch, FLAGS.SHOW_OPENSHIFT_START_GUIDE, noProjects);
+      showStartGuide(noProjects);
     }
   }
 
@@ -286,7 +289,7 @@ class NamespaceBarDropdowns_ extends React.Component {
       },
       {
         label: 'Import YAML',
-        href: formatNamespacedRouteForResource('import', activeNamespace),
+        href: UIActions.formatNamespacedRouteForResource('import', activeNamespace),
       },
     ];
 
@@ -315,7 +318,7 @@ class NamespaceBarDropdowns_ extends React.Component {
   }
 }
 
-const NamespaceBarDropdowns = connect(namespaceBarDropdownStateToProps)(NamespaceBarDropdowns_);
+const NamespaceBarDropdowns = connect(namespaceBarDropdownStateToProps, namespaceBarDropdownDispatchToProps)(NamespaceBarDropdowns_);
 
 const NamespaceBar_ = ({useProjects}) => {
   return <div className="co-namespace-bar">

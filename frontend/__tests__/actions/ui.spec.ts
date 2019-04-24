@@ -1,16 +1,16 @@
 import * as _ from 'lodash-es';
-import { ALL_NAMESPACES_KEY } from '../public/const';
-import '../__mocks__/localStorage';
+import { ALL_NAMESPACES_KEY } from '../../public/const';
 
-import store from '../public/redux';
-import { UIActions, getActiveNamespace, formatNamespaceRoute, formatNamespacedRouteForResource } from '../public/ui/ui-actions';
-import * as router from '../public/components/utils/router';
+import '../../__mocks__/localStorage';
+import store from '../../public/redux';
+import * as UIActions from '../../public/actions/ui';
+import * as router from '../../public/components/utils/router';
 
 const setActiveNamespace = ns => store.dispatch(UIActions.setActiveNamespace(ns));
-const getNamespacedRoute = path => formatNamespaceRoute(getActiveNamespace(), path);
+const getNamespacedRoute = path => UIActions.formatNamespaceRoute(UIActions.getActiveNamespace(), path);
 
 describe('ui-actions', () => {
-  describe('formatNamespaceRoute', () => {
+  describe('UIActions.formatNamespaceRoute', () => {
     it('formats namespaced routes', () => {
       [
         ['bar', '/k8s/ns/foo/pods', '/k8s/ns/bar/pods'],
@@ -19,7 +19,7 @@ describe('ui-actions', () => {
         ['bar', '/k8s/all-namespaces/foo', '/k8s/ns/bar/foo'],
         ['bar', '/k8s/ns/foo/bar/baz', '/k8s/ns/bar/bar'],
       ].forEach(t => {
-        expect(formatNamespaceRoute(t[0], t[1])).toEqual(t[2]);
+        expect(UIActions.formatNamespaceRoute(t[0], t[1])).toEqual(t[2]);
       });
     });
   });
@@ -34,41 +34,41 @@ describe('ui-actions', () => {
 
     it('should set active namespace in memory', () => {
       setActiveNamespace('test1');
-      expect(getActiveNamespace()).toEqual('test1');
+      expect(UIActions.getActiveNamespace()).toEqual('test1');
       setActiveNamespace('test2');
-      expect(getActiveNamespace()).toEqual('test2');
+      expect(UIActions.getActiveNamespace()).toEqual('test2');
     });
 
     it('sets active namespace in memory to all-namespaces', () => {
       setActiveNamespace('test');
       setActiveNamespace(ALL_NAMESPACES_KEY);
-      expect(_.isUndefined(getActiveNamespace())).toBe(false);
-      expect(getActiveNamespace()).toEqual(ALL_NAMESPACES_KEY);
+      expect(_.isUndefined(UIActions.getActiveNamespace())).toBe(false);
+      expect(UIActions.getActiveNamespace()).toEqual(ALL_NAMESPACES_KEY);
     });
 
     it('should redirect namespaced location paths for known namespace-friendly prefixes', () => {
       window.location.pathname = '/k8s/ns/floorwax/pods';
       setActiveNamespace('dessert-topping');
-      expect(formatNamespacedRouteForResource('pods')).toEqual('/k8s/ns/dessert-topping/pods');
+      expect(UIActions.formatNamespacedRouteForResource('pods')).toEqual('/k8s/ns/dessert-topping/pods');
     });
 
     it('should redirect namespaced location paths to their prefixes', () => {
       window.location.pathname = '/k8s/ns/floorwax/pods/new-shimmer';
       setActiveNamespace(ALL_NAMESPACES_KEY); // reset active namespace
-      expect(formatNamespacedRouteForResource('pods')).toEqual('/k8s/all-namespaces/pods');
+      expect(UIActions.formatNamespacedRouteForResource('pods')).toEqual('/k8s/all-namespaces/pods');
     });
 
     it('should redirect to all if no namespaces is selected', () => {
       window.location.pathname = '/k8s/ns/floorwax/pods';
       setActiveNamespace(ALL_NAMESPACES_KEY);
-      expect(formatNamespacedRouteForResource('pods')).toEqual('/k8s/all-namespaces/pods');
+      expect(UIActions.formatNamespacedRouteForResource('pods')).toEqual('/k8s/all-namespaces/pods');
     });
 
     it('should not redirect if the current path isn\'t namespaced, but should set active namespace in memory', () => {
       window.location.pathname = '/not-a-namespaced-path';
       setActiveNamespace('dessert-topping');
       expect(window.location.pathname).toEqual('/not-a-namespaced-path');
-      expect(getActiveNamespace()).toEqual('dessert-topping');
+      expect(UIActions.getActiveNamespace()).toEqual('dessert-topping');
     });
 
     it('should redirect to list view if current path is "new" and setting to "all-namespaces"', () => {

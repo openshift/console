@@ -4,9 +4,10 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Button } from 'patternfly-react';
 
-import { createProjectMessageStateToProps } from '../ui/ui-reducers';
+import { createProjectMessageStateToProps } from '../reducers/ui';
 import { DocumentationSidebar, Disabled } from './utils';
-import { FLAGS, connectToFlags } from '../features';
+import { connectToFlags } from '../reducers/features';
+import { FLAGS } from '../const';
 import { ProjectModel, RoleModel, StorageClassModel } from '../models';
 
 const WHITELIST = [RoleModel.kind, StorageClassModel.kind];

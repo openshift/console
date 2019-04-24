@@ -2,7 +2,8 @@ import * as React from 'react';
 
 import { AsyncComponent } from '../utils/async';
 
-import { FLAGS, connectToFlags } from '../../features';
+import { connectToFlags } from '../../reducers/features';
+import { FLAGS } from '../../const';
 export { Status, errorStatus } from './status';
 
 export const prometheusBasePath = window.SERVER_FLAGS.prometheusBaseURL;

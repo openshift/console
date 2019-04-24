@@ -2,7 +2,8 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import * as classNames from 'classnames';
 
-import { FLAGS, connectToFlags, flagPending } from '../features';
+import { connectToFlags, flagPending } from '../reducers/features';
+import { FLAGS } from '../const';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
 import { getQueryArgument, setQueryArgument } from './utils/router';
 import { coFetchJSON } from '../co-fetch';

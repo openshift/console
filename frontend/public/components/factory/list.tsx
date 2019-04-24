@@ -14,7 +14,7 @@ import {
   WindowScroller,
 } from 'react-virtualized';
 
-import { UIActions } from '../../ui/ui-actions';
+import * as UIActions from '../../actions/ui';
 import { ingressValidHosts } from '../ingress';
 import { routeStatus } from '../routes';
 import { secretTypeFilterReducer } from '../secret';
@@ -24,7 +24,7 @@ import {
   alertStateOrder,
   silenceState,
   silenceStateOrder,
-} from '../../monitoring';
+} from '../../reducers/monitoring';
 import {
   EmptyBox,
   LabelList,

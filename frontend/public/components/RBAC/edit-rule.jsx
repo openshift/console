@@ -8,7 +8,7 @@ import { k8sGet, k8sUpdate } from '../../module/k8s';
 import { RoleModel, ClusterRoleModel } from '../../models';
 import { errorModal } from '../modals';
 import { SectionHeading, history, ResourceIcon, resourceObjPath, PromiseComponent, ButtonBar, LoadingBox } from '../utils';
-import k8sActions from '../../module/k8s/k8s-actions';
+import * as k8sActions from '../../actions/k8s';
 
 const NON_RESOURCE_VERBS = ['get', 'post', 'put', 'delete'];
 const READ_VERBS = new Set(['get', 'list', 'proxy', 'redirect', 'watch']);

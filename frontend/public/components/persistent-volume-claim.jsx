@@ -1,7 +1,8 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 
-import { FLAGS, connectToFlags } from '../features';
+import { connectToFlags } from '../reducers/features';
+import { FLAGS } from '../const';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
 import { Kebab, navFactory, ResourceKebab, SectionHeading, ResourceLink, ResourceSummary, Selector, StatusIcon } from './utils';
 import { ResourceEventStream } from './events';

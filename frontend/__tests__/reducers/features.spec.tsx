@@ -3,37 +3,39 @@
 import * as React from 'react';
 import * as Immutable from 'immutable';
 
-import { FLAGS, featureReducer, DEFAULTS_, connectToFlags } from '../public/features';
-import { types } from '../public/module/k8s/k8s-actions';
-import { ClusterServiceVersionModel } from '../public/models';
+import { setFlag } from '../../public/actions/features';
+import { receivedResources } from '../../public/actions/k8s';
+import { FLAGS } from '../../public/const';
+import { featureReducer, defaults, connectToFlags } from '../../public/reducers/features';
+import { ClusterServiceVersionModel } from '../../public/models';
 
 describe('featureReducer', () => {
 
   it('returns default values if state is uninitialized', () => {
     const newState = featureReducer(null, null);
 
-    expect(newState).toEqual(Immutable.Map(DEFAULTS_));
+    expect(newState).toEqual(Immutable.Map(defaults));
   });
 
-  it('returns updated state with new flags if `SET_FLAG` action', () => {
-    const action = {type: 'SET_FLAG', flag: FLAGS.OPERATOR_LIFECYCLE_MANAGER, value: true};
-    const initialState = Immutable.Map(DEFAULTS_);
+  it('returns updated state with new flags if `setFlag` action', () => {
+    const action = setFlag(FLAGS.OPERATOR_LIFECYCLE_MANAGER, true);
+    const initialState = Immutable.Map(defaults);
     const newState = featureReducer(initialState, action);
 
-    expect(newState).toEqual(initialState.merge({[action.flag]: action.value}));
+    expect(newState).toEqual(initialState.merge({[action.payload.flag]: action.payload.value}));
   });
 
-  it('returns state if not `SET_FLAG` action', () => {
-    const action = {type: 'OTHER_ACTION'};
-    const initialState = Immutable.Map(DEFAULTS_);
+  it('returns state if not `setFlag` action', () => {
+    const action = {type: 'OTHER_ACTION'} as any;
+    const initialState = Immutable.Map(defaults);
     const newState = featureReducer(initialState, action);
 
     expect(newState).toEqual(initialState);
   });
 
   it('sets flags when it gets CRDs', () => {
-    const action = {type: types.resources, resources: {models: [ClusterServiceVersionModel]}};
-    const initialState = Immutable.Map(DEFAULTS_);
+    const action = receivedResources({models: [ClusterServiceVersionModel], adminResources: [], allResources: [], configResources: [], namespacedSet: null, safeResources: [], preferredVersions: []});
+    const initialState = Immutable.Map(defaults);
     const newState = featureReducer(initialState, action);
 
     expect(newState).toEqual(initialState.merge({
@@ -44,7 +46,6 @@ describe('featureReducer', () => {
       [FLAGS.OPERATOR_HUB]: false,
       [FLAGS.CLUSTER_API]: false,
       [FLAGS.MACHINE_CONFIG]: false,
-      [FLAGS.MACHINE_AUTOSCALER]: false,
     }));
   });
 });

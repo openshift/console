@@ -7,10 +7,10 @@ import { connect } from 'react-redux';
 import { Link, Redirect, Route, Switch } from 'react-router-dom';
 
 import { coFetchJSON } from '../co-fetch';
-import k8sActions from '../module/k8s/k8s-actions';
-import { alertState, AlertStates, connectToURLs, MonitoringRoutes, silenceState, SilenceStates } from '../monitoring';
+import * as k8sActions from '../actions/k8s';
+import { alertState, AlertStates, connectToURLs, MonitoringRoutes, silenceState, SilenceStates } from '../reducers/monitoring';
 import store from '../redux';
-import { UIActions } from '../ui/ui-actions';
+import * as UIActions from '../actions/ui';
 import { ColHead, List, ListHeader, ResourceRow, TextFilter } from './factory';
 import { QueryBrowser } from './graphs';
 import { confirmModal } from './modals';
@@ -176,7 +176,7 @@ const ToggleGraph_ = ({hideGraphs, toggle}) => {
     {hideGraphs ? 'Show' : 'Hide'} Graph <i className={iconClass} aria-hidden="true" />
   </button>;
 };
-const ToggleGraph = connect(graphStateToProps, {toggle: UIActions.toggleMonitoringGraphs})(ToggleGraph_);
+const ToggleGraph = connect(graphStateToProps, {toggle: UIActions.ActionType.ToggleMonitoringGraphs})(ToggleGraph_);
 
 // Plotly default colors:
 const graphColors = [
@@ -993,7 +993,7 @@ const QueryBrowserPage = () => {
 
 export class MonitoringUI extends React.Component<null, null> {
   componentDidMount() {
-    const poll = (url: string, key: string, dataHandler: (data: any[]) => any): void => {
+    const poll = (url: string, key: 'alerts' | 'silences', dataHandler: (data: any[]) => any): void => {
       store.dispatch(UIActions.monitoringLoading(key));
       const poller = (): void => {
         coFetchJSON(url)

@@ -10,7 +10,7 @@ import { PackageManifestKind, SubscriptionKind, ClusterServiceVersionLogo, visib
 import { PackageManifestModel, SubscriptionModel, CatalogSourceModel, OperatorGroupModel } from '../../models';
 import { StatusBox, MsgBox } from '../utils';
 import { List, ListHeader, ColHead, MultiListPage } from '../factory';
-import { getActiveNamespace } from '../../ui/ui-actions';
+import { getActiveNamespace } from '../../actions/ui';
 import { ALL_NAMESPACES_KEY, OPERATOR_HUB_LABEL } from '../../const';
 
 export const PackageManifestHeader: React.SFC<PackageManifestHeaderProps> = (props) => <ListHeader>

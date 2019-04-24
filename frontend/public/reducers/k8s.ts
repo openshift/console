@@ -3,11 +3,9 @@
 import * as _ from 'lodash-es';
 import { Map as ImmutableMap, fromJS } from 'immutable';
 
-import { types } from './k8s-actions';
-import { getQN, referenceForModel } from './k8s';
-import { allModels } from './k8s-models';
-import { K8sResourceKind, K8sKind } from './index';
-import { namespacedResources } from '../../ui/ui-actions';
+import { ActionType, K8sAction } from '../actions/k8s';
+import { getQN, referenceForModel, allModels, K8sResourceKind, K8sKind } from '../module/k8s';
+import { namespacedResources } from '../actions/ui';
 
 const moreRecent = (a, b) => {
   const metaA = a.get('metadata').toJSON();
@@ -72,22 +70,24 @@ const loadList = (oldList, resources) => {
   });
 };
 
-export default (state: ImmutableMap<string, any>, action) => {
+export type K8sState = ImmutableMap<string, any>;
+
+export default (state: K8sState, action: K8sAction): K8sState => {
   if (!state) {
     return fromJS({RESOURCES: {inFlight: false, models: ImmutableMap<string, K8sKind>()}});
   }
-  const {k8sObjects, id} = action;
-  const list: ImmutableMap<string, any> = state.getIn([id, 'data']);
+  // const {k8sObjects, id} = action;
+  // const list: ImmutableMap<string, any> = state.getIn([id, 'data']);
 
   let newList;
 
   switch (action.type) {
-    case types.getResourcesInFlight:
+    case ActionType.GetResourcesInFlight:
       return state.setIn(['RESOURCES', 'inFlight'], true);
-    case types.setAPIGroups:
-      return state.setIn(['RESOURCES', 'apiGroups'], action.value);
-    case types.resources:
-      return action.resources.models
+    case ActionType.SetAPIGroups:
+      return state.setIn(['RESOURCES', 'apiGroups'], action.payload.value);
+    case ActionType.ReceivedResources:
+      return action.payload.resources.models
         .filter(model => !state.getIn(['RESOURCES', 'models']).has(referenceForModel(model)))
         .filter(model => {
           const existingModel = state.getIn(['RESOURCES', 'models', model.kind]);
@@ -104,25 +104,26 @@ export default (state: ImmutableMap<string, any>, action) => {
           return prevState.updateIn(['RESOURCES', 'models'], models => models.set(modelRef, model));
         }, state)
         // TODO: Determine where these are used and implement filtering in that component instead of storing in Redux
-        .setIn(['RESOURCES', 'allResources'], action.resources.allResources)
-        .setIn(['RESOURCES', 'safeResources'], action.resources.safeResources)
-        .setIn(['RESOURCES', 'adminResources'], action.resources.adminResources)
-        .setIn(['RESOURCES', 'configResources'], action.resources.configResources)
-        .setIn(['RESOURCES', 'namespacedSet'], action.resources.namespacedSet)
-        .setIn(['RESOURCES', 'preferredVersions'], action.resources.preferredVersions)
+        .setIn(['RESOURCES', 'allResources'], action.payload.resources.allResources)
+        .setIn(['RESOURCES', 'safeResources'], action.payload.resources.safeResources)
+        .setIn(['RESOURCES', 'adminResources'], action.payload.resources.adminResources)
+        .setIn(['RESOURCES', 'configResources'], action.payload.resources.configResources)
+        .setIn(['RESOURCES', 'namespacedSet'], action.payload.resources.namespacedSet)
+        .setIn(['RESOURCES', 'preferredVersions'], action.payload.resources.preferredVersions)
         .setIn(['RESOURCES', 'inFlight'], false);
 
-    case types.filterList:
-      return state.setIn([id, 'filters', action.name], action.value);
+    case ActionType.FilterList:
+      return state.setIn([action.payload.id, 'filters', action.payload.name], action.payload.value);
 
-    case types.watchK8sObject:
-      return state.set(id, ImmutableMap({
+    case ActionType.StartWatchK8sObject:
+      return state.set(action.payload.id, ImmutableMap({
         loadError: '',
         loaded: false,
         data: {},
       }));
 
-    case types.modifyObject: {
+    case ActionType.ModifyObject: {
+      const {k8sObjects, id} = action.payload;
       let currentJS = state.getIn([id, 'data'], {});
       // getIn can return JS object or Immutable object
       if (currentJS.toJSON) {
@@ -140,13 +141,13 @@ export default (state: ImmutableMap<string, any>, action) => {
       });
     }
 
-    case types.watchK8sList:
-      if (list) {
+    case ActionType.StartWatchK8sList:
+      if (state.getIn([action.payload.id, 'data'])) {
         return state;
       }
 
       // We mergeDeep instead of overwriting state because it's possible to add filters before load/watching
-      return state.mergeDeep({[id]: {
+      return state.mergeDeep({[action.payload.id]: {
         loadError: '',
         // has the data set been loaded successfully
         loaded: false,
@@ -158,25 +159,25 @@ export default (state: ImmutableMap<string, any>, action) => {
         selected: null,
       }});
 
-    case types.stopK8sWatch:
-      return state.delete(id);
+    case ActionType.StopWatchK8s:
+      return state.delete(action.payload.id);
 
-    case types.loaded:
-      if (!list) {
+    case ActionType.Loaded:
+      if (!state.getIn([action.payload.id, 'data'])) {
         return state;
       }
       // eslint-disable-next-line no-console
-      console.info(`loaded ${id}`);
+      console.info(`loaded ${action.payload.id}`);
       state = state.mergeDeep({
-        [id]: {loaded: true, loadError: ''},
+        [action.payload.id]: {loaded: true, loadError: ''},
       });
-      newList = loadList(list, k8sObjects);
+      newList = loadList(state.getIn([action.payload.id, 'data']), action.payload.k8sObjects);
       break;
 
-    case types.updateListFromWS:
-      newList = list;
+    case ActionType.UpdateListFromWS:
+      newList = state.getIn([action.payload.id, 'data']);
       // k8sObjects is an array of k8s WS Events
-      for (const {type, object} of k8sObjects) {
+      for (const {type, object} of action.payload.k8sObjects) {
         switch (type) {
           case 'DELETED':
             newList = removeFromList(newList, object);
@@ -193,22 +194,22 @@ export default (state: ImmutableMap<string, any>, action) => {
         }
       }
       break;
-    case types.bulkAddToList:
-      if (!list) {
+    case ActionType.BulkAddToList:
+      if (!state.getIn([action.payload.id, 'data'])) {
         return state;
       }
-      newList = list.merge(k8sObjects.reduce((map, obj) => map.set(getQN(obj), fromJS(obj)), ImmutableMap()));
+      newList = state.getIn([action.payload.id, 'data']).merge(action.payload.k8sObjects.reduce((map, obj) => map.set(getQN(obj), fromJS(obj)), ImmutableMap()));
       break;
-    case types.errored:
-      if (!list) {
+    case ActionType.Errored:
+      if (!state.getIn([action.payload.id, 'data'])) {
         return state;
       }
       /* Don't overwrite data or loaded state if there was an error. Better to
        * keep stale data around than to suddenly have it disappear on a user.
        */
-      return state.setIn([id, 'loadError'], k8sObjects);
+      return state.setIn([action.payload.id, 'loadError'], action.payload.k8sObjects);
     default:
       return state;
   }
-  return state.setIn([id, 'data'], newList);
+  return state.setIn([action.payload.id, 'data'], newList);
 };

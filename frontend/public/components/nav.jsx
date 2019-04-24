@@ -5,9 +5,10 @@ import * as _ from 'lodash-es';
 import * as PropTypes from 'prop-types';
 import memoize from 'memoize-one';
 
-import { FLAGS, featureReducerName, flagPending } from '../features';
-import { monitoringReducerName, MonitoringRoutes } from '../monitoring';
-import { formatNamespacedRouteForResource } from '../ui/ui-actions';
+import { featureReducerName, flagPending } from '../reducers/features';
+import { FLAGS } from '../const';
+import { monitoringReducerName, MonitoringRoutes } from '../reducers/monitoring';
+import { formatNamespacedRouteForResource } from '../actions/ui';
 import {
   BuildConfigModel,
   BuildModel,

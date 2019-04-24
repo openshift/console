@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { Map as ImmutableMap } from 'immutable';
 
 import { inject, makeReduxID, makeQuery } from './index';
-import actions from '../../module/k8s/k8s-actions';
+import * as k8sActions from '../../actions/k8s';
 
 const processReduxId = ({k8s}, props) => {
   const {reduxID, isList, filters} = props;
@@ -94,9 +94,9 @@ const stateToProps = ({k8s}, {resources}) => {
 
 export const Firehose = connect(
   stateToProps, {
-    stopK8sWatch: actions.stopK8sWatch,
-    watchK8sObject: actions.watchK8sObject,
-    watchK8sList: actions.watchK8sList,
+    stopK8sWatch: k8sActions.stopK8sWatch,
+    watchK8sObject: k8sActions.watchK8sObject,
+    watchK8sList: k8sActions.watchK8sList,
   })(
   /** @augments {React.Component<{k8sModels?: Map<string, K8sKind>, forceUpdate?: boolean}>} */
   class Firehose extends React.Component {

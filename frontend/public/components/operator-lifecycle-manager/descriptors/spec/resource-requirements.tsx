@@ -2,78 +2,80 @@
 
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import { Field, reduxForm, getFormValues } from 'redux-form';
+import { connect } from 'react-redux';
 
-import store from '../../../../redux';
 import { ClusterServiceVersionResourceKind } from '../../index';
-import { PromiseComponent } from '../../../utils';
-import { k8sUpdate, referenceFor } from '../../../../module/k8s';
+import { withHandlePromise } from '../../../utils';
+import { k8sUpdate, referenceFor, K8sKind } from '../../../../module/k8s';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../../../factory/modal';
+import { RootState } from '../../../../redux';
 
-export class ResourceRequirementsModal extends PromiseComponent<ResourceRequirementsModalProps, ResourceRequirementsModalState> {
-  private submit(e) {
+export const ResourceRequirementsModal = withHandlePromise((props: ResourceRequirementsModalProps) => {
+  const {obj, path, type, model} = props;
+  const [cpu, setCPU] = React.useState<string>(_.get(obj.spec, `${path}.${type}.cpu`, ''));
+  const [memory, setMemory] = React.useState<string>(_.get(obj.spec, `${path}.${type}.memory`, ''));
+
+  const submit = (e) => {
     e.preventDefault();
 
-    const {Form, obj, cancel, type, path} = this.props;
-    const formData = getFormValues(Form.formName)(store.getState());
-    const newObj = _.cloneDeep(obj);
-    _.set(newObj, `spec.${path}.${type}`, formData);
-    const k8sModel = store.getState().k8s.getIn(['RESOURCES', 'models', referenceFor(obj)]);
+    let newObj = _.cloneDeep(obj);
+    if (cpu !== '' || memory !== '') {
+      newObj = _.set(newObj, `spec.${path}.${type}`, {cpu, memory});
+    }
 
-    this.handlePromise(k8sUpdate(k8sModel, newObj)).then(cancel);
-  }
+    return props.handlePromise(k8sUpdate(model, newObj)).then(props.close);
+  };
 
-  render() {
-    return <form onSubmit={e => this.submit(e)} className="modal-content">
-      <ModalTitle>{this.props.title}</ModalTitle>
-      <ModalBody>
-        <div className="row co-m-form-row">
-          <div className="col-sm-12">{this.props.description}</div>
+  return <form onSubmit={e => submit(e)} className="modal-content">
+    <ModalTitle>{props.title}</ModalTitle>
+    <ModalBody>
+      <div className="row co-m-form-row">
+        <div className="col-sm-12">{props.description}</div>
+      </div>
+      <div className="row co-m-form-row">
+        <div className="col-xs-5">
+          <label style={{fontWeight: 300}} className="text-muted text-uppercase" htmlFor="cpu">CPU cores</label>
+          <input value={cpu} onChange={e => setCPU(e.target.value)} name="cpu" type="text" className="form-control" style={{width: 150}} autoFocus placeholder="500m" />
         </div>
-        <div className="row co-m-form-row">
-          <this.props.Form handleSubmit={this.submit} />
+        <div className="col-xs-5">
+          <label style={{fontWeight: 300}} className="text-muted text-uppercase" htmlFor="memory">Memory</label>
+          <input value={memory} onChange={e => setMemory(e.target.value)} name="memory" type="text" className="form-control" style={{width: 150}} placeholder="50Mi" />
         </div>
-      </ModalBody>
-      <ModalSubmitFooter errorMessage={this.state.errorMessage} inProgress={this.state.inProgress} submitText="Save" cancel={e => this.props.cancel(e)} />
-    </form>;
-  }
-}
+      </div>
+    </ModalBody>
+    <ModalSubmitFooter errorMessage={props.errorMessage} inProgress={props.inProgress} submitText="Save" cancel={e => props.cancel(e)} />
+  </form>;
+});
 
-export const ResourceRequirementsModalLink: React.SFC<ResourceRequirementsModalLinkProps> = (props) => {
-  const {obj, type, path} = props;
-  const {cpu, memory} = _.get(obj.spec, `${path}.${type}`, {cpu: null, memory: null});
+const stateToProps = ({k8s}: RootState, {obj}) => ({
+  model: k8s.getIn(['RESOURCES', 'models', referenceFor(obj)]) as K8sKind,
+});
+
+export const ResourceRequirementsModalLink = connect(stateToProps)((props: ResourceRequirementsModalLinkProps) => {
+  const {obj, type, path, model} = props;
+  const {cpu, memory} = _.get(obj.spec, `${path}.${type}`, {cpu: 'none', memory: 'none'});
 
   const onClick = () => {
-    const modal = createModalLauncher<ResourceRequirementsModalProps>(ResourceRequirementsModal);
+    const modal = createModalLauncher(ResourceRequirementsModal);
     const description = `Define the resource ${type} for this ${obj.kind} instance.`;
     const title = `${obj.kind} Resource ${_.capitalize(type)}`;
 
-    const ResourceRequirementsForm = () => <div>
-      <div className="col-xs-5">
-        <label style={{fontWeight: 300}} className="text-muted text-uppercase" htmlFor="cpu">CPU cores</label>
-        <Field name="cpu" component="input" type="text" className="form-control" style={{width: 150}} autoFocus placeholder="500m" />
-      </div>
-      <div className="col-xs-5">
-        <label style={{fontWeight: 300}} className="text-muted text-uppercase" htmlFor="memory">Memory</label>
-        <Field name="memory" component="input" type="text" className="form-control" style={{width: 150}} placeholder="50Mi" />
-      </div>
-    </div>;
-    const Form = reduxForm({form: 'ResourceRequirements', initialValues: {cpu, memory}})(ResourceRequirementsForm);
-    Form.formName = 'ResourceRequirements';
-
-    return modal({title, description, obj, Form, type, path});
+    return modal({title, description, obj, model, type, path});
   };
 
-  return <button type="button" className="btn btn-link co-modal-btn-link" onClick={onClick}>{`CPU: ${cpu || 'none'}, Memory: ${memory || 'none'}`}</button>;
-};
+  return <button type="button" className="btn btn-link co-modal-btn-link" onClick={onClick}>{`CPU: ${cpu}, Memory: ${memory}`}</button>;
+});
 
 export type ResourceRequirementsModalProps = {
-  Form: React.ComponentType<any> & {formName: string};
   title: string;
   description: string;
   obj: ClusterServiceVersionResourceKind;
+  model: K8sKind;
   type: 'requests' | 'limits';
   path: string;
+  handlePromise: <T>(promise: Promise<T>) => Promise<T>;
+  inProgress: boolean;
+  errorMessage: string;
   cancel: (error: any) => void;
   close: () => void;
 };
@@ -85,8 +87,10 @@ export type ResourceRequirementsModalState = {
 
 export type ResourceRequirementsModalLinkProps = {
   obj: ClusterServiceVersionResourceKind;
+  model: K8sKind;
   type: 'requests' | 'limits';
   path: string;
 };
 
 ResourceRequirementsModalLink.displayName = 'ResourceRequirementsModalLink';
+ResourceRequirementsModal.displayName = 'ResourceRequirementsModal';
