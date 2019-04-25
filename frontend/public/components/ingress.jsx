@@ -12,7 +12,8 @@ const getHosts = (ingress) => {
   const hosts = ingressValidHosts(ingress);
 
   if (hosts.length) {
-    return <div>{hosts.join(', ')}</div>;
+    const hostsStr = hosts.join(', ');
+    return <div className="co-truncate co-select-to-copy" title={hostsStr}>{hostsStr}</div>;
   }
 
   return <div className="text-muted">No hosts</div>;

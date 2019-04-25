@@ -206,13 +206,13 @@ const MachineConfigPoolRow: React.SFC<MachineConfigPoolRowProps> = ({obj}) => <d
   <div className="hidden-xs hidden-sm hidden-md col-lg-5 co-break-word">
     {_.get(obj, 'status.configuration.name') ? <ResourceLink kind={machineConfigReference} name={obj.status.configuration.name} title={obj.status.configuration.name} /> : '-'}
   </div>
-  <div className="col-xs-3  col-sm-2 col-lg-1">
+  <div className="col-xs-3 col-sm-2 col-lg-1">
     {getConditionStatus(obj, MachineConfigPoolConditionType.Updated)}
   </div>
   <div className="hidden-xs col-sm-2 col-lg-1">
     {getConditionStatus(obj, MachineConfigPoolConditionType.Updating)}
   </div>
-  <div className="col-xs-3  col-sm-2 col-lg-1">
+  <div className="col-xs-3 col-sm-2 col-lg-1 co-truncate">
     {getConditionStatus(obj, MachineConfigPoolConditionType.Degraded)}
   </div>
 

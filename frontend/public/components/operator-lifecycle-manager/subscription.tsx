@@ -59,7 +59,7 @@ export const SubscriptionRow: React.SFC<SubscriptionRowProps> = (props) => {
     <div className="hidden-xs col-sm-4 col-md-3 col-lg-2">
       {subscriptionState(_.get(props.obj.status, 'state'))}
     </div>
-    <div className="hidden-xs hidden-sm col-md-3 col-lg-2">
+    <div title={props.obj.spec.channel || 'default'} className="co-truncate co-select-to-copy hidden-xs hidden-sm col-md-3 col-lg-2">
       {props.obj.spec.channel || 'default'}
     </div>
     <div className="hidden-xs hidden-sm hidden-md col-lg-2">
