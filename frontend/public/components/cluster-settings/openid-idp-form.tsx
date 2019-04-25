@@ -8,7 +8,6 @@ import {
   IdentityProvider,
   k8sCreate,
   K8sResourceKind,
-  MappingMethodType,
   OAuthKind,
 } from '../../module/k8s';
 import {
@@ -19,13 +18,11 @@ import {
 } from '../utils';
 import { addIDP, getOAuthResource, redirectToOAuthPage } from './';
 import { IDPNameInput } from './idp-name-input';
-import { MappingMethod } from './mapping-method';
 import { IDPCAFileInput } from './idp-cafile-input';
 
 export class AddOpenIDPage extends PromiseComponent<{}, AddOpenIDIDPPageState> {
   readonly state: AddOpenIDIDPPageState = {
     name: 'openid',
-    mappingMethod: 'claim',
     clientID: '',
     clientSecret: '',
     claimPreferredUsernames: ['preferred_username'],
@@ -81,11 +78,11 @@ export class AddOpenIDPage extends PromiseComponent<{}, AddOpenIDIDPPageState> {
   }
 
   addOpenIDIDP(oauth: OAuthKind, clientSecretName: string, caName: string): Promise<K8sResourceKind> {
-    const { name, mappingMethod, clientID, issuer, extraScopes, claimPreferredUsernames, claimNames, claimEmails } = this.state;
+    const { name, clientID, issuer, extraScopes, claimPreferredUsernames, claimNames, claimEmails } = this.state;
     const idp: IdentityProvider = {
       name,
       type: 'OpenID',
-      mappingMethod,
+      mappingMethod: 'claim',
       openID: {
         clientID,
         clientSecret: {
@@ -160,16 +157,12 @@ export class AddOpenIDPage extends PromiseComponent<{}, AddOpenIDIDPPageState> {
     this.setState({extraScopes});
   };
 
-  mappingMethodChanged = (mappingMethod: MappingMethodType) => {
-    this.setState({mappingMethod});
-  };
-
   caFileChanged = (caFileContent: string) => {
     this.setState({caFileContent});
   };
 
   render() {
-    const { name, mappingMethod, clientID, clientSecret, issuer, claimPreferredUsernames, claimNames, claimEmails, caFileContent } = this.state;
+    const { name, clientID, clientSecret, issuer, claimPreferredUsernames, claimNames, claimEmails, caFileContent } = this.state;
     const title = 'Add Identity Provider: OpenID Connect';
     return <div className="co-m-pane__body">
       <Helmet>
@@ -181,7 +174,6 @@ export class AddOpenIDPage extends PromiseComponent<{}, AddOpenIDIDPPageState> {
           Integrate with an OpenID Connect identity provider using an Authorization Code Flow.
         </p>
         <IDPNameInput value={name} onChange={this.nameChanged} />
-        <MappingMethod value={mappingMethod} onChange={this.mappingMethodChanged} />
         <div className="form-group">
           <label className="control-label co-required" htmlFor="clientID">Client ID</label>
           <input className="form-control"
@@ -235,7 +227,6 @@ export class AddOpenIDPage extends PromiseComponent<{}, AddOpenIDIDPPageState> {
 
 type AddOpenIDIDPPageState = {
   name: string;
-  mappingMethod: MappingMethodType;
   clientID: string;
   clientSecret: string;
   claimPreferredUsernames: string[];

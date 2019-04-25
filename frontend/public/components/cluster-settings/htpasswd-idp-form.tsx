@@ -8,7 +8,6 @@ import {
   IdentityProvider,
   k8sCreate,
   K8sResourceKind,
-  MappingMethodType,
   OAuthKind,
 } from '../../module/k8s';
 import {
@@ -19,14 +18,12 @@ import {
 } from '../utils';
 import { addIDP, getOAuthResource, redirectToOAuthPage } from './';
 import { IDPNameInput } from './idp-name-input';
-import { MappingMethod } from './mapping-method';
 
 const DroppableFileInput = (props: any) => <AsyncComponent loader={() => import('../utils/file-input').then(c => c.DroppableFileInput)} {...props} />;
 
 export class AddHTPasswdPage extends PromiseComponent<{}, AddHTPasswdPageState> {
   readonly state: AddHTPasswdPageState = {
     name: 'htpasswd',
-    mappingMethod: 'claim',
     htpasswdFileContent: '',
     inProgress: false,
     errorMessage: '',
@@ -53,11 +50,11 @@ export class AddHTPasswdPage extends PromiseComponent<{}, AddHTPasswdPageState> 
   }
 
   addHTPasswdIDP(oauth: OAuthKind, secretName: string): Promise<K8sResourceKind> {
-    const { name, mappingMethod } = this.state;
+    const { name } = this.state;
     const idp: IdentityProvider = {
       name,
       type: 'HTPasswd',
-      mappingMethod,
+      mappingMethod: 'claim',
       htpasswd: {
         fileData: {
           name: secretName,
@@ -88,16 +85,12 @@ export class AddHTPasswdPage extends PromiseComponent<{}, AddHTPasswdPageState> 
     this.setState({name: e.currentTarget.value});
   };
 
-  mappingMethodChanged = (mappingMethod: MappingMethodType) => {
-    this.setState({mappingMethod});
-  }
-
   htpasswdFileChanged = (htpasswdFileContent: string) => {
     this.setState({htpasswdFileContent});
   };
 
   render() {
-    const { name, mappingMethod, htpasswdFileContent } = this.state;
+    const { name, htpasswdFileContent } = this.state;
     const title = 'Add Identity Provider: HTPasswd';
 
     return <div className="co-m-pane__body">
@@ -110,7 +103,6 @@ export class AddHTPasswdPage extends PromiseComponent<{}, AddHTPasswdPageState> 
           HTPasswd validates usernames and passwords against a flat file generated using the htpasswd command.
         </p>
         <IDPNameInput value={name} onChange={this.nameChanged} />
-        <MappingMethod value={mappingMethod} onChange={this.mappingMethodChanged} />
         <div className="form-group">
           <DroppableFileInput
             onChange={this.htpasswdFileChanged}
@@ -132,7 +124,6 @@ export class AddHTPasswdPage extends PromiseComponent<{}, AddHTPasswdPageState> 
 
 type AddHTPasswdPageState = {
   name: string;
-  mappingMethod: MappingMethodType;
   htpasswdFileContent: string;
   inProgress: boolean;
   errorMessage: string;

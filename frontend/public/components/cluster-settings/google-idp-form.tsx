@@ -4,17 +4,15 @@ import * as React from 'react';
 import { Helmet } from 'react-helmet';
 
 import { SecretModel } from '../../models';
-import { IdentityProvider, k8sCreate, K8sResourceKind, MappingMethodType, OAuthKind } from '../../module/k8s';
+import { IdentityProvider, k8sCreate, K8sResourceKind, OAuthKind } from '../../module/k8s';
 import { ButtonBar, PromiseComponent, history } from '../utils';
 import { addIDP, getOAuthResource, redirectToOAuthPage } from './';
 import { IDPNameInput } from './idp-name-input';
-import { MappingMethod } from './mapping-method';
 
 
 export class AddGooglePage extends PromiseComponent<{}, AddGooglePageState> {
   readonly state: AddGooglePageState = {
     name: 'google',
-    mappingMethod: 'claim',
     clientID: '',
     clientSecret: '',
     hostedDomain: '',
@@ -44,11 +42,11 @@ export class AddGooglePage extends PromiseComponent<{}, AddGooglePageState> {
   }
 
   addGoogleIDP(oauth: OAuthKind, clientSecretName: string): Promise<K8sResourceKind> {
-    const { name, mappingMethod, clientID, hostedDomain } = this.state;
+    const { name, clientID, hostedDomain } = this.state;
     const idp: IdentityProvider = {
       name,
       type: 'Google',
-      mappingMethod,
+      mappingMethod: 'claim',
       google: {
         hostedDomain,
         clientID,
@@ -89,12 +87,8 @@ export class AddGooglePage extends PromiseComponent<{}, AddGooglePageState> {
     this.setState({hostedDomain: event.currentTarget.value});
   };
 
-  mappingMethodChanged = (mappingMethod: MappingMethodType) => {
-    this.setState({mappingMethod});
-  };
-
   render() {
-    const { name, mappingMethod, clientID, clientSecret, hostedDomain } = this.state;
+    const { name, clientID, clientSecret, hostedDomain } = this.state;
     const title = 'Add Identity Provider: Google';
     return <div className="co-m-pane__body">
       <Helmet>
@@ -106,7 +100,6 @@ export class AddGooglePage extends PromiseComponent<{}, AddGooglePageState> {
           You can use Google integration for users authenticating with Google credentials.
         </p>
         <IDPNameInput value={name} onChange={this.nameChanged} />
-        <MappingMethod value={mappingMethod} onChange={this.mappingMethodChanged} />
         <div className="form-group">
           <label className="control-label co-required" htmlFor="client-id">Client ID</label>
           <input className="form-control"
@@ -148,7 +141,6 @@ export class AddGooglePage extends PromiseComponent<{}, AddGooglePageState> {
 
 type AddGooglePageState = {
   name: string;
-  mappingMethod: MappingMethodType;
   hostedDomain: string
   clientID: string;
   clientSecret: string;
