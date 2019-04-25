@@ -8,7 +8,7 @@ export const BaremetalHostModel: K8sKind = {
   labelPlural: 'Bare Metal Hosts',
   apiVersion: 'v1alpha1',
   path: 'baremetalhosts',
-  apiGroup: 'metalkube.org',
+  apiGroup: 'metal3.io',
   plural: 'baremetalhosts',
   abbr: 'BMH',
   namespaced: true,
