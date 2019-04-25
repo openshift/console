@@ -13,6 +13,7 @@ import {
   NodeModel,
   PersistentVolumeClaimModel,
   PersistentVolumeModel,
+  PodModel,
 } from '../../../models';
 
 import { WithResources } from '../../../kubevirt/components/utils/withResources';
@@ -22,7 +23,7 @@ import { EventStream } from '../../../components/events';
 import { EventsInnerOverview } from '../../../kubevirt/components/cluster/events-inner-overview';
 import { LazyRenderer } from '../../../kubevirt/components/utils/lazyRenderer';
 
-const REFRESH_TIMEOUT = 5000;
+const REFRESH_TIMEOUT = 3000;
 
 const CEPH_PG_CLEAN_AND_ACTIVE_QUERY = 'ceph_pg_clean and ceph_pg_active';
 const CEPH_PG_TOTAL_QUERY = 'ceph_pg_total';
@@ -57,11 +58,14 @@ const resourceMap = {
   },
 };
 
+const pvcFilter = ({ kind }) => PersistentVolumeClaimModel.kind === kind;
+const podFilter = ({ kind, namespace }) => PodModel.kind === kind && namespace === 'openshift-storage';
+
 const getPrometheusBaseURL = () => window.SERVER_FLAGS.prometheusBaseURL;
 
 const getAlertManagerBaseURL = () => window.SERVER_FLAGS.alertManagerBaseURL;
 
-const OverviewEventStream = () => <EventStream scrollableElementId="events-body" InnerComponent={EventsInnerOverview} overview={true} namespace={undefined} kind="PersistentVolumeClaim" />;
+const OverviewEventStream = () => <EventStream scrollableElementId="events-body" InnerComponent={EventsInnerOverview} overview={true} namespace={undefined} filter={[pvcFilter, podFilter]} />;
 
 export class StorageOverview extends React.Component {
   constructor(props) {
@@ -150,16 +154,16 @@ export class StorageOverview extends React.Component {
     this._isMounted = true;
 
     this.fetchPrometheusQuery(CEPH_STATUS_QUERY, this.setHealthData);
-    this.fetchPrometheusQuery(CEPH_OSD_DOWN_QUERY, response => this.setData('diskStats','cephOsdDown', response));
-    this.fetchPrometheusQuery(CEPH_OSD_UP_QUERY, response => this.setData('diskStats','cephOsdUp', response));
-    this.fetchPrometheusQuery(UTILIZATION_IOPS_QUERY, response => this.setData('utilizationData','iopsUtilization', response));
-    this.fetchPrometheusQuery(UTILIZATION_LATENCY_QUERY, response => this.setData('utilizationData','latencyUtilization', response));
-    this.fetchPrometheusQuery(UTILIZATION_THROUGHPUT_QUERY, response => this.setData('utilizationData','throughputUtilization', response));
-    this.fetchPrometheusQuery(UTILIZATION_RECOVERY_RATE_QUERY, response => this.setData('utilizationData','recoveryRateUtilization', response));
-    this.fetchPrometheusQuery(STORAGE_CEPH_CAPACITY_TOTAL_QUERY, response => this.setData('capacityData','capacityTotal', response));
-    this.fetchPrometheusQuery(STORAGE_CEPH_CAPACITY_USED_QUERY, response => this.setData('capacityData','capacityUsed', response));
-    this.fetchPrometheusQuery(CEPH_PG_CLEAN_AND_ACTIVE_QUERY, response => this.setData('dataResiliencyData','cleanAndActivePgRaw', response));
-    this.fetchPrometheusQuery(CEPH_PG_TOTAL_QUERY, response => this.setData('dataResiliencyData','totalPgRaw', response));
+    this.fetchPrometheusQuery(CEPH_OSD_DOWN_QUERY, response => this.setData('diskStats', 'cephOsdDown', response));
+    this.fetchPrometheusQuery(CEPH_OSD_UP_QUERY, response => this.setData('diskStats', 'cephOsdUp', response));
+    this.fetchPrometheusQuery(UTILIZATION_IOPS_QUERY, response => this.setData('utilizationData', 'iopsUtilization', response));
+    this.fetchPrometheusQuery(UTILIZATION_LATENCY_QUERY, response => this.setData('utilizationData', 'latencyUtilization', response));
+    this.fetchPrometheusQuery(UTILIZATION_THROUGHPUT_QUERY, response => this.setData('utilizationData', 'throughputUtilization', response));
+    this.fetchPrometheusQuery(UTILIZATION_RECOVERY_RATE_QUERY, response => this.setData('utilizationData', 'recoveryRateUtilization', response));
+    this.fetchPrometheusQuery(STORAGE_CEPH_CAPACITY_TOTAL_QUERY, response => this.setData('capacityData', 'capacityTotal', response));
+    this.fetchPrometheusQuery(STORAGE_CEPH_CAPACITY_USED_QUERY, response => this.setData('capacityData', 'capacityUsed', response));
+    this.fetchPrometheusQuery(CEPH_PG_CLEAN_AND_ACTIVE_QUERY, response => this.setData('dataResiliencyData', 'cleanAndActivePgRaw', response));
+    this.fetchPrometheusQuery(CEPH_PG_TOTAL_QUERY, response => this.setData('dataResiliencyData', 'totalPgRaw', response));
 
     this.fetchAlerts();
     this.fetchPrometheusQuery(TOP_CONSUMERS_QUERY, response => this.setTopConsumersData(response));
