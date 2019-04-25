@@ -130,15 +130,15 @@ const ClusterVersionDetailsTable: React.SFC<ClusterVersionDetailsTableProps> = (
   return <React.Fragment>
     <div className="co-m-pane__body">
       <div className="co-m-pane__body-group">
-        <div className="co-detail-table">
+        <div className="co-detail-table co-detail-table--lg">
           <div className="co-detail-table__row row">
-            <div className="co-detail-table__section col-sm-4">
+            <div className="co-detail-table__section col-sm-4 col-md-3">
               <dl className="co-m-pane__details">
                 <dt className="co-detail-table__section-header">Channel</dt>
                 <dd><CurrentChannel cv={cv} /></dd>
               </dl>
             </div>
-            <div className="co-detail-table__section col-sm-4">
+            <div className="co-detail-table__section col-sm-4 col-md-4">
               <dl className="co-m-pane__details">
                 <dt className="co-detail-table__section-header"><CurrentVersionHeader cv={cv} /></dt>
                 <dd>
@@ -147,7 +147,7 @@ const ClusterVersionDetailsTable: React.SFC<ClusterVersionDetailsTableProps> = (
                 </dd>
               </dl>
             </div>
-            <div className="co-detail-table__section col-sm-4">
+            <div className="co-detail-table__section col-sm-4 col-md-4">
               <dl className="co-m-pane__details">
                 <dt className="co-detail-table__section-header">Update Status</dt>
                 <dd><UpdateStatus cv={cv} /></dd>

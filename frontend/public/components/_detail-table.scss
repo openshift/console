@@ -4,6 +4,10 @@
   max-width: 600px;
   white-space: nowrap;
 
+  &--lg {
+    max-width: 900px;
+  }
+
   &__row {
     display: flex;
     flex-wrap: wrap;
