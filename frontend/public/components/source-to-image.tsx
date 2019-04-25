@@ -6,7 +6,7 @@ import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
 
 import { LoadingBox, LoadError } from './utils/status-box';
-import { Dropdown, Firehose, history, MsgBox, NsDropdown, ResourceName, ExternalLink } from './utils';
+import { Dropdown, Firehose, history, MsgBox, NsDropdown, ResourceName, ExternalLink, SelectorInput } from './utils';
 import { BuildConfigModel, DeploymentConfigModel, ImageStreamModel, ImageStreamTagModel, RouteModel, ServiceModel } from '../models';
 import { ContainerPort, k8sCreate, k8sGet, K8sResourceKind } from '../module/k8s';
 import { ImageStreamIcon } from './catalog/catalog-item-icon';
@@ -98,6 +98,7 @@ class BuildSource extends React.Component<BuildSourceProps, BuildSourceState> {
       ref: '',
       contextDir: '',
       createRoute: false,
+      labels: [],
       ports: [],
       inProgress: false,
     };
@@ -141,6 +142,10 @@ class BuildSource extends React.Component<BuildSourceProps, BuildSourceState> {
     this.setState({repository: event.currentTarget.value, ref: '', contextDir: ''});
   }
 
+  onLabelsChange = (labels: string[]) => {
+    this.setState({labels});
+  };
+
   onCreateRouteChange: React.ReactEventHandler<HTMLInputElement> = event => {
     this.setState({createRoute: event.currentTarget.checked});
   }
@@ -172,7 +177,8 @@ class BuildSource extends React.Component<BuildSourceProps, BuildSourceState> {
   }
 
   getLabels() {
-    return { app: this.state.name };
+    // If no labels are specified, add a default app label
+    return _.isEmpty(this.state.labels) ? {app: this.state.name} : SelectorInput.objectify(this.state.labels);
   }
 
   getPodLabels() {
@@ -460,6 +466,13 @@ class BuildSource extends React.Component<BuildSourceProps, BuildSourceState> {
               create a <Link to={`/k8s/ns/${this.state.namespace || 'default'}/secrets/~new/source`}>source secret</Link>.
             </div>
           </div>
+          <div className="form-group">
+            <label htmlFor="tags-input" className="control-label">Labels</label>
+            <SelectorInput labelClassName="co-text-deploymentconfig" onChange={this.onLabelsChange} tags={this.state.labels} />
+            <div className="help-block" id="labels-help">
+              If no labels are specified, app={this.state.name || '<name>'} will be added.
+            </div>
+          </div>
           {!_.isEmpty(ports) && <div className="form-group">
             <div className="checkbox">
               <label className="control-label">
@@ -503,25 +516,26 @@ export const SourceToImagePage = (props) => {
 };
 
 export type ImageStreamInfoProps = {
-  imageStream: K8sResourceKind,
-  tag: any,
+  imageStream: K8sResourceKind;
+  tag: any;
 };
 
 export type BuildSourceProps = {
-  obj: any,
-  preselectedNamespace: string,
+  obj: any;
+  preselectedNamespace: string;
 };
 
 export type BuildSourceState = {
-  tags: any[],
-  namespace: string,
-  selectedTag: string,
-  name: string,
-  repository: string,
-  ref: string,
-  contextDir: string,
-  createRoute: boolean,
-  ports: ContainerPort[],
-  inProgress: boolean,
-  error?: any,
+  tags: any[];
+  namespace: string;
+  selectedTag: string;
+  name: string;
+  repository: string;
+  ref: string;
+  contextDir: string;
+  labels: string[];
+  createRoute: boolean;
+  ports: ContainerPort[];
+  inProgress: boolean;
+  error?: any;
 };
