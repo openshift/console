@@ -63,8 +63,6 @@ const Header = props => {
   </ListHeader>;
 };
 
-//const NodeStatus = ({node}) => <StatusIcon status={nodeStatus(node)} />;
-
 const NodeRow = ({obj: node, expand}) => {
   const machine = getMachine(node);
 

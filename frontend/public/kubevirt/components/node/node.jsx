@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { getResource, findNodeMaintenance, getNodeMaintenanceDeletion, IconAndText } from 'kubevirt-web-ui-components';
+import { getResource, findNodeMaintenance, getDeletionTimestamp, NodeStatus } from 'kubevirt-web-ui-components';
 
 import { k8sKill, nodeStatus } from '../../module/okdk8s';
 import { NodeMaintenance } from '../../models';
-import { LoadingInline, StatusIcon } from '../utils/okdutils';
+import { LoadingInline, StatusIcon, Timestamp } from '../utils/okdutils';
 import { startMaintenanceModal } from './node-maintenance-modal';
 import { WithResources } from '../utils/withResources';
 
@@ -23,7 +23,7 @@ const StopMaintenanceAction = (kind, obj, actionArgs) => {
   const nodeMaintenance = findNodeMaintenance(obj, actionArgs[NodeMaintenance.kind]);
   return {
     label: 'Stop Maintenance',
-    hidden: !nodeMaintenance || getNodeMaintenanceDeletion(nodeMaintenance),
+    hidden: !nodeMaintenance || getDeletionTimestamp(nodeMaintenance),
     callback: () => k8sKill(NodeMaintenance, nodeMaintenance),
   };
 };
@@ -41,6 +41,5 @@ const NodeStatusWithMaintenance = ({node, maintenances}) => {
     return <LoadingInline />;
   }
   const maintenance = findNodeMaintenance(node, maintenances);
-  const maintenanceText = getNodeMaintenanceDeletion(maintenance) ? 'Stopping maintenance' : 'Under maintenance';
-  return maintenance ? <IconAndText icon="off" text={maintenanceText} /> : <StatusIcon status={nodeStatus(node)} />;
+  return maintenance ? <NodeStatus node={node} maintenances={maintenances} TimestampComponent={Timestamp} /> : <StatusIcon status={nodeStatus(node)} />;
 };

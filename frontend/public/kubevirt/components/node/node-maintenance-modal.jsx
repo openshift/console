@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as PropTypes from 'prop-types';
-import { getName, FormFactory, settingsValue } from 'kubevirt-web-ui-components';
+import { getName, getFormElement } from 'kubevirt-web-ui-components';
 
 import { k8sCreate } from '../../module/okdk8s';
 import { NodeMaintenance } from '../../models';
@@ -31,33 +31,32 @@ class StartMaintenanceModal extends PromiseComponent {
     super(props);
     this._submit = this._submit.bind(this);
     this._cancel = this.props.cancel.bind(this);
-    this.onFormChange = this._onFormChange.bind(this);
+    this.onReasonChange = this._onReasonChange.bind(this);
     this.state = {};
   }
 
   _submit(event) {
     event.preventDefault();
 
-    const reason = settingsValue(this.state, 'reason');
-    this.handlePromise(k8sCreate(NodeMaintenance, getNodeMaintenance(this.props.resource, reason)))
+    this.handlePromise(k8sCreate(NodeMaintenance, getNodeMaintenance(this.props.resource, this.state.reason)))
       .then(this.props.close)
       .catch(error => {
         throw error;
       });
   }
 
-  _onFormChange(newValue, key) {
+  _onReasonChange(newValue) {
     this.setState({
-      [key]: newValue,
+      reason: newValue,
     });
   }
 
   render() {
-    const formFields = {
-      reason: {
-        id: 'maintenance-reason',
-        title: 'Maintenance reason',
-      },
+    const textField = {
+      id: 'maintenance-reason',
+      onChange: this.onReasonChange,
+      isControlled: true,
+      value: this.state.reason,
     };
 
     return (
@@ -69,7 +68,8 @@ class StartMaintenanceModal extends PromiseComponent {
             and data will not be added to this node until maintenance is
             stopped.
           </p>
-          <FormFactory fields={formFields} fieldsValues={this.state} onFormChange={this.onFormChange} labelSize={4} controlSize={8} />
+          <b>Maintenance reason</b>
+          {getFormElement(textField)}
         </ModalBody>
         <ModalSubmitFooter
           errorMessage={this.state.errorMessage}
