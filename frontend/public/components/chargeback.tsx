@@ -5,6 +5,7 @@ import * as classNames from 'classnames';
 import { connectToFlags, flagPending } from '../reducers/features';
 import { FLAGS } from '../const';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
+import { Conditions } from './conditions';
 import { getQueryArgument, setQueryArgument } from './utils/router';
 import { coFetchJSON } from '../co-fetch';
 import { ChargebackReportModel } from '../models';
@@ -18,7 +19,6 @@ import {
   GroupVersionKind,
   modelFor,
   referenceForModel,
-  resourceURL,
 } from '../module/k8s';
 import {
   Kebab,
@@ -35,42 +35,31 @@ import {
 } from './utils';
 
 export const ReportReference: GroupVersionKind = referenceForModel(ChargebackReportModel);
-export const ScheduledReportReference: GroupVersionKind = 'chargeback.coreos.com~v1alpha1~ScheduledReport';
-export const ReportGenerationQueryReference: GroupVersionKind = 'chargeback.coreos.com~v1alpha1~ReportGenerationQuery';
-export const ReportPrometheusQueryReference: GroupVersionKind = 'chargeback.coreos.com~v1alpha1~ReportPrometheusQuery';
+export const ScheduledReportReference: GroupVersionKind = 'metering.openshift.io~ScheduledReport';
+export const ReportGenerationQueryReference: GroupVersionKind = 'metering.openshift.io~v1alpha1~ReportQuery';
 
 const reportPages=[
   {name: 'All Reports', href: ReportReference},
-  {name: 'Generation Queries', href: ReportGenerationQueryReference},
+  {name: 'Report Queries', href: ReportGenerationQueryReference},
 ];
 
 const { common } = Kebab.factory;
 const menuActions = [...common];
 
 const dataURL = (obj, format='json') => {
-  const serviceModel = modelFor('Service');
-  return resourceURL(serviceModel, {
-    ns: obj.metadata.namespace,
-    name: 'chargeback',
-    path: 'proxy/api/v1/reports/get',
-    queryParams: {
-      name: obj.metadata.name,
-      format,
-    },
-  });
+  return `${window.SERVER_FLAGS.meteringBaseURL}/api/v1/reports/get?name=${obj.metadata.name}&namespace=${obj.metadata.namespace}&format=${format}`;
 };
 
 const ChargebackNavBar: React.SFC<{match: {url: string}}> = props => <div>
   <PageHeading title="Chargeback Reporting" style={{paddingBottom: 15}} />
-  <NavBar pages={reportPages} basePath={props.match.url.split('/').slice(0, -1).join('/')} />
+  <NavBar pages={reportPages} basePath={props.match.url.split('/').slice(0, -1).join('/')} hideDivider />
 </div>;
 
 
 const ReportsHeader = props => <ListHeader>
   <ColHead {...props} className="col-lg-3 col-md-3 col-xs-4" sortField="metadata.name">Name</ColHead>
   <ColHead {...props} className="col-lg-2 col-md-3 col-xs-4" sortField="metadata.namespace">Namespace</ColHead>
-  <ColHead {...props} className="col-lg-2 hidden-md hidden-sm hidden-xs">Report Generation Query</ColHead>
-  <ColHead {...props} className="col-lg-1 col-md-2 col-xs-4" sortField="spec.status.phase">Status</ColHead>
+  <ColHead {...props} className="col-lg-3 hidden-md hidden-sm hidden-xs">Report Query</ColHead>
   <ColHead {...props} className="col-lg-2 col-md-2 hidden-sm hidden-xs" sortField="spec.reportingStart">Reporting Start</ColHead>
   <ColHead {...props} className="col-lg-2 col-md-2 hidden-sm hidden-xs" sortField="spec.reportingEnd">Reporting End</ColHead>
 </ListHeader>;
@@ -81,8 +70,7 @@ const ReportsRow: React.SFC<ReportsRowProps> = ({obj}) => {
       <ResourceLink kind={ReportReference} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
     </div>
     <div className="col-lg-2 col-md-3 col-xs-4"><ResourceLink kind="Namespace" name={obj.metadata.namespace} namespace={undefined} title={obj.metadata.namespace} /></div>
-    <div className="col-lg-2 hidden-md hidden-sm hidden-xs"><ResourceLink kind={ReportGenerationQueryReference} name={_.get(obj, ['spec', 'generationQuery'])} namespace={obj.metadata.namespace} title={obj.metadata.namespace} /></div>
-    <div className="col-lg-1 col-md-2 col-xs-4">{_.get(obj, ['status', 'phase'])}</div>
+    <div className="col-lg-3 hidden-md hidden-sm hidden-xs"><ResourceLink kind={ReportGenerationQueryReference} name={_.get(obj, ['spec', 'query'])} namespace={obj.metadata.namespace} title={obj.metadata.namespace} /></div>
     <div className="col-lg-2 col-md-2 hidden-sm hidden-xs"><Timestamp timestamp={_.get(obj, ['spec', 'reportingStart'])} /></div>
     <div className="col-lg-2 col-md-2 hidden-sm hidden-xs"><Timestamp timestamp={_.get(obj, ['spec', 'reportingEnd'])} /></div>
     <div className="dropdown-kebab-pf">
@@ -94,7 +82,6 @@ const ReportsRow: React.SFC<ReportsRowProps> = ({obj}) => {
 class ReportsDetails extends React.Component<ReportsDetailsProps> {
   render() {
     const {obj} = this.props;
-    const phase = _.get(obj, ['status', 'phase']);
     return <div>
       <div className="co-m-pane__body">
         <SectionHeading text="Report Overview" />
@@ -104,39 +91,32 @@ class ReportsDetails extends React.Component<ReportsDetailsProps> {
           </div>
           <div className="col-sm-6 col-xs-12">
             <dl className="co-m-pane__details">
-              <dt>Phase</dt>
-              <dd>{phase}</dd>
               <dt>Reporting Start</dt>
               <dd><Timestamp timestamp={_.get(obj, ['spec', 'reportingStart'])} /></dd>
               <dt>Reporting End</dt>
               <dd><Timestamp timestamp={_.get(obj, ['spec', 'reportingEnd'])} /></dd>
-              <dt>Generation Query</dt>
-              <dd><ResourceLink kind={ReportGenerationQueryReference} name={_.get(obj, ['spec', 'generationQuery'])} namespace={obj.metadata.namespace} title={obj.metadata.namespace} /></dd>
-              <dt>Grace Period</dt>
-              <dd>{_.get(obj, ['spec', 'gracePeriod'])}</dd>
+              <dt>Report Query</dt>
+              <dd><ResourceLink kind={ReportGenerationQueryReference} name={_.get(obj, ['spec', 'query'])} namespace={obj.metadata.namespace} title={obj.metadata.namespace} /></dd>
               <dt>Run Immediately?</dt>
               <dd>{Boolean(_.get(obj, ['spec', 'runImmediately'])).toString()}</dd>
             </dl>
           </div>
         </div>
       </div>
+      <div className="co-m-pane__body">
+        <SectionHeading text="Conditions" />
+        <Conditions conditions={_.get(obj, 'status.conditions')} />
+      </div>
       <ReportData obj={obj} />
     </div>;
   }
 }
 
-const REDUCER_COLS = ['namespace', 'node', 'pod'];
-const COLS_BLACK_LIST = new Set(['data_start', 'data_end']);
+const COLS_BLACK_LIST = new Set(['period_start', 'period_end']);
 
-const DataCell = ({name, value, maxValue, total}) => {
+const DataCell = ({name, value}) => {
   if (_.isFinite(value)) {
-    const percentage = 100 * value / maxValue;
-    return <div className="text-right" title={`${_.round(100 * value / total, 2)}%`}>
-      {_.round(value, 2).toLocaleString()}
-      <div>
-        <div style={{width: `${percentage}%`}} className="table-bar table-bar--active" />
-      </div>
-    </div>;
+    return <div className="text-right">{_.round(value, 2).toLocaleString()}</div>;
   }
   name = _.startCase(name);
   const model = modelFor(name);
@@ -146,13 +126,13 @@ const DataCell = ({name, value, maxValue, total}) => {
   return value;
 };
 
-const DataTable = ({rows, orderBy, sortBy, applySort, keys, maxValues, totals}:DataTableProps) => {
+const DataTable = ({rows, orderBy, sortBy, applySort, keys}:DataTableProps) => {
   const size = _.clamp(Math.floor(12 / _.size(rows[0])), 1, 4);
   const className = `col-md-${size}`;
   return <div className="co-m-table-grid co-m-table-grid--bordered" style={{marginTop: 20, marginLeft: -15, marginRight: -15}}>
     <ListHeader>
       {_.map(keys, k => <ColHead
-        className={classNames(className, {'text-right': REDUCER_COLS.indexOf(k) < 0})}
+        className={classNames(className, {'text-right': _.isFinite(_.get(rows, [0, k]))})}
         key={k}
         sortField={k}
         sortFunc={k}
@@ -161,11 +141,12 @@ const DataTable = ({rows, orderBy, sortBy, applySort, keys, maxValues, totals}:D
         currentSortFunc={sortBy}
         applySort={applySort}>
         {k.replace(/_/g, ' ')}
-      </ColHead>)}
+      </ColHead>
+      )}
     </ListHeader>
     <div className="co-m-table-grid__body">
       {_.map(rows, (r, i) => <div className="row co-resource-list__item" key={i}>
-        {_.map(r, (v, k) => <div className={className} key={k}><DataCell name={k} value={v} maxValue={maxValues[k]} total={totals[k]} /></div>)}
+        {_.map(r, (v, k) => <div className={className} key={k}><DataCell name={k} value={v} /></div>)}
       </div>)}
     </div>
   </div>;
@@ -178,13 +159,10 @@ class ReportData extends React.Component<ReportDataProps, ReportDataState> {
       inFlight: false,
       error: null,
       data: null,
-      reduceBy: null,
       sortBy: null,
       orderBy: null,
       keys: [],
       rows: null,
-      maxValues: null,
-      totals: null,
     };
   }
 
@@ -207,29 +185,25 @@ class ReportData extends React.Component<ReportDataProps, ReportDataState> {
     if (this.state.inFlight) {
       return;
     }
-    const nextPhase = _.get(nextProps.obj, ['status', 'phase']);
-    const phase = _.get(this.props.obj, ['status', 'phase']);
-    if (phase !== nextPhase && nextPhase === 'Finished') {
+    const conditions = _.get(nextProps.obj, 'status.conditions');
+    const isFinished = _.some(conditions, {type: 'Running', status: 'False'});
+    if (isFinished) {
       this.fetchData();
     }
   }
 
   makeTable(data=this.state.data) {
-    const reduceBy = getQueryArgument('reduceBy') || 'namespace';
-    const keys = this.filterKeys(data, reduceBy);
+    const keys = this.filterKeys(data);
     const sortBy = getQueryArgument('sortBy') || keys[1] || keys[0];
     const orderBy = getQueryArgument('orderBy') || (sortBy === keys[0] ? 'asc' : 'desc');
-    const {rows, maxValues, totals} = this.transformData(data, reduceBy, sortBy, orderBy);
+    const rows = this.transformData(data, sortBy, orderBy);
 
     this.setState({
       data,
-      reduceBy,
       sortBy,
       orderBy,
       keys,
       rows,
-      maxValues,
-      totals,
     });
   }
 
@@ -238,29 +212,14 @@ class ReportData extends React.Component<ReportDataProps, ReportDataState> {
     this.makeTable();
   }
 
-  reduceBy(col) {
-    if (REDUCER_COLS.indexOf(this.state.sortBy) >= 0) {
-      // Sort field is going away. Sort by new field.
-      this.sortBy(col);
-    }
-    setQueryArgument('reduceBy', col);
-    this.makeTable();
-  }
-
   sortBy(col) {
     setQueryArgument('sortBy', col);
     this.makeTable();
   }
 
-  filterKeys(data=[], reduceBy) {
+  filterKeys(data=[]) {
     const keys = _.keys(data[0]).filter(k => {
-      if (k === reduceBy) {
-        return true;
-      }
       if (COLS_BLACK_LIST.has(k)) {
-        return false;
-      }
-      if (REDUCER_COLS.indexOf(k) >= 0) {
         return false;
       }
       return true;
@@ -268,46 +227,13 @@ class ReportData extends React.Component<ReportDataProps, ReportDataState> {
     return keys;
   }
 
-  transformData(data, reduceBy, sortBy, orderBy) {
-    const reducedData = {};
-    const maxValues = {};
-    const totals = {};
-    /* Chargeback data is an array of objects. elements look like:
-      { "data_end": "2018-01-22T19:35:00Z",
-        "data_start": "2018-01-17T20:12:00Z",
-        "namespace": "chargeback",
-        "node": "ip-10-0-37-70.us-west-1.compute.internal",
-        "pod": "prometheus-operator-2227858411-z27rc",
-        "pod_memory_usage_percent": 0.0012751439966320259,
-        "pod_request_memory_byte_seconds": 23385341952000
-      },
-      All fields but start/end are optional. */
-    _.each(data, row => {
-      const key = row[reduceBy];
-      // key == 'namespace', 'pod', 'node' (whatever we're aggregating by)
-      if (!reducedData[key]) {
-        reducedData[key] = {};
-      }
-      _.each(row, (v, k) => {
-        if (!isFinite(v as (any))) {
-          return;
-        }
-        // k == 'pod_memory_usage_percent', 'cost', etc (all columns in table except 1st)
-        if (!reducedData[key][k]) {
-          reducedData[key][k] = 0;
-        }
-        reducedData[key][k] += v;
-        if (!totals[k]) {
-          totals[k] = 0;
-        }
-        totals[k] += v;
-        if (reducedData[key][k] > (maxValues[k] || 0)) {
-          maxValues[k] = reducedData[key][k];
-        }
+  transformData(data, sortBy, orderBy) {
+    const rows = _.map(data, (row) => {
+      return _.omitBy(row, (v, k) => {
+        return COLS_BLACK_LIST.has(k);
       });
     });
-    const rows = _.orderBy(_.map<any>(reducedData, (o, key) => ({[reduceBy]: key, ...o})), sortBy, orderBy);
-    return {rows, maxValues, totals};
+    return _.orderBy(rows, sortBy, orderBy);
   }
 
   applySort(sortBy, func, orderBy) {
@@ -317,25 +243,21 @@ class ReportData extends React.Component<ReportDataProps, ReportDataState> {
 
   render() {
     const {obj} = this.props;
-    const phase = _.get(obj, ['status', 'phase']);
-
-    const {data, reduceBy, sortBy, orderBy, keys, rows, maxValues, totals, inFlight, error} = this.state;
+    const {data, sortBy, orderBy, keys, rows, inFlight, error} = this.state;
 
     let dataElem = <MsgBox title="No Data" detail="Report not finished running." />;
     if (inFlight) {
       dataElem = <div className="row"><div className="col-xs-12 text-center"><LoadingInline /></div></div>;
     } else if (error) {
-      dataElem = <LoadError label="Report" message={error} />;
-    } else if (phase === 'Finished') {
-      if (data) {
-        dataElem = <DataTable sortBy={sortBy} orderBy={orderBy} keys={keys} rows={rows} maxValues={maxValues} totals={totals} applySort={(sb, func, ob) => this.applySort(sb, func, ob)} />;
+      dataElem = <LoadError label="Report" message={_.get(error, 'json.error') || error.message} />;
+    } else if (data) {
+      if (data.error) {
+        dataElem = <LoadError label="Report" message={data.error} />;
       } else {
-        dataElem = <MsgBox title="No Data" detail="" />;
+        dataElem = <DataTable sortBy={sortBy} orderBy={orderBy} keys={keys} rows={rows}
+          applySort={(sb, func, ob) => this.applySort(sb, func, ob)} />;
       }
-    } else if (phase === 'Error') {
-      dataElem = <LoadError label="Report" message={_.get(obj, ['status', 'output'])} canRetry={false} />;
     }
-
     const name = _.get(obj, ['metadata', 'name']);
     const format = 'csv';
     const downloadURL = dataURL(obj, format);
@@ -345,16 +267,6 @@ class ReportData extends React.Component<ReportDataProps, ReportDataState> {
         <SectionHeading text="Usage Report">
           <DownloadButton className="pull-right" url={downloadURL} filename={`${name}.${format}`} />
         </SectionHeading>
-        <div className="row">
-          <div className="col-sm-6 col-xs-12">
-            <div className="btn-group">
-              {_.map(REDUCER_COLS, col => {
-                const disabled = !_.get(data, [0, col]);
-                return <button key={col} disabled={disabled} onClick={() => this.reduceBy(col)} className={classNames(['btn', 'btn-default'], {'btn-primary': col === reduceBy, disabled})}>By {_.startCase(col)}</button>;
-              })}
-            </div>
-          </div>
-        </div>
         { dataElem }
       </div>
     </div>;
@@ -490,13 +402,10 @@ export type ReportDataState = {
   error: any,
   data: any,
   inFlight: boolean,
-  reduceBy: string,
   sortBy: string,
   orderBy: string,
   keys: string[],
   rows: any[],
-  maxValues: {[_: string]: number},
-  totals: {[_: string]: number},
 };
 
 export type DataTableProps = {
@@ -505,8 +414,6 @@ export type DataTableProps = {
   sortBy: string,
   applySort: any,
   keys: string[],
-  maxValues: {[_: string]: number},
-  totals: {[_: string]: number},
 };
 
 export type ReportsPageProps = {

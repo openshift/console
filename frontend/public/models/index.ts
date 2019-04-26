@@ -151,7 +151,7 @@ export const ChargebackReportModel: K8sKind = {
   kind: 'Report',
   label: 'Report',
   labelPlural: 'Reports',
-  apiGroup: 'chargeback.coreos.com',
+  apiGroup: 'metering.openshift.io',
   path: 'reports',
   apiVersion: 'v1alpha1',
   crd: true,
