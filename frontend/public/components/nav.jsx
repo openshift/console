@@ -301,6 +301,7 @@ const MonitoringNavSection_ = ({grafanaURL, canAccess, kibanaURL, prometheusURL}
     ? <NavSection title="Monitoring">
       {showAlerts && <HrefLink href="/monitoring/alerts" name="Alerts" startsWith={monitoringAlertsStartsWith} />}
       {showSilences && <HrefLink href="/monitoring/silences" name="Silences" />}
+      {showAlerts && <HrefLink href="/monitoring/query-browser" name="Query Browser" />}
       {showPrometheus && <ExternalLink href={prometheusURL} name="Metrics" />}
       {showGrafana && <ExternalLink href={grafanaURL} name="Dashboards" />}
       {kibanaURL && <ExternalLink href={kibanaURL} name="Logging" />}
