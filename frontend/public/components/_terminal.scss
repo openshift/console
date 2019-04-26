@@ -29,3 +29,7 @@ $console-collapse-link-z-index: $console-z-index + 20;
   top: 4px;
   z-index: $console-collapse-link-z-index;  // in fullscreen mode, to get above console's z-index
 }
+
+.default-overflow {
+  overflow: visible !important;
+}

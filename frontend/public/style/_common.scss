@@ -380,9 +380,9 @@
   margin-bottom: 0;
  }
 
+ // Note: include .co-select-to-copy to enable single click selection of full text
 .co-truncate {
-  overflow: hidden;
-  text-overflow: ellipsis;
+  @include co-truncate;
 }
 
 .co-select-to-copy {

@@ -457,7 +457,7 @@ class BuildSource extends React.Component<BuildSourceProps, BuildSourceState> {
               id="repository"
               required />
             {sampleRepo && <div className="help-block">
-              <button type="button" className="btn btn-link btn-link--no-padding" onClick={this.fillSample}>
+              <button type="button" className="btn btn-link btn-link--no-btn-default-values" onClick={this.fillSample}>
                 Try Sample <i className="fa fa-level-up" aria-hidden="true" />
               </button>
             </div>}
