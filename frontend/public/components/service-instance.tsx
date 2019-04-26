@@ -199,7 +199,7 @@ const ServiceInstancesRow: React.SFC<ServiceInstancesRowProps> = ({obj}) => {
     <div className="col-md-2 hidden-sm hidden-xs co-break-word">
       {planExternalName(obj) || '-'}
     </div>
-    <div className="col-md-2 hidden-sm hidden-xs co-break-word">
+    <div className="col-md-2 hidden-sm hidden-xs co-truncate">
       <Timestamp timestamp={obj.metadata.creationTimestamp} />
     </div>
     <div className="dropdown-kebab-pf">

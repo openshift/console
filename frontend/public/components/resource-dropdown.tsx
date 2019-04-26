@@ -42,7 +42,7 @@ const blacklistResources = ImmutableSet([
 const DropdownItem: React.SFC<DropdownItemProps> = ({model, showGroup}) => <React.Fragment>
   <span className="co-resource-item">
     <span className="co-resource-icon--fixed-width">
-      <ResourceIcon kind={model.kind} />
+      <ResourceIcon kind={referenceForModel(model)} />
     </span>
     <span className="co-resource-item__resource-name">
       {model.kind}

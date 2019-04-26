@@ -4,6 +4,7 @@ import * as React from 'react';
 import * as fuzzy from 'fuzzysearch';
 
 import { Firehose, LoadingInline, Dropdown, ResourceName, ResourceIcon } from '.';
+import { isDefaultClass } from '../storage-class';
 
 /* Component StorageClassDropdown - creates a dropdown list of storage classes */
 
@@ -41,13 +42,13 @@ class StorageClassDropdown_ extends React.Component<StorageClassDropdownProps, S
       defaultClass: '',
     };
     const unorderedItems = {};
-    const noStorageClass = 'No storage class';
+    const noStorageClass = 'No default storage class';
     _.map(resources.StorageClass.data, resource => {
       unorderedItems[resource.metadata.name] = {
         kindLabel: 'StorageClass',
         name: resource.metadata.name,
         description: _.get(resource, 'metadata.annotations.description', ''),
-        default: _.get(resource, ['metadata', 'annotations', 'storageclass.kubernetes.io/is-default-class']) === 'true',
+        default: isDefaultClass(resource),
         accessMode:  _.get(resource, ['metadata', 'annotations', 'storage.alpha.openshift.io/access-mode'], ''),
         provisioner: resource.provisioner,
         type: _.get(resource, 'parameters.type', ''),
