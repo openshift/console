@@ -4,10 +4,10 @@ import { $$, browser, ExpectedConditions as until } from 'protractor';
 
 import { appHost, testName } from '../../protractor.conf';
 import { isLoaded, resourceRowsPresent, textFilter } from '../../views/crud.view';
-import { listViewAction } from '../../views/kubevirt/vm.actions.view';
+import { listViewAction, getDetailActionDropdownOptions } from '../../views/kubevirt/vm.actions.view';
 import { testNad, hddDisk, networkInterface, getVmManifest } from './mocks';
-import { overviewTab, disksTab, nicsTab, statusIcon, statusIcons } from '../../views/kubevirt/virtualMachine.view';
-import { removeLeakedResources, fillInput, searchYAML, waitForCount, VM_BOOTUP_TIMEOUT, VM_STOP_TIMEOUT, VM_ACTIONS_TIMEOUT, PAGE_LOAD_TIMEOUT } from './utils';
+import { overviewTab, disksTab, nicsTab, statusIcon, statusIcons, vmDetailNodeID } from '../../views/kubevirt/virtualMachine.view';
+import { removeLeakedResources, deleteResources, createResources, fillInput, searchYAML, waitForCount, VM_BOOTUP_TIMEOUT, VM_STOP_TIMEOUT, VM_ACTIONS_TIMEOUT, PAGE_LOAD_TIMEOUT } from './utils';
 import { VirtualMachine } from './models/virtualMachine';
 
 
@@ -73,9 +73,8 @@ describe('Test VM actions', () => {
       testVm.metadata.name = vmName;
       execSync(`echo '${JSON.stringify(testVm)}' | kubectl create -f -`);
       leakedResources.add(JSON.stringify({name: vmName, namespace: testName, kind: 'vm'}));
-    });
 
-    it('Navigates to VMs detail page', async() => {
+      // Navigate to VM detail page
       await browser.get(`${appHost}/k8s/all-namespaces/virtualmachines/${vmName}`);
       await isLoaded();
     });
@@ -102,6 +101,67 @@ describe('Test VM actions', () => {
   });
 });
 
+describe('Test VM Migration', () => {
+  const testVm = getVmManifest('Container', testName);
+  const vm = new VirtualMachine(testVm.metadata.name, testVm.metadata.namespace);
+
+  const MIGRATE_VM = 'Migrate Virtual Machine';
+  const CANCEL_MIGRATION = 'Cancel Virtual Machine Migration';
+
+  beforeEach(() => {
+    createResources([testVm]);
+  });
+
+  afterEach(() => {
+    deleteResources([testVm]);
+  });
+
+  it('Migrate VM action button is displayed appropriately', async() => {
+    await vm.navigateToTab(overviewTab);
+    expect(await getDetailActionDropdownOptions()).not.toContain(MIGRATE_VM);
+    expect(await getDetailActionDropdownOptions()).not.toContain(CANCEL_MIGRATION);
+
+    await vm.action('Start');
+    expect(await getDetailActionDropdownOptions()).toContain(MIGRATE_VM);
+    expect(await getDetailActionDropdownOptions()).not.toContain(CANCEL_MIGRATION);
+
+    await vm.action('Migrate');
+    expect(await getDetailActionDropdownOptions()).not.toContain(MIGRATE_VM);
+    expect(await getDetailActionDropdownOptions()).toContain(CANCEL_MIGRATION);
+  }, VM_BOOTUP_TIMEOUT);
+
+  it('Migrate VM', async() => {
+    await vm.action('Start');
+    const sourceNode = await vmDetailNodeID(vm.namespace, vm.name).getText();
+
+    await vm.action('Migrate');
+    expect((await vmDetailNodeID(vm.namespace, vm.name).getText())).not.toBe(sourceNode);
+  }, VM_ACTIONS_TIMEOUT);
+
+  it('Migrate already migrated VM', async() => {
+    await vm.action('Start');
+    const sourceNode = await vmDetailNodeID(vm.namespace, vm.name).getText();
+
+    await vm.action('Migrate');
+    expect((await vmDetailNodeID(vm.namespace, vm.name).getText())).not.toBe(sourceNode);
+
+    await vm.action('Migrate');
+    expect((await vmDetailNodeID(vm.namespace, vm.name).getText())).toBe(sourceNode);
+  }, VM_ACTIONS_TIMEOUT);
+
+  it('Cancel ongoing VM migration', async() => {
+    await vm.action('Start');
+    const sourceNode = await vmDetailNodeID(vm.namespace, vm.name).getText();
+
+    // Start migration without waiting for it to finish
+    await vm.action('Migrate', false);
+    await vm.waitForStatusIcon(statusIcons.migrating, PAGE_LOAD_TIMEOUT);
+
+    await vm.action('Cancel');
+    expect((await vmDetailNodeID(vm.namespace, vm.name).getText())).toBe(sourceNode);
+  }, VM_BOOTUP_TIMEOUT);
+});
+
 describe('Add/remove disks and NICs on respective VM pages', () => {
   const testVm = getVmManifest('Container', testName);
   const vmName = `vm-disk-nic-${testName}`;
@@ -109,12 +169,12 @@ describe('Add/remove disks and NICs on respective VM pages', () => {
 
   beforeAll(async() => {
     testVm.metadata.name = vmName;
-    execSync(`echo '${JSON.stringify(testNad)}' | kubectl create -f -`);
-    execSync(`echo '${JSON.stringify(testVm)}' | kubectl create -f -`);
+    createResources([testNad, testVm]);
     await vm.action('Start');
   });
 
   afterAll(async() => {
+    deleteResources([testNad, testVm]);
     execSync(`echo '${JSON.stringify(testVm)}' | kubectl delete -f -`);
     execSync(`echo '${JSON.stringify(testNad)}' | kubectl delete -f -`);
   });

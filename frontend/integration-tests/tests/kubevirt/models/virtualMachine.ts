@@ -5,7 +5,7 @@ import { testName } from '../../../protractor.conf';
 import * as vmView from '../../../views/kubevirt/virtualMachine.view';
 import { nameInput } from '../../../views/kubevirt/wizard.view';
 import { confirmAction, resourceRows, isLoaded } from '../../../views/crud.view';
-import { fillInput, PAGE_LOAD_TIMEOUT, selectDropdownOption, VM_BOOTUP_TIMEOUT, VM_STOP_TIMEOUT } from '../utils';
+import { fillInput, PAGE_LOAD_TIMEOUT, selectDropdownOption, VM_BOOTUP_TIMEOUT, VM_STOP_TIMEOUT, VM_ACTIONS_TIMEOUT } from '../utils';
 import { DetailView } from './detailView';
 import { VirtualMachineInstance } from './virtualMachineInstance';
 import { detailViewAction } from '../../../views/kubevirt/vm.actions.view';
@@ -26,7 +26,7 @@ export class VirtualMachine extends DetailView {
     return vmi;
   }
 
-  async action(action: string) {
+  async action(action: string, waitForAction?: boolean) {
     await this.navigateToTab(vmView.overviewTab);
 
     let confirmDialog = true;
@@ -35,27 +35,35 @@ export class VirtualMachine extends DetailView {
     }
 
     await detailViewAction(action, confirmDialog);
-
-    switch (action) {
-      case 'Start':
-        await this.waitForStatusIcon(vmView.statusIcons.running, VM_BOOTUP_TIMEOUT);
-        break;
-      case 'Restart':
-        await this.waitForStatusIcon(vmView.statusIcons.starting, VM_BOOTUP_TIMEOUT);
-        await this.waitForStatusIcon(vmView.statusIcons.running, VM_BOOTUP_TIMEOUT);
-        break;
-      case 'Stop':
-        await this.waitForStatusIcon(vmView.statusIcons.off, VM_STOP_TIMEOUT);
-        break;
-      case 'Clone':
-        await browser.wait(until.presenceOf(nameInput), PAGE_LOAD_TIMEOUT);
-        break;
-      case 'Delete':
-        // wait for redirect
-        await browser.wait(until.textToBePresentInElement(vmView.resourceTitle, 'Virtual Machines'), PAGE_LOAD_TIMEOUT);
-        break;
-      default:
-        throw Error('Received unexpected action.');
+    if (waitForAction !== false) {
+      switch (action) {
+        case 'Start':
+          await this.waitForStatusIcon(vmView.statusIcons.running, VM_BOOTUP_TIMEOUT);
+          break;
+        case 'Restart':
+          await this.waitForStatusIcon(vmView.statusIcons.starting, VM_BOOTUP_TIMEOUT);
+          await this.waitForStatusIcon(vmView.statusIcons.running, VM_BOOTUP_TIMEOUT);
+          break;
+        case 'Stop':
+          await this.waitForStatusIcon(vmView.statusIcons.off, VM_STOP_TIMEOUT);
+          break;
+        case 'Clone':
+          await browser.wait(until.presenceOf(nameInput), PAGE_LOAD_TIMEOUT);
+          break;
+        case 'Migrate':
+          await this.waitForStatusIcon(vmView.statusIcons.migrating, PAGE_LOAD_TIMEOUT);
+          await this.waitForStatusIcon(vmView.statusIcons.running, VM_ACTIONS_TIMEOUT);
+          break;
+        case 'Cancel':
+          await this.waitForStatusIcon(vmView.statusIcons.running, PAGE_LOAD_TIMEOUT);
+          break;
+        case 'Delete':
+          // wait for redirect
+          await browser.wait(until.textToBePresentInElement(vmView.resourceTitle, 'Virtual Machines'), PAGE_LOAD_TIMEOUT);
+          break;
+        default:
+          throw Error('Received unexpected action.');
+      }
     }
   }
 

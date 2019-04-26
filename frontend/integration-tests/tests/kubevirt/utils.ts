@@ -47,10 +47,33 @@ export function removeLeakedResources(leakedResources: Set<string>) {
   leakedResources.clear();
 }
 
+export function createResources(resources) {
+  resources.forEach(resource => {
+    execSync(`echo '${JSON.stringify(resource)}' | kubectl create -f -`);
+  });
+}
+
+export function deleteResources(resources) {
+  resources.forEach(resource => {
+    const kind = resource.kind === 'NetworkAttachmentDefinition' ? 'net-attach-def' : resource.kind;
+    execSync(`kubectl delete -n ${resource.metadata.namespace} --cascade ${kind} ${resource.metadata.name}`);
+  });
+}
+
 export async function selectDropdownOption(dropdownId: string, option: string) {
   await browser.wait(until.elementToBeClickable($(dropdownId)))
     .then(() => $(dropdownId).click());
   await $(`${dropdownId} + ul`).element(by.linkText(option)).click();
+}
+
+export async function getDropdownOptions(dropdownId: string): Promise<string[]> {
+  const options = [];
+  await $(`${dropdownId} + ul`).$$('li').each(async(element) => {
+    element.getText().then((text) => {
+      options.push(text);
+    });
+  });
+  return options;
 }
 
 export async function fillInput(elem: ElementFinder, value: string) {

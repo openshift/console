@@ -34,6 +34,7 @@ export const statusIcons = {
   starting: 'pficon-pending',
   importError: 'pficon-error-circle-o',
   importing: 'pficon-import',
+  migrating: 'pficon-migration',
   running: 'pficon-on-running',
   off: 'pficon-off',
 };

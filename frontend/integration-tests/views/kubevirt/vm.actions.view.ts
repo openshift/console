@@ -6,8 +6,8 @@ export const listViewVmStatus = (name: string) => rowForName(name).$('.kubevirt-
 
 const listViewKebabDropdown = '.co-kebab__button';
 const listViewKebabDropdownMenu = '.co-kebab__dropdown';
-const detailViewDropdown = '.co-m-nav-title  button';
-const detailViewDropdownMenu = '.dropdown-menu-right';
+export const detailViewDropdown = '.co-m-nav-title  button';
+export const detailViewDropdownMenu = '.dropdown-menu-right';
 
 /**
  * Selects option link from given dropdown element.
@@ -42,3 +42,22 @@ export const detailViewAction = async(action, confirm?) => {
   }
 };
 
+/**
+ * Returns available options from Action.
+ * Temporary method that should be superseded by more general getDropdownOptions method in utils.ts
+ * once https://github.com/openshift/console/issues/1492 is resolved
+ */
+export async function getDetailActionDropdownOptions(): Promise<string[]> {
+  const getActionsDropdown = () => $$(detailViewDropdown).first();
+  await browser.wait(until.elementToBeClickable(getActionsDropdown())).then(() => getActionsDropdown().click());
+
+  const options = [];
+  await $('ul.dropdown-menu-right').$$('li').each(async(element) => {
+    element.getText().then((text) => {
+      options.push(text);
+    });
+  });
+
+  await browser.wait(until.elementToBeClickable(getActionsDropdown())).then(() => getActionsDropdown().click());
+  return options;
+}

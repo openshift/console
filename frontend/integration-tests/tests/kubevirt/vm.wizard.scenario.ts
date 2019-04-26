@@ -1,7 +1,6 @@
 /* eslint-disable no-undef, max-nested-callbacks */
 import { execSync } from 'child_process';
 import { OrderedMap } from 'immutable';
-//import { browser, ExpectedConditions as until } from 'protractor';
 import { browser } from 'protractor';
 
 // eslint-disable-next-line no-unused-vars
@@ -10,7 +9,6 @@ import { appHost, testName } from '../../protractor.conf';
 import { errorMessage, isLoaded } from '../../views/crud.view';
 import { statusIcons } from '../../views/kubevirt/virtualMachine.view';
 import { basicVmConfig, glusterfsDisk, hddDisk, networkInterface, testNad } from './mocks';
-//import * as wizardView from '../../views/kubevirt/wizard.view';
 import Wizard from './models/wizard';
 import { VirtualMachine } from './models/virtualMachine';
 
