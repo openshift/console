@@ -1,5 +1,15 @@
-.btn-link--no-padding {
+.btn-link--no-btn-default-values {
+  border: 0;
+  font-size: unset;
+  font-weight: unset;
+  line-height: unset;
   padding: 0;
+  text-align: unset;
+  white-space: normal;
+}
+
+.btn-link--truncated {
+  white-space: nowrap;
 }
 
 .co-required:after {

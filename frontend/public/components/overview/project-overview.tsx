@@ -13,7 +13,6 @@ import {
   pluralize,
   ResourceIcon,
   resourceObjPath,
-  resourcePath,
 } from '../utils';
 
 import {
@@ -210,29 +209,14 @@ const projectOverviewListItemDispatchToProps = (dispatch): ProjectOverviewListIt
 const ProjectOverviewListItem = connect<ProjectOverviewListItemPropsFromState, ProjectOverviewListItemPropsFromDispatch, ProjectOverviewListItemOwnProps>(projectOverviewListItemStateToProps, projectOverviewListItemDispatchToProps)(
   ({dismissDetails, item, metrics, selectItem, selectedUID}: ProjectOverviewListItemProps) => {
     const {current, obj} = item;
-    const {namespace, name, uid} = obj.metadata;
+    const {name, uid} = obj.metadata;
     const {kind} = obj;
     // Hide metrics when a selection is active.
     const hasSelection = !!selectedUID;
     const isSelected = uid === selectedUID;
     const className = classnames(`project-overview__item project-overview__item--${kind}`, {'project-overview__item--selected': isSelected});
-    const heading = <h3 className="project-overview__item-heading">
-      <span className="co-resource-item co-resource-item--truncate">
-        <ResourceIcon kind={kind} />
-        <Link to={resourcePath(kind, name, namespace)} className="co-resource-item__resource-name">
-          {name}
-        </Link>
-        {current && <React.Fragment>,&nbsp;<ControllerLink controller={current} /></React.Fragment>}
-      </span>
-    </h3>;
 
-    const additionalInfo = <div key={uid} className="project-overview__additional-info">
-      <Alerts item={item} />
-      {!hasSelection && <Metrics item={item} metrics={metrics} />}
-      <Status item={item} />
-    </div>;
-
-    const onClick = (e: Event) => {
+    const onClick = (e: React.MouseEvent<any>) => {
       // Don't toggle details if clicking on a link inside the row.
       const target = e.target as HTMLElement;
       if (target.tagName.toLowerCase() === 'a') {
@@ -245,6 +229,22 @@ const ProjectOverviewListItem = connect<ProjectOverviewListItemPropsFromState, P
         selectItem(uid);
       }
     };
+
+    const heading = <h3 className="project-overview__item-heading">
+      <span className="co-resource-item co-resource-item--truncate">
+        <ResourceIcon kind={kind} />
+        <button type="button" onClick={onClick} className="btn btn-link btn-link--truncated btn-link--no-btn-default-values co-resource-item__resource-name">
+          {name}
+        </button>
+        {current && <React.Fragment>,&nbsp;<ControllerLink controller={current} /></React.Fragment>}
+      </span>
+    </h3>;
+
+    const additionalInfo = <div key={uid} className="project-overview__additional-info">
+      <Alerts item={item} />
+      {!hasSelection && <Metrics item={item} metrics={metrics} />}
+      <Status item={item} />
+    </div>;
 
     return <ListView.Item
       onClick={onClick}
