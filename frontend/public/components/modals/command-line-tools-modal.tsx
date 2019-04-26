@@ -14,6 +14,7 @@ export const commandLineToolsModal = createModalLauncher(
       <p><ExternalLink href={OC_DOWNLOAD_LINK} text="Download oc" /></p>
       <hr />
       <h5>odo - Developer-focused CLI for OpenShift</h5>
+      <p><span className="label label-warning">Tech Preview</span></p>
       <p>OpenShift Do (odo) is a fast, iterative, and straightforward CLI tool for developers who write, build, and deploy applications on OpenShift.</p>
       <p>odo abstracts away complex Kubernetes and OpenShift concepts, thus allowing developers to focus on what is most important to them: code.</p>
       <p><ExternalLink href={ODO_DOWNLOAD_LINK} text="Download odo" /></p>
