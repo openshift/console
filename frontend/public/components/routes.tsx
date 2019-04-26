@@ -234,7 +234,7 @@ const CustomRouteHelp: React.SFC<CustomRouteHelpProps> = ({host, routerCanonical
         as the alias.</p>
       </div>
     }>
-    <button className="btn btn-link btn-link--no-padding" type="button">Do you need to set up custom DNS? <QuestionCircleIcon /></button>
+    <button className="btn btn-link btn-link--no-btn-default-values" type="button">Do you need to set up custom DNS? <QuestionCircleIcon /></button>
   </Popover>;
 
 const RouteIngressStatus: React.SFC<RouteIngressStatusProps> = ({ingresses, annotations}) =>
