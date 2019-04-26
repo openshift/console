@@ -16,6 +16,7 @@ import {
   Loading,
   NsDropdown,
   PageHeading,
+  SelectorInput,
   Timestamp,
   units,
 } from './utils';
@@ -62,6 +63,7 @@ export class DeployImage extends React.Component<DeployImageProps, DeployImageSt
       loading: false,
       inProgress: false,
       name: '',
+      labels: [],
     };
   }
 
@@ -88,6 +90,10 @@ export class DeployImage extends React.Component<DeployImageProps, DeployImageSt
 
   onNameChange: React.ReactEventHandler<HTMLInputElement> = event => {
     this.setState({name: event.currentTarget.value});
+  };
+
+  onLabelsChange = (labels: string[]) => {
+    this.setState({labels});
   };
 
   search = event => {
@@ -181,7 +187,7 @@ export class DeployImage extends React.Component<DeployImageProps, DeployImageSt
 
     const ports = getPorts(isi);
 
-    const labels = {app: name};
+    const labels = _.isEmpty(this.state.labels) ? {app: name} : SelectorInput.objectify(this.state.labels);
 
     const errorState = err => this.setState({error: this.state.error ? `${this.state.error}; ${err.message}` : err.message});
 
@@ -306,7 +312,7 @@ export class DeployImage extends React.Component<DeployImageProps, DeployImageSt
 
   render() {
     const title = 'Deploy Image';
-    const { loading, isi, name, searchError } = this.state;
+    const { loading, isi, name, labels, searchError } = this.state;
     const ports = getPorts(isi);
 
     return <React.Fragment>
@@ -397,6 +403,13 @@ export class DeployImage extends React.Component<DeployImageProps, DeployImageSt
                   <div className="help-block">Identifies the resources created for this image.</div>
                 </div>
               </div>
+              <div className="form-group co-deploy-image__labels">
+                <label htmlFor="tags-input" className="control-label">Labels</label>
+                <SelectorInput labelClassName="co-text-deploymentconfig" onChange={this.onLabelsChange} tags={labels} />
+                <div className="help-block" id="labels-help">
+                  If no labels are specified, app={name || '<name>'} will be added.
+                </div>
+              </div>
               <div>
                 <label>Environment Variables</label>
                 <FieldLevelHelp content={
@@ -423,16 +436,17 @@ export class DeployImage extends React.Component<DeployImageProps, DeployImageSt
 }
 
 export type DeployImageProps = {
-  location: any,
+  location: any;
 };
 
 export type DeployImageState = {
-  namespace: string,
-  imageName: string,
-  inProgress: boolean,
-  loading: boolean,
-  isi?: any,
-  name: string,
-  error?: any,
-  searchError?: string,
+  namespace: string;
+  imageName: string;
+  inProgress: boolean;
+  loading: boolean;
+  isi?: any;
+  name: string;
+  labels: string[];
+  error?: any;
+  searchError?: string;
 };
