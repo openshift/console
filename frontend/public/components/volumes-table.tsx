@@ -119,8 +119,8 @@ const VolumesTableRow = ({obj: volume, index, key, style}) => {
 
   return (
     <TableRow id={`${name}-${mountPath}`} index={index} trKey={key} style={style}>
-      <TableData className={volumeRowColumnClasses[0]}>{name}</TableData>
-      <TableData className={classNames(volumeRowColumnClasses[1], 'co-break-word')}>{mountPath}</TableData>
+      <TableData className={volumeRowColumnClasses[0]} data-test-id="name">{name}</TableData>
+      <TableData className={classNames(volumeRowColumnClasses[1], 'co-break-word')} data-test-id="path">{mountPath}</TableData>
       <TableData className={volumeRowColumnClasses[2]}>{subPath}</TableData>
       <TableData className={volumeRowColumnClasses[3]}>
         <VolumeType volume={volumeDetail} namespace={resource.metadata.namespace} />

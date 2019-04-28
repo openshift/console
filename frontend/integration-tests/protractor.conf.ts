@@ -102,6 +102,9 @@ export const config: Config = {
     secrets: suite([
       'tests/secrets.scenario.ts',
     ]),
+    storage: suite([
+      'tests/storage.scenario.ts',
+    ]),
     crud: suite([
       'tests/crud.scenario.ts',
       'tests/secrets.scenario.ts',
@@ -143,6 +146,7 @@ export const config: Config = {
     e2e: suite([
       'tests/crud.scenario.ts',
       'tests/secrets.scenario.ts',
+      'tests/storage.scenario.ts',
       'tests/filter.scenario.ts',
       'tests/modal-annotations.scenario.ts',
       'tests/environment.scenario.ts',
@@ -169,6 +173,7 @@ export const config: Config = {
       'tests/crud.scenario.ts',
       'tests/overview/overview.scenareio.ts',
       'tests/secrets.scenario.ts',
+      'tests/storage.scenario.ts',
       'tests/olm/**/*.scenario.ts',
       'tests/service-catalog/**/*.scenario.ts',
       'tests/filter.scenario.ts',
