@@ -59,7 +59,7 @@ const StorageClassDetails: React.SFC<StorageClassDetailsProps> = ({obj}) => <Rea
         <dt>Reclaim Policy</dt>
         <dd>{obj.reclaimPolicy || '-'}</dd>
         <dt>Default Class</dt>
-        <dd>{isDefaultClass(obj)}</dd>
+        <dd>{isDefaultClass(obj).toString()}</dd>
       </div>
     </div>
   </div>
