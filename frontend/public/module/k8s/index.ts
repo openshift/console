@@ -12,6 +12,7 @@ export * from './k8s-models';
 export * from './label-selector';
 export * from './cluster-operator';
 export * from './cluster-settings';
+export * from './template';
 
 export type OwnerReference = {
   name: string;
@@ -277,6 +278,45 @@ export type CustomResourceDefinitionKind = {
     };
     scope?: 'Namespaced';
   }
+} & K8sResourceKind;
+
+export type TemplateParameter = {
+  name: string;
+  value?: string;
+  displayName?: string;
+  description?: string;
+  generate?: string;
+  required?: boolean;
+};
+
+export type TemplateKind = {
+  message?: string;
+  objects: any[];
+  parameters: TemplateParameter[];
+  labels?: any[];
+} & K8sResourceKind;
+
+type TemplateInstanceObject = {
+  ref: ObjectReference;
+};
+
+export type TemplateInstanceKind = {
+  spec: {
+    template: TemplateKind;
+    secret: {
+      name: string;
+    };
+    requester?: {
+      username?: string;
+      uid?: string;
+      groups?: string[];
+      extra?: any;
+    };
+  };
+  status?: {
+    conditions: any[];
+    objects: TemplateInstanceObject[];
+  };
 } & K8sResourceKind;
 
 export type MachineSpec = {

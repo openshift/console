@@ -5,7 +5,7 @@ import * as _ from 'lodash-es';
 import * as classNames from 'classnames';
 
 // eslint-disable-next-line no-unused-vars
-import { K8sResourceKind } from '../../module/k8s';
+import { K8sResourceKind, TemplateKind } from '../../module/k8s';
 import * as threeScaleImg from '../../imgs/logos/3scale.svg';
 import * as aerogearImg from '../../imgs/logos/aerogear.svg';
 import * as amqImg from '../../imgs/logos/amq.svg';
@@ -177,29 +177,33 @@ const logos = new Map()
   .set('icon-xamarin', xamarinImg)
   .set('icon-zend', zendImg);
 
-export const normalizeIconClass = (iconClass) => {
+export const normalizeIconClass = (iconClass: string): string => {
   return _.startsWith(iconClass, 'icon-') ? `font-icon ${iconClass}` : iconClass;
 };
 
-export const getImageForIconClass = (iconClass) => {
+export const getImageForIconClass = (iconClass: string): string => {
   return logos.get(iconClass);
 };
 
-export const getServiceClassIcon = (serviceClass) => {
+export const getServiceClassIcon = (serviceClass: K8sResourceKind): string => {
   return _.get(serviceClass, ['spec', 'externalMetadata', 'console.openshift.io/iconClass'], logos.get('icon-catalog'));
 };
 
-export const getServiceClassImage = (serviceClass) => {
+export const getServiceClassImage = (serviceClass: K8sResourceKind): string => {
   const iconClass = getServiceClassIcon(serviceClass);
   const iconClassImg = getImageForIconClass(iconClass);
   return _.get(serviceClass, ['spec', 'externalMetadata', 'imageUrl']) || iconClassImg;
 };
 
-export const getImageStreamIcon = (tag) => {
+export const getImageStreamIcon = (tag: string): string => {
   return _.get(tag, 'annotations.iconClass');
 };
 
-export const ClusterServiceClassIcon: React.SFC<ClusterServiceClassIconProps> = ({serviceClass, iconSize}) => {
+export const getTemplateIcon = (template: TemplateKind): string => {
+  return _.get(template, 'metadata.annotations.iconClass');
+};
+
+export const ClusterServiceClassIcon: React.FC<ClusterServiceClassIconProps> = ({serviceClass, iconSize}) => {
   const iconClass = getServiceClassIcon(serviceClass);
   const imageUrl = getServiceClassImage(serviceClass);
   return <span className="co-catalog-item-icon">
@@ -211,11 +215,11 @@ export const ClusterServiceClassIcon: React.SFC<ClusterServiceClassIconProps> = 
 ClusterServiceClassIcon.displayName = 'ClusterServiceClassIcon';
 
 export type ClusterServiceClassIconProps = {
-  serviceClass: K8sResourceKind,
-  iconSize?: string,
+  serviceClass: K8sResourceKind;
+  iconSize?: string;
 };
 
-export const ImageStreamIcon: React.SFC<ImageStreamIconProps> = ({tag, iconSize}) => {
+export const ImageStreamIcon: React.FC<ImageStreamIconProps> = ({tag, iconSize}) => {
   const iconClass = getImageStreamIcon(tag);
   const iconClassImg = getImageForIconClass(iconClass);
   return <span className="co-catalog-item-icon">
@@ -226,7 +230,7 @@ export const ImageStreamIcon: React.SFC<ImageStreamIconProps> = ({tag, iconSize}
 };
 
 export type ImageStreamIconProps = {
-  tag: any,
-  iconSize?: string,
+  tag: any;
+  iconSize?: string;
 };
 

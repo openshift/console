@@ -3,6 +3,7 @@ import * as _ from 'lodash-es';
 import * as PropTypes from 'prop-types';
 import { Helmet } from 'react-helmet';
 
+import { ANNOTATIONS } from '../../const';
 import { CatalogTileViewPage } from './catalog-items';
 import { serviceClassDisplayName, referenceForModel } from '../../module/k8s';
 import { withStartGuide } from '../start-guide';
@@ -18,6 +19,7 @@ import {
   getImageStreamIcon,
   getServiceClassIcon,
   getServiceClassImage,
+  getTemplateIcon,
 } from './catalog-item-icon';
 import { ClusterServiceClassModel, ClusterServiceVersionModel } from '../../models';
 import { providedAPIsFor, referenceForProvidedAPI } from '../operator-lifecycle-manager';
@@ -32,10 +34,11 @@ export class CatalogListPage extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    const {clusterserviceclasses, imagestreams, clusterServiceVersions, namespace} = this.props;
+    const {serviceServiceClasses, templates, imageStreams, clusterServiceVersions, namespace} = this.props;
     if (!_.isEqual(namespace, prevProps.namespace) ||
-      !_.isEqual(clusterserviceclasses, prevProps.clusterserviceclasses) ||
-      !_.isEqual(imagestreams, prevProps.imagestreams) ||
+      !_.isEqual(serviceServiceClasses, prevProps.serviceServiceClasses) ||
+      !_.isEqual(templates, prevProps.templates) ||
+      !_.isEqual(imageStreams, prevProps.imageStreams) ||
       !_.isEqual(clusterServiceVersions, prevProps.clusterServiceVersions)) {
       const items = this.getItems();
       this.setState({items});
@@ -43,21 +46,26 @@ export class CatalogListPage extends React.Component {
   }
 
   getItems() {
-    const {clusterserviceclasses, imagestreams, clusterServiceVersions, loaded} = this.props;
+    const {clusterServiceClasses, templates, imageStreams, clusterServiceVersions, loaded} = this.props;
     let clusterServiceClassItems = [];
-    let imageStreamsItems = [];
+    let templateItems = [];
+    let imageStreamItems = [];
     let operatorProvidedAPIs = [];
 
     if (!loaded) {
       return [];
     }
 
-    if (clusterserviceclasses) {
-      clusterServiceClassItems = this.normalizeClusterServiceClasses(clusterserviceclasses.data, 'ClusterServiceClass');
+    if (clusterServiceClasses) {
+      clusterServiceClassItems = this.normalizeClusterServiceClasses(clusterServiceClasses.data);
     }
 
-    if (imagestreams) {
-      imageStreamsItems = this.normalizeImagestreams(imagestreams.data, 'ImageStream');
+    if (templates) {
+      templateItems = this.normalizeTemplates(templates.data);
+    }
+
+    if (imageStreams) {
+      imageStreamItems = this.normalizeImageStreams(imageStreams.data);
     }
 
     if (clusterServiceVersions) {
@@ -85,10 +93,10 @@ export class CatalogListPage extends React.Component {
         }));
     }
 
-    return _.sortBy([...clusterServiceClassItems, ...imageStreamsItems, ...operatorProvidedAPIs], 'tileName');
+    return _.sortBy([...clusterServiceClassItems, ...templateItems, ...imageStreamItems, ...operatorProvidedAPIs], 'tileName');
   }
 
-  normalizeClusterServiceClasses(serviceClasses, kind) {
+  normalizeClusterServiceClasses(serviceClasses) {
     const {namespace = ''} = this.props;
     const activeServiceClasses = _.reject(serviceClasses, serviceClass => {
       const tags = _.get(serviceClass, 'spec.tags');
@@ -111,7 +119,7 @@ export class CatalogListPage extends React.Component {
 
       return {
         obj: serviceClass,
-        kind,
+        kind: 'ClusterServiceClass',
         tileName,
         tileIconClass,
         tileImgUrl,
@@ -127,29 +135,54 @@ export class CatalogListPage extends React.Component {
     });
   }
 
-  normalizeImagestreams(imagestreams, kind) {
-    const builderImageStreams = _.filter(imagestreams, imagestream => {
-      return isBuilder(imagestream);
-    });
+  normalizeTemplates(templates) {
+    return _.reduce(templates, (acc, template) => {
+      const { name, namespace, annotations = {} } = template.metadata;
+      const tags = (annotations.tags || '').split(/\s*,\s*/);
+      if (tags.includes('hidden')) {
+        return acc;
+      }
+      const iconClass = getTemplateIcon(template);
+      const tileImgUrl = getImageForIconClass(iconClass);
+      const tileIconClass = tileImgUrl ? null : iconClass;
+      acc.push({
+        obj: template,
+        kind: 'Template',
+        tileName: annotations[ANNOTATIONS.displayName] || name,
+        tileIconClass,
+        tileImgUrl,
+        tileDescription: annotations.description,
+        tags,
+        createLabel: 'Instantiate Template',
+        tileProvider: annotations[ANNOTATIONS.providerDisplayName],
+        documentationUrl: annotations[ANNOTATIONS.documentationURL],
+        supportUrl: annotations[ANNOTATIONS.supportURL],
+        href: `/catalog/instantiate-template?template=${name}&template-ns=${namespace}&preselected-ns=${this.props.namespace || ''}`,
+      });
+      return acc;
+    }, []);
+  }
 
-    return _.map(builderImageStreams, imageStream => {
+  normalizeImageStreams(imageStreams) {
+    const builderimageStreams = _.filter(imageStreams, isBuilder);
+    return _.map(builderimageStreams, imageStream => {
       const { namespace: currentNamespace = '' } = this.props;
+      const { name, namespace } = imageStream.metadata;
       const tag = getMostRecentBuilderTag(imageStream);
-      const tileName = _.get(imageStream, ['metadata', 'annotations', 'openshift.io/display-name']) || imageStream.metadata.name;
+      const tileName = _.get(imageStream, ['metadata', 'annotations', ANNOTATIONS.displayName]) || name;
       const iconClass = getImageStreamIcon(tag);
       const tileImgUrl = getImageForIconClass(iconClass);
       const tileIconClass = tileImgUrl ? null : iconClass;
       const tileDescription = _.get(tag, 'annotations.description');
       const tags = getAnnotationTags(tag);
       const createLabel = 'Create Application';
-      const tileProvider = _.get(tag, 'annotations.openshift.io/provider-display-name');
-      const { name, namespace } = imageStream.metadata;
+      const tileProvider = _.get(tag, ['annotations', ANNOTATIONS.providerDisplayName]);
       const href = `/catalog/source-to-image?imagestream=${name}&imagestream-ns=${namespace}&preselected-ns=${currentNamespace}`;
       const builderImageTag = _.head(_.get(imageStream,'spec.tags'));
       const sampleRepo = _.get(builderImageTag, 'annotations.sampleRepo');
       return {
         obj: imageStream,
-        kind,
+        kind: 'ImageStream',
         tileName,
         tileIconClass,
         tileImgUrl,
@@ -193,13 +226,20 @@ export const Catalog = connectToFlags(FLAGS.OPENSHIFT, FLAGS.SERVICE_CATALOG, FL
       isList: true,
       kind: referenceForModel(ClusterServiceClassModel),
       namespaced: false,
-      prop: 'clusterserviceclasses',
+      prop: 'clusterServiceClasses',
     }] : []),
     ...(flags.OPENSHIFT ? [{
       isList: true,
       kind: 'ImageStream',
       namespace: 'openshift',
-      prop: 'imagestreams',
+      prop: 'imageStreams',
+    }] : []),
+    // TODO: Check specifically for template service broker.
+    ...((flags.OPENSHIFT && !flags.SERVICE_CATALOG) ? [{
+      isList: true,
+      kind: 'Template',
+      namespace: 'openshift',
+      prop: 'templates',
     }] : []),
     ...(flags.OPERATOR_LIFECYCLE_MANAGER ? [{
       isList: true,
