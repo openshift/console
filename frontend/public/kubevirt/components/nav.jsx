@@ -24,7 +24,6 @@ const PageNav = ({ onNavSelect, ResourceClusterLink, HrefLink, ResourceNSLink, M
   <Nav aria-label="Nav" onSelect={onNavSelect}>
     <NavList>
       <NavSection title="Home">
-        <HrefLink href="/dashboards" name="Dashboards" activePath="/dashboards/" required={FLAGS.OPENSHIFT} />
         <ResourceClusterLink resource="projects" name="Projects" required={FLAGS.OPENSHIFT} />
         {
           // Show different status pages based on OpenShift vs native Kubernetes.
