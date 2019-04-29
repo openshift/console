@@ -2,6 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { Button } from 'patternfly-react';
 
 import { createProjectMessageStateToProps } from '../ui/ui-reducers';
 import { DocumentationSidebar, Disabled } from './utils';
@@ -10,50 +11,39 @@ import { ProjectModel, RoleModel, StorageClassModel } from '../models';
 
 const WHITELIST = [RoleModel.kind, StorageClassModel.kind];
 
-const seenGuide: string = 'seenGuide';
-
-export class StartGuide extends React.Component<StartGuideProps, StartGuideState> {
-  constructor(props) {
-    super(props);
-
-    // TODO: The dismissable logic is not currently being used, but we'll
-    // probably want a general start guide for OpenShift separate from the no
-    // projects message. Leaving this for now.
-    this.dismiss = this.dismiss.bind(this);
-    let {visible} = props;
-    try {
-      visible = visible || !localStorage.getItem(seenGuide);
-    } catch (ignored) {
-      // ignored
-    }
-    this.state = {
-      visible,
-    };
+export const StartGuide: React.FC<StartGuideProps> = (props) => {
+  const {dismissKey, startGuide} = props;
+  let visible;
+  try {
+    visible = !dismissKey || !localStorage.getItem(dismissKey);
+  } catch (ignored) {
+    // ignored
   }
+  const [isVisible, setIsVisible] = React.useState(visible);
 
-  dismiss() {
-    this.setState({
-      visible: false,
-    });
-    localStorage.setItem(seenGuide, 'true');
-  }
+  const dismiss = () => {
+    setIsVisible(false);
+    localStorage.setItem(dismissKey, 'true');
+  };
 
-  render() {
-    const { visible } = this.state;
-    return visible ? <OpenShiftGettingStarted /> : null;
-  }
-}
+  return isVisible
+    ? <div className="co-well">
+      {dismissKey && <Button className="co-well__close-button" aria-label="Close" bsStyle="link" onClick={dismiss}><i className="pficon pficon-close" aria-hidden="true" /></Button>}
+      {startGuide}
+    </div>
+    : null;
+};
 
 export const StartGuidePage = () => <div className="co-p-has-sidebar">
   <div className="co-p-has-sidebar__body">
-    <StartGuide visible />
+    <StartGuide startGuide={<OpenShiftGettingStarted />} />
   </div>
   <DocumentationSidebar />
 </div>;
 
 export const OpenShiftGettingStarted = connect(createProjectMessageStateToProps)(
   ({createProjectMessage}) =>
-    <div className="co-well">
+    <React.Fragment>
       <h4>Getting Started</h4>
       { createProjectMessage
         ? <p className="co-pre-line">{createProjectMessage}</p>
@@ -65,7 +55,7 @@ export const OpenShiftGettingStarted = connect(createProjectMessageStateToProps)
       <Link to="/k8s/cluster/projects">
         <button className="btn btn-info">View My Projects</button>
       </Link>
-    </div>
+    </React.Fragment>
 );
 
 export const withStartGuide = (WrappedComponent, doNotDisable: boolean = false) =>
@@ -81,7 +71,7 @@ export const withStartGuide = (WrappedComponent, doNotDisable: boolean = false) 
 
       if (flags.SHOW_OPENSHIFT_START_GUIDE) {
         return <React.Fragment>
-          <StartGuide />
+          <StartGuide startGuide={<OpenShiftGettingStarted />} />
           {
             // Whitelist certain resource kinds that should not be disabled when no projects are available.
             // Disabling should also be optional
@@ -97,12 +87,8 @@ export const withStartGuide = (WrappedComponent, doNotDisable: boolean = false) 
 
 /* eslint-disable no-unused-vars, no-undef */
 type StartGuideProps = {
-  dismissible?: boolean;
-  visible?: boolean;
-};
-
-type StartGuideState = {
-  visible: boolean;
+  dismissKey?: string;
+  startGuide: React.ReactNode;
 };
 
 export type WithStartGuideProps = {

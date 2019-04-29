@@ -19,7 +19,7 @@ export const EVENTS = {
 export const ALL_NAMESPACES_KEY = '#ALL_NS#';
 
 // Prefix our localStorage items to avoid conflicts if another app ever runs on the same domain.
-const STORAGE_PREFIX = 'bridge';
+export const STORAGE_PREFIX = 'bridge';
 
 // This localStorage key predates the storage prefix.
 export const NAMESPACE_LOCAL_STORAGE_KEY = 'dropdown-storage-namespaces';
