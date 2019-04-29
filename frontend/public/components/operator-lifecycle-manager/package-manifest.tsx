@@ -26,8 +26,8 @@ export const PackageManifestRow: React.SFC<PackageManifestRowProps> = (props) =>
   const {displayName, icon = [], version, provider} = channel.currentCSVDesc;
 
   const subscriptionLink = () => ns !== ALL_NAMESPACES_KEY
-    ? <Link to={`/operatormanagement/ns/${ns}/${SubscriptionModel.plural}?name=${subscription.metadata.name}`}>View<span className="visible-lg-inline"> subscription</span></Link>
-    : <Link to={`/operatormanagement/all-namespaces/${SubscriptionModel.plural}?name=${obj.metadata.name}`}>View<span className="visible-lg-inline"> subscriptions</span></Link>;
+    ? <Link to={`/operatormanagement/ns/${ns}?name=${subscription.metadata.name}`}>View<span className="visible-lg-inline"> subscription</span></Link>
+    : <Link to={`/operatormanagement/all-namespaces?name=${obj.metadata.name}`}>View<span className="visible-lg-inline"> subscriptions</span></Link>;
 
   const createSubscriptionLink = () => `/k8s/ns/${ns === ALL_NAMESPACES_KEY ? defaultNS : ns}/${SubscriptionModel.plural}/~new?pkg=${obj.metadata.name}&catalog=${catalogSourceName}&catalogNamespace=${catalogSourceNamespace}`;
 
