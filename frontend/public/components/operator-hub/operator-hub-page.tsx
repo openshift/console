@@ -57,7 +57,7 @@ export const OperatorHubList: React.SFC<OperatorHubListProps> = (props) => {
   });
 
   return <StatusBox
-    data={_.sortBy(items, 'name')}
+    data={items}
     loaded={loaded}
     loadError={loadError}
     label="Resources"
