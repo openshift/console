@@ -326,6 +326,12 @@ kbd {
     max-width: 100% !important;
   }
 
+  &__header-tools {
+    @media(max-width: $grid-float-breakpoint-max) {
+      margin-right: 8px !important;
+    }
+  }
+
   &__main {
     // `z-index: auto` is required for fullscreen terminal
     --pf-c-page__main--ZIndex: auto;

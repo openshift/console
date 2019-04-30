@@ -58,6 +58,7 @@ type jsGlobals struct {
 	Branding                 string `json:"branding"`
 	CustomProductName        string `json:"customProductName"`
 	CustomLogoURL            string `json:"customLogoURL"`
+	StatuspageID             string `json:"statuspageID"`
 	DocumentationBaseURL     string `json:"documentationBaseURL"`
 	GoogleTagManagerID       string `json:"googleTagManagerID"`
 	LoadTestFactor           int    `json:"loadTestFactor"`
@@ -78,6 +79,7 @@ type Server struct {
 	Branding             string
 	CustomProductName    string
 	CustomLogoFile       string
+	StatuspageID         string
 	GoogleTagManagerID   string
 	LoadTestFactor       int
 	DexClient            api.DexClient
@@ -269,6 +271,7 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		KubeAPIServerURL:     s.KubeAPIServerURL,
 		Branding:             s.Branding,
 		CustomProductName:    s.CustomProductName,
+		StatuspageID:         s.StatuspageID,
 		DocumentationBaseURL: s.DocumentationBaseURL.String(),
 		GoogleTagManagerID:   s.GoogleTagManagerID,
 		LoadTestFactor:       s.LoadTestFactor,

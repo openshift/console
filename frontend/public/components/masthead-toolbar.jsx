@@ -12,6 +12,14 @@ import { AboutModal } from './about-modal';
 import { getAvailableClusterUpdates, clusterVersionReference } from '../module/k8s/cluster-settings';
 import { commandLineToolsModal } from './modals';
 
+const SystemStatusButton = ({statuspageData, className}) => !_.isEmpty(_.get(statuspageData, 'incidents'))
+  ? <ToolbarItem className={className}>
+    <a className="pf-c-button pf-m-plain" aria-label="System Status" href={statuspageData.page.url} target="_blank" rel="noopener noreferrer">
+      <span className="pficon pficon-warning-triangle-o co-system-status-icon" aria-hidden="true"></span>
+    </a>
+  </ToolbarItem>
+  : null;
+
 const UpdatesAvailableButton = ({obj, onClick}) => {
   const updatesAvailable = !_.isEmpty(getAvailableClusterUpdates(obj.data));
   return updatesAvailable
@@ -30,11 +38,13 @@ class MastheadToolbar_ extends React.Component {
       isApplicationLauncherDropdownOpen: false,
       isUserDropdownOpen: false,
       isKebabDropdownOpen: false,
+      statuspageData: null,
       username: null,
       isKubeAdmin: false,
       showAboutModal: false,
     };
 
+    this._getStatuspageData = this._getStatuspageData.bind(this);
     this._updateUser = this._updateUser.bind(this);
     this._onUserDropdownToggle = this._onUserDropdownToggle.bind(this);
     this._onUserDropdownSelect = this._onUserDropdownSelect.bind(this);
@@ -52,6 +62,9 @@ class MastheadToolbar_ extends React.Component {
   }
 
   componentDidMount() {
+    if (window.SERVER_FLAGS.statuspageID) {
+      this._getStatuspageData(window.SERVER_FLAGS.statuspageID);
+    }
     this._updateUser();
   }
 
@@ -60,6 +73,12 @@ class MastheadToolbar_ extends React.Component {
       || !_.isEqual(this.props.user, prevProps.user)) {
       this._updateUser();
     }
+  }
+
+  _getStatuspageData(statuspageID) {
+    fetch(`https://${statuspageID}.statuspage.io/api/v2/summary.json`, {headers: {Accept: 'application/json'}})
+      .then(response => response.json())
+      .then(statuspageData => this.setState({ statuspageData }));
   }
 
   _updateUser() {
@@ -263,7 +282,7 @@ class MastheadToolbar_ extends React.Component {
   }
 
   render() {
-    const { isApplicationLauncherDropdownOpen, isHelpDropdownOpen, showAboutModal } = this.state;
+    const { isApplicationLauncherDropdownOpen, isHelpDropdownOpen, showAboutModal, statuspageData } = this.state;
     const { flags } = this.props;
     const resources = [{
       kind: clusterVersionReference,
@@ -274,7 +293,9 @@ class MastheadToolbar_ extends React.Component {
     return (
       <React.Fragment>
         <Toolbar>
-          <ToolbarGroup className="pf-u-screen-reader pf-u-visible-on-md">
+          <ToolbarGroup className="hidden-xs">
+            {/* desktop -- (system status button) */}
+            <SystemStatusButton statuspageData={statuspageData} />
             {/* desktop -- (updates button) */}
             {
               flags[FLAGS.CLUSTER_VERSION] &&
@@ -312,11 +333,13 @@ class MastheadToolbar_ extends React.Component {
               />
             </ToolbarItem>
           </ToolbarGroup>
-          <ToolbarGroup >
+          <ToolbarGroup>
+            {/* mobile -- (system status button) */}
+            <SystemStatusButton statuspageData={statuspageData} className="visible-xs-block" />
             {/* mobile -- kebab dropdown [(cluster manager |) documentation, about (| logout)] */}
-            <ToolbarItem className="pf-u-hidden-on-md">{this._renderMenu(true)}</ToolbarItem>
+            <ToolbarItem className="visible-xs-block">{this._renderMenu(true)}</ToolbarItem>
             {/* desktop -- (user dropdown [logout]) */}
-            <ToolbarItem className="pf-u-screen-reader pf-u-visible-on-md">{this._renderMenu(false)}</ToolbarItem>
+            <ToolbarItem className="hidden-xs">{this._renderMenu(false)}</ToolbarItem>
           </ToolbarGroup>
         </Toolbar>
         {showAboutModal && <AboutModal isOpen={showAboutModal} closeAboutModal={this._closeAboutModal} />}
