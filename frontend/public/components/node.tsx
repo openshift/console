@@ -5,15 +5,14 @@ import * as React from 'react';
 
 import { nodeStatus, makeNodeSchedulable, K8sResourceKind, referenceForModel } from '../module/k8s';
 import { ResourceEventStream } from './events';
-import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
+import { ColHead, List, ListHeader, ListPage, ResourceRow } from './factory';
 import { configureUnschedulableModal } from './modals';
 import { PodsPage } from './pod';
-import { Kebab, navFactory, LabelList, ResourceKebab, SectionHeading, ResourceLink, Timestamp, units, cloudProviderNames, cloudProviderID, pluralize } from './utils';
+import { Kebab, navFactory, LabelList, SectionHeading, ResourceLink, Timestamp, units, cloudProviderNames, cloudProviderID, pluralize } from './utils';
 import { Line, requirePrometheus } from './graphs';
-import { MachineModel, NodeModel, NodeMaintenance } from '../models';
+import { MachineModel, NodeModel } from '../models';
 import { CamelCaseWrap } from './utils/camel-case-wrap';
-import { NodeStatusWithMaintenanceConnected, maintenanceActions } from '../kubevirt/components/node/node';
-import { getResource } from 'kubevirt-web-ui-components';
+import { NodeStatusWithMaintenanceConnected, NodeMaintenanceKebab, NodeDetailsPageWithMaintenance } from '../kubevirt/components/node/node';
 
 const MarkAsUnschedulable = (kind, obj) => ({
   label: 'Mark as Unschedulable',
@@ -28,9 +27,9 @@ const MarkAsSchedulable = (kind, obj) => ({
 });
 
 const { ModifyLabels, ModifyAnnotations, Edit } = Kebab.factory;
-const menuActions = [MarkAsSchedulable, MarkAsUnschedulable, ModifyLabels, ModifyAnnotations, Edit, ...maintenanceActions];
+const menuActions = [MarkAsSchedulable, MarkAsUnschedulable, ModifyLabels, ModifyAnnotations, Edit];
 
-const NodeKebab = ({node}) => <ResourceKebab actions={menuActions} kind="Node" resource={node} resources={[getResource(NodeMaintenance)]} />;
+const NodeKebab = ({node}) => <NodeMaintenanceKebab actions={menuActions} kind="Node" resource={node} />;
 
 const getMachine = (node: K8sResourceKind) => {
   const machine = _.get(node, 'metadata.annotations["machine.openshift.io/machine"]');
@@ -245,9 +244,8 @@ const pages = [
   pods(({obj}) => <PodsPage showTitle={false} fieldSelector={`spec.nodeName=${obj.metadata.name}`} />),
   events(ResourceEventStream),
 ];
-export const NodesDetailsPage = props => <DetailsPage
+export const NodesDetailsPage = props => <NodeDetailsPageWithMaintenance
   {...props}
-  menuActions={menuActions}
   pages={pages}
-  resources={[getResource(NodeMaintenance)]}
+  menuActions={menuActions}
 />;

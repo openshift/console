@@ -1,13 +1,15 @@
 import * as React from 'react';
+import { connect } from 'react-redux';
 import { getResource, findNodeMaintenance, getDeletionTimestamp, NodeStatus } from 'kubevirt-web-ui-components';
 
 import { k8sKill, nodeStatus } from '../../module/okdk8s';
 import { NodeMaintenance } from '../../models';
-import { LoadingInline, StatusIcon, Timestamp } from '../utils/okdutils';
+import { LoadingInline, StatusIcon, Timestamp, ResourceKebab } from '../utils/okdutils';
 import { startMaintenanceModal } from './node-maintenance-modal';
 import { WithResources } from '../utils/withResources';
+import { DetailsPage } from '../factory/okdfactory';
 
-const statusResourceMap = {
+const maintenanceResourceMap = {
   maintenances: {
     resource: getResource(NodeMaintenance),
   },
@@ -31,7 +33,7 @@ const StopMaintenanceAction = (kind, obj, actionArgs) => {
 export const maintenanceActions = [StartMaintenanceAction, StopMaintenanceAction];
 
 export const NodeStatusWithMaintenanceConnected = ({node}) => (
-  <WithResources resourceMap={statusResourceMap}>
+  <WithResources resourceMap={maintenanceResourceMap}>
     <NodeStatusWithMaintenance node={node} />
   </WithResources>
 );
@@ -43,3 +45,30 @@ const NodeStatusWithMaintenance = ({node, maintenances}) => {
   const maintenance = findNodeMaintenance(node, maintenances);
   return maintenance ? <NodeStatus node={node} maintenances={maintenances} TimestampComponent={Timestamp} /> : <StatusIcon status={nodeStatus(node)} />;
 };
+
+const stateToProps = ({k8s}) => ({
+  nodeMaintenanceExists: !!k8s.getIn(['RESOURCES', 'models', NodeMaintenance.kind]),
+});
+
+export const NodeDetailsPageWithMaintenance = connect(stateToProps)(({nodeMaintenanceExists, menuActions, ...rest}) => {
+  const resources = nodeMaintenanceExists ? [getResource(NodeMaintenance)] : null;
+
+  const maintenanceMenuActions = nodeMaintenanceExists ? [...menuActions, ...maintenanceActions] : menuActions;
+
+  return (
+    <DetailsPage
+      {...rest}
+      menuActions={maintenanceMenuActions}
+      resources={resources}
+    />
+  );
+});
+
+const ConnectedNodeMaintenanceKebab = connect(stateToProps)(({nodeMaintenanceExists, actions, ...rest }) => {
+  const maintenanceMenuActions = nodeMaintenanceExists ? [...actions, ...maintenanceActions] : actions;
+  const resources = nodeMaintenanceExists ? [getResource(NodeMaintenance)] : [];
+
+  return <ResourceKebab {...rest} actions={maintenanceMenuActions} resources={resources} />;
+});
+
+export const NodeMaintenanceKebab = props => <ConnectedNodeMaintenanceKebab {...props} />;
