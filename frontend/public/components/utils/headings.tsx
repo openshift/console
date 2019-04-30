@@ -13,6 +13,7 @@ import {
   K8sResourceKindReference,
   referenceForModel,
 } from '../../module/k8s';
+import { ResourceItemDeleting } from '../overview/project-overview';
 
 export const BreadCrumbs: React.SFC<BreadCrumbsProps> = ({breadcrumbs}) => (
   <ol className="breadcrumb">
@@ -70,19 +71,23 @@ export const SectionHeading: React.SFC<SectionHeadingProps> = ({text, children, 
 
 export const SidebarSectionHeading: React.SFC<SidebarSectionHeadingProps> = ({text, children, style}) => <h2 className="sidebar__section-heading" style={style}>{text}{children}</h2>;
 
-export const ResourceOverviewHeading: React.SFC<ResourceOverviewHeadingProps> = ({kindObj, actions, resource}) => <div className="overview__sidebar-pane-head resource-overview__heading">
-  <h1 className="co-m-pane__heading">
-    <div className="co-m-pane__name co-resource-item">
-      <ResourceIcon className="co-m-resource-icon--lg" kind={kindObj.kind} />
-      <Link to={resourcePath(resource.kind, resource.metadata.name, resource.metadata.namespace)} className="co-resource-item__resource-name">
-        {resource.metadata.name}
-      </Link>
-    </div>
-    <div className="co-actions">
-      <ActionsMenu actions={actions.map(a => a(kindObj, resource))} />
-    </div>
-  </h1>
-</div>;
+export const ResourceOverviewHeading: React.SFC<ResourceOverviewHeadingProps> = ({kindObj, actions, resource}) => {
+  const isDeleting = !!resource.metadata.deletionTimestamp;
+  return <div className="overview__sidebar-pane-head resource-overview__heading">
+    <h1 className="co-m-pane__heading">
+      <div className="co-m-pane__name co-resource-item">
+        <ResourceIcon className="co-m-resource-icon--lg" kind={kindObj.kind} />
+        <Link to={resourcePath(resource.kind, resource.metadata.name, resource.metadata.namespace)} className="co-resource-item__resource-name">
+          {resource.metadata.name}
+        </Link>
+        {isDeleting && <ResourceItemDeleting />}
+      </div>
+      {!isDeleting && <div className="co-actions">
+        <ActionsMenu actions={actions.map(a => a(kindObj, resource))} />
+      </div>}
+    </h1>
+  </div>;
+};
 
 /* eslint-disable no-undef */
 export type ActionButtonsProps = {
