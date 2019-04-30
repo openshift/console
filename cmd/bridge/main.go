@@ -85,6 +85,8 @@ func main() {
 	fDexAPIHost := fs.String("dex-api-host", "", "Target host and port of the Dex API service.")
 	fBranding := fs.String("branding", "okd", "Console branding for the masthead logo and title. One of okd, openshift, okdvirt, openshiftvirt, ocp, online, dedicated, or azure. Defaults to okd.")
 	fDocumentationBaseURL := fs.String("documentation-base-url", "", "The base URL for documentation links.")
+	fRegistry := fs.String("registry", "", "The container registry in the format [DOMAIN]/[NAMESPACE]/[PATH]. Example: quay.io/kubevirt")
+	fV2vImageTag := fs.String("v2v-image-tag", "", "Tag for V2V conversion images.")
 	fGoogleTagManagerID := fs.String("google-tag-manager-id", "", "Google Tag Manager ID. External analytics are disabled if this is not set.")
 
 	fLoadTestFactor := fs.Int("load-test-factor", 0, "DEV ONLY. The factor used to multiply k8s API list responses for load testing purposes.")
@@ -164,6 +166,8 @@ func main() {
 		DocumentationBaseURL: documentationBaseURL,
 		GoogleTagManagerID:   *fGoogleTagManagerID,
 		LoadTestFactor:       *fLoadTestFactor,
+		Registry:             *fRegistry, // skip validation
+		V2vImageTag:          *fV2vImageTag,
 	}
 
 	if (*fKubectlClientID == "") != (*fKubectlClientSecret == "" && *fKubectlClientSecretFile == "") {

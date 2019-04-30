@@ -25,8 +25,6 @@ import k8sActions, { types } from '../module/k8s/k8s-actions';
 import '../vendor.scss';
 import '../style.scss';
 
-import { initKubevirt } from '../kubevirt/components/init';
-
 //PF4 Imports
 import {
   Page,
@@ -297,8 +295,6 @@ class App extends React.PureComponent {
     );
   }
 }
-
-initKubevirt();
 
 const startDiscovery = () => store.dispatch(k8sActions.watchAPIServices());
 

@@ -55,6 +55,8 @@ type Auth struct {
 type Customization struct {
 	Branding             string `yaml:"branding"`
 	DocumentationBaseURL string `yaml:"documentationBaseURL"`
+	Registry             string `yaml:"registry"`
+	ImageTagV2V          string `yaml:"imageTagV2V"`
 }
 
 // SetFlagsFromConfig sets flag values based on a YAML config file.
@@ -174,5 +176,13 @@ func addCustomization(fs *flag.FlagSet, customization *Customization) {
 
 	if customization.DocumentationBaseURL != "" {
 		fs.Set("documentation-base-url", customization.DocumentationBaseURL)
+	}
+
+	if customization.Registry != "" {
+		fs.Set("registry", customization.Registry)
+	}
+
+	if customization.ImageTagV2V != "" {
+		fs.Set("v2v-image-tag", customization.ImageTagV2V)
 	}
 }

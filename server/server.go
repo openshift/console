@@ -57,6 +57,8 @@ type jsGlobals struct {
 	DocumentationBaseURL     string `json:"documentationBaseURL"`
 	GoogleTagManagerID       string `json:"googleTagManagerID"`
 	LoadTestFactor           int    `json:"loadTestFactor"`
+	Registry                 string `json:"registry"`
+	V2vImageTag              string `json:"v2vImageTag"`
 }
 
 type Server struct {
@@ -75,6 +77,8 @@ type Server struct {
 	GoogleTagManagerID   string
 	LoadTestFactor       int
 	DexClient            api.DexClient
+	Registry             string
+	V2vImageTag          string
 	// A client with the correct TLS setup for communicating with the API server.
 	K8sClient                    *http.Client
 	PrometheusProxyConfig        *proxy.Config
@@ -257,6 +261,8 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		DocumentationBaseURL: s.DocumentationBaseURL.String(),
 		GoogleTagManagerID:   s.GoogleTagManagerID,
 		LoadTestFactor:       s.LoadTestFactor,
+		Registry:             s.Registry,
+		V2vImageTag:          s.V2vImageTag,
 	}
 
 	if !s.authDisabled() {
