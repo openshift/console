@@ -99,6 +99,12 @@
   background-color: $color-ingress-dark;
 }
 
+@keyframes co-resource-icon__deleting {
+  to {
+    color: $color-pf-black-600;
+  }
+}
+
 .co-resource-item {
   align-items: baseline;
   display: flex;
@@ -107,6 +113,17 @@
   &--inline {
     display: inline-flex;
     margin: 0 20px 0 0;
+  }
+  &__deleting {
+    animation: co-resource-icon__deleting 1.5s cubic-bezier(0.45, 0.05, 0.55, 0.95) alternate infinite;
+    flex: 0 0 auto;
+    font-size: ($font-size-base - 1);
+    font-weight: 600;
+    margin: 0 0 0 15px;
+    overflow: hidden;
+    padding: 0 0 2px;
+    position: relative;
+    white-space: nowrap;
   }
   &__resource-name {
     min-width: 0; // required so co-break-word works
@@ -121,4 +138,3 @@
     text-overflow: ellipsis;
   }
 }
-

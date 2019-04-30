@@ -7,7 +7,6 @@ import * as _ from 'lodash-es';
 
 import { PackageManifestHeader, PackageManifestHeaderProps, PackageManifestRow, PackageManifestRowProps, PackageManifestList, PackageManifestListProps } from '../../../public/components/operator-lifecycle-manager/package-manifest';
 import { ClusterServiceVersionLogo, PackageManifestKind } from '../../../public/components/operator-lifecycle-manager';
-import { SubscriptionModel } from '../../../public/models';
 import { ListHeader, ColHead, List, ListInnerProps } from '../../../public/components/factory';
 import { testPackageManifest, testCatalogSource, testSubscription } from '../../../__mocks__/k8sResourcesMocks';
 
@@ -54,7 +53,7 @@ describe(PackageManifestRow.displayName, () => {
   });
 
   it('renders column with link to subscriptions', () => {
-    expect(wrapper.find('.co-resource-list__item').childAt(2).find(Link).at(0).props().to).toEqual(`/operatormanagement/ns/default/${SubscriptionModel.plural}?name=${testSubscription.metadata.name}`);
+    expect(wrapper.find('.co-resource-list__item').childAt(2).find(Link).at(0).props().to).toEqual(`/operatormanagement/ns/default?name=${testSubscription.metadata.name}`);
     expect(wrapper.find('.co-resource-list__item').childAt(2).find(Link).at(0).childAt(0).text()).toEqual('View');
   });
 
