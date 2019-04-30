@@ -206,10 +206,12 @@ const projectOverviewListItemDispatchToProps = (dispatch): ProjectOverviewListIt
   dismissDetails: () => dispatch(UIActions.dismissOverviewDetails()),
 });
 
+export const ResourceItemDeleting = () => <span className="co-resource-item__deleting"><i className="pficon pficon-warning-triangle-o" aria-hidden="true" /> Deleting</span>;
+
 const ProjectOverviewListItem = connect<ProjectOverviewListItemPropsFromState, ProjectOverviewListItemPropsFromDispatch, ProjectOverviewListItemOwnProps>(projectOverviewListItemStateToProps, projectOverviewListItemDispatchToProps)(
   ({dismissDetails, item, metrics, selectItem, selectedUID}: ProjectOverviewListItemProps) => {
     const {current, obj} = item;
-    const {name, uid} = obj.metadata;
+    const {name, uid, deletionTimestamp} = obj.metadata;
     const {kind} = obj;
     // Hide metrics when a selection is active.
     const hasSelection = !!selectedUID;
@@ -237,6 +239,7 @@ const ProjectOverviewListItem = connect<ProjectOverviewListItemPropsFromState, P
           {name}
         </button>
         {current && <React.Fragment>,&nbsp;<ControllerLink controller={current} /></React.Fragment>}
+        {deletionTimestamp && <ResourceItemDeleting />}
       </span>
     </h3>;
 
