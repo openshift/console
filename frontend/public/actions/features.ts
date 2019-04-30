@@ -2,20 +2,8 @@ import { Dispatch } from 'react-redux';
 import * as _ from 'lodash-es';
 import { ActionType as Action, action } from 'typesafe-actions';
 
-import {
-  ChargebackReportModel,
-  ClusterServiceClassModel,
-  ClusterServiceVersionModel,
-  MachineAutoscalerModel,
-  MachineConfigModel,
-  MachineModel,
-  OperatorGroupModel,
-  OperatorSourceModel,
-  PackageManifestModel,
-  PrometheusModel,
-  SelfSubjectAccessReviewModel,
-} from '../models';
-import { k8sBasePath, referenceForModel, ClusterVersionKind, k8sCreate } from '../module/k8s';
+import { OperatorGroupModel, PackageManifestModel, SelfSubjectAccessReviewModel } from '../models';
+import { k8sBasePath, ClusterVersionKind, k8sCreate } from '../module/k8s';
 import { receivedResources } from './k8s';
 import { coFetchJSON } from '../co-fetch';
 import { MonitoringRoutes } from '../reducers/monitoring';
@@ -31,17 +19,6 @@ export const defaults = _.mapValues(FLAGS, flag => flag === FLAGS.AUTH_ENABLED
   ? !window.SERVER_FLAGS.authDisabled
   : undefined
 );
-
-export const CRDs = {
-  [referenceForModel(PrometheusModel)]: FLAGS.PROMETHEUS,
-  [referenceForModel(ChargebackReportModel)]: FLAGS.CHARGEBACK,
-  [referenceForModel(ClusterServiceClassModel)]: FLAGS.SERVICE_CATALOG,
-  [referenceForModel(ClusterServiceVersionModel)]: FLAGS.OPERATOR_LIFECYCLE_MANAGER,
-  [referenceForModel(OperatorSourceModel)]: FLAGS.OPERATOR_HUB,
-  [referenceForModel(MachineModel)]: FLAGS.CLUSTER_API,
-  [referenceForModel(MachineConfigModel)]: FLAGS.MACHINE_CONFIG,
-  [referenceForModel(MachineAutoscalerModel)]: FLAGS.MACHINE_AUTOSCALER,
-};
 
 export const setFlag = (flag: FLAGS, value: boolean) => action(ActionType.SetFlag, {flag, value});
 

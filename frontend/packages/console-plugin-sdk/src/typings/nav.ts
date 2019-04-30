@@ -1,36 +1,38 @@
 import { Extension } from '.';
 import { K8sKind } from '@console/internal/module/k8s';
 
-export interface NavItemProperties {
-  // TODO(vojtech): link to existing nav sections by value
-  section: 'Home' | 'Workloads';
-  componentProps: {
-    name: string;
-    required?: string;
-    disallowed?: string;
-    startsWith?: string[];
+namespace ExtensionProperties {
+  interface NavItem {
+    // TODO(vojtech): link to existing nav sections by value
+    section: 'Home' | 'Workloads';
+    componentProps: {
+      name: string;
+      required?: string;
+      disallowed?: string;
+      startsWith?: string[];
+    }
+  }
+
+  export interface HrefNavItem extends NavItem {
+    componentProps: NavItem['componentProps'] & {
+      href: string;
+      activePath?: string;
+    }
+  }
+
+  export interface ResourceNSNavItem extends NavItem {
+    componentProps: NavItem['componentProps'] & {
+      resource: string;
+      model?: K8sKind;
+    }
   }
 }
 
-export interface HrefProperties extends NavItemProperties {
-  componentProps: NavItemProperties['componentProps'] & {
-    href: string;
-    activePath?: string;
-  }
-}
-
-export interface ResourceNSProperties extends NavItemProperties {
-  componentProps: NavItemProperties['componentProps'] & {
-    resource: string;
-    model?: K8sKind;
-  }
-}
-
-export interface HrefNavItem extends Extension<HrefProperties> {
+export interface HrefNavItem extends Extension<ExtensionProperties.HrefNavItem> {
   type: 'NavItem/Href';
 }
 
-export interface ResourceNSNavItem extends Extension<ResourceNSProperties> {
+export interface ResourceNSNavItem extends Extension<ExtensionProperties.ResourceNSNavItem> {
   type: 'NavItem/ResourceNS';
 }
 

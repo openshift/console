@@ -7,6 +7,7 @@ import {
   ClusterServiceClassModel,
   ClusterServiceVersionModel,
   MachineModel,
+  MachineAutoscalerModel,
   MachineConfigModel,
   OperatorSourceModel,
   PrometheusModel,
@@ -15,6 +16,7 @@ import { referenceForModel } from '../module/k8s';
 import { ActionType as K8sActionType } from '../actions/k8s';
 import { FeatureAction, ActionType } from '../actions/features';
 import { FLAGS } from '../const';
+import * as plugins from '../plugins';
 
 export const defaults = _.mapValues(FLAGS, flag => flag === FLAGS.AUTH_ENABLED
   ? !window.SERVER_FLAGS.authDisabled
@@ -29,7 +31,18 @@ const CRDs = {
   [referenceForModel(OperatorSourceModel)]: FLAGS.OPERATOR_HUB,
   [referenceForModel(MachineModel)]: FLAGS.CLUSTER_API,
   [referenceForModel(MachineConfigModel)]: FLAGS.MACHINE_CONFIG,
+  [referenceForModel(MachineAutoscalerModel)]: FLAGS.MACHINE_AUTOSCALER,
 };
+
+plugins.registry.getFeatureFlags().filter(plugins.isModelFeatureFlag).forEach(ff => {
+  const modelRef = referenceForModel(ff.properties.model);
+  if (!CRDs[modelRef]) {
+    CRDs[modelRef] = ff.properties.flag as FLAGS;
+  } else {
+    // eslint-disable-next-line no-console
+    console.warn(`attempt to redefine flag for model ${modelRef}`);
+  }
+});
 
 export type FeatureState = ImmutableMap<string, boolean>;
 

@@ -175,6 +175,7 @@ window.onunhandledrejection = function(e) {
 
 if ('serviceWorker' in navigator) {
   if (window.SERVER_FLAGS.loadTestFactor > 1) {
+    // eslint-disable-next-line import/no-unresolved
     import('file-loader?name=load-test.sw.js!../load-test.sw.js')
       .then(() => navigator.serviceWorker.register('/load-test.sw.js'))
       .then(() => new Promise(r => navigator.serviceWorker.controller ? r() : navigator.serviceWorker.addEventListener('controllerchange', () => r())))

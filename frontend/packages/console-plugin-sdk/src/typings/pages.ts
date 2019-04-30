@@ -2,16 +2,18 @@ import * as React from 'react';
 import { Extension } from '.';
 import { K8sKind } from '@console/internal/module/k8s';
 
-export interface ResourcePageProperties {
-  model: K8sKind;
-  loader: () => Promise<React.ComponentType<any>>;
+namespace ExtensionProperties {
+  export interface ResourcePage {
+    model: K8sKind;
+    loader: () => Promise<React.ComponentType<any>>;
+  }
 }
 
-export interface ResourceListPage extends Extension<ResourcePageProperties> {
+export interface ResourceListPage extends Extension<ExtensionProperties.ResourcePage> {
   type: 'ResourcePage/List';
 }
 
-export interface ResourceDetailPage extends Extension<ResourcePageProperties> {
+export interface ResourceDetailPage extends Extension<ExtensionProperties.ResourcePage> {
   type: 'ResourcePage/Detail';
 }
 
