@@ -68,6 +68,7 @@ export const Resources = connectToPlural((props: ResourceProps) => {
     namespace={props.obj.metadata.namespace}
     ListComponent={(listProps) => <List
       {...listProps}
+      virtualize={false}
       data={listProps.data.map(o => ({...o, rowKey: o.metadata.uid}))}
       EmptyMsg={() => <MsgBox title="No Resources Found" detail={`There are no Kubernetes resources used by this ${props.obj.kind}.`} />}
       Header={ResourceHeader}
