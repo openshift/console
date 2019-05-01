@@ -262,11 +262,26 @@ tags-input .autocomplete .suggestion-item em {
 
 // PatternFly 4 overrides
 
+.pf-c-about-modal-box {
+  &__brand {
+    min-width: 220px;
+  }
+
+  &__brand-image {
+    height: auto !important;
+  }
+}
+
 // Webpack will not properly bundle the background-image from PatternFly
 @media only screen and (min-width: 576px) {
   .pf-c-about-modal-box__hero {
     background-image: url('../imgs/pfbg_992.jpg') !important;
   }
+}
+
+.pf-c-about-modal-box__brand-image,
+.pf-c-brand {
+  max-width: 100%;
 }
 
 .pf-c-dropdown__menu {
@@ -286,14 +301,23 @@ tags-input .autocomplete .suggestion-item em {
   position: relative;
 
   &__header {
-    background-color: var(--pf-global--BackgroundColor--dark-200);
-    background-image: url("../imgs/pfbg_2000.jpg");
-    background-repeat: no-repeat;
-    background-size: cover;
+    background: #151515;
+    display: grid !important;
+    grid-template-columns: 1fr auto;
     left: 0;
     position: absolute;
     right: 0;
     top: 0;
+  }
+
+  &__header-brand {
+    background: none !important;
+    padding-right: 32px;
+  }
+
+  &__header-brand-link {
+    flex: 0 1 auto !important;
+    max-width: 100% !important;
   }
 
   &__main {
