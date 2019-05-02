@@ -258,7 +258,41 @@ const ProjectOverviewListItem = connect<ProjectOverviewListItemPropsFromState, P
   }
 );
 
-const ProjectOverviewList: React.SFC<ProjectOverviewListProps> = ({items}) => {
+const projectOverviewListItemStateToProps = ({UI}): ProjectOverviewListItemPropsFromState => ({
+  selectedUID: UI.getIn(['overview', 'selectedUID']),
+});
+
+const projectOverviewListDispatchToProps = (dispatch) => ({
+  selectItem: (uid) => dispatch(UIActions.selectOverviewItem(uid)),
+  dismissDetails: () => dispatch(UIActions.dismissOverviewDetails()),
+});
+
+const ProjectOverviewList = connect<ProjectOverviewListPropsFromState, ProjectOverviewListPropsFromDispatch, ProjectOverviewListOwnProps>(projectOverviewListItemStateToProps, projectOverviewListDispatchToProps)(({items, selectedUID, selectItem, dismissDetails}: ProjectOverviewListProps) => {
+  const onKeyDown = (e) => {
+    switch (e.keyCode) {
+      // esc
+      case 27:
+        dismissDetails();
+        break;
+      // up
+      case 38:
+        break;
+      // down
+      case 40:
+        if (!selectedUID) {
+          selectItem(_.get(items, '[0].obj.metadata.uid') as string);
+        }
+        break;
+    }
+  }
+  React.useEffect(() => {
+    window.addEventListener('keydown', onKeyDown);
+    // Remove event listeners on cleanup
+    return () => {
+      window.removeEventListener('keydown', onKeyDown);
+    };
+  }, []);
+
   const listItems = _.map(items, (item) =>
     <ProjectOverviewListItem
       item={item}
@@ -268,7 +302,7 @@ const ProjectOverviewList: React.SFC<ProjectOverviewListProps> = ({items}) => {
   return <ListView className="project-overview__list">
     {listItems}
   </ListView>;
-};
+});
 
 const ProjectOverviewGroup: React.SFC<ProjectOverviewGroupProps> = ({heading, items}) =>
   <div className="project-overview__group">
@@ -335,9 +369,20 @@ type ProjectOverviewListItemOwnProps= {
 
 type ProjectOverviewListItemProps = ProjectOverviewListItemOwnProps & ProjectOverviewListItemPropsFromDispatch & ProjectOverviewListItemPropsFromState;
 
-type ProjectOverviewListProps = {
+type ProjectOverviewListPropsFromState = {
+  selectedUID: string;
+};
+
+type ProjectOverviewListPropsFromDispatch = {
+  selectItem: (uid) => dispatch(UIActions.selectOverviewItem(uid)),
+  dismissDetails: () => void;
+};
+
+type ProjectOverviewListOwnProps = {
   items: OverviewItem[];
 };
+
+type ProjectOverviewListProps = ProjectOverviewListOwnProps & ProjetOverviewListPropsFromState & ProjectOverviewListPropsFromDispatch;
 
 type ProjectOverviewGroupProps = {
   heading: string;
