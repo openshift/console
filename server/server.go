@@ -48,6 +48,7 @@ type jsGlobals struct {
 	LoginErrorURL            string `json:"loginErrorURL"`
 	LogoutURL                string `json:"logoutURL"`
 	LogoutRedirect           string `json:"logoutRedirect"`
+	RequestTokenURL          string `json:"requestTokenURL"`
 	KubeAdminLogoutURL       string `json:"kubeAdminLogoutURL"`
 	KubeAPIServerURL         string `json:"kubeAPIServerURL"`
 	PrometheusBaseURL        string `json:"prometheusBaseURL"`
@@ -260,7 +261,9 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if !s.authDisabled() {
-		jsg.KubeAdminLogoutURL = s.Auther.GetKubeAdminLogoutURL()
+		specialAuthURLs := s.Auther.GetSpecialURLs()
+		jsg.RequestTokenURL = specialAuthURLs.RequestToken
+		jsg.KubeAdminLogoutURL = specialAuthURLs.KubeAdminLogout
 	}
 
 	if s.prometheusProxyEnabled() {

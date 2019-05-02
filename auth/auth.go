@@ -68,6 +68,13 @@ type Authenticator struct {
 	secureCookies bool
 }
 
+type SpecialAuthURLs struct {
+	// RequestToken is a special page in the OpenShift integrated OAuth server for requesting a token.
+	RequestToken string
+	// KubeAdminLogout is the logout URL for the special kube:admin user in OpenShift.
+	KubeAdminLogout string
+}
+
 // loginMethod is used to handle OAuth2 responses and associate bearer tokens
 // with a user.
 //
@@ -79,9 +86,7 @@ type loginMethod interface {
 	login(http.ResponseWriter, *oauth2.Token) (*loginState, error)
 	// logout deletes any cookies associated with the user.
 	logout(http.ResponseWriter, *http.Request)
-	// getKubeAdminLogoutURL returns the logout URL for the special
-	// kube:admin user in OpenShift
-	getKubeAdminLogoutURL() string
+	getSpecialURLs() SpecialAuthURLs
 }
 
 // AuthSource allows callers to switch between Tectonic and OpenShift login support.
@@ -336,8 +341,8 @@ func (a *Authenticator) LogoutFunc(w http.ResponseWriter, r *http.Request) {
 }
 
 // GetKubeAdminLogoutURL returns the logout URL for the special kube:admin user in OpenShift
-func (a *Authenticator) GetKubeAdminLogoutURL() string {
-	return a.getLoginMethod().getKubeAdminLogoutURL()
+func (a *Authenticator) GetSpecialURLs() SpecialAuthURLs {
+	return a.getLoginMethod().getSpecialURLs()
 }
 
 // CallbackFunc handles OAuth2 callbacks and code/token exchange.
