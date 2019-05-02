@@ -9,7 +9,7 @@ import { Firehose, LoadingBox, history, NsDropdown, resourcePathFromModel } from
 import { referenceForModel, K8sResourceKind, k8sUpdate, k8sCreate, apiVersionForModel } from '../../module/k8s';
 import { SubscriptionModel, CatalogSourceConfigModel, OperatorGroupModel, PackageManifestModel } from '../../models';
 import { OperatorGroupKind, PackageManifestKind, ClusterServiceVersionLogo, SubscriptionKind, InstallPlanApproval, defaultChannelFor, supportedInstallModesFor } from '../operator-lifecycle-manager';
-import { InstallModeType, isGlobal, installedFor, supports } from '../operator-lifecycle-manager/operator-group';
+import { InstallModeType, installedFor, supports } from '../operator-lifecycle-manager/operator-group';
 import { RadioGroup, RadioInput } from '../radio';
 import { OPERATOR_HUB_CSC_BASE } from '../../const';
 import { getOperatorProviderType } from './operator-hub-utils';
@@ -43,7 +43,7 @@ export class OperatorHubSubscribeForm extends React.Component<OperatorHubSubscri
         : preferredInstallMode, InstallModeType.InstallModeTypeSingleNamespace);
     let targetNamespace = this.state.targetNamespace || this.props.targetNamespace;
     if (installMode === InstallModeType.InstallModeTypeAllNamespaces) {
-      targetNamespace = _.get(this.props.operatorGroup, 'data', [] as OperatorGroupKind[]).find(og => isGlobal(og)).metadata.namespace;
+      targetNamespace = _.get(this.props.operatorGroup, 'data', [] as OperatorGroupKind[]).find(og => og.metadata.name === 'global-operators').metadata.namespace;
     }
     const approval = this.state.approval || InstallPlanApproval.Automatic;
 
