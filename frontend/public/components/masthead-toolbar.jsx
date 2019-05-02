@@ -243,7 +243,7 @@ class MastheadToolbar_ extends React.Component {
         position="right"
         onSelect={this._onUserDropdownSelect}
         isOpen={isUserDropdownOpen}
-        toggle={<DropdownToggle onToggle={this._onUserDropdownToggle}>{username}</DropdownToggle>}
+        toggle={<DropdownToggle className="co-username" onToggle={this._onUserDropdownToggle}>{username}</DropdownToggle>}
         dropdownItems={this._renderMenuItems(actions)}
       />
     );

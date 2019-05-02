@@ -297,7 +297,7 @@ export const OperatorHubTileView = requireOperatorGroup(
       return <React.Fragment>
         <TileViewPage
           items={items}
-          itemsSorter={(itemsToSort) => _.sortBy(itemsToSort, 'name')}
+          itemsSorter={(itemsToSort) => _.sortBy(itemsToSort, ({name}) => name.toLowerCase())}
           getAvailableCategories={determineCategories}
           getAvailableFilters={determineAvailableFilters}
           filterGroups={operatorHubFilterGroups}
