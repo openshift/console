@@ -12,10 +12,28 @@ import { SpecDescriptor } from './descriptors/spec';
 import { StatusCapability, Descriptor } from './descriptors/types';
 import { Resources } from './k8s-resource';
 import { List, MultiListPage, ListPage, ListHeader, ColHead, DetailsPage, CompactExpandButtons } from '../factory';
-import { ResourceLink, ResourceSummary, StatusBox, navFactory, Timestamp, LabelList, ResourceIcon, MsgBox, ResourceKebab, Kebab } from '../utils';
+import { ResourceLink, ResourceSummary, StatusBox, navFactory, Timestamp, LabelList, ResourceIcon, MsgBox, ResourceKebab, KebabAction } from '../utils';
 import { connectToModel } from '../../kinds';
 import { kindForReference, K8sResourceKind, OwnerReference, K8sKind, referenceFor, GroupVersionKind, referenceForModel } from '../../module/k8s';
 import { ClusterServiceVersionModel } from '../../models';
+import { deleteModal } from '../modals';
+
+const csvName = () => location.pathname.split('/').find((part, i, allParts) => allParts[i - 1] === ClusterServiceVersionModel.plural);
+
+const actions = [
+  (kind, obj) => ({
+    label: `Edit ${kind.label}`,
+    href: `/k8s/ns/${obj.metadata.namespace}/${ClusterServiceVersionModel.plural}/${csvName()}/${referenceFor(obj)}/${obj.metadata.name}/yaml`,
+  }),
+  (kind, obj) => ({
+    label: `Delete ${kind.label}`,
+    callback: () => deleteModal({
+      kind,
+      resource: obj,
+      redirectTo: `/k8s/ns/${obj.metadata.namespace}/${ClusterServiceVersionModel.plural}/${csvName()}/${referenceFor(obj)}`,
+    }),
+  }),
+] as KebabAction[];
 
 export const ClusterServiceVersionResourceHeader: React.SFC<ClusterServiceVersionResourceHeaderProps> = (props) => <ListHeader>
   <ColHead {...props} className="col-xs-6 col-sm-4 col-md-3 col-lg-2" sortField="metadata.name">Name</ColHead>
@@ -28,12 +46,10 @@ export const ClusterServiceVersionResourceHeader: React.SFC<ClusterServiceVersio
 
 export const ClusterServiceVersionResourceLink: React.SFC<ClusterServiceVersionResourceLinkProps> = (props) => {
   const {namespace, name} = props.obj.metadata;
-  // FIXME(alecmerdler): Grab `ClusterServiceVersion` name from Redux instead
-  const appName = location.pathname.split('/').slice(-2, -1);
 
   return <span className="co-resource-item">
     <ResourceIcon kind={referenceFor(props.obj)} />
-    <Link to={`/k8s/ns/${namespace}/${ClusterServiceVersionModel.plural}/${appName}/${referenceFor(props.obj)}/${name}`} className="co-resource-item__resource-name">{name}</Link>
+    <Link to={`/k8s/ns/${namespace}/${ClusterServiceVersionModel.plural}/${csvName()}/${referenceFor(props.obj)}/${name}`} className="co-resource-item__resource-name">{name}</Link>
   </span>;
 };
 
@@ -60,7 +76,7 @@ export const ClusterServiceVersionResourceRow: React.SFC<ClusterServiceVersionRe
       <Timestamp timestamp={obj.metadata.creationTimestamp} />
     </div>
     <div className="dropdown-kebab-pf">
-      <ResourceKebab actions={Kebab.factory.common} kind={referenceFor(obj)} resource={obj} />
+      <ResourceKebab actions={actions} kind={referenceFor(obj)} resource={obj} />
     </div>
   </div>;
 };
@@ -226,7 +242,7 @@ export const ClusterServiceVersionResourcesDetailsPage: React.SFC<ClusterService
   resources={[
     {kind: referenceForModel(ClusterServiceVersionModel), name: props.match.params.appName, namespace: props.namespace, isList: false, prop: 'csv'},
   ]}
-  menuActions={Kebab.factory.common}
+  menuActions={actions}
   breadcrumbsFor={() => [
     {name: props.match.params.appName, path: props.match.url.slice(0, props.match.url.lastIndexOf('/'))},
     {name: `${kindForReference(props.kind)} Details`, path: `${props.match.url}`},

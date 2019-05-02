@@ -50,7 +50,7 @@ describe('OperatorHubList', () => {
     const tiles = wrapper.find(CatalogTile);
     expect(tiles.exists()).toBe(true);
 
-    const prometheusTileProps = tiles.at(2).props(); // Sorting makes this 2
+    const prometheusTileProps = tiles.at(3).props(); // Sorting makes this 3
     const prometheusPackageManifest = operatorHubListPageProps.packageManifest.data[3];
     const prometheusIcon = (prometheusPackageManifest.status.channels[0].currentCSVDesc as any).icon[0];
     expect(prometheusTileProps.title).toEqual(prometheusPackageManifest.status.channels[0].currentCSVDesc.displayName);

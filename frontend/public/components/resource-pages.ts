@@ -15,6 +15,7 @@ import {
   ClusterServiceClassModel,
   ClusterServicePlanModel,
   ClusterServiceVersionModel,
+  ClusterVersionModel,
   ConfigMapModel,
   ContainerModel,
   CronJobModel,
@@ -115,6 +116,7 @@ export const resourceDetailPages = ImmutableMap<GroupVersionKind | string, () =>
   .set(referenceForModel(SubscriptionModel), () => import('./operator-lifecycle-manager/subscription' /* webpackChunkName: "subscription" */).then(m => m.SubscriptionDetailsPage))
   .set(referenceForModel(InstallPlanModel), () => import('./operator-lifecycle-manager/install-plan' /* webpackChunkName: "install-plan" */).then(m => m.InstallPlanDetailsPage))
   .set(referenceForModel(ClusterOperatorModel), () => import('./cluster-settings/cluster-operator' /* webpackChunkName: "cluster-operator" */).then(m => m.ClusterOperatorDetailsPage))
+  .set(referenceForModel(ClusterVersionModel), () => import('./cluster-settings/cluster-version' /* webpackChunkName: "cluster-version" */).then(m => m.ClusterVersionDetailsPage))
   .set(referenceForModel(OAuthModel), () => import('./cluster-settings/oauth' /* webpackChunkName: "oauth" */).then(m => m.OAuthDetailsPage));
 
 export const resourceListPages = ImmutableMap<GroupVersionKind | string, () => Promise<React.ComponentType<any>>>()

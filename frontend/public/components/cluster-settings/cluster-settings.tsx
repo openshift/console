@@ -9,7 +9,7 @@ import { Link } from 'react-router-dom';
 import { ClusterOperatorPage } from './cluster-operator';
 import { clusterChannelModal, clusterUpdateModal } from '../modals';
 import { GlobalConfigPage } from './global-config';
-import { ClusterAutoscalerModel } from '../../models';
+import { ClusterAutoscalerModel, ClusterVersionModel } from '../../models';
 import {
   ClusterUpdateStatus,
   ClusterVersionConditionType,
@@ -126,6 +126,9 @@ const CurrentVersionHeader: React.SFC<CurrentVersionProps> = ({cv}) => {
 
 const ClusterVersionDetailsTable: React.SFC<ClusterVersionDetailsTableProps> = ({obj: cv, autoscalers}) => {
   const { history = [] } = cv.status;
+  const desiredImage: string = _.get(cv, 'status.desired.image') || '';
+  // Split image on `@` to emphasize the digest.
+  const imageParts = desiredImage.split('@');
 
   return <React.Fragment>
     <div className="co-m-pane__body">
@@ -161,7 +164,15 @@ const ClusterVersionDetailsTable: React.SFC<ClusterVersionDetailsTableProps> = (
           <dt>Cluster ID</dt>
           <dd className="co-break-all">{cv.spec.clusterID}</dd>
           <dt>Desired Release Image</dt>
-          <dd className="co-break-all">{_.get(cv, 'status.desired.image') || '-'}</dd>
+          <dd>
+            {imageParts.length === 2
+              ? <React.Fragment><span className="text-muted">{imageParts[0]}@</span>{imageParts[1]}</React.Fragment>
+              : desiredImage || '-'}
+          </dd>
+          <dt>Cluster Version Configuration</dt>
+          <dd>
+            <ResourceLink kind={referenceForModel(ClusterVersionModel)} name={cv.metadata.name} />
+          </dd>
           <dt>Cluster Autoscaler</dt>
           <dd>
             {_.isEmpty(autoscalers)
