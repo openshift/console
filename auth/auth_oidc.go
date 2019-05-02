@@ -132,6 +132,6 @@ func (o *oidcAuth) authenticate(r *http.Request) (*User, error) {
 	}, nil
 }
 
-func (o *oidcAuth) getKubeAdminLogoutURL() string {
-	return ""
+func (o *oidcAuth) getSpecialURLs() SpecialAuthURLs {
+	return SpecialAuthURLs{}
 }
