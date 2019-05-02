@@ -411,6 +411,7 @@ export const Navigation = ({ isNavOpen, onNavSelect }) => {
         </NavSection>
 
         <NavSection title="Administration">
+          <HrefLink href="/cluster-status" name="Cluster Status" activePath="/cluster-status/" required={FLAGS.CAN_LIST_NS} />
           <HrefLink href="/settings/cluster" activePath="/settings/cluster/" name="Cluster Settings" required={FLAGS.CLUSTER_VERSION} startsWith={clusterSettingsStartsWith} />
           <ResourceClusterLink resource="namespaces" name="Namespaces" required={FLAGS.CAN_LIST_NS} />
           <ResourceNSLink resource="serviceaccounts" name="Service Accounts" />
