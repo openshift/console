@@ -79,7 +79,7 @@ export const config: Config = {
     // since we're using kubectl instead of oc.
     const resource = browser.params.openshift === 'true' ? 'projects.project.openshift.io' : 'namespaces';
     await browser.close();
-    execSync(`kubectl delete ${resource} ${testName}`);
+    execSync(`if kubectl get ${resource} ${testName} 2> /dev/null; then kubectl delete ${resource} ${testName}; fi`);
   },
   afterLaunch: (exitCode) => {
     failFast.clean();
