@@ -7,7 +7,7 @@ import { Button } from 'patternfly-react';
 import { Link } from 'react-router-dom';
 
 import { ClusterOperatorPage } from './cluster-operator';
-import { clusterChannelModal, clusterUpdateModal } from '../modals';
+import { clusterChannelModal, clusterUpdateModal, errorModal } from '../modals';
 import { GlobalConfigPage } from './global-config';
 import { ClusterAutoscalerModel, ClusterVersionModel } from '../../models';
 import {
@@ -21,6 +21,7 @@ import {
   getClusterVersionCondition,
   getDesiredClusterVersion,
   isProgressing,
+  k8sPatch,
   K8sResourceConditionStatus,
   K8sResourceKind,
   referenceForModel,
@@ -49,15 +50,32 @@ const getIconClass = (status: ClusterUpdateStatus) => {
     [ClusterUpdateStatus.Updating]: 'fa-spin fa fa-refresh',
     [ClusterUpdateStatus.Failing]: 'pficon pficon-error-circle-o',
     [ClusterUpdateStatus.ErrorRetrieving]: 'pficon pficon-error-circle-o',
+    [ClusterUpdateStatus.Invalid]: 'pficon pficon-error-circle-o',
   }[status];
 };
+
+const cancelUpdate = (cv: ClusterVersionKind) => {
+  k8sPatch(ClusterVersionModel, cv, [{path: '/spec/desiredUpdate', op: 'remove'}]).catch(err => {
+    const error = err.message;
+    errorModal({error});
+  });
+};
+
+const InvalidAlert: React.SFC<InvalidAlertProps> = ({condition, cv}) => <div className="alert alert-danger">
+  <i className="pficon pficon-error-circle-o" aria-hidden="true" />
+  {condition.message || 'The cluster version is invalid.'}
+  {_.has(cv, 'spec.desiredUpdate') && <React.Fragment>
+    &emsp;
+    <button className="btn btn-link btn-link--no-btn-default-values" type="button" onClick={() => cancelUpdate(cv)}>Cancel Update</button>
+  </React.Fragment>}
+</div>;
 
 const UpdateFailingAlert: React.SFC<UpdateFailingAlertProps> = ({condition, updatesAvailable=false}) => <div className="alert alert-danger">
   <i className="pficon pficon-error-circle-o" aria-hidden="true" />
   <strong>Update is failing.</strong>
   &nbsp;
   {condition.message && `${condition.message}. `}
-  View <Link to="/settings/cluster/clusteroperators?orderBy=desc&sortBy=Status">Cluster Operators</Link> for more details
+  View <Link to="/settings/cluster/clusteroperators">Cluster Operators</Link> for more details
   {updatesAvailable && ' or check other available updates to try another version'}.
 </div>;
 
@@ -72,7 +90,7 @@ const UpdateInProgressAlert: React.SFC<UpdateInProgressAlertProps> = ({condition
   <strong>Cluster update in progress.</strong>
   &nbsp;
   {condition.message && `${condition.message}. `}
-  View <Link to="/settings/cluster/clusteroperators?orderBy=desc&sortBy=Status">Cluster Operators</Link> for more details.
+  View <Link to="/settings/cluster/clusteroperators">Cluster Operators</Link> for more details.
 </div>;
 
 const UpdatesAvailableAlert: React.SFC<UpdatesAvailableAlertProps> = ({cv}) => {
@@ -120,6 +138,7 @@ const DesiredVersion: React.SFC<DesiredVersionProps> = ({cv}) => {
 
 const ClusterVersionDetailsTable: React.SFC<ClusterVersionDetailsTableProps> = ({obj: cv, autoscalers}) => {
   const { history = [] } = cv.status;
+  const isInvalidCondition = getClusterVersionCondition(cv, ClusterVersionConditionType.Invalid, K8sResourceConditionStatus.True);
   const retrievedUpdatesFailedCondition = getClusterVersionCondition(cv, ClusterVersionConditionType.RetrievedUpdates, K8sResourceConditionStatus.False);
   const isFailingCondition = getClusterVersionCondition(cv, ClusterVersionConditionType.Failing, K8sResourceConditionStatus.True);
   const updatingCondition = getClusterVersionCondition(cv, ClusterVersionConditionType.Progressing, K8sResourceConditionStatus.True);
@@ -131,6 +150,7 @@ const ClusterVersionDetailsTable: React.SFC<ClusterVersionDetailsTableProps> = (
   return <React.Fragment>
     <div className="co-m-pane__body">
       <div className="co-m-pane__body-group">
+        { isInvalidCondition && <InvalidAlert condition={isInvalidCondition} cv={cv} /> }
         { isFailingCondition && <UpdateFailingAlert condition={isFailingCondition} updatesAvailable={updatesAvailable} /> }
         { retrievedUpdatesFailedCondition && <RetrieveUpdatesFailedAlert condition={retrievedUpdatesFailedCondition} /> }
         { !isFailingCondition && updatingCondition && <UpdateInProgressAlert condition={updatingCondition} /> }
@@ -267,6 +287,11 @@ type ClusterVersionDetailsTableProps = {
 
 type ClusterSettingsPageProps = {
   match: any;
+};
+
+type InvalidAlertProps = {
+  condition: ClusterVersionCondition;
+  cv: ClusterVersionKind;
 };
 
 type UpdateFailingAlertProps = {

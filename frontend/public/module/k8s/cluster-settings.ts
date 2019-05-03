@@ -3,7 +3,7 @@ import * as _ from 'lodash-es';
 
 import { ClusterVersionModel } from '../../models';
 import { referenceForModel } from './k8s';
-import { ClusterVersionKind, ClusterUpdate, ClusterVersionConditionType, K8sResourceConditionStatus, ClusterVersionCondition } from '.';
+import { ClusterVersionKind, ClusterUpdate, ClusterVersionConditionType, K8sResourceConditionStatus, ClusterVersionCondition, UpdateHistory } from '.';
 
 export enum ClusterUpdateStatus {
   UpToDate = 'Up to Date',
@@ -11,6 +11,7 @@ export enum ClusterUpdateStatus {
   Updating = 'Updating',
   Failing = 'Failing',
   ErrorRetrieving = 'Error Retrieving',
+  Invalid = 'Invalid Cluster Version',
 }
 
 export const clusterVersionReference = referenceForModel(ClusterVersionModel);
@@ -25,6 +26,12 @@ export const getDesiredClusterVersion = (cv: ClusterVersionKind): string => {
   return _.get(cv, 'status.desired.version');
 };
 
+export const getLastCompletedUpdate = (cv: ClusterVersionKind): string => {
+  const history: UpdateHistory[] = _.get(cv, 'status.history', []);
+  const lastCompleted: UpdateHistory = history.find(update => update.state === 'Completed');
+  return lastCompleted && lastCompleted.version;
+};
+
 export const getClusterVersionCondition = (cv: ClusterVersionKind, type: ClusterVersionConditionType, status: K8sResourceConditionStatus = undefined): ClusterVersionCondition => {
   const conditions: ClusterVersionCondition[] = _.get(cv, 'status.conditions');
   if (status) {
@@ -35,6 +42,10 @@ export const getClusterVersionCondition = (cv: ClusterVersionKind, type: Cluster
 
 export const isProgressing = (cv: ClusterVersionKind): boolean => {
   return !_.isEmpty(getClusterVersionCondition(cv, ClusterVersionConditionType.Progressing, K8sResourceConditionStatus.True));
+};
+
+export const invalid = (cv: ClusterVersionKind): boolean => {
+  return !_.isEmpty(getClusterVersionCondition(cv, ClusterVersionConditionType.Invalid, K8sResourceConditionStatus.True));
 };
 
 export const failedToRetrieveUpdates = (cv: ClusterVersionKind): boolean => {
@@ -50,6 +61,10 @@ export const hasAvailableUpdates = (cv: ClusterVersionKind): boolean => {
 };
 
 export const getClusterUpdateStatus = (cv: ClusterVersionKind): ClusterUpdateStatus => {
+  if (invalid(cv)) {
+    return ClusterUpdateStatus.Invalid;
+  }
+
   if (updateFailing(cv)) {
     return ClusterUpdateStatus.Failing;
   }

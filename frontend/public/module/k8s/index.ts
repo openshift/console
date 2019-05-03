@@ -242,7 +242,7 @@ export type ClusterUpdate = {
   version: string;
 };
 
-type UpdateHistory = {
+export type UpdateHistory = {
   state: 'Completed' | 'Partial';
   startedTime: string;
   completionTime: string;
@@ -255,6 +255,7 @@ export enum ClusterVersionConditionType {
   Failing = 'Failing',
   Progressing = 'Progressing',
   RetrievedUpdates = 'RetrievedUpdates',
+  Invalid = 'Invalid',
 }
 
 export type ClusterVersionCondition = K8sResourceCondition<ClusterVersionConditionType>;
