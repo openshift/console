@@ -228,7 +228,6 @@ export const ServiceInstancesPage: React.SFC<ServiceInstancesPageProps> = props 
     namespace={_.get(props.match, 'params.ns')}
     kind={referenceForModel(ServiceInstanceModel)}
     ListComponent={ServiceInstancesList}
-    filterLabel="Service Instances by name"
     rowFilters={filters}
     showTitle={false}
   />;

@@ -25,7 +25,6 @@ describe(TextFilter.displayName, () => {
     expect(input.props().type).toEqual('text');
     expect(input.props().placeholder).toEqual(`Filter ${label}...`);
     expect(input.props().onChange).toEqual(onChange);
-    expect(input.props().autoFocus).toEqual(true);
     expect(input.props().defaultValue).toEqual(defaultValue);
   });
 });
@@ -115,7 +114,7 @@ describe(MultiListPage.displayName, () => {
   const ListComponent = () => <div />;
   const wrapper: ShallowWrapper = shallow(<MultiListPage ListComponent={ListComponent} resources={[{
     kind: 'Pod',
-    filterLabel: 'Pods by name',
+    filterLabel: 'by name',
   }]} />);
 
   it('renders a `Firehose` wrapped `ListPageWrapper_`', () => {

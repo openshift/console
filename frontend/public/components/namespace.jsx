@@ -13,7 +13,7 @@ import { ActionsMenu, Kebab, Dropdown, Firehose, LabelList, LoadingInline, navFa
 import { createNamespaceModal, createProjectModal, deleteNamespaceModal, configureNamespacePullSecretModal } from './modals';
 import { RoleBindingsPage } from './RBAC';
 import { Bar, Line, requirePrometheus } from './graphs';
-import { OC_DOWNLOAD_LINK, ALL_NAMESPACES_KEY, NAMESPACE_LOCAL_STORAGE_KEY } from '../const';
+import { OC_DOWNLOAD_LINK, ALL_NAMESPACES_KEY, KEYBOARD_SHORTCUTS, NAMESPACE_LOCAL_STORAGE_KEY } from '../const';
 import { FLAGS, featureReducerName, flagPending, setFlag, connectToFlags } from '../features';
 import { openshiftHelpBase } from './utils/documentation';
 import { createProjectMessageStateToProps } from '../ui/ui-reducers';
@@ -305,7 +305,7 @@ class NamespaceBarDropdowns_ extends React.Component {
         autocompletePlaceholder={`Select ${model.label.toLowerCase()}...`}
         defaultBookmarks={defaultBookmarks}
         storageKey={NAMESPACE_LOCAL_STORAGE_KEY}
-        shortCut="n" />
+        shortCut={KEYBOARD_SHORTCUTS.focusNamespaceDropdown} />
       <ActionsMenu
         actions={addActions}
         title={<React.Fragment><span className="fa fa-plus-circle co-add-actions-selector__icon" aria-hidden="true"></span> Add</React.Fragment>}

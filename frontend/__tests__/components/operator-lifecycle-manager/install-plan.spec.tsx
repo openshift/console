@@ -132,7 +132,6 @@ describe(InstallPlansPage.displayName, () => {
     expect(wrapper.find(MultiListPage).props().title).toEqual('Install Plans');
     expect(wrapper.find(MultiListPage).props().showTitle).toBe(false);
     expect(wrapper.find(MultiListPage).props().ListComponent).toEqual(InstallPlansList);
-    expect(wrapper.find(MultiListPage).props().filterLabel).toEqual('Install Plans by name');
     expect(wrapper.find(MultiListPage).props().resources).toEqual([
       {kind: k8s.referenceForModel(InstallPlanModel), namespace: 'default', namespaced: true, prop: 'installPlan'},
       {kind: k8s.referenceForModel(OperatorGroupModel), namespace: 'default', namespaced: true, prop: 'operatorGroup'},

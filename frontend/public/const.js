@@ -11,6 +11,12 @@ export const ANNOTATIONS = Object.freeze({
   supportURL: 'openshift.io/support-url',
 });
 
+// Common shortcuts than span pages.
+export const KEYBOARD_SHORTCUTS = Object.freeze({
+  focusFilterInput: '/',
+  focusNamespaceDropdown: 'n',
+});
+
 // Use a key for the "all" namespaces option that would be an invalid namespace name to avoid a potential clash
 export const ALL_NAMESPACES_KEY = '#ALL_NS#';
 

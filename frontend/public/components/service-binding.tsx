@@ -110,7 +110,6 @@ export const ServiceBindingsPage: React.SFC<ServiceBindingsPageProps> = props =>
     showTitle={false}
     kind={referenceForModel(ServiceBindingModel)}
     ListComponent={ServiceBindingsList}
-    filterLabel="Service Bindings by name"
   />;
 
 /* eslint-disable no-undef */

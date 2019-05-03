@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { ListView } from 'patternfly-react';
 
+import { KEYBOARD_SHORTCUTS } from '../../const';
 import { Tooltip } from '../utils/tooltip';
 import { K8sResourceKind } from '../../module/k8s';
 import { UIActions } from '../../ui/ui-actions';
@@ -278,16 +279,106 @@ const ProjectOverviewGroup: React.SFC<ProjectOverviewGroupProps> = ({heading, it
     />
   </div>;
 
-export const ProjectOverview: React.SFC<ProjectOverviewProps> = ({groups}) =>
-  <div className="project-overview">
-    {_.map(groups, ({name, items}, index) =>
-      <ProjectOverviewGroup
-        key={name || `_${index}`}
-        heading={name}
-        items={items}
-      />
-    )}
-  </div>;
+
+const projectOverviewStateToProps = ({UI}) => ({
+  selectedUID: UI.getIn(['overview', 'selectedUID']),
+});
+
+const projectOverviewDispatchToProps = (dispatch) => ({
+  selectItem: (item: OverviewItem) => dispatch(UIActions.selectOverviewItem(_.get(item, 'obj.metadata.uid'))),
+  dismissDetails: () => dispatch(UIActions.dismissOverviewDetails()),
+});
+
+class ProjectOverview_ extends React.Component<ProjectOverviewProps> {
+  componentDidMount() {
+    window.addEventListener('keydown', this.onKeyDown);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('keydown', this.onKeyDown);
+  }
+
+  flatten(): OverviewItem[] {
+    return _.flatten(_.map(this.props.groups, 'items'));
+  }
+
+  findIndex(items: OverviewItem[], uid: string): number {
+    return _.findIndex(items, i => _.get(i, 'obj.metadata.uid') === uid);
+  }
+
+  selectPrevious() {
+    const { selectItem, selectedUID } = this.props;
+    const allItems = this.flatten();
+    if (!selectedUID) {
+      selectItem(_.last(allItems));
+    } else {
+      const newIndex = this.findIndex(allItems, selectedUID) - 1;
+      const item = _.get(allItems, [newIndex < 0 ? allItems.length - 1 : newIndex]);
+      selectItem(item);
+    }
+  }
+
+  selectNext() {
+    const { selectItem, selectedUID } = this.props;
+    const allItems = this.flatten();
+    if (!selectedUID) {
+      selectItem(_.first(allItems));
+    } else {
+      const newIndex = this.findIndex(allItems, selectedUID) + 1;
+      const item = _.get(allItems, [newIndex >= allItems.length ? 0 : newIndex]);
+      selectItem(item);
+    }
+  }
+
+  stopEvent(e: KeyboardEvent) {
+    document.activeElement instanceof HTMLElement && document.activeElement.blur();
+    e.stopPropagation();
+    e.preventDefault();
+  }
+
+  onKeyDown = (e: KeyboardEvent) => {
+    const { nodeName } = e.target as Element;
+    if (nodeName === 'INPUT' || nodeName === 'TEXTAREA') {
+      return;
+    }
+
+    switch (e.key) {
+      case 'Escape':
+        this.stopEvent(e);
+        this.props.dismissDetails();
+        break;
+      case 'k':
+      case 'ArrowUp':
+        this.stopEvent(e);
+        this.selectPrevious();
+        break;
+      case 'j':
+      case 'ArrowDown':
+        this.stopEvent(e);
+        this.selectNext();
+        break;
+      default:
+        break;
+    }
+  };
+
+  render() {
+    return <div className="project-overview">
+      {_.map(this.props.groups, ({name, items}, index) =>
+        <ProjectOverviewGroup
+          key={name || `_${index}`}
+          heading={name}
+          items={items}
+        />
+      )}
+      <p className="small text-center hidden-xs">
+        <kbd>&uarr;</kbd> and <kbd>&darr;</kbd> selects items, <kbd>{KEYBOARD_SHORTCUTS.focusFilterInput}</kbd> filters items,
+        and <kbd>{KEYBOARD_SHORTCUTS.focusNamespaceDropdown}</kbd> selects projects.
+      </p>
+    </div>;
+  }
+}
+export const ProjectOverview = connect(projectOverviewStateToProps, projectOverviewDispatchToProps)(ProjectOverview_);
 
 type ControllerLinkProps = {
   controller: PodControllerOverviewItem;
@@ -346,4 +437,7 @@ type ProjectOverviewGroupProps = {
 
 type ProjectOverviewProps = {
   groups: OverviewGroup[];
+  selectedUID: string;
+  selectItem: (item: OverviewItem) => void;
+  dismissDetails: () => void;
 };

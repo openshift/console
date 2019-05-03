@@ -411,7 +411,6 @@ class OverviewHeading_ extends React.Component<OverviewHeadingProps> {
               <div className="form-group overview-toolbar__form-group">
                 <div className="overview-toolbar__text-filter">
                   <TextFilter
-                    autoFocus={!disabled}
                     defaultValue={filterValue}
                     label="by name"
                     onChange={(e) => changeFilter(e.target.value)}

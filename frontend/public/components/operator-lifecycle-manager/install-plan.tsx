@@ -76,8 +76,7 @@ export const InstallPlansPage: React.SFC<InstallPlansPageProps> = (props) => {
       flatten={resources => _.get(resources.installPlan, 'data', [])}
       title="Install Plans"
       showTitle={false}
-      ListComponent={InstallPlansList}
-      filterLabel="Install Plans by name" />
+      ListComponent={InstallPlansList} />
   );
 };
 

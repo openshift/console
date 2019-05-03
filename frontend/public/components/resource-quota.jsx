@@ -239,7 +239,6 @@ export const ResourceQuotasPage = connectToFlags(FLAGS.OPENSHIFT)(({namespace, f
     createProps={{to: `/k8s/ns/${namespace || 'default'}/resourcequotas/~new`}}
     ListComponent={ResourceQuotasList}
     resources={resources}
-    filterLabel="Resource Quotas by name"
     label="Resource Quotas"
     namespace={namespace}
     flatten={flatten}
