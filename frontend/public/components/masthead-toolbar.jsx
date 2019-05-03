@@ -149,6 +149,11 @@ class MastheadToolbar_ extends React.Component {
     commandLineToolsModal({});
   }
 
+  _copyLoginCommand(e) {
+    e.preventDefault();
+    window.open(window.SERVER_FLAGS.requestTokenURL, '_blank').opener = null;
+  }
+
   _launchActions() {
     return [{
       label: 'Multi-Cluster Manager',
@@ -204,6 +209,14 @@ class MastheadToolbar_ extends React.Component {
       if (mobile) {
         actions.push({
           separator: true,
+        });
+      }
+
+      if (window.SERVER_FLAGS.requestTokenURL) {
+        actions.push({
+          label: 'Copy Login Command',
+          callback: this._copyLoginCommand,
+          externalLink: true,
         });
       }
 

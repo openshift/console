@@ -176,6 +176,8 @@ const Details = ({obj: node}) => {
           <dl className="co-m-pane__details">
             <dt>Operating System</dt>
             <dd className="text-capitalize">{_.get(node, 'status.nodeInfo.operatingSystem', '-')}</dd>
+            <dt>OS Image</dt>
+            <dd>{_.get(node, 'status.nodeInfo.osImage', '-')}</dd>
             <dt>Architecture</dt>
             <dd className="text-uppercase">{_.get(node, 'status.nodeInfo.architecture', '-')}</dd>
             <dt>Kernel Version</dt>
