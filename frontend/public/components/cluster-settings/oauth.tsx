@@ -52,6 +52,7 @@ const IdentityProviders: React.SFC<IdentityProvidersProps> = ({identityProviders
 const OAuthDetails: React.SFC<OAuthDetailsProps> = ({obj}: {obj: OAuthKind}) => {
   const { identityProviders, tokenConfig } = obj.spec;
   const addIDPItems = {
+    basicauth: 'Basic Authentication',
     github: 'GitHub',
     gitlab: 'GitLab',
     google: 'Google',
