@@ -127,7 +127,7 @@ class MastheadToolbar_ extends React.Component {
 
   _onClusterManager(e) {
     e.preventDefault();
-    window.open('https://cloud.openshift.com/clusters', '_blank').opener = null;
+    window.open('https://cloud.redhat.com/openshift', '_blank').opener = null;
   }
 
   _onAboutModal(e) {
