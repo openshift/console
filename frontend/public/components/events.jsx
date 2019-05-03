@@ -17,7 +17,7 @@ import { namespaceProptype } from '../propTypes';
 import { ResourceListDropdown } from './resource-dropdown';
 import { SafetyFirst } from './safety-first';
 import { TextFilter } from './factory';
-import { watchURL } from '../module/k8s';
+import { referenceFor, watchURL } from '../module/k8s';
 import { withStartGuide } from './start-guide';
 import { WSFactory } from '../module/ws-factory';
 import { EventModel, NodeModel } from '../models';
@@ -65,7 +65,7 @@ const Inner = connectToFlags(FLAGS.CAN_LIST_NODE)(class Inner extends React.Pure
           <div className="co-sysevent__subheader">
             <ResourceLink
               className="co-sysevent__resourcelink"
-              kind={obj.kind}
+              kind={referenceFor(obj)}
               namespace={obj.namespace}
               name={obj.name}
               title={obj.uid}
