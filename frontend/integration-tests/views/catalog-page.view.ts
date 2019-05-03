@@ -5,6 +5,7 @@ export const catalogTileFor = (name: string) => element(by.cssContainingText('.c
 export const catalogTileById = (id: string) => $(`[data-test=${id}]`);
 
 // FilterSidePanel views
+export const showMoreFilters = (group: string) => $(`[data-test-group-name=${group}] .btn-link`);
 export const filterCheckboxFor = (id: string) => $(`input[data-test=${id}]`);
 export const clickFilterCheckbox = (id: string) => filterCheckboxFor(id).click();
 export const filterCheckboxCount = (id: string) => filterCheckboxFor(id).$('.item-count').getText()
