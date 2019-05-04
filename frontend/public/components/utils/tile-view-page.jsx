@@ -600,6 +600,7 @@ export class TileViewPage extends React.Component {
         title={filterGroupNameMap[groupName] || groupName}
         onShowAllToggle={() => this.onShowAllToggle(groupName)}
         showAll={_.get(filterGroupsShowAll, groupName, false)}
+        data-test-group-name={groupName}
       >
         {_.map(filterGroup, (filter, filterName) => {
           const { label, active } = filter;

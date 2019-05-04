@@ -36,6 +36,7 @@ describe('Subscribing to an Operator from OperatorHub', () => {
   });
 
   it('displays Couchbase Operator operator when filter "Couchbase" is active', async() => {
+    await catalogPageView.showMoreFilters('provider').click();
     await catalogPageView.clickFilterCheckbox('provider-couchbase');
     await browser.wait(until.visibilityOf(catalogPageView.catalogTileById('couchbase-enterprise-certified-openshift-marketplace')));
 
