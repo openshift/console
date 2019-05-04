@@ -1,6 +1,7 @@
 $color-dropdown-hover: rgba(0, 0, 0, .05);
 $color-bookmarker--hover: #AAA;
 $color-bookmarker: #DDD;
+$dropdown-link-hover-border: 1px solid #bee1f4;
 
 .dropdown {
   position: relative;
@@ -85,13 +86,24 @@ $color-bookmarker: #DDD;
       cursor: pointer;
       flex-grow: 1;
       width: 100%;
+      &.disabled {
+        color: $dropdown-link-disabled-color;
+        cursor: not-allowed;
+        &:active,
+        &:focus,
+        &:hover {
+          background-color: inherit;
+          border-color: transparent;
+          color: $dropdown-link-disabled-color !important;
+        }
+      }
       &.next-to-bookmark {
         padding-left: 5px
       }
       &.hover {
         background-color: $dropdown-link-hover-bg;
-        border-top: 1px solid #bee1f4;
-        border-bottom: 1px solid #bee1f4;
+        border-top: $dropdown-link-hover-border;
+        border-bottom: $dropdown-link-hover-border;
         color: $dropdown-link-hover-color;
         position: relative;
         &:after,

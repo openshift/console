@@ -118,8 +118,7 @@ describe('Kubernetes resource CRUD operations', () => {
       });
 
       it('displays detail view for new resource instance', async() => {
-        await browser.wait(until.presenceOf(crudView.actionsDropdown));
-
+        await browser.wait(until.presenceOf(crudView.resourceTitle));
         expect(browser.getCurrentUrl()).toContain(`/${name}`);
         expect(crudView.resourceTitle.getText()).toEqual(name);
       });
@@ -310,10 +309,7 @@ describe('Kubernetes resource CRUD operations', () => {
     });
 
     it('displays modal for editing resource instance labels', async() => {
-      await browser.wait(until.presenceOf(crudView.actionsDropdown));
-      await crudView.actionsDropdown.click();
-      await browser.wait(until.presenceOf(crudView.actionsDropdownMenu));
-      await crudView.actionsDropdownMenu.element(by.linkText('Edit Labels')).click();
+      await crudView.clickDetailsPageAction(crudView.actions.labels);
       await browser.wait(until.presenceOf($('.tags input')));
       await $('.tags input').sendKeys(labelValue, Key.ENTER);
       // This only works because there's only one label
@@ -335,8 +331,8 @@ describe('Kubernetes resource CRUD operations', () => {
 
     afterAll(async() => {
       await browser.get(`${appHost}/k8s/ns/${testName}/${plural}/${name}`);
-      await browser.wait(until.presenceOf(crudView.actionsDropdown));
-      await crudView.actionsDropdown.click();
+      await browser.wait(until.presenceOf(crudView.actionsButton));
+      await crudView.actionsButton.click();
       await browser.wait(until.presenceOf(crudView.actionsDropdownMenu), 1000);
       await crudView.actionsDropdownMenu.element(by.partialLinkText('Delete ')).click();
       await browser.wait(until.presenceOf($('#confirm-action')));

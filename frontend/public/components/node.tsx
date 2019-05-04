@@ -15,12 +15,26 @@ const MarkAsUnschedulable = (kind, obj) => ({
   label: 'Mark as Unschedulable',
   hidden: _.get(obj, 'spec.unschedulable'),
   callback: () => configureUnschedulableModal({resource: obj}),
+  accessReview: {
+    group: kind.apiGroup,
+    resource: kind.path,
+    name: obj.metadata.name,
+    namespace: obj.metadata.namespace,
+    verb: 'patch',
+  },
 });
 
 const MarkAsSchedulable = (kind, obj) => ({
   label: 'Mark as Schedulable',
   hidden: !_.get(obj, 'spec.unschedulable', false),
   callback: () => makeNodeSchedulable(obj),
+  accessReview: {
+    group: kind.apiGroup,
+    resource: kind.path,
+    name: obj.metadata.name,
+    namespace: obj.metadata.namespace,
+    verb: 'patch',
+  },
 });
 
 const { ModifyLabels, ModifyAnnotations, Edit } = Kebab.factory;

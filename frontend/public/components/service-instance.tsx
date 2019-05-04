@@ -31,6 +31,12 @@ const createBinding = (kindObj, serviceInstance) => {
   return {
     callback: () => goToCreateBindingPage(serviceInstance),
     label: 'Create Service Binding',
+    accessReview: {
+      group: ServiceBindingModel.apiGroup,
+      resource: ServiceBindingModel.path,
+      namespace: serviceInstance.metadata.namespace,
+      verb: 'create',
+    },
   };
 };
 

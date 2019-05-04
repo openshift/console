@@ -26,7 +26,7 @@ describe('Interacting with the environment variable editor', () => {
     await yamlView.setContent(safeDump(newContent));
     await crudView.saveChangesBtn.click();
     // Wait until the resource is created and the details page loads before continuing.
-    await browser.wait(until.presenceOf(crudView.actionsDropdown));
+    await browser.wait(until.presenceOf(crudView.actionsButton));
     checkLogs();
     checkErrors();
   });
@@ -41,7 +41,7 @@ describe('Interacting with the environment variable editor', () => {
     await crudView.isLoaded();
     await crudView.nameFilter.sendKeys(WORKLOAD_NAME);
     await browser.wait(until.elementToBeClickable(crudView.resourceRowNamesAndNs.first()), BROWSER_TIMEOUT);
-    await crudView.deleteRow('deployment')(WORKLOAD_NAME);
+    await crudView.deleteRow('Deployment')(WORKLOAD_NAME);
     checkLogs();
     checkErrors();
   });

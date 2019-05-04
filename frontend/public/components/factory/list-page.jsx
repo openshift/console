@@ -14,12 +14,13 @@ import { withFallback } from '../utils/error-boundary';
 import {
   Dropdown,
   Firehose,
-  makeReduxID,
-  makeQuery,
   history,
   inject,
   kindObj,
+  makeQuery,
+  makeReduxID,
   PageHeading,
+  RequireCreatePermission,
 } from '../utils';
 
 export const CompactExpandButtons = ({expand = false, onExpandChange = _.noop}) => <div className="btn-group btn-group-sm" data-toggle="buttons">
@@ -187,8 +188,9 @@ export const FireMan_ = connect(null, {filterList})(
         autoFocus,
         canCreate,
         canExpand,
+        createAccessReview,
         createButtonText,
-        createProps,
+        createProps = {},
         filterLabel,
         helpText,
         resources,
@@ -198,7 +200,7 @@ export const FireMan_ = connect(null, {filterList})(
       let createLink;
       if (canCreate) {
         if (createProps.to) {
-          createLink = <Link className="co-m-primary-action" {...createProps} tabIndex={-1}>
+          createLink = <Link className="co-m-primary-action" {...createProps}>
             <button className="btn btn-primary" id="yaml-create">{createButtonText}</button>
           </Link>;
         } else if (createProps.items) {
@@ -209,6 +211,9 @@ export const FireMan_ = connect(null, {filterList})(
           createLink = <div className="co-m-primary-action">
             <button className="btn btn-primary" id="yaml-create" {...createProps}>{createButtonText}</button>
           </div>;
+        }
+        if (!_.isEmpty(createAccessReview)) {
+          createLink = <RequireCreatePermission model={createAccessReview.model} namespace={createAccessReview.namespace}>{createLink}</RequireCreatePermission>;
         }
       }
 
@@ -252,6 +257,7 @@ FireMan_.defaultProps = {
 FireMan_.propTypes = {
   canCreate: PropTypes.bool,
   canExpand: PropTypes.bool,
+  createAccessReview: PropTypes.object,
   createButtonText: PropTypes.string,
   createProps: PropTypes.object,
   fieldSelector: PropTypes.string,
@@ -297,6 +303,7 @@ export const ListPage = withFallback(props => {
     namespace,
     selector,
     showTitle = true,
+    skipAccessReview,
     textFilter,
     match,
   } = props;
@@ -320,6 +327,7 @@ export const ListPage = withFallback(props => {
   }
 
   createProps = createProps || (createHandler ? {onClick: createHandler} : {to: href});
+  const createAccessReview = skipAccessReview ? null : { model: ko, namespace: usedNamespace };
   const resources = [{
     fieldSelector,
     filters,
@@ -341,6 +349,7 @@ export const ListPage = withFallback(props => {
     autoFocus={autoFocus}
     canCreate={canCreate}
     canExpand={canExpand}
+    createAccessReview={createAccessReview}
     createButtonText={createButtonText || `Create ${label}`}
     createProps={createProps}
     filterLabel={filterLabel || 'by name'}
@@ -367,6 +376,7 @@ export const MultiListPage = props => {
     autoFocus,
     canCreate,
     canExpand,
+    createAccessReview,
     createButtonText,
     createProps,
     filterLabel,
@@ -395,6 +405,7 @@ export const MultiListPage = props => {
     autoFocus={autoFocus}
     canCreate={canCreate}
     canExpand={canExpand}
+    createAccessReview={createAccessReview}
     createButtonText={createButtonText || 'Create'}
     createProps={createProps}
     filterLabel={filterLabel || 'by name'}

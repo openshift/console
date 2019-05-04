@@ -30,6 +30,13 @@ const menuActions = [
   (kind, obj) => ({
     label: `Edit ${kind.label}`,
     href: `${resourceObjPath(obj, kind.kind)}/edit`,
+    accessReview: {
+      group: kind.apiGroup,
+      resource: kind.path,
+      name: obj.metadata.name,
+      namespace: obj.metadata.namespace,
+      verb: 'update',
+    },
   }),
   Kebab.factory.Delete,
 ];

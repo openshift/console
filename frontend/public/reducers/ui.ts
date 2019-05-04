@@ -159,3 +159,7 @@ export const createProjectMessageStateToProps = ({UI}: RootState) => {
 export const userStateToProps = ({UI}: RootState) => {
   return {user: UI.get('user')};
 };
+
+export const impersonateStateToProps = ({UI}: RootState) => {
+  return {impersonate: UI.get('impersonate')};
+};

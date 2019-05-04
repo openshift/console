@@ -22,14 +22,29 @@ const actions = [
   (kind, obj) => ({
     label: `Edit ${kind.label}`,
     href: `/k8s/ns/${obj.metadata.namespace}/${ClusterServiceVersionModel.plural}/${csvName()}/${referenceFor(obj)}/${obj.metadata.name}/yaml`,
+    accessReview: {
+      group: kind.apiGroup,
+      resource: kind.path,
+      name: obj.metadata.name,
+      namespace: obj.metadata.namespace,
+      verb: 'update',
+    },
   }),
   (kind, obj) => ({
     label: `Delete ${kind.label}`,
     callback: () => deleteModal({
       kind,
       resource: obj,
+      namespace: obj.metadata.namespace,
       redirectTo: `/k8s/ns/${obj.metadata.namespace}/${ClusterServiceVersionModel.plural}/${csvName()}/${referenceFor(obj)}`,
     }),
+    accessReview: {
+      group: kind.apiGroup,
+      resource: kind.path,
+      name: obj.metadata.name,
+      namespace: obj.metadata.namespace,
+      verb: 'delete',
+    },
   }),
 ] as KebabAction[];
 

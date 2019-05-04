@@ -66,7 +66,7 @@ describe('Performance test', () => {
     const initialChunks = await browser.executeScript<{name: string, size: number}[]>(() => performance.getEntriesByType('resource')
       .filter(({name}) => name.endsWith('.js')));
 
-    await crudView.selectOptionFromGear('console-config', 'Edit Config Map');
+    await crudView.clickKebabAction('console-config', 'Edit Config Map');
     await yamlView.isLoaded();
 
     const postChunks = await browser.executeScript<{name: string, size: number}[]>(() => performance.getEntriesByType('resource')

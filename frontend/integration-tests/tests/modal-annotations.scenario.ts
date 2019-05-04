@@ -23,11 +23,11 @@ describe('Modal Annotations', () => {
     await crudView.createYAMLButton.click();
     await yamlView.isLoaded();
     const content = await yamlView.editorContent.getText();
-    const newContent = _.defaultsDeep({}, {metadata: {name: WORKLOAD_NAME, labels: {['lbl-modal']: testName}}}, safeLoad(content));
+    const newContent = _.defaultsDeep({}, {metadata: {name: WORKLOAD_NAME, labels: {'lbl-modal': testName}}}, safeLoad(content));
     await yamlView.setContent(safeDump(newContent));
     await crudView.saveChangesBtn.click();
     // Wait until the resource is created and the details page loads before continuing.
-    await browser.wait(until.presenceOf(crudView.actionsDropdown));
+    await browser.wait(until.presenceOf(crudView.resourceTitle));
     checkLogs();
     checkErrors();
   });
@@ -39,10 +39,9 @@ describe('Modal Annotations', () => {
 
   afterAll(async() => {
     await browser.get(`${appHost}/k8s/ns/${testName}/deployments`);
-    await crudView.isLoaded();
+    await crudView.resourceRowsPresent();
     await crudView.nameFilter.sendKeys(WORKLOAD_NAME);
-    await browser.wait(until.elementToBeClickable(crudView.resourceRowNamesAndNs.first()), BROWSER_TIMEOUT);
-    await crudView.deleteRow('deployment')(WORKLOAD_NAME);
+    await crudView.deleteRow('Deployment')(WORKLOAD_NAME);
     checkLogs();
     checkErrors();
   });
@@ -164,14 +163,14 @@ describe('Modal Annotations', () => {
 
     await browser.get(`${appHost}/k8s/ns/${testName}/deployments`);
     await crudView.isLoaded();
-    await crudView.selectOptionFromGear(WORKLOAD_NAME, crudView.gearOptions.annotations);
+    await crudView.clickKebabAction(WORKLOAD_NAME, crudView.actions.annotations);
     await modalAnnotationsView.isLoaded();
     await modalAnnotationsView.addAnnotation(annotationKey,annotationValue);
     await modalAnnotationsView.isLoaded();
     await modalAnnotationsView.confirmActionBtn.click();
     await browser.get(`${appHost}/k8s/ns/${testName}/deployments`);
     await crudView.isLoaded();
-    await crudView.selectOptionFromGear(WORKLOAD_NAME, crudView.gearOptions.annotations);
+    await crudView.clickKebabAction(WORKLOAD_NAME, crudView.actions.annotations);
     await modalAnnotationsView.isLoaded();
     await validateKeyAndValue(annotationKey, annotationValue, true);
     await browser.get(`${appHost}/k8s/ns/${testName}/deployments/${WORKLOAD_NAME}/yaml`);
@@ -289,13 +288,13 @@ describe('Modal Annotations', () => {
 
     await browser.get(`${appHost}/k8s/ns/${testName}/deployments`);
     await crudView.isLoaded();
-    await crudView.selectOptionFromGear(WORKLOAD_NAME, crudView.gearOptions.annotations);
+    await crudView.clickKebabAction(WORKLOAD_NAME, crudView.actions.annotations);
     await modalAnnotationsView.isLoaded();
     await modalAnnotationsView.addAnnotation(annotationKey, annotationValue);
     await modalAnnotationsView.isLoaded();
     await modalAnnotationsView.cancelBtn.click();
     await crudView.isLoaded();
-    await crudView.selectOptionFromGear(WORKLOAD_NAME, crudView.gearOptions.annotations);
+    await crudView.clickKebabAction(WORKLOAD_NAME, crudView.actions.annotations);
     await modalAnnotationsView.isLoaded();
     await validateKeyAndValue(annotationKey, annotationValue, false);
   });

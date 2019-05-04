@@ -36,11 +36,25 @@ const {ModifyCount, AddStorage, EditEnvironment, common} = Kebab.factory;
 const UpdateStrategy: KebabAction = (kind: K8sKind, deployment: K8sResourceKind) => ({
   label: 'Edit Update Strategy',
   callback: () => configureUpdateStrategyModal({deployment}),
+  accessReview: {
+    group: kind.apiGroup,
+    resource: kind.path,
+    name: deployment.metadata.name,
+    namespace: deployment.metadata.namespace,
+    verb: 'patch',
+  },
 });
 
 const PauseAction: KebabAction = (kind: K8sKind, obj: K8sResourceKind) => ({
   label: obj.spec.paused ? 'Resume Rollouts' : 'Pause Rollouts',
   callback: () => togglePaused(kind, obj).catch((err) => errorModal({error: err.message})),
+  accessReview: {
+    group: kind.apiGroup,
+    resource: kind.path,
+    name: obj.metadata.name,
+    namespace: obj.metadata.namespace,
+    verb: 'patch',
+  },
 });
 
 export const menuActions = [

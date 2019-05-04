@@ -86,9 +86,7 @@ export const checkSecret = async(ns: string, name: string, keyValuesToCheck: Obj
 };
 
 export const editSecret = async(ns: string, name: string, updateForm: Function) => {
-  await crudView.actionsDropdown.click();
-  await browser.wait(until.presenceOf(crudView.actionsDropdownMenu));
-  await crudView.actionsDropdownMenu.element(by.linkText('Edit Secret')).click();
+  await crudView.clickDetailsPageAction('Edit Secret');
   await browser.wait(until.urlContains(`/k8s/ns/${ns}/secrets/${name}/edit`));
   await browser.wait(until.and(crudView.untilNoLoadersPresent, until.presenceOf(secretNameInput)));
   await updateForm();

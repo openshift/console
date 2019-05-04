@@ -7,7 +7,25 @@ import { K8sResourceKindReference, referenceFor, K8sResourceKind } from '../modu
 import { cloneBuild, formatBuildDuration, BuildPhase, getBuildNumber } from '../module/k8s/builds';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
 import { errorModal } from './modals';
-import { BuildHooks, BuildStrategy, Kebab, SectionHeading, history, navFactory, ResourceKebab, ResourceLink, resourceObjPath, ResourceSummary, Timestamp, AsyncComponent, resourcePath, StatusIcon, humanizeDecimalBytes, humanizeCpuCores } from './utils';
+import {
+  AsyncComponent,
+  BuildHooks,
+  BuildStrategy,
+  history,
+  humanizeCpuCores,
+  humanizeDecimalBytes,
+  Kebab,
+  KebabAction,
+  navFactory,
+  ResourceKebab,
+  ResourceLink,
+  resourceObjPath,
+  resourcePath,
+  ResourceSummary,
+  SectionHeading,
+  StatusIcon,
+  Timestamp,
+} from './utils';
 import { BuildPipeline, BuildPipelineLogLink } from './build-pipeline';
 import { breadcrumbsForOwnerRefs } from './utils/breadcrumbs';
 import { fromNow } from './utils/datetime';
@@ -19,7 +37,7 @@ const BuildsReference: K8sResourceKindReference = 'Build';
 
 const { common, EditEnvironment } = Kebab.factory;
 
-const cloneBuildAction = (kind, build) => ({
+const cloneBuildAction: KebabAction = (kind, build) => ({
   label: 'Rebuild',
   callback: () => cloneBuild(build).then(clone => {
     history.push(resourceObjPath(clone, referenceFor(clone)));
@@ -27,6 +45,14 @@ const cloneBuildAction = (kind, build) => ({
     const error = err.message;
     errorModal({ error });
   }),
+  accessReview: {
+    group: kind.apiGroup,
+    resource: kind.path,
+    subresource: 'instantiate',
+    name: build.metadata.name,
+    namespace: build.metadata.namespace,
+    verb: 'create',
+  },
 });
 
 const menuActions = [

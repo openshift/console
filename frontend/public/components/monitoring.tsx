@@ -113,7 +113,7 @@ const silenceMenuActions = (silence) => silenceState(silence) === SilenceStates.
 
 const SilenceKebab = ({silence}) => <Kebab options={silenceMenuActions(silence)} />;
 
-const SilenceActionsMenu = ({silence}) => <div className="co-actions">
+const SilenceActionsMenu = ({silence}) => <div className="co-actions" data-test-id="details-actions">
   <ActionsMenu actions={silenceMenuActions(silence)} />
 </div>;
 
@@ -242,7 +242,7 @@ const AlertsDetailsPage = withFallback(connect(alertStateToProps)((props: Alerts
       <div className="co-m-nav-title co-m-nav-title--detail">
         <h1 className="co-m-pane__heading">
           <div className="co-m-pane__name co-resource-item"><MonitoringResourceIcon className="co-m-resource-icon--lg" resource={AlertResource} />{alertname}</div>
-          {(state === AlertStates.Firing || state === AlertStates.Pending) && <div className="co-actions">
+          {(state === AlertStates.Firing || state === AlertStates.Pending) && <div className="co-actions" data-test-id="details-actions">
             <ActionsMenu actions={[silenceAlert(alert)]} />
           </div>}
         </h1>
