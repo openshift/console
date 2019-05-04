@@ -144,7 +144,7 @@ export const BindingsForRolePage = (props) => {
     staticFilters={[{'role-binding-roleRef': name}]}
     resources={resources}
     textFilter="role-binding"
-    filterLabel="Role Bindings by role or subject"
+    filterLabel="by role or subject"
     namespace={ns}
     flatten={bindingsFlatten} />;
 };
@@ -178,7 +178,6 @@ export const RolesPage = ({namespace, mock, showTitle}) => {
     namespace={namespace}
     createButtonText="Create Role"
     createProps={{to: `/k8s/ns/${namespace || 'default'}/roles/~new`}}
-    filterLabel="Roles by name"
     flatten={resources => _.flatMap(resources, 'data').filter(r => !!r)}
     resources={[
       {kind: 'Role', namespaced: true, optional: mock},

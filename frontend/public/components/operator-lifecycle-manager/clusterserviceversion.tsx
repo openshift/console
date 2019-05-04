@@ -120,7 +120,6 @@ export const ClusterServiceVersionsPage = connect(stateToProps)((props: ClusterS
       kind={referenceForModel(ClusterServiceVersionModel)}
       ListComponent={ClusterServiceVersionList}
       helpText={helpText}
-      filterLabel="Cluster Service Versions by name"
       rowFilters={rowFilters}
       showTitle={false} />
   </React.Fragment>;

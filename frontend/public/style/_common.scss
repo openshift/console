@@ -587,7 +587,10 @@
   margin: 0 !important;
 }
 
-.text-filter {
+.co-text-filter {
   min-width: 150px;
   width: 250px;
+  &:focus + .form-control-feedback--keyboard-hint {
+    display: none;
+  }
 }

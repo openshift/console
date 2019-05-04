@@ -156,7 +156,7 @@ export const RoleBindingsPage = ({namespace, showTitle=true, mock}) => <MultiLis
   createButtonText="Create Binding"
   createProps={{to: '/k8s/cluster/rolebindings/~new'}}
   mock={mock}
-  filterLabel="Role Bindings by role or subject"
+  filterLabel="by role or subject"
   flatten={flatten}
   label="Role Bindings"
   ListComponent={BindingsList}

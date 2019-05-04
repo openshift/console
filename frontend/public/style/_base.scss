@@ -1,17 +1,6 @@
 // Base element styles.
 // Please DO NOT add rules of this type.
 
-button:focus,
-a:focus {
-  outline-style: none;
-
-  // restore outline-style to buttons, a in .pf-c-page__header
-  // so there is a visual indicator for keyboard users
-  .pf-c-page__header & {
-    outline-style: auto;
-  }
-}
-
 ul,
 ol {
   padding-left: 20px; }
