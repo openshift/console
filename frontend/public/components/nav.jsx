@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import * as _ from 'lodash-es';
 import * as PropTypes from 'prop-types';
+import memoize from 'memoize-one';
 
 import { FLAGS, featureReducerName, flagPending } from '../features';
 import { monitoringReducerName, MonitoringRoutes } from '../monitoring';
@@ -26,6 +27,7 @@ import {
 import { referenceForModel } from '../module/k8s';
 
 import { stripBasePath } from './utils';
+import * as plugins from '../plugins';
 
 export const matchesPath = (resourcePath, prefix) => resourcePath === prefix || _.startsWith(resourcePath, `${prefix}/`);
 export const matchesModel = (resourcePath, model) => model && matchesPath(resourcePath, referenceForModel(model));
@@ -227,6 +229,10 @@ const NavSection = connect(navSectionStateToProps)(
       this.setState({isOpen: expandState});
     }
 
+    getPluginNavItems = memoize(
+      (section) => plugins.registry.getNavItems(section)
+    );
+
     render() {
       if (!this.props.canRender) {
         return null;
@@ -236,7 +242,7 @@ const NavSection = connect(navSectionStateToProps)(
       const { isOpen, activeChild } = this.state;
       const isActive = !!activeChild;
 
-      const Children = React.Children.map(children, c => {
+      const mapChild = (c) => {
         if (!c) {
           return null;
         }
@@ -252,11 +258,23 @@ const NavSection = connect(navSectionStateToProps)(
           return null;
         }
         return React.cloneElement(c, {key: name, isActive: name === this.state.activeChild, activeNamespace, flags});
-      });
+      };
 
-      return Children ? (
+      const Children = React.Children.map(children, mapChild);
+
+      const PluginChildren = _.compact(this.getPluginNavItems(title).map((item, index) => {
+        if (plugins.isHrefNavItem(item)) {
+          return <HrefLink key={index} {...item.properties.componentProps} />;
+        }
+        if (plugins.isResourceNSNavItem(item)) {
+          return <ResourceNSLink key={index} {...item.properties.componentProps} />;
+        }
+      })).map(mapChild);
+
+      return (Children || PluginChildren.length > 0) ? (
         <NavExpandable title={title} isActive={isActive} isExpanded={isOpen} onExpand={this.toggle}>
           {Children}
+          {PluginChildren}
         </NavExpandable>
       ) : null;
     }
