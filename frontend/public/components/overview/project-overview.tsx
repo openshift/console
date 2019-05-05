@@ -255,6 +255,7 @@ const ProjectOverviewListItem = connect<ProjectOverviewListItemPropsFromState, P
       className={className}
       heading={heading}
       additionalInfo={[additionalInfo]}
+      id={uid}
     />;
   }
 );
@@ -285,7 +286,7 @@ const projectOverviewStateToProps = ({UI}) => ({
 });
 
 const projectOverviewDispatchToProps = (dispatch) => ({
-  selectItem: (item: OverviewItem) => dispatch(UIActions.selectOverviewItem(_.get(item, 'obj.metadata.uid'))),
+  selectItemUID: (uid: string) => dispatch(UIActions.selectOverviewItem(uid)),
   dismissDetails: () => dispatch(UIActions.dismissOverviewDetails()),
 });
 
@@ -306,27 +307,36 @@ class ProjectOverview_ extends React.Component<ProjectOverviewProps> {
     return _.findIndex(items, i => _.get(i, 'obj.metadata.uid') === uid);
   }
 
+  selectItem(item: OverviewItem) {
+    const uid: string = _.get(item, 'obj.metadata.uid');
+    this.props.selectItemUID(uid);
+    const element = document.getElementById(uid);
+    if (element) {
+      element.scrollIntoView({block: 'nearest'});
+    }
+  }
+
   selectPrevious() {
-    const { selectItem, selectedUID } = this.props;
+    const { selectedUID } = this.props;
     const allItems = this.flatten();
     if (!selectedUID) {
-      selectItem(_.last(allItems));
+      this.selectItem(_.last(allItems));
     } else {
       const newIndex = this.findIndex(allItems, selectedUID) - 1;
       const item = _.get(allItems, [newIndex < 0 ? allItems.length - 1 : newIndex]);
-      selectItem(item);
+      this.selectItem(item);
     }
   }
 
   selectNext() {
-    const { selectItem, selectedUID } = this.props;
+    const { selectedUID } = this.props;
     const allItems = this.flatten();
     if (!selectedUID) {
-      selectItem(_.first(allItems));
+      this.selectItem(_.first(allItems));
     } else {
       const newIndex = this.findIndex(allItems, selectedUID) + 1;
       const item = _.get(allItems, [newIndex >= allItems.length ? 0 : newIndex]);
-      selectItem(item);
+      this.selectItem(item);
     }
   }
 
@@ -438,6 +448,6 @@ type ProjectOverviewGroupProps = {
 type ProjectOverviewProps = {
   groups: OverviewGroup[];
   selectedUID: string;
-  selectItem: (item: OverviewItem) => void;
+  selectItemUID: (uid: string) => void;
   dismissDetails: () => void;
 };
