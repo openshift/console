@@ -76,6 +76,9 @@ export default (state, action) => {
     case types.setClusterID:
       return state.set('clusterID', action.clusterID);
 
+    case types.setPodMemoryMetrics:
+      return state.setIn(['pod', 'memory'], action.metrics);
+
     case types.setMonitoringData: {
       const alerts = action.key === 'alerts' ? action.data : state.getIn(['monitoring', 'alerts']);
       const firingAlerts = _.filter(_.get(alerts, 'data'), a => [AlertStates.Firing, AlertStates.Silenced].includes(a.state));
@@ -136,6 +139,7 @@ export default (state, action) => {
     case types.updateOverviewFilterValue: {
       return state.setIn(['overview', 'filterValue'], action.value);
     }
+
     case types.updateTimestamps:
       return state.set('lastTick', action.lastTick);
 

@@ -11,6 +11,8 @@ import { Tooltip } from '../utils/tooltip';
 import { K8sResourceKind } from '../../module/k8s';
 import { UIActions } from '../../ui/ui-actions';
 import {
+  formatBytesAsMiB,
+  formatCores,
   pluralize,
   ResourceIcon,
   resourceObjPath,
@@ -22,15 +24,6 @@ import {
   OverviewMetrics,
   PodControllerOverviewItem,
 } from '.';
-
-const formatToFractionalDigits = (value: number, digits: number): string => Intl.NumberFormat(undefined, { minimumFractionDigits: digits, maximumFractionDigits: digits }).format(value);
-
-const formatBytesAsMiB = (bytes: number): string => {
-  const mib = bytes / 1024 / 1024;
-  return formatToFractionalDigits(mib, 1);
-};
-
-const formatCores = (cores: number): string => formatToFractionalDigits(cores, 3);
 
 const overviewTooltipStyles = Object.freeze({
   content: {

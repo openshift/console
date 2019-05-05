@@ -77,6 +77,7 @@ export const types = {
   setCreateProjectMessage: 'setCreateProjectMessage',
   setClusterID: 'setClusterID',
   setCurrentLocation: 'setCurrentLocation',
+  setPodMemoryMetrics: 'setPodMemoryMetrics',
   setMonitoringData: 'setMonitoringData',
   toggleMonitoringGraphs: 'toggleMonitoringGraphs',
   setUser: 'setUser',
@@ -179,6 +180,8 @@ export const UIActions = {
   [types.setCreateProjectMessage]: message => ({type: types.setCreateProjectMessage, message}),
 
   [types.setUser]: user => ({type: types.setUser, user}),
+
+  [types.setPodMemoryMetrics]: metrics => ({type: types.setPodMemoryMetrics, metrics}),
 
   [types.selectOverviewView]: view => ({type: types.selectOverviewView, view}),
 

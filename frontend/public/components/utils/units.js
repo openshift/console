@@ -297,3 +297,12 @@ export const convertToBaseValue = (value) => {
   // Unrecognized unit.
   return null;
 };
+
+const formatToFractionalDigits = (value, digits) => Intl.NumberFormat(undefined, { minimumFractionDigits: digits, maximumFractionDigits: digits }).format(value);
+
+export const formatBytesAsMiB = (bytes) => {
+  const mib = bytes / 1024 / 1024;
+  return formatToFractionalDigits(mib, 1);
+};
+
+export const formatCores = (cores) => formatToFractionalDigits(cores, 3);
