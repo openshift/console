@@ -27,10 +27,19 @@ import { EventsInnerOverview } from './events-inner-overview';
 import { LoadingInline} from '../utils/okdutils';
 import { LazyRenderer } from '../utils/lazyRenderer';
 
-const CONSUMERS_CPU_QUERY = 'sort(topk(5, sum by (pod_name)(container_cpu_usage_seconds_total{pod_name!=""})))';
-const CONSUMERS_MEMORY_QUERY = 'sort(topk(5, sum by (pod_name)(container_memory_usage_bytes{pod_name!=""})))';
-const NODE_CONSUMERS_CPU_QUERY = 'sort(topk(5, kube_node_status_capacity_cpu_cores - kube_node_status_allocatable_cpu_cores))';
+const CONSUMERS_CPU_QUERY = 'sort(topk(5, pod_name:container_cpu_usage:sum))';
+const CONSUMERS_MEMORY_QUERY = 'sort(topk(5, pod_name:container_memory_usage_bytes:sum))';
+
+const CONSUMERS_STORAGE_QUERY = 'sort(topk(5, avg by (pod_name)(irate(container_fs_io_time_seconds_total{container_name="POD", pod_name!=""}[1m]))))';
+const CONSUMERS_NETWORK_QUERY = `sort(topk(5, sum by (pod_name)(irate(container_network_receive_bytes_total{container_name="POD", pod_name!=""}[1m]) + 
+  irate(container_network_transmit_bytes_total{container_name="POD", pod_name!=""}[1m]))))`;
+
+const NODE_CONSUMERS_CPU_QUERY = 'sort(topk(5, node:node_cpu_utilisation:avg1m))';
 const NODE_CONSUMERS_MEMORY_QUERY = 'sort(topk(5, node:node_memory_bytes_total:sum - node:node_memory_bytes_available:sum))';
+
+const NODE_CONSUMERS_STORAGE_QUERY = 'sort(topk(5, node:node_disk_utilisation:avg_irate{cluster=""}))';
+const NODE_CONSUMERS_NETWORK_QUERY = 'sort(topk(5, node:node_net_utilisation:sum_irate{cluster=""}))';
+
 const OPENSHIFT_VERSION_QUERY = 'openshift_build_info{job="apiserver"}';
 
 const CAPACITY_MEMORY_TOTAL_QUERY = 'sum(kube_node_status_capacity_memory_bytes)';
@@ -169,8 +178,15 @@ export class ClusterOverview extends React.Component {
 
     this.fetchPrometheusQuery(CONSUMERS_CPU_QUERY, 'workloadCpuResults');
     this.fetchPrometheusQuery(CONSUMERS_MEMORY_QUERY, 'workloadMemoryResults');
+
+    this.fetchPrometheusQuery(CONSUMERS_STORAGE_QUERY, 'workloadStorageResults');
+    this.fetchPrometheusQuery(CONSUMERS_NETWORK_QUERY, 'workloadNetworkResults');
+
     this.fetchPrometheusQuery(NODE_CONSUMERS_MEMORY_QUERY, 'infraMemoryResults');
     this.fetchPrometheusQuery(NODE_CONSUMERS_CPU_QUERY, 'infraCpuResults');
+
+    this.fetchPrometheusQuery(NODE_CONSUMERS_STORAGE_QUERY, 'infraStorageResults');
+    this.fetchPrometheusQuery(NODE_CONSUMERS_NETWORK_QUERY, 'infraNetworkResults');
 
     this.fetchHealth();
 
