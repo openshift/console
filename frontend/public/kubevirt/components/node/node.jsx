@@ -2,10 +2,11 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { getResource, findNodeMaintenance, getDeletionTimestamp, NodeStatus } from 'kubevirt-web-ui-components';
 
-import { k8sKill, nodeStatus } from '../../module/okdk8s';
+import { nodeStatus } from '../../module/okdk8s';
 import { NodeMaintenance } from '../../models';
 import { LoadingInline, StatusIcon, Timestamp, ResourceKebab } from '../utils/okdutils';
 import { startMaintenanceModal } from './node-maintenance-modal';
+import { stopMaintenanceModal } from './stop-maintenance-modal';
 import { WithResources } from '../utils/withResources';
 import { DetailsPage } from '../factory/okdfactory';
 
@@ -26,7 +27,7 @@ const StopMaintenanceAction = (kind, obj, actionArgs) => {
   return {
     label: 'Stop Maintenance',
     hidden: !nodeMaintenance || getDeletionTimestamp(nodeMaintenance),
-    callback: () => k8sKill(NodeMaintenance, nodeMaintenance),
+    callback: () => stopMaintenanceModal({ nodeMaintenance, node: obj }),
   };
 };
 
