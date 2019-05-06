@@ -167,7 +167,7 @@ export const PodDetailsList: React.FC<PodDetailsListProps> = ({pod}) => {
 };
 
 export const PodResourceSummary: React.FC<PodResourceSummaryProps> = ({pod}) => (
-  <ResourceSummary resource={pod} showNodeSelector showTolerations>
+  <ResourceSummary resource={pod} showTolerations>
     <dt>Node Selector</dt>
     <dd><Selector kind="Node" selector={pod.spec.nodeSelector} /></dd>
   </ResourceSummary>

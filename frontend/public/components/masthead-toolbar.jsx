@@ -286,6 +286,7 @@ class MastheadToolbar_ extends React.Component {
             {flags[FLAGS.OPENSHIFT] && <ToolbarItem>
               <Dropdown
                 isPlain
+                position="right"
                 onSelect={this._onApplicationLauncherDropdownSelect}
                 toggle={
                   <DropdownToggle aria-label="Application Launcher" iconComponent={null} onToggle={this._onApplicationLauncherDropdownToggle}>
