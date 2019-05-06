@@ -11,7 +11,15 @@ export const commandLineToolsModal = createModalLauncher(
       <h5>oc - OpenShift Command Line Interface (CLI)</h5>
       <p>With the OpenShift command line interface, you can create applications and manage OpenShift projects from a terminal.</p>
       <p>The oc binary offers the same capabilities as the kubectl binary, but it is further extended to natively support OpenShift Container Platform features.</p>
-      <p><ExternalLink href={OC_DOWNLOAD_LINK} text="Download oc" /></p>
+      <p>
+        <ExternalLink href={OC_DOWNLOAD_LINK} text="Download oc" />
+        {(window as any).SERVER_FLAGS.requestTokenURL && (
+          <React.Fragment>
+            &nbsp;<span className="co-action-divider" aria-hidden="true">|</span>
+            &nbsp;<ExternalLink href={(window as any).SERVER_FLAGS.requestTokenURL} text="Copy Login Command" />
+          </React.Fragment>
+        )}
+      </p>
       <hr />
       <h5>odo - Developer-focused CLI for OpenShift</h5>
       <p><span className="label label-warning">Tech Preview</span></p>

@@ -7,7 +7,7 @@ import { Button } from 'patternfly-react';
 import { Link } from 'react-router-dom';
 
 import { ClusterOperatorPage } from './cluster-operator';
-import { clusterChannelModal, clusterUpdateModal } from '../modals';
+import { clusterChannelModal, clusterUpdateModal, errorModal } from '../modals';
 import { GlobalConfigPage } from './global-config';
 import { ClusterAutoscalerModel, ClusterVersionModel } from '../../models';
 import {
@@ -20,6 +20,7 @@ import {
   getClusterVersionCondition,
   getDesiredClusterVersion,
   getLastCompletedUpdate,
+  k8sPatch,
   K8sResourceConditionStatus,
   K8sResourceKind,
   referenceForModel,
@@ -34,18 +35,34 @@ import {
   Timestamp,
 } from '../utils';
 
+const cancelUpdate = (cv: ClusterVersionKind) => {
+  k8sPatch(ClusterVersionModel, cv, [{path: '/spec/desiredUpdate', op: 'remove'}]).catch(err => {
+    const error = err.message;
+    errorModal({error});
+  });
+};
+
 const clusterAutoscalerReference = referenceForModel(ClusterAutoscalerModel);
 
-const CurrentChannel: React.SFC<CurrentChannelProps> = ({cv}) => <button className="btn btn-link co-modal-btn-link" onClick={() => (clusterChannelModal({cv}))}>
+const CurrentChannel: React.SFC<CurrentChannelProps> = ({cv}) => <button className="btn btn-link co-modal-btn-link" onClick={() => clusterChannelModal({cv})}>
   {cv.spec.channel || '-'}
 </button>;
 
+const InvalidMessage: React.SFC<CVStatusMessageProps> = ({cv}) => <React.Fragment>
+  <div>
+    <i className="pficon pficon-error-circle-o" aria-hidden={true} /> Invalid cluster version
+  </div>
+  <Button bsStyle="primary" onClick={() => cancelUpdate(cv)}>
+    Cancel update
+  </Button>
+</React.Fragment>;
+
 const UpdatesAvailableMessage: React.SFC<CVStatusMessageProps> = ({cv}) => <React.Fragment>
   <div className="co-update-status">
-    <i className="fa fa-arrow-circle-o-up update-pending" aria-hidden={true}></i> Update available
+    <i className="fa fa-arrow-circle-o-up update-pending" aria-hidden={true} /> Update available
   </div>
   <div>
-    <Button bsStyle="primary" onClick={() => (clusterUpdateModal({cv}))}>
+    <Button bsStyle="primary" onClick={() => clusterUpdateModal(cv)}>
       Update now
     </Button>
   </div>
@@ -54,29 +71,31 @@ const UpdatesAvailableMessage: React.SFC<CVStatusMessageProps> = ({cv}) => <Reac
 const UpdatingMessage: React.SFC<CVStatusMessageProps> = ({cv}) => {
   const updatingCondition = getClusterVersionCondition(cv, ClusterVersionConditionType.Progressing, K8sResourceConditionStatus.True);
   return <React.Fragment>
-    {updatingCondition.message && <div><i className="fa-spin fa fa-refresh" aria-hidden={true}></i> {updatingCondition.message}</div>}
+    {updatingCondition.message && <div><i className="fa-spin fa fa-refresh" aria-hidden={true} /> {updatingCondition.message}</div>}
     <Link to="/settings/cluster/clusteroperators">View details</Link>
   </React.Fragment>;
 };
 
-const ErrorRetrievingMessage: React.SFC<StatusMessageProps> = () => <div>
-  <i className="pficon pficon-error-circle-o" aria-hidden={true}></i> Error retrieving
+const ErrorRetrievingMessage: React.SFC<{}> = () => <div>
+  <i className="pficon pficon-error-circle-o" aria-hidden={true} /> Error retrieving
 </div>;
 
-const FailingMessage: React.SFC<StatusMessageProps> = () => <React.Fragment>
+const FailingMessage: React.SFC<{}> = () => <React.Fragment>
   <div>
-    <i className="pficon pficon-error-circle-o" aria-hidden={true}></i> Failing
+    <i className="pficon pficon-error-circle-o" aria-hidden={true} /> Failing
   </div>
   <Link to="/settings/cluster/clusteroperators">View details</Link>
 </React.Fragment>;
 
-const UpToDateMessage: React.SFC<StatusMessageProps> = () => <span>
-  <i className="pficon pficon-ok" aria-hidden={true}></i> Up to date
+const UpToDateMessage: React.SFC<{}> = () => <span>
+  <i className="pficon pficon-ok" aria-hidden={true} /> Up to date
 </span>;
 
 const UpdateStatus: React.SFC<UpdateStatusProps> = ({cv}) => {
   const status = getClusterUpdateStatus(cv);
   switch (status) {
+    case ClusterUpdateStatus.Invalid:
+      return <InvalidMessage cv={cv} />;
     case ClusterUpdateStatus.UpdatesAvailable:
       return <UpdatesAvailableMessage cv={cv} />;
     case ClusterUpdateStatus.Updating:
@@ -122,7 +141,6 @@ const CurrentVersionHeader: React.SFC<CurrentVersionProps> = ({cv}) => {
     { status === ClusterUpdateStatus.UpToDate || status === ClusterUpdateStatus.UpdatesAvailable ? 'Current Version' : 'Last Completed Version' }
   </React.Fragment>;
 };
-
 
 const ClusterVersionDetailsTable: React.SFC<ClusterVersionDetailsTableProps> = ({obj: cv, autoscalers}) => {
   const { history = [] } = cv.status;
@@ -255,9 +273,6 @@ type UpdateStatusProps = {
 
 type CVStatusMessageProps = {
   cv: ClusterVersionKind;
-};
-
-type StatusMessageProps = {
 };
 
 type CurrentChannelProps = {

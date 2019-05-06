@@ -127,7 +127,7 @@ class MastheadToolbar_ extends React.Component {
 
   _onClusterManager(e) {
     e.preventDefault();
-    window.open('https://cloud.openshift.com/clusters', '_blank').opener = null;
+    window.open('https://cloud.redhat.com/openshift', '_blank').opener = null;
   }
 
   _onAboutModal(e) {
@@ -147,6 +147,11 @@ class MastheadToolbar_ extends React.Component {
   _onCommandLineTools(e) {
     e.preventDefault();
     commandLineToolsModal({});
+  }
+
+  _copyLoginCommand(e) {
+    e.preventDefault();
+    window.open(window.SERVER_FLAGS.requestTokenURL, '_blank').opener = null;
   }
 
   _launchActions() {
@@ -204,6 +209,14 @@ class MastheadToolbar_ extends React.Component {
       if (mobile) {
         actions.push({
           separator: true,
+        });
+      }
+
+      if (window.SERVER_FLAGS.requestTokenURL) {
+        actions.push({
+          label: 'Copy Login Command',
+          callback: this._copyLoginCommand,
+          externalLink: true,
         });
       }
 
@@ -273,6 +286,7 @@ class MastheadToolbar_ extends React.Component {
             {flags[FLAGS.OPENSHIFT] && <ToolbarItem>
               <Dropdown
                 isPlain
+                position="right"
                 onSelect={this._onApplicationLauncherDropdownSelect}
                 toggle={
                   <DropdownToggle aria-label="Application Launcher" iconComponent={null} onToggle={this._onApplicationLauncherDropdownToggle}>

@@ -17,9 +17,9 @@ import (
 // openShiftAuth implements OpenShift Authentication as defined in:
 // https://docs.openshift.com/container-platform/3.9/architecture/additional_concepts/authentication.html
 type openShiftAuth struct {
-	cookiePath         string
-	secureCookies      bool
-	kubeAdminLogoutURL string
+	cookiePath    string
+	secureCookies bool
+	specialURLs   SpecialAuthURLs
 }
 
 type openShiftConfig struct {
@@ -100,12 +100,21 @@ func newOpenShiftAuth(ctx context.Context, c *openShiftConfig) (oauth2.Endpoint,
 	}
 	defer resp.Body.Close()
 
+	// Special page on the integrated OAuth server for requesting a token.
+	// TODO: We will need to implement this directly console to support external OAuth servers.
+	requestTokenURL := proxy.SingleJoiningSlash(metadata.Token, "/request")
 	kubeAdminLogoutURL := proxy.SingleJoiningSlash(metadata.Issuer, "/logout")
 	return oauth2.Endpoint{
-		AuthURL:  metadata.Auth,
-		TokenURL: metadata.Token,
-	}, &openShiftAuth{c.cookiePath, c.secureCookies, kubeAdminLogoutURL}, nil
-
+			AuthURL:  metadata.Auth,
+			TokenURL: metadata.Token,
+		}, &openShiftAuth{
+			c.cookiePath,
+			c.secureCookies,
+			SpecialAuthURLs{
+				requestTokenURL,
+				kubeAdminLogoutURL,
+			},
+		}, nil
 }
 
 func (o *openShiftAuth) login(w http.ResponseWriter, token *oauth2.Token) (*loginState, error) {
@@ -176,6 +185,6 @@ func getOpenShiftUser(r *http.Request) (*User, error) {
 	}, nil
 }
 
-func (o *openShiftAuth) getKubeAdminLogoutURL() string {
-	return o.kubeAdminLogoutURL
+func (o *openShiftAuth) getSpecialURLs() SpecialAuthURLs {
+	return o.specialURLs
 }
