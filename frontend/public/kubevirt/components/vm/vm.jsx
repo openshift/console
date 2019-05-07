@@ -107,7 +107,7 @@ export const VirtualMachinesPage = connect(
           case 'wizard':
             return () => openCreateVmWizard(this.props.namespace);
           default:
-            return `/k8s/ns/${this.props.namespace || 'default'}/virtualmachines/new/`;
+            return `/k8s/ns/${this.props.namespace || 'default'}/virtualmachines/~new/`;
         }
       },
     };
