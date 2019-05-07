@@ -1,4 +1,9 @@
+.graph-empty-state {
+  background: #f5f5f5;
+}
+
 .graph-wrapper {
+  width: 100%;
   padding-top: 15px; // So graph title doesn't abut border
   margin-top: 0;
   margin-bottom: 16px;

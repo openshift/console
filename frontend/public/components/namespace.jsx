@@ -9,7 +9,7 @@ import { NamespaceModel, ProjectModel, SecretModel } from '../models';
 import { k8sGet } from '../module/k8s';
 import * as UIActions from '../actions/ui';
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
-import { ActionsMenu, Kebab, Dropdown, Firehose, LabelList, LoadingInline, navFactory, ResourceKebab, SectionHeading, ResourceIcon, ResourceLink, ResourceSummary, humanizeBinaryBytes, MsgBox, StatusIconAndText, ExternalLink, humanizeCpuCores, humanizeDecimalBytes } from './utils';
+import { ActionsMenu, Kebab, Dropdown, Firehose, LabelList, LoadingInline, navFactory, ResourceKebab, SectionHeading, ResourceIcon, ResourceLink, ResourceSummary, MsgBox, StatusIconAndText, ExternalLink, humanizeCpuCores, humanizeDecimalBytes } from './utils';
 import { createNamespaceModal, createProjectModal, deleteNamespaceModal, configureNamespacePullSecretModal } from './modals';
 import { RoleBindingsPage } from './RBAC';
 import { Bar, Area, requirePrometheus } from './graphs';
@@ -182,7 +182,7 @@ export const TopPodsBarChart = ({ns}) => (
     title="Memory Usage by Pod (Top 10)"
     namespace={ns.metadata.name}
     query={`sort(topk(10, sum by (pod_name)(container_memory_usage_bytes{container_name!="POD",container_name!="",pod_name!="", namespace="${ns.metadata.name}"})))`}
-    humanize={humanizeBinaryBytes}
+    formatY={humanizeDecimalBytes}
     metric="pod_name"
   />
 );
