@@ -41,7 +41,7 @@ describe('Auth test', () => {
 
       it('logs out htpasswd user', async() => {
         await loginView.logout();
-        expect(browser.getCurrentUrl()).toContain('openshift-authentication');
+        expect(browser.getCurrentUrl()).toContain('oauth-openshift');
         expect($('.login-pf').isPresent()).toBeTruthy();
       });
 
@@ -55,7 +55,7 @@ describe('Auth test', () => {
 
       it('logs out kubeadmin user', async() => {
         await loginView.logout();
-        expect(browser.getCurrentUrl()).toContain('openshift-authentication');
+        expect(browser.getCurrentUrl()).toContain('oauth-openshift');
         expect($('.login-pf').isPresent()).toBeTruthy();
 
         // Log back in so that remaining tests can be run
