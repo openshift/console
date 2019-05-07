@@ -7,14 +7,14 @@ export function getVmManifest(provisionSource: string, namespace: string, name?:
   const metadata = {
     name: name ? name : `${provisionSource.toLowerCase()}-${namespace.slice(-5)}`,
     annotations: {
-      'name.os.template.kubevirt.io/rhel7.6': 'Red Hat Enterprise Linux 7.6',
+      'name.os.template.kubevirt.io/rhel7.0': 'Red Hat Enterprise Linux 7.0',
       description: namespace,
     },
     namespace,
     labels: {
       'app': `vm-${provisionSource.toLowerCase()}-${namespace}`,
       'flavor.template.kubevirt.io/small': 'true',
-      'os.template.kubevirt.io/rhel7.6': 'true',
+      'os.template.kubevirt.io/rhel7.0': 'true',
       'vm.kubevirt.io/template': 'rhel7-generic-small',
       'vm.kubevirt.io/template-namespace': 'openshift',
       'workload.template.kubevirt.io/generic': 'true',
@@ -237,7 +237,7 @@ export const localStoragePersistentVolume = {
 };
 
 export const basicVmConfig = {
-  operatingSystem: 'Red Hat Enterprise Linux 7.6',
+  operatingSystem: 'Red Hat Enterprise Linux 7.0',
   flavor: 'small',
   workloadProfile: 'generic',
   sourceURL: 'https://download.cirros-cloud.net/0.4.0/cirros-0.4.0-x86_64-disk.img',

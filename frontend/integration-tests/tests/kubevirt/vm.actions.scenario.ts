@@ -6,9 +6,9 @@ import { appHost, testName } from '../../protractor.conf';
 import { isLoaded, resourceRowsPresent, textFilter } from '../../views/crud.view';
 import { listViewAction, getDetailActionDropdownOptions } from '../../views/kubevirt/vm.actions.view';
 import { testNad, hddDisk, networkInterface, getVmManifest } from './mocks';
-import { overviewTab, disksTab, nicsTab, statusIcon, statusIcons, vmDetailNodeID } from '../../views/kubevirt/virtualMachine.view';
 import { removeLeakedResources, deleteResources, createResources, fillInput, searchYAML, waitForCount } from './utils/utils';
 import { VM_BOOTUP_TIMEOUT, VM_STOP_TIMEOUT, VM_ACTIONS_TIMEOUT, PAGE_LOAD_TIMEOUT } from './utils/consts';
+import { overviewTab, disksTab, nicsTab, statusIcon, statusIcons, vmDetailNode } from '../../views/kubevirt/virtualMachine.view';
 import { VirtualMachine } from './models/virtualMachine';
 
 
@@ -72,12 +72,10 @@ describe('Test VM actions', () => {
 
     beforeAll(async() => {
       testVm.metadata.name = vmName;
-      execSync(`echo '${JSON.stringify(testVm)}' | kubectl create -f -`);
+      createResources([testVm]);
       leakedResources.add(JSON.stringify({name: vmName, namespace: testName, kind: 'vm'}));
 
-      // Navigate to VM detail page
-      await browser.get(`${appHost}/k8s/all-namespaces/virtualmachines/${vmName}`);
-      await isLoaded();
+      await vm.navigateToTab(overviewTab);
     });
 
     it('Starts VM', async() => {
@@ -133,33 +131,33 @@ describe('Test VM Migration', () => {
 
   it('Migrate VM', async() => {
     await vm.action('Start');
-    const sourceNode = await vmDetailNodeID(vm.namespace, vm.name).getText();
+    const sourceNode = await vmDetailNode(vm.namespace, vm.name).getText();
 
     await vm.action('Migrate');
-    expect((await vmDetailNodeID(vm.namespace, vm.name).getText())).not.toBe(sourceNode);
+    expect((await vmDetailNode(vm.namespace, vm.name).getText())).not.toBe(sourceNode);
   }, VM_ACTIONS_TIMEOUT);
 
   it('Migrate already migrated VM', async() => {
     await vm.action('Start');
-    const sourceNode = await vmDetailNodeID(vm.namespace, vm.name).getText();
+    const sourceNode = await vmDetailNode(vm.namespace, vm.name).getText();
 
     await vm.action('Migrate');
-    expect((await vmDetailNodeID(vm.namespace, vm.name).getText())).not.toBe(sourceNode);
+    expect((await vmDetailNode(vm.namespace, vm.name).getText())).not.toBe(sourceNode);
 
     await vm.action('Migrate');
-    expect((await vmDetailNodeID(vm.namespace, vm.name).getText())).toBe(sourceNode);
+    expect((await vmDetailNode(vm.namespace, vm.name).getText())).toBe(sourceNode);
   }, VM_ACTIONS_TIMEOUT);
 
   it('Cancel ongoing VM migration', async() => {
     await vm.action('Start');
-    const sourceNode = await vmDetailNodeID(vm.namespace, vm.name).getText();
+    const sourceNode = await vmDetailNode(vm.namespace, vm.name).getText();
 
     // Start migration without waiting for it to finish
     await vm.action('Migrate', false);
     await vm.waitForStatusIcon(statusIcons.migrating, PAGE_LOAD_TIMEOUT);
 
     await vm.action('Cancel');
-    expect((await vmDetailNodeID(vm.namespace, vm.name).getText())).toBe(sourceNode);
+    expect((await vmDetailNode(vm.namespace, vm.name).getText())).toBe(sourceNode);
   }, VM_BOOTUP_TIMEOUT);
 });
 
@@ -176,8 +174,6 @@ describe('Add/remove disks and NICs on respective VM pages', () => {
 
   afterAll(async() => {
     deleteResources([testNad, testVm]);
-    execSync(`echo '${JSON.stringify(testVm)}' | kubectl delete -f -`);
-    execSync(`echo '${JSON.stringify(testNad)}' | kubectl delete -f -`);
   });
 
   it('Add/remove disk on VM disks page', async() => {

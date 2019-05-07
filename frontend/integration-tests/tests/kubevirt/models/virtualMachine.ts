@@ -5,7 +5,7 @@ import { testName } from '../../../protractor.conf';
 import * as vmView from '../../../views/kubevirt/virtualMachine.view';
 import { nameInput } from '../../../views/kubevirt/wizard.view';
 import { confirmAction, resourceRows, resourceTitle, isLoaded } from '../../../views/crud.view';
-import { fillInput, selectDropdownOption } from '../utils/utils';
+import { fillInput, selectDropdownOption, click } from '../utils/utils';
 import { PAGE_LOAD_TIMEOUT, VM_BOOTUP_TIMEOUT, VM_STOP_TIMEOUT, VM_ACTIONS_TIMEOUT } from '../utils/consts';
 import { DetailView } from './detailView';
 import { VirtualMachineInstance } from './virtualMachineInstance';
@@ -18,11 +18,8 @@ export class VirtualMachine extends DetailView {
   }
 
   async navigateToVmi(vmiTab: string): Promise<VirtualMachineInstance> {
-    await this.navigateToTab(vmView.overviewTab).then(() => isLoaded());
-    await browser.wait(until.elementToBeClickable(vmView.statusLink))
-      .then(async() => await vmView.statusLink.click())
-      .then(async() => await isLoaded());
-    const vmi = new VirtualMachineInstance(await DetailView.getResourceTitle(), testName);
+    await this.navigateToTab(vmView.overviewTab);
+    const vmi = new VirtualMachineInstance(await vmView.vmDetailPod(this.namespace, this.name).$('a').getText(), testName);
     await vmi.navigateToTab(vmiTab);
     return vmi;
   }
@@ -89,11 +86,11 @@ export class VirtualMachine extends DetailView {
 
   async addDisk(name: string, size: string, storageClass: string) {
     await this.navigateToTab(vmView.disksTab);
-    await vmView.createDisk.click();
+    await click(vmView.createDisk);
     await fillInput(vmView.diskName, name);
     await fillInput(vmView.diskSize, size);
     await selectDropdownOption(vmView.diskStorageClassDropdownId, storageClass);
-    await vmView.applyBtn.click();
+    await click(vmView.applyBtn);
     await isLoaded();
   }
 
@@ -105,12 +102,12 @@ export class VirtualMachine extends DetailView {
 
   async addNic(name: string, mac: string, networkAttachmentDefinition: string, binding: string) {
     await this.navigateToTab(vmView.nicsTab);
-    await vmView.createNic.click();
+    await click(vmView.createNic);
     await fillInput(vmView.nicName, name);
     await selectDropdownOption(vmView.networkTypeDropdownId, networkAttachmentDefinition);
     await selectDropdownOption(vmView.networkBindingId, binding);
     await fillInput(vmView.macAddress, mac);
-    await vmView.applyBtn.click();
+    await click(vmView.applyBtn);
     await isLoaded();
   }
 

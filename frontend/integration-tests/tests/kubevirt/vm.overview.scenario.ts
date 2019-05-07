@@ -31,22 +31,22 @@ describe('Test vm overview page', () => {
   it('Check vm details in overview when vm is off', async() => {
 
     // Non empty fields when vm is off
-    expect(vmView.vmDetailNameID(testName, vmName).getText()).toEqual(vmName);
-    expect(vmView.vmDetailDesID(testName, vmName).getText()).toEqual(testName);
+    expect(vmView.vmDetailName(testName, vmName).getText()).toEqual(vmName);
+    expect(vmView.vmDetailDesc(testName, vmName).getText()).toEqual(testName);
     expect(vmView.statusIcon(vmView.statusIcons.off).isPresent()).toBeTruthy();
-    expect(vmView.vmDetailOSID(testName, vmName).getText()).toEqual(basicVmConfig.operatingSystem);
-    expect(vmView.vmDetailWorkloadProfileID(testName, vmName).getText()).toEqual(basicVmConfig.workloadProfile);
-    expect(vmView.vmDetailTemplateID(testName, vmName).getText()).toEqual('openshift/rhel7-generic-small');
-    expect(vmView.vmDetailNSID(testName, vmName).$('a').getText()).toEqual(testName);
-    expect(vmView.bootOrder(testName, vmName).getText()).toEqual(['rootdisk', 'nic0', 'cloudinitdisk']);
-    expect(vmView.vmDetailFlavorID(testName, vmName).getText()).toEqual(basicVmConfig.flavor);
-    expect(vmView.vmDetailFlavorDesID(testName, vmName).getText()).toEqual('1 CPU, 2G Memory');
+    expect(vmView.vmDetailOS(testName, vmName).getText()).toEqual(basicVmConfig.operatingSystem);
+    expect(vmView.vmDetailWorkloadProfile(testName, vmName).getText()).toEqual(basicVmConfig.workloadProfile);
+    expect(vmView.vmDetailTemplate(testName, vmName).getText()).toEqual('openshift/rhel7-generic-small');
+    expect(vmView.vmDetailNamespace(testName, vmName).$('a').getText()).toEqual(testName);
+    expect(vmView.vmDetailBootOrder(testName, vmName).getText()).toEqual(['rootdisk', 'nic0', 'cloudinitdisk']);
+    expect(vmView.vmDetailFlavor(testName, vmName).getText()).toEqual(basicVmConfig.flavor);
+    expect(vmView.vmDetailFlavorDesc(testName, vmName).getText()).toEqual('1 CPU, 2G Memory');
 
     // Empty fields when vm is off
-    expect(vmView.vmDetailIPID(testName, vmName).getText()).toEqual(emptyStr);
-    expect(vmView.vmDetailPodID(testName, vmName).getText()).toEqual(emptyStr);
-    expect(vmView.vmDetailHostnameID(testName, vmName).getText()).toEqual(emptyStr);
-    expect(vmView.vmDetailNodeID(testName, vmName).getText()).toEqual(emptyStr);
+    expect(vmView.vmDetailIP(testName, vmName).getText()).toEqual(emptyStr);
+    expect(vmView.vmDetailPod(testName, vmName).getText()).toEqual(emptyStr);
+    expect(vmView.vmDetailHostname(testName, vmName).getText()).toEqual(emptyStr);
+    expect(vmView.vmDetailNode(testName, vmName).getText()).toEqual(emptyStr);
 
     // Edit button is enabled when VM is off
     expect(vmView.detailViewEditBtn.isEnabled()).toBe(true);
@@ -57,11 +57,11 @@ describe('Test vm overview page', () => {
     expect(vmView.statusIcon(vmView.statusIcons.running).isPresent()).toBeTruthy();
 
     // Empty fields turn into non-empty
-    expect(vmView.vmDetailIPID(testName, vmName).getText()).toContain('10');
+    expect(vmView.vmDetailIP(testName, vmName).getText()).toContain('10');
     // Known issue for hostname: https://bugzilla.redhat.com/show_bug.cgi?id=1688124
-    expect(vmView.vmDetailHostnameID(testName, vmName).getText()).toEqual(vmName);
-    expect(vmView.vmDetailPodID(testName, vmName).$('a').getText()).toContain('virt-launcher');
-    expect(vmView.vmDetailNodeID(testName, vmName).$('a').getText()).not.toEqual(emptyStr);
+    expect(vmView.vmDetailHostname(testName, vmName).getText()).toEqual(vmName);
+    expect(vmView.vmDetailPod(testName, vmName).$('a').getText()).toContain('virt-launcher');
+    expect(vmView.vmDetailNode(testName, vmName).$('a').getText()).not.toEqual(emptyStr);
 
     // Edit button is disabled when VM is running
     expect(vmView.detailViewEditBtn.isEnabled()).toBe(false);
@@ -74,24 +74,24 @@ describe('Test vm overview page', () => {
 
     // Cancel edit
     await vmView.detailViewEditBtn.click();
-    await fillInput(vmView.vmDetailDesTextareaID(testName, vmName), newVMDescription);
-    await selectDropdownOption(vmView.vmDetailFlavorDropdown(testName, vmName), 'Custom');
-    await fillInput(vmView.vmDetailFlavorCPUID(testName, vmName), '2');
-    await fillInput(vmView.vmDetailFlavorMemoryID(testName, vmName), '4');
+    await fillInput(vmView.vmDetailDescTextarea(testName, vmName), newVMDescription);
+    await selectDropdownOption(vmView.vmDetailFlavorDropdownId(testName, vmName), 'Custom');
+    await fillInput(vmView.vmDetailFlavorCPU(testName, vmName), '2');
+    await fillInput(vmView.vmDetailFlavorMemory(testName, vmName), '4');
     await vmView.detailViewCancelBtn.click();
-    expect(vmView.vmDetailDesID(testName, vmName).getText()).toEqual(testName);
-    expect(vmView.vmDetailFlavorDesID(testName, vmName).getText()).toEqual('1 CPU, 2G Memory');
+    expect(vmView.vmDetailDesc(testName, vmName).getText()).toEqual(testName);
+    expect(vmView.vmDetailFlavorDesc(testName, vmName).getText()).toEqual('1 CPU, 2G Memory');
 
     // Save edit
     await vmView.detailViewEditBtn.click();
-    await fillInput(vmView.vmDetailDesTextareaID(testName, vmName), newVMDescription);
-    await selectDropdownOption(vmView.vmDetailFlavorDropdown(testName, vmName), 'Custom');
-    await fillInput(vmView.vmDetailFlavorCPUID(testName, vmName), '2');
-    await fillInput(vmView.vmDetailFlavorMemoryID(testName, vmName), '4');
+    await fillInput(vmView.vmDetailDescTextarea(testName, vmName), newVMDescription);
+    await selectDropdownOption(vmView.vmDetailFlavorDropdownId(testName, vmName), 'Custom');
+    await fillInput(vmView.vmDetailFlavorCPU(testName, vmName), '2');
+    await fillInput(vmView.vmDetailFlavorMemory(testName, vmName), '4');
     await vmView.detailViewSaveBtn.click();
     await isLoaded();
-    expect(vmView.vmDetailDesID(testName, vmName).getText()).toEqual(newVMDescription);
-    expect(vmView.vmDetailFlavorDesID(testName, vmName).getText()).toEqual('2 CPU, 4G Memory');
+    expect(vmView.vmDetailDesc(testName, vmName).getText()).toEqual(newVMDescription);
+    expect(vmView.vmDetailFlavorDesc(testName, vmName).getText()).toEqual('2 CPU, 4G Memory');
   });
 
   describe('VM Services', () => {

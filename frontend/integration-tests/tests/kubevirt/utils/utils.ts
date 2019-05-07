@@ -1,8 +1,9 @@
 /* eslint-disable no-unused-vars, no-undef */
 import * as _ from 'lodash';
 import { execSync } from 'child_process';
-
 import { $, by, ElementFinder, browser, ExpectedConditions as until } from 'protractor';
+
+import { config } from '../../../protractor.conf';
 import { nameInput as loginNameInput, passwordInput as loginPasswordInput, submitButton as loginSubmitButton } from '../../../views/login.view';
 import { PAGE_LOAD_TIMEOUT } from './consts';
 
@@ -69,9 +70,14 @@ export function deleteResources(resources) {
   resources.forEach(deleteResource);
 }
 
+export async function click(elem: ElementFinder, timeout?: number) {
+  const _timeout = timeout !== undefined ? timeout : config.jasmineNodeOpts.defaultTimeoutInterval;
+  await browser.wait(until.elementToBeClickable(elem), _timeout);
+  await elem.click();
+}
+
 export async function selectDropdownOption(dropdownId: string, option: string) {
-  await browser.wait(until.elementToBeClickable($(dropdownId)))
-    .then(() => $(dropdownId).click());
+  await click($(dropdownId));
   await $(`${dropdownId} + ul`).element(by.linkText(option)).click();
 }
 
@@ -99,16 +105,10 @@ export async function fillInput(elem: ElementFinder, value: string) {
   } while (await elem.getAttribute('value') !== value && attempts > 0);
 }
 
-export async function tickCheckbox(elem: ElementFinder) {
-  await browser.wait(until.elementToBeClickable(elem));
-  await elem.click();
-}
-
 export async function logIn() {
   await fillInput(loginNameInput, process.env.BRIDGE_AUTH_USERNAME);
   await fillInput(loginPasswordInput, process.env.BRIDGE_AUTH_PASSWORD);
-  await browser.wait(until.elementToBeClickable(loginSubmitButton))
-    .then(() => loginSubmitButton.click());
+  await click(loginSubmitButton);
   await browser.wait(until.visibilityOf($('img.pf-c-brand')), PAGE_LOAD_TIMEOUT);
 }
 

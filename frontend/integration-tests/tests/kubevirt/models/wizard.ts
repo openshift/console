@@ -2,7 +2,7 @@
 import { $, browser, ExpectedConditions as until } from 'protractor';
 
 import { createItemButton, isLoaded} from '../../../views/crud.view';
-import { fillInput, selectDropdownOption, tickCheckbox } from '../utils/utils';
+import { fillInput, selectDropdownOption, click } from '../utils/utils';
 import { PAGE_LOAD_TIMEOUT } from '../utils/consts';
 import * as wizardView from '../../../views/kubevirt/wizard.view';
 
@@ -13,7 +13,7 @@ export default class Wizard {
   }
 
   async close() {
-    await browser.wait(until.elementToBeClickable(wizardView.closeWizard), PAGE_LOAD_TIMEOUT).then(() => wizardView.closeWizard.click());
+    await click(wizardView.closeWizard, PAGE_LOAD_TIMEOUT);
     await browser.wait(until.invisibilityOf(wizardView.wizardHeader), PAGE_LOAD_TIMEOUT);
     // Clone VM dialog uses fade in/fade out effect, wait until it disappears
     await browser.wait(until.invisibilityOf($('div.fade')));
@@ -55,14 +55,13 @@ export default class Wizard {
   }
 
   async startOnCreation() {
-    await browser.wait(until.elementToBeClickable(wizardView.startVMOnCreation))
-      .then(async() => await tickCheckbox(wizardView.startVMOnCreation));
+    await click(wizardView.startVMOnCreation);
   }
 
   async useCloudInit(cloudInitOptions) {
-    await tickCheckbox(wizardView.useCloudInit);
+    await click(wizardView.useCloudInit);
     if (cloudInitOptions.useCustomScript) {
-      await tickCheckbox(wizardView.useCustomScript);
+      await click(wizardView.useCustomScript);
       await fillInput(wizardView.customCloudInitScript, cloudInitOptions.customScript);
     } else {
       await fillInput(wizardView.cloudInitHostname, cloudInitOptions.hostname);
@@ -72,20 +71,19 @@ export default class Wizard {
 
   async next() {
     await isLoaded();
-    await browser.wait(until.elementToBeClickable(wizardView.nextButton))
-      .then(async() => await wizardView.nextButton.click());
+    await click(wizardView.nextButton);
     await isLoaded();
   }
 
   async addNic(name: string, mac: string, networkDefinition: string, binding: string) {
-    await wizardView.createNIC.click();
+    await click(wizardView.createNIC);
     const rowsCount = await this.getTableRowsCount();
     // Dropdown selection needs to be first due to https://github.com/kubevirt/web-ui-components/issues/9
     await wizardView.selectTableDropdownAttribute(rowsCount, 'network', networkDefinition);
     await wizardView.selectTableDropdownAttribute(rowsCount, 'binding', binding),
     await wizardView.setTableInputAttribute(rowsCount, 'name', name);
     await wizardView.setTableInputAttribute(rowsCount, 'mac', mac);
-    await wizardView.apply.click();
+    await click(wizardView.apply);
   }
 
   async selectPxeNIC(networkDefinition: string) {
@@ -97,13 +95,13 @@ export default class Wizard {
   }
 
   async addDisk(name: string, size: string, storageClass: string) {
-    await wizardView.createDisk.click();
+    await click(wizardView.createDisk);
     const rowsCount = await this.getTableRowsCount();
     // Dropdown selection needs to be first due to https://github.com/kubevirt/web-ui-components/issues/9
     await wizardView.selectTableDropdownAttribute(rowsCount, 'storage', storageClass);
     await wizardView.setTableInputAttribute(rowsCount, 'name', name);
     await wizardView.setTableInputAttribute(rowsCount, 'size', size);
-    await wizardView.apply.click();
+    await click(wizardView.apply);
   }
 
   async editDiskAttribute(rowNumber: number, attribute: string, value: string) {
@@ -113,7 +111,7 @@ export default class Wizard {
     } else {
       await wizardView.setTableInputAttribute(rowNumber, attribute, value);
     }
-    await wizardView.apply.click();
+    await click(wizardView.apply);
   }
 
   async waitForCreation() {

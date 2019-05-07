@@ -25,8 +25,8 @@ export const diskStorageClassDropdownId = '#disk-storage-class';
 export const cancelBtn = $('button.kubevirt-cancel-accept-buttons.btn-default');
 export const applyBtn = $('button.kubevirt-cancel-accept-buttons.btn-primary');
 
-export const statusIcon = (status) => $(`.kubevirt-vm-status__icon.${status}`);
-export const statusLink = $('a.kubevirt-vm-status__link');
+export const statusIcon = (status) => $(`.kubevirt-status__icon.${status}`);
+export const statusLink = $('a.kubevirt-status__link');
 
 export const statusIcons = {
   starting: 'pficon-pending',
@@ -63,24 +63,24 @@ export const selectKebabOption = async(name: string, option: string) => {
 // VM detail view
 export const vmDetailItemId = (namespace, vmName, itemName) => `#${namespace}-${vmName}-${itemName}`;
 
-export const vmDetailNameID = (namespace, vmName) => $(vmDetailItemId(namespace, vmName, 'name'));
-export const vmDetailDesID = (namespace, vmName) => $(vmDetailItemId(namespace, vmName, 'description'));
-export const vmDetailOSID = (namespace, vmName) => $(vmDetailItemId(namespace, vmName, 'os'));
-export const vmDetailIPID = (namespace, vmName) => $(vmDetailItemId(namespace, vmName, 'ip-addresses'));
-export const vmDetailWorkloadProfileID = (namespace, vmName) => $(vmDetailItemId(namespace, vmName, 'workload-profile'));
-export const vmDetailTemplateID = (namespace, vmName) => $(vmDetailItemId(namespace, vmName, 'template'));
-export const vmDetailHostnameID = (namespace, vmName) => $(vmDetailItemId(namespace, vmName, 'fqdn'));
-export const vmDetailNSID = (namespace, vmName) => $(vmDetailItemId(namespace, vmName, 'namespace'));
-export const vmDetailPodID = (namespace, vmName) => $(vmDetailItemId(namespace, vmName, 'pod'));
-export const vmDetailNodeID = (namespace, vmName) => $(vmDetailItemId(namespace, vmName, 'node'));
-export const vmDetailFlavorID = (namespace, vmName) => $(vmDetailItemId(namespace, vmName, 'flavor'));
-export const vmDetailFlavorDropdown = (namespace, vmName) => vmDetailItemId(namespace, vmName, 'flavor-dropdown');
-export const vmDetailFlavorDropdownID = (namespace, vmName) => $(vmDetailFlavorDropdown(namespace, vmName));
-export const vmDetailFlavorDesID = (namespace, vmName) => $(vmDetailItemId(namespace, vmName, 'flavor-description'));
-export const vmDetailFlavorCPUID = (namespace, vmName) => $(vmDetailItemId(namespace, vmName, 'flavor-cpu'));
-export const vmDetailFlavorMemoryID = (namespace, vmName) => $(vmDetailItemId(namespace, vmName, 'flavor-memory'));
-export const vmDetailDesTextareaID = (namespace, vmName) => $(vmDetailItemId(namespace, vmName, 'description-textarea'));
-export const bootOrder = (namespace, vmName) => $(vmDetailItemId(namespace, vmName, 'boot-order')).$('.kubevirt-boot-order__list').$$('li');
+export const vmDetailName = (namespace, vmName) => $(vmDetailItemId(namespace, vmName, 'name'));
+export const vmDetailDesc = (namespace, vmName) => $(vmDetailItemId(namespace, vmName, 'description'));
+export const vmDetailOS = (namespace, vmName) => $(vmDetailItemId(namespace, vmName, 'os'));
+export const vmDetailIP = (namespace, vmName) => $(vmDetailItemId(namespace, vmName, 'ip-addresses'));
+export const vmDetailWorkloadProfile = (namespace, vmName) => $(vmDetailItemId(namespace, vmName, 'workload-profile'));
+export const vmDetailTemplate = (namespace, vmName) => $(vmDetailItemId(namespace, vmName, 'template'));
+export const vmDetailHostname = (namespace, vmName) => $(vmDetailItemId(namespace, vmName, 'fqdn'));
+export const vmDetailNamespace = (namespace, vmName) => $(vmDetailItemId(namespace, vmName, 'namespace'));
+export const vmDetailPod = (namespace, vmName) => $(vmDetailItemId(namespace, vmName, 'pod'));
+export const vmDetailNode = (namespace, vmName) => $(vmDetailItemId(namespace, vmName, 'node'));
+export const vmDetailFlavor = (namespace, vmName) => $(vmDetailItemId(namespace, vmName, 'flavor'));
+export const vmDetailFlavorDropdownId = (namespace, vmName) => vmDetailItemId(namespace, vmName, 'flavor-dropdown');
+export const vmDetailFlavorDropdown = (namespace, vmName) => $(vmDetailFlavorDropdownId(namespace, vmName));
+export const vmDetailFlavorDesc = (namespace, vmName) => $(vmDetailItemId(namespace, vmName, 'flavor-description'));
+export const vmDetailFlavorCPU = (namespace, vmName) => $(vmDetailItemId(namespace, vmName, 'flavor-cpu'));
+export const vmDetailFlavorMemory = (namespace, vmName) => $(vmDetailItemId(namespace, vmName, 'flavor-memory'));
+export const vmDetailDescTextarea = (namespace, vmName) => $(vmDetailItemId(namespace, vmName, 'description-textarea'));
+export const vmDetailBootOrder = (namespace, vmName) => $(vmDetailItemId(namespace, vmName, 'boot-order')).$('.kubevirt-boot-order__list').$$('li');
 
 export const detailViewEditBtn = element(by.buttonText('Edit'));
 export const detailViewSaveBtn = element(by.buttonText('Save'));

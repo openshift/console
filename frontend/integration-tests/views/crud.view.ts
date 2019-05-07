@@ -13,8 +13,8 @@ export const saveChangesBtn = $('#save-changes');
 export const reloadBtn = $('#reload-object');
 export const cancelBtn = $('#cancel');
 
-export const confirmAction = () => browser.wait(until.presenceOf($('button.btn-primary')))
-  .then(() => $('button.btn-primary').click())
+export const confirmAction = () => browser.wait(until.presenceOf($('button[type=submit]')))
+  .then(() => $('button[type=submit]').click())
   .then(() => browser.wait(until.not(until.presenceOf($('.co-overlay')))));
 
 /**
