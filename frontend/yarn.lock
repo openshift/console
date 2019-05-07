@@ -152,17 +152,19 @@
   resolved "https://registry.yarnpkg.com/@patternfly/patternfly/-/patternfly-2.8.2.tgz#8362795b17a73be76dd9408b3c0d370e8a030d77"
   integrity sha512-DWx5v4m3qYgNSTS4aiNSapq3mXPhBcNu2kw4lk0qJei4WWtNysT/DNgCvMBzfrQzJdzEJ1KRMGl/sf8AIqWoNg==
 
-"@patternfly/react-charts@3.4.5":
-  version "3.4.5"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-charts/-/react-charts-3.4.5.tgz#351ca539906cf27d48d660e2d5616608e4ebc121"
-  integrity sha512-eDlq/9pM3OYO6mkKnBQe+wWOpe4J4Sbl1VsGCwdwGt0L95fsqhhFILamx2ukJltDFEjY0hbRbSyBC3Znog0lpQ==
+"@patternfly/react-charts@3.6.6":
+  version "3.6.6"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-charts/-/react-charts-3.6.6.tgz#94be929ccf3601fd4a533d394690baa829ae9249"
+  integrity sha512-/rA7uYQSsgpkLIldG25beUvuaOU7gqYDDoaQu5Ng8FDUXujnPTI9dAJTlu8StDuO6GlUwfTHcdS40TCoDc5BcA==
   dependencies:
-    "@patternfly/react-styles" "^3.2.1"
+    "@patternfly/react-styles" "^3.2.3"
   optionalDependencies:
-    "@types/victory" "^31.0.15"
+    "@types/victory" "^31.0.18"
     hoist-non-react-statics "^3.3.0"
-    victory "^32.2.0"
-    victory-core "^32.2.0"
+    lodash "^4.17.11"
+    victory "^32.2.3"
+    victory-core "^32.2.3"
+    victory-legend "^32.2.3"
 
 "@patternfly/react-core@3.33.1":
   version "3.33.1"
@@ -184,7 +186,7 @@
   dependencies:
     "@fortawesome/free-brands-svg-icons" "^5.8.1"
 
-"@patternfly/react-styles@^3.2.1", "@patternfly/react-styles@^3.2.3":
+"@patternfly/react-styles@^3.2.3":
   version "3.2.3"
   resolved "https://registry.yarnpkg.com/@patternfly/react-styles/-/react-styles-3.2.3.tgz#1774be2e74758ba3aaa8324859d802c2861760d7"
   integrity sha512-2CSR+gkLLDKzgW1dLf2xL8wubdexcDwHuUJ+Q2ee9XD6kKD+qJBV86LAGTAQH4wTYTv6gPuSLTSnde3DR3vJag==
@@ -584,7 +586,7 @@
   dependencies:
     source-map "^0.6.1"
 
-"@types/victory@^31.0.15":
+"@types/victory@^31.0.18":
   version "31.0.18"
   resolved "https://registry.yarnpkg.com/@types/victory/-/victory-31.0.18.tgz#9132ce77120f38e044d38aa5940e68c039bb3699"
   integrity sha512-tU4mJSiV3QVcOs6FnB4cWoJnPAt5ZLddThafg8U7oMctEZ83TTttgSa9ndsJcDvdOnEJH8XrwgKZdnjIhFWBSw==
@@ -13762,7 +13764,7 @@ victory-chart@^32.2.3:
     victory-polar-axis "^32.2.3"
     victory-shared-events "^32.2.3"
 
-victory-core@^32.2.0, victory-core@^32.2.3:
+victory-core@^32.2.3:
   version "32.2.3"
   resolved "https://registry.yarnpkg.com/victory-core/-/victory-core-32.2.3.tgz#15e2c5c9d616c79dcb58e84ccecae91acc82e72d"
   integrity sha512-JFASPSrVH9lXwD5CdL59fEVc68waa3FDjqhukKhHsHeH7uDHaIr+3QKcWC36fBt5lzrymDWe5bEeWFWLWQeufw==
@@ -13932,7 +13934,7 @@ victory-zoom-container@^32.2.3:
     prop-types "^15.5.8"
     victory-core "^32.2.3"
 
-victory@^32.2.0:
+victory@^32.2.3:
   version "32.2.3"
   resolved "https://registry.yarnpkg.com/victory/-/victory-32.2.3.tgz#64d09ac1d31be57616f89c16f76cc3c49f93942e"
   integrity sha512-1jtZHHdQsHLcOJRRszLcKvigcz8KgQ1n8S+gK1QLh8f+TJ5nFtlDA8BXCgAghJq4X6WH9YOh94AO+9gkg+hHqw==

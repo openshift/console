@@ -5,7 +5,7 @@ export const useRefWidth = () => {
   const [width, setWidth] = useState(0);
 
   useEffect(() => {
-    const handleResize = () => setWidth(ref.current.clientWidth);
+    const handleResize = () => setWidth(ref && ref.current && ref.current.clientWidth);
     window.addEventListener('resize', handleResize);
     window.addEventListener('nav_toggle', handleResize);
     handleResize();

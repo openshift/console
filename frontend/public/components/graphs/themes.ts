@@ -1,54 +1,11 @@
-/* eslint-disable camelcase */
-import { global_FontFamily_sans_serif } from '@patternfly/react-tokens';
-
-const independentAxisTheme = {
-  independentAxis: {
+export const areaTheme = {
+  area: {
     style: {
-      axis: { stroke: '#D1D1D1' },
-      tickLabels: { fontFamily: global_FontFamily_sans_serif.value },
-    },
-  },
-};
-
-const dependentAxisTheme = {
-  dependentAxis: {
-    style: {
-      axis: { stroke: '#D1D1D1' },
-      grid: { stroke: '#EDEDED' },
-      tickLabels: { fontFamily: global_FontFamily_sans_serif.value },
-    },
-  },
-};
-
-const tooltipTheme = {
-  // General tooltip style
-  tooltip: {
-    flyoutStyle: {
-      fill: '#151515',
-    },
-    style: {
-      labels: {
-        fontFamily: global_FontFamily_sans_serif.value,
-        fill: '#FFF',
+      data: {
+        fillOpacity: .15,
       },
     },
   },
-
-  // Voronoi container tooltip theme, overrides general tooltip style
-  voronoi: {
-    style: {
-      flyout: {
-        fill: '#151515',
-      },
-      labels: {
-        fontFamily: global_FontFamily_sans_serif.value,
-        fill: '#FFF',
-      },
-    },
-  },
-};
-
-const chartPadding = {
   chart: {
     padding: {
       bottom: 30,
@@ -57,19 +14,48 @@ const chartPadding = {
       top: 0,
     },
   },
+  dependentAxis: {
+    style: {
+      grid: {stroke: '#EDEDED'},
+    },
+  },
 };
 
-export const areaTheme = {
-  area: {
+export const barTheme = {
+  bar: {
     style: {
-      data: {
-        labels: global_FontFamily_sans_serif.value,
-        fillOpacity: .15,
+      labels: {
+        textAnchor: 'end',
       },
     },
   },
-  ...chartPadding,
-  ...independentAxisTheme,
-  ...dependentAxisTheme,
-  ...tooltipTheme,
+  dependentAxis: {
+    style: {
+      axis: {
+        stroke: 'none',
+      },
+      tickLabels: {
+        fill: 'none',
+      },
+    },
+  },
+  independentAxis: {
+    style: {
+      axis: {
+        stroke: 'none',
+      },
+      tickLabels: {
+        textAnchor: 'start',
+      },
+    },
+  },
+};
+
+export const queryBrowserTheme = {
+  ...areaTheme,
+  independentAxis: {
+    style: {
+      grid: {stroke: '#EDEDED'},
+    },
+  },
 };

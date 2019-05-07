@@ -14,6 +14,7 @@ import {
   ResourceIcon,
   resourceObjPath,
   StatusIcon,
+  truncateMiddle,
 } from '../utils';
 
 import {
@@ -41,17 +42,6 @@ const overviewTooltipStyles = Object.freeze({
   },
 });
 
-const truncateMiddle = (text: string = ''): React.ReactNode => {
-  const length = text.length;
-  if (length < 20) {
-    return text;
-  }
-
-  const begin = text.substr(0, 7);
-  const end = text.substr(length - 10, length);
-  return <span className="text-nowrap">{begin}&hellip;{end}</span>;
-};
-
 const ControllerLink: React.SFC<ControllerLinkProps> = ({controller}) => {
   const { obj, revision } = controller;
   const { name } = obj.metadata;
@@ -67,7 +57,9 @@ const MetricsTooltip: React.SFC<MetricsTooltipProps> = ({metricLabel, byPod, chi
     ? [<React.Fragment key="no-metrics">No {metricLabel} metrics available.</React.Fragment>]
     : _.concat(<div key="#title">{metricLabel} Usage by Pod</div>, sortedMetrics.map(({name, formattedValue}) => (
       <div key={name} className="project-overview__metric-tooltip">
-        <div className="project-overview__metric-tooltip-name">{truncateMiddle(name)}</div>
+        <div className="project-overview__metric-tooltip-name">
+          <span className="no-wrap">{truncateMiddle(name)}</span>
+        </div>
         <div className="project-overview__metric-tooltip-value">{formattedValue}</div>
       </div>
     )));
