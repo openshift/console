@@ -1,11 +1,11 @@
 /* eslint-disable no-undef, max-nested-callbacks */
 import { execSync } from 'child_process';
-import { $, $$, browser, ExpectedConditions as until } from 'protractor';
+import { $, browser, ExpectedConditions as until } from 'protractor';
 import * as _ from 'lodash';
 
 // eslint-disable-next-line no-unused-vars
-import { removeLeakedResources, waitForCount, searchYAML, searchJSON, getResourceJSON,
-  CLONE_VM_TIMEOUT, VM_BOOTUP_TIMEOUT, PAGE_LOAD_TIMEOUT, VM_STOP_TIMEOUT } from './utils';
+import { removeLeakedResources, waitForCount, searchYAML, searchJSON, getResourceJSON } from './utils/utils';
+import { CLONE_VM_TIMEOUT, VM_BOOTUP_TIMEOUT, PAGE_LOAD_TIMEOUT, VM_STOP_TIMEOUT } from './utils/consts';
 import { appHost, testName } from '../../protractor.conf';
 import { filterForName, isLoaded, resourceRowsPresent, resourceRows } from '../../views/crud.view';
 import { basicVmConfig, networkInterface, testNad, getVmManifest, hddDisk, cloudInitCustomScriptConfig, emptyStr } from './mocks';
@@ -144,7 +144,7 @@ describe('Test clone VM.', () => {
       leakedResources.add(JSON.stringify({name: clonedVm.name, namespace: clonedVm.namespace, kind: 'vm'}));
       await clonedVm.navigateToTab(nicsTab);
 
-      await browser.wait(until.and(waitForCount($$('.co-resource-list__item'), 2)), PAGE_LOAD_TIMEOUT);
+      await browser.wait(until.and(waitForCount(resourceRows, 2)), PAGE_LOAD_TIMEOUT);
       // TODO: Add classes/ids to collumn attributes so that divs can be easily selected
       const mac = await resourceRows.first().$('div:nth-child(5)').getText();
       expect(mac === emptyStr).toBe(true, 'MAC address should be cleared');

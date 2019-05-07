@@ -4,8 +4,9 @@ import { browser, ExpectedConditions as until } from 'protractor';
 import { testName } from '../../../protractor.conf';
 import * as vmView from '../../../views/kubevirt/virtualMachine.view';
 import { nameInput } from '../../../views/kubevirt/wizard.view';
-import { confirmAction, resourceRows, isLoaded } from '../../../views/crud.view';
-import { fillInput, PAGE_LOAD_TIMEOUT, selectDropdownOption, VM_BOOTUP_TIMEOUT, VM_STOP_TIMEOUT, VM_ACTIONS_TIMEOUT } from '../utils';
+import { confirmAction, resourceRows, resourceTitle, isLoaded } from '../../../views/crud.view';
+import { fillInput, selectDropdownOption } from '../utils/utils';
+import { PAGE_LOAD_TIMEOUT, VM_BOOTUP_TIMEOUT, VM_STOP_TIMEOUT, VM_ACTIONS_TIMEOUT } from '../utils/consts';
 import { DetailView } from './detailView';
 import { VirtualMachineInstance } from './virtualMachineInstance';
 import { detailViewAction } from '../../../views/kubevirt/vm.actions.view';
@@ -59,7 +60,7 @@ export class VirtualMachine extends DetailView {
           break;
         case 'Delete':
           // wait for redirect
-          await browser.wait(until.textToBePresentInElement(vmView.resourceTitle, 'Virtual Machines'), PAGE_LOAD_TIMEOUT);
+          await browser.wait(until.textToBePresentInElement(resourceTitle, 'Virtual Machines'), PAGE_LOAD_TIMEOUT);
           break;
         default:
           throw Error('Received unexpected action.');
@@ -133,5 +134,4 @@ export class VirtualMachine extends DetailView {
     await browser.wait(until.presenceOf(vmView.rdpPort), PAGE_LOAD_TIMEOUT);
     return vmView.rdpPort.getText();
   }
-
 }

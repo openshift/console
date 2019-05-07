@@ -2,7 +2,8 @@
 import { $, browser, ExpectedConditions as until } from 'protractor';
 
 import { createItemButton, isLoaded} from '../../../views/crud.view';
-import { fillInput, PAGE_LOAD_TIMEOUT, selectDropdownOption, tickCheckbox } from '../utils';
+import { fillInput, selectDropdownOption, tickCheckbox } from '../utils/utils';
+import { PAGE_LOAD_TIMEOUT } from '../utils/consts';
 import * as wizardView from '../../../views/kubevirt/wizard.view';
 
 export default class Wizard {

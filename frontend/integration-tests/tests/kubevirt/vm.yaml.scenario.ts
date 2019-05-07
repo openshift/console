@@ -5,7 +5,7 @@ import { browser } from 'protractor';
 import { appHost, testName } from '../../protractor.conf';
 import { isLoaded } from '../../views/crud.view';
 import * as yamlView from '../../views/yaml.view';
-import { removeLeakedResources } from './utils';
+import { removeLeakedResources } from './utils/utils';
 import { disksTab, nicsTab } from '../../views/kubevirt/virtualMachine.view';
 import Yaml from './models/yaml';
 import { VirtualMachine } from './models/virtualMachine';

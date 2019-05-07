@@ -3,8 +3,7 @@ import { browser } from 'protractor';
 
 import { appHost } from '../../../protractor.conf';
 import { clickHorizontalTab } from '../../../views/horizontal-nav.view';
-import { isLoaded } from '../../../views/crud.view';
-import * as vmView from '../../../views/kubevirt/virtualMachine.view';
+import { isLoaded, resourceTitle } from '../../../views/crud.view';
 
 export class DetailView {
   readonly name: string;
@@ -18,11 +17,11 @@ export class DetailView {
   }
 
   static async getResourceTitle() {
-    return vmView.resourceTitle.getText();
+    return resourceTitle.getText();
   }
 
   async navigateToTab(tabName: string) {
-    if (!await vmView.resourceTitle.isPresent() || await vmView.resourceTitle.getText() !== this.name) {
+    if (!await resourceTitle.isPresent() || await resourceTitle.getText() !== this.name) {
       await browser.get(`${appHost}/k8s/ns/${this.namespace}/${this.kind}/${this.name}`);
       await isLoaded();
     }

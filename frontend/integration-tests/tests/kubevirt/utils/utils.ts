@@ -1,17 +1,10 @@
 /* eslint-disable no-unused-vars, no-undef */
 import * as _ from 'lodash';
 import { execSync } from 'child_process';
-import { $, by, ElementFinder, browser, ExpectedConditions as until } from 'protractor';
-import { nameInput as loginNameInput, passwordInput as loginPasswordInput, submitButton as loginSubmitButton } from '../../views/login.view';
 
-const SEC = 1000;
-export const CLONE_VM_TIMEOUT = 300 * SEC;
-export const PAGE_LOAD_TIMEOUT = 15 * SEC;
-export const VM_ACTIONS_TIMEOUT = 120 * SEC;
-export const VM_BOOTUP_TIMEOUT = 90 * SEC;
-export const VM_STOP_TIMEOUT = 6 * SEC;
-export const VM_IP_ASSIGNMENT_TIMEOUT = 180 * SEC;
-export const WINDOWS_IMPORT_TIMEOUT = 150 * SEC;
+import { $, by, ElementFinder, browser, ExpectedConditions as until } from 'protractor';
+import { nameInput as loginNameInput, passwordInput as loginPasswordInput, submitButton as loginSubmitButton } from '../../../views/login.view';
+import { PAGE_LOAD_TIMEOUT } from './consts';
 
 export type provisionOptions = {
   method: string,
@@ -47,17 +40,33 @@ export function removeLeakedResources(leakedResources: Set<string>) {
   leakedResources.clear();
 }
 
+export function addLeakableResource(leakedResources: Set<string>, resource) {
+  leakedResources.add(
+    JSON.stringify({name: resource.metadata.name, namespace: resource.metadata.namespace, kind: resource.kind})
+  );
+}
+
+export function removeLeakableResource(leakedResources: Set<string>, resource) {
+  leakedResources.delete(
+    JSON.stringify({name: resource.metadata.name, namespace: resource.metadata.namespace, kind: resource.kind})
+  );
+}
+
+export function createResource(resource) {
+  execSync(`echo '${JSON.stringify(resource)}' | kubectl create -f -`);
+}
+
 export function createResources(resources) {
-  resources.forEach(resource => {
-    execSync(`echo '${JSON.stringify(resource)}' | kubectl create -f -`);
-  });
+  resources.forEach(createResource);
+}
+
+export function deleteResource(resource) {
+  const kind = resource.kind === 'NetworkAttachmentDefinition' ? 'net-attach-def' : resource.kind;
+  execSync(`kubectl delete -n ${resource.metadata.namespace} --cascade ${kind} ${resource.metadata.name}`);
 }
 
 export function deleteResources(resources) {
-  resources.forEach(resource => {
-    const kind = resource.kind === 'NetworkAttachmentDefinition' ? 'net-attach-def' : resource.kind;
-    execSync(`kubectl delete -n ${resource.metadata.namespace} --cascade ${kind} ${resource.metadata.name}`);
-  });
+  resources.forEach(deleteResource);
 }
 
 export async function selectDropdownOption(dropdownId: string, option: string) {

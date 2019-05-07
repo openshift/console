@@ -7,7 +7,8 @@ import { isLoaded, resourceRowsPresent, textFilter } from '../../views/crud.view
 import { listViewAction, getDetailActionDropdownOptions } from '../../views/kubevirt/vm.actions.view';
 import { testNad, hddDisk, networkInterface, getVmManifest } from './mocks';
 import { overviewTab, disksTab, nicsTab, statusIcon, statusIcons, vmDetailNodeID } from '../../views/kubevirt/virtualMachine.view';
-import { removeLeakedResources, deleteResources, createResources, fillInput, searchYAML, waitForCount, VM_BOOTUP_TIMEOUT, VM_STOP_TIMEOUT, VM_ACTIONS_TIMEOUT, PAGE_LOAD_TIMEOUT } from './utils';
+import { removeLeakedResources, deleteResources, createResources, fillInput, searchYAML, waitForCount } from './utils/utils';
+import { VM_BOOTUP_TIMEOUT, VM_STOP_TIMEOUT, VM_ACTIONS_TIMEOUT, PAGE_LOAD_TIMEOUT } from './utils/consts';
 import { VirtualMachine } from './models/virtualMachine';
 
 

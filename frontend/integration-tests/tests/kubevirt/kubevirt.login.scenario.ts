@@ -1,6 +1,6 @@
 import { browser } from 'protractor';
 import { appHost } from '../../protractor.conf';
-import { logIn } from '../kubevirt/utils';
+import { logIn } from './utils/utils';
 
 describe('Authentication', () => {
   it('Logs in.', async() => {

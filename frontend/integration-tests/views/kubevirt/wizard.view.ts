@@ -1,5 +1,5 @@
 import { $, $$ } from 'protractor';
-import { selectDropdownOption, fillInput } from '../../tests/kubevirt/utils';
+import { selectDropdownOption, fillInput } from '../../tests/kubevirt/utils/utils';
 
 // Wizard Common
 export const closeWizard = $('.modal-footer > button.btn-cancel');

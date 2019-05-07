@@ -6,7 +6,7 @@ import { appHost, testName } from '../../protractor.conf';
 import { isLoaded } from '../../views/crud.view';
 import { getVmManifest, basicVmConfig, emptyStr } from './mocks';
 import * as vmView from '../../views/kubevirt/virtualMachine.view';
-import { fillInput, execCommandFromCli, exposeService, selectDropdownOption, asyncForEach } from './utils';
+import { fillInput, execCommandFromCli, exposeService, selectDropdownOption, asyncForEach } from './utils/utils';
 import { VirtualMachine } from './models/virtualMachine';
 
 describe('Test vm overview page', () => {

@@ -3,8 +3,6 @@ import { $, $$, by, element, browser, ExpectedConditions as until } from 'protra
 
 import { resourceRows } from '../crud.view';
 
-export const resourceTitle = $('#resource-title');
-
 export const overviewTab = 'Overview';
 export const yamlTab = 'YAML';
 export const consolesTab = 'Consoles';

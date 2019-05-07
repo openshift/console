@@ -289,6 +289,33 @@ export const cloudInitCustomScriptConfig = {
   customScript: basicVmConfig.cloudInitScript,
 };
 
+export const examplePod = ({name, namespace, nodeSelector}) => {
+  return {
+    apiVersion: 'v1',
+    kind: 'Pod',
+    metadata: {
+      name,
+      labels: {
+        app: 'hello-openshift',
+      },
+      namespace,
+    },
+    spec: {
+      containers: [
+        {
+          name: 'hello-openshift',
+          image: 'openshift/hello-openshift',
+          ports: [
+            {
+              containerPort: 8080,
+            },
+          ],
+        },
+      ],
+      nodeSelector,
+    },
+  };
+};
 
 export const customVMWithNicDisk = `
 apiVersion: kubevirt.io/v1alpha3

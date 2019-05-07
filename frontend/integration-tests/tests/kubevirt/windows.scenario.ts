@@ -2,7 +2,8 @@
 import { execSync } from 'child_process';
 import { browser, ExpectedConditions as until } from 'protractor';
 // eslint-disable-next-line no-unused-vars
-import { removeLeakedResources, waitForStringInElement, VM_IP_ASSIGNMENT_TIMEOUT, WINDOWS_IMPORT_TIMEOUT, VM_BOOTUP_TIMEOUT} from './utils';
+import { removeLeakedResources, waitForStringInElement } from './utils/utils';
+import { VM_IP_ASSIGNMENT_TIMEOUT, WINDOWS_IMPORT_TIMEOUT, VM_BOOTUP_TIMEOUT } from './utils/consts';
 import { testName, appHost } from '../../protractor.conf';
 import { errorMessage, isLoaded } from '../../views/crud.view';
 import { windowsVmConfig, localStorageDisk, multusNetworkInterface, multusNad, localStorageClass, localStoragePersistentVolume } from './mocks';

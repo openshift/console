@@ -4,7 +4,8 @@ import { OrderedMap } from 'immutable';
 import { browser} from 'protractor';
 
 // eslint-disable-next-line no-unused-vars
-import { networkResource, provisionOptions, removeLeakedResources, storageResource, VM_BOOTUP_TIMEOUT } from './utils';
+import { networkResource, provisionOptions, removeLeakedResources, storageResource } from './utils/utils';
+import { VM_BOOTUP_TIMEOUT } from './utils/consts';
 import { appHost, testName } from '../../protractor.conf';
 import { statusIcons } from '../../views/kubevirt/virtualMachine.view';
 import { deleteRow, errorMessage, filterForName, isLoaded, resourceRowsPresent } from '../../views/crud.view';
