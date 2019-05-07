@@ -3,7 +3,7 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 
 import { coFetchJSON } from '../../co-fetch';
-import { prometheusBasePath, prometheusTenancyBasePath } from './index';
+import { PROMETHEUS_BASE_PATH, PROMETHEUS_TENANCY_BASE_PATH } from '.';
 
 const colors = {
   ok: 'rgb(57,200,143)',
@@ -30,7 +30,7 @@ export const errorStatus = err => {
 
 const fetchQuery = (q, long, namespace) => {
   const nsParam = namespace ? `&namespace=${encodeURIComponent(namespace)}` : '';
-  const basePath = namespace ? prometheusTenancyBasePath : prometheusBasePath;
+  const basePath = namespace ? PROMETHEUS_TENANCY_BASE_PATH : PROMETHEUS_BASE_PATH;
   return coFetchJSON(`${basePath}/api/v1/query?query=${encodeURIComponent(q)}${nsParam}`)
     .then(res => {
       const short = parseInt(_.get(res, 'data.result[0].value[1]'), 10) || 0;

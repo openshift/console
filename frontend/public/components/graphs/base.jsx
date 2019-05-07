@@ -5,9 +5,8 @@ import { plot, Plots } from 'plotly.js/lib/core';
 import * as classNames from 'classnames';
 
 import { coFetchJSON } from '../../co-fetch';
-
-import { prometheusBasePath, prometheusTenancyBasePath } from './index';
 import { MonitoringRoutes } from '../../reducers/monitoring';
+import { PROMETHEUS_BASE_PATH, PROMETHEUS_TENANCY_BASE_PATH } from '.';
 
 export class BaseGraph extends React.Component {
   constructor(props) {
@@ -43,7 +42,7 @@ export class BaseGraph extends React.Component {
       }];
     }
 
-    const basePath = this.props.basePath || (this.props.namespace ? prometheusTenancyBasePath : prometheusBasePath);
+    const basePath = this.props.basePath || (this.props.namespace ? PROMETHEUS_TENANCY_BASE_PATH : PROMETHEUS_BASE_PATH);
     const pollInterval = timeSpan ? Math.max(timeSpan / 120, 5000) : 15000;
     const stepSize = (timeSpan && this.props.numSamples ? timeSpan / this.props.numSamples : pollInterval) / 1000;
     const timeoutParam = this.props.timeout ? `&timeout=${encodeURIComponent(this.props.timeout)}` : '';

@@ -130,13 +130,28 @@ export const PodContainerTable: React.FC<PodContainerTableProps> = ({heading, co
 const PodGraphs = requirePrometheus(({pod}) => <React.Fragment>
   <div className="row">
     <div className="col-md-4">
-      <Area title="Memory Usage" humanizeValue={humanizeDecimalBytes} namespace={pod.metadata.namespace} query={`pod_name:container_memory_usage_bytes:sum{pod_name='${pod.metadata.name}',namespace='${pod.metadata.namespace}'}`} />
+      <Area
+        title="Memory Usage"
+        formatY={humanizeDecimalBytes}
+        namespace={pod.metadata.namespace}
+        query={`pod_name:container_memory_usage_bytes:sum{pod_name='${pod.metadata.name}',namespace='${pod.metadata.namespace}'}`}
+      />
     </div>
     <div className="col-md-4">
-      <Area title="CPU Usage" humanizeValue={humanizeCpuCores} namespace={pod.metadata.namespace} query={`pod_name:container_cpu_usage:sum{pod_name='${pod.metadata.name}',namespace='${pod.metadata.namespace}'}`} />
+      <Area
+        title="CPU Usage"
+        formatY={humanizeCpuCores}
+        namespace={pod.metadata.namespace}
+        query={`pod_name:container_cpu_usage:sum{pod_name='${pod.metadata.name}',namespace='${pod.metadata.namespace}'}`}
+      />
     </div>
     <div className="col-md-4">
-      <Area title="Filesystem" humanizeValue={humanizeDecimalBytes} namespace={pod.metadata.namespace} query={`pod_name:container_fs_usage_bytes:sum{pod_name='${pod.metadata.name}',namespace='${pod.metadata.namespace}'}`} />
+      <Area
+        title="Filesystem"
+        formatY={humanizeDecimalBytes}
+        namespace={pod.metadata.namespace}
+        query={`pod_name:container_fs_usage_bytes:sum{pod_name='${pod.metadata.name}',namespace='${pod.metadata.namespace}'}`}
+      />
     </div>
   </div>
 
