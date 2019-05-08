@@ -177,30 +177,32 @@ class QueryBrowser_ extends Line_ {
 
     return <div className="query-browser__wrapper">
       <div className="query-browser__header">
-        <div className="query-browser__controls">
-          <div className={isSpanValid ? '' : 'has-error'}>
-            <input
-              className="form-control query-browser__span-text"
-              onChange={this.onSpanTextChange}
-              type="text"
-              value={spanText}
-            />
-          </div>
-          <Dropdown
-            buttonClassName="btn-default form-control query-browser__span-dropdown"
-            items={dropdownItems}
-            menuClassName="dropdown-menu-right query-browser__span-dropdown-menu"
-            noSelection={true}
-            onChange={v => this.showLatest(parsePrometheusDuration(v))}
+        <div className={isSpanValid ? '' : 'has-error'}>
+          <input
+            className="form-control query-browser__span-text"
+            onChange={this.onSpanTextChange}
+            type="text"
+            value={spanText}
           />
-          <button
-            className="btn btn-default query-browser__span-reset"
-            onClick={() => this.showLatest(this.defaultSpan)}
-            type="button"
-          >Reset Zoom</button>
+        </div>
+        <Dropdown
+          buttonClassName="btn-default form-control query-browser__span-dropdown"
+          items={dropdownItems}
+          menuClassName="dropdown-menu-right query-browser__span-dropdown-menu"
+          noSelection={true}
+          onChange={v => this.showLatest(parsePrometheusDuration(v))}
+        />
+        <button
+          className="btn btn-default query-browser__span-reset"
+          onClick={() => this.showLatest(this.defaultSpan)}
+          type="button"
+        >Reset Zoom</button>
+        <div className="query-browser__loading">
           {updating && <LoadingInline />}
         </div>
-        {baseUrl && query && <ExternalLink href={`${baseUrl}/graph?g0.expr=${encodeURIComponent(query)}&g0.tab=0`} text="View in Prometheus UI" />}
+        <div className="query-browser__external-link">
+          {baseUrl && query && <ExternalLink href={`${baseUrl}/graph?g0.expr=${encodeURIComponent(query)}&g0.tab=0`} text="View in Prometheus UI" />}
+        </div>
       </div>
       {error && <div className="alert alert-danger query-browser__error">
         <span className="pficon pficon-error-circle-o" aria-hidden="true"></span>{error.message}
