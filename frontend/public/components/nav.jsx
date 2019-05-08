@@ -33,7 +33,7 @@ import * as plugins from '../plugins';
 export const matchesPath = (resourcePath, prefix) => resourcePath === prefix || _.startsWith(resourcePath, `${prefix}/`);
 export const matchesModel = (resourcePath, model) => model && matchesPath(resourcePath, referenceForModel(model));
 
-import { Nav, NavExpandable, NavItem, NavList, PageSidebar } from '@patternfly/react-core';
+import { Nav, NavExpandable, NavItem, NavItemSeparator, NavList, PageSidebar } from '@patternfly/react-core';
 
 const stripNS = href => {
   href = stripBasePath(href);
@@ -58,22 +58,13 @@ class NavLink extends React.PureComponent {
   }
 
   render() {
-    const { isActive, isSeparated, separatorConditions, flags, id, name, onClick } = this.props;
-    let showSeparator = isSeparated;
-    const separatorConditionsArray = separatorConditions ? _.castArray(separatorConditions) : [];
-    _.forEach(separatorConditionsArray, required => {
-      const requiredArray = required ? _.castArray(required) : [];
-      const notAllowed = _.some(requiredArray, flag => (
-        flag && (flagPending(flags.get(flag)) || !flags.get(flag))
-      ));
-      showSeparator = showSeparator || !notAllowed;
-    });
+    const { isActive, id, name, onClick } = this.props;
 
     // onClick is now handled globally by the Nav's onSelect,
     // however onClick can still be passed if desired in certain cases
 
     return (
-      <NavItem isActive={isActive} isSeparated={showSeparator}>
+      <NavItem isActive={isActive}>
         <Link
           id={id}
           to={this.to}
@@ -148,6 +139,13 @@ HrefLink.propTypes = {
   name: PropTypes.string.isRequired,
   startsWith: PropTypes.arrayOf(PropTypes.string),
   href: PropTypes.string.isRequired,
+};
+
+// Wrap `NavItemSeparator` so we can use `required` without prop type errors.
+const Separator = () => <NavItemSeparator />;
+
+Separator.propTypes = {
+  required: PropTypes.string,
 };
 
 const navSectionStateToProps = (state, {required}) => {
@@ -358,12 +356,8 @@ export const Navigation = ({ isNavOpen, onNavSelect }) => {
             model={ClusterServiceVersionModel}
             resource={ClusterServiceVersionModel.plural}
             name="Installed Operators"
-            separatorConditions={[
-              [FLAGS.CAN_LIST_PACKAGE_MANIFEST, FLAGS.CAN_LIST_OPERATOR_GROUP, FLAGS.OPERATOR_HUB],
-              [FLAGS.CAN_LIST_PACKAGE_MANIFEST, FLAGS.CAN_LIST_OPERATOR_GROUP],
-              FLAGS.SERVICE_CATALOG,
-            ]}
           />
+          <Separator />
           <HrefLink
             required={[FLAGS.CAN_LIST_PACKAGE_MANIFEST, FLAGS.CAN_LIST_OPERATOR_GROUP, FLAGS.OPERATOR_HUB]}
             href="/operatorhub"
@@ -391,7 +385,8 @@ export const Navigation = ({ isNavOpen, onNavSelect }) => {
           <ResourceNSLink resource="deploymentconfigs" name={DeploymentConfigModel.labelPlural} required={FLAGS.OPENSHIFT} />
           <ResourceNSLink resource="statefulsets" name="Stateful Sets" />
           <ResourceNSLink resource="secrets" name="Secrets" />
-          <ResourceNSLink resource="configmaps" name="Config Maps" isSeparated />
+          <ResourceNSLink resource="configmaps" name="Config Maps" />
+          <Separator />
           <ResourceNSLink resource="cronjobs" name="Cron Jobs" />
           <ResourceNSLink resource="jobs" name="Jobs" />
           <ResourceNSLink resource="daemonsets" name="Daemon Sets" />
@@ -425,7 +420,8 @@ export const Navigation = ({ isNavOpen, onNavSelect }) => {
           <ResourceClusterLink resource="nodes" name="Nodes" />
           <ResourceNSLink resource={referenceForModel(MachineModel)} name="Machines" required={FLAGS.CLUSTER_API} />
           <ResourceNSLink resource={referenceForModel(MachineSetModel)} name="Machine Sets" required={FLAGS.CLUSTER_API} />
-          <ResourceNSLink resource={referenceForModel(MachineAutoscalerModel)} name="Machine Autoscalers" required={FLAGS.MACHINE_AUTOSCALER} isSeparated />
+          <ResourceNSLink resource={referenceForModel(MachineAutoscalerModel)} name="Machine Autoscalers" required={FLAGS.MACHINE_AUTOSCALER} />
+          <Separator required={FLAGS.MACHINE_CONFIG} />
           <ResourceClusterLink resource={referenceForModel(MachineConfigModel)} name="Machine Configs" required={FLAGS.MACHINE_CONFIG} />
           <ResourceClusterLink resource={referenceForModel(MachineConfigPoolModel)} name="Machine Config Pools" required={FLAGS.MACHINE_CONFIG} />
         </NavSection>

@@ -302,28 +302,23 @@ kbd {
   }
 }
 
+.pf-c-dropdown__toggle .pf-c-dropdown__toggle-icon {
+  flex: 0 0 auto; // so arrow doesn't shrink
+}
+
 .pf-c-page {
   display: block !important;
   position: relative;
 
   &__header {
-    background: #151515;
-    display: grid !important;
-    grid-template-columns: 1fr auto;
     left: 0;
     position: absolute;
     right: 0;
     top: 0;
   }
 
-  &__header-brand {
-    background: none !important;
-    padding-right: 32px;
-  }
-
   &__header-brand-link {
-    flex: 0 1 auto !important;
-    max-width: 100% !important;
+    flex: 0 1 auto !important; // so link doesn't grow larger than logo
   }
 
   &__header-tools {
@@ -364,8 +359,6 @@ kbd {
 
 .pf-c-page__sidebar {
   --pf-c-page__sidebar--BackgroundColor: #{$color-pf-black-900};
-  --pf-c-page__sidebar--PaddingBottom: 0;
-  --pf-c-page__sidebar--PaddingTop: 0;
   bottom: 0;
   left: 0;
   position: absolute;
@@ -398,7 +391,7 @@ kbd {
     --pf-c-nav__list-link--hover--Color: #{$color-pf-white};
     --pf-c-nav__list-link--m-current--after--BackgroundColor: #{$color-pf-blue-300};
     --pf-c-nav__list-link--m-current--Color: var(--pf-c-nav__list-link--hover--Color);
-    --pf-c-nav__list-link--md--PaddingLeft: 32px;
+    --pf-c-nav__list-link--md--PaddingLeft: 24px;
     --pf-c-nav__list-link--PaddingBottom: var(--pf-c-nav__list-link--PaddingTop);
     --pf-c-nav__list-link--PaddingLeft: 16px;
     --pf-c-nav__list-link--PaddingTop: 17px;
@@ -423,13 +416,13 @@ kbd {
     --pf-c-nav__list-toggle--PaddingRight: 0;
   }
 
-  .pf-c-nav__item .pf-c-nav__simple-list .pf-c-nav__link.pf-m-separator::after {
-    --pf-c-nav__simple-list-link--m-separator--after--Left: var(--pf-c-nav__list-link--PaddingLeft);
-    right: var(--pf-c-nav__list-link--PaddingRight);
+  .pf-c-nav__item .pf-c-nav__simple-list .pf-c-nav__separator {
+    --pf-c-nav__separator--MarginLeft: var(--pf-c-nav__list-link--PaddingLeft);
+    margin-right: var(--pf-c-nav__list-link--PaddingRight);
 
     @media screen and (min-width: $grid-float-breakpoint) {
-      --pf-c-nav__simple-list-link--m-separator--after--Left: var(--pf-c-nav__list-link--md--PaddingLeft);
-      right: var(--pf-c-nav__list-link--md--PaddingRight);
+      --pf-c-nav__separator--MarginLeft: var(--pf-c-nav__list-link--md--PaddingLeft);
+      margin-right: var(--pf-c-nav__list-link--md--PaddingRight);
     }
   }
 
@@ -453,10 +446,6 @@ kbd {
         &.pf-m-expanded > .pf-c-nav__link::after {
           display: none;
         }
-
-        .pf-c-nav__simple-list .pf-c-nav__link.pf-m-separator:after {
-          --pf-c-nav__simple-list-link--m-separator--after--Background: #292929;
-        }
       }
 
       &.pf-m-expanded,
@@ -477,12 +466,16 @@ kbd {
     }
   }
 
+  .pf-c-nav__separator {
+    --pf-c-nav__separator--BackgroundColor: #{$color-pf-black};
+    list-style: none;
+  }
+
   .pf-c-nav__simple-list .pf-c-nav__link {
     font-size: $font-size-base;
     line-height: 25px;
 
-    // use `::before` so as not to conflict with `.pf-m-separator::after`
-    &.pf-m-current::before {
+    &.pf-m-current::after {
       background-color: var(--pf-c-nav__list-link--m-current--after--BackgroundColor);
       bottom: 0;
       content: "";
@@ -491,15 +484,6 @@ kbd {
       left: var(--pf-c-nav__list-link--after--Left);
       position: absolute;
       width: var(--pf-c-nav__list-link--after--Width);
-    }
-
-    &.pf-m-separator {
-      margin-bottom: 17px;
-
-      &::after {
-        --pf-c-nav__simple-list-link--m-separator--after--Background: #{$color-pf-black};
-        --pf-c-nav__simple-list-link--m-separator--after--Bottom: -9px;
-      }
     }
   }
 
@@ -511,4 +495,13 @@ kbd {
     color: var(--pf-c-nav__list-link--Color);
     display: none;
   }
+
+  .pf-m-current .pf-c-nav__separator {
+    --pf-c-nav__separator--BackgroundColor: #292929;
+  }
+}
+
+.pf-c-page__sidebar-body {
+  --pf-c-page__sidebar-body--PaddingTop: 0;
+  --pf-c-page__sidebar-body--PaddingBottom: 0;
 }

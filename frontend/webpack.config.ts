@@ -56,7 +56,7 @@ const config: webpack.Configuration = {
       },
       {
         test: /\.s?css$/,
-        exclude: /node_modules/,
+        exclude: /node_modules\/(?!(@patternfly)\/).*/,
         use: [
           {
             loader: MiniCssExtractPlugin.loader,
