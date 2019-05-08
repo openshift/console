@@ -111,8 +111,8 @@ export const PackageManifestsPage: React.SFC<PackageManifestsPageProps> = (props
     resources={[
       {kind: referenceForModel(PackageManifestModel), isList: true, namespaced: true, prop: 'packageManifest', selector: {matchExpressions: [{key: visibilityLabel, operator: 'DoesNotExist'}, {key: OPERATOR_HUB_LABEL, operator: 'DoesNotExist'}]}},
       {kind: referenceForModel(CatalogSourceModel), isList: true, namespaced: true, prop: 'catalogSource'},
-      {kind: referenceForModel(SubscriptionModel), isList: true, prop: 'subscription'},
-      {kind: referenceForModel(OperatorGroupModel), isList: true, prop: 'operatorGroup'},
+      {kind: referenceForModel(SubscriptionModel), isList: true, namespaced: true, prop: 'subscription'},
+      {kind: referenceForModel(OperatorGroupModel), isList: true, namespaced: true, prop: 'operatorGroup'},
     ]} />;
 };
 
