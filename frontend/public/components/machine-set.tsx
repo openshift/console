@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import { MachineModel, MachineSetModel } from '../models';
 import { K8sKind, MachineDeploymentKind, MachineSetKind, referenceForModel } from '../module/k8s';
 import { getMachineRole, MachinePage } from './machine';
-import { configureReplicaCountModal } from './modals';
+import { configureMachineAutoscalerModal, configureReplicaCountModal } from './modals';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
 import {
   Kebab,
@@ -34,8 +34,13 @@ export const editCountAction: KebabAction = (kind: K8sKind, resource: MachineSet
   callback: () => machineReplicasModal(kind, resource),
 });
 
+const configureMachineAutoscaler = (kind: K8sKind, machineSet: MachineSetKind) => ({
+  label: 'Create Autoscaler',
+  callback: () => configureMachineAutoscalerModal({machineSet, cancel: _.noop, close: _.noop}),
+});
+
 const { common } = Kebab.factory;
-const menuActions = [editCountAction, ...common];
+const menuActions = [editCountAction, configureMachineAutoscaler, ...common];
 const machineReference = referenceForModel(MachineModel);
 const machineSetReference = referenceForModel(MachineSetModel);
 export const getAWSPlacement = (machineSet: MachineSetKind | MachineDeploymentKind) => _.get(machineSet, 'spec.template.spec.providerSpec.value.placement') || {};
@@ -58,7 +63,7 @@ const MachineSetHeader: React.SFC = props => <ListHeader>
 
 const MachineSetRow: React.SFC<MachineSetRowProps> = ({obj}: {obj: MachineSetKind}) => <div className="row co-resource-list__item">
   <div className="col-sm-4 col-xs-6">
-    <ResourceLink kind={machineSetReference} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
+    <ResourceLink kind={machineSetReference} name={obj.metadata.name} namespace={obj.metadata.namespace} />
   </div>
   <div className="col-sm-4 col-xs-6 co-break-word">
     <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
@@ -191,7 +196,11 @@ export const MachineSetDetailsPage: React.SFC<MachineSetDetailsPageProps> = prop
   })}
   menuActions={menuActions}
   kind={machineSetReference}
-  pages={[navFactory.details(MachineSetDetails), navFactory.editYaml(), navFactory.machines(MachineTabPage)]}
+  pages={[
+    navFactory.details(MachineSetDetails),
+    navFactory.editYaml(),
+    navFactory.machines(MachineTabPage),
+  ]}
 />;
 
 export type MachineSetRowProps = {

@@ -65,3 +65,6 @@ export const commandLineToolsModal = (props) => import('./command-line-tools-mod
 
 export const expandPVCModal = (props) => import('./expand-pvc-modal' /* webpackChunkName: "expand-pvc-modal" */)
   .then(m => m.expandPVCModal(props));
+
+export const configureMachineAutoscalerModal = (props) => import('./configure-machine-autoscaler-modal' /* webpackChunkName: "configure-machine-autoscaler-modal" */)
+  .then(m => m.configureMachineAutoscalerModal(props));

@@ -44,6 +44,7 @@ describe('featureReducer', () => {
       [FLAGS.OPERATOR_HUB]: false,
       [FLAGS.CLUSTER_API]: false,
       [FLAGS.MACHINE_CONFIG]: false,
+      [FLAGS.MACHINE_AUTOSCALER]: false,
     }));
   });
 });

@@ -17,6 +17,7 @@ import {
   DeploymentConfigModel,
   ImageStreamModel,
   InstallPlanModel,
+  MachineAutoscalerModel,
   MachineConfigModel,
   MachineConfigPoolModel,
   MachineModel,
@@ -424,7 +425,8 @@ export const Navigation = ({ isNavOpen, onNavSelect }) => {
         <NavSection title="Compute" required={FLAGS.CAN_LIST_NODE}>
           <ResourceClusterLink resource="nodes" name="Nodes" />
           <ResourceNSLink resource={referenceForModel(MachineModel)} name="Machines" required={FLAGS.CLUSTER_API} />
-          <ResourceNSLink resource={referenceForModel(MachineSetModel)} name="Machine Sets" required={FLAGS.CLUSTER_API} isSeparated />
+          <ResourceNSLink resource={referenceForModel(MachineSetModel)} name="Machine Sets" required={FLAGS.CLUSTER_API} />
+          <ResourceNSLink resource={referenceForModel(MachineAutoscalerModel)} name="Machine Autoscalers" required={FLAGS.MACHINE_AUTOSCALER} isSeparated />
           <ResourceClusterLink resource={referenceForModel(MachineConfigModel)} name="Machine Configs" required={FLAGS.MACHINE_CONFIG} />
           <ResourceClusterLink resource={referenceForModel(MachineConfigPoolModel)} name="Machine Config Pools" required={FLAGS.MACHINE_CONFIG} />
         </NavSection>
