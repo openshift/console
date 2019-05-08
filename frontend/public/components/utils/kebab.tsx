@@ -3,7 +3,7 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 
-import { annotationsModal, configureReplicaCountModal, taintsModal, tolerationsModal, labelsModal, podSelectorModal, deleteModal } from '../modals';
+import { annotationsModal, configureReplicaCountModal, taintsModal, tolerationsModal, labelsModal, podSelectorModal, deleteModal, expandPVCModal } from '../modals';
 import { DropdownMixin } from './dropdown';
 import { history, resourceObjPath } from './index';
 import { referenceForModel, K8sResourceKind, K8sResourceKindReference, K8sKind } from '../../module/k8s';
@@ -83,6 +83,13 @@ const kebabFactory: KebabFactory = {
   AddStorage: (kind, obj) => ({
     label: 'Add Storage',
     href: `${resourceObjPath(obj, kind.crd ? referenceForModel(kind) : kind.kind)}/attach-storage`,
+  }),
+  ExpandPVC: (kind, obj) => ({
+    label: 'Expand PVC',
+    callback: () => expandPVCModal({
+      kind,
+      resource: obj,
+    }),
   }),
 };
 

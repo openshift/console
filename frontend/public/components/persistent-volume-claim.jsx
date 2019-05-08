@@ -8,8 +8,8 @@ import { ResourceEventStream } from './events';
 
 const pvcPhase = pvc => pvc.status.phase;
 
-const { common } = Kebab.factory;
-const menuActions = [...common];
+const { common, ExpandPVC } = Kebab.factory;
+const menuActions = [ExpandPVC, ...common];
 
 const PVCStatus = ({pvc}) => {
   const phase = pvcPhase(pvc);
