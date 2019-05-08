@@ -8,8 +8,8 @@ import { ResourceEventStream } from './events';
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import { configureUnschedulableModal } from './modals';
 import { PodsPage } from './pod';
-import { Kebab, navFactory, LabelList, ResourceKebab, SectionHeading, ResourceLink, Timestamp, units, cloudProviderNames, cloudProviderID, pluralize, StatusIcon } from './utils';
-import { Line, requirePrometheus } from './graphs';
+import { Kebab, navFactory, LabelList, ResourceKebab, SectionHeading, ResourceLink, Timestamp, units, cloudProviderNames, cloudProviderID, pluralize, StatusIcon, humanizeDecimalBytes, humanizeCpuCores } from './utils';
+import { Area, requirePrometheus } from './graphs';
 import { MachineModel, NodeModel } from '../models';
 import { CamelCaseWrap } from './utils/camel-case-wrap';
 
@@ -114,22 +114,22 @@ const NodeGraphs = requirePrometheus(({node}) => {
   return <React.Fragment>
     <div className="row">
       <div className="col-md-4">
-        <Line title="Memory Usage" query={ipQuery && `node_memory_Active_bytes${ipQuery}`} />
+        <Area title="Memory Usage" humanizeValue={humanizeDecimalBytes} query={ipQuery && `node_memory_Active_bytes${ipQuery}`} />
       </div>
       <div className="col-md-4">
-        <Line title="CPU Usage" query={ipQuery && `instance:node_cpu:rate:sum${ipQuery}`} />
+        <Area title="CPU Usage" humanizeValue={humanizeCpuCores} query={ipQuery && `instance:node_cpu:rate:sum${ipQuery}`} />
       </div>
       <div className="col-md-4">
-        <Line title="Number of Pods" query={ipQuery && `kubelet_running_pod_count${ipQuery}`} />
+        <Area title="Number of Pods" query={ipQuery && `kubelet_running_pod_count${ipQuery}`} />
       </div>
       <div className="col-md-4">
-        <Line title="Network In" query={ipQuery && `instance:node_network_receive_bytes:rate:sum${ipQuery}`} />
+        <Area title="Network In" humanizeValue={humanizeDecimalBytes} query={ipQuery && `instance:node_network_receive_bytes:rate:sum${ipQuery}`} />
       </div>
       <div className="col-md-4">
-        <Line title="Network Out" query={ipQuery && `instance:node_network_transmit_bytes:rate:sum${ipQuery}`} />
+        <Area title="Network Out" humanizeValue={humanizeDecimalBytes} query={ipQuery && `instance:node_network_transmit_bytes:rate:sum${ipQuery}`} />
       </div>
       <div className="col-md-4">
-        <Line title="Filesystem" query={ipQuery && `instance:node_filesystem_usage:sum${ipQuery}`} />
+        <Area title="Filesystem" humanizeValue={humanizeDecimalBytes} query={ipQuery && `instance:node_filesystem_usage:sum${ipQuery}`} />
       </div>
     </div>
 

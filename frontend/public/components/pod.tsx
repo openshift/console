@@ -24,9 +24,11 @@ import {
   Timestamp,
   navFactory,
   units,
+  humanizeCpuCores,
+  humanizeDecimalBytes,
 } from './utils';
 import { PodLogs } from './pod-logs';
-import { Line, requirePrometheus } from './graphs';
+import { requirePrometheus, Area } from './graphs';
 import { breadcrumbsForOwnerRefs } from './utils/breadcrumbs';
 import { formatDuration } from './utils/datetime';
 import { CamelCaseWrap } from './utils/camel-case-wrap';
@@ -129,13 +131,13 @@ export const PodContainerTable: React.FC<PodContainerTableProps> = ({heading, co
 const PodGraphs = requirePrometheus(({pod}) => <React.Fragment>
   <div className="row">
     <div className="col-md-4">
-      <Line title="Memory Usage" namespace={pod.metadata.namespace} query={`pod_name:container_memory_usage_bytes:sum{pod_name='${pod.metadata.name}',namespace='${pod.metadata.namespace}'}`} />
+      <Area title="Memory Usage" humanizeValue={humanizeDecimalBytes} namespace={pod.metadata.namespace} query={`pod_name:container_memory_usage_bytes:sum{pod_name='${pod.metadata.name}',namespace='${pod.metadata.namespace}'}`} />
     </div>
     <div className="col-md-4">
-      <Line title="CPU Usage" namespace={pod.metadata.namespace} query={`pod_name:container_cpu_usage:sum{pod_name='${pod.metadata.name}',namespace='${pod.metadata.namespace}'}`} />
+      <Area title="CPU Usage" humanizeValue={humanizeCpuCores} namespace={pod.metadata.namespace} query={`pod_name:container_cpu_usage:sum{pod_name='${pod.metadata.name}',namespace='${pod.metadata.namespace}'}`} />
     </div>
     <div className="col-md-4">
-      <Line title="Filesystem" namespace={pod.metadata.namespace} query={`pod_name:container_fs_usage_bytes:sum{pod_name='${pod.metadata.name}',namespace='${pod.metadata.namespace}'}`} />
+      <Area title="Filesystem" humanizeValue={humanizeDecimalBytes} namespace={pod.metadata.namespace} query={`pod_name:container_fs_usage_bytes:sum{pod_name='${pod.metadata.name}',namespace='${pod.metadata.namespace}'}`} />
     </div>
   </div>
 
