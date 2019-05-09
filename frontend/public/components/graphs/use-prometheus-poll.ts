@@ -1,12 +1,13 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import * as _ from 'lodash-es';
 import { useEffect, useRef } from 'react';
 import { prometheusTenancyBasePath, prometheusBasePath } from '.';
 import { coFetchJSON } from '../../co-fetch';
 import { useSafetyFirst } from '../safety-first';
 
-// TODO This effect only handles polling prometheus data range queries. For now,
+// TODO This effect only handles prometheus matrix data. For now,
 // area charts are the only component using this, so that's okay, but will need
-// to be expanded to handle singular vector queries as well.
+// to be expanded to handle vector data as well.
 export const usePrometheusPoll = ({
   basePath,
   defaultQueryName = '',
@@ -18,7 +19,6 @@ export const usePrometheusPoll = ({
 }: PrometheusPollProps ) => {
   const [data, setData] = useSafetyFirst([]);
   const interval = useRef(null);
-
   useEffect(() => {
     const fetch = () => {
       const end = Date.now();
@@ -55,7 +55,7 @@ export const usePrometheusPoll = ({
     return () => {
       clearInterval(interval.current);
     };
-  }, [basePath, defaultQueryName, namespace, numSamples, query, timeout, timeSpan, setData]);
+  }, [basePath, defaultQueryName, namespace, numSamples, query, timeout, timeSpan]);
 
   return [data] as [GraphDataPoint[][]];
 };
