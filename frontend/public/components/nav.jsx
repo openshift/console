@@ -41,7 +41,7 @@ const stripNS = href => {
 };
 
 const ExternalLink = ({href, name}) => <NavItem isActive={false}>
-  <a className="pf-c-nav__link" href={href} target="_blank">{name}<span className="co-external-link"></span></a>
+  <a className="pf-c-nav__link" href={href} target="_blank" rel="noopener noreferrer">{name}<span className="co-external-link"></span></a>
 </NavItem>;
 
 class NavLink extends React.PureComponent {
