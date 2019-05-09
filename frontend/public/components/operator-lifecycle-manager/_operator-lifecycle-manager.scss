@@ -140,3 +140,22 @@
   align-items: center;
   height: 25px;
 }
+
+.co-create-operand__header {
+  border-bottom: 1px solid #ddd;
+  padding: 10px 15px;
+  @media(min-width: $screen-sm-min) {
+    padding: 10px 31px; // left alignment with namespace selector text
+  }
+}
+
+.co-create-operand__header-buttons {
+  display: flex;
+  align-items: baseline;
+}
+
+.co-create-operand__header-text {
+  font-size: 20px;
+  font-weight: 300;
+  margin: 0;
+}

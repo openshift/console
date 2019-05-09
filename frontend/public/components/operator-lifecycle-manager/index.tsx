@@ -116,6 +116,11 @@ export type ClusterServiceVersionKind = {
     apiservicedefinitions?: {owned?: APIServiceDefinition[], required?: APIServiceDefinition[]};
     replaces?: string;
     installModes: {type: InstallModeType, supported: boolean}[];
+    displayName?: string;
+    description?: string;
+    provider?: {name: string};
+    version?: string;
+    icon?: {base64data: string, mediatype: string}[];
   };
   status?: {
     phase: ClusterServiceVersionPhase;

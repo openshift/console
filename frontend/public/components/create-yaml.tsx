@@ -11,7 +11,7 @@ import { ErrorPage404 } from './error';
 import { ClusterServiceVersionModel } from '../models';
 
 export const CreateYAML = connectToPlural((props: CreateYAMLProps) => {
-  const {match, kindsInFlight, kindObj} = props;
+  const {match, kindsInFlight, kindObj, hideHeader = false} = props;
   const {params} = match;
 
   if (!kindObj) {
@@ -39,11 +39,11 @@ export const CreateYAML = connectToPlural((props: CreateYAMLProps) => {
   // TODO: if someone edits namespace, we'll redirect to old namespace
   const redirectURL = params.appName ? `/k8s/ns/${namespace}/${ClusterServiceVersionModel.plural}/${params.appName}/${referenceForModel(kindObj)}` : null;
 
-  return <AsyncComponent loader={() => import('./droppable-edit-yaml').then(c => c.DroppableEditYAML)} obj={obj} create={true} kind={kindObj.kind} redirectURL={redirectURL} header={header} />;
+  return <AsyncComponent loader={() => import('./droppable-edit-yaml').then(c => c.DroppableEditYAML)} obj={obj} create={true} kind={kindObj.kind} redirectURL={redirectURL} header={header} hideHeader={hideHeader} />;
 });
 
 export const EditYAMLPage: React.SFC<EditYAMLPageProps> = (props) => {
-  const Wrapper = (wrapperProps) => <AsyncComponent {...wrapperProps} obj={wrapperProps.obj.data} loader={() => import('./edit-yaml').then(c => c.EditYAML)} create={false} showHeader={true} />;
+  const Wrapper = (wrapperProps) => <AsyncComponent {...wrapperProps} obj={wrapperProps.obj.data} loader={() => import('./edit-yaml').then(c => c.EditYAML)} create={false} />;
   return <Firehose resources={[{kind: props.kind, name: props.match.params.name, namespace: props.match.params.ns, isList: false, prop: 'obj'}]}>
     <Wrapper />
   </Firehose>;
@@ -56,6 +56,7 @@ export type CreateYAMLProps = {
   template?: string;
   download?: boolean;
   header?: string;
+  hideHeader?: boolean;
 };
 
 export type EditYAMLPageProps = {

@@ -89,13 +89,13 @@ describe(ClusterServiceVersionLogo.displayName, () => {
 
   beforeEach(() => {
     const {provider, icon, displayName} = testClusterServiceVersion.spec;
-    wrapper = mount(<ClusterServiceVersionLogo icon={icon} displayName={displayName} provider={provider} />);
+    wrapper = mount(<ClusterServiceVersionLogo icon={icon[0]} displayName={displayName} provider={provider} />);
   });
 
   it('renders logo image from given base64 encoded image string', () => {
     const image: ReactWrapper<React.ImgHTMLAttributes<any>> = wrapper.find('img');
 
-    expect(image.props().src).toEqual(`data:${testClusterServiceVersion.spec.icon.mediatype};base64,${testClusterServiceVersion.spec.icon.base64data}`);
+    expect(image.props().src).toEqual(`data:${testClusterServiceVersion.spec.icon[0].mediatype};base64,${testClusterServiceVersion.spec.icon[0].base64data}`);
   });
 
   it('renders fallback image if given icon is invalid', () => {
