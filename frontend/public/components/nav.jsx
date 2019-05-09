@@ -371,7 +371,6 @@ export const Navigation = ({ isNavOpen, onNavSelect }) => {
             activePath="/operatorhub/"
           />
           <HrefLink
-            required={[FLAGS.CAN_LIST_PACKAGE_MANIFEST, FLAGS.CAN_LIST_OPERATOR_GROUP]}
             href="/operatormanagement"
             name="Operator Management"
             activePath="/operatormanagement/"
