@@ -16,18 +16,18 @@ import { ALL_NAMESPACES_KEY } from '../../const';
 
 export const legalNamePattern = /[a-z0-9](?:[-a-z0-9]*[a-z0-9])?/;
 
-const basePathPattern = new RegExp(`^/?${window.SERVER_FLAGS.basePath}`);
+const basePathPattern = new RegExp(`^/?${(window as any).SERVER_FLAGS.basePath}`);
 
 export const namespacedPrefixes = ['/search', '/status', '/k8s', '/overview', '/catalog', '/provisionedservices', '/operators', '/operatormanagement', '/operatorhub'];
 
-export const stripBasePath = path => path.replace(basePathPattern, '/');
+export const stripBasePath = (path: string): string => path.replace(basePathPattern, '/');
 
-export const getNSPrefix = path => {
+export const getNSPrefix = (path: string): string => {
   path = stripBasePath(path);
   return namespacedPrefixes.filter(p => path.startsWith(p))[0];
 };
 
-export const getNamespace = path => {
+export const getNamespace = (path: string): string => {
   path = stripBasePath(path);
   const split = path.split('/').filter(x => x);
 
@@ -35,7 +35,7 @@ export const getNamespace = path => {
     return ALL_NAMESPACES_KEY;
   }
 
-  let ns;
+  let ns: string;
   if (split[1] === 'cluster' && ['namespaces', 'projects'].includes(split[2]) && split[3]) {
     ns = split[3];
   } else if (split[1] === 'ns' && split[2]) {
@@ -48,13 +48,21 @@ export const getNamespace = path => {
   return match && match.length > 0 && match[0];
 };
 
-export const ExternalLink = ({href, text, additionalClassName=''}) => <a className={classNames('co-external-link', additionalClassName)} href={href} target="_blank" rel="noopener noreferrer">{text}</a>;
-
 export const getURLSearchParams = () => {
-  const all = {};
+  const all: any = {};
   const params = new URLSearchParams(window.location.search);
-  for (const [k, v] of params.entries()) {
+  // The URLSearchParams type definition does not include `entries()`.
+  // https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams/entries
+  for (const [k, v] of (params as any).entries()) {
     all[k] = v;
   }
   return all;
+};
+
+export const ExternalLink: React.FC<ExternalLinkProps> = ({href, text, additionalClassName=''}) => <a className={classNames('co-external-link', additionalClassName)} href={href} target="_blank" rel="noopener noreferrer">{text}</a>;
+
+type ExternalLinkProps = {
+  href: string;
+  text: string;
+  additionalClassName?: string;
 };
