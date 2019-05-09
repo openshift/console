@@ -28,4 +28,14 @@ export class DetailView {
     await clickHorizontalTab(tabName);
     await isLoaded();
   }
+
+  asResource() {
+    return {
+      kind: this.kind,
+      metadata: {
+        namespace: this.namespace,
+        name: this.name,
+      },
+    };
+  }
 }

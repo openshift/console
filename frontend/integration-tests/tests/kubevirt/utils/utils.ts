@@ -100,6 +100,8 @@ export async function fillInput(elem: ElementFinder, value: string) {
       throw Error(`Failed to fill input with value: '${value}'.`);
     }
     await browser.wait(until.elementToBeClickable(elem));
+    // TODO: line below can be removed when pf4 tables in use.
+    await elem.click();
     await elem.clear();
     await elem.sendKeys(value);
   } while (await elem.getAttribute('value') !== value && attempts > 0);

@@ -189,6 +189,7 @@ export const config: Config = {
       'tests/kubevirt/vm.yaml.scenario.ts',
       'tests/kubevirt/vm.overview.scenario.ts',
       'tests/kubevirt/node.maintenance.scenario.ts',
+      'tests/kubevirt/vm.nic.binding.scenario.ts',
     ],
     kubevirtWindows: [
       'tests/kubevirt/kubevirt.login.scenario.ts',

@@ -77,3 +77,11 @@ export const cloneVmWarning = cloneVmDialog.$('.alert-warning');
 
 // VMs List view
 export const firstRowVMStatus = $('div.co-m-row:first-child > div:first-child > div:nth-child(3)');
+
+// VM wizard network
+export const dropdownOptionID = (tableType, rowNumber) => `#${tableType}-edit-${rowNumber}-row`;
+export const dropdownOption = (tableType, rowNumber) => $(dropdownOptionID(tableType, rowNumber));
+export const editableTableCell = $('.kubevirt-editable-table').$$('td');
+
+export const tableRows = $$('.kubevirt-editable-table tbody tr');
+export const itemInTable = (rowNumber, itemNumber) => tableRows.get(rowNumber).$$('td').get(itemNumber);

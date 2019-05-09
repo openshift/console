@@ -253,6 +253,7 @@ export const windowsVmConfig = {
 };
 
 export const networkInterface = {
+  podNicName: 'nic0',
   name: `nic1-${testName.slice(-5)}`,
   mac: 'fe:fe:fe:fe:fe:fe',
   binding: 'bridge',
@@ -264,6 +265,40 @@ export const multusNetworkInterface = {
   mac: 'fa:fa:fa:fe:fe:01',
   binding: 'bridge',
   networkDefinition: multusNad.metadata.name,
+};
+
+export const networkBindingMethod = {
+  masquerade: 'masquerade',
+  bridge: 'bridge',
+  sriov: 'sriov',
+};
+
+export const networkWizardTabCol = {
+  name: 0,
+  mac: 1,
+  networkDefinition: 2,
+  binding: 3,
+};
+
+export const networkTabCol = {
+  name: 1,
+  mode: 2,
+  networkDefinition: 3,
+  binding: 4,
+  mac: 5,
+};
+
+export const diskWizardTabCol = {
+  name: 1,
+  size: 2,
+  storageclass: 3,
+};
+
+export const diskTabCol = {
+  name: 1,
+  size: 2,
+  interface: 3,
+  storageclass: 4,
 };
 
 export const hddDisk = {

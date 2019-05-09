@@ -88,3 +88,5 @@ export const detailViewCancelBtn = element(by.buttonText('Cancel'));
 
 export const vmDetailServiceItem = (namespace, serviceName) => `[href="/k8s/ns/${namespace}/services/${serviceName}"]`;
 export const vmDetailService = (namespace, serviceName) => $(vmDetailServiceItem(namespace, serviceName));
+
+export const itemInRow = (rowName, itemNumber) => rowForName(rowName).$(`div:nth-child(${itemNumber})`);
