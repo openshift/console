@@ -269,11 +269,12 @@ kbd {
 
 .pf-c-about-modal-box {
   &__brand {
+    align-items: flex-start; // so logos don't stretch vertically
     min-width: 220px;
   }
 
   &__brand-image {
-    height: auto !important;
+    height: auto !important; // allow logo to be taller
   }
 }
 
