@@ -26,7 +26,6 @@ import {
   silenceStateOrder,
 } from '../../monitoring';
 import {
-  containerLinuxUpdateOperator,
   EmptyBox,
   LabelList,
   ResourceKebab,
@@ -243,7 +242,6 @@ const sorts = {
     readiness = _.find(readiness, {type: 'Ready'});
     return _.get(readiness, 'status');
   },
-  nodeUpdateStatus: node => _.get(containerLinuxUpdateOperator.getUpdateStatus(node), 'text'),
   numReplicas: resource => _.toInteger(_.get(resource, 'status.replicas')),
   planExternalName,
   podPhase,
