@@ -1,6 +1,8 @@
 import { Base64 } from 'js-base64';
+import * as _ from 'lodash-es';
 
 import store from '../redux';
+import { featureActions } from '../features';
 import { history } from '../components/utils/router';
 import { ALL_NAMESPACES_KEY, LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY } from '../const';
 import { getNSPrefix } from '../components/utils/link';
@@ -155,11 +157,13 @@ export const UIActions = {
     }
 
     dispatch({kind, name, subprotocols, type: types.startImpersonate});
+    _.each(featureActions, dispatch);
     history.push(window.SERVER_FLAGS.basePath);
   },
 
   [types.stopImpersonate]: () => dispatch => {
     dispatch({type: types.stopImpersonate});
+    _.each(featureActions, dispatch);
     history.push(window.SERVER_FLAGS.basePath);
   },
 
