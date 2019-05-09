@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import * as React from 'react';
 import { useSafetyFirst } from '../safety-first';
 
@@ -15,7 +16,7 @@ export const useRefWidth = () => {
       window.removeEventListener('resize', handleResize);
       window.removeEventListener('nav_toggle', handleResize);
     };
-  }, [setWidth]);
+  }, []);
 
   return [ref, width] as [React.Ref<HTMLDivElement>, number];
 };
