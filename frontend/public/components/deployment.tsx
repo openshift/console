@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 
 import { DeploymentModel } from '../models';
+import { K8sKind, K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
 import { configureUpdateStrategyModal, errorModal } from './modals';
 import { Conditions } from './conditions';
 import { ResourceEventStream } from './events';
@@ -17,6 +18,7 @@ import {
 import {
   AsyncComponent,
   Kebab,
+  KebabAction,
   ContainerTable,
   DeploymentPodCounts,
   navFactory,
@@ -28,28 +30,29 @@ import {
   WorkloadPausedAlert,
 } from './utils';
 
+const deploymentsReference: K8sResourceKindReference = 'Deployment';
 const {ModifyCount, AddStorage, EditEnvironment, common} = Kebab.factory;
 
-const UpdateStrategy = (kind, deployment) => ({
+const UpdateStrategy: KebabAction = (kind: K8sKind, deployment: K8sResourceKind) => ({
   label: 'Edit Update Strategy',
   callback: () => configureUpdateStrategyModal({deployment}),
 });
 
-export const pauseAction = (kind, obj) => ({
+const PauseAction: KebabAction = (kind: K8sKind, obj: K8sResourceKind) => ({
   label: obj.spec.paused ? 'Resume Rollouts' : 'Pause Rollouts',
   callback: () => togglePaused(kind, obj).catch((err) => errorModal({error: err.message})),
 });
 
 export const menuActions = [
   ModifyCount,
-  pauseAction,
+  PauseAction,
   AddStorage,
   UpdateStrategy,
   EditEnvironment,
   ...common,
 ];
 
-export const DeploymentDetailsList = ({deployment}) => {
+export const DeploymentDetailsList: React.FC<DeploymentDetailsListProps> = ({deployment}) => {
   const isRecreate = (deployment.spec.strategy.type === 'Recreate');
   const progressDeadlineSeconds = _.get(deployment, 'spec.progressDeadlineSeconds');
   return <dl className="co-m-pane__details">
@@ -65,8 +68,9 @@ export const DeploymentDetailsList = ({deployment}) => {
     <dd>{deployment.spec.minReadySeconds ? pluralize(deployment.spec.minReadySeconds, 'second') : 'Not Configured'}</dd>
   </dl>;
 };
+DeploymentDetailsList.displayName = 'DeploymentDetailsList';
 
-const DeploymentDetails = ({obj: deployment}) => {
+const DeploymentDetails: React.FC<DeploymentDetailsProps> = ({obj: deployment}) => {
   return <React.Fragment>
     <div className="co-m-pane__body">
       <SectionHeading text="Deployment Overview" />
@@ -99,6 +103,8 @@ const DeploymentDetails = ({obj: deployment}) => {
     </div>
   </React.Fragment>;
 };
+DeploymentDetails.displayName = 'DeploymentDetails';
+
 const EnvironmentPage = (props) => <AsyncComponent loader={() => import('./environment.jsx').then(c => c.EnvironmentPage)} {...props} />;
 
 const envPath = ['spec','template','spec','containers'];
@@ -110,14 +116,41 @@ const environmentComponent = (props) => <EnvironmentPage
 />;
 
 const {details, editYaml, pods, envEditor, events} = navFactory;
-const DeploymentsDetailsPage = props => <DetailsPage
+export const DeploymentsDetailsPage: React.FC<DeploymentsDetailsPageProps> = props => <DetailsPage
   {...props}
+  kind={deploymentsReference}
   menuActions={menuActions}
   pages={[details(DeploymentDetails), editYaml(), pods(), envEditor(environmentComponent), events(ResourceEventStream)]}
 />;
+DeploymentsDetailsPage.displayName = 'DeploymentsDetailsPage';
 
-const Row = props => <WorkloadListRow {...props} kind="Deployment" actions={menuActions} />;
-const DeploymentsList = props => <List {...props} Header={WorkloadListHeader} Row={Row} />;
-const DeploymentsPage = props => <ListPage canCreate={true} ListComponent={DeploymentsList} {...props} />;
+const DeploymentsRow: React.FC<DeploymentsRowProps> = props => <WorkloadListRow {...props} kind={deploymentsReference} actions={menuActions} />;
+DeploymentsRow.displayName = 'DeploymentsRow';
 
-export {DeploymentsList, DeploymentsPage, DeploymentsDetailsPage};
+export const DeploymentsList: React.FC = props => <List {...props} Header={WorkloadListHeader} Row={DeploymentsRow} />;
+DeploymentsList.displayName = 'DeploymentsList';
+
+export const DeploymentsPage: React.FC<DeploymentsPageProps> = props => <ListPage kind={deploymentsReference} canCreate={true} ListComponent={DeploymentsList} {...props} />;
+DeploymentsPage.displayName = 'DeploymentsPage';
+
+type DeploymentsRowProps = {
+  obj: K8sResourceKind;
+};
+
+type DeploymentDetailsListProps = {
+  deployment: K8sResourceKind;
+};
+
+type DeploymentDetailsProps = {
+  obj: K8sResourceKind;
+};
+
+type DeploymentsPageProps = {
+  showTitle?: boolean;
+  namespace?: string;
+  selector?: any;
+};
+
+type DeploymentsDetailsPageProps = {
+  match: any;
+};
