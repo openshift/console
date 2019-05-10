@@ -9,6 +9,7 @@ import {
   PersistentVolumeClaimModel,
   VmTemplateModel,
   DataVolumeModel,
+  VirtualMachineModel,
 } from '../../models';
 import { WithResources } from '../utils/withResources';
 import { units } from '../utils/okdutils';
@@ -17,6 +18,10 @@ export const openCreateVmWizard = ( activeNamespace, createTemplate = false ) =>
   const launcher = modalResourceLauncher(CreateVmWizard, {
     namespaces: {
       resource: getResource(NamespaceModel),
+    },
+    virtualMachines: {
+      resource: getResource(VirtualMachineModel),
+      required: true,
     },
     userTemplates: {
       resource: getResource(TemplateModel, {namespace: activeNamespace, prop: 'userTemplates', matchLabels: {[TEMPLATE_TYPE_LABEL]: TEMPLATE_TYPE_VM}}),
