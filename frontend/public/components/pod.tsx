@@ -31,7 +31,7 @@ import {
   humanizeDecimalBytes,
 } from './utils';
 import { PodLogs } from './pod-logs';
-import { prometheusBasePath, prometheusTenancyBasePath, requirePrometheus, Area } from './graphs';
+import { Area, prometheusBasePath, prometheusTenancyBasePath, requirePrometheus } from './graphs';
 import { breadcrumbsForOwnerRefs } from './utils/breadcrumbs';
 import { formatDuration, fromNow } from './utils/datetime';
 import { CamelCaseWrap } from './utils/camel-case-wrap';
@@ -310,12 +310,14 @@ const dispatchToProps = (dispatch) => ({
 export const PodsPage = connect<{}, PodPagePropsFromDispatch, PodPageProps>(null, dispatchToProps)((props: PodPageProps & PodPagePropsFromDispatch) => {
   const { canCreate = true, namespace, setMemoryMetrics, ...listProps } = props;
   if (hasMetrics) {
+    /* eslint-disable react-hooks/exhaustive-deps */
     React.useEffect(() => {
       const updateMetrics = () => fetchMemoryMetrics(namespace).then(setMemoryMetrics);
       updateMetrics();
       const id = setInterval(updateMetrics, 30 * 1000);
       return () => clearInterval(id);
-    }, [namespace, setMemoryMetrics]);
+    }, [namespace]);
+    /* eslint-enable react-hooks/exhaustive-deps */
   }
   return (
     <ListPage
