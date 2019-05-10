@@ -7,6 +7,16 @@ import { Map as ImmutableMap } from 'immutable';
 import { inject, makeReduxID, makeQuery } from './index';
 import actions from '../../module/k8s/k8s-actions';
 
+const shallowMapEquals = (a, b) => {
+  if (a === b || (a.size === 0 && b.size === 0)) {
+    return true;
+  }
+  if (a.size !== b.size) {
+    return false;
+  }
+  return a.every((v, k) => b.get(k) === v);
+};
+
 const processReduxId = ({k8s}, props) => {
   const {reduxID, isList, filters} = props;
 
@@ -77,6 +87,8 @@ const ConnectToState = connect(({k8s}, {reduxes}) => {
     reduxIDs: _.map(reduxes, 'reduxID'),
     resources,
   });
+}, null, null, {
+  areStatesEqual: (next, prev) => (next.k8s === prev.k8s),
 })(props => <div className={props.className}>
   {inject(props.children, _.omit(props, ['children', 'className', 'reduxes']))}
 </div>);
@@ -97,6 +109,11 @@ export const Firehose = connect(
     stopK8sWatch: actions.stopK8sWatch,
     watchK8sObject: actions.watchK8sObject,
     watchK8sList: actions.watchK8sList,
+  }, null, {
+    areStatesEqual: (next, prev) => (next.k8s === prev.k8s),
+    areStatePropsEqual: (next, prev) => (
+      next.loaded === prev.loaded && next.inFlight === prev.inFlight && shallowMapEquals(next.k8sModels, prev.k8sModels)
+    ),
   })(
   /** @augments {React.Component<{k8sModels?: Map<string, K8sKind>, forceUpdate?: boolean}>} */
   class Firehose extends React.Component {

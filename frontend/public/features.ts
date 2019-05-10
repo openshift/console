@@ -285,7 +285,7 @@ export const featureReducer = (state: ImmutableMap<string, any>, action) => {
   }
 };
 
-export const stateToProps = (desiredFlags: string[], state) => {
+const stateToProps = (desiredFlags: string[], state) => {
   const flags = desiredFlags.reduce((allFlags, f) => ({...allFlags, [f]: state[featureReducerName].get(f)}), {});
   return {flags};
 };
@@ -296,7 +296,7 @@ type WithFlagsProps = {
 
 export type ConnectToFlags = <P extends WithFlagsProps>(...flags: FLAGS[]) => (C: React.ComponentType<P>) =>
   React.ComponentType<Omit<P, keyof WithFlagsProps>> & {WrappedComponent: React.ComponentType<P>};
-export const connectToFlags: ConnectToFlags = (...flags) => connect(state => stateToProps(flags, state));
+export const connectToFlags: ConnectToFlags = (...flags) => connect(state => stateToProps(flags, state), null, null, {areStatePropsEqual: _.isEqual});
 
 // Flag detection is not complete if the flag's value is `undefined`.
 export const flagPending = flag => flag === undefined;
