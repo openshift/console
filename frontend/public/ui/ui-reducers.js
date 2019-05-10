@@ -76,8 +76,8 @@ export default (state, action) => {
     case types.setClusterID:
       return state.set('clusterID', action.clusterID);
 
-    case types.setPodMemoryMetrics:
-      return state.setIn(['pod', 'memory'], action.metrics);
+    case types.setPodMetrics:
+      return state.setIn(['metrics', 'pod'], action.metrics);
 
     case types.setMonitoringData: {
       const alerts = action.key === 'alerts' ? action.data : state.getIn(['monitoring', 'alerts']);

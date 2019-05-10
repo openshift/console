@@ -14,8 +14,7 @@ import {
   WindowScroller,
 } from 'react-virtualized';
 
-import store from '../../redux';
-import { UIActions } from '../../ui/ui-actions';
+import { getPodMetric, UIActions } from '../../ui/ui-actions';
 import { ingressValidHosts } from '../ingress';
 import { routeStatus } from '../routes';
 import { secretTypeFilterReducer } from '../secret';
@@ -246,10 +245,8 @@ const sorts = {
   },
   numReplicas: resource => _.toInteger(_.get(resource, 'status.replicas')),
   planExternalName,
-  podMemory: (pod: PodKind): number => {
-    const metrics = store.getState().UI.getIn(['pod', 'memory']);
-    return _.get(metrics, [pod.metadata.namespace, pod.metadata.name], 0);
-  },
+  podCPU: (pod: PodKind): number => getPodMetric(pod, 'cpu'),
+  podMemory: (pod: PodKind): number => getPodMetric(pod, 'memory'),
   podPhase,
   podReadiness,
   serviceClassDisplayName,

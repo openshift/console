@@ -68,6 +68,11 @@ export const formatNamespaceRoute = (activeNamespace, originalPath, location) =>
   return path;
 };
 
+export const getPodMetric = (pod, metric) => {
+  const metrics = store.getState().UI.getIn(['metrics', 'pod']);
+  return _.get(metrics, [metric, pod.metadata.namespace, pod.metadata.name], 0);
+};
+
 export const types = {
   dismissOverviewDetails: 'dismissOverviewDetails',
   selectOverviewDetailsTab: 'selectOverviewDetailsTab',
@@ -77,7 +82,7 @@ export const types = {
   setCreateProjectMessage: 'setCreateProjectMessage',
   setClusterID: 'setClusterID',
   setCurrentLocation: 'setCurrentLocation',
-  setPodMemoryMetrics: 'setPodMemoryMetrics',
+  setPodMetrics: 'setPodMetrics',
   setMonitoringData: 'setMonitoringData',
   toggleMonitoringGraphs: 'toggleMonitoringGraphs',
   setUser: 'setUser',
@@ -181,7 +186,7 @@ export const UIActions = {
 
   [types.setUser]: user => ({type: types.setUser, user}),
 
-  [types.setPodMemoryMetrics]: metrics => ({type: types.setPodMemoryMetrics, metrics}),
+  [types.setPodMetrics]: metrics => ({type: types.setPodMetrics, metrics}),
 
   [types.selectOverviewView]: view => ({type: types.selectOverviewView, view}),
 

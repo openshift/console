@@ -25,6 +25,7 @@ import {
   StatusIcon,
   Timestamp,
   formatBytesAsMiB,
+  formatCores,
   navFactory,
   units,
   humanizeCpuCores,
@@ -38,16 +39,26 @@ import { CamelCaseWrap } from './utils/camel-case-wrap';
 import { VolumesTable } from './volumes-table';
 
 const hasMetrics = !!(prometheusBasePath && prometheusTenancyBasePath);
-const fetchMemoryMetrics = (namespace: string): Promise<MemoryByPod> => {
-  const url = namespace
-    ? `${prometheusTenancyBasePath}/api/v1/query?namespace=${namespace}&query=pod_name:container_memory_usage_bytes:sum{namespace="${namespace}"}`
-    : `${prometheusBasePath}/api/v1/query?query=pod_name:container_memory_usage_bytes:sum`;
-  return coFetchJSON(url).then(({ data: {result} }) => {
-    return result.reduce((acc: MemoryByPod, { metric, value }) => {
-      const bytes = Number(value[1]);
-      return _.set(acc, [metric.namespace, metric.pod_name], bytes);
-    }, {});
+const fetchPodMetrics = (namespace: string): Promise<MetricsByPod> => {
+  const metrics = [{
+    key: 'memory',
+    metric: 'pod_name:container_memory_usage_bytes:sum',
+  }, {
+    key: 'cpu',
+    metric: 'pod_name:container_cpu_usage:sum',
+  }];
+  const promises = metrics.map(({key, metric}): Promise<MetricsByPod> => {
+    const url = namespace
+      ? `${prometheusTenancyBasePath}/api/v1/query?namespace=${namespace}&query=${metric}{namespace="${namespace}"}`
+      : `${prometheusBasePath}/api/v1/query?query=${metric}`;
+    return coFetchJSON(url).then(({ data: {result} }) => {
+      return result.reduce((acc: MetricsByPod, data) => {
+        const value = Number(data.value[1]);
+        return _.set(acc, [key, data.metric.namespace, data.metric.pod_name], value);
+      }, {});
+    });
   });
+  return Promise.all(promises).then((data: MetricsByPod[]) => _.assign({}, ...data));
 };
 
 export const menuActions = [Kebab.factory.EditEnvironment, ...Kebab.factory.common];
@@ -69,28 +80,32 @@ export const Readiness: React.FC<ReadinessProps> = ({pod}) => {
 Readiness.displayName = 'Readiness';
 
 const stateToProps = ({UI}) => ({
-  metrics: UI.getIn(['pod', 'memory']),
+  metrics: UI.getIn(['metrics', 'pod']),
 });
 
 export const PodRow = connect(stateToProps)(({obj: pod, metrics}: PodRowProps) => {
   const phase = podPhase(pod);
   const { name, namespace, creationTimestamp } = pod.metadata;
-  const bytes = _.get(metrics, [namespace, name]);
+  const bytes = _.get(metrics, ['memory', namespace, name]);
+  const cores = _.get(metrics, ['cpu', namespace, name]);
   return <ResourceRow obj={pod}>
-    <div className="col-lg-2 col-md-3 col-sm-4 col-xs-6">
+    <div className="col-md-2 col-sm-4 col-xs-6">
       <ResourceLink kind="Pod" name={name} namespace={namespace} />
     </div>
-    <div className="col-lg-2 col-md-2 col-sm-4 col-xs-6 co-break-word">
+    <div className="col-md-2 col-sm-4 col-xs-6 co-break-word">
       <ResourceLink kind="Namespace" name={namespace} title={namespace} />
     </div>
-    <div className="col-lg-2 col-md-3 hidden-sm hidden-xs">
-      <NodeLink name={pod.spec.nodeName} />
-    </div>
-    <div className="col-lg-2 col-md-2 sol-sm-4 hidden-xs"><StatusIcon status={phase} /></div>
-    <div className="col-lg-2 hidden-md hidden-sm hidden-xs"><Readiness pod={pod} /></div>
+    <div className="col-md-2 sol-sm-4 hidden-xs"><StatusIcon status={phase} /></div>
+    <div className="col-md-2 hidden-sm hidden-xs"><Readiness pod={pod} /></div>
     {hasMetrics
-      ? <div className="col-lg-2 col-md-2 hidden-sm hidden-xs">{bytes && `${formatBytesAsMiB(bytes)} MiB`}</div>
-      : <div className="col-lg-2 col-md-2 hidden-sm hidden-xs">{fromNow(creationTimestamp)}</div>}
+      ? <React.Fragment>
+        <div className="col-md-2 hidden-sm hidden-xs">{bytes ? `${formatBytesAsMiB(bytes)} MiB` : '-'}</div>
+        <div className="col-md-2 hidden-sm hidden-xs">{cores ? `${formatCores(cores)} Cores` : '-'}</div>
+      </React.Fragment>
+      : <React.Fragment>
+        <div className="col-md-2 hidden-sm hidden-xs"><NodeLink name={pod.spec.nodeName} /></div>
+        <div className="col-md-2 hidden-sm hidden-xs">{fromNow(creationTimestamp)}</div>
+      </React.Fragment>}
     <div className="dropdown-kebab-pf">
       <ResourceKebab actions={menuActions} kind="Pod" resource={pod} isDisabled={phase === 'Terminating'} />
     </div>
@@ -99,14 +114,19 @@ export const PodRow = connect(stateToProps)(({obj: pod, metrics}: PodRowProps) =
 PodRow.displayName = 'PodRow';
 
 const PodHeader = props => <ListHeader>
-  <ColHead {...props} className="col-lg-2 col-md-3 col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
-  <ColHead {...props} className="col-lg-2 col-md-2 col-sm-4 col-xs-6" sortField="metadata.namespace">Namespace</ColHead>
-  <ColHead {...props} className="col-lg-2 col-md-3 hidden-sm hidden-xs" sortField="spec.nodeName">Node</ColHead>
-  <ColHead {...props} className="col-lg-2 col-md-2 col-sm-4 hidden-xs" sortFunc="podPhase">Status</ColHead>
-  <ColHead {...props} className="col-lg-2 hidden-md hidden-sm hidden-xs" sortFunc="podReadiness">Readiness</ColHead>
+  <ColHead {...props} className="col-md-2 col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
+  <ColHead {...props} className="col-md-2 col-sm-4 col-xs-6" sortField="metadata.namespace">Namespace</ColHead>
+  <ColHead {...props} className="col-md-2 col-sm-4 hidden-xs" sortFunc="podPhase">Status</ColHead>
+  <ColHead {...props} className="col-md-2 hidden-sm hidden-xs" sortFunc="podReadiness">Readiness</ColHead>
   {hasMetrics
-    ? <ColHead {...props} className="col-lg-2 col-md-2 hidden-sm hidden-xs" sortFunc="podMemory">Memory</ColHead>
-    : <ColHead {...props} className="col-lg-2 col-md-2 hidden-sm hidden-xs" sortField="metadata.creationTimestamp">Created</ColHead>}
+    ? <React.Fragment>
+      <ColHead {...props} className="col-md-2 hidden-sm hidden-xs" sortFunc="podMemory">Memory</ColHead>
+      <ColHead {...props} className="col-md-2 hidden-sm hidden-xs" sortFunc="podCPU">CPU</ColHead>
+    </React.Fragment>
+    : <React.Fragment>
+      <ColHead {...props} className="col-md-2 hidden-sm hidden-xs" sortField="spec.nodeName">Node</ColHead>
+      <ColHead {...props} className="col-md-2 hidden-sm hidden-xs" sortField="metadata.creationTimestamp">Created</ColHead>
+    </React.Fragment>}
 </ListHeader>;
 
 const ContainerLink: React.FC<ContainerLinkProps> = ({pod, name}) => <span className="co-resource-item co-resource-item--inline">
@@ -304,15 +324,15 @@ const filters = [{
 }];
 
 const dispatchToProps = (dispatch) => ({
-  setMemoryMetrics: (metrics: MemoryByPod) => dispatch(UIActions.setPodMemoryMetrics(metrics)),
+  setPodMetrics: (metrics: MetricsByPod) => dispatch(UIActions.setPodMetrics(metrics)),
 });
 
 export const PodsPage = connect<{}, PodPagePropsFromDispatch, PodPageProps>(null, dispatchToProps)((props: PodPageProps & PodPagePropsFromDispatch) => {
-  const { canCreate = true, namespace, setMemoryMetrics, ...listProps } = props;
+  const { canCreate = true, namespace, setPodMetrics, ...listProps } = props;
   if (hasMetrics) {
     /* eslint-disable react-hooks/exhaustive-deps */
     React.useEffect(() => {
-      const updateMetrics = () => fetchMemoryMetrics(namespace).then(setMemoryMetrics);
+      const updateMetrics = () => fetchPodMetrics(namespace).then(setPodMetrics);
       updateMetrics();
       const id = setInterval(updateMetrics, 30 * 1000);
       return () => clearInterval(id);
@@ -330,9 +350,11 @@ export const PodsPage = connect<{}, PodPagePropsFromDispatch, PodPageProps>(null
   );
 });
 
-type MemoryByPod = {
-  [namepsace: string]: {
-    [name: string]: number;
+type MetricsByPod = {
+  [metricKey: string]: {
+    [namepsace: string]: {
+      [name: string]: number;
+    };
   };
 };
 
@@ -342,7 +364,7 @@ type ReadinessProps = {
 
 type PodRowProps = {
   obj: PodKind;
-  metrics: MemoryByPod;
+  metrics: MetricsByPod;
 };
 
 type ContainerLinkProps = {
@@ -382,7 +404,7 @@ type PodDetailsProps = {
 };
 
 type PodPagePropsFromDispatch = {
-  setMemoryMetrics: (metrics: MemoryByPod) => void;
+  setPodMetrics: (metrics: MetricsByPod) => void;
 };
 
 type PodPageProps = {
