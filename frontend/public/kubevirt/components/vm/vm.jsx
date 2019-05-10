@@ -64,7 +64,7 @@ const VMRow = ({obj: vm}) => {
         resource={vm}
         resources={[
           getResource(VirtualMachineInstanceModel, {name, namespace, isList: false}),
-          migrationResources,
+          getResource(VirtualMachineInstanceMigrationModel, {namespace}),
           getResource(PodModel, { namespace }),
         ]} />
     </div>
