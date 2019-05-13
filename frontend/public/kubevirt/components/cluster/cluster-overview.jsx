@@ -26,7 +26,9 @@ import { EventStream } from '../../../components/events';
 import { EventsInnerOverview } from './events-inner-overview';
 import { LoadingInline} from '../utils/okdutils';
 import { LazyRenderer } from '../utils/lazyRenderer';
-import { fetchPeriodically, fetchPrometheusQuery, getPrometheusQuery, getPrometheusMetrics, fetchAlerts } from '../dashboards';
+import { fetchPeriodically, fetchPrometheusQuery, getPrometheusQuery, getPrometheusMetrics, fetchAlerts, getAlertManagerBaseURL, getPrometheusBaseURL } from '../dashboards';
+
+const { warn } = console;
 
 const CONSUMERS_CPU_QUERY = 'sort(topk(5, pod_name:container_cpu_usage:sum))';
 const CONSUMERS_MEMORY_QUERY = 'sort(topk(5, pod_name:container_memory_usage_bytes:sum))';
@@ -63,6 +65,29 @@ const {
   UTILIZATION_STORAGE_IORW_QUERY,
 } = STORAGE_PROMETHEUS_QUERIES;
 
+const PROM_RESULT_CONSTANTS = {
+  workloadCpuResults: 'workloadCpuResults',
+  workloadMemoryResults: 'workloadMemoryResults',
+  workloadStorageResults: 'workloadStorageResults',
+  workloadNetworkResults: 'workloadNetworkResults',
+  infraMemoryResults: 'infraMemoryResults',
+  infraCpuResults: 'infraCpuResults',
+  infraStorageResults: 'infraStorageResults',
+  infraNetworkResults: 'infraNetworkResults',
+  openshiftClusterVersionResponse: 'openshiftClusterVersionResponse',
+  memoryTotal: 'memoryTotal',
+  networkTotal: 'networkTotal',
+  networkUsed: 'networkUsed',
+  cephOsdUp: 'cephOsdUp',
+  cephOsdDown: 'cephOsdDown',
+  cephHealth: 'cephHealth',
+  cpuUtilization: 'cpuUtilization',
+  memoryUtilization: 'memoryUtilization',
+  storageTotal: 'storageTotal',
+  storageUsed: 'storageUsed',
+  storageIORW: 'storageIORW',
+};
+
 const resourceMap = {
   nodes: {
     resource: getResource(NodeModel, {namespaced: false}),
@@ -92,7 +117,24 @@ const OverviewEventStream = () => <EventStream scrollableElementId="events-body"
 export class ClusterOverview extends React.Component {
   constructor(props){
     super(props);
-    this.state = {};
+
+
+    let initializePrometheus;
+
+    if (!getPrometheusBaseURL()){
+      warn('Prometheus BASE URL is missing!');
+      initializePrometheus = {}; // data loaded
+    }
+
+    if (!getAlertManagerBaseURL()){
+      warn('Alert Manager BASE URL is missing!');
+    }
+    this.state = {
+      ...Object.keys(PROM_RESULT_CONSTANTS).reduce((initAcc, key) => {
+        initAcc[PROM_RESULT_CONSTANTS[key]] = initializePrometheus;
+        return initAcc;
+      },{}),
+    };
 
     this.getStorageMetrics = this._getStorageMetrics.bind(this);
     this.onFetch = this._onFetch.bind(this);
@@ -121,9 +163,9 @@ export class ClusterOverview extends React.Component {
         }
       }
     } finally {
-      fetchPrometheusQuery(queryTotal, result => this.onFetch('storageTotal', result));
-      fetchPrometheusQuery(queryUsed, result => this.onFetch('storageUsed', result));
-      fetchPrometheusQuery(UTILIZATION_STORAGE_IORW_QUERY, result => this.onFetch('storageIORW', result)); // Ceph only; will cause error and so the NOT_AVAILABLE state of the component without Cept
+      fetchPrometheusQuery(queryTotal, result => this.onFetch(PROM_RESULT_CONSTANTS.storageTotal, result));
+      fetchPrometheusQuery(queryUsed, result => this.onFetch(PROM_RESULT_CONSTANTS.storageUsed, result));
+      fetchPrometheusQuery(UTILIZATION_STORAGE_IORW_QUERY, result => this.onFetch(PROM_RESULT_CONSTANTS.storageIORW, result)); // Ceph only; will cause error and so the NOT_AVAILABLE state of the component without Cept
     }
   }
 
@@ -137,39 +179,45 @@ export class ClusterOverview extends React.Component {
       `${k8sBasePath}/apis/subresources.${VirtualMachineModel.apiGroup}/${VirtualMachineModel.apiVersion}/healthz`,
       result => this.onFetch('kubevirtHealth', result)
     );
-    fetchPrometheusQuery(CEPH_STATUS_QUERY, result => this.onFetch('cephHealth', result));
   }
 
   componentDidMount() {
     this._isMounted = true;
 
-    fetchPrometheusQuery(CONSUMERS_CPU_QUERY, result => this.onFetch('workloadCpuResults', result));
-    fetchPrometheusQuery(CONSUMERS_MEMORY_QUERY, result => this.onFetch('workloadMemoryResults', result));
-    fetchPrometheusQuery(CONSUMERS_STORAGE_QUERY, 'workloadStorageResults');
-    fetchPrometheusQuery(CONSUMERS_NETWORK_QUERY, 'workloadNetworkResults');
-
-    fetchPrometheusQuery(NODE_CONSUMERS_MEMORY_QUERY, result => this.onFetch('infraMemoryResults', result));
-    fetchPrometheusQuery(NODE_CONSUMERS_CPU_QUERY, result => this.onFetch('infraCpuResults', result));
-
-    fetchPrometheusQuery(NODE_CONSUMERS_STORAGE_QUERY, 'infraStorageResults');
-    fetchPrometheusQuery(NODE_CONSUMERS_NETWORK_QUERY, 'infraNetworkResults');
-
     this.fetchHealth();
 
-    fetchPrometheusQuery(OPENSHIFT_VERSION_QUERY, result => this.onFetch('openshiftClusterVersionResponse', result));
+    if (getPrometheusBaseURL()){
+      fetchPrometheusQuery(CEPH_STATUS_QUERY, result => this.onFetch(PROM_RESULT_CONSTANTS.cephHealth, result));
+      fetchPrometheusQuery(CONSUMERS_CPU_QUERY, result => this.onFetch(PROM_RESULT_CONSTANTS.workloadCpuResults, result));
+      fetchPrometheusQuery(CONSUMERS_MEMORY_QUERY, result => this.onFetch(PROM_RESULT_CONSTANTS.workloadMemoryResults, result));
+      fetchPrometheusQuery(CONSUMERS_STORAGE_QUERY, result => this.onFetch(PROM_RESULT_CONSTANTS.workloadStorageResults, result));
+      fetchPrometheusQuery(CONSUMERS_NETWORK_QUERY, result => this.onFetch(PROM_RESULT_CONSTANTS.workloadNetworkResults, result));
 
-    fetchPrometheusQuery(CAPACITY_MEMORY_TOTAL_QUERY, result => this.onFetch('memoryTotal', result));
-    fetchPrometheusQuery(CAPACITY_NETWORK_TOTAL_QUERY, result => this.onFetch('networkTotal', result));
-    fetchPrometheusQuery(CAPACITY_NETWORK_USED_QUERY, result => this.onFetch('networkUsed', result));
+      fetchPrometheusQuery(NODE_CONSUMERS_MEMORY_QUERY, result => this.onFetch(PROM_RESULT_CONSTANTS.infraMemoryResults, result));
+      fetchPrometheusQuery(NODE_CONSUMERS_CPU_QUERY, result => this.onFetch(PROM_RESULT_CONSTANTS.infraCpuResults, result));
 
-    fetchPrometheusQuery(CEPH_OSD_UP_QUERY, result => this.onFetch('cephOsdUp', result));
-    fetchPrometheusQuery(CEPH_OSD_DOWN_QUERY, result => this.onFetch('cephOsdDown', result));
+      fetchPrometheusQuery(NODE_CONSUMERS_STORAGE_QUERY, result => this.onFetch(PROM_RESULT_CONSTANTS.infraStorageResults, result));
+      fetchPrometheusQuery(NODE_CONSUMERS_NETWORK_QUERY, result => this.onFetch(PROM_RESULT_CONSTANTS.infraNetworkResults, result));
 
-    this.getStorageMetrics();
 
-    fetchPrometheusQuery(UTILIZATION_CPU_USED_QUERY, result => this.onFetch('cpuUtilization', result));
-    fetchPrometheusQuery(UTILIZATION_MEMORY_USED_QUERY, result => this.onFetch('memoryUtilization', result));
-    fetchAlerts(result => this.onFetch('alertsResponse', result));
+      fetchPrometheusQuery(OPENSHIFT_VERSION_QUERY, result => this.onFetch(PROM_RESULT_CONSTANTS.openshiftClusterVersionResponse, result));
+
+      fetchPrometheusQuery(CAPACITY_MEMORY_TOTAL_QUERY, result => this.onFetch(PROM_RESULT_CONSTANTS.memoryTotal, result));
+      fetchPrometheusQuery(CAPACITY_NETWORK_TOTAL_QUERY, result => this.onFetch(PROM_RESULT_CONSTANTS.networkTotal, result));
+      fetchPrometheusQuery(CAPACITY_NETWORK_USED_QUERY, result => this.onFetch(PROM_RESULT_CONSTANTS.networkUsed, result));
+
+      fetchPrometheusQuery(CEPH_OSD_UP_QUERY, result => this.onFetch(PROM_RESULT_CONSTANTS.cephOsdUp, result));
+      fetchPrometheusQuery(CEPH_OSD_DOWN_QUERY, result => this.onFetch(PROM_RESULT_CONSTANTS.cephOsdDown, result));
+
+      this.getStorageMetrics();
+
+      fetchPrometheusQuery(UTILIZATION_CPU_USED_QUERY, result => this.onFetch(PROM_RESULT_CONSTANTS.cpuUtilization, result));
+      fetchPrometheusQuery(UTILIZATION_MEMORY_USED_QUERY, result => this.onFetch(PROM_RESULT_CONSTANTS.memoryUtilization, result));
+    }
+
+    if (getAlertManagerBaseURL()){
+      fetchAlerts(result => this.onFetch('alertsResponse', result));
+    }
   }
 
   componentWillUnmount() {

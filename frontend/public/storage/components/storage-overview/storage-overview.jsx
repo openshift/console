@@ -20,7 +20,9 @@ import { LoadingInline } from '../../../kubevirt/components/utils/okdutils';
 import { EventStream } from '../../../components/events';
 import { EventsInnerOverview } from '../../../kubevirt/components/cluster/events-inner-overview';
 import { LazyRenderer } from '../../../kubevirt/components/utils/lazyRenderer';
-import { fetchAlerts, fetchPrometheusQuery } from '../../../kubevirt/components/dashboards';
+import { fetchAlerts, fetchPrometheusQuery, getAlertManagerBaseURL, getPrometheusBaseURL } from '../../../kubevirt/components/dashboards';
+
+const { warn } = console;
 
 const CEPH_PG_CLEAN_AND_ACTIVE_QUERY = 'ceph_pg_clean and ceph_pg_active';
 const CEPH_PG_TOTAL_QUERY = 'ceph_pg_total';
@@ -39,6 +41,22 @@ const {
   STORAGE_CEPH_CAPACITY_TOTAL_QUERY,
   STORAGE_CEPH_CAPACITY_USED_QUERY,
 } = STORAGE_PROMETHEUS_QUERIES;
+
+
+const PROM_RESULT_CONSTANTS = {
+  ocsHealthResponse: 'ocsHealthResponse',
+  cephOsdDown: 'cephOsdDown',
+  cephOsdUp: 'cephOsdUp',
+  iopsUtilization: 'iopsUtilization',
+  latencyUtilization: 'latencyUtilization',
+  throughputUtilization: 'throughputUtilization',
+  recoveryRateUtilization: 'recoveryRateUtilization',
+  capacityTotal: 'capacityTotal',
+  capacityUsed: 'capacityUsed',
+  cleanAndActivePgRaw: 'cleanAndActivePgRaw',
+  totalPgRaw: 'totalPgRaw',
+  topConsumers: 'topConsumers',
+};
 
 const resourceMap = {
   nodes: {
@@ -63,7 +81,25 @@ const EventStreamComponent = () => <EventStream scrollableElementId="events-body
 export class StorageOverview extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {};
+
+
+    let initializePrometheus;
+
+    if (!getPrometheusBaseURL()){
+      warn('Prometheus BASE URL is missing!');
+      initializePrometheus = {}; // data loaded
+    }
+
+    if (!getAlertManagerBaseURL()){
+      warn('Alert Manager BASE URL is missing!');
+    }
+    this.state = {
+      ...Object.keys(PROM_RESULT_CONSTANTS).reduce((initAcc, key) => {
+        initAcc[PROM_RESULT_CONSTANTS[key]] = initializePrometheus;
+        return initAcc;
+      },{}),
+    };
+
     this.onFetch = this._onFetch.bind(this);
   }
 
@@ -80,20 +116,25 @@ export class StorageOverview extends React.Component {
   componentDidMount() {
     this._isMounted = true;
 
-    fetchPrometheusQuery(CEPH_STATUS_QUERY, response => this.onFetch('ocsHealthResponse', response));
-    fetchPrometheusQuery(CEPH_OSD_DOWN_QUERY, response => this.onFetch('cephOsdDown', response));
-    fetchPrometheusQuery(CEPH_OSD_UP_QUERY, response => this.onFetch('cephOsdUp', response));
-    fetchPrometheusQuery(UTILIZATION_IOPS_QUERY, response => this.onFetch('iopsUtilization', response));
-    fetchPrometheusQuery(UTILIZATION_LATENCY_QUERY, response => this.onFetch('latencyUtilization', response));
-    fetchPrometheusQuery(UTILIZATION_THROUGHPUT_QUERY, response => this.onFetch('throughputUtilization', response));
-    fetchPrometheusQuery(UTILIZATION_RECOVERY_RATE_QUERY, response => this.onFetch('recoveryRateUtilization', response));
-    fetchPrometheusQuery(STORAGE_CEPH_CAPACITY_TOTAL_QUERY, response => this.onFetch('capacityTotal', response));
-    fetchPrometheusQuery(STORAGE_CEPH_CAPACITY_USED_QUERY, response => this.onFetch('capacityUsed', response));
-    fetchPrometheusQuery(CEPH_PG_CLEAN_AND_ACTIVE_QUERY, response => this.onFetch('cleanAndActivePgRaw', response));
-    fetchPrometheusQuery(CEPH_PG_TOTAL_QUERY, response => this.onFetch('totalPgRaw', response));
+    if (getPrometheusBaseURL()) {
+      fetchPrometheusQuery(CEPH_STATUS_QUERY, response => this.onFetch(PROM_RESULT_CONSTANTS.ocsHealthResponse, response));
+      fetchPrometheusQuery(CEPH_OSD_DOWN_QUERY, response => this.onFetch(PROM_RESULT_CONSTANTS.cephOsdDown, response));
+      fetchPrometheusQuery(CEPH_OSD_UP_QUERY, response => this.onFetch(PROM_RESULT_CONSTANTS.cephOsdUp, response));
+      fetchPrometheusQuery(UTILIZATION_IOPS_QUERY, response => this.onFetch(PROM_RESULT_CONSTANTS.iopsUtilization, response));
+      fetchPrometheusQuery(UTILIZATION_LATENCY_QUERY, response => this.onFetch(PROM_RESULT_CONSTANTS.latencyUtilization, response));
+      fetchPrometheusQuery(UTILIZATION_THROUGHPUT_QUERY, response => this.onFetch(PROM_RESULT_CONSTANTS.throughputUtilization, response));
+      fetchPrometheusQuery(UTILIZATION_RECOVERY_RATE_QUERY, response => this.onFetch(PROM_RESULT_CONSTANTS.recoveryRateUtilization, response));
+      fetchPrometheusQuery(STORAGE_CEPH_CAPACITY_TOTAL_QUERY, response => this.onFetch(PROM_RESULT_CONSTANTS.capacityTotal, response));
+      fetchPrometheusQuery(STORAGE_CEPH_CAPACITY_USED_QUERY, response => this.onFetch(PROM_RESULT_CONSTANTS.capacityUsed, response));
+      fetchPrometheusQuery(CEPH_PG_CLEAN_AND_ACTIVE_QUERY, response => this.onFetch(PROM_RESULT_CONSTANTS.cleanAndActivePgRaw, response));
+      fetchPrometheusQuery(CEPH_PG_TOTAL_QUERY, response => this.onFetch(PROM_RESULT_CONSTANTS.totalPgRaw, response));
 
-    fetchAlerts(result => this.onFetch('alertsResponse', result));
-    fetchPrometheusQuery(TOP_CONSUMERS_QUERY, response => this.onFetch('topConsumers', response));
+      fetchPrometheusQuery(TOP_CONSUMERS_QUERY, response => this.onFetch(PROM_RESULT_CONSTANTS.topConsumers, response));
+    }
+
+    if (getAlertManagerBaseURL()) {
+      fetchAlerts(result => this.onFetch('alertsResponse', result));
+    }
   }
 
   componentWillUnmount() {
