@@ -20,12 +20,13 @@ import {
 } from '../../../models';
 import { WithResources } from '../utils/withResources';
 import { k8sBasePath } from '../../module/okdk8s';
-import { coFetch, coFetchJSON } from '../../../co-fetch';
+import { coFetch } from '../../../co-fetch';
 
 import { EventStream } from '../../../components/events';
 import { EventsInnerOverview } from './events-inner-overview';
 import { LoadingInline} from '../utils/okdutils';
 import { LazyRenderer } from '../utils/lazyRenderer';
+import { fetchPeriodically, fetchPrometheusQuery, getPrometheusQuery, getPrometheusMetrics, fetchAlerts } from '../dashboards';
 
 const CONSUMERS_CPU_QUERY = 'sort(topk(5, pod_name:container_cpu_usage:sum))';
 const CONSUMERS_MEMORY_QUERY = 'sort(topk(5, pod_name:container_memory_usage_bytes:sum))';
@@ -62,8 +63,6 @@ const {
   UTILIZATION_STORAGE_IORW_QUERY,
 } = STORAGE_PROMETHEUS_QUERIES;
 
-const REFRESH_TIMEOUT = 5000;
-
 const resourceMap = {
   nodes: {
     resource: getResource(NodeModel, {namespaced: false}),
@@ -90,50 +89,42 @@ const resourceMap = {
 
 const OverviewEventStream = () => <EventStream scrollableElementId="events-body" InnerComponent={EventsInnerOverview} overview={true} namespace={undefined} />;
 
-const getPrometheusBaseURL = () => window.SERVER_FLAGS.prometheusBaseURL;
-
-const getAlertManagerBaseURL = () => window.SERVER_FLAGS.alertManagerBaseURL;
-
 export class ClusterOverview extends React.Component {
   constructor(props){
     super(props);
     this.state = {};
 
     this.getStorageMetrics = this._getStorageMetrics.bind(this);
+    this.onFetch = this._onFetch.bind(this);
+  }
+
+  _onFetch(key, response) {
+    if (this._isMounted) {
+      this.setState({
+        [key]: response,
+      });
+      return true;
+    }
+    return false;
   }
 
   async _getStorageMetrics() {
     let queryTotal = CAPACITY_STORAGE_TOTAL_DEFAULT_QUERY;
     let queryUsed = UTILIZATION_STORAGE_USED_DEFAULT_QUERY;
     try {
-      const metrics = await this.getPrometheusMetrics();
+      const metrics = await getPrometheusMetrics();
       if (_.get(metrics, 'data', []).find(metric => metric === CAPACITY_STORAGE_TOTAL_BASE_CEPH_METRIC)) {
-        const cephData = await this.getPrometheusQuery(CAPACITY_STORAGE_TOTAL_QUERY);
+        const cephData = await getPrometheusQuery(CAPACITY_STORAGE_TOTAL_QUERY);
         if (getCapacityStats(cephData)) { // Ceph data are available
           queryTotal = CAPACITY_STORAGE_TOTAL_QUERY;
           queryUsed = UTILIZATION_STORAGE_USED_QUERY;
         }
       }
     } finally {
-      this.fetchPrometheusQuery(queryTotal, 'storageTotal');
-      this.fetchPrometheusQuery(queryUsed, 'storageUsed');
-      this.fetchPrometheusQuery(UTILIZATION_STORAGE_IORW_QUERY, 'storageIORW'); // Ceph only; will cause error and so the NOT_AVAILABLE state of the component without Cept
+      fetchPrometheusQuery(queryTotal, result => this.onFetch('storageTotal', result));
+      fetchPrometheusQuery(queryUsed, result => this.onFetch('storageUsed', result));
+      fetchPrometheusQuery(UTILIZATION_STORAGE_IORW_QUERY, result => this.onFetch('storageIORW', result)); // Ceph only; will cause error and so the NOT_AVAILABLE state of the component without Cept
     }
-  }
-
-  async getPrometheusMetrics() {
-    const url = `${getPrometheusBaseURL()}/api/v1/label/__name__/values`;
-    return coFetchJSON(url);
-  }
-
-  async getPrometheusQuery(query) {
-    const url = `${getPrometheusBaseURL()}/api/v1/query?query=${encodeURIComponent(query)}`;
-    return coFetchJSON(url);
-  }
-
-  fetchPrometheusQuery(query, key) {
-    const url = `${getPrometheusBaseURL()}/api/v1/query?query=${encodeURIComponent(query)}`;
-    this.fetchAndStore(url, key);
   }
 
   fetchHealth() {
@@ -141,69 +132,44 @@ export class ClusterOverview extends React.Component {
       const text = await response.text();
       return {response : text};
     };
-    this.fetchAndStore(`${k8sBasePath}/healthz`, 'k8sHealth', handleK8sHealthResponse, coFetch);
-    this.fetchAndStore(
+    fetchPeriodically(`${k8sBasePath}/healthz`, result => this.onFetch('k8sHealth', result), handleK8sHealthResponse, coFetch);
+    fetchPeriodically(
       `${k8sBasePath}/apis/subresources.${VirtualMachineModel.apiGroup}/${VirtualMachineModel.apiVersion}/healthz`,
-      'kubevirtHealth'
+      result => this.onFetch('kubevirtHealth', result)
     );
-    this.fetchPrometheusQuery(CEPH_STATUS_QUERY, 'cephHealth');
-  }
-
-  fetchAlerts() {
-    const url = `${getAlertManagerBaseURL()}/api/v2/alerts?silenced=false&inhibited=false`;
-    this.fetchAndStore(url, 'alertsResponse');
-  }
-
-  async fetchAndStore(url, key, responseHandler, fetchMethod = coFetchJSON) {
-    let response;
-    try {
-      response = await fetchMethod(url);
-      if (responseHandler) {
-        response = await responseHandler(response);
-      }
-    } catch (error) {
-      response = error;
-    } finally {
-      if (this._isMounted) {
-        this.setState({
-          [key]: response,
-        });
-        setTimeout(() => this.fetchAndStore(url, key, responseHandler, fetchMethod), REFRESH_TIMEOUT);
-      }
-    }
+    fetchPrometheusQuery(CEPH_STATUS_QUERY, result => this.onFetch('cephHealth', result));
   }
 
   componentDidMount() {
     this._isMounted = true;
 
-    this.fetchPrometheusQuery(CONSUMERS_CPU_QUERY, 'workloadCpuResults');
-    this.fetchPrometheusQuery(CONSUMERS_MEMORY_QUERY, 'workloadMemoryResults');
+    fetchPrometheusQuery(CONSUMERS_CPU_QUERY, result => this.onFetch('workloadCpuResults', result));
+    fetchPrometheusQuery(CONSUMERS_MEMORY_QUERY, result => this.onFetch('workloadMemoryResults', result));
+    fetchPrometheusQuery(CONSUMERS_STORAGE_QUERY, 'workloadStorageResults');
+    fetchPrometheusQuery(CONSUMERS_NETWORK_QUERY, 'workloadNetworkResults');
 
-    this.fetchPrometheusQuery(CONSUMERS_STORAGE_QUERY, 'workloadStorageResults');
-    this.fetchPrometheusQuery(CONSUMERS_NETWORK_QUERY, 'workloadNetworkResults');
+    fetchPrometheusQuery(NODE_CONSUMERS_MEMORY_QUERY, result => this.onFetch('infraMemoryResults', result));
+    fetchPrometheusQuery(NODE_CONSUMERS_CPU_QUERY, result => this.onFetch('infraCpuResults', result));
 
-    this.fetchPrometheusQuery(NODE_CONSUMERS_MEMORY_QUERY, 'infraMemoryResults');
-    this.fetchPrometheusQuery(NODE_CONSUMERS_CPU_QUERY, 'infraCpuResults');
-
-    this.fetchPrometheusQuery(NODE_CONSUMERS_STORAGE_QUERY, 'infraStorageResults');
-    this.fetchPrometheusQuery(NODE_CONSUMERS_NETWORK_QUERY, 'infraNetworkResults');
+    fetchPrometheusQuery(NODE_CONSUMERS_STORAGE_QUERY, 'infraStorageResults');
+    fetchPrometheusQuery(NODE_CONSUMERS_NETWORK_QUERY, 'infraNetworkResults');
 
     this.fetchHealth();
 
-    this.fetchPrometheusQuery(OPENSHIFT_VERSION_QUERY, 'openshiftClusterVersionResponse');
+    fetchPrometheusQuery(OPENSHIFT_VERSION_QUERY, result => this.onFetch('openshiftClusterVersionResponse', result));
 
-    this.fetchPrometheusQuery(CAPACITY_MEMORY_TOTAL_QUERY, 'memoryTotal');
-    this.fetchPrometheusQuery(CAPACITY_NETWORK_TOTAL_QUERY, 'networkTotal');
-    this.fetchPrometheusQuery(CAPACITY_NETWORK_USED_QUERY, 'networkUsed');
+    fetchPrometheusQuery(CAPACITY_MEMORY_TOTAL_QUERY, result => this.onFetch('memoryTotal', result));
+    fetchPrometheusQuery(CAPACITY_NETWORK_TOTAL_QUERY, result => this.onFetch('networkTotal', result));
+    fetchPrometheusQuery(CAPACITY_NETWORK_USED_QUERY, result => this.onFetch('networkUsed', result));
 
-    this.fetchPrometheusQuery(CEPH_OSD_UP_QUERY, 'cephOsdUp');
-    this.fetchPrometheusQuery(CEPH_OSD_DOWN_QUERY, 'cephOsdDown');
+    fetchPrometheusQuery(CEPH_OSD_UP_QUERY, result => this.onFetch('cephOsdUp', result));
+    fetchPrometheusQuery(CEPH_OSD_DOWN_QUERY, result => this.onFetch('cephOsdDown', result));
 
     this.getStorageMetrics();
 
-    this.fetchPrometheusQuery(UTILIZATION_CPU_USED_QUERY, 'cpuUtilization');
-    this.fetchPrometheusQuery(UTILIZATION_MEMORY_USED_QUERY, 'memoryUtilization');
-    this.fetchAlerts();
+    fetchPrometheusQuery(UTILIZATION_CPU_USED_QUERY, result => this.onFetch('cpuUtilization', result));
+    fetchPrometheusQuery(UTILIZATION_MEMORY_USED_QUERY, result => this.onFetch('memoryUtilization', result));
+    fetchAlerts(result => this.onFetch('alertsResponse', result));
   }
 
   componentWillUnmount() {
