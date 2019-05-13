@@ -101,24 +101,20 @@ Resources.propTypes = {
 };
 
 const stateToProps = ({k8s}, {resourceMap}) => {
-  const resources = Object.keys(resourceMap).map(k => {
-    // We can have more queries for the same kind so lets set resource.prop to key to make sure its unique
-    resourceMap[k].resource.prop = k;
-    return resourceMap[k].resource;
-  });
+  const resources = Object.keys(resourceMap).map(k => resourceMap[k].resource);
   return {
     k8sModels: resources.reduce((models, {kind}) => models.set(kind, k8s.getIn(['RESOURCES', 'models', kind])), ImmutableMap()),
   };
 };
-
 
 export const WithResources = connect(stateToProps)(({ resourceMap, k8sModels, children, ...rest }) => {
   const kindExists = Object.keys(resourceMap).some(key => k8sModels.get(resourceMap[key].resource.kind));
 
   const resourceComponent = <Resources resourceMap={resourceMap} {...rest}>{children}</Resources>;
   // firehose renders null if kind does not exist
+  // We can have more queries for the same kind so lets set resource.prop to key to make sure its unique
   return kindExists
-    ? (<Firehose resources={Object.keys(resourceMap).map(k => resourceMap[k].resource)}>
+    ? (<Firehose resources={Object.keys(resourceMap).map(k => ({ ...resourceMap[k].resource, prop: k }))}>
       {resourceComponent}
     </Firehose>)
     : resourceComponent;
