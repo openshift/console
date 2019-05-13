@@ -3,13 +3,13 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 
-import { nodeStatus, makeNodeSchedulable, K8sResourceKind, referenceForModel } from '../module/k8s';
+import { getNodeRoles, nodeStatus, makeNodeSchedulable, K8sResourceKind, referenceForModel } from '../module/k8s';
 import { ResourceEventStream } from './events';
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import { configureUnschedulableModal } from './modals';
 import { PodsPage } from './pod';
-import { Kebab, navFactory, LabelList, ResourceKebab, SectionHeading, ResourceLink, Timestamp, units, cloudProviderNames, cloudProviderID, pluralize, StatusIcon } from './utils';
-import { Line, requirePrometheus } from './graphs';
+import { Kebab, navFactory, LabelList, ResourceKebab, SectionHeading, ResourceLink, Timestamp, units, cloudProviderNames, cloudProviderID, pluralize, StatusIcon, humanizeDecimalBytes, humanizeCpuCores } from './utils';
+import { Area, requirePrometheus } from './graphs';
 import { MachineModel, NodeModel } from '../models';
 import { CamelCaseWrap } from './utils/camel-case-wrap';
 
@@ -54,10 +54,10 @@ const Header = props => {
     return null;
   }
   return <ListHeader>
-    <ColHead {...props} className="col-md-4 col-sm-5 col-xs-8" sortField="metadata.name">Node Name</ColHead>
+    <ColHead {...props} className="col-md-5 col-sm-5 col-xs-8" sortField="metadata.name">Name</ColHead>
     <ColHead {...props} className="col-md-2 col-sm-3 col-xs-4" sortFunc="nodeReadiness">Status</ColHead>
-    <ColHead {...props} className="col-md-3 col-sm-4 hidden-xs" sortField="metadata.annotations['machine.openshift.io/machine']">Machine</ColHead>
-    <ColHead {...props} className="col-md-3 hidden-sm hidden-xs" sortField="status.addresses">Node Addresses</ColHead>
+    <ColHead {...props} className="col-md-2 col-sm-4 hidden-xs" sortFunc="nodeRoles">Role</ColHead>
+    <ColHead {...props} className="col-md-3 hidden-sm hidden-xs" sortField="metadata.annotations['machine.openshift.io/machine']">Machine</ColHead>
   </ListHeader>;
 };
 
@@ -65,18 +65,28 @@ const NodeStatus = ({node}) => <StatusIcon status={nodeStatus(node)} />;
 
 const NodeRow = ({obj: node, expand}) => {
   const machine = getMachine(node);
+  const roles = getNodeRoles(node).sort();
 
   return <ResourceRow obj={node}>
-    <div className="col-md-4 col-sm-5 col-xs-8">
+    <div className="col-md-5 col-sm-5 col-xs-8">
       <ResourceLink kind="Node" name={node.metadata.name} title={node.metadata.uid} />
     </div>
-    <div className="col-md-2 col-sm-3 col-xs-4"><NodeStatus node={node} /></div>
-    <div className="col-md-3 col-sm-4 hidden-xs">
+    <div className="col-md-2 col-sm-3 col-xs-4">
+      <NodeStatus node={node} />
+    </div>
+    <div className="col-md-2 col-sm-4 hidden-xs">
+      {roles.length ? roles.join(', ') : '-'}
+    </div>
+    <div className="col-md-3 hidden-sm hidden-xs">
       {machine && <ResourceLink kind={referenceForModel(MachineModel)} name={machine.name} namespace={machine.namespace} />}
     </div>
-    <div className="col-md-3 hidden-sm hidden-xs"><NodeIPList ips={node.status.addresses} expand={expand} /></div>
-    {expand && <div className="col-xs-12">
-      <LabelList kind="Node" labels={node.metadata.labels} />
+    {expand && <div className="co-resource-list__item--expanded">
+      <div className="col-xs-5">
+        <NodeIPList ips={node.status.addresses} expand={expand} />
+      </div>
+      <div className="col-xs-7">
+        <LabelList kind="Node" labels={node.metadata.labels} />
+      </div>
     </div>}
     <div className="dropdown-kebab-pf">
       <NodeKebab node={node} />
@@ -104,22 +114,22 @@ const NodeGraphs = requirePrometheus(({node}) => {
   return <React.Fragment>
     <div className="row">
       <div className="col-md-4">
-        <Line title="Memory Usage" query={ipQuery && `node_memory_Active_bytes${ipQuery}`} />
+        <Area title="Memory Usage" humanizeValue={humanizeDecimalBytes} query={ipQuery && `node_memory_Active_bytes${ipQuery}`} />
       </div>
       <div className="col-md-4">
-        <Line title="CPU Usage" query={ipQuery && `instance:node_cpu:rate:sum${ipQuery}`} />
+        <Area title="CPU Usage" humanizeValue={humanizeCpuCores} query={ipQuery && `instance:node_cpu:rate:sum${ipQuery}`} />
       </div>
       <div className="col-md-4">
-        <Line title="Number of Pods" query={ipQuery && `kubelet_running_pod_count${ipQuery}`} />
+        <Area title="Number of Pods" query={ipQuery && `kubelet_running_pod_count${ipQuery}`} />
       </div>
       <div className="col-md-4">
-        <Line title="Network In" query={ipQuery && `instance:node_network_receive_bytes:rate:sum${ipQuery}`} />
+        <Area title="Network In" humanizeValue={humanizeDecimalBytes} query={ipQuery && `instance:node_network_receive_bytes:rate:sum${ipQuery}`} />
       </div>
       <div className="col-md-4">
-        <Line title="Network Out" query={ipQuery && `instance:node_network_transmit_bytes:rate:sum${ipQuery}`} />
+        <Area title="Network Out" humanizeValue={humanizeDecimalBytes} query={ipQuery && `instance:node_network_transmit_bytes:rate:sum${ipQuery}`} />
       </div>
       <div className="col-md-4">
-        <Line title="Filesystem" query={ipQuery && `instance:node_filesystem_usage:sum${ipQuery}`} />
+        <Area title="Filesystem" humanizeValue={humanizeDecimalBytes} query={ipQuery && `instance:node_filesystem_usage:sum${ipQuery}`} />
       </div>
     </div>
 

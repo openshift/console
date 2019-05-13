@@ -73,6 +73,6 @@ export type DroppableEditYAMLProps = {
   obj: string,
 };
 export type DroppableEditYAMLState = {
-  fileUpload: string,
+  fileUpload: string | ArrayBuffer,
   error: string,
 };

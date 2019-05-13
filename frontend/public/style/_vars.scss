@@ -19,6 +19,8 @@ $font-size-base: 14px;
 $grid-gutter-width: 30px;
 // Bootstrap font path.
 $icon-font-path: $consoleWebFontPath + '/';
+$kbd-bg: transparent;
+$kbd-color: $color-pf-black-600;
 // Disable PatternFly 4 reset.
 $pf-global--enable-reset: false;
 // PatternFly 4 font path.

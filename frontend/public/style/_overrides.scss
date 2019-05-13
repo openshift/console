@@ -260,15 +260,21 @@ tags-input .autocomplete .suggestion-item em {
   border-right: 1px solid transparent;
 }
 
+kbd {
+  border-radius: 3px;
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.25);
+}
+
 // PatternFly 4 overrides
 
 .pf-c-about-modal-box {
   &__brand {
+    align-items: flex-start; // so logos don't stretch vertically
     min-width: 220px;
   }
 
   &__brand-image {
-    height: auto !important;
+    height: auto !important; // allow logo to be taller
   }
 }
 
@@ -318,6 +324,12 @@ tags-input .autocomplete .suggestion-item em {
   &__header-brand-link {
     flex: 0 1 auto !important;
     max-width: 100% !important;
+  }
+
+  &__header-tools {
+    @media(max-width: $grid-float-breakpoint-max) {
+      margin-right: 8px !important;
+    }
   }
 
   &__main {

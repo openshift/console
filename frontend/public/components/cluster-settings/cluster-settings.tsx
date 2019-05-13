@@ -12,7 +12,6 @@ import { GlobalConfigPage } from './global-config';
 import { ClusterAutoscalerModel, ClusterVersionModel } from '../../models';
 import {
   ClusterUpdateStatus,
-  ClusterVersionCondition,
   ClusterVersionConditionType,
   ClusterVersionKind,
   clusterVersionReference,
@@ -20,12 +19,11 @@ import {
   getClusterUpdateStatus,
   getClusterVersionCondition,
   getDesiredClusterVersion,
-  isProgressing,
+  getLastCompletedUpdate,
   k8sPatch,
   K8sResourceConditionStatus,
   K8sResourceKind,
   referenceForModel,
-  updateFailing,
 } from '../../module/k8s';
 import {
   EmptyBox,
@@ -37,23 +35,6 @@ import {
   Timestamp,
 } from '../utils';
 
-const clusterAutoscalerReference = referenceForModel(ClusterAutoscalerModel);
-
-const CurrentChannel: React.SFC<CurrentChannelProps> = ({cv}) => <button className="btn btn-link co-modal-btn-link" onClick={() => (clusterChannelModal({cv}))}>
-  {cv.spec.channel || '-'}
-</button>;
-
-const getIconClass = (status: ClusterUpdateStatus) => {
-  return {
-    [ClusterUpdateStatus.UpToDate]: 'pficon pficon-ok',
-    [ClusterUpdateStatus.UpdatesAvailable]: 'fa fa-arrow-circle-o-up',
-    [ClusterUpdateStatus.Updating]: 'fa-spin fa fa-refresh',
-    [ClusterUpdateStatus.Failing]: 'pficon pficon-error-circle-o',
-    [ClusterUpdateStatus.ErrorRetrieving]: 'pficon pficon-error-circle-o',
-    [ClusterUpdateStatus.Invalid]: 'pficon pficon-error-circle-o',
-  }[status];
-};
-
 const cancelUpdate = (cv: ClusterVersionKind) => {
   k8sPatch(ClusterVersionModel, cv, [{path: '/spec/desiredUpdate', op: 'remove'}]).catch(err => {
     const error = err.message;
@@ -61,88 +42,108 @@ const cancelUpdate = (cv: ClusterVersionKind) => {
   });
 };
 
-const InvalidAlert: React.SFC<InvalidAlertProps> = ({condition, cv}) => <div className="alert alert-danger">
-  <i className="pficon pficon-error-circle-o" aria-hidden="true" />
-  {condition.message || 'The cluster version is invalid.'}
-  {_.has(cv, 'spec.desiredUpdate') && <React.Fragment>
-    &emsp;
-    <button className="btn btn-link btn-link--no-btn-default-values" type="button" onClick={() => cancelUpdate(cv)}>Cancel Update</button>
-  </React.Fragment>}
-</div>;
+const clusterAutoscalerReference = referenceForModel(ClusterAutoscalerModel);
 
-const UpdateFailingAlert: React.SFC<UpdateFailingAlertProps> = ({condition, updatesAvailable=false}) => <div className="alert alert-danger">
-  <i className="pficon pficon-error-circle-o" aria-hidden="true" />
-  <strong>Update is failing.</strong>
-  &nbsp;
-  {condition.message && `${condition.message}. `}
-  View <Link to="/settings/cluster/clusteroperators">Cluster Operators</Link> for more details
-  {updatesAvailable && ' or check other available updates to try another version'}.
-</div>;
+const CurrentChannel: React.SFC<CurrentChannelProps> = ({cv}) => <button className="btn btn-link co-modal-btn-link" onClick={() => clusterChannelModal({cv})}>
+  {cv.spec.channel || '-'}
+</button>;
 
-const RetrieveUpdatesFailedAlert: React.SFC<RetrieveUpdatesFailedAlertProps> = ({condition}) => <div className="alert alert-danger">
-  <i className="pficon pficon-error-circle-o" aria-hidden="true" />
-  <strong>Could not retrieve updates.</strong>
-  {condition.message && ` ${condition.message}.`}
-</div>;
+const InvalidMessage: React.SFC<CVStatusMessageProps> = ({cv}) => <React.Fragment>
+  <div>
+    <i className="pficon pficon-error-circle-o" aria-hidden={true} /> Invalid cluster version
+  </div>
+  <Button bsStyle="primary" onClick={() => cancelUpdate(cv)}>
+    Cancel update
+  </Button>
+</React.Fragment>;
 
-const UpdateInProgressAlert: React.SFC<UpdateInProgressAlertProps> = ({condition}) => <div className="alert alert-info">
-  <i className="pficon pficon-info" aria-hidden={true} />
-  <strong>Cluster update in progress.</strong>
-  &nbsp;
-  {condition.message && `${condition.message}. `}
-  View <Link to="/settings/cluster/clusteroperators">Cluster Operators</Link> for more details.
-</div>;
-
-const UpdatesAvailableAlert: React.SFC<UpdatesAvailableAlertProps> = ({cv}) => {
-  const currentlyUpdating = isProgressing(cv) || updateFailing(cv);
-  const titleText = currentlyUpdating ? 'Other updates are available.' : 'Cluster update is available.';
-  const buttonText = currentlyUpdating ? 'Update to a different version.' : 'Update now.';
-  return <div className="alert alert-info">
-    <i className="pficon pficon-info" aria-hidden={true} />
-    <strong>
-      {titleText}
-    </strong>
-    <Button bsStyle="link" className="btn btn-link co-modal-btn-link co-modal-btn-link--inline" onClick={()=> (clusterUpdateModal({cv}))}>
-      {buttonText}
+const UpdatesAvailableMessage: React.SFC<CVStatusMessageProps> = ({cv}) => <React.Fragment>
+  <div className="co-update-status">
+    <i className="fa fa-arrow-circle-o-up update-pending" aria-hidden={true} /> Update available
+  </div>
+  <div>
+    <Button bsStyle="primary" onClick={() => clusterUpdateModal(cv)}>
+      Update now
     </Button>
-  </div>;
+  </div>
+</React.Fragment>;
+
+const UpdatingMessage: React.SFC<CVStatusMessageProps> = ({cv}) => {
+  const updatingCondition = getClusterVersionCondition(cv, ClusterVersionConditionType.Progressing, K8sResourceConditionStatus.True);
+  return <React.Fragment>
+    {updatingCondition.message && <div><i className="fa-spin fa fa-refresh" aria-hidden={true} /> {updatingCondition.message}</div>}
+    <Link to="/settings/cluster/clusteroperators">View details</Link>
+  </React.Fragment>;
 };
 
+const ErrorRetrievingMessage: React.SFC<{}> = () => <div>
+  <i className="pficon pficon-error-circle-o" aria-hidden={true} /> Error retrieving
+</div>;
+
+const FailingMessage: React.SFC<{}> = () => <React.Fragment>
+  <div>
+    <i className="pficon pficon-error-circle-o" aria-hidden={true} /> Failing
+  </div>
+  <Link to="/settings/cluster/clusteroperators">View details</Link>
+</React.Fragment>;
+
+const UpToDateMessage: React.SFC<{}> = () => <span>
+  <i className="pficon pficon-ok" aria-hidden={true} /> Up to date
+</span>;
 
 const UpdateStatus: React.SFC<UpdateStatusProps> = ({cv}) => {
   const status = getClusterUpdateStatus(cv);
-  const iconClass = getIconClass(status);
+  switch (status) {
+    case ClusterUpdateStatus.Invalid:
+      return <InvalidMessage cv={cv} />;
+    case ClusterUpdateStatus.UpdatesAvailable:
+      return <UpdatesAvailableMessage cv={cv} />;
+    case ClusterUpdateStatus.Updating:
+      return <UpdatingMessage cv={cv} />;
+    case ClusterUpdateStatus.ErrorRetrieving:
+      return <ErrorRetrievingMessage />;
+    case ClusterUpdateStatus.Failing:
+      return <FailingMessage />;
+    default:
+      return <UpToDateMessage />;
+  }
+};
+
+const CurrentVersion: React.SFC<CurrentVersionProps> = ({cv}) => {
+  const desiredVersion = getDesiredClusterVersion(cv);
+  const lastVersion = getLastCompletedUpdate(cv);
+  const status = getClusterUpdateStatus(cv);
+
+  if (status === ClusterUpdateStatus.UpToDate || status === ClusterUpdateStatus.UpdatesAvailable) {
+    return desiredVersion
+      ? <React.Fragment>{desiredVersion}</React.Fragment>
+      : <React.Fragment><i className="pficon pficon-warning-triangle-o" aria-hidden="true" />&nbsp;Unknown</React.Fragment>;
+  }
+
+  return <React.Fragment>{lastVersion || 'None'}</React.Fragment>;
+};
+
+const UpdateLink: React.SFC<CurrentVersionProps> = ({cv}) => {
+  const status = getClusterUpdateStatus(cv);
+  const updatesAvailable = !_.isEmpty(getAvailableClusterUpdates(cv));
   return <React.Fragment>
     {
-      status === ClusterUpdateStatus.UpdatesAvailable
-        ? <Button bsStyle="link" className="btn btn-link co-modal-btn-link" onClick={() => (clusterUpdateModal({cv}))}>
-          <i className={iconClass} aria-hidden={true}></i>
-          &nbsp;
-          {status}
-        </Button>
-        : <span>
-          {iconClass && <i className={iconClass} aria-hidden={true}></i>}
-          &nbsp;
-          {status}
-        </span>
+      updatesAvailable && status === ClusterUpdateStatus.ErrorRetrieving || status === ClusterUpdateStatus.Failing || status === ClusterUpdateStatus.Updating
+        ? <Button bsStyle="link" className="btn-link--no-btn-default-values" onClick={() => (clusterUpdateModal({cv}))}>Update to another version</Button>
+        : null
     }
   </React.Fragment>;
 };
 
-const DesiredVersion: React.SFC<DesiredVersionProps> = ({cv}) => {
-  const version = getDesiredClusterVersion(cv);
-  return version
-    ? <React.Fragment>{version}</React.Fragment>
-    : <React.Fragment><i className="pficon pficon-warning-triangle-o" aria-hidden="true" />&nbsp;Unknown</React.Fragment>;
+const CurrentVersionHeader: React.SFC<CurrentVersionProps> = ({cv}) => {
+  const status = getClusterUpdateStatus(cv);
+  return <React.Fragment>
+    { status === ClusterUpdateStatus.UpToDate || status === ClusterUpdateStatus.UpdatesAvailable ? 'Current Version' : 'Last Completed Version' }
+  </React.Fragment>;
 };
 
 const ClusterVersionDetailsTable: React.SFC<ClusterVersionDetailsTableProps> = ({obj: cv, autoscalers}) => {
   const { history = [] } = cv.status;
-  const isInvalidCondition = getClusterVersionCondition(cv, ClusterVersionConditionType.Invalid, K8sResourceConditionStatus.True);
-  const retrievedUpdatesFailedCondition = getClusterVersionCondition(cv, ClusterVersionConditionType.RetrievedUpdates, K8sResourceConditionStatus.False);
-  const isFailingCondition = getClusterVersionCondition(cv, ClusterVersionConditionType.Failing, K8sResourceConditionStatus.True);
-  const updatingCondition = getClusterVersionCondition(cv, ClusterVersionConditionType.Progressing, K8sResourceConditionStatus.True);
-  const updatesAvailable = !_.isEmpty(getAvailableClusterUpdates(cv));
   const desiredImage: string = _.get(cv, 'status.desired.image') || '';
   // Split image on `@` to emphasize the digest.
   const imageParts = desiredImage.split('@');
@@ -150,29 +151,27 @@ const ClusterVersionDetailsTable: React.SFC<ClusterVersionDetailsTableProps> = (
   return <React.Fragment>
     <div className="co-m-pane__body">
       <div className="co-m-pane__body-group">
-        { isInvalidCondition && <InvalidAlert condition={isInvalidCondition} cv={cv} /> }
-        { isFailingCondition && <UpdateFailingAlert condition={isFailingCondition} updatesAvailable={updatesAvailable} /> }
-        { retrievedUpdatesFailedCondition && <RetrieveUpdatesFailedAlert condition={retrievedUpdatesFailedCondition} /> }
-        { !isFailingCondition && updatingCondition && <UpdateInProgressAlert condition={updatingCondition} /> }
-        { updatesAvailable && <UpdatesAvailableAlert cv={cv} /> }
-        <div className="co-detail-table">
+        <div className="co-detail-table co-detail-table--lg">
           <div className="co-detail-table__row row">
-            <div className="co-detail-table__section col-sm-4">
+            <div className="co-detail-table__section col-sm-4 col-md-3">
               <dl className="co-m-pane__details">
                 <dt className="co-detail-table__section-header">Channel</dt>
                 <dd><CurrentChannel cv={cv} /></dd>
               </dl>
             </div>
-            <div className="co-detail-table__section col-sm-4">
+            <div className="co-detail-table__section col-sm-4 col-md-4">
+              <dl className="co-m-pane__details">
+                <dt className="co-detail-table__section-header"><CurrentVersionHeader cv={cv} /></dt>
+                <dd>
+                  <div><CurrentVersion cv={cv} /></div>
+                  <UpdateLink cv={cv} />
+                </dd>
+              </dl>
+            </div>
+            <div className="co-detail-table__section col-sm-4 col-md-4">
               <dl className="co-m-pane__details">
                 <dt className="co-detail-table__section-header">Update Status</dt>
                 <dd><UpdateStatus cv={cv} /></dd>
-              </dl>
-            </div>
-            <div className="co-detail-table__section col-sm-4">
-              <dl className="co-m-pane__details">
-                <dt className="co-detail-table__section-header">Desired Version</dt>
-                <dd><DesiredVersion cv={cv} /></dd>
               </dl>
             </div>
           </div>
@@ -272,11 +271,15 @@ type UpdateStatusProps = {
   cv: ClusterVersionKind;
 };
 
+type CVStatusMessageProps = {
+  cv: ClusterVersionKind;
+};
+
 type CurrentChannelProps = {
   cv: K8sResourceKind;
 };
 
-type DesiredVersionProps = {
+type CurrentVersionProps = {
   cv: ClusterVersionKind;
 };
 
@@ -287,26 +290,4 @@ type ClusterVersionDetailsTableProps = {
 
 type ClusterSettingsPageProps = {
   match: any;
-};
-
-type InvalidAlertProps = {
-  condition: ClusterVersionCondition;
-  cv: ClusterVersionKind;
-};
-
-type UpdateFailingAlertProps = {
-  condition: ClusterVersionCondition;
-  updatesAvailable: boolean;
-};
-
-type RetrieveUpdatesFailedAlertProps = {
-  condition: ClusterVersionCondition;
-};
-
-type UpdateInProgressAlertProps = {
-  condition: ClusterVersionCondition;
-};
-
-type UpdatesAvailableAlertProps = {
-  cv: ClusterVersionKind;
 };

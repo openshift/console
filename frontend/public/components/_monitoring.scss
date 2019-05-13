@@ -51,3 +51,22 @@ $monitoring-line-height: 18px;
 .monitoring-state-icon--pending {
   color: $color-pf-black-700;
 }
+
+.group__body--query-browser {
+  padding-top: 20px;
+}
+
+.query-browser-metric__wrapper {
+  display: flex;
+}
+
+.query-browser-metric__color {
+  height: 20px;
+  margin: 2px 12px 2px 5px;
+  min-width: 20px;
+  width: 20px;
+}
+
+.query-browser-metric__labels {
+  word-break: break-word;
+}

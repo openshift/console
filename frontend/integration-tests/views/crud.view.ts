@@ -119,7 +119,7 @@ export const actionsDropdownMenu = actionsButton.$$('.dropdown-menu').first();
 
 export const resourceTitle = $('#resource-title');
 
-export const nameFilter = $('.form-control.text-filter');
+export const nameFilter = $('.form-control.co-text-filter');
 export const messageLbl = $('.cos-status-box');
 export const modalAnnotationsLink = $('.loading-box__loaded').element(by.partialButtonText('Annotation'));
 

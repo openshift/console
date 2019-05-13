@@ -54,7 +54,10 @@ type Auth struct {
 // Customization holds configuration such as what logo to use.
 type Customization struct {
 	Branding             string `yaml:"branding"`
+	StatuspageID         string `yaml:"statuspageID"`
 	DocumentationBaseURL string `yaml:"documentationBaseURL"`
+	CustomProductName    string `yaml:"customProductName"`
+	CustomLogoFile       string `yaml:"customLogoFile"`
 }
 
 // SetFlagsFromConfig sets flag values based on a YAML config file.
@@ -172,7 +175,19 @@ func addCustomization(fs *flag.FlagSet, customization *Customization) {
 		fs.Set("branding", customization.Branding)
 	}
 
+	if customization.StatuspageID != "" {
+		fs.Set("statuspage-id", customization.StatuspageID)
+	}
+
 	if customization.DocumentationBaseURL != "" {
 		fs.Set("documentation-base-url", customization.DocumentationBaseURL)
+	}
+
+	if customization.CustomProductName != "" {
+		fs.Set("custom-product-name", customization.CustomProductName)
+	}
+
+	if customization.CustomLogoFile != "" {
+		fs.Set("custom-logo-file", customization.CustomLogoFile)
 	}
 }

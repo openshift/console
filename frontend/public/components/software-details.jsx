@@ -2,7 +2,6 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 
 import { k8sVersion } from '../module/status';
-import { SafetyFirst } from './safety-first';
 import { LoadingInline } from './utils';
 
 
@@ -56,7 +55,7 @@ const SoftwareDetailRow = ({title, detail, text, children}) => {
   </div>;
 };
 
-export class SoftwareDetails extends SafetyFirst {
+export class SoftwareDetails extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -65,7 +64,6 @@ export class SoftwareDetails extends SafetyFirst {
   }
 
   componentDidMount() {
-    super.componentDidMount();
     this._checkKubernetesVersion();
   }
 

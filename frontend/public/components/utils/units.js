@@ -142,8 +142,10 @@ const humanize = units.humanize = (value, typeName, useRound = false) => {
   };
 };
 
-export const humanizeMem = v => humanize(v, 'binaryBytes', true).string;
+export const humanizeBinaryBytes = v => humanize(v, 'binaryBytes', true).string;
+export const humanizeDecimalBytes = v => humanize(v, 'decimalBytes', true).string;
 export const humanizeNumber = v => humanize(v, 'numeric', true).string;
+export const humanizeCpuCores = v => (v < 1 && v > 0) ? `${round(v*1000)}m` : round(v);
 
 units.dehumanize = (value, typeName) => {
   const type = getType(typeName);

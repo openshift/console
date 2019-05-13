@@ -158,7 +158,6 @@ describe(ClusterServiceVersionsPage.displayName, () => {
 
     expect(listPage.props().kind).toEqual(referenceForModel(ClusterServiceVersionModel));
     expect(listPage.props().ListComponent).toEqual(ClusterServiceVersionList);
-    expect(listPage.props().filterLabel).toEqual('Cluster Service Versions by name');
     expect(listPage.props().showTitle).toBe(false);
   });
 

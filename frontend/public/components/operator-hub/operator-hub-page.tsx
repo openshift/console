@@ -14,7 +14,7 @@ import { OperatorHubTileView } from './operator-hub-items';
 import { PackageManifestKind, OperatorGroupKind, SubscriptionKind } from '../operator-lifecycle-manager';
 import { installedFor, subscriptionFor } from '../operator-lifecycle-manager/operator-group';
 import { OPERATOR_HUB_CSC_BASE } from '../../const';
-import { OperatorHubItem } from './index';
+import { OperatorHubItem, OperatorHubCSVAnnotations } from './index';
 
 import * as operatorImg from '../../imgs/operator.svg';
 
@@ -23,7 +23,7 @@ export const OperatorHubList: React.SFC<OperatorHubListProps> = (props) => {
   const sourceConfigs = _.find(_.get(catalogSourceConfig, 'data'), csc => _.startsWith(csc.metadata.name, OPERATOR_HUB_CSC_BASE));
   const items = _.get(props.packageManifest, 'data', [] as PackageManifestKind[]).map(pkg => {
     const currentCSVDesc = _.get(pkg, 'status.channels[0].currentCSVDesc', {});
-    const currentCSVAnnotations = _.get(currentCSVDesc, 'annotations', {});
+    const currentCSVAnnotations: OperatorHubCSVAnnotations = _.get(currentCSVDesc, 'annotations', {});
     const iconObj = _.get(currentCSVDesc, 'icon[0]');
 
     return {

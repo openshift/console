@@ -23,7 +23,7 @@ export const InstallPlanHeader: React.SFC<InstallPlanHeaderProps> = (props) => <
 </ListHeader>;
 
 export const InstallPlanRow: React.SFC<InstallPlanRowProps> = (props) => {
-  const phaseFor = (phase: InstallPlanKind["status"]["phase"]) => phase === 'RequiresApproval'
+  const phaseFor = (phase: InstallPlanKind['status']['phase']) => phase === 'RequiresApproval'
     ? <React.Fragment><i className="fa fa-exclamation-triangle text-warning" aria-hidden="true" /> {phase}</React.Fragment>
     : phase;
 
@@ -76,8 +76,7 @@ export const InstallPlansPage: React.SFC<InstallPlansPageProps> = (props) => {
       flatten={resources => _.get(resources.installPlan, 'data', [])}
       title="Install Plans"
       showTitle={false}
-      ListComponent={InstallPlansList}
-      filterLabel="Install Plans by name" />
+      ListComponent={InstallPlansList} />
   );
 };
 

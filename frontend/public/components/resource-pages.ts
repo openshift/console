@@ -30,8 +30,9 @@ import {
   InstallPlanModel,
   JobModel,
   LimitRangeModel,
-  MachineConfigPoolModel,
+  MachineAutoscalerModel,
   MachineConfigModel,
+  MachineConfigPoolModel,
   MachineDeploymentModel,
   MachineModel,
   MachineSetModel,
@@ -39,6 +40,7 @@ import {
   NetworkPolicyModel,
   NodeModel,
   OAuthModel,
+  PackageManifestModel,
   PersistentVolumeClaimModel,
   PersistentVolumeModel,
   PodModel,
@@ -59,8 +61,10 @@ import {
   StatefulSetModel,
   StorageClassModel,
   SubscriptionModel,
-  PackageManifestModel,
+  TemplateInstanceModel,
 } from '../models';
+
+import * as plugins from '../plugins';
 
 export const resourceDetailPages = ImmutableMap<GroupVersionKind | string, () => Promise<React.ComponentType<any>>>()
   .set(referenceForModel(ClusterServiceClassModel), () => import('./cluster-service-class' /* webpackChunkName: "cluster-service-class" */).then(m => m.ClusterServiceClassDetailsPage))
@@ -81,6 +85,7 @@ export const resourceDetailPages = ImmutableMap<GroupVersionKind | string, () =>
   .set(referenceForModel(NamespaceModel), () => import('./namespace' /* webpackChunkName: "namespace" */).then(m => m.NamespacesDetailsPage))
   .set(referenceForModel(NetworkPolicyModel), () => import('./network-policy' /* webpackChunkName: "network-policy" */).then(m => m.NetworkPoliciesDetailsPage))
   .set(referenceForModel(NodeModel), () => import('./node' /* webpackChunkName: "node" */).then(m => m.NodesDetailsPage))
+  .set(referenceForModel(MachineAutoscalerModel), () => import('./machine-autoscaler' /* webpackChunkName: "machine-autoscaler" */).then(m => m.MachineAutoscalerDetailsPage))
   .set(referenceForModel(MachineConfigModel), () => import('./machine-config' /* webpackChunkName: "machine-config" */).then(m => m.MachineConfigDetailsPage))
   .set(referenceForModel(MachineConfigPoolModel), () => import('./machine-config-pool' /* webpackChunkName: "machine-config-pool" */).then(m => m.MachineConfigPoolDetailsPage))
   .set(referenceForModel(MachineModel), () => import('./machine' /* webpackChunkName: "machine" */).then(m => m.MachineDetailsPage))
@@ -108,6 +113,7 @@ export const resourceDetailPages = ImmutableMap<GroupVersionKind | string, () =>
   .set(ReportReference, () => import('./chargeback' /* webpackChunkName: "chargeback" */).then(m => m.ReportsDetailsPage))
   .set(ReportGenerationQueryReference, () => import('./chargeback' /* webpackChunkName: "chargeback" */).then(m => m.ReportGenerationQueriesDetailsPage))
   .set(referenceForModel(StorageClassModel), () => import('./storage-class' /* webpackChunkName: "storage-class" */).then(m => m.StorageClassDetailsPage))
+  .set(referenceForModel(TemplateInstanceModel), () => import('./template-instance' /* webpackChunkName: "template-instance" */).then(m => m.TemplateInstanceDetailsPage))
   .set(referenceForModel(CustomResourceDefinitionModel), () => import('./custom-resource-definition' /* webpackChunkName: "custom-resource-definition" */).then(m => m.CustomResourceDefinitionsDetailsPage))
   .set(referenceForModel(ClusterServiceVersionModel), () => import('./operator-lifecycle-manager/clusterserviceversion' /* webpackChunkName: "clusterserviceversion" */).then(m => m.ClusterServiceVersionsDetailsPage))
   .set(referenceForModel(CatalogSourceModel), () => import('./operator-lifecycle-manager/catalog-source' /* webpackChunkName: "catalog-source" */).then(m => m.CatalogSourceDetailsPage))
@@ -115,7 +121,12 @@ export const resourceDetailPages = ImmutableMap<GroupVersionKind | string, () =>
   .set(referenceForModel(InstallPlanModel), () => import('./operator-lifecycle-manager/install-plan' /* webpackChunkName: "install-plan" */).then(m => m.InstallPlanDetailsPage))
   .set(referenceForModel(ClusterOperatorModel), () => import('./cluster-settings/cluster-operator' /* webpackChunkName: "cluster-operator" */).then(m => m.ClusterOperatorDetailsPage))
   .set(referenceForModel(ClusterVersionModel), () => import('./cluster-settings/cluster-version' /* webpackChunkName: "cluster-version" */).then(m => m.ClusterVersionDetailsPage))
-  .set(referenceForModel(OAuthModel), () => import('./cluster-settings/oauth' /* webpackChunkName: "oauth" */).then(m => m.OAuthDetailsPage));
+  .set(referenceForModel(OAuthModel), () => import('./cluster-settings/oauth' /* webpackChunkName: "oauth" */).then(m => m.OAuthDetailsPage))
+  .withMutations(map => {
+    plugins.registry.getResourcePages().filter(plugins.isResourceDetailPage).forEach(page => {
+      map.set(referenceForModel(page.properties.model), page.properties.loader);
+    });
+  });
 
 export const resourceListPages = ImmutableMap<GroupVersionKind | string, () => Promise<React.ComponentType<any>>>()
   .set(referenceForModel(ClusterServiceClassModel), () => import('./cluster-service-class' /* webpackChunkName: "cluster-service-class" */).then(m => m.ClusterServiceClassPage))
@@ -134,6 +145,7 @@ export const resourceListPages = ImmutableMap<GroupVersionKind | string, () => P
   .set(referenceForModel(NamespaceModel), () => import('./namespace' /* webpackChunkName: "namespace" */).then(m => m.NamespacesPage))
   .set(referenceForModel(NetworkPolicyModel), () => import('./network-policy' /* webpackChunkName: "network-policy" */).then(m => m.NetworkPoliciesPage))
   .set(referenceForModel(NodeModel), () => import('./node' /* webpackChunkName: "node" */).then(m => m.NodesPage))
+  .set(referenceForModel(MachineAutoscalerModel), () => import('./machine-autoscaler' /* webpackChunkName: "machine-autoscaler" */).then(m => m.MachineAutoscalerPage))
   .set(referenceForModel(MachineConfigModel), () => import('./machine-config' /* webpackChunkName: "machine-config" */).then(m => m.MachineConfigPage))
   .set(referenceForModel(MachineConfigPoolModel), () => import('./machine-config-pool' /* webpackChunkName: "machine-config-pool" */).then(m => m.MachineConfigPoolPage))
   .set(referenceForModel(MachineModel), () => import('./machine' /* webpackChunkName: "machine" */).then(m => m.MachinePage))
@@ -163,9 +175,15 @@ export const resourceListPages = ImmutableMap<GroupVersionKind | string, () => P
   .set(ReportReference, () => import('./chargeback' /* webpackChunkName: "chargeback" */).then(m => m.ReportsPage))
   .set(ReportGenerationQueryReference, () => import('./chargeback' /* webpackChunkName: "chargeback" */).then(m => m.ReportGenerationQueriesPage))
   .set(referenceForModel(StorageClassModel), () => import('./storage-class' /* webpackChunkName: "storage-class" */).then(m => m.StorageClassPage))
+  .set(referenceForModel(TemplateInstanceModel), () => import('./template-instance' /* webpackChunkName: "template-instance" */).then(m => m.TemplateInstancePage))
   .set(referenceForModel(CustomResourceDefinitionModel), () => import('./custom-resource-definition' /* webpackChunkName: "custom-resource-definition" */).then(m => m.CustomResourceDefinitionsPage))
   .set(referenceForModel(ClusterServiceVersionModel), () => import('./operator-lifecycle-manager/clusterserviceversion' /* webpackChunkName: "clusterserviceversion" */).then(m => m.ClusterServiceVersionsPage))
   .set(referenceForModel(PackageManifestModel), () => import('./operator-lifecycle-manager/package-manifest' /* webpackChunkName: "package-manifest" */).then(m => m.PackageManifestsPage))
   .set(referenceForModel(SubscriptionModel), () => import('./operator-lifecycle-manager/subscription' /* webpackChunkName: "subscription" */).then(m => m.SubscriptionsPage))
   .set(referenceForModel(InstallPlanModel), () => import('./operator-lifecycle-manager/install-plan' /* webpackChunkName: "install-plan" */).then(m => m.InstallPlansPage))
-  .set(referenceForModel(ClusterOperatorModel), () => import('./cluster-settings/cluster-operator' /* webpackChunkName: "cluster-operator" */).then(m => m.ClusterOperatorPage));
+  .set(referenceForModel(ClusterOperatorModel), () => import('./cluster-settings/cluster-operator' /* webpackChunkName: "cluster-operator" */).then(m => m.ClusterOperatorPage))
+  .withMutations(map => {
+    plugins.registry.getResourcePages().filter(plugins.isResourceListPage).forEach(page => {
+      map.set(referenceForModel(page.properties.model), page.properties.loader);
+    });
+  });

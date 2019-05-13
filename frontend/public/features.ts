@@ -8,13 +8,14 @@ import {
   ChargebackReportModel,
   ClusterServiceClassModel,
   ClusterServiceVersionModel,
-  MachineModel,
+  MachineAutoscalerModel,
   MachineConfigModel,
+  MachineModel,
+  OperatorGroupModel,
   OperatorSourceModel,
+  PackageManifestModel,
   PrometheusModel,
   SelfSubjectAccessReviewModel,
-  PackageManifestModel,
-  OperatorGroupModel,
 } from './models';
 import { k8sBasePath, referenceForModel, ClusterVersionKind } from './module/k8s';
 import { k8sCreate } from './module/k8s/resource';
@@ -23,27 +24,6 @@ import { coFetchJSON } from './co-fetch';
 import { MonitoringRoutes, setMonitoringURL } from './monitoring';
 import { UIActions } from './ui/ui-actions';
 
-/* global
-  FLAGS: false,
-  AUTH_ENABLED: false,
-  PROMETHEUS: false,
-  OPERATOR_LIFECYCLE_MANAGER: false,
-  CHARGEBACK: false,
-  OPENSHIFT: false,
-  CAN_GET_NS: false,
-  CAN_LIST_NS: false,
-  CAN_LIST_NODE: false,
-  CAN_LIST_PV: false,
-  CAN_LIST_STORE: false,
-  CAN_LIST_CRD: false,
-  CAN_CREATE_PROJECT: false,
-  SHOW_OPENSHIFT_START_GUIDE: false,
-  SERVICE_CATALOG: false,
-  OPERATOR_HUB: false,
-  CLUSTER_API: false,
-  CLUSTER_VERSION: false,
-  MACHINE_CONFIG: false,
- */
 export enum FLAGS {
   AUTH_ENABLED = 'AUTH_ENABLED',
   PROMETHEUS = 'PROMETHEUS',
@@ -65,6 +45,7 @@ export enum FLAGS {
   CLUSTER_API = 'CLUSTER_API',
   CLUSTER_VERSION = 'CLUSTER_VERSION',
   MACHINE_CONFIG = 'MACHINE_CONFIG',
+  MACHINE_AUTOSCALER = 'MACHINE_AUTOSCALER',
 }
 
 export const DEFAULTS_ = _.mapValues(FLAGS, flag => flag === FLAGS.AUTH_ENABLED
@@ -81,6 +62,7 @@ export const CRDs = {
   'marketplace.redhat.com~v1alpha1~OperatorSource': FLAGS.OPERATOR_HUB,
   [referenceForModel(MachineModel)]: FLAGS.CLUSTER_API,
   [referenceForModel(MachineConfigModel)]: FLAGS.MACHINE_CONFIG,
+  [referenceForModel(MachineAutoscalerModel)]: FLAGS.MACHINE_AUTOSCALER,
 };
 
 const SET_FLAG = 'SET_FLAG';

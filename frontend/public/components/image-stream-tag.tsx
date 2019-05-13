@@ -5,7 +5,7 @@ import * as _ from 'lodash-es';
 import { K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
 import { DetailsPage } from './factory';
 import { Kebab, SectionHeading, navFactory, ResourceSummary } from './utils';
-import { humanizeMem } from './utils/units';
+import { humanizeBinaryBytes } from './utils/units';
 
 const ImageStreamTagsReference: K8sResourceKindReference = 'ImageStreamTag';
 
@@ -39,7 +39,7 @@ export const ImageStreamTagsDetails: React.SFC<ImageStreamTagsDetailsProps> = ({
   const cmd = (config.Cmd || []).join(' ');
   const exposedPorts = _.keys(config.ExposedPorts).join(', ');
   const size = _.get(imageStreamTag, 'image.dockerImageMetadata.Size');
-  const humanizedSize = _.isFinite(size) && humanizeMem(size);
+  const humanizedSize = _.isFinite(size) && humanizeBinaryBytes(size);
   const architecture = _.get(imageStreamTag, 'image.dockerImageMetadata.Architecture');
 
   return <div className="co-m-pane__body">

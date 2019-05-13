@@ -7,7 +7,7 @@ import { Dropdown, EmptyBox, PromiseComponent } from '../utils';
 import { K8sKind, k8sPatch, Toleration, TolerationOperator } from '../../module/k8s';
 import { createModalLauncher, ModalBody, ModalComponentProps, ModalSubmitFooter, ModalTitle } from '../factory';
 
-class TolerationsModal extends PromiseComponent {
+class TolerationsModal extends PromiseComponent<TolerationsModalProps, TolerationsModalState> {
   readonly state: TolerationsModalState;
 
   constructor(public props: TolerationsModalProps) {
@@ -190,7 +190,6 @@ type TolerationsModalProps = {
   resourceKind: K8sKind;
   resource: any;
   existingReadOnly?: boolean;
-  modalClassName: string;
 } & ModalComponentProps;
 
 type TolerationsModalState = {

@@ -16,7 +16,7 @@ import {
   SectionHeading,
   navFactory,
 } from './utils';
-import { MountedVolumes } from './mounted-vol';
+import { VolumesTable } from './volumes-table';
 
 const { AddStorage, EditEnvironment, common } = Kebab.factory;
 export const menuActions = [AddStorage, EditEnvironment, ...common];
@@ -34,7 +34,7 @@ const Details = ({obj: ss}) => <React.Fragment>
     <ContainerTable containers={ss.spec.template.spec.containers} />
   </div>
   <div className="co-m-pane__body">
-    <MountedVolumes podTemplate={ss.spec.template} heading="Mounted Volumes" />
+    <VolumesTable podTemplate={ss.spec.template} heading="Volumes" />
   </div>
 </React.Fragment>;
 

@@ -137,6 +137,13 @@ class App extends React.PureComponent {
   }
 
   _onNavToggle() {
+
+    // Some components, like svg charts, need to reflow when nav is toggled.
+    // Fire event after a short delay to allow nav animation to complete.
+    setTimeout(() => {
+      window.dispatchEvent(new Event('nav_toggle'));
+    }, 100);
+
     this.setState(prevState => {
       return {
         isNavOpen: !prevState.isNavOpen,
@@ -215,6 +222,7 @@ class App extends React.PureComponent {
 
                   <LazyRoute path="/catalog/create-service-instance" exact loader={() => import('./service-catalog/create-instance' /* webpackChunkName: "create-service-instance" */).then(m => m.CreateInstancePage)} />
                   <LazyRoute path="/k8s/ns/:ns/serviceinstances/:name/create-binding" exact loader={() => import('./service-catalog/create-binding' /* webpackChunkName: "create-binding" */).then(m => m.CreateBindingPage)} />
+                  <LazyRoute path="/catalog/instantiate-template" exact loader={() => import('./instantiate-template' /* webpackChunkName: "instantiate-template" */).then(m => m.InstantiateTemplatePage)} />
                   <LazyRoute path="/catalog/source-to-image" exact loader={() => import('./source-to-image' /* webpackChunkName: "source-to-image" */).then(m => m.SourceToImagePage)} />
 
                   <Route path="/k8s/ns/:ns/alertmanagers/:name" exact render={({match}) => <Redirect to={`/k8s/ns/${match.params.ns}/${referenceForModel(AlertmanagerModel)}/${match.params.name}`} />} />
@@ -262,8 +270,13 @@ class App extends React.PureComponent {
                   <LazyRoute path="/k8s/ns/:ns/persistentvolumeclaims/~new/form" exact kind="PersistentVolumeClaim" loader={() => import('./storage/create-pvc' /* webpackChunkName: "create-pvc" */).then(m => m.CreatePVC)} />
 
                   <LazyRoute path="/monitoring" loader={() => import('./monitoring' /* webpackChunkName: "monitoring" */).then(m => m.MonitoringUI)} />
-                  <LazyRoute path="/settings/idp/oidconnect" exact loader={() => import('./cluster-settings/openid-idp-form' /* webpackChunkName: "openid-idp-form" */).then(m => m.AddOpenIDPage)} />
+                  <LazyRoute path="/settings/idp/github" exact loader={() => import('./cluster-settings/github-idp-form' /* webpackChunkName: "github-idp-form" */).then(m => m.AddGitHubPage)} />
+                  <LazyRoute path="/settings/idp/gitlab" exact loader={() => import('./cluster-settings/gitlab-idp-form' /* webpackChunkName: "gitlab-idp-form" */).then(m => m.AddGitLabPage)} />
+                  <LazyRoute path="/settings/idp/google" exact loader={() => import('./cluster-settings/google-idp-form' /* webpackChunkName: "google-idp-form" */).then(m => m.AddGooglePage)} />
                   <LazyRoute path="/settings/idp/htpasswd" exact loader={() => import('./cluster-settings/htpasswd-idp-form' /* webpackChunkName: "htpasswd-idp-form" */).then(m => m.AddHTPasswdPage)} />
+                  <LazyRoute path="/settings/idp/ldap" exact loader={() => import('./cluster-settings/ldap-idp-form' /* webpackChunkName: "ldap-idp-form" */).then(m => m.AddLDAPPage)} />
+                  <LazyRoute path="/settings/idp/oidconnect" exact loader={() => import('./cluster-settings/openid-idp-form' /* webpackChunkName: "openid-idp-form" */).then(m => m.AddOpenIDPage)} />
+                  <LazyRoute path="/settings/idp/basicauth" exact loader={() => import('./cluster-settings/basicauth-idp-form' /* webpackChunkName: "basicauth-idp-form" */).then(m => m.AddBasicAuthPage)} />
                   <LazyRoute path="/settings/cluster" loader={() => import('./cluster-settings/cluster-settings' /* webpackChunkName: "cluster-settings" */).then(m => m.ClusterSettingsPage)} />
 
                   <LazyRoute path={'/k8s/cluster/storageclasses/~new/form'} exact loader={() => import('./storage-class-form' /* webpackChunkName: "storage-class-form" */).then(m => m.StorageClassForm)} />
@@ -306,7 +319,8 @@ getCachedResources().then(resources => {
 
 _.each(featureActions, store.dispatch);
 
-analyticsSvc.push({tier: 'tectonic'});
+// Global timer to ensure all <Timestamp> components update in sync
+setInterval(() => store.dispatch(UIActions.updateTimestamps(Date.now())), 10000);
 
 // Used by GUI tests to check for unhandled exceptions
 window.windowError = false;

@@ -3,6 +3,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 
 import { ClusterOperatorModel } from '../../models';
+import { StartGuide } from '../start-guide';
 import {
   ColHead,
   DetailsPage,
@@ -28,6 +29,7 @@ import {
   ResourceSummary,
   SectionHeading,
 } from '../utils';
+import { STORAGE_PREFIX } from '../../const';
 
 export const clusterOperatorReference: K8sResourceKindReference = referenceForModel(ClusterOperatorModel);
 
@@ -36,14 +38,13 @@ const getIconClass = (status: OperatorStatus) => {
     [OperatorStatus.Available]: 'pficon pficon-ok text-success',
     [OperatorStatus.Updating]: 'fa fa-refresh',
     [OperatorStatus.Degraded]: 'pficon pficon-warning-triangle-o text-warning',
+    [OperatorStatus.Unknown]: 'pficon pficon-unknown',
   }[status];
 };
 
 const OperatorStatusIconAndLabel: React.SFC<OperatorStatusIconAndLabelProps> = ({status}) => {
   const iconClass = getIconClass(status);
-  return status === OperatorStatus.Unknown
-    ? <span className="text-muted">Unknown</span>
-    : <React.Fragment><i className={iconClass} aria-hidden="true" /> {status}</React.Fragment>;
+  return <React.Fragment><i className={iconClass} aria-hidden="true" /> {status}</React.Fragment>;
 };
 
 const ClusterOperatorHeader = props => <ListHeader>
@@ -91,15 +92,26 @@ const filters = [{
   })),
 }];
 
+export const ClusterOperatorStartGuide: React.SFC<{}> = () =>
+  <React.Fragment>
+    <h4>What are Cluster Operators?</h4>
+    <p>
+      An Operator is a method of packaging, deploying, and managing a Kubernetes application. Cluster Operators implement and automate updates of OpenShift and Kubernetes at the cluster level. During an update, the latest versions of the OpenShift and Kubernetes components are downloaded. A rolling update will occur to install the latest versions.
+    </p>
+  </React.Fragment>;
+
 export const ClusterOperatorPage: React.SFC<ClusterOperatorPageProps> = props =>
-  <ListPage
-    {...props}
-    title="Cluster Operators"
-    kind={clusterOperatorReference}
-    ListComponent={ClusterOperatorList}
-    canCreate={false}
-    rowFilters={filters}
-  />;
+  <React.Fragment>
+    <StartGuide dismissKey={`${STORAGE_PREFIX}/seen-cluster-operator-guide`} startGuide={<ClusterOperatorStartGuide />} />
+    <ListPage
+      {...props}
+      title="Cluster Operators"
+      kind={clusterOperatorReference}
+      ListComponent={ClusterOperatorList}
+      canCreate={false}
+      rowFilters={filters}
+    />
+  </React.Fragment>;
 
 const OperandVersions: React.SFC<OperandVersionsProps> = ({versions}) => {
   return _.isEmpty(versions)

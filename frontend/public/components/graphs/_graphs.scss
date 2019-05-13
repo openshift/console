@@ -2,17 +2,25 @@
   padding-top: 15px; // So graph title doesn't abut border
   margin-top: 0;
   margin-bottom: 16px;
-  overflow: hidden;
+  overflow: visible; // Tooltips may overflow
+}
+
+.graph-wrapper svg {
+  overflow: visible !important; // Tooltips may overflow
 }
 
 .graph-title {
-  margin: 0;
-  text-align: center;
+  margin: 0 0 10px 0;
   color: black;
   overflow: hidden;
   text-overflow: ellipsis;
+  text-align: center;
   white-space: nowrap;
   line-height: 1.4; // so descenders don't clip
+}
+
+.graph-title--left {
+  text-align: left;
 }
 
 .query-browser__wrapper {
@@ -24,20 +32,17 @@
 }
 
 .query-browser__header {
-  display: inline-flex;
-  justify-content: space-between;
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap-reverse;
   padding: 10px;
   width: 100%;
-}
-
-.query-browser__controls {
-  display: inline-flex;
 }
 
 .query-browser__span-text {
   border-bottom-right-radius: 0;
   border-top-right-radius: 0;
-  width: 100px;
+  width: 80px;
 }
 
 .query-browser__span-dropdown {
@@ -52,11 +57,19 @@
 }
 
 .query-browser__span-dropdown-menu {
-  min-width: 130px;
+  min-width: 110px;
 }
 
-.query-browser__span-reset {
-  margin: 0 20px;
+.query-browser__span-dropdown, .query-browser__span-dropdown-menu, .query-browser__span-reset {
+  margin-right: 20px;
+}
+
+.query-browser__loading {
+  width: 20px;
+}
+
+.query-browser__external-link {
+  margin-left: auto;
 }
 
 .query-browser__error {

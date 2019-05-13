@@ -9,7 +9,6 @@ import { getActiveNamespace, formatNamespacedRouteForResource, UIActions } from 
 import { ColHead, List, ListHeader, MultiListPage, ResourceRow } from '../factory';
 import { RadioGroup } from '../radio';
 import { confirmModal } from '../modals';
-import { SafetyFirst } from '../safety-first';
 import {
   ButtonBar,
   Kebab,
@@ -157,7 +156,7 @@ export const RoleBindingsPage = ({namespace, showTitle=true, mock}) => <MultiLis
   createButtonText="Create Binding"
   createProps={{to: '/k8s/cluster/rolebindings/~new'}}
   mock={mock}
-  filterLabel="Role Bindings by role or subject"
+  filterLabel="by role or subject"
   flatten={flatten}
   label="Role Bindings"
   ListComponent={BindingsList}
@@ -236,7 +235,7 @@ const Section = ({label, children}) => <div>
 </div>;
 
 const BaseEditRoleBinding = connect(null, {setActiveNamespace: UIActions.setActiveNamespace})(
-  class BaseEditRoleBinding_ extends SafetyFirst {
+  class BaseEditRoleBinding_ extends React.Component {
     constructor(props) {
       super(props);
 

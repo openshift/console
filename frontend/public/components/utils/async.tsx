@@ -4,7 +4,6 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 
 import { LoadingBox } from './status-box';
-import { SafetyFirst } from '../safety-first';
 
 /**
  * FIXME: Comparing two functions is not the *best* solution, but we can handle false negatives.
@@ -12,7 +11,11 @@ import { SafetyFirst } from '../safety-first';
 const sameLoader = (a: () => Promise<React.ComponentType>) => (b: () => Promise<React.ComponentType>) =>
   (a || 'a').toString() === (b || 'b').toString();
 
-export class AsyncComponent extends SafetyFirst<AsyncComponentProps, AsyncComponentState> {
+enum AsyncComponentError {
+  ComponentNotFound = 'COMPONENT_NOT_FOUND',
+}
+
+export class AsyncComponent extends React.Component<AsyncComponentProps, AsyncComponentState> {
   state: AsyncComponentState = {Component: null, loader: null};
   props: AsyncComponentProps;
 
@@ -33,7 +36,6 @@ export class AsyncComponent extends SafetyFirst<AsyncComponentProps, AsyncCompon
   }
 
   componentDidMount() {
-    super.componentDidMount();
     if (this.state.Component === null) {
       this.loadComponent();
     }
@@ -68,10 +70,6 @@ export class AsyncComponent extends SafetyFirst<AsyncComponentProps, AsyncCompon
       ? <Component {...rest} />
       : <LoadingBox />;
   }
-}
-
-enum AsyncComponentError {
-  ComponentNotFound = 'COMPONENT_NOT_FOUND',
 }
 
 export type AsyncComponentProps = {loader: () => Promise<React.ComponentType>} & any;

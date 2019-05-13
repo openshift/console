@@ -122,10 +122,6 @@ const CustomBaseInput = (props) => {
     onBlur,
     onFocus,
     options,
-    schema,
-    formContext,
-    registry,
-    rawErrors,
     ...inputProps
   } = props;
   inputProps.type = options.inputType || inputProps.type || 'text';

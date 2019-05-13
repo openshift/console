@@ -5,7 +5,7 @@
     "moduleResolution": "node",
     "outDir": "./public/dist/build/",
     "target": "es5",
-    "lib": ["dom", "es2015", "es2016.array.include"],
+    "lib": ["dom", "es2015", "es2016.array.include", "es2017.string"],
     "jsx": "react",
     "allowJs": true,
     "downlevelIteration": true,
@@ -14,7 +14,8 @@
     "noUnusedLocals": true
   },
   "exclude": [
-    "node_modules",
+    ".yarn",
+    "**/node_modules",
     "public/dist"
   ],
   "include": [

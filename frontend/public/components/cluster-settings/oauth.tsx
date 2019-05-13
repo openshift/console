@@ -3,7 +3,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 
 import { OAuthModel } from '../../models';
-import { K8sResourceKind, referenceForModel } from '../../module/k8s';
+import { IdentityProvider, OAuthKind, referenceForModel } from '../../module/k8s';
 import { DetailsPage } from '../factory';
 import {
   Dropdown,
@@ -49,18 +49,25 @@ const IdentityProviders: React.SFC<IdentityProvidersProps> = ({identityProviders
     </div>;
 };
 
-const OAuthDetails: React.SFC<OAuthDetailsProps> = ({obj}: {obj: K8sResourceKind}) => {
-  const { identityProviders, tokenConfig = {} } = obj.spec;
+const OAuthDetails: React.SFC<OAuthDetailsProps> = ({obj}: {obj: OAuthKind}) => {
+  const { identityProviders, tokenConfig } = obj.spec;
   const addIDPItems = {
+    basicauth: 'Basic Authentication',
+    github: 'GitHub',
+    gitlab: 'GitLab',
+    google: 'Google',
     htpasswd: 'HTPasswd',
+    ldap: 'LDAP',
     oidconnect: 'OpenID Connect',
   };
   return <React.Fragment>
     <div className="co-m-pane__body">
       <SectionHeading text="OAuth Overview" />
       <ResourceSummary resource={obj}>
-        <dt>Access Token Max Age</dt>
-        <dd>{tokenDuration(tokenConfig.accessTokenMaxAgeSeconds)}</dd>
+        {tokenConfig && <React.Fragment>
+          <dt>Access Token Max Age</dt>
+          <dd>{tokenDuration(tokenConfig.accessTokenMaxAgeSeconds)}</dd>
+        </React.Fragment>}
       </ResourceSummary>
     </div>
     <div className="co-m-pane__body">
@@ -73,7 +80,8 @@ const OAuthDetails: React.SFC<OAuthDetailsProps> = ({obj}: {obj: K8sResourceKind
         buttonClassName="btn-primary"
         title="Add"
         noSelection={true}
-        items={addIDPItems} onChange={(name) => history.push(`/settings/idp/${name}`)} />
+        items={addIDPItems}
+        onChange={(name: string) => history.push(`/settings/idp/${name}`)} />
       <IdentityProviders identityProviders={identityProviders} />
     </div>
   </React.Fragment>;
@@ -89,11 +97,11 @@ export const OAuthDetailsPage: React.SFC<OAuthDetailsPageProps> = props => (
 );
 
 type IdentityProvidersProps = {
-  identityProviders: any[];
+  identityProviders: IdentityProvider[];
 };
 
 type OAuthDetailsProps = {
-  obj: K8sResourceKind;
+  obj: OAuthKind;
 };
 
 type OAuthDetailsPageProps = {

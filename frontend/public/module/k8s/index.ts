@@ -12,6 +12,7 @@ export * from './k8s-models';
 export * from './label-selector';
 export * from './cluster-operator';
 export * from './cluster-settings';
+export * from './template';
 
 export type OwnerReference = {
   name: string;
@@ -90,6 +91,166 @@ export type K8sResourceKind = {
   type?: {[key: string]: any};
 };
 
+export type VolumeMount = {
+  name: string;
+  readOnly: boolean;
+  mountPath: string;
+  subPath?: string;
+  mountPropagation?: 'None' | 'HostToContainer' | 'Bidirectional';
+  subPathExpr?: string;
+};
+
+type ProbePort = string | number;
+
+export type ExecProbe = {
+  command: string[];
+};
+
+export type HTTPGetProbe = {
+  path?: string;
+  port: ProbePort;
+  host?: string;
+  scheme: 'HTTP' | 'HTTPS';
+  httpHeaders?: any[];
+};
+
+export type TCPSocketProbe = {
+  port: ProbePort;
+  host?: string;
+};
+
+export type Handler = {
+  exec?: ExecProbe;
+  httpGet?: HTTPGetProbe;
+  tcpSocket?: TCPSocketProbe;
+};
+
+export type ContainerProbe = {
+  initialDelaySeconds?: number;
+  timeoutSeconds?: number;
+  periodSeconds?: number;
+  successThreshold?: number;
+  failureThreshold?: number;
+} & Handler;
+
+export type ContainerLifecycleStage = 'postStart' | 'preStop';
+
+export type ContainerLifecycle = {
+  postStart?: Handler;
+  preStop?: Handler;
+};
+
+export type ResourceList = {
+  [resourceName: string]: string;
+};
+
+type EnvVarSource = {
+  fieldRef?: {
+    apiVersion?: string;
+    fieldPath: string;
+  };
+  resourceFieldRef?: {
+    resource: string;
+    containerName?: string;
+    divisor?: string;
+  };
+  configMapKeyRef?: {
+    key: string;
+    name: string;
+  };
+  secretKeyRef?: {
+    key: string;
+    name: string;
+  };
+};
+
+export type EnvVar = {
+  name: string;
+  value?: string;
+  valueFrom?: EnvVarSource;
+};
+
+export type ContainerPort = {
+  name?: string;
+  containerPort: number;
+  protocol: string;
+};
+
+type ImagePullPolicy = 'Always' | 'Never' | 'IfNotPresent';
+
+export type ContainerSpec = {
+  name: string;
+  volumeMounts?: VolumeMount[];
+  env?: EnvVar[];
+  livenessProbe?: ContainerProbe;
+  readinessProbe?: ContainerProbe;
+  lifecycle?: ContainerLifecycle;
+  resources?: {
+    limits?: ResourceList;
+    requested?: ResourceList;
+  };
+  ports?: ContainerPort[];
+  imagePullPolicy?: ImagePullPolicy;
+  [key: string]: any;
+};
+
+export type Volume = {
+  name: string;
+  [key: string]: any;
+};
+
+export type PodSpec = {
+  volumes?: Volume[];
+  initContainers?: ContainerSpec[];
+  containers: ContainerSpec[];
+  restartPolicy?: 'Always' | 'OnFailure' | 'Never';
+  terminationGracePeriodSeconds?: number;
+  activeDeadlineSeconds?: number;
+  nodeSelector?: any;
+  serviceAccountName?: string;
+  priorityClassName?: string;
+  tolerations?: Toleration[];
+  [key: string]: any;
+};
+
+type PodPhase = 'Pending' | 'Running' | 'Succeeded' | 'Failed' | 'Unknown';
+
+export type ContainerState = {
+  waiting?: any;
+  running?: any;
+  terminated?: any;
+};
+
+export type ContainerStatus = {
+  name: string;
+  state?: ContainerState;
+  lastState?: ContainerState;
+  ready: boolean;
+  restartCount: number;
+  image: string;
+  imageID: string;
+  containerID?: string;
+};
+
+export type PodStatus = {
+  phase: PodPhase;
+  conditions?: any[];
+  message?: string;
+  reason?: string;
+  startTime?: string;
+  initContainerStatuses?: ContainerStatus[];
+  containerStatuses?: ContainerStatus[];
+  [key: string]: any;
+};
+
+export type PodTemplate = {
+  spec: PodSpec;
+};
+
+export type PodKind = {
+  status: PodStatus;
+} & PodTemplate & K8sResourceKind;
+
 export type NodeKind = {
   spec?: {
     taints?: Taint[];
@@ -99,15 +260,9 @@ export type NodeKind = {
 export type ConfigMapKind = {
   apiVersion: string;
   kind: string;
-  metadata: {
-    annotations?: {[key: string]: string},
-    name: string,
-    namespace?: string,
-    labels?: {[key: string]: string},
-    ownerReferences?: OwnerReference[],
-    [key: string]: any,
-  };
+  metadata: ObjectMetadata;
   data: {[key: string]: string};
+  binaryData: {[key: string]: string};
 };
 
 export type CustomResourceDefinitionKind = {
@@ -123,6 +278,45 @@ export type CustomResourceDefinitionKind = {
     };
     scope?: 'Namespaced';
   }
+} & K8sResourceKind;
+
+export type TemplateParameter = {
+  name: string;
+  value?: string;
+  displayName?: string;
+  description?: string;
+  generate?: string;
+  required?: boolean;
+};
+
+export type TemplateKind = {
+  message?: string;
+  objects: any[];
+  parameters: TemplateParameter[];
+  labels?: any[];
+} & K8sResourceKind;
+
+type TemplateInstanceObject = {
+  ref: ObjectReference;
+};
+
+export type TemplateInstanceKind = {
+  spec: {
+    template: TemplateKind;
+    secret: {
+      name: string;
+    };
+    requester?: {
+      username?: string;
+      uid?: string;
+      groups?: string[];
+      extra?: any;
+    };
+  };
+  status?: {
+    conditions: any[];
+    objects: TemplateInstanceObject[];
+  };
 } & K8sResourceKind;
 
 export type MachineSpec = {
@@ -300,6 +494,43 @@ export type ClusterOperator = {
   };
 } & K8sResourceKind;
 
+export type MappingMethodType = 'claim' | 'lookup' | 'add';
+
+type IdentityProviderType = 'BasicAuth' | 'GitHub' | 'GitLab' | 'Google' | 'HTPasswd' | 'Keystone' | 'LDAP' | 'OpenID' | 'RequestHeader';
+
+type IdentityProviderConfig = {
+  [key: string]: any;
+};
+
+export type IdentityProvider = {
+  name: string;
+  mappingMethod: MappingMethodType;
+  type: IdentityProviderType;
+  basicAuth?: IdentityProviderConfig;
+  github?: IdentityProviderConfig;
+  gitlab?: IdentityProviderConfig;
+  google?: IdentityProviderConfig;
+  htpasswd?: IdentityProviderConfig;
+  keystone?: IdentityProviderConfig;
+  ldap?: IdentityProviderConfig;
+  openID?: IdentityProviderConfig;
+  requestHeader?: IdentityProviderConfig;
+};
+
+export type OAuthKind = {
+  spec: {
+    identityProviders?: IdentityProvider[];
+    tokenConfig?: {
+      accessTokenMaxAgeSeconds: number;
+    };
+    templates?: {
+      login: string;
+      providerSelection: string;
+      error: string;
+    };
+  };
+} & K8sResourceKind;
+
 export type K8sKind = {
   abbr: string;
   kind: string;
@@ -318,11 +549,6 @@ export type K8sKind = {
   labels?: {[key: string]: string};
   annotations?: {[key: string]: string};
   verbs?: string[];
-};
-
-export type ContainerPort = {
-  containerPort: number,
-  protocol: string,
 };
 
 /**

@@ -7,7 +7,7 @@ import { Dropdown, EmptyBox, PromiseComponent } from '../utils';
 import { K8sKind, k8sPatch, NodeKind, Taint } from '../../module/k8s';
 import { createModalLauncher, ModalBody, ModalComponentProps, ModalSubmitFooter, ModalTitle } from '../factory';
 
-class TaintsModal extends PromiseComponent {
+class TaintsModal extends PromiseComponent<TaintsModalProps, TaintsModalState> {
   readonly state: TaintsModalState;
 
   constructor(public props: TaintsModalProps) {
@@ -125,7 +125,6 @@ export const taintsModal = createModalLauncher(TaintsModal);
 type TaintsModalProps = {
   resourceKind: K8sKind;
   resource: NodeKind;
-  modalClassName: string;
 } & ModalComponentProps;
 
 type TaintsModalState = {

@@ -1,13 +1,12 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 
-// eslint-disable-next-line no-unused-vars
-import { k8sCreate, K8sResourceKindReference } from '../module/k8s';
+import { k8sCreate, K8sKind, K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
 import { errorModal } from './modals';
 import { DeploymentConfigModel } from '../models';
 import { Conditions } from './conditions';
 import { ResourceEventStream } from './events';
-import { MountedVolumes } from './mounted-vol';
+import { VolumesTable } from './volumes-table';
 import {
   DetailsPage,
   List,
@@ -18,6 +17,7 @@ import {
 import {
   AsyncComponent,
   Kebab,
+  KebabAction,
   ContainerTable,
   DeploymentPodCounts,
   navFactory,
@@ -31,7 +31,7 @@ import {
 
 const DeploymentConfigsReference: K8sResourceKindReference = 'DeploymentConfig';
 
-const rollout = dc => {
+const rollout = (dc: K8sResourceKind): Promise<K8sResourceKind> => {
   const req = {
     kind: 'DeploymentRequest',
     apiVersion: 'apps.openshift.io/v1',
@@ -47,7 +47,7 @@ const rollout = dc => {
   return k8sCreate(DeploymentConfigModel, req, opts);
 };
 
-const rolloutAction = (kind, obj) => ({
+const RolloutAction: KebabAction = (kind: K8sKind, obj: K8sResourceKind) => ({
   label: 'Start Rollout',
   callback: () => rollout(obj).catch(err => {
     const error = err.message;
@@ -55,7 +55,7 @@ const rolloutAction = (kind, obj) => ({
   }),
 });
 
-export const pauseAction = (kind, obj) => ({
+const PauseAction = (kind: K8sKind, obj: K8sResourceKind) => ({
   label: obj.spec.paused ? 'Resume Rollouts' : 'Pause Rollouts',
   callback: () => togglePaused(kind, obj).catch((err) => errorModal({error: err.message})),
 });
@@ -63,8 +63,8 @@ export const pauseAction = (kind, obj) => ({
 const {ModifyCount, AddStorage, EditEnvironment, common} = Kebab.factory;
 
 export const menuActions = [
-  rolloutAction,
-  pauseAction,
+  RolloutAction,
+  PauseAction,
   ModifyCount,
   AddStorage,
   EditEnvironment,
@@ -102,7 +102,7 @@ export const DeploymentConfigDetailsList = ({dc}) => {
   </dl>;
 };
 
-export const DeploymentConfigsDetails: React.SFC<{obj: any}> = ({obj: dc}) => {
+export const DeploymentConfigsDetails: React.FC<{obj: K8sResourceKind}> = ({obj: dc}) => {
   return <React.Fragment>
     <div className="co-m-pane__body">
       <SectionHeading text="Deployment Config Overview" />
@@ -127,7 +127,7 @@ export const DeploymentConfigsDetails: React.SFC<{obj: any}> = ({obj: dc}) => {
       <ContainerTable containers={dc.spec.template.spec.containers} />
     </div>
     <div className="co-m-pane__body">
-      <MountedVolumes podTemplate={dc.spec.template} heading="Mounted Volumes" />
+      <VolumesTable podTemplate={dc.spec.template} heading="Volumes" />
     </div>
     <div className="co-m-pane__body">
       <SectionHeading text="Conditions" />
@@ -154,18 +154,18 @@ const pages = [
   navFactory.events(ResourceEventStream),
 ];
 
-export const DeploymentConfigsDetailsPage: React.SFC<DeploymentConfigsDetailsPageProps> = props => {
+export const DeploymentConfigsDetailsPage: React.FC<DeploymentConfigsDetailsPageProps> = props => {
   return <DetailsPage {...props} kind={DeploymentConfigsReference} menuActions={menuActions} pages={pages} />;
 };
 DeploymentConfigsDetailsPage.displayName = 'DeploymentConfigsDetailsPage';
 
-const DeploymentConfigsRow: React.SFC<DeploymentConfigsRowProps> = props => {
+const DeploymentConfigsRow: React.FC<DeploymentConfigsRowProps> = props => {
   return <WorkloadListRow {...props} kind="DeploymentConfig" actions={menuActions} />;
 };
-export const DeploymentConfigsList: React.SFC = props => <List {...props} Header={WorkloadListHeader} Row={DeploymentConfigsRow} />;
+export const DeploymentConfigsList: React.FC = props => <List {...props} Header={WorkloadListHeader} Row={DeploymentConfigsRow} />;
 DeploymentConfigsList.displayName = 'DeploymentConfigsList';
 
-export const DeploymentConfigsPage: React.SFC<DeploymentConfigsPageProps> = props => {
+export const DeploymentConfigsPage: React.FC<DeploymentConfigsPageProps> = props => {
   const createItems = {
     image: 'From Image',
     yaml: 'From YAML',
@@ -173,7 +173,7 @@ export const DeploymentConfigsPage: React.SFC<DeploymentConfigsPageProps> = prop
 
   const createProps = {
     items: createItems,
-    createLink: type => type === 'image'
+    createLink: (type: string) => type === 'image'
       ? `/deploy-image${props.namespace ? `?preselected-ns=${props.namespace}` : ''}`
       : `/k8s/ns/${props.namespace || 'default'}/deploymentconfigs/~new`,
   };
@@ -181,17 +181,15 @@ export const DeploymentConfigsPage: React.SFC<DeploymentConfigsPageProps> = prop
 };
 DeploymentConfigsPage.displayName = 'DeploymentConfigsListPage';
 
-/* eslint-disable no-undef */
-export type DeploymentConfigsRowProps = {
-  obj: any,
+type DeploymentConfigsRowProps = {
+  obj: K8sResourceKind;
 };
 
-export type DeploymentConfigsPageProps = {
-  filterLabel: string,
-  namespace: string,
+type DeploymentConfigsPageProps = {
+  filterLabel: string;
+  namespace: string;
 };
 
-export type DeploymentConfigsDetailsPageProps = {
-  match: any,
+type DeploymentConfigsDetailsPageProps = {
+  match: any;
 };
-/* eslint-enable no-undef */

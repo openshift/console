@@ -150,3 +150,11 @@ export const parsePrometheusDuration = (duration: string): number => {
     return 0;
   }
 };
+
+const zeroPad = (number: number) => number < 10 ? `0${number}` : number;
+
+export const twentyFourHourTime = (date: Date): string => {
+  const hours = zeroPad(date.getHours());
+  const minutes = zeroPad(date.getMinutes());
+  return `${hours}:${minutes}`;
+};

@@ -238,6 +238,18 @@
   @media (min-width: $screen-sm-min) {
     margin: $grid-gutter-width;
   }
+
+  .co-well__close-button {
+    float: right;
+  }
+
+  .co-well__close-button {
+    color: $color-pf-blue-600;
+  }
+
+  .co-well__close-button:hover, .co-well__close-button:active {
+    color: $color-pf-blue-400;
+  }
 }
 
 // Prevent iOS phones from zooming on form inputs
@@ -575,7 +587,10 @@
   margin: 0 !important;
 }
 
-.text-filter {
+.co-text-filter {
   min-width: 150px;
   width: 250px;
+  &:focus + .form-control-feedback--keyboard-hint {
+    display: none;
+  }
 }

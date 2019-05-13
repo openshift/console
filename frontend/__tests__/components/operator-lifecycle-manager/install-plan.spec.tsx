@@ -132,7 +132,6 @@ describe(InstallPlansPage.displayName, () => {
     expect(wrapper.find(MultiListPage).props().title).toEqual('Install Plans');
     expect(wrapper.find(MultiListPage).props().showTitle).toBe(false);
     expect(wrapper.find(MultiListPage).props().ListComponent).toEqual(InstallPlansList);
-    expect(wrapper.find(MultiListPage).props().filterLabel).toEqual('Install Plans by name');
     expect(wrapper.find(MultiListPage).props().resources).toEqual([
       {kind: k8s.referenceForModel(InstallPlanModel), namespace: 'default', namespaced: true, prop: 'installPlan'},
       {kind: k8s.referenceForModel(OperatorGroupModel), namespace: 'default', namespaced: true, prop: 'operatorGroup'},
@@ -194,6 +193,7 @@ describe(InstallPlanPreview.name, () => {
 
   it('calls `k8sUpdate` to set `approved: true` when button is clicked', (done) => {
     spyAndExpect(spyOn(k8s, 'k8sUpdate'))(Promise.resolve(testInstallPlan)).then(([model, obj]) => {
+      expect(model).toEqual(InstallPlanModel);
       expect(obj.spec.approved).toBe(true);
       done();
     });

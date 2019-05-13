@@ -1,26 +1,26 @@
 /* eslint-disable no-undef, no-unused-vars */
 
 import * as React from 'react';
-import * as _ from 'lodash-es';
 import { Helmet } from 'react-helmet';
 
-import { OAuthModel, SecretModel, ConfigMapModel } from '../../models';
-import { k8sCreate, k8sGet, k8sPatch, K8sResourceKind, referenceFor } from '../../module/k8s';
+import { SecretModel, ConfigMapModel } from '../../models';
 import {
-  AsyncComponent,
+  IdentityProvider,
+  k8sCreate,
+  K8sResourceKind,
+  OAuthKind,
+} from '../../module/k8s';
+import {
   ButtonBar,
   ListInput,
   PromiseComponent,
   history,
-  resourceObjPath,
 } from '../utils';
+import { addIDP, getOAuthResource, redirectToOAuthPage } from './';
+import { IDPNameInput } from './idp-name-input';
+import { IDPCAFileInput } from './idp-cafile-input';
 
-// The name of the cluster-scoped OAuth configuration resource.
-const oauthResourceName = 'cluster';
-
-const DroppableFileInput = (props) => <AsyncComponent loader={() => import('../utils/file-input').then(c => c.DroppableFileInput)} {...props} />;
-
-export class AddOpenIDPage extends PromiseComponent {
+export class AddOpenIDPage extends PromiseComponent<{}, AddOpenIDIDPPageState> {
   readonly state: AddOpenIDIDPPageState = {
     name: 'openid',
     clientID: '',
@@ -35,8 +35,8 @@ export class AddOpenIDPage extends PromiseComponent {
     errorMessage: '',
   };
 
-  getOAuthResource(): Promise<K8sResourceKind> {
-    return this.handlePromise(k8sGet(OAuthModel, oauthResourceName));
+  getOAuthResource(): Promise<OAuthKind> {
+    return this.handlePromise(getOAuthResource());
   }
 
   createClientSecret(): Promise<K8sResourceKind> {
@@ -77,9 +77,9 @@ export class AddOpenIDPage extends PromiseComponent {
     return this.handlePromise(k8sCreate(ConfigMapModel, ca));
   }
 
-  addOpenIDIDP(oauth: K8sResourceKind, clientSecretName: string, caName: string): Promise<K8sResourceKind> {
+  addOpenIDIDP(oauth: OAuthKind, clientSecretName: string, caName: string): Promise<K8sResourceKind> {
     const { name, clientID, issuer, extraScopes, claimPreferredUsernames, claimNames, claimEmails } = this.state;
-    const idp: any = {
+    const idp: IdentityProvider = {
       name,
       type: 'OpenID',
       mappingMethod: 'claim',
@@ -104,22 +104,15 @@ export class AddOpenIDPage extends PromiseComponent {
       };
     }
 
-    const patch = _.isEmpty(oauth.spec.identityProviders)
-      ? { op: 'add', path: '/spec/identityProviders', value: [idp] }
-      : { op: 'add', path: '/spec/identityProviders/-', value: idp };
-    return this.handlePromise(k8sPatch(OAuthModel, oauth, [patch]));
+    return this.handlePromise(addIDP(oauth, idp));
   }
 
   submit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
-    if (!this.state.clientSecret) {
-      this.setState({errorMessage: 'You must specify a client secret.'});
-      return;
-    }
 
     // Clear any previous errors.
     this.setState({errorMessage: ''});
-    this.getOAuthResource().then((oauth: K8sResourceKind) => {
+    this.getOAuthResource().then((oauth: OAuthKind) => {
       const promises = [
         this.createClientSecret(),
         this.createCAConfigMap(),
@@ -128,9 +121,7 @@ export class AddOpenIDPage extends PromiseComponent {
       Promise.all(promises).then(([secret, configMap]) => {
         const caName = configMap ? configMap.metadata.name : '';
         return this.addOpenIDIDP(oauth, secret.metadata.name, caName);
-      }).then(() => {
-        history.push(resourceObjPath(oauth, referenceFor(oauth)));
-      });
+      }).then(redirectToOAuthPage);
     });
   };
 
@@ -182,19 +173,7 @@ export class AddOpenIDPage extends PromiseComponent {
         <p className="co-m-pane__explanation">
           Integrate with an OpenID Connect identity provider using an Authorization Code Flow.
         </p>
-        <div className="form-group">
-          <label className="control-label co-required" htmlFor="name">Name</label>
-          <input className="form-control"
-            type="text"
-            onChange={this.nameChanged}
-            value={name}
-            aria-describedby="oid-name-help"
-            id="name"
-            required />
-          <p className="help-block" id="oid-name-help">
-            Unique name of the new identity provider. This cannot be changed later.
-          </p>
-        </div>
+        <IDPNameInput value={name} onChange={this.nameChanged} />
         <div className="form-group">
           <label className="control-label co-required" htmlFor="clientID">Client ID</label>
           <input className="form-control"
@@ -234,15 +213,8 @@ export class AddOpenIDPage extends PromiseComponent {
         <ListInput label="Name" initialValues={claimNames} onChange={this.claimNamesChanged} />
         <ListInput label="Email" initialValues={claimEmails} onChange={this.claimEmailsChanged} />
         <div className="co-form-section__separator"></div>
-        <h3>More options</h3>
-        <div className="form-group">
-          <DroppableFileInput
-            onChange={this.caFileChanged}
-            inputFileData={caFileContent}
-            id="caFileContent"
-            label="CA File"
-            hideContents />
-        </div>
+        <h3>More Options</h3>
+        <IDPCAFileInput value={caFileContent} onChange={this.caFileChanged} />
         <ListInput label="Extra Scopes" onChange={this.extraScopesChanged} />
         <ButtonBar errorMessage={this.state.errorMessage} inProgress={this.state.inProgress}>
           <button type="submit" className="btn btn-primary">Add</button>

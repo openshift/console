@@ -318,6 +318,33 @@ export const BuildModel: K8sKind = {
   labelPlural: 'Builds',
 };
 
+export const TemplateModel: K8sKind = {
+  label: 'Template',
+  apiVersion: 'v1',
+  path: 'templates',
+  apiGroup: 'template.openshift.io',
+  plural: 'templates',
+  abbr: 'T',
+  namespaced: true,
+  propagationPolicy: 'Foreground',
+  kind: 'Template',
+  id: 'template',
+  labelPlural: 'Templates',
+};
+
+export const TemplateInstanceModel: K8sKind = {
+  label: 'Template Instance',
+  apiVersion: 'v1',
+  path: 'templateinstances',
+  apiGroup: 'template.openshift.io',
+  plural: 'templateinstances',
+  abbr: 'TI',
+  namespaced: true,
+  kind: 'TemplateInstance',
+  id: 'templateinstance',
+  labelPlural: 'Template Instances',
+};
+
 export const ImageStreamModel: K8sKind = {
   label: 'Image Stream',
   apiVersion: 'v1',
@@ -847,6 +874,20 @@ export const MachineConfigModel: K8sKind = {
   namespaced: false,
   kind: 'MachineConfig',
   id: 'machineconfigpool',
+  crd: true,
+};
+
+export const MachineAutoscalerModel: K8sKind = {
+  label: 'Machine Autoscaler',
+  labelPlural: 'Machine Autoscalers',
+  apiVersion: 'v1beta1',
+  path: 'machineautoscalers',
+  apiGroup: 'autoscaling.openshift.io',
+  plural: 'machineautoscalers',
+  abbr: 'MA',
+  namespaced: true,
+  kind: 'MachineAutoscaler',
+  id: 'machineautoscaler',
   crd: true,
 };
 

@@ -1,6 +1,23 @@
+.co-system-status-icon {
+  margin-top: 3px;
+  .visible-xs-block & {
+    margin-top: 5px;
+  }
+}
+
 .co-username {
-  max-width: 225px !important; // PF4 does not limit username length (upstream bug)
+  max-width: 190px !important; // PF4 does not limit username length (upstream bug)
   overflow-x: hidden;
   padding: 0 8px; // so sizing is consistent with .pf-c-dropdown__toggle
   text-overflow: ellipsis;
+  @media(min-width: 820px) {
+    max-width: 225px !important;
+  }
+  @media(min-width: $screen-md-min) {
+    max-width: 300px !important;
+  }
+}
+
+.co-update-icon svg {
+  color: $color-pf-blue-400;
 }

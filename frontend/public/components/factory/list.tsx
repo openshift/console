@@ -26,7 +26,6 @@ import {
   silenceStateOrder,
 } from '../../monitoring';
 import {
-  containerLinuxUpdateOperator,
   EmptyBox,
   LabelList,
   ResourceKebab,
@@ -49,6 +48,8 @@ import {
   serviceClassDisplayName,
   getClusterOperatorStatus,
   getClusterOperatorVersion,
+  getTemplateInstanceStatus,
+  getNodeRoles,
 } from '../../module/k8s';
 
 const fuzzyCaseInsensitive = (a, b) => fuzzy(_.toLower(a), _.toLower(b));
@@ -189,6 +190,15 @@ const listFilters = {
     const status = getClusterOperatorStatus(operator);
     return statuses.selected.has(status) || !_.includes(statuses.all, status);
   },
+
+  'template-instance-status': (statuses, instance) => {
+    if (!statuses || !statuses.selected || !statuses.selected.size) {
+      return true;
+    }
+
+    const status = getTemplateInstanceStatus(instance);
+    return statuses.selected.has(status) || !_.includes(statuses.all, status);
+  },
 };
 
 const getFilteredRows = (_filters, objects) => {
@@ -232,7 +242,6 @@ const sorts = {
     readiness = _.find(readiness, {type: 'Ready'});
     return _.get(readiness, 'status');
   },
-  nodeUpdateStatus: node => _.get(containerLinuxUpdateOperator.getUpdateStatus(node), 'text'),
   numReplicas: resource => _.toInteger(_.get(resource, 'status.replicas')),
   planExternalName,
   podPhase,
@@ -242,6 +251,11 @@ const sorts = {
   string: val => JSON.stringify(val),
   getClusterOperatorStatus,
   getClusterOperatorVersion,
+  getTemplateInstanceStatus,
+  nodeRoles: (node: K8sResourceKind): string => {
+    const roles = getNodeRoles(node);
+    return roles.sort().join(', ');
+  },
 };
 
 export class ColHead extends React.Component<ColHeadProps> {

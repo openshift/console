@@ -2,7 +2,6 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import * as classNames from 'classnames';
 
-import { SafetyFirst } from './safety-first';
 import { FLAGS, connectToFlags, flagPending } from '../features';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
 import { getQueryArgument, setQueryArgument } from './utils/router';
@@ -172,7 +171,7 @@ const DataTable = ({rows, orderBy, sortBy, applySort, keys, maxValues, totals}:D
   </div>;
 };
 
-class ReportData extends SafetyFirst<ReportDataProps, ReportDataState> {
+class ReportData extends React.Component<ReportDataProps, ReportDataState> {
   constructor(props) {
     super(props);
     this.state = {
@@ -201,7 +200,6 @@ class ReportData extends SafetyFirst<ReportDataProps, ReportDataState> {
   }
 
   componentDidMount() {
-    super.componentDidMount();
     this.fetchData();
   }
 

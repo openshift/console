@@ -1,11 +1,13 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import * as semver from 'semver';
+import { Popover } from '@patternfly/react-core';
+import { QuestionCircleIcon } from '@patternfly/react-icons';
 
 // eslint-disable-next-line no-unused-vars
 import { K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
-import { Kebab, SectionHeading, LabelList, navFactory, ResourceKebab, ResourceLink, ResourceSummary, history, Timestamp } from './utils';
+import { CopyToClipboard, ExternalLink, Kebab, SectionHeading, LabelList, navFactory, ResourceKebab, ResourceLink, ResourceSummary, history, Timestamp } from './utils';
 import { fromNow } from './utils/datetime';
 
 const ImageStreamsReference: K8sResourceKindReference = 'ImageStream';
@@ -107,6 +109,38 @@ const ImageStreamTagsRow: React.SFC<ImageStreamTagsRowProps> = ({imageStream, sp
   </div>;
 };
 
+const ExampleDockerCommandPopover: React.FC<ImageStreamManipulationHelpProps> = ({imageStream}) => {
+  const publicImageRepository = _.get(imageStream, 'status.publicDockerImageRepository');
+  if (!publicImageRepository) {
+    return null;
+  }
+  const loginCommand = 'oc registry login';
+  const pushCommand = `docker push ${publicImageRepository}:<tag>`;
+  const pullCommand = `docker pull ${publicImageRepository}:<tag>`;
+
+  return <Popover
+    headerContent={<React.Fragment>Image registry commands</React.Fragment>}
+    className="co-example-docker-command__popover"
+    bodyContent={
+      <div>
+        <p>Create a new Image Stream Tag by pushing an image to this Image Stream with the desired tag.</p>
+        <br />
+        <p>Authenticate to the internal registry</p>
+        <CopyToClipboard value={loginCommand} />
+        <br />
+        <p>Push an image to this Image Stream</p>
+        <CopyToClipboard value={pushCommand} />
+        <br />
+        <p>Pull an image from this Image Stream</p>
+        <CopyToClipboard value={pullCommand} />
+        <br />
+        <p>Red Hat Enterprise Linux users may use the equivalent <strong>podman</strong> commands. <ExternalLink href="https://podman.io/" text="Learn more." /></p>
+      </div>
+    }>
+    <button className="btn btn-link btn-link--no-btn-default-values hidden-sm hidden-xs" type="button"><QuestionCircleIcon /> Do you need to work with this Image Stream outside of the web console?</button>
+  </Popover>;
+};
+
 export const ImageStreamsDetails: React.SFC<ImageStreamsDetailsProps> = ({obj: imageStream}) => {
   const imageRepository = _.get(imageStream, 'status.dockerImageRepository');
   const publicImageRepository = _.get(imageStream, 'status.publicDockerImageRepository');
@@ -124,6 +158,7 @@ export const ImageStreamsDetails: React.SFC<ImageStreamsDetailsProps> = ({obj: i
         <dt>Image Count</dt>
         <dd>{imageCount ? imageCount : 0}</dd>
       </ResourceSummary>
+      <ExampleDockerCommandPopover imageStream={imageStream} />
     </div>
     <div className="co-m-pane__body">
       <SectionHeading text="Tags" />
@@ -203,24 +238,28 @@ ImageStreamsPage.displayName = 'ImageStreamsListPage';
 
 /*  eslint-disable no-undef, no-unused-vars  */
 type ImageStreamTagsRowProps = {
-  imageStream: any,
-  specTag: any,
-  statusTag: any,
+  imageStream: K8sResourceKind;
+  specTag: any;
+  statusTag: any;
+};
+
+export type ImageStreamManipulationHelpProps = {
+  imageStream: K8sResourceKind;
 };
 
 export type ImageStreamsRowProps = {
-  obj: any,
+  obj: K8sResourceKind;
 };
 
 export type ImageStreamsDetailsProps = {
-  obj: any,
+  obj: K8sResourceKind;
 };
 
 export type ImageStreamsPageProps = {
-  filterLabel: string,
+  filterLabel: string;
 };
 
 export type ImageStreamsDetailsPageProps = {
-  match: any,
+  match: any;
 };
 /* eslint-enable no-undef, no-unused-vars */

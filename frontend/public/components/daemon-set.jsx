@@ -23,7 +23,7 @@ import {
   Selector,
 } from './utils';
 import { ResourceEventStream } from './events';
-import { MountedVolumes } from './mounted-vol';
+import { VolumesTable } from './volumes-table';
 
 export const menuActions = [Kebab.factory.AddStorage, Kebab.factory.EditEnvironment, ...Kebab.factory.common];
 
@@ -83,7 +83,7 @@ const Details = ({obj: daemonset}) => <React.Fragment>
     <ContainerTable containers={daemonset.spec.template.spec.containers} />
   </div>
   <div className="co-m-pane__body">
-    <MountedVolumes podTemplate={daemonset.spec.template} heading="Mounted Volumes" />
+    <VolumesTable podTemplate={daemonset.spec.template} heading="Volumes" />
   </div>
 </React.Fragment>;
 

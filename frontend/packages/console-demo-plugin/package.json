@@ -1,0 +1,13 @@
+{
+  "name": "@console/demo-plugin",
+  "version": "0.0.0-fixed",
+  "description": "Demo plugin for Console web application",
+  "private": true,
+  "dependencies": {
+    "@console/plugin-sdk": "0.0.0-fixed",
+    "@console/shared": "0.0.0-fixed"
+  },
+  "consolePlugin": {
+    "entry": "src/plugin.ts"
+  }
+}

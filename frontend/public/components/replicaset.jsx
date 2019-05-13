@@ -15,7 +15,7 @@ import {
 } from './utils';
 import { breadcrumbsForOwnerRefs } from './utils/breadcrumbs';
 import { ResourceEventStream } from './events';
-import { MountedVolumes } from './mounted-vol';
+import { VolumesTable } from './volumes-table';
 
 const {ModifyCount, AddStorage, EditEnvironment, common} = Kebab.factory;
 
@@ -45,7 +45,7 @@ const Details = ({obj: replicaSet}) => {
       <ContainerTable containers={replicaSet.spec.template.spec.containers} />
     </div>
     <div className="co-m-pane__body">
-      <MountedVolumes podTemplate={replicaSet.spec.template} heading="Mounted Volumes" />
+      <VolumesTable podTemplate={replicaSet.spec.template} heading="Volumes" />
     </div>
   </React.Fragment>;
 };

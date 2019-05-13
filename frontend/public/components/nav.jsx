@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import * as _ from 'lodash-es';
 import * as PropTypes from 'prop-types';
+import memoize from 'memoize-one';
 
 import { FLAGS, featureReducerName, flagPending } from '../features';
 import { monitoringReducerName, MonitoringRoutes } from '../monitoring';
@@ -16,6 +17,7 @@ import {
   DeploymentConfigModel,
   ImageStreamModel,
   InstallPlanModel,
+  MachineAutoscalerModel,
   MachineConfigModel,
   MachineConfigPoolModel,
   MachineModel,
@@ -26,6 +28,7 @@ import {
 import { referenceForModel } from '../module/k8s';
 
 import { stripBasePath } from './utils';
+import * as plugins from '../plugins';
 
 export const matchesPath = (resourcePath, prefix) => resourcePath === prefix || _.startsWith(resourcePath, `${prefix}/`);
 export const matchesModel = (resourcePath, model) => model && matchesPath(resourcePath, referenceForModel(model));
@@ -38,7 +41,7 @@ const stripNS = href => {
 };
 
 const ExternalLink = ({href, name}) => <NavItem isActive={false}>
-  <a className="pf-c-nav__link" href={href} target="_blank">{name}<span className="co-external-link"></span></a>
+  <a className="pf-c-nav__link" href={href} target="_blank" rel="noopener noreferrer">{name}<span className="co-external-link"></span></a>
 </NavItem>;
 
 class NavLink extends React.PureComponent {
@@ -227,6 +230,10 @@ const NavSection = connect(navSectionStateToProps)(
       this.setState({isOpen: expandState});
     }
 
+    getPluginNavItems = memoize(
+      (section) => plugins.registry.getNavItems(section)
+    );
+
     render() {
       if (!this.props.canRender) {
         return null;
@@ -236,7 +243,7 @@ const NavSection = connect(navSectionStateToProps)(
       const { isOpen, activeChild } = this.state;
       const isActive = !!activeChild;
 
-      const Children = React.Children.map(children, c => {
+      const mapChild = (c) => {
         if (!c) {
           return null;
         }
@@ -252,11 +259,23 @@ const NavSection = connect(navSectionStateToProps)(
           return null;
         }
         return React.cloneElement(c, {key: name, isActive: name === this.state.activeChild, activeNamespace, flags});
-      });
+      };
 
-      return Children ? (
+      const Children = React.Children.map(children, mapChild);
+
+      const PluginChildren = _.compact(this.getPluginNavItems(title).map((item, index) => {
+        if (plugins.isHrefNavItem(item)) {
+          return <HrefLink key={index} {...item.properties.componentProps} />;
+        }
+        if (plugins.isResourceNSNavItem(item)) {
+          return <ResourceNSLink key={index} {...item.properties.componentProps} />;
+        }
+      })).map(mapChild);
+
+      return (Children || PluginChildren.length > 0) ? (
         <NavExpandable title={title} isActive={isActive} isExpanded={isOpen} onExpand={this.toggle}>
           {Children}
+          {PluginChildren}
         </NavExpandable>
       ) : null;
     }
@@ -301,6 +320,7 @@ const MonitoringNavSection_ = ({grafanaURL, canAccess, kibanaURL, prometheusURL}
     ? <NavSection title="Monitoring">
       {showAlerts && <HrefLink href="/monitoring/alerts" name="Alerts" startsWith={monitoringAlertsStartsWith} />}
       {showSilences && <HrefLink href="/monitoring/silences" name="Silences" />}
+      {showAlerts && <HrefLink href="/monitoring/query-browser" name="Query Browser" />}
       {showPrometheus && <ExternalLink href={prometheusURL} name="Metrics" />}
       {showGrafana && <ExternalLink href={grafanaURL} name="Dashboards" />}
       {kibanaURL && <ExternalLink href={kibanaURL} name="Logging" />}
@@ -351,7 +371,6 @@ export const Navigation = ({ isNavOpen, onNavSelect }) => {
             activePath="/operatorhub/"
           />
           <HrefLink
-            required={[FLAGS.CAN_LIST_PACKAGE_MANIFEST, FLAGS.CAN_LIST_OPERATOR_GROUP]}
             href="/operatormanagement"
             name="Operator Management"
             activePath="/operatormanagement/"
@@ -405,7 +424,8 @@ export const Navigation = ({ isNavOpen, onNavSelect }) => {
         <NavSection title="Compute" required={FLAGS.CAN_LIST_NODE}>
           <ResourceClusterLink resource="nodes" name="Nodes" />
           <ResourceNSLink resource={referenceForModel(MachineModel)} name="Machines" required={FLAGS.CLUSTER_API} />
-          <ResourceNSLink resource={referenceForModel(MachineSetModel)} name="Machine Sets" required={FLAGS.CLUSTER_API} isSeparated />
+          <ResourceNSLink resource={referenceForModel(MachineSetModel)} name="Machine Sets" required={FLAGS.CLUSTER_API} />
+          <ResourceNSLink resource={referenceForModel(MachineAutoscalerModel)} name="Machine Autoscalers" required={FLAGS.MACHINE_AUTOSCALER} isSeparated />
           <ResourceClusterLink resource={referenceForModel(MachineConfigModel)} name="Machine Configs" required={FLAGS.MACHINE_CONFIG} />
           <ResourceClusterLink resource={referenceForModel(MachineConfigPoolModel)} name="Machine Config Pools" required={FLAGS.MACHINE_CONFIG} />
         </NavSection>

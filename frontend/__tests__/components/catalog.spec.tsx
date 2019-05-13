@@ -22,24 +22,25 @@ describe(CatalogTileViewPage.displayName, () => {
     const tabs = wrapper.find(VerticalTabsTab);
 
     expect(tabs.exists()).toBe(true);
-    expect(tabs.length).toEqual(19); // 'All' through 'Other', plus subcategories
+    expect(tabs.length).toEqual(20); // 'All' through 'Other', plus subcategories
   });
 
   it('renders category filter controls', () => {
     const filterItems = wrapper.find(FilterSidePanel.CategoryItem);
 
     expect(filterItems.exists()).toBe(true);
-    expect(filterItems.length).toEqual(3); // Filter by Types
-    expect(filterItems.at(0).props().count).toBe(11); // total count for ClusterServiceClasses
-    expect(filterItems.at(1).props().count).toBe(9); // total count for imagestreams
-    expect(filterItems.at(2).props().count).toBe(9); // total count for clusterServiceVersions
+    expect(filterItems.length).toEqual(4); // Filter by Types
+    expect(filterItems.at(0).props().count).toBe(11); // total count for clusterServiceClasses
+    expect(filterItems.at(1).props().count).toBe(2); // total count for templates
+    expect(filterItems.at(2).props().count).toBe(9); // total count for imagestreams
+    expect(filterItems.at(3).props().count).toBe(9); // total count for clusterServiceVersions
   });
 
   it('renders tiles correctly', () => {
     const tiles = wrapper.find(CatalogTile);
 
     expect(tiles.exists()).toBe(true);
-    expect(tiles.length).toEqual(29);
+    expect(tiles.length).toEqual(31);
 
     const cakeSqlTileProps = tiles.at(2).props();
     expect(cakeSqlTileProps.title).toEqual('CakePHP + MySQL');
@@ -48,11 +49,18 @@ describe(CatalogTileViewPage.displayName, () => {
     expect(cakeSqlTileProps.vendor).toEqual('provided by Red Hat, Inc.');
     expect(cakeSqlTileProps.description.startsWith('An example CakePHP application with a MySQL database')).toBe(true);
 
-    const wildflyTileProps = tiles.at(28).props();
+    const amqTileProps = tiles.at(23).props();
+    expect(amqTileProps.title).toEqual('Red Hat JBoss A-MQ 6.3 (Ephemeral, no SSL)');
+    expect(amqTileProps.iconImg).toEqual('test-file-stub');
+    expect(amqTileProps.iconClass).toBe(null);
+    expect(amqTileProps.vendor).toEqual('provided by Red Hat, Inc.');
+    expect(amqTileProps.description.startsWith('Application template for JBoss A-MQ brokers. These can be deployed as standalone or in a mesh. This template doesn\'t feature SSL support.')).toBe(true);
+
+    const wildflyTileProps = tiles.at(30).props();
     expect(wildflyTileProps.title).toEqual('WildFly');
     expect(wildflyTileProps.iconImg).toEqual('test-file-stub');
     expect(wildflyTileProps.iconClass).toBe(null);
-    expect(wildflyTileProps.vendor).toEqual(null);
+    expect(wildflyTileProps.vendor).toEqual('provided by Red Hat, Inc.');
     expect(wildflyTileProps.description.startsWith('Build and run WildFly 10.1 applications on CentOS 7. For more information about using this builder image')).toBe(true);
   });
 

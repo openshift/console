@@ -9,7 +9,7 @@ import { ClusterServiceVersionKind, SubscriptionKind } from '../operator-lifecyc
 import { K8sKind, K8sResourceKind } from '../../module/k8s';
 import { ClusterServiceVersionModel, SubscriptionModel, CatalogSourceConfigModel } from '../../models';
 
-export class DisableApplicationModal extends PromiseComponent {
+export class DisableApplicationModal extends PromiseComponent<DisableApplicationModalProps, DisableApplicationModalState> {
   public state: DisableApplicationModalState;
 
   constructor(public props: DisableApplicationModalProps) {

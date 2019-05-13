@@ -58,7 +58,7 @@ describe('Kubernetes resource CRUD operations', () => {
     console.error(`Leaked ${leakedArray.length} resources out of ${testObjs.size}:\n${leakedArray.join('\n')}`);
     leakedArray.map(r => JSON.parse(r) as {name: string, plural: string, namespace?: string})
       .filter(r => r.namespace === undefined)
-      .forEach(({name, namespace, plural}) => {
+      .forEach(({name, plural}) => {
         try {
           execSync(`kubectl delete --cascade ${plural} ${name}`);
         } catch (error) {

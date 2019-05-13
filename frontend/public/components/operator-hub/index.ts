@@ -21,3 +21,14 @@ export type OperatorHubItem = {
   catalogSourceNamespace: string;
   [key: string]: any;
 };
+
+export type OperatorHubCSVAnnotations = {
+  certifiedLevel?: string;
+  healthIndex?: string;
+  repository?: string;
+  containerImage?: string;
+  createdAt?: string;
+  support?: string;
+  description?: string;
+  categories?: string;
+};

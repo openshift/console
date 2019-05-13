@@ -589,7 +589,7 @@ export class TileViewPage extends React.Component {
     </VerticalTabs>;
   }
 
-  // eslint-disable-next-line no-unused-vars
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
   renderFilterGroup(filterGroup, groupName, activeFilters, filterCounts, onFilterChange, onUpdateFilters) {
     const { filterGroupNameMap } = this.props;
     const { filterGroupsShowAll } = this.state;
