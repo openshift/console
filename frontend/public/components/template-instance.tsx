@@ -18,7 +18,7 @@ import {
   ResourceLink,
   ResourceSummary,
   SectionHeading,
-  StatusIcon,
+  StatusIconAndText,
 } from './utils';
 
 const menuActions = Kebab.factory.common;
@@ -37,7 +37,7 @@ const TemplateInstanceRow: React.SFC<TemplateInstanceRowProps> = ({obj}) => (
       <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
     </div>
     <div className="col-sm-2 hidden-xs">
-      <StatusIcon status={getTemplateInstanceStatus(obj)} />
+      <StatusIconAndText status={getTemplateInstanceStatus(obj)} />
     </div>
     <div className="dropdown-kebab-pf">
       <ResourceKebab actions={menuActions} kind="TemplateInstance" resource={obj} />
@@ -87,7 +87,7 @@ const TemplateInstanceDetails: React.SFC<TemplateInstanceDetailsProps> = ({obj})
             <div className="col-sm-6">
               <dl className="co-m-pane__details">
                 <dt>Status</dt>
-                <dd><StatusIcon status={status} /></dd>
+                <dd><StatusIconAndText status={status} /></dd>
                 {secretName && (
                   <React.Fragment>
                     <dt>Parameters</dt>

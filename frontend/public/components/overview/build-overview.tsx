@@ -2,7 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Button, ListGroup } from 'patternfly-react';
 
-import { BuildPhaseIcon, BuildNumberLink, BuildLogLink } from '../build';
+import { BuildNumberLink, BuildLogLink } from '../build';
 import { errorModal } from '../modals/error-modal';
 import { fromNow } from '../utils/datetime';
 import { K8sResourceKind } from '../../module/k8s';
@@ -13,6 +13,7 @@ import {
 import {
   ResourceLink,
   SidebarSectionHeading,
+  StatusIcon,
 } from '../utils';
 
 import { BuildConfigOverviewItem } from '.';
@@ -52,7 +53,7 @@ const BuildOverviewItem: React.SFC<BuildOverviewListItemProps> = ({build}) => {
   return <li className="list-group-item build-overview__item">
     <div className="build-overview__item-title">
       <div>
-        <BuildPhaseIcon build={build} />
+        <StatusIcon status={phase} spin={phase === 'Running'} />
         &nbsp;
         Build
         &nbsp;

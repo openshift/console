@@ -13,6 +13,7 @@ import {
   pluralize,
   ResourceIcon,
   resourceObjPath,
+  StatusIcon,
 } from '../utils';
 
 import {
@@ -149,29 +150,16 @@ const Status: React.SFC<StatusProps> = ({item}) => {
   </div> : null;
 };
 
-const iconClassBySeverity = Object.freeze({
-  error: 'pficon pficon-error-circle-o text-danger',
-  info: 'pficon pficon-info',
-  warning: 'pficon pficon-warning-triangle-o text-warning',
-});
-
-const alertLabelBySeverity = Object.freeze({
-  error: 'Error',
-  info: 'Message',
-  warning: 'Warning',
-});
-
-const AlertTooltip = ({alerts, severity}) => {
-  const iconClass = iconClassBySeverity[severity];
-  const label = alertLabelBySeverity[severity];
+const AlertTooltip = ({alerts, severity, noSeverityLabel=false}) => {
+  const label = severity === 'Info' ? 'Message' : severity;
   const count = _.size(alerts);
-  const message = _.map(alerts, 'message').join('\n');
+  const message = _.uniq(_.map(alerts, 'message')).join('\n');
   const content = [<span key="message" className="co-pre-wrap">{message}</span>];
 
   // Disable the tooltip on mobile since a touch also opens the sidebar, which
   // immediately covers the tooltip content.
   return <Tooltip content={content} styles={overviewTooltipStyles} disableOnMobile>
-    <i className={iconClass} aria-hidden="true" /> {pluralize(count, label)}
+    <StatusIcon status={severity} spin={severity === 'Running'} /> {noSeverityLabel ? count : pluralize(count, label)}
   </Tooltip>;
 };
 
@@ -179,7 +167,7 @@ const Alerts: React.SFC<AlertsProps> = ({item}) => {
   const currentAlerts = _.get(item, 'current.alerts', {});
   const previousAlerts = _.get(item, 'previous.alerts', {});
   const itemAlerts = _.get(item, 'alerts', {});
-  const alerts ={
+  const alerts = {
     ...itemAlerts,
     ...currentAlerts,
     ...previousAlerts,
@@ -188,11 +176,14 @@ const Alerts: React.SFC<AlertsProps> = ({item}) => {
     return null;
   }
 
-  const { error, warning, info } = _.groupBy(alerts, 'severity');
+  const { error, warning, info, buildNew, buildPending, buildRunning, buildFailed, buildError } = _.groupBy(alerts, 'severity');
   return <div className="project-overview__detail project-overview__detail--alert">
-    {error && <AlertTooltip severity="error" alerts={error} />}
-    {warning && <AlertTooltip severity="warning" alerts={warning} />}
-    {info && <AlertTooltip severity="info" alerts={info} />}
+    {error && <AlertTooltip severity="Error" alerts={error} />}
+    {warning && <AlertTooltip severity="Warning" alerts={warning} />}
+    {info && <AlertTooltip severity="Info" alerts={info} />}
+    {(buildNew || buildPending || buildRunning || buildFailed || buildError) && <div>
+      Builds {buildNew && <AlertTooltip severity="New" alerts={buildNew} noSeverityLabel />} {buildPending && <AlertTooltip severity="Pending" alerts={buildPending} noSeverityLabel />} {buildRunning && <AlertTooltip severity="Running" alerts={buildRunning} noSeverityLabel />} {buildFailed && <AlertTooltip severity="Failed" alerts={buildFailed} noSeverityLabel />} {buildError && <AlertTooltip severity="Error" alerts={buildError} noSeverityLabel />}
+    </div>}
   </div>;
 };
 

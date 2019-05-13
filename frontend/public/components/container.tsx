@@ -28,7 +28,7 @@ import {
   ResourceLink,
   ScrollToTopOnMount,
   SectionHeading,
-  StatusIcon,
+  StatusIconAndText,
   Timestamp,
 } from './utils';
 import { resourcePath } from './utils/resource-link';
@@ -190,7 +190,7 @@ const ContainerDetails: React.FC<ContainerDetailsProps> = (props) => {
         <SectionHeading text="Container Overview" />
         <dl className="co-m-pane__details">
           <dt>State</dt>
-          <dd><StatusIcon status={stateValue} /></dd>
+          <dd><StatusIconAndText status={stateValue} /></dd>
           <dt>ID</dt>
           <dd className="co-break-all">{status.containerID || '-'}</dd>
           <dt>Restarts</dt>

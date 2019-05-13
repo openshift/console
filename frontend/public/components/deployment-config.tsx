@@ -26,7 +26,7 @@ import {
   SectionHeading,
   togglePaused,
   WorkloadPausedAlert,
-  StatusIcon,
+  StatusIconAndText,
 } from './utils';
 
 const DeploymentConfigsReference: K8sResourceKindReference = 'DeploymentConfig';
@@ -128,7 +128,7 @@ export const DeploymentConfigsDetails: React.FC<{obj: K8sResourceKind}> = ({obj:
           <div className="col-sm-6">
             <ResourceSummary resource={dc} showPodSelector showNodeSelector showTolerations>
               <dt>Status</dt>
-              <dd>{dc.status.availableReplicas === dc.status.updatedReplicas ? <StatusIcon status="Active" /> : <StatusIcon status="Updating" />}</dd>
+              <dd>{dc.status.availableReplicas === dc.status.updatedReplicas ? <StatusIconAndText status="Active" /> : <StatusIconAndText status="Updating" />}</dd>
             </ResourceSummary>
           </div>
           <div className="col-sm-6">
