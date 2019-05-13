@@ -58,6 +58,7 @@ const OAuthDetails: React.SFC<OAuthDetailsProps> = ({obj}: {obj: OAuthKind}) => 
     htpasswd: 'HTPasswd',
     ldap: 'LDAP',
     oidconnect: 'OpenID Connect',
+    requestheader: 'Request Header',
   };
   return <React.Fragment>
     <div className="co-m-pane__body">
