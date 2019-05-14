@@ -14,7 +14,7 @@ import { getBuildNumber } from '../../module/k8s/builds';
 import { prometheusTenancyBasePath } from '../graphs';
 import { TextFilter } from '../factory';
 import { PodStatus } from '../pod';
-import { UIActions, formatNamespacedRouteForResource } from '../../ui/ui-actions';
+import * as UIActions from '../../actions/ui';
 import {
   apiVersionForModel,
   K8sResourceKind,
@@ -333,7 +333,7 @@ const OverviewEmptyState = connect(overviewEmptyStateToProps)(({activeNamespace,
         <Link className="btn btn-default" to={`/deploy-image?preselected-ns=${activeNamespace}`}>
           Deploy Image
         </Link>
-        <Link className="btn btn-default" to={formatNamespacedRouteForResource('import', activeNamespace)}>
+        <Link className="btn btn-default" to={UIActions.formatNamespacedRouteForResource('import', activeNamespace)}>
           Import YAML
         </Link>
       </EmptyState.Action>
@@ -349,7 +349,7 @@ const headingStateToProps = ({UI}): OverviewHeadingPropsFromState => {
 
 const headingDispatchToProps = (dispatch): OverviewHeadingPropsFromDispatch => ({
   selectView: (view: OverviewViewOption) => dispatch(UIActions.selectOverviewView(view)),
-  selectGroup: (group: string) => dispatch(UIActions.updateOverviewSelectedGroup(group)),
+  selectGroup: (group: OverviewSpecialGroup) => dispatch(UIActions.updateOverviewSelectedGroup(group)),
   changeFilter: (value: string) => dispatch(UIActions.updateOverviewFilterValue(value)),
 });
 
@@ -439,7 +439,7 @@ const mainContentDispatchToProps = (dispatch): OverviewMainContentPropsFromDispa
   updateGroupOptions: (groups: { [key: string]: string }) => dispatch(UIActions.updateOverviewGroupOptions(groups)),
   updateMetrics: (metrics: OverviewMetrics) => dispatch(UIActions.updateOverviewMetrics(metrics)),
   updateResources: (items: OverviewItem[]) => dispatch(UIActions.updateOverviewResources(items)),
-  updateSelectedGroup: (group: string) => dispatch(UIActions.updateOverviewSelectedGroup(group)),
+  updateSelectedGroup: (group: OverviewSpecialGroup) => dispatch(UIActions.updateOverviewSelectedGroup(group)),
 });
 
 class OverviewMainContent_ extends React.Component<OverviewMainContentProps, OverviewMainContentState> {
@@ -1156,7 +1156,7 @@ type OverviewHeadingPropsFromState = {
 
 type OverviewHeadingPropsFromDispatch = {
   selectView: (view: OverviewViewOption) => void;
-  selectGroup: (selectedLabel: string) => void;
+  selectGroup: (selectedLabel: OverviewSpecialGroup) => void;
   changeFilter: (value: string) => void;
 };
 
@@ -1181,7 +1181,7 @@ type OverviewMainContentPropsFromDispatch = {
   updateGroupOptions: (groups: {[key: string]:string}) => void;
   updateMetrics: (metrics: OverviewMetrics) => void;
   updateResources: (items: OverviewItem[]) => void;
-  updateSelectedGroup: (group: string) => void;
+  updateSelectedGroup: (group: OverviewSpecialGroup) => void;
 };
 
 type OverviewMainContentOwnProps = {

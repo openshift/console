@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { Map as ImmutableMap } from 'immutable';
 
 import { inject, makeReduxID, makeQuery } from './index';
-import actions from '../../module/k8s/k8s-actions';
+import * as k8sActions from '../../actions/k8s';
 
 const shallowMapEquals = (a, b) => {
   if (a === b || (a.size === 0 && b.size === 0)) {
@@ -106,9 +106,9 @@ const stateToProps = ({k8s}, {resources}) => {
 
 export const Firehose = connect(
   stateToProps, {
-    stopK8sWatch: actions.stopK8sWatch,
-    watchK8sObject: actions.watchK8sObject,
-    watchK8sList: actions.watchK8sList,
+    stopK8sWatch: k8sActions.stopK8sWatch,
+    watchK8sObject: k8sActions.watchK8sObject,
+    watchK8sList: k8sActions.watchK8sList,
   }, null, {
     areStatesEqual: (next, prev) => (next.k8s === prev.k8s),
     areStatePropsEqual: (next, prev) => (

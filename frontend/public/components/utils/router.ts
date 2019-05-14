@@ -17,10 +17,10 @@ try {
   createHistory = createBrowserHistory;
 }
 
-export const history = createHistory({basename: (window as any).SERVER_FLAGS.basePath});
+export const history = createHistory({basename: window.SERVER_FLAGS.basePath});
 
-const removeBasePath = (url = '/') => _.startsWith(url, (window as any).SERVER_FLAGS.basePath)
-  ? url.slice((window as any).SERVER_FLAGS.basePath.length - 1)
+const removeBasePath = (url = '/') => _.startsWith(url, window.SERVER_FLAGS.basePath)
+  ? url.slice(window.SERVER_FLAGS.basePath.length - 1)
   : url;
 
 // Monkey patch history to slice off the base path

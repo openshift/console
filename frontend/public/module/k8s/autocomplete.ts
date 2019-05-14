@@ -7,7 +7,7 @@ import * as _ from 'lodash-es';
 import { ServiceAccountModel, SecretModel, ServiceModel, ConfigMapModel, AlertmanagerModel } from '../../models';
 import { K8sKind, K8sResourceKind } from '../../module/k8s';
 import { k8sListPartialMetadata } from '../../module/k8s/resource';
-import { getActiveNamespace } from '../../ui/ui-actions';
+import { getActiveNamespace } from '../../actions/ui';
 import { SWAGGER_SESSION_STORAGE_KEY } from '../../const';
 
 export type AceSnippet = {

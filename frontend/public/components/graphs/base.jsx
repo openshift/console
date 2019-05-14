@@ -7,7 +7,7 @@ import * as classNames from 'classnames';
 import { coFetchJSON } from '../../co-fetch';
 
 import { prometheusBasePath, prometheusTenancyBasePath } from './index';
-import { MonitoringRoutes } from '../../monitoring';
+import { MonitoringRoutes } from '../../reducers/monitoring';
 
 export class BaseGraph extends React.Component {
   constructor(props) {

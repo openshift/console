@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 
 import { ButtonBar, Dropdown, history, resourcePathFromModel, ResourceName } from '../utils';
 import { k8sCreate, k8sList, K8sResourceKind } from '../../module/k8s';
-import { formatNamespacedRouteForResource, getActiveNamespace } from '../../ui/ui-actions';
+import { formatNamespacedRouteForResource, getActiveNamespace } from '../../actions/ui';
 import { ServiceModel, RouteModel } from '../../models';
 import { AsyncComponent } from '../utils/async';
 

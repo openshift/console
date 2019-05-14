@@ -3,7 +3,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as classNames from 'classnames';
 
-import { connectToURLs, MonitoringRoutes } from '../../monitoring';
+import { connectToURLs, MonitoringRoutes } from '../../reducers/monitoring';
 
 const getPrometheusUrl = (urls: string[], query: PrometheusQuery[] | string): string => {
   const base = urls && urls[MonitoringRoutes.Prometheus];

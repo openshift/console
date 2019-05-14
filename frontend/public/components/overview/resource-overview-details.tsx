@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 
-import { UIActions } from '../../ui/ui-actions';
+import * as UIActions from '../../actions/ui';
 import { K8sKind } from '../../module/k8s';
 import {
   KebabAction,

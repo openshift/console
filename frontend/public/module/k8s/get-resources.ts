@@ -15,7 +15,7 @@ export const kindToAbbr = kind => (kind.replace(/[^A-Z]/g, '') || kind.toUpperCa
 export const cacheResources = (resources) => new Promise<void>((resolve, reject) => {
   try {
     // Add the console version. We invalidate the cache when console version changes.
-    const { consoleVersion } = (window as any).SERVER_FLAGS;
+    const { consoleVersion } = window.SERVER_FLAGS;
     const versionedResources = _.assign({}, resources, { consoleVersion });
     localStorage.setItem(API_DISCOVERY_RESOURCES_LOCAL_STORAGE_KEY, JSON.stringify(versionedResources));
     resolve();
@@ -38,7 +38,7 @@ export const getCachedResources = () => new Promise<any>((resolve, reject) => {
 
     if (resourcesJSON) {
       const resources = JSON.parse(resourcesJSON);
-      const { consoleVersion: currentVersion } = (window as any).SERVER_FLAGS;
+      const { consoleVersion: currentVersion } = window.SERVER_FLAGS;
       const { consoleVersion: cachedVersion } = resources;
       if (cachedVersion !== currentVersion) {
         // eslint-disable-next-line no-console
@@ -59,6 +59,16 @@ export const getCachedResources = () => new Promise<any>((resolve, reject) => {
 
   resolve(null);
 });
+
+export type DiscoveryResources = {
+  adminResources: string[];
+  allResources: string[];
+  configResources: K8sKind[];
+  models: K8sKind[];
+  namespacedSet: Set<string>;
+  preferredVersions: {groupVersion: string, version: string}[];
+  safeResources: string[];
+};
 
 const getResources_ = () => coFetchJSON('api/kubernetes/apis')
   .then(res => {
@@ -103,7 +113,7 @@ const getResources_ = () => coFetchJSON('api/kubernetes/apis')
         allResources.forEach(r => ADMIN_RESOURCES.has(r.split('/')[0]) ? adminResources.push(r) : safeResources.push(r));
         const configResources = _.filter(models, m => m.apiGroup === 'config.openshift.io' && m.kind !== 'ClusterOperator');
 
-        return {allResources, safeResources, adminResources, configResources, namespacedSet, models, preferredVersions};
+        return {allResources, safeResources, adminResources, configResources, namespacedSet, models, preferredVersions} as DiscoveryResources;
       });
   });
 

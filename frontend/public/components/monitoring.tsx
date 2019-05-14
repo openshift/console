@@ -7,10 +7,10 @@ import { connect } from 'react-redux';
 import { Link, Redirect, Route, Switch } from 'react-router-dom';
 
 import { coFetchJSON } from '../co-fetch';
-import k8sActions from '../module/k8s/k8s-actions';
-import { alertState, AlertStates, connectToURLs, MonitoringRoutes, silenceState, SilenceStates } from '../monitoring';
+import * as k8sActions from '../actions/k8s';
+import { alertState, AlertStates, connectToURLs, MonitoringRoutes, silenceState, SilenceStates } from '../reducers/monitoring';
 import store from '../redux';
-import { UIActions } from '../ui/ui-actions';
+import * as UIActions from '../actions/ui';
 import { ColHead, List, ListHeader, ResourceRow, TextFilter } from './factory';
 import { QueryBrowser } from './graphs';
 import { confirmModal } from './modals';
@@ -102,7 +102,7 @@ const cancelSilence = (silence) => ({
     title: 'Expire Silence',
     message: 'Are you sure you want to expire this silence?',
     btnText: 'Expire Silence',
-    executeFn: () => coFetchJSON.delete(`${(window as any).SERVER_FLAGS.alertManagerBaseURL}/api/v1/silence/${silence.id}`)
+    executeFn: () => coFetchJSON.delete(`${window.SERVER_FLAGS.alertManagerBaseURL}/api/v1/silence/${silence.id}`)
       .then(() => refreshPoller('silences')),
   }),
 });
@@ -176,7 +176,7 @@ const ToggleGraph_ = ({hideGraphs, toggle}) => {
     {hideGraphs ? 'Show' : 'Hide'} Graph <i className={iconClass} aria-hidden="true" />
   </button>;
 };
-const ToggleGraph = connect(graphStateToProps, {toggle: UIActions.toggleMonitoringGraphs})(ToggleGraph_);
+const ToggleGraph = connect(graphStateToProps, {toggle: UIActions.ActionType.ToggleMonitoringGraphs})(ToggleGraph_);
 
 // Plotly default colors:
 const graphColors = [
@@ -809,7 +809,7 @@ class SilenceForm_ extends React.Component<SilenceFormProps, SilenceFormState> {
   onSubmit = (e): void => {
     e.preventDefault();
 
-    const {alertManagerBaseURL} = (window as any).SERVER_FLAGS;
+    const {alertManagerBaseURL} = window.SERVER_FLAGS;
     if (!alertManagerBaseURL) {
       this.setState({error: 'Alertmanager URL not set'});
       return;
@@ -993,7 +993,7 @@ const QueryBrowserPage = () => {
 
 export class MonitoringUI extends React.Component<null, null> {
   componentDidMount() {
-    const poll = (url: string, key: string, dataHandler: (data: any[]) => any): void => {
+    const poll = (url: string, key: 'alerts' | 'silences', dataHandler: (data: any[]) => any): void => {
       store.dispatch(UIActions.monitoringLoading(key));
       const poller = (): void => {
         coFetchJSON(url)
@@ -1006,7 +1006,7 @@ export class MonitoringUI extends React.Component<null, null> {
       poller();
     };
 
-    const {alertManagerBaseURL, prometheusBaseURL} = (window as any).SERVER_FLAGS;
+    const {alertManagerBaseURL, prometheusBaseURL} = window.SERVER_FLAGS;
 
     if (prometheusBaseURL) {
       poll(`${prometheusBaseURL}/api/v1/rules`, 'alerts', data => {

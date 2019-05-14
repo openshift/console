@@ -13,10 +13,10 @@ export const commandLineToolsModal = createModalLauncher(
       <p>The oc binary offers the same capabilities as the kubectl binary, but it is further extended to natively support OpenShift Container Platform features.</p>
       <p>
         <ExternalLink href={OC_DOWNLOAD_LINK} text="Download oc" />
-        {(window as any).SERVER_FLAGS.requestTokenURL && (
+        {window.SERVER_FLAGS.requestTokenURL && (
           <React.Fragment>
             &nbsp;<span className="co-action-divider" aria-hidden="true">|</span>
-            &nbsp;<ExternalLink href={(window as any).SERVER_FLAGS.requestTokenURL} text="Copy Login Command" />
+            &nbsp;<ExternalLink href={window.SERVER_FLAGS.requestTokenURL} text="Copy Login Command" />
           </React.Fragment>
         )}
       </p>

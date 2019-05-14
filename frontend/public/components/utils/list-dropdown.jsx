@@ -4,7 +4,8 @@ import * as fuzzy from 'fuzzysearch';
 import * as PropTypes from 'prop-types';
 
 import { Dropdown, Firehose, LoadingInline, ResourceName } from './';
-import { connectToFlags, FLAGS, flagPending } from '../../features';
+import { connectToFlags, flagPending } from '../../reducers/features';
+import { FLAGS } from '../../const';
 
 class ListDropdown_ extends React.Component {
   constructor(props) {

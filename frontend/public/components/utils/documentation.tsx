@@ -4,7 +4,7 @@ import * as _ from 'lodash-es';
 import { ExternalLink } from '../utils';
 
 // Prefer the documentation base URL passed as a flag, but fall back to the latest docs if none was specified.
-export const openshiftHelpBase = (window as any).SERVER_FLAGS.documentationBaseURL || 'https://docs.okd.io/latest/';
+export const openshiftHelpBase = window.SERVER_FLAGS.documentationBaseURL || 'https://docs.okd.io/latest/';
 
 /* eslint-disable react/jsx-no-target-blank */
 export const DocumentationLinks = () => <dl className="co-documentation-links">

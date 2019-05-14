@@ -4,7 +4,8 @@ import { connect } from 'react-redux';
 import { ArrowCircleUpIcon, QuestionCircleIcon, ThIcon } from '@patternfly/react-icons';
 import { Button, Dropdown, DropdownToggle, DropdownSeparator, DropdownItem, KebabToggle, Toolbar, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
 
-import { FLAGS, connectToFlags, flagPending } from '../features';
+import { connectToFlags, flagPending } from '../reducers/features';
+import { FLAGS } from '../const';
 import { authSvc } from '../module/auth';
 import { history, Firehose } from './utils';
 import { openshiftHelpBase } from './utils/documentation';

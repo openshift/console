@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom';
 import { FieldLevelHelp } from 'patternfly-react';
 import { getPorts } from './source-to-image';
 import { EnvironmentPage } from './environment';
-import { formatNamespacedRouteForResource } from '../ui/ui-actions';
+import { formatNamespacedRouteForResource } from '../actions/ui';
 import { k8sCreate } from '../module/k8s';
 import { ButtonBar } from './utils/button-bar';
 import {

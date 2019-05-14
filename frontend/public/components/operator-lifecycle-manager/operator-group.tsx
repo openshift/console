@@ -9,7 +9,7 @@ import { K8sResourceKind, GroupVersionKind, referenceForModel } from '../../modu
 import { OperatorGroupKind, SubscriptionKind } from './index';
 import { AsyncComponent } from '../utils/async';
 import { OperatorGroupModel } from '../../models';
-import { getActiveNamespace } from '../../ui/ui-actions';
+import { getActiveNamespace } from '../../actions/ui';
 
 export const targetNamespacesFor = (obj: K8sResourceKind) => _.get(obj, ['metadata', 'annotations', 'olm.targetNamespaces']);
 export const operatorNamespaceFor = (obj: K8sResourceKind) => _.get(obj, ['metadata', 'annotations', 'olm.operatorNamespace']);

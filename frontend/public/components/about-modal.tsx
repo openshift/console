@@ -3,7 +3,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { AboutModal as PfAboutModal, TextContent, TextList, TextListItem } from '@patternfly/react-core';
 
-import { clusterIDStateToProps } from '../ui/ui-reducers';
+import { clusterIDStateToProps } from '../reducers/ui';
 import { getBrandingDetails } from './masthead';
 import { k8sVersion } from '../module/status';
 
@@ -16,7 +16,7 @@ const AboutModal_: React.FC<AboutModalProps> = ({isOpen, closeAboutModal, cluste
   }, []);
 
   const details = getBrandingDetails();
-  const customBranding = (window as any).SERVER_FLAGS.customLogoURL || (window as any).SERVER_FLAGS.customProductName;
+  const customBranding = window.SERVER_FLAGS.customLogoURL || window.SERVER_FLAGS.customProductName;
 
   return (
     <PfAboutModal

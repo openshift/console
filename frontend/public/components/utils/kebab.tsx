@@ -144,7 +144,7 @@ export type KebabOption = {
   label: string;
   href?: string, callback?: () => any;
 };
-export type KebabAction = (kind, obj: K8sResourceKind) => KebabOption;
+export type KebabAction = (kind: K8sKind, obj: K8sResourceKind) => KebabOption;
 
 export type ResourceKebabProps = {
   kindObj: K8sKind;

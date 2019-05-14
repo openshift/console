@@ -4,6 +4,8 @@ import { connect } from 'react-redux';
 import { Map as ImmutableMap } from 'immutable';
 import * as _ from 'lodash-es';
 
+import { MonitoringAction, ActionType } from '../actions/monitoring';
+
 export const enum AlertStates {
   Firing = 'firing',
   Silenced = 'silenced',
@@ -24,26 +26,25 @@ export enum MonitoringRoutes {
   Kibana = 'kibana',
 }
 
-const SET_MONITORING_URL = 'setMonitoringURL';
 const DEFAULTS = _.mapValues(MonitoringRoutes, undefined);
 
-export const setMonitoringURL = (name, url) => ({name, url, type: SET_MONITORING_URL});
+export type MonitoringState = ImmutableMap<string, any>;
 
-export const monitoringReducer = (state: ImmutableMap<string, any>, action) => {
+export const monitoringReducerName = 'monitoringURLs';
+export const monitoringReducer = (state: MonitoringState, action: MonitoringAction): MonitoringState => {
   if (!state) {
     return ImmutableMap(DEFAULTS);
   }
 
   switch (action.type) {
-    case SET_MONITORING_URL:
-      return state.merge({ [action.name]: action.url });
+    case ActionType.SetMonitoringURL:
+      return state.merge({ [action.payload.name]: action.payload.url });
 
     default:
       return state;
   }
 };
 
-export const monitoringReducerName = 'monitoringURLs';
 const stateToProps = (desiredURLs: string[], state) => {
   const urls = desiredURLs.reduce((previous, next) => ({...previous, [next]: state[monitoringReducerName].get(next)}), {});
   return { urls };

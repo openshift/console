@@ -5,7 +5,8 @@ import { FieldLevelHelp } from 'patternfly-react';
 
 import { ColHead, DetailsPage, List, ListHeader, MultiListPage } from './factory';
 import { Kebab, SectionHeading, navFactory, ResourceKebab, ResourceLink, ResourceSummary, convertToBaseValue } from './utils';
-import { FLAGS, connectToFlags, flagPending } from '../features';
+import { connectToFlags, flagPending } from '../reducers/features';
+import { FLAGS } from '../const';
 import { Gauge } from './graphs';
 import { LoadingBox } from './utils/status-box';
 import { referenceForModel } from '../module/k8s';

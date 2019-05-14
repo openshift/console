@@ -16,7 +16,7 @@ import {
 } from './utils';
 import { Firehose } from './utils/firehose';
 import { k8sCreate } from './../module/k8s';
-import actions from './../module/k8s/k8s-actions';
+import * as k8sActions from '../actions/k8s';
 import { StorageClassModel } from './../models';
 
 const NameValueEditorComponent = (props) => <AsyncComponent loader={() => import('./utils/name-value-editor').then(c => c.NameValueEditor)} {...props} />;
@@ -886,8 +886,8 @@ const mapStateToProps = ({k8s}, {onClose}) => ({
 });
 
 const mapDispatchToProps = () => ({
-  stopK8sWatch: actions.stopK8sWatch,
-  watchK8sList: actions.watchK8sList,
+  stopK8sWatch: k8sActions.stopK8sWatch,
+  watchK8sList: k8sActions.watchK8sList,
 });
 
 export type StorageClassFormProps = {

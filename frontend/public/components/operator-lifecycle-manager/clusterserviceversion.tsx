@@ -11,7 +11,7 @@ import { DetailsPage, ListHeader, ColHead, List, ListPage } from '../factory';
 import { withFallback } from '../utils/error-boundary';
 import { referenceForModel, referenceFor, GroupVersionKind, K8sKind } from '../../module/k8s';
 import { ClusterServiceVersionModel } from '../../models';
-import { FLAGS as featureFlags } from '../../features';
+import { FLAGS as featureFlags } from '../../const';
 import { ResourceEventStream } from '../events';
 import { Conditions } from '../conditions';
 import {

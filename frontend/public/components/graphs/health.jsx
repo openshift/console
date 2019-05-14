@@ -3,7 +3,8 @@ import { connect } from 'react-redux';
 
 import { Status, errorStatus } from './';
 import { coFetch, coFetchJSON } from '../../co-fetch';
-import { FLAGS, featureReducerName } from '../../features';
+import { featureReducerName } from '../../reducers/features';
+import { FLAGS } from '../../const';
 import { k8sBasePath } from '../../module/k8s';
 
 // Use the shorter 'OpenShift Console' instead of 'OpenShift Container Platform Console' since the title appears in the chart.

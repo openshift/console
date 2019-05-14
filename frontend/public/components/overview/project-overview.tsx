@@ -9,7 +9,7 @@ import { ListView } from 'patternfly-react';
 import { KEYBOARD_SHORTCUTS } from '../../const';
 import { Tooltip } from '../utils/tooltip';
 import { K8sResourceKind } from '../../module/k8s';
-import { UIActions } from '../../ui/ui-actions';
+import * as UIActions from '../../actions/ui';
 import {
   pluralize,
   ResourceIcon,

@@ -3,7 +3,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import * as classNames from 'classnames';
 
-import k8sActions from '../module/k8s/k8s-actions';
+import { filterList } from '../actions/k8s';
 import { getQueryArgument, pluralize, setQueryArgument } from './utils';
 
 const CheckBox = ({title, active, number, toggle}) => {
@@ -122,4 +122,4 @@ class CheckBoxes_ extends React.Component {
 }
 
 /** @type {React.SFC<{items: Array, itemCount: number, numbers: any, reduxIDs: Array, selected?: Array, type: string}>} */
-export const CheckBoxes = connect(null, {filterList: k8sActions.filterList})(CheckBoxes_);
+export const CheckBoxes = connect(null, {filterList})(CheckBoxes_);

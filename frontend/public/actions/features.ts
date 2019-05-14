@@ -1,8 +1,8 @@
 /* eslint-disable no-undef, no-unused-vars */
 
-import { connect } from 'react-redux';
-import { Map as ImmutableMap } from 'immutable';
+import { Dispatch } from 'react-redux';
 import * as _ from 'lodash-es';
+import { ActionType as Action, action } from 'typesafe-actions';
 
 import {
   ChargebackReportModel,
@@ -16,40 +16,21 @@ import {
   PackageManifestModel,
   PrometheusModel,
   SelfSubjectAccessReviewModel,
-} from './models';
-import { k8sBasePath, referenceForModel, ClusterVersionKind } from './module/k8s';
-import { k8sCreate } from './module/k8s/resource';
-import { types } from './module/k8s/k8s-actions';
-import { coFetchJSON } from './co-fetch';
-import { MonitoringRoutes, setMonitoringURL } from './monitoring';
-import { UIActions } from './ui/ui-actions';
+} from '../models';
+import { k8sBasePath, referenceForModel, ClusterVersionKind, k8sCreate } from '../module/k8s';
+import { receivedResources } from './k8s';
+import { coFetchJSON } from '../co-fetch';
+import { MonitoringRoutes } from '../reducers/monitoring';
+import { setMonitoringURL } from './monitoring';
+import { setClusterID, setCreateProjectMessage, setUser } from './ui';
+import { FLAGS } from '../const';
 
-export enum FLAGS {
-  AUTH_ENABLED = 'AUTH_ENABLED',
-  PROMETHEUS = 'PROMETHEUS',
-  OPERATOR_LIFECYCLE_MANAGER = 'OPERATOR_LIFECYCLE_MANAGER',
-  CHARGEBACK = 'CHARGEBACK',
-  OPENSHIFT = 'OPENSHIFT',
-  CAN_GET_NS = 'CAN_GET_NS',
-  CAN_LIST_NS = 'CAN_LIST_NS',
-  CAN_LIST_NODE = 'CAN_LIST_NODE',
-  CAN_LIST_PV = 'CAN_LIST_PV',
-  CAN_LIST_STORE = 'CAN_LIST_STORE',
-  CAN_LIST_CRD = 'CAN_LIST_CRD',
-  CAN_LIST_PACKAGE_MANIFEST = 'CAN_LIST_PACKAGE_MANIFEST',
-  CAN_LIST_OPERATOR_GROUP = 'CAN_LIST_OPERATOR_GROUP',
-  CAN_CREATE_PROJECT = 'CAN_CREATE_PROJECT',
-  SHOW_OPENSHIFT_START_GUIDE = 'SHOW_OPENSHIFT_START_GUIDE',
-  SERVICE_CATALOG = 'SERVICE_CATALOG',
-  OPERATOR_HUB = 'OPERATOR_HUB',
-  CLUSTER_API = 'CLUSTER_API',
-  CLUSTER_VERSION = 'CLUSTER_VERSION',
-  MACHINE_CONFIG = 'MACHINE_CONFIG',
-  MACHINE_AUTOSCALER = 'MACHINE_AUTOSCALER',
+export enum ActionType {
+  SetFlag = 'setFlag',
 }
 
-export const DEFAULTS_ = _.mapValues(FLAGS, flag => flag === FLAGS.AUTH_ENABLED
-  ? !(window as any).SERVER_FLAGS.authDisabled
+export const defaults = _.mapValues(FLAGS, flag => flag === FLAGS.AUTH_ENABLED
+  ? !window.SERVER_FLAGS.authDisabled
   : undefined
 );
 
@@ -59,14 +40,16 @@ export const CRDs = {
   [referenceForModel(ClusterServiceClassModel)]: FLAGS.SERVICE_CATALOG,
   [referenceForModel(ClusterServiceVersionModel)]: FLAGS.OPERATOR_LIFECYCLE_MANAGER,
   [referenceForModel(OperatorSourceModel)]: FLAGS.OPERATOR_HUB,
-  'marketplace.redhat.com~v1alpha1~OperatorSource': FLAGS.OPERATOR_HUB,
   [referenceForModel(MachineModel)]: FLAGS.CLUSTER_API,
   [referenceForModel(MachineConfigModel)]: FLAGS.MACHINE_CONFIG,
   [referenceForModel(MachineAutoscalerModel)]: FLAGS.MACHINE_AUTOSCALER,
 };
 
-const SET_FLAG = 'SET_FLAG';
-export const setFlag = (dispatch, flag, value) => dispatch({flag, value, type: SET_FLAG});
+export const setFlag = (flag: FLAGS, value: boolean) => action(ActionType.SetFlag, {flag, value});
+
+const featureActions = {setFlag};
+
+export type FeatureAction = Action<typeof featureActions | typeof receivedResources>;
 
 const retryFlagDetection = (dispatch, cb) => {
   setTimeout(() => cb(dispatch), 15000);
@@ -75,7 +58,7 @@ const retryFlagDetection = (dispatch, cb) => {
 const handleError = (res, flag, dispatch, cb) => {
   const status = _.get(res, 'response.status');
   if (_.includes([403, 502], status)) {
-    setFlag(dispatch, flag, undefined);
+    dispatch(setFlag(flag, undefined));
   }
   if (!_.includes([401, 403, 500], status)) {
     retryFlagDetection(dispatch, cb);
@@ -85,9 +68,9 @@ const handleError = (res, flag, dispatch, cb) => {
 const openshiftPath = `${k8sBasePath}/apis/apps.openshift.io/v1`;
 const detectOpenShift = dispatch => coFetchJSON(openshiftPath)
   .then(
-    res => setFlag(dispatch, FLAGS.OPENSHIFT, _.size(res.resources) > 0),
+    res => dispatch(setFlag(FLAGS.OPENSHIFT, _.size(res.resources) > 0)),
     err => _.get(err, 'response.status') === 404
-      ? setFlag(dispatch, FLAGS.OPENSHIFT, false)
+      ? dispatch(setFlag(FLAGS.OPENSHIFT, false))
       : handleError(err, FLAGS.OPENSHIFT, dispatch, detectOpenShift)
   );
 
@@ -96,15 +79,15 @@ const detectClusterVersion = dispatch => coFetchJSON(clusterVersionPath)
   .then(
     (clusterVersion: ClusterVersionKind) => {
       const hasClusterVersion = !_.isEmpty(clusterVersion);
-      setFlag(dispatch, FLAGS.CLUSTER_VERSION, hasClusterVersion);
+      dispatch(setFlag(FLAGS.CLUSTER_VERSION, hasClusterVersion));
 
       if (hasClusterVersion && !_.isEmpty(clusterVersion.spec)) {
-        dispatch(UIActions.setClusterID(clusterVersion.spec.clusterID));
+        dispatch(setClusterID(clusterVersion.spec.clusterID));
       }
     },
     err => {
       if (_.includes([403, 404], _.get(err, 'response.status'))) {
-        setFlag(dispatch, FLAGS.CLUSTER_VERSION, false);
+        dispatch(setFlag(FLAGS.CLUSTER_VERSION, false));
       } else {
         handleError(err, FLAGS.OPENSHIFT, dispatch, detectOpenShift);
       }
@@ -113,12 +96,12 @@ const detectClusterVersion = dispatch => coFetchJSON(clusterVersionPath)
 const projectRequestPath = `${k8sBasePath}/apis/project.openshift.io/v1/projectrequests`;
 const detectCanCreateProject = dispatch => coFetchJSON(projectRequestPath)
   .then(
-    res => setFlag(dispatch, FLAGS.CAN_CREATE_PROJECT, res.status === 'Success'),
+    res => dispatch(setFlag(FLAGS.CAN_CREATE_PROJECT, res.status === 'Success')),
     err => {
       const status = _.get(err, 'response.status');
       if (status === 403) {
-        setFlag(dispatch, FLAGS.CAN_CREATE_PROJECT, false);
-        dispatch(UIActions.setCreateProjectMessage(err.message));
+        dispatch(setFlag(FLAGS.CAN_CREATE_PROJECT, false));
+        dispatch(setCreateProjectMessage(err.message));
       } else if (!_.includes([400, 404, 500], status)) {
         retryFlagDetection(dispatch, detectCanCreateProject);
       }
@@ -166,7 +149,7 @@ const detectLoggingURL = dispatch => coFetchJSON(loggingConfigMapPath)
 const detectUser = dispatch => coFetchJSON('api/kubernetes/apis/user.openshift.io/v1/users/~')
   .then(
     (user) => {
-      dispatch(UIActions.setUser(user));
+      dispatch(setUser(user));
     },
     err => {
       if (!_.includes([401, 403, 404, 500], _.get(err, 'response.status'))) {
@@ -174,15 +157,6 @@ const detectUser = dispatch => coFetchJSON('api/kubernetes/apis/user.openshift.i
       }
     },
   );
-
-export const featureActions = [
-  detectOpenShift,
-  detectCanCreateProject,
-  detectMonitoringURLs,
-  detectClusterVersion,
-  detectUser,
-  detectLoggingURL,
-];
 
 const projectListPath = `${k8sBasePath}/apis/project.openshift.io/v1/projects?limit=1`;
 const detectShowOpenShiftStartGuide = (dispatch, canListNS: boolean = false) => {
@@ -196,15 +170,15 @@ const detectShowOpenShiftStartGuide = (dispatch, canListNS: boolean = false) => 
   // from re-listing projects when switching from a namespace-scoped resource
   // to a cluster-scoped resource and back.
   if (canListNS) {
-    setFlag(dispatch, FLAGS.SHOW_OPENSHIFT_START_GUIDE, false);
+    dispatch(setFlag(FLAGS.SHOW_OPENSHIFT_START_GUIDE, false));
     return;
   }
 
   coFetchJSON(projectListPath)
     .then(
-      res => setFlag(dispatch, FLAGS.SHOW_OPENSHIFT_START_GUIDE, _.isEmpty(res.items)),
+      res => dispatch(setFlag(FLAGS.SHOW_OPENSHIFT_START_GUIDE, _.isEmpty(res.items))),
       err => _.get(err, 'response.status') === 404
-        ? setFlag(dispatch, FLAGS.SHOW_OPENSHIFT_START_GUIDE, false)
+        ? dispatch(setFlag(FLAGS.SHOW_OPENSHIFT_START_GUIDE, false))
         : handleError(err, FLAGS.SHOW_OPENSHIFT_START_GUIDE, dispatch, detectShowOpenShiftStartGuide)
     );
 };
@@ -230,73 +204,32 @@ const ssarChecks = [{
   flag: FLAGS.CAN_LIST_PACKAGE_MANIFEST,
   resourceAttributes:{ group: PackageManifestModel.apiGroup, resource: PackageManifestModel.plural, verb: 'list'},
 }, {
-  flag: FLAGS.CAN_LIST_PACKAGE_MANIFEST,
-  // FIXME: Hack for backwards compatibility
-  resourceAttributes:{ group: 'packages.apps.redhat.com', resource: PackageManifestModel.plural, verb: 'list'},
-}, {
   flag: FLAGS.CAN_LIST_OPERATOR_GROUP,
   resourceAttributes:{ group: OperatorGroupModel.apiGroup, resource: OperatorGroupModel.plural, verb: 'list' },
 }];
 
-ssarChecks.forEach(({flag, resourceAttributes, after}) => {
+const ssarCheckActions = ssarChecks.map(({flag, resourceAttributes, after}) => {
   const req = {
     spec: { resourceAttributes },
   };
   const fn = (dispatch) => {
     return k8sCreate(SelfSubjectAccessReviewModel, req) .then((res) => {
       const allowed: boolean = res.status.allowed;
-      setFlag(dispatch, flag, allowed);
+      dispatch(setFlag(flag, allowed));
       if (after) {
         after(dispatch, allowed);
       }
     }, (err) => handleError(err, flag, dispatch, fn));
   };
-  featureActions.push(fn);
+  return fn;
 });
 
-export const featureReducerName = 'FLAGS';
-export const featureReducer = (state: ImmutableMap<string, any>, action) => {
-  if (!state) {
-    return ImmutableMap(DEFAULTS_);
-  }
-
-  switch (action.type) {
-    case SET_FLAG:
-      if (!FLAGS[action.flag]) {
-        throw new Error(`unknown key for reducer ${action.flag}`);
-      }
-      return state.merge({[action.flag]: action.value});
-
-    case types.resources:
-      // Flip all flags to false to signify that we did not see them
-      _.each(CRDs, v => state = state.set(v, false));
-
-      return action.resources.models.filter(model => CRDs[referenceForModel(model)] !== undefined)
-        .reduce((nextState, model) => {
-          const flag = CRDs[referenceForModel(model)];
-          // eslint-disable-next-line no-console
-          console.log(`${flag} was detected.`);
-
-          return nextState.set(flag, true);
-        }, state);
-
-    default:
-      return state;
-  }
-};
-
-const stateToProps = (desiredFlags: string[], state) => {
-  const flags = desiredFlags.reduce((allFlags, f) => ({...allFlags, [f]: state[featureReducerName].get(f)}), {});
-  return {flags};
-};
-
-type WithFlagsProps = {
-  flags: {[key: string]: boolean};
-};
-
-export type ConnectToFlags = <P extends WithFlagsProps>(...flags: FLAGS[]) => (C: React.ComponentType<P>) =>
-  React.ComponentType<Omit<P, keyof WithFlagsProps>> & {WrappedComponent: React.ComponentType<P>};
-export const connectToFlags: ConnectToFlags = (...flags) => connect(state => stateToProps(flags, state), null, null, {areStatePropsEqual: _.isEqual});
-
-// Flag detection is not complete if the flag's value is `undefined`.
-export const flagPending = flag => flag === undefined;
+export const detectFeatures = () => (dispatch: Dispatch) => [
+  detectOpenShift,
+  detectCanCreateProject,
+  detectMonitoringURLs,
+  detectClusterVersion,
+  detectUser,
+  detectLoggingURL,
+  ...ssarCheckActions,
+].forEach(detect => detect(dispatch));

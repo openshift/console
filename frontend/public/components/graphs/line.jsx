@@ -3,7 +3,7 @@ import * as PropTypes from 'prop-types';
 import { restyle } from 'plotly.js/lib/core';
 
 import { BaseGraph } from './base';
-import { connectToURLs, MonitoringRoutes } from '../../monitoring';
+import { connectToURLs, MonitoringRoutes } from '../../reducers/monitoring';
 
 const baseData = {
   x: [],

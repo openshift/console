@@ -7,15 +7,15 @@ import { Route, Router } from 'react-router-dom';
 import * as PropTypes from 'prop-types';
 
 import store from '../redux';
-import { featureActions } from '../features';
+import { detectFeatures } from '../actions/features';
 import { analyticsSvc } from '../module/analytics';
 import AppContents from './app-contents';
 import { getBrandingDetails, Masthead } from './masthead';
 import { Navigation } from './nav';
 import { history } from './utils';
-import { UIActions } from '../ui/ui-actions';
+import * as UIActions from '../actions/ui';
 import { getCachedResources } from '../module/k8s';
-import k8sActions, { types } from '../module/k8s/k8s-actions';
+import { ActionType, watchAPIServices } from '../actions/k8s';
 import '../vendor.scss';
 import '../style.scss';
 
@@ -125,18 +125,18 @@ class App extends React.PureComponent {
   }
 }
 
-const startDiscovery = () => store.dispatch(k8sActions.watchAPIServices());
+const startDiscovery = () => store.dispatch(watchAPIServices());
 
 // Load cached API resources from localStorage to speed up page load.
 getCachedResources().then(resources => {
   if (resources) {
-    store.dispatch({type: types.resources, resources});
+    store.dispatch({type: ActionType.ReceivedResources, resources});
   }
   // Still perform discovery to refresh the cache.
   startDiscovery();
 }).catch(startDiscovery);
 
-_.each(featureActions, store.dispatch);
+store.dispatch(detectFeatures());
 
 // Global timer to ensure all <Timestamp> components update in sync
 setInterval(() => store.dispatch(UIActions.updateTimestamps(Date.now())), 10000);

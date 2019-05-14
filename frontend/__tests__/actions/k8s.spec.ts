@@ -4,12 +4,12 @@ import Spy = jasmine.Spy;
 import { Map as ImmutableMap } from 'immutable';
 import * as _ from 'lodash-es';
 
-import k8sActions, { types } from '../../../public/module/k8s/k8s-actions';
-import * as k8sResource from '../../../public/module/k8s/resource';
-import { K8sResourceKind, K8sKind } from '../../../public/module/k8s';
-import { PodModel, APIServiceModel } from '../../../public/models';
-import { testResourceInstance } from '../../../__mocks__/k8sResourcesMocks';
-import * as coFetch from '../../../public/co-fetch';
+import * as k8sActions from '../../public/actions/k8s';
+import * as k8sResource from '../../public/module/k8s/resource';
+import { K8sResourceKind, K8sKind } from '../../public/module/k8s';
+import { PodModel, APIServiceModel } from '../../public/models';
+import { testResourceInstance } from '../../__mocks__/k8sResourcesMocks';
+import * as coFetch from '../../public/co-fetch';
 
 describe('watchAPIServices', () => {
   const {watchAPIServices} = k8sActions;
@@ -36,7 +36,7 @@ describe('watchAPIServices', () => {
 
     spyAndExpect(spyOn(k8sResource, 'k8sList'))(Promise.resolve({}))
       .then(() => {
-        expect(dispatch.calls.argsFor(0)[0].type).toEqual(types.getResourcesInFlight);
+        expect(dispatch.calls.argsFor(0)[0].type).toEqual(k8sActions.ActionType.GetResourcesInFlight);
         done();
       });
 
@@ -72,7 +72,7 @@ describe('watchAPIServices', () => {
   });
 });
 
-describe(types.watchK8sList, () => {
+describe(k8sActions.ActionType.StartWatchK8sList, () => {
   const {watchK8sList} = k8sActions;
   let getState: Spy;
   let resourceList: {items: K8sResourceKind[], metadata: {resourceVersion: string, continue?: string}, kind: string, apiVersion: string};
@@ -93,10 +93,10 @@ describe(types.watchK8sList, () => {
     const k8sList = spyOn(k8sResource, 'k8sList').and.returnValue(Promise.resolve({...resourceList, items: new Array(10).fill(testResourceInstance)}));
 
     const dispatch = jasmine.createSpy('dispatch').and.callFake((action) => {
-      if (action.type === types.loaded) {
+      if (action.type === k8sActions.ActionType.Loaded) {
         expect(k8sList.calls.count()).toEqual(1);
         done();
-      } else if (action.type !== types.watchK8sList) {
+      } else if (action.type !== k8sActions.ActionType.StartWatchK8sList) {
         fail(`Action other than 'loaded' was dispatched: ${JSON.stringify(action)}`);
       }
     });
@@ -121,20 +121,20 @@ describe(types.watchK8sList, () => {
 
     let returnedItems = 0;
     const dispatch = jasmine.createSpy('dispatch').and.callFake((action) => {
-      if (action.type === types.bulkAddToList) {
-        const bulkAddToListCalls = dispatch.calls.allArgs().filter(args => args[0].type === types.bulkAddToList);
+      if (action.type === k8sActions.ActionType.BulkAddToList) {
+        const bulkAddToListCalls = dispatch.calls.allArgs().filter(args => args[0].type === k8sActions.ActionType.BulkAddToList);
 
-        expect(action.k8sObjects).toEqual(resourceList.items);
+        expect(action.payload.k8sObjects).toEqual(resourceList.items);
         expect(bulkAddToListCalls.length).toEqual(k8sList.calls.count() - 1);
 
-        returnedItems = returnedItems + action.k8sObjects.length;
+        returnedItems = returnedItems + action.payload.k8sObjects.length;
 
         if (bulkAddToListCalls.length === 9) {
           expect(returnedItems).toEqual(resourceList.items.length * bulkAddToListCalls.length);
           done();
         }
-      } else if (action.type === types.errored) {
-        fail(action.k8sObjects);
+      } else if (action.type === k8sActions.ActionType.Errored) {
+        fail(action.payload.k8sObjects);
       }
     });
 
