@@ -53,7 +53,6 @@ export * from './list-input';
   loaded asynchronously in order not to bloat the vendor file. The enum reference into the editor
   will cause it not to load asynchronously.
  */
-/* eslint-disable no-undef */
 export const enum NameValueEditorPair {
   Name = 0,
   Value,

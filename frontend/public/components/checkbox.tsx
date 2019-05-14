@@ -1,4 +1,3 @@
-/* eslint-disable no-undef, no-unused-vars */
 import * as React from 'react';
 
 export const Checkbox: React.SFC<CheckboxProps> = ({name, label, checked, onChange}) => (

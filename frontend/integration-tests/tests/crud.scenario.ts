@@ -1,4 +1,4 @@
-/* eslint-disable no-undef, no-unused-vars, no-console */
+/* eslint-disable no-console */
 
 import { browser, $, $$, by, ExpectedConditions as until, Key, element } from 'protractor';
 import { safeLoad, safeDump } from 'js-yaml';

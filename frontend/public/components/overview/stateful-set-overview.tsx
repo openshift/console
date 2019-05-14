@@ -32,7 +32,6 @@ export const StatefulSetOverview: React.SFC<StatefulSetOverviewProps> = ({item})
     tabs={tabs}
   />;
 
-/* eslint-disable no-unused-vars, no-undef */
 type StatefulSetOverviewDetailsProps = {
   item: OverviewItem;
 };
@@ -40,4 +39,3 @@ type StatefulSetOverviewDetailsProps = {
 type StatefulSetOverviewProps = {
   item: OverviewItem;
 };
-/* eslint-enable no-unused-vars, no-undef */

@@ -1,10 +1,7 @@
-/* eslint-disable no-undef */
-
 import * as React from 'react';
 
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import { SectionHeading, detailsPage, navFactory, ResourceLink, ResourceSummary } from './utils';
-// eslint-disable-next-line no-unused-vars
 import { K8sResourceKind, referenceForModel, servicePlanDisplayName } from '../module/k8s';
 import { ClusterServicePlanModel, ClusterServiceBrokerModel, ClusterServiceClassModel } from '../models';
 import { viewYamlComponent } from './utils/horizontal-nav';

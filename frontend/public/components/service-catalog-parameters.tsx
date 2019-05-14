@@ -1,7 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 
-// eslint-disable-next-line no-unused-vars
 import { K8sResourceKind } from '../module/k8s';
 import { SectionHeading, ResourceLink } from './utils';
 import { MaskedData } from './configmap-and-secret-data';
@@ -42,7 +41,6 @@ export const ServiceCatalogParameters: React.SFC<ServiceCatalogParametersProps> 
   </dl>
 </div>;
 
-/* eslint-disable no-undef */
 export type ServiceCatalogParametersSecretsProps = {
   obj: K8sResourceKind,
 };
@@ -52,4 +50,3 @@ export type ServiceCatalogParametersProps = {
     [key: string]: string
   }
 };
-/* eslint-enable no-undef */

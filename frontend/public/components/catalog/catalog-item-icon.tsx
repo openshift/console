@@ -1,10 +1,7 @@
-/* eslint-disable no-undef */
-
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import * as classNames from 'classnames';
 
-// eslint-disable-next-line no-unused-vars
 import { K8sResourceKind, TemplateKind } from '../../module/k8s';
 import * as threeScaleImg from '../../imgs/logos/3scale.svg';
 import * as aerogearImg from '../../imgs/logos/aerogear.svg';
@@ -233,4 +230,3 @@ export type ImageStreamIconProps = {
   tag: any;
   iconSize?: string;
 };
-

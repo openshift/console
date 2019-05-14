@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
@@ -324,4 +323,3 @@ export type CreatePVCPageState = {
   title: string;
   pvcObj: K8sResourceKind;
 };
-/* eslint-enable no-undef */

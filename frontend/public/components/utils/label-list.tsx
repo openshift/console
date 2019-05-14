@@ -36,7 +36,6 @@ export class LabelList extends React.Component<LabelListProps> {
   }
 }
 
-/* eslint-disable no-undef */
 export type LabelProps = {
   kind: K8sResourceKindReference;
   name: string;
@@ -49,4 +48,3 @@ export type LabelListProps = {
   kind: K8sResourceKindReference;
   expand?: boolean;
 };
-/* eslint-enable no-undef */

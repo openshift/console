@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 import * as _ from 'lodash-es';
 import * as classNames from 'classnames';
 import * as fuzzy from 'fuzzysearch';

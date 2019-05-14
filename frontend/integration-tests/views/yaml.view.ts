@@ -1,4 +1,3 @@
-/* eslint-disable no-undef, no-unused-vars */
 import { $, $$, by, Key, browser, ExpectedConditions as until } from 'protractor';
 import { waitForNone } from '../protractor.conf';
 

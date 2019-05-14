@@ -49,7 +49,6 @@ export const EditYAMLPage: React.SFC<EditYAMLPageProps> = (props) => {
   </Firehose>;
 };
 
-/* eslint-disable no-undef */
 export type CreateYAMLProps = {
   match: RouterMatch<{ns: string, plural: string, appName?: string}>;
   kindsInFlight: boolean;
@@ -63,6 +62,5 @@ export type EditYAMLPageProps = {
   match: RouterMatch<{ns: string, name: string}>;
   kind: string;
 };
-/* eslint-enable no-undef */
 
 EditYAMLPage.displayName = 'EditYAMLPage';

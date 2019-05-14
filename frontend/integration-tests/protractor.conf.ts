@@ -1,5 +1,3 @@
-/* eslint-disable no-undef, no-unused-vars */
-
 import { Config, browser, logging } from 'protractor';
 import { execSync } from 'child_process';
 import * as HtmlScreenshotReporter from 'protractor-jasmine2-screenshot-reporter';

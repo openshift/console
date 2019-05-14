@@ -7,7 +7,6 @@ import { configureReplicaCountModal } from '../modals';
 import { LoadingInline, pluralize } from './';
 
 
-/* eslint-disable no-undef, no-unused-vars */
 type DPCProps = {
   resource: K8sResourceKind;
   resourceKind: K8sKind;
@@ -17,13 +16,10 @@ type DPCState = {
   desiredCount: number,
   waitingForUpdate: boolean,
 };
-/* eslint-enable no-undef, no-unused-vars */
 
 // Common representation of desired / up-to-date / matching pods for Deployment like things
 export class DeploymentPodCounts extends React.Component<DPCProps, DPCState> {
-  /* eslint-disable no-undef, no-unused-vars */
   openReplicaCountModal: any;
-  /* eslint-enable no-undef, no-unused-vars */
 
   constructor(props) {
     super(props);

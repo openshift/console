@@ -1,5 +1,3 @@
-/* eslint-disable no-undef, no-unused-vars */
-
 import * as React from 'react';
 import { safeDump } from 'js-yaml';
 import { match } from 'react-router-dom';

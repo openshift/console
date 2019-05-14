@@ -573,10 +573,8 @@ const filtersToProps = ({k8s}, {reduxID}) => {
 };
 
 const MonitoringListPage = connect(filtersToProps)(class InnerMonitoringListPage extends React.Component<ListPageProps> {
-  /* eslint-disable no-undef */
   props: ListPageProps;
   defaultNameFilter: string;
-  /* eslint-enable no-undef */
 
   constructor(props) {
     super(props);
@@ -777,7 +775,6 @@ class SilenceForm_ extends React.Component<SilenceFormProps, SilenceFormState> {
     }
   }
 
-  /* eslint-disable no-undef */
   setField = (path: string, v: any): void => {
     const data = Object.assign({}, this.state.data);
     _.set(data, path, v);
@@ -830,7 +827,6 @@ class SilenceForm_ extends React.Component<SilenceFormProps, SilenceFormState> {
       .catch(err => this.setState({error: _.get(err, 'json.error') || err.message || 'Error saving Silence'}))
       .then(() => this.setState({inProgress: false}));
   }
-  /* eslint-enable no-undef */
 
   render() {
     const {Info, saveButtonText, title} = this.props;
@@ -1069,7 +1065,6 @@ export class MonitoringUI extends React.Component<null, null> {
   }
 }
 
-/* eslint-disable no-undef, no-unused-vars */
 type Silence = {
   comment: string;
   createdBy: string;

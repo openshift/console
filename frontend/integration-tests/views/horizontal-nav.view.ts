@@ -1,5 +1,3 @@
-/* eslint-disable no-undef, no-unused-vars */
-
 import { $$, by, browser, element, ExpectedConditions as until } from 'protractor';
 
 export const horizontalTabFor = (name: string) => element(by.cssContainingText('.co-m-horizontal-nav__menu-item', name));

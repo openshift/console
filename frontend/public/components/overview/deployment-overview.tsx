@@ -61,7 +61,6 @@ export const DeploymentOverviewPage: React.SFC<DeploymentOverviewProps> = ({item
     tabs={tabs}
   />;
 
-/* eslint-disable no-unused-vars, no-undef */
 type DeploymentOverviewDetailsProps = {
   item: OverviewItem;
 };
@@ -69,4 +68,3 @@ type DeploymentOverviewDetailsProps = {
 type DeploymentOverviewProps = {
   item: OverviewItem;
 };
-/* eslint-enable no-unused-vars, no-undef */

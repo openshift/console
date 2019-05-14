@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars, no-undef */
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import * as _ from 'lodash-es';

@@ -33,7 +33,6 @@ export const ResourceIcon: React.SFC<ResourceIconProps> = ({className, kind}) =>
   return rendered;
 };
 
-/* eslint-disable no-undef */
 export type ResourceIconProps = {
   className?: string;
   kind: K8sResourceKindReference;
@@ -43,7 +42,6 @@ export type ResourceNameProps = {
   kind: K8sResourceKindReference;
   name: string;
 };
-/* eslint-enable no-undef */
 
 export const ResourceName: React.SFC<ResourceNameProps> = (props) => <span className="co-resource-item"><ResourceIcon kind={props.kind} /> <span className="co-resource-item__resource-name">{props.name}</span></span>;
 

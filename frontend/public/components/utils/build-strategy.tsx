@@ -1,7 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 
-// eslint-disable-next-line no-unused-vars
 import { K8sResourceKind, K8sResourceKindReference } from '../../module/k8s';
 import { ResourceLink } from './';
 import { getStrategyType } from '../build';
@@ -67,11 +66,9 @@ export const BuildStrategy: React.SFC<BuildStrategyProps> = ({ resource, childre
   </dl>;
 };
 
-/* eslint-disable no-undef */
 export type BuildStrategyProps = {
   resource: K8sResourceKind;
   children?: JSX.Element[];
 };
-/* eslint-enable no-undef */
 
 BuildStrategy.displayName = 'BuildStrategy';

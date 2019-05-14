@@ -1,7 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 
-// eslint-disable-next-line no-unused-vars
 import {K8sResourceKindReference} from '../module/k8s';
 import {ColHead, DetailsPage, List, ListHeader, ListPage} from './factory';
 import {Kebab, navFactory, SectionHeading, ResourceKebab, ResourceLink, ResourceSummary, Timestamp} from './utils';
@@ -112,7 +111,6 @@ export const LimitRangeDetailsPage = props => <DetailsPage
   pages={[navFactory.details(Details), navFactory.editYaml()]}
 />;
 
-/*  eslint-disable no-undef, no-unused-vars  */
 export type LimitRangeProps = {
   obj: any,
 };

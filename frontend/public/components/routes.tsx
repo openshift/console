@@ -6,14 +6,12 @@ import { QuestionCircleIcon } from '@patternfly/react-icons';
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import { Kebab, CopyToClipboard, SectionHeading, ResourceKebab, detailsPage, navFactory, ResourceLink, ResourceSummary, StatusIcon, ExternalLink } from './utils';
 import { MaskedData } from './configmap-and-secret-data';
-// eslint-disable-next-line no-unused-vars
 import { K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
 import { Conditions, conditionProps } from './conditions';
 
 const RoutesReference: K8sResourceKindReference = 'Route';
 const menuActions = Kebab.factory.common;
 
-/* eslint-disable no-undef */
 export type IngressStatusProps = {
   host: string;
   routerName: string;
@@ -21,7 +19,6 @@ export type IngressStatusProps = {
   wildcardPolicy: string;
   routerCanonicalHostname: string;
 };
-/* eslint-enable no-undef */
 
 const getRouteHost = (route, onlyAdmitted) => {
   let oldestAdmittedIngress = null;
@@ -370,7 +367,6 @@ export const RoutesPage: React.SFC<RoutesPageProps> = props => {
   />;
 };
 
-/* eslint-disable no-undef */
 export type RouteHostnameProps = {
   obj: K8sResourceKind;
 };
@@ -417,4 +413,3 @@ export type CustomRouteHelpProps = {
   host: string;
   routerCanonicalHostname: string;
 };
-/* eslint-enable no-undef */

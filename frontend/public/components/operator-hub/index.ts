@@ -1,5 +1,3 @@
-/* eslint-disable no-undef, no-unused-vars */
-
 import { PackageManifestKind, SubscriptionKind } from '../operator-lifecycle-manager';
 
 export const OPERATOR_HUB_CSC_BASE = 'marketplace-enabled-operators';

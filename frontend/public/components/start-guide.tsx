@@ -86,7 +86,6 @@ export const withStartGuide = (WrappedComponent, doNotDisable: boolean = false) 
     }
   );
 
-/* eslint-disable no-unused-vars, no-undef */
 type StartGuideProps = {
   dismissKey?: string;
   startGuide: React.ReactNode;
@@ -95,4 +94,3 @@ type StartGuideProps = {
 export type WithStartGuideProps = {
   noProjectsAvailable?: boolean;
 };
-/* eslint-enable no-unused-vars, no-undef */

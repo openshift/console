@@ -126,7 +126,6 @@ export const BuildPipeline: React.SFC<BuildPipelineProps> = ({ obj }) => {
   </div>;
 };
 
-/* eslint-disable no-undef */
 export type BuildPipelineProps = {
   obj: K8sResourceKind;
 };
@@ -173,4 +172,3 @@ export type JenkinsInputUrlProps = {
   obj: K8sResourceKind;
   stage: any;
 };
-/* eslint-disable no-undef */

@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import { $, $$, browser, by, ExpectedConditions as until, element, ElementFinder } from 'protractor';
 import { Base64 } from 'js-base64';
 import { execSync } from 'child_process';

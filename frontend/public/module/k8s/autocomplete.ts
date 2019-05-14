@@ -1,5 +1,3 @@
-/* eslint-disable no-undef, no-unused-vars */
-
 import { IEditSession, Editor, Position } from 'brace';
 import { Map as ImmutableMap } from 'immutable';
 import * as _ from 'lodash-es';

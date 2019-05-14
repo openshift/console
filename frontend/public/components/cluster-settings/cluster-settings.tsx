@@ -1,5 +1,3 @@
-/* eslint-disable no-unused-vars, no-undef */
-
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { Helmet } from 'react-helmet';

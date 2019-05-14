@@ -1,5 +1,3 @@
-/* eslint-disable no-unused-vars */
-
 import { Map as ImmutableMap } from 'immutable';
 
 import { ReportReference, ReportGenerationQueryReference } from './chargeback';

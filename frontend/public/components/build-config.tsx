@@ -1,7 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 
-// eslint-disable-next-line no-unused-vars
 import { K8sResourceKindReference, referenceFor } from '../module/k8s';
 import { startBuild } from '../module/k8s/builds';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
@@ -117,7 +116,6 @@ export const BuildConfigsPage: React.SFC<BuildConfigsPageProps> = props =>
     rowFilters={filters} />;
 BuildConfigsPage.displayName = 'BuildConfigsListPage';
 
-/* eslint-disable no-undef */
 export type BuildConfigsRowProps = {
   obj: any,
 };
@@ -133,4 +131,3 @@ export type BuildConfigsPageProps = {
 export type BuildConfigsDetailsPageProps = {
   match: any,
 };
-/* eslint-enable no-undef */

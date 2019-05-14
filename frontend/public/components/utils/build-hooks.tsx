@@ -24,10 +24,8 @@ export const BuildHooks: React.SFC<BuildHooksProps> = ({ resource }) => {
     : null;
 };
 
-/* eslint-disable no-undef */
 export type BuildHooksProps = {
   resource: K8sResourceKind;
 };
-/* eslint-enable no-undef */
 
 BuildHooks.displayName = 'BuildHooks';

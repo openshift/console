@@ -40,7 +40,6 @@ export const DownloadButton: React.FC<DownloadButtonProps> = (props) => {
   </div>;
 };
 
-/* eslint-disable no-undef */
 export type DownloadButtonProps = {
   url: string,
   filename?: string,
@@ -51,6 +50,5 @@ export type DownloadButtonState = {
   inFlight: boolean,
   error: any,
 };
-/* eslint-enable no-undef */
 
 DownloadButton.displayName = 'DownloadButton';

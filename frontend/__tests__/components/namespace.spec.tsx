@@ -1,5 +1,3 @@
-/* eslint-disable no-undef, no-unused-vars */
-
 import * as React from 'react';
 import { mount, ReactWrapper } from 'enzyme';
 import Spy = jasmine.Spy;

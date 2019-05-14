@@ -66,7 +66,6 @@ export const NetworkingOverview: React.SFC<NetworkingOverviewProps> = ({routes, 
   </React.Fragment>;
 };
 
-/* eslint-disable no-unused-vars, no-undef */
 type RoutesOverviewListProps = {
   routes: K8sResourceKind[];
 };
@@ -91,4 +90,3 @@ type ServiceOverviewListProps = {
 type ServiceOverviewListItemProps = {
   service: K8sResourceKind;
 };
-/* eslint-enable no-unused-vars, no-undef */

@@ -1,4 +1,3 @@
-/* eslint-disable no-undef, no-unused-vars */
 import * as React from 'react';
 
 export const IDPNameInput: React.FC<IDPNameInputProps> = ({value, onChange}) => (

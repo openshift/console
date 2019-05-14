@@ -61,7 +61,6 @@ export const StatusIcon: React.FunctionComponent<StatusIconProps> = ({status}) =
   }
 };
 
-/* eslint-disable no-undef */
 export type StatusIconProps = {
   status?: string;
 };

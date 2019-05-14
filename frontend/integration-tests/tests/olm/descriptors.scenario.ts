@@ -1,5 +1,3 @@
-/* eslint-disable no-undef, no-unused-vars */
-
 import { execSync } from 'child_process';
 import { browser, element, by } from 'protractor';
 import { safeDump } from 'js-yaml';

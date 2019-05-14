@@ -1,5 +1,3 @@
-/* eslint-disable no-unused-vars */
-
 import * as _ from 'lodash-es';
 
 import { K8sResourceKindReference, GroupVersionKind, CustomResourceDefinitionKind, K8sResourceKind, K8sKind, OwnerReference } from './index';

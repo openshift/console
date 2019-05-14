@@ -19,7 +19,6 @@ export const ProvisionedServicesPage: React.SFC<ProvisionedServicesPageProps> = 
     <HorizontalNav pages={pages} match={match} hideDivider noStatusBox={true} />
   </React.Fragment>;
 
-/* eslint-disable no-undef */
 export type ProvisionedServicesPageProps = {
   match: any;
 };

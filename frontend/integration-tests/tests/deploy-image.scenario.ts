@@ -1,5 +1,3 @@
-/* eslint-disable no-undef, no-unused-vars */
-
 import { browser, $, element, by, ExpectedConditions as until, Key } from 'protractor';
 import * as _ from 'lodash';
 

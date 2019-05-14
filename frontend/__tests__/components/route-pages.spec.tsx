@@ -1,5 +1,3 @@
-/* eslint-disable no-unused-vars */
-
 import * as React from 'react';
 import { shallow, mount } from 'enzyme';
 

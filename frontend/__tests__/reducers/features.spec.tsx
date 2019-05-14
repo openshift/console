@@ -1,5 +1,3 @@
-/* eslint-disable no-undef, no-unused-vars */
-
 import * as React from 'react';
 import * as Immutable from 'immutable';
 

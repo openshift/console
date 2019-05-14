@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars, no-undef */
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Tooltip as RLT } from 'react-lightweight-tooltip';

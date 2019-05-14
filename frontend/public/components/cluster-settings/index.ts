@@ -1,5 +1,3 @@
-/* eslint-disable no-unused-vars */
-
 import * as _ from 'lodash-es';
 
 import { OAuthModel } from '../../models';

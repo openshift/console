@@ -1,5 +1,3 @@
-/* eslint-disable no-unused-vars */
-
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { shallow, mount, ShallowWrapper, ReactWrapper } from 'enzyme';

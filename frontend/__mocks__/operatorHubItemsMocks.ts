@@ -1,5 +1,3 @@
-/* eslint-disable no-unused-vars, no-undef */
-
 import { PackageManifestKind } from '../public/components/operator-lifecycle-manager';
 import { OperatorHubItem } from '../public/components/operator-hub';
 

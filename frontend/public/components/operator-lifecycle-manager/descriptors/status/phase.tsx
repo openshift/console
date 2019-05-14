@@ -1,5 +1,3 @@
-/* eslint-disable no-undef, no-unused-vars */
-
 import * as React from 'react';
 
 export const Phase: React.SFC<PhaseProps> = ({status}) => <span className={status === 'Failed' ? 'co-error' : ''}>

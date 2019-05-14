@@ -1,5 +1,3 @@
-/* eslint-disable no-undef, no-unused-vars */
-
 import { browser, $, ExpectedConditions as until, by, element } from 'protractor';
 
 export const operatorModal = $('.modal-content');
