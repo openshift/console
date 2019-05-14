@@ -7,4 +7,4 @@ export const horizontalTabFor = (name: string) => element(by.cssContainingText('
 export const clickHorizontalTab = (tabName: string) => browser.wait(until.visibilityOf(horizontalTabFor(tabName)))
   .then(() => horizontalTabFor(tabName).click());
 
-export const activeTab = $$('co-m-horizontal-nav-item--active');
+export const activeTab = $$('.co-m-horizontal-nav-item--active');
