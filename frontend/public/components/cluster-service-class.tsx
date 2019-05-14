@@ -1,5 +1,3 @@
-/* eslint-disable no-undef */
-
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import * as _ from 'lodash-es';
@@ -8,7 +6,6 @@ import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from '.
 import { history, SectionHeading, detailsPage, navFactory, ResourceSummary, resourcePathFromModel, ResourceLink } from './utils';
 import { viewYamlComponent } from './utils/horizontal-nav';
 import { ClusterServiceClassModel, ClusterServiceBrokerModel } from '../models';
-// eslint-disable-next-line no-unused-vars
 import { K8sResourceKind, referenceForModel, serviceClassDisplayName } from '../module/k8s';
 import { ClusterServiceClassIcon } from './catalog/catalog-item-icon';
 import { ClusterServicePlanPage } from './cluster-service-plan';

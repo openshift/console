@@ -1,5 +1,3 @@
-/* eslint-disable no-undef, no-unused-vars */
-
 import {browser, $, ExpectedConditions as until} from 'protractor';
 
 import { appHost, checkLogs, checkErrors, testName } from '../../protractor.conf';

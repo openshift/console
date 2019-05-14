@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars, no-undef */
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { AboutModal as PfAboutModal, TextContent, TextList, TextListItem } from '@patternfly/react-core';

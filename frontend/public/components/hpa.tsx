@@ -1,7 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 
-// eslint-disable-next-line no-unused-vars
 import { K8sResourceKindReference } from '../module/k8s';
 import { Conditions } from './conditions';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
@@ -216,7 +215,6 @@ export const HorizontalPodAutoscalersPage: React.SFC<HorizontalPodAutoscalersPag
   />;
 HorizontalPodAutoscalersPage.displayName = 'HorizontalPodAutoscalersListPage';
 
-/* eslint-disable no-undef */
 export type HorizontalPodAutoscalersRowProps = {
   obj: any,
 };
@@ -244,4 +242,3 @@ export type MetricsRowProps = {
   current: any,
   target: any,
 };
-/* eslint-enable no-undef */

@@ -1,10 +1,8 @@
-/* eslint-disable no-undef */
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { Icon } from 'patternfly-react';
 import { Link } from 'react-router-dom';
 
-// eslint-disable-next-line no-unused-vars
 import { K8sResourceKindReference, referenceFor, K8sResourceKind } from '../module/k8s';
 import { cloneBuild, formatBuildDuration, BuildPhase, getBuildNumber } from '../module/k8s/builds';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
@@ -281,4 +279,3 @@ export type BuildsDetailsPageProps = {
 export type BuildPhaseIconProps = {
   build: K8sResourceKind
 };
-/* eslint-enable no-undef */

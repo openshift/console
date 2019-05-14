@@ -36,7 +36,6 @@ const defaultState = {
   fieldErrors: {parameters: {}},
 };
 
-/*eslint-disable no-undef*/
 export class StorageClassForm_ extends React.Component<StorageClassFormProps, StorageClassFormState> {
 
   resources: Resources;
@@ -938,7 +937,5 @@ export const StorageClassForm = props => {
     </Firehose>
   );
 };
+
 ConnectedStorageClassForm.displayName='StorageClassForm';
-
-
-/* eslint-enable no-undef */

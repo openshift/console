@@ -1,5 +1,3 @@
-/* eslint-disable no-unused-vars */
-
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import { safeLoad, safeDump } from 'js-yaml';

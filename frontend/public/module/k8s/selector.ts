@@ -1,5 +1,3 @@
-/* eslint-disable no-undef, no-unused-vars */
-
 import { createEquals, requirementFromString, requirementToString } from './selector-requirement';
 import { Selector, MatchExpression } from './index';
 

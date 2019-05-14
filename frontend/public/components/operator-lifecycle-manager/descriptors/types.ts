@@ -1,5 +1,3 @@
-/* eslint-disable no-undef, no-unused-vars */
-
 import { K8sKind, K8sResourceKind } from '../../../module/k8s';
 
 export enum SpecCapability {

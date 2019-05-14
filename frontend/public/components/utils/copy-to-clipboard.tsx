@@ -1,5 +1,3 @@
-/* eslint-disable no-undef, no-unused-vars */
-
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { CopyToClipboard as CTC } from 'react-copy-to-clipboard';

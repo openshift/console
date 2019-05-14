@@ -74,7 +74,6 @@ export const ResourceDetailsPage = connectToPlural((props: ResourceDetailsPagePr
   </React.Fragment>;
 });
 
-/* eslint-disable no-undef, no-unused-vars */
 export type ResourceListPageProps = {
   flags: any,
   kindObj: K8sKind;
@@ -89,8 +88,6 @@ export type ResourceDetailsPageProps = {
   match: match<any>;
   modelRef: K8sResourceKindReference;
 };
-/* eslint-enable no-undef, no-unused-vars */
-
 
 ResourceListPage.displayName = 'ResourceListPage';
 ResourceDetailsPage.displayName = 'ResourceDetailsPage';

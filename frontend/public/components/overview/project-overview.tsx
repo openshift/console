@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars, no-undef */
 import * as _ from 'lodash-es';
 import * as classnames from 'classnames';
 import * as React from 'react';

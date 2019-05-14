@@ -1,5 +1,3 @@
-/* eslint-disable no-unused-vars, no-undef */
-
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Tooltip } from './tooltip';

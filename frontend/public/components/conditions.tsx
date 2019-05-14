@@ -44,7 +44,6 @@ export const Conditions: React.SFC<ConditionsProps> = ({conditions}) => {
   </React.Fragment>;
 };
 
-/* eslint-disable no-undef */
 export type conditionProps = {
   type: string;
   status: string;
@@ -59,4 +58,3 @@ export type ConditionsProps = {
   title?: string;
   subTitle?: string;
 };
-/* eslint-enable no-undef */

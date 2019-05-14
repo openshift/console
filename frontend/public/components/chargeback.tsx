@@ -15,7 +15,6 @@ import {
   MsgBox,
 } from './utils/status-box';
 import {
-  // eslint-disable-next-line no-unused-vars
   GroupVersionKind,
   modelFor,
   referenceForModel,
@@ -476,8 +475,6 @@ export const ReportGenerationQueriesDetailsPage: React.SFC<ReportGenerationQueri
   return <DetailsPage {...props} kind={ReportGenerationQueryReference} menuActions={menuActions} pages={reportGenerationQueryPages} />;
 };
 
-
-/* eslint-disable no-undef */
 export type ReportsRowProps = {
   obj: any,
 };
@@ -538,7 +535,6 @@ export type ReportGenerationQueriesPageProps = {
 export type ReportGenerationQueriesDetailsPageProps = {
   match: any,
 };
-/* eslint-enable no-undef */
 
 ReportsRow.displayName = 'ReportsRow';
 ReportsList.displayName = 'ReportsList';

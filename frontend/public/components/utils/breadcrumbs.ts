@@ -1,6 +1,5 @@
 import * as _ from 'lodash-es';
 
-// eslint-disable-next-line no-unused-vars
 import { modelFor, referenceForOwnerRef, K8sResourceKind } from '../../module/k8s';
 import { resourcePathFromModel } from './resource-link';
 

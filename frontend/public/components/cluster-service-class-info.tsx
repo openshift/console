@@ -1,9 +1,6 @@
-/* eslint-disable no-undef */
-
 import * as React from 'react';
 import * as _ from 'lodash-es';
 
-// eslint-disable-next-line no-unused-vars
 import { K8sResourceKind, serviceClassDisplayName } from '../module/k8s';
 import { ClusterServiceClassIcon } from './catalog/catalog-item-icon';
 import { ExternalLink } from './utils';

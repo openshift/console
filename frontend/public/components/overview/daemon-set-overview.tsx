@@ -41,7 +41,6 @@ export const DaemonSetOverview: React.SFC<DaemonSetOverviewProps> = ({item}) =>
     tabs={tabs}
   />;
 
-/* eslint-disable no-unused-vars, no-undef */
 type DaemonSetOverviewDetailsProps = {
   item: OverviewItem;
 };
@@ -49,4 +48,3 @@ type DaemonSetOverviewDetailsProps = {
 type DaemonSetOverviewProps = {
   item: OverviewItem;
 };
-/* eslint-enable no-unused-vars, no-undef */

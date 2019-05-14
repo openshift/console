@@ -1,5 +1,3 @@
-/* eslint-disable no-undef, no-unused-vars */
-
 import { browser, $, $$, by, element, ExpectedConditions as until } from 'protractor';
 
 import * as crudView from './crud.view';

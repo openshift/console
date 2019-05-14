@@ -3,7 +3,6 @@ import * as _ from 'lodash-es';
 
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
 import { Kebab, detailsPage, navFactory, ResourceKebab, SectionHeading, ResourceLink, ResourceSummary } from './utils';
-// eslint-disable-next-line no-unused-vars
 import { K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
 
 export const StorageClassReference: K8sResourceKindReference = 'StorageClass';
@@ -68,7 +67,6 @@ const StorageClassDetails: React.SFC<StorageClassDetailsProps> = ({obj}) => <Rea
 export const StorageClassList: React.SFC = props => <List {...props} Header={StorageClassHeader} Row={StorageClassRow} />;
 StorageClassList.displayName = 'StorageClassList';
 
-/* eslint-disable no-undef */
 export const StorageClassPage: React.SFC<StorageClassPageProps> = props => {
   const createProps = {
     to: '/k8s/cluster/storageclasses/~new/form',
@@ -108,4 +106,3 @@ export type StorageClassPageProps = {
 export type StorageClassDetailsPageProps = {
   match: any,
 };
-/* eslint-enable no-undef */

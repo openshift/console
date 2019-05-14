@@ -1,5 +1,3 @@
-/* eslint-disable no-undef, no-unused-vars */
-
 import { configureCountModal } from '../../../modals';
 import { K8sResourceKind, K8sKind } from '../../../../module/k8s';
 import { Descriptor } from '../types';

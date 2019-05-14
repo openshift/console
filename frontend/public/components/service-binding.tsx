@@ -2,7 +2,6 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { match } from 'react-router-dom';
 
-// eslint-disable-next-line no-unused-vars
 import { serviceCatalogStatus, referenceForModel, K8sResourceKind } from '../module/k8s';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
 import { Kebab, SectionHeading, navFactory, ResourceKebab, ResourceLink, ResourceSummary, StatusWithIcon } from './utils';
@@ -112,7 +111,6 @@ export const ServiceBindingsPage: React.SFC<ServiceBindingsPageProps> = props =>
     ListComponent={ServiceBindingsList}
   />;
 
-/* eslint-disable no-undef */
 export type ServiceBindingsRowProps = {
   obj: K8sResourceKind,
 };
@@ -135,6 +133,5 @@ export type ServiceBindingsPageProps = {
 export type ServiceBindingDetailsPageProps = {
   match: any,
 };
-/* eslint-enable no-undef */
 
 ServiceBindingsPage.displayName = 'ServiceBindingsListPage';

@@ -2,7 +2,6 @@ import withDragDropContext from './utils/drag-drop-context';
 import * as React from 'react';
 import {EditYAML} from './edit-yaml';
 import { NativeTypes } from 'react-dnd-html5-backend';
-// eslint-disable-next-line no-unused-vars
 import { DropTarget } from 'react-dnd';
 
 // Maximal file size, in bytes, that user can upload
@@ -68,10 +67,10 @@ export const DroppableEditYAML = withDragDropContext(class DroppableEditYAML ext
   }
 });
 
-/* eslint-disable no-undef */
 export type DroppableEditYAMLProps = {
   obj: string,
 };
+
 export type DroppableEditYAMLState = {
   fileUpload: string | ArrayBuffer,
   error: string,

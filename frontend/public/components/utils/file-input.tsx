@@ -1,5 +1,3 @@
-/* eslint-disable no-undef, no-unused-vars */
-
 import * as React from 'react';
 import * as classNames from 'classnames';
 import { NativeTypes } from 'react-dnd-html5-backend';

@@ -1,5 +1,3 @@
-/* eslint-disable no-undef, no-unused-vars */
-
 import { Dispatch } from 'react-redux';
 import * as _ from 'lodash-es';
 import { ActionType as Action, action } from 'typesafe-actions';

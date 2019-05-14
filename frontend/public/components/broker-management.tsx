@@ -19,7 +19,6 @@ export const BrokerManagementPage: React.SFC<BrokerManagementPageProps> = ({matc
     <HorizontalNav pages={pages} match={match} hideDivider noStatusBox={true} />
   </React.Fragment>;
 
-/* eslint-disable no-undef */
 export type BrokerManagementPageProps = {
   match: any;
 };

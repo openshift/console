@@ -1,5 +1,3 @@
-/* eslint-disable no-undef, no-unused-vars */
-
 import Spy = jasmine.Spy;
 import { Map as ImmutableMap } from 'immutable';
 import * as _ from 'lodash-es';

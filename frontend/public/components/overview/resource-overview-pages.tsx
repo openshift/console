@@ -1,7 +1,6 @@
 import { Map as ImmutableMap } from 'immutable';
 
 import {
-  /* eslint-disable-next-line no-unused-vars */
   GroupVersionKind,
   referenceForModel,
 } from '../../module/k8s';

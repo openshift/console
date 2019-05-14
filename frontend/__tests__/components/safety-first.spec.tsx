@@ -1,5 +1,5 @@
 
-/* eslint-disable no-undef, no-unused-vars */
+/* eslint-env node */
 
 import * as React from 'react';
 import { mount, ReactWrapper } from 'enzyme';

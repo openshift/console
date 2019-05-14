@@ -1,7 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 
-// eslint-disable-next-line no-unused-vars
 import { K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
 import { DetailsPage } from './factory';
 import { Kebab, SectionHeading, navFactory, ResourceSummary } from './utils';
@@ -147,7 +146,6 @@ export const ImageStreamTagsDetailsPage: React.SFC<ImageStreamTagsDetailsPagePro
     pages={pages} />;
 ImageStreamTagsDetailsPage.displayName = 'ImageStreamTagsDetailsPage';
 
-/* eslint-disable no-undef */
 export type ImageStreamTagsDetailsProps = {
   obj: any,
 };
@@ -155,4 +153,3 @@ export type ImageStreamTagsDetailsProps = {
 export type ImageStreamTagsDetailsPageProps = {
   match: any,
 };
-/* eslint-enable no-undef */

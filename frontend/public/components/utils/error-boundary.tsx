@@ -1,4 +1,4 @@
-/* eslint-disable no-unused-vars, no-undef, react/display-name */
+/* eslint-disable react/display-name */
 
 import * as React from 'react';
 

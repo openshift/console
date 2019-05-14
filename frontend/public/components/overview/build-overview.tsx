@@ -110,7 +110,6 @@ export const BuildOverview: React.SFC<BuildConfigsOverviewProps> = ({buildConfig
   }
 </div>;
 
-/* eslint-disable no-unused-vars, no-undef */
 type BuildOverviewListItemProps = {
   build: K8sResourceKind;
 };
@@ -122,4 +121,3 @@ type BuildOverviewListProps = {
 type BuildConfigsOverviewProps = {
   buildConfigs: BuildConfigOverviewItem[];
 };
-/* eslint-enable no-unused-vars, no-undef */

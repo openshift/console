@@ -1,5 +1,3 @@
-/* eslint-disable no-undef, no-unused-vars */
-
 import * as _ from 'lodash-es';
 import { createBrowserHistory, createMemoryHistory } from 'history';
 

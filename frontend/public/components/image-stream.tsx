@@ -4,7 +4,6 @@ import * as semver from 'semver';
 import { Popover } from '@patternfly/react-core';
 import { QuestionCircleIcon } from '@patternfly/react-icons';
 
-// eslint-disable-next-line no-unused-vars
 import { K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
 import { CopyToClipboard, ExternalLink, Kebab, SectionHeading, LabelList, navFactory, ResourceKebab, ResourceLink, ResourceSummary, history, Timestamp } from './utils';
@@ -236,7 +235,6 @@ export const ImageStreamsPage: React.SFC<ImageStreamsPageProps> = props =>
   />;
 ImageStreamsPage.displayName = 'ImageStreamsListPage';
 
-/*  eslint-disable no-undef, no-unused-vars  */
 type ImageStreamTagsRowProps = {
   imageStream: K8sResourceKind;
   specTag: any;
@@ -262,4 +260,3 @@ export type ImageStreamsPageProps = {
 export type ImageStreamsDetailsPageProps = {
   match: any;
 };
-/* eslint-enable no-undef, no-unused-vars */

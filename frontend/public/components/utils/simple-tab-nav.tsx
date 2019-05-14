@@ -62,7 +62,6 @@ export class SimpleTabNav extends React.Component<SimpleTabNavProps, SimpleTabNa
   }
 }
 
-/* eslint-disable no-unused-vars, no-undef */
 type SimpleTabNavProps = {
   onClickTab?: (name: string) => void;
   selectedTab?: string,
@@ -82,4 +81,3 @@ type SimpleTabProps = {
   onClick: (title: string) => void;
   title: string;
 };
-/* eslint-enable no-unused-vars, no-undef */

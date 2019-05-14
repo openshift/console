@@ -1,5 +1,3 @@
-/* eslint-disable no-undef, no-unused-vars */
-
 import * as React from 'react';
 import { Button, HintBlock, Modal } from 'patternfly-react';
 import { CatalogItemHeader, PropertiesSidePanel, PropertyItem } from 'patternfly-react-extensions';

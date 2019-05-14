@@ -89,7 +89,6 @@ export const ResourceOverviewHeading: React.SFC<ResourceOverviewHeadingProps> = 
   </div>;
 };
 
-/* eslint-disable no-undef */
 export type ActionButtonsProps = {
   actionButtons: any[];
 };
@@ -129,7 +128,6 @@ export type SidebarSectionHeadingProps = {
   style?: any;
   text: string;
 };
-/* eslint-enable no-undef */
 
 BreadCrumbs.displayName = 'BreadCrumbs';
 PageHeading.displayName = 'PageHeading';

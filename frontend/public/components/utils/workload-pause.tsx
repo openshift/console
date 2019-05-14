@@ -1,6 +1,5 @@
 import * as React from 'react';
-// eslint-disable-next-line no-unused-vars
-import { K8sKind, k8sPatch, K8sResourceKind} from '../../module/k8s/index';
+import { K8sKind, k8sPatch, K8sResourceKind } from '../../module/k8s/index';
 import { errorModal } from '../modals/index';
 
 export const togglePaused = (model: K8sKind, obj: K8sResourceKind) => {

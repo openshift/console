@@ -24,7 +24,6 @@ export const OperatorManagementPage: React.SFC<OperatorManagementPageProps> = ({
     <HorizontalNav pages={pages} match={match} hideDivider noStatusBox={true} />
   </React.Fragment>;
 
-/* eslint-disable no-undef */
 export type OperatorManagementPageProps = {
   match: any;
 };

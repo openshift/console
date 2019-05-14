@@ -1,5 +1,3 @@
-/* eslint-disable no-unused-vars */
-
 import { Editor, IEditSession, Position } from 'brace';
 
 import { getCompletions } from '../../../public/module/k8s/autocomplete';

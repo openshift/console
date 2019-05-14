@@ -1,5 +1,3 @@
-/* eslint-disable no-undef */
-
 import { connect } from 'react-redux';
 import { Map as ImmutableMap } from 'immutable';
 import * as _ from 'lodash-es';

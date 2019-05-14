@@ -1,5 +1,3 @@
-/* eslint-disable no-undef */
-
 export * from './job';
 export * from './k8s';
 export * from './node';

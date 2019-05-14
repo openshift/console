@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import * as _ from 'lodash-es';
 
 import { ContainerSpec, PodKind, Volume, VolumeMount } from './';
@@ -136,10 +135,8 @@ export const getVolumeLocation = (volume: Volume) => {
 
 export const getRestartPolicyLabel = (pod: PodKind) => _.get(getRestartPolicy(pod), 'label', '');
 
-/* eslint-disable no-undef */
 export type PodReadiness = string;
 export type PodPhase = string;
-/* eslint-enable no-undef */
 
 export const getVolumeMountPermissions = (v: VolumeMount) => {
   if (!v) {

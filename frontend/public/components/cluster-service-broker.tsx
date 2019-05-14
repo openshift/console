@@ -1,9 +1,6 @@
-/* eslint-disable no-undef */
-
 import * as React from 'react';
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import { Kebab, SectionHeading, detailsPage, navFactory, ResourceLink, ResourceKebab, ResourceSummary, StatusWithIcon, Timestamp, ExternalLink } from './utils';
-// eslint-disable-next-line no-unused-vars
 import { K8sResourceKind, referenceForModel } from '../module/k8s';
 import { ClusterServiceBrokerModel } from '../models';
 import { Conditions } from './conditions';

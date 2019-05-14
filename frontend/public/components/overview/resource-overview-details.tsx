@@ -36,7 +36,6 @@ export const ResourceOverviewDetails = connect<PropsFromState, PropsFromDispatch
     </div>
 );
 
-/* eslint-disable no-unused-vars, no-undef */
 type PropsFromState = {
   selectedDetailsTab: any
 };
@@ -56,4 +55,3 @@ type OwnProps = {
 };
 
 type ResourceOverviewDetailsProps = PropsFromState & PropsFromDispatch & OwnProps;
-/* eslint-enable no-unused-vars, no-undef */

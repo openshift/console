@@ -1,6 +1,4 @@
 /* eslint-env node */
-/* eslint-disable no-unused-vars, no-undef */
-
 import * as webpack from 'webpack';
 import * as path from 'path';
 import * as glob from 'glob';

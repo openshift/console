@@ -1,5 +1,3 @@
-/* eslint-disable no-undef, no-unused-vars */
-
 import {browser, $, ExpectedConditions as until, by, element} from 'protractor';
 
 export const linkForCSC = (name: string) => element(by.linkText(name));

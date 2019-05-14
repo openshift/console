@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import {
   ClusterServiceVersionKind,
   ClusterServiceVersionResourceKind,
@@ -13,7 +12,6 @@ import {
   InstallPlanPhase } from '../public/components/operator-lifecycle-manager';
 import { StatusCapability, SpecCapability } from '../public/components/operator-lifecycle-manager/descriptors/types';
 import { CustomResourceDefinitionKind, K8sResourceKind, K8sKind } from '../public/module/k8s';
-/* eslint-enable no-unused-vars */
 
 export const testNamespace: K8sResourceKind = {
   apiVersion: 'v1',

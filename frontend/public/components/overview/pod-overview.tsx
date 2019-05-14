@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars, no-undef */
 import * as React from 'react';
 import { PodOverviewItem } from '.';
 import { PodResourceSummary, PodDetailsList, menuActions } from '../pod';

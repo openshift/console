@@ -1,5 +1,3 @@
-/* eslint-disable no-undef, no-unused-vars */
-
 import * as React from 'react';
 import { ShallowWrapper, shallow } from 'enzyme';
 import { Map as ImmutableMap } from 'immutable';
