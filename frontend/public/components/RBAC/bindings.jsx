@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 import { getQN, k8sCreate, k8sPatch, referenceFor } from '../../module/k8s';
-import { getActiveNamespace, formatNamespacedRouteForResource, UIActions } from '../../ui/ui-actions';
+import * as UIActions from '../../actions/ui';
 import { ColHead, List, ListHeader, MultiListPage, ResourceRow } from '../factory';
 import { RadioGroup } from '../radio';
 import { confirmModal } from '../modals';
@@ -26,7 +26,8 @@ import {
   resourceObjPath,
 } from '../utils';
 import { isSystemRole } from './index';
-import { connectToFlags, FLAGS, flagPending } from '../../features';
+import { connectToFlags, flagPending } from '../../reducers/features';
+import { FLAGS } from '../../const';
 
 const bindingKind = binding => binding.metadata.namespace ? 'RoleBinding' : 'ClusterRoleBinding';
 
@@ -391,7 +392,7 @@ const BaseEditRoleBinding = connect(null, {setActiveNamespace: UIActions.setActi
 
           <ButtonBar errorMessage={this.state.error} inProgress={this.state.inProgress}>
             <button type="submit" className="btn btn-primary" id="save-changes">{saveButtonText || 'Create'}</button>
-            <Link to={formatNamespacedRouteForResource('rolebindings')} className="btn btn-default" id="cancel">Cancel</Link>
+            <Link to={UIActions.formatNamespacedRouteForResource('rolebindings')} className="btn btn-default" id="cancel">Cancel</Link>
           </ButtonBar>
         </form>
       </div>;
@@ -402,7 +403,7 @@ export const CreateRoleBinding = ({match: {params}, location}) => {
   const searchParams = new URLSearchParams(location.search);
   const roleKind = searchParams.get('rolekind');
   const roleName = searchParams.get('rolename');
-  const metadata = {namespace: getActiveNamespace()};
+  const metadata = {namespace: UIActions.getActiveNamespace()};
   const fixed = {
     kind: (params.ns || roleKind === 'Role') ? 'RoleBinding' : undefined,
     metadata: {namespace: params.ns},

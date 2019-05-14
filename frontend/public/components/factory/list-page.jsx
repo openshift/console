@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 import { KEYBOARD_SHORTCUTS } from '../../const';
-import k8sActions from '../../module/k8s/k8s-actions';
+import { filterList } from '../../actions/k8s';
 import { CheckBoxes, storagePrefix } from '../row-filter';
 import { ErrorPage404, ErrorBoundaryFallback } from '../error';
 import { referenceForModel } from '../../module/k8s';
@@ -123,7 +123,7 @@ ListPageWrapper_.propTypes = {
   staticFilters: PropTypes.array,
 };
 
-export const FireMan_ = connect(null, {filterList: k8sActions.filterList})(
+export const FireMan_ = connect(null, {filterList})(
   class ConnectedFireMan extends React.PureComponent {
     constructor(props) {
       super(props);

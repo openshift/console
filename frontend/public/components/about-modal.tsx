@@ -3,7 +3,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { AboutModal as PfAboutModal, TextContent, TextList, TextListItem } from '@patternfly/react-core';
 
-import { clusterIDStateToProps } from '../ui/ui-reducers';
+import { clusterIDStateToProps } from '../reducers/ui';
 import { getBrandingDetails } from './masthead';
 import { k8sVersion } from '../module/status';
 

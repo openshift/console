@@ -3,7 +3,8 @@ import * as _ from 'lodash-es';
 
 import store from '../redux';
 import { LoadingBox, LoadingInline, Dropdown, ResourceIcon } from './utils';
-import { connectToFlags, FLAGS } from '../features';
+import { connectToFlags } from '../reducers/features';
+import { FLAGS } from '../const';
 import { Terminal } from './terminal';
 import { WSFactory } from '../module/ws-factory';
 import { resourceURL } from '../module/k8s';

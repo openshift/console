@@ -28,7 +28,7 @@ export const NAMESPACE_LOCAL_STORAGE_KEY = 'dropdown-storage-namespaces';
 export const LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY = `${STORAGE_PREFIX}/last-namespace-name`;
 export const API_DISCOVERY_RESOURCES_LOCAL_STORAGE_KEY = `${STORAGE_PREFIX}/api-discovery-resources`;
 export const COMMUNITY_PROVIDERS_WARNING_LOCAL_STORAGE_KEY = `${STORAGE_PREFIX}/community-providers-warning`;
-export const SWAGGER_SESSION_STORAGE_KEY = `${STORAGE_PREFIX}/${window.SERVER_FLAGS.consoleVersion}/swagger-definitions`;
+export const SWAGGER_SESSION_STORAGE_KEY = `${STORAGE_PREFIX}/${(window as any).SERVER_FLAGS.consoleVersion}/swagger-definitions`;
 
 // Bootstrap user for OpenShift 4.0 clusters
 export const KUBE_ADMIN_USERNAME = 'kube:admin';
@@ -41,3 +41,27 @@ export const OPERATOR_HUB_LABEL = 'openshift-marketplace';
 
 export const OC_DOWNLOAD_LINK = 'https://mirror.openshift.com/pub/openshift-v4/clients/oc/4.1';
 export const ODO_DOWNLOAD_LINK = 'https://mirror.openshift.com/pub/openshift-v4/clients/odo/latest';
+
+export enum FLAGS {
+  AUTH_ENABLED = 'AUTH_ENABLED',
+  PROMETHEUS = 'PROMETHEUS',
+  OPERATOR_LIFECYCLE_MANAGER = 'OPERATOR_LIFECYCLE_MANAGER',
+  CHARGEBACK = 'CHARGEBACK',
+  OPENSHIFT = 'OPENSHIFT',
+  CAN_GET_NS = 'CAN_GET_NS',
+  CAN_LIST_NS = 'CAN_LIST_NS',
+  CAN_LIST_NODE = 'CAN_LIST_NODE',
+  CAN_LIST_PV = 'CAN_LIST_PV',
+  CAN_LIST_STORE = 'CAN_LIST_STORE',
+  CAN_LIST_CRD = 'CAN_LIST_CRD',
+  CAN_LIST_PACKAGE_MANIFEST = 'CAN_LIST_PACKAGE_MANIFEST',
+  CAN_LIST_OPERATOR_GROUP = 'CAN_LIST_OPERATOR_GROUP',
+  CAN_CREATE_PROJECT = 'CAN_CREATE_PROJECT',
+  SHOW_OPENSHIFT_START_GUIDE = 'SHOW_OPENSHIFT_START_GUIDE',
+  SERVICE_CATALOG = 'SERVICE_CATALOG',
+  OPERATOR_HUB = 'OPERATOR_HUB',
+  CLUSTER_API = 'CLUSTER_API',
+  CLUSTER_VERSION = 'CLUSTER_VERSION',
+  MACHINE_CONFIG = 'MACHINE_CONFIG',
+  MACHINE_AUTOSCALER = 'MACHINE_AUTOSCALER',
+}

@@ -11,6 +11,8 @@ import { referenceForModel, K8sResourceKind, K8sResourceKindReference, reference
 import { ClusterServiceVersionModel } from '../../models';
 import { ClusterServiceVersionKind } from './index';
 
+// TODO(alecmerdler): Implement dynamic form powered by descriptors and CRD validation schema
+
 /**
  * Component which wraps the YAML editor to ensure the templates are added from the `ClusterServiceVersion` annotations.
  */

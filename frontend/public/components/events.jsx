@@ -20,7 +20,8 @@ import { referenceFor, watchURL } from '../module/k8s';
 import { withStartGuide } from './start-guide';
 import { WSFactory } from '../module/ws-factory';
 import { EventModel, NodeModel } from '../models';
-import { connectToFlags, FLAGS } from '../features';
+import { connectToFlags } from '../reducers/features';
+import { FLAGS } from '../const';
 import {
   Box,
   Dropdown,

@@ -60,6 +60,16 @@ export const getCachedResources = () => new Promise<any>((resolve, reject) => {
   resolve(null);
 });
 
+export type DiscoveryResources = {
+  adminResources: string[];
+  allResources: string[];
+  configResources: K8sKind[];
+  models: K8sKind[];
+  namespacedSet: Set<string>;
+  preferredVersions: {groupVersion: string, version: string}[];
+  safeResources: string[];
+};
+
 const getResources_ = () => coFetchJSON('api/kubernetes/apis')
   .then(res => {
     const preferredVersions = res.groups.map(group => group.preferredVersion);
@@ -103,7 +113,7 @@ const getResources_ = () => coFetchJSON('api/kubernetes/apis')
         allResources.forEach(r => ADMIN_RESOURCES.has(r.split('/')[0]) ? adminResources.push(r) : safeResources.push(r));
         const configResources = _.filter(models, m => m.apiGroup === 'config.openshift.io' && m.kind !== 'ClusterOperator');
 
-        return {allResources, safeResources, adminResources, configResources, namespacedSet, models, preferredVersions};
+        return {allResources, safeResources, adminResources, configResources, namespacedSet, models, preferredVersions} as DiscoveryResources;
       });
   });
 

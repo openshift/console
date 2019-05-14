@@ -3,11 +3,11 @@ import * as _ from 'lodash-es';
 import * as PropTypes from 'prop-types';
 import { Helmet } from 'react-helmet';
 
-import { ANNOTATIONS } from '../../const';
+import { ANNOTATIONS, FLAGS } from '../../const';
 import { CatalogTileViewPage } from './catalog-items';
 import { serviceClassDisplayName, referenceForModel } from '../../module/k8s';
 import { withStartGuide } from '../start-guide';
-import { FLAGS, connectToFlags, flagPending } from '../../features';
+import { connectToFlags, flagPending } from '../../reducers/features';
 import { Firehose, PageHeading, StatusBox } from '../utils';
 import {
   getAnnotationTags,

@@ -6,7 +6,8 @@ import * as classNames from 'classnames';
 import { ResourceIcon } from './index';
 import { modelFor, referenceForModel } from '../../module/k8s';
 import { connectToModel } from '../../kinds';
-import { connectToFlags, FLAGS } from '../../features';
+import { connectToFlags } from '../../reducers/features';
+import { FLAGS } from '../../const';
 
 const unknownKinds = new Set();
 

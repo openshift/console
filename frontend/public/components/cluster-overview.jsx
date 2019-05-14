@@ -8,7 +8,8 @@ import { SoftwareDetails } from './software-details';
 import { withStartGuide } from './start-guide';
 import { coFetchJSON } from '../co-fetch';
 import { ConsoleHealth, KubernetesHealth, Health } from './graphs/health';
-import { FLAGS, connectToFlags, flagPending } from '../features';
+import { connectToFlags, flagPending } from '../reducers/features';
+import { FLAGS } from '../const';
 import { Gauge, prometheusBasePath, requirePrometheus } from './graphs';
 import {
   AdditionalSupportLinks,

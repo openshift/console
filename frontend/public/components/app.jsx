@@ -7,8 +7,9 @@ import { Redirect, Route, Router, Switch } from 'react-router-dom';
 import * as PropTypes from 'prop-types';
 
 import store from '../redux';
-import { ALL_NAMESPACES_KEY } from '../const';
-import { connectToFlags, featureActions, flagPending, FLAGS } from '../features';
+import { ALL_NAMESPACES_KEY, FLAGS } from '../const';
+import { connectToFlags, flagPending } from '../reducers/features';
+import { detectFeatures } from '../actions/features';
 import { analyticsSvc } from '../module/analytics';
 import { GlobalNotifications } from './global-notifications';
 import { getBrandingDetails, Masthead } from './masthead';
@@ -18,10 +19,10 @@ import { SearchPage } from './search';
 import { ResourceDetailsPage, ResourceListPage } from './resource-list';
 import { history, AsyncComponent, Loading } from './utils';
 import { namespacedPrefixes } from './utils/link';
-import { UIActions, getActiveNamespace } from '../ui/ui-actions';
+import * as UIActions from '../actions/ui';
 import { ClusterServiceVersionModel, SubscriptionModel, AlertmanagerModel } from '../models';
 import { getCachedResources, referenceForModel } from '../module/k8s';
-import k8sActions, { types } from '../module/k8s/k8s-actions';
+import { ActionType, watchAPIServices } from '../actions/k8s';
 import '../vendor.scss';
 import '../style.scss';
 
@@ -69,7 +70,7 @@ _.each(namespacedPrefixes, p => {
 
 const appendActiveNamespace = pathname => {
   const basePath = pathname.replace(/\/$/, '');
-  const activeNamespace = getActiveNamespace();
+  const activeNamespace = UIActions.getActiveNamespace();
   return activeNamespace === ALL_NAMESPACES_KEY ? `${basePath}/all-namespaces` : `${basePath}/ns/${activeNamespace}`;
 };
 
@@ -306,18 +307,18 @@ class App extends React.PureComponent {
   }
 }
 
-const startDiscovery = () => store.dispatch(k8sActions.watchAPIServices());
+const startDiscovery = () => store.dispatch(watchAPIServices());
 
 // Load cached API resources from localStorage to speed up page load.
 getCachedResources().then(resources => {
   if (resources) {
-    store.dispatch({type: types.resources, resources});
+    store.dispatch({type: ActionType.ReceivedResources, resources});
   }
   // Still perform discovery to refresh the cache.
   startDiscovery();
 }).catch(startDiscovery);
 
-_.each(featureActions, store.dispatch);
+store.dispatch(detectFeatures());
 
 // Global timer to ensure all <Timestamp> components update in sync
 setInterval(() => store.dispatch(UIActions.updateTimestamps(Date.now())), 10000);
