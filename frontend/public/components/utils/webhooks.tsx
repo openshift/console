@@ -6,7 +6,7 @@ import * as _ from 'lodash-es';
 import { K8sResourceKind } from '../../module/k8s';
 import { SectionHeading, ResourceLink } from '.';
 
-const kubeAPIServerURL = (window as any).SERVER_FLAGS.kubeAPIServerURL || 'https://<api-server>';
+const kubeAPIServerURL = window.SERVER_FLAGS.kubeAPIServerURL || 'https://<api-server>';
 enum TriggerTypes {
   Bitbucket ='Bitbucket',
   ConfigChange = 'ConfigChange',
