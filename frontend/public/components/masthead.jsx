@@ -48,7 +48,7 @@ export const getBrandingDetails = () => {
   return { logoImg, productName };
 };
 
-export const Masthead = ({ onNavToggle }) => {
+export const Masthead = React.memo(({ onNavToggle }) => {
   const details = getBrandingDetails();
   const defaultRoute = '/';
   const logoProps = {
@@ -69,7 +69,7 @@ export const Masthead = ({ onNavToggle }) => {
       onNavToggle={onNavToggle}
     />
   );
-};
+});
 
 Masthead.propTypes = {
   onNavToggle: PropTypes.func,

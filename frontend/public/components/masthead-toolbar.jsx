@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { ArrowCircleUpIcon, QuestionCircleIcon, ThIcon } from '@patternfly/react-icons';
 import { Button, Dropdown, DropdownToggle, DropdownSeparator, DropdownItem, KebabToggle, Toolbar, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
 
-import { stateToProps as flagStateToProps, flagPending } from '../reducers/features';
+import { connectToFlags, flagPending } from '../reducers/features';
 import { FLAGS } from '../const';
 import { authSvc } from '../module/auth';
 import { history, Firehose } from './utils';
@@ -349,11 +349,8 @@ class MastheadToolbar_ extends React.Component {
   }
 }
 
-const mastheadToolbarStateToProps = state => {
-  const desiredFlags = [FLAGS.AUTH_ENABLED, FLAGS.OPENSHIFT, FLAGS.CLUSTER_VERSION];
-  const flagProps = flagStateToProps(desiredFlags, state);
-  const user = state.UI.get('user');
-  return { ...flagProps, user };
-};
+const mastheadToolbarStateToProps = state => ({ user: state.UI.get('user') });
 
-export const MastheadToolbar = connect(mastheadToolbarStateToProps)(MastheadToolbar_);
+export const MastheadToolbar = connect(mastheadToolbarStateToProps)(connectToFlags(
+  FLAGS.AUTH_ENABLED, FLAGS.OPENSHIFT, FLAGS.CLUSTER_VERSION
+)(MastheadToolbar_));

@@ -448,8 +448,8 @@
     "@types/node" "*"
 
 "@types/history@*":
-  version "4.6.2"
-  resolved "https://registry.yarnpkg.com/@types/history/-/history-4.6.2.tgz#12cfaba693ba20f114ed5765467ff25fdf67ddb0"
+  version "4.7.2"
+  resolved "https://registry.yarnpkg.com/@types/history/-/history-4.7.2.tgz#0e670ea254d559241b6eeb3894f8754991e73220"
 
 "@types/immutable@3.x":
   version "3.8.7"
@@ -543,8 +543,8 @@
     "@types/react-router" "*"
 
 "@types/react-router@*":
-  version "4.0.27"
-  resolved "https://registry.yarnpkg.com/@types/react-router/-/react-router-4.0.27.tgz#553f54df7c4b09d6046b0201ce9b91c46b2940e3"
+  version "4.4.5"
+  resolved "https://registry.yarnpkg.com/@types/react-router/-/react-router-4.4.5.tgz#1166997dc7eef2917b5ebce890ebecb32ee5c1b3"
   dependencies:
     "@types/history" "*"
     "@types/react" "*"

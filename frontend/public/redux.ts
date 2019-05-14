@@ -1,9 +1,15 @@
-import { applyMiddleware, combineReducers, createStore } from 'redux';
+import { applyMiddleware, combineReducers, createStore, compose } from 'redux';
 
 import { featureReducer, featureReducerName, FeatureState } from './reducers/features';
 import { monitoringReducer, monitoringReducerName, MonitoringState } from './reducers/monitoring';
 import k8sReducers, { K8sState } from './reducers/k8s';
 import UIReducers, { UIState } from './reducers/ui';
+
+const composeEnhancers =
+  // eslint-disable-next-line no-undef
+  (process.env.NODE_ENV !== 'production' &&
+    (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) ||
+  compose;
 
 /**
  * This is the entirety of the `redux-thunk` library.
@@ -36,7 +42,7 @@ const reducers = combineReducers<RootState>({
   [monitoringReducerName]: monitoringReducer,
 });
 
-const store = createStore(reducers, {}, applyMiddleware(thunk));
+const store = createStore(reducers, {}, composeEnhancers(applyMiddleware(thunk)));
 
 // eslint-disable-next-line no-undef
 if (process.env.NODE_ENV !== 'production') {

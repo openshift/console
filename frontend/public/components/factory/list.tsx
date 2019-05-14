@@ -436,7 +436,9 @@ const stateToProps = ({UI}, {data = [], defaultSortField = 'metadata.name', defa
   };
 };
 
-export const List = connect(stateToProps, {sortList: UIActions.sortList})(
+export const List = connect(stateToProps, {sortList: UIActions.sortList}, null, {
+  areStatesEqual: ({UI: next}, {UI: prev}) => next.get('listSorts') === prev.get('listSorts'),
+})(
   class ListInner extends React.Component<ListInnerProps> {
     static propTypes = {
       data: PropTypes.array,
