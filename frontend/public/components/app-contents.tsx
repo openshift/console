@@ -1,15 +1,15 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Redirect, Route, Switch, withRouter } from 'react-router-dom';
-import { ALL_NAMESPACES_KEY } from '../const';
-import { connectToFlags, flagPending, FLAGS } from '../features';
+import { ALL_NAMESPACES_KEY, FLAGS } from '../const';
+import { connectToFlags, flagPending } from '../reducers/features';
 import { GlobalNotifications } from './global-notifications';
 import { NamespaceBar } from './namespace';
 import { SearchPage } from './search';
 import { ResourceDetailsPage, ResourceListPage } from './resource-list';
 import { AsyncComponent, Loading } from './utils';
 import { namespacedPrefixes } from './utils/link';
-import { getActiveNamespace } from '../ui/ui-actions';
+import * as UIActions from '../actions/ui';
 import { ClusterServiceVersionModel, SubscriptionModel, AlertmanagerModel } from '../models';
 import { referenceForModel } from '../module/k8s';
 
@@ -46,7 +46,7 @@ _.each(namespacedPrefixes, p => {
 
 const appendActiveNamespace = pathname => {
   const basePath = pathname.replace(/\/$/, '');
-  const activeNamespace = getActiveNamespace();
+  const activeNamespace = UIActions.getActiveNamespace();
   return activeNamespace === ALL_NAMESPACES_KEY ? `${basePath}/all-namespaces` : `${basePath}/ns/${activeNamespace}`;
 };
 
@@ -77,7 +77,7 @@ const AppContents = withRouter(React.memo(() => (
   <PageSection variant={PageSectionVariants.light}>
     <div id="content">
       <GlobalNotifications />
-      <Route path={namespacedRoutes} render={() => <NamespaceBar />} />
+      <Route path={namespacedRoutes} component={NamespaceBar} />
       <div id="content-scrollable">
         <Switch>
           <Route path={['/all-namespaces', '/ns/:ns']} component={RedirectComponent} />
