@@ -91,6 +91,18 @@
   version "0.8.2"
   resolved "https://registry.yarnpkg.com/@emotion/utils/-/utils-0.8.2.tgz#576ff7fb1230185b619a75d258cbc98f0867a8dc"
 
+"@fortawesome/fontawesome-common-types@^0.2.18":
+  version "0.2.18"
+  resolved "https://registry.yarnpkg.com/@fortawesome/fontawesome-common-types/-/fontawesome-common-types-0.2.18.tgz#c0d8f073a5116b2de0a2c8a7aba66093a6956ce7"
+  integrity sha512-834DrzO2Ne3upCW+mJJPC/E6BsFcj+2Z1HmPIhbpbj8UaKmXWum4NClqLpUiMetugRlHuG4jbIHNdv2/lc3c1Q==
+
+"@fortawesome/free-brands-svg-icons@^5.8.1":
+  version "5.8.2"
+  resolved "https://registry.yarnpkg.com/@fortawesome/free-brands-svg-icons/-/free-brands-svg-icons-5.8.2.tgz#e68a509c986d5d197cc5bd9ae8d966eff513468d"
+  integrity sha512-nhEWctDOP6f+Ka10LXAFoF+6mtWidC2iQgTBGRGgydmhBtcIEwyxWVx5wQHa86A1zAMi5TnipDAYQs2qn7DD6A==
+  dependencies:
+    "@fortawesome/fontawesome-common-types" "^0.2.18"
+
 "@mapbox/geojson-area@0.2.2":
   version "0.2.2"
   resolved "https://registry.yarnpkg.com/@mapbox/geojson-area/-/geojson-area-0.2.2.tgz#18d7814aa36bf23fbbcc379f8e26a22927debf10"
@@ -135,9 +147,10 @@
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/@mapbox/whoots-js/-/whoots-js-3.1.0.tgz#497c67a1cef50d1a2459ba60f315e448d2ad87fe"
 
-"@patternfly/patternfly@1.0.219":
-  version "1.0.219"
-  resolved "https://registry.yarnpkg.com/@patternfly/patternfly/-/patternfly-1.0.219.tgz#3fb57ca7ec88437d78cd84f6e9563979f1081469"
+"@patternfly/patternfly@2.6.7":
+  version "2.6.7"
+  resolved "https://registry.yarnpkg.com/@patternfly/patternfly/-/patternfly-2.6.7.tgz#0dbe5f5a5033c77f4683ce2e25feecbcb6f8209a"
+  integrity sha512-9HFeRZpvhoB58t02jrFH+GABQqlOA4jcBK7dzuJYdbUZa/yHI/+f1gp9YGXfl6OqI/MR1KN6nEajO+4Vq3DcLw==
 
 "@patternfly/react-charts@^3.4.5":
   version "3.4.5"
@@ -151,39 +164,25 @@
     victory "^32.2.0"
     victory-core "^32.2.0"
 
-"@patternfly/react-core@2.4.1":
-  version "2.4.1"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-core/-/react-core-2.4.1.tgz#3f2fedb160ed9451be5126b906bb8ec493146540"
+"@patternfly/react-core@3.16.16":
+  version "3.16.16"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-core/-/react-core-3.16.16.tgz#0d235dabecb5175dcf8dfcc584cf371bf9af48c5"
+  integrity sha512-bF/yEHFFSGY/tH45yuHrzeX98bZpcMCSyHIZoXgQ8z0fMbz4e2MW7RSJaGMo0Mpo6wpjw6RnRS9ZcdhtHFY9Rg==
   dependencies:
-    "@patternfly/react-icons" "^3.2.0"
-    "@patternfly/react-styles" "^2.3.6"
-    "@patternfly/react-tokens" "^2.0.6"
+    "@patternfly/react-icons" "^3.9.2"
+    "@patternfly/react-styles" "^3.2.1"
+    "@patternfly/react-tokens" "^2.5.2"
     "@tippy.js/react" "^1.1.1"
     emotion "^9.2.9"
     exenv "^1.2.2"
     focus-trap-react "^4.0.1"
-    tippy.js "^3.4.1"
 
-"@patternfly/react-icons@^3.2.0":
-  version "3.2.0"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-icons/-/react-icons-3.2.0.tgz#ad7e121d43d4d2c857a61c89baef81da38716a55"
-
-"@patternfly/react-styles@^2.3.6":
-  version "2.3.6"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-styles/-/react-styles-2.3.6.tgz#8b5712d9c414ebc27d748985106781520a54f215"
+"@patternfly/react-icons@^3.9.2":
+  version "3.9.2"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-icons/-/react-icons-3.9.2.tgz#8a4959a6cdf59929e89f2627a2e3a97e4cb5d798"
+  integrity sha512-EwPB+Nodd7zwiFh7R3Qq6Dif+xUR3WOwaJ+SRbP5NsxEAJf3CyYyrd7rbN8yFrFLTMKzknT2ez9XrP/5Lgr5LQ==
   dependencies:
-    "@babel/helper-plugin-utils" "^7.0.0-beta.48"
-    camel-case "^3.0.0"
-    css "^2.2.3"
-    cssom "^0.3.4"
-    cssstyle "^0.3.1"
-    emotion "^9.2.9"
-    emotion-server "^9.2.9"
-    fbjs-scripts "^0.8.3"
-    fs-extra "^6.0.1"
-    jsdom "^11.11.0"
-    relative "^3.0.2"
-    resolve-from "^4.0.0"
+    "@fortawesome/free-brands-svg-icons" "^5.8.1"
 
 "@patternfly/react-styles@^3.2.1":
   version "3.2.1"
@@ -203,9 +202,10 @@
     relative "^3.0.2"
     resolve-from "^4.0.0"
 
-"@patternfly/react-tokens@^2.0.6":
-  version "2.0.6"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-tokens/-/react-tokens-2.0.6.tgz#40f42a1e176541053478e5c462e22f5412bf2356"
+"@patternfly/react-tokens@^2.5.2":
+  version "2.5.2"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-tokens/-/react-tokens-2.5.2.tgz#268348551b91dc2ad38403ef342892aff0b38b82"
+  integrity sha512-N2J50hVXXlcObHLYc5tXeCWolkZcqa9oDIFFDmdHuJpH4+Sh3sZf1iRtixnN5VdE8+MAKv9p+kkgpuPKkUroMw==
 
 "@plotly/d3-sankey@0.7.2":
   version "0.7.2"
@@ -8025,6 +8025,11 @@ lodash.clonedeep@^4.3.2, lodash.clonedeep@^4.5.0:
   version "4.5.0"
   resolved "https://registry.yarnpkg.com/lodash.clonedeep/-/lodash.clonedeep-4.5.0.tgz#e23f3f9c4f8fbdde872529c1071857a086e5ccef"
 
+lodash.debounce@^4:
+  version "4.0.8"
+  resolved "https://registry.yarnpkg.com/lodash.debounce/-/lodash.debounce-4.0.8.tgz#82d79bff30a67c4005ffd5e2515300ad9ca4d7af"
+  integrity sha1-gteb/zCmfEAF/9XiUVMArZyk168=
+
 lodash.defaults@^3.1.2:
   version "3.1.2"
   resolved "https://registry.yarnpkg.com/lodash.defaults/-/lodash.defaults-3.1.2.tgz#c7308b18dbf8bc9372d701a73493c61192bd2e2c"
@@ -9640,23 +9645,27 @@ patternfly-bootstrap-treeview@~2.1.0:
     bootstrap "3.3.x"
     jquery ">= 2.1.x"
 
-patternfly-react-extensions@2.16.19:
-  version "2.16.19"
-  resolved "https://registry.yarnpkg.com/patternfly-react-extensions/-/patternfly-react-extensions-2.16.19.tgz#233c1e70dbe6b7bb68117830ea056a59672d0677"
+patternfly-react-extensions@2.18.4:
+  version "2.18.4"
+  resolved "https://registry.yarnpkg.com/patternfly-react-extensions/-/patternfly-react-extensions-2.18.4.tgz#b6322b5f3b8c6b07c1bb0bb13b4db1c26086da17"
+  integrity sha512-TQ+rW2NGadPwUsSn39HMwMQSiz/ZoOar0KJndV88x7/AwZzyjIyZYfWVijX7AVlN94JaBtRUeexgMrh6aJF9yA==
   dependencies:
     breakjs "^1.0.0"
     classnames "^2.2.5"
     css-element-queries "^1.0.1"
     patternfly "^3.58.0"
-    patternfly-react "^2.29.17"
+    patternfly-react "^2.32.3"
     react-bootstrap "^0.32.1"
+    react-click-outside "^3.0.1"
     react-diff-view "^1.8.1"
+    react-ellipsis-with-tooltip "^1.0.8"
     react-virtualized "9.x"
     unidiff "^1.0.1"
 
-patternfly-react@2.29.17, patternfly-react@^2.29.17:
-  version "2.29.17"
-  resolved "https://registry.yarnpkg.com/patternfly-react/-/patternfly-react-2.29.17.tgz#e6d11a8dde35a7c9ba15383c3c6e74b7db10f75e"
+patternfly-react@2.32.3, patternfly-react@^2.32.3:
+  version "2.32.3"
+  resolved "https://registry.yarnpkg.com/patternfly-react/-/patternfly-react-2.32.3.tgz#a66d580c6e93cd061ade3e6059cd02af48b79a68"
+  integrity sha512-PslQ8pS6VDyBSYP1+HXHeuZ8FTFToj9ZUqkMeXnTJHqCdWcuQTijBimQ4lAvxXFKAPO7cbcdIUWiO/95cAZvXQ==
   dependencies:
     bootstrap-slider-without-jquery "^10.0.0"
     breakjs "^1.0.0"
@@ -9670,6 +9679,8 @@ patternfly-react@2.29.17, patternfly-react@^2.29.17:
     react-c3js "^0.1.20"
     react-click-outside "^3.0.1"
     react-collapse "^4.0.3"
+    react-debounce-input "^3.2.0"
+    react-ellipsis-with-tooltip "^1.0.8"
     react-fontawesome "^1.6.1"
     react-motion "^0.5.2"
     reactabular-table "^8.14.0"
@@ -9710,9 +9721,10 @@ patternfly@^3.58.0:
     patternfly-bootstrap-combobox "~1.1.7"
     patternfly-bootstrap-treeview "~2.1.0"
 
-patternfly@^3.59.0:
+patternfly@^3.59.1:
   version "3.59.1"
   resolved "https://registry.yarnpkg.com/patternfly/-/patternfly-3.59.1.tgz#4adea89223e7386551bc9560ad5bed99e37df904"
+  integrity sha512-0Q/P58yaxcQXwnXo/OssiXaZmuX0g9QvWdpsYHyml4ihqnN2lL/yGdadFarA6UAQb//15XtNjKHZocoJXCkWYg==
   dependencies:
     bootstrap "~3.4.0"
     font-awesome "^4.7.0"
@@ -10311,14 +10323,7 @@ prop-types@15.6.x, prop-types@^15.5.4:
     loose-envify "^1.3.1"
     object-assign "^4.1.1"
 
-prop-types@^15.5.10, prop-types@^15.5.6, prop-types@^15.5.8, prop-types@^15.6.0, prop-types@^15.6.1, prop-types@^15.6.2:
-  version "15.6.2"
-  resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.6.2.tgz#05d5ca77b4453e985d60fc7ff8c859094a497102"
-  dependencies:
-    loose-envify "^1.3.1"
-    object-assign "^4.1.1"
-
-prop-types@^15.7.2:
+prop-types@^15, prop-types@^15.7.2:
   version "15.7.2"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.7.2.tgz#52c41e75b8c87e72b9d9360e0206b99dcbffa6c5"
   integrity sha512-8QQikdH7//R2vurIJSutZ1smHYTcLpRWEOlHnzcWHmBYrOGUysKwSsrC89BCiFj3CbrfJ/nXFdJepOVrY1GCHQ==
@@ -10326,6 +10331,13 @@ prop-types@^15.7.2:
     loose-envify "^1.4.0"
     object-assign "^4.1.1"
     react-is "^16.8.1"
+
+prop-types@^15.5.10, prop-types@^15.5.6, prop-types@^15.5.8, prop-types@^15.6.0, prop-types@^15.6.1, prop-types@^15.6.2:
+  version "15.6.2"
+  resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.6.2.tgz#05d5ca77b4453e985d60fc7ff8c859094a497102"
+  dependencies:
+    loose-envify "^1.3.1"
+    object-assign "^4.1.1"
 
 protocol-buffers-schema@^2.0.2:
   version "2.2.0"
@@ -10648,6 +10660,14 @@ react-copy-to-clipboard@5.x:
     copy-to-clipboard "^3"
     prop-types "^15.5.8"
 
+react-debounce-input@^3.2.0:
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/react-debounce-input/-/react-debounce-input-3.2.0.tgz#6978c6061d898f549f40417fb0d2ebbecf50aaaa"
+  integrity sha1-aXjGBh2Jj1SfQEF/sNLrvs9Qqqo=
+  dependencies:
+    lodash.debounce "^4"
+    prop-types "^15"
+
 react-diff-view@^1.8.1:
   version "1.8.1"
   resolved "https://registry.yarnpkg.com/react-diff-view/-/react-diff-view-1.8.1.tgz#0b9b4adcb92de6730d28177d68654dfcc2097f73"
@@ -10686,6 +10706,13 @@ react-dom@16.8.6:
     object-assign "^4.1.1"
     prop-types "^15.6.2"
     scheduler "^0.13.6"
+
+react-ellipsis-with-tooltip@^1.0.8:
+  version "1.0.8"
+  resolved "https://registry.yarnpkg.com/react-ellipsis-with-tooltip/-/react-ellipsis-with-tooltip-1.0.8.tgz#fce2d0c9c4820e85ad7fc8c1a77e9a0b86f429fb"
+  integrity sha512-GdEYrrvS/iPYVAufShdJz8gtwG5kZNxlBh1Kb/LjCwYgNwGmRlCbVEmXS///bHrbhXoSxnzYbymGHFyYKR4Q6A==
+  dependencies:
+    uuid "^3.1.0"
 
 react-fast-compare@^2.0.0:
   version "2.0.4"
@@ -12938,12 +12965,6 @@ tinyqueue@^1.1.0:
 tippy.js@^3.2.0:
   version "3.3.0"
   resolved "https://registry.yarnpkg.com/tippy.js/-/tippy.js-3.3.0.tgz#90d4f90be9c80fdc0d0025f49378e3d9f60508d3"
-  dependencies:
-    popper.js "^1.14.6"
-
-tippy.js@^3.4.1:
-  version "3.4.1"
-  resolved "https://registry.yarnpkg.com/tippy.js/-/tippy.js-3.4.1.tgz#f0eb3081824ad6c5d364336451ad77ae2f543da8"
   dependencies:
     popper.js "^1.14.6"
 
