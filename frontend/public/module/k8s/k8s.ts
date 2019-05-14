@@ -6,7 +6,7 @@ import { K8sResourceKindReference, GroupVersionKind, CustomResourceDefinitionKin
 
 export const getQN: (obj: K8sResourceKind) => string = ({metadata: {name, namespace}}) => (namespace ? `(${namespace})-` : '') + name;
 
-export const k8sBasePath = `${(window as any).SERVER_FLAGS.basePath}api/kubernetes`;
+export const k8sBasePath = `${window.SERVER_FLAGS.basePath}api/kubernetes`;
 
 // TODO(alecmerdler): Replace all manual string building with this function
 export const referenceForGroupVersionKind = (group: string) => (version: string) => (kind: string) => [group, version, kind].join('~');

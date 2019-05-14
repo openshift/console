@@ -26,7 +26,7 @@ export const createModalLauncher: CreateModalLauncher = (Component) => (props) =
     };
     Modal.setAppElement(modalContainer);
     ReactDOM.render(<Provider store={store}>
-      <Router {...{history, basename: (window as any).SERVER_FLAGS.basePath}}>
+      <Router {...{history, basename: window.SERVER_FLAGS.basePath}}>
         <Modal
           isOpen={true}
           contentLabel="Modal"

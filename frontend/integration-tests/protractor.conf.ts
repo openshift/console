@@ -225,7 +225,7 @@ export const checkLogs = async() => (await browser.manage().logs().get('browser'
   });
 
 function hasError() {
-  return (window as any).windowError;
+  return window.windowError;
 }
 export const checkErrors = async() => await browser.executeScript(hasError).then(err => {
   if (err) {

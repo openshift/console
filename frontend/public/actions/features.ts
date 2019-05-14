@@ -30,7 +30,7 @@ export enum ActionType {
 }
 
 export const defaults = _.mapValues(FLAGS, flag => flag === FLAGS.AUTH_ENABLED
-  ? !(window as any).SERVER_FLAGS.authDisabled
+  ? !window.SERVER_FLAGS.authDisabled
   : undefined
 );
 

@@ -63,7 +63,7 @@ export const formatNamespaceRoute = (activeNamespace, originalPath, location?) =
     return originalPath;
   }
 
-  originalPath = originalPath.substr(prefix.length + (window as any).SERVER_FLAGS.basePath.length);
+  originalPath = originalPath.substr(prefix.length + window.SERVER_FLAGS.basePath.length);
 
   let parts = originalPath.split('/').filter(p => p);
   let previousNS = '';
@@ -153,12 +153,12 @@ export const startImpersonate = (kind: string, name: string) => async(dispatch, 
 
   dispatch(beginImpersonate(kind, name, subprotocols));
   dispatch(detectFeatures());
-  history.push((window as any).SERVER_FLAGS.basePath);
+  history.push(window.SERVER_FLAGS.basePath);
 };
 export const stopImpersonate = () => (dispatch) => {
   dispatch(endImpersonate());
   dispatch(detectFeatures());
-  history.push((window as any).SERVER_FLAGS.basePath);
+  history.push(window.SERVER_FLAGS.basePath);
 };
 export const sortList = (listId: string, field: string, func: any, orderBy: string, column: string) => {
   const url = new URL(window.location.href);

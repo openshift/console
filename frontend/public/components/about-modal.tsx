@@ -16,7 +16,7 @@ const AboutModal_: React.FC<AboutModalProps> = ({isOpen, closeAboutModal, cluste
   }, []);
 
   const details = getBrandingDetails();
-  const customBranding = (window as any).SERVER_FLAGS.customLogoURL || (window as any).SERVER_FLAGS.customProductName;
+  const customBranding = window.SERVER_FLAGS.customLogoURL || window.SERVER_FLAGS.customProductName;
 
   return (
     <PfAboutModal

@@ -102,7 +102,7 @@ const cancelSilence = (silence) => ({
     title: 'Expire Silence',
     message: 'Are you sure you want to expire this silence?',
     btnText: 'Expire Silence',
-    executeFn: () => coFetchJSON.delete(`${(window as any).SERVER_FLAGS.alertManagerBaseURL}/api/v1/silence/${silence.id}`)
+    executeFn: () => coFetchJSON.delete(`${window.SERVER_FLAGS.alertManagerBaseURL}/api/v1/silence/${silence.id}`)
       .then(() => refreshPoller('silences')),
   }),
 });
@@ -809,7 +809,7 @@ class SilenceForm_ extends React.Component<SilenceFormProps, SilenceFormState> {
   onSubmit = (e): void => {
     e.preventDefault();
 
-    const {alertManagerBaseURL} = (window as any).SERVER_FLAGS;
+    const {alertManagerBaseURL} = window.SERVER_FLAGS;
     if (!alertManagerBaseURL) {
       this.setState({error: 'Alertmanager URL not set'});
       return;
@@ -1006,7 +1006,7 @@ export class MonitoringUI extends React.Component<null, null> {
       poller();
     };
 
-    const {alertManagerBaseURL, prometheusBaseURL} = (window as any).SERVER_FLAGS;
+    const {alertManagerBaseURL, prometheusBaseURL} = window.SERVER_FLAGS;
 
     if (prometheusBaseURL) {
       poll(`${prometheusBaseURL}/api/v1/rules`, 'alerts', data => {
