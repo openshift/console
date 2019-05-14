@@ -77,9 +77,7 @@ const AppContents = withRouter(React.memo(() => (
   <PageSection variant={PageSectionVariants.light}>
     <div id="content">
       <GlobalNotifications />
-      <Route path={namespacedRoutes}>
-        <NamespaceBar />
-      </Route>
+      <Route path={namespacedRoutes} render={() => <NamespaceBar />} />
       <div id="content-scrollable">
         <Switch>
           <Route path={['/all-namespaces', '/ns/:ns']} component={RedirectComponent} />
