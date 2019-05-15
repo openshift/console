@@ -18,6 +18,8 @@ const htmlReporter = new HtmlScreenshotReporter({ dest: './gui_test_screenshots'
 const junitReporter = new JUnitXmlReporter({ savePath: './gui_test_screenshots', consolidateAll: true });
 const browserLogs: logging.Entry[] = [];
 
+const suite = (tests: string[]) => (!_.isNil(process.env.BRIDGE_KUBEADMIN_PASSWORD) ? ['tests/login.scenario.ts'] : []).concat(['tests/base.scenario.ts', ...tests]);
+
 export const config: Config = {
   framework: 'jasmine',
   directConnect: true,
@@ -84,97 +86,69 @@ export const config: Config = {
     return new Promise(resolve => htmlReporter.afterLaunch(resolve.bind(this, exitCode)));
   },
   suites: {
-    filter: [
-      'tests/login.scenario.ts',
-      'tests/base.scenario.ts',
+    filter: suite([
       'tests/filter.scenario.ts',
-    ],
-    annotation: [
-      'tests/login.scenario.ts',
-      'tests/base.scenario.ts',
+    ]),
+    annotation: suite([
       'tests/modal-annotations.scenario.ts',
-    ],
-    environment: [
-      'tests/login.scenario.ts',
-      'tests/base.scenario.ts',
+    ]),
+    environment: suite([
       'tests/environment.scenario.ts',
-    ],
-    secrets: [
-      'tests/login.scenario.ts',
-      'tests/base.scenario.ts',
+    ]),
+    secrets: suite([
       'tests/secrets.scenario.ts',
-    ],
-    crud: [
-      'tests/login.scenario.ts',
-      'tests/base.scenario.ts',
+    ]),
+    crud: suite([
       'tests/crud.scenario.ts',
       'tests/secrets.scenario.ts',
       'tests/filter.scenario.ts',
       'tests/modal-annotations.scenario.ts',
       'tests/environment.scenario.ts',
-    ],
-    monitoring: [
-      'tests/login.scenario.ts',
-      'tests/base.scenario.ts',
+    ]),
+    monitoring: suite([
       'tests/monitoring.scenario.ts',
-    ],
-    newApp: [
-      'tests/login.scenario.ts',
-      'tests/base.scenario.ts',
+    ]),
+    newApp: suite([
       'tests/overview/overview.scenario.ts',
       'tests/source-to-image.scenario.ts',
       'tests/deploy-image.scenario.ts',
-    ],
-    olm: [
-      'tests/login.scenario.ts',
-      'tests/base.scenario.ts',
+    ]),
+    olm: suite([
       'tests/olm/descriptors.scenario.ts',
       'tests/olm/catalog.scenario.ts',
       'tests/olm/single-installmode.scenario.ts',
       'tests/olm/global-installmode.scenario.ts',
-    ],
-    olmUpgrade: [
-      'tests/login.scenario.ts',
-      'tests/base.scenario.ts',
+    ]),
+    olmUpgrade: suite([
       'tests/olm/update-channel-approval.scenario.ts',
-    ],
+    ]),
     operatorHub: [
       'tests/login.scenario.ts',
       'tests/base.scenario.ts',
       'tests/operator-hub/operator-hub.scenario.ts',
     ],
     // OLM and OperatorHub
-    olmFull: [
-      'tests/login.scenario.ts',
-      'tests/base.scenario.ts',
+    olmFull: suite([
       'tests/operator-hub/operator-hub.scenario.ts',
       'tests/olm/descriptors.scenario.ts',
       'tests/olm/catalog.scenario.ts',
       'tests/olm/single-installmode.scenario.ts',
       'tests/olm/global-installmode.scenario.ts',
-    ],
-    performance: [
-      'tests/login.scenario.ts',
-      'tests/base.scenario.ts',
+    ]),
+    performance: suite([
       'tests/performance.scenario.ts',
-    ],
-    serviceCatalog: [
-      'tests/login.scenario.ts',
-      'tests/base.scenario.ts',
+    ]),
+    serviceCatalog: suite([
       'tests/service-catalog/service-catalog.scenario.ts',
       'tests/service-catalog/service-broker.scenario.ts',
       'tests/service-catalog/service-class.scenario.ts',
       'tests/service-catalog/service-binding.scenario.ts',
       'tests/developer-catalog.scenario.ts',
-    ],
-    overview: [
-      'tests/login.scenario.ts',
-      'tests/base.scenario.ts',
+    ]),
+    overview: suite([
       'tests/overview/overview.scenario.ts',
-    ],
-    e2e: [
-      'tests/login.scenario.ts',
-      'tests/base.scenario.ts',
+    ]),
+    e2e: suite([
       'tests/crud.scenario.ts',
       'tests/secrets.scenario.ts',
       'tests/filter.scenario.ts',
@@ -185,10 +159,8 @@ export const config: Config = {
       'tests/deploy-image.scenario.ts',
       'tests/performance.scenario.ts',
       'tests/monitoring.scenario.ts',
-    ],
-    all: [
-      'tests/login.scenario.ts',
-      'tests/base.scenario.ts',
+    ]),
+    all: suite([
       'tests/crud.scenario.ts',
       'tests/overview/overview.scenareio.ts',
       'tests/secrets.scenario.ts',
@@ -201,7 +173,7 @@ export const config: Config = {
       'tests/operator-hub/operator-hub.scenario.ts',
       'tests/developer-catalog.scenario.ts',
       'tests/monitoring.scenario.ts',
-    ],
+    ]),
     login: [
       'tests/login.scenario.ts',
     ],
