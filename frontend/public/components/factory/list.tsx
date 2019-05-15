@@ -491,7 +491,7 @@ export const List = connect(stateToProps, {sortList: UIActions.sortList}, null, 
       </React.Fragment>;
 
       return <div className="co-m-table-grid co-m-table-grid--bordered">
-        { mock ? children : <StatusBox {...this.props}>{children}</StatusBox> }
+        { mock ? children : <StatusBox skeletonClass="loading-skeleton--table" {...this.props}>{children}</StatusBox> }
       </div>;
     }
   });

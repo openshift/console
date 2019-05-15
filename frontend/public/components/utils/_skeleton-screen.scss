@@ -1,0 +1,56 @@
+$skeleton-color: #eaedf1;
+
+@keyframes loading-skeleton {
+  0% {
+    opacity: .15;
+  }
+
+  25% {
+    opacity: .65;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+.loading-skeleton--table {
+  &::after,
+  &::before {
+    animation: loading-skeleton 1.25s ease-out infinite alternate;
+    content: '';
+    display: block;
+    opacity: 0;
+  }
+  // table headings
+  &::before {
+    background-image: linear-gradient( to right,
+      $skeleton-color,
+      $skeleton-color 75%,
+      transparent 75%,
+      transparent 25% );
+      background-position: 0 0;
+      background-repeat: repeat-x;
+      background-size: 57% 40px;
+      height: 50px;
+    @media (min-width: $screen-sm-min) {
+      background-size: 21% 40px;
+    }
+    @media (min-width: $screen-sm-min) and (max-width: $screen-sm-max) {
+      background-size: 37% 40px;
+    }
+   }
+  // table rows
+  &::after {
+    background-image:
+      linear-gradient(#eee 1px, transparent 0px),
+      linear-gradient($skeleton-color 26px, transparent 26px);
+    background-size:
+      100% 46px,
+      50% 46px;
+    background-position:
+      50px 0%,
+      0px 10px;
+    min-height: 320px;
+  }
+}
