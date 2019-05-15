@@ -1,23 +1,33 @@
 import {
   Plugin,
+  ModelFeatureFlag,
   HrefNavItem,
   ResourceNSNavItem,
+  ResourceClusterNavItem,
   ResourceListPage,
   ResourceDetailPage,
-  ModelFeatureFlag,
 } from '@console/plugin-sdk';
 
 // TODO(vojtech): internal code needed by plugins should be moved to console-shared package
 import { PodModel } from '@console/internal/models';
+import { FLAGS } from '@console/internal/const';
 
 type ConsumedExtensions =
+  | ModelFeatureFlag
   | HrefNavItem
   | ResourceNSNavItem
+  | ResourceClusterNavItem
   | ResourceListPage
-  | ResourceDetailPage
-  | ModelFeatureFlag;
+  | ResourceDetailPage;
 
 const plugin: Plugin<ConsumedExtensions> = [
+  {
+    type: 'FeatureFlag/Model',
+    properties: {
+      model: PodModel,
+      flag: 'TEST_MODEL_FLAG',
+    },
+  },
   {
     type: 'NavItem/Href',
     properties: {
@@ -32,11 +42,22 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'NavItem/ResourceNS',
     properties: {
-      section: 'Workloads',
+      section: 'Home',
       componentProps: {
         name: 'Test ResourceNS Link',
         resource: 'pods',
         required: 'TEST_MODEL_FLAG',
+      },
+    },
+  },
+  {
+    type: 'NavItem/ResourceCluster',
+    properties: {
+      section: 'Home',
+      componentProps: {
+        name: 'Test ResourceCluster Link',
+        resource: 'projects',
+        required: [FLAGS.OPENSHIFT, 'TEST_MODEL_FLAG'],
       },
     },
   },
@@ -52,13 +73,6 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       model: PodModel,
       loader: () => import('@console/internal/components/pod' /* webpackChunkName: "pod" */).then(m => m.PodsDetailsPage),
-    },
-  },
-  {
-    type: 'FeatureFlag/Model',
-    properties: {
-      model: PodModel,
-      flag: 'TEST_MODEL_FLAG',
     },
   },
 ];

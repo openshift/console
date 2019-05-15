@@ -34,6 +34,7 @@ declare interface Window {
     statuspageID: string;
   };
   windowError?: boolean;
+  __REDUX_DEVTOOLS_EXTENSION_COMPOSE__?: Function;
 }
 
 // From https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-8.html
