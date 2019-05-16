@@ -449,7 +449,8 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
     filteredItems: [],
     groupedItems: [],
     firstLabel: '',
-  };
+    ...this.createOverviewData(),
+  }
 
   componentDidMount(): void {
     this.fetchMetrics();
@@ -491,7 +492,7 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
       || !_.isEqual(routes, prevProps.routes)
       || !_.isEqual(services, prevProps.services)
       || !_.isEqual(statefulSets, prevProps.statefulSets)) {
-      this.createOverviewData();
+      this.setState(this.createOverviewData());
     } else if (filterValue !== prevProps.filterValue) {
       const filteredItems = this.filterItems(this.state.items);
       this.setState({
@@ -503,7 +504,6 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
         groupedItems: groupItems(this.state.filteredItems, selectedGroup),
       });
     }
-
     // Fetch new metrics when the namespace changes.
     if (namespace !== prevProps.namespace) {
       clearInterval(this.metricsInterval);
@@ -872,7 +872,7 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
     }, []);
   }
 
-  createOverviewData(): void {
+  createOverviewData(): OverviewMainContentState {
     const {loaded, mock, selectedGroup, updateGroupOptions, updateSelectedGroup, updateResources} = this.props;
 
     if (!loaded) {
@@ -901,12 +901,12 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
 
     updateGroupOptions(groupOptions);
     const groupedItems = groupItems(filteredItems, selectedGroup);
-    this.setState({
+    return {
       filteredItems,
       groupedItems,
       firstLabel,
       items,
-    });
+    };
   }
 
   render() {
