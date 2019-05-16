@@ -1,4 +1,3 @@
-import * as _ from 'lodash-es';
 import React from 'react';
 import {
   BasicMigrationDialog,
@@ -47,25 +46,34 @@ const isImporting = (vm, actionArgs) => {
   return status && [VM_STATUS_IMPORTING, VM_STATUS_V2V_CONVERSION_IN_PROGRESS].includes(status.status);
 };
 
-const getStartStopActionLabel = (vm) => {
-  return _.get(vm, 'spec.running', false) ? 'Stop Virtual Machine' : 'Start Virtual Machine';
-};
 
 const menuActionStart = (kind, vm, actionArgs) => {
   return {
-    hidden: isImporting(vm, actionArgs),
-    label: getStartStopActionLabel(vm),
+    hidden: isImporting(vm, actionArgs) || isVmRunning(vm),
+    label: 'Start Virtual Machine',
     callback: () => startStopVmModal({
       kind,
       resource: vm,
-      start: !_.get(vm, 'spec.running', false),
+      start: true,
+    }),
+  };
+};
+
+const menuActionStop = (kind, vm) => {
+  return {
+    hidden: !isVmRunning(vm),
+    label: 'Stop Virtual Machine',
+    callback: () => startStopVmModal({
+      kind,
+      resource: vm,
+      start: false,
     }),
   };
 };
 
 const menuActionRestart = (kind, vm, actionArgs) => {
   return {
-    hidden: !isVmRunning(vm) || isImporting(vm, actionArgs),
+    hidden: isImporting(vm, actionArgs) || !(actionArgs[VirtualMachineInstanceModel.kind] && isVmRunning(vm)),
     label: 'Restart Virtual Machine',
     callback: () => restartVmModal({
       kind,
@@ -116,7 +124,7 @@ const menuActionMigrate = (kind, vm, actionArgs) => {
   const migration = actionArgs && findVMIMigration(actionArgs[VirtualMachineInstanceMigrationModel.kind], actionArgs[VirtualMachineInstanceModel.kind]);
   const { name, namespace } = vm.metadata;
   return {
-    hidden: !actionArgs || !isVmRunning(vm) || isMigrating(migration),
+    hidden: !actionArgs || isImporting(vm, actionArgs) || isMigrating(migration) || !(actionArgs[VirtualMachineInstanceModel.kind] && isVmRunning(vm)),
     label: 'Migrate Virtual Machine',
     callback: () => {
       return modalResourceLauncher(BasicMigrationDialog, {
@@ -133,4 +141,4 @@ const menuActionMigrate = (kind, vm, actionArgs) => {
   };
 };
 
-export const menuActions = [menuActionStart, menuActionRestart, menuActionMigrate, menuActionCancelMigration, menuActionClone, Kebab.factory.Delete];
+export const menuActions = [menuActionStart, menuActionStop, menuActionRestart, menuActionMigrate, menuActionCancelMigration, menuActionClone, Kebab.factory.Delete];
