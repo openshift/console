@@ -18,25 +18,22 @@ export const isDefaultClass = (storageClass: K8sResourceKind) => {
 };
 
 const StorageClassHeader = props => <ListHeader>
-  <ColHead {...props} className="col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
-  <ColHead {...props} className="col-sm-4 col-xs-6" sortField="provisioner">Provisioner</ColHead>
+  <ColHead {...props} className="col-sm-5 col-xs-6" sortField="metadata.name">Name</ColHead>
+  <ColHead {...props} className="col-sm-5 col-xs-6" sortField="provisioner">Provisioner</ColHead>
   <ColHead {...props} className="col-sm-2 hidden-xs" sortField="reclaimPolicy">Reclaim <span className="hidden-sm">Policy</span></ColHead>
-  <ColHead {...props} className="col-sm-2 hidden-xs" sortField={`metadata.annotations['${defaultClassAnnotation}']`}>Default <span className="hidden-sm">Class</span></ColHead>
 </ListHeader>;
 
 const StorageClassRow: React.SFC<StorageClassRowProps> = ({obj}) => {
   return <div className="row co-resource-list__item">
-    <div className="col-sm-4 col-xs-6 co-break-word">
-      <ResourceLink kind={StorageClassReference} name={obj.metadata.name} namespace={undefined} title={obj.metadata.name} />
+    <div className="col-sm-5 col-xs-6 co-break-word">
+      <ResourceLink inline kind={StorageClassReference} name={obj.metadata.name} />
+      { isDefaultClass(obj) && <span className="small text-muted storage-class-default">&ndash; Default</span> }
     </div>
-    <div className="col-sm-4 col-xs-6 co-break-word">
+    <div className="col-sm-5 col-xs-6 co-break-word">
       {obj.provisioner}
     </div>
     <div className="col-sm-2 hidden-xs">
       {obj.reclaimPolicy || '-'}
-    </div>
-    <div className="col-sm-2 hidden-xs">
-      {isDefaultClass(obj).toString()}
     </div>
     <div className="dropdown-kebab-pf">
       <ResourceKebab actions={menuActions} kind={StorageClassReference} resource={obj} />
