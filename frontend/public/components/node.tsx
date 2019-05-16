@@ -147,6 +147,8 @@ const Details = ({obj: node}) => {
           <dl className="co-m-pane__details">
             <dt>Node Name</dt>
             <dd>{node.metadata.name || '-'}</dd>
+            <dt>Status</dt>
+            <dd><NodeStatus node={node} /></dd>
             <dt>External ID</dt>
             <dd>{_.get(node, 'spec.externalID', '-')}</dd>
             <dt>Node Addresses</dt>
