@@ -53,16 +53,31 @@ const RolloutAction: KebabAction = (kind: K8sKind, obj: K8sResourceKind) => ({
     const error = err.message;
     errorModal({error});
   }),
+  accessReview: {
+    group: kind.apiGroup,
+    resource: kind.path,
+    subresource: 'instantiate',
+    name: obj.metadata.name,
+    namespace: obj.metadata.namespace,
+    verb: 'create',
+  },
 });
 
-const PauseAction = (kind: K8sKind, obj: K8sResourceKind) => ({
+const PauseAction: KebabAction = (kind: K8sKind, obj: K8sResourceKind) => ({
   label: obj.spec.paused ? 'Resume Rollouts' : 'Pause Rollouts',
   callback: () => togglePaused(kind, obj).catch((err) => errorModal({error: err.message})),
+  accessReview: {
+    group: kind.apiGroup,
+    resource: kind.path,
+    name: obj.metadata.name,
+    namespace: obj.metadata.namespace,
+    verb: 'patch',
+  },
 });
 
 const {ModifyCount, AddStorage, EditEnvironment, common} = Kebab.factory;
 
-export const menuActions = [
+export const menuActions: KebabAction[] = [
   RolloutAction,
   PauseAction,
   ModifyCount,

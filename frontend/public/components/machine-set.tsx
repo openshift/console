@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { Link } from 'react-router-dom';
 
-import { MachineModel, MachineSetModel } from '../models';
+import { MachineAutoscalerModel, MachineModel, MachineSetModel } from '../models';
 import { K8sKind, MachineDeploymentKind, MachineSetKind, referenceForModel } from '../module/k8s';
 import { getMachineRole, MachinePage } from './machine';
 import { configureMachineAutoscalerModal, configureReplicaCountModal } from './modals';
@@ -31,11 +31,24 @@ const machineReplicasModal = (resourceKind: K8sKind, resource: MachineSetKind | 
 export const editCountAction: KebabAction = (kind: K8sKind, resource: MachineSetKind | MachineDeploymentKind) => ({
   label: 'Edit Count',
   callback: () => machineReplicasModal(kind, resource),
+  accessReview: {
+    group: kind.apiGroup,
+    resource: kind.path,
+    name: resource.metadata.name,
+    namespace: resource.metadata.namespace,
+    verb: 'patch',
+  },
 });
 
-const configureMachineAutoscaler = (kind: K8sKind, machineSet: MachineSetKind) => ({
+const configureMachineAutoscaler: KebabAction = (kind: K8sKind, machineSet: MachineSetKind) => ({
   label: 'Create Autoscaler',
   callback: () => configureMachineAutoscalerModal({machineSet, cancel: _.noop, close: _.noop}),
+  accessReview: {
+    group: MachineAutoscalerModel.apiGroup,
+    resource: MachineAutoscalerModel.path,
+    namespace: machineSet.metadata.namespace,
+    verb: 'create',
+  },
 });
 
 const { common } = Kebab.factory;

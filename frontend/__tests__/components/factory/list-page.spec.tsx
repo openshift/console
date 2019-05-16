@@ -32,7 +32,7 @@ describe(FireMan_.displayName, () => {
   let wrapper: ShallowWrapper<any>;
 
   beforeEach(() => {
-    const resources = [{kind: 'nodes'}];
+    const resources = [{kind: 'Node'}];
     wrapper = shallow(<FireMan_.WrappedComponent resources={resources} />);
   });
 

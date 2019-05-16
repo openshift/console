@@ -1,11 +1,25 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 
-import { K8sResourceKindReference, referenceFor } from '../module/k8s';
+import { K8sResourceKind, K8sResourceKindReference, referenceFor } from '../module/k8s';
 import { startBuild } from '../module/k8s/builds';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
 import { errorModal } from './modals';
-import { BuildHooks, BuildStrategy, Kebab, SectionHeading, LabelList, history, navFactory, ResourceKebab, ResourceLink, resourceObjPath, ResourceSummary, WebhookTriggers } from './utils';
+import {
+  BuildHooks,
+  BuildStrategy,
+  history,
+  Kebab,
+  KebabAction,
+  LabelList,
+  navFactory,
+  ResourceKebab,
+  ResourceLink,
+  resourceObjPath,
+  ResourceSummary,
+  SectionHeading,
+  WebhookTriggers,
+} from './utils';
 import { BuildsPage, BuildEnvironmentComponent, BuildStrategyType } from './build';
 import { fromNow } from './utils/datetime';
 import { ResourceEventStream } from './events';
@@ -14,7 +28,7 @@ const BuildConfigsReference: K8sResourceKindReference = 'BuildConfig';
 
 const { EditEnvironment, common } = Kebab.factory;
 
-const startBuildAction = (kind, buildConfig) => ({
+const startBuildAction: KebabAction = (kind, buildConfig) => ({
   label: 'Start Build',
   callback: () => startBuild(buildConfig).then(build => {
     history.push(resourceObjPath(build, referenceFor(build)));
@@ -22,6 +36,14 @@ const startBuildAction = (kind, buildConfig) => ({
     const error = err.message;
     errorModal({error});
   }),
+  accessReview: {
+    group: kind.apiGroup,
+    resource: kind.path,
+    subresource: 'instantiate',
+    name: buildConfig.metadata.name,
+    namespace: buildConfig.metadata.namespace,
+    verb: 'create',
+  },
 });
 
 const menuActions = [
@@ -46,7 +68,7 @@ export const BuildConfigsDetails: React.SFC<BuildConfigsDetailsProps> = ({obj: b
   <BuildHooks resource={buildConfig} />
 </React.Fragment>;
 
-const BuildsTabPage = ({obj: buildConfig}) => <BuildsPage namespace={buildConfig.metadata.namespace} showTitle={false} selector={{ 'openshift.io/build-config.name': buildConfig.metadata.name}} />;
+const BuildsTabPage = ({obj: buildConfig}) => <BuildsPage namespace={buildConfig.metadata.namespace} showTitle={false} selector={{'openshift.io/build-config.name': buildConfig.metadata.name}} />;
 
 const pages = [
   navFactory.details(BuildConfigsDetails),
@@ -89,7 +111,7 @@ const BuildConfigsRow: React.SFC<BuildConfigsRowProps> = ({obj}) => <div classNa
   </div>
 </div>;
 
-const buildStrategy = buildConfig => buildConfig.spec.strategy.type;
+const buildStrategy = (buildConfig: K8sResourceKind): BuildStrategyType => buildConfig.spec.strategy.type;
 
 const allStrategies = [BuildStrategyType.Docker, BuildStrategyType.JenkinsPipeline, BuildStrategyType.Source, BuildStrategyType.Custom];
 const filters = [{
@@ -117,17 +139,17 @@ export const BuildConfigsPage: React.SFC<BuildConfigsPageProps> = props =>
 BuildConfigsPage.displayName = 'BuildConfigsListPage';
 
 export type BuildConfigsRowProps = {
-  obj: any,
+  obj: any;
 };
 
 export type BuildConfigsDetailsProps = {
-  obj: any,
+  obj: any;
 };
 
 export type BuildConfigsPageProps = {
-  filterLabel: string,
+  filterLabel: string;
 };
 
 export type BuildConfigsDetailsPageProps = {
-  match: any,
+  match: any;
 };

@@ -24,7 +24,7 @@ const getDisplayName = obj => _.get(obj, ['metadata', 'annotations', 'openshift.
 const getRequester = obj => _.get(obj, ['metadata', 'annotations', 'openshift.io/requester']);
 
 export const deleteModal = (kind, ns) => {
-  let {label, weight} = Kebab.factory.Delete(kind, ns);
+  let {label, weight, accessReview} = Kebab.factory.Delete(kind, ns);
   let callback = undefined;
   let tooltip;
 
@@ -40,7 +40,7 @@ export const deleteModal = (kind, ns) => {
       <Tooltip content={tooltip}>{label}</Tooltip>
     </div>;
   }
-  return {label, weight, callback};
+  return {label, weight, callback, accessReview};
 };
 
 const nsMenuActions = [Kebab.factory.ModifyLabels, Kebab.factory.ModifyAnnotations, Kebab.factory.Edit, deleteModal];
@@ -122,8 +122,10 @@ const ProjectList_ = props => {
 export const ProjectList = connect(createProjectMessageStateToProps)(ProjectList_);
 
 const ProjectsPage_ = props => {
-  const canCreate = props.flags.CAN_CREATE_PROJECT;
-  return <ListPage {...props} ListComponent={ProjectList} canCreate={canCreate} createHandler={() => createProjectModal({ blocking: true })} />;
+  const canCreate = props.flags[FLAGS.CAN_CREATE_PROJECT];
+  // Skip self-subject access review for projects since they use a special project request API.
+  // `FLAGS.CAN_CREATE_PROJECT` determines if the user can create projects.
+  return <ListPage {...props} ListComponent={ProjectList} canCreate={canCreate} skipAccessReview createHandler={() => createProjectModal({ blocking: true })} />;
 };
 export const ProjectsPage = connectToFlags(FLAGS.CAN_CREATE_PROJECT)(ProjectsPage_);
 

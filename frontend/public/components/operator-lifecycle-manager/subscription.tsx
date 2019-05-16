@@ -35,6 +35,13 @@ const menuActions = [
   (kind, obj) => ({
     label: 'Remove Subscription...',
     callback: () => createDisableApplicationModal({k8sKill, k8sGet, k8sPatch, subscription: obj}),
+    accessReview: {
+      group: kind.apiGroup,
+      resource: kind.path,
+      name: obj.metadata.name,
+      namespace: obj.metadata.namespace,
+      verb: 'delete',
+    },
   }),
   (kind, obj) => {
     const installedCSV = _.get(obj, 'status.installedCSV');

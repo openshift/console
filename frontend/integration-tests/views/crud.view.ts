@@ -37,33 +37,40 @@ export const clickTab = async(name: string) => {
 
 export const labelsForRow = (name: string) => rowForName(name).$$('.co-m-label');
 export const textFilter = $('.co-m-pane__filter-bar-group--filter input');
-export const gearOptions = {
+export const actions = Object.freeze({
   labels: 'Edit Labels',
   annotations: 'Edit Annotations',
   edit: 'Edit',
   delete: 'Delete',
-};
+});
+const actionForLabel = (label: string) => $(`[data-test-action="${label}"]`);
 
 export const filterForName = async(name: string) => {
   await browser.wait(until.presenceOf(textFilter));
   await textFilter.sendKeys(name);
 };
 
-export const editHumanizedKind = (kind: string) => {
+const actionOnKind = (action: string, kind: string) => {
   const humanizedKind = (kind.includes('~')
     ? kind.split('~')[2]
     : kind
   ).split(/(?=[A-Z])/).join(' ');
 
-  return `Edit ${humanizedKind}`;
+  return `${action} ${humanizedKind}`;
+};
+export const editHumanizedKind = (kind: string) => actionOnKind(actions.edit, kind);
+export const deleteHumanizedKind = (kind: string) => actionOnKind(actions.delete, kind);
+
+export const clickKebabAction = (resourceName: string, actionLabel: string) => {
+  return rowForName(resourceName).$('[data-test-id="kebab-button"]').click()
+    .then(() => browser.wait(until.elementToBeClickable(actionForLabel(actionLabel))))
+    .then(() => actionForLabel(actionLabel).click());
 };
 
 /**
  * Edit row from a list.
  */
-export const editRow = (kind: string) => (name: string) => rowForName(name).$$('.co-kebab__button').first().click()
-  .then(() => browser.wait(until.elementToBeClickable(rowForName(name).$('.co-kebab__dropdown'))))
-  .then(() => rowForName(name).$('.co-kebab__dropdown').$$('a').filter(link => link.getText().then(text => text.startsWith(editHumanizedKind(kind)))).first().click())
+export const editRow = (kind: string) => (name: string) => clickKebabAction(name, editHumanizedKind(kind))
   .then(async() => {
     await browser.wait(until.presenceOf(cancelBtn));
     const reloadBtnIsPresent = await reloadBtn.isPresent();
@@ -76,9 +83,7 @@ export const editRow = (kind: string) => (name: string) => rowForName(name).$$('
 /**
  * Deletes a row from a list. Does not wait until the row is no longer visible.
  */
-export const deleteRow = (kind: string) => (name: string) => rowForName(name).$$('.co-kebab__button').first().click()
-  .then(() => browser.wait(until.elementToBeClickable(rowForName(name).$('.co-kebab__dropdown'))))
-  .then(() => rowForName(name).$('.co-kebab__dropdown').$$('a').filter(link => link.getText().then(text => text.startsWith('Delete'))).first().click())
+export const deleteRow = (kind: string) => (name: string) => clickKebabAction(name, deleteHumanizedKind(kind))
   .then(async() => {
     switch (kind) {
       case 'Namespace':
@@ -99,13 +104,6 @@ export const deleteRow = (kind: string) => (name: string) => rowForName(name).$$
 
   });
 
-export const selectOptionFromGear = (name: string, gearOptionStartsWith: string) =>
-  rowForName(name).$$('.co-kebab__button').first().click()
-    .then(() => browser.wait(until.visibilityOf(rowForName(name).$('.co-kebab__dropdown'))))
-    .then(() => $('.co-kebab__dropdown').$$('a').filter(link => link.getText()
-      .then(text => text.startsWith(gearOptionStartsWith))).first().click()
-    );
-
 export const rowFilters = $$('.row-filter__box');
 export const rowFilterFor = (name: string) => rowFilters.filter(el => el.getText().then(text => text.includes(name))).first();
 export const activeRowFilters = $$('.row-filter__box--active');
@@ -113,9 +111,9 @@ export const activeRowFilters = $$('.row-filter__box--active');
 export const statusMessageTitle = $('.cos-status-box__title');
 export const statusMessageDetail = $('.cos-status-box__detail');
 
-const actionsButton = $('.co-m-nav-title .co-actions-menu');
-export const actionsDropdown = actionsButton.$('button');
-export const actionsDropdownMenu = actionsButton.$$('.dropdown-menu').first();
+const actionsMenu = $('[data-test-id="details-actions"]');
+export const actionsButton = actionsMenu.$('[data-test-id="actions-menu-button"]');
+export const actionsDropdownMenu = actionsMenu.$('[data-test-id="action-items"]');
 
 export const resourceTitle = $('#resource-title');
 
@@ -127,12 +125,18 @@ export const visitResource = async(resource: string, name: string) => {
   await browser.get(`${appHost}/k8s/ns/${testName}/${resource}/${name}`);
 };
 
+export const clickDetailsPageAction = async(actionID: string) => {
+  const action = actionForLabel(actionID);
+  await browser.wait(until.presenceOf(actionsButton));
+  await actionsButton.click();
+  await browser.wait(until.elementToBeClickable(action));
+  await action.click();
+};
+
 export const deleteResource = async(resource: string, kind: string, name: string) => {
   await visitResource(resource, name);
   await isLoaded();
-  await actionsDropdown.click();
-  await browser.wait(until.presenceOf(actionsDropdownMenu), 500);
-  await actionsDropdownMenu.element(by.partialLinkText('Delete ')).click();
+  clickDetailsPageAction(deleteHumanizedKind(kind));
   await browser.wait(until.presenceOf($('#confirm-action')));
   await $('#confirm-action').click();
 };
@@ -155,7 +159,7 @@ export const createNamespacedTestResource = async(kindModel, name) => {
 export const checkResourceExists = async(resource: string, name: string) => {
   await visitResource(resource, name);
   await isLoaded();
-  await browser.wait(until.presenceOf(actionsDropdown));
+  await browser.wait(until.presenceOf(actionsButton));
   expect(resourceTitle.getText()).toEqual(name);
 };
 

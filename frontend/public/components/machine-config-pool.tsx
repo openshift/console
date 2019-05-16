@@ -21,6 +21,7 @@ import {
 } from './factory';
 import {
   Kebab,
+  KebabAction,
   navFactory,
   pluralize,
   ResourceKebab,
@@ -32,9 +33,15 @@ import {
   WorkloadPausedAlert,
 } from './utils';
 
-const pauseAction = (kind, obj) => ({
+const pauseAction: KebabAction = (kind, obj) => ({
   label: obj.spec.paused ? 'Resume Updates' : 'Pause Updates',
   callback: () => togglePaused(kind, obj).catch((err) => errorModal({error: err.message})),
+  accessReview: {
+    group: kind.apiGroup,
+    resource: kind.path,
+    name: obj.metadata.name,
+    verb: 'patch',
+  },
 });
 
 const machineConfigPoolReference = referenceForModel(MachineConfigPoolModel);

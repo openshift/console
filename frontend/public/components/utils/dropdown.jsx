@@ -2,8 +2,10 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as classNames from 'classnames';
 import * as PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 
-import { history, ResourceName } from './index';
+import { impersonateStateToProps } from '../../reducers/ui';
+import { checkAccess, history, KebabItems, ResourceName } from './index';
 
 export class DropdownMixin extends React.PureComponent {
   constructor(props) {
@@ -377,29 +379,68 @@ Dropdown.propTypes = {
   title: PropTypes.node,
 };
 
-export const ActionsMenu = (props) => {
-  const {actions, title = undefined, menuClassName = undefined, buttonClassName = undefined} = props;
-  const shownActions = _.reject(actions, 'hidden');
-  const items = _.fromPairs(_.map(shownActions, (v, k) => [k, v.label]));
-  const btnTitle = title || <span id="action-dropdown">Actions</span>;
-  const onChange = (key, e) => {
-    const action = shownActions[key];
-    if (action.callback) {
-      return action.callback(e);
+class ActionsMenuDropdown extends DropdownMixin {
+  render() {
+    const {actions, title = undefined, buttonClassName = 'btn-default'} = this.props;
+    const onClick = (event, option) => {
+      event.preventDefault();
+
+      if (option.callback) {
+        option.callback();
+      }
+
+      if (option.href) {
+        history.push(option.href);
+      }
+
+      this.hide();
+    };
+    return <div ref={this.dropdownElement} className="co-actions-menu dropdown">
+      <button type="button" aria-haspopup="true" className={classNames('btn btn-dropdown btn-dropdown-toggle', buttonClassName)} onClick={this.toggle} data-test-id="actions-menu-button">
+        <div className="btn-dropdown__content-wrap">
+          <span className="btn-dropdown__item">
+            {title || 'Actions'}
+          </span>
+          <Caret />
+        </div>
+      </button>
+      {this.state.active && <KebabItems options={actions} onClick={onClick} />}
+    </div>;
+  }
+}
+
+const ActionsMenu_ = ({actions, impersonate, title = undefined, buttonClassName = undefined}) => {
+  const [isVisible, setVisible] = React.useState(false);
+
+  // Check if any actions are visible when actions have access reviews.
+  React.useEffect(() => {
+    if (!actions.length) {
+      setVisible(false);
+      return;
     }
-    if (action.href) {
-      history.push(action.href);
+
+    const promises = actions.reduce((acc, action) => {
+      if (action.accessReview) {
+        acc.push(checkAccess(action.accessReview));
+      }
+      return acc;
+    }, []);
+
+    if (_.isEmpty(promises)) {
+      setVisible(true);
+      return;
     }
-  };
-  return <Dropdown
-    buttonClassName={buttonClassName}
-    className="co-actions-menu"
-    menuClassName={menuClassName || 'dropdown-menu-right'}
-    items={items}
-    title={btnTitle}
-    onChange={onChange}
-    noSelection={true} />;
+
+    Promise.all(promises)
+      .then((results) => setVisible(_.some(results, 'status.allowed')))
+      .catch(() => setVisible(true));
+  }, [actions, impersonate]);
+
+  return isVisible
+    ? <ActionsMenuDropdown actions={actions} title={title} buttonClassName={buttonClassName} />
+    : null;
 };
+export const ActionsMenu = connect(impersonateStateToProps)(ActionsMenu_);
 
 ActionsMenu.propTypes = {
   actions: PropTypes.arrayOf(
@@ -407,9 +448,10 @@ ActionsMenu.propTypes = {
       label: PropTypes.node.isRequired,
       href: PropTypes.string,
       callback: PropTypes.func,
+      accessReview: PropTypes.object,
     })).isRequired,
-  menuClassName: PropTypes.string,
   title: PropTypes.node,
+  buttonClassName: PropTypes.string,
 };
 
 const containerLabel = (container) =>

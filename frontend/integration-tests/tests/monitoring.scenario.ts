@@ -1,4 +1,4 @@
-import { by, ExpectedConditions as until } from 'protractor';
+import { ExpectedConditions as until } from 'protractor';
 
 import { checkLogs, checkErrors } from '../protractor.conf';
 import * as crudView from '../views/crud.view';
@@ -60,7 +60,7 @@ describe('Monitoring: Alerts', () => {
   });
 
   it('creates a new Silence from an existing alert', async() => {
-    await monitoringView.clickActionsMenuAction('Silence Alert');
+    await crudView.clickDetailsPageAction('Silence Alert');
     await monitoringView.wait(until.presenceOf(monitoringView.saveButton));
     await monitoringView.saveButton.click();
     expect(crudView.errorMessage.isPresent()).toBe(false);
@@ -91,7 +91,7 @@ describe('Monitoring: Alerts', () => {
   });
 
   it('expires the Silence', async() => {
-    await monitoringView.clickActionsMenuAction('Expire Silence');
+    await crudView.clickDetailsPageAction('Expire Silence');
     await monitoringView.wait(until.elementToBeClickable(monitoringView.modalConfirmButton));
     await monitoringView.modalConfirmButton.click();
     await monitoringView.wait(until.presenceOf(monitoringView.expiredSilenceIcon));
@@ -146,7 +146,7 @@ describe('Monitoring: Silences', () => {
   });
 
   it('edits the Silence', async() => {
-    await monitoringView.clickActionsMenuAction('Edit Silence');
+    await crudView.clickDetailsPageAction('Edit Silence');
     await monitoringView.wait(until.presenceOf(monitoringView.commentTextarea));
     await monitoringView.commentTextarea.sendKeys('Test Comment');
     await monitoringView.saveButton.click();
@@ -162,14 +162,9 @@ describe('Monitoring: Silences', () => {
     await sidenavView.clickNavLink(['Monitoring', 'Silences']);
     await crudView.isLoaded();
     await crudView.nameFilter.sendKeys(testAlertName);
-    await monitoringView.wait(until.elementToBeClickable(monitoringView.firstListLink));
-
     const row = crudView.rowForName(testAlertName);
     await monitoringView.wait(until.presenceOf(row));
-    const menuButton = monitoringView.rowMenuButton(row);
-    await monitoringView.wait(until.elementToBeClickable(menuButton));
-    await menuButton.click();
-    await row.element(by.linkText('Expire Silence')).click();
+    await crudView.clickKebabAction(testAlertName, 'Expire Silence');
     await monitoringView.wait(until.elementToBeClickable(monitoringView.modalConfirmButton));
     await monitoringView.modalConfirmButton.click();
     await monitoringView.wait(until.not(until.presenceOf(row)));

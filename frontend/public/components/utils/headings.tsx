@@ -58,7 +58,7 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
     { breadcrumbsFor && !_.isEmpty(data) && <BreadCrumbs breadcrumbs={breadcrumbsFor(data)} /> }
     <h1 className={classNames('co-m-pane__heading', {'co-m-pane__heading--logo': isCSV})}>
       { logo }
-      { showActions && <div className="co-actions">
+      { showActions && <div className="co-actions" data-test-id="details-actions">
         { hasButtonActions && <ActionButtons actionButtons={buttonActions.map(a => a(kindObj, data))} /> }
         { hasMenuActions && <ActionsMenu actions={menuActions.map(a => a(kindObj, data))} /> }
       </div> }

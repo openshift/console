@@ -13,7 +13,7 @@ import 'brace/ext/language_tools';
 import 'brace/snippets/yaml';
 
 import { k8sCreate, k8sUpdate, referenceFor, getCompletions, groupVersionFor, snippets, referenceForModel } from '../module/k8s';
-import { history, Loading, resourceObjPath } from './utils';
+import { checkAccess, history, Loading, resourceObjPath } from './utils';
 import { coFetchJSON } from '../co-fetch';
 import { ResourceSidebar } from './sidebars/resource-sidebar';
 import { yamlTemplates } from '../models/yaml-templates';
@@ -35,6 +35,7 @@ const generateObjToLoad = (kind, templateName, namespace = 'default') => {
 
 const stateToProps = ({k8s, UI}) => ({
   activeNamespace: UI.get('activeNamespace'),
+  impersonate: UI.get('impersonate'),
   models: k8s.getIn(['RESOURCES', 'models']),
 });
 
@@ -162,8 +163,35 @@ export const EditYAML = connect(stateToProps)(
       });
     }
 
-    loadYaml(reload=false, obj=this.props.obj, readOnly=this.props.readOnly) {
+    checkEditAccess(obj) {
+      const { readOnly, impersonate } = this.props;
+      if (readOnly) {
+        // We're already read-only. No need for the access review.
+        return;
+      }
 
+      const model = this.getModel(obj);
+      if (!model) {
+        return;
+      }
+
+      const { name, namespace } = obj.metadata;
+      const resourceAttributes = {
+        group: model.apiGroup,
+        resource: model.path,
+        verb: 'update',
+        name,
+        namespace,
+      };
+      checkAccess(resourceAttributes, impersonate).then(resp => {
+        if (!resp.status.allowed) {
+          this.setState({ notAllowed: true });
+          this.ace.setReadOnly(true);
+        }
+      });
+    }
+
+    loadYaml(reload = false, obj = this.props.obj, readOnly = this.props.readOnly) {
       if (this.state.initialized && !reload) {
         return;
       }
@@ -180,17 +208,18 @@ export const EditYAML = connect(stateToProps)(
         es.setUseWrapMode(true);
         this.doc = es.getDocument();
       }
-      let yaml = '';
 
+      let yaml = '';
       if (obj) {
-        try {
-          if (!_.isString(obj)){
+        if (_.isString(obj)) {
+          yaml = obj;
+        } else {
+          try {
             yaml = safeDump(obj);
-          } else {
-            yaml = obj;
+            this.checkEditAccess(obj);
+          } catch (e) {
+            yaml = `Error getting YAML: ${e}`;
           }
-        } catch (e) {
-          yaml = `Error dumping YAML: ${e}`;
         }
       }
 
@@ -331,7 +360,8 @@ export const EditYAML = connect(stateToProps)(
       const klass = classNames('co-file-dropzone-container', {'co-file-dropzone--drop-over': isOver});
 
       const {error, success, stale} = this.state;
-      const {create, obj, download = true, readOnly, header} = this.props;
+      const {create, obj, download = true, header} = this.props;
+      const readOnly = this.props.readOnly || this.state.notAllowed;
       const model = this.getModel(obj);
 
       const editYamlComponent = <div className="co-file-dropzone">
@@ -344,10 +374,10 @@ export const EditYAML = connect(stateToProps)(
           </div>}
           <div className="co-p-has-sidebar">
             <div className="co-p-has-sidebar__body">
-              <div className="yaml-editor" ref={r => this.editor = r} style={{height: this.state.height}}>
+              <div className={classNames('yaml-editor', {'yaml-editor--readonly': readOnly})} ref={r => this.editor = r} style={{height: this.state.height}}>
                 <div className="absolute-zero">
                   <div className="full-width-and-height yaml-editor__flexbox">
-                    <div id={this.id} key={this.id} className={classNames('yaml-editor__acebox', {'yaml-editor__acebox--readonly': readOnly})} />
+                    <div id={this.id} key={this.id} className="yaml-editor__acebox" />
                     <div className="yaml-editor__buttons">
                       {error && <p className="alert alert-danger co-alert"><span className="pficon pficon-error-circle-o"></span>{error}</p>}
                       {success && <p className="alert alert-success"><span className="pficon pficon-ok"></span>{success}</p>}

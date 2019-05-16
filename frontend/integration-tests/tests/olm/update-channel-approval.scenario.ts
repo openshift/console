@@ -58,7 +58,7 @@ describe('Manually approving an install plan', () => {
 
   it('does not create a cluster service version', async() => {
     await catalogView.entryRowFor(pkgName).element(by.linkText('View subscription')).click();
-    await crudView.selectOptionFromGear(subName, 'View ClusterServiceVersion');
+    await crudView.clickKebabAction(subName, 'View ClusterServiceVersion');
 
     expect($('.co-m-pane__body').getText()).toContain('404: Not Found');
   });

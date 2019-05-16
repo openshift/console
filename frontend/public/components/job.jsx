@@ -13,6 +13,13 @@ const ModifyJobParallelism = (kind, obj) => ({
     resourceKind: kind,
     resource: obj,
   }),
+  accessReview: {
+    group: kind.apiGroup,
+    resource: kind.path,
+    name: obj.metadata.name,
+    namespace: obj.metadata.namespace,
+    verb: 'patch',
+  },
 });
 const menuActions = [ModifyJobParallelism, ...Kebab.factory.common];
 

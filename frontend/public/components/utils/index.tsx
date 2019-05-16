@@ -47,6 +47,7 @@ export * from './workload-pause';
 export * from './list-dropdown';
 export * from './status-icon';
 export * from './list-input';
+export * from './rbac';
 
 /*
   Add the enum for NameValueEditorPair here and not in its namesake file because the editor should always be

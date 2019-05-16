@@ -80,7 +80,7 @@ export type Toleration = {
 export type K8sResourceKind = {
   apiVersion: string;
   kind: string;
-  metadata: ObjectMetadata;
+  metadata?: ObjectMetadata;
   spec?: {
     selector?: Selector;
     [key: string]: any
@@ -526,6 +526,29 @@ export type OAuthKind = {
       providerSelection: string;
       error: string;
     };
+  };
+} & K8sResourceKind;
+
+export type K8sVerb = 'create' | 'get' | 'list' | 'update' | 'patch' | 'delete' | 'deletecollection';
+
+export type AccessReviewResourceAttributes = {
+    group?: string;
+    resource?: string;
+    subresource?: string;
+    verb?: K8sVerb;
+    name?: string;
+    namespace?: string;
+};
+
+export type SelfSubjectAccessReviewKind = {
+  spec: {
+    resourceAttributes?: AccessReviewResourceAttributes;
+  };
+  status?: {
+    allowed: boolean;
+    denied?: boolean;
+    reason?: string;
+    evaluationError?: string;
   };
 } & K8sResourceKind;
 

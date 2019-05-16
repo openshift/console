@@ -69,6 +69,12 @@ const KubeConfigify = (kind, sa) => ({
       errorModal({error});
     });
   },
+  accessReview: {
+    group: SecretModel.apiGroup,
+    resource: SecretModel.path,
+    namespace: sa.metadata.namespace,
+    verb: 'list',
+  },
 });
 const { common } = Kebab.factory;
 const menuActions = [KubeConfigify, ...common];

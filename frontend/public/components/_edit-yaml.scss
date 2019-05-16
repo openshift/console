@@ -1,15 +1,14 @@
 .yaml-editor {
   position: relative;
-}
-
-.yaml-editor__acebox {
-  flex: 1;
-
-  &--readonly {
+  &--readonly .yaml-editor__acebox {
     background: $input-bg-disabled !important;
     color: $color-pf-black-700 !important;
     filter: grayscale(.55);
   }
+}
+
+.yaml-editor__acebox {
+  flex: 1;
 }
 
 .yaml-editor__buttons {

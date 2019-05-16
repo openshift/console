@@ -39,7 +39,7 @@ describe('Deploy Image', () => {
       await browser.wait(until.presenceOf($('.overview')));
       expect($('.co-m-pane__name').getText()).toEqual('Project Status');
       await browser.get(`${appHost}/k8s/ns/${testName}/deploymentconfigs/${appName}`);
-      await browser.wait(until.presenceOf(crudView.actionsDropdown));
+      await browser.wait(until.presenceOf(crudView.actionsButton));
       expect(browser.getCurrentUrl()).toContain(`/${appName}`);
       expect(crudView.resourceTitle.getText()).toEqual(appName);
     });
