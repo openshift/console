@@ -171,6 +171,7 @@ const AppContents = withRouter(React.memo(() => (
           <LazyRoute path="/settings/idp/ldap" exact loader={() => import('./cluster-settings/ldap-idp-form' /* webpackChunkName: "ldap-idp-form" */).then(m => m.AddLDAPPage)} />
           <LazyRoute path="/settings/idp/oidconnect" exact loader={() => import('./cluster-settings/openid-idp-form' /* webpackChunkName: "openid-idp-form" */).then(m => m.AddOpenIDPage)} />
           <LazyRoute path="/settings/idp/basicauth" exact loader={() => import('./cluster-settings/basicauth-idp-form' /* webpackChunkName: "basicauth-idp-form" */).then(m => m.AddBasicAuthPage)} />
+          <LazyRoute path="/settings/idp/requestheader" exact loader={() => import('./cluster-settings/request-header-idp-form' /* webpackChunkName: "request-header-idp-form" */).then(m => m.AddRequestHeaderPage)} />
           <LazyRoute path="/settings/cluster" loader={() => import('./cluster-settings/cluster-settings' /* webpackChunkName: "cluster-settings" */).then(m => m.ClusterSettingsPage)} />
 
           <LazyRoute path={'/k8s/cluster/storageclasses/~new/form'} exact loader={() => import('./storage-class-form' /* webpackChunkName: "storage-class-form" */).then(m => m.StorageClassForm)} />
