@@ -4,6 +4,7 @@ import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
+import { ClusterRoleBindingModel } from '../../models';
 import { getQN, k8sCreate, k8sPatch, referenceFor } from '../../module/k8s';
 import * as UIActions from '../../actions/ui';
 import { ColHead, List, ListHeader, MultiListPage, ResourceRow } from '../factory';
@@ -24,6 +25,7 @@ import {
   history,
   kindObj,
   resourceObjPath,
+  useAccessReview,
 } from '../utils';
 import { isSystemRole } from './index';
 import { connectToFlags, flagPending } from '../../reducers/features';
@@ -62,10 +64,20 @@ const menuActions = ({subjectIndex, subjects}, startImpersonate) => {
     (kind, obj) => ({
       label: `Duplicate ${kind.label}...`,
       href: `${resourceObjPath(obj, kind.kind)}/copy?subjectIndex=${subjectIndex}`,
+      // Only perform access checks when duplicating cluster role bindings.
+      // It's not practical to check namespace role bindings since we don't know what namespace the user will pick in the form.
+      accessReview: _.get(obj, 'metadata.namespace') ? null : { group: kind.apiGroup, resource: kind.path, verb: 'create' },
     }),
     (kind, obj) => ({
       label: `Edit ${kind.label} Subject...`,
       href: `${resourceObjPath(obj, kind.kind)}/edit?subjectIndex=${subjectIndex}`,
+      accessReview: {
+        group: kind.apiGroup,
+        resource: kind.path,
+        name: obj.metadata.name,
+        namespace: obj.metadata.namespace,
+        verb: 'update',
+      },
     }),
     subjects.length === 1 ? Kebab.factory.Delete : (kind, binding) => ({
       label: `Delete ${kind.label} Subject...`,
@@ -75,6 +87,13 @@ const menuActions = ({subjectIndex, subjects}, startImpersonate) => {
         btnText: 'Delete Subject',
         executeFn: () => k8sPatch(kind, binding, [{op: 'remove', path: `/subjects/${subjectIndex}`}]),
       }),
+      accessReview: {
+        group: kind.apiGroup,
+        resource: kind.path,
+        name: binding.metadata.name,
+        namespace: binding.metadata.namespace,
+        verb: 'patch',
+      },
     }),
   ];
 
@@ -337,9 +356,9 @@ const BaseEditRoleBinding = connect(null, {setActiveNamespace: UIActions.setActi
           <h1 className="co-m-pane__heading">{title}</h1>
           <p className="co-m-pane__explanation">Associate a user/group to the selected role to define the type of access and resources that are allowed.</p>
 
-          <Section label="Binding Type">
-            {!_.get(fixed, 'kind') && <RadioGroup currentValue={kind} items={bindingKinds} onChange={this.setKind} />}
-          </Section>
+          {!_.get(fixed, 'kind') && <Section label="Binding Type">
+            <RadioGroup currentValue={kind} items={bindingKinds} onChange={this.setKind} />
+          </Section>}
 
           <div className="co-form-section__separator"></div>
 
@@ -404,8 +423,13 @@ export const CreateRoleBinding = ({match: {params}, location}) => {
   const roleKind = searchParams.get('rolekind');
   const roleName = searchParams.get('rolename');
   const metadata = {namespace: UIActions.getActiveNamespace()};
+  const clusterAllowed = useAccessReview({
+    group: ClusterRoleBindingModel.apiGroup,
+    resource: ClusterRoleBindingModel.path,
+    verb: 'create',
+  });
   const fixed = {
-    kind: (params.ns || roleKind === 'Role') ? 'RoleBinding' : undefined,
+    kind: (params.ns || roleKind === 'Role' || !clusterAllowed) ? 'RoleBinding' : undefined,
     metadata: {namespace: params.ns},
     roleRef: {kind: roleKind, name: roleName},
   };
@@ -435,5 +459,5 @@ export const EditRoleBinding = ({match: {params}, kind}) => <Firehose resources=
 </Firehose>;
 
 export const CopyRoleBinding = ({match: {params}, kind}) => <Firehose resources={[{kind, name: params.name, namespace: params.ns, isList: false, prop: 'obj'}]}>
-  <BindingLoadingWrapper isCreate={true} subjectIndex={getSubjectIndex()} titleVerb="Duplicate" />
+  <BindingLoadingWrapper isCreate={true} fixedKeys={['kind']} subjectIndex={getSubjectIndex()} titleVerb="Duplicate" />
 </Firehose>;
