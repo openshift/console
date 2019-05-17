@@ -6,7 +6,18 @@ import { FieldLevelHelp, Alert } from 'patternfly-react';
 import * as classNames from 'classnames';
 
 import { k8sPatch, k8sGet, referenceFor, referenceForOwnerRef } from '../module/k8s';
-import { PromiseComponent, NameValueEditorPair, EnvType, EnvFromPair, LoadingInline, LoadingBox, AsyncComponent, ContainerDropdown, ResourceLink } from './utils';
+import {
+  AsyncComponent,
+  checkAccess,
+  ContainerDropdown,
+  EnvFromPair,
+  EnvType,
+  LoadingBox,
+  LoadingInline,
+  NameValueEditorPair,
+  PromiseComponent,
+  ResourceLink,
+} from './utils';
 import { ConfigMapModel, SecretModel } from '../models';
 
 /**
@@ -84,13 +95,15 @@ const getContainersObjectForDropdown = (containerArray) => {
 };
 
 /** @type {(state: any, props: {obj?: object, rawEnvData?: any, readOnly: boolean, envPath: any, onChange?: (env: any) => void, addConfigMapSecret?: boolean, useLoadingInline?: boolean}) => {model: K8sKind}} */
-const stateToProps = ({k8s}, {obj}) => ({
+const stateToProps = ({k8s, UI}, {obj}) => ({
   model: k8s.getIn(['RESOURCES', 'models', referenceFor(obj)]) || k8s.getIn(['RESOURCES', 'models', obj.kind]),
+  impersonate: UI.get('impersonate'),
 });
 
 class CurrentEnvVars {
   constructor() {
     this.currentEnvVars = {};
+    this.state = { allowed: true };
   }
 
   setRawData(rawEnvData) {
@@ -257,6 +270,7 @@ export const EnvironmentPage = connect(stateToProps)(
     }
 
     componentDidMount() {
+      this._checkEditAccess();
       const {addConfigMapSecret, readOnly} = this.props;
       if (!addConfigMapSecret || readOnly) {
         const configMaps = {}, secrets = {};
@@ -285,7 +299,34 @@ export const EnvironmentPage = connect(stateToProps)(
           };
         }),
       ])
-        .then(_.spread((configMaps, secrets) => this.setState({configMaps, secrets})));
+        .then((([configMaps, secrets]) => this.setState({configMaps, secrets})));
+    }
+
+    componentDidUpdate(prevProps) {
+      const { obj, model, impersonate, readOnly } = this.props;
+      if (_.get(prevProps.obj, 'metadata.uid') !== _.get(obj, 'metadata.uid') ||
+          _.get(prevProps.model, 'apiGroup') !== _.get(model, 'apiGroup') ||
+          _.get(prevProps.model, 'path') !== _.get(model, 'path') ||
+          prevProps.impersonate !== impersonate ||
+          prevProps.readOnly !== readOnly) {
+        this._checkEditAccess();
+      }
+    }
+
+    _checkEditAccess() {
+      const { obj, model, impersonate, readOnly } = this.props;
+      if (_.isEmpty(obj) || !model || readOnly) {
+        return;
+      }
+      const { name, namespace } = obj.metadata;
+      const resourceAttributes = {
+        group: model.apiGroup,
+        resource: model.path,
+        verb: 'patch',
+        name,
+        namespace,
+      };
+      checkAccess(resourceAttributes, impersonate).then(resp => this.setState({ allowed: resp.status.allowed }));
     }
 
     /**
@@ -401,8 +442,9 @@ export const EnvironmentPage = connect(stateToProps)(
     }
 
     render() {
-      const {errorMessage, success, inProgress, currentEnvVars, stale, configMaps, secrets, containerIndex, containerType} = this.state;
-      const {rawEnvData, readOnly, obj, addConfigMapSecret, useLoadingInline} = this.props;
+      const {errorMessage, success, inProgress, currentEnvVars, stale, configMaps, secrets, containerIndex, containerType, allowed} = this.state;
+      const {rawEnvData, obj, addConfigMapSecret, useLoadingInline} = this.props;
+      const readOnly = this.props.readOnly || !allowed;
 
       if (!configMaps || !currentEnvVars || !secrets) {
         if (useLoadingInline) {
