@@ -6,7 +6,7 @@ export const listViewVmStatus = (name: string) => rowForName(name).$('.kubevirt-
 
 const listViewKebabDropdown = '.co-kebab__button';
 const listViewKebabDropdownMenu = '.co-kebab__dropdown';
-export const detailViewDropdown = '.co-m-nav-title  button';
+export const detailViewDropdown = '#action-dropdown';
 export const detailViewDropdownMenu = '.dropdown-menu-right';
 
 /**
