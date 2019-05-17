@@ -24,15 +24,9 @@ const getPrometheusUrl = (urls: string[], query: PrometheusQuery[] | string): st
 const PrometheusGraphLink = connectToURLs(MonitoringRoutes.Prometheus)(
   ({children, query, urls}: React.PropsWithChildren<PrometheusGraphLinkProps>) => {
     const url = getPrometheusUrl(urls, query);
-    return <React.Fragment>
-      {
-        url
-          ? <a href={url} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
-            {children}
-          </a>
-          : {children}
-      }
-    </React.Fragment>;
+    return url
+      ? <a href={url} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>{children}</a>
+      : <React.Fragment>{children}</React.Fragment>;
   }
 );
 

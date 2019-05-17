@@ -30,7 +30,7 @@ export const Area: React.FC<AreaProps> = ({
   const _theme = _.merge(theme, cartesianChartStyles, areaStyles);
   const getLabel = ({name, y}) => (data.length > 1) ? `${name}: ${humanizeValue(y)}` : humanizeValue(y);
   const container = <ChartVoronoiContainer voronoiDimension="x" labels={getLabel} />;
-  return <PrometheusGraph className={className} query={query} title={title} >
+  return <PrometheusGraph className={className} query={query} title={title}>
     <div ref={containerRef} style={{width: '100%'}}>
       <Chart
         containerComponent={container}
