@@ -59,6 +59,7 @@ type jsGlobals struct {
 	LoadTestFactor           int    `json:"loadTestFactor"`
 	Registry                 string `json:"registry"`
 	V2vImageTag              string `json:"v2vImageTag"`
+	V2vImagePullPolicy       string `json:"v2vImagePullPolicy"`
 }
 
 type Server struct {
@@ -79,6 +80,7 @@ type Server struct {
 	DexClient            api.DexClient
 	Registry             string
 	V2vImageTag          string
+	V2vImagePullPolicy   string
 	// A client with the correct TLS setup for communicating with the API server.
 	K8sClient                    *http.Client
 	PrometheusProxyConfig        *proxy.Config
@@ -263,6 +265,7 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 		LoadTestFactor:       s.LoadTestFactor,
 		Registry:             s.Registry,
 		V2vImageTag:          s.V2vImageTag,
+		V2vImagePullPolicy:   s.V2vImagePullPolicy,
 	}
 
 	if !s.authDisabled() {

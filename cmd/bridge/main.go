@@ -87,6 +87,7 @@ func main() {
 	fDocumentationBaseURL := fs.String("documentation-base-url", "", "The base URL for documentation links.")
 	fRegistry := fs.String("registry", "", "The container registry in the format [DOMAIN]/[NAMESPACE]/[PATH]. Example: quay.io/kubevirt")
 	fV2vImageTag := fs.String("v2v-image-tag", "", "Tag for V2V conversion images.")
+	fV2vImagePullPolicy := fs.String("v2v-image-pull-policy", "", "Pull policy for V2V conversion images.")
 	fGoogleTagManagerID := fs.String("google-tag-manager-id", "", "Google Tag Manager ID. External analytics are disabled if this is not set.")
 
 	fLoadTestFactor := fs.Int("load-test-factor", 0, "DEV ONLY. The factor used to multiply k8s API list responses for load testing purposes.")
@@ -168,6 +169,7 @@ func main() {
 		LoadTestFactor:       *fLoadTestFactor,
 		Registry:             *fRegistry, // skip validation
 		V2vImageTag:          *fV2vImageTag,
+		V2vImagePullPolicy    *fV2vImagePullPolicy,
 	}
 
 	if (*fKubectlClientID == "") != (*fKubectlClientSecret == "" && *fKubectlClientSecretFile == "") {
