@@ -12,8 +12,13 @@ export const operatorModalIsClosed = () => browser.wait(until.not(until.presence
 export const viewInstalledOperator = () => $('.hint-block-pf').element(by.linkText('View it here.')).click();
 
 export const createSubscriptionFormTitle = element(by.cssContainingText('h1', 'Create Operator Subscription'));
+export const createSubscriptionFormName = $('.co-clusterserviceversion-logo__name__clusterserviceversion');
 export const createSubscriptionFormBtn = element(by.buttonText('Subscribe'));
+export const createSubscriptionFormLoaded = () => browser.wait(until.visibilityOf(createSubscriptionFormBtn));
 export const createSubscriptionFormInstallMode = element(by.cssContainingText('label', 'Installation Mode'));
+export const allNamespacesInstallMode = $('input[value="AllNamespaces"]');
+export const singleNamespaceInstallMode = $('input[value="SingleNamespace"]');
+export const createSubscriptionError = $('.alert-danger');
 
 export const installNamespaceDropdown = $('.dropdown--full-width');
 export const installNamespaceDropdownBtn = installNamespaceDropdown.$('.dropdown-toggle');
@@ -29,3 +34,5 @@ export const operatorCommunityWarningIsClosed = () => browser.wait(until.not(unt
   .then(() => browser.sleep(500));
 export const closeCommunityWarningModal = () => communityWarningModal.$('.btn-default').click();
 export const acceptCommunityWarningModal = () => communityWarningModal.$('.btn-primary').click();
+export const acceptForeverCommunityWarningModal = () => $('.co-modal-ignore-warning__checkbox').$('input').click()
+  .then(() => acceptCommunityWarningModal());

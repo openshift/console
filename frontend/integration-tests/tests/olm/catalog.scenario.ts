@@ -5,7 +5,7 @@ import { appHost, checkLogs, checkErrors, testName } from '../../protractor.conf
 import * as catalogView from '../../views/olm-catalog.view';
 import * as sidenavView from '../../views/sidenav.view';
 
-describe('Installing a service from a Catalog Source', () => {
+describe('Installing an Operator from a Catalog Source', () => {
   const openCloudServices = new Set(['etcd', 'Prometheus Operator']);
   const operatorGroupName = 'test-operatorgroup';
 
@@ -32,7 +32,7 @@ describe('Installing a service from a Catalog Source', () => {
     })());
 
     const operatorGroup = {
-      apiVersion: 'operators.coreos.com/v1alpha2',
+      apiVersion: 'operators.coreos.com/v1',
       kind: 'OperatorGroup',
       metadata: {name: operatorGroupName},
       spec: {targetNamespaces: [testName]},
@@ -60,7 +60,7 @@ describe('Installing a service from a Catalog Source', () => {
 
   it('displays Catalog Source with expected available packages', async() => {
     await sidenavView.clickNavLink(['Catalog', 'Operator Management']);
-    await catalogView.clickCatalogsTab();
+    await catalogView.clickTab('Operator Catalogs');
     await catalogView.isLoaded();
 
     openCloudServices.forEach(name => {
@@ -68,7 +68,7 @@ describe('Installing a service from a Catalog Source', () => {
     });
   });
 
-  it('displays YAML editor for creating a subscription to a service', async() => {
+  it('displays YAML editor for creating a subscription to an Operator', async() => {
     await catalogView.createSubscriptionFor('Prometheus');
     await browser.wait(until.presenceOf($('.ace_text-input')));
 

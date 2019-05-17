@@ -231,7 +231,7 @@ export const testOwnedResourceInstance: ClusterServiceVersionResourceKind = {
 };
 
 export const testOperatorGroup: OperatorGroupKind = {
-  apiVersion: 'operators.coreos.com/v1alpha2',
+  apiVersion: 'operators.coreos.com/v1',
   kind: 'OperatorGroup',
   metadata: {
     name: 'test-operatorgroup',

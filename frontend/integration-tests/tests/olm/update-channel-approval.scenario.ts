@@ -26,7 +26,7 @@ describe('Manually approving an install plan', () => {
 
   it('removes existing subscription if necessary', async() => {
     await sidenavView.clickNavLink(['Operators', 'Catalog Sources']);
-    await catalogView.clickCatalogsTab();
+    await catalogView.clickTab('Operator Catalogs');
     await catalogView.isLoaded();
 
     if (await catalogView.hasSubscription(pkgName)) {
@@ -40,7 +40,7 @@ describe('Manually approving an install plan', () => {
 
   it('creates a subscription with a `startingCSV` that is not latest and manual approval strategy', async() => {
     await sidenavView.clickNavLink(['Operators', 'Catalog Sources']);
-    await catalogView.clickCatalogsTab();
+    await catalogView.clickTab('Operator Catalogs');
     await catalogView.isLoaded();
     await catalogView.entryRowFor(pkgName).element(by.buttonText('Create Subscription')).click();
     await browser.wait(until.presenceOf($('.ace_text-input')));
@@ -50,7 +50,7 @@ describe('Manually approving an install plan', () => {
     await $('#save-changes').click();
     await crudView.isLoaded();
     await sidenavView.clickNavLink(['Operators', 'Catalog Sources']);
-    await catalogView.clickCatalogsTab();
+    await catalogView.clickTab('Operator Catalogs');
     await catalogView.isLoaded();
 
     expect(catalogView.hasSubscription(pkgName)).toBe(true);
