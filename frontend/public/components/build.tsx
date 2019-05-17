@@ -3,10 +3,10 @@ import * as _ from 'lodash-es';
 import { Icon } from 'patternfly-react';
 import { Link } from 'react-router-dom';
 
-import { K8sResourceKindReference, referenceFor, K8sResourceKind } from '../module/k8s';
+import { K8sResourceKindReference, referenceFor, K8sResourceKind, k8sPatch, K8sKind } from '../module/k8s';
 import { cloneBuild, formatBuildDuration, BuildPhase, getBuildNumber } from '../module/k8s/builds';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
-import { errorModal } from './modals';
+import { errorModal, confirmModal } from './modals';
 import {
   AsyncComponent,
   BuildHooks,
@@ -37,7 +37,7 @@ const BuildsReference: K8sResourceKindReference = 'Build';
 
 const { common, EditEnvironment } = Kebab.factory;
 
-const cloneBuildAction: KebabAction = (kind, build) => ({
+const CloneBuildAction: KebabAction = (kind: K8sKind, build: K8sResourceKind) => ({
   label: 'Rebuild',
   callback: () => cloneBuild(build).then(clone => {
     history.push(resourceObjPath(clone, referenceFor(clone)));
@@ -55,8 +55,30 @@ const cloneBuildAction: KebabAction = (kind, build) => ({
   },
 });
 
+const CancelAction: KebabAction = (kind: K8sKind, build: K8sResourceKind) => ({
+  label: 'Cancel Build',
+  hidden: build.status.phase !== 'Running' && build.status.phase !== 'Pending' && build.status.phase !== 'New',
+  callback: () => confirmModal({
+    title: 'Cancel build',
+    message: 'Are you sure you want to cancel this build?',
+    btnText: 'Yes, cancel',
+    cancelText: 'No, don\'t cancel',
+    executeFn: () => k8sPatch(kind,
+      build,
+      [{ op: 'add', path: '/status/cancelled', value: true }]),
+  }),
+  accessReview: {
+    group: kind.apiGroup,
+    resource: kind.path,
+    name: build.metadata.name,
+    namespace: build.metadata.namespace,
+    verb: 'patch',
+  },
+});
+
 const menuActions = [
-  cloneBuildAction,
+  CloneBuildAction,
+  CancelAction,
   EditEnvironment,
   ...common,
 ];

@@ -57,20 +57,21 @@ export const ModalFooter: React.SFC<ModalFooterProps> = ({message, errorMessage,
   </ButtonBar>;
 };
 
-export const ModalSubmitFooter: React.SFC<ModalSubmitFooterProps> = ({message, errorMessage, inProgress, cancel, submitText, submitDisabled, submitButtonClass='btn-primary'}) => {
+export const ModalSubmitFooter: React.SFC<ModalSubmitFooterProps> = ({message, errorMessage, inProgress, cancel, submitText, cancelText, submitDisabled, submitButtonClass='btn-primary'}) => {
   const onCancelClick = e => {
     e.stopPropagation();
     cancel(e);
   };
 
   return <ModalFooter inProgress={inProgress} errorMessage={errorMessage} message={message}>
-    <button type="button" onClick={onCancelClick} className="btn btn-default">Cancel</button>
+    <button type="button" onClick={onCancelClick} className="btn btn-default">{cancelText || 'Cancel'}</button>
     <button type="submit" className={classNames('btn', submitButtonClass)} disabled={submitDisabled} id="confirm-action">{submitText}</button>
   </ModalFooter>;
 };
 
 ModalSubmitFooter.propTypes = {
   cancel: PropTypes.func.isRequired,
+  cancelText: PropTypes.node,
   errorMessage: PropTypes.string.isRequired,
   inProgress: PropTypes.bool.isRequired,
   message: PropTypes.string,
@@ -108,6 +109,7 @@ export type ModalSubmitFooterProps = {
   errorMessage?: string;
   inProgress: boolean;
   cancel: (e: Event) => void;
+  cancelText?: React.ReactNode;
   submitText: React.ReactNode;
   submitDisabled?: boolean;
   submitButtonClass?: string;

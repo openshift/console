@@ -25,13 +25,14 @@ class ConfirmModal extends PromiseComponent {
     return <form onSubmit={this._submit} name="form" className="modal-content">
       <ModalTitle>{this.props.title}</ModalTitle>
       <ModalBody>{this.props.message}</ModalBody>
-      <ModalSubmitFooter errorMessage={this.state.errorMessage} inProgress={this.state.inProgress} submitText={this.props.btnText || 'Confirm'} cancel={this._cancel} />
+      <ModalSubmitFooter errorMessage={this.state.errorMessage} inProgress={this.state.inProgress} submitText={this.props.btnText || 'Confirm'} cancel={this._cancel} cancelText={this.props.cancelText || 'Cancel'} />
     </form>;
   }
 }
 ConfirmModal.propTypes = {
   btnText: PropTypes.node,
   cancel: PropTypes.func.isRequired,
+  cancelText: PropTypes.node,
   close: PropTypes.func.isRequired,
   executeFn: PropTypes.func.isRequired,
   message: PropTypes.node,
