@@ -3,6 +3,7 @@ import * as React from 'react';
 import * as fuzzy from 'fuzzysearch';
 // import { Link } from 'react-router-dom';
 
+import { RoleModel } from '../../models';
 import { flatten as bindingsFlatten } from './bindings';
 import { BindingName, BindingsList, RulesList } from './index';
 import { ColHead, DetailsPage, List, ListHeader, MultiListPage, ResourceRow, TextFilter } from '../factory';
@@ -171,13 +172,19 @@ export const roleType = role => {
 };
 
 export const RolesPage = ({namespace, mock, showTitle}) => {
+  const createNS = namespace || 'default';
+  const accessReview = {
+    model: RoleModel,
+    namespace: createNS,
+  };
   return <MultiListPage
     ListComponent={RolesList}
     canCreate={true}
     showTitle={showTitle}
     namespace={namespace}
+    createAccessReview={accessReview}
     createButtonText="Create Role"
-    createProps={{to: `/k8s/ns/${namespace || 'default'}/roles/~new`}}
+    createProps={{to: `/k8s/ns/${createNS}/roles/~new`}}
     flatten={resources => _.flatMap(resources, 'data').filter(r => !!r)}
     resources={[
       {kind: 'Role', namespaced: true, optional: mock},
