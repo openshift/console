@@ -11,6 +11,7 @@ import {
   isPerspective,
   isYAMLTemplate,
   isRoutePage,
+  isDashboardsOverviewHealthSubsystem,
 } from './typings';
 
 /**
@@ -53,5 +54,9 @@ export class ExtensionRegistry {
 
   public getYAMLTemplates() {
     return this.extensions.filter(isYAMLTemplate);
+  }
+
+  public getDashboardsOverviewHealthSubsystems() {
+    return this.extensions.filter(isDashboardsOverviewHealthSubsystem);
   }
 }
