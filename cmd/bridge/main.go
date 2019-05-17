@@ -169,7 +169,7 @@ func main() {
 		LoadTestFactor:       *fLoadTestFactor,
 		Registry:             *fRegistry, // skip validation
 		V2vImageTag:          *fV2vImageTag,
-		V2vImagePullPolicy    *fV2vImagePullPolicy,
+		V2vImagePullPolicy:    *fV2vImagePullPolicy,
 	}
 
 	if (*fKubectlClientID == "") != (*fKubectlClientSecret == "" && *fKubectlClientSecretFile == "") {
