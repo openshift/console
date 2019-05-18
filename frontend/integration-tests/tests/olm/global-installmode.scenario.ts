@@ -19,7 +19,7 @@ describe('Interacting with the Redis Operator (all-namespaces install mode)', ()
 
   beforeAll(async() => {
     const operatorGroup = {
-      apiVersion: 'operators.coreos.com/v1alpha2',
+      apiVersion: 'operators.coreos.com/v1',
       kind: 'OperatorGroup',
       metadata: {name: operatorGroupName},
     };
@@ -42,7 +42,7 @@ describe('Interacting with the Redis Operator (all-namespaces install mode)', ()
 
   it('can be enabled from the Catalog Source', async() => {
     await sidenavView.clickNavLink(['Catalog', 'Operator Management']);
-    await catalogView.clickCatalogsTab();
+    await catalogView.clickTab('Operator Catalogs');
     await catalogView.isLoaded();
     await catalogView.createSubscriptionFor('Redis Enterprise');
     await browser.wait(until.presenceOf($('.ace_text-input')));
@@ -52,7 +52,7 @@ describe('Interacting with the Redis Operator (all-namespaces install mode)', ()
     await $('#save-changes').click();
     await crudView.isLoaded();
     await sidenavView.clickNavLink(['Catalog', 'Operator Management']);
-    await catalogView.clickCatalogsTab();
+    await catalogView.clickTab('Operator Catalogs');
     await catalogView.isLoaded();
 
     expect(catalogView.hasSubscription('Redis Enterprise')).toBe(true);
