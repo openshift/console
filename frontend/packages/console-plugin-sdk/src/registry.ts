@@ -1,5 +1,5 @@
 import * as _ from 'lodash-es';
-import { Extension, PluginList, isNavItem, isResourcePage } from './typings';
+import { Extension, PluginList, isNavItem, isResourcePage, isFeatureFlag } from './typings';
 
 /**
  * Registry used to query for Console extensions.
@@ -18,6 +18,10 @@ export class ExtensionRegistry {
 
   public getResourcePages() {
     return this.extensions.filter(isResourcePage);
+  }
+
+  public getFeatureFlags() {
+    return this.extensions.filter(isFeatureFlag);
   }
 
 }

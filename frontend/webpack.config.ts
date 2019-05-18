@@ -2,17 +2,18 @@
 import * as webpack from 'webpack';
 import * as path from 'path';
 import * as glob from 'glob';
+import { default as chalk } from 'chalk';
 import * as HtmlWebpackPlugin from 'html-webpack-plugin';
 import * as ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
 import * as MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import * as VirtualModulesPlugin from 'webpack-virtual-modules';
-import { getActivePluginsModule } from '@console/plugin-sdk/src/codegen';
+
+import { readPackages, resolveActivePlugins, getActivePluginsModule } from '@console/plugin-sdk/src/codegen';
 
 const NODE_ENV = process.env.NODE_ENV;
 
 /* Helpers */
 const extractCSS = new MiniCssExtractPlugin({filename: 'app-bundle.css'});
-const packageFiles = glob.sync('packages/*/package.json', { absolute: true });
 
 const config: webpack.Configuration = {
   entry: ['./polyfills.js', '@console/app'],
@@ -115,10 +116,6 @@ const config: webpack.Configuration = {
       chunksSortMode: 'none',
     }),
     extractCSS,
-    // Generate '@console/active-plugins' module
-    new VirtualModulesPlugin({
-      'node_modules/@console/active-plugins.js': getActivePluginsModule(packageFiles),
-    }),
   ],
   devtool: 'cheap-module-source-map',
   stats: 'minimal',
@@ -133,5 +130,19 @@ if (NODE_ENV === 'production') {
   config.optimization.concatenateModules = false;
   config.stats = 'normal';
 }
+
+/* Console plugin support */
+const packageFiles = glob.sync('packages/*/package.json', { absolute: true });
+const { appPackage, pluginPackages } = readPackages(packageFiles);
+const activePluginPackages = appPackage ? resolveActivePlugins(appPackage, pluginPackages) : [];
+
+config.plugins.push(
+  new VirtualModulesPlugin({
+    'node_modules/@console/active-plugins.js': getActivePluginsModule(activePluginPackages),
+  }),
+);
+
+// eslint-disable-next-line no-console
+console.log(`Active plugins: [${(activePluginPackages.map(pkg => `${chalk.green(pkg.name)}`).join(', '))}]`);
 
 export default config;

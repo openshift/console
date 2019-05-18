@@ -10,5 +10,7 @@ const activePlugins = (process.env.NODE_ENV !== 'test')
 
 export const registry = new ExtensionRegistry(activePlugins);
 
-// eslint-disable-next-line no-console
-console.info(`${activePlugins.length} plugins active`);
+if (process.env.NODE_ENV !== 'test') {
+  // eslint-disable-next-line no-console
+  console.info(`${activePlugins.length} plugins active`);
+}

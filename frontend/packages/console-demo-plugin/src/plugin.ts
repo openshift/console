@@ -4,6 +4,7 @@ import {
   ResourceNSNavItem,
   ResourceListPage,
   ResourceDetailPage,
+  ModelFeatureFlag,
 } from '@console/plugin-sdk';
 
 // TODO(vojtech): internal code needed by plugins should be moved to console-shared package
@@ -13,7 +14,8 @@ type ConsumedExtensions =
   | HrefNavItem
   | ResourceNSNavItem
   | ResourceListPage
-  | ResourceDetailPage;
+  | ResourceDetailPage
+  | ModelFeatureFlag;
 
 const plugin: Plugin<ConsumedExtensions> = [
   {
@@ -23,6 +25,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       componentProps: {
         name: 'Test Href Link',
         href: '/test',
+        required: 'TEST_MODEL_FLAG',
       },
     },
   },
@@ -33,6 +36,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       componentProps: {
         name: 'Test ResourceNS Link',
         resource: 'pods',
+        required: 'TEST_MODEL_FLAG',
       },
     },
   },
@@ -48,6 +52,13 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       model: PodModel,
       loader: () => import('@console/internal/components/pod' /* webpackChunkName: "pod" */).then(m => m.PodsDetailsPage),
+    },
+  },
+  {
+    type: 'FeatureFlag/Model',
+    properties: {
+      model: PodModel,
+      flag: 'TEST_MODEL_FLAG',
     },
   },
 ];
