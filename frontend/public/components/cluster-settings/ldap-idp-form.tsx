@@ -219,10 +219,10 @@ export class AddLDAPPage extends PromiseComponent<{}, AddLDAPPageState> {
         <div className="co-form-section__separator"></div>
         <h3>Attributes</h3>
         <p className="co-help-text">Attributes map LDAP attributes to identities.</p>
-        <ListInput label="ID" required initialValues={attributesID} onChange={this.attributesIDChanged} />
-        <ListInput label="Preferred Username" initialValues={attributesPreferredUsername} onChange={this.attributesPreferredUsernameChanged} />
-        <ListInput label="Name" initialValues={attributesName} onChange={this.attributesNameChanged} />
-        <ListInput label="Email" onChange={this.attributesEmailChanged} />
+        <ListInput label="ID" required initialValues={attributesID} onChange={this.attributesIDChanged} helpText="The list of attributes whose values should be used as the user ID." />
+        <ListInput label="Preferred Username" initialValues={attributesPreferredUsername} onChange={this.attributesPreferredUsernameChanged} helpText="The list of attributes whose values should be used as the preferred username." />
+        <ListInput label="Name" initialValues={attributesName} onChange={this.attributesNameChanged} helpText="The list of attributes whose values should be used as the display name." />
+        <ListInput label="Email" onChange={this.attributesEmailChanged} helpText="The list of attributes whose values should be used as the email address." />
         <div className="co-form-section__separator"></div>
         <h3>More Options</h3>
         <IDPCAFileInput value={caFileContent} onChange={this.caFileChanged} />

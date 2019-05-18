@@ -174,11 +174,11 @@ export class AddRequestHeaderPage extends PromiseComponent<{}, AddRequestHeaderP
         <div className="co-form-section__separator" />
         <h3>More Options</h3>
         <IDPCAFileInput value={caFileContent} onChange={this.caFileChanged} isRequired />
-        <ListInput label="Client Common Names" onChange={this.clientCommonNamesChanged} />
-        <ListInput label="Headers" onChange={this.headersChanged} required />
-        <ListInput label="Preferred Username Headers" onChange={this.preferredUsernameHeadersChanged} />
-        <ListInput label="Name Headers" onChange={this.nameHeadersChanged} />
-        <ListInput label="Email Headers" onChange={this.emailHeadersChanged} />
+        <ListInput label="Client Common Names" onChange={this.clientCommonNamesChanged} helpText="The set of common names to require a match from." />
+        <ListInput label="Headers" onChange={this.headersChanged} helpText="The set of headers to check for identity information." required />
+        <ListInput label="Preferred Username Headers" onChange={this.preferredUsernameHeadersChanged} helpText="The set of headers to check for the preferred username." />
+        <ListInput label="Name Headers" onChange={this.nameHeadersChanged} helpText="The set of headers to check for the display name." />
+        <ListInput label="Email Headers" onChange={this.emailHeadersChanged} helpText="The set of headers to check for the email address." />
         <ButtonBar errorMessage={this.state.errorMessage} inProgress={this.state.inProgress}>
           <button type="submit" className="btn btn-primary">Add</button>
           <button type="button" className="btn btn-default" onClick={history.goBack}>Cancel</button>

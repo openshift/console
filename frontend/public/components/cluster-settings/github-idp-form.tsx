@@ -192,11 +192,11 @@ export class AddGitHubPage extends PromiseComponent<{}, AddGitHubPageState> {
         <div className="co-form-section__separator"></div>
         <h3>Organizations</h3>
         <p className="co-help-text">Optionally list organizations. If specified, only GitHub users that are members of at least one of the listed organizations will be allowed to log in. Cannot be used in combination with <strong>teams</strong>.</p>
-        <ListInput label="Organization" onChange={this.organizationChanged} />
+        <ListInput label="Organization" onChange={this.organizationChanged} helpText="Restricts which organizations are allowed to log in." />
         <div className="co-form-section__separator"></div>
         <h3>Teams</h3>
         <p className="co-help-text">Optionally list teams. If specified, only GitHub users that are members of at least one of the listed teams will be allowed to log in. Cannot be used in combination with <strong>organizations</strong>.</p>
-        <ListInput label="Team" onChange={this.teamChanged} />
+        <ListInput label="Team" onChange={this.teamChanged} helpText="Restricts which teams are allowed to log in. The format is <org>/<team>." />
         <ButtonBar errorMessage={this.state.errorMessage} inProgress={this.state.inProgress}>
           <button type="submit" className="btn btn-primary">Add</button>
           <button type="button" className="btn btn-default" onClick={history.goBack}>Cancel</button>
