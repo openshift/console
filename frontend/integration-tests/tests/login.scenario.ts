@@ -39,6 +39,30 @@ describe('Auth test', () => {
       expect(loginView.userDropdown.getText()).toContain(BRIDGE_HTPASSWD_USERNAME);
     });
 
+    it('does not show admin nav items in Administration to htpasswd user', async() => {
+      await browser.wait(until.visibilityOf(sidenavView.navSectionFor('Administration')));
+      expect(sidenavView.navSectionFor('Administration')).not.toContain('Cluster Status');
+      expect(sidenavView.navSectionFor('Administration')).not.toContain('Cluster Settings');
+      expect(sidenavView.navSectionFor('Administration')).not.toContain('Namespaces');
+      expect(sidenavView.navSectionFor('Administration')).not.toContain('Custom Resource Definitions');
+    });
+
+    it('does not show admin nav items in Catalog to htpasswd user', async() => {
+      await browser.wait(until.visibilityOf(sidenavView.navSectionFor('Catalog')));
+      expect(sidenavView.navSectionFor('Catalog')).not.toContain('OperatorHub');
+    });
+
+    it('does not show admin nav items in Storage to htpasswd user', async() => {
+      await browser.wait(until.visibilityOf(sidenavView.navSectionFor('Storage')));
+      expect(sidenavView.navSectionFor('Storage')).not.toContain('Persistent Volumes');
+    });
+
+    it('does not show Compute or Monitoring admin nav items to htpasswd user', async() => {
+      await browser.wait(until.visibilityOf(sidenavView.navSectionFor('Home')));
+      expect(sidenavView.navSectionFor('Compute').isPresent()).toBe(false);
+      expect(sidenavView.navSectionFor('Monitoring').isPresent()).toBe(false);
+    });
+
     it('logs out htpasswd user', async() => {
       await loginView.logout();
       expect(browser.getCurrentUrl()).toContain('oauth-openshift');
