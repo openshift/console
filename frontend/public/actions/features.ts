@@ -8,7 +8,7 @@ import { receivedResources } from './k8s';
 import { coFetchJSON } from '../co-fetch';
 import { MonitoringRoutes } from '../reducers/monitoring';
 import { setMonitoringURL } from './monitoring';
-import { setClusterID, setCreateProjectMessage, setUser } from './ui';
+import { setCreateProjectMessage, setUser } from './ui';
 import { FLAGS } from '../const';
 
 export enum ActionType {
@@ -55,10 +55,6 @@ const detectClusterVersion = dispatch => coFetchJSON(clusterVersionPath)
     (clusterVersion: ClusterVersionKind) => {
       const hasClusterVersion = !_.isEmpty(clusterVersion);
       dispatch(setFlag(FLAGS.CLUSTER_VERSION, hasClusterVersion));
-
-      if (hasClusterVersion && !_.isEmpty(clusterVersion.spec)) {
-        dispatch(setClusterID(clusterVersion.spec.clusterID));
-      }
     },
     err => {
       if (_.includes([403, 404], _.get(err, 'response.status'))) {

@@ -18,7 +18,6 @@ export enum ActionType {
   SelectOverviewView = 'selectOverviewView',
   SetActiveNamespace = 'setActiveNamespace',
   SetCreateProjectMessage = 'setCreateProjectMessage',
-  SetClusterID = 'setClusterID',
   SetCurrentLocation = 'setCurrentLocation',
   SetMonitoringData = 'setMonitoringData',
   ToggleMonitoringGraphs = 'toggleMonitoringGraphs',
@@ -95,7 +94,6 @@ export const formatNamespaceRoute = (activeNamespace, originalPath, location?) =
 };
 
 export const setCurrentLocation = (location: string) => action(ActionType.SetCurrentLocation, {location});
-export const setClusterID = (clusterID: string) => action(ActionType.SetClusterID, {clusterID});
 export const setActiveNamespace = (namespace: string = '') => {
   namespace = namespace.trim();
   // make it noop when new active namespace is the same
@@ -189,7 +187,6 @@ export const toggleMonitoringGraphs = () => action(ActionType.ToggleMonitoringGr
 // TODO(alecmerdler): Implement all actions using `typesafe-actions` and add them to this export
 const uiActions = {
   setCurrentLocation,
-  setClusterID,
   setActiveNamespace,
   beginImpersonate,
   endImpersonate,
