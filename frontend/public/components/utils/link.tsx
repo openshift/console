@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
+import Linkify from 'react-linkify';
 
 import { ALL_NAMESPACES_KEY } from '../../const';
 
@@ -60,6 +61,10 @@ export const getURLSearchParams = () => {
 };
 
 export const ExternalLink: React.FC<ExternalLinkProps> = ({href, text, additionalClassName=''}) => <a className={classNames('co-external-link', additionalClassName)} href={href} target="_blank" rel="noopener noreferrer">{text}</a>;
+
+// Open links in a new window and set noopener/noreferrer.
+export const LinkifyExternal: React.FC<{children: React.ReactNode}> = ({children}) => <Linkify properties={{target: '_blank', rel: 'noopener noreferrer'}}>{children}</Linkify>;
+LinkifyExternal.displayName = 'LinkifyExternal';
 
 type ExternalLinkProps = {
   href: string;

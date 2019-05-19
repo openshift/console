@@ -51,6 +51,7 @@ export * from './rbac';
 export * from './poll-hook';
 export * from './ref-width-hook';
 export * from './safe-fetch-hook';
+export * from './camel-case-wrap';
 
 /*
   Add the enum for NameValueEditorPair here and not in its namesake file because the editor should always be

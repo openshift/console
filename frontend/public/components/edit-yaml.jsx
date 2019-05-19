@@ -14,10 +14,9 @@ import 'brace/snippets/yaml';
 
 import { k8sCreate, k8sUpdate, referenceFor, getCompletions, groupVersionFor, snippets, referenceForModel } from '../module/k8s';
 import { checkAccess, history, Loading, resourceObjPath } from './utils';
-import { coFetchJSON } from '../co-fetch';
+import { ExploreTypeSidebar } from './sidebars/explore-type-sidebar';
 import { ResourceSidebar } from './sidebars/resource-sidebar';
 import { yamlTemplates } from '../models/yaml-templates';
-import { SWAGGER_SESSION_STORAGE_KEY } from '../const';
 
 const { snippetManager } = ace.acequire('ace/snippets');
 snippetManager.register([...snippets.values()], 'yaml');
@@ -70,20 +69,6 @@ export const EditYAML = connect(stateToProps)(
 
       if (this.props.error) {
         this.handleError(this.props.error);
-      }
-
-      // Retrieve k8s API spec for autocompletion
-      if (!window.sessionStorage.getItem(SWAGGER_SESSION_STORAGE_KEY)) {
-        coFetchJSON('api/kubernetes/openapi/v2').then(swagger => {
-          // Only store definitions to reduce the document size.
-          const json = JSON.stringify(swagger.definitions || {});
-          try {
-            window.sessionStorage.setItem(SWAGGER_SESSION_STORAGE_KEY, json);
-          } catch (e) {
-            // eslint-disable-next-line no-console
-            console.error('Could not store swagger.json', e);
-          }
-        });
       }
     }
 
@@ -394,7 +379,8 @@ export const EditYAML = connect(stateToProps)(
                 </div>
               </div>
             </div>
-            <ResourceSidebar isCreateMode={create} kindObj={model} height={this.state.height} loadSampleYaml={this.loadSampleYaml_} downloadSampleYaml={this.downloadSampleYaml_} />
+            {create && <ResourceSidebar isCreateMode={create} kindObj={model} height={this.state.height} loadSampleYaml={this.loadSampleYaml_} downloadSampleYaml={this.downloadSampleYaml_} />}
+            {!create && <ExploreTypeSidebar kindObj={model} height={this.state.height} />}
           </div>
         </div>
       </div>;
