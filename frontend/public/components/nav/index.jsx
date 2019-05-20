@@ -1,14 +1,12 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
-import * as _ from 'lodash-es';
 import * as PropTypes from 'prop-types';
-import memoize from 'memoize-one';
+import { Nav, NavItemSeparator, NavList, PageSidebar } from '@patternfly/react-core';
 
-import { featureReducerName, flagPending } from '../reducers/features';
-import { FLAGS } from '../const';
-import { monitoringReducerName, MonitoringRoutes } from '../reducers/monitoring';
-import { formatNamespacedRouteForResource } from '../actions/ui';
+import { featureReducerName } from '../../reducers/features';
+import { FLAGS } from '../../const';
+import { monitoringReducerName, MonitoringRoutes } from '../../reducers/monitoring';
+
 import {
   BuildConfigModel,
   BuildModel,
@@ -25,122 +23,11 @@ import {
   MachineSetModel,
   PackageManifestModel,
   SubscriptionModel,
-} from '../models';
-import { referenceForModel } from '../module/k8s';
+} from '../../models';
 
-import { stripBasePath } from './utils';
-import * as plugins from '../plugins';
-
-export const matchesPath = (resourcePath, prefix) => resourcePath === prefix || _.startsWith(resourcePath, `${prefix}/`);
-export const matchesModel = (resourcePath, model) => model && matchesPath(resourcePath, referenceForModel(model));
-
-import { Nav, NavExpandable, NavItem, NavItemSeparator, NavList, PageSidebar } from '@patternfly/react-core';
-
-const stripNS = href => {
-  href = stripBasePath(href);
-  return href.replace(/^\/?k8s\//, '').replace(/^\/?(cluster|all-namespaces|ns\/[^/]*)/, '').replace(/^\//, '');
-};
-
-const ExternalLink = ({href, name}) => <NavItem isActive={false}>
-  <a className="pf-c-nav__link" href={href} target="_blank" rel="noopener noreferrer">{name}<span className="co-external-link"></span></a>
-</NavItem>;
-
-class NavLink extends React.PureComponent {
-  static isActive() {
-    throw new Error('not implemented');
-  }
-
-  get to() {
-    throw new Error('not implemented');
-  }
-
-  static startsWith(resourcePath, someStrings) {
-    return _.some(someStrings, s => resourcePath.startsWith(s));
-  }
-
-  render() {
-    const { isActive, id, name, onClick } = this.props;
-
-    // onClick is now handled globally by the Nav's onSelect,
-    // however onClick can still be passed if desired in certain cases
-
-    return (
-      <NavItem isActive={isActive}>
-        <Link
-          id={id}
-          to={this.to}
-          onClick={onClick}
-        >
-          {name}
-        </Link>
-      </NavItem>
-    );
-  }
-}
-
-NavLink.defaultProps = {
-  required: '',
-  disallowed: '',
-};
-
-NavLink.propTypes = {
-  required: PropTypes.string,
-  disallowed: PropTypes.string,
-};
-
-class ResourceNSLink extends NavLink {
-  static isActive(props, resourcePath, activeNamespace) {
-    const href = stripNS(formatNamespacedRouteForResource(props.resource, activeNamespace));
-    return matchesPath(resourcePath, href) || matchesModel(resourcePath, props.model);
-  }
-
-  get to() {
-    const { resource, activeNamespace } = this.props;
-    return formatNamespacedRouteForResource(resource, activeNamespace);
-  }
-}
-
-ResourceNSLink.propTypes = {
-  name: PropTypes.string.isRequired,
-  startsWith: PropTypes.arrayOf(PropTypes.string),
-  resource: PropTypes.string.isRequired,
-  model: PropTypes.object,
-  activeNamespace: PropTypes.string,
-};
-
-class ResourceClusterLink extends NavLink {
-  static isActive(props, resourcePath) {
-    return resourcePath === props.resource || _.startsWith(resourcePath, `${props.resource}/`) || matchesModel(resourcePath, props.model);
-  }
-
-  get to() {
-    return `/k8s/cluster/${this.props.resource}`;
-  }
-}
-
-ResourceClusterLink.propTypes = {
-  name: PropTypes.string.isRequired,
-  startsWith: PropTypes.arrayOf(PropTypes.string),
-  resource: PropTypes.string.isRequired,
-  model: PropTypes.object,
-};
-
-class HrefLink extends NavLink {
-  static isActive(props, resourcePath) {
-    const noNSHref = stripNS(props.href);
-    return resourcePath === noNSHref || _.startsWith(resourcePath, `${noNSHref}/`);
-  }
-
-  get to() {
-    return this.props.href;
-  }
-}
-
-HrefLink.propTypes = {
-  name: PropTypes.string.isRequired,
-  startsWith: PropTypes.arrayOf(PropTypes.string),
-  href: PropTypes.string.isRequired,
-};
+import { referenceForModel } from '../../module/k8s';
+import { ExternalLink, HrefLink, ResourceNSLink, ResourceClusterLink } from './items';
+import { NavSection } from './section';
 
 // Wrap `NavItemSeparator` so we can use `required` without prop type errors.
 const Separator = () => <NavItemSeparator />;
@@ -148,138 +35,6 @@ const Separator = () => <NavItemSeparator />;
 Separator.propTypes = {
   required: PropTypes.string,
 };
-
-const navSectionStateToProps = (state, {required}) => {
-  const flags = state[featureReducerName];
-  const canRender = required ? flags.get(required) : true;
-
-  return {
-    flags, canRender,
-    activeNamespace: state.UI.get('activeNamespace'),
-    location: state.UI.get('location'),
-  };
-};
-
-const NavSection = connect(navSectionStateToProps)(
-  class NavSection extends React.Component {
-    constructor(props) {
-      super(props);
-      this.toggle = (e, val) => this.toggle_(e, val);
-      this.state = { isOpen: false, activeChild: null };
-
-      const activeChild = this.getActiveChild();
-      if (activeChild) {
-        this.state.activeChild = activeChild;
-        this.state.isOpen = true;
-      }
-    }
-
-    shouldComponentUpdate(nextProps, nextState) {
-      const { isOpen } = this.state;
-
-      if (isOpen !== nextProps.isOpen) {
-        return true;
-      }
-
-      if (!isOpen && !nextState.isOpen) {
-        return false;
-      }
-
-      return nextProps.location !== this.props.location || nextProps.flags !== this.props.flags;
-    }
-
-    getActiveChild() {
-      const { activeNamespace, location, children } = this.props;
-
-      if (!children) {
-        return stripBasePath(location).startsWith(this.props.activePath);
-      }
-
-      const resourcePath = location ? stripNS(location) : '';
-
-      //current bug? - we should be checking if children is a single item or .filter is undefined
-      return children.filter(c => {
-        if (!c) {
-          return false;
-        }
-        if (c.props.startsWith) {
-          const active = c.type.startsWith(resourcePath, c.props.startsWith, activeNamespace);
-          if (active || !c.props.activePath) {
-            return active;
-          }
-        }
-        return c.type.isActive && c.type.isActive(c.props, resourcePath, activeNamespace);
-      }).map(c => c.props.name)[0];
-    }
-
-    componentDidUpdate(prevProps, prevState) {
-      if (prevProps.location === this.props.location) {
-        return;
-      }
-
-      const activeChild = this.getActiveChild();
-      const state = {activeChild};
-      if (activeChild && !prevState.activeChild) {
-        state.isOpen = true;
-      }
-      this.setState(state);
-    }
-
-    toggle_(e, expandState) {
-      this.setState({isOpen: expandState});
-    }
-
-    getPluginNavItems = memoize(
-      (section) => plugins.registry.getNavItems(section)
-    );
-
-    render() {
-      if (!this.props.canRender) {
-        return null;
-      }
-
-      const { title, children, activeNamespace, flags } = this.props;
-      const { isOpen, activeChild } = this.state;
-      const isActive = !!activeChild;
-
-      const mapChild = (c) => {
-        if (!c) {
-          return null;
-        }
-        const {name, required, disallowed} = c.props;
-        const requiredArray = required ? _.castArray(required) : [];
-        const requirementMissing = _.some(requiredArray, flag => (
-          flag && (flagPending(flags.get(flag)) || !flags.get(flag))
-        ));
-        if (requirementMissing) {
-          return null;
-        }
-        if (disallowed && (flagPending(flags.get(disallowed)) || flags.get(disallowed))) {
-          return null;
-        }
-        return React.cloneElement(c, {key: name, isActive: name === this.state.activeChild, activeNamespace, flags});
-      };
-
-      const Children = React.Children.map(children, mapChild);
-
-      const PluginChildren = _.compact(this.getPluginNavItems(title).map((item, index) => {
-        if (plugins.isHrefNavItem(item)) {
-          return <HrefLink key={index} {...item.properties.componentProps} />;
-        }
-        if (plugins.isResourceNSNavItem(item)) {
-          return <ResourceNSLink key={index} {...item.properties.componentProps} />;
-        }
-      })).map(mapChild);
-
-      return (Children || PluginChildren.length > 0) ? (
-        <NavExpandable title={title} isActive={isActive} isExpanded={isOpen} onExpand={this.toggle}>
-          {Children}
-          {PluginChildren}
-        </NavExpandable>
-      ) : null;
-    }
-  }
-);
 
 const searchStartsWith = ['search'];
 const operatorManagementStartsWith = [

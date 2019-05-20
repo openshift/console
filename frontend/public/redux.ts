@@ -7,9 +7,7 @@ import UIReducers, { UIState } from './reducers/ui';
 
 const composeEnhancers =
   // eslint-disable-next-line no-undef
-  (process.env.NODE_ENV !== 'production' &&
-    (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) ||
-  compose;
+  (process.env.NODE_ENV !== 'production' && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) || compose;
 
 /**
  * This is the entirety of the `redux-thunk` library.

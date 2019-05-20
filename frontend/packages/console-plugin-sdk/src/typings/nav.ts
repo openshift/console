@@ -1,30 +1,29 @@
 import { Extension } from '.';
-import { K8sKind } from '@console/internal/module/k8s';
+import { NavSectionTitle } from '@console/internal/components/nav/section';
+
+import {
+  NavLinkProps,
+  HrefLinkProps,
+  ResourceNSLinkProps,
+  ResourceClusterLinkProps,
+} from '@console/internal/components/nav/items';
 
 namespace ExtensionProperties {
   interface NavItem {
-    // TODO(vojtech): link to existing nav sections by value
-    section: 'Home' | 'Workloads';
-    componentProps: {
-      name: string;
-      required?: string;
-      disallowed?: string;
-      startsWith?: string[];
-    }
+    section: NavSectionTitle;
+    componentProps: Pick<NavLinkProps, 'name' | 'required' | 'disallowed' | 'startsWith'>;
   }
 
   export interface HrefNavItem extends NavItem {
-    componentProps: NavItem['componentProps'] & {
-      href: string;
-      activePath?: string;
-    }
+    componentProps: NavItem['componentProps'] & Pick<HrefLinkProps, 'href' | 'activePath'>;
   }
 
   export interface ResourceNSNavItem extends NavItem {
-    componentProps: NavItem['componentProps'] & {
-      resource: string;
-      model?: K8sKind;
-    }
+    componentProps: NavItem['componentProps'] & Pick<ResourceNSLinkProps, 'resource' | 'model'>;
+  }
+
+  export interface ResourceClusterNavItem extends NavItem {
+    componentProps: NavItem['componentProps'] & Pick<ResourceClusterLinkProps, 'resource' | 'model'>;
   }
 }
 
@@ -36,8 +35,11 @@ export interface ResourceNSNavItem extends Extension<ExtensionProperties.Resourc
   type: 'NavItem/ResourceNS';
 }
 
-// TODO(vojtech): add ResourceClusterNavItem
-export type NavItem = HrefNavItem | ResourceNSNavItem;
+export interface ResourceClusterNavItem extends Extension<ExtensionProperties.ResourceClusterNavItem> {
+  type: 'NavItem/ResourceCluster';
+}
+
+export type NavItem = HrefNavItem | ResourceNSNavItem | ResourceClusterNavItem;
 
 export function isHrefNavItem(e: Extension<any>): e is HrefNavItem {
   return e.type === 'NavItem/Href';
@@ -47,6 +49,10 @@ export function isResourceNSNavItem(e: Extension<any>): e is ResourceNSNavItem {
   return e.type === 'NavItem/ResourceNS';
 }
 
+export function isResourceClusterNavItem(e: Extension<any>): e is ResourceClusterNavItem {
+  return e.type === 'NavItem/ResourceCluster';
+}
+
 export function isNavItem(e: Extension<any>): e is NavItem {
-  return isHrefNavItem(e) || isResourceNSNavItem(e);
+  return isHrefNavItem(e) || isResourceNSNavItem(e) || isResourceClusterNavItem(e);
 }
