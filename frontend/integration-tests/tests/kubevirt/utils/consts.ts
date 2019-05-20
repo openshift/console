@@ -15,10 +15,28 @@ export const POD_CREATE_DELETE_TIMEOUT = POD_CREATION_TIMEOUT + POD_TERMINATION_
 
 export const NODE_STOP_MAINTENANCE_TIMEOUT = 40 * SEC;
 
-// Exceptions
+// Web-UI Exceptions
 export const WAIT_TIMEOUT_ERROR = 'Wait Timeout Error.';
+export const WIZARD_CREATE_VM_ERROR = 'Creating VM failed';
+export const WIZARD_CREATE_TEMPLATE_ERROR = 'Creating Template failed';
+
+// Framework Exception
+export const UNEXPECTED_ACTION_ERROR = 'Received unexpected action.';
 
 // Compute Nodes
 export const NODE_MAINTENANCE_STATUS = 'Under maintenance';
 export const NODE_STOPPING_MAINTENANCE_STATUS = 'Stopping maintenance';
 export const NODE_READY_STATUS = 'Ready';
+
+// Wizard dialog
+export const WIZARD_TABLE_FIRST_ROW = 1;
+
+// Tab names
+export const TABS = {
+  OVERVIEW: 'Overview',
+  YAML: 'YAML',
+  CONSOLES: 'Consoles',
+  EVENTS: 'Events',
+  DISKS: 'Disks',
+  NICS: 'Network Interfaces',
+};

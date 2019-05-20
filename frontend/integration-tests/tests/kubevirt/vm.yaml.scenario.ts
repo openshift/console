@@ -6,10 +6,10 @@ import { appHost, testName } from '../../protractor.conf';
 import { isLoaded } from '../../views/crud.view';
 import * as yamlView from '../../views/yaml.view';
 import { removeLeakedResources } from './utils/utils';
-import { disksTab, nicsTab } from '../../views/kubevirt/virtualMachine.view';
 import Yaml from './models/yaml';
 import { VirtualMachine } from './models/virtualMachine';
 import { testNad, customVMWithNicDisk } from './mocks';
+import { TABS } from './utils/consts';
 
 describe('Test create vm from yaml', () => {
   const leakedResources = new Set<string>();
@@ -61,8 +61,8 @@ describe('Test create vm from yaml', () => {
 
       // Verify additional nic and disk exists.
       // Note: 'testdisk' and 'nic1' are hard coding in vm yaml customVMWithNicDisk
-      expect((await vm.getAttachedResources(disksTab)).includes('testdisk')).toBe(true);
-      expect((await vm.getAttachedResources(nicsTab)).includes('nic1')).toBe(true);
+      expect((await vm.getAttachedResources(TABS.DISKS)).includes('testdisk')).toBe(true);
+      expect((await vm.getAttachedResources(TABS.NICS)).includes('nic1')).toBe(true);
 
       // prepare VM source for removing
       leakedResources.add(JSON.stringify({name: `vm-${testName}`, namespace: testName, kind: 'vm'}));

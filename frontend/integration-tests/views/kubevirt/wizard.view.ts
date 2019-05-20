@@ -29,6 +29,8 @@ export const provisionSourceDropdownId = '#image-source-type-dropdown';
 export const operatingSystemDropdownId = '#operating-system-dropdown';
 export const templateDropdownId = '#template-dropdown';
 export const flavorDropdownId = '#flavor-dropdown';
+export const customFlavorCpus = '#resources-cpu';
+export const customFlavorMemory = '#resources-memory';
 export const workloadProfileDropdownId = '#workload-profile-dropdown';
 
 export const startVMOnCreation = $('#start-vm');
@@ -45,6 +47,9 @@ export const pxeNICDropdownId = '#pxe-nic-dropdown';
 // Storage tab
 export const attachDisk = $('#attach-disk-btn');
 export const createDisk = $('#create-storage-btn');
+
+// Result tab
+export const errorMessage = $('.kubevirt-create-vm-wizard__result-tab-row--error');
 
 // Tables
 export const tableRowsCount = () => $$('.kubevirt-editable-table tbody tr').count();

@@ -4,15 +4,15 @@ import { $, browser, ExpectedConditions as until } from 'protractor';
 import * as _ from 'lodash';
 
 // eslint-disable-next-line no-unused-vars
-import { removeLeakedResources, waitForCount, searchYAML, searchJSON, getResourceJSON } from './utils/utils';
-import { CLONE_VM_TIMEOUT, VM_BOOTUP_TIMEOUT, PAGE_LOAD_TIMEOUT, VM_STOP_TIMEOUT } from './utils/consts';
+import { removeLeakedResources, waitForCount, searchYAML, searchJSON, getResourceJSON, addLeakableResource, removeLeakableResource, deleteResource, createResources, deleteResources } from './utils/utils';
+import { CLONE_VM_TIMEOUT, VM_BOOTUP_TIMEOUT, PAGE_LOAD_TIMEOUT, VM_STOP_TIMEOUT, TABS } from './utils/consts';
 import { appHost, testName } from '../../protractor.conf';
 import { filterForName, isLoaded, resourceRowsPresent, resourceRows } from '../../views/crud.view';
-import { basicVmConfig, networkInterface, testNad, getVmManifest, hddDisk, cloudInitCustomScriptConfig, emptyStr } from './mocks';
+import { basicVmConfig, networkInterface, testNad, getVmManifest, cloudInitCustomScriptConfig, emptyStr, rootDisk } from './mocks';
 import * as wizardView from '../../views/kubevirt/wizard.view';
 import Wizard from './models/wizard';
 import { VirtualMachine } from './models/virtualMachine';
-import { nicsTab, disksTab, statusIcons } from '../../views/kubevirt/virtualMachine.view';
+import { statusIcons } from '../../views/kubevirt/virtualMachine.view';
 
 
 describe('Test clone VM.', () => {
@@ -98,13 +98,11 @@ describe('Test clone VM.', () => {
     };
 
     beforeAll(async() => {
-      execSync(`echo '${JSON.stringify(urlVmManifest)}' | kubectl create -f -`);
-      execSync(`echo '${JSON.stringify(testNad)}' | kubectl create -f -`);
+      createResources([urlVmManifest, testNad]);
     });
 
     afterAll(async() => {
-      execSync(`kubectl delete -n ${testNad.metadata.namespace} net-attach-def ${testNad.metadata.name}`);
-      execSync(`kubectl delete -n ${urlVm.namespace} vm ${urlVm.name}`);
+      deleteResources([urlVmManifest, testNad]);
       removeLeakedResources(leakedResources);
     });
 
@@ -142,7 +140,7 @@ describe('Test clone VM.', () => {
 
       const clonedVm = new VirtualMachine(`${vm.name}-clone`, vm.namespace);
       leakedResources.add(JSON.stringify({name: clonedVm.name, namespace: clonedVm.namespace, kind: 'vm'}));
-      await clonedVm.navigateToTab(nicsTab);
+      await clonedVm.navigateToTab(TABS.NICS);
 
       await browser.wait(until.and(waitForCount(resourceRows, 2)), PAGE_LOAD_TIMEOUT);
       // TODO: Add classes/ids to collumn attributes so that divs can be easily selected
@@ -206,46 +204,33 @@ describe('Test clone VM.', () => {
     }, CLONE_VM_TIMEOUT);
 
     it('Clone VM with URL source and Cloud Init.', async() => {
-      await browser.get(`${appHost}/k8s/ns/${testName}/virtualmachines`);
-      await isLoaded();
-      await wizard.openWizard();
+      const ciVmConfig = {
+        name: `ci-${testName}`,
+        namespace: testName,
+        description: `Default description ${testName}`,
+        provisionSource: cloudInitVmProvisionConfig,
+        storageResources: [rootDisk],
+        networkResources: [],
+        flavor: basicVmConfig.flavor,
+        operatingSystem: basicVmConfig.operatingSystem,
+        workloadProfile: basicVmConfig.workloadProfile,
+        startOnCreation: false,
+        cloudInit: cloudInitCustomScriptConfig,
+      };
+      const ciVm = new VirtualMachine(cloudInitVmName, testName);
+      await ciVm.create(ciVmConfig);
 
-      // Basic Settings
-      await wizard.fillName(cloudInitVmName);
-      await wizard.selectProvisionSource(cloudInitVmProvisionConfig);
-      await wizard.selectFlavor(basicVmConfig.flavor);
-      await wizard.selectOperatingSystem(basicVmConfig.operatingSystem);
-      await wizard.selectWorkloadProfile(basicVmConfig.workloadProfile);
-      await wizard.useCloudInit(cloudInitCustomScriptConfig);
-      await wizard.next();
-
-      // Networking
-      await wizard.next();
-
-      // Storage
-      await wizard.editDiskAttribute(1, 'size', '1');
-      await wizard.addDisk(hddDisk.name, hddDisk.size, hddDisk.StorageClass);
-
-      // Create VM
-      await wizard.next();
-      await wizard.waitForCreation();
-      leakedResources.add(JSON.stringify({name: cloudInitVmName, namespace: testName, kind: 'vm'}));
-
-      // Close wizard
-      await wizard.next();
+      addLeakableResource(leakedResources, ciVm.asResource());
 
       // Clone VM
-      const ciVm = new VirtualMachine(cloudInitVmName, testName);
       await ciVm.action('Clone');
       await wizard.next();
-
       const clonedVm = new VirtualMachine(`${cloudInitVmName}-clone`, ciVm.namespace);
-      leakedResources.add(JSON.stringify({name: clonedVm.name, namespace: clonedVm.namespace, kind: 'vm'}));
+      addLeakableResource(leakedResources, clonedVm.asResource());
 
       // Check disks on cloned VM
-      const disks = await clonedVm.getAttachedResources(disksTab);
-
-      [hddDisk.name, 'cloudinitdisk'].forEach(element => {
+      const disks = await clonedVm.getAttachedResources(TABS.DISKS);
+      [rootDisk.name, 'cloudinitdisk'].forEach(element => {
         expect(disks.includes(element)).toBe(true, `Disk ${element} should be present on cloned VM.`);
       });
 
@@ -263,10 +248,10 @@ describe('Test clone VM.', () => {
       await clonedVm.action('Start');
 
       // Delete VMs
-      await clonedVm.action('Delete');
-      leakedResources.delete(JSON.stringify({name: clonedVm.name, namespace: testName, kind: 'vm'}));
-      await ciVm.action('Delete');
-      leakedResources.delete(JSON.stringify({name: cloudInitVmName, namespace: testName, kind: 'vm'}));
+      deleteResource(clonedVm.asResource());
+      deleteResource(ciVm.asResource());
+      removeLeakableResource(leakedResources, clonedVm.asResource());
+      removeLeakableResource(leakedResources, ciVm.asResource());
     }, CLONE_VM_TIMEOUT);
   });
 });

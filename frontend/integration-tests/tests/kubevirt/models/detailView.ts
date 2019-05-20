@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars, no-undef */
 import { browser } from 'protractor';
 
-import { appHost } from '../../../protractor.conf';
+import { appHost, testName } from '../../../protractor.conf';
 import { clickHorizontalTab } from '../../../views/horizontal-nav.view';
 import { isLoaded, resourceTitle } from '../../../views/crud.view';
 
@@ -27,6 +27,15 @@ export class DetailView {
     }
     await clickHorizontalTab(tabName);
     await isLoaded();
+  }
+
+  async navigateToListView() {
+    const vmsListUrl = (namespace) => `${appHost}/k8s/ns/${namespace}/${this.kind}`;
+    const currentUrl = await browser.getCurrentUrl();
+    if (![vmsListUrl(testName), vmsListUrl('all-namespaces')].includes(currentUrl)) {
+      await browser.get(vmsListUrl(this.namespace));
+      await isLoaded();
+    }
   }
 
   asResource() {

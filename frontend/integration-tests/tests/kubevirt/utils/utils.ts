@@ -7,7 +7,7 @@ import { config } from '../../../protractor.conf';
 import { nameInput as loginNameInput, passwordInput as loginPasswordInput, submitButton as loginSubmitButton } from '../../../views/login.view';
 import { PAGE_LOAD_TIMEOUT } from './consts';
 
-export type provisionOptions = {
+export type provisionOption = {
   method: string,
   source?: string,
 };
@@ -17,13 +17,21 @@ export type networkResource = {
   mac: string,
   binding: string,
   networkDefinition: string,
-}[];
+};
 
 export type storageResource = {
   name: string,
   size: string,
-  StorageClass: string,
-}[];
+  storageClass: string,
+};
+
+export type cloudInitConfig = {
+  useCloudInit: boolean,
+  useCustomScript?: boolean,
+  customScript?: string,
+  hostname?: string,
+  sshKey?: string,
+};
 
 export function removeLeakedResources(leakedResources: Set<string>) {
   const leakedArray: Array<string> = [...leakedResources];
@@ -70,10 +78,17 @@ export function deleteResources(resources) {
   resources.forEach(deleteResource);
 }
 
-export async function click(elem: ElementFinder, timeout?: number) {
+export async function click(elem: ElementFinder, timeout?: number, conditionFunc?) {
   const _timeout = timeout !== undefined ? timeout : config.jasmineNodeOpts.defaultTimeoutInterval;
-  await browser.wait(until.elementToBeClickable(elem), _timeout);
-  await elem.click();
+  if (conditionFunc === undefined) {
+    await browser.wait(until.elementToBeClickable(elem), _timeout);
+    await elem.click();
+  } else {
+    do {
+      await browser.wait(until.elementToBeClickable(elem), _timeout);
+      await elem.click();
+    } while (await conditionFunc() === false);
+  }
 }
 
 export async function selectDropdownOption(dropdownId: string, option: string) {
@@ -105,6 +120,10 @@ export async function fillInput(elem: ElementFinder, value: string) {
     await elem.clear();
     await elem.sendKeys(value);
   } while (await elem.getAttribute('value') !== value && attempts > 0);
+}
+
+export async function getInputValue(elem: ElementFinder) {
+  return elem.getAttribute('value');
 }
 
 export async function logIn() {

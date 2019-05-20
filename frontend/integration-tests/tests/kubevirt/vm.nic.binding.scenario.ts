@@ -4,11 +4,12 @@ import { $, browser } from 'protractor';
 import { appHost, testName } from '../../protractor.conf';
 import { isLoaded } from '../../views/crud.view';
 import { testNad, basicVmConfig, networkInterface, networkBindingMethod, networkWizardTabCol, networkTabCol } from './mocks';
-import * as vmView from '../../views/kubevirt/virtualMachine.view';
 import { fillInput, selectDropdownOption, getDropdownOptions, createResources, deleteResources } from './utils//utils';
 import Wizard from './models/wizard';
 import { VirtualMachine } from './models/virtualMachine';
 import * as wizardView from '../../views/kubevirt/wizard.view';
+import { TABS } from './utils/consts';
+import * as kubevirtDetailView from '../../views/kubevirt/kubevirtDetailView.view';
 
 describe('Test VM network interface binding method', () => {
   const wizard = new Wizard();
@@ -91,36 +92,35 @@ describe('Test VM network interface binding method', () => {
   });
 
   it('Check nic binding method on vm nic tab', async() => {
-    await vm.navigateToTab(vmView.nicsTab);
-    await isLoaded();
+    await vm.navigateToTab(TABS.NICS);
 
-    expect(vmView.itemInRow(networkInterface.podNicName, networkTabCol.binding).getText()).toEqual(networkBindingMethod.masquerade);
-    expect(vmView.itemInRow(networkInterface.name, networkTabCol.binding).getText()).toEqual(networkBindingMethod.bridge);
+    expect(kubevirtDetailView.itemInRow('nic0', networkTabCol.binding).getText()).toEqual(networkBindingMethod.masquerade);
+    expect(kubevirtDetailView.itemInRow(networkInterface.name, networkTabCol.binding).getText()).toEqual(networkBindingMethod.bridge);
 
     await vm.removeNic(networkInterface.name);
     await isLoaded();
 
-    await vmView.createNic.click();
-    await $(vmView.networkBindingId).click();
-    let options = await getDropdownOptions(vmView.networkBindingId);
+    await kubevirtDetailView.createNic.click();
+    await $(kubevirtDetailView.networkBindingId).click();
+    let options = await getDropdownOptions(kubevirtDetailView.networkBindingId);
     // Without network selected, binding method masquerade, bridge and sriov are available
     expect(options.sort()).toEqual(allBindingMethods.sort());
-    await $(vmView.networkBindingId).click();
+    await $(kubevirtDetailView.networkBindingId).click();
 
-    await selectDropdownOption(vmView.networkTypeDropdownId, networkInterface.networkDefinition);
+    await selectDropdownOption(kubevirtDetailView.networkTypeDropdownId, networkInterface.networkDefinition);
 
-    await $(vmView.networkBindingId).click();
-    options = await getDropdownOptions(vmView.networkBindingId);
+    await $(kubevirtDetailView.networkBindingId).click();
+    options = await getDropdownOptions(kubevirtDetailView.networkBindingId);
     // Network selected, binding method bridge and sriov are available
     expect(options.sort()).toEqual(nonPodNetworkBindingMethods.sort());
-    await $(vmView.networkBindingId).click();
+    await $(kubevirtDetailView.networkBindingId).click();
 
-    await selectDropdownOption(vmView.networkBindingId, networkBindingMethod.bridge);
-    await fillInput(vmView.nicName, networkInterface.name);
-    await fillInput(vmView.macAddress, networkInterface.mac);
-    await vmView.applyBtn.click();
+    await selectDropdownOption(kubevirtDetailView.networkBindingId, networkBindingMethod.bridge);
+    await fillInput(kubevirtDetailView.nicName, networkInterface.name);
+    await fillInput(kubevirtDetailView.macAddress, networkInterface.mac);
+    await kubevirtDetailView.applyBtn.click();
     await isLoaded();
-    expect(vmView.itemInRow(networkInterface.name, networkTabCol.binding).getText()).toEqual(networkBindingMethod.bridge);
+    expect(kubevirtDetailView.itemInRow(networkInterface.name, networkTabCol.binding).getText()).toEqual(networkBindingMethod.bridge);
 
     await vm.removeNic(networkInterface.name);
   });

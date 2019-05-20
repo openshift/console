@@ -1,14 +1,16 @@
 /* eslint-disable no-unused-vars, no-undef */
 import { $, browser, ExpectedConditions as until } from 'protractor';
 
-import { createItemButton, isLoaded} from '../../../views/crud.view';
-import { fillInput, selectDropdownOption, click } from '../utils/utils';
+import { createItemButton, isLoaded } from '../../../views/crud.view';
+import { fillInput, selectDropdownOption, click, cloudInitConfig } from '../utils/utils';
 import { PAGE_LOAD_TIMEOUT } from '../utils/consts';
 import * as wizardView from '../../../views/kubevirt/wizard.view';
 
+
 export default class Wizard {
   async openWizard() {
-    await createItemButton.click().then(() => wizardView.createWithWizardLink.click());
+    await click(createItemButton);
+    await click(wizardView.createWithWizardLink);
     await browser.wait(until.presenceOf(wizardView.nameInput), PAGE_LOAD_TIMEOUT);
   }
 
@@ -58,14 +60,14 @@ export default class Wizard {
     await click(wizardView.startVMOnCreation);
   }
 
-  async useCloudInit(cloudInitOptions) {
+  async useCloudInit(cloudInitOptions: cloudInitConfig) {
     await click(wizardView.useCloudInit);
     if (cloudInitOptions.useCustomScript) {
       await click(wizardView.useCustomScript);
       await fillInput(wizardView.customCloudInitScript, cloudInitOptions.customScript);
     } else {
       await fillInput(wizardView.cloudInitHostname, cloudInitOptions.hostname);
-      await fillInput(wizardView.cloudInitSSH, cloudInitOptions.ssh);
+      await fillInput(wizardView.cloudInitSSH, cloudInitOptions.sshKey);
     }
   }
 

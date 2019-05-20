@@ -2,14 +2,14 @@
 import { execSync } from 'child_process';
 import { browser, ExpectedConditions as until } from 'protractor';
 // eslint-disable-next-line no-unused-vars
-import { removeLeakedResources, waitForStringInElement } from './utils/utils';
-import { VM_IP_ASSIGNMENT_TIMEOUT, WINDOWS_IMPORT_TIMEOUT, VM_BOOTUP_TIMEOUT } from './utils/consts';
+import { removeLeakedResources, waitForStringInElement, deleteResource, createResources } from './utils/utils';
+import { VM_IP_ASSIGNMENT_TIMEOUT, WINDOWS_IMPORT_TIMEOUT, VM_BOOTUP_TIMEOUT, TABS } from './utils/consts';
 import { testName, appHost } from '../../protractor.conf';
 import { errorMessage, isLoaded } from '../../views/crud.view';
 import { windowsVmConfig, localStorageDisk, multusNetworkInterface, multusNad, localStorageClass, localStoragePersistentVolume } from './mocks';
 import Wizard from './models/wizard';
 import { VirtualMachine } from './models/virtualMachine';
-import { consolesTab, overviewTab, overviewIpAddresses, statusIcon, statusIcons } from '../../views/kubevirt/virtualMachine.view';
+import { overviewIpAddresses, statusIcon, statusIcons } from '../../views/kubevirt/virtualMachine.view';
 
 const WINDOWS_RDP_TIMEOUT = WINDOWS_IMPORT_TIMEOUT + VM_IP_ASSIGNMENT_TIMEOUT + VM_BOOTUP_TIMEOUT;
 
@@ -27,14 +27,12 @@ describe('Windows VM', () => {
   const rdpPort = '3389';
 
   beforeAll(async() => {
-    execSync(`echo '${JSON.stringify(multusNad)}' | kubectl create -f -`);
-    execSync(`echo '${JSON.stringify(localStorageClass)}' | kubectl create -f -`);
-    execSync(`echo '${JSON.stringify(localStoragePersistentVolume)}' | kubectl create -f -`);
+    createResources([multusNad, localStorageClass, localStoragePersistentVolume]);
   });
 
   afterAll(async() => {
     removeLeakedResources(leakedResources);
-    execSync(`kubectl delete -n ${multusNad.metadata.namespace} net-attach-def ${multusNad.metadata.name}`);
+    deleteResource(multusNad);
     execSync(`kubectl delete ${localStorageClass.kind} ${localStorageClass.metadata.name}`);
     execSync(`kubectl delete ${localStoragePersistentVolume.kind} ${localStoragePersistentVolume.metadata.name}`);
   });
@@ -84,11 +82,11 @@ describe('Windows VM', () => {
     await vm.action('Start');
 
     // Wait for IP assignment
-    await vm.navigateToTab(overviewTab);
+    await vm.navigateToTab(TABS.OVERVIEW);
     await browser.wait(until.and(waitForStringInElement(overviewIpAddresses(vm.name, vm.namespace), vmIp)), VM_IP_ASSIGNMENT_TIMEOUT);
 
     // Select Desktop Viewer
-    await vm.navigateToTab(consolesTab);
+    await vm.navigateToTab(TABS.CONSOLES);
     await vm.selectConsole('Desktop Viewer');
 
     // Verify that multus nic is selected by default and console page displays correct addresses

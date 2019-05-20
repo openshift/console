@@ -3,12 +3,11 @@ import { browser, ExpectedConditions as until } from 'protractor';
 
 // eslint-disable-next-line no-unused-vars
 import { waitForCount, removeLeakedResources, createResource, deleteResource, addLeakableResource, removeLeakableResource, waitForStringInElement } from './utils/utils';
-import { POD_CREATE_DELETE_TIMEOUT, POD_CREATION_TIMEOUT, WAIT_TIMEOUT_ERROR, POD_TERMINATION_TIMEOUT, NODE_MAINTENANCE_STATUS, NODE_STOP_MAINTENANCE_TIMEOUT, NODE_READY_STATUS, PAGE_LOAD_TIMEOUT } from './utils/consts';
+import { POD_CREATE_DELETE_TIMEOUT, POD_CREATION_TIMEOUT, WAIT_TIMEOUT_ERROR, POD_TERMINATION_TIMEOUT, NODE_MAINTENANCE_STATUS, NODE_STOP_MAINTENANCE_TIMEOUT, NODE_READY_STATUS, PAGE_LOAD_TIMEOUT, TABS } from './utils/consts';
 import { examplePod } from './mocks';
 import { appHost, testName } from '../../protractor.conf';
 import { isLoaded, filterForName, resourceRows, resourceTitle } from '../../views/crud.view';
 import { listViewMaintenanceStatusForNode, listViewReadyStatusForNode } from '../../views/kubevirt/node.view';
-import { overviewTab } from '../../views/kubevirt/virtualMachine.view';
 import { detailViewAction } from '../../views/kubevirt/vm.actions.view';
 import Pod from './models/pod';
 import * as podView from '../../views/kubevirt/pod.view';
@@ -29,7 +28,7 @@ describe('Test Node Maintenance Mode', () => {
     createResource(podResource);
     addLeakableResource(leakedResources, podResource);
 
-    await pod.navigateToTab(overviewTab);
+    await pod.navigateToTab(TABS.OVERVIEW);
     await pod.waitForStatusIcon(podView.statusIcons.running, POD_CREATION_TIMEOUT);
 
     // store hostname of the compute node
@@ -82,7 +81,7 @@ describe('Test Node Maintenance Mode', () => {
     await browser.wait(until.presenceOf(listViewMaintenanceStatusForNode(computeNodeName)))
       .then(() => browser.wait(waitForStringInElement(listViewMaintenanceStatusForNode(computeNodeName), NODE_MAINTENANCE_STATUS), PAGE_LOAD_TIMEOUT));
 
-    await pod.navigateToTab(overviewTab);
+    await pod.navigateToTab(TABS.OVERVIEW);
     let errorMessage: string;
     try {
       await pod.waitForStatusIcon(podView.statusIcons.running, PAGE_LOAD_TIMEOUT);

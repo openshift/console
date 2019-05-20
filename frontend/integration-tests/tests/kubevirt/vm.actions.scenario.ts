@@ -7,8 +7,8 @@ import { isLoaded, resourceRowsPresent, textFilter } from '../../views/crud.view
 import { listViewAction, getDetailActionDropdownOptions } from '../../views/kubevirt/vm.actions.view';
 import { testNad, hddDisk, networkInterface, getVmManifest } from './mocks';
 import { removeLeakedResources, deleteResources, createResources, fillInput, searchYAML, waitForCount } from './utils/utils';
-import { VM_BOOTUP_TIMEOUT, VM_STOP_TIMEOUT, VM_ACTIONS_TIMEOUT, PAGE_LOAD_TIMEOUT } from './utils/consts';
-import { overviewTab, disksTab, nicsTab, statusIcon, statusIcons, vmDetailNode } from '../../views/kubevirt/virtualMachine.view';
+import { VM_BOOTUP_TIMEOUT, VM_STOP_TIMEOUT, VM_ACTIONS_TIMEOUT, PAGE_LOAD_TIMEOUT, TABS } from './utils/consts';
+import { statusIcon, statusIcons, vmDetailNode } from '../../views/kubevirt/virtualMachine.view';
 import { VirtualMachine } from './models/virtualMachine';
 
 
@@ -75,7 +75,7 @@ describe('Test VM actions', () => {
       createResources([testVm]);
       leakedResources.add(JSON.stringify({name: vmName, namespace: testName, kind: 'vm'}));
 
-      await vm.navigateToTab(overviewTab);
+      await vm.navigateToTab(TABS.OVERVIEW);
     });
 
     it('Starts VM', async() => {
@@ -116,7 +116,7 @@ describe('Test VM Migration', () => {
   });
 
   it('Migrate VM action button is displayed appropriately', async() => {
-    await vm.navigateToTab(overviewTab);
+    await vm.navigateToTab(TABS.OVERVIEW);
     expect(await getDetailActionDropdownOptions()).not.toContain(MIGRATE_VM);
     expect(await getDetailActionDropdownOptions()).not.toContain(CANCEL_MIGRATION);
 
@@ -177,30 +177,30 @@ describe('Add/remove disks and NICs on respective VM pages', () => {
   });
 
   it('Add/remove disk on VM disks page', async() => {
-    await vm.addDisk(hddDisk.name, hddDisk.size, hddDisk.StorageClass);
-    expect((await vm.getAttachedResources(disksTab)).includes(hddDisk.name)).toBe(true);
+    await vm.addDisk(hddDisk.name, hddDisk.size, hddDisk.storageClass);
+    expect((await vm.getAttachedResources(TABS.DISKS)).includes(hddDisk.name)).toBe(true);
 
-    let vmi = await vm.navigateToVmi(overviewTab);
+    let vmi = await vm.navigateToVmi(TABS.OVERVIEW);
     expect((await vmi.getVolumes()).includes(hddDisk.name)).toBe(false);
 
     await vm.action('Restart');
 
-    vmi = await vm.navigateToVmi(overviewTab);
+    vmi = await vm.navigateToVmi(TABS.OVERVIEW);
     expect((await vmi.getVolumes()).includes(hddDisk.name)).toBe(true);
 
     await vm.removeDisk(hddDisk.name);
-    expect((await vm.getAttachedResources(disksTab)).includes(hddDisk.name)).toBe(false);
+    expect((await vm.getAttachedResources(TABS.DISKS)).includes(hddDisk.name)).toBe(false);
 
     await vm.action('Restart');
 
-    vmi = await vm.navigateToVmi(overviewTab);
+    vmi = await vm.navigateToVmi(TABS.OVERVIEW);
     expect((await vmi.getVolumes()).includes(hddDisk.name)).toBe(false);
   }, VM_ACTIONS_TIMEOUT * 2);
 
   it('Add/remove nic on VM Network Interfaces page', async() => {
     await vm.addNic(networkInterface.name, networkInterface.mac, networkInterface.networkDefinition, networkInterface.binding);
 
-    expect((await vm.getAttachedResources(nicsTab)).includes(networkInterface.name)).toBe(true);
+    expect((await vm.getAttachedResources(TABS.NICS)).includes(networkInterface.name)).toBe(true);
     expect((searchYAML(networkInterface.networkDefinition, vm.name, vm.namespace, 'vmi'))).toBe(false);
 
     await vm.action('Restart');
@@ -208,7 +208,7 @@ describe('Add/remove disks and NICs on respective VM pages', () => {
     expect((searchYAML(networkInterface.networkDefinition, vm.name, vm.namespace, 'vmi'))).toBe(true);
 
     await vm.removeNic(networkInterface.name);
-    expect((await vm.getAttachedResources(nicsTab)).includes(networkInterface.name)).toBe(false);
+    expect((await vm.getAttachedResources(TABS.NICS)).includes(networkInterface.name)).toBe(false);
 
     await vm.action('Restart');
 

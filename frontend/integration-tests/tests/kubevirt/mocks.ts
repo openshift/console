@@ -1,5 +1,7 @@
 /* eslint-disable no-undef */
 import { testName } from '../../protractor.conf';
+// eslint-disable-next-line no-unused-vars
+import { cloudInitConfig } from './utils/utils';
 
 export const emptyStr = '---';
 
@@ -253,7 +255,6 @@ export const windowsVmConfig = {
 };
 
 export const networkInterface = {
-  podNicName: 'nic0',
   name: `nic1-${testName.slice(-5)}`,
   mac: 'fe:fe:fe:fe:fe:fe',
   binding: 'bridge',
@@ -281,36 +282,43 @@ export const networkWizardTabCol = {
 };
 
 export const networkTabCol = {
-  name: 1,
-  mode: 2,
-  networkDefinition: 3,
-  binding: 4,
-  mac: 5,
+  name: 0,
+  model: 1,
+  networkDefinition: 2,
+  binding: 3,
+  mac: 4,
 };
 
 export const diskWizardTabCol = {
-  name: 1,
-  size: 2,
-  storageclass: 3,
+  name: 0,
+  size: 1,
+  storageClass: 2,
 };
 
 export const diskTabCol = {
-  name: 1,
-  size: 2,
-  interface: 3,
-  storageclass: 4,
+  name: 0,
+  size: 1,
+  interface: 2,
+  storageClass: 3,
+};
+
+export const rootDisk = {
+  name: 'rootdisk',
+  size: '1',
+  storageClass: 'hdd',
 };
 
 export const hddDisk = {
   name: `hdd-${testName.slice(-5)}`,
   size: '2',
-  StorageClass: 'hdd',
+  storageClass: 'hdd',
 };
 
 export const glusterfsDisk = {
   name: `glusterfs-${testName.slice(-5)}`,
   size: '1',
-  StorageClass: 'glusterfs-storage',
+  storageClass: 'glusterfs-storage',
+
 };
 
 export const localStorageDisk = {
@@ -319,7 +327,8 @@ export const localStorageDisk = {
   storageClass: `${localStorageClass.metadata.name}`,
 };
 
-export const cloudInitCustomScriptConfig = {
+export const cloudInitCustomScriptConfig: cloudInitConfig = {
+  useCloudInit: true,
   useCustomScript: true,
   customScript: basicVmConfig.cloudInitScript,
 };
