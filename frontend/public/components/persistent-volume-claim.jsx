@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 
 import { connectToFlags } from '../reducers/features';
+import { Conditions } from './conditions';
 import { FLAGS } from '../const';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
 import { Kebab, navFactory, ResourceKebab, SectionHeading, ResourceLink, ResourceSummary, Selector, StatusIcon } from './utils';
@@ -47,35 +48,42 @@ const Details_ = ({flags, obj: pvc}) => {
   const requestedStorage = _.get(pvc, 'spec.resources.requests.storage');
   const storage = _.get(pvc, 'status.capacity.storage');
   const accessModes = _.get(pvc, 'status.accessModes');
-  return <div className="co-m-pane__body">
-    <SectionHeading text="PersistentVolumeClaim Overview" />
-    <div className="row">
-      <div className="col-sm-6">
-        <ResourceSummary resource={pvc}>
-          <dt>Label Selector</dt>
-          <dd><Selector selector={labelSelector} kind="PersistentVolume" /></dd>
-        </ResourceSummary>
-      </div>
-      <div className="col-sm-6">
-        <dl>
-          <dt>Status</dt>
-          <dd><PVCStatus pvc={pvc} /></dd>
-          <dt>Storage Class</dt>
-          <dd>
-            {storageClassName ? <ResourceLink kind="StorageClass" name={storageClassName} /> : '-'}
-          </dd>
-          {volumeName && canListPV && <React.Fragment>
-            <dt>Persistent Volume</dt>
-            <dd><ResourceLink kind="PersistentVolume" name={volumeName} /></dd>
-          </React.Fragment>}
-          <dt>Requested</dt>
-          <dd>{requestedStorage || '-'}</dd>
-          {storage && <React.Fragment><dt>Size</dt><dd>{storage}</dd></React.Fragment>}
-          {!_.isEmpty(accessModes) && <React.Fragment><dt>Access Modes</dt><dd>{accessModes.join(', ')}</dd></React.Fragment>}
-        </dl>
+  const conditions = _.get(pvc, 'status.conditions');
+  return <React.Fragment>
+    <div className="co-m-pane__body">
+      <SectionHeading text="PersistentVolumeClaim Overview" />
+      <div className="row">
+        <div className="col-sm-6">
+          <ResourceSummary resource={pvc}>
+            <dt>Label Selector</dt>
+            <dd><Selector selector={labelSelector} kind="PersistentVolume" /></dd>
+          </ResourceSummary>
+        </div>
+        <div className="col-sm-6">
+          <dl>
+            <dt>Status</dt>
+            <dd><PVCStatus pvc={pvc} /></dd>
+            <dt>Storage Class</dt>
+            <dd>
+              {storageClassName ? <ResourceLink kind="StorageClass" name={storageClassName} /> : '-'}
+            </dd>
+            {volumeName && canListPV && <React.Fragment>
+              <dt>Persistent Volume</dt>
+              <dd><ResourceLink kind="PersistentVolume" name={volumeName} /></dd>
+            </React.Fragment>}
+            <dt>Requested</dt>
+            <dd>{requestedStorage || '-'}</dd>
+            {storage && <React.Fragment><dt>Size</dt><dd>{storage}</dd></React.Fragment>}
+            {!_.isEmpty(accessModes) && <React.Fragment><dt>Access Modes</dt><dd>{accessModes.join(', ')}</dd></React.Fragment>}
+          </dl>
+        </div>
       </div>
     </div>
-  </div>;
+    <div className="co-m-pane__body">
+      <SectionHeading text="Conditions" />
+      <Conditions conditions={conditions} />
+    </div>
+  </React.Fragment>;
 };
 
 const Details = connectToFlags(FLAGS.CAN_LIST_PV)(Details_);
