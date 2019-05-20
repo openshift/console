@@ -73,7 +73,7 @@ const menuActionStop = (kind, vm) => {
 
 const menuActionRestart = (kind, vm, actionArgs) => {
   return {
-    hidden: isImporting(vm, actionArgs) || !(actionArgs[VirtualMachineInstanceModel.kind] && isVmRunning(vm)),
+    hidden: isImporting(vm, actionArgs) || !(actionArgs && actionArgs[VirtualMachineInstanceModel.kind] && isVmRunning(vm)),
     label: 'Restart Virtual Machine',
     callback: () => restartVmModal({
       kind,
