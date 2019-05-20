@@ -1,8 +1,8 @@
 import * as React from 'react';
 
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
-import { PromiseComponent, RequestSizeInput } from '../utils';
-import { k8sPatch } from '../../module/k8s/';
+import { PromiseComponent, RequestSizeInput, resourceObjPath, history } from '../utils';
+import { k8sPatch, referenceFor } from '../../module/k8s/';
 
 // Modal for expanding persistent volume claims
 class ExpandPVCModal extends PromiseComponent {
@@ -27,8 +27,11 @@ class ExpandPVCModal extends PromiseComponent {
     e.preventDefault();
     const { requestSizeUnit, requestSizeValue } =this.state;
     const patch = [{op: 'replace', path: '/spec/resources/requests', value: {storage: `${requestSizeValue}${requestSizeUnit}`}}];
-    this.handlePromise(k8sPatch(this.props.kind, this.props.resource, patch))
-      .then(this.props.close);
+    this.handlePromise(k8sPatch(this.props.kind, this.props.resource, patch)).then((resource) => {
+      this.props.close();
+      // redirected to the details page for persitent volume claim
+      history.push(resourceObjPath(resource, referenceFor(resource)));
+    });
   }
 
   render() {
