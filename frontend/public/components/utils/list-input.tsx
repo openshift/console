@@ -3,6 +3,7 @@ import * as _ from 'lodash-es';
 import * as classNames from 'classnames';
 
 export class ListInput extends React.Component<ListInputProps, ListInputState> {
+  private helpID: string = _.uniqueId('list-view-help-');
   constructor(props: ListInputProps) {
     super(props);
     this.state = {
@@ -40,7 +41,7 @@ export class ListInput extends React.Component<ListInputProps, ListInputState> {
   }
 
   render() {
-    const { label, required } = this.props;
+    const { label, required, helpText } = this.props;
     const { values } = this.state;
     const missingValues = required && (_.isEmpty(values) || _.every(values, v => !v));
     return (
@@ -54,7 +55,8 @@ export class ListInput extends React.Component<ListInputProps, ListInputState> {
                 type="text"
                 value={v}
                 onChange={(e: React.FormEvent<HTMLInputElement>) => this.valueChanged(i, e.currentTarget.value)}
-                required={missingValues && i === 0} />
+                required={missingValues && i === 0}
+                aria-describedby={helpText ? this.helpID : undefined} />
             </div>
             <div className="co-list-input__remove-btn">
               <button type="button" className="btn btn-link btn-link--inherit-color" onClick={() => this.removeValue(i)} aria-label="Remove">
@@ -63,6 +65,7 @@ export class ListInput extends React.Component<ListInputProps, ListInputState> {
             </div>
           </div>
         ))}
+        {helpText && <div className="co-list-input__help-block help-block" id={this.helpID}>{helpText}</div>}
         <button type="button" className="btn btn-link co-list-input__add-btn" onClick={() => this.addValue()}>
           <i className="fa fa-plus-circle pairs-list__add-icon" aria-hidden="true" />Add More
         </button>
@@ -81,5 +84,6 @@ type ListInputProps = {
   label: string;
   initialValues?: string[];
   onChange: ChangeCallback;
+  helpText?: string;
   required?: boolean;
 };

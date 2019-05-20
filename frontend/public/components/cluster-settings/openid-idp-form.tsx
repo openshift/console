@@ -207,13 +207,13 @@ export class AddOpenIDPage extends PromiseComponent<{}, AddOpenIDIDPPageState> {
         <div className="co-form-section__separator"></div>
         <h3>Claims</h3>
         <p className="co-help-text">Claims map metadata from the OpenID provider to an OpenShift user. The first non-empty claim is used.</p>
-        <ListInput label="Preferred Username" initialValues={claimPreferredUsernames} onChange={this.claimPreferredUsernamesChanged} />
-        <ListInput label="Name" initialValues={claimNames} onChange={this.claimNamesChanged} />
-        <ListInput label="Email" initialValues={claimEmails} onChange={this.claimEmailsChanged} />
+        <ListInput label="Preferred Username" initialValues={claimPreferredUsernames} onChange={this.claimPreferredUsernamesChanged} helpText="Any scopes to request in addition to the standard openid scope." />
+        <ListInput label="Name" initialValues={claimNames} onChange={this.claimNamesChanged} helpText="The list of claims whose values should be used as the display name." />
+        <ListInput label="Email" initialValues={claimEmails} onChange={this.claimEmailsChanged} helpText="The list of claims whose values should be used as the email address." />
         <div className="co-form-section__separator"></div>
         <h3>More Options</h3>
         <IDPCAFileInput value={caFileContent} onChange={this.caFileChanged} />
-        <ListInput label="Extra Scopes" onChange={this.extraScopesChanged} />
+        <ListInput label="Extra Scopes" onChange={this.extraScopesChanged} helpText="Any scopes to request in addition to the standard openid scope." />
         <ButtonBar errorMessage={this.state.errorMessage} inProgress={this.state.inProgress}>
           <button type="submit" className="btn btn-primary">Add</button>
           <button type="button" className="btn btn-default" onClick={history.goBack}>Cancel</button>
