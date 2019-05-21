@@ -70,7 +70,6 @@ type Server struct {
 	LogoutRedirect       *url.URL
 	PublicDir            string
 	TectonicVersion      string
-	TectonicCACertFile   string
 	Auther               *auth.Authenticator
 	StaticUser           *auth.User
 	KubectlClientID      string
@@ -230,7 +229,7 @@ func (s *Server) HTTPHandler() http.Handler {
 		)
 	}
 
-	handle("/api/tectonic/version", authHandler(s.versionHandler))
+	handle("/api/console/version", authHandler(s.versionHandler))
 	mux.HandleFunc(s.BaseURL.Path, s.indexHandler)
 
 	return securityHeadersMiddleware(http.Handler(mux))
@@ -315,11 +314,9 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 
 func (s *Server) versionHandler(w http.ResponseWriter, r *http.Request) {
 	sendResponse(w, http.StatusOK, struct {
-		Version        string `json:"version"`
-		ConsoleVersion string `json:"consoleVersion"`
+		Version string `json:"version"`
 	}{
-		Version:        s.TectonicVersion,
-		ConsoleVersion: version.Version,
+		Version: version.Version,
 	})
 }
 

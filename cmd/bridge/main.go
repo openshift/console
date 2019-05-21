@@ -45,7 +45,7 @@ func main() {
 	fs := flag.NewFlagSet("bridge", flag.ExitOnError)
 	fListen := fs.String("listen", "http://0.0.0.0:9000", "")
 
-	fBaseAddress := fs.String("base-address", "", "Format: <http | https>://domainOrIPAddress[:port]. Example: https://tectonic.example.com.")
+	fBaseAddress := fs.String("base-address", "", "Format: <http | https>://domainOrIPAddress[:port]. Example: https://openshift.example.com.")
 	fBasePath := fs.String("base-path", "/", "")
 	fConfig := fs.String("config", "", "The YAML config file.")
 
@@ -71,8 +71,7 @@ func main() {
 	fPublicDir := fs.String("public-dir", "./frontend/public/dist", "directory containing static web assets.")
 	fTlSCertFile := fs.String("tls-cert-file", "", "TLS certificate. If the certificate is signed by a certificate authority, the certFile should be the concatenation of the server's certificate followed by the CA's certificate.")
 	fTlSKeyFile := fs.String("tls-key-file", "", "The TLS certificate key.")
-	fCAFile := fs.String("ca-file", "", "PEM File containing trusted certificates of trusted CAs. If not present, the system's Root CAs will be used. Not required for in-cluster clients to determine the expiration date for /tectonic/certs endpoint.")
-	fTectonicVersion := fs.String("tectonic-version", "UNKNOWN", "The current tectonic system version, served at /version")
+	fCAFile := fs.String("ca-file", "", "PEM File containing trusted certificates of trusted CAs. If not present, the system's Root CAs will be used.")
 	fDexClientCertFile := fs.String("dex-client-cert-file", "", "PEM File containing certificates of dex client.")
 	fDexClientKeyFile := fs.String("dex-client-key-file", "", "PEM File containing certificate key of the dex client.")
 	fDexClientCAFile := fs.String("dex-client-ca-file", "", "PEM File containing trusted CAs for Dex client configuration. If blank, defaults to value of ca-file argument")
@@ -163,10 +162,8 @@ func main() {
 
 	srv := &server.Server{
 		PublicDir:            *fPublicDir,
-		TectonicVersion:      *fTectonicVersion,
 		BaseURL:              baseURL,
 		LogoutRedirect:       logoutRedirect,
-		TectonicCACertFile:   caCertFilePath,
 		Branding:             branding,
 		CustomProductName:    *fCustomProductName,
 		CustomLogoFile:       *fCustomLogoFile,
