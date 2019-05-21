@@ -40,7 +40,6 @@ export default (state: UIState, action: UIAction): UIState => {
         filterValue: '',
       }),
       user: {},
-      clusterID: '',
     });
   }
 
@@ -75,9 +74,6 @@ export default (state: UIState, action: UIAction): UIState => {
 
     case ActionType.SetUser:
       return state.set('user', action.payload.user);
-
-    case ActionType.SetClusterID:
-      return state.set('clusterID', action.payload.clusterID);
 
     case ActionType.SetMonitoringData: {
       const alerts = action.payload.key === 'alerts' ? action.payload.data : state.getIn(['monitoring', 'alerts']);
@@ -146,10 +142,6 @@ export default (state: UIState, action: UIAction): UIState => {
       break;
   }
   return state;
-};
-
-export const clusterIDStateToProps = ({UI}: RootState) => {
-  return {clusterID: UI.get('clusterID') as string};
 };
 
 export const createProjectMessageStateToProps = ({UI}: RootState) => {
