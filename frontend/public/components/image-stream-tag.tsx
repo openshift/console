@@ -5,8 +5,10 @@ import { K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
 import { DetailsPage } from './factory';
 import { Kebab, SectionHeading, navFactory, ResourceSummary } from './utils';
 import { humanizeBinaryBytes } from './utils/units';
+import { ExampleDockerCommandPopover } from './image-stream';
 
 const ImageStreamTagsReference: K8sResourceKindReference = 'ImageStreamTag';
+const ImageStreamsReference: K8sResourceKindReference = 'ImageStream';
 
 const { common } = Kebab.factory;
 const menuActions = [...common];
@@ -28,7 +30,7 @@ const splitEnv = (nameValue: string) => {
   };
 };
 
-export const ImageStreamTagsDetails: React.SFC<ImageStreamTagsDetailsProps> = ({obj: imageStreamTag}) => {
+export const ImageStreamTagsDetails: React.SFC<ImageStreamTagsDetailsProps> = ({obj: imageStreamTag, imageStream}) => {
   const config = _.get(imageStreamTag, 'image.dockerImageMetadata.Config', {});
   const labels = config.Labels || {};
   // Convert to an array of objects with name and value properties, then sort the array for display.
@@ -40,6 +42,7 @@ export const ImageStreamTagsDetails: React.SFC<ImageStreamTagsDetailsProps> = ({
   const size = _.get(imageStreamTag, 'image.dockerImageMetadata.Size');
   const humanizedSize = _.isFinite(size) && humanizeBinaryBytes(size);
   const architecture = _.get(imageStreamTag, 'image.dockerImageMetadata.Architecture');
+  const tagName = _.get(imageStreamTag, 'tag.name');
 
   return <div className="co-m-pane__body">
     <div className="co-m-pane__body-group">
@@ -54,6 +57,7 @@ export const ImageStreamTagsDetails: React.SFC<ImageStreamTagsDetailsProps> = ({
             {humanizedSize && <dt>Size</dt>}
             {humanizedSize && <dd>{humanizedSize}</dd>}
           </ResourceSummary>
+          <ExampleDockerCommandPopover imageStream={imageStream} tag={tagName} />
         </div>
         <div className="col-md-6 col-sm-12">
           <SectionHeading text="Configuration" />
@@ -122,9 +126,13 @@ export const ImageStreamTagsDetails: React.SFC<ImageStreamTagsDetailsProps> = ({
   </div>;
 };
 
+const parseName = (nameAndTag: string): string => {
+  return nameAndTag.split(':')[0];
+};
+
 export const getImageStreamNameForTag = (imageStreamTag: K8sResourceKind): string => {
   const name = _.get(imageStreamTag, 'metadata.name', '');
-  return name.split(':')[0];
+  return parseName(name);
 };
 
 const pages = [navFactory.details(ImageStreamTagsDetails), navFactory.editYaml()];
@@ -143,13 +151,19 @@ export const ImageStreamTagsDetailsPage: React.SFC<ImageStreamTagsDetailsPagePro
     }}
     kind={ImageStreamTagsReference}
     menuActions={menuActions}
+    resources={[
+      {kind: ImageStreamsReference, name: parseName(props.name), namespace: props.namespace, isList: false, prop: 'imageStream'},
+    ]}
     pages={pages} />;
 ImageStreamTagsDetailsPage.displayName = 'ImageStreamTagsDetailsPage';
 
 export type ImageStreamTagsDetailsProps = {
-  obj: any,
+  obj: K8sResourceKind;
+  imageStream: K8sResourceKind;
 };
 
 export type ImageStreamTagsDetailsPageProps = {
-  match: any,
+  match: any;
+  namespace: string;
+  name: string;
 };
