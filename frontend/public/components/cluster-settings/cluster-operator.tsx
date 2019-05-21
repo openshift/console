@@ -140,24 +140,39 @@ const ClusterOperatorDetails: React.SFC<ClusterOperatorDetailsProps> = ({obj}) =
   const { status, message } = getStatusAndMessage(obj);
   const versions: OperandVersion[] = _.get(obj, 'status.versions', []);
   const conditions = _.get(obj, 'status.conditions', []);
+  // Show the operator version in the details overview if it's the only version.
+  const operatorVersion = versions.length === 1 && versions[0].name === 'operator'
+    ? versions[0].version
+    : null;
   return (
     <React.Fragment>
       <div className="co-m-pane__body">
         <SectionHeading text="Cluster Operator Overview" />
-        <ResourceSummary resource={obj}>
-          <dt>Status</dt>
-          <dd><OperatorStatusIconAndLabel status={status} /></dd>
-          <dt>Message</dt>
-          <dd className="co-pre-line">{message || '-'}</dd>
-        </ResourceSummary>
-      </div>
-      <div className="co-m-pane__body">
-        <SectionHeading text="Operand Versions" />
-        <OperandVersions versions={versions} />
+        <div className="row">
+          <div className="col-sm-6">
+            <ResourceSummary resource={obj} />
+          </div>
+          <div className="col-sm-6">
+            <dl>
+              {operatorVersion && <React.Fragment>
+                <dt>Version</dt>
+                <dd>{operatorVersion}</dd>
+              </React.Fragment>}
+              <dt>Status</dt>
+              <dd><OperatorStatusIconAndLabel status={status} /></dd>
+              <dt>Message</dt>
+              <dd className="co-pre-line">{message || '-'}</dd>
+            </dl>
+          </div>
+        </div>
       </div>
       <div className="co-m-pane__body">
         <SectionHeading text="Conditions" />
         <Conditions conditions={conditions} />
+      </div>
+      <div className="co-m-pane__body">
+        <SectionHeading text="Operand Versions" />
+        <OperandVersions versions={versions} />
       </div>
     </React.Fragment>
   );
