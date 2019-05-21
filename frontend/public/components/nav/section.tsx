@@ -65,7 +65,7 @@ export const NavSection = connect(navSectionStateToProps)(
           return false;
         }
         if (c.props.startsWith) {
-          const active = c.type.startsWith(resourcePath, c.props.startsWith, activeNamespace);
+          const active = c.type.startsWith(resourcePath, c.props.startsWith);
           if (active || !c.props.activePath) {
             return active;
           }
