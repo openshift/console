@@ -34,7 +34,7 @@ class NavLink<P extends NavLinkProps> extends React.PureComponent<P> {
     throw new Error('not implemented');
   }
 
-  static startsWith(resourcePath: string, ...someStrings: string[]) {
+  static startsWith(resourcePath: string, someStrings: string[]) {
     return _.some(someStrings, s => resourcePath.startsWith(s));
   }
 
