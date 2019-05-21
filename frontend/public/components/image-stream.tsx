@@ -108,14 +108,14 @@ const ImageStreamTagsRow: React.SFC<ImageStreamTagsRowProps> = ({imageStream, sp
   </div>;
 };
 
-const ExampleDockerCommandPopover: React.FC<ImageStreamManipulationHelpProps> = ({imageStream}) => {
+export const ExampleDockerCommandPopover: React.FC<ImageStreamManipulationHelpProps> = ({imageStream, tag}) => {
   const publicImageRepository = _.get(imageStream, 'status.publicDockerImageRepository');
   if (!publicImageRepository) {
     return null;
   }
   const loginCommand = 'oc registry login';
-  const pushCommand = `docker push ${publicImageRepository}:<tag>`;
-  const pullCommand = `docker pull ${publicImageRepository}:<tag>`;
+  const pushCommand = `docker push ${publicImageRepository}:${tag || '<tag>'}`;
+  const pullCommand = `docker pull ${publicImageRepository}:${tag || '<tag>'}`;
 
   return <Popover
     headerContent={<React.Fragment>Image registry commands</React.Fragment>}
@@ -243,6 +243,7 @@ type ImageStreamTagsRowProps = {
 
 export type ImageStreamManipulationHelpProps = {
   imageStream: K8sResourceKind;
+  tag?: string
 };
 
 export type ImageStreamsRowProps = {
