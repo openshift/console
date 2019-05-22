@@ -31,8 +31,8 @@ export const addVariableFrom = async(resourceName: string, resourcePrefix: strin
   await dropDownBtn.first().click();
   await textFilter.sendKeys(resourceName);
   await option.first().click();
-  await inputs.get(2).clear();
-  await inputs.get(2).sendKeys(resourcePrefix);
+  await prefix.clear();
+  await prefix.sendKeys(resourcePrefix);
   await browser.wait(until.elementToBeClickable(saveBtn), BROWSER_TIMEOUT);
   await saveBtn.click();
 };
