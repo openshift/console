@@ -11,8 +11,9 @@ import { SpecDescriptor } from './descriptors/spec';
 // FIXME(alecmerdler): Should not be importing `StatusCapability` enum
 import { StatusCapability, Descriptor } from './descriptors/types';
 import { Resources } from './k8s-resource';
+import { ErrorPage404 } from '../error';
 import { List, MultiListPage, ListPage, ListHeader, ColHead, DetailsPage, CompactExpandButtons } from '../factory';
-import { ResourceLink, ResourceSummary, StatusBox, navFactory, Timestamp, LabelList, ResourceIcon, MsgBox, ResourceKebab, KebabAction } from '../utils';
+import { ResourceLink, ResourceSummary, StatusBox, navFactory, Timestamp, LabelList, ResourceIcon, MsgBox, ResourceKebab, KebabAction, LoadingBox } from '../utils';
 import { connectToModel } from '../../kinds';
 import { kindForReference, K8sResourceKind, OwnerReference, K8sKind, referenceFor, GroupVersionKind, referenceForModel } from '../../module/k8s';
 import { ClusterServiceVersionModel } from '../../models';
@@ -140,16 +141,20 @@ export const ProvidedAPIsPage = connect(inFlightStateToProps)(
   });
 
 export const ProvidedAPIPage = connectToModel((props: ProvidedAPIPageProps) => {
-  const {namespace, kind, kindsInFlight, csv} = props;
+  const {namespace, kind, kindsInFlight, kindObj, csv} = props;
 
-  return kindsInFlight
-    ? null
-    : <ListPage
-      kind={kind}
-      ListComponent={ClusterServiceVersionResourceList}
-      canCreate={_.get(props.kindObj, 'verbs', [] as string[]).some(v => v === 'create')}
-      createProps={{to: `/k8s/ns/${csv.metadata.namespace}/${ClusterServiceVersionModel.plural}/${csv.metadata.name}/${kind}/~new`}}
-      namespace={_.get(props.kindObj, 'namespaced') ? namespace : null} />;
+  if (!kindObj) {
+    return kindsInFlight
+      ? <LoadingBox />
+      : <ErrorPage404 message={`The server doesn't have a resource type ${kindForReference(kind)}. Try refreshing the page if it was recently added.`} />;
+  }
+
+  return <ListPage
+    kind={kind}
+    ListComponent={ClusterServiceVersionResourceList}
+    canCreate={_.get(props.kindObj, 'verbs', [] as string[]).some(v => v === 'create')}
+    createProps={{to: `/k8s/ns/${csv.metadata.namespace}/${ClusterServiceVersionModel.plural}/${csv.metadata.name}/${kind}/~new`}}
+    namespace={_.get(props.kindObj, 'namespaced') ? namespace : null} />;
 });
 
 export const ClusterServiceVersionResourceDetails = connectToModel(
