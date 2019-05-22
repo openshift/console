@@ -3,8 +3,7 @@ import { connect } from 'react-redux';
 import { Map as ImmutableMap } from 'immutable';
 import { match } from 'react-router-dom';
 
-import { K8sKind, K8sResourceKindReference, kindForReference, GroupVersionKind, isGroupVersionKind } from './module/k8s';
-import * as k8sModels from './models';
+import { K8sKind, K8sResourceKindReference, kindForReference, GroupVersionKind, isGroupVersionKind, allModels } from './module/k8s';
 
 export const connectToModel = connect((state: State, props: {kind: K8sResourceKindReference} & any) => {
   const kind: string = props.kind || _.get(props, 'match.params.plural');
@@ -34,7 +33,7 @@ export const connectToPlural: ConnectToPlural = connect((state: State, props: {p
 
   const kindObj = isGroupVersionKind(plural)
     ? state.k8s.getIn(['RESOURCES', 'models']).get(plural)
-    : _.find(k8sModels, model => model.plural === plural);
+    : allModels().find(model => model.plural === plural);
 
   const modelRef = isGroupVersionKind(plural) ? plural : _.get(kindObj, 'kind');
 
