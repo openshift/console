@@ -10,6 +10,7 @@ import {
   VM_STATUS_IMPORTING,
   VM_STATUS_V2V_CONVERSION_IN_PROGRESS,
 } from 'kubevirt-web-ui-components';
+import { isEmpty } from 'lodash-es';
 
 import { Kebab, LoadingInline } from '../utils/okdutils';
 import { k8sCreate, k8sPatch } from '../../module/okdk8s';
@@ -73,7 +74,7 @@ const menuActionStop = (kind, vm) => {
 
 const menuActionRestart = (kind, vm, actionArgs) => {
   return {
-    hidden: isImporting(vm, actionArgs) || !(actionArgs && actionArgs[VirtualMachineInstanceModel.kind] && isVmRunning(vm)),
+    hidden: isImporting(vm, actionArgs) || !(actionArgs && !isEmpty(actionArgs[VirtualMachineInstanceModel.kind]) && isVmRunning(vm)),
     label: 'Restart Virtual Machine',
     callback: () => restartVmModal({
       kind,
@@ -124,7 +125,7 @@ const menuActionMigrate = (kind, vm, actionArgs) => {
   const migration = actionArgs && findVMIMigration(actionArgs[VirtualMachineInstanceMigrationModel.kind], actionArgs[VirtualMachineInstanceModel.kind]);
   const { name, namespace } = vm.metadata;
   return {
-    hidden: !actionArgs || isImporting(vm, actionArgs) || isMigrating(migration) || !(actionArgs[VirtualMachineInstanceModel.kind] && isVmRunning(vm)),
+    hidden: !actionArgs || isImporting(vm, actionArgs) || isMigrating(migration) || !(isEmpty(actionArgs[VirtualMachineInstanceModel.kind]) && isVmRunning(vm)),
     label: 'Migrate Virtual Machine',
     callback: () => {
       return modalResourceLauncher(BasicMigrationDialog, {
