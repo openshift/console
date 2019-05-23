@@ -67,7 +67,7 @@ const Details = ({obj: crd}) => {
   </div>;
 };
 
-export const CustomResourceDefinitionsList: React.SFC<CustomResourceDefinitionsListProps> = props => <List {...props} Header={CRDHeader} Row={CRDRow} />;
+export const CustomResourceDefinitionsList: React.SFC<CustomResourceDefinitionsListProps> = props => <List {...props} Header={CRDHeader} Row={CRDRow} defaultSortField="spec.names.kind" />;
 export const CustomResourceDefinitionsPage: React.SFC<CustomResourceDefinitionsPageProps> = props => <ListPage {...props} ListComponent={CustomResourceDefinitionsList} kind="CustomResourceDefinition" canCreate={true} />;
 export const CustomResourceDefinitionsDetailsPage = props => <DetailsPage {...props} menuActions={menuActions} pages={[navFactory.details(Details), navFactory.editYaml()]} />;
 
