@@ -1,5 +1,13 @@
 import * as _ from 'lodash-es';
-import { Extension, PluginList, isNavItem, isResourcePage, isFeatureFlag } from './typings';
+
+import {
+  Extension,
+  ActivePlugin,
+  isModelDefinition,
+  isFeatureFlag,
+  isNavItem,
+  isResourcePage,
+} from './typings';
 
 /**
  * Registry used to query for Console extensions.
@@ -8,8 +16,16 @@ export class ExtensionRegistry {
 
   private readonly extensions: Extension<any>[];
 
-  public constructor(plugins: PluginList) {
-    this.extensions = _.flatMap(plugins);
+  public constructor(plugins: ActivePlugin[]) {
+    this.extensions = _.flatMap(plugins.map(p => p.extensions));
+  }
+
+  public getModelDefinitions() {
+    return this.extensions.filter(isModelDefinition);
+  }
+
+  public getFeatureFlags() {
+    return this.extensions.filter(isFeatureFlag);
   }
 
   public getNavItems(section: string) {
@@ -18,10 +34,6 @@ export class ExtensionRegistry {
 
   public getResourcePages() {
     return this.extensions.filter(isResourcePage);
-  }
-
-  public getFeatureFlags() {
-    return this.extensions.filter(isFeatureFlag);
   }
 
 }

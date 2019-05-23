@@ -1,6 +1,6 @@
-import { referenceFor, referenceForCRD, referenceForOwnerRef, referenceForModel, kindForReference, versionForReference } from '../../../public/module/k8s';
+import { referenceFor, referenceForCRD, referenceForOwnerRef, referenceForModel, kindForReference, versionForReference, modelsToMap } from '../../../public/module/k8s';
 import { testNamespace, testClusterServiceVersion, testCRD, testOwnedResourceInstance } from '../../../__mocks__/k8sResourcesMocks';
-import { PodModel, DeploymentModel } from '../../../public/models';
+import { PodModel, DeploymentModel, SubscriptionModel, PrometheusModel } from '../../../public/models';
 
 describe('referenceFor', () => {
 
@@ -54,5 +54,22 @@ describe('versionForReference', () => {
 
   it('returns the API version for a given reference', () => {
     expect(versionForReference(referenceFor(testClusterServiceVersion))).toEqual('v1alpha1');
+  });
+});
+
+describe('modelsToMap', () => {
+
+  it('returns a map with keys based on model.kind for models with crd:false', () => {
+    expect(modelsToMap([ PodModel, DeploymentModel ]).toObject()).toEqual({
+      [PodModel.kind]: PodModel,
+      [DeploymentModel.kind]: DeploymentModel,
+    });
+  });
+
+  it('returns a map with keys based on referenceForModel for models with crd:true', () => {
+    expect(modelsToMap([ SubscriptionModel, PrometheusModel ]).toObject()).toEqual({
+      [referenceForModel(SubscriptionModel)]: SubscriptionModel,
+      [referenceForModel(PrometheusModel)]: PrometheusModel,
+    });
   });
 });

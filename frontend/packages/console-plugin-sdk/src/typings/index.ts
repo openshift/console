@@ -1,21 +1,25 @@
 /**
- * An extension of the Console web application.
+ * An extension of the Console application.
  *
  * Each extension is a realization (instance) of an extension `type` using the
  * parameters provided via the `properties` object.
  *
- * Core extension types should follow `Category` or `Category/Specialization`
- * format, e.g. `NavItem/Href`.
+ * The value of extension `type` should be formatted in a way that describes
+ * the broader category as well as any specialization(s), for example:
  *
- * @todo(vojtech) write ESLint rule to guard against extension type duplicity
+ * - `ModelDefinition`
+ * - `NavItem/Href`
+ * - `Dashboards/Overview/Utilization`
+ *
+ * TODO(vojtech): write ESLint rule to guard against extension type duplicity
  */
-export interface Extension<P> {
+export type Extension<P> = {
   type: string;
   properties: P;
-}
+};
 
 /**
- * A plugin is simply a list of extensions.
+ * From plugin author perspective, a plugin is simply a list of extensions.
  *
  * Plugin metadata is stored in the `package.json` file of the corresponding
  * monorepo package. The `consolePlugin.entry` path should point to a module
@@ -56,12 +60,17 @@ export interface Extension<P> {
 export type Plugin<E extends Extension<any>> = E[];
 
 /**
- * A list of arbitrary plugins.
+ * From Console application perspective, a plugin is a list of extensions
+ * enhanced with additional data.
  */
-export type PluginList = Plugin<Extension<any>>[];
+export type ActivePlugin = {
+  name: string;
+  extensions: Extension<any>[];
+};
 
 // TODO(vojtech): internal code needed by plugin SDK should be moved to console-shared package
 
 export * from './features';
+export * from './models';
 export * from './nav';
 export * from './pages';

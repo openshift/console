@@ -5,20 +5,45 @@ import { K8sResourceKindReference, K8sKind } from './index';
 import * as staticModels from '../../models';
 import { referenceForModel, kindForReference } from './k8s';
 import store from '../../redux';
+import * as plugins from '../../plugins';
+
+export const modelsToMap = (models: K8sKind[]): ImmutableMap<K8sResourceKindReference, K8sKind> => {
+  return ImmutableMap<K8sResourceKindReference, K8sKind>()
+    .withMutations(map => {
+      models.forEach(model => {
+        if (model.crd) {
+          map.set(referenceForModel(model), model);
+        } else {
+          // TODO: Use `referenceForModel` even for known API objects
+          map.set(model.kind, model);
+        }
+      });
+    });
+};
 
 /**
  * Contains static resource definitions for Kubernetes objects.
  * Keys are of type `group:version:Kind`, but TypeScript doesn't support regex types (https://github.com/Microsoft/TypeScript/issues/6579).
  */
-const k8sModels = ImmutableMap<K8sResourceKindReference, K8sKind>()
-  .withMutations(models => _.forEach(staticModels, model => {
-    if (model.crd) {
-      models.set(referenceForModel(model), model);
-    } else {
-      // TODO: Use `referenceForModel` even for known API objects
-      models.set(model.kind, model);
-    }
-  }));
+let k8sModels = modelsToMap(_.values(staticModels));
+
+const hasModel = (model: K8sKind) => k8sModels.has(referenceForModel(model)) || k8sModels.has(model.kind);
+
+k8sModels = k8sModels.withMutations(map => {
+  const baseModelCount = map.size;
+  const pluginModels = _.flatMap(plugins.registry.getModelDefinitions().map(md => md.properties.models));
+
+  const pluginModelsToAdd = pluginModels.filter(model => !hasModel(model));
+  map.merge(modelsToMap(pluginModelsToAdd));
+
+  _.difference(pluginModels, pluginModelsToAdd).forEach(model => {
+    // eslint-disable-next-line no-console
+    console.warn(`attempt to redefine model ${referenceForModel(model)}`);
+  });
+
+  // eslint-disable-next-line no-console
+  console.info(`${map.size - baseModelCount} new models added by plugins`);
+});
 
 /**
  * Provides a synchronous way to acquire a statically-defined Kubernetes model.
@@ -49,4 +74,3 @@ export const modelFor = (ref: K8sResourceKindReference) => {
  * NOTE: This will not work for CRDs defined at runtime, use `connectToModels` instead.
  */
 export const allModels = () => k8sModels;
-

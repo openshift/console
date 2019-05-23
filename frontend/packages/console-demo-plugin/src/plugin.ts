@@ -1,5 +1,8 @@
+import * as _ from 'lodash-es';
+
 import {
   Plugin,
+  ModelDefinition,
   ModelFeatureFlag,
   HrefNavItem,
   ResourceNSNavItem,
@@ -12,7 +15,10 @@ import {
 import { PodModel } from '@console/internal/models';
 import { FLAGS } from '@console/internal/const';
 
+import * as models from './models';
+
 type ConsumedExtensions =
+  | ModelDefinition
   | ModelFeatureFlag
   | HrefNavItem
   | ResourceNSNavItem
@@ -21,6 +27,12 @@ type ConsumedExtensions =
   | ResourceDetailPage;
 
 const plugin: Plugin<ConsumedExtensions> = [
+  {
+    type: 'ModelDefinition',
+    properties: {
+      models: _.values(models),
+    },
+  },
   {
     type: 'FeatureFlag/Model',
     properties: {
