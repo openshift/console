@@ -25,7 +25,7 @@ import {
   pluralize,
   ResourceSummary,
   SectionHeading,
-  StatusIcon,
+  StatusIconAndText,
   togglePaused,
   WorkloadPausedAlert,
 } from './utils';
@@ -95,7 +95,7 @@ const DeploymentDetails: React.FC<DeploymentDetailsProps> = ({obj: deployment}) 
           <div className="col-sm-6">
             <ResourceSummary resource={deployment} showPodSelector showNodeSelector showTolerations>
               <dt>Status</dt>
-              <dd>{deployment.status.availableReplicas === deployment.status.updatedReplicas ? <StatusIcon status="Active" /> : <StatusIcon status="Updating" />}</dd>
+              <dd>{deployment.status.availableReplicas === deployment.status.updatedReplicas ? <StatusIconAndText status="Active" /> : <StatusIconAndText status="Updating" />}</dd>
             </ResourceSummary>
           </div>
           <div className="col-sm-6">

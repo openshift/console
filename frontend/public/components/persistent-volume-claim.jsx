@@ -5,7 +5,7 @@ import { connectToFlags } from '../reducers/features';
 import { Conditions } from './conditions';
 import { FLAGS } from '../const';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
-import { Kebab, navFactory, ResourceKebab, SectionHeading, ResourceLink, ResourceSummary, Selector, StatusIcon } from './utils';
+import { Kebab, navFactory, ResourceKebab, SectionHeading, ResourceLink, ResourceSummary, Selector, StatusIconAndText } from './utils';
 import { ResourceEventStream } from './events';
 
 const pvcPhase = pvc => pvc.status.phase;
@@ -15,7 +15,7 @@ const menuActions = [ExpandPVC, ...common];
 
 const PVCStatus = ({pvc}) => {
   const phase = pvcPhase(pvc);
-  return <StatusIcon status={phase} />;
+  return <StatusIconAndText status={phase} />;
 };
 
 const Header = props => <ListHeader>

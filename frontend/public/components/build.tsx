@@ -1,10 +1,9 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import { Icon } from 'patternfly-react';
 import { Link } from 'react-router-dom';
 
 import { K8sResourceKindReference, referenceFor, K8sResourceKind, k8sPatch, K8sKind } from '../module/k8s';
-import { cloneBuild, formatBuildDuration, BuildPhase, getBuildNumber } from '../module/k8s/builds';
+import { cloneBuild, formatBuildDuration, getBuildNumber } from '../module/k8s/builds';
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
 import { errorModal, confirmModal } from './modals';
 import {
@@ -23,7 +22,7 @@ import {
   resourcePath,
   ResourceSummary,
   SectionHeading,
-  StatusIcon,
+  StatusIconAndText,
   Timestamp,
 } from './utils';
 import { BuildPipeline, BuildPipelineLogLink } from './build-pipeline';
@@ -89,23 +88,6 @@ export enum BuildStrategyType {
   JenkinsPipeline = 'JenkinsPipeline',
   Source = 'Source',
 }
-
-export const BuildPhaseIcon: React.SFC<BuildPhaseIconProps> = ({build}) => {
-  const {status: {phase}} = build;
-  switch (phase) {
-    case BuildPhase.Running:
-      return <span className="fa fa-spin fa-refresh" aria-hidden="true" />;
-    case BuildPhase.Complete:
-      return <Icon type="pf" name="ok" />;
-    case BuildPhase.Failed:
-    case BuildPhase.Error:
-      return <Icon type="pf" name="error-circle-o" />;
-    case BuildPhase.Cancelled:
-      return <Icon type="fa" name="ban" />;
-    default:
-      return <Icon type="fa" name="clock-o" />;
-  }
-};
 
 export const BuildLogLink = ({build}) => {
   const {metadata: {name, namespace}} = build;
@@ -179,7 +161,7 @@ export const BuildsDetails: React.SFC<BuildsDetailsProps> = ({ obj: build }) => 
         <div className="col-sm-6">
           <BuildStrategy resource={build}>
             <dt>Status</dt>
-            <dd>{build.status.phase}</dd>
+            <dd><StatusIconAndText status={build.status.phase} /></dd>
             {logSnippet && <dt>Log Snippet</dt>}
             {logSnippet && <dd><pre>{logSnippet}</pre></dd>}
             {message && <dt>Reason</dt>}
@@ -269,7 +251,7 @@ const BuildsRow: React.SFC<BuildsRowProps> = ({ obj }) => <div className="row co
     <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
   </div>
   <div className="col-sm-3 hidden-xs">
-    <StatusIcon status={obj.status.phase} />
+    <StatusIconAndText status={obj.status.phase} />
   </div>
   <div className="col-sm-3 hidden-xs">
     {fromNow(obj.metadata.creationTimestamp)}
@@ -322,8 +304,4 @@ export type BuildsPageProps = {
 
 export type BuildsDetailsPageProps = {
   match: any,
-};
-
-export type BuildPhaseIconProps = {
-  build: K8sResourceKind
 };

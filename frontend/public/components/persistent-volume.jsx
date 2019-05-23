@@ -2,12 +2,12 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
-import { Kebab, LabelList, navFactory, ResourceKebab, SectionHeading, ResourceLink, ResourceSummary, Timestamp, StatusIcon } from './utils';
+import { Kebab, LabelList, navFactory, ResourceKebab, SectionHeading, ResourceLink, ResourceSummary, Timestamp, StatusIconAndText } from './utils';
 
 const { common } = Kebab.factory;
 const menuActions = [...common];
 
-const PVStatus = ({pv}) => <StatusIcon status={pv.status.phase} />;
+const PVStatus = ({pv}) => <StatusIconAndText status={pv.status.phase} />;
 
 const Header = props => <ListHeader>
   <ColHead {...props} className="col-lg-2 col-md-2 col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>

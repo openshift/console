@@ -4,7 +4,7 @@ import { Popover } from '@patternfly/react-core';
 import { QuestionCircleIcon } from '@patternfly/react-icons';
 
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
-import { Kebab, CopyToClipboard, SectionHeading, ResourceKebab, detailsPage, navFactory, ResourceLink, ResourceSummary, StatusIcon, ExternalLink } from './utils';
+import { Kebab, CopyToClipboard, SectionHeading, ResourceKebab, detailsPage, navFactory, ResourceLink, ResourceSummary, StatusIconAndText, ExternalLink } from './utils';
 import { MaskedData } from './configmap-and-secret-data';
 import { K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
 import { Conditions, conditionProps } from './conditions';
@@ -103,7 +103,7 @@ export const routeStatus = (route) => {
 
 export const RouteStatus: React.SFC<RouteStatusProps> = ({obj: route}) => {
   const status: string = routeStatus(route);
-  return <StatusIcon status={status} />;
+  return <StatusIconAndText status={status} />;
 };
 RouteStatus.displayName = 'RouteStatus';
 

@@ -6,7 +6,7 @@ import { ResourceEventStream } from './events';
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
 import { configureUnschedulableModal } from './modals';
 import { PodsPage } from './pod';
-import { Kebab, navFactory, LabelList, ResourceKebab, SectionHeading, ResourceLink, Timestamp, units, cloudProviderNames, cloudProviderID, pluralize, StatusIcon, humanizeDecimalBytes, humanizeCpuCores } from './utils';
+import { Kebab, navFactory, LabelList, ResourceKebab, SectionHeading, ResourceLink, Timestamp, units, cloudProviderNames, cloudProviderID, pluralize, StatusIconAndText, humanizeDecimalBytes, humanizeCpuCores } from './utils';
 import { Area, requirePrometheus } from './graphs';
 import { MachineModel, NodeModel } from '../models';
 import { CamelCaseWrap } from './utils/camel-case-wrap';
@@ -73,7 +73,7 @@ const Header = props => {
   </ListHeader>;
 };
 
-const NodeStatus = ({node}) => <StatusIcon status={nodeStatus(node)} />;
+const NodeStatus = ({node}) => <StatusIconAndText status={nodeStatus(node)} />;
 
 const NodeRow = ({obj: node, expand}) => {
   const machine = getMachine(node);

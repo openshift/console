@@ -1,37 +1,34 @@
 import * as React from 'react';
 import { Icon } from 'patternfly-react';
 import {CamelCaseWrap} from './camel-case-wrap';
+import * as classNames from 'classnames';
 
-export const StatusIcon: React.FunctionComponent<StatusIconProps> = ({status}) => {
-
-  if (!status){
-    return <span>-</span>;
-  }
-
+export const StatusIcon: React.FunctionComponent<StatusIconProps> = ({status, spin, additionalIconClassName}) => {
+  const className = classNames(spin && 'fa-spin', additionalIconClassName);
   switch (status) {
     case 'New':
-      return <span className="co-icon-and-text"><Icon type="fa" name="hourglass-1" className="co-icon-and-text__icon" /><CamelCaseWrap value={status} /></span>;
+      return <Icon type="fa" name="hourglass-1" className={className} />;
 
     case 'Pending':
-      return <span className="co-icon-and-text"><Icon type="fa" name="hourglass-half" className="co-icon-and-text__icon" /><CamelCaseWrap value={status} /></span>;
+      return <Icon type="fa" name="hourglass-half" className={className} />;
 
     case 'ContainerCreating':
-      return <span className="co-icon-and-text"><Icon type="pf" name="in-progress" className="co-icon-and-text__icon" /><CamelCaseWrap value={status} /></span>;
+      return <Icon type="pf" name="in-progress" className={className} />;
 
     case 'In Progress':
     case 'Running':
     case 'Updating':
     case 'Upgrading':
-      return <span className="co-icon-and-text"><Icon type="fa" name="refresh" className="co-icon-and-text__icon" /><CamelCaseWrap value={status} /></span>;
+      return <Icon type="fa" name="refresh" className={className} />;
 
     case 'Cancelled':
     case 'Expired':
     case 'Not Ready':
     case 'Terminating':
-      return <span className="co-icon-and-text"><Icon type="fa" name="ban" className="co-icon-and-text__icon" /><CamelCaseWrap value={status} /></span>;
+      return <Icon type="fa" name="ban" className={className} />;
 
     case 'Warning':
-      return <span className="co-icon-and-text"><Icon type="pf" name="warning-triangle-o" className="co-icon-and-text__icon" /><CamelCaseWrap value={status} /></span>;
+      return <Icon type="pf" name="warning-triangle-o" className={className} />;
 
     case 'ContainerCannotRun':
     case 'CrashLoopBackOff':
@@ -41,7 +38,7 @@ export const StatusIcon: React.FunctionComponent<StatusIconProps> = ({status}) =
     case 'InstallCheckFailed':
     case 'Lost':
     case 'Rejected':
-      return <span className="co-icon-and-text"><Icon type="pf" name="error-circle-o" className="co-icon-and-text__icon" /><CamelCaseWrap value={status} /></span>;
+      return <Icon type="pf" name="error-circle-o" className={className} />;
 
     case 'Accepted':
     case 'Active':
@@ -51,16 +48,35 @@ export const StatusIcon: React.FunctionComponent<StatusIconProps> = ({status}) =
     case 'Enabled':
     case 'Ready':
     case 'Up to date':
-      return <span className="co-icon-and-text"><Icon type="pf" name="ok" className="co-icon-and-text__icon" /><CamelCaseWrap value={status} /></span>;
+      return <Icon type="pf" name="ok" className={className} />;
+
+    case 'Info':
+      return <Icon type="pf" name="info" className={className} />;
 
     case 'Unknown':
-      return <span className="co-icon-and-text"><Icon type="pf" name="unknown" className="co-icon-and-text__icon" /><CamelCaseWrap value={status} /></span>;
+      return <Icon type="pf" name="unknown" className={className} />;
 
     default:
-      return <span><CamelCaseWrap value={status} /></span>;
+      return null;
   }
+};
+
+
+export const StatusIconAndText: React.FunctionComponent<StatusIconAndTextProps> = ({status, spin}) => {
+  if (!status){
+    return <span>-</span>;
+  }
+
+  return <span className="co-icon-and-text"><StatusIcon status={status} spin={spin} additionalIconClassName="co-icon-and-text__icon" /><CamelCaseWrap value={status} /></span>;
 };
 
 export type StatusIconProps = {
   status?: string;
+  additionalIconClassName?: any;
+  spin?: boolean;
+};
+
+export type StatusIconAndTextProps = {
+  status?: string;
+  spin?: boolean;
 };

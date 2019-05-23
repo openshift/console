@@ -194,6 +194,42 @@ const combinePodAlerts = (pods: K8sResourceKind[]): OverviewItemAlerts => _.redu
   ...getPodAlerts(pod),
 }), {});
 
+
+const getBuildAlerts = (buildConfigs: BuildConfigOverviewItem[]): OverviewItemAlerts => {
+  const buildAlerts = {};
+  const addAlert = (build: K8sResourceKind, buildPhase: string) => _.set(buildAlerts, `${build.metadata.uid}--build${buildPhase}`, {severity: `build${buildPhase}`, message: _.get(build, ['status', 'message'], buildPhase)});
+
+  _.each(buildConfigs, bc => {
+    let seenComplete = false;
+    // Requires builds to be sorted by most recent first.
+    _.each(bc.builds, (build: K8sResourceKind) => {
+      const buildPhase = _.get(build, ['status', 'phase']);
+      switch (buildPhase) {
+        case 'Complete':
+          seenComplete = true;
+          break;
+        case 'Failed':
+        case 'Error':
+          if (!seenComplete) {
+            // show failure/error
+            addAlert(build, buildPhase);
+          }
+          break;
+        case 'New':
+        case 'Pending':
+        case 'Running':
+          // show new/pending/running
+          addAlert(build, buildPhase);
+          break;
+        default:
+          break;
+      }
+    });
+  });
+
+  return buildAlerts;
+};
+
 const getReplicationControllerAlerts = (rc: K8sResourceKind): OverviewItemAlerts => {
   const phase = getDeploymentPhase(rc);
   const version = getDeploymentConfigVersion(rc);
@@ -709,7 +745,10 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
       const services = this.getServicesForResource(ds);
       const routes = this.getRoutesForServices(services);
       const pods = this.getPodsForResource(ds);
-      const alerts = combinePodAlerts(pods);
+      const alerts = {
+        ...combinePodAlerts(pods),
+        ...getBuildAlerts(buildConfigs),
+      };
       const obj = {
         ...ds,
         apiVersion: apiVersionForModel(DaemonSetModel),
@@ -735,7 +774,6 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
   createDeploymentItems(): OverviewItem[] {
     const {deployments} = this.props;
     return _.map(deployments.data, d => {
-      const alerts = getResourcePausedAlert(d);
       const replicaSets = this.getReplicaSetsForResource(d);
       const current = _.head(replicaSets);
       const previous = _.nth(replicaSets, 1);
@@ -743,6 +781,10 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
       const buildConfigs = this.getBuildConfigsForResource(d);
       const services = this.getServicesForResource(d);
       const routes = this.getRoutesForServices(services);
+      const alerts = {
+        ...getResourcePausedAlert(d),
+        ...getBuildAlerts(buildConfigs),
+      };
       const obj = {
         ...d,
         apiVersion: apiVersionForModel(DeploymentModel),
@@ -774,7 +816,6 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
   createDeploymentConfigItems(): OverviewItem[] {
     const {deploymentConfigs} = this.props;
     return _.map(deploymentConfigs.data, dc => {
-      const alerts = getResourcePausedAlert(dc);
       const replicationControllers = this.getReplicationControllersForResource(dc);
       const current = _.head(replicationControllers);
       const previous = _.nth(replicationControllers, 1);
@@ -782,6 +823,10 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
       const buildConfigs = this.getBuildConfigsForResource(dc);
       const services = this.getServicesForResource(dc);
       const routes = this.getRoutesForServices(services);
+      const alerts = {
+        ...getResourcePausedAlert(dc),
+        ...getBuildAlerts(buildConfigs),
+      };
       const obj = {
         ...dc,
         apiVersion: apiVersionForModel(DeploymentConfigModel),
@@ -815,7 +860,10 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
     return _.map(statefulSets.data, (ss) => {
       const buildConfigs = this.getBuildConfigsForResource(ss);
       const pods = this.getPodsForResource(ss);
-      const alerts = combinePodAlerts(pods);
+      const alerts = {
+        ...combinePodAlerts(pods),
+        ...getBuildAlerts(buildConfigs),
+      };
       const services = this.getServicesForResource(ss);
       const routes = this.getRoutesForServices(services);
       const obj = {

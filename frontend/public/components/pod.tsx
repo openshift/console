@@ -19,7 +19,7 @@ import {
   ScrollToTopOnMount,
   SectionHeading,
   Selector,
-  StatusIcon,
+  StatusIconAndText,
   Timestamp,
   navFactory,
   units,
@@ -67,7 +67,7 @@ export const PodRow: React.FC<PodRowProps> = ({obj: pod}) => {
     <div className="col-lg-2 col-md-2 hidden-sm hidden-xs">
       <NodeLink name={pod.spec.nodeName} />
     </div>
-    <div className="col-lg-2 col-md-2 hidden-sm hidden-xs"><StatusIcon status={phase} /></div>
+    <div className="col-lg-2 col-md-2 hidden-sm hidden-xs"><StatusIconAndText status={phase} /></div>
     <div className="col-lg-2 hidden-md hidden-sm hidden-xs"><Readiness pod={pod} /></div>
     <div className="dropdown-kebab-pf">
       <ResourceKebab actions={menuActions} kind="Pod" resource={pod} isDisabled={phase === 'Terminating'} />
@@ -101,7 +101,7 @@ export const ContainerRow: React.FC<ContainerRowProps> = ({pod, container}) => {
       <ContainerLink pod={pod} name={container.name} />
     </div>
     <div className="col-lg-2 col-md-3 col-sm-5 col-xs-7 co-truncate co-nowrap co-select-to-copy">{container.image || '-'}</div>
-    <div className="col-lg-2 col-md-2 col-sm-3 hidden-xs"><StatusIcon status={cstate.label} /></div>
+    <div className="col-lg-2 col-md-2 col-sm-3 hidden-xs"><StatusIconAndText status={cstate.label} /></div>
     <div className="col-lg-1 col-md-2 hidden-sm hidden-xs">{_.get(cstatus, 'restartCount', '0')}</div>
     <div className="col-lg-2 col-md-2 hidden-sm hidden-xs"><Timestamp timestamp={startedAt} /></div>
     <div className="col-lg-2 hidden-md hidden-sm hidden-xs"><Timestamp timestamp={finishedAt} /></div>
@@ -143,7 +143,7 @@ const PodGraphs = requirePrometheus(({pod}) => <React.Fragment>
   <br />
 </React.Fragment>);
 
-export const PodStatus: React.FC<PodStatusProps> = ({pod}) => <StatusIcon status={podPhase(pod)} />;
+export const PodStatus: React.FC<PodStatusProps> = ({pod}) => <StatusIconAndText status={podPhase(pod)} />;
 
 export const PodDetailsList: React.FC<PodDetailsListProps> = ({pod}) => {
   const activeDeadlineSeconds = _.get(pod, 'spec.activeDeadlineSeconds');
