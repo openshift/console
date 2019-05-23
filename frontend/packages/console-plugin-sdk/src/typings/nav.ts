@@ -12,6 +12,7 @@ namespace ExtensionProperties {
   interface NavItem {
     section: NavSectionTitle;
     componentProps: Pick<NavLinkProps, 'name' | 'required' | 'disallowed' | 'startsWith'>;
+    mergeAfter?: string;
   }
 
   export interface HrefNavItem extends NavItem {
