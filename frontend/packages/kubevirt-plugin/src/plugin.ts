@@ -1,7 +1,9 @@
-import { Plugin, ResourceNSNavItem, ResourceListPage, ResourceDetailPage, ModelFeatureFlag } from '@console/plugin-sdk';
-import { VirtualMachineModel } from './models';
+import { Plugin, ResourceNSNavItem, ResourceListPage, ResourceDetailPage, ModelFeatureFlag, YamlTemplate } from '@console/plugin-sdk';
 
-type ConsumedExtensions = ResourceNSNavItem | ResourceListPage | ResourceDetailPage | ModelFeatureFlag;
+import { VirtualMachineModel } from './models';
+import { vmYamlTemplate } from './yaml-templates';
+
+type ConsumedExtensions = ResourceNSNavItem | ResourceListPage | ResourceDetailPage | ModelFeatureFlag | YamlTemplate;
 
 const FLAG_KUBEVIRT = 'KUBEVIRT';
 
@@ -29,6 +31,13 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       model: VirtualMachineModel,
       loader: () => import('./components/vm' /* webpackChunkName: "virtual-machines" */).then(m => m.VirtualMachinesPage),
+    },
+  },
+  {
+    type: 'YamlTemplate',
+    properties: {
+      model: VirtualMachineModel,
+      template: vmYamlTemplate,
     },
   },
   // {
