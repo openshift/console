@@ -13,6 +13,7 @@ import { PackageManifestKind, OperatorGroupKind, SubscriptionKind } from '../ope
 import { installedFor, subscriptionFor } from '../operator-lifecycle-manager/operator-group';
 import { OPERATOR_HUB_CSC_BASE } from '../../const';
 import { OperatorHubItem, OperatorHubCSVAnnotations } from './index';
+import { skeletonCatalog } from '../catalog/catalog-page';
 
 import * as operatorImg from '../../imgs/operator.svg';
 
@@ -55,6 +56,7 @@ export const OperatorHubList: React.SFC<OperatorHubListProps> = (props) => {
   });
 
   return <StatusBox
+    skeleton={skeletonCatalog}
     data={items}
     loaded={loaded}
     loadError={loadError}
@@ -75,6 +77,10 @@ export const OperatorHubPage = withFallback((props: OperatorHubPageProps) => <Re
   </Helmet>
   <div className="co-catalog">
     <PageHeading title="OperatorHub" />
+    <p className="co-catalog-page__description">Discover Operators from the Kubernetes community and Red Hat partners, curated by Red Hat.
+    Operators can be installed on your clusters to provide optional add-ons and shared services to your developers.
+    Once installed, the capabilities provided by the Operator appear in the <a href="/catalog">Developer Catalog</a>,
+    providing a self-service experience.</p>
     <div className="co-catalog-connect">
       <Firehose resources={[{
         isList: true,

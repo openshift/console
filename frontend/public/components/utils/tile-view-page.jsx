@@ -665,7 +665,7 @@ export class TileViewPage extends React.Component {
   }
 
   render() {
-    const { renderTile, pageDescription } = this.props;
+    const { renderTile } = this.props;
     const { selectedCategoryId, categories } = this.state;
     let activeCategory = findActiveCategory(selectedCategoryId, categories);
     if (!activeCategory) {
@@ -673,31 +673,24 @@ export class TileViewPage extends React.Component {
     }
 
     return (
-      <React.Fragment>
-        {pageDescription && (
-          <p className="co-catalog-page__description">
-            {pageDescription}
-          </p>
-        )}
-        <div className="co-catalog-page">
-          <div className="co-catalog-page__tabs">
-            { this.renderCategoryTabs(activeCategory.id) }
-            { this.renderSidePanel() }
-          </div>
-          <div className="co-catalog-page__content">
-            <div>
-              <div className="co-catalog-page__heading text-capitalize">{activeCategory.label}</div>
-              <div className="co-catalog-page__num-items">{activeCategory.numItems} items</div>
-            </div>
-            {activeCategory.numItems > 0 && (
-              <div className="catalog-tile-view-pf catalog-tile-view-pf-no-categories">
-                {_.map(activeCategory.items, item => renderTile(item))}
-              </div>
-            )}
-            {activeCategory.numItems === 0 && this.renderEmptyState()}
-          </div>
+      <div className="co-catalog-page">
+        <div className="co-catalog-page__tabs">
+          { this.renderCategoryTabs(activeCategory.id) }
+          { this.renderSidePanel() }
         </div>
-      </React.Fragment>
+        <div className="co-catalog-page__content">
+          <div>
+            <div className="co-catalog-page__heading text-capitalize">{activeCategory.label}</div>
+            <div className="co-catalog-page__num-items">{activeCategory.numItems} items</div>
+          </div>
+          {activeCategory.numItems > 0 && (
+            <div className="catalog-tile-view-pf catalog-tile-view-pf-no-categories">
+              {_.map(activeCategory.items, item => renderTile(item))}
+            </div>
+          )}
+          {activeCategory.numItems === 0 && this.renderEmptyState()}
+        </div>
+      </div>
     );
   }
 }
@@ -714,7 +707,6 @@ TileViewPage.propTypes = {
   renderFilterGroup: PropTypes.func,
   keywordCompare: PropTypes.func.isRequired,
   renderTile: PropTypes.func.isRequired,
-  pageDescription: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
   emptyStateTitle: PropTypes.string,
   emptyStateInfo: PropTypes.string,
 };
@@ -724,7 +716,6 @@ TileViewPage.defaultProps = {
   getAvailableFilters: determineAvailableFilters,
   filterGroupNameMap: {},
   renderFilterGroup: null,
-  pageDescription: null,
   emptyStateTitle: 'No Results Match the Filter Criteria',
   emptyStateInfo: 'No items are being shown due to the filters being applied.',
 };
