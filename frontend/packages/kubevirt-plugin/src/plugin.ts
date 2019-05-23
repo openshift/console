@@ -17,13 +17,14 @@ const plugin: Plugin<ConsumedExtensions> = [
   },
   {
     type: 'NavItem/ResourceNS',
-    properties: { // TODO(mlibra): set order, see section.tsx
+    properties: {
       section: 'Workloads',
       componentProps: {
         name: 'Virtual Machines',
         resource: VirtualMachineModel.plural,
         required: FLAG_KUBEVIRT,
       },
+      mergeAfter: 'Pods', // rendered name of the resource navigation link in the left-side menu
     },
   },
   {
