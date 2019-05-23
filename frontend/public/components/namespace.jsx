@@ -160,20 +160,20 @@ export const PullSecret = (props) => {
 
 export const NamespaceLineCharts = ({ns}) => <div className="row">
   <div className="col-sm-6 col-xs-12">
-    <Area title="CPU Usage" humanizeValue={humanizeCpuCores} namespace={ns.metadata.name} query={[
-      {
-        name: 'Used',
-        query: `namespace:container_cpu_usage:sum{namespace='${ns.metadata.name}'}`,
-      },
-    ]} />
+    <Area
+      title="CPU Usage"
+      formatY={humanizeCpuCores}
+      namespace={ns.metadata.name}
+      query={`namespace:container_cpu_usage:sum{namespace='${ns.metadata.name}'}`}
+    />
   </div>
   <div className="col-sm-6 col-xs-12">
-    <Area title="Memory Usage" humanizeValue={humanizeDecimalBytes} namespace={ns.metadata.name} query={[
-      {
-        name: 'Used',
-        query: `namespace:container_memory_usage_bytes:sum{namespace='${ns.metadata.name}'}`,
-      },
-    ]} />
+    <Area
+      title="Memory Usage"
+      formatY={humanizeDecimalBytes}
+      namespace={ns.metadata.name}
+      query={`namespace:container_memory_usage_bytes:sum{namespace='${ns.metadata.name}'}`}
+    />
   </div>
 </div>;
 
@@ -183,7 +183,8 @@ export const TopPodsBarChart = ({ns}) => (
     namespace={ns.metadata.name}
     query={`sort(topk(10, sum by (pod_name)(container_memory_usage_bytes{container_name!="POD",container_name!="",pod_name!="", namespace="${ns.metadata.name}"})))`}
     humanize={humanizeBinaryBytes}
-    metric="pod_name" />
+    metric="pod_name"
+  />
 );
 
 const ResourceUsage = requirePrometheus(({ns}) => <div className="co-m-pane__body">

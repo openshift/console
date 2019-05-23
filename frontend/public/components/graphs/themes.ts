@@ -1,8 +1,7 @@
 /* eslint-disable camelcase */
-
 import { global_FontFamily_sans_serif } from '@patternfly/react-tokens';
 
-const independentAxisStyles = {
+const independentAxisTheme = {
   independentAxis: {
     style: {
       axis: { stroke: '#D1D1D1' },
@@ -11,7 +10,7 @@ const independentAxisStyles = {
   },
 };
 
-const dependentAxisStyles = {
+const dependentAxisTheme = {
   dependentAxis: {
     style: {
       axis: { stroke: '#D1D1D1' },
@@ -21,7 +20,7 @@ const dependentAxisStyles = {
   },
 };
 
-const tooltipStyles = {
+const tooltipTheme = {
   // General tooltip style
   tooltip: {
     flyoutStyle: {
@@ -49,18 +48,7 @@ const tooltipStyles = {
   },
 };
 
-export const areaStyles = {
-  area: {
-    style: {
-      data: {
-        labels: global_FontFamily_sans_serif.value,
-        fillOpacity: .15,
-      },
-    },
-  },
-};
-
-export const cartesianChartStyles = {
+const chartPadding = {
   chart: {
     padding: {
       bottom: 30,
@@ -69,7 +57,19 @@ export const cartesianChartStyles = {
       top: 0,
     },
   },
-  ...independentAxisStyles,
-  ...dependentAxisStyles,
-  ...tooltipStyles,
+};
+
+export const areaTheme = {
+  area: {
+    style: {
+      data: {
+        labels: global_FontFamily_sans_serif.value,
+        fillOpacity: .15,
+      },
+    },
+  },
+  ...chartPadding,
+  ...independentAxisTheme,
+  ...dependentAxisTheme,
+  ...tooltipTheme,
 };

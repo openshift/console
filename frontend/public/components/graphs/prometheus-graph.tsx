@@ -4,33 +4,28 @@ import * as classNames from 'classnames';
 
 import { connectToURLs, MonitoringRoutes } from '../../reducers/monitoring';
 
-const getPrometheusUrl = (urls: string[], query: PrometheusQuery[] | string): string => {
+const getPrometheusExpressionBrowserURL = (urls, query): string => {
   const base = urls && urls[MonitoringRoutes.Prometheus];
-  if (!base || !query) {
+  if (!base || _.isEmpty(query)) {
     return null;
   }
-
-  const queries = _.isArray(query) ? query : [{query}];
   const params = new URLSearchParams();
-  _.each(queries, (q, i) => {
-    params.set(`g${i}.range_input`, '1h');
-    params.set(`g${i}.expr`, q.query);
-    params.set(`g${i}.tab`, '0');
-  });
-
+  params.set('g0.range_input', '1h');
+  params.set('g0.expr', query);
+  params.set('g0.tab', '0');
   return `${base}/graph?${params.toString()}`;
 };
 
 const PrometheusGraphLink = connectToURLs(MonitoringRoutes.Prometheus)(
   ({children, query, urls}: React.PropsWithChildren<PrometheusGraphLinkProps>) => {
-    const url = getPrometheusUrl(urls, query);
+    const url = getPrometheusExpressionBrowserURL(urls, query);
     return url
       ? <a href={url} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>{children}</a>
       : <React.Fragment>{children}</React.Fragment>;
   }
 );
 
-export const PrometheusGraph: React.FunctionComponent<PrometheusGraphProps> = ({children, title, className, query}) => {
+export const PrometheusGraph: React.FC<PrometheusGraphProps> = ({children, className, query, title}) => {
   return <div className={classNames('graph-wrapper', className)}>
     { title && <h5 className="graph-title graph-title--left">{title}</h5> }
     <PrometheusGraphLink query={query}>
@@ -39,18 +34,13 @@ export const PrometheusGraph: React.FunctionComponent<PrometheusGraphProps> = ({
   </div>;
 };
 
-type PrometheusQuery = {
-  name: string;
-  query: string;
-};
-
 type PrometheusGraphLinkProps = {
-  query: PrometheusQuery[] | string;
+  query: string;
   urls?: string[];
 };
 
 type PrometheusGraphProps = {
   className?: string;
-  query: PrometheusQuery[] | string;
+  query: string;
   title?: string;
 }

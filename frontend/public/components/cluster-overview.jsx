@@ -10,7 +10,7 @@ import { coFetchJSON } from '../co-fetch';
 import { ConsoleHealth, KubernetesHealth, Health } from './graphs/health';
 import { connectToFlags, flagPending } from '../reducers/features';
 import { FLAGS } from '../const';
-import { Gauge, prometheusBasePath, requirePrometheus } from './graphs';
+import { Gauge, PROMETHEUS_BASE_PATH, requirePrometheus } from './graphs';
 import {
   AdditionalSupportLinks,
   AsyncComponent,
@@ -166,13 +166,13 @@ const GraphsPage = connectToFlags(FLAGS.OPENSHIFT)(({flags, mock, limited, names
 const permissionedLoader = () => {
   const AllGraphs = (props) => <GraphsPage {...props} />;
   const SomeGraphs = (props) => <GraphsPage limited {...props} />;
-  if (!prometheusBasePath) {
+  if (!PROMETHEUS_BASE_PATH) {
     return Promise.resolve(SomeGraphs);
   }
 
   // Show events list if user lacks permission to view graphs.
   const q = 'sum(ALERTS{alertstate="firing", alertname!="Watchdog"})';
-  return coFetchJSON(`${prometheusBasePath}/api/v1/query?query=${encodeURIComponent(q)}`)
+  return coFetchJSON(`${PROMETHEUS_BASE_PATH}/api/v1/query?query=${encodeURIComponent(q)}`)
     .then(
       () => AllGraphs,
       err => {

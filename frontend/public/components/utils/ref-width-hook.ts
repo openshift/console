@@ -1,12 +1,10 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import * as React from 'react';
-import { useSafetyFirst } from '../safety-first';
+import { useEffect, useRef, useState } from 'react';
 
 export const useRefWidth = () => {
-  const ref = React.useRef<HTMLDivElement>(null);
-  const [width, setWidth] = useSafetyFirst(0);
+  const ref = useRef<HTMLDivElement>(null);
+  const [width, setWidth] = useState(0);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const handleResize = () => setWidth(ref.current.clientWidth);
     window.addEventListener('resize', handleResize);
     window.addEventListener('nav_toggle', handleResize);
