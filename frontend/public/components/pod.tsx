@@ -64,7 +64,7 @@ export const PodRow: React.FC<PodRowProps> = ({obj: pod}) => {
     <div className="col-lg-2 col-md-3 col-sm-4 hidden-xs">
       <LabelList kind="Pod" labels={pod.metadata.labels} />
     </div>
-    <div className="col-lg-2 col-md-2 hidden-sm hidden-xs">
+    <div className="col-lg-2 col-md-2 hidden-sm hidden-xs co-break-word">
       <NodeLink name={pod.spec.nodeName} />
     </div>
     <div className="col-lg-2 col-md-2 hidden-sm hidden-xs"><StatusIconAndText status={phase} /></div>
