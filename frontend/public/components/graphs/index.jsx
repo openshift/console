@@ -14,7 +14,6 @@ export const Area = props => <AsyncComponent loader={() => import('./graph-loade
 export const Bar = props => <AsyncComponent loader={() => import('./graph-loader').then(c => c.Bar)} {...props} />;
 export const Donut = props => <AsyncComponent loader={() => import('./graph-loader').then(c => c.Donut)} {...props} />;
 export const Gauge = props => <AsyncComponent loader={() => import('./graph-loader').then(c => c.Gauge)} {...props} />;
-export const Line = props => <AsyncComponent loader={() => import('./graph-loader').then(c => c.Line)} {...props} />;
 export const QueryBrowser = props => <AsyncComponent loader={() => import('./graph-loader').then(c => c.QueryBrowser)} {...props} />;
 
 const canAccessPrometheus = (prometheusFlag) => prometheusFlag && !!PROMETHEUS_BASE_PATH && !!PROMETHEUS_TENANCY_BASE_PATH;

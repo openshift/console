@@ -7,20 +7,19 @@ export enum PrometheusEndpoint {
   QUERY_RANGE = 'api/v1/query_range',
 }
 
-
 // Range vector queries require end, start, and step search params
-const getRangeVectorSearchParams = (timespan: number, samples: number = 60): URLSearchParams => {
-  const now = Date.now();
+const getRangeVectorSearchParams = (timespan: number, endTime: number = undefined, samples: number = 60): URLSearchParams => {
+  const end = endTime || Date.now();
   const init = timespan ? [
-    [ 'end', `${now / 1000}` ],
-    [ 'start', `${(now - timespan) / 1000}` ],
+    [ 'end', `${end / 1000}` ],
+    [ 'start', `${(end - timespan) / 1000}` ],
     [ 'step', `${timespan / samples / 1000}` ],
   ] : [];
   return new URLSearchParams(init);
 };
 
-const getSearchParams = ({endpoint, timespan, samples, ...params}: PrometheusURLProps): URLSearchParams => {
-  const searchParams = endpoint === PrometheusEndpoint.QUERY_RANGE ? getRangeVectorSearchParams(timespan, samples) : new URLSearchParams();
+const getSearchParams = ({endpoint, endTime, timespan, samples, ...params}: PrometheusURLProps): URLSearchParams => {
+  const searchParams = endpoint === PrometheusEndpoint.QUERY_RANGE ? getRangeVectorSearchParams(timespan, endTime, samples) : new URLSearchParams();
   _.each(params, (value, key) => value && searchParams.append(key, value.toString()));
   return searchParams;
 };
@@ -33,6 +32,7 @@ export const getPrometheusURL = (props: PrometheusURLProps): string => {
 
 type PrometheusURLProps = {
   endpoint: PrometheusEndpoint;
+  endTime?: number;
   namespace?: string;
   query: string;
   samples: number;

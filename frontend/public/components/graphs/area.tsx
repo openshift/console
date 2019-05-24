@@ -40,7 +40,7 @@ export const Area: React.FC<AreaProps> = ({
 }) => {
 
   const [containerRef, width] = useRefWidth();
-  const response = usePrometheusPoll({
+  const [response] = usePrometheusPoll({
     endpoint: PrometheusEndpoint.QUERY_RANGE,
     namespace,
     query,
