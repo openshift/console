@@ -70,7 +70,7 @@ export class Template extends KubevirtDetailView {
         await wizard.editDiskAttribute(WIZARD_TABLE_FIRST_ROW, 'size', resource.size);
         await wizard.editDiskAttribute(WIZARD_TABLE_FIRST_ROW, 'storage', resource.storageClass);
       } else {
-        await wizard.addDisk(resource.name, resource.size, resource.storageClass);
+        await wizard.addDisk(resource);
       }
     }
 

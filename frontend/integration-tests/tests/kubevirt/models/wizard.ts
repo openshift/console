@@ -2,7 +2,7 @@
 import { $, browser, ExpectedConditions as until } from 'protractor';
 
 import { createItemButton, isLoaded } from '../../../views/crud.view';
-import { fillInput, selectDropdownOption, click, cloudInitConfig } from '../utils/utils';
+import { fillInput, selectDropdownOption, click, cloudInitConfig, storageResource } from '../utils/utils';
 import { PAGE_LOAD_TIMEOUT } from '../utils/consts';
 import * as wizardView from '../../../views/kubevirt/wizard.view';
 
@@ -96,13 +96,13 @@ export default class Wizard {
     return await wizardView.tableRowsCount();
   }
 
-  async addDisk(name: string, size: string, storageClass: string) {
+  async addDisk(disk: storageResource) {
     await click(wizardView.createDisk);
     const rowsCount = await this.getTableRowsCount();
     // Dropdown selection needs to be first due to https://github.com/kubevirt/web-ui-components/issues/9
-    await wizardView.selectTableDropdownAttribute(rowsCount, 'storage', storageClass);
-    await wizardView.setTableInputAttribute(rowsCount, 'name', name);
-    await wizardView.setTableInputAttribute(rowsCount, 'size', size);
+    await wizardView.selectTableDropdownAttribute(rowsCount, 'storage', disk.storageClass);
+    await wizardView.setTableInputAttribute(rowsCount, 'name', disk.name);
+    await wizardView.setTableInputAttribute(rowsCount, 'size', disk.size);
     await click(wizardView.apply);
   }
 

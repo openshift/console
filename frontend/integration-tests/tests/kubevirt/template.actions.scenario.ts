@@ -1,7 +1,8 @@
 import { $ } from 'protractor';
 import { testName } from '../../protractor.conf';
-import { testNad, networkInterface, basicVmConfig, hddDisk } from './mocks';
+
 import { createResource, click, fillInput, getInputValue, selectDropdownOption, deleteResource, addLeakableResource, removeLeakableResource } from './utils/utils';
+import { testNad, networkInterface, basicVmConfig, hddDisk } from './mocks';
 import { vmDetailDesc as detailDesc, vmDetailName as detailName, vmDetailOS as detailOS, detailViewEditBtn, detailViewSaveBtn,
   vmDetailFlavorDropdownId as detailFlavorDropdownId, vmDetailFlavorCPU as detailFlavorCPU, vmDetailFlavorMemory as detailFlavorMemory } from '../../views/kubevirt/virtualMachine.view';
 import { VM_ACTIONS_TIMEOUT, TABS } from './utils/consts';
@@ -56,7 +57,7 @@ describe('Test adding discs/nics to template', () => {
   });
 
   it('Add/remove disk to template', async() => {
-    await template.addDisk(hddDisk.name, hddDisk.size, hddDisk.storageClass);
+    await template.addDisk(hddDisk);
     await vm.create(vmConfig);
     addLeakableResource(leakedResources, vm.asResource());
     const addedDisk = (await vm.getAttachedDisks()).find(disk => disk.name === hddDisk.name);
@@ -67,7 +68,7 @@ describe('Test adding discs/nics to template', () => {
   }, VM_ACTIONS_TIMEOUT);
 
   it('Add/remove nic to template', async() => {
-    await template.addNic(networkInterface.name, networkInterface.mac, networkInterface.networkDefinition, networkInterface.binding);
+    await template.addNic(networkInterface);
     await vm.create(vmConfig);
     addLeakableResource(leakedResources, vm.asResource());
     const addedNic = (await vm.getAttachedNics()).find(nic => nic.name === networkInterface.name);
@@ -77,7 +78,7 @@ describe('Test adding discs/nics to template', () => {
     removeLeakableResource(leakedResources, vm.asResource());
   }, VM_ACTIONS_TIMEOUT);
 
-  it('Template values are displayed correctly', async() => {
+  it('Test template Overview page', async() => {
     const customFlavorName = 'Custom';
     const customFlavorResources = '1';
 

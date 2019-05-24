@@ -146,8 +146,9 @@ export function searchYAML(needle: string, name: string, namespace: string, kind
   return result.search(needle) >= 0;
 }
 
-export function getResourceJSON(name: string, namespace: string, kind: string) {
-  return execSync(`oc get -o json -n ${namespace} ${kind} ${name}`).toString();
+export function getResourceObject(name: string, namespace: string, kind: string) {
+  const resourceJson = execSync(`oc get -o json -n ${namespace} ${kind} ${name}`).toString();
+  return JSON.parse(resourceJson);
 }
 
 /**
@@ -160,7 +161,7 @@ export function getResourceJSON(name: string, namespace: string, kind: string) {
    * @returns   {boolean}                   True if found, false otherwise.
    */
 export function searchJSON(propertyPath: string, value: string, name: string, namespace: string, kind: string): boolean {
-  const resource = JSON.parse(getResourceJSON(name, namespace, kind));
+  const resource = getResourceObject(name, namespace, kind);
   const result = _.get(resource, propertyPath, undefined);
   return result === value;
 }

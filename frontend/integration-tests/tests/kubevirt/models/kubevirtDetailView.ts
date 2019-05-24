@@ -1,6 +1,7 @@
+// eslint-disable-next-line no-unused-vars
+import { fillInput, selectDropdownOption, click, networkResource, storageResource } from '../utils/utils';
 import * as kubevirtDetailView from '../../../views/kubevirt/kubevirtDetailView.view';
 import { confirmAction, isLoaded, resourceRows } from '../../../views/crud.view';
-import { fillInput, selectDropdownOption, click } from '../utils/utils';
 import { DetailView } from './detailView';
 import { TABS } from '../utils/consts';
 import { diskTabCol, networkTabCol } from '../mocks';
@@ -19,7 +20,7 @@ export class KubevirtDetailView extends DetailView {
     return resources;
   }
 
-  async getAttachedDisks() {
+  async getAttachedDisks(): Promise<storageResource[]>{
     await this.navigateToTab(TABS.DISKS);
     const resources = [];
     for (const row of await resourceRows) {
@@ -33,7 +34,7 @@ export class KubevirtDetailView extends DetailView {
     return resources;
   }
 
-  async getAttachedNics() {
+  async getAttachedNics(): Promise<networkResource[]>{
     await this.navigateToTab(TABS.NICS);
     const resources = [];
     for (const row of await resourceRows) {
@@ -48,19 +49,19 @@ export class KubevirtDetailView extends DetailView {
     return resources;
   }
 
-  private async waitForNewResourceRow() {
+  async waitForNewResourceRow() {
     // TODO: Remove when https://bugzilla.redhat.com/show_bug.cgi?id=1709939 is fixed
     const inputPresent = await kubevirtDetailView.newResourceRowInput.isPresent();
     await browser.sleep(300);
     return inputPresent && (await kubevirtDetailView.newResourceRowInput.isPresent());
   }
 
-  async addDisk(name: string, size: string, storageClass: string) {
+  async addDisk(disk: storageResource) {
     await this.navigateToTab(TABS.DISKS);
     await click(kubevirtDetailView.createDisk, 1000, this.waitForNewResourceRow);
-    await fillInput(kubevirtDetailView.diskName, name);
-    await fillInput(kubevirtDetailView.diskSize, size);
-    await selectDropdownOption(kubevirtDetailView.diskStorageClassDropdownId, storageClass);
+    await fillInput(kubevirtDetailView.diskName, disk.name);
+    await fillInput(kubevirtDetailView.diskSize, disk.size);
+    await selectDropdownOption(kubevirtDetailView.diskStorageClassDropdownId, disk.storageClass);
     await click(kubevirtDetailView.applyBtn);
     await isLoaded();
   }
@@ -71,13 +72,13 @@ export class KubevirtDetailView extends DetailView {
     await confirmAction();
   }
 
-  async addNic(name: string, mac: string, networkAttachmentDefinition: string, binding: string) {
+  async addNic(nic: networkResource) {
     await this.navigateToTab(TABS.NICS);
     await click(kubevirtDetailView.createNic, 1000, this.waitForNewResourceRow);
-    await fillInput(kubevirtDetailView.nicName, name);
-    await selectDropdownOption(kubevirtDetailView.networkTypeDropdownId, networkAttachmentDefinition);
-    await selectDropdownOption(kubevirtDetailView.networkBindingId, binding);
-    await fillInput(kubevirtDetailView.macAddress, mac);
+    await fillInput(kubevirtDetailView.nicName, nic.name);
+    await selectDropdownOption(kubevirtDetailView.networkTypeDropdownId, nic.networkDefinition);
+    await selectDropdownOption(kubevirtDetailView.networkBindingId, nic.binding);
+    await fillInput(kubevirtDetailView.macAddress, nic.mac);
     await click(kubevirtDetailView.applyBtn);
     await isLoaded();
   }

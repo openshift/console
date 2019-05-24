@@ -4,7 +4,7 @@ import { $, browser, ExpectedConditions as until } from 'protractor';
 import * as _ from 'lodash';
 
 // eslint-disable-next-line no-unused-vars
-import { removeLeakedResources, waitForCount, searchYAML, searchJSON, getResourceJSON, addLeakableResource, removeLeakableResource, deleteResource, createResources, deleteResources } from './utils/utils';
+import { removeLeakedResources, waitForCount, searchYAML, searchJSON, getResourceObject, addLeakableResource, removeLeakableResource, deleteResource, createResources, deleteResources } from './utils/utils';
 import { CLONE_VM_TIMEOUT, VM_BOOTUP_TIMEOUT, PAGE_LOAD_TIMEOUT, VM_STOP_TIMEOUT, TABS } from './utils/consts';
 import { appHost, testName } from '../../protractor.conf';
 import { filterForName, isLoaded, resourceRowsPresent, resourceRows } from '../../views/crud.view';
@@ -134,7 +134,7 @@ describe('Test clone VM.', () => {
     }, VM_BOOTUP_TIMEOUT);
 
     it('Cloned VM has cleared MAC addresses.', async() => {
-      await vm.addNic(networkInterface.name, networkInterface.mac, networkInterface.networkDefinition, networkInterface.binding);
+      await vm.addNic(networkInterface);
       await vm.action('Clone');
       await wizard.next();
 
@@ -235,7 +235,7 @@ describe('Test clone VM.', () => {
       });
 
       // Verify configuration of cloudinitdisk is the same
-      const clonedVmJson = JSON.parse(getResourceJSON(clonedVm.name, clonedVm.namespace, clonedVm.kind));
+      const clonedVmJson = getResourceObject(clonedVm.name, clonedVm.namespace, clonedVm.kind);
       const clonedVmVolumes = _.get(clonedVmJson, 'spec.template.spec.volumes');
       const result = _.filter(clonedVmVolumes, function(o) {
         return o.name === 'cloudinitdisk';

@@ -1,12 +1,14 @@
 /* eslint-disable no-undef */
+import * as _ from 'lodash';
 import { execSync } from 'child_process';
-import { $$, browser, ExpectedConditions as until } from 'protractor';
+import { $, $$, browser, ExpectedConditions as until } from 'protractor';
 
 import { appHost, testName } from '../../protractor.conf';
 import { isLoaded, resourceRowsPresent, textFilter } from '../../views/crud.view';
 import { listViewAction, getDetailActionDropdownOptions } from '../../views/kubevirt/vm.actions.view';
+import { createNic, networkTypeDropdownId } from '../../views/kubevirt/kubevirtDetailView.view';
 import { testNad, hddDisk, networkInterface, getVmManifest } from './mocks';
-import { removeLeakedResources, deleteResources, createResources, fillInput, searchYAML, waitForCount } from './utils/utils';
+import { click, removeLeakedResources, deleteResources, createResources, fillInput, searchYAML, waitForCount, getResourceObject, getDropdownOptions } from './utils/utils';
 import { VM_BOOTUP_TIMEOUT, VM_STOP_TIMEOUT, VM_ACTIONS_TIMEOUT, PAGE_LOAD_TIMEOUT, TABS } from './utils/consts';
 import { statusIcon, statusIcons, vmDetailNode } from '../../views/kubevirt/virtualMachine.view';
 import { VirtualMachine } from './models/virtualMachine';
@@ -177,7 +179,7 @@ describe('Add/remove disks and NICs on respective VM pages', () => {
   });
 
   it('Add/remove disk on VM disks page', async() => {
-    await vm.addDisk(hddDisk.name, hddDisk.size, hddDisk.storageClass);
+    await vm.addDisk(hddDisk);
     expect((await vm.getAttachedResources(TABS.DISKS)).includes(hddDisk.name)).toBe(true);
 
     let vmi = await vm.navigateToVmi(TABS.OVERVIEW);
@@ -198,7 +200,7 @@ describe('Add/remove disks and NICs on respective VM pages', () => {
   }, VM_ACTIONS_TIMEOUT * 2);
 
   it('Add/remove nic on VM Network Interfaces page', async() => {
-    await vm.addNic(networkInterface.name, networkInterface.mac, networkInterface.networkDefinition, networkInterface.binding);
+    await vm.addNic(networkInterface);
 
     expect((await vm.getAttachedResources(TABS.NICS)).includes(networkInterface.name)).toBe(true);
     expect((searchYAML(networkInterface.networkDefinition, vm.name, vm.namespace, 'vmi'))).toBe(false);
@@ -214,4 +216,29 @@ describe('Add/remove disks and NICs on respective VM pages', () => {
 
     expect((searchYAML(networkInterface.networkDefinition, vm.name, vm.namespace, 'vmi'))).toBe(false);
   }, VM_ACTIONS_TIMEOUT * 2);
+
+  it('NIC cannot be added twice using one net-attach-def', async() => {
+    await vm.navigateToTab(TABS.NICS);
+    if ((await vm.getAttachedNics()).filter(nic => nic.name === networkInterface.name).length === 0) {
+      await vm.addNic(networkInterface);
+    }
+
+    // Verify the NIC is added in VM Manifest
+    const resource = getResourceObject(vm.name, vm.namespace, vm.kind);
+    const nic = _.find(_.get(resource, 'spec.template.spec.domain.devices.interfaces', []), o => o.name === networkInterface.name);
+    expect(nic).not.toBe(undefined);
+
+    // Try to add the NIC again
+    await click(createNic, 1000, vm.waitForNewResourceRow);
+
+    // The dropdown should be either empty (disabled) or should not contain the already used net-attach-def
+    await browser.wait(until.or(
+      async() => {
+        return !await $(networkTypeDropdownId).isEnabled();
+      },
+      async() => {
+        return !(await getDropdownOptions(networkTypeDropdownId)).includes(networkInterface.networkDefinition);
+      }
+    ));
+  });
 });
