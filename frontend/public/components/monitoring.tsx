@@ -183,14 +183,14 @@ const graphColors = [
   '#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf',
 ];
 
-const Graph_ = ({hideGraphs, metric = undefined, numSamples, rule}) => {
+const Graph_ = ({hideGraphs, metric = undefined, samples, rule}) => {
   if (hideGraphs) {
     return null;
   }
   const {duration = 0, query = ''} = rule || {};
 
   // 3 times the rule's duration, but not less than 30 minutes
-  const timeSpan = Math.max(3 * duration, 30 * 60) * 1000;
+  const timespan = Math.max(3 * duration, 30 * 60) * 1000;
 
   const GraphLink = query
     ? <Link to={`/monitoring/query-browser?query=${encodeURIComponent(query)}`}>View in Metrics</Link>
@@ -200,10 +200,10 @@ const Graph_ = ({hideGraphs, metric = undefined, numSamples, rule}) => {
     colors={graphColors}
     GraphLink={GraphLink}
     metric={metric}
-    numSamples={numSamples}
     query={query}
-    timeSpan={timeSpan}
+    samples={samples}
     timeout="5s"
+    timespan={timespan}
   />;
 };
 const Graph = connect(graphStateToProps)(Graph_);
@@ -254,7 +254,7 @@ const AlertsDetailsPage = withFallback(connect(alertStateToProps)((props: Alerts
         <div className="co-m-pane__body-group">
           <div className="row">
             <div className="col-sm-12">
-              {state !== AlertStates.NotFiring && <Graph metric={labels} numSamples={600} rule={rule} />}
+              {state !== AlertStates.NotFiring && <Graph metric={labels} rule={rule} samples={600} />}
             </div>
           </div>
           <div className="row">
@@ -405,7 +405,7 @@ const AlertRulesDetailsPage = withFallback(connect(ruleStateToProps)((props: Ale
           </SectionHeading>
           <div className="row">
             <div className="col-sm-12">
-              <Graph numSamples={300} rule={rule} />
+              <Graph rule={rule} samples={300} />
             </div>
           </div>
           <div className="row">
@@ -958,14 +958,14 @@ const QueryBrowserPage = () => {
         <div className="col-xs-12">
           <QueryBrowser
             colors={graphColors}
-            numSamples={600}
             onDataUpdate={data => setMetrics(_.map(data, d => ({
               labels: _.omitBy(d.metric, (v, k) => _.startsWith(k, '__')),
               value: _.get(_.last(d.values), 1),
             })))}
             query={query}
+            samples={600}
             timeout="5s"
-            timeSpan={30 * 60 * 1000}
+            timespan={30 * 60 * 1000}
           />
           <div className="group">
             <div className="group__title">

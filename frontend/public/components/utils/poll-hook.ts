@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 
 // Slightly modified from Dan Abramov's blog post about using React hooks for polling
 // https://overreacted.io/making-setinterval-declarative-with-react-hooks/
-export const usePoll = (callback, delay) => {
+export const usePoll = (callback, delay, ...dependencies) => {
   const savedCallback = useRef(null);
 
   // Remember the latest callback.
@@ -20,5 +20,6 @@ export const usePoll = (callback, delay) => {
       const id = setInterval(tick, delay);
       return () => clearInterval(id);
     }
-  }, [delay]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [delay, ...dependencies]);
 };
