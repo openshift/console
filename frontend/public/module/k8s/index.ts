@@ -7,7 +7,6 @@ export * from './node';
 export * from './pods';
 export * from './resource';
 export * from './service-catalog';
-export * from './autocomplete';
 export * from './get-resources';
 export * from './k8s-models';
 export * from './label-selector';

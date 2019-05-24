@@ -103,11 +103,9 @@ describe('Kubernetes resource CRUD operations', () => {
         }
         await yamlView.isLoaded();
 
-        const content = await yamlView.editorContent.getText();
+        const content = await yamlView.getEditorContent();
         const newContent = _.defaultsDeep({}, {metadata: {name, labels: {[testLabel]: testName}}}, safeLoad(content));
-        await yamlView.setContent(safeDump(newContent));
-
-        expect(yamlView.editorContent.getText()).toContain(name);
+        await yamlView.setEditorContent(safeDump(newContent));
       });
 
       it('creates a new resource instance', async() => {
@@ -261,7 +259,7 @@ describe('Kubernetes resource CRUD operations', () => {
     it('displays a YAML editor for creating a new custom resource definition', async() => {
       await crudView.createYAMLButton.click();
       await yamlView.isLoaded();
-      await yamlView.setContent(safeDump(crd));
+      await yamlView.setEditorContent(safeDump(crd));
       await yamlView.saveButton.click();
       await browser.wait(until.urlContains(name), K8S_CREATION_TIMEOUT);
       expect(crudView.errorMessage.isPresent()).toBe(false);
@@ -274,7 +272,7 @@ describe('Kubernetes resource CRUD operations', () => {
       await crudView.isLoaded();
       await crudView.createYAMLButton.click();
       await yamlView.isLoaded();
-      expect(yamlView.editorContent.getText()).toContain(`kind: CRD${testName}`);
+      expect(yamlView.getEditorContent()).toContain(`kind: CRD${testName}`);
     });
 
     it('creates a new custom resource instance', async() => {
@@ -300,9 +298,9 @@ describe('Kubernetes resource CRUD operations', () => {
     beforeAll(async() => {
       await browser.get(`${appHost}/k8s/ns/${testName}/${plural}/~new`);
       await yamlView.isLoaded();
-      const content = await yamlView.editorContent.getText();
+      const content = await yamlView.getEditorContent();
       const newContent = _.defaultsDeep({}, {metadata: {name, namespace: testName}}, safeLoad(content));
-      await yamlView.setContent(safeDump(newContent));
+      await yamlView.setEditorContent(safeDump(newContent));
       leakedResources.add(JSON.stringify({name, plural, namespace: testName}));
       await yamlView.saveButton.click();
     });

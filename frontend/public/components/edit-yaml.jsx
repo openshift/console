@@ -4,27 +4,15 @@ import * as classNames from 'classnames';
 import { safeLoad, safeDump } from 'js-yaml';
 import { saveAs } from 'file-saver';
 import { connect } from 'react-redux';
+import MonacoEditor, { MonacoDiffEditor } from 'react-monaco-editor';
 import { ActionGroup, Alert, Button } from '@patternfly/react-core';
 import { DownloadIcon } from '@patternfly/react-icons';
 
-import * as ace from 'brace';
-import 'brace/ext/searchbox';
-import 'brace/mode/yaml';
-import 'brace/theme/clouds';
-import 'brace/ext/language_tools';
-import 'brace/snippets/yaml';
-
-import { k8sCreate, k8sUpdate, referenceFor, getCompletions, groupVersionFor, snippets, referenceForModel } from '../module/k8s';
+import { k8sCreate, k8sUpdate, referenceFor, groupVersionFor, referenceForModel } from '../module/k8s';
 import { checkAccess, history, Loading, resourceObjPath } from './utils';
 import { ExploreTypeSidebar } from './sidebars/explore-type-sidebar';
 import { ResourceSidebar } from './sidebars/resource-sidebar';
 import { yamlTemplates } from '../models/yaml-templates';
-
-const { snippetManager } = ace.acequire('ace/snippets');
-snippetManager.register([...snippets.values()], 'yaml');
-ace.acequire('ace/ext/language_tools').addCompleter({getCompletions});
-
-let id = 0;
 
 const generateObjToLoad = (kind, templateName, namespace = 'default') => {
   const sampleObj = safeLoad(yamlTemplates.getIn([kind, templateName]));
@@ -41,7 +29,7 @@ const stateToProps = ({k8s, UI}) => ({
 });
 
 /**
- * This component loads the entire Ace editor library (~100kB) with it.
+ * This component loads the entire Monaco editor library with it.
  * Consider using `AsyncComponent` to dynamically load this component when needed.
  */
 /** @augments {React.Component<{obj?: any, create: boolean, kind: string, redirectURL?: string, resourceObjPath?: (obj: K8sResourceKind, objRef: string) => string}>} */
@@ -58,16 +46,18 @@ export const EditYAML = connect(stateToProps)(
         sampleObj: props.sampleObj,
         fileUpload: props.fileUpload,
       };
-      this.id = `edit-yaml-${++id}`;
-      this.ace = null;
-      this.doc = null;
-      this.resize_ = () => this.setState({height: this.height});
+      this.monacoRef = React.createRef();
+      this.resize = () => {
+        this.setState({height: this.height});
+        this.monacoRef.current.editor.layout({height: this.editorHeight, width: this.width});
+      };
       // k8s uses strings for resource versions
       this.displayedVersion = '0';
       // Default cancel action is browser back navigation
       this.onCancel = 'onCancel' in props ? props.onCancel : history.goBack;
       this.loadSampleYaml_ = this.loadSampleYaml_.bind(this);
       this.downloadSampleYaml_ = this.downloadSampleYaml_.bind(this);
+      this.editorDidMount = this.editorDidMount.bind(this);
 
       if (this.props.error) {
         this.handleError(this.props.error);
@@ -84,36 +74,27 @@ export const EditYAML = connect(stateToProps)(
 
     handleError(error) {
       this.setState({error, success: null}, () => {
-        if (!this.ace) {
-          return;
-        }
-        this.ace.focus();
+        this.resize();
       });
     }
 
     componentDidUpdate(prevProps, prevState) {
-      if (_.isEqual(prevState, this.state) || !this.ace) {
-        return;
+      if (!_.isEqual(prevState, this.state)) {
+        this.resize();
       }
-      // trigger a resize of ace if any state changed...
-      this.ace.resize(true);
     }
 
     componentDidMount() {
       this.loadYaml();
-      window.addEventListener('resize', this.resize_);
+      window.addEventListener('resize', this.resize);
+      window.addEventListener('nav_toggle', this.resize);
+      window.addEventListener('sidebar_toggle', this.resize);
     }
 
     componentWillUnmount() {
-      if (this.ace) {
-        this.ace.destroy();
-        // Avoid the use of .remove() to be compatible with IE 11
-        this.ace.container.parentNode.removeChild(this.ace.container);
-        this.ace = null;
-        window.ace = null;
-      }
-      window.removeEventListener('resize', this.resize_);
-      this.doc = null;
+      window.removeEventListener('resize', this.resize);
+      window.removeEventListener('nav_toggle', this.resize);
+      window.removeEventListener('sidebar_toggle', this.resize);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -138,11 +119,28 @@ export const EditYAML = connect(stateToProps)(
       }
     }
 
+    editorDidMount(editor) {
+      editor.layout();
+      editor.focus();
+    }
+
+    get editorHeight() {
+      return Math.floor(this.height - this.buttons.getBoundingClientRect().height);
+    }
+
     get height() {
       return Math.floor(
         // notifications can appear above and below .pf-c-page, so calculate height using the bottom of .pf-c-page
         document.getElementsByClassName('pf-c-page')[0].getBoundingClientRect().bottom - this.editor.getBoundingClientRect().top
       );
+    }
+
+    get width() {
+      const sidebar = _.first(document.getElementsByClassName('co-p-has-sidebar__sidebar'));
+      const pageWidth = document.getElementById('content-scrollable').getBoundingClientRect().width;
+      return sidebar
+        ? pageWidth - sidebar.getBoundingClientRect().width
+        : pageWidth;
     }
 
     reload() {
@@ -175,29 +173,13 @@ export const EditYAML = connect(stateToProps)(
         namespace,
       };
       checkAccess(resourceAttributes, impersonate).then(resp => {
-        if (!resp.status.allowed) {
-          this.setState({ notAllowed: true });
-          this.ace.setReadOnly(true);
-        }
+        this.setState({notAllowed: !resp.status.allowed});
       });
     }
 
-    loadYaml(reload = false, obj = this.props.obj, readOnly = this.props.readOnly) {
+    loadYaml(reload = false, obj = this.props.obj) {
       if (this.state.initialized && !reload) {
         return;
-      }
-
-      if (!this.ace) {
-        this.ace = ace.edit(this.id);
-        // TODO (kans) not this!
-        window.ace = this.ace;
-        // Squelch warning from Ace
-        this.ace.$blockScrolling = Infinity;
-        const es = this.ace.getSession();
-        es.setMode('ace/mode/yaml');
-        this.ace.setTheme('ace/theme/clouds');
-        es.setUseWrapMode(true);
-        this.doc = es.getDocument();
       }
 
       let yaml = '';
@@ -214,29 +196,19 @@ export const EditYAML = connect(stateToProps)(
         }
       }
 
-      this.doc.setValue(yaml);
-      this.ace.moveCursorTo(0, 0);
-      this.ace.clearSelection();
-      this.ace.setOption('scrollPastEnd', 0.1);
-      this.ace.setOption('tabSize', 2);
-      this.ace.setOption('showPrintMargin', false);
-      this.ace.setOptions({enableBasicAutocompletion: true, enableLiveAutocompletion: !window.navigator.webdriver, enableSnippets: true});
-
-      // Allow undo after saving but not after first loading the document
-      if (!this.state.initialized) {
-        this.ace.getSession().setUndoManager(new ace.UndoManager());
-      }
-      this.ace.focus();
-      this.ace.setReadOnly(readOnly);
       this.displayedVersion = _.get(obj, 'metadata.resourceVersion');
-      this.setState({initialized: true, stale: false});
-      this.resize_();
+      this.setState({yaml, initialized: true, stale: false});
+      this.resize();
+    }
+
+    getEditor() {
+      return this.monacoRef.current.editor;
     }
 
     save() {
       let obj;
       try {
-        obj = safeLoad(this.doc.getValue());
+        obj = safeLoad(this.getEditor().getValue());
       } catch (e) {
         this.handleError(`Error parsing YAML: ${e}`);
         return;
@@ -312,12 +284,13 @@ export const EditYAML = connect(stateToProps)(
             const success = `${newName} has been updated to version ${o.metadata.resourceVersion}`;
             this.setState({success, error: null});
             this.loadYaml(true, o);
+            this.resize();
           })
           .catch(e => this.handleError(e.message));
       });
     }
 
-    download(data = this.doc.getValue()) {
+    download(data = this.getEditor().getValue()) {
       const blob = new Blob([data], { type: 'text/yaml;charset=utf-8' });
       let filename = 'k8s-object.yaml';
       try {
@@ -346,20 +319,15 @@ export const EditYAML = connect(stateToProps)(
       if (!this.props.create && !this.props.obj) {
         return <Loading />;
       }
-      /*
-        Rendering:
-        Our parent divs are meta objects created by third parties... but we need 100% height in all parents for flexbox :-/
-        The current solution uses divs that are relative -> absolute -> flexbox pinning the button row with margin-top: auto
-      */
 
       const { connectDropTarget, isOver, canDrop } = this.props;
       const klass = classNames('co-file-dropzone-container', {'co-file-dropzone--drop-over': isOver});
 
-      const {error, success, stale} = this.state;
+      const {error, success, stale, yaml, height} = this.state;
       const {create, obj, download = true, header} = this.props;
       const readOnly = this.props.readOnly || this.state.notAllowed;
+      const options = { readOnly, scrollBeyondLastLine: false };
       const model = this.getModel(obj);
-
       const editYamlComponent = <div className="co-file-dropzone">
         { canDrop && <div className={klass}><p className="co-file-dropzone__drop-text">Drop file here</p></div> }
 
@@ -368,30 +336,36 @@ export const EditYAML = connect(stateToProps)(
             <h1 className="yaml-editor__header-text">{header}</h1>
             <p className="help-block">Create by manually entering YAML or JSON definitions, or by dragging and dropping a file into the editor.</p>
           </div>}
-          <div className="co-p-has-sidebar">
-            <div className="co-p-has-sidebar__body">
-              <div className={classNames('pf-c-form yaml-editor', {'yaml-editor--readonly': readOnly})} ref={r => this.editor = r} style={{height: this.state.height}}>
-                <div className="absolute-zero">
-                  <div className="full-width-and-height yaml-editor__flexbox">
-                    <div id={this.id} key={this.id} className="yaml-editor__acebox" />
-                    <div className="yaml-editor__buttons">
-                      {error && <Alert isInline className="co-alert co-alert--scrollable" variant="danger" title="An error occurred"><div className="co-pre-line">{error}</div></Alert>}
-                      {success && <Alert isInline className="co-alert" variant="success" title={success} />}
-                      {stale && <Alert isInline className="co-alert" variant="info" title="This object has been updated.">Click reload to see the new version.</Alert>}
-                      <ActionGroup className="pf-c-form__group--no-top-margin">
-                        {create && <Button type="submit" variant="primary" id="save-changes" onClick={() => this.save()}>Create</Button>}
-                        {!create && !readOnly && <Button type="submit" variant="primary" id="save-changes" onClick={() => this.save()}>Save</Button>}
-                        {!create && <Button type="submit" variant="secondary" id="reload-object" onClick={() => this.reload()}>Reload</Button>}
-                        <Button variant="secondary" id="cancel" onClick={() => this.onCancel()}>Cancel</Button>
-                        {download && <Button type="submit" variant="secondary" className="pf-c-button--align-right hidden-sm hidden-xs" onClick={() => this.download()}><DownloadIcon /> Download</Button>}
-                      </ActionGroup>
-                    </div>
+          <div className="pf-c-form">
+            <div className="co-p-has-sidebar">
+              <div className="co-p-has-sidebar__body">
+                <div className={classNames('yaml-editor', {'yaml-editor--readonly': readOnly})} ref={r => this.editor = r}>
+                  <MonacoEditor
+                    ref={this.monacoRef}
+                    language="yaml"
+                    theme="vs-dark"
+                    value={yaml}
+                    options={options}
+                    editorDidMount={this.editorDidMount}
+                    onChange={(newValue) => this.setState({yaml: newValue})}
+                  />
+                  <div className="yaml-editor__buttons" ref={r => this.buttons = r}>
+                    {error && <Alert isInline className="co-alert co-alert--scrollable" variant="danger" title="An error occurred"><div className="co-pre-line">{error}</div></Alert>}
+                    {success && <Alert isInline className="co-alert" variant="success" title={success} />}
+                    {stale && <Alert isInline className="co-alert" variant="info" title="This object has been updated.">Click reload to see the new version.</Alert>}
+                    <ActionGroup className="pf-c-form__group--no-top-margin">
+                      {create && <Button type="submit" variant="primary" id="save-changes" onClick={() => this.save()}>Create</Button>}
+                      {!create && !readOnly && <Button type="submit" variant="primary" id="save-changes" onClick={() => this.save()}>Save</Button>}
+                      {!create && <Button type="submit" variant="secondary" id="reload-object" onClick={() => this.reload()}>Reload</Button>}
+                      <Button variant="secondary" id="cancel" onClick={() => this.onCancel()}>Cancel</Button>
+                      {download && <Button type="submit" variant="secondary" className="pf-c-button--align-right hidden-sm hidden-xs" onClick={() => this.download()}><DownloadIcon /> Download</Button>}
+                    </ActionGroup>
                   </div>
                 </div>
               </div>
+              {create && <ResourceSidebar isCreateMode={create} kindObj={model} height={height} loadSampleYaml={this.loadSampleYaml_} downloadSampleYaml={this.downloadSampleYaml_} />}
+              {!create && <ExploreTypeSidebar kindObj={model} height={this.state.height} />}
             </div>
-            {create && <ResourceSidebar isCreateMode={create} kindObj={model} height={this.state.height} loadSampleYaml={this.loadSampleYaml_} downloadSampleYaml={this.downloadSampleYaml_} />}
-            {!create && <ExploreTypeSidebar kindObj={model} height={this.state.height} />}
           </div>
         </div>
       </div>;

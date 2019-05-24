@@ -23,9 +23,9 @@ describe('Interacting with the environment variable editor', () => {
     await crudView.isLoaded();
     await crudView.createYAMLButton.click();
     await yamlView.isLoaded();
-    const content = await yamlView.editorContent.getText();
+    const content = await yamlView.getEditorContent();
     const newContent = _.defaultsDeep({}, {metadata: {name: WORKLOAD_NAME, labels: {['lbl-env']: testName}}}, safeLoad(content));
-    await yamlView.setContent(safeDump(newContent));
+    await yamlView.setEditorContent(safeDump(newContent));
     await crudView.saveChangesBtn.click();
     // Wait until the resource is created and the details page loads before continuing.
     await browser.wait(until.presenceOf(crudView.actionsButton));

@@ -8,6 +8,7 @@ import * as catalogView from '../../views/catalog.view';
 import * as catalogPageView from '../../views/catalog-page.view';
 import * as operatorHubView from '../../views/operator-hub.view';
 import * as sidenavView from '../../views/sidenav.view';
+import * as yamlView from '../../views/yaml.view';
 
 describe('Interacting with a `OwnNamespace` install mode Operator (Prometheus)', () => {
   const prometheusResources = new Set(['StatefulSet', 'Pod']);
@@ -145,7 +146,7 @@ describe('Interacting with a `OwnNamespace` install mode Operator (Prometheus)',
     await element(by.buttonText('Create New')).click();
     await browser.wait(until.visibilityOf($$('.pf-c-dropdown__menu').first()), 1000);
     await $$('.pf-c-dropdown__menu').first().element(by.buttonText('Prometheus')).click();
-    await browser.wait(until.presenceOf($('.ace_text-input')));
+    await yamlView.isLoaded();
 
     expect($('.co-create-operand__header').getText()).toContain('Create Prometheus');
   });
@@ -191,7 +192,7 @@ describe('Interacting with a `OwnNamespace` install mode Operator (Prometheus)',
     await element(by.buttonText('Create New')).click();
     await browser.wait(until.visibilityOf($$('.pf-c-dropdown__menu').first()), 1000);
     await $$('.pf-c-dropdown__menu').first().element(by.buttonText('Alertmanager')).click();
-    await browser.wait(until.presenceOf($('.ace_text-input')));
+    await yamlView.isLoaded();
 
     expect($('.co-create-operand__header').getText()).toContain('Create Alertmanager');
   });
@@ -237,7 +238,7 @@ describe('Interacting with a `OwnNamespace` install mode Operator (Prometheus)',
     await element(by.buttonText('Create New')).click();
     await browser.wait(until.visibilityOf($$('.pf-c-dropdown__menu').first()), 1000);
     await $$('.pf-c-dropdown__menu').first().element(by.buttonText('Service Monitor')).click();
-    await browser.wait(until.presenceOf($('.ace_text-input')), 10000);
+    await yamlView.isLoaded();
 
     expect($('.co-create-operand__header').getText()).toContain('Create Service Monitor');
   });

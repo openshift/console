@@ -8,6 +8,8 @@ import * as VirtualModulesPlugin from 'webpack-virtual-modules';
 
 import { resolvePluginPackages, getActivePluginsModule } from '@console/plugin-sdk/src/codegen';
 
+const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
+
 const NODE_ENV = process.env.NODE_ENV;
 
 /* Helpers */
@@ -85,6 +87,11 @@ const config: webpack.Configuration = {
         ],
       },
       {
+        test: /\.css$/,
+        include: path.resolve(__dirname, './node_modules/monaco-editor'),
+        use: ['style-loader', 'css-loader'],
+      },
+      {
         test: /\.(png|jpg|jpeg|gif|svg|woff2?|ttf|eot|otf)(\?.*$|$)/,
         loader: 'file-loader',
         options: {
@@ -113,6 +120,9 @@ const config: webpack.Configuration = {
       template: './public/index.html',
       production: NODE_ENV === 'production',
       chunksSortMode: 'none',
+    }),
+    new MonacoWebpackPlugin({
+      languages: ['yaml'],
     }),
     extractCSS,
   ],

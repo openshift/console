@@ -20,19 +20,6 @@ body,
   -webkit-overflow-scrolling: touch;
 }
 
-.absolute-zero {
-  position: absolute;
-  top: 0px;
-  bottom: 0px;
-  left: 0px;
-  right: 0px;
-}
-
-.full-width-and-height {
-  width: 100%;
-  height: 100%;
-}
-
 .co-p-has-sidebar {
   position: relative;
   @media(min-width: $screen-md-min) {
@@ -73,7 +60,7 @@ body,
   &__sidebar--hidden {
     position: absolute;
     right: 13px;
-    top: 8px;
+    top: -35px;
     z-index: 1;
   }
 }

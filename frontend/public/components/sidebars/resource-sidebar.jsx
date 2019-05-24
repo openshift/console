@@ -9,9 +9,16 @@ export const sidebarScrollTop = () => {
 export class ResourceSidebarWrapper extends React.Component {
   constructor(props) {
     super(props);
+    this.toggleSidebar = this.toggleSidebar.bind(this);
     this.state = {
       showSidebar: true,
     };
+  }
+
+  toggleSidebar() {
+    this.setState(state => {
+      return {showSidebar: !state.showSidebar};
+    }, () => window.dispatchEvent(new Event('sidebar_toggle')));
   }
 
   render() {
@@ -20,16 +27,16 @@ export class ResourceSidebarWrapper extends React.Component {
     const {showSidebar} = this.state;
 
     if (!showSidebar) {
-      return <div className="co-p-has-sidebar__sidebar--hidden hidden-sm">
-        <button className="btn btn-link" onClick={() => this.setState({showSidebar: !showSidebar})}>
+      return <div className="co-p-has-sidebar__sidebar--hidden hidden-sm hidden-xs">
+        <button className="btn btn-link" onClick={this.toggleSidebar}>
           <i className="fa fa-fw fa-info-circle co-p-has-sidebar__sidebar-link-icon" aria-hidden="true" />{linkLabel}
         </button>
       </div>;
     }
 
-    return <div className="co-p-has-sidebar__sidebar co-p-has-sidebar__sidebar--bordered hidden-sm" style={{height}}>
+    return <div className="co-p-has-sidebar__sidebar co-p-has-sidebar__sidebar--bordered hidden-sm hidden-xs" style={{height}}>
       <div className="co-m-pane__body">
-        <button type="button" className="close" aria-label="Close" onClick={() => this.setState({showSidebar: !showSidebar})}>
+        <button type="button" className="close" aria-label="Close" onClick={this.toggleSidebar}>
           <i className="pficon pficon-close" aria-hidden="true" />
         </button>
         <h1 className="co-p-has-sidebar__sidebar-heading co-resource-sidebar-header text-capitalize">

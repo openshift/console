@@ -22,9 +22,9 @@ describe('Modal Annotations', () => {
     await crudView.isLoaded();
     await crudView.createYAMLButton.click();
     await yamlView.isLoaded();
-    const content = await yamlView.editorContent.getText();
+    const content = await yamlView.getEditorContent();
     const newContent = _.defaultsDeep({}, {metadata: {name: WORKLOAD_NAME, labels: {'lbl-modal': testName}}}, safeLoad(content));
-    await yamlView.setContent(safeDump(newContent));
+    await yamlView.setEditorContent(safeDump(newContent));
     await crudView.saveChangesBtn.click();
     // Wait until the resource is created and the details page loads before continuing.
     await browser.wait(until.presenceOf(crudView.resourceTitle));
@@ -175,7 +175,7 @@ describe('Modal Annotations', () => {
     await validateKeyAndValue(annotationKey, annotationValue, true);
     await browser.get(`${appHost}/k8s/ns/${testName}/deployments/${WORKLOAD_NAME}/yaml`);
     await yamlView.isLoaded();
-    expect(yamlView.editorContent.getText()).toContain(annotationYAML);
+    expect(yamlView.getEditorContent()).toContain(annotationYAML);
   });
 
   // Scenario: Add alphanumeric Annotation from object detail
@@ -197,7 +197,7 @@ describe('Modal Annotations', () => {
 
     await browser.get(`${appHost}/k8s/ns/${testName}/deployments/${WORKLOAD_NAME}/yaml`);
     await yamlView.isLoaded();
-    expect(yamlView.editorContent.getText()).toContain(annotationYAML);
+    expect(yamlView.getEditorContent()).toContain(annotationYAML);
   });
 
   // Scenario: Add Annotation without value
@@ -217,7 +217,7 @@ describe('Modal Annotations', () => {
 
     await browser.get(`${appHost}/k8s/ns/${testName}/deployments/${WORKLOAD_NAME}/yaml`);
     await yamlView.isLoaded();
-    expect(yamlView.editorContent.getText()).toContain(annotationYAML);
+    expect(yamlView.getEditorContent()).toContain(annotationYAML);
   });
 
   // Scenario: Add annotation wihout key
@@ -270,7 +270,7 @@ describe('Modal Annotations', () => {
 
     await browser.get(`${appHost}/k8s/ns/${testName}/deployments/${WORKLOAD_NAME}/yaml`);
     await yamlView.isLoaded();
-    expect(yamlView.editorContent.getText()).toContain(annotationYAML);
+    expect(yamlView.getEditorContent()).toContain(annotationYAML);
   });
 
   // Scenario: Cancel add Annotation

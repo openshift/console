@@ -147,10 +147,9 @@ export const createNamespacedTestResource = async(kindModel, name) => {
   const next = await browser.getCurrentUrl();
   await browser.get(`${appHost}/k8s/ns/${testName}/${kindModel.plural}/~new`);
   await yamlView.isLoaded();
-  const content = await yamlView.editorContent.getText();
+  const content = await yamlView.getEditorContent();
   const newContent = _.defaultsDeep({}, {metadata: {name, labels: {automatedTestName: testName}}}, safeLoad(content));
-  await yamlView.setContent(safeDump(newContent));
-  await browser.wait(until.textToBePresentInElement(yamlView.editorContent, name));
+  await yamlView.setEditorContent(safeDump(newContent));
   await yamlView.saveButton.click();
   await browser.wait(until.presenceOf($(`.co-m-${kindModel.kind}`)));
   await browser.get(next);
