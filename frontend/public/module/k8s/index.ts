@@ -11,6 +11,7 @@ export * from './label-selector';
 export * from './cluster-operator';
 export * from './cluster-settings';
 export * from './template';
+export * from './swagger';
 
 export type OwnerReference = {
   name: string;

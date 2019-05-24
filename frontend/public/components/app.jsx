@@ -14,7 +14,7 @@ import { getBrandingDetails, Masthead } from './masthead';
 import { Navigation } from './nav';
 import { history } from './utils';
 import * as UIActions from '../actions/ui';
-import { getCachedResources } from '../module/k8s';
+import { fetchSwagger, getCachedResources } from '../module/k8s';
 import { ActionType, watchAPIServices } from '../actions/k8s';
 import '../vendor.scss';
 import '../style.scss';
@@ -140,6 +140,9 @@ store.dispatch(detectFeatures());
 
 // Global timer to ensure all <Timestamp> components update in sync
 setInterval(() => store.dispatch(UIActions.updateTimestamps(Date.now())), 10000);
+
+// Fetch swagger on load if it's stale.
+fetchSwagger();
 
 // Used by GUI tests to check for unhandled exceptions
 window.windowError = false;

@@ -3,10 +3,9 @@ import { Map as ImmutableMap } from 'immutable';
 import * as _ from 'lodash-es';
 
 import { ServiceAccountModel, SecretModel, ServiceModel, ConfigMapModel, AlertmanagerModel } from '../../models';
-import { K8sKind, K8sResourceKind } from '../../module/k8s';
+import { getStoredSwagger, K8sKind, K8sResourceKind, SwaggerDefinitions } from '../../module/k8s';
 import { k8sListPartialMetadata } from '../../module/k8s/resource';
 import { getActiveNamespace } from '../../actions/ui';
-import { SWAGGER_SESSION_STORAGE_KEY } from '../../const';
 
 export type AceSnippet = {
   content: string;
@@ -138,7 +137,7 @@ export const getPropertyCompletions = async(state: Editor, session: IEditSession
 
   const kind = valueFor('kind');
   const apiVersion = valueFor('apiVersion');
-  const swaggerDefinitions: SwaggerDefinitions = JSON.parse(window.sessionStorage.getItem(SWAGGER_SESSION_STORAGE_KEY));
+  const swaggerDefinitions: SwaggerDefinitions = getStoredSwagger();
 
   if (kind.length && apiVersion.length && swaggerDefinitions) {
     const defKey = Object.keys(swaggerDefinitions).find(key => key.endsWith(`${apiVersion.replace('/', '.')}.${kind}`));
@@ -202,20 +201,6 @@ export const getCompletions: Completer['getCompletions'] = (editor, session, pos
   } else {
     getPropertyCompletions(editor, session, pos, prefix, callback);
   }
-};
-
-export type SwaggerDefinitions = {
-  [name: string]: {
-    description: string;
-    properties: {[prop: string]: {description: string, type: string}};
-  }
-};
-
-export type SwaggerAPISpec = {
-  swagger: string;
-  info: {title: string, version: string};
-  paths: {[path: string]: any};
-  definitions: SwaggerDefinitions;
 };
 
 // TODO: Remove once https://github.com/DefinitelyTyped/DefinitelyTyped/pull/25337 is merged
