@@ -218,7 +218,7 @@ type GraphProps = {
     values: GraphDataPoint[];
   }[];
   domain: Domain;
-  onZoom: (Domain) => void;
+  onZoom: (range: Domain) => void;
   query: string;
 };
 
@@ -226,7 +226,7 @@ type QueryBrowserProps = {
   colors: string[];
   GraphLink: React.ComponentType<any>;
   metric: string;
-  onDataUpdate: (GraphDataMetric) => void;
+  onDataUpdate: (data: GraphDataMetric) => void;
   query: string;
   samples?: number;
   timeout?: number;
