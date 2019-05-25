@@ -176,7 +176,7 @@ const ToggleGraph_ = ({hideGraphs, toggle}) => {
     {hideGraphs ? 'Show' : 'Hide'} Graph <i className={iconClass} aria-hidden="true" />
   </button>;
 };
-const ToggleGraph = connect(graphStateToProps, {toggle: UIActions.ActionType.ToggleMonitoringGraphs})(ToggleGraph_);
+const ToggleGraph = connect(graphStateToProps, {toggle: UIActions.monitoringToggleGraphs})(ToggleGraph_);
 
 // Plotly default colors:
 const graphColors = [

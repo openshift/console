@@ -20,7 +20,7 @@ export enum ActionType {
   SetCreateProjectMessage = 'setCreateProjectMessage',
   SetCurrentLocation = 'setCurrentLocation',
   SetMonitoringData = 'setMonitoringData',
-  ToggleMonitoringGraphs = 'toggleMonitoringGraphs',
+  ToggleMonitoringGraphs = 'monitoringToggleGraphs',
   SetUser = 'setUser',
   SortList = 'sortList',
   BeginImpersonate = 'beginImpersonate',
@@ -182,7 +182,7 @@ export const updateOverviewFilterValue = (value: string) => action(ActionType.Up
 export const monitoringLoading = (key: 'alerts' | 'silences') => action(ActionType.SetMonitoringData, {key, data: {loaded: false, loadError: null, data: null}});
 export const monitoringLoaded = (key: 'alerts' | 'silences', data: any) => action(ActionType.SetMonitoringData, {key, data: {loaded: true, loadError: null, data}});
 export const monitoringErrored = (key: 'alerts' | 'silences', loadError: any) => action(ActionType.SetMonitoringData, {key, data: {loaded: true, loadError, data: null}});
-export const toggleMonitoringGraphs = () => action(ActionType.ToggleMonitoringGraphs);
+export const monitoringToggleGraphs = () => action(ActionType.ToggleMonitoringGraphs);
 
 // TODO(alecmerdler): Implement all actions using `typesafe-actions` and add them to this export
 const uiActions = {
@@ -206,7 +206,7 @@ const uiActions = {
   monitoringLoading,
   monitoringLoaded,
   monitoringErrored,
-  toggleMonitoringGraphs,
+  monitoringToggleGraphs,
 };
 
 export type UIAction = Action<typeof uiActions>;
