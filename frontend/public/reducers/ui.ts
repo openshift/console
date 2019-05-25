@@ -2,13 +2,35 @@ import * as _ from 'lodash-es';
 import { Map as ImmutableMap } from 'immutable';
 
 import { ActionType, UIAction } from '../actions/ui';
-import { ALL_NAMESPACES_KEY, LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY, NAMESPACE_LOCAL_STORAGE_KEY } from '../const';
+import {
+  ALL_NAMESPACES_KEY,
+  LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY,
+  NAMESPACE_LOCAL_STORAGE_KEY,
+  LAST_PERSPECTIVE_LOCAL_STORAGE_KEY,
+} from '../const';
 import { AlertStates, isSilenced, SilenceStates } from '../reducers/monitoring';
 import { legalNamePattern, getNamespace } from '../components/utils/link';
 import { OverviewSpecialGroup } from '../components/overview/constants';
 import { RootState } from '../redux';
+import * as plugins from '../plugins';
 
 export type UIState = ImmutableMap<string, any>;
+
+export function getDefaultPerspective() {
+  let activePerspective = localStorage.getItem(LAST_PERSPECTIVE_LOCAL_STORAGE_KEY);
+  if (activePerspective && !plugins.registry.getPerspectives().some(p => p.properties.id === activePerspective)) {
+    // invalid saved perspective
+    activePerspective = undefined;
+  }
+  if (!activePerspective) {
+    // assign default perspective
+    const defaultPerspective = plugins.registry.getPerspectives().find(p => p.properties.default);
+    if (defaultPerspective) {
+      activePerspective = defaultPerspective.properties.id;
+    }
+  }
+  return activePerspective;
+}
 
 export default (state: UIState, action: UIAction): UIState => {
   if (!state) {
@@ -28,6 +50,7 @@ export default (state: UIState, action: UIAction): UIState => {
       activeNavSectionId: 'workloads',
       location: pathname,
       activeNamespace: activeNamespace || 'default',
+      activePerspective: getDefaultPerspective(),
       createProjectMessage: '',
       overview: ImmutableMap({
         metrics: {},
@@ -51,6 +74,9 @@ export default (state: UIState, action: UIAction): UIState => {
         return state;
       }
       return state.set('activeNamespace', action.payload.namespace);
+
+    case ActionType.SetActivePerspective:
+      return state.set('activePerspective', action.payload.perspective);
 
     case ActionType.SetCurrentLocation: {
       state = state.set('location', action.payload.location);
@@ -155,3 +181,5 @@ export const userStateToProps = ({UI}: RootState) => {
 export const impersonateStateToProps = ({UI}: RootState) => {
   return {impersonate: UI.get('impersonate')};
 };
+
+export const getActivePerspective = ({ UI }: RootState) => UI.get('activePerspective');

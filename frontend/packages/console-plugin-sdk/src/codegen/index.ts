@@ -41,7 +41,8 @@ export const readPackages = (packageFiles: string[]) => {
  * Get the list of plugins to be used for the build.
  */
 export const getActivePluginPackages = (appPackage: Package, pluginPackages: PluginPackage[]) => {
-  return pluginPackages.filter(pkg => appPackage.dependencies[pkg.name] === pkg.version);
+  // active plugins include dependencies of the appPackage or the appPackage itself
+  return pluginPackages.filter(pkg => appPackage === pkg || appPackage.dependencies[pkg.name] === pkg.version);
 };
 
 /**

@@ -8,5 +8,8 @@
     "@console/internal": "0.0.0-fixed",
     "@console/plugin-sdk": "0.0.0-fixed",
     "@console/shared": "0.0.0-fixed"
+  },
+  "consolePlugin": {
+    "entry": "src/plugin.tsx"
   }
 }

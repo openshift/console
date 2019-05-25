@@ -8,6 +8,6 @@
     "@console/shared": "0.0.0-fixed"
   },
   "consolePlugin": {
-    "entry": "src/plugin.ts"
+    "entry": "src/plugin.tsx"
   }
 }
