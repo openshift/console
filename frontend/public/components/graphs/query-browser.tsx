@@ -189,7 +189,7 @@ export const QueryBrowser: React.FC<QueryBrowserProps> = ({colors, GraphLink, me
       </div>
     </div>
     {error && <div className="alert alert-danger query-browser__error">
-      <span className="pficon pficon-error-circle-o" aria-hidden="true"></span>{error.message}
+      <span className="pficon pficon-error-circle-o" aria-hidden="true"></span>{_.get(error, 'json.error', error.message)}
     </div>}
     <Graph colors={colors} data={graphData} domain={graphDomain} onZoom={onZoom} query={query} />
   </div>;
