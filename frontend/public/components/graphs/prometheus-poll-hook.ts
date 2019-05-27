@@ -33,7 +33,7 @@ export const usePrometheusPoll = ({
       console.error(`Error polling Prometheus: ${err}`);
     }), [url]);
 
-  usePoll(tick, delay, endTime, timespan);
+  usePoll(tick, delay, endTime, query, timespan);
 
   return [response, error];
 };
