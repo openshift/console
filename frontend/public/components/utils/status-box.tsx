@@ -54,7 +54,12 @@ const Data: React.FC<DataProps> = ({EmptyMsg, label, data, children}) => {
       {EmptyMsg ? <EmptyMsg /> : <EmptyBox label={label} />}
     </div>;
   }
-  return <div className="loading-box loading-box__loaded">{children}</div>;
+  return (
+    <React.Fragment>
+      {children}
+      <div className="loading-box loading-box__loaded"></div>
+    </React.Fragment>
+  );
 };
 Data.displayName = 'Data';
 

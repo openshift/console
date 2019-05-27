@@ -250,7 +250,7 @@ export const Catalog = connectToFlags(FLAGS.OPENSHIFT, FLAGS.SERVICE_CATALOG, FL
     }] : []),
   ];
 
-  return <Firehose resources={mock ? [] : resources} className="co-catalog-connect">
+  return <Firehose resources={mock ? [] : resources}>
     <CatalogListPage namespace={namespace} />
   </Firehose>;
 });

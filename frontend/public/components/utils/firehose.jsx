@@ -89,9 +89,9 @@ const ConnectToState = connect(({k8s}, {reduxes}) => {
   });
 }, null, null, {
   areStatesEqual: (next, prev) => (next.k8s === prev.k8s),
-})(props => <div className={props.className}>
-  {inject(props.children, _.omit(props, ['children', 'className', 'reduxes']))}
-</div>);
+})(props =>
+  inject(props.children, _.omit(props, ['children', 'className', 'reduxes']))
+);
 
 const stateToProps = ({k8s}, {resources}) => {
   const k8sModels = resources.reduce((models, {kind}) => models.set(kind, k8s.getIn(['RESOURCES', 'models', kind])), ImmutableMap());
@@ -180,12 +180,11 @@ export const Firehose = connect(
       const reduxes = this.firehoses.map(({id, prop, isList, filters, optional}) => ({reduxID: id, prop, isList, filters, optional}));
       const children = inject(this.props.children, _.omit(this.props, [
         'children',
-        'className',
         'resources',
       ]));
 
       return this.props.loaded || this.firehoses.length > 0
-        ? <ConnectToState reduxes={reduxes} className={this.props.className}> {children} </ConnectToState>
+        ? <ConnectToState reduxes={reduxes}>{children}</ConnectToState>
         : null;
     }
   }
@@ -208,7 +207,6 @@ Firehose.propTypes = {
     namespace: PropTypes.string,
     selector: PropTypes.object,
     fieldSelector: PropTypes.string,
-    className: PropTypes.string,
     isList: PropTypes.bool,
     optional: PropTypes.bool,
   })).isRequired,

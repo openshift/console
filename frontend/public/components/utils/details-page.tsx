@@ -31,7 +31,7 @@ export const ResourceSummary: React.SFC<ResourceSummaryProps> = ({children, reso
     .map((o, i) => <ResourceLink key={i} kind={referenceForOwnerRef(o)} name={o.name} namespace={metadata.namespace} title={o.uid} />);
   const tolerations = showTolerations ? getTolerations(resource) : null;
 
-  return <dl className="co-m-pane__details">
+  return <dl data-test-id="resource-summary" className="co-m-pane__details">
     <dt>Name</dt>
     <dd>{metadata.name || '-'}</dd>
     { metadata.namespace ? <dt>Namespace</dt> : null }
@@ -47,7 +47,7 @@ export const ResourceSummary: React.SFC<ResourceSummaryProps> = ({children, reso
     {showTolerations && <dt>Tolerations</dt>}
     {showTolerations && <dd><button type="button" className="btn btn-link co-modal-btn-link co-modal-btn-link--left" onClick={Kebab.factory.ModifyTolerations(model, resource).callback}>{pluralize(_.size(tolerations), 'Toleration')}</button></dd>}
     {showAnnotations && <dt>Annotations</dt>}
-    {showAnnotations && <dd><button type="button" className="btn btn-link co-modal-btn-link co-modal-btn-link--left" onClick={Kebab.factory.ModifyAnnotations(model, resource).callback}>{pluralize(_.size(metadata.annotations), 'Annotation')}</button></dd>}
+    {showAnnotations && <dd><button data-test-id="edit-annotations" type="button" className="btn btn-link co-modal-btn-link co-modal-btn-link--left" onClick={Kebab.factory.ModifyAnnotations(model, resource).callback}>{pluralize(_.size(metadata.annotations), 'Annotation')}</button></dd>}
     {children}
     <dt>Created At</dt>
     <dd><Timestamp timestamp={metadata.creationTimestamp} /></dd>
