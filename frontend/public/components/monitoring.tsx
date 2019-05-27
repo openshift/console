@@ -949,7 +949,14 @@ const MetricsList = ({metrics}) => <div className="co-m-table-grid co-m-table-gr
 
 const QueryBrowserPage = () => {
   const [metrics, setMetrics] = React.useState([]);
-  const [query, setQuery] = React.useState(getURLSearchParams().query);
+  const defaultQuery = getURLSearchParams().query || '';
+  const [query, setQuery] = React.useState(defaultQuery);
+  const [queryText, setQueryText] = React.useState(defaultQuery);
+
+  const runQueries = e => {
+    e.preventDefault();
+    setQuery(queryText);
+  };
 
   return <React.Fragment>
     <div className="co-m-nav-title">
@@ -969,20 +976,25 @@ const QueryBrowserPage = () => {
             timeout="5s"
             timespan={30 * 60 * 1000}
           />
-          <div className="group">
-            <div className="group__title">
-              <input
-                className="form-control"
-                onChange={e => setQuery(e.target.value)}
-                placeholder="Expression (press Shift+Enter for newlines)"
-                type="text"
-                value={query}
-              />
+          <form onSubmit={runQueries}>
+            <div className="group">
+              <div className="group__title">
+                <button type="submit" className="btn btn-primary">Run Queries</button>
+              </div>
+              <div className="group__title">
+                <input
+                  className="form-control"
+                  onChange={e => setQueryText(e.target.value)}
+                  placeholder="Expression (press Shift+Enter for newlines)"
+                  type="text"
+                  value={queryText}
+                />
+              </div>
+              <div className="group__body group__body--query-browser">
+                <MetricsList metrics={metrics} />
+              </div>
             </div>
-            <div className="group__body group__body--query-browser">
-              <MetricsList metrics={metrics} />
-            </div>
-          </div>
+          </form>
         </div>
       </div>
     </div>
