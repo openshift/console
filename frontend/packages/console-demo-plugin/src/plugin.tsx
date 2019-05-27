@@ -11,6 +11,7 @@ import {
   ResourceListPage,
   ResourceDetailPage,
   Perspective,
+  YAMLTemplate,
 } from '@console/plugin-sdk';
 
 // TODO(vojtech): internal code needed by plugins should be moved to console-shared package
@@ -18,6 +19,7 @@ import { PodModel } from '@console/internal/models';
 import { FLAGS } from '@console/internal/const';
 
 import * as models from './models';
+import { yamlTemplates } from './yaml-templates';
 
 type ConsumedExtensions =
   | ModelDefinition
@@ -27,7 +29,8 @@ type ConsumedExtensions =
   | ResourceClusterNavItem
   | ResourceListPage
   | ResourceDetailPage
-  | Perspective;
+  | Perspective
+  | YAMLTemplate;
 
 const plugin: Plugin<ConsumedExtensions> = [
   {
@@ -108,6 +111,13 @@ const plugin: Plugin<ConsumedExtensions> = [
         </svg>
       ),
       landingPageURL: '/search',
+    },
+  },
+  {
+    type: 'YAMLTemplate',
+    properties: {
+      model: models.FooBarModel,
+      template: yamlTemplates.getIn([models.FooBarModel, 'default']),
     },
   },
 ];

@@ -75,3 +75,4 @@ export * from './models';
 export * from './nav';
 export * from './pages';
 export * from './perspective';
+export * from './yaml-templates';
