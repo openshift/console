@@ -937,7 +937,9 @@ const MetricsList = ({metrics}) => <div className="co-m-table-grid co-m-table-gr
       <div className="col-xs-9 query-browser-metric__wrapper">
         <div className="query-browser-metric__color" style={{backgroundColor: graphColors[parseInt(i, 10) % graphColors.length]}}></div>
         <div className="query-browser-metric__labels">
-          {_.map(m.labels, (v, k) => `${k}="${v}"`).join(',')}
+          {_.isEmpty(m.labels)
+            ? <span className="text-muted">{'{}'}</span>
+            : _.map(m.labels, (v, k) => `${k}="${v}"`).join(',')}
         </div>
       </div>
       <div className="col-xs-3">{m.value}</div>
