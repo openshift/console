@@ -3,6 +3,8 @@ import * as _ from 'lodash-es';
 
 import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
 import { Kebab, LabelList, navFactory, ResourceKebab, SectionHeading, ResourceLink, ResourceSummary, Timestamp, StatusIconAndText } from './utils';
+import { connectToFlags } from '../reducers/features';
+import { FLAGS } from '../const';
 
 const { common } = Kebab.factory;
 const menuActions = [...common];
@@ -48,12 +50,48 @@ const Row = ({obj}) => <div className="row co-resource-list__item">
   </div>
 </div>;
 
-const Details = ({obj}) => <React.Fragment>
-  <div className="co-m-pane__body">
-    <SectionHeading text="PersistentVolume Overview" />
-    <ResourceSummary resource={obj} podSelector="spec.podSelector" showNodeSelector={false} showPodSelector />
-  </div>
-</React.Fragment>;
+const Details_ = ({obj: pv}) =>{
+  const storageClassName = _.get(pv, 'spec.storageClassName');
+  const pvcName = _.get(pv, 'spec.claimRef.name');
+  const namespace = _.get(pv, 'spec.claimRef.namespace');
+  const storage = _.get(pv, 'spec.capacity.storage');
+  const accessModes = _.get(pv, 'spec.accessModes');
+  const volumeMode = _.get(pv, 'spec.volumeMode');
+  const reclaimPolicy = _.get(pv, 'spec.persistentVolumeReclaimPolicy');
+  return (
+    <div className="co-m-pane__body">
+      <SectionHeading text="PersistentVolume Overview" />
+      <div className="row">
+        <div className="col-sm-6">
+          <ResourceSummary resource={pv} />
+          <dt>Reclaim Policy</dt>
+          <dd>{reclaimPolicy}</dd>
+        </div>
+        <div className="col-sm-6">
+          <dl>
+            <dt>Status</dt>
+            <dd><PVStatus pv={pv} /></dd>
+            <dt>Capacity</dt>
+            <dd>{storage}</dd>
+            {!_.isEmpty(accessModes) && <React.Fragment><dt>Access Modes</dt><dd>{accessModes.join(', ')}</dd></React.Fragment>}
+            <dt>Volume Mode</dt>
+            <dd>{volumeMode || 'Filesystem' }</dd>
+            <dt>Storage Class</dt>
+            <dd>
+              {storageClassName ? <ResourceLink kind="StorageClass" name={storageClassName} /> : '-'}
+            </dd>
+            {pvcName && <React.Fragment>
+              <dt>Persistent Volume Claim</dt>
+              <dd><ResourceLink kind="PersistentVolumeClaim" name={pvcName} namespace={namespace} /></dd>
+            </React.Fragment>}
+          </dl>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const Details = connectToFlags(FLAGS.CAN_LIST_PV)(Details_);
 
 export const PersistentVolumesList = props => <List {...props} Header={Header} Row={Row} />;
 export const PersistentVolumesPage = props => <ListPage {...props} ListComponent={PersistentVolumesList} kind={kind} canCreate={true} />;
