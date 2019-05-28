@@ -111,12 +111,11 @@ export const OperatorHubItemDetails: React.SFC<OperatorHubItemDetailsProps> = ({
           <div className="co-catalog-page__overlay-body">
             <PropertiesSidePanel>
               { !installed
-                ? <Button
-                  bsStyle="primary"
-                  className="co-catalog-page__overlay-create"
-                  onClick={() => history.push(createLink)}>
+                ? <Link
+                  className="btn btn-primary co-catalog-page__overlay-create"
+                  to={createLink}>
                   Install
-                </Button>
+                </Link>
                 : <Button
                   bsStyle="default"
                   className="co-catalog-page__overlay-create"

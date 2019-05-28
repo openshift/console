@@ -33,7 +33,6 @@ export const COMMUNITY_PROVIDERS_WARNING_LOCAL_STORAGE_KEY = `${STORAGE_PREFIX}/
 // Bootstrap user for OpenShift 4.0 clusters
 export const KUBE_ADMIN_USERNAME = 'kube:admin';
 
-export const OPERATOR_HUB_CSC_BASE = 'installed';
 export const RH_OPERATOR_SUPPORT_POLICY_LINK = 'https://access.redhat.com/third-party-software-support';
 
 // Package manifests for the OperatorHub use this label.

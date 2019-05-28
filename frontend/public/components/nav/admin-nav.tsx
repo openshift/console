@@ -111,7 +111,7 @@ const AdminNav = () => (
       />
       <Separator />
       <HrefLink
-        required={[FLAGS.CAN_LIST_PACKAGE_MANIFEST, FLAGS.CAN_LIST_OPERATOR_GROUP, FLAGS.OPERATOR_HUB]}
+        required={[FLAGS.CAN_LIST_PACKAGE_MANIFEST, FLAGS.CAN_LIST_OPERATOR_GROUP, FLAGS.OPERATOR_LIFECYCLE_MANAGER]}
         href="/operatorhub"
         name="OperatorHub"
         activePath="/operatorhub/"
