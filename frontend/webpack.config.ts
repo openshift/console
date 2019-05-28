@@ -8,7 +8,7 @@ import * as ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
 import * as MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import * as VirtualModulesPlugin from 'webpack-virtual-modules';
 
-import { readPackages, resolveActivePlugins, getActivePluginsModule } from '@console/plugin-sdk/src/codegen';
+import { readPackages, getActivePluginPackages, getActivePluginsModule } from '@console/plugin-sdk/src/codegen';
 
 const NODE_ENV = process.env.NODE_ENV;
 
@@ -134,7 +134,7 @@ if (NODE_ENV === 'production') {
 /* Console plugin support */
 const packageFiles = glob.sync('packages/*/package.json', { absolute: true });
 const { appPackage, pluginPackages } = readPackages(packageFiles);
-const activePluginPackages = appPackage ? resolveActivePlugins(appPackage, pluginPackages) : [];
+const activePluginPackages = appPackage ? getActivePluginPackages(appPackage, pluginPackages) : [];
 
 config.plugins.push(
   new VirtualModulesPlugin({

@@ -5,57 +5,59 @@ import * as readPkg from 'read-pkg';
 
 export type Package = readPkg.NormalizedPackageJson;
 
-export interface PluginPackage extends Package {
+export type PluginPackage = Package & {
   consolePlugin: {
     entry: string;
   }
-}
+};
 
-export function isValidPluginPackage(pkg: Package): pkg is PluginPackage {
+/**
+ * Return `true` if the given package represents a Console plugin.
+ */
+export const isPluginPackage = (pkg: Package): pkg is PluginPackage => {
   if (!(pkg as PluginPackage).consolePlugin) {
     return false;
   }
 
   const entry = (pkg as PluginPackage).consolePlugin.entry;
-  return typeof entry === 'string' && entry.length > 0;
-}
+  return typeof entry === 'string' && !!entry;
+};
 
 /**
  * Read package metadata and detect any plugins.
  *
  * @param packageFiles Paths to `package.json` files (all the monorepo packages).
  */
-export function readPackages(packageFiles: string[]) {
+export const readPackages = (packageFiles: string[]) => {
   const pkgList: Package[] = packageFiles.map(file => readPkg.sync({ cwd: path.dirname(file), normalize: true }));
 
   return {
     appPackage: pkgList.find(pkg => pkg.name === '@console/app'),
-    pluginPackages: pkgList.filter(isValidPluginPackage),
+    pluginPackages: pkgList.filter(isPluginPackage),
   };
-}
+};
 
 /**
- * Resolve the list of active plugins.
+ * Get the list of plugins to be used for the build.
  */
-export function resolveActivePlugins(appPackage: Package, pluginPackages: PluginPackage[]) {
+export const getActivePluginPackages = (appPackage: Package, pluginPackages: PluginPackage[]) => {
   return pluginPackages.filter(pkg => appPackage.dependencies[pkg.name] === pkg.version);
-}
+};
 
 /**
- * Generate the "active plugins" module source.
+ * Generate the `@console/active-plugins` module source.
  */
-export function getActivePluginsModule(activePluginPackages: PluginPackage[]): string {
+export const getActivePluginsModule = (pluginPackages: PluginPackage[]) => {
   let output = `
     const activePlugins = [];
   `;
 
-  for (const pkg of activePluginPackages) {
-    const importName = `plugin_${activePluginPackages.indexOf(pkg)}`;
-    const importPath = `${pkg.name}/${pkg.consolePlugin.entry}`;
+  for (const pkg of pluginPackages) {
+    const importName = `plugin_${pluginPackages.indexOf(pkg)}`;
     output = `
       ${output}
-      import ${importName} from '${importPath}';
-      activePlugins.push(${importName});
+      import ${importName} from '${pkg.name}/${pkg.consolePlugin.entry}';
+      activePlugins.push({ name: '${pkg.name}', extensions: ${importName} });
     `;
   }
 
@@ -65,4 +67,4 @@ export function getActivePluginsModule(activePluginPackages: PluginPackage[]): s
   `;
 
   return output.replace(/^\s+/gm, '');
-}
+};

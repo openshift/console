@@ -1,8 +1,8 @@
 import {
   Package,
   PluginPackage,
-  isValidPluginPackage,
-  resolveActivePlugins,
+  isPluginPackage,
+  getActivePluginPackages,
   getActivePluginsModule,
 } from '..';
 
@@ -10,36 +10,36 @@ const templatePackage: Package = { name: 'test', version: '1.2.3', readme: '', _
 
 describe('codegen', () => {
 
-  describe('isValidPluginPackage', () => {
+  describe('isPluginPackage', () => {
     it('returns false if package.consolePlugin is missing', () => {
-      expect(isValidPluginPackage({
+      expect(isPluginPackage({
         ...templatePackage,
       })).toBe(false);
     });
 
     it('returns false if package.consolePlugin.entry is missing', () => {
-      expect(isValidPluginPackage({
+      expect(isPluginPackage({
         ...templatePackage,
         consolePlugin: {},
       })).toBe(false);
     });
 
     it('returns false if package.consolePlugin.entry is an empty string', () => {
-      expect(isValidPluginPackage({
+      expect(isPluginPackage({
         ...templatePackage,
         consolePlugin: { entry: '' },
       })).toBe(false);
     });
 
-    it('returns true if package.consolePlugin.entry is not an empty string', () => {
-      expect(isValidPluginPackage({
+    it('returns true if package.consolePlugin.entry is a non-empty string', () => {
+      expect(isPluginPackage({
         ...templatePackage,
         consolePlugin: { entry: 'plugin.ts' },
       })).toBe(true);
     });
   });
 
-  describe('resolveActivePlugins', () => {
+  describe('getActivePluginPackages', () => {
     it('filters out packages which are not listed in appPackage.dependencies', () => {
       const appPackage: Package = {
         ...templatePackage,
@@ -65,14 +65,14 @@ describe('codegen', () => {
         },
       ];
 
-      expect(resolveActivePlugins(appPackage, pluginPackages)).toEqual([
+      expect(getActivePluginPackages(appPackage, pluginPackages)).toEqual([
         { ...pluginPackages[0] },
       ]);
     });
   });
 
   describe('getActivePluginsModule', () => {
-    it('returns the source of a module that exports the list of active plugins', () => {
+    it('returns module source that exports the list of active plugins', () => {
       const pluginPackages: PluginPackage[] = [
         {
           ...templatePackage,
@@ -88,16 +88,17 @@ describe('codegen', () => {
         },
       ];
 
-      const expectedModule = `
+      expect(getActivePluginsModule(pluginPackages)).toBe(`
         const activePlugins = [];
-        import plugin_0 from 'bar/src/plugin.ts';
-        activePlugins.push(plugin_0);
-        import plugin_1 from 'qux-plugin/index.ts';
-        activePlugins.push(plugin_1);
-        export default activePlugins;
-      `.replace(/^\s+/gm, '');
 
-      expect(getActivePluginsModule(pluginPackages)).toBe(expectedModule);
+        import plugin_0 from 'bar/src/plugin.ts';
+        activePlugins.push({ name: 'bar', extensions: plugin_0 });
+
+        import plugin_1 from 'qux-plugin/index.ts';
+        activePlugins.push({ name: 'qux-plugin', extensions: plugin_1 });
+
+        export default activePlugins;
+      `.replace(/^\s+/gm, ''));
     });
   });
 
