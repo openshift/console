@@ -198,12 +198,12 @@ const Graph_ = ({hideGraphs, metric = undefined, samples, rule}) => {
 
   return <QueryBrowser
     colors={graphColors}
+    defaultTimespan={timespan}
     GraphLink={GraphLink}
     metric={metric}
     query={query}
     samples={samples}
     timeout="5s"
-    timespan={timespan}
   />;
 };
 const Graph = connect(graphStateToProps)(Graph_);
@@ -967,6 +967,7 @@ const QueryBrowserPage = () => {
         <div className="col-xs-12">
           <QueryBrowser
             colors={graphColors}
+            defaultTimespan={30 * 60 * 1000}
             onDataUpdate={data => setMetrics(_.map(data, d => ({
               labels: _.omitBy(d.metric, (v, k) => _.startsWith(k, '__')),
               value: _.get(_.last(d.values), 1),
@@ -974,7 +975,6 @@ const QueryBrowserPage = () => {
             query={query}
             samples={600}
             timeout="5s"
-            timespan={30 * 60 * 1000}
           />
           <form onSubmit={runQueries}>
             <div className="group">

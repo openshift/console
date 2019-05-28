@@ -89,9 +89,9 @@ const Graph: React.FC<GraphProps> = ({colors, domain, data, onZoom, query}) => {
   </PrometheusGraph>;
 };
 
-export const QueryBrowser: React.FC<QueryBrowserProps> = ({colors, GraphLink, metric, onDataUpdate, query, samples, timeout, timespan}) => {
-  // For the default time span, use the first of the suggested span options that is at least as long as timespan
-  const defaultSpanText = spans.find(s => parsePrometheusDuration(s) >= timespan);
+export const QueryBrowser: React.FC<QueryBrowserProps> = ({colors, defaultTimespan, GraphLink, metric, onDataUpdate, query, samples, timeout}) => {
+  // For the default time span, use the first of the suggested span options that is at least as long as defaultTimespan
+  const defaultSpanText = spans.find(s => parsePrometheusDuration(s) >= defaultTimespan);
 
   const [domain, setDomain] = React.useState();
   const [graphData, setGraphData] = React.useState();
@@ -111,6 +111,8 @@ export const QueryBrowser: React.FC<QueryBrowserProps> = ({colors, GraphLink, me
     timeout,
     timespan: span,
   });
+
+  React.useEffect(() => setUpdating(true), [query, samples]);
 
   React.useEffect(() => {
     const result = _.get(data, 'data.result');
@@ -224,11 +226,11 @@ type GraphProps = {
 
 type QueryBrowserProps = {
   colors: string[];
+  defaultTimespan: number;
   GraphLink: React.ComponentType<any>;
   metric: string;
   onDataUpdate: (data: GraphDataMetric) => void;
   query: string;
   samples?: number;
   timeout?: number;
-  timespan: number;
 };
