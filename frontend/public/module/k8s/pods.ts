@@ -51,6 +51,7 @@ export const VolumeSource = {
   },
   secret: {
     id: 'secret',
+    link: 'Secret',
     label: 'Secret',
     description: 'Secret to populate volume.',
   },
@@ -76,6 +77,7 @@ export const VolumeSource = {
   },
   configMap: {
     id: 'configMap',
+    link: 'ConfigMap',
     label: 'ConfigMap',
     description: 'ConfigMap to be consumed in volume.',
   },
@@ -83,6 +85,12 @@ export const VolumeSource = {
     id: 'projected',
     label: 'Projected',
     description: 'A projected volume maps several existing volume sources into the same directory.',
+  },
+  persistentVolumeClaim: {
+    id: 'persistentVolumeClaim',
+    link: 'PersistentVolumeClaim',
+    label: 'Persistent Volume Claim',
+    description: 'A Persistent Volume Claim is a request for a Persistent Volume',
   },
 };
 
@@ -101,12 +109,18 @@ const genericFormatter = volInfo => {
     if (key === 'readOnly') {
       return '';
     }
+    if (key === 'defaultMode') {
+      return '';
+    }
+    if (key === 'optional') {
+      return '';
+    }
     return volInfo[key];
   });
   if (keys.indexOf('readOnly') !== -1) {
     parts.push(volInfo.readOnly ? 'ro' : 'rw');
   }
-  return parts.join(' ') || null;
+  return parts.join(' ').trim() || null;
 };
 
 export const getVolumeLocation = (volume: Volume) => {
@@ -121,9 +135,7 @@ export const getVolumeLocation = (volume: Volume) => {
     // Override any special formatting cases.
     case VolumeSource.gitRepo.id:
       return `${info.repository}:${info.revision}`;
-    case VolumeSource.configMap.id:
     case VolumeSource.emptyDir.id:
-    case VolumeSource.secret.id:
     case VolumeSource.projected.id:
       return null;
     // Defaults to space separated sorted keys.

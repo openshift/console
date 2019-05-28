@@ -8,7 +8,7 @@ export * from './log-window';
 export * from './resource-icon';
 export * from './resource-link';
 export * from './resource-log';
-export * from './volume-icon';
+export * from './volume-type';
 export * from './timestamp';
 export * from './horizontal-nav';
 export * from './details-page';

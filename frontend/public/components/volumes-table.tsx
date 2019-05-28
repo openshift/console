@@ -15,7 +15,7 @@ import {
   getVolumeLocation,
 } from '../module/k8s/pods';
 import {
-  VolumeIcon,
+  VolumeType,
   ResourceIcon,
   EmptyBox,
   SectionHeading,
@@ -56,6 +56,7 @@ const VolumeRow: React.FC<VolumeRowProps> = ({value, pod}) => {
   const kind = _.get(getVolumeType(value.volume), 'id', '');
   const loc = getVolumeLocation(value.volume);
   const name = value.name;
+  const namespace = pod.metadata.namespace;
   const permission = value.readOnly ? 'Read-only' : 'Read/Write';
 
   return <div>
@@ -67,8 +68,7 @@ const VolumeRow: React.FC<VolumeRowProps> = ({value, pod}) => {
           {_.get(m, 'subPath', '-')}
         </div>
         <div className="col-lg-2 col-md-2 hidden-sm hidden-xs">
-          <VolumeIcon kind={kind} />
-          <span className="co-break-word">{loc && ` (${loc})`}</span>
+          <VolumeType kind={kind} name={loc} namespace={namespace} />
         </div>
         <div className="col-lg-2 col-md-2 hidden-sm hidden-xs">{permission}</div>
         <div className="col-lg-2 hidden-md hidden-sm hidden-xs">

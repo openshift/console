@@ -244,6 +244,7 @@ export type PodStatus = {
 
 export type PodTemplate = {
   spec: PodSpec;
+  metadata: ObjectMetadata;
 };
 
 export type PodKind = {
