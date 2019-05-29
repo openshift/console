@@ -25,10 +25,10 @@ const PrometheusGraphLink = connectToURLs(MonitoringRoutes.Prometheus)(
   }
 );
 
-export const PrometheusGraph: React.FC<PrometheusGraphProps> = ({children, className, linkToPrometheusUI = true, query, title}) => {
+export const PrometheusGraph: React.FC<PrometheusGraphProps> = ({children, className, query, title}) => {
   return <div className={classNames('graph-wrapper', className)}>
     { title && <h5 className="graph-title graph-title--left">{title}</h5> }
-    {linkToPrometheusUI ? <PrometheusGraphLink query={query}>{children}</PrometheusGraphLink> : children}
+    <PrometheusGraphLink query={query}>{children}</PrometheusGraphLink>
   </div>;
 };
 
@@ -39,7 +39,6 @@ type PrometheusGraphLinkProps = {
 
 type PrometheusGraphProps = {
   className?: string;
-  linkToPrometheusUI?: boolean;
   query: string;
   title?: string;
 }
