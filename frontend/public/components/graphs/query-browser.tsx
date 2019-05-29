@@ -195,10 +195,10 @@ export const QueryBrowser: React.FC<QueryBrowserProps> = ({colors, defaultTimesp
     </div>
     {query
       ? <React.Fragment>
-        {error && <div className="alert alert-danger query-browser__error">
+        {error && <div className="alert alert-danger">
           <span className="pficon pficon-error-circle-o" aria-hidden="true"></span>{_.get(error, 'json.error', error.message)}
         </div>}
-        {!error && !updating && _.isEmpty(graphData) && <div className="alert alert-warning query-browser__error">
+        {!error && !updating && _.isEmpty(graphData) && <div className="alert alert-warning">
           <span className="pficon pficon-warning-triangle-o" aria-hidden="true"></span> Query did not return any data
         </div>}
         <Graph colors={colors} data={graphData} domain={graphDomain} onZoom={onZoom} />
