@@ -29,8 +29,8 @@ export class ExtensionRegistry {
     return this.extensions.filter(isFeatureFlag);
   }
 
-  public getNavItems(section: string) {
-    return this.extensions.filter(isNavItem).filter(e => e.properties.section === section);
+  public getNavItems() {
+    return this.extensions.filter(isNavItem);
   }
 
   public getResourcePages() {
