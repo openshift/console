@@ -14,15 +14,6 @@ import { OperatorHubItemDetails } from './operator-hub-item-details';
 import { communityOperatorWarningModal } from './operator-hub-community-provider-modal';
 import { OperatorHubItem } from './index';
 
-const pageDescription = (
-  <span>
-    Discover Operators from the Kubernetes community and Red Hat partners, curated by Red Hat.
-    Operators can be installed on your clusters to provide optional add-ons and shared services to your developers.
-    Once installed, the capabilities provided by the Operator appear in the <a href="/catalog">Developer Catalog</a>,
-    providing a self-service experience.
-  </span>
-);
-
 const communityOperatorBadge = <span key="1" className="pf-c-badge pf-m-read">Community</span>;
 
 /**
@@ -302,7 +293,6 @@ export const OperatorHubTileView = requireOperatorGroup(
           filterGroupNameMap={operatorHubFilterMap}
           keywordCompare={keywordCompare}
           renderTile={this.renderTile}
-          pageDescription={pageDescription}
           emptyStateInfo="No OperatorHub items are being shown due to the filters being applied."
         />
         <Modal show={!!detailsItem && showDetails} onHide={this.closeOverlay} bsSize="lg" className="co-catalog-page__overlay right-side-modal-pf">

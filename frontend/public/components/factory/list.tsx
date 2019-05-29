@@ -403,6 +403,8 @@ Rows.propTypes = {
   mock: PropTypes.bool,
 };
 
+const skeletonTable = <div className="loading-skeleton--table" />;
+
 const stateToProps = ({UI}, {data = [], defaultSortField = 'metadata.name', defaultSortFunc = undefined, filters = {}, loaded = false, reduxID = null, reduxIDs = null, staticFilters = [{}]}) => {
   const allFilters = staticFilters ? Object.assign({}, filters, ...staticFilters) : filters;
   let newData = getFilteredRows(allFilters, data);
@@ -491,7 +493,7 @@ export const List = connect(stateToProps, {sortList: UIActions.sortList}, null, 
       </React.Fragment>;
 
       return <div className="co-m-table-grid co-m-table-grid--bordered">
-        { mock ? children : <StatusBox skeletonClass="loading-skeleton--table" {...this.props}>{children}</StatusBox> }
+        { mock ? children : <StatusBox skeleton={skeletonTable}{...this.props}>{children}</StatusBox> }
       </div>;
     }
   });

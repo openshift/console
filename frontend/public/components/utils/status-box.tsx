@@ -64,7 +64,7 @@ const Data: React.FC<DataProps> = ({EmptyMsg, label, data, children}) => {
 Data.displayName = 'Data';
 
 export const StatusBox: React.FC<StatusBoxProps> = props => {
-  const {loadError, loaded, skeletonClass, ...dataProps} = props;
+  const {loadError, loaded, skeleton, ...dataProps} = props;
 
   if (loadError) {
     const status = _.get(loadError, 'response.status');
@@ -88,7 +88,9 @@ export const StatusBox: React.FC<StatusBoxProps> = props => {
   }
 
   if (!loaded) {
-    return skeletonClass ? <div className={skeletonClass} /> : <LoadingBox className="loading-box loading-box__loading" />;
+    return skeleton
+      ? <React.Fragment>{skeleton}</React.Fragment>
+      : <LoadingBox className="loading-box loading-box__loading" />;
   }
   return <Data {...dataProps} />;
 };
@@ -139,8 +141,8 @@ type StatusBoxProps = {
   label?: string;
   loadError?: any;
   loaded?: boolean;
-  skeletonClass?: string;
   data?: any;
-  EmptyMsg?: React.ComponentType
+  skeleton?: React.ReactNode;
+  EmptyMsg?: React.ComponentType;
   children?: React.ReactNode;
 };

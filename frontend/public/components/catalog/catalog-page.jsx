@@ -25,6 +25,18 @@ import { ClusterServiceClassModel, ClusterServiceVersionModel } from '../../mode
 import { providedAPIsFor, referenceForProvidedAPI } from '../operator-lifecycle-manager';
 import * as operatorLogo from '../../imgs/operator.svg';
 
+export const skeletonCatalog = <div className="loading-skeleton--catalog">
+  <div className="skeleton-catalog--list" />
+  <div className="skeleton-catalog--grid">
+    <div className="skeleton-catalog--tile" />
+    <div className="skeleton-catalog--tile" />
+    <div className="skeleton-catalog--tile" />
+    <div className="skeleton-catalog--tile" />
+    <div className="skeleton-catalog--tile" />
+    <div className="skeleton-catalog--tile" />
+  </div>
+</div>;
+
 export class CatalogListPage extends React.Component {
   constructor(props) {
     super(props);
@@ -200,7 +212,7 @@ export class CatalogListPage extends React.Component {
     const {loaded, loadError} = this.props;
     const {items} = this.state;
 
-    return <StatusBox data={items} loaded={loaded} loadError={loadError} label="Resources">
+    return <StatusBox skeleton={skeletonCatalog} data={items} loaded={loaded} loadError={loadError} label="Resources">
       <CatalogTileViewPage items={items} />
     </StatusBox>;
   }
@@ -269,6 +281,9 @@ export const CatalogPage = withStartGuide(({match, noProjectsAvailable}) => {
     </Helmet>
     <div className="co-catalog">
       <PageHeading title="Developer Catalog" />
+      <p className="co-catalog-page__description">
+      Add shared apps, services, or source-to-image builders to your project from the Developer Catalog. Cluster admins can install additional apps which will show up here automatically.
+      </p>
       <Catalog namespace={namespace} mock={noProjectsAvailable} />
     </div>
   </React.Fragment>;
