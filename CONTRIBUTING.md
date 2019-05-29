@@ -6,6 +6,7 @@ This document outlines some of the conventions on development workflow.
 
 - Fork the repository on GitHub
 - Read the [README](README.md) for build and test instructions
+- Read the [STYLEGUIDE](STYLEGUIDE.md) for code conventions
 - Play with the project, submit bugs, submit patches!
 
 ## Contribution Flow
@@ -57,22 +58,18 @@ issue to its pull request and close the issue when the pull request merges.
 While we don't have automated tooling for JIRA issues, you should still include
 a link to the issue in the commit description to make it easy to get to the issue.
 
-### Pull Requests Against Other Branches
+### Backporting Fixes
 
-Pull requests opened against branches other than master should start the pull
-request title with the branch name in brackets like `[release-3.11]` to make it
-obvious. Include the bug as well when appropriate. For instance,
+Branches for previous releases follow the format `release-X.Y`, for example,
+`release-4.1`. Typically, bugs are fixed in the master branch first then
+backported to the appropriate release branches. Fixes backported to previous
+releases should have a Bugzilla bug for each version fixed.
 
-```
-[release-3.11] Bug 1643948: Fix crashlooping pods query
-```
-
-If you use the `/cherrypick` command, the bot will automatically append the
-branch to the pull request title. For instance, adding a comment to a PR like
+You can use the `/cherrypick` command to ask the bot to backport a fix.
 
 ```
-/cherrypick release-3.11
+/cherrypick release-4.1
 ```
 
-will create a new pull request against the release-3.11 branch when the current
+will create a new pull request against the release-4.1 branch when the current
 pull request merges as long as there are no merge conflicts.

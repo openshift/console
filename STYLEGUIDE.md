@@ -1,4 +1,4 @@
-# Tectonic Console Styleguide
+# OpenShift Console Styleguide
 
 ## Directory and File Names
 
@@ -22,8 +22,12 @@
 - All SCSS variables should be scoped within their component.
 - We use [BEM](http://getbem.com) naming conventions.
 
-## JavaScript
+## TypeScript and JavaScript
 
+- New code should be written in TypeScript, not JavaScript.
+- Prefer functional components to class-based components.
+- Use [React hooks](https://reactjs.org/docs/hooks-intro.html) with functional components if you need state.
+- Prefer [composition to inheritance](https://reactjs.org/docs/composition-vs-inheritance.html).
 - Run the linter and follow all rules defined in .eslintrc
 - Never use absolute paths in code. The app should be able to run behind a proxy under an arbitrary path.
 - TESTS: Should follow a similar "test tables" convention as used in Go where applicable.
