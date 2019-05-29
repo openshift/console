@@ -72,15 +72,15 @@ spec:
     matchLabels:
       app: api
   ingress:
-  - from:
-    - podSelector:
-          matchLabels:
-            role: monitoring
-  - ports:
-    - protocol: TCP
-      port: 80
-    - protocol: TCP
-      port: 443
+    - from:
+        - podSelector:
+            matchLabels:
+              role: monitoring
+      ports:
+        - protocol: TCP
+          port: 80
+        - protocol: TCP
+          port: 443
 `).setIn([referenceForModel(k8sModels.NetworkPolicyModel), 'default-deny-all'], `
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
