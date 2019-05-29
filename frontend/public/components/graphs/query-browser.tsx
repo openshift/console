@@ -9,7 +9,6 @@ import { Dropdown, humanizeNumber, LoadingInline, useRefWidth } from '../utils';
 import { formatPrometheusDuration, parsePrometheusDuration, twentyFourHourTime } from '../utils/datetime';
 import { PrometheusEndpoint } from './helpers';
 import { usePrometheusPoll } from './prometheus-poll-hook';
-import { PrometheusGraph } from './prometheus-graph';
 import { areaTheme } from './themes';
 
 const spans = ['5m', '15m', '30m', '1h', '2h', '6h', '12h', '1d', '2d', '1w', '2w'];
@@ -65,10 +64,10 @@ const SpanControls = ({defaultSpanText, onChange, span}) => {
   </React.Fragment>;
 };
 
-const Graph: React.FC<GraphProps> = ({colors, domain, data, onZoom, query}) => {
+const Graph: React.FC<GraphProps> = ({colors, domain, data, onZoom}) => {
   const [containerRef, width] = useRefWidth();
 
-  return <PrometheusGraph linkToPrometheusUI={false} query={query}>
+  return <div className="graph-wrapper">
     <div ref={containerRef} style={{width: '100%'}}>
       <Chart
         containerComponent={<VictorySelectionContainer onSelection={(points, range) => onZoom(range)} />}
@@ -86,7 +85,7 @@ const Graph: React.FC<GraphProps> = ({colors, domain, data, onZoom, query}) => {
         </ChartGroup>
       </Chart>
     </div>
-  </PrometheusGraph>;
+  </div>;
 };
 
 export const QueryBrowser: React.FC<QueryBrowserProps> = ({colors, defaultTimespan, GraphLink, metric, onDataUpdate, query, samples, timeout}) => {
@@ -202,7 +201,7 @@ export const QueryBrowser: React.FC<QueryBrowserProps> = ({colors, defaultTimesp
         {!error && !updating && _.isEmpty(graphData) && <div className="alert alert-warning query-browser__error">
           <span className="pficon pficon-warning-triangle-o" aria-hidden="true"></span> Query did not return any data
         </div>}
-        <Graph colors={colors} data={graphData} domain={graphDomain} onZoom={onZoom} query={query} />
+        <Graph colors={colors} data={graphData} domain={graphDomain} onZoom={onZoom} />
       </React.Fragment>
       : <div className="text-center text-muted">Enter a query in the box below to explore the metrics gathered for this cluster</div>}
   </div>;
@@ -232,7 +231,6 @@ type GraphProps = {
   }[];
   domain: Domain;
   onZoom: (range: Domain) => void;
-  query: string;
 };
 
 type QueryBrowserProps = {
