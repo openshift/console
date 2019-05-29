@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { Chart, ChartArea, ChartAxis, ChartGroup, ChartTheme } from '@patternfly/react-charts';
+import { connect } from 'react-redux';
 
 // This is not yet available as part of PatternFly
 import { VictorySelectionContainer } from 'victory-selection-container';
@@ -88,7 +89,7 @@ const Graph: React.FC<GraphProps> = ({colors, domain, data, onZoom}) => {
   </div>;
 };
 
-export const QueryBrowser: React.FC<QueryBrowserProps> = ({colors, defaultTimespan, GraphLink, metric, onDataUpdate, query, samples, timeout}) => {
+const QueryBrowser_: React.FC<QueryBrowserProps> = ({colors, defaultTimespan, GraphLink, hideGraphs, metric, onDataUpdate, query, samples, timeout}) => {
   // For the default time span, use the first of the suggested span options that is at least as long as defaultTimespan
   const defaultSpanText = spans.find(s => parsePrometheusDuration(s) >= defaultTimespan);
 
@@ -190,7 +191,7 @@ export const QueryBrowser: React.FC<QueryBrowserProps> = ({colors, defaultTimesp
         {updating && <LoadingInline />}
       </div>
       <div className="query-browser__external-link">
-        {GraphLink}
+        <GraphLink />
       </div>
     </div>
     {query
@@ -201,11 +202,13 @@ export const QueryBrowser: React.FC<QueryBrowserProps> = ({colors, defaultTimesp
         {!error && !updating && _.isEmpty(graphData) && <div className="alert alert-warning">
           <span className="pficon pficon-warning-triangle-o" aria-hidden="true"></span> Query did not return any data
         </div>}
-        <Graph colors={colors} data={graphData} domain={graphDomain} onZoom={onZoom} />
+        {!hideGraphs && <Graph colors={colors} data={graphData} domain={graphDomain} onZoom={onZoom} />}
       </React.Fragment>
       : <div className="text-center text-muted">Enter a query in the box below to explore the metrics gathered for this cluster</div>}
   </div>;
 };
+const stateToProps = ({UI}) => ({hideGraphs: !!UI.getIn(['monitoring', 'hideGraphs'])});
+export const QueryBrowser = connect(stateToProps)(QueryBrowser_);
 
 type Domain = {
   x: [number, number];
@@ -236,7 +239,8 @@ type GraphProps = {
 type QueryBrowserProps = {
   colors: string[];
   defaultTimespan: number;
-  GraphLink: React.ComponentType<any>;
+  GraphLink: React.ComponentType<{}>;
+  hideGraphs: boolean;
   metric: string;
   onDataUpdate: (data: GraphDataMetric) => void;
   query: string;
