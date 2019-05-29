@@ -59,6 +59,7 @@ const Details_ = ({flags, obj: pvc}) => {
   const requestedStorage = _.get(pvc, 'spec.resources.requests.storage');
   const storage = _.get(pvc, 'status.capacity.storage');
   const accessModes = _.get(pvc, 'status.accessModes');
+  const volumeMode = _.get(pvc, 'spec.volumeMode');
   const conditions = _.get(pvc, 'status.conditions');
   return <React.Fragment>
     <div className="co-m-pane__body">
@@ -74,6 +75,12 @@ const Details_ = ({flags, obj: pvc}) => {
           <dl>
             <dt>Status</dt>
             <dd><PVCStatus pvc={pvc} /></dd>
+            {storage && <React.Fragment><dt>Size</dt><dd>{storage}</dd></React.Fragment>}
+            <dt>Requested</dt>
+            <dd>{requestedStorage || '-'}</dd>
+            {!_.isEmpty(accessModes) && <React.Fragment><dt>Access Modes</dt><dd>{accessModes.join(', ')}</dd></React.Fragment>}
+            <dt>Volume Mode</dt>
+            <dd>{volumeMode || 'Filesystem' }</dd>
             <dt>Storage Class</dt>
             <dd>
               {storageClassName ? <ResourceLink kind="StorageClass" name={storageClassName} /> : '-'}
@@ -82,10 +89,6 @@ const Details_ = ({flags, obj: pvc}) => {
               <dt>Persistent Volume</dt>
               <dd><ResourceLink kind="PersistentVolume" name={volumeName} /></dd>
             </React.Fragment>}
-            <dt>Requested</dt>
-            <dd>{requestedStorage || '-'}</dd>
-            {storage && <React.Fragment><dt>Size</dt><dd>{storage}</dd></React.Fragment>}
-            {!_.isEmpty(accessModes) && <React.Fragment><dt>Access Modes</dt><dd>{accessModes.join(', ')}</dd></React.Fragment>}
           </dl>
         </div>
       </div>
