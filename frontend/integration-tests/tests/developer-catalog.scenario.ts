@@ -111,7 +111,7 @@ describe('Developer Catalog', () => {
     await browser.wait(until.and(crudView.untilNoLoadersPresent, until.presenceOf(catalogView.createServiceInstanceForm)));
 
     await $('#dropdown-selectbox').click();
-    await $$('.dropdown-menu').first().$(`#${testName}-Project-link`).click();
+    await $$('.pf-c-dropdown__menu').first().$(`#${testName}-Project-link`).click();
     await srvCatalogView.createButton.click();
     await crudView.isLoaded();
 

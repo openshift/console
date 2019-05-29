@@ -3,7 +3,7 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 import * as PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-
+import { CaretDownIcon } from '@patternfly/react-icons';
 import { impersonateStateToProps } from '../../reducers/ui';
 import { checkAccess, history, KebabItems, ResourceName } from './index';
 
@@ -93,12 +93,17 @@ export class DropdownMixin extends React.PureComponent {
   }
 }
 
-const Caret = () => <span className="caret" />;
-
 class DropDownRow extends React.PureComponent {
   render() {
-    const {itemKey, content, onclick, onBookmark, onUnBookmark, className, selected, hover, canFavorite, onFavorite, favoriteKey} = this.props;
+    const {itemKey, content, onclick, onBookmark, onUnBookmark, className, selected, hover, canFavorite, onFavorite, favoriteKey, autocompleteFilter} = this.props;
     let prefix;
+
+    if (!autocompleteFilter && !onBookmark && !onUnBookmark) {
+      //use pf4 markup if not using the autocomplete dropdown
+      return <li key={itemKey}>
+        <button className="pf-c-dropdown__menu-item" id={`${itemKey}-link`} onClick={e => onclick(itemKey, e)}>{content}</button>
+      </li>;
+    }
     if (onUnBookmark) {
       prefix = <a href="#" className={classNames('bookmarker', {hover, focus: selected})} onClick={e => onUnBookmark(e, itemKey)}><i aria-hidden className="fa fa-minus-circle" /></a>;
     }
@@ -114,7 +119,7 @@ class DropDownRow extends React.PureComponent {
 
     return <li role="option" className={classNames(className)} key={itemKey}>
       {prefix}
-      <a href="#" ref={this.link} id={`${itemKey}-link`} className={classNames({'next-to-bookmark': !!prefix, hover, focus: selected})} onClick={e => onclick(itemKey, e)}>{content}</a>
+      <a href="#" ref={this.link} id={`${itemKey}-link`} className={classNames('pf-c-dropdown__menu-item', {'next-to-bookmark': !!prefix, hover, focus: selected})} onClick={e => onclick(itemKey, e)}>{content}</a>
       {suffix}
     </li>;
   }
@@ -151,7 +156,7 @@ export class Dropdown extends DropdownMixin {
 
     this.state.items = Object.assign({}, bookmarks, props.items);
 
-    const defaultTitle = React.isValidElement(props.title) ? props.title : <span className="btn-dropdown__item--placeholder">{props.title}</span>;
+    const defaultTitle = React.isValidElement(props.title) ? props.title : <span className="pf-c-dropdown__toggle-text--placeholder">{props.title}</span>;
     this.state.title = props.noSelection
       ? props.title
       : _.get(props.items, props.selectedKey, defaultTitle);
@@ -349,47 +354,68 @@ export class Dropdown extends DropdownMixin {
       if (_.has(headerBefore, key)) {
         rows.push(<li key={`${key}-header`}><div className="dropdown-menu__header" >{headerBefore[key]}</div></li>);
       }
-      rows.push(<DropDownRow className={klass} key={key} itemKey={key} content={content} onBookmark={storageKey && this.onBookmark} onclick={this.onClick} selected={selected} hover={hover} />);
+      rows.push(<DropDownRow className={klass} key={key} itemKey={key} content={content} onBookmark={storageKey && this.onBookmark} onclick={this.onClick} selected={selected} hover={hover} autocompleteFilter={autocompleteFilter} />);
     };
 
     _.each(items, (v, k) => addItem(k, v));
 
-    return <div className={classNames(className)} ref={this.dropdownElement} style={this.props.style}>
-      <div className={classNames('dropdown', dropDownClassName)}>
-        <button aria-haspopup="true" onClick={this.toggle} onKeyDown={this.onKeyDown} type="button" className={classNames('btn', 'btn-dropdown', 'dropdown-toggle', buttonClassName ? buttonClassName : 'btn-default')} id={this.props.id} aria-describedby={describedBy} disabled={disabled}>
-          <div className="btn-dropdown__content-wrap">
-            <span className="btn-dropdown__item">
-              {titlePrefix && <span className="btn-link__titlePrefix">{titlePrefix}: </span>}
-              {title}
-            </span>
-            <Caret />
-          </div>
+    //render PF4 dropdown markup if this is not the autocomplete filter
+    if (autocompleteFilter){
+      return <div className={classNames(className)} ref={this.dropdownElement} style={this.props.style}>
+        <div className={classNames('dropdown pf-c-dropdown', {'pf-m-expanded': this.state.active}, dropDownClassName)}>
+          <button aria-haspopup="true" onClick={this.toggle} onKeyDown={this.onKeyDown} type="button" className={classNames('pf-c-dropdown__toggle', buttonClassName ? buttonClassName : '')} id={this.props.id} aria-describedby={describedBy} disabled={disabled} >
+            <div className="btn-dropdown__content-wrap">
+              <span className="pf-c-dropdown__toggle-text">
+                {titlePrefix && <span className="btn-link__titlePrefix">{titlePrefix}: </span>}
+                {title}
+              </span>
+              <CaretDownIcon className="pf-c-dropdown__toggle-icon" />
+            </div>
+          </button>
+          {
+            active && <ul role="listbox" ref={this.dropdownList} className={classNames('dropdown-menu__autocomplete-filter', 'pf-c-dropdown__menu', menuClassName)}>
+              {
+                autocompleteFilter && <div className="dropdown-menu__filter">
+                  <input
+                    autoFocus
+                    type="text"
+                    ref={input => this.input = input}
+                    onChange={this.changeTextFilter}
+                    placeholder={autocompletePlaceholder}
+                    value={autocompleteText || ''}
+                    autoCapitalize="none"
+                    onKeyDown={this.onKeyDown}
+                    className="form-control dropdown--text-filter pf-c-form-control"
+                    onClick={e => e.stopPropagation()} />
+                </div>
+              }
+              { this.renderActionItem() }
+              { bookMarkRows }
+              {_.size(bookMarkRows) ? <li className="co-namespace-selector__divider"><div className="dropdown-menu__divider" /></li> : null}
+              {rows}
+            </ul>
+          }
+        </div>
+      </div>;
+    }
+    //pf4 markup
+    return (<div className={classNames(className)} ref={this.dropdownElement} style={this.props.style}>
+      <div className={classNames({'dropdown pf-c-dropdown': true, 'pf-m-expanded': this.state.active})}>
+        <button aria-haspopup="true" aria-expanded={this.state.active} className={classNames('pf-c-dropdown__toggle')} onClick={this.toggle} onKeyDown={this.onKeyDown} type="button" id={this.props.id} aria-describedby={describedBy} >
+          <span className="pf-c-dropdown__toggle-text">
+            {titlePrefix && <span className="btn-link__titlePrefix">{titlePrefix}: </span>}
+            {title}
+          </span>
+          <CaretDownIcon className="pf-c-dropdown__toggle-icon" />
         </button>
         {
-          active && <ul role="listbox" ref={this.dropdownList} className={classNames('dropdown-menu', 'dropdown-menu--block', menuClassName)}>
-            {
-              autocompleteFilter && <div className="dropdown-menu__filter">
-                <input
-                  autoFocus
-                  type="text"
-                  ref={input => this.input = input}
-                  onChange={this.changeTextFilter}
-                  placeholder={autocompletePlaceholder}
-                  value={autocompleteText || ''}
-                  autoCapitalize="none"
-                  onKeyDown={this.onKeyDown}
-                  className="form-control dropdown--text-filter"
-                  onClick={e => e.stopPropagation()} />
-              </div>
-            }
-            { this.renderActionItem() }
-            { bookMarkRows }
-            {_.size(bookMarkRows) ? <li className="co-namespace-selector__divider"><div className="dropdown-menu__divider" /></li> : null}
+          active && <ul ref={this.dropdownList} className="pf-c-dropdown__menu">
             {rows}
           </ul>
         }
       </div>
-    </div>;
+    </div>);
+
   }
 }
 
@@ -419,7 +445,7 @@ Dropdown.propTypes = {
 
 class ActionsMenuDropdown extends DropdownMixin {
   render() {
-    const {actions, title = undefined, buttonClassName = 'btn-default'} = this.props;
+    const {actions, title = undefined} = this.props;
     const onClick = (event, option) => {
       event.preventDefault();
 
@@ -433,21 +459,19 @@ class ActionsMenuDropdown extends DropdownMixin {
 
       this.hide();
     };
-    return <div ref={this.dropdownElement} className="co-actions-menu dropdown">
-      <button type="button" aria-haspopup="true" className={classNames('btn btn-dropdown btn-dropdown-toggle', buttonClassName)} onClick={this.toggle} data-test-id="actions-menu-button">
-        <div className="btn-dropdown__content-wrap">
-          <span className="btn-dropdown__item">
-            {title || 'Actions'}
-          </span>
-          <Caret />
-        </div>
+    return <div ref={this.dropdownElement} className={classNames({'co-actions-menu pf-c-dropdown': true, 'pf-m-expanded': this.state.active})}>
+      <button type="button" aria-haspopup="true" aria-label="Actions" aria-expanded={this.state.active} className="pf-c-dropdown__toggle" onClick={this.toggle} data-test-id="actions-menu-button">
+        <span className="pf-c-dropdown__toggle-text">
+          {title || 'Actions'}
+        </span>
+        <CaretDownIcon className="pf-c-dropdown__toggle-icon" />
       </button>
-      {this.state.active && <KebabItems options={actions} onClick={onClick} isActionDropdown />}
+      {this.state.active && <KebabItems options={actions} onClick={onClick} />}
     </div>;
   }
 }
 
-const ActionsMenu_ = ({actions, impersonate, title = undefined, buttonClassName = undefined}) => {
+const ActionsMenu_ = ({actions, impersonate, title = undefined}) => {
   const [isVisible, setVisible] = React.useState(false);
 
   // Check if any actions are visible when actions have access reviews.
@@ -475,7 +499,7 @@ const ActionsMenu_ = ({actions, impersonate, title = undefined, buttonClassName 
   }, [actions, impersonate]);
 
   return isVisible
-    ? <ActionsMenuDropdown actions={actions} title={title} buttonClassName={buttonClassName} />
+    ? <ActionsMenuDropdown actions={actions} title={title} />
     : null;
 };
 export const ActionsMenu = connect(impersonateStateToProps)(ActionsMenu_);
@@ -489,7 +513,6 @@ ActionsMenu.propTypes = {
       accessReview: PropTypes.object,
     })).isRequired,
   title: PropTypes.node,
-  buttonClassName: PropTypes.string,
 };
 
 const containerLabel = (container) =>

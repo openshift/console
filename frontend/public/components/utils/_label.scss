@@ -1,7 +1,7 @@
 .co-m-label {
   background-color: $color-pf-black-150;
-  border-radius: 12px;
   border: 1px solid $color-pf-black-200;
+  border-radius: 12px;
   display: inline-flex;
   line-height: $co-m-label-line-height;
   margin: 2px 2px 2px 0;
@@ -20,4 +20,151 @@
   .co-m-label__key, .co-m-label__value {
     max-width: 100%;
   }
+}
+
+tags-input:focus,
+tags-input .host:focus {
+  outline: none;
+}
+
+tags-input .host {
+  margin-bottom: 5px;
+  margin-top: 5px;
+  position: relative;
+}
+tags-input .host:active {
+  outline: none;
+}
+
+tags-input .tags {
+  background-image: none; // Reset unusual Firefox-on-Android default style; see https://github.com/necolas/normalize.css/issues/214
+  border-radius: $input-border-radius; // Note: This has no effect on <select>s in some browsers, due to the limited stylability of <select>s in CSS.
+  color: $input-color;
+  cursor: text;
+  line-height: $co-m-label-line-height;
+  padding: 0 $padding-base-horizontal;
+}
+
+.modal-body tags-input .tags {
+  background-color: rgba(255, 255, 255, 0.5); // enable scroll-shadows to be seen
+  margin-bottom: ($grid-gutter-width / 2);
+  min-height: 120px;
+
+  .tag-item {
+    background-color: rgba(235,235,235,.5); // enable scroll-shadows to be seen
+  }
+}
+
+tags-input .tags.focused,
+tags-input .tags:focus {
+  border-color: #66AFE9;
+  outline: none;
+}
+
+tags-input .tags .tag-item {
+  @extend .co-m-label;
+  word-break: break-all; // required for Firefox, Edge
+}
+
+tags-input .tags .tag-list {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+tags-input .tags .tag-item.selected {
+  border: solid 1px;
+}
+
+tags-input .tags .tag-item .remove-button {
+  border: none;
+  background: none;
+  color: #585858;
+  cursor: pointer;
+  font-size: 16px;
+  margin: 0 0 0 2px;
+  padding: 0;
+  vertical-align: middle;
+}
+
+tags-input .tags .tag-item .remove-button:active {
+  color: #fff;
+}
+
+tags-input .remove-button:active,
+tags-input .remove-button:hover {
+  text-decoration: none;
+}
+
+tags-input .tags .input {
+  background: transparent;
+  border: 1px solid transparent;
+  line-height: $co-m-label-line-height;
+  outline: none;
+  padding: 0;
+  // Since iOS phone text input size is larger, remove border and margin and increase line-height
+  @supports (-webkit-overflow-scrolling: touch) { // Target mobile Safari
+    @media (max-width: $grid-float-breakpoint-max) { // Target phones
+      border: 0;
+      line-height: 24px;
+      margin-bottom: 0;
+      margin-top: 0;
+    }
+  }
+}
+
+tags-input .tags .input.invalid-tag {
+  color: $color-pf-red-200;
+}
+
+tags-input .tags .input::-ms-clear {
+  display: none;
+}
+
+tags-input.ng-invalid .tags {
+  border-color: $color-pf-red-200;
+}
+
+tags-input .autocomplete {
+  background-color: white;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  margin-top: 5px;
+  position: absolute;
+  padding: 5px 0;
+  width: 100%;
+  z-index: 999;
+}
+
+tags-input .autocomplete .suggestion-list {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+
+tags-input .autocomplete .suggestion-item {
+  background-color: white;
+  color: black;
+  cursor: pointer;
+  font: 16px "Helvetica Neue", Helvetica, Arial, sans-serif;
+  overflow: hidden;
+  padding: 5px 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+tags-input .autocomplete .suggestion-item.selected {
+  background-color: #0097cf;
+  color: white;
+}
+
+tags-input .autocomplete .suggestion-item.selected em {
+  background-color: #0097cf;
+  color: white;
+}
+
+tags-input .autocomplete .suggestion-item em {
+  background-color: white;
+  color: black;
+  font: normal bold 16px "Helvetica Neue", Helvetica, Arial, sans-serif;
 }

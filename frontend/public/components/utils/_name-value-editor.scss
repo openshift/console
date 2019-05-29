@@ -40,9 +40,6 @@ $drag-row-margin: 8px;
   padding-right: 0;
   display: flex;
   flex-direction: column;
-  @media(min-width: $screen-md-min) {
-    flex-direction: row;
-  }
 }
 
 .pairs-list__value-ro-field {

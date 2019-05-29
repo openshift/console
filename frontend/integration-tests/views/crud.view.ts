@@ -117,7 +117,7 @@ export const actionsDropdownMenu = actionsMenu.$('[data-test-id="action-items"]'
 
 export const resourceTitle = $('#resource-title');
 
-export const nameFilter = $('.form-control.co-text-filter');
+export const nameFilter = $('.pf-c-form-control.co-text-filter');
 export const messageLbl = $('.cos-status-box');
 export const modalAnnotationsLink = $('[data-test-id=resource-summary] [data-test-id=edit-annotations]');
 

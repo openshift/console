@@ -4,11 +4,8 @@
     margin-top: 15px;
   }
 
-  &__namespace {
-    .btn-dropdown,
-    .dropdown-menu {
-      width: 100%;
-    }
+  &__namespace .pf-c-dropdown {
+    width: 100%;
   }
 }
 

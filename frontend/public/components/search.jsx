@@ -75,10 +75,8 @@ class SearchPage_ extends React.PureComponent {
       </Helmet>
       <PageHeading detail={true} title="Search" >
         <div className="co-search">
-          <div className="input-group input-group-select">
-            <div className="input-group-btn">
-              <ResourceListDropdown selected={kind} onChange={this.onSelectorChange} />
-            </div>
+          <div className="pf-c-input-group">
+            <ResourceListDropdown selected={kind} onChange={this.onSelectorChange} />
             <SelectorInput labelClassName={labelClassName} tags={validTags} onChange={updateTags} ref={this.setRef} autoFocus={!noProjectsAvailable} />
           </div>
         </div>

@@ -188,30 +188,6 @@
   white-space: pre-wrap;
 }
 
-.co-search {
-  padding-bottom: 30px;
-  .input-group-btn {
-    vertical-align: top;
-    @media(max-width: $grid-float-breakpoint-max) {
-      display: flex;
-      min-width: 0;
-      width: auto;
-      .co-type-selector {
-        width: 100%;
-      }
-    }
-  }
-  @media(max-width: $grid-float-breakpoint-max) {
-    .input-group-select {
-      display: block;
-      .btn-dropdown {
-        margin-bottom: 2px;
-        width: 100%;
-      }
-    }
-  }
-}
-
 .co-well {
   color: $color-pf-blue-600;
   background-color: $color-pf-blue-50;
@@ -566,12 +542,4 @@
 
 .no-margin {
   margin: 0 !important;
-}
-
-.co-text-filter {
-  min-width: 150px;
-  width: 250px;
-  &:focus + .form-control-feedback--keyboard-hint {
-    display: none;
-  }
 }

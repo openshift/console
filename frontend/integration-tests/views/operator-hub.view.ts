@@ -21,7 +21,7 @@ export const ownNamespaceInstallMode = $('input[value="OwnNamespace"]');
 export const createSubscriptionError = $('.alert-danger');
 
 export const installNamespaceDropdown = $('.dropdown--full-width');
-export const installNamespaceDropdownBtn = installNamespaceDropdown.$('.dropdown-toggle');
+export const installNamespaceDropdownBtn = installNamespaceDropdown.$('.pf-c-dropdown__toggle');
 export const installNamespaceDropdownFilter = (filter: string) => installNamespaceDropdown
   .$('.dropdown-menu__filter').$('input').sendKeys(filter);
 export const installNamespaceDropdownSelect = (namespace: string) => installNamespaceDropdown
