@@ -4,7 +4,11 @@ import { action, ActionType as Action } from 'typesafe-actions';
 // FIXME(alecmerdler): Do not `import store`
 import store from '../redux';
 import { history } from '../components/utils/router';
-import { ALL_NAMESPACES_KEY, LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY } from '../const';
+import {
+  ALL_NAMESPACES_KEY,
+  LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY,
+  LAST_PERSPECTIVE_LOCAL_STORAGE_KEY,
+} from '../const';
 import { getNSPrefix } from '../components/utils/link';
 import { allModels } from '../module/k8s/k8s-models';
 import { detectFeatures } from './features';
@@ -17,6 +21,7 @@ export enum ActionType {
   SelectOverviewItem = 'selectOverviewItem',
   SelectOverviewView = 'selectOverviewView',
   SetActiveNamespace = 'setActiveNamespace',
+  SetActivePerspective = 'setActivePerspective',
   SetCreateProjectMessage = 'setCreateProjectMessage',
   SetCurrentLocation = 'setCurrentLocation',
   SetMonitoringData = 'setMonitoringData',
@@ -111,6 +116,14 @@ export const setActiveNamespace = (namespace: string = '') => {
 
   return action(ActionType.SetActiveNamespace, {namespace});
 };
+
+export const setActivePerspective = (perspective: string) => {
+  // remember the most recently-viewed perspective, which is automatically
+  // selected when returning to the console
+  localStorage.setItem(LAST_PERSPECTIVE_LOCAL_STORAGE_KEY, perspective);
+  return action(ActionType.SetActivePerspective, {perspective});
+};
+
 export const beginImpersonate = (kind: string, name: string, subprotocols: string[]) => action(ActionType.BeginImpersonate, {kind, name, subprotocols});
 export const endImpersonate = () => action(ActionType.EndImpersonate);
 export const startImpersonate = (kind: string, name: string) => async(dispatch, getState) => {
@@ -188,6 +201,7 @@ export const monitoringToggleGraphs = () => action(ActionType.ToggleMonitoringGr
 const uiActions = {
   setCurrentLocation,
   setActiveNamespace,
+  setActivePerspective,
   beginImpersonate,
   endImpersonate,
   sortList,

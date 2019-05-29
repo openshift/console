@@ -7,13 +7,13 @@ import {
   isFeatureFlag,
   isNavItem,
   isResourcePage,
+  isPerspective,
 } from './typings';
 
 /**
  * Registry used to query for Console extensions.
  */
 export class ExtensionRegistry {
-
   private readonly extensions: Extension<any>[];
 
   public constructor(plugins: ActivePlugin[]) {
@@ -36,4 +36,7 @@ export class ExtensionRegistry {
     return this.extensions.filter(isResourcePage);
   }
 
+  public getPerspectives() {
+    return this.extensions.filter(isPerspective);
+  }
 }

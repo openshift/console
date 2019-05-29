@@ -26,6 +26,7 @@ export const STORAGE_PREFIX = 'bridge';
 // This localStorage key predates the storage prefix.
 export const NAMESPACE_LOCAL_STORAGE_KEY = 'dropdown-storage-namespaces';
 export const LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY = `${STORAGE_PREFIX}/last-namespace-name`;
+export const LAST_PERSPECTIVE_LOCAL_STORAGE_KEY = `${STORAGE_PREFIX}/last-perspective`;
 export const API_DISCOVERY_RESOURCES_LOCAL_STORAGE_KEY = `${STORAGE_PREFIX}/api-discovery-resources`;
 export const COMMUNITY_PROVIDERS_WARNING_LOCAL_STORAGE_KEY = `${STORAGE_PREFIX}/community-providers-warning`;
 

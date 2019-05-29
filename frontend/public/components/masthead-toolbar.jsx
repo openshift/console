@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { ArrowCircleUpIcon, QuestionCircleIcon, ThIcon } from '@patternfly/react-icons';
 import { Button, Dropdown, DropdownToggle, DropdownSeparator, DropdownItem, KebabToggle, Toolbar, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
 
+import * as UIActions from '../actions/ui';
 import { connectToFlags, flagPending } from '../reducers/features';
 import { FLAGS } from '../const';
 import { authSvc } from '../module/auth';
@@ -12,6 +13,7 @@ import { openshiftHelpBase } from './utils/documentation';
 import { AboutModal } from './about-modal';
 import { getAvailableClusterUpdates, clusterVersionReference } from '../module/k8s/cluster-settings';
 import { commandLineToolsModal } from './modals';
+import * as plugins from '../plugins';
 
 const SystemStatusButton = ({statuspageData, className}) => !_.isEmpty(_.get(statuspageData, 'incidents'))
   ? <ToolbarItem className={className}>
@@ -174,12 +176,36 @@ class MastheadToolbar_ extends React.Component {
     window.open(window.SERVER_FLAGS.requestTokenURL, '_blank').opener = null;
   }
 
+  _getPerspectiveActions() {
+    const perspectives = plugins.registry.getPerspectives();
+    if (perspectives.length <= 1) {
+      return [];
+    }
+    const { setActivePerspective } = this.props;
+    return [
+      { separator: true },
+      ...perspectives
+        .sort((a, b) => a.properties.name.localeCompare(b.properties.name))
+        .map(p => ({
+          label: <React.Fragment>{p.properties.icon}{' '}{p.properties.name}</React.Fragment>,
+          callback: e => {
+            e.preventDefault();
+            setActivePerspective(p.properties.id);
+            history.push(p.properties.landingPageURL);
+          },
+        })),
+    ];
+  }
+
   _launchActions() {
-    return [{
-      label: 'Multi-Cluster Manager',
-      callback: this._onClusterManager,
-      externalLink: true,
-    }];
+    return [
+      {
+        label: 'Multi-Cluster Manager',
+        callback: this._onClusterManager,
+        externalLink: true,
+      },
+      ...this._getPerspectiveActions(),
+    ];
   }
 
   _helpActions() {
@@ -351,6 +377,11 @@ class MastheadToolbar_ extends React.Component {
 
 const mastheadToolbarStateToProps = state => ({ user: state.UI.get('user') });
 
-export const MastheadToolbar = connect(mastheadToolbarStateToProps)(connectToFlags(
-  FLAGS.AUTH_ENABLED, FLAGS.OPENSHIFT, FLAGS.CLUSTER_VERSION
-)(MastheadToolbar_));
+export const MastheadToolbar = connect(
+  mastheadToolbarStateToProps,
+  { setActivePerspective: UIActions.setActivePerspective }
+)(
+  connectToFlags(FLAGS.AUTH_ENABLED, FLAGS.OPENSHIFT, FLAGS.CLUSTER_VERSION)(
+    MastheadToolbar_
+  )
+);

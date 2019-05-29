@@ -69,6 +69,17 @@ describe('codegen', () => {
         { ...pluginPackages[0] },
       ]);
     });
+
+    it('should include appPackage as a valid plugin package', () => {
+      const appPackage: PluginPackage = {
+        ...templatePackage,
+        name: 'app',
+        dependencies: {},
+        consolePlugin: { entry: 'plugin.ts' },
+      };
+
+      expect(getActivePluginPackages(appPackage, [appPackage])).toEqual([appPackage]);
+    });
   });
 
   describe('getActivePluginsModule', () => {
