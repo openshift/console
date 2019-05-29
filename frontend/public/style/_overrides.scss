@@ -300,6 +300,8 @@ kbd {
   &:hover {
     color: var(--pf-global--Color--dark-100);
   }
+  font-size: $font-size-base;
+  --pf-c-dropdown__menu-item--FontSize: 14px;
 }
 
 .pf-c-dropdown__toggle .pf-c-dropdown__toggle-icon {

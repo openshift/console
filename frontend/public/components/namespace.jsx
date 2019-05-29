@@ -296,7 +296,7 @@ class NamespaceBarDropdowns_ extends React.Component {
       },
     ];
 
-    return <div className="co-namespace-bar__dropdowns">
+    return <div className="co-namespace-bar__dropdowns pf-l-flex pf-m-justify-content-space-between pf-m-align-items-center">
       <Dropdown
         className="co-namespace-selector"
         menuClassName="co-namespace-selector__menu"

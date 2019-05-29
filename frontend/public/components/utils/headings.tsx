@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
 import { Link } from 'react-router-dom';
-
+import { Button } from '@patternfly/react-core';
 import { ActionsMenu, ResourceIcon, KebabAction, resourcePath } from './index';
 import { ClusterServiceVersionLogo } from '../operator-lifecycle-manager';
 import { connectToModel } from '../../kinds';
@@ -30,13 +30,14 @@ export const BreadCrumbs: React.SFC<BreadCrumbsProps> = ({breadcrumbs}) => (
     }) }
   </ol>);
 
-const ActionButtons: React.SFC<ActionButtonsProps> = ({actionButtons}) => <div className="co-action-buttons">
+const ActionButtons: React.SFC<ActionButtonsProps> = ({actionButtons}) => <React.Fragment>
   {_.map(actionButtons, (actionButton, i) => {
     if (!_.isEmpty(actionButton)) {
-      return <button className={`btn ${actionButton.btnClass} co-action-buttons__btn`} onClick={actionButton.callback} key={i}>{actionButton.label}</button>;
+      return <Button variant="primary" onClick={actionButton.callback} key={i}>{actionButton.label}</Button>;
+      {/* return <button className={`btn ${actionButton.btnClass} co-action-buttons__btn`} onClick={actionButton.callback} key={i}>{actionButton.label}</button>; */}
     }
   })}
-</div>;
+</React.Fragment>;
 
 export const PageHeading = connectToModel((props: PageHeadingProps) => {
   const {kind, kindObj, detail, title, menuActions, buttonActions, obj, breadcrumbsFor, titleFunc, style} = props;
@@ -58,7 +59,7 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
     { breadcrumbsFor && !_.isEmpty(data) && <BreadCrumbs breadcrumbs={breadcrumbsFor(data)} /> }
     <h1 className={classNames('co-m-pane__heading', {'co-m-pane__heading--logo': isCSV})}>
       { logo }
-      { showActions && <div className="co-actions" data-test-id="details-actions">
+      { showActions && <div className="pf-l-flex pf-m-space-items-sm" data-test-id="details-actions">
         { hasButtonActions && <ActionButtons actionButtons={buttonActions.map(a => a(kindObj, data))} /> }
         { hasMenuActions && <ActionsMenu actions={menuActions.map(a => a(kindObj, data))} /> }
       </div> }
@@ -82,7 +83,7 @@ export const ResourceOverviewHeading: React.SFC<ResourceOverviewHeadingProps> = 
         </Link>
         {isDeleting && <ResourceItemDeleting />}
       </div>
-      {!isDeleting && <div className="co-actions">
+      {!isDeleting && <div className="pf-l-flex pf-m-space-items-sm">
         <ActionsMenu actions={actions.map(a => a(kindObj, resource))} />
       </div>}
     </h1>
