@@ -70,7 +70,7 @@ describe('Test VM actions', () => {
 
   describe('Test VM detail view kebab actions', () => {
     const vmName = `vm-detail-view-actions-${testName}`;
-    const vm = new VirtualMachine(vmName, testName);
+    const vm = new VirtualMachine({name: vmName, namespace: testName});
 
     beforeAll(async() => {
       testVm.metadata.name = vmName;
@@ -104,7 +104,7 @@ describe('Test VM actions', () => {
 
 describe('Test VM Migration', () => {
   const testVm = getVmManifest('Container', testName);
-  const vm = new VirtualMachine(testVm.metadata.name, testVm.metadata.namespace);
+  const vm = new VirtualMachine(testVm.metadata);
 
   const MIGRATE_VM = 'Migrate Virtual Machine';
   const CANCEL_MIGRATION = 'Cancel Virtual Machine Migration';
@@ -164,12 +164,10 @@ describe('Test VM Migration', () => {
 });
 
 describe('Add/remove disks and NICs on respective VM pages', () => {
-  const testVm = getVmManifest('Container', testName);
-  const vmName = `vm-disk-nic-${testName}`;
-  const vm = new VirtualMachine(vmName, testName);
+  const testVm = getVmManifest('Container', testName, `vm-disk-nic-${testName}`);
+  const vm = new VirtualMachine(testVm.metadata);
 
   beforeAll(async() => {
-    testVm.metadata.name = vmName;
     createResources([testNad, testVm]);
     await vm.action('Start');
   });

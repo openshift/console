@@ -5,7 +5,7 @@ import { OrderedMap } from 'immutable';
 import { networkResource, provisionOption, deleteResource, removeLeakedResources, storageResource, addLeakableResource, createResource, removeLeakableResource } from './utils/utils';
 import { VM_BOOTUP_TIMEOUT } from './utils/consts';
 import { testName } from '../../protractor.conf';
-import { basicVmConfig, rootDisk, glusterfsDisk, networkInterface, testNad, hddDisk } from './mocks';
+import { basicVmConfig, rootDisk, networkInterface, testNad, hddDisk } from './mocks';
 import { VirtualMachine } from './models/virtualMachine';
 
 describe('Kubevirt create VM using wizard', () => {
@@ -43,7 +43,7 @@ describe('Kubevirt create VM using wizard', () => {
         method: 'PXE',
       },
       networkResources: [networkInterface],
-      storageResources: [rootDisk, glusterfsDisk],
+      storageResources: [rootDisk],
     });
 
   beforeAll(async() => {
@@ -58,13 +58,13 @@ describe('Kubevirt create VM using wizard', () => {
   provisionConfigs.forEach((provisionConfig, configName) => {
     it(`Create VM using ${configName}.`, async() => {
       const vmConfig = {
+        ...commonSettings,
         name: `vm-${provisionConfig.provision.method.toLowerCase()}-${testName}`,
         provisionSource: provisionConfig.provision,
         storageResources: provisionConfig.storageResources,
         networkResources: provisionConfig.networkResources,
-        ...commonSettings,
       };
-      const vm = new VirtualMachine(vmConfig.name, vmConfig.namespace);
+      const vm = new VirtualMachine(vmConfig);
 
       addLeakableResource(leakedResources, vm.asResource());
       await vm.create(vmConfig);

@@ -27,6 +27,7 @@ describe('Test adding discs/nics to template', () => {
   };
 
   const templateConfig = {
+    ...commonConfig,
     name: `template-${testName}`,
     provisionSource: {
       method: 'Container',
@@ -34,16 +35,15 @@ describe('Test adding discs/nics to template', () => {
     },
     operatingSystem: basicVmConfig.operatingSystem,
     workloadProfile: basicVmConfig.workloadProfile,
-    ...commonConfig,
   };
   const vmConfig = {
+    ...commonConfig,
     name: `vm-${testName}`,
     template: templateConfig.name,
     startOnCreation: false,
-    ...commonConfig,
   };
-  const template = new Template(templateConfig.name, templateConfig.namespace);
-  const vm = new VirtualMachine(vmConfig.name, vmConfig.namespace);
+  const template = new Template(templateConfig);
+  const vm = new VirtualMachine(vmConfig);
   const wizard = new Wizard();
 
   beforeAll(async() => {

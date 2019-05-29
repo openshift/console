@@ -9,7 +9,7 @@ import { removeLeakedResources } from './utils/utils';
 import Yaml from './models/yaml';
 import { VirtualMachine } from './models/virtualMachine';
 import { testNad, customVMWithNicDisk } from './mocks';
-import { TABS } from './utils/consts';
+import { TABS, VM_BOOTUP_TIMEOUT } from './utils/consts';
 
 describe('Test create vm from yaml', () => {
   const leakedResources = new Set<string>();
@@ -34,7 +34,7 @@ describe('Test create vm from yaml', () => {
     it('Creates VM', async() => {
       await yaml.createVMFromYaml();
       await isLoaded();
-      const vm = new VirtualMachine('example', testName);
+      const vm = new VirtualMachine({name: 'example', namespace: testName});
       await vm.action('Start');
 
       // prepare VM source for removing
@@ -56,17 +56,17 @@ describe('Test create vm from yaml', () => {
       await yamlView.setContent(customVMWithNicDisk);
       await yaml.createVMFromYaml();
       await isLoaded();
-      const vm = new VirtualMachine(`vm-${testName}`, testName);
+      const vm = new VirtualMachine({name: `vm-${testName}`, namespace: testName});
       await vm.action('Start');
 
       // Verify additional nic and disk exists.
-      // Note: 'testdisk' and 'nic1' are hard coding in vm yaml customVMWithNicDisk
+      // Note: 'testdisk' and 'nic1' are hard coded in vm yaml customVMWithNicDisk
       expect((await vm.getAttachedResources(TABS.DISKS)).includes('testdisk')).toBe(true);
       expect((await vm.getAttachedResources(TABS.NICS)).includes('nic1')).toBe(true);
 
       // prepare VM source for removing
       leakedResources.add(JSON.stringify({name: `vm-${testName}`, namespace: testName, kind: 'vm'}));
-    });
+    }, VM_BOOTUP_TIMEOUT);
   });
 
   describe('Test create VM from an invalid yaml', () => {

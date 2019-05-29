@@ -15,13 +15,12 @@ import * as podView from '../../views/kubevirt/pod.view';
 
 describe('Test Node Maintenance Mode', () => {
   const leakedResources = new Set<string>();
-  const podName = `maintenance-${testName}`;
-  const pod = new Pod(podName, testName);
+  const podResourceOpts = {name: `maintenance-${testName}`, namespace: testName, nodeSelector: {}};
+  const podResource = examplePod(podResourceOpts);
+  const pod = new Pod(podResourceOpts);
   let computeNodeName = '';
   let computeNodeHostname = '';
   let computeNodeURL = '';
-  const podResourceOpts = {name: podName, namespace: testName, nodeSelector: {}};
-  const podResource = examplePod(podResourceOpts);
 
   beforeAll(async() => {
     // Create an example hello-world pod
@@ -50,7 +49,7 @@ describe('Test Node Maintenance Mode', () => {
   afterEach(async() => {
     await browser.get(computeNodeURL);
     await isLoaded;
-    await detailViewAction('Stop Maintenance', false);
+    await detailViewAction('Stop Maintenance', true);
 
     await browser.get(`${appHost}/k8s/cluster/nodes`);
     await isLoaded();
@@ -65,7 +64,7 @@ describe('Test Node Maintenance Mode', () => {
     await browser.get(`${appHost}/k8s/ns/${testName}/pods`);
     await isLoaded();
 
-    await filterForName(podName);
+    await filterForName(pod.name);
     await browser.wait(until.and(waitForCount(resourceRows, 0)), POD_TERMINATION_TIMEOUT);
     removeLeakableResource(leakedResources, podResource);
   }, POD_CREATE_DELETE_TIMEOUT);

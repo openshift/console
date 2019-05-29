@@ -15,13 +15,14 @@ import { rowForName } from '../../../views/kubevirt/kubevirtDetailView.view';
 
 
 export class VirtualMachine extends KubevirtDetailView {
-  constructor(name: string, namespace: string) {
-    super(name, namespace, 'virtualmachines');
+  constructor(vmConfig) {
+    super({...vmConfig, kind: 'virtualmachines'});
   }
 
   async navigateToVmi(vmiTab: string): Promise<VirtualMachineInstance> {
     await this.navigateToTab(TABS.OVERVIEW);
-    const vmi = new VirtualMachineInstance(await vmView.vmDetailPod(this.namespace, this.name).$('a').getText(), testName);
+    const vmPodName = await vmView.vmDetailPod(this.namespace, this.name).$('a').getText();
+    const vmi = new VirtualMachineInstance({name: vmPodName, namespace: testName});
     await vmi.navigateToTab(vmiTab);
     return vmi;
   }

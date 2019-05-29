@@ -9,8 +9,8 @@ import { detailViewAction } from '../../../views/kubevirt/vm.actions.view';
 import { statusIcon } from '../../../views/kubevirt/pod.view';
 
 export default class Pod extends DetailView {
-  constructor(name: string, namespace: string) {
-    super(name, namespace, 'pods');
+  constructor(podConfig) {
+    super({...podConfig, kind: 'pods'});
   }
 
   async action(action: string) {

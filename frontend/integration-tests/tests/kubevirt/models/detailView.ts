@@ -10,10 +10,10 @@ export class DetailView {
   readonly namespace: string;
   readonly kind: string;
 
-  constructor(name: string, namespace: string, kind: string) {
-    this.name = name;
-    this.namespace = namespace;
-    this.kind = kind;
+  constructor(instance) {
+    this.name = instance.name;
+    this.namespace = instance.namespace;
+    this.kind = instance.kind;
   }
 
   static async getResourceTitle() {

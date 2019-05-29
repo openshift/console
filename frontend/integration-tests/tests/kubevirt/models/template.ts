@@ -11,8 +11,8 @@ import { KubevirtDetailView } from './kubevirtDetailView';
 
 
 export class Template extends KubevirtDetailView {
-  constructor(name: string, namespace: string) {
-    super(name, namespace, 'templates');
+  constructor(templateConfig) {
+    super({...templateConfig, kind: 'templates'});
   }
 
   async create({

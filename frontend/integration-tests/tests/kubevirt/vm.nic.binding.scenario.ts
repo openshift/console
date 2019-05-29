@@ -14,7 +14,7 @@ import * as kubevirtDetailView from '../../views/kubevirt/kubevirtDetailView.vie
 describe('Test VM network interface binding method', () => {
   const wizard = new Wizard();
   const vmName = `vm-${testName}`;
-  const vm = new VirtualMachine(vmName, testName);
+  const vm = new VirtualMachine({name: vmName, namespace: testName});
   const allBindingMethods = [networkBindingMethod.bridge, networkBindingMethod.masquerade, networkBindingMethod.sriov];
   const nonPodNetworkBindingMethods = [networkBindingMethod.bridge, networkBindingMethod.sriov];
 

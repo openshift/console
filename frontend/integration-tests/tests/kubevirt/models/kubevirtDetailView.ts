@@ -9,6 +9,10 @@ import { browser } from 'protractor';
 
 
 export class KubevirtDetailView extends DetailView {
+  constructor(instanceConfig) {
+    super(instanceConfig);
+  }
+
   // TODO: Deprecate getAttachedResources and use specific methods instead (getAttachedDisks/getAttachedNics)
   async getAttachedResources(resourceTab: string): Promise<string[]> {
     await this.navigateToTab(resourceTab);

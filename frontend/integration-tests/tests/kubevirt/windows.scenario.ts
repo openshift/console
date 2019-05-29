@@ -2,27 +2,36 @@
 import { execSync } from 'child_process';
 import { browser, ExpectedConditions as until } from 'protractor';
 // eslint-disable-next-line no-unused-vars
-import { removeLeakedResources, waitForStringInElement, deleteResource, createResources } from './utils/utils';
+import { removeLeakedResources, waitForStringInElement, deleteResource, createResources, removeLeakableResource, addLeakableResource } from './utils/utils';
 import { VM_IP_ASSIGNMENT_TIMEOUT, WINDOWS_IMPORT_TIMEOUT, VM_BOOTUP_TIMEOUT, TABS } from './utils/consts';
-import { testName, appHost } from '../../protractor.conf';
-import { errorMessage, isLoaded } from '../../views/crud.view';
+import { testName } from '../../protractor.conf';
 import { windowsVmConfig, localStorageDisk, multusNetworkInterface, multusNad, localStorageClass, localStoragePersistentVolume } from './mocks';
-import Wizard from './models/wizard';
 import { VirtualMachine } from './models/virtualMachine';
-import { overviewIpAddresses, statusIcon, statusIcons } from '../../views/kubevirt/virtualMachine.view';
+import { overviewIpAddresses } from '../../views/kubevirt/virtualMachine.view';
 
 const WINDOWS_RDP_TIMEOUT = WINDOWS_IMPORT_TIMEOUT + VM_IP_ASSIGNMENT_TIMEOUT + VM_BOOTUP_TIMEOUT;
 
 describe('Windows VM', () => {
   const leakedResources = new Set<string>();
-  const wizard = new Wizard();
-  const provisionConfig = {
-    provision: {
+  const vmConfig = {
+    name: `windows-${testName.slice(-5)}`,
+    startOnCreation: true,
+    cloudInit: {
+      useCloudInit: false,
+    },
+    namespace: testName,
+    description: `Default description ${testName}`,
+    flavor: windowsVmConfig.flavor,
+    operatingSystem: windowsVmConfig.operatingSystem,
+    workloadProfile: windowsVmConfig.workloadProfile,
+    provisionSource: {
       method: 'URL',
       source: windowsVmConfig.sourceURL,
     },
-    networkOptions: [multusNetworkInterface],
+    storageResources: [localStorageDisk],
+    networkResources: [multusNetworkInterface],
   };
+  const vm = new VirtualMachine(vmConfig);
   const vmIp = '192.168.0.55';
   const rdpPort = '3389';
 
@@ -37,49 +46,9 @@ describe('Windows VM', () => {
     execSync(`kubectl delete ${localStoragePersistentVolume.kind} ${localStoragePersistentVolume.metadata.name}`);
   });
 
-  beforeEach(async() => {
-    await browser.get(`${appHost}/k8s/ns/${testName}/virtualmachines`);
-    await isLoaded();
-    await wizard.openWizard();
-  });
-
   it('Windows L2 RDP', async() => {
-    const vmName = `windows-${provisionConfig.provision.method.toLowerCase()}-${testName.slice(-5)}`;
-
-    // Basic Settings
-    await wizard.fillName(vmName);
-    await wizard.fillDescription(testName);
-    await wizard.selectProvisionSource(provisionConfig.provision);
-    await wizard.selectFlavor(windowsVmConfig.flavor);
-    await wizard.selectOperatingSystem(windowsVmConfig.operatingSystem);
-    await wizard.selectWorkloadProfile(windowsVmConfig.workloadProfile);
-    await wizard.next();
-
-    // Networking
-    for (const networkOption of provisionConfig.networkOptions) {
-      await wizard.addNic(networkOption.name, networkOption.mac, networkOption.networkDefinition, networkOption.binding);
-    }
-    await wizard.next();
-
-    // Change Rootdisk size and storage class
-    await wizard.editDiskAttribute(1, 'storage', localStorageDisk.storageClass);
-    await wizard.editDiskAttribute(1, 'size', localStorageDisk.size);
-
-    // Create VM
-    await wizard.next();
-    await wizard.waitForCreation();
-
-    // Check for errors and close wizard
-    expect(errorMessage.isPresent()).toBe(false);
-    leakedResources.add(JSON.stringify({name: vmName, namespace: testName, kind: 'vm'}));
-    await wizard.next();
-
-    // Wait for import to finish
-    await browser.wait(until.invisibilityOf(statusIcon(statusIcons.importing)), WINDOWS_IMPORT_TIMEOUT);
-
-    // Start VM
-    const vm = new VirtualMachine(vmName, testName);
-    await vm.action('Start');
+    await vm.create(vmConfig);
+    addLeakableResource(leakedResources, vm.asResource());
 
     // Wait for IP assignment
     await vm.navigateToTab(TABS.OVERVIEW);
@@ -94,6 +63,6 @@ describe('Windows VM', () => {
     expect(vm.getConsoleRdpPort()).toEqual(rdpPort);
 
     await vm.action('Delete');
-    leakedResources.delete(JSON.stringify({name: vmName, namespace: testName, kind: 'vm'}));
+    removeLeakableResource(leakedResources, vm.asResource());
   }, WINDOWS_RDP_TIMEOUT);
 });

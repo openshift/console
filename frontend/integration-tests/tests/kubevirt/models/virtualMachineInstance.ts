@@ -2,8 +2,8 @@ import { volumeRows } from '../../../views/kubevirt/virtualMachineInstance.view'
 import { DetailView } from './detailView';
 
 export class VirtualMachineInstance extends DetailView {
-  constructor(name: string, namespace: string) {
-    super(name, namespace, 'pods');
+  constructor(vmiConfig) {
+    super({...vmiConfig, kind: 'pods'});
   }
 
   async getVolumes() {

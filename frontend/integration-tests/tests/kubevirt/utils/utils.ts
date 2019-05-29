@@ -178,13 +178,14 @@ export function execCommandFromCli(command: string) {
     execSync(command);
   } catch (error) {
     console.error(`Failed to run ${command}:\n${error}`);
+    throw Error(`Failed to run ${command}:\n${error}`);
   }
 }
 
 export function exposeService(exposeServices: Set<any>) {
   const srvArray: Array<any> = [...exposeServices];
-  srvArray.forEach(({name, kind, port, targetPort, exposeName, type}) => {
-    execCommandFromCli(`virtctl expose ${kind} ${name} --port=${port} --target-port=${targetPort} --name=${exposeName} --type=${type}`);
+  srvArray.forEach(({name, kind, port, targetPort, exposeName, type, namespace}) => {
+    execCommandFromCli(`virtctl expose ${kind} ${name} --port=${port} --target-port=${targetPort} --name=${exposeName} --type=${type} -n ${namespace}`);
   });
 }
 

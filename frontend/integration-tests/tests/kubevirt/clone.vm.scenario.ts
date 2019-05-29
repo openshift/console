@@ -19,9 +19,13 @@ describe('Test clone VM.', () => {
   const leakedResources = new Set<string>();
   const wizard = new Wizard();
   const testContainerVm = getVmManifest('Container', testName);
-  const vm = new VirtualMachine(testContainerVm.metadata.name, testContainerVm.metadata.namespace);
+  const vm = new VirtualMachine(testContainerVm.metadata);
   const nameValidationNamespace = `${testName}-cloning`;
   const testNameValidationVm = getVmManifest('Container', nameValidationNamespace, testContainerVm.metadata.name);
+  const clonedVmConf = {
+    name: `${vm.name}-clone`,
+    namespace: vm.namespace,
+  };
 
   describe('Test Clone VM wizard dialog.', () => {
     beforeAll(() => {
@@ -47,7 +51,7 @@ describe('Test clone VM.', () => {
 
       // Clone the VM
       await wizard.next();
-      const clonedVm = new VirtualMachine(`${vm.name}-clone`, vm.namespace);
+      const clonedVm = new VirtualMachine(clonedVmConf);
       leakedResources.add(JSON.stringify({name: clonedVm.name, namespace: clonedVm.namespace, kind: 'vm'}));
 
       // Verify that the original VM is stopped
@@ -90,8 +94,7 @@ describe('Test clone VM.', () => {
 
   describe('Test Cloning VM.', () => {
     const urlVmManifest = getVmManifest('URL', testName);
-    const urlVm = new VirtualMachine(urlVmManifest.metadata.name, urlVmManifest.metadata.namespace);
-    const cloudInitVmName = `ci-${testName}`;
+    const urlVm = new VirtualMachine(urlVmManifest.metadata);
     const cloudInitVmProvisionConfig = {
       method: 'URL',
       source: basicVmConfig.sourceURL,
@@ -119,7 +122,7 @@ describe('Test clone VM.', () => {
       await wizard.startOnCreation();
       await wizard.next();
 
-      const clonedVm = new VirtualMachine(`${vm.name}-clone`, vm.namespace);
+      const clonedVm = new VirtualMachine(clonedVmConf);
       leakedResources.add(JSON.stringify({name: clonedVm.name, namespace: clonedVm.namespace, kind: 'vm'}));
 
       await browser.get(`${appHost}/k8s/ns/${testName}/virtualmachines`);
@@ -138,7 +141,7 @@ describe('Test clone VM.', () => {
       await vm.action('Clone');
       await wizard.next();
 
-      const clonedVm = new VirtualMachine(`${vm.name}-clone`, vm.namespace);
+      const clonedVm = new VirtualMachine(clonedVmConf);
       leakedResources.add(JSON.stringify({name: clonedVm.name, namespace: clonedVm.namespace, kind: 'vm'}));
       await clonedVm.navigateToTab(TABS.NICS);
 
@@ -156,7 +159,7 @@ describe('Test clone VM.', () => {
       await vm.action('Clone');
       await wizard.next();
 
-      const clonedVm = new VirtualMachine(`${vm.name}-clone`, vm.namespace);
+      const clonedVm = new VirtualMachine(clonedVmConf);
       leakedResources.add(JSON.stringify({name: clonedVm.name, namespace: clonedVm.namespace, kind: 'vm'}));
       expect(searchYAML(`vm.kubevirt.io/name: ${vm.name}`, clonedVm.name, clonedVm.namespace, 'vm'))
         .toBeTruthy('Cloned VM should have vm.kubevirt.io/name label.');
@@ -169,7 +172,7 @@ describe('Test clone VM.', () => {
       await vm.action('Clone');
       await wizard.next();
 
-      const clonedVm = new VirtualMachine(`${vm.name}-clone`, vm.namespace);
+      const clonedVm = new VirtualMachine(clonedVmConf);
       leakedResources.add(JSON.stringify({name: clonedVm.name, namespace: clonedVm.namespace, kind: 'vm'}));
       expect(searchYAML('kubevirt/cirros-registry-disk-demo', clonedVm.name, clonedVm.namespace, 'vm'))
         .toBeTruthy('Cloned VM should have container image.');
@@ -184,7 +187,7 @@ describe('Test clone VM.', () => {
       await urlVm.action('Clone');
       await wizard.next();
 
-      const clonedVm = new VirtualMachine(`${urlVm.name}-clone`, urlVm.namespace);
+      const clonedVm = new VirtualMachine({name: `${urlVm.name}-clone`, namespace: urlVm.namespace});
       leakedResources.add(JSON.stringify({name: clonedVm.name, namespace: clonedVm.namespace, kind: 'vm'}));
       await clonedVm.action('Start');
 
@@ -217,7 +220,7 @@ describe('Test clone VM.', () => {
         startOnCreation: false,
         cloudInit: cloudInitCustomScriptConfig,
       };
-      const ciVm = new VirtualMachine(cloudInitVmName, testName);
+      const ciVm = new VirtualMachine(ciVmConfig);
       await ciVm.create(ciVmConfig);
 
       addLeakableResource(leakedResources, ciVm.asResource());
@@ -225,7 +228,7 @@ describe('Test clone VM.', () => {
       // Clone VM
       await ciVm.action('Clone');
       await wizard.next();
-      const clonedVm = new VirtualMachine(`${cloudInitVmName}-clone`, ciVm.namespace);
+      const clonedVm = new VirtualMachine({name: `${ciVmConfig.name}-clone`, namespace: ciVm.namespace});
       addLeakableResource(leakedResources, clonedVm.asResource());
 
       // Check disks on cloned VM

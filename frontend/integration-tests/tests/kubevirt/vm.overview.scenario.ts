@@ -1,6 +1,5 @@
 /* eslint-disable no-undef */
 import { browser, ExpectedConditions as until } from 'protractor';
-import { execSync } from 'child_process';
 
 import { appHost, testName } from '../../protractor.conf';
 import { isLoaded } from '../../views/crud.view';
@@ -16,13 +15,20 @@ import { detailViewAction } from '../../views/kubevirt/vm.actions.view';
 const newVMDescription = 'edited vm description';
 const vmName = `vm-${testName}`;
 
+const exposeServices = new Set<any>();
+const serviceTemplate = {name: vmName, kind: 'vm', type: 'NodePort', namespace: testName};
+exposeServices.add({exposeName: `${vmName}-service-ssh`, port: '22', targetPort: '20022', ...serviceTemplate});
+exposeServices.add({exposeName: `${vmName}-service-smtp`, port: '25', targetPort: '20025', ...serviceTemplate});
+exposeServices.add({exposeName: `${vmName}-service-http`, port: '80', targetPort: '20080', ...serviceTemplate});
+
 describe('Test vm overview', () => {
-  const vm = new VirtualMachine(vmName, testName);
   const cloudInit = `#cloud-config\nuser: cloud-user\npassword: atomic\nchpasswd: {expire: False}\nhostname: vm-${testName}.example.com`;
   const testVm = getVmManifest('Container', testName, vmName, cloudInit);
+  const vm = new VirtualMachine(testVm.metadata);
 
   beforeAll(async() => {
     createResource(testVm);
+    exposeService(exposeServices);
   });
 
   afterAll(async() => {
@@ -98,19 +104,6 @@ describe('Test vm overview', () => {
     expect(vmView.vmDetailDesc(testName, vmName).getText()).toEqual(newVMDescription);
     expect(vmView.vmDetailFlavorDesc(testName, vmName).getText()).toEqual('2 CPU, 4G Memory');
   });
-});
-
-describe('VM Services', () => {
-  const exposeServices = new Set<any>();
-  const serviceTemplate = {name: vmName, kind: 'vm', type: 'NodePort'};
-  exposeServices.add({exposeName: `${vmName}-service-ssh`, port: '22', targetPort: '20022', ...serviceTemplate});
-  exposeServices.add({exposeName: `${vmName}-service-smtp`, port: '25', targetPort: '20025', ...serviceTemplate});
-  exposeServices.add({exposeName: `${vmName}-service-http`, port: '80', targetPort: '20080', ...serviceTemplate});
-
-  beforeAll(async() => {
-    execSync(`oc project ${testName}`);
-    exposeService(exposeServices);
-  });
 
   it('Check vm services', async() => {
     await asyncForEach(exposeServices, async(srv) => {
@@ -122,73 +115,72 @@ describe('VM Services', () => {
       await isLoaded();
     });
   });
-});
 
-describe('Test vm overview on project overview page', () => {
-  const exposeServices = new Set<any>();
+  describe('Test vm overview on project overview page', () => {
+    beforeEach(async() => {
+      await browser.get(`${appHost}/overview/ns/${testName}`);
+      await isLoaded();
+    });
 
-  beforeEach(async() => {
-    await browser.get(`${appHost}/overview/ns/${testName}`);
-    await isLoaded();
-  });
+    it('Check vm details on project overview', async() => {
+      expect(vmView.statusIcon(vmView.statusIcons.off).isPresent()).toBeTruthy();
+      await itemVirtualMachine.click();
+      await isLoaded();
+      await detailViewAction('Start', true);
+      await browser.wait(until.presenceOf(vmView.statusIcon(vmView.statusIcons.running)), VM_BOOTUP_TIMEOUT);
 
-  it('Check vm details on project overview', async() => {
-    expect(vmView.statusIcon(vmView.statusIcons.off).isPresent()).toBeTruthy();
-    await itemVirtualMachine.click();
-    await isLoaded();
-    await detailViewAction('Start', true);
-    await browser.wait(until.presenceOf(vmView.statusIcon(vmView.statusIcons.running)), VM_BOOTUP_TIMEOUT);
+      expect(vmView.vmDetailDesc(testName, vmName).getText()).toEqual(newVMDescription);
+      expect(vmView.vmDetailOS(testName, vmName).getText()).toEqual(basicVmConfig.operatingSystem);
+      expect(vmView.statusIcon(vmView.statusIcons.running).isPresent()).toBeTruthy();
+      expect(vmView.vmDetailTemplate(testName, vmName).getText()).toEqual('openshift/rhel7-generic-small');
+      expect(vmView.vmDetailNamespace(testName, vmName).$('a').getText()).toEqual(testName);
+      expect(vmView.vmDetailBootOrder(testName, vmName).getText()).toEqual(['rootdisk', 'nic0', 'cloudinitdisk']);
+      expect(vmView.vmDetailFlavorDesc(testName, vmName).getText()).toEqual('2 CPU, 4G Memory');
+      expect(vmView.vmDetailIP(testName, vmName).getText()).not.toEqual(emptyStr);
+      expect(vmView.vmDetailHostname(testName, vmName).getText()).toEqual(vmName);
+      expect(vmView.vmDetailPod(testName, vmName).$('a').getText()).toContain('virt-launcher');
+      expect(vmView.vmDetailNode(testName, vmName).$('a').getText()).not.toEqual(emptyStr);
 
-    expect(vmView.vmDetailDesc(testName, vmName).getText()).toEqual(newVMDescription);
-    expect(vmView.vmDetailOS(testName, vmName).getText()).toEqual(basicVmConfig.operatingSystem);
-    expect(vmView.statusIcon(vmView.statusIcons.running).isPresent()).toBeTruthy();
-    expect(vmView.vmDetailTemplate(testName, vmName).getText()).toEqual('openshift/rhel7-generic-small');
-    expect(vmView.vmDetailNamespace(testName, vmName).$('a').getText()).toEqual(testName);
-    expect(vmView.vmDetailBootOrder(testName, vmName).getText()).toEqual(['rootdisk', 'nic0', 'cloudinitdisk']);
-    expect(vmView.vmDetailFlavorDesc(testName, vmName).getText()).toEqual('2 CPU, 4G Memory');
-    expect(vmView.vmDetailIP(testName, vmName).getText()).not.toEqual(emptyStr);
-    expect(vmView.vmDetailHostname(testName, vmName).getText()).toEqual(vmName);
-    expect(vmView.vmDetailPod(testName, vmName).$('a').getText()).toContain('virt-launcher');
-    expect(vmView.vmDetailNode(testName, vmName).$('a').getText()).not.toEqual(emptyStr);
+      await asyncForEach(exposeServices, async(srv) => {
+        expect(vmView.vmDetailService(testName, srv.exposeName).getText()).toEqual(srv.exposeName);
+      });
+    }, VM_BOOTUP_TIMEOUT);
 
-    await asyncForEach(exposeServices, async(srv) => {
-      expect(vmView.vmDetailService(testName, srv.exposeName).getText()).toEqual(srv.exposeName);
+    it('Click vm link', async() => {
+      virtualMachineLink(0).click();
+      expect(browser.getCurrentUrl()).toEqual(`${appHost}/k8s/ns/${testName}/virtualmachines/${vmName}`);
+    });
+
+    it('Click vm status when vm is running', async() => {
+      vmStatusLink(0).click();
+      expect(activeTab.first().getText()).toEqual('Overview');
+      expect(browser.getCurrentUrl()).toContain('pods');
+    });
+
+    it('Click vm status when vm is pending', async() => {
+      await itemVirtualMachine.click();
+      await isLoaded();
+      await detailViewAction('Restart', true);
+      await browser.wait(until.presenceOf(vmView.statusIcon(vmView.statusIcons.starting)), VM_BOOTUP_TIMEOUT);
+      await browser.wait(until.presenceOf(vmStatusLink(0)), VM_BOOTUP_TIMEOUT);
+      vmStatusLink(0).click();
+      expect(activeTab.first().getText()).toEqual('Events');
+      const currentUrl = await browser.getCurrentUrl();
+      expect(currentUrl).toContain('pods');
+      expect(currentUrl).toContain('events');
+    });
+
+    it('Open and close vm overview page', async() => {
+      await itemVirtualMachine.click();
+      await isLoaded();
+      expect(vmView.vmDetailOS(testName, vmName).isPresent()).toBeTruthy();
+
+      // Close vm overview page
+      await itemVirtualMachine.click();
+      await isLoaded();
+      expect(vmView.vmDetailOS(testName, vmName).isPresent()).toBe(false, 'Should not display OS');
     });
   });
-
-  it('Click vm link', async() => {
-    virtualMachineLink(0).click();
-    expect(browser.getCurrentUrl()).toEqual(`${appHost}/k8s/ns/${testName}/virtualmachines/${vmName}`);
-  });
-
-  it('Click vm status when vm is running', async() => {
-    vmStatusLink(0).click();
-    expect(activeTab.first().getText()).toEqual('Overview');
-    expect(browser.getCurrentUrl()).toContain('pods');
-  });
-
-  it('Click vm status when vm is pending', async() => {
-    await itemVirtualMachine.click();
-    await isLoaded();
-    await detailViewAction('Restart', true);
-    await browser.wait(until.presenceOf(vmView.statusIcon(vmView.statusIcons.starting)), VM_BOOTUP_TIMEOUT);
-    await browser.wait(until.presenceOf(vmStatusLink(0)), VM_BOOTUP_TIMEOUT);
-    vmStatusLink(0).click();
-    expect(activeTab.first().getText()).toEqual('Events');
-    const currentUrl = await browser.getCurrentUrl();
-    expect(currentUrl).toContain('pods');
-    expect(currentUrl).toContain('events');
-  });
-
-  it('Open and close vm overview page', async() => {
-    await itemVirtualMachine.click();
-    await isLoaded();
-    expect(vmView.vmDetailOS(testName, vmName).isPresent()).toBeTruthy();
-
-    // Close vm overview page
-    await itemVirtualMachine.click();
-    await isLoaded();
-    expect(vmView.vmDetailOS(testName, vmName).isPresent()).toBe(false, 'Should not display OS');
-  });
 });
+
 
