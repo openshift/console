@@ -21,6 +21,28 @@ const navSectionStateToProps = (state: RootState, {required}) => {
   };
 };
 
+const mergePluginChild = (Children: React.ReactElement[], pluginChild: React.ReactElement, mergeAfter?: string) => {
+  const index = mergeAfter ? Children.findIndex(c => c.props.name === mergeAfter) : -1;
+  if (index >= 0) {
+    Children.splice(index + 1, 0, pluginChild);
+  } else {
+    Children.push(pluginChild);
+  }
+};
+
+const getNavLinkFromItem = (item: plugins.NavItem, key: number): React.ReactElement | null => {
+  if (plugins.isHrefNavItem(item)) {
+    return <HrefLink key={key} {...item.properties.componentProps} />;
+  }
+  if (plugins.isResourceNSNavItem(item)) {
+    return <ResourceNSLink key={key} {...item.properties.componentProps} />;
+  }
+  if (plugins.isResourceClusterNavItem(item)) {
+    return <ResourceClusterLink key={key} {...item.properties.componentProps} />;
+  }
+  return null;
+};
+
 export const NavSection = connect(navSectionStateToProps)(
   class NavSection extends React.Component<NavSectionProps, NavSectionState> {
     public state: NavSectionState;
@@ -95,56 +117,55 @@ export const NavSection = connect(navSectionStateToProps)(
       (section) => plugins.registry.getNavItems(section)
     );
 
+    mapChild = (c: React.ReactElement): React.ReactElement | null => {
+      if (!c) {
+        return null;
+      }
+
+      const { activeChild } = this.state;
+      const { flags, activeNamespace } = this.props;
+      const { name, required, disallowed } = c.props;
+
+      const requiredArray = required ? _.castArray(required) : [];
+      const requirementMissing = _.some(requiredArray, flag => (
+        flag && (flagPending(flags.get(flag)) || !flags.get(flag))
+      ));
+      if (requirementMissing) {
+        return null;
+      }
+      if (disallowed && (flagPending(flags.get(disallowed)) || flags.get(disallowed))) {
+        return null;
+      }
+
+      return React.cloneElement(c, {
+        key: name,
+        isActive: name === activeChild,
+        activeNamespace,
+        flags,
+      });
+    }
+
     render() {
       if (!this.props.canRender) {
         return null;
       }
 
-      const { title, children, activeNamespace, flags } = this.props;
+      const { title, children } = this.props;
       const { isOpen, activeChild } = this.state;
       const isActive = !!activeChild;
 
-      const mapChild = (c) => {
-        if (!c) {
-          return null;
-        }
-        const {name, required, disallowed} = c.props;
-        const requiredArray = required ? _.castArray(required) : [];
-        const requirementMissing = _.some(requiredArray, flag => (
-          flag && (flagPending(flags.get(flag)) || !flags.get(flag))
-        ));
-        if (requirementMissing) {
-          return null;
-        }
-        if (disallowed && (flagPending(flags.get(disallowed)) || flags.get(disallowed))) {
-          return null;
-        }
-        return React.cloneElement(c, {
-          key: name,
-          isActive: name === this.state.activeChild,
-          activeNamespace,
-          flags,
-        });
-      };
+      const Children: React.ReactElement[] | null = React.Children.map(children, this.mapChild) || [];
 
-      const Children = React.Children.map(children, mapChild);
+      this.getPluginNavItems(title).forEach((item, index) => {
+        const pluginChild = this.mapChild(getNavLinkFromItem(item, index));
+        if (pluginChild) {
+          mergePluginChild(Children, pluginChild, item.properties.mergeAfter);
+        }
+      });
 
-      const PluginChildren = _.compact(this.getPluginNavItems(title).map((item, index) => {
-        if (plugins.isHrefNavItem(item)) {
-          return <HrefLink key={index} {...item.properties.componentProps} />;
-        }
-        if (plugins.isResourceNSNavItem(item)) {
-          return <ResourceNSLink key={index} {...item.properties.componentProps} />;
-        }
-        if (plugins.isResourceClusterNavItem(item)) {
-          return <ResourceClusterLink key={index} {...item.properties.componentProps} />;
-        }
-      })).map(mapChild);
-
-      return (Children || PluginChildren.length > 0) ? (
+      return Children.length > 0 ? (
         <NavExpandable title={title} isActive={isActive} isExpanded={isOpen} onExpand={this.toggle}>
           {Children}
-          {PluginChildren}
         </NavExpandable>
       ) : null;
     }
