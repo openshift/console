@@ -11,9 +11,10 @@ import { IDPCAFileInput } from './idp-cafile-input';
 
 const DroppableFileInput = (props: any) => <AsyncComponent loader={() => import('../utils/file-input').then(c => c.DroppableFileInput)} {...props} />;
 
-export class AddBasicAuthPage extends PromiseComponent<{}, AddBasicAuthPageState> {
-  readonly state: AddBasicAuthPageState = {
-    name: 'basic-auth',
+export class AddKeystonePage extends PromiseComponent<{}, AddKeystonePageState> {
+  readonly state: AddKeystonePageState = {
+    name: 'keystone',
+    domainName: '',
     url: '',
     caFileContent: '',
     certFileContent: '',
@@ -36,7 +37,7 @@ export class AddBasicAuthPage extends PromiseComponent<{}, AddBasicAuthPageState
       apiVersion: 'v1',
       kind: 'Secret',
       metadata: {
-        generateName: 'basic-auth-tls-',
+        generateName: 'keystone-tls-',
         namespace: 'openshift-config',
       },
       stringData: {
@@ -58,7 +59,7 @@ export class AddBasicAuthPage extends PromiseComponent<{}, AddBasicAuthPageState
       apiVersion: 'v1',
       kind: 'ConfigMap',
       metadata: {
-        generateName: 'basic-auth-ca-',
+        generateName: 'keystone-ca-',
         namespace: 'openshift-config',
       },
       stringData: {
@@ -69,28 +70,29 @@ export class AddBasicAuthPage extends PromiseComponent<{}, AddBasicAuthPageState
     return this.handlePromise(k8sCreate(ConfigMapModel, ca));
   }
 
-  addBasicAuthIDP(oauth: OAuthKind, secretName: string, caName: string): Promise<K8sResourceKind> {
-    const { name, url } = this.state;
+  addKeystoneIDP(oauth: OAuthKind, secretName: string, caName: string): Promise<K8sResourceKind> {
+    const { name, domainName, url } = this.state;
     const idp: IdentityProvider = {
       name,
-      type: 'BasicAuth',
+      type: 'Keystone',
       mappingMethod: 'claim',
-      basicAuth: {
+      keystone: {
+        domainName,
         url,
       },
     };
 
     if (caName) {
-      idp.basicAuth.ca = {
+      idp.keystone.ca = {
         name: caName,
       };
     }
 
     if (secretName) {
-      idp.basicAuth.tlsClientCert = {
+      idp.keystone.tlsClientCert = {
         name: secretName,
       };
-      idp.basicAuth.tlsClientKey = {
+      idp.keystone.tlsClientKey = {
         name: secretName,
       };
     }
@@ -115,13 +117,17 @@ export class AddBasicAuthPage extends PromiseComponent<{}, AddBasicAuthPageState
       Promise.all(promises).then(([tlsSecret, configMap]) => {
         const caName = configMap ? configMap.metadata.name : '';
         const secretName = tlsSecret ? tlsSecret.metadata.name: '';
-        return this.addBasicAuthIDP(oauth, secretName, caName);
+        return this.addKeystoneIDP(oauth, secretName, caName);
       }).then(redirectToOAuthPage);
     });
   };
 
   nameChanged: React.ReactEventHandler<HTMLInputElement> = (event) => {
     this.setState({name: event.currentTarget.value});
+  };
+
+  domainNameChanged: React.ReactEventHandler<HTMLInputElement> = (event) => {
+    this.setState({domainName: event.currentTarget.value});
   };
 
   urlChanged: React.ReactEventHandler<HTMLInputElement> = (event) => {
@@ -141,8 +147,8 @@ export class AddBasicAuthPage extends PromiseComponent<{}, AddBasicAuthPageState
   };
 
   render() {
-    const { name, url, caFileContent, certFileContent, keyFileContent } = this.state;
-    const title = 'Add Identity Provider: Basic Authentication';
+    const { name, domainName, url, caFileContent, certFileContent, keyFileContent } = this.state;
+    const title = 'Add Identity Provider: Keystone Authentication';
     return <div className="co-m-pane__body">
       <Helmet>
         <title>{title}</title>
@@ -150,9 +156,21 @@ export class AddBasicAuthPage extends PromiseComponent<{}, AddBasicAuthPageState
       <form onSubmit={this.submit} name="form" className="co-m-pane__body-group co-m-pane__form">
         <h1 className="co-m-pane__heading">{title}</h1>
         <p className="co-m-pane__explanation">
-          Basic authentication is a generic backend integration mechanism that allows users to authenticate with credentials validated against a remote identity provider.
+          Adding Keystone enables shared authentication with an OpenStack server configured to store users in an internal Keystone database.
         </p>
         <IDPNameInput value={name} onChange={this.nameChanged} />
+        <div className="form-group">
+          <label className="control-label" htmlFor="domain-name">Domain Name</label>
+          <input className="form-control"
+            type="text"
+            onChange={this.domainNameChanged}
+            value={domainName}
+            id="domain-name"
+            aria-describedby="idp-domain-name-help" />
+          <p className="help-block" id="idp-domain-name-help">
+            Required for keystone v3.
+          </p>
+        </div>
         <div className="form-group">
           <label className="control-label co-required" htmlFor="url">URL</label>
           <input className="form-control"
@@ -194,8 +212,9 @@ export class AddBasicAuthPage extends PromiseComponent<{}, AddBasicAuthPageState
   }
 }
 
-type AddBasicAuthPageState = {
+type AddKeystonePageState = {
   name: string;
+  domainName: string;
   url: string
   caFileContent: string;
   certFileContent: string;

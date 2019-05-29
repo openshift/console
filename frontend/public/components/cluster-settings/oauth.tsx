@@ -56,6 +56,7 @@ const OAuthDetails: React.SFC<OAuthDetailsProps> = ({obj}: {obj: OAuthKind}) => 
     gitlab: 'GitLab',
     google: 'Google',
     htpasswd: 'HTPasswd',
+    keystone: 'Keystone',
     ldap: 'LDAP',
     oidconnect: 'OpenID Connect',
     requestheader: 'Request Header',
