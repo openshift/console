@@ -192,7 +192,7 @@ const Graph_ = ({hideGraphs, metric = undefined, samples, rule}) => {
   // 3 times the rule's duration, but not less than 30 minutes
   const timespan = Math.max(3 * duration, 30 * 60) * 1000;
 
-  const GraphLink = query
+  const GraphLink = () => query
     ? <Link to={`/monitoring/query-browser?query=${encodeURIComponent(query)}`}>View in Metrics</Link>
     : null;
 
@@ -968,6 +968,7 @@ const QueryBrowserPage = () => {
           <QueryBrowser
             colors={graphColors}
             defaultTimespan={30 * 60 * 1000}
+            GraphLink={ToggleGraph}
             onDataUpdate={data => setMetrics(_.map(data, d => ({
               labels: _.omitBy(d.metric, (v, k) => _.startsWith(k, '__')),
               value: _.get(_.last(d.values), 1),
