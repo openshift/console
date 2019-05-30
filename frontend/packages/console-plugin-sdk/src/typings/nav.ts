@@ -10,8 +10,11 @@ import {
 
 namespace ExtensionProperties {
   interface NavItem {
+    /** Nav section to which this item belongs to. */
     section: NavSectionTitle;
+    /** Props to pass to the corresponding `NavLink` component. */
     componentProps: Pick<NavLinkProps, 'name' | 'required' | 'disallowed' | 'startsWith'>;
+    /** Nav item after which this item should be placed. */
     mergeAfter?: string;
   }
 
@@ -42,18 +45,18 @@ export interface ResourceClusterNavItem extends Extension<ExtensionProperties.Re
 
 export type NavItem = HrefNavItem | ResourceNSNavItem | ResourceClusterNavItem;
 
-export function isHrefNavItem(e: Extension<any>): e is HrefNavItem {
+export const isHrefNavItem = (e: Extension<any>): e is HrefNavItem => {
   return e.type === 'NavItem/Href';
-}
+};
 
-export function isResourceNSNavItem(e: Extension<any>): e is ResourceNSNavItem {
+export const isResourceNSNavItem = (e: Extension<any>): e is ResourceNSNavItem => {
   return e.type === 'NavItem/ResourceNS';
-}
+};
 
-export function isResourceClusterNavItem(e: Extension<any>): e is ResourceClusterNavItem {
+export const isResourceClusterNavItem = (e: Extension<any>): e is ResourceClusterNavItem => {
   return e.type === 'NavItem/ResourceCluster';
-}
+};
 
-export function isNavItem(e: Extension<any>): e is NavItem {
+export const isNavItem = (e: Extension<any>): e is NavItem => {
   return isHrefNavItem(e) || isResourceNSNavItem(e) || isResourceClusterNavItem(e);
-}
+};

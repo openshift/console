@@ -3,6 +3,7 @@ import { K8sKind } from '@console/internal/module/k8s';
 
 namespace ExtensionProperties {
   export interface ModelDefinition {
+    /** Additional Kubernetes model definitions to register with Console. */
     models: K8sKind[];
   }
 }
@@ -11,6 +12,6 @@ export interface ModelDefinition extends Extension<ExtensionProperties.ModelDefi
   type: 'ModelDefinition';
 }
 
-export function isModelDefinition(e: Extension<any>): e is ModelDefinition {
+export const isModelDefinition = (e: Extension<any>): e is ModelDefinition => {
   return e.type === 'ModelDefinition';
-}
+};
