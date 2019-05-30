@@ -4,7 +4,7 @@ import * as classNames from 'classnames';
 
 import { connectToURLs, MonitoringRoutes } from '../../reducers/monitoring';
 
-const getPrometheusExpressionBrowserURL = (urls, query): string => {
+export const getPrometheusExpressionBrowserURL = (urls, query): string => {
   const base = urls && urls[MonitoringRoutes.Prometheus];
   if (!base || _.isEmpty(query)) {
     return null;
