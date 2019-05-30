@@ -82,7 +82,7 @@ type AreaProps = {
   samples?: number;
   theme?: any;
   tickCount?: number;
-  timeout?: number;
+  timeout?: string;
   timespan?: number;
   title?: string;
 }

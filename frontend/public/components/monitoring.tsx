@@ -203,7 +203,6 @@ const Graph_ = ({hideGraphs, metric = undefined, samples, rule}) => {
     metric={metric}
     query={query}
     samples={samples}
-    timeout="5s"
   />;
 };
 const Graph = connect(graphStateToProps)(Graph_);
@@ -975,7 +974,6 @@ const QueryBrowserPage = () => {
             })))}
             query={query}
             samples={600}
-            timeout="5s"
           />
           <form onSubmit={runQueries}>
             <div className="group">
