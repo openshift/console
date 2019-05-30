@@ -8,11 +8,12 @@ import { Link, Redirect, Route, Switch } from 'react-router-dom';
 
 import { coFetchJSON } from '../co-fetch';
 import * as k8sActions from '../actions/k8s';
+import * as UIActions from '../actions/ui';
 import { alertState, AlertStates, connectToURLs, MonitoringRoutes, silenceState, SilenceStates } from '../reducers/monitoring';
 import store from '../redux';
-import * as UIActions from '../actions/ui';
 import { ColHead, List, ListHeader, ResourceRow, TextFilter } from './factory';
 import { QueryBrowser } from './graphs';
+import { getPrometheusExpressionBrowserURL } from './graphs/prometheus-graph';
 import { confirmModal } from './modals';
 import { CheckBoxes } from './row-filter';
 import { formatPrometheusDuration } from './utils/datetime';
@@ -553,6 +554,16 @@ const HeaderAlertmanagerLink_ = ({path, urls}) => _.isEmpty(urls[MonitoringRoute
   </span>;
 const HeaderAlertmanagerLink = connectToURLs(MonitoringRoutes.AlertManager)(HeaderAlertmanagerLink_);
 
+const HeaderPrometheusLink_ = ({query, urls}) => {
+  const url = getPrometheusExpressionBrowserURL(urls, query);
+  return _.isEmpty(url)
+    ? null
+    : <span className="monitoring-header-link">
+      <ExternalLink href={url} text="Prometheus UI" />
+    </span>;
+};
+const HeaderPrometheusLink = connectToURLs(MonitoringRoutes.Prometheus)(HeaderPrometheusLink_);
+
 const alertsRowFilter = {
   type: 'alert-state',
   selected: [AlertStates.Firing, AlertStates.Silenced, AlertStates.Pending],
@@ -959,7 +970,12 @@ const QueryBrowserPage = () => {
 
   return <React.Fragment>
     <div className="co-m-nav-title">
-      <h1 className="co-m-pane__heading">Metrics</h1>
+      <h1 className="co-m-pane__heading">
+        <div className="co-m-pane__name co-resource-item">
+          Metrics
+          <HeaderPrometheusLink query={query} />
+        </div>
+      </h1>
     </div>
     <div className="co-m-pane__body">
       <div className="row">
