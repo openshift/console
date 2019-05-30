@@ -1,4 +1,4 @@
-import { Extension } from '.';
+import { Extension } from './extension';
 
 import {
   NavLinkProps,
