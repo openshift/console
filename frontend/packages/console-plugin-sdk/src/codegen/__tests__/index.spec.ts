@@ -9,33 +9,40 @@ import {
 const templatePackage: Package = { name: 'test', version: '1.2.3', readme: '', _id: '@' };
 
 describe('codegen', () => {
-
   describe('isPluginPackage', () => {
     it('returns false if package.consolePlugin is missing', () => {
-      expect(isPluginPackage({
-        ...templatePackage,
-      })).toBe(false);
+      expect(
+        isPluginPackage({
+          ...templatePackage,
+        }),
+      ).toBe(false);
     });
 
     it('returns false if package.consolePlugin.entry is missing', () => {
-      expect(isPluginPackage({
-        ...templatePackage,
-        consolePlugin: {},
-      })).toBe(false);
+      expect(
+        isPluginPackage({
+          ...templatePackage,
+          consolePlugin: {},
+        }),
+      ).toBe(false);
     });
 
     it('returns false if package.consolePlugin.entry is an empty string', () => {
-      expect(isPluginPackage({
-        ...templatePackage,
-        consolePlugin: { entry: '' },
-      })).toBe(false);
+      expect(
+        isPluginPackage({
+          ...templatePackage,
+          consolePlugin: { entry: '' },
+        }),
+      ).toBe(false);
     });
 
     it('returns true if package.consolePlugin.entry is a non-empty string', () => {
-      expect(isPluginPackage({
-        ...templatePackage,
-        consolePlugin: { entry: 'plugin.ts' },
-      })).toBe(true);
+      expect(
+        isPluginPackage({
+          ...templatePackage,
+          consolePlugin: { entry: 'plugin.ts' },
+        }),
+      ).toBe(true);
     });
   });
 
@@ -45,8 +52,8 @@ describe('codegen', () => {
         ...templatePackage,
         name: 'app',
         dependencies: {
-          'foo': '0.1.2',
-          'bar': '1.2.3',
+          foo: '0.1.2',
+          bar: '1.2.3',
         },
       };
 
@@ -99,7 +106,8 @@ describe('codegen', () => {
         },
       ];
 
-      expect(getActivePluginsModule(pluginPackages)).toBe(`
+      expect(getActivePluginsModule(pluginPackages)).toBe(
+        `
         const activePlugins = [];
 
         import plugin_0 from 'bar/src/plugin.ts';
@@ -109,8 +117,8 @@ describe('codegen', () => {
         activePlugins.push({ name: 'qux-plugin', extensions: plugin_1 });
 
         export default activePlugins;
-      `.replace(/^\s+/gm, ''));
+      `.replace(/^\s+/gm, ''),
+      );
     });
   });
-
 });

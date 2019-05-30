@@ -8,7 +8,7 @@ export type Package = readPkg.NormalizedPackageJson;
 export type PluginPackage = Package & {
   consolePlugin: {
     entry: string;
-  }
+  };
 };
 
 /**
@@ -19,7 +19,7 @@ export const isPluginPackage = (pkg: Package): pkg is PluginPackage => {
     return false;
   }
 
-  const entry = (pkg as PluginPackage).consolePlugin.entry;
+  const { entry } = (pkg as PluginPackage).consolePlugin;
   return typeof entry === 'string' && !!entry;
 };
 
@@ -29,10 +29,12 @@ export const isPluginPackage = (pkg: Package): pkg is PluginPackage => {
  * @param packageFiles Paths to `package.json` files (all the monorepo packages).
  */
 export const readPackages = (packageFiles: string[]) => {
-  const pkgList: Package[] = packageFiles.map(file => readPkg.sync({ cwd: path.dirname(file), normalize: true }));
+  const pkgList: Package[] = packageFiles.map((file) =>
+    readPkg.sync({ cwd: path.dirname(file), normalize: true }),
+  );
 
   return {
-    appPackage: pkgList.find(pkg => pkg.name === '@console/app'),
+    appPackage: pkgList.find((pkg) => pkg.name === '@console/app'),
     pluginPackages: pkgList.filter(isPluginPackage),
   };
 };
@@ -42,7 +44,9 @@ export const readPackages = (packageFiles: string[]) => {
  */
 export const getActivePluginPackages = (appPackage: Package, pluginPackages: PluginPackage[]) => {
   // active plugins include dependencies of the appPackage or the appPackage itself
-  return pluginPackages.filter(pkg => appPackage === pkg || appPackage.dependencies[pkg.name] === pkg.version);
+  return pluginPackages.filter(
+    (pkg) => appPackage === pkg || appPackage.dependencies[pkg.name] === pkg.version,
+  );
 };
 
 /**
