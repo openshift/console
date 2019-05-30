@@ -88,7 +88,7 @@ describe(ClusterServiceVersionRow.displayName, () => {
   it('renders column for app status', () => {
     const col = wrapper.find('.row').childAt(3);
 
-    expect(col.childAt(0).text()).toEqual(CSVConditionReason.CSVReasonInstallSuccessful);
+    expect(col.childAt(0).text()).toEqual(` ${CSVConditionReason.CSVReasonInstallSuccessful}`);
   });
 
   it('renders "disabling" status if CSV has `deletionTimestamp`', () => {
