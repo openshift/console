@@ -1,17 +1,24 @@
-import { Plugin, ResourceNSNavItem, ResourceListPage, ResourceDetailPage, ModelFeatureFlag, YamlTemplate } from '@console/plugin-sdk';
+import * as _ from 'lodash-es';
+import { Plugin, ResourceNSNavItem, ResourceListPage, ResourceDetailPage, ModelFeatureFlag, YamlTemplate, ModelDefinition } from '@console/plugin-sdk';
 
-import { VirtualMachineModel } from './models';
+import * as models from './models';
 import { vmYamlTemplate } from './yaml-templates';
 
-type ConsumedExtensions = ResourceNSNavItem | ResourceListPage | ResourceDetailPage | ModelFeatureFlag | YamlTemplate;
+type ConsumedExtensions = ResourceNSNavItem | ResourceListPage | ResourceDetailPage | ModelFeatureFlag | YamlTemplate | ModelDefinition;
 
 const FLAG_KUBEVIRT = 'KUBEVIRT';
 
 const plugin: Plugin<ConsumedExtensions> = [
   {
+    type: 'ModelDefinition',
+    properties: {
+      models: _.values(models),
+    },
+  },
+  {
     type: 'FeatureFlag/Model',
     properties: {
-      model: VirtualMachineModel,
+      model: models.VirtualMachineModel,
       flag: FLAG_KUBEVIRT,
     },
   },
@@ -21,7 +28,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       section: 'Workloads',
       componentProps: {
         name: 'Virtual Machines',
-        resource: VirtualMachineModel.plural,
+        resource: models.VirtualMachineModel.plural,
         required: FLAG_KUBEVIRT,
       },
       mergeAfter: 'Pods', // rendered name of the resource navigation link in the left-side menu
@@ -30,14 +37,14 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'ResourcePage/List',
     properties: {
-      model: VirtualMachineModel,
+      model: models.VirtualMachineModel,
       loader: () => import('./components/vm' /* webpackChunkName: "virtual-machines" */).then(m => m.VirtualMachinesPage),
     },
   },
   {
     type: 'YamlTemplate',
     properties: {
-      model: VirtualMachineModel,
+      model: models.VirtualMachineModel,
       template: vmYamlTemplate,
     },
   },
