@@ -15,12 +15,9 @@
 
 export BRIDGE_USER_AUTH="disabled"
 export BRIDGE_K8S_MODE="off-cluster"
-BRIDGE_K8S_MODE_OFF_CLUSTER_ENDPOINT=$(oc config view -o json | jq '{myctx: .["current-context"], ctxs: .contexts[], clusters: .clusters[]}' | jq 'select(.myctx == .ctxs.name)' | jq 'select(.ctxs.context.cluster ==  .clusters.name)' | jq '.clusters.cluster.server' -r)
-export BRIDGE_K8S_MODE_OFF_CLUSTER_ENDPOINT
+export BRIDGE_K8S_MODE_OFF_CLUSTER_ENDPOINT=$(oc whoami --show-server)
 export BRIDGE_K8S_MODE_OFF_CLUSTER_SKIP_VERIFY_TLS=true
 export BRIDGE_K8S_AUTH="bearer-token"
-
-BRIDGE_K8S_AUTH_BEARER_TOKEN=$(oc whoami --show-token)
-export BRIDGE_K8S_AUTH_BEARER_TOKEN
+export BRIDGE_K8S_AUTH_BEARER_TOKEN=$(oc whoami --show-token)
 
 echo "Using $BRIDGE_K8S_MODE_OFF_CLUSTER_ENDPOINT"
