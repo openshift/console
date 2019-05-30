@@ -3,8 +3,13 @@ import { Icon } from 'patternfly-react';
 import {CamelCaseWrap} from './camel-case-wrap';
 import * as classNames from 'classnames';
 
-export const StatusIcon: React.FunctionComponent<StatusIconProps> = ({status, spin, additionalIconClassName}) => {
+export const StatusIcon: React.FunctionComponent<StatusIconProps> = ({status, spin, iconName, additionalIconClassName}) => {
   const className = classNames(spin && 'fa-spin', additionalIconClassName);
+
+  if (iconName){
+    return <Icon type="pf" name={iconName} className={className} />;
+  }
+
   switch (status) {
     case 'New':
       return <Icon type="fa" name="hourglass-1" className={className} />;
@@ -62,21 +67,23 @@ export const StatusIcon: React.FunctionComponent<StatusIconProps> = ({status, sp
 };
 
 
-export const StatusIconAndText: React.FunctionComponent<StatusIconAndTextProps> = ({status, spin}) => {
+export const StatusIconAndText: React.FunctionComponent<StatusIconAndTextProps> = ({status, spin, iconName}) => {
   if (!status){
     return <span>-</span>;
   }
 
-  return <span className="co-icon-and-text"><StatusIcon status={status} spin={spin} additionalIconClassName="co-icon-and-text__icon" /><CamelCaseWrap value={status} /></span>;
+  return <span className="co-icon-and-text"><StatusIcon status={status} spin={spin} additionalIconClassName="co-icon-and-text__icon" iconName={iconName} /><CamelCaseWrap value={status} /></span>;
 };
 
 export type StatusIconProps = {
   status?: string;
   additionalIconClassName?: any;
   spin?: boolean;
+  iconName?: string;
 };
 
 export type StatusIconAndTextProps = {
   status?: string;
   spin?: boolean;
+  iconName?: string;
 };

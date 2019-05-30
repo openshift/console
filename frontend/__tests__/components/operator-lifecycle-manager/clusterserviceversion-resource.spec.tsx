@@ -3,14 +3,14 @@ import { match as RouterMatch } from 'react-router-dom';
 import { shallow, ShallowWrapper } from 'enzyme';
 import * as _ from 'lodash-es';
 
-import { ClusterServiceVersionResourceList, ClusterServiceVersionResourceListProps, ProvidedAPIsPage, ProvidedAPIsPageProps, ClusterServiceVersionResourceHeaderProps, ClusterServiceVersionResourcesDetailsState, ClusterServiceVersionResourceRowProps, ClusterServiceVersionResourceHeader, ClusterServiceVersionResourceRow, ClusterServiceVersionResourceDetails, ClusterServiceVersionResourcesDetailsPageProps, ClusterServiceVersionResourcesDetailsProps, ClusterServiceVersionResourcesDetailsPage, ClusterServiceVersionResourceLink, ProvidedAPIPage, ProvidedAPIPageProps } from '../../../public/components/operator-lifecycle-manager/clusterserviceversion-resource';
+import { ClusterServiceVersionResourceList, ClusterServiceVersionResourceListProps, ProvidedAPIsPage, ProvidedAPIsPageProps, ClusterServiceVersionResourceHeaderProps, ClusterServiceVersionResourceRowProps, ClusterServiceVersionResourceHeader, ClusterServiceVersionResourceRow, ClusterServiceVersionResourceDetails, ClusterServiceVersionResourcesDetailsPageProps, ClusterServiceVersionResourcesDetailsProps, ClusterServiceVersionResourcesDetailsPage, ClusterServiceVersionResourceLink, ProvidedAPIPage, ProvidedAPIPageProps } from '../../../public/components/operator-lifecycle-manager/clusterserviceversion-resource';
 import { Resources } from '../../../public/components/operator-lifecycle-manager/k8s-resource';
 import { ClusterServiceVersionResourceKind, referenceForProvidedAPI } from '../../../public/components/operator-lifecycle-manager';
 import { StatusDescriptor } from '../../../public/components/operator-lifecycle-manager/descriptors/status';
 import { SpecDescriptor } from '../../../public/components/operator-lifecycle-manager/descriptors/spec';
 import { testCRD, testResourceInstance, testClusterServiceVersion, testOwnedResourceInstance, testModel } from '../../../__mocks__/k8sResourcesMocks';
 import { List, ColHead, ListHeader, DetailsPage, MultiListPage, ListPage } from '../../../public/components/factory';
-import { Timestamp, LabelList, ResourceSummary, StatusBox, ResourceKebab } from '../../../public/components/utils';
+import { Timestamp, LabelList, StatusBox, ResourceKebab } from '../../../public/components/utils';
 import { referenceFor, K8sKind, referenceForModel } from '../../../public/module/k8s';
 import { ClusterServiceVersionModel } from '../../../public/models';
 
@@ -146,7 +146,7 @@ describe(ClusterServiceVersionResourceList.displayName, () => {
 });
 
 describe(ClusterServiceVersionResourceDetails.displayName, () => {
-  let wrapper: ShallowWrapper<ClusterServiceVersionResourcesDetailsProps, ClusterServiceVersionResourcesDetailsState>;
+  let wrapper: ShallowWrapper<ClusterServiceVersionResourcesDetailsProps>;
   let resourceDefinition: any;
 
   beforeEach(() => {
@@ -168,46 +168,12 @@ describe(ClusterServiceVersionResourceDetails.displayName, () => {
     expect(section.exists()).toBe(true);
   });
 
-  it('renders creation date from CRD metadata', () => {
-    expect(wrapper.find(Timestamp).props().timestamp).toEqual(testResourceInstance.metadata.creationTimestamp);
-  });
-
   it('does not render filtered status fields', () => {
     const crd = testClusterServiceVersion.spec.customresourcedefinitions.owned.find(c => c.name === 'testresource.testapp.coreos.com');
     const filteredDescriptor = crd.statusDescriptors.find((sd) => sd.path === 'importantMetrics');
-
-    wrapper.setState({expanded: false});
     const statusView = wrapper.find(StatusDescriptor).filterWhere(node => node.props().descriptor === filteredDescriptor);
 
     expect(statusView.exists()).toBe(false);
-  });
-
-  it('does not render the extended information unless in expanded mode', () => {
-    expect(wrapper.find(ResourceSummary).exists()).toBe(false);
-  });
-
-  it('renders the extended information when in expanded mode', () => {
-    wrapper.setState({expanded: true});
-
-    expect(wrapper.find(ResourceSummary).exists()).toBe(true);
-  });
-
-  it('does not render the non-filled in status field when in expanded mode', () => {
-    const crd = testClusterServiceVersion.spec.customresourcedefinitions.owned.find(c => c.name === 'testresource.testapp.coreos.com');
-    const unfilledDescriptor = crd.statusDescriptors.find((sd) => sd.path === 'some-unfilled-path');
-    const statusView = wrapper.find(StatusDescriptor).filterWhere(node => node.props().descriptor === unfilledDescriptor);
-
-    expect(statusView.exists()).toBe(false);
-  });
-
-  it('renders the non-filled in status field when in expanded mode', () => {
-    const crd = testClusterServiceVersion.spec.customresourcedefinitions.owned.find(c => c.name === 'testresource.testapp.coreos.com');
-    const unfilledDescriptor = crd.statusDescriptors.find((sd) => sd.path === 'some-unfilled-path');
-
-    wrapper.setState({expanded: true});
-    const statusView = wrapper.find(StatusDescriptor).filterWhere(node => node.props().descriptor === unfilledDescriptor);
-
-    expect(statusView.exists()).toBe(true);
   });
 
   it('does not render any spec descriptor fields if there are none defined on the `ClusterServiceVersion`', () => {

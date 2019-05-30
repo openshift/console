@@ -10,8 +10,8 @@ import { SpecDescriptor } from './descriptors/spec';
 import { StatusCapability, Descriptor } from './descriptors/types';
 import { Resources } from './k8s-resource';
 import { ErrorPage404 } from '../error';
-import { List, MultiListPage, ListPage, ListHeader, ColHead, DetailsPage, CompactExpandButtons } from '../factory';
-import { ResourceLink, ResourceSummary, StatusBox, navFactory, Timestamp, LabelList, ResourceIcon, MsgBox, ResourceKebab, KebabAction, LoadingBox } from '../utils';
+import { List, MultiListPage, ListPage, ListHeader, ColHead, DetailsPage } from '../factory';
+import { ResourceSummary, StatusBox, navFactory, Timestamp, LabelList, ResourceIcon, MsgBox, ResourceKebab, KebabAction, LoadingBox, StatusIconAndText } from '../utils';
 import { connectToModel } from '../../kinds';
 import { kindForReference, K8sResourceKind, OwnerReference, K8sKind, referenceFor, GroupVersionKind, referenceForModel } from '../../module/k8s';
 import { ClusterServiceVersionModel } from '../../models';
@@ -69,6 +69,7 @@ export const ClusterServiceVersionResourceLink: React.SFC<ClusterServiceVersionR
 
 export const ClusterServiceVersionResourceRow: React.SFC<ClusterServiceVersionResourceRowProps> = (props) => {
   const {obj} = props;
+  const status = _.get(obj.status, 'phase');
 
   return <div className="row co-resource-list__item">
     <div className="col-xs-6 col-sm-4 col-md-3 col-lg-2">
@@ -81,7 +82,10 @@ export const ClusterServiceVersionResourceRow: React.SFC<ClusterServiceVersionRe
       {obj.kind}
     </div>
     <div className="hidden-xs hidden-sm col-md-3 col-lg-2">
-      {_.get(obj.status, 'phase') || <div className="text-muted">Unknown</div>}
+      {_.isEmpty(status) ?
+        <div className="text-muted">Unknown</div> :
+        <StatusIconAndText status={status} iconName={status === 'Running' ? 'ok' : undefined} />
+      }
     </div>
     <div className="hidden-xs hidden-sm hidden-md col-lg-2">
       {_.get(obj.spec, 'version') || <div className="text-muted">Unknown</div>}
@@ -170,90 +174,96 @@ export const ProvidedAPIPage = connectToModel((props: ProvidedAPIPageProps) => {
     namespace={_.get(props.kindObj, 'namespaced') ? namespace : null} />;
 });
 
-export const ClusterServiceVersionResourceDetails = connectToModel(
-  class ClusterServiceVersionResourceDetails extends React.Component<ClusterServiceVersionResourcesDetailsProps, ClusterServiceVersionResourcesDetailsState> {
-    constructor(props) {
-      super(props);
-      this.state = {expanded: false};
-    }
+export const ClusterServiceVersionResourceDetails = connectToModel((props: ClusterServiceVersionResourcesDetailsProps) => {
+  // TODO(alecmerdler): Use additional `x-descriptor` to specify if should be considered main?
+  const isMainDescriptor = (descriptor: Descriptor) => {
+    return (descriptor['x-descriptors'] as StatusCapability[] || []).some((type) => {
+      switch (type) {
+        case StatusCapability.podStatuses:
+          return true;
+        default:
+          return false;
+      }
+    });
+  };
 
-    render() {
-      // TODO(alecmerdler): Use additional `x-descriptor` to specify if should be considered main?
-      const isMainDescriptor = (descriptor: Descriptor) => {
-        return (descriptor['x-descriptors'] as StatusCapability[] || []).some((type) => {
-          switch (type) {
-            case StatusCapability.podStatuses:
-              return true;
-            default:
-              return false;
-          }
-        });
-      };
+  const blockValue = (descriptor: Descriptor, block: {[key: string]: any}) => !_.isEmpty(descriptor)
+    ? _.get(block, descriptor.path, descriptor.value)
+    : undefined;
 
-      const blockValue = (descriptor: Descriptor, block: {[key: string]: any}) => !_.isEmpty(descriptor)
-        ? _.get(block, descriptor.path, descriptor.value)
-        : undefined;
+  const {kind, metadata, spec, status} = props.obj;
 
-      const descriptorFor = (descriptors: Descriptor[] = [], capability: StatusCapability) => {
-        return descriptors.find((descriptor) => (descriptor['x-descriptors'] as StatusCapability[] || []).some((cap) => cap === capability));
-      };
+  // Find the matching CRD spec for the kind of this resource in the CSV.
+  const ownedDefinitions = _.get(props.clusterServiceVersion, 'spec.customresourcedefinitions.owned', []);
+  const reqDefinitions = _.get(props.clusterServiceVersion, 'spec.customresourcedefinitions.required', []);
+  const thisDefinition = _.find(ownedDefinitions.concat(reqDefinitions), (def) => def.name.split('.')[0] === props.kindObj.path);
+  const statusDescriptors = _.get<Descriptor[]>(thisDefinition, 'statusDescriptors', []);
+  const specDescriptors = _.get<Descriptor[]>(thisDefinition, 'specDescriptors', []);
+  const currentStatus = _.find(statusDescriptors, {displayName: 'Status'});
+  const primaryDescriptors = statusDescriptors.filter(descriptor => isMainDescriptor(descriptor));
 
-      const {kind, metadata, spec, status} = this.props.obj;
+  const header = <h2 className="co-section-heading">{`${thisDefinition ? thisDefinition.displayName : kind} Overview`}</h2>;
 
-      // Find the matching CRD spec for the kind of this resource in the CSV.
-      const ownedDefinitions = _.get(this.props.clusterServiceVersion, 'spec.customresourcedefinitions.owned', []);
-      const reqDefinitions = _.get(this.props.clusterServiceVersion, 'spec.customresourcedefinitions.required', []);
-      const thisDefinition = _.find(ownedDefinitions.concat(reqDefinitions), (def) => def.name.split('.')[0] === this.props.kindObj.path);
-      const statusDescriptors = _.get<Descriptor[]>(thisDefinition, 'statusDescriptors', []);
-      const specDescriptors = _.get<Descriptor[]>(thisDefinition, 'specDescriptors', []);
-      const podStatusesDescriptor = descriptorFor(statusDescriptors, StatusCapability.podStatuses);
-
-      return <div className="co-clusterserviceversion-resource-details co-m-pane">
-        <div className="co-m-pane__body">
-          <h2 className="co-section-heading">{`${thisDefinition ? thisDefinition.displayName : kind} Overview`}</h2>
-          <div className="row">
-            { podStatusesDescriptor && <div className="col-sm-6 col-md-4">
-              <StatusDescriptor descriptor={podStatusesDescriptor} value={blockValue(podStatusesDescriptor, status)} obj={this.props.obj} model={this.props.kindObj} />
-            </div> }
-          </div>
+  const primaryDescriptor = primaryDescriptors.map((statusDescriptor: Descriptor) => {
+    return (
+      <div className="row" key={statusDescriptor.displayName}>
+        <div className="col-sm-6 col-md-4">
+          <StatusDescriptor descriptor={statusDescriptor} value={blockValue(statusDescriptor, status)}
+            obj={props.obj} model={props.kindObj} />
         </div>
-        <div className="co-m-pane__body">
-          <div className="co-clusterserviceversion-resource-details__compact-expand">
-            <CompactExpandButtons expand={this.state.expanded} onExpandChange={(expanded) => this.setState({expanded})} />
-          </div>
-          <div className="co-clusterserviceversion-resource-details__section co-clusterserviceversion-resource-details__section--info">
-            <div className="row">
-              <div className="col-xs-6">
-                { this.state.expanded
-                  ? <ResourceSummary resource={this.props.obj} />
-                  : <dl className="co-m-pane__details">
-                    <dt>Name</dt>
-                    <dd>{metadata.name}</dd>
-                    <dt>Namespace</dt>
-                    <dd><ResourceLink namespace="" kind="Namespace" name={metadata.namespace} title={metadata.namespace} /></dd>
-                    <dt>Created At</dt>
-                    <dd><Timestamp timestamp={metadata.creationTimestamp} /></dd>
-                  </dl> }
-              </div>
-              { specDescriptors.map((specDescriptor: Descriptor, i) => <div key={i} className="col-xs-6">
-                <SpecDescriptor namespace={metadata.namespace} obj={this.props.obj} model={this.props.kindObj} value={blockValue(specDescriptor, spec)} descriptor={specDescriptor} />
-              </div>) }
-
-              { statusDescriptors.filter(descriptor => !isMainDescriptor(descriptor))
-                .map((statusDescriptor: Descriptor) => {
-                  const statusValue = blockValue(statusDescriptor, status);
-                  return !_.isEmpty(statusValue) || _.isNumber(statusValue) || this.state.expanded
-                    ? <div className="col-xs-6" key={statusDescriptor.path}>
-                      <StatusDescriptor namespace={metadata.namespace} obj={this.props.obj} model={this.props.kindObj} descriptor={statusDescriptor} value={statusValue} />
-                    </div>
-                    : null;
-                }) }
-            </div>
-          </div>
-        </div>
-      </div>;
-    }
+      </div>
+    );
   });
+
+  const details = <div className="co-clusterserviceversion-resource-details__section co-clusterserviceversion-resource-details__section--info">
+    <div className="row">
+      <div className="col-xs-6">
+        <ResourceSummary resource={props.obj} />
+      </div>
+      { currentStatus &&
+      <div className="col-xs-6" key={currentStatus.path}>
+        <StatusDescriptor namespace={metadata.namespace} obj={props.obj} model={props.kindObj} descriptor={currentStatus} value={blockValue(currentStatus, status)} />
+      </div>
+      }
+
+      { specDescriptors.map((specDescriptor: Descriptor, i) =>
+        <div key={i} className="col-xs-6">
+          <SpecDescriptor namespace={metadata.namespace} obj={props.obj} model={props.kindObj} value={blockValue(specDescriptor, spec)} descriptor={specDescriptor} />
+        </div>)
+      }
+
+      { statusDescriptors.filter(function(descriptor) {
+        return !isMainDescriptor(descriptor) && descriptor.displayName !== 'Status';
+      }).map((statusDescriptor: Descriptor) => {
+        const statusValue = blockValue(statusDescriptor, status);
+        return (
+          <div className="col-xs-6" key={statusDescriptor.path}>
+            <StatusDescriptor namespace={metadata.namespace} obj={props.obj} model={props.kindObj} descriptor={statusDescriptor} value={statusValue} />
+          </div>
+        );
+      }) }
+    </div>
+  </div>;
+
+  return <div className="co-clusterserviceversion-resource-details co-m-pane">
+    { _.isEmpty(primaryDescriptors) ? (
+      <div className="co-m-pane__body">
+        {header}
+        {details}
+      </div>
+    ) : (
+      <React.Fragment>
+        <div className="co-m-pane__body">
+          {header}
+          {primaryDescriptor}
+        </div>
+        <div className="co-m-pane__body">
+          {details}
+        </div>
+      </React.Fragment>
+    )}
+  </div>;
+});
 
 export const ClusterServiceVersionResourcesDetailsPage: React.SFC<ClusterServiceVersionResourcesDetailsPageProps> = (props) => <DetailsPage
   {...props}
@@ -325,10 +335,6 @@ export type CSVResourceDetailsProps = {
   name: string;
   namespace: string;
   match: match<{appName: string}>;
-};
-
-export type ClusterServiceVersionResourcesDetailsState = {
-  expanded: boolean;
 };
 
 export type ClusterServiceVersionResourceLinkProps = {

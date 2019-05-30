@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { Map as ImmutableMap } from 'immutable';
 
-import { ResourceLink } from '../../../utils';
+import { ResourceLink, StatusIconAndText } from '../../../utils';
 import { StatusCapability, CapabilityProps, DescriptorProps } from '../types';
 import { Phase } from './phase';
 import { PodStatusChart } from './pods';
@@ -77,7 +77,12 @@ export const StatusDescriptor: React.SFC<DescriptorProps> = (props) => {
         <dt className="olm-descriptor__title">{descriptor.displayName}</dt>
       </Tooltip>
     </div>
-    <dd className="olm-descriptor__value"><Capability descriptor={descriptor} capability={capability} value={value} namespace={namespace} /></dd>
+    <dd className="olm-descriptor__value">
+      {descriptor.displayName === 'Status' ?
+        (<StatusIconAndText status={value} iconName={value === 'Running' ? 'ok' : undefined} />) :
+        (<Capability descriptor={descriptor} capability={capability} value={value} namespace={namespace} />)
+      }
+    </dd>
   </dl>;
 };
 
