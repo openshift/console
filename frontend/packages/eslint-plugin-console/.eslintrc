@@ -1,0 +1,8 @@
+{
+  "root": true,
+  "extends": [
+    "plugin:console/base",
+    "plugin:console/node",
+    "plugin:console/prettier"
+  ]
+}
