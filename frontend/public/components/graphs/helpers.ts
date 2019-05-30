@@ -36,6 +36,6 @@ type PrometheusURLProps = {
   namespace?: string;
   query: string;
   samples: number;
-  timeout?: number;
+  timeout?: string;
   timespan: number;
 };

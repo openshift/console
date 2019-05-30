@@ -89,7 +89,7 @@ const Graph: React.FC<GraphProps> = ({colors, domain, data, onZoom}) => {
   </div>;
 };
 
-const QueryBrowser_: React.FC<QueryBrowserProps> = ({colors, defaultTimespan, GraphLink, hideGraphs, metric, onDataUpdate, query, samples, timeout}) => {
+const QueryBrowser_: React.FC<QueryBrowserProps> = ({colors, defaultTimespan, GraphLink, hideGraphs, metric, onDataUpdate, query, samples}) => {
   // For the default time span, use the first of the suggested span options that is at least as long as defaultTimespan
   const defaultSpanText = spans.find(s => parsePrometheusDuration(s) >= defaultTimespan);
 
@@ -108,7 +108,7 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({colors, defaultTimespan, Gr
     endpoint: PrometheusEndpoint.QUERY_RANGE,
     query,
     samples,
-    timeout,
+    timeout: '5s',
     timespan: span,
   });
 
@@ -245,5 +245,4 @@ type QueryBrowserProps = {
   onDataUpdate: (data: GraphDataMetric) => void;
   query: string;
   samples?: number;
-  timeout?: number;
 };

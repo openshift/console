@@ -45,6 +45,6 @@ type PrometheusPollProps = {
   namespace?: string;
   query: string;
   samples?: number;
-  timeout?: number;
+  timeout?: string;
   timespan?: number;
 }
