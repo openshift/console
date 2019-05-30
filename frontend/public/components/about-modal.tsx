@@ -43,6 +43,8 @@ const AboutModalItems: React.FC<AboutModalItemsProps> = ({cv}) => {
             <TextListItem component="dd">{clusterID}</TextListItem>
           </React.Fragment>
         )}
+        <TextListItem component="dt">API Server</TextListItem>
+        <TextListItem component="dd">{window.SERVER_FLAGS.kubeAPIServerURL}</TextListItem>
       </TextList>
     </TextContent>
   );
