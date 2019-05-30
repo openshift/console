@@ -30,7 +30,7 @@ const mergePluginChild = (Children: React.ReactElement[], pluginChild: React.Rea
   }
 };
 
-const getNavLinkFromItem = (item: plugins.NavItem, key: number): React.ReactElement | null => {
+const getNavLinkFromItem = (item: plugins.NavItem, key: number) => {
   if (plugins.isHrefNavItem(item)) {
     return <HrefLink key={key} {...item.properties.componentProps} />;
   }
@@ -117,7 +117,7 @@ export const NavSection = connect(navSectionStateToProps)(
       (section) => plugins.registry.getNavItems(section)
     );
 
-    mapChild = (c: React.ReactElement): React.ReactElement | null => {
+    mapChild = (c: React.ReactElement) => {
       if (!c) {
         return null;
       }
@@ -154,7 +154,7 @@ export const NavSection = connect(navSectionStateToProps)(
       const { isOpen, activeChild } = this.state;
       const isActive = !!activeChild;
 
-      const Children: React.ReactElement[] | null = React.Children.map(children, this.mapChild) || [];
+      const Children = React.Children.map(children, this.mapChild) || [];
 
       this.getPluginNavItems(title).forEach((item, index) => {
         const pluginChild = this.mapChild(getNavLinkFromItem(item, index));
