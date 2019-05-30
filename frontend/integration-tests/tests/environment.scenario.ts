@@ -138,7 +138,7 @@ describe('Interacting with the environment variable editor', () => {
     });
   });
 
-  describe('When a variable is added from a secret', () => {
+  xdescribe('CONSOLE-1504 - When a variable is added from a secret', () => {
     it('shows the correct variables', async() => {
       const resourceName = 'my-secret';
       const envPrefix = 'testsecret';
