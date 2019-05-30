@@ -16,7 +16,7 @@ export const getPrometheusQuery = async(query) => {
   return coFetchJSON(url);
 };
 
-export const fetchPeriodically = async(url, onFetch, responseHandler, fetchMethod = coFetchJSON) => {
+export const fetchPeriodically = async(url, onFetch, onTimeoutScheduled, responseHandler, fetchMethod = coFetchJSON) => {
   let response;
   try {
     response = await fetchMethod(url);
@@ -27,17 +27,27 @@ export const fetchPeriodically = async(url, onFetch, responseHandler, fetchMetho
     response = error;
   } finally {
     if (onFetch(response)) {
-      setTimeout(() => fetchPeriodically(url, onFetch, responseHandler, fetchMethod), REFRESH_TIMEOUT);
+      const timerId = setTimeout(() => fetchPeriodically(url, onFetch, onTimeoutScheduled, responseHandler, fetchMethod), REFRESH_TIMEOUT);
+
+      if (onTimeoutScheduled) {
+        onTimeoutScheduled(timerId);
+      }
     }
   }
 };
 
-export const fetchPrometheusQuery = (query, onFetch) => {
+export const fetchPrometheusQuery = (query, onFetch, onTimeoutScheduled) => {
   const url = `${getPrometheusBaseURL()}/api/v1/query?query=${encodeURIComponent(query)}`;
-  fetchPeriodically(url, onFetch);
+  fetchPeriodically(url, onFetch, onTimeoutScheduled);
 };
 
 export const fetchAlerts = onFetch => {
   const url = `${getAlertManagerBaseURL()}/api/v2/alerts?silenced=false&inhibited=false`;
   fetchPeriodically(url, onFetch);
+};
+
+export const stopPrometheusQuery = id => {
+  if (id) {
+    clearTimeout(id);
+  }
 };
