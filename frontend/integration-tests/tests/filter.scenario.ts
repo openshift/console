@@ -75,7 +75,7 @@ describe('Filtering', () => {
     expect(crudView.resourceRowNamesAndNs.first().getText()).toContain(WORKLOAD_NAME);
   });
 
-  it('searches for object by label', async() => {
+  xit('CONSOLE-1503 - searches for object by label', async() => {
     await browser.get(`${appHost}/search/ns/${testName}`);
     await browser.wait(until.elementToBeClickable(searchView.dropdown), BROWSER_TIMEOUT);
     await searchView.selectSearchType('Deployment');
