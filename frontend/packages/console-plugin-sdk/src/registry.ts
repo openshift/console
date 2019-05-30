@@ -8,6 +8,7 @@ import {
   isNavItem,
   isResourcePage,
   isPerspective,
+  isYAMLTemplate,
 } from './typings';
 
 /**
@@ -38,5 +39,9 @@ export class ExtensionRegistry {
 
   public getPerspectives() {
     return this.extensions.filter(isPerspective);
+  }
+
+  public getYAMLTemplates() {
+    return this.extensions.filter(isYAMLTemplate);
   }
 }
