@@ -52,6 +52,7 @@ export const OperatorHubList: React.SFC<OperatorHubListProps> = (props) => {
         'createdAt',
         'support',
       ]),
+      capabilityLevel: currentCSVDesc.annotations.capabilities,
     } as OperatorHubItem;
   });
 

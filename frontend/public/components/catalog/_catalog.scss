@@ -110,8 +110,18 @@ $co-modal-ignore-warning-icon-width: 30px;
     }
   }
 
+  &__filter {
+    display: flex;
+    justify-content: space-between;
+  }
+
   &__filter-toggle {
     margin-top: 5px;
+  }
+
+  &__header {
+    border-bottom: 1px solid $color-pf-black-200;
+    margin: 0 ($grid-gutter-width / 2) $grid-gutter-width 0;
   }
 
   &__heading {
@@ -120,10 +130,13 @@ $co-modal-ignore-warning-icon-width: 30px;
     margin: 0 0 20px;
   }
 
+  &__input {
+    margin: 0 0 20px;
+    width: auto;
+  }
+
   &__num-items {
-    border-bottom: 1px solid $color-pf-black-200;
     font-weight: 700;
-    margin: 0 ($grid-gutter-width / 2) $grid-gutter-width 0;
     padding: 0 0 20px;
   }
 
