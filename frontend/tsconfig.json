@@ -11,7 +11,11 @@
     "downlevelIteration": true,
     "experimentalDecorators": true,
     "sourceMap": true,
-    "noUnusedLocals": true
+    "noUnusedLocals": true,
+    "types": [
+      "jest",
+      "jasmine"
+    ]
   },
   "exclude": [
     ".yarn",

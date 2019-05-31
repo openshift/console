@@ -22,44 +22,6 @@
     "debug-test-suite": "TS_NODE_COMPILER_OPTIONS='{\"module\":\"commonjs\"}' node -r ts-node/register --inspect-brk ./node_modules/.bin/protractor integration-tests/protractor.conf.ts",
     "analyze": "NODE_ENV=production ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/webpack --mode=production --profile --json | awk '{if(NR>2)print}' > public/dist/stats.json && ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/webpack-bundle-analyzer --mode static -r public/dist/report.html public/dist/stats.json"
   },
-  "jest": {
-    "moduleFileExtensions": [
-      "js",
-      "jsx",
-      "ts",
-      "tsx"
-    ],
-    "moduleNameMapper": {
-      "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/__mocks__/fileMock.js",
-      "\\.(css|less)$": "<rootDir>/__mocks__/styleMock.js"
-    },
-    "transform": {
-      ".(ts|tsx|js|jsx)": "./node_modules/ts-jest/preprocessor.js"
-    },
-    "transformIgnorePatterns": [
-      "<rootDir>/node_modules/(?!lodash-es|@console)"
-    ],
-    "testRegex": "/__tests__/.*\\.(ts|tsx|js|jsx)$",
-    "setupFiles": [
-      "./__mocks__/requestAnimationFrame.js",
-      "./__mocks__/localStorage.ts",
-      "./__mocks__/matchMedia.js",
-      "./before-tests.js"
-    ],
-    "coverageDirectory": "__coverage__",
-    "coverageReporters": [
-      "json",
-      "lcov",
-      "text",
-      "text-summary"
-    ],
-    "collectCoverageFrom": [
-      "public/*.{js,jsx,ts,tsx}",
-      "public/{components,module,ui}/**/*.{js,jsx,ts,tsx}",
-      "packages/*/src/**/*.{js,jsx,ts,tsx}",
-      "!**/node_modules/**"
-    ]
-  },
   "dependencies": {
     "@patternfly/patternfly": "2.8.2",
     "@patternfly/react-charts": "3.4.5",
@@ -117,6 +79,7 @@
     "@types/immutable": "3.x",
     "@types/jasmine": "2.8.x",
     "@types/jasminewd2": "2.0.x",
+    "@types/jest": "24.x",
     "@types/lodash-es": "4.x",
     "@types/prop-types": "15.5.6",
     "@types/react": "16.8.13",
@@ -136,8 +99,9 @@
     "chromedriver": "^2.43.3",
     "circular-dependency-plugin": "5.0.2",
     "css-loader": "0.28.x",
-    "enzyme": "^3.9.0",
-    "enzyme-adapter-react-16": "1.12.1",
+    "enzyme": "3.x",
+    "enzyme-adapter-react-16": "1.13.2",
+    "enzyme-to-json": "3.x",
     "eslint": "5.16.0",
     "eslint-plugin-import": "2.x",
     "eslint-plugin-react": "7.x",
@@ -150,8 +114,8 @@
     "jasmine-console-reporter": "2.x",
     "jasmine-core": "2.x",
     "jasmine-reporters": "2.x",
-    "jest": "21.x",
-    "jest-cli": "21.x",
+    "jest": "24.x",
+    "jest-cli": "24.x",
     "mini-css-extract-plugin": "0.4.x",
     "node-sass": "4.8.x",
     "protractor": "5.4.x",
@@ -161,7 +125,7 @@
     "resolve-url-loader": "2.x",
     "sass-loader": "6.x",
     "thread-loader": "1.x",
-    "ts-jest": "21.x",
+    "ts-jest": "24.x",
     "ts-loader": "5.3.3",
     "ts-node": "5.x",
     "typescript": "3.4.4",
