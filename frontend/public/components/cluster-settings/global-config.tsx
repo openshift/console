@@ -7,9 +7,11 @@ import * as plugins from '../../plugins';
 
 import { RootState } from '../../redux';
 import { featureReducerName, flagPending, FeatureState } from '../../reducers/features';
-import { K8sKind, k8sList, referenceForModel } from '../../module/k8s';
+import { K8sKind, k8sList, referenceForModel, getDefinitionKey, getStoredSwagger, SwaggerDefinition, SwaggerDefinitions } from '../../module/k8s';
 import { resourcePathFromModel, Kebab, LoadingBox } from '../utils';
 import { addIDPItems } from './oauth';
+
+const allDefinitions: SwaggerDefinitions = getStoredSwagger();
 
 const stateToProps = (state: RootState) => ({
   configResources: state.k8s.getIn(['RESOURCES', 'configResources']),
@@ -39,10 +41,15 @@ const ItemRow = ({item}) => {
     viewAPIExplorerMenuItem(item.kind, apiExplorerLink),
     ...(item.kind === 'OAuth') ? oauthMenuItems : [],
   ];
+  const itemKey = getDefinitionKey(item.model, allDefinitions);
+  const itemDefinition: SwaggerDefinition = _.get(allDefinitions, itemKey) || {};
 
   return <div className="row co-resource-list__item">
-    <div className="col-sm-12">
+    <div className="col-xs-10 col-sm-4">
       <Link to={resourceLink}>{item.kind}</Link>
+    </div>
+    <div className="hidden-xs col-sm-7">
+      {itemDefinition.description || '-'}
     </div>
     <div className="dropdown-kebab-pf">
       <Kebab options={menuItems} />
@@ -110,8 +117,9 @@ class GlobalConfigPage_ extends React.Component<GlobalConfigPageProps, GlobalCon
         </p>
         <div className="co-m-table-grid co-m-table-grid--bordered">
           <div className="row co-m-table-grid__head">
-            <div className="col-sm-10 col-xs-12">Configuration Resource</div>
-            <div className="col-sm-2 hidden-xs"></div>
+            <div className="col-xs-10 col-sm-4">Configuration Resource</div>
+            <div className="hidden-xs col-sm-7">Description</div>
+            <div></div>
           </div>
           <div className="co-m-table-grid__body">
             { _.map(sortedItems, item => <ItemRow item={item} key={item.uid} />)}
