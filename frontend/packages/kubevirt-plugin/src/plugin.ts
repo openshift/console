@@ -52,7 +52,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'ResourcePage/List',
     properties: {
       model: models.VirtualMachineModel,
-      loader: () => import('./components/vm' /* webpackChunkName: "virtual-machines" */).then(m => m.VirtualMachinesPage),
+      loader: () => import('./components/vm' /* webpackChunkName: "kubevirt-virtual-machines" */).then(m => m.VirtualMachinesPage),
     },
   },
   {
@@ -66,7 +66,7 @@ const plugin: Plugin<ConsumedExtensions> = [
   //   type: 'ResourcePage/Detail',
   //   properties: {
   //     model: VirtualMachineModel,
-  //     loader: () => import('./components/vm-detail' /* webpackChunkName: "virtual-machines" */).then(m => m.VirtualMachinesDetailsPage),
+  //     loader: () => import('./components/vm-detail' /* webpackChunkName: "kubevirt-virtual-machines" */).then(m => m.VirtualMachinesDetailsPage),
   //   },
   // },
 ];
