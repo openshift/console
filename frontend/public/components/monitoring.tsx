@@ -1155,7 +1155,7 @@ export type SilencesDetailsPageProps = {
 };
 export type SilenceFormProps = {
   defaults?: any;
-  Info: React.ComponentType<any>;
+  Info: React.ComponentType<{}>;
   saveButtonText?: string;
   title: string;
   urls: {key: string}[];
@@ -1167,7 +1167,7 @@ export type SilenceFormState = {
 };
 export type ListPageProps = {
   alertmanagerLinkPath: string;
-  CreateButton: React.ComponentType<any>;
+  CreateButton: React.ComponentType<{}>;
   data: Rule[] | Silence[];
   filters: {[key: string]: any};
   Header: React.ComponentType<any>;
@@ -1177,7 +1177,7 @@ export type ListPageProps = {
   loadError?: string;
   match: {path: string};
   nameFilterID: string;
-  PageDescription: React.ComponentType<any>;
+  PageDescription: React.ComponentType<{}>;
   reduxID: string;
   Row: React.ComponentType<any>;
   rowFilter: {type: string, selected: string[], reducer: (any) => string, items: {id: string, title: string}[]};
