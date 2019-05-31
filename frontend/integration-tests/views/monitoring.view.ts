@@ -8,7 +8,7 @@ export const firstListLink = $$('.co-resource-list__item a.co-resource-item__res
 export const createButton = $('.co-m-pane__filter-bar-group button');
 
 // Details pages
-export const detailsHeading = $('.co-m-nav-title .co-m-pane__name');
+export const detailsHeading = $('.co-m-nav-title .co-resource-item');
 export const detailsHeadingAlertIcon = $('.co-m-nav-title .co-m-resource-alert');
 export const detailsHeadingRuleIcon = $('.co-m-nav-title .co-m-resource-alertrule');
 export const detailsHeadingSilenceIcon = $('.co-m-nav-title .co-m-resource-silence');
