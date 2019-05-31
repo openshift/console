@@ -241,7 +241,7 @@ const AlertsDetailsPage = withFallback(connect(alertStateToProps)((props: Alerts
     <StatusBox data={alert} label={AlertResource.label} loaded={loaded} loadError={loadError}>
       <div className="co-m-nav-title co-m-nav-title--detail">
         <h1 className="co-m-pane__heading">
-          <div className="co-m-pane__name co-resource-item"><MonitoringResourceIcon className="co-m-resource-icon--lg" resource={AlertResource} />{alertname}</div>
+          <div className="co-resource-item"><MonitoringResourceIcon className="co-m-resource-icon--lg" resource={AlertResource} />{alertname}</div>
           {(state === AlertStates.Firing || state === AlertStates.Pending) && <div className="co-actions" data-test-id="details-actions">
             <ActionsMenu actions={[silenceAlert(alert)]} />
           </div>}
@@ -359,7 +359,7 @@ const AlertRulesDetailsPage = withFallback(connect(ruleStateToProps)((props: Ale
     <StatusBox data={rule} label={AlertRuleResource.label} loaded={loaded} loadError={loadError}>
       <div className="co-m-nav-title co-m-nav-title--detail">
         <h1 className="co-m-pane__heading">
-          <div className="co-m-pane__name co-resource-item"><MonitoringResourceIcon className="co-m-resource-icon--lg" resource={AlertRuleResource} />{name}</div>
+          <div className="co-resource-item"><MonitoringResourceIcon className="co-m-resource-icon--lg" resource={AlertRuleResource} />{name}</div>
         </h1>
       </div>
       <div className="co-m-pane__body">
@@ -458,7 +458,7 @@ const SilencesDetailsPage = withFallback(connect(silenceParamToProps)((props: Si
     <StatusBox data={silence} label={SilenceResource.label} loaded={loaded} loadError={loadError}>
       <div className="co-m-nav-title co-m-nav-title--detail">
         <h1 className="co-m-pane__heading">
-          <div className="co-m-pane__name co-resource-item"><MonitoringResourceIcon className="co-m-resource-icon--lg" resource={SilenceResource} />{name}</div>
+          <div className="co-resource-item"><MonitoringResourceIcon className="co-m-resource-icon--lg" resource={SilenceResource} />{name}</div>
           <SilenceActionsMenu silence={silence} />
         </h1>
       </div>
@@ -629,10 +629,7 @@ const MonitoringListPage = connect(filtersToProps)(class InnerMonitoringListPage
       </Helmet>
       <div className="co-m-nav-title">
         <h1 className="co-m-pane__heading">
-          <div className="co-m-pane__name co-resource-item">
-            {kindPlural}
-            <HeaderAlertmanagerLink path={alertmanagerLinkPath} />
-          </div>
+          <span>{kindPlural}<HeaderAlertmanagerLink path={alertmanagerLinkPath} /></span>
         </h1>
         <PageDescription />
       </div>
@@ -971,10 +968,7 @@ const QueryBrowserPage = () => {
   return <React.Fragment>
     <div className="co-m-nav-title">
       <h1 className="co-m-pane__heading">
-        <div className="co-m-pane__name co-resource-item">
-          Metrics
-          <HeaderPrometheusLink query={query} />
-        </div>
+        <span>Metrics<HeaderPrometheusLink query={query} /></span>
       </h1>
     </div>
     <div className="co-m-pane__body">
@@ -1161,7 +1155,7 @@ export type SilencesDetailsPageProps = {
 };
 export type SilenceFormProps = {
   defaults?: any;
-  Info: React.ComponentType<any>;
+  Info: React.ComponentType<{}>;
   saveButtonText?: string;
   title: string;
   urls: {key: string}[];
@@ -1173,7 +1167,7 @@ export type SilenceFormState = {
 };
 export type ListPageProps = {
   alertmanagerLinkPath: string;
-  CreateButton: React.ComponentType<any>;
+  CreateButton: React.ComponentType<{}>;
   data: Rule[] | Silence[];
   filters: {[key: string]: any};
   Header: React.ComponentType<any>;
@@ -1183,7 +1177,7 @@ export type ListPageProps = {
   loadError?: string;
   match: {path: string};
   nameFilterID: string;
-  PageDescription: React.ComponentType<any>;
+  PageDescription: React.ComponentType<{}>;
   reduxID: string;
   Row: React.ComponentType<any>;
   rowFilter: {type: string, selected: string[], reducer: (any) => string, items: {id: string, title: string}[]};
