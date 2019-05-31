@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as _ from 'lodash-es';
 
 import {
   getName,
@@ -95,43 +94,35 @@ const filters = [{
 }];
 */
 
-const createItems = {
-  wizard: 'Create with Wizard',
-  yaml: 'Create from YAML',
-};
-
 export type VirtualMachinesPageProps = {
   namespace: string;
 };
 
-export class VirtualMachinesPage extends React.Component<VirtualMachinesPageProps> {
-  createProps = {
-    items: createItems,
-    createLink: (type) => {
-      switch (type) {
-        case 'wizard':
-          return () => {
-            window.console.log('TODO: start wizard'); // TODO(mlibra)
-          };
-          // return () => openCreateVmWizard(this.props.namespace);
-        default:
-          return `/k8s/ns/${this.props.namespace || 'default'}/virtualmachines/~new/`; // TODO
-      }
-    },
-  };
+const getCreateProps = ({ namespace }) => ({
+  items: {
+    wizard: 'Create with Wizard',
+    yaml: 'Create from YAML',
+  },
+  createLink: type => {
+    switch (type) {
+      case 'wizard':
+        return () => {
+          window.console.log('TODO: start wizard'); // TODO(mlibra)
+        };
+      // return () => openCreateVmWizard(this.props.namespace);
+      default:
+        return `/k8s/ns/${namespace || 'default'}/virtualmachines/~new/`;
+    }
+  },
+});
 
-  shouldComponentUpdate(nextProps: VirtualMachinesPageProps) {
-    return !_.isEqual(nextProps, this.props);
-  }
-
-  render() {
-    return <ListPage
-      {...this.props}
-      canCreate={true}
-      kind={VirtualMachineModel.kind}
-      ListComponent={VMList}
-      createProps={this.createProps}
-      rowFilters={filters}
-    />;
-  }
-}
+export const VirtualMachinesPage: React.FC<VirtualMachinesPageProps> = props => (
+  <ListPage
+    {...props}
+    canCreate={true}
+    kind={VirtualMachineModel.kind}
+    ListComponent={VMList}
+    createProps={getCreateProps(props)}
+    rowFilters={filters}
+  />
+);
