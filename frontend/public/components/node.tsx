@@ -7,7 +7,7 @@ import { ResourceEventStream } from './events';
 import { Table, TableRow, TableData, DetailsPage, ListPage } from './factory';
 import { configureUnschedulableModal } from './modals';
 import { PodsPage } from './pod';
-import { Kebab, navFactory, LabelList, ResourceKebab, SectionHeading, ResourceLink, Timestamp, units, cloudProviderNames, cloudProviderID, pluralize, StatusIconAndText, humanizeDecimalBytes, humanizeCpuCores } from './utils';
+import { Kebab, navFactory, LabelList, ResourceKebab, SectionHeading, ResourceLink, Timestamp, units, cloudProviderNames, cloudProviderID, pluralize, StatusIconAndText, humanizeDecimalBytes, humanizeCpuCores, useAccessReview } from './utils';
 import { Area, requirePrometheus } from './graphs';
 import { MachineModel, NodeModel } from '../models';
 import { CamelCaseWrap } from './utils/camel-case-wrap';
@@ -196,6 +196,13 @@ const NodeGraphs = requirePrometheus(({node}) => {
 const Details = ({obj: node}) => {
   const images = _.filter(node.status.images, 'names');
   const machine = getMachine(node);
+  const canUpdate = useAccessReview({
+    group: NodeModel.apiGroup,
+    resource: NodeModel.path,
+    verb: 'patch',
+    name: node.metadata.name,
+    namespace: node.metadata.namespace,
+  });
   return <React.Fragment>
     <div className="co-m-pane__body">
       <SectionHeading text="Node Overview" />
@@ -214,9 +221,17 @@ const Details = ({obj: node}) => {
             <dt>Node Labels</dt>
             <dd><LabelList kind="Node" labels={node.metadata.labels} /></dd>
             <dt>Taints</dt>
-            <dd><button type="button" className="btn btn-link co-modal-btn-link co-modal-btn-link--left" onClick={Kebab.factory.ModifyTaints(NodeModel, node).callback}>{pluralize(_.size(node.spec.taints), 'Taint')}</button></dd>
+            <dd>
+              {canUpdate
+                ? <button type="button" className="btn btn-link co-modal-btn-link co-modal-btn-link--left" onClick={Kebab.factory.ModifyTaints(NodeModel, node).callback}>{pluralize(_.size(node.spec.taints), 'Taint')}</button>
+                : pluralize(_.size(node.spec.taints), 'Taint')}
+            </dd>
             <dt>Annotations</dt>
-            <dd><button type="button" className="btn btn-link co-modal-btn-link co-modal-btn-link--left" onClick={Kebab.factory.ModifyAnnotations(NodeModel, node).callback}>{pluralize(_.size(node.metadata.annotations), 'Annotation')}</button></dd>
+            <dd>
+              {canUpdate
+                ? <button type="button" className="btn btn-link co-modal-btn-link co-modal-btn-link--left" onClick={Kebab.factory.ModifyAnnotations(NodeModel, node).callback}>{pluralize(_.size(node.metadata.annotations), 'Annotation')}</button>
+                : pluralize(_.size(node.metadata.annotations), 'Annotation')}
+            </dd>
             {machine && <React.Fragment>
               <dt>Machine</dt>
               <dd><ResourceLink kind={referenceForModel(MachineModel)} name={machine.name} namespace={machine.namespace} /></dd>

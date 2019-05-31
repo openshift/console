@@ -19,6 +19,7 @@ import {
   navFactory,
   pluralize,
   resourcePath,
+  useAccessReview,
 } from './utils';
 import { breadcrumbsForOwnerRefs } from './utils/breadcrumbs';
 import { Tooltip } from './utils/tooltip';
@@ -135,6 +136,15 @@ export const MachineCounts: React.SFC<MachineCountsProps> = ({resourceKind, reso
   const readyReplicas = getReadyReplicas(resource);
   const availableReplicas = getAvailableReplicas(resource);
 
+  const canUpdate = useAccessReview({
+    group: resourceKind.apiGroup,
+    resource: resourceKind.path,
+    verb: 'patch',
+    name: resource.metadata.name,
+    namespace: resource.metadata.namespace,
+  });
+
+  const desiredReplicasText = pluralize(desiredReplicas, 'machine');
   return <div className="co-m-pane__body-group">
     <div className="co-detail-table">
       <div className="co-detail-table__row row">
@@ -142,9 +152,9 @@ export const MachineCounts: React.SFC<MachineCountsProps> = ({resourceKind, reso
           <dl className="co-m-pane__details">
             <dt className="co-detail-table__section-header">Desired Count</dt>
             <dd>
-              <button type="button" className="btn btn-link co-modal-btn-link" onClick={editReplicas}>
-                {pluralize(desiredReplicas, 'machine')}
-              </button>
+              {canUpdate
+                ? <button type="button" className="btn btn-link co-modal-btn-link" onClick={editReplicas}>{desiredReplicasText}</button>
+                : desiredReplicasText}
             </dd>
           </dl>
         </div>
