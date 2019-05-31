@@ -1,10 +1,24 @@
 import * as _ from 'lodash-es';
-import { Plugin, ResourceNSNavItem, ResourceListPage, ResourceDetailPage, ModelFeatureFlag, YamlTemplate, ModelDefinition } from '@console/plugin-sdk';
+import {
+  Plugin,
+  ResourceNSNavItem,
+  ResourceListPage,
+  ResourceDetailPage,
+  ModelFeatureFlag,
+  YAMLTemplate,
+  ModelDefinition,
+} from '@console/plugin-sdk';
 
 import * as models from './models';
-import { vmYamlTemplate } from './yaml-templates';
+import { yamlTemplates } from './yaml-templates';
 
-type ConsumedExtensions = ResourceNSNavItem | ResourceListPage | ResourceDetailPage | ModelFeatureFlag | YamlTemplate | ModelDefinition;
+type ConsumedExtensions =
+  | ResourceNSNavItem
+  | ResourceListPage
+  | ResourceDetailPage
+  | ModelFeatureFlag
+  | YAMLTemplate
+  | ModelDefinition;
 
 const FLAG_KUBEVIRT = 'KUBEVIRT';
 
@@ -31,7 +45,7 @@ const plugin: Plugin<ConsumedExtensions> = [
         resource: models.VirtualMachineModel.plural,
         required: FLAG_KUBEVIRT,
       },
-      mergeAfter: 'Pods', // rendered name of the resource navigation link in the left-side menu
+      mergeAfter: 'Pods',
     },
   },
   {
@@ -42,10 +56,10 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
-    type: 'YamlTemplate',
+    type: 'YAMLTemplate',
     properties: {
       model: models.VirtualMachineModel,
-      template: vmYamlTemplate,
+      template: yamlTemplates.getIn([models.VirtualMachineModel, 'default']),
     },
   },
   // {
