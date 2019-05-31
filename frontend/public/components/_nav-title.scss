@@ -17,11 +17,16 @@
     padding-left: $grid-gutter-width;
     padding-right: $grid-gutter-width;
   }
-  &--breadcrumbs {
-    padding-top: 0;
-  }
   &--detail {
     border-bottom: 1px solid $color-grey-background-border;
+    // Set min-height to prevent shifting of page content when actions btn is rendered after page content
+    min-height: 90px; // h1 text + top & bottom margin + bottom border (29 + 30 + 30 + 1)
+  }
+  // Positioned after --detail to take precedence, since they will be a siblings
+  &--breadcrumbs {
+    // Set min-height to prevent shifting of page content when actions btn is rendered after page content
+    min-height: 118px; // breadcrumb text + top & bottom padding + h1 text + bottom margin + bottom border +  (21 + 25 + 12 + 29 + 30 + 1)
+    padding-top: 0;
   }
   &--logo {
     padding-top: ($grid-gutter-width / 2);
