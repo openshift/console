@@ -3,11 +3,12 @@ import { shallow } from 'enzyme';
 import { FieldLevelHelp } from 'patternfly-react';
 
 import { EnvironmentPage } from '../../public/components/environment';
+import { DeploymentModel } from '../../public/models';
 import * as k8s from '../../public/module/k8s';
 
 describe(EnvironmentPage.name, () => {
 
-  const configMaps={}, secrets = {}, objects = {'metadata': {'namespace': 'test'}};
+  const configMaps={}, secrets = {}, obj = {'metadata': {'namespace': 'test'}};
 
   let wrapper, wrapperRO;
   let environmentPage, environmentPageRO;
@@ -15,12 +16,36 @@ describe(EnvironmentPage.name, () => {
   describe('When readOnly attribute is "true"', () => {
     beforeEach(() => {
       environmentPageRO=<EnvironmentPage.WrappedComponent
-        obj={objects}
+        obj={obj}
+        model={DeploymentModel}
         rawEnvData={[ { 'env': [ { 'name': 'test', 'value': ':0', 'ID': 0 } ] } ]}
         envPath={[]}
         readOnly={true}
       />;
       wrapperRO = shallow(environmentPageRO);
+      wrapperRO.setState({allowed: true});
+    });
+
+    it('does not show field level help', () => {
+      expect(wrapperRO.find(FieldLevelHelp).exists()).toEqual(false);
+    });
+
+    it('does not render save and reload buttons', () => {
+      expect(wrapperRO.find('.environment-buttons button').exists()).toEqual(false);
+    });
+  });
+
+  describe('When user does not have permission', () => {
+    beforeEach(() => {
+      environmentPageRO=<EnvironmentPage.WrappedComponent
+        obj={obj}
+        model={DeploymentModel}
+        rawEnvData={[ { 'env': [ { 'name': 'test', 'value': ':0', 'ID': 0 } ] } ]}
+        envPath={[]}
+        readOnly={false}
+      />;
+      wrapperRO = shallow(environmentPageRO);
+      wrapperRO.setState({allowed: false});
     });
 
     it('does not show field level help', () => {
@@ -36,13 +61,14 @@ describe(EnvironmentPage.name, () => {
     beforeEach(() => {
       spyOn(k8s, 'k8sGet').and.callFake(() => Promise.resolve());
       environmentPage=<EnvironmentPage.WrappedComponent
-        obj={objects}
+        obj={obj}
+        model={DeploymentModel}
         rawEnvData={[ { 'env': [ { 'name': 'test', 'value': ':0', 'ID': 0 } ] } ]}
         envPath={[]}
         readOnly={false}
       />;
       wrapper = shallow(environmentPage);
-      wrapper.setState({secrets, configMaps});
+      wrapper.setState({secrets, configMaps, allowed: true});
     });
 
     it('shows field level help component', () => {
@@ -57,13 +83,14 @@ describe(EnvironmentPage.name, () => {
   describe('When page has error messages or alerts', () => {
     beforeEach(() => {
       environmentPage=<EnvironmentPage.WrappedComponent
-        obj={objects}
+        obj={obj}
+        model={DeploymentModel}
         rawEnvData={[ { 'env': [ { 'name': 'test', 'value': ':0', 'ID': 0 } ] } ]}
         envPath={[]}
         readOnly={true}
       />;
       wrapper = shallow(environmentPage);
-      wrapper.setState({secrets, configMaps});
+      wrapper.setState({secrets, configMaps, allowed: true});
     });
 
     it('renders error message when error in state', () => {
@@ -85,7 +112,8 @@ describe(EnvironmentPage.name, () => {
   describe('When page does not have error messages or alerts', () => {
     beforeEach(() => {
       environmentPage=<EnvironmentPage.WrappedComponent
-        obj={objects}
+        obj={obj}
+        model={DeploymentModel}
         rawEnvData={[ { 'env': [ { 'name': 'test', 'value': ':0', 'ID': 0 } ] } ]}
         envPath={[]}
         readOnly={true}
