@@ -8,16 +8,19 @@ import { RootState } from '../../redux';
 import { featureReducerName, flagPending, FeatureState } from '../../reducers/features';
 import { stripBasePath } from '../utils';
 import * as plugins from '../../plugins';
-import { HrefLink, ResourceNSLink, ResourceClusterLink, stripNS } from './items';
+import { stripNS, createLink } from './items';
+import { getActivePerspective } from '../../reducers/ui';
 
-const navSectionStateToProps = (state: RootState, {required}) => {
+const navSectionStateToProps = (state: RootState, {required}: NavSectionProps): NavSectionStateProps => {
   const flags = state[featureReducerName];
   const canRender = required ? flags.get(required) : true;
 
   return {
-    flags, canRender,
+    flags,
+    canRender,
     activeNamespace: state.UI.get('activeNamespace'),
     location: state.UI.get('location'),
+    perspective: getActivePerspective(state),
   };
 };
 
@@ -30,21 +33,8 @@ const mergePluginChild = (Children: React.ReactElement[], pluginChild: React.Rea
   }
 };
 
-const getNavLinkFromItem = (item: plugins.NavItem, key: number) => {
-  if (plugins.isHrefNavItem(item)) {
-    return <HrefLink key={key} {...item.properties.componentProps} />;
-  }
-  if (plugins.isResourceNSNavItem(item)) {
-    return <ResourceNSLink key={key} {...item.properties.componentProps} />;
-  }
-  if (plugins.isResourceClusterNavItem(item)) {
-    return <ResourceClusterLink key={key} {...item.properties.componentProps} />;
-  }
-  return null;
-};
-
 export const NavSection = connect(navSectionStateToProps)(
-  class NavSection extends React.Component<NavSectionProps, NavSectionState> {
+  class NavSection extends React.Component<Props, NavSectionState> {
     public state: NavSectionState;
 
     constructor(props) {
@@ -113,9 +103,24 @@ export const NavSection = connect(navSectionStateToProps)(
       this.setState({isOpen: expandState});
     }
 
-    getPluginNavItems = memoize(
-      (section) => plugins.registry.getNavItems(section)
-    );
+    getNavItems(perspective: string, section: string): plugins.NavItem[] {
+      const defaultPerspective = _.find(
+        plugins.registry.getPerspectives(),
+        p => p.properties.default
+      );
+      const isDefaultPerspective =
+        defaultPerspective && perspective === defaultPerspective.properties.id;
+      return plugins.registry.getNavItems().filter(
+        item =>
+          // check if the item is contributed to the current perspective,
+          // or if no perspective specified, are we in the default perspective
+          (item.properties.perspective === perspective ||
+            (!item.properties.perspective && isDefaultPerspective)) &&
+          item.properties.section === section
+      );
+    }
+
+    getPluginNavItems: (perspective: string, section: string) => plugins.NavItem[] = memoize(this.getNavItems)
 
     mapChild = (c: React.ReactElement) => {
       if (!c) {
@@ -150,14 +155,14 @@ export const NavSection = connect(navSectionStateToProps)(
         return null;
       }
 
-      const { title, children } = this.props;
+      const { title, children, perspective } = this.props;
       const { isOpen, activeChild } = this.state;
       const isActive = !!activeChild;
 
       const Children = React.Children.map(children, this.mapChild) || [];
 
-      this.getPluginNavItems(title).forEach((item, index) => {
-        const pluginChild = this.mapChild(getNavLinkFromItem(item, index));
+      this.getPluginNavItems(perspective, title).forEach((item) => {
+        const pluginChild = this.mapChild(createLink(item));
         if (pluginChild) {
           mergePluginChild(Children, pluginChild, item.properties.mergeAfter);
         }
@@ -183,14 +188,21 @@ export type NavSectionTitle =
   | 'Storage'
   | 'Workloads';
 
-type NavSectionProps = {
+type NavSectionStateProps = {
   flags?: FeatureState;
-  title: NavSectionTitle;
   canRender?: boolean;
   activeNamespace?: string;
   activePath?: string;
   location?: string;
+  perspective: string;
 };
+
+export type NavSectionProps = {
+  title: NavSectionTitle | string;
+  required?: string;
+};
+
+type Props = NavSectionProps & NavSectionStateProps;
 
 type NavSectionState = {
   isOpen: boolean;

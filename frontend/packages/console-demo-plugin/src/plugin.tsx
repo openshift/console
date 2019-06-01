@@ -120,6 +120,27 @@ const plugin: Plugin<ConsumedExtensions> = [
       template: yamlTemplates.getIn([models.FooBarModel, 'default']),
     },
   },
+  {
+    type: 'NavItem/Href',
+    properties: {
+      perspective: 'test',
+      componentProps: {
+        name: 'Test Search',
+        href: '/search',
+      },
+    },
+  },
+  {
+    type: 'NavItem/ResourceCluster',
+    properties: {
+      perspective: 'test',
+      section: 'Advanced',
+      componentProps: {
+        name: 'Test Projects',
+        resource: 'projects',
+      },
+    },
+  },
 ];
 
 export default plugin;

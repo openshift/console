@@ -6,6 +6,7 @@ import { NavItem } from '@patternfly/react-core';
 import { formatNamespacedRouteForResource } from '../../actions/ui';
 import { referenceForModel, K8sKind } from '../../module/k8s';
 import { stripBasePath } from '../utils';
+import * as plugins from '../../plugins';
 
 export const matchesPath = (resourcePath, prefix) => resourcePath === prefix || _.startsWith(resourcePath, `${prefix}/`);
 export const matchesModel = (resourcePath, model) => model && matchesPath(resourcePath, referenceForModel(model));
@@ -115,4 +116,16 @@ export type ResourceClusterLinkProps = NavLinkProps & {
 
 export type HrefLinkProps = NavLinkProps & {
   href: string;
+};
+
+export const createLink = (item: plugins.NavItem): React.ReactElement => {
+  if (plugins.isHrefNavItem(item)) {
+    return <HrefLink key={item.properties.componentProps.name} {...item.properties.componentProps} />;
+  }
+  if (plugins.isResourceNSNavItem(item)) {
+    return <ResourceNSLink key={item.properties.componentProps.name} {...item.properties.componentProps} />;
+  }
+  if (plugins.isResourceClusterNavItem(item)) {
+    return <ResourceClusterLink key={item.properties.componentProps.name} {...item.properties.componentProps} />;
+  }
 };

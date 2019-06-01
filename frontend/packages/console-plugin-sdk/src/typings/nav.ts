@@ -1,5 +1,4 @@
 import { Extension } from '.';
-import { NavSectionTitle } from '@console/internal/components/nav/section';
 
 import {
   NavLinkProps,
@@ -10,8 +9,10 @@ import {
 
 namespace ExtensionProperties {
   interface NavItem {
+    /** Perspective to which this item belongs to. */
+    perspective?: string;
     /** Nav section to which this item belongs to. */
-    section: NavSectionTitle;
+    section?: string;
     /** Props to pass to the corresponding `NavLink` component. */
     componentProps: Pick<NavLinkProps, 'name' | 'required' | 'disallowed' | 'startsWith'>;
     /** Nav item after which this item should be placed. */
