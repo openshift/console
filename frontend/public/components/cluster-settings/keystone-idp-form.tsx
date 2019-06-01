@@ -160,16 +160,13 @@ export class AddKeystonePage extends PromiseComponent<{}, AddKeystonePageState> 
         </p>
         <IDPNameInput value={name} onChange={this.nameChanged} />
         <div className="form-group">
-          <label className="control-label" htmlFor="domain-name">Domain Name</label>
+          <label className="control-label co-required" htmlFor="domain-name">Domain Name</label>
           <input className="form-control"
             type="text"
             onChange={this.domainNameChanged}
             value={domainName}
             id="domain-name"
-            aria-describedby="idp-domain-name-help" />
-          <p className="help-block" id="idp-domain-name-help">
-            Required for keystone v3.
-          </p>
+            required />
         </div>
         <div className="form-group">
           <label className="control-label co-required" htmlFor="url">URL</label>
