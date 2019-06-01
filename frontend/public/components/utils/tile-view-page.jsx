@@ -627,16 +627,6 @@ export class TileViewPage extends React.Component {
 
     return (
       <FilterSidePanel>
-        <FilterSidePanel.Category key="keyword" onSubmit={(e) => e.preventDefault()}>
-          <FormControl
-            type="text"
-            inputRef={(ref) => this.filterByKeywordInput = ref}
-            placeholder="Filter by keyword..."
-            bsClass="form-control"
-            value={activeFilters.keyword.value}
-            onChange={e => this.onKeywordChange(e.target.value)}
-          />
-        </FilterSidePanel.Category>
         {_.map(activeFilters, (filterGroup, groupName) => {
           if (groupName === 'keyword') {
             return;
@@ -666,7 +656,7 @@ export class TileViewPage extends React.Component {
 
   render() {
     const { renderTile } = this.props;
-    const { selectedCategoryId, categories } = this.state;
+    const { activeFilters, selectedCategoryId, categories } = this.state;
     let activeCategory = findActiveCategory(selectedCategoryId, categories);
     if (!activeCategory) {
       activeCategory = findActiveCategory('all', categories);
@@ -679,9 +669,20 @@ export class TileViewPage extends React.Component {
           { this.renderSidePanel() }
         </div>
         <div className="co-catalog-page__content">
-          <div>
+          <div className="co-catalog-page__header">
             <div className="co-catalog-page__heading text-capitalize">{activeCategory.label}</div>
-            <div className="co-catalog-page__num-items">{activeCategory.numItems} items</div>
+            <div className="co-catalog-page__filter">
+              <FormControl
+                className="co-catalog-page__input"
+                type="text"
+                inputRef={(ref) => this.filterByKeywordInput = ref}
+                placeholder="Filter by keyword..."
+                bsClass="form-control"
+                value={activeFilters.keyword.value}
+                onChange={e => this.onKeywordChange(e.target.value)}
+              />
+              <div className="co-catalog-page__num-items">{activeCategory.numItems} items</div>
+            </div>
           </div>
           {activeCategory.numItems > 0 && (
             <div className="catalog-tile-view-pf catalog-tile-view-pf-no-categories">

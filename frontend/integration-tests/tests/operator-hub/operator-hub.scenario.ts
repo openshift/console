@@ -40,7 +40,7 @@ describe('Subscribing to an Operator from OperatorHub', () => {
   });
 
   it('filters Operators by name', async() => {
-    await catalogPageView.filterSectionFor('provider').$$('.filter-panel-pf-category-item').get(1).$('input').click();
+    await $('.co-catalog-page__filter input').click();
     const filteredOperator = await catalogPageView.catalogTiles.first().$('.catalog-tile-pf-title').getText();
     await catalogPageView.filterByKeyword(filteredOperator);
 

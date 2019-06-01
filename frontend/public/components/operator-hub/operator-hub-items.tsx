@@ -23,11 +23,13 @@ const operatorHubFilterGroups = [
   'providerType',
   'provider',
   'installState',
+  'capabilityLevel',
 ];
 
 const operatorHubFilterMap = {
   providerType: 'Provider Type',
   installState: 'Install State',
+  capabilityLevel: 'Capability Level',
 };
 
 const COMMUNITY_PROVIDER_TYPE: string = 'Community';
@@ -77,29 +79,63 @@ const providerSort = provider => {
   return provider.value;
 };
 
+enum ProviderType {
+  RedHat = 'Red Hat',
+  Certified = 'Certified',
+  Community = 'Community',
+  Custom = 'Custom',
+}
+
+enum InstalledState {
+  Installed = 'Installed',
+  NotInstalled = 'Not Installed',
+}
+
+enum CapabilityLevel {
+  BasicInstall = 'Basic Install',
+  SeamlessUpgrades = 'Seamless Upgrades',
+  FullLifecycle = 'Full Lifecycle',
+  DeepInsights = 'Deep Insights',
+}
+
 const providerTypeSort = provider => {
   switch (provider.value) {
-    case 'Red Hat':
+    case ProviderType.RedHat:
       return 0;
-    case 'Certified':
+    case ProviderType.Certified:
       return 1;
-    case 'Community':
+    case ProviderType.Community:
       return 2;
-    case 'Custom':
+    case ProviderType.Custom:
       return 4;
     default:
       return 5;
   }
 };
 
-const installedStateSort = provider =>{
+const installedStateSort = provider => {
   switch (provider.value) {
-    case 'Installed':
+    case InstalledState.Installed:
       return 0;
-    case 'Not Installed':
+    case InstalledState.NotInstalled:
       return 1;
     default:
       return 3;
+  }
+};
+
+const capabilityLevelSort = provider => {
+  switch (provider.value) {
+    case CapabilityLevel.BasicInstall:
+      return 0;
+    case CapabilityLevel.SeamlessUpgrades:
+      return 1;
+    case CapabilityLevel.FullLifecycle:
+      return 2;
+    case CapabilityLevel.DeepInsights:
+      return 3;
+    default:
+      return 5;
   }
 };
 
@@ -116,6 +152,10 @@ const sortFilterValues = (values, field) => {
 
   if (field === 'installState') {
     sorter = installedStateSort;
+  }
+
+  if (field === 'capabilityLevel') {
+    sorter = capabilityLevelSort;
   }
 
   return _.sortBy(values, sorter);
