@@ -18,7 +18,7 @@ export class ExtensionRegistry {
   private readonly extensions: Extension<any>[];
 
   public constructor(plugins: ActivePlugin[]) {
-    this.extensions = _.flatMap(plugins.map(p => p.extensions));
+    this.extensions = _.flatMap(plugins.map((p) => p.extensions));
   }
 
   public getModelDefinitions() {

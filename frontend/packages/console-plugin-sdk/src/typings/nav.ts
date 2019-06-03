@@ -1,11 +1,10 @@
-import { Extension } from '.';
-
 import {
   NavLinkProps,
   HrefLinkProps,
   ResourceNSLinkProps,
   ResourceClusterLinkProps,
 } from '@console/internal/components/nav/items';
+import { Extension } from './extension';
 
 namespace ExtensionProperties {
   interface NavItem {
@@ -28,7 +27,8 @@ namespace ExtensionProperties {
   }
 
   export interface ResourceClusterNavItem extends NavItem {
-    componentProps: NavItem['componentProps'] & Pick<ResourceClusterLinkProps, 'resource' | 'model'>;
+    componentProps: NavItem['componentProps'] &
+      Pick<ResourceClusterLinkProps, 'resource' | 'model'>;
   }
 }
 
@@ -40,7 +40,8 @@ export interface ResourceNSNavItem extends Extension<ExtensionProperties.Resourc
   type: 'NavItem/ResourceNS';
 }
 
-export interface ResourceClusterNavItem extends Extension<ExtensionProperties.ResourceClusterNavItem> {
+export interface ResourceClusterNavItem
+  extends Extension<ExtensionProperties.ResourceClusterNavItem> {
   type: 'NavItem/ResourceCluster';
 }
 

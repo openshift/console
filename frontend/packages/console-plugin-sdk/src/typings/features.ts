@@ -1,5 +1,5 @@
-import { Extension } from '.';
 import { K8sKind } from '@console/internal/module/k8s';
+import { Extension } from './extension';
 
 namespace ExtensionProperties {
   export interface ModelFeatureFlag {

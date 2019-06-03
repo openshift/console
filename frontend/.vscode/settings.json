@@ -1,0 +1,31 @@
+{
+  "[javascript]": {
+    "editor.formatOnSave": true
+  },
+  "[javascriptreact]": {
+    "editor.formatOnSave": true
+  },
+  "[typescript]": {
+    "editor.formatOnSave": true
+  },
+  "[typescriptreact]": {
+    "editor.formatOnSave": true
+  },
+
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact"
+  ],
+  "eslint.enable": true,
+
+  "prettier.eslintIntegration": true,
+  "javascript.validate.enable": false
+
+  // TODO support prettier + stylelint
+  // "prettier.stylelintIntegration": true,
+  // "css.validate": false,
+  // "less.validate": false,
+  // "scss.validate": false,
+}

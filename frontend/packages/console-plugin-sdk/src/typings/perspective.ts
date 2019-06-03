@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Extension } from '.';
+import { Extension } from './extension';
 
 namespace ExtensionProperties {
   export interface Perspective {

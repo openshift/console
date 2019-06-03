@@ -83,14 +83,20 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'ResourcePage/List',
     properties: {
       model: PodModel,
-      loader: () => import('@console/internal/components/pod' /* webpackChunkName: "pod" */).then(m => m.PodsPage),
+      loader: () =>
+        import('@console/internal/components/pod' /* webpackChunkName: "pod" */).then(
+          (m) => m.PodsPage,
+        ),
     },
   },
   {
     type: 'ResourcePage/Detail',
     properties: {
       model: PodModel,
-      loader: () => import('@console/internal/components/pod' /* webpackChunkName: "pod" */).then(m => m.PodsDetailsPage),
+      loader: () =>
+        import('@console/internal/components/pod' /* webpackChunkName: "pod" */).then(
+          (m) => m.PodsDetailsPage,
+        ),
     },
   },
   {

@@ -79,9 +79,14 @@
     "wrap-iife": [2, "inside"],
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "warn",
+    "react/display-name": 0,
+    "react/no-unescaped-entities": 0,
   },
   "settings": {
     "import/extensions": [".js", ".jsx"],
     "import/resolver": {"node": {"extensions": [".js", ".jsx", ".ts", ".tsx"]}},
+    "react": {
+      "version": "detect",
+    },
   }
 }

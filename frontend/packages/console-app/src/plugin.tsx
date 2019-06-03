@@ -1,12 +1,8 @@
 import * as React from 'react';
 import { CogIcon } from '@patternfly/react-icons';
-import {
-  Plugin,
-  Perspective,
-} from '@console/plugin-sdk';
+import { Plugin, Perspective } from '@console/plugin-sdk';
 
-type ConsumedExtensions =
-  | Perspective;
+type ConsumedExtensions = Perspective;
 
 const plugin: Plugin<ConsumedExtensions> = [
   {
