@@ -85,7 +85,7 @@ func main() {
 	fBranding := fs.String("branding", "okd", "Console branding for the masthead logo and title. One of okd, openshift, ocp, online, dedicated, or azure. Defaults to okd.")
 	fCustomProductName := fs.String("custom-product-name", "", "Custom product name for console branding.")
 	fCustomLogoFile := fs.String("custom-logo-file", "", "Custom product image for console branding.")
-	fStatuspageID := fs.String("statuspage-id", "", "The statuspage.io ID.")
+	fStatuspageID := fs.String("statuspage-id", "", "Unique ID assigned by statuspage.io page that provides status info.")
 	fDocumentationBaseURL := fs.String("documentation-base-url", "", "The base URL for documentation links.")
 	fGoogleTagManagerID := fs.String("google-tag-manager-id", "", "Google Tag Manager ID. External analytics are disabled if this is not set.")
 
