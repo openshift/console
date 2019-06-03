@@ -135,6 +135,9 @@ export const config: Config = {
     performance: suite([
       'tests/performance.scenario.ts',
     ]),
+    limitrange  : suite([
+      'tests/limitrange.scenario.ts',
+    ]),
     serviceCatalog: suite([
       'tests/service-catalog/service-catalog.scenario.ts',
       'tests/service-catalog/service-broker.scenario.ts',
@@ -170,6 +173,7 @@ export const config: Config = {
       'tests/operator-hub/operator-hub.scenario.ts',
       'tests/developer-catalog.scenario.ts',
       'tests/monitoring.scenario.ts',
+      'tests/limitrange.scenario.ts',
     ]),
     login: [
       'tests/login.scenario.ts',
