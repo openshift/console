@@ -1,6 +1,27 @@
 $skeleton-animation: loading-skeleton 1s ease-out .15s infinite alternate;
 $skeleton-color: #eaedf1;
 
+// declared out of alpha order so they can be reused
+$skeleton-overview-tile-height: 71px;
+$skeleton-overview-tile-padding: 24px;
+
+$skeleton-overview-icon-size: 24px;
+$skeleton-overview-icon-position: 15px $skeleton-overview-tile-padding;
+$skeleton-overview-icon-bone: radial-gradient(circle 12px at center, white 100%, transparent 0
+);
+
+$skeleton-overview-meta-height: 24px;
+$skeleton-overview-meta-position: 96% $skeleton-overview-tile-padding;
+$skeleton-overview-meta-bone: linear-gradient(white $skeleton-overview-meta-height, transparent 0);
+$skeleton-overview-meta-width:75px;
+
+$skeleton-overview-tile-bone: linear-gradient($skeleton-color $skeleton-overview-tile-height, transparent 0);
+
+$skeleton-overview-title-height: 24px;
+$skeleton-overview-title-position: 50px $skeleton-overview-tile-padding;
+$skeleton-overview-title-bone: linear-gradient(white $skeleton-overview-title-height, transparent 0);
+$skeleton-overview-title-width: 38%;
+
 $skeleton-tile-height: 230px; // $catalog-tile-pf-height
 $skeleton-tile-padding: 15px;
 $skeleton-tile-bone: linear-gradient($skeleton-color $skeleton-tile-height, transparent 0);
@@ -128,6 +149,63 @@ $skeleton-tile-desc-line-bone: linear-gradient(#fff $skeleton-tile-desc-line-hei
       $skeleton-tile-logo-size $skeleton-tile-logo-size,
       100% 100%;
   }
+}
+
+.skeleton-overview {
+  align-content: flex-start;
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 40px;
+  position: relative;
+}
+
+.skeleton-overview--head {
+  margin: 4px 0 10px;
+  width: 100%;
+  &::after {
+    animation: $skeleton-animation;
+    background: $skeleton-color;
+    content: "";
+    display: block;
+    height: $skeleton-overview-title-height;
+    opacity: 0;
+    top: -30px;
+    width: 150px;
+  }
+}
+
+.skeleton-overview--tile {
+  height: $skeleton-overview-tile-height;
+  margin: 0 0 10px 0;
+  width: 100%;
+  &::after {
+    animation: $skeleton-animation;
+    content:"";
+    display:block;
+    height: 100%;
+    opacity: 0;
+    width: 100%;
+
+    background-image:
+      $skeleton-overview-title-bone,
+      $skeleton-overview-meta-bone,
+      $skeleton-overview-icon-bone,
+      $skeleton-overview-tile-bone;
+
+    background-position:
+      $skeleton-overview-title-position,
+      $skeleton-overview-meta-position,
+      $skeleton-overview-icon-position,
+      0 0;
+
+    background-repeat: no-repeat;
+
+    background-size:
+      $skeleton-overview-title-width $skeleton-overview-title-height,
+      $skeleton-overview-meta-width $skeleton-overview-meta-height,
+      $skeleton-overview-icon-size $skeleton-overview-icon-size,
+      100% 100%;
+    }
 }
 
 .loading-skeleton--table {

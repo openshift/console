@@ -3,6 +3,7 @@
   flex-direction: column;
   flex-wrap: wrap;
   justify-content: space-between;
+  min-height: 113px; // Positions skeleton screen at appropriate height since .overview-view-selector elements are loaded afterwards
 }
 
 .overview-toolbar {

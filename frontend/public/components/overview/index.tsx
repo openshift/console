@@ -960,6 +960,14 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
   render() {
     const {loaded, loadError, mock, title, project = {}, selectedView} = this.props;
     const {filteredItems, groupedItems, firstLabel} = this.state;
+
+    const skeletonOverview = <div className="skeleton-overview">
+      <div className="skeleton-overview--head" />
+      <div className="skeleton-overview--tile" />
+      <div className="skeleton-overview--tile" />
+      <div className="skeleton-overview--tile" />
+    </div>;
+
     return <div className="co-m-pane">
       <OverviewHeading
         disabled={mock}
@@ -969,6 +977,7 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
       />
       <div className="co-m-pane__body co-m-pane__body--no-top-margin">
         <StatusBox
+          skeleton={skeletonOverview}
           data={selectedView === OverviewViewOption.RESOURCES ? filteredItems : project}
           label="Resources"
           loaded={loaded}
