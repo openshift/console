@@ -13,3 +13,20 @@ export const FooBarModel: K8sKind = {
   id: 'foobar',
   crd: true,
 };
+
+export const MyTemplatesModel: K8sKind = {
+  label: 'My Specialized Template',
+  labelPlural: 'My Specialized Templates',
+  apiVersion: 'v1',
+  path: 'templates',
+  apiGroup: 'template.openshift.io',
+  plural: 'mytemplates',
+  namespaced: true,
+  abbr: 'MT',
+  kind: 'Template',
+  id: 'mytemplate',
+  specialized: true,
+  selector: {
+    matchLabels: { my: 'yes' },
+  },
+};

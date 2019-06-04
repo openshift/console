@@ -564,6 +564,7 @@ export type K8sKind = {
 
   id?: string;
   crd?: boolean;
+  specialized?: boolean;
   apiVersion: string;
   apiGroup?: string;
   namespaced?: boolean;

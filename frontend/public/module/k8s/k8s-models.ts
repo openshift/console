@@ -33,7 +33,7 @@ k8sModels = k8sModels.withMutations(map => {
   const baseModelCount = map.size;
   const pluginModels = _.flatMap(plugins.registry.getModelDefinitions().map(md => md.properties.models));
 
-  const pluginModelsToAdd = pluginModels.filter(model => !hasModel(model));
+  const pluginModelsToAdd = pluginModels.filter(model => (model.specialized || !hasModel(model)));
   map.merge(modelsToMap(pluginModelsToAdd));
 
   _.difference(pluginModels, pluginModelsToAdd).forEach(model => {
