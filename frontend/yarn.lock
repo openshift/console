@@ -152,13 +152,14 @@
   resolved "https://registry.yarnpkg.com/@patternfly/patternfly/-/patternfly-2.8.2.tgz#8362795b17a73be76dd9408b3c0d370e8a030d77"
   integrity sha512-DWx5v4m3qYgNSTS4aiNSapq3mXPhBcNu2kw4lk0qJei4WWtNysT/DNgCvMBzfrQzJdzEJ1KRMGl/sf8AIqWoNg==
 
-"@patternfly/react-charts@3.6.6":
-  version "3.6.6"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-charts/-/react-charts-3.6.6.tgz#94be929ccf3601fd4a533d394690baa829ae9249"
-  integrity sha512-/rA7uYQSsgpkLIldG25beUvuaOU7gqYDDoaQu5Ng8FDUXujnPTI9dAJTlu8StDuO6GlUwfTHcdS40TCoDc5BcA==
+"@patternfly/react-charts@4.0.1":
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-charts/-/react-charts-4.0.1.tgz#ffd135051da566771cee0431567408dda5f328bf"
+  integrity sha512-neEUrDCHjYHBWeWYqeDLJeRgc3p/64sEFcHeUoXVPNGtMiIQL9HtiDgZivHqXFVStxeRj0gfBdgU2SOWsBOzFg==
   dependencies:
     "@patternfly/react-styles" "^3.2.3"
   optionalDependencies:
+    "@types/lodash" "^4.14.132"
     "@types/victory" "^31.0.18"
     hoist-non-react-statics "^3.3.0"
     lodash "^4.17.11"
@@ -166,10 +167,10 @@
     victory-core "^32.2.3"
     victory-legend "^32.2.3"
 
-"@patternfly/react-core@3.33.1":
-  version "3.33.1"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-core/-/react-core-3.33.1.tgz#af3a7032ff78030afcc49a0a02e0e26596048e82"
-  integrity sha512-a17AOG+GmlF9nZtqLyzaHdZtTuhCCzafVECFkVG3qBWtN1qcZd17GkpSrwlZU8qH+3JOECPi0uEmUqBtDQf1jg==
+"@patternfly/react-core@3.34.0":
+  version "3.34.0"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-core/-/react-core-3.34.0.tgz#8d485a6ac6f692064e7a6c59897b87c654aa0151"
+  integrity sha512-O833leVu1SzlTh9ks06UoqtEp3ReO9v2fexpDguxrHWpantsREeHdPmZQ1YO1PJgOcoAOVmdCZquI2UdQ59bLA==
   dependencies:
     "@patternfly/react-icons" "^3.9.3"
     "@patternfly/react-styles" "^3.2.3"
@@ -482,6 +483,11 @@
 "@types/lodash@*":
   version "4.14.106"
   resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.106.tgz#6093e9a02aa567ddecfe9afadca89e53e5dce4dd"
+
+"@types/lodash@^4.14.132":
+  version "4.14.133"
+  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.133.tgz#430721c96da22dd1694443e68e6cec7ba1c1003d"
+  integrity sha512-/3JqnvPnY58GLzG3Y7fpphOhATV1DDZ/Ak3DQufjlRK5E4u+s0CfClfNFtAGBabw+jDGtRFbOZe+Z02ZMWCBNQ==
 
 "@types/minimatch@*":
   version "3.0.3"
