@@ -95,7 +95,11 @@ const DeploymentDetails: React.FC<DeploymentDetailsProps> = ({obj: deployment}) 
           <div className="col-sm-6">
             <ResourceSummary resource={deployment} showPodSelector showNodeSelector showTolerations>
               <dt>Status</dt>
-              <dd>{deployment.status.availableReplicas === deployment.status.updatedReplicas ? <StatusIconAndText status="Active" /> : <StatusIconAndText status="Updating" />}</dd>
+              <dd>
+                {deployment.status.availableReplicas === deployment.status.updatedReplicas && deployment.spec.replicas === deployment.status.availableReplicas
+                  ? <StatusIconAndText status="Up to date" />
+                  : <StatusIconAndText status="Updating" />}
+              </dd>
             </ResourceSummary>
           </div>
           <div className="col-sm-6">
