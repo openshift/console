@@ -46,23 +46,10 @@ export const VirtualMachineInstanceReplicaSetModel: K8sKind = {
   path: 'virtualmachineinstancereplicaset',
   apiGroup: 'kubevirt.io',
   plural: 'virtualmachineinstancereplicasets',
-  abbr: 'VMIRS',
+  abbr: 'VMIR',
   namespaced: true,
   kind: 'VirtualMachineInstanceReplicaSet',
   id: 'virtualmachineinstancereplicaset',
-};
-
-export const TemplateModel: K8sKind = {
-  label: 'Template',
-  labelPlural: 'Templates',
-  apiVersion: 'v1',
-  path: 'templates',
-  apiGroup: 'template.openshift.io',
-  plural: 'templates',
-  namespaced: true,
-  abbr: 'Template',
-  kind: 'Template',
-  id: 'template',
 };
 
 /* TODO(mlibra): migrate templates
@@ -129,23 +116,10 @@ export const V2VVMwareModel: K8sKind = {
   path: 'v2vvmwares',
   apiGroup: 'kubevirt.io',
   plural: 'v2vvmwares',
-  abbr: 'v2vVmw',
+  abbr: 'VVW',
   namespaced: true,
   kind: 'V2VVmware',
   id: 'v2vvmware',
-};
-
-export const InfrastructureModel: K8sKind = {
-  label: 'Infrastructure',
-  labelPlural: 'Infrastructures',
-  apiVersion: 'v1',
-  path: 'infrastructures',
-  apiGroup: 'config.openshift.io',
-  plural: 'infrastructures',
-  abbr: 'infra',
-  namespaced: false,
-  kind: 'Infrastructure',
-  id: 'infrastructure',
 };
 
 export const NodeMaintenance: K8sKind = {
@@ -155,7 +129,7 @@ export const NodeMaintenance: K8sKind = {
   path: 'nodemaintenances',
   apiGroup: 'kubevirt.io',
   plural: 'nodemaintenances',
-  abbr: 'nm',
+  abbr: 'NM',
   namespaced: false,
   kind: 'NodeMaintenance',
   id: 'nodemaintenance',

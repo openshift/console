@@ -2,8 +2,9 @@ import { Map as ImmutableMap } from 'immutable';
 
 import { VirtualMachineModel } from './models';
 
-export const yamlTemplates = ImmutableMap()
-  .setIn([VirtualMachineModel, 'default'], `
+export const yamlTemplates = ImmutableMap().setIn(
+  [VirtualMachineModel, 'default'],
+  `
 apiVersion: ${VirtualMachineModel.apiGroup}/${VirtualMachineModel.apiVersion}
 kind: ${VirtualMachineModel.kind}
 metadata:
@@ -37,4 +38,5 @@ spec:
         - name: cloudinitdisk
           cloudInitNoCloud:
             userDataBase64: SGkuXG4=
-`);
+`,
+);

@@ -52,7 +52,10 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'ResourcePage/List',
     properties: {
       model: models.VirtualMachineModel,
-      loader: () => import('./components/vm' /* webpackChunkName: "kubevirt-virtual-machines" */).then(m => m.VirtualMachinesPage),
+      loader: () =>
+        import('./components/vm' /* webpackChunkName: "kubevirt-virtual-machines" */).then(
+          (m) => m.VirtualMachinesPage,
+        ),
     },
   },
   {
