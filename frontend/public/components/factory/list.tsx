@@ -287,6 +287,7 @@ const stateToProps = ({UI}, {data = [], defaultSortField = 'metadata.name', defa
     currentSortField,
     currentSortFunc,
     currentSortOrder,
+    unfilteredData: data,
     data: newData,
     listId,
   };
@@ -298,6 +299,8 @@ export const List = connect(stateToProps, {sortList: UIActions.sortList}, null, 
   class ListInner extends React.Component<ListInnerProps> {
     static propTypes = {
       data: PropTypes.array,
+      unfilteredData: PropTypes.array,
+      AllItemsFilteredMsg: PropTypes.func,
       EmptyMsg: PropTypes.func,
       expand: PropTypes.bool,
       fieldSelector: PropTypes.string,
@@ -419,6 +422,7 @@ export type ListInnerProps = {
   data?: any[];
   defaultSortField?: string;
   defaultSortFunc?: string;
+  AllItemsFilteredMsg?: React.ComponentType<{}>;
   EmptyMsg?: React.ComponentType<{}>;
   expand?: boolean;
   fieldSelector?: string;

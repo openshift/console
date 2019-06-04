@@ -12,7 +12,6 @@ import * as sidenavView from '../../views/sidenav.view';
 import * as yamlView from '../../views/yaml.view';
 
 describe('Interacting with an `AllNamespaces` install mode Operator (Redis)', () => {
-  const redisClusterResources = new Set(['Service', 'StatefulSet', 'Pod']);
   const deleteRecoveryTime = 60000;
   const redisOperatorName = 'redis-enterprise-operator';
   const testLabel = 'automatedTestName';
@@ -168,15 +167,6 @@ describe('Interacting with an `AllNamespaces` install mode Operator (Redis)', ()
     await browser.wait(until.visibilityOf(crudView.successMessage), 2000);
 
     expect(crudView.successMessage.getText()).toContain(`${redisEnterpriseCluster} has been updated to version`);
-  });
-
-  it('displays Kubernetes objects associated with the `RedisEnterpriseCluster` in its "Resources" section', async() => {
-    await element(by.linkText('Resources')).click();
-    await crudView.isLoaded();
-
-    redisClusterResources.forEach(kind => {
-      expect(crudView.rowFilterFor(kind).isDisplayed()).toBe(true);
-    });
   });
 
   it('displays button to uninstall the Operator', async() => {

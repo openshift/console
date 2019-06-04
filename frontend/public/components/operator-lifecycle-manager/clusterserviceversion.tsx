@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Link, match as RouterMatch } from 'react-router-dom';
 import * as _ from 'lodash-es';
+import * as UIActions from '../../actions/ui';
 import { connect } from 'react-redux';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
@@ -204,7 +205,14 @@ const subscriptionFor = (csv: ClusterServiceVersionKind) => (subs: SubscriptionK
 });
 
 export const ClusterServiceVersionList: React.SFC<ClusterServiceVersionListProps> = (props) => {
-  const EmptyMsg = () => <MsgBox title="No Cluster Service Versions Found" detail="" />;
+
+  const EmptyMsg = () => <MsgBox title="No Operators match filter" detail="" />;
+
+  const allItemsFilteredDetail = <React.Fragment>
+    <div>No Operators are available for project <span className="co-clusterserviceversion-empty__state__namespace">{UIActions.getActiveNamespace()}</span></div>
+    <div>Discover and install Operators from the <a href="/operatorhub">OperatorHub</a>.</div>
+  </React.Fragment>;
+  const AllItemsFilteredMsg = () => <MsgBox title="No Operators Found" detail={allItemsFilteredDetail} />;
 
   return <Table
     {...props}
@@ -214,6 +222,7 @@ export const ClusterServiceVersionList: React.SFC<ClusterServiceVersionListProps
       ? <ClusterServiceVersionTableRow {...rowProps} subscription={subscriptionFor(rowProps.obj)(_.get(props.subscription, 'data', []))} />
       : <FailedSubscriptionTableRow {...rowProps} />}
     EmptyMsg={EmptyMsg}
+    AllItemsFilteredMsg={AllItemsFilteredMsg}
     virtualize />;
 };
 
