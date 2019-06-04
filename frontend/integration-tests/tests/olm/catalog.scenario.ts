@@ -25,7 +25,7 @@ describe('Installing an Operator from a Catalog Source', () => {
     execSync(`echo '${JSON.stringify(catalogSource)}' | kubectl create -n ${testName} -f -`);
     await new Promise(resolve => (function checkForPackages() {
       const output = execSync(`kubectl get packagemanifests -n ${testName} -o json`);
-      if (JSON.parse(output.toString('utf-8')).items.find(pkg => pkg.status.packageName === 'etcd')) {
+      if (JSON.parse(output.toString('utf-8')).items.find(pkg => pkg.status.catalogSourceNamespace === testName)) {
         return resolve();
       }
       setTimeout(checkForPackages, 2000);
