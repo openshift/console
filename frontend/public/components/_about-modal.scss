@@ -12,4 +12,10 @@
     color: var(--pf-global--color--100);
     margin-bottom: var(--pf-global--spacer--xl);
   }
+  .co-about-modal__alert {
+    margin-bottom: var(--pf-global--spacer--xl);
+  }
+  .co-about-modal__alert h4 {
+    line-height: var(--pf-global--LineHeight--md);
+  }
 }
