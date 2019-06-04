@@ -1,16 +1,17 @@
 {
-  "[javascript]": {
-    "editor.formatOnSave": true
-  },
-  "[javascriptreact]": {
-    "editor.formatOnSave": true
-  },
-  "[typescript]": {
-    "editor.formatOnSave": true
-  },
-  "[typescriptreact]": {
-    "editor.formatOnSave": true
-  },
+  // TODO uncomment once we enable new eslint & prettier support across the entire project
+  // "[javascript]": {
+  //   "editor.formatOnSave": true
+  // },
+  // "[javascriptreact]": {
+  //   "editor.formatOnSave": true
+  // },
+  // "[typescript]": {
+  //   "editor.formatOnSave": true
+  // },
+  // "[typescriptreact]": {
+  //   "editor.formatOnSave": true
+  // },
 
   "eslint.validate": [
     "javascript",
