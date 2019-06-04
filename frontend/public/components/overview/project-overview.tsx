@@ -14,8 +14,7 @@ import {
   ResourceIcon,
   resourceObjPath,
   StatusIcon,
-  truncate,
-  TruncationPoint,
+  truncateMiddle,
 } from '../utils';
 
 import {
@@ -59,7 +58,7 @@ const MetricsTooltip: React.SFC<MetricsTooltipProps> = ({metricLabel, byPod, chi
     : _.concat(<div key="#title">{metricLabel} Usage by Pod</div>, sortedMetrics.map(({name, formattedValue}) => (
       <div key={name} className="project-overview__metric-tooltip">
         <div className="project-overview__metric-tooltip-name">
-          <span className="no-wrap">{truncate(name, TruncationPoint.middle)}</span>
+          <span className="no-wrap">{truncateMiddle(name)}</span>
         </div>
         <div className="project-overview__metric-tooltip-value">{formattedValue}</div>
       </div>

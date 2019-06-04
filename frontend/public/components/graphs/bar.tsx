@@ -7,7 +7,7 @@ import { usePrometheusPoll } from './prometheus-poll-hook';
 import { PrometheusEndpoint } from './helpers';
 import { PrometheusGraph } from './prometheus-graph';
 import { barTheme } from './themes';
-import { humanizeNumber, truncate, TruncationPoint } from '../utils';
+import { humanizeNumber, truncateMiddle } from '../utils';
 import { EmptyState, EmptyStateVariant, EmptyStateIcon, Title } from '@patternfly/react-core';
 import { ChartBarIcon } from '@patternfly/react-icons';
 import { MutatorFunction, DataPoint, PrometheusResponse, DomainPadding } from '.';
@@ -26,7 +26,7 @@ const handleResponse = (response: PrometheusResponse, metric: string, formatY: M
       x: _.get(r, ['metric', metric], ''),
       y,
     };
-  }).reverse();
+  });
 };
 
 const getTotalXDomainPadding = (domainPadding: DomainPadding): number => {
@@ -65,11 +65,11 @@ export const Bar: React.FC<BarProps> = ({
   const height = ((spacing + barWidth) * data.length) + totalXDomainPadding;
   const padding = {
     bottom: 0,
-    left: Math.min(120, maxHorizontalPadding),
+    left: Math.min(110, maxHorizontalPadding),
     right: Math.min(100, maxHorizontalPadding),
     top: 0,
   };
-  const tickFormat = (tick) => truncate(tick.toString(), TruncationPoint.end, 15);
+  const tickFormat = (tick) => truncateMiddle(tick.toString(), 15);
   const tickLabelComponent = <ChartLabel x={0} />;
   const labelComponent = <ChartLabel x={width} />;
 
