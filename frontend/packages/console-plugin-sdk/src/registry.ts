@@ -6,9 +6,11 @@ import {
   isModelDefinition,
   isFeatureFlag,
   isNavItem,
-  isResourcePage,
+  isResourceListPage,
+  isResourceDetailsPage,
   isPerspective,
   isYAMLTemplate,
+  isRoutePage,
 } from './typings';
 
 /**
@@ -33,8 +35,16 @@ export class ExtensionRegistry {
     return this.extensions.filter(isNavItem);
   }
 
-  public getResourcePages() {
-    return this.extensions.filter(isResourcePage);
+  public getResourceListPages() {
+    return this.extensions.filter(isResourceListPage);
+  }
+
+  public getResourceDetailsPages() {
+    return this.extensions.filter(isResourceDetailsPage);
+  }
+
+  public getRoutePages() {
+    return this.extensions.filter(isRoutePage);
   }
 
   public getPerspectives() {

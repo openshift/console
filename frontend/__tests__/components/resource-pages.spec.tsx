@@ -1,10 +1,10 @@
-import { resourceDetailPages, resourceListPages } from '../../public/components/resource-pages';
+import { resourceDetailsPages, resourceListPages } from '../../public/components/resource-pages';
 import { isGroupVersionKind } from '../../public/module/k8s';
 
-describe('resourceDetailPages', () => {
+describe('resourceDetailsPages', () => {
 
   it('contains a map of promises which resolve to every resource detail view component', (done) => {
-    resourceDetailPages.forEach((promise, name) => {
+    resourceDetailsPages.forEach((promise, name) => {
       expect(name.length > 0).toBe(true);
       expect(isGroupVersionKind(name)).toBe(true);
 
