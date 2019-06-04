@@ -5,9 +5,6 @@ module.exports = {
   // Require or disallow named function expressions
   'func-names': 'off',
 
-  // max line length
-  'max-len': ['error', { code: 120, comments: 100, ignoreUrls: true }],
-
   // Disallow nested ternary expressions
   'no-nested-ternary': 'off',
 
