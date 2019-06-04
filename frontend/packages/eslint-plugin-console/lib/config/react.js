@@ -15,7 +15,11 @@ module.exports = {
 
   plugins: ['react-hooks'],
 
-  rules: merge(require('./rules/react'), require('./rules/react-hooks'), require('./rules/airbnb-base-overrides')),
+  rules: merge(
+    require('./rules/react'),
+    require('./rules/react-hooks'),
+    require('./rules/airbnb-base-overrides'),
+  ),
 
   overrides: [
     {
