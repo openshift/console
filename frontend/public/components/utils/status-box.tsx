@@ -55,10 +55,9 @@ const Data: React.FC<DataProps> = ({EmptyMsg, label, data, children}) => {
     </div>;
   }
   return (
-    <React.Fragment>
+    <div className="loading-box loading-box__loaded">
       {children}
-      <div className="loading-box loading-box__loaded"></div>
-    </React.Fragment>
+    </div>
   );
 };
 Data.displayName = 'Data';
