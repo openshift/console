@@ -17,6 +17,7 @@ type Config struct {
 	ClusterInfo   `yaml:"clusterInfo"`
 	Auth          `yaml:"auth"`
 	Customization `yaml:"customization"`
+	Providers     `yaml:"providers"`
 }
 
 // ServingInfo holds configuration for serving HTTP.
@@ -54,10 +55,13 @@ type Auth struct {
 // Customization holds configuration such as what logo to use.
 type Customization struct {
 	Branding             string `yaml:"branding"`
-	StatuspageID         string `yaml:"statuspageID"`
 	DocumentationBaseURL string `yaml:"documentationBaseURL"`
 	CustomProductName    string `yaml:"customProductName"`
 	CustomLogoFile       string `yaml:"customLogoFile"`
+}
+
+type Providers struct {
+	StatuspageID string `yaml:"statuspageID"`
 }
 
 // SetFlagsFromConfig sets flag values based on a YAML config file.
@@ -85,6 +89,7 @@ func SetFlagsFromConfig(fs *flag.FlagSet, filename string) (err error) {
 	addClusterInfo(fs, &config.ClusterInfo)
 	addAuth(fs, &config.Auth)
 	addCustomization(fs, &config.Customization)
+	addProviders(fs, &config.Providers)
 
 	return nil
 }
@@ -170,13 +175,15 @@ func addAuth(fs *flag.FlagSet, auth *Auth) {
 	}
 }
 
+func addProviders(fs *flag.FlagSet, providers *Providers) {
+	if providers.StatuspageID != "" {
+		fs.Set("statuspage-id", providers.StatuspageID)
+	}
+}
+
 func addCustomization(fs *flag.FlagSet, customization *Customization) {
 	if customization.Branding != "" {
 		fs.Set("branding", customization.Branding)
-	}
-
-	if customization.StatuspageID != "" {
-		fs.Set("statuspage-id", customization.StatuspageID)
 	}
 
 	if customization.DocumentationBaseURL != "" {
