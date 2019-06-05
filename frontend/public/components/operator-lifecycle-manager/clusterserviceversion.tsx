@@ -3,6 +3,7 @@ import { Link, match as RouterMatch } from 'react-router-dom';
 import * as _ from 'lodash-es';
 import { connect } from 'react-redux';
 import { Alert } from 'patternfly-react';
+import * as classNames from 'classnames';
 
 import { ProvidedAPIsPage, ProvidedAPIPage } from './clusterserviceversion-resource';
 import { DetailsPage, ListHeader, ColHead, List, ListPage } from '../factory';
@@ -53,9 +54,10 @@ export const ClusterServiceVersionRow = withFallback<ClusterServiceVersionRowPro
   const route = `/k8s/ns/${obj.metadata.namespace}/${ClusterServiceVersionModel.plural}/${obj.metadata.name}`;
 
   const statusString = _.get(obj, 'status.reason', ClusterServiceVersionPhase.CSVPhaseUnknown);
+  const showSuccessIcon = statusString === 'Copied' || statusString === 'InstallSucceeded';
   const installStatus = obj.status && obj.status.phase !== ClusterServiceVersionPhase.CSVPhaseFailed
-    ? <span>{(statusString === 'Copied' || statusString === 'InstallSucceeded') && <i aria-hidden="true" className="pficon pficon-ok" />} {statusString}</span>
-    : <span className="co-error"><i className="fa fa-times-circle co-icon-space-r" /> Failed</span>;
+    ? <span className={classNames(showSuccessIcon && 'co-icon-and-text')}>{showSuccessIcon && <i aria-hidden="true" className="pficon pficon-ok co-icon-and-text__icon" />}{statusString}</span>
+    : <span className="co-error co-icon-and-text"><i className="fa fa-times-circle co-icon-space-r co-icon-and-text__icon" /> Failed</span>;
 
   return <div className="row co-resource-list__item">
     <div className="col-lg-3 col-md-4 col-sm-4 col-xs-6" style={{display: 'flex', alignItems: 'center'}}>

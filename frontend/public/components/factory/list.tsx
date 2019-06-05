@@ -111,12 +111,6 @@ const listFilters = {
     }
     return filters.selected.has(resource.kind);
   },
-  'clusterserviceversion-status': (filters, csv) => {
-    if (!filters || !filters.selected || !filters.selected.size) {
-      return true;
-    }
-    return filters.selected.has(_.get(csv.status, 'reason')) || !_.includes(filters.all, _.get(csv.status, 'reason'));
-  },
 
   'packagemanifest-name': (filter, pkg) => fuzzyCaseInsensitive(filter, (pkg.status.defaultChannel
     ? pkg.status.channels.find(ch => ch.name === pkg.status.defaultChannel)
