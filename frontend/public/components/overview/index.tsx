@@ -19,6 +19,7 @@ import {
   K8sResourceKind,
   LabelSelector,
   PodKind,
+  PodTemplate,
 } from '../../module/k8s';
 import {
   withStartGuide,
@@ -631,10 +632,29 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
     });
   }
 
+  getPodTemplate(resource: K8sResourceKind): PodTemplate {
+    switch (resource.kind) {
+      case 'Pod':
+        return resource as PodKind;
+      case 'DeploymentConfig':
+        // Include labels automatically added to deployment config pods since a service
+        // might select them.
+        return _.defaultsDeep({
+          metadata: {
+            labels: {
+              deploymentconfig: resource.metadata.name,
+            },
+          },
+        }, resource.spec.template);
+      default:
+        return resource.spec.template;
+    }
+  }
+
   getServicesForResource(resource: K8sResourceKind): K8sResourceKind[] {
     const {services} = this.props;
-    const template = resource.kind === 'Pod' ? resource : _.get(resource, 'spec.template');
-    return _.filter(services.data, service => {
+    const template: PodTemplate = this.getPodTemplate(resource);
+    return _.filter(services.data, (service: K8sResourceKind) => {
       const selector = new LabelSelector(_.get(service, 'spec.selector', {}));
       return selector.matches(template);
     });
@@ -741,22 +761,22 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
   createDaemonSetItems(): OverviewItem[] {
     const {daemonSets} = this.props;
     return _.map(daemonSets.data, ds => {
-      const buildConfigs = this.getBuildConfigsForResource(ds);
-      const services = this.getServicesForResource(ds);
-      const routes = this.getRoutesForServices(services);
-      const pods = this.getPodsForResource(ds);
-      const alerts = {
-        ...combinePodAlerts(pods),
-        ...getBuildAlerts(buildConfigs),
-      };
-      const obj = {
+      const obj: K8sResourceKind = {
         ...ds,
         apiVersion: apiVersionForModel(DaemonSetModel),
         kind: DaemonSetModel.kind,
       };
+      const buildConfigs = this.getBuildConfigsForResource(obj);
+      const services = this.getServicesForResource(obj);
+      const routes = this.getRoutesForServices(services);
+      const pods = this.getPodsForResource(obj);
+      const alerts = {
+        ...combinePodAlerts(pods),
+        ...getBuildAlerts(buildConfigs),
+      };
       const status = <OverviewItemReadiness
-        desired={ds.status.desiredNumberScheduled}
-        ready={ds.status.currentNumberScheduled}
+        desired={obj.status.desiredNumberScheduled}
+        ready={obj.status.currentNumberScheduled}
         resource={obj}
       />;
       return {
@@ -774,28 +794,28 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
   createDeploymentItems(): OverviewItem[] {
     const {deployments} = this.props;
     return _.map(deployments.data, d => {
-      const replicaSets = this.getReplicaSetsForResource(d);
-      const current = _.head(replicaSets);
-      const previous = _.nth(replicaSets, 1);
-      const isRollingOut = !!current && !!previous;
-      const buildConfigs = this.getBuildConfigsForResource(d);
-      const services = this.getServicesForResource(d);
-      const routes = this.getRoutesForServices(services);
-      const alerts = {
-        ...getResourcePausedAlert(d),
-        ...getBuildAlerts(buildConfigs),
-      };
-      const obj = {
+      const obj: K8sResourceKind = {
         ...d,
         apiVersion: apiVersionForModel(DeploymentModel),
         kind: DeploymentModel.kind,
+      };
+      const replicaSets = this.getReplicaSetsForResource(obj);
+      const current = _.head(replicaSets);
+      const previous = _.nth(replicaSets, 1);
+      const isRollingOut = !!current && !!previous;
+      const buildConfigs = this.getBuildConfigsForResource(obj);
+      const services = this.getServicesForResource(obj);
+      const routes = this.getRoutesForServices(services);
+      const alerts = {
+        ...getResourcePausedAlert(obj),
+        ...getBuildAlerts(buildConfigs),
       };
       // TODO: Show pod status for previous and next revisions.
       const status = isRollingOut
         ? <span className="text-muted">Rollout in progress...</span>
         : <OverviewItemReadiness
-          desired={d.spec.replicas}
-          ready={d.status.replicas}
+          desired={obj.spec.replicas}
+          ready={obj.status.replicas}
           resource={current ? current.obj : obj}
         />;
 
@@ -816,29 +836,29 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
   createDeploymentConfigItems(): OverviewItem[] {
     const {deploymentConfigs} = this.props;
     return _.map(deploymentConfigs.data, dc => {
-      const replicationControllers = this.getReplicationControllersForResource(dc);
-      const current = _.head(replicationControllers);
-      const previous = _.nth(replicationControllers, 1);
-      const isRollingOut = current && previous && current.phase !== 'Cancelled' && current.phase !== 'Failed';
-      const buildConfigs = this.getBuildConfigsForResource(dc);
-      const services = this.getServicesForResource(dc);
-      const routes = this.getRoutesForServices(services);
-      const alerts = {
-        ...getResourcePausedAlert(dc),
-        ...getBuildAlerts(buildConfigs),
-      };
-      const obj = {
+      const obj: K8sResourceKind = {
         ...dc,
         apiVersion: apiVersionForModel(DeploymentConfigModel),
         kind: DeploymentConfigModel.kind,
+      };
+      const replicationControllers = this.getReplicationControllersForResource(obj);
+      const current = _.head(replicationControllers);
+      const previous = _.nth(replicationControllers, 1);
+      const isRollingOut = current && previous && current.phase !== 'Cancelled' && current.phase !== 'Failed';
+      const buildConfigs = this.getBuildConfigsForResource(obj);
+      const services = this.getServicesForResource(obj);
+      const routes = this.getRoutesForServices(services);
+      const alerts = {
+        ...getResourcePausedAlert(obj),
+        ...getBuildAlerts(buildConfigs),
       };
 
       // TODO: Show pod status for previous and next revisions.
       const status = isRollingOut
         ? <span className="text-muted">Rollout in progress...</span>
         : <OverviewItemReadiness
-          desired={dc.spec.replicas}
-          ready={dc.status.replicas}
+          desired={obj.spec.replicas}
+          ready={obj.status.replicas}
           resource={current ? current.obj : obj}
         />;
       return {
@@ -858,22 +878,22 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
   createStatefulSetItems(): OverviewItem[] {
     const {statefulSets} = this.props;
     return _.map(statefulSets.data, (ss) => {
-      const buildConfigs = this.getBuildConfigsForResource(ss);
-      const pods = this.getPodsForResource(ss);
-      const alerts = {
-        ...combinePodAlerts(pods),
-        ...getBuildAlerts(buildConfigs),
-      };
-      const services = this.getServicesForResource(ss);
-      const routes = this.getRoutesForServices(services);
-      const obj = {
+      const obj: K8sResourceKind = {
         ...ss,
         apiVersion: apiVersionForModel(StatefulSetModel),
         kind: StatefulSetModel.kind,
       };
+      const buildConfigs = this.getBuildConfigsForResource(obj);
+      const pods = this.getPodsForResource(obj);
+      const alerts = {
+        ...combinePodAlerts(pods),
+        ...getBuildAlerts(buildConfigs),
+      };
+      const services = this.getServicesForResource(obj);
+      const routes = this.getRoutesForServices(services);
       const status = <OverviewItemReadiness
-        desired={ss.spec.replicas}
-        ready={ss.status.replicas}
+        desired={obj.spec.replicas}
+        ready={obj.status.replicas}
         resource={obj}
       />;
 
@@ -892,21 +912,21 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
   createPodItems(): OverviewItem[] {
     const {pods} = this.props;
     return _.reduce(pods.data, (acc, pod) => {
-      const owners = _.get(pod, 'metadata.ownerReferences');
-      const phase = _.get(pod, 'status.phase');
-      if (!_.isEmpty(owners) || ['Succeeded', 'Failed'].includes(phase)) {
-        return acc;
-      }
-
-      const obj = {
+      const obj: PodKind = {
         ...pod,
         apiVersion: apiVersionForModel(PodModel),
         kind: PodModel.kind,
       };
-      const alerts = getPodAlerts(pod);
+      const owners = _.get(obj, 'metadata.ownerReferences');
+      const phase = _.get(obj, 'status.phase');
+      if (!_.isEmpty(owners) || ['Succeeded', 'Failed'].includes(phase)) {
+        return acc;
+      }
+
+      const alerts = getPodAlerts(obj);
       const services = this.getServicesForResource(obj);
       const routes = this.getRoutesForServices(services);
-      const status = <PodStatus pod={pod} />;
+      const status = <PodStatus pod={obj} />;
       return [
         ...acc,
         {
