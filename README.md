@@ -156,47 +156,6 @@ yarn run dev
 ```
 If changes aren't detected, you might need to increase `fs.inotify.max_user_watches`. See <https://webpack.js.org/configuration/watch/#not-enough-watchers>.
 
-#### Deploying a Custom Image to an OpenShift Cluster
-
-Once you have made changes locally, these instructions will allow you to push changes to an
- OpenShift cluster for others to review.  This involves building a local image, pushing the
- image to an image registry, then updating the OpenShift cluster to pull the new image.
-
-##### Prerequisites
-
-1. Docker v17.05 or higher
-2. An image registry like [quay.io](https://quay.io/signin/) or [Docker Hub](https://hub.docker.com/)
-
-##### Steps
-1. Create a repository in the image registry of your choice to hold the image
-2. Build Image `docker build -t <your-image-name> <path-to-repository>`.  Here we are in the `console` directory, building from the local repository:
-    ```
-    docker build -t quay.io/myaccount/console:latest .
-    ```
-    `<path-to-repository>` can also be a URL to a Git repository.
-3. Push image to image registry `docker push <your-image-name>`.  Make sure docker is logged into your image registry!  Here we are pushing to a repository named 'console' on quay.io:
-    ```
-    docker push quay.io/myaccount/console:latest
-    ```
-4. Put the console operator in unmanaged state. 
-    ```
-    oc patch consoles.operator.openshift.io cluster --patch '{ "spec": { "managementState": "Unmanaged" } }' --type=merge
-    ```
-5. Update the console Deployment with the new image:
-    ```
-    oc set image deploy console console=quay.io/myaccount/console:latest -n openshift-console
-    ```
-6. Wait for the changes to rollout
-    ```
-    oc rollout status -w deploy/console -n openshift-console
-    ``` 
-You should now be able to see your development changes on the remote OpenShift cluster!
-
-When done making/pushing changes, you can put the console operator back in a managed state: 
-```
-oc patch consoles.operator.openshift.io cluster --patch '{ "spec": { "managementState": "Managed" } }' --type=merge
-```
-
 ### Unit Tests
 
 Run all unit tests:
@@ -281,6 +240,48 @@ Remove the `--headless` flag to Chrome (chromeOptions) in [protractor.conf.ts](f
 5. Launches chrome-dev tools, click Resume button to continue
 6. Will break on any `debugger;` statements
 7. Pauses browser when not using `--headless` argument!
+
+### Deploying a Custom Image to an OpenShift Cluster
+
+Once you have made changes locally, these instructions will allow you to push
+changes to an OpenShift cluster for others to review.  This involves building a
+local image, pushing the image to an image registry, then updating the
+OpenShift cluster to pull the new image.
+
+#### Prerequisites
+
+1. Docker v17.05 or higher for multi-stage builds
+2. An image registry like [quay.io](https://quay.io/signin/) or [Docker Hub](https://hub.docker.com/)
+
+#### Steps
+1. Create a repository in the image registry of your choice to hold the image.
+2. Build Image `docker build -t <your-image-name> <path-to-repository | url>`. For example:
+```
+docker build -t quay.io/myaccount/console:latest .
+```
+3. Push image to image registry `docker push <your-image-name>`.  Make sure
+   docker is logged into your image registry! For example:
+```
+docker push quay.io/myaccount/console:latest
+```
+4. Put the console operator in unmanaged state:
+```
+oc patch consoles.operator.openshift.io cluster --patch '{ "spec": { "managementState": "Unmanaged" } }' --type=merge
+```
+5. Update the console Deployment with the new image:
+```
+oc set image deploy console console=quay.io/myaccount/console:latest -n openshift-console
+```
+6. Wait for the changes to rollout:
+```
+oc rollout status -w deploy/console -n openshift-console
+```
+You should now be able to see your development changes on the remote OpenShift cluster!
+
+When done, you can put the console operator back in a managed state to remove the custom image:
+```
+oc patch consoles.operator.openshift.io cluster --patch '{ "spec": { "managementState": "Managed" } }' --type=merge
+```
 
 ### Dependency Management
 
