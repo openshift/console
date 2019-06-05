@@ -176,14 +176,18 @@ export class OperatorHubSubscribeForm extends React.Component<OperatorHubSubscri
             </div>
           </div>
           <div className="form-group">
-            <label className="co-required">Update Channel</label>
+            <Tooltip content="The channel to track and receive the updates from.">
+              <label className="co-required">Update Channel</label>
+            </Tooltip>
             <RadioGroup
               currentValue={updateChannel}
               items={channels.map(ch => ({value: ch.name, title: ch.name}))}
               onChange={(e) => this.setState({updateChannel: e.currentTarget.value, installMode: null, targetNamespace: null})} />
           </div>
           <div className="form-group">
-            <label className="co-required">Approval Strategy</label>
+            <Tooltip content="The strategy to determine either manual or automatic updates.">
+              <label className="co-required">Approval Strategy</label>
+            </Tooltip>
             <RadioGroup
               currentValue={approval}
               items={[
@@ -224,7 +228,7 @@ export const OperatorHubSubscribePage: React.SFC<OperatorHubSubscribePageProps> 
   <div>
     <h1>Create Operator Subscription</h1>
     <p className="co-help-text">
-      Keep your service up to date by selecting a channel and approval strategy. The strategy determines either manual or automatic updates.
+      Install your Operator by subscribing to one of the update channels to keep the Operator up to date. The strategy determines either manual or automatic updates.
     </p>
   </div>
   <Firehose resources={[{
