@@ -1,0 +1,23 @@
+.co-details-card {
+  margin-bottom: 1rem;
+}
+
+.co-details-card__body {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.co-details-card__item-title {
+  flex-basis: 100%;
+  font-size: 0.875rem;
+  text-transform: capitalize;
+}
+
+.co-details-card__item-value {
+  flex-basis: 100%;
+  font-size: 0.875rem;
+  margin-bottom: 8px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

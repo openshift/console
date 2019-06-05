@@ -16,6 +16,8 @@ import {
   StopWatchPrometheusAction,
 } from '../../actions/dashboards';
 import { RootState } from '../../redux';
+import { Firehose, FirehoseResource, FirehoseResult } from '../utils';
+import { K8sResourceKind } from '../../module/k8s';
 
 const mapDispatchToProps = dispatch => ({
   watchURL: (url, fetch): WatchURL => dispatch(watchURL(url, fetch)),
@@ -30,18 +32,27 @@ const mapStateToProps = (state: RootState) => ({
 });
 
 const WithDashboardResources = (WrappedComponent: React.ComponentType<DashboardItemProps>) =>
-  class WithDashboardResources_ extends React.Component<WithDashboardResourcesProps> {
+  class WithDashboardResources_ extends React.Component<WithDashboardResourcesProps, WithDashboardResourcesState> {
     private urls: Array<string> = [];
     private queries: Array<string> = [];
 
-    shouldComponentUpdate(nextProps: WithDashboardResourcesProps) {
+    constructor(props) {
+      super(props);
+      this.state = {
+        k8sResources: [],
+      };
+    }
+
+    shouldComponentUpdate(nextProps: WithDashboardResourcesProps, nextState: WithDashboardResourcesState) {
       const urlResultChanged = this.urls.some(urlKey =>
         this.props[RESULTS_TYPE.URL].getIn([urlKey, 'result']) !== nextProps[RESULTS_TYPE.URL].getIn([urlKey, 'result'])
       );
       const queryResultChanged = this.queries.some(query =>
         this.props[RESULTS_TYPE.PROMETHEUS].getIn([query, 'result']) !== nextProps[RESULTS_TYPE.PROMETHEUS].getIn([query, 'result'])
       );
-      return urlResultChanged || queryResultChanged;
+      const k8sResourcesChanged = this.state.k8sResources !== nextState.k8sResources;
+
+      return urlResultChanged || queryResultChanged || k8sResourcesChanged;
     }
 
     watchURL: WatchURL = (url, fetch) => {
@@ -54,16 +65,32 @@ const WithDashboardResources = (WrappedComponent: React.ComponentType<DashboardI
       this.props.watchPrometheusQuery(query);
     }
 
+    watchK8sResource: WatchK8sResource = resource => {
+      this.setState((state: WithDashboardResourcesState) => ({
+        k8sResources: [...state.k8sResources, resource],
+      }));
+    }
+
+    stopWatchK8sResource: StopWatchK8sResource = resource => {
+      this.setState((state: WithDashboardResourcesState) => ({
+        k8sResources: state.k8sResources.filter(r => r.prop !== resource.prop),
+      }));
+    }
+
     render() {
       return (
-        <WrappedComponent
-          watchURL={this.watchURL}
-          stopWatchURL={this.props.stopWatchURL}
-          watchPrometheus={this.watchPrometheus}
-          stopWatchPrometheusQuery={this.props.stopWatchPrometheusQuery}
-          urlResults={this.props[RESULTS_TYPE.URL]}
-          prometheusResults={this.props[RESULTS_TYPE.URL]}
-        />
+        <Firehose resources={this.state.k8sResources}>
+          <WrappedComponent
+            watchURL={this.watchURL}
+            stopWatchURL={this.props.stopWatchURL}
+            watchPrometheus={this.watchPrometheus}
+            stopWatchPrometheusQuery={this.props.stopWatchPrometheusQuery}
+            urlResults={this.props[RESULTS_TYPE.URL]}
+            prometheusResults={this.props[RESULTS_TYPE.PROMETHEUS]}
+            watchK8sResource={this.watchK8sResource}
+            stopWatchK8sResource={this.stopWatchK8sResource}
+          />
+        </Firehose>
       );
     }
   };
@@ -75,6 +102,10 @@ export type StopWatchURL = (url: string) => void;
 export type WatchPrometheus = (query: string) => void;
 export type StopWatchPrometheus = (query: string) => void;
 
+type WithDashboardResourcesState = {
+  k8sResources: FirehoseResource[];
+};
+
 type WithDashboardResourcesProps = {
   watchURL: WatchURLAction;
   watchPrometheusQuery: WatchPrometheusQueryAction;
@@ -84,11 +115,19 @@ type WithDashboardResourcesProps = {
   [RESULTS_TYPE.URL]: ImmutableMap<string, any>;
 };
 
+export type WatchK8sResource = (resource: FirehoseResource) => void;
+export type StopWatchK8sResource = (resource: FirehoseResource) => void;
+
 export type DashboardItemProps = {
-  watchURL: WatchURL,
-  stopWatchURL: StopWatchURL,
-  watchPrometheus: WatchPrometheus,
-  stopWatchPrometheusQuery: StopWatchPrometheus,
-  urlResults: ImmutableMap<string, any>,
-  prometheusResults: ImmutableMap<string, any>,
-}
+  watchURL: WatchURL;
+  stopWatchURL: StopWatchURL;
+  watchPrometheus: WatchPrometheus;
+  stopWatchPrometheusQuery: StopWatchPrometheus;
+  urlResults: ImmutableMap<string, any>;
+  prometheusResults: ImmutableMap<string, any>;
+  watchK8sResource: WatchK8sResource;
+  stopWatchK8sResource: StopWatchK8sResource;
+  resources?: {
+    [key: string]: FirehoseResult | FirehoseResult<K8sResourceKind>;
+  };
+};

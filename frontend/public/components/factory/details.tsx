@@ -2,20 +2,11 @@ import * as React from 'react';
 import { match } from 'react-router-dom';
 import * as _ from 'lodash-es';
 
-import { Firehose, HorizontalNav, PageHeading } from '../utils';
-import { K8sResourceKindReference, K8sResourceKind, K8sKind, Selector } from '../../module/k8s';
+import { Firehose, HorizontalNav, PageHeading, FirehoseResource } from '../utils';
+import { K8sResourceKindReference, K8sResourceKind, K8sKind } from '../../module/k8s';
 import { withFallback } from '../utils/error-boundary';
 import { ErrorBoundaryFallback } from '../error';
 import { breadcrumbsForDetailsPage } from '../utils/breadcrumbs';
-
-export type FirehoseResource = {
-  kind: K8sResourceKindReference;
-  name?: string;
-  namespace: string;
-  isList?: boolean;
-  selector?: Selector;
-  prop: string;
-};
 
 export const DetailsPage = withFallback<DetailsPageProps>((props) => <Firehose resources={[{
   kind: props.kind,

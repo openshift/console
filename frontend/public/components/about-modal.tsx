@@ -8,29 +8,29 @@ import { connectToFlags } from '../reducers/features';
 import { getBrandingDetails } from './masthead';
 import { Firehose } from './utils';
 import { ClusterVersionModel } from '../models';
-import { ClusterVersionKind, referenceForModel, UpdateHistory } from '../module/k8s';
+import { ClusterVersionKind, referenceForModel } from '../module/k8s';
 import { k8sVersion } from '../module/status';
-import { hasAvailableUpdates } from '../module/k8s/cluster-settings';
+import { hasAvailableUpdates, getK8sGitVersion, getOpenShiftVersion } from '../module/k8s/cluster-settings';
 
 const AboutModalItems: React.FC<AboutModalItemsProps> = ({closeAboutModal, cv}) => {
   const [kubernetesVersion, setKubernetesVersion] = React.useState('');
   React.useEffect(() => {
     k8sVersion()
-      .then(({gitVersion}) => setKubernetesVersion(gitVersion))
+      .then(response => setKubernetesVersion(getK8sGitVersion(response) || '-'))
       .catch(() => setKubernetesVersion('unknown'));
   }, []);
   const clusterID: string = _.get(cv, 'data.spec.clusterID');
   const channel: string = _.get(cv, 'data.spec.channel');
-  const lastUpdate: UpdateHistory = _.get(cv, 'data.status.history[0]');
+  const openshiftVersion = getOpenShiftVersion(_.get(cv, 'data'));
   return (
     <React.Fragment>
       {hasAvailableUpdates(cv.data) && <Alert className="co-about-modal__alert" variant="info" title={<React.Fragment>Update available. <Link to="/settings/cluster" onClick={closeAboutModal}>View Cluster Settings</Link></React.Fragment>} />}
       <TextContent>
         <TextList component="dl">
-          {lastUpdate && (
+          {openshiftVersion && (
             <React.Fragment>
               <TextListItem component="dt">OpenShift Version</TextListItem>
-              <TextListItem component="dd">{lastUpdate.state === 'Partial' ? `Updating to ${lastUpdate.version}` : lastUpdate.version}</TextListItem>
+              <TextListItem component="dd">{openshiftVersion}</TextListItem>
             </React.Fragment>
           )}
           <TextListItem component="dt">Kubernetes Version</TextListItem>

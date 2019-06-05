@@ -947,3 +947,18 @@ export const OAuthModel: K8sKind = {
   id: 'oauth',
   crd: true,
 };
+
+export const InfrastructureModel: K8sKind = {
+  label: 'Infrastructure',
+  labelPlural: 'Infrastructures',
+  apiVersion: 'v1',
+  path: 'infrastructures',
+  apiGroup: 'config.openshift.io',
+  plural: 'infrastructures',
+  abbr: 'INF',
+  namespaced: false,
+  kind: 'Infrastructure',
+  id: 'infrastructure',
+  crd: true,
+};
+
