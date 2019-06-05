@@ -3,7 +3,7 @@ import {
   Plugin,
   ResourceNSNavItem,
   ResourceListPage,
-  ResourceDetailPage,
+  ResourceDetailsPage,
   ModelFeatureFlag,
   YAMLTemplate,
   ModelDefinition,
@@ -15,7 +15,7 @@ import { yamlTemplates } from './yaml-templates';
 type ConsumedExtensions =
   | ResourceNSNavItem
   | ResourceListPage
-  | ResourceDetailPage
+  | ResourceDetailsPage
   | ModelFeatureFlag
   | YAMLTemplate
   | ModelDefinition;
@@ -49,7 +49,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
-    type: 'ResourcePage/List',
+    type: 'Page/Resource/List',
     properties: {
       model: models.VirtualMachineModel,
       loader: () =>
@@ -66,7 +66,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   // {
-  //   type: 'ResourcePage/Detail',
+  //   type: 'Page/Resource/Details',
   //   properties: {
   //     model: VirtualMachineModel,
   //     loader: () => import('./components/vm-detail' /* webpackChunkName: "kubevirt-virtual-machines" */).then(m => m.VirtualMachinesDetailsPage),
