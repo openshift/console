@@ -234,10 +234,16 @@ export const ResourceQuotasPage = connectToFlags(FLAGS.OPENSHIFT)(({namespace, f
       ],
     }];
   }
+  const createNS = namespace || 'default';
+  const accessReview = {
+    model: ResourceQuotaModel,
+    namespace: createNS,
+  };
   return <MultiListPage
     canCreate={true}
+    createAccessReview={accessReview}
     createButtonText="Create Resource Quota"
-    createProps={{to: `/k8s/ns/${namespace || 'default'}/resourcequotas/~new`}}
+    createProps={{to: `/k8s/ns/${createNS}/resourcequotas/~new`}}
     ListComponent={ResourceQuotasList}
     resources={resources}
     label="Resource Quotas"
