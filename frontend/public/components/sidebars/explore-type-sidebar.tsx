@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import * as classNames from 'classnames';
 
-import { getStoredSwagger, K8sKind, SwaggerDefinition, SwaggerDefinitions } from '../../module/k8s';
+import { getDefinitionKey, getStoredSwagger, K8sKind, SwaggerDefinition, SwaggerDefinitions } from '../../module/k8s';
 import { ResourceSidebarWrapper, sidebarScrollTop } from './resource-sidebar';
 import { CamelCaseWrap, LinkifyExternal } from '../utils';
 
@@ -29,9 +29,7 @@ export const ExploreTypeSidebar: React.FC<ExploreTypeSidebarProps> = (props) => 
   }
   const currentSelection = _.last(drilldownHistory);
   // Show the current selected property or the top-level definition for the kind.
-  const currentPath = currentSelection
-    ? currentSelection.path
-    : [Object.keys(allDefinitions).find(key => key.endsWith(`${kindObj.apiVersion.replace('/', '.')}.${kindObj.kind}`))];
+  const currentPath = currentSelection ? currentSelection.path : [getDefinitionKey(kindObj, allDefinitions)];
   const currentDefinition: SwaggerDefinition = _.get(allDefinitions, currentPath) || {};
 
   // Prefer the description saved in `currentSelection`. It won't always be defined in the definition itself.
