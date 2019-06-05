@@ -12,6 +12,7 @@ import { namespacedPrefixes } from './utils/link';
 import * as UIActions from '../actions/ui';
 import { ClusterServiceVersionModel, SubscriptionModel, AlertmanagerModel } from '../models';
 import { referenceForModel } from '../module/k8s';
+import * as plugins from '../plugins';
 
 //PF4 Imports
 import {
@@ -70,7 +71,20 @@ const DefaultPage = connectToFlags(FLAGS.OPENSHIFT)(({ flags }) => {
   return <Redirect to={statusPage} />;
 });
 
-const LazyRoute = (props) => <Route {...props} render={(componentProps) => <AsyncComponent loader={props.loader} kind={props.kind} {...componentProps} />} />;
+const LazyRoute = (props) => (
+  <Route
+    {...props}
+    component={undefined}
+    render={(componentProps) => (
+      <AsyncComponent loader={props.loader} kind={props.kind} {...componentProps} />
+    )}
+  />
+);
+
+const pageRouteExtensions = plugins.registry.getRoutePages().map((r) => {
+  const Component = r.properties.loader ? LazyRoute : Route;
+  return <Component {...r.properties} key={Array.from(r.properties.path).join(',')} />;
+});
 
 // use `withRouter` to force a re-render when routes change since we are using React.memo
 const AppContents = withRouter(React.memo(() => (
@@ -80,6 +94,8 @@ const AppContents = withRouter(React.memo(() => (
       <Route path={namespacedRoutes} component={NamespaceBar} />
       <div id="content-scrollable">
         <Switch>
+          {pageRouteExtensions}
+
           <Route path={['/all-namespaces', '/ns/:ns']} component={RedirectComponent} />
 
           <LazyRoute path="/cluster-status" exact loader={() => import('./cluster-overview' /* webpackChunkName: "cluster-overview" */).then(m => m.ClusterOverviewPage)} />
