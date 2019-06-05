@@ -167,10 +167,10 @@
     victory-core "^32.2.3"
     victory-legend "^32.2.3"
 
-"@patternfly/react-core@3.34.0":
-  version "3.34.0"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-core/-/react-core-3.34.0.tgz#8d485a6ac6f692064e7a6c59897b87c654aa0151"
-  integrity sha512-O833leVu1SzlTh9ks06UoqtEp3ReO9v2fexpDguxrHWpantsREeHdPmZQ1YO1PJgOcoAOVmdCZquI2UdQ59bLA==
+"@patternfly/react-core@3.34.2":
+  version "3.34.2"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-core/-/react-core-3.34.2.tgz#bd88a0824708eb1f15c86c56b8af5ccebfeb5183"
+  integrity sha512-EgIGpnOUiZgD51VTT5/jb8iqLm07twPKLUfW7gaTOeIlXGtV4bUzIYZ1TtSVVKcBc3k6vD16c3bAsq7/Inp/WA==
   dependencies:
     "@patternfly/react-icons" "^3.9.3"
     "@patternfly/react-styles" "^3.2.3"
