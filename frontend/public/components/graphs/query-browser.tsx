@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import { Chart, ChartArea, ChartAxis, ChartGroup, ChartTheme } from '@patternfly/react-charts';
+import { Chart, ChartArea, ChartAxis, ChartGroup, getCustomTheme, ChartThemeColor, ChartThemeVariant } from '@patternfly/react-charts';
 import { connect } from 'react-redux';
 
 // This is not yet available as part of PatternFly
@@ -10,18 +10,11 @@ import { Dropdown, humanizeNumber, LoadingInline, useRefWidth } from '../utils';
 import { formatPrometheusDuration, parsePrometheusDuration, twentyFourHourTime } from '../utils/datetime';
 import { PrometheusEndpoint } from './helpers';
 import { usePrometheusPoll } from './prometheus-poll-hook';
-import { areaTheme } from './themes';
+import { queryBrowserTheme } from './themes';
 
 const spans = ['5m', '15m', '30m', '1h', '2h', '6h', '12h', '1d', '2d', '1w', '2w'];
 const dropdownItems = _.zipObject(spans, spans);
-
-const theme = Object.assign({}, ChartTheme.light.multi, areaTheme, {
-  independentAxis: {
-    style: {
-      grid: {stroke: '#ededed'},
-    },
-  },
-});
+const theme = getCustomTheme(ChartThemeColor.multi, ChartThemeVariant.light, queryBrowserTheme);
 
 const SpanControls = ({defaultSpanText, onChange, span}) => {
   const [isValid, setIsValid] = React.useState(true);
