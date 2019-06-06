@@ -86,7 +86,7 @@ export const CreateSubscriptionYAML: React.SFC<CreateSubscriptionYAMLProps> = (p
             namespace: default
           spec:
             source: ${new URLSearchParams(props.location.search).get('catalog')}
-            sourceNamespace: ${pkg.status.catalogSourceNamespace}
+            sourceNamespace: ${new URLSearchParams(props.location.search).get('catalogNamespace')}
             name: ${pkg.metadata.name}
             startingCSV: ${channel.currentCSV}
             channel: ${channel.name}
