@@ -3,6 +3,7 @@ import { Link, match as RouterMatch } from 'react-router-dom';
 import * as _ from 'lodash-es';
 import { connect } from 'react-redux';
 import { Alert } from 'patternfly-react';
+import * as classNames from 'classnames';
 
 import { ProvidedAPIsPage, ProvidedAPIPage } from './clusterserviceversion-resource';
 import { DetailsPage, ListHeader, ColHead, List, ListPage } from '../factory';
@@ -47,14 +48,16 @@ export const ClusterServiceVersionHeader: React.SFC = () => <ListHeader>
   <ColHead className="col-lg-3 col-md-3 hidden-sm hidden-xs">Provided APIs</ColHead>
 </ListHeader>;
 
-const menuActions = [Kebab.factory.Edit, Kebab.factory.Delete];
+const menuActions = [Kebab.factory.Edit];
 
 export const ClusterServiceVersionRow = withFallback<ClusterServiceVersionRowProps>(({obj}) => {
   const route = `/k8s/ns/${obj.metadata.namespace}/${ClusterServiceVersionModel.plural}/${obj.metadata.name}`;
 
+  const statusString = _.get(obj, 'status.reason', ClusterServiceVersionPhase.CSVPhaseUnknown);
+  const showSuccessIcon = statusString === 'Copied' || statusString === 'InstallSucceeded';
   const installStatus = obj.status && obj.status.phase !== ClusterServiceVersionPhase.CSVPhaseFailed
-    ? <span>{_.get(obj, 'status.reason', ClusterServiceVersionPhase.CSVPhaseUnknown)}</span>
-    : <span className="co-error"><i className="fa fa-times-circle co-icon-space-r" /> Failed</span>;
+    ? <span className={classNames(showSuccessIcon && 'co-icon-and-text')}>{showSuccessIcon && <i aria-hidden="true" className="pficon pficon-ok co-icon-and-text__icon" />}{statusString}</span>
+    : <span className="co-error co-icon-and-text"><i className="fa fa-times-circle co-icon-space-r co-icon-and-text__icon" /> Failed</span>;
 
   return <div className="row co-resource-list__item">
     <div className="col-lg-3 col-md-4 col-sm-4 col-xs-6" style={{display: 'flex', alignItems: 'center'}}>
@@ -102,14 +105,6 @@ export const ClusterServiceVersionsPage = connect(stateToProps)((props: ClusterS
     Installed Operators are represented by Cluster Service Versions within this namespace. For more information, see the <ExternalLink href="https://github.com/operator-framework/operator-lifecycle-manager/blob/master/Documentation/design/architecture.md" text="Operator Lifecycle Manager documentation" />. Or create an Operator and Cluster Service Version using the <ExternalLink href="https://github.com/operator-framework/operator-sdk" text="Operator SDK" />.
   </p>;
 
-  const allFilterValues = [CSVConditionReason.CSVReasonInstallSuccessful, CSVConditionReason.CSVReasonCopied];
-  const rowFilters = [{
-    type: 'clusterserviceversion-status',
-    selected: allFilterValues,
-    reducer: (csv: ClusterServiceVersionKind) => _.get(csv.status, 'reason'),
-    items: allFilterValues.map(status => ({id: status, title: status})),
-  }];
-
   return <React.Fragment>
     <PageHeading title="Installed Operators" />
     <ListPage
@@ -118,7 +113,6 @@ export const ClusterServiceVersionsPage = connect(stateToProps)((props: ClusterS
       kind={referenceForModel(ClusterServiceVersionModel)}
       ListComponent={ClusterServiceVersionList}
       helpText={helpText}
-      rowFilters={rowFilters}
       showTitle={false} />
   </React.Fragment>;
 });
