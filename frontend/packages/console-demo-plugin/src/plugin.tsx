@@ -13,6 +13,8 @@ import {
   Perspective,
   YAMLTemplate,
   RoutePage,
+  DashboardsOverviewHealthPrometheusSubsystem,
+  DashboardsOverviewHealthURLSubsystem,
 } from '@console/plugin-sdk';
 
 // TODO(vojtech): internal code needed by plugins should be moved to console-shared package
@@ -21,6 +23,7 @@ import { FLAGS } from '@console/internal/const';
 
 import * as models from './models';
 import { yamlTemplates } from './yaml-templates';
+import { getFooHealthState, getBarHealthState } from './dashboards/health';
 
 type ConsumedExtensions =
   | ModelDefinition
@@ -32,7 +35,9 @@ type ConsumedExtensions =
   | ResourceDetailsPage
   | Perspective
   | YAMLTemplate
-  | RoutePage;
+  | RoutePage
+  | DashboardsOverviewHealthPrometheusSubsystem
+  | DashboardsOverviewHealthURLSubsystem<any>;
 
 const plugin: Plugin<ConsumedExtensions> = [
   {
@@ -126,6 +131,22 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       model: models.FooBarModel,
       template: yamlTemplates.getIn([models.FooBarModel, 'default']),
+    },
+  },
+  {
+    type: 'Dashboards/Overview/Health/URL',
+    properties: {
+      title: 'Foo system',
+      url: 'fooUrl',
+      healthHandler: getFooHealthState,
+    },
+  },
+  {
+    type: 'Dashboards/Overview/Health/Prometheus',
+    properties: {
+      title: 'Bar system',
+      query: 'barQuery',
+      healthHandler: getBarHealthState,
     },
   },
   {
