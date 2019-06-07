@@ -17,7 +17,7 @@ The console is a more friendly `kubectl` in the form of a single page webapp.  I
 ### Dependencies:
 
 1. [node.js](https://nodejs.org/) >= 8 & [yarn](https://yarnpkg.com/en/docs/install) >= 1.3.2
-2. [go](https://golang.org/) >= 1.8 & [glide](https://glide.sh/) >= 0.12.0 (`go get github.com/Masterminds/glide`) & [glide-vc](https://github.com/sgotti/glide-vc)
+2. [go](https://golang.org/) >= 1.11+
 3. [oc](https://mirror.openshift.com/pub/openshift-v4/clients/oc/4.1/) or [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/) and an OpenShift or Kubernetes cluster
 4. `jq` (for `contrib/environment.sh`)
 5. Google Chrome/Chromium >= 60 (needs --headless flag) for integration tests
@@ -134,7 +134,7 @@ See [STYLEGUIDE](STYLEGUIDE.md) for file format and coding style guide.
 
 ### Dev Dependencies
 
-go, glide, glide-vc, nodejs/yarn, kubectl
+go 1.11+, nodejs/yarn, kubectl
 
 ### Frontend Development
 
@@ -294,14 +294,10 @@ Whenever making vendor changes:
 2. Commit everything *except* `vendor/` (eg, `server: add x feature`)
 3. Make a second commit with only `vendor/` (eg, `vendor: revendor`)
 
-Add new backend dependencies:
- 1. Edit `glide.yaml`
- 2. `./revendor.sh`
-
-Update existing backend dependencies:
- 1. Edit the `glide.yaml` file to the desired version (most likely a git hash)
- 2. Run `./revendor.sh`
- 3. Verify update was successful. `glide.lock` will have been updated to reflect the changes to `glide.yaml` and the package will have been updated in `vendor`.
+Adding new or updating existing backend dependencies:
+ 1. Edit the `go.mod` file to the desired version (most likely a git hash)
+ 2. Run `go mod tidy && go mod vendor`
+ 3. Verify update was successful. `go.sum` will have been updated to reflect the changes to `go.mod` and the package will have been updated in `vendor`.
 
 #### Frontend
 
