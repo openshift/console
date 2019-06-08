@@ -24,14 +24,15 @@ The console is a more friendly `kubectl` in the form of a single page webapp.  I
 
 ### Build everything:
 
-Clone the repository to `$GOPATH/src/github.com/openshift/console` and build with the command:
+This project uses uses [Go modules](https://github.com/golang/go/wiki/Modules),
+so you should clone the project outside of your `GOPATH`. To build both the
+frontend and backend, run:
 
 ```
 ./build.sh
 ```
 
-Backend binaries are output to `/bin`.
-
+Backend binaries are output to `./bin`.
 
 ### Configure the application
 
@@ -41,7 +42,6 @@ to. OpenShift 4.x clusters can be installed using the
 You can also use [CodeReady Containers](https://github.com/code-ready/crc)
 for local installs. More information about installing OpenShift can be found at
 <https://try.openshift.com/>.
-
 
 #### OpenShift (no authentication)
 
