@@ -152,12 +152,30 @@ export class HorizontalNav extends React.PureComponent<HorizontalNavProps> {
     const {noStatusBox, obj, EmptyMsg, label} = this.props;
     const content = <Switch> {routes} </Switch>;
 
+    const skeletonDetails = <div className="skeleton-detail-view">
+      <div className="skeleton-detail-view--head" />
+      <div className="skeleton-detail-view--grid">
+        <div className="skeleton-detail-view--column">
+          <div className="skeleton-detail-view--tile skeleton-detail-view--tile-plain" />
+          <div className="skeleton-detail-view--tile skeleton-detail-view--tile-resource" />
+          <div className="skeleton-detail-view--tile skeleton-detail-view--tile-labels" />
+          <div className="skeleton-detail-view--tile skeleton-detail-view--tile-resource" />
+        </div>
+        <div className="skeleton-detail-view--column">
+          <div className="skeleton-detail-view--tile skeleton-detail-view--tile-plain" />
+          <div className="skeleton-detail-view--tile skeleton-detail-view--tile-plain" />
+          <div className="skeleton-detail-view--tile skeleton-detail-view--tile-resource" />
+          <div className="skeleton-detail-view--tile skeleton-detail-view--tile-plain" />
+        </div>
+      </div>
+    </div>;
+
     if (noStatusBox) {
       return content;
     }
 
     return (
-      <StatusBox {...obj} EmptyMsg={EmptyMsg} label={label} >
+      <StatusBox skeleton={skeletonDetails} {...obj} EmptyMsg={EmptyMsg} label={label} >
         {content}
       </StatusBox>
     );

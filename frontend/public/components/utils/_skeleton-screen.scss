@@ -1,6 +1,27 @@
 $skeleton-animation: loading-skeleton 1s ease-out .15s infinite alternate;
 $skeleton-color: #eaedf1;
 
+$skeleton-detail-bone-height: 24px;
+$skeleton-detail-bone: linear-gradient(white $skeleton-detail-bone-height, transparent 0);
+
+$skeleton-detail-position: 15px 35px; // declared out of alpha order to be reused
+
+$skeleton-detail-data-position: $skeleton-detail-position;
+$skeleton-detail-data-size: 200px $skeleton-detail-bone-height;
+
+$skeleton-detail-label: linear-gradient(white ($skeleton-detail-bone-height * 2), transparent 0);
+$skeleton-detail-label-position: $skeleton-detail-position;
+$skeleton-detail-label-size: 90% 75px;
+
+$skeleton-detail-name-position: 15px 15px;
+$skeleton-detail-name-size: 80px 15px;
+
+$skeleton-detail-resource-position: 45px 35px;
+$skeleton-detail-resource-size: 75%;
+$skeleton-detail-resource-icon: radial-gradient(circle 12px at center, white 100%, transparent 0);
+$skeleton-detail-resource-icon-position: $skeleton-detail-position;
+$skeleton-detail-resource-icon-size: $skeleton-detail-bone-height $skeleton-detail-bone-height;
+
 // declared out of alpha order so they can be reused
 $skeleton-overview-tile-height: 71px;
 $skeleton-overview-tile-padding: 24px;
@@ -149,6 +170,100 @@ $skeleton-tile-desc-line-bone: linear-gradient(#fff $skeleton-tile-desc-line-hei
       $skeleton-tile-logo-size $skeleton-tile-logo-size,
       100% 100%;
   }
+}
+
+
+.skeleton-detail-view {
+  padding: $grid-gutter-width;
+  height: 100%;
+  width: 100%;
+}
+
+.skeleton-detail-view--column {
+  display:flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  margin: 10px 0;
+  min-width: 311px;
+  width: 50%;
+}
+
+.skeleton-detail-view--grid {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.skeleton-detail-view--head::after {
+  animation: $skeleton-animation;
+  background: $skeleton-color;
+  content: '';
+  display: block;
+  height: 30px;
+  opacity: 0;
+  width: 230px;
+}
+
+.skeleton-detail-view--tile {
+  animation: $skeleton-animation;
+  background: $skeleton-color;
+  height: 75px;
+  opacity: 0;
+  width: 95%;
+  &::after {
+    background-repeat: no-repeat;
+    content:"";
+    display:block;
+    height: 100%;
+    width: 100%;
+  }
+  &.skeleton-detail-view--tile-labels {
+    height: 100px;
+  }
+}
+
+.skeleton-detail-view--tile.skeleton-detail-view--tile-plain::after {
+  background-image:
+    $skeleton-detail-bone,
+    $skeleton-detail-bone;
+
+  background-size:
+    $skeleton-detail-name-size,
+    $skeleton-detail-data-size;
+
+  background-position:
+    $skeleton-detail-name-position,
+    $skeleton-detail-data-position;
+}
+
+.skeleton-detail-view--tile.skeleton-detail-view--tile-resource::after {
+  background-image:
+    $skeleton-detail-bone,
+    $skeleton-detail-bone,
+    $skeleton-detail-resource-icon;
+
+  background-position:
+    $skeleton-detail-name-position,
+    $skeleton-detail-resource-position,
+    $skeleton-detail-resource-icon-position;
+
+  background-size:
+    $skeleton-detail-name-size,
+    $skeleton-detail-resource-size,
+    $skeleton-detail-resource-icon-size;
+}
+
+.skeleton-detail-view--tile.skeleton-detail-view--tile-labels::after {
+  background-image:
+    $skeleton-detail-bone,
+    $skeleton-detail-label;
+
+  background-position:
+    $skeleton-detail-name-position,
+    $skeleton-detail-label-position;
+
+  background-size:
+    $skeleton-detail-name-size,
+    $skeleton-detail-label-size;
 }
 
 .skeleton-overview {
