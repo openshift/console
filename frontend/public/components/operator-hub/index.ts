@@ -1,6 +1,23 @@
 import { PackageManifestKind, SubscriptionKind } from '../operator-lifecycle-manager';
 
-export const OPERATOR_HUB_CSC_BASE = 'marketplace-enabled-operators';
+export enum ProviderType {
+  RedHat = 'Red Hat',
+  Certified = 'Certified',
+  Community = 'Community',
+  Custom = 'Custom',
+}
+
+export enum InstalledState {
+  Installed = 'Installed',
+  NotInstalled = 'Not Installed',
+}
+
+export enum CapabilityLevel {
+  BasicInstall = 'Basic Install',
+  SeamlessUpgrades = 'Seamless Upgrades',
+  FullLifecycle = 'Full Lifecycle',
+  DeepInsights = 'Deep Insights',
+}
 
 export type OperatorHubItem = {
   obj: PackageManifestKind;
@@ -8,8 +25,9 @@ export type OperatorHubItem = {
   kind: string;
   uid: string;
   installed: boolean;
+  installState?: InstalledState;
   subscription?: SubscriptionKind
-  provider: string;
+  provider: ProviderType;
   longDescription: string;
   description: string;
   createdAt: string;
@@ -29,4 +47,5 @@ export type OperatorHubCSVAnnotations = {
   support?: string;
   description?: string;
   categories?: string;
+  capabilities?: CapabilityLevel;
 };

@@ -1,20 +1,17 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import * as PropTypes from 'prop-types';
 import { Icon, Modal } from 'patternfly-react';
 import { CatalogTile } from 'patternfly-react-extensions';
 
 import { history } from '../utils/router';
 import { COMMUNITY_PROVIDERS_WARNING_LOCAL_STORAGE_KEY } from '../../const';
-import { K8sResourceKind } from '../../module/k8s';
-import { requireOperatorGroup } from '../operator-lifecycle-manager/operator-group';
 import { normalizeIconClass } from '../catalog/catalog-item-icon';
 import { TileViewPage } from '../utils/tile-view-page';
 import { OperatorHubItemDetails } from './operator-hub-item-details';
 import { communityOperatorWarningModal } from './operator-hub-community-provider-modal';
-import { OperatorHubItem } from './index';
+import { OperatorHubItem, InstalledState, ProviderType, CapabilityLevel } from './index';
 
-const communityOperatorBadge = <span key="1" className="pf-c-badge pf-m-read">Community</span>;
+const badge = (text: string) => <span key="1" className="pf-c-badge pf-m-read">{text}</span>;
 
 /**
  * Filter property white list
@@ -32,7 +29,8 @@ const operatorHubFilterMap = {
   capabilityLevel: 'Capability Level',
 };
 
-const COMMUNITY_PROVIDER_TYPE: string = 'Community';
+const COMMUNITY_PROVIDER_TYPE = 'Community';
+const CUSTOM_PROVIDER_TYPE = 'Custom';
 
 const ignoredProviderTails = [', Inc.', ', Inc', ' Inc.', ' Inc', ', LLC', ' LLC'];
 
@@ -78,25 +76,6 @@ const providerSort = provider => {
   }
   return provider.value;
 };
-
-enum ProviderType {
-  RedHat = 'Red Hat',
-  Certified = 'Certified',
-  Community = 'Community',
-  Custom = 'Custom',
-}
-
-enum InstalledState {
-  Installed = 'Installed',
-  NotInstalled = 'Not Installed',
-}
-
-enum CapabilityLevel {
-  BasicInstall = 'Basic Install',
-  SeamlessUpgrades = 'Seamless Upgrades',
-  FullLifecycle = 'Full Lifecycle',
-  DeepInsights = 'Deep Insights',
-}
 
 const providerTypeSort = provider => {
   switch (provider.value) {
@@ -226,141 +205,98 @@ const setURLParams = params => {
   history.replace(`${url.pathname}${searchParams}`);
 };
 
-export const OperatorHubTileView = requireOperatorGroup(
-  class OperatorHubTileView extends React.Component<OperatorHubTileViewProps, OperatorHubTileViewState> {
-    constructor(props) {
-      super(props);
+export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) => {
+  const [detailsItem, setDetailsItem] = React.useState(null);
+  const [showDetails, setShowDetails] = React.useState(false);
 
-      this.state = {
-        detailsItem: null,
-        showDetails: false,
-        communityModalShown: false,
-        items: [],
-        communityOperatorsExist: false,
-        includeCommunityOperators: false,
-      };
+  React.useEffect(() => {
+    const detailsItemID = new URLSearchParams(window.location.search).get('details-item');
+    const currentItem = _.find(props.items, {uid: detailsItemID});
+    setDetailsItem(currentItem);
+    setShowDetails(!_.isNil(currentItem));
+  }, [props.items]);
 
-      this.openOverlay = this.openOverlay.bind(this);
-      this.closeOverlay = this.closeOverlay.bind(this);
-      this.renderTile = this.renderTile.bind(this);
+  const showCommunityOperator = (item: OperatorHubItem) => (ignoreWarning = false) => {
+    const params = new URLSearchParams(window.location.search);
+    params.set('details-item', item.uid);
+    setURLParams(params);
+    setDetailsItem(item);
+    setShowDetails(true);
+
+    if (ignoreWarning) {
+      localStorage.setItem(COMMUNITY_PROVIDERS_WARNING_LOCAL_STORAGE_KEY, 'true');
+    }
+  };
+
+  const openOverlay = (item: OperatorHubItem) => {
+    const ignoreWarning = localStorage.getItem(COMMUNITY_PROVIDERS_WARNING_LOCAL_STORAGE_KEY) === 'true';
+
+    if (!ignoreWarning && item.providerType === COMMUNITY_PROVIDER_TYPE) {
+      return communityOperatorWarningModal({showCommunityOperators: (ignore) => showCommunityOperator(item)(ignore)});
     }
 
-    componentDidMount() {
-      const {items} = this.props;
-      const searchParams = new URLSearchParams(window.location.search);
-      const detailsItemID = searchParams.get('details-item');
+    const params = new URLSearchParams(window.location.search);
+    params.set('details-item', item.uid);
+    setURLParams(params);
+    setDetailsItem(item);
+    setShowDetails(true);
+  };
 
-      const detailsItem = detailsItemID && _.find(items, {uid: detailsItemID});
+  const closeOverlay = () => {
+    const params = new URLSearchParams(window.location.search);
+    params.delete('details-item');
+    setURLParams(params);
+    setDetailsItem(null);
+    setShowDetails(false);
+  };
 
-      this.setState({detailsItem});
+  const renderTile = (item: OperatorHubItem) => {
+    if (!item) {
+      return null;
     }
 
-    showCommunityOperator = (ignoreWarning: boolean = false) => {
-      const { detailsItem } = this.state;
+    const {uid, name, imgUrl, iconClass, provider, description, installed} = item;
+    const normalizedIconClass = iconClass && `icon ${normalizeIconClass(iconClass)}`;
+    const vendor = provider ? `provided by ${provider}` : null;
+    const badges = [COMMUNITY_PROVIDER_TYPE, CUSTOM_PROVIDER_TYPE].includes(item.providerType) ? [badge(item.providerType)] : [];
 
-      const params = new URLSearchParams(window.location.search);
-      params.set('details-item', detailsItem.uid);
-      setURLParams(params);
-      this.setState({showDetails: true});
+    return (
+      <CatalogTile
+        key={uid}
+        title={name}
+        badges={badges}
+        iconImg={imgUrl}
+        iconClass={normalizedIconClass}
+        vendor={vendor}
+        description={description}
+        onClick={() => openOverlay(item)}
+        footer={installed ? <span><Icon type="pf" name="ok" /> Installed</span> : null}
+        data-test={uid}
+      />
+    );
+  };
 
-      if (ignoreWarning) {
-        localStorage.setItem(COMMUNITY_PROVIDERS_WARNING_LOCAL_STORAGE_KEY, 'true');
-      }
-    };
-
-    openOverlay(detailsItem) {
-      const ignoreWarning = localStorage.getItem(COMMUNITY_PROVIDERS_WARNING_LOCAL_STORAGE_KEY) === 'true';
-
-      if (!ignoreWarning && detailsItem.providerType === COMMUNITY_PROVIDER_TYPE) {
-        this.setState({detailsItem});
-        communityOperatorWarningModal({ showCommunityOperators: this.showCommunityOperator });
-        return;
-      }
-
-      const params = new URLSearchParams(window.location.search);
-      params.set('details-item', detailsItem.uid);
-      setURLParams(params);
-
-      this.setState({detailsItem, showDetails: true});
-    }
-
-    closeOverlay() {
-      const params = new URLSearchParams(window.location.search);
-      params.delete('details-item');
-      setURLParams(params);
-
-      this.setState({detailsItem: null, showDetails: false});
-    }
-
-    renderTile(item) {
-      if (!item) {
-        return null;
-      }
-
-      const { uid, name, imgUrl, iconClass, provider, description, installed } = item;
-      const normalizedIconClass = iconClass && `icon ${normalizeIconClass(iconClass)}`;
-      const vendor = provider ? `provided by ${provider}` : null;
-
-      const badges = item.providerType === COMMUNITY_PROVIDER_TYPE ? [communityOperatorBadge] : [];
-
-      return (
-        <CatalogTile
-          key={uid}
-          title={name}
-          badges={badges}
-          iconImg={imgUrl}
-          iconClass={normalizedIconClass}
-          vendor={vendor}
-          description={description}
-          onClick={() => this.openOverlay(item)}
-          footer={installed ? <span><Icon type="pf" name="ok" /> Installed</span> : null}
-          data-test={uid}
-        />
-      );
-    }
-
-    render() {
-      const { detailsItem, showDetails } = this.state;
-      const { items } = this.props;
-
-      return <React.Fragment>
-        <TileViewPage
-          items={items}
-          itemsSorter={(itemsToSort) => _.sortBy(itemsToSort, ({name}) => name.toLowerCase())}
-          getAvailableCategories={determineCategories}
-          getAvailableFilters={determineAvailableFilters}
-          filterGroups={operatorHubFilterGroups}
-          filterGroupNameMap={operatorHubFilterMap}
-          keywordCompare={keywordCompare}
-          renderTile={this.renderTile}
-          emptyStateInfo="No OperatorHub items are being shown due to the filters being applied."
-        />
-        <Modal show={!!detailsItem && showDetails} onHide={this.closeOverlay} bsSize="lg" className="co-catalog-page__overlay right-side-modal-pf">
-          {detailsItem && <OperatorHubItemDetails namespace={this.props.namespace} item={detailsItem} closeOverlay={this.closeOverlay} />}
-        </Modal>
-      </React.Fragment>;
-    }
-  }
-);
-
-OperatorHubTileView.propTypes = {
-  items: PropTypes.array,
-  catalogSourceConfig: PropTypes.object,
+  return <React.Fragment>
+    <TileViewPage
+      items={props.items}
+      itemsSorter={itemsToSort => _.sortBy(itemsToSort, ({name}) => name.toLowerCase())}
+      getAvailableCategories={determineCategories}
+      getAvailableFilters={determineAvailableFilters}
+      filterGroups={operatorHubFilterGroups}
+      filterGroupNameMap={operatorHubFilterMap}
+      keywordCompare={keywordCompare}
+      renderTile={renderTile}
+      emptyStateInfo="No OperatorHub items are being shown due to the filters being applied."
+    />
+    <Modal show={!!detailsItem && showDetails} onHide={closeOverlay} bsSize="lg" className="co-catalog-page__overlay right-side-modal-pf">
+      {detailsItem && <OperatorHubItemDetails namespace={props.namespace} item={detailsItem} closeOverlay={closeOverlay} />}
+    </Modal>
+  </React.Fragment>;
 };
 
 export type OperatorHubTileViewProps = {
   namespace?: string;
   items: OperatorHubItem[];
-  catalogSourceConfig: K8sResourceKind;
-};
-
-export type OperatorHubTileViewState = {
-  detailsItem: any;
-  showDetails: boolean;
-  items: OperatorHubItem[];
-  communityOperatorsExist: boolean;
-  includeCommunityOperators: boolean;
-  communityModalShown: boolean;
 };
 
 OperatorHubTileView.displayName = 'OperatorHubTileView';

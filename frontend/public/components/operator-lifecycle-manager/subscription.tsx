@@ -96,7 +96,7 @@ export const SubscriptionsPage: React.SFC<SubscriptionsPageProps> = (props) => {
     helpText="Operator Subscriptions keep your services up to date by tracking a channel in a package. The approval strategy determines either manual or automatic updates."
     showTitle={false}
     canCreate={true}
-    createProps={{to: namespace ? `/operatormanagement/ns/${namespace}/catalogsources` : '/operatormanagement/all-namespaces/catalogsources'}}
+    createProps={{to: '/operatorhub'}}
     createButtonText="Create Subscription"
     ListComponent={SubscriptionsList}
     filterLabel="Subscriptions by package" />;

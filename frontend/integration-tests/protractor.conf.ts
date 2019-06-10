@@ -113,22 +113,10 @@ export const config: Config = {
       'tests/source-to-image.scenario.ts',
       'tests/deploy-image.scenario.ts',
     ]),
-    olm: suite([
-      'tests/olm/descriptors.scenario.ts',
-      'tests/olm/catalog.scenario.ts',
-      'tests/olm/global-installmode.scenario.ts',
-      'tests/olm/single-installmode.scenario.ts',
-    ]),
-    olmUpgrade: suite([
-      'tests/olm/update-channel-approval.scenario.ts',
-    ]),
-    operatorHub: suite([
-      'tests/operator-hub/operator-hub.scenario.ts',
-    ]),
+    // TODO(alecmerdler): Rename this to `olm` (being used by ci-operator)
     olmFull: suite([
-      'tests/operator-hub/operator-hub.scenario.ts',
       'tests/olm/descriptors.scenario.ts',
-      'tests/olm/catalog.scenario.ts',
+      'tests/operator-hub/operator-hub.scenario.ts',
       'tests/olm/global-installmode.scenario.ts',
       'tests/olm/single-installmode.scenario.ts',
     ]),

@@ -4,7 +4,7 @@ export const operatorModal = $('.modal-content');
 export const operatorModalIsLoaded = () => browser.wait(until.presenceOf(operatorModal), 1000)
   .then(() => browser.sleep(500));
 export const operatorModalTitle = operatorModal.$('.catalog-item-header-pf-title');
-export const operatorModalInstallBtn = operatorModal.element(by.buttonText('Install'));
+export const operatorModalInstallBtn = operatorModal.element(by.linkText('Install'));
 export const operatorModalUninstallBtn = operatorModal.element(by.buttonText('Uninstall'));
 export const closeOperatorModal = () => operatorModal.$('.close').click();
 export const operatorModalIsClosed = () => browser.wait(until.not(until.presenceOf(operatorModal)), 1000)
@@ -25,7 +25,7 @@ export const installNamespaceDropdownBtn = installNamespaceDropdown.$('.dropdown
 export const installNamespaceDropdownFilter = (filter: string) => installNamespaceDropdown
   .$('.dropdown-menu__filter').$('input').sendKeys(filter);
 export const installNamespaceDropdownSelect = (namespace: string) => installNamespaceDropdown
-  .$(`#${namespace}-Project-link`);
+  .element(by.cssContainingText('a .co-resource-item__resource-name', namespace));
 
 export const communityWarningModal = $('.co-modal-ignore-warning');
 export const operatorCommunityWarningIsLoaded = () => browser.wait(until.presenceOf(communityWarningModal), 1000)

@@ -243,7 +243,7 @@ export const testOperatorGroup: OperatorGroupKind = {
 };
 
 export const testPackageManifest: PackageManifestKind = {
-  apiVersion: 'packages.app.redhat.com/v1alpha1',
+  apiVersion: 'packages.operators.coreos.com/v1',
   kind: 'PackageManifest',
   metadata: {
     name: 'test-package',

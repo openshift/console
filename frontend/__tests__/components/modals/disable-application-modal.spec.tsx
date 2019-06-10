@@ -7,8 +7,7 @@ import { DisableApplicationModal, DisableApplicationModalProps, DisableApplicati
 import { ModalTitle, ModalSubmitFooter } from '../../../public/components/factory/modal';
 import { testSubscription } from '../../../__mocks__/k8sResourcesMocks';
 import { SubscriptionKind } from '../../../public/components/operator-lifecycle-manager/index';
-import { ClusterServiceVersionModel, SubscriptionModel, CatalogSourceConfigModel } from '../../../public/models';
-import { apiVersionForModel } from '../../../public/module/k8s';
+import { ClusterServiceVersionModel, SubscriptionModel } from '../../../public/models';
 
 describe(DisableApplicationModal.name, () => {
   let wrapper: ShallowWrapper<DisableApplicationModalProps, DisableApplicationModalState>;
@@ -100,54 +99,6 @@ describe(DisableApplicationModal.name, () => {
     spyAndExpect(close)(null).then(() => {
       expect(k8sKill.calls.argsFor(0)[3]).toEqual({kind: 'DeleteOptions', apiVersion: 'v1', propagationPolicy: 'Foreground'});
       expect(k8sKill.calls.argsFor(1)[3]).toEqual({kind: 'DeleteOptions', apiVersion: 'v1', propagationPolicy: 'Foreground'});
-      done();
-    });
-
-    wrapper.find('form').simulate('submit', new Event('submit'));
-  });
-
-  it('calls `props.k8sKill` to update `CatalogSourceConfig` if subscription contains appropriate labels', (done) => {
-    subscription.metadata.labels = {
-      'csc-owner-name': 'test-csc',
-      'csc-owner-namespace': 'default',
-    };
-    wrapper = wrapper.setProps({subscription});
-
-    const catalogSourceConfig = {
-      apiVersion: apiVersionForModel(CatalogSourceConfigModel),
-      kind: CatalogSourceConfigModel.kind,
-      spec: {packages: [subscription.spec.name].join(',')},
-    };
-    k8sGet.and.returnValue(Promise.resolve(catalogSourceConfig));
-
-    spyAndExpect(close)(null).then(() => {
-      expect(k8sGet.calls.count()).toEqual(1);
-      expect(k8sKill.calls.argsFor(2)[1]).toEqual(catalogSourceConfig);
-      done();
-    });
-
-    wrapper.find('form').simulate('submit', new Event('submit'));
-  });
-
-  it('calls `props.k8sKill` to delete `CatalogSourceConfig` if subscription contains appropriate labels and is the last entry in `spec.packages`', (done) => {
-    subscription.metadata.labels = {
-      'csc-owner-name': 'test-csc',
-      'csc-owner-namespace': 'default',
-    };
-    wrapper = wrapper.setProps({subscription});
-
-    const catalogSourceConfig = {
-      apiVersion: apiVersionForModel(CatalogSourceConfigModel),
-      kind: CatalogSourceConfigModel.kind,
-      spec: {packages: [subscription.spec.name, 'other-package'].join(',')},
-    };
-    k8sGet.and.returnValue(Promise.resolve(catalogSourceConfig));
-
-    spyAndExpect(close)(null).then(() => {
-      expect(k8sGet.calls.count()).toEqual(1);
-      expect(k8sKill.calls.count()).toEqual(2);
-      expect(k8sPatch.calls.argsFor(0)[1]).toEqual(catalogSourceConfig);
-      expect(k8sPatch.calls.argsFor(0)[2]).toEqual([{op: 'replace', path: '/spec/packages', value: 'other-package'}]);
       done();
     });
 

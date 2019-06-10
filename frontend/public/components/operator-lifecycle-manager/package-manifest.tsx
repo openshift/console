@@ -80,7 +80,7 @@ export const PackageManifestList = requireOperatorGroup((props: PackageManifestL
           subscription={(props.subscription.data || [])
             .filter(sub => _.isEmpty(props.namespace) || sub.metadata.namespace === props.namespace)
             .find(sub => sub.spec.name === rowProps.obj.metadata.name)}
-          canSubscribe={!installedFor(props.subscription.data)(props.operatorGroup.data)(rowProps.obj.status.packageName)(getActiveNamespace())
+          canSubscribe={props.canSubscribe && !installedFor(props.subscription.data)(props.operatorGroup.data)(rowProps.obj.status.packageName)(getActiveNamespace())
             && props.operatorGroup.data
               .filter(og => _.isEmpty(props.namespace) || og.metadata.namespace === props.namespace)
               .some(og => supports(installModesFor(rowProps.obj)(defaultChannelFor(rowProps.obj)))(og))}
@@ -95,13 +95,13 @@ export const PackageManifestsPage: React.SFC<PackageManifestsPageProps> = (props
   const namespace = _.get(props.match, 'params.ns');
   type Flatten = (resources: {[kind: string]: {data: K8sResourceKind[]}}) => K8sResourceKind[];
   const flatten: Flatten = resources => _.get(resources.packageManifest, 'data', []);
-  const HelpText = <p className="co-help-text">Catalogs are groups of Operators you can make available on the cluster. Subscribe and grant a namespace access to use the installed Operators.</p>;
+  const helpText = <p className="co-help-text">Catalogs are groups of Operators you can make available on the cluster. Use <Link to="/operatorhub">OperatorHub</Link> to subscribe and grant namespaces access to use installed Operators.</p>;
 
   return <MultiListPage
     {...props}
     namespace={namespace}
     showTitle={false}
-    helpText={HelpText}
+    helpText={helpText}
     ListComponent={(listProps: PackageManifestListProps) => <PackageManifestList {...listProps} showDetailsLink={true} namespace={namespace} />}
     textFilter="packagemanifest-name"
     flatten={flatten}
@@ -127,6 +127,7 @@ export type PackageManifestListProps = {
   loaded: boolean;
   loadError?: string | Object;
   showDetailsLink?: boolean;
+  canSubscribe?: boolean;
 };
 
 export type PackageManifestHeaderProps = {
