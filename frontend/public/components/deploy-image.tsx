@@ -303,7 +303,7 @@ export class DeployImage extends React.Component<DeployImageProps, DeployImageSt
       .then(() => {
         this.setState({inProgress: false});
         if (!this.state.error) {
-          history.push(`/overview/ns/${this.state.namespace}`);
+          history.push(`/k8s/cluster/projects/${this.state.namespace}/workloads`);
         }
       });
   };

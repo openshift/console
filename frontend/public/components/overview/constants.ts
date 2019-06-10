@@ -4,9 +4,3 @@ export enum OverviewSpecialGroup {
   GROUP_BY_APPLICATION = '#GROUP_BY_APPLICATION#',
   GROUP_BY_RESOURCE = '#GROUP_BY_RESOURCE#',
 }
-
-// View options for overview page
-export enum OverviewViewOption {
-  RESOURCES = 'resources',
-  DASHBOARD = 'dashboard',
-}

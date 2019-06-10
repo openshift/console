@@ -85,12 +85,6 @@ const AdminNav = () => (
   <React.Fragment>
     <NavSection title="Home">
       <ResourceClusterLink resource="projects" name="Projects" required={FLAGS.OPENSHIFT} />
-      {
-        // Show different status pages based on OpenShift vs native Kubernetes.
-        // TODO: Make Overview work on native Kubernetes. It currently assumes OpenShift resources.
-      }
-      <HrefLink href="/overview" name="Status" activePath="/overview/" required={FLAGS.OPENSHIFT} />
-      <HrefLink href="/status" name="Status" activePath="/status/" disallowed={FLAGS.OPENSHIFT} />
       <HrefLink href="/search" name="Search" startsWith={searchStartsWith} />
       <ResourceNSLink resource="events" name="Events" />
     </NavSection>

@@ -19,7 +19,6 @@ export enum ActionType {
   DismissOverviewDetails = 'dismissOverviewDetails',
   SelectOverviewDetailsTab = 'selectOverviewDetailsTab',
   SelectOverviewItem = 'selectOverviewItem',
-  SelectOverviewView = 'selectOverviewView',
   SetActiveNamespace = 'setActiveNamespace',
   SetActivePerspective = 'setActivePerspective',
   SetCreateProjectMessage = 'setCreateProjectMessage',
@@ -182,7 +181,6 @@ export const sortList = (listId: string, field: string, func: any, orderBy: stri
 };
 export const setCreateProjectMessage = (message: string) => action(ActionType.SetCreateProjectMessage, {message});
 export const setUser = (user: any) => action(ActionType.SetUser, {user});
-export const selectOverviewView = (view: string) => action(ActionType.SelectOverviewView, {view});
 export const selectOverviewItem = (uid: string) => action(ActionType.SelectOverviewItem, {uid});
 export const selectOverviewDetailsTab = (tab: string) => action(ActionType.SelectOverviewDetailsTab, {tab});
 export const updateOverviewMetrics = (metrics: any) => action(ActionType.UpdateOverviewMetrics, {metrics});
@@ -207,7 +205,6 @@ const uiActions = {
   sortList,
   setCreateProjectMessage,
   setUser,
-  selectOverviewView,
   selectOverviewItem,
   selectOverviewDetailsTab,
   updateOverviewMetrics,
