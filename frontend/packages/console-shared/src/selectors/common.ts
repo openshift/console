@@ -1,4 +1,4 @@
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 
 import { K8sResourceKind } from '@console/internal/module/k8s';
 

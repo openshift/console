@@ -3,8 +3,11 @@ import { Extension } from './extension';
 
 namespace ExtensionProperties {
   export interface YAMLTemplate {
+    /** Model associated with the template. */
     model: K8sKind;
+    /** The YAML template to use. */
     template: string;
+    /** The name of the template. If not specified, use the `default` value. */
     templateName?: string;
   }
 }
