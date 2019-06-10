@@ -25,6 +25,9 @@ const getSearchParams = ({endpoint, endTime, timespan, samples, ...params}: Prom
 };
 
 export const getPrometheusURL = (props: PrometheusURLProps): string => {
+  if (!props.query) {
+    return '';
+  }
   const basePath = props.namespace ? PROMETHEUS_TENANCY_BASE_PATH : PROMETHEUS_BASE_PATH;
   const params = getSearchParams(props);
   return `${basePath}/${props.endpoint}?${params.toString()}`;

@@ -65,7 +65,7 @@
   },
   "dependencies": {
     "@patternfly/patternfly": "2.13.1",
-    "@patternfly/react-charts": "3.6.6",
+    "@patternfly/react-charts": "4.4.0",
     "@patternfly/react-core": "3.48.5",
     "@patternfly/react-table": "2.11.1",
     "@patternfly/react-virtualized-extension": "1.0.5",

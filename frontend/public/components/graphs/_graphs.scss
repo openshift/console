@@ -3,6 +3,9 @@
 }
 
 .graph-wrapper {
+  align-items: stretch;
+  display: flex;
+  flex-direction: column;
   margin-bottom: 16px;
   margin-top: 0;
   overflow: visible; // Tooltips may overflow
@@ -19,13 +22,20 @@
   line-height: 1.4; // so descenders don't clip
   margin: 0 0 10px 0;
   overflow: hidden;
-  text-align: center;
   text-overflow: ellipsis;
   white-space: nowrap;
+  width: 100%;
 }
 
-.graph-title--left {
-  text-align: left;
+.graph-wrapper--title-center .graph-title {
+  text-align: center;
+}
+
+.graph-wrapper--gauge {
+  margin: auto;
+  max-width: 170px;
+  min-width: 135px;
+  width: 100%;
 }
 
 .query-browser__external-link {
