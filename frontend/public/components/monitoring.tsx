@@ -202,7 +202,7 @@ const Graph_ = ({hideGraphs, metric = undefined, samples, rule}) => {
     defaultTimespan={timespan}
     GraphLink={GraphLink}
     metric={metric}
-    query={query}
+    queries={[query]}
     samples={samples}
   />;
 };
@@ -554,8 +554,8 @@ const HeaderAlertmanagerLink_ = ({path, urls}) => _.isEmpty(urls[MonitoringRoute
   </span>;
 const HeaderAlertmanagerLink = connectToURLs(MonitoringRoutes.AlertManager)(HeaderAlertmanagerLink_);
 
-const HeaderPrometheusLink_ = ({query, urls}) => {
-  const url = getPrometheusExpressionBrowserURL(urls, query);
+const HeaderPrometheusLink_ = ({queries, urls}) => {
+  const url = getPrometheusExpressionBrowserURL(urls, queries);
   return _.isEmpty(url)
     ? null
     : <span className="monitoring-header-link">
@@ -955,20 +955,36 @@ const MetricsList = ({metrics}) => <div className="co-m-table-grid co-m-table-gr
 </div>;
 
 const QueryBrowserPage = () => {
+  const [hideTables, setHideTables] = React.useState([false]);
   const [metrics, setMetrics] = React.useState([]);
-  const defaultQuery = getURLSearchParams().query || '';
-  const [query, setQuery] = React.useState(defaultQuery);
-  const [queryText, setQueryText] = React.useState(defaultQuery);
+  const defaultQueries = [getURLSearchParams().query || ''];
+  const [queries, setQueries] = React.useState(defaultQueries);
+  const [queryTexts, setQueryTexts] = React.useState(defaultQueries);
+
+  const addQuery = () => {
+    setQueries([...queries, '']);
+    setQueryTexts([...queryTexts, '']);
+  };
 
   const runQueries = e => {
     e.preventDefault();
-    setQuery(queryText);
+    setQueries(queryTexts);
   };
+
+  const toggleTable = i => setHideTables(_.set(_.cloneDeep(hideTables), i, !hideTables[i]));
+
+  const onQueryChange = (e, i) => setQueryTexts(_.set(_.cloneDeep(queryTexts), i, e.target.value));
+
+  const onDataUpdate = queriesData => setMetrics(_.map(queriesData,
+    data => _.map(data, ({labels, values}) => ({labels, value: _.get(_.last(values), 'y')}))
+  ));
+
+  const validQueries = _.reject(queries, _.isEmpty);
 
   return <React.Fragment>
     <div className="co-m-nav-title">
       <h1 className="co-m-pane__heading">
-        <span>Metrics<HeaderPrometheusLink query={query} /></span>
+        <span>Metrics<HeaderPrometheusLink queries={validQueries} /></span>
       </h1>
     </div>
     <div className="co-m-pane__body">
@@ -978,30 +994,36 @@ const QueryBrowserPage = () => {
             colors={graphColors}
             defaultTimespan={30 * 60 * 1000}
             GraphLink={ToggleGraph}
-            onDataUpdate={data => setMetrics(_.map(data, d => ({
-              labels: _.omitBy(d.metric, (v, k) => _.startsWith(k, '__')),
-              value: _.get(_.last(d.values), 1),
-            })))}
-            query={query}
+            onDataUpdate={onDataUpdate}
+            queries={validQueries}
             samples={600}
           />
           <form onSubmit={runQueries}>
             <div className="group">
               <div className="group__title">
+                <button type="button" className="btn" onClick={addQuery}>Add Query</button>
                 <button type="submit" className="btn btn-primary">Run Queries</button>
               </div>
-              <div className="group__title">
-                <input
-                  className="form-control"
-                  onChange={e => setQueryText(e.target.value)}
-                  placeholder="Expression (press Shift+Enter for newlines)"
-                  type="text"
-                  value={queryText}
-                />
-              </div>
-              <div className="group__body group__body--query-browser">
-                <MetricsList metrics={metrics} />
-              </div>
+              {_.map(queries, (query, i) => <React.Fragment key={i}>
+                <div className="group__title">
+                  <i
+                    className={`query-browser__table-toggle fa fa-angle-${hideTables[i] ? 'right' : 'down'}`}
+                    aria-hidden="true"
+                    onClick={() => toggleTable(i)}
+                    title={`${hideTables[i] ? 'Show' : 'Hide'} Table`}
+                  />
+                  <input
+                    className="form-control"
+                    onChange={e => onQueryChange(e, i)}
+                    placeholder="Expression (press Shift+Enter for newlines)"
+                    type="text"
+                    value={queryTexts[i]}
+                  />
+                </div>
+                {!hideTables[i] && <div className="group__body group__body--query-browser">
+                  <MetricsList metrics={metrics[i]} />
+                </div>}
+              </React.Fragment>)}
             </div>
           </form>
         </div>
