@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 
-import { getName, getNamespace } from '@console/shared';
-import { MachineModel } from '@console/internal/models';
+import { getName, getNamespace, getMachineNode } from '@console/shared';
+import { MachineModel, NodeModel } from '@console/internal/models';
 
 import {
   ListHeader,
@@ -46,7 +46,7 @@ const HostHeader = (props: React.ComponentProps<typeof ColHead>) => (
 );
 
 type HostRowProps = {
-  obj: K8sResourceKind & { machine: K8sResourceKind };
+  obj: K8sResourceKind & { machine: K8sResourceKind; node: K8sResourceKind };
   style?: React.StyleHTMLAttributes<any>;
 };
 
@@ -131,6 +131,11 @@ export const BaremetalHostsPage: React.FC<BaremetalHostsPageProps> = (props) => 
     namespaced: true,
     prop: 'machines',
   };
+  const nodesResource = {
+    kind: NodeModel.kind,
+    namespaced: false,
+    prop: 'nodes',
+  };
 
   const flatten = (resources) => {
     // TODO(jtomasek): Remove loaded check once ListPageWrapper_ is updated to call flatten only
@@ -141,10 +146,15 @@ export const BaremetalHostsPage: React.FC<BaremetalHostsPageProps> = (props) => 
     const {
       hosts: { data: hostsData },
       machines: { data: machinesData },
+      nodes: { data: nodesData },
     } = resources;
 
     if (loaded) {
-      return hostsData.map((host) => ({ ...host, machine: getHostMachine(host, machinesData) }));
+      return hostsData.map((host) => {
+        const machine = getHostMachine(host, machinesData);
+        const node = getMachineNode(machine, nodesData);
+        return { ...host, machine, node };
+      });
     }
     return [];
   };
@@ -155,8 +165,8 @@ export const BaremetalHostsPage: React.FC<BaremetalHostsPageProps> = (props) => 
       canCreate
       rowFilters={filters}
       createButtonText="Add Host"
-      resources={[hostsResource, machinesResource]}
       namespace={props.namespace}
+      resources={[hostsResource, machinesResource, nodesResource]}
       flatten={flatten}
       ListComponent={HostList}
     />
