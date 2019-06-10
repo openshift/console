@@ -2,7 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 
 import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
-import { ConfigMapData } from './configmap-and-secret-data';
+import { ConfigMapData, ConfigMapBinaryData } from './configmap-and-secret-data';
 import { Kebab, SectionHeading, navFactory, ResourceKebab, ResourceLink, ResourceSummary } from './utils';
 import { fromNow } from './utils/datetime';
 
@@ -37,7 +37,11 @@ const ConfigMapDetails = ({obj: configMap}) => {
     </div>
     <div className="co-m-pane__body">
       <SectionHeading text="Data" />
-      <ConfigMapData data={configMap.data} />
+      <ConfigMapData data={configMap.data} label="Data" />
+    </div>
+    <div className="co-m-pane__body">
+      <SectionHeading text="Binary Data" />
+      <ConfigMapBinaryData data={configMap.binaryData} />
     </div>
   </React.Fragment>;
 };
