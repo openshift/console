@@ -180,7 +180,7 @@ const ToggleGraph_ = ({hideGraphs, toggle}) => {
 };
 const ToggleGraph = connect(graphStateToProps, {toggle: UIActions.monitoringToggleGraphs})(ToggleGraph_);
 
-const Graph_ = ({hideGraphs, metric = undefined, samples, rule}) => {
+const Graph_ = ({hideGraphs, metric = undefined, rule}) => {
   if (hideGraphs) {
     return null;
   }
@@ -198,7 +198,6 @@ const Graph_ = ({hideGraphs, metric = undefined, samples, rule}) => {
     GraphLink={GraphLink}
     metric={metric}
     queries={[query]}
-    samples={samples}
   />;
 };
 const Graph = connect(graphStateToProps)(Graph_);
@@ -249,7 +248,7 @@ const AlertsDetailsPage = withFallback(connect(alertStateToProps)((props: Alerts
         <div className="co-m-pane__body-group">
           <div className="row">
             <div className="col-sm-12">
-              {state !== AlertStates.NotFiring && <Graph metric={labels} rule={rule} samples={600} />}
+              {state !== AlertStates.NotFiring && <Graph metric={labels} rule={rule} />}
             </div>
           </div>
           <div className="row">
@@ -400,7 +399,7 @@ const AlertRulesDetailsPage = withFallback(connect(ruleStateToProps)((props: Ale
           </SectionHeading>
           <div className="row">
             <div className="col-sm-12">
-              <Graph rule={rule} samples={300} />
+              <Graph rule={rule} />
             </div>
           </div>
           <div className="row">
@@ -990,7 +989,6 @@ const QueryBrowserPage = () => {
             GraphLink={ToggleGraph}
             onDataUpdate={onDataUpdate}
             queries={validQueries}
-            samples={600}
           />
           <form onSubmit={runQueries}>
             <div className="group">

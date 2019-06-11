@@ -148,7 +148,6 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
   metric,
   onDataUpdate,
   queries,
-  samples,
 }) => {
   // For the default time span, use the first of the suggested span options that is at least as long as defaultTimespan
   const defaultSpanText = spans.find(s => parsePrometheusDuration(s) >= defaultTimespan);
@@ -160,6 +159,9 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
   const [updating, setUpdating] = React.useState(true);
 
   const endTime = _.get(domain, 'x[1]');
+
+  // Use more samples if we are only displaying a single metric
+  const samples = metric ? 600 : 300;
 
   const urls = _.map(queries, query => getPrometheusURL({
     endpoint: PrometheusEndpoint.QUERY_RANGE,
@@ -268,5 +270,4 @@ type QueryBrowserProps = {
   metric: Labels;
   onDataUpdate: (data: GraphDataMetric[]) => void;
   queries: string[];
-  samples?: number;
 };
