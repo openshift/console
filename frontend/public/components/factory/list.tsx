@@ -50,6 +50,7 @@ import {
   getTemplateInstanceStatus,
   getNodeRoles,
 } from '../../module/k8s';
+import * as plugins from '../../plugins';
 
 const fuzzyCaseInsensitive = (a, b) => fuzzy(_.toLower(a), _.toLower(b));
 
@@ -193,6 +194,32 @@ const listFilters = {
     return statuses.selected.has(status) || !_.includes(statuses.all, status);
   },
 };
+
+/* Append filters from plugins
+
+TODO(mlibra):
+Some objects (like VirtualMachines) require to query additional objects
+to fully asses state (like pods and CRs in the case of a VirtualMachine).
+Recent filtering logic can handle just a single "listed" object.
+We will need to find a way how to pass additional resources there.
+*/
+(function () {
+  const baseListCount = Object.keys(listFilters).length;
+
+  plugins.registry.getResourceListPages()
+    .filter(rlp => !!rlp.properties.filter)
+    .forEach(rlp => {
+      if (listFilters[rlp.properties.model.kind]) {
+        // eslint-disable-next-line no-console
+        console.warn(`List filter for ${rlp.properties.model.kind} already defined, skipping.`);
+      } else {
+        listFilters[rlp.properties.model.kind] = rlp.properties.filter;
+      }
+    });
+
+  // eslint-disable-next-line no-console
+  console.info(`${Object.keys(listFilters).length - baseListCount} new list filters added by plugins.`);
+})();
 
 const getFilteredRows = (_filters, objects) => {
   if (_.isEmpty(_filters)) {

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteProps, RouteComponentProps } from 'react-router';
-import { K8sKind, K8sResourceKindReference } from '@console/internal/module/k8s';
+import { K8sKind, K8sResourceKindReference, K8sResourceKind } from '@console/internal/module/k8s';
 import { Extension } from './extension';
 
 type LazyLoader<T> = () => Promise<React.ComponentType<T>>;
@@ -13,6 +13,11 @@ namespace ExtensionProperties {
     loader: LazyLoader<T>;
   }
 
+  interface ResourceListFilterGroups {
+    selected: any;
+    all: string[];
+  }
+  
   export type ResourceListPage = ResourcePage<{
     /** See https://reacttraining.com/react-router/web/api/match */
     match?: RouteComponentProps['match'];
@@ -24,7 +29,10 @@ namespace ExtensionProperties {
     mock?: boolean;
     /** The namespace scope. */
     namespace?: string;
-  }>;
+  }> & {
+    /** Function. If "true" is returned then particular item is included in the list. */
+    filter?: (filterGroups: ResourceListFilterGroups, obj: K8sResourceKind) => boolean;
+  };
 
   export type ResourceDetailsPage = ResourcePage<{
     /** See https://reacttraining.com/react-router/web/api/match */
