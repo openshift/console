@@ -7,7 +7,9 @@ import {
   ModelFeatureFlag,
   YAMLTemplate,
   ModelDefinition,
+  RoutePage,
 } from '@console/plugin-sdk';
+import { TemplateModel } from '@console/internal/models';
 
 import * as models from './models';
 import { yamlTemplates } from './yaml-templates';
@@ -20,7 +22,8 @@ type ConsumedExtensions =
   | ResourceDetailsPage
   | ModelFeatureFlag
   | YAMLTemplate
-  | ModelDefinition;
+  | ModelDefinition
+  | RoutePage;
 
 const FLAG_KUBEVIRT = 'KUBEVIRT';
 
@@ -51,6 +54,21 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
+    // NOTE(yaacov): vmtemplates is a template resource with a selector.
+    // 'NavItem/ResourceNS' is used, and not 'NavItem/Href', because it injects
+    // the namespace needed to get the correct link to a resource ( template with selector ) in our case.
+    type: 'NavItem/ResourceNS',
+    properties: {
+      section: 'Workloads',
+      componentProps: {
+        name: 'Virtual Machine Templates',
+        resource: 'vmtemplates',
+        required: FLAG_KUBEVIRT,
+      },
+      mergeAfter: 'Virtual Machines',
+    },
+  },
+  {
     type: 'Page/Resource/List',
     properties: {
       model: models.VirtualMachineModel,
@@ -68,6 +86,14 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
+    type: 'YAMLTemplate',
+    properties: {
+      model: TemplateModel,
+      template: yamlTemplates.getIn([TemplateModel, 'vm-template']),
+      templateName: 'vm-template',
+    },
+  },
+  {
     type: 'Page/Resource/Details',
     properties: {
       model: models.VirtualMachineModel,
@@ -75,6 +101,17 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/vms/vm-details-page' /* webpackChunkName: "kubevirt-virtual-machine-details" */
         ).then((m) => m.VirtualMachinesDetailsPage),
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      exact: true,
+      path: [`/k8s/ns/:ns/vmtemplates`, '/k8s/all-namespaces/vmtemplates'],
+      loader: () =>
+        import(
+          './components/vm-templates/vm-template' /* webpackChunkName: "kubevirt-vmtemplates" */
+        ).then((m) => m.VirtualMachineTemplatesPage),
     },
   },
 ];
