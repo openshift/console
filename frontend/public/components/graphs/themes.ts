@@ -52,8 +52,15 @@ export const barTheme = {
 };
 
 export const queryBrowserTheme = {
-  ...areaTheme,
-  independentAxis: {
+  chart: {
+    padding: {
+      bottom: 0,
+      left: 40,
+      right: 0,
+      top: 0,
+    },
+  },
+  dependentAxis: {
     style: {
       grid: {stroke: '#EDEDED'},
     },

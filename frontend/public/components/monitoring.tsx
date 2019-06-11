@@ -13,6 +13,7 @@ import { alertState, AlertStates, connectToURLs, MonitoringRoutes, silenceState,
 import store from '../redux';
 import { ColHead, List, ListHeader, ResourceRow, TextFilter } from './factory';
 import { QueryBrowser } from './graphs';
+import { graphColors } from './graphs/query-browser';
 import { getPrometheusExpressionBrowserURL } from './graphs/prometheus-graph';
 import { confirmModal } from './modals';
 import { CheckBoxes } from './row-filter';
@@ -179,12 +180,7 @@ const ToggleGraph_ = ({hideGraphs, toggle}) => {
 };
 const ToggleGraph = connect(graphStateToProps, {toggle: UIActions.monitoringToggleGraphs})(ToggleGraph_);
 
-// Plotly default colors:
-const graphColors = [
-  '#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf',
-];
-
-const Graph_ = ({hideGraphs, metric = undefined, samples, rule}) => {
+const Graph_ = ({hideGraphs, metric = undefined, rule}) => {
   if (hideGraphs) {
     return null;
   }
@@ -198,12 +194,10 @@ const Graph_ = ({hideGraphs, metric = undefined, samples, rule}) => {
     : null;
 
   return <QueryBrowser
-    colors={graphColors}
     defaultTimespan={timespan}
     GraphLink={GraphLink}
     metric={metric}
     queries={[query]}
-    samples={samples}
   />;
 };
 const Graph = connect(graphStateToProps)(Graph_);
@@ -254,7 +248,7 @@ const AlertsDetailsPage = withFallback(connect(alertStateToProps)((props: Alerts
         <div className="co-m-pane__body-group">
           <div className="row">
             <div className="col-sm-12">
-              {state !== AlertStates.NotFiring && <Graph metric={labels} rule={rule} samples={600} />}
+              {state !== AlertStates.NotFiring && <Graph metric={labels} rule={rule} />}
             </div>
           </div>
           <div className="row">
@@ -405,7 +399,7 @@ const AlertRulesDetailsPage = withFallback(connect(ruleStateToProps)((props: Ale
           </SectionHeading>
           <div className="row">
             <div className="col-sm-12">
-              <Graph rule={rule} samples={300} />
+              <Graph rule={rule} />
             </div>
           </div>
           <div className="row">
@@ -991,12 +985,10 @@ const QueryBrowserPage = () => {
       <div className="row">
         <div className="col-xs-12">
           <QueryBrowser
-            colors={graphColors}
             defaultTimespan={30 * 60 * 1000}
             GraphLink={ToggleGraph}
             onDataUpdate={onDataUpdate}
             queries={validQueries}
-            samples={600}
           />
           <form onSubmit={runQueries}>
             <div className="group">

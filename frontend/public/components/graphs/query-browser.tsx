@@ -2,9 +2,9 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import {
   Chart,
-  ChartArea,
   ChartAxis,
   ChartGroup,
+  ChartLine,
   ChartThemeColor,
   ChartThemeVariant,
   getCustomTheme,
@@ -30,6 +30,12 @@ import { queryBrowserTheme } from './themes';
 const spans = ['5m', '15m', '30m', '1h', '2h', '6h', '12h', '1d', '2d', '1w', '2w'];
 const dropdownItems = _.zipObject(spans, spans);
 const theme = getCustomTheme(ChartThemeColor.multi, ChartThemeVariant.light, queryBrowserTheme);
+
+// Plotly default colors
+// TODO: Remove this once PatternFly's default colors are finalized
+export const graphColors = [
+  '#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf',
+];
 
 const SpanControls = ({defaultSpanText, onChange, span}) => {
   const [isValid, setIsValid] = React.useState(true);
@@ -73,7 +79,7 @@ const SpanControls = ({defaultSpanText, onChange, span}) => {
   </React.Fragment>;
 };
 
-const Graph: React.FC<GraphProps> = ({colors, domain, data, onZoom}) => {
+const Graph: React.FC<GraphProps> = ({domain, data, onZoom}) => {
   const [containerRef, width] = useRefWidth();
 
   return <div className="graph-wrapper">
@@ -89,8 +95,8 @@ const Graph: React.FC<GraphProps> = ({colors, domain, data, onZoom}) => {
       >
         <ChartAxis tickCount={5} tickFormat={twentyFourHourTime} />
         <ChartAxis dependentAxis tickCount={5} tickFormat={humanizeNumber} />
-        <ChartGroup colorScale={colors}>
-          {_.map(data, ({values}, i) => <ChartArea key={i} data={values} />)}
+        <ChartGroup colorScale={graphColors}>
+          {_.map(data, ({values}, i) => <ChartLine key={i} data={values} />)}
         </ChartGroup>
       </Chart>
     </div>
@@ -136,14 +142,12 @@ const handleResponses = (responses: PrometheusResponse[], metric: Labels, sample
 };
 
 const QueryBrowser_: React.FC<QueryBrowserProps> = ({
-  colors,
   defaultTimespan,
   GraphLink,
   hideGraphs,
   metric,
   onDataUpdate,
   queries,
-  samples,
 }) => {
   // For the default time span, use the first of the suggested span options that is at least as long as defaultTimespan
   const defaultSpanText = spans.find(s => parsePrometheusDuration(s) >= defaultTimespan);
@@ -155,6 +159,9 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
   const [updating, setUpdating] = React.useState(true);
 
   const endTime = _.get(domain, 'x[1]');
+
+  // Use more samples if we are only displaying a single metric
+  const samples = metric ? 600 : 300;
 
   const urls = _.map(queries, query => getPrometheusURL({
     endpoint: PrometheusEndpoint.QUERY_RANGE,
@@ -226,7 +233,7 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
           <EmptyStateIcon size="sm" icon={ChartLineIcon} />
           <Title size="sm">No Prometheus datapoints found.</Title>
         </EmptyState>}
-        {!hideGraphs && !isEmptyState && <Graph colors={colors} data={graphData} domain={graphDomain} onZoom={onZoom} />}
+        {!hideGraphs && !isEmptyState && <Graph data={graphData} domain={graphDomain} onZoom={onZoom} />}
       </React.Fragment>}
   </div>;
 };
@@ -251,19 +258,16 @@ type GraphDataMetric = {
 };
 
 type GraphProps = {
-  colors: string[];
   data: GraphDataMetric[];
   domain: Domain;
   onZoom: (range: Domain) => void;
 };
 
 type QueryBrowserProps = {
-  colors: string[];
   defaultTimespan: number;
   GraphLink: React.ComponentType<{}>;
   hideGraphs: boolean;
   metric: Labels;
   onDataUpdate: (data: GraphDataMetric[]) => void;
   queries: string[];
-  samples?: number;
 };
