@@ -2,9 +2,9 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import {
   Chart,
-  ChartArea,
   ChartAxis,
   ChartGroup,
+  ChartLine,
   ChartThemeColor,
   ChartThemeVariant,
   getCustomTheme,
@@ -96,7 +96,7 @@ const Graph: React.FC<GraphProps> = ({domain, data, onZoom}) => {
         <ChartAxis tickCount={5} tickFormat={twentyFourHourTime} />
         <ChartAxis dependentAxis tickCount={5} tickFormat={humanizeNumber} />
         <ChartGroup colorScale={graphColors}>
-          {_.map(data, ({values}, i) => <ChartArea key={i} data={values} />)}
+          {_.map(data, ({values}, i) => <ChartLine key={i} data={values} />)}
         </ChartGroup>
       </Chart>
     </div>
