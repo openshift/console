@@ -13,6 +13,7 @@ import { alertState, AlertStates, connectToURLs, MonitoringRoutes, silenceState,
 import store from '../redux';
 import { ColHead, List, ListHeader, ResourceRow, TextFilter } from './factory';
 import { QueryBrowser } from './graphs';
+import { graphColors } from './graphs/query-browser';
 import { getPrometheusExpressionBrowserURL } from './graphs/prometheus-graph';
 import { confirmModal } from './modals';
 import { CheckBoxes } from './row-filter';
@@ -179,11 +180,6 @@ const ToggleGraph_ = ({hideGraphs, toggle}) => {
 };
 const ToggleGraph = connect(graphStateToProps, {toggle: UIActions.monitoringToggleGraphs})(ToggleGraph_);
 
-// Plotly default colors:
-const graphColors = [
-  '#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf',
-];
-
 const Graph_ = ({hideGraphs, metric = undefined, samples, rule}) => {
   if (hideGraphs) {
     return null;
@@ -198,7 +194,6 @@ const Graph_ = ({hideGraphs, metric = undefined, samples, rule}) => {
     : null;
 
   return <QueryBrowser
-    colors={graphColors}
     defaultTimespan={timespan}
     GraphLink={GraphLink}
     metric={metric}
@@ -991,7 +986,6 @@ const QueryBrowserPage = () => {
       <div className="row">
         <div className="col-xs-12">
           <QueryBrowser
-            colors={graphColors}
             defaultTimespan={30 * 60 * 1000}
             GraphLink={ToggleGraph}
             onDataUpdate={onDataUpdate}
