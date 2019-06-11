@@ -2,8 +2,9 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { safeDump } from 'js-yaml';
 import { Base64 } from 'js-base64';
-
-import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
+import * as classNames from 'classnames';
+import { sortable } from '@patternfly/react-table';
+import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
 import { Kebab, SectionHeading, navFactory, ResourceKebab, ResourceLink, ResourceSummary } from './utils';
 import { fromNow } from './utils/datetime';
 import { k8sList } from '../module/k8s';
@@ -79,36 +80,63 @@ const KubeConfigify = (kind, sa) => ({
 const { common } = Kebab.factory;
 const menuActions = [KubeConfigify, ...common];
 
-const Header = props => <ListHeader>
-  <ColHead {...props} className="col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
-  <ColHead {...props} className="col-sm-4 col-xs-6" sortField="metadata.namespace">Namespace</ColHead>
-  <ColHead {...props} className="col-sm-2 hidden-xs" sortField="secrets">Secrets</ColHead>
-  <ColHead {...props} className="col-sm-2 hidden-xs" sortField="metadata.creationTimestamp">Age</ColHead>
-</ListHeader>;
+const kind = 'ServiceAccount';
 
-const ServiceAccountRow = ({obj: serviceaccount}) => {
+const tableColumnClasses = [
+  classNames('pf-m-4-col-on-md', 'pf-m-6-col-on-sm'),
+  classNames('pf-m-4-col-on-md', 'pf-m-6-col-on-sm'),
+  classNames('pf-m-2-col-on-lg', 'pf-m-hidden', 'pf-m-visible-on-lg'),
+  classNames('pf-m-2-col-on-md', 'pf-m-hidden', 'pf-m-visible-on-md'),
+  Kebab.columnClass,
+];
+
+const ServiceAccountTableHeader = () => {
+  return [
+    {
+      title: 'Name', sortField: 'metadata.name', transforms: [sortable],
+      props: { className: tableColumnClasses[0] },
+    },
+    {
+      title: 'Namespace', sortField: 'metadata.namespace', transforms: [sortable],
+      props: { className: tableColumnClasses[1] },
+    },
+    {
+      title: 'Secrets', sortField: 'secrets', transforms: [sortable],
+      props: { className: tableColumnClasses[2] },
+    },
+    { title: 'Age', sortField: 'metadata.creationTimestamp', transforms: [sortable],
+      props: { className: tableColumnClasses[3] },
+    },
+    {
+      title: '', props: { className: tableColumnClasses[4] },
+    },
+  ];
+};
+ServiceAccountTableHeader.displayName = 'ServiceAccountTableHeader';
+
+const ServiceAccountTableRow = ({obj: serviceaccount, index, key, style}) => {
   const {metadata: {name, namespace, uid, creationTimestamp}, secrets} = serviceaccount;
-
   return (
-    <ResourceRow obj={serviceaccount}>
-      <div className="col-sm-4 col-xs-6">
-        <ResourceLink kind="ServiceAccount" name={name} namespace={namespace} title={uid} />
-      </div>
-      <div className="col-sm-4 col-xs-6 co-break-word">
+    <TableRow id={serviceaccount.metadata.uid} index={index} trKey={key} style={style}>
+      <TableData className={tableColumnClasses[0]}>
+        <ResourceLink kind={kind} name={name} namespace={namespace} title={uid} />
+      </TableData>
+      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
         <ResourceLink kind="Namespace" name={namespace} title={namespace} /> {}
-      </div>
-      <div className="col-sm-2 hidden-xs">
+      </TableData>
+      <TableData className={tableColumnClasses[2]}>
         {secrets ? secrets.length : 0}
-      </div>
-      <div className="col-sm-2 hidden-xs">
+      </TableData>
+      <TableData className={tableColumnClasses[3]}>
         {fromNow(creationTimestamp)}
-      </div>
-      <div className="dropdown-kebab-pf">
-        <ResourceKebab actions={menuActions} kind="ServiceAccount" resource={serviceaccount} />
-      </div>
-    </ResourceRow>
+      </TableData>
+      <TableData className={tableColumnClasses[4]}>
+        <ResourceKebab actions={menuActions} kind={kind} resource={serviceaccount} />
+      </TableData>
+    </TableRow>
   );
 };
+ServiceAccountTableRow.displayName = 'ServiceAccountTableRow';
 
 const Details = ({obj: serviceaccount}) => {
   const {metadata: {namespace}, secrets} = serviceaccount;
@@ -133,6 +161,6 @@ const ServiceAccountsDetailsPage = props => <DetailsPage
   menuActions={menuActions}
   pages={[navFactory.details(Details), navFactory.editYaml()]}
 />;
-const ServiceAccountsList = props => <List {...props} Header={Header} Row={ServiceAccountRow} />;
+const ServiceAccountsList = props => <Table {...props} aria-label="Service Accounts" Header={ServiceAccountTableHeader} Row={ServiceAccountTableRow} virtualize />;
 const ServiceAccountsPage = props => <ListPage ListComponent={ServiceAccountsList} {...props} canCreate={true} />;
 export {ServiceAccountsList, ServiceAccountsPage, ServiceAccountsDetailsPage};

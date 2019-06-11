@@ -1,9 +1,10 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-
+import * as classNames from 'classnames';
+import { sortable } from '@patternfly/react-table';
 import { getNodeRoles, nodeStatus, makeNodeSchedulable, K8sResourceKind, referenceForModel } from '../module/k8s';
 import { ResourceEventStream } from './events';
-import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
+import { Table, TableRow, TableData, DetailsPage, ListPage } from './factory';
 import { configureUnschedulableModal } from './modals';
 import { PodsPage } from './pod';
 import { Kebab, navFactory, LabelList, ResourceKebab, SectionHeading, ResourceLink, Timestamp, units, cloudProviderNames, cloudProviderID, pluralize, StatusIconAndText, humanizeDecimalBytes, humanizeCpuCores } from './utils';
@@ -61,52 +62,73 @@ export const NodeIPList = ({ips, expand = false}) => <div>
   </div>)}
 </div>;
 
-const Header = props => {
-  if (!props.data) {
-    return null;
-  }
-  return <ListHeader>
-    <ColHead {...props} className="col-md-5 col-sm-5 col-xs-8" sortField="metadata.name">Name</ColHead>
-    <ColHead {...props} className="col-md-2 col-sm-3 col-xs-4" sortFunc="nodeReadiness">Status</ColHead>
-    <ColHead {...props} className="col-md-2 col-sm-4 hidden-xs" sortFunc="nodeRoles">Role</ColHead>
-    <ColHead {...props} className="col-md-3 hidden-sm hidden-xs" sortField="metadata.annotations['machine.openshift.io/machine']">Machine</ColHead>
-  </ListHeader>;
+const tableColumnClasses = [
+  classNames('pf-m-5-col-on-lg', 'pf-m-5-col-on-md', 'pf-m-8-col-on-sm'),
+  classNames('pf-m-2-col-on-lg', 'pf-m-3-col-on-md', 'pf-m-4-col-on-sm'),
+  classNames('pf-m-2-col-on-lg', 'pf-m-4-col-on-md', 'pf-m-hidden', 'pf-m-visible-on-md'),
+  classNames('pf-m-3-col-on-lg', 'pf-m-hidden', 'pf-m-visible-on-lg'),
+  Kebab.columnClass,
+];
+
+const NodeTableHeader = () => {
+  return [
+    {
+      title: 'Name', sortField: 'metadata.name', transforms: [sortable],
+      props: { className: tableColumnClasses[0] },
+    },
+    {
+      title: 'Status', sortFunc: 'nodeReadiness', transforms: [sortable],
+      props: { className: tableColumnClasses[1] },
+    },
+    {
+      title: 'Role', sortFunc: 'nodeRoles', transforms: [sortable],
+      props: { className: tableColumnClasses[2] },
+    },
+    {
+      title: 'Machine', sortField: 'metadata.annotations[\'machine.openshift.io/machine\']', transforms: [sortable],
+      props: { className: tableColumnClasses[3] },
+    },
+    {
+      title: '', props: { className: tableColumnClasses[4] },
+    },
+  ];
 };
+NodeTableHeader.displayName = 'NodeTableHeader';
 
 const NodeStatus = ({node}) => <StatusIconAndText status={nodeStatus(node)} />;
 
-const NodeRow = ({obj: node, expand}) => {
+const NodeTableRow: React.FC<NodeTableRowProps> = ({obj: node, index, key, style}) => {
   const machine = getMachine(node);
   const roles = getNodeRoles(node).sort();
-
-  return <ResourceRow obj={node}>
-    <div className="col-md-5 col-sm-5 col-xs-8">
-      <ResourceLink kind="Node" name={node.metadata.name} title={node.metadata.uid} />
-    </div>
-    <div className="col-md-2 col-sm-3 col-xs-4">
-      <NodeStatus node={node} />
-    </div>
-    <div className="col-md-2 col-sm-4 hidden-xs">
-      {roles.length ? roles.join(', ') : '-'}
-    </div>
-    <div className="col-md-3 hidden-sm hidden-xs">
-      {machine && <ResourceLink kind={referenceForModel(MachineModel)} name={machine.name} namespace={machine.namespace} />}
-    </div>
-    {expand && <div className="co-resource-list__item--expanded">
-      <div className="col-xs-5">
-        <NodeIPList ips={node.status.addresses} expand={expand} />
-      </div>
-      <div className="col-xs-7">
-        <LabelList kind="Node" labels={node.metadata.labels} />
-      </div>
-    </div>}
-    <div className="dropdown-kebab-pf">
-      <NodeKebab node={node} />
-    </div>
-  </ResourceRow>;
+  return (
+    <TableRow id={node.metadata.uid} index={index} trKey={key} style={style}>
+      <TableData className={tableColumnClasses[0]}>
+        <ResourceLink kind="Node" name={node.metadata.name} title={node.metadata.uid} />
+      </TableData>
+      <TableData className={tableColumnClasses[1]}>
+        <NodeStatus node={node} />
+      </TableData>
+      <TableData className={tableColumnClasses[2]}>
+        {roles.length ? roles.join(', ') : '-'}
+      </TableData>
+      <TableData className={tableColumnClasses[3]}>
+        {machine && <ResourceLink kind={referenceForModel(MachineModel)} name={machine.name} namespace={machine.namespace} />}
+      </TableData>
+      <TableData className={tableColumnClasses[4]}>
+        <NodeKebab node={node} />
+      </TableData>
+    </TableRow>
+  );
+};
+NodeTableRow.displayName = 'NodeTableRow';
+type NodeTableRowProps = {
+  obj: K8sResourceKind;
+  index: number;
+  key?: string;
+  style: object;
 };
 
-const NodesList = props => <List {...props} Header={Header} Row={NodeRow} />;
+const NodesList = props => <Table {...props} aria-label="Nodes" Header={NodeTableHeader} Row={NodeTableRow} virtualize />;
 
 const filters = [{
   type: 'node-status',
@@ -117,7 +139,7 @@ const filters = [{
     {id: 'Not Ready', title: 'Not Ready'},
   ],
 }];
-export const NodesPage = props => <ListPage {...props} ListComponent={NodesList} rowFilters={filters} canExpand={true} />;
+export const NodesPage = props => <ListPage {...props} ListComponent={NodesList} rowFilters={filters} />;
 
 const NodeGraphs = requirePrometheus(({node}) => {
   const nodeIp = _.find<{type: string, address: string}>(node.status.addresses, {type: 'InternalIP'});

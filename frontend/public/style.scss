@@ -1,6 +1,8 @@
 // Config
 // pf3 color variables
 @import '~patternfly/dist/sass/patternfly/color-variables';
+@import '~@patternfly/patternfly/sass-utilities/all';
+@import "~@patternfly/patternfly/_variables";
 @import "style/vars";
 
 // External dependency variables or mixins that are required/extended by our custom styles (tilde tells Webpack not to use relative path)

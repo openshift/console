@@ -1,10 +1,11 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-
+import { sortable } from '@patternfly/react-table';
+import * as classNames from 'classnames';
 import { connectToFlags } from '../reducers/features';
 import { Conditions } from './conditions';
 import { FLAGS } from '../const';
-import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
+import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
 import { Kebab, navFactory, ResourceKebab, SectionHeading, ResourceLink, ResourceSummary, Selector, StatusIconAndText } from './utils';
 import { ResourceEventStream } from './events';
 
@@ -18,38 +19,74 @@ const PVCStatus = ({pvc}) => {
   return <StatusIconAndText status={phase} />;
 };
 
-const Header = props => <ListHeader>
-  <ColHead {...props} className="col-lg-2 col-md-2 col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
-  <ColHead {...props} className="col-lg-2 col-md-2 col-sm-4 col-xs-6" sortField="metadata.namespace">Namespace</ColHead>
-  <ColHead {...props} className="col-lg-2 col-md-2 col-sm-4 hidden-xs" sortField="status.phase">Status</ColHead>
-  <ColHead {...props} className="col-lg-3 col-md-3 hidden-sm hidden-xs" sortField="spec.volumeName">Persistent Volume</ColHead>
-  <ColHead {...props} className="col-lg-3 col-md-3 hidden-sm hidden-xs" sortField="spec.resources.requests.storage">Requested</ColHead>
-</ListHeader>;
+const tableColumnClasses = [
+  classNames('pf-m-2-col-on-xl', 'pf-m-2-col-on-lg', 'pf-m-4-col-on-md', 'pf-m-6-col-on-sm'),
+  classNames('pf-m-2-col-on-xl', 'pf-m-2-col-on-lg', 'pf-m-4-col-on-md', 'pf-m-6-col-on-sm'),
+  classNames('pf-m-2-col-on-xl', 'pf-m-2-col-on-lg', 'pf-m-4-col-on-md', 'pf-m-hidden', 'pf-m-visible-on-md'),
+  classNames('pf-m-3-col-on-xl', 'pf-m-3-col-on-lg', 'pf-m-hidden', 'pf-m-visible-on-lg'),
+  classNames('pf-m-3-col-on-xl', 'pf-m-3-col-on-lg', 'pf-m-hidden', 'pf-m-visible-on-lg'),
+  Kebab.columnClass,
+];
+
+const PVCTableHeader = () => {
+  return [
+    {
+      title: 'Name', sortField: 'metadata.name', transforms: [sortable],
+      props: { className: tableColumnClasses[0] },
+    },
+    {
+      title: 'Namespace', sortField: 'metadata.namespace', transforms: [sortable],
+      props: { className: tableColumnClasses[1] },
+    },
+    {
+      title: 'Status', sortField: 'status.phase', transforms: [sortable],
+      props: { className: tableColumnClasses[2] },
+    },
+    {
+      title: 'Persistent Volume', sortField: 'spec.volumeName', transforms: [sortable],
+      props: { className: tableColumnClasses[3] },
+    },
+    {
+      title: 'Requested', sortField: 'spec.resources.requests.storage', transforms: [sortable],
+      props: { className: tableColumnClasses[4] },
+    },
+    {
+      title: '', props: { className: tableColumnClasses[5] },
+    },
+  ];
+};
+PVCTableHeader.displayName = 'PVCTableHeader';
 
 const kind = 'PersistentVolumeClaim';
-const Row = ({obj}) => <div className="row co-resource-list__item">
-  <div className="col-lg-2 col-md-2 col-sm-4 col-xs-6">
-    <ResourceLink kind={kind} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
-  </div>
-  <div className="col-lg-2 col-md-2 col-sm-4 col-xs-6 co-break-word">
-    <ResourceLink kind="Namespace" name={obj.metadata.namespace} title={obj.metadata.namespace} />
-  </div>
-  <div className="col-lg-2 col-md-2 col-sm-4 hidden-xs">
-    <PVCStatus pvc={obj} />
-  </div>
-  <div className="col-lg-3 col-md-3 hidden-sm hidden-xs">
-    { _.get(obj, 'spec.volumeName') ?
-      <ResourceLink kind="PersistentVolume" name={obj.spec.volumeName} title={obj.spec.volumeName} />:
-      <div className="text-muted">No Persistent Volume</div>
-    }
-  </div>
-  <div className="col-lg-3 col-md-3 hidden-sm hidden-xs">
-    {_.get(obj, 'spec.resources.requests.storage', '-')}
-  </div>
-  <div className="dropdown-kebab-pf">
-    <ResourceKebab actions={menuActions} kind={kind} resource={obj} />
-  </div>
-</div>;
+
+const PVCTableRow = ({obj, index, key, style}) => {
+  return (
+    <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+      <TableData className={tableColumnClasses[0]}>
+        <ResourceLink kind={kind} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
+      </TableData>
+      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+        <ResourceLink kind="Namespace" name={obj.metadata.namespace} title={obj.metadata.namespace} />
+      </TableData>
+      <TableData className={tableColumnClasses[2]}>
+        <PVCStatus pvc={obj} />
+      </TableData>
+      <TableData className={tableColumnClasses[3]}>
+        { _.get(obj, 'spec.volumeName') ?
+          <ResourceLink kind="PersistentVolume" name={obj.spec.volumeName} title={obj.spec.volumeName} />:
+          <div className="text-muted">No Persistent Volume</div>
+        }
+      </TableData>
+      <TableData className={tableColumnClasses[4]}>
+        {_.get(obj, 'spec.resources.requests.storage', '-')}
+      </TableData>
+      <TableData className={tableColumnClasses[5]}>
+        <ResourceKebab actions={menuActions} kind={kind} resource={obj} />
+      </TableData>
+    </TableRow>
+  );
+};
+PVCTableRow.displayName = 'PVCTableRow';
 
 const Details_ = ({flags, obj: pvc}) => {
   const canListPV = flags[FLAGS.CAN_LIST_PV];
@@ -114,7 +151,7 @@ const filters = [{
 }];
 
 
-export const PersistentVolumeClaimsList = props => <List {...props} Header={Header} Row={Row} />;
+export const PersistentVolumeClaimsList = props => <Table {...props} aria-label="Persistent Volume Claims" Header={PVCTableHeader} Row={PVCTableRow} virtualize />;
 export const PersistentVolumeClaimsPage = props => {
   const createProps = {
     to: `/k8s/ns/${props.namespace || 'default'}/persistentvolumeclaims/~new/form`,

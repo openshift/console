@@ -154,8 +154,9 @@
   table {
     thead {
       th {
-        color: $color-text-secondary;
-        font-weight: 400;
+        color: $color-text-primary;
+        font-weight: var(--pf-global--FontWeight--bold);
+        font-size: $font-size-base;
       }
     }
   }
@@ -477,10 +478,10 @@
     }
   }
   &__head {
-    color: $color-text-secondary;
-    font-size: ($font-size-base - 1);
+    color: $color-text-primary;
+    font-weight: var(--pf-global--FontWeight--bold);
+    font-size: $font-size-base;
     padding: 0 20px 10px 0; // right padding to maintain alignment with __body .row
-    text-transform: uppercase;
     a {
       cursor: pointer;
     }

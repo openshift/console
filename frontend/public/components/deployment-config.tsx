@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-
 import { k8sCreate, K8sKind, K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
 import { errorModal } from './modals';
 import { DeploymentConfigModel } from '../models';
@@ -9,10 +8,8 @@ import { ResourceEventStream } from './events';
 import { VolumesTable } from './volumes-table';
 import {
   DetailsPage,
-  List,
   ListPage,
-  WorkloadListHeader,
-  WorkloadListRow,
+  Table,
 } from './factory';
 import {
   AsyncComponent,
@@ -30,6 +27,11 @@ import {
   WorkloadPausedAlert,
   StatusIconAndText,
 } from './utils';
+
+import {
+  WorkloadTableRow,
+  WorkloadTableHeader,
+} from './workload-table';
 
 const DeploymentConfigsReference: K8sResourceKindReference = 'DeploymentConfig';
 
@@ -186,10 +188,27 @@ export const DeploymentConfigsDetailsPage: React.FC<DeploymentConfigsDetailsPage
 };
 DeploymentConfigsDetailsPage.displayName = 'DeploymentConfigsDetailsPage';
 
-const DeploymentConfigsRow: React.FC<DeploymentConfigsRowProps> = props => {
-  return <WorkloadListRow {...props} kind="DeploymentConfig" actions={menuActions} />;
+const kind = 'DeploymentConfig';
+
+const DeploymentConfigTableRow: React.FC<DeploymentConfigTableRowProps> = ({obj, index, key, style}) => {
+  return (
+    <WorkloadTableRow obj={obj} index={index} key={key} style={style} menuActions={menuActions} kind={kind} />
+  );
 };
-export const DeploymentConfigsList: React.FC = props => <List {...props} Header={WorkloadListHeader} Row={DeploymentConfigsRow} />;
+DeploymentConfigTableRow.displayName = 'DeploymentTableRow';
+type DeploymentConfigTableRowProps = {
+  obj: K8sResourceKind;
+  index: number;
+  key?: string;
+  style: object;
+};
+
+const DeploymentConfigTableHeader = () => {
+  return WorkloadTableHeader();
+};
+DeploymentConfigTableHeader.displayName = 'DeploymentConfigTableHeader';
+
+export const DeploymentConfigsList: React.FC = props => <Table {...props} aria-label="Deployment Configs" Header={DeploymentConfigTableHeader} Row={DeploymentConfigTableRow} virtualize />;
 DeploymentConfigsList.displayName = 'DeploymentConfigsList';
 
 export const DeploymentConfigsPage: React.FC<DeploymentConfigsPageProps> = props => {
@@ -207,10 +226,6 @@ export const DeploymentConfigsPage: React.FC<DeploymentConfigsPageProps> = props
   return <ListPage {...props} title="Deployment Configs" kind={DeploymentConfigsReference} ListComponent={DeploymentConfigsList} canCreate={true} createButtonText="Create" createProps={createProps} filterLabel={props.filterLabel} />;
 };
 DeploymentConfigsPage.displayName = 'DeploymentConfigsListPage';
-
-type DeploymentConfigsRowProps = {
-  obj: K8sResourceKind;
-};
 
 type DeploymentConfigsPageProps = {
   filterLabel: string;

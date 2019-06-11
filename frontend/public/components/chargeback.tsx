@@ -1,11 +1,11 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import * as classNames from 'classnames';
-
+import { sortable } from '@patternfly/react-table';
 import { connectToFlags, flagPending } from '../reducers/features';
 import { FLAGS } from '../const';
-import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
 import { Conditions } from './conditions';
+import { ColHead, DetailsPage, ListHeader, ListPage, Table, TableRow, TableData } from './factory';
 import { getQueryArgument, setQueryArgument } from './utils/router';
 import { coFetchJSON } from '../co-fetch';
 import { ChargebackReportModel } from '../models';
@@ -17,6 +17,7 @@ import {
 } from './utils/status-box';
 import {
   GroupVersionKind,
+  K8sResourceKind,
   modelFor,
   referenceForModel,
 } from '../module/k8s';
@@ -55,28 +56,76 @@ const ChargebackNavBar: React.SFC<{match: {url: string}}> = props => <div>
   <NavBar pages={reportPages} basePath={props.match.url.split('/').slice(0, -1).join('/')} hideDivider />
 </div>;
 
+const tableColumnClasses = [
+  classNames('pf-m-3-col-on-xl', 'pf-m-3-col-on-lg', 'pf-m-4-col-on-sm'),
+  classNames('pf-m-2-col-on-xl', 'pf-m-3-col-on-lg', 'pf-m-4-col-on-sm'),
+  classNames('pf-m-3-col-on-xl', 'pf-m-hidden', 'pf-m-visible-on-xl'),
+  classNames('pf-m-2-col-on-xl', 'pf-m-2-col-on-lg', 'pf-m-hidden', 'pf-m-visible-on-lg'),
+  classNames('pf-m-2-col-on-xl', 'pf-m-2-col-on-lg', 'pf-m-hidden', 'pf-m-visible-on-lg'),
+  Kebab.columnClass,
+];
 
-const ReportsHeader = props => <ListHeader>
-  <ColHead {...props} className="col-lg-3 col-md-3 col-xs-4" sortField="metadata.name">Name</ColHead>
-  <ColHead {...props} className="col-lg-2 col-md-3 col-xs-4" sortField="metadata.namespace">Namespace</ColHead>
-  <ColHead {...props} className="col-lg-3 hidden-md hidden-sm hidden-xs">Report Query</ColHead>
-  <ColHead {...props} className="col-lg-2 col-md-2 hidden-sm hidden-xs" sortField="spec.reportingStart">Reporting Start</ColHead>
-  <ColHead {...props} className="col-lg-2 col-md-2 hidden-sm hidden-xs" sortField="spec.reportingEnd">Reporting End</ColHead>
-</ListHeader>;
+const ReportsTableHeader = () => {
+  return [
+    {
+      title: 'Name', sortField: 'metadata.name', transforms: [sortable],
+      props: { className: tableColumnClasses[0] },
+    },
+    {
+      title: 'Namespace', sortField: 'metadata.namespace', transforms: [sortable],
+      props: { className: tableColumnClasses[1] },
+    },
+    {
+      title: 'Report Query', props: { className: tableColumnClasses[2] },
+    },
+    {
+      title: 'Reporting Start', sortField: 'spec.reportingStart', transforms: [sortable],
+      props: { className: tableColumnClasses[3] },
+    },
+    {
+      title: 'Reporting End', sortField: 'spec.reportingEnd', transforms: [sortable],
+      props: { className: tableColumnClasses[4] },
+    },
+    {
+      title: '', props: { className: tableColumnClasses[5] },
+    },
+  ];
+};
+ReportsTableHeader.displayName = 'ReportsTableHeader';
 
-const ReportsRow: React.SFC<ReportsRowProps> = ({obj}) => {
-  return <div className="row co-resource-list__item">
-    <div className="col-lg-3 col-md-3 col-xs-4">
-      <ResourceLink kind={ReportReference} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
-    </div>
-    <div className="col-lg-2 col-md-3 col-xs-4"><ResourceLink kind="Namespace" name={obj.metadata.namespace} namespace={undefined} title={obj.metadata.namespace} /></div>
-    <div className="col-lg-3 hidden-md hidden-sm hidden-xs"><ResourceLink kind={ReportGenerationQueryReference} name={_.get(obj, ['spec', 'query'])} namespace={obj.metadata.namespace} title={obj.metadata.namespace} /></div>
-    <div className="col-lg-2 col-md-2 hidden-sm hidden-xs"><Timestamp timestamp={_.get(obj, ['spec', 'reportingStart'])} /></div>
-    <div className="col-lg-2 col-md-2 hidden-sm hidden-xs"><Timestamp timestamp={_.get(obj, ['spec', 'reportingEnd'])} /></div>
-    <div className="dropdown-kebab-pf">
-      <ResourceKebab actions={menuActions} kind={ReportReference} resource={obj} />
-    </div>
-  </div>;
+const ReportsTableRow: React.FC<ReportsTableRowProps> = ({obj, index, key, style}) => {
+  return (
+    <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+      <TableData className={tableColumnClasses[0]}>
+        <ResourceLink kind={ReportReference} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
+      </TableData>
+      <TableData className={tableColumnClasses[1]}>
+        <ResourceLink kind="Namespace" name={obj.metadata.namespace} namespace={undefined} title={obj.metadata.namespace} />
+      </TableData>
+      <TableData className={tableColumnClasses[2]}>
+        <ResourceLink kind={ReportGenerationQueryReference} name={_.get(obj, ['spec', 'generationQuery'])} namespace={obj.metadata.namespace} title={obj.metadata.namespace} />
+      </TableData>
+      <TableData className={classNames(tableColumnClasses[3], 'co-break-word')}>
+        {_.get(obj, ['status', 'phase'])}
+      </TableData>
+      <TableData className={tableColumnClasses[4]}>
+        <Timestamp timestamp={_.get(obj, ['spec', 'reportingStart'])} />
+      </TableData>
+      <TableData className={tableColumnClasses[5]}>
+        <Timestamp timestamp={_.get(obj, ['spec', 'reportingEnd'])} />
+      </TableData>
+      <TableData className={tableColumnClasses[6]}>
+        <ResourceKebab actions={menuActions} kind={ReportReference} resource={obj} />
+      </TableData>
+    </TableRow>
+  );
+};
+ReportsTableRow.displayName = 'ReportsTableRow';
+type ReportsTableRowProps = {
+  obj: K8sResourceKind;
+  index: number;
+  key?: string;
+  style: object;
 };
 
 class ReportsDetails extends React.Component<ReportsDetailsProps> {
@@ -279,7 +328,8 @@ const reportsPages = [
 ];
 
 const EmptyMsg = () => <MsgBox title="No reports have been generated" detail="Reports allow resource usage and cost to be tracked per namespace, pod, and more." />;
-export const ReportsList: React.SFC = props => <List {...props} Header={ReportsHeader} Row={ReportsRow} EmptyMsg={EmptyMsg} />;
+
+export const ReportsList: React.SFC = props => <Table {...props} aria-label="Reports" Header={ReportsTableHeader} Row={ReportsTableRow} EmptyMsg={EmptyMsg} />;
 
 const ReportsPage_: React.SFC<ReportsPageProps> = props => {
   if (flagPending(props.flags[FLAGS.CHARGEBACK])) {
@@ -318,26 +368,65 @@ export const ReportsDetailsPage: React.SFC<ReportsDetailsPageProps> = props => {
   return <DetailsPage {...props} kind={ReportReference} menuActions={menuActions} pages={reportsPages} />;
 };
 
+const reportsGenerationColumnClasses = [
+  classNames('pf-m-3-col-on-lg', 'pf-m-4-col-on-md'),
+  classNames('pf-m-3-col-on-lg', 'pf-m-4-col-on-md'),
+  classNames('pf-m-3-col-on-lg', 'pf-m-hidden', 'pf-m-visible-on-lg'),
+  classNames('pf-m-3-col-on-lg', 'pf-m-4-col-on-md'),
+  Kebab.columnClass,
+];
 
-const ReportGenerationQueriesHeader = props => <ListHeader>
-  <ColHead {...props} className="col-md-3 col-sm-4" sortField="metadata.name">Name</ColHead>
-  <ColHead {...props} className="col-md-3 col-sm-4" sortField="metadata.namespace">Namespace</ColHead>
-  <ColHead {...props} className="col-md-3 hidden-sm hidden-xs">Labels</ColHead>
-  <ColHead {...props} className="col-md-3 col-sm-4" sortField="metadata.creationTimestamp">Created At</ColHead>
-</ListHeader>;
+const ReportGenerationQueriesTableHeader = () => {
+  return [
+    {
+      title: 'Name', sortField: 'metadata.name', transforms: [sortable],
+      props: { className: reportsGenerationColumnClasses[0] },
+    },
+    {
+      title: 'Namespace', sortField: 'metadata.namespace', transforms: [sortable],
+      props: { className: reportsGenerationColumnClasses[1] },
+    },
+    {
+      title: 'Labels', props: { className: reportsGenerationColumnClasses[2] },
+    },
+    {
+      title: 'Created At', sortField: 'metadata.creationTimestamp', transforms: [sortable],
+      props: { className: reportsGenerationColumnClasses[3] },
+    },
+    {
+      title: '', props: { className: reportsGenerationColumnClasses[4] },
+    },
+  ];
+};
+ReportGenerationQueriesTableHeader.displayName = 'ReportGenerationQueriesTableHeader';
 
-const ReportGenerationQueriesRow: React.SFC<ReportGenerationQueriesRowProps> = ({obj}) => {
-  return <div className="row co-resource-list__item">
-    <div className="col-md-3 col-sm-4">
-      <ResourceLink kind={ReportGenerationQueryReference} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
-    </div>
-    <div className="col-md-3 col-sm-4"><ResourceLink kind="Namespace" namespace={undefined} name={obj.metadata.namespace} title={obj.metadata.namespace} /></div>
-    <div className="col-md-3 hidden-sm hidden-xs"><LabelList kind={ReportGenerationQueryReference} labels={_.get(obj, ['metadata', 'labels'])} /></div>
-    <div className="col-md-3 col-sm-4"><Timestamp timestamp={_.get(obj, ['metadata', 'creationTimestamp'])} /></div>
-    <div className="dropdown-kebab-pf">
-      <ResourceKebab actions={menuActions} kind={ReportGenerationQueryReference} resource={obj} />
-    </div>
-  </div>;
+const ReportGenerationQueriesTableRow: React.FC<ReportGenerationQueriesTableRowProps> = ({obj, index, key, style}) => {
+  return (
+    <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+      <TableData className={reportsGenerationColumnClasses[0]}>
+        <ResourceLink kind={ReportGenerationQueryReference} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
+      </TableData>
+      <TableData className={reportsGenerationColumnClasses[1]}>
+        <ResourceLink kind="Namespace" namespace={undefined} name={obj.metadata.namespace} title={obj.metadata.namespace} />
+      </TableData>
+      <TableData className={reportsGenerationColumnClasses[2]}>
+        <LabelList kind={ReportGenerationQueryReference} labels={_.get(obj, ['metadata', 'labels'])} />
+      </TableData>
+      <TableData className={reportsGenerationColumnClasses[3]}>
+        <Timestamp timestamp={_.get(obj, ['metadata', 'creationTimestamp'])} />
+      </TableData>
+      <TableData className={reportsGenerationColumnClasses[4]}>
+        <ResourceKebab actions={menuActions} kind={ReportGenerationQueryReference} resource={obj} />
+      </TableData>
+    </TableRow>
+  );
+};
+ReportGenerationQueriesTableRow.displayName = 'ReportGenerationQueriesTableRow';
+type ReportGenerationQueriesTableRowProps = {
+  obj: K8sResourceKind;
+  index: number;
+  key?: string;
+  style: object;
 };
 
 const ReportGenerationQueriesDetails: React.SFC<ReportGenerationQueriesDetailsProps> = ({obj}) => {
@@ -375,7 +464,7 @@ const ReportGenerationQueriesDetails: React.SFC<ReportGenerationQueriesDetailsPr
   </div>;
 };
 
-export const ReportGenerationQueriesList: React.SFC = props => <List {...props} Header={ReportGenerationQueriesHeader} Row={ReportGenerationQueriesRow} />;
+export const ReportGenerationQueriesList: React.SFC = props => <Table aria-label="Chargeback Queries List" {...props} Header={ReportGenerationQueriesTableHeader} Row={ReportGenerationQueriesTableRow} />;
 
 export const ReportGenerationQueriesPage: React.SFC<ReportGenerationQueriesPageProps> = props => <div>
   <ChargebackNavBar match={props.match} />
@@ -385,10 +474,6 @@ export const ReportGenerationQueriesPage: React.SFC<ReportGenerationQueriesPageP
 const reportGenerationQueryPages = [navFactory.details(ReportGenerationQueriesDetails), navFactory.editYaml()];
 export const ReportGenerationQueriesDetailsPage: React.SFC<ReportGenerationQueriesDetailsPageProps> = props => {
   return <DetailsPage {...props} kind={ReportGenerationQueryReference} menuActions={menuActions} pages={reportGenerationQueryPages} />;
-};
-
-export type ReportsRowProps = {
-  obj: any,
 };
 
 export type ReportsDetailsProps = {
@@ -443,12 +528,10 @@ export type ReportGenerationQueriesDetailsPageProps = {
   match: any,
 };
 
-ReportsRow.displayName = 'ReportsRow';
 ReportsList.displayName = 'ReportsList';
 ReportsPage.displayName = 'ReportsPage';
 ReportsDetailsPage.displayName = 'ReportsDetailsPage';
 
-ReportGenerationQueriesRow.displayName = 'ReportGenerationQueriesRow';
 ReportGenerationQueriesDetails.displayName = 'ReportGenerationQueriesDetails';
 ReportGenerationQueriesList.displayName = 'ReportGenerationQueriesList';
 ReportGenerationQueriesPage.displayName = 'ReportGenerationQueriesPage';
