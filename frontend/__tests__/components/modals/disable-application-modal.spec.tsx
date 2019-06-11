@@ -3,14 +3,14 @@ import { ShallowWrapper, shallow } from 'enzyme';
 import Spy = jasmine.Spy;
 import * as _ from 'lodash-es';
 
-import { DisableApplicationModal, DisableApplicationModalProps, DisableApplicationModalState } from '../../../public/components/modals/disable-application-modal';
+import { DisableApplicationModal, DisableApplicationModalProps } from '../../../public/components/modals/disable-application-modal';
 import { ModalTitle, ModalSubmitFooter } from '../../../public/components/factory/modal';
 import { testSubscription } from '../../../__mocks__/k8sResourcesMocks';
 import { SubscriptionKind } from '../../../public/components/operator-lifecycle-manager/index';
 import { ClusterServiceVersionModel, SubscriptionModel } from '../../../public/models';
 
 describe(DisableApplicationModal.name, () => {
-  let wrapper: ShallowWrapper<DisableApplicationModalProps, DisableApplicationModalState>;
+  let wrapper: ShallowWrapper<DisableApplicationModalProps>;
   let k8sKill: Spy;
   let k8sGet: Spy;
   let k8sPatch: Spy;
@@ -31,7 +31,7 @@ describe(DisableApplicationModal.name, () => {
     cancel = jasmine.createSpy('cancel');
     subscription = {..._.cloneDeep(testSubscription), status: {installedCSV: 'testapp.v1.0.0'}};
 
-    wrapper = shallow(<DisableApplicationModal subscription={subscription} k8sKill={k8sKill} k8sGet={k8sGet} k8sPatch={k8sPatch} close={close} cancel={cancel} />);
+    wrapper = shallow(<DisableApplicationModal subscription={subscription} k8sKill={k8sKill} k8sGet={k8sGet} k8sPatch={k8sPatch} close={close} cancel={cancel} />).dive();
   });
 
   it('renders a modal form', () => {
@@ -82,7 +82,7 @@ describe(DisableApplicationModal.name, () => {
   });
 
   it('does not call `props.k8sKill` to delete `ClusterServiceVersion` if `state.deleteCSV` is false', (done) => {
-    wrapper = wrapper.setState({deleteCSV: false});
+    wrapper.find('input').simulate('click');
     wrapper = wrapper.setProps({subscription: testSubscription});
 
     spyAndExpect(close)(null).then(() => {
@@ -94,8 +94,6 @@ describe(DisableApplicationModal.name, () => {
   });
 
   it('adds delete options with `propagationPolicy` if cascading delete checkbox is checked', (done) => {
-    wrapper = wrapper.setState({deleteCSV: true});
-
     spyAndExpect(close)(null).then(() => {
       expect(k8sKill.calls.argsFor(0)[3]).toEqual({kind: 'DeleteOptions', apiVersion: 'v1', propagationPolicy: 'Foreground'});
       expect(k8sKill.calls.argsFor(1)[3]).toEqual({kind: 'DeleteOptions', apiVersion: 'v1', propagationPolicy: 'Foreground'});
