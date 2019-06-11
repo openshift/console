@@ -152,16 +152,15 @@ spec:
     imageChange: {}
   - type: ConfigChange
 `).setIn([referenceForModel(k8sModels.ChargebackReportModel), 'default'], `
-apiVersion: chargeback.coreos.com/v1alpha1
+apiVersion: metering.openshift.io/v1alpha1
 kind: Report
 metadata:
   name: namespace-memory-request
-  namespace: default
+  namespace: openshift-metering
 spec:
-  generationQuery: namespace-memory-request
-  gracePeriod: 5m0s
-  reportingStart: '2018-01-01T00:00:00Z'
-  reportingEnd: '2018-12-30T23:59:59Z'
+  query: namespace-memory-request
+  reportingStart: '2019-01-01T00:00:00Z'
+  reportingEnd: '2019-12-30T23:59:59Z'
   runImmediately: true
 `)
   .setIn([referenceForModel(k8sModels.DeploymentModel), 'default'], `

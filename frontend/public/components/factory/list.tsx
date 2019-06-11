@@ -1,5 +1,4 @@
 import * as _ from 'lodash-es';
-import * as classNames from 'classnames';
 import * as fuzzy from 'fuzzysearch';
 import * as PropTypes from 'prop-types';
 import * as React from 'react';
@@ -278,13 +277,13 @@ export class ColHead extends React.Component<ColHeadProps> {
     const {
       applySort,
       children,
+      className,
       currentSortField,
       currentSortFunc,
       currentSortOrder,
       sortField,
       sortFunc,
     } = this.props;
-    const className = classNames(this.props.className, 'text-nowrap');
     if (!sortField && !sortFunc) {
       return <div className={className}>{children}</div>;
     }

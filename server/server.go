@@ -32,6 +32,7 @@ const (
 	prometheusProxyEndpoint        = "/api/prometheus"
 	prometheusTenancyProxyEndpoint = "/api/prometheus-tenancy"
 	alertManagerProxyEndpoint      = "/api/alertmanager"
+	meteringProxyEndpoint          = "/api/metering"
 	customLogoEndpoint             = "/custom-logo"
 )
 
@@ -55,6 +56,7 @@ type jsGlobals struct {
 	PrometheusBaseURL        string `json:"prometheusBaseURL"`
 	PrometheusTenancyBaseURL string `json:"prometheusTenancyBaseURL"`
 	AlertManagerBaseURL      string `json:"alertManagerBaseURL"`
+	MeteringBaseURL          string `json:"meteringBaseURL"`
 	Branding                 string `json:"branding"`
 	CustomProductName        string `json:"customProductName"`
 	CustomLogoURL            string `json:"customLogoURL"`
@@ -87,6 +89,7 @@ type Server struct {
 	PrometheusProxyConfig        *proxy.Config
 	PrometheusTenancyProxyConfig *proxy.Config
 	AlertManagerProxyConfig      *proxy.Config
+	MeteringProxyConfig          *proxy.Config
 }
 
 func (s *Server) authDisabled() bool {
@@ -99,6 +102,10 @@ func (s *Server) prometheusProxyEnabled() bool {
 
 func (s *Server) alertManagerProxyEnabled() bool {
 	return s.AlertManagerProxyConfig != nil
+}
+
+func (s *Server) meteringProxyEnabled() bool {
+	return s.MeteringProxyConfig != nil
 }
 
 func (s *Server) HTTPHandler() http.Handler {
@@ -229,6 +236,18 @@ func (s *Server) HTTPHandler() http.Handler {
 		)
 	}
 
+	if s.meteringProxyEnabled() {
+		meteringProxyAPIPath := meteringProxyEndpoint + "/api/"
+		meteringProxy := proxy.NewProxy(s.MeteringProxyConfig)
+		handle(meteringProxyAPIPath, http.StripPrefix(
+			proxy.SingleJoiningSlash(s.BaseURL.Path, meteringProxyAPIPath),
+			authHandlerWithUser(func(user *auth.User, w http.ResponseWriter, r *http.Request) {
+				r.Header.Set("Authorization", fmt.Sprintf("Bearer %s", user.Token))
+				meteringProxy.ServeHTTP(w, r)
+			})),
+		)
+	}
+
 	handle("/api/console/version", authHandler(s.versionHandler))
 	mux.HandleFunc(s.BaseURL.Path, s.indexHandler)
 
@@ -289,6 +308,10 @@ func (s *Server) indexHandler(w http.ResponseWriter, r *http.Request) {
 
 	if s.alertManagerProxyEnabled() {
 		jsg.AlertManagerBaseURL = proxy.SingleJoiningSlash(s.BaseURL.Path, alertManagerProxyEndpoint)
+	}
+
+	if s.meteringProxyEnabled() {
+		jsg.MeteringBaseURL = proxy.SingleJoiningSlash(s.BaseURL.Path, meteringProxyEndpoint)
 	}
 
 	if !s.authDisabled() {

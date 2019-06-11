@@ -36,6 +36,9 @@ const (
 
 	// Well-known location of Alert Manager service for OpenShift. This is only accessible in-cluster.
 	openshiftAlertManagerHost = "alertmanager-main.openshift-monitoring.svc:9094"
+
+	// Well-known location of metering service for OpenShift. This is only accessible in-cluster.
+	openshiftMeteringHost = "reporting-operator.openshift-metering.svc:8080"
 )
 
 func main() {
@@ -258,25 +261,30 @@ func main() {
 			if err != nil {
 				log.Fatalf("failed to read service-ca.crt file: %v", err)
 			}
-			monitoringProxyRootCAs := x509.NewCertPool()
-			if !monitoringProxyRootCAs.AppendCertsFromPEM(serviceCertPEM) {
+			serviceProxyRootCAs := x509.NewCertPool()
+			if !serviceProxyRootCAs.AppendCertsFromPEM(serviceCertPEM) {
 				log.Fatalf("no CA found for Kubernetes services")
 			}
-			monitoringProxyTLSConfig := &tls.Config{RootCAs: monitoringProxyRootCAs}
+			serviceProxyTLSConfig := &tls.Config{RootCAs: serviceProxyRootCAs}
 			srv.PrometheusProxyConfig = &proxy.Config{
-				TLSClientConfig: monitoringProxyTLSConfig,
+				TLSClientConfig: serviceProxyTLSConfig,
 				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
 				Endpoint:        &url.URL{Scheme: "https", Host: openshiftPrometheusHost, Path: "/api"},
 			}
 			srv.PrometheusTenancyProxyConfig = &proxy.Config{
-				TLSClientConfig: monitoringProxyTLSConfig,
+				TLSClientConfig: serviceProxyTLSConfig,
 				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
 				Endpoint:        &url.URL{Scheme: "https", Host: openshiftPrometheusTenancyHost, Path: "/api"},
 			}
 			srv.AlertManagerProxyConfig = &proxy.Config{
-				TLSClientConfig: monitoringProxyTLSConfig,
+				TLSClientConfig: serviceProxyTLSConfig,
 				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
 				Endpoint:        &url.URL{Scheme: "https", Host: openshiftAlertManagerHost, Path: "/api"},
+			}
+			srv.MeteringProxyConfig = &proxy.Config{
+				TLSClientConfig: serviceProxyTLSConfig,
+				HeaderBlacklist: []string{"Cookie", "X-CSRFToken"},
+				Endpoint:        &url.URL{Scheme: "https", Host: openshiftMeteringHost, Path: "/api"},
 			}
 		}
 

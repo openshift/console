@@ -187,7 +187,7 @@ const AdminNav = () => (
       <ResourceNSLink resource="rolebindings" name="Role Bindings" startsWith={rolebindingsStartsWith} />
       <ResourceNSLink resource="resourcequotas" name="Resource Quotas" startsWith={quotaStartsWith} />
       <ResourceNSLink resource="limitranges" name="Limit Ranges" />
-      <ResourceNSLink resource={referenceForModel(ChargebackReportModel)} name="Chargeback" disallowed={FLAGS.OPENSHIFT} />
+      <ResourceNSLink resource={referenceForModel(ChargebackReportModel)} name="Chargeback" required={FLAGS.CHARGEBACK} />
       <ResourceClusterLink resource="customresourcedefinitions" name="Custom Resource Definitions" required={FLAGS.CAN_LIST_CRD} />
     </NavSection>
   </React.Fragment>
