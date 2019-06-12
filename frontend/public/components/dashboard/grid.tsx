@@ -1,9 +1,8 @@
 import * as React from 'react';
 import { Grid, GridItem } from '@patternfly/react-core';
+import { global_breakpoint_lg as breakpointLG } from '@patternfly/react-tokens';
 
 import { useRefWidth } from '../utils/ref-width-hook';
-
-export const MEDIA_QUERY_LG = 992;
 
 export enum GridPosition {
   MAIN = 'MAIN',
@@ -18,7 +17,7 @@ const mapCardsToGrid = (cards: React.ComponentType<any>[], keyPrefix: string): R
 
 export const DashboardGrid: React.FC<DashboardGridProps> = ({ mainCards, leftCards = [], rightCards = [] }) => {
   const [containerRef, width] = useRefWidth();
-  const grid = width <= MEDIA_QUERY_LG ?
+  const grid = width <= parseInt(breakpointLG.value, 10) ?
     (
       <Grid className="co-dashboard-grid">
         <GridItem lg={12} md={12} sm={12}>

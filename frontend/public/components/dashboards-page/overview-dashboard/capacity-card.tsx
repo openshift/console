@@ -12,17 +12,7 @@ import { CapacityBody, CapacityItem } from '../../dashboard/capacity-card';
 import { withDashboardResources, DashboardItemProps } from '../with-dashboard-resources';
 import { humanizePercentage, humanizeDecimalBytesPerSec, humanizeBinaryBytesWithoutB } from '../../utils';
 import { getInstantVectorStats, getRangeVectorStats, GetStats } from '../../graphs/utils';
-import { CapacityQuery } from './capacity-query-types';
-
-const defaultQueries = {
-  [CapacityQuery.CPU_USED]: '((sum(node:node_cpu_utilisation:avg1m) / count(node:node_cpu_utilisation:avg1m)) * 100)[60m:5m]',
-  [CapacityQuery.MEMORY_TOTAL]: 'sum(kube_node_status_capacity_memory_bytes)',
-  [CapacityQuery.MEMORY_USED]: '(sum(kube_node_status_capacity_memory_bytes) - sum(kube_node_status_allocatable_memory_bytes))[60m:5m]',
-  [CapacityQuery.STORAGE_TOTAL]: 'sum(node_filesystem_size_bytes)',
-  [CapacityQuery.STORAGE_USED]: '(sum(node_filesystem_size_bytes) - sum(node_filesystem_free_bytes))[60m:5m]',
-  [CapacityQuery.NETWORK_TOTAL]: 'sum(avg by(instance)(node_network_speed_bytes))',
-  [CapacityQuery.NETWORK_USED]: 'sum(node:node_net_utilisation:sum_irate)',
-};
+import { OverviewQuery, overviewQueries } from './queries';
 
 const getLastStats = (response, getStats: GetStats): React.ReactText => {
   const stats = getStats(response);
@@ -31,13 +21,13 @@ const getLastStats = (response, getStats: GetStats): React.ReactText => {
 
 const getQueries = () => {
   const pluginQueries = {};
-  plugins.registry.getDashboardsOverviewCapacityQueries().forEach(cq => {
-    const queryKey = cq.properties.queryKey;
+  plugins.registry.getDashboardsOverviewQueries().forEach(pluginQuery => {
+    const queryKey = pluginQuery.properties.queryKey;
     if (!pluginQueries[queryKey]) {
-      pluginQueries[queryKey] = cq.properties.query;
+      pluginQueries[queryKey] = pluginQuery.properties.query;
     }
   });
-  return _.defaults(pluginQueries, defaultQueries);
+  return _.defaults(pluginQueries, overviewQueries);
 };
 
 export const CapacityCard_: React.FC<DashboardItemProps> = ({
@@ -52,13 +42,13 @@ export const CapacityCard_: React.FC<DashboardItemProps> = ({
   }, [watchPrometheus, stopWatchPrometheusQuery]);
 
   const queries = getQueries();
-  const cpuUtilization = prometheusResults.getIn([queries[CapacityQuery.CPU_USED], 'result']);
-  const memoryUtilization = prometheusResults.getIn([queries[CapacityQuery.MEMORY_USED], 'result']);
-  const memoryTotal = prometheusResults.getIn([queries[CapacityQuery.MEMORY_TOTAL], 'result']);
-  const storageUsed = prometheusResults.getIn([queries[CapacityQuery.STORAGE_USED], 'result']);
-  const storageTotal = prometheusResults.getIn([queries[CapacityQuery.STORAGE_TOTAL], 'result']);
-  const networkUsed = prometheusResults.getIn([queries[CapacityQuery.NETWORK_USED], 'result']);
-  const networkTotal = prometheusResults.getIn([queries[CapacityQuery.NETWORK_TOTAL], 'result']);
+  const cpuUtilization = prometheusResults.getIn([queries[OverviewQuery.CPU_UTILIZATION], 'result']);
+  const memoryUtilization = prometheusResults.getIn([queries[OverviewQuery.MEMORY_UTILIZATION], 'result']);
+  const memoryTotal = prometheusResults.getIn([queries[OverviewQuery.MEMORY_TOTAL], 'result']);
+  const storageUsed = prometheusResults.getIn([queries[OverviewQuery.STORAGE_UTILIZATION], 'result']);
+  const storageTotal = prometheusResults.getIn([queries[OverviewQuery.STORAGE_TOTAL], 'result']);
+  const networkUsed = prometheusResults.getIn([queries[OverviewQuery.NETWORK_UTILIZATION], 'result']);
+  const networkTotal = prometheusResults.getIn([queries[OverviewQuery.NETWORK_TOTAL], 'result']);
 
   return (
     <DashboardCard>

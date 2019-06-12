@@ -1,0 +1,56 @@
+.co-utilization-card__body-time-axis--wide {
+  padding-left: 0;
+}
+
+.co-utilization-card__body-time-axis--narrow {
+  border-bottom: 1px solid $pf-color-black-300;
+  margin-right: 0.25em;
+}
+
+.co-utilization-card__item {
+  border-bottom: 1px solid $pf-color-black-300;
+  font-size: 1.333em;
+}
+
+.co-utilization-card__item-chart {
+  text-align: center;
+
+  svg {
+    overflow: visible;
+  }
+}
+
+.co-utilization-card__item-chart--narrow {
+  text-align: center;
+}
+
+.co-utilization-card__item-chart--wide {
+  border-left: 1px solid $pf-color-black-300;
+  padding-left: 0;
+}
+
+.co-utilization-card__item-current {
+  text-align: right;
+}
+
+.co-utilization-card__item-current--narrow {
+  font-size: 0.9em;
+}
+
+.co-utilization-card__item-row--narrow {
+  margin-right: 0.25em;
+}
+
+.co-utilization-card__item-title-row--narrow {
+  margin-bottom: 0.5em;
+  margin-top: 1em;
+}
+
+.co-utilization-card__item-title--narrow {
+  font-size: 0.875rem;
+}
+
+.co-utilization-card__item--wide {
+  align-items: center;
+  display: flex;
+}
