@@ -15,9 +15,9 @@ import (
 	"github.com/coreos/pkg/capnslog"
 	"github.com/coreos/pkg/flagutil"
 
-	"github.com/openshift/console/auth"
+	"github.com/openshift/console/pkg/auth"
 	"github.com/openshift/console/pkg/proxy"
-	"github.com/openshift/console/server"
+	"github.com/openshift/console/pkg/server"
 )
 
 var (
