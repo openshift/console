@@ -180,6 +180,15 @@ const tableFilters = {
     const status = getClusterOperatorStatus(operator);
     return statuses.selected.has(status) || !_.includes(statuses.all, status);
   },
+
+  'template-instance-status': (statuses, instance) => {
+    if (!statuses || !statuses.selected || !statuses.selected.size) {
+      return true;
+    }
+
+    const status = getTemplateInstanceStatus(instance);
+    return statuses.selected.has(status) || !_.includes(statuses.all, status);
+  },
 };
 
 const getFilteredRows = (_filters, objects) => {
