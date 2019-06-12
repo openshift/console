@@ -3,12 +3,12 @@ import * as _ from 'lodash-es';
 import * as semver from 'semver';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
-import { Popover } from '@patternfly/react-core';
+import { AlertVariant, Popover } from '@patternfly/react-core';
 import { QuestionCircleIcon } from '@patternfly/react-icons';
 
 import { K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
-import { CopyToClipboard, ExternalLink, Kebab, SectionHeading, LabelList, navFactory, ResourceKebab, ResourceLink, ResourceSummary, history, Timestamp } from './utils';
+import { CopyToClipboard, ExpandableAlert, ExternalLink, Kebab, SectionHeading, LabelList, navFactory, ResourceKebab, ResourceLink, ResourceSummary, history, Timestamp } from './utils';
 import { fromNow } from './utils/datetime';
 
 const ImageStreamsReference: K8sResourceKindReference = 'ImageStream';
@@ -148,14 +148,23 @@ export const ExampleDockerCommandPopover: React.FC<ImageStreamManipulationHelpPr
   </Popover>;
 };
 
+const getImportErrors = (imageStream: K8sResourceKind): string[] => {
+  return _.transform(imageStream.status.tags, (acc, tag: any) => {
+    const importErrorCondition = _.find(tag.conditions, condition => condition.type === 'ImportSuccess' && condition.status === 'False');
+    importErrorCondition && acc.push(`Unable to sync image for tag ${imageStream.metadata.name}:${tag.tag}. ${importErrorCondition.message}`);
+  });
+};
+
 export const ImageStreamsDetails: React.SFC<ImageStreamsDetailsProps> = ({obj: imageStream}) => {
   const imageRepository = _.get(imageStream, 'status.dockerImageRepository');
   const publicImageRepository = _.get(imageStream, 'status.publicDockerImageRepository');
   const imageCount = _.get(imageStream, 'status.tags.length');
   const specTagByName = _.keyBy(imageStream.spec.tags, 'name');
+  const importErrors = getImportErrors(imageStream);
 
   return <div>
     <div className="co-m-pane__body">
+      {!_.isEmpty(importErrors) && <ExpandableAlert variant={AlertVariant.warning} alerts={_.map(importErrors, (error, i) => <React.Fragment key={i}>{error}</React.Fragment>)} />}
       <SectionHeading text="Image Stream Overview" />
       <ResourceSummary resource={imageStream}>
         {imageRepository && <dt>Image Repository</dt>}
