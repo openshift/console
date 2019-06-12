@@ -550,7 +550,9 @@ export const Table = connect<TablePropsFromState,TablePropsFromDispatch,TableOwn
         </TableWrapper>
       );
       return <div className="co-m-table-grid co-m-table-grid--bordered">
-        { mock ? children : <StatusBox {...this.props}>{children}</StatusBox> }
+        { mock
+          ? children
+          : <StatusBox skeleton={<div className="loading-skeleton--table" />} {...this.props}>{children}</StatusBox> }
       </div>;
     }
   });
