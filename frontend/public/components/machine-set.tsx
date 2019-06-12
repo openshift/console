@@ -69,9 +69,9 @@ export const getReadyReplicas = (machineSet: MachineSetKind | MachineDeploymentK
 export const getAvailableReplicas = (machineSet: MachineSetKind | MachineDeploymentKind) => _.get(machineSet, 'status.availableReplicas', 0);
 
 const tableColumnClasses = [
-  classNames('pf-m-4-col-on-md', 'pf-m-6-col-on-sm'),
-  classNames('pf-m-4-col-on-md', 'pf-m-6-col-on-sm'),
-  classNames('pf-m-4-col-on-md', 'pf-m-hidden', 'pf-m-visible-on-md'),
+  classNames('col-sm-4', 'col-xs-6'),
+  classNames('col-sm-4', 'col-xs-6'),
+  classNames('col-sm-4', 'hidden-xs'),
   Kebab.columnClass,
 ];
 

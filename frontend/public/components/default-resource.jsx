@@ -19,9 +19,9 @@ const { common } = Kebab.factory;
 const menuActions = [...common];
 
 const tableColumnClasses = [
-  classNames('pf-m-6-col-on-sm', 'pf-m-4-col-on-md'),
-  classNames('pf-m-6-col-on-sm', 'pf-m-4-col-on-md'),
-  classNames('pf-m-4-col-on-md', 'pf-m-hidden', 'pf-m-visible-on-md'),
+  classNames('col-xs-6', 'col-sm-4'),
+  classNames('col-xs-6', 'col-sm-4'),
+  classNames('col-sm-4', 'hidden-xs'),
   Kebab.columnClass,
 ];
 

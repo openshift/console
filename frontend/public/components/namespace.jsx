@@ -48,9 +48,9 @@ export const deleteModal = (kind, ns) => {
 const nsMenuActions = [Kebab.factory.ModifyLabels, Kebab.factory.ModifyAnnotations, Kebab.factory.Edit, deleteModal];
 
 const namespacesColumnClasses = [
-  classNames('pf-m-4-col-on-md', 'pf-m-6-col-on-sm'),
-  classNames('pf-m-4-col-on-md', 'pf-m-6-col-on-sm'),
-  classNames('pf-m-4-col-on-md', 'pf-m-hidden', 'pf-m-visible-on-md'),
+  classNames('col-sm-4', 'col-xs-6'),
+  classNames('col-sm-4', 'col-xs-6'),
+  classNames('col-sm-4', 'hidden-xs'),
   Kebab.columnClass,
 ];
 
@@ -102,10 +102,10 @@ export const NamespacesPage = props => <ListPage {...props} ListComponent={Names
 const projectMenuActions = [Kebab.factory.Edit, deleteModal];
 
 const projectColumnClasses = [
-  classNames('pf-m-3-col-on-lg', 'pf-m-6-col-on-md', 'pf-m-8-col-on-sm'),
-  classNames('pf-m-3-col-on-lg', 'pf-m-3-col-on-md', 'pf-m-4-col-on-sm'),
-  classNames('pf-m-3-col-on-lg', 'pf-m-3-col-on-md', 'pf-m-hidden', 'pf-m-visible-on-md'),
-  classNames('pf-m-3-col-on-lg', 'pf-m-hidden', 'pf-m-visible-on-lg'),
+  classNames('col-md-3', 'col-sm-6', 'col-xs-8'),
+  classNames('col-md-3', 'col-sm-3', 'col-xs-4'),
+  classNames('col-md-3', 'col-sm-3', 'hidden-xs'),
+  classNames('col-md-3', 'hidden-sm', 'hidden-xs'),
   Kebab.columnClass,
 ];
 

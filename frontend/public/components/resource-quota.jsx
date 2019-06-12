@@ -43,8 +43,8 @@ const getResourceUsage = (quota, resourceType) => {
 };
 
 const tableColumnClasses = [
-  classNames('pf-m-5-col-on-lg', 'pf-m-6-col-on-sm'),
-  classNames('pf-m-7-col-on-lg', 'pf-m-6-col-on-sm'),
+  classNames('col-md-5', 'col-xs-6'),
+  classNames('col-md-7', 'col-xs-6'),
   Kebab.columnClass,
 ];
 

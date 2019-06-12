@@ -83,10 +83,10 @@ const menuActions = [KubeConfigify, ...common];
 const kind = 'ServiceAccount';
 
 const tableColumnClasses = [
-  classNames('pf-m-4-col-on-md', 'pf-m-6-col-on-sm'),
-  classNames('pf-m-4-col-on-md', 'pf-m-6-col-on-sm'),
-  classNames('pf-m-2-col-on-lg', 'pf-m-hidden', 'pf-m-visible-on-lg'),
-  classNames('pf-m-2-col-on-md', 'pf-m-hidden', 'pf-m-visible-on-md'),
+  classNames('col-sm-4', 'col-xs-6'),
+  classNames('col-sm-4', 'col-xs-6'),
+  classNames('col-md-2', 'hidden-sm', 'hidden-xs'),
+  classNames('col-sm-2', 'hidden-xs'),
   Kebab.columnClass,
 ];
 

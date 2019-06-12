@@ -57,11 +57,11 @@ const ChargebackNavBar: React.SFC<{match: {url: string}}> = props => <div>
 </div>;
 
 const tableColumnClasses = [
-  classNames('pf-m-3-col-on-xl', 'pf-m-3-col-on-lg', 'pf-m-4-col-on-sm'),
-  classNames('pf-m-2-col-on-xl', 'pf-m-3-col-on-lg', 'pf-m-4-col-on-sm'),
-  classNames('pf-m-3-col-on-xl', 'pf-m-hidden', 'pf-m-visible-on-xl'),
-  classNames('pf-m-2-col-on-xl', 'pf-m-2-col-on-lg', 'pf-m-hidden', 'pf-m-visible-on-lg'),
-  classNames('pf-m-2-col-on-xl', 'pf-m-2-col-on-lg', 'pf-m-hidden', 'pf-m-visible-on-lg'),
+  classNames('col-lg-3', 'col-md-3', 'col-xs-4'),
+  classNames('col-lg-2', 'col-md-3', 'col-xs-4'),
+  classNames('col-lg-3', 'hidden-md', 'hidden-sm', 'hidden-xs'),
+  classNames('col-lg-2', 'col-md-2', 'hidden-sm', 'hidden-xs'),
+  classNames('col-lg-2', 'col-md-2', 'hidden-sm', 'hidden-xs'),
   Kebab.columnClass,
 ];
 
@@ -369,10 +369,10 @@ export const ReportsDetailsPage: React.SFC<ReportsDetailsPageProps> = props => {
 };
 
 const reportsGenerationColumnClasses = [
-  classNames('pf-m-3-col-on-lg', 'pf-m-4-col-on-md'),
-  classNames('pf-m-3-col-on-lg', 'pf-m-4-col-on-md'),
-  classNames('pf-m-3-col-on-lg', 'pf-m-hidden', 'pf-m-visible-on-lg'),
-  classNames('pf-m-3-col-on-lg', 'pf-m-4-col-on-md'),
+  classNames('col-md-3', 'col-sm-4'),
+  classNames('col-md-3', 'col-sm-4'),
+  classNames('col-md-3', 'hidden-sm', 'hidden-xs'),
+  classNames('col-md-3', 'col-sm-4'),
   Kebab.columnClass,
 ];
 

@@ -63,10 +63,10 @@ export const NodeIPList = ({ips, expand = false}) => <div>
 </div>;
 
 const tableColumnClasses = [
-  classNames('pf-m-5-col-on-lg', 'pf-m-5-col-on-md', 'pf-m-8-col-on-sm'),
-  classNames('pf-m-2-col-on-lg', 'pf-m-3-col-on-md', 'pf-m-4-col-on-sm'),
-  classNames('pf-m-2-col-on-lg', 'pf-m-4-col-on-md', 'pf-m-hidden', 'pf-m-visible-on-md'),
-  classNames('pf-m-3-col-on-lg', 'pf-m-hidden', 'pf-m-visible-on-lg'),
+  classNames('col-md-5', 'col-sm-5', 'col-xs-8'),
+  classNames('col-md-2', 'col-sm-3', 'col-xs-4'),
+  classNames('col-md-2', 'col-sm-4', 'hidden-xs'),
+  classNames('col-md-3', 'hidden-sm', 'hidden-xs'),
   Kebab.columnClass,
 ];
 
