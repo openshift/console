@@ -86,6 +86,9 @@ export const config: Config = {
     return new Promise(resolve => htmlReporter.afterLaunch(resolve.bind(this, exitCode)));
   },
   suites: {
+    networking: suite([
+      'tests/networking.scenario.ts',
+    ]),
     filter: suite([
       'tests/filter.scenario.ts',
     ]),
@@ -156,6 +159,7 @@ export const config: Config = {
       'tests/deploy-image.scenario.ts',
       'tests/performance.scenario.ts',
       'tests/monitoring.scenario.ts',
+      'tests/networking.scenario.ts',
     ]),
     all: suite([
       'tests/crud.scenario.ts',

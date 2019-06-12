@@ -125,3 +125,8 @@ export const isValueInJSONPath = (propertyPath: string, value: string, name: str
   const result = _.get(resource, propertyPath, undefined);
   return result === value;
 };
+
+export const getPathInJSON = (path: string, name: string, namespace: string, kind: string) => {
+  const resourceJSON = JSON.parse(getResourceJSON(name, namespace, kind));
+  return _.get(resourceJSON, path, undefined);
+};
