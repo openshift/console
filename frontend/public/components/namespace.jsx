@@ -11,7 +11,7 @@ import { NamespaceModel, ProjectModel, SecretModel } from '../models';
 import { k8sGet } from '../module/k8s';
 import * as UIActions from '../actions/ui';
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
-import { ActionsMenu, Kebab, Dropdown, Firehose, LabelList, LoadingInline, navFactory, ResourceKebab, SectionHeading, ResourceIcon, ResourceLink, ResourceSummary, MsgBox, StatusIconAndText, ExternalLink, humanizeCpuCores, humanizeDecimalBytes } from './utils';
+import { Kebab, Dropdown, Firehose, LabelList, LoadingInline, navFactory, ResourceKebab, SectionHeading, ResourceIcon, ResourceLink, ResourceSummary, MsgBox, StatusIconAndText, ExternalLink, humanizeCpuCores, humanizeDecimalBytes } from './utils';
 import { createNamespaceModal, createProjectModal, deleteNamespaceModal, configureNamespacePullSecretModal } from './modals';
 import { RoleBindingsPage } from './RBAC';
 import { Bar, Area, requirePrometheus } from './graphs';
@@ -341,22 +341,7 @@ class NamespaceBarDropdowns_ extends React.Component {
 
     const onChange = newNamespace => dispatch(UIActions.setActiveNamespace(newNamespace));
 
-    const addActions = [
-      {
-        label: 'Browse Catalog',
-        href: '/catalog',
-      },
-      {
-        label: 'Deploy Image',
-        href: `/deploy-image?preselected-ns=${activeNamespace}`,
-      },
-      {
-        label: 'Import YAML',
-        href: UIActions.formatNamespacedRouteForResource('import', activeNamespace),
-      },
-    ];
-
-    return <div className="co-namespace-bar__dropdowns">
+    return <div className="co-namespace-bar__items">
       <Dropdown
         className="co-namespace-selector"
         menuClassName="co-namespace-selector__menu"
@@ -372,11 +357,7 @@ class NamespaceBarDropdowns_ extends React.Component {
         defaultBookmarks={defaultBookmarks}
         storageKey={NAMESPACE_LOCAL_STORAGE_KEY}
         shortCut={KEYBOARD_SHORTCUTS.focusNamespaceDropdown} />
-      <ActionsMenu
-        actions={addActions}
-        title={<React.Fragment><span className="fa fa-plus-circle co-add-actions-selector__icon" aria-hidden="true"></span> Add</React.Fragment>}
-        menuClassName="co-add-actions-selector__menu dropdown-menu--right"
-        buttonClassName="btn-link" />
+      <Link to={UIActions.formatNamespacedRouteForResource('import', activeNamespace)} className="co-namespace-bar__import"><span className="fa fa-plus-circle co-add-actions-selector__icon" aria-hidden="true"></span> Import YAML</Link>
     </div>;
   }
 }
