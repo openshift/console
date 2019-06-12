@@ -1,0 +1,74 @@
+export const HOST_STATUS_READY = 'ready';
+export const HOST_STATUS_DISCOVERED = 'discovered';
+export const HOST_STATUS_OK = 'OK';
+export const HOST_STATUS_EXTERNALLY_PROVISIONED = 'externally provisioned';
+export const HOST_STATUS_PROVISIONED = 'provisioned';
+export const HOST_STATUS_DEPROVISIONED = 'deprovisioned';
+export const HOST_STATUS_REGISTERING = 'registering';
+export const HOST_STATUS_INSPECTING = 'inspecting';
+export const HOST_STATUS_PREPARING_TO_PROVISION = 'preparing to provision';
+export const HOST_STATUS_PROVISIONING = 'provisioning';
+export const HOST_STATUS_DEPROVISIONING = 'deprovisioning';
+export const HOST_STATUS_MAKING_HOST_AVAILABLE = 'making host available';
+export const HOST_STATUS_MATCH_PROFILE = 'match profile';
+export const HOST_STATUS_STARTING_MAINTENANCE = 'starting maintenance';
+export const HOST_STATUS_STOPPING_MAINTENANCE = 'stopping maintenance';
+export const HOST_STATUS_MAINTENANCE = 'maintenance';
+export const HOST_STATUS_VALIDATION_ERROR = 'validation error';
+export const HOST_STATUS_REGISTRATION_ERROR = 'registration error';
+export const HOST_STATUS_PROVISIONING_ERROR = 'provisioning error';
+export const HOST_STATUS_POWER_MANAGEMENT_ERROR = 'power management error';
+
+export const HOST_STATUS_TITLES = {
+  [HOST_STATUS_READY]: 'Ready',
+  [HOST_STATUS_DISCOVERED]: 'Discovered',
+  [HOST_STATUS_OK]: 'OK',
+  [HOST_STATUS_PROVISIONED]: 'Provisioned',
+  [HOST_STATUS_EXTERNALLY_PROVISIONED]: 'Externally provisioned',
+  [HOST_STATUS_DEPROVISIONED]: 'Deprovisioned',
+  [HOST_STATUS_REGISTERING]: 'Registering',
+  [HOST_STATUS_INSPECTING]: 'Inspecting',
+  [HOST_STATUS_PREPARING_TO_PROVISION]: 'Preparing to provision',
+  [HOST_STATUS_PROVISIONING]: 'Provisioning',
+  [HOST_STATUS_DEPROVISIONING]: 'Deprovisioning',
+  [HOST_STATUS_MAKING_HOST_AVAILABLE]: 'Making host available',
+  [HOST_STATUS_VALIDATION_ERROR]: 'Validation Error(s)',
+  [HOST_STATUS_REGISTRATION_ERROR]: 'Registration Error',
+  [HOST_STATUS_PROVISIONING_ERROR]: 'Provisioning Error',
+  [HOST_STATUS_POWER_MANAGEMENT_ERROR]: 'Power Management Error',
+  [HOST_STATUS_STARTING_MAINTENANCE]: 'Starting maintenance',
+  [HOST_STATUS_STOPPING_MAINTENANCE]: 'Stopping maintenance',
+  [HOST_STATUS_MAINTENANCE]: 'Maintenance',
+  [HOST_STATUS_MATCH_PROFILE]: 'Matching profile',
+};
+
+export const HOST_ERROR_STATES = [
+  HOST_STATUS_REGISTRATION_ERROR,
+  HOST_STATUS_PROVISIONING_ERROR,
+  HOST_STATUS_VALIDATION_ERROR,
+  HOST_STATUS_POWER_MANAGEMENT_ERROR,
+];
+
+export const HOST_WARN_STATES = [];
+
+export const HOST_PROGRESS_STATES = [
+  HOST_STATUS_INSPECTING,
+  HOST_STATUS_PREPARING_TO_PROVISION,
+  HOST_STATUS_PREPARING_TO_PROVISION,
+  HOST_STATUS_PROVISIONING,
+  HOST_STATUS_DEPROVISIONING,
+  HOST_STATUS_MAKING_HOST_AVAILABLE,
+  HOST_STATUS_REGISTERING,
+  HOST_STATUS_STARTING_MAINTENANCE,
+  HOST_STATUS_STOPPING_MAINTENANCE,
+  HOST_STATUS_MATCH_PROFILE,
+];
+
+export const HOST_SUCCESS_STATES = [
+  HOST_STATUS_READY,
+  HOST_STATUS_DISCOVERED,
+  HOST_STATUS_OK,
+  HOST_STATUS_PROVISIONED,
+  HOST_STATUS_EXTERNALLY_PROVISIONED,
+  HOST_STATUS_DEPROVISIONED,
+];

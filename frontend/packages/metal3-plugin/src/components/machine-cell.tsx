@@ -1,13 +1,17 @@
 import * as React from 'react';
-// import { Link } from 'react-router-dom';
-// import { Icon } from 'patternfly-react';
+import { Link } from 'react-router-dom';
 
 import { DASH } from '@console/shared';
 import { MachineModel } from '@console/internal/models';
-import { ResourceLink /* , RequireCreatePermission */ } from '@console/internal/components/utils';
+import {
+  ResourceLink,
+  RequireCreatePermission,
+  StatusIconAndText,
+} from '@console/internal/components/utils';
 import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
 
 import { getHostMachineName } from '../selectors';
+import { canHostAddMachine } from '../utils/host-status';
 
 interface MachineCellProps {
   host: K8sResourceKind;
@@ -30,21 +34,17 @@ const MachineCell: React.FC<MachineCellProps> = ({ host }) => {
       />
     );
   }
-  // TODO(jtomasek): Re-enable this once host status is added
-  // if (canHostAddMachine(host)) {
-  //   const ns = namespace || 'default';
-  //   const href = `/k8s/ns/${ns}/${referenceForModel(MachineModel)}/~new`;
-  //   return (
-  //     <RequireCreatePermission model={MachineModel} namespace={ns}>
-  //       <Link to={href}>
-  //         <span className="co-icon-and-text">
-  //           <Icon type="pf" name="add-circle-o" className="co-icon-and-text__icon" />
-  //           Add machine
-  //         </span>
-  //       </Link>
-  //     </RequireCreatePermission>
-  //   );
-  // }
+  if (canHostAddMachine(host)) {
+    const ns = namespace || 'default';
+    const href = `/k8s/ns/${ns}/${referenceForModel(MachineModel)}/~new`;
+    return (
+      <RequireCreatePermission model={MachineModel} namespace={ns}>
+        <Link to={href}>
+          <StatusIconAndText status="Add machine" iconName="add-circle-o" />
+        </Link>
+      </RequireCreatePermission>
+    );
+  }
   return <>{DASH}</>;
 };
 

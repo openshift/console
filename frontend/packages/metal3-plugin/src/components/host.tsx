@@ -19,9 +19,10 @@ import { BaremetalHostModel } from '../models';
 import { getHostBMCAddress, getHostMachine } from '../selectors';
 import { BaremetalHostRole } from './host-role';
 import MachineCell from './machine-cell';
+import BaremetalHostStatus from './host-status';
 
 const tableColumnClasses = [
-  classNames('col-lg-5', 'col-md-8', 'col-sm-12', 'col-xs-12'),
+  classNames('col-lg-3', 'col-md-4', 'col-sm-12', 'col-xs-12'),
   classNames('col-lg-2', 'col-md-4', 'col-sm-6', 'hidden-xs'),
   classNames('col-lg-3', 'col-md-4', 'hidden-sm', 'hidden-xs'),
   classNames('col-lg-2', 'hidden-md', 'hidden-sm', 'hidden-xs'),
@@ -35,6 +36,13 @@ const HostsTableHeader = () => [
     sortField: 'metadata.name',
     transforms: [sortable],
     props: { className: tableColumnClasses[0] },
+  },
+  {
+    title: 'Status',
+    // TODO(jtomasek): enable this once it is possible to pass sort function
+    // sortFunc: getSimpleHostStatus,
+    // transforms: [sortable],
+    props: { className: tableColumnClasses[1] },
   },
   {
     title: 'Machine',
@@ -72,7 +80,7 @@ const HostsTableRow: React.FC<HostsTableRowProps> = ({ obj: host, index, key, st
   const namespace = getNamespace(host);
   // const machineName = getHostMachineName(host);
   const address = getHostBMCAddress(host);
-  const { machine } = host;
+  const { machine, node } = host;
 
   // TODO(jtomasek): other resource references will be updated as a subsequent change
   // const machineResource = {
@@ -102,9 +110,9 @@ const HostsTableRow: React.FC<HostsTableRowProps> = ({ obj: host, index, key, st
           namespace={namespace}
         />
       </TableData>
-      {/* <TableData className={tableColumnClasses[0]}>
-           <BaremetalHostStatus host={host} />
-       </TableData> */}
+      <TableData className={tableColumnClasses[1]}>
+        <BaremetalHostStatus host={host} machine={machine} node={node} />
+      </TableData>
       <TableData className={tableColumnClasses[2]}>
         <MachineCell host={host} />
       </TableData>
@@ -120,13 +128,7 @@ const HostsTableRow: React.FC<HostsTableRowProps> = ({ obj: host, index, key, st
 };
 
 const HostList: React.FC<React.ComponentProps<typeof Table>> = (props) => (
-  <Table
-    {...props}
-    aria-label="Baremetal Hosts"
-    Header={HostsTableHeader}
-    Row={HostsTableRow}
-    virtualize
-  />
+  <Table {...props} aria-label="Baremetal Hosts" Header={HostsTableHeader} Row={HostsTableRow} />
 );
 
 // TODO(jtomasek): re-enable filters once the extension point for list.tsx is in place
