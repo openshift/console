@@ -1,12 +1,14 @@
 import withDragDropContext from './utils/drag-drop-context';
 import * as React from 'react';
-import {EditYAML} from './edit-yaml';
+
+import { EditYAML } from './edit-yaml';
 import { NativeTypes } from 'react-dnd-html5-backend';
 import { DropTarget } from 'react-dnd';
 
 // Maximal file size, in bytes, that user can upload
 const maxFileUploadSize = 4000000;
 const fileSizeErrorMsg = 'Maximum file size exceeded. File limit is 4MB.';
+const fileTypeErrorMsg = 'Binary file detected. Edit text based YAML files only.';
 
 const boxTarget = {
   drop(props, monitor) {
@@ -33,6 +35,14 @@ export const DroppableEditYAML = withDragDropContext(class DroppableEditYAML ext
     this.handleFileDrop = this.handleFileDrop.bind(this);
   }
 
+  containsNonPrintableCharacters(value: string) {
+    if (!value) {
+      return false;
+    }
+    // eslint-disable-next-line no-control-regex
+    return /[\x00-\x09\x0E-\x1F]/.test(value);
+  }
+
   handleFileDrop(item, monitor) {
     if (!monitor) {
       return;
@@ -42,10 +52,17 @@ export const DroppableEditYAML = withDragDropContext(class DroppableEditYAML ext
     if (file.size <= maxFileUploadSize) {
       const reader = new FileReader();
       reader.onload = () => {
-        const input = reader.result;
-        this.setState({
-          fileUpload: input,
-        });
+        const input = reader.result as string;
+        if (this.containsNonPrintableCharacters(input)) {
+          this.setState({
+            error: fileTypeErrorMsg,
+          });
+        } else {
+          this.setState({
+            fileUpload: input,
+            error: '',
+          });
+        }
       };
       reader.readAsText(file, 'UTF-8');
     } else {
