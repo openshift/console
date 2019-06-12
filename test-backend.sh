@@ -17,8 +17,8 @@ export GOBIN=${PWD}/bin:${GOBIN}
 # Invoke ./cover for HTML output
 COVER=${COVER:-"-cover"}
 
-TESTABLE="auth pkg/proxy server"
-FORMATTABLE="${TESTABLE} cmd/bridge version"
+TESTABLE="pkg/auth pkg/proxy pkg/server"
+FORMATTABLE="${TESTABLE} cmd/bridge pkg/version"
 
 # user has not provided PKG override
 if [ -z "${PKG}" ]; then

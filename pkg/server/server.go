@@ -14,9 +14,9 @@ import (
 	"github.com/coreos/pkg/capnslog"
 	"github.com/coreos/pkg/health"
 
-	"github.com/openshift/console/auth"
+	"github.com/openshift/console/pkg/auth"
 	"github.com/openshift/console/pkg/proxy"
-	"github.com/openshift/console/version"
+	"github.com/openshift/console/pkg/version"
 )
 
 const (
