@@ -12,7 +12,12 @@ module.exports = {
   // One JSX element Per line
   'react/jsx-one-expression-per-line': 'off',
 
-  // Prevent missing props validation in a React component definition
-  // Off due to false positives in typescript
-  'react/prop-types': 'off',
+  // Declare only one React component per file
+  'react/no-multi-comp': 'off',
+
+  // (Deprecated) A form label must be associated with a control
+  'jsx-a11y/label-has-for': 'off',
+
+  // Enforce that a label tag has a text label and an associated control.
+  'jsx-a11y/label-has-associated-control': ['error', { assert: 'either' }],
 };
