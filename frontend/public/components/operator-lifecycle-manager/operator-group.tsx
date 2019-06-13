@@ -56,27 +56,33 @@ export enum InstallModeType {
 export type InstallModeSet = {type: InstallModeType, supported: boolean}[];
 
 /**
- * Logic consistent with https://github.com/operator-framework/operator-lifecycle-manager/blob/9febd60fde1837bf510308bbd6a5f10fed53c7ab/pkg/api/apis/operators/v1alpha1/clusterserviceversion.go#L158.
+ * Logic consistent with https://github.com/operator-framework/operator-lifecycle-manager/blob/4ef074e4207f5518d95ddf8c378036dfc4270dda/pkg/api/apis/operators/v1alpha1/clusterserviceversion.go#L165.
  */
 export const supports = (set: InstallModeSet) => (obj: OperatorGroupKind) => {
   const namespaces = _.get(obj.status, 'namespaces') || [];
   const supportedModes = set.filter(({supported}) => supported).map(({type}) => type);
 
-  if (namespaces.length === 1 && namespaces[0] === '') {
-    return supportedModes.includes(InstallModeType.InstallModeTypeAllNamespaces);
-  }
-  if (namespaces.length === 1 && namespaces[0] !== '') {
-    return supportedModes.includes(InstallModeType.InstallModeTypeSingleNamespace) || supportedModes.includes(InstallModeType.InstallModeTypeMultiNamespace);
-  }
-  if (namespaces.length > 1) {
-    return supportedModes.includes(InstallModeType.InstallModeTypeMultiNamespace);
-  }
-  if (namespaces.includes(obj.metadata.namespace)) {
-    return supportedModes.includes(InstallModeType.InstallModeTypeOwnNamespace);
-  }
-  if (namespaces.length > 1 && namespaces.includes('')) {
+  if (namespaces.length === 0) {
     return false;
+  } else if (namespaces.length === 1) {
+    if (namespaces[0] === obj.metadata.namespace) {
+      return supportedModes.includes(InstallModeType.InstallModeTypeOwnNamespace);
+    }
+    if (namespaces[0] === '') {
+      return supportedModes.includes(InstallModeType.InstallModeTypeAllNamespaces);
+    }
+    return supportedModes.includes(InstallModeType.InstallModeTypeSingleNamespace);
+  } else if (namespaces.length > 1 && !supportedModes.includes(InstallModeType.InstallModeTypeMultiNamespace)) {
+    return false;
+  } else if (namespaces.length > 1) {
+    if (namespaces.includes(obj.metadata.namespace) && !supportedModes.includes(InstallModeType.InstallModeTypeOwnNamespace)) {
+      return false;
+    } else if (namespaces.includes('')) {
+      return false;
+    }
   }
+
+  return true;
 };
 
 export const isGlobal = (obj: OperatorGroupKind) => supports([{type: InstallModeType.InstallModeTypeAllNamespaces, supported: true}])(obj);

@@ -38,7 +38,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
   const selectedInstallMode = installMode || supportedInstallModesFor(props.packageManifest.data[0])(selectedUpdateChannel)
     .reduce((preferredInstallMode, mode) => mode.type === InstallModeType.InstallModeTypeAllNamespaces
       ? InstallModeType.InstallModeTypeAllNamespaces
-      : preferredInstallMode, InstallModeType.InstallModeTypeSingleNamespace);
+      : preferredInstallMode, InstallModeType.InstallModeTypeOwnNamespace);
   let selectedTargetNamespace = targetNamespace || props.targetNamespace;
   if (selectedInstallMode === InstallModeType.InstallModeTypeAllNamespaces) {
     selectedTargetNamespace = _.get(props.operatorGroup, 'data', [] as OperatorGroupKind[]).find(og => og.metadata.name === 'global-operators').metadata.namespace;
@@ -60,13 +60,13 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
   }, [catalogSource, catalogSourceNamespace, pkgName, props.packageManifest.data, selectedTargetNamespace]);
 
   const installModes = channels.find(ch => ch.name === selectedUpdateChannel).currentCSVDesc.installModes;
-  const supportsSingle = installModes.find(m => m.type === InstallModeType.InstallModeTypeSingleNamespace).supported;
+  const supportsSingle = installModes.find(m => m.type === InstallModeType.InstallModeTypeOwnNamespace).supported;
   const supportsGlobal = installModes.find(m => m.type === InstallModeType.InstallModeTypeAllNamespaces).supported;
   const descFor = (mode: InstallModeType) => {
     if (mode === InstallModeType.InstallModeTypeAllNamespaces && supportsGlobal) {
       return 'Operator will be available in all namespaces.';
     }
-    if (mode === InstallModeType.InstallModeTypeSingleNamespace && supportsSingle) {
+    if (mode === InstallModeType.InstallModeTypeOwnNamespace && supportsSingle) {
       return 'Operator will be available in a single namespace only.';
     }
     return 'This mode is not supported by this Operator';
@@ -169,21 +169,21 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
             </Tooltip>
           </div>
           <div>
-            <Tooltip content={descFor(InstallModeType.InstallModeTypeSingleNamespace)} hidden={!supportsSingle}>
+            <Tooltip content={descFor(InstallModeType.InstallModeTypeOwnNamespace)} hidden={!supportsSingle}>
               <RadioInput
                 onChange={e => {
                   setInstallMode(e.target.value);
                   setTargetNamespace(null);
                   setCannotResolve(false);
                 }}
-                value={InstallModeType.InstallModeTypeSingleNamespace}
-                checked={selectedInstallMode === InstallModeType.InstallModeTypeSingleNamespace}
+                value={InstallModeType.InstallModeTypeOwnNamespace}
+                checked={selectedInstallMode === InstallModeType.InstallModeTypeOwnNamespace}
                 disabled={!supportsSingle}
                 title="A specific namespace on the cluster">
                 <div className="co-m-radio-desc">
-                  <p className="text-muted">{descFor(InstallModeType.InstallModeTypeSingleNamespace)}</p>
+                  <p className="text-muted">{descFor(InstallModeType.InstallModeTypeOwnNamespace)}</p>
                 </div>
-                { selectedInstallMode === InstallModeType.InstallModeTypeSingleNamespace && <div style={{marginLeft: '20px'}}>
+                { selectedInstallMode === InstallModeType.InstallModeTypeOwnNamespace && <div style={{marginLeft: '20px'}}>
                   <NsDropdown
                     id="dropdown-selectbox"
                     selectedKey={selectedTargetNamespace}
