@@ -322,7 +322,7 @@ class NamespaceBarDropdowns_ extends React.Component {
   }
 
   render() {
-    const { activeNamespace, dispatch, canListNS, useProjects } = this.props;
+    const { activeNamespace, dispatch, canListNS, useProjects, children } = this.props;
     if (flagPending(canListNS)) {
       return null;
     }
@@ -363,6 +363,7 @@ class NamespaceBarDropdowns_ extends React.Component {
         defaultBookmarks={defaultBookmarks}
         storageKey={NAMESPACE_LOCAL_STORAGE_KEY}
         shortCut={KEYBOARD_SHORTCUTS.focusNamespaceDropdown} />
+      { children }
       <Link to={UIActions.formatNamespacedRouteForResource('import', activeNamespace)} className="co-namespace-bar__import"><span className="fa fa-plus-circle co-add-actions-selector__icon" aria-hidden="true"></span>Import YAML</Link>
     </div>;
   }
@@ -370,10 +371,12 @@ class NamespaceBarDropdowns_ extends React.Component {
 
 const NamespaceBarDropdowns = connect(namespaceBarDropdownStateToProps, namespaceBarDropdownDispatchToProps)(NamespaceBarDropdowns_);
 
-const NamespaceBar_ = ({useProjects}) => {
+const NamespaceBar_ = ({useProjects, children}) => {
   return <div className="co-namespace-bar">
     <Firehose resources={[{kind: getModel(useProjects).kind, prop: 'namespace', isList: true}]}>
-      <NamespaceBarDropdowns useProjects={useProjects} />
+      <NamespaceBarDropdowns useProjects={useProjects}>
+        {children}
+      </NamespaceBarDropdowns>
     </Firehose>
   </div>;
 };
