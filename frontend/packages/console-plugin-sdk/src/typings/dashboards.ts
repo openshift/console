@@ -4,6 +4,8 @@ import { FirehoseResource, Humanize } from '@console/internal/components/utils';
 import { K8sKind } from '@console/internal/module/k8s';
 import { StatusGroupMapper } from '@console/internal/components/dashboard/inventory-card/inventory-item';
 import { OverviewQuery } from '@console/internal/components/dashboards-page/overview-dashboard/queries';
+import { ConsumerMutator } from '@console/internal/components/dashboards-page/overview-dashboard/top-consumers-card';
+import { MetricType } from '@console/internal/components/dashboard/top-consumers-card/metric-type';
 
 import { Extension } from './extension';
 import { LazyLoader } from './types';
@@ -67,6 +69,20 @@ namespace ExtensionProperties {
 
     /** The Prometheus query */
     query: string;
+  }
+
+  export interface DashboardsOverviewTopConsumerItem {
+    /** The name of the top consumer item */
+    name: string;
+
+    /** The name of the metric */
+    metric: string;
+
+    /** The queries which will be used to query prometheus */
+    queries: { [key in MetricType]?: string };
+
+    /** Function which can mutate results of parsed prometheus data */
+    mutator?: ConsumerMutator;
   }
 
   export interface DashboardsOverviewInventoryItem {
@@ -182,5 +198,14 @@ export interface DashboardsInventoryItemGroup
 export const isDashboardsInventoryItemGroup = (
   e: Extension<any>,
 ): e is DashboardsInventoryItemGroup => e.type === 'Dashboards/Inventory/Item/Group';
+
+export interface DashboardsOverviewTopConsumerItem
+  extends Extension<ExtensionProperties.DashboardsOverviewTopConsumerItem> {
+  type: 'Dashboards/Overview/TopConsumers/Item';
+}
+
+export const isDashboardsOverviewTopConsumerItem = (
+  e: Extension<any>,
+): e is DashboardsOverviewTopConsumerItem => e.type === 'Dashboards/Overview/TopConsumers/Item';
 
 export type DashboardCardSpan = 4 | 6 | 12;
