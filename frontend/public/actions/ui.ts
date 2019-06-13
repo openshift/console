@@ -9,7 +9,6 @@ import {
   LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY,
   LAST_PERSPECTIVE_LOCAL_STORAGE_KEY,
 } from '../const';
-import { getNSPrefix } from '../components/utils/link';
 import { allModels } from '../module/k8s/k8s-models';
 import { detectFeatures } from './features';
 import { OverviewSpecialGroup } from '../components/overview/constants';
@@ -61,21 +60,22 @@ export const formatNamespacedRouteForResource = (resource, activeNamespace = get
 };
 
 export const formatNamespaceRoute = (activeNamespace, originalPath, location?) => {
-  const prefix = getNSPrefix(originalPath);
-  if (!prefix) {
-    return originalPath;
-  }
+  let path = originalPath.substr(window.SERVER_FLAGS.basePath.length);
 
-  originalPath = originalPath.substr(prefix.length + window.SERVER_FLAGS.basePath.length);
+  let parts = path.split('/').filter(p => p);
+  const prefix = parts.shift();
 
-  let parts = originalPath.split('/').filter(p => p);
-  let previousNS = '';
+  let previousNS;
   if (parts[0] === 'all-namespaces') {
     parts.shift();
     previousNS = ALL_NAMESPACES_KEY;
   } else if (parts[0] === 'ns') {
     parts.shift();
     previousNS = parts.shift();
+  }
+
+  if (!previousNS) {
+    return originalPath;
   }
 
   if ((previousNS !== activeNamespace && (parts[1] !== 'new' || activeNamespace !== ALL_NAMESPACES_KEY)) || activeNamespace === ALL_NAMESPACES_KEY && parts[1] === 'new') {
@@ -85,7 +85,7 @@ export const formatNamespaceRoute = (activeNamespace, originalPath, location?) =
 
   const namespacePrefix = activeNamespace === ALL_NAMESPACES_KEY ? 'all-namespaces' : `ns/${activeNamespace}`;
 
-  let path = `${prefix}/${namespacePrefix}`;
+  path = `/${prefix}/${namespacePrefix}`;
   if (parts.length) {
     path += `/${parts.join('/')}`;
   }
@@ -105,8 +105,9 @@ export const setActiveNamespace = (namespace: string = '') => {
   // broken direct links and bookmarks
   if (namespace !== getActiveNamespace()) {
     const oldPath = window.location.pathname;
-    if (getNSPrefix(oldPath)) {
-      history.pushPath(formatNamespaceRoute(namespace, oldPath, window.location));
+    const newPath = formatNamespaceRoute(namespace, oldPath, window.location);
+    if (newPath !== oldPath) {
+      history.pushPath(newPath);
     }
     // remember the most recently-viewed project, which is automatically
     // selected when returning to the console
