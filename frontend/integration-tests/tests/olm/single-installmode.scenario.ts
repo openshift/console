@@ -8,7 +8,7 @@ import * as catalogPageView from '../../views/catalog-page.view';
 import * as operatorHubView from '../../views/operator-hub.view';
 import * as sidenavView from '../../views/sidenav.view';
 
-describe('Interacting with a `SingleNamespace` install mode Operator (Prometheus)', () => {
+describe('Interacting with a `OwnNamespace` install mode Operator (Prometheus)', () => {
   const prometheusResources = new Set(['StatefulSet', 'Pod']);
   const alertmanagerResources = new Set(['StatefulSet', 'Pod']);
   const serviceMonitorResources = new Set(['Pod']);
@@ -67,7 +67,7 @@ describe('Interacting with a `SingleNamespace` install mode Operator (Prometheus
 
   it('selects target namespace for Operator subscription', async() => {
     await browser.wait(until.visibilityOf(operatorHubView.createSubscriptionFormInstallMode));
-    await operatorHubView.singleNamespaceInstallMode.click();
+    await operatorHubView.ownNamespaceInstallMode.click();
     await browser.wait(until.visibilityOf(operatorHubView.installNamespaceDropdownBtn));
     await operatorHubView.installNamespaceDropdownBtn.click();
     await operatorHubView.installNamespaceDropdownFilter(testName);

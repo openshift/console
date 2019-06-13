@@ -17,7 +17,7 @@ export const createSubscriptionFormBtn = element(by.buttonText('Subscribe'));
 export const createSubscriptionFormLoaded = () => browser.wait(until.visibilityOf(createSubscriptionFormBtn));
 export const createSubscriptionFormInstallMode = element(by.cssContainingText('label', 'Installation Mode'));
 export const allNamespacesInstallMode = $('input[value="AllNamespaces"]');
-export const singleNamespaceInstallMode = $('input[value="SingleNamespace"]');
+export const ownNamespaceInstallMode = $('input[value="OwnNamespace"]');
 export const createSubscriptionError = $('.alert-danger');
 
 export const installNamespaceDropdown = $('.dropdown--full-width');
