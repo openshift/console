@@ -171,6 +171,11 @@ class MastheadToolbar_ extends React.Component {
     commandLineToolsModal({});
   }
 
+  _onReportBug(e) {
+    e.preventDefault();
+    window.open('https://bugzilla.redhat.com/enter_bug.cgi?product=OpenShift%20Container%20Platform', '_blank').opener = null;
+  }
+
   _copyLoginCommand(e) {
     e.preventDefault();
     window.open(window.SERVER_FLAGS.requestTokenURL, '_blank').opener = null;
@@ -216,7 +221,11 @@ class MastheadToolbar_ extends React.Component {
     }, {
       label: 'Command Line Tools',
       callback: this._onCommandLineTools,
-    }, {
+    }, ...(window.SERVER_FLAGS.branding === 'ocp' ? [{
+      label: 'Report Bug',
+      callback: this._onReportBug,
+      externalLink: true,
+    }] : []), {
       label: 'About',
       callback: this._onAboutModal,
     }];
