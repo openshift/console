@@ -57,7 +57,6 @@ export default (state: UIState, action: UIAction): UIState => {
         resources: ImmutableMap({}),
         selectedDetailsTab: '',
         selectedUID: '',
-        selectedView: 'resources',
         selectedGroup: OverviewSpecialGroup.GROUP_BY_APPLICATION,
         groupOptions: ImmutableMap(),
         filterValue: '',
@@ -129,9 +128,6 @@ export default (state: UIState, action: UIAction): UIState => {
     }
     case ActionType.ToggleMonitoringGraphs:
       return state.setIn(['monitoring', 'hideGraphs'], !state.getIn(['monitoring', 'hideGraphs']));
-
-    case ActionType.SelectOverviewView:
-      return state.setIn(['overview', 'selectedView'], action.payload.view);
 
     case ActionType.SelectOverviewItem:
       return state.setIn(['overview', 'selectedUID'], action.payload.uid);

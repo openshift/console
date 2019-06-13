@@ -20,7 +20,7 @@ describe('Visiting Overview page', () => {
   });
 
   beforeAll(async() => {
-    await browser.get(`${appHost}/overview/ns/${testName}`);
+    await browser.get(`${appHost}/k8s/cluster/projects/${testName}/workloads`);
     await crudView.isLoaded();
   });
 

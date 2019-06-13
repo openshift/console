@@ -11,7 +11,7 @@ import { NamespaceModel, ProjectModel, SecretModel } from '../models';
 import { k8sGet } from '../module/k8s';
 import * as UIActions from '../actions/ui';
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
-import { Kebab, Dropdown, Firehose, LabelList, LoadingInline, navFactory, ResourceKebab, SectionHeading, ResourceIcon, ResourceLink, ResourceSummary, MsgBox, StatusIconAndText, ExternalLink, humanizeCpuCores, humanizeDecimalBytes } from './utils';
+import { Kebab, Dropdown, Firehose, LabelList, LoadingInline, navFactory, ResourceKebab, SectionHeading, ResourceLink, ResourceSummary, MsgBox, StatusIconAndText, ExternalLink, humanizeCpuCores, humanizeDecimalBytes } from './utils';
 import { createNamespaceModal, createProjectModal, deleteNamespaceModal, configureNamespacePullSecretModal } from './modals';
 import { RoleBindingsPage } from './RBAC';
 import { Bar, Area, requirePrometheus } from './graphs';
@@ -20,6 +20,8 @@ import { featureReducerName, flagPending, connectToFlags } from '../reducers/fea
 import { setFlag } from '../actions/features';
 import { openshiftHelpBase } from './utils/documentation';
 import { createProjectMessageStateToProps } from '../reducers/ui';
+import { Overview } from './overview';
+import { OverviewNamespaceDashboard } from './overview/namespace-overview';
 
 const getModel = useProjects => useProjects ? ProjectModel : NamespaceModel;
 const getDisplayName = obj => _.get(obj, ['metadata', 'annotations', 'openshift.io/display-name']);
@@ -134,17 +136,13 @@ const ProjectTableHeader = () => {
 };
 ProjectTableHeader.displayName = 'ProjectTableHeader';
 
-
 const ProjectTableRow = ({obj: project, index, key, style}) => {
-  const name = project.metadata.name;
-  const displayName = getDisplayName(project);
   const requester = getRequester(project);
   return (
     <TableRow id={project.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={projectColumnClasses[0]}>
         <span className="co-resource-item">
-          <ResourceIcon kind="Project" />
-          <Link to={`/overview/ns/${name}`} title={displayName} className="co-resource-item__resource-name">{project.metadata.name}</Link>
+          <ResourceLink kind="Project" name={project.metadata.name} title={project.metadata.uid} />
         </span>
       </TableData>
       <TableData className={projectColumnClasses[1]}>
@@ -390,5 +388,5 @@ export const NamespacesDetailsPage = props => <DetailsPage
 export const ProjectsDetailsPage = props => <DetailsPage
   {...props}
   menuActions={projectMenuActions}
-  pages={[navFactory.details(Details), navFactory.editYaml(), navFactory.roles(RolesPage)]}
+  pages={[navFactory.details(OverviewNamespaceDashboard), navFactory.editYaml(), navFactory.workloads(Overview), navFactory.roles(RolesPage)]}
 />;

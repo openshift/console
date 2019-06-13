@@ -364,8 +364,7 @@ class ProjectOverview_ extends React.Component<ProjectOverviewProps> {
         />
       )}
       <p className="small text-center hidden-xs">
-        <kbd>&uarr;</kbd> and <kbd>&darr;</kbd> selects items, <kbd>{KEYBOARD_SHORTCUTS.focusFilterInput}</kbd> filters items,
-        and <kbd>{KEYBOARD_SHORTCUTS.focusNamespaceDropdown}</kbd> selects projects.
+        <kbd>&uarr;</kbd> and <kbd>&darr;</kbd> selects items, and <kbd>{KEYBOARD_SHORTCUTS.focusFilterInput}</kbd> filters items.
       </p>
     </div>;
   }

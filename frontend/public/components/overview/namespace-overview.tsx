@@ -96,12 +96,12 @@ const OverviewResourceQuotas = ({ns}) => {
   </Firehose>;
 };
 
-export const OverviewNamespaceDashboard = ({obj: ns}) => <React.Fragment>
+export const OverviewNamespaceDashboard = ({obj: ns}) => <div className="co-m-pane__body">
   <OverviewHealth ns={ns} />
   <OverviewResourceQuotas ns={ns} />
   <OverviewResourceUsage ns={ns} />
   <OverviewNamespaceSummary ns={ns} />
-</React.Fragment>;
+</div>;
 
 export type QuotaBoxesProps = {
   resourceQuotas?: {loaded: boolean, loadError: string, data: K8sResourceKind};

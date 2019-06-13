@@ -104,6 +104,11 @@ export const navFactory: NavFactory = {
     name: 'Machines',
     component,
   }),
+  workloads: component => ({
+    href: 'workloads',
+    name: 'Workloads',
+    component,
+  }),
 };
 
 export const NavBar: React.SFC<NavBarProps> = ({pages, basePath, hideDivider}) => {
