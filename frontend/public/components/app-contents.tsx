@@ -1,7 +1,9 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
+import { connect } from 'react-redux';
+import * as PropTypes from 'prop-types';
 import { Redirect, Route, Switch, withRouter } from 'react-router-dom';
-import { ALL_NAMESPACES_KEY, FLAGS } from '../const';
+import { FLAGS } from '../const';
 import { connectToFlags, flagPending } from '../reducers/features';
 import { GlobalNotifications } from './global-notifications';
 import { NamespaceBar } from './namespace';
@@ -9,10 +11,12 @@ import { SearchPage } from './search';
 import { ResourceDetailsPage, ResourceListPage } from './resource-list';
 import { AsyncComponent, Loading } from './utils';
 import { namespacedPrefixes } from './utils/link';
-import * as UIActions from '../actions/ui';
 import { ClusterServiceVersionModel, SubscriptionModel, AlertmanagerModel } from '../models';
 import { referenceForModel } from '../module/k8s';
 import * as plugins from '../plugins';
+import { NamespaceRedirect } from './utils/namespace-redirect';
+import { getActivePerspective } from '../reducers/ui';
+import { RootState } from '../redux';
 
 //PF4 Imports
 import {
@@ -20,6 +24,11 @@ import {
   PageSectionVariants,
 } from '@patternfly/react-core';
 
+// React Router's proptypes are incorrect. See https://github.com/ReactTraining/react-router/pull/5393
+(Route as any).propTypes.path = PropTypes.oneOfType([
+  PropTypes.string,
+  PropTypes.arrayOf(PropTypes.string),
+]);
 
 const RedirectComponent = props => {
   const to = `/k8s${props.location.pathname}`;
@@ -45,19 +54,25 @@ _.each(namespacedPrefixes, p => {
   namespacedRoutes.push(`${p}/all-namespaces`);
 });
 
-const appendActiveNamespace = pathname => {
-  const basePath = pathname.replace(/\/$/, '');
-  const activeNamespace = UIActions.getActiveNamespace();
-  return activeNamespace === ALL_NAMESPACES_KEY ? `${basePath}/all-namespaces` : `${basePath}/ns/${activeNamespace}`;
-};
-
-const NamespaceRedirect = ({location: {pathname}}) => {
-  const to = appendActiveNamespace(pathname) + location.search;
-  return <Redirect to={to} />;
+type DefaultPageProps = {
+  activePerspective: string;
+  flags: {[key: string]: boolean};
 };
 
 // The default page component lets us connect to flags without connecting the entire App.
-const DefaultPage = connectToFlags(FLAGS.OPENSHIFT)(({ flags }) => {
+const DefaultPage_: React.FC<DefaultPageProps> = ({ flags, activePerspective }) => {
+  // support redirecting to perspective landing page
+  if (activePerspective !== 'admin') {
+    return (
+      <Redirect
+        to={
+          plugins.registry.getPerspectives().find((p) => p.properties.id === activePerspective)
+            .properties.landingPageURL
+        }
+      />
+    );
+  }
+
   const openshiftFlag = flags[FLAGS.OPENSHIFT];
   if (flagPending(openshiftFlag)) {
     return <Loading />;
@@ -68,7 +83,13 @@ const DefaultPage = connectToFlags(FLAGS.OPENSHIFT)(({ flags }) => {
   }
 
   return <Redirect to="/cluster-status" />;
-});
+};
+
+const DefaultPage = connect((state: RootState) => ({
+  activePerspective: getActivePerspective(state),
+}))(
+  connectToFlags(FLAGS.OPENSHIFT)(DefaultPage_),
+);
 
 const LazyRoute = (props) => (
   <Route
