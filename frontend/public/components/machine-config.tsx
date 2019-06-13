@@ -64,7 +64,7 @@ const MachineConfigRow: React.SFC<MachineConfigRowProps> = ({obj}) => <div class
   <div className="col-xs-6  col-sm-4  col-md-3  col-lg-2">
     <ResourceLink kind={machineConfigReference} name={obj.metadata.name} title={obj.metadata.name} />
   </div>
-  <div className="hidden-xs col-sm-6  col-md-4  col-lg-3">
+  <div className="hidden-xs col-sm-6  col-md-4  col-lg-3 co-break-word">
     { _.get(obj, ['metadata', 'annotations', 'machineconfiguration.openshift.io/generated-by-controller-version'], '-')}
   </div>
   <div className="hidden-xs hidden-sm col-md-3  col-lg-3">
