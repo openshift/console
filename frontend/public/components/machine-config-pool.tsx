@@ -199,11 +199,11 @@ export const MachineConfigPoolDetailsPage: React.SFC<any> = props => (
 );
 
 const tableColumnClasses = [
-  classNames('pf-m-4-col-on-xl', 'pf-m-6-col-on-sm'),
-  classNames('pf-m-5-col-on-xl', 'pf-m-hidden', 'pf-m-visible-on-xl'),
-  classNames('pf-m-1-col-on-xl', 'pf-m-2-col-on-md', 'pf-m-3-col-on-sm'),
-  classNames('pf-m-1-col-on-xl', 'pf-m-2-col-on-md', 'pf-m-hidden', 'pf-m-visible-on-md'),
-  classNames('pf-m-1-col-on-xl', 'pf-m-2-col-on-md', 'pf-m-3-col-on-sm'),
+  classNames('col-lg-4', 'col-xs-6'),
+  classNames('col-lg-5', 'hidden-md', 'hidden-sm', 'hidden-xs'),
+  classNames('col-lg-1', 'col-sm-2', 'col-xs-3'),
+  classNames('col-lg-1', 'col-sm-2', 'hidden-xs'),
+  classNames('col-lg-1', 'col-sm-2', 'col-xs-3'),
   Kebab.columnClass,
 ];
 

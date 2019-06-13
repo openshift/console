@@ -31,8 +31,8 @@ const menuActions = [
 ];
 
 const roleColumnClasses = [
-  classNames('pf-m-6-col-on-sm'),
-  classNames('pf-m-6-col-on-sm'),
+  classNames('col-xs-6'),
+  classNames('col-xs-6'),
   Kebab.columnClass,
 ];
 
@@ -131,10 +131,10 @@ class Details extends React.Component {
 }
 
 const bindingsColumnClasses = [
-  classNames('pf-m-4-col-on-sm'),
-  classNames('pf-m-2-col-on-sm'),
-  classNames('pf-m-4-col-on-sm'),
-  classNames('pf-m-2-col-on-sm'),
+  classNames('col-xs-4'),
+  classNames('col-xs-2'),
+  classNames('col-xs-4'),
+  classNames('col-xs-2'),
 ];
 
 const BindingsTableHeader = () => {

@@ -515,9 +515,9 @@ const SilencesDetailsPage = withFallback(connect(silenceParamToProps)((props: Si
 }));
 
 const tableAlertClasses = [
-  classNames('pf-m-7-col-on-md', 'pf-m-8-col-on-sm'),
-  classNames('pf-m-3-col-on-md', 'pf-m-4-col-on-sm'),
-  classNames('pf-m-2-col-on-md', 'pf-m-hidden', 'pf-m-visible-on-md'),
+  classNames('col-sm-7', 'col-xs-8'),
+  classNames('col-sm-3', 'col-xs-4'),
+  classNames('col-sm-2', 'hidden-xs'),
   Kebab.columnClass,
 ];
 
@@ -716,9 +716,9 @@ const AlertsPage_ = props => <MonitoringListPage
 const AlertsPage = withFallback(connect(alertsToProps)(AlertsPage_));
 
 const tableSilenceClasses = [
-  classNames('pf-m-7-col-on-md', 'pf-m-8-col-on-sm'),
-  classNames('pf-m-3-col-on-md', 'pf-m-4-col-on-sm'),
-  classNames('pf-m-2-col-on-md', 'pf-m-hidden', 'pf-m-visible-on-md'),
+  classNames('col-sm-7', 'col-xs-8'),
+  classNames('col-sm-3', 'col-xs-4'),
+  classNames('col-sm-2', 'hidden-xs'),
   Kebab.columnClass,
 ];
 

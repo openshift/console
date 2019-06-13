@@ -88,10 +88,10 @@ export const BuildConfigsDetailsPage: React.SFC<BuildConfigsDetailsPageProps> = 
 BuildConfigsDetailsPage.displayName = 'BuildConfigsDetailsPage';
 
 const tableColumnClasses = [
-  classNames('pf-m-3-col-on-md', 'pf-m-6-col-on-sm'),
-  classNames('pf-m-3-col-on-md', 'pf-m-6-col-on-sm'),
-  classNames('pf-m-3-col-on-md', 'pf-m-hidden', 'pf-m-visible-on-md'),
-  classNames('pf-m-3-col-on-md', 'pf-m-hidden', 'pf-m-visible-on-md'),
+  classNames('col-sm-3', 'col-xs-6'),
+  classNames('col-sm-3', 'col-xs-6'),
+  classNames('col-sm-3', 'hidden-xs'),
+  classNames('col-sm-3', 'hidden-xs'),
   Kebab.columnClass,
 ];
 

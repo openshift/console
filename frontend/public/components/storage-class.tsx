@@ -19,9 +19,9 @@ export const isDefaultClass = (storageClass: K8sResourceKind) => {
 };
 
 const tableColumnClasses = [
-  classNames('pf-m-5-col-on-md', 'pf-m-6-col-on-sm'),
-  classNames('pf-m-5-col-on-md', 'pf-m-6-col-on-sm'),
-  classNames('pf-m-2-col-on-md', 'pf-m-hidden', 'pf-m-visible-on-md'),
+  classNames('col-sm-5', 'col-xs-6'),
+  classNames('col-sm-5', 'col-xs-6'),
+  classNames('col-sm-2', 'hidden-xs'),
   Kebab.columnClass,
 ];
 

@@ -8,9 +8,9 @@ import { ClusterServicePlanModel, ClusterServiceBrokerModel, ClusterServiceClass
 import { viewYamlComponent } from './utils/horizontal-nav';
 
 const tableColumnClasses = [
-  classNames('pf-m-4-col-on-md', 'pf-m-6-col-on-sm'),
-  classNames('pf-m-4-col-on-md', 'pf-m-6-col-on-sm'),
-  classNames('pf-m-4-col-on-md', 'pf-m-hidden', 'pf-m-visible-on-md'),
+  classNames('col-sm-4', 'col-xs-6'),
+  classNames('col-sm-4', 'col-xs-6'),
+  classNames('col-sm-4', 'hidden-xs'),
 ];
 
 const ClusterServicePlanTableHeader = () => {
