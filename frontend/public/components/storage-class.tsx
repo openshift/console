@@ -36,7 +36,7 @@ const StorageClassTableHeader = () => {
       props: { className: tableColumnClasses[1] },
     },
     {
-      title: <React.Fragment>Reclaim <span className="pf-u-display-none-on-md pf-u-display-inline-block-on-lg">Policy</span></React.Fragment>,
+      title: <React.Fragment>Reclaim <span className="hidden-sm">Policy</span></React.Fragment>,
       sortField: 'reclaimPolicy', transforms: [sortable],
       props: { className: tableColumnClasses[2] },
     },

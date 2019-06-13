@@ -202,9 +202,8 @@ tags-input .autocomplete .suggestion-item em {
     vertical-align: middle !important;
   }
   th {
-    padding-top: 0 !important;
-    color: $color-text-primary;
     font-weight: var(--pf-global--FontWeight--bold);
+    padding-top: 0 !important;
   }
   thead > tr > th {
     border-bottom: 0;
@@ -513,7 +512,6 @@ kbd {
 // pf table overrides
 
 .pf-c-table tr > th {
-  color: $color-text-primary;
   font-weight: var(--pf-global--FontWeight--bold);
 }
 

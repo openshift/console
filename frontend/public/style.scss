@@ -1,8 +1,4 @@
 // Config
-// pf3 color variables
-@import '~patternfly/dist/sass/patternfly/color-variables';
-@import '~@patternfly/patternfly/sass-utilities/all';
-@import "~@patternfly/patternfly/_variables";
 @import "style/vars";
 
 // External dependency variables or mixins that are required/extended by our custom styles (tilde tells Webpack not to use relative path)
@@ -13,11 +9,6 @@
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/variables";
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/mixins";
 @import "~font-awesome-sass/assets/stylesheets/font-awesome/variables";
-
-// pf4 color variables
-// these vars have slightly different names to pf3 ones (imported above)
-// ie $color-pf-black-100 (pf3) vs $pf-color-black-100 (pf4)
-@import '~@patternfly/patternfly/sass-utilities/colors';
 
 @import "style/base";
 

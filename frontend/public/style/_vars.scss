@@ -4,6 +4,14 @@
 $consoleWebDistPath: './';
 $consoleWebFontPath: $consoleWebDistPath + 'fonts';
 
+// PatternFly color variables -- imported here so they can be used throughout
+// PF3 color variables
+@import '~patternfly/dist/sass/patternfly/color-variables';
+// PF4 color variables
+// Note these vars have slightly different names to PF3 ones (imported above)
+// i.e., $color-pf-black-100 (PF3) vs $pf-color-black-100 (PF4)
+@import '~@patternfly/patternfly/sass-utilities/colors';
+
 
 // == Overrides of external dependency variables
 
@@ -36,27 +44,24 @@ $co-m-label-line-height: 19px;
 
 // == Colors
 
-$color-error: $color-pf-red-100;
-$color-primary: $color-pf-blue-300;
-// TODO (jon) review color usage throughout app and consolidate common colors into this file
-
 $color-alertmanager-dark: $color-pf-orange-500;
 $color-co-m-row-hover: #fafafa;
 $color-configmap-dark: $color-pf-purple-600;
 $color-container-dark: $color-pf-light-blue-400;
+$color-error: $color-pf-red-100;
 $color-grey-background-border: #ccc;
 $color-ingress-dark: $color-pf-purple-700;
 $color-namespace-dark: $color-pf-green-500;
 $color-node-dark: $color-pf-purple-400;
 $color-pod-dark: $color-pf-cyan-400;
 $color-pod-overlord: $color-pf-blue-600;
+$color-primary: $color-pf-blue-300;
 $color-rbac-binding-dark: $color-pf-cyan-500;
 $color-rbac-role-dark: $color-pf-orange-600;
 $color-secret-dark: $color-pf-orange-400;
 $color-service-dark: $color-pf-light-green-500;
 $color-text-muted: $color-pf-black-600;
-$color-text-primary: $pf-global--Color--100;
-$color-text-secondary: $pf-global--Color--200;
+$color-text-secondary: $color-pf-black-600;
 // -- Depend on color vars defined above
 $color-alert-dark: $color-container-dark;
 $color-alertrule-dark: $color-configmap-dark;
