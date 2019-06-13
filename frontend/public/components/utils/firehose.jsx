@@ -25,8 +25,12 @@ const processReduxId = ({k8s}, props) => {
   }
 
   if (!isList) {
-    const stuff = k8s.get(reduxID);
-    return stuff ? stuff.toJS() : {};
+    let stuff = k8s.get(reduxID);
+    if (stuff) {
+      stuff = stuff.toJS();
+      stuff.ignoreIfMissing = props.ignoreIfMissing;
+    }
+    return stuff || {};
   }
 
   const data = k8s.getIn([reduxID, 'data']);
@@ -42,6 +46,7 @@ const processReduxId = ({k8s}, props) => {
     loadError: k8s.getIn([reduxID, 'loadError']),
     loaded: k8s.getIn([reduxID, 'loaded']),
     optional: props.optional,
+    ignoreIfMissing: props.ignoreIfMissing,
     selected,
   };
 };
@@ -67,6 +72,16 @@ const worstError = errors => {
   return worst;
 };
 
+const isLoaded = resource => {
+  if (resource.ignoreIfMissing) {
+    return resource.loaded || !_.isEmpty(resource.loadError) || _.get(resource.loadError, 'response.status') === 404;
+  }
+  if (resource.optional) {
+    return resource.loaded || !_.isEmpty(resource.loadError);
+  }
+  return resource.loaded;
+};
+
 // A wrapper Component that takes data out of redux for a list or object at some reduxID ...
 // passing it to children
 const ConnectToState = connect(({k8s}, {reduxes}) => {
@@ -76,8 +91,8 @@ const ConnectToState = connect(({k8s}, {reduxes}) => {
     resources[redux.prop] = processReduxId({k8s}, redux);
   });
 
-  const required = _.filter(resources, r => !r.optional);
-  const loaded = _.every(resources, resource => (resource.optional ? resource.loaded || !_.isEmpty(resource.loadError) : resource.loaded));
+  const required = _.filter(resources, r => !r.optional && !r.ignoreIfMissing);
+  const loaded = _.every(resources, isLoaded);
   const loadError = worstError(_.map(required, 'loadError').filter(Boolean));
 
   return Object.assign({}, resources, {
@@ -177,7 +192,7 @@ export const Firehose = connect(
     }
 
     render() {
-      const reduxes = this.firehoses.map(({id, prop, isList, filters, optional}) => ({reduxID: id, prop, isList, filters, optional}));
+      const reduxes = this.firehoses.map(({id, prop, isList, filters, optional, ignoreIfMissing}) => ({reduxID: id, prop, isList, filters, optional, ignoreIfMissing}));
       const children = inject(this.props.children, _.omit(this.props, [
         'children',
         'resources',
@@ -208,6 +223,7 @@ Firehose.propTypes = {
     selector: PropTypes.object,
     fieldSelector: PropTypes.string,
     isList: PropTypes.bool,
-    optional: PropTypes.bool,
+    optional: PropTypes.bool, // do not block children-rendering while resource is still being loaded
+    ignoreIfMissing: PropTypes.bool, // do not fail if the resource is missing (HTTP 404)
   })).isRequired,
 };
