@@ -1,0 +1,10 @@
+apiVersion: operators.coreos.com/v1alpha1
+kind: CatalogSource
+metadata:
+  name: rhd-operatorhub-catalog
+  namespace: openshift-operator-lifecycle-manager
+spec:
+  sourceType: grpc
+  image: quay.io/redhat-developer/operator-registry:latest
+  displayName: Community Operators
+  publisher: RHD Operator Hub

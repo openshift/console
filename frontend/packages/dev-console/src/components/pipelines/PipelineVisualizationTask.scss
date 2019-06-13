@@ -1,0 +1,116 @@
+$border-color: var(--pf-global--BorderColor--light-100);
+$gutter: 1.8em;
+.odc-pipeline-vis-task {
+  position: relative;
+  width: 13em;
+  height: 2em;
+  white-space: normal;
+  border: 1px solid $border-color;
+  border-radius: 5px;
+  background-color: var(--pf-global--BackgroundColor--200);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1.5em;
+  padding: 0.5em;
+  &__content {
+    width: inherit;
+    display: flex;
+    position: relative;
+    top: 1px;
+  }
+
+  &.is-done {
+    color: var(--pf-global--success-color--200);
+  }
+
+  &.is-running {
+    color: var(--pf-global--primary-color--dark-100);
+  }
+
+  &.is-error {
+    color: var(--pf-global--danger-color--100);
+  }
+
+  &.is-idle {
+    color: var(--pf-global--disabled-color--100);
+  }
+
+  &.is-input-node {
+    width: 2em;
+    height: 2em;
+    border-radius: 2em;
+    color: var(--pf-global--BackgroundColor--200);
+    background: $border-color;
+    &::after {
+      content: '';
+      position: absolute;
+      transform: translateY(-100%);
+      left: 2em;
+      bottom: -1em;
+    }
+  }
+
+  &:not(:first-child) {
+    margin-top: 3em;
+  }
+
+  &__stepcount {
+    margin: 0 4px;
+    white-space: nowrap;
+  }
+
+  &__status {
+    margin: 0 4px;
+    width: 1.5em;
+    flex-grow: 0;
+    flex-shrink: 0;
+    order: -1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.1em;
+  }
+
+  &__title {
+    flex-grow: 1;
+    flex-shrink: 1;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    margin: 0px 4px;
+    &:hover {
+      cursor: pointer;
+    }
+    &.is-text-center {
+      text-align: center;
+    }
+  }
+  // Connect each task
+  &:not(:first-child) {
+    &::after,
+    &::before {
+      content: '';
+      top: -4em;
+      position: absolute;
+      border-bottom: 1px solid $border-color;
+      width: $gutter / 2;
+      height: calc(5em + 1px);
+    }
+
+    // Right connecting lines
+    &::after {
+      right: 0;
+      transform: translateX(100%);
+      border-right: 1px solid $border-color;
+    }
+
+    // Left connecting lines
+    &::before {
+      left: 0;
+      transform: translateX(-100%);
+      border-left: 1px solid $border-color;
+    }
+  }
+}

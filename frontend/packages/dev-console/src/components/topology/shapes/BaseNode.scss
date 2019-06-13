@@ -1,0 +1,16 @@
+.odc-base-node {
+  &__bg {
+    fill: var(--pf-global--BackgroundColor--light-100);
+  }
+
+  &__selection {
+    fill: none;
+    stroke: var(--pf-global--active-color--300);
+  }
+
+  &__label {
+    pointer-events: none;
+    fill: var(--pf-global--Color--300);
+    font-size: var(--pf-global--FontSize--sm);
+  }
+}

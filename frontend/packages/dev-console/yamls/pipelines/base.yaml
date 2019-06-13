@@ -1,0 +1,469 @@
+apiVersion: policy/v1beta1
+kind: PodSecurityPolicy
+metadata:
+  name: tekton-pipelines
+spec:
+  allowPrivilegeEscalation: false
+  fsGroup:
+    ranges:
+    - max: 65535
+      min: 1
+    rule: MustRunAs
+  hostIPC: false
+  hostNetwork: false
+  hostPID: false
+  privileged: false
+  runAsUser:
+    rule: RunAsAny
+  seLinux:
+    rule: RunAsAny
+  supplementalGroups:
+    ranges:
+    - max: 65535
+      min: 1
+    rule: MustRunAs
+  volumes:
+  - emptyDir
+  - configMap
+  - secret
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: tekton-pipelines-admin
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  - namespaces
+  - secrets
+  - events
+  - serviceaccounts
+  - configmaps
+  - persistentvolumeclaims
+  verbs:
+  - get
+  - list
+  - create
+  - update
+  - delete
+  - patch
+  - watch
+- apiGroups:
+  - apps
+  resources:
+  - deployments
+  verbs:
+  - get
+  - list
+  - create
+  - update
+  - delete
+  - patch
+  - watch
+- apiGroups:
+  - apps
+  resources:
+  - deployments/finalizers
+  verbs:
+  - get
+  - list
+  - create
+  - update
+  - delete
+  - patch
+  - watch
+- apiGroups:
+  - admissionregistration.k8s.io
+  resources:
+  - mutatingwebhookconfigurations
+  verbs:
+  - get
+  - list
+  - create
+  - update
+  - delete
+  - patch
+  - watch
+- apiGroups:
+  - tekton.dev
+  resources:
+  - tasks
+  - clustertasks
+  - taskruns
+  - pipelines
+  - pipelineruns
+  - pipelineresources
+  verbs:
+  - get
+  - list
+  - create
+  - update
+  - delete
+  - patch
+  - watch
+- apiGroups:
+  - tekton.dev
+  resources:
+  - taskruns/finalizers
+  - pipelineruns/finalizers
+  verbs:
+  - get
+  - list
+  - create
+  - update
+  - delete
+  - patch
+  - watch
+- apiGroups:
+  - tekton.dev
+  resources:
+  - tasks/status
+  - clustertasks/status
+  - taskruns/status
+  - pipelines/status
+  - pipelineruns/status
+  - pipelineresources/status
+  verbs:
+  - get
+  - list
+  - create
+  - update
+  - delete
+  - patch
+  - watch
+- apiGroups:
+  - policy
+  resourceNames:
+  - tekton-pipelines
+  resources:
+  - podsecuritypolicies
+  verbs:
+  - use
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: pipeline
+  namespace: tekton-pipelines
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+  name: pipeline-admin
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: tekton-pipelines-admin
+subjects:
+- kind: ServiceAccount
+  name: pipeline
+  namespace: tekton-pipelines
+
+---
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  name: clustertasks.tekton.dev
+spec:
+  group: tekton.dev
+  names:
+    categories:
+    - all
+    - tekton-pipelines
+    kind: ClusterTask
+    plural: clustertasks
+  scope: Cluster
+  subresources:
+    status: {}
+  version: v1alpha1
+
+---
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  name: images.caching.internal.knative.dev
+spec:
+  group: caching.internal.knative.dev
+  names:
+    categories:
+    - all
+    - knative-internal
+    - caching
+    kind: Image
+    plural: images
+    shortNames:
+    - img
+    singular: image
+  scope: Namespaced
+  subresources:
+    status: {}
+  version: v1alpha1
+
+---
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  name: pipelines.tekton.dev
+spec:
+  group: tekton.dev
+  names:
+    categories:
+    - all
+    - tekton-pipelines
+    kind: Pipeline
+    plural: pipelines
+  scope: Namespaced
+  subresources:
+    status: {}
+  version: v1alpha1
+
+---
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  name: pipelineruns.tekton.dev
+spec:
+  additionalPrinterColumns:
+  - JSONPath: .status.conditions[?(@.type=="Succeeded")].status
+    description: The status of the pipelinrun
+    name: Status
+    type: string
+  - JSONPath: .status.startTime
+    name: StartTime
+    type: date
+  - JSONPath: .status.completionTime
+    name: CompletionTime
+    type: date
+  group: tekton.dev
+  names:
+    categories:
+    - all
+    - tekton-pipelines
+    kind: PipelineRun
+    plural: pipelineruns
+    shortNames:
+    - pr
+    - prs
+  scope: Namespaced
+  subresources:
+    status: {}
+  version: v1alpha1
+
+---
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  name: pipelineresources.tekton.dev
+spec:
+  group: tekton.dev
+  names:
+    categories:
+    - all
+    - tekton-pipelines
+    kind: PipelineResource
+    plural: pipelineresources
+  scope: Namespaced
+  subresources:
+    status: {}
+  version: v1alpha1
+
+---
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  name: tasks.tekton.dev
+spec:
+  group: tekton.dev
+  names:
+    categories:
+    - all
+    - tekton-pipelines
+    kind: Task
+    plural: tasks
+  scope: Namespaced
+  subresources:
+    status: {}
+  version: v1alpha1
+
+---
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  name: taskruns.tekton.dev
+spec:
+  additionalPrinterColumns:
+  - JSONPath: .status.conditions[?(@.type=="Succeeded")].status
+    name: Succeeded
+    type: string
+  - JSONPath: .status.conditions[?(@.type=="Succeeded")].reason
+    name: Reason
+    type: string
+  - JSONPath: .status.startTime
+    name: StartTime
+    type: date
+  - JSONPath: .status.completionTime
+    name: CompletionTime
+    type: date
+  group: tekton.dev
+  names:
+    categories:
+    - all
+    - tekton-pipelines
+    kind: TaskRun
+    plural: taskruns
+    shortNames:
+    - tr
+    - trs
+  scope: Namespaced
+  subresources:
+    status: {}
+  version: v1alpha1
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: pipeline
+  name: pipeline
+  namespace: tekton-pipelines
+spec:
+  ports:
+  - name: metrics
+    port: 9090
+    protocol: TCP
+    targetPort: 9090
+  selector:
+    app: pipeline
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: tekton-pipelines-webhook
+  name: tekton-pipelines-webhook
+  namespace: tekton-pipelines
+spec:
+  ports:
+  - port: 443
+    targetPort: 8443
+  selector:
+    app: tekton-pipelines-webhook
+
+---
+apiVersion: v1
+data: null
+kind: ConfigMap
+metadata:
+  name: config-artifact-bucket
+  namespace: tekton-pipelines
+
+---
+apiVersion: v1
+data:
+  loglevel.controller: info
+  loglevel.webhook: info
+  zap-logger-config: |
+    {
+      "level": "info",
+      "development": false,
+      "sampling": {
+        "initial": 100,
+        "thereafter": 100
+      },
+      "outputPaths": ["stdout"],
+      "errorOutputPaths": ["stderr"],
+      "encoding": "json",
+      "encoderConfig": {
+        "timeKey": "",
+        "levelKey": "level",
+        "nameKey": "logger",
+        "callerKey": "caller",
+        "messageKey": "msg",
+        "stacktraceKey": "stacktrace",
+        "lineEnding": "",
+        "levelEncoder": "",
+        "timeEncoder": "",
+        "durationEncoder": "",
+        "callerEncoder": ""
+      }
+    }
+kind: ConfigMap
+metadata:
+  name: config-logging
+  namespace: tekton-pipelines
+
+---
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: pipeline
+  namespace: tekton-pipelines
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: pipeline
+    spec:
+      containers:
+      - args:
+        - -logtostderr
+        - -stderrthreshold
+        - INFO
+        - -kubeconfig-writer-image
+        - gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/kubeconfigwriter@sha256:a5a2a193f01c2dd47da7306560de3eb52db7b88a587a1a53a34e450c8e12bb57
+        - -creds-image
+        - gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/creds-init@sha256:a8d00fe67962f6bb1cf223b0d9988c41aee0bf459c03f1e75f171cdc31fdf525
+        - -git-image
+        - gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/git-init@sha256:68636c92fabf75e9f960e2bd6fd29f3d0932e945a14e0bfb1ac89d0dd2d45d79
+        - -nop-image
+        - gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/nop@sha256:7673de6ccea5385df2ef92ec1afd77b2654b2686888595d23d6f42ec4ec810ca
+        - -bash-noop-image
+        - gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/bash@sha256:8c33726ee8a194f04cedb6cd612d16471ffb4b2c5c160e2927d0119ab98428b1
+        - -gsutil-image
+        - gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/gsutil@sha256:7ee20ca5428358e766086a217b7d27dba56960dbcb4ce705dd0db3e551cd06fd
+        - -entrypoint-image
+        - gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/entrypoint@sha256:d35d81ea85babd9c43b70eb0aa225c59b44d5b32624c40d6ae8aeb0a65def8fb
+        image: gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/controller@sha256:85b932024e07dc2538dece0d979fc0030211600e07ff6fb18935cd7a6b56bad6
+        name: pipeline
+        volumeMounts:
+        - mountPath: /etc/config-logging
+          name: config-logging
+      serviceAccountName: pipeline
+      volumes:
+      - configMap:
+          name: config-logging
+        name: config-logging
+
+---
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: tekton-pipelines-webhook
+  namespace: tekton-pipelines
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: tekton-pipelines-webhook
+    spec:
+      containers:
+      - image: gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/webhook@sha256:59be4e291f510bced7c138e92cbfee1ea58e0a48969fbaa3a055c1537d77bfd9
+        name: webhook
+        volumeMounts:
+        - mountPath: /etc/config-logging
+          name: config-logging
+      serviceAccountName: pipeline
+      volumes:
+      - configMap:
+          name: config-logging
+        name: config-logging
+
+---
