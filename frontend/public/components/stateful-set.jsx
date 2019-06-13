@@ -22,8 +22,8 @@ import {
 } from './utils';
 import { VolumesTable } from './volumes-table';
 
-const { AddStorage, EditEnvironment, common } = Kebab.factory;
-export const menuActions = [AddStorage, EditEnvironment, ...common];
+const { AddStorage, common } = Kebab.factory;
+export const menuActions = [AddStorage, ...common];
 
 const kind = 'StatefulSet';
 

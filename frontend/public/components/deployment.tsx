@@ -33,7 +33,7 @@ import {
 } from './workload-table';
 
 const deploymentsReference: K8sResourceKindReference = 'Deployment';
-const {ModifyCount, AddStorage, EditEnvironment, common} = Kebab.factory;
+const {ModifyCount, AddStorage, common} = Kebab.factory;
 
 const UpdateStrategy: KebabAction = (kind: K8sKind, deployment: K8sResourceKind) => ({
   label: 'Edit Update Strategy',
@@ -64,7 +64,6 @@ export const menuActions = [
   PauseAction,
   AddStorage,
   UpdateStrategy,
-  EditEnvironment,
   ...common,
 ];
 
