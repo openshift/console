@@ -1081,10 +1081,14 @@ const QueryBrowserPage = () => {
     </div>
     <div className="co-m-pane__body">
       <div className="row">
+        <div className="col-xs-12 text-right">
+          <ToggleGraph />
+        </div>
+      </div>
+      <div className="row">
         <div className="col-xs-12">
           <QueryBrowser
             defaultTimespan={30 * 60 * 1000}
-            GraphLink={ToggleGraph}
             onDataUpdate={onDataUpdate}
             queries={validQueries}
           />
