@@ -10,9 +10,7 @@ dl {
 
 // match pf4 styling / table col head styling
 dt {
-  color: $color-text-primary;
-  font-weight: var(--pf-global--FontWeight--bold);
-  font-size: $font-size-base; }
+  font-weight: var(--pf-global--FontWeight--bold); }
 
 dd {
   margin-bottom: 20px; }
