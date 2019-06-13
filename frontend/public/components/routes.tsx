@@ -42,7 +42,7 @@ const isWebRoute = (route) => {
     _.get(route, 'spec.wildcardPolicy') !== 'Subdomain';
 };
 
-const getRouteWebURL = (route) => {
+export const getRouteWebURL = (route) => {
   const scheme = _.get(route, 'spec.tls.termination') ? 'https' : 'http';
   let url = `${scheme }://${getRouteHost(route, false)}`;
   if (route.spec.path) {
