@@ -1,17 +1,13 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
+import * as classNames from 'classnames';
+import { sortable } from '@patternfly/react-table';
 
 import { getName, getNamespace, getMachineNode } from '@console/shared';
 import { MachineModel, NodeModel } from '@console/internal/models';
 
-import {
-  ListHeader,
-  ColHead,
-  List,
-  MultiListPage,
-  ResourceRow,
-} from '@console/internal/components/factory';
-import { ResourceLink } from '@console/internal/components/utils';
+import { MultiListPage, Table, TableRow, TableData } from '@console/internal/components/factory';
+import { ResourceLink, Kebab } from '@console/internal/components/utils';
 import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
 
 import { BaremetalHostModel } from '../models';
@@ -19,38 +15,54 @@ import { getHostBMCAddress, getHostMachine } from '../selectors';
 import { BaremetalHostRole } from './host-role';
 import MachineCell from './machine-cell';
 
-const nameColumnClasses = 'col-lg-4 col-md-4 col-sm-6 col-xs-6';
-// const statusColumnClasses = 'col-lg-2 col-md-4 hidden-sm hidden-xs';
-const machineColumnClasses = 'col-lg-3 visible-lg';
-const roleColumnClasses = 'col-lg-2 visible-lg';
-const addressColumnClasses = 'col-lg-2 visible-lg';
+const tableColumnClasses = [
+  classNames('col-lg-5', 'col-md-8', 'col-sm-12', 'col-xs-12'),
+  classNames('col-lg-2', 'col-md-4', 'col-sm-6', 'hidden-xs'),
+  classNames('col-lg-3', 'col-md-4', 'hidden-sm', 'hidden-xs'),
+  classNames('col-lg-2', 'hidden-md', 'hidden-sm', 'hidden-xs'),
+  classNames('col-lg-2', 'hidden-md', 'hidden-sm', 'hidden-xs'),
+  Kebab.columnClass,
+];
 
-const HostHeader = (props: React.ComponentProps<typeof ColHead>) => (
-  <ListHeader>
-    <ColHead {...props} className={nameColumnClasses} sortField="metadata.name">
-      Name
-    </ColHead>
-    {/* <ColHead {...props} className={statusColumnClasses}>
-      Status
-    </ColHead> */}
-    <ColHead {...props} className={machineColumnClasses} sortField="spec.machineRef.name">
-      Machine
-    </ColHead>
-    <ColHead {...props} className={roleColumnClasses}>
-      Role
-    </ColHead>
-    <ColHead {...props} className={addressColumnClasses} sortField="spec.bmc.address">
-      Management Address
-    </ColHead>
-  </ListHeader>
-);
+const HostsTableHeader = () => [
+  {
+    title: 'Name',
+    sortField: 'metadata.name',
+    transforms: [sortable],
+    props: { className: tableColumnClasses[0] },
+  },
+  {
+    title: 'Machine',
+    sortField: 'spec.machineRef.name',
+    transforms: [sortable],
+    props: { className: tableColumnClasses[2] },
+  },
+  {
+    title: 'Role',
+    sortField: 'machine.metadata.labels["machine.openshift.io/cluster-api-machine-role"]',
+    transforms: [sortable],
+    props: { className: tableColumnClasses[3] },
+  },
+  {
+    title: 'Management Address',
+    sortField: 'spec.machineRef.name',
+    transforms: [sortable],
+    props: { className: tableColumnClasses[4] },
+  },
+  // {
+  //   title: '',
+  //   props: { className: tableColumnClasses[5] },
+  // },
+];
 
-type HostRowProps = {
+type HostsTableRowProps = {
   obj: K8sResourceKind & { machine: K8sResourceKind; node: K8sResourceKind };
-  style?: React.StyleHTMLAttributes<any>;
+  index: number;
+  key?: string;
+  style: React.StyleHTMLAttributes<any>;
 };
 
-const HostRow: React.FC<HostRowProps> = ({ obj: host }) => {
+const HostsTableRow: React.FC<HostsTableRowProps> = ({ obj: host, index, key, style }) => {
   const name = getName(host);
   const namespace = getNamespace(host);
   // const machineName = getHostMachineName(host);
@@ -77,32 +89,39 @@ const HostRow: React.FC<HostRowProps> = ({ obj: host }) => {
   // };
 
   return (
-    <ResourceRow obj={host}>
-      <div className={nameColumnClasses}>
+    <TableRow id={host.metadata.uid} index={index} trKey={key} style={style}>
+      <TableData className={tableColumnClasses[0]}>
         <ResourceLink
           kind={referenceForModel(BaremetalHostModel)}
           name={name}
           namespace={namespace}
         />
-      </div>
-      {/* <div className={statusColumnClasses}>
-        <WithResources resourceMap={machineName ? hostResourceMap : {}}>
-          <BaremetalHostStatus host={host} />
-        </WithResources>
-      </div> */}
-      <div className={machineColumnClasses}>
+      </TableData>
+      {/* <TableData className={tableColumnClasses[0]}>
+           <BaremetalHostStatus host={host} />
+       </TableData> */}
+      <TableData className={tableColumnClasses[2]}>
         <MachineCell host={host} />
-      </div>
-      <div className={roleColumnClasses}>
+      </TableData>
+      <TableData className={tableColumnClasses[3]}>
         <BaremetalHostRole machine={machine} />
-      </div>
-      <div className={addressColumnClasses}>{address}</div>
-    </ResourceRow>
+      </TableData>
+      <TableData className={tableColumnClasses[4]}>{address}</TableData>
+      {/* <TableData className={tableColumnClasses[5]}>
+        TODO(jtomasek): Add host actions here
+      </TableData> */}
+    </TableRow>
   );
 };
 
-const HostList: React.FC<React.ComponentProps<typeof List>> = (props) => (
-  <List {...props} Header={HostHeader} Row={HostRow} virtualize />
+const HostList: React.FC<React.ComponentProps<typeof Table>> = (props) => (
+  <Table
+    {...props}
+    aria-label="Baremetal Hosts"
+    Header={HostsTableHeader}
+    Row={HostsTableRow}
+    virtualize
+  />
 );
 
 // TODO(jtomasek): re-enable filters once the extension point for list.tsx is in place
