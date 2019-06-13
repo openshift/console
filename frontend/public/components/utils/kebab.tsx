@@ -177,17 +177,6 @@ const kebabFactory: KebabFactory = {
       verb: 'patch',
     },
   }),
-  EditEnvironment: (kind, obj) => ({
-    label: `${kind.kind === 'Pod' ? 'View' : 'Edit'} Environment`,
-    href: `${resourceObjPath(obj, kind.crd ? referenceForModel(kind) : kind.kind)}/environment`,
-    accessReview: {
-      group: kind.apiGroup,
-      resource: kind.path,
-      name: obj.metadata.name,
-      namespace: obj.metadata.namespace,
-      verb: 'patch',
-    },
-  }),
   AddStorage: (kind, obj) => ({
     label: 'Add Storage',
     href: `${resourceObjPath(obj, kind.crd ? referenceForModel(kind) : kind.kind)}/attach-storage`,

@@ -85,14 +85,13 @@ const PauseAction: KebabAction = (kind: K8sKind, obj: K8sResourceKind) => ({
   },
 });
 
-const {ModifyCount, AddStorage, EditEnvironment, common} = Kebab.factory;
+const {ModifyCount, AddStorage, common} = Kebab.factory;
 
 export const menuActions: KebabAction[] = [
   RolloutAction,
   PauseAction,
   ModifyCount,
   AddStorage,
-  EditEnvironment,
   ...common,
 ];
 

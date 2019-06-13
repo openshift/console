@@ -27,8 +27,6 @@ import { ResourceEventStream } from './events';
 
 const BuildConfigsReference: K8sResourceKindReference = 'BuildConfig';
 
-const { EditEnvironment, common } = Kebab.factory;
-
 const startBuildAction: KebabAction = (kind, buildConfig) => ({
   label: 'Start Build',
   callback: () => startBuild(buildConfig).then(build => {
@@ -49,8 +47,7 @@ const startBuildAction: KebabAction = (kind, buildConfig) => ({
 
 const menuActions = [
   startBuildAction,
-  EditEnvironment,
-  ...common,
+  ...Kebab.factory.common,
 ];
 
 export const BuildConfigsDetails: React.SFC<BuildConfigsDetailsProps> = ({obj: buildConfig}) => <React.Fragment>

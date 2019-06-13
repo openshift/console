@@ -23,9 +23,9 @@ import { breadcrumbsForOwnerRefs } from './utils/breadcrumbs';
 import { ResourceEventStream } from './events';
 import { VolumesTable } from './volumes-table';
 
-const {ModifyCount, AddStorage, EditEnvironment, common} = Kebab.factory;
+const {ModifyCount, AddStorage, common} = Kebab.factory;
 
-export const replicaSetMenuActions = [ModifyCount, AddStorage, EditEnvironment, ...common];
+export const replicaSetMenuActions = [ModifyCount, AddStorage, ...common];
 
 const Details = ({obj: replicaSet}) => {
   const revision = _.get(replicaSet, ['metadata', 'annotations', 'deployment.kubernetes.io/revision']);

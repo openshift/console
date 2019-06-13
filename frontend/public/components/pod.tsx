@@ -35,7 +35,7 @@ import { formatDuration } from './utils/datetime';
 import { CamelCaseWrap } from './utils/camel-case-wrap';
 import { VolumesTable } from './volumes-table';
 
-export const menuActions = [Kebab.factory.EditEnvironment, ...Kebab.factory.common];
+export const menuActions = [...Kebab.factory.common];
 const validReadinessStates = new Set(['ContainersNotReady', 'Ready', 'PodCompleted']);
 
 export const Readiness: React.FC<ReadinessProps> = ({pod}) => {

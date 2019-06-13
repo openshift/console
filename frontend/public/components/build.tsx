@@ -35,8 +35,6 @@ import { Area, requirePrometheus } from './graphs';
 
 const BuildsReference: K8sResourceKindReference = 'Build';
 
-const { common, EditEnvironment } = Kebab.factory;
-
 const CloneBuildAction: KebabAction = (kind: K8sKind, build: K8sResourceKind) => ({
   label: 'Rebuild',
   callback: () => cloneBuild(build).then(clone => {
@@ -79,8 +77,7 @@ const CancelAction: KebabAction = (kind: K8sKind, build: K8sResourceKind) => ({
 const menuActions = [
   CloneBuildAction,
   CancelAction,
-  EditEnvironment,
-  ...common,
+  ...Kebab.factory.common,
 ];
 
 export enum BuildStrategyType {
