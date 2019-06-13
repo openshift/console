@@ -22,7 +22,9 @@
   "eslint.enable": true,
 
   "prettier.eslintIntegration": true,
-  "javascript.validate.enable": false
+  "javascript.validate.enable": false,
+  "debug.node.autoAttach": "on",
+  "typescript.tsdk": "node_modules/typescript/lib"
 
   // TODO support prettier + stylelint
   // "prettier.stylelintIntegration": true,
