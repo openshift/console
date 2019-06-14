@@ -11,7 +11,7 @@ import { NamespaceModel, ProjectModel, SecretModel } from '../models';
 import { k8sGet } from '../module/k8s';
 import * as UIActions from '../actions/ui';
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
-import { Kebab, Dropdown, Firehose, LabelList, LoadingInline, navFactory, ResourceKebab, SectionHeading, ResourceLink, ResourceSummary, MsgBox, StatusIconAndText, ExternalLink, humanizeCpuCores, humanizeDecimalBytes } from './utils';
+import { Kebab, Dropdown, Firehose, LabelList, LoadingInline, navFactory, ResourceKebab, SectionHeading, ResourceLink, ResourceSummary, MsgBox, StatusIconAndText, ExternalLink, humanizeCpuCores, humanizeDecimalBytes, useAccessReview } from './utils';
 import { createNamespaceModal, createProjectModal, deleteNamespaceModal, configureNamespacePullSecretModal } from './modals';
 import { RoleBindingsPage } from './RBAC';
 import { Bar, Area, requirePrometheus } from './graphs';
@@ -254,6 +254,12 @@ const ResourceUsage = requirePrometheus(({ns}) => <div className="co-m-pane__bod
 export const NamespaceSummary = ({ns}) => {
   const displayName = getDisplayName(ns);
   const requester = getRequester(ns);
+  const canListSecrets = useAccessReview({
+    group: SecretModel.apiGroup,
+    resource: SecretModel.path,
+    verb: 'patch',
+    namespace: ns.metadata.name,
+  });
   return <div className="row">
     <div className="col-sm-6 col-xs-12">
       <ResourceSummary resource={ns}>
@@ -267,8 +273,10 @@ export const NamespaceSummary = ({ns}) => {
       <dl className="co-m-pane__details">
         <dt>Status</dt>
         <dd><StatusIconAndText status={ns.status.phase} /></dd>
-        <dt>Default Pull Secret</dt>
-        <dd><PullSecret namespace={ns} /></dd>
+        {canListSecrets && <React.Fragment>
+          <dt>Default Pull Secret</dt>
+          <dd><PullSecret namespace={ns} /></dd>
+        </React.Fragment>}
         <dt>Network Policies</dt>
         <dd>
           <Link to={`/k8s/ns/${ns.metadata.name}/networkpolicies`}>Network Policies</Link>
