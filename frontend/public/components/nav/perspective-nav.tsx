@@ -36,7 +36,7 @@ const PerspectiveNav: React.FC<StateProps> = ({ perspective }) => {
               renderedSections.push(section);
               return <NavSection title={section} key={section} />;
             }
-            return createLink(item);
+            return createLink(item, true);
           })
       )}
     </React.Fragment>
