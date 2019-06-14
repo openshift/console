@@ -281,6 +281,10 @@ export const ClusterServiceVersionsDetailsPage: React.StatelessComponent<Cluster
 
   return <DetailsPage
     {...props}
+    breadcrumbsFor={() => [
+      {name: 'Installed Operators', path: `/k8s/ns/${props.match.params.ns}/${props.match.params.plural}`},
+      {name: 'Operator Details', path: props.match.url},
+    ]}
     namespace={props.match.params.ns}
     kind={referenceForModel(ClusterServiceVersionModel)}
     name={props.match.params.name}

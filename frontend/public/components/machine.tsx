@@ -16,7 +16,6 @@ import {
   SectionHeading,
   navFactory,
 } from './utils';
-import { breadcrumbsForOwnerRefs } from './utils/breadcrumbs';
 
 const { common } = Kebab.factory;
 const menuActions = [...common];
@@ -147,10 +146,6 @@ export const MachinePage: React.SFC<MachinePageProps> = props =>
 export const MachineDetailsPage: React.SFC<MachineDetailsPageProps> = props =>
   <DetailsPage
     {...props}
-    breadcrumbsFor={obj => breadcrumbsForOwnerRefs(obj).concat({
-      name: 'Machine Details',
-      path: props.match.url,
-    })}
     kind={machineReference}
     menuActions={menuActions}
     pages={[navFactory.details(MachineDetails), navFactory.editYaml()]}

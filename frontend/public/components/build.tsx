@@ -27,7 +27,6 @@ import {
   Timestamp,
 } from './utils';
 import { BuildPipeline, BuildPipelineLogLink } from './build-pipeline';
-import { breadcrumbsForOwnerRefs } from './utils/breadcrumbs';
 import { fromNow } from './utils/datetime';
 import { BuildLogs } from './build-logs';
 import { ResourceEventStream } from './events';
@@ -239,10 +238,6 @@ const pages = [
 export const BuildsDetailsPage: React.SFC<BuildsDetailsPageProps> = props =>
   <DetailsPage
     {...props}
-    breadcrumbsFor={obj => breadcrumbsForOwnerRefs(obj).concat({
-      name: 'Build Details',
-      path: props.match.url,
-    })}
     kind={BuildsReference}
     menuActions={menuActions}
     pages={pages} />;

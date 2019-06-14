@@ -21,7 +21,6 @@ import {
   resourcePath,
   useAccessReview,
 } from './utils';
-import { breadcrumbsForOwnerRefs } from './utils/breadcrumbs';
 import { Tooltip } from './utils/tooltip';
 
 const machineReplicasModal = (resourceKind: K8sKind, resource: MachineSetKind | MachineDeploymentKind) => configureReplicaCountModal({
@@ -241,10 +240,6 @@ export const MachineSetPage: React.SFC<MachineSetPageProps> = props =>
 
 export const MachineSetDetailsPage: React.SFC<MachineSetDetailsPageProps> = props => <DetailsPage
   {...props}
-  breadcrumbsFor={obj => breadcrumbsForOwnerRefs(obj).concat({
-    name: 'Machine Set Details',
-    path: props.match.url,
-  })}
   menuActions={menuActions}
   kind={machineSetReference}
   pages={[

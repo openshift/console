@@ -9,7 +9,6 @@ import { SectionHeading, MsgBox, ResourceLink, ResourceKebab, Kebab, ResourceIco
 import { InstallPlanKind, InstallPlanApproval, olmNamespace, Step, referenceForStepResource } from './index';
 import { K8sResourceKind, referenceForModel, referenceForOwnerRef, k8sUpdate, apiVersionForReference } from '../../module/k8s';
 import { SubscriptionModel, ClusterServiceVersionModel, InstallPlanModel, CatalogSourceModel, OperatorGroupModel } from '../../models';
-import { breadcrumbsForOwnerRefs } from '../utils/breadcrumbs';
 import { requireOperatorGroup } from './operator-group';
 import { installPlanPreviewModal } from '../modals';
 
@@ -248,10 +247,6 @@ export const InstallPlanDetailsPage: React.SFC<InstallPlanDetailsPageProps> = (p
     navFactory.editYaml(),
     {href: 'components', name: 'Components', component: InstallPlanPreview},
   ]}
-  breadcrumbsFor={(obj) => breadcrumbsForOwnerRefs(obj).concat({
-    name: 'Install Plan Details',
-    path: props.match.url,
-  })}
   menuActions={Kebab.factory.common} />;
 
 export type InstallPlansListProps = {

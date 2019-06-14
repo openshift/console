@@ -181,7 +181,7 @@ describe('Interacting with a `OwnNamespace` install mode Operator (Prometheus)',
   });
 
   it('displays YAML editor for creating a new `Alertmanager` instance', async() => {
-    await $$('.breadcrumb-link').first().click();
+    await $$('[data-test-id=breadcrumb-link-1]').click();
     await crudView.isLoaded();
     await element(by.linkText('All Instances')).click();
     await browser.wait(until.visibilityOf(element(by.buttonText('Create New'))));
@@ -227,7 +227,7 @@ describe('Interacting with a `OwnNamespace` install mode Operator (Prometheus)',
   });
 
   it('displays YAML editor for creating a new `ServiceMonitor` instance', async() => {
-    await $$('.breadcrumb-link').first().click();
+    await $$('[data-test-id=breadcrumb-link-1]').click();
     await crudView.isLoaded();
     await element(by.linkText('All Instances')).click();
     await browser.wait(until.visibilityOf(element(by.buttonText('Create New'))));
