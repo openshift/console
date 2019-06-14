@@ -22,7 +22,7 @@ import { usePrometheusPoll } from './prometheus-poll-hook';
 import { PrometheusEndpoint } from './helpers';
 import { PrometheusGraph } from './prometheus-graph';
 import { barTheme } from './themes';
-import { humanizeNumber, truncateMiddle } from '../utils';
+import { humanizeNumber } from '../utils';
 import {
   DataPoint,
   DomainPadding,
@@ -30,7 +30,8 @@ import {
   PrometheusResponse,
 } from '.';
 
-const DEFAULT_SPACING = 10;
+const BAR_PADDING = 8; // Space between each bar (top and bottom)
+const BAR_LABEL_PADDING = 8;
 const DEFAULT_BAR_WIDTH = 10;
 const DEFAULT_DOMAIN_PADDING: DomainPadding = { x: [20, 10] };
 const PADDING_RATIO = 1 / 3;
@@ -47,17 +48,6 @@ const handleResponse = (response: PrometheusResponse, metric: string, formatY: M
   });
 };
 
-const getTotalXDomainPadding = (domainPadding: DomainPadding): number => {
-  const value = _.get(domainPadding, 'x', domainPadding);
-  if (_.isArray(value)) {
-    return _.sum(value);
-  }
-  if (_.isFinite(value)) {
-    return value * 2;
-  }
-  return 0;
-};
-
 export const Bar: React.FC<BarProps> = ({
   barWidth = DEFAULT_BAR_WIDTH,
   domainPadding = DEFAULT_DOMAIN_PADDING,
@@ -67,35 +57,35 @@ export const Bar: React.FC<BarProps> = ({
   query,
   theme = getCustomTheme(ChartThemeColor.blue, ChartThemeVariant.light, barTheme),
   title,
-  spacing = DEFAULT_SPACING,
 }) => {
   const [containerRef, width] = useRefWidth();
   const [response] = usePrometheusPoll({ endpoint: PrometheusEndpoint.QUERY, namespace, query });
   const data = handleResponse(response, metric, formatY);
 
-  // Max space that horizontal padding should take up. By default, 1/3 of the horizontal space is always available for the actual bar graph.
+  // Max space that horizontal padding should take up. By default, 2/3 of the horizontal space is always available for the actual bar graph.
   const maxHorizontalPadding = PADDING_RATIO * width;
 
-  // Get total x-axis domain padding (top and bottom in this case, since graph is horizontal)
-  const totalXDomainPadding = getTotalXDomainPadding(domainPadding);
+  // SVG text element is slightly taller than font size
+  const xAxisTickLabelHeight = _.get(theme, 'independentAxis.style.tickLabels.fontSize') || _.get(theme, 'axis.style.tickLabels.fontSize', 14) * 1.25;
+  const barFootprint = barWidth + xAxisTickLabelHeight + BAR_PADDING + BAR_LABEL_PADDING;
+  const topPadding = xAxisTickLabelHeight + BAR_LABEL_PADDING; // Moving the label above the bar
 
   // Calculate total graph height, accounting for domain padding.
-  const height = ((spacing + barWidth) * data.length) + totalXDomainPadding;
+  const height = barFootprint * data.length + topPadding;
   const padding = {
     bottom: 0,
-    left: Math.min(110, maxHorizontalPadding),
+    left: 0,
     right: Math.min(100, maxHorizontalPadding),
-    top: 0,
+    top: topPadding,
   };
-  const tickFormat = (tick) => truncateMiddle(tick.toString(), { length: 15 });
-  const tickLabelComponent = <ChartLabel x={0} />;
+  const tickLabelComponent = <ChartLabel x={0} verticalAnchor="start" transform={`translate(0, -${xAxisTickLabelHeight + BAR_LABEL_PADDING})`} />;
   const labelComponent = <ChartLabel x={width} />;
 
   return <PrometheusGraph ref={containerRef} title={title} query={query}>
     { data.length
       ? <Chart domainPadding={domainPadding} height={height} theme={theme} width={width} padding={padding}>
         <ChartBar barWidth={barWidth} data={data} horizontal labelComponent={labelComponent} />
-        <ChartAxis tickFormat={tickFormat} tickLabelComponent={tickLabelComponent} />
+        <ChartAxis tickLabelComponent={tickLabelComponent} />
       </Chart>
       : <EmptyState className="graph-empty-state" variant={EmptyStateVariant.full}>
         <EmptyStateIcon size="sm" icon={ChartBarIcon} />

@@ -10,7 +10,7 @@ export const areaTheme = {
     padding: {
       bottom: 30,
       left: 60,
-      right: 0,
+      right: 10,
       top: 0,
     },
   },

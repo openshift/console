@@ -11,7 +11,6 @@ import {
   Chart,
   ChartArea,
   ChartAxis,
-  ChartGroup,
   ChartThemeColor,
   ChartThemeVariant,
   ChartVoronoiContainer,
@@ -26,7 +25,7 @@ import { usePrometheusPoll } from './prometheus-poll-hook';
 import { areaTheme } from './themes';
 import { DataPoint, MutatorFunction, PrometheusResponse } from './';
 
-const DEFAULT_HEIGHT = 100;
+const DEFAULT_HEIGHT = 180;
 const DEFAULT_SAMPLES = 60;
 const DEFAULT_TICK_COUNT = 3;
 const DEFAULT_TIMESPAN = 60 * 60 * 1000; // 1 hour
@@ -63,7 +62,7 @@ export const Area: React.FC<AreaProps> = ({
     timespan,
   });
   const data = formatResponse(response);
-  const getLabel = ({y}) => formatY(y);
+  const getLabel = ({x, y}) => `${formatY(y)} at ${formatX(x)}`;
   const container = <ChartVoronoiContainer voronoiDimension="x" labels={getLabel} />;
   return <PrometheusGraph ref={containerRef} className={className} query={query} title={title}>
     {
@@ -78,9 +77,7 @@ export const Area: React.FC<AreaProps> = ({
         >
           <ChartAxis tickCount={tickCount} tickFormat={formatX} />
           <ChartAxis dependentAxis tickCount={tickCount} tickFormat={formatY} />
-          <ChartGroup>
-            <ChartArea data={data} />
-          </ChartGroup>
+          <ChartArea data={data} />
         </Chart>
         : <EmptyState className="graph-empty-state" variant={EmptyStateVariant.full}>
           <EmptyStateIcon size="sm" icon={ChartAreaIcon} />

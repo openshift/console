@@ -147,41 +147,41 @@ const NodeGraphs = requirePrometheus(({node}) => {
 
   return <React.Fragment>
     <div className="row">
-      <div className="col-md-4">
+      <div className="col-md-12 col-lg-4">
         <Area
           title="Memory Usage"
           formatY={humanizeDecimalBytes}
           query={ipQuery && `node_memory_Active_bytes${ipQuery}`}
         />
       </div>
-      <div className="col-md-4">
+      <div className="col-md-12 col-lg-4">
         <Area
           title="CPU Usage"
           formatY={humanizeCpuCores}
           query={ipQuery && `instance:node_cpu:rate:sum${ipQuery}`}
         />
       </div>
-      <div className="col-md-4">
+      <div className="col-md-12 col-lg-4">
         <Area
           title="Number of Pods"
           query={ipQuery && `kubelet_running_pod_count${ipQuery}`}
         />
       </div>
-      <div className="col-md-4">
+      <div className="col-md-12 col-lg-4">
         <Area
           title="Network In"
           formatY={humanizeDecimalBytes}
           query={ipQuery && `instance:node_network_receive_bytes:rate:sum${ipQuery}`}
         />
       </div>
-      <div className="col-md-4">
+      <div className="col-md-12 col-lg-4">
         <Area
           title="Network Out"
           formatY={humanizeDecimalBytes}
           query={ipQuery && `instance:node_network_transmit_bytes:rate:sum${ipQuery}`}
         />
       </div>
-      <div className="col-md-4">
+      <div className="col-md-12 col-lg-4">
         <Area
           title="Filesystem"
           formatY={humanizeDecimalBytes}
