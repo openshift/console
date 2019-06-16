@@ -3,6 +3,7 @@ import * as _ from 'lodash-es';
 import {PROMETHEUS_BASE_PATH, PROMETHEUS_TENANCY_BASE_PATH} from './index';
 
 export enum PrometheusEndpoint {
+  LABEL = 'api/v1/label',
   QUERY = 'api/v1/query',
   QUERY_RANGE = 'api/v1/query_range',
 }

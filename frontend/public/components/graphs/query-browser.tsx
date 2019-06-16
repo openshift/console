@@ -23,6 +23,7 @@ import { VictorySelectionContainer } from 'victory-selection-container';
 
 import { Dropdown, humanizeNumber, LoadingInline, usePoll, useRefWidth, useSafeFetch } from '../utils';
 import { formatPrometheusDuration, parsePrometheusDuration, twentyFourHourTime } from '../utils/datetime';
+import { withFallback } from '../utils/error-boundary';
 import { PrometheusResponse } from '.';
 import { getPrometheusURL, PrometheusEndpoint } from './helpers';
 import { queryBrowserTheme } from './themes';
@@ -251,7 +252,7 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
   </div>;
 };
 const stateToProps = ({UI}) => ({hideGraphs: !!UI.getIn(['monitoring', 'hideGraphs'])});
-export const QueryBrowser = connect(stateToProps)(QueryBrowser_);
+export const QueryBrowser = withFallback(connect(stateToProps)(QueryBrowser_));
 
 type Domain = {
   x: [number, number];
