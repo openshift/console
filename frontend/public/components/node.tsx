@@ -143,7 +143,7 @@ export const NodesPage = props => <ListPage {...props} ListComponent={NodesList}
 
 const NodeGraphs = requirePrometheus(({node}) => {
   const nodeIp = _.find<{type: string, address: string}>(node.status.addresses, {type: 'InternalIP'});
-  const ipQuery = nodeIp && `{instance=~'.*${nodeIp.address}.*'}`;
+  const ipQuery = nodeIp && `{instance=~'${nodeIp.address}:.*'}`;
 
   return <React.Fragment>
     <div className="row">
