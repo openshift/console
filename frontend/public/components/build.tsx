@@ -117,7 +117,7 @@ const BuildGraphs = requirePrometheus(({build}) => {
 
   return <React.Fragment>
     <div className="row">
-      <div className="col-md-4">
+      <div className="col-md-12 col-lg-4">
         <Area
           title="Memory Usage"
           formatY={humanizeDecimalBytes}
@@ -125,7 +125,7 @@ const BuildGraphs = requirePrometheus(({build}) => {
           query={`pod_name:container_memory_usage_bytes:sum{pod_name='${podName}',container_name='',namespace='${namespace}'}`}
         />
       </div>
-      <div className="col-md-4">
+      <div className="col-md-12 col-lg-4">
         <Area
           title="CPU Usage"
           formatY={humanizeCpuCores}
@@ -133,7 +133,7 @@ const BuildGraphs = requirePrometheus(({build}) => {
           query={`pod_name:container_cpu_usage:sum{pod_name='${podName}',container_name='',namespace='${namespace}'}`}
         />
       </div>
-      <div className="col-md-4">
+      <div className="col-md-12 col-lg-4">
         <Area
           title="Filesystem"
           formatY={humanizeDecimalBytes}

@@ -217,7 +217,7 @@ export const PullSecret = (props) => {
 };
 
 export const NamespaceLineCharts = ({ns}) => <div className="row">
-  <div className="col-sm-6 col-xs-12">
+  <div className="col-md-6 col-sm-12">
     <Area
       title="CPU Usage"
       formatY={humanizeCpuCores}
@@ -225,7 +225,7 @@ export const NamespaceLineCharts = ({ns}) => <div className="row">
       query={`namespace:container_cpu_usage:sum{namespace='${ns.metadata.name}'}`}
     />
   </div>
-  <div className="col-sm-6 col-xs-12">
+  <div className="col-md-6 col-sm-12">
     <Area
       title="Memory Usage"
       formatY={humanizeDecimalBytes}

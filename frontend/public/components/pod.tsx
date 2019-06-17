@@ -178,7 +178,7 @@ export const PodContainerTable: React.FC<PodContainerTableProps> = ({heading, co
 
 const PodGraphs = requirePrometheus(({pod}) => <React.Fragment>
   <div className="row">
-    <div className="col-md-4">
+    <div className="col-md-12 col-lg-4">
       <Area
         title="Memory Usage"
         formatY={humanizeDecimalBytes}
@@ -186,7 +186,7 @@ const PodGraphs = requirePrometheus(({pod}) => <React.Fragment>
         query={`pod_name:container_memory_usage_bytes:sum{pod_name='${pod.metadata.name}',namespace='${pod.metadata.namespace}'}`}
       />
     </div>
-    <div className="col-md-4">
+    <div className="col-md-12 col-lg-4">
       <Area
         title="CPU Usage"
         formatY={humanizeCpuCores}
@@ -194,7 +194,7 @@ const PodGraphs = requirePrometheus(({pod}) => <React.Fragment>
         query={`pod_name:container_cpu_usage:sum{pod_name='${pod.metadata.name}',namespace='${pod.metadata.namespace}'}`}
       />
     </div>
-    <div className="col-md-4">
+    <div className="col-md-12 col-lg-4">
       <Area
         title="Filesystem"
         formatY={humanizeDecimalBytes}
