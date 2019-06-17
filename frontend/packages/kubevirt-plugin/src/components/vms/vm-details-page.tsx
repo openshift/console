@@ -7,11 +7,11 @@ import { DetailsPage } from '@console/internal/components/factory';
 import { K8sResourceKindReference } from '@console/internal/module/k8s';
 
 import { VMDetailsFirehose } from './vm-details';
+import { VMDisksFirehose } from '../vm-disks';
 
 // import { VmEvents } from './vm-events';
 // import VmConsolesConnected from '../vmconsoles';
 // import { Nic } from '../nic';
-// import { Disk } from '../disk';
 // import { menuActions } from './menu-actions';
 
 export const VirtualMachinesDetailsPage = (props: VirtualMachinesDetailsPageProps) => {
@@ -27,13 +27,13 @@ export const VirtualMachinesDetailsPage = (props: VirtualMachinesDetailsPageProp
     name: 'Network Interfaces',
     component: VmNic,
   };
+  */
 
   const disksPage = {
     href: 'disks',
     name: 'Disks',
-    component: VmDisk,
+    component: VMDisksFirehose,
   };
-  */
 
   const pages = [
     navFactory.details(VMDetailsFirehose),
@@ -41,7 +41,7 @@ export const VirtualMachinesDetailsPage = (props: VirtualMachinesDetailsPageProp
     // consolePage,
     navFactory.events(ResourceEventStream),
     // nicsPage,
-    // disksPage,
+    disksPage,
   ];
 
   const menuActions = undefined; // TODO(mlibra): menuActions
