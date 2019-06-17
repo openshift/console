@@ -5,6 +5,8 @@ import { connect } from 'react-redux';
 import { Alert } from 'patternfly-react';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
+import { Helmet } from 'react-helmet';
+
 import { ProvidedAPIsPage, ProvidedAPIPage } from './clusterserviceversion-resource';
 import { DetailsPage, ListPage, Table, TableRow, TableData } from '../factory';
 import { withFallback } from '../utils/error-boundary';
@@ -131,12 +133,16 @@ export const ClusterServiceVersionsPage = connect(stateToProps)((props: ClusterS
     return <LoadingBox />;
   }
 
+  const title = 'Installed Operators';
   const helpText = <p className="co-help-text">
     Installed Operators are represented by Cluster Service Versions within this namespace. For more information, see the <ExternalLink href="https://github.com/operator-framework/operator-lifecycle-manager/blob/master/Documentation/design/architecture.md" text="Operator Lifecycle Manager documentation" />. Or create an Operator and Cluster Service Version using the <ExternalLink href="https://github.com/operator-framework/operator-sdk" text="Operator SDK" />.
   </p>;
 
   return <React.Fragment>
-    <PageHeading title="Installed Operators" />
+    <Helmet>
+      <title>{title}</title>
+    </Helmet>
+    <PageHeading title={title} />
     <ListPage
       {...props}
       namespace={props.namespace}
