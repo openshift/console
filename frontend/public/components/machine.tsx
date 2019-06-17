@@ -2,8 +2,9 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
+import { getMachineRole, getMachineNodeName, getMachineAWSPlacement } from '@console/shared';
 import { MachineModel } from '../models';
-import { MachineDeploymentKind, MachineKind, MachineSetKind, referenceForModel } from '../module/k8s';
+import { MachineKind, referenceForModel } from '../module/k8s';
 import { Conditions } from './conditions';
 import { NodeIPList } from './node';
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
@@ -21,11 +22,6 @@ import { breadcrumbsForOwnerRefs } from './utils/breadcrumbs';
 const { common } = Kebab.factory;
 const menuActions = [...common];
 export const machineReference = referenceForModel(MachineModel);
-const getAWSPlacement = (machine: MachineKind) => _.get(machine, 'spec.providerSpec.value.placement') || {};
-
-export const getMachineRole = (obj: MachineKind | MachineSetKind | MachineDeploymentKind) => _.get(obj, ['metadata', 'labels', 'sigs.k8s.io/cluster-api-machine-role']);
-
-const getNodeName = (obj) => _.get(obj, 'status.nodeRef.name');
 
 const tableColumnClasses = [
   classNames('pf-m-3-col-on-xl', 'pf-m-4-col-on-lg', 'pf-m-4-col-on-md', 'pf-m-6-col-on-sm'),
@@ -66,8 +62,8 @@ const MachineTableHeader = () => {
 MachineTableHeader.displayName = 'MachineTableHeader';
 
 const MachineTableRow: React.FC<MachineTableRowProps> = ({obj, index, key, style}) => {
-  const { availabilityZone, region } = getAWSPlacement(obj);
-  const nodeName = getNodeName(obj);
+  const { availabilityZone, region } = getMachineAWSPlacement(obj);
+  const nodeName = getMachineNodeName(obj);
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={classNames(tableColumnClasses[0], 'co-break-word')}>
@@ -100,9 +96,9 @@ type MachineTableRowProps = {
 };
 
 const MachineDetails: React.SFC<MachineDetailsProps> = ({obj}: {obj: MachineKind}) => {
-  const nodeName = getNodeName(obj);
+  const nodeName = getMachineNodeName(obj);
   const machineRole = getMachineRole(obj);
-  const { availabilityZone, region } = getAWSPlacement(obj);
+  const { availabilityZone, region } = getMachineAWSPlacement(obj);
   return <React.Fragment>
     <div className="co-m-pane__body">
       <SectionHeading text="Machine Overview" />

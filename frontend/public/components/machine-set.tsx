@@ -3,9 +3,10 @@ import * as _ from 'lodash-es';
 import { Link } from 'react-router-dom';
 import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
+import { getMachineRole } from '@console/shared';
 import { MachineAutoscalerModel, MachineModel, MachineSetModel } from '../models';
 import { K8sKind, MachineDeploymentKind, MachineSetKind, referenceForModel } from '../module/k8s';
-import { getMachineRole, MachinePage } from './machine';
+import { MachinePage } from './machine';
 import { configureMachineAutoscalerModal, configureReplicaCountModal } from './modals';
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
 import {

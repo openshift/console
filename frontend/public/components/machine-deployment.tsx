@@ -3,9 +3,9 @@ import * as _ from 'lodash-es';
 import { Link } from 'react-router-dom';
 import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
+import { getMachineRole } from '@console/shared';
 import { MachineModel, MachineDeploymentModel } from '../models';
 import { MachineDeploymentKind, referenceForModel } from '../module/k8s';
-import { getMachineRole } from './machine';
 import {
   editCountAction,
   getAWSPlacement,

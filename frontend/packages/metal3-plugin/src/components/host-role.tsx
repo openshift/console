@@ -1,8 +1,8 @@
 import { getMachineRole, DASH } from '@console/shared';
-import { K8sResourceKind } from '@console/internal/module/k8s';
+import { MachineKind } from '@console/internal/module/k8s';
 
 type BaremetalHostRoleProps = {
-  machine: K8sResourceKind;
+  machine: MachineKind;
 };
 export const BaremetalHostRole: React.FC<BaremetalHostRoleProps> = ({ machine }) =>
   getMachineRole(machine) || DASH;

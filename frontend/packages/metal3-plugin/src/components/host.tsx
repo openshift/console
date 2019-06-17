@@ -8,7 +8,12 @@ import { MachineModel, NodeModel } from '@console/internal/models';
 
 import { MultiListPage, Table, TableRow, TableData } from '@console/internal/components/factory';
 import { ResourceLink, Kebab } from '@console/internal/components/utils';
-import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
+import {
+  referenceForModel,
+  K8sResourceKind,
+  MachineKind,
+  NodeKind,
+} from '@console/internal/module/k8s';
 
 import { BaremetalHostModel } from '../models';
 import { getHostBMCAddress, getHostMachine } from '../selectors';
@@ -56,7 +61,7 @@ const HostsTableHeader = () => [
 ];
 
 type HostsTableRowProps = {
-  obj: K8sResourceKind & { machine: K8sResourceKind; node: K8sResourceKind };
+  obj: K8sResourceKind & { machine: MachineKind; node: NodeKind };
   index: number;
   key?: string;
   style: React.StyleHTMLAttributes<any>;
