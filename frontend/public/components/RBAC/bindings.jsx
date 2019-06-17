@@ -67,14 +67,14 @@ const menuActions = ({subjectIndex, subjects}, startImpersonate) => {
       href: `${resourceObjPath(obj, kind.kind)}/copy?subjectIndex=${subjectIndex}`,
       // Only perform access checks when duplicating cluster role bindings.
       // It's not practical to check namespace role bindings since we don't know what namespace the user will pick in the form.
-      accessReview: _.get(obj, 'metadata.namespace') ? null : { group: kind.apiGroup, resource: kind.path, verb: 'create' },
+      accessReview: _.get(obj, 'metadata.namespace') ? null : { group: kind.apiGroup, resource: kind.plural, verb: 'create' },
     }),
     (kind, obj) => ({
       label: `Edit ${kind.label} Subject...`,
       href: `${resourceObjPath(obj, kind.kind)}/edit?subjectIndex=${subjectIndex}`,
       accessReview: {
         group: kind.apiGroup,
-        resource: kind.path,
+        resource: kind.plural,
         name: obj.metadata.name,
         namespace: obj.metadata.namespace,
         verb: 'update',
@@ -90,7 +90,7 @@ const menuActions = ({subjectIndex, subjects}, startImpersonate) => {
       }),
       accessReview: {
         group: kind.apiGroup,
-        resource: kind.path,
+        resource: kind.plural,
         name: binding.metadata.name,
         namespace: binding.metadata.namespace,
         verb: 'patch',
@@ -461,7 +461,7 @@ export const CreateRoleBinding = ({match: {params}, location}) => {
   const metadata = {namespace: UIActions.getActiveNamespace()};
   const clusterAllowed = useAccessReview({
     group: ClusterRoleBindingModel.apiGroup,
-    resource: ClusterRoleBindingModel.path,
+    resource: ClusterRoleBindingModel.plural,
     verb: 'create',
   });
   const fixed = {

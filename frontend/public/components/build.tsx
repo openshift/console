@@ -44,7 +44,7 @@ const CloneBuildAction: KebabAction = (kind: K8sKind, build: K8sResourceKind) =>
   }),
   accessReview: {
     group: kind.apiGroup,
-    resource: kind.path,
+    resource: kind.plural,
     subresource: 'instantiate',
     name: build.metadata.name,
     namespace: build.metadata.namespace,
@@ -66,7 +66,7 @@ const CancelAction: KebabAction = (kind: K8sKind, build: K8sResourceKind) => ({
   }),
   accessReview: {
     group: kind.apiGroup,
-    resource: kind.path,
+    resource: kind.plural,
     name: build.metadata.name,
     namespace: build.metadata.namespace,
     verb: 'patch',

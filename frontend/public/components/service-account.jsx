@@ -72,7 +72,7 @@ const KubeConfigify = (kind, sa) => ({
   },
   accessReview: {
     group: SecretModel.apiGroup,
-    resource: SecretModel.path,
+    resource: SecretModel.plural,
     namespace: sa.metadata.namespace,
     verb: 'list',
   },

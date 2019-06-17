@@ -33,7 +33,7 @@ export const ResourceSummary: React.SFC<ResourceSummaryProps> = ({children, reso
 
   const canUpdate = useAccessReview({
     group: model.apiGroup,
-    resource: model.path,
+    resource: model.plural,
     verb: 'patch',
     name: metadata.name,
     namespace: metadata.namespace,

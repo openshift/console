@@ -6,7 +6,6 @@ export const FooBarModel: K8sKind = {
   kind: 'FooBar',
   label: 'Foo Bar',
   labelPlural: 'Foo Bars',
-  path: 'foobars',
   plural: 'foobars',
   abbr: 'FOOBAR',
   namespaced: true,

@@ -39,7 +39,7 @@ const pauseAction: KebabAction = (kind, obj) => ({
   callback: () => togglePaused(kind, obj).catch((err) => errorModal({error: err.message})),
   accessReview: {
     group: kind.apiGroup,
-    resource: kind.path,
+    resource: kind.plural,
     name: obj.metadata.name,
     verb: 'patch',
   },

@@ -16,7 +16,7 @@ const ModifyJobParallelism = (kind, obj) => ({
   }),
   accessReview: {
     group: kind.apiGroup,
-    resource: kind.path,
+    resource: kind.plural,
     name: obj.metadata.name,
     namespace: obj.metadata.namespace,
     verb: 'patch',

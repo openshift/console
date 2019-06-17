@@ -33,7 +33,7 @@ const menuActions = [
     href: `${resourceObjPath(obj, kind.kind)}/edit`,
     accessReview: {
       group: kind.apiGroup,
-      resource: kind.path,
+      resource: kind.plural,
       name: obj.metadata.name,
       namespace: obj.metadata.namespace,
       verb: 'update',

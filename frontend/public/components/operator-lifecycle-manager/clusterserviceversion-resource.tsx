@@ -26,7 +26,7 @@ const actions = [
     href: `/k8s/ns/${obj.metadata.namespace}/${ClusterServiceVersionModel.plural}/${csvName()}/${referenceFor(obj)}/${obj.metadata.name}/yaml`,
     accessReview: {
       group: kind.apiGroup,
-      resource: kind.path,
+      resource: kind.plural,
       name: obj.metadata.name,
       namespace: obj.metadata.namespace,
       verb: 'update',
@@ -42,7 +42,7 @@ const actions = [
     }),
     accessReview: {
       group: kind.apiGroup,
-      resource: kind.path,
+      resource: kind.plural,
       name: obj.metadata.name,
       namespace: obj.metadata.namespace,
       verb: 'delete',
@@ -245,7 +245,7 @@ export const ClusterServiceVersionResourceDetails = connectToModel((props: Clust
   // Find the matching CRD spec for the kind of this resource in the CSV.
   const ownedDefinitions = _.get(props.clusterServiceVersion, 'spec.customresourcedefinitions.owned', []);
   const reqDefinitions = _.get(props.clusterServiceVersion, 'spec.customresourcedefinitions.required', []);
-  const thisDefinition = _.find(ownedDefinitions.concat(reqDefinitions), (def) => def.name.split('.')[0] === props.kindObj.path);
+  const thisDefinition = _.find(ownedDefinitions.concat(reqDefinitions), (def) => def.name.split('.')[0] === props.kindObj.plural);
   const statusDescriptors = _.get<Descriptor[]>(thisDefinition, 'statusDescriptors', []);
   const specDescriptors = _.get<Descriptor[]>(thisDefinition, 'specDescriptors', []);
   const currentStatus = _.find(statusDescriptors, {displayName: 'Status'});

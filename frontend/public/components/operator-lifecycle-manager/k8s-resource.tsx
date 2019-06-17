@@ -19,7 +19,7 @@ export const Resources = connectToPlural((props: ResourceProps) => {
 
   // If the CSV defines a resources list under the CRD, then we use that instead of the default.
   const thisDescription: CRDDescription[] = _.get(clusterServiceVersion, 'spec.customresourcedefinitions.owned', [])
-    .find((def) => def.name.split('.')[0] === _.get(kindObj, 'path', ''));
+    .find((def) => def.name.split('.')[0] === _.get(kindObj, 'plural', ''));
 
   const crds = _.get(thisDescription, 'resources', []).filter(ref => ref.name).map(ref => ref.kind);
   const firehoseResources = _.get(thisDescription, 'resources', ['Deployment', 'Service', 'ReplicaSet', 'Pod', 'Secret', 'ConfigMap'].map(kind => ({kind})))

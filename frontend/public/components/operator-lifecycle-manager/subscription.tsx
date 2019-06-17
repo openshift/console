@@ -65,7 +65,7 @@ const menuActions = [
     callback: () => createDisableApplicationModal({k8sKill, k8sGet, k8sPatch, subscription: obj}),
     accessReview: {
       group: kind.apiGroup,
-      resource: kind.path,
+      resource: kind.plural,
       name: obj.metadata.name,
       namespace: obj.metadata.namespace,
       verb: 'delete',

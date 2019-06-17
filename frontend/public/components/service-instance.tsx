@@ -34,7 +34,7 @@ const createBinding = (kindObj, serviceInstance) => {
     label: 'Create Service Binding',
     accessReview: {
       group: ServiceBindingModel.apiGroup,
-      resource: ServiceBindingModel.path,
+      resource: ServiceBindingModel.plural,
       namespace: serviceInstance.metadata.namespace,
       verb: 'create',
     },

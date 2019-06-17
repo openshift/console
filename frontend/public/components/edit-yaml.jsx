@@ -166,7 +166,7 @@ export const EditYAML = connect(stateToProps)(
       const { name, namespace } = obj.metadata;
       const resourceAttributes = {
         group: model.apiGroup,
-        resource: model.path,
+        resource: model.plural,
         verb: 'update',
         name,
         namespace,

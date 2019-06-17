@@ -35,7 +35,7 @@ export const editCountAction: KebabAction = (kind: K8sKind, resource: MachineSet
   callback: () => machineReplicasModal(kind, resource),
   accessReview: {
     group: kind.apiGroup,
-    resource: kind.path,
+    resource: kind.plural,
     name: resource.metadata.name,
     namespace: resource.metadata.namespace,
     verb: 'patch',
@@ -47,7 +47,7 @@ const configureMachineAutoscaler: KebabAction = (kind: K8sKind, machineSet: Mach
   callback: () => configureMachineAutoscalerModal({machineSet, cancel: _.noop, close: _.noop}),
   accessReview: {
     group: MachineAutoscalerModel.apiGroup,
-    resource: MachineAutoscalerModel.path,
+    resource: MachineAutoscalerModel.plural,
     namespace: machineSet.metadata.namespace,
     verb: 'create',
   },
@@ -138,7 +138,7 @@ export const MachineCounts: React.SFC<MachineCountsProps> = ({resourceKind, reso
 
   const canUpdate = useAccessReview({
     group: resourceKind.apiGroup,
-    resource: resourceKind.path,
+    resource: resourceKind.plural,
     verb: 'patch',
     name: resource.metadata.name,
     namespace: resource.metadata.namespace,

@@ -79,7 +79,7 @@ class DeploymentPodCounts_ extends React.Component<DPCProps & { impersonate?: st
     const { name, namespace } = resource.metadata;
     const resourceAttributes: AccessReviewResourceAttributes = {
       group: model.apiGroup,
-      resource: model.path,
+      resource: model.plural,
       verb: 'patch',
       name,
       namespace,
