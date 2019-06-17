@@ -37,6 +37,12 @@ export const graphColors = [
   '#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf',
 ];
 
+const NoQueryMessage = () => <div className="text-center text-muted">Enter a query in the box below to explore the metrics gathered for this cluster</div>;
+
+const Error = ({error}) => <div className="alert alert-danger">
+  <span className="pficon pficon-error-circle-o" aria-hidden="true"></span>{_.get(error, 'json.error', error.message)}
+</div>;
+
 const SpanControls = ({defaultSpanText, onChange, span}) => {
   const [isValid, setIsValid] = React.useState(true);
   const [text, setText] = React.useState(formatPrometheusDuration(span));
@@ -213,27 +219,34 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
 
   const isEmptyState = !updating && _.isEmpty(graphData);
 
+  if (hideGraphs) {
+    if (_.isEmpty(queries)) {
+      return <div className="query-browser__wrapper">
+        {_.isEmpty(queries) && <NoQueryMessage />}
+      </div>;
+    }
+    return error ? <Error error={error} /> : null;
+  }
+
   return <div className="query-browser__wrapper">
     <div className="query-browser__header">
       <SpanControls defaultSpanText={defaultSpanText} onChange={onSpanChange} span={span} />
       <div className="query-browser__loading">
         {updating && <LoadingInline />}
       </div>
-      <div className="query-browser__external-link">
+      {GraphLink && <div className="query-browser__external-link">
         <GraphLink />
-      </div>
+      </div>}
     </div>
     {_.isEmpty(queries)
-      ? <div className="text-center text-muted">Enter a query in the box below to explore the metrics gathered for this cluster</div>
+      ? <NoQueryMessage />
       : <React.Fragment>
-        {error && <div className="alert alert-danger">
-          <span className="pficon pficon-error-circle-o" aria-hidden="true"></span>{_.get(error, 'json.error', error.message)}
-        </div>}
+        {error && <Error error={error} />}
         {isEmptyState && <EmptyState className="graph-empty-state" variant={EmptyStateVariant.full}>
           <EmptyStateIcon size="sm" icon={ChartLineIcon} />
           <Title size="sm">No Prometheus datapoints found.</Title>
         </EmptyState>}
-        {!hideGraphs && !isEmptyState && <Graph data={graphData} domain={graphDomain} onZoom={onZoom} />}
+        {!isEmptyState && <Graph data={graphData} domain={graphDomain} onZoom={onZoom} />}
       </React.Fragment>}
   </div>;
 };
