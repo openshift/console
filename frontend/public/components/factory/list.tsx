@@ -48,8 +48,8 @@ const rowFiltersToFilterFuncs = (rowFilters) => {
 };
 
 const getAllTableFilters = (rowFilters = []) => ({
-  ...rowFiltersToFilterFuncs(rowFilters),
   ...tableFilters,
+  ...rowFiltersToFilterFuncs(rowFilters),
 });
 
 const getFilteredRows = (_filters, rowFilters, objects) => {
