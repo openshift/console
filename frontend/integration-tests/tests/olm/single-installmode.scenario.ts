@@ -45,8 +45,8 @@ describe('Interacting with a `OwnNamespace` install mode Operator (Prometheus)',
 
   afterAll(() => {
     execSync(`kubectl delete catalogsource -n ${testName} ${catalogSource.metadata.name}`);
-    execSync(`kubectl delete subscription -n ${testName} --field-selector metadata.name=prometheus`);
-    execSync(`kubectl delete clusterserviceversion -n ${testName} --field-selector metadata.name=prometheusoperator.0.27.0`);
+    execSync(`kubectl delete subscription -n ${testName} prometheus`);
+    execSync(`kubectl delete clusterserviceversion -n ${testName} prometheusoperator.0.27.0`);
   });
 
   afterEach(() => {
