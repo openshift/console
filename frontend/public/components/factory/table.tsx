@@ -39,15 +39,27 @@ import {
   WindowScroller,
 } from '@patternfly/react-virtualized-extension';
 
-import { tableFilters, TableFilterMap } from './table-filters';
+import { tableFilters } from './table-filters';
 
-const getFilteredRows = (_filters, customFilterFuncs: TableFilterMap, objects) => {
+const rowFiltersToFilterFuncs = (rowFilters) => {
+  return rowFilters
+    .filter(f => f.type && _.isFunction(f.filter))
+    .reduce((acc, f) => ({ ...acc, [f.type]: f.filter }), {});
+};
+
+const getAllTableFilters = (rowFilters) => ({
+  ...rowFiltersToFilterFuncs(rowFilters),
+  ...tableFilters,
+});
+
+const getFilteredRows = (_filters, rowFilters, objects) => {
   if (_.isEmpty(_filters)) {
     return objects;
   }
 
+  const allTableFilters = getAllTableFilters(rowFilters);
   _.each(_filters, (value, name) => {
-    const filter = tableFilters[name] || customFilterFuncs[name];
+    const filter = allTableFilters[name];
     if (_.isFunction(filter)) {
       objects = _.filter(objects, o => filter(value, o));
     }
@@ -61,8 +73,9 @@ const filterPropType = (props, propName, componentName) => {
     return;
   }
 
+  const allTableFilters = getAllTableFilters(props.rowFilters);
   for (const key of _.keys(props[propName])) {
-    if (key in tableFilters || key in props.customFilterFuncs || key === 'loadTest') {
+    if (key in allTableFilters || key === 'loadTest') {
       continue;
     }
     return new Error(`Invalid prop '${propName}' in '${componentName}'. '${key}' is not a valid filter type!`);
@@ -98,9 +111,9 @@ const sorts = {
   },
 };
 
-const stateToProps = ({UI}, {data = [], defaultSortField = 'metadata.name', defaultSortFunc = undefined, filters = {}, loaded = false, reduxID = null, reduxIDs = null, staticFilters = [{}], customFilterFuncs = {}}) => {
+const stateToProps = ({UI}, {data = [], defaultSortField = 'metadata.name', defaultSortFunc = undefined, filters = {}, loaded = false, reduxID = null, reduxIDs = null, staticFilters = [{}]}, rowFilters = []) => {
   const allFilters = staticFilters ? Object.assign({}, filters, ...staticFilters) : filters;
-  let newData = getFilteredRows(allFilters, customFilterFuncs, data);
+  let newData = getFilteredRows(allFilters, rowFilters, data);
 
   const listId = reduxIDs ? reduxIDs.join(',') : reduxID;
   // Only default to 'metadata.name' if no `defaultSortFunc`
@@ -446,8 +459,8 @@ export type TableInnerProps = {
   selectedResourcesForKind?: string[];
   onSelect?: (event: React.MouseEvent, isSelected: boolean, rowIndex: number, rowData: IRowData, extraData: IExtraData) => void;
   staticFilters?: any[];
+  rowFilters?: any[];
   virtualize?: boolean;
-  customFilterFuncs?: TableFilterMap;
 };
 
 export type TableInnerState = {

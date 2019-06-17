@@ -12,7 +12,6 @@ import {
   serviceClassDisplayName,
   getClusterOperatorStatus,
   getTemplateInstanceStatus,
-  K8sResourceKind,
 } from '../../module/k8s';
 
 import {
@@ -163,15 +162,15 @@ export const tableFilters: TableFilterMap = {
   },
 };
 
-interface FilterGroups {
+interface TableFilterGroups {
   selected: Set<string>;
   all: string[];
   values: Set<string>;
   field: string;
 }
 
-type TableFilter<T extends K8sResourceKind> = (filters: FilterGroups, obj: T) => boolean;
+export type TableFilter = (groups: TableFilterGroups, obj: any) => boolean;
 
-export type TableFilterMap = {
-  [key: string]: TableFilter<any>;
+type TableFilterMap = {
+  [key: string]: TableFilter;
 }
