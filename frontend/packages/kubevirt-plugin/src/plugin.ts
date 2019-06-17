@@ -55,7 +55,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       model: models.VirtualMachineModel,
       loader: () =>
-        import('./components/vm' /* webpackChunkName: "kubevirt-virtual-machines" */).then(
+        import('./components/vms/vm' /* webpackChunkName: "kubevirt-virtual-machines" */).then(
           (m) => m.VirtualMachinesPage,
         ),
     },
@@ -72,9 +72,9 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       model: models.VirtualMachineModel,
       loader: () =>
-        import('./components/vm-details' /* webpackChunkName: "kubevirt-virtual-machines" */).then(
-          (m) => m.VirtualMachinesDetailsPage,
-        ),
+        import(
+          './components/vms/vm-details' /* webpackChunkName: "kubevirt-virtual-machine-details" */
+        ).then((m) => m.VirtualMachinesDetailsPage),
     },
   },
 ];

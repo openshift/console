@@ -1,7 +1,7 @@
 import { K8sResourceKind, ObjectMetadata } from '@console/internal/module/k8s';
 
 // https://kubevirt.io/api-reference/master/definitions.html#_v1_virtualmachineinstancespec
-export type VmiSpec = {
+export type VMISpec = {
   affinity: any;
   dnsConfig: any;
   dnsPolicy: string;
@@ -19,7 +19,7 @@ export type VmiSpec = {
 };
 
 // https://kubevirt.io/api-reference/master/definitions.html#_v1_virtualmachineinstancestatus
-export type VmiStatus = {
+export type VMIStatus = {
   conditions: any[];
   interfaces: any[];
   migrationMethod: string;
@@ -29,24 +29,24 @@ export type VmiStatus = {
   reason: string;
 };
 
-export type VmiKind = {
-  spec: VmiSpec;
-  status: VmiStatus;
+export type VMIKind = {
+  spec: VMISpec;
+  status: VMIStatus;
 } & K8sResourceKind;
 
-export type VmiTemplate = {
+export type VMITemplate = {
   metadata?: ObjectMetadata;
-  spec?: VmiSpec;
+  spec?: VMISpec;
 };
 
-export type VmSpec = {
-  template: VmiTemplate;
+export type VMSpec = {
+  template: VMITemplate;
   running?: boolean;
   runStrategy?: any;
   dataVolumeTemplates?: any[];
 };
 
-export type VmStatus = {
+export type VMStatus = {
   conditions?: any[];
   created?: boolean;
   ready?: boolean;
@@ -54,7 +54,7 @@ export type VmStatus = {
 };
 
 // https://kubevirt.io/api-reference/master/definitions.html#_v1_virtualmachine
-export type VmKind = {
-  spec: VmSpec;
-  status: VmStatus;
+export type VMKind = {
+  spec: VMSpec;
+  status: VMStatus;
 } & K8sResourceKind;

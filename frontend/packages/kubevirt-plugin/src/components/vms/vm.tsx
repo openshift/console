@@ -26,7 +26,7 @@ import {
   VirtualMachineModel,
   // VirtualMachineInstanceModel,
   // VirtualMachineInstanceMigrationModel,
-} from '../models';
+} from '../../models';
 
 // import { openCreateVmWizard } from '../modals/create-vm-modal';
 // import { menuActions } from './menu-actions';
