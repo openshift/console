@@ -85,14 +85,16 @@ const { common } = Kebab.factory;
 const menuActions = [...common];
 
 const ImageStreamTagsRow: React.SFC<ImageStreamTagsRowProps> = ({imageStream, specTag, statusTag}) => {
+  const imageStreamStatus = _.get(imageStream, 'status');
   const latest = _.get(statusTag, ['items', 0]);
   const from = _.get(specTag, 'from');
   const referencesTag = _.get(specTag, 'from.kind') === 'ImageStreamTag';
   const image = _.get(latest, 'image');
   const created = _.get(latest, 'created');
+  const dockerRepositoryCheck = _.has(imageStream, ['metadata', 'annotations', 'openshift.io/image.dockerRepositoryCheck']);
   return <div className="row">
     <div className="col-md-2 col-sm-4 col-xs-4 co-break-word">
-      <ResourceLink kind={ImageStreamTagsReference} name={getImageStreamTagName(imageStream.metadata.name, statusTag.tag)} namespace={imageStream.metadata.namespace} title={statusTag.tag} />
+      <ResourceLink kind={ImageStreamTagsReference} name={getImageStreamTagName(imageStream.metadata.name, statusTag.tag)} namespace={imageStream.metadata.namespace} title={statusTag.tag} linkTo={!!image} />
     </div>
     <span className="col-md-3 col-sm-4 col-xs-8 co-break-all">
       {from && referencesTag && <ResourceLink kind={ImageStreamTagsReference} name={getImageStreamTagName(imageStream.metadata.name, from.name)} namespace={imageStream.metadata.namespace} title={from.name} />}
@@ -100,8 +102,12 @@ const ImageStreamTagsRow: React.SFC<ImageStreamTagsRowProps> = ({imageStream, sp
       {!from && <span className="text-muted">pushed image</span>}
     </span>
     <span className="col-md-4 col-sm-4 hidden-xs co-break-all">
-      {image && <React.Fragment>{image}</React.Fragment>}
-      {!image && '-'}
+      {!imageStreamStatus && dockerRepositoryCheck && <React.Fragment><i className="pficon pficon-warning-triangle-o" aria-hidden="true" />&nbsp;Unable to resolve</React.Fragment>}
+      {!imageStreamStatus && !dockerRepositoryCheck && !from && <React.Fragment>Not synced yet</React.Fragment>}
+      {/* We have no idea why in this case  */}
+      {!imageStreamStatus && !dockerRepositoryCheck && from && <React.Fragment>Unresolved</React.Fragment>}
+      {imageStreamStatus && image && <React.Fragment>{image}</React.Fragment>}
+      {imageStreamStatus && !image && <React.Fragment><i className="pficon pficon-warning-triangle-o" aria-hidden="true" />&nbsp;There is no image associated with this tag</React.Fragment>}
     </span>
     <div className="col-md-3 hidden-sm hidden-xs">
       {created && <Timestamp timestamp={created} />}
