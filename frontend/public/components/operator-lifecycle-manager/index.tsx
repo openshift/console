@@ -249,8 +249,8 @@ export const olmNamespace = 'operator-lifecycle-manager';
 export const visibilityLabel = 'olm-visibility';
 
 type ProvidedAPIsFor = (csv: ClusterServiceVersionKind) => (CRDDescription | APIServiceDefinition)[];
-export const providedAPIsFor: ProvidedAPIsFor = csv => _.get(csv.spec, 'customresourcedefinitions.owned', [])
-  .concat(_.get(csv.spec, 'apiservicedefinitions.owned', []));
+export const providedAPIsFor: ProvidedAPIsFor = csv => _.get(csv, 'spec.customresourcedefinitions.owned', [])
+  .concat(_.get(csv, 'spec.apiservicedefinitions.owned', []));
 
 export const referenceForProvidedAPI = (desc: CRDDescription | APIServiceDefinition): GroupVersionKind => _.get(desc, 'group')
   ? referenceForGroupVersionKind((desc as APIServiceDefinition).group)(desc.version)(desc.kind)
