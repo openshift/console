@@ -1,8 +1,5 @@
 import { $, $$, browser, by, ExpectedConditions as until, element, ElementFinder } from 'protractor';
 import { Base64 } from 'js-base64';
-import { execSync } from 'child_process';
-import * as _ from 'lodash';
-
 import * as crudView from '../views/crud.view';
 
 export const secretNameInput = $('#secret-name');
@@ -116,17 +113,3 @@ export const addSecretToWorkloadAsVol = async(workloadname: string, MntPath: str
   await $('#confirm-action').click();
 };
 
-export const getResourceJSON = (name: string, namespace: string, kind: string) => {
-  return execSync(`kubectl get -o json -n ${namespace} ${kind} ${name}`).toString();
-};
-
-export const isValueInJSONPath = (propertyPath: string, value: string, name: string, namespace: string, kind: string): boolean => {
-  const resource = JSON.parse(getResourceJSON(name, namespace, kind));
-  const result = _.get(resource, propertyPath, undefined);
-  return result === value;
-};
-
-export const getPathInJSON = (path: string, name: string, namespace: string, kind: string) => {
-  const resourceJSON = JSON.parse(getResourceJSON(name, namespace, kind));
-  return _.get(resourceJSON, path, undefined);
-};
