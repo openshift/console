@@ -14,11 +14,11 @@ import { ErrorPage404 } from '../error';
 import { MultiListPage, ListPage, DetailsPage, Table, TableRow, TableData } from '../factory';
 import { ResourceSummary, StatusBox, navFactory, Timestamp, LabelList, ResourceIcon, MsgBox, ResourceKebab, Kebab, KebabAction, LoadingBox, StatusIconAndText } from '../utils';
 import { connectToModel } from '../../kinds';
-import { kindForReference, K8sResourceKind, OwnerReference, K8sKind, referenceFor, GroupVersionKind, referenceForModel } from '../../module/k8s';
+import { apiVersionForReference, kindForReference, K8sResourceKind, OwnerReference, K8sKind, referenceFor, GroupVersionKind, referenceForModel } from '../../module/k8s';
 import { ClusterServiceVersionModel } from '../../models';
 import { deleteModal } from '../modals';
 
-const csvName = () => location.pathname.split('/').find((part, i, allParts) => allParts[i - 1] === ClusterServiceVersionModel.plural);
+const csvName = () => location.pathname.split('/').find((part, i, allParts) => allParts[i - 1] === referenceForModel(ClusterServiceVersionModel) || allParts[i - 1] === ClusterServiceVersionModel.plural);
 
 const actions = [
   (kind, obj) => ({
@@ -139,7 +139,17 @@ export type CSVRTableRowProps = {
 };
 
 export const ClusterServiceVersionResourceList: React.SFC<ClusterServiceVersionResourceListProps> = (props) => {
-  const ensureKind = (data: K8sResourceKind[]) => data.map(obj => ({kind: obj.kind || props.kinds[0], ...obj}));
+  const ensureKind = (data: K8sResourceKind[]) => data.map(obj => {
+    if (obj.apiVersion && obj.kind) {
+      return obj;
+    }
+    const reference = props.kinds[0];
+    return {
+      apiVersion: apiVersionForReference(reference),
+      kind: kindForReference(reference),
+      ...obj,
+    };
+  });
   const EmptyMsg = () => <MsgBox title="No Application Resources Found" detail="Application resources are declarative components used to define the behavior of the application." />;
 
   return <Table {...props}
