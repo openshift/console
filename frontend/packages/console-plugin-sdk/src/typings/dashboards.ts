@@ -1,4 +1,6 @@
 import { SubsystemHealth } from '@console/internal/components/dashboards-page/overview-dashboard/health-card';
+import { CAPACITY_QUERY } from '@console/internal/components/dashboards-page/overview-dashboard/capacity-query-types';
+
 import { Extension } from './extension';
 
 namespace ExtensionProperties {
@@ -31,6 +33,14 @@ namespace ExtensionProperties {
     /** The Prometheus query */
     query: string;
   }
+
+  export interface DashboardsOverviewCapacityQuery {
+    /** The original Prometheus query key to replace */
+    queryKey: CAPACITY_QUERY;
+
+    /** The Prometheus query */
+    query: string;
+  }
 }
 
 export interface DashboardsOverviewHealthURLSubsystem<R>
@@ -60,3 +70,12 @@ export const isDashboardsOverviewHealthSubsystem = (
   e: Extension<any>,
 ): e is DashboardsOverviewHealthSubsystem =>
   isDashboardsOverviewHealthURLSubsystem(e) || isDashboardsOverviewHealthPrometheusSubsystem(e);
+
+export interface DashboardsOverviewCapacityQuery
+  extends Extension<ExtensionProperties.DashboardsOverviewCapacityQuery> {
+  type: 'Dashboards/Overview/Capacity/Query';
+}
+
+export const isDashboardsOverviewCapacityQuery = (
+  e: Extension<any>,
+): e is DashboardsOverviewCapacityQuery => e.type === 'Dashboards/Overview/Capacity/Query';

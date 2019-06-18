@@ -62,7 +62,7 @@ const WithDashboardResources = (WrappedComponent: React.ComponentType<DashboardI
           watchPrometheus={this.watchPrometheus}
           stopWatchPrometheusQuery={this.props.stopWatchPrometheusQuery}
           urlResults={this.props[RESULTS_TYPE.URL]}
-          prometheusResults={this.props[RESULTS_TYPE.URL]}
+          prometheusResults={this.props[RESULTS_TYPE.PROMETHEUS]}
         />
       );
     }

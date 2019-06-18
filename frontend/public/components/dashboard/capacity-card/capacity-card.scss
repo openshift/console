@@ -1,0 +1,30 @@
+.co-capacity-card__body {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+}
+
+.co-capacity-card__item {
+  display: flex;
+  flex: 0 1 120px;
+  flex-direction: column;
+  justify-content: space-between;
+  text-align: center;
+}
+
+.co-capacity-card__item-description {
+  font-size: 0.6875em;
+}
+
+.co-capacity-card__item-description-value {
+  white-space: nowrap;
+}
+
+.co-capacity-card__item-graph {
+  display: flex;
+  flex-direction: column;
+}
+
+.co-capacity-card__item-title {
+  margin-top: 0;
+}

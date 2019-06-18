@@ -15,11 +15,13 @@ import {
   RoutePage,
   DashboardsOverviewHealthPrometheusSubsystem,
   DashboardsOverviewHealthURLSubsystem,
+  DashboardsOverviewCapacityQuery,
 } from '@console/plugin-sdk';
 
 // TODO(vojtech): internal code needed by plugins should be moved to console-shared package
 import { PodModel } from '@console/internal/models';
 import { FLAGS } from '@console/internal/const';
+import { CAPACITY_QUERY } from '@console/internal/components/dashboards-page/overview-dashboard/capacity-query-types';
 
 import * as models from './models';
 import { yamlTemplates } from './yaml-templates';
@@ -37,7 +39,8 @@ type ConsumedExtensions =
   | YAMLTemplate
   | RoutePage
   | DashboardsOverviewHealthPrometheusSubsystem
-  | DashboardsOverviewHealthURLSubsystem<any>;
+  | DashboardsOverviewHealthURLSubsystem<any>
+  | DashboardsOverviewCapacityQuery;
 
 const plugin: Plugin<ConsumedExtensions> = [
   {
@@ -176,6 +179,20 @@ const plugin: Plugin<ConsumedExtensions> = [
       exact: true,
       path: '/test',
       render: () => <h1>Test Page</h1>,
+    },
+  },
+  {
+    type: 'Dashboards/Overview/Capacity/Query',
+    properties: {
+      queryKey: CAPACITY_QUERY.STORAGE_TOTAL,
+      query: 'fooQuery',
+    },
+  },
+  {
+    type: 'Dashboards/Overview/Capacity/Query',
+    properties: {
+      queryKey: CAPACITY_QUERY.STORAGE_USED,
+      query: 'barQuery',
     },
   },
 ];

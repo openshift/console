@@ -39,6 +39,11 @@ const TYPES = {
     space: false,
     divisor: 1000,
   },
+  decimalBytesPerSec: {
+    units: ['Bps', 'KBps', 'MBps', 'GBps', 'TBps', 'PBps', 'EBps'],
+    space: true,
+    divisor: 1000,
+  },
 };
 
 const getType = (name) => {
@@ -53,9 +58,20 @@ const getType = (name) => {
   return type;
 };
 
-const convertBaseValueToUnits = (value, unitArray, divisor, initialUnit) => {
+const convertBaseValueToUnits = (value, unitArray, divisor, initialUnit, preferredUnit) => {
   const sliceIndex = initialUnit ? unitArray.indexOf(initialUnit) : 0;
   const units_ = unitArray.slice(sliceIndex);
+
+  if (preferredUnit || preferredUnit === '') {
+    const unitIndex = units_.indexOf(preferredUnit);
+    if (unitIndex !== -1) {
+      return {
+        value: value / divisor ** unitIndex,
+        unit: preferredUnit,
+      };
+    }
+  }
+
   let unit = units_.shift();
   while (value >= divisor && units_.length > 0) {
     value = value / divisor;
@@ -117,35 +133,34 @@ const round = units.round = (value) => {
   return Math.round(value * multiplier) / multiplier;
 };
 
-const humanize = units.humanize = (value, typeName, useRound = false) => {
+const humanize = units.humanize = (value, typeName, useRound = false, initialUnit, preferredUnit) => {
   const type = getType(typeName);
 
   if (!isFinite(value)) {
     value = 0;
   }
 
-  let converted = convertBaseValueToUnits(value, type.units, type.divisor);
+  let converted = convertBaseValueToUnits(value, type.units, type.divisor, initialUnit, preferredUnit);
 
   if (useRound) {
     converted.value = round(converted.value);
-    converted = convertBaseValueToUnits(converted.value, type.units, type.divisor, converted.unit);
-  }
-
-  if (type.space && converted.unit.length > 0) {
-    converted.unit = ` ${converted.unit}`;
+    converted = convertBaseValueToUnits(converted.value, type.units, type.divisor, converted.unit, preferredUnit);
   }
 
   return {
-    string: converted.value + converted.unit,
+    string: type.space ? `${converted.value} ${converted.unit}`: converted.value + converted.unit,
     value: converted.value,
     unit: converted.unit,
   };
 };
 
-export const humanizeBinaryBytes = v => humanize(v, 'binaryBytes', true).string;
-export const humanizeDecimalBytes = v => humanize(v, 'decimalBytes', true).string;
-export const humanizeNumber = v => humanize(v, 'numeric', true).string;
+export const humanizeBinaryBytesWithoutB = (v, initialUnit, preferredUnit) => humanize(v, 'binaryBytesWithoutB', true, initialUnit, preferredUnit);
+export const humanizeBinaryBytes = (v, initialUnit, preferredUnit) => humanize(v, 'binaryBytes', true, initialUnit, preferredUnit);
+export const humanizeDecimalBytes = (v, initialUnit, preferredUnit) => humanize(v, 'decimalBytes', true, initialUnit, preferredUnit);
+export const humanizeNumber = (v, initialUnit, preferredUnit) => humanize(v, 'numeric', true, initialUnit, preferredUnit);
 export const humanizeCpuCores = v => (v < 1 && v > 0) ? `${round(v*1000)}m` : round(v);
+export const humanizePercentage = v => humanize(v, 'percentage', true);
+export const humanizeDecimalBytesPerSec = (v, initialUnit, preferredUnit) => humanize(v, 'decimalBytesPerSec', true, initialUnit, preferredUnit);
 
 units.dehumanize = (value, typeName) => {
   const type = getType(typeName);

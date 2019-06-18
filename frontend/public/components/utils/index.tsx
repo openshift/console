@@ -78,3 +78,14 @@ export const enum EnvType {
   ENV = 0,
   ENV_FROM = 1
 }
+
+
+export type HumanizeResult = {
+  string: string;
+  value: number;
+  unit: string;
+}
+
+export type Humanize = {
+  (v: React.ReactText, initialUnit?: string, preferredUnit?: string): HumanizeResult;
+}
