@@ -169,7 +169,7 @@ describe('Interacting with a `OwnNamespace` install mode Operator (Prometheus)',
     await element(by.linkText('YAML')).click();
     await browser.wait(until.presenceOf($('.yaml-editor__buttons')));
     await $('.yaml-editor__buttons').element(by.buttonText('Save')).click();
-    await browser.wait(until.visibilityOf($('.alert-success')), 1000);
+    await browser.wait(until.visibilityOf(crudView.successMessage), 1000);
 
     expect(crudView.successMessage.getText()).toContain('example has been updated to version');
   });

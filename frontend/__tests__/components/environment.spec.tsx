@@ -95,17 +95,17 @@ describe(EnvironmentPage.name, () => {
 
     it('renders error message when error in state', () => {
       wrapper.setState({errorMessage: 'errorMessage'});
-      expect(wrapper.find('.environment-buttons p').text()).toContain('errorMessage');
+      expect(wrapper.find('.environment-buttons Alert [variant="danger"]'));
     });
 
     it('renders error message when data is stale', () => {
       wrapper.setState({stale: true});
-      expect(wrapper.find('.environment-buttons p').text()).toContain('The information on this page is no longer current. Click Reload to update and lose edits, or Save Changes to overwrite.');
+      expect(wrapper.find('.environment-buttons Alert [variant="info"]'));
     });
 
     it('renders success message when data is updated successfully', () => {
       wrapper.setState({success: 'success'});
-      expect(wrapper.find('.environment-buttons p').text()).toContain('success');
+      expect(wrapper.find('.environment-buttons Alert [variant="success"]'));
     });
   });
 
@@ -123,15 +123,15 @@ describe(EnvironmentPage.name, () => {
     });
 
     it('does not render error message when error not in state', () => {
-      expect(wrapper.find('.environment-buttons p').exists()).toEqual(false);
+      expect(wrapper.find('.environment-buttons Alert').exists()).toEqual(false);
     });
 
     it('does not render error message when data is not stale', () => {
-      expect(wrapper.find('.environment-buttons p').exists()).toEqual(false);
+      expect(wrapper.find('.environment-buttons Alert').exists()).toEqual(false);
     });
 
     it('does not render success message when data is not updated', () => {
-      expect(wrapper.find('.environment-buttons p').exists()).toEqual(false);
+      expect(wrapper.find('.environment-buttons Alert').exists()).toEqual(false);
     });
   });
 });

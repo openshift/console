@@ -3,6 +3,8 @@ import * as _ from 'lodash-es';
 import { match } from 'react-router-dom';
 import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
+import { Alert } from '@patternfly/react-core';
+
 import { serviceCatalogStatus, referenceForModel, K8sResourceKind } from '../module/k8s';
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
 import { Kebab, SectionHeading, navFactory, ResourceKebab, ResourceLink, ResourceSummary, StatusWithIcon } from './utils';
@@ -30,10 +32,7 @@ const ServiceBindingDetails: React.SFC<ServiceBindingDetailsProps> = ({obj: sb})
 
   return <React.Fragment>
     <div className="co-m-pane__body">
-      {notReady && <p className="alert alert-warning">
-        <span className="pficon pficon-warning-triangle-o" aria-hidden="true"></span>
-        This binding is not ready yet. Once it is ready, bind its secret to a workload.
-      </p>}
+      {notReady && <Alert isInline className="co-alert" variant="warning" title="This binding is not ready yet.">Once it is ready, bind its secret to a workload.</Alert>}
       <ServiceBindingDescription instanceName={sb.spec.instanceRef.name} className="co-m-pane__explanation" />
       <SectionHeading text="Service Binding Overview" />
       <div className="row">

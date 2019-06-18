@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { saveAs } from 'file-saver';
+import { Alert } from '@patternfly/react-core';
 
 import { coFetch } from '../../co-fetch';
 
@@ -36,7 +37,7 @@ export const DownloadButton: React.FC<DownloadButtonProps> = (props) => {
       </span>
       <span style={{visibility: 'hidden'}}>&nbsp;{filename}</span>
     </button>
-    { error && <p className="alert alert-danger" style={{wordBreak: 'break-word'}}><span className="pficon pficon-error-circle-o"></span>{error.toString()}</p> }
+    { error && <Alert isInline className="co-alert co-break-word" variant="danger" title={error.toString()} /> }
   </div>;
 };
 

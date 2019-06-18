@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { Alert } from '@patternfly/react-core';
 
 import { K8sKind, k8sList } from '../../module/k8s';
 import { resourcePathFromModel } from '../utils/resource-link';
@@ -52,7 +53,7 @@ class GlobalConfigPage_ extends React.Component<GlobalConfigPageProps, GlobalCon
     const { errorMessage, items, loading } = this.state;
 
     return <div className="co-m-pane__body">
-      {errorMessage && <div className="alert alert-danger"><span className="pficon pficon-error-circle-o" aria-hidden="true" />{errorMessage}</div>}
+      {errorMessage && <Alert isInline className="co-alert" variant="danger" title={errorMessage} />}
       {loading && <LoadingBox />}
       {!loading && <React.Fragment>
         <p className="co-m-pane__explanation">

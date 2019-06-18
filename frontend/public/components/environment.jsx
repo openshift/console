@@ -2,7 +2,8 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import * as PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { FieldLevelHelp, Alert } from 'patternfly-react';
+import { FieldLevelHelp } from 'patternfly-react';
+import { Alert } from '@patternfly/react-core';
 import * as classNames from 'classnames';
 
 import { k8sPatch, k8sGet, referenceFor, referenceForOwnerRef } from '../module/k8s';
@@ -467,8 +468,7 @@ export const EnvironmentPage = connect(stateToProps)(
         <React.Fragment>
           { (readOnly && !_.isEmpty(owners)) &&
             <div className="co-toolbar__group co-toolbar__group--left">
-              <Alert className="col-md-11 col-xs-10" type="info">Environment variables for {resourceName} were set from the resource {owners.length > 1 ? 'owners' : 'owner'}: <span className="environment-resource-link">{owners}</span>
-              </Alert>
+              <Alert isInline className="co-alert col-md-11 col-xs-10" variant="info" title="Environment variables already set">Environment variables for {resourceName} were set from the resource {owners.length > 1 ? 'owners' : 'owner'}: <span className="environment-resource-link">{owners}</span></Alert>
             </div>
           }
           { currentEnvVars.isContainerArray && <div className="co-toolbar__group co-toolbar__group--left">
@@ -500,13 +500,9 @@ export const EnvironmentPage = connect(stateToProps)(
         {containerVars}
         { !currentEnvVars.isCreate && <div className="co-m-pane__body-group">
           <div className="environment-buttons">
-            {errorMessage && <p className="alert alert-danger"><span className="pficon pficon-error-circle-o" aria-hidden="true"></span>{errorMessage}</p>}
-            {stale && <p className="alert alert-info"><span className="pficon pficon-info" aria-hidden="true"></span>The
-              information on this page is no longer current. Click Reload to update and lose edits, or Save Changes to
-              overwrite.</p>}
-            {success &&
-            <p className="alert alert-success"><span className="pficon pficon-ok" aria-hidden="true"></span>{success}
-            </p>}
+            {errorMessage && <Alert isInline className="co-alert" variant="danger" title={errorMessage} />}
+            {stale && <Alert isInline className="co-alert" variant="info" title="The information on this page is no longer current.">Click Reload to update and lose edits, or Save Changes to overwrite.</Alert>}
+            {success && <Alert isInline className="co-alert" variant="success" title={success} />}
             {!readOnly &&
             <button disabled={inProgress} type="submit" className="btn btn-primary" onClick={this.saveChanges}>Save</button>}
             {!readOnly && <button disabled={inProgress} type="button" className="btn btn-default" onClick={this.reload}>Reload</button>}

@@ -2,6 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as classNames from 'classnames';
 import * as PropTypes from 'prop-types';
+import { Alert } from '@patternfly/react-core';
 
 import { LoadingInline } from './status-box';
 
@@ -15,8 +16,8 @@ const injectDisabled = (children, disabled) => {
   });
 };
 
-const ErrorMessage = ({message}) => <div className="co-alert alert alert-danger"><span className="pficon pficon-error-circle-o" aria-hidden="true" />{message}</div>;
-const InfoMessage = ({message}) => <div className="co-alert alert alert-info"><span className="pficon pficon-info" aria-hidden="true" />{message}</div>;
+const ErrorMessage = ({message}) => <Alert isInline className="co-alert co-scrollable-alert" variant="danger" title={message} />;
+const InfoMessage = ({message}) => <Alert isInline className="co-alert co-scrollable-alert" variant="info" title={message} />;
 
 // NOTE: DO NOT use <a> elements within a ButtonBar.
 // They don't support the disabled attribute, and therefore

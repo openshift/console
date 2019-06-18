@@ -4,6 +4,7 @@ import * as classNames from 'classnames';
 import { safeLoad, safeDump } from 'js-yaml';
 import { saveAs } from 'file-saver';
 import { connect } from 'react-redux';
+import { Alert } from '@patternfly/react-core';
 
 import * as ace from 'brace';
 import 'brace/ext/searchbox';
@@ -367,11 +368,9 @@ export const EditYAML = connect(stateToProps)(
                   <div className="full-width-and-height yaml-editor__flexbox">
                     <div id={this.id} key={this.id} className="yaml-editor__acebox" />
                     <div className="yaml-editor__buttons">
-                      {error && <p className="alert alert-danger co-alert"><span className="pficon pficon-error-circle-o"></span>{error}</p>}
-                      {success && <p className="alert alert-success"><span className="pficon pficon-ok"></span>{success}</p>}
-                      {stale && <p className="alert alert-info">
-                        <span className="pficon pficon-info"></span>This object has been updated. Click reload to see the new version.
-                      </p>}
+                      {error && <Alert isInline className="co-alert co-scrollable-alert" variant="danger" title={error} />}
+                      {success && <Alert isInline className="co-alert" variant="success" title={success} />}
+                      {stale && <Alert isInline className="co-alert" variant="info" title="This object has been updated.">Click reload to see the new version.</Alert>}
                       {create && <button type="submit" className="btn btn-primary" id="save-changes" onClick={() => this.save()}>Create</button>}
                       {!create && !readOnly && <button type="submit" className="btn btn-primary" id="save-changes" onClick={() => this.save()}>Save</button>}
                       {!create && <button type="submit" className="btn btn-default" id="reload-object" onClick={() => this.reload()}>Reload</button>}

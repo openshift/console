@@ -2,6 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as fuzzy from 'fuzzysearch';
 import * as PropTypes from 'prop-types';
+import { Alert } from '@patternfly/react-core';
 
 import { Dropdown, Firehose, LoadingInline, ResourceName } from './';
 import { connectToFlags, flagPending } from '../../reducers/features';
@@ -119,7 +120,7 @@ class ListDropdown_ extends React.Component {
 
     return <div>
       { Component }
-      { loaded && _.isEmpty(items) && <p className="alert alert-info"><span className="pficon pficon-info" aria-hidden="true"></span>No {desc} found or defined.</p> }
+      { loaded && _.isEmpty(items) && <Alert isInline className="co-alert" variant="info" title={`No ${desc} found or defined.`} />}
     </div>;
   }
 }

@@ -1,6 +1,7 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
+import { Alert } from '@patternfly/react-core';
 
 import { ButtonBar, Dropdown, history, resourcePathFromModel, ResourceName } from '../utils';
 import { k8sCreate, k8sList, K8sResourceKind } from '../../module/k8s';
@@ -274,7 +275,7 @@ export class CreateRoute extends React.Component<null, CreateRouteState> {
           </div>
           <div className="form-group co-create-route__service">
             <label className="co-required" htmlFor="service">Service</label>
-            {(loaded && _.isEmpty(serviceOptions)) && <p className="alert alert-info co-create-route__alert"><span className="pficon pficon-info" aria-hidden="true"></span> There are no services in your project to expose with a route.</p> }
+            {(loaded && _.isEmpty(serviceOptions)) && <Alert isInline className="co-alert co-create-route__alert" variant="info" title="There are no services in your project to expose with a route." />}
             {(loaded && !_.isEmpty(serviceOptions)) && <Dropdown items={serviceOptions} title={service ? serviceOptions[service.metadata.name] : 'Select a service'} dropDownClassName="dropdown--full-width" id="service" onChange={this.changeService} describedBy="service-help" /> }
             <div className="help-block" id="service-help">
               Service to route to.

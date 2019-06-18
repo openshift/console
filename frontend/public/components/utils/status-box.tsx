@@ -1,6 +1,7 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as classNames from 'classnames';
+import { Alert } from '@patternfly/react-core';
 
 import * as restrictedSignImg from '../../imgs/restricted-sign.svg';
 import { TimeoutError } from '../../co-fetch';
@@ -44,7 +45,7 @@ MsgBox.displayName = 'MsgBox';
 export const AccessDenied: React.FC<AccessDeniedProps> = ({message}) => <Box className="text-center">
   <img className="cos-status-box__access-denied-icon" src={restrictedSignImg} />
   <MsgBox title="Restricted Access" detail="You don't have access to this section due to cluster policy." />
-  { _.isString(message) && <div className="alert alert-danger text-left"><span className="pficon pficon-error-circle-o"></span>{ message }</div>}
+  { _.isString(message) && <Alert isInline className="co-alert" variant="danger" title={message} />}
 </Box>;
 AccessDenied.displayName = 'AccessDenied';
 

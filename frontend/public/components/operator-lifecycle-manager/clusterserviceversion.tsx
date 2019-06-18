@@ -2,10 +2,10 @@ import * as React from 'react';
 import { Link, match as RouterMatch } from 'react-router-dom';
 import * as _ from 'lodash-es';
 import { connect } from 'react-redux';
-import { Alert } from 'patternfly-react';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import { Helmet } from 'react-helmet';
+import { Alert } from '@patternfly/react-core';
 
 import { ProvidedAPIsPage, ProvidedAPIPage } from './clusterserviceversion-resource';
 import { DetailsPage, ListPage, Table, TableRow, TableData } from '../factory';
@@ -228,7 +228,7 @@ export const ClusterServiceVersionDetails: React.SFC<ClusterServiceVersionDetail
             </dl>
           </div>
           <div className="col-sm-9">
-            {status.phase === ClusterServiceVersionPhase.CSVPhaseFailed && <Alert type="error"><strong>{status.phase}</strong>: {status.message}</Alert>}
+            {status.phase === ClusterServiceVersionPhase.CSVPhaseFailed && <Alert isInline className="co-alert" variant="danger" title={`${status.phase}: ${status.message}`} />}
             <SectionHeading text="Provided APIs" />
             <CRDCardRow csv={props.obj} crdDescs={providedAPIsFor(props.obj)} />
             <SectionHeading text="Description" />

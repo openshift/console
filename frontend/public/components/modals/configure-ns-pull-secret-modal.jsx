@@ -2,6 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as PropTypes from 'prop-types';
 import { Base64 } from 'js-base64';
+import { Alert } from '@patternfly/react-core';
 
 import { k8sPatch, k8sCreate } from '../../module/k8s';
 import { SecretModel } from '../../models';
@@ -177,7 +178,7 @@ class ConfigureNamespacePullSecret extends PromiseComponent {
           Specify default credentials to be used to authenticate and download containers within this namespace. These credentials will be the default unless a pod references a specific pull secret.
         </p>
 
-        {existingData.invalidData && <p className="alert alert-danger"><span className="pficon pficon-error-circle-o"></span>A default pull secret exists, but can&rsquo;t be parsed. Saving this will overwrite it.</p>}
+        {existingData.invalidData && <Alert isInline className="co-alert" variant="danger" title="Overwriting default pull secret">A default pull secret exists, but can't be parsed. Saving this will overwrite it.</Alert>}
 
         <div className="row co-m-form-row">
           <div className="col-xs-3">
@@ -276,7 +277,7 @@ class ConfigureNamespacePullSecret extends PromiseComponent {
           </div>
           { this.state.invalidJson || existingData.invalidJson && <div className="row co-m-form-row">
             <div className="col-xs-9 col-sm-offset-3">
-              <div className="alert alert-danger"><span className="pficon pficon-error-circle-o"></span>Invalid format. Uploaded file is not properly formatted json.</div>
+              <Alert isInline className="co-alert" variant="danger" title="Invalid format.">Uploaded file is not properly formatted json.</Alert>
             </div>
           </div> }
           { this.state.fileData &&<div className="row co-m-form-row">
