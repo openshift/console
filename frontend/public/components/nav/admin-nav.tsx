@@ -101,9 +101,10 @@ const AdminNav = () => (
       <ResourceNSLink
         model={ClusterServiceVersionModel}
         resource={ClusterServiceVersionModel.plural}
+        required={[FLAGS.OPERATOR_LIFECYCLE_MANAGER]}
         name="Installed Operators"
       />
-      <Separator />
+      <Separator required={FLAGS.OPERATOR_LIFECYCLE_MANAGER} />
       <HrefLink
         required={[FLAGS.CAN_LIST_PACKAGE_MANIFEST, FLAGS.CAN_LIST_OPERATOR_GROUP, FLAGS.OPERATOR_LIFECYCLE_MANAGER]}
         href="/operatorhub"
@@ -113,6 +114,7 @@ const AdminNav = () => (
       <HrefLink
         href="/operatormanagement"
         name="Operator Management"
+        required={[FLAGS.OPERATOR_LIFECYCLE_MANAGER]}
         activePath="/operatormanagement/"
         startsWith={operatorManagementStartsWith}
       />
