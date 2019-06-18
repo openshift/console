@@ -31,7 +31,7 @@
     ],
     "moduleNameMapper": {
       "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/__mocks__/fileMock.js",
-      "\\.(css|less)$": "<rootDir>/__mocks__/styleMock.js"
+      "\\.(css|less|scss)$": "<rootDir>/__mocks__/styleMock.js"
     },
     "transform": {
       ".(ts|tsx|js|jsx)": "./node_modules/ts-jest/preprocessor.js"
@@ -39,7 +39,7 @@
     "transformIgnorePatterns": [
       "<rootDir>/node_modules/(?!lodash-es|@console)"
     ],
-    "testRegex": "/__tests__/.*\\.(ts|tsx|js|jsx)$",
+    "testRegex": "/__tests__/.*\\.spec\\.(ts|tsx|js|jsx)$",
     "setupFiles": [
       "./__mocks__/requestAnimationFrame.js",
       "./__mocks__/localStorage.ts",
