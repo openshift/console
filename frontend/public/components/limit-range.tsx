@@ -18,7 +18,7 @@ const tableColumnClasses = [
   Kebab.columnClass,
 ];
 
-const LimitRangeTableRow: React.FC<LimitRangeTableRowProps> = ({obj, index, key, style}) => {
+export const LimitRangeTableRow: React.FC<LimitRangeTableRowProps> = ({obj, index, key, style}) => {
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
@@ -44,7 +44,7 @@ type LimitRangeTableRowProps = {
   style: object;
 };
 
-const LimitRangeTableHeader = () => {
+export const LimitRangeTableHeader = () => {
   return [
     {
       title: 'Name', sortField: 'metadata.name', transforms: [sortable],
@@ -76,7 +76,7 @@ export const LimitRangeListPage: React.SFC<LimitRangeListPageProps> = props =>
     canCreate={true}
   />;
 
-const LimitRangeDetailsRow: React.SFC<LimitRangeDetailsRowProps> = ({limitType, resource, limit}) => {
+export const LimitRangeDetailsRow: React.SFC<LimitRangeDetailsRowProps> = ({limitType, resource, limit}) => {
   return <tr className="co-resource-list__item">
     <td>{limitType}</td>
     <td>{resource}</td>
