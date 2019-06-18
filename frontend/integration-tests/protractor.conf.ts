@@ -172,6 +172,11 @@ export const config: Config = {
     devconsole: [
       'tests/devconsole/dev-perspective.scenario.ts',
     ],
+    kubevirt: [
+      'tests/kubevirt/kubevirt.login.scenario.ts',
+      'tests/base.scenario.ts',
+      'tests/kubevirt/non-admin.scenario.ts',
+    ],
   },
   params: {
     // Set to 'true' to enable OpenShift resources in the crud scenario.
