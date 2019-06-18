@@ -1,30 +1,17 @@
 import * as _ from 'lodash-es';
-import * as fuzzy from 'fuzzysearch';
 import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import { connect } from 'react-redux';
+
 import * as UIActions from '../../actions/ui';
 import { ingressValidHosts } from '../ingress';
-import { routeStatus } from '../routes';
-import { secretTypeFilterReducer } from '../secret';
-import { bindingType, roleType } from '../RBAC';
-import {
-  alertState,
-  alertStateOrder,
-  silenceState,
-  silenceStateOrder,
-} from '../../reducers/monitoring';
-import {
-  EmptyBox,
-  StatusBox,
-} from '../utils';
+import { alertStateOrder, silenceStateOrder } from '../../reducers/monitoring';
+import { EmptyBox, StatusBox } from '../utils';
 import {
   getJobTypeAndCompletions,
-  nodeStatus,
   K8sResourceKind,
   planExternalName,
   podPhase,
-  podPhaseFilterReducer,
   podReadiness,
   serviceCatalogStatus,
   serviceClassDisplayName,
@@ -52,152 +39,27 @@ import {
   WindowScroller,
 } from '@patternfly/react-virtualized-extension';
 
-const fuzzyCaseInsensitive = (a, b) => fuzzy(_.toLower(a), _.toLower(b));
+import { tableFilters } from './table-filters';
 
-// TODO: Having table filters here is undocumented, stringly-typed, and non-obvious. We can change that
-const tableFilters = {
-  'name': (filter, obj) => fuzzyCaseInsensitive(filter, obj.metadata.name),
-
-  'alert-name': (filter, alert) => fuzzyCaseInsensitive(filter, _.get(alert, 'labels.alertname')),
-
-  'alert-state': (filter, alert) => filter.selected.has(alertState(alert)),
-
-  'silence-name': (filter, silence) => fuzzyCaseInsensitive(filter, silence.name),
-
-  'silence-state': (filter, silence) => filter.selected.has(silenceState(silence)),
-
-  // Filter role by role kind
-  'role-kind': (filter, role) => filter.selected.has(roleType(role)),
-
-  // Filter role bindings by role kind
-  'role-binding-kind': (filter, binding) => filter.selected.has(bindingType(binding)),
-
-  // Filter role bindings by text match
-  'role-binding': (str, {metadata, roleRef, subject}) => {
-    const isMatch = val => fuzzyCaseInsensitive(str, val);
-    return [metadata.name, roleRef.name, subject.kind, subject.name].some(isMatch);
-  },
-
-  // Filter role bindings by roleRef name
-  'role-binding-roleRef': (roleRef, binding) => binding.roleRef.name === roleRef,
-
-  'selector': (selector, obj) => {
-    if (!selector || !selector.values || !selector.values.size) {
-      return true;
-    }
-    return selector.values.has(_.get(obj, selector.field));
-  },
-
-  'pod-status': (phases, pod) => {
-    if (!phases || !phases.selected || !phases.selected.size) {
-      return true;
-    }
-
-    const phase = podPhaseFilterReducer(pod);
-    return phases.selected.has(phase) || !_.includes(phases.all, phase);
-  },
-
-  'node-status': (statuses, node) => {
-    if (!statuses || !statuses.selected || !statuses.selected.size) {
-      return true;
-    }
-
-    const status = nodeStatus(node);
-    return statuses.selected.has(status) || !_.includes(statuses.all, status);
-  },
-
-  'clusterserviceversion-resource-kind': (filters, resource) => {
-    if (!filters || !filters.selected || !filters.selected.size) {
-      return true;
-    }
-    return filters.selected.has(resource.kind);
-  },
-
-  'build-status': (phases, build) => {
-    if (!phases || !phases.selected || !phases.selected.size) {
-      return true;
-    }
-
-    const phase = build.status.phase;
-    return phases.selected.has(phase) || !_.includes(phases.all, phase);
-  },
-
-  'build-strategy': (strategies, buildConfig) => {
-    if (!strategies || !strategies.selected || !strategies.selected.size) {
-      return true;
-    }
-
-    const strategy = buildConfig.spec.strategy.type;
-    return strategies.selected.has(strategy) || !_.includes(strategies.all, strategy);
-  },
-
-  'route-status': (statuses, route) => {
-    if (!statuses || !statuses.selected || !statuses.selected.size) {
-      return true;
-    }
-
-    const status = routeStatus(route);
-    return statuses.selected.has(status) || !_.includes(statuses.all, status);
-  },
-
-  'catalog-status': (statuses, catalog) => {
-    if (!statuses || !statuses.selected || !statuses.selected.size) {
-      return true;
-    }
-
-    const status = serviceCatalogStatus(catalog);
-    return statuses.selected.has(status) || !_.includes(statuses.all, status);
-  },
-
-  'secret-type': (types, secret) => {
-    if (!types || !types.selected || !types.selected.size) {
-      return true;
-    }
-    const type = secretTypeFilterReducer(secret);
-    return types.selected.has(type) || !_.includes(types.all, type);
-  },
-
-  'pvc-status': (phases, pvc) => {
-    if (!phases || !phases.selected || !phases.selected.size) {
-      return true;
-    }
-
-    const phase = pvc.status.phase;
-    return phases.selected.has(phase) || !_.includes(phases.all, phase);
-  },
-
-  // Filter service classes by text match
-  'service-class': (str, serviceClass) => {
-    const displayName = serviceClassDisplayName(serviceClass);
-    return fuzzyCaseInsensitive(str, displayName);
-  },
-
-  'cluster-operator-status': (statuses, operator) => {
-    if (!statuses || !statuses.selected || !statuses.selected.size) {
-      return true;
-    }
-
-    const status = getClusterOperatorStatus(operator);
-    return statuses.selected.has(status) || !_.includes(statuses.all, status);
-  },
-
-  'template-instance-status': (statuses, instance) => {
-    if (!statuses || !statuses.selected || !statuses.selected.size) {
-      return true;
-    }
-
-    const status = getTemplateInstanceStatus(instance);
-    return statuses.selected.has(status) || !_.includes(statuses.all, status);
-  },
+const rowFiltersToFilterFuncs = (rowFilters) => {
+  return rowFilters
+    .filter(f => f.type && _.isFunction(f.filter))
+    .reduce((acc, f) => ({ ...acc, [f.type]: f.filter }), {});
 };
 
-const getFilteredRows = (_filters, objects) => {
+const getAllTableFilters = (rowFilters = []) => ({
+  ...tableFilters,
+  ...rowFiltersToFilterFuncs(rowFilters),
+});
+
+const getFilteredRows = (_filters, rowFilters, objects) => {
   if (_.isEmpty(_filters)) {
     return objects;
   }
 
+  const allTableFilters = getAllTableFilters(rowFilters);
   _.each(_filters, (value, name) => {
-    const filter = tableFilters[name];
+    const filter = allTableFilters[name];
     if (_.isFunction(filter)) {
       objects = _.filter(objects, o => filter(value, o));
     }
@@ -211,8 +73,9 @@ const filterPropType = (props, propName, componentName) => {
     return;
   }
 
+  const allTableFilters = getAllTableFilters(props.rowFilters);
   for (const key of _.keys(props[propName])) {
-    if (key in tableFilters || key === 'loadTest') {
+    if (key in allTableFilters || key === 'loadTest') {
       continue;
     }
     return new Error(`Invalid prop '${propName}' in '${componentName}'. '${key}' is not a valid filter type!`);
@@ -248,9 +111,9 @@ const sorts = {
   },
 };
 
-const stateToProps = ({UI}, {data = [], defaultSortField = 'metadata.name', defaultSortFunc = undefined, filters = {}, loaded = false, reduxID = null, reduxIDs = null, staticFilters = [{}] }) => {
+const stateToProps = ({UI}, {data = [], defaultSortField = 'metadata.name', defaultSortFunc = undefined, filters = {}, loaded = false, reduxID = null, reduxIDs = null, staticFilters = [{}]}, rowFilters = []) => {
   const allFilters = staticFilters ? Object.assign({}, filters, ...staticFilters) : filters;
-  let newData = getFilteredRows(allFilters, data);
+  let newData = getFilteredRows(allFilters, rowFilters, data);
 
   const listId = reduxIDs ? reduxIDs.join(',') : reduxID;
   // Only default to 'metadata.name' if no `defaultSortFunc`
@@ -596,6 +459,7 @@ export type TableInnerProps = {
   selectedResourcesForKind?: string[];
   onSelect?: (event: React.MouseEvent, isSelected: boolean, rowIndex: number, rowData: IRowData, extraData: IExtraData) => void;
   staticFilters?: any[];
+  rowFilters?: any[];
   virtualize?: boolean;
 };
 
