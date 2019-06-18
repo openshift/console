@@ -100,7 +100,7 @@ const Graph: React.FC<GraphProps> = React.memo(({domain, data, onZoom, span}) =>
         scale={{x: 'time', y: 'linear'}}
       >
         <ChartAxis tickCount={5} tickFormat={twentyFourHourTime} />
-        <ChartAxis dependentAxis tickCount={5} tickFormat={humanizeNumber} />
+        <ChartAxis dependentAxis tickCount={5} tickFormat={value => humanizeNumber(value).string} />
         <ChartGroup colorScale={graphColors}>
           {_.map(data, (values, i) => <ChartLine key={i} data={values} />)}
         </ChartGroup>

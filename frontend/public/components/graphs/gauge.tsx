@@ -1,4 +1,3 @@
-import * as _ from 'lodash-es';
 import * as React from 'react';
 import { ChartDonutThreshold, ChartDonutUtilization } from '@patternfly/react-charts';
 
@@ -6,7 +5,8 @@ import { PrometheusGraph, PrometheusGraphLink } from './prometheus-graph';
 import { usePrometheusPoll } from './prometheus-poll-hook';
 import { PrometheusEndpoint } from './helpers';
 import { useRefWidth, humanizePercentage } from '../utils';
-import { MutatorFunction, PrometheusResponse, ThresholdColor } from '.';
+import { MutatorFunction, ThresholdColor } from '.';
+import { getInstantVectorStats } from './utils';
 
 const DEFAULT_THRESHOLDS = [
   {
@@ -19,67 +19,93 @@ const DEFAULT_THRESHOLDS = [
   },
 ];
 
-const handleResponse = (response: PrometheusResponse): number => {
-  return parseFloat(_.get(response, 'data.result[0].value[1]', 0));
+export const GaugeChart: React.FC<GaugeChartProps> = ({
+  query = '',
+  thresholds = DEFAULT_THRESHOLDS,
+  invert = false,
+  usedLabel = 'used',
+  label,
+  remainderLabel = 'available',
+  title,
+  theme,
+  data,
+  secondaryTitle = usedLabel,
+  error = false,
+}) => {
+  const [ref, width] = useRefWidth();
+  const labels = (d) => d.x ? `${d.x} ${usedLabel}` : `${d.y} ${remainderLabel}`;
+  return (
+    <PrometheusGraph className="graph-wrapper--title-center" title={title}>
+      <div ref={ref} className="graph-wrapper--gauge">
+        <PrometheusGraphLink query={query}>
+          <ChartDonutThreshold
+            data={thresholds}
+            height={width} // Changes the scale of the graph, not actual width and height
+            y="value"
+            width={width}
+          >
+            <ChartDonutUtilization
+              labels={labels}
+              data={error ? {y: 0}: data}
+              invert={invert}
+              subTitle={error ? null : secondaryTitle}
+              thresholds={thresholds}
+              title={error ? 'No Data' : label}
+              theme={theme}
+            />
+          </ChartDonutThreshold>
+        </PrometheusGraphLink>
+      </div>
+    </PrometheusGraph>
+  );
 };
 
 export const Gauge: React.FC<GaugeProps> = ({
-  formatY = humanizePercentage,
-  invert = false,
-  label = '',
+  formatY = v => humanizePercentage(v).string,
+  invert,
   namespace,
   percent = 0,
-  remainderLabel = 'available',
-  query = '',
-  thresholds = DEFAULT_THRESHOLDS,
+  remainderLabel,
+  query,
+  thresholds,
   title,
-  usedLabel = 'used',
+  usedLabel,
+  theme,
+  secondaryTitle,
 }) => {
-  const [ref, width] = useRefWidth();
   const [response, error] = usePrometheusPoll({
     endpoint: PrometheusEndpoint.QUERY,
     namespace,
     query,
   });
 
-  const used = response ? handleResponse(response) : percent;
-  const data = { x: formatY(used/100), y: used };
-  const labels = (d) => d.x ? `${d.x} ${usedLabel}` : `${formatY(d.y/100)} ${remainderLabel}`;
-  return <PrometheusGraph className="graph-wrapper--title-center" title={title}>
-    <div ref={ref} className="graph-wrapper--gauge">
-      {
-        error ? (
-          <ChartDonutUtilization data={{y: 0}} title="No Data" labels={[]} />
-        ) : (
-          <PrometheusGraphLink query={query}>
-            <ChartDonutThreshold
-              data={thresholds}
-              height={width} // Changes the scale of the graph, not actual width and height
-              y="value"
-              width={width}
-            >
-              <ChartDonutUtilization
-                labels={labels}
-                data={data}
-                invert={invert}
-                subTitle={usedLabel}
-                thresholds={thresholds}
-                title={label || formatY(used/100)}
-              />
-            </ChartDonutThreshold>
-          </PrometheusGraphLink>
-        )
-      }
-    </div>
-  </PrometheusGraph>;
+  const data = response ?
+    getInstantVectorStats(response, null, formatY).map(({label, y}) => ({x: label, y}))[0]
+    : {x: formatY(percent), y: percent};
+  return (
+    <GaugeChart
+      query={query}
+      thresholds={thresholds}
+      invert={invert}
+      usedLabel={usedLabel}
+      label={data.x}
+      data={data}
+      remainderLabel={remainderLabel}
+      title={title}
+      theme={theme}
+      error={!!error}
+      secondaryTitle={secondaryTitle}
+    />
+  );
 };
 
-type GaugeProps = {
-  formatY?: MutatorFunction;
+type GaugeChartProps = {
   invert?: boolean;
-  label?: string;
-  namespace?: string;
-  percent?: number;
+  label: string;
+  data: {
+    x: string,
+    y: React.ReactText,
+  };
   query?: string;
   remainderLabel?: string;
   theme?: any;
@@ -87,6 +113,25 @@ type GaugeProps = {
     value: number;
     color: ThresholdColor;
   }[];
-  title: string;
+  title?: string;
   usedLabel?: string;
+  secondaryTitle?: string;
+  error?: boolean;
+}
+
+type GaugeProps = {
+  formatY?: MutatorFunction;
+  namespace?: string;
+  percent?: number;
+  invert?: boolean;
+  remainderLabel?: string,
+  query?: string,
+  thresholds?: {
+    value: number;
+    color: ThresholdColor;
+  }[];
+  title?: string,
+  usedLabel?: string,
+  theme?: any,
+  secondaryTitle?: string,
 }

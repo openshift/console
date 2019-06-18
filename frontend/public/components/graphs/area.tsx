@@ -1,4 +1,3 @@
-import * as _ from 'lodash-es';
 import * as React from 'react';
 import { ChartAreaIcon } from '@patternfly/react-icons';
 import {
@@ -23,25 +22,18 @@ import { PrometheusEndpoint } from './helpers';
 import { PrometheusGraph, PrometheusGraphLink } from './prometheus-graph';
 import { usePrometheusPoll } from './prometheus-poll-hook';
 import { areaTheme } from './themes';
-import { DataPoint, MutatorFunction, PrometheusResponse } from './';
+import { MutatorFunction } from './';
+import { getRangeVectorStats } from './utils';
 
 const DEFAULT_HEIGHT = 180;
 const DEFAULT_SAMPLES = 60;
 const DEFAULT_TICK_COUNT = 3;
 const DEFAULT_TIMESPAN = 60 * 60 * 1000; // 1 hour
 
-const formatResponse = (response: PrometheusResponse): DataPoint[] => {
-  const values = _.get(response, 'data.result[0].values');
-  return _.map(values, value => ({
-    x: new Date(value[0] * 1000),
-    y: parseFloat(value[1]),
-  }));
-};
-
 export const Area: React.FC<AreaProps> = ({
   className,
   formatX = twentyFourHourTime,
-  formatY = humanizeNumber,
+  formatY = value => humanizeNumber(value).string,
   height = DEFAULT_HEIGHT,
   namespace,
   query,
@@ -61,7 +53,7 @@ export const Area: React.FC<AreaProps> = ({
     timeout,
     timespan,
   });
-  const data = formatResponse(response);
+  const data = getRangeVectorStats(response);
   const getLabel = ({x, y}) => `${formatY(y)} at ${formatX(x)}`;
   const container = <ChartVoronoiContainer voronoiDimension="x" labels={getLabel} />;
   return <PrometheusGraph ref={containerRef} className={className} title={title}>
