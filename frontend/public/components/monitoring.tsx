@@ -13,10 +13,10 @@ import store from '../redux';
 import * as UIActions from '../actions/ui';
 import {
   ResourceRow,
-  TextFilter,
   Table,
-  TableRow,
   TableData,
+  TableRow,
+  TextFilter,
 } from './factory';
 import { QueryBrowser } from './graphs';
 import { graphColors } from './graphs/query-browser';
@@ -695,7 +695,8 @@ const MonitoringListPage = connect(filtersToProps)(class InnerMonitoringListPage
               loadError={loadError}
               reduxID={reduxID}
               Row={Row}
-              virtualize />
+              virtualize
+            />
           </div>
         </div>
       </div>
@@ -804,7 +805,6 @@ export type SilenceTableRowProps = {
   key?: string;
   style: object;
 };
-
 
 const SilencesPageDescription = () => <p className="co-help-text">
   Silences temporarily mute alerts based on a set of conditions that you define. Notifications are not sent for alerts that meet the given conditions.
@@ -1047,36 +1047,58 @@ const MetricsList = ({metrics}) => <div className="co-m-table-grid co-m-table-gr
 </div>;
 
 const QueryBrowserPage = () => {
-  const [hideTables, setHideTables] = React.useState([false]);
   const [metrics, setMetrics] = React.useState([]);
-  const defaultQueries = [getURLSearchParams().query || ''];
-  const [queries, setQueries] = React.useState(defaultQueries);
-  const [queryTexts, setQueryTexts] = React.useState(defaultQueries);
 
-  const addQuery = () => {
-    setQueries([...queries, '']);
-    setQueryTexts([...queryTexts, '']);
-  };
+  const defaultQuery = getURLSearchParams().query || '';
+
+  // `text` is the current string in the text input and `query` is the value displayed in the graph
+  const [queries, setQueries] = React.useState([{enabled: true, expanded: true, query: defaultQuery, text: defaultQuery}]);
+
+  const defaultQueryObj = {enabled: true, expanded: true, query: '', text: ''};
+
+  const updateQuery = (i, obj) => setQueries(_.map(queries, (q, j) => i === j ? Object.assign({}, q, obj) : q));
+
+  const addQuery = () => setQueries([...queries, defaultQueryObj]);
+
+  const deleteAllQueries = () => setQueries([defaultQueryObj]);
+
+  const deleteQuery = i => setQueries(queries.length <= 1 ? [defaultQueryObj] : queries.filter((v, k) => k !== i));
 
   const runQueries = e => {
     e.preventDefault();
-    setQueries(queryTexts);
+    setQueries(queries.map(q => q.enabled ? Object.assign({}, q, {query: q.text}) : q));
   };
 
-  const toggleTable = i => setHideTables(_.set(_.cloneDeep(hideTables), i, !hideTables[i]));
+  const onQueryChange = (e, i) => updateQuery(i, {text: e.target.value});
 
-  const onQueryChange = (e, i) => setQueryTexts(_.set(_.cloneDeep(queryTexts), i, e.target.value));
+  const toggleEnabled = i => _.get(queries, [i, 'enabled'])
+    ? updateQuery(i, {enabled: false, expanded: false, query: ''})
+    : updateQuery(i, {enabled: true, expanded: true, query: _.get(queries, [i, 'text'])});
+
+  const toggleExpanded = i => updateQuery(i, {expanded: !_.get(queries, [i, 'expanded'])});
+
+  const isAllExpanded = _.every(queries, 'expanded');
+  const toggleAllExpanded = () => setQueries(_.map(queries, q => Object.assign({}, q, {expanded: !isAllExpanded})));
+
+  const actionsMenuActions = [
+    {label: 'Add query', callback: addQuery},
+    {label: `${isAllExpanded ? 'Collapse' : 'Expand'} all query tables`, callback: toggleAllExpanded},
+    {label: 'Delete all queries', callback: deleteAllQueries},
+  ];
 
   const onDataUpdate = queriesData => setMetrics(_.map(queriesData,
     data => _.map(data, ({labels, values}) => ({labels, value: _.get(_.last(values), 'y')}))
   ));
 
-  const validQueries = _.reject(queries, _.isEmpty);
+  const validQueries = _.reject(_.map(queries, 'query'), _.isEmpty);
 
   return <React.Fragment>
     <div className="co-m-nav-title">
       <h1 className="co-m-pane__heading">
         <span>Metrics<HeaderPrometheusLink queries={validQueries} /></span>
+        <div className="co-actions">
+          <ActionsMenu actions={actionsMenuActions} />
+        </div>
       </h1>
     </div>
     <div className="co-m-pane__body">
@@ -1098,23 +1120,33 @@ const QueryBrowserPage = () => {
                 <button type="button" className="btn" onClick={addQuery}>Add Query</button>
                 <button type="submit" className="btn btn-primary">Run Queries</button>
               </div>
-              {_.map(queries, (query, i) => <React.Fragment key={i}>
+              {_.map(queries, (q, i) => <React.Fragment key={i}>
                 <div className="group__title">
-                  <i
-                    className={`query-browser__table-toggle fa fa-angle-${hideTables[i] ? 'right' : 'down'}`}
-                    aria-hidden="true"
-                    onClick={() => toggleTable(i)}
-                    title={`${hideTables[i] ? 'Show' : 'Hide'} Table`}
-                  />
+                  <button
+                    className="btn btn-link query-browser__table-toggle-btn"
+                    onClick={() => toggleExpanded(i)}
+                    title={`${q.expanded ? 'Hide' : 'Show'} Table`}
+                  >
+                    <i
+                      aria-hidden="true"
+                      className={`fa fa-angle-${q.expanded ? 'down' : 'right'} query-browser__table-toggle-icon`}
+                    />
+                  </button>
                   <input
-                    className="form-control"
+                    className="form-control query-browser__query"
                     onChange={e => onQueryChange(e, i)}
                     placeholder="Expression (press Shift+Enter for newlines)"
                     type="text"
-                    value={queryTexts[i]}
+                    value={q.text}
                   />
+                  <div className="dropdown-kebab-pf query-browser__kebab">
+                    <Kebab options={[
+                      {label: `${q.enabled ? 'Disable' : 'Enable'} query`, callback: () => toggleEnabled(i)},
+                      {label: 'Delete query', callback: () => deleteQuery(i)},
+                    ]} />
+                  </div>
                 </div>
-                {!hideTables[i] && <div className="group__body group__body--query-browser">
+                {q.expanded && <div className="group__body group__body--query-browser">
                   <MetricsList metrics={metrics[i]} />
                 </div>}
               </React.Fragment>)}
