@@ -118,7 +118,7 @@ const AppContents = withRouter(React.memo(() => (
 
           <Route path={['/all-namespaces', '/ns/:ns']} component={RedirectComponent} />
 
-          <LazyRoute path="/dashboards" exact loader={() => import('./dashboards-page/dashboards' /* webpackChunkName: "dashboards" */).then(m => m.DashboardsPage)} />
+          <LazyRoute path="/dashboards" loader={() => import('./dashboards-page/dashboards' /* webpackChunkName: "dashboards" */).then(m => m.DashboardsPage)} />
           <LazyRoute path="/cluster-status" exact loader={() => import('./cluster-overview' /* webpackChunkName: "cluster-overview" */).then(m => m.ClusterOverviewPage)} />
           <Redirect from="/overview/all-namespaces" to="/cluster-status" />
           <Redirect from="/overview/ns/:ns" to="/k8s/cluster/projects/:ns/workloads" />
