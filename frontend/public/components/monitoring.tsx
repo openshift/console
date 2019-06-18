@@ -1217,6 +1217,7 @@ const QueryBrowserPage = withFallback(() => {
                     />
                   </button>
                   <textarea
+                    autoFocus={true}
                     className="form-control query-browser__query"
                     onBlur={e => onQueryBlur(e, i)}
                     onChange={e => onQueryChange(e, i)}
