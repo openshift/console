@@ -16,6 +16,7 @@ import {
   DashboardsOverviewHealthPrometheusSubsystem,
   DashboardsOverviewHealthURLSubsystem,
   DashboardsOverviewCapacityQuery,
+  DashboardsCard,
 } from '@console/plugin-sdk';
 
 // TODO(vojtech): internal code needed by plugins should be moved to console-shared package
@@ -26,6 +27,7 @@ import { CAPACITY_QUERY } from '@console/internal/components/dashboards-page/ove
 import * as models from './models';
 import { yamlTemplates } from './yaml-templates';
 import { getFooHealthState, getBarHealthState } from './dashboards/health';
+import { FooCard } from './dashboards/foo-card';
 
 type ConsumedExtensions =
   | ModelDefinition
@@ -40,7 +42,8 @@ type ConsumedExtensions =
   | RoutePage
   | DashboardsOverviewHealthPrometheusSubsystem
   | DashboardsOverviewHealthURLSubsystem<any>
-  | DashboardsOverviewCapacityQuery;
+  | DashboardsOverviewCapacityQuery
+  | DashboardsCard;
 
 const plugin: Plugin<ConsumedExtensions> = [
   {
@@ -193,6 +196,13 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       queryKey: CAPACITY_QUERY.STORAGE_USED,
       query: 'barQuery',
+    },
+  },
+  {
+    type: 'Dashboards/Card',
+    properties: {
+      tab: 'foo',
+      component: FooCard,
     },
   },
 ];

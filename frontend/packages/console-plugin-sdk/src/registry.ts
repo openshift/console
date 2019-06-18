@@ -13,6 +13,7 @@ import {
   isRoutePage,
   isDashboardsOverviewHealthSubsystem,
   isDashboardsOverviewCapacityQuery,
+  isDashboardsCard,
 } from './typings';
 
 /**
@@ -63,5 +64,9 @@ export class ExtensionRegistry {
 
   public getDashboardsOverviewCapacityQueries() {
     return this.extensions.filter(isDashboardsOverviewCapacityQuery);
+  }
+
+  public getDashboardsCards() {
+    return this.extensions.filter(isDashboardsCard);
   }
 }

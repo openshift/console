@@ -5,9 +5,15 @@ import { useRefWidth } from '../utils';
 
 export const MEDIA_QUERY_LG = 992;
 
-const mapCardsToGrid = (cards: React.ReactNode[], keyPrefix: string): React.ReactNode[] =>
-  cards.map((card, index) => (
-    <GridItem key={`${keyPrefix}-${index}`}span={12}>{card}</GridItem>
+export enum GridPosition {
+  MAIN = 'MAIN',
+  LEFT = 'LEFT',
+  RIGHT = 'RIGHT',
+}
+
+const mapCardsToGrid = (cards: React.ReactType[], keyPrefix: string): React.ReactNode[] =>
+  cards.map((Card, index) => (
+    <GridItem key={`${keyPrefix}-${index}`}span={12}><Card /></GridItem>
   ));
 
 export const DashboardGrid: React.FC<DashboardGridProps> = ({ mainCards, leftCards = [], rightCards = [] }) => {
@@ -55,7 +61,7 @@ export const DashboardGrid: React.FC<DashboardGridProps> = ({ mainCards, leftCar
 };
 
 type DashboardGridProps = {
-  mainCards: React.ReactNode[],
-  leftCards?: React.ReactNode[],
-  rightCards?: React.ReactNode[],
+  mainCards: React.ReactType[],
+  leftCards?: React.ReactType[],
+  rightCards?: React.ReactType[],
 };

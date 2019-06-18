@@ -1,5 +1,6 @@
 import { SubsystemHealth } from '@console/internal/components/dashboards-page/overview-dashboard/health-card';
 import { CAPACITY_QUERY } from '@console/internal/components/dashboards-page/overview-dashboard/capacity-query-types';
+import { GridPosition } from '@console/internal/components/dashboard/grid';
 
 import { Extension } from './extension';
 
@@ -41,6 +42,20 @@ namespace ExtensionProperties {
     /** The Prometheus query */
     query: string;
   }
+
+  export interface DashboardsCard {
+    /**
+     * Tab href. Tab will be generated and it's title will be with capitalized first letter
+     * example: `foo` will became `/dashboards/foo` tab with `Foo` title
+     */
+    tab: string;
+
+    /** The card position in the tab. Defaults to `GridPosition.MAIN` */
+    position?: GridPosition;
+
+    /** The card component to render */
+    component: React.ReactType;
+  }
 }
 
 export interface DashboardsOverviewHealthURLSubsystem<R>
@@ -79,3 +94,10 @@ export interface DashboardsOverviewCapacityQuery
 export const isDashboardsOverviewCapacityQuery = (
   e: Extension<any>,
 ): e is DashboardsOverviewCapacityQuery => e.type === 'Dashboards/Overview/Capacity/Query';
+
+export interface DashboardsCard extends Extension<ExtensionProperties.DashboardsCard> {
+  type: 'Dashboards/Card';
+}
+
+export const isDashboardsCard = (e: Extension<any>): e is DashboardsCard =>
+  e.type === 'Dashboards/Card';
