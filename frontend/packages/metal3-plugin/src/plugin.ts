@@ -2,13 +2,19 @@ import {
   Plugin,
   ResourceNSNavItem,
   ResourceListPage,
+  ResourceDetailsPage,
   ModelFeatureFlag,
   ModelDefinition,
 } from '@console/plugin-sdk';
 
 import { BaremetalHostModel } from './models';
 
-type ConsumedExtensions = ResourceNSNavItem | ResourceListPage | ModelFeatureFlag | ModelDefinition;
+type ConsumedExtensions =
+  | ResourceNSNavItem
+  | ResourceListPage
+  | ResourceDetailsPage
+  | ModelFeatureFlag
+  | ModelDefinition;
 
 const METAL3_FLAG = 'METAL3';
 
@@ -45,6 +51,16 @@ const plugin: Plugin<ConsumedExtensions> = [
       loader: () =>
         import('./components/host' /* webpackChunkName: "metal3-baremetalhost" */).then(
           (m) => m.BaremetalHostsPage,
+        ),
+    },
+  },
+  {
+    type: 'Page/Resource/Details',
+    properties: {
+      model: BaremetalHostModel,
+      loader: () =>
+        import('./components/host-detail' /* webpackChunkName: "metal3-baremetalhost" */).then(
+          (m) => m.BaremetalHostDetailPage,
         ),
     },
   },
