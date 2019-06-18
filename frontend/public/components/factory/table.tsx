@@ -111,7 +111,7 @@ const sorts = {
   },
 };
 
-const stateToProps = ({UI}, {data = [], defaultSortField = 'metadata.name', defaultSortFunc = undefined, filters = {}, loaded = false, reduxID = null, reduxIDs = null, staticFilters = [{}]}, rowFilters = []) => {
+const stateToProps = ({UI}, {data = [], defaultSortField = 'metadata.name', defaultSortFunc = undefined, filters = {}, loaded = false, reduxID = null, reduxIDs = null, staticFilters = [{}], rowFilters = []}) => {
   const allFilters = staticFilters ? Object.assign({}, filters, ...staticFilters) : filters;
   let newData = getFilteredRows(allFilters, rowFilters, data);
 
