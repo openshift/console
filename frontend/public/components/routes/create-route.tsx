@@ -255,9 +255,7 @@ export class CreateRoute extends React.Component<null, CreateRouteState> {
               name="hostname"
               aria-describedby="hostname-help" />
             <div className="help-block" id="hostname-help">
-              <p>Public hostname for the route.  If not specified, a hostname is generated.</p>
-              <p>The hostname cannot be changed after the route is created.</p>
-              {/* TODO:  add additional wildcard help text from https://github.com/openshift/origin-web-console/blob/master/app/views/directives/osc-routing.html#L65-L67 */}
+              Public hostname for the route. If not specified, a hostname is generated.
             </div>
           </div>
           <div className="form-group co-create-route__path">
