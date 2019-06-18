@@ -9,12 +9,13 @@ import { QuestionCircleIcon } from '@patternfly/react-icons';
 import { K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
 import { CopyToClipboard, ExpandableAlert, ExternalLink, Kebab, SectionHeading, LabelList, navFactory, ResourceKebab, ResourceLink, ResourceSummary, history, Timestamp } from './utils';
+import { ImageStreamTimeline } from './image-stream-timeline';
 import { fromNow } from './utils/datetime';
 
 const ImageStreamsReference: K8sResourceKindReference = 'ImageStream';
 const ImageStreamTagsReference: K8sResourceKindReference = 'ImageStreamTag';
 
-const getImageStreamTagName = (imageStreamName: string, tag: string): string => `${imageStreamName}:${tag}`;
+export const getImageStreamTagName = (imageStreamName: string, tag: string): string => `${imageStreamName}:${tag}`;
 
 export const getAnnotationTags = (specTag: any) => _.get(specTag, 'annotations.tags', '').split(/\s*,\s*/);
 
@@ -202,7 +203,13 @@ export const ImageStreamsDetails: React.SFC<ImageStreamsDetailsProps> = ({obj: i
   </div>;
 };
 
-const pages = [navFactory.details(ImageStreamsDetails), navFactory.editYaml()];
+const ImageStreamHistory: React.FC<ImageStreamHistoryProps> = ({ obj: imageStream }) => {
+  const imageStreamStatusTags = _.get(imageStream, 'status.tags');
+  return <ImageStreamTimeline imageStreamTags={imageStreamStatusTags} imageStreamName={imageStream.metadata.name} imageStreamNamespace={imageStream.metadata.namespace} />;
+};
+ImageStreamHistory.displayName = 'ImageStreamHistory';
+
+const pages = [navFactory.details(ImageStreamsDetails), navFactory.editYaml(), navFactory.history(ImageStreamHistory)];
 export const ImageStreamsDetailsPage: React.SFC<ImageStreamsDetailsPageProps> = props =>
   <DetailsPage
     {...props}
@@ -294,6 +301,10 @@ type ImageStreamTagsRowProps = {
   specTag: any;
   statusTag: any;
 };
+
+type ImageStreamHistoryProps = {
+  obj: K8sResourceKind;
+}
 
 export type ImageStreamManipulationHelpProps = {
   imageStream: K8sResourceKind;
