@@ -5,7 +5,7 @@
  *    git://github.com/kubernetes-ui/label-selector.git
  *    author: Jessica Forrester <jforrest@redhat.com>
  **/
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 // selector (optional) - the JSON format as returned by k8s API, will also
 //      handle {key: null} as the key exists operator (not currently returned
 //      by API)

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { match, Link } from 'react-router-dom';
 import { Map as ImmutableMap } from 'immutable';
 import { sortable } from '@patternfly/react-table';

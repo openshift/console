@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { shallow } from 'enzyme';
 
 import { requireOperatorGroup, NoOperatorGroupMsg, supports, InstallModeSet, InstallModeType, installedFor, subscriptionFor } from '../../../public/components/operator-lifecycle-manager/operator-group';

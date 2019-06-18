@@ -1,4 +1,4 @@
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import * as React from 'react';
 import { Redirect, Route, Switch, withRouter } from 'react-router-dom';
 import { ALL_NAMESPACES_KEY, FLAGS } from '../const';

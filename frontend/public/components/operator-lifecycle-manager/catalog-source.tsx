@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { match } from 'react-router-dom';
 
 import { SectionHeading, Firehose, MsgBox, LoadingBox, Kebab, navFactory } from '../utils';

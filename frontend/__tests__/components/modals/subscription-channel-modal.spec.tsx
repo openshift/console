@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ShallowWrapper, shallow } from 'enzyme';
 import Spy = jasmine.Spy;
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 
 import { SubscriptionChannelModal, SubscriptionChannelModalProps, SubscriptionChannelModalState } from '../../../public/components/modals/subscription-channel-modal';
 import { ModalTitle, ModalSubmitFooter, ModalBody } from '../../../public/components/factory/modal';

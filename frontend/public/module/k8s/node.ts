@@ -1,4 +1,4 @@
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 
 import { k8sPatch } from './resource';
 import { NodeModel } from '../../models';

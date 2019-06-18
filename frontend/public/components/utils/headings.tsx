@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { Link } from 'react-router-dom';
 
 import { ActionsMenu, ResourceIcon, KebabAction, resourcePath } from './index';

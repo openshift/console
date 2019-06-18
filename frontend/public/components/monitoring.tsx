@@ -1,4 +1,4 @@
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import * as classNames from 'classnames';
 import { murmur3 } from 'murmurhash-js';
 import * as React from 'react';

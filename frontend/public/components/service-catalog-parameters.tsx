@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 
 import { K8sResourceKind } from '../module/k8s';
 import { SectionHeading, ResourceLink } from './utils';

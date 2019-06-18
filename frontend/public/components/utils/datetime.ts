@@ -1,4 +1,4 @@
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 
 // Behaves like moment.js's fromNow
 export const fromNow = (dateTime, now=undefined, options = { omitSuffix: false }) => {

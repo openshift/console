@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import memoize from 'memoize-one';
 import { NavExpandable } from '@patternfly/react-core';
 

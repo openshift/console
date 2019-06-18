@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import * as PropTypes from 'prop-types';
 import * as catalogImg from '../../imgs/logos/catalog-icon.svg';
 import { CatalogTile } from 'patternfly-react-extensions';

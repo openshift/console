@@ -1,5 +1,5 @@
 import * as Immutable from 'immutable';
-import { noop } from 'lodash-es';
+import { noop } from 'lodash';
 
 import { dashboardsReducer, defaults, RESULTS_TYPE } from '../../public/reducers/dashboards';
 import { activateWatch, updateWatchTimeout, updateWatchInFlight, stopWatch, updateResult } from '../../public/actions/dashboards';

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { connect } from 'react-redux';
 
 import { ClusterServiceVersionResourceKind } from '../../index';

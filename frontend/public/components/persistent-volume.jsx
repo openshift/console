@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';

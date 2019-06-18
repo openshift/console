@@ -1,4 +1,4 @@
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { Map as ImmutableMap, fromJS } from 'immutable';
 
 import { ActionType, K8sAction } from '../actions/k8s';

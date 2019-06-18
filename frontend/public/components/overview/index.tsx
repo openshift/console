@@ -1,4 +1,4 @@
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import * as classnames from 'classnames';
 import * as fuzzy from 'fuzzysearch';
 import * as React from 'react';

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { Alert, AboutModal as PfAboutModal, TextContent, TextList, TextListItem } from '@patternfly/react-core';
 import { Link } from 'react-router-dom';
 

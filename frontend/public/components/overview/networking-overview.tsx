@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { Icon, ListGroup } from 'patternfly-react';
 
 import { K8sResourceKind } from '../../module/k8s';

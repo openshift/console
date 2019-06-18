@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import * as PropTypes from 'prop-types';
 import {Link} from 'react-router-dom';
 import {Modal} from 'patternfly-react';

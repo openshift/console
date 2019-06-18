@@ -1,4 +1,4 @@
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 
 import { BuildModel, BuildConfigModel } from '../../models';
 import { k8sCreate } from './';

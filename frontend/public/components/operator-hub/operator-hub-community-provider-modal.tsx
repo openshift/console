@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { Checkbox, Icon } from 'patternfly-react';
 
 import { RH_OPERATOR_SUPPORT_POLICY_LINK } from '../../const';

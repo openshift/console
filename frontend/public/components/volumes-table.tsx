@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import * as classNames from 'classnames';
 
 import {

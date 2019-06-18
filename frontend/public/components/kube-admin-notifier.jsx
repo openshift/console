@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 
 import { OAuthModel } from '../models';
 import { userStateToProps } from '../reducers/ui';

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { shallow, mount, ShallowWrapper, ReactWrapper } from 'enzyme';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { CatalogTile, FilterSidePanel, VerticalTabs } from 'patternfly-react-extensions';
 import { Modal } from 'patternfly-react';
 

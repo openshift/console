@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { Helmet } from 'react-helmet';
 import * as classNames from 'classnames';
 

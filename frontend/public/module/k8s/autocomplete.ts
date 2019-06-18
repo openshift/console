@@ -1,6 +1,6 @@
 import { IEditSession, Editor, Position } from 'brace';
 import { Map as ImmutableMap } from 'immutable';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 
 import { ServiceAccountModel, SecretModel, ServiceModel, ConfigMapModel, AlertmanagerModel } from '../../models';
 import { getStoredSwagger, K8sKind, K8sResourceKind, SwaggerDefinitions } from '../../module/k8s';
@@ -22,7 +22,7 @@ export const snippets = ImmutableMap<string, string>()
     metadata:
       name: \${1}
       namespace: \${2}
-      labels: 
+      labels:
         \${3}
       annotations:
         \${4}

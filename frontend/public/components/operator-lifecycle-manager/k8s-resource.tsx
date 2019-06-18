@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 
 import { connectToPlural } from '../../kinds';
 import { CRDDescription, ClusterServiceVersionKind, ClusterServiceVersionResourceLink, ClusterServiceVersionResourceKind } from './index';

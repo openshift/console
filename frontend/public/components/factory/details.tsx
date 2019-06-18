@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { match } from 'react-router-dom';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 
 import { Firehose, HorizontalNav, PageHeading } from '../utils';
 import { K8sResourceKindReference, K8sResourceKind, Selector } from '../../module/k8s';

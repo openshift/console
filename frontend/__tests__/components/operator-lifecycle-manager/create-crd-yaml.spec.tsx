@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { safeDump } from 'js-yaml';
 
 import { CreateCRDYAML, CreateCRDYAMLProps } from '../../../public/components/operator-lifecycle-manager/create-crd-yaml';

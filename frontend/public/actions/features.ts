@@ -1,5 +1,5 @@
 import { Dispatch } from 'react-redux';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { ActionType as Action, action } from 'typesafe-actions';
 
 import { OperatorGroupModel, PackageManifestModel, SelfSubjectAccessReviewModel } from '../models';

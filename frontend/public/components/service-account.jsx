@@ -1,4 +1,4 @@
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import * as React from 'react';
 import { safeDump } from 'js-yaml';
 import { Base64 } from 'js-base64';

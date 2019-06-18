@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 
 class SimpleTab extends React.PureComponent<SimpleTabProps> {
   constructor(props) {

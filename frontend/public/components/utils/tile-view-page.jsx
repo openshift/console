@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import * as PropTypes from 'prop-types';
 import {FilterSidePanel, VerticalTabs} from 'patternfly-react-extensions';
 import {EmptyState, FormControl} from 'patternfly-react';

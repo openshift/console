@@ -1,4 +1,4 @@
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 
 import { coFetchJSON } from '../../co-fetch';
 import { K8sKind } from '../../module/k8s';

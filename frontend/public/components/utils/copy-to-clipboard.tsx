@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { CopyToClipboard as CTC } from 'react-copy-to-clipboard';
 import { Tooltip } from 'react-lightweight-tooltip';
 

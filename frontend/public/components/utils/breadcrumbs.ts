@@ -1,4 +1,4 @@
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 
 import { modelFor, referenceForOwnerRef, K8sResourceKind } from '../../module/k8s';
 import { resourcePathFromModel } from './resource-link';

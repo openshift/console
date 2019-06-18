@@ -1,4 +1,4 @@
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import * as React from 'react';
 
 import { Dropdown, EmptyBox, PromiseComponent } from '../utils';

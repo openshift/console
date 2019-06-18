@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 
 import { K8sResourceKind, GroupVersionKind, OwnerReference, Selector, referenceForGroupVersionKind } from '../../module/k8s';
 import { Descriptor } from './descriptors/types';

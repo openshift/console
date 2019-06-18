@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { Map as ImmutableMap } from 'immutable';
 
 import { ResourceLink, StatusIconAndText } from '../../../utils';

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as PropTypes from 'prop-types';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import * as fuzzy from 'fuzzysearch';
 
 import { Dropdown, ResourceName} from './';

@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import { Map as ImmutableMap } from 'immutable';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 
 import {
   ChargebackReportModel,

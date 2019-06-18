@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 
 import { Timestamp } from './utils';
 import { CamelCaseWrap } from './utils/camel-case-wrap';

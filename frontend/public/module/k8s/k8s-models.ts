@@ -1,5 +1,5 @@
 import { Map as ImmutableMap } from 'immutable';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 
 import { K8sResourceKindReference, K8sKind } from './index';
 import * as staticModels from '../../models';

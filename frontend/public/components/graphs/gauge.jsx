@@ -1,4 +1,4 @@
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import * as PropTypes from 'prop-types';
 import { relayout, register } from 'plotly.js/lib/core';
 import * as pie from 'plotly.js/lib/pie';

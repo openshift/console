@@ -1,4 +1,4 @@
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { connect } from 'react-redux';
 import { Map as ImmutableMap } from 'immutable';
 import { match } from 'react-router-dom';

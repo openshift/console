@@ -5,7 +5,7 @@ import * as Modal from 'react-modal';
 import * as PropTypes from 'prop-types';
 import { Router } from 'react-router-dom';
 import * as classNames from 'classnames';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 
 import store from '../../redux';
 import { ButtonBar } from '../utils/button-bar';

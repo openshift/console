@@ -1,5 +1,5 @@
 import * as React from 'react';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import * as classNames from 'classnames';
 
 export class ListInput extends React.Component<ListInputProps, ListInputState> {

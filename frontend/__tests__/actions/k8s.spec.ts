@@ -1,6 +1,6 @@
 import Spy = jasmine.Spy;
 import { Map as ImmutableMap } from 'immutable';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 
 import * as k8sActions from '../../public/actions/k8s';
 import * as k8sResource from '../../public/module/k8s/resource';

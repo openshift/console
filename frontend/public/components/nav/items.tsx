@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Link, LinkProps } from 'react-router-dom';
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 import { NavItem } from '@patternfly/react-core';
 
 import { formatNamespacedRouteForResource } from '../../actions/ui';

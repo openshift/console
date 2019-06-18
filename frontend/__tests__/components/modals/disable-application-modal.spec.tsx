@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ShallowWrapper, shallow } from 'enzyme';
 import Spy = jasmine.Spy;
-import * as _ from 'lodash-es';
+import * as _ from 'lodash';
 
 import { DisableApplicationModal, DisableApplicationModalProps } from '../../../public/components/modals/disable-application-modal';
 import { ModalTitle, ModalSubmitFooter } from '../../../public/components/factory/modal';
