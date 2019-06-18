@@ -19,7 +19,6 @@ import {
   WorkloadTableHeader,
 } from './workload-table';
 
-import { breadcrumbsForOwnerRefs } from './utils/breadcrumbs';
 import { ResourceEventStream } from './events';
 import { VolumesTable } from './volumes-table';
 
@@ -69,10 +68,6 @@ const environmentComponent = (props) => <EnvironmentPage
 const {details, editYaml, pods, envEditor, events} = navFactory;
 const ReplicaSetsDetailsPage = props => <DetailsPage
   {...props}
-  breadcrumbsFor={obj => breadcrumbsForOwnerRefs(obj).concat({
-    name: 'ReplicaSet Details',
-    path: props.match.url,
-  })}
   menuActions={replicaSetMenuActions}
   pages={[details(Details), editYaml(), pods(), envEditor(environmentComponent), events(ResourceEventStream)]}
 />;

@@ -216,6 +216,7 @@ describe(ClusterServiceVersionResourcesDetailsPage.displayName, () => {
 
   it('passes function to create breadcrumbs for resource to `DetailsPage`', () => {
     expect(wrapper.find(DetailsPage).props().breadcrumbsFor(null)).toEqual([
+      {name: 'Installed Operators', path: `/k8s/ns/default/${ClusterServiceVersionModel.plural}`},
       {name: 'etcd', path: `/k8s/ns/default/${ClusterServiceVersionModel.plural}/etcd/etcdclusters`},
       {name: `${testResourceInstance.kind} Details`, path: `/k8s/ns/default/${ClusterServiceVersionModel.plural}/etcd/etcdclusters/my-etcd`},
     ]);
@@ -227,6 +228,7 @@ describe(ClusterServiceVersionResourcesDetailsPage.displayName, () => {
     wrapper.setProps({match});
 
     expect(wrapper.find(DetailsPage).props().breadcrumbsFor(null)).toEqual([
+      {name: 'Installed Operators', path: `/k8s/ns/example/${ClusterServiceVersionModel.plural}`},
       {name: 'example', path: `/k8s/ns/${ClusterServiceVersionModel.plural}/example/example`},
       {name: `${testResourceInstance.kind} Details`, path: `/k8s/ns/${ClusterServiceVersionModel.plural}/example/example/example`},
     ]);

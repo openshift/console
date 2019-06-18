@@ -28,7 +28,4 @@
     min-height: 118px; // breadcrumb text + top & bottom padding + h1 text + bottom margin + bottom border +  (21 + 25 + 12 + 29 + 30 + 1)
     padding-top: 0;
   }
-  &--logo {
-    padding-top: ($grid-gutter-width / 2);
-  }
 }

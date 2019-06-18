@@ -321,6 +321,7 @@ export const ClusterServiceVersionResourcesDetailsPage: React.SFC<ClusterService
   ]}
   menuActions={actions}
   breadcrumbsFor={() => [
+    {name: 'Installed Operators', path: `/k8s/ns/${props.match.params.ns}/${ClusterServiceVersionModel.plural}`},
     {name: props.match.params.appName, path: props.match.url.slice(0, props.match.url.lastIndexOf('/'))},
     {name: `${kindForReference(props.kind)} Details`, path: `${props.match.url}`},
   ]}

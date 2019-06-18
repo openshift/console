@@ -282,8 +282,9 @@ export const ContainersDetailsPage: React.FC<ContainerDetailsPageProps> = (props
       title={props.match.params.name}
       kind="Container"
       breadcrumbsFor={() => [
+        {name: 'Pods', path: `/k8s/ns/${props.match.params.ns}/pods`},
         {name: props.match.params.podName, path: resourcePath('Pod', props.match.params.podName, props.match.params.ns)},
-        {name: 'Container Details', path: `${props.match.url}`},
+        {name: 'Container Details', path: props.match.url},
       ]} />
     <HorizontalNav hideNav={true} pages={[{name: 'container', href: '', component: ContainerDetails}]} match={props.match} />
   </Firehose>

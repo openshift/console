@@ -18,7 +18,6 @@ import {
   WorkloadTableHeader,
 } from './workload-table';
 
-import { breadcrumbsForOwnerRefs } from './utils/breadcrumbs';
 import { VolumesTable } from './volumes-table';
 
 const Details = ({obj: replicationController}) => {
@@ -64,10 +63,6 @@ const {details, editYaml, pods, envEditor, events} = navFactory;
 
 export const ReplicationControllersDetailsPage = props => <DetailsPage
   {...props}
-  breadcrumbsFor={obj => breadcrumbsForOwnerRefs(obj).concat({
-    name: 'ReplicationController Details',
-    path: props.match.url,
-  })}
   menuActions={replicaSetMenuActions}
   pages={[details(Details), editYaml(), pods(), envEditor(environmentComponent), events(ResourceEventStream)]}
 />;

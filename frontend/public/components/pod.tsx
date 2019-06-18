@@ -30,7 +30,6 @@ import {
 } from './utils';
 import { PodLogs } from './pod-logs';
 import { requirePrometheus, Area } from './graphs';
-import { breadcrumbsForOwnerRefs } from './utils/breadcrumbs';
 import { formatDuration } from './utils/datetime';
 import { CamelCaseWrap } from './utils/camel-case-wrap';
 import { VolumesTable } from './volumes-table';
@@ -303,10 +302,6 @@ const PodExecLoader: React.FC<PodExecLoaderProps> = ({obj}) => <div className="c
 
 export const PodsDetailsPage: React.FC<PodDetailsPageProps> = props => <DetailsPage
   {...props}
-  breadcrumbsFor={obj => breadcrumbsForOwnerRefs(obj).concat({
-    name: 'Pod Details',
-    path: props.match.url,
-  })}
   menuActions={menuActions}
   pages={[
     navFactory.details(Details),
