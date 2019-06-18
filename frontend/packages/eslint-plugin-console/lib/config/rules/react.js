@@ -11,4 +11,8 @@ module.exports = {
 
   // One JSX element Per line
   'react/jsx-one-expression-per-line': 'off',
+
+  // Prevent missing props validation in a React component definition
+  // Off due to false positives in typescript
+  'react/prop-types': 'off',
 };
