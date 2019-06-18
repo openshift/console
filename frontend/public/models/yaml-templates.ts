@@ -127,8 +127,8 @@ spec:
   ingress:
     - from:
       - namespaceSelector:
-        matchLabels:
-        env: production
+          matchLabels:
+            env: production
 `).setIn([referenceForModel(k8sModels.BuildConfigModel), 'default'], `
 apiVersion: build.openshift.io/v1
 kind: BuildConfig
