@@ -24,7 +24,6 @@ import { VictorySelectionContainer } from 'victory-selection-container';
 import { Dropdown, humanizeNumber, LoadingInline, usePoll, useRefWidth, useSafeFetch } from '../utils';
 import { formatPrometheusDuration, parsePrometheusDuration, twentyFourHourTime } from '../utils/datetime';
 import { withFallback } from '../utils/error-boundary';
-import { PrometheusResponse } from '.';
 import { getPrometheusURL, PrometheusEndpoint } from './helpers';
 import { queryBrowserTheme } from './themes';
 
@@ -103,56 +102,39 @@ const Graph: React.FC<GraphProps> = React.memo(({domain, data, onZoom, span}) =>
         <ChartAxis tickCount={5} tickFormat={twentyFourHourTime} />
         <ChartAxis dependentAxis tickCount={5} tickFormat={humanizeNumber} />
         <ChartGroup colorScale={graphColors}>
-          {_.map(data, ({values}, i) => <ChartLine key={i} data={values} />)}
+          {_.map(data, (values, i) => <ChartLine key={i} data={values} />)}
         </ChartGroup>
       </Chart>
     </div>
   </div>;
 });
 
-const handleResponses = (responses: PrometheusResponse[], metric: Labels, samples: number, span: number): GraphDataMetric[] => {
-  const allData = [];
+const formatSeriesValues = (values: PrometheusValue[], samples: number, span: number): GraphDataPoint[] => {
+  const newValues = _.map(values, v => ({
+    x: new Date(v[0] * 1000),
+    y: parseFloat(v[1]),
+  }));
 
-  _.each(responses, (response, responseIndex) => {
-    allData[responseIndex] = [];
-
-    _.each(_.get(response, 'data.result'), data => {
-      const labels = _.omit(data.metric, '__name__');
-
-      // If metric prop is specified, ignore all other metrics
-      if (metric && _.some(labels, (v, k) => _.get(metric, k) !== v)) {
-        return;
-      }
-
-      const values = _.map(data.values, v => ({
-        x: new Date(v[0] * 1000),
-        y: parseFloat(v[1]),
-      }));
-
-      // The data may have missing values, so we fill those gaps with nulls so that the graph correctly shows the
-      // missing values as gaps in the line
-      const start = Number(_.get(values, '[0].x'));
-      const end = Number(_.get(_.last(values), 'x'));
-      const step = span / samples;
-      _.range(start, end, step).map((t, i) => {
-        const x = new Date(t);
-        if (_.get(values, [i, 'x']) > x) {
-          values.splice(i, 0, {x, y: null});
-        }
-      });
-
-      allData[responseIndex].push({labels, values});
-    });
+  // The data may have missing values, so we fill those gaps with nulls so that the graph correctly shows the
+  // missing values as gaps in the line
+  const start = Number(_.get(newValues, '[0].x'));
+  const end = Number(_.get(_.last(newValues), 'x'));
+  const step = span / samples;
+  _.range(start, end, step).map((t, i) => {
+    const x = new Date(t);
+    if (_.get(newValues, [i, 'x']) > x) {
+      newValues.splice(i, 0, {x, y: null});
+    }
   });
 
-  return allData;
+  return newValues;
 };
 
 const QueryBrowser_: React.FC<QueryBrowserProps> = ({
   defaultTimespan,
+  disabledSeries = [],
   GraphLink,
   hideGraphs,
-  metric,
   onDataUpdate,
   queries,
 }) => {
@@ -161,14 +143,13 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
 
   const [domain, setDomain] = React.useState();
   const [error, setError] = React.useState();
-  const [graphData, setGraphData] = React.useState();
+  const [results, setResults] = React.useState();
   const [span, setSpan] = React.useState(parsePrometheusDuration(defaultSpanText));
   const [updating, setUpdating] = React.useState(true);
 
   const endTime = _.get(domain, 'x[1]');
 
-  // Use more samples if we are only displaying a single metric
-  const samples = metric ? 600 : 300;
+  const samples = 300;
 
   const urls = _.map(queries, query => getPrometheusURL({
     endpoint: PrometheusEndpoint.QUERY_RANGE,
@@ -183,10 +164,10 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
 
   const tick = () => Promise.all(urls.map(safeFetch))
     .then(responses => {
-      const data = handleResponses(responses, metric, samples, span);
-      setGraphData(_.flatten(data));
+      const newResults = _.map(responses, 'data.result');
+      setResults(newResults);
       if (onDataUpdate) {
-        onDataUpdate(data);
+        onDataUpdate(newResults);
       }
       setUpdating(false);
       setError(undefined);
@@ -201,10 +182,23 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
   const delay = endTime ? null : Math.max(span / 120, 5000);
 
   const queriesKey = JSON.stringify(queries);
+  const disabledSeriesKey = JSON.stringify(disabledSeries);
 
   usePoll(tick, delay, endTime, queriesKey, samples, span);
 
   React.useEffect(() => setUpdating(true), [endTime, queriesKey, samples, span]);
+
+  const graphData: GraphDataPoint[][] = React.useMemo(() => _.flatten(
+    _.map(results, (result, responseIndex) => {
+      return _.map(result, ({metric, values}) => {
+        const labels = _.omit(metric, '__name__');
+        return _.some(disabledSeries[responseIndex], s => _.isEqual(s, labels))
+          ? [{x: null, y: null}]
+          : formatSeriesValues(values, samples, span);
+      });
+    })
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  ), [disabledSeriesKey, results, samples, span]);
 
   const onSpanChange = React.useCallback(newSpan => {
     setDomain(undefined);
@@ -262,15 +256,17 @@ type GraphDataPoint = {
   y: number;
 };
 
-type Labels = {[key: string]: string}[];
+export type Labels = {[key: string]: string};
 
-type GraphDataMetric = {
-  labels: Labels;
-  values: GraphDataPoint[];
+type PrometheusValue = [number, string];
+
+export type PrometheusSeries = {
+  metric: Labels;
+  values: PrometheusValue[];
 };
 
 type GraphProps = {
-  data: GraphDataMetric[];
+  data: GraphDataPoint[][];
   domain: Domain;
   onZoom: (range: Domain) => void;
   span: number;
@@ -278,10 +274,10 @@ type GraphProps = {
 
 type QueryBrowserProps = {
   defaultTimespan: number;
+  disabledSeries: Labels[];
   GraphLink: React.ComponentType<{}>;
   hideGraphs: boolean;
-  metric: Labels;
-  onDataUpdate: (data: GraphDataMetric[]) => void;
+  onDataUpdate: (allSeries: PrometheusSeries[][]) => void;
   queries: string[];
 };
 

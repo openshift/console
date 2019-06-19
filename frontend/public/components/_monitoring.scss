@@ -65,6 +65,9 @@ $monitoring-line-height: 18px;
   margin: 2px 12px 2px 5px;
   min-width: 20px;
   width: 20px;
+  &--disabled {
+    border: 1px solid #888;
+  }
 }
 
 .query-browser-metric__labels {
