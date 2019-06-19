@@ -138,3 +138,15 @@
   padding: 10px;
   width: 100%;
 }
+
+.co-alert-manager-yaml__explanation {
+  margin-bottom: 0;
+}
+
+.co-alert-manager-yaml__form-entry-wrapper {
+  position: relative;
+}
+
+.co-alert-manager-yaml__form co-file-dropzone__textarea {
+  min-height: 400px;
+}
