@@ -23,7 +23,7 @@ export const defaults = _.mapValues(FLAGS, flag => flag === FLAGS.AUTH_ENABLED
   : undefined
 );
 
-const CRDs = {
+export const baseCRDs = {
   [referenceForModel(PrometheusModel)]: FLAGS.PROMETHEUS,
   [referenceForModel(ChargebackReportModel)]: FLAGS.CHARGEBACK,
   [referenceForModel(ClusterServiceClassModel)]: FLAGS.SERVICE_CATALOG,
@@ -34,13 +34,12 @@ const CRDs = {
   [referenceForModel(MachineAutoscalerModel)]: FLAGS.MACHINE_AUTOSCALER,
 };
 
+const CRDs = { ...baseCRDs };
+
 plugins.registry.getFeatureFlags().filter(plugins.isModelFeatureFlag).forEach(ff => {
   const modelRef = referenceForModel(ff.properties.model);
   if (!CRDs[modelRef]) {
     CRDs[modelRef] = ff.properties.flag as FLAGS;
-  } else {
-    // eslint-disable-next-line no-console
-    console.warn(`attempt to redefine flag for model ${modelRef}`);
   }
 });
 

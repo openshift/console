@@ -7,7 +7,7 @@ import * as plugins from '../plugins';
 /**
  * Sample YAML manifests for some of the statically-defined Kubernetes models.
  */
-const baseTemplates = ImmutableMap<GroupVersionKind, ImmutableMap<string, string>>()
+export const baseTemplates = ImmutableMap<GroupVersionKind, ImmutableMap<string, string>>()
   .setIn(['DEFAULT', 'default'], `
 apiVersion: ''
 kind: ''
@@ -818,9 +818,6 @@ const pluginTemplates = ImmutableMap<GroupVersionKind, ImmutableMap<string, stri
 
       if (!baseTemplates.hasIn([modelRef, templateName])) {
         map.setIn([modelRef, templateName], yt.properties.template);
-      } else {
-        // eslint-disable-next-line no-console
-        console.warn(`attempt to redefine YAML template ${templateName} for model ${modelRef}`);
       }
     });
   });

@@ -11,12 +11,17 @@
     "downlevelIteration": true,
     "experimentalDecorators": true,
     "sourceMap": true,
-    "noUnusedLocals": true
+    "noUnusedLocals": true,
+    "types": [
+      "jest"
+    ]
   },
   "exclude": [
     ".yarn",
     "**/node_modules",
-    "public/dist"
+    "public/dist",
+    "**/__tests__",
+    "integration-tests"
   ],
   "include": [
     "**/*.js",
