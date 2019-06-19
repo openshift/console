@@ -41,7 +41,7 @@ export const graphColors = [
 const NoQueryMessage = () => <div className="text-center text-muted">Enter a query in the box below to explore the metrics gathered for this cluster</div>;
 
 const Error = ({error}) => <div className="alert alert-danger">
-  <span className="pficon pficon-error-circle-o" aria-hidden="true"></span>{_.get(error, 'json.error', error.message)}
+  <span className="pficon pficon-error-circle-o" aria-hidden="true" />{_.get(error, 'json.error', error.message)}
 </div>;
 
 const SpanControls: React.FC<SpanControlsProps> = React.memo(({defaultSpanText, onChange, span}) => {
