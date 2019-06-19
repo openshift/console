@@ -51,8 +51,9 @@ const StorageClassTableRow: React.SFC<StorageClassTableRowProps> = ({obj, index,
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={classNames(tableColumnClasses[0], 'co-break-word')}>
-        <ResourceLink inline kind={StorageClassReference} name={obj.metadata.name} />
-        { isDefaultClass(obj) && <span className="small text-muted storage-class-default">&ndash; Default</span> }
+        <ResourceLink kind={StorageClassReference} name={obj.metadata.name}>
+          { isDefaultClass(obj) && <span className="small text-muted co-resource-item__help-text">&ndash; Default</span> }
+        </ResourceLink>
       </TableData>
       <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
         {obj.provisioner}
