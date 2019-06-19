@@ -2,11 +2,14 @@ import * as React from 'react';
 import { Link, LinkProps } from 'react-router-dom';
 import * as _ from 'lodash-es';
 import { NavItem } from '@patternfly/react-core';
-
+import { connect } from 'react-redux';
 import { formatNamespacedRouteForResource } from '../../actions/ui';
 import { referenceForModel, K8sKind } from '../../module/k8s';
 import { stripBasePath } from '../utils';
 import * as plugins from '../../plugins';
+import { featureReducerName } from '../../reducers/features';
+import { RootState } from '../../redux';
+import { getActiveNamespace } from '../../reducers/ui';
 
 export const matchesPath = (resourcePath, prefix) => resourcePath === prefix || _.startsWith(resourcePath, `${prefix}/`);
 export const matchesModel = (resourcePath, model) => model && matchesPath(resourcePath, referenceForModel(model));
@@ -118,14 +121,67 @@ export type HrefLinkProps = NavLinkProps & {
   href: string;
 };
 
-export const createLink = (item: plugins.NavItem): React.ReactElement => {
-  if (plugins.isHrefNavItem(item)) {
-    return <HrefLink key={item.properties.componentProps.name} {...item.properties.componentProps} />;
-  }
-  if (plugins.isResourceNSNavItem(item)) {
-    return <ResourceNSLink key={item.properties.componentProps.name} {...item.properties.componentProps} />;
-  }
-  if (plugins.isResourceClusterNavItem(item)) {
-    return <ResourceClusterLink key={item.properties.componentProps.name} {...item.properties.componentProps} />;
-  }
+type NavLinkComponent<T extends NavLinkProps = NavLinkProps> = React.ComponentType<T> & {
+  isActive: (props: T, resourcePath: string, activeNamespace: string) => boolean;
 };
+
+export const createLink = (item: plugins.NavItem, rootNavLink = false): React.ReactElement => {
+  if (plugins.isNavItem(item)) {
+    let Component: NavLinkComponent = null;
+    if (plugins.isHrefNavItem(item)) {
+      Component = HrefLink;
+    }
+    if (plugins.isResourceNSNavItem(item)) {
+      Component = ResourceNSLink;
+    }
+    if (plugins.isResourceClusterNavItem(item)) {
+      Component = ResourceClusterLink;
+    }
+    if (Component) {
+      const key = item.properties.componentProps.name;
+      const props = item.properties.componentProps;
+      if (rootNavLink) {
+        return <RootNavLink {...props} key={key} component={Component} />;
+      }
+      return <Component {...props} key={key} />;
+    }
+  }
+  return undefined;
+};
+
+type RootNavLinkStateProps = {
+  canRender: boolean;
+  isActive: boolean;
+  activeNamespace: string,
+};
+
+type RootNavLinkProps<T extends NavLinkProps = NavLinkProps> = NavLinkProps & {
+  component: NavLinkComponent<T>;
+};
+
+const RootNavLink_: React.FC<RootNavLinkProps & RootNavLinkStateProps> = ({
+  canRender,
+  component: Component,
+  isActive,
+  ...props
+}) => {
+  if (!canRender) {
+    return null;
+  }
+  return <Component {...props} isActive={isActive} />;
+};
+
+const rootNavLinkMapStateToProps = (
+  state: RootState,
+  { required, component: Component, ...props }: RootNavLinkProps,
+): RootNavLinkStateProps => ({
+  canRender: required ? _.castArray(required).every((r) => state[featureReducerName].get(r)) : true,
+  activeNamespace: getActiveNamespace(state),
+  isActive: Component.isActive(
+    props,
+    stripNS(state.UI.get('location')),
+    getActiveNamespace(state),
+  ),
+});
+
+export const RootNavLink = connect(rootNavLinkMapStateToProps)(RootNavLink_);

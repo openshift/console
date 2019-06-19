@@ -1,0 +1,113 @@
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: skaffold-image-leeroy-web
+spec:
+  type: image
+  params:
+    - name: url
+      value: gcr.io/apple/leeroy-web
+---
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: skaffold-git
+spec:
+  type: git
+  params:
+    - name: revision
+      value: master
+    - name: url
+      value: https://github.com/GoogleContainerTools/skaffold #configure: change if you want to build something else, perhaps from your own local git repository.
+---
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: mapit-git
+spec:
+  type: git
+  params:
+  - name: url
+    value: https://github.com/siamaksade/mapit-spring.git
+---
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: mapit-image
+spec:
+  type: image
+  params:
+  - name: url
+    value: image-registry.openshift-image-registry.svc:5000/pipeline-demo/mapit-spring:latest
+---
+apiVersion: v1
+items:
+- apiVersion: tekton.dev/v1alpha1
+  kind: PipelineResource
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"tekton.dev/v1alpha1","kind":"PipelineResource","metadata":{"annotations":{},"name":"samples-git"},"spec":{"params":[{"name":"url","value":"https://github.com/vdemeester/openshift-pipelines-samples.git"}],"type":"git"}}
+    creationTimestamp: 2019-05-07T18:45:54Z
+    generation: 1
+    name: samples-git
+    resourceVersion: "27364115"
+    uid: 5874adea-70f8-11e9-b4a5-1295abd4b972
+  spec:
+    params:
+    - name: url
+      value: https://github.com/vdemeester/openshift-pipelines-samples.git
+    type: git
+- apiVersion: tekton.dev/v1alpha1
+  kind: PipelineResource
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"tekton.dev/v1alpha1","kind":"PipelineResource","metadata":{"annotations":{},"name":"voting-result-image"},"spec":{"params":[{"name":"url","value":"image-registry.openshift-image-registry.svc:5000/pipeline-demo/voting-result"}],"type":"image"}}
+    creationTimestamp: 2019-05-07T18:45:55Z
+    generation: 2
+    name: voting-result-image
+    resourceVersion: "27364118"
+    uid: 58812aea-70f8-11e9-b4a5-1295abd4b972
+  spec:
+    params:
+    - name: url
+      value: image-registry.openshift-image-registry.svc:5000/pipeline-demo/voting-result
+    type: image
+- apiVersion: tekton.dev/v1alpha1
+  kind: PipelineResource
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"tekton.dev/v1alpha1","kind":"PipelineResource","metadata":{"annotations":{},"name":"voting-vote-image"},"spec":{"params":[{"name":"url","value":"image-registry.openshift-image-registry.svc:5000/pipeline-demo/voting-vote"}],"type":"image"}}
+    creationTimestamp: 2019-05-07T18:45:55Z
+    generation: 2
+    name: voting-vote-image
+    resourceVersion: "27364117"
+    uid: 587d6cca-70f8-11e9-b4a5-1295abd4b972
+  spec:
+    params:
+    - name: url
+      value: image-registry.openshift-image-registry.svc:5000/pipeline-demo/voting-vote
+    type: image
+- apiVersion: tekton.dev/v1alpha1
+  kind: PipelineResource
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"tekton.dev/v1alpha1","kind":"PipelineResource","metadata":{"annotations":{},"name":"voting-worker-image"},"spec":{"params":[{"name":"url","value":"image-registry.openshift-image-registry.svc:5000/pipeline-demo/voting-worker"}],"type":"image"}}
+    creationTimestamp: 2019-05-07T18:45:55Z
+    generation: 2
+    name: voting-worker-image
+    resourceVersion: "27364116"
+    uid: 587969d0-70f8-11e9-b4a5-1295abd4b972
+  spec:
+    params:
+    - name: url
+      value: image-registry.openshift-image-registry.svc:5000/pipeline-demo/voting-worker
+    type: image
+kind: List
+metadata:
+  resourceVersion: ""
+  selfLink: ""
+  

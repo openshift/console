@@ -29,6 +29,9 @@ module.exports = {
         'react/jsx-filename-extension': ['error', { extensions: ['.tsx'] }],
         // Disable JS specific rules
         'react/default-props-match-prop-types': 'off',
+        // Prevent missing props validation in a React component definition
+        // Off due to false positives in typescript
+        'react/prop-types': 'off',
       },
     },
   ],

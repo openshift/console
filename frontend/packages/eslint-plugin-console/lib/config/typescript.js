@@ -41,5 +41,13 @@ module.exports = {
         '@typescript-eslint/unbound-method': 'off',
       }),
     },
+    {
+      files: ['*.tsx'],
+      rules: {
+        // Require a consistent member declaration order
+        // Off due to conflict with react ordering
+        '@typescript-eslint/member-ordering': 'off',
+      },
+    },
   ],
 };

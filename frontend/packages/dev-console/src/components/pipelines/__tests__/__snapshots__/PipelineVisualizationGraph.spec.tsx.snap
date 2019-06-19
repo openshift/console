@@ -1,0 +1,197 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`PipelineVisualizationGraph should match the previous pipeline snapshot 1`] = `
+<div
+  className="odc-pipeline-vis-graph"
+>
+  <div
+    className="odc-pipeline-vis-graph__stages"
+  >
+    <div
+      className="odc-pipeline-vis-graph__stage"
+    >
+      <div
+        className="odc-pipeline-vis-task is-input-node"
+      >
+        <svg
+          aria-hidden={true}
+          aria-labelledby={null}
+          fill="currentColor"
+          height="1em"
+          role="img"
+          style={
+            Object {
+              "verticalAlign": "-0.125em",
+            }
+          }
+          viewBox="0 0 512 512"
+          width="1em"
+        >
+          <path
+            d="M256 8c137 0 248 111 248 248S393 504 256 504 8 393 8 256 119 8 256 8zm113.9 231L234.4 103.5c-9.4-9.4-24.6-9.4-33.9 0l-17 17c-9.4 9.4-9.4 24.6 0 33.9L285.1 256 183.5 357.6c-9.4 9.4-9.4 24.6 0 33.9l17 17c9.4 9.4 24.6 9.4 33.9 0L369.9 273c9.4-9.4 9.4-24.6 0-34z"
+            transform=""
+          />
+        </svg>
+      </div>
+    </div>
+    <div
+      className="odc-pipeline-vis-graph__stage"
+    >
+      <ul
+        className="odc-pipeline-vis-graph__stage-column"
+      >
+        <li
+          className="odc-pipeline-vis-task"
+        >
+          <span>
+            start-app
+          </span>
+        </li>
+      </ul>
+    </div>
+    <div
+      className="odc-pipeline-vis-graph__stage is-parallel"
+    >
+      <ul
+        className="odc-pipeline-vis-graph__stage-column"
+      >
+        <li
+          className="odc-pipeline-vis-task"
+        >
+          <span>
+            test-app-1
+          </span>
+        </li>
+        <li
+          className="odc-pipeline-vis-task"
+        >
+          <span>
+            test-app-2
+          </span>
+        </li>
+      </ul>
+    </div>
+    <div
+      className="odc-pipeline-vis-graph__stage is-parallel"
+    >
+      <ul
+        className="odc-pipeline-vis-graph__stage-column"
+      >
+        <li
+          className="odc-pipeline-vis-task"
+        >
+          <span>
+            build-image-1
+          </span>
+        </li>
+        <li
+          className="odc-pipeline-vis-task"
+        >
+          <span>
+            build-image-2
+          </span>
+        </li>
+      </ul>
+    </div>
+    <div
+      className="odc-pipeline-vis-graph__stage"
+    >
+      <ul
+        className="odc-pipeline-vis-graph__stage-column"
+      >
+        <li
+          className="odc-pipeline-vis-task"
+        >
+          <span>
+            deploy
+          </span>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`PipelineVisualizationGraph should match the previous pipelineRun snapshot 1`] = `
+<div
+  className="odc-pipeline-vis-graph"
+>
+  <div
+    className="odc-pipeline-vis-graph__stages"
+  >
+    <div
+      className="odc-pipeline-vis-graph__stage"
+    >
+      <div
+        className="odc-pipeline-vis-task is-input-node"
+      >
+        <svg
+          aria-hidden={true}
+          aria-labelledby={null}
+          fill="currentColor"
+          height="1em"
+          role="img"
+          style={
+            Object {
+              "verticalAlign": "-0.125em",
+            }
+          }
+          viewBox="0 0 512 512"
+          width="1em"
+        >
+          <path
+            d="M256 8c137 0 248 111 248 248S393 504 256 504 8 393 8 256 119 8 256 8zm113.9 231L234.4 103.5c-9.4-9.4-24.6-9.4-33.9 0l-17 17c-9.4 9.4-9.4 24.6 0 33.9L285.1 256 183.5 357.6c-9.4 9.4-9.4 24.6 0 33.9l17 17c9.4 9.4 24.6 9.4 33.9 0L369.9 273c9.4-9.4 9.4-24.6 0-34z"
+            transform=""
+          />
+        </svg>
+      </div>
+    </div>
+    <div
+      className="odc-pipeline-vis-graph__stage"
+    >
+      <ul
+        className="odc-pipeline-vis-graph__stage-column"
+      >
+        <li
+          className="odc-pipeline-vis-task"
+        >
+          <span>
+            build-skaffold-web
+          </span>
+          <span
+            className="is-done"
+          >
+            Succeeded
+          </span>
+          <span>
+            32s
+          </span>
+        </li>
+      </ul>
+    </div>
+    <div
+      className="odc-pipeline-vis-graph__stage"
+    >
+      <ul
+        className="odc-pipeline-vis-graph__stage-column"
+      >
+        <li
+          className="odc-pipeline-vis-task"
+        >
+          <span>
+            deploy-web
+          </span>
+          <span
+            className="is-done"
+          >
+            Succeeded
+          </span>
+          <span>
+            32s
+          </span>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+`;

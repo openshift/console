@@ -18,6 +18,8 @@ export type OwnerReference = {
   kind: string;
   uid: string;
   apiVersion: string;
+  controller?: boolean;
+  blockOwnerDeletion?: boolean;
 };
 
 export type ObjectReference = {

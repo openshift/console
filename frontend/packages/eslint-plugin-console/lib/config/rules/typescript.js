@@ -51,26 +51,28 @@ module.exports = {
   '@typescript-eslint/member-naming': 'off',
 
   // Require a consistent member declaration order
-  '@typescript-eslint/member-ordering': [
-    'error',
-    {
-      default: [
-        'public-static-field',
-        'protected-static-field',
-        'private-static-field',
-        'public-static-method',
-        'protected-static-method',
-        'private-static-method',
-        'public-instance-field',
-        'protected-instance-field',
-        'private-instance-field',
-        'constructor',
-        'public-instance-method',
-        'protected-instance-method',
-        'private-instance-method',
-      ],
-    },
-  ],
+  // FIXME Off for now to figure out how best to utilize this rule
+  '@typescript-eslint/member-ordering': 'off',
+  // '@typescript-eslint/member-ordering': [
+  //   'error',
+  //   {
+  //     default: [
+  //       'public-static-field',
+  //       'protected-static-field',
+  //       'private-static-field',
+  //       'public-static-method',
+  //       'protected-static-method',
+  //       'private-static-method',
+  //       'public-instance-field',
+  //       'protected-instance-field',
+  //       'private-instance-field',
+  //       'constructor',
+  //       'public-instance-method',
+  //       'protected-instance-method',
+  //       'private-instance-method',
+  //     ],
+  //   },
+  // ],
 
   // Enforces the use of as Type assertions instead of <Type> assertions
   '@typescript-eslint/no-angle-bracket-type-assertion': 'error',
@@ -137,7 +139,7 @@ module.exports = {
 
   // Disallow unused variables
   'no-unused-vars': 'off',
-  '@typescript-eslint/no-unused-vars': 'error',
+  '@typescript-eslint/no-unused-vars': ['error', { ignoreRestSiblings: true }],
 
   // Disallow the use of variables before they are defined
   'no-use-before-define': 'off',

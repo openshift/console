@@ -1,0 +1,27 @@
+import * as React from 'react';
+import { NormalizedBuilderImages } from '../../../utils/imagestream-utils';
+import { ImageData } from '../import-types';
+import FormSection from '../section/FormSection';
+import BuilderImageSelector from './BuilderImageSelector';
+import BuilderImageTagSelector from './BuilderImageTagSelector';
+
+export interface ImageSectionProps {
+  image: ImageData;
+  builderImages: NormalizedBuilderImages;
+}
+
+const BuilderSection: React.FC<ImageSectionProps> = ({ image, builderImages }) => {
+  return (
+    <FormSection title="Builder" divider>
+      <BuilderImageSelector loadingImageStream={!builderImages} builderImages={builderImages} />
+      {image.tag && (
+        <BuilderImageTagSelector
+          selectedBuilderImage={builderImages[image.selected]}
+          selectedImageTag={image.tag}
+        />
+      )}
+    </FormSection>
+  );
+};
+
+export default BuilderSection;

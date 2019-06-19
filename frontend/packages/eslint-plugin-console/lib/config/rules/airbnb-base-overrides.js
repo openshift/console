@@ -27,4 +27,7 @@ module.exports = {
 
   // When there is only a single export from a module, prefer using default export over named export.
   'import/prefer-default-export': 'off',
+
+  // Disallow Unused Expressions
+  'no-unused-expressions': ['error', { allowShortCircuit: true, allowTernary: true }],
 };

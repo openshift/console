@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Nav, NavProps, NavList, PageSidebar } from '@patternfly/react-core';
 import PerspectiveNav from './perspective-nav';
+import NavHeader from './nav-header';
 
 type NavigationProps = {
   onNavSelect: NavProps['onSelect'];
@@ -12,6 +13,7 @@ export const Navigation: React.FC<NavigationProps> = React.memo(
     <PageSidebar
       nav={
         <Nav aria-label="Nav" onSelect={onNavSelect}>
+          <NavHeader />
           <NavList>
             <PerspectiveNav />
           </NavList>

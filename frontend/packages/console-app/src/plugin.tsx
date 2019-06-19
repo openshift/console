@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { CogIcon } from '@patternfly/react-icons';
+import { CogsIcon } from '@patternfly/react-icons';
 import { Plugin, Perspective } from '@console/plugin-sdk';
 
 type ConsumedExtensions = Perspective;
@@ -10,7 +10,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       id: 'admin',
       name: 'Administrator',
-      icon: <CogIcon />,
+      icon: <CogsIcon />,
       landingPageURL: '/',
       default: true,
     },
