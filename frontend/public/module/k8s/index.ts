@@ -35,10 +35,12 @@ export type ObjectReference = {
 export type ObjectMetadata = {
   name?: string;
   generateName?: string;
+  uid?: string;
   annotations?: {[key: string]: string},
   namespace?: string,
   labels?: {[key: string]: string},
   ownerReferences?: OwnerReference[],
+  deletionTimestamp?: string;
   [key: string]: any,
 };
 
@@ -81,8 +83,8 @@ export type Toleration = {
 };
 
 export type K8sResourceKind = {
-  apiVersion: string;
-  kind: string;
+  apiVersion?: string;
+  kind?: string;
   metadata?: ObjectMetadata;
   spec?: {
     selector?: Selector;
