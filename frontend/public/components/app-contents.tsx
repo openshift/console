@@ -67,8 +67,7 @@ const DefaultPage = connectToFlags(FLAGS.OPENSHIFT)(({ flags }) => {
     return <Redirect to="/k8s/cluster/projects" />;
   }
 
-  const statusPage = appendActiveNamespace('/status');
-  return <Redirect to={statusPage} />;
+  return <Redirect to="/cluster-status" />;
 });
 
 const LazyRoute = (props) => (
