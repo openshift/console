@@ -73,7 +73,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       model: models.VirtualMachineModel,
       loader: () =>
         import(
-          './components/vms/vm-details' /* webpackChunkName: "kubevirt-virtual-machine-details" */
+          './components/vms/vm-details-page' /* webpackChunkName: "kubevirt-virtual-machine-details" */
         ).then((m) => m.VirtualMachinesDetailsPage),
     },
   },
