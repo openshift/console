@@ -65,7 +65,7 @@ const ResourceQuotaTableHeader = () => {
 };
 ResourceQuotaTableHeader.displayName = 'ResourceQuotaTableHeader';
 
-const ResourceQuotaTableRow = ({obj: rq, index, key, style}) => {
+export const ResourceQuotaTableRow = ({obj: rq, index, key, style}) => {
   return (
     <TableRow id={rq.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
@@ -82,7 +82,7 @@ const ResourceQuotaTableRow = ({obj: rq, index, key, style}) => {
 };
 ResourceQuotaTableRow.displayName = 'ResourceQuotaTableRow';
 
-const UsageIcon = ({percent}) => {
+export const UsageIcon = ({percent}) => {
   let usageIconClass = 'pficon pficon-unknown';
   if (percent === 0) {
     usageIconClass = 'fa fa-circle-thin co-resource-quota-empty';
