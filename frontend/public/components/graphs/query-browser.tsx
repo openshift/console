@@ -43,7 +43,7 @@ const Error = ({error}) => <div className="alert alert-danger">
   <span className="pficon pficon-error-circle-o" aria-hidden="true"></span>{_.get(error, 'json.error', error.message)}
 </div>;
 
-const SpanControls = ({defaultSpanText, onChange, span}) => {
+const SpanControls: React.FC<SpanControlsProps> = React.memo(({defaultSpanText, onChange, span}) => {
   const [isValid, setIsValid] = React.useState(true);
   const [text, setText] = React.useState(formatPrometheusDuration(span));
 
@@ -83,16 +83,16 @@ const SpanControls = ({defaultSpanText, onChange, span}) => {
       type="button"
     >Reset Zoom</button>
   </React.Fragment>;
-};
+});
 
-const Graph: React.FC<GraphProps> = ({domain, data, onZoom}) => {
+const Graph: React.FC<GraphProps> = React.memo(({domain, data, onZoom, span}) => {
   const [containerRef, width] = useRefWidth();
 
   return <div className="graph-wrapper">
     <div ref={containerRef} style={{width: '100%'}}>
       <Chart
         containerComponent={<VictorySelectionContainer onSelection={(points, range) => onZoom(range)} />}
-        domain={domain}
+        domain={domain || {x: [Date.now() - span, Date.now()], y: undefined}}
         domainPadding={{y: 20}}
         height={200}
         width={width}
@@ -107,7 +107,7 @@ const Graph: React.FC<GraphProps> = ({domain, data, onZoom}) => {
       </Chart>
     </div>
   </div>;
-};
+});
 
 const handleResponses = (responses: PrometheusResponse[], metric: Labels, samples: number, span: number): GraphDataMetric[] => {
   const allData = [];
@@ -205,17 +205,15 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
 
   React.useEffect(() => setUpdating(true), [endTime, queriesKey, samples, span]);
 
-  const onSpanChange = newSpan => {
+  const onSpanChange = React.useCallback(newSpan => {
     setDomain(undefined);
     setSpan(newSpan);
-  };
+  }, []);
 
-  const onZoom = ({x, y}) => {
+  const onZoom = React.useCallback(({x, y}) => {
     setDomain({x, y});
     setSpan(x[1] - x[0]);
-  };
-
-  const graphDomain = domain || {x: [Date.now() - span, Date.now()], y: undefined};
+  }, []);
 
   const isEmptyState = !updating && _.isEmpty(graphData);
 
@@ -246,7 +244,7 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
           <EmptyStateIcon size="sm" icon={ChartLineIcon} />
           <Title size="sm">No Prometheus datapoints found.</Title>
         </EmptyState>}
-        {!isEmptyState && <Graph data={graphData} domain={graphDomain} onZoom={onZoom} />}
+        {!isEmptyState && <Graph data={graphData} domain={domain} onZoom={onZoom} span={span} />}
       </React.Fragment>}
   </div>;
 };
@@ -274,6 +272,7 @@ type GraphProps = {
   data: GraphDataMetric[];
   domain: Domain;
   onZoom: (range: Domain) => void;
+  span: number;
 };
 
 type QueryBrowserProps = {
@@ -283,4 +282,10 @@ type QueryBrowserProps = {
   metric: Labels;
   onDataUpdate: (data: GraphDataMetric[]) => void;
   queries: string[];
+};
+
+type SpanControlsProps = {
+  defaultSpanText: string;
+  onChange: (span: number) => void;
+  span: number;
 };
