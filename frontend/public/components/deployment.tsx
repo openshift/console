@@ -40,7 +40,7 @@ const UpdateStrategy: KebabAction = (kind: K8sKind, deployment: K8sResourceKind)
   callback: () => configureUpdateStrategyModal({deployment}),
   accessReview: {
     group: kind.apiGroup,
-    resource: kind.path,
+    resource: kind.plural,
     name: deployment.metadata.name,
     namespace: deployment.metadata.namespace,
     verb: 'patch',
@@ -52,7 +52,7 @@ const PauseAction: KebabAction = (kind: K8sKind, obj: K8sResourceKind) => ({
   callback: () => togglePaused(kind, obj).catch((err) => errorModal({error: err.message})),
   accessReview: {
     group: kind.apiGroup,
-    resource: kind.path,
+    resource: kind.plural,
     name: obj.metadata.name,
     namespace: obj.metadata.namespace,
     verb: 'patch',

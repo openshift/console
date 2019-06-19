@@ -563,7 +563,6 @@ export type K8sKind = {
   kind: string;
   label: string;
   labelPlural: string;
-  path: string;
   plural: string;
   propagationPolicy?: 'Foreground' | 'Background';
 

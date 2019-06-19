@@ -37,7 +37,7 @@ const startBuildAction: KebabAction = (kind, buildConfig) => ({
   }),
   accessReview: {
     group: kind.apiGroup,
-    resource: kind.path,
+    resource: kind.plural,
     subresource: 'instantiate',
     name: buildConfig.metadata.name,
     namespace: buildConfig.metadata.namespace,

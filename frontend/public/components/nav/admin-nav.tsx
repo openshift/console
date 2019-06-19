@@ -37,15 +37,15 @@ const Separator: React.FC<SeparatorProps> = () => <NavItemSeparator />;
 const searchStartsWith = ['search'];
 const operatorManagementStartsWith = [
   referenceForModel(PackageManifestModel),
-  PackageManifestModel.path,
+  PackageManifestModel.plural,
   // FIXME(alecmerdler): Needed for backwards-compatibility with new API groups
   'packages.apps.redhat.com~v1alpha1~PackageManifest',
   referenceForModel(SubscriptionModel),
-  SubscriptionModel.path,
+  SubscriptionModel.plural,
   referenceForModel(InstallPlanModel),
-  InstallPlanModel.path,
+  InstallPlanModel.plural,
   referenceForModel(CatalogSourceModel),
-  CatalogSourceModel.path,
+  CatalogSourceModel.plural,
 ];
 const provisionedServicesStartsWith = ['serviceinstances', 'servicebindings'];
 const brokerManagementStartsWith = ['clusterservicebrokers', 'clusterserviceclasses'];

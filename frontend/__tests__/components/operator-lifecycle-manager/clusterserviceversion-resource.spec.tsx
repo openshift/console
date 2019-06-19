@@ -108,7 +108,7 @@ describe(ClusterServiceVersionResourceDetails.displayName, () => {
 
   beforeEach(() => {
     resourceDefinition = {
-      path: testCRD.metadata.name.split('.')[0],
+      plural: testCRD.metadata.name.split('.')[0],
       annotations: testCRD.metadata.annotations,
     };
     wrapper = shallow(<ClusterServiceVersionResourceDetails.WrappedComponent clusterServiceVersion={testClusterServiceVersion} obj={testResourceInstance} kindObj={resourceDefinition} appName={testClusterServiceVersion.metadata.name} />);
@@ -126,7 +126,7 @@ describe(ClusterServiceVersionResourceDetails.displayName, () => {
   });
 
   it('does not render filtered status fields', () => {
-    const crd = testClusterServiceVersion.spec.customresourcedefinitions.owned.find(c => c.name === 'testresource.testapp.coreos.com');
+    const crd = testClusterServiceVersion.spec.customresourcedefinitions.owned.find(c => c.name === 'testresources.testapp.coreos.com');
     const filteredDescriptor = crd.statusDescriptors.find((sd) => sd.path === 'importantMetrics');
     const statusView = wrapper.find(StatusDescriptor).filterWhere(node => node.props().descriptor === filteredDescriptor);
 
@@ -161,10 +161,9 @@ describe('ResourcesList', () => {
       abbr: '',
       apiVersion: 'v1',
       kind: testClusterServiceVersion.spec.customresourcedefinitions.owned[0].kind,
-      path: testClusterServiceVersion.spec.customresourcedefinitions.owned[0].name.split('.')[0],
+      plural: testClusterServiceVersion.spec.customresourcedefinitions.owned[0].name.split('.')[0],
       label: '',
       labelPlural: '',
-      plural: '',
     };
 
     const resourceComponent = shallow(<Resources.WrappedComponent clusterServiceVersion={testClusterServiceVersion} kindObj={kindObj} obj={testResourceInstance} />);
@@ -308,7 +307,7 @@ describe(ProvidedAPIsPage.displayName, () => {
 
     expect(listPage.props().createButtonText).toEqual('Create New');
     expect(listPage.props().createProps.to).not.toBeDefined();
-    expect(listPage.props().createProps.items).toEqual({'testresource.testapp.coreos.com': 'Test Resource', 'foobars.testapp.coreos.com': 'Foo Bars'});
+    expect(listPage.props().createProps.items).toEqual({'testresources.testapp.coreos.com': 'Test Resource', 'foobars.testapp.coreos.com': 'Foo Bars'});
     expect(listPage.props().createProps.createLink(obj.spec.customresourcedefinitions.owned[0].name)).toEqual(`/k8s/ns/default/${ClusterServiceVersionModel.plural}/testapp/testapp.coreos.com~v1~TestResource/~new`);
   });
 

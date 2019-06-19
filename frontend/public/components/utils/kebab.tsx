@@ -70,7 +70,7 @@ const kebabFactory: KebabFactory = {
     }),
     accessReview: {
       group: kind.apiGroup,
-      resource: kind.path,
+      resource: kind.plural,
       name: obj.metadata.name,
       namespace: obj.metadata.namespace,
       verb: 'delete',
@@ -82,7 +82,7 @@ const kebabFactory: KebabFactory = {
     // TODO: Fallback to "View YAML"? We might want a similar fallback for annotations, labels, etc.
     accessReview: {
       group: kind.apiGroup,
-      resource: kind.path,
+      resource: kind.plural,
       name: obj.metadata.name,
       namespace: obj.metadata.namespace,
       verb: 'update',
@@ -97,7 +97,7 @@ const kebabFactory: KebabFactory = {
     }),
     accessReview: {
       group: kind.apiGroup,
-      resource: kind.path,
+      resource: kind.plural,
       name: obj.metadata.name,
       namespace: obj.metadata.namespace,
       verb: 'patch',
@@ -112,7 +112,7 @@ const kebabFactory: KebabFactory = {
     }),
     accessReview: {
       group: kind.apiGroup,
-      resource: kind.path,
+      resource: kind.plural,
       name: obj.metadata.name,
       namespace: obj.metadata.namespace,
       verb: 'patch',
@@ -127,7 +127,7 @@ const kebabFactory: KebabFactory = {
     }),
     accessReview: {
       group: kind.apiGroup,
-      resource: kind.path,
+      resource: kind.plural,
       name: obj.metadata.name,
       namespace: obj.metadata.namespace,
       verb: 'patch',
@@ -141,7 +141,7 @@ const kebabFactory: KebabFactory = {
     }),
     accessReview: {
       group: kind.apiGroup,
-      resource: kind.path,
+      resource: kind.plural,
       name: obj.metadata.name,
       namespace: obj.metadata.namespace,
       verb: 'patch',
@@ -156,7 +156,7 @@ const kebabFactory: KebabFactory = {
     }),
     accessReview: {
       group: kind.apiGroup,
-      resource: kind.path,
+      resource: kind.plural,
       name: obj.metadata.name,
       namespace: obj.metadata.namespace,
       verb: 'patch',
@@ -171,7 +171,7 @@ const kebabFactory: KebabFactory = {
     }),
     accessReview: {
       group: kind.apiGroup,
-      resource: kind.path,
+      resource: kind.plural,
       name: obj.metadata.name,
       namespace: obj.metadata.namespace,
       verb: 'patch',
@@ -182,7 +182,7 @@ const kebabFactory: KebabFactory = {
     href: `${resourceObjPath(obj, kind.crd ? referenceForModel(kind) : kind.kind)}/attach-storage`,
     accessReview: {
       group: kind.apiGroup,
-      resource: kind.path,
+      resource: kind.plural,
       name: obj.metadata.name,
       namespace: obj.metadata.namespace,
       verb: 'patch',
@@ -196,7 +196,7 @@ const kebabFactory: KebabFactory = {
     }),
     accessReview: {
       group: kind.apiGroup,
-      resource: kind.path,
+      resource: kind.plural,
       name: obj.metadata.name,
       namespace: obj.metadata.namespace,
       verb: 'patch',

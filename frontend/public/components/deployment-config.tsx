@@ -65,7 +65,7 @@ const RolloutAction: KebabAction = (kind: K8sKind, obj: K8sResourceKind) => ({
   }),
   accessReview: {
     group: kind.apiGroup,
-    resource: kind.path,
+    resource: kind.plural,
     subresource: 'instantiate',
     name: obj.metadata.name,
     namespace: obj.metadata.namespace,
@@ -78,7 +78,7 @@ const PauseAction: KebabAction = (kind: K8sKind, obj: K8sResourceKind) => ({
   callback: () => togglePaused(kind, obj).catch((err) => errorModal({error: err.message})),
   accessReview: {
     group: kind.apiGroup,
-    resource: kind.path,
+    resource: kind.plural,
     name: obj.metadata.name,
     namespace: obj.metadata.namespace,
     verb: 'patch',

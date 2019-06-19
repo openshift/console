@@ -64,7 +64,7 @@ export const useAccessReview = (resourceAttributes: AccessReviewResourceAttribut
 const RequireCreatePermission_: React.FC<RequireCreatePermissionProps> = ({model, namespace, impersonate, children}) => {
   const isAllowed = useAccessReview({
     group: model.apiGroup,
-    resource: model.path,
+    resource: model.plural,
     verb: 'create',
     namespace,
   }, impersonate);

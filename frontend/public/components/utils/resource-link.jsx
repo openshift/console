@@ -12,7 +12,7 @@ import { FLAGS } from '../../const';
 const unknownKinds = new Set();
 
 export const resourcePathFromModel = (model, name, namespace) => {
-  const {path, namespaced, crd} = model;
+  const {plural, namespaced, crd} = model;
 
   let url = '/k8s/';
 
@@ -26,8 +26,8 @@ export const resourcePathFromModel = (model, name, namespace) => {
 
   if (crd) {
     url += referenceForModel(model);
-  } else if (path) {
-    url += path;
+  } else if (plural) {
+    url += plural;
   }
 
   if (name) {

@@ -256,7 +256,7 @@ export const NamespaceSummary = ({ns}) => {
   const requester = getRequester(ns);
   const canListSecrets = useAccessReview({
     group: SecretModel.apiGroup,
-    resource: SecretModel.path,
+    resource: SecretModel.plural,
     verb: 'patch',
     namespace: ns.metadata.name,
   });

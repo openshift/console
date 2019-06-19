@@ -18,7 +18,7 @@ const MarkAsUnschedulable = (kind, obj) => ({
   callback: () => configureUnschedulableModal({resource: obj}),
   accessReview: {
     group: kind.apiGroup,
-    resource: kind.path,
+    resource: kind.plural,
     name: obj.metadata.name,
     namespace: obj.metadata.namespace,
     verb: 'patch',
@@ -31,7 +31,7 @@ const MarkAsSchedulable = (kind, obj) => ({
   callback: () => makeNodeSchedulable(obj),
   accessReview: {
     group: kind.apiGroup,
-    resource: kind.path,
+    resource: kind.plural,
     name: obj.metadata.name,
     namespace: obj.metadata.namespace,
     verb: 'patch',
@@ -198,7 +198,7 @@ const Details = ({obj: node}) => {
   const machine = getMachine(node);
   const canUpdate = useAccessReview({
     group: NodeModel.apiGroup,
-    resource: NodeModel.path,
+    resource: NodeModel.plural,
     verb: 'patch',
     name: node.metadata.name,
     namespace: node.metadata.namespace,
