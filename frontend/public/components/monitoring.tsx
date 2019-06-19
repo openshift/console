@@ -1,5 +1,6 @@
 import * as _ from 'lodash-es';
 import * as classNames from 'classnames';
+import * as fuzzy from 'fuzzysearch';
 import { murmur3 } from 'murmurhash-js';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
@@ -18,9 +19,10 @@ import {
   TableRow,
   TextFilter,
 } from './factory';
-import { QueryBrowser } from './graphs';
-import { graphColors } from './graphs/query-browser';
+import { PROMETHEUS_BASE_PATH, QueryBrowser } from './graphs';
+import { PrometheusEndpoint } from './graphs/helpers';
 import { getPrometheusExpressionBrowserURL } from './graphs/prometheus-graph';
+import { graphColors } from './graphs/query-browser';
 import { confirmModal } from './modals';
 import { CheckBoxes } from './row-filter';
 import { formatPrometheusDuration } from './utils/datetime';
@@ -29,6 +31,7 @@ import { Tooltip } from './utils/tooltip';
 import {
   ActionsMenu,
   ButtonBar,
+  Dropdown,
   ExternalLink,
   getURLSearchParams,
   history,
@@ -37,6 +40,7 @@ import {
   SectionHeading,
   StatusBox,
   Timestamp,
+  useSafeFetch,
 } from './utils';
 
 const AlertResource = {
@@ -1021,6 +1025,36 @@ const CreateSilence = () => {
     : <SilenceForm defaults={{matchers}} saveButtonText="Create" title="Silence Alert" />;
 };
 
+const MetricsDropdown = ({onChange}) => {
+  const [items, setItems] = React.useState({});
+  const [isError, setIsError] = React.useState(false);
+
+  const safeFetch = React.useCallback(useSafeFetch(), []);
+
+  React.useEffect(() => {
+    safeFetch(`${PROMETHEUS_BASE_PATH}/${PrometheusEndpoint.LABEL}/__name__/values`)
+      .then(({data}) => setItems(_.zipObject(data, data)))
+      .catch(() => setIsError(true));
+  }, [safeFetch]);
+
+  let title: string | React.ReactNode = 'Insert Metric at Cursor';
+  if (isError) {
+    title = 'Failed to load metrics list';
+  } else if (_.isEmpty(items)) {
+    title = <LoadingInline />;
+  }
+
+  return <Dropdown
+    autocompleteFilter={fuzzy}
+    buttonClassName="btn-default query-browser__metrics-dropdown"
+    id="metrics-dropdown"
+    items={items}
+    menuClassName="query-browser__metrics-dropdown-menu"
+    onChange={onChange}
+    title={title}
+  />;
+};
+
 const MetricsList = ({metrics}) => <div className="co-m-table-grid co-m-table-grid--bordered">
   <div className="row co-m-table-grid__head">
     <div className="col-xs-9 query-browser-metric__wrapper">
@@ -1044,8 +1078,10 @@ const MetricsList = ({metrics}) => <div className="co-m-table-grid co-m-table-gr
   </div>
 </div>;
 
-const QueryBrowserPage = () => {
+const QueryBrowserPage = withFallback(() => {
+  const [focusedQuery, setFocusedQuery] = React.useState();
   const [metrics, setMetrics] = React.useState([]);
+  const [restoreSelection, setRestoreSelection] = React.useState();
 
   const defaultQuery = getURLSearchParams().query || '';
 
@@ -1088,6 +1124,47 @@ const QueryBrowserPage = () => {
     data => _.map(data, ({labels, values}) => ({labels, value: _.get(_.last(values), 'y')}))
   ));
 
+  const onQueryBlur = (e, i) => {
+    if (_.get(e, 'relatedTarget.id') === 'metrics-dropdown') {
+      // Focus has shifted from a query input to the metrics dropdown, so store the cursor position so we know where to
+      // insert the metric when it is selected
+      setFocusedQuery({
+        index: i,
+        selection: {
+          start: e.target.selectionStart,
+          end: e.target.selectionEnd,
+        },
+        target: e.target,
+      });
+    } else {
+      // Focus is shifting to somewhere other than the metrics dropdown, so don't track the cursor position
+      setFocusedQuery(undefined);
+    }
+  };
+
+  const onMetricChange = metric => {
+    if (focusedQuery) {
+      // Replace the currently selected text with the metric
+      const {index, selection, target} = focusedQuery;
+      const oldText = _.get(queries, [index, 'text']);
+      const text = oldText.substring(0, selection.start) + metric + oldText.substring(selection.end);
+      updateQuery(index, {text});
+      target.focus();
+
+      // Restore the cursor position / currently selected text
+      setRestoreSelection([selection.start, selection.start + metric.length]);
+    } else {
+      // No focused query, so add the metric to the end of the first query input
+      updateQuery(0, {text: _.get(queries, [0, 'text']) + metric});
+    }
+  };
+
+  React.useEffect(() => {
+    if (focusedQuery && restoreSelection) {
+      focusedQuery.target.setSelectionRange(...restoreSelection);
+    }
+  }, [focusedQuery, restoreSelection]);
+
   const validQueries = _.reject(_.map(queries, 'query'), _.isEmpty);
 
   return <React.Fragment>
@@ -1113,48 +1190,50 @@ const QueryBrowserPage = () => {
             queries={validQueries}
           />
           <form onSubmit={runQueries}>
-            <div className="group">
-              <div className="group__title">
+            <div className="query-browser__all-queries-controls">
+              <MetricsDropdown onChange={onMetricChange} />
+              <div>
                 <button type="button" className="btn" onClick={addQuery}>Add Query</button>
                 <button type="submit" className="btn btn-primary">Run Queries</button>
               </div>
-              {_.map(queries, (q, i) => <React.Fragment key={i}>
-                <div className="group__title">
-                  <button
-                    className="btn btn-link query-browser__table-toggle-btn"
-                    onClick={() => toggleExpanded(i)}
-                    title={`${q.expanded ? 'Hide' : 'Show'} Table`}
-                  >
-                    <i
-                      aria-hidden="true"
-                      className={`fa fa-angle-${q.expanded ? 'down' : 'right'} query-browser__table-toggle-icon`}
-                    />
-                  </button>
-                  <input
-                    className="form-control query-browser__query"
-                    onChange={e => onQueryChange(e, i)}
-                    placeholder="Expression (press Shift+Enter for newlines)"
-                    type="text"
-                    value={q.text}
-                  />
-                  <div className="dropdown-kebab-pf query-browser__kebab">
-                    <Kebab options={[
-                      {label: `${q.enabled ? 'Disable' : 'Enable'} query`, callback: () => toggleEnabled(i)},
-                      {label: 'Delete query', callback: () => deleteQuery(i)},
-                    ]} />
-                  </div>
-                </div>
-                {q.expanded && <div className="group__body group__body--query-browser">
-                  <MetricsList metrics={metrics[i]} />
-                </div>}
-              </React.Fragment>)}
             </div>
+            {_.map(queries, (q, i) => <div className="group" key={i}>
+              <div className="group__title">
+                <button
+                  className="btn btn-link query-browser__table-toggle-btn"
+                  onClick={() => toggleExpanded(i)}
+                  title={`${q.expanded ? 'Hide' : 'Show'} Table`}
+                >
+                  <i
+                    aria-hidden="true"
+                    className={`fa fa-angle-${q.expanded ? 'down' : 'right'} query-browser__table-toggle-icon`}
+                  />
+                </button>
+                <input
+                  className="form-control query-browser__query"
+                  onBlur={e => onQueryBlur(e, i)}
+                  onChange={e => onQueryChange(e, i)}
+                  placeholder="Expression (press Shift+Enter for newlines)"
+                  type="text"
+                  value={q.text}
+                />
+                <div className="dropdown-kebab-pf query-browser__kebab">
+                  <Kebab options={[
+                    {label: `${q.enabled ? 'Disable' : 'Enable'} query`, callback: () => toggleEnabled(i)},
+                    {label: 'Delete query', callback: () => deleteQuery(i)},
+                  ]} />
+                </div>
+              </div>
+              {q.expanded && <div className="group__body group__body--query-browser">
+                <MetricsList metrics={metrics[i]} />
+              </div>}
+            </div>)}
           </form>
         </div>
       </div>
     </div>
   </React.Fragment>;
-};
+});
 
 export class MonitoringUI extends React.Component<null, null> {
   componentDidMount() {
