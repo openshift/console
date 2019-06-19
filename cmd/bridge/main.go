@@ -16,8 +16,10 @@ import (
 	"github.com/coreos/pkg/flagutil"
 
 	"github.com/openshift/console/pkg/auth"
+	"github.com/openshift/console/pkg/bridge"
 	"github.com/openshift/console/pkg/proxy"
 	"github.com/openshift/console/pkg/server"
+	"github.com/openshift/console/pkg/serverconfig"
 )
 
 var (
@@ -105,14 +107,14 @@ func main() {
 	}
 
 	if *fConfig != "" {
-		if err := SetFlagsFromConfig(fs, *fConfig); err != nil {
+		if err := serverconfig.SetFlagsFromConfig(fs, *fConfig); err != nil {
 			log.Fatalf("Failed to load config: %v", err)
 		}
 	}
 
 	baseURL := &url.URL{}
 	if *fBaseAddress != "" {
-		baseURL = validateFlagIsURL("base-address", *fBaseAddress)
+		baseURL = bridge.ValidateFlagIsURL("base-address", *fBaseAddress)
 	}
 
 	if *fDexClientCAFile == "" {
@@ -120,7 +122,7 @@ func main() {
 	}
 
 	if !strings.HasPrefix(*fBasePath, "/") || !strings.HasSuffix(*fBasePath, "/") {
-		flagFatalf("base-path", "value must start and end with slash")
+		bridge.FlagFatalf("base-path", "value must start and end with slash")
 	}
 	baseURL.Path = *fBasePath
 
@@ -131,15 +133,15 @@ func main() {
 
 	logoutRedirect := &url.URL{}
 	if *fUserAuthLogoutRedirect != "" {
-		logoutRedirect = validateFlagIsURL("user-auth-logout-redirect", *fUserAuthLogoutRedirect)
+		logoutRedirect = bridge.ValidateFlagIsURL("user-auth-logout-redirect", *fUserAuthLogoutRedirect)
 	}
 
 	documentationBaseURL := &url.URL{}
 	if *fDocumentationBaseURL != "" {
 		if !strings.HasSuffix(*fDocumentationBaseURL, "/") {
-			flagFatalf("documentation-base-url", "value must end with slash")
+			bridge.FlagFatalf("documentation-base-url", "value must end with slash")
 		}
-		documentationBaseURL = validateFlagIsURL("documentation-base-url", *fDocumentationBaseURL)
+		documentationBaseURL = bridge.ValidateFlagIsURL("documentation-base-url", *fDocumentationBaseURL)
 	}
 
 	branding := *fBranding
@@ -154,7 +156,7 @@ func main() {
 	case "dedicated":
 	case "azure":
 	default:
-		flagFatalf("branding", "value must be one of okd, openshift, ocp, online, dedicated, or azure")
+		bridge.FlagFatalf("branding", "value must be one of okd, openshift, ocp, online, dedicated, or azure")
 	}
 
 	if *fCustomLogoFile != "" {
@@ -289,7 +291,7 @@ func main() {
 		}
 
 	case "off-cluster":
-		k8sEndpoint = validateFlagIsURL("k8s-mode-off-cluster-endpoint", *fK8sModeOffClusterEndpoint)
+		k8sEndpoint = bridge.ValidateFlagIsURL("k8s-mode-off-cluster-endpoint", *fK8sModeOffClusterEndpoint)
 
 		srv.K8sProxyConfig = &proxy.Config{
 			TLSClientConfig: &tls.Config{
@@ -299,7 +301,7 @@ func main() {
 			Endpoint:        k8sEndpoint,
 		}
 	default:
-		flagFatalf("k8s-mode", "must be one of: in-cluster, off-cluster")
+		bridge.FlagFatalf("k8s-mode", "must be one of: in-cluster, off-cluster")
 	}
 
 	apiServerEndpoint := *fK8sPublicEndpoint
@@ -315,8 +317,8 @@ func main() {
 
 	switch *fUserAuth {
 	case "oidc", "openshift":
-		validateFlagNotEmpty("base-address", *fBaseAddress)
-		validateFlagNotEmpty("user-auth-oidc-client-id", *fUserAuthOIDCClientID)
+		bridge.ValidateFlagNotEmpty("base-address", *fBaseAddress)
+		bridge.ValidateFlagNotEmpty("user-auth-oidc-client-id", *fUserAuthOIDCClientID)
 
 		if *fUserAuthOIDCClientSecret == "" && *fUserAuthOIDCClientSecretFile == "" {
 			fmt.Fprintln(os.Stderr, "Must provide either --user-auth-oidc-client-secret or --user-auth-oidc-client-secret-file")
@@ -350,11 +352,11 @@ func main() {
 			scopes = []string{"user:full"}
 			authSource = auth.AuthSourceOpenShift
 			if *fUserAuthOIDCIssuerURL != "" {
-				flagFatalf("user-auth-oidc-issuer-url", "cannot be used with --user-auth=\"openshift\"")
+				bridge.FlagFatalf("user-auth-oidc-issuer-url", "cannot be used with --user-auth=\"openshift\"")
 			}
 			userAuthOIDCIssuerURL = k8sEndpoint
 		} else {
-			userAuthOIDCIssuerURL = validateFlagIsURL("user-auth-oidc-issuer-url", *fUserAuthOIDCIssuerURL)
+			userAuthOIDCIssuerURL = bridge.ValidateFlagIsURL("user-auth-oidc-issuer-url", *fUserAuthOIDCIssuerURL)
 		}
 
 		if *fUserAuthOIDCClientSecretFile != "" {
@@ -408,34 +410,34 @@ func main() {
 	case "disabled":
 		log.Warningf("running with AUTHENTICATION DISABLED!")
 	default:
-		flagFatalf("user-auth", "must be one of: oidc, disabled")
+		bridge.FlagFatalf("user-auth", "must be one of: oidc, disabled")
 	}
 
 	switch *fK8sAuth {
 	case "service-account":
-		validateFlagIs("k8s-mode", *fK8sMode, "in-cluster")
+		bridge.ValidateFlagIs("k8s-mode", *fK8sMode, "in-cluster")
 		srv.StaticUser = &auth.User{
 			Token: k8sAuthServiceAccountBearerToken,
 		}
 	case "bearer-token":
-		validateFlagNotEmpty("k8s-auth-bearer-token", *fK8sAuthBearerToken)
+		bridge.ValidateFlagNotEmpty("k8s-auth-bearer-token", *fK8sAuthBearerToken)
 		srv.StaticUser = &auth.User{
 			Token: *fK8sAuthBearerToken,
 		}
 	case "oidc", "openshift":
-		validateFlagIs("user-auth", *fUserAuth, "oidc", "openshift")
+		bridge.ValidateFlagIs("user-auth", *fUserAuth, "oidc", "openshift")
 	default:
-		flagFatalf("k8s-mode", "must be one of: service-account, bearer-token, oidc")
+		bridge.FlagFatalf("k8s-mode", "must be one of: service-account, bearer-token, oidc")
 	}
 
-	listenURL := validateFlagIsURL("listen", *fListen)
+	listenURL := bridge.ValidateFlagIsURL("listen", *fListen)
 	switch listenURL.Scheme {
 	case "http":
 	case "https":
-		validateFlagNotEmpty("tls-cert-file", *fTlSCertFile)
-		validateFlagNotEmpty("tls-key-file", *fTlSKeyFile)
+		bridge.ValidateFlagNotEmpty("tls-cert-file", *fTlSCertFile)
+		bridge.ValidateFlagNotEmpty("tls-key-file", *fTlSKeyFile)
 	default:
-		flagFatalf("listen", "scheme must be one of: http, https")
+		bridge.FlagFatalf("listen", "scheme must be one of: http, https")
 	}
 
 	httpsrv := &http.Server{
@@ -451,47 +453,4 @@ func main() {
 		log.Info("not using TLS")
 		log.Fatal(httpsrv.ListenAndServe())
 	}
-}
-
-func validateFlagIsURL(name string, value string) *url.URL {
-	validateFlagNotEmpty(name, value)
-
-	ur, err := url.Parse(value)
-	if err != nil {
-		flagFatalf(name, "%v", err)
-	}
-
-	if ur == nil || ur.String() == "" || ur.Scheme == "" || ur.Host == "" {
-		flagFatalf(name, "malformed URL")
-	}
-
-	return ur
-}
-
-func validateFlagNotEmpty(name string, value string) string {
-	if value == "" {
-		flagFatalf(name, "value is required")
-	}
-
-	return value
-}
-
-func validateFlagIs(name string, value string, expectedValues ...string) string {
-	if len(expectedValues) != 1 {
-		for _, v := range expectedValues {
-			if v == value {
-				return value
-			}
-		}
-		flagFatalf(name, "value must be one of %s, not %s", expectedValues, value)
-	}
-	if value != expectedValues[0] {
-		flagFatalf(name, "value must be %s, not %s", expectedValues[0], value)
-	}
-
-	return value
-}
-
-func flagFatalf(name string, format string, a ...interface{}) {
-	log.Fatalf("Invalid flag: %s, error: %s", name, fmt.Sprintf(format, a...))
 }
