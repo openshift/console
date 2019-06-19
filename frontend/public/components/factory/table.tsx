@@ -167,6 +167,7 @@ export const TableData: React.SFC<TableDataProps> = ({className, ...props}) => {
 };
 TableData.displayName = 'TableData';
 export type TableDataProps = {
+  id?: string;
   className?: string;
 }
 
