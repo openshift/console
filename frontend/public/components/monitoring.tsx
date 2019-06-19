@@ -554,25 +554,24 @@ type AlertTableRowProps = {
   style: object;
 };
 
-const AlertTableHeader = () => {
-  return [
-    {
-      title: 'Name', sortField: 'metadata.name', transforms: [sortable],
-      props: { className: tableAlertClasses[0]},
-    },
-    {
-      title: 'State', sortFunc: 'alertStateOrder', transforms: [sortable],
-      props: { className: tableAlertClasses[1]},
-    },
-    {
-      title: 'Severity', sortField: 'labels.severity', transforms: [sortable],
-      props: { className: tableAlertClasses[2]},
-    },
-    { title: '',
-      props: { className: tableAlertClasses[3]},
-    },
-  ];
-};
+const AlertTableHeader = () => [
+  {
+    title: 'Name', sortField: 'labels.alertname', transforms: [sortable],
+    props: { className: tableAlertClasses[0] },
+  },
+  {
+    title: 'State', sortFunc: 'alertStateOrder', transforms: [sortable],
+    props: { className: tableAlertClasses[1] },
+  },
+  {
+    title: 'Severity', sortField: 'labels.severity', transforms: [sortable],
+    props: { className: tableAlertClasses[2] },
+  },
+  {
+    title: '',
+    props: { className: tableAlertClasses[3] },
+  },
+];
 AlertTableHeader.displayName = 'AlertTableHeader';
 
 const AlertsPageDescription = () => <p className="co-help-text">
@@ -687,7 +686,7 @@ const MonitoringListPage = connect(filtersToProps)(class InnerMonitoringListPage
         <div className="row">
           <div className="col-xs-12">
             <Table
-              aria-label="Alerts"
+              aria-label={kindPlural}
               data={data}
               filters={filters}
               Header={Header}
@@ -723,25 +722,24 @@ const tableSilenceClasses = [
   Kebab.columnClass,
 ];
 
-const SilenceTableHeader = () => {
-  return [
-    {
-      title: 'Name', sortField: 'name', transforms: [sortable],
-      props: { className: tableSilenceClasses[0]},
-    },
-    {
-      title: 'State', sortFunc: 'silenceStateOrder', transforms: [sortable],
-      props: { className: tableSilenceClasses[1]},
-    },
-    {
-      title: 'Firing Alerts', sortField: 'firingAlerts.length', transforms: [sortable],
-      props: { className: tableSilenceClasses[2]},
-    },
-    { title: '',
-      props: { className: tableSilenceClasses[3]},
-    },
-  ];
-};
+const SilenceTableHeader = () => [
+  {
+    title: 'Name', sortField: 'name', transforms: [sortable],
+    props: { className: tableSilenceClasses[0] },
+  },
+  {
+    title: 'State', sortFunc: 'silenceStateOrder', transforms: [sortable],
+    props: { className: tableSilenceClasses[1] },
+  },
+  {
+    title: 'Firing Alerts', sortField: 'firingAlerts.length', transforms: [sortable],
+    props: { className: tableSilenceClasses[2] },
+  },
+  {
+    title: '',
+    props: { className: tableSilenceClasses[3] },
+  },
+];
 SilenceTableHeader.displayName = 'SilenceTableHeader';
 
 const SilenceRow = ({obj}) => {
