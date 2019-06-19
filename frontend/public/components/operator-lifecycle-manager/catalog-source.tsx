@@ -5,7 +5,7 @@ import { match } from 'react-router-dom';
 import { SectionHeading, Firehose, MsgBox, LoadingBox, Kebab, navFactory } from '../utils';
 import { withFallback } from '../utils/error-boundary';
 import { CreateYAML } from '../create-yaml';
-import { CatalogSourceKind, SubscriptionKind, PackageManifestKind, visibilityLabel, OperatorGroupKind } from './index';
+import { CatalogSourceKind, SubscriptionKind, PackageManifestKind, OperatorGroupKind } from './index';
 import { requireOperatorGroup } from './operator-group';
 import { PackageManifestList } from './package-manifest';
 import { SubscriptionModel, CatalogSourceModel, PackageManifestModel, OperatorGroupModel } from '../../models';
@@ -53,7 +53,7 @@ export const CatalogSourceDetailsPage: React.SFC<CatalogSourceDetailsPageProps> 
     kind: referenceForModel(PackageManifestModel),
     isList: true,
     namespace: props.match.params.ns,
-    selector: {matchLabels: {catalog: props.match.params.name}, matchExpressions: [{key: visibilityLabel, operator: 'DoesNotExist'}]},
+    selector: {matchLabels: {catalog: props.match.params.name}},
     prop: 'packageManifests',
   }, {
     kind: referenceForModel(SubscriptionModel),

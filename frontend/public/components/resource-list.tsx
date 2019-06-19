@@ -70,7 +70,7 @@ export const ResourceDetailsPage = connectToPlural((props: ResourceDetailsPagePr
     <Helmet>
       <title>{`${name} · Details`}</title>
     </Helmet>
-    <AsyncComponent loader={componentLoader} match={props.match} namespace={ns} kind={props.modelRef} name={name} />
+    <AsyncComponent loader={componentLoader} match={props.match} namespace={ns} kind={props.modelRef} kindObj={kindObj} name={name} />
   </React.Fragment>;
 });
 

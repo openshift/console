@@ -5,22 +5,23 @@ import { match } from 'react-router';
 
 import { Firehose, PageHeading, StatusBox, MsgBox, ExternalLink, withFallback } from '../utils';
 import { ErrorBoundaryFallback } from '../error';
-import { referenceForModel, K8sResourceKind } from '../../module/k8s';
-import { PackageManifestModel, OperatorGroupModel, CatalogSourceConfigModel, SubscriptionModel } from '../../models';
+import { referenceForModel } from '../../module/k8s';
+import { fromRequirements } from '../../module/k8s/selector';
+import { PackageManifestModel, OperatorGroupModel, SubscriptionModel } from '../../models';
 import { getOperatorProviderType } from './operator-hub-utils';
 import { OperatorHubTileView } from './operator-hub-items';
 import { PackageManifestKind, OperatorGroupKind, SubscriptionKind } from '../operator-lifecycle-manager';
 import { installedFor, subscriptionFor } from '../operator-lifecycle-manager/operator-group';
-import { OPERATOR_HUB_CSC_BASE } from '../../const';
 import { OperatorHubItem, OperatorHubCSVAnnotations } from './index';
 import { skeletonCatalog } from '../catalog/catalog-page';
 
 import * as operatorImg from '../../imgs/operator.svg';
 
 export const OperatorHubList: React.SFC<OperatorHubListProps> = (props) => {
-  const {catalogSourceConfig, operatorGroup, subscription, loaded, loadError, namespace = ''} = props;
-  const sourceConfigs = _.find(_.get(catalogSourceConfig, 'data'), csc => _.startsWith(csc.metadata.name, OPERATOR_HUB_CSC_BASE));
-  const items = _.get(props.packageManifest, 'data', [] as PackageManifestKind[]).map(pkg => {
+  const {operatorGroup, subscription, loaded, loadError, namespace = ''} = props;
+  const marketplaceItems = _.get(props.marketplacePackageManifest, 'data', [] as PackageManifestKind[]);
+  const localItems = _.get(props.packageManifest, 'data', [] as PackageManifestKind[]);
+  const items = marketplaceItems.concat(localItems).map(pkg => {
     const currentCSVDesc = _.get(pkg, 'status.channels[0].currentCSVDesc', {});
     const currentCSVAnnotations: OperatorHubCSVAnnotations = _.get(currentCSVDesc, 'annotations', {});
     const iconObj = _.get(currentCSVDesc, 'icon[0]');
@@ -52,7 +53,7 @@ export const OperatorHubList: React.SFC<OperatorHubListProps> = (props) => {
         'createdAt',
         'support',
       ]),
-      capabilityLevel: currentCSVDesc.annotations.capabilities,
+      capabilityLevel: currentCSVAnnotations.capabilities,
     } as OperatorHubItem;
   });
 
@@ -68,7 +69,7 @@ export const OperatorHubList: React.SFC<OperatorHubListProps> = (props) => {
         detail={<span>Please check that the OperatorHub is running and that you have created a valid OperatorSource. For more information about OperatorHub, please click <ExternalLink href="https://github.com/operator-framework/operator-marketplace" text="here" />.</span>}
       />
     )}>
-    <OperatorHubTileView items={items} catalogSourceConfig={sourceConfigs} namespace={namespace} />
+    <OperatorHubTileView items={items} namespace={namespace} />
   </StatusBox>;
 };
 
@@ -85,19 +86,20 @@ export const OperatorHubPage = withFallback((props: OperatorHubPageProps) => <Re
     <div className="co-catalog-connect">
       <Firehose resources={[{
         isList: true,
-        kind: referenceForModel(CatalogSourceConfigModel),
-        namespace: 'openshift-marketplace',
-        prop: 'catalogSourceConfig',
-      }, {
-        isList: true,
         kind: referenceForModel(OperatorGroupModel),
         prop: 'operatorGroup',
       }, {
         isList: true,
         kind: referenceForModel(PackageManifestModel),
-        namespace: 'openshift-marketplace',
+        namespace: props.match.params.ns,
+        selector: {'openshift-marketplace': 'true'},
+        prop: 'marketplacePackageManifest',
+      }, {
+        isList: true,
+        kind: referenceForModel(PackageManifestModel),
+        namespace: props.match.params.ns,
+        selector: fromRequirements([{key: 'csc-owner-name', operator: 'DoesNotExist'}]),
         prop: 'packageManifest',
-        selector: {matchLabels: {'openshift-marketplace': 'true'}},
       }, {
         isList: true,
         kind: referenceForModel(SubscriptionModel),
@@ -116,16 +118,12 @@ export type OperatorHubPageProps = {
 
 export type OperatorHubListProps = {
   namespace?: string;
-  catalogSourceConfig: {loaded: boolean, data?: K8sResourceKind[]};
   operatorGroup: {loaded: boolean, data?: OperatorGroupKind[]};
   packageManifest: {loaded: boolean, data?: PackageManifestKind[]};
+  marketplacePackageManifest: {loaded: boolean, data?: PackageManifestKind[]};
   subscription: {loaded: boolean, data?: SubscriptionKind[]};
   loaded: boolean;
   loadError?: string;
-};
-
-export type OperatorHubListState = {
-  items: any[];
 };
 
 OperatorHubList.displayName = 'OperatorHubList';

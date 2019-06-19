@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-
 import { DeploymentModel } from '../models';
 import { K8sKind, K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
 import { configureUpdateStrategyModal, errorModal } from './modals';
@@ -10,10 +9,8 @@ import { formatDuration } from './utils/datetime';
 import { VolumesTable } from './volumes-table';
 import {
   DetailsPage,
-  List,
   ListPage,
-  WorkloadListHeader,
-  WorkloadListRow,
+  Table,
 } from './factory';
 import {
   AsyncComponent,
@@ -30,15 +27,20 @@ import {
   WorkloadPausedAlert,
 } from './utils';
 
+import {
+  WorkloadTableRow,
+  WorkloadTableHeader,
+} from './workload-table';
+
 const deploymentsReference: K8sResourceKindReference = 'Deployment';
-const {ModifyCount, AddStorage, EditEnvironment, common} = Kebab.factory;
+const {ModifyCount, AddStorage, common} = Kebab.factory;
 
 const UpdateStrategy: KebabAction = (kind: K8sKind, deployment: K8sResourceKind) => ({
   label: 'Edit Update Strategy',
   callback: () => configureUpdateStrategyModal({deployment}),
   accessReview: {
     group: kind.apiGroup,
-    resource: kind.path,
+    resource: kind.plural,
     name: deployment.metadata.name,
     namespace: deployment.metadata.namespace,
     verb: 'patch',
@@ -50,7 +52,7 @@ const PauseAction: KebabAction = (kind: K8sKind, obj: K8sResourceKind) => ({
   callback: () => togglePaused(kind, obj).catch((err) => errorModal({error: err.message})),
   accessReview: {
     group: kind.apiGroup,
-    resource: kind.path,
+    resource: kind.plural,
     name: obj.metadata.name,
     namespace: obj.metadata.namespace,
     verb: 'patch',
@@ -62,7 +64,6 @@ export const menuActions = [
   PauseAction,
   AddStorage,
   UpdateStrategy,
-  EditEnvironment,
   ...common,
 ];
 
@@ -142,19 +143,6 @@ export const DeploymentsDetailsPage: React.FC<DeploymentsDetailsPageProps> = pro
 />;
 DeploymentsDetailsPage.displayName = 'DeploymentsDetailsPage';
 
-const DeploymentsRow: React.FC<DeploymentsRowProps> = props => <WorkloadListRow {...props} kind={deploymentsReference} actions={menuActions} />;
-DeploymentsRow.displayName = 'DeploymentsRow';
-
-export const DeploymentsList: React.FC = props => <List {...props} Header={WorkloadListHeader} Row={DeploymentsRow} />;
-DeploymentsList.displayName = 'DeploymentsList';
-
-export const DeploymentsPage: React.FC<DeploymentsPageProps> = props => <ListPage kind={deploymentsReference} canCreate={true} ListComponent={DeploymentsList} {...props} />;
-DeploymentsPage.displayName = 'DeploymentsPage';
-
-type DeploymentsRowProps = {
-  obj: K8sResourceKind;
-};
-
 type DeploymentDetailsListProps = {
   deployment: K8sResourceKind;
 };
@@ -162,6 +150,32 @@ type DeploymentDetailsListProps = {
 type DeploymentDetailsProps = {
   obj: K8sResourceKind;
 };
+
+const kind = 'Deployment';
+
+const DeploymentTableRow: React.FC<DeploymentTableRowProps> = ({obj, index, key, style}) => {
+  return (
+    <WorkloadTableRow obj={obj} index={index} key={key} style={style} menuActions={menuActions} kind={kind} />
+  );
+};
+DeploymentTableRow.displayName = 'DeploymentTableRow';
+type DeploymentTableRowProps = {
+  obj: K8sResourceKind;
+  index: number;
+  key: string;
+  style: object;
+}
+
+const DeploymentTableHeader = () => {
+  return WorkloadTableHeader();
+};
+DeploymentTableHeader.displayName = 'DeploymentTableHeader';
+
+export const DeploymentsList: React.FC = props => <Table {...props} aria-label="Deployments" Header={DeploymentTableHeader} Row={DeploymentTableRow} virtualize />;
+DeploymentsList.displayName = 'DeploymentsList';
+
+export const DeploymentsPage: React.FC<DeploymentsPageProps> = props => <ListPage kind={deploymentsReference} canCreate={true} ListComponent={DeploymentsList} {...props} />;
+DeploymentsPage.displayName = 'DeploymentsPage';
 
 type DeploymentsPageProps = {
   showTitle?: boolean;

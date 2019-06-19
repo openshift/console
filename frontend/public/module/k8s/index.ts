@@ -250,6 +250,11 @@ export type PodKind = {
   status: PodStatus;
 } & PodTemplate & K8sResourceKind;
 
+export type StorageClassResourceKind = {
+  provisioner: string;
+  reclaimPolicy: string;
+} & K8sResourceKind;
+
 export type NodeKind = {
   spec?: {
     taints?: Taint[];
@@ -558,7 +563,6 @@ export type K8sKind = {
   kind: string;
   label: string;
   labelPlural: string;
-  path: string;
   plural: string;
   propagationPolicy?: 'Foreground' | 'Background';
 

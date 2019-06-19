@@ -21,7 +21,7 @@ export const untilNoLoadersPresent = waitForNone($$('.co-m-loader'));
 export const isLoaded = () => browser.wait(until.and(untilNoLoadersPresent, untilLoadingBoxLoaded)).then(() => browser.sleep(1000));
 export const resourceRowsPresent = () => browser.wait(until.presenceOf($('.co-m-resource-icon + a')), 10000);
 
-export const resourceRows = $$('.co-resource-list__item');
+export const resourceRows = $$('[data-test-rows="resource-row"]');
 export const resourceRowNamesAndNs = $$('.co-m-resource-icon + a');
 export const rowForName = (name: string) => resourceRows.filter((row) => row.$$('.co-m-resource-icon + a').first().getText().then(text => text === name)).first();
 export const rowForOperator = (name: string) => resourceRows.filter((row) => row.$('.co-clusterserviceversion-logo__name__clusterserviceversion').getText().then(text => text === name)).first();

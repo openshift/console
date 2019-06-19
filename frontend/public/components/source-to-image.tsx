@@ -392,7 +392,7 @@ class BuildSource extends React.Component<BuildSourceProps, BuildSourceState> {
     Promise.all(requests).then(() => {
       this.setState({inProgress: false});
       if (!this.state.error) {
-        history.push(`/overview/ns/${this.state.namespace}`);
+        history.push(`/k8s/cluster/projects/${this.state.namespace}/workloads`);
       }
     }).catch(() => this.setState({inProgress: false}));
   };

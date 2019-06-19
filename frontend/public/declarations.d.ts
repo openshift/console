@@ -28,6 +28,7 @@ declare interface Window {
     loginURL: string;
     logoutRedirect: string;
     logoutURL: string;
+    meteringBaseURL: string;
     prometheusBaseURL: string;
     prometheusTenancyBaseURL: string;
     requestTokenURL: string;

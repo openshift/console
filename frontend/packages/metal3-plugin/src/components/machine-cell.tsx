@@ -13,7 +13,7 @@ interface MachineCellProps {
   host: K8sResourceKind;
 }
 
-const MachineCell = ({ host }: MachineCellProps) => {
+const MachineCell: React.FC<MachineCellProps> = ({ host }) => {
   const machineName = getHostMachineName(host);
 
   const {

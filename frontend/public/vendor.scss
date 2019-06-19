@@ -1,5 +1,4 @@
 // Config
-@import '~patternfly/dist/sass/patternfly/color-variables';
 @import "style/vars";
 
 // External dependencies (tilde tells Webpack not to use relative path). Seperate SCSS entrypoint here because some modules break sourcemaps.

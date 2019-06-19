@@ -1,11 +1,13 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import * as semver from 'semver';
+import * as classNames from 'classnames';
+import { sortable } from '@patternfly/react-table';
 import { Popover } from '@patternfly/react-core';
 import { QuestionCircleIcon } from '@patternfly/react-icons';
 
 import { K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
-import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
+import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
 import { CopyToClipboard, ExternalLink, Kebab, SectionHeading, LabelList, navFactory, ResourceKebab, ResourceLink, ResourceSummary, history, Timestamp } from './utils';
 import { fromNow } from './utils/datetime';
 
@@ -83,14 +85,16 @@ const { common } = Kebab.factory;
 const menuActions = [...common];
 
 const ImageStreamTagsRow: React.SFC<ImageStreamTagsRowProps> = ({imageStream, specTag, statusTag}) => {
+  const imageStreamStatus = _.get(imageStream, 'status');
   const latest = _.get(statusTag, ['items', 0]);
   const from = _.get(specTag, 'from');
   const referencesTag = _.get(specTag, 'from.kind') === 'ImageStreamTag';
   const image = _.get(latest, 'image');
   const created = _.get(latest, 'created');
+  const dockerRepositoryCheck = _.has(imageStream, ['metadata', 'annotations', 'openshift.io/image.dockerRepositoryCheck']);
   return <div className="row">
     <div className="col-md-2 col-sm-4 col-xs-4 co-break-word">
-      <ResourceLink kind={ImageStreamTagsReference} name={getImageStreamTagName(imageStream.metadata.name, statusTag.tag)} namespace={imageStream.metadata.namespace} title={statusTag.tag} />
+      <ResourceLink kind={ImageStreamTagsReference} name={getImageStreamTagName(imageStream.metadata.name, statusTag.tag)} namespace={imageStream.metadata.namespace} title={statusTag.tag} linkTo={!!image} />
     </div>
     <span className="col-md-3 col-sm-4 col-xs-8 co-break-all">
       {from && referencesTag && <ResourceLink kind={ImageStreamTagsReference} name={getImageStreamTagName(imageStream.metadata.name, from.name)} namespace={imageStream.metadata.namespace} title={from.name} />}
@@ -98,8 +102,12 @@ const ImageStreamTagsRow: React.SFC<ImageStreamTagsRowProps> = ({imageStream, sp
       {!from && <span className="text-muted">pushed image</span>}
     </span>
     <span className="col-md-4 col-sm-4 hidden-xs co-break-all">
-      {image && <React.Fragment>{image}</React.Fragment>}
-      {!image && '-'}
+      {!imageStreamStatus && dockerRepositoryCheck && <React.Fragment><i className="pficon pficon-warning-triangle-o" aria-hidden="true" />&nbsp;Unable to resolve</React.Fragment>}
+      {!imageStreamStatus && !dockerRepositoryCheck && !from && <React.Fragment>Not synced yet</React.Fragment>}
+      {/* We have no idea why in this case  */}
+      {!imageStreamStatus && !dockerRepositoryCheck && from && <React.Fragment>Unresolved</React.Fragment>}
+      {imageStreamStatus && image && <React.Fragment>{image}</React.Fragment>}
+      {imageStreamStatus && !image && <React.Fragment><i className="pficon pficon-warning-triangle-o" aria-hidden="true" />&nbsp;There is no image associated with this tag</React.Fragment>}
     </span>
     <div className="col-md-3 hidden-sm hidden-xs">
       {created && <Timestamp timestamp={created} />}
@@ -195,32 +203,69 @@ export const ImageStreamsDetailsPage: React.SFC<ImageStreamsDetailsPageProps> = 
     pages={pages} />;
 ImageStreamsDetailsPage.displayName = 'ImageStreamsDetailsPage';
 
-const ImageStreamsHeader = props => <ListHeader>
-  <ColHead {...props} className="col-sm-3 col-xs-6" sortField="metadata.name">Name</ColHead>
-  <ColHead {...props} className="col-sm-3 col-xs-6" sortField="metadata.namespace">Namespace</ColHead>
-  <ColHead {...props} className="col-sm-3 hidden-xs" sortField="metadata.labels">Labels</ColHead>
-  <ColHead {...props} className="col-sm-3 hidden-xs" sortField="metadata.creationTimestamp">Created</ColHead>
-</ListHeader>;
+const tableColumnClasses = [
+  classNames('col-sm-3', 'col-xs-6'),
+  classNames('col-sm-3', 'col-xs-6'),
+  classNames('col-sm-3', 'hidden-xs'),
+  classNames('col-sm-3', 'hidden-xs'),
+  Kebab.columnClass,
+];
 
-const ImageStreamsRow: React.SFC<ImageStreamsRowProps> = ({obj}) => <div className="row co-resource-list__item">
-  <div className="col-sm-3 col-xs-6">
-    <ResourceLink kind={ImageStreamsReference} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
-  </div>
-  <div className="col-sm-3 col-xs-6 co-break-word">
-    <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
-  </div>
-  <div className="col-sm-3 hidden-xs">
-    <LabelList kind={ImageStreamsReference} labels={obj.metadata.labels} />
-  </div>
-  <div className="col-sm-3 hidden-xs">
-    { fromNow(obj.metadata.creationTimestamp) }
-  </div>
-  <div className="dropdown-kebab-pf">
-    <ResourceKebab actions={menuActions} kind={ImageStreamsReference} resource={obj} />
-  </div>
-</div>;
+const ImageStreamsTableHeader = () => {
+  return [
+    {
+      title: 'Name', sortField: 'metadata.name', transforms: [sortable],
+      props: { className: tableColumnClasses[0] },
+    },
+    {
+      title: 'Namespace', sortField: 'metadata.namespace', transforms: [sortable],
+      props: { className: tableColumnClasses[1] },
+    },
+    {
+      title: 'Labels', sortField: 'metadata.labels', transforms: [sortable],
+      props: { className: tableColumnClasses[2] },
+    },
+    {
+      title: 'Created', sortField: 'metadata.creationTimestamp', transforms: [sortable],
+      props: { className: tableColumnClasses[3] },
+    },
+    {
+      title: '', props: { className: tableColumnClasses[4] },
+    },
+  ];
+};
+ImageStreamsTableHeader.displayName = 'ImageStreamsTableHeader';
 
-export const ImageStreamsList: React.SFC = props => <List {...props} Header={ImageStreamsHeader} Row={ImageStreamsRow} />;
+const ImageStreamsTableRow: React.FC<ImageStreamsTableRowProps> = ({obj, index, key, style}) => {
+  return (
+    <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+      <TableData className={tableColumnClasses[0]}>
+        <ResourceLink kind={ImageStreamsReference} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
+      </TableData>
+      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+        <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
+      </TableData>
+      <TableData className={tableColumnClasses[2]}>
+        <LabelList kind={ImageStreamsReference} labels={obj.metadata.labels} />
+      </TableData>
+      <TableData className={tableColumnClasses[3]}>
+        {fromNow(obj.metadata.creationTimestamp)}
+      </TableData>
+      <TableData className={tableColumnClasses[4]}>
+        <ResourceKebab actions={menuActions} kind={ImageStreamsReference} resource={obj} />
+      </TableData>
+    </TableRow>
+  );
+};
+ImageStreamsTableRow.displayName = 'ImageStreamsTableRow';
+type ImageStreamsTableRowProps = {
+  obj: K8sResourceKind;
+  index: number;
+  key?: string;
+  style: object;
+};
+
+export const ImageStreamsList: React.SFC = props => <Table {...props} aria-label="Image Streams" Header={ImageStreamsTableHeader} Row={ImageStreamsTableRow} virtualize />;
 ImageStreamsList.displayName = 'ImageStreamsList';
 
 export const buildPhase = build => build.status.phase;
@@ -244,10 +289,6 @@ type ImageStreamTagsRowProps = {
 export type ImageStreamManipulationHelpProps = {
   imageStream: K8sResourceKind;
   tag?: string
-};
-
-export type ImageStreamsRowProps = {
-  obj: K8sResourceKind;
 };
 
 export type ImageStreamsDetailsProps = {

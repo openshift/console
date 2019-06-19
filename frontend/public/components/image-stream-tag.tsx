@@ -141,11 +141,12 @@ export const ImageStreamTagsDetailsPage: React.SFC<ImageStreamTagsDetailsPagePro
     {...props}
     breadcrumbsFor={obj => {
       const imageStreamName = getImageStreamNameForTag(obj);
-      return [{
-        name: imageStreamName,
-        path: `/k8s/ns/${obj.metadata.namespace}/imagestreams/${imageStreamName}`,
+      return [{name: 'Image Streams', path: `/k8s/ns/${props.match.params.ns}/imagestreams`,
       }, {
-        name: 'ImageStreamTag Details',
+        name: imageStreamName,
+        path: `/k8s/ns/${props.match.params.ns}/imagestreams/${imageStreamName}`,
+      }, {
+        name: 'Image Stream Tag Details',
         path: props.match.url,
       }];
     }}

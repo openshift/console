@@ -1,16 +1,16 @@
-/* eslint-disable no-undef, no-unused-vars */
+import {$, $$, browser, ExpectedConditions as until} from 'protractor';
 
-import { $$, by, browser, element, ExpectedConditions as until } from 'protractor';
+export const navSectionFor = (name: string) => $(`[data-test-nav-item="${name}"]`);
 
-export const navSectionFor = (name: string) =>  element(by.css('.pf-c-nav__list')).element(by.linkText(name));
+export const clickNavLink = async function(path: [string, string]) {
+  await browser.wait(until.visibilityOf(navSectionFor(path[0])));
+  const isVisible = await navSectionFor(path[1]).isDisplayed();
+  if (!isVisible) {
+    await navSectionFor(path[0]).click();
+    await browser.wait(until.visibilityOf(navSectionFor(path[1])));
+  }
 
-export const clickNavLink = (path: [string, string]) => browser.wait(until.visibilityOf(navSectionFor(path[0])))
-  .then(() => navSectionFor(path[1]).isDisplayed().then((isVisible: boolean) => {
-    if (!isVisible) {
-        navSectionFor(path[0]).click();
-        browser.wait(until.visibilityOf(navSectionFor(path[1])));
-    }
-  }))
-  .then(() => navSectionFor(path[1]).click());
+  return await navSectionFor(path[1]).click();
+};
 
 export const activeLink = $$('.pf-c-nav__link.pf-m-current');

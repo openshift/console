@@ -151,14 +151,6 @@
 .co-table-container {
   overflow: auto;
   margin-bottom: 30px;
-  table {
-    thead {
-      th {
-        color: $color-text-secondary;
-        font-weight: 400;
-      }
-    }
-  }
 }
 
 .co-m-pane__details {
@@ -477,10 +469,8 @@
     }
   }
   &__head {
-    color: $color-text-secondary;
-    font-size: ($font-size-base - 1);
+    font-weight: var(--pf-global--FontWeight--bold);
     padding: 0 20px 10px 0; // right padding to maintain alignment with __body .row
-    text-transform: uppercase;
     a {
       cursor: pointer;
     }

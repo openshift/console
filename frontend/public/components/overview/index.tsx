@@ -4,9 +4,7 @@ import * as fuzzy from 'fuzzysearch';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { CSSTransition } from 'react-transition-group';
-import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
-import { Toolbar, EmptyState } from 'patternfly-react';
 
 import { coFetchJSON } from '../../co-fetch';
 import { getBuildNumber } from '../../module/k8s/builds';
@@ -22,34 +20,27 @@ import {
   PodTemplate,
 } from '../../module/k8s';
 import {
-  withStartGuide,
-  WithStartGuideProps,
-} from '../start-guide';
-import {
   DaemonSetModel,
   DeploymentModel,
   DeploymentConfigModel,
   PodModel,
-  ProjectModel,
   ReplicationControllerModel,
   ReplicaSetModel,
   StatefulSetModel,
 } from '../../models';
 import {
-  ActionsMenu,
   CloseButton,
-  KebabAction,
   Dropdown,
   Firehose,
   StatusBox,
   EmptyBox,
   resourceObjPath,
+  FirehoseResult,
 } from '../utils';
 
-import { overviewMenuActions, OverviewNamespaceDashboard } from './namespace-overview';
 import { ProjectOverview } from './project-overview';
 import { ResourceOverviewPage } from './resource-overview-page';
-import { OverviewViewOption, OverviewSpecialGroup } from './constants';
+import { OverviewSpecialGroup } from './constants';
 
 
 // List of container status waiting reason values that we should call out as errors in project status rows.
@@ -70,9 +61,6 @@ const DEFAULT_GROUP_NAME = 'other resources';
 
 // Interval at which metrics are retrieved and updated
 const METRICS_POLL_INTERVAL = 30 * 1000;
-
-// Namespace prefixes that are reserved and should not have calls to action on empty state
-const RESERVED_NS_PREFIXES = ['openshift-', 'kube-', 'kubernetes-'];
 
 // Annotation key for image triggers
 const TRIGGERS_ANNOTATION = 'image.openshift.io/triggers';
@@ -336,8 +324,6 @@ const sortBuilds = (builds: K8sResourceKind[]): K8sResourceKind[] => {
   return builds.sort(byBuildNumber);
 };
 
-const isReservedNamespace = (ns: string) => ns === 'default' || ns === 'openshift' || RESERVED_NS_PREFIXES.some(prefix => _.startsWith(ns, prefix));
-
 const OverviewItemReadiness: React.SFC<OverviewItemReadinessProps> = ({desired = 0, ready = 0, resource}) => {
   const href = `${resourceObjPath(resource, resource.kind)}/pods`;
   return <Link to={href}>
@@ -345,46 +331,14 @@ const OverviewItemReadiness: React.SFC<OverviewItemReadinessProps> = ({desired =
   </Link>;
 };
 
-const overviewEmptyStateToProps = ({UI}) => ({
-  activeNamespace: UI.get('activeNamespace'),
-  resources: UI.getIn(['overview', 'resources']),
-});
-
-const OverviewEmptyState = connect(overviewEmptyStateToProps)(({activeNamespace, resources}) => {
-  // Don't encourage users to add content to system namespaces.
-  if (resources.isEmpty() && !isReservedNamespace(activeNamespace)) {
-    return <EmptyState>
-      <EmptyState.Title>
-        Get started with your project.
-      </EmptyState.Title>
-      <EmptyState.Info>
-        Add content to your project from the catalog of web frameworks, databases, and other components. You may also deploy an existing image or create resources using YAML definitions.
-      </EmptyState.Info>
-      <EmptyState.Action>
-        <Link to="/catalog" className="btn btn-primary">
-          Browse Catalog
-        </Link>
-      </EmptyState.Action>
-      <EmptyState.Action secondary>
-        <Link className="btn btn-default" to={`/deploy-image?preselected-ns=${activeNamespace}`}>
-          Deploy Image
-        </Link>
-        <Link className="btn btn-default" to={UIActions.formatNamespacedRouteForResource('import', activeNamespace)}>
-          Import YAML
-        </Link>
-      </EmptyState.Action>
-    </EmptyState>;
-  }
-  return <EmptyBox label="Resources" />;
-});
+const OverviewEmptyState = () => <EmptyBox label="Workloads" />;
 
 const headingStateToProps = ({UI}): OverviewHeadingPropsFromState => {
-  const {selectedView, selectedGroup, groupOptions, filterValue} = UI.get('overview').toJS();
-  return {groupOptions, selectedGroup, selectedView, filterValue};
+  const {selectedGroup, groupOptions, filterValue} = UI.get('overview').toJS();
+  return {groupOptions, selectedGroup, filterValue};
 };
 
 const headingDispatchToProps = (dispatch): OverviewHeadingPropsFromDispatch => ({
-  selectView: (view: OverviewViewOption) => dispatch(UIActions.selectOverviewView(view)),
   selectGroup: (group: OverviewSpecialGroup) => dispatch(UIActions.updateOverviewSelectedGroup(group)),
   changeFilter: (value: string) => dispatch(UIActions.updateOverviewFilterValue(value)),
 });
@@ -396,70 +350,27 @@ class OverviewHeading_ extends React.Component<OverviewHeadingProps> {
   }
 
   render() {
-    const {changeFilter, disabled, filterValue, firstLabel = '', groupOptions, selectGroup, selectedGroup, selectView, selectedView, title, project} = this.props;
-    return <div className={classnames('co-m-nav-title co-m-nav-title--overview', { 'overview-filter-group': selectedView === OverviewViewOption.RESOURCES })}>
-      {
-        title &&
-        <h1 className="co-m-pane__heading co-m-pane__heading--overview">
-          <div className="co-m-pane__name co-m-pane__name--overview">{title}</div>
-        </h1>
-      }
-      {!_.isEmpty(project) && <div className={classnames('overview-view-selector', {'selected-view__resources': selectedView === OverviewViewOption.RESOURCES })}>
-        <div className="form-group btn-group">
-          <button
-            type="button"
-            className={classnames('btn btn-default', { 'btn-primary': selectedView === OverviewViewOption.RESOURCES })}
-            aria-label="Resources"
-            title="Resources"
-            disabled={disabled}
-            onClick={() => selectView(OverviewViewOption.RESOURCES)}
-          >
-            <i className="fa fa-list-ul" aria-hidden="true" />
-            Resources
-          </button>
-          <button
-            type="button"
-            className={classnames('btn btn-default', { 'btn-primary': selectedView === OverviewViewOption.DASHBOARD })}
-            aria-label="Dashboard"
-            title="Dashboard"
-            disabled={disabled}
-            onClick={() => selectView(OverviewViewOption.DASHBOARD)}
-          >
-            <i className="fa fa-dashboard" aria-hidden="true" />
-            Dashboard
-          </button>
-        </div>
-        <Toolbar className="overview-toolbar" preventSubmit>
-          <Toolbar.RightContent>
-            {selectedView === OverviewViewOption.RESOURCES && <React.Fragment>
-              <div className="form-group overview-toolbar__form-group">
-                <Dropdown
-                  className="overview-toolbar__dropdown"
-                  menuClassName="dropdown-menu--text-wrap"
-                  items={groupOptions}
-                  onChange={selectGroup}
-                  titlePrefix="Group by"
-                  title={groupOptions[selectedGroup] || 'Select Category'}
-                  spacerBefore={new Set([firstLabel])}
-                  headerBefore={{[firstLabel]: 'Label'}}
-                />
-              </div>
-              <div className="form-group overview-toolbar__form-group">
-                <div className="overview-toolbar__text-filter">
-                  <TextFilter
-                    defaultValue={filterValue}
-                    label="by name"
-                    onChange={(e) => changeFilter(e.target.value)}
-                  />
-                </div>
-              </div>
-            </React.Fragment>}
-            {selectedView === OverviewViewOption.DASHBOARD && !_.isEmpty(project) && <div className="form-group">
-              <ActionsMenu actions={overviewMenuActions.map((a: KebabAction) => a(ProjectModel, project))} />
-            </div>}
-          </Toolbar.RightContent>
-        </Toolbar>
-      </div>}
+    const {changeFilter, filterValue, firstLabel = '', groupOptions, selectGroup, selectedGroup} = this.props;
+    return <div className="co-m-pane__filter-bar">
+      <div className="co-m-pane__filter-bar-group">
+        <Dropdown
+          className="btn-group"
+          menuClassName="dropdown-menu--text-wrap"
+          items={groupOptions}
+          onChange={selectGroup}
+          titlePrefix="Group by"
+          title={groupOptions[selectedGroup] || 'Select Category'}
+          spacerBefore={new Set([firstLabel])}
+          headerBefore={{[firstLabel]: 'Label'}}
+        />
+      </div>
+      <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--filter">
+        <TextFilter
+          defaultValue={filterValue}
+          label="by name"
+          onChange={(e) => changeFilter(e.target.value)}
+        />
+      </div>
     </div>;
   }
 }
@@ -467,8 +378,8 @@ class OverviewHeading_ extends React.Component<OverviewHeadingProps> {
 const OverviewHeading = connect<OverviewHeadingPropsFromState, OverviewHeadingPropsFromDispatch, OverviewHeadingOwnProps>(headingStateToProps, headingDispatchToProps)(OverviewHeading_);
 
 const mainContentStateToProps = ({UI}): OverviewMainContentPropsFromState => {
-  const {filterValue, metrics, selectedView, selectedGroup, groupOptions} = UI.get('overview').toJS();
-  return {filterValue, groupOptions, metrics, selectedGroup, selectedView};
+  const {filterValue, metrics, selectedGroup, groupOptions} = UI.get('overview').toJS();
+  return {filterValue, groupOptions, metrics, selectedGroup};
 };
 
 const mainContentDispatchToProps = (dispatch): OverviewMainContentPropsFromDispatch => ({
@@ -978,7 +889,7 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
   }
 
   render() {
-    const {loaded, loadError, mock, title, project = {}, selectedView} = this.props;
+    const {loaded, loadError, project} = this.props;
     const {filteredItems, groupedItems, firstLabel} = this.state;
 
     const skeletonOverview = <div className="skeleton-overview">
@@ -990,22 +901,19 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
 
     return <div className="co-m-pane">
       <OverviewHeading
-        disabled={mock}
         firstLabel={firstLabel}
-        title={title}
-        project={project.data}
+        project={_.get(project, 'data')}
       />
       <div className="co-m-pane__body co-m-pane__body--no-top-margin">
         <StatusBox
           skeleton={skeletonOverview}
-          data={selectedView === OverviewViewOption.RESOURCES ? filteredItems : project}
+          data={filteredItems}
           label="Resources"
           loaded={loaded}
           loadError={loadError}
           EmptyMsg={OverviewEmptyState}
         >
-          {selectedView === OverviewViewOption.RESOURCES && <ProjectOverview groups={groupedItems} />}
-          {selectedView === OverviewViewOption.DASHBOARD && <OverviewNamespaceDashboard obj={project.data} />}
+          <ProjectOverview groups={groupedItems} />
         </StatusBox>
       </div>
     </div>;
@@ -1018,8 +926,8 @@ const overviewStateToProps = ({UI}): OverviewPropsFromState => {
   const selectedUID = UI.getIn(['overview', 'selectedUID']);
   const resources = UI.getIn(['overview', 'resources']);
   const selectedItem = !!resources && resources.get(selectedUID);
-  const selectedView = UI.getIn(['overview', 'selectedView'], OverviewViewOption.RESOURCES);
-  return { selectedItem, selectedView };
+  return { selectedItem };
+
 };
 
 const overviewDispatchToProps = (dispatch): OverviewPropsFromDispatch => {
@@ -1028,9 +936,24 @@ const overviewDispatchToProps = (dispatch): OverviewPropsFromDispatch => {
   };
 };
 
-const Overview_: React.SFC<OverviewProps> = ({mock, namespace, selectedItem, selectedView, title, dismissDetails}) => {
-  const sidebarOpen = !_.isEmpty(selectedItem) && selectedView !== OverviewViewOption.DASHBOARD;
+const Overview_: React.SFC<OverviewProps> = ({mock, match, selectedItem, title, dismissDetails}) => {
+  const namespace = _.get(match, 'params.name');
+  const sidebarOpen = !_.isEmpty(selectedItem);
   const className = classnames('overview', {'overview--sidebar-shown': sidebarOpen});
+  const ref = React.useRef();
+  const [height, setHeight] = React.useState(500);
+  const calcHeight = (node) => {
+    setHeight(document.getElementsByClassName('pf-c-page')[0].getBoundingClientRect().bottom - node.current.getBoundingClientRect().top);
+  };
+  React.useLayoutEffect(() => {
+    calcHeight(ref);
+    const handleResize = () => calcHeight(ref);
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  });
+
   // TODO: Update resources for native Kubernetes clusters.
   const resources = [
     {
@@ -1108,7 +1031,7 @@ const Overview_: React.SFC<OverviewProps> = ({mock, namespace, selectedItem, sel
   ];
 
   return <div className={className}>
-    <div className="overview__main-column">
+    <div className="overview__main-column" ref={ref} style={{height}}>
       <div className="overview__main-column-section">
         <Firehose resources={mock ? [] : resources} forceUpdate>
           <OverviewMainContent
@@ -1139,33 +1062,6 @@ const Overview_: React.SFC<OverviewProps> = ({mock, namespace, selectedItem, sel
 };
 
 export const Overview = connect<OverviewPropsFromState, OverviewPropsFromDispatch, OverviewOwnProps>(overviewStateToProps, overviewDispatchToProps)(Overview_);
-
-export const OverviewPage = withStartGuide(
-  ({match, noProjectsAvailable}: OverviewPageProps & WithStartGuideProps) => {
-    const namespace = _.get(match, 'params.ns');
-    const title = 'Project Status';
-    return <React.Fragment>
-      <Helmet>
-        <title>{title}</title>
-      </Helmet>
-      <Overview
-        mock={noProjectsAvailable}
-        namespace={namespace}
-        title={title}
-      />
-    </React.Fragment>;
-  }
-);
-
-type FirehoseItem = {
-  data?: K8sResourceKind;
-  [key: string]: any;
-};
-
-type FirehoseList<T extends K8sResourceKind> = {
-  data?: T[];
-  [key: string]: any;
-};
 
 type OverviewItemAlerts = {
   [key: string]: {
@@ -1227,19 +1123,15 @@ type OverviewHeadingPropsFromState = {
   filterValue: string;
   groupOptions: {[key: string]: string};
   selectedGroup: string;
-  selectedView: OverviewViewOption;
 };
 
 type OverviewHeadingPropsFromDispatch = {
-  selectView: (view: OverviewViewOption) => void;
   selectGroup: (selectedLabel: OverviewSpecialGroup) => void;
   changeFilter: (value: string) => void;
 };
 
 type OverviewHeadingOwnProps = {
-  disabled?: boolean;
   firstLabel?: string;
-  title: string;
   project: K8sResourceKind;
 };
 
@@ -1250,7 +1142,6 @@ type OverviewMainContentPropsFromState = {
   groupOptions: {[key: string]: string};
   metrics: OverviewMetrics;
   selectedGroup: string;
-  selectedView: OverviewViewOption;
 };
 
 type OverviewMainContentPropsFromDispatch = {
@@ -1261,23 +1152,23 @@ type OverviewMainContentPropsFromDispatch = {
 };
 
 type OverviewMainContentOwnProps = {
-  builds?: FirehoseList<K8sResourceKind>;
-  buildConfigs?: FirehoseList<K8sResourceKind>;
-  daemonSets?: FirehoseList<K8sResourceKind>;
-  deploymentConfigs?: FirehoseList<K8sResourceKind>;
-  deployments?: FirehoseList<K8sResourceKind>;
+  builds?: FirehoseResult;
+  buildConfigs?: FirehoseResult;
+  daemonSets?: FirehoseResult;
+  deploymentConfigs?: FirehoseResult;
+  deployments?: FirehoseResult;
   mock: boolean;
   loaded?: boolean;
   loadError?: any;
   namespace: string;
-  pods?: FirehoseList<PodKind>;
-  project?: FirehoseItem;
-  replicationControllers?: FirehoseList<K8sResourceKind>;
-  replicaSets?: FirehoseList<K8sResourceKind>;
-  routes?: FirehoseList<K8sResourceKind>;
-  services?: FirehoseList<K8sResourceKind>;
+  pods?: FirehoseResult<PodKind[]>;
+  project?: FirehoseResult<K8sResourceKind>;
+  replicationControllers?: FirehoseResult;
+  replicaSets?: FirehoseResult;
+  routes?: FirehoseResult;
+  services?: FirehoseResult;
   selectedItem: OverviewItem;
-  statefulSets?: FirehoseList<K8sResourceKind>;
+  statefulSets?: FirehoseResult;
   title?: string;
 };
 
@@ -1292,7 +1183,6 @@ type OverviewMainContentState = {
 
 type OverviewPropsFromState = {
   selectedItem: any;
-  selectedView: OverviewViewOption;
 };
 
 type OverviewPropsFromDispatch = {
@@ -1301,12 +1191,8 @@ type OverviewPropsFromDispatch = {
 
 type OverviewOwnProps = {
   mock: boolean;
-  namespace: string;
+  match: any;
   title: string;
 };
 
 type OverviewProps = OverviewPropsFromState & OverviewPropsFromDispatch & OverviewOwnProps;
-
-type OverviewPageProps = {
-  match: any;
-};

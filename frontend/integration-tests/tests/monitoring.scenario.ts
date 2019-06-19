@@ -35,13 +35,13 @@ describe('Monitoring: Alerts', () => {
   it('filters Alerts by name', async() => {
     await monitoringView.wait(until.elementToBeClickable(crudView.nameFilter));
     await crudView.nameFilter.sendKeys(testAlertName);
-    expect(monitoringView.firstListLink.getText()).toContain(testAlertName);
+    expect(monitoringView.firstListLinkById('alert-resource-link').getText()).toContain(testAlertName);
   });
 
   it('displays Alert details page', async() => {
-    await monitoringView.wait(until.elementToBeClickable(monitoringView.firstListLink));
-    expect(monitoringView.firstListLink.getText()).toContain(testAlertName);
-    await monitoringView.firstListLink.click();
+    await monitoringView.wait(until.elementToBeClickable(monitoringView.firstListLinkById('alert-resource-link')));
+    expect(monitoringView.firstListLinkById('alert-resource-link').getText()).toContain(testAlertName);
+    await monitoringView.firstListLinkById('alert-resource-link').click();
     await monitoringView.wait(until.presenceOf(monitoringView.detailsHeadingAlertIcon));
     testDetailsPage('Alert Overview', testAlertName);
   });
@@ -81,11 +81,11 @@ describe('Monitoring: Alerts', () => {
   });
 
   it('shows the newly created Silence in the Silenced By list', async() => {
-    await monitoringView.wait(until.elementToBeClickable(monitoringView.firstListLink));
-    expect(monitoringView.firstListLink.getText()).toContain(testAlertName);
+    await monitoringView.wait(until.elementToBeClickable(monitoringView.firstListLinkById('silence-resource-link')));
+    expect(monitoringView.firstListLinkById('silence-resource-link').getText()).toContain(testAlertName);
 
     // Click the link to navigate back to the Silence details page
-    await monitoringView.firstListLink.click();
+    await monitoringView.firstListLinkById('silence-resource-link').click();
     await monitoringView.wait(until.presenceOf(monitoringView.detailsHeadingSilenceIcon));
     testDetailsPage('Silence Overview', testAlertName);
   });
@@ -134,13 +134,13 @@ describe('Monitoring: Silences', () => {
     await crudView.isLoaded();
     await monitoringView.wait(until.elementToBeClickable(crudView.nameFilter));
     await crudView.nameFilter.sendKeys(testAlertName);
-    expect(monitoringView.firstListLink.getText()).toContain(testAlertName);
+    expect(monitoringView.firstListLinkById('silence-resource-link').getText()).toContain(testAlertName);
   });
 
   it('displays Silence details page', async() => {
-    await monitoringView.wait(until.elementToBeClickable(monitoringView.firstListLink));
-    expect(monitoringView.firstListLink.getText()).toContain(testAlertName);
-    await monitoringView.firstListLink.click();
+    await monitoringView.wait(until.elementToBeClickable(monitoringView.firstListLinkById('silence-resource-link')));
+    expect(monitoringView.firstListLinkById('silence-resource-link').getText()).toContain(testAlertName);
+    await monitoringView.firstListLinkById('silence-resource-link').click();
     await monitoringView.wait(until.presenceOf(monitoringView.detailsHeadingSilenceIcon));
     testDetailsPage('Silence Overview', testAlertName);
   });

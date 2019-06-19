@@ -25,8 +25,12 @@ const processReduxId = ({k8s}, props) => {
   }
 
   if (!isList) {
-    const stuff = k8s.get(reduxID);
-    return stuff ? stuff.toJS() : {};
+    let stuff = k8s.get(reduxID);
+    if (stuff) {
+      stuff = stuff.toJS();
+      stuff.optional = props.optional;
+    }
+    return stuff || {};
   }
 
   const data = k8s.getIn([reduxID, 'data']);
@@ -208,6 +212,6 @@ Firehose.propTypes = {
     selector: PropTypes.object,
     fieldSelector: PropTypes.string,
     isList: PropTypes.bool,
-    optional: PropTypes.bool,
+    optional: PropTypes.bool, // do not block children-rendering while resource is still being loaded; do not fail if resource is missing (404)
   })).isRequired,
 };

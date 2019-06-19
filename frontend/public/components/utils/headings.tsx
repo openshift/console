@@ -24,7 +24,7 @@ export const BreadCrumbs: React.SFC<BreadCrumbsProps> = ({breadcrumbs}) => (
         {isLast ? (
           crumb.name
         ) : (
-          <Link className="breadcrumb-link" to={crumb.path}>{crumb.name}</Link>
+          <Link className="breadcrumb-link" to={crumb.path} data-test-id={`breadcrumb-link-${i}`}>{crumb.name}</Link>
         )}
       </li>;
     }) }

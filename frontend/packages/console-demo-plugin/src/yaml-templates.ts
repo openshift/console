@@ -5,7 +5,7 @@ import { FooBarModel } from './models';
 export const yamlTemplates = ImmutableMap().setIn(
   [FooBarModel, 'default'],
   `
-apiVersion: ${FooBarModel.apiVersion}
+apiVersion: ${FooBarModel.apiGroup}/${FooBarModel.apiVersion}
 kind: ${FooBarModel.kind}
 metadata:
   name: example

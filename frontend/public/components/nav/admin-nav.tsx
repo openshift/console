@@ -37,15 +37,15 @@ const Separator: React.FC<SeparatorProps> = () => <NavItemSeparator />;
 const searchStartsWith = ['search'];
 const operatorManagementStartsWith = [
   referenceForModel(PackageManifestModel),
-  PackageManifestModel.path,
+  PackageManifestModel.plural,
   // FIXME(alecmerdler): Needed for backwards-compatibility with new API groups
   'packages.apps.redhat.com~v1alpha1~PackageManifest',
   referenceForModel(SubscriptionModel),
-  SubscriptionModel.path,
+  SubscriptionModel.plural,
   referenceForModel(InstallPlanModel),
-  InstallPlanModel.path,
+  InstallPlanModel.plural,
   referenceForModel(CatalogSourceModel),
-  CatalogSourceModel.path,
+  CatalogSourceModel.plural,
 ];
 const provisionedServicesStartsWith = ['serviceinstances', 'servicebindings'];
 const brokerManagementStartsWith = ['clusterservicebrokers', 'clusterserviceclasses'];
@@ -85,12 +85,6 @@ const AdminNav = () => (
   <React.Fragment>
     <NavSection title="Home">
       <ResourceClusterLink resource="projects" name="Projects" required={FLAGS.OPENSHIFT} />
-      {
-        // Show different status pages based on OpenShift vs native Kubernetes.
-        // TODO: Make Overview work on native Kubernetes. It currently assumes OpenShift resources.
-      }
-      <HrefLink href="/overview" name="Status" activePath="/overview/" required={FLAGS.OPENSHIFT} />
-      <HrefLink href="/status" name="Status" activePath="/status/" disallowed={FLAGS.OPENSHIFT} />
       <HrefLink href="/search" name="Search" startsWith={searchStartsWith} />
       <ResourceNSLink resource="events" name="Events" />
     </NavSection>
@@ -107,11 +101,12 @@ const AdminNav = () => (
       <ResourceNSLink
         model={ClusterServiceVersionModel}
         resource={ClusterServiceVersionModel.plural}
+        required={[FLAGS.OPERATOR_LIFECYCLE_MANAGER]}
         name="Installed Operators"
       />
-      <Separator />
+      <Separator required={FLAGS.OPERATOR_LIFECYCLE_MANAGER} />
       <HrefLink
-        required={[FLAGS.CAN_LIST_PACKAGE_MANIFEST, FLAGS.CAN_LIST_OPERATOR_GROUP, FLAGS.OPERATOR_HUB]}
+        required={[FLAGS.CAN_LIST_PACKAGE_MANIFEST, FLAGS.CAN_LIST_OPERATOR_GROUP, FLAGS.OPERATOR_LIFECYCLE_MANAGER]}
         href="/operatorhub"
         name="OperatorHub"
         activePath="/operatorhub/"
@@ -119,6 +114,7 @@ const AdminNav = () => (
       <HrefLink
         href="/operatormanagement"
         name="Operator Management"
+        required={[FLAGS.OPERATOR_LIFECYCLE_MANAGER]}
         activePath="/operatormanagement/"
         startsWith={operatorManagementStartsWith}
       />
@@ -187,7 +183,7 @@ const AdminNav = () => (
       <ResourceNSLink resource="rolebindings" name="Role Bindings" startsWith={rolebindingsStartsWith} />
       <ResourceNSLink resource="resourcequotas" name="Resource Quotas" startsWith={quotaStartsWith} />
       <ResourceNSLink resource="limitranges" name="Limit Ranges" />
-      <ResourceNSLink resource={referenceForModel(ChargebackReportModel)} name="Chargeback" disallowed={FLAGS.OPENSHIFT} />
+      <ResourceNSLink resource={referenceForModel(ChargebackReportModel)} name="Chargeback" required={FLAGS.CHARGEBACK} />
       <ResourceClusterLink resource="customresourcedefinitions" name="Custom Resource Definitions" required={FLAGS.CAN_LIST_CRD} />
     </NavSection>
   </React.Fragment>

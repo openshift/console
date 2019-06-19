@@ -149,12 +149,26 @@ describe('supports', () => {
   it('correctly returns for an Operator that can only run in its own namespace', () => {
     set = [
       {type: InstallModeType.InstallModeTypeOwnNamespace, supported: true},
-      {type: InstallModeType.InstallModeTypeSingleNamespace, supported: true},
+      {type: InstallModeType.InstallModeTypeSingleNamespace, supported: false},
       {type: InstallModeType.InstallModeTypeMultiNamespace, supported: false},
       {type: InstallModeType.InstallModeTypeAllNamespaces, supported: false},
     ];
 
     expect(supports(set)(ownNamespaceGroup)).toBe(true);
+    expect(supports(set)(singleNamespaceGroup)).toBe(false);
+    expect(supports(set)(multiNamespaceGroup)).toBe(false);
+    expect(supports(set)(allNamespacesGroup)).toBe(false);
+  });
+
+  it('correctly returns for an Operator that can only run in a single namespace', () => {
+    set = [
+      {type: InstallModeType.InstallModeTypeOwnNamespace, supported: false},
+      {type: InstallModeType.InstallModeTypeSingleNamespace, supported: true},
+      {type: InstallModeType.InstallModeTypeMultiNamespace, supported: false},
+      {type: InstallModeType.InstallModeTypeAllNamespaces, supported: false},
+    ];
+
+    expect(supports(set)(ownNamespaceGroup)).toBe(false);
     expect(supports(set)(singleNamespaceGroup)).toBe(true);
     expect(supports(set)(multiNamespaceGroup)).toBe(false);
     expect(supports(set)(allNamespacesGroup)).toBe(false);
@@ -176,7 +190,7 @@ describe('supports', () => {
 
   it('correctly returns for an Operator which can only run in all namespaces', () => {
     set = [
-      {type: InstallModeType.InstallModeTypeOwnNamespace, supported: true},
+      {type: InstallModeType.InstallModeTypeOwnNamespace, supported: false},
       {type: InstallModeType.InstallModeTypeSingleNamespace, supported: false},
       {type: InstallModeType.InstallModeTypeMultiNamespace, supported: false},
       {type: InstallModeType.InstallModeTypeAllNamespaces, supported: true},

@@ -1,9 +1,9 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import * as classNames from 'classnames';
 import { FieldLevelHelp } from 'patternfly-react';
-
-import { ColHead, DetailsPage, List, ListHeader, MultiListPage } from './factory';
+import * as classNames from 'classnames';
+import { sortable } from '@patternfly/react-table';
+import { DetailsPage, MultiListPage, Table, TableRow, TableData } from './factory';
 import { Kebab, SectionHeading, navFactory, ResourceKebab, ResourceLink, ResourceSummary, convertToBaseValue } from './utils';
 import { connectToFlags, flagPending } from '../reducers/features';
 import { FLAGS } from '../const';
@@ -42,24 +42,47 @@ const getResourceUsage = (quota, resourceType) => {
   };
 };
 
-const Header = props => <ListHeader>
-  <ColHead {...props} className="col-md-5 col-xs-6" sortField="metadata.name">Name</ColHead>
-  <ColHead {...props} className="col-md-7 col-xs-6" sortField="metadata.namespace">Namespace</ColHead>
-</ListHeader>;
+const tableColumnClasses = [
+  classNames('col-md-5', 'col-xs-6'),
+  classNames('col-md-7', 'col-xs-6'),
+  Kebab.columnClass,
+];
 
-const Row = ({obj: rq}) => <div className="row co-resource-list__item">
-  <div className="col-md-5 col-xs-6">
-    <ResourceLink kind={quotaKind(rq)} name={rq.metadata.name} namespace={rq.metadata.namespace} className="co-resource-item__resource-name" />
-  </div>
-  <div className="col-md-7 col-xs-6 co-break-word">
-    {rq.metadata.namespace ? <ResourceLink kind="Namespace" name={rq.metadata.namespace} title={rq.metadata.namespace} /> : 'None'}
-  </div>
-  <div className="dropdown-kebab-pf">
-    <ResourceKebab actions={menuActions} kind={quotaKind(rq)} resource={rq} />
-  </div>
-</div>;
+const ResourceQuotaTableHeader = () => {
+  return [
+    {
+      title: 'Name', sortField: 'metadata.name', transforms: [sortable],
+      props: { className: tableColumnClasses[0] },
+    },
+    {
+      title: 'Namespace', sortField: 'metadata.namespace', transforms: [sortable],
+      props: { className: tableColumnClasses[1] },
+    },
+    {
+      title: '', props: { className: tableColumnClasses[2] },
+    },
+  ];
+};
+ResourceQuotaTableHeader.displayName = 'ResourceQuotaTableHeader';
 
-const UsageIcon = ({percent}) => {
+export const ResourceQuotaTableRow = ({obj: rq, index, key, style}) => {
+  return (
+    <TableRow id={rq.metadata.uid} index={index} trKey={key} style={style}>
+      <TableData className={tableColumnClasses[0]}>
+        <ResourceLink kind={quotaKind(rq)} name={rq.metadata.name} namespace={rq.metadata.namespace} className="co-resource-item__resource-name" />
+      </TableData>
+      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+        {rq.metadata.namespace ? <ResourceLink kind="Namespace" name={rq.metadata.namespace} title={rq.metadata.namespace} /> : 'None'}
+      </TableData>
+      <TableData className={tableColumnClasses[2]}>
+        <ResourceKebab actions={menuActions} kind={quotaKind(rq)} resource={rq} />
+      </TableData>
+    </TableRow>
+  );
+};
+ResourceQuotaTableRow.displayName = 'ResourceQuotaTableRow';
+
+export const UsageIcon = ({percent}) => {
   let usageIconClass = 'pficon pficon-unknown';
   if (percent === 0) {
     usageIconClass = 'fa fa-circle-thin co-resource-quota-empty';
@@ -202,7 +225,7 @@ const Details = ({obj: rq}) => {
   </React.Fragment>;
 };
 
-export const ResourceQuotasList = props => <List {...props} Header={Header} Row={Row} />;
+export const ResourceQuotasList = props => <Table {...props} aria-label="Resource Quoates" Header={ResourceQuotaTableHeader} Row={ResourceQuotaTableRow} virtualize />;
 
 export const quotaType = quota => {
   if (!quota) {

@@ -1,20 +1,48 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import { Chart, ChartArea, ChartAxis, ChartGroup, getCustomTheme, ChartThemeColor, ChartThemeVariant } from '@patternfly/react-charts';
+import {
+  Chart,
+  ChartAxis,
+  ChartGroup,
+  ChartLine,
+  ChartThemeColor,
+  ChartThemeVariant,
+  getCustomTheme,
+} from '@patternfly/react-charts';
+import {
+  EmptyState,
+  EmptyStateIcon,
+  EmptyStateVariant,
+  Title,
+} from '@patternfly/react-core';
+import { ChartLineIcon } from '@patternfly/react-icons';
 import { connect } from 'react-redux';
 
 // This is not yet available as part of PatternFly
 import { VictorySelectionContainer } from 'victory-selection-container';
 
-import { Dropdown, humanizeNumber, LoadingInline, useRefWidth } from '../utils';
+import { Dropdown, humanizeNumber, LoadingInline, usePoll, useRefWidth, useSafeFetch } from '../utils';
 import { formatPrometheusDuration, parsePrometheusDuration, twentyFourHourTime } from '../utils/datetime';
-import { PrometheusEndpoint } from './helpers';
-import { usePrometheusPoll } from './prometheus-poll-hook';
+import { withFallback } from '../utils/error-boundary';
+import { PrometheusResponse } from '.';
+import { getPrometheusURL, PrometheusEndpoint } from './helpers';
 import { queryBrowserTheme } from './themes';
 
 const spans = ['5m', '15m', '30m', '1h', '2h', '6h', '12h', '1d', '2d', '1w', '2w'];
 const dropdownItems = _.zipObject(spans, spans);
 const theme = getCustomTheme(ChartThemeColor.multi, ChartThemeVariant.light, queryBrowserTheme);
+
+// Plotly default colors
+// TODO: Remove this once PatternFly's default colors are finalized
+export const graphColors = [
+  '#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf',
+];
+
+const NoQueryMessage = () => <div className="text-center text-muted">Enter a query in the box below to explore the metrics gathered for this cluster</div>;
+
+const Error = ({error}) => <div className="alert alert-danger">
+  <span className="pficon pficon-error-circle-o" aria-hidden="true"></span>{_.get(error, 'json.error', error.message)}
+</div>;
 
 const SpanControls = ({defaultSpanText, onChange, span}) => {
   const [isValid, setIsValid] = React.useState(true);
@@ -58,7 +86,7 @@ const SpanControls = ({defaultSpanText, onChange, span}) => {
   </React.Fragment>;
 };
 
-const Graph: React.FC<GraphProps> = ({colors, domain, data, onZoom}) => {
+const Graph: React.FC<GraphProps> = ({domain, data, onZoom}) => {
   const [containerRef, width] = useRefWidth();
 
   return <div className="graph-wrapper">
@@ -74,65 +102,29 @@ const Graph: React.FC<GraphProps> = ({colors, domain, data, onZoom}) => {
       >
         <ChartAxis tickCount={5} tickFormat={twentyFourHourTime} />
         <ChartAxis dependentAxis tickCount={5} tickFormat={humanizeNumber} />
-        <ChartGroup colorScale={colors}>
-          {_.map(data, ({values}, i) => <ChartArea key={i} data={values} />)}
+        <ChartGroup colorScale={graphColors}>
+          {_.map(data, ({values}, i) => <ChartLine key={i} data={values} />)}
         </ChartGroup>
       </Chart>
     </div>
   </div>;
 };
 
-const QueryBrowser_: React.FC<QueryBrowserProps> = ({colors, defaultTimespan, GraphLink, hideGraphs, metric, onDataUpdate, query, samples}) => {
-  // For the default time span, use the first of the suggested span options that is at least as long as defaultTimespan
-  const defaultSpanText = spans.find(s => parsePrometheusDuration(s) >= defaultTimespan);
+const handleResponses = (responses: PrometheusResponse[], metric: Labels, samples: number, span: number): GraphDataMetric[] => {
+  const allData = [];
 
-  const [domain, setDomain] = React.useState();
-  const [graphData, setGraphData] = React.useState();
-  const [span, setSpan] = React.useState(parsePrometheusDuration(defaultSpanText));
-  const [updating, setUpdating] = React.useState(true);
+  _.each(responses, (response, responseIndex) => {
+    allData[responseIndex] = [];
 
-  const endTime = _.get(domain, 'x[1]');
-
-  const [data, error] = usePrometheusPoll({
-    // If an end time was set, stop polling since we are no longer displaying the latest data. Otherwise use a polling
-    // interval relative to the graph's timespan, but not less than 5s.
-    delay: endTime ? null : Math.max(span / 120, 5000),
-    endTime,
-    endpoint: PrometheusEndpoint.QUERY_RANGE,
-    query,
-    samples,
-    timeout: '5s',
-    timespan: span,
-  });
-
-  React.useEffect(() => setUpdating(!!query), [query, samples]);
-
-  React.useEffect(() => {
-    if (data === undefined) {
-      setGraphData(undefined);
-      return;
-    }
-
-    const result = _.get(data, 'data.result');
-    const newGraphData = [];
-
-    // Work out which labels have different values for different metrics
-    const allLabels = _.map(result, 'metric');
-    const allLabelKeys = _.uniq(_.flatMap(allLabels, _.keys));
-    const differingLabelKeys = _.filter(allLabelKeys, k => _.uniqBy(allLabels, k).length > 1);
-
-    _.each(result, d => {
-      const labels = _.omit(d.metric, '__name__');
+    _.each(_.get(response, 'data.result'), data => {
+      const labels = _.omit(data.metric, '__name__');
 
       // If metric prop is specified, ignore all other metrics
       if (metric && _.some(labels, (v, k) => _.get(metric, k) !== v)) {
         return;
       }
 
-      // Just show labels that differ between metrics to keep the name shorter
-      const name = _.map(_.pick(labels, differingLabelKeys), (v, k) => `${k}="${v}"`).join(',');
-
-      const values = _.map(d.values, v => ({
+      const values = _.map(data.values, v => ({
         x: new Date(v[0] * 1000),
         y: parseFloat(v[1]),
       }));
@@ -149,33 +141,93 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({colors, defaultTimespan, Gr
         }
       });
 
-      newGraphData.push({name, values});
+      allData[responseIndex].push({labels, values});
+    });
+  });
+
+  return allData;
+};
+
+const QueryBrowser_: React.FC<QueryBrowserProps> = ({
+  defaultTimespan,
+  GraphLink,
+  hideGraphs,
+  metric,
+  onDataUpdate,
+  queries,
+}) => {
+  // For the default time span, use the first of the suggested span options that is at least as long as defaultTimespan
+  const defaultSpanText = spans.find(s => parsePrometheusDuration(s) >= defaultTimespan);
+
+  const [domain, setDomain] = React.useState();
+  const [error, setError] = React.useState();
+  const [graphData, setGraphData] = React.useState();
+  const [span, setSpan] = React.useState(parsePrometheusDuration(defaultSpanText));
+  const [updating, setUpdating] = React.useState(true);
+
+  const endTime = _.get(domain, 'x[1]');
+
+  // Use more samples if we are only displaying a single metric
+  const samples = metric ? 600 : 300;
+
+  const urls = _.map(queries, query => getPrometheusURL({
+    endpoint: PrometheusEndpoint.QUERY_RANGE,
+    endTime,
+    query,
+    samples,
+    timeout: '5s',
+    timespan: span,
+  }));
+
+  const safeFetch = useSafeFetch();
+
+  const tick = () => Promise.all(urls.map(safeFetch))
+    .then(responses => {
+      const data = handleResponses(responses, metric, samples, span);
+      setGraphData(_.flatten(data));
+      if (onDataUpdate) {
+        onDataUpdate(data);
+      }
+      setUpdating(false);
+      setError(undefined);
+    })
+    .catch(err => {
+      setError(err);
+      setUpdating(false);
     });
 
-    setGraphData(newGraphData);
-    setUpdating(false);
+  // If an end time was set, stop polling since we are no longer displaying the latest data. Otherwise use a polling
+  // interval relative to the graph's timespan, but not less than 5s.
+  const delay = endTime ? null : Math.max(span / 120, 5000);
 
-    if (onDataUpdate) {
-      onDataUpdate(result);
-    }
+  const queriesKey = JSON.stringify(queries);
 
-    // Only trigger when data is updated
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data]);
+  usePoll(tick, delay, endTime, queriesKey, samples, span);
+
+  React.useEffect(() => setUpdating(true), [endTime, queriesKey, samples, span]);
 
   const onSpanChange = newSpan => {
     setDomain(undefined);
     setSpan(newSpan);
-    setUpdating(true);
   };
 
   const onZoom = ({x, y}) => {
     setDomain({x, y});
     setSpan(x[1] - x[0]);
-    setUpdating(true);
   };
 
   const graphDomain = domain || {x: [Date.now() - span, Date.now()], y: undefined};
+
+  const isEmptyState = !updating && _.isEmpty(graphData);
+
+  if (hideGraphs) {
+    if (_.isEmpty(queries)) {
+      return <div className="query-browser__wrapper">
+        {_.isEmpty(queries) && <NoQueryMessage />}
+      </div>;
+    }
+    return error ? <Error error={error} /> : null;
+  }
 
   return <div className="query-browser__wrapper">
     <div className="query-browser__header">
@@ -183,25 +235,24 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({colors, defaultTimespan, Gr
       <div className="query-browser__loading">
         {updating && <LoadingInline />}
       </div>
-      <div className="query-browser__external-link">
+      {GraphLink && <div className="query-browser__external-link">
         <GraphLink />
-      </div>
+      </div>}
     </div>
-    {query
-      ? <React.Fragment>
-        {error && <div className="alert alert-danger">
-          <span className="pficon pficon-error-circle-o" aria-hidden="true"></span>{_.get(error, 'json.error', error.message)}
-        </div>}
-        {!error && !updating && _.isEmpty(graphData) && <div className="alert alert-warning">
-          <span className="pficon pficon-warning-triangle-o" aria-hidden="true"></span> Query did not return any data
-        </div>}
-        {!hideGraphs && <Graph colors={colors} data={graphData} domain={graphDomain} onZoom={onZoom} />}
-      </React.Fragment>
-      : <div className="text-center text-muted">Enter a query in the box below to explore the metrics gathered for this cluster</div>}
+    {_.isEmpty(queries)
+      ? <NoQueryMessage />
+      : <React.Fragment>
+        {error && <Error error={error} />}
+        {isEmptyState && <EmptyState className="graph-empty-state" variant={EmptyStateVariant.full}>
+          <EmptyStateIcon size="sm" icon={ChartLineIcon} />
+          <Title size="sm">No Prometheus datapoints found.</Title>
+        </EmptyState>}
+        {!isEmptyState && <Graph data={graphData} domain={graphDomain} onZoom={onZoom} />}
+      </React.Fragment>}
   </div>;
 };
 const stateToProps = ({UI}) => ({hideGraphs: !!UI.getIn(['monitoring', 'hideGraphs'])});
-export const QueryBrowser = connect(stateToProps)(QueryBrowser_);
+export const QueryBrowser = withFallback(connect(stateToProps)(QueryBrowser_));
 
 type Domain = {
   x: [number, number];
@@ -209,33 +260,28 @@ type Domain = {
 };
 
 type GraphDataPoint = {
-  name?: string;
   x: Date;
   y: number;
 };
 
+type Labels = {[key: string]: string}[];
+
 type GraphDataMetric = {
-  metric: {[key: string]: string}[];
+  labels: Labels;
   values: GraphDataPoint[];
 };
 
 type GraphProps = {
-  colors: string[];
-  data: {
-    name: string;
-    values: GraphDataPoint[];
-  }[];
+  data: GraphDataMetric[];
   domain: Domain;
   onZoom: (range: Domain) => void;
 };
 
 type QueryBrowserProps = {
-  colors: string[];
   defaultTimespan: number;
   GraphLink: React.ComponentType<{}>;
   hideGraphs: boolean;
-  metric: string;
-  onDataUpdate: (data: GraphDataMetric) => void;
-  query: string;
-  samples?: number;
+  metric: Labels;
+  onDataUpdate: (data: GraphDataMetric[]) => void;
+  queries: string[];
 };

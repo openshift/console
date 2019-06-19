@@ -78,11 +78,6 @@ export type ResourceRequirementsModalProps = {
   close: () => void;
 };
 
-export type ResourceRequirementsModalState = {
-  inProgress: boolean;
-  errorMessage: string;
-};
-
 export type ResourceRequirementsModalLinkProps = {
   obj: ClusterServiceVersionResourceKind;
   model: K8sKind;

@@ -59,6 +59,8 @@ export interface RoutePage extends Extension<ExtensionProperties.RoutePage> {
   type: 'Page/Route';
 }
 
+export type ResourcePage = ResourceListPage | ResourceDetailsPage;
+
 export const isResourceListPage = (e: Extension<any>): e is ResourceListPage => {
   return e.type === 'Page/Resource/List';
 };

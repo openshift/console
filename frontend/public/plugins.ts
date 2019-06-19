@@ -4,7 +4,7 @@ import { ActivePlugin, ExtensionRegistry } from '@console/plugin-sdk';
 export * from '@console/plugin-sdk';
 
 // the '@console/active-plugins' module is generated during webpack build
-const activePlugins = (process.env.NODE_ENV !== 'test')
+export const activePlugins = (process.env.NODE_ENV !== 'test')
   ? require('@console/active-plugins').default as ActivePlugin[]
   : [];
 

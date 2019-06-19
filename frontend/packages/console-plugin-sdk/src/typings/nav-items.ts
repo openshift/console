@@ -8,9 +8,9 @@ import { Extension } from './extension';
 
 namespace ExtensionProperties {
   interface NavItem {
-    /** Perspective to which this item belongs to. */
+    /** Perspective id to which this item belongs to. If not specified, use the default perspective. */
     perspective?: string;
-    /** Nav section to which this item belongs to. */
+    /** Nav section to which this item belongs to. If not specified, render item as top-level link. */
     section?: string;
     /** Props to pass to the corresponding `NavLink` component. */
     componentProps: Pick<NavLinkProps, 'name' | 'required' | 'disallowed' | 'startsWith'>;

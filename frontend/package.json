@@ -27,11 +27,12 @@
       "js",
       "jsx",
       "ts",
-      "tsx"
+      "tsx",
+      "json"
     ],
     "moduleNameMapper": {
       "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/__mocks__/fileMock.js",
-      "\\.(css|less)$": "<rootDir>/__mocks__/styleMock.js"
+      "\\.(css|less|scss)$": "<rootDir>/__mocks__/styleMock.js"
     },
     "transform": {
       ".(ts|tsx|js|jsx)": "./node_modules/ts-jest/preprocessor.js"
@@ -39,7 +40,7 @@
     "transformIgnorePatterns": [
       "<rootDir>/node_modules/(?!lodash-es|@console)"
     ],
-    "testRegex": "/__tests__/.*\\.(ts|tsx|js|jsx)$",
+    "testRegex": "/__tests__/.*\\.spec\\.(ts|tsx|js|jsx)$",
     "setupFiles": [
       "./__mocks__/requestAnimationFrame.js",
       "./__mocks__/localStorage.ts",
@@ -61,9 +62,11 @@
     ]
   },
   "dependencies": {
-    "@patternfly/patternfly": "2.8.2",
+    "@patternfly/patternfly": "2.13.1",
     "@patternfly/react-charts": "3.6.6",
-    "@patternfly/react-core": "3.33.1",
+    "@patternfly/react-core": "3.48.5",
+    "@patternfly/react-table": "2.11.1",
+    "@patternfly/react-virtualized-extension": "1.0.5",
     "brace": "0.11.x",
     "classnames": "2.x",
     "core-js": "2.x",
@@ -94,7 +97,7 @@
     "react-linkify": "^0.2.2",
     "react-modal": "3.x",
     "react-redux": "5.x",
-    "react-router-dom": "4.x",
+    "react-router-dom": "4.3.x",
     "react-tagsinput": "3.19.x",
     "react-transition-group": "2.3.x",
     "react-virtualized": "9.x",
@@ -117,6 +120,7 @@
     "@types/immutable": "3.x",
     "@types/jasmine": "2.8.x",
     "@types/jasminewd2": "2.0.x",
+    "@types/jest": "21.x",
     "@types/lodash-es": "4.x",
     "@types/prop-types": "15.5.6",
     "@types/react": "16.8.13",

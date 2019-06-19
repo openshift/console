@@ -1,6 +1,7 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-
+import { sortable } from '@patternfly/react-table';
+import * as classNames from 'classnames';
 import { Conditions } from './conditions';
 import { errorModal } from './modals';
 import { Tooltip } from './utils/tooltip';
@@ -13,11 +14,11 @@ import {
   referenceForModel,
 } from '../module/k8s';
 import {
-  ColHead,
   DetailsPage,
-  List,
-  ListHeader,
   ListPage,
+  Table,
+  TableRow,
+  TableData,
 } from './factory';
 import {
   Kebab,
@@ -38,7 +39,7 @@ const pauseAction: KebabAction = (kind, obj) => ({
   callback: () => togglePaused(kind, obj).catch((err) => errorModal({error: err.message})),
   accessReview: {
     group: kind.apiGroup,
-    resource: kind.path,
+    resource: kind.plural,
     name: obj.metadata.name,
     verb: 'patch',
   },
@@ -197,43 +198,79 @@ export const MachineConfigPoolDetailsPage: React.SFC<any> = props => (
   />
 );
 
-const MachineConfigPoolHeader: React.SFC<any> = props => <ListHeader>
-  <ColHead {...props} className="col-xs-6 col-lg-4" sortField="metadata.name">Name</ColHead>
-  <ColHead {...props} className="hidden-xs hidden-sm hidden-md col-lg-5" sortField="status.configuration.name">Configuration</ColHead>
-  <ColHead {...props} className="col-xs-3  col-sm-2 col-lg-1">Updated</ColHead>
-  <ColHead {...props} className="hidden-xs col-sm-2 col-lg-1">Updating</ColHead>
-  <ColHead {...props} className="col-xs-3  col-sm-2 col-lg-1">Degraded</ColHead>
-</ListHeader>;
+const tableColumnClasses = [
+  classNames('col-lg-4', 'col-xs-6'),
+  classNames('col-lg-5', 'hidden-md', 'hidden-sm', 'hidden-xs'),
+  classNames('col-lg-1', 'col-sm-2', 'col-xs-3'),
+  classNames('col-lg-1', 'col-sm-2', 'hidden-xs'),
+  classNames('col-lg-1', 'col-sm-2', 'col-xs-3'),
+  Kebab.columnClass,
+];
 
-const MachineConfigPoolRow: React.SFC<MachineConfigPoolRowProps> = ({obj}) => <div className="row co-resource-list__item">
-  <div className="col-xs-6 col-lg-4 co-break-word">
-    <ResourceLink kind={machineConfigPoolReference} name={obj.metadata.name} title={obj.metadata.name} />
-  </div>
-  <div className="hidden-xs hidden-sm hidden-md col-lg-5 co-break-word">
-    {_.get(obj, 'status.configuration.name') ? <ResourceLink kind={machineConfigReference} name={obj.status.configuration.name} title={obj.status.configuration.name} /> : '-'}
-  </div>
-  <div className="col-xs-3 col-sm-2 col-lg-1">
-    {getConditionStatus(obj, MachineConfigPoolConditionType.Updated)}
-  </div>
-  <div className="hidden-xs col-sm-2 col-lg-1">
-    {getConditionStatus(obj, MachineConfigPoolConditionType.Updating)}
-  </div>
-  <div className="col-xs-3 col-sm-2 col-lg-1 co-truncate">
-    {getConditionStatus(obj, MachineConfigPoolConditionType.Degraded)}
-  </div>
+const MachineConfigPoolTableHeader = () => {
+  return [
+    {
+      title: 'Name', sortField: 'metadata.name', transforms: [sortable],
+      props: { className: tableColumnClasses[0] },
+    },
+    {
+      title: 'Configuration', sortField: 'status.configuration.name', transforms: [sortable],
+      props: { className: tableColumnClasses[1] },
+    },
+    {
+      title: 'Updated', props: { className: tableColumnClasses[2] },
+    },
+    {
+      title: 'Updating', props: { className: tableColumnClasses[3] },
+    },
+    {
+      title: 'Degraded', props: { className: tableColumnClasses[4] },
+    },
+    {
+      title: '', props: { className: tableColumnClasses[5] },
+    },
+  ];
+};
+MachineConfigPoolTableHeader.displayName = 'MachineConfigPoolTableHeader';
 
-  <div className="dropdown-kebab-pf">
-    <ResourceKebab actions={machineConfigPoolMenuActions} kind={machineConfigPoolReference} resource={obj} />
-  </div>
-</div>;
+const MachineConfigPoolTableRow: React.FC<MachineConfigPoolTableRowProps> = ({obj, index, key, style}) => {
+  return (
+    <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+      <TableData className={classNames(tableColumnClasses[0], 'co-break-word')}>
+        <ResourceLink kind={machineConfigPoolReference} name={obj.metadata.name} title={obj.metadata.name} />
+      </TableData>
+      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+        {_.get(obj, 'status.configuration.name') ? <ResourceLink kind={machineConfigReference} name={obj.status.configuration.name} title={obj.status.configuration.name} /> : '-'}
+      </TableData>
+      <TableData className={tableColumnClasses[2]}>
+        {getConditionStatus(obj, MachineConfigPoolConditionType.Updated)}
+      </TableData>
+      <TableData className={tableColumnClasses[3]}>
+        {getConditionStatus(obj, MachineConfigPoolConditionType.Updating)}
+      </TableData>
+      <TableData className={classNames(tableColumnClasses[4], 'co-truncate')}>
+        {getConditionStatus(obj, MachineConfigPoolConditionType.Degraded)}
+      </TableData>
+      <TableData className={tableColumnClasses[5]}>
+        <ResourceKebab actions={machineConfigPoolMenuActions} kind={machineConfigPoolReference} resource={obj} />
+      </TableData>
+    </TableRow>
+  );
+};
+MachineConfigPoolTableRow.displayName = 'MachineConfigPoolTableRow';
+type MachineConfigPoolTableRowProps = {
+  obj: MachineConfigPoolKind;
+  index: number;
+  key?: string;
+  style: object;
+};
 
-const MachineConfigPoolList: React.SFC<any> = props => (
-  <List
-    {...props}
-    Header={MachineConfigPoolHeader}
-    Row={MachineConfigPoolRow}
-  />
-);
+const MachineConfigPoolList: React.SFC<any> = props => <Table
+  {...props}
+  aria-label="Machine Config Pools"
+  Header={MachineConfigPoolTableHeader}
+  Row={MachineConfigPoolTableRow}
+  virtualize />;
 
 export const MachineConfigPoolPage: React.SFC<any> = props => (
   <ListPage
@@ -261,9 +298,5 @@ type MachineConfigPoolCharacteristicsProps = {
 };
 
 type MachineConfigPoolSummaryProps = {
-  obj: MachineConfigPoolKind;
-};
-
-type MachineConfigPoolRowProps = {
   obj: MachineConfigPoolKind;
 };

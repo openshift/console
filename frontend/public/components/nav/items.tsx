@@ -51,6 +51,7 @@ class NavLink<P extends NavLinkProps> extends React.PureComponent<P> {
           id={id}
           to={this.to}
           onClick={onClick}
+          data-test-nav-item={name}
         >
           {name}
         </Link>

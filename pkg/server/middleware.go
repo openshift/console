@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/openshift/console/auth"
+	"github.com/openshift/console/pkg/auth"
 )
 
 // Middleware generates a middleware wrapper for request hanlders.

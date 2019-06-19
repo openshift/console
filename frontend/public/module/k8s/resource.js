@@ -31,7 +31,7 @@ export const resourceURL = (model, options) => {
   if (options.ns) {
     u += `/namespaces/${options.ns}`;
   }
-  u += `/${model.path}`;
+  u += `/${model.plural}`;
   if (options.name) {
     u += `/${options.name}`;
   }

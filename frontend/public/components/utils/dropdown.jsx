@@ -404,7 +404,7 @@ class ActionsMenuDropdown extends DropdownMixin {
           <Caret />
         </div>
       </button>
-      {this.state.active && <KebabItems options={actions} onClick={onClick} />}
+      {this.state.active && <KebabItems options={actions} onClick={onClick} isActionDropdown />}
     </div>;
   }
 }
