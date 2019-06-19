@@ -59,7 +59,7 @@ export const resourcePath = (kind, name, namespace) => {
 export const resourceObjPath = (obj, kind) => resourcePath(kind, _.get(obj, 'metadata.name'), _.get(obj, 'metadata.namespace'));
 
 export const ResourceLink = connectToModel(
-  ({className, displayName, inline = false, kind, linkTo = true, name, namespace, hideIcon, title}) => {
+  ({className, displayName, inline = false, kind, linkTo = true, name, namespace, hideIcon, title, children}) => {
     if (!kind) {
       return null;
     }
@@ -70,6 +70,7 @@ export const ResourceLink = connectToModel(
     return <span className={classes}>
       { !hideIcon && <ResourceIcon kind={kind} /> }
       {(path && linkTo) ? <Link to={path} title={title} className="co-resource-item__resource-name">{value}</Link> : <span className="co-resource-item__resource-name">{value}</span>}
+      {children}
     </span>;
   });
 
