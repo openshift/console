@@ -66,7 +66,7 @@ const fetchK8sHealth = async(url) => {
   return response.text();
 };
 
-const _HealthCard: React.FC<HealthProps> = ({
+const HealthCard_: React.FC<HealthProps> = ({
   watchURL,
   stopWatchURL,
   watchPrometheus,
@@ -153,7 +153,7 @@ const _HealthCard: React.FC<HealthProps> = ({
   );
 };
 
-export const HealthCard = withDashboardResources(connect(mapStateToProps)(_HealthCard));
+export const HealthCard = withDashboardResources(connect(mapStateToProps)(HealthCard_));
 
 type ClusterHealth = {
   state: HealthState;

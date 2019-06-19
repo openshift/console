@@ -1,3 +1,5 @@
+import { K8sResourceKindReference, Selector, K8sResourceKind } from '../../module/k8s';
+
 export * from './line-buffer';
 export * from './promise-component';
 export * from './kebab';
@@ -78,3 +80,19 @@ export const enum EnvType {
   ENV = 0,
   ENV_FROM = 1
 }
+
+export type FirehoseResource = {
+  kind: K8sResourceKindReference;
+  name?: string;
+  namespace?: string;
+  isList?: boolean;
+  selector?: Selector;
+  prop: string;
+  namespaced?: boolean,
+};
+
+export type FirehoseResult<R extends K8sResourceKind | K8sResourceKind[] = K8sResourceKind[]> = {
+  loaded: boolean;
+  loadError: string;
+  data: R;
+};

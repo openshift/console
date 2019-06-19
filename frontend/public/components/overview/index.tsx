@@ -35,6 +35,7 @@ import {
   StatusBox,
   EmptyBox,
   resourceObjPath,
+  FirehoseResult,
 } from '../utils';
 
 import { ProjectOverview } from './project-overview';
@@ -888,7 +889,7 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
   }
 
   render() {
-    const {loaded, loadError, project = {}} = this.props;
+    const {loaded, loadError, project} = this.props;
     const {filteredItems, groupedItems, firstLabel} = this.state;
 
     const skeletonOverview = <div className="skeleton-overview">
@@ -901,7 +902,7 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
     return <div className="co-m-pane">
       <OverviewHeading
         firstLabel={firstLabel}
-        project={project.data}
+        project={_.get(project, 'data')}
       />
       <div className="co-m-pane__body co-m-pane__body--no-top-margin">
         <StatusBox
@@ -1062,16 +1063,6 @@ const Overview_: React.SFC<OverviewProps> = ({mock, match, selectedItem, title, 
 
 export const Overview = connect<OverviewPropsFromState, OverviewPropsFromDispatch, OverviewOwnProps>(overviewStateToProps, overviewDispatchToProps)(Overview_);
 
-type FirehoseItem = {
-  data?: K8sResourceKind;
-  [key: string]: any;
-};
-
-type FirehoseList<T extends K8sResourceKind> = {
-  data?: T[];
-  [key: string]: any;
-};
-
 type OverviewItemAlerts = {
   [key: string]: {
     message: string;
@@ -1161,23 +1152,23 @@ type OverviewMainContentPropsFromDispatch = {
 };
 
 type OverviewMainContentOwnProps = {
-  builds?: FirehoseList<K8sResourceKind>;
-  buildConfigs?: FirehoseList<K8sResourceKind>;
-  daemonSets?: FirehoseList<K8sResourceKind>;
-  deploymentConfigs?: FirehoseList<K8sResourceKind>;
-  deployments?: FirehoseList<K8sResourceKind>;
+  builds?: FirehoseResult;
+  buildConfigs?: FirehoseResult;
+  daemonSets?: FirehoseResult;
+  deploymentConfigs?: FirehoseResult;
+  deployments?: FirehoseResult;
   mock: boolean;
   loaded?: boolean;
   loadError?: any;
   namespace: string;
-  pods?: FirehoseList<PodKind>;
-  project?: FirehoseItem;
-  replicationControllers?: FirehoseList<K8sResourceKind>;
-  replicaSets?: FirehoseList<K8sResourceKind>;
-  routes?: FirehoseList<K8sResourceKind>;
-  services?: FirehoseList<K8sResourceKind>;
+  pods?: FirehoseResult<PodKind[]>;
+  project?: FirehoseResult<K8sResourceKind>;
+  replicationControllers?: FirehoseResult;
+  replicaSets?: FirehoseResult;
+  routes?: FirehoseResult;
+  services?: FirehoseResult;
   selectedItem: OverviewItem;
-  statefulSets?: FirehoseList<K8sResourceKind>;
+  statefulSets?: FirehoseResult;
   title?: string;
 };
 
