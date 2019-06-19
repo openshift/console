@@ -43,7 +43,29 @@ const plugin: Plugin<ConsumedExtensions> = [
       position: GridPosition.MAIN,
       loader: () =>
         import(
-          './components/dashboard-page/storage-dashboard/data-resiliency/data-resiliency' /* webpackChunkName: "ceph-data-resiliency-card" */
+          './components/dashboard-page/storage-dashboard/health-card' /* webpackChunkName: "ceph-storage-health-card" */
+        ).then((m) => m.default),
+    },
+  },
+  {
+    type: 'Dashboards/Card',
+    properties: {
+      tab: 'persistent-storage',
+      position: GridPosition.LEFT,
+      loader: () =>
+        import(
+          './components/dashboard-page/storage-dashboard/details-card' /* webpackChunkName: "ceph-storage-details-card" */
+        ).then((m) => m.default),
+    },
+  },
+  {
+    type: 'Dashboards/Card',
+    properties: {
+      tab: 'persistent-storage',
+      position: GridPosition.MAIN,
+      loader: () =>
+        import(
+          './components/dashboard-page/storage-dashboard/data-resiliency/data-resiliency' /* webpackChunkName: "ceph-storage-data-resiliency-card" */
         ).then((m) => m.DataResiliencyWithResources),
     },
   },
