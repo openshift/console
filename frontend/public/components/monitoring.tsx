@@ -42,21 +42,21 @@ import {
 const AlertResource = {
   kind: 'Alert',
   label: 'Alert',
-  path: '/monitoring/alerts',
+  plural: '/monitoring/alerts',
   abbr: 'AL',
 };
 
 const AlertRuleResource = {
   kind: 'AlertRule',
   label: 'Alerting Rule',
-  path: '/monitoring/alertrules',
+  plural: '/monitoring/alertrules',
   abbr: 'AR',
 };
 
 const SilenceResource = {
   kind: 'Silence',
   label: 'Silence',
-  path: '/monitoring/silences',
+  plural: '/monitoring/silences',
   abbr: 'SL',
 };
 
@@ -69,8 +69,8 @@ const buildNotFiringAlert = (rule: Rule): Alert => ({
   state: AlertStates.NotFiring,
 });
 
-const alertURL = (alert, ruleID) => `${AlertResource.path}/${ruleID}?${labelsToParams(alert.labels)}`;
-const ruleURL = rule => `${AlertRuleResource.path}/${_.get(rule, 'id')}`;
+const alertURL = (alert, ruleID) => `${AlertResource.plural}/${ruleID}?${labelsToParams(alert.labels)}`;
+const ruleURL = rule => `${AlertRuleResource.plural}/${_.get(rule, 'id')}`;
 
 const alertDescription = alert => {
   const {annotations = {}, labels = {}} = alert;
@@ -91,7 +91,7 @@ const refreshPoller = key => {
 
 const silenceAlert = alert => ({
   label: 'Silence Alert',
-  href: `${SilenceResource.path}/~new?${labelsToParams(alert.labels)}`,
+  href: `${SilenceResource.plural}/~new?${labelsToParams(alert.labels)}`,
 });
 
 const viewAlertRule = alert => ({
@@ -101,7 +101,7 @@ const viewAlertRule = alert => ({
 
 const editSilence = silence => ({
   label: silenceState(silence) === SilenceStates.Expired ? 'Recreate Silence' : 'Edit Silence',
-  href: `${SilenceResource.path}/${silence.id}/edit`,
+  href: `${SilenceResource.plural}/${silence.id}/edit`,
 });
 
 const cancelSilence = (silence) => ({
@@ -751,7 +751,7 @@ const SilenceRow = ({obj}) => {
     <div className="col-sm-7 col-xs-8">
       <div className="co-resource-item">
         <MonitoringResourceIcon resource={SilenceResource} />
-        <Link className="co-resource-item__resource-name" data-test-id="silence-resource-link" title={obj.id} to={`${SilenceResource.path}/${obj.id}`}>{obj.name}</Link>
+        <Link className="co-resource-item__resource-name" data-test-id="silence-resource-link" title={obj.id} to={`${SilenceResource.plural}/${obj.id}`}>{obj.name}</Link>
       </div>
       <div className="monitoring-label-list">
         <SilenceMatchersList silence={obj} />
@@ -777,7 +777,7 @@ const SilenceTableRow: React.FC<SilenceTableRowProps> = ({obj, index, key, style
       <TableData className={tableSilenceClasses[0]}>
         <div className="co-resource-item">
           <MonitoringResourceIcon resource={SilenceResource} />
-          <Link className="co-resource-item__resource-name" data-test-id="silence-resource-link" title={obj.id} to={`${SilenceResource.path}/${obj.id}`}>{obj.name}</Link>
+          <Link className="co-resource-item__resource-name" data-test-id="silence-resource-link" title={obj.id} to={`${SilenceResource.plural}/${obj.id}`}>{obj.name}</Link>
         </div>
         <div className="monitoring-label-list">
           <SilenceMatchersList silence={obj} />
@@ -921,7 +921,7 @@ class SilenceForm_ extends React.Component<SilenceFormProps, SilenceFormState> {
       .then(({data}) => {
         this.setState({error: undefined});
         refreshPoller('silences');
-        history.push(`${SilenceResource.path}/${encodeURIComponent(_.get(data, 'silenceId'))}`);
+        history.push(`${SilenceResource.plural}/${encodeURIComponent(_.get(data, 'silenceId'))}`);
       })
       .catch(err => this.setState({error: _.get(err, 'json.error') || err.message || 'Error saving Silence'}))
       .then(() => this.setState({inProgress: false}));
@@ -993,7 +993,7 @@ class SilenceForm_ extends React.Component<SilenceFormProps, SilenceFormState> {
 
         <ButtonBar errorMessage={error} inProgress={inProgress}>
           <button type="submit" className="btn btn-primary">{saveButtonText || 'Save'}</button>
-          <Link to={data.id ? `${SilenceResource.path}/${data.id}` : SilenceResource.path} className="btn btn-default">Cancel</Link>
+          <Link to={data.id ? `${SilenceResource.plural}/${data.id}` : SilenceResource.plural} className="btn btn-default">Cancel</Link>
         </ButtonBar>
       </form>
     </div>;

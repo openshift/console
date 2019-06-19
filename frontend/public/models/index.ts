@@ -880,7 +880,6 @@ export const InfrastructureModel: K8sKind = {
   label: 'Infrastructure',
   labelPlural: 'Infrastructures',
   apiVersion: 'v1',
-  path: 'infrastructures',
   apiGroup: 'config.openshift.io',
   plural: 'infrastructures',
   abbr: 'INF',
