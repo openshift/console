@@ -114,6 +114,14 @@
     display: inline-flex;
     margin: 0 20px 0 0;
   }
+  &--truncate {
+    white-space: nowrap;
+    .co-resource-item__resource-name {
+      line-height: normal;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
   &__deleting {
     animation: co-resource-icon__deleting 1.5s cubic-bezier(0.45, 0.05, 0.55, 0.95) alternate infinite;
     flex: 0 0 auto;
@@ -125,16 +133,11 @@
     position: relative;
     white-space: nowrap;
   }
+  &__help-text {
+    margin-left: 3px;
+    white-space: nowrap;
+  }
   &__resource-name {
     min-width: 0; // required so co-break-word works
-  }
-}
-
-.co-resource-item--truncate {
-  white-space: nowrap;
-  .co-resource-item__resource-name {
-    line-height: normal;
-    overflow: hidden;
-    text-overflow: ellipsis;
   }
 }
