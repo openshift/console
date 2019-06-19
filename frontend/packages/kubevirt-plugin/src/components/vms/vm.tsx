@@ -11,21 +11,23 @@ import {
 } from 'kubevirt-web-ui-components';
 import { getName, getNamespace, getUid } from '@console/shared';
 
-import { NamespaceModel } from '@console/internal/models';
+import { NamespaceModel, PodModel } from '@console/internal/models';
 import { Table, MultiListPage, TableRow, TableData } from '@console/internal/components/factory';
-import { Kebab, ResourceLink } from '@console/internal/components/utils';
+import { FirehoseResult, Kebab, ResourceLink } from '@console/internal/components/utils';
 // import { actions } from '../../module/okdk8s';
 
 import { sortable } from '@patternfly/react-table';
+import { PodKind } from '@console/internal/module/k8s';
 import {
+  VirtualMachineInstanceMigrationModel,
   VirtualMachineModel,
   // VirtualMachineInstanceModel,
-  // VirtualMachineInstanceMigrationModel,
 } from '../../models';
+
 import { VMKind } from '../../types';
+import { menuActions } from './menu-actions';
 
 // import { openCreateVmWizard } from '../modals/create-vm-modal';
-// import { menuActions } from './menu-actions';
 
 const tableColumnClasses = [
   classNames('col-lg-4', 'col-md-4', 'col-sm-6', 'col-xs-6'),
@@ -51,18 +53,19 @@ const VMHeader = () => [
   //   title: 'Status',
   //   props: { className: tableColumnClasses[2] },
   // },
-  // {
-  //   title: '',
-  //   props: { className: Kebab.columnClass, props: { className: tableColumnClasses[3] } },
-  // },
+  {
+    title: '',
+    props: { className: Kebab.columnClass, props: { className: tableColumnClasses[3] } },
+  },
 ];
 
-const VMRow: React.FC<VMRowProps> = ({ obj: vm, index, key, style }) => {
+const VMRow: React.FC<VMRowProps> = ({ obj: vm, customData, index, key, style }) => {
   const name = getName(vm);
   const namespace = getNamespace(vm);
+  const uid = getUid(vm);
 
   return (
-    <TableRow id={getUid(vm)} index={index} trKey={key} style={style}>
+    <TableRow id={uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink kind={VirtualMachineModel.kind} name={name} namespace={namespace} />
       </TableData>
@@ -70,20 +73,32 @@ const VMRow: React.FC<VMRowProps> = ({ obj: vm, index, key, style }) => {
         <ResourceLink kind={NamespaceModel.kind} name={namespace} title={namespace} />
       </TableData>
       {/* TODO(mlibra): migrate VM status in a follow-up */}
-      {/* TODO(mlibra): migrate actions in a follow-up */}
+      <TableData className={Kebab.columnClass}>
+        <Kebab
+          options={menuActions.map((action) => action(VirtualMachineModel, vm, customData))}
+          key={`kebab-for-${uid}`}
+          id={`kebab-for-${uid}`}
+        />
+      </TableData>
     </TableRow>
   );
 };
 
-const VMList: React.FC<React.ComponentProps<typeof Table> & VMListProps> = (props) => (
-  <Table
-    {...props}
-    aria-label={VirtualMachineModel.labelPlural}
-    Header={VMHeader}
-    Row={VMRow}
-    virtualize
-  />
-);
+const VMList: React.FC<React.ComponentProps<typeof Table> & VMListProps> = (props) => {
+  const { resources } = props;
+  return (
+    <Table
+      {...props}
+      aria-label={VirtualMachineModel.labelPlural}
+      Header={VMHeader}
+      Row={VMRow}
+      customData={{
+        pods: resources.pods.data || [],
+        migrations: resources.migrations.data || [],
+      }}
+    />
+  );
+};
 
 VMList.displayName = 'VMList';
 
@@ -122,6 +137,12 @@ const getCreateProps = (namespace: string) => ({
 
 export const VirtualMachinesPage: React.FC<VirtualMachinesPageProps> = (props) => {
   const { namespace } = props;
+  const resources = [
+    getResource(VirtualMachineModel, { namespace, prop: 'vms' }),
+    getResource(PodModel, { namespace, prop: 'pods' }),
+    getResource(VirtualMachineInstanceMigrationModel, { namespace, prop: 'migrations' }),
+  ];
+
   const flatten = ({ vms: { data: vmsData, loaded, loadError } }) =>
     loaded && !loadError ? vmsData : [];
 
@@ -133,7 +154,7 @@ export const VirtualMachinesPage: React.FC<VirtualMachinesPageProps> = (props) =
       rowFilters={filters}
       ListComponent={VMList}
       createProps={getCreateProps(props.namespace)}
-      resources={[getResource(VirtualMachineModel, { namespace, prop: 'vms' })]}
+      resources={resources}
       flatten={flatten}
     />
   );
@@ -144,10 +165,18 @@ type VMRowProps = {
   index: number;
   key: string;
   style: object;
+  customData: {
+    pods: PodKind[];
+    migrations: any[];
+  };
 };
 
 type VMListProps = {
   data: VMKind[];
+  resources: {
+    pods: FirehoseResult<PodKind[]>;
+    migrations: FirehoseResult<any[]>;
+  };
 };
 
 type VirtualMachinesPageProps = {
