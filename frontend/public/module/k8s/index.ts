@@ -35,10 +35,12 @@ export type ObjectReference = {
 export type ObjectMetadata = {
   name?: string;
   generateName?: string;
+  uid?: string;
   annotations?: {[key: string]: string},
   namespace?: string,
   labels?: {[key: string]: string},
   ownerReferences?: OwnerReference[],
+  deletionTimestamp?: string | Date;
   [key: string]: any,
 };
 
@@ -56,7 +58,7 @@ export type K8sResourceCondition<T> = {
   message: string;
 };
 
-export type MatchExpression = {key: string, operator: 'Exists' | 'DoesNotExist'} | {key: string, operator: 'In' | 'NotIn' | 'Equals' | 'NotEquals', values: string[]};
+export type MatchExpression = {key: string, operator: 'Exists' | 'DoesNotExist' | 'In' | 'NotIn' | 'Equals' | 'NotEquals' | string, values?: string[]};
 
 export type Selector = {
   matchLabels?: {[key: string]: string};
@@ -81,8 +83,8 @@ export type Toleration = {
 };
 
 export type K8sResourceKind = {
-  apiVersion: string;
-  kind: string;
+  apiVersion?: string;
+  kind?: string;
   metadata?: ObjectMetadata;
   spec?: {
     selector?: Selector;
