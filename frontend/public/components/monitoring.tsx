@@ -1,24 +1,20 @@
-import * as _ from 'lodash-es';
 import * as classNames from 'classnames';
 import * as fuzzy from 'fuzzysearch';
+import * as _ from 'lodash-es';
 import { murmur3 } from 'murmurhash-js';
+import { Switch } from '@patternfly/react-core';
+import { sortable } from '@patternfly/react-table';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
-import { Link, Redirect, Route, Switch } from 'react-router-dom';
-import { sortable } from '@patternfly/react-table';
-import { coFetchJSON } from '../co-fetch';
+import { Link, Redirect, Route, Switch as RouteSwitch } from 'react-router-dom';
+
 import * as k8sActions from '../actions/k8s';
+import * as UIActions from '../actions/ui';
+import { coFetchJSON } from '../co-fetch';
 import { alertState, AlertStates, connectToURLs, MonitoringRoutes, silenceState, SilenceStates } from '../reducers/monitoring';
 import store from '../redux';
-import * as UIActions from '../actions/ui';
-import {
-  ResourceRow,
-  Table,
-  TableData,
-  TableRow,
-  TextFilter,
-} from './factory';
+import { ResourceRow, Table, TableData, TableRow, TextFilter } from './factory';
 import { PROMETHEUS_BASE_PATH, QueryBrowser } from './graphs';
 import { PrometheusEndpoint } from './graphs/helpers';
 import { getPrometheusExpressionBrowserURL } from './graphs/prometheus-graph';
@@ -1105,9 +1101,10 @@ const QueryBrowserPage = withFallback(() => {
 
   const onQueryChange = (e, i) => updateQuery(i, {text: e.target.value});
 
-  const toggleEnabled = i => _.get(queries, [i, 'enabled'])
-    ? updateQuery(i, {enabled: false, expanded: false, query: ''})
-    : updateQuery(i, {enabled: true, expanded: true, query: _.get(queries, [i, 'text'])});
+  const toggleEnabled = i => {
+    const {enabled, text} = queries[i];
+    updateQuery(i, {enabled: !enabled, expanded: !enabled, query: enabled ? '' : text});
+  };
 
   const toggleExpanded = i => updateQuery(i, {expanded: !_.get(queries, [i, 'expanded'])});
 
@@ -1197,37 +1194,45 @@ const QueryBrowserPage = withFallback(() => {
                 <button type="submit" className="btn btn-primary">Run Queries</button>
               </div>
             </div>
-            {_.map(queries, (q, i) => <div className="group" key={i}>
-              <div className="group__title">
-                <button
-                  className="btn btn-link query-browser__table-toggle-btn"
-                  onClick={() => toggleExpanded(i)}
-                  title={`${q.expanded ? 'Hide' : 'Show'} Table`}
-                >
-                  <i
-                    aria-hidden="true"
-                    className={`fa fa-angle-${q.expanded ? 'down' : 'right'} query-browser__table-toggle-icon`}
+            {_.map(queries, (q, i) => {
+              const toggleEnabledLabel = `${q.enabled ? 'Disable' : 'Enable'} query`;
+              return <div className="group" key={i}>
+                <div className="group__title">
+                  <button
+                    className="btn btn-link query-browser__table-toggle-btn"
+                    onClick={() => toggleExpanded(i)}
+                    title={`${q.expanded ? 'Hide' : 'Show'} Table`}
+                  >
+                    <i
+                      aria-hidden="true"
+                      className={`fa fa-angle-${q.expanded ? 'down' : 'right'} query-browser__table-toggle-icon`}
+                    />
+                  </button>
+                  <input
+                    className="form-control query-browser__query"
+                    onBlur={e => onQueryBlur(e, i)}
+                    onChange={e => onQueryChange(e, i)}
+                    placeholder="Expression (press Shift+Enter for newlines)"
+                    type="text"
+                    value={q.text}
                   />
-                </button>
-                <input
-                  className="form-control query-browser__query"
-                  onBlur={e => onQueryBlur(e, i)}
-                  onChange={e => onQueryChange(e, i)}
-                  placeholder="Expression (press Shift+Enter for newlines)"
-                  type="text"
-                  value={q.text}
-                />
-                <div className="dropdown-kebab-pf query-browser__kebab">
-                  <Kebab options={[
-                    {label: `${q.enabled ? 'Disable' : 'Enable'} query`, callback: () => toggleEnabled(i)},
-                    {label: 'Delete query', callback: () => deleteQuery(i)},
-                  ]} />
+                  <div className="query-browser__query-switch">
+                    <Tooltip content={toggleEnabledLabel}>
+                      <Switch aria-label={toggleEnabledLabel} isChecked={q.enabled} onChange={() => toggleEnabled(i)} />
+                    </Tooltip>
+                  </div>
+                  <div className="dropdown-kebab-pf query-browser__kebab">
+                    <Kebab options={[
+                      {label: toggleEnabledLabel, callback: () => toggleEnabled(i)},
+                      {label: 'Delete query', callback: () => deleteQuery(i)},
+                    ]} />
+                  </div>
                 </div>
-              </div>
-              {q.expanded && <div className="group__body group__body--query-browser">
-                <MetricsList metrics={metrics[i]} />
-              </div>}
-            </div>)}
+                {q.expanded && <div className="group__body group__body--query-browser">
+                  <MetricsList metrics={metrics[i]} />
+                </div>}
+              </div>;
+            })}
           </form>
         </div>
       </div>
@@ -1299,7 +1304,7 @@ export class MonitoringUI extends React.Component<null, null> {
   }
 
   render() {
-    return <Switch>
+    return <RouteSwitch>
       <Redirect from="/monitoring" exact to="/monitoring/alerts" />
       <Route path="/monitoring/alerts" exact component={AlertsPage} />
       <Route path="/monitoring/alerts/:ruleID" exact component={AlertsDetailsPage} />
@@ -1309,7 +1314,7 @@ export class MonitoringUI extends React.Component<null, null> {
       <Route path="/monitoring/silences/:id" exact component={SilencesDetailsPage} />
       <Route path="/monitoring/silences/:id/edit" exact component={EditSilence} />
       <Route path="/monitoring/query-browser" exact component={QueryBrowserPage} />
-    </Switch>;
+    </RouteSwitch>;
   }
 }
 
