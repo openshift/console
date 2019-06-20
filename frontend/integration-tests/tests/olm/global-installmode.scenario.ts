@@ -50,9 +50,11 @@ describe('Interacting with an `AllNamespaces` install mode Operator (Redis)', ()
   });
 
   afterAll(() => {
-    execSync(`kubectl delete catalogsource -n ${catalogNamespace} ${catalogSource.metadata.name}`);
-    execSync(`kubectl delete subscription -n ${globalOperatorsNamespace} redis-enterprise`);
-    execSync(`kubectl delete clusterserviceversion -n ${globalOperatorsNamespace} redis-enterprise-operator.v0.0.1`);
+    [
+      `kubectl delete catalogsource -n ${catalogNamespace} ${catalogSource.metadata.name}`,
+      `kubectl delete subscription -n ${globalOperatorsNamespace} redis-enterprise`,
+      `kubectl delete clusterserviceversion -n ${globalOperatorsNamespace} redis-enterprise-operator.v0.0.1`,
+    ].forEach(cmd => _.attempt(() => execSync(cmd)));
   });
 
   afterEach(() => {
