@@ -12,6 +12,8 @@ import {
 import * as models from './models';
 import { yamlTemplates } from './yaml-templates';
 
+import './style.scss';
+
 type ConsumedExtensions =
   | ResourceNSNavItem
   | ResourceListPage
@@ -53,7 +55,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       model: models.VirtualMachineModel,
       loader: () =>
-        import('./components/vm' /* webpackChunkName: "kubevirt-virtual-machines" */).then(
+        import('./components/vms/vm' /* webpackChunkName: "kubevirt-virtual-machines" */).then(
           (m) => m.VirtualMachinesPage,
         ),
     },
@@ -65,13 +67,16 @@ const plugin: Plugin<ConsumedExtensions> = [
       template: yamlTemplates.getIn([models.VirtualMachineModel, 'default']),
     },
   },
-  // {
-  //   type: 'Page/Resource/Details',
-  //   properties: {
-  //     model: VirtualMachineModel,
-  //     loader: () => import('./components/vm-detail' /* webpackChunkName: "kubevirt-virtual-machines" */).then(m => m.VirtualMachinesDetailsPage),
-  //   },
-  // },
+  {
+    type: 'Page/Resource/Details',
+    properties: {
+      model: models.VirtualMachineModel,
+      loader: () =>
+        import(
+          './components/vms/vm-details-page' /* webpackChunkName: "kubevirt-virtual-machine-details" */
+        ).then((m) => m.VirtualMachinesDetailsPage),
+    },
+  },
 ];
 
 export default plugin;
