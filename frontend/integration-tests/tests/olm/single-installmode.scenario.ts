@@ -1,5 +1,6 @@
 import { browser, $, $$, element, ExpectedConditions as until, by } from 'protractor';
 import { execSync } from 'child_process';
+import * as _ from 'lodash';
 
 import { appHost, testName, checkLogs, checkErrors } from '../../protractor.conf';
 import * as crudView from '../../views/crud.view';
@@ -44,9 +45,11 @@ describe('Interacting with a `OwnNamespace` install mode Operator (Prometheus)',
   });
 
   afterAll(() => {
-    execSync(`kubectl delete catalogsource -n ${testName} ${catalogSource.metadata.name}`);
-    execSync(`kubectl delete subscription -n ${testName} prometheus`);
-    execSync(`kubectl delete clusterserviceversion -n ${testName} prometheusoperator.0.27.0`);
+    [
+      `kubectl delete catalogsource -n ${testName} ${catalogSource.metadata.name}`,
+      `kubectl delete subscription -n ${testName} prometheus`,
+      `kubectl delete clusterserviceversion -n ${testName} prometheusoperator.0.27.0`,
+    ].forEach(cmd => _.attempt(() => execSync(cmd)));
   });
 
   afterEach(() => {
