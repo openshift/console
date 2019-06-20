@@ -3,9 +3,9 @@ import { TableRow, TableData } from '@console/internal/components/factory';
 import {
   Kebab,
   ResourceLink,
-  StatusIcon,
   Timestamp,
   ResourceKebab,
+  StatusIconAndText,
 } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { pipelineFilterReducer } from '../../utils/pipeline-filter-reducer';
@@ -52,7 +52,7 @@ const PipelineRow: React.FC<PipelineRowProps> = ({ obj, index, key, style }) => 
         )}
       </TableData>
       <TableData className={tableColumnClasses[2]}>
-        <StatusIcon status={pipelineFilterReducer(obj)} />
+        <StatusIconAndText status={pipelineFilterReducer(obj)} />
       </TableData>
       <TableData className={tableColumnClasses[3]}>-</TableData>
       <TableData className={tableColumnClasses[4]}>
