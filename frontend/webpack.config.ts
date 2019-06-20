@@ -105,10 +105,7 @@ const config: webpack.Configuration = {
     runtimeChunk: true,
   },
   plugins: [
-    // replace 'lodash' and 'lodash/*' imports with a lodash-es equivalent
-    new webpack.NormalModuleReplacementPlugin(/^lodash($|\/.*$)/, (resource) => {
-      resource.request = resource.request.replace(/^lodash/, 'lodash-es');
-    }),
+    new webpack.NormalModuleReplacementPlugin(/^lodash$/, 'lodash-es'),
     new ForkTsCheckerWebpackPlugin({ checkSyntacticErrors: true }),
     new HtmlWebpackPlugin({
       filename: './tokener.html',
