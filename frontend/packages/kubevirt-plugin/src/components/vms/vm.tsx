@@ -11,7 +11,6 @@ import {
 } from 'kubevirt-web-ui-components';
 import { getName, getNamespace, getUid } from '@console/shared';
 
-
 import { NamespaceModel } from '@console/internal/models';
 import { Table, MultiListPage, TableRow, TableData } from '@console/internal/components/factory';
 import { Kebab, ResourceLink } from '@console/internal/components/utils';
@@ -23,7 +22,7 @@ import {
   // VirtualMachineInstanceModel,
   // VirtualMachineInstanceMigrationModel,
 } from '../../models';
-import {VMKind} from "./types";
+import { VMKind } from '../../types';
 
 // import { openCreateVmWizard } from '../modals/create-vm-modal';
 // import { menuActions } from './menu-actions';
@@ -123,7 +122,8 @@ const getCreateProps = (namespace: string) => ({
 
 export const VirtualMachinesPage: React.FC<VirtualMachinesPageProps> = (props) => {
   const { namespace } = props;
-  const flatten = ({ vms: { data: vmsData, loaded, loadError } }) => loaded && !loadError ? vmsData : [];
+  const flatten = ({ vms: { data: vmsData, loaded, loadError } }) =>
+    loaded && !loadError ? vmsData : [];
 
   return (
     <MultiListPage

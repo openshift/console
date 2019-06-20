@@ -14,7 +14,7 @@ import { PodKind } from '@console/internal/module/k8s';
 import { PodModel, ServiceModel } from '@console/internal/models';
 
 import { ServicesList } from '@console/internal/components/service';
-import { VMKind, VMIKind } from './types';
+import { VMKind, VMIKind } from '../../types';
 import { VirtualMachineInstanceModel, VirtualMachineInstanceMigrationModel } from '../../models';
 import { VMResourceSummary, VMDetailsList } from './vm-resource';
 
