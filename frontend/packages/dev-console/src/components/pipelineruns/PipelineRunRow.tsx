@@ -3,9 +3,9 @@ import { TableRow, TableData } from '@console/internal/components/factory';
 import {
   Kebab,
   ResourceLink,
-  StatusIcon,
   Timestamp,
   ResourceKebab,
+  StatusIconAndText,
 } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { pipelineRunFilterReducer } from '../../utils/pipeline-filter-reducer';
@@ -40,7 +40,7 @@ const PipelineRunRow: React.FC<PipelineRunRowProps> = ({ obj, index, key, style 
         <Timestamp timestamp={obj.status && obj.status.startTime} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>
-        <StatusIcon status={pipelineRunFilterReducer(obj)} />
+        <StatusIconAndText status={pipelineRunFilterReducer(obj)} />
       </TableData>
       <TableData className={tableColumnClasses[3]}>-</TableData>
       <TableData className={tableColumnClasses[4]}>-</TableData>
