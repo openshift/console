@@ -7,7 +7,7 @@ import { ExternalLink } from '../utils';
 export const commandLineToolsModal = createModalLauncher(
   ({cancel}) => <div className="modal-content">
     <ModalTitle>Command Line Tools</ModalTitle>
-    <ModalBody className="modal-body">
+    <ModalBody>
       <h5>oc - OpenShift Command Line Interface (CLI)</h5>
       <p>With the OpenShift command line interface, you can create applications and manage OpenShift projects from a terminal.</p>
       <p>The oc binary offers the same capabilities as the kubectl binary, but it is further extended to natively support OpenShift Container Platform features.</p>

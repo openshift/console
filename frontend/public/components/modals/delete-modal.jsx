@@ -52,8 +52,8 @@ class DeleteModal extends PromiseComponent {
         <div className="co-delete-modal">
           <span aria-hidden="true" className="co-delete-modal__icon pficon pficon-warning-triangle-o"></span>
           <div>
-            <p className="lead">Delete {resource.metadata.name}?</p>
-            <div>Are you sure you want to delete <strong>{resource.metadata.name}</strong>
+            <p className="lead">Delete <span className="co-break-word">{resource.metadata.name}</span>?</p>
+            <div>Are you sure you want to delete <strong className="co-break-word">{resource.metadata.name}</strong>
               {_.has(resource.metadata, 'namespace') && <span> in namespace <strong>{ resource.metadata.namespace }</strong>?</span>}
               {_.has(kind, 'propagationPolicy') && <div className="checkbox">
                 <label className="control-label">
