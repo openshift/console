@@ -1,15 +1,6 @@
 import * as React from 'react';
 
-import {
-  getName,
-  getNamespace,
-  // VmStatus,
-  // getSimpleVmStatus,
-  // VM_SIMPLE_STATUS_ALL,
-  // VM_SIMPLE_STATUS_TO_TEXT,
-  //  getResource,
-  //  DASHES,
-} from 'kubevirt-web-ui-components';
+import { getName, getNamespace } from '@console/shared/src';
 
 import { NamespaceModel } from '@console/internal/models';
 import {

@@ -4,21 +4,27 @@ import * as _ from 'lodash';
 import { getResource, getServicesForVm } from 'kubevirt-web-ui-components';
 
 import {
+  V1VirtualMachine,
+  V1VirtualMachineInstance,
+  V1VirtualMachineInstanceMigration,
+} from 'kubevirt-typescript-api/esm';
+import { V1Pod } from 'openshift-typescript-api/esm';
+
+import {
   Firehose,
   StatusBox,
   ScrollToTopOnMount,
   SectionHeading,
+  FirehoseResult,
 } from '@console/internal/components/utils';
 
-import { PodKind } from '@console/internal/module/k8s';
 import { PodModel, ServiceModel } from '@console/internal/models';
 
 import { ServicesList } from '@console/internal/components/service';
-import { VMKind, VMIKind } from './types';
 import { VirtualMachineInstanceModel, VirtualMachineInstanceMigrationModel } from '../../models';
 import { VMResourceSummary, VMDetailsList } from './vm-resource';
 
-export const VMDetailsFirehose = ({ obj: vm }: { obj: VMKind }) => {
+export const VMDetailsFirehose = ({ obj: vm }: { obj: V1VirtualMachine }) => {
   const { name, namespace } = vm.metadata;
 
   const vmiRes = getResource(VirtualMachineInstanceModel, {
@@ -79,8 +85,8 @@ const VMDetails = (props: VMDetailsProps) => {
 };
 
 type VMDetailsProps = {
-  vm: VMKind;
-  pods?: PodKind[];
-  migrations?: any[];
-  vmi?: VMIKind;
+  vm: V1VirtualMachine;
+  pods?: FirehoseResult<V1Pod[]>;
+  migrations?: FirehoseResult<V1VirtualMachineInstanceMigration[]>;
+  vmi?: FirehoseResult<V1VirtualMachineInstance>;
 };
