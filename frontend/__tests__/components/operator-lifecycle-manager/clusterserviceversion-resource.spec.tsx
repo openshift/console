@@ -2,70 +2,28 @@ import * as React from 'react';
 import { match as RouterMatch } from 'react-router-dom';
 import { shallow, ShallowWrapper } from 'enzyme';
 import * as _ from 'lodash-es';
-
-import { ClusterServiceVersionResourceList, ClusterServiceVersionResourceListProps, ProvidedAPIsPage, ProvidedAPIsPageProps, ClusterServiceVersionResourceHeaderProps, ClusterServiceVersionResourcesDetailsState, ClusterServiceVersionResourceRowProps, ClusterServiceVersionResourceHeader, ClusterServiceVersionResourceRow, ClusterServiceVersionResourceDetails, ClusterServiceVersionResourcesDetailsPageProps, ClusterServiceVersionResourcesDetailsProps, ClusterServiceVersionResourcesDetailsPage, ClusterServiceVersionResourceLink, ProvidedAPIPage, ProvidedAPIPageProps } from '../../../public/components/operator-lifecycle-manager/clusterserviceversion-resource';
+import { ClusterServiceVersionResourceList, ClusterServiceVersionResourceListProps, ProvidedAPIsPage, ProvidedAPIsPageProps, CSVRTableRowProps, CSVRTableHeader, CSVRTableRow, ClusterServiceVersionResourceDetails, ClusterServiceVersionResourcesDetailsPageProps, ClusterServiceVersionResourcesDetailsProps, ClusterServiceVersionResourcesDetailsPage, ClusterServiceVersionResourceLink, ProvidedAPIPage, ProvidedAPIPageProps } from '../../../public/components/operator-lifecycle-manager/clusterserviceversion-resource';
 import { Resources } from '../../../public/components/operator-lifecycle-manager/k8s-resource';
 import { ClusterServiceVersionResourceKind, referenceForProvidedAPI } from '../../../public/components/operator-lifecycle-manager';
 import { StatusDescriptor } from '../../../public/components/operator-lifecycle-manager/descriptors/status';
 import { SpecDescriptor } from '../../../public/components/operator-lifecycle-manager/descriptors/spec';
 import { testCRD, testResourceInstance, testClusterServiceVersion, testOwnedResourceInstance, testModel } from '../../../__mocks__/k8sResourcesMocks';
-import { List, ColHead, ListHeader, DetailsPage, MultiListPage, ListPage } from '../../../public/components/factory';
-import { Timestamp, LabelList, ResourceSummary, StatusBox, ResourceKebab } from '../../../public/components/utils';
+import { Table, DetailsPage, MultiListPage, ListPage } from '../../../public/components/factory';
+import { Timestamp, LabelList, StatusBox, ResourceKebab } from '../../../public/components/utils';
 import { referenceFor, K8sKind, referenceForModel } from '../../../public/module/k8s';
 import { ClusterServiceVersionModel } from '../../../public/models';
 
-describe(ClusterServiceVersionResourceHeader.displayName, () => {
-  let wrapper: ShallowWrapper<ClusterServiceVersionResourceHeaderProps>;
-
-  beforeEach(() => {
-    wrapper = shallow(<ClusterServiceVersionResourceHeader data={[]} />);
-  });
-
-  it('renders column header for resource name', () => {
-    const colHeader = wrapper.find(ListHeader).find(ColHead).at(0);
-
-    expect(colHeader.props().sortField).toEqual('metadata.name');
-    expect(colHeader.childAt(0).text()).toEqual('Name');
-  });
-
-  it('renders column header for resource labels', () => {
-    const colHeader = wrapper.find(ListHeader).find(ColHead).at(1);
-
-    expect(colHeader.props().sortField).toEqual('metadata.labels');
-    expect(colHeader.childAt(0).text()).toEqual('Labels');
-  });
-
-  it('renders column header for resource type', () => {
-    const colHeader = wrapper.find(ListHeader).find(ColHead).at(2);
-
-    expect(colHeader.props().sortField).toEqual('kind');
-    expect(colHeader.childAt(0).text()).toEqual('Type');
-  });
-
-  it('renders column header for resource status', () => {
-    const colHeader = wrapper.find(ListHeader).find(ColHead).at(3);
-
-    expect(colHeader.childAt(0).text()).toEqual('Status');
-  });
-
-  it('renders column header for resource version', () => {
-    const colHeader = wrapper.find(ListHeader).find(ColHead).at(4);
-
-    expect(colHeader.childAt(0).text()).toEqual('Version');
-  });
-
-  it('renders column header for last updated timestamp', () => {
-    const colHeader = wrapper.find(ListHeader).find(ColHead).at(5);
-
-    expect(colHeader.childAt(0).text()).toEqual('Last Updated');
+describe(CSVRTableHeader.displayName, () => {
+  it('returns column header definition for resource', () => {
+    expect(Array.isArray(CSVRTableHeader()));
   });
 });
 
-describe(ClusterServiceVersionResourceRow.displayName, () => {
-  let wrapper: ShallowWrapper<ClusterServiceVersionResourceRowProps>;
+describe(CSVRTableRow.displayName, () => {
+  let wrapper: ShallowWrapper<CSVRTableRowProps>;
 
   beforeEach(() => {
-    wrapper = shallow(<ClusterServiceVersionResourceRow obj={testResourceInstance} />);
+    wrapper = shallow(<CSVRTableRow obj={testResourceInstance} index={0} style={{}} />);
   });
 
   it('renders column for resource name', () => {
@@ -95,13 +53,13 @@ describe(ClusterServiceVersionResourceRow.displayName, () => {
   it('renders column for resource type', () => {
     const col = wrapper.childAt(2);
 
-    expect(col.text()).toEqual(testResourceInstance.kind);
+    expect(col.shallow().text()).toEqual(testResourceInstance.kind);
   });
 
   it('renders column for resource status', () => {
     const col = wrapper.childAt(3);
 
-    expect(col.text()).toEqual('Unknown');
+    expect(col.shallow().text()).toEqual('Unknown');
   });
 
   it('renders column for resource status if unknown', () => {
@@ -110,13 +68,13 @@ describe(ClusterServiceVersionResourceRow.displayName, () => {
     wrapper.setProps({obj});
     const col = wrapper.childAt(3);
 
-    expect(col.text()).toEqual('Unknown');
+    expect(col.shallow().text()).toEqual('Unknown');
   });
 
   it('renders column for resource version', () => {
     const col = wrapper.childAt(4);
 
-    expect(col.text()).toEqual(testResourceInstance.spec.version || 'Unknown');
+    expect(col.shallow().text()).toEqual(testResourceInstance.spec.version || 'Unknown');
   });
 
   it('renders column for last updated timestamp', () => {
@@ -136,22 +94,21 @@ describe(ClusterServiceVersionResourceList.displayName, () => {
     wrapper = shallow(<ClusterServiceVersionResourceList loaded={true} data={resources} filters={{}} />);
   });
 
-  it('renders a `List` of the custom resource instances of the given kind', () => {
-    const list: ShallowWrapper<any> = wrapper.find(List);
-
-    expect(Object.keys(wrapper.props()).reduce((k, prop) => list.prop(prop) === wrapper.prop(prop), false)).toBe(true);
-    expect(list.props().Header).toEqual(ClusterServiceVersionResourceHeader);
-    expect(list.props().Row).toEqual(ClusterServiceVersionResourceRow);
+  it('renders a `Table` of the custom resource instances of the given kind', () => {
+    const table: ShallowWrapper<any> = wrapper.find(Table);
+    expect(Object.keys(wrapper.props()).reduce((k, prop) => table.prop(prop) === wrapper.prop(prop), false)).toBe(true);
+    expect(table.props().Header).toEqual(CSVRTableHeader);
+    expect(table.props().Row).toEqual(CSVRTableRow);
   });
 });
 
 describe(ClusterServiceVersionResourceDetails.displayName, () => {
-  let wrapper: ShallowWrapper<ClusterServiceVersionResourcesDetailsProps, ClusterServiceVersionResourcesDetailsState>;
+  let wrapper: ShallowWrapper<ClusterServiceVersionResourcesDetailsProps>;
   let resourceDefinition: any;
 
   beforeEach(() => {
     resourceDefinition = {
-      path: testCRD.metadata.name.split('.')[0],
+      plural: testCRD.metadata.name.split('.')[0],
       annotations: testCRD.metadata.annotations,
     };
     wrapper = shallow(<ClusterServiceVersionResourceDetails.WrappedComponent clusterServiceVersion={testClusterServiceVersion} obj={testResourceInstance} kindObj={resourceDefinition} appName={testClusterServiceVersion.metadata.name} />);
@@ -168,46 +125,12 @@ describe(ClusterServiceVersionResourceDetails.displayName, () => {
     expect(section.exists()).toBe(true);
   });
 
-  it('renders creation date from CRD metadata', () => {
-    expect(wrapper.find(Timestamp).props().timestamp).toEqual(testResourceInstance.metadata.creationTimestamp);
-  });
-
   it('does not render filtered status fields', () => {
-    const crd = testClusterServiceVersion.spec.customresourcedefinitions.owned.find(c => c.name === 'testresource.testapp.coreos.com');
+    const crd = testClusterServiceVersion.spec.customresourcedefinitions.owned.find(c => c.name === 'testresources.testapp.coreos.com');
     const filteredDescriptor = crd.statusDescriptors.find((sd) => sd.path === 'importantMetrics');
-
-    wrapper.setState({expanded: false});
     const statusView = wrapper.find(StatusDescriptor).filterWhere(node => node.props().descriptor === filteredDescriptor);
 
     expect(statusView.exists()).toBe(false);
-  });
-
-  it('does not render the extended information unless in expanded mode', () => {
-    expect(wrapper.find(ResourceSummary).exists()).toBe(false);
-  });
-
-  it('renders the extended information when in expanded mode', () => {
-    wrapper.setState({expanded: true});
-
-    expect(wrapper.find(ResourceSummary).exists()).toBe(true);
-  });
-
-  it('does not render the non-filled in status field when in expanded mode', () => {
-    const crd = testClusterServiceVersion.spec.customresourcedefinitions.owned.find(c => c.name === 'testresource.testapp.coreos.com');
-    const unfilledDescriptor = crd.statusDescriptors.find((sd) => sd.path === 'some-unfilled-path');
-    const statusView = wrapper.find(StatusDescriptor).filterWhere(node => node.props().descriptor === unfilledDescriptor);
-
-    expect(statusView.exists()).toBe(false);
-  });
-
-  it('renders the non-filled in status field when in expanded mode', () => {
-    const crd = testClusterServiceVersion.spec.customresourcedefinitions.owned.find(c => c.name === 'testresource.testapp.coreos.com');
-    const unfilledDescriptor = crd.statusDescriptors.find((sd) => sd.path === 'some-unfilled-path');
-
-    wrapper.setState({expanded: true});
-    const statusView = wrapper.find(StatusDescriptor).filterWhere(node => node.props().descriptor === unfilledDescriptor);
-
-    expect(statusView.exists()).toBe(true);
   });
 
   it('does not render any spec descriptor fields if there are none defined on the `ClusterServiceVersion`', () => {
@@ -238,10 +161,9 @@ describe('ResourcesList', () => {
       abbr: '',
       apiVersion: 'v1',
       kind: testClusterServiceVersion.spec.customresourcedefinitions.owned[0].kind,
-      path: testClusterServiceVersion.spec.customresourcedefinitions.owned[0].name.split('.')[0],
+      plural: testClusterServiceVersion.spec.customresourcedefinitions.owned[0].name.split('.')[0],
       label: '',
       labelPlural: '',
-      plural: '',
     };
 
     const resourceComponent = shallow(<Resources.WrappedComponent clusterServiceVersion={testClusterServiceVersion} kindObj={kindObj} obj={testResourceInstance} />);
@@ -293,6 +215,7 @@ describe(ClusterServiceVersionResourcesDetailsPage.displayName, () => {
 
   it('passes function to create breadcrumbs for resource to `DetailsPage`', () => {
     expect(wrapper.find(DetailsPage).props().breadcrumbsFor(null)).toEqual([
+      {name: 'Installed Operators', path: `/k8s/ns/default/${ClusterServiceVersionModel.plural}`},
       {name: 'etcd', path: `/k8s/ns/default/${ClusterServiceVersionModel.plural}/etcd/etcdclusters`},
       {name: `${testResourceInstance.kind} Details`, path: `/k8s/ns/default/${ClusterServiceVersionModel.plural}/etcd/etcdclusters/my-etcd`},
     ]);
@@ -304,6 +227,7 @@ describe(ClusterServiceVersionResourcesDetailsPage.displayName, () => {
     wrapper.setProps({match});
 
     expect(wrapper.find(DetailsPage).props().breadcrumbsFor(null)).toEqual([
+      {name: 'Installed Operators', path: `/k8s/ns/example/${ClusterServiceVersionModel.plural}`},
       {name: 'example', path: `/k8s/ns/${ClusterServiceVersionModel.plural}/example/example`},
       {name: `${testResourceInstance.kind} Details`, path: `/k8s/ns/${ClusterServiceVersionModel.plural}/example/example/example`},
     ]);
@@ -383,7 +307,7 @@ describe(ProvidedAPIsPage.displayName, () => {
 
     expect(listPage.props().createButtonText).toEqual('Create New');
     expect(listPage.props().createProps.to).not.toBeDefined();
-    expect(listPage.props().createProps.items).toEqual({'testresource.testapp.coreos.com': 'Test Resource', 'foobars.testapp.coreos.com': 'Foo Bars'});
+    expect(listPage.props().createProps.items).toEqual({'testresources.testapp.coreos.com': 'Test Resource', 'foobars.testapp.coreos.com': 'Foo Bars'});
     expect(listPage.props().createProps.createLink(obj.spec.customresourcedefinitions.owned[0].name)).toEqual(`/k8s/ns/default/${ClusterServiceVersionModel.plural}/testapp/testapp.coreos.com~v1~TestResource/~new`);
   });
 

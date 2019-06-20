@@ -11,8 +11,8 @@ module.exports = {
     'no-restricted-imports': [
       'error',
       {
-        name: 'lodash',
-        message: 'Use lodash-es instead.',
+        name: 'lodash-es',
+        message: 'Use lodash instead. webpack is configured to use lodash-es automatically.',
       },
     ],
     // TODO fix for monorepo support

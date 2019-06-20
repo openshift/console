@@ -369,7 +369,7 @@ class MastheadToolbar_ extends React.Component {
             <ToolbarItem className="hidden-xs">{this._renderMenu(false)}</ToolbarItem>
           </ToolbarGroup>
         </Toolbar>
-        {showAboutModal && <AboutModal isOpen={showAboutModal} closeAboutModal={this._closeAboutModal} />}
+        <AboutModal isOpen={showAboutModal} closeAboutModal={this._closeAboutModal} />
       </React.Fragment>
     );
   }

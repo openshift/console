@@ -3,6 +3,7 @@ import { useCallback, useState } from 'react';
 
 import { usePoll, useSafeFetch } from '../utils';
 import { getPrometheusURL, PrometheusEndpoint } from './helpers';
+import { PrometheusResponse } from '.';
 
 const DEFAULT_DELAY = 15000; // 15 seconds
 const DEFAULT_SAMPLES = 60;
@@ -18,7 +19,7 @@ export const usePrometheusPoll = ({
   timeout,
   timespan = DEFAULT_TIMESPAN,
 }: PrometheusPollProps) => {
-  const url = getPrometheusURL({endpoint, endTime, namespace, query, samples, timeout, timespan});
+  const url = getPrometheusURL({ endpoint, endTime, namespace, query, samples, timeout, timespan });
   const [error, setError] = useState();
   const [response, setResponse] = useState();
   const safeFetch = useSafeFetch();
@@ -35,7 +36,7 @@ export const usePrometheusPoll = ({
 
   usePoll(tick, delay, endTime, query, timespan);
 
-  return [response, error];
+  return [response, error] as [PrometheusResponse, Error];
 };
 
 type PrometheusPollProps = {

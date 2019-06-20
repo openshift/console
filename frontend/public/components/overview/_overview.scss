@@ -1,161 +1,12 @@
-.co-m-nav-title--overview {
-  display: flex;
-  flex-direction: column;
-  flex-wrap: wrap;
-  justify-content: space-between;
-}
-
-.overview-toolbar {
-  margin: 0 0 ($grid-gutter-width / 2) 0;
-  min-width: 0;
-  padding: 0;
-  @media (max-width: $screen-xs-max) {
-    // Stack toggle buttons above resource filter options at mobile
-    .selected-view__resources & {
-      width: 100%;
-    }
-  }
-
-  .toolbar-pf-actions {
-    margin: 0;
-  }
-
-  // Override pf and make toolbar a flex object to control positioning
-  .toolbar-pf-action-right {
-    align-items: flex-end;
-    display: flex;
-    float: none;
-
-    @media (min-width: $screen-sm-min) and (max-width: $screen-md-max) {
-      // switch to stacked fields when side open but still at desktop widths
-      .overview--sidebar-shown & {
-        align-items: initial;
-        display: flex;
-        flex-direction: column;
-        float: none;
-        min-width: 160px;
-        width: calc(100% - 535px);
-      }
-    }
-  }
-}
-
-.overview-toolbar__dropdown {
-  display: inline-block;
-  max-width: 100%; // enable text-overflow: ellipsis
-
-  @media (max-width: $screen-sm-max) {
-    min-width: 100%;
-  }
-
-  .overview--sidebar-shown & {
-    @media (max-width: $screen-md-max) {
-      min-width: 100%; // stack selections
-    }
-  }
-
-  .btn-dropdown {
-    width: 100%;
-  }
-
-  .btn-link__titlePrefix {
-    color: lighten($btn-default-color, 15%);
-    font-weight: normal;
-    margin-right: 2px;
-  }
-
-  .dropdown-menu {
-    min-width: 250px;
-  }
-}
-
-.overview-toolbar__form-group {
-  flex: 1 1 auto;
-  min-width: 0; // enable truncation
-
-  @media (min-width: $screen-xs-min) {
-    padding-right: 15px;
-  }
-
-  &:first-child {
-    border-right: 0;
-    margin-bottom: 0;
-    padding-left: 0;
-    padding-right: 10px;
-
-    @media (max-width: $screen-md-max) {
-      .overview--sidebar-shown & {
-        padding-right: 0;
-      }
-    }
-
-    @media (min-width: $screen-lg-min) and (max-width: ($screen-lg-min + 200)) {
-      .overview--sidebar-shown & {
-        max-width: 200px; // prevents group by select from pushing filter input behind the sidebar
-      }
-    }
-  }
-
-  + .overview-toolbar__form-group {
-    border-left: 1px solid $color-pf-black-300;
-    padding-left: 10px;
-
-    .overview--sidebar-shown & {
-      @media (max-width: $screen-md-max) {
-        border: 0;
-        padding-left: 0;
-        padding-top: 5px;
-      }
-
-    }
-  }
-
-  .co-actions-menu {
-    margin-left: 0;
-  }
-}
-
-.co-m-pane__heading--overview {
-  justify-content: flex-start;
-  margin: 0 20px ($grid-gutter-width / 2) 0;
-}
-
-.co-m-pane__name--overview {
-  flex: 0 1 auto;
-}
-
-.overview-toolbar__label {
-  margin: 0 10px 0 0;
-  vertical-align: middle;
-  white-space: nowrap;
-  @media (max-width: $screen-md-max) {
-    margin-bottom: 0;
-    margin-right: 10px;
-  }
-}
-
-.overview-toolbar__text-filter .co-text-filter {
-  min-width: 100%;
-  width: 100%;
-
-  .overview--sidebar-shown & {
-    width: auto;
-  }
-}
+$overview-sidebar-width: 550px;
 
 .overview {
-  bottom: 0;
-  display: flex;
-  left: 0;
-  position: absolute;
-  right: 0;
-  top: 0;
+  overflow: hidden; // hide .overview__sidebar box-shadow at top
+  position: relative;
 
   .overview__main-column {
-    height: 100%;
     overflow-x: hidden;
     overflow-y: auto;
-    width: 100%;
     -webkit-overflow-scrolling: touch;
   }
 
@@ -168,10 +19,10 @@
     right: 0;
     top: 0;
     width: calc(100% - 15px);
-    @media(min-width: $screen-sm-min) {
-      max-width: 550px;
-    }
     z-index: 5;
+    @media(min-width: $screen-sm-min) {
+      max-width: $overview-sidebar-width;
+    }
   }
 
   .overview__sidebar-appear {
@@ -195,16 +46,7 @@
 
     @media(min-width: $screen-lg-min) {
       .overview__main-column {
-        width: calc(100% - 500px);
-
-        .co-m-pane__body {
-          padding-right: 0;
-        }
-      }
-
-      .overview__sidebar {
-        min-height: 0;
-        overflow: hidden;
+        margin-right: $overview-sidebar-width;
       }
     }
   }
@@ -243,27 +85,6 @@
 
   .co-actions-menu {
     margin-top: -3px;
-  }
-}
-
-.overview-view-selector {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-
-  @media (max-width: $screen-md-max) {
-    .overview--sidebar-shown & {
-      flex-direction: column;
-    }
-  }
-
-  .btn-group {
-    button+button {
-      margin-left: 0;
-    }
-    i.fa {
-      margin-right: 6px;
-    }
   }
 }
 

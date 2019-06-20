@@ -30,19 +30,8 @@ let k8sModels = modelsToMap(_.values(staticModels));
 const hasModel = (model: K8sKind) => k8sModels.has(referenceForModel(model)) || k8sModels.has(model.kind);
 
 k8sModels = k8sModels.withMutations(map => {
-  const baseModelCount = map.size;
   const pluginModels = _.flatMap(plugins.registry.getModelDefinitions().map(md => md.properties.models));
-
-  const pluginModelsToAdd = pluginModels.filter(model => !hasModel(model));
-  map.merge(modelsToMap(pluginModelsToAdd));
-
-  _.difference(pluginModels, pluginModelsToAdd).forEach(model => {
-    // eslint-disable-next-line no-console
-    console.warn(`attempt to redefine model ${referenceForModel(model)}`);
-  });
-
-  // eslint-disable-next-line no-console
-  console.info(`${map.size - baseModelCount} new models added by plugins`);
+  map.merge(modelsToMap(pluginModels.filter(model => !hasModel(model))));
 });
 
 /**

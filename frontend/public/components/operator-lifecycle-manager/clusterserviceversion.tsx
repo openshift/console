@@ -3,9 +3,12 @@ import { Link, match as RouterMatch } from 'react-router-dom';
 import * as _ from 'lodash-es';
 import { connect } from 'react-redux';
 import { Alert } from 'patternfly-react';
+import * as classNames from 'classnames';
+import { sortable } from '@patternfly/react-table';
+import { Helmet } from 'react-helmet';
 
 import { ProvidedAPIsPage, ProvidedAPIPage } from './clusterserviceversion-resource';
-import { DetailsPage, ListHeader, ColHead, List, ListPage } from '../factory';
+import { DetailsPage, ListPage, Table, TableRow, TableData } from '../factory';
 import { withFallback } from '../utils/error-boundary';
 import { referenceForModel, referenceFor, GroupVersionKind, K8sKind } from '../../module/k8s';
 import { ClusterServiceVersionModel } from '../../models';
@@ -39,53 +42,85 @@ import {
 } from '../utils';
 import { operatorGroupFor, operatorNamespaceFor } from './operator-group';
 
-export const ClusterServiceVersionHeader: React.SFC = () => <ListHeader>
-  <ColHead className="col-lg-3 col-md-4 col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
-  <ColHead className="col-lg-2 col-md-2 col-sm-4 col-xs-6">Namespace</ColHead>
-  <ColHead className="col-lg-2 hidden-md hidden-sm hidden-xs">Deployment</ColHead>
-  <ColHead className="col-lg-2 col-md-3 col-sm-4 hidden-xs">Status</ColHead>
-  <ColHead className="col-lg-3 col-md-3 hidden-sm hidden-xs">Provided APIs</ColHead>
-</ListHeader>;
+const tableColumnClasses = [
+  classNames('col-lg-3', 'col-md-4', 'col-sm-4', 'col-xs-6'),
+  classNames('col-lg-2', 'col-md-2', 'col-sm-4', 'col-xs-6'),
+  classNames('col-lg-2', 'hidden-md', 'hidden-sm', 'hidden-xs'),
+  classNames('col-lg-2', 'col-md-3', 'col-sm-4', 'hidden-xs'),
+  classNames('col-lg-3', 'col-md-3', 'hidden-sm', 'hidden-xs'),
+  Kebab.columnClass,
+];
 
-const menuActions = [Kebab.factory.Edit, Kebab.factory.Delete];
+export const ClusterServiceVersionTableHeader = () => {
+  return [
+    {
+      title: 'Name', sortField: 'metadata.name', transforms: [sortable],
+      props: { className: tableColumnClasses[0] },
+    },
+    {
+      title: 'Namespace', props: { className: tableColumnClasses[1] },
+    },
+    {
+      title: 'Deployment', props: { className: tableColumnClasses[2] },
+    },
+    {
+      title: 'Status', props: { className: tableColumnClasses[3] },
+    },
+    {
+      title: 'Provided APIs', props: { className: tableColumnClasses[4] },
+    },
+    {
+      title: '', props: { className: tableColumnClasses[5] },
+    },
+  ];
+};
+ClusterServiceVersionTableHeader.displayName = 'ClusterServiceVersionTableHeader';
 
-export const ClusterServiceVersionRow = withFallback<ClusterServiceVersionRowProps>(({obj}) => {
+const menuActions = [Kebab.factory.Edit];
+
+export const ClusterServiceVersionTableRow = withFallback<ClusterServiceVersionTableRowProps>(({obj, index, key, style}) => {
   const route = `/k8s/ns/${obj.metadata.namespace}/${ClusterServiceVersionModel.plural}/${obj.metadata.name}`;
 
+  const statusString = _.get(obj, 'status.reason', ClusterServiceVersionPhase.CSVPhaseUnknown);
+  const showSuccessIcon = statusString === 'Copied' || statusString === 'InstallSucceeded';
   const installStatus = obj.status && obj.status.phase !== ClusterServiceVersionPhase.CSVPhaseFailed
-    ? <span>{_.get(obj, 'status.reason', ClusterServiceVersionPhase.CSVPhaseUnknown)}</span>
-    : <span className="co-error"><i className="fa fa-times-circle co-icon-space-r" /> Failed</span>;
-
-  return <div className="row co-resource-list__item">
-    <div className="col-lg-3 col-md-4 col-sm-4 col-xs-6" style={{display: 'flex', alignItems: 'center'}}>
-      <Link to={route}>
-        <ClusterServiceVersionLogo icon={_.get(obj, 'spec.icon', [])[0]} displayName={obj.spec.displayName} version={obj.spec.version} provider={obj.spec.provider} />
-      </Link>
-    </div>
-    <div className="col-lg-2 col-md-2 col-sm-4 col-xs-6">
-      <ResourceLink kind="Namespace" title={obj.metadata.namespace} name={obj.metadata.namespace} />
-    </div>
-    <div className="col-lg-2 hidden-md hidden-sm hidden-xs">
-      <ResourceLink kind="Deployment" name={obj.spec.install.spec.deployments[0].name} namespace={operatorNamespaceFor(obj)} title={obj.spec.install.spec.deployments[0].name} />
-    </div>
-    {/* TODO(alecmerdler): Handle "Copied" status from `OperatorGroup` */}
-    <div className="col-lg-2 col-md-3 col-sm-4 hidden-xs">{obj.metadata.deletionTimestamp ? 'Disabling' : installStatus}</div>
-    <div className="col-lg-3 col-md-3 hidden-sm hidden-xs">
-      { _.take(providedAPIsFor(obj), 4).map((desc, i) => <div key={i}>
-        <Link to={`${route}/${referenceForProvidedAPI(desc)}`} title={desc.name}>{desc.displayName}</Link>
-      </div>)}
-      { providedAPIsFor(obj).length > 4 && <Link to={`${route}/instances`} title={`View ${providedAPIsFor(obj).length - 4} more...`}>{`View ${providedAPIsFor(obj).length - 4} more...`}</Link>}
-    </div>
-    <div className="dropdown-kebab-pf">
-      <ResourceKebab resource={obj} kind={referenceFor(obj)} actions={menuActions} />
-    </div>
-  </div>;
+    ? <span className={classNames(showSuccessIcon && 'co-icon-and-text')}>{showSuccessIcon &&
+        <i aria-hidden="true" className="pficon pficon-ok co-icon-and-text__icon" />}{statusString}
+    </span>
+    : <span className="co-error co-icon-and-text"><i className="fa fa-times-circle co-icon-space-r co-icon-and-text__icon" /> Failed</span>;
+  return (
+    <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+      <TableData className={tableColumnClasses[0]}>
+        <Link to={route}>
+          <ClusterServiceVersionLogo icon={_.get(obj, 'spec.icon', [])[0]} displayName={obj.spec.displayName} version={obj.spec.version} provider={obj.spec.provider} />
+        </Link>
+      </TableData>
+      <TableData className={tableColumnClasses[1]}>
+        <ResourceLink kind="Namespace" title={obj.metadata.namespace} name={obj.metadata.namespace} />
+      </TableData>
+      <TableData className={tableColumnClasses[2]}>
+        <ResourceLink kind="Deployment" name={obj.spec.install.spec.deployments[0].name} namespace={operatorNamespaceFor(obj)} title={obj.spec.install.spec.deployments[0].name} />
+      </TableData>
+      <TableData className={tableColumnClasses[3]}>
+        {obj.metadata.deletionTimestamp ? 'Disabling' : installStatus}
+      </TableData>
+      <TableData className={tableColumnClasses[4]}>
+        { _.take(providedAPIsFor(obj), 4).map((desc, i) => <div key={i}>
+          <Link to={`${route}/${referenceForProvidedAPI(desc)}`} title={desc.name}>{desc.displayName}</Link>
+        </div>)}
+        { providedAPIsFor(obj).length > 4 && <Link to={`${route}/instances`} title={`View ${providedAPIsFor(obj).length - 4} more...`}>{`View ${providedAPIsFor(obj).length - 4} more...`}</Link>}
+      </TableData>
+      <TableData className={tableColumnClasses[5]}>
+        <ResourceKebab resource={obj} kind={referenceFor(obj)} actions={menuActions} />
+      </TableData>
+    </TableRow>
+  );
 });
 
 export const ClusterServiceVersionList: React.SFC<ClusterServiceVersionListProps> = (props) => {
   const EmptyMsg = () => <MsgBox title="No Cluster Service Versions Found" detail="" />;
 
-  return <List {...props} Row={ClusterServiceVersionRow} Header={ClusterServiceVersionHeader} EmptyMsg={EmptyMsg} />;
+  return <Table {...props} aria-label="Installed Operators" Header={ClusterServiceVersionTableHeader} Row={ClusterServiceVersionTableRow} EmptyMsg={EmptyMsg} virtualize />;
 };
 
 const stateToProps = ({k8s, FLAGS}) => ({
@@ -98,27 +133,22 @@ export const ClusterServiceVersionsPage = connect(stateToProps)((props: ClusterS
     return <LoadingBox />;
   }
 
+  const title = 'Installed Operators';
   const helpText = <p className="co-help-text">
     Installed Operators are represented by Cluster Service Versions within this namespace. For more information, see the <ExternalLink href="https://github.com/operator-framework/operator-lifecycle-manager/blob/master/Documentation/design/architecture.md" text="Operator Lifecycle Manager documentation" />. Or create an Operator and Cluster Service Version using the <ExternalLink href="https://github.com/operator-framework/operator-sdk" text="Operator SDK" />.
   </p>;
 
-  const allFilterValues = [CSVConditionReason.CSVReasonInstallSuccessful, CSVConditionReason.CSVReasonCopied];
-  const rowFilters = [{
-    type: 'clusterserviceversion-status',
-    selected: allFilterValues,
-    reducer: (csv: ClusterServiceVersionKind) => _.get(csv.status, 'reason'),
-    items: allFilterValues.map(status => ({id: status, title: status})),
-  }];
-
   return <React.Fragment>
-    <PageHeading title="Installed Operators" />
+    <Helmet>
+      <title>{title}</title>
+    </Helmet>
+    <PageHeading title={title} />
     <ListPage
       {...props}
       namespace={props.namespace}
       kind={referenceForModel(ClusterServiceVersionModel)}
       ListComponent={ClusterServiceVersionList}
       helpText={helpText}
-      rowFilters={rowFilters}
       showTitle={false} />
   </React.Fragment>;
 });
@@ -129,7 +159,7 @@ export const MarkdownView = (props: {content: string, styles?: string}) => {
 
 export const CRDCard: React.SFC<CRDCardProps> = (props) => {
   const {csv, crd, canCreate} = props;
-  const createRoute = `/k8s/ns/${csv.metadata.namespace}/${ClusterServiceVersionModel.plural}/${csv.metadata.name}/${referenceForProvidedAPI(crd)}/~new`;
+  const createRoute = () => `/k8s/ns/${csv.metadata.namespace}/${ClusterServiceVersionModel.plural}/${csv.metadata.name}/${referenceForProvidedAPI(crd)}/~new`;
 
   return <div className="co-crd-card">
     <div className="co-crd-card__title">
@@ -141,7 +171,7 @@ export const CRDCard: React.SFC<CRDCardProps> = (props) => {
       <p>{crd.description}</p>
     </div>
     { canCreate && <div className="co-crd-card__footer">
-      <Link className="co-crd-card__link" to={createRoute}>
+      <Link className="co-crd-card__link" to={createRoute()}>
         <span className="pficon pficon-add-circle-o" aria-hidden="true"></span> Create New
       </Link>
     </div> }
@@ -257,6 +287,10 @@ export const ClusterServiceVersionsDetailsPage: React.StatelessComponent<Cluster
 
   return <DetailsPage
     {...props}
+    breadcrumbsFor={() => [
+      {name: 'Installed Operators', path: `/k8s/ns/${props.match.params.ns}/${props.match.params.plural}`},
+      {name: 'Operator Details', path: props.match.url},
+    ]}
     namespace={props.match.params.ns}
     kind={referenceForModel(ClusterServiceVersionModel)}
     name={props.match.params.name}
@@ -306,8 +340,11 @@ export type ClusterServiceVersionDetailsProps = {
   obj: ClusterServiceVersionKind;
 };
 
-export type ClusterServiceVersionRowProps = {
+export type ClusterServiceVersionTableRowProps = {
   obj: ClusterServiceVersionKind;
+  index: number;
+  key?: string;
+  style: object;
 };
 
 // TODO(alecmerdler): Find Webpack loader/plugin to add `displayName` to React components automagically
@@ -316,5 +353,3 @@ ClusterServiceVersionsPage.displayName = 'ClusterServiceVersionsPage';
 CRDCard.displayName = 'CRDCard';
 ClusterServiceVersionsDetailsPage.displayName = 'ClusterServiceVersionsDetailsPage';
 ClusterServiceVersionDetails.displayName = 'ClusterServiceVersionDetails';
-ClusterServiceVersionRow.displayName = 'ClusterServiceVersionRow';
-ClusterServiceVersionHeader.displayName = 'ClusterServiceVersionHeader';

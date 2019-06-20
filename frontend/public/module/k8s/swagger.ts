@@ -2,10 +2,20 @@ import * as _ from 'lodash-es';
 
 import { STORAGE_PREFIX } from '../../const';
 import { coFetchJSON } from '../../co-fetch';
-import { SwaggerDefinitions } from './';
+import { K8sKind, referenceForModel, SwaggerDefinitions } from './';
 
 const SWAGGER_LOCAL_STORAGE_KEY = `${STORAGE_PREFIX}/swagger-definitions`;
 const SWAGGER_TIMESTAMP_LOCAL_STORAGE_KEY = `${STORAGE_PREFIX}/swagger-last-updated`;
+
+export const getDefinitionKey = _.memoize((model: K8sKind, definitions: SwaggerDefinitions): string => {
+  return _.findKey(definitions, (def: SwaggerDefinition) => {
+    return _.some(def['x-kubernetes-group-version-kind'], ({group, version, kind}) => {
+      return (model.apiGroup || '') === (group || '') &&
+        model.apiVersion === version &&
+        model.kind === kind;
+    });
+  });
+}, referenceForModel);
 
 export const getStoredSwagger = (): SwaggerDefinitions => {
   const json = window.localStorage.getItem(SWAGGER_LOCAL_STORAGE_KEY);

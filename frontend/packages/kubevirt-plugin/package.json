@@ -1,0 +1,15 @@
+{
+  "name": "@console/kubevirt-plugin",
+  "version": "0.0.0-fixed",
+  "description": "Kubevirt - Virtual machines addon for Kubernetes",
+  "private": true,
+  "dependencies": {
+    "@console/internal": "0.0.0-fixed",
+    "@console/plugin-sdk": "0.0.0-fixed",
+    "@console/shared": "0.0.0-fixed",
+    "kubevirt-web-ui-components": "~0.1.35"
+  },
+  "consolePlugin": {
+    "entry": "src/plugin.ts"
+  }
+}

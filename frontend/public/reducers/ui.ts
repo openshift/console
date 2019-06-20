@@ -4,6 +4,7 @@ import { Map as ImmutableMap } from 'immutable';
 import { ActionType, UIAction } from '../actions/ui';
 import {
   ALL_NAMESPACES_KEY,
+  ALL_APPLICATIONS_KEY,
   LAST_NAMESPACE_NAME_LOCAL_STORAGE_KEY,
   NAMESPACE_LOCAL_STORAGE_KEY,
   LAST_PERSPECTIVE_LOCAL_STORAGE_KEY,
@@ -50,6 +51,7 @@ export default (state: UIState, action: UIAction): UIState => {
       activeNavSectionId: 'workloads',
       location: pathname,
       activeNamespace: activeNamespace || 'default',
+      activeApplication: ALL_APPLICATIONS_KEY,
       activePerspective: getDefaultPerspective(),
       createProjectMessage: '',
       overview: ImmutableMap({
@@ -57,7 +59,6 @@ export default (state: UIState, action: UIAction): UIState => {
         resources: ImmutableMap({}),
         selectedDetailsTab: '',
         selectedUID: '',
-        selectedView: 'resources',
         selectedGroup: OverviewSpecialGroup.GROUP_BY_APPLICATION,
         groupOptions: ImmutableMap(),
         filterValue: '',
@@ -67,13 +68,17 @@ export default (state: UIState, action: UIAction): UIState => {
   }
 
   switch (action.type) {
+    case ActionType.SetActiveApplication:
+      return state.set('activeApplication', action.payload.application);
+
     case ActionType.SetActiveNamespace:
       if (!action.payload.namespace) {
         // eslint-disable-next-line no-console
         console.warn('setActiveNamespace: Not setting to falsy!');
         return state;
       }
-      return state.set('activeNamespace', action.payload.namespace);
+
+      return state.set('activeApplication', ALL_APPLICATIONS_KEY).set('activeNamespace', action.payload.namespace);
 
     case ActionType.SetActivePerspective:
       return state.set('activePerspective', action.payload.perspective);
@@ -130,9 +135,6 @@ export default (state: UIState, action: UIAction): UIState => {
     case ActionType.ToggleMonitoringGraphs:
       return state.setIn(['monitoring', 'hideGraphs'], !state.getIn(['monitoring', 'hideGraphs']));
 
-    case ActionType.SelectOverviewView:
-      return state.setIn(['overview', 'selectedView'], action.payload.view);
-
     case ActionType.SelectOverviewItem:
       return state.setIn(['overview', 'selectedUID'], action.payload.uid);
 
@@ -182,4 +184,8 @@ export const impersonateStateToProps = ({UI}: RootState) => {
   return {impersonate: UI.get('impersonate')};
 };
 
-export const getActivePerspective = ({ UI }: RootState) => UI.get('activePerspective');
+export const getActiveNamespace = ({ UI }: RootState): string => UI.get('activeNamespace');
+
+export const getActivePerspective = ({ UI }: RootState): string => UI.get('activePerspective');
+
+export const getActiveApplication = ({ UI }: RootState): string => UI.get('activeApplication');

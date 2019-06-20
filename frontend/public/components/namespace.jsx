@@ -1,5 +1,7 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
+import * as classNames from 'classnames';
+import { sortable } from '@patternfly/react-table';
 import { connect } from 'react-redux';
 import { Tooltip } from './utils/tooltip';
 import { Link } from 'react-router-dom';
@@ -8,8 +10,8 @@ import * as fuzzy from 'fuzzysearch';
 import { NamespaceModel, ProjectModel, SecretModel } from '../models';
 import { k8sGet } from '../module/k8s';
 import * as UIActions from '../actions/ui';
-import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
-import { ActionsMenu, Kebab, Dropdown, Firehose, LabelList, LoadingInline, navFactory, ResourceKebab, SectionHeading, ResourceIcon, ResourceLink, ResourceSummary, humanizeBinaryBytes, MsgBox, StatusIconAndText, ExternalLink, humanizeCpuCores, humanizeDecimalBytes } from './utils';
+import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
+import { Kebab, Dropdown, Firehose, LabelList, LoadingInline, navFactory, ResourceKebab, SectionHeading, ResourceLink, ResourceSummary, MsgBox, StatusIconAndText, ExternalLink, humanizeCpuCores, humanizeDecimalBytes, useAccessReview } from './utils';
 import { createNamespaceModal, createProjectModal, deleteNamespaceModal, configureNamespacePullSecretModal } from './modals';
 import { RoleBindingsPage } from './RBAC';
 import { Bar, Area, requirePrometheus } from './graphs';
@@ -18,6 +20,8 @@ import { featureReducerName, flagPending, connectToFlags } from '../reducers/fea
 import { setFlag } from '../actions/features';
 import { openshiftHelpBase } from './utils/documentation';
 import { createProjectMessageStateToProps } from '../reducers/ui';
+import { Overview } from './overview';
+import { OverviewNamespaceDashboard } from './overview/namespace-overview';
 
 const getModel = useProjects => useProjects ? ProjectModel : NamespaceModel;
 const getDisplayName = obj => _.get(obj, ['metadata', 'annotations', 'openshift.io/display-name']);
@@ -45,64 +49,118 @@ export const deleteModal = (kind, ns) => {
 
 const nsMenuActions = [Kebab.factory.ModifyLabels, Kebab.factory.ModifyAnnotations, Kebab.factory.Edit, deleteModal];
 
-const NamespaceHeader = props => <ListHeader>
-  <ColHead {...props} className="col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
-  <ColHead {...props} className="col-sm-4 col-xs-6" sortField="status.phase">Status</ColHead>
-  <ColHead {...props} className="col-sm-4 hidden-xs" sortField="metadata.labels">Labels</ColHead>
-</ListHeader>;
+const namespacesColumnClasses = [
+  classNames('col-sm-4', 'col-xs-6'),
+  classNames('col-sm-4', 'col-xs-6'),
+  classNames('col-sm-4', 'hidden-xs'),
+  Kebab.columnClass,
+];
 
-const NamespaceRow = ({obj: ns}) => <ResourceRow obj={ns}>
-  <div className="col-sm-4 col-xs-6">
-    <ResourceLink kind="Namespace" name={ns.metadata.name} title={ns.metadata.uid} />
-  </div>
-  <div className="col-sm-4 col-xs-6 co-break-word">
-    <StatusIconAndText status={ns.status.phase} />
-  </div>
-  <div className="col-sm-4 hidden-xs">
-    <LabelList kind="Namespace" labels={ns.metadata.labels} />
-  </div>
-  <div className="dropdown-kebab-pf">
-    <ResourceKebab actions={nsMenuActions} kind="Namespace" resource={ns} />
-  </div>
-</ResourceRow>;
+const NamespacesTableHeader = () => {
+  return [
+    {
+      title: 'Name', sortField: 'metadata.name', transforms: [sortable],
+      props: { className: namespacesColumnClasses[0]},
+    },
+    {
+      title: 'Status', sortField: 'status.phase', transforms: [sortable],
+      props: { className: namespacesColumnClasses[1]},
+    },
+    {
+      title: 'Labels', sortField: 'metadata.labels', transforms: [sortable],
+      props: { className: namespacesColumnClasses[2]},
+    },
+    { title: '',
+      props: { className: namespacesColumnClasses[3]},
+    },
+  ];
+};
+NamespacesTableHeader.displayName = 'NamespacesTableHeader';
 
-export const NamespacesList = props => <List {...props} Header={NamespaceHeader} Row={NamespaceRow} />;
+const NamespacesTableRow = ({obj: ns, index, key, style}) => {
+  return (
+    <TableRow id={ns.metadata.uid} index={index} trKey={key} style={style}>
+      <TableData className={namespacesColumnClasses[0]}>
+        <ResourceLink kind="Namespace" name={ns.metadata.name} title={ns.metadata.uid} />
+      </TableData>
+      <TableData className={classNames(namespacesColumnClasses[1], 'co-break-word')}>
+        <StatusIconAndText status={ns.status.phase} />
+      </TableData>
+      <TableData className={namespacesColumnClasses[2]}>
+        <LabelList kind="Namespace" labels={ns.metadata.labels} />
+      </TableData>
+      <TableData className={namespacesColumnClasses[3]}>
+        <ResourceKebab actions={nsMenuActions} kind="Namespace" resource={ns} />
+      </TableData>
+    </TableRow>
+  );
+};
+NamespacesTableRow.displayName = 'NamespacesTableRow';
+
+export const NamespacesList = props => <Table {...props} aria-label="Namespaces" Header={NamespacesTableHeader} Row={NamespacesTableRow} virtualize />;
+
 export const NamespacesPage = props => <ListPage {...props} ListComponent={NamespacesList} canCreate={true} createHandler={() => createNamespaceModal({blocking: true})} />;
 
 const projectMenuActions = [Kebab.factory.Edit, deleteModal];
 
-const ProjectHeader = props => <ListHeader>
-  <ColHead {...props} className="col-md-3 col-sm-6 col-xs-8" sortField="metadata.name">Name</ColHead>
-  <ColHead {...props} className="col-md-3 col-sm-3 col-xs-4" sortField="status.phase">Status</ColHead>
-  <ColHead {...props} className="col-md-3 col-sm-3 hidden-xs" sortField="metadata.annotations.['openshift.io/requester']">Requester</ColHead>
-  <ColHead {...props} className="col-md-3 hidden-sm hidden-xs" sortField="metadata.labels">Labels</ColHead>
-</ListHeader>;
+const projectColumnClasses = [
+  classNames('col-md-3', 'col-sm-6', 'col-xs-8'),
+  classNames('col-md-3', 'col-sm-3', 'col-xs-4'),
+  classNames('col-md-3', 'col-sm-3', 'hidden-xs'),
+  classNames('col-md-3', 'hidden-sm', 'hidden-xs'),
+  Kebab.columnClass,
+];
 
-const ProjectRow = ({obj: project}) => {
-  const name = project.metadata.name;
-  const displayName = getDisplayName(project);
-  const requester = getRequester(project);
-  return <ResourceRow obj={project}>
-    <div className="col-md-3 col-sm-6 col-xs-8">
-      <span className="co-resource-item">
-        <ResourceIcon kind="Project" />
-        <Link to={`/overview/ns/${name}`} title={displayName} className="co-resource-item__resource-name">{project.metadata.name}</Link>
-      </span>
-    </div>
-    <div className="col-md-3 col-sm-3 col-xs-4">
-      <StatusIconAndText status={project.status.phase} />
-    </div>
-    <div className="col-md-3 col-sm-3 hidden-xs co-break-word">
-      {requester || <span className="text-muted">No requester</span>}
-    </div>
-    <div className="col-md-3 hidden-sm hidden-xs">
-      <LabelList kind="Project" labels={project.metadata.labels} />
-    </div>
-    <div className="dropdown-kebab-pf">
-      <ResourceKebab actions={projectMenuActions} kind="Project" resource={project} />
-    </div>
-  </ResourceRow>;
+const ProjectTableHeader = () => {
+  return [
+    {
+      title: 'Name', sortField: 'metadata.name', transforms: [sortable],
+      props: { className: projectColumnClasses[0]},
+    },
+    {
+      title: 'Status', sortField: 'status.phase', transforms: [sortable],
+      props: { className: projectColumnClasses[1]},
+    },
+    {
+      title: 'Requester', sortField: 'metadata.annotations.[\'openshift.io/requester\']', transforms: [sortable],
+      props: { className: projectColumnClasses[2]},
+    },
+    {
+      title: 'Labels', sortField: 'metadata.labels', transforms: [sortable],
+      props: { className: projectColumnClasses[3]},
+    },
+    { title: '',
+      props: { className: projectColumnClasses[4]},
+    },
+  ];
 };
+ProjectTableHeader.displayName = 'ProjectTableHeader';
+
+const ProjectTableRow = ({obj: project, index, key, style}) => {
+  const requester = getRequester(project);
+  return (
+    <TableRow id={project.metadata.uid} index={index} trKey={key} style={style}>
+      <TableData className={projectColumnClasses[0]}>
+        <span className="co-resource-item">
+          <ResourceLink kind="Project" name={project.metadata.name} title={project.metadata.uid} />
+        </span>
+      </TableData>
+      <TableData className={projectColumnClasses[1]}>
+        <StatusIconAndText status={project.status.phase} />
+      </TableData>
+      <TableData className={classNames(projectColumnClasses[2], 'co-break-word')}>
+        {requester || <span className="text-muted">No requester</span>}
+      </TableData>
+      <TableData className={projectColumnClasses[3]}>
+        <LabelList kind="Project" labels={project.metadata.labels} />
+      </TableData>
+      <TableData className={projectColumnClasses[4]}>
+        <ResourceKebab actions={projectMenuActions} kind="Project" resource={project} />
+      </TableData>
+    </TableRow>
+  );
+};
+ProjectTableRow.displayName = 'ProjectTableRow';
 
 const ProjectList_ = props => {
   const ProjectEmptyMessageDetail = <React.Fragment>
@@ -117,7 +175,7 @@ const ProjectList_ = props => {
     </p>
   </React.Fragment>;
   const ProjectEmptyMessage = () => <MsgBox title="Welcome to OpenShift" detail={ProjectEmptyMessageDetail} />;
-  return <List {...props} Header={ProjectHeader} Row={ProjectRow} EmptyMsg={ProjectEmptyMessage} />;
+  return <Table {...props} aria-label="Projects" Header={ProjectTableHeader} Row={ProjectTableRow} EmptyMsg={ProjectEmptyMessage} virtualize />;
 };
 export const ProjectList = connect(createProjectMessageStateToProps)(ProjectList_);
 
@@ -159,7 +217,7 @@ export const PullSecret = (props) => {
 };
 
 export const NamespaceLineCharts = ({ns}) => <div className="row">
-  <div className="col-sm-6 col-xs-12">
+  <div className="col-md-6 col-sm-12">
     <Area
       title="CPU Usage"
       formatY={humanizeCpuCores}
@@ -167,7 +225,7 @@ export const NamespaceLineCharts = ({ns}) => <div className="row">
       query={`namespace:container_cpu_usage:sum{namespace='${ns.metadata.name}'}`}
     />
   </div>
-  <div className="col-sm-6 col-xs-12">
+  <div className="col-md-6 col-sm-12">
     <Area
       title="Memory Usage"
       formatY={humanizeDecimalBytes}
@@ -182,7 +240,7 @@ export const TopPodsBarChart = ({ns}) => (
     title="Memory Usage by Pod (Top 10)"
     namespace={ns.metadata.name}
     query={`sort(topk(10, sum by (pod_name)(container_memory_usage_bytes{container_name!="POD",container_name!="",pod_name!="", namespace="${ns.metadata.name}"})))`}
-    humanize={humanizeBinaryBytes}
+    formatY={humanizeDecimalBytes}
     metric="pod_name"
   />
 );
@@ -196,6 +254,12 @@ const ResourceUsage = requirePrometheus(({ns}) => <div className="co-m-pane__bod
 export const NamespaceSummary = ({ns}) => {
   const displayName = getDisplayName(ns);
   const requester = getRequester(ns);
+  const canListSecrets = useAccessReview({
+    group: SecretModel.apiGroup,
+    resource: SecretModel.plural,
+    verb: 'patch',
+    namespace: ns.metadata.name,
+  });
   return <div className="row">
     <div className="col-sm-6 col-xs-12">
       <ResourceSummary resource={ns}>
@@ -209,8 +273,10 @@ export const NamespaceSummary = ({ns}) => {
       <dl className="co-m-pane__details">
         <dt>Status</dt>
         <dd><StatusIconAndText status={ns.status.phase} /></dd>
-        <dt>Default Pull Secret</dt>
-        <dd><PullSecret namespace={ns} /></dd>
+        {canListSecrets && <React.Fragment>
+          <dt>Default Pull Secret</dt>
+          <dd><PullSecret namespace={ns} /></dd>
+        </React.Fragment>}
         <dt>Network Policies</dt>
         <dd>
           <Link to={`/k8s/ns/${ns.metadata.name}/networkpolicies`}>Network Policies</Link>
@@ -256,7 +322,7 @@ class NamespaceBarDropdowns_ extends React.Component {
   }
 
   render() {
-    const { activeNamespace, dispatch, canListNS, useProjects } = this.props;
+    const { activeNamespace, dispatch, canListNS, useProjects, children } = this.props;
     if (flagPending(canListNS)) {
       return null;
     }
@@ -281,22 +347,7 @@ class NamespaceBarDropdowns_ extends React.Component {
 
     const onChange = newNamespace => dispatch(UIActions.setActiveNamespace(newNamespace));
 
-    const addActions = [
-      {
-        label: 'Browse Catalog',
-        href: '/catalog',
-      },
-      {
-        label: 'Deploy Image',
-        href: `/deploy-image?preselected-ns=${activeNamespace}`,
-      },
-      {
-        label: 'Import YAML',
-        href: UIActions.formatNamespacedRouteForResource('import', activeNamespace),
-      },
-    ];
-
-    return <div className="co-namespace-bar__dropdowns">
+    return <div className="co-namespace-bar__items">
       <Dropdown
         className="co-namespace-selector"
         menuClassName="co-namespace-selector__menu"
@@ -312,21 +363,20 @@ class NamespaceBarDropdowns_ extends React.Component {
         defaultBookmarks={defaultBookmarks}
         storageKey={NAMESPACE_LOCAL_STORAGE_KEY}
         shortCut={KEYBOARD_SHORTCUTS.focusNamespaceDropdown} />
-      <ActionsMenu
-        actions={addActions}
-        title={<React.Fragment><span className="fa fa-plus-circle co-add-actions-selector__icon" aria-hidden="true"></span> Add</React.Fragment>}
-        menuClassName="co-add-actions-selector__menu dropdown-menu--right"
-        buttonClassName="btn-link" />
+      { children }
+      <Link to={UIActions.formatNamespacedRouteForResource('import', activeNamespace)} className="co-namespace-bar__import"><span className="fa fa-plus-circle co-add-actions-selector__icon" aria-hidden="true"></span>Import YAML</Link>
     </div>;
   }
 }
 
 const NamespaceBarDropdowns = connect(namespaceBarDropdownStateToProps, namespaceBarDropdownDispatchToProps)(NamespaceBarDropdowns_);
 
-const NamespaceBar_ = ({useProjects}) => {
+const NamespaceBar_ = ({useProjects, children}) => {
   return <div className="co-namespace-bar">
     <Firehose resources={[{kind: getModel(useProjects).kind, prop: 'namespace', isList: true}]}>
-      <NamespaceBarDropdowns useProjects={useProjects} />
+      <NamespaceBarDropdowns useProjects={useProjects}>
+        {children}
+      </NamespaceBarDropdowns>
     </Firehose>
   </div>;
 };
@@ -349,5 +399,5 @@ export const NamespacesDetailsPage = props => <DetailsPage
 export const ProjectsDetailsPage = props => <DetailsPage
   {...props}
   menuActions={projectMenuActions}
-  pages={[navFactory.details(Details), navFactory.editYaml(), navFactory.roles(RolesPage)]}
+  pages={[navFactory.details(OverviewNamespaceDashboard), navFactory.editYaml(), navFactory.workloads(Overview), navFactory.roles(RolesPage)]}
 />;

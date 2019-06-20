@@ -1,14 +1,17 @@
 /* eslint-env node */
 import * as webpack from 'webpack';
 import * as path from 'path';
-import * as glob from 'glob';
-import { default as chalk } from 'chalk';
 import * as HtmlWebpackPlugin from 'html-webpack-plugin';
 import * as ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
 import * as MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import * as VirtualModulesPlugin from 'webpack-virtual-modules';
 
-import { readPackages, getActivePluginPackages, getActivePluginsModule } from '@console/plugin-sdk/src/codegen';
+import {
+  resolvePluginPackages,
+  loadActivePlugins,
+  getActivePluginsModule,
+  printPluginStats,
+} from '@console/plugin-sdk/src/codegen';
 
 const NODE_ENV = process.env.NODE_ENV;
 
@@ -102,6 +105,10 @@ const config: webpack.Configuration = {
     runtimeChunk: true,
   },
   plugins: [
+    // replace 'lodash' and 'lodash/*' imports with a lodash-es equivalent
+    new webpack.NormalModuleReplacementPlugin(/^lodash($|\/.*$)/, (resource) => {
+      resource.request = resource.request.replace(/^lodash/, 'lodash-es');
+    }),
     new ForkTsCheckerWebpackPlugin({ checkSyntacticErrors: true }),
     new HtmlWebpackPlugin({
       filename: './tokener.html',
@@ -132,17 +139,13 @@ if (NODE_ENV === 'production') {
 }
 
 /* Console plugin support */
-const packageFiles = glob.sync('packages/*/package.json', { absolute: true });
-const { appPackage, pluginPackages } = readPackages(packageFiles);
-const activePluginPackages = appPackage ? getActivePluginPackages(appPackage, pluginPackages) : [];
+const pluginPackages = resolvePluginPackages();
+printPluginStats(loadActivePlugins(pluginPackages));
 
 config.plugins.push(
   new VirtualModulesPlugin({
-    'node_modules/@console/active-plugins.js': getActivePluginsModule(activePluginPackages),
+    'node_modules/@console/active-plugins.js': getActivePluginsModule(pluginPackages),
   }),
 );
-
-// eslint-disable-next-line no-console
-console.log(`Active plugins: [${(activePluginPackages.map(pkg => `${chalk.green(pkg.name)}`).join(', '))}]`);
 
 export default config;

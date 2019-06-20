@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 
-import { Kebab, LabelList, ResourceLink, Selector, Timestamp } from './index';
+import { Kebab, LabelList, ResourceLink, Selector, Timestamp, useAccessReview } from './index';
 import {
   K8sResourceKind,
   modelFor,
@@ -31,6 +31,14 @@ export const ResourceSummary: React.SFC<ResourceSummaryProps> = ({children, reso
     .map((o, i) => <ResourceLink key={i} kind={referenceForOwnerRef(o)} name={o.name} namespace={metadata.namespace} title={o.uid} />);
   const tolerations = showTolerations ? getTolerations(resource) : null;
 
+  const canUpdate = useAccessReview({
+    group: model.apiGroup,
+    resource: model.plural,
+    verb: 'patch',
+    name: metadata.name,
+    namespace: metadata.namespace,
+  });
+
   return <dl data-test-id="resource-summary" className="co-m-pane__details">
     <dt>Name</dt>
     <dd>{metadata.name || '-'}</dd>
@@ -45,9 +53,21 @@ export const ResourceSummary: React.SFC<ResourceSummaryProps> = ({children, reso
     {showNodeSelector && <dt>Node Selector</dt>}
     {showNodeSelector && <dd><Selector kind="Node" selector={_.get(resource, 'spec.template.spec.nodeSelector')} /></dd>}
     {showTolerations && <dt>Tolerations</dt>}
-    {showTolerations && <dd><button type="button" className="btn btn-link co-modal-btn-link co-modal-btn-link--left" onClick={Kebab.factory.ModifyTolerations(model, resource).callback}>{pluralize(_.size(tolerations), 'Toleration')}</button></dd>}
+    {showTolerations && (
+      <dd>
+        {canUpdate
+          ? <button type="button" className="btn btn-link co-modal-btn-link co-modal-btn-link--left" onClick={Kebab.factory.ModifyTolerations(model, resource).callback}>{pluralize(_.size(tolerations), 'Toleration')}</button>
+          : pluralize(_.size(tolerations), 'Toleration')}
+      </dd>
+    )}
     {showAnnotations && <dt>Annotations</dt>}
-    {showAnnotations && <dd><button data-test-id="edit-annotations" type="button" className="btn btn-link co-modal-btn-link co-modal-btn-link--left" onClick={Kebab.factory.ModifyAnnotations(model, resource).callback}>{pluralize(_.size(metadata.annotations), 'Annotation')}</button></dd>}
+    {showAnnotations && (
+      <dd>
+        {canUpdate
+          ? <button data-test-id="edit-annotations" type="button" className="btn btn-link co-modal-btn-link co-modal-btn-link--left" onClick={Kebab.factory.ModifyAnnotations(model, resource).callback}>{pluralize(_.size(metadata.annotations), 'Annotation')}</button>
+          : pluralize(_.size(metadata.annotations), 'Annotation')}
+      </dd>
+    )}
     {children}
     <dt>Created At</dt>
     <dd><Timestamp timestamp={metadata.creationTimestamp} /></dd>

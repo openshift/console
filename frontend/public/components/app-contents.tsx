@@ -1,7 +1,9 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
+import { connect } from 'react-redux';
+import * as PropTypes from 'prop-types';
 import { Redirect, Route, Switch, withRouter } from 'react-router-dom';
-import { ALL_NAMESPACES_KEY, FLAGS } from '../const';
+import { FLAGS } from '../const';
 import { connectToFlags, flagPending } from '../reducers/features';
 import { GlobalNotifications } from './global-notifications';
 import { NamespaceBar } from './namespace';
@@ -9,9 +11,12 @@ import { SearchPage } from './search';
 import { ResourceDetailsPage, ResourceListPage } from './resource-list';
 import { AsyncComponent, Loading } from './utils';
 import { namespacedPrefixes } from './utils/link';
-import * as UIActions from '../actions/ui';
 import { ClusterServiceVersionModel, SubscriptionModel, AlertmanagerModel } from '../models';
 import { referenceForModel } from '../module/k8s';
+import * as plugins from '../plugins';
+import { NamespaceRedirect } from './utils/namespace-redirect';
+import { getActivePerspective } from '../reducers/ui';
+import { RootState } from '../redux';
 
 //PF4 Imports
 import {
@@ -19,6 +24,11 @@ import {
   PageSectionVariants,
 } from '@patternfly/react-core';
 
+// React Router's proptypes are incorrect. See https://github.com/ReactTraining/react-router/pull/5393
+(Route as any).propTypes.path = PropTypes.oneOfType([
+  PropTypes.string,
+  PropTypes.arrayOf(PropTypes.string),
+]);
 
 const RedirectComponent = props => {
   const to = `/k8s${props.location.pathname}`;
@@ -44,19 +54,25 @@ _.each(namespacedPrefixes, p => {
   namespacedRoutes.push(`${p}/all-namespaces`);
 });
 
-const appendActiveNamespace = pathname => {
-  const basePath = pathname.replace(/\/$/, '');
-  const activeNamespace = UIActions.getActiveNamespace();
-  return activeNamespace === ALL_NAMESPACES_KEY ? `${basePath}/all-namespaces` : `${basePath}/ns/${activeNamespace}`;
-};
-
-const NamespaceRedirect = ({location: {pathname}}) => {
-  const to = appendActiveNamespace(pathname) + location.search;
-  return <Redirect to={to} />;
+type DefaultPageProps = {
+  activePerspective: string;
+  flags: {[key: string]: boolean};
 };
 
 // The default page component lets us connect to flags without connecting the entire App.
-const DefaultPage = connectToFlags(FLAGS.OPENSHIFT)(({ flags }) => {
+const DefaultPage_: React.FC<DefaultPageProps> = ({ flags, activePerspective }) => {
+  // support redirecting to perspective landing page
+  if (activePerspective !== 'admin') {
+    return (
+      <Redirect
+        to={
+          plugins.registry.getPerspectives().find((p) => p.properties.id === activePerspective)
+            .properties.landingPageURL
+        }
+      />
+    );
+  }
+
   const openshiftFlag = flags[FLAGS.OPENSHIFT];
   if (flagPending(openshiftFlag)) {
     return <Loading />;
@@ -66,11 +82,29 @@ const DefaultPage = connectToFlags(FLAGS.OPENSHIFT)(({ flags }) => {
     return <Redirect to="/k8s/cluster/projects" />;
   }
 
-  const statusPage = appendActiveNamespace('/status');
-  return <Redirect to={statusPage} />;
-});
+  return <Redirect to="/cluster-status" />;
+};
 
-const LazyRoute = (props) => <Route {...props} render={(componentProps) => <AsyncComponent loader={props.loader} kind={props.kind} {...componentProps} />} />;
+const DefaultPage = connect((state: RootState) => ({
+  activePerspective: getActivePerspective(state),
+}))(
+  connectToFlags(FLAGS.OPENSHIFT)(DefaultPage_),
+);
+
+const LazyRoute = (props) => (
+  <Route
+    {...props}
+    component={undefined}
+    render={(componentProps) => (
+      <AsyncComponent loader={props.loader} kind={props.kind} {...componentProps} />
+    )}
+  />
+);
+
+const pageRouteExtensions = plugins.registry.getRoutePages().map((r) => {
+  const Component = r.properties.loader ? LazyRoute : Route;
+  return <Component {...r.properties} key={Array.from(r.properties.path).join(',')} />;
+});
 
 // use `withRouter` to force a re-render when routes change since we are using React.memo
 const AppContents = withRouter(React.memo(() => (
@@ -80,16 +114,15 @@ const AppContents = withRouter(React.memo(() => (
       <Route path={namespacedRoutes} component={NamespaceBar} />
       <div id="content-scrollable">
         <Switch>
+          {pageRouteExtensions}
+
           <Route path={['/all-namespaces', '/ns/:ns']} component={RedirectComponent} />
 
+          <LazyRoute path="/dashboards" exact loader={() => import('./dashboards-page/dashboards' /* webpackChunkName: "dashboards" */).then(m => m.DashboardsPage)} />
           <LazyRoute path="/cluster-status" exact loader={() => import('./cluster-overview' /* webpackChunkName: "cluster-overview" */).then(m => m.ClusterOverviewPage)} />
-          <LazyRoute path="/overview/all-namespaces" exact loader={() => import('./cluster-overview' /* webpackChunkName: "cluster-overview" */).then(m => m.ClusterOverviewPage)} />
-          <LazyRoute path="/overview/ns/:ns" exact loader={() => import('./overview' /* webpackChunkName: "overview" */).then(m => m.OverviewPage)} />
+          <Redirect from="/overview/all-namespaces" to="/cluster-status" />
+          <Redirect from="/overview/ns/:ns" to="/k8s/cluster/projects/:ns/workloads" />
           <Route path="/overview" exact component={NamespaceRedirect} />
-
-          <LazyRoute path="/status/all-namespaces" exact loader={() => import('./cluster-overview' /* webpackChunkName: "cluster-overview" */).then(m => m.ClusterOverviewPage)} />
-          <LazyRoute path="/status/ns/:ns" exact loader={() => import('./cluster-overview' /* webpackChunkName: "cluster-overview" */).then(m => m.ClusterOverviewPage)} />
-          <Route path="/status" exact component={NamespaceRedirect} />
 
           <LazyRoute path="/start-guide" exact loader={() => import('./start-guide' /* webpackChunkName: "start-guide" */).then(m => m.StartGuidePage)} />
 

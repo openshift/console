@@ -1,52 +1,57 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import { AboutModal as PfAboutModal, TextContent, TextList, TextListItem } from '@patternfly/react-core';
+import { Alert, AboutModal as PfAboutModal, TextContent, TextList, TextListItem } from '@patternfly/react-core';
+import { Link } from 'react-router-dom';
 
 import { FLAGS } from '../const';
 import { connectToFlags } from '../reducers/features';
 import { getBrandingDetails } from './masthead';
 import { Firehose } from './utils';
 import { ClusterVersionModel } from '../models';
-import { ClusterVersionKind, referenceForModel, UpdateHistory } from '../module/k8s';
+import { ClusterVersionKind, referenceForModel } from '../module/k8s';
 import { k8sVersion } from '../module/status';
+import { hasAvailableUpdates, getK8sGitVersion, getOpenShiftVersion } from '../module/k8s/cluster-settings';
 
-const AboutModalItems: React.FC<AboutModalItemsProps> = ({cv}) => {
+const AboutModalItems: React.FC<AboutModalItemsProps> = ({closeAboutModal, cv}) => {
   const [kubernetesVersion, setKubernetesVersion] = React.useState('');
   React.useEffect(() => {
     k8sVersion()
-      .then(({gitVersion}) => setKubernetesVersion(gitVersion))
+      .then(response => setKubernetesVersion(getK8sGitVersion(response) || '-'))
       .catch(() => setKubernetesVersion('unknown'));
   }, []);
   const clusterID: string = _.get(cv, 'data.spec.clusterID');
   const channel: string = _.get(cv, 'data.spec.channel');
-  const lastUpdate: UpdateHistory = _.get(cv, 'data.status.history[0]');
+  const openshiftVersion = getOpenShiftVersion(_.get(cv, 'data'));
   return (
-    <TextContent>
-      <TextList component="dl">
-        {lastUpdate && (
-          <React.Fragment>
-            <TextListItem component="dt">OpenShift Version</TextListItem>
-            <TextListItem component="dd">{lastUpdate.state === 'Partial' ? `Updating to ${lastUpdate.version}` : lastUpdate.version}</TextListItem>
-          </React.Fragment>
-        )}
-        <TextListItem component="dt">Kubernetes Version</TextListItem>
-        <TextListItem component="dd">{kubernetesVersion}</TextListItem>
-        {channel && (
-          <React.Fragment>
-            <TextListItem component="dt">Channel</TextListItem>
-            <TextListItem component="dd">{channel}</TextListItem>
-          </React.Fragment>
-        )}
-        {clusterID && (
-          <React.Fragment>
-            <TextListItem component="dt">Cluster ID</TextListItem>
-            <TextListItem component="dd">{clusterID}</TextListItem>
-          </React.Fragment>
-        )}
-        <TextListItem component="dt">API Server</TextListItem>
-        <TextListItem component="dd">{window.SERVER_FLAGS.kubeAPIServerURL}</TextListItem>
-      </TextList>
-    </TextContent>
+    <React.Fragment>
+      {hasAvailableUpdates(cv.data) && <Alert className="co-about-modal__alert" variant="info" title={<React.Fragment>Update available. <Link to="/settings/cluster" onClick={closeAboutModal}>View Cluster Settings</Link></React.Fragment>} />}
+      <TextContent>
+        <TextList component="dl">
+          {openshiftVersion && (
+            <React.Fragment>
+              <TextListItem component="dt">OpenShift Version</TextListItem>
+              <TextListItem component="dd">{openshiftVersion}</TextListItem>
+            </React.Fragment>
+          )}
+          <TextListItem component="dt">Kubernetes Version</TextListItem>
+          <TextListItem component="dd">{kubernetesVersion}</TextListItem>
+          {channel && (
+            <React.Fragment>
+              <TextListItem component="dt">Channel</TextListItem>
+              <TextListItem component="dd">{channel}</TextListItem>
+            </React.Fragment>
+          )}
+          {clusterID && (
+            <React.Fragment>
+              <TextListItem component="dt">Cluster ID</TextListItem>
+              <TextListItem component="dd">{clusterID}</TextListItem>
+            </React.Fragment>
+          )}
+          <TextListItem component="dt">API Server</TextListItem>
+          <TextListItem component="dd">{window.SERVER_FLAGS.kubeAPIServerURL}</TextListItem>
+        </TextList>
+      </TextContent>
+    </React.Fragment>
   );
 };
 AboutModalItems.displayName = 'AboutModalItems';
@@ -65,10 +70,10 @@ const AboutModal_: React.FC<AboutModalProps> = (props) => {
       productName=""
       brandImageSrc={details.logoImg}
       brandImageAlt={details.productName}
+      noAboutModalBoxContentContainer={true}
     >
       {!customBranding && <p>OpenShift is Red Hat&apos;s container application platform that allows developers to quickly develop, host,
         and scale applications in a cloud environment.</p>}
-      <br />
       <Firehose resources={resources}>
         <AboutModalItems {...props as any} />
       </Firehose>
@@ -79,6 +84,7 @@ export const AboutModal = connectToFlags(FLAGS.CLUSTER_VERSION)(AboutModal_);
 AboutModal.displayName = 'AboutModal';
 
 type AboutModalItemsProps = {
+  closeAboutModal: () => void;
   cv?: {
     data?: ClusterVersionKind;
   };

@@ -63,7 +63,8 @@ export const NavSection = connect(navSectionStateToProps)(
     }
 
     getActiveChild() {
-      const { activeNamespace, location, children } = this.props;
+      const { activeNamespace, location } = this.props;
+      const children = this.getChildren();
 
       if (!children) {
         return stripBasePath(location).startsWith(this.props.activePath);
@@ -150,15 +151,8 @@ export const NavSection = connect(navSectionStateToProps)(
       });
     }
 
-    render() {
-      if (!this.props.canRender) {
-        return null;
-      }
-
+    getChildren() {
       const { title, children, perspective } = this.props;
-      const { isOpen, activeChild } = this.state;
-      const isActive = !!activeChild;
-
       const Children = React.Children.map(children, this.mapChild) || [];
 
       this.getPluginNavItems(perspective, title).forEach((item) => {
@@ -168,9 +162,22 @@ export const NavSection = connect(navSectionStateToProps)(
         }
       });
 
-      return Children.length > 0 ? (
+      return Children;
+    }
+
+    render() {
+      if (!this.props.canRender) {
+        return null;
+      }
+
+      const { title } = this.props;
+      const { isOpen, activeChild } = this.state;
+      const isActive = !!activeChild;
+      const children = this.getChildren();
+
+      return children.length > 0 ? (
         <NavExpandable title={title} isActive={isActive} isExpanded={isOpen} onExpand={this.toggle}>
-          {Children}
+          {children}
         </NavExpandable>
       ) : null;
     }

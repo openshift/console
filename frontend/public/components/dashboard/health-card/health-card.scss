@@ -1,0 +1,47 @@
+.co-health-card__body {
+  min-height: 2.3em;
+}
+
+.co-health-card__icon {
+  font-size: 1.5rem;
+}
+
+.co-health-card__icon--error {
+  color: $pf-color-red-100;
+}
+
+.co-health-card__icon--ok {
+  color: $pf-color-light-green-400;
+}
+
+.co-health-card__icon--warning {
+  color: $pf-color-gold-400;
+}
+
+.co-health-card__item {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.co-health-card__separator {
+  border-bottom: 1px solid $pf-color-black-200;
+}
+
+.co-health-card__subsystem-item {
+  padding-top: 5px;
+}
+
+.co-health-card__subtitle {
+  color: $pf-color-black-500;
+  font-size: 0.7rem;
+}
+
+.co-health-card__text {
+  font-size: 0.875rem;
+  margin-left: 1rem;
+}
+
+.co-health-card__title {
+  padding-left: 0.6rem;
+}

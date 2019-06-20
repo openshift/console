@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 
 import { ResourceEventStream } from './events';
-import { DetailsPage, List, ListPage, WorkloadListHeader, WorkloadListRow } from './factory';
+import { DetailsPage, ListPage, Table } from './factory';
 import { replicaSetMenuActions } from './replicaset';
 import {
   ContainerTable,
@@ -12,7 +12,12 @@ import {
   ResourcePodCount,
   AsyncComponent,
 } from './utils';
-import { breadcrumbsForOwnerRefs } from './utils/breadcrumbs';
+
+import {
+  WorkloadTableRow,
+  WorkloadTableHeader,
+} from './workload-table';
+
 import { VolumesTable } from './volumes-table';
 
 const Details = ({obj: replicationController}) => {
@@ -58,14 +63,25 @@ const {details, editYaml, pods, envEditor, events} = navFactory;
 
 export const ReplicationControllersDetailsPage = props => <DetailsPage
   {...props}
-  breadcrumbsFor={obj => breadcrumbsForOwnerRefs(obj).concat({
-    name: 'ReplicationController Details',
-    path: props.match.url,
-  })}
   menuActions={replicaSetMenuActions}
   pages={[details(Details), editYaml(), pods(), envEditor(environmentComponent), events(ResourceEventStream)]}
 />;
 
-const Row = props => <WorkloadListRow {...props} kind="ReplicationController" actions={replicaSetMenuActions} />;
-export const ReplicationControllersList = props => <List {...props} Header={WorkloadListHeader} Row={Row} />;
+const kind = 'ReplicationController';
+
+const ReplicationControllerTableRow = ({obj, index, key, style}) => {
+  return (
+    <WorkloadTableRow obj={obj} index={index} key={key} style={style} menuActions={replicaSetMenuActions} kind={kind} />
+  );
+};
+ReplicationControllerTableRow.displayName = 'ReplicationControllerTableRow';
+
+
+const ReplicationControllerTableHeader = () => {
+  return WorkloadTableHeader();
+};
+ReplicationControllerTableHeader.displayName = 'ReplicationControllerTableHeader';
+
+export const ReplicationControllersList = props => <Table {...props} aria-label="Replication Controllers" Header={ReplicationControllerTableHeader} Row={ReplicationControllerTableRow} virtualize />;
+
 export const ReplicationControllersPage = props => <ListPage canCreate={true} ListComponent={ReplicationControllersList} {...props} />;

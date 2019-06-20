@@ -1,19 +1,24 @@
-import * as _ from 'lodash-es';
 import * as classNames from 'classnames';
+import * as fuzzy from 'fuzzysearch';
+import * as _ from 'lodash-es';
 import { murmur3 } from 'murmurhash-js';
+import { Switch } from '@patternfly/react-core';
+import { sortable } from '@patternfly/react-table';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
-import { Link, Redirect, Route, Switch } from 'react-router-dom';
+import { Link, Redirect, Route, Switch as RouteSwitch } from 'react-router-dom';
 
-import { coFetchJSON } from '../co-fetch';
 import * as k8sActions from '../actions/k8s';
 import * as UIActions from '../actions/ui';
+import { coFetchJSON } from '../co-fetch';
 import { alertState, AlertStates, connectToURLs, MonitoringRoutes, silenceState, SilenceStates } from '../reducers/monitoring';
 import store from '../redux';
-import { ColHead, List, ListHeader, ResourceRow, TextFilter } from './factory';
-import { QueryBrowser } from './graphs';
+import { ResourceRow, Table, TableData, TableRow, TextFilter } from './factory';
+import { PROMETHEUS_BASE_PATH, QueryBrowser } from './graphs';
+import { PrometheusEndpoint } from './graphs/helpers';
 import { getPrometheusExpressionBrowserURL } from './graphs/prometheus-graph';
+import { graphColors } from './graphs/query-browser';
 import { confirmModal } from './modals';
 import { CheckBoxes } from './row-filter';
 import { formatPrometheusDuration } from './utils/datetime';
@@ -22,6 +27,7 @@ import { Tooltip } from './utils/tooltip';
 import {
   ActionsMenu,
   ButtonBar,
+  Dropdown,
   ExternalLink,
   getURLSearchParams,
   history,
@@ -30,26 +36,27 @@ import {
   SectionHeading,
   StatusBox,
   Timestamp,
+  useSafeFetch,
 } from './utils';
 
 const AlertResource = {
   kind: 'Alert',
   label: 'Alert',
-  path: '/monitoring/alerts',
+  plural: '/monitoring/alerts',
   abbr: 'AL',
 };
 
 const AlertRuleResource = {
   kind: 'AlertRule',
   label: 'Alerting Rule',
-  path: '/monitoring/alertrules',
+  plural: '/monitoring/alertrules',
   abbr: 'AR',
 };
 
 const SilenceResource = {
   kind: 'Silence',
   label: 'Silence',
-  path: '/monitoring/silences',
+  plural: '/monitoring/silences',
   abbr: 'SL',
 };
 
@@ -62,8 +69,8 @@ const buildNotFiringAlert = (rule: Rule): Alert => ({
   state: AlertStates.NotFiring,
 });
 
-const alertURL = (alert, ruleID) => `${AlertResource.path}/${ruleID}?${labelsToParams(alert.labels)}`;
-const ruleURL = rule => `${AlertRuleResource.path}/${_.get(rule, 'id')}`;
+const alertURL = (alert, ruleID) => `${AlertResource.plural}/${ruleID}?${labelsToParams(alert.labels)}`;
+const ruleURL = rule => `${AlertRuleResource.plural}/${_.get(rule, 'id')}`;
 
 const alertDescription = alert => {
   const {annotations = {}, labels = {}} = alert;
@@ -84,7 +91,7 @@ const refreshPoller = key => {
 
 const silenceAlert = alert => ({
   label: 'Silence Alert',
-  href: `${SilenceResource.path}/~new?${labelsToParams(alert.labels)}`,
+  href: `${SilenceResource.plural}/~new?${labelsToParams(alert.labels)}`,
 });
 
 const viewAlertRule = alert => ({
@@ -94,7 +101,7 @@ const viewAlertRule = alert => ({
 
 const editSilence = silence => ({
   label: silenceState(silence) === SilenceStates.Expired ? 'Recreate Silence' : 'Edit Silence',
-  href: `${SilenceResource.path}/${silence.id}/edit`,
+  href: `${SilenceResource.plural}/${silence.id}/edit`,
 });
 
 const cancelSilence = (silence) => ({
@@ -179,12 +186,7 @@ const ToggleGraph_ = ({hideGraphs, toggle}) => {
 };
 const ToggleGraph = connect(graphStateToProps, {toggle: UIActions.monitoringToggleGraphs})(ToggleGraph_);
 
-// Plotly default colors:
-const graphColors = [
-  '#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf',
-];
-
-const Graph_ = ({hideGraphs, metric = undefined, samples, rule}) => {
+const Graph_ = ({hideGraphs, metric = undefined, rule}) => {
   if (hideGraphs) {
     return null;
   }
@@ -198,12 +200,10 @@ const Graph_ = ({hideGraphs, metric = undefined, samples, rule}) => {
     : null;
 
   return <QueryBrowser
-    colors={graphColors}
     defaultTimespan={timespan}
     GraphLink={GraphLink}
     metric={metric}
-    query={query}
-    samples={samples}
+    queries={[query]}
   />;
 };
 const Graph = connect(graphStateToProps)(Graph_);
@@ -254,7 +254,7 @@ const AlertsDetailsPage = withFallback(connect(alertStateToProps)((props: Alerts
         <div className="co-m-pane__body-group">
           <div className="row">
             <div className="col-sm-12">
-              {state !== AlertStates.NotFiring && <Graph metric={labels} rule={rule} samples={600} />}
+              {state !== AlertStates.NotFiring && <Graph metric={labels} rule={rule} />}
             </div>
           </div>
           <div className="row">
@@ -282,7 +282,7 @@ const AlertsDetailsPage = withFallback(connect(alertStateToProps)((props: Alerts
                 <dd>
                   <div className="co-resource-item">
                     <MonitoringResourceIcon resource={AlertRuleResource} />
-                    <Link to={ruleURL(rule)} className="co-resource-item__resource-name">{_.get(rule, 'name')}</Link>
+                    <Link to={ruleURL(rule)} data-test-id="alert-detail-resource-link" className="co-resource-item__resource-name">{_.get(rule, 'name')}</Link>
                   </div>
                 </dd>
               </dl>
@@ -405,7 +405,7 @@ const AlertRulesDetailsPage = withFallback(connect(ruleStateToProps)((props: Ale
           </SectionHeading>
           <div className="row">
             <div className="col-sm-12">
-              <Graph rule={rule} samples={300} />
+              <Graph rule={rule} />
             </div>
           </div>
           <div className="row">
@@ -514,34 +514,65 @@ const SilencesDetailsPage = withFallback(connect(silenceParamToProps)((props: Si
   </React.Fragment>;
 }));
 
-const AlertRow = ({obj}) => {
-  const {annotations = {}, labels = {}} = obj;
-  const state = alertState(obj);
+const tableAlertClasses = [
+  classNames('col-sm-7', 'col-xs-8'),
+  classNames('col-sm-3', 'col-xs-4'),
+  classNames('col-sm-2', 'hidden-xs'),
+  Kebab.columnClass,
+];
 
-  return <ResourceRow obj={obj}>
-    <div className="col-sm-7 col-xs-8">
-      <div className="co-resource-item">
-        <MonitoringResourceIcon resource={AlertResource} />
-        <Link to={alertURL(obj, obj.rule.id)} className="co-resource-item__resource-name">{labels.alertname}</Link>
-      </div>
-      <div className="monitoring-description">{annotations.description || annotations.message}</div>
-    </div>
-    <div className="col-sm-3 col-xs-4">
-      <AlertState state={state} />
-      <AlertStateDescription alert={obj} />
-    </div>
-    <div className="col-sm-2 hidden-xs co-truncate">{_.startCase(_.get(labels, 'severity')) || '-'}</div>
-    <div className="dropdown-kebab-pf">
-      <Kebab options={state === AlertStates.Firing || state === AlertStates.Pending ? [silenceAlert(obj), viewAlertRule(obj)] : [viewAlertRule(obj)]} />
-    </div>
-  </ResourceRow>;
+const AlertTableRow: React.FC<AlertTableRowProps> = ({obj, index, key, style}) => {
+  const {annotations = {}, labels} = obj;
+  const state = alertState(obj);
+  return (
+    <TableRow id={obj.rule.id} index={index} trKey={key} style={style}>
+      <TableData className={tableAlertClasses[0]}>
+        <div className="co-resource-item">
+          <MonitoringResourceIcon resource={AlertResource} />
+          <Link to={alertURL(obj, obj.rule.id)} data-test-id="alert-resource-link" className="co-resource-item__resource-name">{labels && labels.alertname}</Link>
+        </div>
+        <div className="monitoring-description">{annotations.description || annotations.message}</div>
+      </TableData>
+      <TableData className={tableAlertClasses[1]}>
+        <AlertState state={state} />
+        <AlertStateDescription alert={obj} />
+      </TableData>
+      <TableData className={classNames(tableAlertClasses[2], 'co-truncate')}>
+        {_.startCase(_.get(labels, 'severity')) || '-'}
+      </TableData>
+      <TableData className={tableAlertClasses[3]}>
+        <Kebab options={state === AlertStates.Firing || state === AlertStates.Pending ? [silenceAlert(obj), viewAlertRule(obj)] : [viewAlertRule(obj)]} />
+      </TableData>
+    </TableRow>
+  );
+};
+AlertTableRow.displayName = 'AlertTableRow';
+type AlertTableRowProps = {
+  obj: Alert;
+  index: number;
+  key?: string;
+  style: object;
 };
 
-const AlertHeader = props => <ListHeader>
-  <ColHead {...props} className="col-sm-7 col-xs-8" sortField="labels.alertname">Name</ColHead>
-  <ColHead {...props} className="col-sm-3 col-xs-4" sortFunc="alertStateOrder">State</ColHead>
-  <ColHead {...props} className="col-sm-2 hidden-xs" sortField="labels.severity">Severity</ColHead>
-</ListHeader>;
+const AlertTableHeader = () => [
+  {
+    title: 'Name', sortField: 'labels.alertname', transforms: [sortable],
+    props: { className: tableAlertClasses[0] },
+  },
+  {
+    title: 'State', sortFunc: 'alertStateOrder', transforms: [sortable],
+    props: { className: tableAlertClasses[1] },
+  },
+  {
+    title: 'Severity', sortField: 'labels.severity', transforms: [sortable],
+    props: { className: tableAlertClasses[2] },
+  },
+  {
+    title: '',
+    props: { className: tableAlertClasses[3] },
+  },
+];
+AlertTableHeader.displayName = 'AlertTableHeader';
 
 const AlertsPageDescription = () => <p className="co-help-text">
   Alerts help notify you when certain conditions in your environment are met. <ExternalLink href="https://prometheus.io/docs/prometheus/latest/configuration/alerting_rules/" text="Learn more about how alerts are configured." />
@@ -554,8 +585,8 @@ const HeaderAlertmanagerLink_ = ({path, urls}) => _.isEmpty(urls[MonitoringRoute
   </span>;
 const HeaderAlertmanagerLink = connectToURLs(MonitoringRoutes.AlertManager)(HeaderAlertmanagerLink_);
 
-const HeaderPrometheusLink_ = ({query, urls}) => {
-  const url = getPrometheusExpressionBrowserURL(urls, query);
+const HeaderPrometheusLink_ = ({queries, urls}) => {
+  const url = getPrometheusExpressionBrowserURL(urls, queries);
   return _.isEmpty(url)
     ? null
     : <span className="monitoring-header-link">
@@ -654,7 +685,8 @@ const MonitoringListPage = connect(filtersToProps)(class InnerMonitoringListPage
         </div>
         <div className="row">
           <div className="col-xs-12">
-            <List
+            <Table
+              aria-label={kindPlural}
               data={data}
               filters={filters}
               Header={Header}
@@ -662,6 +694,7 @@ const MonitoringListPage = connect(filtersToProps)(class InnerMonitoringListPage
               loadError={loadError}
               reduxID={reduxID}
               Row={Row}
+              virtualize
             />
           </div>
         </div>
@@ -672,21 +705,42 @@ const MonitoringListPage = connect(filtersToProps)(class InnerMonitoringListPage
 
 const AlertsPage_ = props => <MonitoringListPage
   {...props}
-  Header={AlertHeader}
+  Header={AlertTableHeader}
   kindPlural="Alerts"
   nameFilterID="alert-name"
   PageDescription={AlertsPageDescription}
   reduxID="monitoringRules"
-  Row={AlertRow}
+  Row={AlertTableRow}
   rowFilter={alertsRowFilter}
 />;
 const AlertsPage = withFallback(connect(alertsToProps)(AlertsPage_));
 
-const SilenceHeader = props => <ListHeader>
-  <ColHead {...props} className="col-sm-7 col-xs-8" sortField="name">Name</ColHead>
-  <ColHead {...props} className="col-sm-3 col-xs-4" sortFunc="silenceStateOrder">State</ColHead>
-  <ColHead {...props} className="col-sm-2 hidden-xs" sortField="firingAlerts.length">Firing Alerts</ColHead>
-</ListHeader>;
+const tableSilenceClasses = [
+  classNames('col-sm-7', 'col-xs-8'),
+  classNames('col-sm-3', 'col-xs-4'),
+  classNames('col-sm-2', 'hidden-xs'),
+  Kebab.columnClass,
+];
+
+const SilenceTableHeader = () => [
+  {
+    title: 'Name', sortField: 'name', transforms: [sortable],
+    props: { className: tableSilenceClasses[0] },
+  },
+  {
+    title: 'State', sortFunc: 'silenceStateOrder', transforms: [sortable],
+    props: { className: tableSilenceClasses[1] },
+  },
+  {
+    title: 'Firing Alerts', sortField: 'firingAlerts.length', transforms: [sortable],
+    props: { className: tableSilenceClasses[2] },
+  },
+  {
+    title: '',
+    props: { className: tableSilenceClasses[3] },
+  },
+];
+SilenceTableHeader.displayName = 'SilenceTableHeader';
 
 const SilenceRow = ({obj}) => {
   const state = silenceState(obj);
@@ -695,7 +749,7 @@ const SilenceRow = ({obj}) => {
     <div className="col-sm-7 col-xs-8">
       <div className="co-resource-item">
         <MonitoringResourceIcon resource={SilenceResource} />
-        <Link className="co-resource-item__resource-name" title={obj.id} to={`${SilenceResource.path}/${obj.id}`}>{obj.name}</Link>
+        <Link className="co-resource-item__resource-name" data-test-id="silence-resource-link" title={obj.id} to={`${SilenceResource.plural}/${obj.id}`}>{obj.name}</Link>
       </div>
       <div className="monitoring-label-list">
         <SilenceMatchersList silence={obj} />
@@ -712,6 +766,42 @@ const SilenceRow = ({obj}) => {
       <SilenceKebab silence={obj} />
     </div>
   </ResourceRow>;
+};
+
+const SilenceTableRow: React.FC<SilenceTableRowProps> = ({obj, index, key, style}) => {
+  const state = silenceState(obj);
+  return (
+    <TableRow id={obj.id} index={index} trKey={key} style={style}>
+      <TableData className={tableSilenceClasses[0]}>
+        <div className="co-resource-item">
+          <MonitoringResourceIcon resource={SilenceResource} />
+          <Link className="co-resource-item__resource-name" data-test-id="silence-resource-link" title={obj.id} to={`${SilenceResource.plural}/${obj.id}`}>{obj.name}</Link>
+        </div>
+        <div className="monitoring-label-list">
+          <SilenceMatchersList silence={obj} />
+        </div>
+      </TableData>
+      <TableData className={classNames(tableSilenceClasses[1], 'co-break-word')}>
+        <SilenceState silence={obj} />
+        {state === SilenceStates.Pending && <StateTimestamp text="Starts" timestamp={obj.startsAt} />}
+        {state === SilenceStates.Active && <StateTimestamp text="Ends" timestamp={obj.endsAt} />}
+        {state === SilenceStates.Expired && <StateTimestamp text="Expired" timestamp={obj.endsAt} />}
+      </TableData>
+      <TableData className={tableSilenceClasses[2]}>
+        {obj.firingAlerts.length}
+      </TableData>
+      <TableData className={tableSilenceClasses[3]}>
+        <SilenceKebab silence={obj} />
+      </TableData>
+    </TableRow>
+  );
+};
+SilenceTableRow.displayName = 'SilenceTableRow';
+export type SilenceTableRowProps = {
+  obj: Silence;
+  index: number;
+  key?: string;
+  style: object;
 };
 
 const SilencesPageDescription = () => <p className="co-help-text">
@@ -737,12 +827,12 @@ const SilencesPage_ = props => <MonitoringListPage
   {...props}
   alertmanagerLinkPath="/#/silences"
   CreateButton={CreateButton}
-  Header={SilenceHeader}
+  Header={SilenceTableHeader}
   kindPlural="Silences"
   nameFilterID="silence-name"
   PageDescription={SilencesPageDescription}
   reduxID="monitoringSilences"
-  Row={SilenceRow}
+  Row={SilenceTableRow}
   rowFilter={silencesRowFilter}
 />;
 const SilencesPage = withFallback(connect(silencesToProps)(SilencesPage_));
@@ -829,7 +919,7 @@ class SilenceForm_ extends React.Component<SilenceFormProps, SilenceFormState> {
       .then(({data}) => {
         this.setState({error: undefined});
         refreshPoller('silences');
-        history.push(`${SilenceResource.path}/${encodeURIComponent(_.get(data, 'silenceId'))}`);
+        history.push(`${SilenceResource.plural}/${encodeURIComponent(_.get(data, 'silenceId'))}`);
       })
       .catch(err => this.setState({error: _.get(err, 'json.error') || err.message || 'Error saving Silence'}))
       .then(() => this.setState({inProgress: false}));
@@ -901,7 +991,7 @@ class SilenceForm_ extends React.Component<SilenceFormProps, SilenceFormState> {
 
         <ButtonBar errorMessage={error} inProgress={inProgress}>
           <button type="submit" className="btn btn-primary">{saveButtonText || 'Save'}</button>
-          <Link to={data.id ? `${SilenceResource.path}/${data.id}` : SilenceResource.path} className="btn btn-default">Cancel</Link>
+          <Link to={data.id ? `${SilenceResource.plural}/${data.id}` : SilenceResource.plural} className="btn btn-default">Cancel</Link>
         </ButtonBar>
       </form>
     </div>;
@@ -931,6 +1021,36 @@ const CreateSilence = () => {
     : <SilenceForm defaults={{matchers}} saveButtonText="Create" title="Silence Alert" />;
 };
 
+const MetricsDropdown = ({onChange}) => {
+  const [items, setItems] = React.useState({});
+  const [isError, setIsError] = React.useState(false);
+
+  const safeFetch = React.useCallback(useSafeFetch(), []);
+
+  React.useEffect(() => {
+    safeFetch(`${PROMETHEUS_BASE_PATH}/${PrometheusEndpoint.LABEL}/__name__/values`)
+      .then(({data}) => setItems(_.zipObject(data, data)))
+      .catch(() => setIsError(true));
+  }, [safeFetch]);
+
+  let title: string | React.ReactNode = 'Insert Metric at Cursor';
+  if (isError) {
+    title = 'Failed to load metrics list';
+  } else if (_.isEmpty(items)) {
+    title = <LoadingInline />;
+  }
+
+  return <Dropdown
+    autocompleteFilter={fuzzy}
+    buttonClassName="btn-default query-browser__metrics-dropdown"
+    id="metrics-dropdown"
+    items={items}
+    menuClassName="query-browser__metrics-dropdown-menu"
+    onChange={onChange}
+    title={title}
+  />;
+};
+
 const MetricsList = ({metrics}) => <div className="co-m-table-grid co-m-table-grid--bordered">
   <div className="row co-m-table-grid__head">
     <div className="col-xs-9 query-browser-metric__wrapper">
@@ -954,61 +1074,171 @@ const MetricsList = ({metrics}) => <div className="co-m-table-grid co-m-table-gr
   </div>
 </div>;
 
-const QueryBrowserPage = () => {
+const QueryBrowserPage = withFallback(() => {
+  const [focusedQuery, setFocusedQuery] = React.useState();
   const [metrics, setMetrics] = React.useState([]);
+  const [restoreSelection, setRestoreSelection] = React.useState();
+
   const defaultQuery = getURLSearchParams().query || '';
-  const [query, setQuery] = React.useState(defaultQuery);
-  const [queryText, setQueryText] = React.useState(defaultQuery);
+
+  // `text` is the current string in the text input and `query` is the value displayed in the graph
+  const [queries, setQueries] = React.useState([{enabled: true, expanded: true, query: defaultQuery, text: defaultQuery}]);
+
+  const defaultQueryObj = {enabled: true, expanded: true, query: '', text: ''};
+
+  const updateQuery = (i, obj) => setQueries(_.map(queries, (q, j) => i === j ? Object.assign({}, q, obj) : q));
+
+  const addQuery = () => setQueries([...queries, defaultQueryObj]);
+
+  const deleteAllQueries = () => setQueries([defaultQueryObj]);
+
+  const deleteQuery = i => setQueries(queries.length <= 1 ? [defaultQueryObj] : queries.filter((v, k) => k !== i));
 
   const runQueries = e => {
     e.preventDefault();
-    setQuery(queryText);
+    setQueries(queries.map(q => q.enabled ? Object.assign({}, q, {query: q.text}) : q));
   };
+
+  const onQueryChange = (e, i) => updateQuery(i, {text: e.target.value});
+
+  const toggleEnabled = i => {
+    const {enabled, text} = queries[i];
+    updateQuery(i, {enabled: !enabled, expanded: !enabled, query: enabled ? '' : text});
+  };
+
+  const toggleExpanded = i => updateQuery(i, {expanded: !_.get(queries, [i, 'expanded'])});
+
+  const isAllExpanded = _.every(queries, 'expanded');
+  const toggleAllExpanded = () => setQueries(_.map(queries, q => Object.assign({}, q, {expanded: !isAllExpanded})));
+
+  const actionsMenuActions = [
+    {label: 'Add query', callback: addQuery},
+    {label: `${isAllExpanded ? 'Collapse' : 'Expand'} all query tables`, callback: toggleAllExpanded},
+    {label: 'Delete all queries', callback: deleteAllQueries},
+  ];
+
+  const onDataUpdate = queriesData => setMetrics(_.map(queriesData,
+    data => _.map(data, ({labels, values}) => ({labels, value: _.get(_.last(values), 'y')}))
+  ));
+
+  const onQueryBlur = (e, i) => {
+    if (_.get(e, 'relatedTarget.id') === 'metrics-dropdown') {
+      // Focus has shifted from a query input to the metrics dropdown, so store the cursor position so we know where to
+      // insert the metric when it is selected
+      setFocusedQuery({
+        index: i,
+        selection: {
+          start: e.target.selectionStart,
+          end: e.target.selectionEnd,
+        },
+        target: e.target,
+      });
+    } else {
+      // Focus is shifting to somewhere other than the metrics dropdown, so don't track the cursor position
+      setFocusedQuery(undefined);
+    }
+  };
+
+  const onMetricChange = metric => {
+    if (focusedQuery) {
+      // Replace the currently selected text with the metric
+      const {index, selection, target} = focusedQuery;
+      const oldText = _.get(queries, [index, 'text']);
+      const text = oldText.substring(0, selection.start) + metric + oldText.substring(selection.end);
+      updateQuery(index, {text});
+      target.focus();
+
+      // Restore the cursor position / currently selected text
+      setRestoreSelection([selection.start, selection.start + metric.length]);
+    } else {
+      // No focused query, so add the metric to the end of the first query input
+      updateQuery(0, {text: _.get(queries, [0, 'text']) + metric});
+    }
+  };
+
+  React.useEffect(() => {
+    if (focusedQuery && restoreSelection) {
+      focusedQuery.target.setSelectionRange(...restoreSelection);
+    }
+  }, [focusedQuery, restoreSelection]);
+
+  const validQueries = _.reject(_.map(queries, 'query'), _.isEmpty);
 
   return <React.Fragment>
     <div className="co-m-nav-title">
       <h1 className="co-m-pane__heading">
-        <span>Metrics<HeaderPrometheusLink query={query} /></span>
+        <span>Metrics<HeaderPrometheusLink queries={validQueries} /></span>
+        <div className="co-actions">
+          <ActionsMenu actions={actionsMenuActions} />
+        </div>
       </h1>
     </div>
     <div className="co-m-pane__body">
       <div className="row">
+        <div className="col-xs-12 text-right">
+          <ToggleGraph />
+        </div>
+      </div>
+      <div className="row">
         <div className="col-xs-12">
           <QueryBrowser
-            colors={graphColors}
             defaultTimespan={30 * 60 * 1000}
-            GraphLink={ToggleGraph}
-            onDataUpdate={data => setMetrics(_.map(data, d => ({
-              labels: _.omitBy(d.metric, (v, k) => _.startsWith(k, '__')),
-              value: _.get(_.last(d.values), 1),
-            })))}
-            query={query}
-            samples={600}
+            onDataUpdate={onDataUpdate}
+            queries={validQueries}
           />
           <form onSubmit={runQueries}>
-            <div className="group">
-              <div className="group__title">
+            <div className="query-browser__all-queries-controls">
+              <MetricsDropdown onChange={onMetricChange} />
+              <div>
+                <button type="button" className="btn" onClick={addQuery}>Add Query</button>
                 <button type="submit" className="btn btn-primary">Run Queries</button>
               </div>
-              <div className="group__title">
-                <input
-                  className="form-control"
-                  onChange={e => setQueryText(e.target.value)}
-                  placeholder="Expression (press Shift+Enter for newlines)"
-                  type="text"
-                  value={queryText}
-                />
-              </div>
-              <div className="group__body group__body--query-browser">
-                <MetricsList metrics={metrics} />
-              </div>
             </div>
+            {_.map(queries, (q, i) => {
+              const toggleEnabledLabel = `${q.enabled ? 'Disable' : 'Enable'} query`;
+              return <div className="group" key={i}>
+                <div className="group__title">
+                  <button
+                    className="btn btn-link query-browser__table-toggle-btn"
+                    onClick={() => toggleExpanded(i)}
+                    title={`${q.expanded ? 'Hide' : 'Show'} Table`}
+                  >
+                    <i
+                      aria-hidden="true"
+                      className={`fa fa-angle-${q.expanded ? 'down' : 'right'} query-browser__table-toggle-icon`}
+                    />
+                  </button>
+                  <input
+                    className="form-control query-browser__query"
+                    onBlur={e => onQueryBlur(e, i)}
+                    onChange={e => onQueryChange(e, i)}
+                    placeholder="Expression (press Shift+Enter for newlines)"
+                    type="text"
+                    value={q.text}
+                  />
+                  <div className="query-browser__query-switch">
+                    <Tooltip content={toggleEnabledLabel}>
+                      <Switch aria-label={toggleEnabledLabel} isChecked={q.enabled} onChange={() => toggleEnabled(i)} />
+                    </Tooltip>
+                  </div>
+                  <div className="dropdown-kebab-pf query-browser__kebab">
+                    <Kebab options={[
+                      {label: toggleEnabledLabel, callback: () => toggleEnabled(i)},
+                      {label: 'Delete query', callback: () => deleteQuery(i)},
+                    ]} />
+                  </div>
+                </div>
+                {q.expanded && <div className="group__body group__body--query-browser">
+                  <MetricsList metrics={metrics[i]} />
+                </div>}
+              </div>;
+            })}
           </form>
         </div>
       </div>
     </div>
   </React.Fragment>;
-};
+});
 
 export class MonitoringUI extends React.Component<null, null> {
   componentDidMount() {
@@ -1074,7 +1304,7 @@ export class MonitoringUI extends React.Component<null, null> {
   }
 
   render() {
-    return <Switch>
+    return <RouteSwitch>
       <Redirect from="/monitoring" exact to="/monitoring/alerts" />
       <Route path="/monitoring/alerts" exact component={AlertsPage} />
       <Route path="/monitoring/alerts/:ruleID" exact component={AlertsDetailsPage} />
@@ -1084,7 +1314,7 @@ export class MonitoringUI extends React.Component<null, null> {
       <Route path="/monitoring/silences/:id" exact component={SilencesDetailsPage} />
       <Route path="/monitoring/silences/:id/edit" exact component={EditSilence} />
       <Route path="/monitoring/query-browser" exact component={QueryBrowserPage} />
-    </Switch>;
+    </RouteSwitch>;
   }
 }
 
@@ -1170,7 +1400,8 @@ export type ListPageProps = {
   CreateButton: React.ComponentType<{}>;
   data: Rule[] | Silence[];
   filters: {[key: string]: any};
-  Header: React.ComponentType<any>;
+  // Header: React.ComponentType<any>;
+  Header: (...args) => any[];
   itemCount: number;
   kindPlural: string;
   loaded: boolean;

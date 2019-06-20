@@ -7,7 +7,7 @@ import * as plugins from '../plugins';
 /**
  * Sample YAML manifests for some of the statically-defined Kubernetes models.
  */
-const baseTemplates = ImmutableMap<GroupVersionKind, ImmutableMap<string, string>>()
+export const baseTemplates = ImmutableMap<GroupVersionKind, ImmutableMap<string, string>>()
   .setIn(['DEFAULT', 'default'], `
 apiVersion: ''
 kind: ''
@@ -152,16 +152,15 @@ spec:
     imageChange: {}
   - type: ConfigChange
 `).setIn([referenceForModel(k8sModels.ChargebackReportModel), 'default'], `
-apiVersion: chargeback.coreos.com/v1alpha1
+apiVersion: metering.openshift.io/v1alpha1
 kind: Report
 metadata:
   name: namespace-memory-request
-  namespace: default
+  namespace: openshift-metering
 spec:
-  generationQuery: namespace-memory-request
-  gracePeriod: 5m0s
-  reportingStart: '2018-01-01T00:00:00Z'
-  reportingEnd: '2018-12-30T23:59:59Z'
+  query: namespace-memory-request
+  reportingStart: '2019-01-01T00:00:00Z'
+  reportingEnd: '2019-12-30T23:59:59Z'
   runImmediately: true
 `)
   .setIn([referenceForModel(k8sModels.DeploymentModel), 'default'], `
@@ -819,9 +818,6 @@ const pluginTemplates = ImmutableMap<GroupVersionKind, ImmutableMap<string, stri
 
       if (!baseTemplates.hasIn([modelRef, templateName])) {
         map.setIn([modelRef, templateName], yt.properties.template);
-      } else {
-        // eslint-disable-next-line no-console
-        console.warn(`attempt to redefine YAML template ${templateName} for model ${modelRef}`);
       }
     });
   });

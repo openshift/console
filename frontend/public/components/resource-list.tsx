@@ -8,7 +8,7 @@ import { ErrorPage404 } from './error';
 import { withStartGuide } from './start-guide';
 import { AsyncComponent, LoadingBox } from './utils';
 import { DefaultPage, DefaultDetailsPage } from './default-resource';
-import { resourceListPages, resourceDetailPages } from './resource-pages';
+import { resourceListPages, resourceDetailsPages } from './resource-pages';
 import {
   apiVersionForReference,
   isGroupVersionKind,
@@ -64,13 +64,13 @@ export const ResourceDetailsPage = connectToPlural((props: ResourceDetailsPagePr
   const ref = props.match.path.indexOf('customresourcedefinitions') === -1 ? referenceForModel(kindObj) : null;
   const componentLoader = props.match.params.appName
     ? () => import('./operator-lifecycle-manager/clusterserviceversion-resource' /* webpackChunkName: "csv-resource" */).then(m => m.ClusterServiceVersionResourcesDetailsPage)
-    : resourceDetailPages.get(ref, () => Promise.resolve(DefaultDetailsPage));
+    : resourceDetailsPages.get(ref, () => Promise.resolve(DefaultDetailsPage));
 
   return <React.Fragment>
     <Helmet>
       <title>{`${name} · Details`}</title>
     </Helmet>
-    <AsyncComponent loader={componentLoader} match={props.match} namespace={ns} kind={props.modelRef} name={name} />
+    <AsyncComponent loader={componentLoader} match={props.match} namespace={ns} kind={props.modelRef} kindObj={kindObj} name={name} />
   </React.Fragment>;
 });
 

@@ -1,0 +1,40 @@
+.odc-builder-image-card {
+  position: relative;
+  height: 112px;
+  width: 136px;
+  margin: 4px;
+  align-items: center;
+  border: 0;
+
+  &__icon {
+    height: 32px;
+    max-width: 80px;
+    min-width: 40px;
+  }
+
+  &__title {
+    font-size: var(--pf-global--FontSize--sm);
+    font-weight: var(--pf-global--FontWeight--bold);
+    line-height: var(--pf-global--LineHeight--sm);
+  }
+
+  &__recommended {
+    position: absolute;
+    color: var(--pf-global--success-color--100);
+    font-size: var(--pf-global--FontSize--md);
+    top: 0px;
+    right: 3px;
+  }
+
+  &.is-selected,
+  &:hover,
+  &:focus,
+  &:active {
+    outline: var(--pf-global--active-color--100) 3px solid;
+    outline-offset: -3px;
+  }
+
+  .pf-c-card__body {
+    padding: 5px !important;
+  }
+}

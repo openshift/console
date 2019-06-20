@@ -1,0 +1,145 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Pipeline
+metadata:
+  name: simple-pipeline
+spec:
+  resources:
+    - name: source-repo
+      type: git
+    - name: web-image
+      type: image
+  tasks:
+    - name: build-skaffold-web
+      taskRef:
+        name: build-docker-image-from-git-source
+      params:
+        - name: pathToDockerFile
+          value: Dockerfile
+        - name: pathToContext
+          value: /workspace/docker-source/examples/microservices/leeroy-web #configure: may change according to your source
+      resources:
+        inputs:
+          - name: docker-source
+            resource: source-repo
+        outputs:
+          - name: builtImage
+            resource: web-image
+    - name: deploy-web
+      taskRef:
+        name: deploy-using-kubectl
+      resources:
+        inputs:
+          - name: source
+            resource: source-repo
+          - name: image
+            resource: web-image
+            from:
+              - build-skaffold-web
+      params:
+        - name: path
+          value: /workspace/source/examples/microservices/leeroy-web/kubernetes/deployment.yaml #configure: may change according to your source
+        - name: yqArg
+          value: "-d1"
+        - name: yamlPathToImage
+          value: "spec.template.spec.containers[0].image"
+---
+apiVersion: tekton.dev/v1alpha1
+kind: Pipeline
+metadata:
+  name: mapit-deploy-pipeline
+spec:
+  resources:
+  - name: mapit-git
+    type: git
+  - name: mapit-image
+    type: image
+  tasks:
+  - name: build-app
+    taskRef:
+      name: mvn-build
+    resources:
+      inputs:
+      - name: workspace-git
+        resource: mapit-git
+      outputs:
+      - name: workspace-git
+        resource: mapit-git
+  - name: test-app
+    taskRef:
+      name: mvn-test
+    resources:
+      inputs:
+      - name: workspace-git
+        resource: mapit-git
+        from: [build-app]
+  - name: analyse-code
+    taskRef:
+      name: static-analysis
+    resources:
+      inputs:
+      - name: workspace-git
+        resource: mapit-git
+        from: [build-app]
+  - name: build-image
+    taskRef:
+      name: buildah
+    runAfter:
+      - test-app
+      - analyse-code
+    params:
+    - name: dockerfile
+      value: Dockerfile.openjdk
+    - name: verifyTLS
+      value: "false"
+    resources:
+      inputs:
+      - name: workspace-git
+        resource: mapit-git
+        from: [build-app]
+      outputs:
+      - name: image
+        resource: mapit-image
+  - name: deploy
+    taskRef:
+      name: openshift-cli
+    runAfter:
+      - build-image
+---
+apiVersion: tekton.dev/v1alpha1
+kind: Pipeline
+metadata:
+  name: mapit-build-pipeline
+spec:
+  resources:
+  - name: mapit-git
+    type: git
+  - name: mapit-image
+    type: image
+  tasks:
+  - name: build-app
+    taskRef:
+      name: mvn-build
+    resources:
+      inputs:
+      - name: workspace-git
+        resource: mapit-git
+      outputs:
+      - name: workspace-git
+        resource: mapit-git
+  - name: build-image
+    taskRef:
+      name: buildah
+    params:
+    - name: dockerfile
+      value: Dockerfile.openjdk
+    - name: verifyTLS
+      value: "false"
+    resources:
+      inputs:
+      - name: workspace-git
+        resource: mapit-git
+        from: [build-app]
+      outputs:
+      - name: image
+        resource: mapit-image
+     

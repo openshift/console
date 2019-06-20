@@ -61,13 +61,13 @@ export const testClusterServiceVersion: ClusterServiceVersionKind = {
     install: {
       strategy: 'Deployment',
       spec: {
-        permissions: [{serviceAccountName: 'testapp-operator', rules: [{apiGroups: ['testapp.coreos.com'], resources: ['testresource'], verbs: ['*']}]}],
+        permissions: [{serviceAccountName: 'testapp-operator', rules: [{apiGroups: ['testapp.coreos.com'], resources: ['testresources'], verbs: ['*']}]}],
         deployments: [{name: 'testapp-operator', spec: {}}],
       },
     },
     customresourcedefinitions: {
       owned: [{
-        name: 'testresource.testapp.coreos.com',
+        name: 'testresources.testapp.coreos.com',
         kind: 'TestResource',
         version: 'v1',
         displayName: 'Test Resource',
@@ -133,13 +133,13 @@ export const localClusterServiceVersion: ClusterServiceVersionKind = {
     install: {
       strategy: 'Deployment',
       spec: {
-        permissions: [{serviceAccountName: 'local-operator', rules: [{apiGroups: ['testapp.coreos.com'], resources: ['testresource'], verbs: ['*']}]}],
+        permissions: [{serviceAccountName: 'local-operator', rules: [{apiGroups: ['testapp.coreos.com'], resources: ['testresources'], verbs: ['*']}]}],
         deployments: [{name: 'testapp-operator', spec: {}}],
       },
     },
     customresourcedefinitions: {
       owned: [{
-        name: 'testresource.testapp.coreos.com',
+        name: 'testresources.testapp.coreos.com',
         kind: 'TestResource',
         version: 'v1',
         displayName: 'Test Resource',
@@ -157,7 +157,7 @@ export const testCRD: CustomResourceDefinitionKind = {
   apiVersion: 'apiextensions.k8s.io/v1beta1',
   kind: 'CustomResourceDefinition',
   metadata: {
-    name: 'testresource.testapp.coreos.com',
+    name: 'testresources.testapp.coreos.com',
     labels: {
       'owner-testapp': 'testapp.clusterserviceversions.coreos.com',
     },
@@ -171,7 +171,7 @@ export const testCRD: CustomResourceDefinitionKind = {
     version: 'v1alpha1',
     names: {
       kind: 'TestResource',
-      plural: 'testresource',
+      plural: 'testresources',
       singular: 'testresource',
       listKind: 'TestResourceList',
     },
@@ -183,8 +183,7 @@ export const testModel: K8sKind = {
   kind: 'TestResource',
   label: 'Test Resource',
   labelPlural: '',
-  path: 'test-resource',
-  plural: 'test-resources',
+  plural: 'testresources',
   apiVersion: 'v1',
   crd: true,
 };
@@ -243,7 +242,7 @@ export const testOperatorGroup: OperatorGroupKind = {
 };
 
 export const testPackageManifest: PackageManifestKind = {
-  apiVersion: 'packages.app.redhat.com/v1alpha1',
+  apiVersion: 'packages.operators.coreos.com/v1',
   kind: 'PackageManifest',
   metadata: {
     name: 'test-package',

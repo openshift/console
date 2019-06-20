@@ -5,7 +5,6 @@ import { safeLoad } from 'js-yaml';
 
 import { CatalogSourceDetails, CatalogSourceDetailsProps, CatalogSourceDetailsPage, CatalogSourceDetailsPageProps, CreateSubscriptionYAML, CreateSubscriptionYAMLProps } from '../../../public/components/operator-lifecycle-manager/catalog-source';
 import { PackageManifestList } from '../../../public/components/operator-lifecycle-manager/package-manifest';
-import { visibilityLabel } from '../../../public/components/operator-lifecycle-manager';
 import { referenceForModel } from '../../../public/module/k8s';
 import { SubscriptionModel, CatalogSourceModel, PackageManifestModel, OperatorGroupModel } from '../../../public/models';
 import { DetailsPage } from '../../../public/components/factory';
@@ -49,7 +48,7 @@ describe(CatalogSourceDetailsPage.displayName, () => {
   });
 
   it('renders `DetailsPage` with correct props', () => {
-    const selector = {matchLabels: {catalog: match.params.name}, matchExpressions: [{key: visibilityLabel, operator: 'DoesNotExist'}]};
+    const selector = {matchLabels: {catalog: match.params.name}};
 
     expect(wrapper.find(DetailsPage).props().kind).toEqual(referenceForModel(CatalogSourceModel));
     expect(wrapper.find(DetailsPage).props().pages.map(p => p.name)).toEqual(['Overview', 'YAML']);

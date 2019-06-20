@@ -195,12 +195,14 @@ class TemplateForm_ extends React.Component<TemplateFormProps, TemplateFormState
             <label className="control-label co-required" htmlFor="namespace">Namespace</label>
             <NsDropdown selectedKey={this.state.namespace} onChange={this.onNamespaceChange} id="namespace" />
           </div>
-          {parameters.map(({name, displayName, description, required, generate}: TemplateParameter) => {
+          {parameters.map(({name, displayName, description, required: requiredParam, generate}: TemplateParameter) => {
             const value = this.state.parameters[name] || '';
             const helpID = description ? `${name}-help` : '';
             const placeholder = generate ? '(generated if empty)' : '';
+            // Only set required for parameters not generated.
+            const requiredInput = requiredParam && !generate;
             return <div className="form-group" key={name}>
-              <label className={classNames('control-label', { 'co-required': required })} htmlFor={name}>
+              <label className={classNames('control-label', { 'co-required': requiredInput })} htmlFor={name}>
                 {displayName || name}
               </label>
               <input
@@ -210,7 +212,7 @@ class TemplateForm_ extends React.Component<TemplateFormProps, TemplateFormState
                 name={name}
                 value={value}
                 onChange={this.onParameterChanged}
-                required={required}
+                required={requiredInput}
                 placeholder={placeholder}
                 aria-describedby={helpID} />
               {description && <div className="help-block" id={helpID}>{description}</div>}

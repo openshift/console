@@ -78,3 +78,15 @@ export const getClusterUpdateStatus = (cv: ClusterVersionKind): ClusterUpdateSta
 
   return hasAvailableUpdates(cv) ? ClusterUpdateStatus.UpdatesAvailable : ClusterUpdateStatus.UpToDate;
 };
+
+export const getK8sGitVersion = (k8sVersionResponse): string => _.get(k8sVersionResponse, 'gitVersion');
+
+export const getOpenShiftVersion = (cv: ClusterVersionKind): string => {
+  const lastUpdate: UpdateHistory = _.get(cv, 'status.history[0]');
+  if (!lastUpdate) {
+    return null;
+  }
+  return lastUpdate.state === 'Partial' ? `Updating to ${lastUpdate.version}` : lastUpdate.version;
+};
+
+export const getClusterName = (): string => window.SERVER_FLAGS.kubeAPIServerURL || null;

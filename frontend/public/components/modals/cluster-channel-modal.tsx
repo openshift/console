@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as _ from 'lodash-es';
 
 import { ClusterVersionModel } from '../../models';
 import { Dropdown, PromiseComponent } from '../utils';
@@ -20,6 +21,7 @@ class ClusterChannelModal extends PromiseComponent<ClusterChannelModalProps, Clu
 
   constructor(public props: ClusterChannelModalProps) {
     super(props);
+    this.state.selectedChannel = _.get(props.cv, 'spec.channel');
   }
 
   _submit = (e) => {

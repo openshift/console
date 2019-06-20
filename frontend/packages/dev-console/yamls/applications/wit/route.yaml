@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Route
+metadata:
+  name: wit-route
+  labels: 
+    app.kubernetes.io/part-of: application-1
+    app.kubernetes.io/name: nodejs
+    app.kubernetes.io/component: backend
+    app.kubernetes.io/instance: wit
+    app.kubernetes.io/version: "1.0"
+spec:
+  host: wit.io
+  path: /
+  to:
+    kind: Service
+    name: wit-service
+

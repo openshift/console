@@ -64,6 +64,11 @@ export class DropdownMixin extends React.PureComponent {
 
   toggle(e) {
     e.preventDefault();
+
+    if (this.props.disabled) {
+      return;
+    }
+
     if (this.state.active) {
       this.hide(e);
     } else {
@@ -146,9 +151,10 @@ export class Dropdown extends DropdownMixin {
 
     this.state.items = Object.assign({}, bookmarks, props.items);
 
+    const defaultTitle = React.isValidElement(props.title) ? props.title : <span className="btn-dropdown__item--placeholder">{props.title}</span>;
     this.state.title = props.noSelection
       ? props.title
-      : _.get(props.items, props.selectedKey, <span className="btn-dropdown__item--placeholder">{props.title}</span>);
+      : _.get(props.items, props.selectedKey, defaultTitle);
 
     this.onKeyDown = e => this.onKeyDown_(e);
     this.changeTextFilter = e => this.applyTextFilter_(e.target.value, this.props.items);
@@ -293,9 +299,35 @@ export class Dropdown extends DropdownMixin {
     localStorage.setItem(this.bookmarkStorageKey, JSON.stringify(bookmarks));
   }
 
+  renderActionItem() {
+    const { actionItem } = this.props;
+    if (actionItem) {
+      const { selectedKey, keyboardHoverKey, noSelection } = this.props;
+      const { actionTitle, actionKey } = actionItem;
+      const selected = (actionKey === selectedKey) && !noSelection;
+      const hover = actionKey === keyboardHoverKey;
+      return (
+        <React.Fragment>
+          <DropDownRow
+            className={classNames({'active': selected})}
+            key={`${actionKey}-${actionTitle}`}
+            itemKey={actionKey}
+            content={actionTitle}
+            onclick={this.onClick}
+            selected={selected}
+            hover={hover} />
+          <li className="co-namespace-selector__divider">
+            <div className="dropdown-menu__divider" />
+          </li>
+        </React.Fragment>
+      );
+    }
+    return null;
+  }
+
   render() {
     const {active, autocompleteText, selectedKey, items, title, bookmarks, keyboardHoverKey, favoriteKey} = this.state;
-    const {autocompleteFilter, autocompletePlaceholder, className, buttonClassName, menuClassName, storageKey, canFavorite, dropDownClassName, titlePrefix, describedBy} = this.props;
+    const {autocompleteFilter, autocompletePlaceholder, className, buttonClassName, menuClassName, storageKey, canFavorite, dropDownClassName, titlePrefix, describedBy, disabled} = this.props;
 
     const spacerBefore = this.props.spacerBefore || new Set();
     const headerBefore = this.props.headerBefore || {};
@@ -324,7 +356,7 @@ export class Dropdown extends DropdownMixin {
 
     return <div className={classNames(className)} ref={this.dropdownElement} style={this.props.style}>
       <div className={classNames('dropdown', dropDownClassName)}>
-        <button aria-haspopup="true" onClick={this.toggle} onKeyDown={this.onKeyDown} type="button" className={classNames('btn', 'btn-dropdown', 'dropdown-toggle', buttonClassName ? buttonClassName : 'btn-default')} id={this.props.id} aria-describedby={describedBy} >
+        <button aria-haspopup="true" onClick={this.toggle} onKeyDown={this.onKeyDown} type="button" className={classNames('btn', 'btn-dropdown', 'dropdown-toggle', buttonClassName ? buttonClassName : 'btn-default')} id={this.props.id} aria-describedby={describedBy} disabled={disabled}>
           <div className="btn-dropdown__content-wrap">
             <span className="btn-dropdown__item">
               {titlePrefix && <span className="btn-link__titlePrefix">{titlePrefix}: </span>}
@@ -350,6 +382,7 @@ export class Dropdown extends DropdownMixin {
                   onClick={e => e.stopPropagation()} />
               </div>
             }
+            { this.renderActionItem() }
             { bookMarkRows }
             {_.size(bookMarkRows) ? <li className="co-namespace-selector__divider"><div className="dropdown-menu__divider" /></li> : null}
             {rows}
@@ -361,6 +394,10 @@ export class Dropdown extends DropdownMixin {
 }
 
 Dropdown.propTypes = {
+  actionItem: PropTypes.shape({
+    key: PropTypes.string,
+    title: PropTypes.string,
+  }),
   autocompleteFilter: PropTypes.func,
   autocompletePlaceholder: PropTypes.string,
   canFavorite: PropTypes.bool,
@@ -377,6 +414,7 @@ Dropdown.propTypes = {
   spacerBefore: PropTypes.instanceOf(Set),
   textFilter: PropTypes.string,
   title: PropTypes.node,
+  disabled: PropTypes.bool,
 };
 
 class ActionsMenuDropdown extends DropdownMixin {
@@ -404,7 +442,7 @@ class ActionsMenuDropdown extends DropdownMixin {
           <Caret />
         </div>
       </button>
-      {this.state.active && <KebabItems options={actions} onClick={onClick} />}
+      {this.state.active && <KebabItems options={actions} onClick={onClick} isActionDropdown />}
     </div>;
   }
 }

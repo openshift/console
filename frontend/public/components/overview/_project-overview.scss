@@ -48,11 +48,29 @@
 
   .project-overview__item {
     min-height: 71px;
+
+    &.list-group-item {
+      background-clip: initial;
+      border-bottom: 1px solid $color-pf-black-200;
+      border-left: 0;
+      border-right: 0;
+      border-top: 1px solid $color-pf-black-200;
+      cursor: pointer;
+      position: relative;
+    }
   }
 
-  .project-overview__item--selected,
-  .project-overview__item.project-overview__item--selected:hover, {
-    background-color: $color-pf-blue-100;
+  .project-overview__item--selected {
+    background-color: $color-pf-blue-100 !important;
+
+    &::after {
+      align-self: center;
+      content: $fa-var-chevron-right;
+      display: block;
+      font-family: 'FontAwesome';
+      position: absolute;
+      right: 30px;
+    }
   }
 
   .project-overview__item .project-overview__item-chevron {
@@ -84,35 +102,6 @@
     padding: 5px 0;
     text-overflow: ellipsis;
     white-space: nowrap;
-  }
-
-  .project-overview__item.list-group-item {
-    background-clip: initial;
-    border-bottom: 1px solid $color-pf-black-200;
-    border-left: 0;
-    border-right: 0;
-    border-top: 1px solid $color-pf-black-200;
-    cursor: pointer;
-    position: relative;
-    &::after {
-      align-self: center;
-      content: $fa-var-chevron-right;
-      display: none;
-      font-family: 'FontAwesome';
-      position: absolute;
-      right: 30px;
-    }
-
-    &--selected::after,
-    &:hover::after {
-      display: block;
-    }
-
-    &--selected,
-    &--selected:hover {
-      background-color: $color-pf-blue-100;
-      border-color: $color-pf-blue-100;
-    }
   }
 
   .project-overview__list {

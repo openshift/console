@@ -1,0 +1,16 @@
+.odc-pod-tooltip {
+  fill: var(--pf-global--BackgroundColor--200);
+
+  &__label {
+    pointer-events: none;
+
+    & rect {
+      fill: var(--pf-global--Color--300);
+    }
+
+    & text {
+      fill: #fff;
+      font-size: var(--pf-global--FontSize--sm);
+    }
+  }
+}

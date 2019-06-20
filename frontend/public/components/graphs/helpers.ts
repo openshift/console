@@ -3,16 +3,16 @@ import * as _ from 'lodash-es';
 import {PROMETHEUS_BASE_PATH, PROMETHEUS_TENANCY_BASE_PATH} from './index';
 
 export enum PrometheusEndpoint {
+  LABEL = 'api/v1/label',
   QUERY = 'api/v1/query',
   QUERY_RANGE = 'api/v1/query_range',
 }
 
 // Range vector queries require end, start, and step search params
-const getRangeVectorSearchParams = (timespan: number, endTime: number = undefined, samples: number = 60): URLSearchParams => {
-  const end = endTime || Date.now();
+const getRangeVectorSearchParams = (timespan: number, endTime: number = Date.now(), samples: number = 60): URLSearchParams => {
   const init = timespan ? [
-    [ 'end', `${end / 1000}` ],
-    [ 'start', `${(end - timespan) / 1000}` ],
+    [ 'end', `${endTime / 1000}` ],
+    [ 'start', `${(endTime - timespan) / 1000}` ],
     [ 'step', `${timespan / samples / 1000}` ],
   ] : [];
   return new URLSearchParams(init);

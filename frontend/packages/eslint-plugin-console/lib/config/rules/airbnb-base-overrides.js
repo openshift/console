@@ -5,9 +5,6 @@ module.exports = {
   // Require or disallow named function expressions
   'func-names': 'off',
 
-  // max line length
-  'max-len': ['error', { code: 120, comments: 100, ignoreUrls: true }],
-
   // Disallow nested ternary expressions
   'no-nested-ternary': 'off',
 
@@ -30,4 +27,7 @@ module.exports = {
 
   // When there is only a single export from a module, prefer using default export over named export.
   'import/prefer-default-export': 'off',
+
+  // Disallow Unused Expressions
+  'no-unused-expressions': ['error', { allowShortCircuit: true, allowTernary: true }],
 };

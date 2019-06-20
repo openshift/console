@@ -4,7 +4,6 @@ import { render } from 'react-dom';
 import { Helmet } from 'react-helmet';
 import { Provider } from 'react-redux';
 import { Route, Router } from 'react-router-dom';
-import * as PropTypes from 'prop-types';
 
 import store from '../redux';
 import { detectFeatures } from '../actions/features';
@@ -26,12 +25,6 @@ const breakpointMD = 768;
 
 // Edge lacks URLSearchParams
 import 'url-search-params-polyfill';
-
-// React Router's proptypes are incorrect. See https://github.com/ReactTraining/react-router/pull/5393
-Route.propTypes.path = PropTypes.oneOfType([
-  PropTypes.string,
-  PropTypes.arrayOf(PropTypes.string),
-]);
 
 class App extends React.PureComponent {
   constructor(props) {

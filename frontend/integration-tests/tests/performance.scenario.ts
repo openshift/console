@@ -28,7 +28,6 @@ const chunkedRoutes = OrderedMap<string, {section: string, name: string}>()
   .set('image-stream', {section: 'Builds', name: 'Image Streams'})
   .set('node', {section: 'Compute', name: 'Nodes'})
   .set('service-account', {section: 'Administration', name: 'Service Accounts'})
-  .set('resource-quota', {section: 'Administration', name: 'Resource Quotas'})
   .set('limit-range', {section: 'Administration', name: 'Limit Ranges'})
   .set('custom-resource-definition', {section: 'Administration', name: 'Custom Resource Definitions'})
   .set('catalog', {section: 'Catalog', name: 'Developer Catalog'})
@@ -46,17 +45,6 @@ describe('Performance test', () => {
     writeFileSync(path.resolve(__dirname, '../../gui_test_screenshots/bundle-analysis.txt'), resources);
 
     expect(resources.length).not.toEqual(0);
-  });
-
-  it('downloads new bundle for "Overview" route', async() => {
-    await browser.get(`${appHost}/status/all-namespaces`);
-    await browser.wait(until.presenceOf(crudView.resourceTitle));
-
-    const overviewChunk = await browser.executeScript<any>(() => performance.getEntriesByType('resource')
-      .find(({name}) => name.endsWith('.js') && name.indexOf('cluster-overview') > -1));
-
-    expect(overviewChunk).not.toBeNull();
-    expect(overviewChunk.decodedBodySize).toBeLessThan(100000);
   });
 
   it('downloads new bundle for YAML editor route', async() => {

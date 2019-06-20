@@ -18,6 +18,8 @@ export type OwnerReference = {
   kind: string;
   uid: string;
   apiVersion: string;
+  controller?: boolean;
+  blockOwnerDeletion?: boolean;
 };
 
 export type ObjectReference = {
@@ -249,6 +251,11 @@ export type PodTemplate = {
 export type PodKind = {
   status: PodStatus;
 } & PodTemplate & K8sResourceKind;
+
+export type StorageClassResourceKind = {
+  provisioner: string;
+  reclaimPolicy: string;
+} & K8sResourceKind;
 
 export type NodeKind = {
   spec?: {
@@ -558,7 +565,6 @@ export type K8sKind = {
   kind: string;
   label: string;
   labelPlural: string;
-  path: string;
   plural: string;
   propagationPolicy?: 'Foreground' | 'Background';
 

@@ -1,28 +1,58 @@
 import * as React from 'react';
-
-import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
+import * as classNames from 'classnames';
+import { sortable } from '@patternfly/react-table';
+import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
 import { SectionHeading, detailsPage, navFactory, ResourceLink, ResourceSummary } from './utils';
 import { K8sResourceKind, referenceForModel, servicePlanDisplayName } from '../module/k8s';
 import { ClusterServicePlanModel, ClusterServiceBrokerModel, ClusterServiceClassModel } from '../models';
 import { viewYamlComponent } from './utils/horizontal-nav';
 
-const ClusterServicePlanHeader: React.SFC<ClusterServicePlanHeaderProps> = props => <ListHeader>
-  <ColHead {...props} className="col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
-  <ColHead {...props} className="col-sm-4 col-xs-6" sortField="spec.externalName">External Name</ColHead>
-  <ColHead {...props} className="col-sm-4 hidden-xs" sortField="spec.clusterServiceBrokerName">Broker</ColHead>
-</ListHeader>;
+const tableColumnClasses = [
+  classNames('col-sm-4', 'col-xs-6'),
+  classNames('col-sm-4', 'col-xs-6'),
+  classNames('col-sm-4', 'hidden-xs'),
+];
 
-const ClusterServicePlanListRow: React.SFC<ClusterServicePlanRowProps> = ({obj: servicePlan}) => <ResourceRow obj={servicePlan}>
-  <div className="col-sm-4 col-xs-6">
-    <ResourceLink kind={referenceForModel(ClusterServicePlanModel)} name={servicePlan.metadata.name} displayName={servicePlan.spec.externalName} />
-  </div>
-  <div className="col-sm-4 col-xs-6">
-    {servicePlan.spec.externalName}
-  </div>
-  <div className="col-sm-4 hidden-xs co-break-word">
-    <ResourceLink kind={referenceForModel(ClusterServiceBrokerModel)} name={servicePlan.spec.clusterServiceBrokerName} title={servicePlan.spec.clusterServiceBrokerName} />
-  </div>
-</ResourceRow>;
+const ClusterServicePlanTableHeader = () => {
+  return [
+    {
+      title: 'Name', sortField: 'metadata.name', transforms: [sortable],
+      props: { className: tableColumnClasses[0] },
+    },
+    {
+      title: 'External Name', sortField: 'spec.externalName', transforms: [sortable],
+      props: { className: tableColumnClasses[1] },
+    },
+    {
+      title: 'Broker', sortField: 'spec.clusterServiceBrokerName', transforms: [sortable],
+      props: { className: tableColumnClasses[2] },
+    },
+  ];
+};
+ClusterServicePlanTableHeader.displayName = 'ClusterServicePlanTableHeader';
+
+const ClusterServicePlanTableRow: React.FC<ClusterServicePlanTableRowProps> = ({obj: servicePlan, index, key, style}) => {
+  return (
+    <TableRow id={servicePlan.metadata.uid} index={index} trKey={key} style={style}>
+      <TableData className={tableColumnClasses[0]}>
+        <ResourceLink kind={referenceForModel(ClusterServicePlanModel)} name={servicePlan.metadata.name} displayName={servicePlan.spec.externalName} />
+      </TableData>
+      <TableData className={tableColumnClasses[1]}>
+        {servicePlan.spec.externalName}
+      </TableData>
+      <TableData className={classNames(tableColumnClasses[2], 'co-break-word')}>
+        <ResourceLink kind={referenceForModel(ClusterServiceBrokerModel)} name={servicePlan.spec.clusterServiceBrokerName} title={servicePlan.spec.clusterServiceBrokerName} />
+      </TableData>
+    </TableRow>
+  );
+};
+ClusterServicePlanTableRow.displayName = 'ClusterServicePlanTableRow';
+type ClusterServicePlanTableRowProps = {
+  obj: K8sResourceKind;
+  index: number;
+  key?: string;
+  style: object;
+};
 
 const ClusterServicePlanDetails: React.SFC<ClusterServicePlanDetailsProps> = ({obj: servicePlan}) => {
   return <div className="co-m-pane__body">
@@ -58,7 +88,8 @@ export const ClusterServicePlanDetailsPage: React.SFC<ClusterServicePlanDetailsP
     navFactory.editYaml(viewYamlComponent),
   ]}
 />;
-export const ClusterServicePlanList: React.SFC = props => <List {...props} Header={ClusterServicePlanHeader} Row={ClusterServicePlanListRow} />;
+
+export const ClusterServicePlanList: React.SFC = props => <Table {...props} aria-label="Cluster Service Plans" Header={ClusterServicePlanTableHeader} Row={ClusterServicePlanTableRow} virtualize />;
 
 export const ClusterServicePlanPage: React.SFC<ClusterServicePlanPageProps> = props =>
   <ListPage
@@ -67,14 +98,6 @@ export const ClusterServicePlanPage: React.SFC<ClusterServicePlanPageProps> = pr
     kind={referenceForModel(ClusterServicePlanModel)}
     canCreate={false}
   />;
-
-export type ClusterServicePlanRowProps = {
-  obj: K8sResourceKind
-};
-
-export type ClusterServicePlanHeaderProps = {
-  obj: K8sResourceKind
-};
 
 export type ClusterServicePlanPageProps = {
   showTitle?: boolean,

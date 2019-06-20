@@ -3,7 +3,7 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 
-import { DetailsPage, List, ListPage, WorkloadListHeader, WorkloadListRow } from './factory';
+import { DetailsPage, ListPage, Table } from './factory';
 import {
   Kebab,
   ContainerTable,
@@ -13,13 +13,18 @@ import {
   ResourcePodCount,
   AsyncComponent,
 } from './utils';
-import { breadcrumbsForOwnerRefs } from './utils/breadcrumbs';
+
+import {
+  WorkloadTableRow,
+  WorkloadTableHeader,
+} from './workload-table';
+
 import { ResourceEventStream } from './events';
 import { VolumesTable } from './volumes-table';
 
-const {ModifyCount, AddStorage, EditEnvironment, common} = Kebab.factory;
+const {ModifyCount, AddStorage, common} = Kebab.factory;
 
-export const replicaSetMenuActions = [ModifyCount, AddStorage, EditEnvironment, ...common];
+export const replicaSetMenuActions = [ModifyCount, AddStorage, ...common];
 
 const Details = ({obj: replicaSet}) => {
   const revision = _.get(replicaSet, ['metadata', 'annotations', 'deployment.kubernetes.io/revision']);
@@ -63,16 +68,26 @@ const environmentComponent = (props) => <EnvironmentPage
 const {details, editYaml, pods, envEditor, events} = navFactory;
 const ReplicaSetsDetailsPage = props => <DetailsPage
   {...props}
-  breadcrumbsFor={obj => breadcrumbsForOwnerRefs(obj).concat({
-    name: 'ReplicaSet Details',
-    path: props.match.url,
-  })}
   menuActions={replicaSetMenuActions}
   pages={[details(Details), editYaml(), pods(), envEditor(environmentComponent), events(ResourceEventStream)]}
 />;
 
-const Row = props => <WorkloadListRow {...props} kind="ReplicaSet" actions={replicaSetMenuActions} />;
-const ReplicaSetsList = props => <List {...props} Header={WorkloadListHeader} Row={Row} />;
+const kind = 'ReplicaSet';
+
+const ReplicaSetTableRow = ({obj, index, key, style}) => {
+  return (
+    <WorkloadTableRow obj={obj} index={index} key={key} style={style} menuActions={replicaSetMenuActions} kind={kind} />
+  );
+};
+ReplicaSetTableRow.displayName = 'ReplicaSetTableRow';
+
+
+const ReplicaSetTableHeader = () => {
+  return WorkloadTableHeader();
+};
+ReplicaSetTableHeader.displayName = 'ReplicaSetTableHeader';
+
+const ReplicaSetsList = props => <Table {...props} aria-label="Replicate Sets" Header={ReplicaSetTableHeader} Row={ReplicaSetTableRow} virtualize />;
 const ReplicaSetsPage = props => <ListPage canCreate={true} ListComponent={ReplicaSetsList} {...props} />;
 
 export {ReplicaSetsList, ReplicaSetsPage, ReplicaSetsDetailsPage};

@@ -23,11 +23,6 @@ export const namespacedPrefixes = ['/search', '/status', '/k8s', '/overview', '/
 
 export const stripBasePath = (path: string): string => path.replace(basePathPattern, '/');
 
-export const getNSPrefix = (path: string): string => {
-  path = stripBasePath(path);
-  return namespacedPrefixes.filter(p => path.startsWith(p))[0];
-};
-
 export const getNamespace = (path: string): string => {
   path = stripBasePath(path);
   const split = path.split('/').filter(x => x);

@@ -1,12 +1,13 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-
+import * as classNames from 'classnames';
+import { sortable } from '@patternfly/react-table';
 import { getNodeRoles, nodeStatus, makeNodeSchedulable, K8sResourceKind, referenceForModel } from '../module/k8s';
 import { ResourceEventStream } from './events';
-import { ColHead, DetailsPage, List, ListHeader, ListPage, ResourceRow } from './factory';
+import { Table, TableRow, TableData, DetailsPage, ListPage } from './factory';
 import { configureUnschedulableModal } from './modals';
 import { PodsPage } from './pod';
-import { Kebab, navFactory, LabelList, ResourceKebab, SectionHeading, ResourceLink, Timestamp, units, cloudProviderNames, cloudProviderID, pluralize, StatusIconAndText, humanizeDecimalBytes, humanizeCpuCores } from './utils';
+import { Kebab, navFactory, LabelList, ResourceKebab, SectionHeading, ResourceLink, Timestamp, units, cloudProviderNames, cloudProviderID, pluralize, StatusIconAndText, humanizeDecimalBytes, humanizeCpuCores, useAccessReview } from './utils';
 import { Area, requirePrometheus } from './graphs';
 import { MachineModel, NodeModel } from '../models';
 import { CamelCaseWrap } from './utils/camel-case-wrap';
@@ -17,7 +18,7 @@ const MarkAsUnschedulable = (kind, obj) => ({
   callback: () => configureUnschedulableModal({resource: obj}),
   accessReview: {
     group: kind.apiGroup,
-    resource: kind.path,
+    resource: kind.plural,
     name: obj.metadata.name,
     namespace: obj.metadata.namespace,
     verb: 'patch',
@@ -30,7 +31,7 @@ const MarkAsSchedulable = (kind, obj) => ({
   callback: () => makeNodeSchedulable(obj),
   accessReview: {
     group: kind.apiGroup,
-    resource: kind.path,
+    resource: kind.plural,
     name: obj.metadata.name,
     namespace: obj.metadata.namespace,
     verb: 'patch',
@@ -61,52 +62,73 @@ export const NodeIPList = ({ips, expand = false}) => <div>
   </div>)}
 </div>;
 
-const Header = props => {
-  if (!props.data) {
-    return null;
-  }
-  return <ListHeader>
-    <ColHead {...props} className="col-md-5 col-sm-5 col-xs-8" sortField="metadata.name">Name</ColHead>
-    <ColHead {...props} className="col-md-2 col-sm-3 col-xs-4" sortFunc="nodeReadiness">Status</ColHead>
-    <ColHead {...props} className="col-md-2 col-sm-4 hidden-xs" sortFunc="nodeRoles">Role</ColHead>
-    <ColHead {...props} className="col-md-3 hidden-sm hidden-xs" sortField="metadata.annotations['machine.openshift.io/machine']">Machine</ColHead>
-  </ListHeader>;
+const tableColumnClasses = [
+  classNames('col-md-5', 'col-sm-5', 'col-xs-8'),
+  classNames('col-md-2', 'col-sm-3', 'col-xs-4'),
+  classNames('col-md-2', 'col-sm-4', 'hidden-xs'),
+  classNames('col-md-3', 'hidden-sm', 'hidden-xs'),
+  Kebab.columnClass,
+];
+
+const NodeTableHeader = () => {
+  return [
+    {
+      title: 'Name', sortField: 'metadata.name', transforms: [sortable],
+      props: { className: tableColumnClasses[0] },
+    },
+    {
+      title: 'Status', sortFunc: 'nodeReadiness', transforms: [sortable],
+      props: { className: tableColumnClasses[1] },
+    },
+    {
+      title: 'Role', sortFunc: 'nodeRoles', transforms: [sortable],
+      props: { className: tableColumnClasses[2] },
+    },
+    {
+      title: 'Machine', sortField: 'metadata.annotations[\'machine.openshift.io/machine\']', transforms: [sortable],
+      props: { className: tableColumnClasses[3] },
+    },
+    {
+      title: '', props: { className: tableColumnClasses[4] },
+    },
+  ];
 };
+NodeTableHeader.displayName = 'NodeTableHeader';
 
 const NodeStatus = ({node}) => <StatusIconAndText status={nodeStatus(node)} />;
 
-const NodeRow = ({obj: node, expand}) => {
+const NodeTableRow: React.FC<NodeTableRowProps> = ({obj: node, index, key, style}) => {
   const machine = getMachine(node);
   const roles = getNodeRoles(node).sort();
-
-  return <ResourceRow obj={node}>
-    <div className="col-md-5 col-sm-5 col-xs-8">
-      <ResourceLink kind="Node" name={node.metadata.name} title={node.metadata.uid} />
-    </div>
-    <div className="col-md-2 col-sm-3 col-xs-4">
-      <NodeStatus node={node} />
-    </div>
-    <div className="col-md-2 col-sm-4 hidden-xs">
-      {roles.length ? roles.join(', ') : '-'}
-    </div>
-    <div className="col-md-3 hidden-sm hidden-xs">
-      {machine && <ResourceLink kind={referenceForModel(MachineModel)} name={machine.name} namespace={machine.namespace} />}
-    </div>
-    {expand && <div className="co-resource-list__item--expanded">
-      <div className="col-xs-5">
-        <NodeIPList ips={node.status.addresses} expand={expand} />
-      </div>
-      <div className="col-xs-7">
-        <LabelList kind="Node" labels={node.metadata.labels} />
-      </div>
-    </div>}
-    <div className="dropdown-kebab-pf">
-      <NodeKebab node={node} />
-    </div>
-  </ResourceRow>;
+  return (
+    <TableRow id={node.metadata.uid} index={index} trKey={key} style={style}>
+      <TableData className={tableColumnClasses[0]}>
+        <ResourceLink kind="Node" name={node.metadata.name} title={node.metadata.uid} />
+      </TableData>
+      <TableData className={tableColumnClasses[1]}>
+        <NodeStatus node={node} />
+      </TableData>
+      <TableData className={tableColumnClasses[2]}>
+        {roles.length ? roles.join(', ') : '-'}
+      </TableData>
+      <TableData className={tableColumnClasses[3]}>
+        {machine && <ResourceLink kind={referenceForModel(MachineModel)} name={machine.name} namespace={machine.namespace} />}
+      </TableData>
+      <TableData className={tableColumnClasses[4]}>
+        <NodeKebab node={node} />
+      </TableData>
+    </TableRow>
+  );
+};
+NodeTableRow.displayName = 'NodeTableRow';
+type NodeTableRowProps = {
+  obj: K8sResourceKind;
+  index: number;
+  key?: string;
+  style: object;
 };
 
-const NodesList = props => <List {...props} Header={Header} Row={NodeRow} />;
+const NodesList = props => <Table {...props} aria-label="Nodes" Header={NodeTableHeader} Row={NodeTableRow} virtualize />;
 
 const filters = [{
   type: 'node-status',
@@ -117,49 +139,49 @@ const filters = [{
     {id: 'Not Ready', title: 'Not Ready'},
   ],
 }];
-export const NodesPage = props => <ListPage {...props} ListComponent={NodesList} rowFilters={filters} canExpand={true} />;
+export const NodesPage = props => <ListPage {...props} ListComponent={NodesList} rowFilters={filters} />;
 
 const NodeGraphs = requirePrometheus(({node}) => {
   const nodeIp = _.find<{type: string, address: string}>(node.status.addresses, {type: 'InternalIP'});
-  const ipQuery = nodeIp && `{instance=~'.*${nodeIp.address}.*'}`;
+  const ipQuery = nodeIp && `{instance=~'${nodeIp.address}:.*'}`;
 
   return <React.Fragment>
     <div className="row">
-      <div className="col-md-4">
+      <div className="col-md-12 col-lg-4">
         <Area
           title="Memory Usage"
           formatY={humanizeDecimalBytes}
           query={ipQuery && `node_memory_Active_bytes${ipQuery}`}
         />
       </div>
-      <div className="col-md-4">
+      <div className="col-md-12 col-lg-4">
         <Area
           title="CPU Usage"
           formatY={humanizeCpuCores}
           query={ipQuery && `instance:node_cpu:rate:sum${ipQuery}`}
         />
       </div>
-      <div className="col-md-4">
+      <div className="col-md-12 col-lg-4">
         <Area
           title="Number of Pods"
           query={ipQuery && `kubelet_running_pod_count${ipQuery}`}
         />
       </div>
-      <div className="col-md-4">
+      <div className="col-md-12 col-lg-4">
         <Area
           title="Network In"
           formatY={humanizeDecimalBytes}
           query={ipQuery && `instance:node_network_receive_bytes:rate:sum${ipQuery}`}
         />
       </div>
-      <div className="col-md-4">
+      <div className="col-md-12 col-lg-4">
         <Area
           title="Network Out"
           formatY={humanizeDecimalBytes}
           query={ipQuery && `instance:node_network_transmit_bytes:rate:sum${ipQuery}`}
         />
       </div>
-      <div className="col-md-4">
+      <div className="col-md-12 col-lg-4">
         <Area
           title="Filesystem"
           formatY={humanizeDecimalBytes}
@@ -174,6 +196,13 @@ const NodeGraphs = requirePrometheus(({node}) => {
 const Details = ({obj: node}) => {
   const images = _.filter(node.status.images, 'names');
   const machine = getMachine(node);
+  const canUpdate = useAccessReview({
+    group: NodeModel.apiGroup,
+    resource: NodeModel.plural,
+    verb: 'patch',
+    name: node.metadata.name,
+    namespace: node.metadata.namespace,
+  });
   return <React.Fragment>
     <div className="co-m-pane__body">
       <SectionHeading text="Node Overview" />
@@ -192,9 +221,17 @@ const Details = ({obj: node}) => {
             <dt>Node Labels</dt>
             <dd><LabelList kind="Node" labels={node.metadata.labels} /></dd>
             <dt>Taints</dt>
-            <dd><button type="button" className="btn btn-link co-modal-btn-link co-modal-btn-link--left" onClick={Kebab.factory.ModifyTaints(NodeModel, node).callback}>{pluralize(_.size(node.spec.taints), 'Taint')}</button></dd>
+            <dd>
+              {canUpdate
+                ? <button type="button" className="btn btn-link co-modal-btn-link co-modal-btn-link--left" onClick={Kebab.factory.ModifyTaints(NodeModel, node).callback}>{pluralize(_.size(node.spec.taints), 'Taint')}</button>
+                : pluralize(_.size(node.spec.taints), 'Taint')}
+            </dd>
             <dt>Annotations</dt>
-            <dd><button type="button" className="btn btn-link co-modal-btn-link co-modal-btn-link--left" onClick={Kebab.factory.ModifyAnnotations(NodeModel, node).callback}>{pluralize(_.size(node.metadata.annotations), 'Annotation')}</button></dd>
+            <dd>
+              {canUpdate
+                ? <button type="button" className="btn btn-link co-modal-btn-link co-modal-btn-link--left" onClick={Kebab.factory.ModifyAnnotations(NodeModel, node).callback}>{pluralize(_.size(node.metadata.annotations), 'Annotation')}</button>
+                : pluralize(_.size(node.metadata.annotations), 'Annotation')}
+            </dd>
             {machine && <React.Fragment>
               <dt>Machine</dt>
               <dd><ResourceLink kind={referenceForModel(MachineModel)} name={machine.name} namespace={machine.namespace} /></dd>

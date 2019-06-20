@@ -1,0 +1,20 @@
+.odc-pipeline-vis-steps-list {
+  list-style: none;
+  padding: 0;
+  width: 10em;
+  &__item {
+    padding: 5px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    border: 1px solid var(--pf-global--BorderColor--light-100);
+    background: var(--pf-global--BackgroundColor--200);
+    color: var(--pf-global--Color--dark-100);
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    text-align: center;
+    &:last-child {
+      margin-bottom: 0px;
+    }
+  }
+}

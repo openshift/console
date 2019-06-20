@@ -123,6 +123,9 @@ export const EditYAML = connect(stateToProps)(
       this.setState({stale});
       if (nextProps.error) {
         this.handleError(nextProps.error);
+      } else if (this.state.error) {
+        //clear stale error state
+        this.setState({error: ''});
       }
       if (nextProps.sampleObj) {
         this.loadYaml(!_.isEqual(this.state.sampleObj, nextProps.sampleObj), nextProps.sampleObj);
@@ -163,7 +166,7 @@ export const EditYAML = connect(stateToProps)(
       const { name, namespace } = obj.metadata;
       const resourceAttributes = {
         group: model.apiGroup,
-        resource: model.path,
+        resource: model.plural,
         verb: 'update',
         name,
         namespace,

@@ -685,7 +685,7 @@ export class BasicAuthSubform extends React.Component<BasicAuthSubformProps, Bas
 
 const DroppableFileInput = (props) => <AsyncComponent loader={() => import('../utils/file-input').then(c => c.DroppableFileInput)} {...props} />;
 
-class SSHAuthSubform extends React.Component<SSHAuthSubformProps, SSHAuthSubformState> {
+export class SSHAuthSubform extends React.Component<SSHAuthSubformProps, SSHAuthSubformState> {
   constructor(props) {
     super(props);
     this.state = {

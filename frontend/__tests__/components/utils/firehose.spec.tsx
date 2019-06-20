@@ -4,9 +4,9 @@ import { Map as ImmutableMap } from 'immutable';
 import Spy = jasmine.Spy;
 
 import { Firehose } from '../../../public/components/utils/firehose';
-import { FirehoseResource } from '../../../public/components/factory';
 import { K8sKind, K8sResourceKindReference } from '../../../public/module/k8s';
 import { PodModel, ServiceModel } from '../../../public/models';
+import { FirehoseResource } from '../../../public/components/utils';
 
 // TODO(alecmerdler): Use these once `Firehose` is converted to TypeScript
 type FirehoseProps = {

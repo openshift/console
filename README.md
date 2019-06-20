@@ -17,21 +17,22 @@ The console is a more friendly `kubectl` in the form of a single page webapp.  I
 ### Dependencies:
 
 1. [node.js](https://nodejs.org/) >= 8 & [yarn](https://yarnpkg.com/en/docs/install) >= 1.3.2
-2. [go](https://golang.org/) >= 1.8 & [glide](https://glide.sh/) >= 0.12.0 (`go get github.com/Masterminds/glide`) & [glide-vc](https://github.com/sgotti/glide-vc)
+2. [go](https://golang.org/) >= 1.11+
 3. [oc](https://mirror.openshift.com/pub/openshift-v4/clients/oc/4.1/) or [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/) and an OpenShift or Kubernetes cluster
 4. `jq` (for `contrib/environment.sh`)
 5. Google Chrome/Chromium >= 60 (needs --headless flag) for integration tests
 
 ### Build everything:
 
-Clone the repository to `$GOPATH/src/github.com/openshift/console` and build with the command:
+This project uses uses [Go modules](https://github.com/golang/go/wiki/Modules),
+so you should clone the project outside of your `GOPATH`. To build both the
+frontend and backend, run:
 
 ```
 ./build.sh
 ```
 
-Backend binaries are output to `/bin`.
-
+Backend binaries are output to `./bin`.
 
 ### Configure the application
 
@@ -41,7 +42,6 @@ to. OpenShift 4.x clusters can be installed using the
 You can also use [CodeReady Containers](https://github.com/code-ready/crc)
 for local installs. More information about installing OpenShift can be found at
 <https://try.openshift.com/>.
-
 
 #### OpenShift (no authentication)
 
@@ -134,7 +134,7 @@ See [STYLEGUIDE](STYLEGUIDE.md) for file format and coding style guide.
 
 ### Dev Dependencies
 
-go, glide, glide-vc, nodejs/yarn, kubectl
+go 1.11+, nodejs/yarn, kubectl
 
 ### Frontend Development
 
@@ -155,47 +155,6 @@ The following build task will watch the source code for changes and compile auto
 yarn run dev
 ```
 If changes aren't detected, you might need to increase `fs.inotify.max_user_watches`. See <https://webpack.js.org/configuration/watch/#not-enough-watchers>.
-
-#### Deploying a Custom Image to an OpenShift Cluster
-
-Once you have made changes locally, these instructions will allow you to push changes to an
- OpenShift cluster for others to review.  This involves building a local image, pushing the
- image to an image registry, then updating the OpenShift cluster to pull the new image.
-
-##### Prerequisites
-
-1. Docker v17.05 or higher
-2. An image registry like [quay.io](https://quay.io/signin/) or [Docker Hub](https://hub.docker.com/)
-
-##### Steps
-1. Create a repository in the image registry of your choice to hold the image
-2. Build Image `docker build -t <your-image-name> <path-to-repository>`.  Here we are in the `console` directory, building from the local repository:
-    ```
-    docker build -t quay.io/myaccount/console:latest .
-    ```
-    `<path-to-repository>` can also be a URL to a Git repository.
-3. Push image to image registry `docker push <your-image-name>`.  Make sure docker is logged into your image registry!  Here we are pushing to a repository named 'console' on quay.io:
-    ```
-    docker push quay.io/myaccount/console:latest
-    ```
-4. Put the console operator in unmanaged state. 
-    ```
-    oc patch consoles.operator.openshift.io cluster --patch '{ "spec": { "managementState": "Unmanaged" } }' --type=merge
-    ```
-5. Update the console Deployment with the new image:
-    ```
-    oc set image deploy console console=quay.io/myaccount/console:latest -n openshift-console
-    ```
-6. Wait for the changes to rollout
-    ```
-    oc rollout status -w deploy/console -n openshift-console
-    ``` 
-You should now be able to see your development changes on the remote OpenShift cluster!
-
-When done making/pushing changes, you can put the console operator back in a managed state: 
-```
-oc patch consoles.operator.openshift.io cluster --patch '{ "spec": { "managementState": "Managed" } }' --type=merge
-```
 
 ### Unit Tests
 
@@ -282,6 +241,48 @@ Remove the `--headless` flag to Chrome (chromeOptions) in [protractor.conf.ts](f
 6. Will break on any `debugger;` statements
 7. Pauses browser when not using `--headless` argument!
 
+### Deploying a Custom Image to an OpenShift Cluster
+
+Once you have made changes locally, these instructions will allow you to push
+changes to an OpenShift cluster for others to review.  This involves building a
+local image, pushing the image to an image registry, then updating the
+OpenShift cluster to pull the new image.
+
+#### Prerequisites
+
+1. Docker v17.05 or higher for multi-stage builds
+2. An image registry like [quay.io](https://quay.io/signin/) or [Docker Hub](https://hub.docker.com/)
+
+#### Steps
+1. Create a repository in the image registry of your choice to hold the image.
+2. Build Image `docker build -t <your-image-name> <path-to-repository | url>`. For example:
+```
+docker build -t quay.io/myaccount/console:latest .
+```
+3. Push image to image registry `docker push <your-image-name>`.  Make sure
+   docker is logged into your image registry! For example:
+```
+docker push quay.io/myaccount/console:latest
+```
+4. Put the console operator in unmanaged state:
+```
+oc patch consoles.operator.openshift.io cluster --patch '{ "spec": { "managementState": "Unmanaged" } }' --type=merge
+```
+5. Update the console Deployment with the new image:
+```
+oc set image deploy console console=quay.io/myaccount/console:latest -n openshift-console
+```
+6. Wait for the changes to rollout:
+```
+oc rollout status -w deploy/console -n openshift-console
+```
+You should now be able to see your development changes on the remote OpenShift cluster!
+
+When done, you can put the console operator back in a managed state to remove the custom image:
+```
+oc patch consoles.operator.openshift.io cluster --patch '{ "spec": { "managementState": "Managed" } }' --type=merge
+```
+
 ### Dependency Management
 
 Dependencies should be pinned to an exact semver, sha, or git tag (eg, no ^).
@@ -293,14 +294,10 @@ Whenever making vendor changes:
 2. Commit everything *except* `vendor/` (eg, `server: add x feature`)
 3. Make a second commit with only `vendor/` (eg, `vendor: revendor`)
 
-Add new backend dependencies:
- 1. Edit `glide.yaml`
- 2. `./revendor.sh`
-
-Update existing backend dependencies:
- 1. Edit the `glide.yaml` file to the desired version (most likely a git hash)
- 2. Run `./revendor.sh`
- 3. Verify update was successful. `glide.lock` will have been updated to reflect the changes to `glide.yaml` and the package will have been updated in `vendor`.
+Adding new or updating existing backend dependencies:
+ 1. Edit the `go.mod` file to the desired version (most likely a git hash)
+ 2. Run `go mod tidy && go mod vendor`
+ 3. Verify update was successful. `go.sum` will have been updated to reflect the changes to `go.mod` and the package will have been updated in `vendor`.
 
 #### Frontend
 

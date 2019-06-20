@@ -1,5 +1,4 @@
 // Config
-@import '~patternfly/dist/sass/patternfly/color-variables';
 @import "style/vars";
 
 // External dependency variables or mixins that are required/extended by our custom styles (tilde tells Webpack not to use relative path)
@@ -31,7 +30,6 @@
 @import "style/text";
 @import "style/forms";
 @import "style/status";
-@import "style/storage-class";
 
 // React Components
 @import "components/utils/copy-to-clipboard";
@@ -95,3 +93,10 @@
 @import "components/storage-class-form";
 @import "components/quota";
 @import "components/cluster-settings/cluster-settings";
+
+@import "components/dashboard/dashboard";
+@import "components/dashboard/dashboard-card/card";
+@import "components/dashboard/health-card/health-card";
+@import "components/dashboard/details-card/details-card";
+
+@import "components/nav/nav-header";

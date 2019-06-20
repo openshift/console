@@ -3,11 +3,12 @@ import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-
+import * as classNames from 'classnames';
+import { sortable } from '@patternfly/react-table';
 import { ClusterRoleBindingModel } from '../../models';
 import { getQN, k8sCreate, k8sPatch, referenceFor } from '../../module/k8s';
 import * as UIActions from '../../actions/ui';
-import { ColHead, List, ListHeader, MultiListPage, ResourceRow } from '../factory';
+import { MultiListPage, Table, TableRow, TableData } from '../factory';
 import { RadioGroup } from '../radio';
 import { confirmModal } from '../modals';
 import {
@@ -66,14 +67,14 @@ const menuActions = ({subjectIndex, subjects}, startImpersonate) => {
       href: `${resourceObjPath(obj, kind.kind)}/copy?subjectIndex=${subjectIndex}`,
       // Only perform access checks when duplicating cluster role bindings.
       // It's not practical to check namespace role bindings since we don't know what namespace the user will pick in the form.
-      accessReview: _.get(obj, 'metadata.namespace') ? null : { group: kind.apiGroup, resource: kind.path, verb: 'create' },
+      accessReview: _.get(obj, 'metadata.namespace') ? null : { group: kind.apiGroup, resource: kind.plural, verb: 'create' },
     }),
     (kind, obj) => ({
       label: `Edit ${kind.label} Subject...`,
       href: `${resourceObjPath(obj, kind.kind)}/edit?subjectIndex=${subjectIndex}`,
       accessReview: {
         group: kind.apiGroup,
-        resource: kind.path,
+        resource: kind.plural,
         name: obj.metadata.name,
         namespace: obj.metadata.namespace,
         verb: 'update',
@@ -89,7 +90,7 @@ const menuActions = ({subjectIndex, subjects}, startImpersonate) => {
       }),
       accessReview: {
         group: kind.apiGroup,
-        resource: kind.path,
+        resource: kind.plural,
         name: binding.metadata.name,
         namespace: binding.metadata.namespace,
         verb: 'patch',
@@ -107,13 +108,43 @@ const menuActions = ({subjectIndex, subjects}, startImpersonate) => {
   return actions;
 };
 
-const Header = props => <ListHeader>
-  <ColHead {...props} className="col-md-3 col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
-  <ColHead {...props} className="col-md-3 col-sm-4 hidden-xs" sortField="roleRef.name">Role Ref</ColHead>
-  <ColHead {...props} className="col-md-2 hidden-sm hidden-xs" sortField="subject.kind">Subject Kind</ColHead>
-  <ColHead {...props} className="col-md-2 hidden-sm hidden-xs" sortField="subject.name">Subject Name</ColHead>
-  <ColHead {...props} className="col-md-2 col-sm-4 col-xs-6" sortField="metadata.namespace">Namespace</ColHead>
-</ListHeader>;
+const tableColumnClasses = [
+  classNames('col-md-3', 'col-sm-4', 'col-xs-6'),
+  classNames('col-md-3', 'col-sm-4', 'hidden-xs'),
+  classNames('col-lg-2', 'col-md-3', 'hidden-sm', 'hidden-xs'),
+  classNames('col-lg-2', 'hidden-md', 'hidden-sm', 'hidden-xs'),
+  classNames('col-lg-2', 'col-md-3', 'col-sm-4', 'col-xs-6'),
+  Kebab.columnClass,
+];
+
+const RoleBindingsTableHeader = () => {
+  return [
+    {
+      title: 'Name', sortField: 'metadata.name', transforms: [sortable],
+      props: { className: tableColumnClasses[0] },
+    },
+    {
+      title: 'Role Ref', sortField: 'roleRef.name', transforms: [sortable],
+      props: { className: tableColumnClasses[1] },
+    },
+    {
+      title: 'Subject Kind', sortField: 'subject.kind', transforms: [sortable],
+      props: { className: tableColumnClasses[2] },
+    },
+    {
+      title: 'Subject Name', sortField: 'subject.name', transforms: [sortable],
+      props: { className: tableColumnClasses[3] },
+    },
+    {
+      title: 'Namespace', sortField: 'metadata.namespace', transforms: [sortable],
+      props: { className: tableColumnClasses[4] },
+    },
+    {
+      title: '', props: { className: tableColumnClasses[5] },
+    },
+  ];
+};
+RoleBindingsTableHeader.displayName = 'RoleBindingsTableHeader';
 
 export const BindingName = ({binding}) => {
   <ResourceLink kind={bindingKind(binding)} name={binding.metadata.name} namespace={binding.metadata.namespace} className="co-resource-item__resource-name" />;
@@ -131,30 +162,35 @@ export const RoleLink = ({binding}) => {
   return <ResourceLink kind={kind} name={binding.roleRef.name} namespace={ns} />;
 };
 
-const Row = ({obj: binding}) => <ResourceRow obj={binding}>
-  <div className="col-md-3 col-sm-4 col-xs-6">
-    <ResourceLink kind={bindingKind(binding)} name={binding.metadata.name} namespace={binding.metadata.namespace} className="co-resource-item__resource-name" />
-  </div>
-  <div className="col-md-3 col-sm-4 hidden-xs co-break-word">
-    <RoleLink binding={binding} />
-  </div>
-  <div className="col-md-2 hidden-sm hidden-xs co-break-word">
-    {binding.subject.kind}
-  </div>
-  <div className="col-md-2 hidden-sm hidden-xs co-break-word">
-    {binding.subject.name}
-  </div>
-  <div className="col-md-2 col-sm-4 col-xs-6 co-break-word">
-    {binding.metadata.namespace ? <ResourceLink kind="Namespace" name={binding.metadata.namespace} /> : 'all'}
-  </div>
-  <div className="dropdown-kebab-pf">
-    <BindingKebab binding={binding} />
-  </div>
-</ResourceRow>;
+const RoleBindingsTableRow = ({obj: binding, index, key, style}) => {
+  return (
+    <TableRow id={binding.metadata.uid} index={index} trKey={key} style={style}>
+      <TableData className={tableColumnClasses[0]}>
+        <ResourceLink kind={bindingKind(binding)} name={binding.metadata.name} namespace={binding.metadata.namespace} className="co-resource-item__resource-name" />
+      </TableData>
+      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+        <RoleLink binding={binding} />
+      </TableData>
+      <TableData className={classNames(tableColumnClasses[2], 'co-break-word')}>
+        {binding.subject.kind}
+      </TableData>
+      <TableData className={classNames(tableColumnClasses[3], 'co-break-word')}>
+        {binding.subject.name}
+      </TableData>
+      <TableData className={classNames(tableColumnClasses[4], 'co-break-word')}>
+        {binding.metadata.namespace ? <ResourceLink kind="Namespace" name={binding.metadata.namespace} /> : 'all'}
+      </TableData>
+      <TableData className={tableColumnClasses[5]}>
+        <BindingKebab binding={binding} />
+      </TableData>
+    </TableRow>
+  );
+};
+RoleBindingsTableRow.displayName = 'RoleBindingsTableRow';
 
 const EmptyMsg = () => <MsgBox title="No Role Bindings Found" detail="Roles grant access to types of objects in the cluster. Roles are applied to a group or user via a Role Binding." />;
 
-export const BindingsList = props => <List {...props} EmptyMsg={EmptyMsg} Header={Header} Row={Row} />;
+export const BindingsList = props => <Table {...props} aria-label="Role Bindings" EmptyMsg={EmptyMsg} Header={RoleBindingsTableHeader} Row={RoleBindingsTableRow} virtualize />;
 
 export const bindingType = binding => {
   if (!binding) {
@@ -425,7 +461,7 @@ export const CreateRoleBinding = ({match: {params}, location}) => {
   const metadata = {namespace: UIActions.getActiveNamespace()};
   const clusterAllowed = useAccessReview({
     group: ClusterRoleBindingModel.apiGroup,
-    resource: ClusterRoleBindingModel.path,
+    resource: ClusterRoleBindingModel.plural,
     verb: 'create',
   });
   const fixed = {

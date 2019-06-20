@@ -1,10 +1,11 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { Link } from 'react-router-dom';
-
+import { sortable } from '@patternfly/react-table';
+import * as classNames from 'classnames';
+import { getMachineRole } from '@console/shared';
 import { MachineModel, MachineDeploymentModel } from '../models';
 import { MachineDeploymentKind, referenceForModel } from '../module/k8s';
-import { getMachineRole } from './machine';
 import {
   editCountAction,
   getAWSPlacement,
@@ -13,7 +14,7 @@ import {
   MachineCounts,
   MachineTabPage,
 } from './machine-set';
-import { ColHead, DetailsPage, List, ListHeader, ListPage } from './factory';
+import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
 import {
   Kebab,
   ResourceKebab,
@@ -32,28 +33,61 @@ const menuActions = [editCountAction, ...common];
 const machineReference = referenceForModel(MachineModel);
 const machineDeploymentReference = referenceForModel(MachineDeploymentModel);
 
-const MachineDeploymentHeader: React.SFC = props => <ListHeader>
-  <ColHead {...props} className="col-sm-4 col-xs-6" sortField="metadata.name">Name</ColHead>
-  <ColHead {...props} className="col-sm-4 col-xs-6" sortField="metadata.namespace">Namespace</ColHead>
-  <ColHead {...props} className="col-sm-4 hidden-xs" sortField="status.replicas">Machines</ColHead>
-</ListHeader>;
+const tableColumnClasses = [
+  classNames('col-sm-4', 'col-xs-6'),
+  classNames('col-sm-4', 'col-xs-6'),
+  classNames('col-sm-4', 'hidden-xs'),
+  Kebab.columnClass,
+];
 
-const MachineDeploymentRow: React.SFC<MachineDeploymentRowProps> = ({obj}: {obj: MachineDeploymentKind}) => <div className="row co-resource-list__item">
-  <div className="col-sm-4 col-xs-6">
-    <ResourceLink kind={machineDeploymentReference} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
-  </div>
-  <div className="col-sm-4 col-xs-6 co-break-word">
-    <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
-  </div>
-  <div className="col-sm-4 hidden-xs">
-    <Link to={`${resourcePath(machineDeploymentReference, obj.metadata.name, obj.metadata.namespace)}/machines`}>
-      {getReadyReplicas(obj)} of {getDesiredReplicas(obj)} machines
-    </Link>
-  </div>
-  <div className="dropdown-kebab-pf">
-    <ResourceKebab actions={menuActions} kind={machineDeploymentReference} resource={obj} />
-  </div>
-</div>;
+const MachineDeploymentTableHeader = () => {
+  return [
+    {
+      title: 'Name', sortField: 'metadata.name', transforms: [sortable],
+      props: { className: tableColumnClasses[0] },
+    },
+    {
+      title: 'Namespace', sortField: 'metadata.namespace', transforms: [sortable],
+      props: { className: tableColumnClasses[1] },
+    },
+    {
+      title: 'Machines', sortField: 'status.replicas', transforms: [sortable],
+      props: { className: tableColumnClasses[2] },
+    },
+    {
+      title: '', props: { className: tableColumnClasses[3] },
+    },
+  ];
+};
+MachineDeploymentTableHeader.displayName = 'MachineDeploymentTableHeader';
+
+const MachineDeploymentTableRow: React.FC<MachineDeploymentTableRowProps> = ({obj, index, key, style}) => {
+  return (
+    <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+      <TableData className={tableColumnClasses[0]}>
+        <ResourceLink kind={machineDeploymentReference} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
+      </TableData>
+      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+        <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
+      </TableData>
+      <TableData className={tableColumnClasses[2]}>
+        <Link to={`${resourcePath(machineDeploymentReference, obj.metadata.name, obj.metadata.namespace)}/machines`}>
+          {getReadyReplicas(obj)} of {getDesiredReplicas(obj)} machines
+        </Link>
+      </TableData>
+      <TableData className={tableColumnClasses[3]}>
+        <ResourceKebab actions={menuActions} kind={machineDeploymentReference} resource={obj} />
+      </TableData>
+    </TableRow>
+  );
+};
+MachineDeploymentTableRow.displayName = 'MachineDeploymentTableRow';
+type MachineDeploymentTableRowProps = {
+  obj: MachineDeploymentKind;
+  index: number;
+  key?: string;
+  style: object;
+};
 
 const MachineDeploymentDetails: React.SFC<MachineDeploymentDetailsProps> = ({obj}) => {
   const machineRole = getMachineRole(obj);
@@ -110,12 +144,12 @@ const MachineDeploymentDetails: React.SFC<MachineDeploymentDetailsProps> = ({obj
   </React.Fragment>;
 };
 
-export const MachineDeploymentList: React.SFC = props =>
-  <List
-    {...props}
-    Header={MachineDeploymentHeader}
-    Row={MachineDeploymentRow}
-  />;
+export const MachineDeploymentList: React.SFC = props => <Table
+  {...props}
+  aria-label="Machine Deployments"
+  Header={MachineDeploymentTableHeader}
+  Row={MachineDeploymentTableRow}
+  virtualize />;
 
 export const MachineDeploymentPage: React.SFC<MachineDeploymentPageProps> = props =>
   <ListPage
@@ -131,10 +165,6 @@ export const MachineDeploymentDetailsPage: React.SFC<MachineDeploymentDetailsPag
   kind={machineDeploymentReference}
   pages={[navFactory.details(MachineDeploymentDetails), navFactory.editYaml(), navFactory.machines(MachineTabPage)]}
 />;
-
-export type MachineDeploymentRowProps = {
-  obj: MachineDeploymentKind;
-};
 
 export type MachineDeploymentDetailsProps = {
   obj: MachineDeploymentKind;

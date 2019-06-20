@@ -1,25 +1,53 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { match, Link } from 'react-router-dom';
-
-import { List, ListHeader, ColHead, DetailsPage, MultiListPage } from '../factory';
+import { sortable } from '@patternfly/react-table';
+import * as classNames from 'classnames';
+import { DetailsPage, MultiListPage, Table, TableRow, TableData } from '../factory';
 import { requireOperatorGroup } from './operator-group';
 import { MsgBox, ResourceLink, ResourceKebab, navFactory, Kebab, ResourceSummary, LoadingInline, SectionHeading } from '../utils';
 import { removeQueryArgument } from '../utils/router';
 import { SubscriptionKind, SubscriptionState, PackageManifestKind, InstallPlanApproval, ClusterServiceVersionKind, olmNamespace, OperatorGroupKind, InstallPlanKind, InstallPlanPhase } from './index';
-import { referenceForModel, k8sGet, k8sPatch, k8sKill, k8sUpdate } from '../../module/k8s';
+import { referenceForModel, k8sGet, k8sPatch, k8sKill, k8sUpdate, K8sResourceKind } from '../../module/k8s';
 import { SubscriptionModel, ClusterServiceVersionModel, CatalogSourceModel, InstallPlanModel, PackageManifestModel, OperatorGroupModel } from '../../models';
 import { createDisableApplicationModal } from '../modals/disable-application-modal';
 import { createSubscriptionChannelModal } from '../modals/subscription-channel-modal';
 import { createInstallPlanApprovalModal } from '../modals/installplan-approval-modal';
 
-export const SubscriptionHeader: React.SFC<SubscriptionHeaderProps> = (props) => <ListHeader>
-  <ColHead {...props} className="col-xs-6 col-sm-4 col-md-3" sortField="metadata.name">Name</ColHead>
-  <ColHead {...props} className="col-xs-6 col-sm-4 col-md-3" sortField="metadata.namespace">Namespace</ColHead>
-  <ColHead {...props} className="hidden-xs col-sm-4 col-md-3 col-lg-2">Status</ColHead>
-  <ColHead {...props} className="hidden-xs hidden-sm col-md-3 col-lg-2">Channel</ColHead>
-  <ColHead {...props} className="hidden-xs hidden-sm hidden-md col-lg-2">Approval Strategy</ColHead>
-</ListHeader>;
+const tableColumnClasses = [
+  classNames('col-md-3', 'col-sm-4', 'col-xs-6'),
+  classNames('col-md-3', 'col-sm-4', 'col-xs-6'),
+  classNames('col-lg-2', 'col-md-3', 'col-sm-4', 'hidden-xs'),
+  classNames('col-lg-2', 'col-md-3', 'hidden-sm', 'hidden-xs'),
+  classNames('col-lg-2', 'hidden-md', 'hidden-sm', 'hidden-xs'),
+  Kebab.columnClass,
+];
+
+export const SubscriptionTableHeader = () => {
+  return [
+    {
+      title: 'Name', sortField: 'metadata.name', transforms: [sortable],
+      props: { className: tableColumnClasses[0] },
+    },
+    {
+      title: 'Namespace', sortField: 'metadata.namespace', transforms: [sortable],
+      props: { className: tableColumnClasses[1] },
+    },
+    {
+      title: 'Status', props: { className: tableColumnClasses[2] },
+    },
+    {
+      title: 'Channel', props: { className: tableColumnClasses[3] },
+    },
+    {
+      title: 'Approval Strategy', props: { className: tableColumnClasses[4] },
+    },
+    {
+      title: '', props: { className: tableColumnClasses[5] },
+    },
+  ];
+};
+SubscriptionTableHeader.displayName = 'SubscriptionTableHeader';
 
 const subscriptionState = (state: SubscriptionState) => {
   switch (state) {
@@ -37,7 +65,7 @@ const menuActions = [
     callback: () => createDisableApplicationModal({k8sKill, k8sGet, k8sPatch, subscription: obj}),
     accessReview: {
       group: kind.apiGroup,
-      resource: kind.path,
+      resource: kind.plural,
       name: obj.metadata.name,
       namespace: obj.metadata.namespace,
       verb: 'delete',
@@ -53,34 +81,46 @@ const menuActions = [
   },
 ];
 
-export const SubscriptionRow: React.SFC<SubscriptionRowProps> = (props) => {
-  return <div className="row co-resource-list__item">
-    <div className="col-xs-6 col-sm-4 col-md-3">
-      <ResourceLink kind={referenceForModel(SubscriptionModel)} name={props.obj.metadata.name} namespace={props.obj.metadata.namespace} title={props.obj.metadata.name} />
-    </div>
-    <div className="col-xs-6 col-sm-4 col-md-3">
-      <ResourceLink kind="Namespace" name={props.obj.metadata.namespace} title={props.obj.metadata.namespace} displayName={props.obj.metadata.namespace} />
-    </div>
-    <div className="hidden-xs col-sm-4 col-md-3 col-lg-2">
-      {subscriptionState(_.get(props.obj.status, 'state'))}
-    </div>
-    <div title={props.obj.spec.channel || 'default'} className="co-truncate co-select-to-copy hidden-xs hidden-sm col-md-3 col-lg-2">
-      {props.obj.spec.channel || 'default'}
-    </div>
-    <div className="hidden-xs hidden-sm hidden-md col-lg-2">
-      {props.obj.spec.installPlanApproval || 'Automatic'}
-    </div>
-    <div className="dropdown-kebab-pf">
-      <ResourceKebab actions={menuActions} kind={referenceForModel(SubscriptionModel)} resource={props.obj} />
-    </div>
-  </div>;
+export const SubscriptionTableRow: React.FC<SubscriptionTableRowProps> = ({obj, index, key, style}) => {
+  return (
+    <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+      <TableData className={tableColumnClasses[0]}>
+        <ResourceLink kind={referenceForModel(SubscriptionModel)} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
+      </TableData>
+      <TableData className={tableColumnClasses[1]}>
+        <ResourceLink kind="Namespace" name={obj.metadata.namespace} title={obj.metadata.namespace} displayName={obj.metadata.namespace} />
+      </TableData>
+      <TableData className={tableColumnClasses[2]}>
+        {subscriptionState(_.get(obj.status, 'state'))}
+      </TableData>
+      <TableData className={classNames(tableColumnClasses[3], 'co-truncate', 'co-select-to-copy')}>
+        {obj.spec.channel || 'default'}
+      </TableData>
+      <TableData className={tableColumnClasses[4]}>
+        {obj.spec.installPlanApproval || 'Automatic'}
+      </TableData>
+      <TableData className={tableColumnClasses[5]}>
+        <ResourceKebab actions={menuActions} kind={referenceForModel(SubscriptionModel)} resource={obj} />
+      </TableData>
+    </TableRow>
+  );
+};
+SubscriptionTableRow.displayName = 'SubscriptionTableRow';
+export type SubscriptionTableRowProps = {
+  obj: K8sResourceKind;
+  index: number;
+  key?: string;
+  style: object;
 };
 
-export const SubscriptionsList = requireOperatorGroup((props: SubscriptionsListProps) => <List
-  {...props}
-  Row={SubscriptionRow}
-  Header={SubscriptionHeader}
-  EmptyMsg={() => <MsgBox title="No Subscriptions Found" detail="Each namespace can subscribe to a single channel of a package for automatic updates." />} />);
+export const SubscriptionsList = requireOperatorGroup((props: SubscriptionsListProps) =>
+  <Table {...props}
+    aria-label="Operator Subscriptions"
+    Header={SubscriptionTableHeader}
+    Row={SubscriptionTableRow}
+    EmptyMsg={() => <MsgBox title="No Subscriptions Found" detail="Each namespace can subscribe to a single channel of a package for automatic updates." />}
+    virtualize />
+);
 
 export const SubscriptionsPage: React.SFC<SubscriptionsPageProps> = (props) => {
   const namespace = _.get(props.match, 'params.ns');
@@ -96,7 +136,7 @@ export const SubscriptionsPage: React.SFC<SubscriptionsPageProps> = (props) => {
     helpText="Operator Subscriptions keep your services up to date by tracking a channel in a package. The approval strategy determines either manual or automatic updates."
     showTitle={false}
     canCreate={true}
-    createProps={{to: namespace ? `/operatormanagement/ns/${namespace}/catalogsources` : '/operatormanagement/all-namespaces/catalogsources'}}
+    createProps={{to: '/operatorhub'}}
     createButtonText="Create Subscription"
     ListComponent={SubscriptionsList}
     filterLabel="Subscriptions by package" />;
@@ -268,14 +308,6 @@ export type SubscriptionsListProps = {
   operatorGroup: {loaded: boolean, data?: OperatorGroupKind[]};
 };
 
-export type SubscriptionHeaderProps = {
-
-};
-
-export type SubscriptionRowProps = {
-  obj: SubscriptionKind;
-};
-
 export type SubscriptionUpdatesProps = {
   obj: SubscriptionKind;
   pkg: PackageManifestKind;
@@ -302,8 +334,6 @@ export type SubscriptionDetailsPageProps = {
   namespace: string;
 };
 
-SubscriptionHeader.displayName = 'SubscriptionHeader';
-SubscriptionRow.displayName = 'SubscriptionRow';
 SubscriptionsList.displayName = 'SubscriptionsList';
 SubscriptionsPage.displayName = 'SubscriptionsPage';
 SubscriptionDetails.displayName = 'SubscriptionDetails';

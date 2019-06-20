@@ -2,10 +2,12 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as fuzzy from 'fuzzysearch';
 // import { Link } from 'react-router-dom';
-
+import { RoleModel } from '../../models';
+import * as classNames from 'classnames';
+import { sortable } from '@patternfly/react-table';
 import { flatten as bindingsFlatten } from './bindings';
 import { BindingName, BindingsList, RulesList } from './index';
-import { ColHead, DetailsPage, List, ListHeader, MultiListPage, ResourceRow, TextFilter } from '../factory';
+import { DetailsPage, MultiListPage, TextFilter, Table, TableRow, TableData } from '../factory';
 import { Kebab, SectionHeading, MsgBox, navFactory, ResourceKebab, ResourceLink, Timestamp } from '../utils';
 
 export const isSystemRole = role => _.startsWith(role.metadata.name, 'system:');
@@ -28,22 +30,44 @@ const menuActions = [
   Kebab.factory.Delete,
 ];
 
-const Header = props => <ListHeader>
-  <ColHead {...props} className="col-xs-6" sortField="metadata.name">Name</ColHead>
-  <ColHead {...props} className="col-xs-6" sortField="metadata.namespace">Namespace</ColHead>
-</ListHeader>;
+const roleColumnClasses = [
+  classNames('col-xs-6'),
+  classNames('col-xs-6'),
+  Kebab.columnClass,
+];
 
-const Row = ({obj: role}) => <div className="row co-resource-list__item">
-  <div className="col-xs-6">
-    <ResourceLink kind={roleKind(role)} name={role.metadata.name} namespace={role.metadata.namespace} />
-  </div>
-  <div className="col-xs-6 co-break-word">
-    {role.metadata.namespace ? <ResourceLink kind="Namespace" name={role.metadata.namespace} /> : 'all'}
-  </div>
-  <div className="dropdown-kebab-pf">
-    <ResourceKebab actions={menuActions} kind={roleKind(role)} resource={role} />
-  </div>
-</div>;
+
+const RolesTableHeader = () => {
+  return [
+    {
+      title: 'Name', sortField: 'metadata.name', transforms: [sortable],
+      props: { className: roleColumnClasses[0]},
+    },
+    {
+      title: 'Namespace', sortField: 'metadata.namespace', transforms: [sortable],
+      props: { className: roleColumnClasses[1]},
+    },
+    { title: '', props: { className: roleColumnClasses[2]}},
+  ];
+};
+RolesTableHeader.displayName = 'RolesTableHeader';
+
+const RolesTableRow = ({obj: role, index, key, style}) => {
+  return (
+    <TableRow id={role.metadata.uid} index={index} trKey={key} style={style}>
+      <TableData className={roleColumnClasses[0]}>
+        <ResourceLink kind={roleKind(role)} name={role.metadata.name} namespace={role.metadata.namespace} />
+      </TableData>
+      <TableData className={classNames(roleColumnClasses[1], 'co-break-word')}>
+        {role.metadata.namespace ? <ResourceLink kind="Namespace" name={role.metadata.namespace} /> : 'all'}
+      </TableData>
+      <TableData className={roleColumnClasses[2]}>
+        <ResourceKebab actions={menuActions} kind={roleKind(role)} resource={role} />
+      </TableData>
+    </TableRow>
+  );
+};
+RolesTableRow.displayName = 'RolesTableRow';
 
 class Details extends React.Component {
   constructor(props) {
@@ -106,29 +130,55 @@ class Details extends React.Component {
   }
 }
 
-const BindingHeader = props => <ListHeader>
-  <ColHead {...props} className="col-xs-4" sortField="metadata.name">Name</ColHead>
-  <ColHead {...props} className="col-xs-2" sortField="subject.kind">Subject Kind</ColHead>
-  <ColHead {...props} className="col-xs-4" sortField="subject.name">Subject Name</ColHead>
-  <ColHead {...props} className="col-xs-2" sortField="metadata.namespace">Namespace</ColHead>
-</ListHeader>;
+const bindingsColumnClasses = [
+  classNames('col-xs-4'),
+  classNames('col-xs-2'),
+  classNames('col-xs-4'),
+  classNames('col-xs-2'),
+];
 
-const BindingRow = ({obj: binding}) => <ResourceRow obj={binding}>
-  <div className="col-xs-4">
-    <BindingName binding={binding} />
-  </div>
-  <div className="col-xs-2">
-    {binding.subject.kind}
-  </div>
-  <div className="col-xs-4">
-    {binding.subject.name}
-  </div>
-  <div className="col-xs-2">
-    {binding.namespace || 'all'}
-  </div>
-</ResourceRow>;
+const BindingsTableHeader = () => {
+  return [
+    {
+      title: 'Name', sortField: 'metadata.name', transforms: [sortable],
+      props: { className: bindingsColumnClasses[0]},
+    },
+    {
+      title: 'Subject Kind', sortField: 'subject.kind', transforms: [sortable],
+      props: { className: bindingsColumnClasses[1]},
+    },
+    {
+      title: 'Subject Name', sortField: 'subject.name', transforms: [sortable],
+      props: { className: bindingsColumnClasses[2]},
+    },
+    { title: 'Namespace', sortField: 'metadata.namespace', transforms: [sortable],
+      props: { className: bindingsColumnClasses[3]},
+    },
+  ];
+};
+BindingsTableHeader.displayName = 'BindingsTableHeader';
 
-const BindingsListComponent = props => <BindingsList {...props} Header={BindingHeader} Row={BindingRow} />;
+const BindingsTableRow = ({obj: binding, index, key, style}) => {
+  return (
+    <TableRow id={binding.metadata.uid} index={index} trKey={key} style={style}>
+      <TableData className={bindingsColumnClasses[0]}>
+        <BindingName binding={binding} />
+      </TableData>
+      <TableData className={bindingsColumnClasses[1]}>
+        {binding.subject.kind}
+      </TableData>
+      <TableData className={bindingsColumnClasses[2]}>
+        {binding.subject.name}
+      </TableData>
+      <TableData className={bindingsColumnClasses[3]}>
+        {binding.namespace || 'all'}
+      </TableData>
+    </TableRow>
+  );
+};
+BindingsTableRow.displayName = 'BindingsTableRow';
+
+const BindingsListComponent = props => <BindingsList {...props} Header={BindingsTableHeader} Row={BindingsTableRow} virtualize />;
 
 export const BindingsForRolePage = (props) => {
   const {match: {params: {name, ns}}, obj:{kind}} = props;
@@ -158,7 +208,7 @@ export const ClusterRolesDetailsPage = RolesDetailsPage;
 
 const EmptyMsg = () => <MsgBox title="No Roles Found" detail="Roles grant access to types of objects in the cluster. Roles are applied to a team or user via a Role Binding." />;
 
-const RolesList = props => <List {...props} EmptyMsg={EmptyMsg} Header={Header} Row={Row} />;
+const RolesList = props => <Table {...props} aria-label="Roles" EmptyMsg={EmptyMsg} Header={RolesTableHeader} Row={RolesTableRow} virtualize />;
 
 export const roleType = role => {
   if (!role) {
@@ -171,13 +221,19 @@ export const roleType = role => {
 };
 
 export const RolesPage = ({namespace, mock, showTitle}) => {
+  const createNS = namespace || 'default';
+  const accessReview = {
+    model: RoleModel,
+    namespace: createNS,
+  };
   return <MultiListPage
     ListComponent={RolesList}
     canCreate={true}
     showTitle={showTitle}
     namespace={namespace}
+    createAccessReview={accessReview}
     createButtonText="Create Role"
-    createProps={{to: `/k8s/ns/${namespace || 'default'}/roles/~new`}}
+    createProps={{to: `/k8s/ns/${createNS}/roles/~new`}}
     flatten={resources => _.flatMap(resources, 'data').filter(r => !!r)}
     resources={[
       {kind: 'Role', namespaced: true, optional: mock},

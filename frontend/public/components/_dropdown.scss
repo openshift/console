@@ -42,11 +42,6 @@ $dropdown-link-hover-border: 1px solid #bee1f4;
   padding: 5px 10px 10px;
 }
 
-.dropdown-menu--right {
-  left: auto;
-  right: 0;
-}
-
 .dropdown-menu--text-wrap {
   max-width: 100%;
   li a {
@@ -153,7 +148,12 @@ $dropdown-link-hover-border: 1px solid #bee1f4;
     padding-right: 30px;
   }
 
-  &__dropdowns {
+  &__import {
+    color: inherit;
+  }
+
+  &__items {
+    align-items: center;
     display: flex;
     justify-content: space-between;
 
@@ -175,7 +175,7 @@ $dropdown-link-hover-border: 1px solid #bee1f4;
 }
 
 .co-namespace-selector {
-  max-width: 75%;
+  max-width: 60%;
 
   .btn-link {
     font-size: ($font-size-base + 1);
