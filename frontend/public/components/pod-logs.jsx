@@ -68,8 +68,6 @@ export class PodLogs extends React.Component {
 
   render() {
     const { containers, currentKey, initContainers } = this.state;
-    const namespace = _.get(this.props.obj, 'metadata.namespace');
-    const podName = _.get(this.props.obj, 'metadata.name');
     const currentContainer = _.get(containers, currentKey) || _.get(initContainers, currentKey);
     const currentContainerStatus = containerToLogSourceStatus(currentContainer);
     const containerDropdown = <ContainerDropdown
@@ -81,10 +79,8 @@ export class PodLogs extends React.Component {
     return <div className="co-m-pane__body">
       <ResourceLog
         containerName={currentContainer ? currentContainer.name : ''}
-        kind="Pod"
         dropdown={containerDropdown}
-        namespace={namespace}
-        resourceName={podName}
+        resource={this.props.obj}
         resourceStatus={currentContainerStatus}
       />
     </div>;

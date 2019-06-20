@@ -13,6 +13,7 @@ import {
   PrometheusModel,
   ConsoleCLIDownloadModel,
   ConsoleNotificationModel,
+  ConsoleLogLinkModel,
 } from '../models';
 import { referenceForModel } from '../module/k8s';
 import { ActionType as K8sActionType } from '../actions/k8s';
@@ -36,6 +37,7 @@ export const baseCRDs = {
   [referenceForModel(MachineAutoscalerModel)]: FLAGS.MACHINE_AUTOSCALER,
   [referenceForModel(ConsoleCLIDownloadModel)]: FLAGS.CONSOLE_CLI_DOWNLOAD,
   [referenceForModel(ConsoleNotificationModel)]: FLAGS.CONSOLE_NOTIFICATION,
+  [referenceForModel(ConsoleLogLinkModel)]: FLAGS.CONSOLE_LOG_LINK,
 };
 
 const CRDs = { ...baseCRDs };
