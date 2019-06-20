@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
-import {LimitRangeTableHeader, LimitRangeTableRow, LimitRangeDetailsRowProps, LimitRangeDetailsRow} from '../../public/components/limit-range';
+import { LimitRangeTableHeader, LimitRangeTableRow, LimitRangeDetailsRowProps, LimitRangeDetailsRow } from '../../public/components/limit-range';
 
 describe(LimitRangeTableHeader.displayName, () => {
   it('returns column header definition for resource', () => {
