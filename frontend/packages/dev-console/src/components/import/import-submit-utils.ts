@@ -206,6 +206,7 @@ export const createRoute = (
     application: { name: application },
     image: { ports },
     labels: userLabels,
+    route: { hostname, secure, path, tls },
   } = formData;
 
   const firstPort = _.head(ports);
@@ -223,6 +224,9 @@ export const createRoute = (
         kind: 'Service',
         name,
       },
+      ...(secure ? { tls } : {}),
+      host: hostname,
+      path,
       // The service created by `createService` uses the same port as the container port.
       port: {
         // Use the port name, not the number for targetPort. The router looks

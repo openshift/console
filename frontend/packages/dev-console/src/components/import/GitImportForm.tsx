@@ -33,7 +33,7 @@ const GitImportForm: React.FC<FormikProps<FormikValues> & GitImportFormProps> = 
       <AppSection project={values.project} />
       <BuilderSection image={values.image} builderImages={builderImages} />
       <ExpandCollapse>
-        <RouteSection />
+        <RouteSection route={values.route} />
         <BuildConfigSection namespace={values.project.name} />
         <DeploymentConfigSection namespace={values.project.name} />
         <ScalingSection />
