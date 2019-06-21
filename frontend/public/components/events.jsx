@@ -464,7 +464,7 @@ class EventStream extends React.Component {
     });
     const messageCount = count < maxMessages ? `Showing ${pluralize(count, 'event')}` : `Showing ${count} of ${allCount}+ events`;
 
-    return <div className="co-m-pane__body co-m-pane__body--alt">
+    return <div className="co-m-pane__body">
       <div className="co-sysevent-stream">
         <div className="co-sysevent-stream__status">
           <div className="co-sysevent-stream__timeline__btn-text">
