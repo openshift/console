@@ -1,3 +1,11 @@
+import {
+  chart_color_green_400 as successColor,
+  chart_color_blue_300 as runningColor,
+  global_danger_color_100 as failureColor,
+  chart_color_blue_100 as pendingColor,
+  chart_color_black_200 as skippedColor,
+  chart_color_black_400 as cancelledColor,
+} from '@patternfly/react-tokens';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { pipelineRunFilterReducer } from './pipeline-filter-reducer';
 
@@ -5,9 +13,23 @@ interface Metadata {
   name: string;
   namespace?: string;
 }
+
 export interface PropPipelineData {
   metadata: Metadata;
   latestRun?: PipelineRun;
+}
+
+interface StatusMessage {
+  message: string;
+  pftoken: { name: string; value: string; var: string };
+}
+
+export interface TaskStatus {
+  Succeeded?: number;
+  Running?: number;
+  Failed?: number;
+  Notstarted?: number;
+  FailedToStart?: number;
 }
 
 export interface Resource {
@@ -49,12 +71,14 @@ export interface PipelineRun extends K8sResourceKind {
     conditions?: Condition[];
     startTime?: string;
     completionTime?: string;
+    taskRuns?: K8sResourceKind[];
   };
 }
 
 export interface Condition {
   type: string;
   status: string;
+  reason?: string;
 }
 
 export interface Param {
@@ -142,4 +166,73 @@ export const augmentRunsToData = (
     );
   }
   return data;
+};
+
+export enum runStatus {
+  Succeeded = 'Succeeded',
+  Failed = 'Failed',
+  Running = 'Running',
+  'In progress' = 'In Progress',
+  Pending = 'Pending',
+  FailedToStart = 'FailedToStart',
+  PipelineNotStarted = 'PipelineNotStarted',
+  Skipped = 'Skipped',
+  Cancelled = 'Cancelled',
+}
+
+export const getRunStatusColor = (status: string): StatusMessage => {
+  switch (status) {
+    case runStatus.Succeeded:
+      return { message: 'Succeded', pftoken: successColor };
+    case runStatus.Failed:
+      return { message: 'Failed', pftoken: failureColor };
+    case runStatus.Running:
+      return { message: 'Running', pftoken: runningColor };
+    case runStatus['In Progress']:
+      return { message: 'Running', pftoken: runningColor };
+    case runStatus.Pending:
+      return { message: 'Not Started Yet', pftoken: pendingColor };
+    case runStatus.FailedToStart:
+      return {
+        message: 'PipelineRun Failed To Start',
+        pftoken: failureColor,
+      };
+    case runStatus.Skipped:
+      return { message: 'Skipped', pftoken: skippedColor };
+    case runStatus.Cancelled:
+      return { message: 'Cancelled', pftoken: cancelledColor };
+    default:
+      return { message: 'PipelineRun Not started Yet', pftoken: pendingColor };
+  }
+};
+
+export const getTaskStatus = (pipelinerun: PipelineRun): TaskStatus => {
+  const taskStatus: TaskStatus = {};
+  Object.keys(runStatus).forEach((key) => {
+    taskStatus[key] = 0;
+  });
+  if (pipelinerun && pipelinerun.status && pipelinerun.status.taskRuns) {
+    Object.keys(pipelinerun.status.taskRuns).forEach((taskRun) => {
+      const status = pipelineRunFilterReducer(pipelinerun.status.taskRuns[taskRun]);
+      if (status === 'Succeeded' || status === 'Completed' || status === 'Complete') {
+        taskStatus[runStatus.Succeeded]++;
+      } else if (status === 'Running') {
+        taskStatus[runStatus.Running]++;
+      } else if (status === 'Failed') {
+        taskStatus[runStatus.Failed]++;
+      } else {
+        taskStatus[runStatus.Pending]++;
+      }
+    });
+  } else if (
+    pipelinerun &&
+    pipelinerun.status &&
+    pipelinerun.status.conditions &&
+    pipelinerun.status.conditions[0].status === 'False'
+  ) {
+    taskStatus[runStatus.FailedToStart]++;
+  } else {
+    taskStatus[runStatus.PipelineNotStarted]++;
+  }
+  return taskStatus;
 };

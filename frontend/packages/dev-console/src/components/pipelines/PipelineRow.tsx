@@ -10,6 +10,7 @@ import {
 import { referenceForModel } from '@console/internal/module/k8s';
 import { pipelineFilterReducer } from '../../utils/pipeline-filter-reducer';
 import { Pipeline } from '../../utils/pipeline-augment';
+import { PipelineTaskStatus } from '../pipelineruns/PipelineTaskStatus';
 import { tableColumnClasses } from './pipeline-table';
 import { PipelineModel, PipelineRunModel } from '../../models';
 import { triggerPipeline, rerunPipeline } from '../../utils/pipeline-actions';
@@ -54,11 +55,14 @@ const PipelineRow: React.FC<PipelineRowProps> = ({ obj, index, key, style }) => 
       <TableData className={tableColumnClasses[2]}>
         <StatusIconAndText status={pipelineFilterReducer(obj)} />
       </TableData>
-      <TableData className={tableColumnClasses[3]}>-</TableData>
+      <TableData className={tableColumnClasses[3]}>
+        {(obj.latestRun && <PipelineTaskStatus pipelinerun={obj.latestRun} />) || '-'}
+      </TableData>
       <TableData className={tableColumnClasses[4]}>
-        <Timestamp
-          timestamp={obj.latestRun && obj.latestRun.status && obj.latestRun.status.completionTime}
-        />
+        {(obj.latestRun && obj.latestRun.status && obj.latestRun.status.completionTime && (
+          <Timestamp timestamp={obj.latestRun.status.completionTime} />
+        )) ||
+          '-'}
       </TableData>
       <TableData className={tableColumnClasses[5]}>
         <ResourceKebab actions={menuActions} kind={pipelineReference} resource={obj} />
