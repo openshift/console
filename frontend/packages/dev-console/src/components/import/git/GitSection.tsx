@@ -5,6 +5,7 @@ import { InputField, DropdownField } from '../../formik-fields';
 import FormSection from '../section/FormSection';
 import { GitTypes } from '../import-types';
 import { detectGitType } from '../import-validation-utils';
+import './GitSection.scss';
 
 const GitSection: React.FC = () => {
   const { values, setValues, setFieldTouched, validateForm } = useFormikContext<FormikValues>();
@@ -46,10 +47,12 @@ const GitSection: React.FC = () => {
         />
       )}
       <ExpandCollapse
+        className="odc-expand-collapse"
         textExpanded="Hide Advanced Git Options"
         textCollapsed="Show Advanced Git Options"
       >
         <InputField
+          style={{ marginTop: '15px' }}
           type="text"
           name="git.ref"
           label="Git Reference"

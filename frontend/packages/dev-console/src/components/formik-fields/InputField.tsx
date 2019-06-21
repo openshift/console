@@ -5,10 +5,11 @@ import { FormGroup, ControlLabel, FormControl, HelpBlock } from 'patternfly-reac
 import { InputFieldProps } from './field-types';
 import { getValidationState } from './field-utils';
 
-const InputField: React.FC<InputFieldProps> = ({ label, helpText, ...props }) => {
+const InputField: React.FC<InputFieldProps> = ({ label, helpText, style, ...props }) => {
   const [field, { touched, error }] = useField(props.name);
   return (
     <FormGroup
+      style={style}
       controlId={`${props.name}-field`}
       validationState={getValidationState(error, touched)}
     >
