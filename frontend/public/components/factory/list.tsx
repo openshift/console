@@ -42,12 +42,12 @@ import {
 import { tableFilters } from './table-filters';
 
 const rowFiltersToFilterFuncs = (rowFilters) => {
-  return rowFilters
+  return (rowFilters || [])
     .filter(f => f.type && _.isFunction(f.filter))
     .reduce((acc, f) => ({ ...acc, [f.type]: f.filter }), {});
 };
 
-const getAllTableFilters = (rowFilters = []) => ({
+const getAllTableFilters = (rowFilters) => ({
   ...tableFilters,
   ...rowFiltersToFilterFuncs(rowFilters),
 });
