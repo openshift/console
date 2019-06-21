@@ -4,7 +4,14 @@ import * as _ from 'lodash-es';
 
 import store from '../../redux';
 import { impersonateStateToProps } from '../../reducers/ui';
-import { AccessReviewResourceAttributes, k8sCreate, K8sKind, K8sVerb, SelfSubjectAccessReviewKind } from '../../module/k8s';
+import {
+  AccessReviewResourceAttributes,
+  k8sCreate,
+  K8sKind,
+  K8sResourceKind,
+  K8sVerb,
+  SelfSubjectAccessReviewKind,
+} from '../../module/k8s';
 import { SelfSubjectAccessReviewModel } from '../../models';
 
 // Memoize the result so we only make the request once for each access review.
@@ -79,3 +86,11 @@ type RequireCreatePermissionProps = {
   impersonate?: string;
   children: React.ReactNode;
 };
+
+export const asAccessReview = (kindObj: K8sKind, obj: K8sResourceKind, verb: K8sVerb): AccessReviewResourceAttributes => ({
+  group: kindObj.apiGroup,
+  resource: kindObj.plural,
+  name: obj.metadata.name,
+  namespace: obj.metadata.namespace,
+  verb,
+});

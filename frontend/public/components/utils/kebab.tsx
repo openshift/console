@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 // import { EllipsisVIcon } from '@patternfly/react-icons';
 import { annotationsModal, configureReplicaCountModal, taintsModal, tolerationsModal, labelsModal, podSelectorModal, deleteModal, expandPVCModal } from '../modals';
 import { DropdownMixin } from './dropdown';
-import { checkAccess, history, resourceObjPath, useAccessReview } from './index';
+import { asAccessReview, checkAccess, history, resourceObjPath, useAccessReview } from './index';
 import {
   AccessReviewResourceAttributes,
   K8sKind,
@@ -68,25 +68,13 @@ const kebabFactory: KebabFactory = {
       kind,
       resource: obj,
     }),
-    accessReview: {
-      group: kind.apiGroup,
-      resource: kind.plural,
-      name: obj.metadata.name,
-      namespace: obj.metadata.namespace,
-      verb: 'delete',
-    },
+    accessReview: asAccessReview(kind, obj, 'delete'),
   }),
   Edit: (kind, obj) => ({
     label: `Edit ${kind.label}`,
     href: `${resourceObjPath(obj, kind.crd ? referenceForModel(kind) : kind.kind)}/yaml`,
     // TODO: Fallback to "View YAML"? We might want a similar fallback for annotations, labels, etc.
-    accessReview: {
-      group: kind.apiGroup,
-      resource: kind.plural,
-      name: obj.metadata.name,
-      namespace: obj.metadata.namespace,
-      verb: 'update',
-    },
+    accessReview: asAccessReview(kind, obj, 'update'),
   }),
   ModifyLabels: (kind, obj) => ({
     label: 'Edit Labels',
@@ -95,13 +83,7 @@ const kebabFactory: KebabFactory = {
       resource: obj,
       blocking: true,
     }),
-    accessReview: {
-      group: kind.apiGroup,
-      resource: kind.plural,
-      name: obj.metadata.name,
-      namespace: obj.metadata.namespace,
-      verb: 'patch',
-    },
+    accessReview: asAccessReview(kind, obj, 'patch'),
   }),
   ModifyPodSelector: (kind, obj) => ({
     label: 'Edit Pod Selector',
@@ -110,13 +92,7 @@ const kebabFactory: KebabFactory = {
       resource:  obj,
       blocking: true,
     }),
-    accessReview: {
-      group: kind.apiGroup,
-      resource: kind.plural,
-      name: obj.metadata.name,
-      namespace: obj.metadata.namespace,
-      verb: 'patch',
-    },
+    accessReview: asAccessReview(kind, obj, 'patch'),
   }),
   ModifyAnnotations: (kind, obj) => ({
     label: 'Edit Annotations',
@@ -125,13 +101,7 @@ const kebabFactory: KebabFactory = {
       resource: obj,
       blocking: true,
     }),
-    accessReview: {
-      group: kind.apiGroup,
-      resource: kind.plural,
-      name: obj.metadata.name,
-      namespace: obj.metadata.namespace,
-      verb: 'patch',
-    },
+    accessReview: asAccessReview(kind, obj, 'patch'),
   }),
   ModifyCount: (kind, obj) => ({
     label: 'Edit Count',
@@ -139,13 +109,7 @@ const kebabFactory: KebabFactory = {
       resourceKind: kind,
       resource: obj,
     }),
-    accessReview: {
-      group: kind.apiGroup,
-      resource: kind.plural,
-      name: obj.metadata.name,
-      namespace: obj.metadata.namespace,
-      verb: 'patch',
-    },
+    accessReview: asAccessReview(kind, obj, 'patch'),
   }),
   ModifyTaints: (kind, obj) => ({
     label: 'Edit Taints',
@@ -154,13 +118,7 @@ const kebabFactory: KebabFactory = {
       resource: obj,
       modalClassName: 'modal-lg',
     }),
-    accessReview: {
-      group: kind.apiGroup,
-      resource: kind.plural,
-      name: obj.metadata.name,
-      namespace: obj.metadata.namespace,
-      verb: 'patch',
-    },
+    accessReview: asAccessReview(kind, obj, 'patch'),
   }),
   ModifyTolerations: (kind, obj) => ({
     label: 'Edit Tolerations',
@@ -169,24 +127,12 @@ const kebabFactory: KebabFactory = {
       resource: obj,
       modalClassName: 'modal-lg',
     }),
-    accessReview: {
-      group: kind.apiGroup,
-      resource: kind.plural,
-      name: obj.metadata.name,
-      namespace: obj.metadata.namespace,
-      verb: 'patch',
-    },
+    accessReview: asAccessReview(kind, obj, 'patch'),
   }),
   AddStorage: (kind, obj) => ({
     label: 'Add Storage',
     href: `${resourceObjPath(obj, kind.crd ? referenceForModel(kind) : kind.kind)}/attach-storage`,
-    accessReview: {
-      group: kind.apiGroup,
-      resource: kind.plural,
-      name: obj.metadata.name,
-      namespace: obj.metadata.namespace,
-      verb: 'patch',
-    },
+    accessReview: asAccessReview(kind, obj, 'patch'),
   }),
   ExpandPVC: (kind, obj) => ({
     label: 'Expand PVC',
@@ -194,13 +140,7 @@ const kebabFactory: KebabFactory = {
       kind,
       resource: obj,
     }),
-    accessReview: {
-      group: kind.apiGroup,
-      resource: kind.plural,
-      name: obj.metadata.name,
-      namespace: obj.metadata.namespace,
-      verb: 'patch',
-    },
+    accessReview: asAccessReview(kind, obj, 'patch'),
   }),
 };
 
