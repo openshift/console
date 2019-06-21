@@ -148,8 +148,8 @@ const Details = ({obj: serviceaccount}) => {
         <SectionHeading text="Service Account Overview" />
         <ResourceSummary resource={serviceaccount} />
       </div>
-      <div className="co-m-pane__body co-m-pane__body--alt">
-        <SectionHeading text="Secrets" style={{marginBottom: '-20px'}} />
+      <div className="co-m-pane__body co-m-pane__body--section-heading">
+        <SectionHeading text="Secrets" />
       </div>
       <SecretsPage kind="Secret" canCreate={false} namespace={namespace} filters={filters} autoFocus={false} showTitle={false} />
     </React.Fragment>

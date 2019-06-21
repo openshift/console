@@ -8,22 +8,22 @@
 }
 
 .co-m-pane__body {
-  border-bottom: 1px solid $color-grey-background-border;
   margin: $grid-gutter-width 0 0;
   padding: 0 ($grid-gutter-width / 2) $grid-gutter-width;
   @media (min-width: $screen-sm-min) {
     padding-left: $grid-gutter-width;
     padding-right: $grid-gutter-width;
   }
-  &--alt {
-    border-bottom: 0;
-    padding-bottom: 0;
-  }
   &--no-top-margin {
     margin-top: 0;
   }
-  &:last-child {
-    border-bottom: 0;
+  &--section-heading {
+    padding-bottom: 0;
+  }
+  + .co-m-pane__body {
+    border-top: 1px solid $color-grey-background-border;
+    margin-top: 0;
+    padding-top: $grid-gutter-width;
   }
 }
 
