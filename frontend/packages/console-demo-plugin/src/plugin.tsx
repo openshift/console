@@ -17,10 +17,12 @@ import {
   DashboardsCard,
   DashboardsTab,
   DashboardsOverviewCapacityQuery,
+  DashboardsOverviewInventoryItem,
+  DashboardsInventoryItemGroup,
 } from '@console/plugin-sdk';
 
 // TODO(vojtech): internal code needed by plugins should be moved to console-shared package
-import { PodModel } from '@console/internal/models';
+import { PodModel, RouteModel } from '@console/internal/models';
 import { FLAGS } from '@console/internal/const';
 import { GridPosition } from '@console/internal/components/dashboard/grid';
 import { CapacityQuery } from '@console/internal/components/dashboards-page/overview-dashboard/capacity-query-types';
@@ -29,6 +31,7 @@ import { FooBarModel } from './models';
 import { yamlTemplates } from './yaml-templates';
 import TestIcon from './components/test-icon';
 import { getFooHealthState, getBarHealthState } from './dashboards/health';
+import { getRouteStatusGroups, DemoGroupIcon } from './dashboards/inventory';
 
 type ConsumedExtensions =
   | ModelDefinition
@@ -45,7 +48,9 @@ type ConsumedExtensions =
   | DashboardsOverviewHealthURLSubsystem<any>
   | DashboardsTab
   | DashboardsCard
-  | DashboardsOverviewCapacityQuery;
+  | DashboardsOverviewCapacityQuery
+  | DashboardsOverviewInventoryItem
+  | DashboardsInventoryItemGroup;
 
 const plugin: Plugin<ConsumedExtensions> = [
   {
@@ -203,6 +208,25 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       queryKey: CapacityQuery.STORAGE_USED,
       query: 'barQuery',
+    },
+  },
+  {
+    type: 'Dashboards/Overview/Inventory/Item',
+    properties: {
+      resource: {
+        isList: true,
+        kind: RouteModel.kind,
+        prop: 'routes',
+      },
+      model: RouteModel,
+      mapper: getRouteStatusGroups,
+    },
+  },
+  {
+    type: 'Dashboards/Inventory/Item/Group',
+    properties: {
+      id: 'demo-inventory-group',
+      icon: <DemoGroupIcon />,
     },
   },
 ];

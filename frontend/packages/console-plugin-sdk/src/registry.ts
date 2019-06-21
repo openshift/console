@@ -15,6 +15,8 @@ import {
   isDashboardsCard,
   isDashboardsTab,
   isDashboardsOverviewCapacityQuery,
+  isDashboardsOverviewInventoryItem,
+  isDashboardsInventoryItemGroup,
 } from './typings';
 
 /**
@@ -73,5 +75,13 @@ export class ExtensionRegistry {
 
   public getDashboardsOverviewCapacityQueries() {
     return this.extensions.filter(isDashboardsOverviewCapacityQuery);
+  }
+
+  public getDashboardsOverviewInventoryItems() {
+    return this.extensions.filter(isDashboardsOverviewInventoryItem);
+  }
+
+  public getDashboardsInventoryItemGroups() {
+    return this.extensions.filter(isDashboardsInventoryItemGroup);
   }
 }
