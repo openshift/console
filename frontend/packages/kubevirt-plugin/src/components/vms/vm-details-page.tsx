@@ -2,6 +2,7 @@ import * as React from 'react';
 
 import { navFactory } from '@console/internal/components/utils';
 
+import { ResourceEventStream } from '@console/internal/components/events';
 import { DetailsPage } from '@console/internal/components/factory';
 import { K8sResourceKindReference } from '@console/internal/module/k8s';
 
@@ -38,7 +39,7 @@ export const VirtualMachinesDetailsPage = (props: VirtualMachinesDetailsPageProp
     navFactory.details(VMDetailsFirehose),
     navFactory.editYaml(),
     // consolePage,
-    // navFactory.events(VmEvents),
+    navFactory.events(ResourceEventStream),
     // nicsPage,
     // disksPage,
   ];

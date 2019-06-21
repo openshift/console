@@ -44,6 +44,18 @@ const GitImport: React.FC<GitImportProps> = ({ namespace, imageStreams }) => {
     },
     route: {
       create: true,
+      targetPort: '',
+      path: '',
+      hostname: '',
+      secure: false,
+      tls: {
+        termination: '',
+        insecureEdgeTerminationPolicy: '',
+        caCertificate: '',
+        certificate: '',
+        destinationCACertificate: '',
+        privateKey: '',
+      },
     },
     build: {
       env: [],

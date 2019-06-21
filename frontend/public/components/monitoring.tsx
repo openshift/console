@@ -1033,7 +1033,7 @@ const MetricsDropdown = ({onChange}) => {
       .catch(() => setIsError(true));
   }, [safeFetch]);
 
-  let title: string | React.ReactNode = 'Insert Metric at Cursor';
+  let title: React.ReactNode = 'Insert Metric at Cursor';
   if (isError) {
     title = 'Failed to load metrics list';
   } else if (_.isEmpty(items)) {
@@ -1139,6 +1139,14 @@ const QueryBrowserPage = withFallback(() => {
     }
   };
 
+  const onQueryKeyDown = e => {
+    // Enter+Shift inserts newlines, Enter alone runs the query
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      runQueries(e);
+    }
+  };
+
   const onMetricChange = metric => {
     if (focusedQuery) {
       // Replace the currently selected text with the metric
@@ -1208,12 +1216,13 @@ const QueryBrowserPage = withFallback(() => {
                       className={`fa fa-angle-${q.expanded ? 'down' : 'right'} query-browser__table-toggle-icon`}
                     />
                   </button>
-                  <input
+                  <textarea
+                    autoFocus={true}
                     className="form-control query-browser__query"
                     onBlur={e => onQueryBlur(e, i)}
                     onChange={e => onQueryChange(e, i)}
+                    onKeyDown={onQueryKeyDown}
                     placeholder="Expression (press Shift+Enter for newlines)"
-                    type="text"
                     value={q.text}
                   />
                   <div className="query-browser__query-switch">

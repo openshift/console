@@ -6,12 +6,7 @@ import * as ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
 import * as MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import * as VirtualModulesPlugin from 'webpack-virtual-modules';
 
-import {
-  resolvePluginPackages,
-  loadActivePlugins,
-  getActivePluginsModule,
-  printPluginStats,
-} from '@console/plugin-sdk/src/codegen';
+import { resolvePluginPackages, getActivePluginsModule } from '@console/plugin-sdk/src/codegen';
 
 const NODE_ENV = process.env.NODE_ENV;
 
@@ -105,10 +100,7 @@ const config: webpack.Configuration = {
     runtimeChunk: true,
   },
   plugins: [
-    // replace 'lodash' and 'lodash/*' imports with a lodash-es equivalent
-    new webpack.NormalModuleReplacementPlugin(/^lodash($|\/.*$)/, (resource) => {
-      resource.request = resource.request.replace(/^lodash/, 'lodash-es');
-    }),
+    new webpack.NormalModuleReplacementPlugin(/^lodash$/, 'lodash-es'),
     new ForkTsCheckerWebpackPlugin({ checkSyntacticErrors: true }),
     new HtmlWebpackPlugin({
       filename: './tokener.html',
@@ -139,12 +131,9 @@ if (NODE_ENV === 'production') {
 }
 
 /* Console plugin support */
-const pluginPackages = resolvePluginPackages();
-printPluginStats(loadActivePlugins(pluginPackages));
-
 config.plugins.push(
   new VirtualModulesPlugin({
-    'node_modules/@console/active-plugins.js': getActivePluginsModule(pluginPackages),
+    'node_modules/@console/active-plugins.js': getActivePluginsModule(resolvePluginPackages()),
   }),
 );
 

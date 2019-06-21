@@ -98,7 +98,7 @@ export const UsageIcon = ({percent}) => {
   return <i className={usageIconClass} aria-hidden="true" />;
 };
 
-const ResourceUsageRow = ({quota, resourceType}) => {
+export const ResourceUsageRow = ({quota, resourceType}) => {
   const { used, max, percent } = getResourceUsage(quota, resourceType);
   return <div className="row co-m-row">
     <div className="col-sm-4 col-xs-6 co-break-word">{resourceType}</div>

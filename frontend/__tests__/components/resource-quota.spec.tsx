@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
-import { ResourceQuotaTableRow, UsageIcon } from '../../public/components/resource-quota';
+import { ResourceQuotaTableRow, UsageIcon, ResourceUsageRow } from '../../public/components/resource-quota';
 
 describe(ResourceQuotaTableRow.displayName, () => {
   let wrapper: ShallowWrapper;
@@ -39,6 +39,27 @@ describe(ResourceQuotaTableRow.displayName, () => {
     wrapper = shallow(<UsageIcon percent={101} />);
     expect(wrapper.find('i').hasClass('pficon-warning-triangle-o')).toBe(true);
   });
-
 });
 
+describe('Check quota table columns by ResourceUsageRow', () => {
+  let wrapper: ShallowWrapper;
+  const quota = { 'status': {'hard': {'limits.cpu' : 2}, 'used': {'limits.cpu' : 1} } };
+
+  beforeEach(() => {
+    wrapper = shallow(<ResourceUsageRow resourceType={'limits.cpu'} quota={quota} />);
+  });
+
+  it('renders ResourceUsageRow for each columns', () => {
+    const col0 = wrapper.childAt(0);
+    expect(col0.text()).toBe('limits.cpu');
+
+    const col1 = wrapper.childAt(1);
+    expect(col1.find('.co-resource-quota-icon').exists()).toBe(true);
+
+    const col2 = wrapper.childAt(2);
+    expect(col2.text()).toBe('1');
+
+    const col3 = wrapper.childAt(3);
+    expect(col3.text()).toBe('2');
+  });
+});
