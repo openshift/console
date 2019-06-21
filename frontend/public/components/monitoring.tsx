@@ -1226,9 +1226,7 @@ const QueryBrowserPage = withFallback(() => {
                     value={q.text}
                   />
                   <div className="query-browser__query-switch">
-                    <Tooltip content={toggleEnabledLabel}>
-                      <Switch aria-label={toggleEnabledLabel} isChecked={q.enabled} onChange={() => toggleEnabled(i)} />
-                    </Tooltip>
+                    <Switch aria-label={toggleEnabledLabel} isChecked={q.enabled} onChange={() => toggleEnabled(i)} />
                   </div>
                   <div className="dropdown-kebab-pf query-browser__kebab">
                     <Kebab options={[
