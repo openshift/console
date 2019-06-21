@@ -158,9 +158,13 @@ export const config: Config = {
       'tests/operator-hub/operator-hub.scenario.ts',
       'tests/developer-catalog.scenario.ts',
       'tests/monitoring.scenario.ts',
+      'tests/devconsole/mega-menu.scenario.ts',
     ]),
     login: [
       'tests/login.scenario.ts',
+    ],
+    devconsole: [
+      'tests/devconsole/mega-menu.scenario.ts',
     ],
   },
   params: {
