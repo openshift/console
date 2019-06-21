@@ -25,7 +25,7 @@ const GitImportForm: React.FC<FormikProps<FormikValues> & GitImportFormProps> = 
 }) => (
   <Form onReset={handleReset} onSubmit={handleSubmit}>
     <div className="co-m-pane__form">
-      <GitSection />
+      <GitSection project={values.project} />
       <AppSection project={values.project} />
       <BuilderSection image={values.image} builderImages={builderImages} />
       <AdvancedSection values={values} />
