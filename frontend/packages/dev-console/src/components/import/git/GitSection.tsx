@@ -1,14 +1,15 @@
 import * as React from 'react';
 import { useFormikContext, FormikValues } from 'formik';
-import { ExpandCollapse } from 'patternfly-react';
+import { Expandable } from '@patternfly/react-core';
 import { InputField, DropdownField } from '../../formik-fields';
 import FormSection from '../section/FormSection';
 import { GitTypes } from '../import-types';
 import { detectGitType } from '../import-validation-utils';
-import './GitSection.scss';
 
 const GitSection: React.FC = () => {
+  const [isExpanded, toggleExpandCollapse] = React.useState(false);
   const { values, setValues, setFieldTouched, validateForm } = useFormikContext<FormikValues>();
+
   const handleGitUrlBlur = () => {
     const gitType = detectGitType(values.git.url);
     const showGitType = gitType === '';
@@ -24,6 +25,12 @@ const GitSection: React.FC = () => {
     setFieldTouched('git.url', true);
     setFieldTouched('git.type', showGitType);
     validateForm(newValues);
+  };
+
+  const ontoggle: any = (event) => {
+    // TODO: This can be removed when https://github.com/patternfly/patternfly-react/issues/2339 is fixed
+    event.preventDefault();
+    toggleExpandCollapse(!isExpanded);
   };
 
   return (
@@ -46,13 +53,12 @@ const GitSection: React.FC = () => {
           required
         />
       )}
-      <ExpandCollapse
-        className="odc-expand-collapse"
-        textExpanded="Hide Advanced Git Options"
-        textCollapsed="Show Advanced Git Options"
+      <Expandable
+        toggleText={isExpanded ? 'Hide Advanced Git Options' : 'Show Advanced Git Options'}
+        onToggle={ontoggle}
+        isExpanded={isExpanded}
       >
         <InputField
-          style={{ marginTop: '15px' }}
           type="text"
           name="git.ref"
           label="Git Reference"
@@ -64,7 +70,7 @@ const GitSection: React.FC = () => {
           label="Context Dir"
           helpText="Optional subdirectory for the application source code, used as a context directory for build."
         />
-      </ExpandCollapse>
+      </Expandable>
     </FormSection>
   );
 };

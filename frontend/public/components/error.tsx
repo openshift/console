@@ -1,6 +1,6 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import { ExpandCollapse } from 'patternfly-react';
+import { Expandable } from '@patternfly/react-core';
 import { Helmet } from 'react-helmet';
 
 import {CopyToClipboard, getQueryArgument, PageHeading} from './utils';
@@ -63,31 +63,45 @@ export const ErrorPage404: React.SFC<ErrorPage404Props> = (props) => <div>
   <ErrorComponent title="404: Page Not Found" message={props.message} errMessage={props.errMessage} />
 </div>;
 
-export const ErrorBoundaryFallback: React.SFC<ErrorBoundaryFallbackProps> = (props) =>
-  <div className="co-m-pane__body">
-    <h1 className="co-m-pane__heading co-m-pane__heading--center">Oh no! Something went wrong.</h1>
-    <div className="row">
-      <ExpandCollapse textCollapsed="Show Details" textExpanded="Hide Details" bordered={false}>
-        <h3 className="co-section-heading-tertiary">{props.title}</h3>
-        <div className="form-group">
-          <label htmlFor="description">Description: </label>
-          <p>{props.errorMessage}</p>
-        </div>
-        <div className="form-group">
-          <label htmlFor="componentTrace">Component Trace: </label>
-          <div className="co-copy-to-clipboard__stacktrace-width-height">
-            <CopyToClipboard value={props.componentStack.trim()} />
+export const ErrorBoundaryFallback: React.SFC<ErrorBoundaryFallbackProps> = (props) => {
+
+  const [isExpanded, toggleExpandCollapse] = React.useState(false);
+
+  const ontoggle:any = (event) => {
+    // TODO: This can be removed when https://github.com/patternfly/patternfly-react/issues/2339 is fixed
+    event.preventDefault();
+    toggleExpandCollapse(!isExpanded);
+  };
+
+  return (
+    <div className="co-m-pane__body">
+      <h1 className="co-m-pane__heading co-m-pane__heading--center">Oh no! Something went wrong.</h1>
+      <div className="row">
+        <Expandable toggleText={isExpanded? 'Hide Details':'Show Details'}
+          onToggle={ontoggle}
+          isExpanded={isExpanded}>
+          <h3 className="co-section-heading-tertiary">{props.title}</h3>
+          <div className="form-group">
+            <label htmlFor="description">Description: </label>
+            <p>{props.errorMessage}</p>
           </div>
-        </div>
-        <div className="form-group">
-          <label htmlFor="stackTrace">Stack Trace: </label>
-          <div className="co-copy-to-clipboard__stacktrace-width-height">
-            <CopyToClipboard value={props.stack.trim()} />
+          <div className="form-group">
+            <label htmlFor="componentTrace">Component Trace: </label>
+            <div className="co-copy-to-clipboard__stacktrace-width-height">
+              <CopyToClipboard value={props.componentStack.trim()} />
+            </div>
           </div>
-        </div>
-      </ExpandCollapse>
+          <div className="form-group">
+            <label htmlFor="stackTrace">Stack Trace: </label>
+            <div className="co-copy-to-clipboard__stacktrace-width-height">
+              <CopyToClipboard value={props.stack.trim()} />
+            </div>
+          </div>
+        </Expandable>
+      </div>
     </div>
-  </div>;
+  );
+};
 
 export type ErrorComponentProps = {
   title: string;
