@@ -26,6 +26,10 @@ export interface TopologyDataResources {
   buildconfigs: Resource;
   builds: Resource;
   daemonSets?: Resource;
+  ksroutes?: Resource;
+  configurations?: Resource;
+  revisions?: Resource;
+  ksservices?: Resource;
 }
 
 export interface Node {

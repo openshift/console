@@ -40,6 +40,33 @@ const TopologySideBar: React.FC<TopologySideBarProps> = ({ item, show, onClose }
       services,
       buildConfigs,
     };
+
+    const ksroutes = metadataUIDCheck(
+      item.resources.filter(
+        (o) =>
+          o.kind === 'Route' && o.apiVersion && o.apiVersion === 'serving.knative.dev/v1alpha1',
+      ),
+    );
+    const configurations = metadataUIDCheck(
+      item.resources.filter(
+        (o) =>
+          o.kind === 'Configuration' &&
+          o.apiVersion &&
+          o.apiVersion === 'serving.knative.dev/v1alpha1',
+      ),
+    );
+    const revisions = metadataUIDCheck(
+      item.resources.filter(
+        (o) =>
+          o.kind === 'Revision' && o.apiVersion && o.apiVersion === 'serving.knative.dev/v1alpha1',
+      ),
+    );
+    if (configurations.length) {
+      itemtoShowOnSideBar = {
+        ...itemtoShowOnSideBar,
+        ...{ ksroutes, configurations, revisions },
+      };
+    }
   }
 
   return (

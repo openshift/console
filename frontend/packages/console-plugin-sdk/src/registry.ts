@@ -18,6 +18,8 @@ import {
   isDashboardsInventoryItemGroup,
   isDashboardsOverviewQuery,
   isDashboardsOverviewUtilizationItem,
+  isOverviewResourceTab,
+  isOverviewCRD,
 } from './typings';
 
 /**
@@ -88,5 +90,13 @@ export class ExtensionRegistry {
 
   public getDashboardsInventoryItemGroups() {
     return this.extensions.filter(isDashboardsInventoryItemGroup);
+  }
+
+  public getOverviewResourceTabs() {
+    return this.extensions.filter(isOverviewResourceTab);
+  }
+
+  public getOverviewCRDs() {
+    return this.extensions.filter(isOverviewCRD);
   }
 }

@@ -160,4 +160,50 @@ describe('TopologyUtils ', () => {
       1,
     );
   });
+
+  it('should return knative routes for knative resource', () => {
+    const transformTopologyData = new TransformTopologyData(MockKnativeResources);
+    transformTopologyData.transformDataBy('deploymentConfigs');
+    transformTopologyData.transformDataBy('deployments');
+    const result = transformTopologyData.getTopologyData();
+    const topologyTransformedData = result.topology;
+    const keys = Object.keys(topologyTransformedData);
+    expect((topologyTransformedData[keys[0]].data as WorkloadData).url).toEqual(
+      'http://overlayimage.knativeapps.apps.bpetersen-june-23.devcluster.openshift.com',
+    );
+  });
+
+  it('should return revision resources for knative workloads', () => {
+    const transformTopologyData = new TransformTopologyData(MockKnativeResources);
+    transformTopologyData.transformDataBy('deploymentConfigs');
+    transformTopologyData.transformDataBy('deployments');
+    const result = transformTopologyData.getTopologyData();
+    const topologyTransformedData = result.topology;
+    const keys = Object.keys(topologyTransformedData);
+    const revRes = topologyTransformedData[keys[0]].resources.filter(
+      (item) =>
+        item.kind &&
+        item.kind === 'Revision' &&
+        item.apiVersion &&
+        item.apiVersion === 'serving.knative.dev/v1alpha1',
+    );
+    expect(revRes.length).toEqual(1);
+  });
+
+  it('should return Configuration resources for knative workloads', () => {
+    const transformTopologyData = new TransformTopologyData(MockKnativeResources);
+    transformTopologyData.transformDataBy('deploymentConfigs');
+    transformTopologyData.transformDataBy('deployments');
+    const result = transformTopologyData.getTopologyData();
+    const topologyTransformedData = result.topology;
+    const keys = Object.keys(topologyTransformedData);
+    const configRes = topologyTransformedData[keys[0]].resources.filter(
+      (item) =>
+        item.kind &&
+        item.kind === 'Configuration' &&
+        item.apiVersion &&
+        item.apiVersion === 'serving.knative.dev/v1alpha1',
+    );
+    expect(configRes).toHaveLength(1);
+  });
 });

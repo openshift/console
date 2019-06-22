@@ -9,6 +9,7 @@ describe('TopologyDataController', () => {
   const props = {
     namespace: 'test',
     resources,
+    knative: false,
     render: () => <TestInner />,
   };
   let wrapper: ShallowWrapper<TopologyDataControllerProps>;

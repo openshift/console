@@ -7,10 +7,10 @@ import {
   RouteModel,
 } from '@console/internal/models';
 import { k8sCreate, K8sResourceKind } from '@console/internal/module/k8s';
+import { createKnativeService } from '@console/knative-plugin/src/utils/create-knative-utils';
 import { makePortName } from '../../utils/imagestream-utils';
 import { getAppLabels, getPodLabels } from '../../utils/resource-label-utils';
 import { GitImportFormData } from './import-types';
-import { createKnativeService } from '../../utils/create-knative-utils';
 
 const dryRunOpt = { queryParams: { dryRun: 'All' } };
 
