@@ -64,25 +64,22 @@ const tableColumnClasses = [
 export const OperandTableHeader = () => {
   return [
     {
-      title: 'Name', sortField: 'metadata.name', transforms: [sortable],
-      props: { className: tableColumnClasses[0] },
+      title: 'Name', sortField: 'metadata.name', transforms: [sortable], props: { className: tableColumnClasses[0] },
     },
     {
-      title: 'Labels', sortField: 'metadata.labels', transforms: [sortable],
-      props: { className: tableColumnClasses[1] },
+      title: 'Labels', sortField: 'metadata.labels', transforms: [sortable], props: { className: tableColumnClasses[1] },
     },
     {
-      title: 'Type', sortField: 'kind', transforms: [sortable],
-      props: { className: tableColumnClasses[2] },
+      title: 'Kind', sortField: 'kind', transforms: [sortable], props: { className: tableColumnClasses[2] },
     },
     {
-      title: 'Status', props: { className: tableColumnClasses[3] },
+      title: 'Status', sortField: 'status.phase', transforms: [sortable], props: { className: tableColumnClasses[3] },
     },
     {
-      title: 'Version', props: { className: tableColumnClasses[4] },
+      title: 'Version', sortField: 'spec.version', transforms: [sortable], props: { className: tableColumnClasses[4] },
     },
     {
-      title: 'Last Updated', props: { className: tableColumnClasses[5] },
+      title: 'Last Updated', sortField: 'metadata.creationTimestamp', transforms: [sortable], props: { className: tableColumnClasses[5] },
     },
     {
       title: '', props: { className: tableColumnClasses[6] },
