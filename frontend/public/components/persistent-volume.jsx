@@ -2,13 +2,15 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
+
+import { Status } from '@console/shared';
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
-import { Kebab, LabelList, navFactory, ResourceKebab, SectionHeading, ResourceLink, ResourceSummary, Timestamp, StatusIconAndText } from './utils';
+import { Kebab, LabelList, navFactory, ResourceKebab, SectionHeading, ResourceLink, ResourceSummary, Timestamp } from './utils';
 
 const { common } = Kebab.factory;
 const menuActions = [...common];
 
-const PVStatus = ({pv}) => <StatusIconAndText status={pv.status.phase} />;
+const PVStatus = ({pv}) => <Status status={pv.status.phase} />;
 
 const tableColumnClasses = [
   classNames('col-lg-2', 'col-md-2', 'col-sm-4', 'col-xs-6'),

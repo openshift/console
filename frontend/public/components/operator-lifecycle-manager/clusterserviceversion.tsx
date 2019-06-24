@@ -7,6 +7,7 @@ import { sortable } from '@patternfly/react-table';
 import { Helmet } from 'react-helmet';
 import { Alert } from '@patternfly/react-core';
 
+import { SuccessStatus, ErrorStatus } from '@console/shared';
 import { ProvidedAPIsPage, ProvidedAPIPage } from './operand';
 import { DetailsPage, ListPage, Table, TableRow, TableData } from '../factory';
 import { withFallback } from '../utils/error-boundary';
@@ -47,7 +48,6 @@ import {
 } from '../utils';
 import { operatorGroupFor, operatorNamespaceFor } from './operator-group';
 import { SubscriptionDetails } from './subscription';
-import { GreenCheckCircleIcon, RedExclamationCircleIcon } from '@console/internal/components/utils/status-icon';
 
 const tableColumnClasses = [
   classNames('col-lg-3', 'col-md-4', 'col-sm-4', 'col-xs-6'),
@@ -92,9 +92,9 @@ export const ClusterServiceVersionTableRow = withFallback<ClusterServiceVersionT
   const showSuccessIcon = statusString === 'Copied' || statusString === 'InstallSucceeded';
   const installStatus = obj.status && obj.status.phase !== ClusterServiceVersionPhase.CSVPhaseFailed
     ? <span className={classNames(showSuccessIcon && 'co-icon-and-text')}>{showSuccessIcon &&
-        <GreenCheckCircleIcon className="co-icon-and-text__icon" />}{statusString}
+        <SuccessStatus title={statusString} />}
     </span>
-    : <span className="co-error co-icon-and-text"><RedExclamationCircleIcon className="co-icon-and-text__icon" />Failed</span>;
+    : <span className="co-error co-icon-and-text"><ErrorStatus title="Failed" /></span>;
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>

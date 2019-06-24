@@ -2,12 +2,14 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { InProgressIcon, QuestionCircleIcon } from '@patternfly/react-icons';
 
-import * as plugins from '../../../plugins';
 import {
   GreenCheckCircleIcon,
-  LoadingInline,
   RedExclamationCircleIcon,
   YellowExclamationTriangleIcon,
+} from '@console/shared';
+import * as plugins from '../../../plugins';
+import {
+  LoadingInline,
 } from '../../utils';
 import { K8sResourceKind, K8sKind } from '../../../module/k8s';
 import { InventoryStatusGroup } from './status-group';

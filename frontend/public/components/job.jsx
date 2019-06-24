@@ -2,10 +2,12 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
+
+import { Status } from '@console/shared';
 import { getJobTypeAndCompletions } from '../module/k8s';
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
 import { configureJobParallelismModal } from './modals';
-import { Kebab, ContainerTable, SectionHeading, LabelList, ResourceKebab, ResourceLink, ResourceSummary, Timestamp, navFactory, StatusIconAndText } from './utils';
+import { Kebab, ContainerTable, SectionHeading, LabelList, ResourceKebab, ResourceLink, ResourceSummary, Timestamp, navFactory } from './utils';
 import { ResourceEventStream } from './events';
 
 const ModifyJobParallelism = (kind, obj) => ({
@@ -109,7 +111,7 @@ const Details = ({obj: job}) => <React.Fragment>
         <SectionHeading text="Job Status" />
         <dl className="co-m-pane__details">
           <dt>Status</dt>
-          <dd>{job.status.conditions ? <StatusIconAndText status={job.status.conditions[0].type} /> : <StatusIconAndText status="In Progress" />}</dd>
+          <dd>{job.status.conditions ? <Status status={job.status.conditions[0].type} /> : <Status status="In Progress" />}</dd>
           <dt>Start Time</dt>
           <dd><Timestamp timestamp={job.status.startTime} /></dd>
           <dt>Completion Time</dt>

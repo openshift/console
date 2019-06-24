@@ -1,8 +1,8 @@
 import * as React from 'react';
 
+import { RedExclamationCircleIcon, YellowExclamationTriangleIcon } from '@console/shared';
 import { getAlertSeverity, getAlertMessage, getAlertDescription } from './';
 import { Alert } from '../../monitoring';
-import { RedExclamationCircleIcon, YellowExclamationTriangleIcon } from '@console/internal/components/utils/status-icon';
 
 const getSeverityIcon = (severity: string) => {
   switch (severity) {

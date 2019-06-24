@@ -2,12 +2,14 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
+
+import { Status } from '@console/shared';
 import { getNodeRoles, nodeStatus, makeNodeSchedulable, K8sResourceKind, referenceForModel } from '../module/k8s';
 import { ResourceEventStream } from './events';
 import { Table, TableRow, TableData, DetailsPage, ListPage } from './factory';
 import { configureUnschedulableModal } from './modals';
 import { PodsPage } from './pod';
-import { Kebab, navFactory, LabelList, ResourceKebab, SectionHeading, ResourceLink, Timestamp, units, cloudProviderNames, cloudProviderID, pluralize, StatusIconAndText, humanizeDecimalBytes, humanizeCpuCores, useAccessReview, humanizeDecimalBytesPerSec } from './utils';
+import { Kebab, navFactory, LabelList, ResourceKebab, SectionHeading, ResourceLink, Timestamp, units, cloudProviderNames, cloudProviderID, pluralize, humanizeDecimalBytes, humanizeCpuCores, useAccessReview, humanizeDecimalBytesPerSec } from './utils';
 import { Area, requirePrometheus } from './graphs';
 import { MachineModel, NodeModel } from '../models';
 import { CamelCaseWrap } from './utils/camel-case-wrap';
@@ -95,7 +97,7 @@ const NodeTableHeader = () => {
 };
 NodeTableHeader.displayName = 'NodeTableHeader';
 
-const NodeStatus = ({node}) => <StatusIconAndText status={nodeStatus(node)} />;
+const NodeStatus = ({node}) => <Status status={nodeStatus(node)} />;
 
 const NodeTableRow: React.FC<NodeTableRowProps> = ({obj: node, index, key, style}) => {
   const machine = getMachine(node);

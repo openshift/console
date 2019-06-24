@@ -3,6 +3,7 @@ import * as _ from 'lodash-es';
 import { Modal } from 'patternfly-react';
 import { CatalogTile } from 'patternfly-react-extensions';
 
+import { GreenCheckCircleIcon } from '@console/shared';
 import { history } from '../utils/router';
 import { COMMUNITY_PROVIDERS_WARNING_LOCAL_STORAGE_KEY } from '../../const';
 import { normalizeIconClass } from '../catalog/catalog-item-icon';
@@ -10,7 +11,6 @@ import { TileViewPage } from '../utils/tile-view-page';
 import { OperatorHubItemDetails } from './operator-hub-item-details';
 import { communityOperatorWarningModal } from './operator-hub-community-provider-modal';
 import { OperatorHubItem, InstalledState, ProviderType, CapabilityLevel } from './index';
-import { GreenCheckCircleIcon } from '../utils/status-icon';
 
 const badge = (text: string) => <span key="1" className="pf-c-badge pf-m-read">{text}</span>;
 

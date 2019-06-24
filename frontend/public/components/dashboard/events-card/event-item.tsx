@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 
+import { RedExclamationCircleIcon } from '@console/shared';
 import { connectToFlags } from '../../../reducers/features';
 import { FLAGS } from '../../../const';
 import { Timestamp, ResourceLink, resourcePathFromModel } from '../../utils';
 import { NodeModel } from '../../../models';
 import { EventComponentProps } from '../../utils/event-stream';
 import { categoryFilter } from '../../events';
-import { RedExclamationCircleIcon } from '@console/internal/components/utils/status-icon';
 
 const EventItem_: React.FC<EventItemProps> = ({ event, flags }) => {
   const { count, firstTimestamp, lastTimestamp, involvedObject: obj, source, message } = event;

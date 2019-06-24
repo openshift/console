@@ -1,12 +1,8 @@
 import * as React from 'react';
+
+import { Status } from '@console/shared';
 import { TableRow, TableData } from '@console/internal/components/factory';
-import {
-  Kebab,
-  ResourceLink,
-  Timestamp,
-  ResourceKebab,
-  StatusIconAndText,
-} from '@console/internal/components/utils';
+import { Kebab, ResourceLink, Timestamp, ResourceKebab } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { pipelineFilterReducer } from '../../utils/pipeline-filter-reducer';
 import { Pipeline } from '../../utils/pipeline-augment';
@@ -53,7 +49,7 @@ const PipelineRow: React.FC<PipelineRowProps> = ({ obj, index, key, style }) => 
         )}
       </TableData>
       <TableData className={tableColumnClasses[2]}>
-        <StatusIconAndText status={pipelineFilterReducer(obj)} />
+        <Status status={pipelineFilterReducer(obj)} />
       </TableData>
       <TableData className={tableColumnClasses[3]}>
         {(obj.latestRun && <PipelineTaskStatus pipeline={obj} pipelinerun={obj.latestRun} />) ||

@@ -4,6 +4,7 @@ import { Progress } from '@patternfly/react-core';
 
 import './data-resiliency.scss';
 
+import { GreenCheckCircleIcon, RedExclamationCircleIcon } from '@console/shared';
 import { DashboardCard } from '@console/internal/components/dashboard/dashboard-card/card';
 import { DashboardCardBody } from '@console/internal/components/dashboard/dashboard-card/card-body';
 import { DashboardCardHeader } from '@console/internal/components/dashboard/dashboard-card/card-header';
@@ -12,10 +13,6 @@ import {
   withDashboardResources,
   DashboardItemProps,
 } from '@console/internal/components/dashboards-page/with-dashboard-resources';
-import {
-  GreenCheckCircleIcon,
-  RedExclamationCircleIcon,
-} from '@console/internal/components/utils/status-icon';
 
 import { DATA_RESILIENCY_QUERIES } from '../../../../constants/queries';
 
