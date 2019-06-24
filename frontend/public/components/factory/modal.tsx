@@ -42,8 +42,8 @@ export const createModalLauncher: CreateModalLauncher = (Component) => (props) =
 
 export const ModalTitle: React.SFC<ModalTitleProps> = ({children, className = 'modal-header'}) => <div className={className}><h4 className="modal-title">{children}</h4></div>;
 
-export const ModalBody: React.SFC<ModalBodyProps> = ({children, className= 'modal-body'}) => (
-  <div className={className}>
+export const ModalBody: React.SFC<ModalBodyProps> = ({children}) => (
+  <div className="modal-body">
     <div className="modal-body-content">
       <div className="modal-body-inner-shadow-covers">{children}</div>
     </div>
