@@ -133,6 +133,7 @@ const formatSeriesValues = (values: PrometheusValue[], samples: number, span: nu
 const QueryBrowser_: React.FC<QueryBrowserProps> = ({
   defaultTimespan,
   disabledSeries = [],
+  filterLabels,
   GraphLink,
   hideGraphs,
   onDataUpdate,
@@ -151,18 +152,24 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
 
   const samples = 300;
 
-  const urls = _.map(queries, query => getPrometheusURL({
-    endpoint: PrometheusEndpoint.QUERY_RANGE,
-    endTime,
-    query,
-    samples,
-    timeout: '5s',
-    timespan: span,
-  }));
-
   const safeFetch = useSafeFetch();
 
-  const tick = () => Promise.all(urls.map(safeFetch))
+  const safeFetchQuery = query => {
+    if (_.isEmpty(query)) {
+      return undefined;
+    }
+    const url = getPrometheusURL({
+      endpoint: PrometheusEndpoint.QUERY_RANGE,
+      endTime,
+      query,
+      samples,
+      timeout: '5s',
+      timespan: span,
+    });
+    return safeFetch(url);
+  };
+
+  const tick = () => Promise.all(_.map(queries, safeFetchQuery))
     .then(responses => {
       const newResults = _.map(responses, 'data.result');
       setResults(newResults);
@@ -192,13 +199,17 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
     _.map(results, (result, responseIndex) => {
       return _.map(result, ({metric, values}) => {
         const labels = _.omit(metric, '__name__');
-        return _.some(disabledSeries[responseIndex], s => _.isEqual(s, labels))
-          ? [{x: null, y: null}]
-          : formatSeriesValues(values, samples, span);
+
+        // If filterLabels is specified, ignore all series that don't match
+        const isIgnored = filterLabels
+          ? _.some(labels, (v, k) => filterLabels[k] !== v)
+          : _.some(disabledSeries[responseIndex], s => _.isEqual(s, labels));
+
+        return isIgnored ? [{x: null, y: null}] : formatSeriesValues(values, samples, span);
       });
     })
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  ), [disabledSeriesKey, results, samples, span]);
+  ), [disabledSeriesKey, filterLabels, results, samples, span]);
 
   const onSpanChange = React.useCallback(newSpan => {
     setDomain(undefined);
@@ -275,6 +286,7 @@ type GraphProps = {
 type QueryBrowserProps = {
   defaultTimespan: number;
   disabledSeries: Labels[];
+  filterLabels: Labels;
   GraphLink: React.ComponentType<{}>;
   hideGraphs: boolean;
   onDataUpdate: (allSeries: PrometheusSeries[][]) => void;
