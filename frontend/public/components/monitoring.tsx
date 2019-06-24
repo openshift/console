@@ -1089,7 +1089,7 @@ type Silences = {
   loaded: boolean;
   loadError?: string;
 };
-type Alert = {
+export type Alert = {
   activeAt?: string;
   annotations: any;
   labels: {
@@ -1100,6 +1100,7 @@ type Alert = {
   silencedBy?: Silence[];
   state: AlertStates;
   value?: number;
+  fingerprint?: string;
 };
 type Rule = {
   alerts: Alert[];
