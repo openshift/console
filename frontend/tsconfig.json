@@ -20,8 +20,6 @@
     ".yarn",
     "**/node_modules",
     "public/dist",
-    "**/__tests__",
-    "integration-tests"
   ],
   "include": [
     "**/*.js",

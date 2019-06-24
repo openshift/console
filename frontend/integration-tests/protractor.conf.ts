@@ -55,13 +55,14 @@ export const config: Config = {
   },
   beforeLaunch: () => new Promise(resolve => htmlReporter.beforeLaunch(resolve)),
   onPrepare: () => {
+    const addReporter = (jasmine as any).getEnv().addReporter;
     browser.waitForAngularEnabled(false);
-    jasmine.getEnv().addReporter(htmlReporter);
-    jasmine.getEnv().addReporter(junitReporter);
+    addReporter(htmlReporter);
+    addReporter(junitReporter);
     if (tap) {
-      jasmine.getEnv().addReporter(new TapReporter());
+      addReporter(new TapReporter());
     } else {
-      jasmine.getEnv().addReporter(new ConsoleReporter());
+      addReporter(new ConsoleReporter());
     }
   },
   onComplete: async() => {
