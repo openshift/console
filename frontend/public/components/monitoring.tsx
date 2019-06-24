@@ -1051,7 +1051,9 @@ const MetricsDropdown = ({onChange}) => {
   />;
 };
 
-const MetricsList: React.FC<MetricsListProps> = ({allSeries, disabledSeries, onToggleSeries}) => (
+const getGraphColor = colorIndex => graphColors[colorIndex % graphColors.length];
+
+const MetricsList: React.FC<MetricsListProps> = ({allSeries, colorOffset, disabledSeries, onToggleSeries}) => (
   <div className="co-m-table-grid co-m-table-grid--bordered">
     <div className="row co-m-table-grid__head">
       <div className="col-xs-9 query-browser-metric__wrapper">
@@ -1063,8 +1065,7 @@ const MetricsList: React.FC<MetricsListProps> = ({allSeries, disabledSeries, onT
     <div className="co-m-table-grid__body">
       {_.map(allSeries, ({labels, value}, i) => {
         const isDisabled = _.some(disabledSeries, s => _.isEqual(s, labels));
-        const style = isDisabled ? undefined : {backgroundColor: graphColors[i % graphColors.length]};
-
+        const style = isDisabled ? undefined : {backgroundColor: getGraphColor(colorOffset + i)};
         return <div className="row" key={i}>
           <div className="col-xs-9 query-browser-metric__wrapper">
             <div
@@ -1199,6 +1200,8 @@ const QueryBrowserPage = withFallback(() => {
 
   const validQueries = _.reject(queries, q => _.isEmpty(q.query));
 
+  const getColorOffset = i => i > 0 ? _.sumBy(_.range(i), j => _.get(metrics, [j, 'length'])) : 0;
+
   return <React.Fragment>
     <div className="co-m-nav-title">
       <h1 className="co-m-pane__heading">
@@ -1266,6 +1269,7 @@ const QueryBrowserPage = withFallback(() => {
                 {q.expanded && <div className="group__body group__body--query-browser">
                   <MetricsList
                     allSeries={metrics[i]}
+                    colorOffset={getColorOffset(i)}
                     disabledSeries={queries[i].disabledSeries}
                     onToggleSeries={labels => toggleSeries(i, labels)}
                   />
@@ -1454,6 +1458,7 @@ export type ListPageProps = {
 };
 type MetricsListProps = {
   allSeries: {labels: Labels; value: number}[];
+  colorOffset: number;
   disabledSeries: Labels[];
   onToggleSeries: (labels: Labels) => void;
 };
