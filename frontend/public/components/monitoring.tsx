@@ -18,7 +18,7 @@ import { ResourceRow, Table, TableData, TableRow, TextFilter } from './factory';
 import { PROMETHEUS_BASE_PATH, QueryBrowser } from './graphs';
 import { PrometheusEndpoint } from './graphs/helpers';
 import { getPrometheusExpressionBrowserURL } from './graphs/prometheus-graph';
-import { graphColors } from './graphs/query-browser';
+import { graphColors, Labels, PrometheusSeries } from './graphs/query-browser';
 import { confirmModal } from './modals';
 import { CheckBoxes } from './row-filter';
 import { formatPrometheusDuration } from './utils/datetime';
@@ -1051,28 +1051,40 @@ const MetricsDropdown = ({onChange}) => {
   />;
 };
 
-const MetricsList = ({metrics}) => <div className="co-m-table-grid co-m-table-grid--bordered">
-  <div className="row co-m-table-grid__head">
-    <div className="col-xs-9 query-browser-metric__wrapper">
-      <div className="query-browser-metric__color"></div>
-      Series
-    </div>
-    <div className="col-xs-3">Value</div>
-  </div>
-  <div className="co-m-table-grid__body">
-    {_.map(metrics, (m, i) => <div className="row" key={i}>
+const getGraphColor = colorIndex => graphColors[colorIndex % graphColors.length];
+
+const MetricsList: React.FC<MetricsListProps> = ({allSeries, colorOffset, disabledSeries, onToggleSeries}) => (
+  <div className="co-m-table-grid co-m-table-grid--bordered">
+    <div className="row co-m-table-grid__head">
       <div className="col-xs-9 query-browser-metric__wrapper">
-        <div className="query-browser-metric__color" style={{backgroundColor: graphColors[parseInt(i, 10) % graphColors.length]}}></div>
-        <div className="query-browser-metric__labels">
-          {_.isEmpty(m.labels)
-            ? <span className="text-muted">{'{}'}</span>
-            : _.map(m.labels, (v, k) => `${k}="${v}"`).join(',')}
-        </div>
+        <div className="query-browser-metric__color"></div>
+        Series
       </div>
-      <div className="col-xs-3">{m.value}</div>
-    </div>)}
+      <div className="col-xs-3">Value</div>
+    </div>
+    <div className="co-m-table-grid__body">
+      {_.map(allSeries, ({labels, value}, i) => {
+        const isDisabled = _.some(disabledSeries, s => _.isEqual(s, labels));
+        const style = isDisabled ? undefined : {backgroundColor: getGraphColor(colorOffset + i)};
+        return <div className="row" key={i}>
+          <div className="col-xs-9 query-browser-metric__wrapper">
+            <div
+              className={classNames('query-browser-metric__color', {'query-browser-metric__color--disabled': isDisabled})}
+              onClick={() => onToggleSeries(labels)}
+              style={style}
+            ></div>
+            <div className="query-browser-metric__labels">
+              {_.isEmpty(labels)
+                ? <span className="text-muted">{'{}'}</span>
+                : _.map(labels, (v, k) => `${k}="${v}"`).join(',')}
+            </div>
+          </div>
+          <div className="col-xs-3">{value}</div>
+        </div>;
+      })}
+    </div>
   </div>
-</div>;
+);
 
 const QueryBrowserPage = withFallback(() => {
   const [focusedQuery, setFocusedQuery] = React.useState();
@@ -1082,9 +1094,15 @@ const QueryBrowserPage = withFallback(() => {
   const defaultQuery = getURLSearchParams().query || '';
 
   // `text` is the current string in the text input and `query` is the value displayed in the graph
-  const [queries, setQueries] = React.useState([{enabled: true, expanded: true, query: defaultQuery, text: defaultQuery}]);
+  const [queries, setQueries] = React.useState([{
+    disabledSeries: [],
+    enabled: true,
+    expanded: true,
+    query: defaultQuery,
+    text: defaultQuery,
+  }]);
 
-  const defaultQueryObj = {enabled: true, expanded: true, query: '', text: ''};
+  const defaultQueryObj = {disabledSeries: [], enabled: true, expanded: true, query: '', text: ''};
 
   const updateQuery = (i, obj) => setQueries(_.map(queries, (q, j) => i === j ? Object.assign({}, q, obj) : q));
 
@@ -1106,6 +1124,11 @@ const QueryBrowserPage = withFallback(() => {
     updateQuery(i, {enabled: !enabled, expanded: !enabled, query: enabled ? '' : text});
   };
 
+  const toggleSeries = (i: number, labels: Labels) => {
+    const disabledSeries = _.xorWith(queries[i].disabledSeries, [labels], _.isEqual);
+    updateQuery(i, {disabledSeries});
+  };
+
   const toggleExpanded = i => updateQuery(i, {expanded: !_.get(queries, [i, 'expanded'])});
 
   const isAllExpanded = _.every(queries, 'expanded');
@@ -1117,9 +1140,14 @@ const QueryBrowserPage = withFallback(() => {
     {label: 'Delete all queries', callback: deleteAllQueries},
   ];
 
-  const onDataUpdate = queriesData => setMetrics(_.map(queriesData,
-    data => _.map(data, ({labels, values}) => ({labels, value: _.get(_.last(values), 'y')}))
-  ));
+  const onDataUpdate = (allSeries: PrometheusSeries[][]) => {
+    return setMetrics(_.map(allSeries, series => {
+      return _.map(series, ({metric, values}) => ({
+        labels: _.omit(metric, '__name__'),
+        value: parseFloat(_.last(values)[1]),
+      }));
+    }));
+  };
 
   const onQueryBlur = (e, i) => {
     if (_.get(e, 'relatedTarget.id') === 'metrics-dropdown') {
@@ -1170,12 +1198,14 @@ const QueryBrowserPage = withFallback(() => {
     }
   }, [focusedQuery, restoreSelection]);
 
-  const validQueries = _.reject(_.map(queries, 'query'), _.isEmpty);
+  const validQueries = _.reject(queries, q => _.isEmpty(q.query));
+
+  const getColorOffset = i => i > 0 ? _.sumBy(_.range(i), j => _.get(metrics, [j, 'length'])) : 0;
 
   return <React.Fragment>
     <div className="co-m-nav-title">
       <h1 className="co-m-pane__heading">
-        <span>Metrics<HeaderPrometheusLink queries={validQueries} /></span>
+        <span>Metrics<HeaderPrometheusLink queries={_.map(validQueries, 'query')} /></span>
         <div className="co-actions">
           <ActionsMenu actions={actionsMenuActions} />
         </div>
@@ -1191,8 +1221,9 @@ const QueryBrowserPage = withFallback(() => {
         <div className="col-xs-12">
           <QueryBrowser
             defaultTimespan={30 * 60 * 1000}
+            disabledSeries={_.map(validQueries, 'disabledSeries')}
             onDataUpdate={onDataUpdate}
-            queries={validQueries}
+            queries={_.map(validQueries, 'query')}
           />
           <form onSubmit={runQueries}>
             <div className="query-browser__all-queries-controls">
@@ -1236,7 +1267,12 @@ const QueryBrowserPage = withFallback(() => {
                   </div>
                 </div>
                 {q.expanded && <div className="group__body group__body--query-browser">
-                  <MetricsList metrics={metrics[i]} />
+                  <MetricsList
+                    allSeries={metrics[i]}
+                    colorOffset={getColorOffset(i)}
+                    disabledSeries={queries[i].disabledSeries}
+                    onToggleSeries={labels => toggleSeries(i, labels)}
+                  />
                 </div>}
               </div>;
             })}
@@ -1360,7 +1396,7 @@ type Rule = {
   annotations: any;
   duration: number;
   id: string;
-  labels: {[key: string]: string};
+  labels: Labels;
   name: string;
   query: string;
 };
@@ -1419,4 +1455,10 @@ export type ListPageProps = {
   reduxID: string;
   Row: React.ComponentType<any>;
   rowFilter: {type: string, selected: string[], reducer: (any) => string, items: {id: string, title: string}[]};
+};
+type MetricsListProps = {
+  allSeries: {labels: Labels; value: number}[];
+  colorOffset: number;
+  disabledSeries: Labels[];
+  onToggleSeries: (labels: Labels) => void;
 };
