@@ -153,7 +153,7 @@ export const ClusterServiceVersionsPage = connect(stateToProps)((props: ClusterS
   </React.Fragment>;
 });
 
-export const MarkdownView = (props: {content: string, styles?: string}) => {
+export const MarkdownView = (props: {content: string, styles?: string, exactHeight?: boolean}) => {
   return <AsyncComponent loader={() => import('./markdown-view').then(c => c.SyncMarkdownView)} {...props} />;
 };
 
