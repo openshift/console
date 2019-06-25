@@ -64,6 +64,7 @@ export default (state: UIState, action: UIAction): UIState => {
         filterValue: '',
       }),
       user: {},
+      consoleLinks: [],
     });
   }
 
@@ -165,6 +166,9 @@ export default (state: UIState, action: UIAction): UIState => {
     }
     case ActionType.UpdateTimestamps:
       return state.set('lastTick', action.payload.lastTick);
+
+    case ActionType.SetConsoleLinks:
+      return state.set('consoleLinks', action.payload.consoleLinks);
 
     default:
       break;
