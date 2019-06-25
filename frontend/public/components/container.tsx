@@ -63,7 +63,7 @@ const Probe: React.FC<ProbeProps> = ({probe, podIP}) => {
   const label = probe && k8sProbe.getActionLabelFromObject(probe);
   const value = probe && _.get(k8sProbe.mapProbeToFields(probe, podIP), 'cmd');
   if (!value) {
-    return <>''</>;
+    return <>-</>;
   }
   const isMultiline = value.indexOf('\n') !== -1;
   const formattedValue = isMultiline ? <pre>{value}</pre> : <code>{value}</code>;
