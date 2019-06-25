@@ -87,7 +87,7 @@ export const normalizeBuilderImages = (
 ): NormalizedBuilderImages => {
   const builderImageStreams = imageStreams.filter((imageStream) => isBuilder(imageStream));
 
-  return builderImageStreams.reduce((builderImages, imageStream) => {
+  return builderImageStreams.reduce((builderImages: NormalizedBuilderImages, imageStream) => {
     const tags = getBuilderTagsSortedByVersion(imageStream);
     const recentTag = getMostRecentBuilderTag(imageStream);
     const { name } = imageStream.metadata;
