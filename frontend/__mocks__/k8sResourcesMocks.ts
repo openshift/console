@@ -69,7 +69,7 @@ export const testClusterServiceVersion: ClusterServiceVersionKind = {
       owned: [{
         name: 'testresources.testapp.coreos.com',
         kind: 'TestResource',
-        version: 'v1',
+        version: 'v1alpha1',
         displayName: 'Test Resource',
         resources: [{
           kind: 'Pod',
@@ -182,9 +182,10 @@ export const testModel: K8sKind = {
   abbr: 'TR',
   kind: 'TestResource',
   label: 'Test Resource',
-  labelPlural: '',
+  labelPlural: 'Test Resources',
   plural: 'testresources',
-  apiVersion: 'v1',
+  apiVersion: 'v1alpha1',
+  apiGroup: 'testapp.coreos.com',
   crd: true,
 };
 

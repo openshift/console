@@ -1,3 +1,5 @@
+import { JSONSchema6 } from 'json-schema';
+
 export * from './job';
 export * from './k8s';
 export * from './node';
@@ -283,6 +285,10 @@ export type CustomResourceDefinitionKind = {
       shortNames?: string[];
     };
     scope?: 'Namespaced';
+    validation?: {
+      // NOTE: Actually a subset of JSONSchema, but using this type for convenience
+      openAPIV3Schema: JSONSchema6;
+    }
   }
 } & K8sResourceKind;
 
@@ -577,6 +583,24 @@ export type K8sKind = {
   labels?: {[key: string]: string};
   annotations?: {[key: string]: string};
   verbs?: string[];
+};
+
+export type Status = {
+  apiVersion: 'v1';
+  kind: 'Status';
+  details: {
+    causes: {
+      field: string;
+      message: string;
+      reason: string;
+    }[];
+    group: string;
+    kind: string;
+  };
+  message: string;
+  metadata: any;
+  reason: string;
+  status: string;
 };
 
 /**

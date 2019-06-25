@@ -356,7 +356,7 @@ export const EditYAML = connect(stateToProps)(
         { canDrop && <div className={klass}><p className="co-file-dropzone__drop-text">Drop file here</p></div> }
 
         <div>
-          {create && <div className="yaml-editor__header">
+          {create && !this.props.hideHeader && <div className="yaml-editor__header">
             <h1 className="yaml-editor__header-text">{header}</h1>
             <p className="help-block">Create by manually entering YAML or JSON definitions, or by dragging and dropping a file into the editor.</p>
           </div>}

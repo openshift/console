@@ -147,7 +147,7 @@ describe('Interacting with a `OwnNamespace` install mode Operator (Prometheus)',
     await $$('.dropdown-menu').first().element(by.linkText('Prometheus')).click();
     await browser.wait(until.presenceOf($('.ace_text-input')));
 
-    expect($('.yaml-editor__header').getText()).toContain('Create Prometheus');
+    expect($('.co-create-operand__header').getText()).toContain('Create Prometheus');
   });
 
   it('displays new `Prometheus` that was created from YAML editor', async() => {
@@ -193,7 +193,7 @@ describe('Interacting with a `OwnNamespace` install mode Operator (Prometheus)',
     await $$('.dropdown-menu').first().element(by.linkText('Alertmanager')).click();
     await browser.wait(until.presenceOf($('.ace_text-input')));
 
-    expect($('.yaml-editor__header').getText()).toContain('Create Alertmanager');
+    expect($('.co-create-operand__header').getText()).toContain('Create Alertmanager');
   });
 
   it('displays new `Alertmanager` that was created from YAML editor', async() => {
@@ -239,7 +239,7 @@ describe('Interacting with a `OwnNamespace` install mode Operator (Prometheus)',
     await $$('.dropdown-menu').first().element(by.linkText('Service Monitor')).click();
     await browser.wait(until.presenceOf($('.ace_text-input')), 10000);
 
-    expect($('.yaml-editor__header').getText()).toContain('Create Service Monitor');
+    expect($('.co-create-operand__header').getText()).toContain('Create Service Monitor');
   });
 
   it('displays new `ServiceMonitor` that was created from YAML editor', async() => {

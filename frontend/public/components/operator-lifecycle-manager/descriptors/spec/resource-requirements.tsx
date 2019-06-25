@@ -8,6 +8,21 @@ import { k8sUpdate, referenceFor, K8sKind } from '../../../../module/k8s';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../../../factory/modal';
 import { RootState } from '../../../../redux';
 
+export const ResourceRequirements: React.FC<ResourceRequirementsProps> = (props) => {
+  const {cpu, memory, onChangeCPU, onChangeMemory} = props;
+
+  return <div className="row co-m-form-row">
+    <div className="col-xs-5">
+      <label style={{fontWeight: 300}} className="text-muted text-uppercase" htmlFor="cpu">CPU cores</label>
+      <input value={cpu} onChange={e => onChangeCPU(e.target.value)} name="cpu" type="text" className="form-control" style={{width: 150}} autoFocus placeholder="500m" />
+    </div>
+    <div className="col-xs-5">
+      <label style={{fontWeight: 300}} className="text-muted text-uppercase" htmlFor="memory">Memory</label>
+      <input value={memory} onChange={e => onChangeMemory(e.target.value)} name="memory" type="text" className="form-control" style={{width: 150}} placeholder="50Mi" />
+    </div>
+  </div>;
+};
+
 export const ResourceRequirementsModal = withHandlePromise((props: ResourceRequirementsModalProps) => {
   const {obj, path, type, model} = props;
   const [cpu, setCPU] = React.useState<string>(_.get(obj.spec, `${path}.${type}.cpu`, ''));
@@ -30,16 +45,7 @@ export const ResourceRequirementsModal = withHandlePromise((props: ResourceRequi
       <div className="row co-m-form-row">
         <div className="col-sm-12">{props.description}</div>
       </div>
-      <div className="row co-m-form-row">
-        <div className="col-xs-5">
-          <label style={{fontWeight: 300}} className="text-muted text-uppercase" htmlFor="cpu">CPU cores</label>
-          <input value={cpu} onChange={e => setCPU(e.target.value)} name="cpu" type="text" className="form-control" style={{width: 150}} autoFocus placeholder="500m" />
-        </div>
-        <div className="col-xs-5">
-          <label style={{fontWeight: 300}} className="text-muted text-uppercase" htmlFor="memory">Memory</label>
-          <input value={memory} onChange={e => setMemory(e.target.value)} name="memory" type="text" className="form-control" style={{width: 150}} placeholder="50Mi" />
-        </div>
-      </div>
+      <ResourceRequirements cpu={cpu} memory={memory} onChangeCPU={setCPU} onChangeMemory={setMemory} />
     </ModalBody>
     <ModalSubmitFooter errorMessage={props.errorMessage} inProgress={props.inProgress} submitText="Save" cancel={e => props.cancel(e)} />
   </form>;
@@ -78,6 +84,13 @@ export type ResourceRequirementsModalProps = {
   close: () => void;
 };
 
+export type ResourceRequirementsProps = {
+  cpu: string;
+  memory: string;
+  onChangeCPU: (value: string) => void;
+  onChangeMemory: (value: string) => void;
+};
+
 export type ResourceRequirementsModalLinkProps = {
   obj: ClusterServiceVersionResourceKind;
   model: K8sKind;
@@ -85,5 +98,6 @@ export type ResourceRequirementsModalLinkProps = {
   path: string;
 };
 
+ResourceRequirements.displayName = 'ResourceRequirements';
 ResourceRequirementsModalLink.displayName = 'ResourceRequirementsModalLink';
 ResourceRequirementsModal.displayName = 'ResourceRequirementsModal';
