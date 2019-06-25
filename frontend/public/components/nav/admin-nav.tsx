@@ -101,7 +101,7 @@ const AdminNav = () => (
       <ResourceNSLink
         model={ClusterServiceVersionModel}
         resource={ClusterServiceVersionModel.plural}
-        required={[FLAGS.OPERATOR_LIFECYCLE_MANAGER]}
+        required={[FLAGS.OPERATOR_LIFECYCLE_MANAGER, FLAGS.CAN_LIST_PACKAGE_MANIFEST]}
         name="Installed Operators"
       />
       <Separator required={FLAGS.OPERATOR_LIFECYCLE_MANAGER} />
