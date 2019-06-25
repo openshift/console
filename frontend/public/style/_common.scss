@@ -1,12 +1,3 @@
-.co-alert {
-  max-height: 75px;
-  overflow-x: hidden;
-  overflow-y: auto;
-  @media (min-height: $screen-sm-min) {
-    max-height: 150px;
-  }
-}
-
 .co-m-pane__body {
   margin: $grid-gutter-width 0 0;
   padding: 0 ($grid-gutter-width / 2) $grid-gutter-width;
