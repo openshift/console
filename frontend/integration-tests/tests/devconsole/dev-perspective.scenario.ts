@@ -21,6 +21,7 @@ describe('Application Launcher Menu', () => {
 
   it('Switch from admin to dev perspective', async() => {
     await switchPerspective(Perspective.Administrator);
+    expect(sideHeader.getText()).toContain('Administrator');
     await switchPerspective(Perspective.Developer);
     expect(sideHeader.getText()).toContain('Developer');
     expect(pageSidebar.getText()).toContain('Topology');
@@ -28,6 +29,7 @@ describe('Application Launcher Menu', () => {
 
   it('Switch to dev to admin perspective', async() => {
     await switchPerspective(Perspective.Developer);
+    expect(sideHeader.getText()).toContain('Developer');
     await switchPerspective(Perspective.Administrator);
     expect(sideHeader.getText()).toContain('Administrator');
     expect(pageSidebar.getText()).toContain('Administration');

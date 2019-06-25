@@ -1,6 +1,6 @@
 import { $, browser, ExpectedConditions as until, by, element } from 'protractor';
 
-export const switcher = element(by.css('[aria-label="Application Launcher"]'));
+export const switcher = element(by.css('[data-test-id="application-launcher"]'));
 
 export const applicationlLauncher = $('.pf-c-dropdown__menu.pf-m-align-right');
 
