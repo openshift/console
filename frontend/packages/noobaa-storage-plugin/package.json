@@ -1,0 +1,13 @@
+{
+  "name": "@console/noobaa-storage-plugin",
+  "version": "0.0.0-fixed",
+  "description": "Noobaa Storage - Object data service for Kubernetes hybrid and multi-cloud environments",
+  "private": true,
+  "dependencies": {
+    "@console/plugin-sdk": "0.0.0-fixed",
+    "@console/shared": "0.0.0-fixed"
+  },
+  "consolePlugin": {
+    "entry": "src/plugin.ts"
+  }
+}
