@@ -511,6 +511,11 @@ kbd {
 
 // pf table overrides
 
+.pf-c-table .pf-c-table__sort .pf-c-button {
+  // remove padding-top on col heads to match what we had before
+  padding-top: 0 !important;
+}
+
 .pf-c-table tr > th {
   font-weight: var(--pf-global--FontWeight--bold);
 }
