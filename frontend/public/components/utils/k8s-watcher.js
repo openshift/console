@@ -1,12 +1,14 @@
 import * as _ from 'lodash-es';
 
+import { referenceForModel } from '../../module/k8s';
+
 export const makeReduxID = (k8sKind = {}, query) => {
   let qs = '';
   if (!_.isEmpty(query)) {
     qs = `---${JSON.stringify(query)}`;
   }
 
-  return `${k8sKind.plural}${qs}`;
+  return `${referenceForModel(k8sKind)}${qs}`;
 };
 
 /** @type {(namespace: string, labelSelector?: any, fieldSelector?: any, name?: string) => {[key: string]: string}} */
