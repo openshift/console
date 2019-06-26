@@ -9,11 +9,6 @@ const TYPES = {
     space: false,
     divisor: 1000,
   },
-  percentage: {
-    units: ['%'],
-    space: false,
-    divisor: 1000,
-  },
   decimalBytes: {
     units: ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB'],
     space: true,
@@ -101,20 +96,26 @@ const convertValueWithUnitsToBaseValue = (value, unitArray, divisor) => {
   return { value, unit };
 };
 
-const round = units.round = (value) => {
+const getDefaultFractionDigits = value => {
+  if (value < 1) {
+    return 3;
+  }
+  if (value < 100) {
+    return 2;
+  }
+  return 1;
+};
+
+const round = units.round = (value, options) => {
+  const fractionDigits = getDefaultFractionDigits(value);
+  const {locales, ...rest} = _.defaults(options, {
+    maximumFractionDigits: fractionDigits,
+  });
+
   if (!isFinite(value)) {
-    return 0;
+    return Intl.NumberFormat(locales, rest).format(0);
   }
-  let digits;
-  if (value >= 100) {
-    digits = 1;
-  } else if (value >= 1) {
-    digits = 2;
-  } else {
-    digits = 3;
-  }
-  const multiplier = Math.pow(10, digits);
-  return Math.round(value * multiplier) / multiplier;
+  return Intl.NumberFormat(locales, rest).format(value);
 };
 
 const humanize = units.humanize = (value, typeName, useRound = false) => {
@@ -146,10 +147,18 @@ export const humanizeBinaryBytes = v => humanize(v, 'binaryBytes', true).string;
 export const humanizeDecimalBytes = v => humanize(v, 'decimalBytes', true).string;
 export const humanizeNumber = v => humanize(v, 'numeric', true).string;
 export const humanizeCpuCores = v => (v < 1 && v > 0) ? `${round(v*1000)}m` : round(v);
-
+export const humanizePercentage = (value, options) => {
+  const {locales, ...rest} = _.defaults(
+    { style: 'percent' }, // Don't allow perent style to be overridden.
+    options,
+    {
+      maximumFractionDigits: 1,
+    }
+  );
+  return Intl.NumberFormat(locales, rest).format(value);
+};
 units.dehumanize = (value, typeName) => {
   const type = getType(typeName);
-
   return convertValueWithUnitsToBaseValue(value, type.units, type.divisor);
 };
 

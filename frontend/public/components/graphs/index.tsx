@@ -8,6 +8,12 @@ export const PROMETHEUS_BASE_PATH = window.SERVER_FLAGS.prometheusBaseURL;
 export const PROMETHEUS_TENANCY_BASE_PATH = window.SERVER_FLAGS.prometheusTenancyBaseURL;
 export const ALERT_MANAGER_BASE_PATH = window.SERVER_FLAGS.alertManagerBaseURL;
 
+export enum ThresholdColor {
+  'OK' = '#06C',
+  'WARN' = '#F0AB00',
+  'ERROR' = '#C9190B',
+}
+
 export * from './require-prometheus';
 export const Area = props => <AsyncComponent loader={() => import('./graph-loader').then(c => c.Area)} {...props} />;
 export const Bar = props => <AsyncComponent loader={() => import('./graph-loader').then(c => c.Bar)} {...props} />;
@@ -15,11 +21,12 @@ export const Donut = props => <AsyncComponent loader={() => import('./graph-load
 export const Gauge = props => <AsyncComponent loader={() => import('./graph-loader').then(c => c.Gauge)} {...props} />;
 export const QueryBrowser = props => <AsyncComponent loader={() => import('./graph-loader').then(c => c.QueryBrowser)} {...props} />;
 
-export type MutatorFunction = (value: string | number) => string;
+
+export type MutatorFunction = (value: string | number, options?: any) => string;
 
 export type DataPoint = {
-  x: Date | string | number;
-  y: string | number;
+  x?: Date | string | number;
+  y?: string | number;
   label?: string;
 }
 

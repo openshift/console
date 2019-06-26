@@ -18,19 +18,19 @@ export const getPrometheusExpressionBrowserURL = (urls, queries): string => {
   return `${base}/graph?${params.toString()}`;
 };
 
-const PrometheusGraphLink = connectToURLs(MonitoringRoutes.Prometheus)(
+export const PrometheusGraphLink = connectToURLs(MonitoringRoutes.Prometheus)(
   ({children, query, urls}: React.PropsWithChildren<PrometheusGraphLinkProps>) => {
     const url = getPrometheusExpressionBrowserURL(urls, [query]);
-    return url
+    return query
       ? <a href={url} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>{children}</a>
       : <React.Fragment>{children}</React.Fragment>;
   }
 );
 
-export const PrometheusGraph: React.FC<PrometheusGraphProps> = React.forwardRef(({children, className, query, title}, ref: React.RefObject<HTMLDivElement>) => {
+export const PrometheusGraph: React.FC<PrometheusGraphProps> = React.forwardRef(({children, className, title}, ref: React.RefObject<HTMLDivElement>) => {
   return <div ref={ref} className={classNames('graph-wrapper', className)}>
-    { title && <h5 className="graph-title graph-title--left">{title}</h5> }
-    <PrometheusGraphLink query={query}>{children}</PrometheusGraphLink>
+    {title && <h5 className="graph-title">{title}</h5>}
+    {children}
   </div>;
 });
 
@@ -40,8 +40,7 @@ type PrometheusGraphLinkProps = {
 };
 
 type PrometheusGraphProps = {
-  ref: React.Ref<HTMLDivElement>;
+  ref?: React.Ref<HTMLDivElement>;
   className?: string;
-  query: string;
   title?: string;
 }
