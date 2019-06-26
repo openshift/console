@@ -71,6 +71,17 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Dashboards/Card',
     properties: {
       tab: 'object-service',
+      position: GridPosition.MAIN,
+      loader: () =>
+        import(
+          './components/data-consumption-card/data-consumption-card' /* webpackChunkName: "object-service-data-consumption-card" */
+        ).then((m) => m.default),
+    },
+  },
+  {
+    type: 'Dashboards/Card',
+    properties: {
+      tab: 'object-service',
       position: GridPosition.RIGHT,
       loader: () =>
         import(
