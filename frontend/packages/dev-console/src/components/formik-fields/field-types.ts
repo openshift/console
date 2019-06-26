@@ -48,3 +48,15 @@ export interface SecretKeyRef {
     name: string;
   };
 }
+
+export interface ResourceLimitFieldProps {
+  type?: string;
+  name: string;
+  unitName: string;
+  inputLabel: string;
+  unitItems: object;
+  unitSelectedKey: string;
+  helpText?: string;
+  required?: boolean;
+  fullWidth?: boolean;
+}

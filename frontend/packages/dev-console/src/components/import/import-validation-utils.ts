@@ -1,5 +1,6 @@
 import * as yup from 'yup';
 import * as _ from 'lodash';
+import { convertToBaseValue } from '@console/internal/components/utils';
 
 const urlRegex = /^(((ssh|git|https?):\/\/[\w]+)|(git@[\w]+.[\w]+:))([\w\-._~/?#[\]!$&'()*+,;=])+$/;
 const hostnameRegex = /^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$/;
@@ -93,6 +94,84 @@ export const validationSchema = yup.object().shape({
     path: yup
       .string()
       .matches(pathRegex, { message: 'Path must start with /.', excludeEmptyString: true }),
+  }),
+  limits: yup.object().shape({
+    cpu: yup.object().shape({
+      request: yup
+        .number()
+        .nullable()
+        .min(0, 'Request must be greater than or equal to 0.')
+        .test({
+          test(request) {
+            const { requestUnit, limit, limitUnit } = this.parent;
+            if (limit !== null) {
+              return (
+                convertToBaseValue(`${request}${requestUnit}`) <=
+                convertToBaseValue(`${limit}${limitUnit}`)
+              );
+            }
+            return true;
+          },
+          message: 'CPU request must be less than or equal to limit.',
+        }),
+      requestUnit: yup.string('Unit must be millicores or cores.'),
+      limitUnit: yup.string('Unit must be millicores or cores.'),
+      limit: yup
+        .number()
+        .nullable()
+        .min(0, 'Limit must be greater than or equal to 0.')
+        .test({
+          test(limit) {
+            const { request, requestUnit, limitUnit } = this.parent;
+            if (limit !== null) {
+              return (
+                convertToBaseValue(`${limit}${limitUnit}`) >=
+                convertToBaseValue(`${request}${requestUnit}`)
+              );
+            }
+            return true;
+          },
+          message: 'CPU limit must be greater than or equal to request.',
+        }),
+    }),
+    memory: yup.object().shape({
+      request: yup
+        .number()
+        .nullable()
+        .min(0, 'Request must be greater than or equal to 0.')
+        .test({
+          test(request) {
+            const { requestUnit, limit, limitUnit } = this.parent;
+            if (limit !== null) {
+              return (
+                convertToBaseValue(`${request}${requestUnit}`) <=
+                convertToBaseValue(`${limit}${limitUnit}`)
+              );
+            }
+            return true;
+          },
+          message: 'Memory request must be less than or equal to limit.',
+        }),
+      requestUnit: yup.string('Unit must be Mi or Gi.'),
+      limit: yup
+        .number()
+        .nullable()
+        .min(0, 'Limit must be greater than or equal to 0.')
+        .test({
+          test(limit) {
+            const { request, requestUnit, limitUnit } = this.parent;
+            if (limit !== null) {
+              return (
+                convertToBaseValue(`${request}${requestUnit}`) <=
+                convertToBaseValue(`${limit}${limitUnit}`)
+              );
+            }
+            return true;
+          },
+          message: 'Memory limit must be greater than or equal to request.',
+        }),
+      limitUnit: yup.string('Unit must be Mi or Gi.'),
+    }),
   }),
 });
 

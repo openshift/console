@@ -94,6 +94,20 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
       replicas: 1,
     },
     labels: {},
+    limits: {
+      cpu: {
+        request: null,
+        requestUnit: 'm',
+        limit: null,
+        limitUnit: 'm',
+      },
+      memory: {
+        request: null,
+        requestUnit: 'Mi',
+        limit: null,
+        limitUnit: 'Mi',
+      },
+    },
   };
   const builderImages: NormalizedBuilderImages =
     imageStreams && imageStreams.loaded && normalizeBuilderImages(imageStreams.data);

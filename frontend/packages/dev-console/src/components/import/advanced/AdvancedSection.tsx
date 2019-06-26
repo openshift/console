@@ -8,6 +8,7 @@ import ScalingSection from './ScalingSection';
 import ServerlessScalingSection from './ServerlessScalingSection';
 import BuildConfigSection from './BuildConfigSection';
 import DeploymentConfigSection from './DeploymentConfigSection';
+import ResourceLimitSection from './ResourceLimitSection';
 
 export interface AdvancedSectionProps {
   values: FormikValues;
@@ -39,6 +40,9 @@ const AdvancedSection: React.FC<AdvancedSectionProps> = ({ values }) => {
       </ProgressiveListItem>
       <ProgressiveListItem name="Deployment Config">
         <DeploymentConfigSection namespace={values.project.name} />
+      </ProgressiveListItem>
+      <ProgressiveListItem name="Resource Limit">
+        <ResourceLimitSection />
       </ProgressiveListItem>
     </ProgressiveList>
   );
