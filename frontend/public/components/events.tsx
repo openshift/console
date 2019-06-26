@@ -1,61 +1,35 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import * as classNames from 'classnames';
-import * as PropTypes from 'prop-types';
-import { CSSTransition } from 'react-transition-group';
+import classNames from 'classnames';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
-import {
-  AutoSizer,
-  List as VirtualList,
-  WindowScroller,
-  CellMeasurerCache,
-  CellMeasurer,
-} from 'react-virtualized';
 
-import { namespaceProptype } from '../propTypes';
 import { ResourceListDropdown } from './resource-dropdown';
 import { TextFilter } from './factory';
-import { referenceFor, watchURL } from '../module/k8s';
+import { referenceFor, K8sResourceKind, EventInvolvedObject, EventKind } from '../module/k8s';
 import { withStartGuide } from './start-guide';
-import { WSFactory } from '../module/ws-factory';
-import { EventModel, NodeModel } from '../models';
+import { NodeModel } from '../models';
 import { connectToFlags } from '../reducers/features';
 import { FLAGS } from '../const';
 import {
-  Box,
   Dropdown,
-  Loading,
   PageHeading,
-  pluralize,
   ResourceLink,
   resourcePathFromModel,
   Timestamp,
   TogglePlay,
+  Box,
+  Loading,
+  pluralize,
 } from './utils';
+import { EventStream, EventStreamList, maxMessages, EventStreamChildProps } from './utils/event-stream';
 
-const maxMessages = 500;
-const flushInterval = 500;
+const Inner = React.memo(connectToFlags(FLAGS.CAN_LIST_NODE)(({ event, flags, isError }: InnerProps) => {
+  const { message, source, firstTimestamp, lastTimestamp, count, involvedObject: obj, reason } = event;
 
-// Predicate function to filter by event "category" (info, error, or all)
-const categoryFilter = (category, {reason}) => {
-  if (category === 'all') {
-    return true;
-  }
-  const errorSubstrings = ['error', 'failed', 'unhealthy', 'nodenotready'];
-  const isError = reason && errorSubstrings.find(substring => reason.toLowerCase().includes(substring));
-  return category === 'error' ? isError : !isError;
-};
-
-const kindFilter = (kind, {involvedObject}) => {
-  return kind === 'all' || involvedObject.kind === kind;
-};
-
-const Inner = connectToFlags(FLAGS.CAN_LIST_NODE)(class Inner extends React.PureComponent {
-  render() {
-    const {klass, status, tooltipMsg, obj, lastTimestamp, firstTimestamp, message, source, count, flags} = this.props;
-
-    return <div className={`${klass} slide-${status}`}>
+  const tooltipMsg = `${reason} (${obj.kind})`;
+  return (
+    <div className={classNames('co-sysevent', {'co-sysevent--error': isError})}>
       <div className="co-sysevent__icon-box">
         <i className="co-sysevent-icon" title={tooltipMsg} />
         <div className="co-sysevent__icon-line"></div>
@@ -95,104 +69,52 @@ const Inner = connectToFlags(FLAGS.CAN_LIST_NODE)(class Inner extends React.Pure
           {message}
         </div>
       </div>
-    </div>;
-  }
-});
-
-// Keep track of seen events so we only animate new ones.
-const seen = new Set();
-const timeout = {enter: 150};
-
-class SysEvent extends React.Component {
-  shouldComponentUpdate(nextProps) {
-    if (this.props.lastTimestamp !== nextProps.lastTimestamp) {
-      // Timestamps can be modified because events can be combined.
-      return true;
-    }
-    if (_.isEqual(this.props.style, nextProps.style)) {
-      return false;
-    }
-    return true;
-  }
-
-  componentWillUnmount() {
-    // TODO (kans): this is not correct, but don't memory leak :-/
-    seen.delete(this.props.metadata.uid);
-  }
-
-  render() {
-    const { index, style, reason, message, source, metadata, firstTimestamp, lastTimestamp, count, involvedObject: obj} = this.props;
-    const klass = classNames('co-sysevent', {'co-sysevent--error': categoryFilter('error', this.props)});
-    const tooltipMsg = `${reason} (${obj.kind})`;
-
-    let shouldAnimate;
-    const key = metadata.uid;
-    // Only animate events if they're at the start of the list (first 6) and we haven't seen them before.
-    if (!seen.has(key) && index < 6) {
-      seen.add(key);
-      shouldAnimate = true;
-    }
-
-    return <div className="co-sysevent--transition" style={style}>
-      <CSSTransition mountOnEnter={true} appear={shouldAnimate} in exit={false} timeout={timeout} classNames="slide">
-        {status => <Inner klass={klass} status={status} tooltipMsg={tooltipMsg} obj={obj} firstTimestamp={firstTimestamp} lastTimestamp={lastTimestamp} count={count} message={message} source={source} width={style.width} />}
-      </CSSTransition>
-    </div>;
-  }
-}
+    </div>
+  );
+}));
 
 const categories = {all: 'All Categories', info: 'Info', error: 'Error'};
 
-export class EventsList extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      category: 'all',
-      kind: 'all',
-      textFilter: '',
-    };
-  }
+export const EventsList: React.FC<EventsListProps> = ({mock}) => {
+  const [category, setCategory] = React.useState('all');
+  const [kind, setKind] = React.useState('all');
+  const [textFilter, setTextFilter] = React.useState('');
 
-  render() {
-    const { category, kind, textFilter } = this.state;
-    const { autoFocus=true, mock } = this.props;
-
-    return <React.Fragment>
+  return (
+    <>
       <div className="co-m-pane__filter-bar">
         <div className="co-m-pane__filter-bar-group">
           <ResourceListDropdown
             className="btn-group"
-            onChange={v => this.setState({kind: v})}
+            onChange={setKind}
             selected={kind}
             showAll
-            title="All Types"
           />
           <Dropdown
             className="btn-group"
             items={categories}
-            onChange={v => this.setState({category: v})}
-            selectedKey={this.state.category}
-            title="All Categories"
+            onChange={setCategory}
+            selectedKey={category}
+            title={categories.all}
           />
         </div>
         <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--filter">
           <TextFilter
-            autoFocus={autoFocus}
             label="Events by name or message"
-            onChange={e => this.setState({textFilter: e.target.value || ''})}
+            onChange={e => setTextFilter(e.target.value || '')}
+            defaultValue=""
           />
         </div>
       </div>
-      <EventStream
-        {...this.props}
+      <PausibleEventStream
         category={category}
         kind={kind}
         mock={mock}
         textFilter={textFilter}
       />
-    </React.Fragment>;
-  }
-}
+    </>
+  );
+};
 
 export const EventStreamPage = withStartGuide(({noProjectsAvailable, ...rest}) =>
   <React.Fragment>
@@ -200,271 +122,77 @@ export const EventStreamPage = withStartGuide(({noProjectsAvailable, ...rest}) =
       <title>Events</title>
     </Helmet>
     <PageHeading title="Events" />
-    <EventsList {...rest} autoFocus={!noProjectsAvailable} mock={noProjectsAvailable} />
+    <EventsList {...rest} mock={noProjectsAvailable} />
   </React.Fragment>
 );
 
-const measurementCache = new CellMeasurerCache({
-  fixedWidth: true,
-  minHeight: 109, /* height of event with a one-line event message on desktop */
-});
+export const NoEvents: React.FC<{}> = () => (
+  <Box className="co-sysevent-stream__status-box-empty">
+    <div className="text-center cos-status-box__detail">
+      No events in the past hour
+    </div>
+  </Box>
+);
 
-class EventStream extends React.Component {
-  constructor(props) {
-    super(props);
-    this.messages = {};
-    this.state = {
-      active: true,
-      sortedMessages: [],
-      filteredEvents: [],
-      error: null,
-      loading: true,
-      oldestTimestamp: new Date(),
-    };
-    this.toggleStream = this.toggleStream_.bind(this);
-    this.rowRenderer = function rowRenderer({index, style, key, parent}) {
-      const event = this.state.filteredEvents[index];
-      return <CellMeasurer
-        cache={measurementCache}
-        columnIndex={0}
-        key={key}
-        rowIndex={index}
-        parent={parent}>
-        {({ measure }) =>
-          <SysEvent {...event} onLoad={measure} onEntered={print} src={event} key={key} style={style} index={index} />
-        }
-      </CellMeasurer>;
-    }.bind(this);
+export const NoMatchingEvents: React.FC<NoMatchingEventsProps> = ({ allCount }) => (
+  <Box className="co-sysevent-stream__status-box-empty">
+    <div className="cos-status-box__title">No matching events</div>
+    <div className="text-center cos-status-box__detail">
+      {allCount}{allCount >= maxMessages && '+'} events exist, but none match the current filter
+    </div>
+  </Box>
+);
+
+export const ErrorLoadingEvents: React.FC<{}> = () => (
+  <Box>
+    <div className="cos-status-box__title cos-error-title">Error loading events</div>
+    <div className="cos-status-box__detail text-center">An error occurred during event retrieval. Attempting to reconnect...</div>
+  </Box>
+);
+
+const EventsTimeline: React.FC<EventsTimelineProps> = ({
+  setActive,
+  filteredEvents,
+  oldestTimestamp,
+  sortedMessages,
+  loading,
+  active,
+  error,
+  mock,
+  resourceEventStream,
+  noEvents,
+  noMatches,
+}) => {
+  let sysEventStatus, statusBtnTxt;
+
+  const count = filteredEvents.length;
+  const allCount = sortedMessages.length;
+  if (noEvents || mock || (noMatches && resourceEventStream)) {
+    sysEventStatus = <NoEvents />;
+  }
+  if (noMatches && !resourceEventStream) {
+    sysEventStatus = <NoMatchingEvents allCount={allCount} />;
   }
 
-  wsInit(ns) {
-    const params = {
-      ns,
-      fieldSelector: this.props.fieldSelector,
-    };
-
-    this.ws = new WSFactory(`${ns || 'all'}-sysevents`, {
-      host: 'auto',
-      reconnect: true,
-      path: watchURL(EventModel, params),
-      jsonParse: true,
-      bufferFlushInterval: flushInterval,
-      bufferMax: maxMessages,
-    })
-      .onbulkmessage(events => {
-        events.forEach(({object, type}) => {
-          const uid = object.metadata.uid;
-
-          switch (type) {
-            case 'ADDED':
-            case 'MODIFIED':
-              if (this.messages[uid] && this.messages[uid].count > object.count) {
-                // We already have a more recent version of this message stored, so skip this one
-                return;
-              }
-              this.messages[uid] = object;
-              break;
-            case 'DELETED':
-              delete this.messages[uid];
-              break;
-            default:
-              // eslint-disable-next-line no-console
-              console.error(`UNHANDLED EVENT: ${type}`);
-              return;
-          }
-        });
-        this.flushMessages();
-        this.resizeEvents();
-      })
-      .onopen(() => {
-        this.messages = {};
-        this.setState({error: false, loading: false, sortedMessages: [], filteredEvents: []});
-      })
-      .onclose(evt => {
-        if (evt && evt.wasClean === false) {
-          this.setState({error: evt.reason || 'Connection did not close cleanly.'});
-        }
-        this.messages = {};
-        this.setState({sortedMessages: [], filteredEvents: []});
-      })
-      .onerror(() => {
-        this.messages = {};
-        this.setState({error: true, sortedMessages: [], filteredEvents: []});
-      });
+  if (error) {
+    statusBtnTxt = <span className="co-sysevent-stream__connection-error">Error connecting to event stream{_.isString(error) && `: ${error}`}</span>;
+    sysEventStatus = <ErrorLoadingEvents />;
+  } else if (loading) {
+    statusBtnTxt = <span>Loading events...</span>;
+    sysEventStatus = <Loading />;
+  } else if (active) {
+    statusBtnTxt = <span>Streaming events...</span>;
+  } else {
+    statusBtnTxt = <span>Event stream is paused.</span>;
   }
 
-  componentDidMount() {
-    if (!this.props.mock) {
-      this.wsInit(this.props.namespace);
-    }
-  }
+  const klass = classNames('co-sysevent-stream__timeline', {
+    'co-sysevent-stream__timeline--empty': !allCount || !count,
+  });
+  const messageCount = count < maxMessages ? `Showing ${pluralize(count, 'event')}` : `Showing ${count} of ${allCount}+ events`;
 
-  componentWillUnmount() {
-    this.ws && this.ws.destroy();
-  }
-
-  static filterEvents(messages, {kind, category, filter, textFilter}) {
-    // Don't use `fuzzy` because it results in some surprising matches in long event messages.
-    // Instead perform an exact substring match on each word in the text filter.
-    const words = _.uniq(_.toLower(textFilter).match(/\S+/g)).sort((a, b) => {
-      // Sort the longest words first.
-      return b.length - a.length;
-    });
-
-    const textMatches = (obj) => {
-      if (_.isEmpty(words)) {
-        return true;
-      }
-      const name = _.get(obj, 'involvedObject.name', '');
-      const message = _.toLower(obj.message);
-      return _.every(words, word => name.indexOf(word) !== -1 || message.indexOf(word) !== -1);
-    };
-
-    const f = (obj) => {
-      if (category && !categoryFilter(category, obj)) {
-        return false;
-      }
-      if (kind && !kindFilter(kind, obj)) {
-        return false;
-      }
-      if (filter && !_.isMatch(obj.involvedObject, filter)) {
-        return false;
-      }
-      if (!textMatches(obj)) {
-        return false;
-      }
-      return true;
-    };
-
-    return _.filter(messages, f);
-  }
-
-  static getDerivedStateFromProps(nextProps, prevState) {
-    const {filter, kind, category, textFilter, loading} = prevState;
-
-    if (_.isEqual(filter, nextProps.filter)
-      && kind === nextProps.kind
-      && category === nextProps.category
-      && textFilter === nextProps.textFilter) {
-      return {};
-    }
-
-    return {
-      active: !nextProps.mock,
-      loading: !nextProps.mock && loading,
-      // update the filteredEvents
-      filteredEvents: EventStream.filterEvents(prevState.sortedMessages, nextProps),
-      // we need these for bookkeeping because getDerivedStateFromProps doesn't get prevProps
-      textFilter: nextProps.textFilter,
-      kind: nextProps.kind,
-      category: nextProps.category,
-      filter: nextProps.filter,
-    };
-  }
-
-  componentDidUpdate(prevProps) {
-    // If the namespace has changed, created a new WebSocket with the new namespace
-    if (prevProps.namespace !== this.props.namespace) {
-      this.ws && this.ws.destroy();
-      this.wsInit(this.props.namespace);
-    }
-    if ((prevProps.textFilter !== this.props.textFilter) || (prevProps.kind !== this.props.kind) || (prevProps.category !== this.props.category)) {
-      this.resizeEvents();
-    }
-  }
-
-  onResize() {
-    measurementCache.clearAll();
-  }
-
-  resizeEvents() {
-    measurementCache.clearAll();
-    if (this.list) {
-      this.list.recomputeRowHeights();
-    }
-  }
-
-  // Messages can come in extremely fast when the buffer flushes.
-  // Instead of calling setState() on every single message, let onmessage()
-  // update an instance variable, and throttle the actual UI update (see constructor)
-  flushMessages() {
-    // In addition to sorting by timestamp, secondarily sort by name so that the order is consistent when events have
-    // the same timestamp
-    const sorted = _.orderBy(this.messages, ['lastTimestamp', 'name'], ['desc', 'asc']);
-    const oldestTimestamp = _.min([this.state.oldestTimestamp, new Date(_.last(sorted).lastTimestamp)]);
-    sorted.splice(maxMessages);
-    this.setState({
-      oldestTimestamp,
-      sortedMessages: sorted,
-      filteredEvents: EventStream.filterEvents(sorted, this.props),
-    });
-
-    // Shrink this.messages back to maxMessages messages, to stop it growing indefinitely
-    this.messages = _.keyBy(sorted, 'metadata.uid');
-  }
-
-  toggleStream_() {
-    this.setState({active: !this.state.active}, () => {
-      if (this.state.active) {
-        this.ws && this.ws.unpause();
-      } else {
-        this.ws && this.ws.pause();
-      }
-    });
-  }
-
-  render() {
-    const { mock, resourceEventStream } = this.props;
-    const {active, error, loading, filteredEvents, sortedMessages} = this.state;
-    const count = filteredEvents.length;
-    const allCount = sortedMessages.length;
-    const noEvents = allCount === 0 && this.ws && this.ws.bufferSize() === 0;
-    const noMatches = allCount > 0 && count === 0;
-    let sysEventStatus, statusBtnTxt;
-
-    if (noEvents || mock || (noMatches && resourceEventStream)) {
-      sysEventStatus = (
-        <Box className="co-sysevent-stream__status-box-empty">
-          <div className="text-center cos-status-box__detail">
-          No events in the past hour
-          </div>
-        </Box>
-      );
-    }
-    if (noMatches && !resourceEventStream) {
-      sysEventStatus = (
-        <Box className="co-sysevent-stream__status-box-empty">
-          <div className="cos-status-box__title">No matching events</div>
-          <div className="text-center cos-status-box__detail">
-            {allCount}{allCount >= maxMessages && '+'} events exist, but none match the current filter
-          </div>
-        </Box>
-      );
-    }
-
-    if (error) {
-      statusBtnTxt = <span className="co-sysevent-stream__connection-error">Error connecting to event stream{_.isString(error) && `: ${error}`}</span>;
-      sysEventStatus = (
-        <Box>
-          <div className="cos-status-box__title cos-error-title">Error loading events</div>
-          <div className="cos-status-box__detail text-center">An error occurred during event retrieval. Attempting to reconnect...</div>
-        </Box>
-      );
-    } else if (loading) {
-      statusBtnTxt = <span>Loading events...</span>;
-      sysEventStatus = <Loading />;
-    } else if (active) {
-      statusBtnTxt = <span>Streaming events...</span>;
-    } else {
-      statusBtnTxt = <span>Event stream is paused.</span>;
-    }
-
-    const klass = classNames('co-sysevent-stream__timeline', {
-      'co-sysevent-stream__timeline--empty': !allCount || !count,
-    });
-    const messageCount = count < maxMessages ? `Showing ${pluralize(count, 'event')}` : `Showing ${count} of ${allCount}+ events`;
-
-    return <div className="co-m-pane__body">
+  return (
+    <div className="co-m-pane__body">
       <div className="co-sysevent-stream">
         <div className="co-sysevent-stream__status">
           <div className="co-sysevent-stream__timeline__btn-text">
@@ -476,57 +204,64 @@ class EventStream extends React.Component {
         </div>
 
         <div className={klass}>
-          <TogglePlay active={active} onClick={this.toggleStream} className="co-sysevent-stream__timeline__btn" />
+          <TogglePlay active={active} onClick={() => setActive(!active)} className="co-sysevent-stream__timeline__btn" />
           <div className="co-sysevent-stream__timeline__end-message">
-          There are no events before <Timestamp timestamp={this.state.oldestTimestamp} />
+          There are no events before <Timestamp timestamp={oldestTimestamp ? oldestTimestamp.toString() : null} />
           </div>
         </div>
-        { /* Default `height` to 0 to avoid console errors from https://github.com/bvaughn/react-virtualized/issues/1158 */}
-        { count > 0 &&
-            <WindowScroller scrollElement={document.getElementById('content-scrollable')}>
-              {({height, isScrolling, registerChild, onChildScroll, scrollTop}) =>
-                <AutoSizer disableHeight onResize={this.onResize}>
-                  {({width}) => <div ref={registerChild}>
-                    <VirtualList
-                      autoHeight
-                      data={filteredEvents}
-                      deferredMeasurementCache={measurementCache}
-                      height={height || 0}
-                      isScrolling={isScrolling}
-                      onScroll={onChildScroll}
-                      ref={virtualList => this.list = virtualList}
-                      rowCount={count}
-                      rowHeight={measurementCache.rowHeight}
-                      rowRenderer={this.rowRenderer}
-                      scrollTop={scrollTop}
-                      tabIndex={null}
-                      width={width}
-                    />
-                  </div>}
-                </AutoSizer> }
-            </WindowScroller>
-        }
+        <EventStreamList EventComponent={Inner} events={filteredEvents} />
         { sysEventStatus }
       </div>
-    </div>;
-  }
+    </div>
+  );
+};
+
+const PausibleEventStream: React.FC<PausibleEventStream> = ({ filter, category, kind, mock, textFilter, resourceEventStream, namespace }) => {
+  const [active, setActive] = React.useState(true);
+  return mock ? (
+    <EventsTimeline active={active} mock={mock} setActive={setActive} resourceEventStream={resourceEventStream} />
+  ) : (
+    <EventStream filter={filter} namespace={namespace} active={active} category={category} kind={kind} textFilter={textFilter}>
+      <EventsTimeline active={active} setActive={setActive} resourceEventStream={resourceEventStream} />
+    </EventStream>
+  );
+};
+
+export const ResourceEventStream: React.FC<ResourceEventStreamProps> = ({obj: {kind, metadata: {name, namespace}}}) => (
+  <PausibleEventStream filter={{name, kind}} namespace={namespace} resourceEventStream />
+);
+
+type PausibleEventStream = {
+  category?: string;
+  kind?: string;
+  mock?: boolean;
+  textFilter?: string;
+  resourceEventStream?: boolean;
+  namespace?: string;
+  filter?: Partial<EventInvolvedObject>;
 }
 
-EventStream.defaultProps = {
-  category: 'all',
-  kind: 'all',
-  mock: false,
-};
+type ResourceEventStreamProps = {
+  obj: K8sResourceKind;
+}
 
-EventStream.propTypes = {
-  category: PropTypes.string,
-  filter: PropTypes.object,
-  kind: PropTypes.string.isRequired,
-  mock: PropTypes.bool,
-  namespace: namespaceProptype,
-  showTitle: PropTypes.bool,
-  textFilter: PropTypes.string,
-};
+type NoMatchingEventsProps = {
+  allCount: number;
+}
 
+type EventsTimelineProps = Partial<EventStreamChildProps> & {
+  setActive: (active: boolean) => void;
+  active: boolean;
+  resourceEventStream: boolean;
+  mock?: boolean;
+}
 
-export const ResourceEventStream = ({obj: {kind, metadata: {name, namespace}}}) => <EventStream filter={{name, kind}} namespace={namespace} resourceEventStream />;
+type EventsListProps = {
+  mock: boolean;
+}
+
+type InnerProps = {
+  event: EventKind;
+  flags: {[FLAGS.CAN_LIST_NODE]: boolean};
+  isError: true;
+}
