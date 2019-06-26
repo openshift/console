@@ -1,5 +1,8 @@
 import { SubsystemHealth } from '@console/internal/components/dashboards-page/overview-dashboard/health-card';
+import { GridPosition } from '@console/internal/components/dashboard/grid';
+
 import { Extension } from './extension';
+import { LazyLoader } from './types';
 
 namespace ExtensionProperties {
   interface DashboardsOverviewHealthSubsystem<R> {
@@ -31,6 +34,25 @@ namespace ExtensionProperties {
     /** The Prometheus query */
     query: string;
   }
+
+  export interface DashboardsTab {
+    /** The tab's ID which will be used as part of href within dashboards page */
+    id: string;
+
+    /** The tab title */
+    title: string;
+  }
+
+  export interface DashboardsCard {
+    /** The tab's ID where this card should be rendered */
+    tab: string;
+
+    /** The card position in the tab */
+    position: GridPosition;
+
+    /** Loader for the corresponding dashboard card component. */
+    loader: LazyLoader<any>;
+  }
 }
 
 export interface DashboardsOverviewHealthURLSubsystem<R>
@@ -60,3 +82,17 @@ export const isDashboardsOverviewHealthSubsystem = (
   e: Extension<any>,
 ): e is DashboardsOverviewHealthSubsystem =>
   isDashboardsOverviewHealthURLSubsystem(e) || isDashboardsOverviewHealthPrometheusSubsystem(e);
+
+export interface DashboardsTab extends Extension<ExtensionProperties.DashboardsTab> {
+  type: 'Dashboards/Tab';
+}
+
+export const isDashboardsTab = (e: Extension<any>): e is DashboardsTab =>
+  e.type === 'Dashboards/Tab';
+
+export interface DashboardsCard extends Extension<ExtensionProperties.DashboardsCard> {
+  type: 'Dashboards/Card';
+}
+
+export const isDashboardsCard = (e: Extension<any>): e is DashboardsCard =>
+  e.type === 'Dashboards/Card';

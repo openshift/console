@@ -26,7 +26,7 @@ class PodsComponent extends React.PureComponent<PodsComponentProps> {
   }
 }
 
-type Page = {
+export type Page = {
   href: string;
   name: string;
   component?: React.ComponentType<any>;
