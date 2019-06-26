@@ -210,6 +210,7 @@ export class Kebab extends DropdownMixin {
 }
 
 export type KebabOption = {
+  hidden?: boolean,
   label: string;
   href?: string, callback?: () => any;
   accessReview?: AccessReviewResourceAttributes;
