@@ -186,7 +186,7 @@ const ToggleGraph_ = ({hideGraphs, toggle}) => {
 };
 const ToggleGraph = connect(graphStateToProps, {toggle: UIActions.monitoringToggleGraphs})(ToggleGraph_);
 
-const Graph_ = ({hideGraphs, metric = undefined, rule}) => {
+const Graph_ = ({hideGraphs, filterLabels = undefined, rule}) => {
   if (hideGraphs) {
     return null;
   }
@@ -201,8 +201,8 @@ const Graph_ = ({hideGraphs, metric = undefined, rule}) => {
 
   return <QueryBrowser
     defaultTimespan={timespan}
+    filterLabels={filterLabels}
     GraphLink={GraphLink}
-    metric={metric}
     queries={[query]}
   />;
 };
@@ -254,7 +254,7 @@ const AlertsDetailsPage = withFallback(connect(alertStateToProps)((props: Alerts
         <div className="co-m-pane__body-group">
           <div className="row">
             <div className="col-sm-12">
-              {state !== AlertStates.NotFiring && <Graph metric={labels} rule={rule} />}
+              {state !== AlertStates.NotFiring && <Graph filterLabels={labels} rule={rule} />}
             </div>
           </div>
           <div className="row">
@@ -1051,44 +1051,91 @@ const MetricsDropdown = ({onChange}) => {
   />;
 };
 
-const getGraphColor = colorIndex => graphColors[colorIndex % graphColors.length];
+const SeriesIcon = ({colorIndex, isDisabled, onClick}) => <div
+  className={classNames('query-browser-metric__color', {'query-browser-metric__color--disabled': isDisabled})}
+  onClick={onClick}
+  style={isDisabled ? undefined : {backgroundColor: graphColors[colorIndex % graphColors.length]}}
+></div>;
 
-const MetricsList: React.FC<MetricsListProps> = ({allSeries, colorOffset, disabledSeries, onToggleSeries}) => (
-  <div className="co-m-table-grid co-m-table-grid--bordered">
-    <div className="row co-m-table-grid__head">
-      <div className="col-xs-9 query-browser-metric__wrapper">
-        <div className="query-browser-metric__color"></div>
-        Series
+const Query: React.FC<QueryProps> = ({colorOffset, onBlur, onDelete, onSubmit, onUpdate, query}) => {
+  const {allSeries, disabledSeries, enabled, expanded, text} = query;
+
+  const toggleEnabled = () => onUpdate({enabled: !enabled, expanded: !enabled, query: enabled ? '' : text});
+
+  const toggleAllSeries = () => onUpdate({disabledSeries: _.isEmpty(disabledSeries) ? _.map(allSeries, 'labels') : []});
+
+  const onKeyDown = (e: React.KeyboardEvent) => {
+    // Enter+Shift inserts newlines, Enter alone runs the query
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      onSubmit(e);
+    }
+  };
+
+  const kebabOptions = [
+    {label: `${enabled ? 'Disable' : 'Enable'} query`, callback: toggleEnabled},
+    {label: `${_.isEmpty(disabledSeries) ? 'Hide' : 'Show'} all series`, callback: toggleAllSeries},
+    {label: 'Delete query', callback: onDelete},
+  ];
+
+  return <div className="group">
+    <div className="group__title">
+      <button
+        className="btn btn-link query-browser__table-toggle-btn"
+        onClick={() => onUpdate({expanded: !expanded})}
+        title={`${expanded ? 'Hide' : 'Show'} Table`}
+      >
+        <i aria-hidden="true" className={`fa fa-angle-${expanded ? 'down' : 'right'} query-browser__table-toggle-icon`} />
+      </button>
+      <textarea
+        autoFocus={true}
+        className="form-control query-browser__query"
+        onBlur={onBlur}
+        onChange={e => onUpdate({text: e.target.value})}
+        onKeyDown={onKeyDown}
+        placeholder="Expression (press Shift+Enter for newlines)"
+        value={text}
+      />
+      <div className="query-browser__query-switch">
+        <Switch aria-label={`${enabled ? 'Disable' : 'Enable'} query`} isChecked={enabled} onChange={toggleEnabled} />
       </div>
-      <div className="col-xs-3">Value</div>
+      <div className="dropdown-kebab-pf query-browser__kebab">
+        <Kebab options={kebabOptions} />
+      </div>
     </div>
-    <div className="co-m-table-grid__body">
-      {_.map(allSeries, ({labels, value}, i) => {
-        const isDisabled = _.some(disabledSeries, s => _.isEqual(s, labels));
-        const style = isDisabled ? undefined : {backgroundColor: getGraphColor(colorOffset + i)};
-        return <div className="row" key={i}>
+    {expanded && <div className="group__body group__body--query-browser">
+      <div className="co-m-table-grid co-m-table-grid--bordered">
+        <div className="row co-m-table-grid__head">
           <div className="col-xs-9 query-browser-metric__wrapper">
-            <div
-              className={classNames('query-browser-metric__color', {'query-browser-metric__color--disabled': isDisabled})}
-              onClick={() => onToggleSeries(labels)}
-              style={style}
-            ></div>
-            <div className="query-browser-metric__labels">
-              {_.isEmpty(labels)
-                ? <span className="text-muted">{'{}'}</span>
-                : _.map(labels, (v, k) => `${k}="${v}"`).join(',')}
-            </div>
+            <div className="query-browser-metric__color"></div>
+            Series
           </div>
-          <div className="col-xs-3">{value}</div>
-        </div>;
-      })}
-    </div>
-  </div>
-);
+          <div className="col-xs-3">Value</div>
+        </div>
+        <div className="co-m-table-grid__body">
+          {_.map(allSeries, ({labels, value}, i) => <div className="row" key={i}>
+            <div className="col-xs-9 query-browser-metric__wrapper">
+              <SeriesIcon
+                colorIndex={colorOffset + i}
+                isDisabled={_.some(disabledSeries, s => _.isEqual(s, labels))}
+                onClick={() => onUpdate({disabledSeries: _.xorWith(disabledSeries, [labels], _.isEqual)})}
+              />
+              <div className="query-browser-metric__labels">
+                {_.isEmpty(labels)
+                  ? <span className="text-muted">{'{}'}</span>
+                  : _.map(labels, (v, k) => `${k}="${v}"`).join(',')}
+              </div>
+            </div>
+            <div className="col-xs-3">{value}</div>
+          </div>)}
+        </div>
+      </div>
+    </div>}
+  </div>;
+};
 
 const QueryBrowserPage = withFallback(() => {
   const [focusedQuery, setFocusedQuery] = React.useState();
-  const [metrics, setMetrics] = React.useState([]);
   const [restoreSelection, setRestoreSelection] = React.useState();
 
   const defaultQuery = getURLSearchParams().query || '';
@@ -1104,32 +1151,18 @@ const QueryBrowserPage = withFallback(() => {
 
   const defaultQueryObj = {disabledSeries: [], enabled: true, expanded: true, query: '', text: ''};
 
-  const updateQuery = (i, obj) => setQueries(_.map(queries, (q, j) => i === j ? Object.assign({}, q, obj) : q));
+  const updateQuery = (i: number, patch: PrometheusQuery) => {
+    setQueries(_.map(queries, (q, j) => i === j ? Object.assign({}, q, patch) : q));
+  };
 
   const addQuery = () => setQueries([...queries, defaultQueryObj]);
 
   const deleteAllQueries = () => setQueries([defaultQueryObj]);
 
-  const deleteQuery = i => setQueries(queries.length <= 1 ? [defaultQueryObj] : queries.filter((v, k) => k !== i));
-
-  const runQueries = e => {
+  const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setQueries(queries.map(q => q.enabled ? Object.assign({}, q, {query: q.text}) : q));
   };
-
-  const onQueryChange = (e, i) => updateQuery(i, {text: e.target.value});
-
-  const toggleEnabled = i => {
-    const {enabled, text} = queries[i];
-    updateQuery(i, {enabled: !enabled, expanded: !enabled, query: enabled ? '' : text});
-  };
-
-  const toggleSeries = (i: number, labels: Labels) => {
-    const disabledSeries = _.xorWith(queries[i].disabledSeries, [labels], _.isEqual);
-    updateQuery(i, {disabledSeries});
-  };
-
-  const toggleExpanded = i => updateQuery(i, {expanded: !_.get(queries, [i, 'expanded'])});
 
   const isAllExpanded = _.every(queries, 'expanded');
   const toggleAllExpanded = () => setQueries(_.map(queries, q => Object.assign({}, q, {expanded: !isAllExpanded})));
@@ -1140,42 +1173,18 @@ const QueryBrowserPage = withFallback(() => {
     {label: 'Delete all queries', callback: deleteAllQueries},
   ];
 
-  const onDataUpdate = (allSeries: PrometheusSeries[][]) => {
-    return setMetrics(_.map(allSeries, series => {
-      return _.map(series, ({metric, values}) => ({
-        labels: _.omit(metric, '__name__'),
-        value: parseFloat(_.last(values)[1]),
+  const onDataUpdate = (allQueries: PrometheusSeries[][]) => {
+    const newQueries = _.map(allQueries, (querySeries, i) => {
+      const allSeries = _.map(querySeries, s => ({
+        labels: _.omit(s.metric, '__name__'),
+        value: parseFloat(_.last(s.values)[1]),
       }));
-    }));
+      return Object.assign({}, queries[i], {allSeries});
+    });
+    setQueries(newQueries);
   };
 
-  const onQueryBlur = (e, i) => {
-    if (_.get(e, 'relatedTarget.id') === 'metrics-dropdown') {
-      // Focus has shifted from a query input to the metrics dropdown, so store the cursor position so we know where to
-      // insert the metric when it is selected
-      setFocusedQuery({
-        index: i,
-        selection: {
-          start: e.target.selectionStart,
-          end: e.target.selectionEnd,
-        },
-        target: e.target,
-      });
-    } else {
-      // Focus is shifting to somewhere other than the metrics dropdown, so don't track the cursor position
-      setFocusedQuery(undefined);
-    }
-  };
-
-  const onQueryKeyDown = e => {
-    // Enter+Shift inserts newlines, Enter alone runs the query
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      runQueries(e);
-    }
-  };
-
-  const onMetricChange = metric => {
+  const onMetricChange = (metric: string) => {
     if (focusedQuery) {
       // Replace the currently selected text with the metric
       const {index, selection, target} = focusedQuery;
@@ -1198,14 +1207,12 @@ const QueryBrowserPage = withFallback(() => {
     }
   }, [focusedQuery, restoreSelection]);
 
-  const validQueries = _.reject(queries, q => _.isEmpty(q.query));
-
-  const getColorOffset = i => i > 0 ? _.sumBy(_.range(i), j => _.get(metrics, [j, 'length'])) : 0;
+  let colorOffset = 0;
 
   return <React.Fragment>
     <div className="co-m-nav-title">
       <h1 className="co-m-pane__heading">
-        <span>Metrics<HeaderPrometheusLink queries={_.map(validQueries, 'query')} /></span>
+        <span>Metrics<HeaderPrometheusLink queries={_.map(queries, 'query')} /></span>
         <div className="co-actions">
           <ActionsMenu actions={actionsMenuActions} />
         </div>
@@ -1221,11 +1228,11 @@ const QueryBrowserPage = withFallback(() => {
         <div className="col-xs-12">
           <QueryBrowser
             defaultTimespan={30 * 60 * 1000}
-            disabledSeries={_.map(validQueries, 'disabledSeries')}
+            disabledSeries={_.map(queries, 'disabledSeries')}
             onDataUpdate={onDataUpdate}
-            queries={_.map(validQueries, 'query')}
+            queries={_.map(queries, 'query')}
           />
-          <form onSubmit={runQueries}>
+          <form onSubmit={onSubmit}>
             <div className="query-browser__all-queries-controls">
               <MetricsDropdown onChange={onMetricChange} />
               <div>
@@ -1234,47 +1241,39 @@ const QueryBrowserPage = withFallback(() => {
               </div>
             </div>
             {_.map(queries, (q, i) => {
-              const toggleEnabledLabel = `${q.enabled ? 'Disable' : 'Enable'} query`;
-              return <div className="group" key={i}>
-                <div className="group__title">
-                  <button
-                    className="btn btn-link query-browser__table-toggle-btn"
-                    onClick={() => toggleExpanded(i)}
-                    title={`${q.expanded ? 'Hide' : 'Show'} Table`}
-                  >
-                    <i
-                      aria-hidden="true"
-                      className={`fa fa-angle-${q.expanded ? 'down' : 'right'} query-browser__table-toggle-icon`}
-                    />
-                  </button>
-                  <textarea
-                    autoFocus={true}
-                    className="form-control query-browser__query"
-                    onBlur={e => onQueryBlur(e, i)}
-                    onChange={e => onQueryChange(e, i)}
-                    onKeyDown={onQueryKeyDown}
-                    placeholder="Expression (press Shift+Enter for newlines)"
-                    value={q.text}
-                  />
-                  <div className="query-browser__query-switch">
-                    <Switch aria-label={toggleEnabledLabel} isChecked={q.enabled} onChange={() => toggleEnabled(i)} />
-                  </div>
-                  <div className="dropdown-kebab-pf query-browser__kebab">
-                    <Kebab options={[
-                      {label: toggleEnabledLabel, callback: () => toggleEnabled(i)},
-                      {label: 'Delete query', callback: () => deleteQuery(i)},
-                    ]} />
-                  </div>
-                </div>
-                {q.expanded && <div className="group__body group__body--query-browser">
-                  <MetricsList
-                    allSeries={metrics[i]}
-                    colorOffset={getColorOffset(i)}
-                    disabledSeries={queries[i].disabledSeries}
-                    onToggleSeries={labels => toggleSeries(i, labels)}
-                  />
-                </div>}
-              </div>;
+              const deleteQuery = () => setQueries(queries.length <= 1
+                ? [defaultQueryObj]
+                : queries.filter((v, k) => k !== i));
+
+              const onBlur = e => {
+                if (_.get(e, 'relatedTarget.id') === 'metrics-dropdown') {
+                  // Focus has shifted from a query input to the metrics dropdown, so store the cursor position so we
+                  // know where to insert the metric when it is selected
+                  setFocusedQuery({
+                    index: i,
+                    selection: {
+                      start: e.target.selectionStart,
+                      end: e.target.selectionEnd,
+                    },
+                    target: e.target,
+                  });
+                } else {
+                  // Focus is shifting to somewhere other than the metrics dropdown, so don't track the cursor position
+                  setFocusedQuery(undefined);
+                }
+              };
+
+              colorOffset += _.get(queries, [i - 1, 'allSeries', 'length'], 0);
+
+              return <Query
+                colorOffset={colorOffset}
+                key={i}
+                onBlur={onBlur}
+                onDelete={deleteQuery}
+                onSubmit={onSubmit}
+                onUpdate={patch => updateQuery(i, patch)}
+                query={q}
+              />;
             })}
           </form>
         </div>
@@ -1456,9 +1455,19 @@ export type ListPageProps = {
   Row: React.ComponentType<any>;
   rowFilter: {type: string, selected: string[], reducer: (any) => string, items: {id: string, title: string}[]};
 };
-type MetricsListProps = {
-  allSeries: {labels: Labels; value: number}[];
+type PrometheusQuery = {
+  allSeries?: {labels: Labels, value: number}[];
+  disabledSeries?: Labels[];
+  enabled?: boolean;
+  expanded?: boolean;
+  query?: string;
+  text?: string;
+};
+type QueryProps = {
   colorOffset: number;
-  disabledSeries: Labels[];
-  onToggleSeries: (labels: Labels) => void;
+  onBlur: (e: React.FocusEvent) => void;
+  onDelete: () => void;
+  onSubmit: (e: React.FormEvent) => void;
+  onUpdate: (patch: PrometheusQuery) => void;
+  query: PrometheusQuery;
 };
