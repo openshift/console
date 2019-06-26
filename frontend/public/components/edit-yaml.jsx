@@ -368,7 +368,7 @@ export const EditYAML = connect(stateToProps)(
                   <div className="full-width-and-height yaml-editor__flexbox">
                     <div id={this.id} key={this.id} className="yaml-editor__acebox" />
                     <div className="yaml-editor__buttons">
-                      {error && <Alert isInline className="co-alert co-scrollable-alert" variant="danger" title={error} />}
+                      {error && <Alert isInline className="co-alert co-scrollable-alert" variant="danger" title="An error occurred">{error}</Alert>}
                       {success && <Alert isInline className="co-alert" variant="success" title={success} />}
                       {stale && <Alert isInline className="co-alert" variant="info" title="This object has been updated.">Click reload to see the new version.</Alert>}
                       {create && <button type="submit" className="btn btn-primary" id="save-changes" onClick={() => this.save()}>Create</button>}

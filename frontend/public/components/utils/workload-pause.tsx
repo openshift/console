@@ -19,7 +19,7 @@ export const WorkloadPausedAlert = ({model, obj}) => {
     isInline
     className="co-alert"
     variant="info"
-    title={<React.Fragment>{obj.metadata.name} is paused.</React.Fragment>}
+    title={<React.Fragment>{obj.metadata.name} is paused</React.Fragment>}
     action={<AlertActionLink onClick={() => togglePaused(model, obj).catch((err) => errorModal({error: err.message}))}>Resume Rollouts</AlertActionLink>}
   >
     This will stop any new rollouts or triggers from running until resumed.

@@ -135,8 +135,8 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
     || !_.isEmpty(conflictingProvidedAPIs(selectedTargetNamespace));
 
   const formError = () => {
-    return !namespaceSupports(selectedTargetNamespace)(selectedInstallMode) && <Alert isInline className="co-alert" variant="danger" title="Namespace does not support install modes for this Operator." />
-      || subscriptionExists(selectedTargetNamespace) && <Alert isInline className="co-alert" variant="danger" title={`Operator subscription for namespace &quot;${selectedTargetNamespace}&quot; already exists.`} />
+    return !namespaceSupports(selectedTargetNamespace)(selectedInstallMode) && <Alert isInline className="co-alert" variant="danger" title="Namespace does not support install modes for this Operator" />
+      || subscriptionExists(selectedTargetNamespace) && <Alert isInline className="co-alert" variant="danger" title={`Operator subscription for namespace &quot;${selectedTargetNamespace}&quot; already exists`} />
       || !_.isEmpty(conflictingProvidedAPIs(selectedTargetNamespace)) && <Alert
         isInline
         className="co-alert"
@@ -146,7 +146,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
         Installing Operator in selected namespace would cause conflicts with another Operator providing these APIs:
         <ul>{conflictingProvidedAPIs(selectedTargetNamespace).map(gvk => <li key={gvk}><strong>{kindForReference(gvk)}</strong> <i>({apiVersionForReference(gvk)})</i></li>)}</ul>
       </Alert>
-      || (selectedTargetNamespace && cannotResolve) && <Alert isInline className="co-alert" variant="danger" title="Operator not available for selected namespace(s)" />;
+      || (selectedTargetNamespace && cannotResolve) && <Alert isInline className="co-alert" variant="danger" title="Operator not available for selected namespaces" />;
   };
 
   return <React.Fragment>

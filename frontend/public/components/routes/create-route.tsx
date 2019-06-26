@@ -275,7 +275,7 @@ export class CreateRoute extends React.Component<null, CreateRouteState> {
           </div>
           <div className="form-group co-create-route__service">
             <label className="co-required" htmlFor="service">Service</label>
-            {(loaded && _.isEmpty(serviceOptions)) && <Alert isInline className="co-alert co-create-route__alert" variant="info" title="There are no services in your project to expose with a route." />}
+            {(loaded && _.isEmpty(serviceOptions)) && <Alert isInline className="co-alert co-create-route__alert" variant="info" title="No services">There are no services in your project to expose with a route.</Alert>}
             {(loaded && !_.isEmpty(serviceOptions)) && <Dropdown items={serviceOptions} title={service ? serviceOptions[service.metadata.name] : 'Select a service'} dropDownClassName="dropdown--full-width" id="service" onChange={this.changeService} describedBy="service-help" /> }
             <div className="help-block" id="service-help">
               Service to route to.

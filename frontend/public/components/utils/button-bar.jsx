@@ -16,7 +16,7 @@ const injectDisabled = (children, disabled) => {
   });
 };
 
-const ErrorMessage = ({message}) => <Alert isInline className="co-alert co-scrollable-alert" variant="danger" title={message} />;
+const ErrorMessage = ({message}) => <Alert isInline className="co-alert co-scrollable-alert" variant="danger" title="An error occurred">{message}</Alert>;
 const InfoMessage = ({message}) => <Alert isInline className="co-alert co-scrollable-alert" variant="info" title={message} />;
 
 // NOTE: DO NOT use <a> elements within a ButtonBar.

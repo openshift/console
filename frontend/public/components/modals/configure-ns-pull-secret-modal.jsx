@@ -277,7 +277,7 @@ class ConfigureNamespacePullSecret extends PromiseComponent {
           </div>
           { this.state.invalidJson || existingData.invalidJson && <div className="row co-m-form-row">
             <div className="col-xs-9 col-sm-offset-3">
-              <Alert isInline className="co-alert" variant="danger" title="Invalid format.">Uploaded file is not properly formatted json.</Alert>
+              <Alert isInline className="co-alert" variant="danger" title="Invalid JSON">The uploaded file is not properly-formatted JSON.</Alert>
             </div>
           </div> }
           { this.state.fileData &&<div className="row co-m-form-row">

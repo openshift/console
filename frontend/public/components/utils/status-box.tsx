@@ -42,11 +42,13 @@ export const MsgBox: React.FC<MsgBoxProps> = ({title, detail, className = ''}) =
 </Box>;
 MsgBox.displayName = 'MsgBox';
 
-export const AccessDenied: React.FC<AccessDeniedProps> = ({message}) => <Box className="text-center">
-  <img className="cos-status-box__access-denied-icon" src={restrictedSignImg} />
-  <MsgBox title="Restricted Access" detail="You don't have access to this section due to cluster policy." />
-  { _.isString(message) && <Alert isInline className="co-alert" variant="danger" title={message} />}
-</Box>;
+export const AccessDenied: React.FC<AccessDeniedProps> = ({message}) => <div>
+  <Box className="text-center">
+    <img className="cos-status-box__access-denied-icon" src={restrictedSignImg} />
+    <MsgBox title="Restricted Access" detail="You don't have access to this section due to cluster policy." />
+  </Box>
+  { _.isString(message) && <Alert isInline className="co-alert" variant="danger" title="Error details">{message}</Alert>}
+</div>;
 AccessDenied.displayName = 'AccessDenied';
 
 const Data: React.FC<DataProps> = ({EmptyMsg, label, data, children}) => {

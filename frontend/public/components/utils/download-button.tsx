@@ -37,7 +37,7 @@ export const DownloadButton: React.FC<DownloadButtonProps> = (props) => {
       </span>
       <span style={{visibility: 'hidden'}}>&nbsp;{filename}</span>
     </button>
-    { error && <Alert isInline className="co-alert co-break-word" variant="danger" title={error.toString()} /> }
+    { error && <Alert isInline className="co-alert co-break-word" variant="danger" title="An error occurred">{error.toString()}</Alert> }
   </div>;
 };
 

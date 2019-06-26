@@ -462,13 +462,14 @@ export const EnvironmentPage = connect(stateToProps)(
         onChange={this.selectContainer} /> : null;
 
       const owners = _.get(obj.metadata, 'ownerReferences', [])
-        .map((o, i) => <ResourceLink key={i} kind={referenceForOwnerRef(o)} name={o.name} namespace={obj.metadata.namespace} title={o.uid} />);
-      const resourceName = _.get(obj.metadata, 'name', '');
+        .map((o, i) => <ResourceLink key={i} kind={referenceForOwnerRef(o)} name={o.name} namespace={obj.metadata.namespace} title={o.uid} inline />);
       const containerVars =
         <React.Fragment>
           { (readOnly && !_.isEmpty(owners)) &&
             <div className="co-toolbar__group co-toolbar__group--left">
-              <Alert isInline className="co-alert col-md-11 col-xs-10" variant="info" title="Environment variables already set">Environment variables for {resourceName} were set from the resource {owners.length > 1 ? 'owners' : 'owner'}: <span className="environment-resource-link">{owners}</span></Alert>
+              <Alert isInline className="co-alert col-md-11 col-xs-10" variant="info" title="Environment variables set from parent">
+                View environment for resource {owners.length > 1 ? <React.Fragment>owners: {owners}</React.Fragment> : owners}
+              </Alert>
             </div>
           }
           { currentEnvVars.isContainerArray && <div className="co-toolbar__group co-toolbar__group--left">
