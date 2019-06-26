@@ -56,6 +56,7 @@ export * from './ref-width-hook';
 export * from './safe-fetch-hook';
 export * from './camel-case-wrap';
 export * from './truncate-middle';
+export * from './expand-collapse';
 
 /*
   Add the enum for NameValueEditorPair here and not in its namesake file because the editor should always be

@@ -1,13 +1,12 @@
 import * as React from 'react';
 import { useFormikContext, FormikValues } from 'formik';
-import { Expandable } from '@patternfly/react-core';
+import { ExpandCollapse } from '@console/internal/components/utils';
 import { InputField, DropdownField } from '../../formik-fields';
 import FormSection from '../section/FormSection';
 import { GitTypes } from '../import-types';
 import { detectGitType } from '../import-validation-utils';
 
 const GitSection: React.FC = () => {
-  const [isExpanded, toggleExpandCollapse] = React.useState(false);
   const { values, setValues, setFieldTouched, validateForm } = useFormikContext<FormikValues>();
 
   const handleGitUrlBlur = () => {
@@ -25,12 +24,6 @@ const GitSection: React.FC = () => {
     setFieldTouched('git.url', true);
     setFieldTouched('git.type', showGitType);
     validateForm(newValues);
-  };
-
-  const ontoggle: any = (event) => {
-    // TODO: This can be removed when https://github.com/patternfly/patternfly-react/issues/2339 is fixed
-    event.preventDefault();
-    toggleExpandCollapse(!isExpanded);
   };
 
   return (
@@ -53,10 +46,9 @@ const GitSection: React.FC = () => {
           required
         />
       )}
-      <Expandable
-        toggleText={isExpanded ? 'Hide Advanced Git Options' : 'Show Advanced Git Options'}
-        onToggle={ontoggle}
-        isExpanded={isExpanded}
+      <ExpandCollapse
+        textExpanded="Hide Advanced Git Options"
+        textCollapsed="Show Advanced Git Options"
       >
         <InputField
           type="text"
@@ -70,7 +62,7 @@ const GitSection: React.FC = () => {
           label="Context Dir"
           helpText="Optional subdirectory for the application source code, used as a context directory for build."
         />
-      </Expandable>
+      </ExpandCollapse>
     </FormSection>
   );
 };
