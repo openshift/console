@@ -229,20 +229,20 @@ const ClusterVersionDetailsTable: React.SFC<ClusterVersionDetailsTableProps> = (
   </React.Fragment>;
 };
 
-const ClusterOperatorTabPage: React.SFC = () => <ClusterOperatorPage autoFocus={false} showTitle={false} />;
+const ClusterOperatorTabPage: React.SFC<ClusterOperatorTabPageProps> = ({obj: cv}) => <ClusterOperatorPage cv={cv} autoFocus={false} showTitle={false} />;
 
 const pages = [{
   href: '',
   name: 'Overview',
   component: ClusterVersionDetailsTable,
 }, {
-  href: 'globalconfig',
-  name: 'Global Configuration',
-  component: GlobalConfigPage,
-}, {
   href: 'clusteroperators',
   name: 'Cluster Operators',
   component: ClusterOperatorTabPage,
+}, {
+  href: 'globalconfig',
+  name: 'Global Configuration',
+  component: GlobalConfigPage,
 }];
 
 export const ClusterSettingsPage: React.SFC<ClusterSettingsPageProps> = ({match}) => {
@@ -288,4 +288,8 @@ type ClusterVersionDetailsTableProps = {
 
 type ClusterSettingsPageProps = {
   match: any;
+};
+
+type ClusterOperatorTabPageProps = {
+  obj: ClusterVersionKind;
 };
