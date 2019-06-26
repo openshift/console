@@ -143,6 +143,10 @@ const AdminNav = () => (
       <ResourceNSLink resource="horizontalpodautoscalers" name="Horizontal Pod Autoscalers" />
     </NavSection>
 
+    { /* Temporary addition of Knative Serverless section until extensibility allows for section ordering
+         and admin-nav gets contributed through extensions. */ }
+    <NavSection title="Serverless" />
+
     <NavSection title="Networking">
       <ResourceNSLink resource="services" name="Services" />
       <ResourceNSLink resource="routes" name="Routes" required={FLAGS.OPENSHIFT} />
