@@ -11,7 +11,8 @@ export { SubscriptionsPage } from './subscription';
 import * as operatorLogo from '../../imgs/operator.svg';
 import { InstallModeType } from './operator-group';
 
-export const appCatalogLabel = 'alm-catalog';
+export const copiedLabelKey = 'olm.copiedFrom';
+
 export enum AppCatalog {
   rhOperators = 'rh-operators',
 }

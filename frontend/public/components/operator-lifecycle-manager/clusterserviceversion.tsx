@@ -11,7 +11,7 @@ import { ProvidedAPIsPage, ProvidedAPIPage } from './clusterserviceversion-resou
 import { DetailsPage, ListPage, Table, TableRow, TableData } from '../factory';
 import { withFallback } from '../utils/error-boundary';
 import { referenceForModel, referenceFor, GroupVersionKind, K8sKind } from '../../module/k8s';
-import { ClusterServiceVersionModel } from '../../models';
+import { ClusterServiceVersionModel, SubscriptionModel, PackageManifestModel } from '../../models';
 import { FLAGS as featureFlags } from '../../const';
 import { ResourceEventStream } from '../events';
 import { Conditions } from '../conditions';
@@ -24,6 +24,9 @@ import {
   APIServiceDefinition,
   CSVConditionReason,
   providedAPIsFor,
+  SubscriptionKind,
+  PackageManifestKind,
+  copiedLabelKey,
 } from './index';
 import {
   Kebab,
@@ -39,8 +42,13 @@ import {
   ScrollToTopOnMount,
   AsyncComponent,
   ExternalLink,
+  Firehose,
+  FirehoseResult,
+  StatusBox,
 } from '../utils';
 import { operatorGroupFor, operatorNamespaceFor } from './operator-group';
+import { SubscriptionDetails } from './subscription';
+import { RootState } from '../../redux';
 
 const tableColumnClasses = [
   classNames('col-lg-3', 'col-md-4', 'col-sm-4', 'col-xs-6'),
@@ -123,7 +131,7 @@ export const ClusterServiceVersionList: React.SFC<ClusterServiceVersionListProps
   return <Table {...props} aria-label="Installed Operators" Header={ClusterServiceVersionTableHeader} Row={ClusterServiceVersionTableRow} EmptyMsg={EmptyMsg} virtualize />;
 };
 
-const stateToProps = ({k8s, FLAGS}) => ({
+const stateToProps = ({k8s, FLAGS}: RootState) => ({
   loading: FLAGS.get(featureFlags.OPENSHIFT) === undefined || !k8s.getIn([FLAGS.get(featureFlags.OPENSHIFT) ? 'projects' : 'namespaces', 'loaded']),
 });
 
@@ -264,11 +272,43 @@ export const ClusterServiceVersionDetails: React.SFC<ClusterServiceVersionDetail
       </div>
     </div>
     <div className="co-m-pane__body">
-      {/* FIXME(alecmerdler): Need to modify CSV conditions to follow standard conventions */}
       <SectionHeading text="Conditions" />
       <Conditions conditions={_.get(status, 'conditions', []).map(c => ({...c, type: c.phase, status: 'True'}))} />
     </div>
   </React.Fragment>;
+};
+
+export const CSVSubscription: React.FC<CSVSubscriptionProps> = (props) => {
+  type SubscriptionProps = {
+    subscription: FirehoseResult<SubscriptionKind[]>;
+    packageManifest: FirehoseResult<PackageManifestKind[]>;
+    loaded: boolean;
+  };
+
+  const Subscription: React.FC<SubscriptionProps> = (subscriptionProps) => {
+    const subscription = subscriptionProps.subscription.data.find(sub => _.get(sub.status, 'installedCSV') === props.obj.metadata.name);
+
+    return <StatusBox {...subscriptionProps.subscription}>
+      <SubscriptionDetails
+        obj={subscription}
+        installedCSV={props.obj}
+        pkg={subscriptionProps.packageManifest.data.find(pkg => pkg.status.packageName === subscription.spec.name)} />
+    </StatusBox>;
+  };
+
+  return <Firehose resources={[{
+    kind: referenceForModel(SubscriptionModel),
+    namespace: props.obj.metadata.annotations[copiedLabelKey],
+    isList: true,
+    prop: 'subscription',
+  }, {
+    kind: referenceForModel(PackageManifestModel),
+    namespace: props.obj.metadata.namespace,
+    isList: true,
+    prop: 'packageManifest',
+  }]}>
+    <Subscription {...props as any} />
+  </Firehose>;
 };
 
 export const ClusterServiceVersionsDetailsPage: React.StatelessComponent<ClusterServiceVersionsDetailsPageProps> = (props) => {
@@ -280,7 +320,6 @@ export const ClusterServiceVersionsDetailsPage: React.StatelessComponent<Cluster
       .concat(providedAPIsFor(obj).map((desc: CRDDescription) => ({
         href: referenceForProvidedAPI(desc),
         name: desc.displayName,
-        /* eslint-disable-next-line react/display-name */
         component: (instancesProps) => <ProvidedAPIPage {...instancesProps} csv={obj} kind={referenceForProvidedAPI(desc)} namespace={props.match.params.ns} />,
       })));
   };
@@ -294,12 +333,17 @@ export const ClusterServiceVersionsDetailsPage: React.StatelessComponent<Cluster
     namespace={props.match.params.ns}
     kind={referenceForModel(ClusterServiceVersionModel)}
     name={props.match.params.name}
-    pagesFor={(obj: ClusterServiceVersionKind) => [
+    pagesFor={(obj: ClusterServiceVersionKind) => _.compact([
       navFactory.details(ClusterServiceVersionDetails),
       navFactory.editYaml(),
+      {
+        href: 'subscription',
+        name: 'Subscription',
+        component: CSVSubscription,
+      },
       navFactory.events(ResourceEventStream),
       ...instancePagesFor(obj),
-    ]}
+    ])}
     menuActions={menuActions} />;
 };
 
@@ -347,9 +391,14 @@ export type ClusterServiceVersionTableRowProps = {
   style: object;
 };
 
+export type CSVSubscriptionProps = {
+  obj: ClusterServiceVersionKind;
+};
+
 // TODO(alecmerdler): Find Webpack loader/plugin to add `displayName` to React components automagically
 ClusterServiceVersionList.displayName = 'ClusterServiceVersionList';
 ClusterServiceVersionsPage.displayName = 'ClusterServiceVersionsPage';
 CRDCard.displayName = 'CRDCard';
 ClusterServiceVersionsDetailsPage.displayName = 'ClusterServiceVersionsDetailsPage';
 ClusterServiceVersionDetails.displayName = 'ClusterServiceVersionDetails';
+CSVSubscription.displayName = 'CSVSubscription';
