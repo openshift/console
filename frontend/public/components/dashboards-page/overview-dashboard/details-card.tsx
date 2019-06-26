@@ -73,7 +73,7 @@ export const DetailsCard_: React.FC<DetailsCardProps> = ({
   const kubernetesVersionResponse = urlResults.getIn(['version', 'result']);
 
   return (
-    <DashboardCard className="co-details-card">
+    <DashboardCard>
       <DashboardCardHeader>
         <DashboardCardTitle>Details</DashboardCardTitle>
       </DashboardCardHeader>
