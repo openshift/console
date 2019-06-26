@@ -899,6 +899,7 @@ export const ConsoleLinkModel: K8sKind = {
   namespaced: false,
   kind: 'ConsoleLink',
   id: 'consolelink',
+  crd: true,
 };
 
 export const ConsoleCLIDownloadModel: K8sKind = {
