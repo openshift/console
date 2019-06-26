@@ -3,6 +3,7 @@ import { ListPage } from '@console/internal/components/factory';
 import PipelineList from './PipelineList';
 import { pipelineFilterReducer, pipelineStatusFilter } from '../../utils/pipeline-filter-reducer';
 import { PipelineModel } from '../../models';
+import DefaultPage from '../DefaultPage';
 
 const filters = [
   {
@@ -18,14 +19,18 @@ const filters = [
   },
 ];
 
-const PipelinesPage: React.FC<any> = (props) => (
-  <ListPage
-    {...props}
-    canCreate={false}
-    kind={PipelineModel.kind}
-    ListComponent={PipelineList}
-    rowFilters={filters}
-  />
-);
+const PipelinesPage: React.FC<any> = (props) => {
+  return props.namespace ? (
+    <ListPage
+      {...props}
+      canCreate={false}
+      kind={PipelineModel.kind}
+      ListComponent={PipelineList}
+      rowFilters={filters}
+    />
+  ) : (
+    <DefaultPage title="Pipelines">Select a project to view the list of pipelines</DefaultPage>
+  );
+};
 
 export default PipelinesPage;

@@ -10,6 +10,7 @@ import EmptyState from '../EmptyState';
 import TopologyDataController, { RenderProps } from './TopologyDataController';
 import Topology from './Topology';
 import NamespacedPage from '../NamespacedPage';
+import DefaultPage from '../DefaultPage';
 
 interface StateProps {
   activeApplication: string;
@@ -67,7 +68,7 @@ const TopologyPage: React.FC<Props> = ({ match, activeApplication }) => {
             render={renderTopology}
           />
         ) : (
-          <EmptyMsg />
+          <DefaultPage title="Topology">Select a project to view the topology</DefaultPage>
         )}
       </NamespacedPage>
     </React.Fragment>

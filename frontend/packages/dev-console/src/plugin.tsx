@@ -67,12 +67,12 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
-    type: 'NavItem/ResourceNS',
+    type: 'NavItem/Href',
     properties: {
       perspective: 'dev',
       componentProps: {
         name: 'Builds',
-        resource: 'buildconfigs',
+        href: '/buildconfigs',
         required: FLAGS.OPENSHIFT,
       },
     },
@@ -166,7 +166,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Page/Route',
     properties: {
       exact: true,
-      path: ['/add', '/import', '/topology'],
+      path: ['/add', '/import', '/topology', '/buildconfigs'],
       component: NamespaceRedirect,
     },
   },
@@ -209,6 +209,17 @@ const plugin: Plugin<ConsumedExtensions> = [
       loader: async () =>
         (await import(
           './components/import/ImportPage' /* webpackChunkName: "dev-console-import" */
+        )).default,
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      exact: true,
+      path: ['/buildconfigs/all-namespaces', '/buildconfigs/ns/:ns'],
+      loader: async () =>
+        (await import(
+          './components/BuildconfigPage' /* webpackChunkName: "dev-console-buildconfigs" */
         )).default,
     },
   },
