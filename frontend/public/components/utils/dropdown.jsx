@@ -48,16 +48,20 @@ export class DropdownMixin extends React.PureComponent {
     e.preventDefault();
     e.stopPropagation();
 
-    const {onChange, noSelection, title} = this.props;
+    const { items, actionItem, onChange, noSelection, title } = this.props;
 
     if (onChange) {
       onChange(selectedKey, e);
     }
 
-    this.setState({
-      selectedKey,
-      title: noSelection ? title : this.props.items[selectedKey],
-    });
+    const newTitle = items[selectedKey];
+
+    if (!actionItem || (selectedKey !== actionItem.actionKey)) {
+      this.setState({
+        selectedKey,
+        title: noSelection ? title : newTitle,
+      });
+    }
 
     this.hide();
   }
@@ -421,8 +425,8 @@ export class Dropdown extends DropdownMixin {
 
 Dropdown.propTypes = {
   actionItem: PropTypes.shape({
-    key: PropTypes.string,
-    title: PropTypes.string,
+    actionKey: PropTypes.string,
+    actionTitle: PropTypes.string,
   }),
   autocompleteFilter: PropTypes.func,
   autocompletePlaceholder: PropTypes.string,
