@@ -1,0 +1,35 @@
+@import '~@patternfly/patternfly/sass-utilities/colors';
+
+.nb-resource-providers-card__row {
+  align-items: center;
+  border-bottom: 1px solid $pf-color-black-300;
+  display: flex;
+  font-size: 1rem;
+  justify-content: space-between;
+  padding: 1em 0;
+}
+
+.nb-resource-providers-card__row-status {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  :last-child {
+    margin-right: 0;
+  }
+}
+
+.nb-resource-providers-card__row-status-item {
+  align-items: center;
+  display: flex;
+  flex-shrink: 0;
+  margin-right: 0.5em;
+}
+
+.nb-resource-providers-card__row-status-item-text {
+  color: $pf-color-blue-300;
+  margin-left: 0.25em;
+}
+
+.nb-resource-providers-card__row-title {
+  margin-right: 0.5em;
+}
