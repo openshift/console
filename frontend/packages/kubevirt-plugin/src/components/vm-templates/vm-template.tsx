@@ -11,9 +11,15 @@ import {
 } from 'kubevirt-web-ui-components';
 
 import { ListPage, Table, TableRow, TableData } from '@console/internal/components/factory';
-import { Kebab, ResourceLink, ResourceKebab } from '@console/internal/components/utils';
+import {
+  Kebab,
+  ResourceLink,
+  ResourceKebab,
+  ResourceIcon,
+} from '@console/internal/components/utils';
 import { getName, getNamespace, DASH, getUid } from '@console/shared';
 import { TemplateModel } from '@console/internal/models';
+import { Link } from 'react-router-dom';
 import { TemplateKind } from '@console/internal/module/k8s';
 import { match } from 'react-router';
 
@@ -38,7 +44,7 @@ const tableColumnClasses = [
   Kebab.columnClass,
 ];
 
-const VmTemplateTableHeader = () => {
+const VMTemplateTableHeader = () => {
   return [
     {
       title: 'Name',
@@ -76,20 +82,24 @@ const VmTemplateTableHeader = () => {
     },
   ];
 };
-VmTemplateTableHeader.displayName = 'VmTemplateTableHeader';
+VMTemplateTableHeader.displayName = 'VMTemplateTableHeader';
 
-const VmTemplateTableRow = ({ obj: template, index, key, style }: VmTemplateTableRowProps) => {
+const VMTemplateTableRow = ({ obj: template, index, key, style }: VMTemplateTableRowProps) => {
   const os = getTemplateOperatingSystems([template])[0];
+  const name = getName(template);
+  const namespace = getNamespace(template);
 
   return (
     <TableRow id={template.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
-        <ResourceLink
-          kind={kind}
-          name={getName(template)}
-          namespace={getNamespace(template)}
+        <ResourceIcon kind={kind} />
+        <Link
+          to={`/k8s/ns/${namespace}/vmtemplates/${name}`}
           title={getUid(template)}
-        />
+          className="co-resource-item__resource-name"
+        >
+          {name}
+        </Link>
       </TableData>
       <TableData className={tableColumnClasses[1]}>
         <ResourceLink
@@ -112,15 +122,15 @@ const VmTemplateTableRow = ({ obj: template, index, key, style }: VmTemplateTabl
     </TableRow>
   );
 };
-VmTemplateTableRow.displayName = 'VmTemplateTableRow';
+VMTemplateTableRow.displayName = 'VmTemplateTableRow';
 
 const VirtualMachineTemplates = (props: React.ComponentProps<typeof Table>) => {
   return (
     <Table
       {...props}
       aria-label={labelPlural}
-      Header={VmTemplateTableHeader}
-      Row={VmTemplateTableRow}
+      Header={VMTemplateTableHeader}
+      Row={VMTemplateTableRow}
     />
   );
 };
@@ -146,7 +156,7 @@ const VirtualMachineTemplatesPage = (
   />
 );
 
-type VmTemplateTableRowProps = {
+type VMTemplateTableRowProps = {
   obj: TemplateKind;
   index: number;
   key: string;
