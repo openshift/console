@@ -68,12 +68,13 @@ class SearchPage_ extends React.PureComponent {
     const validTags = _.reject(tags, tag => requirementFromString(tag) === undefined);
     const selector = selectorFromString(validTags.join(','));
     const labelClassName = `co-text-${_.toLower(kindForReference(kind))}`;
+    const title = 'Browse Resources';
 
     return <React.Fragment>
       <Helmet>
-        <title>Search</title>
+        <title>{title}</title>
       </Helmet>
-      <PageHeading detail={true} title="Search" >
+      <PageHeading detail={true} title={title}>
         <div className="co-search">
           <div className="input-group input-group-select">
             <div className="input-group-btn">

@@ -117,7 +117,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       perspective: 'dev',
       section: 'Advanced',
       componentProps: {
-        name: 'Search',
+        name: 'Browse Resources',
         href: '/search',
       },
     },

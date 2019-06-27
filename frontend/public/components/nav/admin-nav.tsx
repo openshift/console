@@ -85,7 +85,7 @@ const AdminNav = () => (
   <React.Fragment>
     <NavSection title="Home">
       <ResourceClusterLink resource="projects" name="Projects" required={FLAGS.OPENSHIFT} />
-      <HrefLink href="/search" name="Search" startsWith={searchStartsWith} />
+      <HrefLink href="/search" name="Browse Resources" startsWith={searchStartsWith} />
       <ResourceNSLink resource="events" name="Events" />
     </NavSection>
 
