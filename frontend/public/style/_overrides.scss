@@ -1,218 +1,6 @@
 // Use this file to override styles from 3rd party dependencies
 $pf-4-nav-bar-height: 76px; // Height of the PatternFly 4 masthead
 
-.text-secondary {
-  color: $color-text-secondary;
-}
-
-.form-control[disabled], fieldset[disabled] .form-control {
-  cursor: auto;
-}
-
-tags-input:focus,
-tags-input .host:focus {
-  outline: none;
-}
-
-tags-input .host {
-  position: relative;
-  margin-top: 5px;
-  margin-bottom: 5px;
-}
-tags-input .host:active {
-  outline: none;
-}
-
-tags-input .tags {
-  cursor: text;
-  // Style to look like .form-control
-  min-height: $input-height-base; // Make inputs at least the height of their button counterpart (base line-height + padding + border)
-  padding: 0 $padding-base-horizontal;
-  line-height: $co-m-label-line-height;
-  color: $input-color;
-  background-color: $input-bg;
-  background-image: none; // Reset unusual Firefox-on-Android default style; see https://github.com/necolas/normalize.css/issues/214
-  border: 1px solid $input-border;
-  border-radius: $input-border-radius; // Note: This has no effect on <select>s in some browsers, due to the limited stylability of <select>s in CSS.
-  @include box-shadow(inset 0 1px 1px rgba(0,0,0,.075));
-  @include transition(border-color ease-in-out .15s, box-shadow ease-in-out .15s);
-}
-.modal-body tags-input .tags {
-  background-color: rgba(255, 255, 255, 0.5); // enable scroll-shadows to be seen
-  margin-bottom: ($grid-gutter-width / 2);
-  min-height: 120px;
-  .tag-item {
-    background-color: rgba(235,235,235,.5); // enable scroll-shadows to be seen
-  }
-}
-tags-input .tags.focused,
-tags-input .tags:focus {
-  outline: none;
-  border-color: #66AFE9;
-}
-tags-input .tags .tag-list {
-  margin: 0;
-  padding: 0;
-  list-style-type: none;
-}
-
-tags-input .tags .tag-item {
-  @extend .co-m-label;
-  word-break: break-all; // required for Firefox, Edge
-}
-
-tags-input .tags .tag-item.selected {
-  border: solid 1px;
-}
-
-tags-input .tags .tag-item .remove-button {
-  margin: 0 0 0 2px;
-  padding: 0;
-  border: none;
-  background: none;
-  cursor: pointer;
-  vertical-align: middle;
-  font-size: 16px;
-  color: #585858;
-}
-tags-input .tags .tag-item .remove-button:active {
-  color: #fff;
-}
-tags-input .remove-button:active,
-tags-input .remove-button:hover {
-  text-decoration: none;
-}
-tags-input .tags .input {
-  background: transparent;
-  border: 1px solid transparent;
-  line-height: $co-m-label-line-height;
-  margin: 2px 0;
-  outline: none;
-  padding: 0;
-  // Since iOS phone text input size is larger, remove border and margin and increase line-height
-  @supports (-webkit-overflow-scrolling: touch) { // Target mobile Safari
-    @media (max-width: $grid-float-breakpoint-max) { // Target phones
-      border: 0;
-      line-height: 24px;
-      margin-bottom: 0;
-      margin-top: 0;
-    }
-  }
-}
-tags-input .tags .input.invalid-tag {
-  color: $color-pf-red-200;
-}
-tags-input .tags .input::-ms-clear {
-  display: none;
-}
-tags-input.ng-invalid .tags {
-  border-color: $color-pf-red-200;
-}
-
-tags-input .autocomplete {
-  margin-top: 5px;
-  position: absolute;
-  padding: 5px 0;
-  z-index: 999;
-  width: 100%;
-  background-color: white;
-  border: 1px solid rgba(0, 0, 0, 0.2);
-  -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-  -moz-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-}
-tags-input .autocomplete .suggestion-list {
-  margin: 0;
-  padding: 0;
-  list-style-type: none;
-}
-tags-input .autocomplete .suggestion-item {
-  padding: 5px 10px;
-  cursor: pointer;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  font: 16px "Helvetica Neue", Helvetica, Arial, sans-serif;
-  color: black;
-  background-color: white;
-}
-tags-input .autocomplete .suggestion-item.selected {
-  color: white;
-  background-color: #0097cf;
-}
-tags-input .autocomplete .suggestion-item.selected em {
-  color: white;
-  background-color: #0097cf;
-}
-tags-input .autocomplete .suggestion-item em {
-  font: normal bold 16px "Helvetica Neue", Helvetica, Arial, sans-serif;
-  color: black;
-  background-color: white;
-}
-
-// account for collapsing space between .btn
-.btn + .btn {
-  margin-left: 3px;
-}
-
-.btn-link--inherit-color {
-  color: inherit;
-}
-
-.breadcrumb {
-  margin-bottom: 0;
-  padding-bottom: 12px;
-  padding-top: 25px;
-}
-
-.modal-footer .alert {
-  text-align: left;
-}
-
-// FIXME: Pass as `style` prop to `List` once this is resolved (https://github.com/bvaughn/react-virtualized/issues/876). This is for the cog menus' overflow.
-.pf-c-window-scroller.ReactVirtualized__VirtualGrid {
-  overflow: visible !important;
-}
-
-.pf-c-window-scroller .ReactVirtualized__VirtualGrid__innerScrollContainer {
-  overflow: visible !important;
-}
-
-.toolbar-pf {
-  background-color: transparent;
-  border-bottom: none;
-  box-shadow: none;
-  min-width: 0; // enable text-overflow: ellipsis
-  padding-top: 0;
-}
-
-@media (max-width: $screen-md-max) {
-  .toolbar-pf-actions {
-    display: block;
-    margin-bottom: 0;
-  }
-}
-
-.table {
-  margin-bottom: 0;
-  &--layout-fixed {
-    table-layout: fixed;
-  }
-  td {
-    vertical-align: middle !important;
-  }
-  th {
-    font-weight: var(--pf-global--FontWeight--bold);
-    padding-top: 0 !important;
-  }
-  thead > tr > th {
-    border-bottom: 0;
-  }
-  tr:last-child {
-    border-bottom: 1px solid $table-border-color;
-  }
-}
-
 .blank-slate-pf {
   background-color: transparent;
   border: none;
@@ -226,6 +14,30 @@ tags-input .autocomplete .suggestion-item em {
       display: none;
     }
   }
+}
+
+.breadcrumb {
+  margin-bottom: 0;
+  padding-bottom: 12px;
+  padding-top: 25px;
+}
+
+// account for collapsing space between .btn
+.btn + .btn {
+  margin-left: 3px;
+}
+
+.btn-link--inherit-color {
+  color: inherit;
+}
+
+.form-control[disabled], fieldset[disabled] .form-control {
+  cursor: auto;
+}
+
+kbd {
+  border-radius: 3px;
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.25);
 }
 
 .modal.right-side-modal-pf {
@@ -251,19 +63,12 @@ tags-input .autocomplete .suggestion-item em {
   }
 }
 
+.modal-footer .alert {
+  text-align: left;
+}
+
 .modal-title {
   font-size: $font-size-base;
-}
-
-.xterm .xterm-screen canvas {
-  // workaround bug where 1px white stripe appears atop terminal in Firefox for MacOS
-  // see https://github.com/xtermjs/xterm.js/issues/1974
-  border-right: 1px solid transparent;
-}
-
-kbd {
-  border-radius: 3px;
-  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.25);
 }
 
 // PatternFly 4 overrides
@@ -289,22 +94,6 @@ kbd {
 .pf-c-about-modal-box__brand-image,
 .pf-c-brand {
   max-width: 100%;
-}
-
-.pf-c-dropdown__menu {
-  list-style: none;
-}
-
-// TEMP fix until https://github.com/patternfly/patternfly-next/issues/1543 is fixed upstream
-.pf-c-dropdown__menu-item {
-  &:focus,
-  &:hover {
-    color: var(--pf-global--Color--dark-100);
-  }
-}
-
-.pf-c-dropdown__toggle .pf-c-dropdown__toggle-icon {
-  flex: 0 0 auto; // so arrow doesn't shrink
 }
 
 .pf-c-page {
@@ -356,6 +145,24 @@ kbd {
   .pf-m-expanded + .pf-c-page__main {
     left: var(--pf-c-page__sidebar--md--Width);
   }
+}
+
+// specificity targeting form elements to override --pf-global--FontSize--md
+.pf-c-page,
+.modal-dialog {
+  .pf-c-button,
+  .pf-c-dropdown,
+  .pf-c-dropdown__menu-item,
+  .pf-c-dropdown__toggle,
+  .pf-c-form-control {
+    font-size: $font-size-base;
+    height: auto;
+  }
+}
+
+.pf-c-page__sidebar-body {
+  --pf-c-page__sidebar-body--PaddingTop: 0;
+  --pf-c-page__sidebar-body--PaddingBottom: 0;
 }
 
 .pf-c-page__sidebar {
@@ -504,15 +311,35 @@ kbd {
   }
 }
 
-.pf-c-page__sidebar-body {
-  --pf-c-page__sidebar-body--PaddingTop: 0;
-  --pf-c-page__sidebar-body--PaddingBottom: 0;
-}
-
 // pf table overrides
 
 .pf-c-table tr > th {
   font-weight: var(--pf-global--FontWeight--bold);
+}
+
+.pf-c-table {
+  table-layout: fixed;
+}
+
+.pf-c-table tr > * {
+  --pf-c-table-cell--PaddingLeft: 16px;
+  --pf-c-table-cell--PaddingRight: 16px;
+  --pf-c-table--m-compact-cell--first-last-child--PaddingLeft: 16px;
+  --pf-c-table--m-compact-cell--first-last-child--PaddingRight: 16px;
+}
+
+// operator name alignment adjusted
+.pf-c-table.pf-c-virtualized .co-clusterserviceversion-logo__icon {
+  align-items: flex-start;
+}
+.pf-c-table.pf-c-virtualized .co-clusterserviceversion-logo__name {
+  justify-content: flex-start;
+}
+
+.pf-c-table.pf-c-virtualized tr {
+  display: table;
+  table-layout: fixed;
+  width: 100%;
 }
 
 // override .co-m-table-grid [class*='col-'], .co-m-table-grid .row
@@ -524,14 +351,6 @@ kbd {
   vertical-align: middle;
 }
 
-// operator name alignment adjusted
-.pf-c-table.pf-c-virtualized .co-clusterserviceversion-logo__icon {
-  align-items: flex-start;
-}
-.pf-c-table.pf-c-virtualized .co-clusterserviceversion-logo__name {
-  justify-content: flex-start;
-}
-
 .pf-c-table.pf-c-virtualized tr.vertical-align-middle {
   .co-clusterserviceversion-logo__icon,
   .co-clusterserviceversion-logo {
@@ -539,12 +358,9 @@ kbd {
   }
 }
 
-// pf4 table spacings adjusted to match existing styles
-.pf-c-table tr > * {
-  --pf-c-table-cell--PaddingLeft: 16px;
-  --pf-c-table-cell--PaddingRight: 16px;
-  --pf-c-table--m-compact-cell--first-last-child--PaddingLeft: 16px;
-  --pf-c-table--m-compact-cell--first-last-child--PaddingRight: 16px;
+.pf-c-table tbody > tr > :first-child::before {
+  content: none;
+  width: 0 !important;
 }
 
 .pf-c-table.pf-m-compact .pf-c-table__action {
@@ -552,44 +368,12 @@ kbd {
   --pf-c-table__action--PaddingRight: 16px;
   --pf-c-table__action--PaddingTop: 8px;
   --pf-c-table__action--PaddingBottom: 8px;
-
-  .pf-c-dropdown__toggle {
-    font-size: $font-size-base;
-  }
-  .pf-c-dropdown__menu-item {
-    font-size: $font-size-base;
-  }
-}
-
-.pf-c-window-scroller .ReactVirtualized__VirtualGrid {
-  overflow: visible !important;
-}
-
-.pf-c-window-scroller .ReactVirtualized__VirtualGrid__innerScrollContainer {
-  overflow: visible !important;
-}
-
-.pf-c-table {
-  table-layout: fixed;
-}
-
-.pf-c-table.pf-c-virtualized tr {
-  display: table;
-  table-layout: fixed;
-  width: 100%;
-}
-
-.pf-c-table tbody > tr > :first-child::before {
-  content: none;
-  width: 0 !important;
 }
 
 .pf-c-table__check {
   width: 8.333% !important;
-}
 
-@media screen and (max-width: 768px) {
-  .pf-c-table__check {
+  @media screen and (max-width: 768px) {
     width: 16.66% !important;
   }
 }
@@ -597,44 +381,66 @@ kbd {
 .pf-c-table__action {
   width: 5% !important;
   padding-left: 0px !important;
-}
 
-// legacy classes to support existing dropdown, can be dropped after conversion to PF4
-.pf-c-table__action.dropdown-kebab-pf {
-  .co-kebab {
-    position: relative;
-    display: inline-block;
-    width: 100%;
-  }
-  .co-kebab__button {
-    position: relative;
-    width: 100%;
-    padding-left: 0px;
-    padding-right: 14px; // offset width of the co-kebab-dropdown ::before
-    margin-left: 0px;
-    margin-right: 0px;
-    font-size: 16px;
-    text-align: right;
-
-    --pf-c-dropdown__toggle--m-plain--Color: var(--pf-global--Color--200);
-    --pf-c-dropdown__toggle--m-plain--hover--Color: var(--pf-global--Color--100);
-    --pf-c-dropdown__toggle--m-plain--disabled--Color: var(--pf-global--disabled-color--200);
-
-    color: var(--pf-c-dropdown__toggle--m-plain--Color);
-    &:hover, &:focus {
-      color: var(--pf-global--Color--100);
-      text-decoration: none;
-    }
-  }
-  .dropdown-menu.dropdown-menu-right {
-    left: auto;
-    right: 0px;
-    margin-top: 9px;
-  }
-}
-
-@media screen and (max-width: 992px) {
-  .pf-c-table__action {
+  @media screen and (max-width: 992px) {
     width: 10% !important;
   }
+}
+
+.pf-c-table__action.dropdown-kebab-pf .pf-c-dropdown__menu.dropdown-menu-right {
+  left: auto;
+  right: -16px; // align with table edge, offset pf-c-table--m-compact-cell--first-last-child--PaddingRight
+}
+
+// FIXME: Pass as `style` prop to `List` once this is resolved (https://github.com/bvaughn/react-virtualized/issues/876). This is for the kebab menus' overflow.
+.pf-c-window-scroller.ReactVirtualized__VirtualGrid,
+.pf-c-window-scroller .ReactVirtualized__VirtualGrid,
+.pf-c-window-scroller .ReactVirtualized__VirtualGrid__innerScrollContainer {
+  overflow: visible !important;
+}
+
+.table {
+  margin-bottom: 0;
+  &--layout-fixed {
+    table-layout: fixed;
+  }
+  td {
+    vertical-align: middle !important;
+  }
+  th {
+    font-weight: var(--pf-global--FontWeight--bold);
+    padding-top: 0 !important;
+  }
+  thead > tr > th {
+    border-bottom: 0;
+  }
+  tr:last-child {
+    border-bottom: 1px solid $table-border-color;
+  }
+}
+
+.text-secondary {
+  color: $color-text-secondary;
+}
+
+.toolbar-pf {
+  background-color: transparent;
+  border-bottom: none;
+  box-shadow: none;
+  min-width: 0; // enable text-overflow: ellipsis
+  padding-top: 0;
+}
+
+@media (max-width: $screen-md-max) {
+  .toolbar-pf-actions {
+    display: block;
+    margin-bottom: 0;
+  }
+}
+
+
+.xterm .xterm-screen canvas {
+  // workaround bug where 1px white stripe appears atop terminal in Firefox for MacOS
+  // see https://github.com/xtermjs/xterm.js/issues/1974
+  border-right: 1px solid transparent;
 }

@@ -23,9 +23,9 @@ export class RequestSizeInput extends React.Component<RequestSizeInputProps> {
     const dropdownName = `${name}Unit`;
     return (
       <div className="form-group">
-        <div className="input-group">
+        <div className="pf-c-input-group">
           <input
-            className="form-control"
+            className="pf-c-form-control"
             type="number"
             step="any"
             onChange={this.onValueChange}

@@ -270,9 +270,7 @@ describe('Kubernetes resource CRUD operations', () => {
     it('displays YAML editor for creating a new custom resource instance', async() => {
       await browser.get(`${appHost}/k8s/cluster/customresourcedefinitions?name=${name}`);
       await crudView.isLoaded();
-      await crudView.resourceRows.$$('.co-kebab__button').click();
-      await browser.wait(until.elementToBeClickable($('.co-kebab__dropdown')));
-      await element(by.cssContainingText('.co-kebab__dropdown a', 'View Instances')).click();
+      await crudView.clickKebabAction(crd.spec.names.kind,'View Instances');
       await crudView.isLoaded();
       await crudView.createYAMLButton.click();
       await yamlView.isLoaded();

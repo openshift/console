@@ -18,7 +18,7 @@ export const visitOpenShiftImageStream = async(name: string) => {
 
 export const selectTestProject = async() => {
   await nsDropdown.click();
-  await browser.wait(until.visibilityOf($('.dropdown-menu')));
+  await browser.wait(until.visibilityOf($('.pf-c-dropdown__menu')));
   await element(by.cssContainingText('li[role=option] a', testName)).click();
-  await browser.wait(until.not(until.visibilityOf($('.dropdown-menu'))));
+  await browser.wait(until.not(until.visibilityOf($('.pf-c-dropdown__menu'))));
 };

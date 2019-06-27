@@ -37,7 +37,7 @@ describe('Test for Cluster Service Binding', () => {
 
     // select test namespace, then submit create instance form
     await $('#dropdown-selectbox').click();
-    await $$('.dropdown-menu').first().$(`#${testName}-Project-link`).click();
+    await $$('.pf-c-dropdown__menu').first().$(`#${testName}-Project-link`).click();
     await srvCatalogView.createButton.click();
     await crudView.isLoaded();
 

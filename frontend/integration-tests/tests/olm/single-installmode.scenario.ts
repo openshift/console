@@ -143,8 +143,8 @@ describe('Interacting with a `OwnNamespace` install mode Operator (Prometheus)',
   it('displays YAML editor for creating a new `Prometheus` instance', async() => {
     await browser.wait(until.visibilityOf(element(by.buttonText('Create New'))));
     await element(by.buttonText('Create New')).click();
-    await browser.wait(until.visibilityOf($$('.dropdown-menu').first()), 1000);
-    await $$('.dropdown-menu').first().element(by.linkText('Prometheus')).click();
+    await browser.wait(until.visibilityOf($$('.pf-c-dropdown__menu').first()), 1000);
+    await $$('.pf-c-dropdown__menu').first().element(by.buttonText('Prometheus')).click();
     await browser.wait(until.presenceOf($('.ace_text-input')));
 
     expect($('.co-create-operand__header').getText()).toContain('Create Prometheus');
@@ -189,8 +189,8 @@ describe('Interacting with a `OwnNamespace` install mode Operator (Prometheus)',
     await element(by.linkText('All Instances')).click();
     await browser.wait(until.visibilityOf(element(by.buttonText('Create New'))));
     await element(by.buttonText('Create New')).click();
-    await browser.wait(until.visibilityOf($$('.dropdown-menu').first()), 1000);
-    await $$('.dropdown-menu').first().element(by.linkText('Alertmanager')).click();
+    await browser.wait(until.visibilityOf($$('.pf-c-dropdown__menu').first()), 1000);
+    await $$('.pf-c-dropdown__menu').first().element(by.buttonText('Alertmanager')).click();
     await browser.wait(until.presenceOf($('.ace_text-input')));
 
     expect($('.co-create-operand__header').getText()).toContain('Create Alertmanager');
@@ -235,8 +235,8 @@ describe('Interacting with a `OwnNamespace` install mode Operator (Prometheus)',
     await element(by.linkText('All Instances')).click();
     await browser.wait(until.visibilityOf(element(by.buttonText('Create New'))));
     await element(by.buttonText('Create New')).click();
-    await browser.wait(until.visibilityOf($$('.dropdown-menu').first()), 1000);
-    await $$('.dropdown-menu').first().element(by.linkText('Service Monitor')).click();
+    await browser.wait(until.visibilityOf($$('.pf-c-dropdown__menu').first()), 1000);
+    await $$('.pf-c-dropdown__menu').first().element(by.buttonText('Service Monitor')).click();
     await browser.wait(until.presenceOf($('.ace_text-input')), 10000);
 
     expect($('.co-create-operand__header').getText()).toContain('Create Service Monitor');

@@ -38,8 +38,8 @@ const ApplicationSelector: React.FC<ApplicationSelectorProps> = ({
   return (
     <ApplicationDropdown
       className="co-namespace-selector"
-      menuClassName="co-namespace-selector__menu dropdown-menu--right"
-      buttonClassName="btn-link"
+      menuClassName="co-namespace-selector__menu"
+      buttonClassName="pf-m-plain"
       namespace={namespace}
       title={title && <span className="btn-link__title">{title}</span>}
       titlePrefix="Application"

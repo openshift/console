@@ -59,7 +59,7 @@ export const TextFilter = ({label, onChange, defaultValue, style, className}) =>
       <input
         ref={input}
         autoCapitalize="none"
-        className={classNames('form-control co-text-filter', className)}
+        className={classNames('pf-c-form-control co-text-filter', className)}
         defaultValue={defaultValue}
         onChange={onChange}
         onKeyDown={e => e.key === 'Escape' && e.target.blur()}

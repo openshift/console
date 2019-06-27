@@ -127,6 +127,7 @@ class StorageClassDropdown_ extends React.Component<StorageClassDropdownProps, S
             Storage Class
           </label>
           <Dropdown
+            className="co-storage-class-dropdown"
             autocompleteFilter={this.autocompleteFilter}
             autocompletePlaceholder="Select storage class"
             items={items}
