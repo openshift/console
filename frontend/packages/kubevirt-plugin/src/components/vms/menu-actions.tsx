@@ -1,56 +1,147 @@
-import {
-  getVmStatus,
-  VM_STATUS_IMPORTING,
-  VM_STATUS_V2V_CONVERSION_IN_PROGRESS,
-} from 'kubevirt-web-ui-components';
-
+import * as _ from 'lodash';
+import * as React from 'react';
 import { asAccessReview, Kebab, KebabOption } from '@console/internal/components/utils';
-import { K8sKind, PodKind } from '@console/internal/module/k8s';
-import { isVMRunning } from '../../selectors/vm';
-import { startStopVmModal } from '../modals/start-stop-vm-modal';
-import { VMKind } from '../../types/vm';
+import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
+import { getName, getNamespace } from '@console/shared';
+import { confirmModal } from '@console/internal/components/modals';
+import { VMIKind, VMKind } from '../../types/vm';
+import { isVMImporting, isVMRunning, isVMRunningWithVMI } from '../../selectors/vm';
+import { getMigrationVMIName, isMigrating } from '../../selectors/vmim';
+import { VirtualMachineInstanceMigrationModel } from '../../models';
+import { K8sEntityMap, VMMultiStatus } from '../../types';
+import { getLookupId } from '../../utils';
+import { restartVM, startVM, stopVM, VMActionType } from '../../k8s/requests/vm';
+import { startVMIMigration } from '../../k8s/requests/vmi';
+import { cancelMigration } from '../../k8s/requests/vmim';
 
 type ActionArgs = {
-  pods: PodKind[];
-  migrations: any[];
+  migrationLookup: K8sEntityMap<K8sResourceKind>;
+  vmiLookup: K8sEntityMap<VMIKind>;
+  vmStatus: VMMultiStatus;
 };
 
-const isImporting = (vm: VMKind, { pods, migrations }: ActionArgs): boolean => {
-  const status = getVmStatus(vm, pods, migrations);
-  return (
-    status && [VM_STATUS_IMPORTING, VM_STATUS_V2V_CONVERSION_IN_PROGRESS].includes(status.status)
-  );
-};
+const getVMActionMessage = (vm, action: VMActionType) => (
+  <React.Fragment>
+    Are you sure you want to {action} <strong>{getName(vm)}</strong> in namespace{' '}
+    <strong>{getNamespace(vm)}</strong>?
+  </React.Fragment>
+);
 
-const menuActionStart = (kindObj: K8sKind, vm: VMKind, actionArgs: ActionArgs): KebabOption => {
+const menuActionStart = (kindObj: K8sKind, vm: VMKind, { vmStatus }: ActionArgs): KebabOption => {
+  const title = 'Start Virtual Machine';
   return {
-    hidden: isImporting(vm, actionArgs) || isVMRunning(vm),
-    label: 'Start Virtual Machine',
+    hidden: isVMImporting(vmStatus) || isVMRunning(vm),
+    label: title,
     callback: () =>
-      startStopVmModal({
-        vm,
-        start: true,
+      confirmModal({
+        title,
+        message: getVMActionMessage(vm, VMActionType.Start),
+        btnText: _.capitalize(VMActionType.Start),
+        executeFn: () => startVM(vm),
       }),
     accessReview: asAccessReview(kindObj, vm, 'patch'),
   };
 };
 
 const menuActionStop = (kindObj: K8sKind, vm: VMKind): KebabOption => {
+  const title = 'Stop Virtual Machine';
   return {
     hidden: !isVMRunning(vm),
-    label: 'Stop Virtual Machine',
+    label: title,
     callback: () =>
-      startStopVmModal({
-        vm,
-        start: false,
+      confirmModal({
+        title,
+        message: getVMActionMessage(vm, VMActionType.Stop),
+        btnText: _.capitalize(VMActionType.Stop),
+        executeFn: () => stopVM(vm),
       }),
     accessReview: asAccessReview(kindObj, vm, 'patch'),
+  };
+};
+
+const menuActionRestart = (
+  kindObj: K8sKind,
+  vm: VMKind,
+  { vmStatus, vmiLookup }: ActionArgs,
+): KebabOption => {
+  const title = 'Restart Virtual Machine';
+  return {
+    hidden: isVMImporting(vmStatus) || !isVMRunningWithVMI({ vm, vmi: vmiLookup[getLookupId(vm)] }),
+    label: title,
+    callback: () =>
+      confirmModal({
+        title,
+        message: getVMActionMessage(vm, VMActionType.Restart),
+        btnText: _.capitalize(VMActionType.Restart),
+        executeFn: () => restartVM(vm),
+      }),
+    accessReview: asAccessReview(kindObj, vm, 'patch'),
+  };
+};
+
+const menuActionMigrate = (
+  kindObj: K8sKind,
+  vm: VMKind,
+  { vmStatus, migrationLookup, vmiLookup }: ActionArgs,
+): KebabOption => {
+  const title = 'Migrate Virtual Machine';
+  const vmi = vmiLookup[getLookupId(vm)];
+  const migration = migrationLookup[getLookupId(vm)];
+  return {
+    hidden: isVMImporting(vmStatus) || isMigrating(migration) || !isVMRunningWithVMI({ vm, vmi }),
+    label: title,
+    callback: () =>
+      confirmModal({
+        title,
+        message: (
+          <React.Fragment>
+            Do you wish to migrate <strong>{getName(vmi)}</strong> vmi to another node?
+          </React.Fragment>
+        ),
+        btnText: 'Migrate',
+        executeFn: () => startVMIMigration(vmi),
+      }),
+    accessReview: asAccessReview(
+      VirtualMachineInstanceMigrationModel,
+      { metadata: { namespace: getNamespace(vm) } },
+      'create',
+    ),
+  };
+};
+
+const menuActionCancelMigration = (
+  kindObj: K8sKind,
+  vm: VMKind,
+  { migrationLookup }: ActionArgs,
+): KebabOption => {
+  const title = 'Cancel Virtual Machine Migration';
+  const migration = migrationLookup[getLookupId(vm)];
+  return {
+    hidden: !isMigrating(migration),
+    label: title,
+    callback: () =>
+      confirmModal({
+        title,
+        message: (
+          <React.Fragment>
+            Are you sure you want to cancel <strong>{getMigrationVMIName(migration)}</strong>{' '}
+            migration in <strong>{getNamespace(migration)}</strong> namespace?
+          </React.Fragment>
+        ),
+        btnText: 'Cancel Migration',
+        executeFn: () => cancelMigration(migration),
+      }),
+    accessReview:
+      migration && asAccessReview(VirtualMachineInstanceMigrationModel, migration, 'delete'),
   };
 };
 
 export const menuActions = [
   menuActionStart,
   menuActionStop,
+  menuActionRestart,
+  menuActionMigrate,
+  menuActionCancelMigration,
   Kebab.factory.ModifyLabels,
   Kebab.factory.ModifyAnnotations,
   Kebab.factory.Delete,
