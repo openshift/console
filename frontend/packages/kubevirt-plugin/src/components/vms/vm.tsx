@@ -31,7 +31,7 @@ import { getMigrationVMIName, isMigrating } from '../../selectors/vmim';
 import { vmStatusFilter } from './table-filters';
 import { dimensifyHeader, dimensifyRow } from '../../utils/table';
 
-// import { openCreateVmWizard } from '../modals/create-vm-modal';
+import { openCreateVmWizard } from '../modals';
 
 const tableColumnClasses = [
   classNames('col-lg-4', 'col-md-4', 'col-sm-6', 'col-xs-6'),
@@ -127,20 +127,11 @@ VMList.displayName = 'VMList';
 
 const getCreateProps = (namespace: string) => ({
   items: {
-    // wizard: 'Create with Wizard', TODO(mlibra): migrate Create VM Dialog
+    wizard: 'Create with Wizard',
     yaml: 'Create from YAML',
   },
-  createLink: () => `/k8s/ns/${namespace || 'default'}/virtualmachines/~new/`,
-  /* TODO(mlibra): migrate Create VM Dialog
-  createLink: type => {
-    switch (type) {
-      case 'wizard':
-       return () => openCreateVmWizard(this.props.namespace);
-      default:
-        return `/k8s/ns/${namespace || 'default'}/virtualmachines/~new/`;
-    }
-  },
-  */
+  createLink: () => `/k8s/ns/${namespace || 'default'}/virtualmachines/~new/`, // covers 'yaml' and default
+  action: (itemName) => (itemName === 'wizard' ? () => openCreateVmWizard(namespace) : null),
 });
 
 export const VirtualMachinesPage: React.FC<VirtualMachinesPageProps> = (props) => {
