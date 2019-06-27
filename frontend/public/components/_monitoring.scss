@@ -60,7 +60,8 @@ $monitoring-line-height: 18px;
   display: flex;
 }
 
-.query-browser-metric__color {
+.query-browser__series-btn {
+  border: none;
   height: 20px;
   margin: 2px 12px 2px 5px;
   min-width: 20px;

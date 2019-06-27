@@ -1048,11 +1048,17 @@ const MetricsDropdown = ({onChange}) => {
   />;
 };
 
-const SeriesIcon = ({colorIndex, isDisabled, onClick}) => <div
-  className={classNames('query-browser-metric__color', {'query-browser-metric__color--disabled': isDisabled})}
-  onClick={onClick}
-  style={isDisabled ? undefined : {backgroundColor: graphColors[colorIndex % graphColors.length]}}
-></div>;
+const SeriesButton = ({colorIndex, isDisabled, onClick}) => {
+  const title = `${isDisabled ? 'Show' : 'Hide'} series`;
+  return <button
+    aria-label={title}
+    className={classNames('query-browser__series-btn', {'query-browser__series-btn--disabled': isDisabled})}
+    onClick={onClick}
+    style={isDisabled ? undefined : {backgroundColor: graphColors[colorIndex % graphColors.length]}}
+    title={title}
+    type="button"
+  ></button>;
+};
 
 const Query: React.FC<QueryProps> = ({colorOffset, onBlur, onDelete, onSubmit, onUpdate, query}) => {
   const {allSeries, disabledSeries, enabled, expanded, text} = query;
@@ -1112,7 +1118,7 @@ const Query: React.FC<QueryProps> = ({colorOffset, onBlur, onDelete, onSubmit, o
         <div className="co-m-table-grid__body">
           {_.map(allSeries, ({labels, value}, i) => <div className="row" key={i}>
             <div className="col-xs-9 query-browser-metric__wrapper">
-              <SeriesIcon
+              <SeriesButton
                 colorIndex={colorOffset + i}
                 isDisabled={_.some(disabledSeries, s => _.isEqual(s, labels))}
                 onClick={() => onUpdate({disabledSeries: _.xorWith(disabledSeries, [labels], _.isEqual)})}
