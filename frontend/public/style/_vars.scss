@@ -36,11 +36,17 @@ $pf-global--font-path: '~@patternfly/patternfly/assets/fonts';
 $popover-max-width: 325px;
 $table-border-color: $color-pf-black-200;
 
+:root {
+  --pf-global--FontSize--md: $font-size-base;
+  --pf-global--FontSize--sm: 13px;
+}
+
 
 // == Custom variables
 
 $co-m-label-line-height: 19px;
 $pf-header-icon-fontsize: 16px; // Patternfly 4 default
+$co-side-nav-font-size: 16px; // Side nav section (sub-section set by body)
 
 
 // == Colors
