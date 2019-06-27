@@ -2,7 +2,7 @@ import { Map as ImmutableMap } from 'immutable';
 
 import { TemplateModel } from '@console/internal/models';
 
-export const VmTemplateYAMLTemplates = ImmutableMap().setIn(
+export const VMTemplateYAMLTemplates = ImmutableMap().setIn(
   ['vm-template'],
   `
 apiVersion: ${TemplateModel.apiGroup}/${TemplateModel.apiVersion}

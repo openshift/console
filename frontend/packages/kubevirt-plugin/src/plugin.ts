@@ -12,7 +12,7 @@ import {
 import { TemplateModel } from '@console/internal/models';
 
 import * as models from './models';
-import { VmTemplateYAMLTemplates, VirtualMachineYAMLTemplates } from './models/templates';
+import { VMTemplateYAMLTemplates, VirtualMachineYAMLTemplates } from './models/templates';
 
 import './style.scss';
 
@@ -89,7 +89,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'YAMLTemplate',
     properties: {
       model: TemplateModel,
-      template: VmTemplateYAMLTemplates.getIn(['vm-template']),
+      template: VMTemplateYAMLTemplates.getIn(['vm-template']),
       templateName: 'vm-template',
     },
   },
