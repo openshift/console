@@ -10,3 +10,6 @@ export const getUid = (value: K8sResourceKind) =>
   _.get(value, 'metadata.uid') as K8sResourceKind['metadata']['uid'];
 export const getDeletetionTimestamp = (value: K8sResourceKind) =>
   _.get(value, 'metadata.deletionTimestamp') as K8sResourceKind['metadata']['deletionTimestamp'];
+
+export const getStatusPhase = (value: K8sResourceKind) =>
+  _.get(value, 'status.phase') as K8sResourceKind['status']['phase'];
