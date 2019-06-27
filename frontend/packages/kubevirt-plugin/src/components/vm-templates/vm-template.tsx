@@ -37,7 +37,7 @@ const tableColumnClasses = [
   Kebab.columnClass,
 ];
 
-const VmTempleateTableHeader = () => {
+const VmTemplateTableHeader = () => {
   return [
     {
       title: 'Name',
@@ -75,7 +75,7 @@ const VmTempleateTableHeader = () => {
     },
   ];
 };
-VmTempleateTableHeader.displayName = 'VmTemplateTableHeader';
+VmTemplateTableHeader.displayName = 'VmTemplateTableHeader';
 
 const VmTemplateTableRow = ({ obj: template, index, key, style }: VmTemplateTableRowProps) => {
   const os = getTemplateOperatingSystems([template])[0];
@@ -118,7 +118,7 @@ const VirtualMachineTemplates = (props: React.ComponentProps<typeof Table>) => {
     <Table
       {...props}
       aria-label={labelPlural}
-      Header={VmTempleateTableHeader}
+      Header={VmTemplateTableHeader}
       Row={VmTemplateTableRow}
     />
   );
