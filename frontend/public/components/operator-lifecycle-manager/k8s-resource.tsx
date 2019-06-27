@@ -2,7 +2,8 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 
 import { connectToPlural } from '../../kinds';
-import { CRDDescription, ClusterServiceVersionKind, ClusterServiceVersionResourceLink, ClusterServiceVersionResourceKind } from './index';
+import { CRDDescription, ClusterServiceVersionKind } from './index';
+import { OperandLink } from './operand';
 import { ResourceLink, Timestamp, MsgBox } from '../utils';
 import { ColHead, ListHeader, MultiListPage, List } from '../factory';
 import { K8sResourceKind, GroupVersionKind, kindForReference, K8sKind } from '../../module/k8s';
@@ -46,7 +47,7 @@ export const Resources = connectToPlural((props: ResourceProps) => {
 
   const ResourceRow: React.SFC<ResourceRowProps> = ({obj}) => <div className="row co-resource-list__item">
     <div className="col-xs-4">
-      { isCR(obj) ? <ClusterServiceVersionResourceLink obj={obj} /> : <ResourceLink kind={obj.kind} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} /> }
+      { isCR(obj) ? <OperandLink obj={obj} /> : <ResourceLink kind={obj.kind} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} /> }
     </div>
     <div className="col-xs-2">{obj.kind}</div>
     <div className="col-xs-2">{_.get(obj.status, 'phase', 'Created')}</div>
@@ -79,7 +80,7 @@ export type ResourceHeaderProps = {
 };
 
 export type ResourceProps = {
-  obj: ClusterServiceVersionResourceKind;
+  obj: K8sResourceKind;
   kindObj: K8sKind;
   clusterServiceVersion: ClusterServiceVersionKind;
 };

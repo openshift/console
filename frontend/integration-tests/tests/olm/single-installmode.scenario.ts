@@ -162,7 +162,7 @@ describe('Interacting with a `OwnNamespace` install mode Operator (Prometheus)',
     await crudView.rowForName('example').element(by.linkText('example')).click();
     await browser.wait(until.presenceOf($('.loading-box__loaded')), 5000);
 
-    expect($('.co-clusterserviceversion-resource-details__section--info').isDisplayed()).toBe(true);
+    expect($('.co-operand-details__section--info').isDisplayed()).toBe(true);
   });
 
   it('displays the raw YAML for the `Prometheus`', async() => {
@@ -208,7 +208,7 @@ describe('Interacting with a `OwnNamespace` install mode Operator (Prometheus)',
     await crudView.rowForName('alertmanager-main').element(by.linkText('alertmanager-main')).click();
     await browser.wait(until.presenceOf($('.loading-box__loaded')), 5000);
 
-    expect($('.co-clusterserviceversion-resource-details__section--info').isDisplayed()).toBe(true);
+    expect($('.co-operand-details__section--info').isDisplayed()).toBe(true);
   });
 
   it('displays the raw YAML for the `Alertmanager`', async() => {
@@ -254,7 +254,7 @@ describe('Interacting with a `OwnNamespace` install mode Operator (Prometheus)',
     await crudView.rowForName('example').element(by.linkText('example')).click();
     await browser.wait(until.presenceOf($('.loading-box__loaded')), 5000);
 
-    expect($('.co-clusterserviceversion-resource-details__section--info').isDisplayed()).toBe(true);
+    expect($('.co-operand-details__section--info').isDisplayed()).toBe(true);
   });
 
   it('displays the raw YAML for the `ServiceMonitor`', async() => {

@@ -7,7 +7,7 @@ import { sortable } from '@patternfly/react-table';
 import { Helmet } from 'react-helmet';
 import { Alert } from '@patternfly/react-core';
 
-import { ProvidedAPIsPage, ProvidedAPIPage } from './clusterserviceversion-resource';
+import { ProvidedAPIsPage, ProvidedAPIPage } from './operand';
 import { DetailsPage, ListPage, Table, TableRow, TableData } from '../factory';
 import { withFallback } from '../utils/error-boundary';
 import { referenceForModel, referenceFor, GroupVersionKind, K8sKind } from '../../module/k8s';

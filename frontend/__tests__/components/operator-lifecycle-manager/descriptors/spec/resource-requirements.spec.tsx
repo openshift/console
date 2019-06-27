@@ -4,7 +4,6 @@ import { shallow, mount, ShallowWrapper, ReactWrapper } from 'enzyme';
 import Spy = jasmine.Spy;
 
 import { ResourceRequirementsModal, ResourceRequirementsModalProps, ResourceRequirementsModalLink, ResourceRequirementsModalLinkProps } from '../../../../../public/components/operator-lifecycle-manager/descriptors/spec/resource-requirements';
-import { ClusterServiceVersionResourceKind } from '../../../../../public/components/operator-lifecycle-manager';
 import { testResourceInstance, testModel } from '../../../../../__mocks__/k8sResourcesMocks';
 import * as modal from '../../../../../public/components/factory/modal';
 import * as k8s from '../../../../../public/module/k8s';
@@ -47,7 +46,7 @@ describe(ResourceRequirementsModal.name, () => {
 
 describe(ResourceRequirementsModalLink.displayName, () => {
   let wrapper: ShallowWrapper<ResourceRequirementsModalLinkProps>;
-  let obj: ClusterServiceVersionResourceKind;
+  let obj: k8s.K8sResourceKind;
 
   beforeEach(() => {
     obj = _.cloneDeep(testResourceInstance);

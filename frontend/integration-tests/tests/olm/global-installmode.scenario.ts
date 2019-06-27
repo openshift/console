@@ -158,7 +158,7 @@ describe('Interacting with an `AllNamespaces` install mode Operator (Redis)', ()
     await crudView.rowForName(redisEnterpriseCluster).element(by.linkText(redisEnterpriseCluster)).click();
     await browser.wait(until.presenceOf($('.loading-box__loaded')), 5000);
 
-    expect($('.co-clusterserviceversion-resource-details__section--info').isDisplayed()).toBe(true);
+    expect($('.co-operand-details__section--info').isDisplayed()).toBe(true);
   });
 
   it('displays the raw YAML for the `RedisEnterpriseCluster`', async() => {

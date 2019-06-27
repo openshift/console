@@ -3,13 +3,13 @@ import * as _ from 'lodash-es';
 
 import { K8sResourceKind, GroupVersionKind, OwnerReference, Selector, referenceForGroupVersionKind } from '../../module/k8s';
 import { Descriptor } from './descriptors/types';
-export { ClusterServiceVersionsDetailsPage, ClusterServiceVersionsPage } from './clusterserviceversion';
-export { ClusterServiceVersionResourcesDetailsPage, ClusterServiceVersionResourceLink } from './clusterserviceversion-resource';
-export { CatalogSourceDetailsPage, CreateSubscriptionYAML } from './catalog-source';
-export { SubscriptionsPage } from './subscription';
+import { InstallModeType } from './operator-group';
 
 import * as operatorLogo from '../../imgs/operator.svg';
-import { InstallModeType } from './operator-group';
+
+export { ClusterServiceVersionsDetailsPage, ClusterServiceVersionsPage } from './clusterserviceversion';
+export { CatalogSourceDetailsPage, CreateSubscriptionYAML } from './catalog-source';
+export { SubscriptionsPage } from './subscription';
 
 export const copiedLabelKey = 'olm.copiedFrom';
 
@@ -128,11 +128,6 @@ export type ClusterServiceVersionKind = {
     reason: CSVConditionReason;
     requirementStatus?: RequirementStatus[];
   };
-} & K8sResourceKind;
-
-// FIXME(alecmerdler): Remove this and just use `K8sResourceKind`
-export type ClusterServiceVersionResourceKind = {
-
 } & K8sResourceKind;
 
 export type StepResource = {

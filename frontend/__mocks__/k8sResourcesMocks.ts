@@ -1,6 +1,5 @@
 import {
   ClusterServiceVersionKind,
-  ClusterServiceVersionResourceKind,
   InstallPlanKind,
   ClusterServiceVersionPhase,
   CSVConditionReason,
@@ -189,7 +188,7 @@ export const testModel: K8sKind = {
   crd: true,
 };
 
-export const testResourceInstance: ClusterServiceVersionResourceKind = {
+export const testResourceInstance: K8sResourceKind = {
   apiVersion: 'testapp.coreos.com/v1alpha1',
   kind: 'TestResource',
   metadata: {
@@ -210,7 +209,7 @@ export const testResourceInstance: ClusterServiceVersionResourceKind = {
   },
 };
 
-export const testOwnedResourceInstance: ClusterServiceVersionResourceKind = {
+export const testOwnedResourceInstance: K8sResourceKind = {
   apiVersion: 'ownedoperators.coreos.com/v1alpha1',
   kind: 'TestOwnedResource',
   metadata: {
