@@ -60,18 +60,30 @@
   width: 20px;
 }
 
-.query-browser__metrics-dropdown {
-  .query-browser__metrics-dropdown-button {
-    width: 200px;
-  }
-  .query-browser__metrics-dropdown-menu {
-    max-height: 25vh;
-    overflow: scroll;
-  }
+.query-browser__dropdown--subtitle {
+  padding: 1px 10px;
+}
+
+.query-browser__metrics-dropdown-button {
+  width: 200px;
+}
+
+.query-browser__metrics-dropdown-menu {
+  display: block;
+  max-height: 25vh;
+  overflow: scroll;
 }
 
 .query-browser__query {
+  width: 100%;
+}
+
+.query-browser__query-input {
   resize: vertical;
+}
+
+.query-browser__query-switch {
+  margin-right: 15px;
 }
 
 .query-browser__span-dropdown {

@@ -1018,7 +1018,56 @@ const CreateSilence = () => {
     : <SilenceForm defaults={{matchers}} saveButtonText="Create" title="Silence Alert" />;
 };
 
-const MetricsDropdown = ({onChange}) => {
+const prometheusFunctions = [
+  'abs()',
+  'absent()',
+  'avg_over_time()',
+  'ceil()',
+  'changes()',
+  'clamp_max()',
+  'clamp_min()',
+  'count_over_time()',
+  'day_of_month()',
+  'day_of_week()',
+  'days_in_month()',
+  'delta()',
+  'deriv()',
+  'exp()',
+  'floor()',
+  'histogram_quantile()',
+  'holt_winters()',
+  'hour()',
+  'idelta()',
+  'increase()',
+  'irate()',
+  'label_join()',
+  'label_replace()',
+  'ln()',
+  'log10()',
+  'log2()',
+  'max_over_time()',
+  'min_over_time()',
+  'minute()',
+  'month()',
+  'predict_linear()',
+  'quantile_over_time()',
+  'rate()',
+  'resets()',
+  'round()',
+  'scalar()',
+  'sort()',
+  'sort_desc()',
+  'sqrt()',
+  'stddev_over_time()',
+  'stdvar_over_time()',
+  'sum_over_time()',
+  'time()',
+  'timestamp()',
+  'vector()',
+  'year()',
+];
+
+const MetricsDropdown = ({onChange, onLoad}) => {
   const [items, setItems] = React.useState({});
   const [isError, setIsError] = React.useState(false);
 
@@ -1026,9 +1075,14 @@ const MetricsDropdown = ({onChange}) => {
 
   React.useEffect(() => {
     safeFetch(`${PROMETHEUS_BASE_PATH}/${PrometheusEndpoint.LABEL}/__name__/values`)
-      .then(({data}) => setItems(_.zipObject(data, data)))
+      .then(({data}) => {
+        setItems(_.zipObject(data, data));
+        if (onLoad) {
+          onLoad(data);
+        }
+      })
       .catch(() => setIsError(true));
-  }, [safeFetch]);
+  }, [onLoad, safeFetch]);
 
   let title: React.ReactNode = 'Insert Metric at Cursor';
   if (isError) {
@@ -1068,20 +1122,84 @@ const SeriesButton = ({colorIndex, isDisabled, onClick}) => {
   ></button>;
 };
 
-const Query: React.FC<QueryProps> = ({colorOffset, onBlur, onDelete, onSubmit, onUpdate, query}) => {
-  const {allSeries, disabledSeries, enabled, expanded, text} = query;
+const QueryInput: React.FC<QueryInputProps> = ({metrics = [], onBlur, onSubmit, onUpdate, value = ''}) => {
+  const [token, setToken] = React.useState('');
 
-  const toggleEnabled = () => onUpdate({enabled: !enabled, expanded: !enabled, query: enabled ? '' : text});
+  const inputRef = React.useRef(null);
 
-  const toggleAllSeries = () => onUpdate({disabledSeries: _.isEmpty(disabledSeries) ? _.map(allSeries, 'labels') : []});
+  const onChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    onUpdate(e.target.value);
+
+    const textBeforeCursor = e.target.value.substring(0, inputRef.current.selectionEnd);
+
+    // Metric and function names can only contain the characters a-z, A-Z, 0-9, '_' and ':', but also add '(' and ')'
+    // for matching function brackets
+    const allTokens = textBeforeCursor.split(/[^a-zA-Z0-9_:()]+/);
+
+    setToken(_.last(allTokens));
+  };
 
   const onKeyDown = (e: React.KeyboardEvent) => {
     // Enter+Shift inserts newlines, Enter alone runs the query
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      onSubmit(e);
+      onSubmit();
     }
   };
+
+  const onTextareaBlur = (e: React.FocusEvent<HTMLTextAreaElement>) => {
+    if (!_.get(e, 'relatedTarget.dataset.autocomplete')) {
+      onBlur(e);
+      setToken('');
+    }
+  };
+
+  const onClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+
+    // Replace the autocomplete token with the selected autocomplete option
+    const re = new RegExp(`${_.escapeRegExp(token)}$`);
+    onUpdate(value.replace(re, `${e.currentTarget.dataset.autocomplete} `));
+
+    setToken('');
+    inputRef.current.focus();
+  };
+
+  const functionOptions = token.length < 2 ? [] : prometheusFunctions.filter(a => fuzzy(token, a));
+  const metricOptions = token.length < 2 ? [] : metrics.filter(a => fuzzy(token, a));
+
+  return <div className="query-browser__query query-browser__inline-control pf-c-dropdown">
+    <textarea
+      autoFocus={true}
+      className="form-control query-browser__query-input"
+      onBlur={onTextareaBlur}
+      onChange={onChange}
+      onKeyDown={onKeyDown}
+      placeholder="Expression (press Shift+Enter for newlines)"
+      ref={inputRef}
+      value={value}
+    />
+    {(!_.isEmpty(functionOptions) || !_.isEmpty(metricOptions)) && (
+      <ul className="pf-c-dropdown__menu query-browser__metrics-dropdown-menu">
+        {!_.isEmpty(functionOptions) && <div className="text-muted query-browser__dropdown--subtitle">Functions</div>}
+        {_.map(functionOptions, f => <li key={f}>
+          <a href="#" className="pf-c-dropdown__menu-item" data-autocomplete={f} onClick={onClick}>{f}</a>
+        </li>)}
+        {!_.isEmpty(metricOptions) && <div className="text-muted query-browser__dropdown--subtitle">Metrics</div>}
+        {_.map(metricOptions, m => <li key={m}>
+          <a href="#" className="pf-c-dropdown__menu-item" data-autocomplete={m} onClick={onClick}>{m}</a>
+        </li>)}
+      </ul>
+    )}
+  </div>;
+};
+
+const Query: React.FC<QueryProps> = ({colorOffset, metrics, onBlur, onDelete, onSubmit, onUpdate, query}) => {
+  const {allSeries, disabledSeries, enabled, expanded, text} = query;
+
+  const toggleEnabled = () => onUpdate({enabled: !enabled, expanded: !enabled, query: enabled ? '' : text});
+
+  const toggleAllSeries = () => onUpdate({disabledSeries: _.isEmpty(disabledSeries) ? _.map(allSeries, 'labels') : []});
 
   const kebabOptions = [
     {label: `${enabled ? 'Disable' : 'Enable'} query`, callback: toggleEnabled},
@@ -1092,13 +1210,11 @@ const Query: React.FC<QueryProps> = ({colorOffset, onBlur, onDelete, onSubmit, o
   return <div className="group">
     <div className="group__title">
       <ExpandButton isExpanded={expanded} onClick={() => onUpdate({expanded: !expanded})} />
-      <textarea
-        autoFocus={true}
-        className="form-control query-browser__inline-control query-browser__query"
+      <QueryInput
+        metrics={metrics}
         onBlur={onBlur}
-        onChange={e => onUpdate({text: e.target.value})}
-        onKeyDown={onKeyDown}
-        placeholder="Expression (press Shift+Enter for newlines)"
+        onSubmit={onSubmit}
+        onUpdate={v => onUpdate({text: v})}
         value={text}
       />
       <div className="query-browser__inline-control">
@@ -1141,6 +1257,7 @@ const Query: React.FC<QueryProps> = ({colorOffset, onBlur, onDelete, onSubmit, o
 
 const QueryBrowserPage = withFallback(() => {
   const [focusedQuery, setFocusedQuery] = React.useState();
+  const [metrics, setMetrics] = React.useState();
   const [restoreSelection, setRestoreSelection] = React.useState();
 
   const defaultQuery = getURLSearchParams().query || '';
@@ -1164,9 +1281,11 @@ const QueryBrowserPage = withFallback(() => {
 
   const deleteAllQueries = () => setQueries([defaultQueryObj]);
 
+  const runQueries = () => setQueries(queries.map(q => q.enabled ? Object.assign({}, q, {query: q.text}) : q));
+
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setQueries(queries.map(q => q.enabled ? Object.assign({}, q, {query: q.text}) : q));
+    runQueries();
   };
 
   const isAllExpanded = _.every(queries, 'expanded');
@@ -1239,7 +1358,7 @@ const QueryBrowserPage = withFallback(() => {
           />
           <form onSubmit={onSubmit}>
             <div className="query-browser__all-queries-controls">
-              <MetricsDropdown onChange={onMetricChange} />
+              <MetricsDropdown onChange={onMetricChange} onLoad={setMetrics} />
               <div>
                 <button type="button" className="btn btn-default query-browser__inline-control" onClick={addQuery}>Add Query</button>
                 <button type="submit" className="btn btn-primary">Run Queries</button>
@@ -1250,7 +1369,7 @@ const QueryBrowserPage = withFallback(() => {
                 ? [defaultQueryObj]
                 : queries.filter((v, k) => k !== i));
 
-              const onBlur = e => {
+              const onBlur = (e: React.FocusEvent<HTMLTextAreaElement>) => {
                 if (_.get(e, 'relatedTarget.id') === 'metrics-dropdown') {
                   // Focus has shifted from a query input to the metrics dropdown, so store the cursor position so we
                   // know where to insert the metric when it is selected
@@ -1273,9 +1392,10 @@ const QueryBrowserPage = withFallback(() => {
               return <Query
                 colorOffset={colorOffset}
                 key={i}
+                metrics={metrics}
                 onBlur={onBlur}
                 onDelete={deleteQuery}
-                onSubmit={onSubmit}
+                onSubmit={runQueries}
                 onUpdate={patch => updateQuery(i, patch)}
                 query={q}
               />;
@@ -1469,9 +1589,17 @@ type PrometheusQuery = {
 };
 type QueryProps = {
   colorOffset: number;
-  onBlur: (e: React.FocusEvent) => void;
+  metrics: string[],
+  onBlur: (e: React.FocusEvent<HTMLTextAreaElement>) => void;
   onDelete: () => void;
-  onSubmit: (e: React.FormEvent) => void;
+  onSubmit: () => void;
   onUpdate: (patch: PrometheusQuery) => void;
   query: PrometheusQuery;
+};
+type QueryInputProps = {
+  metrics: string[],
+  onBlur: (e: React.FocusEvent<HTMLTextAreaElement>) => void;
+  onSubmit: () => void;
+  onUpdate: (text: string) => void;
+  value: string,
 };
