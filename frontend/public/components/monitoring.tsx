@@ -1442,7 +1442,6 @@ export type ListPageProps = {
   CreateButton: React.ComponentType<{}>;
   data: Rule[] | Silence[];
   filters: {[key: string]: any};
-  // Header: React.ComponentType<any>;
   Header: (...args) => any[];
   itemCount: number;
   kindPlural: string;

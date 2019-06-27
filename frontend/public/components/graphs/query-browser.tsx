@@ -24,6 +24,7 @@ import { VictorySelectionContainer } from 'victory-selection-container';
 import { Dropdown, humanizeNumber, LoadingInline, usePoll, useRefWidth, useSafeFetch } from '../utils';
 import { formatPrometheusDuration, parsePrometheusDuration, twentyFourHourTime } from '../utils/datetime';
 import { withFallback } from '../utils/error-boundary';
+import { PrometheusResponse } from '.';
 import { getPrometheusURL, PrometheusEndpoint } from './helpers';
 import { queryBrowserTheme } from './themes';
 
@@ -51,7 +52,7 @@ const SpanControls: React.FC<SpanControlsProps> = React.memo(({defaultSpanText, 
     setText(formatPrometheusDuration(span));
   }, [span]);
 
-  const setSpan = newText => {
+  const setSpan = (newText: string) => {
     const newSpan = parsePrometheusDuration(newText);
     const newIsValid = (newSpan > 0);
     setIsValid(newIsValid);
@@ -154,7 +155,7 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
 
   const safeFetch = useSafeFetch();
 
-  const safeFetchQuery = query => {
+  const safeFetchQuery = (query: string) => {
     if (_.isEmpty(query)) {
       return undefined;
     }
@@ -170,7 +171,7 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
   };
 
   const tick = () => Promise.all(_.map(queries, safeFetchQuery))
-    .then(responses => {
+    .then((responses: PrometheusResponse[]) => {
       const newResults = _.map(responses, 'data.result');
       setResults(newResults);
       if (onDataUpdate) {
@@ -211,12 +212,12 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   ), [disabledSeriesKey, filterLabels, results, samples, span]);
 
-  const onSpanChange = React.useCallback(newSpan => {
+  const onSpanChange = React.useCallback((newSpan: number) => {
     setDomain(undefined);
     setSpan(newSpan);
   }, []);
 
-  const onZoom = React.useCallback(({x, y}) => {
+  const onZoom = React.useCallback(({x, y}: Domain) => {
     setDomain({x, y});
     setSpan(x[1] - x[0]);
   }, []);
