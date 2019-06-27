@@ -78,7 +78,7 @@ describe('Renders QuotaGaugeCharts', () => {
   const chartRow = wrapper.find('.co-resource-quota-chart-row');
 
   it('renders QuotaGaugeCharts for CPU Request', () => {
-    expect(chartRow.find({title:'CPU Request'}).find({centerText:'No Request'}).exists()).toBe(true);
+    expect(chartRow.find('NoQuotaGuage').find({title:'CPU Request'}).exists()).toBe(true);
   });
 
   it('renders QuotaGaugeCharts for CPU Limit', () => {
@@ -90,7 +90,7 @@ describe('Renders QuotaGaugeCharts', () => {
   });
 
   it('renders QuotaGaugeCharts for Memory Limit', () => {
-    expect(chartRow.find({title:'Memory Limit'}).find({centerText:'No Limit'}).exists()).toBe(true);
+    expect(chartRow.find('NoQuotaGuage').find({title:'Memory Limit'}).exists()).toBe(true);
   });
 });
 
