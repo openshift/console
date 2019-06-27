@@ -1,50 +1,10 @@
 import { Map as ImmutableMap } from 'immutable';
 
 import { TemplateModel } from '@console/internal/models';
-import { VirtualMachineModel } from './models';
 
-export const yamlTemplates = ImmutableMap()
-  .setIn(
-    [VirtualMachineModel, 'default'],
-    `
-apiVersion: ${VirtualMachineModel.apiGroup}/${VirtualMachineModel.apiVersion}
-kind: ${VirtualMachineModel.kind}
-metadata:
-  name: example
-spec:
-  running: false
-  template:
-    spec:
-      domain:
-        devices:
-          disks:
-            - name: containerdisk
-              disk:
-                bus: virtio
-            - name: cloudinitdisk
-              disk:
-                bus: virtio
-          interfaces:
-          - name: default
-            bridge: {}
-        resources:
-          requests:
-            memory: 64M
-      networks:
-      - name: default
-        pod: {}
-      volumes:
-        - name: containerdisk
-          containerDisk:
-            image: kubevirt/cirros-registry-disk-demo
-        - name: cloudinitdisk
-          cloudInitNoCloud:
-            userDataBase64: SGkuXG4=
-`,
-  )
-  .setIn(
-    [TemplateModel, 'vm-template'],
-    `
+export const VmTemplateYAMLTemplates = ImmutableMap().setIn(
+  ['vm-template'],
+  `
 apiVersion: ${TemplateModel.apiGroup}/${TemplateModel.apiVersion}
 kind: ${TemplateModel.kind}
 metadata:
@@ -113,4 +73,4 @@ parameters:
     description: Amount of cores
     value: '4'
 `,
-  );
+);
