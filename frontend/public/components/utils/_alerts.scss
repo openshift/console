@@ -1,12 +1,21 @@
 .co-alert {
-  max-height: 75px;
-  overflow-x: hidden;
-  overflow-y: auto;
-  @media (min-height: $screen-sm-min) {
-    max-height: 150px;
+  margin-bottom: var(--pf-global--spacer--lg);
+  // overrides Bootstrap-related line-height issue that causes the title and icon to go out of alignment
+  h4 {
+    line-height: var(--pf-global--LineHeight--md);
   }
 }
 
 .co-expandable-alert {
   margin-bottom: var(--pf-global--spacer--xl);
+}
+
+.co-scrollable-alert .pf-c-alert__description {
+  max-height: 100px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  @include co-break-word;
+  @media (min-height: $screen-sm-min) {
+    max-height: 200px;
+  }
 }

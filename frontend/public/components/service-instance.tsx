@@ -3,6 +3,8 @@ import * as _ from 'lodash-es';
 import { Link, withRouter, RouteComponentProps, match } from 'react-router-dom';
 import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
+import { Alert } from '@patternfly/react-core';
+
 import { k8sList, K8sResourceKind, planExternalName, serviceCatalogStatus, referenceForModel } from '../module/k8s';
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
 import {
@@ -87,12 +89,13 @@ class ServiceInstanceMessage_ extends React.Component<ServiceInstanceMessageProp
     // Warn when the instance is deleted, but is still has bindings.
     if (deletionTimestamp && hasBindings) {
       const basePath = url.replace(/\/$/, '');
-      return <p className="alert alert-warning co-service-instance-delete-bindings-warning">
-        <i className="pficon pficon-warning-triangle-o" aria-hidden="true" />
-        This service instance is marked for deletion, but still has bindings.
-        You must delete the bindings before the instance will be deleted.&nbsp;&nbsp;
-        <Link to={`${basePath}/servicebindings`}>View Service Bindings</Link>
-      </p>;
+      return <Alert
+        isInline
+        className="co-alert co-service-instance-delete-bindings-warning"
+        variant="warning"
+        title="Service instance still has bindings">
+          This service instance is marked for deletion, but still has bindings. You must delete the bindings before the instance will be deleted. <Link to={`${basePath}/servicebindings`}>View Service Bindings</Link>
+      </Alert>;
     }
 
     // Show help for creating a binding when there are none for this instance.

@@ -2,6 +2,7 @@ import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import { Base64 } from 'js-base64';
 import { saveAs } from 'file-saver';
+import { Alert, AlertActionLink } from '@patternfly/react-core';
 
 import { LoadingInline, LogWindow, TogglePlay } from './';
 import * as classNames from 'classnames';
@@ -246,22 +247,21 @@ export class ResourceLog extends React.Component {
     const {error, lines, linesBehind, stale, status, isFullscreen} = this.state;
     const bufferFull = lines.length === bufferSize;
 
-    // TODO create alert component or use pf-react alerts here.
     return <React.Fragment>
-      {error && <p className="alert alert-danger">
-        <span className="pficon pficon-error-circle-o" aria-hidden="true"></span>
-        An error occured while retrieving the requested logs.
-        <button className="btn btn-link" onClick={this._restartStream} >
-          Retry
-        </button>
-      </p>}
-      {stale && <p className="alert alert-info">
-        <span className="pficon pficon-info" aria-hidden="true"></span>
-        The logs for this {kind} may be stale.
-        <button className="btn btn-link" onClick={this._restartStream} >
-          Refresh
-        </button>
-      </p>}
+      {error && <Alert
+        isInline
+        className="co-alert"
+        variant="danger"
+        title="An error occured while retrieving the requested logs."
+        action={<AlertActionLink onClick={this._restartStream}>Retry</AlertActionLink>}
+      />}
+      {stale && <Alert
+        isInline
+        className="co-alert"
+        variant="info"
+        title={`The logs for this ${kind} may be stale.`}
+        action={<AlertActionLink onClick={this._restartStream}>Refresh</AlertActionLink>}
+      />}
       <div ref={this._resourceLogRef} className={classNames('resource-log', {'resource-log--fullscreen': isFullscreen})}>
         <LogControls
           dropdown={dropdown}

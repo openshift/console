@@ -2,7 +2,7 @@ import * as classNames from 'classnames';
 import * as fuzzy from 'fuzzysearch';
 import * as _ from 'lodash-es';
 import { murmur3 } from 'murmurhash-js';
-import { Switch } from '@patternfly/react-core';
+import { Alert, Switch } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
@@ -999,10 +999,7 @@ class SilenceForm_ extends React.Component<SilenceFormProps, SilenceFormState> {
 }
 const SilenceForm = withFallback(SilenceForm_);
 
-const EditInfo = () => <div className="alert alert-info">
-  <span className="pficon pficon-info"></span>
-  When changes are saved, the currently existing silence will be expired and a new silence with the new configuration will take its place.
-</div>;
+const EditInfo = () => <Alert isInline className="co-alert" variant="info" title="Overwriting current silence">When changes are saved, the currently existing silence will be expired and a new silence with the new configuration will take its place.</Alert>;
 
 const EditSilence = connect(silenceParamToProps)(({loaded, loadError, silence}) => {
   const isExpired = silenceState(silence) === SilenceStates.Expired;

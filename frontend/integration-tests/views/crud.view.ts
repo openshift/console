@@ -165,5 +165,5 @@ export const checkResourceExists = async(resource: string, name: string) => {
 
 export const emptyState = $('.cos-status-box').$('.text-center');
 
-export const errorMessage = $('.alert-danger');
-export const successMessage = $('.alert-success');
+export const errorMessage = $('.pf-c-alert.pf-m-inline.pf-m-danger');
+export const successMessage = $('.pf-c-alert.pf-m-inline.pf-m-success');
