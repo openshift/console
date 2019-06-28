@@ -1,5 +1,8 @@
 /* eslint-env node */
 
+import './setup-jsdom';
+import './__mocks__/matchMedia';
+
 import {
   resolvePluginPackages,
   loadActivePlugins,

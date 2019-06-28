@@ -1,1 +1,1 @@
-window.matchMedia = () => ({matches: true});
+window.matchMedia = () => ({ matches: true });

@@ -38,7 +38,7 @@ describe('BaseNode', () => {
         .find('.odc-base-node__bg')
         .first()
         .props().filter,
-    ).toBe('url(blank#BaseNodeDropShadowFilterId)');
+    ).toBe('url(/#BaseNodeDropShadowFilterId)');
 
     wrapper.setState({ hover: true });
     expect(
@@ -46,7 +46,7 @@ describe('BaseNode', () => {
         .find('.odc-base-node__bg')
         .first()
         .props().filter,
-    ).toBe('url(blank#BaseNodeDropShadowFilterId--hover)');
+    ).toBe('url(/#BaseNodeDropShadowFilterId--hover)');
   });
 
   it('should show long labels when selected', () => {

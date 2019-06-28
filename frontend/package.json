@@ -43,8 +43,8 @@
       "<rootDir>/node_modules/(?!lodash-es|@console)"
     ],
     "testRegex": "/__tests__/.*\\.spec\\.(ts|tsx|js|jsx)$",
+    "testURL": "http://localhost",
     "setupFiles": [
-      "./__mocks__/requestAnimationFrame.js",
       "./__mocks__/localStorage.ts",
       "./__mocks__/matchMedia.js",
       "./before-tests.js"

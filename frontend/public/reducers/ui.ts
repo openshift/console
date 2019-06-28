@@ -30,7 +30,7 @@ export function getDefaultPerspective() {
       activePerspective = defaultPerspective.properties.id;
     }
   }
-  return activePerspective;
+  return activePerspective || undefined;
 }
 
 export default (state: UIState, action: UIAction): UIState => {
