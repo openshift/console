@@ -15,7 +15,7 @@ const DeploymentConfigSection: React.FC<DeploymentConfigSectionProps> = ({ names
   };
 
   return (
-    <FormSection title="Deployment Configuration" divider>
+    <FormSection title="Deployment Configuration">
       <CheckboxField
         type="checkbox"
         name="deployment.triggers.image"

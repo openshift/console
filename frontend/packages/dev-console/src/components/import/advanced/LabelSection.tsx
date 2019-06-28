@@ -8,7 +8,7 @@ const LabelSection: React.FC = () => {
   const labels = SelectorInput.arrayify(values.labels);
 
   return (
-    <FormSection title="Labels" subTitle="Each label is applied to each created resource." divider>
+    <FormSection title="Labels" subTitle="Each label is applied to each created resource.">
       <SelectorInput
         onChange={(val) => setFieldValue('labels', SelectorInput.objectify(val))}
         tags={labels}

@@ -15,7 +15,7 @@ const BuildConfigSection: React.FC<BuildConfigSectionProps> = ({ namespace }) =>
   };
 
   return (
-    <FormSection title="Build Configuration" divider>
+    <FormSection title="Build Configuration">
       <CheckboxField
         type="checkbox"
         name="build.triggers.webhook"
