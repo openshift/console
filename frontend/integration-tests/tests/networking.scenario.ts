@@ -1,6 +1,6 @@
 import { appHost, testName, checkLogs, checkErrors } from '../protractor.conf';
 import { execSync } from 'child_process';
-import { $$} from 'protractor';
+import { $$ } from 'protractor';
 import * as _ from 'lodash';
 import * as networkingView from '../views/networking.view';
 import * as crudView from '../views/crud.view';
@@ -33,7 +33,7 @@ describe('Interacting with route creation forms', () => {
     await networkingView.createUnsecureRoute(unsecureRouteName, unsecureServiceName);
     await networkingView.visitRoutesDetailsPage(appHost, testName, unsecureRouteName);
     await crudView.isLoaded();
-    const hostSearchLabel = 'LOCATION';
+    const hostSearchLabel = 'Location';
     const hostnameFoundIndex = await utilsView.getKeyIndex(await $$('dt'), hostSearchLabel, async(label) => {
       return await label.getText() === hostSearchLabel;
     });

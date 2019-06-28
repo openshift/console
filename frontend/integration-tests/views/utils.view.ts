@@ -3,8 +3,8 @@ import { execSync } from 'child_process';
 import * as _ from 'lodash';
 
 export const chooseFromList = async(itemName: string) => {
-  await browser.wait(until.presenceOf($('li[role=option]')), 5000);
-  await element(by.cssContainingText('li[role=option] a', itemName)).click();
+  await browser.wait(until.presenceOf($('li')), 5000);
+  await element(by.cssContainingText('li span', itemName)).click();
 };
 
 export const getKeyIndex = async function(iterable, needle, callback) {

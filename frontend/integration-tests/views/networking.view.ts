@@ -15,7 +15,7 @@ const fillRequiredFields = async(routeName: string, servicename: string) => {
   await utilsView.chooseFromList(servicename);
   await browser.wait(until.presenceOf(selectTargetPort));
   await selectTargetPort.click();
-  await $$('li[role=option] a').first().click();
+  await $$('li button').first().click();
 };
 
 export const visitRoutesPage = async(appHost: string, ns: string) => {
