@@ -102,15 +102,15 @@
   width: 80px;
 }
 
-.query-browser__table-toggle-btn {
+.query-browser__expand-button {
   padding: 0;
   width: 38px;
 }
 
-.query-browser__table-toggle-icon {
+.query-browser__expand-icon {
+  color: $color-pf-black-600;
   font-size: 30px;
   font-weight: 600;
-  vertical-align: top;
 }
 
 .query-browser__wrapper {
