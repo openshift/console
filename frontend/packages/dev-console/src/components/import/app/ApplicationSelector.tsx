@@ -35,6 +35,7 @@ const ApplicationSelector: React.FC<ApplicationSelectorProps> = ({ namespace }) 
         <ApplicationDropdown
           dropDownClassName="dropdown--full-width"
           menuClassName="dropdown-menu--text-wrap"
+          id="application-form-app-dropdown"
           namespace={namespace}
           actionItem={{
             actionTitle: 'Create New Application',
@@ -50,6 +51,7 @@ const ApplicationSelector: React.FC<ApplicationSelectorProps> = ({ namespace }) 
           type="text"
           name="application.name"
           label="Application Name"
+          data-test-id="application-form-app-input"
           helpText="A unique name for the application"
           required
         />

@@ -9,6 +9,10 @@ export interface InputFieldProps {
   onBlur?: (event) => void;
 }
 
+export interface SearchInputFieldProps extends InputFieldProps {
+  onSearch: (searchTerm: string) => void;
+}
+
 export interface DropdownFieldProps extends InputFieldProps {
   items?: object;
   selectedKey: string;

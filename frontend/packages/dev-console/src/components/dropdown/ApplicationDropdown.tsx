@@ -3,6 +3,7 @@ import { Firehose } from '@console/internal/components/utils';
 import ResourceDropdown from './ResourceDropdown';
 
 interface ApplicationDropdownProps {
+  id?: string;
   className?: string;
   dropDownClassName?: string;
   menuClassName?: string;

@@ -15,6 +15,7 @@ interface State {
 }
 
 interface ResourceDropdownProps {
+  id?: string;
   className?: string;
   dropDownClassName?: string;
   menuClassName?: string;
@@ -136,6 +137,7 @@ class ResourceDropdown extends React.Component<ResourceDropdownProps, State> {
   render() {
     return (
       <Dropdown
+        id={this.props.id}
         className={this.props.className}
         dropDownClassName={this.props.dropDownClassName}
         menuClassName={this.props.menuClassName}

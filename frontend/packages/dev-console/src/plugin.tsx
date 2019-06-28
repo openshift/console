@@ -167,7 +167,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       perspective: 'dev',
       exact: true,
-      path: ['/add', '/import', '/topology'],
+      path: ['/add', '/import', '/topology', '/deploy-image'],
       component: NamespaceRedirect,
     },
   },
@@ -226,6 +226,17 @@ const plugin: Plugin<ConsumedExtensions> = [
       loader: async () =>
         (await import(
           './components/BuildConfigPage' /* webpackChunkName: "dev-console-buildconfigs" */
+        )).default,
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      exact: true,
+      path: ['/deploy-image/all-namespaces', '/deploy-image/ns/:ns'],
+      loader: async () =>
+        (await import(
+          './components/import/DeployImagePage' /* webpackChunkName: "dev-console-deployImage" */
         )).default,
     },
   },
