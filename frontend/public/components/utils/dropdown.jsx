@@ -465,7 +465,7 @@ class ActionsMenuDropdown extends DropdownMixin {
       this.hide();
     };
     return <div ref={this.dropdownElement} className={classNames({'co-actions-menu pf-c-dropdown': true, 'pf-m-expanded': this.state.active})}>
-      <button type="button" aria-haspopup="true" aria-label="Actions" aria-expanded={this.state.active} className="pf-c-dropdown__toggle" onClick={this.toggle} data-test-id="actions-menu-button">
+      <button type="button" aria-haspopup="true" aria-label="Actions" aria-expanded={this.state.active} className="pf-c-dropdown__toggle" onClick={this.toggle}>
         <span className="pf-c-dropdown__toggle-text">
           {title || 'Actions'}
         </span>

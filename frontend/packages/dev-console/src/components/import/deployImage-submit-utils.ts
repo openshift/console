@@ -275,10 +275,14 @@ export const createResources = (
     createBuildConfig(formData, dryRun),
   ];
 
-  if (!_.isEmpty(ports)) {
-    requests.push(createService(formData, dryRun));
-    if (canCreateRoute) {
-      requests.push(createRoute(formData, dryRun));
+  if (!formData.serverless.trigger) {
+    requests.push(createDeploymentConfig(formData, dryRun));
+
+    if (!_.isEmpty(ports)) {
+      requests.push(createService(formData, dryRun));
+      if (canCreateRoute) {
+        requests.push(createRoute(formData, dryRun));
+      }
     }
   }
 

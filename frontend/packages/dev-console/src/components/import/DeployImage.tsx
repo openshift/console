@@ -6,6 +6,7 @@ import { DeployImageFormData } from './import-types';
 import { createResources } from './deployImage-submit-utils';
 import { deployValidationSchema } from './deployImage-validation-utils';
 import DeployImageForm from './DeployImageForm';
+import { createKnativeService } from '../../utils/create-knative-utils';
 
 export interface DeployImageProps {
   namespace: string;
@@ -37,6 +38,9 @@ const DeployImage: React.FC<DeployImageProps> = ({ namespace }) => {
       ports: [],
     },
     isSearchingForImage: false,
+    serverless: {
+      trigger: false,
+    },
     route: {
       create: true,
       targetPort: '',
@@ -75,22 +79,35 @@ const DeployImage: React.FC<DeployImageProps> = ({ namespace }) => {
   const handleSubmit = (values, actions) => {
     const {
       project: { name: projectName },
+      name,
+      isi: { name: isiName, tag },
     } = values;
-
-    const dryRunRequests: Promise<K8sResourceKind[]> = createResources(values, true);
-    dryRunRequests
-      .then(() => {
-        const requests: Promise<K8sResourceKind[]> = createResources(values);
-        return requests;
-      })
-      .then(() => {
-        actions.setSubmitting(false);
-        history.push(`/topology/ns/${projectName}`);
-      })
-      .catch((err) => {
-        actions.setSubmitting(false);
-        actions.setStatus({ submitError: err.message });
-      });
+    if (values.serverless && values.serverless.trigger) {
+      createKnativeService(name, projectName, isiName, tag)
+        .then(() => {
+          actions.setSubmitting(false);
+          history.push(`/topology/ns/${projectName}`);
+        })
+        .catch((err) => {
+          actions.setSubmitting(false);
+          actions.setStatus({ submitError: err.message });
+        });
+    } else {
+      const dryRunRequests: Promise<K8sResourceKind[]> = createResources(values, true);
+      dryRunRequests
+        .then(() => {
+          const requests: Promise<K8sResourceKind[]> = createResources(values);
+          return requests;
+        })
+        .then(() => {
+          actions.setSubmitting(false);
+          history.push(`/topology/ns/${projectName}`);
+        })
+        .catch((err) => {
+          actions.setSubmitting(false);
+          actions.setStatus({ submitError: err.message });
+        });
+    }
   };
 
   return (
