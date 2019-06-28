@@ -9,11 +9,12 @@
     }
   }
 
-  .btn-dropdown {
+  .pf-c-dropdown,
+  .pf-c-dropdown__toggle {
     width: 100%;
   }
 
-  .dropdown-menu {
+  .pf-c-dropdown__menu {
     min-width: 250px;
     width: 100%;
   }

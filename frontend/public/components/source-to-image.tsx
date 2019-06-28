@@ -110,7 +110,7 @@ class BuildSource extends React.Component<BuildSourceProps, BuildSourceState> {
     // Sort tags in reverse order by semver, falling back to a string comparison if not a valid version.
     const tags = getBuilderTagsSortedByVersion(props.obj.data);
     // Select the first tag if the current tag is missing or empty.
-    const selectedTag = previousTag && _.includes(tags, previousTag)
+    const selectedTag = previousTag && _.find(tags, {name:previousTag})
       ? previousTag
       : _.get(_.head(tags), 'name');
 

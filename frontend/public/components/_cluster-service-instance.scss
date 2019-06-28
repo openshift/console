@@ -2,11 +2,8 @@
   margin-bottom: 20px;
 }
 
-.co-create-service-instance__namespace {
-  .btn-dropdown,
-  .dropdown-menu {
-    width: 100%;
-  }
+.co-create-service-instance__namespace .pf-c-dropdown {
+  width: 100%;
 }
 
 .co-create-service-instance__plan {

@@ -11,7 +11,7 @@ interface RouteSectionProps {
 
 const RouteSection: React.FC<RouteSectionProps> = ({ route }) => {
   return (
-    <FormSection title="Routing" divider>
+    <FormSection title="Routing">
       <CheckboxField
         type="checkbox"
         name="route.create"

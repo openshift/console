@@ -20,7 +20,7 @@ import {
 import { twentyFourHourTime } from '../utils/datetime';
 import { humanizeNumber, useRefWidth } from '../utils';
 import { PrometheusEndpoint } from './helpers';
-import { PrometheusGraph } from './prometheus-graph';
+import { PrometheusGraph, PrometheusGraphLink } from './prometheus-graph';
 import { usePrometheusPoll } from './prometheus-poll-hook';
 import { areaTheme } from './themes';
 import { DataPoint, MutatorFunction, PrometheusResponse } from './';
@@ -64,25 +64,29 @@ export const Area: React.FC<AreaProps> = ({
   const data = formatResponse(response);
   const getLabel = ({x, y}) => `${formatY(y)} at ${formatX(x)}`;
   const container = <ChartVoronoiContainer voronoiDimension="x" labels={getLabel} />;
-  return <PrometheusGraph ref={containerRef} className={className} query={query} title={title}>
+  return <PrometheusGraph ref={containerRef} className={className} title={title}>
     {
-      data.length
-        ? <Chart
-          containerComponent={container}
-          domainPadding={{y: 20}}
-          height={height}
-          width={width}
-          theme={theme}
-          scale={{x: 'time', y: 'linear'}}
-        >
-          <ChartAxis tickCount={tickCount} tickFormat={formatX} />
-          <ChartAxis dependentAxis tickCount={tickCount} tickFormat={formatY} />
-          <ChartArea data={data} />
-        </Chart>
-        : <EmptyState className="graph-empty-state" variant={EmptyStateVariant.full}>
+      data.length ? (
+        <PrometheusGraphLink query={query}>
+          <Chart
+            containerComponent={container}
+            domainPadding={{y: 20}}
+            height={height}
+            width={width}
+            theme={theme}
+            scale={{x: 'time', y: 'linear'}}
+          >
+            <ChartAxis tickCount={tickCount} tickFormat={formatX} />
+            <ChartAxis dependentAxis tickCount={tickCount} tickFormat={formatY} />
+            <ChartArea data={data} />
+          </Chart>
+        </PrometheusGraphLink>
+      ) : (
+        <EmptyState className="graph-empty-state" variant={EmptyStateVariant.full}>
           <EmptyStateIcon size="sm" icon={ChartAreaIcon} />
           <Title size="sm">No Prometheus datapoints found.</Title>
         </EmptyState>
+      )
     }
   </PrometheusGraph>;
 };

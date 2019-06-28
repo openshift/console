@@ -61,3 +61,17 @@
   flex-basis: 30px;
   max-width: 30px;
 }
+
+.has-feedback {
+  .form-control,
+  .pf-c-form-control {
+    padding-right: 25px;
+  }
+}
+
+.pf-c-form-control.co-text-filter {
+  min-width: 270px;
+  &:focus + .form-control-feedback--keyboard-hint {
+    display: none;
+  }
+}

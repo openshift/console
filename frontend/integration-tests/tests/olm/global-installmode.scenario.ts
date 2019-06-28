@@ -143,7 +143,7 @@ describe('Interacting with an `AllNamespaces` install mode Operator (Redis)', ()
     const newContent = _.defaultsDeep({}, {metadata: {name: `${testName}-redisenterprisecluster`, labels: {[testLabel]: testName}}}, safeLoad(content));
     await yamlView.setContent(safeDump(newContent));
 
-    expect($('.yaml-editor__header').getText()).toContain('Create Redis Enterprise Cluster');
+    expect($('.co-create-operand__header').getText()).toContain('Create Redis Enterprise Cluster');
   });
 
   it('displays new `RedisEnterpriseCluster` that was created from YAML editor', async() => {

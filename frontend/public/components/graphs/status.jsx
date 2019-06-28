@@ -113,7 +113,7 @@ export class Status extends React.Component {
       marginBottom: '30px',
     };
 
-    const statusElem = <div className="graph-wrapper" style={Object.assign({}, defaultStyle, this.style)} >
+    const statusElem = <div className="graph-wrapper graph-wrapper--title-center" style={Object.assign({}, defaultStyle, this.style)} >
       { title && <h5 className="graph-title">{title}</h5> }
       <div className="text-center">
         <h1 style={{color, fontSize: 26, marginBottom: 2}}>{short}</h1>

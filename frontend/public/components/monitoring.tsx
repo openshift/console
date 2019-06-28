@@ -2,7 +2,7 @@ import * as classNames from 'classnames';
 import * as fuzzy from 'fuzzysearch';
 import * as _ from 'lodash-es';
 import { murmur3 } from 'murmurhash-js';
-import { Switch } from '@patternfly/react-core';
+import { Alert, Switch } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
@@ -18,7 +18,7 @@ import { ResourceRow, Table, TableData, TableRow, TextFilter } from './factory';
 import { PROMETHEUS_BASE_PATH, QueryBrowser } from './graphs';
 import { PrometheusEndpoint } from './graphs/helpers';
 import { getPrometheusExpressionBrowserURL } from './graphs/prometheus-graph';
-import { graphColors } from './graphs/query-browser';
+import { graphColors, Labels, PrometheusSeries } from './graphs/query-browser';
 import { confirmModal } from './modals';
 import { CheckBoxes } from './row-filter';
 import { formatPrometheusDuration } from './utils/datetime';
@@ -186,7 +186,7 @@ const ToggleGraph_ = ({hideGraphs, toggle}) => {
 };
 const ToggleGraph = connect(graphStateToProps, {toggle: UIActions.monitoringToggleGraphs})(ToggleGraph_);
 
-const Graph_ = ({hideGraphs, metric = undefined, rule}) => {
+const Graph_ = ({hideGraphs, filterLabels = undefined, rule}) => {
   if (hideGraphs) {
     return null;
   }
@@ -201,8 +201,8 @@ const Graph_ = ({hideGraphs, metric = undefined, rule}) => {
 
   return <QueryBrowser
     defaultTimespan={timespan}
+    filterLabels={filterLabels}
     GraphLink={GraphLink}
-    metric={metric}
     queries={[query]}
   />;
 };
@@ -254,7 +254,7 @@ const AlertsDetailsPage = withFallback(connect(alertStateToProps)((props: Alerts
         <div className="co-m-pane__body-group">
           <div className="row">
             <div className="col-sm-12">
-              {state !== AlertStates.NotFiring && <Graph metric={labels} rule={rule} />}
+              {state !== AlertStates.NotFiring && <Graph filterLabels={labels} rule={rule} />}
             </div>
           </div>
           <div className="row">
@@ -999,10 +999,7 @@ class SilenceForm_ extends React.Component<SilenceFormProps, SilenceFormState> {
 }
 const SilenceForm = withFallback(SilenceForm_);
 
-const EditInfo = () => <div className="alert alert-info">
-  <span className="pficon pficon-info"></span>
-  When changes are saved, the currently existing silence will be expired and a new silence with the new configuration will take its place.
-</div>;
+const EditInfo = () => <Alert isInline className="co-alert" variant="info" title="Overwriting current silence">When changes are saved, the currently existing silence will be expired and a new silence with the new configuration will take its place.</Alert>;
 
 const EditSilence = connect(silenceParamToProps)(({loaded, loadError, silence}) => {
   const isExpired = silenceState(silence) === SilenceStates.Expired;
@@ -1051,62 +1048,124 @@ const MetricsDropdown = ({onChange}) => {
   />;
 };
 
-const MetricsList = ({metrics}) => <div className="co-m-table-grid co-m-table-grid--bordered">
-  <div className="row co-m-table-grid__head">
-    <div className="col-xs-9 query-browser-metric__wrapper">
-      <div className="query-browser-metric__color"></div>
-      Series
+const SeriesButton = ({colorIndex, isDisabled, onClick}) => {
+  const title = `${isDisabled ? 'Show' : 'Hide'} series`;
+  return <button
+    aria-label={title}
+    className={classNames('query-browser__series-btn', {'query-browser__series-btn--disabled': isDisabled})}
+    onClick={onClick}
+    style={isDisabled ? undefined : {backgroundColor: graphColors[colorIndex % graphColors.length]}}
+    title={title}
+    type="button"
+  ></button>;
+};
+
+const Query: React.FC<QueryProps> = ({colorOffset, onBlur, onDelete, onSubmit, onUpdate, query}) => {
+  const {allSeries, disabledSeries, enabled, expanded, text} = query;
+
+  const toggleEnabled = () => onUpdate({enabled: !enabled, expanded: !enabled, query: enabled ? '' : text});
+
+  const toggleAllSeries = () => onUpdate({disabledSeries: _.isEmpty(disabledSeries) ? _.map(allSeries, 'labels') : []});
+
+  const onKeyDown = (e: React.KeyboardEvent) => {
+    // Enter+Shift inserts newlines, Enter alone runs the query
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      onSubmit(e);
+    }
+  };
+
+  const kebabOptions = [
+    {label: `${enabled ? 'Disable' : 'Enable'} query`, callback: toggleEnabled},
+    {label: `${_.isEmpty(disabledSeries) ? 'Hide' : 'Show'} all series`, callback: toggleAllSeries},
+    {label: 'Delete query', callback: onDelete},
+  ];
+
+  return <div className="group">
+    <div className="group__title">
+      <button
+        className="btn btn-link query-browser__table-toggle-btn"
+        onClick={() => onUpdate({expanded: !expanded})}
+        title={`${expanded ? 'Hide' : 'Show'} Table`}
+      >
+        <i aria-hidden="true" className={`fa fa-angle-${expanded ? 'down' : 'right'} query-browser__table-toggle-icon`} />
+      </button>
+      <textarea
+        autoFocus={true}
+        className="form-control query-browser__query"
+        onBlur={onBlur}
+        onChange={e => onUpdate({text: e.target.value})}
+        onKeyDown={onKeyDown}
+        placeholder="Expression (press Shift+Enter for newlines)"
+        value={text}
+      />
+      <div className="query-browser__query-switch">
+        <Switch aria-label={`${enabled ? 'Disable' : 'Enable'} query`} isChecked={enabled} onChange={toggleEnabled} />
+      </div>
+      <div className="dropdown-kebab-pf query-browser__kebab">
+        <Kebab options={kebabOptions} />
+      </div>
     </div>
-    <div className="col-xs-3">Value</div>
-  </div>
-  <div className="co-m-table-grid__body">
-    {_.map(metrics, (m, i) => <div className="row" key={i}>
-      <div className="col-xs-9 query-browser-metric__wrapper">
-        <div className="query-browser-metric__color" style={{backgroundColor: graphColors[parseInt(i, 10) % graphColors.length]}}></div>
-        <div className="query-browser-metric__labels">
-          {_.isEmpty(m.labels)
-            ? <span className="text-muted">{'{}'}</span>
-            : _.map(m.labels, (v, k) => `${k}="${v}"`).join(',')}
+    {expanded && <div className="group__body group__body--query-browser">
+      <div className="co-m-table-grid co-m-table-grid--bordered">
+        <div className="row co-m-table-grid__head">
+          <div className="col-xs-9 query-browser-metric__wrapper">
+            <div className="query-browser-metric__color"></div>
+            Series
+          </div>
+          <div className="col-xs-3">Value</div>
+        </div>
+        <div className="co-m-table-grid__body">
+          {_.map(allSeries, ({labels, value}, i) => <div className="row" key={i}>
+            <div className="col-xs-9 query-browser-metric__wrapper">
+              <SeriesButton
+                colorIndex={colorOffset + i}
+                isDisabled={_.some(disabledSeries, s => _.isEqual(s, labels))}
+                onClick={() => onUpdate({disabledSeries: _.xorWith(disabledSeries, [labels], _.isEqual)})}
+              />
+              <div className="query-browser-metric__labels">
+                {_.isEmpty(labels)
+                  ? <span className="text-muted">{'{}'}</span>
+                  : _.map(labels, (v, k) => `${k}="${v}"`).join(',')}
+              </div>
+            </div>
+            <div className="col-xs-3">{value}</div>
+          </div>)}
         </div>
       </div>
-      <div className="col-xs-3">{m.value}</div>
-    </div>)}
-  </div>
-</div>;
+    </div>}
+  </div>;
+};
 
 const QueryBrowserPage = withFallback(() => {
   const [focusedQuery, setFocusedQuery] = React.useState();
-  const [metrics, setMetrics] = React.useState([]);
   const [restoreSelection, setRestoreSelection] = React.useState();
 
   const defaultQuery = getURLSearchParams().query || '';
 
   // `text` is the current string in the text input and `query` is the value displayed in the graph
-  const [queries, setQueries] = React.useState([{enabled: true, expanded: true, query: defaultQuery, text: defaultQuery}]);
+  const [queries, setQueries] = React.useState([{
+    disabledSeries: [],
+    enabled: true,
+    expanded: true,
+    query: defaultQuery,
+    text: defaultQuery,
+  }]);
 
-  const defaultQueryObj = {enabled: true, expanded: true, query: '', text: ''};
+  const defaultQueryObj = {disabledSeries: [], enabled: true, expanded: true, query: '', text: ''};
 
-  const updateQuery = (i, obj) => setQueries(_.map(queries, (q, j) => i === j ? Object.assign({}, q, obj) : q));
+  const updateQuery = (i: number, patch: PrometheusQuery) => {
+    setQueries(_.map(queries, (q, j) => i === j ? Object.assign({}, q, patch) : q));
+  };
 
   const addQuery = () => setQueries([...queries, defaultQueryObj]);
 
   const deleteAllQueries = () => setQueries([defaultQueryObj]);
 
-  const deleteQuery = i => setQueries(queries.length <= 1 ? [defaultQueryObj] : queries.filter((v, k) => k !== i));
-
-  const runQueries = e => {
+  const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setQueries(queries.map(q => q.enabled ? Object.assign({}, q, {query: q.text}) : q));
   };
-
-  const onQueryChange = (e, i) => updateQuery(i, {text: e.target.value});
-
-  const toggleEnabled = i => {
-    const {enabled, text} = queries[i];
-    updateQuery(i, {enabled: !enabled, expanded: !enabled, query: enabled ? '' : text});
-  };
-
-  const toggleExpanded = i => updateQuery(i, {expanded: !_.get(queries, [i, 'expanded'])});
 
   const isAllExpanded = _.every(queries, 'expanded');
   const toggleAllExpanded = () => setQueries(_.map(queries, q => Object.assign({}, q, {expanded: !isAllExpanded})));
@@ -1117,37 +1176,18 @@ const QueryBrowserPage = withFallback(() => {
     {label: 'Delete all queries', callback: deleteAllQueries},
   ];
 
-  const onDataUpdate = queriesData => setMetrics(_.map(queriesData,
-    data => _.map(data, ({labels, values}) => ({labels, value: _.get(_.last(values), 'y')}))
-  ));
-
-  const onQueryBlur = (e, i) => {
-    if (_.get(e, 'relatedTarget.id') === 'metrics-dropdown') {
-      // Focus has shifted from a query input to the metrics dropdown, so store the cursor position so we know where to
-      // insert the metric when it is selected
-      setFocusedQuery({
-        index: i,
-        selection: {
-          start: e.target.selectionStart,
-          end: e.target.selectionEnd,
-        },
-        target: e.target,
-      });
-    } else {
-      // Focus is shifting to somewhere other than the metrics dropdown, so don't track the cursor position
-      setFocusedQuery(undefined);
-    }
+  const onDataUpdate = (allQueries: PrometheusSeries[][]) => {
+    const newQueries = _.map(allQueries, (querySeries, i) => {
+      const allSeries = _.map(querySeries, s => ({
+        labels: _.omit(s.metric, '__name__'),
+        value: parseFloat(_.last(s.values)[1]),
+      }));
+      return Object.assign({}, queries[i], {allSeries});
+    });
+    setQueries(newQueries);
   };
 
-  const onQueryKeyDown = e => {
-    // Enter+Shift inserts newlines, Enter alone runs the query
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      runQueries(e);
-    }
-  };
-
-  const onMetricChange = metric => {
+  const onMetricChange = (metric: string) => {
     if (focusedQuery) {
       // Replace the currently selected text with the metric
       const {index, selection, target} = focusedQuery;
@@ -1170,12 +1210,12 @@ const QueryBrowserPage = withFallback(() => {
     }
   }, [focusedQuery, restoreSelection]);
 
-  const validQueries = _.reject(_.map(queries, 'query'), _.isEmpty);
+  let colorOffset = 0;
 
   return <React.Fragment>
     <div className="co-m-nav-title">
       <h1 className="co-m-pane__heading">
-        <span>Metrics<HeaderPrometheusLink queries={validQueries} /></span>
+        <span>Metrics<HeaderPrometheusLink queries={_.map(queries, 'query')} /></span>
         <div className="co-actions">
           <ActionsMenu actions={actionsMenuActions} />
         </div>
@@ -1191,10 +1231,11 @@ const QueryBrowserPage = withFallback(() => {
         <div className="col-xs-12">
           <QueryBrowser
             defaultTimespan={30 * 60 * 1000}
+            disabledSeries={_.map(queries, 'disabledSeries')}
             onDataUpdate={onDataUpdate}
-            queries={validQueries}
+            queries={_.map(queries, 'query')}
           />
-          <form onSubmit={runQueries}>
+          <form onSubmit={onSubmit}>
             <div className="query-browser__all-queries-controls">
               <MetricsDropdown onChange={onMetricChange} />
               <div>
@@ -1203,44 +1244,39 @@ const QueryBrowserPage = withFallback(() => {
               </div>
             </div>
             {_.map(queries, (q, i) => {
-              const toggleEnabledLabel = `${q.enabled ? 'Disable' : 'Enable'} query`;
-              return <div className="group" key={i}>
-                <div className="group__title">
-                  <button
-                    className="btn btn-link query-browser__table-toggle-btn"
-                    onClick={() => toggleExpanded(i)}
-                    title={`${q.expanded ? 'Hide' : 'Show'} Table`}
-                  >
-                    <i
-                      aria-hidden="true"
-                      className={`fa fa-angle-${q.expanded ? 'down' : 'right'} query-browser__table-toggle-icon`}
-                    />
-                  </button>
-                  <textarea
-                    autoFocus={true}
-                    className="form-control query-browser__query"
-                    onBlur={e => onQueryBlur(e, i)}
-                    onChange={e => onQueryChange(e, i)}
-                    onKeyDown={onQueryKeyDown}
-                    placeholder="Expression (press Shift+Enter for newlines)"
-                    value={q.text}
-                  />
-                  <div className="query-browser__query-switch">
-                    <Tooltip content={toggleEnabledLabel}>
-                      <Switch aria-label={toggleEnabledLabel} isChecked={q.enabled} onChange={() => toggleEnabled(i)} />
-                    </Tooltip>
-                  </div>
-                  <div className="dropdown-kebab-pf query-browser__kebab">
-                    <Kebab options={[
-                      {label: toggleEnabledLabel, callback: () => toggleEnabled(i)},
-                      {label: 'Delete query', callback: () => deleteQuery(i)},
-                    ]} />
-                  </div>
-                </div>
-                {q.expanded && <div className="group__body group__body--query-browser">
-                  <MetricsList metrics={metrics[i]} />
-                </div>}
-              </div>;
+              const deleteQuery = () => setQueries(queries.length <= 1
+                ? [defaultQueryObj]
+                : queries.filter((v, k) => k !== i));
+
+              const onBlur = e => {
+                if (_.get(e, 'relatedTarget.id') === 'metrics-dropdown') {
+                  // Focus has shifted from a query input to the metrics dropdown, so store the cursor position so we
+                  // know where to insert the metric when it is selected
+                  setFocusedQuery({
+                    index: i,
+                    selection: {
+                      start: e.target.selectionStart,
+                      end: e.target.selectionEnd,
+                    },
+                    target: e.target,
+                  });
+                } else {
+                  // Focus is shifting to somewhere other than the metrics dropdown, so don't track the cursor position
+                  setFocusedQuery(undefined);
+                }
+              };
+
+              colorOffset += _.get(queries, [i - 1, 'allSeries', 'length'], 0);
+
+              return <Query
+                colorOffset={colorOffset}
+                key={i}
+                onBlur={onBlur}
+                onDelete={deleteQuery}
+                onSubmit={onSubmit}
+                onUpdate={patch => updateQuery(i, patch)}
+                query={q}
+              />;
             })}
           </form>
         </div>
@@ -1362,7 +1398,7 @@ type Rule = {
   annotations: any;
   duration: number;
   id: string;
-  labels: {[key: string]: string};
+  labels: Labels;
   name: string;
   query: string;
 };
@@ -1409,7 +1445,6 @@ export type ListPageProps = {
   CreateButton: React.ComponentType<{}>;
   data: Rule[] | Silence[];
   filters: {[key: string]: any};
-  // Header: React.ComponentType<any>;
   Header: (...args) => any[];
   itemCount: number;
   kindPlural: string;
@@ -1421,4 +1456,20 @@ export type ListPageProps = {
   reduxID: string;
   Row: React.ComponentType<any>;
   rowFilter: {type: string, selected: string[], reducer: (any) => string, items: {id: string, title: string}[]};
+};
+type PrometheusQuery = {
+  allSeries?: {labels: Labels, value: number}[];
+  disabledSeries?: Labels[];
+  enabled?: boolean;
+  expanded?: boolean;
+  query?: string;
+  text?: string;
+};
+type QueryProps = {
+  colorOffset: number;
+  onBlur: (e: React.FocusEvent) => void;
+  onDelete: () => void;
+  onSubmit: (e: React.FormEvent) => void;
+  onUpdate: (patch: PrometheusQuery) => void;
+  query: PrometheusQuery;
 };

@@ -48,24 +48,6 @@ export const VirtualMachineInstanceReplicaSetModel: K8sKind = {
   id: 'virtualmachineinstancereplicaset',
 };
 
-/* TODO(mlibra): migrate templates
-export const VmTemplateModel: K8sKind = {
-  label: 'Template',
-  labelPlural: 'Templates',
-  apiVersion: 'v1',
-  path: 'templates',
-  apiGroup: 'template.openshift.io',
-  plural: 'vmtemplates',
-  namespaced: true,
-  abbr: 'VMT',
-  kind: 'Template',
-  id: 'vmtemplate',
-  selector: {
-    matchLabels: {[TEMPLATE_TYPE_LABEL]: 'vm'},
-  },
-};
-*/
-
 export const NetworkAttachmentDefinitionModel: K8sKind = {
   label: 'Network Attachment Definition',
   labelPlural: 'Network Attachment Definitions',

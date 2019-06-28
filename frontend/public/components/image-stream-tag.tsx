@@ -6,6 +6,7 @@ import { DetailsPage } from './factory';
 import { Kebab, SectionHeading, navFactory, ResourceSummary } from './utils';
 import { humanizeBinaryBytes } from './utils/units';
 import { ExampleDockerCommandPopover } from './image-stream';
+import { ImageStreamTimeline } from './image-stream-timeline';
 
 const ImageStreamTagsReference: K8sResourceKindReference = 'ImageStreamTag';
 const ImageStreamsReference: K8sResourceKindReference = 'ImageStream';
@@ -130,17 +131,24 @@ const parseName = (nameAndTag: string): string => {
   return nameAndTag.split(':')[0];
 };
 
-export const getImageStreamNameForTag = (imageStreamTag: K8sResourceKind): string => {
-  const name = _.get(imageStreamTag, 'metadata.name', '');
-  return parseName(name);
+const getImageStreamNameAndTag = (imageStreamTag: K8sResourceKind) => {
+  const name: string = _.get(imageStreamTag, 'metadata.name') || '';
+  const [ imageStreamName, tag ] = name.split(':');
+  return { imageStreamName, tag };
 };
 
-const pages = [navFactory.details(ImageStreamTagsDetails), navFactory.editYaml()];
+const ImageStreamTagHistory: React.FC<ImageStreamTagHistoryProps> = ({ obj: imageStreamTag, imageStream }) => {
+  const imageStreamStatusTags = _.filter(_.get(imageStream, 'status.tags'), i => i.tag === getImageStreamNameAndTag(imageStreamTag).tag);
+  return <ImageStreamTimeline imageStreamTags={imageStreamStatusTags} imageStreamName={imageStream.metadata.name} imageStreamNamespace={imageStream.metadata.namespace} />;
+};
+ImageStreamTagHistory.displayName = 'ImageStreamTagHistory';
+
+const pages = [navFactory.details(ImageStreamTagsDetails), navFactory.editYaml(), navFactory.history(ImageStreamTagHistory)];
 export const ImageStreamTagsDetailsPage: React.SFC<ImageStreamTagsDetailsPageProps> = props =>
   <DetailsPage
     {...props}
     breadcrumbsFor={obj => {
-      const imageStreamName = getImageStreamNameForTag(obj);
+      const imageStreamName = getImageStreamNameAndTag(obj).tag;
       return [{name: 'Image Streams', path: `/k8s/ns/${props.match.params.ns}/imagestreams`,
       }, {
         name: imageStreamName,
@@ -157,6 +165,11 @@ export const ImageStreamTagsDetailsPage: React.SFC<ImageStreamTagsDetailsPagePro
     ]}
     pages={pages} />;
 ImageStreamTagsDetailsPage.displayName = 'ImageStreamTagsDetailsPage';
+
+type ImageStreamTagHistoryProps = {
+  imageStream: K8sResourceKind;
+  obj: K8sResourceKind;
+}
 
 export type ImageStreamTagsDetailsProps = {
   obj: K8sResourceKind;

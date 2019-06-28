@@ -2,8 +2,9 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
+import { Alert } from '@patternfly/react-core';
+
 import { ClusterOperatorModel } from '../../models';
-import { StartGuide } from '../start-guide';
 import {
   DetailsPage,
   ListPage,
@@ -15,8 +16,12 @@ import { Conditions } from '../conditions';
 import {
   getClusterOperatorStatus,
   getClusterOperatorVersion,
+  getClusterVersionCondition,
   getStatusAndMessage,
   ClusterOperator,
+  ClusterVersionConditionType,
+  ClusterVersionKind,
+  K8sResourceConditionStatus,
   K8sResourceKindReference,
   OperandVersion,
   OperatorStatus,
@@ -30,7 +35,6 @@ import {
   ResourceSummary,
   SectionHeading,
 } from '../utils';
-import { STORAGE_PREFIX } from '../../const';
 
 export const clusterOperatorReference: K8sResourceKindReference = referenceForModel(ClusterOperatorModel);
 
@@ -124,17 +128,24 @@ const filters = [{
   })),
 }];
 
-export const ClusterOperatorStartGuide: React.SFC<{}> = () =>
-  <React.Fragment>
-    <h4>What are Cluster Operators?</h4>
-    <p>
-      An Operator is a method of packaging, deploying, and managing a Kubernetes application. Cluster Operators implement and automate updates of OpenShift and Kubernetes at the cluster level. During an update, the latest versions of the OpenShift and Kubernetes components are downloaded. A rolling update will occur to install the latest versions.
-    </p>
-  </React.Fragment>;
+const UpdateInProgressAlert: React.SFC<UpdateInProgressAlertProps> = ({cv}) => {
+  const updateCondition = getClusterVersionCondition(cv, ClusterVersionConditionType.Progressing, K8sResourceConditionStatus.True);
+  return (
+    <React.Fragment>
+      { updateCondition &&
+        <div className="co-m-pane__body co-m-pane__body--section-heading">
+          <Alert isInline className="co-alert" variant="info" title="Cluster update in progress.">
+            {updateCondition.message}
+          </Alert>
+        </div>
+      }
+    </React.Fragment>
+  );
+};
 
 export const ClusterOperatorPage: React.SFC<ClusterOperatorPageProps> = props =>
   <React.Fragment>
-    <StartGuide dismissKey={`${STORAGE_PREFIX}/seen-cluster-operator-guide`} startGuide={<ClusterOperatorStartGuide />} />
+    <UpdateInProgressAlert cv={props.cv} />
     <ListPage
       {...props}
       title="Cluster Operators"
@@ -223,6 +234,7 @@ type OperatorStatusIconAndLabelProps = {
 };
 
 type ClusterOperatorPageProps = {
+  cv: ClusterVersionKind;
   autoFocus?: boolean;
   showTitle?: boolean;
 };
@@ -237,4 +249,8 @@ type ClusterOperatorDetailsProps = {
 
 type ClusterOperatorDetailsPageProps = {
   match: any;
+};
+
+type UpdateInProgressAlertProps = {
+  cv: ClusterVersionKind;
 };

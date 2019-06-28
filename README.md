@@ -235,7 +235,7 @@ Remove the `--headless` flag to Chrome (chromeOptions) in [protractor.conf.ts](f
 
 1. `cd frontend; yarn run build`
 2. Add `debugger;` statements to any e2e test
-3. `yarn run debug-test-suite --suite overview`
+3. `yarn run debug-test-suite --suite <suite-to-debug>`
 4. Chrome browser URL: 'chrome://inspect/#devices', click on the 'inspect' link in **Target (v10...)** section.
 5. Launches chrome-dev tools, click Resume button to continue
 6. Will break on any `debugger;` statements

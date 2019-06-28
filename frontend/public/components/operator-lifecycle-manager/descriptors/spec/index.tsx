@@ -41,35 +41,35 @@ const K8sResourceLink: React.SFC<SpecCapabilityProps> = (props) => _.isEmpty(pro
 
 const BasicSelector: React.SFC<SpecCapabilityProps> = ({value, capability}) => <Selector selector={value} kind={capability.split(SpecCapability.selector)[1]} />;
 
-class BooleanSwitch extends React.Component<SpecCapabilityProps, BooleanSwitchState> {
-  public state = {value: this.props.value, confirmed: false};
+const BooleanSwitch: React.FC<SpecCapabilityProps> = (props) => {
+  const [value, setValue] = React.useState(props.value);
+  const [confirmed, setConfirmed] = React.useState(false);
 
-  render() {
-    const {props, state} = this;
-    const patchFor = (value: boolean) => [{op: 'replace', path: `/spec/${props.descriptor.path.replace('.', '/')}`, value}];
+  const patchFor = (val: boolean) => [{op: 'replace', path: `/spec/${props.descriptor.path.replace('.', '/')}`, val}];
+  const update = () => {
+    setConfirmed(true);
+    return k8sPatch(props.model, props.obj, patchFor(value));
+  };
 
-    const update = () => {
-      this.setState({confirmed: true});
-      return k8sPatch(props.model, props.obj, patchFor(state.value));
-    };
-
-    return <div className="co-spec-descriptor--switch">
-      <AsyncComponent
-        loader={() => import('patternfly-react').then(m => m.Switch)}
-        value={state.value}
-        onChange={(el, value) => this.setState({value, confirmed: false})}
-        onText="True"
-        offText="False"
-        bsSize="mini" />
-      &nbsp;&nbsp;
-      {state.value !== props.value && state.confirmed && <LoadingInline />}
-      {state.value !== props.value && !state.confirmed && <React.Fragment>
-        &nbsp;&nbsp;<i className="fa fa-exclamation-triangle text-warning" aria-hidden="true" />
-        <button className="btn btn-link" onClick={update}>Confirm change</button>
-      </React.Fragment>}
-    </div>;
-  }
-}
+  return <div className="co-spec-descriptor--switch">
+    <AsyncComponent
+      loader={() => import('patternfly-react').then(m => m.Switch)}
+      value={value}
+      onChange={(el, val) => {
+        setValue(val);
+        setConfirmed(false);
+      }}
+      onText="True"
+      offText="False"
+      bsSize="mini" />
+    &nbsp;&nbsp;
+    {value !== props.value && confirmed && <LoadingInline />}
+    {value !== props.value && !confirmed && <React.Fragment>
+      &nbsp;&nbsp;<i className="fa fa-exclamation-triangle text-warning" aria-hidden="true" />
+      <button className="btn btn-link" onClick={update}>Confirm change</button>
+    </React.Fragment>}
+  </div>;
+};
 
 const capabilityComponents = ImmutableMap<SpecCapability, React.ComponentType<SpecCapabilityProps>>()
   .set(SpecCapability.podCount, PodCount)
@@ -110,11 +110,6 @@ export const SpecDescriptor: React.SFC<DescriptorProps> = (props) => {
     </div>
     <dd className="olm-descriptor__value"><Capability descriptor={descriptor} capability={capability} value={value} namespace={namespace} model={model} obj={obj} /></dd>
   </dl>;
-};
-
-type BooleanSwitchState = {
-  value: boolean;
-  confirmed: boolean;
 };
 
 type SpecCapabilityProps = CapabilityProps<SpecCapability>;

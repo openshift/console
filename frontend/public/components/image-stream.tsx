@@ -3,18 +3,19 @@ import * as _ from 'lodash-es';
 import * as semver from 'semver';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
-import { Popover } from '@patternfly/react-core';
+import { AlertVariant, Popover } from '@patternfly/react-core';
 import { QuestionCircleIcon } from '@patternfly/react-icons';
 
 import { K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
-import { CopyToClipboard, ExternalLink, Kebab, SectionHeading, LabelList, navFactory, ResourceKebab, ResourceLink, ResourceSummary, history, Timestamp } from './utils';
+import { CopyToClipboard, ExpandableAlert, ExternalLink, Kebab, SectionHeading, LabelList, navFactory, ResourceKebab, ResourceLink, ResourceSummary, history, Timestamp } from './utils';
+import { ImageStreamTimeline } from './image-stream-timeline';
 import { fromNow } from './utils/datetime';
 
 const ImageStreamsReference: K8sResourceKindReference = 'ImageStream';
 const ImageStreamTagsReference: K8sResourceKindReference = 'ImageStreamTag';
 
-const getImageStreamTagName = (imageStreamName: string, tag: string): string => `${imageStreamName}:${tag}`;
+export const getImageStreamTagName = (imageStreamName: string, tag: string): string => `${imageStreamName}:${tag}`;
 
 export const getAnnotationTags = (specTag: any) => _.get(specTag, 'annotations.tags', '').split(/\s*,\s*/);
 
@@ -148,14 +149,23 @@ export const ExampleDockerCommandPopover: React.FC<ImageStreamManipulationHelpPr
   </Popover>;
 };
 
+const getImportErrors = (imageStream: K8sResourceKind): string[] => {
+  return _.transform(imageStream.status.tags, (acc, tag: any) => {
+    const importErrorCondition = _.find(tag.conditions, condition => condition.type === 'ImportSuccess' && condition.status === 'False');
+    importErrorCondition && acc.push(`Unable to sync image for tag ${imageStream.metadata.name}:${tag.tag}. ${importErrorCondition.message}`);
+  });
+};
+
 export const ImageStreamsDetails: React.SFC<ImageStreamsDetailsProps> = ({obj: imageStream}) => {
   const imageRepository = _.get(imageStream, 'status.dockerImageRepository');
   const publicImageRepository = _.get(imageStream, 'status.publicDockerImageRepository');
   const imageCount = _.get(imageStream, 'status.tags.length');
   const specTagByName = _.keyBy(imageStream.spec.tags, 'name');
+  const importErrors = getImportErrors(imageStream);
 
   return <div>
     <div className="co-m-pane__body">
+      {!_.isEmpty(importErrors) && <ExpandableAlert variant={AlertVariant.warning} alerts={_.map(importErrors, (error, i) => <React.Fragment key={i}>{error}</React.Fragment>)} />}
       <SectionHeading text="Image Stream Overview" />
       <ResourceSummary resource={imageStream}>
         {imageRepository && <dt>Image Repository</dt>}
@@ -193,7 +203,13 @@ export const ImageStreamsDetails: React.SFC<ImageStreamsDetailsProps> = ({obj: i
   </div>;
 };
 
-const pages = [navFactory.details(ImageStreamsDetails), navFactory.editYaml()];
+const ImageStreamHistory: React.FC<ImageStreamHistoryProps> = ({ obj: imageStream }) => {
+  const imageStreamStatusTags = _.get(imageStream, 'status.tags');
+  return <ImageStreamTimeline imageStreamTags={imageStreamStatusTags} imageStreamName={imageStream.metadata.name} imageStreamNamespace={imageStream.metadata.namespace} />;
+};
+ImageStreamHistory.displayName = 'ImageStreamHistory';
+
+const pages = [navFactory.details(ImageStreamsDetails), navFactory.editYaml(), navFactory.history(ImageStreamHistory)];
 export const ImageStreamsDetailsPage: React.SFC<ImageStreamsDetailsPageProps> = props =>
   <DetailsPage
     {...props}
@@ -285,6 +301,10 @@ type ImageStreamTagsRowProps = {
   specTag: any;
   statusTag: any;
 };
+
+type ImageStreamHistoryProps = {
+  obj: K8sResourceKind;
+}
 
 export type ImageStreamManipulationHelpProps = {
   imageStream: K8sResourceKind;

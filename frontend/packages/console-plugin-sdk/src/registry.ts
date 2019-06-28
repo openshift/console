@@ -12,6 +12,8 @@ import {
   isYAMLTemplate,
   isRoutePage,
   isDashboardsOverviewHealthSubsystem,
+  isDashboardsCard,
+  isDashboardsTab,
 } from './typings';
 
 /**
@@ -58,5 +60,13 @@ export class ExtensionRegistry {
 
   public getDashboardsOverviewHealthSubsystems() {
     return this.extensions.filter(isDashboardsOverviewHealthSubsystem);
+  }
+
+  public getDashboardsTabs() {
+    return this.extensions.filter(isDashboardsTab);
+  }
+
+  public getDashboardsCards() {
+    return this.extensions.filter(isDashboardsCard);
   }
 }

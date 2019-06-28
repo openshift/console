@@ -351,7 +351,7 @@ class NamespaceBarDropdowns_ extends React.Component {
       <Dropdown
         className="co-namespace-selector"
         menuClassName="co-namespace-selector__menu"
-        buttonClassName="btn-link"
+        buttonClassName="pf-m-plain"
         canFavorite
         items={items}
         titlePrefix={model.label}

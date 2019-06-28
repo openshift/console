@@ -20,7 +20,7 @@ import {
 import { useRefWidth } from '../utils/ref-width-hook';
 import { usePrometheusPoll } from './prometheus-poll-hook';
 import { PrometheusEndpoint } from './helpers';
-import { PrometheusGraph } from './prometheus-graph';
+import { PrometheusGraph, PrometheusGraphLink } from './prometheus-graph';
 import { barTheme } from './themes';
 import { humanizeNumber } from '../utils';
 import {
@@ -81,16 +81,32 @@ export const Bar: React.FC<BarProps> = ({
   const tickLabelComponent = <ChartLabel x={0} verticalAnchor="start" transform={`translate(0, -${xAxisTickLabelHeight + BAR_LABEL_PADDING})`} />;
   const labelComponent = <ChartLabel x={width} />;
 
-  return <PrometheusGraph ref={containerRef} title={title} query={query}>
-    { data.length
-      ? <Chart domainPadding={domainPadding} height={height} theme={theme} width={width} padding={padding}>
-        <ChartBar barWidth={barWidth} data={data} horizontal labelComponent={labelComponent} />
-        <ChartAxis tickLabelComponent={tickLabelComponent} />
-      </Chart>
-      : <EmptyState className="graph-empty-state" variant={EmptyStateVariant.full}>
-        <EmptyStateIcon size="sm" icon={ChartBarIcon} />
-        <Title size="sm">No Prometheus datapoints found.</Title>
-      </EmptyState>
+  return <PrometheusGraph ref={containerRef} title={title} >
+    {
+      data.length ? (
+        <PrometheusGraphLink query={query}>
+          <Chart
+            domainPadding={domainPadding}
+            height={height}
+            theme={theme}
+            width={width}
+            padding={padding}
+          >
+            <ChartAxis tickLabelComponent={tickLabelComponent} />
+            <ChartBar
+              barWidth={barWidth}
+              data={data}
+              horizontal
+              labelComponent={labelComponent}
+            />
+          </Chart>
+        </PrometheusGraphLink>
+      ) : (
+        <EmptyState className="graph-empty-state" variant={EmptyStateVariant.full}>
+          <EmptyStateIcon size="sm" icon={ChartBarIcon} />
+          <Title size="sm">No Prometheus datapoints found.</Title>
+        </EmptyState>
+      )
     }
   </PrometheusGraph>;
 };

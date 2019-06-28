@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
 import { Link } from 'react-router-dom';
-
+import { Button } from '@patternfly/react-core';
 import { ActionsMenu, ResourceIcon, KebabAction, resourcePath } from './index';
 import { ClusterServiceVersionLogo } from '../operator-lifecycle-manager';
 import { connectToModel } from '../../kinds';
@@ -33,7 +33,7 @@ export const BreadCrumbs: React.SFC<BreadCrumbsProps> = ({breadcrumbs}) => (
 const ActionButtons: React.SFC<ActionButtonsProps> = ({actionButtons}) => <div className="co-action-buttons">
   {_.map(actionButtons, (actionButton, i) => {
     if (!_.isEmpty(actionButton)) {
-      return <button className={`btn ${actionButton.btnClass} co-action-buttons__btn`} onClick={actionButton.callback} key={i}>{actionButton.label}</button>;
+      return <Button className="co-action-buttons__btn" variant="primary" onClick={actionButton.callback} key={i}>{actionButton.label}</Button>;
     }
   })}
 </div>;

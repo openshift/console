@@ -5,13 +5,8 @@ import { HealthCard } from './health-card';
 import { DetailsCard } from './details-card';
 
 export const OverviewDashboard: React.FC<{}> = () => {
-  const mainCards = [
-    <HealthCard key="health" />,
-  ];
-
-  const leftCards = [
-    <DetailsCard key="details" />,
-  ];
+  const mainCards = [HealthCard];
+  const leftCards = [DetailsCard];
 
   return (
     <Dashboard>

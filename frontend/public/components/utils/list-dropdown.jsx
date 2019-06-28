@@ -2,6 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as fuzzy from 'fuzzysearch';
 import * as PropTypes from 'prop-types';
+import { Alert } from '@patternfly/react-core';
 
 import { Dropdown, Firehose, LoadingInline, ResourceName } from './';
 import { connectToFlags, flagPending } from '../../reducers/features';
@@ -18,7 +19,7 @@ class ListDropdown_ extends React.Component {
       this.state.selectedKey = props.selectedKeyKind ? `${props.selectedKey}-${props.selectedKeyKind}` : props.selectedKey;
     }
 
-    this.state.title = props.loaded ? <span className="btn-dropdown__item--placeholder">{props.placeholder}</span> : <LoadingInline />;
+    this.state.title = props.loaded ? <span className="pf-c-dropdown__toggle-text--placeholder">{props.placeholder}</span> : <LoadingInline />;
 
     this.autocompleteFilter = (text, item) => fuzzy(text, item.props.name);
     // Pass both the resource name and the resource kind to onChange()
@@ -71,7 +72,7 @@ class ListDropdown_ extends React.Component {
 
       // did we switch from !loaded -> loaded ?
       if (!this.props.loaded && !selectedKey) {
-        state.title = <span className="btn-dropdown__item--placeholder">{nextProps.placeholder}</span>;
+        state.title = <span className="pf-c-dropdown__toggle-text--placeholder">{nextProps.placeholder}</span>;
       }
 
       if (selectedKey) {
@@ -119,7 +120,7 @@ class ListDropdown_ extends React.Component {
 
     return <div>
       { Component }
-      { loaded && _.isEmpty(items) && <p className="alert alert-info"><span className="pficon pficon-info" aria-hidden="true"></span>No {desc} found or defined.</p> }
+      { loaded && _.isEmpty(items) && <Alert isInline className="co-alert" variant="info" title={`No ${desc} found or defined`} />}
     </div>;
   }
 }

@@ -323,7 +323,7 @@ const PairElement = DragSource(DRAGGABLE_TYPE.ENV_ROW, pairSource, collectSource
             </div>
           }
           <div className="col-xs-5 pairs-list__name-field">
-            <input type="text" className="form-control" placeholder={nameString.toLowerCase()} value={pair[NameValueEditorPair.Name]} onChange={this._onChangeName} disabled={readOnly} />
+            <input type="text" className="pf-c-form-control" placeholder={nameString.toLowerCase()} value={pair[NameValueEditorPair.Name]} onChange={this._onChangeName} disabled={readOnly} />
           </div>
           {
             _.isPlainObject(pair[NameValueEditorPair.Value]) ?
@@ -332,7 +332,7 @@ const PairElement = DragSource(DRAGGABLE_TYPE.ENV_ROW, pairSource, collectSource
               </div>
               :
               <div className="col-xs-5 pairs-list__value-field">
-                <input type="text" className="form-control" placeholder={valueString.toLowerCase()} value={pair[NameValueEditorPair.Value] || ''} onChange={this._onChangeValue} disabled={readOnly} />
+                <input type="text" className="pf-c-form-control" placeholder={valueString.toLowerCase()} value={pair[NameValueEditorPair.Value] || ''} onChange={this._onChangeValue} disabled={readOnly} />
               </div>
           }
           {
@@ -410,7 +410,7 @@ const EnvFromPairElement = DragSource(DRAGGABLE_TYPE.ENV_FROM_ROW, pairSource, c
             <ValueFromPair pair={pair[EnvFromPair.Resource]} configMaps={configMaps} secrets={secrets} onChange={this._onChangeResource} disabled={readOnly} />
           </div>
           <div className="col-xs-5 pairs-list__name-field">
-            <input data-test-id="env-prefix" type="text" className="form-control" placeholder={valueString.toLowerCase()} value={pair[EnvFromPair.Prefix]} onChange={this._onChangePrefix} disabled={readOnly} />
+            <input data-test-id="env-prefix" type="text" className="pf-c-form-control" placeholder={valueString.toLowerCase()} value={pair[EnvFromPair.Prefix]} onChange={this._onChangePrefix} disabled={readOnly} />
           </div>
           {
             readOnly ? null :

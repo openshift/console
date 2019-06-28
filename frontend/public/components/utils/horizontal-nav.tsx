@@ -26,7 +26,7 @@ class PodsComponent extends React.PureComponent<PodsComponentProps> {
   }
 }
 
-type Page = {
+export type Page = {
   href: string;
   name: string;
   component?: React.ComponentType<any>;
@@ -107,6 +107,11 @@ export const navFactory: NavFactory = {
   workloads: component => ({
     href: 'workloads',
     name: 'Workloads',
+    component,
+  }),
+  history: component => ({
+    href: 'history',
+    name: 'History',
     component,
   }),
 };

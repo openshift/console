@@ -11,7 +11,8 @@ export { SubscriptionsPage } from './subscription';
 import * as operatorLogo from '../../imgs/operator.svg';
 import { InstallModeType } from './operator-group';
 
-export const appCatalogLabel = 'alm-catalog';
+export const copiedLabelKey = 'olm.copiedFrom';
+
 export enum AppCatalog {
   rhOperators = 'rh-operators',
 }
@@ -116,6 +117,11 @@ export type ClusterServiceVersionKind = {
     apiservicedefinitions?: {owned?: APIServiceDefinition[], required?: APIServiceDefinition[]};
     replaces?: string;
     installModes: {type: InstallModeType, supported: boolean}[];
+    displayName?: string;
+    description?: string;
+    provider?: {name: string};
+    version?: string;
+    icon?: {base64data: string, mediatype: string}[];
   };
   status?: {
     phase: ClusterServiceVersionPhase;

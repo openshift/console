@@ -1,7 +1,14 @@
-$color-dropdown-hover: rgba(0, 0, 0, .05);
-$color-bookmarker--hover: #AAA;
-$color-bookmarker: #DDD;
-$dropdown-link-hover-border: 1px solid #bee1f4;
+$color-bookmarker--hover: $color-pf-black-500;
+$color-bookmarker: $color-pf-black-400;
+$dropdown-background--hover: $color-pf-black-200; // pf-c-dropdown__menu-item--hover--BackgroundColor
+
+.btn-dropdown__content-wrap {
+  align-items: center;
+  display: flex;
+  flex: 1 1 auto;
+  justify-content: space-between;
+  min-width: 0;
+}
 
 .dropdown {
   position: relative;
@@ -11,8 +18,8 @@ $dropdown-link-hover-border: 1px solid #bee1f4;
 }
 
 .dropdown--full-width {
-  & > .btn-dropdown,
-  & > .dropdown-menu {
+  &,
+  .pf-c-dropdown__toggle {
     width: 100%;
   }
 }
@@ -23,11 +30,11 @@ $dropdown-link-hover-border: 1px solid #bee1f4;
 }
 
 .dropdown-menu__divider {
+  background-color: $color-pf-black-200;
   height: 1px;
+  flex-grow: 1;
   margin: 9px 0;
   overflow: hidden;
-  flex-grow: 1;
-  background-color: $color-pf-black-200;
 }
 
 .dropdown-menu__header {
@@ -60,56 +67,103 @@ $dropdown-link-hover-border: 1px solid #bee1f4;
   color: gold;
 }
 
-.dropdown-menu {
-  &--block {
-    display: block;
+.co-add-actions-selector__icon {
+  margin: 0 5px 0 0;
+}
+
+.co-namespace-bar {
+  border-bottom: 1px solid $color-grey-background-border;
+  padding: 0 15px;
+  white-space: nowrap;
+
+  @media (min-width: $grid-float-breakpoint) {
+    padding-left: 30px;
+    padding-right: 30px;
   }
 
-  ul {
-    padding: 0;
-    margin: 0;
-    list-style: none;
+  &__import {
+    color: inherit;
   }
 
-  li {
-    padding: 0;
+  &__items {
+    align-items: center;
     display: flex;
+    justify-content: space-between;
+
+    .pf-m-plain {
+      color: inherit;
+      padding: 4px 0 2px !important;
+
+      @media(min-width: $grid-float-breakpoint) {
+        padding-bottom: 10px !important;
+        padding-top: 11px !important;
+      }
+
+      &:hover,
+      &:focus {
+        text-decoration: none;
+      }
+    }
+  }
+}
+
+.co-namespace-selector {
+  max-width: 60%;
+
+  .pf-c-dropdown__toggle.pf-m-plain {
+    color: initial;
+    font-size: ($font-size-base + 1);
+    padding: 2px 0 !important;
+
+    @media (min-width: $grid-float-breakpoint) {
+      font-size: ($font-size-base + 2);
+      padding-bottom: 9px !important;
+      padding-top: 9px !important;
+    }
+
+    &__titlePrefix {
+      margin-right: 6px;
+    }
+  }
+}
+
+
+// Custom dropdown menu rules for namespace-selector & resource-item that don't use the default pf4 styles
+.co-namespace-selector .dropdown-menu__autocomplete-filter {
+  li {
+    display: flex;
+    padding: 0;
     &:focus {
       outline: none;
+    }
+    &.active a {
+      background-color: var(--pf-global--BackgroundColor--150);
     }
     a {
       cursor: pointer;
       flex-grow: 1;
       width: 100%;
       &.disabled {
-        color: $dropdown-link-disabled-color;
+        color: var(--pf-global--Color--dark-200);
         cursor: not-allowed;
         &:active,
         &:focus,
         &:hover {
           background-color: inherit;
           border-color: transparent;
-          color: $dropdown-link-disabled-color !important;
+          color: var(--pf-global--Color--dark-200) !important;
         }
       }
       &.next-to-bookmark {
         padding-left: 5px
       }
-      &.hover {
-        background-color: $dropdown-link-hover-bg;
-        border-top: $dropdown-link-hover-border;
-        border-bottom: $dropdown-link-hover-border;
-        color: $dropdown-link-hover-color;
-        position: relative;
-        &:after,
-        &:before {
-          height: 1px;
-        }
-      }
-      &.focus {
-        color: white;
-      }
     }
+  }
+
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
   }
 }
 
@@ -134,74 +188,13 @@ $dropdown-link-hover-border: 1px solid #bee1f4;
 }
 }
 
-.co-add-actions-selector__icon {
-  margin: 0 5px 0 0;
-}
-
-.co-namespace-bar {
-  border-bottom: 1px solid $color-grey-background-border;
-  padding: 0 15px;
-  white-space: nowrap;
-
-  @media (min-width: $grid-float-breakpoint) {
-    padding-left: 30px;
-    padding-right: 30px;
-  }
-
-  &__import {
-    color: inherit;
-  }
-
-  &__items {
-    align-items: center;
-    display: flex;
-    justify-content: space-between;
-
-    .btn-link {
-      color: inherit;
-      padding: 4px 0 2px !important;
-
-      @media(min-width: $grid-float-breakpoint) {
-        padding-bottom: 10px !important;
-        padding-top: 11px !important;
-      }
-
-      &:hover,
-      &:focus {
-        text-decoration: none;
-      }
-    }
-  }
-}
-
-.co-namespace-selector {
-  max-width: 60%;
-
-  .btn-link {
-    font-size: ($font-size-base + 1);
-    padding: 2px 0 !important;
-
-    @media (min-width: $grid-float-breakpoint) {
-      font-size: ($font-size-base + 2);
-      padding-bottom: 9px !important;
-      padding-top: 9px !important;
-    }
-
-    &__titlePrefix {
-      margin-right: 6px;
-    }
-  }
-}
-
-.co-namespace-selector__menu.dropdown-menu {
-  max-height: 60vh;
+.co-namespace-selector__menu.pf-c-dropdown__menu {
+  margin: -5px 0 0;
   max-width: 100%;
   min-width: 210px;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
 
   @media (min-width: $grid-float-breakpoint) {
-    min-width: 250px;
+    min-width: 325px;
   }
 
   a {
@@ -213,62 +206,30 @@ $dropdown-link-hover-border: 1px solid #bee1f4;
     background-color: inherit;
     color: inherit;
   }
-  // Mimic PatternFly dropdown-menu visual states.
+  // Mimic PatternFly4 dropdown-menu visual states.
   // Since namespace selector has multiple <a> tags within each list item,
   // target the <li> except the one containing the list divider.
   li {
-    &:not(.co-namespace-selector__divider) {
-      &:after,
-      &:before {
-        content: '';
-        background-color: $dropdown-link-hover-border-color;
-        left: 0;
-        position: absolute;
-        width: 100%;
-      }
-      &:after {
-        top: 0;
-      }
-      &:before {
-        bottom: 0;
-      }
-      &:hover {
-        background-color: $dropdown-link-hover-bg;
-        color: $dropdown-link-hover-color;
-        position: relative;
-        &:after,
-        &:before {
-          height: 1px;
-        }
-      }
-      &.active:hover:after,
-      &.active:hover:before {
-        height: 0;
-      }
+    &:not(.co-namespace-selector__divider):hover {
+      background-color: $dropdown-background--hover;
+      color: $dropdown-link-hover-color;
+      position: relative;
     }
     > a {
       padding: 6px;
       text-decoration: none;
-      &.active {
-        border-color: transparent;
-      }
-      &:active {
-        background-color: transparent;
-        color: inherit !important;
-      }
       &.bookmarker {
         display: inline-block;
         padding-right: 5px;
         padding-left: 12px;
         color: $color-bookmarker;
-        flex-grow: 0;
+        flex: 0;
         &:hover {
-          background-color: transparent;
+          background-color: $dropdown-background--hover;
           color: $color-bookmarker--hover;
         }
         &:focus {
-          background-color: transparent;
-          border-color: transparent;
+          background-color: $dropdown-background--hover;
         }
       }
       &.next-to-bookmark {
@@ -279,15 +240,38 @@ $dropdown-link-hover-border: 1px solid #bee1f4;
   }
 }
 
-.btn-dropdown {
-  max-width: 100%;
-  .caret {
-    flex: 0 0 auto;
-    margin-left: 5px;
+.co-storage-class-dropdown .pf-c-dropdown__menu {
+  min-width: 290px;
+}
+
+.dropdown-menu__autocomplete-filter {
+  max-height: 60vh;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.pf-c-dropdown__menu {
+  list-style: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+// TEMP fix until https://github.com/patternfly/patternfly-next/issues/1543 is fixed upstream
+.pf-c-dropdown__menu-item {
+  &:focus,
+  &:hover {
+    color: var(--pf-global--Color--dark-100);
   }
 }
 
-.btn-dropdown__item {
+.pf-c-dropdown__toggle {
+  max-width: 100%;
+}
+
+.pf-c-dropdown__toggle .pf-c-dropdown__toggle-icon {
+  flex: 0 0 auto; // so arrow doesn't shrink
+}
+
+.pf-c-dropdown__toggle-text {
   overflow: hidden;
   text-align: left;
   text-overflow: ellipsis;
@@ -297,19 +281,7 @@ $dropdown-link-hover-border: 1px solid #bee1f4;
   }
 }
 
-.btn-dropdown__item--placeholder {
+.pf-c-dropdown__toggle-text--placeholder {
   color: $color-pf-black-500;
   font-style: italic;
-}
-
-.btn-dropdown__content-wrap {
-  align-items: baseline;
-  display: flex;
-  flex: 1 1 auto;
-  justify-content: space-between;
-  min-width: 0;
-}
-
-.btn--actions {
-  margin-top: -1px;
 }

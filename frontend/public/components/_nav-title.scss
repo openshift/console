@@ -6,6 +6,12 @@
   }
 }
 
+@media(max-width: $screen-xs){
+  .co-action-buttons__btn {
+    margin-bottom: 10px;
+  }
+}
+
 .co-action-buttons__btn, // btn along with drowdown actions
 .co-actions-menu {
   margin-left: 10px;

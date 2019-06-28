@@ -22,7 +22,7 @@ import { PodKind } from '@console/internal/module/k8s';
 import { getName, getNamespace, DASH } from '@console/shared';
 import { PodModel } from '@console/internal/models';
 
-import { VMKind, VMIKind } from './types';
+import { VMKind, VMIKind } from '../../types';
 
 export const VMResourceSummary = ({ vm }: VMResourceSummaryProps) => {
   const template = getVmTemplate(vm);

@@ -42,12 +42,12 @@ import {
 import { tableFilters } from './table-filters';
 
 const rowFiltersToFilterFuncs = (rowFilters) => {
-  return rowFilters
+  return (rowFilters || [])
     .filter(f => f.type && _.isFunction(f.filter))
     .reduce((acc, f) => ({ ...acc, [f.type]: f.filter }), {});
 };
 
-const getAllTableFilters = (rowFilters = []) => ({
+const getAllTableFilters = (rowFilters) => ({
   ...tableFilters,
   ...rowFiltersToFilterFuncs(rowFilters),
 });
@@ -58,14 +58,15 @@ const getFilteredRows = (_filters, rowFilters, objects) => {
   }
 
   const allTableFilters = getAllTableFilters(rowFilters);
+  let filteredObjects = objects;
   _.each(_filters, (value, name) => {
     const filter = allTableFilters[name];
     if (_.isFunction(filter)) {
-      objects = _.filter(objects, o => filter(value, o));
+      filteredObjects = _.filter(filteredObjects, o => filter(value, o));
     }
   });
 
-  return objects;
+  return filteredObjects;
 };
 
 const filterPropType = (props, propName, componentName) => {
@@ -166,6 +167,7 @@ export const TableData: React.SFC<TableDataProps> = ({className, ...props}) => {
 };
 TableData.displayName = 'TableData';
 export type TableDataProps = {
+  id?: string;
   className?: string;
 }
 

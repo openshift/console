@@ -44,8 +44,8 @@ class ExpandPVCModal extends PromiseComponent {
     const { requestSizeUnit, requestSizeValue } =this.state;
     return <form onSubmit={this._submit} name="form" className="modal-content modal-content--no-inner-scroll">
       <ModalTitle>Expand {kind.label}</ModalTitle>
-      <ModalBody className="modal-body">
-        <p>Increase the capacity of claim <strong>{resource.metadata.name}.</strong> This can be a time-consuming process.</p>
+      <ModalBody>
+        <p>Increase the capacity of claim <strong className="co-break-word">{resource.metadata.name}.</strong> This can be a time-consuming process.</p>
         <label className="control-label co-required">Size</label>
         <RequestSizeInput
           name="requestSize"

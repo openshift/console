@@ -14,7 +14,7 @@ export const DashboardCardSeeAll: React.FC<DashboardCardTitleSeeAllProps> = Reac
   );
   return (
     <OverlayTrigger overlay={overlay} placement="right" trigger={['click']} rootClose>
-      <Button bsStyle="link">{SEE_ALL}</Button>
+      <Button bsStyle="link" className="co-dashboard-card__see-all">{SEE_ALL}</Button>
     </OverlayTrigger>
   );
 });

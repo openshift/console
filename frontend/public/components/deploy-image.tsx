@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
+import { Alert } from '@patternfly/react-core';
 
 import { FieldLevelHelp } from 'patternfly-react';
 import { getPorts } from './source-to-image';
@@ -360,15 +361,14 @@ export class DeployImage extends React.Component<DeployImageProps, DeployImageSt
             </div>}
             {isi && <React.Fragment>
               <div className="co-image-name-results__details">
+                {runsAsRoot(isi.image) && <Alert isInline className="co-alert" variant="warning" title="Image runs as root">
+                  Image <strong>{isi.name}</strong> runs as the <strong>root</strong> user which might not be permitted by your cluster administrator.
+                </Alert>}
                 <div className="row">
                   <div className="col-sm-3 col-md-2 hidden-xs text-right h2">
                     <span className="fa fa-cube text-muted" style={{fontSize: '100px'}} aria-hidden="true"></span>
                   </div>
                   <div className="col-sm-9 col-md-10">
-                    {runsAsRoot(isi.image) && <div className="alert alert-warning">
-                      <span className="pficon pficon-warning-triangle-o" aria-hidden="true"></span>
-                      Image <strong>{isi.name}</strong> runs as the <strong>root</strong> user which might not be permitted by your cluster administrator.
-                    </div>}
                     <h2 className="co-image-name-results__heading co-break-word">
                       {isi.name}
                       <small>

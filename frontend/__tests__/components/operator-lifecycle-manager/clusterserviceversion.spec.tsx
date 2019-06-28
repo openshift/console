@@ -3,13 +3,45 @@ import { shallow, ShallowWrapper, mount, ReactWrapper } from 'enzyme';
 import { Link } from 'react-router-dom';
 import * as _ from 'lodash-es';
 
-import { ClusterServiceVersionsDetailsPage, ClusterServiceVersionsDetailsPageProps, ClusterServiceVersionDetails, ClusterServiceVersionDetailsProps, ClusterServiceVersionsPage, ClusterServiceVersionsPageProps, ClusterServiceVersionList, ClusterServiceVersionTableHeader, ClusterServiceVersionTableRow, ClusterServiceVersionTableRowProps, CRDCard, CRDCardRow } from '../../../public/components/operator-lifecycle-manager/clusterserviceversion';
-import { ClusterServiceVersionKind, ClusterServiceVersionLogo, ClusterServiceVersionLogoProps, referenceForProvidedAPI, CSVConditionReason } from '../../../public/components/operator-lifecycle-manager';
+import {
+  ClusterServiceVersionsDetailsPage,
+  ClusterServiceVersionsDetailsPageProps,
+  ClusterServiceVersionDetails,
+  ClusterServiceVersionDetailsProps,
+  ClusterServiceVersionsPage,
+  ClusterServiceVersionsPageProps,
+  ClusterServiceVersionList,
+  ClusterServiceVersionTableHeader,
+  ClusterServiceVersionTableRow,
+  ClusterServiceVersionTableRowProps,
+  CRDCard,
+  CRDCardRow,
+  CSVSubscription,
+  CSVSubscriptionProps,
+} from '../../../public/components/operator-lifecycle-manager/clusterserviceversion';
+import {
+  ClusterServiceVersionKind,
+  ClusterServiceVersionLogo,
+  ClusterServiceVersionLogoProps,
+  referenceForProvidedAPI,
+  CSVConditionReason,
+  copiedLabelKey,
+} from '../../../public/components/operator-lifecycle-manager';
 import { DetailsPage, ListPage, TableInnerProps, Table, TableRow } from '../../../public/components/factory';
 import { testClusterServiceVersion } from '../../../__mocks__/k8sResourcesMocks';
-import { Timestamp, MsgBox, ResourceLink, ResourceKebab, ErrorBoundary, LoadingBox, ScrollToTopOnMount, SectionHeading } from '../../../public/components/utils';
+import {
+  Timestamp,
+  MsgBox,
+  ResourceLink,
+  ResourceKebab,
+  ErrorBoundary,
+  LoadingBox,
+  ScrollToTopOnMount,
+  SectionHeading,
+  Firehose,
+} from '../../../public/components/utils';
 import { referenceForModel } from '../../../public/module/k8s';
-import { ClusterServiceVersionModel } from '../../../public/models';
+import { ClusterServiceVersionModel, SubscriptionModel, PackageManifestModel } from '../../../public/models';
 
 import * as operatorLogo from '../../../public/imgs/operator.svg';
 
@@ -89,13 +121,13 @@ describe(ClusterServiceVersionLogo.displayName, () => {
 
   beforeEach(() => {
     const {provider, icon, displayName} = testClusterServiceVersion.spec;
-    wrapper = mount(<ClusterServiceVersionLogo icon={icon} displayName={displayName} provider={provider} />);
+    wrapper = mount(<ClusterServiceVersionLogo icon={icon[0]} displayName={displayName} provider={provider} />);
   });
 
   it('renders logo image from given base64 encoded image string', () => {
     const image: ReactWrapper<React.ImgHTMLAttributes<any>> = wrapper.find('img');
 
-    expect(image.props().src).toEqual(`data:${testClusterServiceVersion.spec.icon.mediatype};base64,${testClusterServiceVersion.spec.icon.base64data}`);
+    expect(image.props().src).toEqual(`data:${testClusterServiceVersion.spec.icon[0].mediatype};base64,${testClusterServiceVersion.spec.icon[0].base64data}`);
   });
 
   it('renders fallback image if given icon is invalid', () => {
@@ -238,6 +270,28 @@ describe(ClusterServiceVersionDetails.displayName, () => {
   });
 });
 
+describe(CSVSubscription.displayName, () => {
+  let wrapper: ShallowWrapper<CSVSubscriptionProps>;
+
+  it('renders `Firehose` for PackageManifest and Subscription', () => {
+    let obj = _.cloneDeep(testClusterServiceVersion);
+    obj = _.set(obj, 'metadata.annotations', {[copiedLabelKey]: 'operators'});
+    wrapper = shallow(<CSVSubscription obj={obj} />);
+
+    expect(wrapper.find(Firehose).props().resources).toEqual([{
+      kind: referenceForModel(SubscriptionModel),
+      namespace: obj.metadata.annotations[copiedLabelKey],
+      isList: true,
+      prop: 'subscription',
+    }, {
+      kind: referenceForModel(PackageManifestModel),
+      namespace: obj.metadata.namespace,
+      isList: true,
+      prop: 'packageManifest',
+    }]);
+  });
+});
+
 describe(ClusterServiceVersionsDetailsPage.displayName, () => {
   let wrapper: ShallowWrapper<ClusterServiceVersionsDetailsPageProps>;
   const name = 'example';
@@ -263,8 +317,10 @@ describe(ClusterServiceVersionsDetailsPage.displayName, () => {
     expect(detailsPage.props().pagesFor(testClusterServiceVersion)[0].component).toEqual(ClusterServiceVersionDetails);
     expect(detailsPage.props().pagesFor(testClusterServiceVersion)[1].name).toEqual('YAML');
     expect(detailsPage.props().pagesFor(testClusterServiceVersion)[1].href).toEqual('yaml');
-    expect(detailsPage.props().pagesFor(testClusterServiceVersion)[2].name).toEqual('Events');
-    expect(detailsPage.props().pagesFor(testClusterServiceVersion)[2].href).toEqual('events');
+    expect(detailsPage.props().pagesFor(testClusterServiceVersion)[2].name).toEqual('Subscription');
+    expect(detailsPage.props().pagesFor(testClusterServiceVersion)[2].href).toEqual('subscription');
+    expect(detailsPage.props().pagesFor(testClusterServiceVersion)[3].name).toEqual('Events');
+    expect(detailsPage.props().pagesFor(testClusterServiceVersion)[3].href).toEqual('events');
   });
 
   it('includes tab for each "owned" CRD', () => {
@@ -273,11 +329,11 @@ describe(ClusterServiceVersionsDetailsPage.displayName, () => {
     const csv = _.cloneDeep(testClusterServiceVersion);
     csv.spec.customresourcedefinitions.owned = csv.spec.customresourcedefinitions.owned.concat([{name: 'e.example.com', kind: 'E', version: 'v1', displayName: 'E'}]);
 
-    expect(detailsPage.props().pagesFor(csv)[3].name).toEqual('All Instances');
-    expect(detailsPage.props().pagesFor(csv)[3].href).toEqual('instances');
+    expect(detailsPage.props().pagesFor(csv)[4].name).toEqual('All Instances');
+    expect(detailsPage.props().pagesFor(csv)[4].href).toEqual('instances');
     csv.spec.customresourcedefinitions.owned.forEach((desc, i) => {
-      expect(detailsPage.props().pagesFor(csv)[4 + i].name).toEqual(desc.displayName);
-      expect(detailsPage.props().pagesFor(csv)[4 + i].href).toEqual(referenceForProvidedAPI(desc));
+      expect(detailsPage.props().pagesFor(csv)[5 + i].name).toEqual(desc.displayName);
+      expect(detailsPage.props().pagesFor(csv)[5 + i].href).toEqual(referenceForProvidedAPI(desc));
     });
   });
 

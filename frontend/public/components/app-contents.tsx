@@ -118,13 +118,14 @@ const AppContents = withRouter(React.memo(() => (
 
           <Route path={['/all-namespaces', '/ns/:ns']} component={RedirectComponent} />
 
-          <LazyRoute path="/dashboards" exact loader={() => import('./dashboards-page/dashboards' /* webpackChunkName: "dashboards" */).then(m => m.DashboardsPage)} />
+          <LazyRoute path="/dashboards" loader={() => import('./dashboards-page/dashboards' /* webpackChunkName: "dashboards" */).then(m => m.DashboardsPage)} />
           <LazyRoute path="/cluster-status" exact loader={() => import('./cluster-overview' /* webpackChunkName: "cluster-overview" */).then(m => m.ClusterOverviewPage)} />
           <Redirect from="/overview/all-namespaces" to="/cluster-status" />
           <Redirect from="/overview/ns/:ns" to="/k8s/cluster/projects/:ns/workloads" />
           <Route path="/overview" exact component={NamespaceRedirect} />
 
           <LazyRoute path="/start-guide" exact loader={() => import('./start-guide' /* webpackChunkName: "start-guide" */).then(m => m.StartGuidePage)} />
+          <LazyRoute path="/command-line-tools" exact loader={() => import('./command-line-tools' /* webpackChunkName: "command-line-tools" */).then(m => m.CommandLineToolsPage)} />
 
           <LazyRoute path="/operatorhub/all-namespaces" exact loader={() => import('./operator-hub/operator-hub-page' /* webpackChunkName: "operator-hub" */).then(m => m.OperatorHubPage)} />
           <LazyRoute path="/operatorhub/ns/:ns" exact loader={() => import('./operator-hub/operator-hub-page' /* webpackChunkName: "operator-hub" */).then(m => m.OperatorHubPage)} />
@@ -155,7 +156,7 @@ const AppContents = withRouter(React.memo(() => (
           <Route path="/k8s/ns/:ns/alertmanagers/:name" exact render={({match}) => <Redirect to={`/k8s/ns/${match.params.ns}/${referenceForModel(AlertmanagerModel)}/${match.params.name}`} />} />
 
           <LazyRoute path={`/k8s/ns/:ns/${ClusterServiceVersionModel.plural}/:name/edit`} exact loader={() => import('./create-yaml' /* webpackChunkName: "create-yaml" */).then(m => m.EditYAMLPage)} kind={referenceForModel(ClusterServiceVersionModel)} />
-          <LazyRoute path={`/k8s/ns/:ns/${ClusterServiceVersionModel.plural}/:appName/:plural/~new`} exact loader={() => import('./operator-lifecycle-manager/create-crd-yaml' /* webpackChunkName: "create-crd-yaml" */).then(m => m.CreateCRDYAML)} />
+          <LazyRoute path={`/k8s/ns/:ns/${ClusterServiceVersionModel.plural}/:appName/:plural/~new`} exact loader={() => import('./operator-lifecycle-manager/create-operand' /* webpackChunkName: "create-operand" */).then(m => m.CreateOperandPage)} />
           <Route path={`/k8s/ns/:ns/${ClusterServiceVersionModel.plural}/:appName/:plural/:name`} component={ResourceDetailsPage} />
 
           <LazyRoute path="/k8s/all-namespaces/events" exact loader={() => import('./events' /* webpackChunkName: "events" */).then(m => NamespaceFromURL(m.EventStreamPage))} />

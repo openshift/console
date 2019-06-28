@@ -10,7 +10,7 @@ import { coFetchJSON } from '../co-fetch';
 import { ConsoleHealth, KubernetesHealth, Health } from './graphs/health';
 import { connectToFlags, flagPending } from '../reducers/features';
 import { FLAGS } from '../const';
-import { Gauge, PROMETHEUS_BASE_PATH, requirePrometheus } from './graphs';
+import { Gauge, PROMETHEUS_BASE_PATH, requirePrometheus, ThresholdColor } from './graphs';
 import {
   AdditionalSupportLinks,
   AsyncComponent,
@@ -38,16 +38,80 @@ const Graphs = requirePrometheus(({namespace}) => {
         <div className="container-fluid group__body group__graphs">
           <div className="row">
             <div className="col-md-3 col-sm-6">
-              <Gauge title="API Servers Up" query={'(sum(up{job="apiserver"} == 1) / count(up{job="apiserver"})) * 100'} invert={true} thresholds={{warn: 15, error: 50}} />
+              <Gauge
+                invert
+                query={'(sum(up{job="apiserver"} == 1) / count(up{job="apiserver"})) * 100'}
+                remainderLabel="down"
+                thresholds={[
+                  {
+                    value: 85,
+                    color: ThresholdColor.WARN,
+                  },
+                  {
+                    value: 50,
+                    color: ThresholdColor.ERROR,
+                  },
+                ]}
+                title="API Servers Up"
+                usedLabel="up"
+              />
             </div>
             <div className="col-md-3 col-sm-6">
-              <Gauge title="Controller Managers Up" query={'(sum(up{job="kube-controller-manager"} == 1) / count(up{job="kube-controller-manager"})) * 100'} invert={true} thresholds={{warn: 15, error: 50}} />
+              <Gauge
+                remainderLabel="down"
+                query={'(sum(up{job="kube-controller-manager"} == 1) / count(up{job="kube-controller-manager"})) * 100'}
+                invert
+                thresholds={[
+                  {
+                    value: 85,
+                    color: ThresholdColor.WARN,
+                  },
+                  {
+                    value: 50,
+                    color: ThresholdColor.ERROR,
+                  },
+                ]}
+                title="Controller Managers Up"
+                usedLabel="up"
+              />
             </div>
             <div className="col-md-3 col-sm-6">
-              <Gauge title="Schedulers Up" query={'(sum(up{job="scheduler"} == 1) / count(up{job="scheduler"})) * 100'} invert={true} thresholds={{warn: 15, error: 50}} />
+              <Gauge
+                invert
+                query={'(sum(up{job="scheduler"} == 1) / count(up{job="scheduler"})) * 100'}
+                remainderLabel="down"
+                thresholds={[
+                  {
+                    value: 85,
+                    color: ThresholdColor.WARN,
+                  },
+                  {
+                    value: 50,
+                    color: ThresholdColor.ERROR,
+                  },
+                ]}
+                title="Schedulers Up"
+                usedLabel="up"
+              />
             </div>
             <div className="col-md-3 col-sm-6">
-              <Gauge title="API Request Success Rate" query={'sum(rate(apiserver_request_count{code=~"2.."}[5m])) / sum(rate(apiserver_request_count[5m])) * 100'} invert={true} thresholds={{warn: 15, error: 30}} />
+              <Gauge
+                invert
+                query={'sum(rate(apiserver_request_count{code=~"2.."}[5m])) / sum(rate(apiserver_request_count[5m])) * 100'}
+                remainderLabel="failure"
+                thresholds={[
+                  {
+                    value: 85,
+                    color: ThresholdColor.WARN,
+                  },
+                  {
+                    value: 70,
+                    color: ThresholdColor.ERROR,
+                  },
+                ]}
+                title="API Request Success Rate"
+                usedLabel="success"
+              />
             </div>
           </div>
         </div>
@@ -61,16 +125,28 @@ const Graphs = requirePrometheus(({namespace}) => {
         <div className="container-fluid group__body group__graphs">
           <div className="row">
             <div className="col-md-3 col-sm-6">
-              <Gauge title="CPU Usage" query={'(sum(node:node_cpu_utilisation:avg1m) / count(node:node_cpu_utilisation:avg1m)) * 100'} />
+              <Gauge
+                query={'(sum(node:node_cpu_utilisation:avg1m) / count(node:node_cpu_utilisation:avg1m)) * 100'}
+                title="CPU Usage"
+              />
             </div>
             <div className="col-md-3 col-sm-6">
-              <Gauge title="Memory Usage" query={'(sum(node:node_memory_utilisation:)) / count(node:node_memory_utilisation:) * 100'} />
+              <Gauge
+                query={'(sum(node:node_memory_utilisation:)) / count(node:node_memory_utilisation:) * 100'}
+                title="Memory Usage"
+              />
             </div>
             <div className="col-md-3 col-sm-6">
-              <Gauge title="Disk Usage" query={'(sum(node:node_filesystem_usage:)) / count(node:node_filesystem_usage:) * 100'} />
+              <Gauge
+                query={'(sum(node:node_filesystem_usage:)) / count(node:node_filesystem_usage:) * 100'}
+                title="Disk Usage"
+              />
             </div>
             <div className="col-md-3 col-sm-6">
-              <Gauge title="Pod Usage" query={'100 - (sum(kube_node_status_capacity_pods) - sum(kube_pod_info)) / sum(kube_node_status_capacity_pods) * 100'} />
+              <Gauge
+                query={'100 - (sum(kube_node_status_capacity_pods) - sum(kube_pod_info)) / sum(kube_node_status_capacity_pods) * 100'}
+                title="Pod Usage"
+              />
             </div>
           </div>
         </div>

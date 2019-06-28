@@ -14,11 +14,14 @@ import {
   RoutePage,
   DashboardsOverviewHealthPrometheusSubsystem,
   DashboardsOverviewHealthURLSubsystem,
+  DashboardsCard,
+  DashboardsTab,
 } from '@console/plugin-sdk';
 
 // TODO(vojtech): internal code needed by plugins should be moved to console-shared package
 import { PodModel } from '@console/internal/models';
 import { FLAGS } from '@console/internal/const';
+import { GridPosition } from '@console/internal/components/dashboard/grid';
 
 import { FooBarModel } from './models';
 import { yamlTemplates } from './yaml-templates';
@@ -37,7 +40,9 @@ type ConsumedExtensions =
   | YAMLTemplate
   | RoutePage
   | DashboardsOverviewHealthPrometheusSubsystem
-  | DashboardsOverviewHealthURLSubsystem<any>;
+  | DashboardsOverviewHealthURLSubsystem<any>
+  | DashboardsTab
+  | DashboardsCard;
 
 const plugin: Plugin<ConsumedExtensions> = [
   {
@@ -165,6 +170,22 @@ const plugin: Plugin<ConsumedExtensions> = [
       exact: true,
       path: '/test',
       render: () => <h1>Test Page</h1>,
+    },
+  },
+  {
+    type: 'Dashboards/Tab',
+    properties: {
+      id: 'foo-tab',
+      title: 'Foo',
+    },
+  },
+  {
+    type: 'Dashboards/Card',
+    properties: {
+      tab: 'foo-tab',
+      position: GridPosition.MAIN,
+      loader: () =>
+        import('./dashboards/foo-card' /* webpackChunkName: "demo-card" */).then((m) => m.FooCard),
     },
   },
 ];

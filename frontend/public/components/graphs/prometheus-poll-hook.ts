@@ -23,7 +23,7 @@ export const usePrometheusPoll = ({
   const [error, setError] = useState();
   const [response, setResponse] = useState();
   const safeFetch = useSafeFetch();
-  const tick = useCallback(() => safeFetch(url)
+  const tick = useCallback(() => url && safeFetch(url)
     .then(data => {
       setResponse(data);
       setError(undefined);

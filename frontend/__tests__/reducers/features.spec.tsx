@@ -45,6 +45,7 @@ describe('featureReducer', () => {
       [FLAGS.CLUSTER_API]: false,
       [FLAGS.MACHINE_CONFIG]: false,
       [FLAGS.MACHINE_AUTOSCALER]: false,
+      [FLAGS.CONSOLE_CLI_DOWNLOAD]: false,
     }));
   });
 });

@@ -146,14 +146,13 @@ export const SubscriptionDetails: React.SFC<SubscriptionDetailsProps> = (props) 
   const {obj, installedCSV, pkg} = props;
   const catalogNS = obj.spec.sourceNamespace || olmNamespace;
 
-  const Effect: React.SFC<{promise: () => Promise<any>}> = ({promise}) => {
-    promise();
-    return null;
-  };
+  React.useEffect(() => {
+    if (props.showDelete) {
+      createDisableApplicationModal({k8sKill, k8sGet, k8sPatch, subscription: obj}).result.then(() => removeQueryArgument('showDelete'));
+    }
+  }, [obj, props.showDelete]);
 
   return <div className="co-m-pane__body">
-    <Effect promise={props.showDelete ? () => createDisableApplicationModal({k8sKill, k8sGet, k8sPatch, subscription: obj}).result.then(() => removeQueryArgument('showDelete')) : () => null} />
-
     <SectionHeading text="Subscription Overview" />
     <div className="co-m-pane__body-group">
       <SubscriptionUpdates pkg={pkg} obj={obj} installedCSV={installedCSV} installPlan={props.installPlan} />
@@ -177,6 +176,11 @@ export const SubscriptionDetails: React.SFC<SubscriptionDetailsProps> = (props) 
             <dd>
               <ResourceLink kind={referenceForModel(CatalogSourceModel)} name={obj.spec.source} namespace={catalogNS} title={obj.spec.source} />
             </dd>
+            <dt>Install Plan</dt>
+            <dd>{_.get(obj.status, 'installplan.name')
+              ? <ResourceLink kind={referenceForModel(InstallPlanModel)} name={obj.status.installplan.name} namespace={obj.metadata.namespace} title={obj.status.installplan.name} />
+              : 'None'
+            }</dd>
           </dl>
         </div>
       </div>

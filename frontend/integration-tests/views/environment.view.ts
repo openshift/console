@@ -2,7 +2,7 @@ import { $, $$, browser, ExpectedConditions as until, by, element } from 'protra
 
 const BROWSER_TIMEOUT = 15000;
 
-const inputs = $$('.form-control');
+const inputs = $$('.pf-c-form-control');
 export const rowsKey = $('[placeholder="name"]');
 export const rowsValue = $('[placeholder="value"]');
 export const deleteBtn = $$('.pairs-list__delete-icon').first();

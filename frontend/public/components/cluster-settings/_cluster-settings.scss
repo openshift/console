@@ -1,9 +1,9 @@
-.cluster-channel-modal__dropdown,
-.cluster-update-modal__dropdown {
-  .btn-dropdown,
-  .dropdown-menu {
-    width: 100%;
-  }
+.cluster-channel-modal__dropdown .pf-c-dropdown {
+  width: 100%;
+}
+
+.cluster-update-modal__dropdown .pf-c-dropdown {
+  width: 100%;
 }
 
 .co-update-status {

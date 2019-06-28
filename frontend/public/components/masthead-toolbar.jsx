@@ -12,7 +12,6 @@ import { history, Firehose } from './utils';
 import { openshiftHelpBase } from './utils/documentation';
 import { AboutModal } from './about-modal';
 import { getAvailableClusterUpdates, clusterVersionReference } from '../module/k8s/cluster-settings';
-import { commandLineToolsModal } from './modals';
 import * as plugins from '../plugins';
 
 const SystemStatusButton = ({statuspageData, className}) => !_.isEmpty(_.get(statuspageData, 'incidents'))
@@ -168,7 +167,7 @@ class MastheadToolbar_ extends React.Component {
 
   _onCommandLineTools(e) {
     e.preventDefault();
-    commandLineToolsModal({});
+    history.push('/command-line-tools');
   }
 
   _copyLoginCommand(e) {
@@ -197,6 +196,10 @@ class MastheadToolbar_ extends React.Component {
     ];
   }
 
+  _getAdditionalLinks(links, type) {
+    return _.sortBy(_.filter(links, link => link.spec.location === type), 'spec.text');
+  }
+
   _launchActions() {
     return [
       {
@@ -208,8 +211,9 @@ class MastheadToolbar_ extends React.Component {
     ];
   }
 
-  _helpActions() {
-    return [{
+  _helpActions(additionalHelpActions) {
+    const helpActions = [];
+    helpActions.push({
       label: 'Documentation',
       callback: this._onDocumentation,
       externalLink: true,
@@ -219,7 +223,21 @@ class MastheadToolbar_ extends React.Component {
     }, {
       label: 'About',
       callback: this._onAboutModal,
-    }];
+    }, ...additionalHelpActions);
+    return helpActions;
+  }
+
+  _getAdditionalActions(links) {
+    return _.map(links, link => {
+      return {
+        callback: (e) => {
+          e.preventDefault();
+          window.open(link.spec.href,'_blank').opener = null;
+        },
+        label: link.spec.text,
+        externalLink: true,
+      };
+    });
   }
 
   _renderMenuItems(actions) {
@@ -232,9 +250,10 @@ class MastheadToolbar_ extends React.Component {
   }
 
   _renderMenu(mobile) {
-    const { flags } = this.props;
+    const { flags, consoleLinks } = this.props;
     const { isUserDropdownOpen, isKebabDropdownOpen, username } = this.state;
-    const helpActions = this._helpActions();
+    const additionalUserActions = this._getAdditionalActions(this._getAdditionalLinks(consoleLinks, 'UserMenu'));
+    const helpActions = this._helpActions(this._getAdditionalActions(this._getAdditionalLinks(consoleLinks, 'HelpMenu')));
     const launchActions = this._launchActions();
 
     if (flagPending(flags[FLAGS.OPENSHIFT]) || flagPending(flags[FLAGS.AUTH_ENABLED]) || !username) {
@@ -252,7 +271,7 @@ class MastheadToolbar_ extends React.Component {
         }
       };
 
-      if (mobile) {
+      if (mobile || !_.isEmpty(additionalUserActions)) {
         actions.push({
           separator: true,
         });
@@ -270,6 +289,16 @@ class MastheadToolbar_ extends React.Component {
         label: 'Log out',
         callback: logout,
       });
+    }
+
+    if (!_.isEmpty(additionalUserActions)) {
+      actions.unshift(...additionalUserActions);
+
+      if (mobile) {
+        actions.unshift({
+          separator: true,
+        });
+      }
     }
 
     if (mobile) {
@@ -310,7 +339,7 @@ class MastheadToolbar_ extends React.Component {
 
   render() {
     const { isApplicationLauncherDropdownOpen, isHelpDropdownOpen, showAboutModal, statuspageData } = this.state;
-    const { flags } = this.props;
+    const { flags, consoleLinks } = this.props;
     const resources = [{
       kind: clusterVersionReference,
       name: 'version',
@@ -356,7 +385,7 @@ class MastheadToolbar_ extends React.Component {
                   </DropdownToggle>
                 }
                 isOpen={isHelpDropdownOpen}
-                dropdownItems={this._renderMenuItems(this._helpActions())}
+                dropdownItems={this._renderMenuItems(this._helpActions(this._getAdditionalActions(this._getAdditionalLinks(consoleLinks, 'HelpMenu'))))}
               />
             </ToolbarItem>
           </ToolbarGroup>
@@ -375,7 +404,10 @@ class MastheadToolbar_ extends React.Component {
   }
 }
 
-const mastheadToolbarStateToProps = state => ({ user: state.UI.get('user') });
+const mastheadToolbarStateToProps = state => ({
+  user: state.UI.get('user'),
+  consoleLinks: state.UI.get('consoleLinks'),
+});
 
 export const MastheadToolbar = connect(
   mastheadToolbarStateToProps,

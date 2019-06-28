@@ -32,6 +32,7 @@
 @import "style/status";
 
 // React Components
+@import "components/utils/alerts";
 @import "components/utils/copy-to-clipboard";
 @import "components/utils/disabled";
 @import "components/utils/file-input";
@@ -67,7 +68,6 @@
 @import "components/sysevent-stream";
 @import "components/icon-and-text";
 @import "components/toggle-play";
-@import "components/users";
 @import "components/volume-icon";
 @import "components/horizontal-nav";
 @import "components/edit-yaml";

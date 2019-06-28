@@ -10,7 +10,7 @@ export const getHostBMCAddress = (host) => _.get(host, 'spec.bmc.address');
 export const isHostOnline = (host) => _.get(host, 'spec.online', false);
 export const getHostNICs = (host) => _.get(host, 'status.hardware.nics', []);
 export const getHostStorage = (host) => _.get(host, 'status.hardware.storage', []);
-export const getHostCPUs = (host) => _.get(host, 'status.hardware.cpus', []);
+export const getHostCPU = (host) => _.get(host, 'status.hardware.cpu', {});
 export const getHostRAM = (host) => _.get(host, 'status.hardware.ramGiB');
 export const getHostErrorMessage = (host) => _.get(host, 'status.errorMessage');
 export const getHostDescription = (host) => _.get(host, 'spec.description', '');

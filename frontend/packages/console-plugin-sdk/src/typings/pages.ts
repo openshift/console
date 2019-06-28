@@ -1,9 +1,7 @@
-import * as React from 'react';
 import { RouteProps, RouteComponentProps } from 'react-router-dom';
 import { K8sKind, K8sResourceKindReference } from '@console/internal/module/k8s';
 import { Extension } from './extension';
-
-type LazyLoader<T extends {}> = () => Promise<React.ComponentType<Partial<T>>>;
+import { LazyLoader } from './types';
 
 namespace ExtensionProperties {
   export interface ResourcePage<T> {

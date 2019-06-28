@@ -116,10 +116,10 @@ export const NameKeyDropdownPair = ({name, key, configMaps, secrets, onChange, k
 
 const FieldRef = ({data: {fieldPath}}) => <React.Fragment>
   <div className="pairs-list__value-ro-field">
-    <input type="text" className="form-control" value="FieldRef" disabled />
+    <input type="text" className="pf-c-form-control" value="FieldRef" disabled />
   </div>
   <div className="pairs-list__value-ro-field">
-    <input type="text" className="form-control" value={fieldPath} disabled />
+    <input type="text" className="pf-c-form-control" value={fieldPath} disabled />
   </div>
 </React.Fragment>;
 
@@ -130,10 +130,10 @@ const ConfigMapSecretKeyRef = ({data: {name, key}, configMaps, secrets, onChange
   if (disabled) {
     return <React.Fragment>
       <div className="pairs-list__value-ro-field">
-        <input type="text" className="form-control" value={`${name} - ${kind}`} disabled />
+        <input type="text" className="pf-c-form-control" value={`${name} - ${kind}`} disabled />
       </div>
       <div className="pairs-list__value-ro-field">
-        <input type="text" className="form-control" value={key} disabled />
+        <input type="text" className="pf-c-form-control" value={key} disabled />
       </div>
     </React.Fragment>;
   }
@@ -148,7 +148,7 @@ const ConfigMapSecretRef = ({data: {name, key}, configMaps, secrets, onChange, d
 
   if (disabled) {
     return <div className="pairs-list__value-ro-field">
-      <input type="text" className="form-control" value={nameString} disabled placeholder="config map/secret" />
+      <input type="text" className="pf-c-form-control" value={nameString} disabled placeholder="config map/secret" />
     </div>;
   }
   return NameKeyDropdownPair({name, key, configMaps, secrets, onChange, kind, nameTitle, placeholderString, isKeyRef});
@@ -156,10 +156,10 @@ const ConfigMapSecretRef = ({data: {name, key}, configMaps, secrets, onChange, d
 
 const ResourceFieldRef = ({data: {containerName, resource}}) => <React.Fragment>
   <div className="pairs-list__value-ro-field">
-    <input type="text" className="form-control value-from" value={`${containerName} - Resource Field`} disabled />
+    <input type="text" className="pf-c-form-control value-from" value={`${containerName} - Resource Field`} disabled />
   </div>
   <div className="pairs-list__value-ro-field">
-    <input type="text" className="form-control value-from" value={resource} disabled />
+    <input type="text" className="pf-c-form-control value-from" value={resource} disabled />
   </div>
 </React.Fragment>;
 

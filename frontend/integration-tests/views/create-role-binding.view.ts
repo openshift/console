@@ -5,7 +5,7 @@ const selectFromDropdown = async(dropdownButton, text) => {
   await browser.wait(until.presenceOf($('.dropdown--text-filter')));
   await browser.actions().sendKeys(text).perform();
   await element(by.cssContainingText('li[role=option] a', text)).click();
-  await browser.wait(until.not(until.visibilityOf($('.dropdown-menu'))));
+  await browser.wait(until.not(until.visibilityOf($('.pf-c-dropdown__menu'))));
 };
 
 export const selectNamespace = (namespace) => selectFromDropdown($('#ns-dropdown'), namespace);
