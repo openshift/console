@@ -136,8 +136,8 @@ describe('Interacting with a `OwnNamespace` install mode Operator (Prometheus)',
     expect(crudView.rowFilterFor('Alertmanager').isDisplayed()).toBe(true);
     expect(crudView.rowFilterFor('ServiceMonitor').isDisplayed()).toBe(true);
     expect(crudView.rowFilterFor('PrometheusRule').isDisplayed()).toBe(true);
-    expect(crudView.statusMessageTitle.getText()).toEqual('No Application Resources Found');
-    expect(crudView.statusMessageDetail.getText()).toEqual('Application resources are declarative components used to define the behavior of the application.');
+    expect(crudView.statusMessageTitle.getText()).toEqual('No Operands Found');
+    expect(crudView.statusMessageDetail.getText()).toEqual('Operands are declarative components used to define the behavior of the application.');
   });
 
   it('displays YAML editor for creating a new `Prometheus` instance', async() => {

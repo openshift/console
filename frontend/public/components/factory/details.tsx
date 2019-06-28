@@ -34,7 +34,7 @@ export const DetailsPage = withFallback<DetailsPageProps>((props) => <Firehose r
     resourceKeys={_.map(props.resources, 'prop')} />
 </Firehose>, ErrorBoundaryFallback);
 
-type Page = {
+export type Page = {
   href: string;
   name: string;
   component?: React.ComponentType<any>;

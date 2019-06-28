@@ -17,6 +17,7 @@ import { connectToModel } from '../../kinds';
 import { apiVersionForReference, kindForReference, K8sResourceKind, OwnerReference, K8sKind, referenceFor, GroupVersionKind, referenceForModel } from '../../module/k8s';
 import { ClusterServiceVersionModel } from '../../models';
 import { deleteModal } from '../modals';
+import { RootState } from '../../redux';
 
 const csvName = () => location.pathname.split('/').find((part, i, allParts) => allParts[i - 1] === referenceForModel(ClusterServiceVersionModel) || allParts[i - 1] === ClusterServiceVersionModel.plural);
 
@@ -153,7 +154,7 @@ export const OperandList: React.SFC<OperandListProps> = (props) => {
     virtualize />;
 };
 
-const inFlightStateToProps = ({k8s}) => ({inFlight: k8s.getIn(['RESOURCES', 'inFlight'])});
+const inFlightStateToProps = ({k8s}: RootState) => ({inFlight: k8s.getIn(['RESOURCES', 'inFlight'])});
 
 export const ProvidedAPIsPage = connect(inFlightStateToProps)(
   (props: ProvidedAPIsPageProps) => {
@@ -196,7 +197,8 @@ export const ProvidedAPIsPage = connect(inFlightStateToProps)(
         rowFilters={firehoseResources.length > 1 ? rowFilters : null}
       />
       : <StatusBox loaded={true} EmptyMsg={EmptyMsg} />;
-  });
+  }
+);
 
 export const ProvidedAPIPage = connectToModel((props: ProvidedAPIPageProps) => {
   const {namespace, kind, kindsInFlight, kindObj, csv} = props;
@@ -210,9 +212,9 @@ export const ProvidedAPIPage = connectToModel((props: ProvidedAPIPageProps) => {
   return <ListPage
     kind={kind}
     ListComponent={OperandList}
-    canCreate={_.get(props.kindObj, 'verbs', [] as string[]).some(v => v === 'create')}
+    canCreate={_.get(kindObj, 'verbs', [] as string[]).some(v => v === 'create')}
     createProps={{to: `/k8s/ns/${csv.metadata.namespace}/${ClusterServiceVersionModel.plural}/${csv.metadata.name}/${kind}/~new`}}
-    namespace={_.get(props.kindObj, 'namespaced') ? namespace : null} />;
+    namespace={_.get(kindObj, 'namespaced') ? namespace : null} />;
 });
 
 export const OperandDetails = connectToModel((props: OperandDetailsProps) => {

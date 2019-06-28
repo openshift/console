@@ -1,8 +1,8 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as classNames from 'classnames';
-import * as PropTypes from 'prop-types';
-import { Route, Switch, Link } from 'react-router-dom';
+import { History, Location } from 'history';
+import { Route, Switch, Link, withRouter, match } from 'react-router-dom';
 
 import { EmptyBox, StatusBox } from '.';
 import { PodsPage } from '../pod';
@@ -116,7 +116,7 @@ export const navFactory: NavFactory = {
   }),
 };
 
-export const NavBar: React.SFC<NavBarProps> = ({pages, basePath, hideDivider}) => {
+export const NavBar = withRouter<NavBarProps>(({pages, basePath, hideDivider}) => {
   // These tabs go before the divider
   const before = ['', 'edit', 'yaml'];
   const divider = <li className="co-m-horizontal-nav__menu-item co-m-horizontal-nav__menu-item--divider" key="_divider" />;
@@ -138,28 +138,12 @@ export const NavBar: React.SFC<NavBarProps> = ({pages, basePath, hideDivider}) =
     {primaryTabs}
     {secondaryTabs}
   </div>;
-};
+});
 NavBar.displayName = 'NavBar';
 
-export class HorizontalNav extends React.PureComponent<HorizontalNavProps> {
-  static propTypes = {
-    pages: PropTypes.arrayOf(PropTypes.shape({
-      href: PropTypes.string,
-      name: PropTypes.string,
-      component: PropTypes.func,
-    })),
-    pagesFor: PropTypes.func,
-    className: PropTypes.string,
-    hideNav: PropTypes.bool,
-    hideDivider: PropTypes.bool,
-    match: PropTypes.shape({
-      path: PropTypes.string,
-    }),
-    noStatusBox: PropTypes.bool,
-  };
-
-  renderContent(routes: any) {
-    const {noStatusBox, obj, EmptyMsg, label} = this.props;
+export const HorizontalNav: React.FC<HorizontalNavProps> = React.memo((props) => {
+  const renderContent = (routes: JSX.Element[]) => {
+    const {noStatusBox, obj, EmptyMsg, label} = props;
     const content = <Switch> {routes} </Switch>;
 
     const skeletonDetails = <div className="skeleton-detail-view">
@@ -189,31 +173,27 @@ export class HorizontalNav extends React.PureComponent<HorizontalNavProps> {
         {content}
       </StatusBox>
     );
-  }
+  };
 
-  render() {
-    const props = this.props;
+  const componentProps = {..._.pick(props, ['filters', 'selected', 'match']), obj: _.get(props.obj, 'data')};
+  const extraResources = _.reduce(props.resourceKeys, (extraObjs, key) => ({...extraObjs, [key]: _.get(props[key], 'data')}), {});
+  const pages = props.pages || props.pagesFor(_.get(props.obj, 'data'));
 
-    const componentProps = {..._.pick(props, ['filters', 'selected', 'match']), obj: _.get(props.obj, 'data')};
-    const extraResources = _.reduce(props.resourceKeys, (extraObjs, key) => ({...extraObjs, [key]: _.get(props[key], 'data')}), {});
-    const pages = props.pages || props.pagesFor(_.get(props.obj, 'data'));
+  const routes = pages.map(p => {
+    const path = `${props.match.url}/${p.href}`;
+    const render = () => {
+      return <p.component {...componentProps} {...extraResources} />;
+    };
+    return <Route path={path} exact key={p.name} render={render} />;
+  });
 
-    const routes = pages.map(p => {
-      const path = `${props.match.url}/${p.href}`;
-      const render = () => {
-        return <p.component {...componentProps} {...extraResources} />;
-      };
-      return <Route path={path} exact key={p.name} render={render} />;
-    });
-
-    return <div className={props.className}>
-      <div className="co-m-horizontal-nav">
-        {!props.hideNav && <NavBar pages={pages} basePath={props.match.url} hideDivider={props.hideDivider} />}
-        {this.renderContent(routes)}
-      </div>
-    </div>;
-  }
-}
+  return <div className={props.className}>
+    <div className="co-m-horizontal-nav">
+      {!props.hideNav && <NavBar pages={pages} basePath={props.match.url} hideDivider={props.hideDivider} />}
+      {renderContent(routes)}
+    </div>
+  </div>;
+}, _.isEqual);
 
 export type PodsComponentProps = {
   obj: K8sResourceKind;
@@ -223,6 +203,9 @@ export type NavBarProps = {
   pages: Page[];
   basePath: string;
   hideDivider?: boolean;
+  history: History;
+  location: Location<any>;
+  match: match<any>;
 };
 
 export type HorizontalNavProps = {
@@ -238,3 +221,5 @@ export type HorizontalNavProps = {
   EmptyMsg?: React.ComponentType<any>;
   noStatusBox?: boolean;
 };
+
+HorizontalNav.displayName = 'HorizontalNav';
