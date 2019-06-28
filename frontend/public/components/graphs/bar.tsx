@@ -22,8 +22,8 @@ import { usePrometheusPoll } from './prometheus-poll-hook';
 import { PrometheusEndpoint } from './helpers';
 import { PrometheusGraph, PrometheusGraphLink } from './prometheus-graph';
 import { barTheme } from './themes';
-import { humanizeNumber } from '../utils';
-import { DomainPadding, HumanizeFunction } from '.';
+import { humanizeNumber, Humanize } from '../utils';
+import { DomainPadding } from '.';
 import { getInstantVectorStats } from './utils';
 
 const BAR_PADDING = 8; // Space between each bar (top and bottom)
@@ -98,7 +98,7 @@ export const Bar: React.FC<BarProps> = ({
 type BarProps = {
   barWidth?: number;
   domainPadding?: DomainPadding;
-  humanize?: HumanizeFunction;
+  humanize?: Humanize;
   metric: string;
   namespace?: string;
   query: string;

@@ -177,7 +177,7 @@ export const humanizeCpuCores = v => {
   return {
     string: `${value}${unit}`,
     unit,
-    value
+    value,
   };
 };
 export const humanizePercentage = value => ({

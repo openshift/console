@@ -4,8 +4,8 @@ import { ChartDonutThreshold, ChartDonutUtilization } from '@patternfly/react-ch
 import { PrometheusGraph, PrometheusGraphLink } from './prometheus-graph';
 import { usePrometheusPoll } from './prometheus-poll-hook';
 import { PrometheusEndpoint } from './helpers';
-import { useRefWidth, humanizePercentage } from '../utils';
-import { HumanizeFunction, ThresholdColor } from '.';
+import { useRefWidth, humanizePercentage, Humanize } from '../utils';
+import { ThresholdColor } from '.';
 import { getInstantVectorStats } from './utils';
 
 const DEFAULT_THRESHOLDS = [
@@ -120,7 +120,7 @@ type GaugeChartProps = {
 }
 
 type GaugeProps = {
-  humanize?: HumanizeFunction;
+  humanize?: Humanize;
   namespace?: string;
   percent?: number;
   invert?: boolean;

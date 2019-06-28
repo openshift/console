@@ -17,12 +17,11 @@ import {
 } from '@patternfly/react-charts';
 
 import { twentyFourHourTime } from '../utils/datetime';
-import { humanizeNumber, useRefWidth } from '../utils';
+import { humanizeNumber, useRefWidth, Humanize } from '../utils';
 import { PrometheusEndpoint } from './helpers';
 import { PrometheusGraph, PrometheusGraphLink } from './prometheus-graph';
 import { usePrometheusPoll } from './prometheus-poll-hook';
 import { areaTheme } from './themes';
-import { HumanizeFunction } from './';
 import { getRangeVectorStats } from './utils';
 
 const DEFAULT_HEIGHT = 180;
@@ -86,7 +85,7 @@ export const Area: React.FC<AreaProps> = ({
 type AreaProps = {
   className?: string;
   formatDate: (date: Date) => string;
-  humanize: HumanizeFunction;
+  humanize: Humanize;
   height?: number,
   namespace?: string;
   query: string;

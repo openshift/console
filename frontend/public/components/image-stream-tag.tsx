@@ -41,7 +41,7 @@ export const ImageStreamTagsDetails: React.SFC<ImageStreamTagsDetailsProps> = ({
   const cmd = (config.Cmd || []).join(' ');
   const exposedPorts = _.keys(config.ExposedPorts).join(', ');
   const size = _.get(imageStreamTag, 'image.dockerImageMetadata.Size');
-  const humanizedSize = _.isFinite(size) && humanizeBinaryBytes(size);
+  const humanizedSize = _.isFinite(size) && humanizeBinaryBytes(size).string;
   const architecture = _.get(imageStreamTag, 'image.dockerImageMetadata.Architecture');
   const tagName = _.get(imageStreamTag, 'tag.name');
 

@@ -1,6 +1,7 @@
 import * as _ from 'lodash-es';
 
-import { PrometheusResponse, DataPoint, HumanizeFunction } from '.';
+import { PrometheusResponse, DataPoint } from '.';
+import { Humanize } from '../utils';
 
 export const getRangeVectorStats: GetStats = response => {
   const values = _.get(response, 'data.result[0].values');
@@ -23,5 +24,5 @@ export const getInstantVectorStats: GetStats = (response, metric, humanize) => {
 };
 
 export type GetStats = {
-  (response: PrometheusResponse, metric?: string, humanize?: HumanizeFunction): DataPoint[];
+  (response: PrometheusResponse, metric?: string, humanize?: Humanize): DataPoint[];
 }
