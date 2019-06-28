@@ -1093,17 +1093,17 @@ const Query: React.FC<QueryProps> = ({colorOffset, onBlur, onDelete, onSubmit, o
       </button>
       <textarea
         autoFocus={true}
-        className="form-control query-browser__query"
+        className="form-control query-browser__inline-control query-browser__query"
         onBlur={onBlur}
         onChange={e => onUpdate({text: e.target.value})}
         onKeyDown={onKeyDown}
         placeholder="Expression (press Shift+Enter for newlines)"
         value={text}
       />
-      <div className="query-browser__query-switch">
+      <div className="query-browser__inline-control">
         <Switch aria-label={`${enabled ? 'Disable' : 'Enable'} query`} isChecked={enabled} onChange={toggleEnabled} />
       </div>
-      <div className="dropdown-kebab-pf query-browser__kebab">
+      <div className="dropdown-kebab-pf">
         <Kebab options={kebabOptions} />
       </div>
     </div>
@@ -1240,7 +1240,7 @@ const QueryBrowserPage = withFallback(() => {
             <div className="query-browser__all-queries-controls">
               <MetricsDropdown onChange={onMetricChange} />
               <div>
-                <button type="button" className="btn" onClick={addQuery}>Add Query</button>
+                <button type="button" className="btn btn-default query-browser__inline-control" onClick={addQuery}>Add Query</button>
                 <button type="submit" className="btn btn-primary">Run Queries</button>
               </div>
             </div>

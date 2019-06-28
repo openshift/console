@@ -80,7 +80,7 @@ const SpanControls: React.FC<SpanControlsProps> = React.memo(({defaultSpanText, 
       title="&nbsp;"
     />
     <button
-      className="btn btn-default query-browser__span-reset"
+      className="btn btn-default query-browser__inline-control"
       onClick={() => setSpan(defaultSpanText)}
       type="button"
     >Reset Zoom</button>

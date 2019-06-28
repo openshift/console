@@ -56,10 +56,6 @@
   width: 100%;
 }
 
-.query-browser__kebab {
-  position: relative;
-}
-
 .query-browser__loading {
   width: 20px;
 }
@@ -74,8 +70,7 @@
   }
 }
 
-.query-browser__query, .query-browser__query-switch {
-  margin-right: 15px;
+.query-browser__query {
   resize: vertical;
 }
 
@@ -91,8 +86,9 @@
   }
 }
 
-.query-browser__span-dropdown, .query-browser__span-reset {
-  margin-right: 20px;
+.query-browser__inline-control {
+  margin-left: 10px;
+  margin-right: 10px;
 }
 
 .query-browser__span-text {
