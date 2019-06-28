@@ -37,6 +37,9 @@ const DeployImage: React.FC<DeployImageProps> = ({ namespace }) => {
       ports: [],
     },
     isSearchingForImage: false,
+    serverless: {
+      trigger: false,
+    },
     route: {
       create: true,
       targetPort: '',

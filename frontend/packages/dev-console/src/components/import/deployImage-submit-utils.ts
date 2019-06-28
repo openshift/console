@@ -11,6 +11,7 @@ import { SelectorInput } from '@console/internal/components/utils';
 import { makePortName } from '../../utils/imagestream-utils';
 import { getAppLabels, getPodLabels } from '../../utils/resource-label-utils';
 import { DeployImageFormData } from './import-types';
+import { createKnativeService } from '../../utils/create-knative-utils';
 
 const annotations = {
   'openshift.io/generated-by': 'OpenShiftWebConsole',
@@ -266,20 +267,26 @@ export const createResources = (
 ): Promise<K8sResourceKind[]> => {
   const {
     route: { create: canCreateRoute },
-    isi: { ports },
+    project: { name: projectName },
+    name,
+    isi: { name: isiName, tag, ports },
   } = formData;
 
-  const requests: Promise<K8sResourceKind>[] = [
-    createDeploymentConfig(formData, dryRun),
-    createImageStream(formData, dryRun),
-    createBuildConfig(formData, dryRun),
-  ];
+  const requests: Promise<K8sResourceKind>[] = [];
+  if (!formData.serverless.trigger) {
+    requests.push(createDeploymentConfig(formData, dryRun));
+    requests.push(createImageStream(formData, dryRun));
+    requests.push(createBuildConfig(formData, dryRun));
 
-  if (!_.isEmpty(ports)) {
-    requests.push(createService(formData, dryRun));
-    if (canCreateRoute) {
-      requests.push(createRoute(formData, dryRun));
+    if (!_.isEmpty(ports)) {
+      requests.push(createService(formData, dryRun));
+      if (canCreateRoute) {
+        requests.push(createRoute(formData, dryRun));
+      }
     }
+  } else if (!dryRun) {
+    // Do not run serverless call during the dry run.
+    requests.push(createKnativeService(name, projectName, isiName, tag));
   }
 
   return Promise.all(requests);

@@ -19,6 +19,9 @@ export const deployValidationSchema = yup.object().shape({
     tag: yup.string().required('Required'),
     status: yup.string().required('Required'),
   }),
+  serverless: yup.object().shape({
+    trigger: yup.boolean(),
+  }),
   deployment: yup.object().shape({
     replicas: yup
       .number()
