@@ -7,7 +7,7 @@ import { ResourceEventStream } from './events';
 import { Table, TableRow, TableData, DetailsPage, ListPage } from './factory';
 import { configureUnschedulableModal } from './modals';
 import { PodsPage } from './pod';
-import { Kebab, navFactory, LabelList, ResourceKebab, SectionHeading, ResourceLink, Timestamp, units, cloudProviderNames, cloudProviderID, pluralize, StatusIconAndText, humanizeDecimalBytes, humanizeCpuCores, useAccessReview } from './utils';
+import { Kebab, navFactory, LabelList, ResourceKebab, SectionHeading, ResourceLink, Timestamp, units, cloudProviderNames, cloudProviderID, pluralize, StatusIconAndText, humanizeDecimalBytes, humanizeCpuCores, useAccessReview, humanizeDecimalBytesPerSec } from './utils';
 import { Area, requirePrometheus } from './graphs';
 import { MachineModel, NodeModel } from '../models';
 import { CamelCaseWrap } from './utils/camel-case-wrap';
@@ -150,14 +150,14 @@ const NodeGraphs = requirePrometheus(({node}) => {
       <div className="col-md-12 col-lg-4">
         <Area
           title="Memory Usage"
-          formatY={humanizeDecimalBytes}
+          humanize={humanizeDecimalBytes}
           query={ipQuery && `node_memory_Active_bytes${ipQuery}`}
         />
       </div>
       <div className="col-md-12 col-lg-4">
         <Area
           title="CPU Usage"
-          formatY={humanizeCpuCores}
+          humanize={humanizeCpuCores}
           query={ipQuery && `instance:node_cpu:rate:sum${ipQuery}`}
         />
       </div>
@@ -170,21 +170,21 @@ const NodeGraphs = requirePrometheus(({node}) => {
       <div className="col-md-12 col-lg-4">
         <Area
           title="Network In"
-          formatY={humanizeDecimalBytes}
+          humanize={humanizeDecimalBytesPerSec}
           query={ipQuery && `instance:node_network_receive_bytes:rate:sum${ipQuery}`}
         />
       </div>
       <div className="col-md-12 col-lg-4">
         <Area
           title="Network Out"
-          formatY={humanizeDecimalBytes}
+          humanize={humanizeDecimalBytesPerSec}
           query={ipQuery && `instance:node_network_transmit_bytes:rate:sum${ipQuery}`}
         />
       </div>
       <div className="col-md-12 col-lg-4">
         <Area
           title="Filesystem"
-          formatY={humanizeDecimalBytes}
+          humanize={humanizeDecimalBytes}
           query={ipQuery && `instance:node_filesystem_usage:sum${ipQuery}`}
         />
       </div>

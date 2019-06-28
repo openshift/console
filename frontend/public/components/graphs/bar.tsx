@@ -23,7 +23,7 @@ import { PrometheusEndpoint } from './helpers';
 import { PrometheusGraph, PrometheusGraphLink } from './prometheus-graph';
 import { barTheme } from './themes';
 import { humanizeNumber } from '../utils';
-import { DomainPadding } from '.';
+import { DomainPadding, HumanizeFunction } from '.';
 import { getInstantVectorStats } from './utils';
 
 const BAR_PADDING = 8; // Space between each bar (top and bottom)
@@ -35,7 +35,7 @@ const PADDING_RATIO = 1 / 3;
 export const Bar: React.FC<BarProps> = ({
   barWidth = DEFAULT_BAR_WIDTH,
   domainPadding = DEFAULT_DOMAIN_PADDING,
-  formatY = value => humanizeNumber(value).string,
+  humanize = humanizeNumber,
   metric,
   namespace,
   query,
@@ -44,7 +44,7 @@ export const Bar: React.FC<BarProps> = ({
 }) => {
   const [containerRef, width] = useRefWidth();
   const [response] = usePrometheusPoll({ endpoint: PrometheusEndpoint.QUERY, namespace, query });
-  const data = getInstantVectorStats(response, metric, formatY);
+  const data = getInstantVectorStats(response, metric, humanize);
 
   // Max space that horizontal padding should take up. By default, 2/3 of the horizontal space is always available for the actual bar graph.
   const maxHorizontalPadding = PADDING_RATIO * width;
@@ -98,7 +98,7 @@ export const Bar: React.FC<BarProps> = ({
 type BarProps = {
   barWidth?: number;
   domainPadding?: DomainPadding;
-  formatY?: (val: number | string) => string;
+  humanize?: HumanizeFunction;
   metric: string;
   namespace?: string;
   query: string;

@@ -22,7 +22,7 @@ import { PrometheusEndpoint } from './helpers';
 import { PrometheusGraph, PrometheusGraphLink } from './prometheus-graph';
 import { usePrometheusPoll } from './prometheus-poll-hook';
 import { areaTheme } from './themes';
-import { MutatorFunction } from './';
+import { HumanizeFunction } from './';
 import { getRangeVectorStats } from './utils';
 
 const DEFAULT_HEIGHT = 180;
@@ -32,9 +32,9 @@ const DEFAULT_TIMESPAN = 60 * 60 * 1000; // 1 hour
 
 export const Area: React.FC<AreaProps> = ({
   className,
-  formatX = twentyFourHourTime,
-  formatY = value => humanizeNumber(value).string,
+  formatDate = twentyFourHourTime,
   height = DEFAULT_HEIGHT,
+  humanize = humanizeNumber,
   namespace,
   query,
   samples = DEFAULT_SAMPLES,
@@ -54,7 +54,7 @@ export const Area: React.FC<AreaProps> = ({
     timespan,
   });
   const data = getRangeVectorStats(response);
-  const getLabel = ({x, y}) => `${formatY(y)} at ${formatX(x)}`;
+  const getLabel = ({x, y}) => `${humanize(y).string} at ${formatDate(x)}`;
   const container = <ChartVoronoiContainer voronoiDimension="x" labels={getLabel} />;
   return <PrometheusGraph ref={containerRef} className={className} title={title}>
     {
@@ -68,8 +68,8 @@ export const Area: React.FC<AreaProps> = ({
             theme={theme}
             scale={{x: 'time', y: 'linear'}}
           >
-            <ChartAxis tickCount={tickCount} tickFormat={formatX} />
-            <ChartAxis dependentAxis tickCount={tickCount} tickFormat={formatY} />
+            <ChartAxis tickCount={tickCount} tickFormat={formatDate} />
+            <ChartAxis dependentAxis tickCount={tickCount} tickFormat={tick => humanize(tick).string} />
             <ChartArea data={data} />
           </Chart>
         </PrometheusGraphLink>
@@ -83,11 +83,10 @@ export const Area: React.FC<AreaProps> = ({
   </PrometheusGraph>;
 };
 
-
 type AreaProps = {
   className?: string;
-  formatX: MutatorFunction;
-  formatY: MutatorFunction;
+  formatDate: (date: Date) => string;
+  humanize: HumanizeFunction;
   height?: number,
   namespace?: string;
   query: string;

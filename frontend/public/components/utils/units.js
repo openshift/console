@@ -150,8 +150,8 @@ const humanize = units.humanize = (value, typeName, useRound = false, initialUni
 
   return {
     string: type.space ? `${converted.value} ${converted.unit}`: converted.value + converted.unit,
-    value: converted.value,
     unit: converted.unit,
+    value: converted.value,
   };
 };
 
@@ -169,14 +169,22 @@ const formatPercentage = (value, options) => {
 export const humanizeBinaryBytesWithoutB = (v, initialUnit, preferredUnit) => humanize(v, 'binaryBytesWithoutB', true, initialUnit, preferredUnit);
 export const humanizeBinaryBytes = (v, initialUnit, preferredUnit) => humanize(v, 'binaryBytes', true, initialUnit, preferredUnit);
 export const humanizeDecimalBytes = (v, initialUnit, preferredUnit) => humanize(v, 'decimalBytes', true, initialUnit, preferredUnit);
+export const humanizeDecimalBytesPerSec = (v, initialUnit, preferredUnit) => humanize(v, 'decimalBytesPerSec', true, initialUnit, preferredUnit);
 export const humanizeNumber = (v, initialUnit, preferredUnit) => humanize(v, 'numeric', true, initialUnit, preferredUnit);
-export const humanizeCpuCores = v => (v < 1 && v > 0) ? `${round(v*1000)}m` : round(v);
+export const humanizeCpuCores = v => {
+  const value = v < 1 ? round(v*1000) : v;
+  const unit = v < 1 ? 'm' : '';
+  return {
+    string: `${value}${unit}`,
+    unit,
+    value
+  };
+};
 export const humanizePercentage = value => ({
   string: formatPercentage(value/100),
-  value,
   unit: '%',
+  value,
 });
-export const humanizeDecimalBytesPerSec = (v, initialUnit, preferredUnit) => humanize(v, 'decimalBytesPerSec', true, initialUnit, preferredUnit);
 
 units.dehumanize = (value, typeName) => {
   const type = getType(typeName);

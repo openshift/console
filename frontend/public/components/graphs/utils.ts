@@ -1,6 +1,6 @@
 import * as _ from 'lodash-es';
 
-import { PrometheusResponse, DataPoint, MutatorFunction } from '.';
+import { PrometheusResponse, DataPoint, HumanizeFunction } from '.';
 
 export const getRangeVectorStats: GetStats = response => {
   const values = _.get(response, 'data.result[0].values');
@@ -10,12 +10,12 @@ export const getRangeVectorStats: GetStats = response => {
   }));
 };
 
-export const getInstantVectorStats: GetStats = (response, metric, formatY) => {
+export const getInstantVectorStats: GetStats = (response, metric, humanize) => {
   const results = _.get(response, 'data.result', []);
   return results.map(r => {
     const y = _.get(r, 'value[1]');
     return {
-      label: formatY ? formatY(y): null,
+      label: humanize ? humanize(y).string : null,
       x: _.get(r, ['metric', metric], ''),
       y,
     };
@@ -23,5 +23,5 @@ export const getInstantVectorStats: GetStats = (response, metric, formatY) => {
 };
 
 export type GetStats = {
-  (response: PrometheusResponse, metric?: string, formatY?: MutatorFunction): DataPoint[];
+  (response: PrometheusResponse, metric?: string, humanize?: HumanizeFunction): DataPoint[];
 }

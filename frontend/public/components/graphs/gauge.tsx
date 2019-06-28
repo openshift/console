@@ -5,7 +5,7 @@ import { PrometheusGraph, PrometheusGraphLink } from './prometheus-graph';
 import { usePrometheusPoll } from './prometheus-poll-hook';
 import { PrometheusEndpoint } from './helpers';
 import { useRefWidth, humanizePercentage } from '../utils';
-import { MutatorFunction, ThresholdColor } from '.';
+import { HumanizeFunction, ThresholdColor } from '.';
 import { getInstantVectorStats } from './utils';
 
 const DEFAULT_THRESHOLDS = [
@@ -61,7 +61,7 @@ export const GaugeChart: React.FC<GaugeChartProps> = ({
 };
 
 export const Gauge: React.FC<GaugeProps> = ({
-  formatY = v => humanizePercentage(v).string,
+  humanize = humanizePercentage,
   invert,
   namespace,
   percent = 0,
@@ -80,8 +80,8 @@ export const Gauge: React.FC<GaugeProps> = ({
   });
 
   const data = response ?
-    getInstantVectorStats(response, null, formatY).map(({label, y}) => ({x: label, y}))[0]
-    : {x: formatY(percent), y: percent};
+    getInstantVectorStats(response, null, humanize).map(({label, y}) => ({x: label, y}))[0]
+    : {x: humanize(percent).string, y: percent};
   return (
     <GaugeChart
       query={query}
@@ -120,7 +120,7 @@ type GaugeChartProps = {
 }
 
 type GaugeProps = {
-  formatY?: MutatorFunction;
+  humanize?: HumanizeFunction;
   namespace?: string;
   percent?: number;
   invert?: boolean;

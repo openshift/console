@@ -22,7 +22,11 @@ export const Gauge = props => <AsyncComponent loader={() => import('./graph-load
 export const QueryBrowser = props => <AsyncComponent loader={() => import('./graph-loader').then(c => c.QueryBrowser)} {...props} />;
 
 
-export type MutatorFunction = (value: string | number, options?: any) => string;
+export type HumanizeFunction = (value: string | number, initialUnit?: string, preferredUnit?: string) => {
+  string: string,
+  unit: string,
+  value: number
+};
 
 export type DataPoint = {
   x?: Date | string | number;
