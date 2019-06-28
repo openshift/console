@@ -1048,6 +1048,13 @@ const MetricsDropdown = ({onChange}) => {
   />;
 };
 
+const ExpandButton = ({isExpanded, onClick}) => {
+  const title = `${isExpanded ? 'Hide' : 'Show'} Table`;
+  return <button aria-label={title} className="btn btn-link query-browser__expand-button" onClick={onClick} title={title}>
+    <i aria-hidden="true" className={`fa fa-angle-${isExpanded ? 'down' : 'right'} query-browser__expand-icon`} />
+  </button>;
+};
+
 const SeriesButton = ({colorIndex, isDisabled, onClick}) => {
   const title = `${isDisabled ? 'Show' : 'Hide'} series`;
   return <button
@@ -1083,13 +1090,7 @@ const Query: React.FC<QueryProps> = ({colorOffset, onBlur, onDelete, onSubmit, o
 
   return <div className="group">
     <div className="group__title">
-      <button
-        className="btn btn-link query-browser__table-toggle-btn"
-        onClick={() => onUpdate({expanded: !expanded})}
-        title={`${expanded ? 'Hide' : 'Show'} Table`}
-      >
-        <i aria-hidden="true" className={`fa fa-angle-${expanded ? 'down' : 'right'} query-browser__table-toggle-icon`} />
-      </button>
+      <ExpandButton isExpanded={expanded} onClick={() => onUpdate({expanded: !expanded})} />
       <textarea
         autoFocus={true}
         className="form-control query-browser__query"
