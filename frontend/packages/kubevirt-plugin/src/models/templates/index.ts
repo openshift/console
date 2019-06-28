@@ -1,2 +1,2 @@
-export * from './vm-template-yaml-templates';
-export * from './vm-yaml-templates';
+export * from './vm-template-yaml';
+export * from './vm-yaml';
