@@ -1039,7 +1039,8 @@ const MetricsDropdown = ({onChange}) => {
 
   return <Dropdown
     autocompleteFilter={fuzzy}
-    buttonClassName="btn-default query-browser__metrics-dropdown"
+    buttonClassName="query-browser__metrics-dropdown-button"
+    className="query-browser__metrics-dropdown"
     id="metrics-dropdown"
     items={items}
     menuClassName="query-browser__metrics-dropdown-menu"

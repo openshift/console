@@ -71,11 +71,13 @@ const SpanControls: React.FC<SpanControlsProps> = React.memo(({defaultSpanText, 
       />
     </div>
     <Dropdown
-      buttonClassName="query-browser__span-dropdown"
+      buttonClassName="query-browser__span-dropdown-button"
+      className="query-browser__span-dropdown"
       items={dropdownItems}
-      menuClassName="pf-c-dropdown__menu dropdown-menu-right query-browser__span-dropdown-menu"
-      onChange={setSpan}
+      menuClassName="query-browser__span-dropdown-menu"
       noSelection={true}
+      onChange={setSpan}
+      title="&nbsp;"
     />
     <button
       className="btn btn-default query-browser__span-reset"
