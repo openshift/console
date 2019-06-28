@@ -7,11 +7,14 @@ import * as plugins from '../../plugins';
 import { OverviewDashboard } from './overview-dashboard/overview-dashboard';
 import { HorizontalNav, PageHeading, LoadingBox, Page, AsyncComponent } from '../utils';
 import { Dashboard } from '../dashboard/dashboard';
-import { DashboardGrid, GridPosition } from '../dashboard/grid';
+import { DashboardGrid, GridPosition, GridDashboardCard } from '../dashboard/grid';
 import { DashboardsCard } from '@console/plugin-sdk';
 
-const getCardsOnPosition = (cards: DashboardsCard[], position: GridPosition): React.ComponentType<any>[] =>
-  cards.filter(c => c.properties.position === position).map(c => () => <AsyncComponent loader={c.properties.loader} />);
+const getCardsOnPosition = (cards: DashboardsCard[], position: GridPosition): GridDashboardCard[] =>
+  cards.filter(c => c.properties.position === position).map(c => ({
+    Card: () => <AsyncComponent loader={c.properties.loader} />,
+    span: c.properties.span,
+  }));
 
 const getPluginTabPages = (): Page[] => {
   const cards = plugins.registry.getDashboardsCards();

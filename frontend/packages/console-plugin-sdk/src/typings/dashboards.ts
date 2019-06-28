@@ -56,6 +56,9 @@ namespace ExtensionProperties {
 
     /** Loader for the corresponding dashboard card component. */
     loader: LazyLoader<any>;
+
+    /** Card's vertical span in the column. Ignored for small screens, defaults to 12. */
+    span?: DashboardCardSpan;
   }
 
   export interface DashboardsOverviewQuery {
@@ -179,3 +182,5 @@ export interface DashboardsInventoryItemGroup
 export const isDashboardsInventoryItemGroup = (
   e: Extension<any>,
 ): e is DashboardsInventoryItemGroup => e.type === 'Dashboards/Inventory/Item/Group';
+
+export type DashboardCardSpan = 4 | 6 | 12;
