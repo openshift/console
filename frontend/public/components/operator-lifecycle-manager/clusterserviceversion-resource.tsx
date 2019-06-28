@@ -155,7 +155,7 @@ export const ClusterServiceVersionResourceList: React.SFC<ClusterServiceVersionR
   return <Table {...props}
     data={ensureKind(props.data)}
     EmptyMsg={EmptyMsg}
-    aria-label="Cluster Operators"
+    aria-label="Application Resources"
     Header={CSVRTableHeader}
     Row={CSVRTableRow}
     virtualize />;
