@@ -12,6 +12,7 @@ import { detectFeatures } from '../actions/features';
 import { analyticsSvc } from '../module/analytics';
 import AppContents from './app-contents';
 import { getBrandingDetails, Masthead } from './masthead';
+import { ConsoleNotifier } from './console-notifier';
 import { Navigation } from './nav';
 import { history } from './utils';
 import * as UIActions from '../actions/ui';
@@ -109,12 +110,14 @@ class App extends React.PureComponent {
           titleTemplate={`%s · ${productName}`}
           defaultTitle={productName}
         />
+        <ConsoleNotifier location="BannerTop" />
         <Page
           header={<Masthead onNavToggle={this._onNavToggle} />}
           sidebar={<Navigation isNavOpen={isNavOpen} onNavSelect={this._onNavSelect} />}
         >
           <AppContents />
         </Page>
+        <ConsoleNotifier location="BannerBottom" />
       </React.Fragment>
     );
   }

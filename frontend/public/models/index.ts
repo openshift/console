@@ -914,3 +914,16 @@ export const ConsoleCLIDownloadModel: K8sKind = {
   id: 'consoleclidownload',
   crd: true,
 };
+
+export const ConsoleNotificationModel: K8sKind = {
+  label: 'Console Notification',
+  labelPlural: 'Console Notifications',
+  apiVersion: 'v1',
+  apiGroup: 'console.openshift.io',
+  plural: 'consolenotifications',
+  abbr: 'CN',
+  namespaced: false,
+  kind: 'ConsoleNotification',
+  id: 'consolenotification',
+  crd: true,
+};
