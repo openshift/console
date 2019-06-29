@@ -1,3 +1,4 @@
+
 apiVersion: tekton.dev/v1alpha1
 kind: Pipeline
 metadata:
@@ -9,39 +10,28 @@ spec:
     - name: web-image
       type: image
   tasks:
-    - name: build-skaffold-web
+    - name: hello-world-1
       taskRef:
-        name: build-docker-image-from-git-source
-      params:
-        - name: pathToDockerFile
-          value: Dockerfile
-        - name: pathToContext
-          value: /workspace/docker-source/examples/microservices/leeroy-web #configure: may change according to your source
-      resources:
-        inputs:
-          - name: docker-source
-            resource: source-repo
-        outputs:
-          - name: builtImage
-            resource: web-image
-    - name: deploy-web
+        name: hello-world-1
+    - name: hello-world-2
       taskRef:
-        name: deploy-using-kubectl
-      resources:
-        inputs:
-          - name: source
-            resource: source-repo
-          - name: image
-            resource: web-image
-            from:
-              - build-skaffold-web
-      params:
-        - name: path
-          value: /workspace/source/examples/microservices/leeroy-web/kubernetes/deployment.yaml #configure: may change according to your source
-        - name: yqArg
-          value: "-d1"
-        - name: yamlPathToImage
-          value: "spec.template.spec.containers[0].image"
+        name: hello-world-2
+---
+apiVersion: tekton.dev/v1alpha1
+kind: Pipeline
+metadata:
+  name: partial-pipeline
+spec:
+  tasks:
+    - name: hello-world-1
+      taskRef:
+        name: hello-world-1
+    - name: hello-world-2
+      taskRef:
+        name: hello-world-2
+    - name: hello-world-3
+      taskRef:
+        name: hello-world-3
 ---
 apiVersion: tekton.dev/v1alpha1
 kind: Pipeline
@@ -142,4 +132,4 @@ spec:
       outputs:
       - name: image
         resource: mapit-image
-     
+---

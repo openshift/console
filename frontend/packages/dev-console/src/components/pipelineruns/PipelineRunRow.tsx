@@ -10,6 +10,7 @@ import {
 import { referenceForModel } from '@console/internal/module/k8s';
 import { pipelineRunFilterReducer } from '../../utils/pipeline-filter-reducer';
 import { reRunPipelineRun, stopPipelineRun } from '../../utils/pipeline-actions';
+import { PipelineTaskStatus } from './PipelineTaskStatus';
 import { PipelineRun } from '../../utils/pipeline-augment';
 import { tableColumnClasses } from './pipelinerun-table';
 import { PipelineRunModel } from '../../models';
@@ -35,14 +36,15 @@ const PipelineRunRow: React.FC<PipelineRunRowProps> = ({ obj, index, key, style 
           title={obj.metadata.name}
         />
       </TableData>
-
       <TableData className={tableColumnClasses[1]}>
         <Timestamp timestamp={obj.status && obj.status.startTime} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>
         <StatusIconAndText status={pipelineRunFilterReducer(obj)} />
       </TableData>
-      <TableData className={tableColumnClasses[3]}>-</TableData>
+      <TableData className={tableColumnClasses[3]}>
+        <PipelineTaskStatus pipelinerun={obj} />
+      </TableData>
       <TableData className={tableColumnClasses[4]}>-</TableData>
       <TableData className={tableColumnClasses[5]}>
         {obj.spec && obj.spec.trigger && obj.spec.trigger.type ? obj.spec.trigger.type : '-'}

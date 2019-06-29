@@ -10,7 +10,7 @@ import {
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { Firehose } from '@console/internal/components/utils';
 import { PipelineVisualizationStepList } from './PipelineVisualizationStepList';
-import { TaskStatusClassNameMap } from '../../utils/pipeline-utils';
+import { getRunStatusColor } from '../../utils/pipeline-augment';
 
 import './PipelineVisualizationTask.scss';
 
@@ -79,11 +79,11 @@ const TaskComponent: React.FC<TaskProps> = (props) => {
   const task = props.task.data;
   const { status } = props;
 
-  const getTaskStatusClass = (taskStatus = 'Idle') => {
-    return TaskStatusClassNameMap[taskStatus];
-  };
   return (
-    <li className={cx('odc-pipeline-vis-task', status && getTaskStatusClass(status.reason))}>
+    <li
+      className={cx('odc-pipeline-vis-task')}
+      style={{ color: getRunStatusColor(status.reason).pftoken.value }}
+    >
       <Tooltip
         position="bottom"
         enableFlip={false}

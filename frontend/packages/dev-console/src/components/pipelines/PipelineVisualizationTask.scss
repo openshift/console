@@ -21,22 +21,6 @@ $gutter: 1.8em;
     top: 1px;
   }
 
-  &.is-done {
-    color: var(--pf-global--success-color--200);
-  }
-
-  &.is-running {
-    color: var(--pf-global--primary-color--dark-100);
-  }
-
-  &.is-error {
-    color: var(--pf-global--danger-color--100);
-  }
-
-  &.is-idle {
-    color: var(--pf-global--disabled-color--100);
-  }
-
   &.is-input-node {
     width: 2em;
     height: 2em;
