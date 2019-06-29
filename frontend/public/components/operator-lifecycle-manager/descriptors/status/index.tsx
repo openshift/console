@@ -35,7 +35,9 @@ const StatusConditions: React.SFC<StatusCapabilityProps> = (props) => {
     || <Conditions conditions={props.value} />;
 };
 
-const Link: React.SFC<StatusCapabilityProps> = ({value}) => <a href={value}>{value.replace(/https?:\/\//, '')}</a>;
+const Link: React.SFC<StatusCapabilityProps> = ({value}) => !_.isNil(value)
+  ? <a href={value}>{value.replace(/https?:\/\//, '')}</a>
+  : <span className="text-muted">None</span>;
 
 const K8sPhase: React.SFC<StatusCapabilityProps> = ({value}) => <Phase status={value} />;
 

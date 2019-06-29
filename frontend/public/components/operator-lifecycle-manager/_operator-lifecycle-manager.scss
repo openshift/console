@@ -139,12 +139,36 @@
 }
 
 .co-create-operand__header-buttons {
-  display: flex;
   align-items: baseline;
+  display: flex;
 }
 
 .co-create-operand__header-text {
   font-size: 20px;
   font-weight: 300;
   margin: 0;
+}
+
+.co-affinity-term {
+  border: 1px solid #eee;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
+  padding: 10px 0 5px 20px;
+}
+
+.co-affinity-term__remove {
+  margin-left: auto;
+}
+
+.co-affinity-term__topology {
+  display: flex;
+  margin-bottom: 15px;
+}
+
+.co-affinity-term__topology-input {
+  display: flex;
+  flex-direction: column;
+  padding-right: 15px;
+  width: 50%;
 }

@@ -9,6 +9,16 @@ export enum SpecCapability {
   namespaceSelector = 'urn:alm:descriptor:com.tectonic.ui:namespaceSelector',
   k8sResourcePrefix = 'urn:alm:descriptor:io.kubernetes:',
   booleanSwitch = 'urn:alm:descriptor:com.tectonic.ui:booleanSwitch',
+
+  password = 'urn:alm:descriptor:com.tectonic.ui:password',
+  checkbox = 'urn:alm:descriptor:com.tectonic.ui:checkbox',
+  imagePullPolicy = 'urn:alm:descriptor:com.tectonic.ui:imagePullPolicy',
+  updateStrategy = 'urn:alm:descriptor:com.tectonic.ui:updateStrategy',
+  text = 'urn:alm:descriptor:com.tectonic.ui:text',
+  number = 'urn:alm:descriptor:com.tectonic.ui:number',
+  nodeAffinity = 'urn:alm:descriptor:com.tectonic.ui:nodeAffinity',
+  podAffinity = 'urn:alm:descriptor:com.tectonic.ui:podAffinity',
+  podAntiAffinity = 'urn:alm:descriptor:com.tectonic.ui:podAntiAffinity',
 }
 
 export enum StatusCapability {

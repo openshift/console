@@ -1,5 +1,5 @@
 import { execSync } from 'child_process';
-import { browser, element, by } from 'protractor';
+import { browser, element, by, $, $$, ExpectedConditions as until } from 'protractor';
 import { safeDump } from 'js-yaml';
 
 import { appHost, testName, checkLogs, checkErrors } from '../../protractor.conf';
@@ -14,6 +14,7 @@ const defaultValueFor = <C extends SpecCapability | StatusCapability>(capability
     case SpecCapability.resourceRequirements: return {limits: {cpu: '500m', memory: '50Mi'}, requests: {cpu: '500m', memory: '50Mi'}};
     case SpecCapability.namespaceSelector: return {matchNames: ['default']};
     case SpecCapability.booleanSwitch: return true;
+    case SpecCapability.password: return 'password123';
 
     case StatusCapability.podStatuses: return {ready: ['pod-0', 'pod-1'], unhealthy: ['pod-2'], stopped: ['pod-3']};
     case StatusCapability.podCount: return 3;
@@ -113,6 +114,7 @@ describe('Using OLM descriptor components', () => {
           }],
         },
       },
+      // TODO(alecmerdler): Test `apiservicedefinitions` as well...
       customresourcedefinitions: {
         owned: [
           {
@@ -124,13 +126,13 @@ describe('Using OLM descriptor components', () => {
             resources: [],
             specDescriptors: Object.keys(SpecCapability).filter(c => !prefixedCapabilities.has(SpecCapability[c])).map(capability => ({
               description: `Spec descriptor for ${capability}`,
-              displayName: capability,
+              displayName: capability.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()),
               path: capability,
               'x-descriptors': [SpecCapability[capability]],
             })),
             statusDescriptors: Object.keys(StatusCapability).filter(c => !prefixedCapabilities.has(StatusCapability[c])).map(capability => ({
               description: `Status descriptor for ${capability}`,
-              displayName: capability,
+              displayName: capability.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase()),
               path: capability,
               'x-descriptors': [StatusCapability[capability]],
             })),
@@ -164,12 +166,12 @@ describe('Using OLM descriptor components', () => {
     execSync(`kubectl delete -n ${testName} clusterserviceversion ${testCSV.metadata.name}`);
   });
 
-  it('displays list containing custom resource', async() => {
+  it('displays list containing operands', async() => {
     await crudView.resourceRowsPresent();
     expect(crudView.rowForName(testCR.metadata.name).isDisplayed()).toBe(true);
   });
 
-  it('displays detail view for custom resource', async() => {
+  it('displays detail view for operand', async() => {
     const {group, version, names: {kind}} = testCRD.spec;
     await browser.get(`${appHost}/ns/${testName}/clusterserviceversions/${testCSV.metadata.name}/${group}~${version}~${kind}/${testCR.metadata.name}`);
     await crudView.isLoaded();
@@ -191,5 +193,15 @@ describe('Using OLM descriptor components', () => {
     it(`displays status descriptor for ${descriptor.displayName}`, async() => {
       expect(label.isDisplayed()).toBe(true);
     });
+  });
+
+  it('displays form for creating operand', async() => {
+    await $$('[data-test-id=breadcrumb-link-1]').click();
+    await browser.wait(until.visibilityOf(element(by.buttonText('Create App'))));
+    await element(by.buttonText('Create App')).click();
+    await browser.wait(until.presenceOf($('.ace_text-input')));
+    await element(by.buttonText('Edit Form')).click();
+
+    expect($('#name').isDisplayed()).toBe(true);
   });
 });

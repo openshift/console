@@ -183,7 +183,37 @@ export type ContainerPort = {
   protocol: string;
 };
 
-type ImagePullPolicy = 'Always' | 'Never' | 'IfNotPresent';
+export enum ImagePullPolicy {
+  Always = 'Always',
+  Never = 'Never',
+  IfNotPresent = 'IfNotPresent',
+}
+
+export type NodeAffinity = {
+  preferredDuringSchedulingIgnoredDuringExecution?: {
+    preference: Selector;
+    weight: number;
+  }[];
+  requiredDuringSchedulingIgnoredDuringExecution?: {
+    nodeSelectorTerms: Selector[];
+  };
+};
+
+export type PodAffinity = {
+  preferredDuringSchedulingIgnoredDuringExecution: {
+    podAffinityTerm: {
+      labelSelector?: Selector;
+      namespaces?: string[];
+      topologyKey: string;
+    };
+    weight?: number;
+  }[];
+  requiredDuringSchedulingIgnoredDuringExecution: {
+    labelSelector?: Selector;
+    namespaces?: string[];
+    topologyKey: string;
+  }[];
+};
 
 export type ContainerSpec = {
   name: string;
@@ -381,6 +411,20 @@ export type MachineSetKind = {
   };
 } & K8sResourceKind;
 
+export type Patch = {
+  op: string;
+  path: string;
+  value?: any;
+};
+
+export type RollingUpdate = {maxUnavailable?: number | string, maxSurge?: number | string};
+export type DeploymentUpdateStrategy = {
+  type: 'Recreate';
+} | {
+  type: 'RollingUpdate';
+  rollingUpdate: RollingUpdate;
+};
+
 export type MachineDeploymentKind = {
   spec: {
     replicas: number;
@@ -391,13 +435,7 @@ export type MachineDeploymentKind = {
     paused?: boolean;
     minReadySeconds?: number;
     progressDeadlineSeconds?: number;
-    strategy: {
-      type: string;
-      rollingUpdate?: {
-        maxUnavailable?: number | string;
-        maxSurge?: number | string;
-      };
-    };
+    strategy: DeploymentUpdateStrategy;
   };
   status?: {
     availableReplicas: number;
