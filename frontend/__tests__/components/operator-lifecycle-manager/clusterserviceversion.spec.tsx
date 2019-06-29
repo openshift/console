@@ -31,11 +31,9 @@ import { DetailsPage, ListPage, TableInnerProps, Table, TableRow } from '../../.
 import { testClusterServiceVersion } from '../../../__mocks__/k8sResourcesMocks';
 import {
   Timestamp,
-  MsgBox,
   ResourceLink,
   ResourceKebab,
   ErrorBoundary,
-  LoadingBox,
   ScrollToTopOnMount,
   SectionHeading,
   Firehose,
@@ -156,7 +154,7 @@ describe(ClusterServiceVersionsPage.displayName, () => {
   let wrapper: ShallowWrapper<ClusterServiceVersionsPageProps>;
 
   beforeEach(() => {
-    wrapper = shallow(<ClusterServiceVersionsPage.WrappedComponent kind={referenceForModel(ClusterServiceVersionModel)} resourceDescriptions={[]} namespace="foo" />);
+    wrapper = shallow(<ClusterServiceVersionsPage kind={referenceForModel(ClusterServiceVersionModel)} resourceDescriptions={[]} namespace="foo" />);
   });
 
   it('renders a `ListPage` with correct props', () => {
@@ -165,16 +163,6 @@ describe(ClusterServiceVersionsPage.displayName, () => {
     expect(listPage.props().kind).toEqual(referenceForModel(ClusterServiceVersionModel));
     expect(listPage.props().ListComponent).toEqual(ClusterServiceVersionList);
     expect(listPage.props().showTitle).toBe(false);
-  });
-
-  it('renders `LoadingBox` if still detecting OpenShift or namespaces/projects are loading', () => {
-    wrapper = wrapper.setProps({loading: true});
-    const msgBox = wrapper.find(MsgBox);
-    const listPage = wrapper.find(ListPage);
-
-    expect(listPage.exists()).toBe(false);
-    expect(msgBox.exists()).toBe(false);
-    expect(wrapper.find(LoadingBox).exists()).toBe(true);
   });
 });
 

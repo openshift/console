@@ -12,7 +12,6 @@ import { DetailsPage, ListPage, Table, TableRow, TableData } from '../factory';
 import { withFallback } from '../utils/error-boundary';
 import { referenceForModel, referenceFor, GroupVersionKind, K8sKind } from '../../module/k8s';
 import { ClusterServiceVersionModel, SubscriptionModel, PackageManifestModel } from '../../models';
-import { FLAGS as featureFlags } from '../../const';
 import { ResourceEventStream } from '../events';
 import { Conditions } from '../conditions';
 import {
@@ -30,7 +29,6 @@ import {
 } from './index';
 import {
   Kebab,
-  LoadingBox,
   MsgBox,
   navFactory,
   PageHeading,
@@ -48,7 +46,6 @@ import {
 } from '../utils';
 import { operatorGroupFor, operatorNamespaceFor } from './operator-group';
 import { SubscriptionDetails } from './subscription';
-import { RootState } from '../../redux';
 
 const tableColumnClasses = [
   classNames('col-lg-3', 'col-md-4', 'col-sm-4', 'col-xs-6'),
@@ -131,16 +128,7 @@ export const ClusterServiceVersionList: React.SFC<ClusterServiceVersionListProps
   return <Table {...props} aria-label="Installed Operators" Header={ClusterServiceVersionTableHeader} Row={ClusterServiceVersionTableRow} EmptyMsg={EmptyMsg} virtualize />;
 };
 
-const stateToProps = ({k8s, FLAGS}: RootState) => ({
-  loading: FLAGS.get(featureFlags.OPENSHIFT) === undefined || !k8s.getIn([FLAGS.get(featureFlags.OPENSHIFT) ? 'projects' : 'namespaces', 'loaded']),
-});
-
-export const ClusterServiceVersionsPage = connect(stateToProps)((props: ClusterServiceVersionsPageProps) => {
-  // Wait for OpenShift feature detection to prevent flash of "disabled" UI
-  if (props.loading) {
-    return <LoadingBox />;
-  }
-
+export const ClusterServiceVersionsPage: React.FC<ClusterServiceVersionsPageProps> = (props) => {
   const title = 'Installed Operators';
   const helpText = <p className="co-help-text">
     Installed Operators are represented by Cluster Service Versions within this namespace. For more information, see the <ExternalLink href="https://github.com/operator-framework/operator-lifecycle-manager/blob/master/Documentation/design/architecture.md" text="Operator Lifecycle Manager documentation" />. Or create an Operator and Cluster Service Version using the <ExternalLink href="https://github.com/operator-framework/operator-sdk" text="Operator SDK" />.
@@ -159,7 +147,7 @@ export const ClusterServiceVersionsPage = connect(stateToProps)((props: ClusterS
       helpText={helpText}
       showTitle={false} />
   </React.Fragment>;
-});
+};
 
 export const MarkdownView = (props: {content: string, styles?: string, exactHeight?: boolean}) => {
   return <AsyncComponent loader={() => import('./markdown-view').then(c => c.SyncMarkdownView)} {...props} />;
@@ -349,7 +337,6 @@ export const ClusterServiceVersionsDetailsPage: React.StatelessComponent<Cluster
 
 export type ClusterServiceVersionsPageProps = {
   kind: string;
-  loading?: boolean;
   namespace: string;
   resourceDescriptions: CRDDescription[];
 };
