@@ -360,10 +360,10 @@ export class Dropdown extends DropdownMixin {
     _.each(items, (v, k) => addItem(k, v));
 
     //render PF4 dropdown markup if this is not the autocomplete filter
-    if (autocompleteFilter){
-      return <div className={classNames(className)} ref={this.dropdownElement} style={this.props.style}>
+    if (autocompleteFilter) {
+      return <div className={className} ref={this.dropdownElement} style={this.props.style}>
         <div className={classNames('dropdown pf-c-dropdown', {'pf-m-expanded': this.state.active}, dropDownClassName)}>
-          <button aria-haspopup="true" onClick={this.toggle} onKeyDown={this.onKeyDown} type="button" className={classNames('pf-c-dropdown__toggle', buttonClassName ? buttonClassName : '')} id={this.props.id} aria-describedby={describedBy} disabled={disabled} >
+          <button aria-haspopup="true" onClick={this.toggle} onKeyDown={this.onKeyDown} type="button" className={classNames('pf-c-dropdown__toggle', buttonClassName)} id={this.props.id} aria-describedby={describedBy} disabled={disabled} >
             <div className="btn-dropdown__content-wrap">
               <span className="pf-c-dropdown__toggle-text">
                 {titlePrefix && <span className="btn-link__titlePrefix">{titlePrefix}: </span>}
@@ -398,10 +398,11 @@ export class Dropdown extends DropdownMixin {
         </div>
       </div>;
     }
+
     //pf4 markup
-    return (<div className={classNames(className)} ref={this.dropdownElement} style={this.props.style}>
+    return (<div className={className} ref={this.dropdownElement} style={this.props.style}>
       <div className={classNames({'dropdown pf-c-dropdown': true, 'pf-m-expanded': this.state.active})}>
-        <button aria-haspopup="true" aria-expanded={this.state.active} className={classNames('pf-c-dropdown__toggle')} onClick={this.toggle} onKeyDown={this.onKeyDown} type="button" id={this.props.id} aria-describedby={describedBy} >
+        <button aria-haspopup="true" aria-expanded={this.state.active} className={classNames('pf-c-dropdown__toggle', buttonClassName)} onClick={this.toggle} onKeyDown={this.onKeyDown} type="button" id={this.props.id} aria-describedby={describedBy} >
           <span className="pf-c-dropdown__toggle-text">
             {titlePrefix && <span className="btn-link__titlePrefix">{titlePrefix}: </span>}
             {title}
@@ -409,13 +410,12 @@ export class Dropdown extends DropdownMixin {
           <CaretDownIcon className="pf-c-dropdown__toggle-icon" />
         </button>
         {
-          active && <ul ref={this.dropdownList} className="pf-c-dropdown__menu">
+          active && <ul ref={this.dropdownList} className={classNames('pf-c-dropdown__menu', menuClassName)}>
             {rows}
           </ul>
         }
       </div>
     </div>);
-
   }
 }
 
