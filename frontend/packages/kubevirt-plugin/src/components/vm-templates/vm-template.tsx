@@ -14,7 +14,8 @@ import { ListPage, Table, TableRow, TableData } from '@console/internal/componen
 import { Kebab, ResourceLink, ResourceKebab } from '@console/internal/components/utils';
 import { getName, getNamespace, DASH, getUid } from '@console/shared';
 import { TemplateModel } from '@console/internal/models';
-import { TemplateKind } from '../../../../../public/module/k8s/index';
+import { TemplateKind } from '@console/internal/module/k8s';
+import { match } from 'react-router';
 
 export const menuActions = Kebab.factory.common;
 
@@ -124,7 +125,19 @@ const VirtualMachineTemplates = (props: React.ComponentProps<typeof Table>) => {
   );
 };
 
-const VirtualMachineTemplatesPage = (props: React.ComponentProps<typeof ListPage>) => (
+const getCreateProps = (namespace: string) => ({
+  items: {
+    yaml: 'Create from YAML',
+  },
+  createLink: () =>
+    namespace
+      ? `/k8s/ns/${namespace || 'default'}/vmtemplates/~new/`
+      : '/k8s/cluster/vmtemplates/~new',
+});
+
+const VirtualMachineTemplatesPage = (
+  props: VirtualMachineTemplatesPageProps & React.ComponentProps<typeof ListPage>,
+) => (
   <ListPage
     {...props}
     title={labelPlural}
@@ -132,6 +145,7 @@ const VirtualMachineTemplatesPage = (props: React.ComponentProps<typeof ListPage
     kind={kind}
     selector={selector}
     canCreate
+    createProps={getCreateProps(props.match.params.ns)}
   />
 );
 
@@ -140,6 +154,10 @@ type VmTemplateTableRowProps = {
   index: number;
   key: string;
   style: any;
+};
+
+type VirtualMachineTemplatesPageProps = {
+  match: match<{ ns?: string }>;
 };
 
 export { VirtualMachineTemplates, VirtualMachineTemplatesPage };
