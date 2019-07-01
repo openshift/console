@@ -2,34 +2,44 @@ import * as React from 'react';
 import { useFormikContext, FormikValues } from 'formik';
 import { ExpandCollapse } from '@console/internal/components/utils';
 import { InputField, DropdownField } from '../../formik-fields';
-import FormSection from '../section/FormSection';
-import SourceSecretSelector from './SourceSecretSelector';
 import { GitTypes, ProjectData } from '../import-types';
 import { detectGitType } from '../import-validation-utils';
+import { getSampleRepo, getSampleRef, getSampleContextDir } from '../../../utils/imagestream-utils';
+import FormSection from '../section/FormSection';
+import SampleRepo from './SampleRepo';
+import SourceSecretSelector from './SourceSecretSelector';
 
 export interface GitSectionProps {
   project: ProjectData;
+  showSample?: boolean;
 }
 
-const GitSection: React.FC<GitSectionProps> = ({ project }) => {
-  const { values, setValues, setFieldTouched, validateForm } = useFormikContext<FormikValues>();
+const GitSection: React.FC<GitSectionProps> = ({ project, showSample }) => {
+  const { values, setFieldValue, setFieldTouched, validateForm } = useFormikContext<FormikValues>();
+  const tag = values.image.tagObj;
+  const sampleRepo = showSample && getSampleRepo(tag);
 
-  const handleGitUrlBlur = () => {
+  const handleGitUrlBlur: React.ReactEventHandler<HTMLInputElement> = React.useCallback(() => {
     const gitType = detectGitType(values.git.url);
     const showGitType = gitType === '';
-    const newValues = {
-      ...values,
-      git: {
-        ...values.git,
-        type: gitType,
-        showGitType,
-      },
-    };
-    setValues(newValues);
+    setFieldValue('git.type', gitType);
+    setFieldValue('git.showGitType', showGitType);
     setFieldTouched('git.url', true);
     setFieldTouched('git.type', showGitType);
-    validateForm(newValues);
-  };
+    validateForm();
+  }, [setFieldTouched, setFieldValue, validateForm, values.git.url]);
+
+  const fillSample: React.ReactEventHandler<HTMLButtonElement> = React.useCallback(() => {
+    const url = sampleRepo;
+    const ref = getSampleRef(tag);
+    const dir = getSampleContextDir(tag);
+    const name = values.name || values.image.selected;
+    values.name !== name && setFieldValue('name', name);
+    setFieldValue('git.url', url);
+    setFieldValue('git.dir', dir);
+    setFieldValue('git.ref', ref);
+    validateForm();
+  }, [sampleRepo, setFieldValue, tag, validateForm, values.image.selected, values.name]);
 
   return (
     <FormSection title="Git" divider>
@@ -51,6 +61,7 @@ const GitSection: React.FC<GitSectionProps> = ({ project }) => {
           required
         />
       )}
+      {sampleRepo && <SampleRepo onClick={fillSample} />}
       <ExpandCollapse
         textExpanded="Hide Advanced Git Options"
         textCollapsed="Show Advanced Git Options"

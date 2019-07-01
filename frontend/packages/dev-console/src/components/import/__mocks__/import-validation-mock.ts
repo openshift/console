@@ -21,6 +21,7 @@ export const mockFormData: GitImportFormData = {
     selected: 'nodejs',
     recommended: '',
     tag: 'latest',
+    tagObj: {},
     ports: [],
   },
   route: {

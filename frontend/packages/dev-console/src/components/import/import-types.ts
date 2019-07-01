@@ -27,6 +27,7 @@ export interface ImageData {
   selected: string;
   recommended: string;
   tag: string;
+  tagObj: object;
   ports: ContainerPort[];
 }
 

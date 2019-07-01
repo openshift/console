@@ -200,6 +200,17 @@ const plugin: Plugin<ConsumedExtensions> = [
         )).default,
     },
   },
+  {
+    type: 'Page/Route',
+    properties: {
+      exact: true,
+      path: ['/catalog/source-to-image'],
+      loader: async () =>
+        (await import(
+          './components/import/ImportPage' /* webpackChunkName: "dev-console-import" */
+        )).default,
+    },
+  },
 ];
 
 export default plugin;

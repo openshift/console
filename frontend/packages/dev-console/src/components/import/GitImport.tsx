@@ -7,13 +7,15 @@ import { NormalizedBuilderImages, normalizeBuilderImages } from '../../utils/ima
 import { createResources } from './import-submit-utils';
 import { validationSchema } from './import-validation-utils';
 import GitImportForm from './GitImportForm';
+import SourceToImageForm from './SourceToImageForm';
 
 export interface GitImportProps {
   namespace: string;
+  isS2I: boolean;
   imageStreams?: FirehoseList;
 }
 
-const GitImport: React.FC<GitImportProps> = ({ namespace, imageStreams }) => {
+const GitImport: React.FC<GitImportProps> = ({ namespace, imageStreams, isS2I }) => {
   const initialValues: GitImportFormData = {
     name: '',
     project: {
@@ -35,6 +37,7 @@ const GitImport: React.FC<GitImportProps> = ({ namespace, imageStreams }) => {
       selected: '',
       recommended: '',
       tag: '',
+      tagObj: {},
       ports: [],
     },
     route: {
@@ -70,7 +73,6 @@ const GitImport: React.FC<GitImportProps> = ({ namespace, imageStreams }) => {
     },
     labels: {},
   };
-
   const builderImages: NormalizedBuilderImages =
     imageStreams && imageStreams.loaded && normalizeBuilderImages(imageStreams.data);
 
@@ -97,13 +99,20 @@ const GitImport: React.FC<GitImportProps> = ({ namespace, imageStreams }) => {
       });
   };
 
+  const renderForm = (props) => {
+    if (isS2I) {
+      return <SourceToImageForm {...props} builderImages={builderImages} />;
+    }
+    return <GitImportForm {...props} builderImages={builderImages} />;
+  };
+
   return (
     <Formik
       initialValues={initialValues}
       onSubmit={handleSubmit}
       onReset={history.goBack}
       validationSchema={validationSchema}
-      render={(props) => <GitImportForm {...props} builderImages={builderImages} />}
+      render={renderForm}
     />
   );
 };
