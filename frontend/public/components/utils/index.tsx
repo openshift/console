@@ -97,3 +97,13 @@ export type FirehoseResult<R extends K8sResourceKind | K8sResourceKind[] = K8sRe
   loadError: string;
   data: R;
 };
+
+export type HumanizeResult = {
+  string: string;
+  value: number;
+  unit: string;
+}
+
+export type Humanize = {
+  (v: React.ReactText, initialUnit?: string, preferredUnit?: string): HumanizeResult;
+}

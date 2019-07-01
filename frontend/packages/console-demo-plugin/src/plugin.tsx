@@ -16,12 +16,14 @@ import {
   DashboardsOverviewHealthURLSubsystem,
   DashboardsCard,
   DashboardsTab,
+  DashboardsOverviewCapacityQuery,
 } from '@console/plugin-sdk';
 
 // TODO(vojtech): internal code needed by plugins should be moved to console-shared package
 import { PodModel } from '@console/internal/models';
 import { FLAGS } from '@console/internal/const';
 import { GridPosition } from '@console/internal/components/dashboard/grid';
+import { CapacityQuery } from '@console/internal/components/dashboards-page/overview-dashboard/capacity-query-types';
 
 import { FooBarModel } from './models';
 import { yamlTemplates } from './yaml-templates';
@@ -42,7 +44,8 @@ type ConsumedExtensions =
   | DashboardsOverviewHealthPrometheusSubsystem
   | DashboardsOverviewHealthURLSubsystem<any>
   | DashboardsTab
-  | DashboardsCard;
+  | DashboardsCard
+  | DashboardsOverviewCapacityQuery;
 
 const plugin: Plugin<ConsumedExtensions> = [
   {
@@ -186,6 +189,20 @@ const plugin: Plugin<ConsumedExtensions> = [
       position: GridPosition.MAIN,
       loader: () =>
         import('./dashboards/foo-card' /* webpackChunkName: "demo-card" */).then((m) => m.FooCard),
+    },
+  },
+  {
+    type: 'Dashboards/Overview/Capacity/Query',
+    properties: {
+      queryKey: CapacityQuery.STORAGE_TOTAL,
+      query: 'fooQuery',
+    },
+  },
+  {
+    type: 'Dashboards/Overview/Capacity/Query',
+    properties: {
+      queryKey: CapacityQuery.STORAGE_USED,
+      query: 'barQuery',
     },
   },
 ];

@@ -1,5 +1,6 @@
 import { SubsystemHealth } from '@console/internal/components/dashboards-page/overview-dashboard/health-card';
 import { GridPosition } from '@console/internal/components/dashboard/grid';
+import { CapacityQuery } from '@console/internal/components/dashboards-page/overview-dashboard/capacity-query-types';
 
 import { Extension } from './extension';
 import { LazyLoader } from './types';
@@ -53,6 +54,14 @@ namespace ExtensionProperties {
     /** Loader for the corresponding dashboard card component. */
     loader: LazyLoader<any>;
   }
+
+  export interface DashboardsOverviewCapacityQuery {
+    /** The original Prometheus query key to replace */
+    queryKey: CapacityQuery;
+
+    /** The Prometheus query */
+    query: string;
+  }
 }
 
 export interface DashboardsOverviewHealthURLSubsystem<R>
@@ -96,3 +105,12 @@ export interface DashboardsCard extends Extension<ExtensionProperties.Dashboards
 
 export const isDashboardsCard = (e: Extension<any>): e is DashboardsCard =>
   e.type === 'Dashboards/Card';
+
+export interface DashboardsOverviewCapacityQuery
+  extends Extension<ExtensionProperties.DashboardsOverviewCapacityQuery> {
+  type: 'Dashboards/Overview/Capacity/Query';
+}
+
+export const isDashboardsOverviewCapacityQuery = (
+  e: Extension<any>,
+): e is DashboardsOverviewCapacityQuery => e.type === 'Dashboards/Overview/Capacity/Query';

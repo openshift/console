@@ -119,7 +119,7 @@ const BuildGraphs = requirePrometheus(({build}) => {
       <div className="col-md-12 col-lg-4">
         <Area
           title="Memory Usage"
-          formatY={humanizeDecimalBytes}
+          humanize={humanizeDecimalBytes}
           namespace={namespace}
           query={`pod_name:container_memory_usage_bytes:sum{pod_name='${podName}',container_name='',namespace='${namespace}'}`}
         />
@@ -127,7 +127,7 @@ const BuildGraphs = requirePrometheus(({build}) => {
       <div className="col-md-12 col-lg-4">
         <Area
           title="CPU Usage"
-          formatY={humanizeCpuCores}
+          humanize={humanizeCpuCores}
           namespace={namespace}
           query={`pod_name:container_cpu_usage:sum{pod_name='${podName}',container_name='',namespace='${namespace}'}`}
         />
@@ -135,7 +135,7 @@ const BuildGraphs = requirePrometheus(({build}) => {
       <div className="col-md-12 col-lg-4">
         <Area
           title="Filesystem"
-          formatY={humanizeDecimalBytes}
+          humanize={humanizeDecimalBytes}
           namespace={namespace}
           query={`pod_name:container_fs_usage_bytes:sum{pod_name='${podName}',container_name='',namespace='${namespace}'}`}
         />

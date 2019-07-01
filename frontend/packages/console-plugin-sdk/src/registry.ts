@@ -14,6 +14,7 @@ import {
   isDashboardsOverviewHealthSubsystem,
   isDashboardsCard,
   isDashboardsTab,
+  isDashboardsOverviewCapacityQuery,
 } from './typings';
 
 /**
@@ -68,5 +69,9 @@ export class ExtensionRegistry {
 
   public getDashboardsCards() {
     return this.extensions.filter(isDashboardsCard);
+  }
+
+  public getDashboardsOverviewCapacityQueries() {
+    return this.extensions.filter(isDashboardsOverviewCapacityQuery);
   }
 }

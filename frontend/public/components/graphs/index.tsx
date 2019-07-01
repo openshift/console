@@ -21,9 +21,6 @@ export const Donut = props => <AsyncComponent loader={() => import('./graph-load
 export const Gauge = props => <AsyncComponent loader={() => import('./graph-loader').then(c => c.Gauge)} {...props} />;
 export const QueryBrowser = props => <AsyncComponent loader={() => import('./graph-loader').then(c => c.QueryBrowser)} {...props} />;
 
-
-export type MutatorFunction = (value: string | number, options?: any) => string;
-
 export type DataPoint = {
   x?: Date | string | number;
   y?: string | number;

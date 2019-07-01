@@ -180,7 +180,7 @@ const PodGraphs = requirePrometheus(({pod}) => <React.Fragment>
     <div className="col-md-12 col-lg-4">
       <Area
         title="Memory Usage"
-        formatY={humanizeDecimalBytes}
+        humanize={humanizeDecimalBytes}
         namespace={pod.metadata.namespace}
         query={`pod_name:container_memory_usage_bytes:sum{pod_name='${pod.metadata.name}',namespace='${pod.metadata.namespace}'}`}
       />
@@ -188,7 +188,7 @@ const PodGraphs = requirePrometheus(({pod}) => <React.Fragment>
     <div className="col-md-12 col-lg-4">
       <Area
         title="CPU Usage"
-        formatY={humanizeCpuCores}
+        humanize={humanizeCpuCores}
         namespace={pod.metadata.namespace}
         query={`pod_name:container_cpu_usage:sum{pod_name='${pod.metadata.name}',namespace='${pod.metadata.namespace}'}`}
       />
@@ -196,7 +196,7 @@ const PodGraphs = requirePrometheus(({pod}) => <React.Fragment>
     <div className="col-md-12 col-lg-4">
       <Area
         title="Filesystem"
-        formatY={humanizeDecimalBytes}
+        humanize={humanizeDecimalBytes}
         namespace={pod.metadata.namespace}
         query={`pod_name:container_fs_usage_bytes:sum{pod_name='${pod.metadata.name}',namespace='${pod.metadata.namespace}'}`}
       />

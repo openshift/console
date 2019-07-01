@@ -1,4 +1,3 @@
-import * as _ from 'lodash-es';
 import * as React from 'react';
 import { ChartAreaIcon } from '@patternfly/react-icons';
 import {
@@ -18,31 +17,23 @@ import {
 } from '@patternfly/react-charts';
 
 import { twentyFourHourTime } from '../utils/datetime';
-import { humanizeNumber, useRefWidth } from '../utils';
+import { humanizeNumber, useRefWidth, Humanize } from '../utils';
 import { PrometheusEndpoint } from './helpers';
 import { PrometheusGraph, PrometheusGraphLink } from './prometheus-graph';
 import { usePrometheusPoll } from './prometheus-poll-hook';
 import { areaTheme } from './themes';
-import { DataPoint, MutatorFunction, PrometheusResponse } from './';
+import { getRangeVectorStats } from './utils';
 
 const DEFAULT_HEIGHT = 180;
 const DEFAULT_SAMPLES = 60;
 const DEFAULT_TICK_COUNT = 3;
 const DEFAULT_TIMESPAN = 60 * 60 * 1000; // 1 hour
 
-const formatResponse = (response: PrometheusResponse): DataPoint[] => {
-  const values = _.get(response, 'data.result[0].values');
-  return _.map(values, value => ({
-    x: new Date(value[0] * 1000),
-    y: parseFloat(value[1]),
-  }));
-};
-
 export const Area: React.FC<AreaProps> = ({
   className,
-  formatX = twentyFourHourTime,
-  formatY = humanizeNumber,
+  formatDate = twentyFourHourTime,
   height = DEFAULT_HEIGHT,
+  humanize = humanizeNumber,
   namespace,
   query,
   samples = DEFAULT_SAMPLES,
@@ -61,8 +52,8 @@ export const Area: React.FC<AreaProps> = ({
     timeout,
     timespan,
   });
-  const data = formatResponse(response);
-  const getLabel = ({x, y}) => `${formatY(y)} at ${formatX(x)}`;
+  const data = getRangeVectorStats(response);
+  const getLabel = ({x, y}) => `${humanize(y).string} at ${formatDate(x)}`;
   const container = <ChartVoronoiContainer voronoiDimension="x" labels={getLabel} />;
   return <PrometheusGraph ref={containerRef} className={className} title={title}>
     {
@@ -76,8 +67,8 @@ export const Area: React.FC<AreaProps> = ({
             theme={theme}
             scale={{x: 'time', y: 'linear'}}
           >
-            <ChartAxis tickCount={tickCount} tickFormat={formatX} />
-            <ChartAxis dependentAxis tickCount={tickCount} tickFormat={formatY} />
+            <ChartAxis tickCount={tickCount} tickFormat={formatDate} />
+            <ChartAxis dependentAxis tickCount={tickCount} tickFormat={tick => humanize(tick).string} />
             <ChartArea data={data} />
           </Chart>
         </PrometheusGraphLink>
@@ -91,11 +82,10 @@ export const Area: React.FC<AreaProps> = ({
   </PrometheusGraph>;
 };
 
-
 type AreaProps = {
   className?: string;
-  formatX: MutatorFunction;
-  formatY: MutatorFunction;
+  formatDate: (date: Date) => string;
+  humanize: Humanize;
   height?: number,
   namespace?: string;
   query: string;

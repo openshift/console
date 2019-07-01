@@ -22,13 +22,9 @@ import { usePrometheusPoll } from './prometheus-poll-hook';
 import { PrometheusEndpoint } from './helpers';
 import { PrometheusGraph, PrometheusGraphLink } from './prometheus-graph';
 import { barTheme } from './themes';
-import { humanizeNumber } from '../utils';
-import {
-  DataPoint,
-  DomainPadding,
-  MutatorFunction,
-  PrometheusResponse,
-} from '.';
+import { humanizeNumber, Humanize } from '../utils';
+import { DomainPadding } from '.';
+import { getInstantVectorStats } from './utils';
 
 const BAR_PADDING = 8; // Space between each bar (top and bottom)
 const BAR_LABEL_PADDING = 8;
@@ -36,22 +32,10 @@ const DEFAULT_BAR_WIDTH = 10;
 const DEFAULT_DOMAIN_PADDING: DomainPadding = { x: [20, 10] };
 const PADDING_RATIO = 1 / 3;
 
-const handleResponse = (response: PrometheusResponse, metric: string, formatY: MutatorFunction): DataPoint[] => {
-  const results = _.get(response, 'data.result', []);
-  return _.map(results, r => {
-    const y = _.get(r, 'value[1]');
-    return {
-      label: formatY(y),
-      x: _.get(r, ['metric', metric], ''),
-      y,
-    };
-  });
-};
-
 export const Bar: React.FC<BarProps> = ({
   barWidth = DEFAULT_BAR_WIDTH,
   domainPadding = DEFAULT_DOMAIN_PADDING,
-  formatY = humanizeNumber,
+  humanize = humanizeNumber,
   metric,
   namespace,
   query,
@@ -60,7 +44,7 @@ export const Bar: React.FC<BarProps> = ({
 }) => {
   const [containerRef, width] = useRefWidth();
   const [response] = usePrometheusPoll({ endpoint: PrometheusEndpoint.QUERY, namespace, query });
-  const data = handleResponse(response, metric, formatY);
+  const data = getInstantVectorStats(response, metric, humanize);
 
   // Max space that horizontal padding should take up. By default, 2/3 of the horizontal space is always available for the actual bar graph.
   const maxHorizontalPadding = PADDING_RATIO * width;
@@ -114,7 +98,7 @@ export const Bar: React.FC<BarProps> = ({
 type BarProps = {
   barWidth?: number;
   domainPadding?: DomainPadding;
-  formatY?: (val: number | string) => string;
+  humanize?: Humanize;
   metric: string;
   namespace?: string;
   query: string;

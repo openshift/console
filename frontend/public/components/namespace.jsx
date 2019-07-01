@@ -220,7 +220,7 @@ export const NamespaceLineCharts = ({ns}) => <div className="row">
   <div className="col-md-6 col-sm-12">
     <Area
       title="CPU Usage"
-      formatY={humanizeCpuCores}
+      humanize={humanizeCpuCores}
       namespace={ns.metadata.name}
       query={`namespace:container_cpu_usage:sum{namespace='${ns.metadata.name}'}`}
     />
@@ -228,7 +228,7 @@ export const NamespaceLineCharts = ({ns}) => <div className="row">
   <div className="col-md-6 col-sm-12">
     <Area
       title="Memory Usage"
-      formatY={humanizeDecimalBytes}
+      humanize={humanizeDecimalBytes}
       namespace={ns.metadata.name}
       query={`namespace:container_memory_usage_bytes:sum{namespace='${ns.metadata.name}'}`}
     />
@@ -240,7 +240,7 @@ export const TopPodsBarChart = ({ns}) => (
     title="Memory Usage by Pod (Top 10)"
     namespace={ns.metadata.name}
     query={`sort(topk(10, sum by (pod_name)(container_memory_usage_bytes{container_name!="POD",container_name!="",pod_name!="", namespace="${ns.metadata.name}"})))`}
-    formatY={humanizeDecimalBytes}
+    humanize={humanizeDecimalBytes}
     metric="pod_name"
   />
 );
