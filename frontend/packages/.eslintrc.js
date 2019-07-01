@@ -17,5 +17,6 @@ module.exports = {
     ],
     // TODO fix for monorepo support
     'import/no-extraneous-dependencies': 'off',
+    'no-underscore-dangle': 'off',
   },
 };
