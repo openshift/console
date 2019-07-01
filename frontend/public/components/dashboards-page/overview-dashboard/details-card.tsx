@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
+import { connect } from 'react-redux';
 
 import {
   DashboardCard,
@@ -8,12 +9,13 @@ import {
   DashboardCardTitle,
 } from '../../dashboard/dashboard-card';
 import { DetailsBody, DetailItem } from '../../dashboard/details-card';
-import { withDashboardResources, DashboardItemProps } from '../with-dashboard-resources';
+import { DashboardItemProps, withDashboardResources } from '../with-dashboard-resources';
 import { InfrastructureModel, ClusterVersionModel } from '../../../models';
 import { referenceForModel, K8sResourceKind, getOpenShiftVersion, getK8sGitVersion, getClusterName, ClusterVersionKind } from '../../../module/k8s';
 import { FLAGS } from '../../../const';
-import { flagPending, connectToFlags } from '../../../reducers/features';
+import { flagPending, featureReducerName } from '../../../reducers/features';
 import { FirehoseResource } from '../../utils';
+import { RootState } from '../../../redux';
 
 const getInfrastructurePlatform = (infrastructure: K8sResourceKind): string => _.get(infrastructure, 'status.platform');
 
@@ -33,16 +35,19 @@ const infrastructureResource: FirehoseResource = {
   prop: 'infrastructure',
 };
 
-export const DetailsCard_: React.FC<DetailsCardProps> = ({
+const mapStateToProps = (state: RootState) => ({
+  openshiftFlag: state[featureReducerName].get(FLAGS.OPENSHIFT),
+});
+
+export const DetailsCard_ = connect(mapStateToProps)(({
   watchURL,
   stopWatchURL,
   watchK8sResource,
   stopWatchK8sResource,
   resources,
   urlResults,
-  flags,
-}) => {
-  const openshiftFlag = flags[FLAGS.OPENSHIFT];
+  openshiftFlag,
+}: DetailsCardProps) => {
   React.useEffect(() => {
     if (flagPending(openshiftFlag)) {
       return;
@@ -112,10 +117,10 @@ export const DetailsCard_: React.FC<DetailsCardProps> = ({
       </DashboardCardBody>
     </DashboardCard>
   );
-};
+});
+
+export const DetailsCard = withDashboardResources(DetailsCard_);
 
 type DetailsCardProps = DashboardItemProps & {
-  flags: {[FLAGS.OPENSHIFT]: boolean};
+  openshiftFlag: boolean;
 }
-
-export const DetailsCard = withDashboardResources(connectToFlags(FLAGS.OPENSHIFT)(DetailsCard_));
