@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { TopologySideBar as PfTopologySideBar } from '@patternfly/react-topology';
+import { TopologySideBar as PFTopologySideBar } from '@patternfly/react-topology';
 import { CloseButton } from '@console/internal/components/utils';
 import { ResourceOverviewPage } from '@console/internal/components/overview/resource-overview-page';
 import { TopologyDataObject } from './topology-types';
@@ -44,14 +44,14 @@ const TopologySideBar: React.FC<TopologySideBarProps> = ({ item, show, onClose }
   }
 
   return (
-    <PfTopologySideBar show={show}>
+    <PFTopologySideBar show={show}>
       <div className="odc-topology-sidebar__dismiss clearfix">
         <CloseButton onClick={onClose} data-test-id="sidebar-close-button" />
       </div>
       {itemtoShowOnSideBar ? (
         <ResourceOverviewPage item={itemtoShowOnSideBar} kind={itemtoShowOnSideBar.kind} />
       ) : null}
-    </PfTopologySideBar>
+    </PFTopologySideBar>
   );
 };
 
