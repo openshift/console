@@ -11,6 +11,9 @@ const consoleAppName = '@console/app';
 // glob that matches all the monorepo packages
 const consolePkgGlob = 'packages/*/package.json';
 
+// env. variable used to override the active plugin list
+const consolePluginOverrideEnvVar = 'CONSOLE_PLUGINS';
+
 /**
  * Return `true` if the given package represents a Console plugin.
  */
@@ -40,14 +43,19 @@ export const readPackages = (packageFiles: string[]) => {
   };
 };
 
+const sortPluginPackages: PluginPackageFilter = (appPackage, pluginPackages) => {
+  // if appPackage is in the list, make sure it's the first element
+  return _.sortBy(pluginPackages, (pkg) => (appPackage === pkg ? 0 : 1));
+};
+
 export const filterActivePluginPackages: PluginPackageFilter = (appPackage, pluginPackages) => {
   // include dependencies of the appPackage or the appPackage itself
-  const list = pluginPackages.filter(
-    (pkg) => appPackage === pkg || appPackage.dependencies[pkg.name] === pkg.version,
+  return sortPluginPackages(
+    appPackage,
+    pluginPackages.filter(
+      (pkg) => appPackage === pkg || appPackage.dependencies[pkg.name] === pkg.version,
+    ),
   );
-
-  // if appPackage is in the list, make sure it's the first element
-  return _.sortBy(list, (pkg) => (appPackage === pkg ? 0 : 1));
 };
 
 /**
@@ -59,7 +67,21 @@ export const resolvePluginPackages = (
 ) => {
   const packageFiles = glob.sync(consolePkgGlob, { cwd: monorepoRootDir, absolute: true });
   const { appPackage, pluginPackages } = readPackages(packageFiles);
-  return appPackage ? pluginFilter(appPackage, pluginPackages) : [];
+
+  if (!appPackage) {
+    throw new Error(`Cannot detect Console application package ${consoleAppName}`);
+  }
+
+  // provide the ability to override the active plugin list
+  if (_.isString(process.env[consolePluginOverrideEnvVar])) {
+    const pluginPackageNames = process.env[consolePluginOverrideEnvVar].split(',');
+    return sortPluginPackages(
+      appPackage,
+      pluginPackages.filter((pkg) => pluginPackageNames.includes(pkg.name)),
+    );
+  }
+
+  return pluginFilter(appPackage, pluginPackages);
 };
 
 export type Package = readPkg.NormalizedPackageJson;
