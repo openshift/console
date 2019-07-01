@@ -10,7 +10,7 @@ import {
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { Firehose } from '@console/internal/components/utils';
 import { PipelineVisualizationStepList } from './PipelineVisualizationStepList';
-import { getRunStatusColor } from '../../utils/pipeline-augment';
+import { getRunStatusColor, runStatus } from '../../utils/pipeline-augment';
 
 import './PipelineVisualizationTask.scss';
 
@@ -82,7 +82,12 @@ const TaskComponent: React.FC<TaskProps> = (props) => {
   return (
     <li
       className={cx('odc-pipeline-vis-task')}
-      style={{ color: getRunStatusColor(status.reason).pftoken.value }}
+      style={{
+        color:
+          status && status.reason
+            ? getRunStatusColor(status.reason).pftoken.value
+            : getRunStatusColor(runStatus.Cancelled).pftoken.value,
+      }}
     >
       <Tooltip
         position="bottom"
