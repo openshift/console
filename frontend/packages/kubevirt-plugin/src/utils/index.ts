@@ -1,20 +1,32 @@
-import * as _ from 'lodash';
-import { K8sResourceKind } from '@console/internal/module/k8s';
 import { FirehoseResult } from '@console/internal/components/utils';
+import { getName, getNamespace } from '@console/shared';
+import { K8sResourceKind } from '@console/internal/module/k8s';
 import { K8sEntityMap } from '../types';
 
-export const createBasicLookup = <A>(list, path): K8sEntityMap<A> => {
-  return list.reduce((lookup, entity) => {
-    lookup[_.get(entity, path)] = entity;
+type KeyResolver<A> = (entity: A) => string;
+
+export const getLookupId: KeyResolver<K8sResourceKind> = (entity) =>
+  `${getNamespace(entity)}-${getName(entity)}`;
+
+export const createBasicLookup = <A>(list: A[], getKey: KeyResolver<A>): K8sEntityMap<A> => {
+  return (list || []).reduce((lookup, entity) => {
+    const key = getKey(entity);
+    if (key) {
+      lookup[key] = entity;
+    }
     return lookup;
   }, {});
 };
 
-export const createLookup = <A>(
-  loadingList: FirehoseResult<A[] & K8sResourceKind>,
-): K8sEntityMap<A> => {
-  if (loadingList.loaded) {
-    return createBasicLookup(loadingList.data, 'metadata.name');
+export const createLookup = <A extends K8sResourceKind>(
+  loadingList: FirehoseResult<K8sResourceKind[]>,
+  getKey?: KeyResolver<K8sResourceKind>,
+): K8sEntityMap<K8sResourceKind> => {
+  if (loadingList && loadingList.loaded) {
+    return createBasicLookup(loadingList.data, getKey || getLookupId);
   }
   return {};
 };
+
+export const prefixedId = (idPrefix: string, id: string): string =>
+  idPrefix && id ? `${idPrefix}-${id}` : null;

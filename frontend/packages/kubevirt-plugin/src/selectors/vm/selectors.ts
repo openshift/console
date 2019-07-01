@@ -4,6 +4,8 @@ import { BUS_VIRTIO } from '../../constants/vm';
 import { VMKind } from '../../types';
 
 export const getDisks = (volume) => _.get(volume, 'spec.template.spec.domain.devices.disks', []);
+export const getInterfaces = (vm: VMKind) =>
+  _.get(vm, 'spec.template.spec.domain.devices.interfaces', []);
 export const getVolumes = (vm: VMKind) => _.get(vm, 'spec.template.spec.volumes', []);
 export const getDataVolumeTemplates = (vm: VMKind) => _.get(vm, 'spec.dataVolumeTemplates', []);
 

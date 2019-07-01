@@ -3,6 +3,7 @@ import * as classNames from 'classnames';
 
 import {
   getResource,
+  getVmStatus,
   // VmStatus,
   // getSimpleVmStatus,
   // VM_SIMPLE_STATUS_ALL,
@@ -14,18 +15,19 @@ import { getName, getNamespace, getUid } from '@console/shared';
 import { NamespaceModel, PodModel } from '@console/internal/models';
 import { Table, MultiListPage, TableRow, TableData } from '@console/internal/components/factory';
 import { FirehoseResult, Kebab, ResourceLink } from '@console/internal/components/utils';
-// import { actions } from '../../module/okdk8s';
 
 import { sortable } from '@patternfly/react-table';
-import { PodKind } from '@console/internal/module/k8s';
+import { K8sResourceKind, PodKind } from '@console/internal/module/k8s';
 import {
   VirtualMachineInstanceMigrationModel,
+  VirtualMachineInstanceModel,
   VirtualMachineModel,
-  // VirtualMachineInstanceModel,
 } from '../../models';
 
-import { VMKind } from '../../types';
+import { K8sEntityMap, VMIKind, VMKind } from '../../types';
 import { menuActions } from './menu-actions';
+import { createLookup } from '../../utils';
+import { getMigrationVMIName, isMigrating } from '../../selectors/vmim';
 
 // import { openCreateVmWizard } from '../modals/create-vm-modal';
 
@@ -59,10 +61,17 @@ const VMHeader = () => [
   },
 ];
 
-const VMRow: React.FC<VMRowProps> = ({ obj: vm, customData, index, key, style }) => {
+const VMRow: React.FC<VMRowProps> = ({
+  obj: vm,
+  customData: { pods, migrations, vmiLookup, migrationLookup },
+  index,
+  key,
+  style,
+}) => {
   const name = getName(vm);
   const namespace = getNamespace(vm);
   const uid = getUid(vm);
+  const vmStatus = getVmStatus(vm, pods, migrations);
 
   return (
     <TableRow id={uid} index={index} trKey={key} style={style}>
@@ -75,7 +84,9 @@ const VMRow: React.FC<VMRowProps> = ({ obj: vm, customData, index, key, style })
       {/* TODO(mlibra): migrate VM status in a follow-up */}
       <TableData className={Kebab.columnClass}>
         <Kebab
-          options={menuActions.map((action) => action(VirtualMachineModel, vm, customData))}
+          options={menuActions.map((action) =>
+            action(VirtualMachineModel, vm, { vmStatus, migrationLookup, vmiLookup }),
+          )}
           key={`kebab-for-${uid}`}
           id={`kebab-for-${uid}`}
         />
@@ -95,6 +106,11 @@ const VMList: React.FC<React.ComponentProps<typeof Table> & VMListProps> = (prop
       customData={{
         pods: resources.pods.data || [],
         migrations: resources.migrations.data || [],
+        vmiLookup: createLookup(resources.vmis),
+        migrationLookup: createLookup(
+          resources.migrations,
+          (m) => isMigrating(m) && `${getNamespace(m)}-${getMigrationVMIName(m)}`,
+        ),
       }}
     />
   );
@@ -137,10 +153,16 @@ const getCreateProps = (namespace: string) => ({
 
 export const VirtualMachinesPage: React.FC<VirtualMachinesPageProps> = (props) => {
   const { namespace } = props;
+
   const resources = [
     getResource(VirtualMachineModel, { namespace, prop: 'vms' }),
     getResource(PodModel, { namespace, prop: 'pods' }),
     getResource(VirtualMachineInstanceMigrationModel, { namespace, prop: 'migrations' }),
+    getResource(VirtualMachineInstanceModel, {
+      namespace,
+      prop: 'vmis',
+      optional: true,
+    }),
   ];
 
   const flatten = ({ vms: { data: vmsData, loaded, loadError } }) =>
@@ -167,7 +189,9 @@ type VMRowProps = {
   style: object;
   customData: {
     pods: PodKind[];
-    migrations: any[];
+    migrations: K8sResourceKind[];
+    migrationLookup: K8sEntityMap<VMIKind>;
+    vmiLookup: K8sEntityMap<VMIKind>;
   };
 };
 
@@ -175,10 +199,12 @@ type VMListProps = {
   data: VMKind[];
   resources: {
     pods: FirehoseResult<PodKind[]>;
-    migrations: FirehoseResult<any[]>;
+    migrations: FirehoseResult<K8sResourceKind[]>;
+    vmis: FirehoseResult<VMIKind[]>;
   };
 };
 
 type VirtualMachinesPageProps = {
   namespace: string;
+  obj: VMKind;
 };

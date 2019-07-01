@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import * as React from 'react';
 import { Alert, Button } from 'patternfly-react';
 
@@ -5,7 +6,7 @@ import { Table } from '@console/internal/components/factory';
 import { PersistentVolumeClaimModel } from '@console/internal/models';
 import { Firehose, FirehoseResult, Kebab } from '@console/internal/components/utils';
 import { getResource } from 'kubevirt-web-ui-components';
-import { getNamespace } from '@console/shared';
+import { getNamespace, getName } from '@console/shared';
 import { useSafetyFirst } from '@console/internal/components/safety-first';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { DataVolumeModel } from '../../models';
@@ -15,15 +16,15 @@ import { asVm } from '../../selectors/selectors';
 import { getDataVolumeTemplates, getDisks, getVolumes } from '../../selectors/vm';
 import { createBasicLookup, createLookup } from '../../utils';
 import { DiskRow } from './disk-row';
-import { StorageTypeEnum, VMDiskRowProps } from './types';
+import { StorageType, VMDiskRowProps } from './types';
 import { CreateDiskRowFirehose } from './create-disk-row';
 
 export const VMDiskRow: React.FC<VMDiskRowProps> = (props) => {
   switch (props.obj.storageType) {
-    case StorageTypeEnum.STORAGE_TYPE_VM:
-      return <DiskRow {...props} key={StorageTypeEnum.STORAGE_TYPE_VM} />;
-    case StorageTypeEnum.STORAGE_TYPE_CREATE:
-      return <CreateDiskRowFirehose {...props} key={StorageTypeEnum.STORAGE_TYPE_CREATE} />;
+    case StorageType.STORAGE_TYPE_VM:
+      return <DiskRow {...props} key={StorageType.STORAGE_TYPE_VM} />;
+    case StorageType.STORAGE_TYPE_CREATE:
+      return <CreateDiskRowFirehose {...props} key={StorageType.STORAGE_TYPE_CREATE} />;
     default:
       return null;
   }
@@ -34,18 +35,18 @@ const getStoragesData = (vmLikeEntity: VMLikeEntityKind, addNewDisk: boolean): S
 
   const disksWithType = getDisks(vm).map((disk) => ({
     name: disk.name,
-    storageType: StorageTypeEnum.STORAGE_TYPE_VM,
+    storageType: StorageType.STORAGE_TYPE_VM,
     disk,
   }));
 
   return addNewDisk
-    ? [{ storageType: StorageTypeEnum.STORAGE_TYPE_CREATE }, ...disksWithType]
+    ? [{ storageType: StorageType.STORAGE_TYPE_CREATE }, ...disksWithType]
     : disksWithType;
 };
 
 type StorageBundle = {
   name: string;
-  storageType: StorageTypeEnum;
+  storageType: StorageType;
   disk: any;
 };
 
@@ -97,14 +98,11 @@ export const VMDisks: React.FC<VMDisksProps> = ({ vmLikeEntity, pvcs, datavolume
             vmLikeEntity,
             vm,
             pvcs,
-            pvcLookup: createLookup(pvcs),
+            pvcLookup: createLookup(pvcs, getName),
             datavolumes,
-            datavolumeLookup: createLookup(datavolumes),
-            volumeLookup: createBasicLookup(getVolumes(vm), 'name'),
-            datavolumeTemplatesLookup: createBasicLookup(
-              getDataVolumeTemplates(vm),
-              'metadata.name',
-            ),
+            datavolumeLookup: createLookup(datavolumes, getName),
+            volumeLookup: createBasicLookup(getVolumes(vm), (volume) => _.get(volume, 'name')),
+            datavolumeTemplatesLookup: createBasicLookup(getDataVolumeTemplates(vm), getName),
             onCreateRowDismiss: () => {
               setIsCreating(false);
             },

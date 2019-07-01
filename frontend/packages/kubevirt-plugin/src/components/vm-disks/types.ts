@@ -2,7 +2,7 @@ import { FirehoseResult } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { K8sEntityMap, VMLikeEntityKind, VMKind } from '../../types';
 
-export enum StorageTypeEnum {
+export enum StorageType {
   STORAGE_TYPE_VM = 'storage-type-vm',
   STORAGE_TYPE_CREATE = 'storage-type-create',
 }
@@ -10,7 +10,7 @@ export enum StorageTypeEnum {
 export type VMDiskRowProps = {
   obj: {
     name: string;
-    storageType: StorageTypeEnum;
+    storageType: StorageType;
     disk: any;
   };
   index: number;
