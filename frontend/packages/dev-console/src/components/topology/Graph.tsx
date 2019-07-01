@@ -29,6 +29,7 @@ export interface GraphProps {
   children?(GraphApi): React.ReactNode;
   selected?: string;
   onSelect?(string): void;
+  graphApiRef?(GraphApi): void;
 }
 
 export default class Graph extends React.Component<GraphProps, State> {
@@ -51,7 +52,9 @@ export default class Graph extends React.Component<GraphProps, State> {
   }, 100);
 
   captureApiRef = (r) => {
+    const { graphApiRef } = this.props;
     this.setState({ graphApi: r ? r.api() : null });
+    graphApiRef && graphApiRef(r ? r.api() : null);
   };
 
   renderMeasure = ({ measureRef }) => {

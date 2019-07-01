@@ -1,19 +1,19 @@
 import * as React from 'react';
 import {
-  ExpandIcon,
-  ExpandArrowsAltIcon,
-  SearchPlusIcon,
-  SearchMinusIcon,
-} from '@patternfly/react-icons';
+  TopologyView,
+  TopologyControlBar,
+  createTopologyControlButtons,
+  defaultControlButtonsOptions,
+} from '@patternfly/react-topology';
+
 import { nodeProvider, edgeProvider, groupProvider } from './shape-providers';
 import Graph from './Graph';
-import GraphToolbar from './GraphToolbar';
 import { GraphApi, TopologyDataModel } from './topology-types';
 import TopologySideBar from './TopologySideBar';
-import GraphToolbarButton from './GraphToolbarButton';
 
 type State = {
   selected?: string;
+  graphApi?: GraphApi;
 };
 
 export interface TopologyProps {
@@ -44,30 +44,52 @@ export default class Topology extends React.Component<TopologyProps, State> {
     this.setState({ selected: null });
   };
 
-  renderToolbar = (graphApi: GraphApi) => (
-    <GraphToolbar>
-      <GraphToolbarButton label="Zoom In" onClick={graphApi.zoomIn}>
-        <SearchPlusIcon />
-      </GraphToolbarButton>
-      <GraphToolbarButton label="Zoom Out" onClick={graphApi.zoomOut}>
-        <SearchMinusIcon />
-      </GraphToolbarButton>
-      <GraphToolbarButton label="Fit to Screen" onClick={graphApi.zoomFit}>
-        <ExpandArrowsAltIcon />
-      </GraphToolbarButton>
-      <GraphToolbarButton label="Reset Layout" onClick={graphApi.resetLayout}>
-        <ExpandIcon />
-      </GraphToolbarButton>
-    </GraphToolbar>
-  );
+  graphApiRef = (api: GraphApi) => {
+    this.setState({ graphApi: api });
+  };
+
+  renderControlBar = () => {
+    const { graphApi } = this.state;
+    const controlButtons = createTopologyControlButtons({
+      ...defaultControlButtonsOptions,
+      zoomInCallback: () => {
+        graphApi && graphApi.zoomIn();
+      },
+      zoomOutCallback: () => {
+        graphApi && graphApi.zoomOut();
+      },
+      fitToScreenCallback: () => {
+        graphApi && graphApi.zoomFit();
+      },
+      resetViewCallback: () => {
+        graphApi && graphApi.resetLayout();
+      },
+      legend: false,
+    });
+
+    return <TopologyControlBar controlButtons={controlButtons} />;
+  };
 
   render() {
     const {
       data: { graph, topology },
     } = this.props;
     const { selected } = this.state;
+
+    const topologySideBar = (
+      <TopologySideBar
+        item={selected ? topology[selected] : null}
+        show={!!selected}
+        onClose={this.onSidebarClose}
+      />
+    );
+
     return (
-      <React.Fragment>
+      <TopologyView
+        controlBar={this.renderControlBar()}
+        sideBar={topologySideBar}
+        sideBarOpen={!!selected}
+      >
         <Graph
           graph={graph}
           topology={topology}
@@ -76,15 +98,9 @@ export default class Topology extends React.Component<TopologyProps, State> {
           groupProvider={groupProvider}
           selected={selected}
           onSelect={this.onSelect}
-        >
-          {this.renderToolbar}
-        </Graph>
-        <TopologySideBar
-          item={selected ? topology[selected] : null}
-          show={!!selected}
-          onClose={this.onSidebarClose}
+          graphApiRef={this.graphApiRef}
         />
-      </React.Fragment>
+      </TopologyView>
     );
   }
 }
