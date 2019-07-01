@@ -431,7 +431,13 @@ class BuildSource extends React.Component<BuildSourceProps, BuildSourceState> {
           </div>
           <div className="form-group">
             <label className="control-label co-required" htmlFor="tag">Version</label>
-            <Dropdown items={tagOptions} selectedKey={selectedTag} title={tagOptions[selectedTag]} onChange={this.onTagChange} id="tag" />
+            <Dropdown
+              dropDownClassName="dropdown--full-width"
+              items={tagOptions}
+              selectedKey={selectedTag}
+              title={tagOptions[selectedTag]}
+              onChange={this.onTagChange}
+              id="tag" />
           </div>
           <div className="form-group">
             <label className="control-label co-required" htmlFor="name">Name</label>
