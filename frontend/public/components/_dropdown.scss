@@ -20,6 +20,7 @@ $dropdown-background--hover: $color-pf-black-200; // pf-c-dropdown__menu-item--h
 .dropdown--full-width {
   &,
   .pf-c-dropdown__toggle {
+    justify-content: space-between;
     width: 100%;
   }
 }

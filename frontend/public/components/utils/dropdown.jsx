@@ -401,7 +401,7 @@ export class Dropdown extends DropdownMixin {
 
     //pf4 markup
     return (<div className={className} ref={this.dropdownElement} style={this.props.style}>
-      <div className={classNames({'dropdown pf-c-dropdown': true, 'pf-m-expanded': this.state.active})}>
+      <div className={classNames({'dropdown pf-c-dropdown': true, 'pf-m-expanded': this.state.active}, dropDownClassName)}>
         <button aria-haspopup="true" aria-expanded={this.state.active} className={classNames('pf-c-dropdown__toggle', buttonClassName)} onClick={this.toggle} onKeyDown={this.onKeyDown} type="button" id={this.props.id} aria-describedby={describedBy} >
           <span className="pf-c-dropdown__toggle-text">
             {titlePrefix && <span className="btn-link__titlePrefix">{titlePrefix}: </span>}
