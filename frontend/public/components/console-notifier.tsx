@@ -19,7 +19,8 @@ const ConsoleNotifier_: React.FC<ConsoleNotifierProps> = ({obj, location}) => {
         style={{
           backgroundColor: notification.spec.backgroundColor,
           color: notification.spec.color,
-        }}>
+        }}
+        data-test={`${notification.metadata.name}-${notification.spec.location}`}>
         <div className="co-global-notification__content">
           <p className="co-global-notification__text">
             {notification.spec.text} {_.get(notification.spec, ['link', 'href'])
