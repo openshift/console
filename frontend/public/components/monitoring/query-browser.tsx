@@ -25,9 +25,9 @@ import { VictorySelectionContainer } from 'victory-selection-container';
 import { Dropdown, humanizeNumber, LoadingInline, usePoll, useRefWidth, useSafeFetch } from '../utils';
 import { formatPrometheusDuration, parsePrometheusDuration, twentyFourHourTime } from '../utils/datetime';
 import { withFallback } from '../utils/error-boundary';
-import { PrometheusResponse } from '.';
-import { getPrometheusURL, PrometheusEndpoint } from './helpers';
-import { queryBrowserTheme } from './themes';
+import { PrometheusResponse } from '../graphs';
+import { getPrometheusURL, PrometheusEndpoint } from '../graphs/helpers';
+import { queryBrowserTheme } from '../graphs/themes';
 
 const spans = ['5m', '15m', '30m', '1h', '2h', '6h', '12h', '1d', '2d', '1w', '2w'];
 const dropdownItems = _.zipObject(spans, spans);
@@ -287,11 +287,11 @@ type GraphProps = {
 
 type QueryBrowserProps = {
   defaultTimespan: number;
-  disabledSeries: Labels[];
-  filterLabels: Labels;
-  GraphLink: React.ComponentType<{}>;
+  disabledSeries?: Labels[][];
+  filterLabels?: Labels;
+  GraphLink?: React.ComponentType<{}>;
   hideGraphs: boolean;
-  onDataUpdate: (allSeries: PrometheusSeries[][]) => void;
+  onDataUpdate?: (allSeries: PrometheusSeries[][]) => void;
   queries: string[];
 };
 
