@@ -100,6 +100,7 @@ export const VMDisks: React.FC<VMDisksProps> = ({ vmLikeEntity, pvcs, datavolume
             pvcLookup: createLookup(pvcs, getName),
             datavolumes,
             datavolumeLookup: createLookup(datavolumes, getName),
+            diskLookup: createBasicLookup(getDisks(vm), (disk) => _.get(disk, 'name')),
             volumeLookup: createBasicLookup(getVolumes(vm), (volume) => _.get(volume, 'name')),
             datavolumeTemplatesLookup: createBasicLookup(getDataVolumeTemplates(vm), getName),
             onCreateRowDismiss: () => {

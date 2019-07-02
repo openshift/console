@@ -1,4 +1,4 @@
-import { VMKind, VMLikeEntityKind } from '../../types';
+import { EntityMap, VMKind, VMLikeEntityKind } from '../../types';
 
 export enum NetworkRowType {
   NETWORK_TYPE_VM = 'network-type-vm',
@@ -21,6 +21,7 @@ export type VMNicRowProps = {
   customData: {
     vmLikeEntity: VMLikeEntityKind;
     vm: VMKind;
+    interfaceLookup: EntityMap<any>;
     preferableNicBus: string;
     onCreateRowDismiss: () => void;
     onCreateRowError: (error: string) => void;

@@ -5,7 +5,6 @@ import {
   Integer,
   Dropdown,
   CancelAcceptButtons,
-  validateDNS1123SubdomainValue,
   VALIDATION_INFO_TYPE,
   getResource,
 } from 'kubevirt-web-ui-components';
@@ -25,6 +24,7 @@ import { getAddDiskPatches } from '../../k8s/patches/vm/vm-disk-patches';
 import { VMLikeEntityKind } from '../../types';
 
 import './_create-device-row.scss';
+import { validateDiskName } from '../../utils/validations/vm';
 
 const createDisk = ({
   vmLikeEntity,
@@ -76,7 +76,7 @@ type CreateDiskRowProps = VMDiskRowProps & { storageClasses?: FirehoseResult<K8s
 
 export const CreateDiskRow: React.FC<CreateDiskRowProps> = ({
   storageClasses,
-  customData: { vm, vmLikeEntity, onCreateRowDismiss, onCreateRowError },
+  customData: { vm, vmLikeEntity, diskLookup, onCreateRowDismiss, onCreateRowError },
   index,
   style,
 }) => {
@@ -87,7 +87,7 @@ export const CreateDiskRow: React.FC<CreateDiskRowProps> = ({
 
   const id = 'create-disk-row';
 
-  const nameError = validateDNS1123SubdomainValue(name);
+  const nameError = validateDiskName(name, diskLookup);
   const isValid = !nameError && size;
 
   const bus = getVmPreferableDiskBus(vm);

@@ -24,6 +24,7 @@ export type VMDiskRowProps = {
     pvcLookup: K8sEntityMap<K8sResourceKind>;
     datavolumes: FirehoseResult<K8sResourceKind[]>;
     datavolumeLookup: K8sEntityMap<K8sResourceKind>;
+    diskLookup: EntityMap<any>;
     volumeLookup: EntityMap<any>;
     datavolumeTemplatesLookup: K8sEntityMap<K8sResourceKind>;
     onCreateRowDismiss: () => void;

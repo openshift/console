@@ -110,6 +110,9 @@ export const VMNics: React.FC<VMNicsProps> = ({ obj: vmLikeEntity }) => {
             vmLikeEntity,
             vm,
             preferableNicBus,
+            interfaceLookup: createBasicLookup(getInterfaces(vm), (intface) =>
+              _.get(intface, 'name'),
+            ),
             onCreateRowDismiss: () => {
               setIsCreating(false);
             },

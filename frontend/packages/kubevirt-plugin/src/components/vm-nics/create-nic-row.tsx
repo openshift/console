@@ -6,7 +6,6 @@ import {
   Dropdown,
   getResource,
   Text,
-  validateDNS1123SubdomainValue,
   VALIDATION_INFO_TYPE,
 } from 'kubevirt-web-ui-components';
 import { connect } from 'react-redux';
@@ -30,6 +29,7 @@ import { getNetworkBindings, nicTableColumnClasses } from './utils';
 import { getNetworkChoices } from '../../selectors/vm';
 import { dimensifyRow } from '../../utils/table';
 import { NetworkType } from '../../constants/vm';
+import { validateNicName } from '../../utils/validations/vm';
 
 const createNic = ({
   vmLikeEntity,
@@ -87,7 +87,14 @@ type CreateNicRowProps = VMNicRowProps & { nads?: FirehoseResult<K8sResourceKind
 export const CreateNicRow: React.FC<CreateNicRowProps> = ({
   nads,
   hasNADs,
-  customData: { vm, preferableNicBus, vmLikeEntity, onCreateRowDismiss, onCreateRowError },
+  customData: {
+    vm,
+    preferableNicBus,
+    vmLikeEntity,
+    interfaceLookup,
+    onCreateRowDismiss,
+    onCreateRowError,
+  },
   index,
   style,
 }) => {
@@ -102,7 +109,7 @@ export const CreateNicRow: React.FC<CreateNicRowProps> = ({
   const dimensify = dimensifyRow(nicTableColumnClasses);
   const id = 'create-nic-row';
 
-  const nameError = validateDNS1123SubdomainValue(name);
+  const nameError = validateNicName(name, interfaceLookup);
   const isValid = !nameError && network && binding;
 
   return (
