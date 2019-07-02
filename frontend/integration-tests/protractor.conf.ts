@@ -159,9 +159,13 @@ export const config: Config = {
       'tests/operator-hub/operator-hub.scenario.ts',
       'tests/developer-catalog.scenario.ts',
       'tests/monitoring.scenario.ts',
+      'tests/devconsole/dev-perspective.scenario.ts',
     ]),
     login: [
       'tests/login.scenario.ts',
+    ],
+    devconsole: [
+      'tests/devconsole/dev-perspective.scenario.ts',
     ],
   },
   params: {
