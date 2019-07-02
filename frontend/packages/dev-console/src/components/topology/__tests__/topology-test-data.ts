@@ -9,6 +9,7 @@ export const resources: TopologyDataResources = {
   deployments: { data: [] },
   replicasets: { data: [] },
   buildconfigs: { data: [] },
+  builds: { data: [] },
 };
 
 export const topologyData: TopologyDataModel = {
@@ -889,6 +890,102 @@ const sampleBuildConfigs: Resource = {
   ],
 };
 
+const sampleBuilds: Resource = {
+  data: [
+    {
+      kind: 'Builds',
+      metadata: {
+        annotations: {
+          'openshift.io/build-config.name': 'analytics-build',
+          'openshift.io/build.number': '1',
+        },
+        selfLink: '/apis/build.openshift.io/v1/namespaces/testproject3/builds/analytics-build-1',
+        resourceVersion: '358822',
+        name: 'analytics-build-1',
+        uid: '58d6b528-9c89-11e9-80f4-0a580a82001a',
+        creationTimestamp: '2019-07-02T05:22:12Z',
+        namespace: 'testproject3',
+        ownerReferences: [
+          {
+            apiVersion: 'build.openshift.io/v1',
+            kind: 'BuildConfig',
+            name: 'analytics-build',
+            uid: '5ca46c49-680d-11e9-b69e-5254003f9382',
+            controller: true,
+          },
+        ],
+        labels: {
+          app: 'analytics-build',
+          'app.kubernetes.io/component': 'analytics-build',
+          'app.kubernetes.io/instance': 'analytics-build',
+          'app.kubernetes.io/name': 'nodejs',
+          'app.kubernetes.io/part-of': 'myapp',
+          buildconfig: 'analytics-build',
+          'openshift.io/build-config.name': 'analytics-build',
+          'openshift.io/build.start-policy': 'Serial',
+        },
+      },
+      spec: {
+        serviceAccount: 'builder',
+        source: {
+          type: 'Git',
+          git: {
+            uri: 'https://github.com/fabric8-ui/fabric8-ui',
+          },
+          contextDir: '/',
+        },
+        strategy: {
+          type: 'Source',
+          sourceStrategy: {
+            from: {
+              kind: 'DockerImage',
+              name:
+                'image-registry.openshift-image-registry.svc:5000/openshift/nodejs@sha256:0ad231dc2d1c34ed3fb29fb304821171155e0a1a23f0e0490b2cd8ca60915517',
+            },
+            pullSecret: {
+              name: 'builder-dockercfg-tx6qx',
+            },
+          },
+        },
+        output: {
+          to: {
+            kind: 'ImageStreamTag',
+            name: 'analytics-build:latest',
+          },
+        },
+        resources: {},
+        postCommit: {},
+        nodeSelector: null,
+        triggeredBy: [
+          {
+            message: 'Image change',
+            imageChangeBuild: {
+              imageID:
+                'image-registry.openshift-image-registry.svc:5000/openshift/nodejs@sha256:0ad231dc2d1c34ed3fb29fb304821171155e0a1a23f0e0490b2cd8ca60915517',
+              fromRef: {
+                kind: 'ImageStreamTag',
+                namespace: 'openshift',
+                name: 'nodejs:10',
+              },
+            },
+          },
+        ],
+      },
+      status: {
+        phase: 'New',
+        reason: 'CannotCreateBuildPod',
+        message: 'Failed creating build pod.',
+        config: {
+          kind: 'BuildConfig',
+          namespace: 'testproject3',
+          name: 'analytics-build',
+        },
+        output: {},
+      },
+    },
+  ],
+};
+
 export const MockResources: TopologyDataResources = {
   deployments: sampleDeployments,
   deploymentConfigs: sampleDeploymentConfigs,
@@ -898,4 +995,5 @@ export const MockResources: TopologyDataResources = {
   services: sampleServices,
   routes: sampleRoutes,
   buildconfigs: sampleBuildConfigs,
+  builds: sampleBuilds,
 };

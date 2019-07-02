@@ -133,6 +133,10 @@ const sampleKnativeBuildConfigs: Resource = {
   data: [],
 };
 
+const sampleKnativeBuilds: Resource = {
+  data: [],
+};
+
 export const sampleKnativeServices: Resource = {
   data: [
     {
@@ -221,4 +225,5 @@ export const MockKnativeResources: TopologyDataResources = {
   services: sampleKnativeServices,
   routes: sampleKnativeRoutes,
   buildconfigs: sampleKnativeBuildConfigs,
+  builds: sampleKnativeBuilds,
 };
