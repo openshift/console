@@ -5,6 +5,7 @@ import { sortable } from '@patternfly/react-table';
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
 import { Kebab, navFactory, ResourceKebab, ResourceLink, ResourceSummary, SectionHeading } from './utils';
 import { K8sResourceKind, referenceForCRD } from '../module/k8s';
+import { ResourceListPage } from './resource-list';
 
 const { common } = Kebab.factory;
 
@@ -111,7 +112,8 @@ const Details = ({obj: crd}) => {
 export const CustomResourceDefinitionsList: React.SFC<CustomResourceDefinitionsListProps> = props => <Table {...props} aria-label="Custom Resource Definitions" Header={CRDTableHeader} Row={CRDTableRow} defaultSortField="spec.names.kind" virtualize />;
 
 export const CustomResourceDefinitionsPage: React.SFC<CustomResourceDefinitionsPageProps> = props => <ListPage {...props} ListComponent={CustomResourceDefinitionsList} kind="CustomResourceDefinition" canCreate={true} />;
-export const CustomResourceDefinitionsDetailsPage = props => <DetailsPage {...props} menuActions={menuActions} pages={[navFactory.details(Details), navFactory.editYaml()]} />;
+export const CustomResourceDefinitionsDetailsPage = props => <DetailsPage {...props} menuActions={menuActions} pages={[navFactory.details(Details), navFactory.editYaml(),
+  {name: 'Instances', href: 'instances', component: (instanceProps) => <ResourceListPage {...instanceProps} modelRef={referenceForCRD(instanceProps.obj)} />}]} />;
 
 export type CustomResourceDefinitionsListProps = {
 };
