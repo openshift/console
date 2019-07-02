@@ -114,7 +114,7 @@ const DeploymentDetails: React.FC<DeploymentDetailsProps> = ({obj: deployment}) 
       <ContainerTable containers={deployment.spec.template.spec.containers} />
     </div>
     <div className="co-m-pane__body">
-      <VolumesTable podTemplate={deployment.spec.template} heading="Volumes" />
+      <VolumesTable resource={deployment} heading="Volumes" />
     </div>
     <div className="co-m-pane__body">
       <SectionHeading text="Conditions" />

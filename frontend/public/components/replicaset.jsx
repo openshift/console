@@ -50,7 +50,7 @@ const Details = ({obj: replicaSet}) => {
       <ContainerTable containers={replicaSet.spec.template.spec.containers} />
     </div>
     <div className="co-m-pane__body">
-      <VolumesTable podTemplate={replicaSet.spec.template} heading="Volumes" />
+      <VolumesTable resource={replicaSet} heading="Volumes" />
     </div>
   </React.Fragment>;
 };

@@ -50,7 +50,7 @@ const Details = ({obj: ss}) => <React.Fragment>
     <ContainerTable containers={ss.spec.template.spec.containers} />
   </div>
   <div className="co-m-pane__body">
-    <VolumesTable podTemplate={ss.spec.template} heading="Volumes" />
+    <VolumesTable resource={ss} heading="Volumes" />
   </div>
 </React.Fragment>;
 

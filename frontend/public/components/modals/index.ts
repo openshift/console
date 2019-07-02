@@ -63,5 +63,8 @@ export const installPlanPreviewModal = (props) => import('./installplan-preview-
 export const expandPVCModal = (props) => import('./expand-pvc-modal' /* webpackChunkName: "expand-pvc-modal" */)
   .then(m => m.expandPVCModal(props));
 
+export const removeVolumeModal = (props) => import('./remove-volume-modal' /* webpackChunkName: "remove-volume-modal" */)
+  .then(m => m.removeVolumeModal(props));
+
 export const configureMachineAutoscalerModal = (props) => import('./configure-machine-autoscaler-modal' /* webpackChunkName: "configure-machine-autoscaler-modal" */)
   .then(m => m.configureMachineAutoscalerModal(props));
