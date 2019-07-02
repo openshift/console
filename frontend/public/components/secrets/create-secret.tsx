@@ -88,7 +88,7 @@ const generateSecret = () => {
 };
 
 // withSecretForm returns SubForm which is a Higher Order Component for all the types of secret forms.
-export const withSecretForm = (SubForm, modal?:boolean) => class SecretFormComponent extends React.Component<BaseEditSecretProps_, BaseEditSecretState_> {
+export const withSecretForm = (SubForm, modal?: boolean) => class SecretFormComponent extends React.Component<BaseEditSecretProps_, BaseEditSecretState_> {
   constructor(props) {
     super(props);
     const existingSecret = _.pick(props.obj, ['metadata', 'type']);
@@ -1044,7 +1044,7 @@ type BaseEditSecretProps_ = {
   saveButtonText?: string;
   explanation: string;
   onCancel?: () => void;
-  onSave?:(name: string) => void;
+  onSave?: (name: string) => void;
 };
 
 type BasicAuthSubformProps = {

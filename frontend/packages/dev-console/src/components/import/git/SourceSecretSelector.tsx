@@ -6,7 +6,7 @@ import { sourceSecretModalLauncher } from './CreateSourceSecretModal';
 
 const CREATE_SOURCE_SECRET = 'create-source-secret';
 
-interface SourceSecretSelectorProps {
+export interface SourceSecretSelectorProps {
   namespace: string;
   helpText: string;
 }
@@ -22,7 +22,7 @@ const SourceSecretSelector: React.FC<SourceSecretSelectorProps> = ({ namespace, 
   const handleDropdownChange = (key: string) => {
     if (key === CREATE_SOURCE_SECRET) {
       setFieldValue('git.secret', secret.value);
-      sourceSecretModalLauncher({ namespace, onSave: handleSave });
+      sourceSecretModalLauncher({ namespace, save: handleSave });
     } else {
       setFieldValue('git.secret', key);
     }
