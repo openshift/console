@@ -49,6 +49,7 @@ const ClusterInventoryItem = withDashboardResources(
       useAbbr,
       additionalResources,
       expandedComponent,
+      ...props
     }: ClusterInventoryItemProps) => {
       React.useEffect(() => {
         const resource = getFirehoseResource(model);
@@ -104,6 +105,7 @@ const ClusterInventoryItem = withDashboardResources(
           useAbbr={useAbbr}
           additionalResources={additionalResourcesData}
           ExpandedComponent={expandedComponent ? ExpandedComponent : null}
+          data-test-id={props['data-test-id']}
         />
       );
     },
@@ -120,14 +122,26 @@ export const InventoryCard = connectToFlags(
         <DashboardCardTitle>Cluster Inventory</DashboardCardTitle>
       </DashboardCardHeader>
       <DashboardCardBody>
-        <ClusterInventoryItem model={NodeModel} mapper={getNodeStatusGroups} />
-        <ClusterInventoryItem model={PodModel} mapper={getPodStatusGroups} />
-        <ClusterInventoryItem model={StorageClassModel} />
+        <ClusterInventoryItem
+          model={NodeModel}
+          mapper={getNodeStatusGroups}
+          data-test-id="console-dashboard-inventory-node"
+        />
+        <ClusterInventoryItem
+          model={PodModel}
+          mapper={getPodStatusGroups}
+          data-test-id="console-dashboard-inventory-pod"
+        />
+        <ClusterInventoryItem
+          model={StorageClassModel}
+          data-test-id="console-dashboard-inventory-pvc"
+        />
         <ClusterInventoryItem
           model={PersistentVolumeClaimModel}
           mapper={getPVCStatusGroups}
           useAbbr
-        />
+          data-test-id="console-dashboard-inventory-pvcm"
+        />        
         {items.map((item) => (
           <ClusterInventoryItem
             key={item.properties.model.kind}
@@ -136,6 +150,7 @@ export const InventoryCard = connectToFlags(
             additionalResources={item.properties.additionalResources}
             useAbbr={item.properties.useAbbr}
             expandedComponent={item.properties.expandedComponent}
+            data-test-id={`console-dashboard-inventory-${item.properties.model.id}`}
           />
         ))}
       </DashboardCardBody>
@@ -149,4 +164,5 @@ type ClusterInventoryItemProps = DashboardItemProps & {
   useAbbr?: boolean;
   additionalResources?: FirehoseResource[];
   expandedComponent?: LazyLoader;
+  'data-test-id'?: string;
 };

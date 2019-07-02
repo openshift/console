@@ -97,10 +97,18 @@ const InventoryCard: React.FC = () => {
           TitleComponent={DiskTitleComponent}
         />
         <InventoryItem
+<<<<<<< HEAD
           title="NIC"
           isLoading={!obj}
           count={getHostNICs(obj).length}
           TitleComponent={NICTitleComponent}
+=======
+          isLoading={!podData}
+          title="Pod"
+          count={podCount}
+          error={podQueryError || podError || !podStats.length}
+          data-test-id="console-dashboard-inventory-pod"
+>>>>>>> 2657874c6... Testing infra for the system dashboards
         />
         <InventoryItem title="CPU" isLoading={!obj} count={getHostCPU(obj).count} />
       </DashboardCardBody>

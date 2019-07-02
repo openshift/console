@@ -8,11 +8,6 @@ import * as ConsoleReporter from 'jasmine-console-reporter';
 import * as failFast from 'protractor-fail-fast';
 import { createWriteStream, writeFileSync } from 'fs';
 import { format } from 'util';
-import {
-  resolvePluginPackages,
-  reducePluginTestSuites,
-  mergeTestSuites,
-} from '@console/plugin-sdk/src/codegen';
 
 const tap = !!process.env.TAP;
 
@@ -194,10 +189,103 @@ export const config: Config = {
     failFast.clean();
     return new Promise((resolve) => htmlReporter.afterLaunch(resolve.bind(this, exitCode)));
   },
-  suites: mergeTestSuites(
-    testSuites,
-    reducePluginTestSuites(resolvePluginPackages(), __dirname, suite),
-  ),
+  suites: {
+    dashboardsTests: ['tests/dashboards/dashboard.scenario.ts'],
+    dashboardsBareMetalHosts: [
+      '../packages/metal3-plugin/integration-tests/tests/dashboards/dashboard.scenario.ts',
+    ],
+    filter: suite(['tests/filter.scenario.ts']),
+    annotation: suite(['tests/modal-annotations.scenario.ts']),
+    environment: suite(['tests/environment.scenario.ts']),
+    secrets: suite(['tests/secrets.scenario.ts']),
+    storage: suite(['tests/storage.scenario.ts']),
+    crud: suite([
+      'tests/crud.scenario.ts',
+      'tests/secrets.scenario.ts',
+      'tests/filter.scenario.ts',
+      'tests/modal-annotations.scenario.ts',
+      'tests/environment.scenario.ts',
+    ]),
+    monitoring: suite(['tests/monitoring.scenario.ts']),
+    newApp: suite(['tests/overview/overview.scenario.ts', 'tests/deploy-image.scenario.ts']),
+    olmFull: suite([
+      '../packages/operator-lifecycle-manager/integration-tests/scenarios/descriptors.scenario.ts',
+      '../packages/operator-lifecycle-manager/integration-tests/scenarios/operator-hub.scenario.ts',
+      '../packages/operator-lifecycle-manager/integration-tests/scenarios/global-installmode.scenario.ts',
+      '../packages/operator-lifecycle-manager/integration-tests/scenarios/single-installmode.scenario.ts',
+    ]),
+    performance: suite(['tests/performance.scenario.ts']),
+    serviceCatalog: suite([
+      'tests/service-catalog/service-catalog.scenario.ts',
+      'tests/service-catalog/service-broker.scenario.ts',
+      'tests/service-catalog/service-class.scenario.ts',
+      'tests/service-catalog/service-binding.scenario.ts',
+      'tests/developer-catalog.scenario.ts',
+    ]),
+    overview: suite(['tests/overview/overview.scenario.ts']),
+    crdExtensions: suite(['tests/crd-extensions.scenario.ts']),
+    e2e: suite([
+      'tests/crud.scenario.ts',
+      'tests/secrets.scenario.ts',
+      'tests/storage.scenario.ts',
+      'tests/filter.scenario.ts',
+      'tests/modal-annotations.scenario.ts',
+      'tests/environment.scenario.ts',
+      'tests/overview/overview.scenario.ts',
+      'tests/deploy-image.scenario.ts',
+      'tests/performance.scenario.ts',
+      'tests/monitoring.scenario.ts',
+      'tests/crd-extensions.scenario.ts',
+      '../packages/operator-lifecycle-manager/integration-tests/scenarios/descriptors.scenario.ts',
+      '../packages/operator-lifecycle-manager/integration-tests/scenarios/operator-hub.scenario.ts',
+      '../packages/operator-lifecycle-manager/integration-tests/scenarios/global-installmode.scenario.ts',
+      '../packages/operator-lifecycle-manager/integration-tests/scenarios/single-installmode.scenario.ts',
+    ]),
+    release: suite([
+      'tests/crud.scenario.ts',
+      'tests/secrets.scenario.ts',
+      'tests/filter.scenario.ts',
+      'tests/environment.scenario.ts',
+      'tests/overview/overview.scenario.ts',
+      'tests/deploy-image.scenario.ts',
+      'tests/performance.scenario.ts',
+      'tests/monitoring.scenario.ts',
+      'tests/crd-extensions.scenario.ts',
+    ]),
+    'kubevirt-plugin': suite([
+      '../packages/kubevirt-plugin/integration-tests/tests/vm.wizard.scenario.ts',
+      '../packages/kubevirt-plugin/integration-tests/tests/vm.yaml.scenario.ts',
+      '../packages/kubevirt-plugin/integration-tests/tests/vm.actions.scenario.ts',
+      '../packages/kubevirt-plugin/integration-tests/tests/vm.migration.scenario.ts',
+      '../packages/kubevirt-plugin/integration-tests/tests/vm.resources.scenario.ts',
+      '../packages/kubevirt-plugin/integration-tests/tests/vm.clone.scenario.ts',
+      '../packages/kubevirt-plugin/integration-tests/tests/vm.detail.flavor.scenario.ts',
+      '../packages/kubevirt-plugin/integration-tests/tests/vm.template.wizard.scenario.ts',
+    ]),
+    all: suite([
+      'tests/crud.scenario.ts',
+      'tests/overview/overview.scenareio.ts',
+      'tests/secrets.scenario.ts',
+      'tests/storage.scenario.ts',
+      'tests/olm/**/*.scenario.ts',
+      'tests/service-catalog/**/*.scenario.ts',
+      'tests/filter.scenario.ts',
+      'tests/modal-annotations.scenario.ts',
+      'tests/deploy-image.scenario.ts',
+      'tests/operator-hub/operator-hub.scenario.ts',
+      'tests/developer-catalog.scenario.ts',
+      'tests/monitoring.scenario.ts',
+      'tests/devconsole/dev-perspective.scenario.ts',
+      'tests/devconsole/git-import-flow.scenario.ts',
+      'tests/crd-extensions.scenario.ts',
+    ]),
+    clusterSettings: suite(['tests/cluster-settings.scenario.ts']),
+    login: ['tests/login.scenario.ts'],
+    devconsole: [
+      'tests/devconsole/dev-perspective.scenario.ts',
+      'tests/devconsole/git-import-flow.scenario.ts',
+    ],
+  },
   params: {
     // Set to 'true' to enable OpenShift resources in the crud scenario.
     // Use a string rather than boolean so it can be specified on the command line:

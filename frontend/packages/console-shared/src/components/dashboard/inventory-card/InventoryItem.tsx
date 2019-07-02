@@ -69,6 +69,7 @@ const InventoryItem: React.FC<InventoryItemProps> = React.memo(
     error = false,
     TitleComponent,
     ExpandedComponent,
+    ...props
   }) => {
     const [expanded, setExpanded] = React.useState(false);
     const onClick = React.useCallback(() => setExpanded(!expanded), [expanded]);
@@ -86,7 +87,7 @@ const InventoryItem: React.FC<InventoryItemProps> = React.memo(
             id={title}
             className="co-inventory-card__accordion-toggle"
           >
-            <div className="co-inventory-card__item">
+            <div className="co-inventory-card__item" data-test-id={props['data-test-id']}>
               <div className="co-inventory-card__item-title">
                 {isLoading && !error && <div className="skeleton-inventory" />}
                 {TitleComponent ? <TitleComponent>{titleMessage}</TitleComponent> : titleMessage}
@@ -108,7 +109,10 @@ const InventoryItem: React.FC<InventoryItemProps> = React.memo(
         </AccordionItem>
       </Accordion>
     ) : (
-      <div className="co-inventory-card__item">
+      <div
+        className="co-inventory-card__item"
+        data-test-id={props['data-test-id']}
+      >
         <div className="co-inventory-card__item-title">
           {isLoading && !error && <div className="skeleton-inventory" />}
           {TitleComponent ? <TitleComponent>{titleMessage}</TitleComponent> : titleMessage}
@@ -152,6 +156,7 @@ const StatusLink = connectToFlags<StatusLinkProps>(
   const statusItems = encodeURIComponent(statusIDs.join(','));
   const namespacePath = namespace ? `ns/${namespace}` : 'all-namespaces';
   const path = basePath || `/k8s/${namespacePath}/${kind.plural}`;
+  const cleanStatusItems = statusIDs.join('-').toLowerCase();
   const to =
     filterType && statusItems.length > 0 ? `${path}?rowFilter-${filterType}=${statusItems}` : path;
   const statusGroupIcons = getStatusGroupIcons(flags);
@@ -160,7 +165,12 @@ const StatusLink = connectToFlags<StatusLinkProps>(
     <div className="co-inventory-card__status">
       <Link to={to} style={{ textDecoration: 'none' }}>
         <span className="co-dashboard-icon">{groupIcon}</span>
-        <span className="co-inventory-card__status-text">{count}</span>
+        <span
+          className="co-inventory-card__status-text"
+          data-test-id={`console-dashboard-inventory-count-${cleanStatusItems}`}
+        >
+          {count}
+        </span>
       </Link>
     </div>
   );
@@ -189,6 +199,7 @@ export const ResourceInventoryItem = connectToFlags<ResourceInventoryItemProps>(
     flags = {},
     ExpandedComponent,
     basePath,
+    ...rest
   }) => {
     const TitleComponent = React.useCallback(
       (props) => (
@@ -211,6 +222,7 @@ export const ResourceInventoryItem = connectToFlags<ResourceInventoryItemProps>(
         error={error}
         TitleComponent={showLink ? TitleComponent : null}
         ExpandedComponent={ExpandedComponent}
+        data-test-id={rest['data-test-id']}
       >
         {top3Groups.map((key) =>
           showLink ? (
@@ -257,6 +269,7 @@ type InventoryItemProps = {
   error?: boolean;
   TitleComponent?: React.ComponentType<{}>;
   ExpandedComponent?: React.ComponentType<{}>;
+  'data-test-id'?: string;
 };
 
 type StatusProps = WithFlagsProps & {
@@ -295,4 +308,5 @@ type ResourceTitleComponentComponent = {
   kind: K8sKind;
   namespace: string;
   basePath?: string;
+  'data-test-id'?: string;
 };
