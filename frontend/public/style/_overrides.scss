@@ -115,7 +115,11 @@ kbd {
     @media(max-width: $grid-float-breakpoint-max) {
       margin-right: 8px !important;
     }
+    .pf-c-dropdown__toggle {
+      font-size: $pf-header-icon-fontsize !important;
+    }
   }
+
 
   &__main {
     // `z-index: auto` is required for fullscreen terminal
