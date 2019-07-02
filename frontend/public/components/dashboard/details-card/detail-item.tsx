@@ -15,7 +15,7 @@ export const DetailItem: React.FC<DetailItemProps> = React.memo(({ title, value,
       <span>{value}</span>
     </OverlayTrigger>
   ) : (
-    '-'
+    <span className="text-secondary">Unavailable</span>
   );
   return (
     <React.Fragment>
