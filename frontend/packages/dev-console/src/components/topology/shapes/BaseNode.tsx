@@ -2,6 +2,7 @@ import * as React from 'react';
 import { getImageForIconClass } from '@console/internal/components/catalog/catalog-item-icon';
 import SvgDropShadowFilter from '../../svg/SvgDropShadowFilter';
 import { createSvgIdUrl } from '../../../utils/svg-utils';
+import SvgBoxedText from '../../svg/SvgBoxedText';
 
 import './BaseNode.scss';
 
@@ -88,15 +89,15 @@ export default class BaseNode extends React.Component<BaseNodeProps, State> {
             }
           />
           {label != null && (
-            <text
+            <SvgBoxedText
               className="odc-base-node__label"
-              textAnchor="middle"
-              y={outerRadius + 10}
+              y={outerRadius + 20}
               x={0}
-              dy="0.6em"
+              paddingX={8}
+              paddingY={4}
             >
               {selected || hover ? label : truncateEnd(label)}
-            </text>
+            </SvgBoxedText>
           )}
           {selected && (
             <circle
