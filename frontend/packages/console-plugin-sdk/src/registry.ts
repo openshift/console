@@ -20,6 +20,7 @@ import {
   isDashboardsOverviewTopConsumerItem,
   isOverviewResourceTab,
   isOverviewCRD,
+  isGlobalConfig,
 } from './typings';
 
 /**
@@ -102,5 +103,9 @@ export class ExtensionRegistry {
 
   public getOverviewCRDs() {
     return this.extensions.filter(isOverviewCRD);
+  }
+
+  public getGlobalConfigs() {
+    return this.extensions.filter(isGlobalConfig);
   }
 }

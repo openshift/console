@@ -10,3 +10,4 @@ export * from './overview';
 export * from './pages';
 export * from './perspectives';
 export * from './yaml-templates';
+export * from './global-configs';
