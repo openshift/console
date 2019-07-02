@@ -76,7 +76,18 @@ const plugin: Plugin<ConsumedExtensions> = [
       position: GridPosition.RIGHT,
       loader: () =>
         import(
-          './components/dashboard-page/storage-dashboard/events-card' /* webpackChunkName: "ceph-events-card" */
+          './components/dashboard-page/storage-dashboard/utilization-card/utilization-card' /* webpackChunkName: "ceph-storage-utilization-card" */
+        ).then((m) => m.default),
+    },
+  },
+  {
+    type: 'Dashboards/Card',
+    properties: {
+      tab: 'persistent-storage',
+      position: GridPosition.RIGHT,
+      loader: () =>
+        import(
+          './components/dashboard-page/storage-dashboard/events-card' /* webpackChunkName: "ceph-storage-events-card" */
         ).then((m) => m.default),
     },
   },
