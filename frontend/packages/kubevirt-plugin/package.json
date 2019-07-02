@@ -10,6 +10,6 @@
     "kubevirt-web-ui-components": "~0.1.36"
   },
   "consolePlugin": {
-    "entry": "src/plugin.ts"
+    "entry": "src/plugin.tsx"
   }
 }
