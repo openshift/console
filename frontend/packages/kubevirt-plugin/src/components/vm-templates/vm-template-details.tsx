@@ -9,9 +9,9 @@ import {
   ScrollToTopOnMount,
   SectionHeading,
 } from '@console/internal/components/utils';
-
 import { TemplateKind } from '@console/internal/module/k8s';
 import { TemplateModel } from '@console/internal/models';
+
 import { VMTemplateResourceSummary, VMTemplateDetailsList } from './vm-template-resource';
 import { DataVolumeModel } from '../../models';
 

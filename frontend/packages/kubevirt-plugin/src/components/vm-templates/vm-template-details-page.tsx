@@ -1,11 +1,10 @@
 import * as React from 'react';
 
 import { navFactory } from '@console/internal/components/utils';
-
 import { DetailsPage } from '@console/internal/components/factory';
 import { K8sResourceKindReference } from '@console/internal/module/k8s';
-
 import { TemplateModel } from '@console/internal/models';
+
 import { VMTemplateDetailsFirehose } from './vm-template-details';
 import { VMDisksFirehose } from '../vm-disks';
 
