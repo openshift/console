@@ -3,7 +3,7 @@ import * as _ from 'lodash';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 
-import { getName, getNamespace, getUid, getMachineNode } from '@console/shared';
+import { getName, getNamespace, getUID, getMachineNode } from '@console/shared';
 import { MachineModel, NodeModel } from '@console/internal/models';
 
 import { MultiListPage, Table, TableRow, TableData } from '@console/internal/components/factory';
@@ -91,7 +91,7 @@ const HostsTableRow: React.FC<HostsTableRowProps> = ({
   const namespace = getNamespace(host);
   // const machineName = getHostMachineName(host);
   const address = getHostBMCAddress(host);
-  const uid = getUid(host);
+  const uid = getUID(host);
   const machine = getHostMachine(host, machines);
   const node = getMachineNode(machine, nodes);
 
