@@ -29,6 +29,7 @@ import { menuActions } from './menu-actions';
 import { createLookup } from '../../utils';
 import { getMigrationVMIName, isMigrating } from '../../selectors/vmim';
 import { vmStatusFilter } from './table-filters';
+import { dimensifyHeader, dimensifyRow } from '../../utils/table';
 
 // import { openCreateVmWizard } from '../modals/create-vm-modal';
 
@@ -39,30 +40,30 @@ const tableColumnClasses = [
   Kebab.columnClass,
 ];
 
-const VMHeader = () => [
-  {
-    title: 'Name',
-    sortField: 'metadata.name',
-    transforms: [sortable],
-    props: { className: tableColumnClasses[0] },
-  },
-  {
-    title: 'Namespace',
-    sortField: 'metadata.namespace',
-    transforms: [sortable],
-    props: { className: tableColumnClasses[1] },
-  },
-  {
-    title: 'Status',
-    sortFunc: 'string',
-    transforms: [sortable],
-    props: { className: tableColumnClasses[2] },
-  },
-  {
-    title: '',
-    props: { className: Kebab.columnClass, props: { className: tableColumnClasses[3] } },
-  },
-];
+const VMHeader = () =>
+  dimensifyHeader(
+    [
+      {
+        title: 'Name',
+        sortField: 'metadata.name',
+        transforms: [sortable],
+      },
+      {
+        title: 'Namespace',
+        sortField: 'metadata.namespace',
+        transforms: [sortable],
+      },
+      {
+        title: 'Status',
+        sortFunc: 'string',
+        transforms: [sortable],
+      },
+      {
+        title: '',
+      },
+    ],
+    tableColumnClasses,
+  );
 
 const VMRow: React.FC<VMRowProps> = ({
   obj: vm,
@@ -75,19 +76,20 @@ const VMRow: React.FC<VMRowProps> = ({
   const namespace = getNamespace(vm);
   const uid = getUid(vm);
   const vmStatus = getVmStatus(vm, pods, migrations);
+  const dimensify = dimensifyRow(tableColumnClasses);
 
   return (
     <TableRow id={uid} index={index} trKey={key} style={style}>
-      <TableData className={tableColumnClasses[0]}>
+      <TableData className={dimensify()}>
         <ResourceLink kind={VirtualMachineModel.kind} name={name} namespace={namespace} />
       </TableData>
-      <TableData className={tableColumnClasses[1]}>
+      <TableData className={dimensify()}>
         <ResourceLink kind={NamespaceModel.kind} name={namespace} title={namespace} />
       </TableData>
-      <TableData className={tableColumnClasses[2]}>
+      <TableData className={dimensify()}>
         <VmStatus vm={vm} pods={pods} migrations={migrations} />
       </TableData>
-      <TableData className={Kebab.columnClass}>
+      <TableData className={dimensify(true)}>
         <Kebab
           options={menuActions.map((action) =>
             action(VirtualMachineModel, vm, { vmStatus, migrationLookup, vmiLookup }),

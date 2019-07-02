@@ -1,7 +1,12 @@
 import * as React from 'react';
 
 import { TableData, TableRow } from '@console/internal/components/factory';
-import { asAccessReview, Kebab, LoadingInline } from '@console/internal/components/utils';
+import {
+  asAccessReview,
+  Kebab,
+  KebabOption,
+  LoadingInline,
+} from '@console/internal/components/utils';
 import { getDeletetionTimestamp, DASH } from '@console/shared';
 
 import { TemplateModel } from '@console/internal/models';
@@ -22,7 +27,7 @@ import { VMDiskRowProps } from './types';
 import { VirtualMachineModel } from '../../models';
 import { isVm } from '../../selectors/selectors';
 
-const menuActionDelete = (vmLikeEntity: VMLikeEntityKind, disk) => ({
+const menuActionDelete = (vmLikeEntity: VMLikeEntityKind, disk): KebabOption => ({
   label: 'Delete',
   callback: () =>
     deleteDeviceModal({
@@ -46,7 +51,6 @@ export const DiskRow: React.FC<VMDiskRowProps> = ({
   obj: { disk },
   customData: {
     vmLikeEntity,
-    vm,
     pvcs,
     datavolumes,
     datavolumeLookup,
@@ -98,7 +102,7 @@ export const DiskRow: React.FC<VMDiskRowProps> = ({
         <Kebab
           options={getActions(vmLikeEntity, disk)}
           key={`kebab-for--${diskName}`}
-          isDisabled={getDeletetionTimestamp(vm)}
+          isDisabled={getDeletetionTimestamp(vmLikeEntity)}
           id={`kebab-for-${diskName}`}
         />
       </TableData>

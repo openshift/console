@@ -24,7 +24,7 @@ import { VirtualMachineModel } from '../../models';
 import { getAddDiskPatches } from '../../k8s/patches/vm/vm-disk-patches';
 import { VMLikeEntityKind } from '../../types';
 
-import './_create-disk-row.scss';
+import './_create-device-row.scss';
 
 const createDisk = ({
   vmLikeEntity,
@@ -95,7 +95,7 @@ export const CreateDiskRow: React.FC<CreateDiskRowProps> = ({
     <TableRow id={id} index={index} trKey={id} style={style}>
       <TableData>
         <FormGroup
-          className="kubevirt-vm-disks__cell--no_bottom"
+          className="kubevirt-vm-create-device-row__cell--no_bottom"
           validationState={
             nameError && !nameError.isEmptyError && nameError.type !== VALIDATION_INFO_TYPE
               ? nameError.type
@@ -103,7 +103,7 @@ export const CreateDiskRow: React.FC<CreateDiskRowProps> = ({
           }
         >
           <Text id="disk-name" disabled={creating} onChange={setName} value={name} />
-          <HelpBlock className="kubevirt-vm-disks__cell--help">
+          <HelpBlock className="kubevirt-vm-create-device-row__cell--help">
             {nameError && !nameError.isEmptyError && nameError.message}
           </HelpBlock>
         </FormGroup>
@@ -114,10 +114,10 @@ export const CreateDiskRow: React.FC<CreateDiskRowProps> = ({
           positive
           disabled={creating}
           value={size}
-          className="kubevirt-vm-disks__cell_field--with-addendum"
+          className="kubevirt-vm-create-device-row__cell_field--with-addendum"
           onChange={setSize}
         />
-        <span className="kubevirt-vm-disks__cell_addendum">Gi</span>
+        <span className="kubevirt-vm-create-device-row__cell_addendum">Gi</span>
       </TableData>
       <TableData id="disk-bus">{bus}</TableData>
       <TableData>
@@ -128,7 +128,7 @@ export const CreateDiskRow: React.FC<CreateDiskRowProps> = ({
           creating={creating}
         />
       </TableData>
-      <TableData className="kubevirt-vm-disks__confirmation-buttons">
+      <TableData className="kubevirt-vm-create-device-row__confirmation-buttons">
         <CancelAcceptButtons
           onCancel={onCreateRowDismiss}
           onAccept={() => {

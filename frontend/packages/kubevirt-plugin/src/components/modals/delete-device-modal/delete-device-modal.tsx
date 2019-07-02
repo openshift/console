@@ -17,6 +17,7 @@ import { VirtualMachineModel } from '../../../models';
 import { VMLikeEntityKind } from '../../../types';
 import { isVm } from '../../../selectors/selectors';
 import { getRemoveDiskPatches } from '../../../k8s/patches/vm/vm-disk-patches';
+import { getRemoveNicPatches } from '../../../k8s/patches/vm/vm-nic-patches';
 
 export enum DeviceType {
   NIC = 'NIC',
@@ -47,9 +48,9 @@ export const DeleteDeviceModal = withHandlePromise((props: DeleteDeviceModalProp
         patches = getRemoveDiskPatches(vmLikeEntity, device);
         break;
       case DeviceType.NIC:
+        patches = getRemoveNicPatches(vmLikeEntity, device);
+        break;
       default:
-        // eslint-disable-next-line no-console
-        console.error('Not Implemented!');
         return;
     }
 
