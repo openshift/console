@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as _ from 'lodash';
 
 import { getResource } from 'kubevirt-web-ui-components';
 
@@ -12,6 +13,7 @@ import {
 import { TemplateKind } from '@console/internal/module/k8s';
 import { TemplateModel } from '@console/internal/models';
 import { VMTemplateResourceSummary, VMTemplateDetailsList } from './vm-template-resource';
+import { DataVolumeModel } from '../../models';
 
 export const VMTemplateDetailsFirehose: React.FC<VMTemplateDetailsFirehoseProps> = ({
   obj: template,
@@ -25,8 +27,7 @@ export const VMTemplateDetailsFirehose: React.FC<VMTemplateDetailsFirehoseProps>
     prop: 'vmt',
     optional: true,
   });
-
-  const resources = [vmtRes];
+  const resources = [vmtRes, getResource(DataVolumeModel, { namespace, prop: 'datavolumes' })];
 
   return (
     <div className="co-m-pane__body">
@@ -41,6 +42,7 @@ const VMTemplateDetails: React.FC<VMTemplateDetailsProps> = (props) => {
   const { template, ...restProps } = props;
   const flatResources = {
     template,
+    dataVolumes: _.get(props, 'datavolumes.data'),
   };
 
   return (

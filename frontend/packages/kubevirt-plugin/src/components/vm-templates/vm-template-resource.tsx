@@ -16,7 +16,7 @@ import {
 import { ResourceSummary } from '@console/internal/components/utils';
 
 import { DASH } from '@console/shared';
-import { TemplateKind } from '@console/internal/module/k8s';
+import { TemplateKind, K8sResourceKind } from '@console/internal/module/k8s';
 
 export const VMTemplateResourceSummary: React.FC<VMTemplateResourceSummaryProps> = ({
   template,
@@ -36,9 +36,11 @@ export const VMTemplateResourceSummary: React.FC<VMTemplateResourceSummaryProps>
   );
 };
 
-export const VMTemplateDetailsList: React.FC<VMTemplateResourceListProps> = ({ template }) => {
+export const VMTemplateDetailsList: React.FC<VMTemplateResourceListProps> = ({
+  template,
+  dataVolumes,
+}) => {
   const sortedBootableDevices = getBootableDevicesInOrder(template);
-  const dataVolumes = undefined; // NOTE(yaacov): how to get the date volumes ?
 
   return (
     <dl className="co-m-pane__details">
@@ -68,6 +70,7 @@ export const VMTemplateDetailsList: React.FC<VMTemplateResourceListProps> = ({ t
 
 type VMTemplateResourceListProps = {
   template: TemplateKind;
+  dataVolumes: K8sResourceKind[];
 };
 
 type VMTemplateResourceSummaryProps = {
