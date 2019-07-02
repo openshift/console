@@ -13,7 +13,9 @@ import { TemplateKind } from '@console/internal/module/k8s';
 import { TemplateModel } from '@console/internal/models';
 import { VMTemplateResourceSummary, VMTemplateDetailsList } from './vm-template-resource';
 
-export const VMTemplateDetailsFirehose = ({ obj: template }: { obj: TemplateKind }) => {
+export const VMTemplateDetailsFirehose: React.FC<VMTemplateDetailsFirehoseProps> = ({
+  obj: template,
+}) => {
   const { name, namespace } = template.metadata;
 
   const vmtRes = getResource(TemplateModel, {
@@ -35,7 +37,7 @@ export const VMTemplateDetailsFirehose = ({ obj: template }: { obj: TemplateKind
   );
 };
 
-const VMTemplateDetails = (props: VMTemplateDetailsProps) => {
+const VMTemplateDetails: React.FC<VMTemplateDetailsProps> = (props) => {
   const { template, ...restProps } = props;
   const flatResources = {
     template,
@@ -61,4 +63,8 @@ const VMTemplateDetails = (props: VMTemplateDetailsProps) => {
 
 type VMTemplateDetailsProps = {
   template: TemplateKind;
+};
+
+type VMTemplateDetailsFirehoseProps = {
+  obj: TemplateKind;
 };

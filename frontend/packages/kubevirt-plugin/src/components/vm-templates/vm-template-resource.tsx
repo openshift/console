@@ -18,7 +18,9 @@ import { ResourceSummary } from '@console/internal/components/utils';
 import { DASH } from '@console/shared';
 import { TemplateKind } from '@console/internal/module/k8s';
 
-export const VMTemplateResourceSummary = ({ template }: VMTemplateResourceSummaryProps) => {
+export const VMTemplateResourceSummary: React.FC<VMTemplateResourceSummaryProps> = ({
+  template,
+}) => {
   const base = getVmTemplate(template);
   const baseLink = base && getTemplateDisplayName(base); // TODO(mlibra): link to a template detail, once implemented
 
@@ -34,7 +36,7 @@ export const VMTemplateResourceSummary = ({ template }: VMTemplateResourceSummar
   );
 };
 
-export const VMTemplateDetailsList = ({ template }: VMTemplateResourceListProps) => {
+export const VMTemplateDetailsList: React.FC<VMTemplateResourceListProps> = ({ template }) => {
   const sortedBootableDevices = getBootableDevicesInOrder(template);
   const dataVolumes = undefined; // NOTE(yaacov): how to get the date volumes ?
 

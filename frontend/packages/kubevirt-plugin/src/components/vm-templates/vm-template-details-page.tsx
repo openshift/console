@@ -9,7 +9,7 @@ import { TemplateModel } from '@console/internal/models';
 import { VMTemplateDetailsFirehose } from './vm-template-details';
 import { VMDisksFirehose } from '../vm-disks';
 
-export const VMTemplateDetailsPage = (props: VMTemplateDetailsPageProps) => {
+export const VMTemplateDetailsPage: React.FC<VMTemplateDetailsPageProps> = (props) => {
   /* TODO(mlibra): pages will be transferred one by one in follow-ups
   const nicsPage = {
     href: 'nics',
