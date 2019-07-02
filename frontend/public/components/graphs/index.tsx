@@ -17,12 +17,11 @@ export enum ThresholdColor {
 export * from './require-prometheus';
 export const Area = props => <AsyncComponent loader={() => import('./graph-loader').then(c => c.Area)} {...props} />;
 export const Bar = props => <AsyncComponent loader={() => import('./graph-loader').then(c => c.Bar)} {...props} />;
-export const Donut = props => <AsyncComponent loader={() => import('./graph-loader').then(c => c.Donut)} {...props} />;
 export const Gauge = props => <AsyncComponent loader={() => import('./graph-loader').then(c => c.Gauge)} {...props} />;
 
 export type DataPoint = {
   x?: Date | string | number;
-  y?: string | number;
+  y?: number;
   label?: string;
 }
 
