@@ -1,0 +1,57 @@
+.co-inventory-card__item {
+  align-items: center;
+  border-bottom: 1px solid $pf-color-black-300;
+  display: flex;
+  font-size: 1rem;
+  justify-content: space-between;
+  padding: 1em 0;
+}
+
+.co-inventory-card__item-status {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+
+  :last-child {
+    margin-right: 0;
+  }
+}
+
+.co-inventory-card__item-title {
+  margin-right: 0.5em;
+}
+
+.co-inventory-card__status {
+  align-items: center;
+  display: flex;
+  flex-shrink: 0;
+  margin-right: 0.5em;
+}
+
+.co-inventory-card__status-icon {
+  font-size: 1.125rem;
+}
+
+.co-inventory-card__status-icon--error {
+  color: $pf-color-red-100;
+}
+
+.co-inventory-card__status-icon--question {
+  color: $pf-color-black-300;
+}
+
+.co-inventory-card__status-icon--ok {
+  color: $pf-color-light-green-400;
+}
+
+.co-inventory-card__status-icon--progress {
+  color: $pf-color-black-600;
+}
+
+.co-inventory-card__status-icon--warn {
+  color: $pf-color-gold-400;
+}
+
+.co-inventory-card__status-text {
+  margin-left: 0.25em;
+}

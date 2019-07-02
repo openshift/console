@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import { connect } from 'react-redux';
+import { Map as ImmutableMap } from 'immutable';
 
 import * as plugins from '../../plugins';
 import { OverviewDashboard } from './overview-dashboard/overview-dashboard';
@@ -41,8 +42,8 @@ const tabs: Page[] = [
   ...getPluginTabPages(),
 ];
 
-const DashboardsPage_: React.FC<DashboardsPageProps> = ({ match, kindsInFlight }) => {
-  return kindsInFlight
+const DashboardsPage_: React.FC<DashboardsPageProps> = ({ match, kindsInFlight, k8sModels }) => {
+  return kindsInFlight && k8sModels.size === 0
     ? <LoadingBox />
     : (
       <>
@@ -54,10 +55,12 @@ const DashboardsPage_: React.FC<DashboardsPageProps> = ({ match, kindsInFlight }
 
 const mapStateToProps = ({k8s}) => ({
   kindsInFlight: k8s.getIn(['RESOURCES', 'inFlight']),
+  k8sModels: k8s.getIn(['RESOURCES', 'models']),
 });
 
 export const DashboardsPage = connect(mapStateToProps)(DashboardsPage_);
 
 type DashboardsPageProps = RouteComponentProps & {
   kindsInFlight: boolean;
+  k8sModels: ImmutableMap<string, any>;
 };

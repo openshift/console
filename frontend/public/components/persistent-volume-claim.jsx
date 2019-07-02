@@ -9,7 +9,7 @@ import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
 import { Kebab, navFactory, ResourceKebab, SectionHeading, ResourceLink, ResourceSummary, Selector, StatusIconAndText } from './utils';
 import { ResourceEventStream } from './events';
 
-const pvcPhase = pvc => pvc.status.phase;
+export const pvcPhase = pvc => pvc.status.phase;
 
 const { common, ExpandPVC } = Kebab.factory;
 const menuActions = [ExpandPVC, ...common];

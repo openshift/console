@@ -4,10 +4,11 @@ import { Dashboard, DashboardGrid } from '../../dashboard';
 import { HealthCard } from './health-card';
 import { DetailsCard } from './details-card';
 import { CapacityCard } from './capacity-card';
+import { InventoryCard } from './inventory-card';
 
 export const OverviewDashboard: React.FC<{}> = () => {
   const mainCards = [HealthCard, CapacityCard];
-  const leftCards = [DetailsCard];
+  const leftCards = [DetailsCard, InventoryCard];
 
   return (
     <Dashboard>
