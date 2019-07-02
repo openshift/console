@@ -129,10 +129,7 @@ const getCreateProps = (namespace: string) => ({
   items: {
     yaml: 'Create from YAML',
   },
-  createLink: () =>
-    namespace
-      ? `/k8s/ns/${namespace || 'default'}/vmtemplates/~new/`
-      : '/k8s/cluster/vmtemplates/~new',
+  createLink: () => `/k8s/ns/${namespace || 'default'}/vmtemplates/~new/`,
 });
 
 const VirtualMachineTemplatesPage = (
