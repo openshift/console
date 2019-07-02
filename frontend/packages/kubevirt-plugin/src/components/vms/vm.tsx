@@ -1,10 +1,11 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
+import { sortable } from '@patternfly/react-table';
 
 import {
   getResource,
   getVmStatus,
-  // VmStatus,
+  VmStatus,
   // getSimpleVmStatus,
   // VM_SIMPLE_STATUS_ALL,
   // VM_SIMPLE_STATUS_TO_TEXT,
@@ -15,9 +16,8 @@ import { getName, getNamespace, getUid } from '@console/shared';
 import { NamespaceModel, PodModel } from '@console/internal/models';
 import { Table, MultiListPage, TableRow, TableData } from '@console/internal/components/factory';
 import { FirehoseResult, Kebab, ResourceLink } from '@console/internal/components/utils';
-
-import { sortable } from '@patternfly/react-table';
 import { K8sResourceKind, PodKind } from '@console/internal/module/k8s';
+
 import {
   VirtualMachineInstanceMigrationModel,
   VirtualMachineInstanceModel,
@@ -28,6 +28,7 @@ import { K8sEntityMap, VMIKind, VMKind } from '../../types';
 import { menuActions } from './menu-actions';
 import { createLookup } from '../../utils';
 import { getMigrationVMIName, isMigrating } from '../../selectors/vmim';
+import { vmStatusFilter } from './table-filters';
 
 // import { openCreateVmWizard } from '../modals/create-vm-modal';
 
@@ -51,10 +52,12 @@ const VMHeader = () => [
     transforms: [sortable],
     props: { className: tableColumnClasses[1] },
   },
-  // {
-  //   title: 'Status',
-  //   props: { className: tableColumnClasses[2] },
-  // },
+  {
+    title: 'Status',
+    sortFunc: 'string',
+    transforms: [sortable],
+    props: { className: tableColumnClasses[2] },
+  },
   {
     title: '',
     props: { className: Kebab.columnClass, props: { className: tableColumnClasses[3] } },
@@ -81,7 +84,9 @@ const VMRow: React.FC<VMRowProps> = ({
       <TableData className={tableColumnClasses[1]}>
         <ResourceLink kind={NamespaceModel.kind} name={namespace} title={namespace} />
       </TableData>
-      {/* TODO(mlibra): migrate VM status in a follow-up */}
+      <TableData className={tableColumnClasses[2]}>
+        <VmStatus vm={vm} pods={pods} migrations={migrations} />
+      </TableData>
       <TableData className={Kebab.columnClass}>
         <Kebab
           options={menuActions.map((action) =>
@@ -117,21 +122,6 @@ const VMList: React.FC<React.ComponentProps<typeof Table> & VMListProps> = (prop
 };
 
 VMList.displayName = 'VMList';
-
-const filters = undefined;
-/* TODO(mlibra): introduce extension point for list.tsx and reenable here then.
-Beyond recent kubevirt-web-ui functionality, user experience would be improved by full-featured VM status filtering.
-To properly determine VM status, aditional objects (pods or CRs) needs to be accessed.
-Recent filtering logic around list.tsx can handle just a single "listed" object (in our case, a VirtualMachine).
-We will need to find a way how to supply additional resources there.
-
-const filters = [{
-  type: 'vm-status',
-  selected: VM_SIMPLE_STATUS_ALL,
-  reducer: getSimpleVmStatus,
-  items: VM_SIMPLE_STATUS_ALL.map(status => ({ id: status, title: VM_SIMPLE_STATUS_TO_TEXT[status] }) ),
-}];
-*/
 
 const getCreateProps = (namespace: string) => ({
   items: {
@@ -173,7 +163,7 @@ export const VirtualMachinesPage: React.FC<VirtualMachinesPageProps> = (props) =
       {...props}
       canCreate
       title={VirtualMachineModel.labelPlural}
-      rowFilters={filters}
+      rowFilters={[vmStatusFilter]}
       ListComponent={VMList}
       createProps={getCreateProps(props.namespace)}
       resources={resources}
