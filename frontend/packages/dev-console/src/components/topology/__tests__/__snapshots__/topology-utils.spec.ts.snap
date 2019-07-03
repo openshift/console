@@ -224,6 +224,7 @@ Object {
           "status": Object {},
         },
         Object {
+          "builds": Array [],
           "kind": "BuildConfig",
           "metadata": Object {},
           "name": undefined,
@@ -536,6 +537,7 @@ Object {
           "status": Object {},
         },
         Object {
+          "builds": Array [],
           "kind": "BuildConfig",
           "metadata": Object {},
           "name": undefined,
@@ -841,6 +843,7 @@ Object {
           "status": Object {},
         },
         Object {
+          "builds": Array [],
           "kind": "BuildConfig",
           "metadata": Object {
             "annotations": Object {

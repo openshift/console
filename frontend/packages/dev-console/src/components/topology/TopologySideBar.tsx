@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { ModelessOverlay } from 'patternfly-react';
-import { some } from 'lodash';
 import { CloseButton } from '@console/internal/components/utils';
 import { ResourceOverviewPage } from '@console/internal/components/overview/resource-overview-page';
 import { TopologyDataObject, ResourceProps } from './topology-types';
@@ -33,20 +32,7 @@ const TopologySideBar: React.FC<TopologySideBarProps> = ({ item, show, onClose }
     );
     const routes = metadataUIDCheck(item.resources.filter((o) => o.kind === 'Route'));
     const services = metadataUIDCheck(item.resources.filter((o) => o.kind === 'Service'));
-    const builds = metadataUIDCheck(item.resources.filter((o) => o.kind === 'Builds'));
-    const buildConfigs = metadataUIDCheck(
-      item.resources.filter((o) => o.kind === 'BuildConfig'),
-    ).map((bc) => {
-      const {
-        metadata: { uid },
-      } = bc;
-      return {
-        builds: builds.filter(({ metadata: { ownerReferences } }: ResourceProps) =>
-          some(ownerReferences, { uid }),
-        ),
-        ...bc,
-      };
-    });
+    const buildConfigs = metadataUIDCheck(item.resources.filter((o) => o.kind === 'BuildConfig'));
     itemtoShowOnSideBar = {
       obj: { apiVersion: 'apps.openshift.io/v1', ...dc[0] },
       kind: dc[0].kind,
