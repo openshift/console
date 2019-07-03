@@ -70,7 +70,7 @@ const CreateNamespaceModal = connect(null, mapDispatchToProps)(class CreateNames
 
   _submit(event) {
     event.preventDefault();
-    const { createProject, close } = this.props;
+    const { createProject, close, onSubmit } = this.props;
 
     let promise = createProject ? this.createProject() : this.createNamespace();
     if (this.state.np === deny) {
@@ -83,7 +83,11 @@ const CreateNamespaceModal = connect(null, mapDispatchToProps)(class CreateNames
 
     this.handlePromise(promise).then(obj => {
       close();
-      history.push(resourceObjPath(obj, referenceFor(obj)));
+      if (onSubmit) {
+        onSubmit(obj);
+      } else {
+        history.push(resourceObjPath(obj, referenceFor(obj)));
+      }
     });
   }
 

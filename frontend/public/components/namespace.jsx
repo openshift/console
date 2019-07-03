@@ -26,6 +26,7 @@ import { OverviewNamespaceDashboard } from './overview/namespace-overview';
 const getModel = useProjects => useProjects ? ProjectModel : NamespaceModel;
 const getDisplayName = obj => _.get(obj, ['metadata', 'annotations', 'openshift.io/display-name']);
 const getRequester = obj => _.get(obj, ['metadata', 'annotations', 'openshift.io/requester']);
+const CREATE_NEW_RESOURCE = '#CREATE_RESOURCE_ACTION#';
 
 export const deleteModal = (kind, ns) => {
   let {label, weight, accessReview} = Kebab.factory.Delete(kind, ns);
@@ -344,8 +345,21 @@ class NamespaceBarDropdowns_ extends React.Component {
       // If the currently active namespace is not found in the list of all namespaces, put it in anyway
       items[title] = title;
     }
+    const defaultActionItem = {
+      actionTitle: `Create ${model.label}`,
+      actionKey: CREATE_NEW_RESOURCE,
+    };
 
-    const onChange = newNamespace => dispatch(UIActions.setActiveNamespace(newNamespace));
+    const onChange = (newNamespace) => {
+      if (newNamespace === CREATE_NEW_RESOURCE) {
+        createProjectModal({
+          blocking: true,
+          onSubmit: (newProject) => dispatch(UIActions.setActiveNamespace(newProject.metadata.name)),
+        });
+      } else {
+        dispatch(UIActions.setActiveNamespace(newNamespace));
+      }
+    };
 
     return <div className="co-namespace-bar__items" data-test-id="namespace-bar-dropdown">
       <Dropdown
@@ -354,6 +368,7 @@ class NamespaceBarDropdowns_ extends React.Component {
         buttonClassName="pf-m-plain"
         canFavorite
         items={items}
+        actionItem={defaultActionItem}
         titlePrefix={model.label}
         title={<span className="btn-link__title">{title}</span>}
         onChange={onChange}
