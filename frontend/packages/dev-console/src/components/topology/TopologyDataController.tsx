@@ -91,6 +91,12 @@ const TopologyDataController: React.FC<TopologyDataControllerProps> = ({
       namespace,
       prop: 'buildconfigs',
     },
+    {
+      isList: true,
+      kind: 'Build',
+      namespace,
+      prop: 'builds',
+    },
   ];
   return (
     <Firehose resources={resources} forceUpdate>
