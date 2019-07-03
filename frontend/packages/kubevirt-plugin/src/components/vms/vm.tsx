@@ -26,8 +26,8 @@ import {
 
 import { K8sEntityMap, VMIKind, VMKind } from '../../types';
 import { menuActions } from './menu-actions';
-import { createLookup } from '../../utils';
-import { getMigrationVMIName, isMigrating } from '../../selectors/vmim';
+import { createLookup, getLookupId } from '../../utils';
+import { getMigrationVMIName, isMigrating } from '../../selectors/vmi-migration';
 import { vmStatusFilter } from './table-filters';
 import { dimensifyHeader, dimensifyRow } from '../../utils/table';
 
@@ -72,11 +72,15 @@ const VMRow: React.FC<VMRowProps> = ({
   key,
   style,
 }) => {
+  const dimensify = dimensifyRow(tableColumnClasses);
   const name = getName(vm);
   const namespace = getNamespace(vm);
   const uid = getUID(vm);
   const vmStatus = getVmStatus(vm, pods, migrations);
-  const dimensify = dimensifyRow(tableColumnClasses);
+  const lookupId = getLookupId(vm);
+
+  const migration = migrationLookup[lookupId];
+  const vmi = vmiLookup[lookupId];
 
   return (
     <TableRow id={uid} index={index} trKey={key} style={style}>
@@ -91,9 +95,13 @@ const VMRow: React.FC<VMRowProps> = ({
       </TableData>
       <TableData className={dimensify(true)}>
         <Kebab
-          options={menuActions.map((action) =>
-            action(VirtualMachineModel, vm, { vmStatus, migrationLookup, vmiLookup }),
-          )}
+          options={menuActions.map((action) => {
+            return action(VirtualMachineModel, vm, {
+              vmStatus,
+              migration,
+              vmi,
+            });
+          })}
           key={`kebab-for-${uid}`}
           id={`kebab-for-${uid}`}
         />
