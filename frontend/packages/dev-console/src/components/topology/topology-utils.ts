@@ -223,9 +223,12 @@ export class TransformTopologyData {
     return route;
   }
 
-  private getBuildConfigs(deploymentConfig: ResourceProps): ResourceProps {
+  private getBuildConfigs(
+    deploymentConfig: ResourceProps,
+  ): ResourceProps & { builds: ResourceProps[] } {
     const buildConfig = {
       kind: 'BuildConfig',
+      builds: [] as ResourceProps[],
       metadata: {},
       status: {},
       spec: {},
@@ -235,7 +238,28 @@ export class TransformTopologyData {
       'metadata.labels["app.kubernetes.io/instance"]',
       _.get(deploymentConfig, 'metadata.labels["app.kubernetes.io/instance"]'),
     ]);
-    return bconfig ? _.merge(buildConfig, bconfig) : buildConfig;
+    if (bconfig) {
+      const bc = _.merge(buildConfig, bconfig);
+      const builds = this.getBuilds(bc);
+      return { ...bc, builds };
+    }
+    return buildConfig;
+  }
+
+  private getBuilds({ metadata: { uid } }: ResourceProps): ResourceProps[] {
+    const builds = {
+      kind: 'Builds',
+      metadata: {},
+      status: {},
+      spec: {},
+    };
+    const bs = this.resources.builds.data.filter(({ metadata: { ownerReferences } }) => {
+      return _.some(ownerReferences, {
+        uid,
+        controller: true,
+      });
+    });
+    return bs ? _.map(bs, (build) => _.extend({}, build, { kind: 'Builds' })) : [builds];
   }
 
   /**

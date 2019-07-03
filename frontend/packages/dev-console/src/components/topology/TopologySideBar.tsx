@@ -2,8 +2,7 @@ import * as React from 'react';
 import { TopologySideBar as PFTopologySideBar } from '@patternfly/react-topology';
 import { CloseButton } from '@console/internal/components/utils';
 import { ResourceOverviewPage } from '@console/internal/components/overview/resource-overview-page';
-import { TopologyDataObject } from './topology-types';
-
+import { TopologyDataObject, ResourceProps } from './topology-types';
 import './TopologySideBar.scss';
 
 export type TopologySideBarProps = {
@@ -21,7 +20,7 @@ export type TopologySideBarProps = {
  * Datacontroller get the buildConfigs based on apps.kubernetes.io/instance label which is not applied to apps created using browser catalog
  */
 
-function metadataUIDCheck(items: any): boolean {
+function metadataUIDCheck(items: any): ResourceProps[] {
   return items.filter((item) => item.metadata && item.metadata.uid);
 }
 
