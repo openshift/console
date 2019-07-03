@@ -316,9 +316,17 @@ export const EnvironmentPage = connect(stateToProps)(
 
     _checkEditAccess() {
       const { obj, model, impersonate, readOnly } = this.props;
-      if (_.isEmpty(obj) || !model || readOnly) {
+      if (readOnly) {
         return;
       }
+
+      // Only check RBAC if editing an existing resource. The form will always
+      // be enabled when creating a new application (git import / deploy image).
+      if (_.isEmpty(obj) || !model) {
+        this.setState({ allowed: true });
+        return;
+      }
+
       const { name, namespace } = obj.metadata;
       const resourceAttributes = {
         group: model.apiGroup,
