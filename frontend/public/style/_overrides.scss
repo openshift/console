@@ -231,6 +231,8 @@ kbd {
     --pf-c-nav__subnav--MaxHeight: 100%;
     // Toggle
     --pf-c-nav__list-toggle--PaddingRight: 0;
+    // Nav Section
+    font-size: $co-side-nav-font-size;
   }
 
   .pf-c-nav__item .pf-c-nav__simple-list .pf-c-nav__separator {
@@ -329,6 +331,7 @@ kbd {
 }
 
 .pf-c-table tr > * {
+  --pf-c-table-cell--FontSize: $font-size-base;
   --pf-c-table-cell--PaddingLeft: 16px;
   --pf-c-table-cell--PaddingRight: 16px;
   --pf-c-table--m-compact-cell--first-last-child--PaddingLeft: 16px;

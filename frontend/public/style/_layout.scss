@@ -13,10 +13,6 @@ body,
   flex-direction: column;
 }
 
-#content {
-  font-size: $font-size-base; // so PatternFly 4's PatternFly 3 shield rules don't override
-}
-
 #content-scrollable {
   overflow-x: auto; // so catalog is scrollable at mobile
   overflow-y: auto;
