@@ -10,7 +10,10 @@
 
   &__label {
     pointer-events: none;
-    fill: var(--pf-global--Color--300);
+    fill: var(--pf-global--Color--light-100);
     font-size: var(--pf-global--FontSize--sm);
+    text {
+      fill: var(--pf-global--Color--300);
+    }
   }
 }
