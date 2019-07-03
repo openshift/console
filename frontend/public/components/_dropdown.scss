@@ -47,7 +47,7 @@ $dropdown-background--hover: $color-pf-black-200; // pf-c-dropdown__menu-item--h
 }
 
 .dropdown-menu__filter {
-  padding: 5px 10px 10px;
+  padding: 5px var(--pf-c-dropdown__menu-item--PaddingRight) 10px;
 }
 
 .dropdown-menu--text-wrap {
@@ -222,7 +222,7 @@ $dropdown-background--hover: $color-pf-black-200; // pf-c-dropdown__menu-item--h
       &.bookmarker {
         display: inline-block;
         padding-right: 5px;
-        padding-left: 12px;
+        padding-left: var(--pf-c-dropdown__menu-item--PaddingLeft);
         color: $color-bookmarker;
         flex: 0;
         &:hover {
@@ -252,6 +252,7 @@ $dropdown-background--hover: $color-pf-black-200; // pf-c-dropdown__menu-item--h
 }
 
 .pf-c-dropdown__menu {
+  border-width: 0 !important; // TEMP fix until https://github.com/patternfly/patternfly-next/issues/2019 is fixed upstream
   list-style: none;
   -webkit-overflow-scrolling: touch;
 }
