@@ -9,13 +9,13 @@ import { validationSchema } from './import-validation-utils';
 import GitImportForm from './GitImportForm';
 import SourceToImageForm from './SourceToImageForm';
 
-export interface GitImportProps {
+export interface ImportFormProps {
   namespace: string;
   isS2I: boolean;
   imageStreams?: FirehoseList;
 }
 
-const GitImport: React.FC<GitImportProps> = ({ namespace, imageStreams, isS2I }) => {
+const ImportForm: React.FC<ImportFormProps> = ({ namespace, imageStreams, isS2I }) => {
   const initialValues: GitImportFormData = {
     name: '',
     project: {
@@ -117,4 +117,4 @@ const GitImport: React.FC<GitImportProps> = ({ namespace, imageStreams, isS2I })
   );
 };
 
-export default GitImport;
+export default ImportForm;
