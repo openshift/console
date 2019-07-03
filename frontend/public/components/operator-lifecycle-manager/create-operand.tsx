@@ -21,7 +21,7 @@ import { ClusterServiceVersionKind, referenceForProvidedAPI, providedAPIsFor, CR
 import { ClusterServiceVersionModel } from '../../models';
 import { Firehose } from '../utils/firehose';
 import { NumberSpinner, StatusBox, BreadCrumbs, history, SelectorInput } from '../utils';
-import { SpecCapability, StatusCapability } from './descriptors/types';
+import { SpecCapability, StatusCapability, Descriptor } from './descriptors/types';
 import { ResourceRequirements } from './descriptors/spec/resource-requirements';
 import { RootState } from '../../redux';
 import { CreateYAML } from '../create-yaml';
@@ -39,7 +39,7 @@ type OperandField = {
   capabilities: (SpecCapability | StatusCapability)[];
 };
 
-const fieldsFor = (providedAPI: CRDDescription) => providedAPI.specDescriptors.map(desc => ({
+const fieldsFor = (providedAPI: CRDDescription) => _.get(providedAPI, 'specDescriptors', [] as Descriptor[]).map(desc => ({
   path: desc.path,
   displayName: desc.displayName,
   description: desc.description,
