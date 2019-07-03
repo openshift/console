@@ -16,7 +16,7 @@ const CommandLineTools: React.FC<CommandLineToolsProps> = ({obj}) => {
     const defaultLinkText = `Download ${displayName}`;
     return <React.Fragment key={tool.metadata.uid}>
       <hr />
-      <h2 className="co-section-heading">{displayName}</h2>
+      <h2 className="co-section-heading" data-test-id={displayName}>{displayName}</h2>
       <MarkdownView content={tool.spec.description} exactHeight />
       {tool.spec.links.length === 1 && <p><ExternalLink href={tool.spec.links[0].href} text={tool.spec.links[0].text || defaultLinkText} /></p>}
       {tool.spec.links.length > 1 && <ul>

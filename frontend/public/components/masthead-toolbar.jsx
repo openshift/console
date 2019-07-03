@@ -381,7 +381,7 @@ class MastheadToolbar_ extends React.Component {
                 position="right"
                 onSelect={this._onHelpDropdownSelect}
                 toggle={
-                  <DropdownToggle aria-label="Help" iconComponent={null} onToggle={this._onHelpDropdownToggle}>
+                  <DropdownToggle aria-label="Help" iconComponent={null} onToggle={this._onHelpDropdownToggle} data-test="help-dropdown-toggle">
                     <QuestionCircleIcon />
                   </DropdownToggle>
                 }

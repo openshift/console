@@ -134,6 +134,9 @@ export const config: Config = {
     overview: suite([
       'tests/overview/overview.scenario.ts',
     ]),
+    crdExtensions: suite([
+      'tests/crd-extensions.scenario.ts',
+    ]),
     e2e: suite([
       'tests/crud.scenario.ts',
       'tests/secrets.scenario.ts',
@@ -145,6 +148,7 @@ export const config: Config = {
       'tests/deploy-image.scenario.ts',
       'tests/performance.scenario.ts',
       'tests/monitoring.scenario.ts',
+      'tests/crd-extensions.scenario.ts',
     ]),
     all: suite([
       'tests/crud.scenario.ts',
@@ -160,6 +164,7 @@ export const config: Config = {
       'tests/developer-catalog.scenario.ts',
       'tests/monitoring.scenario.ts',
       'tests/devconsole/dev-perspective.scenario.ts',
+      'tests/crd-extensions.scenario.ts',
     ]),
     login: [
       'tests/login.scenario.ts',
