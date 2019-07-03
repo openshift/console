@@ -2,6 +2,7 @@ import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import * as _ from 'lodash';
 import Spy = jasmine.Spy;
+import { Alert } from '@patternfly/react-core';
 
 import {
   CreateOperandForm,
@@ -109,7 +110,7 @@ describe(CreateOperandForm.displayName, () => {
     spyAndExpect(spyOn(k8s, 'k8sCreate'))(Promise.reject(error))
       .then(() => new Promise(resolve => setTimeout(() => resolve(), 10)))
       .then(() => {
-        expect(wrapper.find('.co-alert').text()).toEqual(error.message);
+        expect(wrapper.find(Alert).props().title).toEqual(error.message);
         done();
       });
 

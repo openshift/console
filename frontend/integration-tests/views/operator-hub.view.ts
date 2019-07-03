@@ -18,7 +18,7 @@ export const createSubscriptionFormLoaded = () => browser.wait(until.visibilityO
 export const createSubscriptionFormInstallMode = element(by.cssContainingText('label', 'Installation Mode'));
 export const allNamespacesInstallMode = $('input[value="AllNamespaces"]');
 export const ownNamespaceInstallMode = $('input[value="OwnNamespace"]');
-export const createSubscriptionError = $('.alert-danger');
+export const createSubscriptionError = $('.pf-c-alert.pf-m-danger');
 
 export const installNamespaceDropdown = $('.dropdown--full-width');
 export const installNamespaceDropdownBtn = installNamespaceDropdown.$('.pf-c-dropdown__toggle');

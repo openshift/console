@@ -1,6 +1,7 @@
 import * as _ from 'lodash';
 import * as React from 'react';
-import { Alert, Button } from 'patternfly-react';
+import { Button } from 'patternfly-react';
+import { Alert, AlertActionCloseButton } from '@patternfly/react-core';
 
 import { Table } from '@console/internal/components/factory';
 import { PersistentVolumeClaimModel } from '@console/internal/models';
@@ -71,7 +72,13 @@ export const VMDisks: React.FC<VMDisksProps> = ({ vmLikeEntity, pvcs, datavolume
         </div>
       </div>
       <div className="co-m-pane__body">
-        {createError && <Alert onDismiss={() => setCreateError(null)}>{createError}</Alert>}
+        {createError && (
+          <Alert
+            variant="danger"
+            action={<AlertActionCloseButton onClose={() => setCreateError(null)} />}
+            title={createError}
+          />
+        )}
         <Table
           aria-label="VM Disks List"
           data={getStoragesData(vmLikeEntity, isCreating)}

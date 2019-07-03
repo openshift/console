@@ -5,6 +5,7 @@ import { Helmet } from 'react-helmet';
 import { safeDump } from 'js-yaml';
 import { Link } from 'react-router-dom';
 import * as _ from 'lodash-es';
+import { Alert } from '@patternfly/react-core';
 
 import {
   K8sResourceKindReference,
@@ -136,9 +137,9 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
           { field.description && <span className="help-block text-muted">{field.description}</span> }
         </div>
       </div>)}
-      <div className="row">
-        {error && <p className="alert alert-danger co-alert"><span className="pficon pficon-error-circle-o"></span>{error}</p>}
-      </div>
+      {error && <div className="row">
+        <Alert isInline className="co-alert co-break-word" variant="danger" title={error} />
+      </div>}
       <div className="row">
         <button className="btn btn-primary" type="submit" onClick={submit}>Create</button>
         <Link className="btn btn-default" to={`/k8s/ns/${props.namespace}/clusterserviceversions/${props.clusterServiceVersion.metadata.name}/${referenceForModel(props.operandModel)}`}>Cancel</Link>
