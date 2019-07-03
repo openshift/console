@@ -15,9 +15,9 @@ import { startVMIMigration } from '../../k8s/requests/vmi';
 import { cancelMigration } from '../../k8s/requests/vmim';
 
 type ActionArgs = {
-  migrationLookup: K8sEntityMap<K8sResourceKind>;
-  vmiLookup: K8sEntityMap<VMIKind>;
-  vmStatus: VMMultiStatus;
+  migrationLookup?: K8sEntityMap<K8sResourceKind>;
+  vmiLookup?: K8sEntityMap<VMIKind>;
+  vmStatus?: VMMultiStatus;
 };
 
 const getVMActionMessage = (vm, action: VMActionType) => (
@@ -27,7 +27,11 @@ const getVMActionMessage = (vm, action: VMActionType) => (
   </React.Fragment>
 );
 
-const menuActionStart = (kindObj: K8sKind, vm: VMKind, { vmStatus }: ActionArgs): KebabOption => {
+export const menuActionStart = (
+  kindObj: K8sKind,
+  vm: VMKind,
+  { vmStatus }: ActionArgs,
+): KebabOption => {
   const title = 'Start Virtual Machine';
   return {
     hidden: isVMImporting(vmStatus) || isVMRunning(vm),

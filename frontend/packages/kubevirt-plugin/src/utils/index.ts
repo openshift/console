@@ -30,3 +30,8 @@ export const createLookup = <A extends K8sResourceKind>(
 
 export const prefixedId = (idPrefix: string, id: string): string =>
   idPrefix && id ? `${idPrefix}-${id}` : null;
+
+export const getLoadedData = (
+  result: FirehoseResult<K8sResourceKind | K8sResourceKind[]>,
+  defaultValue = null,
+) => (result && result.loaded ? result.data : defaultValue);

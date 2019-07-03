@@ -31,6 +31,7 @@ import {
   getDataVolumeStorageClassName,
   getDataVolumeStorageSize,
 } from '../../selectors/dv/selectors';
+import { VMLikeEntityTabProps } from '../vms/types';
 
 export const VMDiskRow: React.FC<VMDiskRowProps> = (props) => {
   switch (props.obj.storageType) {
@@ -197,7 +198,7 @@ interface VMDisksProps {
   datavolumes?: FirehoseResult<K8sResourceKind[]>;
 }
 
-export const VMDisksFirehose: React.FC<VMDisksFirehoseProps> = ({ obj: vmLikeEntity }) => {
+export const VMDisksFirehose: React.FC<VMLikeEntityTabProps> = ({ obj: vmLikeEntity }) => {
   const namespace = getNamespace(vmLikeEntity);
 
   const resources = [
@@ -217,7 +218,3 @@ export const VMDisksFirehose: React.FC<VMDisksFirehoseProps> = ({ obj: vmLikeEnt
     </Firehose>
   );
 };
-
-interface VMDisksFirehoseProps {
-  obj?: VMLikeEntityKind;
-}

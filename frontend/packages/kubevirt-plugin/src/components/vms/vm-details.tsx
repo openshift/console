@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as _ from 'lodash';
 
 import { getResource, getServicesForVm } from 'kubevirt-web-ui-components';
 
@@ -8,18 +7,23 @@ import {
   StatusBox,
   ScrollToTopOnMount,
   SectionHeading,
+  FirehoseResult,
 } from '@console/internal/components/utils';
 
-import { PodKind } from '@console/internal/module/k8s';
+import { getName, getNamespace } from '@console/shared';
+import { K8sResourceKind, PodKind } from '@console/internal/module/k8s';
 import { PodModel, ServiceModel } from '@console/internal/models';
 
 import { ServicesList } from '@console/internal/components/service';
 import { VMKind, VMIKind } from '../../types';
 import { VirtualMachineInstanceModel, VirtualMachineInstanceMigrationModel } from '../../models';
 import { VMResourceSummary, VMDetailsList } from './vm-resource';
+import { getLoadedData } from '../../utils';
+import { VMTabProps } from './types';
 
-export const VMDetailsFirehose = ({ obj: vm }: { obj: VMKind }) => {
-  const { name, namespace } = vm.metadata;
+export const VMDetailsFirehose: React.FC<VMTabProps> = ({ obj: vm }) => {
+  const name = getName(vm);
+  const namespace = getNamespace(vm);
 
   const vmiRes = getResource(VirtualMachineInstanceModel, {
     name,
@@ -45,16 +49,16 @@ export const VMDetailsFirehose = ({ obj: vm }: { obj: VMKind }) => {
   );
 };
 
-const VMDetails = (props: VMDetailsProps) => {
+const VMDetails: React.FC<VMDetailsProps> = (props) => {
   const { vm, ...restProps } = props;
   const flatResources = {
     vm,
-    vmi: _.get(props, 'vmi.data'),
-    pods: _.get(props, 'pods.data'),
-    migrations: _.get(props, 'migrations.data'),
+    vmi: getLoadedData(props.vmi),
+    pods: getLoadedData(props.pods),
+    migrations: getLoadedData(props.migrations),
   };
 
-  const vmServicesData = getServicesForVm(_.get(props, 'services', {}).data, vm);
+  const vmServicesData = getServicesForVm(getLoadedData(props.services, []), vm);
 
   return (
     <StatusBox data={vm} {...restProps}>
@@ -80,7 +84,8 @@ const VMDetails = (props: VMDetailsProps) => {
 
 type VMDetailsProps = {
   vm: VMKind;
-  pods?: PodKind[];
-  migrations?: any[];
-  vmi?: VMIKind;
+  pods?: FirehoseResult<PodKind[]>;
+  migrations?: FirehoseResult<K8sResourceKind[]>;
+  services?: FirehoseResult<K8sResourceKind[]>;
+  vmi?: FirehoseResult<VMIKind>;
 };
