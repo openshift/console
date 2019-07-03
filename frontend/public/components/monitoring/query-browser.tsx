@@ -14,6 +14,7 @@ import {
   EmptyState,
   EmptyStateIcon,
   EmptyStateVariant,
+  TextInput,
   Title,
 } from '@patternfly/react-core';
 import { ChartLineIcon } from '@patternfly/react-icons';
@@ -62,17 +63,16 @@ const SpanControls: React.FC<SpanControlsProps> = React.memo(({defaultSpanText, 
   };
 
   return <React.Fragment>
-    <div className={isValid ? '' : 'has-error'}>
-      <input
-        className="form-control query-browser__span-text"
-        onChange={e => setSpan(e.target.value)}
-        type="text"
-        value={text}
-      />
-    </div>
+    <TextInput
+      aria-label="graph timespan"
+      className="query-browser__span-text"
+      isValid={isValid}
+      onChange={setSpan}
+      type="text"
+      value={text}
+    />
     <Dropdown
       buttonClassName="query-browser__span-dropdown-button"
-      className="query-browser__span-dropdown"
       items={dropdownItems}
       menuClassName="query-browser__span-dropdown-menu"
       noSelection={true}
@@ -235,12 +235,14 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
   }
 
   return <div className="query-browser__wrapper">
-    <div className="query-browser__header">
-      <SpanControls defaultSpanText={defaultSpanText} onChange={onSpanChange} span={span} />
-      <div className="query-browser__loading">
-        {updating && <LoadingInline />}
+    <div className="query-browser__controls">
+      <div className="query-browser__controls--left">
+        <SpanControls defaultSpanText={defaultSpanText} onChange={onSpanChange} span={span} />
+        <div className="query-browser__loading">
+          {updating && <LoadingInline />}
+        </div>
       </div>
-      {GraphLink && <div className="query-browser__external-link">
+      {GraphLink && <div className="query-browser__controls--right">
         <GraphLink />
       </div>}
     </div>
