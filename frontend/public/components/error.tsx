@@ -1,9 +1,8 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
-import { ExpandCollapse } from 'patternfly-react';
 import { Helmet } from 'react-helmet';
 
-import {CopyToClipboard, getQueryArgument, PageHeading} from './utils';
+import {CopyToClipboard, getQueryArgument, PageHeading, ExpandCollapse} from './utils';
 import {ErrorBoundaryFallbackProps} from './utils/error-boundary';
 
 // User messages for error_types returned in auth.go
@@ -67,7 +66,7 @@ export const ErrorBoundaryFallback: React.SFC<ErrorBoundaryFallbackProps> = (pro
   <div className="co-m-pane__body">
     <h1 className="co-m-pane__heading co-m-pane__heading--center">Oh no! Something went wrong.</h1>
     <div className="row">
-      <ExpandCollapse textCollapsed="Show Details" textExpanded="Hide Details" bordered={false}>
+      <ExpandCollapse textCollapsed="Show Details" textExpanded="Hide Details">
         <h3 className="co-section-heading-tertiary">{props.title}</h3>
         <div className="form-group">
           <label htmlFor="description">Description: </label>

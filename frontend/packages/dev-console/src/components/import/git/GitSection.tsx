@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useFormikContext, FormikValues } from 'formik';
-import { ExpandCollapse } from 'patternfly-react';
+import { ExpandCollapse } from '@console/internal/components/utils';
 import { InputField, DropdownField } from '../../formik-fields';
 import FormSection from '../section/FormSection';
 import { GitTypes } from '../import-types';
@@ -8,6 +8,7 @@ import { detectGitType } from '../import-validation-utils';
 
 const GitSection: React.FC = () => {
   const { values, setValues, setFieldTouched, validateForm } = useFormikContext<FormikValues>();
+
   const handleGitUrlBlur = () => {
     const gitType = detectGitType(values.git.url);
     const showGitType = gitType === '';
