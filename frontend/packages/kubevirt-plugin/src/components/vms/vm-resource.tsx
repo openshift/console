@@ -78,7 +78,7 @@ export const VMDetailsList = ({ vm, vmi, pods, migrations }: VMResourceListProps
       <dd>{ipAddresses.length > 0 ? ipAddresses.join(', ') : DASH}</dd>
       <dt>Node</dt>
       <dd>{<NodeLink name={nodeName} />}</dd>
-      <dt>Flavour</dt>
+      <dt>Flavor</dt>
       <dd>{getFlavor(vm) || DASH}</dd>
       <dt>Workload Profile</dt>
       <dd>{getWorkloadProfile(vm) || DASH}</dd>
