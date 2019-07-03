@@ -1,14 +1,10 @@
 import * as React from 'react';
-import {
-  TopologyView,
-  TopologyControlBar,
-  createTopologyControlButtons,
-  defaultControlButtonsOptions,
-} from '@patternfly/react-topology';
+import { TopologyView } from '@patternfly/react-topology';
 
 import { nodeProvider, edgeProvider, groupProvider } from './shape-providers';
 import Graph from './Graph';
 import { GraphApi, TopologyDataModel } from './topology-types';
+import TopologyControlBar from './TopologyControlBar';
 import TopologySideBar from './TopologySideBar';
 
 type State = {
@@ -48,33 +44,11 @@ export default class Topology extends React.Component<TopologyProps, State> {
     this.setState({ graphApi: api });
   };
 
-  renderControlBar = () => {
-    const { graphApi } = this.state;
-    const controlButtons = createTopologyControlButtons({
-      ...defaultControlButtonsOptions,
-      zoomInCallback: () => {
-        graphApi && graphApi.zoomIn();
-      },
-      zoomOutCallback: () => {
-        graphApi && graphApi.zoomOut();
-      },
-      fitToScreenCallback: () => {
-        graphApi && graphApi.zoomFit();
-      },
-      resetViewCallback: () => {
-        graphApi && graphApi.resetLayout();
-      },
-      legend: false,
-    });
-
-    return <TopologyControlBar controlButtons={controlButtons} />;
-  };
-
   render() {
     const {
       data: { graph, topology },
     } = this.props;
-    const { selected } = this.state;
+    const { selected, graphApi } = this.state;
 
     const topologySideBar = (
       <TopologySideBar
@@ -86,7 +60,7 @@ export default class Topology extends React.Component<TopologyProps, State> {
 
     return (
       <TopologyView
-        controlBar={this.renderControlBar()}
+        controlBar={<TopologyControlBar graphApi={graphApi} />}
         sideBar={topologySideBar}
         sideBarOpen={!!selected}
       >

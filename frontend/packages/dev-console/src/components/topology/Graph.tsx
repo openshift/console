@@ -3,7 +3,6 @@ import ReactMeasure from 'react-measure';
 import * as _ from 'lodash';
 import Renderer from './D3ForceDirectedRenderer';
 import {
-  GraphApi,
   EdgeProvider,
   NodeProvider,
   GraphModel,
@@ -17,7 +16,6 @@ interface State {
     width: number;
     height: number;
   };
-  graphApi?: GraphApi;
 }
 
 export interface GraphProps {
@@ -26,7 +24,6 @@ export interface GraphProps {
   groupProvider: GroupProvider;
   graph: GraphModel;
   topology: TopologyDataMap;
-  children?(GraphApi): React.ReactNode;
   selected?: string;
   onSelect?(string): void;
   graphApiRef?(GraphApi): void;
@@ -53,13 +50,11 @@ export default class Graph extends React.Component<GraphProps, State> {
 
   captureApiRef = (r) => {
     const { graphApiRef } = this.props;
-    this.setState({ graphApi: r ? r.api() : null });
     graphApiRef && graphApiRef(r ? r.api() : null);
   };
 
   renderMeasure = ({ measureRef }) => {
     const {
-      children,
       graph,
       nodeProvider,
       edgeProvider,
@@ -68,7 +63,7 @@ export default class Graph extends React.Component<GraphProps, State> {
       selected,
       topology,
     } = this.props;
-    const { dimensions, graphApi } = this.state;
+    const { dimensions } = this.state;
     return (
       <div ref={measureRef} className="odc-graph">
         {dimensions && (
@@ -86,7 +81,6 @@ export default class Graph extends React.Component<GraphProps, State> {
             selected={selected}
           />
         )}
-        {children && graphApi && children(graphApi)}
       </div>
     );
   };
