@@ -16,9 +16,7 @@ function copyProps(src, target) {
 
 global.window = window;
 global.document = window.document;
-global.navigator = {
-  userAgent: 'node.js',
-};
+// don't set global.navigator since vendor libs interpret its presence as browser env.
 global.requestAnimationFrame = (callback) => setTimeout(callback, 0);
 global.cancelAnimationFrame = (id) => {
   clearTimeout(id);
