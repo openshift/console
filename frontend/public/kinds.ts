@@ -1,11 +1,11 @@
 import * as _ from 'lodash-es';
 import { connect } from 'react-redux';
-import { Map as ImmutableMap } from 'immutable';
 import { match } from 'react-router-dom';
 
 import { K8sKind, K8sResourceKindReference, kindForReference, GroupVersionKind, isGroupVersionKind, allModels } from './module/k8s';
+import { RootState } from './redux';
 
-export const connectToModel = connect((state: State, props: {kind: K8sResourceKindReference} & any) => {
+export const connectToModel = connect((state: RootState, props: {kind: K8sResourceKindReference} & any) => {
   const kind: string = props.kind || _.get(props, 'match.params.plural');
 
   const kindObj: K8sKind = !_.isEmpty(kind)
@@ -28,7 +28,7 @@ export type ConnectToPlural = <P extends WithPluralProps>(C: React.ComponentType
  * @deprecated TODO(alecmerdler): `plural` is not a unique lookup key, remove uses of this.
  * FIXME(alecmerdler): Not returning correctly typed `WrappedComponent`
  */
-export const connectToPlural: ConnectToPlural = connect((state: State, props: {plural?: GroupVersionKind | string, match: match<{plural: GroupVersionKind | string}>}) => {
+export const connectToPlural: ConnectToPlural = connect((state: RootState, props: {plural?: GroupVersionKind | string, match: match<{plural: GroupVersionKind | string}>}) => {
   const plural = props.plural || _.get(props, 'match.params.plural');
 
   const kindObj = isGroupVersionKind(plural)
@@ -39,5 +39,3 @@ export const connectToPlural: ConnectToPlural = connect((state: State, props: {p
 
   return {kindObj, modelRef, kindsInFlight: state.k8s.getIn(['RESOURCES', 'inFlight'])};
 });
-
-type State = {k8s: ImmutableMap<string, any>};

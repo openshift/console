@@ -130,8 +130,8 @@ describe('Interacting with an `AllNamespaces` install mode Operator (Redis)', ()
     await element(by.linkText('Redis Enterprise Cluster')).click();
     await crudView.isLoaded();
 
-    expect(crudView.statusMessageTitle.getText()).toEqual('No Application Resources Found');
-    expect(crudView.statusMessageDetail.getText()).toEqual('Application resources are declarative components used to define the behavior of the application.');
+    expect(crudView.statusMessageTitle.getText()).toEqual('No Operands Found');
+    expect(crudView.statusMessageDetail.getText()).toEqual('Operands are declarative components used to define the behavior of the application.');
   });
 
   it('displays YAML editor for creating a new `RedisEnterpriseCluster` instance', async() => {
@@ -158,7 +158,7 @@ describe('Interacting with an `AllNamespaces` install mode Operator (Redis)', ()
     await crudView.rowForName(redisEnterpriseCluster).element(by.linkText(redisEnterpriseCluster)).click();
     await browser.wait(until.presenceOf($('.loading-box__loaded')), 5000);
 
-    expect($('.co-clusterserviceversion-resource-details__section--info').isDisplayed()).toBe(true);
+    expect($('.co-operand-details__section--info').isDisplayed()).toBe(true);
   });
 
   it('displays the raw YAML for the `RedisEnterpriseCluster`', async() => {

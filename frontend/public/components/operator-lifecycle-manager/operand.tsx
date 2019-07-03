@@ -4,7 +4,7 @@ import * as _ from 'lodash-es';
 import { connect } from 'react-redux';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
-import { ClusterServiceVersionResourceKind, ClusterServiceVersionKind, referenceForProvidedAPI } from './index';
+import { ClusterServiceVersionKind, referenceForProvidedAPI } from './index';
 import { StatusDescriptor } from './descriptors/status';
 import { SpecDescriptor } from './descriptors/spec';
 // FIXME(alecmerdler): Should not be importing `StatusCapability` enum
@@ -17,6 +17,7 @@ import { connectToModel } from '../../kinds';
 import { apiVersionForReference, kindForReference, K8sResourceKind, OwnerReference, K8sKind, referenceFor, GroupVersionKind, referenceForModel } from '../../module/k8s';
 import { ClusterServiceVersionModel } from '../../models';
 import { deleteModal } from '../modals';
+import { RootState } from '../../redux';
 
 const csvName = () => location.pathname.split('/').find((part, i, allParts) => allParts[i - 1] === referenceForModel(ClusterServiceVersionModel) || allParts[i - 1] === ClusterServiceVersionModel.plural);
 
@@ -60,7 +61,7 @@ const tableColumnClasses = [
   Kebab.columnClass,
 ];
 
-export const CSVRTableHeader = () => {
+export const OperandTableHeader = () => {
   return [
     {
       title: 'Name', sortField: 'metadata.name', transforms: [sortable],
@@ -88,9 +89,8 @@ export const CSVRTableHeader = () => {
     },
   ];
 };
-CSVRTableHeader.displayName = 'CSVRTableHeader';
 
-export const ClusterServiceVersionResourceLink: React.SFC<ClusterServiceVersionResourceLinkProps> = (props) => {
+export const OperandLink: React.SFC<OperandLinkProps> = (props) => {
   const {namespace, name} = props.obj.metadata;
 
   return <span className="co-resource-item">
@@ -99,12 +99,12 @@ export const ClusterServiceVersionResourceLink: React.SFC<ClusterServiceVersionR
   </span>;
 };
 
-export const CSVRTableRow: React.FC<CSVRTableRowProps> = ({obj, index, key, style}) => {
+export const OperandTableRow: React.FC<OperandTableRowProps> = ({obj, index, key, style}) => {
   const status = _.get(obj.status, 'phase');
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
-        <ClusterServiceVersionResourceLink obj={obj} />
+        <OperandLink obj={obj} />
       </TableData>
       <TableData className={tableColumnClasses[1]}>
         <LabelList kind={obj.kind} labels={obj.metadata.labels} />
@@ -130,15 +130,8 @@ export const CSVRTableRow: React.FC<CSVRTableRowProps> = ({obj, index, key, styl
     </TableRow>
   );
 };
-CSVRTableRow.displayName = 'CSVRTableRow';
-export type CSVRTableRowProps = {
-  obj: K8sResourceKind;
-  index: number;
-  key?: string;
-  style: object;
-};
 
-export const ClusterServiceVersionResourceList: React.SFC<ClusterServiceVersionResourceListProps> = (props) => {
+export const OperandList: React.SFC<OperandListProps> = (props) => {
   const ensureKind = (data: K8sResourceKind[]) => data.map(obj => {
     if (obj.apiVersion && obj.kind) {
       return obj;
@@ -150,18 +143,18 @@ export const ClusterServiceVersionResourceList: React.SFC<ClusterServiceVersionR
       ...obj,
     };
   });
-  const EmptyMsg = () => <MsgBox title="No Application Resources Found" detail="Application resources are declarative components used to define the behavior of the application." />;
+  const EmptyMsg = () => <MsgBox title="No Operands Found" detail="Operands are declarative components used to define the behavior of the application." />;
 
   return <Table {...props}
     data={ensureKind(props.data)}
     EmptyMsg={EmptyMsg}
-    aria-label="Application Resources"
-    Header={CSVRTableHeader}
-    Row={CSVRTableRow}
+    aria-label="Operands"
+    Header={OperandTableHeader}
+    Row={OperandTableRow}
     virtualize />;
 };
 
-const inFlightStateToProps = ({k8s}) => ({inFlight: k8s.getIn(['RESOURCES', 'inFlight'])});
+const inFlightStateToProps = ({k8s}: RootState) => ({inFlight: k8s.getIn(['RESOURCES', 'inFlight'])});
 
 export const ProvidedAPIsPage = connect(inFlightStateToProps)(
   (props: ProvidedAPIsPageProps) => {
@@ -169,7 +162,7 @@ export const ProvidedAPIsPage = connect(inFlightStateToProps)(
     const {owned = []} = obj.spec.customresourcedefinitions;
     const firehoseResources = owned.map((desc) => ({kind: referenceForProvidedAPI(desc), namespaced: true, prop: desc.kind}));
 
-    const EmptyMsg = () => <MsgBox title="No Application Resources Defined" detail="This application was not properly installed or configured." />;
+    const EmptyMsg = () => <MsgBox title="No Provided APIs Defined" detail="This application was not properly installed or configured." />;
     const createLink = (name: string) => `/k8s/ns/${obj.metadata.namespace}/${ClusterServiceVersionModel.plural}/${obj.metadata.name}/${referenceForProvidedAPI(_.find(owned, {name}))}/~new`;
     const createProps = owned.length > 1
       ? {items: owned.reduce((acc, crd) => ({...acc, [crd.name]: crd.displayName}), {}), createLink}
@@ -193,7 +186,7 @@ export const ProvidedAPIsPage = connect(inFlightStateToProps)(
     return firehoseResources.length > 0
       ? <MultiListPage
         {...props}
-        ListComponent={ClusterServiceVersionResourceList}
+        ListComponent={OperandList}
         filterLabel="Resources by name"
         resources={firehoseResources}
         namespace={obj.metadata.namespace}
@@ -204,7 +197,8 @@ export const ProvidedAPIsPage = connect(inFlightStateToProps)(
         rowFilters={firehoseResources.length > 1 ? rowFilters : null}
       />
       : <StatusBox loaded={true} EmptyMsg={EmptyMsg} />;
-  });
+  }
+);
 
 export const ProvidedAPIPage = connectToModel((props: ProvidedAPIPageProps) => {
   const {namespace, kind, kindsInFlight, kindObj, csv} = props;
@@ -217,13 +211,13 @@ export const ProvidedAPIPage = connectToModel((props: ProvidedAPIPageProps) => {
 
   return <ListPage
     kind={kind}
-    ListComponent={ClusterServiceVersionResourceList}
-    canCreate={_.get(props.kindObj, 'verbs', [] as string[]).some(v => v === 'create')}
+    ListComponent={OperandList}
+    canCreate={_.get(kindObj, 'verbs', [] as string[]).some(v => v === 'create')}
     createProps={{to: `/k8s/ns/${csv.metadata.namespace}/${ClusterServiceVersionModel.plural}/${csv.metadata.name}/${kind}/~new`}}
-    namespace={_.get(props.kindObj, 'namespaced') ? namespace : null} />;
+    namespace={_.get(kindObj, 'namespaced') ? namespace : null} />;
 });
 
-export const ClusterServiceVersionResourceDetails = connectToModel((props: ClusterServiceVersionResourcesDetailsProps) => {
+export const OperandDetails = connectToModel((props: OperandDetailsProps) => {
   // TODO(alecmerdler): Use additional `x-descriptor` to specify if should be considered main?
   const isMainDescriptor = (descriptor: Descriptor) => {
     return (descriptor['x-descriptors'] as StatusCapability[] || []).some((type) => {
@@ -264,7 +258,7 @@ export const ClusterServiceVersionResourceDetails = connectToModel((props: Clust
     );
   });
 
-  const details = <div className="co-clusterserviceversion-resource-details__section co-clusterserviceversion-resource-details__section--info">
+  const details = <div className="co-operand-details__section co-operand-details__section--info">
     <div className="row">
       <div className="col-xs-6">
         <ResourceSummary resource={props.obj} />
@@ -294,7 +288,7 @@ export const ClusterServiceVersionResourceDetails = connectToModel((props: Clust
     </div>
   </div>;
 
-  return <div className="co-clusterserviceversion-resource-details co-m-pane">
+  return <div className="co-operand-details co-m-pane">
     { _.isEmpty(primaryDescriptors) ? (
       <div className="co-m-pane__body">
         {header}
@@ -314,7 +308,7 @@ export const ClusterServiceVersionResourceDetails = connectToModel((props: Clust
   </div>;
 });
 
-export const ClusterServiceVersionResourcesDetailsPage: React.SFC<ClusterServiceVersionResourcesDetailsPageProps> = (props) => <DetailsPage
+export const OperandDetailsPage: React.SFC<OperandDetailsPageProps> = (props) => <DetailsPage
   {...props}
   resources={[
     {kind: referenceForModel(ClusterServiceVersionModel), name: props.match.params.appName, namespace: props.namespace, isList: false, prop: 'csv'},
@@ -326,17 +320,16 @@ export const ClusterServiceVersionResourcesDetailsPage: React.SFC<ClusterService
     {name: `${kindForReference(props.kind)} Details`, path: `${props.match.url}`},
   ]}
   pages={[
-    navFactory.details((detailsProps) => <ClusterServiceVersionResourceDetails {...detailsProps} clusterServiceVersion={detailsProps.csv} appName={props.match.params.appName} />),
+    navFactory.details((detailsProps) => <OperandDetails {...detailsProps} clusterServiceVersion={detailsProps.csv} appName={props.match.params.appName} />),
     navFactory.editYaml(),
-    // eslint-disable-next-line react/display-name
     {name: 'Resources', href: 'resources', component: (resourcesProps) => <Resources {...resourcesProps} clusterServiceVersion={resourcesProps.csv} />},
   ]}
 />;
 
-export type ClusterServiceVersionResourceListProps = {
+export type OperandListProps = {
   loaded: boolean;
   kinds?: GroupVersionKind[];
-  data: ClusterServiceVersionResourceKind[];
+  data: K8sResourceKind[];
   filters: {[key: string]: any};
   reduxID?: string;
   reduxIDs?: string[];
@@ -344,12 +337,12 @@ export type ClusterServiceVersionResourceListProps = {
   staticFilters?: any;
 };
 
-export type ClusterServiceVersionResourceHeaderProps = {
-  data: ClusterServiceVersionResourceKind[];
+export type OperandHeaderProps = {
+  data: K8sResourceKind[];
 };
 
-export type ClusterServiceVersionResourceRowProps = {
-  obj: ClusterServiceVersionResourceKind;
+export type OperandRowProps = {
+  obj: K8sResourceKind;
 };
 
 export type ProvidedAPIsPageProps = {
@@ -365,21 +358,21 @@ export type ProvidedAPIPageProps = {
   namespace: string;
 };
 
-export type ClusterServiceVersionResourcesDetailsProps = {
-  obj: ClusterServiceVersionResourceKind;
+export type OperandDetailsProps = {
+  obj: K8sResourceKind;
   appName: string;
   kindObj: K8sKind;
   clusterServiceVersion: ClusterServiceVersionKind;
 };
 
-export type ClusterServiceVersionResourcesDetailsPageProps = {
+export type OperandDetailsPageProps = {
   kind: GroupVersionKind;
   name: string;
   namespace: string;
   match: match<any>;
 };
 
-export type CSVResourceDetailsProps = {
+export type OperandesourceDetailsProps = {
   csv?: {data: ClusterServiceVersionKind};
   kind: GroupVersionKind;
   name: string;
@@ -387,15 +380,24 @@ export type CSVResourceDetailsProps = {
   match: match<{appName: string}>;
 };
 
-export type ClusterServiceVersionResourceLinkProps = {
-  obj: ClusterServiceVersionResourceKind;
+export type OperandLinkProps = {
+  obj: K8sResourceKind;
+};
+
+export type OperandTableRowProps = {
+  obj: K8sResourceKind;
+  index: number;
+  key?: string;
+  style: object;
 };
 
 // TODO(alecmerdler): Find Webpack loader/plugin to add `displayName` to React components automagically
-ClusterServiceVersionResourceList.displayName = 'ClusterServiceVersionResourceList';
-ClusterServiceVersionResourceDetails.displayName = 'ClusterServiceVersionResourceDetails';
-ClusterServiceVersionResourceList.displayName = 'ClusterServiceVersionResourceList';
-ClusterServiceVersionResourceLink.displayName = 'ClusterServiceVersionResourceLink';
+OperandList.displayName = 'OperandList';
+OperandDetails.displayName = 'OperandDetails';
+OperandList.displayName = 'OperandList';
+OperandLink.displayName = 'OperandLink';
 ProvidedAPIsPage.displayName = 'ProvidedAPIsPage';
-ClusterServiceVersionResourcesDetailsPage.displayName = 'ClusterServiceVersionResourcesDetailsPage';
+OperandDetailsPage.displayName = 'OperandDetailsPage';
 Resources.displayName = 'Resources';
+OperandTableRow.displayName = 'OperandTableRow';
+OperandTableHeader.displayName = 'OperandTableHeader';

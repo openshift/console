@@ -136,8 +136,8 @@ describe('Interacting with a `OwnNamespace` install mode Operator (Prometheus)',
     expect(crudView.rowFilterFor('Alertmanager').isDisplayed()).toBe(true);
     expect(crudView.rowFilterFor('ServiceMonitor').isDisplayed()).toBe(true);
     expect(crudView.rowFilterFor('PrometheusRule').isDisplayed()).toBe(true);
-    expect(crudView.statusMessageTitle.getText()).toEqual('No Application Resources Found');
-    expect(crudView.statusMessageDetail.getText()).toEqual('Application resources are declarative components used to define the behavior of the application.');
+    expect(crudView.statusMessageTitle.getText()).toEqual('No Operands Found');
+    expect(crudView.statusMessageDetail.getText()).toEqual('Operands are declarative components used to define the behavior of the application.');
   });
 
   it('displays YAML editor for creating a new `Prometheus` instance', async() => {
@@ -162,7 +162,7 @@ describe('Interacting with a `OwnNamespace` install mode Operator (Prometheus)',
     await crudView.rowForName('example').element(by.linkText('example')).click();
     await browser.wait(until.presenceOf($('.loading-box__loaded')), 5000);
 
-    expect($('.co-clusterserviceversion-resource-details__section--info').isDisplayed()).toBe(true);
+    expect($('.co-operand-details__section--info').isDisplayed()).toBe(true);
   });
 
   it('displays the raw YAML for the `Prometheus`', async() => {
@@ -208,7 +208,7 @@ describe('Interacting with a `OwnNamespace` install mode Operator (Prometheus)',
     await crudView.rowForName('alertmanager-main').element(by.linkText('alertmanager-main')).click();
     await browser.wait(until.presenceOf($('.loading-box__loaded')), 5000);
 
-    expect($('.co-clusterserviceversion-resource-details__section--info').isDisplayed()).toBe(true);
+    expect($('.co-operand-details__section--info').isDisplayed()).toBe(true);
   });
 
   it('displays the raw YAML for the `Alertmanager`', async() => {
@@ -254,7 +254,7 @@ describe('Interacting with a `OwnNamespace` install mode Operator (Prometheus)',
     await crudView.rowForName('example').element(by.linkText('example')).click();
     await browser.wait(until.presenceOf($('.loading-box__loaded')), 5000);
 
-    expect($('.co-clusterserviceversion-resource-details__section--info').isDisplayed()).toBe(true);
+    expect($('.co-operand-details__section--info').isDisplayed()).toBe(true);
   });
 
   it('displays the raw YAML for the `ServiceMonitor`', async() => {

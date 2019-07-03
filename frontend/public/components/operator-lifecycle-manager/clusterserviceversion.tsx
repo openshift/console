@@ -7,7 +7,7 @@ import { sortable } from '@patternfly/react-table';
 import { Helmet } from 'react-helmet';
 import { Alert } from '@patternfly/react-core';
 
-import { ProvidedAPIsPage, ProvidedAPIPage } from './clusterserviceversion-resource';
+import { ProvidedAPIsPage, ProvidedAPIPage } from './operand';
 import { DetailsPage, ListPage, Table, TableRow, TableData } from '../factory';
 import { withFallback } from '../utils/error-boundary';
 import { referenceForModel, referenceFor, GroupVersionKind, K8sKind } from '../../module/k8s';
@@ -43,6 +43,7 @@ import {
   Firehose,
   FirehoseResult,
   StatusBox,
+  Page,
 } from '../utils';
 import { operatorGroupFor, operatorNamespaceFor } from './operator-group';
 import { SubscriptionDetails } from './subscription';
@@ -299,18 +300,27 @@ export const CSVSubscription: React.FC<CSVSubscriptionProps> = (props) => {
   </Firehose>;
 };
 
-export const ClusterServiceVersionsDetailsPage: React.StatelessComponent<ClusterServiceVersionsDetailsPageProps> = (props) => {
-  const AllInstances: React.SFC<{obj: ClusterServiceVersionKind}> = ({obj}) => <ProvidedAPIsPage obj={obj} />;
-  AllInstances.displayName = 'AllInstances';
-
+export const ClusterServiceVersionsDetailsPage: React.FC<ClusterServiceVersionsDetailsPageProps> = (props) => {
   const instancePagesFor = (obj: ClusterServiceVersionKind) => {
-    return (providedAPIsFor(obj).length > 1 ? [{href: 'instances', name: 'All Instances', component: AllInstances}] : [])
+    return (providedAPIsFor(obj).length > 1 ? [{href: 'instances', name: 'All Instances', component: ProvidedAPIsPage}] : [] as Page[])
       .concat(providedAPIsFor(obj).map((desc: CRDDescription) => ({
         href: referenceForProvidedAPI(desc),
         name: desc.displayName,
-        component: (instancesProps) => <ProvidedAPIPage {...instancesProps} csv={obj} kind={referenceForProvidedAPI(desc)} namespace={props.match.params.ns} />,
+        component: React.memo(() => <ProvidedAPIPage csv={obj} kind={referenceForProvidedAPI(desc)} namespace={obj.metadata.namespace} />, (_.isEqual)),
       })));
   };
+
+  const pagesFor = React.useCallback((obj: ClusterServiceVersionKind) => _.compact([
+    navFactory.details(ClusterServiceVersionDetails),
+    navFactory.editYaml(),
+    {
+      href: 'subscription',
+      name: 'Subscription',
+      component: CSVSubscription,
+    },
+    navFactory.events(ResourceEventStream),
+    ...instancePagesFor(obj),
+  ]), []);
 
   return <DetailsPage
     {...props}
@@ -321,17 +331,7 @@ export const ClusterServiceVersionsDetailsPage: React.StatelessComponent<Cluster
     namespace={props.match.params.ns}
     kind={referenceForModel(ClusterServiceVersionModel)}
     name={props.match.params.name}
-    pagesFor={(obj: ClusterServiceVersionKind) => _.compact([
-      navFactory.details(ClusterServiceVersionDetails),
-      navFactory.editYaml(),
-      {
-        href: 'subscription',
-        name: 'Subscription',
-        component: CSVSubscription,
-      },
-      navFactory.events(ResourceEventStream),
-      ...instancePagesFor(obj),
-    ])}
+    pagesFor={pagesFor}
     menuActions={menuActions} />;
 };
 

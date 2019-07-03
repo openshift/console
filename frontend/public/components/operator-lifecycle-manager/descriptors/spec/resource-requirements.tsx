@@ -2,9 +2,8 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { connect } from 'react-redux';
 
-import { ClusterServiceVersionResourceKind } from '../../index';
 import { withHandlePromise } from '../../../utils';
-import { k8sUpdate, referenceFor, K8sKind } from '../../../../module/k8s';
+import { k8sUpdate, referenceFor, K8sKind, K8sResourceKind } from '../../../../module/k8s';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../../../factory/modal';
 import { RootState } from '../../../../redux';
 
@@ -73,7 +72,7 @@ export const ResourceRequirementsModalLink = connect(stateToProps)((props: Resou
 export type ResourceRequirementsModalProps = {
   title: string;
   description: string;
-  obj: ClusterServiceVersionResourceKind;
+  obj: K8sResourceKind;
   model: K8sKind;
   type: 'requests' | 'limits';
   path: string;
@@ -92,7 +91,7 @@ export type ResourceRequirementsProps = {
 };
 
 export type ResourceRequirementsModalLinkProps = {
-  obj: ClusterServiceVersionResourceKind;
+  obj: K8sResourceKind;
   model: K8sKind;
   type: 'requests' | 'limits';
   path: string;

@@ -2,33 +2,48 @@ import * as React from 'react';
 import { match as RouterMatch } from 'react-router-dom';
 import { shallow, ShallowWrapper } from 'enzyme';
 import * as _ from 'lodash-es';
-import { ClusterServiceVersionResourceList, ClusterServiceVersionResourceListProps, ProvidedAPIsPage, ProvidedAPIsPageProps, CSVRTableRowProps, CSVRTableHeader, CSVRTableRow, ClusterServiceVersionResourceDetails, ClusterServiceVersionResourcesDetailsPageProps, ClusterServiceVersionResourcesDetailsProps, ClusterServiceVersionResourcesDetailsPage, ClusterServiceVersionResourceLink, ProvidedAPIPage, ProvidedAPIPageProps } from '../../../public/components/operator-lifecycle-manager/clusterserviceversion-resource';
+
+import { OperandList,
+  OperandListProps,
+  ProvidedAPIsPage,
+  ProvidedAPIsPageProps,
+  OperandTableRowProps,
+  OperandTableHeader,
+  OperandTableRow,
+  OperandDetails,
+  OperandDetailsPageProps,
+  OperandDetailsProps,
+  OperandDetailsPage,
+  OperandLink,
+  ProvidedAPIPage,
+  ProvidedAPIPageProps } from '../../../public/components/operator-lifecycle-manager/operand';
 import { Resources } from '../../../public/components/operator-lifecycle-manager/k8s-resource';
-import { ClusterServiceVersionResourceKind, referenceForProvidedAPI } from '../../../public/components/operator-lifecycle-manager';
+import { referenceForProvidedAPI } from '../../../public/components/operator-lifecycle-manager';
 import { StatusDescriptor } from '../../../public/components/operator-lifecycle-manager/descriptors/status';
 import { SpecDescriptor } from '../../../public/components/operator-lifecycle-manager/descriptors/spec';
 import { testCRD, testResourceInstance, testClusterServiceVersion, testOwnedResourceInstance, testModel } from '../../../__mocks__/k8sResourcesMocks';
 import { Table, DetailsPage, MultiListPage, ListPage } from '../../../public/components/factory';
 import { Timestamp, LabelList, StatusBox, ResourceKebab } from '../../../public/components/utils';
-import { referenceFor, K8sKind, referenceForModel } from '../../../public/module/k8s';
+import { referenceFor, K8sKind, referenceForModel , K8sResourceKind } from '../../../public/module/k8s';
 import { ClusterServiceVersionModel } from '../../../public/models';
 
-describe(CSVRTableHeader.displayName, () => {
+
+describe(OperandTableHeader.displayName, () => {
   it('returns column header definition for resource', () => {
-    expect(Array.isArray(CSVRTableHeader()));
+    expect(Array.isArray(OperandTableHeader())).toBe(true);
   });
 });
 
-describe(CSVRTableRow.displayName, () => {
-  let wrapper: ShallowWrapper<CSVRTableRowProps>;
+describe(OperandTableRow.displayName, () => {
+  let wrapper: ShallowWrapper<OperandTableRowProps>;
 
   beforeEach(() => {
-    wrapper = shallow(<CSVRTableRow obj={testResourceInstance} index={0} style={{}} />);
+    wrapper = shallow(<OperandTableRow obj={testResourceInstance} index={0} style={{}} />);
   });
 
   it('renders column for resource name', () => {
     const col = wrapper.childAt(0);
-    const link = col.find(ClusterServiceVersionResourceLink);
+    const link = col.find(OperandLink);
 
     expect(link.props().obj).toEqual(testResourceInstance);
   });
@@ -85,25 +100,25 @@ describe(CSVRTableRow.displayName, () => {
   });
 });
 
-describe(ClusterServiceVersionResourceList.displayName, () => {
-  let wrapper: ShallowWrapper<ClusterServiceVersionResourceListProps>;
-  let resources: ClusterServiceVersionResourceKind[];
+describe(OperandList.displayName, () => {
+  let wrapper: ShallowWrapper<OperandListProps>;
+  let resources: K8sResourceKind[];
 
   beforeEach(() => {
     resources = [testResourceInstance];
-    wrapper = shallow(<ClusterServiceVersionResourceList loaded={true} data={resources} filters={{}} />);
+    wrapper = shallow(<OperandList loaded={true} data={resources} filters={{}} />);
   });
 
   it('renders a `Table` of the custom resource instances of the given kind', () => {
     const table: ShallowWrapper<any> = wrapper.find(Table);
     expect(Object.keys(wrapper.props()).reduce((k, prop) => table.prop(prop) === wrapper.prop(prop), false)).toBe(true);
-    expect(table.props().Header).toEqual(CSVRTableHeader);
-    expect(table.props().Row).toEqual(CSVRTableRow);
+    expect(table.props().Header).toEqual(OperandTableHeader);
+    expect(table.props().Row).toEqual(OperandTableRow);
   });
 });
 
-describe(ClusterServiceVersionResourceDetails.displayName, () => {
-  let wrapper: ShallowWrapper<ClusterServiceVersionResourcesDetailsProps>;
+describe(OperandDetails.displayName, () => {
+  let wrapper: ShallowWrapper<OperandDetailsProps>;
   let resourceDefinition: any;
 
   beforeEach(() => {
@@ -111,7 +126,7 @@ describe(ClusterServiceVersionResourceDetails.displayName, () => {
       plural: testCRD.metadata.name.split('.')[0],
       annotations: testCRD.metadata.annotations,
     };
-    wrapper = shallow(<ClusterServiceVersionResourceDetails.WrappedComponent clusterServiceVersion={testClusterServiceVersion} obj={testResourceInstance} kindObj={resourceDefinition} appName={testClusterServiceVersion.metadata.name} />);
+    wrapper = shallow(<OperandDetails.WrappedComponent clusterServiceVersion={testClusterServiceVersion} obj={testResourceInstance} kindObj={resourceDefinition} appName={testClusterServiceVersion.metadata.name} />);
   });
 
   it('renders description title', () => {
@@ -120,7 +135,7 @@ describe(ClusterServiceVersionResourceDetails.displayName, () => {
   });
 
   it('renders info section', () => {
-    const section = wrapper.find('.co-clusterserviceversion-resource-details__section--info');
+    const section = wrapper.find('.co-operand-details__section--info');
 
     expect(section.exists()).toBe(true);
   });
@@ -176,8 +191,8 @@ describe('ResourcesList', () => {
   });
 });
 
-describe(ClusterServiceVersionResourcesDetailsPage.displayName, () => {
-  let wrapper: ShallowWrapper<ClusterServiceVersionResourcesDetailsPageProps>;
+describe(OperandDetailsPage.displayName, () => {
+  let wrapper: ShallowWrapper<OperandDetailsPageProps>;
   let match: RouterMatch<any>;
 
   beforeEach(() => {
@@ -188,7 +203,7 @@ describe(ClusterServiceVersionResourcesDetailsPage.displayName, () => {
       path: `/k8s/ns/:ns/${ClusterServiceVersionModel.plural}/:appName/:plural/:name`,
     };
 
-    wrapper = shallow(<ClusterServiceVersionResourcesDetailsPage kind={referenceFor(testResourceInstance)} namespace="default" name={testResourceInstance.metadata.name} match={match} />);
+    wrapper = shallow(<OperandDetailsPage kind={referenceFor(testResourceInstance)} namespace="default" name={testResourceInstance.metadata.name} match={match} />);
   });
 
   it('renders a `DetailsPage` with the correct subpages', () => {
@@ -288,7 +303,7 @@ describe(ProvidedAPIsPage.displayName, () => {
     const {owned = [], required = []} = testClusterServiceVersion.spec.customresourcedefinitions;
     const listPage = wrapper.find(MultiListPage);
 
-    expect(listPage.props().ListComponent).toEqual(ClusterServiceVersionResourceList);
+    expect(listPage.props().ListComponent).toEqual(OperandList);
     expect(listPage.props().filterLabel).toEqual('Resources by name');
     expect(listPage.props().canCreate).toBe(true);
     expect(listPage.props().resources).toEqual(owned.concat(required).map((crdDesc) => ({

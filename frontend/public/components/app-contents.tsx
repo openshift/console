@@ -1,8 +1,8 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { connect } from 'react-redux';
-import * as PropTypes from 'prop-types';
 import { Redirect, Route, Switch, withRouter } from 'react-router-dom';
+
 import { FLAGS } from '../const';
 import { connectToFlags, flagPending } from '../reducers/features';
 import { GlobalNotifications } from './global-notifications';
@@ -23,12 +23,6 @@ import {
   PageSection,
   PageSectionVariants,
 } from '@patternfly/react-core';
-
-// React Router's proptypes are incorrect. See https://github.com/ReactTraining/react-router/pull/5393
-(Route as any).propTypes.path = PropTypes.oneOfType([
-  PropTypes.string,
-  PropTypes.arrayOf(PropTypes.string),
-]);
 
 const RedirectComponent = props => {
   const to = `/k8s${props.location.pathname}`;
