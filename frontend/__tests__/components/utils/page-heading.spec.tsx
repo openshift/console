@@ -60,7 +60,7 @@ describe(PageHeading.displayName, () => {
 
   it('renders breadcrumbs if given `breadcrumbsFor` function', () => {
     const breadcrumbs = [];
-    wrapper = wrapper.setProps({breadcrumbsFor: () => breadcrumbs, obj: {data: testResourceInstance}});
+    wrapper = wrapper.setProps({breadcrumbsFor: () => breadcrumbs, obj: { data: testResourceInstance, loaded: true, loadError: null }});
 
     expect(wrapper.find(BreadCrumbs).exists()).toBe(true);
     expect(wrapper.find(BreadCrumbs).props().breadcrumbs).toEqual(breadcrumbs);
