@@ -22,6 +22,7 @@ import { TemplateModel } from '@console/internal/models';
 import { Link } from 'react-router-dom';
 import { TemplateKind } from '@console/internal/module/k8s';
 import { match } from 'react-router';
+import { dimensifyHeader, dimensifyRow } from '../../utils/table';
 
 export const menuActions = Kebab.factory.common;
 
@@ -44,54 +45,51 @@ const tableColumnClasses = [
   Kebab.columnClass,
 ];
 
-const VMTemplateTableHeader = () => {
-  return [
-    {
-      title: 'Name',
-      sortField: 'metadata.name',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[0] },
-    },
-    {
-      title: 'Namespace',
-      sortField: 'metadata.namespace',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[1] },
-    },
-    {
-      title: 'Description',
-      sortField: 'metadata.annotations.description',
-      transforms: [sortable],
-      props: { className: tableColumnClasses[2] },
-    },
-    {
-      title: 'Source',
-      props: { className: tableColumnClasses[3] },
-    },
-    {
-      title: 'OS',
-      props: { className: tableColumnClasses[4] },
-    },
-    {
-      title: 'Flavor',
-      props: { className: tableColumnClasses[5] },
-    },
-    {
-      title: '',
-      props: { className: tableColumnClasses[6] },
-    },
-  ];
-};
+const VMTemplateTableHeader = () =>
+  dimensifyHeader(
+    [
+      {
+        title: 'Name',
+        sortField: 'metadata.name',
+        transforms: [sortable],
+      },
+      {
+        title: 'Namespace',
+        sortField: 'metadata.namespace',
+        transforms: [sortable],
+      },
+      {
+        title: 'Description',
+        sortField: 'metadata.annotations.description',
+        transforms: [sortable],
+      },
+      {
+        title: 'Source',
+      },
+      {
+        title: 'OS',
+      },
+      {
+        title: 'Flavor',
+      },
+      {
+        title: '',
+      },
+    ],
+    tableColumnClasses,
+  );
+
 VMTemplateTableHeader.displayName = 'VMTemplateTableHeader';
 
 const VMTemplateTableRow = ({ obj: template, index, key, style }: VMTemplateTableRowProps) => {
+  const dimensify = dimensifyRow(tableColumnClasses);
   const os = getTemplateOperatingSystems([template])[0];
   const name = getName(template);
   const namespace = getNamespace(template);
 
   return (
     <TableRow id={template.metadata.uid} index={index} trKey={key} style={style}>
-      <TableData className={tableColumnClasses[0]}>
+      <TableData className={dimensify()}>
         <ResourceIcon kind={kind} />
         <Link
           to={`/k8s/ns/${namespace}/vmtemplates/${name}`}
@@ -101,22 +99,22 @@ const VMTemplateTableRow = ({ obj: template, index, key, style }: VMTemplateTabl
           {name}
         </Link>
       </TableData>
-      <TableData className={tableColumnClasses[1]}>
+      <TableData className={dimensify()}>
         <ResourceLink
           kind="Namespace"
           name={getNamespace(template)}
           title={getNamespace(template)}
         />
       </TableData>
-      <TableData className={tableColumnClasses[2]}>
+      <TableData className={dimensify()}>
         {_.get(template.metadata, 'annotations.description', DASH)}
       </TableData>
-      <TableData className={tableColumnClasses[3]}>
+      <TableData className={dimensify()}>
         <TemplateSource template={template} />
       </TableData>
-      <TableData className={tableColumnClasses[4]}>{os ? os.name || os.id : DASH}</TableData>
-      <TableData className={tableColumnClasses[5]}>{getTemplateFlavors([template])[0]}</TableData>
-      <TableData className={tableColumnClasses[6]}>
+      <TableData className={dimensify()}>{os ? os.name || os.id : DASH}</TableData>
+      <TableData className={dimensify()}>{getTemplateFlavors([template])[0]}</TableData>
+      <TableData className={dimensify(true)}>
         <ResourceKebab actions={menuActions} kind={kind} resource={template} />
       </TableData>
     </TableRow>
@@ -167,4 +165,4 @@ type VirtualMachineTemplatesPageProps = {
   match: match<{ ns?: string }>;
 };
 
-export { VirtualMachineTemplates, VirtualMachineTemplatesPage };
+export { VirtualMachineTemplatesPage };

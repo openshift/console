@@ -1,0 +1,21 @@
+.kubevirt-vm-create-device-row__cell_addendum {
+  margin-left: 0.5em;
+  width: 2em;
+}
+
+.kubevirt-vm-create-device-row__cell_field--with-addendum {
+  width: calc(100% - 2.5em) !important;
+  display: inline-block !important;
+}
+
+.kubevirt-vm-create-device-row__cell--help {
+  min-height: 1em;
+}
+
+.kubevirt-vm-create-device-row__cell--no_bottom {
+  margin-bottom: 0;
+}
+
+.kubevirt-vm-create-device-row__confirmation-buttons {
+  width: 90px;
+}

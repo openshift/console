@@ -9,6 +9,7 @@ import { getResource } from 'kubevirt-web-ui-components';
 import { getNamespace, getName } from '@console/shared';
 import { useSafetyFirst } from '@console/internal/components/safety-first';
 import { K8sResourceKind } from '@console/internal/module/k8s';
+import { sortable } from '@patternfly/react-table';
 import { DataVolumeModel } from '../../models';
 
 import { VMLikeEntityKind } from '../../types';
@@ -16,7 +17,7 @@ import { asVm } from '../../selectors/selectors';
 import { getDataVolumeTemplates, getDisks, getVolumes } from '../../selectors/vm';
 import { createBasicLookup, createLookup } from '../../utils';
 import { DiskRow } from './disk-row';
-import { StorageType, VMDiskRowProps } from './types';
+import { StorageBundle, StorageType, VMDiskRowProps } from './types';
 import { CreateDiskRowFirehose } from './create-disk-row';
 
 export const VMDiskRow: React.FC<VMDiskRowProps> = (props) => {
@@ -34,7 +35,7 @@ const getStoragesData = (vmLikeEntity: VMLikeEntityKind, addNewDisk: boolean): S
   const vm = asVm(vmLikeEntity);
 
   const disksWithType = getDisks(vm).map((disk) => ({
-    name: disk.name,
+    ...disk, // for sorting
     storageType: StorageType.STORAGE_TYPE_VM,
     disk,
   }));
@@ -42,12 +43,6 @@ const getStoragesData = (vmLikeEntity: VMLikeEntityKind, addNewDisk: boolean): S
   return addNewDisk
     ? [{ storageType: StorageType.STORAGE_TYPE_CREATE }, ...disksWithType]
     : disksWithType;
-};
-
-type StorageBundle = {
-  name: string;
-  storageType: StorageType;
-  disk: any;
 };
 
 export const VMDisks: React.FC<VMDisksProps> = ({ vmLikeEntity, pvcs, datavolumes }) => {
@@ -78,12 +73,16 @@ export const VMDisks: React.FC<VMDisksProps> = ({ vmLikeEntity, pvcs, datavolume
           Header={() => [
             {
               title: 'Name',
+              sortField: 'name',
+              transforms: [sortable],
             },
             {
               title: 'Size',
             },
             {
               title: 'Interface',
+              sortField: 'disk.bus',
+              transforms: [sortable],
             },
             {
               title: 'Storage Class',
@@ -101,6 +100,7 @@ export const VMDisks: React.FC<VMDisksProps> = ({ vmLikeEntity, pvcs, datavolume
             pvcLookup: createLookup(pvcs, getName),
             datavolumes,
             datavolumeLookup: createLookup(datavolumes, getName),
+            diskLookup: createBasicLookup(getDisks(vm), (disk) => _.get(disk, 'name')),
             volumeLookup: createBasicLookup(getVolumes(vm), (volume) => _.get(volume, 'name')),
             datavolumeTemplatesLookup: createBasicLookup(getDataVolumeTemplates(vm), getName),
             onCreateRowDismiss: () => {

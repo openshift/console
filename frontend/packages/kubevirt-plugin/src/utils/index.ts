@@ -1,14 +1,14 @@
 import { FirehoseResult } from '@console/internal/components/utils';
 import { getName, getNamespace } from '@console/shared';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { K8sEntityMap } from '../types';
+import { EntityMap, K8sEntityMap } from '../types';
 
 type KeyResolver<A> = (entity: A) => string;
 
-export const getLookupId: KeyResolver<K8sResourceKind> = (entity) =>
+export const getLookupId = <A extends K8sResourceKind>(entity: A): string =>
   `${getNamespace(entity)}-${getName(entity)}`;
 
-export const createBasicLookup = <A>(list: A[], getKey: KeyResolver<A>): K8sEntityMap<A> => {
+export const createBasicLookup = <A>(list: A[], getKey: KeyResolver<A>): EntityMap<A> => {
   return (list || []).reduce((lookup, entity) => {
     const key = getKey(entity);
     if (key) {
@@ -19,9 +19,9 @@ export const createBasicLookup = <A>(list: A[], getKey: KeyResolver<A>): K8sEnti
 };
 
 export const createLookup = <A extends K8sResourceKind>(
-  loadingList: FirehoseResult<K8sResourceKind[]>,
-  getKey?: KeyResolver<K8sResourceKind>,
-): K8sEntityMap<K8sResourceKind> => {
+  loadingList: FirehoseResult<A[]>,
+  getKey?: KeyResolver<A>,
+): K8sEntityMap<A> => {
   if (loadingList && loadingList.loaded) {
     return createBasicLookup(loadingList.data, getKey || getLookupId);
   }
