@@ -186,7 +186,7 @@ const QueryInput: React.FC<QueryInputProps> = ({metrics = [], onBlur, onSubmit, 
 
   return <div className="query-browser__query query-browser__inline-control pf-c-dropdown">
     <textarea
-      autoFocus={true}
+      autoFocus
       className="form-control query-browser__query-input"
       onBlur={onTextareaBlur}
       onChange={onChange}
@@ -243,7 +243,7 @@ const Query: React.FC<QueryProps> = ({colorOffset, metrics, onBlur, onDelete, on
     {expanded && <div className="group__body group__body--query-browser">
       <div className="co-m-table-grid co-m-table-grid--bordered">
         <div className="row co-m-table-grid__head">
-          <div className="col-xs-9 query-browser-metric__wrapper">
+          <div className="col-xs-9">
             <div className="query-browser-metric__color"></div>
             Series
           </div>
@@ -373,9 +373,11 @@ export const QueryBrowserPage = withFallback(() => {
             queries={_.map(queries, 'query')}
           />
           <form onSubmit={onSubmit}>
-            <div className="query-browser__all-queries-controls">
-              <MetricsDropdown onChange={onMetricChange} onLoad={setMetrics} />
-              <div>
+            <div className="query-browser__controls">
+              <div className="query-browser__controls--left">
+                <MetricsDropdown onChange={onMetricChange} onLoad={setMetrics} />
+              </div>
+              <div className="query-browser__controls--right">
                 <button type="button" className="btn btn-default query-browser__inline-control" onClick={addQuery}>Add Query</button>
                 <button type="submit" className="btn btn-primary">Run Queries</button>
               </div>
