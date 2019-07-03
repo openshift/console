@@ -8,6 +8,7 @@ import {
   YAMLTemplate,
   ModelDefinition,
   RoutePage,
+  DashboardsOverviewHealthURLSubsystem,
 } from '@console/plugin-sdk';
 import { TemplateModel } from '@console/internal/models';
 
@@ -15,6 +16,7 @@ import * as models from './models';
 import { VMTemplateYAMLTemplates, VirtualMachineYAMLTemplates } from './models/templates';
 
 import './style.scss';
+import { getKubevirtHealthState } from './components/dashboards-page/overview-dashboard/health';
 
 type ConsumedExtensions =
   | ResourceNSNavItem
@@ -23,7 +25,8 @@ type ConsumedExtensions =
   | ModelFeatureFlag
   | YAMLTemplate
   | ModelDefinition
-  | RoutePage;
+  | RoutePage
+  | DashboardsOverviewHealthURLSubsystem<any>;
 
 const FLAG_KUBEVIRT = 'KUBEVIRT';
 
@@ -133,6 +136,16 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/vm-templates/vm-template-create-yaml' /* webpackChunkName: "kubevirt-vmtemplates-create-yaml" */
         ).then((m) => m.CreateVMTemplateYAML),
+    },
+  },
+  {
+    type: 'Dashboards/Overview/Health/URL',
+    properties: {
+      title: 'Virtualization',
+      url: `/apis/subresources.${models.VirtualMachineModel.apiGroup}/${
+        models.VirtualMachineModel.apiVersion
+      }/healthz`,
+      healthHandler: getKubevirtHealthState,
     },
   },
 ];
