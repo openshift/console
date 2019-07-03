@@ -10,7 +10,7 @@ export const ExpandableAlert: React.FC<CustomAlertProps> = ({alerts, variant}) =
   return <Alert
     isInline
     variant={variant}
-    className="co-expandable-alert"
+    className="co-alert"
     title={<React.Fragment>{`There are ${alertCount} ${variant} alerts.`}<button type="button" className="btn btn-link" onClick={() => setExpanded(!expanded)}>{expanded ? 'Hide' : 'Show'} Details</button></React.Fragment>}
   >
     {expanded && alertContent}
