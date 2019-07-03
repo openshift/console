@@ -29,6 +29,8 @@ export const VMTemplateResourceSummary: React.FC<VMTemplateResourceSummaryProps>
       <dd>{getDescription(template)}</dd>
       <dt>Operating System</dt>
       <dd>{getOperatingSystemName(template) || getOperatingSystem(template) || DASH}</dd>
+      <dt>Workload Profile</dt>
+      <dd>{getWorkloadProfile(template) || DASH}</dd>
       <dt>Base Template</dt>
       <dd>{baseLink || DASH}</dd>
     </ResourceSummary>
@@ -53,8 +55,6 @@ export const VMTemplateDetailsList: React.FC<VMTemplateResourceListProps> = ({
       </dd>
       <dt>Flavor</dt>
       <dd>{getFlavor(template) || DASH}</dd>
-      <dt>Workload Profile</dt>
-      <dd>{getWorkloadProfile(template) || DASH}</dd>
       <dt>Source</dt>
       <dd>
         {dataVolumes ? (
