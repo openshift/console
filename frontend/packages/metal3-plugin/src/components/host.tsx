@@ -20,6 +20,7 @@ import { getHostBMCAddress, getHostMachine } from '../selectors';
 import { BaremetalHostRole } from './host-role';
 import MachineCell from './machine-cell';
 import BaremetalHostStatus from './host-status';
+import { hostStatusFilter } from './table-filters';
 
 const tableColumnClasses = [
   classNames('col-lg-3', 'col-md-4', 'col-sm-12', 'col-xs-12'),
@@ -131,17 +132,6 @@ const HostList: React.FC<React.ComponentProps<typeof Table>> = (props) => (
   <Table {...props} aria-label="Baremetal Hosts" Header={HostsTableHeader} Row={HostsTableRow} />
 );
 
-// TODO(jtomasek): re-enable filters once the extension point for list.tsx is in place
-const filters = [];
-// const filters = [
-//   {
-//     type: 'baremetalhost-status',
-//     selected: ['online', 'offline'],
-//     reducer: getSimpleHostStatus,
-//     items: [{ id: 'online', title: 'online' }, { id: 'offline', title: 'offline' }],
-//   },
-// ];
-
 type BaremetalHostsPageProps = {
   namespace: string;
 };
@@ -189,7 +179,7 @@ export const BaremetalHostsPage: React.FC<BaremetalHostsPageProps> = (props) => 
     <MultiListPage
       {...props}
       canCreate
-      rowFilters={filters}
+      rowFilters={[hostStatusFilter]}
       createButtonText="Add Host"
       namespace={props.namespace}
       resources={[hostsResource, machinesResource, nodesResource]}
