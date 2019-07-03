@@ -205,7 +205,7 @@ export const FireMan_ = connect(null, {filterList})(
           </Link>;
         } else if (createProps.items) {
           createLink = <div className="co-m-primary-action">
-            <Dropdown buttonClassName="btn-primary" id="item-create" title={createButtonText} noSelection={true} items={createProps.items} onChange={(name) => history.push(createProps.createLink(name))} />
+            <Dropdown buttonClassName="pf-c-dropdown__toggle" id="item-create" title={createButtonText} noSelection={true} items={createProps.items} onChange={(name) => history.push(createProps.createLink(name))} />
           </div>;
         } else {
           createLink = <div className="co-m-primary-action">

@@ -78,7 +78,7 @@ const OAuthDetails: React.SFC<OAuthDetailsProps> = ({obj}: {obj: OAuthKind}) => 
       </p>
       <Dropdown
         className="co-m-pane__dropdown"
-        buttonClassName="btn-primary"
+        buttonClassName="pf-c-dropdown__toggle"
         title="Add"
         noSelection={true}
         items={addIDPItems}
