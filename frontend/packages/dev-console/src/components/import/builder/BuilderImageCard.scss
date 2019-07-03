@@ -1,7 +1,7 @@
 .odc-builder-image-card {
   position: relative;
-  height: 112px;
   width: 136px;
+  min-height: 118px;
   margin: 4px;
   align-items: center;
   border: 0;
@@ -16,6 +16,10 @@
     font-size: var(--pf-global--FontSize--sm);
     font-weight: var(--pf-global--FontWeight--bold);
     line-height: var(--pf-global--LineHeight--sm);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 
   &__recommended {
