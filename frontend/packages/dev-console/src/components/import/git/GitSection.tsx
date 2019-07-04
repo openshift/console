@@ -3,10 +3,15 @@ import { useFormikContext, FormikValues } from 'formik';
 import { ExpandCollapse } from '@console/internal/components/utils';
 import { InputField, DropdownField } from '../../formik-fields';
 import FormSection from '../section/FormSection';
-import { GitTypes } from '../import-types';
+import SourceSecretSelector from './SourceSecretSelector';
+import { GitTypes, ProjectData } from '../import-types';
 import { detectGitType } from '../import-validation-utils';
 
-const GitSection: React.FC = () => {
+export interface GitSectionProps {
+  project: ProjectData;
+}
+
+const GitSection: React.FC<GitSectionProps> = ({ project }) => {
   const { values, setValues, setFieldTouched, validateForm } = useFormikContext<FormikValues>();
 
   const handleGitUrlBlur = () => {
@@ -61,6 +66,10 @@ const GitSection: React.FC = () => {
           name="git.dir"
           label="Context Dir"
           helpText="Optional subdirectory for the application source code, used as a context directory for build."
+        />
+        <SourceSecretSelector
+          namespace={project.name}
+          helpText="Secret with credentials for pulling your source code."
         />
       </ExpandCollapse>
     </FormSection>

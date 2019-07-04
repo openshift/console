@@ -47,7 +47,7 @@ export const createBuildConfig = (
     name,
     project: { name: namespace },
     application: { name: application },
-    git: { url: repository, ref = 'master', dir: contextDir },
+    git: { url: repository, ref = 'master', dir: contextDir, secret: secretName },
     image: { tag: selectedTag },
     build: { env, triggers },
     labels: userLabels,
@@ -76,6 +76,7 @@ export const createBuildConfig = (
           ref,
           type: 'Git',
         },
+        ...(secretName ? { sourceSecret: { name: secretName } } : {}),
       },
       strategy: {
         type: 'Source',

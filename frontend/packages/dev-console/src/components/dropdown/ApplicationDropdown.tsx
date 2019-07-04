@@ -22,7 +22,7 @@ interface ApplicationDropdownProps {
     actionKey: string;
   };
   selectedKey: string;
-  onChange?: (name: string, key: string) => void;
+  onChange?: (key: string, name?: string) => void;
 }
 
 const ApplicationDropdown: React.FC<ApplicationDropdownProps> = ({ namespace, ...props }) => {

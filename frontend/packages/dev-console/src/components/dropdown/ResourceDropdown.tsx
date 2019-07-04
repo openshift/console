@@ -39,7 +39,7 @@ interface ResourceDropdownProps {
   resources?: FirehoseList[];
   selectedKey: string;
   resourceFilter?: (resource: any) => boolean;
-  onChange?: (name: string, key: string) => void;
+  onChange?: (key: string, name?: string) => void;
 }
 
 class ResourceDropdown extends React.Component<ResourceDropdownProps, State> {
@@ -64,13 +64,14 @@ class ResourceDropdown extends React.Component<ResourceDropdownProps, State> {
       allSelectorItem,
       resourceFilter,
       dataSelector,
+      selectedKey,
     } = nextProps;
 
     if (!loaded) {
       this.setState({ title: <LoadingInline /> });
       return;
     }
-    if (!this.props.loaded) {
+    if (!this.props.loaded || !selectedKey) {
       this.setState({
         title: <span className="btn-dropdown__item--placeholder">{placeholder}</span>,
       });
@@ -128,7 +129,7 @@ class ResourceDropdown extends React.Component<ResourceDropdownProps, State> {
     const name = this.state.items[key];
     const { actionItem, onChange } = this.props;
     const title = actionItem && key === actionItem.actionKey ? actionItem.actionTitle : name;
-    onChange && this.props.onChange(name, key);
+    onChange && this.props.onChange(key, name);
     this.setState({ title });
   };
 

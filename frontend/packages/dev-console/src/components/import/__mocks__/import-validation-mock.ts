@@ -15,6 +15,7 @@ export const mockFormData: GitImportFormData = {
     ref: '',
     dir: '',
     showGitType: false,
+    secret: '',
   },
   image: {
     selected: 'nodejs',
