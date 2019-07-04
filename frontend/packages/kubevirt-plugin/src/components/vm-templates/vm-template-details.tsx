@@ -3,6 +3,8 @@ import * as _ from 'lodash';
 
 import { getResource } from 'kubevirt-web-ui-components';
 
+import { getNamespace } from '@console/shared';
+
 import {
   Firehose,
   StatusBox,
@@ -17,7 +19,7 @@ import { DataVolumeModel } from '../../models';
 
 const VMTemplateDetailsFirehose: React.FC<VMTemplateDetailsFirehoseProps> = (props) => {
   const { obj: template, hasDataVolumes } = props;
-  const { namespace } = template.metadata;
+  const namespace = getNamespace(template);
 
   const resources = [
     getResource(DataVolumeModel, { namespace, optional: true, prop: 'datavolumes' }),
