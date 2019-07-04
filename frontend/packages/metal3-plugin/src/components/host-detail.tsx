@@ -27,6 +27,7 @@ import {
   getMachineRole,
 } from '@console/shared';
 
+import { ResourceEventStream } from '@console/internal/components/events';
 import { BaremetalHostModel } from '../models';
 import { canHostAddMachine } from '../utils/host-status';
 import MachineCell from './machine-cell';
@@ -43,6 +44,7 @@ import {
   getHostMachine,
 } from '../selectors';
 import BaremetalHostStatus from './host-status';
+import BaremetalHostNICList from './host-nics';
 
 type BaremetalHostDetailPageProps = {
   namespace: string;
@@ -187,10 +189,20 @@ export const BaremetalHostDetailPage: React.FC<BaremetalHostDetailPageProps> = (
     isList: true,
     prop: 'nodes',
   };
+  const nicsPage = {
+    href: 'nics',
+    name: 'Network Interfaces',
+    component: BaremetalHostNICList,
+  };
   return (
     <DetailsPage
       {...props}
-      pagesFor={() => [navFactory.details(BaremetalHostDetails), navFactory.editYaml()]}
+      pagesFor={() => [
+        navFactory.details(BaremetalHostDetails),
+        navFactory.editYaml(),
+        nicsPage,
+        navFactory.events(ResourceEventStream),
+      ]}
       kind={referenceForModel(BaremetalHostModel)}
       resources={[machinesResource, nodesResource]}
     />
