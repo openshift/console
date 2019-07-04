@@ -55,7 +55,7 @@ export const VMTemplateDetailsList: React.FC<VMTemplateResourceListProps> = ({
       </dd>
       <dt>Flavor</dt>
       <dd>{getFlavor(template) || DASH}</dd>
-      <dt>Source</dt>
+      <dt>Provision Source</dt>
       <dd>
         {dataVolumes ? (
           <TemplateSource template={template} dataVolumes={dataVolumes} detailed />
