@@ -5,6 +5,7 @@ import { sortable } from '@patternfly/react-table';
 import { Table, TableRow, TableData } from '@console/internal/components/factory';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { getHostNICs } from '../selectors';
+import { BaremetalHostNIC } from '../types';
 
 const NICsTableHeader = () => [
   { title: 'Name', sortField: 'name', transforms: [sortable] },
@@ -15,16 +16,6 @@ const NICsTableHeader = () => [
   { title: 'MAC Address', sortField: 'mac', transforms: [sortable] },
   { title: 'VLAN ID', sortField: 'vlanId', transforms: [sortable] },
 ];
-
-type BaremetalHostNIC = {
-  ip: string;
-  mac: string;
-  model: string;
-  name: string;
-  pxe: boolean;
-  speedGbps: number;
-  vlanId: number;
-};
 
 type NICsTableRowProps = {
   obj: BaremetalHostNIC;

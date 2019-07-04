@@ -5,6 +5,7 @@ import { Table, TableRow, TableData } from '@console/internal/components/factory
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { humanizeDecimalBytes } from '@console/internal/components/utils';
 import { getHostStorage } from '../selectors';
+import { BaremetalHostDisk } from '../types';
 
 const DisksTableHeader = () => [
   { title: 'Name', sortField: 'name', transforms: [sortable] },
@@ -15,16 +16,6 @@ const DisksTableHeader = () => [
   { title: 'Vendor', sortField: 'vendor', transforms: [sortable] },
   { title: 'HCTL', sortField: 'hctl', transforms: [sortable] },
 ];
-
-type BaremetalHostDisk = {
-  hctl: string;
-  model: string;
-  name: string;
-  rotational: boolean;
-  serialNumber: string;
-  sizeBytes: number;
-  vendor: string;
-};
 
 type DisksTableRowProps = {
   obj: BaremetalHostDisk;

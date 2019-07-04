@@ -2,16 +2,7 @@ import * as _ from 'lodash';
 
 import { K8sResourceKind, MachineKind } from '@console/internal/module/k8s';
 import { getName } from '@console/shared';
-
-type BaremetalHostDisk = {
-  hctl: string;
-  model: string;
-  name: string;
-  rotational: boolean;
-  serialNumber: string;
-  sizeBytes: number;
-  vendor: string;
-};
+import { BaremetalHostDisk } from '../types';
 
 export const getHostOperationalStatus = (host: K8sResourceKind) =>
   _.get(host, 'status.operationalStatus');
