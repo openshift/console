@@ -7,15 +7,14 @@ import { TemplateModel } from '@console/internal/models';
 
 import { VMTemplateDetailsFirehose } from './vm-template-details';
 import { VMDisksFirehose } from '../vm-disks';
+import { VMNics } from '../vm-nics';
 
 export const VMTemplateDetailsPage: React.FC<VMTemplateDetailsPageProps> = (props) => {
-  /* TODO(mlibra): pages will be transferred one by one in follow-ups
   const nicsPage = {
     href: 'nics',
     name: 'Network Interfaces',
-    component: VmNic,
+    component: VMNics,
   };
-  */
 
   const disksPage = {
     href: 'disks',
@@ -26,7 +25,7 @@ export const VMTemplateDetailsPage: React.FC<VMTemplateDetailsPageProps> = (prop
   const pages = [
     navFactory.details(VMTemplateDetailsFirehose),
     navFactory.editYaml(),
-    // nicsPage,
+    nicsPage,
     disksPage,
   ];
 
