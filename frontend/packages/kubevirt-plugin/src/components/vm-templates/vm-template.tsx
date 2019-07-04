@@ -11,18 +11,13 @@ import {
 } from 'kubevirt-web-ui-components';
 
 import { ListPage, Table, TableRow, TableData } from '@console/internal/components/factory';
-import {
-  Kebab,
-  ResourceLink,
-  ResourceKebab,
-  ResourceIcon,
-} from '@console/internal/components/utils';
-import { getName, getNamespace, DASH, getUid } from '@console/shared';
+import { Kebab, ResourceLink, ResourceKebab } from '@console/internal/components/utils';
+import { getNamespace, DASH } from '@console/shared';
 import { TemplateModel } from '@console/internal/models';
-import { Link } from 'react-router-dom';
 import { TemplateKind } from '@console/internal/module/k8s';
 import { match } from 'react-router';
 import { dimensifyHeader, dimensifyRow } from '../../utils/table';
+import { VMTemplateLink } from './vm-template-link';
 
 export const menuActions = Kebab.factory.common;
 
@@ -161,26 +156,4 @@ type VirtualMachineTemplatesPageProps = {
   match: match<{ ns?: string }>;
 };
 
-const VMTemplateLink: React.FC<VMTemplateLinkProps> = ({ template }) => {
-  const name = getName(template);
-  const namespace = getNamespace(template);
-
-  return (
-    <>
-      <ResourceIcon kind={kind} />
-      <Link
-        to={`/k8s/ns/${namespace}/vmtemplates/${name}`}
-        title={getUid(template)}
-        className="co-resource-item__resource-name"
-      >
-        {name}
-      </Link>
-    </>
-  );
-};
-
-type VMTemplateLinkProps = {
-  template: TemplateKind;
-};
-
-export { VMTemplateLink, VirtualMachineTemplatesPage };
+export { VirtualMachineTemplatesPage };

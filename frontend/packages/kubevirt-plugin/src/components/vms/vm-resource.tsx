@@ -22,7 +22,7 @@ import { getName, getNamespace, DASH } from '@console/shared';
 import { PodModel } from '@console/internal/models';
 
 import { VMKind, VMIKind } from '../../types';
-import { VMTemplateLink } from '../vm-templates/vm-template';
+import { VMTemplateLink } from '../vm-templates/vm-template-link';
 
 export const VMResourceSummary = ({ vm }: VMResourceSummaryProps) => {
   const template = getVmTemplate(vm);

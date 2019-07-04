@@ -15,7 +15,7 @@ import {
 import { ResourceSummary } from '@console/internal/components/utils';
 import { DASH } from '@console/shared';
 import { TemplateKind, K8sResourceKind } from '@console/internal/module/k8s';
-import { VMTemplateLink } from './vm-template';
+import { VMTemplateLink } from './vm-template-link';
 
 export const VMTemplateResourceSummary: React.FC<VMTemplateResourceSummaryProps> = ({
   template,
