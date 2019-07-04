@@ -3,6 +3,8 @@ import * as _ from 'lodash';
 
 import { getResource } from 'kubevirt-web-ui-components';
 
+import { getNamespace } from '@console/shared';
+
 import {
   Firehose,
   StatusBox,
@@ -10,33 +12,39 @@ import {
   SectionHeading,
 } from '@console/internal/components/utils';
 import { TemplateKind } from '@console/internal/module/k8s';
-import { TemplateModel } from '@console/internal/models';
 
+import { connect } from 'react-redux';
 import { VMTemplateResourceSummary, VMTemplateDetailsList } from './vm-template-resource';
 import { DataVolumeModel } from '../../models';
 
-export const VMTemplateDetailsFirehose: React.FC<VMTemplateDetailsFirehoseProps> = ({
-  obj: template,
-}) => {
-  const { name, namespace } = template.metadata;
+const VMTemplateDetailsFirehose: React.FC<VMTemplateDetailsFirehoseProps> = (props) => {
+  const { obj: template, hasDataVolumes } = props;
+  const namespace = getNamespace(template);
 
-  const vmtRes = getResource(TemplateModel, {
-    name,
-    namespace,
-    isList: false,
-    prop: 'vmt',
-    optional: true,
-  });
-  const resources = [vmtRes, getResource(DataVolumeModel, { namespace, prop: 'datavolumes' })];
+  const resources = [
+    getResource(DataVolumeModel, { namespace, optional: true, prop: 'datavolumes' }),
+  ];
 
   return (
     <div className="co-m-pane__body">
-      <Firehose resources={resources}>
-        <VMTemplateDetails template={template} />
-      </Firehose>
+      {hasDataVolumes ? (
+        <Firehose resources={resources}>
+          <VMTemplateDetails template={template} />
+        </Firehose>
+      ) : (
+        <VMTemplateDetails template={template} hasDataVolumes={hasDataVolumes} />
+      )}
     </div>
   );
 };
+
+const stateToProps = ({ k8s }) => {
+  return {
+    hasDataVolumes: !!k8s.getIn(['RESOURCES', 'models', DataVolumeModel.kind]),
+  };
+};
+
+export const VMTemplateDetailsConnected = connect(stateToProps)(VMTemplateDetailsFirehose);
 
 const VMTemplateDetails: React.FC<VMTemplateDetailsProps> = (props) => {
   const { template, ...restProps } = props;
@@ -44,9 +52,10 @@ const VMTemplateDetails: React.FC<VMTemplateDetailsProps> = (props) => {
     template,
     dataVolumes: _.get(props, 'datavolumes.data'),
   };
+  const loaded = props.loaded || !props.hasDataVolumes;
 
   return (
-    <StatusBox data={template} {...restProps}>
+    <StatusBox data={template} {...restProps} loaded={loaded}>
       <ScrollToTopOnMount />
       <div className="co-m-pane__body">
         <SectionHeading text="VM Template Overview" />
@@ -65,8 +74,11 @@ const VMTemplateDetails: React.FC<VMTemplateDetailsProps> = (props) => {
 
 type VMTemplateDetailsProps = {
   template: TemplateKind;
+  loaded?: boolean;
+  hasDataVolumes?: boolean;
 };
 
 type VMTemplateDetailsFirehoseProps = {
   obj: TemplateKind;
+  hasDataVolumes: boolean;
 };
