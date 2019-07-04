@@ -13,6 +13,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       icon: <CogsIcon />,
       landingPageURL: '/',
       default: true,
+      getImportRedirectURL: (project) => `/k8s/cluster/projects/${project}/workloads`,
     },
   },
 ];

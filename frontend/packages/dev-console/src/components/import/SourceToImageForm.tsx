@@ -27,7 +27,7 @@ const SourceToImageForm: React.FC<FormikProps<FormikValues> & SourceToImageFormP
     <div className="co-m-pane__form">
       <AppSection project={values.project} />
       <BuilderSection image={values.image} builderImages={builderImages} />
-      <GitSection showSample />
+      <GitSection project={values.project} showSample />
       <AdvancedSection values={values} />
     </div>
     <br />

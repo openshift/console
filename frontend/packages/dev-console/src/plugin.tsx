@@ -159,6 +159,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       name: 'Developer',
       icon: <CodeIcon />,
       landingPageURL: '/topology',
+      getImportRedirectURL: (project) => `/topology/ns/${project}`,
     },
   },
   {
