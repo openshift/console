@@ -74,10 +74,16 @@ export const resolvePluginPackages = (
 
   // provide the ability to override the active plugin list
   if (_.isString(process.env[consolePluginOverrideEnvVar])) {
-    const pluginPackageNames = process.env[consolePluginOverrideEnvVar].split(',');
+    const pkgNames = process.env[consolePluginOverrideEnvVar]
+      .split(',')
+      .map((name) => (!name.startsWith('@') ? `@console/${name}` : name));
+
     return sortPluginPackages(
       appPackage,
-      pluginPackages.filter((pkg) => pluginPackageNames.includes(pkg.name)),
+      _.uniq([
+        ...((isPluginPackage(appPackage) && [appPackage]) || []),
+        ...pluginPackages.filter((pkg) => pkgNames.includes(pkg.name)),
+      ]),
     );
   }
 
