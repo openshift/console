@@ -4,7 +4,13 @@ import { K8sResourceKind, MachineKind } from '@console/internal/module/k8s';
 import { getName } from '@console/shared';
 
 type BaremetalHostDisk = {
-  sizeGiB: number;
+  hctl: string;
+  model: string;
+  name: string;
+  rotational: boolean;
+  serialNumber: string;
+  sizeBytes: number;
+  vendor: string;
 };
 
 export const getHostOperationalStatus = (host: K8sResourceKind) =>
@@ -17,11 +23,13 @@ export const isHostOnline = (host: K8sResourceKind) => _.get(host, 'spec.online'
 export const getHostNICs = (host: K8sResourceKind) => _.get(host, 'status.hardware.nics', []);
 export const getHostStorage = (host: K8sResourceKind) => _.get(host, 'status.hardware.storage', []);
 export const getHostCPU = (host: K8sResourceKind) => _.get(host, 'status.hardware.cpu', {});
-export const getHostRAM = (host: K8sResourceKind) => _.get(host, 'status.hardware.ramGiB');
+export const getHostRAMMiB = (host: K8sResourceKind) => _.get(host, 'status.hardware.ramMebibytes');
 export const getHostErrorMessage = (host: K8sResourceKind) => _.get(host, 'status.errorMessage');
 export const getHostDescription = (host: K8sResourceKind) => _.get(host, 'spec.description', '');
 export const isHostPoweredOn = (host: K8sResourceKind) => _.get(host, 'status.poweredOn', false);
+export const getHostVendorInfo = (host: K8sResourceKind) =>
+  _.get(host, 'status.hardware.systemVendor', {});
 export const getHostTotalStorageCapacity = (host: K8sResourceKind) =>
-  _.reduce(getHostStorage(host), (sum: number, disk: BaremetalHostDisk) => sum + disk.sizeGiB, 0);
+  _.reduce(getHostStorage(host), (sum: number, disk: BaremetalHostDisk) => sum + disk.sizeBytes, 0);
 export const getHostMachine = (host: K8sResourceKind, machines: MachineKind[]) =>
   machines.find((machine: MachineKind) => getHostMachineName(host) === getName(machine));

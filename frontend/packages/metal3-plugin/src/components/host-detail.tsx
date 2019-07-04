@@ -1,25 +1,48 @@
 import * as React from 'react';
-import * as classNames from 'classnames';
+import * as _ from 'lodash';
 
 import { Row, Col } from 'patternfly-react';
 
-import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
+import {
+  referenceForModel,
+  K8sResourceKind,
+  MachineKind,
+  NodeKind,
+} from '@console/internal/module/k8s';
 import { DetailsPage } from '@console/internal/components/factory';
-import { navFactory, SectionHeading, Timestamp } from '@console/internal/components/utils';
-import { units } from '@console/internal/components/utils/units';
-import { getName } from '@console/shared';
+import {
+  navFactory,
+  SectionHeading,
+  Timestamp,
+  humanizeDecimalBytes,
+  StatusIconAndText,
+  ResourceLink,
+} from '@console/internal/components/utils';
+import { MachineModel, NodeModel } from '@console/internal/models';
+import {
+  getName,
+  getMachineNode,
+  getMachineNodeName,
+  getNamespace,
+  getMachineRole,
+} from '@console/shared';
 
 import { BaremetalHostModel } from '../models';
+import { canHostAddMachine } from '../utils/host-status';
 import MachineCell from './machine-cell';
 import {
   getHostNICs,
-  isHostOnline,
   getHostDescription,
   getHostBMCAddress,
   getHostCPU,
-  getHostRAM,
+  getHostRAMMiB,
   getHostTotalStorageCapacity,
+  getHostMachineName,
+  isHostPoweredOn,
+  getHostVendorInfo,
+  getHostMachine,
 } from '../selectors';
+import BaremetalHostStatus from './host-status';
 
 type BaremetalHostDetailPageProps = {
   namespace: string;
@@ -27,20 +50,32 @@ type BaremetalHostDetailPageProps = {
   match: any;
 };
 
-const BaremetalHostDetails: React.FC<{ obj: K8sResourceKind }> = ({ obj }) => {
-  const { creationTimestamp } = obj.metadata;
-  const nics = getHostNICs(obj);
-  const online = isHostOnline(obj);
+type BaremetalHostDetailsProps = {
+  obj: K8sResourceKind;
+  machines: MachineKind[];
+  nodes: NodeKind[];
+};
+
+const BaremetalHostDetails: React.FC<BaremetalHostDetailsProps> = ({
+  obj: host,
+  machines,
+  nodes,
+}) => {
+  const { creationTimestamp } = host.metadata;
+  const namespace = getNamespace(host);
+  const nics = getHostNICs(host);
   const ips = nics.map((nic) => nic.ip).join(', ');
-
-  const statusIconClasses = classNames('fa fa-refresh', { 'co-icon-and-text__icon': online });
-
-  const totalCapacity = units.humanize(
-    // The value from the selector is in GB
-    getHostTotalStorageCapacity(obj) * 1024 ** 3,
-    'decimalBytes',
-    true,
-  ).string;
+  const machineName = getHostMachineName(host);
+  const machine = getHostMachine(host, machines);
+  const nodeName = getMachineNodeName(machine);
+  const node = getMachineNode(machine, nodes);
+  const role = getMachineRole(machine);
+  const RAMGB = humanizeDecimalBytes(getHostRAMMiB(host) * 2 ** 20).string;
+  const totalStorageCapacity = humanizeDecimalBytes(getHostTotalStorageCapacity(host)).string;
+  const description = getHostDescription(host);
+  const hostPoweredOn = isHostPoweredOn(host) ? 'Powered On' : 'Powered Off';
+  const { count: CPUCount, model: CPUModel } = getHostCPU(host);
+  const { manufacturer, productName, serialNumber } = getHostVendorInfo(host);
 
   return (
     <div className="co-m-pane__body">
@@ -49,19 +84,40 @@ const BaremetalHostDetails: React.FC<{ obj: K8sResourceKind }> = ({ obj }) => {
         <Col sm={6} xs={12} id="name-description-column">
           <dl>
             <dt>Name</dt>
-            <dd>{getName(obj)}</dd>
-            <dt>Description</dt>
-            <dd>{getHostDescription(obj)}</dd>
+            <dd>{getName(host)}</dd>
+            {description && (
+              <>
+                <dt>Description</dt>
+                <dd>{description}</dd>
+              </>
+            )}
             <dt>Host Addresses</dt>
             <dd>
-              Management: {getHostBMCAddress(obj)}
+              Management: {getHostBMCAddress(host)}
               <br />
               NICs: {ips}
             </dd>
-            <dt>Machine</dt>
-            <dd>
-              <MachineCell host={obj} />
-            </dd>
+            {(canHostAddMachine(host) || machineName) && (
+              <>
+                <dt>Machine</dt>
+                <dd>
+                  <MachineCell host={host} />
+                </dd>
+              </>
+            )}
+            {nodeName && (
+              <>
+                <dt>Node</dt>
+                <dd>
+                  <ResourceLink
+                    kind={referenceForModel(NodeModel)}
+                    name={nodeName}
+                    namespace={namespace}
+                    title={nodeName}
+                  />
+                </dd>
+              </>
+            )}
             <dt>Created at</dt>
             <dd>
               <Timestamp timestamp={creationTimestamp} />
@@ -72,19 +128,45 @@ const BaremetalHostDetails: React.FC<{ obj: K8sResourceKind }> = ({ obj }) => {
           <dl>
             <dt>Status</dt>
             <dd>
-              <span className="co-icon-and-text">
-                <span aria-hidden="true" className={statusIconClasses} />
-                {online ? 'Running' : 'Not running'}
-              </span>
+              <BaremetalHostStatus host={host} machine={machine} node={node} />
             </dd>
-            <dt>Hardware</dt>
+            <dt>Power Status</dt>
             <dd>
-              {getHostCPU(obj).count} CPU cores
-              <br />
-              {getHostRAM(obj)} GB RAM
-              <br />
-              {totalCapacity} Disk
+              <StatusIconAndText
+                status={hostPoweredOn ? 'Running' : 'Powered Off'}
+                iconName={hostPoweredOn ? 'on-running' : 'off'}
+              />
             </dd>
+            {role && (
+              <>
+                <dt>Role</dt>
+                <dd>{role}</dd>
+              </>
+            )}
+            {(manufacturer || productName) && (
+              <>
+                <dt>Model</dt>
+                <dd>{_.filter([manufacturer, productName]).join(', ')}</dd>
+              </>
+            )}
+            {serialNumber && (
+              <>
+                <dt>Serial Number</dt>
+                <dd>{serialNumber}</dd>
+              </>
+            )}
+            {_.get(host, 'status.hardware') && (
+              <>
+                <dt>Hardware</dt>
+                <dd>
+                  {CPUCount}x {CPUModel} CPU
+                  <br />
+                  {RAMGB} RAM
+                  <br />
+                  {totalStorageCapacity} Disk
+                </dd>
+              </>
+            )}
           </dl>
         </Col>
       </Row>
@@ -92,10 +174,25 @@ const BaremetalHostDetails: React.FC<{ obj: K8sResourceKind }> = ({ obj }) => {
   );
 };
 
-export const BaremetalHostDetailPage: React.FC<BaremetalHostDetailPageProps> = (props) => (
-  <DetailsPage
-    {...props}
-    pagesFor={() => [navFactory.details(BaremetalHostDetails), navFactory.editYaml()]}
-    kind={referenceForModel(BaremetalHostModel)}
-  />
-);
+export const BaremetalHostDetailPage: React.FC<BaremetalHostDetailPageProps> = (props) => {
+  const machinesResource = {
+    kind: referenceForModel(MachineModel),
+    namespaced: true,
+    isList: true,
+    prop: 'machines',
+  };
+  const nodesResource = {
+    kind: NodeModel.kind,
+    namespaced: false,
+    isList: true,
+    prop: 'nodes',
+  };
+  return (
+    <DetailsPage
+      {...props}
+      pagesFor={() => [navFactory.details(BaremetalHostDetails), navFactory.editYaml()]}
+      kind={referenceForModel(BaremetalHostModel)}
+      resources={[machinesResource, nodesResource]}
+    />
+  );
+};
