@@ -8,7 +8,6 @@ import {
   getVmiIpAddresses,
   getWorkloadProfile,
   getVmTemplate,
-  getTemplateDisplayName,
   getNodeName,
   getFlavor,
   VmStatuses,
@@ -23,10 +22,10 @@ import { getName, getNamespace, DASH } from '@console/shared';
 import { PodModel } from '@console/internal/models';
 
 import { VMKind, VMIKind } from '../../types';
+import { VMTemplateLink } from '../vm-templates/vm-template';
 
 export const VMResourceSummary = ({ vm }: VMResourceSummaryProps) => {
   const template = getVmTemplate(vm);
-  const templateLink = template && getTemplateDisplayName(template); // TODO(mlibra): link to a template detail, once implemented
 
   return (
     <ResourceSummary resource={vm}>
@@ -35,7 +34,7 @@ export const VMResourceSummary = ({ vm }: VMResourceSummaryProps) => {
       <dt>Operating System</dt>
       <dd>{getOperatingSystemName(vm) || getOperatingSystem(vm) || DASH}</dd>
       <dt>Template</dt>
-      <dd>{templateLink || DASH}</dd>
+      <dd>{template ? <VMTemplateLink template={template} /> : DASH}</dd>
     </ResourceSummary>
   );
 };

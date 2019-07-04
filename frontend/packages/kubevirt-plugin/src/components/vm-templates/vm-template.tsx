@@ -81,23 +81,19 @@ const VMTemplateTableHeader = () =>
 
 VMTemplateTableHeader.displayName = 'VMTemplateTableHeader';
 
-const VMTemplateTableRow = ({ obj: template, index, key, style }: VMTemplateTableRowProps) => {
+const VMTemplateTableRow: React.FC<VMTemplateTableRowProps> = ({
+  obj: template,
+  index,
+  key,
+  style,
+}) => {
   const dimensify = dimensifyRow(tableColumnClasses);
   const os = getTemplateOperatingSystems([template])[0];
-  const name = getName(template);
-  const namespace = getNamespace(template);
 
   return (
     <TableRow id={template.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={dimensify()}>
-        <ResourceIcon kind={kind} />
-        <Link
-          to={`/k8s/ns/${namespace}/vmtemplates/${name}`}
-          title={getUid(template)}
-          className="co-resource-item__resource-name"
-        >
-          {name}
-        </Link>
+        <VMTemplateLink template={template} />
       </TableData>
       <TableData className={dimensify()}>
         <ResourceLink
@@ -122,7 +118,7 @@ const VMTemplateTableRow = ({ obj: template, index, key, style }: VMTemplateTabl
 };
 VMTemplateTableRow.displayName = 'VmTemplateTableRow';
 
-const VirtualMachineTemplates = (props: React.ComponentProps<typeof Table>) => {
+const VirtualMachineTemplates: React.FC<React.ComponentProps<typeof Table>> = (props) => {
   return (
     <Table
       {...props}
@@ -140,9 +136,9 @@ const getCreateProps = (namespace: string) => ({
   createLink: () => `/k8s/ns/${namespace || 'default'}/vmtemplates/~new/`,
 });
 
-const VirtualMachineTemplatesPage = (
-  props: VirtualMachineTemplatesPageProps & React.ComponentProps<typeof ListPage>,
-) => (
+const VirtualMachineTemplatesPage: React.FC<
+  VirtualMachineTemplatesPageProps & React.ComponentProps<typeof ListPage>
+> = (props) => (
   <ListPage
     {...props}
     title={labelPlural}
@@ -165,4 +161,26 @@ type VirtualMachineTemplatesPageProps = {
   match: match<{ ns?: string }>;
 };
 
-export { VirtualMachineTemplatesPage };
+const VMTemplateLink: React.FC<VMTemplateLinkProps> = ({ template }) => {
+  const name = getName(template);
+  const namespace = getNamespace(template);
+
+  return (
+    <>
+      <ResourceIcon kind={kind} />
+      <Link
+        to={`/k8s/ns/${namespace}/vmtemplates/${name}`}
+        title={getUid(template)}
+        className="co-resource-item__resource-name"
+      >
+        {name}
+      </Link>
+    </>
+  );
+};
+
+type VMTemplateLinkProps = {
+  template: TemplateKind;
+};
+
+export { VMTemplateLink, VirtualMachineTemplatesPage };

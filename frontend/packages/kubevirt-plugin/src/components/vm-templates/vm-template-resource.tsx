@@ -6,7 +6,6 @@ import {
   getOperatingSystem,
   getWorkloadProfile,
   getVmTemplate,
-  getTemplateDisplayName,
   getFlavor,
   BootOrder,
   getBootableDevicesInOrder,
@@ -16,12 +15,12 @@ import {
 import { ResourceSummary } from '@console/internal/components/utils';
 import { DASH } from '@console/shared';
 import { TemplateKind, K8sResourceKind } from '@console/internal/module/k8s';
+import { VMTemplateLink } from './vm-template';
 
 export const VMTemplateResourceSummary: React.FC<VMTemplateResourceSummaryProps> = ({
   template,
 }) => {
   const base = getVmTemplate(template);
-  const baseLink = base && getTemplateDisplayName(base); // TODO(mlibra): link to a template detail, once implemented
 
   return (
     <ResourceSummary resource={template}>
@@ -32,7 +31,7 @@ export const VMTemplateResourceSummary: React.FC<VMTemplateResourceSummaryProps>
       <dt>Workload Profile</dt>
       <dd>{getWorkloadProfile(template) || DASH}</dd>
       <dt>Base Template</dt>
-      <dd>{baseLink || DASH}</dd>
+      <dd>{base ? <VMTemplateLink template={base} /> : DASH}</dd>
     </ResourceSummary>
   );
 };
