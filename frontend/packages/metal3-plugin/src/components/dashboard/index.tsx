@@ -5,6 +5,7 @@ import { withDashboardResources } from '@console/internal/components/dashboards-
 import { HealthCard } from './health-card';
 import { UtilizationCard } from './utilization-card';
 import { EventsCard } from './events-card';
+import { InventoryCard } from './inventory-card';
 
 export const HostDashboard: React.FC<{ obj: K8sResourceKind }> = ({ obj }) => {
   const ConnectedHealthCard = withDashboardResources(HealthCard, {
@@ -19,8 +20,12 @@ export const HostDashboard: React.FC<{ obj: K8sResourceKind }> = ({ obj }) => {
     obj,
   });
 
+  const ConnectedInventoryCard = withDashboardResources(InventoryCard, {
+    obj,
+  });
+
   const mainCards = [{ Card: ConnectedHealthCard }, { Card: ConnectedUtilizationCard }];
-  const leftCards = [];
+  const leftCards = [{ Card: ConnectedInventoryCard }];
   const rightCards = [{ Card: ConnectedEventsCard }];
 
   return (
