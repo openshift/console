@@ -13,16 +13,7 @@ import { TemplateModel } from '@console/internal/models';
 import { BUS_VIRTIO } from '../../constants/vm';
 import { deleteDeviceModal, DeviceType } from '../modals/delete-device-modal';
 import { VMLikeEntityKind } from '../../types';
-import {
-  getDiskBus,
-  getVolumeDataVolumeName,
-  getVolumePersistentVolumeClaimName,
-} from '../../selectors/vm';
-import {
-  getDataVolumeStorageClassName,
-  getDataVolumeStorageSize,
-} from '../../selectors/dv/selectors';
-import { getPvcStorageClassName, getPvcStorageSize } from '../../selectors/pvc/selectors';
+import { getDiskBus } from '../../selectors/vm';
 import { VMDiskRowProps } from './types';
 import { VirtualMachineModel } from '../../models';
 import { isVm } from '../../selectors/selectors';
@@ -48,49 +39,14 @@ const getActions = (vmLikeEntity: VMLikeEntityKind, disk) => {
 };
 
 export const DiskRow: React.FC<VMDiskRowProps> = ({
-  obj: { disk },
-  customData: {
-    vmLikeEntity,
-    pvcs,
-    datavolumes,
-    datavolumeLookup,
-    pvcLookup,
-    volumeLookup,
-    datavolumeTemplatesLookup,
-  },
+  obj: { disk, size, storageClass },
+  customData: { vmLikeEntity },
   index,
   style,
 }) => {
   const diskName = disk.name;
-  const volume = volumeLookup[diskName];
-
-  const pvcName = getVolumePersistentVolumeClaimName(volume);
-  const dataVolumeName = getVolumeDataVolumeName(volume);
-
-  let sizeColumn;
-  let storageColumn;
-
-  if (pvcName) {
-    const pvc = pvcLookup[pvcName];
-    if (pvc) {
-      sizeColumn = getPvcStorageSize(pvc);
-      storageColumn = getPvcStorageClassName(pvc);
-    } else if (!pvcs.loaded) {
-      sizeColumn = <LoadingInline />;
-      storageColumn = <LoadingInline />;
-    }
-  } else if (dataVolumeName) {
-    const dataVolumeTemplate =
-      datavolumeTemplatesLookup[dataVolumeName] || datavolumeLookup[dataVolumeName];
-
-    if (dataVolumeTemplate) {
-      sizeColumn = getDataVolumeStorageSize(dataVolumeTemplate);
-      storageColumn = getDataVolumeStorageClassName(dataVolumeTemplate);
-    } else if (!datavolumes.loaded) {
-      sizeColumn = <LoadingInline />;
-      storageColumn = <LoadingInline />;
-    }
-  }
+  const sizeColumn = size === undefined ? <LoadingInline /> : size;
+  const storageColumn = storageClass === undefined ? <LoadingInline /> : storageClass;
 
   return (
     <TableRow id={diskName} index={index} trKey={diskName} style={style}>

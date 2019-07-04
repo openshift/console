@@ -1,6 +1,4 @@
-import { FirehoseResult } from '@console/internal/components/utils';
-import { K8sResourceKind } from '@console/internal/module/k8s';
-import { EntityMap, VMLikeEntityKind, VMKind, K8sEntityMap } from '../../types';
+import { EntityMap, VMLikeEntityKind, VMKind } from '../../types';
 
 export enum StorageType {
   STORAGE_TYPE_VM = 'storage-type-vm',
@@ -9,6 +7,8 @@ export enum StorageType {
 
 export type StorageBundle = {
   name: string;
+  size: string;
+  storageClass: string;
   storageType: StorageType;
   disk: any;
 };
@@ -20,13 +20,7 @@ export type VMDiskRowProps = {
   customData: {
     vmLikeEntity: VMLikeEntityKind;
     vm: VMKind;
-    pvcs: FirehoseResult<K8sResourceKind[]>;
-    pvcLookup: K8sEntityMap<K8sResourceKind>;
-    datavolumes: FirehoseResult<K8sResourceKind[]>;
-    datavolumeLookup: K8sEntityMap<K8sResourceKind>;
     diskLookup: EntityMap<any>;
-    volumeLookup: EntityMap<any>;
-    datavolumeTemplatesLookup: K8sEntityMap<K8sResourceKind>;
     onCreateRowDismiss: () => void;
     onCreateRowError: (error: string) => void;
   };
