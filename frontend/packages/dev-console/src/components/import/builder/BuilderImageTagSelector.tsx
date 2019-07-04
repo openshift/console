@@ -5,9 +5,9 @@ import { ResourceName } from '@console/internal/components/utils';
 import { getPorts } from '@console/internal/components/source-to-image';
 import { K8sResourceKind, k8sGet } from '@console/internal/module/k8s';
 import { ImageStreamTagModel } from '@console/internal/models';
-import ImageStreamInfo from '../../source-to-image/ImageStreamInfo';
 import { BuilderImage, getTagDataWithDisplayName } from '../../../utils/imagestream-utils';
 import { DropdownField } from '../../formik-fields';
+import ImageStreamInfo from './ImageStreamInfo';
 
 export interface BuilderImageTagSelectorProps {
   selectedBuilderImage: BuilderImage;
@@ -18,7 +18,7 @@ const BuilderImageTagSelector: React.FC<BuilderImageTagSelectorProps> = ({
   selectedBuilderImage,
   selectedImageTag,
 }) => {
-  const { setFieldValue } = useFormikContext<FormikValues>();
+  const { setFieldValue, setFieldError } = useFormikContext<FormikValues>();
   const {
     name: imageName,
     tags: imageTags,
@@ -39,14 +39,14 @@ const BuilderImageTagSelector: React.FC<BuilderImageTagSelectorProps> = ({
   );
 
   React.useEffect(() => {
-    // eslint-disable-next-line promise/catch-or-return
-    k8sGet(ImageStreamTagModel, `${imageName}:${selectedImageTag}`, imageStreamNamespace).then(
-      (imageStreamTag: K8sResourceKind) => {
+    setFieldValue('image.tagObj', imageTag);
+    k8sGet(ImageStreamTagModel, `${imageName}:${selectedImageTag}`, imageStreamNamespace)
+      .then((imageStreamTag: K8sResourceKind) => {
         const ports = getPorts(imageStreamTag);
         setFieldValue('image.ports', ports);
-      },
-    );
-  }, [imageName, imageStreamNamespace, selectedImageTag, setFieldValue]);
+      })
+      .catch((err) => setFieldError('image.ports', err.message));
+  }, [selectedImageTag, setFieldValue, setFieldError, imageName, imageStreamNamespace, imageTag]);
 
   return (
     <React.Fragment>

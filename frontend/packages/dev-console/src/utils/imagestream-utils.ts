@@ -33,9 +33,9 @@ export interface NormalizedBuilderImages {
   [builderImageName: string]: BuilderImage;
 }
 
-export const getSampleRepo = (tag) => _.get(tag, 'annotations.sampleRepo');
-export const getSampleRef = (tag) => _.get(tag, 'annotations.sampleRef');
-export const getSampleContextDir = (tag) => _.get(tag, 'annotations.sampleContextDir');
+export const getSampleRepo = (tag) => _.get(tag, 'annotations.sampleRepo', '');
+export const getSampleRef = (tag) => _.get(tag, 'annotations.sampleRef', '');
+export const getSampleContextDir = (tag) => _.get(tag, 'annotations.sampleContextDir', '');
 
 // Transform image ports to k8s structure.
 // `{ '3306/tcp': {} }` -> `{ containerPort: 3306, protocol: 'TCP' }`
@@ -85,7 +85,8 @@ export const prettifyName = (name: string) => {
 export const normalizeBuilderImages = (
   imageStreams: K8sResourceKind[],
 ): NormalizedBuilderImages => {
-  const builderImageStreams = imageStreams.filter((imageStream) => isBuilder(imageStream));
+  const data = Array.isArray(imageStreams) ? imageStreams : [imageStreams];
+  const builderImageStreams = data.filter((imageStream) => isBuilder(imageStream));
 
   return builderImageStreams.reduce((builderImages: NormalizedBuilderImages, imageStream) => {
     const tags = getBuilderTagsSortedByVersion(imageStream);

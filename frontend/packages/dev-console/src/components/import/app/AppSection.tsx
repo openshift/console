@@ -10,7 +10,7 @@ export interface AppSectionProps {
 
 const AppSection: React.FC<AppSectionProps> = ({ project }) => {
   return (
-    <FormSection title="App" divider>
+    <FormSection title="General" divider>
       <NSDropdownField
         name="project.name"
         label="Project"

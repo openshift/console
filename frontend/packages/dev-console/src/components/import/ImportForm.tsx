@@ -1,19 +1,34 @@
 import * as React from 'react';
+import * as plugins from '@console/internal/plugins';
 import { Formik } from 'formik';
 import { history } from '@console/internal/components/utils';
 import { K8sResourceKind } from '@console/internal/module/k8s';
+import { getActivePerspective } from '@console/internal/reducers/ui';
+import { RootState } from '@console/internal/redux';
+import { connect } from 'react-redux';
 import { GitImportFormData, FirehoseList } from './import-types';
 import { NormalizedBuilderImages, normalizeBuilderImages } from '../../utils/imagestream-utils';
 import { createResources } from './import-submit-utils';
 import { validationSchema } from './import-validation-utils';
 import GitImportForm from './GitImportForm';
+import SourceToImageForm from './SourceToImageForm';
 
-export interface GitImportProps {
+export interface ImportFormProps {
   namespace: string;
+  isS2I: boolean;
   imageStreams?: FirehoseList;
 }
 
-const GitImport: React.FC<GitImportProps> = ({ namespace, imageStreams }) => {
+export interface StateProps {
+  perspective: string;
+}
+
+const ImportForm: React.FC<ImportFormProps & StateProps> = ({
+  namespace,
+  imageStreams,
+  isS2I,
+  perspective,
+}) => {
   const initialValues: GitImportFormData = {
     name: '',
     project: {
@@ -35,6 +50,7 @@ const GitImport: React.FC<GitImportProps> = ({ namespace, imageStreams }) => {
       selected: '',
       recommended: '',
       tag: '',
+      tagObj: {},
       ports: [],
     },
     route: {
@@ -70,9 +86,16 @@ const GitImport: React.FC<GitImportProps> = ({ namespace, imageStreams }) => {
     },
     labels: {},
   };
-
   const builderImages: NormalizedBuilderImages =
     imageStreams && imageStreams.loaded && normalizeBuilderImages(imageStreams.data);
+
+  const handleRedirect = (project: string) => {
+    const perspectiveData = plugins.registry
+      .getPerspectives()
+      .find((item) => item.properties.id === perspective);
+    const redirectURL = perspectiveData.properties.getImportRedirectURL(project);
+    history.push(redirectURL);
+  };
 
   const handleSubmit = (values, actions) => {
     const imageStream = builderImages[values.image.selected].obj;
@@ -89,12 +112,19 @@ const GitImport: React.FC<GitImportProps> = ({ namespace, imageStreams }) => {
       })
       .then(() => {
         actions.setSubmitting(false);
-        history.push(`/topology/ns/${projectName}`);
+        handleRedirect(projectName);
       })
       .catch((err) => {
         actions.setSubmitting(false);
         actions.setStatus({ submitError: err.message });
       });
+  };
+
+  const renderForm = (props) => {
+    if (isS2I) {
+      return <SourceToImageForm {...props} builderImages={builderImages} />;
+    }
+    return <GitImportForm {...props} builderImages={builderImages} />;
   };
 
   return (
@@ -103,9 +133,15 @@ const GitImport: React.FC<GitImportProps> = ({ namespace, imageStreams }) => {
       onSubmit={handleSubmit}
       onReset={history.goBack}
       validationSchema={validationSchema}
-      render={(props) => <GitImportForm {...props} builderImages={builderImages} />}
+      render={renderForm}
     />
   );
 };
 
-export default GitImport;
+const mapStateToProps = (state: RootState): StateProps => {
+  return {
+    perspective: getActivePerspective(state),
+  };
+};
+
+export default connect(mapStateToProps)(ImportForm);

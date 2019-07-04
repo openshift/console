@@ -159,6 +159,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       name: 'Developer',
       icon: <CodeIcon />,
       landingPageURL: '/topology',
+      getImportRedirectURL: (project) => `/topology/ns/${project}`,
     },
   },
   {
@@ -194,6 +195,17 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       exact: true,
       path: ['/import/all-namespaces', '/import/ns/:ns'],
+      loader: async () =>
+        (await import(
+          './components/import/ImportPage' /* webpackChunkName: "dev-console-import" */
+        )).default,
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      exact: true,
+      path: ['/catalog/source-to-image'],
       loader: async () =>
         (await import(
           './components/import/ImportPage' /* webpackChunkName: "dev-console-import" */

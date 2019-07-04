@@ -13,6 +13,8 @@ namespace ExtensionProperties {
     landingPageURL: string;
     /** Whether the perspective is the default. There can only be one default. */
     default?: boolean;
+    /** The function to get redirect URL for import flow. */
+    getImportRedirectURL: (project: string) => string;
   }
 }
 

@@ -22,23 +22,30 @@ const BuilderImageSelector: React.FC<BuilderImageSelectorProps> = ({
   builderImages,
 }) => {
   const [selected, { error: selectedError, touched: selectedTouched }] = useField('image.selected');
-  const [recommended] = useField('image.recommended');
-  const { values, setValues, setFieldTouched, validateForm } = useFormikContext<FormikValues>();
+  const { values, setFieldValue, setFieldTouched, validateForm } = useFormikContext<FormikValues>();
+  const builderImageCount = _.keys(builderImages).length;
 
-  const handleImageChange = (image: string) => {
-    const newValues = {
-      ...values,
-      image: {
-        ...values.image,
-        selected: image,
-        tag: builderImages[image].recentTag.name,
-      },
-    };
-    setValues(newValues);
-    setFieldTouched('image.selected', true);
-    setFieldTouched('image.tag', true);
-    validateForm(newValues);
-  };
+  const handleImageChange = React.useCallback(
+    (image: string) => {
+      setFieldValue('image.selected', image);
+      setFieldValue('image.tag', builderImages[image].recentTag.name);
+      setFieldTouched('image.selected', true);
+      setFieldTouched('image.tag', true);
+      validateForm();
+    },
+    [setFieldValue, setFieldTouched, validateForm, builderImages],
+  );
+
+  React.useEffect(() => {
+    if (builderImageCount === 1) {
+      const image = _.find(builderImages);
+      handleImageChange(image.name);
+    }
+  }, [builderImageCount, builderImages, handleImageChange]);
+
+  if (builderImageCount === 1) {
+    return null;
+  }
 
   return (
     <FormGroup
@@ -47,7 +54,7 @@ const BuilderImageSelector: React.FC<BuilderImageSelectorProps> = ({
     >
       <ControlLabel className="co-required">Builder Image</ControlLabel>
       {loadingRecommendedImage && <LoadingInline />}
-      {recommended.value && (
+      {values.image.recommended && (
         <React.Fragment>
           <CheckCircleIcon className="odc-builder-image-selector__success-icon" />
           <HelpBlock>
@@ -65,7 +72,7 @@ const BuilderImageSelector: React.FC<BuilderImageSelectorProps> = ({
               key={image.name}
               image={image}
               selected={selected.value === image.name}
-              recommended={recommended.value === image.name}
+              recommended={values.image.recommended === image.name}
               onChange={handleImageChange}
             />
           ))}
