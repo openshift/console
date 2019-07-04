@@ -1,34 +1,39 @@
 import * as React from 'react';
-import { VictoryStack, VictoryBar } from 'victory';
-import { Tooltip } from '@console/internal/components/utils/tooltip';
-import {
-  getTaskStatus,
-  PipelineRun,
-  runStatus,
-  getRunStatusColor,
-} from '../../utils/pipeline-augment';
-import TaskStatusToolTip from './TaskStatusTooltip';
+import { Firehose } from '@console/internal/components/utils';
+import { PipelineRun, Pipeline } from '../../utils/pipeline-augment';
+import { PipelineModel } from '../../models';
+import { PipelineBars } from './PipelineBars';
 
-interface PipelineTaskStatusProps {
+export interface PipelineTaskStatusProps {
   pipelinerun: PipelineRun;
+  pipeline?: Pipeline;
 }
 
-export const PipelineTaskStatus: React.FC<PipelineTaskStatusProps> = ({ pipelinerun }) => {
-  const taskStatus = getTaskStatus(pipelinerun);
-  return (
-    <Tooltip content={<TaskStatusToolTip taskStatus={taskStatus} />}>
-      <VictoryStack horizontal height={32}>
-        {Object.keys(runStatus).map((status) => {
-          return taskStatus[runStatus[status]] && taskStatus[runStatus[status]] > 0 ? (
-            <VictoryBar
-              key={status}
-              barWidth={32}
-              data={[{ x: 2, y: taskStatus[runStatus[status]] }]}
-              style={{ data: { fill: getRunStatusColor(runStatus[status]).pftoken.value } }}
-            />
-          ) : null;
-        })}
-      </VictoryStack>
-    </Tooltip>
+export const PipelineTaskStatus: React.FC<PipelineTaskStatusProps> = ({
+  pipelinerun,
+  pipeline,
+}) => {
+  return !pipeline &&
+    pipelinerun &&
+    pipelinerun.spec &&
+    pipelinerun.spec.pipelineRef &&
+    pipelinerun.spec.pipelineRef.name &&
+    pipelinerun.metadata &&
+    pipelinerun.metadata.namespace ? (
+    <Firehose
+      resources={[
+        {
+          name: pipelinerun.spec.pipelineRef.name,
+          namespace: pipelinerun.metadata.namespace,
+          kind: PipelineModel.kind,
+          isList: false,
+          prop: 'pipeline',
+        },
+      ]}
+    >
+      <PipelineBars pipelinerun={pipelinerun} />
+    </Firehose>
+  ) : (
+    <PipelineBars pipelinerun={pipelinerun} pipeline={{ data: pipeline }} />
   );
 };

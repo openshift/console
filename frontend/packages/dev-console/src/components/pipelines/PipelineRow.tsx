@@ -56,7 +56,8 @@ const PipelineRow: React.FC<PipelineRowProps> = ({ obj, index, key, style }) => 
         <StatusIconAndText status={pipelineFilterReducer(obj)} />
       </TableData>
       <TableData className={tableColumnClasses[3]}>
-        {(obj.latestRun && <PipelineTaskStatus pipelinerun={obj.latestRun} />) || '-'}
+        {(obj.latestRun && <PipelineTaskStatus pipeline={obj} pipelinerun={obj.latestRun} />) ||
+          '-'}
       </TableData>
       <TableData className={tableColumnClasses[4]}>
         {(obj.latestRun && obj.latestRun.status && obj.latestRun.status.completionTime && (
