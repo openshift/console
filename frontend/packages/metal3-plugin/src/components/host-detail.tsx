@@ -45,6 +45,7 @@ import {
 } from '../selectors';
 import BaremetalHostStatus from './host-status';
 import BaremetalHostNICList from './host-nics';
+import BaremetalHostDiskList from './host-disks';
 
 type BaremetalHostDetailPageProps = {
   namespace: string;
@@ -194,6 +195,11 @@ export const BaremetalHostDetailPage: React.FC<BaremetalHostDetailPageProps> = (
     name: 'Network Interfaces',
     component: BaremetalHostNICList,
   };
+  const disksPage = {
+    href: 'disks',
+    name: 'Disks',
+    component: BaremetalHostDiskList,
+  };
   return (
     <DetailsPage
       {...props}
@@ -201,6 +207,7 @@ export const BaremetalHostDetailPage: React.FC<BaremetalHostDetailPageProps> = (
         navFactory.details(BaremetalHostDetails),
         navFactory.editYaml(),
         nicsPage,
+        disksPage,
         navFactory.events(ResourceEventStream),
       ]}
       kind={referenceForModel(BaremetalHostModel)}
