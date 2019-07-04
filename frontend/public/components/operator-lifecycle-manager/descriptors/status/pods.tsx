@@ -1,23 +1,51 @@
+import * as _ from 'lodash';
 import * as React from 'react';
+import { ChartDonut } from '@patternfly/react-charts';
+import {
+  /* eslint-disable camelcase */
+  chart_color_blue_100 as blue100,
+  chart_color_blue_200 as blue200,
+  chart_color_blue_300 as blue300,
+  /* eslint-enable camelcase */
+} from '@patternfly/react-tokens';
 
-import { Donut } from '../../../graphs';
 import { Descriptor } from '../types';
+import { useRefWidth } from '../../../utils';
 
-export const PodStatusChart: React.SFC<PodStatusChartProps> = (props) => {
-  const {statusDescriptor, fetcher} = props;
-  const donutFetcher = () => {
-    const fetched = fetcher();
-    const values = Object.keys(fetched).map((key) => fetched[key].length);
-    const labels = Object.keys(fetched);
-    return Promise.resolve([values, labels]);
-  };
+const colorScale = [
+  blue300.value,
+  blue200.value,
+  blue100.value,
+];
 
-  return <Donut fetch={donutFetcher} kind={statusDescriptor.path} title={statusDescriptor.displayName} />;
+export const PodStatusChart: React.SFC<PodStatusChartProps> = ({statuses, statusDescriptor}) => {
+  const [ref, width] = useRefWidth();
+  const data = _.map(statuses, (podList, status) => {
+    const x = status;
+    const y = podList.length;
+    return {
+      label: `${y} ${x}`,
+      x,
+      y,
+    };
+  });
+  const total = data.reduce((sum, dataPoint) => sum + dataPoint.y, 0);
+
+  return <div ref={ref} className="graph-wrapper--gauge">
+    <ChartDonut
+      colorScale={colorScale}
+      data={data}
+      height={width}
+      subTitle={statusDescriptor.path}
+      title={total.toString()}
+      width={width}
+    />
+  </div>;
 };
 
 export type PodStatusChartProps = {
   statusDescriptor: Descriptor;
-  fetcher: () => any;
+  statuses: { [key: string]: string[]};
 };
 
 PodStatusChart.displayName = 'PodStatusChart';

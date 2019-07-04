@@ -100,7 +100,7 @@ export class Status extends React.Component {
   render() {
     const title = this.props.title;
     const { short, long, status } = this.state;
-    let color = colors.gray;
+    let color = colors.gray; // TODO colors.gray is undefined
     if (status === 'OK') {
       color = colors.ok;
     } else if (status === 'ERROR') {

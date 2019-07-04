@@ -25,7 +25,7 @@ const Default: React.SFC<StatusCapabilityProps> = ({value}) => {
 const PodStatuses: React.SFC<StatusCapabilityProps> = (props) => {
   return (!_.isObject(props.value) || _.some(props.value, v => !_.isArray(v))) && <Invalid {...props} />
     || _.every(props.value, v => _.isArray(v) && v.length === 0) && <span className="text-muted">No members</span>
-    || <PodStatusChart fetcher={() => props.value} statusDescriptor={props.descriptor} />;
+    || <PodStatusChart statuses={props.value} statusDescriptor={props.descriptor} />;
 };
 
 const StatusConditions: React.SFC<StatusCapabilityProps> = (props) => {
@@ -78,9 +78,10 @@ export const StatusDescriptor: React.SFC<DescriptorProps> = (props) => {
       </Tooltip>
     </div>
     <dd className="olm-descriptor__value">
-      {descriptor.displayName === 'Status' ?
-        (<StatusIconAndText status={value} iconName={value === 'Running' ? 'ok' : undefined} />) :
-        (<Capability descriptor={descriptor} capability={capability} value={value} namespace={namespace} />)
+      {
+        descriptor.displayName === 'Status'
+          ? (<StatusIconAndText status={value} iconName={value === 'Running' ? 'ok' : undefined} />)
+          : (<Capability descriptor={descriptor} capability={capability} value={value} namespace={namespace} />)
       }
     </dd>
   </dl>;
