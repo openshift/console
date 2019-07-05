@@ -3,6 +3,7 @@ import * as fuzzy from 'fuzzysearch';
 import * as _ from 'lodash-es';
 import { Switch } from '@patternfly/react-core';
 import * as React from 'react';
+import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
 
 import * as UIActions from '../../actions/ui';
@@ -109,11 +110,9 @@ const MetricsDropdown = ({onChange, onLoad}) => {
 
   return <Dropdown
     autocompleteFilter={fuzzy}
-    buttonClassName="query-browser__metrics-dropdown-button"
-    className="query-browser__metrics-dropdown"
     id="metrics-dropdown"
     items={items}
-    menuClassName="query-browser__metrics-dropdown-menu"
+    menuClassName="query-browser__metrics-dropdown-menu query-browser__metrics-dropdown-menu--insert"
     onChange={onChange}
     title={title}
   />;
@@ -354,6 +353,9 @@ export const QueryBrowserPage = withFallback(() => {
   let colorOffset = 0;
 
   return <React.Fragment>
+    <Helmet>
+      <title>Metrics</title>
+    </Helmet>
     <div className="co-m-nav-title">
       <h1 className="co-m-pane__heading">
         <span>Metrics<HeaderPrometheusLink queries={_.map(queries, 'query')} /></span>

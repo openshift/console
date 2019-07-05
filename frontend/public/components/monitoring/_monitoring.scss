@@ -44,14 +44,18 @@
   min-width: 20px;
 }
 
-.query-browser__metrics-dropdown-button {
-  width: 200px;
-}
-
 .query-browser__metrics-dropdown-menu {
-  display: block;
   max-height: 25vh;
   overflow: scroll;
+  width: 100%;
+
+  &--insert {
+    @media (min-width: $screen-sm-min) {
+      max-width: 55vw;
+    }
+    max-width: 85vw;
+    width: 550px;
+  }
 }
 
 .query-browser-metric__labels {
