@@ -184,6 +184,9 @@ const QueryInput: React.FC<QueryInputProps> = ({metrics = [], onBlur, onSubmit, 
   const functionOptions = token.length < 2 ? [] : prometheusFunctions.filter(a => fuzzy(token, a));
   const metricOptions = token.length < 2 ? [] : metrics.filter(a => fuzzy(token, a));
 
+  // Set the default textarea height to the number of lines in the query text
+  const rows = _.clamp((value.match(/\n/g) || []).length + 1, 2, 10);
+
   return <div className="query-browser__query query-browser__inline-control pf-c-dropdown">
     <textarea
       autoFocus
@@ -193,6 +196,7 @@ const QueryInput: React.FC<QueryInputProps> = ({metrics = [], onBlur, onSubmit, 
       onKeyDown={onKeyDown}
       placeholder="Expression (press Shift+Enter for newlines)"
       ref={inputRef}
+      rows={rows}
       value={value}
     />
     {(!_.isEmpty(functionOptions) || !_.isEmpty(metricOptions)) && (
