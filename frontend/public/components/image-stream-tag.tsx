@@ -132,13 +132,14 @@ const parseName = (nameAndTag: string): string => {
 };
 
 const getImageStreamNameAndTag = (imageStreamTag: K8sResourceKind) => {
-  const name: string = _.get(imageStreamTag, 'metadata.name') || '';
-  const [ imageStreamName, tag ] = name.split(':');
+  const imageStreamTagName: string = _.get(imageStreamTag, 'metadata.name') || '';
+  const [ imageStreamName, tag ] = imageStreamTagName.split(':');
   return { imageStreamName, tag };
 };
 
 const ImageStreamTagHistory: React.FC<ImageStreamTagHistoryProps> = ({ obj: imageStreamTag, imageStream }) => {
-  const imageStreamStatusTags = _.filter(_.get(imageStream, 'status.tags'), i => i.tag === getImageStreamNameAndTag(imageStreamTag).tag);
+  const { tag } = getImageStreamNameAndTag(imageStreamTag);
+  const imageStreamStatusTags = _.filter(_.get(imageStream, 'status.tags'), i => i.tag === tag);
   return <ImageStreamTimeline imageStreamTags={imageStreamStatusTags} imageStreamName={imageStream.metadata.name} imageStreamNamespace={imageStream.metadata.namespace} />;
 };
 ImageStreamTagHistory.displayName = 'ImageStreamTagHistory';
@@ -148,7 +149,7 @@ export const ImageStreamTagsDetailsPage: React.SFC<ImageStreamTagsDetailsPagePro
   <DetailsPage
     {...props}
     breadcrumbsFor={obj => {
-      const imageStreamName = getImageStreamNameAndTag(obj).tag;
+      const { imageStreamName } = getImageStreamNameAndTag(obj);
       return [{name: 'Image Streams', path: `/k8s/ns/${props.match.params.ns}/imagestreams`,
       }, {
         name: imageStreamName,
