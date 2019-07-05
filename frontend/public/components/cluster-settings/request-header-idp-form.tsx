@@ -46,7 +46,7 @@ export class AddRequestHeaderPage extends PromiseComponent<{}, AddRequestHeaderP
         generateName: 'request-header-ca-',
         namespace: 'openshift-config',
       },
-      stringData: {
+      data: {
         'ca.crt': caFileContent,
       },
     };

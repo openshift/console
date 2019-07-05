@@ -62,7 +62,7 @@ export class AddKeystonePage extends PromiseComponent<{}, AddKeystonePageState> 
         generateName: 'keystone-ca-',
         namespace: 'openshift-config',
       },
-      stringData: {
+      data: {
         'ca.crt': caFileContent,
       },
     };

@@ -67,7 +67,7 @@ export class AddOpenIDPage extends PromiseComponent<{}, AddOpenIDIDPPageState> {
         generateName: 'openid-ca-',
         namespace: 'openshift-config',
       },
-      stringData: {
+      data: {
         'ca.crt': caFileContent,
       },
     };

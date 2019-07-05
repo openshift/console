@@ -61,7 +61,7 @@ export class AddGitHubPage extends PromiseComponent<{}, AddGitHubPageState> {
         generateName: 'github-ca-',
         namespace: 'openshift-config',
       },
-      stringData: {
+      data: {
         'ca.crt': caFileContent,
       },
     };
