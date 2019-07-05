@@ -20,8 +20,8 @@ export class AddGitHubPage extends PromiseComponent<{}, AddGitHubPageState> {
     clientID: '',
     clientSecret: '',
     hostname: '',
-    organization: [],
-    team: [],
+    organizations: [],
+    teams: [],
     caFileContent: '',
     inProgress: false,
     errorMessage: '',
@@ -70,7 +70,7 @@ export class AddGitHubPage extends PromiseComponent<{}, AddGitHubPageState> {
   }
 
   addGitHubIDP(oauth: OAuthKind, clientSecretName: string, caName: string): Promise<K8sResourceKind> {
-    const { name, clientID, hostname, organization, team } = this.state;
+    const { name, clientID, hostname, organizations, teams } = this.state;
     const idp: IdentityProvider = {
       name,
       type: 'GitHub',
@@ -81,8 +81,8 @@ export class AddGitHubPage extends PromiseComponent<{}, AddGitHubPageState> {
           name: clientSecretName,
         },
         hostname,
-        organization,
-        team,
+        organizations,
+        teams,
       },
     };
 
@@ -97,7 +97,7 @@ export class AddGitHubPage extends PromiseComponent<{}, AddGitHubPageState> {
 
   submit: React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
-    if (this.state.organization.length > 0 && this.state.team.length > 0) {
+    if (this.state.organizations.length > 0 && this.state.teams.length > 0) {
       this.setState({errorMessage: 'Specify either organizations or teams, but not both.'});
       return;
     }
@@ -133,12 +133,12 @@ export class AddGitHubPage extends PromiseComponent<{}, AddGitHubPageState> {
     this.setState({hostname: event.currentTarget.value});
   };
 
-  organizationChanged = (organization: string[]) => {
-    this.setState({organization});
+  organizationsChanged = (organizations: string[]) => {
+    this.setState({organizations});
   };
 
-  teamChanged = (team: string[]) => {
-    this.setState({team});
+  teamsChanged = (teams: string[]) => {
+    this.setState({teams});
   };
 
   caFileChanged = (caFileContent: string) => {
@@ -192,11 +192,11 @@ export class AddGitHubPage extends PromiseComponent<{}, AddGitHubPageState> {
         <div className="co-form-section__separator"></div>
         <h3>Organizations</h3>
         <p className="co-help-text">Optionally list organizations. If specified, only GitHub users that are members of at least one of the listed organizations will be allowed to log in. Cannot be used in combination with <strong>teams</strong>.</p>
-        <ListInput label="Organization" onChange={this.organizationChanged} helpText="Restricts which organizations are allowed to log in." />
+        <ListInput label="Organization" onChange={this.organizationsChanged} helpText="Restricts which organizations are allowed to log in." />
         <div className="co-form-section__separator"></div>
         <h3>Teams</h3>
         <p className="co-help-text">Optionally list teams. If specified, only GitHub users that are members of at least one of the listed teams will be allowed to log in. Cannot be used in combination with <strong>organizations</strong>.</p>
-        <ListInput label="Team" onChange={this.teamChanged} helpText="Restricts which teams are allowed to log in. The format is <org>/<team>." />
+        <ListInput label="Team" onChange={this.teamsChanged} helpText="Restricts which teams are allowed to log in. The format is <org>/<team>." />
         <ButtonBar errorMessage={this.state.errorMessage} inProgress={this.state.inProgress}>
           <button type="submit" className="btn btn-primary">Add</button>
           <button type="button" className="btn btn-default" onClick={history.goBack}>Cancel</button>
@@ -211,8 +211,8 @@ type AddGitHubPageState = {
   clientID: string;
   clientSecret: string;
   hostname: string
-  organization: string[];
-  team: string[];
+  organizations: string[];
+  teams: string[];
   caFileContent: string;
   inProgress: boolean;
   errorMessage: string;
