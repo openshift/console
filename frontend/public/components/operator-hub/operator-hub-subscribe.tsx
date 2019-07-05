@@ -149,7 +149,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
       || (selectedTargetNamespace && cannotResolve) && <Alert isInline className="co-alert" variant="danger" title="Operator not available for selected namespaces" />;
   };
 
-  return <React.Fragment>
+  return <div className="row">
     <div className="col-xs-6">
       <React.Fragment>
         <div className="form-group">
@@ -252,7 +252,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
             <CRDCard key={referenceForProvidedAPI(api)} canCreate={false} crd={api} csv={null} />) }
       </div>
     </div>
-  </React.Fragment>;
+  </div>;
 };
 
 const OperatorHubSubscribe: React.FC<OperatorHubSubscribeFormProps> = (props) => <StatusBox data={props.packageManifest.data[0]} loaded={props.loaded} loadError={props.loadError}>
@@ -264,11 +264,11 @@ export const OperatorHubSubscribePage: React.SFC<OperatorHubSubscribePageProps> 
     'details-item': `${new URLSearchParams(window.location.search).get('pkg')}-${new URLSearchParams(window.location.search).get('catalogNamespace')}`,
   });
 
-  return <div className="co-m-pane__body" style={{margin: 0}}>
+  return <React.Fragment>
     <Helmet>
       <title>OperatorHub Subscription</title>
     </Helmet>
-    <div>
+    <div className="co-m-nav-title co-m-nav-title--breadcrumbs">
       <BreadCrumbs breadcrumbs={[
         {name: 'OperatorHub', path: `/operatorhub?${search.toString()}`},
         {name: 'Operator Subscription', path: props.match.url},
@@ -278,26 +278,28 @@ export const OperatorHubSubscribePage: React.SFC<OperatorHubSubscribePageProps> 
         Install your Operator by subscribing to one of the update channels to keep the Operator up to date. The strategy determines either manual or automatic updates.
       </p>
     </div>
-    <Firehose resources={[{
-      isList: true,
-      kind: referenceForModel(OperatorGroupModel),
-      prop: 'operatorGroup',
-    }, {
-      isList: true,
-      kind: referenceForModel(PackageManifestModel),
-      namespace: new URLSearchParams(window.location.search).get('catalogNamespace'),
-      fieldSelector: `metadata.name=${new URLSearchParams(window.location.search).get('pkg')}`,
-      selector: {matchLabels: {catalog: new URLSearchParams(window.location.search).get('catalog')}},
-      prop: 'packageManifest',
-    }, {
-      isList: true,
-      kind: referenceForModel(SubscriptionModel),
-      prop: 'subscription',
-    }]}>
-      {/* FIXME(alecmerdler): Hack because `Firehose` injects props without TypeScript knowing about it */}
-      <OperatorHubSubscribe {...props as any} targetNamespace={new URLSearchParams(window.location.search).get('targetNamespace') || null} />
-    </Firehose>
-  </div>;
+    <div className="co-m-pane__body">
+      <Firehose resources={[{
+        isList: true,
+        kind: referenceForModel(OperatorGroupModel),
+        prop: 'operatorGroup',
+      }, {
+        isList: true,
+        kind: referenceForModel(PackageManifestModel),
+        namespace: new URLSearchParams(window.location.search).get('catalogNamespace'),
+        fieldSelector: `metadata.name=${new URLSearchParams(window.location.search).get('pkg')}`,
+        selector: {matchLabels: {catalog: new URLSearchParams(window.location.search).get('catalog')}},
+        prop: 'packageManifest',
+      }, {
+        isList: true,
+        kind: referenceForModel(SubscriptionModel),
+        prop: 'subscription',
+      }]}>
+        {/* FIXME(alecmerdler): Hack because `Firehose` injects props without TypeScript knowing about it */}
+        <OperatorHubSubscribe {...props as any} targetNamespace={new URLSearchParams(window.location.search).get('targetNamespace') || null} />
+      </Firehose>
+    </div>
+  </React.Fragment>;
 };
 
 export type OperatorHubSubscribeFormProps = {
