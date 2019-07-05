@@ -89,41 +89,24 @@ const AdminNav = () => (
       <ResourceNSLink resource="events" name="Events" />
     </NavSection>
 
-    <NavSection title="Catalog">
-      <HrefLink href="/catalog" name="Developer Catalog" activePath="/catalog/" />
+    <NavSection title="Operators" required={FLAGS.OPERATOR_LIFECYCLE_MANAGER}>
       <HrefLink
-        href="/provisionedservices"
-        name="Provisioned Services"
-        activePath="/provisionedservices/"
-        startsWith={provisionedServicesStartsWith}
-        required={FLAGS.SERVICE_CATALOG}
-      />
-      <ResourceNSLink
-        model={ClusterServiceVersionModel}
-        resource={ClusterServiceVersionModel.plural}
-        required={[FLAGS.OPERATOR_LIFECYCLE_MANAGER, FLAGS.CAN_LIST_PACKAGE_MANIFEST]}
-        name="Installed Operators"
-      />
-      <Separator required={FLAGS.OPERATOR_LIFECYCLE_MANAGER} />
-      <HrefLink
-        required={[FLAGS.CAN_LIST_PACKAGE_MANIFEST, FLAGS.CAN_LIST_OPERATOR_GROUP, FLAGS.OPERATOR_LIFECYCLE_MANAGER]}
+        required={[FLAGS.CAN_LIST_PACKAGE_MANIFEST, FLAGS.CAN_LIST_OPERATOR_GROUP]}
         href="/operatorhub"
         name="OperatorHub"
         activePath="/operatorhub/"
       />
+      <ResourceNSLink
+        model={ClusterServiceVersionModel}
+        resource={ClusterServiceVersionModel.plural}
+        required={FLAGS.CAN_LIST_PACKAGE_MANIFEST}
+        name="Installed Operators"
+      />
       <HrefLink
         href="/operatormanagement"
         name="Operator Management"
-        required={[FLAGS.OPERATOR_LIFECYCLE_MANAGER]}
         activePath="/operatormanagement/"
         startsWith={operatorManagementStartsWith}
-      />
-      <HrefLink
-        href="/brokermanagement"
-        name="Broker Management"
-        activePath="/brokermanagement/"
-        startsWith={brokerManagementStartsWith}
-        required={FLAGS.SERVICE_CATALOG}
       />
     </NavSection>
 
@@ -164,6 +147,21 @@ const AdminNav = () => (
       <ResourceNSLink resource="buildconfigs" name={BuildConfigModel.labelPlural} />
       <ResourceNSLink resource="builds" name={BuildModel.labelPlural} />
       <ResourceNSLink resource="imagestreams" name={ImageStreamModel.labelPlural} startsWith={imagestreamsStartsWith} />
+    </NavSection>
+
+    <NavSection title="Service Catalog" required={FLAGS.SERVICE_CATALOG}>
+      <HrefLink
+        href="/provisionedservices"
+        name="Provisioned Services"
+        activePath="/provisionedservices/"
+        startsWith={provisionedServicesStartsWith}
+      />
+      <HrefLink
+        href="/brokermanagement"
+        name="Broker Management"
+        activePath="/brokermanagement/"
+        startsWith={brokerManagementStartsWith}
+      />
     </NavSection>
 
     <MonitoringNavSection />

@@ -48,8 +48,8 @@ describe('Auth test', () => {
     });
 
     it('does not show admin nav items in Catalog to htpasswd user', async() => {
-      await browser.wait(until.visibilityOf(sidenavView.navSectionFor('Catalog')));
-      expect(sidenavView.navSectionFor('Catalog')).not.toContain('OperatorHub');
+      await browser.wait(until.visibilityOf(sidenavView.navSectionFor('Operators')));
+      expect(sidenavView.navSectionFor('Operators')).not.toContain('OperatorHub');
     });
 
     it('does not show admin nav items in Storage to htpasswd user', async() => {

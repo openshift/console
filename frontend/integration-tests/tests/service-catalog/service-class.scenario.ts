@@ -19,7 +19,7 @@ describe('Test for Cluster Service Class', () => {
   });
 
   it('displays `default` service plan for service class `MariaDB`', async() => {
-    await sidenavView.clickNavLink(['Catalog', 'Broker Management']);
+    await sidenavView.clickNavLink(['Service Catalog', 'Broker Management']);
     await crudView.isLoaded();
     await horizontalnavView.clickHorizontalTab('Service Classes');
 
@@ -42,7 +42,7 @@ describe('Test for Cluster Service Class', () => {
   });
 
   it('creates a new instance for service class `MariaDB`', async() => {
-    await sidenavView.clickNavLink(['Catalog', 'Broker Management']);
+    await sidenavView.clickNavLink(['Service Catalog', 'Broker Management']);
     await crudView.isLoaded();
     await horizontalnavView.clickHorizontalTab('Service Classes');
 

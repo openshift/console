@@ -42,8 +42,8 @@ describe('Interacting with OperatorHub', () => {
 
   it('displays OperatorHub tile view with expected available Operators', async() => {
     await browser.get(`${appHost}/status/ns/${testName}`);
-    await browser.wait(until.presenceOf(sidenavView.navSectionFor('Catalog')));
-    await sidenavView.clickNavLink(['Catalog', 'OperatorHub']);
+    await browser.wait(until.presenceOf(sidenavView.navSectionFor('Operators')));
+    await sidenavView.clickNavLink(['Operators', 'OperatorHub']);
     await crudView.isLoaded();
 
     expect(catalogPageView.catalogTiles.count()).toBeGreaterThan(0);

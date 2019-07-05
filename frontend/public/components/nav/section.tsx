@@ -187,11 +187,12 @@ export const NavSection = connect(navSectionStateToProps)(
 export type NavSectionTitle =
   | 'Administration'
   | 'Builds'
-  | 'Catalog'
   | 'Compute'
   | 'Home'
   | 'Monitoring'
   | 'Networking'
+  | 'Operators'
+  | 'Service Catalog'
   | 'Storage'
   | 'Workloads';
 

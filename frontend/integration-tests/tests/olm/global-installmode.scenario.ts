@@ -44,8 +44,8 @@ describe('Interacting with an `AllNamespaces` install mode Operator (Redis)', ()
     })());
 
     await browser.get(`${appHost}/status/ns/${testName}`);
-    await browser.wait(until.presenceOf(sidenavView.navSectionFor('Catalog')));
-    await sidenavView.clickNavLink(['Catalog', 'OperatorHub']);
+    await browser.wait(until.presenceOf(sidenavView.navSectionFor('Operators')));
+    await sidenavView.clickNavLink(['Operators', 'OperatorHub']);
     await crudView.isLoaded();
   });
 

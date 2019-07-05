@@ -9,7 +9,7 @@ import * as crudView from '../views/crud.view';
 import * as yamlView from '../views/yaml.view';
 
 const chunkedRoutes = OrderedMap<string, {section: string, name: string}>()
-  .set('operator-management', {section: 'Catalog', name: 'Operator Management'})
+  .set('operator-management', {section: 'Operators', name: 'Operator Management'})
   .set('daemon-set', {section: 'Workloads', name: 'Daemon Sets'})
   .set('deployment', {section: 'Workloads', name: 'Deployments'})
   .set('deployment-config', {section: 'Workloads', name: 'Deployment Configs'})
@@ -30,8 +30,7 @@ const chunkedRoutes = OrderedMap<string, {section: string, name: string}>()
   .set('service-account', {section: 'Administration', name: 'Service Accounts'})
   .set('limit-range', {section: 'Administration', name: 'Limit Ranges'})
   .set('custom-resource-definition', {section: 'Administration', name: 'Custom Resource Definitions'})
-  .set('catalog', {section: 'Catalog', name: 'Developer Catalog'})
-  .set('operator-hub', {section: 'Catalog', name: 'OperatorHub'});
+  .set('operator-hub', {section: 'Operators', name: 'OperatorHub'});
 
 describe('Performance test', () => {
 
@@ -75,8 +74,8 @@ describe('Performance test', () => {
       await browser.get(`${appHost}/k8s/cluster/projects`);
       await browser.executeScript(() => performance.setResourceTimingBufferSize(1000));
       await browser.wait(until.presenceOf(crudView.resourceTitle));
-      // Avoid problems where the Catalog nav section appears where Workloads was at the moment the tests try to click.
-      await browser.wait(until.visibilityOf(sidenavView.navSectionFor('Catalog')));
+      // Avoid problems where the Operators nav section appears where Workloads was at the moment the tests try to click.
+      await browser.wait(until.visibilityOf(sidenavView.navSectionFor('Operators')));
       await sidenavView.clickNavLink([route.section, route.name]);
       await browser.wait(crudView.untilNoLoadersPresent);
 

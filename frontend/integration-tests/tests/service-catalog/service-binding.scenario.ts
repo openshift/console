@@ -19,7 +19,7 @@ describe('Test for Cluster Service Binding', () => {
   });
 
   it('creates a new binding for new service instance `mysql-persistent`', async() => {
-    await sidenavView.clickNavLink(['Catalog', 'Broker Management']);
+    await sidenavView.clickNavLink(['Service Catalog', 'Broker Management']);
     await crudView.isLoaded();
     await horizontalnavView.clickHorizontalTab('Service Classes');
 
