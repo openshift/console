@@ -3,6 +3,7 @@ import * as fuzzy from 'fuzzysearch';
 import * as _ from 'lodash-es';
 import { Switch } from '@patternfly/react-core';
 import * as React from 'react';
+import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
 
 import * as UIActions from '../../actions/ui';
@@ -348,6 +349,9 @@ export const QueryBrowserPage = withFallback(() => {
   let colorOffset = 0;
 
   return <React.Fragment>
+    <Helmet>
+      <title>Metrics</title>
+    </Helmet>
     <div className="co-m-nav-title">
       <h1 className="co-m-pane__heading">
         <span>Metrics<HeaderPrometheusLink queries={_.map(queries, 'query')} /></span>
