@@ -40,6 +40,17 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Dashboards/Card',
     properties: {
       tab: 'object-service',
+      position: GridPosition.MAIN,
+      loader: () =>
+        import(
+          './components/health-card/health-card' /* webpackChunkName: "object-service-health-card" */
+        ).then((m) => m.default),
+    },
+  },
+  {
+    type: 'Dashboards/Card',
+    properties: {
+      tab: 'object-service',
       position: GridPosition.LEFT,
       loader: () =>
         import(
