@@ -12,6 +12,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       name: 'Administrator',
       icon: <CogsIcon />,
       landingPageURL: '/',
+      k8sLandingPageURL: '/',
       default: true,
       getImportRedirectURL: (project) => `/k8s/cluster/projects/${project}/workloads`,
     },
