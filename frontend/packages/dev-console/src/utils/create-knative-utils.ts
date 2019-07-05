@@ -1,5 +1,5 @@
 import { k8sCreate, K8sResourceKind } from '@console/internal/module/k8s';
-import { KsServiceModel } from '../models';
+import { ServiceModel } from '@console/knative-plugin';
 
 export const createKnativeService = (
   name: string,
@@ -37,5 +37,5 @@ export const createKnativeService = (
     },
   };
 
-  return k8sCreate(KsServiceModel, knativeDeployResource);
+  return k8sCreate(ServiceModel, knativeDeployResource);
 };

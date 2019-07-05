@@ -1,0 +1,13 @@
+{
+  "name": "@console/knative-plugin",
+  "version": "0.0.0-fixed",
+  "description": "Knative - Kubernetes-based platform to build, deploy, and manage modern serverless workloads",
+  "private": true,
+  "main": "src/index.ts",
+  "dependencies": {
+    "@console/plugin-sdk": "0.0.0-fixed"
+  },
+  "consolePlugin": {
+    "entry": "src/plugin.tsx"
+  }
+}
