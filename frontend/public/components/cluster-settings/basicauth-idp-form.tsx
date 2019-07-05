@@ -61,7 +61,7 @@ export class AddBasicAuthPage extends PromiseComponent<{}, AddBasicAuthPageState
         generateName: 'basic-auth-ca-',
         namespace: 'openshift-config',
       },
-      stringData: {
+      data: {
         'ca.crt': caFileContent,
       },
     };

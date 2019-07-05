@@ -46,7 +46,7 @@ export class AddLDAPPage extends PromiseComponent<{}, AddLDAPPageState> {
         generateName: 'ldap-ca-',
         namespace: 'openshift-config',
       },
-      stringData: {
+      data: {
         'ca.crt': caFileContent,
       },
     };

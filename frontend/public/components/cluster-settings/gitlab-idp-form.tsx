@@ -54,7 +54,7 @@ export class AddGitLabPage extends PromiseComponent<{}, AddGitLabPageState> {
         generateName: 'gitlab-ca-',
         namespace: 'openshift-config',
       },
-      stringData: {
+      data: {
         'ca.crt': caFileContent,
       },
     };
