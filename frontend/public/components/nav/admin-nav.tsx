@@ -186,6 +186,7 @@ const AdminNav = () => (
       <ResourceNSLink resource="resourcequotas" name="Resource Quotas" startsWith={quotaStartsWith} />
       <ResourceNSLink resource="limitranges" name="Limit Ranges" />
       <ResourceNSLink resource={referenceForModel(ChargebackReportModel)} name="Chargeback" required={FLAGS.CHARGEBACK} />
+      <HrefLink href="/api-explorer" name="API Explorer" />
       <ResourceClusterLink resource="customresourcedefinitions" name="Custom Resource Definitions" required={FLAGS.CAN_LIST_CRD} />
     </NavSection>
   </React.Fragment>

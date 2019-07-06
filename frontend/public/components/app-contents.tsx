@@ -117,6 +117,8 @@ const AppContents = withRouter(React.memo(() => (
           <Redirect from="/overview/all-namespaces" to="/cluster-status" />
           <Redirect from="/overview/ns/:ns" to="/k8s/cluster/projects/:ns/workloads" />
           <Route path="/overview" exact component={NamespaceRedirect} />
+          <LazyRoute path="/api-explorer" exact loader={() => import('./api-explorer' /* webpackChunkName: "api-explorer" */).then(m => m.APIExplorerPage)} />
+          <LazyRoute path="/api-explorer/:plural" loader={() => import('./api-explorer' /* webpackChunkName: "api-explorer" */).then(m => m.APIResourcePage)} />
 
           <LazyRoute path="/start-guide" exact loader={() => import('./start-guide' /* webpackChunkName: "start-guide" */).then(m => m.StartGuidePage)} />
           <LazyRoute path="/command-line-tools" exact loader={() => import('./command-line-tools' /* webpackChunkName: "command-line-tools" */).then(m => m.CommandLineToolsPage)} />
