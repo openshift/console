@@ -30,25 +30,25 @@ const AboutModalItems: React.FC<AboutModalItemsProps> = ({closeAboutModal, cv}) 
           {openshiftVersion && (
             <React.Fragment>
               <TextListItem component="dt">OpenShift Version</TextListItem>
-              <TextListItem component="dd">{openshiftVersion}</TextListItem>
+              <TextListItem component="dd" className="co-select-to-copy">{openshiftVersion}</TextListItem>
             </React.Fragment>
           )}
           <TextListItem component="dt">Kubernetes Version</TextListItem>
-          <TextListItem component="dd">{kubernetesVersion}</TextListItem>
+          <TextListItem component="dd" className="co-select-to-copy">{kubernetesVersion}</TextListItem>
           {channel && (
             <React.Fragment>
               <TextListItem component="dt">Channel</TextListItem>
-              <TextListItem component="dd">{channel}</TextListItem>
+              <TextListItem component="dd" className="co-select-to-copy">{channel}</TextListItem>
             </React.Fragment>
           )}
           {clusterID && (
             <React.Fragment>
               <TextListItem component="dt">Cluster ID</TextListItem>
-              <TextListItem component="dd">{clusterID}</TextListItem>
+              <TextListItem component="dd" className="co-select-to-copy">{clusterID}</TextListItem>
             </React.Fragment>
           )}
           <TextListItem component="dt">API Server</TextListItem>
-          <TextListItem component="dd">{window.SERVER_FLAGS.kubeAPIServerURL}</TextListItem>
+          <TextListItem component="dd" className="co-select-to-copy">{window.SERVER_FLAGS.kubeAPIServerURL}</TextListItem>
         </TextList>
       </TextContent>
     </React.Fragment>
