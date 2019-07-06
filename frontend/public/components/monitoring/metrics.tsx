@@ -15,6 +15,20 @@ import { ActionsMenu, Dropdown, ExternalLink, getURLSearchParams, Kebab, Loading
 import { withFallback } from '../utils/error-boundary';
 import { graphColors, Labels, omitInternalLabels, PrometheusSeries, QueryBrowser } from './query-browser';
 
+const aggregationOperators = [
+  'avg',
+  'bottomk',
+  'count',
+  'count_values',
+  'max',
+  'min',
+  'quantile',
+  'stddev',
+  'stdvar',
+  'sum',
+  'topk',
+];
+
 const prometheusFunctions = [
   'abs()',
   'absent()',
@@ -142,14 +156,13 @@ const QueryInput: React.FC<QueryInputProps> = ({metrics = [], onBlur, onSubmit, 
 
   const inputRef = React.useRef(null);
 
+  const getTextBeforeCursor = () => inputRef.current.value.substring(0, inputRef.current.selectionEnd);
+
   const onChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     onUpdate(e.target.value);
 
-    const textBeforeCursor = e.target.value.substring(0, inputRef.current.selectionEnd);
-
-    // Metric and function names can only contain the characters a-z, A-Z, 0-9, '_' and ':', but also add '(' and ')'
-    // for matching function brackets
-    const allTokens = textBeforeCursor.split(/[^a-zA-Z0-9_:()]+/);
+    // Metric and function names can only contain the characters a-z, A-Z, 0-9, '_' and ':'
+    const allTokens = getTextBeforeCursor().split(/[^a-zA-Z0-9_:]+/);
 
     setToken(_.last(allTokens));
   };
@@ -159,6 +172,7 @@ const QueryInput: React.FC<QueryInputProps> = ({metrics = [], onBlur, onSubmit, 
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       onSubmit();
+      setToken('');
     }
   };
 
@@ -174,14 +188,25 @@ const QueryInput: React.FC<QueryInputProps> = ({metrics = [], onBlur, onSubmit, 
 
     // Replace the autocomplete token with the selected autocomplete option
     const re = new RegExp(`${_.escapeRegExp(token)}$`);
-    onUpdate(value.replace(re, `${e.currentTarget.dataset.autocomplete} `));
+    const newTextBeforeCursor = getTextBeforeCursor().replace(re, e.currentTarget.dataset.autocomplete);
+    onUpdate(newTextBeforeCursor + value.substring(inputRef.current.selectionEnd));
 
     setToken('');
     inputRef.current.focus();
+
+    // Move cursor to just after the text we inserted (use _.defer() so this is called after the textarea value is set)
+    const cursorPosition = newTextBeforeCursor.length;
+    _.defer(() => inputRef.current.setSelectionRange(cursorPosition, cursorPosition));
   };
 
-  const functionOptions = token.length < 2 ? [] : prometheusFunctions.filter(a => fuzzy(token, a));
-  const metricOptions = token.length < 2 ? [] : metrics.filter(a => fuzzy(token, a));
+  const isMatch = v => fuzzy(token.toLowerCase(), v.toLowerCase());
+  const allSuggestions = token.length < 2
+    ? {}
+    : _.omitBy({
+      ['Aggregation Operators']: aggregationOperators.filter(isMatch),
+      ['Functions']: prometheusFunctions.filter(isMatch),
+      ['Metrics']: metrics.filter(isMatch),
+    }, _.isEmpty);
 
   // Set the default textarea height to the number of lines in the query text
   const rows = _.clamp((value.match(/\n/g) || []).length + 1, 2, 10);
@@ -196,20 +221,17 @@ const QueryInput: React.FC<QueryInputProps> = ({metrics = [], onBlur, onSubmit, 
       placeholder="Expression (press Shift+Enter for newlines)"
       ref={inputRef}
       rows={rows}
+      spellCheck={false}
       value={value}
     />
-    {(!_.isEmpty(functionOptions) || !_.isEmpty(metricOptions)) && (
-      <ul className="pf-c-dropdown__menu query-browser__metrics-dropdown-menu">
-        {!_.isEmpty(functionOptions) && <div className="text-muted query-browser__dropdown--subtitle">Functions</div>}
-        {_.map(functionOptions, f => <li key={f}>
-          <a href="#" className="pf-c-dropdown__menu-item" data-autocomplete={f} onClick={onClick}>{f}</a>
+    {!_.isEmpty(allSuggestions) && <ul className="pf-c-dropdown__menu query-browser__metrics-dropdown-menu">
+      {_.map(allSuggestions, (suggestions, title) => <React.Fragment key={title}>
+        <div className="text-muted query-browser__dropdown--subtitle">{title}</div>
+        {_.map(suggestions, s => <li key={s}>
+          <a href="#" className="pf-c-dropdown__menu-item" data-autocomplete={s} onClick={onClick}>{s}</a>
         </li>)}
-        {!_.isEmpty(metricOptions) && <div className="text-muted query-browser__dropdown--subtitle">Metrics</div>}
-        {_.map(metricOptions, m => <li key={m}>
-          <a href="#" className="pf-c-dropdown__menu-item" data-autocomplete={m} onClick={onClick}>{m}</a>
-        </li>)}
-      </ul>
-    )}
+      </React.Fragment>)}
+    </ul>}
   </div>;
 };
 
