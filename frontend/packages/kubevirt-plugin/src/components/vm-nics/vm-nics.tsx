@@ -15,6 +15,7 @@ import { CreateNicRowConnected } from './create-nic-row';
 import { dimensifyHeader } from '../../utils/table';
 import { createBasicLookup } from '../../utils';
 import { getInterfaceBinding, getNetworkName, nicTableColumnClasses } from './utils';
+import { VMLikeEntityTabProps } from '../vms/types';
 
 export const VMNicRow: React.FC<VMNicRowProps> = (props) => {
   switch (props.obj.networkType) {
@@ -44,7 +45,7 @@ const getStoragesData = (vmLikeEntity: VMLikeEntityKind, addNewNic: boolean): Ne
     : nicsWithType;
 };
 
-export const VMNics: React.FC<VMNicsProps> = ({ obj: vmLikeEntity }) => {
+export const VMNics: React.FC<VMLikeEntityTabProps> = ({ obj: vmLikeEntity }) => {
   const [isCreating, setIsCreating] = useSafetyFirst(false);
   const [createError, setCreateError] = useSafetyFirst(null);
 
@@ -127,7 +128,3 @@ export const VMNics: React.FC<VMNicsProps> = ({ obj: vmLikeEntity }) => {
     </div>
   );
 };
-
-interface VMNicsProps {
-  obj?: VMLikeEntityKind;
-}

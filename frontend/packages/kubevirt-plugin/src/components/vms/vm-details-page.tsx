@@ -9,19 +9,17 @@ import { K8sResourceKindReference } from '@console/internal/module/k8s';
 import { VMDetailsFirehose } from './vm-details';
 import { VMDisksFirehose } from '../vm-disks';
 import { VMNics } from '../vm-nics';
+import { VMConsoleFirehose } from './vm-console';
 
 // import { VmEvents } from './vm-events';
-// import VmConsolesConnected from '../vmconsoles';
 // import { menuActions } from './menu-actions';
 
 export const VirtualMachinesDetailsPage = (props: VirtualMachinesDetailsPageProps) => {
-  /* TODO(mlibra): pages will be transferred one by one in follow-ups
   const consolePage = {
     href: 'consoles',
     name: 'Consoles',
-    component: VmConsolesConnected,
+    component: VMConsoleFirehose,
   };
-  */
 
   const nicsPage = {
     href: 'nics',
@@ -38,7 +36,7 @@ export const VirtualMachinesDetailsPage = (props: VirtualMachinesDetailsPageProp
   const pages = [
     navFactory.details(VMDetailsFirehose),
     navFactory.editYaml(),
-    // consolePage,
+    consolePage,
     navFactory.events(ResourceEventStream),
     nicsPage,
     disksPage,
