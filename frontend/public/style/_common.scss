@@ -72,6 +72,10 @@
   }
 }
 
+.co-m-pane__filter-bar-group--full-width {
+  flex-basis: 100%;
+}
+
 .co-m-pane__filter-bar-group--help-text {
   @media (min-width: $screen-sm-min) {
     margin-right: 20px;

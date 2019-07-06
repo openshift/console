@@ -5,10 +5,21 @@ import * as _ from 'lodash-es';
 import { Helmet } from 'react-helmet';
 import { Map as ImmutableMap } from 'immutable';
 import * as fuzzy from 'fuzzysearch';
+import { sortable } from '@patternfly/react-table';
 
-import { ALL_NAMESPACES_KEY } from '../const';
+import { ALL_NAMESPACES_KEY, FLAGS } from '../const';
 import { connectToModel } from '../kinds';
-import { K8sKind, K8sResourceKindReference, referenceForModel } from '../module/k8s';
+import { LocalResourceAccessReviewsModel, ResourceAccessReviewsModel } from '../models';
+import {
+  apiVersionForModel,
+  k8sCreate,
+  K8sKind,
+  K8sResourceKindReference,
+  K8sVerb,
+  referenceForModel,
+  ResourceAccessReviewRequest,
+} from '../module/k8s';
+import { connectToFlags } from '../reducers/features';
 import { RootState } from '../redux';
 import { DefaultPage } from './default-resource';
 import { Table, TextFilter } from './factory';
@@ -17,6 +28,8 @@ import { ExploreType } from './sidebars/explore-type-sidebar';
 import {
   AsyncComponent,
   BreadCrumbs,
+  Dropdown,
+  LoadError,
   Loading,
   ResourceIcon,
   ScrollToTopOnMount,
@@ -115,7 +128,7 @@ export const APIExplorerPage: React.FC<{}> = () => <React.Fragment>
 </React.Fragment>;
 APIExplorerPage.displayName = 'APIExplorerPage';
 
-const APIResourceOverview: React.FC<{kindObj: K8sKind}> = ({kindObj}) => {
+const APIResourceOverview: React.FC<APIResourceTabProps> = ({kindObj}) => {
   const exploreTypeRef = React.useRef(null);
   const scrollTop = () => {
     document.getElementById('content-scrollable').scrollTo(0, exploreTypeRef.current.offsetTop);
@@ -123,7 +136,6 @@ const APIResourceOverview: React.FC<{kindObj: K8sKind}> = ({kindObj}) => {
 
   return <React.Fragment>
     <div className="co-m-pane__body">
-      <h2 className="co-section-heading">Overview</h2>
       <dl className="co-m-pane__details">
         <dt>Kind</dt>
         <dd>{kindObj.kind}</dd>
@@ -142,22 +154,129 @@ const APIResourceOverview: React.FC<{kindObj: K8sKind}> = ({kindObj}) => {
   </React.Fragment>;
 };
 
-const ResourceList: React.FC<{kindObj: K8sKind, namespace?: string}> = ({kindObj, namespace}) => {
+const ResourceList: React.FC<APIResourceTabProps> = ({kindObj, namespace}) => {
   const componentLoader = resourceListPages.get(referenceForModel(kindObj), () => Promise.resolve(DefaultPage));
   const ns = kindObj.namespaced ? namespace : undefined;
 
   return <AsyncComponent loader={componentLoader} namespace={ns} kind={kindObj.crd ? referenceForModel(kindObj) : kindObj.kind} showTitle={false} autoFocus={false} />;
 };
 
-const tabs = [{
-  name: 'Overview',
-  component: APIResourceOverview,
+const AccessTableHeader = () => [{
+  title: 'Subject',
+  sortField: 'name',
+  transforms: [sortable],
 }, {
-  name: 'Instances',
-  component: ResourceList,
+  title: 'Type',
+  sortField: 'type',
+  transforms: [sortable],
 }];
 
-export const APIResourcePage = connectToModel(({match, kindObj, kindsInFlight}: {match: any, kindObj: K8sKind, kindsInFlight: boolean}) => {
+const AccessTableRows = ({componentProps: {data}}) => _.map(data, (subject) => [{
+  title: <span className="co-break-word co-select-to-copy">{subject.name}</span>,
+}, {
+  title: subject.type,
+}]);
+
+const ResourceAccess: React.FC<APIResourceTabProps> = ({kindObj, namespace}) => {
+  // TODO: Make sure verbs are filled in for all models. Currently static models don't use verbs from API discovery.
+  const verbs: K8sVerb[] = (kindObj.verbs || ['create', 'delete', 'deletecollection', 'get', 'list', 'patch', 'update', 'watch']).sort();
+  const [verb, setVerb] = React.useState(_.first(verbs));
+  const [filter, setFilter] = React.useState('');
+  const [showServiceAccounts, setShowServiceAccounts] = React.useState(false);
+  const [accessResponse, setAccessResponse] = React.useState();
+  const [error, setError] = React.useState(null);
+  React.useEffect(() => {
+    setError(null);
+    const accessReviewModel = namespace ? LocalResourceAccessReviewsModel : ResourceAccessReviewsModel;
+    const req: ResourceAccessReviewRequest = {
+      apiVersion: apiVersionForModel(accessReviewModel),
+      kind: accessReviewModel.kind,
+      namespace,
+      resourceAPIVersion: apiVersionForModel(kindObj),
+      resourceAPIGroup: kindObj.apiGroup,
+      resource: kindObj.plural,
+      verb,
+    };
+    k8sCreate(accessReviewModel, req, { ns: namespace })
+      .then(setAccessResponse)
+      .catch(setError);
+  }, [kindObj, namespace, verb]);
+
+  if (error) {
+    return <LoadError message={error.message} label="Access Review" className="loading-box loading-box__errored" />;
+  }
+
+  if (!accessResponse) {
+    return <Loading />;
+  }
+
+  const verbOptions = _.zipObject(verbs, verbs);
+  const users = _.reduce(accessResponse.users, (result, name: string) => {
+    const isServiceAccount = name.startsWith('system:serviceaccount:');
+    if (!showServiceAccounts && isServiceAccount) {
+      return result;
+    }
+    const type = isServiceAccount ? 'ServiceAccount' : 'User';
+    return [...result, { name, type }];
+  }, []);
+  const groups = _.map(accessResponse.groups, (name: string) => ({ name, type: 'Group' }));
+  const filteredData = [...users, ...groups].filter(({name}: {name: string}) => fuzzy(filter, name));
+  const sortedData = _.orderBy(filteredData, ['type', 'name'], ['asc', 'asc']);
+  const onFilterChange: React.ReactEventHandler<HTMLInputElement> = (e) => setFilter(e.currentTarget.value);
+  const onShowServiceAccountChange: React.ReactEventHandler<HTMLInputElement> = (e) => setShowServiceAccounts(e.currentTarget.checked);
+
+  return (
+    <React.Fragment>
+      <div className="co-m-pane__filter-bar">
+        <div className="co-m-pane__filter-bar-group">
+          <Dropdown
+            items={verbOptions}
+            onChange={(v: K8sVerb) => setVerb(v)}
+            selectedKey={verb}
+            titlePrefix="Verb"
+          />
+        </div>
+        <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--filter">
+          <TextFilter
+            defaultValue={filter}
+            label="by subject"
+            onChange={onFilterChange}
+          />
+        </div>
+        <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--full-width">
+          <div className="checkbox">
+            <label>
+              <input type="checkbox"
+                onChange={onShowServiceAccountChange}
+                checked={showServiceAccounts}
+              />
+              Show service accounts
+            </label>
+          </div>
+        </div>
+      </div>
+      <div className="co-m-pane__body">
+        <p className="co-m-pane__explanation">
+          The following users and groups can {verb} {kindObj.plural}
+          {kindObj.namespaced && namespace && <React.Fragment> in namespace {namespace}</React.Fragment>}
+          {kindObj.namespaced && !namespace && <React.Fragment> in all namespaces</React.Fragment>}
+          {!kindObj.namespaced && <React.Fragment> at the cluster scope</React.Fragment>}
+          .
+        </p>
+        <Table
+          aria-label="API Resources"
+          data={sortedData}
+          Header={AccessTableHeader}
+          Rows={AccessTableRows}
+          virtualize={false}
+          loaded
+        />
+      </div>
+    </React.Fragment>
+  );
+};
+
+const APIResourcePage_ = ({match, kindObj, kindsInFlight, flags}: {match: any, kindObj: K8sKind, kindsInFlight: boolean, flags: {[key: string]: boolean}}) => {
   const [selectedTab, onClickTab] = React.useState('Overview');
   if (!kindObj) {
     return kindsInFlight
@@ -171,9 +290,28 @@ export const APIResourcePage = connectToModel(({match, kindObj, kindsInFlight}: 
     name: 'API Explorer',
     path: '/api-explorer',
   }, {
-    name: `${kindObj.label} Details`,
+    name: 'Resource Details',
     path: match.url,
   }];
+
+  const tabs = [{
+    name: 'Overview',
+    component: APIResourceOverview,
+  }];
+
+  if (_.isEmpty(kindObj.verbs) || kindObj.verbs.includes('list')) {
+    tabs.push({
+      name: 'Instances',
+      component: ResourceList,
+    });
+  }
+
+  if (flags[FLAGS.OPENSHIFT]) {
+    tabs.push({
+      name: 'Access Review',
+      component: ResourceAccess,
+    });
+  }
 
   const namespace = kindObj.namespaced ? match.params.ns : null;
 
@@ -193,8 +331,8 @@ export const APIResourcePage = connectToModel(({match, kindObj, kindsInFlight}: 
       tabs={tabs}
     />
   </React.Fragment>;
-});
-APIResourcePage.displayName = 'APIResourcePage';
+};
+export const APIResourcePage = connectToModel(connectToFlags(FLAGS.OPENSHIFT)(APIResourcePage_));
 
 type APIResourceLinkStateProps = {
   activeNamespace: string;
@@ -206,4 +344,9 @@ type APIResourcesListPropsFromState = {
 
 type APIResourceLinkOwnProps = {
   model: K8sKind;
+};
+
+type APIResourceTabProps = {
+  kindObj: K8sKind;
+  namespace?: string;
 };
