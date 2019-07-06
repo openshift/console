@@ -110,41 +110,32 @@ export class CatalogListPage extends React.Component {
 
   normalizeClusterServiceClasses(serviceClasses) {
     const {namespace = ''} = this.props;
-    const activeServiceClasses = _.reject(serviceClasses, serviceClass => {
-      const tags = _.get(serviceClass, 'spec.tags');
-      return serviceClass.status.removedFromBrokerCatalog || _.includes(tags, 'hidden');
-    });
+    return _.reduce(serviceClasses, (acc, serviceClass) => {
+      // Prefer native templates to template-service-broker service classes.
+      if (serviceClass.status.removedFromBrokerCatalog || serviceClass.spec.clusterServiceBrokerName === 'template-service-broker') {
+        return acc;
+      }
 
-    return _.map(activeServiceClasses, serviceClass => {
-      const tileName = serviceClassDisplayName(serviceClass);
       const iconClass = getServiceClassIcon(serviceClass);
       const tileImgUrl = getServiceClassImage(serviceClass, iconClass);
-      const tileIconClass = tileImgUrl ? null : iconClass;
-      const tileDescription = _.get(serviceClass, 'spec.description');
-      const tileProvider = _.get(serviceClass, 'spec.externalMetadata.providerDisplayName');
-      const tags = _.get(serviceClass, 'spec.tags');
-      const createLabel = 'Create Service Instance';
-      const href = `/catalog/create-service-instance?cluster-service-class=${serviceClass.metadata.name}&preselected-ns=${namespace}`;
-      const supportUrl = _.get(serviceClass, 'spec.externalMetadata.supportUrl');
-      const longDescription = _.get(serviceClass, 'spec.externalMetadata.longDescription');
-      const documentationUrl = _.get(serviceClass, 'spec.externalMetadata.documentationUrl');
 
-      return {
+      acc.push({
         obj: serviceClass,
         kind: 'ClusterServiceClass',
-        tileName,
-        tileIconClass,
+        tileName: serviceClassDisplayName(serviceClass),
+        tileIconClass: tileImgUrl ? null : iconClass,
         tileImgUrl,
-        tileDescription,
-        tileProvider,
-        tags,
-        createLabel,
-        href,
-        supportUrl,
-        longDescription,
-        documentationUrl,
-      };
-    });
+        tileDescription: serviceClass.spec.description,
+        tileProvider: _.get(serviceClass, 'spec.externalMetadata.providerDisplayName'),
+        tags: serviceClass.spec.tags,
+        createLabel: 'Create Service Instance',
+        href: `/catalog/create-service-instance?cluster-service-class=${serviceClass.metadata.name}&preselected-ns=${namespace}`,
+        supportUrl: _.get(serviceClass, 'spec.externalMetadata.supportUrl'),
+        longDescription: _.get(serviceClass, 'spec.externalMetadata.longDescription'),
+        documentationUrl: _.get(serviceClass, 'spec.externalMetadata.documentationUrl'),
+      });
+      return acc;
+    }, []);
   }
 
   normalizeTemplates(templates) {
@@ -229,31 +220,29 @@ CatalogListPage.propTypes = {
 // eslint-disable-next-line no-unused-vars
 export const Catalog = connectToFlags(FLAGS.OPENSHIFT, FLAGS.SERVICE_CATALOG, FLAGS.OPERATOR_LIFECYCLE_MANAGER)(({flags, mock, namespace}) => {
 
-  if (flagPending(flags.OPENSHIFT) || flagPending(flags.SERVICE_CATALOG)) {
+  if (flagPending(flags[FLAGS.OPENSHIFT]) || flagPending(flags[FLAGS.SERVICE_CATALOG])) {
     return null;
   }
 
   const resources = [
-    ...(flags.SERVICE_CATALOG ? [{
+    ...(flags[FLAGS.SERVICE_CATALOG] ? [{
       isList: true,
       kind: referenceForModel(ClusterServiceClassModel),
       namespaced: false,
       prop: 'clusterServiceClasses',
     }] : []),
-    ...(flags.OPENSHIFT ? [{
+    ...(flags[FLAGS.OPENSHIFT] ? [{
       isList: true,
       kind: 'ImageStream',
       namespace: 'openshift',
       prop: 'imageStreams',
-    }] : []),
-    // TODO: Check specifically for template service broker.
-    ...((flags.OPENSHIFT && !flags.SERVICE_CATALOG) ? [{
+    }, {
       isList: true,
       kind: 'Template',
       namespace: 'openshift',
       prop: 'templates',
     }] : []),
-    ...(flags.OPERATOR_LIFECYCLE_MANAGER ? [{
+    ...(flags[FLAGS.OPERATOR_LIFECYCLE_MANAGER] ? [{
       isList: true,
       kind: referenceForModel(ClusterServiceVersionModel),
       namespaced: true,
