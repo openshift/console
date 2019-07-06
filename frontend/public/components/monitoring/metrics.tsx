@@ -13,7 +13,7 @@ import { PrometheusEndpoint } from '../graphs/helpers';
 import { getPrometheusExpressionBrowserURL } from '../graphs/prometheus-graph';
 import { ActionsMenu, Dropdown, ExternalLink, getURLSearchParams, Kebab, LoadingInline, useSafeFetch } from '../utils';
 import { withFallback } from '../utils/error-boundary';
-import { graphColors, Labels, PrometheusSeries, QueryBrowser } from './query-browser';
+import { graphColors, Labels, omitInternalLabels, PrometheusSeries, QueryBrowser } from './query-browser';
 
 const prometheusFunctions = [
   'abs()',
@@ -319,7 +319,7 @@ export const QueryBrowserPage = withFallback(() => {
   const onDataUpdate = (allQueries: PrometheusSeries[][]) => {
     const newQueries = _.map(allQueries, (querySeries, i) => {
       const allSeries = _.map(querySeries, s => ({
-        labels: _.omit(s.metric, '__name__'),
+        labels: omitInternalLabels(s.metric),
         value: parseFloat(_.last(s.values)[1]),
       }));
       return Object.assign({}, queries[i], {allSeries});

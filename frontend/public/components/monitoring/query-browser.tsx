@@ -40,6 +40,9 @@ export const graphColors = [
   '#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf',
 ];
 
+// Takes a Prometheus labels object and removes the internal labels (those beginning with "__")
+export const omitInternalLabels = labels => _.omitBy(labels, (v, k) => _.startsWith(k, '__'));
+
 const NoQueryMessage = () => <div className="text-center text-muted">Enter a query in the box below to explore the metrics gathered for this cluster</div>;
 
 const Error = ({error}) => <Alert isInline className="co-alert" variant="danger" title="An error occurred">{_.get(error, 'json.error', error.message)}</Alert>;
@@ -200,7 +203,7 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
   const graphData: GraphDataPoint[][] = React.useMemo(() => _.flatten(
     _.map(results, (result, responseIndex) => {
       return _.map(result, ({metric, values}) => {
-        const labels = _.omit(metric, '__name__');
+        const labels = omitInternalLabels(metric);
 
         // If filterLabels is specified, ignore all series that don't match
         const isIgnored = filterLabels
