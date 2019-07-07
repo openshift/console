@@ -342,7 +342,7 @@ export const QueryBrowserPage = withFallback(() => {
     const newQueries = _.map(allQueries, (querySeries, i) => {
       const allSeries = _.map(querySeries, s => ({
         labels: omitInternalLabels(s.metric),
-        value: parseFloat(_.last(s.values)[1]),
+        value: _.last(s.values)[1],
       }));
       return Object.assign({}, queries[i], {allSeries});
     });

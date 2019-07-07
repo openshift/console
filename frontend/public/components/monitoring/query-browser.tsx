@@ -41,7 +41,7 @@ export const graphColors = [
 ];
 
 // Takes a Prometheus labels object and removes the internal labels (those beginning with "__")
-export const omitInternalLabels = labels => _.omitBy(labels, (v, k) => _.startsWith(k, '__'));
+export const omitInternalLabels = (labels: Labels): Labels => _.omitBy(labels, (v, k) => _.startsWith(k, '__'));
 
 const NoQueryMessage = () => <div className="text-center text-muted">Enter a query in the box below to explore the metrics gathered for this cluster</div>;
 
@@ -115,10 +115,13 @@ const Graph: React.FC<GraphProps> = React.memo(({domain, data, onZoom, span}) =>
 });
 
 const formatSeriesValues = (values: PrometheusValue[], samples: number, span: number): GraphDataPoint[] => {
-  const newValues = _.map(values, v => ({
-    x: new Date(v[0] * 1000),
-    y: parseFloat(v[1]),
-  }));
+  const newValues = _.map(values, v => {
+    const y = Number(v[1]);
+    return ({
+      x: new Date(v[0] * 1000),
+      y: Number.isNaN(y) ? null : y,
+    });
+  });
 
   // The data may have missing values, so we fill those gaps with nulls so that the graph correctly shows the
   // missing values as gaps in the line
