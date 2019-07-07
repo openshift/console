@@ -2,6 +2,7 @@ import * as classNames from 'classnames';
 import * as fuzzy from 'fuzzysearch';
 import * as _ from 'lodash-es';
 import { Switch } from '@patternfly/react-core';
+import { TimesIcon } from '@patternfly/react-icons';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
@@ -199,6 +200,11 @@ const QueryInput: React.FC<QueryInputProps> = ({metrics = [], onBlur, onSubmit, 
     _.defer(() => inputRef.current.setSelectionRange(cursorPosition, cursorPosition));
   };
 
+  const onClear = (e: React.MouseEvent) => {
+    e.preventDefault();
+    onUpdate('');
+  };
+
   const isMatch = v => fuzzy(token.toLowerCase(), v.toLowerCase());
   const allSuggestions = token.length < 2
     ? {}
@@ -224,6 +230,9 @@ const QueryInput: React.FC<QueryInputProps> = ({metrics = [], onBlur, onSubmit, 
       spellCheck={false}
       value={value}
     />
+    <button className="btn btn-link query-browser__clear-icon" aria-label="Clear Query" onClick={onClear}>
+      <TimesIcon />
+    </button>
     {!_.isEmpty(allSuggestions) && <ul className="pf-c-dropdown__menu query-browser__metrics-dropdown-menu">
       {_.map(allSuggestions, (suggestions, title) => <React.Fragment key={title}>
         <div className="text-muted query-browser__dropdown--subtitle">{title}</div>
