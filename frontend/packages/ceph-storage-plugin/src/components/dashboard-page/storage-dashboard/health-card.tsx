@@ -1,6 +1,11 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 
+import {
+  AlertsBody,
+  AlertItem,
+  getAlerts,
+} from '@console/internal/components/dashboard/health-card';
 import { DashboardCard } from '@console/internal/components/dashboard/dashboard-card/card';
 import { DashboardCardBody } from '@console/internal/components/dashboard/dashboard-card/card-body';
 import { DashboardCardHeader } from '@console/internal/components/dashboard/dashboard-card/card-header';
@@ -14,6 +19,7 @@ import { HealthItem } from '@console/internal/components/dashboard/health-card/h
 import { HealthState } from '@console/internal/components/dashboard/health-card/states';
 import { STORAGE_HEALTH_QUERIES } from '../../../constants/queries';
 import { CEPH_HEALTHY, CEPH_DEGRADED, CEPH_ERROR, CEPH_UNKNOWN } from '../../../constants';
+import { filterCephAlerts } from '../../../selectors';
 
 const CephHealthStatus = [
   {
@@ -46,17 +52,23 @@ const HealthCard: React.FC<DashboardItemProps> = ({
   watchPrometheus,
   stopWatchPrometheusQuery,
   prometheusResults,
+  watchAlerts,
+  stopWatchAlerts,
+  alertsResults,
 }) => {
   React.useEffect(() => {
+    watchAlerts();
     watchPrometheus(STORAGE_HEALTH_QUERIES.CEPH_STATUS_QUERY);
     return () => {
+      stopWatchAlerts();
       stopWatchPrometheusQuery(STORAGE_HEALTH_QUERIES.CEPH_STATUS_QUERY);
     };
-  }, [watchPrometheus, stopWatchPrometheusQuery]);
+  }, [watchPrometheus, stopWatchPrometheusQuery, watchAlerts, stopWatchAlerts]);
 
   const queryResult = prometheusResults.getIn([STORAGE_HEALTH_QUERIES.CEPH_STATUS_QUERY, 'result']);
 
   const cephHealthState = getCephHealthState(queryResult);
+  const alerts = filterCephAlerts(getAlerts(alertsResults));
 
   return (
     <DashboardCard>
@@ -68,6 +80,20 @@ const HealthCard: React.FC<DashboardItemProps> = ({
           <HealthItem state={cephHealthState.state} message={cephHealthState.message} />
         </HealthBody>
       </DashboardCardBody>
+      {alerts.length > 0 && (
+        <React.Fragment>
+          <DashboardCardHeader className="co-alerts-card__border">
+            <DashboardCardTitle>Alerts</DashboardCardTitle>
+          </DashboardCardHeader>
+          <DashboardCardBody>
+            <AlertsBody>
+              {alerts.map((alert) => (
+                <AlertItem key={alert.fingerprint} alert={alert} />
+              ))}
+            </AlertsBody>
+          </DashboardCardBody>
+        </React.Fragment>
+      )}
     </DashboardCard>
   );
 };
