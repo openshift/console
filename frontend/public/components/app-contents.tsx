@@ -55,28 +55,27 @@ type DefaultPageProps = {
 
 // The default page component lets us connect to flags without connecting the entire App.
 const DefaultPage_: React.FC<DefaultPageProps> = ({ flags, activePerspective }) => {
-  // support redirecting to perspective landing page
-  if (activePerspective !== 'admin') {
-    return (
-      <Redirect
-        to={
-          plugins.registry.getPerspectives().find((p) => p.properties.id === activePerspective)
-            .properties.landingPageURL
-        }
-      />
-    );
-  }
-
   const openshiftFlag = flags[FLAGS.OPENSHIFT];
+
   if (flagPending(openshiftFlag)) {
     return <Loading />;
   }
-
-  if (openshiftFlag) {
-    return <Redirect to="/k8s/cluster/projects" />;
-  }
-
-  return <Redirect to="/cluster-status" />;
+  // support redirecting to perspective landing page
+  return openshiftFlag ? (
+    <Redirect
+      to={
+        plugins.registry.getPerspectives().find((p) => p.properties.id === activePerspective)
+          .properties.landingPageURL
+      }
+    />
+  ) : (
+    <Redirect
+      to={
+        plugins.registry.getPerspectives().find((p) => p.properties.id === activePerspective)
+          .properties.k8sLandingPageURL
+      }
+    />
+  );
 };
 
 const DefaultPage = connect((state: RootState) => ({

@@ -11,6 +11,8 @@ namespace ExtensionProperties {
     icon: React.ReactElement;
     /** The perspective landing page URL. */
     landingPageURL: string;
+    /** The perspective landing page URL. */
+    k8sLandingPageURL: string;
     /** Whether the perspective is the default. There can only be one default. */
     default?: boolean;
     /** The function to get redirect URL for import flow. */

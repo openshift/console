@@ -63,6 +63,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       componentProps: {
         name: 'Topology',
         href: '/topology',
+        required: FLAGS.OPENSHIFT,
       },
     },
   },
@@ -159,6 +160,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       name: 'Developer',
       icon: <CodeIcon />,
       landingPageURL: '/topology',
+      k8sLandingPageURL: '/add',
       getImportRedirectURL: (project) => `/topology/ns/${project}`,
     },
   },

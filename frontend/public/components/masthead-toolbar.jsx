@@ -190,7 +190,7 @@ class MastheadToolbar_ extends React.Component {
           callback: e => {
             e.preventDefault();
             setActivePerspective(p.properties.id);
-            history.push(p.properties.landingPageURL);
+            history.push('/');
           },
         })),
     ];
