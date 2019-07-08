@@ -307,17 +307,13 @@ class ReportData extends React.Component<ReportDataProps, ReportDataState> {
           applySort={(sb, func, ob) => this.applySort(sb, func, ob)} />;
       }
     }
-    const name = _.get(obj, ['metadata', 'name']);
     const format = 'csv';
     const downloadURL = dataURL(obj, format);
 
-    return <div>
-      <div className="co-m-pane__body">
-        <SectionHeading text="Usage Report">
-          <DownloadButton className="pull-right" url={downloadURL} filename={`${name}.${format}`} />
-        </SectionHeading>
-        { dataElem }
-      </div>
+    return <div className="co-m-pane__body">
+      <SectionHeading text="Usage Report" />
+      <DownloadButton url={downloadURL} />
+      { dataElem }
     </div>;
   }
 }

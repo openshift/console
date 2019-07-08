@@ -22,23 +22,12 @@ export const DownloadButton: React.FC<DownloadButtonProps> = (props) => {
       .then(() => setInFlight(false));
   };
 
-  const { className, filename } = props;
-  const spanStyle = {
-    position: 'absolute' as 'absolute',
-    left: 0,
-  };
-  // The position styling and always-hidden filename are so the button doesn't resize when its content changes.
-  return <div className={className}>
+  return <React.Fragment>
     <button className="btn btn-primary" style={{marginBottom: 10}} disabled={inFlight} type="button" onClick={() => download()}>
-      <i className="fa fa-fw fa-download" />&nbsp;Download
-      <span style={{position: 'relative'}}>
-        { inFlight && <span style={spanStyle}>ing...</span> }
-        <span style={Object.assign({}, spanStyle, {visibility: inFlight ? 'hidden' : 'visible'})}>&nbsp;{filename}</span>
-      </span>
-      <span style={{visibility: 'hidden'}}>&nbsp;{filename}</span>
+      <i className="fa fa-fw fa-download" aria-hidden="true" />&nbsp;Download{inFlight && <React.Fragment>ing...</React.Fragment>}
     </button>
-    { error && <Alert isInline className="co-alert co-break-word" variant="danger" title="An error occurred">{error.toString()}</Alert> }
-  </div>;
+    { error && <Alert isInline className="co-alert co-break-word" variant="danger" title={error.toString()} /> }
+  </React.Fragment>;
 };
 
 export type DownloadButtonProps = {
