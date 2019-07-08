@@ -47,6 +47,7 @@
     "setupFiles": [
       "./__mocks__/localStorage.ts",
       "./__mocks__/matchMedia.js",
+      "./__mocks__/serverFlags.js",
       "./before-tests.js"
     ],
     "coverageDirectory": "__coverage__",
@@ -143,6 +144,7 @@
     "@types/react-virtualized": "9.x",
     "@types/webpack": "4.x",
     "bootstrap-sass": "^3.3.7",
+    "browser-env": "3.x",
     "cache-loader": "1.x",
     "chalk": "2.3.x",
     "chromedriver": "^2.43.3",

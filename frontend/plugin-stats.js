@@ -17,8 +17,12 @@ require('ts-node').register({
   require.extensions[ext] = () => undefined;
 });
 
-require('./setup-jsdom');
+// Assume test environment for the purpose of Console plugin stat reporting.
+process.env.NODE_ENV = 'test';
+
+require('browser-env')({ url: 'http://localhost' });
 require('./__mocks__/matchMedia');
+require('./__mocks__/serverFlags');
 
 const {
   resolvePluginPackages,
