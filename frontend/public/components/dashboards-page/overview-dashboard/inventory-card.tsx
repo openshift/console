@@ -8,7 +8,7 @@ import {
   DashboardCardHeader,
   DashboardCardTitle,
 } from '../../dashboard/dashboard-card';
-import { InventoryItem } from '../../dashboard/inventory-card/inventory-item';
+import { ResourceInventoryItem } from '../../dashboard/inventory-card/inventory-item';
 import { DashboardItemProps, withDashboardResources } from '../with-dashboard-resources';
 import { PodModel, NodeModel, PersistentVolumeClaimModel } from '../../../models';
 import { K8sResourceKind, PodKind } from '../../../module/k8s';
@@ -78,9 +78,9 @@ const InventoryCard_: React.FC<DashboardItemProps> = ({ watchK8sResource, stopWa
         <DashboardCardTitle>Cluster inventory</DashboardCardTitle>
       </DashboardCardHeader>
       <DashboardCardBody>
-        <InventoryItem isLoading={!nodesLoaded} kind={NodeModel} resources={nodesData} mapper={getNodeStatusGroups} />
-        <InventoryItem isLoading={!podsLoaded} kind={PodModel} resources={podsData} mapper={getPodStatusGroups} />
-        <InventoryItem isLoading={!pvcsLoaded} kind={PersistentVolumeClaimModel} useAbbr resources={pvcsData} mapper={getPVCStatusGroups} />
+        <ResourceInventoryItem isLoading={!nodesLoaded} kind={NodeModel} resources={nodesData} mapper={getNodeStatusGroups} />
+        <ResourceInventoryItem isLoading={!podsLoaded} kind={PodModel} resources={podsData} mapper={getPodStatusGroups} />
+        <ResourceInventoryItem isLoading={!pvcsLoaded} kind={PersistentVolumeClaimModel} useAbbr resources={pvcsData} mapper={getPVCStatusGroups} />
         {pluginItems.map((item, index) => {
           const resource = _.get(resources, uniqueResource(item.properties.resource, index).prop);
           const resourceLoaded = _.get(resource, 'loaded');
@@ -98,7 +98,7 @@ const InventoryCard_: React.FC<DashboardItemProps> = ({ watchK8sResource, stopWa
           Object.keys(additionalResources).forEach(key => additionalResourcesData[key] = _.get(additionalResources[key], 'data', []));
 
           return (
-            <InventoryItem
+            <ResourceInventoryItem
               key={index}
               isLoading={!resourceLoaded || !additionalResourcesLoaded}
               kind={item.properties.model}
