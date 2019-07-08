@@ -545,7 +545,7 @@ export type OAuthKind = {
   };
 } & K8sResourceKind;
 
-export type K8sVerb = 'create' | 'get' | 'list' | 'update' | 'patch' | 'delete' | 'deletecollection';
+export type K8sVerb = 'create' | 'get' | 'list' | 'update' | 'patch' | 'delete' | 'deletecollection' | 'watch';
 
 export type AccessReviewResourceAttributes = {
     group?: string;
@@ -568,6 +568,20 @@ export type SelfSubjectAccessReviewKind = {
   };
 } & K8sResourceKind;
 
+export type ResourceAccessReviewRequest = {
+  namespace?: string;
+  resourceAPIVersion: string;
+  resourceAPIGroup: string;
+  resource: string;
+  verb: K8sVerb;
+} & K8sResourceKind;
+
+export type ResourceAccessReviewResponse = {
+  namespace?: string;
+  users: string[];
+  groups: string[];
+} & K8sResourceKind;
+
 export type K8sKind = {
   abbr: string;
   kind: string;
@@ -584,7 +598,7 @@ export type K8sKind = {
   selector?: Selector;
   labels?: {[key: string]: string};
   annotations?: {[key: string]: string};
-  verbs?: string[];
+  verbs?: K8sVerb[];
 };
 
 export type Status = {

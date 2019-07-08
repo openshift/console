@@ -55,6 +55,7 @@ const quotaStartsWith = ['resourcequotas', 'clusterresourcequotas'];
 const imagestreamsStartsWith = ['imagestreams', 'imagestreamtags'];
 const monitoringAlertsStartsWith = ['monitoring/alerts', 'monitoring/alertrules'];
 const clusterSettingsStartsWith = ['settings/cluster', 'settings/idp', 'config.openshift.io'];
+const apiExplorerStartsWith = ['api-explorer', 'api-resource'];
 
 const monitoringNavSectionStateToProps = (state) => ({
   canAccess: !!state[featureReducerName].get(FLAGS.CAN_GET_NS),
@@ -186,7 +187,7 @@ const AdminNav = () => (
       <ResourceNSLink resource="resourcequotas" name="Resource Quotas" startsWith={quotaStartsWith} />
       <ResourceNSLink resource="limitranges" name="Limit Ranges" />
       <ResourceNSLink resource={referenceForModel(ChargebackReportModel)} name="Chargeback" required={FLAGS.CHARGEBACK} />
-      <HrefLink href="/api-explorer" name="API Explorer" />
+      <HrefLink href="/api-explorer" name="API Explorer" startsWith={apiExplorerStartsWith} />
       <ResourceClusterLink resource="customresourcedefinitions" name="Custom Resource Definitions" required={FLAGS.CAN_LIST_CRD} />
     </NavSection>
   </React.Fragment>
