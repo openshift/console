@@ -156,4 +156,4 @@ type VirtualMachineTemplatesPageProps = {
   match: match<{ ns?: string }>;
 };
 
-export { VirtualMachineTemplatesPage };
+export { labelPlural, VirtualMachineTemplatesPage };

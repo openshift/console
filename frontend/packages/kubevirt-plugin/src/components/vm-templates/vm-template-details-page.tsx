@@ -8,6 +8,7 @@ import { TemplateModel } from '@console/internal/models';
 import { VMDisksFirehose } from '../vm-disks';
 import { VMTemplateDetailsConnected } from './vm-template-details';
 import { VMNics } from '../vm-nics';
+import { labelPlural } from './vm-template';
 
 export const VMTemplateDetailsPage: React.FC<VMTemplateDetailsPageProps> = (props) => {
   const nicsPage = {
@@ -31,6 +32,11 @@ export const VMTemplateDetailsPage: React.FC<VMTemplateDetailsPageProps> = (prop
 
   const menuActions = undefined; // TODO(mlibra): menuActions
 
+  const breadcrumbsForVMTemplatePage = (match: any) => () => [
+    { name: labelPlural, path: `/k8s/ns/${match.params.ns || 'default'}/vmtemplates` },
+    { name: `${match.params.name} details`, path: `${match.url}` },
+  ];
+
   return (
     <DetailsPage
       {...props}
@@ -40,6 +46,7 @@ export const VMTemplateDetailsPage: React.FC<VMTemplateDetailsPageProps> = (prop
       namespace={props.match.params.ns}
       menuActions={menuActions}
       pages={pages}
+      breadcrumbsFor={breadcrumbsForVMTemplatePage(props.match)}
     />
   );
 };
