@@ -10,7 +10,7 @@ import { coFetchJSON } from '../co-fetch';
 import { ConsoleHealth, KubernetesHealth, Health } from './graphs/health';
 import { connectToFlags, flagPending } from '../reducers/features';
 import { FLAGS } from '../const';
-import { Gauge, PROMETHEUS_BASE_PATH, requirePrometheus, ThresholdColor } from './graphs';
+import { Gauge, PROMETHEUS_BASE_PATH, requirePrometheus } from './graphs';
 import {
   AdditionalSupportLinks,
   AsyncComponent,
@@ -42,16 +42,7 @@ const Graphs = requirePrometheus(({namespace}) => {
                 invert
                 query={'(sum(up{job="apiserver"} == 1) / count(up{job="apiserver"})) * 100'}
                 remainderLabel="down"
-                thresholds={[
-                  {
-                    value: 85,
-                    color: ThresholdColor.WARN,
-                  },
-                  {
-                    value: 50,
-                    color: ThresholdColor.ERROR,
-                  },
-                ]}
+                thresholds={[{ value: 85 }, { value: 50 }]}
                 title="API Servers Up"
                 usedLabel="up"
               />
@@ -61,16 +52,7 @@ const Graphs = requirePrometheus(({namespace}) => {
                 remainderLabel="down"
                 query={'(sum(up{job="kube-controller-manager"} == 1) / count(up{job="kube-controller-manager"})) * 100'}
                 invert
-                thresholds={[
-                  {
-                    value: 85,
-                    color: ThresholdColor.WARN,
-                  },
-                  {
-                    value: 50,
-                    color: ThresholdColor.ERROR,
-                  },
-                ]}
+                thresholds={[{ value: 85 }, { value: 50 }]}
                 title="Controller Managers Up"
                 usedLabel="up"
               />
@@ -80,16 +62,7 @@ const Graphs = requirePrometheus(({namespace}) => {
                 invert
                 query={'(sum(up{job="scheduler"} == 1) / count(up{job="scheduler"})) * 100'}
                 remainderLabel="down"
-                thresholds={[
-                  {
-                    value: 85,
-                    color: ThresholdColor.WARN,
-                  },
-                  {
-                    value: 50,
-                    color: ThresholdColor.ERROR,
-                  },
-                ]}
+                thresholds={[{ value: 85 }, { value: 50 }]}
                 title="Schedulers Up"
                 usedLabel="up"
               />
@@ -99,16 +72,7 @@ const Graphs = requirePrometheus(({namespace}) => {
                 invert
                 query={'sum(rate(apiserver_request_count{code=~"2.."}[5m])) / sum(rate(apiserver_request_count[5m])) * 100'}
                 remainderLabel="failure"
-                thresholds={[
-                  {
-                    value: 85,
-                    color: ThresholdColor.WARN,
-                  },
-                  {
-                    value: 70,
-                    color: ThresholdColor.ERROR,
-                  },
-                ]}
+                thresholds={[{ value: 85 }, { value: 70 }]}
                 title="API Request Success Rate"
                 usedLabel="success"
               />
