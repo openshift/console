@@ -17,6 +17,7 @@ import { K8sResourceKind } from '@console/internal/module/k8s/index';
 import { getName } from '@console/shared/src/selectors/common';
 import { referenceForModel } from '@console/internal/module/k8s/k8s';
 import { CephClusterModel } from '../../../models';
+import { CEPH_STORAGE_NAMESPACE, CEPH_CLUSTER_NAME } from '../../../constants/index';
 
 const getInfrastructurePlatform = (infrastructure: K8sResourceKind): string =>
   _.get(infrastructure, 'status.platform');
@@ -35,8 +36,8 @@ const infrastructureResource: FirehoseResource = {
 const cephClusterResource: FirehoseResource = {
   kind: referenceForModel(CephClusterModel),
   namespaced: true,
-  namespace: 'openshift-storage',
-  name: 'rook-ceph',
+  namespace: CEPH_STORAGE_NAMESPACE,
+  name: CEPH_CLUSTER_NAME,
   isList: false,
   prop: 'ceph',
 };
