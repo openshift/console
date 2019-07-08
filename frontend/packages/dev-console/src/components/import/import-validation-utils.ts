@@ -1,4 +1,5 @@
 import * as yup from 'yup';
+import * as _ from 'lodash';
 
 const urlRegex = /^(((ssh|git|https?):\/\/[\w]+)|(git@[\w]+.[\w]+:))([\w\-._~/?#[\]!$&'()*+,;=])+$/;
 const hostnameRegex = /^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$/;
@@ -39,6 +40,40 @@ export const validationSchema = yup.object().shape({
         message: 'This field cannot be empty.',
       }),
   }),
+  serverless: yup.object().shape({
+    trigger: yup.boolean(),
+    scaling: yup.object().when('trigger', {
+      is: true,
+      then: yup.object({
+        minpods: yup
+          .number()
+          .integer('Min Pods must be an Integer.')
+          .min(0, 'Min Pods must be greater than or equal to 0.'),
+        maxpods: yup
+          .number()
+          .transform((cv) => (_.isNaN(cv) ? undefined : cv))
+          .integer('Max Pods must be an Integer.')
+          .min(1, 'Max Pods must be greater than or equal to 1.')
+          .test({
+            test(limit) {
+              const { minpods } = this.parent;
+              return limit ? limit >= minpods : true;
+            },
+            message: 'Max Pods must be greater than or equal to Min Pods.',
+          }),
+        concurrencytarget: yup
+          .number()
+          .transform((cv) => (_.isNaN(cv) ? undefined : cv))
+          .integer('Concurrency Target must be an Integer.')
+          .min(0, 'Concurrency Target must be greater than or equal to 0.'),
+        concurrencylimit: yup
+          .number()
+          .transform((cv) => (_.isNaN(cv) ? undefined : cv))
+          .integer('Concurrency Limit must be an Integer.')
+          .min(0, 'Concurrency Limit must be greater than or equal to 0.'),
+      }),
+    }),
+  }),
   route: yup.object().shape({
     secure: yup.boolean(),
     tls: yup.object().when('secure', {
@@ -58,9 +93,6 @@ export const validationSchema = yup.object().shape({
     path: yup
       .string()
       .matches(pathRegex, { message: 'Path must start with /.', excludeEmptyString: true }),
-  }),
-  serverless: yup.object().shape({
-    trigger: yup.boolean(),
   }),
 });
 

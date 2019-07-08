@@ -58,5 +58,11 @@ export const mockFormData: GitImportFormData = {
   labels: {},
   serverless: {
     trigger: false,
+    scaling: {
+      minpods: 0,
+      maxpods: '',
+      concurrencytarget: '',
+      concurrencylimit: '',
+    },
   },
 };
