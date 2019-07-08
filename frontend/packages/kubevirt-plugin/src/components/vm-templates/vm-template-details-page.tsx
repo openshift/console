@@ -34,7 +34,7 @@ export const VMTemplateDetailsPage: React.FC<VMTemplateDetailsPageProps> = (prop
 
   const breadcrumbsForVMTemplatePage = (match: any) => () => [
     { name: labelPlural, path: `/k8s/ns/${match.params.ns || 'default'}/vmtemplates` },
-    { name: `${match.params.name} details`, path: `${match.url}` },
+    { name: `${match.params.name} Details`, path: `${match.url}` },
   ];
 
   return (
