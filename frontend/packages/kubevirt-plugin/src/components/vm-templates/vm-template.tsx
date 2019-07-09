@@ -11,7 +11,12 @@ import {
 } from 'kubevirt-web-ui-components';
 
 import { ListPage, Table, TableRow, TableData } from '@console/internal/components/factory';
-import { Kebab, ResourceLink, ResourceKebab } from '@console/internal/components/utils';
+import {
+  Kebab,
+  ResourceLink,
+  ResourceKebab,
+  asAccessReview,
+} from '@console/internal/components/utils';
 import { getNamespace, DASH } from '@console/shared';
 import { TemplateModel } from '@console/internal/models';
 import { TemplateKind } from '@console/internal/module/k8s';
@@ -20,7 +25,17 @@ import { dimensifyHeader, dimensifyRow } from '../../utils/table';
 import { VMTemplateLink } from './vm-template-link';
 import { VM_TEMPLATE_LABEL_PLURAL } from '../../constants/vm-templates';
 
-export const menuActions = Kebab.factory.common;
+const vmTemplateEditAction = (kind, obj) => ({
+  label: `Edit VM Template`,
+  href: `/k8s/ns/${obj.metadata.namespace}/vmtemplates/${obj.metadata.name}/yaml`,
+  accessReview: asAccessReview(kind, obj, 'update'),
+});
+const menuActions = [
+  Kebab.factory.ModifyLabels,
+  Kebab.factory.ModifyAnnotations,
+  vmTemplateEditAction,
+  Kebab.factory.Delete,
+];
 
 const { kind } = TemplateModel;
 const selector = {
