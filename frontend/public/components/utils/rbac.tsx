@@ -12,7 +12,7 @@ import {
   K8sVerb,
   SelfSubjectAccessReviewKind,
 } from '../../module/k8s';
-import { SelfSubjectAccessReviewModel } from '../../models';
+import { ProjectModel, SelfSubjectAccessReviewModel } from '../../models';
 
 // Memoize the result so we only make the request once for each access review.
 // This does mean that the user will have to refresh the page to see updates.
@@ -23,11 +23,16 @@ import { SelfSubjectAccessReviewModel } from '../../models';
 // not guaranteed to give the same result for equivalent objects.)
 // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
 const checkAccessInternal = _.memoize((group: string, resource: string, subresource: string, verb: K8sVerb, name: string, namespace: string, impersonateKey: string): Promise<SelfSubjectAccessReviewKind> => {
+  // Projects are a special case. `namespace` must be set to the project name
+  // even though it's a cluster-scoped resource.
+  const reviewNamespace = group === ProjectModel.apiGroup && resource === ProjectModel.plural
+    ? name
+    : namespace;
   const ssar: SelfSubjectAccessReviewKind = {
     apiVersion: 'authorization.k8s.io/v1',
     kind: 'SelfSubjectAccessReview',
     spec: {
-      resourceAttributes: { group, resource, subresource, verb, name, namespace },
+      resourceAttributes: { group, resource, subresource, verb, name, namespace: reviewNamespace },
     },
   };
   return k8sCreate(SelfSubjectAccessReviewModel, ssar);
