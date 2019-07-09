@@ -13,8 +13,8 @@ export const HOST_STATUS_DEPROVISIONING = 'deprovisioning';
 export const HOST_STATUS_MAKING_HOST_AVAILABLE = 'making host available';
 export const HOST_STATUS_MATCH_PROFILE = 'match profile';
 export const HOST_STATUS_STARTING_MAINTENANCE = 'starting maintenance';
+export const HOST_STATUS_UNDER_MAINTENANCE = 'under maintenance';
 export const HOST_STATUS_STOPPING_MAINTENANCE = 'stopping maintenance';
-export const HOST_STATUS_MAINTENANCE = 'maintenance';
 export const HOST_STATUS_VALIDATION_ERROR = 'validation error';
 export const HOST_STATUS_REGISTRATION_ERROR = 'registration error';
 export const HOST_STATUS_PROVISIONING_ERROR = 'provisioning error';
@@ -38,8 +38,8 @@ export const HOST_STATUS_TITLES = {
   [HOST_STATUS_PROVISIONING_ERROR]: 'Provisioning Error',
   [HOST_STATUS_POWER_MANAGEMENT_ERROR]: 'Power Management Error',
   [HOST_STATUS_STARTING_MAINTENANCE]: 'Starting maintenance',
+  [HOST_STATUS_UNDER_MAINTENANCE]: 'Under maintenance',
   [HOST_STATUS_STOPPING_MAINTENANCE]: 'Stopping maintenance',
-  [HOST_STATUS_MAINTENANCE]: 'Maintenance',
   [HOST_STATUS_MATCH_PROFILE]: 'Matching profile',
 };
 

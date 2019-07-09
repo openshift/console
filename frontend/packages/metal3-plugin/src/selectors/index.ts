@@ -4,6 +4,8 @@ import { K8sResourceKind, MachineKind } from '@console/internal/module/k8s';
 import { getName } from '@console/shared';
 import { BaremetalHostDisk } from '../types';
 
+export * from './node-maintanance';
+
 export const getHostOperationalStatus = (host: K8sResourceKind) =>
   _.get(host, 'status.operationalStatus');
 export const getHostProvisioningState = (host: K8sResourceKind) =>
@@ -22,5 +24,6 @@ export const getHostVendorInfo = (host: K8sResourceKind) =>
   _.get(host, 'status.hardware.systemVendor', {});
 export const getHostTotalStorageCapacity = (host: K8sResourceKind) =>
   _.reduce(getHostStorage(host), (sum: number, disk: BaremetalHostDisk) => sum + disk.sizeBytes, 0);
-export const getHostMachine = (host: K8sResourceKind, machines: MachineKind[]) =>
+
+export const getHostMachine = (host: K8sResourceKind, machines: MachineKind[] = []) =>
   machines.find((machine: MachineKind) => getHostMachineName(host) === getName(machine));

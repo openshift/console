@@ -1,8 +1,6 @@
 import * as _ from 'lodash';
 
 import { Filter } from '@console/shared';
-import { K8sResourceKind } from '@console/internal/module/k8s';
-import { getSimpleHostStatus } from '../utils/host-status';
 import {
   HOST_REGISTERING_STATES,
   HOST_PROVISIONING_STATES,
@@ -11,6 +9,7 @@ import {
   HOST_STATUS_TITLES,
   HOST_STATUS_PROVISIONED,
 } from '../constants';
+import { HostRowBundle } from './types';
 
 const hostStatesToFilterMap = Object.freeze({
   registering: {
@@ -39,9 +38,8 @@ const hostStatesToFilterMap = Object.freeze({
   },
 });
 
-const getHostFilterStatus = (host: K8sResourceKind): string => {
-  const status = getSimpleHostStatus(host);
-  return _.findKey(hostStatesToFilterMap, ({ states }) => states.includes(status));
+const getHostFilterStatus = (bundle: HostRowBundle): string => {
+  return _.findKey(hostStatesToFilterMap, ({ states }) => states.includes(bundle.status.status));
 };
 
 export const hostStatusFilter: Filter = {
@@ -49,8 +47,8 @@ export const hostStatusFilter: Filter = {
   selected: Object.keys(hostStatesToFilterMap),
   reducer: getHostFilterStatus,
   items: _.map(hostStatesToFilterMap, ({ title }, id) => ({ id, title })),
-  filter: (groups, host: K8sResourceKind) => {
-    const status = getHostFilterStatus(host);
+  filter: (groups, bundle: HostRowBundle) => {
+    const status = getHostFilterStatus(bundle);
     return groups.selected.has(status) || !_.includes(groups.all, status);
   },
 };
