@@ -23,6 +23,7 @@ import { TemplateKind } from '@console/internal/module/k8s';
 import { match } from 'react-router';
 import { dimensifyHeader, dimensifyRow } from '../../utils/table';
 import { VMTemplateLink } from './vm-template-link';
+import { openCreateVmWizard } from '../modals';
 import { VM_TEMPLATE_LABEL_PLURAL } from '../../constants/vm-templates';
 
 const vmTemplateEditAction = (kind, obj) => ({
@@ -141,9 +142,11 @@ const VirtualMachineTemplates: React.FC<React.ComponentProps<typeof Table>> = (p
 
 const getCreateProps = (namespace: string) => ({
   items: {
+    wizard: 'Create with Wizard',
     yaml: 'Create from YAML',
   },
   createLink: () => `/k8s/ns/${namespace || 'default'}/vmtemplates/~new/`,
+  action: (itemName) => (itemName === 'wizard' ? () => openCreateVmWizard(namespace, true) : null),
 });
 
 const VirtualMachineTemplatesPage: React.FC<
