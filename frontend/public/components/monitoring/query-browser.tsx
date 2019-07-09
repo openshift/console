@@ -241,7 +241,7 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
   }
 
   return <div className="query-browser__wrapper">
-    <div className="query-browser__controls">
+    <div className="query-browser__controls query-browser__controls--graph">
       <div className="query-browser__controls--left">
         <SpanControls defaultSpanText={defaultSpanText} onChange={onSpanChange} span={span} />
         <div className="query-browser__loading">
