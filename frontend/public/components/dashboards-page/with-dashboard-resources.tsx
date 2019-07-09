@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Map as ImmutableMap } from 'immutable';
 
@@ -31,71 +30,72 @@ const mapStateToProps = (state: RootState) => ({
   [RESULTS_TYPE.PROMETHEUS]: state.dashboards.get(RESULTS_TYPE.PROMETHEUS),
 });
 
-const WithDashboardResources = (WrappedComponent: React.ComponentType<DashboardItemProps>) =>
-  class WithDashboardResources_ extends React.Component<WithDashboardResourcesProps, WithDashboardResourcesState> {
-    private urls: Array<string> = [];
-    private queries: Array<string> = [];
+export const withDashboardResources = <P extends DashboardItemProps>(WrappedComponent: React.ComponentType<P>, additionalProps: any = {}) =>
+  connect(mapStateToProps, mapDispatchToProps)(
+    class WithDashboardResources extends React.Component<WithDashboardResourcesProps, WithDashboardResourcesState> {
+      private urls: Array<string> = [];
+      private queries: Array<string> = [];
 
-    constructor(props) {
-      super(props);
-      this.state = {
-        k8sResources: [],
-      };
+      constructor(props) {
+        super(props);
+        this.state = {
+          k8sResources: [],
+        };
+      }
+
+      shouldComponentUpdate(nextProps: WithDashboardResourcesProps, nextState: WithDashboardResourcesState) {
+        const urlResultChanged = this.urls.some(urlKey =>
+          this.props[RESULTS_TYPE.URL].getIn([urlKey, 'result']) !== nextProps[RESULTS_TYPE.URL].getIn([urlKey, 'result'])
+        );
+        const queryResultChanged = this.queries.some(query =>
+          this.props[RESULTS_TYPE.PROMETHEUS].getIn([query, 'result']) !== nextProps[RESULTS_TYPE.PROMETHEUS].getIn([query, 'result'])
+        );
+        const k8sResourcesChanged = this.state.k8sResources !== nextState.k8sResources;
+
+        return urlResultChanged || queryResultChanged || k8sResourcesChanged;
+      }
+
+      watchURL: WatchURL = (url, fetch) => {
+        this.urls.push(url);
+        this.props.watchURL(url, fetch);
+      }
+
+      watchPrometheus: WatchPrometheus = query => {
+        this.queries.push(query);
+        this.props.watchPrometheusQuery(query);
+      }
+
+      watchK8sResource: WatchK8sResource = resource => {
+        this.setState((state: WithDashboardResourcesState) => ({
+          k8sResources: [...state.k8sResources, resource],
+        }));
+      }
+
+      stopWatchK8sResource: StopWatchK8sResource = resource => {
+        this.setState((state: WithDashboardResourcesState) => ({
+          k8sResources: state.k8sResources.filter(r => r.prop !== resource.prop),
+        }));
+      }
+
+      render() {
+        return (
+          <Firehose resources={this.state.k8sResources}>
+            <WrappedComponent
+              watchURL={this.watchURL}
+              stopWatchURL={this.props.stopWatchURL}
+              watchPrometheus={this.watchPrometheus}
+              stopWatchPrometheusQuery={this.props.stopWatchPrometheusQuery}
+              urlResults={this.props[RESULTS_TYPE.URL]}
+              prometheusResults={this.props[RESULTS_TYPE.PROMETHEUS]}
+              watchK8sResource={this.watchK8sResource}
+              stopWatchK8sResource={this.stopWatchK8sResource}
+              {...additionalProps}
+            />
+          </Firehose>
+        );
+      }
     }
-
-    shouldComponentUpdate(nextProps: WithDashboardResourcesProps, nextState: WithDashboardResourcesState) {
-      const urlResultChanged = this.urls.some(urlKey =>
-        this.props[RESULTS_TYPE.URL].getIn([urlKey, 'result']) !== nextProps[RESULTS_TYPE.URL].getIn([urlKey, 'result'])
-      );
-      const queryResultChanged = this.queries.some(query =>
-        this.props[RESULTS_TYPE.PROMETHEUS].getIn([query, 'result']) !== nextProps[RESULTS_TYPE.PROMETHEUS].getIn([query, 'result'])
-      );
-      const k8sResourcesChanged = this.state.k8sResources !== nextState.k8sResources;
-
-      return urlResultChanged || queryResultChanged || k8sResourcesChanged;
-    }
-
-    watchURL: WatchURL = (url, fetch) => {
-      this.urls.push(url);
-      this.props.watchURL(url, fetch);
-    }
-
-    watchPrometheus: WatchPrometheus = query => {
-      this.queries.push(query);
-      this.props.watchPrometheusQuery(query);
-    }
-
-    watchK8sResource: WatchK8sResource = resource => {
-      this.setState((state: WithDashboardResourcesState) => ({
-        k8sResources: [...state.k8sResources, resource],
-      }));
-    }
-
-    stopWatchK8sResource: StopWatchK8sResource = resource => {
-      this.setState((state: WithDashboardResourcesState) => ({
-        k8sResources: state.k8sResources.filter(r => r.prop !== resource.prop),
-      }));
-    }
-
-    render() {
-      return (
-        <Firehose resources={this.state.k8sResources}>
-          <WrappedComponent
-            watchURL={this.watchURL}
-            stopWatchURL={this.props.stopWatchURL}
-            watchPrometheus={this.watchPrometheus}
-            stopWatchPrometheusQuery={this.props.stopWatchPrometheusQuery}
-            urlResults={this.props[RESULTS_TYPE.URL]}
-            prometheusResults={this.props[RESULTS_TYPE.PROMETHEUS]}
-            watchK8sResource={this.watchK8sResource}
-            stopWatchK8sResource={this.stopWatchK8sResource}
-          />
-        </Firehose>
-      );
-    }
-  };
-
-export const withDashboardResources = compose(connect(mapStateToProps, mapDispatchToProps), WithDashboardResources);
+  );
 
 export type WatchURL = (url: string, fetch?: Fetch) => void;
 export type StopWatchURL = (url: string) => void;
