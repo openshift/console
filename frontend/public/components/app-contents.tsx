@@ -95,20 +95,26 @@ const LazyRoute = (props) => (
   />
 );
 
-const pageRouteExtensions = plugins.registry.getRoutePages().map((r) => {
-  const Component = r.properties.loader ? LazyRoute : Route;
-  return <Component {...r.properties} key={Array.from(r.properties.path).join(',')} />;
-});
+const getPageRouteExtensions = (perspective: string) =>
+  plugins.registry.getRoutePages().map((r) => {
+    if (r.properties.perspective && r.properties.perspective !== perspective) {
+      return null;
+    }
+    const Component = r.properties.loader ? LazyRoute : Route;
+    return <Component {...r.properties} key={Array.from(r.properties.path).join(',')} />;
+  });
 
 // use `withRouter` to force a re-render when routes change since we are using React.memo
-const AppContents = withRouter(React.memo(() => (
+const AppContents = connect((state: RootState) => ({
+  activePerspective: getActivePerspective(state),
+}))(withRouter(React.memo(({activePerspective}) => (
   <PageSection variant={PageSectionVariants.light}>
     <div id="content">
       <GlobalNotifications />
       <Route path={namespacedRoutes} component={NamespaceBar} />
       <div id="content-scrollable">
         <Switch>
-          {pageRouteExtensions}
+          {getPageRouteExtensions(activePerspective)}
 
           <Route path={['/all-namespaces', '/ns/:ns']} component={RedirectComponent} />
 
@@ -227,6 +233,6 @@ const AppContents = withRouter(React.memo(() => (
       </div>
     </div>
   </PageSection>
-)));
+))));
 
 export default AppContents;

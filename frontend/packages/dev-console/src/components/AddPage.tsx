@@ -31,6 +31,7 @@ const AddPage: React.FC<AddPageProps> = ({ match }) => {
           <DefaultPage title="Add">
             Select a project to start adding to it or{' '}
             <button
+              style={{ verticalAlign: 'baseline' }}
               type="button"
               className="btn btn-link btn-link--no-btn-default-values"
               onClick={openProjectModal}

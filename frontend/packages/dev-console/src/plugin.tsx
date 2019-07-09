@@ -67,12 +67,12 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
-    type: 'NavItem/Href',
+    type: 'NavItem/ResourceNS',
     properties: {
       perspective: 'dev',
       componentProps: {
         name: 'Builds',
-        href: '/buildconfigs',
+        resource: 'buildconfigs',
         required: FLAGS.OPENSHIFT,
       },
     },
@@ -165,14 +165,16 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'Page/Route',
     properties: {
+      perspective: 'dev',
       exact: true,
-      path: ['/add', '/import', '/topology', '/buildconfigs'],
+      path: ['/add', '/import', '/topology'],
       component: NamespaceRedirect,
     },
   },
   {
     type: 'Page/Route',
     properties: {
+      perspective: 'dev',
       exact: true,
       path: ['/add/all-namespaces', '/add/ns/:ns'],
       loader: async () =>
@@ -182,6 +184,7 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'Page/Route',
     properties: {
+      perspective: 'dev',
       exact: true,
       path: ['/topology/all-namespaces', '/topology/ns/:ns'],
       loader: async () =>
@@ -193,6 +196,7 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'Page/Route',
     properties: {
+      perspective: 'dev',
       exact: true,
       path: ['/import/all-namespaces', '/import/ns/:ns'],
       loader: async () =>
@@ -204,6 +208,7 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'Page/Route',
     properties: {
+      perspective: 'dev',
       exact: true,
       path: ['/catalog/source-to-image'],
       loader: async () =>
@@ -215,11 +220,12 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'Page/Route',
     properties: {
+      perspective: 'dev',
       exact: true,
-      path: ['/buildconfigs/all-namespaces', '/buildconfigs/ns/:ns'],
+      path: ['/k8s/all-namespaces/buildconfigs', '/k8s/ns/:ns/buildconfigs'],
       loader: async () =>
         (await import(
-          './components/BuildconfigPage' /* webpackChunkName: "dev-console-buildconfigs" */
+          './components/BuildConfigPage' /* webpackChunkName: "dev-console-buildconfigs" */
         )).default,
     },
   },
