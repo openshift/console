@@ -1,6 +1,7 @@
 export const HOST_STATUS_READY = 'ready';
 export const HOST_STATUS_DISCOVERED = 'discovered';
 export const HOST_STATUS_OK = 'OK';
+export const HOST_STATUS_ERROR = 'error';
 export const HOST_STATUS_EXTERNALLY_PROVISIONED = 'externally provisioned';
 export const HOST_STATUS_PROVISIONED = 'provisioned';
 export const HOST_STATUS_DEPROVISIONED = 'deprovisioned';
@@ -59,6 +60,7 @@ export const HOST_ERROR_STATES = [
   HOST_STATUS_PROVISIONING_ERROR,
   HOST_STATUS_VALIDATION_ERROR,
   HOST_STATUS_POWER_MANAGEMENT_ERROR,
+  HOST_STATUS_ERROR,
 ];
 
 export const HOST_WARN_STATES = [];
@@ -83,3 +85,7 @@ export const HOST_SUCCESS_STATES = [
   HOST_STATUS_EXTERNALLY_PROVISIONED,
   HOST_STATUS_DEPROVISIONED,
 ];
+
+export const HOST_HEALTH_OK = 'Host is healthy';
+export const HOST_HEALTH_ERROR = 'Host is in an error state';
+export const HOST_HEALTH_LOADING = 'Loading host health data';

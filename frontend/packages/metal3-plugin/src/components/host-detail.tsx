@@ -46,6 +46,7 @@ import {
 import BaremetalHostStatus from './host-status';
 import BaremetalHostNICList from './host-nics';
 import BaremetalHostDiskList from './host-disks';
+import { HostDashboard } from './dashboard';
 
 type BaremetalHostDetailPageProps = {
   namespace: string;
@@ -200,11 +201,17 @@ export const BaremetalHostDetailPage: React.FC<BaremetalHostDetailPageProps> = (
     name: 'Disks',
     component: BaremetalHostDiskList,
   };
+  const dashboardPage = {
+    href: 'dashboard',
+    name: 'Dashboard',
+    component: HostDashboard,
+  };
   return (
     <DetailsPage
       {...props}
       pagesFor={() => [
         navFactory.details(BaremetalHostDetails),
+        dashboardPage,
         navFactory.editYaml(),
         nicsPage,
         disksPage,
