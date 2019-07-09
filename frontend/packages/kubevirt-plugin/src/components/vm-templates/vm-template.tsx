@@ -17,7 +17,7 @@ import {
   ResourceKebab,
   asAccessReview,
 } from '@console/internal/components/utils';
-import { getNamespace, DASH } from '@console/shared';
+import { getNamespace, DASH, getName } from '@console/shared';
 import { TemplateModel } from '@console/internal/models';
 import { TemplateKind } from '@console/internal/module/k8s';
 import { match } from 'react-router';
@@ -27,7 +27,7 @@ import { VM_TEMPLATE_LABEL_PLURAL } from '../../constants/vm-templates';
 
 const vmTemplateEditAction = (kind, obj) => ({
   label: `Edit VM Template`,
-  href: `/k8s/ns/${obj.metadata.namespace}/vmtemplates/${obj.metadata.name}/yaml`,
+  href: `/k8s/ns/${getNamespace(obj)}/vmtemplates/${getName(obj)}/yaml`,
   accessReview: asAccessReview(kind, obj, 'update'),
 });
 const menuActions = [
