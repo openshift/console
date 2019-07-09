@@ -14,6 +14,12 @@ import { ExploreTypeSidebar } from './sidebars/explore-type-sidebar';
 import { ResourceSidebar } from './sidebars/resource-sidebar';
 import { yamlTemplates } from '../models/yaml-templates';
 
+import { getStoredSwagger } from '../module/k8s/swagger';
+import { MonacoToProtocolConverter, ProtocolToMonacoConverter } from 'monaco-languageclient/lib/monaco-converter';
+import { getLanguageService, TextDocument, SchemaRequestService, CustomFormatterOptions } from "yaml-language-server";
+import { OpenAPItoJSONSchema } from '../module/k8s/openapi-to-json-schema';
+import * as URL from 'url';
+
 const generateObjToLoad = (kind, templateName, namespace = 'default') => {
   const sampleObj = safeLoad(yamlTemplates.getIn([kind, templateName]));
   if (_.has(sampleObj.metadata, 'namespace')) {
@@ -119,9 +125,10 @@ export const EditYAML = connect(stateToProps)(
       }
     }
 
-    editorDidMount(editor) {
+    editorDidMount(editor, monaco) {
       editor.layout();
       editor.focus();
+      this.registerYAMLinMonaco(monaco);
     }
 
     get editorHeight() {
@@ -313,6 +320,173 @@ export const EditYAML = connect(stateToProps)(
     downloadSampleYaml_(templateName = 'default', kind = referenceForModel(this.props.model)) {
       const data = safeDump(generateObjToLoad(kind, templateName, this.props.obj.metadata.namespace));
       this.download(data);
+    }
+
+    registerYAMLinMonaco(monaco) {
+        const LANGUAGE_ID = 'yaml';
+        const MODEL_URI = 'inmemory://model.yaml'
+        const MONACO_URI = monaco.Uri.parse(MODEL_URI);
+        
+        const m2p = new MonacoToProtocolConverter();
+        const p2m = new ProtocolToMonacoConverter();
+
+        function createDocument(model) {
+            return TextDocument.create(MODEL_URI, model.getModeId(), model.getVersionId(), model.getValue());
+        }
+
+        const yamlService = this.createYAMLService();
+
+        // validation is not a 'registered' feature like the others, it relies on calling the yamlService
+        // directly for validation results when content in the editor has changed
+        this.YAMLValidation(monaco, p2m, MONACO_URI, createDocument, yamlService);
+
+        /**
+         * This exists because react-monaco-editor passes the same monaco
+         * object each time. Without it you would be registering all the features again and
+         * getting duplicate results.
+         * 
+         * Monaco does not provide any apis for unregistering or checking if the features have already
+         * been registered for a language.
+         * 
+         * We check that > 1 YAML language exists because one is the default and one is the initial register
+         * that setups our features. 
+         */
+        if (monaco.languages.getLanguages().filter(x => x.id === LANGUAGE_ID).length > 1) {
+            return;
+        }
+
+        this.registerYAMLLanguage(); //register the YAML language with monaco
+        this.registerYAMLCompletion(LANGUAGE_ID, monaco, m2p, p2m, createDocument, yamlService);
+        this.registerYAMLDocumentSymbols(LANGUAGE_ID, monaco, p2m, createDocument, yamlService);
+        this.registerYAMLHover(LANGUAGE_ID, monaco, m2p, p2m, createDocument, yamlService);
+
+    }
+
+    registerYAMLLanguage() {
+        // register the YAML language with Monaco
+        monaco.languages.register({
+            id: 'yaml',
+            extensions: ['.yml', '.yaml'],
+            aliases: ['YAML', 'yaml'],
+            mimetypes: ['application/yaml']
+        });
+    }
+
+    createYAMLService() {
+        var resolveSchema = function (url) {
+            const promise = new Promise((resolve, reject) => {
+                const xhr = new XMLHttpRequest();
+                xhr.onload = () => resolve(xhr.responseText);
+                xhr.onerror = () => reject(xhr.statusText);
+                xhr.open("GET", url, true);
+                xhr.send();
+            });
+            return promise;
+        }
+
+        const workspaceContext = {
+            resolveRelativePath: (relativePath, resource) => URL.resolve(resource, relativePath)
+        };
+
+        const yamlService = getLanguageService(resolveSchema, workspaceContext, []);
+        
+        // Prepare the schema
+        const yamlOpenAPI = getStoredSwagger();
+
+        // Convert the openAPI schema to something the language server understands
+        const kubernetesJSONSchema = OpenAPItoJSONSchema(yamlOpenAPI);
+
+        const schemas = [{
+            uri: 'inmemory:yaml',
+            fileMatch: ["*"],
+            schema: kubernetesJSONSchema
+        }];
+        yamlService.configure({
+            validate: true,
+            schemas: schemas,
+            hover: true,
+            completion: true
+        });
+        return yamlService;
+    }
+
+    registerYAMLCompletion(languageID, monaco, m2p, p2m, createDocument, yamlService) {
+        monaco.languages.registerCompletionItemProvider(languageID, {
+            provideCompletionItems(model, position, token) {
+                const document = createDocument(model);
+                return yamlService.doComplete(document, m2p.asPosition(position.lineNumber, position.column), true).then((list) => {
+                    return p2m.asCompletionResult(list);
+                });
+            },
+
+            resolveCompletionItem(item, token) {
+                return yamlService.doResolve(m2p.asCompletionItem(item)).then(result => p2m.asCompletionItem(result));
+            }
+        });
+    }
+
+    registerYAMLDocumentSymbols(languageID, monaco, p2m, createDocument, yamlService) {
+        monaco.languages.registerDocumentSymbolProvider(languageID, {
+            provideDocumentSymbols(model, token) {
+                const document = createDocument(model);
+                return p2m.asSymbolInformations(yamlService.findDocumentSymbols(document));
+            }
+        });
+    }
+
+    registerYAMLHover(languageID, monaco, m2p, p2m, createDocument, yamlService) {
+        monaco.languages.registerHoverProvider(languageID, {
+            provideHover(model, position, token) {
+                const document = createDocument(model);
+                return yamlService.doHover(document, m2p.asPosition(position.lineNumber, position.column)).then((hover) => {
+                    return p2m.asHover(hover);
+                });
+            }
+        });
+    }
+
+    YAMLValidation(monaco, p2m, monaco_uri, createDocument, yamlService) {
+        const pendingValidationRequests = new Map();
+
+        function getModel() {
+            return monaco.editor.getModels()[0];
+        }
+
+        getModel().onDidChangeContent((event) => {
+            validate();
+        });
+
+        function validate() {
+            const document = createDocument(getModel());
+            cleanPendingValidation(document);
+            pendingValidationRequests.set(document.uri, setTimeout(() => {
+                pendingValidationRequests.delete(document.uri);
+                doValidate(document);
+            }));
+        }
+
+        function cleanPendingValidation(document) {
+            const request = pendingValidationRequests.get(document.uri);
+            if (request !== undefined) {
+                clearTimeout(request);
+                pendingValidationRequests.delete(document.uri);
+            }
+        }
+
+        function doValidate(document) {
+            if (document.getText().length === 0) {
+                cleanDiagnostics();
+                return;
+            }
+            yamlService.doValidation(document, true).then((diagnostics) => {
+                const markers = p2m.asDiagnostics(diagnostics);
+                monaco.editor.setModelMarkers(getModel(), 'default', markers);
+            });
+        }
+
+        function cleanDiagnostics() {
+            monaco.editor.setModelMarkers(monaco.editor.getModel(monaco_uri), 'default', []);
+        }
     }
 
     render() {

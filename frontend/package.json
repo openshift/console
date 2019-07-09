@@ -9,8 +9,8 @@
   ],
   "scripts": {
     "clean": "rm -rf ./public/dist",
-    "dev": "yarn clean && ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/webpack --mode development --watch --progress",
-    "build": "yarn clean && NODE_ENV=production ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/webpack --mode=production",
+    "dev": "yarn clean && NODE_OPTIONS=--max-old-space-size=4096 ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/webpack --mode development --watch --progress",
+    "build": "yarn clean && NODE_ENV=production NODE_OPTIONS=--max-old-space-size=4096 ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/webpack --mode=production",
     "coverage": "jest --coverage .",
     "eslint": "eslint --ext .js,.jsx,.ts,.tsx --color",
     "lint": "yarn eslint .",
@@ -88,6 +88,7 @@
     "js-yaml": "^3.13.1",
     "lodash-es": "4.x",
     "memoize-one": "5.x",
+    "monaco-languageclient": "^0.9.0",
     "murmurhash-js": "1.0.x",
     "openshift-logos-icon": "1.7.1",
     "patternfly": "^3.59.1",
@@ -121,8 +122,10 @@
     "typesafe-actions": "^4.2.1",
     "url-polyfill": "^1.1.5",
     "url-search-params-polyfill": "2.x",
+    "vscode-languageserver-types": "^3.10.0",
     "whatwg-fetch": "2.x",
     "xterm": "^3.12.2",
+    "yaml-language-server": "0.5.2",
     "yup": "^0.27.0"
   },
   "devDependencies": {
@@ -164,6 +167,7 @@
     "jest": "21.x",
     "jest-cli": "21.x",
     "mini-css-extract-plugin": "0.4.x",
+    "monaco-editor-core": "0.14.0",
     "monaco-editor-webpack-plugin": "^1.7.0",
     "node-sass": "4.8.x",
     "protractor": "5.4.x",

@@ -5,6 +5,7 @@ import { safeDump } from 'js-yaml';
 import { appHost, testName, checkLogs, checkErrors } from '../../protractor.conf';
 import { SpecCapability, StatusCapability } from '../../../public/components/operator-lifecycle-manager/descriptors/types';
 import * as crudView from '../../views/crud.view';
+import * as yamlView from '../../views/yaml.view';
 
 const defaultValueFor = <C extends SpecCapability | StatusCapability>(capability: C) => {
   switch (capability) {
@@ -199,7 +200,7 @@ describe('Using OLM descriptor components', () => {
     await $$('[data-test-id=breadcrumb-link-1]').click();
     await browser.wait(until.visibilityOf(element(by.buttonText('Create App'))));
     await element(by.buttonText('Create App')).click();
-    await browser.wait(until.presenceOf($('.ace_text-input')));
+    await yamlView.isLoaded();
     await element(by.buttonText('Edit Form')).click();
 
     expect($('#name').isDisplayed()).toBe(true);
