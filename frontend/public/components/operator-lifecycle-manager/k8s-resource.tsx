@@ -1,31 +1,72 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
+import * as classNames from 'classnames';
+import { sortable } from '@patternfly/react-table';
+import { match } from 'react-router';
 
-import { connectToPlural } from '../../kinds';
-import { CRDDescription, ClusterServiceVersionKind } from './index';
+import { CRDDescription, ClusterServiceVersionKind, referenceForProvidedAPI, providedAPIsFor } from './index';
 import { OperandLink } from './operand';
-import { ResourceLink, Timestamp, MsgBox } from '../utils';
-import { ColHead, ListHeader, MultiListPage, List } from '../factory';
-import { K8sResourceKind, GroupVersionKind, kindForReference, K8sKind } from '../../module/k8s';
+import { ResourceLink, Timestamp, MsgBox, FirehoseResource } from '../utils';
+import { MultiListPage, Table, TableRow, TableData } from '../factory';
+import { K8sResourceKind, GroupVersionKind, kindForReference } from '../../module/k8s';
 
-export const Resources = connectToPlural((props: ResourceProps) => {
-  const {kindObj, clusterServiceVersion} = props;
+const tableColumnClasses = [
+  classNames('col-lg-4', 'col-md-4', 'col-sm-4', 'col-xs-6'),
+  classNames('col-lg-2', 'col-md-2', 'col-sm-4', 'col-xs-6'),
+  classNames('col-lg-2', 'hidden-md', 'hidden-sm', 'hidden-xs'),
+  classNames('col-lg-4', 'col-md-4', 'col-sm-4', 'hidden-xs'),
+];
 
-  const resourceForCRD = (crdDesc) => ({
-    kind: `${crdDesc.name.slice(crdDesc.name.indexOf('.') + 1)}:${crdDesc.version}:${crdDesc.kind}` as GroupVersionKind,
-    namespaced: true,
-    optional: true,
-    prop: crdDesc.kind,
-  });
+export const ResourceTableHeader = () => [
+  {
+    title: 'Name', sortField: 'metadata.name', transforms: [sortable],
+    props: { className: tableColumnClasses[0] },
+  },
+  {
+    title: 'Kind', sortField: 'kind', transforms: [sortable],
+    props: { className: tableColumnClasses[1] },
+  },
+  {
+    title: 'Status',
+    props: { className: tableColumnClasses[2] },
+  },
+  {
+    title: 'Created', sortField: 'metadata.creationTimestamp', transforms: [sortable],
+    props: { className: tableColumnClasses[3] },
+  },
+];
 
-  // If the CSV defines a resources list under the CRD, then we use that instead of the default.
-  const thisDescription: CRDDescription[] = _.get(clusterServiceVersion, 'spec.customresourcedefinitions.owned', [])
-    .find((def) => def.name.split('.')[0] === _.get(kindObj, 'plural', ''));
+export const ResourceTableRow: React.FC<ResourceTableRowProps> = ({obj, index, key, style, linkFor}) => <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+  <TableData className={tableColumnClasses[0]}>
+    {linkFor(obj)}
+  </TableData>
+  <TableData className={tableColumnClasses[1]}>
+    {obj.kind}
+  </TableData>
+  <TableData className={tableColumnClasses[2]}>
+    {_.get(obj.status, 'phase', 'Created')}
+  </TableData>
+  <TableData className={tableColumnClasses[3]}>
+    <Timestamp timestamp={obj.metadata.creationTimestamp} />
+  </TableData>
+</TableRow>;
 
-  const crds = _.get(thisDescription, 'resources', []).filter(ref => ref.name).map(ref => ref.kind);
-  const firehoseResources = _.get(thisDescription, 'resources', ['Deployment', 'Service', 'ReplicaSet', 'Pod', 'Secret', 'ConfigMap'].map(kind => ({kind})))
-    .map(ref => _.get(ref, 'name') ? resourceForCRD(ref) : {kind: ref.kind, namespaced: true});
+export const ResourceTable: React.FC<ResourceTableProps> = (props) => <Table
+  {...props}
+  aria-label="Operand Resources"
+  Header={ResourceTableHeader}
+  Row={rowProps => <ResourceTableRow {...rowProps} linkFor={props.linkFor} />}
+  EmptyMsg={() => <MsgBox title="No Resources Found" detail="There are no Kubernetes resources used by this operand." />}
+  virtualize />;
 
+export const Resources: React.FC<ResourcesProps> = (props) => {
+  const providedAPI = providedAPIsFor(props.clusterServiceVersion).find(desc => referenceForProvidedAPI(desc) === props.match.params.plural);
+
+  const defaultResources = ['Deployment', 'Service', 'ReplicaSet', 'Pod', 'Secret', 'ConfigMap'];
+  const firehoseResources = _.get(providedAPI, 'resources', defaultResources.map(kind => ({kind})) as CRDDescription['resources'])
+    .map(ref => ({kind: ref.kind, namespaced: true}) as FirehoseResource);
+
+  // NOTE: This is us building the `ownerReferences` graph client-side
   const flattenFor = (parentObj: K8sResourceKind) => (resources: {[kind: string]: {data: K8sResourceKind[]}}) => {
     return _.flatMap(resources, (resource, kind: string) => resource.data.map(item => ({...item, kind})))
       .reduce((owned, resource) => {
@@ -36,23 +77,9 @@ export const Resources = connectToPlural((props: ResourceProps) => {
   };
 
   // FIXME: Comparing `kind` is not enough to determine if an object is a custom resource
-  const isCR = (k8sObj) => crds.find((kind) => kind === k8sObj.kind);
-
-  const ResourceHeader: React.SFC<ResourceHeaderProps> = (headerProps) => <ListHeader>
-    <ColHead {...headerProps} className="col-xs-4" sortField="metadata.name">Name</ColHead>
-    <ColHead {...headerProps} className="col-xs-2" sortField="kind">Type</ColHead>
-    <ColHead {...headerProps} className="col-xs-2" sortField="status.phase">Status</ColHead>
-    <ColHead {...headerProps} className="col-xs-4" sortField="metadata.creationTimestamp">Created</ColHead>
-  </ListHeader>;
-
-  const ResourceRow: React.SFC<ResourceRowProps> = ({obj}) => <div className="row co-resource-list__item">
-    <div className="col-xs-4">
-      { isCR(obj) ? <OperandLink obj={obj} /> : <ResourceLink kind={obj.kind} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} /> }
-    </div>
-    <div className="col-xs-2">{obj.kind}</div>
-    <div className="col-xs-2">{_.get(obj.status, 'phase', 'Created')}</div>
-    <div className="col-xs-4"><Timestamp timestamp={obj.metadata.creationTimestamp} /></div>
-  </div>;
+  const linkFor = (obj: K8sResourceKind) => _.get(providedAPI, 'resources', []).some(({kind, name}) => name && kind === obj.kind)
+    ? <OperandLink obj={obj} />
+    : <ResourceLink kind={obj.kind} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />;
 
   return <MultiListPage
     filterLabel="Resources by name"
@@ -65,30 +92,35 @@ export const Resources = connectToPlural((props: ResourceProps) => {
     }]}
     flatten={flattenFor(props.obj)}
     namespace={props.obj.metadata.namespace}
-    ListComponent={(listProps) => <List
-      {...listProps}
-      virtualize={false}
-      data={listProps.data.map(o => ({...o, rowKey: o.metadata.uid}))}
-      EmptyMsg={() => <MsgBox title="No Resources Found" detail={`There are no Kubernetes resources used by this ${props.obj.kind}.`} />}
-      Header={ResourceHeader}
-      Row={ResourceRow} />}
+    ListComponent={listProps => <ResourceTable {...listProps} linkFor={linkFor} />}
   />;
-});
-
-export type ResourceHeaderProps = {
-  data: K8sResourceKind[];
 };
 
-export type ResourceProps = {
+export type ResourcesProps = {
   obj: K8sResourceKind;
-  kindObj: K8sKind;
   clusterServiceVersion: ClusterServiceVersionKind;
+  match: match<{plural: GroupVersionKind, ns: string, appName: string, name: string}>;
 };
 
-export type ResourceRowProps = {
+export type ResourceTableRowProps = {
   obj: K8sResourceKind;
+  linkFor: (obj: K8sResourceKind) => JSX.Element;
+  index: number;
+  key?: string;
+  style: object;
 };
 
 export type ResourceListProps = {
 
 };
+
+export type ResourceTableProps = {
+  loaded: boolean;
+  loadError?: string;
+  data: K8sResourceKind[];
+  linkFor: (obj: K8sResourceKind) => JSX.Element;
+};
+
+ResourceTableHeader.displayName = 'ResourceTableHeader';
+ResourceTable.displayName = 'ResourceTable';
+Resources.displayName = 'Resources';
