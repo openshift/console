@@ -1,9 +1,9 @@
 import { SubsystemHealth } from '@console/internal/components/dashboards-page/overview-dashboard/health-card';
 import { GridPosition } from '@console/internal/components/dashboard/grid';
-import { CapacityQuery } from '@console/internal/components/dashboards-page/overview-dashboard/capacity-query-types';
-import { FirehoseResource } from '@console/internal/components/utils';
+import { FirehoseResource, Humanize } from '@console/internal/components/utils';
 import { K8sKind } from '@console/internal/module/k8s';
 import { StatusGroupMapper } from '@console/internal/components/dashboard/inventory-card/inventory-item';
+import { OverviewQuery } from '@console/internal/components/dashboards-page/overview-dashboard/queries';
 
 import { Extension } from './extension';
 import { LazyLoader } from './types';
@@ -58,9 +58,9 @@ namespace ExtensionProperties {
     loader: LazyLoader<any>;
   }
 
-  export interface DashboardsOverviewCapacityQuery {
+  export interface DashboardsOverviewQuery {
     /** The original Prometheus query key to replace */
-    queryKey: CapacityQuery;
+    queryKey: OverviewQuery;
 
     /** The Prometheus query */
     query: string;
@@ -89,6 +89,17 @@ namespace ExtensionProperties {
 
     /** React component representing status group icon. */
     icon: React.ReactElement;
+  }
+
+  export interface DashboardsOverviewUtilizationItem {
+    /** The utilization item title */
+    title: string;
+
+    /** The Prometheus utilization query */
+    query: string;
+
+    /** Function which will be used to format data from prometheus */
+    humanizeValue: Humanize;
   }
 }
 
@@ -134,14 +145,22 @@ export interface DashboardsCard extends Extension<ExtensionProperties.Dashboards
 export const isDashboardsCard = (e: Extension<any>): e is DashboardsCard =>
   e.type === 'Dashboards/Card';
 
-export interface DashboardsOverviewCapacityQuery
-  extends Extension<ExtensionProperties.DashboardsOverviewCapacityQuery> {
-  type: 'Dashboards/Overview/Capacity/Query';
+export interface DashboardsOverviewQuery
+  extends Extension<ExtensionProperties.DashboardsOverviewQuery> {
+  type: 'Dashboards/Overview/Query';
 }
 
-export const isDashboardsOverviewCapacityQuery = (
+export const isDashboardsOverviewQuery = (e: Extension<any>): e is DashboardsOverviewQuery =>
+  e.type === 'Dashboards/Overview/Query';
+
+export interface DashboardsOverviewUtilizationItem
+  extends Extension<ExtensionProperties.DashboardsOverviewUtilizationItem> {
+  type: 'Dashboards/Overview/Utilization/Item';
+}
+
+export const isDashboardsOverviewUtilizationItem = (
   e: Extension<any>,
-): e is DashboardsOverviewCapacityQuery => e.type === 'Dashboards/Overview/Capacity/Query';
+): e is DashboardsOverviewUtilizationItem => e.type === 'Dashboards/Overview/Utilization/Item';
 
 export interface DashboardsOverviewInventoryItem
   extends Extension<ExtensionProperties.DashboardsOverviewInventoryItem> {

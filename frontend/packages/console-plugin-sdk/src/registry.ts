@@ -14,9 +14,10 @@ import {
   isDashboardsOverviewHealthSubsystem,
   isDashboardsCard,
   isDashboardsTab,
-  isDashboardsOverviewCapacityQuery,
   isDashboardsOverviewInventoryItem,
   isDashboardsInventoryItemGroup,
+  isDashboardsOverviewQuery,
+  isDashboardsOverviewUtilizationItem,
 } from './typings';
 
 /**
@@ -73,8 +74,12 @@ export class ExtensionRegistry {
     return this.extensions.filter(isDashboardsCard);
   }
 
-  public getDashboardsOverviewCapacityQueries() {
-    return this.extensions.filter(isDashboardsOverviewCapacityQuery);
+  public getDashboardsOverviewQueries() {
+    return this.extensions.filter(isDashboardsOverviewQuery);
+  }
+
+  public getDashboardsOverviewUtilizationItems() {
+    return this.extensions.filter(isDashboardsOverviewUtilizationItem);
   }
 
   public getDashboardsOverviewInventoryItems() {

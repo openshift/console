@@ -16,16 +16,18 @@ import {
   DashboardsOverviewHealthURLSubsystem,
   DashboardsCard,
   DashboardsTab,
-  DashboardsOverviewCapacityQuery,
   DashboardsOverviewInventoryItem,
   DashboardsInventoryItemGroup,
+  DashboardsOverviewQuery,
+  DashboardsOverviewUtilizationItem,
 } from '@console/plugin-sdk';
 
 // TODO(vojtech): internal code needed by plugins should be moved to console-shared package
 import { PodModel, RouteModel } from '@console/internal/models';
 import { FLAGS } from '@console/internal/const';
 import { GridPosition } from '@console/internal/components/dashboard/grid';
-import { CapacityQuery } from '@console/internal/components/dashboards-page/overview-dashboard/capacity-query-types';
+import { humanizeBinaryBytesWithoutB } from '@console/internal/components/utils/units';
+import { OverviewQuery } from '@console/internal/components/dashboards-page/overview-dashboard/queries';
 
 import { FooBarModel } from './models';
 import { yamlTemplates } from './yaml-templates';
@@ -48,9 +50,10 @@ type ConsumedExtensions =
   | DashboardsOverviewHealthURLSubsystem<any>
   | DashboardsTab
   | DashboardsCard
-  | DashboardsOverviewCapacityQuery
   | DashboardsOverviewInventoryItem
-  | DashboardsInventoryItemGroup;
+  | DashboardsInventoryItemGroup
+  | DashboardsOverviewQuery
+  | DashboardsOverviewUtilizationItem;
 
 const plugin: Plugin<ConsumedExtensions> = [
   {
@@ -198,16 +201,16 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
-    type: 'Dashboards/Overview/Capacity/Query',
+    type: 'Dashboards/Overview/Query',
     properties: {
-      queryKey: CapacityQuery.STORAGE_TOTAL,
+      queryKey: OverviewQuery.STORAGE_TOTAL,
       query: 'fooQuery',
     },
   },
   {
-    type: 'Dashboards/Overview/Capacity/Query',
+    type: 'Dashboards/Overview/Query',
     properties: {
-      queryKey: CapacityQuery.STORAGE_USED,
+      queryKey: OverviewQuery.STORAGE_UTILIZATION,
       query: 'barQuery',
     },
   },
@@ -228,6 +231,14 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       id: 'demo-inventory-group',
       icon: <DemoGroupIcon />,
+    },
+  },
+  {
+    type: 'Dashboards/Overview/Utilization/Item',
+    properties: {
+      title: 'Foo',
+      query: 'barQuery',
+      humanizeValue: humanizeBinaryBytesWithoutB,
     },
   },
 ];
