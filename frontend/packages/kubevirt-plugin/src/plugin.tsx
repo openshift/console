@@ -1,3 +1,4 @@
+import * as React from 'react';
 import * as _ from 'lodash';
 import {
   Plugin,
@@ -9,14 +10,20 @@ import {
   ModelDefinition,
   RoutePage,
   DashboardsOverviewHealthURLSubsystem,
+  DashboardsOverviewInventoryItem,
+  DashboardsInventoryItemGroup,
 } from '@console/plugin-sdk';
-import { TemplateModel } from '@console/internal/models';
+import { TemplateModel, PodModel } from '@console/internal/models';
 
 import * as models from './models';
 import { VMTemplateYAMLTemplates, VirtualMachineYAMLTemplates } from './models/templates';
+import { getKubevirtHealthState } from './components/dashboards-page/overview-dashboard/health';
+import {
+  getVMStatusGroups,
+  VMOffGroupIcon,
+} from './components/dashboards-page/overview-dashboard/inventory';
 
 import './style.scss';
-import { getKubevirtHealthState } from './components/dashboards-page/overview-dashboard/health';
 
 type ConsumedExtensions =
   | ResourceNSNavItem
@@ -26,7 +33,9 @@ type ConsumedExtensions =
   | YAMLTemplate
   | ModelDefinition
   | RoutePage
-  | DashboardsOverviewHealthURLSubsystem<any>;
+  | DashboardsOverviewHealthURLSubsystem<any>
+  | DashboardsOverviewInventoryItem
+  | DashboardsInventoryItemGroup;
 
 const FLAG_KUBEVIRT = 'KUBEVIRT';
 
@@ -146,6 +155,38 @@ const plugin: Plugin<ConsumedExtensions> = [
         models.VirtualMachineModel.apiVersion
       }/healthz`,
       healthHandler: getKubevirtHealthState,
+    },
+  },
+  {
+    type: 'Dashboards/Overview/Inventory/Item',
+    properties: {
+      resource: {
+        isList: true,
+        kind: models.VirtualMachineModel.kind,
+        prop: 'vms',
+      },
+      additionalResources: [
+        {
+          isList: true,
+          kind: PodModel.kind,
+          prop: 'pods',
+        },
+        {
+          isList: true,
+          kind: models.VirtualMachineInstanceMigrationModel.kind,
+          prop: 'migrations',
+        },
+      ],
+      model: models.VirtualMachineModel,
+      mapper: getVMStatusGroups,
+      useAbbr: true,
+    },
+  },
+  {
+    type: 'Dashboards/Inventory/Item/Group',
+    properties: {
+      id: 'vm-off',
+      icon: <VMOffGroupIcon />,
     },
   },
 ];
