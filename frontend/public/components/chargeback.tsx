@@ -103,18 +103,15 @@ const ReportsTableRow: React.FC<ReportsTableRowProps> = ({obj, index, key, style
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} namespace={undefined} title={obj.metadata.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>
-        <ResourceLink kind={ReportGenerationQueryReference} name={_.get(obj, ['spec', 'generationQuery'])} namespace={obj.metadata.namespace} title={obj.metadata.namespace} />
+        <ResourceLink kind={ReportGenerationQueryReference} name={_.get(obj, ['spec', 'query'])} namespace={obj.metadata.namespace} title={obj.metadata.namespace} />
       </TableData>
-      <TableData className={classNames(tableColumnClasses[3], 'co-break-word')}>
-        {_.get(obj, ['status', 'phase'])}
-      </TableData>
-      <TableData className={tableColumnClasses[4]}>
+      <TableData className={tableColumnClasses[3]}>
         <Timestamp timestamp={_.get(obj, ['spec', 'reportingStart'])} />
       </TableData>
-      <TableData className={tableColumnClasses[5]}>
+      <TableData className={tableColumnClasses[4]}>
         <Timestamp timestamp={_.get(obj, ['spec', 'reportingEnd'])} />
       </TableData>
-      <TableData className={tableColumnClasses[6]}>
+      <TableData className={tableColumnClasses[5]}>
         <ResourceKebab actions={menuActions} kind={ReportReference} resource={obj} />
       </TableData>
     </TableRow>
