@@ -1,9 +1,9 @@
-import { ActionType as Action, action } from 'typesafe-actions';
+import { action, ActionType as Action } from 'typesafe-actions';
 import { Dispatch } from 'react-redux';
 
 import { coFetchJSON } from '../co-fetch';
 import { k8sBasePath } from '../module/k8s/k8s';
-import { RESULTS_TYPE, isWatchActive } from '../reducers/dashboards';
+import { isWatchActive, RESULTS_TYPE } from '../reducers/dashboards';
 import { RootState } from '../redux';
 
 export enum ActionType {
@@ -15,6 +15,8 @@ export enum ActionType {
 }
 
 const REFRESH_TIMEOUT = 5000;
+
+export const ALERTS_KEY = 'alerts';
 
 export const stopWatch = (type: RESULTS_TYPE, key: string) => action(ActionType.StopWatch, { type, key });
 export const updateResult = (type: RESULTS_TYPE, key: string, result) => action(ActionType.UpdateResult, { type, key, result });
@@ -71,15 +73,32 @@ export const watchURL: WatchURLAction = (url, fetch = coFetchJSON) => (dispatch,
   }
 };
 
+export const watchAlerts: WatchAlertsAction = () => (dispatch, getState) => {
+  const isActive = isWatchActive(getState().dashboards, RESULTS_TYPE.ALERTS, ALERTS_KEY);
+  dispatch(activateWatch(RESULTS_TYPE.ALERTS, ALERTS_KEY));
+  if (!isActive) {
+    const alertManagerBaseURL = window.SERVER_FLAGS.alertManagerBaseURL;
+    if (!alertManagerBaseURL) {
+      dispatch(updateResult(RESULTS_TYPE.ALERTS, ALERTS_KEY, {}));
+    } else {
+      const alertManagerURL = `${alertManagerBaseURL}/api/v2/alerts?silenced=false&inhibited=false`;
+      fetchPeriodically(dispatch, RESULTS_TYPE.ALERTS, ALERTS_KEY, alertManagerURL, getState, coFetchJSON);
+    }
+  }
+};
+
 export const stopWatchPrometheusQuery = (query: string) => stopWatch(RESULTS_TYPE.PROMETHEUS, query);
 export const stopWatchURL = (url: string) => stopWatch(RESULTS_TYPE.URL, url);
+export const stopWatchAlerts = () => stopWatch(RESULTS_TYPE.ALERTS, ALERTS_KEY);
 
 type ThunkAction = (dispatch: Dispatch, getState: () => RootState) => void;
 
 export type WatchURLAction = (url: string, fetch?: Fetch) => ThunkAction;
 export type WatchPrometheusQueryAction = (query: string) => ThunkAction;
+export type WatchAlertsAction = () => ThunkAction;
 export type StopWatchURLAction = (url: string) => void;
 export type StopWatchPrometheusAction = (query: string) => void;
+export type StopWatchAlertsAction = () => void;
 
 export type Fetch = (url: string) => Promise<any>;
 

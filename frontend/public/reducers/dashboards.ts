@@ -4,11 +4,13 @@ import { Map as ImmutableMap, fromJS } from 'immutable';
 export enum RESULTS_TYPE {
   PROMETHEUS = 'PROMETHEUS',
   URL = 'URL',
+  ALERTS = 'ALERTS',
 }
 
 export const defaults = {
   [RESULTS_TYPE.PROMETHEUS]: fromJS({}),
   [RESULTS_TYPE.URL]: fromJS({}),
+  [RESULTS_TYPE.ALERTS]: fromJS({}),
 };
 
 export type DashboardsState = ImmutableMap<string, any>;

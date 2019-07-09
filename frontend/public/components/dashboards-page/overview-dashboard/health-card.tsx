@@ -9,7 +9,7 @@ import {
   DashboardCardTitle,
   DashboardCardSeeAll,
 } from '../../dashboard/dashboard-card';
-import { HealthBody, HealthItem } from '../../dashboard/health-card';
+import { AlertsBody, AlertItem, getAlerts, HealthBody, HealthItem } from '../../dashboard/health-card';
 import { HealthState } from '../../dashboard/health-card/states';
 import { coFetch } from '../../../co-fetch';
 import { flagPending, featureReducerName } from '../../../reducers/features';
@@ -71,13 +71,18 @@ const HealthCard_ = connect(mapStateToProps)(({
   stopWatchURL,
   watchPrometheus,
   stopWatchPrometheusQuery,
+  watchAlerts,
+  stopWatchAlerts,
   urlResults,
   prometheusResults,
+  alertsResults,
   openshiftFlag,
 }: HealthProps) => {
   React.useEffect(() => {
     const subsystems = plugins.registry.getDashboardsOverviewHealthSubsystems();
     watchURL('healthz', fetchK8sHealth);
+
+    watchAlerts();
 
     subsystems.filter(plugins.isDashboardsOverviewHealthURLSubsystem).forEach(subsystem => {
       const { url, fetch } = subsystem.properties;
@@ -90,6 +95,8 @@ const HealthCard_ = connect(mapStateToProps)(({
     return () => {
       stopWatchURL('healthz');
 
+      stopWatchAlerts();
+
       subsystems.filter(plugins.isDashboardsOverviewHealthURLSubsystem).forEach(subsystem =>
         stopWatchURL(subsystem.properties.url)
       );
@@ -97,7 +104,7 @@ const HealthCard_ = connect(mapStateToProps)(({
         stopWatchPrometheusQuery(subsystem.properties.query)
       );
     };
-  }, [watchURL, stopWatchURL, watchPrometheus, stopWatchPrometheusQuery]);
+  }, [watchURL, stopWatchURL, watchPrometheus, stopWatchPrometheusQuery, watchAlerts, stopWatchAlerts]);
 
   const subsystems = plugins.registry.getDashboardsOverviewHealthSubsystems();
   const k8sHealth = urlResults.getIn(['healthz', 'result']);
@@ -114,6 +121,8 @@ const HealthCard_ = connect(mapStateToProps)(({
   });
 
   const healthState = getClusterHealth([k8sHealthState, ...subsystemsHealths]);
+
+  const alerts = getAlerts(alertsResults);
 
   return (
     <DashboardCard>
@@ -149,6 +158,21 @@ const HealthCard_ = connect(mapStateToProps)(({
           />
         </HealthBody>
       </DashboardCardBody>
+
+      {alerts.length > 0 &&
+        <React.Fragment>
+          <DashboardCardHeader className="co-health-card__alerts-border">
+            <DashboardCardTitle>Alerts</DashboardCardTitle>
+          </DashboardCardHeader>
+          <DashboardCardBody isLoading={flagPending(openshiftFlag)}>
+            <AlertsBody>
+              {alerts.map(alert => (
+                <AlertItem key={alert.fingerprint} alert={alert} />
+              ))}
+            </AlertsBody>
+          </DashboardCardBody>
+        </React.Fragment>
+      }
     </DashboardCard>
   );
 });
