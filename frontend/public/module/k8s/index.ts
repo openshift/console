@@ -1,4 +1,5 @@
 import { JSONSchema6 } from 'json-schema';
+import { EventInvolvedObject } from './event';
 
 export * from './job';
 export * from './k8s';
@@ -14,6 +15,7 @@ export * from './cluster-operator';
 export * from './cluster-settings';
 export * from './template';
 export * from './swagger';
+export * from './event';
 
 export type OwnerReference = {
   name: string;
@@ -631,3 +633,17 @@ export type GroupVersionKind = string;
  * Maintains backwards-compatibility with references using the `kind` string field.
  */
 export type K8sResourceKindReference = GroupVersionKind | string;
+
+export type EventKind = K8sResourceKind & {
+  count: number;
+  type: string;
+  involvedObject: EventInvolvedObject;
+  message: string;
+  lastTimestamp: string;
+  firstTimestamp: string;
+  reason: string;
+  source: {
+    component: string;
+    host?: string;
+  }
+};
