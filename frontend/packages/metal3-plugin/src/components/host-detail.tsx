@@ -77,7 +77,7 @@ const BaremetalHostDetails: React.FC<BaremetalHostDetailsProps> = ({
   const RAMGB = humanizeDecimalBytes(getHostRAMMiB(host) * 2 ** 20).string;
   const totalStorageCapacity = humanizeDecimalBytes(getHostTotalStorageCapacity(host)).string;
   const description = getHostDescription(host);
-  const hostPoweredOn = isHostPoweredOn(host) ? 'Powered On' : 'Powered Off';
+  const hostPoweredOn = isHostPoweredOn(host);
   const { count: CPUCount, model: CPUModel } = getHostCPU(host);
   const { manufacturer, productName, serialNumber } = getHostVendorInfo(host);
 
