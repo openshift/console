@@ -7,6 +7,7 @@ import { Table } from '@console/internal/components/factory';
 import { useSafetyFirst } from '@console/internal/components/safety-first';
 
 import { sortable } from '@patternfly/react-table';
+import { createBasicLookup } from '@console/shared';
 import { VMLikeEntityKind } from '../../types';
 import { asVm } from '../../selectors/selectors';
 import { getInterfaces, getNetworks, getVmPreferableNicBus } from '../../selectors/vm';
@@ -14,7 +15,6 @@ import { NicRow } from './nic-row';
 import { NetworkBundle, NetworkRowType, VMNicRowProps } from './types';
 import { CreateNicRowConnected } from './create-nic-row';
 import { dimensifyHeader } from '../../utils/table';
-import { createBasicLookup } from '../../utils';
 import { getInterfaceBinding, getNetworkName, nicTableColumnClasses } from './utils';
 import { VMLikeEntityTabProps } from '../vms/types';
 
