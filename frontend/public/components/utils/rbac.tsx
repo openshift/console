@@ -2,6 +2,8 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import * as _ from 'lodash-es';
 
+import { getName, getNamespace } from '@console/shared';
+
 import store from '../../redux';
 import { impersonateStateToProps } from '../../reducers/ui';
 import {
@@ -87,10 +89,16 @@ type RequireCreatePermissionProps = {
   children: React.ReactNode;
 };
 
-export const asAccessReview = (kindObj: K8sKind, obj: K8sResourceKind, verb: K8sVerb): AccessReviewResourceAttributes => ({
-  group: kindObj.apiGroup,
-  resource: kindObj.plural,
-  name: obj.metadata.name,
-  namespace: obj.metadata.namespace,
-  verb,
-});
+export const asAccessReview = (kindObj: K8sKind, obj: K8sResourceKind, verb: K8sVerb): AccessReviewResourceAttributes => {
+  if (!obj){
+    console.warn('review obj should not be null'); // eslint-disable-line no-console
+    return null;
+  }
+  return ({
+    group: kindObj.apiGroup,
+    resource: kindObj.plural,
+    name: getName(obj),
+    namespace: getNamespace(obj),
+    verb,
+  });
+};
