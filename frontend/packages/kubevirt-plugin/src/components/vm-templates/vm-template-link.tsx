@@ -7,8 +7,8 @@ import { TemplateModel } from '@console/internal/models';
 import { TemplateKind } from '@console/internal/module/k8s';
 
 export const VMTemplateLink: React.FC<VMTemplateLinkProps> = ({ template }) => {
-  const name = (template && template.name) || getName(template);
-  const namespace = (template && template.namespace) || getNamespace(template);
+  const name = template && (template.name || getName(template));
+  const namespace = template && (template.namespace || getNamespace(template));
 
   return (
     <>
