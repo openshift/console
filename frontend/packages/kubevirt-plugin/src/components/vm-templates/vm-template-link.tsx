@@ -25,5 +25,5 @@ export const VMTemplateLink: React.FC<VMTemplateLinkProps> = ({ template }) => {
 };
 
 type VMTemplateLinkProps = {
-  template: TemplateKind & { name?: string, namespace?: string };
+  template: TemplateKind & { name?: string; namespace?: string };
 };
