@@ -11,7 +11,16 @@ import { DefaultPage } from './default-resource';
 
 const { common } = Kebab.factory;
 
-const menuActions = [...common];
+const crdInstancesPath = crd => _.get(crd, 'spec.scope') === 'Namespaced'
+  ? `/k8s/all-namespaces/${referenceForCRD(crd)}`
+  : `/k8s/cluster/${referenceForCRD(crd)}`;
+
+const instances = (kind, obj) => ({
+  label: 'View Instances',
+  href: crdInstancesPath(obj),
+});
+
+const menuActions = [instances, ...common];
 
 const tableColumnClasses = [
   classNames('col-lg-3', 'col-md-4', 'col-sm-4', 'col-xs-6'),
