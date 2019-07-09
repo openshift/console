@@ -220,7 +220,7 @@ const VirtualBody: React.SFC<VirtualBodyProps> = (props) => {
   );
 };
 
-export type RowFunctionArgs = {obj: object, index: number, columns: [], isScrolling: boolean, key: string, style: object, customData?: object};
+export type RowFunctionArgs = {obj: object, index: number, columns: [], isScrolling: boolean, key: string, style: object, customData?: any};
 export type RowFunction = (args: RowFunctionArgs) => JSX.Element;
 
 export type VirtualBodyProps = {
@@ -239,7 +239,7 @@ export type VirtualBodyProps = {
 }
 
 type TableOwnProps = {
-  customData?: object;
+  customData?: any;
   data?: any[];
   defaultSortFunc?: string;
   defaultSortField?: string;
@@ -254,6 +254,7 @@ type TableOwnProps = {
   loaded?: boolean;
   reduxID?: string;
   reduxIDs?: string[];
+  onSelect?: Function;
 }
 
 type TablePropsFromState = {};
@@ -272,7 +273,7 @@ export const Table = connect<TablePropsFromState,TablePropsFromDispatch,TableOwn
 )(
   class TableInner extends React.Component<TableInnerProps, TableInnerState> {
     static propTypes = {
-      customData: PropTypes.object,
+      customData: PropTypes.any,
       data: PropTypes.array,
       EmptyMsg: PropTypes.func,
       expand: PropTypes.bool,
@@ -406,7 +407,7 @@ export const Table = connect<TablePropsFromState,TablePropsFromDispatch,TableOwn
         <TableWrapper virtualize={virtualize} ariaLabel={ariaLabel} ariaRowCount={ariaRowCount}>
           <PfTable
             cells={columns}
-            rows={virtualize ? [] : Rows({componentProps, selectedResourcesForKind, customData})}
+            rows={virtualize ? customData : Rows({componentProps, selectedResourcesForKind, customData})}
             gridBreakPoint={virtualize ? TableGridBreakpoint.none : TableGridBreakpoint.gridMd}
             onSort={this._onSort}
             onSelect={onSelect}
@@ -459,7 +460,7 @@ export const Table = connect<TablePropsFromState,TablePropsFromDispatch,TableOwn
 
 export type TableInnerProps = {
   'aria-label': string;
-  customData?: object;
+  customData?: any;
   currentSortField?: string;
   currentSortFunc?: string;
   currentSortOrder?: any;

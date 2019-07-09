@@ -301,6 +301,7 @@ FireMan_.propTypes = {
 
 /** @type {React.SFC<{ListComponent: React.ComponentType<any>, kind: string, helpText?: any, namespace?: string, filterLabel?: string, textFilter?: string, title?: string, showTitle?: boolean, rowFilters?: any[], selector?: any, fieldSelector?: string, canCreate?: boolean, createButtonText?: string, createProps?: any, mock?: boolean}>} */
 export const ListPage = withFallback(props => {
+  console.log(props, "list component");
   const {
     autoFocus,
     canCreate,

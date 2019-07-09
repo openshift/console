@@ -6,14 +6,25 @@ import {
   ModelFeatureFlag,
   ModelDefinition,
   Plugin,
+  RoutePage,
 } from '@console/plugin-sdk';
 
 import { GridPosition } from '@console/internal/components/dashboard';
+import { ClusterServiceVersionModel } from '@console/internal/models';
+import { referenceForModel } from '@console/internal/module/k8s';
 import * as models from './models';
 
-type ConsumedExtensions = ModelFeatureFlag | ModelDefinition | DashboardsTab | DashboardsCard;
+type ConsumedExtensions =
+  | ModelFeatureFlag
+  | ModelDefinition
+  | DashboardsTab
+  | DashboardsCard
+  | RoutePage;
 
 const CEPH_FLAG = 'CEPH';
+// keeping this for testing, will be removed once ocs operator available
+const apiObjectRef = 'core.libopenstorage.org~v1alpha1~StorageCluster';
+// const apiObjectRef = referenceForModel(models.OCSServiceModel);
 
 const plugin: Plugin<ConsumedExtensions> = [
   {
@@ -43,30 +54,19 @@ const plugin: Plugin<ConsumedExtensions> = [
       position: GridPosition.MAIN,
       loader: () =>
         import(
-          './components/dashboard-page/storage-dashboard/health-card' /* webpackChunkName: "ceph-storage-health-card" */
-        ).then((m) => m.default),
-    },
-  },
-  {
-    type: 'Dashboards/Card',
-    properties: {
-      tab: 'persistent-storage',
-      position: GridPosition.LEFT,
-      loader: () =>
-        import(
-          './components/dashboard-page/storage-dashboard/details-card' /* webpackChunkName: "ceph-storage-details-card" */
-        ).then((m) => m.default),
-    },
-  },
-  {
-    type: 'Dashboards/Card',
-    properties: {
-      tab: 'persistent-storage',
-      position: GridPosition.MAIN,
-      loader: () =>
-        import(
-          './components/dashboard-page/storage-dashboard/data-resiliency/data-resiliency' /* webpackChunkName: "ceph-storage-data-resiliency-card" */
+          './components/dashboard-page/storage-dashboard/data-resiliency/data-resiliency' /* webpackChunkName: "ceph-data-resiliency-card" */
         ).then((m) => m.DataResiliencyWithResources),
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      exact: true,
+      path: `/k8s/ns/:ns/${ClusterServiceVersionModel.plural}/:appName/${apiObjectRef}/~new`,
+      loader: () =>
+        import(
+          './components/ocs-install/ocs-install' /* webpackChunkName: "ceph-ocs-service" */
+        ).then((m) => m.CreateOCSService),
     },
   },
   {

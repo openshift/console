@@ -1,0 +1,18 @@
+.ceph-ocs-info__alert {
+  box-shadow: var(--pf-global--BoxShadow--sm);
+  height: 2.6em;
+  .ceph-ocs-desc__legend {
+    font-weight: 450;
+  }
+  .pf-c-alert__icon {
+    height: 1.6em;
+    padding: 0.3em;
+  }
+  .pf-c-alert__title {
+    font-size: 0.8rem;
+    padding: 1.1em;
+  }
+}
+.ceph-ocs-install__form {
+  max-width: 66%;
+}

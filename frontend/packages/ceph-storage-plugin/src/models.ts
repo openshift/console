@@ -12,3 +12,16 @@ export const CephClusterModel: K8sKind = {
   id: 'cephcluster',
   crd: true,
 };
+
+export const OCSServiceModel: K8sKind = {
+  label: 'OCS Cluster Service',
+  labelPlural: 'OCS Cluster Services',
+  apiVersion: 'v1alpha1',
+  apiGroup: 'ocs.openshift.io',
+  plural: 'ocsclusters',
+  abbr: 'OCS',
+  namespaced: true,
+  kind: 'StorageCluster',
+  id: 'ipiocscluster',
+  crd: true,
+};
