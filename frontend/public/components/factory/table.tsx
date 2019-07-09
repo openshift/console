@@ -352,7 +352,7 @@ export const Table = connect<TablePropsFromState,TablePropsFromDispatch,TableOwn
     }
 
     componentDidUpdate(prevProps){
-      const {data, virtualize} = this.props;
+      const { data, virtualize = true } = this.props;
       if (virtualize && this._bodyRef && !_.isEqual(prevProps.data, data)){
         // force react-virtualized to update after data changes with `isScrollingOptOut` set true
         this._refreshGrid();
