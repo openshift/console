@@ -11,7 +11,7 @@ import {
   // VM_SIMPLE_STATUS_TO_TEXT,
   //  DASHES,
 } from 'kubevirt-web-ui-components';
-import { getName, getNamespace, getUid } from '@console/shared';
+import { getName, getNamespace, getUID } from '@console/shared';
 
 import { NamespaceModel, PodModel } from '@console/internal/models';
 import { Table, MultiListPage, TableRow, TableData } from '@console/internal/components/factory';
@@ -74,7 +74,7 @@ const VMRow: React.FC<VMRowProps> = ({
 }) => {
   const name = getName(vm);
   const namespace = getNamespace(vm);
-  const uid = getUid(vm);
+  const uid = getUID(vm);
   const vmStatus = getVmStatus(vm, pods, migrations);
   const dimensify = dimensifyRow(tableColumnClasses);
 
