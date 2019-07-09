@@ -18,6 +18,7 @@ import { TemplateKind } from '@console/internal/module/k8s';
 import { match } from 'react-router';
 import { dimensifyHeader, dimensifyRow } from '../../utils/table';
 import { VMTemplateLink } from './vm-template-link';
+import { VM_TEMPLATE_LABEL_PLURAL } from '../../constants/vm-templates';
 
 export const menuActions = Kebab.factory.common;
 
@@ -25,7 +26,6 @@ const { kind } = TemplateModel;
 const selector = {
   matchLabels: { [TEMPLATE_TYPE_LABEL]: 'vm' },
 };
-const labelPlural = 'Virtual Machine Templates';
 
 const tableColumnClass = classNames('col-lg-2', 'col-sm-4', 'col-xs-4');
 const tableColumnClassHiddenOnSmall = classNames('col-lg-2', 'hidden-sm', 'hidden-xs');
@@ -117,7 +117,7 @@ const VirtualMachineTemplates: React.FC<React.ComponentProps<typeof Table>> = (p
   return (
     <Table
       {...props}
-      aria-label={labelPlural}
+      aria-label={VM_TEMPLATE_LABEL_PLURAL}
       Header={VMTemplateTableHeader}
       Row={VMTemplateTableRow}
     />
@@ -136,7 +136,7 @@ const VirtualMachineTemplatesPage: React.FC<
 > = (props) => (
   <ListPage
     {...props}
-    title={labelPlural}
+    title={VM_TEMPLATE_LABEL_PLURAL}
     ListComponent={VirtualMachineTemplates}
     kind={kind}
     selector={selector}
