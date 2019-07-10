@@ -5,7 +5,7 @@ import { sortable } from '@patternfly/react-table';
 
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
 import { AsyncComponent, Kebab, navFactory, ResourceKebab, ResourceLink, ResourceSummary, SectionHeading } from './utils';
-import { K8sResourceKind, referenceForCRD } from '../module/k8s';
+import {K8sResourceKind, referenceForCRD, CustomResourceDefinitionKind} from '../module/k8s';
 import { resourceListPages } from './resource-pages';
 import { DefaultPage } from './default-resource';
 
@@ -111,21 +111,26 @@ const Details = ({obj: crd}) => {
   </div>;
 };
 
-const Instances = ({obj, namespace}) => {
+const Instances:React.FC<InstancesProps> = ({obj, namespace}) => {
   const crdKind = referenceForCRD(obj);
   const componentLoader = resourceListPages.get(crdKind, () => Promise.resolve(DefaultPage));
   return <AsyncComponent loader={componentLoader} namespace={namespace ? namespace : undefined} kind={crdKind} showTitle={false} autoFocus={false} />;
 };
 
-export const CustomResourceDefinitionsList: React.SFC<CustomResourceDefinitionsListProps> = props => <Table {...props} aria-label="Custom Resource Definitions" Header={CRDTableHeader} Row={CRDTableRow} defaultSortField="spec.names.kind" virtualize />;
+export const CustomResourceDefinitionsList: React.FC<CustomResourceDefinitionsListProps> = props => <Table {...props} aria-label="Custom Resource Definitions" Header={CRDTableHeader} Row={CRDTableRow} defaultSortField="spec.names.kind" virtualize />;
 
-export const CustomResourceDefinitionsPage: React.SFC<CustomResourceDefinitionsPageProps> = props => <ListPage {...props} ListComponent={CustomResourceDefinitionsList} kind="CustomResourceDefinition" canCreate={true} />;
+export const CustomResourceDefinitionsPage: React.FC<CustomResourceDefinitionsPageProps> = props => <ListPage {...props} ListComponent={CustomResourceDefinitionsList} kind="CustomResourceDefinition" canCreate={true} />;
 export const CustomResourceDefinitionsDetailsPage = props => <DetailsPage {...props} menuActions={menuActions} pages={[navFactory.details(Details), navFactory.editYaml(), {name: 'Instances', href: 'instances', component: Instances}]} />;
 
 export type CustomResourceDefinitionsListProps = {
 };
 
 export type CustomResourceDefinitionsPageProps = {
+};
+
+type InstancesProps = {
+  obj: CustomResourceDefinitionKind;
+  namespace: string;
 };
 
 CustomResourceDefinitionsList.displayName = 'CustomResourceDefinitionsList';
