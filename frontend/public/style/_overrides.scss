@@ -96,6 +96,15 @@ kbd {
   max-width: 100%;
 }
 
+.pf-c-form {
+  .pf-c-form__helper-text {
+    --pf-c-form__helper-text--FontSize: #{$font-size-base};
+  }
+  .pf-c-form__label {
+    --pf-c-form__label--FontSize: #{$font-size-base};
+  }
+}
+
 // PF components that calculate their correct height based on --pf-global--FontSize--md: 1rem
 .pf-c-modal-box,
 .pf-c-switch {

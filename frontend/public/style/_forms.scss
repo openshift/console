@@ -34,7 +34,8 @@
 
 
 // Restrict form widths
-.co-m-pane__form {
+.co-m-pane__form,
+.pf-c-form {
   @media (min-width: 769px) {
     max-width: 650px;
   }

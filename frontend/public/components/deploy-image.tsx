@@ -2,7 +2,14 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
-import { Alert } from '@patternfly/react-core';
+import {
+  Alert,
+  Button,
+  Form,
+  FormGroup,
+  InputGroup,
+  TextInput,
+} from '@patternfly/react-core';
 
 import { FieldLevelHelp } from 'patternfly-react';
 import { getPorts } from './source-to-image';
@@ -73,8 +80,8 @@ export class DeployImage extends React.Component<DeployImageProps, DeployImageSt
     this.setState({namespace});
   };
 
-  onImageNameChange: React.ReactEventHandler<HTMLInputElement> = event => {
-    this.setState({imageName: event.currentTarget.value});
+  onImageNameChange = value => {
+    this.setState({imageName: value});
   };
 
   onKeyPress = event => {
@@ -87,8 +94,8 @@ export class DeployImage extends React.Component<DeployImageProps, DeployImageSt
     this.env = env;
   };
 
-  onNameChange: React.ReactEventHandler<HTMLInputElement> = event => {
-    this.setState({name: event.currentTarget.value});
+  onNameChange = value => {
+    this.setState({name: value});
   };
 
   onLabelsChange = (labels: string[]) => {
@@ -320,34 +327,42 @@ export class DeployImage extends React.Component<DeployImageProps, DeployImageSt
       </Helmet>
       <PageHeading title={title} />
       <div className="co-m-pane__body">
-        <form onSubmit={this.save} className="co-deploy-image co-m-pane__form">
-          <div className="form-group co-deploy-image__namespace">
-            <label className="control-label co-required" htmlFor="dropdown-selectbox">Namespace</label>
+        <Form onSubmit={this.save} className="co-deploy-image">
+          <FormGroup
+            className="co-deploy-image__namespace"
+            label="Namespace"
+            isRequired
+            fieldId="dropdown-selectbox">
             <NsDropdown selectedKey={this.state.namespace} onChange={this.onNamespaceChange} id="dropdown-selectbox" />
-          </div>
-          <p>Deploy an existing image from an {/*image stream tag or */} image registry.</p>
-          <div className="form-group co-deploy-image__image-name">
-            <label className="control-label co-required" htmlFor="image-name">Image Name</label>
-            <div className="input-group">
-              <input className="form-control"
+          </FormGroup>
+          <FormGroup fieldId="co-deploy-image__instructions">
+            <p style={{margin: 0}}>Deploy an existing image from an {/*image stream tag or */} image registry.</p>
+          </FormGroup>
+          <FormGroup
+            className="co-deploy-image__image-name"
+            label="Image Name"
+            isRequired
+            fieldId="image-name"
+            helperText={<React.Fragment>To deploy an image from a private repository, you must <Link to={`/k8s/ns/${this.state.namespace || 'default'}/secrets/~new/image`}>create an image pull secret</Link> with your image registry credentials.</React.Fragment>}>
+            <InputGroup>
+              <TextInput
+                name="imageName"
+                id="image-name"
                 type="search"
                 onChange={this.onImageNameChange}
                 onKeyDown={this.onKeyPress}
                 value={this.state.imageName}
-                id="image-name"
-                name="imageName"
-                aria-describedby="image-name-help" />
-              <span className="input-group-btn">
-                <button type="button" className="btn btn-default" onClick={this.search} disabled={!this.state.imageName}>
-                  <i className="fa fa-search" aria-hidden="true"></i>
-                  <span className="sr-only">Find</span>
-                </button>
-              </span>
-            </div>
-            <div className="help-block" id="image-name-help">
-              To deploy an image from a private repository, you must <Link to={`/k8s/ns/${this.state.namespace || 'default'}/secrets/~new/image`}>create an image pull secret</Link> with your image registry credentials.
-            </div>
-          </div>
+                aria-describedby="image-name-helper" />
+              <Button
+                variant="tertiary"
+                aria-label="Find"
+                onClick={this.search}
+                isDisabled={!this.state.imageName}
+                data-test-id="image-search">
+                <i className="fa fa-search" aria-hidden="true"></i>
+              </Button>
+            </InputGroup>
+          </FormGroup>
           <div className="co-image-name-results">
             {!isi && <div className="co-image-name-results__loading">
               {loading && <Loading className="co-m-loader--inline" />}
@@ -389,37 +404,44 @@ export class DeployImage extends React.Component<DeployImageProps, DeployImageSt
                     </p>}
                   </div>
                 </div>
-                <div className="form-group co-deploy-image__name">
-                  <label htmlFor="name" className="control-label co-required">Name</label>
-                  <input className="form-control"
+              </div>
+              <div className="pf-c-form">
+                <FormGroup
+                  className="co-deploy-image__image-name"
+                  label="Name"
+                  isRequired
+                  fieldId="name"
+                  helperText="Identifies the resources created for this image.">
+                  <TextInput
+                    name="name"
+                    id="name"
                     type="text"
                     onChange={this.onNameChange}
                     value={name}
-                    id="name"
-                    name="name"
-                    required />
-                  <div className="help-block">Identifies the resources created for this image.</div>
-                </div>
-              </div>
-              <div className="form-group co-deploy-image__labels">
-                <label htmlFor="tags-input" className="control-label">Labels</label>
-                <SelectorInput labelClassName="co-text-deploymentconfig" onChange={this.onLabelsChange} tags={labels} />
-                <div className="help-block" id="labels-help">
-                  If no labels are specified, app={name || '<name>'} will be added.
-                </div>
-              </div>
-              <div>
-                <label>Environment Variables</label>
-                <FieldLevelHelp content={
-                  <div>Define environment variables as key-value pairs to store configuration settings. Drag and drop environment variables to change the order in which they are run. A variable can reference any other variables that come before it in the list, for example <code>FULLDOMAIN = $(SUBDOMAIN).example.com</code>.</div>} />
-                <div>
-                  <EnvironmentPage
-                    envPath={['spec','template','spec','containers']}
-                    readOnly={false}
-                    onChange={this.onEnvironmentChange}
-                    addConfigMapSecret={false}
-                    useLoadingInline={true} />
-                </div>
+                    aria-describedby="name-helper"/>
+                </FormGroup>
+                <FormGroup
+                  className="co-deploy-image__labels"
+                  label="Labels"
+                  isRequired
+                  fieldId="tags-input"
+                  helperText={<React.Fragment>If no labels are specified, app={name || '<name>'} will be added.</React.Fragment>}>
+                  <SelectorInput labelClassName="co-text-deploymentconfig" onChange={this.onLabelsChange} tags={labels} />
+                </FormGroup>
+                <FormGroup
+                  fieldId="co-deploy-image__env-vars">
+                  <label>Environment Variables</label>
+                  <FieldLevelHelp content={
+                    <div>Define environment variables as key-value pairs to store configuration settings. Drag and drop environment variables to change the order in which they are run. A variable can reference any other variables that come before it in the list, for example <code>FULLDOMAIN = $(SUBDOMAIN).example.com</code>.</div>} />
+                  <div>
+                    <EnvironmentPage
+                      envPath={['spec','template','spec','containers']}
+                      readOnly={false}
+                      onChange={this.onEnvironmentChange}
+                      addConfigMapSecret={false}
+                      useLoadingInline={true} />
+                  </div>
+                </FormGroup>
               </div>
             </React.Fragment>}
           </div>
@@ -427,7 +449,7 @@ export class DeployImage extends React.Component<DeployImageProps, DeployImageSt
             <button type="submit" className="btn btn-primary" disabled={!this.state.namespace || !this.state.imageName || !this.state.name}>Deploy</button>
             <Link to={formatNamespacedRouteForResource('deploymentconfigs')} className="btn btn-default">Cancel</Link>
           </ButtonBar>
-        </form>
+        </Form>
       </div>
     </React.Fragment>;
   }
