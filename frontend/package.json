@@ -22,7 +22,7 @@
     "test-suite": "ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/protractor integration-tests/protractor.conf.ts",
     "debug-test-suite": "TS_NODE_COMPILER_OPTIONS='{\"module\":\"commonjs\"}' node -r ts-node/register --inspect-brk ./node_modules/.bin/protractor integration-tests/protractor.conf.ts",
     "analyze": "NODE_ENV=production ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/webpack --mode=production --profile --json | awk '{if(NR>2)print}' > public/dist/stats.json && ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/webpack-bundle-analyzer --mode static -r public/dist/report.html public/dist/stats.json",
-    "plugin-stats": "ts-node -O '{\"module\":\"commonjs\"}' ./plugin-stats.ts"
+    "plugin-stats": "node ./plugin-stats.js"
   },
   "jest": {
     "moduleFileExtensions": [
@@ -47,6 +47,7 @@
     "setupFiles": [
       "./__mocks__/localStorage.ts",
       "./__mocks__/matchMedia.js",
+      "./__mocks__/serverFlags.js",
       "./before-tests.js"
     ],
     "coverageDirectory": "__coverage__",
@@ -143,6 +144,7 @@
     "@types/react-virtualized": "9.x",
     "@types/webpack": "4.x",
     "bootstrap-sass": "^3.3.7",
+    "browser-env": "3.x",
     "cache-loader": "1.x",
     "chalk": "2.3.x",
     "chromedriver": "^2.43.3",
