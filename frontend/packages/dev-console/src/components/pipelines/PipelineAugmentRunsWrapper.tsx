@@ -23,13 +23,14 @@ const PipelineAugmentRunsWrapper: React.FC<PipelineAugmentRunsWrapperProps> = ({
         <div className="text-center">No {PipelineModel.labelPlural} Found</div>
       </div>
     );
-  const { propsReferenceForRuns, resources }: Resource = getResources(pipeline.data);
+  const firehoseResources: Resource = getResources(pipeline.data);
   return (
-    <Firehose resources={resources}>
+    <Firehose resources={firehoseResources.resources}>
       <PipelineAugmentRuns
         {...props}
-        propsReferenceForRuns={propsReferenceForRuns}
+        pipeline={pipeline}
         reduxIDs={reduxIDs}
+        propsReferenceForRuns={firehoseResources.propsReferenceForRuns}
       >
         <ListPageWrapper
           flatten={(_resources) => _.get(_resources, 'pipeline', {}).data}

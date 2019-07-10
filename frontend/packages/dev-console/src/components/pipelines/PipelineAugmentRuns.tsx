@@ -48,6 +48,7 @@ const PipelineAugmentRuns: React.FC<PipelineAugmentRunsProps> = ({
 
   const children = inject(props.children, {
     resources: { pipeline: { data: resourceData } },
+    pipeline,
     reduxIDs: props.reduxIDs,
     applyFilter: props.applyFilter,
     loaded: true,
