@@ -132,8 +132,9 @@ export const VMDisks: React.FC<VMDisksProps> = ({ vmLikeEntity, pvcs, datavolume
         {createError && (
           <Alert
             variant="danger"
-            action={<AlertActionCloseButton onClose={() => setCreateError(null)} />}
             title={createError}
+            className="kubevirt-vm-create-device-error"
+            action={<AlertActionCloseButton onClose={() => setCreateError(null)} />}
           />
         )}
         <Table
@@ -185,6 +186,7 @@ export const VMDisks: React.FC<VMDisksProps> = ({ vmLikeEntity, pvcs, datavolume
               setCreateError(error);
             },
           }}
+          virtualize
           loaded
         />
       </div>
