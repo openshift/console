@@ -68,10 +68,16 @@ const APIResourceLink = connect<APIResourceLinkStateProps, {}, APIResourceLinkOw
 
 const APIResourceHeader = () => [{
   title: 'Kind',
+  sortField: 'kind',
+  transforms: [sortable],
 }, {
   title: 'Group',
+  sortField: 'apiGroup',
+  transforms: [sortable],
 }, {
   title: 'Version',
+  sortField: 'apiVersion',
+  transforms: [sortable],
 }];
 
 const APIResourceRows = ({componentProps: {data}}) => _.map(data, (model: K8sKind) => [{
