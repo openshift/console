@@ -67,6 +67,15 @@ export const fetchSwagger = async(): Promise<SwaggerDefinitions> => {
   }
 };
 
+export const getResourceDescription = _.memoize((kindObj: K8sKind): string => {
+  const allDefinitions: SwaggerDefinitions = getStoredSwagger();
+  if (!allDefinitions) {
+    return null;
+  }
+  const key = getDefinitionKey(kindObj, allDefinitions);
+  return _.get(allDefinitions, [key, 'description']);
+}, referenceForModel);
+
 export type SwaggerDefinition = {
   description?: string;
   type?: string;

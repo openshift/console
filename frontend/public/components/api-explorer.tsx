@@ -16,6 +16,7 @@ import {
   K8sKind,
   K8sResourceKindReference,
   K8sVerb,
+  getResourceDescription,
   referenceForModel,
   ResourceAccessReviewRequest,
 } from '../module/k8s';
@@ -29,6 +30,7 @@ import {
   AsyncComponent,
   BreadCrumbs,
   Dropdown,
+  LinkifyExternal,
   LoadError,
   Loading,
   ResourceIcon,
@@ -129,12 +131,8 @@ export const APIExplorerPage: React.FC<{}> = () => <React.Fragment>
 APIExplorerPage.displayName = 'APIExplorerPage';
 
 const APIResourceOverview: React.FC<APIResourceTabProps> = ({kindObj}) => {
-  const exploreTypeRef = React.useRef(null);
-  const scrollTop = () => {
-    document.getElementById('content-scrollable').scrollTo(0, exploreTypeRef.current.offsetTop);
-  };
-
-  return <React.Fragment>
+  const description = getResourceDescription(kindObj);
+  return (
     <div className="co-m-pane__body">
       <dl className="co-m-pane__details">
         <dt>Kind</dt>
@@ -145,16 +143,27 @@ const APIResourceOverview: React.FC<APIResourceTabProps> = ({kindObj}) => {
         <dd>{kindObj.apiVersion}</dd>
         <dt>Namespaced</dt>
         <dd>{kindObj.namespaced ? 'true' : 'false'}</dd>
+        {description && (
+          <React.Fragment>
+            <dt>Description</dt>
+            <dd className="co-break-word co-pre-line"><LinkifyExternal>{description}</LinkifyExternal></dd>
+          </React.Fragment>
+        )}
       </dl>
     </div>
-    <div className="co-m-pane__body" ref={exploreTypeRef}>
-      <h2 className="co-section-heading co-section-heading--breadcrumbs">Schema</h2>
-      <ExploreType kindObj={kindObj} scrollTop={scrollTop} />
-    </div>
-  </React.Fragment>;
+  );
 };
 
-const ResourceList: React.FC<APIResourceTabProps> = ({kindObj, namespace}) => {
+const scrollTop = () => document.getElementById('content-scrollable').scrollTop = 0;
+const APIResourceSchema: React.FC<APIResourceTabProps> = ({kindObj}) => {
+  return (
+    <div className="co-m-pane__body co-m-pane__body--no-top-margin">
+      <ExploreType kindObj={kindObj} scrollTop={scrollTop} />
+    </div>
+  );
+};
+
+const APIResourceInstances: React.FC<APIResourceTabProps> = ({kindObj, namespace}) => {
   const componentLoader = resourceListPages.get(referenceForModel(kindObj), () => Promise.resolve(DefaultPage));
   const ns = kindObj.namespaced ? namespace : undefined;
 
@@ -177,7 +186,7 @@ const AccessTableRows = ({componentProps: {data}}) => _.map(data, (subject) => [
   title: subject.type,
 }]);
 
-const ResourceAccess: React.FC<APIResourceTabProps> = ({kindObj, namespace}) => {
+const APIResourceAccessReview: React.FC<APIResourceTabProps> = ({kindObj, namespace}) => {
   // TODO: Make sure verbs are filled in for all models. Currently static models don't use verbs from API discovery.
   const verbs: K8sVerb[] = (kindObj.verbs || ['create', 'delete', 'deletecollection', 'get', 'list', 'patch', 'update', 'watch']).sort();
   const [verb, setVerb] = React.useState(_.first(verbs));
@@ -297,19 +306,22 @@ const APIResourcePage_ = ({match, kindObj, kindsInFlight, flags}: {match: any, k
   const tabs = [{
     name: 'Overview',
     component: APIResourceOverview,
+  }, {
+    name: 'Schema',
+    component: APIResourceSchema,
   }];
 
   if (_.isEmpty(kindObj.verbs) || kindObj.verbs.includes('list')) {
     tabs.push({
       name: 'Instances',
-      component: ResourceList,
+      component: APIResourceInstances,
     });
   }
 
   if (flags[FLAGS.OPENSHIFT]) {
     tabs.push({
       name: 'Access Review',
-      component: ResourceAccess,
+      component: APIResourceAccessReview,
     });
   }
 
