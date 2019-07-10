@@ -200,11 +200,18 @@ const BaremetalHostsPage: React.FC<BaremetalHostsPageProps> = ({
     return [];
   };
 
+  const createHostProps = {
+    to: `/k8s/ns/${props.namespace || 'default'}/${referenceForModel(
+      BaremetalHostModel,
+    )}/~new/form`,
+  };
+
   return (
     <MultiListPage
       {...props}
       canCreate
       rowFilters={[hostStatusFilter]}
+      createProps={createHostProps}
       createButtonText="Add Host"
       namespace={props.namespace}
       resources={resources}
