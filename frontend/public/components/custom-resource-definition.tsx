@@ -5,7 +5,7 @@ import { sortable } from '@patternfly/react-table';
 
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
 import { AsyncComponent, Kebab, navFactory, ResourceKebab, ResourceLink, ResourceSummary, SectionHeading } from './utils';
-import {K8sResourceKind, referenceForCRD, CustomResourceDefinitionKind} from '../module/k8s';
+import { K8sResourceKind, referenceForCRD, CustomResourceDefinitionKind } from '../module/k8s';
 import { resourceListPages } from './resource-pages';
 import { DefaultPage } from './default-resource';
 
@@ -111,7 +111,7 @@ const Details = ({obj: crd}) => {
   </div>;
 };
 
-const Instances:React.FC<InstancesProps> = ({obj, namespace}) => {
+const Instances: React.FC<InstancesProps> = ({obj, namespace}) => {
   const crdKind = referenceForCRD(obj);
   const componentLoader = resourceListPages.get(crdKind, () => Promise.resolve(DefaultPage));
   return <AsyncComponent loader={componentLoader} namespace={namespace ? namespace : undefined} kind={crdKind} showTitle={false} autoFocus={false} />;
