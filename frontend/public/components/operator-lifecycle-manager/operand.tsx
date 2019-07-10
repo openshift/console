@@ -395,6 +395,5 @@ OperandList.displayName = 'OperandList';
 OperandLink.displayName = 'OperandLink';
 ProvidedAPIsPage.displayName = 'ProvidedAPIsPage';
 OperandDetailsPage.displayName = 'OperandDetailsPage';
-Resources.displayName = 'Resources';
 OperandTableRow.displayName = 'OperandTableRow';
 OperandTableHeader.displayName = 'OperandTableHeader';

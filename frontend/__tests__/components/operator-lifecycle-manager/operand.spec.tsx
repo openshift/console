@@ -24,7 +24,7 @@ import { SpecDescriptor } from '../../../public/components/operator-lifecycle-ma
 import { testCRD, testResourceInstance, testClusterServiceVersion, testOwnedResourceInstance, testModel } from '../../../__mocks__/k8sResourcesMocks';
 import { Table, DetailsPage, MultiListPage, ListPage } from '../../../public/components/factory';
 import { Timestamp, LabelList, StatusBox, ResourceKebab } from '../../../public/components/utils';
-import { referenceFor, K8sKind, referenceForModel , K8sResourceKind } from '../../../public/module/k8s';
+import { referenceFor, referenceForModel , K8sResourceKind } from '../../../public/module/k8s';
 import { ClusterServiceVersionModel } from '../../../public/models';
 
 
@@ -171,22 +171,25 @@ describe(OperandDetails.displayName, () => {
 });
 
 describe('ResourcesList', () => {
-  it('uses the resources defined in the CSV', () => {
-    const kindObj: K8sKind = {
-      abbr: '',
-      apiVersion: 'v1',
-      kind: testClusterServiceVersion.spec.customresourcedefinitions.owned[0].kind,
-      plural: testClusterServiceVersion.spec.customresourcedefinitions.owned[0].name.split('.')[0],
-      label: '',
-      labelPlural: '',
-    };
+  let match: RouterMatch<any>;
 
-    const resourceComponent = shallow(<Resources.WrappedComponent clusterServiceVersion={testClusterServiceVersion} kindObj={kindObj} obj={testResourceInstance} />);
+  beforeEach(() => {
+    match = {
+      params: {appName: 'etcd', plural: referenceFor(testResourceInstance), name: 'my-etcd', ns: 'default'},
+      isExact: false,
+      url: `/k8s/ns/default/${ClusterServiceVersionModel.plural}/etcd/etcdclusters/my-etcd`,
+      path: `/k8s/ns/:ns/${ClusterServiceVersionModel.plural}/:appName/:plural/:name`,
+    };
+  });
+
+  it('uses the resources defined in the CSV', () => {
+    const resourceComponent = shallow(<Resources match={match} clusterServiceVersion={testClusterServiceVersion} obj={testResourceInstance} />);
+
     expect(resourceComponent.props().resources).toEqual(testClusterServiceVersion.spec.customresourcedefinitions.owned[0].resources.map((resource) => ({ kind: resource.kind, namespaced: true })));
   });
 
   it('uses the default resources if the kind is not found in the CSV', () => {
-    const resourceComponent = shallow(<Resources.WrappedComponent clusterServiceVersion={null} kindObj={null} obj={testResourceInstance} />);
+    const resourceComponent = shallow(<Resources match={match} clusterServiceVersion={null} obj={testResourceInstance} />);
     expect(resourceComponent.props().resources.length > 5).toEqual(true);
   });
 });
@@ -249,7 +252,7 @@ describe(OperandDetailsPage.displayName, () => {
   });
 
   it('passes `flatten` function to Resources component which returns only objects with `ownerReferences` to each other or parent object', () => {
-    const resourceComponent = shallow(<Resources.WrappedComponent clusterServiceVersion={testClusterServiceVersion} kindObj={null} obj={testResourceInstance} />);
+    const resourceComponent = shallow(<Resources clusterServiceVersion={testClusterServiceVersion} obj={testResourceInstance} match={match} />);
     const flatten = resourceComponent.find(MultiListPage).props().flatten;
     const pod = {
       kind: 'Pod',
