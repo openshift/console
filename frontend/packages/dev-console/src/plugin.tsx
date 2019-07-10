@@ -165,6 +165,7 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'Page/Route',
     properties: {
+      perspective: 'dev',
       exact: true,
       path: ['/add', '/import', '/topology'],
       component: NamespaceRedirect,
@@ -173,6 +174,7 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'Page/Route',
     properties: {
+      perspective: 'dev',
       exact: true,
       path: ['/add/all-namespaces', '/add/ns/:ns'],
       loader: async () =>
@@ -182,6 +184,7 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'Page/Route',
     properties: {
+      perspective: 'dev',
       exact: true,
       path: ['/topology/all-namespaces', '/topology/ns/:ns'],
       loader: async () =>
@@ -193,6 +196,7 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'Page/Route',
     properties: {
+      perspective: 'dev',
       exact: true,
       path: ['/import/all-namespaces', '/import/ns/:ns'],
       loader: async () =>
@@ -204,11 +208,24 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'Page/Route',
     properties: {
+      perspective: 'dev',
       exact: true,
       path: ['/catalog/source-to-image'],
       loader: async () =>
         (await import(
           './components/import/ImportPage' /* webpackChunkName: "dev-console-import" */
+        )).default,
+    },
+  },
+  {
+    type: 'Page/Route',
+    properties: {
+      perspective: 'dev',
+      exact: true,
+      path: ['/k8s/all-namespaces/buildconfigs', '/k8s/ns/:ns/buildconfigs'],
+      loader: async () =>
+        (await import(
+          './components/BuildConfigPage' /* webpackChunkName: "dev-console-buildconfigs" */
         )).default,
     },
   },

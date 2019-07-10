@@ -42,6 +42,8 @@ namespace ExtensionProperties {
     loader?: LazyLoader<RouteComponentProps>;
     /** Any valid URL path or array of paths that path-to-regexp@^1.7.0 understands. */
     path: string | string[];
+    /** Perspective id to which this page belongs to. */
+    perspective?: string;
   };
 }
 

@@ -179,7 +179,7 @@ export type BuildConfigsDetailsProps = {
 };
 
 export type BuildConfigsPageProps = {
-  filterLabel: string;
+  filterLabel?: string;
 };
 
 export type BuildConfigsDetailsPageProps = {
