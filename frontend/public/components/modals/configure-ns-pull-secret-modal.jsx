@@ -198,7 +198,7 @@ class ConfigureNamespacePullSecret extends PromiseComponent {
               <ResourceIcon kind="Secret" />
                 &nbsp;{_.get(pullSecret, 'metadata.name')}
             </div> : <div className="col-xs-9">
-              <input type="text" className="form-control" id="namespace-pull-secret-name" aria-describedby="namespace-pull-secret-name-help" required />
+              <input type="text" className="pf-c-form-control" id="namespace-pull-secret-name" aria-describedby="namespace-pull-secret-name-help" required />
               <p className="help-block text-muted" id="namespace-pull-secret-name-help">Friendly name to help you manage this in the future</p>
             </div>
           }
@@ -235,7 +235,7 @@ class ConfigureNamespacePullSecret extends PromiseComponent {
               <label htmlFor="namespace-pull-secret-address">Registry Address</label>
             </div>
             <div className="col-xs-9">
-              <input type="text" className="form-control" id="namespace-pull-secret-address" defaultValue={existingData.address} placeholder="quay.io" required />
+              <input type="text" className="pf-c-form-control" id="namespace-pull-secret-address" defaultValue={existingData.address} placeholder="quay.io" required />
             </div>
           </div>
           <div className="row co-m-form-row">
@@ -243,7 +243,7 @@ class ConfigureNamespacePullSecret extends PromiseComponent {
               <label htmlFor="namespace-pull-secret-email">Email Address</label>
             </div>
             <div className="col-xs-9">
-              <input type="email" className="form-control" defaultValue={existingData.email} id="namespace-pull-secret-email" aria-describedby="namespace-pull-secret-email-help" />
+              <input type="email" className="pf-c-form-control" defaultValue={existingData.email} id="namespace-pull-secret-email" aria-describedby="namespace-pull-secret-email-help" />
               <p className="help-block text-muted" id="namespace-pull-secret-email-help">Optional, depending on registry provider</p>
             </div>
           </div>
@@ -252,7 +252,7 @@ class ConfigureNamespacePullSecret extends PromiseComponent {
               <label htmlFor="namespace-pull-secret-username">Username</label>
             </div>
             <div className="col-xs-9">
-              <input type="text" defaultValue={existingData.username} className="form-control" id="namespace-pull-secret-username" required />
+              <input type="text" defaultValue={existingData.username} className="pf-c-form-control" id="namespace-pull-secret-username" required />
             </div>
           </div>
           <div className="row co-m-form-row">
@@ -260,7 +260,7 @@ class ConfigureNamespacePullSecret extends PromiseComponent {
               <label htmlFor="namespace-pull-secret-password">Password</label>
             </div>
             <div className="col-xs-9">
-              <input type="password" defaultValue={existingData.password} className="form-control" id="namespace-pull-secret-password" required />
+              <input type="password" defaultValue={existingData.password} className="pf-c-form-control" id="namespace-pull-secret-password" required />
             </div>
           </div>
         </div> }

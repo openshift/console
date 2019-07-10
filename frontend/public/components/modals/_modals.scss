@@ -42,11 +42,11 @@
 
   // so that input, textarea, button, and input-group-addon don't mask the inner scroll shadows
   input, textarea {
-    &.form-control {
+    &.pf-c-form-control {
       background-color: transparent;
       &[disabled],
       &[readonly] {
-        background-color: rgba(234, 234, 234, 0.5);
+        background-color: rgba(128, 128, 128, 0.15);
       }
     }
   }

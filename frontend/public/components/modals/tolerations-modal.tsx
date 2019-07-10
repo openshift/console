@@ -120,7 +120,7 @@ class TolerationsModal extends PromiseComponent<TolerationsModalProps, Toleratio
               return <div className="row" key={i}>
                 <div className="col-md-4 col-sm-5 col-xs-5 toleration-modal__field">
                   <div className="hidden-md hidden-lg text-secondary text-uppercase">Key</div>
-                  <input type="text" className="form-control" value={key} onChange={(e) => this._change(e, i, 'key')} readOnly={!this._isEditable(t)} />
+                  <input type="text" className="pf-c-form-control" value={key} onChange={(e) => this._change(e, i, 'key')} readOnly={!this._isEditable(t)} />
                 </div>
                 <div className="col-md-2 col-sm-5 col-xs-5 toleration-modal__field">
                   <div className="hidden-md hidden-lg text-secondary text-uppercase">Operator</div>
@@ -132,14 +132,14 @@ class TolerationsModal extends PromiseComponent<TolerationsModalProps, Toleratio
                       onChange={(op: TolerationOperator) => this._opChange(op, i)}
                       selectedKey={operator}
                       title={operators[operator]} />
-                    : (<input type="text" className="form-control" value={operator} readOnly />)}
+                    : (<input type="text" className="pf-c-form-control" value={operator} readOnly />)}
                 </div>
                 <div className="clearfix visible-sm visible-xs"></div>
                 <div className="col-md-3 col-sm-5 col-xs-5 toleration-modal__field">
                   <div className="hidden-md hidden-lg text-secondary text-uppercase">Value</div>
                   <input
                     type="text"
-                    className="form-control"
+                    className="pf-c-form-control"
                     value={value}
                     onChange={(e) => this._change(e, i, 'value')}
                     readOnly={!this._isEditable(t) || operator === 'Exists'} />
@@ -154,7 +154,7 @@ class TolerationsModal extends PromiseComponent<TolerationsModalProps, Toleratio
                       onChange={(e: string) => this._change(e, i, 'effect')}
                       selectedKey={effect}
                       title={effects[effect]} />
-                    : <input type="text" className="form-control" value={effects[effect]} readOnly />}
+                    : <input type="text" className="pf-c-form-control" value={effects[effect]} readOnly />}
                 </div>
                 <div className="col-md-1 col-sm-2 col-xs-2">
                   {this._isEditable(t) && (

@@ -84,11 +84,11 @@ class TaintsModal extends PromiseComponent<TaintsModalProps, TaintsModalState> {
               <div className="row" key={i}>
                 <div className="col-md-4 col-sm-6 col-xs-6 taint-modal__field">
                   <div className="hidden-md hidden-lg text-secondary text-uppercase">Key</div>
-                  <input type="text" className="form-control" value={c.key} onChange={(e) => this._change(e, i, 'key')} required />
+                  <input type="text" className="pf-c-form-control" value={c.key} onChange={(e) => this._change(e, i, 'key')} required />
                 </div>
                 <div className="col-md-3 col-sm-5 col-xs-5 taint-modal__field">
                   <div className="hidden-md hidden-lg text-secondary text-uppercase">Value</div>
-                  <input type="text" className="form-control" value={c.value} onChange={(e) => this._change(e, i, 'value')} />
+                  <input type="text" className="pf-c-form-control" value={c.value} onChange={(e) => this._change(e, i, 'value')} />
                 </div>
                 <div className="clearfix visible-sm visible-xs"></div>
                 <div className="col-md-4 col-sm-6 col-xs-6 taint-modal__field">

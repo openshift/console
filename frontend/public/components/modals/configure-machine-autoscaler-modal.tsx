@@ -81,13 +81,13 @@ export class ConfigureMachineAutoscalerModal extends PromiseComponent<ConfigureM
         <div className="form-group">
           <label className="co-delete-modal-checkbox-label">
             Minimum Replicas:
-            <NumberSpinner className="form-control" value={this.state.minReplicas} onChange={this.changeMinReplicas} changeValueBy={this.changeMinReplicasBy} autoFocus required />
+            <NumberSpinner className="pf-c-form-control" value={this.state.minReplicas} onChange={this.changeMinReplicas} changeValueBy={this.changeMinReplicasBy} autoFocus required />
           </label>
         </div>
         <div className="form-group">
           <label className="co-delete-modal-checkbox-label">
             Maximum Replicas:
-            <NumberSpinner className="form-control" value={this.state.maxReplicas} onChange={this.changeMaxReplicas} changeValueBy={this.changeMaxReplicasBy} required />
+            <NumberSpinner className="pf-c-form-control" value={this.state.maxReplicas} onChange={this.changeMaxReplicas} changeValueBy={this.changeMaxReplicasBy} required />
           </label>
         </div>
       </ModalBody>

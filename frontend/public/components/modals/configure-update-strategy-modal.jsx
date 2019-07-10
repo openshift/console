@@ -92,13 +92,13 @@ class ConfigureUpdateStrategyModal extends PromiseComponent {
                   </div>
                   <div className="co-m-form-col col-sm-9">
                     <div className="form-inline">
-                      <div className="input-group">
+                      <div className="pf-c-input-group">
                         <input disabled={this.state.strategyType !== 'RollingUpdate'}
-                          placeholder="25%" size="5" type="text" className="form-control"
+                          placeholder="25%" size="5" type="text" className="pf-c-form-control"
                           id="input-max-unavailable"
                           defaultValue={maxUnavailable}
                           aria-describedby="input-max-unavailable-help" />
-                        <span className="input-group-addon">
+                        <span className="pf-c-input-group__text">
                           <Tooltip content="Current desired pod count">of { pluralize(this.deployment.spec.replicas, 'pod')}</Tooltip>
                         </span>
                       </div>
@@ -113,16 +113,16 @@ class ConfigureUpdateStrategyModal extends PromiseComponent {
                   </div>
                   <div className="co-m-form-col col-sm-9">
                     <div className="form-inline">
-                      <div className="input-group">
+                      <div className="pf-c-input-group">
                         <input disabled={this.state.strategyType !== 'RollingUpdate'}
                           placeholder="25%"
                           size="5"
                           type="text"
-                          className="form-control"
+                          className="pf-c-form-control"
                           id="input-max-surge"
                           defaultValue={maxSurge}
                           aria-describedby="input-max-surge-help" />
-                        <span className="input-group-addon">
+                        <span className="pf-c-input-group__text">
                           <Tooltip content="Current desired pod count">greater than { pluralize(this.deployment.spec.replicas, 'pod')}</Tooltip>
                         </span>
                       </div>

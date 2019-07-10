@@ -30,7 +30,7 @@ export const ConfigureCountModal = withHandlePromise((props: ConfigureCountModal
     <ModalBody>
       <p>{props.message}</p>
       <NumberSpinner
-        className="form-control"
+        className="pf-c-form-control"
         value={value}
         onChange={(e: any) => setValue(e.target.value)}
         changeValueBy={operation => setValue(_.toInteger(value) + operation)}

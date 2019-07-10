@@ -186,7 +186,7 @@ export class AddSecretToWorkloadModal extends React.Component<AddSecretToWorkloa
           {addAsEnvironment && <div className="co-m-radio-desc">
             <div className="form-group">
               <label htmlFor="co-add-secret-to-workload__prefix">Prefix</label>
-              <input className="form-control"
+              <input className="pf-c-form-control"
                 name="prefix"
                 id="co-add-secret-to-workload__prefix"
                 placeholder="(optional)"
@@ -198,7 +198,7 @@ export class AddSecretToWorkloadModal extends React.Component<AddSecretToWorkloa
           {addAsVolume && <div className="co-m-radio-desc">
             <div className="form-group">
               <label htmlFor="co-add-secret-to-workload__mountpath" className="co-required">Mount Path</label>
-              <input className="form-control"
+              <input className="pf-c-form-control"
                 name="mountPath"
                 id="co-add-secret-to-workload__mountpath"
                 type="text"
