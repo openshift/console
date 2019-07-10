@@ -96,6 +96,14 @@ kbd {
   max-width: 100%;
 }
 
+.pf-c-button--align-right {
+  margin-left: auto !important;
+}
+
+.pf-c-button.pf-m-link--align-left {
+  padding-left: 0;
+}
+
 // PF components that calculate their correct height based on --pf-global--FontSize--md: 1rem
 .pf-c-modal-box,
 .pf-c-switch {

@@ -1,8 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
-import { Alert } from '@patternfly/react-core';
+import { Alert, Button } from '@patternfly/react-core';
 
 import { K8sKind, k8sList } from '../../module/k8s';
 import { resourcePathFromModel } from '../utils/resource-link';
@@ -16,10 +15,22 @@ const ItemRow = ({item}) => {
   const resourceLink = resourcePathFromModel(item.model, item.metadata.name, item.metadata.namespace);
   return <div className="row co-resource-list__item">
     <div className="col-sm-10 col-xs-12">
-      <Link to={resourceLink}>{item.kind}</Link>
+      <Button
+        className="pf-m-link--align-left"
+        component="a"
+        href={resourceLink}
+        variant="link">
+        {item.kind}
+      </Button>
     </div>
     <div className="col-sm-2 hidden-xs">
-      <Link to={`${resourceLink}/yaml`} className="btn btn-default pull-right">Edit YAML</Link>
+      <Button
+        className="pull-right"
+        component="a"
+        href={`${resourceLink}/yaml`}
+        variant="secondary">
+        Edit YAML
+      </Button>
     </div>
   </div>;
 };

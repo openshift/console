@@ -1,7 +1,7 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
-import { Alert } from '@patternfly/react-core';
+import { Alert, ActionGroup, Button } from '@patternfly/react-core';
 
 import { ButtonBar, Dropdown, history, resourcePathFromModel, ResourceName } from '../utils';
 import { k8sCreate, k8sList, K8sResourceKind } from '../../module/k8s';
@@ -355,11 +355,21 @@ export class CreateRoute extends React.Component<null, CreateRouteState> {
             </React.Fragment>}
           </div> }
           <ButtonBar errorMessage={this.state.error} inProgress={this.state.inProgress}>
-            <button type="submit"
-              disabled={(!this.state.name || !this.state.service || !this.state.targetPort || (this.state.secure && !this.state.termination))}
-              className="btn btn-primary"
-              id="save-changes">Create</button>
-            <Link to={formatNamespacedRouteForResource('routes')} className="btn btn-default" id="cancel">Cancel</Link>
+            <ActionGroup className="pf-c-form">
+              <Button type="submit"
+                isDisabled={(!this.state.name || !this.state.service || !this.state.targetPort || (this.state.secure && !this.state.termination))}
+                id="save-changes"
+                variant="primary">
+                Create
+              </Button>
+              <Button
+                component="a"
+                href={formatNamespacedRouteForResource('routes')}
+                id="cancel"
+                variant="secondary">
+                Cancel
+              </Button>
+            </ActionGroup>
           </ButtonBar>
         </form>
       </div>

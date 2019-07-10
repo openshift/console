@@ -4,6 +4,8 @@ import * as _ from 'lodash-es';
 import * as classNames from 'classnames';
 import { DragSource, DropTarget } from 'react-dnd';
 import { DRAGGABLE_TYPE } from './draggable-item-types';
+import { Button } from '@patternfly/react-core';
+import { PlusCircleIcon } from '@patternfly/react-icons';
 
 import { NameValueEditorPair, EnvFromPair, EnvType } from './index';
 import { ValueFromPair } from './value-from-pair';
@@ -78,16 +80,24 @@ export const NameValueEditor = withDragDropContext(class NameValueEditor extends
             readOnly ?
               null :
               <div className="co-toolbar__group co-toolbar__group--left">
-                <button type="button" className="btn btn-link pairs-list__add-btn" onClick={this._append}>
-                  <i aria-hidden="true" className="fa fa-plus-circle pairs-list__add-icon" />{addString}
-                </button>
+                <Button
+                  className="pf-m-link--align-left"
+                  data-test-id="pairs-list__add-btn"
+                  onClick={this._append}
+                  type="button"
+                  variant="link">
+                  <PlusCircleIcon data-test-id="pairs-list__add-icon" /> {addString}
+                </Button>
                 {
                   addConfigMapSecret &&
                     <React.Fragment>
                       <span aria-hidden="true" className="co-action-divider hidden-xs">|</span>
-                      <button type="button" className="btn btn-link" onClick={this._appendConfigMapOrSecret}>
-                        <i aria-hidden="true" className="fa fa-plus-circle pairs-list__add-icon" />Add from Config Map or Secret
-                      </button>
+                      <Button
+                        onClick={this._appendConfigMapOrSecret}
+                        type="button"
+                        variant="link">
+                        <PlusCircleIcon data-test-id="pairs-list__add-icon" /> Add from Config Map or Secret
+                      </Button>
                     </React.Fragment>
                 }
               </div>
@@ -189,9 +199,13 @@ export const EnvFromEditor = withDragDropContext(class EnvFromEditor extends Rea
         <div className="col-xs-12">
           {
             !readOnly &&
-            <button type="button" className="btn-link" onClick={this._append}>
-              <i aria-hidden="true" className="fa fa-plus-circle pairs-list__add-icon" />Add All From Config Map or Secret
-            </button>
+            <Button
+              className="pf-m-link--align-left"
+              onClick={this._append}
+              type="button"
+              variant="link">
+              <PlusCircleIcon /> Add All From Config Map or Secret
+            </Button>
           }
         </div>
       </div>

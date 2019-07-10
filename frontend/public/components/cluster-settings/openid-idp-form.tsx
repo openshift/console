@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
+import { ActionGroup, Button } from '@patternfly/react-core';
 
 import { SecretModel, ConfigMapModel } from '../../models';
 import {
@@ -215,8 +216,19 @@ export class AddOpenIDPage extends PromiseComponent<{}, AddOpenIDIDPPageState> {
         <IDPCAFileInput value={caFileContent} onChange={this.caFileChanged} />
         <ListInput label="Extra Scopes" onChange={this.extraScopesChanged} helpText="Any scopes to request in addition to the standard openid scope." />
         <ButtonBar errorMessage={this.state.errorMessage} inProgress={this.state.inProgress}>
-          <button type="submit" className="btn btn-primary">Add</button>
-          <button type="button" className="btn btn-default" onClick={history.goBack}>Cancel</button>
+          <ActionGroup className="pf-c-form">
+            <Button
+              type="submit"
+              variant="primary">
+              Add
+            </Button>
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={history.goBack}>
+              Cancel
+            </Button>
+          </ActionGroup>
         </ButtonBar>
       </form>
     </div>;
