@@ -993,7 +993,7 @@ const CreateSilence = () => {
     : <SilenceForm defaults={{matchers}} saveButtonText="Create" title="Silence Alert" />;
 };
 
-export class MonitoringUI extends React.Component<null, null> {
+class PollerPages extends React.Component<null, null> {
   componentDidMount() {
     const poll = (url: string, key: 'alerts' | 'silences', dataHandler: (data: any[]) => any): void => {
       store.dispatch(UIActions.monitoringLoading(key));
@@ -1053,23 +1053,27 @@ export class MonitoringUI extends React.Component<null, null> {
   }
 
   componentWillUnmount() {
-    _.each(pollerTimeouts, t => clearTimeout(t));
+    _.each(pollerTimeouts, clearTimeout);
   }
 
   render() {
     return <Switch>
-      <Redirect from="/monitoring" exact to="/monitoring/alerts" />
       <Route path="/monitoring/alerts" exact component={AlertsPage} />
       <Route path="/monitoring/alerts/:ruleID" exact component={AlertsDetailsPage} />
       <Route path="/monitoring/alertrules/:id" exact component={AlertRulesDetailsPage} />
       <Route path="/monitoring/silences" exact component={SilencesPage} />
-      <Route path="/monitoring/silences/~new" exact component={CreateSilence} />
       <Route path="/monitoring/silences/:id" exact component={SilencesDetailsPage} />
       <Route path="/monitoring/silences/:id/edit" exact component={EditSilence} />
-      <Route path="/monitoring/query-browser" exact component={QueryBrowserPage} />
     </Switch>;
   }
 }
+
+export const MonitoringUI = () => <Switch>
+  <Redirect from="/monitoring" exact to="/monitoring/alerts" />
+  <Route path="/monitoring/query-browser" exact component={QueryBrowserPage} />
+  <Route path="/monitoring/silences/~new" exact component={CreateSilence} />
+  <Route component={PollerPages} />
+</Switch>;
 
 type Silence = {
   comment: string;
