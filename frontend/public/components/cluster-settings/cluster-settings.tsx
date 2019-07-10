@@ -114,7 +114,7 @@ const CurrentVersion: React.SFC<CurrentVersionProps> = ({cv}) => {
 
   if (status === ClusterUpdateStatus.UpToDate || status === ClusterUpdateStatus.UpdatesAvailable) {
     return desiredVersion
-      ? <React.Fragment>{desiredVersion}</React.Fragment>
+      ? <span className="co-select-to-copy">{desiredVersion}</span>
       : <React.Fragment><i className="pficon pficon-warning-triangle-o" aria-hidden="true" />&nbsp;Unknown</React.Fragment>;
   }
 
@@ -178,9 +178,9 @@ const ClusterVersionDetailsTable: React.SFC<ClusterVersionDetailsTableProps> = (
       <div className="co-m-pane__body-group">
         <dl className="co-m-pane__details">
           <dt>Cluster ID</dt>
-          <dd className="co-break-all">{cv.spec.clusterID}</dd>
+          <dd className="co-break-all co-select-to-copy">{cv.spec.clusterID}</dd>
           <dt>Desired Release Image</dt>
-          <dd>
+          <dd className="co-break-all co-select-to-copy">
             {imageParts.length === 2
               ? <React.Fragment><span className="text-muted">{imageParts[0]}@</span>{imageParts[1]}</React.Fragment>
               : desiredImage || '-'}
@@ -216,7 +216,7 @@ const ClusterVersionDetailsTable: React.SFC<ClusterVersionDetailsTableProps> = (
             </thead>
             <tbody>
               {_.map(history, (update, i) => <tr key={i}>
-                <td className="co-break-all">{update.version || '-'}</td>
+                <td className="co-break-all co-select-to-copy">{update.version || '-'}</td>
                 <td>{update.state || '-'}</td>
                 <td><Timestamp timestamp={update.startedTime} /></td>
                 <td>{update.completionTime ? <Timestamp timestamp={update.completionTime} /> : '-'}</td>
