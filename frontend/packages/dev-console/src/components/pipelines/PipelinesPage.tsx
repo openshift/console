@@ -1,31 +1,37 @@
 import * as React from 'react';
-import { ListPage } from '@console/internal/components/factory';
-import PipelineList from './PipelineList';
-import { pipelineFilterReducer, pipelineStatusFilter } from '../../utils/pipeline-filter-reducer';
+import { FireMan_ as FireMan } from '@console/internal/components/factory';
+import { Firehose } from '@console/internal/components/utils';
 import { PipelineModel } from '../../models';
+import { filters } from './PipelineAugmentRuns';
+import PipelineAugmentRunsWrapper from './PipelineAugmentRunsWrapper';
 
-const filters = [
-  {
-    type: 'pipeline-status',
-    selected: ['Running', 'Failed', 'Complete'],
-    reducer: pipelineFilterReducer,
-    items: [
-      { id: 'Running', title: 'Running' },
-      { id: 'Failed', title: 'Failed' },
-      { id: 'Complete', title: 'Complete' },
-    ],
-    filter: pipelineStatusFilter,
-  },
-];
+interface PipelinesPageProps {
+  namespace: string;
+}
 
-const PipelinesPage: React.FC<any> = (props) => (
-  <ListPage
-    {...props}
-    canCreate={false}
-    kind={PipelineModel.kind}
-    ListComponent={PipelineList}
-    rowFilters={filters}
-  />
-);
+const PipelinesPage: React.FC<PipelinesPageProps> = ({ namespace }) => {
+  const resources = [
+    {
+      isList: true,
+      kind: PipelineModel.kind,
+      namespace,
+      prop: PipelineModel.id,
+      filters,
+    },
+  ];
+  return (
+    <FireMan
+      canCreate={false}
+      canExpand={false}
+      filterLabel="by name"
+      textFilter="name"
+      resources={resources}
+    >
+      <Firehose resources={resources}>
+        <PipelineAugmentRunsWrapper />
+      </Firehose>
+    </FireMan>
+  );
+};
 
 export default PipelinesPage;
