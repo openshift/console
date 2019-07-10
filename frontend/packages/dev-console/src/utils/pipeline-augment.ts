@@ -172,12 +172,13 @@ export enum runStatus {
   Succeeded = 'Succeeded',
   Failed = 'Failed',
   Running = 'Running',
-  'In progress' = 'In Progress',
+  'In Progress' = 'In Progress',
   Pending = 'Pending',
   FailedToStart = 'FailedToStart',
   PipelineNotStarted = 'PipelineNotStarted',
   Skipped = 'Skipped',
   Cancelled = 'Cancelled',
+  Idle = 'Idle',
 }
 
 export const getRunStatusColor = (status: string): StatusMessage => {
@@ -190,6 +191,7 @@ export const getRunStatusColor = (status: string): StatusMessage => {
       return { message: 'Running', pftoken: runningColor };
     case runStatus['In Progress']:
       return { message: 'Running', pftoken: runningColor };
+    case runStatus.Idle:
     case runStatus.Pending:
       return { message: 'Not Started Yet', pftoken: pendingColor };
     case runStatus.FailedToStart:
