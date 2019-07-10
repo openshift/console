@@ -1,7 +1,3 @@
-.group__body--query-browser {
-  padding-top: 20px;
-}
-
 .query-browser__clear-icon {
   color: $color-pf-black-600;
   font-size: 18px;
@@ -16,14 +12,17 @@
 }
 
 .query-browser__expand-button {
+  border: none;
+  height: 30px;
   padding: 0;
-  width: 38px;
+  width: 30px;
 }
 
 .query-browser__expand-icon {
   color: $color-pf-black-600;
   font-size: 30px;
   font-weight: 600;
+  vertical-align: middle;
 }
 
 .query-browser__controls {
@@ -31,7 +30,12 @@
   flex-wrap: wrap-reverse;
   justify-content: space-between;
   margin-bottom: 15px;
+  padding: 0 20px;
   width: 100%;
+
+  &--graph {
+    padding: 0;
+  }
 }
 
 .query-browser__controls--left {
@@ -67,31 +71,28 @@
   }
 }
 
-.query-browser-metric__labels {
-  word-break: break-word;
-}
-
-.query-browser-metric__wrapper {
-  display: flex;
-}
-
 .query-browser__query {
+  margin-left: 10px;
+  margin-right: 15px;
   width: 100%;
+}
+
+.query-browser__query-controls {
+  align-items: center;
+  border: solid $color-grey-background-border;
+  border-width: 1px 0;
+  display: flex;
+  padding: 10px 20px 10px 30px;
 }
 
 .query-browser__query-input {
   resize: vertical;
 }
 
-.query-browser__query-switch {
-  margin-right: 15px;
-}
-
 .query-browser__series-btn {
   border: none;
   height: 20px;
-  margin: 2px 12px 2px 5px;
-  min-width: 20px;
+  padding: 5px;
   width: 20px;
   &--disabled {
     border: 1px solid #888;
@@ -110,6 +111,23 @@
 
 .query-browser__span-text {
   max-width: 87px;
+}
+
+.query-browser__table {
+  border-left: 3px solid transparent;
+  margin-bottom: 25px;
+
+  &--expanded {
+    border-left-color: var(--pf-global--active-color--100);
+  }
+
+  tr > :first-child {
+    width: 40px;
+  }
+}
+
+.query-browser__table-cell {
+  padding-right: 0;
 }
 
 .query-browser__wrapper {
