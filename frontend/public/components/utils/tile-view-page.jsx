@@ -677,7 +677,7 @@ export class TileViewPage extends React.Component {
                 type="text"
                 inputRef={(ref) => this.filterByKeywordInput = ref}
                 placeholder="Filter by keyword..."
-                bsClass="form-control"
+                bsClass="pf-c-form-control"
                 value={activeFilters.keyword.value}
                 onChange={e => this.onKeywordChange(e.target.value)}
               />
