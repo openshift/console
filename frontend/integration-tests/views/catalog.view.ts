@@ -14,3 +14,4 @@ export const createServiceInstanceForm = $('.co-create-service-instance');
 export const createServiceBindingButton = $('.co-hint-block').element(
   by.buttonText('Create Service Binding'),
 );
+export const createSourceToImageForm = $('.co-resource-item__resource-name');

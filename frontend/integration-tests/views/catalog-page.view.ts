@@ -15,6 +15,7 @@ export const filterCheckboxCount = (id: string) =>
     .$('.item-count')
     .getText()
     .then((text) => parseInt(text.substring(1, text.indexOf(')')), 10));
+export const createSourceToImageForm = $('.co-resource-item__resource-name');
 export const filterTextbox = $('.co-catalog-page__filter input');
 export const filterByKeyword = (filter: string) =>
   filterTextbox.clear().then(() => filterTextbox.sendKeys(filter));

@@ -144,4 +144,37 @@ describe('Developer Catalog', () => {
     execSync(`kubectl delete -n ${testName} servicebinding mongodb-persistent`);
     execSync(`kubectl delete -n ${testName} serviceinstance mongodb-persistent`);
   });
+
+  it('Create Source-to-Image Application', async () => {
+    expect(catalogPageView.catalogTiles.isPresent()).toBe(true);
+
+    await catalogPageView.clickFilterCheckbox('kind-image-stream');
+    await catalogPageView.filterByKeyword('Perl');
+    expect(catalogPageView.catalogTileFor('Perl').isDisplayed()).toBe(true);
+    await catalogPageView.catalogTileFor('Perl').click();
+    await catalogView.catalogDetailsLoaded();
+
+    expect(catalogView.createServiceInstanceButton.isDisplayed()).toBe(true);
+    await catalogView.createServiceInstanceButton.click();
+    await browser.wait(
+      until.and(
+        crudView.untilNoLoadersPresent,
+        until.presenceOf(catalogView.createSourceToImageForm),
+      ),
+    );
+
+    await srvCatalogView.trySampleButton.click();
+    await srvCatalogView.createButton.click();
+    await crudView.isLoaded();
+
+    await browser.get(`${appHost}/k8s/cluster/projects/${testName}/workloads`);
+    await crudView.isLoaded();
+    await browser.sleep(1000);
+
+    expect($('.project-overview__group-heading').getText()).toBe('perl-app');
+    expect($('.btn-link--no-btn-default-values.co-resource-item__resource-name').getText()).toBe(
+      'perl',
+    );
+    execSync(`kubectl delete all -l app=perl  -n ${testName}`);
+  });
 });

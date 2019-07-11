@@ -14,3 +14,6 @@ export const createBindingFormIsLoaded = () =>
     .wait(until.presenceOf($('.co-create-service-binding__name')), 10000)
     .then(() => browser.sleep(500));
 export const createButton = $('.co-m-btn-bar').element(by.buttonText('Create'));
+export const trySampleButton = $('.pf-c-button.pf-m-link.pf-m-inline').element(
+  by.buttonText('Try Sample'),
+);
