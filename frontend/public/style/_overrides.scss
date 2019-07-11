@@ -31,10 +31,6 @@ $pf-4-nav-bar-height: 76px; // Height of the PatternFly 4 masthead
   color: inherit;
 }
 
-.form-control[disabled], fieldset[disabled] .form-control {
-  cursor: auto;
-}
-
 kbd {
   border-radius: 3px;
   box-shadow: inset 0 0 0 1px rgba(0,0,0,0.25);
