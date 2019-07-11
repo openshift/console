@@ -207,7 +207,7 @@ class TemplateForm_ extends React.Component<TemplateFormProps, TemplateFormState
               </label>
               <input
                 type="text"
-                className="form-control"
+                className="pf-c-form-control"
                 id={name}
                 name={name}
                 value={value}
