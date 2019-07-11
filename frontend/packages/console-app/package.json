@@ -13,7 +13,8 @@
     "@console/knative-plugin": "0.0.0-fixed",
     "@console/metal3-plugin": "0.0.0-fixed",
     "@console/plugin-sdk": "0.0.0-fixed",
-    "@console/shared": "0.0.0-fixed"
+    "@console/shared": "0.0.0-fixed",
+    "@console/kubevirt-plugin": "0.0.0-fixed"
   },
   "consolePlugin": {
     "entry": "src/plugin.tsx"
