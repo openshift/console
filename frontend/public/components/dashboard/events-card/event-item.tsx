@@ -21,7 +21,7 @@ const EventItem_: React.FC<EventItemProps> = ({ event, flags }) => {
         </div>}
       </small>
       <div className="co-events-card__item-subheader">
-        {isError && <Icon type="fa" name="exclamation-circle" className="co-events-card__item-icon--error" />}
+        {isError && <Icon type="pf" name="icon-error-circle-o" className="co-events-card__item-icon--error" />}
         <ResourceLink
           className="co-events-card__item-resourcelink"
           kind={obj.kind}

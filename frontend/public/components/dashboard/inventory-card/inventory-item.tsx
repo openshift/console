@@ -18,22 +18,22 @@ const getPluginStatusGroupIcons = () => {
 const statusGroupIcons = {
   [InventoryStatusGroup.OK]: (
     <Icon
-      type="fa"
-      name="check-circle"
+      type="pf"
+      name="icon-ok"
       className="co-inventory-card__status-icon co-inventory-card__status-icon--ok"
     />
   ),
   [InventoryStatusGroup.WARN]: (
     <Icon
-      type="fa"
-      name="exclamation-triangle"
+      type="pf"
+      name="icon-warning-triangle-o"
       className="co-inventory-card__status-icon co-inventory-card__status-icon--warn"
     />
   ),
   [InventoryStatusGroup.ERROR]: (
     <Icon
-      type="fa"
-      name="exclamation-circle"
+      type="pf"
+      name="icon-error-circle-o"
       className="co-inventory-card__status-icon co-inventory-card__status-icon--error"
     />
   ),
@@ -46,8 +46,8 @@ const statusGroupIcons = {
   ),
   [InventoryStatusGroup.NOT_MAPPED]: (
     <Icon
-      type="fa"
-      name="question-circle"
+      type="pf"
+      name="icon-help"
       className="co-inventory-card__status-icon co-inventory-card__status-icon--question"
     />
   ),

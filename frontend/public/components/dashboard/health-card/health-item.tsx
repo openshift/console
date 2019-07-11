@@ -10,21 +10,21 @@ const HealthItemIcon: React.FC<HealthItemIconProps> = ({ state }) => {
   let iconClassModifier;
   switch (state) {
     case HealthState.OK:
-      icon = 'check-circle';
+      icon = 'icon-ok';
       iconClassModifier = 'ok';
       break;
     case HealthState.ERROR:
-      icon = 'exclamation-circle';
+      icon = 'icon-error-circle-o';
       iconClassModifier = 'error';
       break;
     case HealthState.WARNING:
     default:
-      icon = 'exclamation-triangle';
+      icon = 'icon-warning-triangle-o';
       iconClassModifier = 'warning';
   }
   return (
     <div className={`co-health-card__icon co-health-card__icon--${iconClassModifier}`}>
-      <Icon type="fa" name={icon} />
+      <Icon type="pf" name={icon} />
     </div>
   );
 };
