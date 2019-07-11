@@ -174,7 +174,7 @@ export class AddOpenIDPage extends PromiseComponent<{}, AddOpenIDIDPPageState> {
         <IDPNameInput value={name} onChange={this.nameChanged} />
         <div className="form-group">
           <label className="control-label co-required" htmlFor="clientID">Client ID</label>
-          <input className="form-control"
+          <input className="pf-c-form-control"
             type="text"
             onChange={this.clientIDChanged}
             value={clientID}
@@ -183,7 +183,7 @@ export class AddOpenIDPage extends PromiseComponent<{}, AddOpenIDIDPPageState> {
         </div>
         <div className="form-group">
           <label className="control-label co-required" htmlFor="clientSecret">Client Secret</label>
-          <input className="form-control"
+          <input className="pf-c-form-control"
             type="password"
             onChange={this.clientSecretChanged}
             value={clientSecret}
@@ -192,7 +192,7 @@ export class AddOpenIDPage extends PromiseComponent<{}, AddOpenIDIDPPageState> {
         </div>
         <div className="form-group">
           <label className="control-label co-required" htmlFor="issuer">Issuer URL</label>
-          <input className="form-control"
+          <input className="pf-c-form-control"
             type="text"
             onChange={this.issuerChanged}
             value={issuer}

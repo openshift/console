@@ -160,7 +160,7 @@ export class AddGitHubPage extends PromiseComponent<{}, AddGitHubPageState> {
         <IDPNameInput value={name} onChange={this.nameChanged} />
         <div className="form-group">
           <label className="control-label co-required" htmlFor="client-id">Client ID</label>
-          <input className="form-control"
+          <input className="pf-c-form-control"
             type="text"
             onChange={this.clientIDChanged}
             value={clientID}
@@ -169,7 +169,7 @@ export class AddGitHubPage extends PromiseComponent<{}, AddGitHubPageState> {
         </div>
         <div className="form-group">
           <label className="control-label co-required" htmlFor="client-secret">Client Secret</label>
-          <input className="form-control"
+          <input className="pf-c-form-control"
             type="password"
             onChange={this.clientSecretChanged}
             value={clientSecret}
@@ -178,7 +178,7 @@ export class AddGitHubPage extends PromiseComponent<{}, AddGitHubPageState> {
         </div>
         <div className="form-group">
           <label className="control-label" htmlFor="hostname">Hostname</label>
-          <input className="form-control"
+          <input className="pf-c-form-control"
             type="text"
             onChange={this.hostnameChanged}
             value={hostname}

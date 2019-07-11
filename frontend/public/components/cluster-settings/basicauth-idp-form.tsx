@@ -155,7 +155,7 @@ export class AddBasicAuthPage extends PromiseComponent<{}, AddBasicAuthPageState
         <IDPNameInput value={name} onChange={this.nameChanged} />
         <div className="form-group">
           <label className="control-label co-required" htmlFor="url">URL</label>
-          <input className="form-control"
+          <input className="pf-c-form-control"
             type="text"
             onChange={this.urlChanged}
             value={url}

@@ -51,7 +51,7 @@ export class ListInput extends React.Component<ListInputProps, ListInputState> {
           <div className="co-list-input__row" key={i}>
             <div className="co-list-input__value">
               <input
-                className="form-control"
+                className="pf-c-form-control"
                 type="text"
                 value={v}
                 onChange={(e: React.FormEvent<HTMLInputElement>) => this.valueChanged(i, e.currentTarget.value)}

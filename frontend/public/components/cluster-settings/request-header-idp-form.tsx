@@ -149,7 +149,7 @@ export class AddRequestHeaderPage extends PromiseComponent<{}, AddRequestHeaderP
         </p>
         <div className="form-group">
           <label className="control-label" htmlFor="challenge-url">Challenge URL</label>
-          <input className="form-control"
+          <input className="pf-c-form-control"
             type="text"
             onChange={this.challengeURLChanged}
             value={challengeURL}
@@ -161,7 +161,7 @@ export class AddRequestHeaderPage extends PromiseComponent<{}, AddRequestHeaderP
         </div>
         <div className="form-group">
           <label className="control-label" htmlFor="login-url">Login URL</label>
-          <input className="form-control"
+          <input className="pf-c-form-control"
             type="text"
             onChange={this.loginURLChanged}
             value={loginURL}
