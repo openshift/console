@@ -11,21 +11,36 @@ import {
 } from 'kubevirt-web-ui-components';
 
 import { ListPage, Table, TableRow, TableData } from '@console/internal/components/factory';
-import { Kebab, ResourceLink, ResourceKebab } from '@console/internal/components/utils';
-import { getNamespace, DASH } from '@console/shared';
+import {
+  Kebab,
+  ResourceLink,
+  ResourceKebab,
+  asAccessReview,
+} from '@console/internal/components/utils';
+import { getNamespace, DASH, getName } from '@console/shared';
 import { TemplateModel } from '@console/internal/models';
 import { TemplateKind } from '@console/internal/module/k8s';
 import { match } from 'react-router';
 import { dimensifyHeader, dimensifyRow } from '../../utils/table';
 import { VMTemplateLink } from './vm-template-link';
+import { VM_TEMPLATE_LABEL_PLURAL } from '../../constants/vm-templates';
 
-export const menuActions = Kebab.factory.common;
+const vmTemplateEditAction = (kind, obj) => ({
+  label: `Edit VM Template`,
+  href: `/k8s/ns/${getNamespace(obj)}/vmtemplates/${getName(obj)}/yaml`,
+  accessReview: asAccessReview(kind, obj, 'update'),
+});
+const menuActions = [
+  Kebab.factory.ModifyLabels,
+  Kebab.factory.ModifyAnnotations,
+  vmTemplateEditAction,
+  Kebab.factory.Delete,
+];
 
 const { kind } = TemplateModel;
 const selector = {
   matchLabels: { [TEMPLATE_TYPE_LABEL]: 'vm' },
 };
-const labelPlural = 'Virtual Machine Templates';
 
 const tableColumnClass = classNames('col-lg-2', 'col-sm-4', 'col-xs-4');
 const tableColumnClassHiddenOnSmall = classNames('col-lg-2', 'hidden-sm', 'hidden-xs');
@@ -117,7 +132,7 @@ const VirtualMachineTemplates: React.FC<React.ComponentProps<typeof Table>> = (p
   return (
     <Table
       {...props}
-      aria-label={labelPlural}
+      aria-label={VM_TEMPLATE_LABEL_PLURAL}
       Header={VMTemplateTableHeader}
       Row={VMTemplateTableRow}
     />
@@ -136,7 +151,7 @@ const VirtualMachineTemplatesPage: React.FC<
 > = (props) => (
   <ListPage
     {...props}
-    title={labelPlural}
+    title={VM_TEMPLATE_LABEL_PLURAL}
     ListComponent={VirtualMachineTemplates}
     kind={kind}
     selector={selector}

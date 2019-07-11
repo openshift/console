@@ -9,14 +9,14 @@ import {
   DashboardCardTitle,
   DashboardCardSeeAll,
 } from '../../dashboard/dashboard-card';
-import { HealthBody, HealthItem } from '../../dashboard/health-card';
+import { AlertsBody, AlertItem, getAlerts, HealthBody, HealthItem } from '../../dashboard/health-card';
 import { HealthState } from '../../dashboard/health-card/states';
 import { coFetch } from '../../../co-fetch';
-import { featureReducerName, flagPending } from '../../../reducers/features';
+import { flagPending, featureReducerName } from '../../../reducers/features';
 import { FLAGS } from '../../../const';
-import { withDashboardResources, DashboardItemProps } from '../with-dashboard-resources';
-import { RootState } from '../../../redux';
+import { DashboardItemProps, withDashboardResources } from '../with-dashboard-resources';
 import { getBrandingDetails } from '../../masthead';
+import { RootState } from '../../../redux';
 
 export const HEALTHY = 'is healthy';
 export const ERROR = 'is in an error state';
@@ -46,38 +46,43 @@ const getClusterHealth = (subsystemStates: Array<SubsystemHealth>): ClusterHealt
   return healthState;
 };
 
-const getName = (openShiftFlag: boolean): string => openShiftFlag ? getBrandingDetails().productName : 'Kubernetes';
+const getName = (openshiftFlag: boolean): string => openshiftFlag ? getBrandingDetails().productName : 'Kubernetes';
 
-const getK8sHealthState = (openShiftFlag: boolean, k8sHealth: any): SubsystemHealth => {
+const getK8sHealthState = (openshiftFlag: boolean, k8sHealth: any): SubsystemHealth => {
   if (!k8sHealth) {
     return { state: HealthState.LOADING };
   }
   return k8sHealth === 'ok'
-    ? { message: `${getName(openShiftFlag)} ${HEALTHY}`, state: HealthState.OK }
-    : { message: `${getName(openShiftFlag)} ${ERROR}`, state: HealthState.ERROR };
+    ? { message: `${getName(openshiftFlag)} ${HEALTHY}`, state: HealthState.OK }
+    : { message: `${getName(openshiftFlag)} ${ERROR}`, state: HealthState.ERROR };
 };
-
-const mapStateToProps = (state: RootState) => ({
-  openShiftFlag: state[featureReducerName].get(FLAGS.OPENSHIFT),
-});
 
 const fetchK8sHealth = async(url) => {
   const response = await coFetch(url);
   return response.text();
 };
 
-const HealthCard_: React.FC<HealthProps> = ({
+const mapStateToProps = (state: RootState) => ({
+  openshiftFlag: state[featureReducerName].get(FLAGS.OPENSHIFT),
+});
+
+const HealthCard_ = connect(mapStateToProps)(({
   watchURL,
   stopWatchURL,
   watchPrometheus,
   stopWatchPrometheusQuery,
+  watchAlerts,
+  stopWatchAlerts,
   urlResults,
   prometheusResults,
-  openShiftFlag,
-}) => {
+  alertsResults,
+  openshiftFlag,
+}: HealthProps) => {
   React.useEffect(() => {
     const subsystems = plugins.registry.getDashboardsOverviewHealthSubsystems();
     watchURL('healthz', fetchK8sHealth);
+
+    watchAlerts();
 
     subsystems.filter(plugins.isDashboardsOverviewHealthURLSubsystem).forEach(subsystem => {
       const { url, fetch } = subsystem.properties;
@@ -90,6 +95,8 @@ const HealthCard_: React.FC<HealthProps> = ({
     return () => {
       stopWatchURL('healthz');
 
+      stopWatchAlerts();
+
       subsystems.filter(plugins.isDashboardsOverviewHealthURLSubsystem).forEach(subsystem =>
         stopWatchURL(subsystem.properties.url)
       );
@@ -97,11 +104,11 @@ const HealthCard_: React.FC<HealthProps> = ({
         stopWatchPrometheusQuery(subsystem.properties.query)
       );
     };
-  }, [watchURL, stopWatchURL, watchPrometheus, stopWatchPrometheusQuery]);
+  }, [watchURL, stopWatchURL, watchPrometheus, stopWatchPrometheusQuery, watchAlerts, stopWatchAlerts]);
 
   const subsystems = plugins.registry.getDashboardsOverviewHealthSubsystems();
   const k8sHealth = urlResults.getIn(['healthz', 'result']);
-  const k8sHealthState = getK8sHealthState(openShiftFlag, k8sHealth);
+  const k8sHealthState = getK8sHealthState(openshiftFlag, k8sHealth);
 
   const subsystemsHealths = subsystems.map(subsystem => {
     let result;
@@ -115,14 +122,16 @@ const HealthCard_: React.FC<HealthProps> = ({
 
   const healthState = getClusterHealth([k8sHealthState, ...subsystemsHealths]);
 
+  const alerts = getAlerts(alertsResults);
+
   return (
     <DashboardCard>
       <DashboardCardHeader>
         <DashboardCardTitle>Cluster Health</DashboardCardTitle>
-        {subsystems.length > 0 && !flagPending(openShiftFlag) && (
+        {subsystems.length > 0 && !flagPending(openshiftFlag) && (
           <DashboardCardSeeAll title="Subsystem health">
             <HealthItem
-              message={getName(openShiftFlag)}
+              message={getName(openshiftFlag)}
               details={k8sHealthState.message}
               state={k8sHealthState.state}
             />
@@ -140,7 +149,7 @@ const HealthCard_: React.FC<HealthProps> = ({
           </DashboardCardSeeAll>
         )}
       </DashboardCardHeader>
-      <DashboardCardBody isLoading={flagPending(openShiftFlag)}>
+      <DashboardCardBody isLoading={flagPending(openshiftFlag)}>
         <HealthBody>
           <HealthItem
             state={healthState.state}
@@ -149,11 +158,26 @@ const HealthCard_: React.FC<HealthProps> = ({
           />
         </HealthBody>
       </DashboardCardBody>
+
+      {alerts.length > 0 &&
+        <React.Fragment>
+          <DashboardCardHeader className="co-health-card__alerts-border">
+            <DashboardCardTitle>Alerts</DashboardCardTitle>
+          </DashboardCardHeader>
+          <DashboardCardBody isLoading={flagPending(openshiftFlag)}>
+            <AlertsBody>
+              {alerts.map(alert => (
+                <AlertItem key={alert.fingerprint} alert={alert} />
+              ))}
+            </AlertsBody>
+          </DashboardCardBody>
+        </React.Fragment>
+      }
     </DashboardCard>
   );
-};
+});
 
-export const HealthCard = withDashboardResources(connect(mapStateToProps)(HealthCard_));
+export const HealthCard = withDashboardResources(HealthCard_);
 
 type ClusterHealth = {
   state: HealthState;
@@ -167,5 +191,5 @@ export type SubsystemHealth = {
 };
 
 type HealthProps = DashboardItemProps & {
-  openShiftFlag: boolean;
-};
+  openshiftFlag: boolean;
+}

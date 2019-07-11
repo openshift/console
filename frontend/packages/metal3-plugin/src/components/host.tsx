@@ -3,11 +3,11 @@ import * as _ from 'lodash';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 
-import { getName, getNamespace, getMachineNode } from '@console/shared';
+import { getName, getNamespace, getUID, getMachineNode } from '@console/shared';
 import { MachineModel, NodeModel } from '@console/internal/models';
 
 import { MultiListPage, Table, TableRow, TableData } from '@console/internal/components/factory';
-import { ResourceLink, Kebab } from '@console/internal/components/utils';
+import { FirehoseResult, Kebab, ResourceLink } from '@console/internal/components/utils';
 import {
   referenceForModel,
   K8sResourceKind,
@@ -70,18 +70,30 @@ const HostsTableHeader = () => [
 ];
 
 type HostsTableRowProps = {
-  obj: K8sResourceKind & { machine: MachineKind; node: NodeKind };
+  obj: K8sResourceKind;
+  customData: {
+    machines: MachineKind[];
+    nodes: NodeKind[];
+  };
   index: number;
   key?: string;
   style: React.StyleHTMLAttributes<any>;
 };
 
-const HostsTableRow: React.FC<HostsTableRowProps> = ({ obj: host, index, key, style }) => {
+const HostsTableRow: React.FC<HostsTableRowProps> = ({
+  obj: host,
+  customData: { machines, nodes },
+  index,
+  key,
+  style,
+}) => {
   const name = getName(host);
   const namespace = getNamespace(host);
   // const machineName = getHostMachineName(host);
   const address = getHostBMCAddress(host);
-  const { machine, node } = host;
+  const uid = getUID(host);
+  const machine = getHostMachine(host, machines);
+  const node = getMachineNode(machine, nodes);
 
   // TODO(jtomasek): other resource references will be updated as a subsequent change
   // const machineResource = {
@@ -103,7 +115,7 @@ const HostsTableRow: React.FC<HostsTableRowProps> = ({ obj: host, index, key, st
   // };
 
   return (
-    <TableRow id={host.metadata.uid} index={index} trKey={key} style={style}>
+    <TableRow id={uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
         <ResourceLink
           kind={referenceForModel(BaremetalHostModel)}
@@ -128,9 +140,32 @@ const HostsTableRow: React.FC<HostsTableRowProps> = ({ obj: host, index, key, st
   );
 };
 
-const HostList: React.FC<React.ComponentProps<typeof Table>> = (props) => (
-  <Table {...props} aria-label="Baremetal Hosts" Header={HostsTableHeader} Row={HostsTableRow} />
-);
+type HostListProps = {
+  data: K8sResourceKind[];
+  resources: {
+    machines: FirehoseResult<MachineKind[]>;
+    nodes: FirehoseResult<NodeKind[]>;
+  };
+} & React.ComponentProps<typeof Table>;
+
+const HostList: React.FC<HostListProps> = (props) => {
+  const {
+    resources: { machines, nodes },
+    ...tableProps
+  } = props;
+  return (
+    <Table
+      {...tableProps}
+      aria-label="Baremetal Hosts"
+      Header={HostsTableHeader}
+      Row={HostsTableRow}
+      customData={{
+        machines: machines.data || [],
+        nodes: nodes.data || [],
+      }}
+    />
+  );
+};
 
 type BaremetalHostsPageProps = {
   namespace: string;
@@ -161,18 +196,9 @@ export const BaremetalHostsPage: React.FC<BaremetalHostsPageProps> = (props) => 
     );
     const {
       hosts: { data: hostsData },
-      machines: { data: machinesData },
-      nodes: { data: nodesData },
     } = resources;
 
-    if (loaded) {
-      return hostsData.map((host) => {
-        const machine = getHostMachine(host, machinesData);
-        const node = getMachineNode(machine, nodesData);
-        return { ...host, machine, node };
-      });
-    }
-    return [];
+    return loaded ? hostsData : [];
   };
 
   return (

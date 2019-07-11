@@ -181,8 +181,19 @@ export class Kebab extends DropdownMixin {
   render() {
     const {options, isDisabled} = this.props;
 
-    return <div ref={this.dropdownElement} className={classNames({'dropdown pf-c-dropdown': true, 'pf-m-expanded': this.state.active})} onFocus={this.onHover}>
-      <button type="button" aria-label="Actions" aria-expanded={this.state.active} disabled={isDisabled} aria-haspopup="true" className="pf-c-dropdown__toggle pf-m-plain" onClick={this.toggle} data-test-id="kebab-button">
+    return <div ref={this.dropdownElement} className={classNames({'dropdown pf-c-dropdown': true, 'pf-m-expanded': this.state.active})}>
+      <button
+        type="button"
+        aria-expanded={this.state.active}
+        aria-haspopup="true"
+        aria-label="Actions"
+        className="pf-c-dropdown__toggle pf-m-plain"
+        data-test-id="kebab-button"
+        disabled={isDisabled}
+        onClick={this.toggle}
+        onFocus={this.onHover}
+        onMouseEnter={this.onHover}
+      >
         <EllipsisVIcon />
       </button>
       {(!isDisabled && this.state.active) && <KebabItems options={options} onClick={this.onClick} />}

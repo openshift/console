@@ -176,15 +176,15 @@
   resolved "https://registry.yarnpkg.com/@novnc/novnc/-/novnc-1.1.0.tgz#3827b623e9e201ee1e1c8a61d107c51cbfaeb871"
   integrity sha512-W90Q79EuCYT++39aT/VKGyk7hUt2gPN3rN+ifPUvY4rdjgZlfwdCg9q7yzj04hke/zgdHsbXFfyFijBvrRuU5A==
 
-"@patternfly/patternfly@2.12.5":
-  version "2.12.5"
-  resolved "https://registry.yarnpkg.com/@patternfly/patternfly/-/patternfly-2.12.5.tgz#f2c5924deb875a8cde95e09e6d5c9022f00429da"
-  integrity sha512-zB+pwtUXZVbv6l76XMU3ggMZrbHZtbZDBHrNBeWVfDngp2xnwTNVu0Ha4WaZVtZzutyVaF6F1VHTLnef6mO5ug==
-
 "@patternfly/patternfly@2.13.1":
   version "2.13.1"
   resolved "https://registry.yarnpkg.com/@patternfly/patternfly/-/patternfly-2.13.1.tgz#90f20cff5ba461c356c535b845a6618014fdc01a"
   integrity sha512-E/Wzj9K9Ej91Aq5VMhF2P+Fk7ecfb/lCS2D6Rh/y1c+d7HOUK/MdyLOUHx0I9sUV3ens4jAUag95JZabPvqa8Q==
+
+"@patternfly/patternfly@2.17.2":
+  version "2.17.2"
+  resolved "https://registry.yarnpkg.com/@patternfly/patternfly/-/patternfly-2.17.2.tgz#c8bbf275a3553479c6112e0ca8d2fbe39d0ce16a"
+  integrity sha512-E4FiZLcNTIKBCLU7Bttb/IlQivPh5I0ZXmKSix2Z/D3l/vwplYp0M0XYu82kl7djpysaxmP+YC5LGoNCakdOhQ==
 
 "@patternfly/react-charts@4.4.0":
   version "4.4.0"
@@ -213,84 +213,25 @@
     file-saver "^1.3.8"
     xterm "^3.3.0"
 
-"@patternfly/react-core@3.48.5":
-  version "3.48.5"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-core/-/react-core-3.48.5.tgz#8872297ffd9015074a9297d437f8e9ca38e979d9"
-  integrity sha512-5PW0GzJeeC9Z8D6l8btZqlQBytvBn5/gjXBPhBEQ9wJ+PpEk3R1ur4I3CPFtcnM/XPKveouRuxQwY0cOKo5DoA==
+"@patternfly/react-core@3.62.1", "@patternfly/react-core@^3.62.1":
+  version "3.62.1"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-core/-/react-core-3.62.1.tgz#c97809e8446afd57102aaabf23ef05bbec5dccaa"
+  integrity sha512-3HDZ0UdXSdnXoFMCiNK64Gw1gRCle6BJFrcBQlXXYSmK0nPbXUwEzov6mwiFb4JQoHA3K2aE0arQ9WIu++HJzA==
   dependencies:
-    "@patternfly/react-icons" "^3.10.2"
-    "@patternfly/react-styles" "^3.4.2"
-    "@patternfly/react-tokens" "^2.6.1"
+    "@patternfly/react-icons" "^3.10.8"
+    "@patternfly/react-styles" "^3.4.8"
+    "@patternfly/react-tokens" "^2.6.8"
     "@tippy.js/react" "^1.1.1"
     emotion "^9.2.9"
     exenv "^1.2.2"
     focus-trap-react "^4.0.1"
 
-"@patternfly/react-core@^3.38.1":
-  version "3.38.1"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-core/-/react-core-3.38.1.tgz#ca2ac43c2860b4aad49197328126331f2d21f207"
-  integrity sha512-BZUZD+DCryfNCiqhFqIR6IV0AMfFeIl0mfcIZ+N7tSM/S9GPJAAN6xtohBItYe+dM6oEs1lVFYae9MiYEieAkw==
-  dependencies:
-    "@patternfly/react-icons" "^3.9.5"
-    "@patternfly/react-styles" "^3.3.3"
-    "@patternfly/react-tokens" "^2.5.5"
-    "@tippy.js/react" "^1.1.1"
-    emotion "^9.2.9"
-    exenv "^1.2.2"
-    focus-trap-react "^4.0.1"
-
-"@patternfly/react-core@^3.57.1":
-  version "3.57.1"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-core/-/react-core-3.57.1.tgz#4757e1798798daaf4f6a835f8d9256e27f908aa1"
-  integrity sha512-V9ET59Md62nDzNdbWMQGjFoyctkEw0bfRazV/8KZgMqWXVle0bt+TuIYHDtwxFlfTmnbEiDKoE+Fl1y3FC1Www==
-  dependencies:
-    "@patternfly/react-icons" "^3.10.6"
-    "@patternfly/react-styles" "^3.4.6"
-    "@patternfly/react-tokens" "^2.6.5"
-    "@tippy.js/react" "^2.2.1"
-    emotion "^9.2.9"
-    exenv "^1.2.2"
-    focus-trap-react "^4.0.1"
-
-"@patternfly/react-icons@^3.10.2":
-  version "3.10.2"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-icons/-/react-icons-3.10.2.tgz#154c9d727e0d4f59212d463fe0790c3c71c78343"
-  integrity sha512-n4NbSzqeROzpGsioQ6nvf/b2N4WzV0fuz5UXTuWD4PZCaY3D++eF1GLpIqEZHdA5uYN4NU6hzikPtyQqpX+bGA==
+"@patternfly/react-icons@^3.10.8":
+  version "3.10.8"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-icons/-/react-icons-3.10.8.tgz#0f32c3d89817af2a47a772ea1876386779c43aa9"
+  integrity sha512-jWWfnCnZgq7g7vD6TIEIsoxIhwgHnSFry4rhVuo37LHvJerzTVLIDYhgk95k/qaaYGaGWA+ggv0MjCiFq3IMXQ==
   dependencies:
     "@fortawesome/free-brands-svg-icons" "^5.8.1"
-
-"@patternfly/react-icons@^3.10.6":
-  version "3.10.6"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-icons/-/react-icons-3.10.6.tgz#f437cafe2f123e45a9a3456c85c27979b63ee765"
-  integrity sha512-zO14BaFuU/dZaEA+45Rh+eIb3c86l/ZPe6+UOyaD7s8GgqoiTFYYueoDCc9GEICdB+zb9kTLg20LIfsrnDsgnw==
-  dependencies:
-    "@fortawesome/free-brands-svg-icons" "^5.8.1"
-
-"@patternfly/react-icons@^3.9.5":
-  version "3.9.5"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-icons/-/react-icons-3.9.5.tgz#c21bf16475aad39426abf76198acfa14c0556752"
-  integrity sha512-SFKeEqMXjVZlVl4rl8q4P36R8Bn5e7Log0+g6602/jUO0tX1qdKK5FlGInUZ73AVqYsJ/WdKXDmoI++m/ys3Ew==
-  dependencies:
-    "@fortawesome/free-brands-svg-icons" "^5.8.1"
-
-"@patternfly/react-styles@^3.3.3":
-  version "3.3.3"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-styles/-/react-styles-3.3.3.tgz#30b82b38b8976b9102cbc863a8261f056db092a6"
-  integrity sha512-Mhs+wsysc9XT+rTMHIrvsLEa6jJEkYCs97x7woFmHBJBcdl31bhT9n9gWgg5JstOUjtdMkmBHMo8gJcjgbxQxw==
-  dependencies:
-    "@babel/helper-plugin-utils" "^7.0.0-beta.48"
-    camel-case "^3.0.0"
-    css "^2.2.3"
-    cssom "^0.3.4"
-    cssstyle "^0.3.1"
-    emotion "^9.2.9"
-    emotion-server "^9.2.9"
-    fbjs-scripts "^0.8.3"
-    fs-extra "^6.0.1"
-    jsdom "^15.1.0"
-    relative "^3.0.2"
-    resolve-from "^4.0.0"
-    typescript "3.4.5"
 
 "@patternfly/react-styles@^3.4.2":
   version "3.4.2"
@@ -311,10 +252,10 @@
     resolve-from "^4.0.0"
     typescript "3.4.5"
 
-"@patternfly/react-styles@^3.4.6":
-  version "3.4.6"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-styles/-/react-styles-3.4.6.tgz#03c645adfa3f6b8b7113232e90326547a39c6322"
-  integrity sha512-m9ynr85EMmBAxGhCguwRiGgpLDA9+YKtwF83ORK7ylHHsrK9JC/RFPvTj8d/80oUMmlzcL765ZwG7sT9qR3ybA==
+"@patternfly/react-styles@^3.4.8":
+  version "3.4.8"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-styles/-/react-styles-3.4.8.tgz#0382ccc862aabc517f1522eef980ed6d3985be0f"
+  integrity sha512-K8gsx0N4PpfehKByokbF5W0R/xNviTuEGD72dEbxqQEhtNQZm5tAfCRIEY3IiqPce7YjHig93lK2cOX0TGcxgg==
   dependencies:
     "@babel/helper-plugin-utils" "^7.0.0-beta.48"
     camel-case "^3.0.0"
@@ -330,52 +271,43 @@
     resolve-from "^4.0.0"
     typescript "3.4.5"
 
-"@patternfly/react-table@2.11.1":
-  version "2.11.1"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-table/-/react-table-2.11.1.tgz#2bf52436797f2ef5a2f0aa49f75c680c50343bcf"
-  integrity sha512-SWCFw4N95Z35emLPwI0N3rFZKBGBtZKjklTyeTqTd1jhKrZWmyBTCCig89fKy6D5RlYFEn0D+4TkDeOebNC4EA==
+"@patternfly/react-table@2.13.54":
+  version "2.13.54"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-table/-/react-table-2.13.54.tgz#6775d7fdf1f0e27397eaef50002e68c3458e2c2c"
+  integrity sha512-erxCzbPt3GvEokYzGS9YRDWUbAKwpvQ+mNJNVDZh67kT2XQxXkGPOEfcUaVoHRlS9z2X6o4nPBJVY6plHymtbA==
   dependencies:
-    "@patternfly/patternfly" "2.12.5"
-    "@patternfly/react-core" "^3.38.1"
-    "@patternfly/react-icons" "^3.9.5"
-    "@patternfly/react-styles" "^3.3.3"
-    "@patternfly/react-tokens" "^2.5.5"
+    "@patternfly/patternfly" "2.17.2"
+    "@patternfly/react-core" "^3.62.1"
+    "@patternfly/react-icons" "^3.10.8"
+    "@patternfly/react-styles" "^3.4.8"
+    "@patternfly/react-tokens" "^2.6.8"
     classnames "^2.2.5"
     exenv "^1.2.2"
+    lodash-es "^4.2.1"
 
-"@patternfly/react-tokens@^2.5.5":
-  version "2.5.5"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-tokens/-/react-tokens-2.5.5.tgz#4d1ff0c2f6091be5c0031a70079e0b745c5d57f0"
-  integrity sha512-5ztqkgBjSNcBnCqJFltG2OaP1bUgk+s5+Fp4kTDpVZLu3LNI46O/gPTRwObYXkbCna0r/hv2k3JVGER53G9fEA==
+"@patternfly/react-tokens@^2.6.8":
+  version "2.6.8"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-tokens/-/react-tokens-2.6.8.tgz#501d9966dcb0525a863d5c4a0819e097c3472725"
+  integrity sha512-I68SRNc0PC6cXV3GLraLGTxZgzm+pbMdNHhA9P/Ps7cF0aJj14+EtEqsI983NQvmmDac1TyZrsotgCZSzUO8/g==
 
-"@patternfly/react-tokens@^2.6.1":
-  version "2.6.1"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-tokens/-/react-tokens-2.6.1.tgz#06b296dc14a2e30af026a61e544670da07bc28c4"
-  integrity sha512-FoIY2uewqzxb6ScEn0G1lbfb1jLESDCqGo//zSXUx9dh83NWEsmkfKBKFEDhONyVYUGyFKcD7psByA94XLqnjw==
-
-"@patternfly/react-tokens@^2.6.5":
-  version "2.6.5"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-tokens/-/react-tokens-2.6.5.tgz#94907bbf1182855ceb69a44a0e351f7775842f19"
-  integrity sha512-HZ0LLAOugMmnD9n5T5Hp6vDnZ86ikm+MXu7kbfNqK9dTOVmEroPai0rUN6hnnPP4mCzFrLXmh4rzecDr2273yg==
-
-"@patternfly/react-topology@2.4.13":
-  version "2.4.13"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-topology/-/react-topology-2.4.13.tgz#318c8effba2806c9381a950b533d047c77d08dad"
-  integrity sha512-CaScmtQFr+++zr9z2dNxXl5Osihu30000af5TapkbBZABspnmcZ+AGO8dDj2VvLJ9e/qJaC2QP5tWc0W95s4hg==
+"@patternfly/react-topology@2.5.4":
+  version "2.5.4"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-topology/-/react-topology-2.5.4.tgz#a52dc71d30c9f6a54c371a145ece942a06be6962"
+  integrity sha512-0ZTr9mIJFq+0k9Njm17FuwoLJHpFzIUNAxKlclWi4lCB3ayid8u0G1tgDnDydekh/CH5cRn3WNK6t7QocXl7JQ==
   dependencies:
-    "@patternfly/react-core" "^3.57.1"
-    "@patternfly/react-icons" "^3.10.6"
-    "@patternfly/react-styles" "^3.4.6"
+    "@patternfly/react-core" "^3.62.1"
+    "@patternfly/react-icons" "^3.10.8"
+    "@patternfly/react-styles" "^3.4.8"
 
-"@patternfly/react-virtualized-extension@1.0.5":
-  version "1.0.5"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-virtualized-extension/-/react-virtualized-extension-1.0.5.tgz#08e5f8190de46fa068b82fe6d72956f449bfd48d"
-  integrity sha512-FOtq4sapKtKayZ0o9gh0ziGqlgd4UM3/C6nKNOuDEQszdIjofk1fixhCFPGdpu4mL6IrWawQO4UPCPL9dcDQ4w==
+"@patternfly/react-virtualized-extension@1.1.56":
+  version "1.1.56"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-virtualized-extension/-/react-virtualized-extension-1.1.56.tgz#88b1943274956c0b67695a62cdb33a065b6a029b"
+  integrity sha512-YCFOKClxMJDyiBROv5+N/nDgb6uIRF5paNQTPFokI7rsk9aDjoRiU04xMxZNaL00/hsQJSWlF+S+Q795MNH+dg==
   dependencies:
-    "@patternfly/patternfly" "2.12.5"
-    "@patternfly/react-core" "^3.38.1"
-    "@patternfly/react-icons" "^3.9.5"
-    "@patternfly/react-styles" "^3.3.3"
+    "@patternfly/patternfly" "2.17.2"
+    "@patternfly/react-core" "^3.62.1"
+    "@patternfly/react-icons" "^3.10.8"
+    "@patternfly/react-styles" "^3.4.8"
     clsx "^1.0.1"
     dom-helpers "^2.4.0 || ^3.0.0"
     exenv "^1.2.2"
@@ -407,14 +339,6 @@
   dependencies:
     prop-types "^15.6.2"
     tippy.js "^3.2.0"
-
-"@tippy.js/react@^2.2.1":
-  version "2.2.2"
-  resolved "https://registry.yarnpkg.com/@tippy.js/react/-/react-2.2.2.tgz#a0fbc646958cdb002d7d227f7b18dca346c76f2e"
-  integrity sha512-ex6IEy1cFC1a1MqbRaNZqo/MRK/GQOfa/VO5jydYeBrxnxJ3I/3gCX098dUHRLZmB6aFKVY39TwgnQRCbLUG4Q==
-  dependencies:
-    prop-types "^15.6.2"
-    tippy.js "^4.3.4"
 
 "@types/anymatch@*":
   version "1.3.1"
@@ -1056,7 +980,7 @@ acorn-globals@^3.1.0:
   dependencies:
     acorn "^4.0.4"
 
-acorn-globals@^4.3.2:
+acorn-globals@^4.3.0, acorn-globals@^4.3.2:
   version "4.3.2"
   resolved "https://registry.yarnpkg.com/acorn-globals/-/acorn-globals-4.3.2.tgz#4e2c2313a597fd589720395f6354b41cd5ec8006"
   integrity sha512-BbzvZhVtZP+Bs1J1HcwrQe8ycfO0wStkSGxuul3He3GkHOIZ6eTqOkPuw9IP1X3+IkOo4wiJmwkobzXYz4wewQ==
@@ -1091,6 +1015,11 @@ acorn@^6.0.1, acorn@^6.0.5, acorn@^6.0.7, acorn@^6.1.1:
   version "6.1.1"
   resolved "https://registry.yarnpkg.com/acorn/-/acorn-6.1.1.tgz#7d25ae05bb8ad1f9b699108e1094ecd7884adc1f"
   integrity sha512-jPTiwtOxaHNaAPg/dmrJ/beuzLRnXtB0kQPQ8JpotKJgTB6rX6c8mlf315941pyjBSaPg8NHXS9fhP4u17DpGA==
+
+acorn@^6.0.4:
+  version "6.2.0"
+  resolved "https://registry.yarnpkg.com/acorn/-/acorn-6.2.0.tgz#67f0da2fc339d6cfb5d6fb244fd449f33cd8bbe3"
+  integrity sha512-8oe72N3WPMjA+2zVG71Ia0nXZ8DpQH+QyyHO+p06jT8eg8FGG3FbcUIi8KziHlAfheJQZeoqbvq1mQSQHXKYLw==
 
 add-line-numbers@^1.0.1:
   version "1.0.1"
@@ -2661,6 +2590,13 @@ brorand@^1.0.1:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/brorand/-/brorand-1.1.0.tgz#12c25efe40a45e3c323eb8675a0a0ce57b22371f"
 
+browser-env@3.x:
+  version "3.2.6"
+  resolved "https://registry.yarnpkg.com/browser-env/-/browser-env-3.2.6.tgz#a10872b92a25b02ddd17de76ca479744de82d8e7"
+  integrity sha512-FJ1dwr5gWEP2Igv1/acvLaMPUTwIqdBJsAL3prDfcjRG9G5/y70WN6M8uCNIyITHC+mMj0W9RkkCz9DFE5s4MQ==
+  dependencies:
+    window "4.2.6"
+
 browser-process-hrtime@^0.1.2:
   version "0.1.3"
   resolved "https://registry.yarnpkg.com/browser-process-hrtime/-/browser-process-hrtime-0.1.3.tgz#616f00faef1df7ec1b5bf9cfe2bdc3170f26c7b4"
@@ -3911,6 +3847,11 @@ cssom@^0.3.4, cssom@^0.3.6:
   resolved "https://registry.yarnpkg.com/cssom/-/cssom-0.3.6.tgz#f85206cee04efa841f3c5982a74ba96ab20d65ad"
   integrity sha512-DtUeseGk9/GBW0hl0vVPpU22iHL6YB5BUX7ml1hB+GMpo0NX5G4voX3kdWiMSEguFtcW3Vh3djqNF4aIe6ne0A==
 
+cssom@~0.3.6:
+  version "0.3.8"
+  resolved "https://registry.yarnpkg.com/cssom/-/cssom-0.3.8.tgz#9f1276f5b2b463f2114d3f2c75250af8c1a36f4a"
+  integrity sha512-b0tGHbfegbhPJpxpiBPU2sCkigAqtM9O121le6bbOlgyV+NyGyCmVfJ6QW9eRjz8CpNfWEOYBIMIGRYkLwsIYg==
+
 "cssstyle@>= 0.2.37 < 0.3.0":
   version "0.2.37"
   resolved "https://registry.yarnpkg.com/cssstyle/-/cssstyle-0.2.37.tgz#541097234cb2513c83ceed3acddc27ff27987d54"
@@ -3923,6 +3864,13 @@ cssstyle@^0.3.1:
   integrity sha512-tNvaxM5blOnxanyxI6panOsnfiyLRj3HV4qjqqS45WPNS1usdYWRUQjqTEEELK73lpeP/1KoIGYUwrBn/VcECA==
   dependencies:
     cssom "0.3.x"
+
+cssstyle@^1.1.1:
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/cssstyle/-/cssstyle-1.3.0.tgz#c36c466f7037fd30f03baa271b65f0f17b50585c"
+  integrity sha512-wXsoRfsRfsLVNaVzoKdqvEmK/5PFaEXNspVT22Ots6K/cnJdpoDKuQFw+qlMiXnmaif1OgeC466X1zISgAOcGg==
+  dependencies:
+    cssom "~0.3.6"
 
 cssstyle@^1.2.2:
   version "1.2.2"
@@ -5030,7 +4978,7 @@ escape-string-regexp@^1.0.2, escape-string-regexp@^1.0.5:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/escape-string-regexp/-/escape-string-regexp-1.0.5.tgz#1b61c0562190a8dff6ae3bb2cf0200ca130b86d4"
 
-escodegen@^1.11.1:
+escodegen@^1.11.0, escodegen@^1.11.1:
   version "1.11.1"
   resolved "https://registry.yarnpkg.com/escodegen/-/escodegen-1.11.1.tgz#c485ff8d6b4cdb89e27f4a856e91f118401ca510"
   integrity sha512-JwiqFD9KdGVVpeuRa68yU3zZnBEOcPs0nKW7wZzXky8Z7tffdYUHbe11bPCV5jYlK6DVdKLWLm0f5I/QlL0Kmw==
@@ -8376,6 +8324,38 @@ jscodeshift@^0.5.0:
     temp "^0.8.1"
     write-file-atomic "^1.2.0"
 
+jsdom@13.2.0:
+  version "13.2.0"
+  resolved "https://registry.yarnpkg.com/jsdom/-/jsdom-13.2.0.tgz#b1a0dbdadc255435262be8ea3723d2dba0d7eb3a"
+  integrity sha512-cG1NtMWO9hWpqRNRR3dSvEQa8bFI6iLlqU2x4kwX51FQjp0qus8T9aBaAO6iGp3DeBrhdwuKxckknohkmfvsFw==
+  dependencies:
+    abab "^2.0.0"
+    acorn "^6.0.4"
+    acorn-globals "^4.3.0"
+    array-equal "^1.0.0"
+    cssom "^0.3.4"
+    cssstyle "^1.1.1"
+    data-urls "^1.1.0"
+    domexception "^1.0.1"
+    escodegen "^1.11.0"
+    html-encoding-sniffer "^1.0.2"
+    nwsapi "^2.0.9"
+    parse5 "5.1.0"
+    pn "^1.1.0"
+    request "^2.88.0"
+    request-promise-native "^1.0.5"
+    saxes "^3.1.5"
+    symbol-tree "^3.2.2"
+    tough-cookie "^2.5.0"
+    w3c-hr-time "^1.0.1"
+    w3c-xmlserializer "^1.0.1"
+    webidl-conversions "^4.0.2"
+    whatwg-encoding "^1.0.5"
+    whatwg-mimetype "^2.3.0"
+    whatwg-url "^7.0.0"
+    ws "^6.1.2"
+    xml-name-validator "^3.0.0"
+
 jsdom@^15.1.0:
   version "15.1.1"
   resolved "https://registry.yarnpkg.com/jsdom/-/jsdom-15.1.1.tgz#21ed01f81d95ef4327f3e564662aef5e65881252"
@@ -9937,7 +9917,7 @@ numeric@^1.2.6:
   version "1.4.4"
   resolved "https://registry.yarnpkg.com/nwmatcher/-/nwmatcher-1.4.4.tgz#2285631f34a95f0d0395cd900c96ed39b58f346e"
 
-nwsapi@^2.1.4:
+nwsapi@^2.0.9, nwsapi@^2.1.4:
   version "2.1.4"
   resolved "https://registry.yarnpkg.com/nwsapi/-/nwsapi-2.1.4.tgz#e006a878db23636f8e8a67d33ca0e4edf61a842f"
   integrity sha512-iGfd9Y6SFdTNldEy2L0GUhcarIutFmk+MPWIn9dmj8NMIup03G08uUF2KGbbmv/Ux4RT0VZJoP/sVbWA6d/VIw==
@@ -10797,7 +10777,7 @@ popper.js@^1.14.1:
   version "1.14.4"
   resolved "https://registry.yarnpkg.com/popper.js/-/popper.js-1.14.4.tgz#8eec1d8ff02a5a3a152dd43414a15c7b79fd69b6"
 
-popper.js@^1.14.6, popper.js@^1.14.7:
+popper.js@^1.14.6:
   version "1.15.0"
   resolved "https://registry.yarnpkg.com/popper.js/-/popper.js-1.15.0.tgz#5560b99bbad7647e9faa475c6b8056621f5a4ff2"
   integrity sha512-w010cY1oCUmI+9KwwlWki+r5jxKfTFDVoadl7MSrIujHU5MJ5OR6HTDj6Xo8aoR/QsA56x8jKjA59qGH4ELtrA==
@@ -12309,7 +12289,7 @@ request-promise-core@1.1.2:
   dependencies:
     lodash "^4.17.11"
 
-request-promise-native@^1.0.7:
+request-promise-native@^1.0.5, request-promise-native@^1.0.7:
   version "1.0.7"
   resolved "https://registry.yarnpkg.com/request-promise-native/-/request-promise-native-1.0.7.tgz#a49868a624bdea5069f1251d0a836e0d89aa2c59"
   integrity sha512-rIMnbBdgNViL37nZ1b3L/VfPOpSi0TqVDQPAvO6U14lMzOLrt5nilxCQqtDKhZeDiW0/hkCXGoQjhgJd/tCh6w==
@@ -12787,6 +12767,13 @@ saucelabs@^1.5.0:
 sax@>=0.6.0, sax@^1.2.1, sax@^1.2.4, sax@~1.2.1:
   version "1.2.4"
   resolved "https://registry.yarnpkg.com/sax/-/sax-1.2.4.tgz#2816234e2378bddc4e5354fab5caa895df7100d9"
+
+saxes@^3.1.5:
+  version "3.1.11"
+  resolved "https://registry.yarnpkg.com/saxes/-/saxes-3.1.11.tgz#d59d1fd332ec92ad98a2e0b2ee644702384b1c5b"
+  integrity sha512-Ydydq3zC+WYDJK1+gRxRapLIED9PWeSuuS41wqyoRmzvhhh9nc+QQrVMKJYzJFULazeGhzSV0QleN2wD3boh2g==
+  dependencies:
+    xmlchars "^2.1.1"
 
 saxes@^3.1.9:
   version "3.1.9"
@@ -13940,13 +13927,6 @@ tippy.js@^3.2.0:
   dependencies:
     popper.js "^1.14.6"
 
-tippy.js@^4.3.4:
-  version "4.3.4"
-  resolved "https://registry.yarnpkg.com/tippy.js/-/tippy.js-4.3.4.tgz#9a91fd5ce8c401f181b7adaa6b2c27f3d105f3ba"
-  integrity sha512-O2ukxHOJTLVYZ/TfHjNd8WgAWoefX9uk5QiWRdHfX2PR2lBpUU4BJQLl7U2Ykc8K7o16gTeHEElpuRfgD5b0aA==
-  dependencies:
-    popper.js "^1.14.7"
-
 tlds@^1.57.0:
   version "1.203.1"
   resolved "https://registry.yarnpkg.com/tlds/-/tlds-1.203.1.tgz#4dc9b02f53de3315bc98b80665e13de3edfc1dfc"
@@ -14063,7 +14043,7 @@ tough-cookie@^2.3.2, tough-cookie@~2.3.0, tough-cookie@~2.3.3:
   dependencies:
     punycode "^1.4.1"
 
-tough-cookie@^2.3.3:
+tough-cookie@^2.3.3, tough-cookie@^2.5.0:
   version "2.5.0"
   resolved "https://registry.yarnpkg.com/tough-cookie/-/tough-cookie-2.5.0.tgz#cd9fb2a0aa1d5a12b473bd9fb96fa3dcff65ade2"
   integrity sha512-nlLsUzgm1kfLXSXfRZMc1KLAugd4hqJHDTvc2hDIwS3mZAfMEuMbc03SujMF+GEcpaX/qboeycw6iO8JwVv2+g==
@@ -15033,7 +15013,7 @@ w3c-hr-time@^1.0.1:
   dependencies:
     browser-process-hrtime "^0.1.2"
 
-w3c-xmlserializer@^1.1.2:
+w3c-xmlserializer@^1.0.1, w3c-xmlserializer@^1.1.2:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/w3c-xmlserializer/-/w3c-xmlserializer-1.1.2.tgz#30485ca7d70a6fd052420a3d12fd90e6339ce794"
   integrity sha512-p10l/ayESzrBMYWRID6xbuCKh2Fp77+sA0doRuGn4tTIMrrZVeqfpKjXHY+oDh3K4nLdPgNwMTVP6Vp4pvqbNg==
@@ -15300,6 +15280,13 @@ window-size@0.1.0:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/window-size/-/window-size-0.1.0.tgz#5438cd2ea93b202efa3a19fe8887aee7c94f9c9d"
 
+window@4.2.6:
+  version "4.2.6"
+  resolved "https://registry.yarnpkg.com/window/-/window-4.2.6.tgz#27e44d6688bbd23634be24d4007061ce071c70f3"
+  integrity sha512-vk5Uv4hlPkZjUTAUVJUyvJQrbA05T99Qm3CTk0krXHKdoghxV70uPbHK3uGmrI1SfyJpdYncvZ7CbewJ30e9MQ==
+  dependencies:
+    jsdom "13.2.0"
+
 wordwrap@0.0.2:
   version "0.0.2"
   resolved "https://registry.yarnpkg.com/wordwrap/-/wordwrap-0.0.2.tgz#b79669bb42ecb409f83d583cad52ca17eaa1643f"
@@ -15365,6 +15352,13 @@ ws@^4.0.0:
     async-limiter "~1.0.0"
     safe-buffer "~5.1.0"
 
+ws@^6.1.2:
+  version "6.2.1"
+  resolved "https://registry.yarnpkg.com/ws/-/ws-6.2.1.tgz#442fdf0a47ed64f59b6a5d8ff130f4748ed524fb"
+  integrity sha512-GIyAXC2cB7LjvpgMt9EKS2ldqr0MTrORaleiOno6TweZ6r3TKtoFQWay/2PceJ3RuBasOHzXNn5Lrw1X0bEjqA==
+  dependencies:
+    async-limiter "~1.0.0"
+
 ws@^7.0.0:
   version "7.0.0"
   resolved "https://registry.yarnpkg.com/ws/-/ws-7.0.0.tgz#79351cbc3f784b3c20d0821baf4b4ff809ffbf51"
@@ -15400,6 +15394,11 @@ xmlchars@^1.3.1:
   version "1.3.1"
   resolved "https://registry.yarnpkg.com/xmlchars/-/xmlchars-1.3.1.tgz#1dda035f833dbb4f86a0c28eaa6ca769214793cf"
   integrity sha512-tGkGJkN8XqCod7OT+EvGYK5Z4SfDQGD30zAa58OcnAa0RRWgzUEK72tkXhsX1FZd+rgnhRxFtmO+ihkp8LHSkw==
+
+xmlchars@^2.1.1:
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/xmlchars/-/xmlchars-2.1.1.tgz#ef1a81c05bff629c2280007f12daca21bd6f6c93"
+  integrity sha512-7hew1RPJ1iIuje/Y01bGD/mXokXxegAgVS+e+E0wSi2ILHQkYAH1+JXARwTjZSM4Z4Z+c73aKspEcqj+zPPL/w==
 
 xmldom@^0.1.22:
   version "0.1.27"

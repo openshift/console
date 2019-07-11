@@ -4,6 +4,7 @@ import { Firehose } from '@console/internal/components/utils';
 import { PipelineModel } from '../../models';
 import { filters } from './PipelineAugmentRuns';
 import PipelineAugmentRunsWrapper from './PipelineAugmentRunsWrapper';
+import DefaultPage from '../DefaultPage';
 
 interface PipelinesPageProps {
   namespace: string;
@@ -19,7 +20,7 @@ const PipelinesPage: React.FC<PipelinesPageProps> = ({ namespace }) => {
       filters,
     },
   ];
-  return (
+  return namespace ? (
     <FireMan
       canCreate={false}
       canExpand={false}
@@ -31,6 +32,8 @@ const PipelinesPage: React.FC<PipelinesPageProps> = ({ namespace }) => {
         <PipelineAugmentRunsWrapper />
       </Firehose>
     </FireMan>
+  ) : (
+    <DefaultPage title="Pipelines">Select a project to view the list of pipelines</DefaultPage>
   );
 };
 

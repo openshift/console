@@ -11,7 +11,7 @@ import { NamespaceModel, ProjectModel, SecretModel } from '../models';
 import { k8sGet } from '../module/k8s';
 import * as UIActions from '../actions/ui';
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
-import { Kebab, Dropdown, Firehose, LabelList, LoadingInline, navFactory, ResourceKebab, SectionHeading, ResourceLink, ResourceSummary, MsgBox, StatusIconAndText, ExternalLink, humanizeCpuCores, humanizeDecimalBytes, useAccessReview } from './utils';
+import { Kebab, Dropdown, Firehose, LabelList, LoadingInline, navFactory, ResourceKebab, SectionHeading, ResourceLink, ResourceIcon, ResourceSummary, MsgBox, StatusIconAndText, ExternalLink, humanizeCpuCores, humanizeDecimalBytes, useAccessReview } from './utils';
 import { createNamespaceModal, createProjectModal, deleteNamespaceModal, configureNamespacePullSecretModal } from './modals';
 import { RoleBindingsPage } from './RBAC';
 import { Bar, Area, requirePrometheus } from './graphs';
@@ -137,14 +137,37 @@ const ProjectTableHeader = () => {
 };
 ProjectTableHeader.displayName = 'ProjectTableHeader';
 
-const ProjectTableRow = ({obj: project, index, key, style}) => {
+const ProjectLink = connect(
+  null,
+  { setActiveNamespace: UIActions.setActiveNamespace },
+)(({ project, setActiveNamespace }) => (
+  <span className="co-resource-item co-resource-item--truncate">
+    <ResourceIcon kind="Project" />
+    <button
+      title={project.metadata.name}
+      type="button"
+      className="co-resource-item__resource-name btn btn-link"
+      onClick={() => setActiveNamespace(project.metadata.name)}
+    >
+      {project.metadata.name}
+    </button>
+  </span>
+));
+const projectHeaderWithoutActions = () => _.dropRight(ProjectTableHeader());
+
+const ProjectTableRow = ({obj: project, index, key, style, customData = {}}) => {
   const requester = getRequester(project);
+  const { ProjectLinkComponent, actionsEnabled = true } = customData;
   return (
     <TableRow id={project.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={projectColumnClasses[0]}>
-        <span className="co-resource-item">
-          <ResourceLink kind="Project" name={project.metadata.name} title={project.metadata.uid} />
-        </span>
+        {customData && ProjectLinkComponent ? (
+          <ProjectLinkComponent project={project} />
+        ) : (
+          <span className="co-resource-item">
+            <ResourceLink kind="Project" name={project.metadata.name} title={project.metadata.uid} />
+          </span>
+        )}
       </TableData>
       <TableData className={projectColumnClasses[1]}>
         <StatusIconAndText status={project.status.phase} />
@@ -155,13 +178,19 @@ const ProjectTableRow = ({obj: project, index, key, style}) => {
       <TableData className={projectColumnClasses[3]}>
         <LabelList kind="Project" labels={project.metadata.labels} />
       </TableData>
-      <TableData className={projectColumnClasses[4]}>
-        <ResourceKebab actions={projectMenuActions} kind="Project" resource={project} />
-      </TableData>
+      {
+        actionsEnabled && (
+          <TableData className={projectColumnClasses[4]}>
+            <ResourceKebab actions={projectMenuActions} kind="Project" resource={project} />
+          </TableData>
+        )
+      }
     </TableRow>
   );
 };
 ProjectTableRow.displayName = 'ProjectTableRow';
+
+export const ProjectsTable = props => <Table {...props} aria-label="Projects" Header={projectHeaderWithoutActions} Row={ProjectTableRow} customData={{ProjectLinkComponent: ProjectLink, actionsEnabled: false}} virtualize />;
 
 const ProjectList_ = props => {
   const ProjectEmptyMessageDetail = <React.Fragment>
@@ -402,7 +431,7 @@ const namespaceBarStateToProps = ({k8s}) => {
     useProjects,
   };
 };
-
+/** @type {React.FC<{children?: ReactNode}>} */
 export const NamespaceBar = connect(namespaceBarStateToProps)(NamespaceBar_);
 
 export const NamespacesDetailsPage = props => <DetailsPage

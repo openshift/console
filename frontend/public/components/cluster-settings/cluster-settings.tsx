@@ -60,7 +60,7 @@ const UpdatesAvailableMessage: React.SFC<CVStatusMessageProps> = ({cv}) => <Reac
     <i className="fa fa-arrow-circle-o-up update-pending" aria-hidden={true} /> Update available
   </div>
   <div>
-    <Button bsStyle="primary" onClick={() => clusterUpdateModal(cv)}>
+    <Button bsStyle="primary" onClick={() => clusterUpdateModal({cv})}>
       Update now
     </Button>
   </div>

@@ -1,3 +1,35 @@
+.co-health-card__alerts-body {
+  max-height: 10em;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.co-health-card__alerts-border {
+  border-top: 1px solid $pf-color-black-300;
+  padding-top: 1em;
+}
+
+.co-health-card__alerts-icon {
+  margin-right: 1.5em;
+}
+
+.co-health-card__alerts-icon--critical {
+  color: $pf-color-red-100;
+}
+
+.co-health-card__alerts-icon--warning {
+  color: $pf-color-gold-400;
+}
+
+.co-health-card__alerts-item {
+  display: table;
+  margin-bottom: 0.5em;
+}
+
+.co-health-card__alerts-item-message {
+  display: table-cell;
+}
+
 .co-health-card__body {
   min-height: 2.3em;
 }

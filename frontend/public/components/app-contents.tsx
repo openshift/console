@@ -95,20 +95,26 @@ const LazyRoute = (props) => (
   />
 );
 
-const pageRouteExtensions = plugins.registry.getRoutePages().map((r) => {
-  const Component = r.properties.loader ? LazyRoute : Route;
-  return <Component {...r.properties} key={Array.from(r.properties.path).join(',')} />;
-});
+const getPageRouteExtensions = (perspective: string) =>
+  plugins.registry.getRoutePages().map((r) => {
+    if (r.properties.perspective && r.properties.perspective !== perspective) {
+      return null;
+    }
+    const Component = r.properties.loader ? LazyRoute : Route;
+    return <Component {...r.properties} key={Array.from(r.properties.path).join(',')} />;
+  });
 
 // use `withRouter` to force a re-render when routes change since we are using React.memo
-const AppContents = withRouter(React.memo(() => (
+const AppContents = connect((state: RootState) => ({
+  activePerspective: getActivePerspective(state),
+}))(withRouter(React.memo(({activePerspective}) => (
   <PageSection variant={PageSectionVariants.light}>
     <div id="content">
       <GlobalNotifications />
       <Route path={namespacedRoutes} component={NamespaceBar} />
       <div id="content-scrollable">
         <Switch>
-          {pageRouteExtensions}
+          {getPageRouteExtensions(activePerspective)}
 
           <Route path={['/all-namespaces', '/ns/:ns']} component={RedirectComponent} />
 
@@ -118,7 +124,9 @@ const AppContents = withRouter(React.memo(() => (
           <Redirect from="/overview/ns/:ns" to="/k8s/cluster/projects/:ns/workloads" />
           <Route path="/overview" exact component={NamespaceRedirect} />
           <LazyRoute path="/api-explorer" exact loader={() => import('./api-explorer' /* webpackChunkName: "api-explorer" */).then(m => m.APIExplorerPage)} />
-          <LazyRoute path="/api-explorer/:plural" loader={() => import('./api-explorer' /* webpackChunkName: "api-explorer" */).then(m => m.APIResourcePage)} />
+          <LazyRoute path="/api-resource/cluster/:plural" loader={() => import('./api-explorer' /* webpackChunkName: "api-explorer" */).then(m => m.APIResourcePage)} />
+          <LazyRoute path="/api-resource/all-namespaces/:plural" loader={() => import('./api-explorer' /* webpackChunkName: "api-explorer" */).then(m => NamespaceFromURL(m.APIResourcePage))} />
+          <LazyRoute path="/api-resource/ns/:ns/:plural" loader={() => import('./api-explorer' /* webpackChunkName: "api-explorer" */).then(m => NamespaceFromURL(m.APIResourcePage))} />
 
           <LazyRoute path="/start-guide" exact loader={() => import('./start-guide' /* webpackChunkName: "start-guide" */).then(m => m.StartGuidePage)} />
           <LazyRoute path="/command-line-tools" exact loader={() => import('./command-line-tools' /* webpackChunkName: "command-line-tools" */).then(m => m.CommandLineToolsPage)} />
@@ -225,6 +233,6 @@ const AppContents = withRouter(React.memo(() => (
       </div>
     </div>
   </PageSection>
-)));
+))));
 
 export default AppContents;

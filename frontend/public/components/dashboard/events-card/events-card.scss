@@ -1,0 +1,57 @@
+.co-events-card__body {
+  margin: -1.5em;
+  max-height: 30em;
+  min-height: 10em;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.co-events-card__body-loading {
+  text-align: center;
+}
+
+.co-events-card__body-stream {
+  margin-top: 1.5em;
+}
+
+.co-events-card__item {
+  border-bottom: solid 1px $pf-color-black-200;
+  padding: 0 1.5em;
+}
+
+.co-events-card__item-icon--error {
+  align-items: center;
+  color: $pf-color-red-100;
+  display: flex;
+  font-size: 1.2rem;
+  margin-right: 0.3em;
+}
+
+.co-events-card__item-message {
+  font-size: 0.875rem;
+  margin-top: 0.5em;
+}
+
+.co-events-card__item-resourcelink {
+  display: block;
+  flex: 2 0 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.co-events-card__item-source {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.co-events-card__item-subheader {
+  display: flex;
+  justify-content: space-between;
+  white-space: pre;
+}
+
+.co-events-card__item-timestamp {
+  display: inline-block;
+}

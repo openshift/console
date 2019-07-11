@@ -47,7 +47,6 @@
 @import "components/image-stream";
 @import "components/about-modal";
 @import "components/build-pipeline";
-@import "components/chargeback";
 @import "components/cluster-overview";
 @import "components/configure-ports";
 @import "components/detail-table";
@@ -101,5 +100,7 @@
 @import "components/dashboard/details-card/details-card";
 @import "components/dashboard/capacity-card/capacity-card";
 @import "components/dashboard/inventory-card/inventory-card";
+@import "components/dashboard/events-card/events-card";
+@import "components/dashboard/utilization-card/utilization-card";
 
 @import "components/nav/nav-header";

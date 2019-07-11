@@ -1,7 +1,7 @@
 import * as _ from 'lodash-es';
 
 import { coFetchJSON } from '../../co-fetch';
-import { K8sKind } from '../../module/k8s';
+import { K8sKind, K8sVerb } from '../../module/k8s';
 import { API_DISCOVERY_RESOURCES_LOCAL_STORAGE_KEY } from '../../const';
 
 const ADMIN_RESOURCES = new Set(
@@ -129,6 +129,6 @@ export type APIResourceList = {
     singularName?: string;
     namespaced?: boolean;
     kind: string;
-    verbs: string[];
+    verbs: K8sVerb[];
   }[];
 };

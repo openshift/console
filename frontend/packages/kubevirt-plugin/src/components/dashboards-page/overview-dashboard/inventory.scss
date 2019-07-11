@@ -1,0 +1,6 @@
+@import '~@patternfly/patternfly/sass-utilities/all';
+
+.kubevirt-inventory-card__status-icon--off {
+  font-size: 1rem;
+  color: $pf-color-black-600;
+}

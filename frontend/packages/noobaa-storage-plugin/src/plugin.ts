@@ -58,6 +58,17 @@ const plugin: Plugin<ConsumedExtensions> = [
         ).then((m) => m.BucketsCard),
     },
   },
+  {
+    type: 'Dashboards/Card',
+    properties: {
+      tab: 'object-service',
+      position: GridPosition.LEFT,
+      loader: () =>
+        import(
+          './components/resource-providers-card/resource-providers-card' /* webpackChunkName: "object-service-resource-providers-card" */
+        ).then((m) => m.ResourceProvidersCard),
+    },
+  },
 ];
 
 export default plugin;

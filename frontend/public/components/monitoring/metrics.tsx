@@ -3,6 +3,16 @@ import * as fuzzy from 'fuzzysearch';
 import * as _ from 'lodash-es';
 import { Switch } from '@patternfly/react-core';
 import { TimesIcon } from '@patternfly/react-icons';
+import {
+  IDecorator,
+  ISortBy,
+  sortable,
+  Table,
+  TableBody,
+  TableGridBreakpoint,
+  TableHeader,
+  TableVariant,
+} from '@patternfly/react-table';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
@@ -203,6 +213,7 @@ const QueryInput: React.FC<QueryInputProps> = ({metrics = [], onBlur, onSubmit, 
   const onClear = (e: React.MouseEvent) => {
     e.preventDefault();
     onUpdate('');
+    inputRef.current.focus();
   };
 
   const isMatch = v => fuzzy(token.toLowerCase(), v.toLowerCase());
@@ -215,9 +226,9 @@ const QueryInput: React.FC<QueryInputProps> = ({metrics = [], onBlur, onSubmit, 
     }, _.isEmpty);
 
   // Set the default textarea height to the number of lines in the query text
-  const rows = _.clamp((value.match(/\n/g) || []).length + 1, 2, 10);
+  const rows = Math.min((value.match(/\n/g) || []).length + 1, 10);
 
-  return <div className="query-browser__query query-browser__inline-control pf-c-dropdown">
+  return <div className="query-browser__query pf-c-dropdown">
     <textarea
       autoFocus
       className="form-control query-browser__query-input"
@@ -247,9 +258,13 @@ const QueryInput: React.FC<QueryInputProps> = ({metrics = [], onBlur, onSubmit, 
 const Query: React.FC<QueryProps> = ({colorOffset, metrics, onBlur, onDelete, onSubmit, onUpdate, query}) => {
   const {allSeries, disabledSeries, enabled, expanded, text} = query;
 
+  const [sortBy, setSortBy] = React.useState<ISortBy>({index: 0, direction: 'asc'});
+
   const toggleEnabled = () => onUpdate({enabled: !enabled, expanded: !enabled, query: enabled ? '' : text});
 
   const toggleAllSeries = () => onUpdate({disabledSeries: _.isEmpty(disabledSeries) ? _.map(allSeries, 'labels') : []});
+
+  const onSort = (e, index, direction) => setSortBy({index, direction});
 
   const kebabOptions = [
     {label: `${enabled ? 'Disable' : 'Enable'} query`, callback: toggleEnabled},
@@ -257,8 +272,50 @@ const Query: React.FC<QueryProps> = ({colorOffset, metrics, onBlur, onDelete, on
     {label: 'Delete query', callback: onDelete},
   ];
 
-  return <div className="group">
-    <div className="group__title">
+  const cellProps = {
+    props: {className: 'co-truncate query-browser__table-cell'},
+
+    // Only enable table sorting if we have multiple rows
+    transforms: _.isEmpty(allSeries) ? undefined : [sortable as (v: any) => IDecorator],
+  };
+
+  const allLabelKeys = _.uniq(_.flatMap(allSeries, s => _.keys(s.labels))).sort();
+  const columns = [
+    '',
+    ...allLabelKeys.map(title => ({title, ...cellProps})),
+    {title: 'Value', ...cellProps},
+  ];
+
+  const unsortedRows = _.map(allSeries, ({labels, value}, i) => [
+    <div key="series-button">
+      <SeriesButton
+        colorIndex={colorOffset + i}
+        isDisabled={_.some(disabledSeries, s => _.isEqual(s, labels))}
+        onClick={() => onUpdate({disabledSeries: _.xorWith(disabledSeries, [labels], _.isEqual)})}
+      />
+    </div>,
+    ..._.map(allLabelKeys, k => labels[k]),
+    value,
+  ]);
+
+  const rows = _.orderBy(unsortedRows, [sortBy.index], [sortBy.direction]) as string[][];
+
+  // Set the result table's break point based on the number of columns
+  let breakPoint: keyof typeof TableGridBreakpoint = 'grid';
+  if (columns.length <= 2) {
+    breakPoint = 'none';
+  } else if (columns.length <= 5) {
+    breakPoint = 'gridMd';
+  } else if (columns.length <= 8) {
+    breakPoint = 'gridLg';
+  } else if (columns.length <= 11) {
+    breakPoint = 'gridXl';
+  } else if (columns.length <= 14) {
+    breakPoint = 'grid2xl';
+  }
+
+  return <div className={classNames('query-browser__table', {'query-browser__table--expanded': expanded})}>
+    <div className="query-browser__query-controls">
       <ExpandButton isExpanded={expanded} onClick={() => onUpdate({expanded: !expanded})} />
       <QueryInput
         metrics={metrics}
@@ -267,41 +324,22 @@ const Query: React.FC<QueryProps> = ({colorOffset, metrics, onBlur, onDelete, on
         onUpdate={v => onUpdate({text: v})}
         value={text}
       />
-      <div className="query-browser__inline-control">
-        <Switch aria-label={`${enabled ? 'Disable' : 'Enable'} query`} isChecked={enabled} onChange={toggleEnabled} />
-      </div>
+      <Switch aria-label={`${enabled ? 'Disable' : 'Enable'} query`} isChecked={enabled} onChange={toggleEnabled} />
       <div className="dropdown-kebab-pf">
         <Kebab options={kebabOptions} />
       </div>
     </div>
-    {expanded && <div className="group__body group__body--query-browser">
-      <div className="co-m-table-grid co-m-table-grid--bordered">
-        <div className="row co-m-table-grid__head">
-          <div className="col-xs-9">
-            <div className="query-browser-metric__color"></div>
-            Series
-          </div>
-          <div className="col-xs-3">Value</div>
-        </div>
-        <div className="co-m-table-grid__body">
-          {_.map(allSeries, ({labels, value}, i) => <div className="row" key={i}>
-            <div className="col-xs-9 query-browser-metric__wrapper">
-              <SeriesButton
-                colorIndex={colorOffset + i}
-                isDisabled={_.some(disabledSeries, s => _.isEqual(s, labels))}
-                onClick={() => onUpdate({disabledSeries: _.xorWith(disabledSeries, [labels], _.isEqual)})}
-              />
-              <div className="query-browser-metric__labels">
-                {_.isEmpty(labels)
-                  ? <span className="text-muted">{'{}'}</span>
-                  : _.map(labels, (v, k) => `${k}="${v}"`).join(',')}
-              </div>
-            </div>
-            <div className="col-xs-3">{value}</div>
-          </div>)}
-        </div>
-      </div>
-    </div>}
+    {expanded && !_.isEmpty(rows) && <Table
+      cells={columns}
+      gridBreakPoint={TableGridBreakpoint[breakPoint]}
+      onSort={onSort}
+      rows={rows}
+      sortBy={sortBy}
+      variant={TableVariant.compact}
+    >
+      <TableHeader />
+      <TableBody />
+    </Table>}
   </div>;
 };
 

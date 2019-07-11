@@ -525,7 +525,7 @@ export const RoleModel: K8sKind = {
 };
 
 export const SelfSubjectAccessReviewModel: K8sKind = {
-  label: 'SelfSubjectAccessReview',
+  label: 'Self Subject Access Review',
   apiGroup: 'authorization.k8s.io',
   apiVersion: 'v1',
   plural: 'selfsubjectaccessreviews',
@@ -534,6 +534,30 @@ export const SelfSubjectAccessReviewModel: K8sKind = {
   kind: 'SelfSubjectAccessReview',
   id: 'selfsubjectaccessreview',
   labelPlural: 'Self Subject Access Reviews',
+};
+
+export const ResourceAccessReviewsModel: K8sKind = {
+  label: 'Resource Access Review',
+  apiGroup: 'authorization.openshift.io',
+  apiVersion: 'v1',
+  plural: 'resourceaccessreviews',
+  abbr: 'LRAR',
+  namespaced: false,
+  kind: 'ResourceAccessReview',
+  id: 'resourceaccessreview',
+  labelPlural: 'Resource Access Reviews',
+};
+
+export const LocalResourceAccessReviewsModel: K8sKind = {
+  label: 'Local Resource Access Review',
+  apiGroup: 'authorization.openshift.io',
+  apiVersion: 'v1',
+  plural: 'localresourceaccessreviews',
+  abbr: 'LRAR',
+  namespaced: true,
+  kind: 'LocalResourceAccessReview',
+  id: 'localresourceaccessreview',
+  labelPlural: 'Local Resource Access Reviews',
 };
 
 export const PersistentVolumeModel: K8sKind = {

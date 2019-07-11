@@ -103,18 +103,15 @@ const ReportsTableRow: React.FC<ReportsTableRowProps> = ({obj, index, key, style
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} namespace={undefined} title={obj.metadata.namespace} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>
-        <ResourceLink kind={ReportGenerationQueryReference} name={_.get(obj, ['spec', 'generationQuery'])} namespace={obj.metadata.namespace} title={obj.metadata.namespace} />
+        <ResourceLink kind={ReportGenerationQueryReference} name={_.get(obj, ['spec', 'query'])} namespace={obj.metadata.namespace} title={obj.metadata.namespace} />
       </TableData>
-      <TableData className={classNames(tableColumnClasses[3], 'co-break-word')}>
-        {_.get(obj, ['status', 'phase'])}
-      </TableData>
-      <TableData className={tableColumnClasses[4]}>
+      <TableData className={tableColumnClasses[3]}>
         <Timestamp timestamp={_.get(obj, ['spec', 'reportingStart'])} />
       </TableData>
-      <TableData className={tableColumnClasses[5]}>
+      <TableData className={tableColumnClasses[4]}>
         <Timestamp timestamp={_.get(obj, ['spec', 'reportingEnd'])} />
       </TableData>
-      <TableData className={tableColumnClasses[6]}>
+      <TableData className={tableColumnClasses[5]}>
         <ResourceKebab actions={menuActions} kind={ReportReference} resource={obj} />
       </TableData>
     </TableRow>
@@ -307,17 +304,13 @@ class ReportData extends React.Component<ReportDataProps, ReportDataState> {
           applySort={(sb, func, ob) => this.applySort(sb, func, ob)} />;
       }
     }
-    const name = _.get(obj, ['metadata', 'name']);
     const format = 'csv';
     const downloadURL = dataURL(obj, format);
 
-    return <div>
-      <div className="co-m-pane__body">
-        <SectionHeading text="Usage Report">
-          <DownloadButton className="pull-right" url={downloadURL} filename={`${name}.${format}`} />
-        </SectionHeading>
-        { dataElem }
-      </div>
+    return <div className="co-m-pane__body">
+      <SectionHeading text="Usage Report" />
+      <DownloadButton url={downloadURL} />
+      { dataElem }
     </div>;
   }
 }

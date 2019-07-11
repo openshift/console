@@ -19,7 +19,7 @@
   "exclude": [
     ".yarn",
     "**/node_modules",
-    "public/dist",
+    "public/dist"
   ],
   "include": [
     "**/*.js",

@@ -14,7 +14,7 @@ import {
   DashboardItemProps,
 } from '@console/internal/components/dashboards-page/with-dashboard-resources';
 
-import { DATA_RESILIENCY_QUERIES } from '../../../../constants/storage';
+import { DATA_RESILIENCY_QUERIES } from '../../../../constants/queries';
 
 const getCapacityStats = (response) => {
   return _.get(response, 'data.result[0].value[1]');

@@ -22,7 +22,7 @@
     "test-suite": "ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/protractor integration-tests/protractor.conf.ts",
     "debug-test-suite": "TS_NODE_COMPILER_OPTIONS='{\"module\":\"commonjs\"}' node -r ts-node/register --inspect-brk ./node_modules/.bin/protractor integration-tests/protractor.conf.ts",
     "analyze": "NODE_ENV=production ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/webpack --mode=production --profile --json | awk '{if(NR>2)print}' > public/dist/stats.json && ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/webpack-bundle-analyzer --mode static -r public/dist/report.html public/dist/stats.json",
-    "plugin-stats": "ts-node -O '{\"module\":\"commonjs\"}' ./plugin-stats.ts"
+    "plugin-stats": "node ./plugin-stats.js"
   },
   "jest": {
     "moduleFileExtensions": [
@@ -47,6 +47,7 @@
     "setupFiles": [
       "./__mocks__/localStorage.ts",
       "./__mocks__/matchMedia.js",
+      "./__mocks__/serverFlags.js",
       "./before-tests.js"
     ],
     "coverageDirectory": "__coverage__",
@@ -66,11 +67,11 @@
   "dependencies": {
     "@patternfly/patternfly": "2.13.1",
     "@patternfly/react-charts": "4.4.0",
-    "@patternfly/react-core": "3.48.5",
-    "@patternfly/react-table": "2.11.1",
-    "@patternfly/react-topology": "2.4.13",
-    "@patternfly/react-tokens": "^2.6.5",
-    "@patternfly/react-virtualized-extension": "1.0.5",
+    "@patternfly/react-topology": "2.5.4",
+    "@patternfly/react-tokens": "^2.6.8",
+    "@patternfly/react-core": "3.62.1",
+    "@patternfly/react-table": "2.13.54",
+    "@patternfly/react-virtualized-extension": "1.1.56",
     "abort-controller": "^3.0.0",
     "brace": "0.11.x",
     "classnames": "2.x",
@@ -143,6 +144,7 @@
     "@types/react-virtualized": "9.x",
     "@types/webpack": "4.x",
     "bootstrap-sass": "^3.3.7",
+    "browser-env": "3.x",
     "cache-loader": "1.x",
     "chalk": "2.3.x",
     "chromedriver": "^2.43.3",

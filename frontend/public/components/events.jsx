@@ -2,16 +2,8 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as classNames from 'classnames';
 import * as PropTypes from 'prop-types';
-import { CSSTransition } from 'react-transition-group';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
-import {
-  AutoSizer,
-  List as VirtualList,
-  WindowScroller,
-  CellMeasurerCache,
-  CellMeasurer,
-} from 'react-virtualized';
 
 import { namespaceProptype } from '../propTypes';
 import { ResourceListDropdown } from './resource-dropdown';
@@ -33,12 +25,13 @@ import {
   Timestamp,
   TogglePlay,
 } from './utils';
+import { EventStreamList } from './utils/event-stream';
 
 const maxMessages = 500;
 const flushInterval = 500;
 
 // Predicate function to filter by event "category" (info, error, or all)
-const categoryFilter = (category, {reason}) => {
+export const categoryFilter = (category, {reason}) => {
   if (category === 'all') {
     return true;
   }
@@ -53,9 +46,12 @@ const kindFilter = (kind, {involvedObject}) => {
 
 const Inner = connectToFlags(FLAGS.CAN_LIST_NODE)(class Inner extends React.PureComponent {
   render() {
-    const {klass, status, tooltipMsg, obj, lastTimestamp, firstTimestamp, message, source, count, flags} = this.props;
+    const { event, flags } = this.props;
+    const { count, firstTimestamp, lastTimestamp, involvedObject: obj, source, message, reason } = event;
+    const tooltipMsg = `${reason} (${obj.kind})`;
+    const isError = categoryFilter('error', event);
 
-    return <div className={`${klass} slide-${status}`}>
+    return <div className={classNames('co-sysevent', {'co-sysevent--error': isError})}>
       <div className="co-sysevent__icon-box">
         <i className="co-sysevent-icon" title={tooltipMsg} />
         <div className="co-sysevent__icon-line"></div>
@@ -98,48 +94,6 @@ const Inner = connectToFlags(FLAGS.CAN_LIST_NODE)(class Inner extends React.Pure
     </div>;
   }
 });
-
-// Keep track of seen events so we only animate new ones.
-const seen = new Set();
-const timeout = {enter: 150};
-
-class SysEvent extends React.Component {
-  shouldComponentUpdate(nextProps) {
-    if (this.props.lastTimestamp !== nextProps.lastTimestamp) {
-      // Timestamps can be modified because events can be combined.
-      return true;
-    }
-    if (_.isEqual(this.props.style, nextProps.style)) {
-      return false;
-    }
-    return true;
-  }
-
-  componentWillUnmount() {
-    // TODO (kans): this is not correct, but don't memory leak :-/
-    seen.delete(this.props.metadata.uid);
-  }
-
-  render() {
-    const { index, style, reason, message, source, metadata, firstTimestamp, lastTimestamp, count, involvedObject: obj} = this.props;
-    const klass = classNames('co-sysevent', {'co-sysevent--error': categoryFilter('error', this.props)});
-    const tooltipMsg = `${reason} (${obj.kind})`;
-
-    let shouldAnimate;
-    const key = metadata.uid;
-    // Only animate events if they're at the start of the list (first 6) and we haven't seen them before.
-    if (!seen.has(key) && index < 6) {
-      seen.add(key);
-      shouldAnimate = true;
-    }
-
-    return <div className="co-sysevent--transition" style={style}>
-      <CSSTransition mountOnEnter={true} appear={shouldAnimate} in exit={false} timeout={timeout} classNames="slide">
-        {status => <Inner klass={klass} status={status} tooltipMsg={tooltipMsg} obj={obj} firstTimestamp={firstTimestamp} lastTimestamp={lastTimestamp} count={count} message={message} source={source} width={style.width} />}
-      </CSSTransition>
-    </div>;
-  }
-}
 
 const categories = {all: 'All Categories', info: 'Info', error: 'Error'};
 
@@ -194,6 +148,30 @@ export class EventsList extends React.Component {
   }
 }
 
+export const NoEvents = () => (
+  <Box className="co-sysevent-stream__status-box-empty">
+    <div className="text-center cos-status-box__detail">
+      No events in the past hour
+    </div>
+  </Box>
+);
+
+export const NoMatchingEvents = ({ allCount }) => (
+  <Box className="co-sysevent-stream__status-box-empty">
+    <div className="cos-status-box__title">No matching events</div>
+    <div className="text-center cos-status-box__detail">
+      {allCount}{allCount >= maxMessages && '+'} events exist, but none match the current filter
+    </div>
+  </Box>
+);
+
+export const ErrorLoadingEvents = () => (
+  <Box>
+    <div className="cos-status-box__title cos-error-title">Error loading events</div>
+    <div className="cos-status-box__detail text-center">An error occurred during event retrieval. Attempting to reconnect...</div>
+  </Box>
+);
+
 export const EventStreamPage = withStartGuide(({noProjectsAvailable, ...rest}) =>
   <React.Fragment>
     <Helmet>
@@ -203,11 +181,6 @@ export const EventStreamPage = withStartGuide(({noProjectsAvailable, ...rest}) =
     <EventsList {...rest} autoFocus={!noProjectsAvailable} mock={noProjectsAvailable} />
   </React.Fragment>
 );
-
-const measurementCache = new CellMeasurerCache({
-  fixedWidth: true,
-  minHeight: 109, /* height of event with a one-line event message on desktop */
-});
 
 class EventStream extends React.Component {
   constructor(props) {
@@ -222,19 +195,6 @@ class EventStream extends React.Component {
       oldestTimestamp: new Date(),
     };
     this.toggleStream = this.toggleStream_.bind(this);
-    this.rowRenderer = function rowRenderer({index, style, key, parent}) {
-      const event = this.state.filteredEvents[index];
-      return <CellMeasurer
-        cache={measurementCache}
-        columnIndex={0}
-        key={key}
-        rowIndex={index}
-        parent={parent}>
-        {({ measure }) =>
-          <SysEvent {...event} onLoad={measure} onEntered={print} src={event} key={key} style={style} index={index} />
-        }
-      </CellMeasurer>;
-    }.bind(this);
   }
 
   wsInit(ns) {
@@ -368,20 +328,6 @@ class EventStream extends React.Component {
       this.ws && this.ws.destroy();
       this.wsInit(this.props.namespace);
     }
-    if ((prevProps.textFilter !== this.props.textFilter) || (prevProps.kind !== this.props.kind) || (prevProps.category !== this.props.category)) {
-      this.resizeEvents();
-    }
-  }
-
-  onResize() {
-    measurementCache.clearAll();
-  }
-
-  resizeEvents() {
-    measurementCache.clearAll();
-    if (this.list) {
-      this.list.recomputeRowHeights();
-    }
   }
 
   // Messages can come in extremely fast when the buffer flushes.
@@ -423,33 +369,15 @@ class EventStream extends React.Component {
     let sysEventStatus, statusBtnTxt;
 
     if (noEvents || mock || (noMatches && resourceEventStream)) {
-      sysEventStatus = (
-        <Box className="co-sysevent-stream__status-box-empty">
-          <div className="text-center cos-status-box__detail">
-          No events in the past hour
-          </div>
-        </Box>
-      );
+      sysEventStatus = <NoEvents />;
     }
     if (noMatches && !resourceEventStream) {
-      sysEventStatus = (
-        <Box className="co-sysevent-stream__status-box-empty">
-          <div className="cos-status-box__title">No matching events</div>
-          <div className="text-center cos-status-box__detail">
-            {allCount}{allCount >= maxMessages && '+'} events exist, but none match the current filter
-          </div>
-        </Box>
-      );
+      sysEventStatus = <NoMatchingEvents />;
     }
 
     if (error) {
       statusBtnTxt = <span className="co-sysevent-stream__connection-error">Error connecting to event stream{_.isString(error) && `: ${error}`}</span>;
-      sysEventStatus = (
-        <Box>
-          <div className="cos-status-box__title cos-error-title">Error loading events</div>
-          <div className="cos-status-box__detail text-center">An error occurred during event retrieval. Attempting to reconnect...</div>
-        </Box>
-      );
+      sysEventStatus = <ErrorLoadingEvents />;
     } else if (loading) {
       statusBtnTxt = <span>Loading events...</span>;
       sysEventStatus = <Loading />;
@@ -481,31 +409,7 @@ class EventStream extends React.Component {
           There are no events before <Timestamp timestamp={this.state.oldestTimestamp} />
           </div>
         </div>
-        { /* Default `height` to 0 to avoid console errors from https://github.com/bvaughn/react-virtualized/issues/1158 */}
-        { count > 0 &&
-            <WindowScroller scrollElement={document.getElementById('content-scrollable')}>
-              {({height, isScrolling, registerChild, onChildScroll, scrollTop}) =>
-                <AutoSizer disableHeight onResize={this.onResize}>
-                  {({width}) => <div ref={registerChild}>
-                    <VirtualList
-                      autoHeight
-                      data={filteredEvents}
-                      deferredMeasurementCache={measurementCache}
-                      height={height || 0}
-                      isScrolling={isScrolling}
-                      onScroll={onChildScroll}
-                      ref={virtualList => this.list = virtualList}
-                      rowCount={count}
-                      rowHeight={measurementCache.rowHeight}
-                      rowRenderer={this.rowRenderer}
-                      scrollTop={scrollTop}
-                      tabIndex={null}
-                      width={width}
-                    />
-                  </div>}
-                </AutoSizer> }
-            </WindowScroller>
-        }
+        { count > 0 && <EventStreamList events={filteredEvents} EventComponent={Inner} /> }
         { sysEventStatus }
       </div>
     </div>;
