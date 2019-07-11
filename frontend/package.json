@@ -49,6 +49,7 @@
       "./__mocks__/localStorage.ts",
       "./__mocks__/matchMedia.js",
       "./__mocks__/serverFlags.js",
+      "./__mocks__/mutationObserver.js",
       "./before-tests.js"
     ],
     "coverageDirectory": "__coverage__",
