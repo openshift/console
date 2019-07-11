@@ -283,7 +283,7 @@ class AttachStorageForm extends React.Component<
             </label>
             <div>
               <input
-                className="form-control"
+                className="pf-c-form-control"
                 type="text"
                 onChange={this.handleMountPathChange}
                 aria-describedby="mount-path-help"
@@ -309,7 +309,7 @@ class AttachStorageForm extends React.Component<
             </label>
             <div>
               <input
-                className="form-control"
+                className="pf-c-form-control"
                 type="text"
                 onChange={this.handleChange}
                 aria-describedby="subpath-help"

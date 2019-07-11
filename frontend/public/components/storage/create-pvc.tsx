@@ -143,7 +143,7 @@ export class CreatePVCForm extends React.Component<CreatePVCFormProps, CreatePVC
         </label>
         <div className="form-group">
           <input
-            className="form-control"
+            className="pf-c-form-control"
             type="text"
             onChange={this.handleChange}
             placeholder="my-storage-claim"
