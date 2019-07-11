@@ -139,7 +139,7 @@ export class AddGitLabPage extends PromiseComponent<{}, AddGitLabPageState> {
         <IDPNameInput value={name} onChange={this.nameChanged} />
         <div className="form-group">
           <label className="control-label co-required" htmlFor="url">URL</label>
-          <input className="form-control"
+          <input className="pf-c-form-control"
             type="text"
             onChange={this.urlChanged}
             value={url}
@@ -152,7 +152,7 @@ export class AddGitLabPage extends PromiseComponent<{}, AddGitLabPageState> {
         </div>
         <div className="form-group">
           <label className="control-label co-required" htmlFor="client-id">Client ID</label>
-          <input className="form-control"
+          <input className="pf-c-form-control"
             type="text"
             onChange={this.clientIDChanged}
             value={clientID}
@@ -161,7 +161,7 @@ export class AddGitLabPage extends PromiseComponent<{}, AddGitLabPageState> {
         </div>
         <div className="form-group">
           <label className="control-label co-required" htmlFor="client-secret">Client Secret</label>
-          <input className="form-control"
+          <input className="pf-c-form-control"
             type="password"
             onChange={this.clientSecretChanged}
             value={clientSecret}

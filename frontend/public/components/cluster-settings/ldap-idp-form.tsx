@@ -181,7 +181,7 @@ export class AddLDAPPage extends PromiseComponent<{}, AddLDAPPageState> {
         <IDPNameInput value={name} onChange={this.nameChanged} />
         <div className="form-group">
           <label className="control-label co-required" htmlFor="url">URL</label>
-          <input className="form-control"
+          <input className="pf-c-form-control"
             type="text"
             onChange={this.urlChanged}
             value={url}
@@ -194,7 +194,7 @@ export class AddLDAPPage extends PromiseComponent<{}, AddLDAPPageState> {
         </div>
         <div className="form-group">
           <label className="control-label" htmlFor="bind-dn">Bind DN</label>
-          <input className="form-control"
+          <input className="pf-c-form-control"
             type="text"
             onChange={this.bindDNChanged}
             value={bindDN}
@@ -206,7 +206,7 @@ export class AddLDAPPage extends PromiseComponent<{}, AddLDAPPageState> {
         </div>
         <div className="form-group">
           <label className="control-label" htmlFor="bind-password">Bind Password</label>
-          <input className="form-control"
+          <input className="pf-c-form-control"
             type="password"
             onChange={this.bindPasswordChanged}
             value={bindPassword}

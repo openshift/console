@@ -100,7 +100,7 @@ export class AddGooglePage extends PromiseComponent<{}, AddGooglePageState> {
         <IDPNameInput value={name} onChange={this.nameChanged} />
         <div className="form-group">
           <label className="control-label co-required" htmlFor="client-id">Client ID</label>
-          <input className="form-control"
+          <input className="pf-c-form-control"
             type="text"
             onChange={this.clientIDChanged}
             value={clientID}
@@ -109,7 +109,7 @@ export class AddGooglePage extends PromiseComponent<{}, AddGooglePageState> {
         </div>
         <div className="form-group">
           <label className="control-label co-required" htmlFor="client-secret">Client Secret</label>
-          <input className="form-control"
+          <input className="pf-c-form-control"
             type="password"
             onChange={this.clientSecretChanged}
             value={clientSecret}
@@ -118,7 +118,7 @@ export class AddGooglePage extends PromiseComponent<{}, AddGooglePageState> {
         </div>
         <div className="form-group">
           <label className="control-label" htmlFor="hosted-domain">Hosted Domain</label>
-          <input className="form-control"
+          <input className="pf-c-form-control"
             type="text"
             onChange={this.hostedDomainChanged}
             value={hostedDomain}

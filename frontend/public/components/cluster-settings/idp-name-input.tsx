@@ -3,7 +3,7 @@ import * as React from 'react';
 export const IDPNameInput: React.FC<IDPNameInputProps> = ({value, onChange}) => (
   <div className="form-group">
     <label className="control-label co-required" htmlFor="idp-name">Name</label>
-    <input className="form-control"
+    <input className="pf-c-form-control"
       type="text"
       onChange={onChange}
       value={value}

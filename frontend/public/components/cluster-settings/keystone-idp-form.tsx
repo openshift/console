@@ -161,7 +161,7 @@ export class AddKeystonePage extends PromiseComponent<{}, AddKeystonePageState> 
         <IDPNameInput value={name} onChange={this.nameChanged} />
         <div className="form-group">
           <label className="control-label co-required" htmlFor="domain-name">Domain Name</label>
-          <input className="form-control"
+          <input className="pf-c-form-control"
             type="text"
             onChange={this.domainNameChanged}
             value={domainName}
@@ -170,7 +170,7 @@ export class AddKeystonePage extends PromiseComponent<{}, AddKeystonePageState> 
         </div>
         <div className="form-group">
           <label className="control-label co-required" htmlFor="url">URL</label>
-          <input className="form-control"
+          <input className="pf-c-form-control"
             type="text"
             onChange={this.urlChanged}
             value={url}
