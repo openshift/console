@@ -11,7 +11,7 @@ import { VolumesTable } from './volumes-table';
 import {
   DetailsPage,
   ListPage,
-  Table,
+  VirtualTable,
 } from './factory';
 import {
   AsyncComponent,
@@ -208,7 +208,7 @@ const DeploymentConfigTableHeader = () => {
 };
 DeploymentConfigTableHeader.displayName = 'DeploymentConfigTableHeader';
 
-export const DeploymentConfigsList: React.FC = props => <Table {...props} aria-label="Deployment Configs" Header={DeploymentConfigTableHeader} Row={DeploymentConfigTableRow} virtualize />;
+export const DeploymentConfigsList: React.FC = props => <VirtualTable {...props} aria-label="Deployment Configs" Header={DeploymentConfigTableHeader} Row={DeploymentConfigTableRow} />;
 DeploymentConfigsList.displayName = 'DeploymentConfigsList';
 
 export const DeploymentConfigsPage: React.FC<DeploymentConfigsPageProps> = props => {

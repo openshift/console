@@ -7,7 +7,7 @@ import { match } from 'react-router';
 import { CRDDescription, ClusterServiceVersionKind, referenceForProvidedAPI, providedAPIsFor } from './index';
 import { OperandLink } from './operand';
 import { ResourceLink, Timestamp, MsgBox, FirehoseResource } from '../utils';
-import { MultiListPage, Table, TableRow, TableData } from '../factory';
+import { MultiListPage, VirtualTable, VirtualTableRow, VirtualTableData } from '../factory';
 import { K8sResourceKind, GroupVersionKind, kindForReference } from '../../module/k8s';
 
 const tableColumnClasses = [
@@ -36,28 +36,27 @@ export const ResourceTableHeader = () => [
   },
 ];
 
-export const ResourceTableRow: React.FC<ResourceTableRowProps> = ({obj, index, key, style, linkFor}) => <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
-  <TableData className={tableColumnClasses[0]}>
+export const ResourceTableRow: React.FC<ResourceTableRowProps> = ({obj, index, key, style, linkFor}) => <VirtualTableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+  <VirtualTableData className={tableColumnClasses[0]}>
     {linkFor(obj)}
-  </TableData>
-  <TableData className={tableColumnClasses[1]}>
+  </VirtualTableData>
+  <VirtualTableData className={tableColumnClasses[1]}>
     {obj.kind}
-  </TableData>
-  <TableData className={tableColumnClasses[2]}>
+  </VirtualTableData>
+  <VirtualTableData className={tableColumnClasses[2]}>
     {_.get(obj.status, 'phase', 'Created')}
-  </TableData>
-  <TableData className={tableColumnClasses[3]}>
+  </VirtualTableData>
+  <VirtualTableData className={tableColumnClasses[3]}>
     <Timestamp timestamp={obj.metadata.creationTimestamp} />
-  </TableData>
-</TableRow>;
+  </VirtualTableData>
+</VirtualTableRow>;
 
-export const ResourceTable: React.FC<ResourceTableProps> = (props) => <Table
+export const ResourceTable: React.FC<ResourceTableProps> = (props) => <VirtualTable
   {...props}
   aria-label="Operand Resources"
   Header={ResourceTableHeader}
   Row={rowProps => <ResourceTableRow {...rowProps} linkFor={props.linkFor} />}
-  EmptyMsg={() => <MsgBox title="No Resources Found" detail="There are no Kubernetes resources used by this operand." />}
-  virtualize />;
+  EmptyMsg={() => <MsgBox title="No Resources Found" detail="There are no Kubernetes resources used by this operand." />} />;
 
 export const Resources: React.FC<ResourcesProps> = (props) => {
   const providedAPI = providedAPIsFor(props.clusterServiceVersion).find(desc => referenceForProvidedAPI(desc) === props.match.params.plural);

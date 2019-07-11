@@ -5,7 +5,7 @@ import { sortable } from '@patternfly/react-table';
 
 import { Status } from '@console/shared';
 import { getJobTypeAndCompletions } from '../module/k8s';
-import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
+import { DetailsPage, ListPage, VirtualTable, VirtualTableRow, VirtualTableData } from './factory';
 import { configureJobParallelismModal } from './modals';
 import { Kebab, ContainerTable, SectionHeading, LabelList, ResourceKebab, ResourceLink, ResourceSummary, Timestamp, navFactory } from './utils';
 import { ResourceEventStream } from './events';
@@ -69,26 +69,26 @@ JobTableHeader.displayName = 'JobTableHeader';
 const JobTableRow = ({obj: job, index, key, style}) => {
   const {type, completions} = getJobTypeAndCompletions(job);
   return (
-    <TableRow id={job.metadata.uid} index={index} trKey={key} style={style}>
-      <TableData className={tableColumnClasses[0]}>
+    <VirtualTableRow id={job.metadata.uid} index={index} trKey={key} style={style}>
+      <VirtualTableData className={tableColumnClasses[0]}>
         <ResourceLink kind={kind} name={job.metadata.name} namespace={job.metadata.namespace} title={job.metadata.uid} />
-      </TableData>
-      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+      </VirtualTableData>
+      <VirtualTableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
         <ResourceLink kind="Namespace" name={job.metadata.namespace} title={job.metadata.namespace} />
-      </TableData>
-      <TableData className={tableColumnClasses[2]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[2]}>
         <LabelList kind={kind} labels={job.metadata.labels} />
-      </TableData>
-      <TableData className={tableColumnClasses[3]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[3]}>
         <Link to={`/k8s/ns/${job.metadata.namespace}/jobs/${job.metadata.name}/pods`} title="pods">
           {job.status.succeeded || 0} of {completions}
         </Link>
-      </TableData>
-      <TableData className={tableColumnClasses[4]}>{type}</TableData>
-      <TableData className={tableColumnClasses[5]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[4]}>{type}</VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[5]}>
         <ResourceKebab actions={menuActions} kind="Job" resource={job} />
-      </TableData>
-    </TableRow>
+      </VirtualTableData>
+    </VirtualTableRow>
   );
 };
 JobTableRow.displayName = 'JobTableRow';
@@ -138,7 +138,7 @@ const JobsDetailsPage = props => <DetailsPage
   menuActions={menuActions}
   pages={[details(Details), editYaml(), pods(), events(ResourceEventStream)]}
 />;
-const JobsList = props => <Table {...props} aria-label="Jobs" Header={JobTableHeader} Row={JobTableRow} virtualize />;
+const JobsList = props => <VirtualTable {...props} aria-label="Jobs" Header={JobTableHeader} Row={JobTableRow} />;
 
 const JobsPage = props => <ListPage ListComponent={JobsList} canCreate={true} {...props} />;
 export {JobsList, JobsPage, JobsDetailsPage};

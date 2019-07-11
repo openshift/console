@@ -4,7 +4,7 @@ import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import { K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
 import { Conditions } from './conditions';
-import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
+import { DetailsPage, ListPage, VirtualTable, VirtualTableRow, VirtualTableData } from './factory';
 import { Kebab, SectionHeading, LabelList, navFactory, ResourceKebab, ResourceLink, ResourceSummary, Timestamp } from './utils';
 import { ResourceEventStream } from './events';
 
@@ -218,29 +218,29 @@ HorizontalPodAutoscalersTableHeader.displayName = 'HorizontalPodAutoscalersTable
 
 const HorizontalPodAutoscalersTableRow: React.FC<HorizontalPodAutoscalersTableRowProps> = ({obj, index, key, style}) => {
   return (
-    <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
-      <TableData className={tableColumnClasses[0]}>
+    <VirtualTableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+      <VirtualTableData className={tableColumnClasses[0]}>
         <ResourceLink kind={HorizontalPodAutoscalersReference} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
-      </TableData>
-      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+      </VirtualTableData>
+      <VirtualTableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} title={obj.metadata.namespace} />
-      </TableData>
-      <TableData className={tableColumnClasses[2]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[2]}>
         <LabelList kind={kind} labels={obj.metadata.labels} />
-      </TableData>
-      <TableData className={classNames(tableColumnClasses[3], 'co-break-word')}>
+      </VirtualTableData>
+      <VirtualTableData className={classNames(tableColumnClasses[3], 'co-break-word')}>
         <ResourceLink kind={obj.spec.scaleTargetRef.kind} name={obj.spec.scaleTargetRef.name} namespace={obj.metadata.namespace} title={obj.spec.scaleTargetRef.name} />
-      </TableData>
-      <TableData className={tableColumnClasses[4]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[4]}>
         {obj.spec.minReplicas}
-      </TableData>
-      <TableData className={tableColumnClasses[5]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[5]}>
         {obj.spec.maxReplicas}
-      </TableData>
-      <TableData className={tableColumnClasses[6]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[6]}>
         <ResourceKebab actions={menuActions} kind={HorizontalPodAutoscalersReference} resource={obj} />
-      </TableData>
-    </TableRow>
+      </VirtualTableData>
+    </VirtualTableRow>
   );
 };
 HorizontalPodAutoscalersTableRow.displayName = 'HorizontalPodAutoscalersTableRow';
@@ -251,7 +251,7 @@ type HorizontalPodAutoscalersTableRowProps = {
   style: object;
 };
 
-const HorizontalPodAutoscalersList: React.SFC = props => <Table {...props} aria-label="Horizontal Pod Auto Scalers" Header={HorizontalPodAutoscalersTableHeader} Row={HorizontalPodAutoscalersTableRow} virtualize />;
+const HorizontalPodAutoscalersList: React.SFC = props => <VirtualTable {...props} aria-label="Horizontal Pod Auto Scalers" Header={HorizontalPodAutoscalersTableHeader} Row={HorizontalPodAutoscalersTableRow} />;
 HorizontalPodAutoscalersList.displayName = 'HorizontalPodAutoscalersList';
 
 export const HorizontalPodAutoscalersPage: React.SFC<HorizontalPodAutoscalersPageProps> = props =>

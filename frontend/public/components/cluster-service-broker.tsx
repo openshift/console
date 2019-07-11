@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
-import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
+import { DetailsPage, ListPage, VirtualTable, VirtualTableRow, VirtualTableData } from './factory';
 import { Kebab, SectionHeading, detailsPage, navFactory, ResourceLink, ResourceKebab, ResourceSummary, StatusWithIcon, Timestamp, ExternalLink } from './utils';
 import { K8sResourceKind, referenceForModel } from '../module/k8s';
 import { ClusterServiceBrokerModel } from '../models';
@@ -45,23 +45,23 @@ ClusterServiceBrokerTableHeader.displayName = 'ClusterServiceBrokerTableHeader';
 
 const ClusterServiceBrokerTableRow: React.FC<ClusterServiceBrokerTableRowProps> = ({obj: serviceBroker, index, key, style}) => {
   return (
-    <TableRow id={serviceBroker.metadata.uid} index={index} trKey={key} style={style}>
-      <TableData className={tableColumnClasses[0]}>
+    <VirtualTableRow id={serviceBroker.metadata.uid} index={index} trKey={key} style={style}>
+      <VirtualTableData className={tableColumnClasses[0]}>
         <ResourceLink kind={referenceForModel(ClusterServiceBrokerModel)} name={serviceBroker.metadata.name} />
-      </TableData>
-      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+      </VirtualTableData>
+      <VirtualTableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
         <StatusWithIcon obj={serviceBroker} />
-      </TableData>
-      <TableData className={tableColumnClasses[2]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[2]}>
         {serviceBroker.spec.relistBehavior}
-      </TableData>
-      <TableData className={tableColumnClasses[3]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[3]}>
         <Timestamp timestamp={serviceBroker.status.lastCatalogRetrievalTime} />
-      </TableData>
-      <TableData className={tableColumnClasses[4]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[4]}>
         <ResourceKebab actions={menuActions} kind={referenceForModel(ClusterServiceBrokerModel)} resource={serviceBroker} />
-      </TableData>
-    </TableRow>
+      </VirtualTableData>
+    </VirtualTableRow>
   );
 };
 ClusterServiceBrokerTableRow.displayName = 'ClusterServiceBrokerTableRow';
@@ -120,7 +120,7 @@ export const ClusterServiceBrokerDetailsPage: React.SFC<ClusterServiceBrokerDeta
     navFactory.clusterServiceClasses(ServiceClassTabPage),
   ]}
 />;
-export const ClusterServiceBrokerList: React.SFC = props => <Table {...props} aria-label="Cluster Service Brokers" Header={ClusterServiceBrokerTableHeader} Row={ClusterServiceBrokerTableRow} virtualize />;
+export const ClusterServiceBrokerList: React.SFC = props => <VirtualTable {...props} aria-label="Cluster Service Brokers" Header={ClusterServiceBrokerTableHeader} Row={ClusterServiceBrokerTableRow} />;
 
 export const ClusterServiceBrokerPage: React.SFC<ClusterServiceBrokerPageProps> = props =>
   <ListPage

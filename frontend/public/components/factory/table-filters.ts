@@ -174,3 +174,45 @@ export type TableFilter = (groups: TableFilterGroups, obj: any) => boolean;
 type TableFilterMap = {
   [key: string]: TableFilter;
 }
+
+export const rowFiltersToFilterFuncs = (rowFilters) => {
+  return (rowFilters || [])
+    .filter(f => f.type && _.isFunction(f.filter))
+    .reduce((acc, f) => ({ ...acc, [f.type]: f.filter }), {});
+};
+
+export const getAllTableFilters = (rowFilters) => ({
+  ...tableFilters,
+  ...rowFiltersToFilterFuncs(rowFilters),
+});
+
+export const getFilteredRows = (_filters, rowFilters, objects) => {
+  if (_.isEmpty(_filters)) {
+    return objects;
+  }
+
+  const allTableFilters = getAllTableFilters(rowFilters);
+  let filteredObjects = objects;
+  _.each(_filters, (value, name) => {
+    const filter = allTableFilters[name];
+    if (_.isFunction(filter)) {
+      filteredObjects = _.filter(filteredObjects, o => filter(value, o));
+    }
+  });
+
+  return filteredObjects;
+};
+
+export const filterPropType = (props, propName, componentName) => {
+  if (!props) {
+    return;
+  }
+
+  const allTableFilters = getAllTableFilters(props.rowFilters);
+  for (const key of _.keys(props[propName])) {
+    if (key in allTableFilters || key === 'loadTest') {
+      continue;
+    }
+    return new Error(`Invalid prop '${propName}' in '${componentName}'. '${key}' is not a valid filter type!`);
+  }
+};

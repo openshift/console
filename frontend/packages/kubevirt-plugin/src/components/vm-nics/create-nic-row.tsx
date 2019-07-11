@@ -10,7 +10,7 @@ import {
 } from 'kubevirt-web-ui-components';
 import { connect } from 'react-redux';
 
-import { TableData, TableRow } from '@console/internal/components/factory';
+import { VirtualTableData, VirtualTableRow } from '@console/internal/components/factory';
 import { Firehose, FirehoseResult, LoadingInline } from '@console/internal/components/utils';
 import { FormGroup, HelpBlock } from 'patternfly-react';
 import { TemplateModel } from '@console/internal/models';
@@ -114,8 +114,8 @@ export const CreateNicRow: React.FC<CreateNicRowProps> = ({
   const isValid = !nameError && network && binding;
 
   return (
-    <TableRow id={id} index={index} trKey={id} style={style}>
-      <TableData className={dimensify()}>
+    <VirtualTableRow id={id} index={index} trKey={id} style={style}>
+      <VirtualTableData className={dimensify()}>
         <FormGroup
           className="kubevirt-vm-create-device-row__cell--no_bottom"
           validationState={
@@ -129,11 +129,11 @@ export const CreateNicRow: React.FC<CreateNicRowProps> = ({
             {nameError && !nameError.isEmptyError && nameError.message}
           </HelpBlock>
         </FormGroup>
-      </TableData>
-      <TableData id="nic-model" className={dimensify()}>
+      </VirtualTableData>
+      <VirtualTableData id="nic-model" className={dimensify()}>
         {model}
-      </TableData>
-      <TableData id="nic-binding" className={dimensify()}>
+      </VirtualTableData>
+      <VirtualTableData id="nic-binding" className={dimensify()}>
         <NetworkColumn
           network={network}
           onChange={(net) => {
@@ -153,8 +153,8 @@ export const CreateNicRow: React.FC<CreateNicRowProps> = ({
           vm={vm}
           creating={creating}
         />
-      </TableData>
-      <TableData className={dimensify()}>
+      </VirtualTableData>
+      <VirtualTableData className={dimensify()}>
         <Dropdown
           id="nic-binding"
           choices={getNetworkBindings(networkType)}
@@ -162,16 +162,16 @@ export const CreateNicRow: React.FC<CreateNicRowProps> = ({
           onChange={setBinding}
           disabled={creating}
         />
-      </TableData>
-      <TableData className={dimensify()}>
+      </VirtualTableData>
+      <VirtualTableData className={dimensify()}>
         <Text
           id="nic-mac-address"
           onChange={setMacAddress}
           value={macAddress}
           disabled={creating || networkType === NetworkType.POD}
         />
-      </TableData>
-      <TableData className="kubevirt-vm-create-device-row__confirmation-buttons">
+      </VirtualTableData>
+      <VirtualTableData className="kubevirt-vm-create-device-row__confirmation-buttons">
         <CancelAcceptButtons
           onCancel={onCreateRowDismiss}
           onAccept={() => {
@@ -185,8 +185,8 @@ export const CreateNicRow: React.FC<CreateNicRowProps> = ({
           }}
           disabled={!isValid}
         />
-      </TableData>
-    </TableRow>
+      </VirtualTableData>
+    </VirtualTableRow>
   );
 };
 

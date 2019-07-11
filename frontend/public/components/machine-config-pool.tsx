@@ -16,9 +16,9 @@ import {
 import {
   DetailsPage,
   ListPage,
-  Table,
-  TableRow,
-  TableData,
+  VirtualTable,
+  VirtualTableRow,
+  VirtualTableData,
 } from './factory';
 import {
   Kebab,
@@ -237,26 +237,26 @@ MachineConfigPoolTableHeader.displayName = 'MachineConfigPoolTableHeader';
 
 const MachineConfigPoolTableRow: React.FC<MachineConfigPoolTableRowProps> = ({obj, index, key, style}) => {
   return (
-    <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
-      <TableData className={classNames(tableColumnClasses[0], 'co-break-word')}>
+    <VirtualTableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+      <VirtualTableData className={classNames(tableColumnClasses[0], 'co-break-word')}>
         <ResourceLink kind={machineConfigPoolReference} name={obj.metadata.name} title={obj.metadata.name} />
-      </TableData>
-      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+      </VirtualTableData>
+      <VirtualTableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
         {_.get(obj, 'status.configuration.name') ? <ResourceLink kind={machineConfigReference} name={obj.status.configuration.name} title={obj.status.configuration.name} /> : '-'}
-      </TableData>
-      <TableData className={tableColumnClasses[2]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[2]}>
         {getConditionStatus(obj, MachineConfigPoolConditionType.Updated)}
-      </TableData>
-      <TableData className={tableColumnClasses[3]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[3]}>
         {getConditionStatus(obj, MachineConfigPoolConditionType.Updating)}
-      </TableData>
-      <TableData className={classNames(tableColumnClasses[4], 'co-truncate')}>
+      </VirtualTableData>
+      <VirtualTableData className={classNames(tableColumnClasses[4], 'co-truncate')}>
         {getConditionStatus(obj, MachineConfigPoolConditionType.Degraded)}
-      </TableData>
-      <TableData className={tableColumnClasses[5]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[5]}>
         <ResourceKebab actions={machineConfigPoolMenuActions} kind={machineConfigPoolReference} resource={obj} />
-      </TableData>
-    </TableRow>
+      </VirtualTableData>
+    </VirtualTableRow>
   );
 };
 MachineConfigPoolTableRow.displayName = 'MachineConfigPoolTableRow';
@@ -267,12 +267,11 @@ type MachineConfigPoolTableRowProps = {
   style: object;
 };
 
-const MachineConfigPoolList: React.SFC<any> = props => <Table
+const MachineConfigPoolList: React.SFC<any> = props => <VirtualTable
   {...props}
   aria-label="Machine Config Pools"
   Header={MachineConfigPoolTableHeader}
-  Row={MachineConfigPoolTableRow}
-  virtualize />;
+  Row={MachineConfigPoolTableRow} />;
 
 export const MachineConfigPoolPage: React.SFC<any> = props => (
   <ListPage

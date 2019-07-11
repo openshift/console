@@ -6,7 +6,7 @@ import * as classNames from 'classnames';
 import { Alert } from '@patternfly/react-core';
 
 import { k8sList, K8sResourceKind, planExternalName, serviceCatalogStatus, referenceForModel } from '../module/k8s';
-import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
+import { DetailsPage, ListPage, VirtualTable, VirtualTableRow, VirtualTableData } from './factory';
 import {
   ExternalLink,
   Kebab,
@@ -224,31 +224,31 @@ ServiceInstancesTableHeader.displayName = 'ServiceInstancesTableHeader';
 const ServiceInstancesTableRow: React.FC<ServiceInstancesTableRowProps> = ({obj, index, key, style}) => {
   const clusterServiceClassRefName = _.get(obj, 'spec.clusterServiceClassRef.name');
   return (
-    <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
-      <TableData className={tableColumnClasses[0]}>
+    <VirtualTableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+      <VirtualTableData className={tableColumnClasses[0]}>
         <ResourceLink kind={referenceForModel(ServiceInstanceModel)} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
-      </TableData>
-      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+      </VirtualTableData>
+      <VirtualTableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} title={obj.metadata.namespace} />
-      </TableData>
-      <TableData className={classNames(tableColumnClasses[2], 'co-break-word')}>
+      </VirtualTableData>
+      <VirtualTableData className={classNames(tableColumnClasses[2], 'co-break-word')}>
         {clusterServiceClassRefName
           ? <ResourceLink kind={referenceForModel(ClusterServiceClassModel)} displayName={obj.spec.clusterServiceClassExternalName} title={obj.spec.clusterServiceClassExternalName} name={obj.spec.clusterServiceClassRef.name} />
           : obj.spec.clusterServiceClassExternalName }
-      </TableData>
-      <TableData className={tableColumnClasses[3]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[3]}>
         <StatusWithIcon obj={obj} />
-      </TableData>
-      <TableData className={classNames(tableColumnClasses[4], 'co-break-word')}>
+      </VirtualTableData>
+      <VirtualTableData className={classNames(tableColumnClasses[4], 'co-break-word')}>
         {planExternalName(obj) || '-'}
-      </TableData>
-      <TableData className={classNames(tableColumnClasses[5], 'co-truncate')}>
+      </VirtualTableData>
+      <VirtualTableData className={classNames(tableColumnClasses[5], 'co-truncate')}>
         <Timestamp timestamp={obj.metadata.creationTimestamp} />
-      </TableData>
-      <TableData className={tableColumnClasses[6]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[6]}>
         <ResourceKebab actions={menuActions} kind={referenceForModel(ServiceInstanceModel)} resource={obj} />
-      </TableData>
-    </TableRow>
+      </VirtualTableData>
+    </VirtualTableRow>
   );
 };
 ServiceInstancesTableRow.displayName = 'ServiceInstancesTableRow';
@@ -259,7 +259,7 @@ type ServiceInstancesTableRowProps = {
   style: object;
 };
 
-const ServiceInstancesList: React.SFC = props => <Table {...props} aria-label="Service Instances" Header={ServiceInstancesTableHeader} Row={ServiceInstancesTableRow} virtualize />;
+const ServiceInstancesList: React.SFC = props => <VirtualTable {...props} aria-label="Service Instances" Header={ServiceInstancesTableHeader} Row={ServiceInstancesTableRow} />;
 ServiceInstancesList.displayName = 'ServiceInstancesList';
 
 const filters = [{

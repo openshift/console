@@ -9,7 +9,7 @@ import {
   getResource,
 } from 'kubevirt-web-ui-components';
 
-import { TableData, TableRow } from '@console/internal/components/factory';
+import { VirtualTableData, VirtualTableRow } from '@console/internal/components/factory';
 import { Firehose, FirehoseResult, LoadingInline } from '@console/internal/components/utils';
 import { HelpBlock, FormGroup } from 'patternfly-react';
 import { StorageClassModel, TemplateModel } from '@console/internal/models';
@@ -92,8 +92,8 @@ export const CreateDiskRow: React.FC<CreateDiskRowProps> = ({
 
   const bus = getVmPreferableDiskBus(vm);
   return (
-    <TableRow id={id} index={index} trKey={id} style={style}>
-      <TableData>
+    <VirtualTableRow id={id} index={index} trKey={id} style={style}>
+      <VirtualTableData>
         <FormGroup
           className="kubevirt-vm-create-device-row__cell--no_bottom"
           validationState={
@@ -107,8 +107,8 @@ export const CreateDiskRow: React.FC<CreateDiskRowProps> = ({
             {nameError && !nameError.isEmptyError && nameError.message}
           </HelpBlock>
         </FormGroup>
-      </TableData>
-      <TableData>
+      </VirtualTableData>
+      <VirtualTableData>
         <Integer
           id="disk-size"
           positive
@@ -118,17 +118,17 @@ export const CreateDiskRow: React.FC<CreateDiskRowProps> = ({
           onChange={setSize}
         />
         <span className="kubevirt-vm-create-device-row__cell_addendum">Gi</span>
-      </TableData>
-      <TableData id="disk-bus">{bus}</TableData>
-      <TableData>
+      </VirtualTableData>
+      <VirtualTableData id="disk-bus">{bus}</VirtualTableData>
+      <VirtualTableData>
         <StorageClassColumn
           storageClass={storageClass}
           onChange={setStorageClass}
           storageClasses={storageClasses}
           creating={creating}
         />
-      </TableData>
-      <TableData className="kubevirt-vm-create-device-row__confirmation-buttons">
+      </VirtualTableData>
+      <VirtualTableData className="kubevirt-vm-create-device-row__confirmation-buttons">
         <CancelAcceptButtons
           onCancel={onCreateRowDismiss}
           onAccept={() => {
@@ -142,8 +142,8 @@ export const CreateDiskRow: React.FC<CreateDiskRowProps> = ({
           }}
           disabled={!isValid}
         />
-      </TableData>
-    </TableRow>
+      </VirtualTableData>
+    </VirtualTableRow>
   );
 };
 

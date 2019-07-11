@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Table } from '@console/internal/components/factory';
+import { VirtualTable } from '@console/internal/components/factory';
 import PipelineHeader from './PipelineHeader';
 import PipelineRow from './PipelineRow';
 import { augmentRunsToData, PropPipelineData, KeyedRuns } from '../../utils/pipeline-augment';
@@ -16,13 +16,12 @@ const PipelineAugmentRuns: React.FC<PipelineAugmentRunsProps> = ({
   propsReferenceForRuns,
   ...props
 }) => (
-  <Table
+  <VirtualTable
     {...props}
     data={augmentRunsToData(data, propsReferenceForRuns, props as KeyedRuns)}
     aria-label={PipelineModel.labelPlural}
     Header={PipelineHeader}
     Row={PipelineRow}
-    virtualize
   />
 );
 

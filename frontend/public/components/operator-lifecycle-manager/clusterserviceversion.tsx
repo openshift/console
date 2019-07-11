@@ -9,7 +9,7 @@ import { Alert } from '@patternfly/react-core';
 
 import { SuccessStatus, ErrorStatus } from '@console/shared';
 import { ProvidedAPIsPage, ProvidedAPIPage } from './operand';
-import { DetailsPage, ListPage, Table, TableRow, TableData } from '../factory';
+import { DetailsPage, ListPage, VirtualTable, VirtualTableRow, VirtualTableData } from '../factory';
 import { withFallback } from '../utils/error-boundary';
 import { referenceForModel, referenceFor, GroupVersionKind, K8sKind } from '../../module/k8s';
 import { ClusterServiceVersionModel, SubscriptionModel, PackageManifestModel } from '../../models';
@@ -96,38 +96,38 @@ export const ClusterServiceVersionTableRow = withFallback<ClusterServiceVersionT
     </span>
     : <span className="co-error co-icon-and-text"><ErrorStatus title="Failed" /></span>;
   return (
-    <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
-      <TableData className={tableColumnClasses[0]}>
+    <VirtualTableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+      <VirtualTableData className={tableColumnClasses[0]}>
         <Link to={route}>
           <ClusterServiceVersionLogo icon={_.get(obj, 'spec.icon', [])[0]} displayName={obj.spec.displayName} version={obj.spec.version} provider={obj.spec.provider} />
         </Link>
-      </TableData>
-      <TableData className={tableColumnClasses[1]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[1]}>
         <ResourceLink kind="Namespace" title={obj.metadata.namespace} name={obj.metadata.namespace} />
-      </TableData>
-      <TableData className={tableColumnClasses[2]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[2]}>
         <ResourceLink kind="Deployment" name={obj.spec.install.spec.deployments[0].name} namespace={operatorNamespaceFor(obj)} title={obj.spec.install.spec.deployments[0].name} />
-      </TableData>
-      <TableData className={tableColumnClasses[3]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[3]}>
         {obj.metadata.deletionTimestamp ? 'Disabling' : installStatus}
-      </TableData>
-      <TableData className={tableColumnClasses[4]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[4]}>
         { _.take(providedAPIsFor(obj), 4).map((desc, i) => <div key={i}>
           <Link to={`${route}/${referenceForProvidedAPI(desc)}`} title={desc.name}>{desc.displayName}</Link>
         </div>)}
         { providedAPIsFor(obj).length > 4 && <Link to={`${route}/instances`} title={`View ${providedAPIsFor(obj).length - 4} more...`}>{`View ${providedAPIsFor(obj).length - 4} more...`}</Link>}
-      </TableData>
-      <TableData className={tableColumnClasses[5]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[5]}>
         <ResourceKebab resource={obj} kind={referenceFor(obj)} actions={menuActions} />
-      </TableData>
-    </TableRow>
+      </VirtualTableData>
+    </VirtualTableRow>
   );
 });
 
 export const ClusterServiceVersionList: React.SFC<ClusterServiceVersionListProps> = (props) => {
   const EmptyMsg = () => <MsgBox title="No Cluster Service Versions Found" detail="" />;
 
-  return <Table {...props} aria-label="Installed Operators" Header={ClusterServiceVersionTableHeader} Row={ClusterServiceVersionTableRow} EmptyMsg={EmptyMsg} virtualize />;
+  return <VirtualTable {...props} aria-label="Installed Operators" Header={ClusterServiceVersionTableHeader} Row={ClusterServiceVersionTableRow} EmptyMsg={EmptyMsg} />;
 };
 
 export const ClusterServiceVersionsPage: React.FC<ClusterServiceVersionsPageProps> = (props) => {

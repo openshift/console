@@ -5,7 +5,7 @@ import * as classNames from 'classnames';
 import { Link } from 'react-router-dom';
 import { sortable } from '@patternfly/react-table';
 import { ResourceEventStream } from './events';
-import { DetailsPage, ListPage, Table, TableData, TableRow } from './factory';
+import { DetailsPage, ListPage, VirtualTable, VirtualTableData, VirtualTableRow } from './factory';
 import { replicaSetMenuActions } from './replicaset';
 import {
   ContainerTable,
@@ -120,31 +120,31 @@ const ReplicationControllerTableRow = ({obj, index, key, style}) => {
   const phase = _.get(obj, ['metadata', 'annotations', 'openshift.io/deployment.phase']);
 
   return (
-    <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
-      <TableData className={tableColumnClasses[0]}>
+    <VirtualTableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+      <VirtualTableData className={tableColumnClasses[0]}>
         <ResourceLink kind={kind} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.uid} />
-      </TableData>
-      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+      </VirtualTableData>
+      <VirtualTableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} title={obj.metadata.namespace} />
-      </TableData>
-      <TableData className={tableColumnClasses[2]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[2]}>
         <LabelList kind={kind} labels={obj.metadata.labels} />
-      </TableData>
-      <TableData className={tableColumnClasses[3]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[3]}>
         <Link to={`${resourcePath(kind, obj.metadata.name, obj.metadata.namespace)}/pods`} title="pods">
           {obj.status.replicas || 0} of {obj.spec.replicas} pods
         </Link>
-      </TableData>
-      <TableData className={tableColumnClasses[4]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[4]}>
         {phase}
-      </TableData>
-      <TableData className={tableColumnClasses[5]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[5]}>
         <Selector selector={obj.spec.selector} namespace={obj.metadata.namespace} />
-      </TableData>
-      <TableData className={tableColumnClasses[6]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[6]}>
         <ResourceKebab actions={replicaSetMenuActions} kind={kind} resource={obj} />
-      </TableData>
-    </TableRow>
+      </VirtualTableData>
+    </VirtualTableRow>
   );
 };
 ReplicationControllerTableRow.displayName = 'ReplicationControllerTableRow';
@@ -183,6 +183,6 @@ const ReplicationControllerTableHeader = () => {
 };
 ReplicationControllerTableHeader.displayName = 'ReplicationControllerTableHeader';
 
-export const ReplicationControllersList = props => <Table {...props} aria-label="Replication Controllers" Header={ReplicationControllerTableHeader} Row={ReplicationControllerTableRow} virtualize />;
+export const ReplicationControllersList = props => <VirtualTable {...props} aria-label="Replication Controllers" Header={ReplicationControllerTableHeader} Row={ReplicationControllerTableRow} />;
 
 export const ReplicationControllersPage = props => <ListPage canCreate={true} ListComponent={ReplicationControllersList} {...props} />;

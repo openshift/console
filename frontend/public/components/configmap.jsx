@@ -2,7 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
-import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
+import { DetailsPage, ListPage, VirtualTable, VirtualTableRow, VirtualTableData } from './factory';
 import { ConfigMapData, ConfigMapBinaryData } from './configmap-and-secret-data';
 import { Kebab, SectionHeading, navFactory, ResourceKebab, ResourceLink, ResourceSummary } from './utils';
 import { fromNow } from './utils/datetime';
@@ -46,23 +46,23 @@ ConfigMapTableHeader.displayName = 'ConfigMapTableHeader';
 
 const ConfigMapTableRow = ({obj: configMap, index, key, style}) => {
   return (
-    <TableRow id={configMap.metadata.uid} index={index} trKey={key} style={style}>
-      <TableData className={tableColumnClasses[0]}>
+    <VirtualTableRow id={configMap.metadata.uid} index={index} trKey={key} style={style}>
+      <VirtualTableData className={tableColumnClasses[0]}>
         <ResourceLink kind="ConfigMap" name={configMap.metadata.name} namespace={configMap.metadata.namespace} title={configMap.metadata.uid} />
-      </TableData>
-      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+      </VirtualTableData>
+      <VirtualTableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
         <ResourceLink kind="Namespace" name={configMap.metadata.namespace} title={configMap.metadata.namespace} />
-      </TableData>
-      <TableData className={tableColumnClasses[2]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[2]}>
         {_.size(configMap.data)}
-      </TableData>
-      <TableData className={tableColumnClasses[3]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[3]}>
         {fromNow(configMap.metadata.creationTimestamp)}
-      </TableData>
-      <TableData className={tableColumnClasses[4]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[4]}>
         <ResourceKebab actions={menuActions} kind={kind} resource={configMap} />
-      </TableData>
-    </TableRow>
+      </VirtualTableData>
+    </VirtualTableRow>
   );
 };
 ConfigMapTableRow.displayName = 'ConfigMapTableRow';
@@ -85,7 +85,7 @@ const ConfigMapDetails = ({obj: configMap}) => {
   </React.Fragment>;
 };
 
-const ConfigMaps = props => <Table {...props} aria-label="Config Maps" Header={ConfigMapTableHeader} Row={ConfigMapTableRow} virtualize />;
+const ConfigMaps = props => <VirtualTable {...props} aria-label="Config Maps" Header={ConfigMapTableHeader} Row={ConfigMapTableRow} />;
 
 const ConfigMapsPage = props => <ListPage ListComponent={ConfigMaps} canCreate={true} {...props} />;
 const ConfigMapsDetailsPage = props => <DetailsPage

@@ -3,7 +3,7 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import { referenceForModel, K8sResourceKind } from '../module/k8s';
-import { ListPage, DetailsPage, Table, TableRow, TableData } from './factory';
+import { ListPage, DetailsPage, VirtualTable, VirtualTableRow, VirtualTableData } from './factory';
 import { SectionHeading, LabelList, navFactory, ResourceLink, Selector, Firehose, LoadingInline, pluralize } from './utils';
 import { configureReplicaCountModal } from './modals';
 import { AlertmanagerModel } from '../models';
@@ -95,23 +95,23 @@ const tableColumnClasses = [
 const AlertManagerTableRow: React.FC<AlertManagerTableRowProps> = ({obj: alertManager, index, key, style}) => {
   const {metadata, spec} = alertManager;
   return (
-    <TableRow id={alertManager.metadata.uid} index={index} trKey={key} style={style}>
-      <TableData className={tableColumnClasses[0]}>
+    <VirtualTableRow id={alertManager.metadata.uid} index={index} trKey={key} style={style}>
+      <VirtualTableData className={tableColumnClasses[0]}>
         <ResourceLink kind={referenceForModel(AlertmanagerModel)} name={metadata.name} namespace={metadata.namespace} title={metadata.uid} />
-      </TableData>
-      <TableData className={tableColumnClasses[1]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[1]}>
         <ResourceLink kind="Namespace" name={metadata.namespace} title={metadata.namespace} />
-      </TableData>
-      <TableData className={tableColumnClasses[2]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[2]}>
         <LabelList kind={AlertmanagerModel.kind} labels={metadata.labels} />
-      </TableData>
-      <TableData className={tableColumnClasses[3]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[3]}>
         {spec.version}
-      </TableData>
-      <TableData className={tableColumnClasses[4]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[4]}>
         <Selector selector={spec.nodeSelector} kind="Node" />
-      </TableData>
-    </TableRow>
+      </VirtualTableData>
+    </VirtualTableRow>
   );
 };
 AlertManagerTableRow.displayName = 'AlertManagerTableRow';
@@ -148,7 +148,7 @@ const AlertManagerTableHeader = () => {
 };
 AlertManagerTableHeader.displayName = 'AlertManagerTableHeader';
 
-export const AlertManagersList = props => <Table {...props} aria-label="Alert Managers" Header={AlertManagerTableHeader} Row={AlertManagerTableRow} virtualize />;
+export const AlertManagersList = props => <VirtualTable {...props} aria-label="Alert Managers" Header={AlertManagerTableHeader} Row={AlertManagerTableRow} />;
 
 export const AlertManagersPage = props => <ListPage {...props} ListComponent={AlertManagersList} canCreate={false} kind={referenceForModel(AlertmanagerModel)} />;
 

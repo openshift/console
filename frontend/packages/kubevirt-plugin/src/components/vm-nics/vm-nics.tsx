@@ -3,7 +3,7 @@ import { Button } from 'patternfly-react';
 import { Alert, AlertActionCloseButton } from '@patternfly/react-core';
 import * as _ from 'lodash';
 
-import { Table } from '@console/internal/components/factory';
+import { VirtualTable } from '@console/internal/components/factory';
 import { useSafetyFirst } from '@console/internal/components/safety-first';
 
 import { sortable } from '@patternfly/react-table';
@@ -76,7 +76,7 @@ export const VMNics: React.FC<VMLikeEntityTabProps> = ({ obj: vmLikeEntity }) =>
             action={<AlertActionCloseButton onClose={() => setCreateError(null)} />}
           />
         )}
-        <Table
+        <VirtualTable
           aria-label="VM Nics List"
           data={getStoragesData(vmLikeEntity, isCreating)}
           Header={() =>

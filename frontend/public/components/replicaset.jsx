@@ -3,7 +3,7 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 
-import { DetailsPage, ListPage, Table } from './factory';
+import { DetailsPage, ListPage, VirtualTable } from './factory';
 import {
   Kebab,
   ContainerTable,
@@ -87,7 +87,7 @@ const ReplicaSetTableHeader = () => {
 };
 ReplicaSetTableHeader.displayName = 'ReplicaSetTableHeader';
 
-const ReplicaSetsList = props => <Table {...props} aria-label="Replicate Sets" Header={ReplicaSetTableHeader} Row={ReplicaSetTableRow} virtualize />;
+const ReplicaSetsList = props => <VirtualTable {...props} aria-label="Replicate Sets" Header={ReplicaSetTableHeader} Row={ReplicaSetTableRow} />;
 const ReplicaSetsPage = props => <ListPage canCreate={true} ListComponent={ReplicaSetsList} {...props} />;
 
 export {ReplicaSetsList, ReplicaSetsPage, ReplicaSetsDetailsPage};

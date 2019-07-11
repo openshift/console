@@ -14,7 +14,7 @@ import {
   MachineCounts,
   MachineTabPage,
 } from './machine-set';
-import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
+import { DetailsPage, ListPage, VirtualTable, VirtualTableRow, VirtualTableData } from './factory';
 import {
   Kebab,
   ResourceKebab,
@@ -63,22 +63,22 @@ MachineDeploymentTableHeader.displayName = 'MachineDeploymentTableHeader';
 
 const MachineDeploymentTableRow: React.FC<MachineDeploymentTableRowProps> = ({obj, index, key, style}) => {
   return (
-    <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
-      <TableData className={tableColumnClasses[0]}>
+    <VirtualTableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+      <VirtualTableData className={tableColumnClasses[0]}>
         <ResourceLink kind={machineDeploymentReference} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
-      </TableData>
-      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+      </VirtualTableData>
+      <VirtualTableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
-      </TableData>
-      <TableData className={tableColumnClasses[2]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[2]}>
         <Link to={`${resourcePath(machineDeploymentReference, obj.metadata.name, obj.metadata.namespace)}/machines`}>
           {getReadyReplicas(obj)} of {getDesiredReplicas(obj)} machines
         </Link>
-      </TableData>
-      <TableData className={tableColumnClasses[3]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[3]}>
         <ResourceKebab actions={menuActions} kind={machineDeploymentReference} resource={obj} />
-      </TableData>
-    </TableRow>
+      </VirtualTableData>
+    </VirtualTableRow>
   );
 };
 MachineDeploymentTableRow.displayName = 'MachineDeploymentTableRow';
@@ -144,12 +144,11 @@ const MachineDeploymentDetails: React.SFC<MachineDeploymentDetailsProps> = ({obj
   </React.Fragment>;
 };
 
-export const MachineDeploymentList: React.SFC = props => <Table
+export const MachineDeploymentList: React.SFC = props => <VirtualTable
   {...props}
   aria-label="Machine Deployments"
   Header={MachineDeploymentTableHeader}
-  Row={MachineDeploymentTableRow}
-  virtualize />;
+  Row={MachineDeploymentTableRow} />;
 
 export const MachineDeploymentPage: React.SFC<MachineDeploymentPageProps> = props =>
   <ListPage

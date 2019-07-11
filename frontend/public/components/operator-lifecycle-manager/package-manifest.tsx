@@ -8,7 +8,7 @@ import { requireOperatorGroup, installedFor, supports } from './operator-group';
 import { PackageManifestKind, SubscriptionKind, ClusterServiceVersionLogo, visibilityLabel, OperatorGroupKind, installModesFor, defaultChannelFor } from './index';
 import { PackageManifestModel, SubscriptionModel, CatalogSourceModel, OperatorGroupModel } from '../../models';
 import { StatusBox, MsgBox } from '../utils';
-import { MultiListPage, Table, TableRow, TableData } from '../factory';
+import { MultiListPage, VirtualTable, VirtualTableRow, VirtualTableData } from '../factory';
 import { getActiveNamespace } from '../../actions/ui';
 import { ALL_NAMESPACES_KEY, OPERATOR_HUB_LABEL } from '../../const';
 
@@ -38,21 +38,21 @@ export const PackageManifestTableRow: React.SFC<PackageManifestTableRowProps> = 
 
   const createSubscriptionLink = () => `/k8s/ns/${ns === ALL_NAMESPACES_KEY ? defaultNS : ns}/${SubscriptionModel.plural}/~new?pkg=${obj.metadata.name}&catalog=${catalogSourceName}&catalogNamespace=${catalogSourceNamespace}`;
 
-  return <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
-    <TableData className={tableColumnClasses[0]}>
+  return <VirtualTableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+    <VirtualTableData className={tableColumnClasses[0]}>
       <ClusterServiceVersionLogo displayName={displayName} icon={_.get(icon, '[0]')} provider={provider.name} />
-    </TableData>
-    <TableData className={tableColumnClasses[1]}>
+    </VirtualTableData>
+    <VirtualTableData className={tableColumnClasses[1]}>
       {version} ({channel.name})
-    </TableData>
-    <TableData className={tableColumnClasses[2]}>{ subscription
+    </VirtualTableData>
+    <VirtualTableData className={tableColumnClasses[2]}>{ subscription
       ? subscriptionLink()
       : <span className="text-muted">None</span> }
     { canSubscribe && <Link to={createSubscriptionLink()}>
       <button className="btn btn-primary">Create<span className="visible-lg-inline"> Subscription</span></button>
     </Link> }
-    </TableData>
-  </TableRow>;
+    </VirtualTableData>
+  </VirtualTableRow>;
 };
 
 export const PackageManifestList = requireOperatorGroup((props: PackageManifestListProps) => {
@@ -78,7 +78,7 @@ export const PackageManifestList = requireOperatorGroup((props: PackageManifestL
         </div>
         {props.showDetailsLink && <Link to={`/k8s/ns/${catalog.namespace}/${referenceForModel(CatalogSourceModel)}/${catalog.name}`}>View catalog details</Link>}
       </div>
-      <Table
+      <VirtualTable
         aria-label="Package Manifests"
         loaded={true}
         data={(props.data || []).filter(pkg => pkg.status.catalogSource === catalog.name)}
@@ -99,8 +99,7 @@ export const PackageManifestList = requireOperatorGroup((props: PackageManifestL
               .filter(og => _.isEmpty(props.namespace) || og.metadata.namespace === props.namespace)
               .some(og => supports(installModesFor(rowProps.obj)(defaultChannelFor(rowProps.obj)))(og))}
           defaultNS={_.get(props.operatorGroup, 'data[0].metadata.namespace')} />}
-        EmptyMsg={() => <MsgBox title="No PackageManifests Found" detail="The catalog author has not added any packages." />}
-        virtualize />
+        EmptyMsg={() => <MsgBox title="No PackageManifests Found" detail="The catalog author has not added any packages." />} />
     </div>) }
   </StatusBox>;
 });

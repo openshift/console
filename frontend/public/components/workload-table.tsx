@@ -4,8 +4,8 @@ import { sortable } from '@patternfly/react-table';
 import { Link } from 'react-router-dom';
 import { K8sResourceKind } from '../module/k8s';
 import {
-  TableRow,
-  TableData,
+  VirtualTableRow,
+  VirtualTableData,
 } from './factory';
 
 import {
@@ -29,28 +29,28 @@ const tableColumnClasses = [
 
 export const WorkloadTableRow: React.FC<WorkloadTableRowProps> = ({obj, index, key, style, kind, menuActions}) => {
   return (
-    <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
-      <TableData className={tableColumnClasses[0]}>
+    <VirtualTableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+      <VirtualTableData className={tableColumnClasses[0]}>
         <ResourceLink kind={kind} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.uid} />
-      </TableData>
-      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+      </VirtualTableData>
+      <VirtualTableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} title={obj.metadata.namespace} />
-      </TableData>
-      <TableData className={tableColumnClasses[2]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[2]}>
         <LabelList kind={kind} labels={obj.metadata.labels} />
-      </TableData>
-      <TableData className={tableColumnClasses[3]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[3]}>
         <Link to={`${resourcePath(kind, obj.metadata.name, obj.metadata.namespace)}/pods`} title="pods">
           {obj.status.replicas || 0} of {obj.spec.replicas} pods
         </Link>
-      </TableData>
-      <TableData className={tableColumnClasses[4]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[4]}>
         <Selector selector={obj.spec.selector} namespace={obj.metadata.namespace} />
-      </TableData>
-      <TableData className={tableColumnClasses[5]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[5]}>
         <ResourceKebab actions={menuActions} kind={kind} resource={obj} />
-      </TableData>
-    </TableRow>
+      </VirtualTableData>
+    </VirtualTableRow>
   );
 };
 WorkloadTableRow.displayName = 'WorkloadTableRow';

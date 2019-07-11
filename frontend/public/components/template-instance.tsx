@@ -7,9 +7,9 @@ import { Status } from '@console/shared';
 import {
   DetailsPage,
   ListPage,
-  Table,
-  TableRow,
-  TableData,
+  VirtualTable,
+  VirtualTableRow,
+  VirtualTableData,
 } from './factory';
 import { Conditions } from './conditions';
 import { getTemplateInstanceStatus, referenceFor, TemplateInstanceKind } from '../module/k8s';
@@ -55,20 +55,20 @@ TemplateInstanceTableHeader.displayName = 'TemplateInstanceTableHeader';
 
 const TemplateInstanceTableRow: React.FC<TemplateInstanceTableRowProps> = ({obj, index, key, style}) => {
   return (
-    <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
-      <TableData className={classNames(tableColumnClasses[0], 'co-break-word')}>
+    <VirtualTableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+      <VirtualTableData className={classNames(tableColumnClasses[0], 'co-break-word')}>
         <ResourceLink kind="TemplateInstance" name={obj.metadata.name} namespace={obj.metadata.namespace} />
-      </TableData>
-      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+      </VirtualTableData>
+      <VirtualTableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
-      </TableData>
-      <TableData className={tableColumnClasses[2]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[2]}>
         <Status status={getTemplateInstanceStatus(obj)} />
-      </TableData>
-      <TableData className={tableColumnClasses[3]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[3]}>
         <ResourceKebab actions={menuActions} kind="TemplateInstance" resource={obj} />
-      </TableData>
-    </TableRow>
+      </VirtualTableData>
+    </VirtualTableRow>
   );
 };
 TemplateInstanceTableRow.displayName = 'TemplateInstanceTableRow';
@@ -79,7 +79,7 @@ type TemplateInstanceTableRowProps = {
   style: object;
 };
 
-export const TemplateInstanceList: React.SFC = props => <Table {...props} aria-label="Template Instances" Header={TemplateInstanceTableHeader} Row={TemplateInstanceTableRow} virtualize />;
+export const TemplateInstanceList: React.SFC = props => <VirtualTable {...props} aria-label="Template Instances" Header={TemplateInstanceTableHeader} Row={TemplateInstanceTableRow} />;
 
 const allStatuses = ['Ready', 'Not Ready', 'Failed'];
 

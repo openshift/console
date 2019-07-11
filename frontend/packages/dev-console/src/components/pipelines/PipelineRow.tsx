@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import { Status } from '@console/shared';
-import { TableRow, TableData } from '@console/internal/components/factory';
+import { VirtualTableRow, VirtualTableData } from '@console/internal/components/factory';
 import { Kebab, ResourceLink, Timestamp, ResourceKebab } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { pipelineFilterReducer } from '../../utils/pipeline-filter-reducer';
@@ -28,16 +28,16 @@ const PipelineRow: React.FC<PipelineRowProps> = ({ obj, index, key, style }) => 
     ...Kebab.factory.common,
   ];
   return (
-    <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
-      <TableData className={tableColumnClasses[0]}>
+    <VirtualTableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+      <VirtualTableData className={tableColumnClasses[0]}>
         <ResourceLink
           kind={pipelineReference}
           name={obj.metadata.name}
           namespace={obj.metadata.namespace}
           title={obj.metadata.name}
         />
-      </TableData>
-      <TableData className={tableColumnClasses[1]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[1]}>
         {obj.latestRun && obj.latestRun.metadata && obj.latestRun.metadata.name ? (
           <ResourceLink
             kind={pipelinerunReference}
@@ -47,24 +47,24 @@ const PipelineRow: React.FC<PipelineRowProps> = ({ obj, index, key, style }) => 
         ) : (
           '-'
         )}
-      </TableData>
-      <TableData className={tableColumnClasses[2]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[2]}>
         <Status status={pipelineFilterReducer(obj)} />
-      </TableData>
-      <TableData className={tableColumnClasses[3]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[3]}>
         {(obj.latestRun && <PipelineTaskStatus pipeline={obj} pipelinerun={obj.latestRun} />) ||
           '-'}
-      </TableData>
-      <TableData className={tableColumnClasses[4]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[4]}>
         {(obj.latestRun && obj.latestRun.status && obj.latestRun.status.completionTime && (
           <Timestamp timestamp={obj.latestRun.status.completionTime} />
         )) ||
           '-'}
-      </TableData>
-      <TableData className={tableColumnClasses[5]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[5]}>
         <ResourceKebab actions={menuActions} kind={pipelineReference} resource={obj} />
-      </TableData>
-    </TableRow>
+      </VirtualTableData>
+    </VirtualTableRow>
   );
 };
 

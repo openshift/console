@@ -3,7 +3,7 @@ import * as _ from 'lodash-es';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import {K8sResourceKindReference, K8sResourceKind} from '../module/k8s';
-import {DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
+import {DetailsPage, ListPage, VirtualTable, VirtualTableRow, VirtualTableData } from './factory';
 import {Kebab, navFactory, SectionHeading, ResourceKebab, ResourceLink, ResourceSummary, Timestamp} from './utils';
 
 const { common } = Kebab.factory;
@@ -20,20 +20,20 @@ const tableColumnClasses = [
 
 export const LimitRangeTableRow: React.FC<LimitRangeTableRowProps> = ({obj, index, key, style}) => {
   return (
-    <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
-      <TableData className={tableColumnClasses[0]}>
+    <VirtualTableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+      <VirtualTableData className={tableColumnClasses[0]}>
         <ResourceLink kind={LimitRangeReference} name={obj.metadata.name} namespace={obj.metadata.namespace} />
-      </TableData>
-      <TableData className={tableColumnClasses[1]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[1]}>
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} title={obj.metadata.namespace} />
-      </TableData>
-      <TableData className={tableColumnClasses[2]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[2]}>
         <Timestamp timestamp={obj.metadata.creationTimestamp} />
-      </TableData>
-      <TableData className={tableColumnClasses[3]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[3]}>
         <ResourceKebab actions={menuActions} kind={LimitRangeReference} resource={obj} />
-      </TableData>
-    </TableRow>
+      </VirtualTableData>
+    </VirtualTableRow>
   );
 };
 LimitRangeTableRow.displayName = 'LimitRangeTableRow';
@@ -65,7 +65,7 @@ export const LimitRangeTableHeader = () => {
 };
 LimitRangeTableHeader.displayName = 'LimitRangeTableHeader';
 
-export const LimitRangeList: React.SFC = props => <Table {...props} aria-label="Limit Ranges" Header={LimitRangeTableHeader} Row={LimitRangeTableRow} virtualize />;
+export const LimitRangeList: React.SFC = props => <VirtualTable {...props} aria-label="Limit Ranges" Header={LimitRangeTableHeader} Row={LimitRangeTableRow} />;
 
 export const LimitRangeListPage: React.SFC<LimitRangeListPageProps> = props =>
   <ListPage

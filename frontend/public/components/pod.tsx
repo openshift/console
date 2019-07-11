@@ -9,7 +9,7 @@ import { ContainerSpec, K8sResourceKindReference, PodKind } from '../module/k8s'
 import { getRestartPolicyLabel, podPhase, podPhaseFilterReducer, podReadiness } from '../module/k8s/pods';
 import { getContainerState, getContainerStatus } from '../module/k8s/container';
 import { ResourceEventStream } from './events';
-import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
+import { DetailsPage, ListPage, VirtualTable, VirtualTableRow, VirtualTableData } from './factory';
 import {
   AsyncComponent,
   Kebab,
@@ -66,29 +66,29 @@ const kind = 'Pod';
 const PodTableRow: React.FC<PodTableRowProps> = ({obj: pod, index, key, style}) => {
   const phase = podPhase(pod);
   return (
-    <TableRow id={pod.metadata.uid} index={index} trKey={key} style={style}>
-      <TableData className={tableColumnClasses[0]}>
+    <VirtualTableRow id={pod.metadata.uid} index={index} trKey={key} style={style}>
+      <VirtualTableData className={tableColumnClasses[0]}>
         <ResourceLink kind={kind} name={pod.metadata.name} namespace={pod.metadata.namespace} title={pod.metadata.uid} />
-      </TableData>
-      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+      </VirtualTableData>
+      <VirtualTableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
         <ResourceLink kind="Namespace" name={pod.metadata.namespace} title={pod.metadata.namespace} />
-      </TableData>
-      <TableData className={tableColumnClasses[2]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[2]}>
         <LabelList kind={kind} labels={pod.metadata.labels} />
-      </TableData>
-      <TableData className={tableColumnClasses[3]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[3]}>
         <NodeLink name={pod.spec.nodeName} />
-      </TableData>
-      <TableData className={tableColumnClasses[4]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[4]}>
         <Status status={phase} />
-      </TableData>
-      <TableData className={tableColumnClasses[5]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[5]}>
         <Readiness pod={pod} />
-      </TableData>
-      <TableData className={tableColumnClasses[6]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[6]}>
         <ResourceKebab actions={menuActions} kind={kind} resource={pod} isDisabled={phase === 'Terminating'} />
-      </TableData>
-    </TableRow>
+      </VirtualTableData>
+    </VirtualTableRow>
   );
 };
 PodTableRow.displayName = 'PodTableRow';
@@ -317,7 +317,7 @@ export const PodsDetailsPage: React.FC<PodDetailsPageProps> = props => <DetailsP
 />;
 PodsDetailsPage.displayName = 'PodsDetailsPage';
 
-export const PodList: React.FC = props => <Table {...props} aria-label="Pods" Header={PodTableHeader} Row={PodTableRow} virtualize />;
+export const PodList: React.FC = props => <VirtualTable {...props} aria-label="Pods" Header={PodTableHeader} Row={PodTableRow} />;
 PodList.displayName = 'PodList';
 
 const filters = [{

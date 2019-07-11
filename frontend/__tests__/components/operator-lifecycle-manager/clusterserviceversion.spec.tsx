@@ -27,7 +27,7 @@ import {
   CSVConditionReason,
   copiedLabelKey,
 } from '../../../public/components/operator-lifecycle-manager';
-import { DetailsPage, ListPage, TableInnerProps, Table, TableRow } from '../../../public/components/factory';
+import { DetailsPage, ListPage, VirtualTableInnerProps, VirtualTable, VirtualTableRow } from '../../../public/components/factory';
 import { testClusterServiceVersion } from '../../../__mocks__/k8sResourcesMocks';
 import {
   Timestamp,
@@ -63,7 +63,7 @@ describe(ClusterServiceVersionTableRow.displayName, () => {
   });
 
   it('renders `ResourceKebab` with actions', () => {
-    const col = wrapper.find(TableRow);
+    const col = wrapper.find(VirtualTableRow);
 
     expect(col.find(ResourceKebab).props().resource).toEqual(testClusterServiceVersion);
     expect(col.find(ResourceKebab).props().kind).toEqual(referenceForModel(ClusterServiceVersionModel));
@@ -71,14 +71,14 @@ describe(ClusterServiceVersionTableRow.displayName, () => {
   });
 
   it('renders clickable column for app logo and name', () => {
-    const col = wrapper.find(TableRow).childAt(0);
+    const col = wrapper.find(VirtualTableRow).childAt(0);
 
     expect(col.find(Link).props().to).toEqual(`/k8s/ns/${testClusterServiceVersion.metadata.namespace}/${ClusterServiceVersionModel.plural}/${testClusterServiceVersion.metadata.name}`);
     expect(col.find(Link).find(ClusterServiceVersionLogo).exists()).toBe(true);
   });
 
   it('renders column for app namespace link', () => {
-    const link = wrapper.find(TableRow).childAt(1).find(ResourceLink);
+    const link = wrapper.find(VirtualTableRow).childAt(1).find(ResourceLink);
 
     expect(link.props().kind).toEqual('Namespace');
     expect(link.props().title).toEqual(testClusterServiceVersion.metadata.namespace);
@@ -86,14 +86,14 @@ describe(ClusterServiceVersionTableRow.displayName, () => {
   });
 
   it('renders column with link to Operator deployment', () => {
-    const col = wrapper.find(TableRow).childAt(2);
+    const col = wrapper.find(VirtualTableRow).childAt(2);
 
     expect(col.find(ResourceLink).props().kind).toEqual('Deployment');
     expect(col.find(ResourceLink).props().name).toEqual(testClusterServiceVersion.spec.install.spec.deployments[0].name);
   });
 
   it('renders column for app status', () => {
-    const col = wrapper.find(TableRow).childAt(3);
+    const col = wrapper.find(VirtualTableRow).childAt(3);
     const statusComponent = col.childAt(0).find('SuccessStatus');
     expect(statusComponent.exists()).toBeTruthy();
     expect(statusComponent.prop('title')).toEqual(CSVConditionReason.CSVReasonInstallSuccessful);
@@ -101,13 +101,13 @@ describe(ClusterServiceVersionTableRow.displayName, () => {
 
   it('renders "disabling" status if CSV has `deletionTimestamp`', () => {
     wrapper = wrapper.setProps({obj: _.cloneDeepWith(testClusterServiceVersion, (v, k) => k === 'metadata' ? {...v, deletionTimestamp: Date.now()} : undefined)});
-    const col = wrapper.find(TableRow).childAt(3);
+    const col = wrapper.find(VirtualTableRow).childAt(3);
 
     expect(col.childAt(0).text()).toEqual('Disabling');
   });
 
   it('renders column with each CRD provided by the Operator', () => {
-    const col = wrapper.find(TableRow).childAt(4);
+    const col = wrapper.find(VirtualTableRow).childAt(4);
     testClusterServiceVersion.spec.customresourcedefinitions.owned.forEach((desc, i) => {
       expect(col.find(Link).at(i).props().title).toEqual(desc.name);
       expect(col.find(Link).at(i).props().to).toEqual(`/k8s/ns/default/clusterserviceversions/testapp/${referenceForProvidedAPI(desc)}`);
@@ -146,8 +146,8 @@ describe(ClusterServiceVersionList.displayName, () => {
 
   it('renders `List` with correct props', () => {
     const wrapper = shallow(<ClusterServiceVersionList data={[]} loaded={true} />);
-    expect(wrapper.find<TableInnerProps>(Table).props().Row).toEqual(ClusterServiceVersionTableRow);
-    expect(wrapper.find<TableInnerProps>(Table).props().Header).toEqual(ClusterServiceVersionTableHeader);
+    expect(wrapper.find<VirtualTableInnerProps>(VirtualTable).props().Row).toEqual(ClusterServiceVersionTableRow);
+    expect(wrapper.find<VirtualTableInnerProps>(VirtualTable).props().Header).toEqual(ClusterServiceVersionTableHeader);
   });
 });
 

@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { TableData, TableRow } from '@console/internal/components/factory';
+import { VirtualTableData, VirtualTableRow } from '@console/internal/components/factory';
 import { asAccessReview, Kebab, KebabOption } from '@console/internal/components/utils';
 import { getDeletetionTimestamp, DASH } from '@console/shared';
 
@@ -44,20 +44,20 @@ export const NicRow: React.FC<VMNicRowProps> = ({
   const dimensify = dimensifyRow(nicTableColumnClasses);
 
   return (
-    <TableRow id={nicName} index={index} trKey={nicName} style={style}>
-      <TableData className={dimensify()}>{nicName}</TableData>
-      <TableData className={dimensify()}>{nic.model || BUS_VIRTIO}</TableData>
-      <TableData className={dimensify()}>{networkName}</TableData>
-      <TableData className={dimensify()}>{binding || DASH}</TableData>
-      <TableData className={dimensify()}>{nic.macAddress || DASH}</TableData>
-      <TableData className={dimensify(true)}>
+    <VirtualTableRow id={nicName} index={index} trKey={nicName} style={style}>
+      <VirtualTableData className={dimensify()}>{nicName}</VirtualTableData>
+      <VirtualTableData className={dimensify()}>{nic.model || BUS_VIRTIO}</VirtualTableData>
+      <VirtualTableData className={dimensify()}>{networkName}</VirtualTableData>
+      <VirtualTableData className={dimensify()}>{binding || DASH}</VirtualTableData>
+      <VirtualTableData className={dimensify()}>{nic.macAddress || DASH}</VirtualTableData>
+      <VirtualTableData className={dimensify(true)}>
         <Kebab
           options={getActions(vmLikeEntity, nic)}
           key={`kebab-for--${nicName}`}
           isDisabled={getDeletetionTimestamp(vmLikeEntity)}
           id={`kebab-for-${nicName}`}
         />
-      </TableData>
-    </TableRow>
+      </VirtualTableData>
+    </VirtualTableRow>
   );
 };

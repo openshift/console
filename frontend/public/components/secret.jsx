@@ -2,7 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
-import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
+import { DetailsPage, ListPage, VirtualTable, VirtualTableRow, VirtualTableData } from './factory';
 import { SecretData } from './configmap-and-secret-data';
 import { Kebab, SectionHeading, ResourceKebab, ResourceLink, ResourceSummary, detailsPage, navFactory, resourceObjPath } from './utils';
 import { fromNow } from './utils/datetime';
@@ -86,20 +86,20 @@ const SecretTableRow = ({obj: secret, index, key, style}) => {
   const data = _.size(secret.data);
   const age = fromNow(secret.metadata.creationTimestamp);
   return (
-    <TableRow id={secret.metadata.uid} index={index} trKey={key} style={style}>
-      <TableData className={tableColumnClasses[0]}>
+    <VirtualTableRow id={secret.metadata.uid} index={index} trKey={key} style={style}>
+      <VirtualTableData className={tableColumnClasses[0]}>
         <ResourceLink kind="Secret" name={secret.metadata.name} namespace={secret.metadata.namespace} title={secret.metadata.uid} />
-      </TableData>
-      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+      </VirtualTableData>
+      <VirtualTableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
         <ResourceLink kind="Namespace" name={secret.metadata.namespace} title={secret.metadata.namespace} />
-      </TableData>
-      <TableData className={classNames(tableColumnClasses[2], 'co-break-word')}>{secret.type}</TableData>
-      <TableData className={tableColumnClasses[3]}>{data}</TableData>
-      <TableData className={tableColumnClasses[4]}>{age}</TableData>
-      <TableData className={tableColumnClasses[5]}>
+      </VirtualTableData>
+      <VirtualTableData className={classNames(tableColumnClasses[2], 'co-break-word')}>{secret.type}</VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[3]}>{data}</VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[4]}>{age}</VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[5]}>
         <ResourceKebab actions={menuActions} kind={kind} resource={secret} />
-      </TableData>
-    </TableRow>
+      </VirtualTableData>
+    </VirtualTableRow>
   );
 };
 SecretTableRow.displayName = 'SecretTableRow';
@@ -116,7 +116,7 @@ const SecretDetails = ({obj: secret}) => {
   </React.Fragment>;
 };
 
-const SecretsList = props => <Table {...props} aria-label="Secrets" Header={SecretTableHeader} Row={SecretTableRow} virtualize />;
+const SecretsList = props => <VirtualTable {...props} aria-label="Secrets" Header={SecretTableHeader} Row={SecretTableRow} />;
 SecretsList.displayName = 'SecretsList';
 
 const IMAGE_FILTER_VALUE = 'Image';

@@ -4,7 +4,7 @@ import { match, Link } from 'react-router-dom';
 import { Map as ImmutableMap } from 'immutable';
 import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
-import { MultiListPage, DetailsPage, Table, TableRow, TableData } from '../factory';
+import { MultiListPage, DetailsPage, VirtualTable, VirtualTableRow, VirtualTableData } from '../factory';
 import { SectionHeading, MsgBox, ResourceLink, ResourceKebab, Kebab, ResourceIcon, navFactory, ResourceSummary, history } from '../utils';
 import { InstallPlanKind, InstallPlanApproval, olmNamespace, Step, referenceForStepResource } from './index';
 import { K8sResourceKind, referenceForModel, referenceForOwnerRef, k8sUpdate, apiVersionForReference } from '../../module/k8s';
@@ -53,14 +53,14 @@ export const InstallPlanTableRow: React.FC<InstallPlanTableRowProps> = ({obj, in
     ? <React.Fragment><i className="fa fa-exclamation-triangle text-warning" aria-hidden="true" /> {phase}</React.Fragment>
     : phase;
   return (
-    <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
-      <TableData className={tableColumnClasses[0]}>
+    <VirtualTableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+      <VirtualTableData className={tableColumnClasses[0]}>
         <ResourceLink kind={referenceForModel(InstallPlanModel)} namespace={obj.metadata.namespace} name={obj.metadata.name} title={obj.metadata.uid} />
-      </TableData>
-      <TableData className={tableColumnClasses[1]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[1]}>
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} title={obj.metadata.namespace} displayName={obj.metadata.namespace} />
-      </TableData>
-      <TableData className={tableColumnClasses[2]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[2]}>
         <ul className="list-unstyled">
           { obj.spec.clusterServiceVersionNames.map((csvName, i) => <li key={i}>
             { _.get(obj, 'status.phase') === 'Complete'
@@ -68,21 +68,21 @@ export const InstallPlanTableRow: React.FC<InstallPlanTableRowProps> = ({obj, in
               : <React.Fragment><ResourceIcon kind={referenceForModel(ClusterServiceVersionModel)} />{csvName}</React.Fragment> }
           </li>) }
         </ul>
-      </TableData>
-      <TableData className={tableColumnClasses[3]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[3]}>
         { (obj.metadata.ownerReferences || [])
           .filter(ref => referenceForOwnerRef(ref) === referenceForModel(SubscriptionModel))
           .map(ref => <ul key={ref.uid} className="list-unstyled">
             <li><ResourceLink kind={referenceForModel(SubscriptionModel)} name={ref.name} namespace={obj.metadata.namespace} title={ref.uid} /></li>
           </ul>) || <span className="text-muted">None</span> }
-      </TableData>
-      <TableData className={tableColumnClasses[4]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[4]}>
         {phaseFor(_.get(obj.status, 'phase')) || 'Unknown'}
-      </TableData>
-      <TableData className={tableColumnClasses[5]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[5]}>
         <ResourceKebab actions={Kebab.factory.common} kind={referenceForModel(InstallPlanModel)} resource={obj} />
-      </TableData>
-    </TableRow>
+      </VirtualTableData>
+    </VirtualTableRow>
   );
 };
 InstallPlanTableRow.displayName = 'InstallPlanTableRow';
@@ -95,7 +95,7 @@ export type InstallPlanTableRowProps = {
 
 export const InstallPlansList = requireOperatorGroup((props: InstallPlansListProps) => {
   const EmptyMsg = () => <MsgBox title="No Install Plans Found" detail="Install Plans are created automatically by subscriptions or manually using the CLI." />;
-  return <Table {...props} aria-label="Install Plans" Header={InstallPlanTableHeader} Row={InstallPlanTableRow} EmptyMsg={EmptyMsg} />;
+  return <VirtualTable {...props} aria-label="Install Plans" Header={InstallPlanTableHeader} Row={InstallPlanTableRow} EmptyMsg={EmptyMsg} />;
 });
 
 export const InstallPlansPage: React.SFC<InstallPlansPageProps> = (props) => {

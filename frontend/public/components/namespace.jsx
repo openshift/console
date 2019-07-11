@@ -11,7 +11,7 @@ import { Status } from '@console/shared';
 import { NamespaceModel, ProjectModel, SecretModel } from '../models';
 import { k8sGet } from '../module/k8s';
 import * as UIActions from '../actions/ui';
-import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
+import { DetailsPage, ListPage, VirtualTable, VirtualTableRow, VirtualTableData } from './factory';
 import { Kebab, Dropdown, Firehose, LabelList, LoadingInline, navFactory, ResourceKebab, SectionHeading, ResourceLink, ResourceIcon, ResourceSummary, MsgBox, ExternalLink, humanizeCpuCores, humanizeDecimalBytes, useAccessReview } from './utils';
 import { createNamespaceModal, createProjectModal, deleteNamespaceModal, configureNamespacePullSecretModal } from './modals';
 import { RoleBindingsPage } from './RBAC';
@@ -81,25 +81,25 @@ NamespacesTableHeader.displayName = 'NamespacesTableHeader';
 
 const NamespacesTableRow = ({obj: ns, index, key, style}) => {
   return (
-    <TableRow id={ns.metadata.uid} index={index} trKey={key} style={style}>
-      <TableData className={namespacesColumnClasses[0]}>
+    <VirtualTableRow id={ns.metadata.uid} index={index} trKey={key} style={style}>
+      <VirtualTableData className={namespacesColumnClasses[0]}>
         <ResourceLink kind="Namespace" name={ns.metadata.name} title={ns.metadata.uid} />
-      </TableData>
-      <TableData className={classNames(namespacesColumnClasses[1], 'co-break-word')}>
+      </VirtualTableData>
+      <VirtualTableData className={classNames(namespacesColumnClasses[1], 'co-break-word')}>
         <Status status={ns.status.phase} />
-      </TableData>
-      <TableData className={namespacesColumnClasses[2]}>
+      </VirtualTableData>
+      <VirtualTableData className={namespacesColumnClasses[2]}>
         <LabelList kind="Namespace" labels={ns.metadata.labels} />
-      </TableData>
-      <TableData className={namespacesColumnClasses[3]}>
+      </VirtualTableData>
+      <VirtualTableData className={namespacesColumnClasses[3]}>
         <ResourceKebab actions={nsMenuActions} kind="Namespace" resource={ns} />
-      </TableData>
-    </TableRow>
+      </VirtualTableData>
+    </VirtualTableRow>
   );
 };
 NamespacesTableRow.displayName = 'NamespacesTableRow';
 
-export const NamespacesList = props => <Table {...props} aria-label="Namespaces" Header={NamespacesTableHeader} Row={NamespacesTableRow} virtualize />;
+export const NamespacesList = props => <VirtualTable {...props} aria-label="Namespaces" Header={NamespacesTableHeader} Row={NamespacesTableRow} />;
 
 export const NamespacesPage = props => <ListPage {...props} ListComponent={NamespacesList} canCreate={true} createHandler={() => createNamespaceModal({blocking: true})} />;
 
@@ -160,8 +160,8 @@ const ProjectTableRow = ({obj: project, index, key, style, customData = {}}) => 
   const requester = getRequester(project);
   const { ProjectLinkComponent, actionsEnabled = true } = customData;
   return (
-    <TableRow id={project.metadata.uid} index={index} trKey={key} style={style}>
-      <TableData className={projectColumnClasses[0]}>
+    <VirtualTableRow id={project.metadata.uid} index={index} trKey={key} style={style}>
+      <VirtualTableData className={projectColumnClasses[0]}>
         {customData && ProjectLinkComponent ? (
           <ProjectLinkComponent project={project} />
         ) : (
@@ -169,29 +169,29 @@ const ProjectTableRow = ({obj: project, index, key, style, customData = {}}) => 
             <ResourceLink kind="Project" name={project.metadata.name} title={project.metadata.uid} />
           </span>
         )}
-      </TableData>
-      <TableData className={projectColumnClasses[1]}>
+      </VirtualTableData>
+      <VirtualTableData className={projectColumnClasses[1]}>
         <Status status={project.status.phase} />
-      </TableData>
-      <TableData className={classNames(projectColumnClasses[2], 'co-break-word')}>
+      </VirtualTableData>
+      <VirtualTableData className={classNames(projectColumnClasses[2], 'co-break-word')}>
         {requester || <span className="text-muted">No requester</span>}
-      </TableData>
-      <TableData className={projectColumnClasses[3]}>
+      </VirtualTableData>
+      <VirtualTableData className={projectColumnClasses[3]}>
         <LabelList kind="Project" labels={project.metadata.labels} />
-      </TableData>
+      </VirtualTableData>
       {
         actionsEnabled && (
-          <TableData className={projectColumnClasses[4]}>
+          <VirtualTableData className={projectColumnClasses[4]}>
             <ResourceKebab actions={projectMenuActions} kind="Project" resource={project} />
-          </TableData>
+          </VirtualTableData>
         )
       }
-    </TableRow>
+    </VirtualTableRow>
   );
 };
 ProjectTableRow.displayName = 'ProjectTableRow';
 
-export const ProjectsTable = props => <Table {...props} aria-label="Projects" Header={projectHeaderWithoutActions} Row={ProjectTableRow} customData={{ProjectLinkComponent: ProjectLink, actionsEnabled: false}} virtualize />;
+export const ProjectsTable = props => <VirtualTable {...props} aria-label="Projects" Header={projectHeaderWithoutActions} Row={ProjectTableRow} customData={{ProjectLinkComponent: ProjectLink, actionsEnabled: false}} />;
 
 const ProjectList_ = props => {
   const ProjectEmptyMessageDetail = <React.Fragment>
@@ -206,7 +206,7 @@ const ProjectList_ = props => {
     </p>
   </React.Fragment>;
   const ProjectEmptyMessage = () => <MsgBox title="Welcome to OpenShift" detail={ProjectEmptyMessageDetail} />;
-  return <Table {...props} aria-label="Projects" Header={ProjectTableHeader} Row={ProjectTableRow} EmptyMsg={ProjectEmptyMessage} virtualize />;
+  return <VirtualTable {...props} aria-label="Projects" Header={ProjectTableHeader} Row={ProjectTableRow} EmptyMsg={ProjectEmptyMessage} />;
 };
 export const ProjectList = connect(createProjectMessageStateToProps)(ProjectList_);
 

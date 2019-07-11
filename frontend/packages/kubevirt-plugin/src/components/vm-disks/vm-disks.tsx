@@ -3,7 +3,7 @@ import * as React from 'react';
 import { Button } from 'patternfly-react';
 import { Alert, AlertActionCloseButton } from '@patternfly/react-core';
 
-import { Table } from '@console/internal/components/factory';
+import { VirtualTable } from '@console/internal/components/factory';
 import { PersistentVolumeClaimModel } from '@console/internal/models';
 import { Firehose, FirehoseResult, Kebab } from '@console/internal/components/utils';
 import { getResource } from 'kubevirt-web-ui-components';
@@ -136,7 +136,7 @@ export const VMDisks: React.FC<VMDisksProps> = ({ vmLikeEntity, pvcs, datavolume
             action={<AlertActionCloseButton onClose={() => setCreateError(null)} />}
           />
         )}
-        <Table
+        <VirtualTable
           aria-label="VM Disks List"
           data={getStoragesData(
             {

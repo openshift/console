@@ -7,7 +7,7 @@ import { Status } from '@console/shared';
 import { connectToFlags } from '../reducers/features';
 import { Conditions } from './conditions';
 import { FLAGS } from '../const';
-import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
+import { DetailsPage, ListPage, VirtualTable, VirtualTableRow, VirtualTableData } from './factory';
 import { Kebab, navFactory, ResourceKebab, SectionHeading, ResourceLink, ResourceSummary, Selector } from './utils';
 import { ResourceEventStream } from './events';
 
@@ -63,29 +63,29 @@ const kind = 'PersistentVolumeClaim';
 
 const PVCTableRow = ({obj, index, key, style}) => {
   return (
-    <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
-      <TableData className={tableColumnClasses[0]}>
+    <VirtualTableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+      <VirtualTableData className={tableColumnClasses[0]}>
         <ResourceLink kind={kind} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
-      </TableData>
-      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+      </VirtualTableData>
+      <VirtualTableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} title={obj.metadata.namespace} />
-      </TableData>
-      <TableData className={tableColumnClasses[2]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[2]}>
         <PVCStatus pvc={obj} />
-      </TableData>
-      <TableData className={tableColumnClasses[3]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[3]}>
         { _.get(obj, 'spec.volumeName') ?
           <ResourceLink kind="PersistentVolume" name={obj.spec.volumeName} title={obj.spec.volumeName} />:
           <div className="text-muted">No Persistent Volume</div>
         }
-      </TableData>
-      <TableData className={tableColumnClasses[4]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[4]}>
         {_.get(obj, 'spec.resources.requests.storage', '-')}
-      </TableData>
-      <TableData className={tableColumnClasses[5]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[5]}>
         <ResourceKebab actions={menuActions} kind={kind} resource={obj} />
-      </TableData>
-    </TableRow>
+      </VirtualTableData>
+    </VirtualTableRow>
   );
 };
 PVCTableRow.displayName = 'PVCTableRow';
@@ -153,7 +153,7 @@ const filters = [{
 }];
 
 
-export const PersistentVolumeClaimsList = props => <Table {...props} aria-label="Persistent Volume Claims" Header={PVCTableHeader} Row={PVCTableRow} virtualize />;
+export const PersistentVolumeClaimsList = props => <VirtualTable {...props} aria-label="Persistent Volume Claims" Header={PVCTableHeader} Row={PVCTableRow} />;
 export const PersistentVolumeClaimsPage = props => {
   const createProps = {
     to: `/k8s/ns/${props.namespace || 'default'}/persistentvolumeclaims/~new/form`,

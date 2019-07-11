@@ -203,7 +203,6 @@ const APIResourcesList = connect<APIResourcesListPropsFromState>(stateToProps)((
         aria-label="API Resources"
         data={sortedResources}
         loaded={!!models.size}
-        virtualize={false}
       />
     </div>
   </>;
@@ -420,7 +419,6 @@ const APIResourceAccessReview: React.FC<APIResourceTabProps> = ({kindObj, namesp
           aria-label="API Resources"
           data={sortedData}
           loaded
-          virtualize={false}
         />
       </div>
     </>

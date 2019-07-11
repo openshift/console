@@ -10,7 +10,12 @@ import {
   TEMPLATE_TYPE_LABEL,
 } from 'kubevirt-web-ui-components';
 
-import { ListPage, Table, TableRow, TableData } from '@console/internal/components/factory';
+import {
+  ListPage,
+  VirtualTable,
+  VirtualTableRow,
+  VirtualTableData,
+} from '@console/internal/components/factory';
 import {
   Kebab,
   ResourceLink,
@@ -102,36 +107,38 @@ const VMTemplateTableRow: React.FC<VMTemplateTableRowProps> = ({
   const os = getTemplateOperatingSystems([template])[0];
 
   return (
-    <TableRow id={template.metadata.uid} index={index} trKey={key} style={style}>
-      <TableData className={dimensify()}>
+    <VirtualTableRow id={template.metadata.uid} index={index} trKey={key} style={style}>
+      <VirtualTableData className={dimensify()}>
         <VMTemplateLink template={template} />
-      </TableData>
-      <TableData className={dimensify()}>
+      </VirtualTableData>
+      <VirtualTableData className={dimensify()}>
         <ResourceLink
           kind="Namespace"
           name={getNamespace(template)}
           title={getNamespace(template)}
         />
-      </TableData>
-      <TableData className={dimensify()}>
+      </VirtualTableData>
+      <VirtualTableData className={dimensify()}>
         {_.get(template.metadata, 'annotations.description', DASH)}
-      </TableData>
-      <TableData className={dimensify()}>
+      </VirtualTableData>
+      <VirtualTableData className={dimensify()}>
         <TemplateSource template={template} />
-      </TableData>
-      <TableData className={dimensify()}>{os ? os.name || os.id : DASH}</TableData>
-      <TableData className={dimensify()}>{getTemplateFlavors([template])[0]}</TableData>
-      <TableData className={dimensify(true)}>
+      </VirtualTableData>
+      <VirtualTableData className={dimensify()}>{os ? os.name || os.id : DASH}</VirtualTableData>
+      <VirtualTableData className={dimensify()}>
+        {getTemplateFlavors([template])[0]}
+      </VirtualTableData>
+      <VirtualTableData className={dimensify(true)}>
         <ResourceKebab actions={menuActions} kind={kind} resource={template} />
-      </TableData>
-    </TableRow>
+      </VirtualTableData>
+    </VirtualTableRow>
   );
 };
 VMTemplateTableRow.displayName = 'VmTemplateTableRow';
 
-const VirtualMachineTemplates: React.FC<React.ComponentProps<typeof Table>> = (props) => {
+const VirtualMachineTemplates: React.FC<React.ComponentProps<typeof VirtualTable>> = (props) => {
   return (
-    <Table
+    <VirtualTable
       {...props}
       aria-label={VM_TEMPLATE_LABEL_PLURAL}
       Header={VMTemplateTableHeader}

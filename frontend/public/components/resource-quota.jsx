@@ -3,7 +3,7 @@ import * as React from 'react';
 import { FieldLevelHelp } from 'patternfly-react';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
-import { DetailsPage, MultiListPage, Table, TableRow, TableData } from './factory';
+import { DetailsPage, MultiListPage, VirtualTable, VirtualTableRow, VirtualTableData } from './factory';
 import { Kebab, SectionHeading, navFactory, ResourceKebab, ResourceLink, ResourceSummary, convertToBaseValue } from './utils';
 import { connectToFlags, flagPending } from '../reducers/features';
 import { FLAGS } from '../const';
@@ -66,17 +66,17 @@ ResourceQuotaTableHeader.displayName = 'ResourceQuotaTableHeader';
 
 export const ResourceQuotaTableRow = ({obj: rq, index, key, style}) => {
   return (
-    <TableRow id={rq.metadata.uid} index={index} trKey={key} style={style}>
-      <TableData className={tableColumnClasses[0]}>
+    <VirtualTableRow id={rq.metadata.uid} index={index} trKey={key} style={style}>
+      <VirtualTableData className={tableColumnClasses[0]}>
         <ResourceLink kind={quotaKind(rq)} name={rq.metadata.name} namespace={rq.metadata.namespace} className="co-resource-item__resource-name" />
-      </TableData>
-      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+      </VirtualTableData>
+      <VirtualTableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
         {rq.metadata.namespace ? <ResourceLink kind="Namespace" name={rq.metadata.namespace} title={rq.metadata.namespace} /> : 'None'}
-      </TableData>
-      <TableData className={tableColumnClasses[2]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[2]}>
         <ResourceKebab actions={menuActions} kind={quotaKind(rq)} resource={rq} />
-      </TableData>
-    </TableRow>
+      </VirtualTableData>
+    </VirtualTableRow>
   );
 };
 ResourceQuotaTableRow.displayName = 'ResourceQuotaTableRow';
@@ -243,7 +243,7 @@ const Details = ({obj: rq}) => {
   </React.Fragment>;
 };
 
-export const ResourceQuotasList = props => <Table {...props} aria-label="Resource Quoates" Header={ResourceQuotaTableHeader} Row={ResourceQuotaTableRow} virtualize />;
+export const ResourceQuotasList = props => <VirtualTable {...props} aria-label="Resource Quoates" Header={ResourceQuotaTableHeader} Row={ResourceQuotaTableRow} />;
 
 export const quotaType = quota => {
   if (!quota) {

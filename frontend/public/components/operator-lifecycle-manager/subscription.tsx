@@ -3,7 +3,7 @@ import * as _ from 'lodash-es';
 import { match, Link } from 'react-router-dom';
 import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
-import { DetailsPage, MultiListPage, Table, TableRow, TableData } from '../factory';
+import { DetailsPage, MultiListPage, VirtualTable, VirtualTableRow, VirtualTableData } from '../factory';
 import { requireOperatorGroup } from './operator-group';
 import { MsgBox, ResourceLink, ResourceKebab, navFactory, Kebab, ResourceSummary, LoadingInline, SectionHeading } from '../utils';
 import { removeQueryArgument } from '../utils/router';
@@ -83,26 +83,26 @@ const menuActions = [
 
 export const SubscriptionTableRow: React.FC<SubscriptionTableRowProps> = ({obj, index, key, style}) => {
   return (
-    <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
-      <TableData className={tableColumnClasses[0]}>
+    <VirtualTableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+      <VirtualTableData className={tableColumnClasses[0]}>
         <ResourceLink kind={referenceForModel(SubscriptionModel)} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
-      </TableData>
-      <TableData className={tableColumnClasses[1]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[1]}>
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} title={obj.metadata.namespace} displayName={obj.metadata.namespace} />
-      </TableData>
-      <TableData className={tableColumnClasses[2]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[2]}>
         {subscriptionState(_.get(obj.status, 'state'))}
-      </TableData>
-      <TableData className={classNames(tableColumnClasses[3], 'co-truncate', 'co-select-to-copy')}>
+      </VirtualTableData>
+      <VirtualTableData className={classNames(tableColumnClasses[3], 'co-truncate', 'co-select-to-copy')}>
         {obj.spec.channel || 'default'}
-      </TableData>
-      <TableData className={tableColumnClasses[4]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[4]}>
         {obj.spec.installPlanApproval || 'Automatic'}
-      </TableData>
-      <TableData className={tableColumnClasses[5]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[5]}>
         <ResourceKebab actions={menuActions} kind={referenceForModel(SubscriptionModel)} resource={obj} />
-      </TableData>
-    </TableRow>
+      </VirtualTableData>
+    </VirtualTableRow>
   );
 };
 SubscriptionTableRow.displayName = 'SubscriptionTableRow';
@@ -114,12 +114,11 @@ export type SubscriptionTableRowProps = {
 };
 
 export const SubscriptionsList = requireOperatorGroup((props: SubscriptionsListProps) =>
-  <Table {...props}
+  <VirtualTable {...props}
     aria-label="Operator Subscriptions"
     Header={SubscriptionTableHeader}
     Row={SubscriptionTableRow}
-    EmptyMsg={() => <MsgBox title="No Subscriptions Found" detail="Each namespace can subscribe to a single channel of a package for automatic updates." />}
-    virtualize />
+    EmptyMsg={() => <MsgBox title="No Subscriptions Found" detail="Each namespace can subscribe to a single channel of a package for automatic updates." />} />
 );
 
 export const SubscriptionsPage: React.SFC<SubscriptionsPageProps> = (props) => {

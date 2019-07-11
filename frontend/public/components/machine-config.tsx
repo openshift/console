@@ -8,9 +8,9 @@ import { fromNow } from './utils/datetime';
 import {
   DetailsPage,
   ListPage,
-  Table,
-  TableRow,
-  TableData,
+  VirtualTable,
+  VirtualTableRow,
+  VirtualTableData,
 } from './factory';
 import {
   Kebab,
@@ -95,26 +95,26 @@ MachineConfigTableHeader.displayName = 'MachineConfigTableHeader';
 
 const MachineConfigTableRow: React.FC<MachineConfigTableRowProps> = ({obj, index, key, style}) => {
   return (
-    <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
-      <TableData className={tableColumnClasses[0]}>
+    <VirtualTableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+      <VirtualTableData className={tableColumnClasses[0]}>
         <ResourceLink kind={machineConfigReference} name={obj.metadata.name} title={obj.metadata.name} />
-      </TableData>
-      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+      </VirtualTableData>
+      <VirtualTableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
         { _.get(obj, ['metadata', 'annotations', 'machineconfiguration.openshift.io/generated-by-controller-version'], '-')}
-      </TableData>
-      <TableData className={tableColumnClasses[2]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[2]}>
         {_.get(obj, 'spec.config.ignition.version') || '-'}
-      </TableData>
-      <TableData className={classNames(tableColumnClasses[3], 'co-break-word')}>
+      </VirtualTableData>
+      <VirtualTableData className={classNames(tableColumnClasses[3], 'co-break-word')}>
         {_.get(obj, 'spec.osImageURL') || '-'}
-      </TableData>
-      <TableData className={tableColumnClasses[4]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[4]}>
         {fromNow(obj.metadata.creationTimestamp)}
-      </TableData>
-      <TableData className={tableColumnClasses[5]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[5]}>
         <ResourceKebab actions={machineConfigMenuActions} kind={machineConfigReference} resource={obj} />
-      </TableData>
-    </TableRow>
+      </VirtualTableData>
+    </VirtualTableRow>
   );
 };
 MachineConfigTableRow.displayName = 'MachineConfigTableRow';
@@ -125,12 +125,11 @@ type MachineConfigTableRowProps = {
   style: object;
 };
 
-const MachineConfigList: React.SFC<any> = props => <Table
+const MachineConfigList: React.SFC<any> = props => <VirtualTable
   {...props}
   aria-label="Machine Configs"
   Header={MachineConfigTableHeader}
-  Row={MachineConfigTableRow}
-  virtualize />;
+  Row={MachineConfigTableRow} />;
 
 export const MachineConfigPage: React.SFC<any> = ({canCreate = true, ...rest}) => (
   <ListPage

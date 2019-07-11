@@ -2,7 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
-import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
+import { DetailsPage, ListPage, VirtualTable, VirtualTableRow, VirtualTableData } from './factory';
 import { fromNow } from './utils/datetime';
 import { referenceFor, kindForReference } from '../module/k8s';
 import {
@@ -48,23 +48,23 @@ TableHeader.displayName = 'TableHeader';
 
 const TableRowForKind = ({obj, index, key, style, customData}) => {
   return (
-    <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
-      <TableData className={tableColumnClasses[0]}>
+    <VirtualTableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+      <VirtualTableData className={tableColumnClasses[0]}>
         <ResourceLink kind={customData.kind} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
-      </TableData>
-      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+      </VirtualTableData>
+      <VirtualTableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
         { obj.metadata.namespace
           ? <ResourceLink kind="Namespace" name={obj.metadata.namespace} title={obj.metadata.namespace} />
           : 'None'
         }
-      </TableData>
-      <TableData className={tableColumnClasses[2]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[2]}>
         { fromNow(obj.metadata.creationTimestamp) }
-      </TableData>
-      <TableData className={tableColumnClasses[3]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[3]}>
         <ResourceKebab actions={menuActions} kind={referenceFor(obj) || customData.kind} resource={obj} />
-      </TableData>
-    </TableRow>
+      </VirtualTableData>
+    </VirtualTableRow>
   );
 };
 TableRowForKind.displayName = 'TableRowForKind';
@@ -81,13 +81,12 @@ const DetailsForKind = kind => function DetailsForKind_({obj}) {
 export const DefaultList = props => {
   const { kinds } = props;
 
-  return <Table {...props}
+  return <VirtualTable {...props}
     aria-label="Default Resource"
     kinds={[kinds[0]]}
     customData={{kind: kinds[0]}}
     Header={TableHeader}
-    Row={TableRowForKind}
-    virtualize />;
+    Row={TableRowForKind} />;
 };
 DefaultList.displayName = DefaultList;
 

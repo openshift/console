@@ -6,7 +6,12 @@ import { sortable } from '@patternfly/react-table';
 
 import { getName, getNamespace, getUID, getMachineNode, createLookup } from '@console/shared';
 import { MachineModel, NodeModel } from '@console/internal/models';
-import { MultiListPage, Table, TableRow, TableData } from '@console/internal/components/factory';
+import {
+  MultiListPage,
+  VirtualTable,
+  VirtualTableRow,
+  VirtualTableData,
+} from '@console/internal/components/factory';
 import { Kebab, ResourceLink, FirehoseResource } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
 
@@ -90,25 +95,25 @@ const HostsTableRow: React.FC<HostsTableRowProps> = ({
   const nodeName = getName(node);
 
   return (
-    <TableRow id={uid} index={index} trKey={key} style={style}>
-      <TableData className={tableColumnClasses[0]}>
+    <VirtualTableRow id={uid} index={index} trKey={key} style={style}>
+      <VirtualTableData className={tableColumnClasses[0]}>
         <ResourceLink
           kind={referenceForModel(BaremetalHostModel)}
           name={name}
           namespace={namespace}
         />
-      </TableData>
-      <TableData className={tableColumnClasses[1]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[1]}>
         <BaremetalHostStatus host={host} status={status} />
-      </TableData>
-      <TableData className={tableColumnClasses[2]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[2]}>
         <MachineCell host={host} status={status} />
-      </TableData>
-      <TableData className={tableColumnClasses[3]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[3]}>
         <BaremetalHostRole machine={machine} />
-      </TableData>
-      <TableData className={tableColumnClasses[4]}>{address}</TableData>
-      <TableData className={tableColumnClasses[5]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[4]}>{address}</VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[5]}>
         <Kebab
           options={menuActions.map((action) =>
             action(BaremetalHostModel, host, null, {
@@ -120,16 +125,21 @@ const HostsTableRow: React.FC<HostsTableRowProps> = ({
           key={`kebab-for-${uid}`}
           id={`kebab-for-${uid}`}
         />
-      </TableData>
-    </TableRow>
+      </VirtualTableData>
+    </VirtualTableRow>
   );
 };
 
 const HostList: React.FC<HostListProps> = (props) => (
-  <Table {...props} aria-label="Baremetal Hosts" Header={HostsTableHeader} Row={HostsTableRow} />
+  <VirtualTable
+    {...props}
+    aria-label="Baremetal Hosts"
+    Header={HostsTableHeader}
+    Row={HostsTableRow}
+  />
 );
 
-type HostListProps = React.ComponentProps<typeof Table> & {
+type HostListProps = React.ComponentProps<typeof VirtualTable> & {
   data: HostRowBundle[];
   customData: {
     hasNodeMaintenanceCapability: boolean;

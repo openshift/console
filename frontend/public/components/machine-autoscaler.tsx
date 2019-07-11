@@ -4,7 +4,7 @@ import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
 import { MachineAutoscalerModel } from '../models';
 import { groupVersionFor, K8sResourceKind, referenceForGroupVersionKind, referenceForModel } from '../module/k8s';
-import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
+import { DetailsPage, ListPage, VirtualTable, VirtualTableRow, VirtualTableData } from './factory';
 import {
   Kebab,
   navFactory,
@@ -71,26 +71,26 @@ MachineAutoscalerTableHeader.displayName = 'MachineAutoscalerTableHeader';
 
 const MachineAutoscalerTableRow: React.FC<MachineAutoscalerTableRowProps> = ({obj, index, key, style}) => {
   return (
-    <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
-      <TableData className={tableColumnClasses[0]}>
+    <VirtualTableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+      <VirtualTableData className={tableColumnClasses[0]}>
         <ResourceLink kind={machineAutoscalerReference} name={obj.metadata.name} namespace={obj.metadata.namespace} />
-      </TableData>
-      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+      </VirtualTableData>
+      <VirtualTableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
-      </TableData>
-      <TableData className={classNames(tableColumnClasses[2], 'co-break-word')}>
+      </VirtualTableData>
+      <VirtualTableData className={classNames(tableColumnClasses[2], 'co-break-word')}>
         <MachineAutoscalerTargetLink obj={obj} />
-      </TableData>
-      <TableData className={tableColumnClasses[3]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[3]}>
         {_.get(obj, 'spec.minReplicas') || '-'}
-      </TableData>
-      <TableData className={tableColumnClasses[4]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[4]}>
         {_.get(obj, 'spec.maxReplicas') || '-'}
-      </TableData>
-      <TableData className={tableColumnClasses[5]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[5]}>
         <ResourceKebab actions={menuActions} kind={machineAutoscalerReference} resource={obj} />
-      </TableData>
-    </TableRow>
+      </VirtualTableData>
+    </VirtualTableRow>
   );
 };
 MachineAutoscalerTableRow.displayName = 'MachineAutoscalerTableRow';
@@ -101,12 +101,11 @@ type MachineAutoscalerTableRowProps = {
   style: object;
 };
 
-const MachineAutoscalerList: React.FC = props => <Table
+const MachineAutoscalerList: React.FC = props => <VirtualTable
   {...props}
   aria-label="Machine Autoscalers"
   Header={MachineAutoscalerTableHeader}
-  Row={MachineAutoscalerTableRow}
-  virtualize />;
+  Row={MachineAutoscalerTableRow} />;
 
 const MachineAutoscalerDetails: React.FC<MachineAutoscalerDetailsProps> = ({obj}) => {
   return <React.Fragment>

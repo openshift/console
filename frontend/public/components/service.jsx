@@ -3,7 +3,7 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 
-import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
+import { DetailsPage, ListPage, VirtualTable, VirtualTableRow, VirtualTableData } from './factory';
 import { Kebab, navFactory, LabelList, ResourceKebab, SectionHeading, ResourceIcon, ResourceLink, ResourceSummary, Selector } from './utils';
 
 const menuActions = [Kebab.factory.ModifyPodSelector, ...Kebab.factory.common];
@@ -57,26 +57,26 @@ ServiceTableHeader.displayName = 'ServiceTableHeader';
 
 const ServiceTableRow = ({obj: s, index, key, style}) => {
   return (
-    <TableRow id={s.metadata.uid} index={index} trKey={key} style={style}>
-      <TableData className={tableColumnClasses[0]}>
+    <VirtualTableRow id={s.metadata.uid} index={index} trKey={key} style={style}>
+      <VirtualTableData className={tableColumnClasses[0]}>
         <ResourceLink kind={kind} name={s.metadata.name} namespace={s.metadata.namespace} title={s.metadata.uid} />
-      </TableData>
-      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+      </VirtualTableData>
+      <VirtualTableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
         <ResourceLink kind="Namespace" name={s.metadata.namespace} title={s.metadata.namespace} />
-      </TableData>
-      <TableData className={tableColumnClasses[2]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[2]}>
         <LabelList kind={kind} labels={s.metadata.labels} />
-      </TableData>
-      <TableData className={tableColumnClasses[3]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[3]}>
         <Selector selector={s.spec.selector} namespace={s.metadata.namespace} />
-      </TableData>
-      <TableData className={tableColumnClasses[4]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[4]}>
         <ServiceIP s={s} />
-      </TableData>
-      <TableData className={tableColumnClasses[5]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[5]}>
         <ResourceKebab actions={menuActions} kind={kind} resource={s} />
-      </TableData>
-    </TableRow>
+      </VirtualTableData>
+    </VirtualTableRow>
   );
 };
 ServiceTableRow.displayName = 'ServiceTableRow';
@@ -180,7 +180,7 @@ const ServicesDetailsPage = props => <DetailsPage
   pages={[details(Details), editYaml(), pods()]}
 />;
 
-const ServicesList = props => <Table {...props} aria-label="Services" Header={ServiceTableHeader} Row={ServiceTableRow} virtualize />;
+const ServicesList = props => <VirtualTable {...props} aria-label="Services" Header={ServiceTableHeader} Row={ServiceTableRow} />;
 const ServicesPage = props => <ListPage canCreate={true} ListComponent={ServicesList} {...props} />;
 
 export {ServicesList, ServicesPage, ServicesDetailsPage};

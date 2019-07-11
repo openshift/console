@@ -6,7 +6,7 @@ import { sortable } from '@patternfly/react-table';
 import { QuestionCircleIcon } from '@patternfly/react-icons';
 
 import { Status } from '@console/shared';
-import { DetailsPage,ListPage, Table, TableRow, TableData } from './factory';
+import { DetailsPage,ListPage, VirtualTable, VirtualTableRow, VirtualTableData } from './factory';
 import { Kebab, CopyToClipboard, SectionHeading, ResourceKebab, detailsPage, navFactory, ResourceLink, ResourceSummary, ExternalLink } from './utils';
 import { MaskedData } from './configmap-and-secret-data';
 import { K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
@@ -152,27 +152,27 @@ RouteTableHeader.displayName = 'RouteTableHeader';
 
 const RouteTableRow: React.FC<RouteTableRowProps> = ({obj: route, index, key, style}) => {
   return (
-    <TableRow id={route.metadata.uid} index={index} trKey={key} style={style}>
-      <TableData className={tableColumnClasses[0]}>
+    <VirtualTableRow id={route.metadata.uid} index={index} trKey={key} style={style}>
+      <VirtualTableData className={tableColumnClasses[0]}>
         <ResourceLink kind={kind} name={route.metadata.name}
           namespace={route.metadata.namespace} title={route.metadata.uid} />
-      </TableData>
-      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+      </VirtualTableData>
+      <VirtualTableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
         <ResourceLink kind="Namespace" name={route.metadata.namespace} title={route.metadata.namespace} />
-      </TableData>
-      <TableData className={classNames(tableColumnClasses[2], 'co-break-word')}>
+      </VirtualTableData>
+      <VirtualTableData className={classNames(tableColumnClasses[2], 'co-break-word')}>
         <RouteLocation obj={route} />
-      </TableData>
-      <TableData className={tableColumnClasses[3]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[3]}>
         <ResourceLink kind="Service" name={route.spec.to.name} namespace={route.metadata.namespace} title={route.spec.to.name} />
-      </TableData>
-      <TableData className={tableColumnClasses[4]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[4]}>
         <RouteStatus obj={route} />
-      </TableData>
-      <TableData className={tableColumnClasses[5]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[5]}>
         <ResourceKebab actions={menuActions} kind={kind} resource={route} />
-      </TableData>
-    </TableRow>
+      </VirtualTableData>
+    </VirtualTableRow>
   );
 };
 RouteTableRow.displayName = 'RouteTableRow';
@@ -386,7 +386,7 @@ export const RoutesDetailsPage: React.SFC<RoutesDetailsPageProps> = props => <De
   menuActions={menuActions}
   pages={[navFactory.details(detailsPage(RouteDetails)), navFactory.editYaml()]}
 />;
-export const RoutesList: React.SFC = props => <Table {...props} aria-label="Routes" Header={RouteTableHeader} Row={RouteTableRow} virtualize />;
+export const RoutesList: React.SFC = props => <VirtualTable {...props} aria-label="Routes" Header={RouteTableHeader} Row={RouteTableRow} />;
 
 const filters = [{
   type: 'route-status',

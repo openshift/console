@@ -7,7 +7,7 @@ import { sortable } from '@patternfly/react-table';
 import { Status } from '@console/shared';
 import { K8sResourceKindReference, referenceFor, K8sResourceKind, k8sPatch, K8sKind } from '../module/k8s';
 import { cloneBuild, formatBuildDuration, getBuildNumber } from '../module/k8s/builds';
-import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
+import { DetailsPage, ListPage, VirtualTable, VirtualTableRow, VirtualTableData } from './factory';
 import { errorModal, confirmModal } from './modals';
 import {
   AsyncComponent,
@@ -279,23 +279,23 @@ BuildsTableHeader.displayName = 'BuildsTableHeader';
 
 const BuildsTableRow: React.FC<BuildsTableRowProps> = ({obj, index, key, style}) => {
   return (
-    <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
-      <TableData className={tableColumnClasses[0]}>
+    <VirtualTableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+      <VirtualTableData className={tableColumnClasses[0]}>
         <ResourceLink kind={BuildsReference} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
-      </TableData>
-      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+      </VirtualTableData>
+      <VirtualTableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
-      </TableData>
-      <TableData className={tableColumnClasses[2]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[2]}>
         <Status status={obj.status.phase} />
-      </TableData>
-      <TableData className={tableColumnClasses[3]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[3]}>
         {fromNow(obj.metadata.creationTimestamp)}
-      </TableData>
-      <TableData className={tableColumnClasses[4]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[4]}>
         <ResourceKebab actions={menuActions} kind={BuildsReference} resource={obj} />
-      </TableData>
-    </TableRow>
+      </VirtualTableData>
+    </VirtualTableRow>
   );
 };
 BuildsTableRow.displayName = 'BuildsTableRow';
@@ -306,7 +306,7 @@ type BuildsTableRowProps = {
   style: object;
 };
 
-export const BuildsList: React.SFC = props => <Table {...props} aria-label="Builds" Header={BuildsTableHeader} Row={BuildsTableRow} virtualize />;
+export const BuildsList: React.SFC = props => <VirtualTable {...props} aria-label="Builds" Header={BuildsTableHeader} Row={BuildsTableRow} />;
 
 BuildsList.displayName = 'BuildsList';
 

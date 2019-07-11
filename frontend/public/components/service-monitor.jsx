@@ -2,7 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
-import { ListPage, Table, TableRow, TableData } from './factory';
+import { ListPage, VirtualTable, VirtualTableRow, VirtualTableData } from './factory';
 import { Kebab, ResourceKebab, ResourceLink, Selector } from './utils';
 import { ServiceMonitorModel } from '../models';
 import { referenceForModel } from '../module/k8s';
@@ -37,25 +37,25 @@ const tableColumnClasses = [
 const ServiceMonitorTableRow = ({obj: sm, index, key, style}) => {
   const {metadata} = sm;
   return (
-    <TableRow id={sm.metadata.uid} index={index} trKey={key} style={style}>
-      <TableData className={tableColumnClasses[0]}>
+    <VirtualTableRow id={sm.metadata.uid} index={index} trKey={key} style={style}>
+      <VirtualTableData className={tableColumnClasses[0]}>
         <ResourceLink kind={referenceForModel(ServiceMonitorModel)} name={metadata.name} namespace={metadata.namespace} title={metadata.uid} />
-      </TableData>
-      <TableData className={tableColumnClasses[1]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[1]}>
         <ResourceLink kind="Namespace" name={metadata.namespace} title={metadata.namespace} />
-      </TableData>
-      <TableData className={tableColumnClasses[2]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[2]}>
         { serviceSelectorLinks(sm) }
-      </TableData>
-      <TableData className={tableColumnClasses[3]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[3]}>
         <p>
           { namespaceSelectorLinks(sm) }
         </p>
-      </TableData>
-      <TableData className={tableColumnClasses[4]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[4]}>
         <ResourceKebab actions={menuActions} kind={referenceForModel(ServiceMonitorModel)} resource={sm} />
-      </TableData>
-    </TableRow>
+      </VirtualTableData>
+    </VirtualTableRow>
   );
 };
 ServiceMonitorTableRow.displayName = 'ServiceMonitorTableRow';
@@ -85,7 +85,7 @@ const ServiceMonitorTableHeader = () => {
 };
 ServiceMonitorTableHeader.displayName = 'ServiceMonitorTableHeader';
 
-export const ServiceMonitorsList = props => <Table {...props} aria-label="Service Monitors" Header={ServiceMonitorTableHeader} Row={ServiceMonitorTableRow} virtualize />;
+export const ServiceMonitorsList = props => <VirtualTable {...props} aria-label="Service Monitors" Header={ServiceMonitorTableHeader} Row={ServiceMonitorTableRow} />;
 
 export const ServiceMonitorsPage = props => <ListPage
   {...props}

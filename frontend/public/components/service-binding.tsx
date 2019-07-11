@@ -6,7 +6,7 @@ import * as classNames from 'classnames';
 import { Alert } from '@patternfly/react-core';
 
 import { serviceCatalogStatus, referenceForModel, K8sResourceKind } from '../module/k8s';
-import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
+import { DetailsPage, ListPage, VirtualTable, VirtualTableRow, VirtualTableData } from './factory';
 import { Kebab, SectionHeading, navFactory, ResourceKebab, ResourceLink, ResourceSummary, StatusWithIcon } from './utils';
 import { ResourceEventStream } from './events';
 import { Conditions } from './conditions';
@@ -110,26 +110,26 @@ ServiceBindingsTableHeader.displayName = 'ServiceBindingsTableHeader';
 
 const ServiceBindingsTableRow: React.FC<ServiceBindingsTableRowProps> = ({obj, index, key, style}) => {
   return (
-    <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
-      <TableData className={tableColumnClasses[0]}>
+    <VirtualTableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+      <VirtualTableData className={tableColumnClasses[0]}>
         <ResourceLink kind={referenceForModel(ServiceBindingModel)} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
-      </TableData>
-      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+      </VirtualTableData>
+      <VirtualTableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} title={obj.metadata.namespace} />
-      </TableData>
-      <TableData className={classNames(tableColumnClasses[2], 'co-break-word')}>
+      </VirtualTableData>
+      <VirtualTableData className={classNames(tableColumnClasses[2], 'co-break-word')}>
         <ResourceLink kind={referenceForModel(ServiceInstanceModel)} name={obj.spec.instanceRef.name} title={obj.spec.instanceRef.name} namespace={obj.metadata.namespace} />
-      </TableData>
-      <TableData className={classNames(tableColumnClasses[3], 'co-break-word')}>
+      </VirtualTableData>
+      <VirtualTableData className={classNames(tableColumnClasses[3], 'co-break-word')}>
         { secretLink(obj) }
-      </TableData>
-      <TableData className={classNames(tableColumnClasses[4], 'co-break-word')}>
+      </VirtualTableData>
+      <VirtualTableData className={classNames(tableColumnClasses[4], 'co-break-word')}>
         <StatusWithIcon obj={obj} />
-      </TableData>
-      <TableData className={tableColumnClasses[5]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[5]}>
         <ResourceKebab actions={menuActions} kind={referenceForModel(ServiceBindingModel)} resource={obj} />
-      </TableData>
-    </TableRow>
+      </VirtualTableData>
+    </VirtualTableRow>
   );
 };
 ServiceBindingsTableRow.displayName = 'ServiceBindingsTableRow';
@@ -141,7 +141,7 @@ type ServiceBindingsTableRowProps = {
 };
 
 
-const ServiceBindingsList: React.SFC = props => <Table {...props} aria-label="Service Bindings" Header={ServiceBindingsTableHeader} Row={ServiceBindingsTableRow} virtualize />;
+const ServiceBindingsList: React.SFC = props => <VirtualTable {...props} aria-label="Service Bindings" Header={ServiceBindingsTableHeader} Row={ServiceBindingsTableRow} />;
 ServiceBindingsList.displayName = 'ServiceBindingsList';
 
 export const ServiceBindingsPage: React.SFC<ServiceBindingsPageProps> = props =>

@@ -6,7 +6,7 @@ import { sortable } from '@patternfly/react-table';
 import { Status } from '@console/shared';
 import { getNodeRoles, nodeStatus, makeNodeSchedulable, K8sResourceKind, referenceForModel } from '../module/k8s';
 import { ResourceEventStream } from './events';
-import { Table, TableRow, TableData, DetailsPage, ListPage } from './factory';
+import { VirtualTable, VirtualTableRow, VirtualTableData, DetailsPage, ListPage } from './factory';
 import { configureUnschedulableModal } from './modals';
 import { PodsPage } from './pod';
 import { Kebab, navFactory, LabelList, ResourceKebab, SectionHeading, ResourceLink, Timestamp, units, cloudProviderNames, cloudProviderID, pluralize, humanizeDecimalBytes, humanizeCpuCores, useAccessReview, humanizeDecimalBytesPerSec } from './utils';
@@ -103,23 +103,23 @@ const NodeTableRow: React.FC<NodeTableRowProps> = ({obj: node, index, key, style
   const machine = getMachine(node);
   const roles = getNodeRoles(node).sort();
   return (
-    <TableRow id={node.metadata.uid} index={index} trKey={key} style={style}>
-      <TableData className={tableColumnClasses[0]}>
+    <VirtualTableRow id={node.metadata.uid} index={index} trKey={key} style={style}>
+      <VirtualTableData className={tableColumnClasses[0]}>
         <ResourceLink kind="Node" name={node.metadata.name} title={node.metadata.uid} />
-      </TableData>
-      <TableData className={tableColumnClasses[1]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[1]}>
         <NodeStatus node={node} />
-      </TableData>
-      <TableData className={tableColumnClasses[2]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[2]}>
         {roles.length ? roles.join(', ') : '-'}
-      </TableData>
-      <TableData className={tableColumnClasses[3]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[3]}>
         {machine && <ResourceLink kind={referenceForModel(MachineModel)} name={machine.name} namespace={machine.namespace} />}
-      </TableData>
-      <TableData className={tableColumnClasses[4]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[4]}>
         <NodeKebab node={node} />
-      </TableData>
-    </TableRow>
+      </VirtualTableData>
+    </VirtualTableRow>
   );
 };
 NodeTableRow.displayName = 'NodeTableRow';
@@ -130,7 +130,7 @@ type NodeTableRowProps = {
   style: object;
 };
 
-const NodesList = props => <Table {...props} aria-label="Nodes" Header={NodeTableHeader} Row={NodeTableRow} virtualize />;
+const NodesList = props => <VirtualTable {...props} aria-label="Nodes" Header={NodeTableHeader} Row={NodeTableRow} />;
 
 const filters = [{
   type: 'node-status',

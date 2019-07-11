@@ -3,7 +3,7 @@ import * as _ from 'lodash-es';
 import { Helmet } from 'react-helmet';
 import { Button } from 'patternfly-react';
 import { Link } from 'react-router-dom';
-
+import { Table } from '../factory';
 import { ClusterOperatorPage } from './cluster-operator';
 import { clusterChannelModal, clusterUpdateModal, errorModal } from '../modals';
 import { GlobalConfigPage } from './global-config';
@@ -146,6 +146,26 @@ const ClusterVersionDetailsTable: React.SFC<ClusterVersionDetailsTableProps> = (
   // Split image on `@` to emphasize the digest.
   const imageParts = desiredImage.split('@');
 
+  const HistoryHeader = () => {
+    return [
+      { title: 'Version' },
+      { title: 'State' },
+      { title: 'Started' },
+      { title: 'Completed' },
+    ];
+  };
+
+  const HistoryRows = ({componentProps}) => {
+    return _.map(componentProps.data, (update) => {
+      return [
+        { title: update.version || '-' },
+        { title: update.state || '-' },
+        { title: <Timestamp timestamp={update.startedTime} /> },
+        { title: update.completionTime ? <Timestamp timestamp={update.completionTime} /> : '-' },
+      ];
+    });
+  };
+
   return <React.Fragment>
     <div className="co-m-pane__body">
       <div className="co-m-pane__body-group">
@@ -205,24 +225,12 @@ const ClusterVersionDetailsTable: React.SFC<ClusterVersionDetailsTableProps> = (
       {_.isEmpty(history)
         ? <EmptyBox label="History" />
         : <div className="co-table-container">
-          <table className="table">
-            <thead>
-              <tr>
-                <th>Version</th>
-                <th>State</th>
-                <th>Started</th>
-                <th>Completed</th>
-              </tr>
-            </thead>
-            <tbody>
-              {_.map(history, (update, i) => <tr key={i}>
-                <td className="co-break-all co-select-to-copy">{update.version || '-'}</td>
-                <td>{update.state || '-'}</td>
-                <td><Timestamp timestamp={update.startedTime} /></td>
-                <td>{update.completionTime ? <Timestamp timestamp={update.completionTime} /> : '-'}</td>
-              </tr>)}
-            </tbody>
-          </table>
+          <Table
+            aria-label="Update History"
+            data={history}
+            Header={HistoryHeader}
+            Rows={HistoryRows}
+            loaded={true} />
         </div>
       }
     </div>

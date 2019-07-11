@@ -4,7 +4,7 @@ import { safeDump } from 'js-yaml';
 import { Base64 } from 'js-base64';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
-import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
+import { DetailsPage, ListPage, VirtualTable, VirtualTableRow, VirtualTableData } from './factory';
 import { Kebab, SectionHeading, navFactory, ResourceKebab, ResourceLink, ResourceSummary } from './utils';
 import { fromNow } from './utils/datetime';
 import { k8sList } from '../module/k8s';
@@ -117,23 +117,23 @@ ServiceAccountTableHeader.displayName = 'ServiceAccountTableHeader';
 const ServiceAccountTableRow = ({obj: serviceaccount, index, key, style}) => {
   const {metadata: {name, namespace, uid, creationTimestamp}, secrets} = serviceaccount;
   return (
-    <TableRow id={serviceaccount.metadata.uid} index={index} trKey={key} style={style}>
-      <TableData className={tableColumnClasses[0]}>
+    <VirtualTableRow id={serviceaccount.metadata.uid} index={index} trKey={key} style={style}>
+      <VirtualTableData className={tableColumnClasses[0]}>
         <ResourceLink kind={kind} name={name} namespace={namespace} title={uid} />
-      </TableData>
-      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+      </VirtualTableData>
+      <VirtualTableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
         <ResourceLink kind="Namespace" name={namespace} title={namespace} /> {}
-      </TableData>
-      <TableData className={tableColumnClasses[2]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[2]}>
         {secrets ? secrets.length : 0}
-      </TableData>
-      <TableData className={tableColumnClasses[3]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[3]}>
         {fromNow(creationTimestamp)}
-      </TableData>
-      <TableData className={tableColumnClasses[4]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[4]}>
         <ResourceKebab actions={menuActions} kind={kind} resource={serviceaccount} />
-      </TableData>
-    </TableRow>
+      </VirtualTableData>
+    </VirtualTableRow>
   );
 };
 ServiceAccountTableRow.displayName = 'ServiceAccountTableRow';
@@ -161,6 +161,6 @@ const ServiceAccountsDetailsPage = props => <DetailsPage
   menuActions={menuActions}
   pages={[navFactory.details(Details), navFactory.editYaml()]}
 />;
-const ServiceAccountsList = props => <Table {...props} aria-label="Service Accounts" Header={ServiceAccountTableHeader} Row={ServiceAccountTableRow} virtualize />;
+const ServiceAccountsList = props => <VirtualTable {...props} aria-label="Service Accounts" Header={ServiceAccountTableHeader} Row={ServiceAccountTableRow} />;
 const ServiceAccountsPage = props => <ListPage ListComponent={ServiceAccountsList} {...props} canCreate={true} />;
 export {ServiceAccountsList, ServiceAccountsPage, ServiceAccountsDetailsPage};

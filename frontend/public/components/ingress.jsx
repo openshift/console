@@ -2,7 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
-import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
+import { DetailsPage, ListPage, VirtualTable, VirtualTableRow, VirtualTableData } from './factory';
 import { Kebab, SectionHeading, LabelList, ResourceKebab, ResourceIcon, detailsPage, EmptyBox, navFactory, ResourceLink, ResourceSummary } from './utils';
 
 const menuActions = Kebab.factory.common;
@@ -70,24 +70,24 @@ IngressTableHeader.displayName = 'IngressTableHeader';
 
 const IngressTableRow = ({obj: ingress, index, key, style}) => {
   return (
-    <TableRow id={ingress.metadata.uid} index={index} trKey={key} style={style}>
-      <TableData className={tableColumnClasses[0]}>
+    <VirtualTableRow id={ingress.metadata.uid} index={index} trKey={key} style={style}>
+      <VirtualTableData className={tableColumnClasses[0]}>
         <ResourceLink kind={kind} name={ingress.metadata.name}
           namespace={ingress.metadata.namespace} title={ingress.metadata.uid} />
-      </TableData>
-      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+      </VirtualTableData>
+      <VirtualTableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
         <ResourceLink kind="Namespace" name={ingress.metadata.namespace} title={ingress.metadata.namespace} />
-      </TableData>
-      <TableData className={tableColumnClasses[2]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[2]}>
         <LabelList kind={kind} labels={ingress.metadata.labels} />
-      </TableData>
-      <TableData className={tableColumnClasses[3]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[3]}>
         {getHosts(ingress)}
-      </TableData>
-      <TableData className={tableColumnClasses[4]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[4]}>
         <ResourceKebab actions={menuActions} kind={kind} resource={ingress} />
-      </TableData>
-    </TableRow>
+      </VirtualTableData>
+    </VirtualTableRow>
   );
 };
 IngressTableRow.displayName = 'IngressTableRow';
@@ -175,7 +175,7 @@ const IngressesDetailsPage = props => <DetailsPage
   menuActions={menuActions}
   pages={[navFactory.details(detailsPage(Details)), navFactory.editYaml()]}
 />;
-const IngressesList = props => <Table {...props} aria-label="Ingresses" Header={IngressTableHeader} Row={IngressTableRow} virtualize />;
+const IngressesList = props => <VirtualTable {...props} aria-label="Ingresses" Header={IngressTableHeader} Row={IngressTableRow} />;
 
 const IngressesPage = props => <ListPage ListComponent={IngressesList} canCreate={true} {...props} />;
 

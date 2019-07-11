@@ -8,7 +8,7 @@ import { MachineAutoscalerModel, MachineModel, MachineSetModel } from '../models
 import { K8sKind, MachineDeploymentKind, MachineSetKind, referenceForModel } from '../module/k8s';
 import { MachinePage } from './machine';
 import { configureMachineAutoscalerModal, configureReplicaCountModal } from './modals';
-import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
+import { DetailsPage, ListPage, VirtualTable, VirtualTableRow, VirtualTableData } from './factory';
 import {
   Kebab,
   KebabAction,
@@ -100,22 +100,22 @@ MachineSetTableHeader.displayName = 'MachineSetTableHeader';
 
 const MachineSetTableRow: React.FC<MachineSetTableRowProps> = ({obj, index, key, style}) => {
   return (
-    <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
-      <TableData className={tableColumnClasses[0]}>
+    <VirtualTableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+      <VirtualTableData className={tableColumnClasses[0]}>
         <ResourceLink kind={machineSetReference} name={obj.metadata.name} namespace={obj.metadata.namespace} />
-      </TableData>
-      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+      </VirtualTableData>
+      <VirtualTableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
-      </TableData>
-      <TableData className={tableColumnClasses[2]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[2]}>
         <Link to={`${resourcePath(machineSetReference, obj.metadata.name, obj.metadata.namespace)}/machines`}>
           {getReadyReplicas(obj)} of {getDesiredReplicas(obj)} machines
         </Link>
-      </TableData>
-      <TableData className={tableColumnClasses[3]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[3]}>
         <ResourceKebab actions={menuActions} kind={machineSetReference} resource={obj} />
-      </TableData>
-    </TableRow>
+      </VirtualTableData>
+    </VirtualTableRow>
   );
 };
 MachineSetTableRow.displayName = 'MachineSetTableRow';
@@ -230,7 +230,7 @@ const MachineSetDetails: React.SFC<MachineSetDetailsProps> = ({obj}) => {
   </React.Fragment>;
 };
 
-export const MachineSetList: React.SFC = props => <Table {...props} aria-label="Machine Sets" Header={MachineSetTableHeader} Row={MachineSetTableRow} virtualize />;
+export const MachineSetList: React.SFC = props => <VirtualTable {...props} aria-label="Machine Sets" Header={MachineSetTableHeader} Row={MachineSetTableRow} />;
 
 export const MachineSetPage: React.SFC<MachineSetPageProps> = props =>
   <ListPage

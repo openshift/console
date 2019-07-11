@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
-import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
+import { DetailsPage, ListPage, VirtualTable, VirtualTableRow, VirtualTableData } from './factory';
 import { SectionHeading, detailsPage, navFactory, ResourceLink, ResourceSummary } from './utils';
 import { K8sResourceKind, referenceForModel, servicePlanDisplayName } from '../module/k8s';
 import { ClusterServicePlanModel, ClusterServiceBrokerModel, ClusterServiceClassModel } from '../models';
@@ -33,17 +33,17 @@ ClusterServicePlanTableHeader.displayName = 'ClusterServicePlanTableHeader';
 
 const ClusterServicePlanTableRow: React.FC<ClusterServicePlanTableRowProps> = ({obj: servicePlan, index, key, style}) => {
   return (
-    <TableRow id={servicePlan.metadata.uid} index={index} trKey={key} style={style}>
-      <TableData className={tableColumnClasses[0]}>
+    <VirtualTableRow id={servicePlan.metadata.uid} index={index} trKey={key} style={style}>
+      <VirtualTableData className={tableColumnClasses[0]}>
         <ResourceLink kind={referenceForModel(ClusterServicePlanModel)} name={servicePlan.metadata.name} displayName={servicePlan.spec.externalName} />
-      </TableData>
-      <TableData className={tableColumnClasses[1]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[1]}>
         {servicePlan.spec.externalName}
-      </TableData>
-      <TableData className={classNames(tableColumnClasses[2], 'co-break-word')}>
+      </VirtualTableData>
+      <VirtualTableData className={classNames(tableColumnClasses[2], 'co-break-word')}>
         <ResourceLink kind={referenceForModel(ClusterServiceBrokerModel)} name={servicePlan.spec.clusterServiceBrokerName} title={servicePlan.spec.clusterServiceBrokerName} />
-      </TableData>
-    </TableRow>
+      </VirtualTableData>
+    </VirtualTableRow>
   );
 };
 ClusterServicePlanTableRow.displayName = 'ClusterServicePlanTableRow';
@@ -89,7 +89,7 @@ export const ClusterServicePlanDetailsPage: React.SFC<ClusterServicePlanDetailsP
   ]}
 />;
 
-export const ClusterServicePlanList: React.SFC = props => <Table {...props} aria-label="Cluster Service Plans" Header={ClusterServicePlanTableHeader} Row={ClusterServicePlanTableRow} virtualize />;
+export const ClusterServicePlanList: React.SFC = props => <VirtualTable {...props} aria-label="Cluster Service Plans" Header={ClusterServicePlanTableHeader} Row={ClusterServicePlanTableRow} />;
 
 export const ClusterServicePlanPage: React.SFC<ClusterServicePlanPageProps> = props =>
   <ListPage

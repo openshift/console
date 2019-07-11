@@ -1,43 +1,51 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-
+import { Table } from './factory';
 import { Timestamp } from './utils';
 import { CamelCaseWrap } from './utils/camel-case-wrap';
 
 export const Conditions: React.SFC<ConditionsProps> = ({conditions}) => {
-  const rows = _.map(conditions, (condition, i) => <div className="row" key={i}>
-    <div className="col-xs-4 col-sm-2 col-md-2">
-      <CamelCaseWrap value={condition.type} />
-    </div>
-    <div className="col-xs-4 col-sm-2 col-md-2">
-      {condition.status}
-    </div>
-    <div className="hidden-xs hidden-sm col-md-2">
-      <Timestamp timestamp={condition.lastUpdateTime || condition.lastTransitionTime} />
-    </div>
-    <div className="col-xs-4 col-sm-3 col-md-2">
-      <CamelCaseWrap value={condition.reason} />
-    </div>
-    {/* remove initial newline which appears in route messages */}
-    <div className="hidden-xs col-sm-5 col-md-4 co-break-word co-pre-line">
-      {_.trim(condition.message) || '-'}
-    </div>
-  </div>);
+  const ConditionsTableHeader = () => {
+    return [
+      {
+        title: 'Type',
+      },
+      {
+        title: 'Status',
+      },
+      {
+        title: 'Updated',
+      },
+      {
+        title: 'Reason',
+      },
+      {
+        title: 'Message',
+      },
+    ];
+  };
+
+  const ConditionsTableRows = ({componentProps}) => {
+    return _.map(componentProps.data, (condition) => {
+      return [
+        { title: <CamelCaseWrap value={condition.type} /> },
+        { title: condition.status },
+        { title: <Timestamp timestamp={condition.lastUpdateTime || condition.lastTransitionTime} /> },
+        { title: <CamelCaseWrap value={condition.reason} /> },
+        /* remove initial newline which appears in route messages */
+        { title: _.trim(condition.message) || '-', props: { className: 'co-pre-line' } },
+      ];
+    });
+  };
 
   return <React.Fragment>
     {conditions
-      ? <div className="co-m-table-grid co-m-table-grid--bordered">
-        <div className="row co-m-table-grid__head">
-          <div className="col-xs-4 col-sm-2 col-md-2">Type</div>
-          <div className="col-xs-4 col-sm-2 col-md-2">Status</div>
-          <div className="hidden-xs hidden-sm col-md-2">Updated</div>
-          <div className="col-xs-4 col-sm-3 col-md-2">Reason</div>
-          <div className="hidden-xs col-sm-5 col-md-4">Message</div>
-        </div>
-        <div className="co-m-table-grid__body">
-          {rows}
-        </div>
-      </div>
+      ? <Table
+        aria-label="Conditions"
+        data={conditions}
+        Header={ConditionsTableHeader}
+        Rows={ConditionsTableRows}
+        loaded={true} />
       : <div className="cos-status-box">
         <div className="text-center">No Conditions Found</div>
       </div>}

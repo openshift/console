@@ -4,7 +4,7 @@ import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import { K8sResourceKind, K8sResourceKindReference, referenceFor } from '../module/k8s';
 import { startBuild } from '../module/k8s/builds';
-import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
+import { DetailsPage, ListPage, VirtualTable, VirtualTableRow, VirtualTableData } from './factory';
 import { errorModal } from './modals';
 import {
   BuildHooks,
@@ -119,23 +119,23 @@ BuildConfigsTableHeader.displayName = 'BuildConfigsTableHeader';
 
 const BuildConfigsTableRow: React.FC<BuildConfigsTableRowProps> = ({obj, index, key, style}) => {
   return (
-    <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
-      <TableData className={tableColumnClasses[0]}>
+    <VirtualTableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+      <VirtualTableData className={tableColumnClasses[0]}>
         <ResourceLink kind={BuildConfigsReference} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
-      </TableData>
-      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+      </VirtualTableData>
+      <VirtualTableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
-      </TableData>
-      <TableData className={tableColumnClasses[2]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[2]}>
         <LabelList kind={BuildConfigsReference} labels={obj.metadata.labels} />
-      </TableData>
-      <TableData className={tableColumnClasses[3]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[3]}>
         { fromNow(obj.metadata.creationTimestamp) }
-      </TableData>
-      <TableData className={tableColumnClasses[4]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[4]}>
         <ResourceKebab actions={menuActions} kind={BuildConfigsReference} resource={obj} />
-      </TableData>
-    </TableRow>
+      </VirtualTableData>
+    </VirtualTableRow>
   );
 };
 BuildConfigsTableRow.displayName = 'BuildConfigsTableRow';
@@ -159,7 +159,7 @@ const filters = [{
   })),
 }];
 
-export const BuildConfigsList: React.SFC = props => <Table {...props} aria-label="Build Configs" Header={BuildConfigsTableHeader} Row={BuildConfigsTableRow} virtualize />;
+export const BuildConfigsList: React.SFC = props => <VirtualTable {...props} aria-label="Build Configs" Header={BuildConfigsTableHeader} Row={BuildConfigsTableRow} />;
 
 BuildConfigsList.displayName = 'BuildConfigsList';
 

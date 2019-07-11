@@ -374,7 +374,7 @@ kbd {
   }
 }
 
-.pf-c-table tbody > tr > :first-child::before {
+.pf-c-table.pf-c-virtualized tbody > tr > :first-child::before {
   content: none;
   width: 0 !important;
 }
@@ -434,6 +434,7 @@ kbd {
     border-bottom: 1px solid $table-border-color;
   }
 }
+
 
 .text-secondary {
   color: $color-text-secondary;

@@ -8,7 +8,7 @@ import { sortable } from '@patternfly/react-table';
 import { ClusterRoleBindingModel } from '../../models';
 import { getQN, k8sCreate, k8sPatch, referenceFor } from '../../module/k8s';
 import * as UIActions from '../../actions/ui';
-import { MultiListPage, Table, TableRow, TableData } from '../factory';
+import { MultiListPage, VirtualTable, VirtualTableRow, VirtualTableData } from '../factory';
 import { RadioGroup } from '../radio';
 import { confirmModal } from '../modals';
 import {
@@ -164,33 +164,33 @@ export const RoleLink = ({binding}) => {
 
 const RoleBindingsTableRow = ({obj: binding, index, key, style}) => {
   return (
-    <TableRow id={binding.metadata.uid} index={index} trKey={key} style={style}>
-      <TableData className={tableColumnClasses[0]}>
+    <VirtualTableRow id={binding.metadata.uid} index={index} trKey={key} style={style}>
+      <VirtualTableData className={tableColumnClasses[0]}>
         <ResourceLink kind={bindingKind(binding)} name={binding.metadata.name} namespace={binding.metadata.namespace} className="co-resource-item__resource-name" />
-      </TableData>
-      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+      </VirtualTableData>
+      <VirtualTableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
         <RoleLink binding={binding} />
-      </TableData>
-      <TableData className={classNames(tableColumnClasses[2], 'co-break-word')}>
+      </VirtualTableData>
+      <VirtualTableData className={classNames(tableColumnClasses[2], 'co-break-word')}>
         {binding.subject.kind}
-      </TableData>
-      <TableData className={classNames(tableColumnClasses[3], 'co-break-word')}>
+      </VirtualTableData>
+      <VirtualTableData className={classNames(tableColumnClasses[3], 'co-break-word')}>
         {binding.subject.name}
-      </TableData>
-      <TableData className={classNames(tableColumnClasses[4], 'co-break-word')}>
+      </VirtualTableData>
+      <VirtualTableData className={classNames(tableColumnClasses[4], 'co-break-word')}>
         {binding.metadata.namespace ? <ResourceLink kind="Namespace" name={binding.metadata.namespace} /> : 'all'}
-      </TableData>
-      <TableData className={tableColumnClasses[5]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[5]}>
         <BindingKebab binding={binding} />
-      </TableData>
-    </TableRow>
+      </VirtualTableData>
+    </VirtualTableRow>
   );
 };
 RoleBindingsTableRow.displayName = 'RoleBindingsTableRow';
 
 const EmptyMsg = () => <MsgBox title="No Role Bindings Found" detail="Roles grant access to types of objects in the cluster. Roles are applied to a group or user via a Role Binding." />;
 
-export const BindingsList = props => <Table {...props} aria-label="Role Bindings" EmptyMsg={EmptyMsg} Header={RoleBindingsTableHeader} Row={RoleBindingsTableRow} virtualize />;
+export const BindingsList = props => <VirtualTable {...props} aria-label="Role Bindings" EmptyMsg={EmptyMsg} Header={RoleBindingsTableHeader} Row={RoleBindingsTableRow} />;
 
 export const bindingType = binding => {
   if (!binding) {

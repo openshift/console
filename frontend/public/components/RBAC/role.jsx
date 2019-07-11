@@ -7,7 +7,7 @@ import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import { flatten as bindingsFlatten } from './bindings';
 import { BindingName, BindingsList, RulesList } from './index';
-import { DetailsPage, MultiListPage, TextFilter, Table, TableRow, TableData } from '../factory';
+import { DetailsPage, MultiListPage, TextFilter, VirtualTable, VirtualTableRow, VirtualTableData } from '../factory';
 import { Kebab, SectionHeading, MsgBox, navFactory, ResourceKebab, ResourceLink, Timestamp } from '../utils';
 
 export const isSystemRole = role => _.startsWith(role.metadata.name, 'system:');
@@ -54,17 +54,17 @@ RolesTableHeader.displayName = 'RolesTableHeader';
 
 const RolesTableRow = ({obj: role, index, key, style}) => {
   return (
-    <TableRow id={role.metadata.uid} index={index} trKey={key} style={style}>
-      <TableData className={roleColumnClasses[0]}>
+    <VirtualTableRow id={role.metadata.uid} index={index} trKey={key} style={style}>
+      <VirtualTableData className={roleColumnClasses[0]}>
         <ResourceLink kind={roleKind(role)} name={role.metadata.name} namespace={role.metadata.namespace} />
-      </TableData>
-      <TableData className={classNames(roleColumnClasses[1], 'co-break-word')}>
+      </VirtualTableData>
+      <VirtualTableData className={classNames(roleColumnClasses[1], 'co-break-word')}>
         {role.metadata.namespace ? <ResourceLink kind="Namespace" name={role.metadata.namespace} /> : 'all'}
-      </TableData>
-      <TableData className={roleColumnClasses[2]}>
+      </VirtualTableData>
+      <VirtualTableData className={roleColumnClasses[2]}>
         <ResourceKebab actions={menuActions} kind={roleKind(role)} resource={role} />
-      </TableData>
-    </TableRow>
+      </VirtualTableData>
+    </VirtualTableRow>
   );
 };
 RolesTableRow.displayName = 'RolesTableRow';
@@ -160,20 +160,20 @@ BindingsTableHeader.displayName = 'BindingsTableHeader';
 
 const BindingsTableRow = ({obj: binding, index, key, style}) => {
   return (
-    <TableRow id={binding.metadata.uid} index={index} trKey={key} style={style}>
-      <TableData className={bindingsColumnClasses[0]}>
+    <VirtualTableRow id={binding.metadata.uid} index={index} trKey={key} style={style}>
+      <VirtualTableData className={bindingsColumnClasses[0]}>
         <BindingName binding={binding} />
-      </TableData>
-      <TableData className={bindingsColumnClasses[1]}>
+      </VirtualTableData>
+      <VirtualTableData className={bindingsColumnClasses[1]}>
         {binding.subject.kind}
-      </TableData>
-      <TableData className={bindingsColumnClasses[2]}>
+      </VirtualTableData>
+      <VirtualTableData className={bindingsColumnClasses[2]}>
         {binding.subject.name}
-      </TableData>
-      <TableData className={bindingsColumnClasses[3]}>
+      </VirtualTableData>
+      <VirtualTableData className={bindingsColumnClasses[3]}>
         {binding.namespace || 'all'}
-      </TableData>
-    </TableRow>
+      </VirtualTableData>
+    </VirtualTableRow>
   );
 };
 BindingsTableRow.displayName = 'BindingsTableRow';
@@ -208,7 +208,7 @@ export const ClusterRolesDetailsPage = RolesDetailsPage;
 
 const EmptyMsg = () => <MsgBox title="No Roles Found" detail="Roles grant access to types of objects in the cluster. Roles are applied to a team or user via a Role Binding." />;
 
-const RolesList = props => <Table {...props} aria-label="Roles" EmptyMsg={EmptyMsg} Header={RolesTableHeader} Row={RolesTableRow} virtualize />;
+const RolesList = props => <VirtualTable {...props} aria-label="Roles" EmptyMsg={EmptyMsg} Header={RolesTableHeader} Row={RolesTableRow} />;
 
 export const roleType = role => {
   if (!role) {

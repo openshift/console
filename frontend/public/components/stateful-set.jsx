@@ -4,7 +4,7 @@ import { ResourceEventStream } from './events';
 import {
   DetailsPage,
   ListPage,
-  Table,
+  VirtualTable,
 } from './factory';
 
 import {
@@ -64,7 +64,7 @@ const environmentComponent = (props) => <EnvironmentPage
   readOnly={false}
 />;
 
-export const StatefulSetsList = props => <Table {...props} aria-label="Stateful Sets" Header={StatefulSetTableHeader} Row={StatefulSetTableRow} virtualize />;
+export const StatefulSetsList = props => <VirtualTable {...props} aria-label="Stateful Sets" Header={StatefulSetTableHeader} Row={StatefulSetTableRow} />;
 export const StatefulSetsPage = props => <ListPage {...props} ListComponent={StatefulSetsList} kind={kind} canCreate={true} />;
 
 const pages = [

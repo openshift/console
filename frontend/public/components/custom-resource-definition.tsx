@@ -3,7 +3,7 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 
-import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
+import { DetailsPage, ListPage, VirtualTable, VirtualTableRow, VirtualTableData } from './factory';
 import { AsyncComponent, Kebab, navFactory, ResourceKebab, ResourceLink, ResourceSummary, SectionHeading } from './utils';
 import { K8sResourceKind, referenceForCRD, CustomResourceDefinitionKind } from '../module/k8s';
 import { resourceListPages } from './resource-pages';
@@ -68,32 +68,32 @@ const namespaced = crd => crd.spec.scope === 'Namespaced';
 
 const CRDTableRow: React.FC<CRDTableRowProps> = ({obj: crd, index, key, style}) => {
   return (
-    <TableRow id={crd.metadata.uid} index={index} trKey={key} style={style}>
-      <TableData className={tableColumnClasses[0]}>
+    <VirtualTableRow id={crd.metadata.uid} index={index} trKey={key} style={style}>
+      <VirtualTableData className={tableColumnClasses[0]}>
         <span className="co-resource-item">
           <ResourceLink kind="CustomResourceDefinition" name={crd.metadata.name} namespace={crd.metadata.namespace} displayName={_.get(crd, 'spec.names.kind')} />
         </span>
-      </TableData>
-      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+      </VirtualTableData>
+      <VirtualTableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
         { crd.spec.group }
-      </TableData>
-      <TableData className={tableColumnClasses[2]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[2]}>
         { crd.spec.version }
-      </TableData>
-      <TableData className={tableColumnClasses[3]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[3]}>
         { namespaced(crd) ? 'Yes' : 'No' }
-      </TableData>
-      <TableData className={tableColumnClasses[4]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[4]}>
         {
           isEstablished(crd.status.conditions)
             ? <span><i className="pficon pficon-ok" aria-hidden="true"></i></span>
             : <span><i className="fa fa-ban" aria-hidden="true"></i></span>
         }
-      </TableData>
-      <TableData className={tableColumnClasses[5]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[5]}>
         <ResourceKebab actions={menuActions} kind="CustomResourceDefinition" resource={crd} />
-      </TableData>
-    </TableRow>
+      </VirtualTableData>
+    </VirtualTableRow>
   );
 };
 CRDTableRow.displayName = 'CRDTableRow';
@@ -117,7 +117,7 @@ const Instances: React.FC<InstancesProps> = ({obj, namespace}) => {
   return <AsyncComponent loader={componentLoader} namespace={namespace ? namespace : undefined} kind={crdKind} showTitle={false} autoFocus={false} />;
 };
 
-export const CustomResourceDefinitionsList: React.FC<CustomResourceDefinitionsListProps> = props => <Table {...props} aria-label="Custom Resource Definitions" Header={CRDTableHeader} Row={CRDTableRow} defaultSortField="spec.names.kind" virtualize />;
+export const CustomResourceDefinitionsList: React.FC<CustomResourceDefinitionsListProps> = props => <VirtualTable {...props} aria-label="Custom Resource Definitions" Header={CRDTableHeader} Row={CRDTableRow} defaultSortField="spec.names.kind" />;
 
 export const CustomResourceDefinitionsPage: React.FC<CustomResourceDefinitionsPageProps> = props => <ListPage {...props} ListComponent={CustomResourceDefinitionsList} kind="CustomResourceDefinition" canCreate={true} />;
 export const CustomResourceDefinitionsDetailsPage = props => <DetailsPage {...props} menuActions={menuActions} pages={[navFactory.details(Details), navFactory.editYaml(), {name: 'Instances', href: 'instances', component: Instances}]} />;

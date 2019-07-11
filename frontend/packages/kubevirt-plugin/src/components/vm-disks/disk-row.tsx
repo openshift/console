@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { TableData, TableRow } from '@console/internal/components/factory';
+import { VirtualTableData, VirtualTableRow } from '@console/internal/components/factory';
 import {
   asAccessReview,
   Kebab,
@@ -49,19 +49,19 @@ export const DiskRow: React.FC<VMDiskRowProps> = ({
   const storageColumn = storageClass === undefined ? <LoadingInline /> : storageClass;
 
   return (
-    <TableRow id={diskName} index={index} trKey={diskName} style={style}>
-      <TableData>{diskName}</TableData>
-      <TableData>{sizeColumn || DASH}</TableData>
-      <TableData>{getDiskBus(disk, BUS_VIRTIO)}</TableData>
-      <TableData>{storageColumn || DASH}</TableData>
-      <TableData className={Kebab.columnClass}>
+    <VirtualTableRow id={diskName} index={index} trKey={diskName} style={style}>
+      <VirtualTableData>{diskName}</VirtualTableData>
+      <VirtualTableData>{sizeColumn || DASH}</VirtualTableData>
+      <VirtualTableData>{getDiskBus(disk, BUS_VIRTIO)}</VirtualTableData>
+      <VirtualTableData>{storageColumn || DASH}</VirtualTableData>
+      <VirtualTableData className={Kebab.columnClass}>
         <Kebab
           options={getActions(vmLikeEntity, disk)}
           key={`kebab-for--${diskName}`}
           isDisabled={getDeletetionTimestamp(vmLikeEntity)}
           id={`kebab-for-${diskName}`}
         />
-      </TableData>
-    </TableRow>
+      </VirtualTableData>
+    </VirtualTableRow>
   );
 };

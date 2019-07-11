@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
-import { ListPage, Table, TableRow, TableData } from './factory';
+import { ListPage, VirtualTable, VirtualTableRow, VirtualTableData } from './factory';
 import { Kebab, LabelList, ResourceKebab, ResourceLink, Selector } from './utils';
 import { PrometheusModel } from '../models';
 import { referenceForModel } from '../module/k8s';
@@ -21,26 +21,26 @@ const tableColumnClasses = [
 const PrometheusTableRow = ({obj: instance, index, key, style}) => {
   const {metadata, spec} = instance;
   return (
-    <TableRow id={instance.metadata.uid} index={index} trKey={key} style={style}>
-      <TableData className={tableColumnClasses[0]}>
+    <VirtualTableRow id={instance.metadata.uid} index={index} trKey={key} style={style}>
+      <VirtualTableData className={tableColumnClasses[0]}>
         <ResourceLink kind={referenceForModel(PrometheusModel)} name={metadata.name} namespace={metadata.namespace} title={metadata.uid} />
-      </TableData>
-      <TableData className={tableColumnClasses[1]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[1]}>
         <ResourceLink kind="Namespace" name={metadata.namespace} title={metadata.namespace} />
-      </TableData>
-      <TableData className={tableColumnClasses[2]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[2]}>
         <LabelList kind={PrometheusModel.kind} labels={metadata.labels} />
-      </TableData>
-      <TableData className={tableColumnClasses[3]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[3]}>
         {spec.version}
-      </TableData>
-      <TableData className={tableColumnClasses[4]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[4]}>
         <Selector selector={spec.serviceMonitorSelector} kind="ServiceMonitor" namespace={metadata.namespace} />
-      </TableData>
-      <TableData className={tableColumnClasses[5]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[5]}>
         <ResourceKebab actions={menuActions} kind={referenceForModel(PrometheusModel)} resource={instance} />
-      </TableData>
-    </TableRow>
+      </VirtualTableData>
+    </VirtualTableRow>
   );
 };
 PrometheusTableRow.displayName = 'PrometheusTableRow';
@@ -74,6 +74,6 @@ const PrometheusTableHeader = () => {
 };
 PrometheusTableHeader.displayName = 'PrometheusTableHeader';
 
-export const PrometheusInstancesList = props => <Table {...props} aria-label="Promethesuses" Header={PrometheusTableHeader} Row={PrometheusTableRow} virtualize />;
+export const PrometheusInstancesList = props => <VirtualTable {...props} aria-label="Promethesuses" Header={PrometheusTableHeader} Row={PrometheusTableRow} />;
 
 export const PrometheusInstancesPage = props => <ListPage {...props} ListComponent={PrometheusInstancesList} canCreate={true} kind={referenceForModel(PrometheusModel)} />;

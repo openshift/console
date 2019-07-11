@@ -5,9 +5,9 @@ import { sortable } from '@patternfly/react-table';
 import {
   DetailsPage,
   ListPage,
-  Table,
-  TableRow,
-  TableData,
+  VirtualTable,
+  VirtualTableRow,
+  VirtualTableData,
 } from './factory';
 import {
   AsyncComponent,
@@ -69,28 +69,28 @@ DaemonSetTableHeader.displayName = 'DaemonSetTableHeader';
 
 const DaemonSetTableRow = ({obj: daemonset, index, key, style}) => {
   return (
-    <TableRow id={daemonset.metadata.uid} index={index} trKey={key} style={style}>
-      <TableData className={tableColumnClasses[0]}>
+    <VirtualTableRow id={daemonset.metadata.uid} index={index} trKey={key} style={style}>
+      <VirtualTableData className={tableColumnClasses[0]}>
         <ResourceLink kind={kind} name={daemonset.metadata.name} namespace={daemonset.metadata.namespace} title={daemonset.metadata.uid} />
-      </TableData>
-      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+      </VirtualTableData>
+      <VirtualTableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
         <ResourceLink kind="Namespace" name={daemonset.metadata.namespace} title={daemonset.metadata.namespace} />
-      </TableData>
-      <TableData className={tableColumnClasses[2]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[2]}>
         <LabelList kind={kind} labels={daemonset.metadata.labels} />
-      </TableData>
-      <TableData className={tableColumnClasses[3]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[3]}>
         <Link to={`/k8s/ns/${daemonset.metadata.namespace}/daemonsets/${daemonset.metadata.name}/pods`} title="pods">
           {daemonset.status.currentNumberScheduled} of {daemonset.status.desiredNumberScheduled} pods
         </Link>
-      </TableData>
-      <TableData className={tableColumnClasses[4]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[4]}>
         <Selector selector={daemonset.spec.selector} namespace={daemonset .metadata.namespace} />
-      </TableData>
-      <TableData className={tableColumnClasses[5]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[5]}>
         <ResourceKebab actions={menuActions} kind={kind} resource={daemonset} />
-      </TableData>
-    </TableRow>
+      </VirtualTableData>
+    </VirtualTableRow>
   );
 };
 DaemonSetTableRow.displayName = 'DaemonSetTableRow';
@@ -134,7 +134,7 @@ const environmentComponent = (props) => <EnvironmentPage
   readOnly={false}
 />;
 const {details, pods, editYaml, envEditor, events} = navFactory;
-const DaemonSets = props => <Table {...props} aria-label="Daemon Sets" Header={DaemonSetTableHeader} Row={DaemonSetTableRow} virtualize />;
+const DaemonSets = props => <VirtualTable {...props} aria-label="Daemon Sets" Header={DaemonSetTableHeader} Row={DaemonSetTableRow} />;
 
 const DaemonSetsPage = props => <ListPage canCreate={true} ListComponent={DaemonSets} {...props} />;
 const DaemonSetsDetailsPage = props => <DetailsPage

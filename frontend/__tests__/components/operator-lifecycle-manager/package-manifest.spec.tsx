@@ -5,7 +5,7 @@ import * as _ from 'lodash-es';
 
 import { PackageManifestTableHeader, PackageManifestTableRow, PackageManifestTableRowProps, PackageManifestList, PackageManifestListProps } from '../../../public/components/operator-lifecycle-manager/package-manifest';
 import { ClusterServiceVersionLogo, PackageManifestKind } from '../../../public/components/operator-lifecycle-manager';
-import { Table, TableRow } from '../../../public/components/factory';
+import { VirtualTable, VirtualTableRow } from '../../../public/components/factory';
 import { testPackageManifest, testCatalogSource, testSubscription } from '../../../__mocks__/k8sResourcesMocks';
 
 describe(PackageManifestTableHeader.displayName, () => {
@@ -31,33 +31,33 @@ describe(PackageManifestTableRow.displayName, () => {
   });
 
   it('renders column for package name and logo', () => {
-    expect(wrapper.find(TableRow).childAt(0).dive().find(ClusterServiceVersionLogo).props().displayName).toEqual(testPackageManifest.status.channels[0].currentCSVDesc.displayName);
+    expect(wrapper.find(VirtualTableRow).childAt(0).dive().find(ClusterServiceVersionLogo).props().displayName).toEqual(testPackageManifest.status.channels[0].currentCSVDesc.displayName);
   });
 
   it('renders column for latest CSV version for package in catalog', () => {
     const {name, currentCSVDesc: {version}} = testPackageManifest.status.channels[0];
-    expect(wrapper.find(TableRow).childAt(1).dive().text()).toEqual(`${version} (${name})`);
+    expect(wrapper.find(VirtualTableRow).childAt(1).dive().text()).toEqual(`${version} (${name})`);
   });
 
   it('does not render link if no subscriptions exist in the current namespace', () => {
     wrapper = wrapper.setProps({subscription: null});
 
-    expect(wrapper.find(TableRow).childAt(2).dive().text()).toContain('None');
+    expect(wrapper.find(VirtualTableRow).childAt(2).dive().text()).toContain('None');
   });
 
   it('renders column with link to subscriptions', () => {
-    expect(wrapper.find(TableRow).childAt(2).dive().find(Link).at(0).props().to).toEqual(`/operatormanagement/ns/default?name=${testSubscription.metadata.name}`);
-    expect(wrapper.find(TableRow).childAt(2).dive().find(Link).at(0).childAt(0).text()).toEqual('View');
+    expect(wrapper.find(VirtualTableRow).childAt(2).dive().find(Link).at(0).props().to).toEqual(`/operatormanagement/ns/default?name=${testSubscription.metadata.name}`);
+    expect(wrapper.find(VirtualTableRow).childAt(2).dive().find(Link).at(0).childAt(0).text()).toEqual('View');
   });
 
   it('renders button to create new subscription if `canSubscribe` is true', () => {
-    expect(wrapper.find(TableRow).childAt(2).dive().find('button').text()).toEqual('Create Subscription');
+    expect(wrapper.find(VirtualTableRow).childAt(2).dive().find('button').text()).toEqual('Create Subscription');
   });
 
   it('does not render button to create new subscription if `canSubscribe` is false', () => {
     wrapper = wrapper.setProps({canSubscribe: false});
 
-    expect(wrapper.find(TableRow).childAt(2).dive().find('button').exists()).toBe(false);
+    expect(wrapper.find(VirtualTableRow).childAt(2).dive().find('button').exists()).toBe(false);
   });
 });
 
@@ -82,11 +82,11 @@ describe(PackageManifestList.displayName, () => {
     });
   });
 
-  it('renders `Table` component with correct props for each section', () => {
-    expect(wrapper.find(Table).length).toEqual(2);
+  it('renders `VirtualTable` component with correct props for each section', () => {
+    expect(wrapper.find(VirtualTable).length).toEqual(2);
     packages.forEach((pkg, i) => {
-      expect(wrapper.find('.co-catalogsource-list__section').at(i).find(Table).props().Header).toEqual(PackageManifestTableHeader);
-      expect(wrapper.find('.co-catalogsource-list__section').at(i).find(Table).props().data.length).toEqual(1);
+      expect(wrapper.find('.co-catalogsource-list__section').at(i).find(VirtualTable).props().Header).toEqual(PackageManifestTableHeader);
+      expect(wrapper.find('.co-catalogsource-list__section').at(i).find(VirtualTable).props().data.length).toEqual(1);
     });
   });
 });

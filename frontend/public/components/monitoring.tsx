@@ -13,7 +13,7 @@ import * as UIActions from '../actions/ui';
 import { coFetchJSON } from '../co-fetch';
 import { alertState, AlertStates, connectToURLs, MonitoringRoutes, silenceState, SilenceStates } from '../reducers/monitoring';
 import store from '../redux';
-import { ResourceRow, Table, TableData, TableRow, TextFilter } from './factory';
+import { ResourceRow, VirtualTable, VirtualTableData, VirtualTableRow, TextFilter } from './factory';
 import { confirmModal } from './modals';
 import { graphStateToProps, QueryBrowserPage, ToggleGraph } from './monitoring/metrics';
 import { Labels, QueryBrowser } from './monitoring/query-browser';
@@ -510,25 +510,25 @@ const AlertTableRow: React.FC<AlertTableRowProps> = ({obj, index, key, style}) =
   const {annotations = {}, labels} = obj;
   const state = alertState(obj);
   return (
-    <TableRow id={obj.rule.id} index={index} trKey={key} style={style}>
-      <TableData className={tableAlertClasses[0]}>
+    <VirtualTableRow id={obj.rule.id} index={index} trKey={key} style={style}>
+      <VirtualTableData className={tableAlertClasses[0]}>
         <div className="co-resource-item">
           <MonitoringResourceIcon resource={AlertResource} />
           <Link to={alertURL(obj, obj.rule.id)} data-test-id="alert-resource-link" className="co-resource-item__resource-name">{labels && labels.alertname}</Link>
         </div>
         <div className="monitoring-description">{annotations.description || annotations.message}</div>
-      </TableData>
-      <TableData className={tableAlertClasses[1]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableAlertClasses[1]}>
         <AlertState state={state} />
         <AlertStateDescription alert={obj} />
-      </TableData>
-      <TableData className={classNames(tableAlertClasses[2], 'co-truncate')}>
+      </VirtualTableData>
+      <VirtualTableData className={classNames(tableAlertClasses[2], 'co-truncate')}>
         {_.startCase(_.get(labels, 'severity')) || '-'}
-      </TableData>
-      <TableData className={tableAlertClasses[3]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableAlertClasses[3]}>
         <Kebab options={state === AlertStates.Firing || state === AlertStates.Pending ? [silenceAlert(obj), viewAlertRule(obj)] : [viewAlertRule(obj)]} />
-      </TableData>
-    </TableRow>
+      </VirtualTableData>
+    </VirtualTableRow>
   );
 };
 AlertTableRow.displayName = 'AlertTableRow';
@@ -660,7 +660,7 @@ const MonitoringListPage = connect(filtersToProps)(class InnerMonitoringListPage
         </div>
         <div className="row">
           <div className="col-xs-12">
-            <Table
+            <VirtualTable
               aria-label={kindPlural}
               data={data}
               filters={filters}
@@ -669,7 +669,6 @@ const MonitoringListPage = connect(filtersToProps)(class InnerMonitoringListPage
               loadError={loadError}
               reduxID={reduxID}
               Row={Row}
-              virtualize
             />
           </div>
         </div>
@@ -746,8 +745,8 @@ const SilenceRow = ({obj}) => {
 const SilenceTableRow: React.FC<SilenceTableRowProps> = ({obj, index, key, style}) => {
   const state = silenceState(obj);
   return (
-    <TableRow id={obj.id} index={index} trKey={key} style={style}>
-      <TableData className={tableSilenceClasses[0]}>
+    <VirtualTableRow id={obj.id} index={index} trKey={key} style={style}>
+      <VirtualTableData className={tableSilenceClasses[0]}>
         <div className="co-resource-item">
           <MonitoringResourceIcon resource={SilenceResource} />
           <Link className="co-resource-item__resource-name" data-test-id="silence-resource-link" title={obj.id} to={`${SilenceResource.plural}/${obj.id}`}>{obj.name}</Link>
@@ -755,20 +754,20 @@ const SilenceTableRow: React.FC<SilenceTableRowProps> = ({obj, index, key, style
         <div className="monitoring-label-list">
           <SilenceMatchersList silence={obj} />
         </div>
-      </TableData>
-      <TableData className={classNames(tableSilenceClasses[1], 'co-break-word')}>
+      </VirtualTableData>
+      <VirtualTableData className={classNames(tableSilenceClasses[1], 'co-break-word')}>
         <SilenceState silence={obj} />
         {state === SilenceStates.Pending && <StateTimestamp text="Starts" timestamp={obj.startsAt} />}
         {state === SilenceStates.Active && <StateTimestamp text="Ends" timestamp={obj.endsAt} />}
         {state === SilenceStates.Expired && <StateTimestamp text="Expired" timestamp={obj.endsAt} />}
-      </TableData>
-      <TableData className={tableSilenceClasses[2]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableSilenceClasses[2]}>
         {obj.firingAlerts.length}
-      </TableData>
-      <TableData className={tableSilenceClasses[3]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableSilenceClasses[3]}>
         <SilenceKebab silence={obj} />
-      </TableData>
-    </TableRow>
+      </VirtualTableData>
+    </VirtualTableRow>
   );
 };
 SilenceTableRow.displayName = 'SilenceTableRow';

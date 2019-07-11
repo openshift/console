@@ -7,7 +7,7 @@ import { AlertVariant, Popover } from '@patternfly/react-core';
 import { QuestionCircleIcon } from '@patternfly/react-icons';
 
 import { K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
-import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
+import { DetailsPage, ListPage, VirtualTable, VirtualTableRow, VirtualTableData } from './factory';
 import { CopyToClipboard, ExpandableAlert, ExternalLink, Kebab, SectionHeading, LabelList, navFactory, ResourceKebab, ResourceLink, ResourceSummary, history, Timestamp } from './utils';
 import { ImageStreamTimeline } from './image-stream-timeline';
 import { fromNow } from './utils/datetime';
@@ -254,23 +254,23 @@ ImageStreamsTableHeader.displayName = 'ImageStreamsTableHeader';
 
 const ImageStreamsTableRow: React.FC<ImageStreamsTableRowProps> = ({obj, index, key, style}) => {
   return (
-    <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
-      <TableData className={tableColumnClasses[0]}>
+    <VirtualTableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+      <VirtualTableData className={tableColumnClasses[0]}>
         <ResourceLink kind={ImageStreamsReference} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
-      </TableData>
-      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+      </VirtualTableData>
+      <VirtualTableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} />
-      </TableData>
-      <TableData className={tableColumnClasses[2]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[2]}>
         <LabelList kind={ImageStreamsReference} labels={obj.metadata.labels} />
-      </TableData>
-      <TableData className={tableColumnClasses[3]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[3]}>
         {fromNow(obj.metadata.creationTimestamp)}
-      </TableData>
-      <TableData className={tableColumnClasses[4]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[4]}>
         <ResourceKebab actions={menuActions} kind={ImageStreamsReference} resource={obj} />
-      </TableData>
-    </TableRow>
+      </VirtualTableData>
+    </VirtualTableRow>
   );
 };
 ImageStreamsTableRow.displayName = 'ImageStreamsTableRow';
@@ -281,7 +281,7 @@ type ImageStreamsTableRowProps = {
   style: object;
 };
 
-export const ImageStreamsList: React.SFC = props => <Table {...props} aria-label="Image Streams" Header={ImageStreamsTableHeader} Row={ImageStreamsTableRow} virtualize />;
+export const ImageStreamsList: React.SFC = props => <VirtualTable {...props} aria-label="Image Streams" Header={ImageStreamsTableHeader} Row={ImageStreamsTableRow} />;
 ImageStreamsList.displayName = 'ImageStreamsList';
 
 export const buildPhase = build => build.status.phase;

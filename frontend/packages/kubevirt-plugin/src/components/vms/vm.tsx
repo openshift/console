@@ -14,7 +14,12 @@ import {
 import { getName, getNamespace, getUID, createLookup, K8sEntityMap } from '@console/shared';
 
 import { NamespaceModel, PodModel } from '@console/internal/models';
-import { Table, MultiListPage, TableRow, TableData } from '@console/internal/components/factory';
+import {
+  VirtualTable,
+  MultiListPage,
+  VirtualTableRow,
+  VirtualTableData,
+} from '@console/internal/components/factory';
 import { FirehoseResult, Kebab, ResourceLink } from '@console/internal/components/utils';
 import { K8sResourceKind, PodKind } from '@console/internal/module/k8s';
 
@@ -83,17 +88,17 @@ const VMRow: React.FC<VMRowProps> = ({
   const vmi = vmiLookup[lookupID];
 
   return (
-    <TableRow id={uid} index={index} trKey={key} style={style}>
-      <TableData className={dimensify()}>
+    <VirtualTableRow id={uid} index={index} trKey={key} style={style}>
+      <VirtualTableData className={dimensify()}>
         <ResourceLink kind={VirtualMachineModel.kind} name={name} namespace={namespace} />
-      </TableData>
-      <TableData className={dimensify()}>
+      </VirtualTableData>
+      <VirtualTableData className={dimensify()}>
         <ResourceLink kind={NamespaceModel.kind} name={namespace} title={namespace} />
-      </TableData>
-      <TableData className={dimensify()}>
+      </VirtualTableData>
+      <VirtualTableData className={dimensify()}>
         <VmStatus vm={vm} pods={pods} migrations={migrations} />
-      </TableData>
-      <TableData className={dimensify(true)}>
+      </VirtualTableData>
+      <VirtualTableData className={dimensify(true)}>
         <Kebab
           options={menuActions.map((action) => {
             return action(VirtualMachineModel, vm, {
@@ -105,15 +110,15 @@ const VMRow: React.FC<VMRowProps> = ({
           key={`kebab-for-${uid}`}
           id={`kebab-for-${uid}`}
         />
-      </TableData>
-    </TableRow>
+      </VirtualTableData>
+    </VirtualTableRow>
   );
 };
 
-const VMList: React.FC<React.ComponentProps<typeof Table> & VMListProps> = (props) => {
+const VMList: React.FC<React.ComponentProps<typeof VirtualTable> & VMListProps> = (props) => {
   const { resources } = props;
   return (
-    <Table
+    <VirtualTable
       {...props}
       aria-label={VirtualMachineModel.labelPlural}
       Header={VMHeader}

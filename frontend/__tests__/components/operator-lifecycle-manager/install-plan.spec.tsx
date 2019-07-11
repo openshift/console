@@ -6,7 +6,7 @@ import Spy = jasmine.Spy;
 
 import { InstallPlanTableHeader, InstallPlanTableRow, InstallPlanTableRowProps, InstallPlansList, InstallPlansListProps, InstallPlansPage, InstallPlansPageProps, InstallPlanDetailsPage, InstallPlanPreview, InstallPlanPreviewProps, InstallPlanPreviewState, InstallPlanDetailsPageProps, InstallPlanDetails, InstallPlanDetailsProps } from '../../../public/components/operator-lifecycle-manager/install-plan';
 import { InstallPlanKind, InstallPlanApproval, referenceForStepResource } from '../../../public/components/operator-lifecycle-manager';
-import { Table, TableRow, MultiListPage, DetailsPage } from '../../../public/components/factory';
+import { VirtualTable, VirtualTableRow, MultiListPage, DetailsPage } from '../../../public/components/factory';
 import { ResourceKebab, ResourceLink, ResourceIcon, Kebab, MsgBox } from '../../../public/components/utils';
 import { testInstallPlan } from '../../../__mocks__/k8sResourcesMocks';
 import { InstallPlanModel, ClusterServiceVersionModel, OperatorGroupModel, CustomResourceDefinitionModel } from '../../../public/models';
@@ -27,43 +27,43 @@ describe(InstallPlanTableRow.displayName, () => {
   });
 
   it('renders resource kebab for performing common actions', () => {
-    expect(wrapper.find(TableRow).find(ResourceKebab).props().actions).toEqual(Kebab.factory.common);
+    expect(wrapper.find(VirtualTableRow).find(ResourceKebab).props().actions).toEqual(Kebab.factory.common);
   });
 
   it('renders column for install plan name', () => {
-    expect(wrapper.find(TableRow).childAt(0).find(ResourceLink).props().kind).toEqual(k8s.referenceForModel(InstallPlanModel));
-    expect(wrapper.find(TableRow).childAt(0).find(ResourceLink).props().namespace).toEqual(testInstallPlan.metadata.namespace);
-    expect(wrapper.find(TableRow).childAt(0).find(ResourceLink).props().name).toEqual(testInstallPlan.metadata.name);
-    expect(wrapper.find(TableRow).childAt(0).find(ResourceLink).props().title).toEqual(testInstallPlan.metadata.uid);
+    expect(wrapper.find(VirtualTableRow).childAt(0).find(ResourceLink).props().kind).toEqual(k8s.referenceForModel(InstallPlanModel));
+    expect(wrapper.find(VirtualTableRow).childAt(0).find(ResourceLink).props().namespace).toEqual(testInstallPlan.metadata.namespace);
+    expect(wrapper.find(VirtualTableRow).childAt(0).find(ResourceLink).props().name).toEqual(testInstallPlan.metadata.name);
+    expect(wrapper.find(VirtualTableRow).childAt(0).find(ResourceLink).props().title).toEqual(testInstallPlan.metadata.uid);
   });
 
   it('renders column for install plan namespace', () => {
-    expect(wrapper.find(TableRow).childAt(1).find(ResourceLink).props().kind).toEqual('Namespace');
-    expect(wrapper.find(TableRow).childAt(1).find(ResourceLink).props().title).toEqual(testInstallPlan.metadata.namespace);
-    expect(wrapper.find(TableRow).childAt(1).find(ResourceLink).props().displayName).toEqual(testInstallPlan.metadata.namespace);
+    expect(wrapper.find(VirtualTableRow).childAt(1).find(ResourceLink).props().kind).toEqual('Namespace');
+    expect(wrapper.find(VirtualTableRow).childAt(1).find(ResourceLink).props().title).toEqual(testInstallPlan.metadata.namespace);
+    expect(wrapper.find(VirtualTableRow).childAt(1).find(ResourceLink).props().displayName).toEqual(testInstallPlan.metadata.namespace);
   });
 
   it('render column for install plan components list', () => {
-    expect(wrapper.find(TableRow).childAt(2).find(ResourceLink).props().kind).toEqual(k8s.referenceForModel(ClusterServiceVersionModel));
-    expect(wrapper.find(TableRow).childAt(2).find(ResourceLink).props().name).toEqual(testInstallPlan.spec.clusterServiceVersionNames.toString());
-    expect(wrapper.find(TableRow).childAt(2).find(ResourceLink).props().namespace).toEqual(testInstallPlan.metadata.namespace);
+    expect(wrapper.find(VirtualTableRow).childAt(2).find(ResourceLink).props().kind).toEqual(k8s.referenceForModel(ClusterServiceVersionModel));
+    expect(wrapper.find(VirtualTableRow).childAt(2).find(ResourceLink).props().name).toEqual(testInstallPlan.spec.clusterServiceVersionNames.toString());
+    expect(wrapper.find(VirtualTableRow).childAt(2).find(ResourceLink).props().namespace).toEqual(testInstallPlan.metadata.namespace);
   });
 
   it('renders column for parent subscription(s) determined by `metadata.ownerReferences`', () => {
-    expect(wrapper.find(TableRow).childAt(3).find(ResourceLink).length).toEqual(1);
+    expect(wrapper.find(VirtualTableRow).childAt(3).find(ResourceLink).length).toEqual(1);
   });
 
   it('renders column for install plan status', () => {
-    expect(wrapper.find(TableRow).childAt(4).shallow().text()).toEqual(testInstallPlan.status.phase);
+    expect(wrapper.find(VirtualTableRow).childAt(4).shallow().text()).toEqual(testInstallPlan.status.phase);
   });
 
   it('renders column with fallback status if `status.phase` is undefined', () => {
     const obj = {..._.cloneDeep(testInstallPlan), status: null};
     wrapper = wrapper.setProps({obj});
 
-    expect(wrapper.find(TableRow).childAt(4).shallow().text()).toEqual('Unknown');
-    expect(wrapper.find(TableRow).childAt(2).find(ResourceIcon).length).toEqual(1);
-    expect(wrapper.find(TableRow).childAt(2).find(ResourceIcon).at(0).props().kind).toEqual(k8s.referenceForModel(ClusterServiceVersionModel));
+    expect(wrapper.find(VirtualTableRow).childAt(4).shallow().text()).toEqual('Unknown');
+    expect(wrapper.find(VirtualTableRow).childAt(2).find(ResourceIcon).length).toEqual(1);
+    expect(wrapper.find(VirtualTableRow).childAt(2).find(ResourceIcon).at(0).props().kind).toEqual(k8s.referenceForModel(ClusterServiceVersionModel));
   });
 });
 
@@ -75,12 +75,12 @@ describe(InstallPlansList.displayName, () => {
   });
 
   it('renders a `Table` component with the correct props', () => {
-    expect(wrapper.find<any>(Table).props().Header).toEqual(InstallPlanTableHeader);
-    expect(wrapper.find<any>(Table).props().Row).toEqual(InstallPlanTableRow);
+    expect(wrapper.find<any>(VirtualTable).props().Header).toEqual(InstallPlanTableHeader);
+    expect(wrapper.find<any>(VirtualTable).props().Row).toEqual(InstallPlanTableRow);
   });
 
   it('passes custom empty message for table', () => {
-    const EmptyMsg = wrapper.find<any>(Table).props().EmptyMsg;
+    const EmptyMsg = wrapper.find<any>(VirtualTable).props().EmptyMsg;
     const msgWrapper = shallow(<EmptyMsg />);
 
     expect(msgWrapper.find(MsgBox).props().title).toEqual('No Install Plans Found');

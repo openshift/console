@@ -13,7 +13,7 @@ import { SpecDescriptor } from './descriptors/spec';
 import { StatusCapability, Descriptor } from './descriptors/types';
 import { Resources } from './k8s-resource';
 import { ErrorPage404 } from '../error';
-import { MultiListPage, ListPage, DetailsPage, Table, TableRow, TableData } from '../factory';
+import { MultiListPage, ListPage, DetailsPage, VirtualTable, VirtualTableRow, VirtualTableData } from '../factory';
 import { ResourceSummary, StatusBox, navFactory, Timestamp, LabelList, ResourceIcon, MsgBox, ResourceKebab, Kebab, KebabAction, LoadingBox } from '../utils';
 import { connectToModel } from '../../kinds';
 import { apiVersionForReference, kindForReference, K8sResourceKind, OwnerReference, K8sKind, referenceFor, GroupVersionKind, referenceForModel } from '../../module/k8s';
@@ -101,32 +101,32 @@ export const OperandLink: React.SFC<OperandLinkProps> = (props) => {
 export const OperandTableRow: React.FC<OperandTableRowProps> = ({obj, index, key, style}) => {
   const status = _.get(obj.status, 'phase');
   return (
-    <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
-      <TableData className={tableColumnClasses[0]}>
+    <VirtualTableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+      <VirtualTableData className={tableColumnClasses[0]}>
         <OperandLink obj={obj} />
-      </TableData>
-      <TableData className={tableColumnClasses[1]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[1]}>
         <LabelList kind={obj.kind} labels={obj.metadata.labels} />
-      </TableData>
-      <TableData className={classNames(tableColumnClasses[2], 'co-break-word')}>
+      </VirtualTableData>
+      <VirtualTableData className={classNames(tableColumnClasses[2], 'co-break-word')}>
         {obj.kind}
-      </TableData>
-      <TableData className={tableColumnClasses[3]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[3]}>
         {_.isEmpty(status) ?
           <div className="text-muted">Unknown</div> :
           <>{status === 'Running' ? <SuccessStatus title={status} /> : <Status status={status} />}</>
         }
-      </TableData>
-      <TableData className={tableColumnClasses[4]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[4]}>
         {_.get(obj.spec, 'version') || <div className="text-muted">Unknown</div>}
-      </TableData>
-      <TableData className={tableColumnClasses[5]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[5]}>
         <Timestamp timestamp={obj.metadata.creationTimestamp} />
-      </TableData>
-      <TableData className={tableColumnClasses[6]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[6]}>
         <ResourceKebab actions={actions} kind={referenceFor(obj)} resource={obj} />
-      </TableData>
-    </TableRow>
+      </VirtualTableData>
+    </VirtualTableRow>
   );
 };
 
@@ -144,13 +144,12 @@ export const OperandList: React.SFC<OperandListProps> = (props) => {
   });
   const EmptyMsg = () => <MsgBox title="No Operands Found" detail="Operands are declarative components used to define the behavior of the application." />;
 
-  return <Table {...props}
+  return <VirtualTable {...props}
     data={ensureKind(props.data)}
     EmptyMsg={EmptyMsg}
     aria-label="Operands"
     Header={OperandTableHeader}
-    Row={OperandTableRow}
-    virtualize />;
+    Row={OperandTableRow} />;
 };
 
 const inFlightStateToProps = ({k8s}: RootState) => ({inFlight: k8s.getIn(['RESOURCES', 'inFlight'])});

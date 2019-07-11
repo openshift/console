@@ -5,7 +5,7 @@ import { sortable } from '@patternfly/react-table';
 import { connectToFlags, flagPending } from '../reducers/features';
 import { FLAGS } from '../const';
 import { Conditions } from './conditions';
-import { ColHead, DetailsPage, ListHeader, ListPage, Table, TableRow, TableData } from './factory';
+import { ColHead, DetailsPage, ListHeader, ListPage, VirtualTable, VirtualTableRow, VirtualTableData } from './factory';
 import { getQueryArgument, setQueryArgument } from './utils/router';
 import { coFetchJSON } from '../co-fetch';
 import { ChargebackReportModel } from '../models';
@@ -95,26 +95,26 @@ ReportsTableHeader.displayName = 'ReportsTableHeader';
 
 const ReportsTableRow: React.FC<ReportsTableRowProps> = ({obj, index, key, style}) => {
   return (
-    <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
-      <TableData className={tableColumnClasses[0]}>
+    <VirtualTableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+      <VirtualTableData className={tableColumnClasses[0]}>
         <ResourceLink kind={ReportReference} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
-      </TableData>
-      <TableData className={tableColumnClasses[1]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[1]}>
         <ResourceLink kind="Namespace" name={obj.metadata.namespace} namespace={undefined} title={obj.metadata.namespace} />
-      </TableData>
-      <TableData className={tableColumnClasses[2]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[2]}>
         <ResourceLink kind={ReportGenerationQueryReference} name={_.get(obj, ['spec', 'query'])} namespace={obj.metadata.namespace} title={obj.metadata.namespace} />
-      </TableData>
-      <TableData className={tableColumnClasses[3]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[3]}>
         <Timestamp timestamp={_.get(obj, ['spec', 'reportingStart'])} />
-      </TableData>
-      <TableData className={tableColumnClasses[4]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[4]}>
         <Timestamp timestamp={_.get(obj, ['spec', 'reportingEnd'])} />
-      </TableData>
-      <TableData className={tableColumnClasses[5]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[5]}>
         <ResourceKebab actions={menuActions} kind={ReportReference} resource={obj} />
-      </TableData>
-    </TableRow>
+      </VirtualTableData>
+    </VirtualTableRow>
   );
 };
 ReportsTableRow.displayName = 'ReportsTableRow';
@@ -322,7 +322,7 @@ const reportsPages = [
 
 const EmptyMsg = () => <MsgBox title="No reports have been generated" detail="Reports allow resource usage and cost to be tracked per namespace, pod, and more." />;
 
-export const ReportsList: React.SFC = props => <Table {...props} aria-label="Reports" Header={ReportsTableHeader} Row={ReportsTableRow} EmptyMsg={EmptyMsg} />;
+export const ReportsList: React.SFC = props => <VirtualTable {...props} aria-label="Reports" Header={ReportsTableHeader} Row={ReportsTableRow} EmptyMsg={EmptyMsg} />;
 
 const ReportsPage_: React.SFC<ReportsPageProps> = props => {
   if (flagPending(props.flags[FLAGS.CHARGEBACK])) {
@@ -395,23 +395,23 @@ ReportGenerationQueriesTableHeader.displayName = 'ReportGenerationQueriesTableHe
 
 const ReportGenerationQueriesTableRow: React.FC<ReportGenerationQueriesTableRowProps> = ({obj, index, key, style}) => {
   return (
-    <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
-      <TableData className={reportsGenerationColumnClasses[0]}>
+    <VirtualTableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+      <VirtualTableData className={reportsGenerationColumnClasses[0]}>
         <ResourceLink kind={ReportGenerationQueryReference} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
-      </TableData>
-      <TableData className={reportsGenerationColumnClasses[1]}>
+      </VirtualTableData>
+      <VirtualTableData className={reportsGenerationColumnClasses[1]}>
         <ResourceLink kind="Namespace" namespace={undefined} name={obj.metadata.namespace} title={obj.metadata.namespace} />
-      </TableData>
-      <TableData className={reportsGenerationColumnClasses[2]}>
+      </VirtualTableData>
+      <VirtualTableData className={reportsGenerationColumnClasses[2]}>
         <LabelList kind={ReportGenerationQueryReference} labels={_.get(obj, ['metadata', 'labels'])} />
-      </TableData>
-      <TableData className={reportsGenerationColumnClasses[3]}>
+      </VirtualTableData>
+      <VirtualTableData className={reportsGenerationColumnClasses[3]}>
         <Timestamp timestamp={_.get(obj, ['metadata', 'creationTimestamp'])} />
-      </TableData>
-      <TableData className={reportsGenerationColumnClasses[4]}>
+      </VirtualTableData>
+      <VirtualTableData className={reportsGenerationColumnClasses[4]}>
         <ResourceKebab actions={menuActions} kind={ReportGenerationQueryReference} resource={obj} />
-      </TableData>
-    </TableRow>
+      </VirtualTableData>
+    </VirtualTableRow>
   );
 };
 ReportGenerationQueriesTableRow.displayName = 'ReportGenerationQueriesTableRow';
@@ -457,7 +457,7 @@ const ReportGenerationQueriesDetails: React.SFC<ReportGenerationQueriesDetailsPr
   </div>;
 };
 
-export const ReportGenerationQueriesList: React.SFC = props => <Table aria-label="Chargeback Queries List" {...props} Header={ReportGenerationQueriesTableHeader} Row={ReportGenerationQueriesTableRow} />;
+export const ReportGenerationQueriesList: React.SFC = props => <VirtualTable aria-label="Chargeback Queries List" {...props} Header={ReportGenerationQueriesTableHeader} Row={ReportGenerationQueriesTableRow} />;
 
 export const ReportGenerationQueriesPage: React.SFC<ReportGenerationQueriesPageProps> = props => <div>
   <ChargebackNavBar match={props.match} />

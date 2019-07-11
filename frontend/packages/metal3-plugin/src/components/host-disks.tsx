@@ -1,7 +1,11 @@
 import * as React from 'react';
 import { sortable } from '@patternfly/react-table';
 
-import { Table, TableRow, TableData } from '@console/internal/components/factory';
+import {
+  VirtualTable,
+  VirtualTableRow,
+  VirtualTableData,
+} from '@console/internal/components/factory';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { humanizeDecimalBytes } from '@console/internal/components/utils';
 import { getHostStorage } from '../selectors';
@@ -28,15 +32,15 @@ const DisksTableRow: React.FC<DisksTableRowProps> = ({ obj, index, key, style })
   const { hctl, model, name, rotational, serialNumber, sizeBytes, vendor } = obj;
   const { string: size } = humanizeDecimalBytes(sizeBytes);
   return (
-    <TableRow id={name} index={index} trKey={key} style={style}>
-      <TableData>{name}</TableData>
-      <TableData>{size}</TableData>
-      <TableData>{rotational ? 'Rotational' : 'SSD'}</TableData>
-      <TableData>{model}</TableData>
-      <TableData>{serialNumber}</TableData>
-      <TableData>{vendor}</TableData>
-      <TableData>{hctl}</TableData>
-    </TableRow>
+    <VirtualTableRow id={name} index={index} trKey={key} style={style}>
+      <VirtualTableData>{name}</VirtualTableData>
+      <VirtualTableData>{size}</VirtualTableData>
+      <VirtualTableData>{rotational ? 'Rotational' : 'SSD'}</VirtualTableData>
+      <VirtualTableData>{model}</VirtualTableData>
+      <VirtualTableData>{serialNumber}</VirtualTableData>
+      <VirtualTableData>{vendor}</VirtualTableData>
+      <VirtualTableData>{hctl}</VirtualTableData>
+    </VirtualTableRow>
   );
 };
 
@@ -49,7 +53,7 @@ const BaremetalHostDiskList: React.FC<BaremetalHostNICListProps> = ({ obj: host 
   return (
     <div className="co-m-list">
       <div className="co-m-pane__body">
-        <Table
+        <VirtualTable
           data={disks}
           aria-label="Baremetal Host NICs"
           Header={DisksTableHeader}

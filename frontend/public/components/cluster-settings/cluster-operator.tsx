@@ -7,10 +7,11 @@ import { Alert } from '@patternfly/react-core';
 import { ClusterOperatorModel } from '../../models';
 import {
   DetailsPage,
-  ListPage,
   Table,
-  TableRow,
-  TableData,
+  ListPage,
+  VirtualTable,
+  VirtualTableRow,
+  VirtualTableData,
 } from '../factory';
 import { Conditions } from '../conditions';
 import {
@@ -85,20 +86,20 @@ const ClusterOperatorTableRow: React.FC<ClusterOperatorTableRowProps> = ({obj, i
   const { status, message } = getStatusAndMessage(obj);
   const operatorVersion = getClusterOperatorVersion(obj);
   return (
-    <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
-      <TableData className={tableColumnClasses[0]}>
+    <VirtualTableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+      <VirtualTableData className={tableColumnClasses[0]}>
         <ResourceLink kind={clusterOperatorReference} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
-      </TableData>
-      <TableData className={tableColumnClasses[1]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[1]}>
         <OperatorStatusIconAndLabel status={status} />
-      </TableData>
-      <TableData className={tableColumnClasses[2]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[2]}>
         {operatorVersion || '-'}
-      </TableData>
-      <TableData className={classNames(tableColumnClasses[3], 'co-break-word', 'co-pre-line')}>
+      </VirtualTableData>
+      <VirtualTableData className={classNames(tableColumnClasses[3], 'co-break-word', 'co-pre-line')}>
         {message ? _.truncate(message, { length: 256, separator: ' ' }) : '-'}
-      </TableData>
-    </TableRow>
+      </VirtualTableData>
+    </VirtualTableRow>
   );
 };
 ClusterOperatorTableRow.displayName = 'ClusterOperatorTableRow';
@@ -109,7 +110,7 @@ type ClusterOperatorTableRowProps = {
   style: object;
 };
 
-export const ClusterOperatorList: React.SFC = props => <Table {...props} aria-label="Cluster Operators" Header={ClusterOperatorTableHeader} Row={ClusterOperatorTableRow} virtualize />;
+export const ClusterOperatorList: React.SFC = props => <VirtualTable {...props} aria-label="Cluster Operators" Header={ClusterOperatorTableHeader} Row={ClusterOperatorTableRow} />;
 
 const allStatuses = [
   OperatorStatus.Available,
@@ -157,25 +158,29 @@ export const ClusterOperatorPage: React.SFC<ClusterOperatorPageProps> = props =>
   </React.Fragment>;
 
 const OperandVersions: React.SFC<OperandVersionsProps> = ({versions}) => {
+  const OperandVersionsHeader = () => {
+    return [
+      { title: 'Name' },
+      { title: 'Version' },
+    ];
+  };
+  const OperandVersionsRows = ({componentProps}) => {
+    return _.map(componentProps.data, ({name, version}) => {
+      return [
+        { title: name },
+        { title: version },
+      ];
+    });
+  };
   return _.isEmpty(versions)
     ? <EmptyBox label="Versions" />
     : <div className="co-table-container">
-      <table className="table">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Version</th>
-          </tr>
-        </thead>
-        <tbody>
-          {_.map(versions, ({name, version}, i) => (
-            <tr key={i}>
-              <td>{name}</td>
-              <td>{version}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <Table
+        aria-label="Versions"
+        data={versions}
+        Header={OperandVersionsHeader}
+        Rows={OperandVersionsRows}
+        loaded={true} />
     </div>;
 };
 

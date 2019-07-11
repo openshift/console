@@ -22,7 +22,7 @@ import { referenceForProvidedAPI } from '../../../public/components/operator-lif
 import { StatusDescriptor } from '../../../public/components/operator-lifecycle-manager/descriptors/status';
 import { SpecDescriptor } from '../../../public/components/operator-lifecycle-manager/descriptors/spec';
 import { testCRD, testResourceInstance, testClusterServiceVersion, testOwnedResourceInstance, testModel } from '../../../__mocks__/k8sResourcesMocks';
-import { Table, DetailsPage, MultiListPage, ListPage } from '../../../public/components/factory';
+import { VirtualTable, DetailsPage, MultiListPage, ListPage } from '../../../public/components/factory';
 import { Timestamp, LabelList, StatusBox, ResourceKebab } from '../../../public/components/utils';
 import { referenceFor, referenceForModel , K8sResourceKind } from '../../../public/module/k8s';
 import { ClusterServiceVersionModel } from '../../../public/models';
@@ -109,8 +109,8 @@ describe(OperandList.displayName, () => {
     wrapper = shallow(<OperandList loaded={true} data={resources} filters={{}} />);
   });
 
-  it('renders a `Table` of the custom resource instances of the given kind', () => {
-    const table: ShallowWrapper<any> = wrapper.find(Table);
+  it('renders a `VirtualTable` of the custom resource instances of the given kind', () => {
+    const table: ShallowWrapper<any> = wrapper.find(VirtualTable);
     expect(Object.keys(wrapper.props()).reduce((k, prop) => table.prop(prop) === wrapper.prop(prop), false)).toBe(true);
     expect(table.props().Header).toEqual(OperandTableHeader);
     expect(table.props().Row).toEqual(OperandTableRow);

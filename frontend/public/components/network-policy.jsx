@@ -5,7 +5,7 @@ import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
 import { connectToFlags } from '../reducers/features';
 import { FLAGS } from '../const';
-import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
+import { DetailsPage, ListPage, VirtualTable, VirtualTableRow, VirtualTableData } from './factory';
 import { Kebab, navFactory, ResourceKebab, SectionHeading, ResourceLink, ResourceSummary, Selector, ExternalLink } from './utils';
 
 const { common } = Kebab.factory;
@@ -43,29 +43,29 @@ const kind = 'NetworkPolicy';
 
 const NetworkPolicyTableRow = ({obj: np, index, key, style}) => {
   return (
-    <TableRow id={np.metadata.uid} index={index} trKey={key} style={style}>
-      <TableData className={tableColumnClasses[0]}>
+    <VirtualTableRow id={np.metadata.uid} index={index} trKey={key} style={style}>
+      <VirtualTableData className={tableColumnClasses[0]}>
         <ResourceLink kind={kind} name={np.metadata.name} namespace={np.metadata.namespace} title={np.metadata.name} />
-      </TableData>
-      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+      </VirtualTableData>
+      <VirtualTableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
         <ResourceLink kind={'Namespace'} name={np.metadata.namespace} title={np.metadata.namespace} />
-      </TableData>
-      <TableData className={classNames(tableColumnClasses[2], 'co-break-word')}>
+      </VirtualTableData>
+      <VirtualTableData className={classNames(tableColumnClasses[2], 'co-break-word')}>
         {
           _.isEmpty(np.spec.podSelector) ?
             <Link to={`/search/ns/${np.metadata.namespace}?kind=Pod`}>{`All pods within ${np.metadata.namespace}`}</Link> :
             <Selector selector={np.spec.podSelector} namespace={np.metadata.namespace} />
         }
-      </TableData>
-      <TableData className={tableColumnClasses[3]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[3]}>
         <ResourceKebab actions={menuActions} kind={kind} resource={np} />
-      </TableData>
-    </TableRow>
+      </VirtualTableData>
+    </VirtualTableRow>
   );
 };
 NetworkPolicyTableRow.displayName = 'NetworkPolicyTableRow';
 
-const NetworkPoliciesList = props => <Table {...props} aria-label="Network Policies" Header={NetworkPolicyTableHeader} Row={NetworkPolicyTableRow} virtualize />;
+const NetworkPoliciesList = props => <VirtualTable {...props} aria-label="Network Policies" Header={NetworkPolicyTableHeader} Row={NetworkPolicyTableRow} />;
 
 export const NetworkPoliciesPage = props => <ListPage {...props} ListComponent={NetworkPoliciesList} kind={kind} canCreate={true} />;
 

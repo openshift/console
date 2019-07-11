@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
-import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
+import { DetailsPage, ListPage, VirtualTable, VirtualTableRow, VirtualTableData } from './factory';
 import { Kebab, detailsPage, navFactory, ResourceKebab, SectionHeading, ResourceLink, ResourceSummary } from './utils';
 import { StorageClassResourceKind, K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
 
@@ -49,22 +49,22 @@ StorageClassTableHeader.displayName = 'StorageClassTableHeader';
 
 const StorageClassTableRow: React.SFC<StorageClassTableRowProps> = ({obj, index, key, style}) => {
   return (
-    <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
-      <TableData className={classNames(tableColumnClasses[0], 'co-break-word')}>
+    <VirtualTableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+      <VirtualTableData className={classNames(tableColumnClasses[0], 'co-break-word')}>
         <ResourceLink kind={StorageClassReference} name={obj.metadata.name}>
           { isDefaultClass(obj) && <span className="small text-muted co-resource-item__help-text">&ndash; Default</span> }
         </ResourceLink>
-      </TableData>
-      <TableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
+      </VirtualTableData>
+      <VirtualTableData className={classNames(tableColumnClasses[1], 'co-break-word')}>
         {obj.provisioner}
-      </TableData>
-      <TableData className={tableColumnClasses[2]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[2]}>
         {obj.reclaimPolicy || '-'}
-      </TableData>
-      <TableData className={tableColumnClasses[3]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[3]}>
         <ResourceKebab actions={menuActions} kind={StorageClassReference} resource={obj} />
-      </TableData>
-    </TableRow>
+      </VirtualTableData>
+    </VirtualTableRow>
   );
 };
 StorageClassTableRow.displayName = 'StorageClassTableRow';
@@ -95,7 +95,7 @@ const StorageClassDetails: React.SFC<StorageClassDetailsProps> = ({obj}) => <Rea
   </div>
 </React.Fragment>;
 
-export const StorageClassList: React.SFC = props => <Table {...props} aria-label="Storage Classes" Header={StorageClassTableHeader} Row={StorageClassTableRow} virtualize />;
+export const StorageClassList: React.SFC = props => <VirtualTable {...props} aria-label="Storage Classes" Header={StorageClassTableHeader} Row={StorageClassTableRow} />;
 StorageClassList.displayName = 'StorageClassList';
 
 export const StorageClassPage: React.SFC<StorageClassPageProps> = props => {

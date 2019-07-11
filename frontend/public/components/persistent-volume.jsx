@@ -4,7 +4,7 @@ import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
 
 import { Status } from '@console/shared';
-import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
+import { DetailsPage, ListPage, VirtualTable, VirtualTableRow, VirtualTableData } from './factory';
 import { Kebab, LabelList, navFactory, ResourceKebab, SectionHeading, ResourceLink, ResourceSummary, Timestamp } from './utils';
 
 const { common } = Kebab.factory;
@@ -59,33 +59,33 @@ const kind = 'PersistentVolume';
 
 const PVTableRow = ({obj, index, key, style}) => {
   return (
-    <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
-      <TableData className={tableColumnClasses[0]}>
+    <VirtualTableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
+      <VirtualTableData className={tableColumnClasses[0]}>
         <ResourceLink kind={kind} name={obj.metadata.name} namespace={obj.metadata.namespace} title={obj.metadata.name} />
-      </TableData>
-      <TableData className={tableColumnClasses[1]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[1]}>
         <PVStatus pv={obj} />
-      </TableData>
-      <TableData className={tableColumnClasses[2]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[2]}>
         {_.get(obj,'spec.claimRef.name') ?
           <ResourceLink kind="PersistentVolumeClaim" name={obj.spec.claimRef.name} namespace={obj.spec.claimRef.namespace} title={obj.spec.claimRef.name} />
           :
           <div className="text-muted">No Claim</div>
         }
-      </TableData>
-      <TableData className={tableColumnClasses[3]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[3]}>
         {_.get(obj, 'spec.capacity.storage', '-')}
-      </TableData>
-      <TableData className={tableColumnClasses[4]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[4]}>
         <LabelList kind={kind} labels={obj.metadata.labels} />
-      </TableData>
-      <TableData className={tableColumnClasses[5]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[5]}>
         <Timestamp timestamp={obj.metadata.creationTimestamp} />
-      </TableData>
-      <TableData className={tableColumnClasses[6]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[6]}>
         <ResourceKebab actions={menuActions} kind={kind} resource={obj} />
-      </TableData>
-    </TableRow>
+      </VirtualTableData>
+    </VirtualTableRow>
   );
 };
 PVTableRow.displayName = 'PVTableRow';
@@ -97,7 +97,7 @@ const Details = ({obj}) => <React.Fragment>
   </div>
 </React.Fragment>;
 
-export const PersistentVolumesList = props => <Table {...props} aria-label="Persistent Volumes" Header={PVTableHeader} Row={PVTableRow} virtualize />;
+export const PersistentVolumesList = props => <VirtualTable {...props} aria-label="Persistent Volumes" Header={PVTableHeader} Row={PVTableRow} />;
 export const PersistentVolumesPage = props => <ListPage {...props} ListComponent={PersistentVolumesList} kind={kind} canCreate={true} />;
 export const PersistentVolumesDetailsPage = props => <DetailsPage
   {...props}

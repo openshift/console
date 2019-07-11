@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import * as _ from 'lodash-es';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
-import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
+import { DetailsPage, ListPage, VirtualTable, VirtualTableRow, VirtualTableData } from './factory';
 import { history, SectionHeading, detailsPage, navFactory, ResourceSummary, resourcePathFromModel, ResourceLink } from './utils';
 import { viewYamlComponent } from './utils/horizontal-nav';
 import { ClusterServiceClassModel, ClusterServiceBrokerModel } from '../models';
@@ -55,18 +55,18 @@ ClusterServiceClassTableHeader.displayName = 'ClusterServiceClassTableHeader';
 const ClusterServiceClassTableRow: React.FC<ClusterServiceClassTableRowProps> = ({obj: serviceClass, index, key, style}) => {
   const path = resourcePathFromModel(ClusterServiceClassModel, serviceClass.metadata.name);
   return (
-    <TableRow id={serviceClass.metadata.uid} index={index} trKey={key} style={style}>
-      <TableData className={tableColumnClasses[0]}>
+    <VirtualTableRow id={serviceClass.metadata.uid} index={index} trKey={key} style={style}>
+      <VirtualTableData className={tableColumnClasses[0]}>
         <ClusterServiceClassIcon serviceClass={serviceClass} />
         <Link className="co-cluster-service-class-link" to={path}>{serviceClassDisplayName(serviceClass)}</Link>
-      </TableData>
-      <TableData className={tableColumnClasses[1]}>
+      </VirtualTableData>
+      <VirtualTableData className={tableColumnClasses[1]}>
         {serviceClass.spec.externalName}
-      </TableData>
-      <TableData className={classNames(tableColumnClasses[2], 'co-break-word')}>
+      </VirtualTableData>
+      <VirtualTableData className={classNames(tableColumnClasses[2], 'co-break-word')}>
         <ResourceLink kind={referenceForModel(ClusterServiceBrokerModel)} name={serviceClass.spec.clusterServiceBrokerName} />
-      </TableData>
-    </TableRow>
+      </VirtualTableData>
+    </VirtualTableRow>
   );
 };
 ClusterServiceClassTableRow.displayName = 'ClusterServiceClassTableRow';
@@ -108,7 +108,7 @@ export const ClusterServiceClassDetailsPage: React.SFC<ClusterServiceClassDetail
       fieldSelector={`spec.clusterServiceClassRef.name=${obj.metadata.name}`} />)]}
 />;
 
-export const ClusterServiceClassList: React.SFC = props => <Table {...props} aria-label="Cluster Service Classes" Header={ClusterServiceClassTableHeader} Row={ClusterServiceClassTableRow} defaultSortFunc="serviceClassDisplayName" virtualize />;
+export const ClusterServiceClassList: React.SFC = props => <VirtualTable {...props} aria-label="Cluster Service Classes" Header={ClusterServiceClassTableHeader} Row={ClusterServiceClassTableRow} defaultSortFunc="serviceClassDisplayName" />;
 
 export const ClusterServiceClassPage: React.SFC<ClusterServiceClassPageProps> = props =>
   <ListPage
