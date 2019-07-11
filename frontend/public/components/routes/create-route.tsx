@@ -232,7 +232,7 @@ export class CreateRoute extends React.Component<null, CreateRouteState> {
         <form onSubmit={this.save} className="co-create-route">
           <div className="form-group co-create-route__name">
             <label className="co-required" htmlFor="name">Name</label>
-            <input className="form-control"
+            <input className="pf-c-form-control"
               type="text"
               onChange={this.handleChange}
               value={this.state.name}
@@ -247,7 +247,7 @@ export class CreateRoute extends React.Component<null, CreateRouteState> {
           </div>
           <div className="form-group co-create-route__hostname">
             <label htmlFor="hostname">Hostname</label>
-            <input className="form-control"
+            <input className="pf-c-form-control"
               type="text"
               onChange={this.handleChange}
               value={this.state.hostname}
@@ -261,7 +261,7 @@ export class CreateRoute extends React.Component<null, CreateRouteState> {
           </div>
           <div className="form-group co-create-route__path">
             <label htmlFor="path">Path</label>
-            <input className="form-control"
+            <input className="pf-c-form-control"
               type="text"
               onChange={this.handleChange}
               value={this.state.path}
