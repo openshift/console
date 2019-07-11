@@ -1,5 +1,5 @@
 import { ComponentType } from 'react';
-import { ObjectMetadata } from '@console/internal/module/k8s';
+import { K8sResourceKind, ObjectMetadata } from '@console/internal/module/k8s';
 
 export interface ResourceProps {
   kind: string;
@@ -81,6 +81,7 @@ export interface TopologyDataObject<D = {}> {
   name: string;
   type: string;
   resources: ResourceProps[];
+  pods: K8sResourceKind[];
   data: D;
 }
 

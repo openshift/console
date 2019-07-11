@@ -39,6 +39,7 @@ const TopologySideBar: React.FC<TopologySideBarProps> = ({ item, show, onClose }
       routes,
       services,
       buildConfigs,
+      pods: item.pods,
     };
 
     const ksroutes = metadataUIDCheck(
