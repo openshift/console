@@ -98,7 +98,7 @@ export const OperatorHubPage = withFallback((props: OperatorHubPageProps) => <Re
         isList: true,
         kind: referenceForModel(PackageManifestModel),
         namespace: props.match.params.ns,
-        selector: fromRequirements([{key: 'csc-owner-name', operator: 'DoesNotExist'}]),
+        selector: fromRequirements([{key: 'opsrc-owner-name', operator: 'DoesNotExist'}, {key: 'csc-owner-name', operator: 'DoesNotExist'}]),
         prop: 'packageManifest',
       }, {
         isList: true,
