@@ -1,9 +1,11 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
+import * as semver from 'semver';
 
 import { ClusterVersionModel } from '../../models';
 import { Dropdown, PromiseComponent } from '../utils';
 import {
+  ClusterUpdate,
   ClusterVersionKind,
   getAvailableClusterUpdates,
   getDesiredClusterVersion,
@@ -17,12 +19,23 @@ import {
   ModalTitle,
 } from '../factory/modal';
 
+const getSortedUpdates = (cv: ClusterVersionKind): ClusterUpdate[] => {
+  const available = getAvailableClusterUpdates(cv) || [];
+  try {
+    return available.sort(({version: left}, {version: right}) => semver.rcompare(left, right));
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.error('error sorting cluster updates', e);
+    return available;
+  }
+};
+
 class ClusterUpdateModal extends PromiseComponent<ClusterUpdateModalProps, ClusterUpdateModalState> {
   readonly state: ClusterUpdateModalState;
 
   constructor(public props: ClusterUpdateModalProps) {
     super(props);
-    const available = getAvailableClusterUpdates(props.cv);
+    const available = getSortedUpdates(props.cv);
     this.state.selectedVersion = _.get(available, '[0].version', '');
   }
 
@@ -57,7 +70,7 @@ class ClusterUpdateModal extends PromiseComponent<ClusterUpdateModalProps, Clust
   render() {
     const {cv} = this.props;
     const {selectedVersion} = this.state;
-    const availableUpdates = getAvailableClusterUpdates(cv);
+    const availableUpdates = getSortedUpdates(cv);
     const currentVersion = getDesiredClusterVersion(cv);
     const dropdownItems = _.reduce(availableUpdates, (acc, {version}) => {
       acc[version] = version;
