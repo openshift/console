@@ -11,11 +11,10 @@ import store from '../../redux';
 import { ButtonBar } from '../utils/button-bar';
 import { history } from '../utils/router';
 
-export const createModalLauncher: CreateModalLauncher = (Component) => (props) => {
+export const createModal: CreateModal = getModalContainer => {
   const modalContainer = document.getElementById('modal-container');
-
   const result = new Promise(resolve => {
-    const closeModal = e => {
+    const closeModal = (e?: React.SyntheticEvent) => {
       if (e && e.stopPropagation) {
         e.stopPropagation();
       }
@@ -23,21 +22,28 @@ export const createModalLauncher: CreateModalLauncher = (Component) => (props) =
       resolve();
     };
     Modal.setAppElement(modalContainer);
-    ReactDOM.render(<Provider store={store}>
+    ReactDOM.render(getModalContainer(closeModal), modalContainer);
+  });
+  return {result};
+};
+
+export const createModalLauncher: CreateModalLauncher = (Component) => (props) => {
+  const getModalContainer: GetModalContainer = (onClose) => (
+    <Provider store={store}>
       <Router {...{history, basename: window.SERVER_FLAGS.basePath}}>
         <Modal
           isOpen={true}
           contentLabel="Modal"
-          onRequestClose={closeModal}
+          onRequestClose={onClose}
           className={classNames('modal-dialog', props.modalClassName)}
           overlayClassName="co-overlay"
           shouldCloseOnOverlayClick={!props.blocking}>
-          <Component {..._.omit(props, 'blocking', 'modalClassName') as any} cancel={closeModal} close={closeModal} />
+          <Component {..._.omit(props, 'blocking', 'modalClassName') as any} cancel={onClose} close={onClose} />
         </Modal>
       </Router>
-    </Provider>, modalContainer);
-  });
-  return {result};
+    </Provider>
+  );
+  return createModal(getModalContainer);
 };
 
 export const ModalTitle: React.SFC<ModalTitleProps> = ({children, className = 'modal-header'}) => <div className={className}><h4 className="modal-title">{children}</h4></div>;
@@ -79,6 +85,10 @@ ModalSubmitFooter.propTypes = {
   submitButtonClass: PropTypes.string,
   submitDisabled: PropTypes.bool,
 };
+
+export type GetModalContainer = (onClose: (e?: React.SyntheticEvent) => void) => React.ReactElement;
+
+type CreateModal = (getModalContainer: GetModalContainer) => {result: Promise<any>};
 
 export type CreateModalLauncherProps = {
   blocking?: boolean;
