@@ -69,6 +69,17 @@ const plugin: Plugin<ConsumedExtensions> = [
         ).then((m) => m.DataResiliencyWithResources),
     },
   },
+  {
+    type: 'Dashboards/Card',
+    properties: {
+      tab: 'persistent-storage',
+      position: GridPosition.RIGHT,
+      loader: () =>
+        import(
+          './components/dashboard-page/storage-dashboard/events-card' /* webpackChunkName: "ceph-events-card" */
+        ).then((m) => m.default),
+    },
+  },
 ];
 
 export default plugin;
