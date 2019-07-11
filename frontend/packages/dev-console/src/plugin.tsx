@@ -91,8 +91,8 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'NavItem/ResourceCluster',
     properties: {
-      perspective: 'dev',
       section: 'Advanced',
+      perspective: 'dev',
       componentProps: {
         name: 'Projects',
         resource: 'projects',
@@ -103,8 +103,8 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'NavItem/ResourceNS',
     properties: {
-      perspective: 'dev',
       section: 'Advanced',
+      perspective: 'dev',
       componentProps: {
         name: 'Events',
         resource: 'events',
@@ -114,8 +114,8 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'NavItem/Href',
     properties: {
-      perspective: 'dev',
       section: 'Advanced',
+      perspective: 'dev',
       componentProps: {
         name: 'Search',
         href: '/search',
@@ -165,7 +165,6 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'Page/Route',
     properties: {
-      perspective: 'dev',
       exact: true,
       path: ['/add', '/import', '/topology', '/deploy-image'],
       component: NamespaceRedirect,
@@ -174,7 +173,6 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'Page/Route',
     properties: {
-      perspective: 'dev',
       exact: true,
       path: ['/add/all-namespaces', '/add/ns/:ns'],
       loader: async () =>
@@ -184,7 +182,6 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'Page/Route',
     properties: {
-      perspective: 'dev',
       exact: true,
       path: ['/topology/all-namespaces', '/topology/ns/:ns'],
       loader: async () =>
@@ -196,7 +193,6 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'Page/Route',
     properties: {
-      perspective: 'dev',
       exact: true,
       path: ['/import/all-namespaces', '/import/ns/:ns'],
       loader: async () =>
@@ -208,7 +204,6 @@ const plugin: Plugin<ConsumedExtensions> = [
   {
     type: 'Page/Route',
     properties: {
-      perspective: 'dev',
       exact: true,
       path: ['/catalog/source-to-image'],
       loader: async () =>
