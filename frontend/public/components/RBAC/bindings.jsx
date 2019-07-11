@@ -403,7 +403,7 @@ const BaseEditRoleBinding = connect(null, {setActiveNamespace: UIActions.setActi
               <label htmlFor="role-binding-name" className="co-required">Name</label>
               {_.get(fixed, 'metadata.name')
                 ? <ResourceName kind={kind} name={metadata.name} />
-                : <input className="form-control" type="text" onChange={this.changeName} placeholder="Role binding name" value={metadata.name} required id="role-binding-name" />}
+                : <input className="pf-c-form-control" type="text" onChange={this.changeName} placeholder="Role binding name" value={metadata.name} required id="role-binding-name" />}
             </div>
             {kind === 'RoleBinding' && <div className="form-group">
               <label htmlFor="ns-dropdown" className="co-required">Namespace</label>
@@ -439,7 +439,7 @@ const BaseEditRoleBinding = connect(null, {setActiveNamespace: UIActions.setActi
             </div>}
             <div className="form-group">
               <label htmlFor="subject-name" className="co-required">Subject Name</label>
-              <input className="form-control" type="text" onChange={this.changeSubjectName} placeholder="Subject name" value={subject.name} required id="subject-name" />
+              <input className="pf-c-form-control" type="text" onChange={this.changeSubjectName} placeholder="Subject name" value={subject.name} required id="subject-name" />
             </div>
           </Section>
 

@@ -353,7 +353,7 @@ const EditRule = connect(stateToProps, {getResources: k8sActions.getResources}) 
                     <RadioButton name="resourceControl" activeValue={resourceControl} onChange={this.set}
                       value={RESOURCE_ENUM.NON} label="Non-resource URLs" text="API URLs that do not correspond to objects" />
                     <HelpText>
-                      <input type="text" value={nonResourceURLs} className="form-control text-input"
+                      <input type="text" value={nonResourceURLs} className="pf-c-form-control text-input"
                         onChange={e => this.setNonResourceURL(e.target.value)} placeholder="Comma separated list of non-resource urls (/apis/extensions/v1beta1)" />
                     </HelpText>
                   </div>
@@ -406,7 +406,7 @@ const EditRule = connect(stateToProps, {getResources: k8sActions.getResources}) 
                 <p className="text-secondary">Restrict this role to a subset of API URLs that don&rsquo;t correspond to objects.</p>
 
                 <div>
-                  <input id="api-groups" type="text" value={APIGroups} className="form-control text-input" onChange={e => this.setApiGroups(e.target.value)} placeholder="Comma separated list of the api groups for the selected resources." />
+                  <input id="api-groups" type="text" value={APIGroups} className="pf-c-form-control text-input" onChange={e => this.setApiGroups(e.target.value)} placeholder="Comma separated list of the api groups for the selected resources." />
                 </div>
               </div>
             </div>
