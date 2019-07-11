@@ -194,9 +194,7 @@ const QueryInput: React.FC<QueryInputProps> = ({metrics = [], onBlur, onSubmit, 
     }
   };
 
-  const onClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    e.preventDefault();
-
+  const onClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     // Replace the autocomplete token with the selected autocomplete option
     const re = new RegExp(`${_.escapeRegExp(token)}$`);
     const newTextBeforeCursor = getTextBeforeCursor().replace(re, e.currentTarget.dataset.autocomplete);
@@ -210,8 +208,7 @@ const QueryInput: React.FC<QueryInputProps> = ({metrics = [], onBlur, onSubmit, 
     _.defer(() => inputRef.current.setSelectionRange(cursorPosition, cursorPosition));
   };
 
-  const onClear = (e: React.MouseEvent) => {
-    e.preventDefault();
+  const onClear = () => {
     onUpdate('');
     inputRef.current.focus();
   };
@@ -241,14 +238,14 @@ const QueryInput: React.FC<QueryInputProps> = ({metrics = [], onBlur, onSubmit, 
       spellCheck={false}
       value={value}
     />
-    <button className="btn btn-link query-browser__clear-icon" aria-label="Clear Query" onClick={onClear}>
+    <button className="btn btn-link query-browser__clear-icon" aria-label="Clear Query" onClick={onClear} type="button">
       <TimesIcon />
     </button>
     {!_.isEmpty(allSuggestions) && <ul className="pf-c-dropdown__menu query-browser__metrics-dropdown-menu">
       {_.map(allSuggestions, (suggestions, title) => <React.Fragment key={title}>
         <div className="text-muted query-browser__dropdown--subtitle">{title}</div>
         {_.map(suggestions, s => <li key={s}>
-          <a href="#" className="pf-c-dropdown__menu-item" data-autocomplete={s} onClick={onClick}>{s}</a>
+          <button className="pf-c-dropdown__menu-item" data-autocomplete={s} onClick={onClick} type="button">{s}</button>
         </li>)}
       </React.Fragment>)}
     </ul>}
