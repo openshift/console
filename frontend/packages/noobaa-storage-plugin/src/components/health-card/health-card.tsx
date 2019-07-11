@@ -2,13 +2,20 @@ import * as React from 'react';
 import * as _ from 'lodash';
 
 import {
+  AlertsBody,
+  AlertItem,
+  getAlerts,
+  HealthBody,
+  HealthItem,
+} from '@console/internal/components/dashboard/health-card';
+import {
   DashboardCard,
   DashboardCardBody,
   DashboardCardHeader,
   DashboardCardTitle,
 } from '@console/internal/components/dashboard/dashboard-card';
 import { FirehoseResource } from '@console/internal/components/utils';
-import { HealthBody, HealthItem } from '@console/internal/components/dashboard/health-card';
+
 import { HealthState } from '@console/internal/components/dashboard/health-card/states';
 import {
   DashboardItemProps,
@@ -18,7 +25,7 @@ import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s
 
 import { HealthCardQueries } from '../../queries';
 import { NooBaaSystemModel } from '../../models';
-import { getPropsData } from '../../utils';
+import { getPropsData, filterNooBaaAlerts } from '../../utils';
 
 const noobaaSystemResource: FirehoseResource = {
   kind: referenceForModel(NooBaaSystemModel),
@@ -84,8 +91,11 @@ const getObjectStorageHealthState = (
 };
 
 const HealthCard: React.FC<DashboardItemProps> = ({
+  alertsResults,
   watchPrometheus,
+  watchAlerts,
   watchK8sResource,
+  stopWatchAlerts,
   stopWatchK8sResource,
   stopWatchPrometheusQuery,
   prometheusResults,
@@ -100,7 +110,14 @@ const HealthCard: React.FC<DashboardItemProps> = ({
         stopWatchPrometheusQuery(HealthCardQueries[key]),
       );
     };
-  }, [watchK8sResource, stopWatchK8sResource, watchPrometheus, stopWatchPrometheusQuery]);
+  }, [
+    watchK8sResource,
+    stopWatchK8sResource,
+    watchPrometheus,
+    stopWatchPrometheusQuery,
+    watchAlerts,
+    stopWatchAlerts,
+  ]);
 
   const bucketsQueryResult = prometheusResults.getIn([HealthCardQueries.BUCKETS_COUNT, 'result']);
   const unhealthyBucketsQueryResult = prometheusResults.getIn([
@@ -123,6 +140,7 @@ const HealthCard: React.FC<DashboardItemProps> = ({
     unhealthyPoolsQueryResult,
     noobaaSystemData,
   );
+  const alerts = filterNooBaaAlerts(getAlerts(alertsResults));
 
   return (
     <DashboardCard>
@@ -137,6 +155,20 @@ const HealthCard: React.FC<DashboardItemProps> = ({
           />
         </HealthBody>
       </DashboardCardBody>
+      {alerts.length > 0 && (
+        <React.Fragment>
+          <DashboardCardHeader className="co-alerts-card__border">
+            <DashboardCardTitle>Alerts</DashboardCardTitle>
+          </DashboardCardHeader>
+          <DashboardCardBody>
+            <AlertsBody>
+              {alerts.map((alert) => (
+                <AlertItem key={alert.fingerprint} alert={alert} />
+              ))}
+            </AlertsBody>
+          </DashboardCardBody>
+        </React.Fragment>
+      )}
     </DashboardCard>
   );
 };
