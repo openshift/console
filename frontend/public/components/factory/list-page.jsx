@@ -183,6 +183,16 @@ export const FireMan_ = connect(null, {filterList})(
       params.forEach((v, k) => this.applyFilter(k, v));
     }
 
+    runOrNavigate = (itemName) => {
+      const { createProps = {} } = this.props;
+      const action = _.isFunction(createProps.action) && createProps.action(itemName);
+      if (action) {
+        action();
+      } else if (_.isFunction(createProps.createLink)) {
+        history.push(createProps.createLink(itemName));
+      }
+    };
+
     render() {
       const {
         autoFocus,
@@ -205,7 +215,14 @@ export const FireMan_ = connect(null, {filterList})(
           </Link>;
         } else if (createProps.items) {
           createLink = <div className="co-m-primary-action">
-            <Dropdown buttonClassName="pf-c-dropdown__toggle" id="item-create" title={createButtonText} noSelection={true} items={createProps.items} onChange={(name) => history.push(createProps.createLink(name))} />
+            <Dropdown
+              buttonClassName="pf-c-dropdown__toggle"
+              id="item-create"
+              title={createButtonText}
+              noSelection
+              items={createProps.items}
+              onChange={this.runOrNavigate}
+            />
           </div>;
         } else {
           createLink = <div className="co-m-primary-action">
