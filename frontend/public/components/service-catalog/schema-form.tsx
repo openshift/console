@@ -126,7 +126,7 @@ const CustomBaseInput = (props) => {
 
   return (
     <input
-      className="form-control"
+      className="pf-c-form-control"
       readOnly={readonly}
       disabled={disabled}
       autoFocus={autofocus}

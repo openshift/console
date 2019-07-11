@@ -135,7 +135,7 @@ class CreateBindingForm extends React.Component<CreateBindingProps, CreateBindin
             <form className="co-create-service-binding co-m-pane__form">
               <div className="form-group co-create-service-binding__name">
                 <label className="control-label co-required" htmlFor="name">Service Binding Name</label>
-                <input className="form-control"
+                <input className="pf-c-form-control"
                   type="text"
                   onChange={this.onNameChange}
                   value={name}
