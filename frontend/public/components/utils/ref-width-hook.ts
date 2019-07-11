@@ -16,5 +16,5 @@ export const useRefWidth = () => {
     };
   }, []);
 
-  return [ref, width] as [React.Ref<HTMLDivElement>, number];
+  return [ref, width] as [React.MutableRefObject<HTMLDivElement>, number];
 };
