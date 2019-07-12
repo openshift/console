@@ -8,6 +8,7 @@ import GitSection from './git/GitSection';
 import BuilderSection from './builder/BuilderSection';
 import AppSection from './app/AppSection';
 import AdvancedSection from './advanced/AdvancedSection';
+import ServerlessSection from './serverless/ServerlessSection';
 
 export interface SourceToImageFormProps {
   builderImages?: NormalizedBuilderImages;
@@ -26,6 +27,7 @@ const SourceToImageForm: React.FC<FormikProps<FormikValues> & SourceToImageFormP
   <Form onReset={handleReset} onSubmit={handleSubmit}>
     <div className="co-m-pane__form">
       <AppSection project={values.project} />
+      <ServerlessSection />
       <BuilderSection image={values.image} builderImages={builderImages} />
       <GitSection project={values.project} showSample />
       <AdvancedSection values={values} />

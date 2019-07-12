@@ -8,6 +8,7 @@ import GitSection from './git/GitSection';
 import BuilderSection from './builder/BuilderSection';
 import AppSection from './app/AppSection';
 import AdvancedSection from './advanced/AdvancedSection';
+import ServerlessSection from './serverless/ServerlessSection';
 
 export interface GitImportFormProps {
   builderImages?: NormalizedBuilderImages;
@@ -27,6 +28,7 @@ const GitImportForm: React.FC<FormikProps<FormikValues> & GitImportFormProps> = 
     <div className="co-m-pane__form">
       <GitSection project={values.project} />
       <AppSection project={values.project} />
+      <ServerlessSection />
       <BuilderSection image={values.image} builderImages={builderImages} />
       <AdvancedSection values={values} />
     </div>

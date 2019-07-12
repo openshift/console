@@ -68,6 +68,9 @@ const ImportForm: React.FC<ImportFormProps & StateProps> = ({
         privateKey: '',
       },
     },
+    serverless: {
+      trigger: false,
+    },
     build: {
       env: [],
       triggers: {

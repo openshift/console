@@ -27,6 +27,7 @@ export interface GitImportFormData {
   project: ProjectData;
   application: ApplicationData;
   git: GitData;
+  serverless?: ServerlessData;
   image: ImageData;
   route: RouteData;
   build: BuildData;
