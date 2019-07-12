@@ -36,7 +36,7 @@ class DeleteNamespaceModal extends PromiseComponent {
           <div>
             <p>This action cannot be undone. It will destroy all pods, services and other objects in the deleted namespace.</p>
             <p>Confirm deletion by typing <strong className="co-break-word">{this.props.resource.metadata.name}</strong> below:</p>
-            <input type="text" className="form-control" onKeyUp={this._matchTypedNamespace} placeholder="Enter name" autoFocus={true} />
+            <input type="text" className="pf-c-form-control" onKeyUp={this._matchTypedNamespace} placeholder="Enter name" autoFocus={true} />
           </div>
         </div>
       </ModalBody>

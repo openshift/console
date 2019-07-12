@@ -173,7 +173,7 @@ export const withSecretForm = (SubForm, modal?: boolean) => class SecretFormComp
             </label>
             <div>
               <input
-                className="form-control"
+                className="pf-c-form-control"
                 type="text"
                 onChange={this.onNameChanged}
                 value={this.state.secret.metadata.name}
@@ -389,7 +389,7 @@ class ConfigEntryForm extends React.Component<ConfigEntryFormProps, ConfigEntryF
       <div className="form-group">
         <label className="control-label co-required" htmlFor={`${this.props.id}-address`}>Registry Server Address</label>
         <div>
-          <input className="form-control"
+          <input className="pf-c-form-control"
             id={`${this.props.id}-address`}
             type="text"
             name="address"
@@ -401,7 +401,7 @@ class ConfigEntryForm extends React.Component<ConfigEntryFormProps, ConfigEntryF
       <div className="form-group">
         <label className="control-label co-required" htmlFor={`${this.props.id}-username`}>Username</label>
         <div>
-          <input className="form-control"
+          <input className="pf-c-form-control"
             id={`${this.props.id}-username`}
             type="text"
             name="username"
@@ -413,7 +413,7 @@ class ConfigEntryForm extends React.Component<ConfigEntryFormProps, ConfigEntryF
       <div className="form-group">
         <label className="control-label co-required" htmlFor={`${this.props.id}-password`}>Password</label>
         <div>
-          <input className="form-control"
+          <input className="pf-c-form-control"
             id={`${this.props.id}-password`}
             type="password"
             name="password"
@@ -425,7 +425,7 @@ class ConfigEntryForm extends React.Component<ConfigEntryFormProps, ConfigEntryF
       <div className="form-group">
         <label className="control-label" htmlFor={`${this.props.id}-email`}>Email</label>
         <div>
-          <input className="form-control"
+          <input className="pf-c-form-control"
             id={`${this.props.id}-email`}
             type="text"
             name="email"
@@ -619,8 +619,8 @@ class WebHookSecretForm extends React.Component<WebHookSecretFormProps, WebHookS
   render() {
     return <div className="form-group">
       <label className="control-label co-required" htmlFor="webhook-secret-key">Webhook Secret Key</label>
-      <div className="input-group">
-        <input className="form-control"
+      <div className="pf-c-input-group">
+        <input className="pf-c-form-control"
           id="webhook-secret-key"
           type="text"
           name="webhookSecretKey"
@@ -628,9 +628,7 @@ class WebHookSecretForm extends React.Component<WebHookSecretFormProps, WebHookS
           value={this.state.stringData.WebHookSecretKey}
           aria-describedby="webhook-secret-help"
           required />
-        <span className="input-group-btn">
-          <button type="button" onClick={this.generateWebHookSecret} className="btn btn-default">Generate</button>
-        </span>
+        <button type="button" onClick={this.generateWebHookSecret} className="pf-c-button pf-m-tertiary">Generate</button>
       </div>
       <p className="help-block" id="webhook-secret-help">Value of the secret will be supplied when invoking the webhook. </p>
     </div>;
@@ -700,7 +698,7 @@ export class BasicAuthSubform extends React.Component<BasicAuthSubformProps, Bas
       <div className="form-group">
         <label className="control-label" htmlFor="username">Username</label>
         <div>
-          <input className="form-control"
+          <input className="pf-c-form-control"
             id="username"
             aria-describedby="username-help"
             type="text"
@@ -713,7 +711,7 @@ export class BasicAuthSubform extends React.Component<BasicAuthSubformProps, Bas
       <div className="form-group">
         <label className="control-label co-required" htmlFor="password">Password or Token</label>
         <div>
-          <input className="form-control"
+          <input className="pf-c-form-control"
             id="password"
             aria-describedby="password-help"
             type="password"
@@ -899,7 +897,7 @@ class KeyValueEntryForm extends React.Component<KeyValueEntryFormProps, KeyValue
       <div className="form-group">
         <label className="control-label co-required" htmlFor={`${this.props.id}-key`}>Key</label>
         <div>
-          <input className="form-control"
+          <input className="pf-c-form-control"
             id={`${this.props.id}-key`}
             type="text"
             name="key"

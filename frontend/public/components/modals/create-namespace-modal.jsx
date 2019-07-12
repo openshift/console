@@ -107,19 +107,19 @@ const CreateNamespaceModal = connect(null, mapDispatchToProps)(class CreateNames
         <div className="form-group">
           <label htmlFor="input-name" className="control-label co-required">Name</label>
           <div className="modal-body__field">
-            <input id="input-name" name="name" type="text" className="form-control" onChange={this.handleChange} value={this.state.name || ''} autoFocus required />
+            <input id="input-name" name="name" type="text" className="pf-c-form-control" onChange={this.handleChange} value={this.state.name || ''} autoFocus required />
           </div>
         </div>
         {this.props.createProject && <div className="form-group">
           <label htmlFor="input-display-name" className="control-label">Display Name</label>
           <div className="modal-body__field">
-            <input id="input-display-name" name="displayName" type="text" className="form-control" onChange={this.handleChange} value={this.state.displayName || ''} />
+            <input id="input-display-name" name="displayName" type="text" className="pf-c-form-control" onChange={this.handleChange} value={this.state.displayName || ''} />
           </div>
         </div>}
         {this.props.createProject && <div className="form-group">
           <label htmlFor="input-description" className="control-label">Description</label>
           <div className="modal-body__field">
-            <textarea id="input-description" name="description" className="form-control" onChange={this.handleChange} value={this.state.description || ''} />
+            <textarea id="input-description" name="description" className="pf-c-form-control" onChange={this.handleChange} value={this.state.description || ''} />
           </div>
         </div>}
         {!this.props.createProject && <div className="form-group">

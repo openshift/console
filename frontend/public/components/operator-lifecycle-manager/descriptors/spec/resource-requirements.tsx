@@ -13,11 +13,11 @@ export const ResourceRequirements: React.FC<ResourceRequirementsProps> = (props)
   return <div className="row co-m-form-row">
     <div className="col-xs-5">
       <label style={{fontWeight: 300}} className="text-muted text-uppercase" htmlFor="cpu">CPU cores</label>
-      <input value={cpu} onChange={e => onChangeCPU(e.target.value)} name="cpu" type="text" className="form-control" style={{width: 150}} autoFocus placeholder="500m" />
+      <input value={cpu} onChange={e => onChangeCPU(e.target.value)} name="cpu" type="text" className="pf-c-form-control" autoFocus placeholder="500m" />
     </div>
     <div className="col-xs-5">
       <label style={{fontWeight: 300}} className="text-muted text-uppercase" htmlFor="memory">Memory</label>
-      <input value={memory} onChange={e => onChangeMemory(e.target.value)} name="memory" type="text" className="form-control" style={{width: 150}} placeholder="50Mi" />
+      <input value={memory} onChange={e => onChangeMemory(e.target.value)} name="memory" type="text" className="pf-c-form-control" placeholder="50Mi" />
     </div>
   </div>;
 };

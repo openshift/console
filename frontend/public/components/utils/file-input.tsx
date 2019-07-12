@@ -51,22 +51,20 @@ export class FileInput extends React.Component<FileInputProps, FileInputState> {
           <div className="form-group">
             <label className={classNames('control-label', {'co-required': isRequired})} htmlFor={id}>{this.props.label}</label>
             <div className="modal-body__field">
-              <div className="input-group">
+              <div className="pf-c-input-group">
                 <input type="text"
-                  className="form-control"
+                  className="pf-c-form-control"
                   value={this.props.inputFileName}
                   aria-describedby={`${id}-help`}
                   readOnly
                   disabled />
-                <span className="input-group-btn">
-                  <span className="btn btn-default co-btn-file">
-                    Browse&hellip;
-                    <input type="file" onChange={this.onFileUpload} className="form-control" />
-                  </span>
+                <span className="pf-c-button pf-m-tertiary co-btn-file">
+                  <input type="file" onChange={this.onFileUpload} />
+                  Browse&hellip;
                 </span>
               </div>
               <p className="help-block" id={`${id}-help`}>{this.props.inputFieldHelpText}</p>
-              {!hideContents && <textarea className="form-control co-file-dropzone__textarea"
+              {!hideContents && <textarea className="pf-c-form-control co-file-dropzone__textarea"
                 onChange={this.onDataChange}
                 value={this.props.inputFileData}
                 aria-describedby={`${id}-textarea-help`}
