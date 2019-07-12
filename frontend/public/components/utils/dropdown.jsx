@@ -389,8 +389,9 @@ export class Dropdown extends DropdownMixin {
                     value={autocompleteText || ''}
                     autoCapitalize="none"
                     onKeyDown={this.onKeyDown}
-                    className="form-control dropdown--text-filter pf-c-form-control"
-                    onClick={e => e.stopPropagation()} />
+                    className="pf-c-form-control"
+                    onClick={e => e.stopPropagation()}
+                    data-test-id="dropdown-text-filter" />
                 </div>
               }
               { this.renderActionItem() }

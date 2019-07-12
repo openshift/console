@@ -132,7 +132,7 @@ $co-modal-ignore-warning-icon-width: 30px;
 
   &__input {
     margin: 0 0 20px;
-    width: auto;
+    width: auto !important;
   }
 
   &__num-items {
