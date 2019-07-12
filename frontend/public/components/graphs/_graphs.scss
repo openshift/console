@@ -11,6 +11,11 @@
   overflow: visible; // Tooltips may overflow
   padding-top: 15px; // So graph title doesn't abut border
   width: 100%;
+
+  .cos-status-box {
+    height: 100%; // Loading box should be approximately same height as graph
+    position: relative; // .co-m-loader uses position: absolute, needs position: relative wrapper for correct placement
+  }
 }
 
 .graph-wrapper svg {
@@ -32,7 +37,6 @@
 }
 
 .graph-wrapper--gauge {
-  margin: auto;
   max-width: 170px;
   min-width: 135px;
   width: 100%;

@@ -2,12 +2,6 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { ChartBarIcon } from '@patternfly/react-icons';
 import {
-  EmptyState,
-  EmptyStateIcon,
-  EmptyStateVariant,
-  Title,
-} from '@patternfly/react-core';
-import {
   Chart,
   ChartAxis,
   ChartBar,
@@ -25,6 +19,7 @@ import { barTheme } from './themes';
 import { humanizeNumber, Humanize } from '../utils';
 import { DomainPadding } from '.';
 import { getInstantVectorStats } from './utils';
+import { GraphEmpty } from './graph-empty';
 
 const BAR_PADDING = 8; // Space between each bar (top and bottom)
 const BAR_LABEL_PADDING = 8;
@@ -43,7 +38,7 @@ export const Bar: React.FC<BarProps> = ({
   title,
 }) => {
   const [containerRef, width] = useRefWidth();
-  const [response] = usePrometheusPoll({ endpoint: PrometheusEndpoint.QUERY, namespace, query });
+  const [response,, loading] = usePrometheusPoll({ endpoint: PrometheusEndpoint.QUERY, namespace, query });
   const data = getInstantVectorStats(response, metric, humanize);
 
   // Max space that horizontal padding should take up. By default, 2/3 of the horizontal space is always available for the actual bar graph.
@@ -65,7 +60,7 @@ export const Bar: React.FC<BarProps> = ({
   const tickLabelComponent = <ChartLabel x={0} verticalAnchor="start" transform={`translate(0, -${xAxisTickLabelHeight + BAR_LABEL_PADDING})`} />;
   const labelComponent = <ChartLabel x={width} />;
 
-  return <PrometheusGraph ref={containerRef} title={title} >
+  return <PrometheusGraph ref={containerRef} title={title}>
     {
       data.length ? (
         <PrometheusGraphLink query={query}>
@@ -86,10 +81,7 @@ export const Bar: React.FC<BarProps> = ({
           </Chart>
         </PrometheusGraphLink>
       ) : (
-        <EmptyState className="graph-empty-state" variant={EmptyStateVariant.full}>
-          <EmptyStateIcon size="sm" icon={ChartBarIcon} />
-          <Title size="sm">No Prometheus datapoints found.</Title>
-        </EmptyState>
+        <GraphEmpty icon={ChartBarIcon} loading={loading} height={100} />
       )
     }
   </PrometheusGraph>;
