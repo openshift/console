@@ -1,23 +1,13 @@
 import * as React from 'react';
-import { ChartDonutThreshold, ChartDonutUtilization } from '@patternfly/react-charts';
+import { ChartDonutThreshold, ChartDonutUtilization, ChartThemeColor } from '@patternfly/react-charts';
 
 import { PrometheusGraph, PrometheusGraphLink } from './prometheus-graph';
 import { usePrometheusPoll } from './prometheus-poll-hook';
 import { PrometheusEndpoint } from './helpers';
 import { useRefWidth, humanizePercentage, Humanize } from '../utils';
-import { ThresholdColor } from '.';
 import { getInstantVectorStats } from './utils';
 
-const DEFAULT_THRESHOLDS = [
-  {
-    value: 67,
-    color: ThresholdColor.WARN,
-  },
-  {
-    value: 92,
-    color: ThresholdColor.ERROR,
-  },
-];
+const DEFAULT_THRESHOLDS = [{ value: 67 }, { value: 92 }];
 
 export const GaugeChart: React.FC<GaugeChartProps> = ({
   query = '',
@@ -49,6 +39,7 @@ export const GaugeChart: React.FC<GaugeChartProps> = ({
               data={error ? {y: 0}: data}
               invert={invert}
               subTitle={error ? null : secondaryTitle}
+              themeColor={ChartThemeColor.green}
               thresholds={thresholds}
               title={error ? 'No Data' : label}
               theme={theme}
@@ -111,7 +102,7 @@ type GaugeChartProps = {
   theme?: any;
   thresholds?: {
     value: number;
-    color: ThresholdColor;
+    color?: string;
   }[];
   title?: string;
   usedLabel?: string;
@@ -128,7 +119,7 @@ type GaugeProps = {
   query?: string,
   thresholds?: {
     value: number;
-    color: ThresholdColor;
+    color?: string;
   }[];
   title?: string,
   usedLabel?: string,

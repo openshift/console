@@ -55,8 +55,9 @@
 @import '~patternfly-react-extensions/dist/sass/properties-side-panel';
 @import '~patternfly-react-extensions/dist/sass/vertical-tabs';
 @import '~@patternfly/patternfly/sass-utilities/all';
-@import "~@patternfly/patternfly/_variables";
-@import "~@patternfly/patternfly/_fonts";
-@import "~@patternfly/patternfly/_base";
+@import "~@patternfly/patternfly/variables";
+@import "~@patternfly/patternfly/fonts";
+@import "~@patternfly/patternfly/base";
 @import "~@patternfly/patternfly/components/FormControl/form-control";
 @import "~@patternfly/patternfly/components/InputGroup/input-group";
+@import "~@patternfly/patternfly/patternfly-charts";

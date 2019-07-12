@@ -7,7 +7,7 @@ import { DetailsPage, MultiListPage, Table, TableRow, TableData } from './factor
 import { Kebab, SectionHeading, navFactory, ResourceKebab, ResourceLink, ResourceSummary, convertToBaseValue } from './utils';
 import { connectToFlags, flagPending } from '../reducers/features';
 import { FLAGS } from '../const';
-import { Gauge, ThresholdColor } from './graphs';
+import { Gauge } from './graphs';
 import { LoadingBox } from './utils/status-box';
 import { referenceForModel } from '../module/k8s';
 import { ResourceQuotaModel, ClusterResourceQuotaModel } from '../models';
@@ -16,16 +16,7 @@ const { common } = Kebab.factory;
 const menuActions = [...common];
 
 const quotaKind = quota => quota.metadata.namespace ? referenceForModel(ResourceQuotaModel) : referenceForModel(ClusterResourceQuotaModel);
-const gaugeChartThresholds = [
-  {
-    value: 90,
-    color: ThresholdColor.WARN,
-  },
-  {
-    value: 101,
-    color: ThresholdColor.ERROR,
-  },
-];
+const gaugeChartThresholds = [{ value: 90 }, { value: 101 }];
 
 const quotaScopes = Object.freeze({
   'Terminating': {label: 'Terminating', description: 'Affects pods that have an active deadline. These pods usually include builds, deployers, and jobs.'},

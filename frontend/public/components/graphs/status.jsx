@@ -1,16 +1,10 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
+import * as classnames from 'classnames';
 import { Link } from 'react-router-dom';
 
 import { coFetchJSON } from '../../co-fetch';
 import { PROMETHEUS_BASE_PATH, PROMETHEUS_TENANCY_BASE_PATH } from '.';
-
-const colors = {
-  ok: 'rgb(57,200,143)',
-  warn: 'rgb(245,178,83)',
-  error: 'rgb(213,69,89)',
-};
-
 
 export const errorStatus = err => {
   if (_.get(err.response, 'ok') === false) {
@@ -100,30 +94,23 @@ export class Status extends React.Component {
   render() {
     const title = this.props.title;
     const { short, long, status } = this.state;
-    let color = colors.gray; // TODO colors.gray is undefined
-    if (status === 'OK') {
-      color = colors.ok;
-    } else if (status === 'ERROR') {
-      color = colors.error;
-    } else if (status === 'WARN') {
-      color = colors.warn;
-    }
+    const shortStatusClassName = classnames('graph-status__short', {
+      'graph-status__short--ok': status === 'OK',
+      'graph-status__short--warn': status === 'WARN',
+      'graph-status__short--error': status === 'ERROR',
+    });
 
-    const defaultStyle = {
-      marginBottom: '30px',
-    };
-
-    const statusElem = <div className="graph-wrapper graph-wrapper--title-center" style={Object.assign({}, defaultStyle, this.style)} >
+    const statusElem = <div className="graph-wrapper graph-wrapper--title-center graph-wrapper--status">
       { title && <h5 className="graph-title">{title}</h5> }
-      <div className="text-center">
-        <h1 style={{color, fontSize: 26, marginBottom: 2}}>{short}</h1>
-        <div className="text-muted" style={{fontSize: 14, lineHeight: 1.3}}>{long}</div>
+      <div className="graph-status">
+        <h1 className={shortStatusClassName}>{short}</h1>
+        <div className="graph-status--long">{long}</div>
       </div>
     </div>;
-    const props = _.pick(this.props, ['rel', 'target', 'to']);
-    if (_.isEmpty(props)) {
+    const linkProps = _.pick(this.props, ['rel', 'target', 'to']);
+    if (_.isEmpty(linkProps)) {
       return statusElem;
     }
-    return <Link {...props} style={{textDecoration: 'none'}}>{statusElem}</Link>;
+    return <Link {...linkProps} className="graph-status__link">{statusElem}</Link>;
   }
 }
