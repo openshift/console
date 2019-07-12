@@ -113,7 +113,7 @@ class App extends React.PureComponent {
         <ConsoleNotifier location="BannerTop" />
         <Page
           header={<Masthead onNavToggle={this._onNavToggle} />}
-          sidebar={<Navigation isNavOpen={isNavOpen} onNavSelect={this._onNavSelect} />}
+          sidebar={<Navigation isNavOpen={isNavOpen} onNavSelect={this._onNavSelect} onPerspectiveSelected={this._onNavSelect} />}
         >
           <AppContents />
         </Page>

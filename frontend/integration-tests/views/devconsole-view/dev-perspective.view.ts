@@ -1,8 +1,8 @@
-import { $, browser, ExpectedConditions as until, by, element } from 'protractor';
+import { browser, ExpectedConditions as until, by, element } from 'protractor';
 
-export const switcher = element(by.css('[data-test-id="application-launcher"]'));
+export const switcher = element(by.css('[data-test-id="perspective-switcher-toggle"]'));
 
-export const applicationlLauncher = $('.pf-c-dropdown__menu.pf-m-align-right');
+export const switcherMenu = element(by.css('[data-test-id="perspective-switcher-menu"]'));
 
 export const devPerspective = element(by.cssContainingText('.pf-c-dropdown__menu-item', 'Developer'));
 
@@ -16,7 +16,7 @@ export enum Perspective {
 export const switchPerspective = async function(perspective: Perspective) {
   await browser.wait(until.elementToBeClickable(switcher), 5000);
   await switcher.click();
-  await browser.wait(until.visibilityOf(applicationlLauncher));
+  await browser.wait(until.visibilityOf(switcherMenu));
   switch (perspective) {
     case Perspective.Developer: {
       await browser.wait(until.elementToBeClickable(devPerspective));

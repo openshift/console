@@ -6,6 +6,7 @@
 }
 
 .co-username {
+  font-size: $pf-header-icon-fontsize; // for cases where there is no user menu
   max-width: 190px !important; // PF4 does not limit username length (upstream bug)
   overflow-x: hidden;
   padding: 0 8px; // so sizing is consistent with .pf-c-dropdown__toggle
@@ -20,4 +21,27 @@
 
 .co-update-icon svg {
   color: $color-pf-blue-400;
+}
+
+.co-app-launcher {
+  // PF4 app-launcher does not support the align right modifier yet: https://github.com/patternfly/patternfly-next/issues/1972
+  .pf-m-align-right {
+    right: 0;
+  }
+
+  ul {
+    list-style: none;
+  }
+
+  .pf-c-app-launcher__menu-item-external-icon {
+    opacity: 1;
+    color: var(--pf-global--icon--Color--light);
+  }
+  .pf-c-app-launcher__menu-item {
+    &:hover, &:focus {
+      .pf-c-app-launcher__menu-item-external-icon {
+        color: var(--pf-c-app-launcher__menu-item-external-icon--Color);
+      }
+    }
+  }
 }

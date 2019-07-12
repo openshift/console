@@ -121,11 +121,10 @@ kbd {
     @media(max-width: $grid-float-breakpoint-max) {
       margin-right: 8px !important;
     }
-    .pf-c-dropdown__toggle {
+    .pf-c-dropdown__toggle, .pf-c-app-launcher__toggle {
       font-size: $pf-header-icon-fontsize !important;
     }
   }
-
 
   &__main {
     // `z-index: auto` is required for fullscreen terminal
@@ -160,6 +159,7 @@ kbd {
 // specificity targeting form elements to override --pf-global--FontSize--md
 .pf-c-page,
 .modal-dialog {
+  .pf-c-app-launcher,
   .pf-c-button,
   .pf-c-dropdown,
   .pf-c-dropdown__menu-item,
