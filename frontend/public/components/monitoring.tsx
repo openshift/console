@@ -820,7 +820,7 @@ const toISODate = (dateStr: string): string => {
   return isNaN(timestamp) ? undefined : (new Date(timestamp)).toISOString();
 };
 
-const Text = props => <input {...props} type="text" className="form-control form-control--silence-text" />;
+const Text = props => <input {...props} type="text" className="pf-c-form-control" />;
 
 const Datetime = props => {
   const pattern = '\\d{4}/(0?[1-9]|1[012])/(0?[1-9]|[12]\\d|3[01]) (0?\\d|1\\d|2[0-3]):[0-5]\\d(:[0-5]\\d)?';
@@ -961,7 +961,7 @@ class SilenceForm_ extends React.Component<SilenceFormProps, SilenceFormState> {
         </div>
         <div className="form-group">
           <label>Comment</label>
-          <textarea className="form-control" onChange={this.onFieldChange('comment')} value={data.comment} />
+          <textarea className="pf-c-form-control" onChange={this.onFieldChange('comment')} value={data.comment} />
         </div>
 
         <ButtonBar errorMessage={error} inProgress={inProgress}>
