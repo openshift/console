@@ -30,6 +30,7 @@ import {
   AsyncComponent,
   BreadCrumbs,
   Dropdown,
+  EmptyBox,
   LinkifyExternal,
   LoadError,
   Loading,
@@ -82,8 +83,10 @@ const APIResourceRows = ({componentProps: {data}}) => _.map(data, (model: K8sKin
   title: model.apiVersion,
 }]);
 
+const EmptyMsg: React.FC<{}> = () => <EmptyBox label="API Resources" />;
+
 const stateToProps = ({k8s}) => ({
-  models: k8s.getIn(['RESOURCES', 'models']),
+  models: k8s.getIn(['RESOURCES', 'models']) || [],
 });
 
 const APIResourcesList = connect<APIResourcesListPropsFromState>(stateToProps)(({models}) => {
@@ -108,12 +111,14 @@ const APIResourcesList = connect<APIResourcesListPropsFromState>(stateToProps)((
     </div>
     <div className="co-m-pane__body">
       <Table
-        aria-label="API Resources"
-        data={sortedResources}
+        EmptyMsg={EmptyMsg}
         Header={APIResourceHeader}
         Rows={APIResourceRows}
+        aria-label="API Resources"
+        data={sortedResources}
+        loaded={!_.isEmpty(models)}
         virtualize={false}
-        loaded={!_.isEmpty(sortedResources)} />
+      />
     </div>
   </React.Fragment>;
 });
