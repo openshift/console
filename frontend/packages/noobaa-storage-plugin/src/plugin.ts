@@ -69,6 +69,17 @@ const plugin: Plugin<ConsumedExtensions> = [
         ).then((m) => m.ResourceProvidersCard),
     },
   },
+  {
+    type: 'Dashboards/Card',
+    properties: {
+      tab: 'object-service',
+      position: GridPosition.RIGHT,
+      loader: () =>
+        import(
+          './components/object-data-reduction-card/object-data-reduction-card' /* webpackChunkName: "object-service-data-reduction-card" */
+        ).then((m) => m.default),
+    },
+  },
 ];
 
 export default plugin;
