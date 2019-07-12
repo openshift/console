@@ -33,6 +33,7 @@ import { requirePrometheus, Area } from './graphs';
 import { formatDuration } from './utils/datetime';
 import { CamelCaseWrap } from './utils/camel-case-wrap';
 import { VolumesTable } from './volumes-table';
+import { RedExclamationCircleIcon } from '@console/internal/components/utils/status-icon';
 
 export const menuActions = [...Kebab.factory.common];
 const validReadinessStates = new Set(['ContainersNotReady', 'Ready', 'PodCompleted']);
@@ -46,7 +47,7 @@ export const Readiness: React.FC<ReadinessProps> = ({pod}) => {
     return <CamelCaseWrap value={readiness} />;
   }
   return <span className="co-error co-icon-and-text">
-    <i className="fa fa-times-circle co-icon-and-text__icon" aria-hidden="true" />
+    <RedExclamationCircleIcon className="co-icon-and-text__icon" />
     <CamelCaseWrap value={readiness} />
   </span>;
 };

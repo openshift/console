@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
+import { AddCircleOIcon } from '@patternfly/react-icons';
 
 import { DASH } from '@console/shared';
 import { MachineModel } from '@console/internal/models';
@@ -40,7 +41,7 @@ const MachineCell: React.FC<MachineCellProps> = ({ host }) => {
     return (
       <RequireCreatePermission model={MachineModel} namespace={ns}>
         <Link to={href}>
-          <StatusIconAndText status="Add machine" iconName="add-circle-o" />
+          <StatusIconAndText status="Add machine" icon={<AddCircleOIcon />} />
         </Link>
       </RequireCreatePermission>
     );

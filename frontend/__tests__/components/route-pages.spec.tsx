@@ -196,7 +196,7 @@ describe(RouteStatus.displayName, () => {
     };
 
     const wrapper = mount(<RouteStatus obj={route} />);
-    expect(wrapper.find('.pficon-ok').exists()).toBe(true);
+    expect(wrapper.find('.co-icon-and-text__icon').exists()).toBe(true);
     expect(wrapper.text()).toEqual('Accepted');
   });
 
@@ -223,7 +223,7 @@ describe(RouteStatus.displayName, () => {
     };
 
     const wrapper = mount(<RouteStatus obj={route} />);
-    expect(wrapper.find('.pficon-error-circle-o').exists()).toBe(true);
+    expect(wrapper.find('.co-icon-and-text__icon').exists()).toBe(true);
     expect(wrapper.text()).toEqual('Rejected');
   });
 
@@ -237,7 +237,7 @@ describe(RouteStatus.displayName, () => {
     };
 
     const wrapper = mount(<RouteStatus obj={route} />);
-    expect(wrapper.find('.fa-hourglass-half').exists()).toBe(true);
+    expect(wrapper.find('.co-icon-and-text__icon').exists()).toBe(true);
     expect(wrapper.text()).toEqual('Pending');
   });
 });

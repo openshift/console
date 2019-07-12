@@ -1,39 +1,59 @@
 import * as React from 'react';
-import { Icon } from 'patternfly-react';
+import {
+  BanIcon,
+  CheckCircleIcon,
+  ExclamationCircleIcon,
+  ExclamationTriangleIcon,
+  HourglassHalfIcon,
+  HourglassStartIcon,
+  InfoCircleIcon,
+  InProgressIcon,
+  SyncAltIcon,
+  UnknownIcon,
+} from '@patternfly/react-icons';
+
 import {CamelCaseWrap} from './camel-case-wrap';
 import * as classNames from 'classnames';
 
-export const StatusIcon: React.FunctionComponent<StatusIconProps> = ({status, spin, iconName, additionalIconClassName}) => {
+export const GreenCheckCircleIcon: React.FunctionComponent<ColoredIconProps> = ({className}) => {
+  return <CheckCircleIcon color="var(--pf-global--success-color--100)" className={className} />;
+};
+
+export const RedExclamationCircleIcon: React.FunctionComponent<ColoredIconProps> = ({className}) => {
+  return <ExclamationCircleIcon color="var(--pf-global--danger-color--100)" className={className} />;
+};
+
+export const StatusIcon: React.FunctionComponent<StatusIconProps> = ({status, spin, icon, additionalIconClassName}) => {
   const className = classNames(spin && 'fa-spin', additionalIconClassName);
 
-  if (iconName){
-    return <Icon type="pf" name={iconName} className={className} />;
+  if (icon) {
+    return React.cloneElement(icon, {className});
   }
 
   switch (status) {
     case 'New':
-      return <Icon type="fa" name="hourglass-1" className={className} />;
+      return <HourglassStartIcon className={className} />;
 
     case 'Pending':
-      return <Icon type="fa" name="hourglass-half" className={className} />;
+      return <HourglassHalfIcon className={className} />;
 
     case 'ContainerCreating':
-      return <Icon type="pf" name="in-progress" className={className} />;
+      return <InProgressIcon className={className} />;
 
     case 'In Progress':
     case 'Running':
     case 'Updating':
     case 'Upgrading':
-      return <Icon type="fa" name="refresh" className={className} />;
+      return <SyncAltIcon className={className} />;
 
     case 'Cancelled':
     case 'Expired':
     case 'Not Ready':
     case 'Terminating':
-      return <Icon type="fa" name="ban" className={className} />;
+      return <BanIcon className={className} />;
 
     case 'Warning':
-      return <Icon type="pf" name="warning-triangle-o" className={className} />;
+      return <ExclamationTriangleIcon color="var(--pf-global--warning-color--100)" className={className} />;
 
     case 'ContainerCannotRun':
     case 'CrashLoopBackOff':
@@ -43,7 +63,7 @@ export const StatusIcon: React.FunctionComponent<StatusIconProps> = ({status, sp
     case 'InstallCheckFailed':
     case 'Lost':
     case 'Rejected':
-      return <Icon type="pf" name="error-circle-o" className={className} />;
+      return <RedExclamationCircleIcon className={className} />;
 
     case 'Accepted':
     case 'Active':
@@ -54,37 +74,40 @@ export const StatusIcon: React.FunctionComponent<StatusIconProps> = ({status, sp
     case 'Enabled':
     case 'Ready':
     case 'Up to date':
-      return <Icon type="pf" name="ok" className={className} />;
+      return <GreenCheckCircleIcon className={className} />;
 
     case 'Info':
-      return <Icon type="pf" name="info" className={className} />;
+      return <InfoCircleIcon className={className} />;
 
     case 'Unknown':
-      return <Icon type="pf" name="unknown" className={className} />;
+      return <UnknownIcon className={className} />;
 
     default:
       return null;
   }
 };
 
-
-export const StatusIconAndText: React.FunctionComponent<StatusIconAndTextProps> = ({status, spin, iconName}) => {
+export const StatusIconAndText: React.FunctionComponent<StatusIconAndTextProps> = ({status, spin, icon}) => {
   if (!status){
     return <span>-</span>;
   }
 
-  return <span className="co-icon-and-text"><StatusIcon status={status} spin={spin} additionalIconClassName="co-icon-and-text__icon" iconName={iconName} /><CamelCaseWrap value={status} /></span>;
+  return <span className="co-icon-and-text"><StatusIcon status={status} spin={spin} additionalIconClassName="co-icon-and-text__icon" icon={icon} /><CamelCaseWrap value={status} /></span>;
+};
+
+export type ColoredIconProps = {
+  className?: string;
 };
 
 export type StatusIconProps = {
   status?: string;
   additionalIconClassName?: any;
   spin?: boolean;
-  iconName?: string;
+  icon?: React.ReactElement;
 };
 
 export type StatusIconAndTextProps = {
   status?: string;
   spin?: boolean;
-  iconName?: string;
+  icon?: React.ReactElement;
 };
