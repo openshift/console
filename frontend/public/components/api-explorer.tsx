@@ -30,6 +30,7 @@ import {
   AsyncComponent,
   BreadCrumbs,
   Dropdown,
+  EmptyBox,
   LinkifyExternal,
   LoadError,
   Loading,
@@ -66,6 +67,19 @@ const APIResourceLink_: React.FC<APIResourceLinkStateProps & APIResourceLinkOwnP
 };
 const APIResourceLink = connect<APIResourceLinkStateProps, {}, APIResourceLinkOwnProps>(mapStateToProps)(APIResourceLink_);
 
+const EmptyMsg: React.FC<{}> = () => <EmptyBox label="API Resources" />;
+
+const Group: React.FC<{value: string}> = ({value}) => {
+  if (!value) {
+    return <>-</>;
+  }
+
+  const [first, ...rest] = value.split('.');
+  return _.isEmpty(rest)
+    ? <>{value}</>
+    : <>{first}<span className="text-muted">.{rest.join('.')}</span></>;
+};
+
 const APIResourceHeader = () => [{
   title: 'Kind',
   sortField: 'kind',
@@ -83,7 +97,7 @@ const APIResourceHeader = () => [{
 const APIResourceRows = ({componentProps: {data}}) => _.map(data, (model: K8sKind) => [{
   title: <APIResourceLink model={model} />,
 }, {
-  title: model.apiGroup || '-',
+  title: <Group value={model.apiGroup} />,
 }, {
   title: model.apiVersion,
 }]);
@@ -93,17 +107,85 @@ const stateToProps = ({k8s}) => ({
 });
 
 const APIResourcesList = connect<APIResourcesListPropsFromState>(stateToProps)(({models}) => {
+  const ALL = '#all#';
   const [textFilter, setTextFilter] = React.useState('');
-  const filteredResources = textFilter
-    ? models.filter(({kind, apiGroup}) => {
+  const [groupFilter, setGroupFilter] = React.useState(ALL);
+  const [versionFilter, setVersionFilter] = React.useState(ALL);
+
+  // group options
+  const groups: Set<string> = models.reduce((result: Set<string>, {apiGroup}) => {
+    return apiGroup ? result.add(apiGroup) : result;
+  }, new Set<string>());
+  const sortedGroups: string[] = [...groups].sort();
+  const groupOptions = sortedGroups.reduce((result, group: string) => {
+    result[group] = <Group value={group} />;
+    return result;
+  }, {[ALL]: 'All Groups', '': 'No Group'});
+
+  const groupSpacer = new Set<string>();
+  if (sortedGroups.length) {
+    groupSpacer.add(sortedGroups[0]);
+  }
+
+  const autocompleteGroups = (text: string, item: string, key: string): boolean => {
+    return key !== ALL && fuzzy(text, key);
+  };
+
+  // version options
+  const versions: Set<string> = models.reduce((result: Set<string>, {apiVersion}) => {
+    return result.add(apiVersion);
+  }, new Set<string>());
+  const sortedVersions: string[] = [...versions].sort();
+  const versionOptions = sortedVersions.reduce((result, version: string) => {
+    result[version] = version;
+    return result;
+  }, {[ALL]: 'All Versions'});
+
+  const versionSpacer = new Set<string>();
+  if (sortedVersions.length) {
+    versionSpacer.add(sortedVersions[0]);
+  }
+
+  // filter by group, version, or text
+  const filteredResources = models.filter(({kind, apiGroup, apiVersion}) => {
+    if (groupFilter !== ALL && (apiGroup || '') !== groupFilter) {
+      return false;
+    }
+
+    if (versionFilter !== ALL && apiVersion !== versionFilter) {
+      return false;
+    }
+
+    if (textFilter) {
       const text = textFilter.toLowerCase();
       return fuzzy(text, kind.toLowerCase()) || (apiGroup && fuzzy(text, apiGroup));
-    })
-    : models;
+    }
+
+    return true;
+  });
+
   // Put models with no API group (core k8s resources) at the top.
   const sortedResources = _.sortBy(filteredResources.toArray(), [({apiGroup}) => apiGroup || '1', 'apiVersion', 'kind']);
-  return <React.Fragment>
+
+  return <>
     <div className="co-m-pane__filter-bar">
+      <div className="co-m-pane__filter-bar-group">
+        <Dropdown
+          autocompleteFilter={autocompleteGroups}
+          items={groupOptions}
+          onChange={(group: string) => setGroupFilter(group)}
+          selectedKey={groupFilter}
+          spacerBefore={groupSpacer}
+          title={groupOptions[groupFilter]}
+        />
+        <Dropdown
+          items={versionOptions}
+          onChange={(version: string) => setVersionFilter(version)}
+          selectedKey={versionFilter}
+          spacerBefore={versionSpacer}
+          title={versionOptions[versionFilter]}
+        />
+      </div>
       <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--filter">
         <TextFilter
           defaultValue={textFilter}
@@ -114,18 +196,20 @@ const APIResourcesList = connect<APIResourcesListPropsFromState>(stateToProps)((
     </div>
     <div className="co-m-pane__body">
       <Table
-        aria-label="API Resources"
-        data={sortedResources}
+        EmptyMsg={EmptyMsg}
         Header={APIResourceHeader}
         Rows={APIResourceRows}
+        aria-label="API Resources"
+        data={sortedResources}
+        loaded={!!models.size}
         virtualize={false}
-        loaded={!_.isEmpty(sortedResources)} />
+      />
     </div>
-  </React.Fragment>;
+  </>;
 });
 APIResourcesList.displayName = 'APIResourcesList';
 
-export const APIExplorerPage: React.FC<{}> = () => <React.Fragment>
+export const APIExplorerPage: React.FC<{}> = () => <>
   <Helmet>
     <title>API Explorer</title>
   </Helmet>
@@ -133,7 +217,7 @@ export const APIExplorerPage: React.FC<{}> = () => <React.Fragment>
     <h1 className="co-m-pane__heading">API Explorer</h1>
   </div>
   <APIResourcesList />
-</React.Fragment>;
+</>;
 APIExplorerPage.displayName = 'APIExplorerPage';
 
 const APIResourceOverview: React.FC<APIResourceTabProps> = ({kindObj}) => {
