@@ -18,7 +18,7 @@ const htmlReporter = new HtmlScreenshotReporter({ dest: './gui_test_screenshots'
 const junitReporter = new JUnitXmlReporter({ savePath: './gui_test_screenshots', consolidateAll: true });
 const browserLogs: logging.Entry[] = [];
 
-const suite = (tests: string[]) => (!_.isNil(process.env.BRIDGE_KUBEADMIN_PASSWORD) ? ['tests/login.scenario.ts'] : []).concat(['tests/base.scenario.ts', ...tests]);
+const suite = (tests: string[]) => (!_.isNil(process.env.BRIDGE_KUBEADMIN_PASSWORD) ? ['tests/auth.scenario.ts'] : []).concat(['tests/base.scenario.ts', ...tests]);
 
 export const config: Config = {
   framework: 'jasmine',
