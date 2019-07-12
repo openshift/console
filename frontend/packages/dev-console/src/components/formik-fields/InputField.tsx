@@ -9,7 +9,8 @@ const InputField: React.FC<InputFieldProps> = ({ label, helpText, ...props }) =>
   const [field, { touched, error }] = useField(props.name);
   return (
     <FormGroup
-      controlId={`${props.name}-field`}
+      controlId={`form-input-${props.name.replace(/\./g, '-')}-field`}
+      name={`${props.name}-field`}
       validationState={getValidationState(error, touched)}
     >
       <ControlLabel className={cx({ 'co-required': props.required })}>{label}</ControlLabel>

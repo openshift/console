@@ -212,15 +212,12 @@ DeploymentConfigsList.displayName = 'DeploymentConfigsList';
 
 export const DeploymentConfigsPage: React.FC<DeploymentConfigsPageProps> = props => {
   const createItems = {
-    image: 'From Image',
     yaml: 'From YAML',
   };
 
   const createProps = {
     items: createItems,
-    createLink: (type: string) => type === 'image'
-      ? `/deploy-image${props.namespace ? `?preselected-ns=${props.namespace}` : ''}`
-      : `/k8s/ns/${props.namespace || 'default'}/deploymentconfigs/~new`,
+    createLink: () => `/k8s/ns/${props.namespace || 'default'}/deploymentconfigs/~new`,
   };
   return <ListPage {...props} title="Deployment Configs" kind={DeploymentConfigsReference} ListComponent={DeploymentConfigsList} canCreate={true} createButtonText="Create" createProps={createProps} filterLabel={props.filterLabel} />;
 };

@@ -16,7 +16,8 @@ const NSDropdownField: React.FC<DropdownFieldProps> = ({ label, helpText, ...pro
     >
       <ControlLabel className={cx({ 'co-required': props.required })}>{label}</ControlLabel>
       <NsDropdown
-        id={`${props.name}-field`}
+        id={`namespace-dropdown-${props.name.replace(/\./g, '-')}-field`}
+        name={`${props.name}-field`}
         {...field}
         {...props}
         dropDownClassName={cx({ 'dropdown--full-width': props.fullWidth })}

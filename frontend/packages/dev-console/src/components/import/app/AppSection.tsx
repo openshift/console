@@ -12,6 +12,7 @@ const AppSection: React.FC<AppSectionProps> = ({ project }) => {
   return (
     <FormSection title="General" divider>
       <NSDropdownField
+        data-test-id="application-form-namespace-dropdown"
         name="project.name"
         label="Project"
         selectedKey={project.name}
@@ -21,6 +22,7 @@ const AppSection: React.FC<AppSectionProps> = ({ project }) => {
       <ApplicationSelector namespace={project.name} />
       <InputField
         type="text"
+        data-test-id="application-form-app-name"
         name="name"
         label="Name"
         helpText="Identifies the resources created for this application."

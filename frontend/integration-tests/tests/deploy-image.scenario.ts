@@ -1,8 +1,6 @@
-import { browser, $, element, by, ExpectedConditions as until, Key } from 'protractor';
-import * as _ from 'lodash';
+import { browser, $, element, by, ExpectedConditions as until } from 'protractor';
 
 import { appHost, checkLogs, checkErrors, testName } from '../protractor.conf';
-import * as crudView from '../views/crud.view';
 
 describe('Deploy Image', () => {
   afterEach(() => {
@@ -10,61 +8,66 @@ describe('Deploy Image', () => {
     checkErrors();
   });
 
-  const appName = 'mysql';
-
-  describe('Deployment Configs page', () => {
-    it('has Create button', async() => {
-      await browser.get(`${appHost}/k8s/ns/${testName}/deploymentconfigs`);
-      await crudView.isLoaded();
-      expect((element(by.buttonText('Create'))).isPresent()).toBe(true);
-    });
-
-    it('can be used to navigate to the Deploy Image page', async() => {
-      await $('#item-create').click().then(() => browser.actions().sendKeys(Key.ARROW_DOWN, Key.ENTER).perform());
-      await browser.wait(until.presenceOf($('.co-deploy-image')));
-      expect((element(by.cssContainingText('#resource-title', 'Deploy Image'))).isPresent()).toBe(true);
-    });
-  });
+  const appName = 'myapp';
+  const imageName = 'mysql';
 
   describe('Deploy Image page', () => {
+    it('should auto-fill the namespace/project', async() => {
+      // Navigate to the deploy-image page
+      await browser.get(`${appHost}/deploy-image/ns/${testName}?preselected-ns=${testName}`);
+
+      const nsSpan = '#namespace-dropdown-project-name-field .btn-dropdown__content-wrap .co-resource-item__resource-name';
+      // Wait for the Project field to appear
+      await browser.wait(until.presenceOf(element(by.css(nsSpan))));
+      // Confirm that the project field has the right text
+      expect(element(by.css(nsSpan)).getText()).toEqual(testName);
+    });
+
     it('can be used to search for an image', async() => {
-      await $('#image-name').sendKeys(appName);
-      await $('.input-group-btn .btn-default').click();
+      // Put the search term in the search field
+      await element(by.css('[data-test-id="deploy-image-search-term"]')).sendKeys(imageName);
+      // Click the search button
+      await element(by.css('[data-test-id="input-search-field-btn"]')).click();
+      // Wait for the results section to appear
       await browser.wait(until.presenceOf($('.co-image-name-results__details')));
-      expect((element(by.cssContainingText('.co-image-name-results__heading', appName))).isPresent()).toBe(true);
+      // Confirm the results appeared
+      expect(
+        element(by.cssContainingText('.co-image-name-results__heading', imageName)).isPresent(),
+      ).toBe(true);
     });
 
-    it('can be used to create an app based on an image', async() => {
-      await $('.co-m-btn-bar .btn-primary').click();
-      await browser.wait(until.presenceOf($('.overview')));
-      expect($('.project-overview').isPresent());
-      await browser.get(`${appHost}/k8s/ns/${testName}/deploymentconfigs/${appName}`);
-      await browser.wait(until.presenceOf(crudView.actionsButton));
-      expect(browser.getCurrentUrl()).toContain(`/${appName}`);
-      expect(crudView.resourceTitle.getText()).toEqual(appName);
-    });
-  });
-
-  describe('Deploy Image app', () => {
-    const resources = {
-      'deploymentconfigs': {kind: 'DeploymentConfig'},
-      'imagestreams': {kind: 'ImageStream'},
-      'services': {kind: 'Service'},
-    };
-
-    afterAll(async() => {
-      for (const resource in resources) {
-        if (resources.hasOwnProperty(resource)) {
-          const { kind } = resources[resource];
-          await crudView.deleteResource(resource, kind, appName);
-        }
-      }
+    it('should fill in the application', async() => {
+      // Set the application name
+      // Click on the dropdown
+      await element(by.id('application-form-app-dropdown')).click();
+      // Wait for the Create Application button to appear
+      await browser.wait(until.presenceOf(element(by.id('create-application-key-link'))));
+      // Click on the Create New Application button
+      await element(by.id('create-application-key-link')).click();
+      // Wait for the Application Name field to appear
+      await browser.wait(until.presenceOf(element(by.id('form-input-application-name-field'))));
+      // Enter the new Application name
+      await element(by.id('form-input-application-name-field')).sendKeys(appName);
+      // Confirm that a node is present in the topology
+      expect(element(by.id('form-input-application-name-field')).getAttribute('value')).toEqual(
+        appName,
+      );
     });
 
-    _.each(resources, ({kind}, resource) => {
-      it(`displays detail view for new ${kind} instance`, async() => {
-        crudView.checkResourceExists(resource, appName);
-      });
+    it('should deploy the image and display it in the topology', async() => {
+      // Deploy the image
+      // Wait until the button is active
+      await browser.wait(
+        until.elementToBeClickable(
+          element(by.css('[data-test-id="deploy-image-form-submit-btn"]')),
+        ),
+      );
+      // Click the Deploy button now that the Search is done
+      await element(by.css('[data-test-id="deploy-image-form-submit-btn"]')).click();
+      // Wait to be redirected to the Topology view
+      await browser.wait(until.presenceOf(element(by.css('.odc-graph'))));
+      // Confirm that a node is present in the topology
+      expect(element.all(by.css('.odc-base-node__bg')).isPresent());
     });
   });
 });

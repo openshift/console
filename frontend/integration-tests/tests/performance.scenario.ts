@@ -67,7 +67,7 @@ describe('Performance test', () => {
 
     const routeChunkFor = function() {
       const chunkName = arguments[0];
-      return performance.getEntriesByType('resource').find(({name}) => name.endsWith('.js') && name.indexOf(chunkName) > -1);
+      return performance.getEntriesByType('resource').find(({name}) => name.endsWith('.js') && name.indexOf(`/${chunkName}`) > -1);
     };
 
     it(`downloads new bundle for ${routeName}`, async() => {
