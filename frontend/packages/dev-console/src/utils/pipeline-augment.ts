@@ -53,7 +53,12 @@ export type KeyedRuns = { [key: string]: Runs };
 
 export interface Pipeline extends K8sResourceKind {
   latestRun?: PipelineRun;
-  spec?: { pipelineRef?: { name: string }; params: Param[]; resources: PipelineResource[] };
+  spec?: {
+    pipelineRef?: { name: string };
+    params: Param[];
+    resources: PipelineResource[];
+    tasks: K8sResourceKind[];
+  };
 }
 
 export interface PipelineRun extends K8sResourceKind {
@@ -173,11 +178,11 @@ export enum runStatus {
   Failed = 'Failed',
   Running = 'Running',
   'In Progress' = 'In Progress',
-  Pending = 'Pending',
   FailedToStart = 'FailedToStart',
   PipelineNotStarted = 'PipelineNotStarted',
   Skipped = 'Skipped',
   Cancelled = 'Cancelled',
+  Pending = 'Pending',
   Idle = 'Idle',
 }
 
@@ -187,34 +192,44 @@ export const getRunStatusColor = (status: string): StatusMessage => {
       return { message: 'Succeded', pftoken: successColor };
     case runStatus.Failed:
       return { message: 'Failed', pftoken: failureColor };
-    case runStatus.Running:
-      return { message: 'Running', pftoken: runningColor };
-    case runStatus['In Progress']:
-      return { message: 'Running', pftoken: runningColor };
-    case runStatus.Idle:
-    case runStatus.Pending:
-      return { message: 'Not Started Yet', pftoken: pendingColor };
     case runStatus.FailedToStart:
       return {
         message: 'PipelineRun Failed To Start',
         pftoken: failureColor,
       };
+    case runStatus.Running:
+      return { message: 'Running', pftoken: runningColor };
+    case runStatus['In Progress']:
+      return { message: 'Running', pftoken: runningColor };
+
     case runStatus.Skipped:
       return { message: 'Skipped', pftoken: skippedColor };
     case runStatus.Cancelled:
       return { message: 'Cancelled', pftoken: cancelledColor };
+    case runStatus.Idle:
+    case runStatus.Pending:
+      return { message: 'Not Started Yet', pftoken: pendingColor };
     default:
       return { message: 'PipelineRun Not started Yet', pftoken: pendingColor };
   }
 };
 
-export const getTaskStatus = (pipelinerun: PipelineRun): TaskStatus => {
+export const getTaskStatus = (pipelinerun: PipelineRun, pipeline: Pipeline): TaskStatus => {
+  const totalTasks =
+    pipeline && pipeline.spec && pipeline.spec.tasks ? pipeline.spec.tasks.length : 0;
+  const plrTasks =
+    pipelinerun && pipelinerun.status && pipelinerun.status.taskRuns
+      ? Object.keys(pipelinerun.status.taskRuns)
+      : [];
+  const plrTaskLength = plrTasks.length;
   const taskStatus: TaskStatus = {};
   Object.keys(runStatus).forEach((key) => {
     taskStatus[key] = 0;
   });
+  taskStatus[runStatus.Pending] =
+    totalTasks >= plrTaskLength ? totalTasks - plrTaskLength : totalTasks;
   if (pipelinerun && pipelinerun.status && pipelinerun.status.taskRuns) {
-    Object.keys(pipelinerun.status.taskRuns).forEach((taskRun) => {
+    plrTasks.forEach((taskRun) => {
       const status = pipelineRunFilterReducer(pipelinerun.status.taskRuns[taskRun]);
       if (status === 'Succeeded' || status === 'Completed' || status === 'Complete') {
         taskStatus[runStatus.Succeeded]++;
