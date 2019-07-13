@@ -129,6 +129,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       name: 'Test Perspective',
       icon: TestIcon,
       landingPageURL: '/test',
+      k8sLandingPageURL: '/test',
       getImportRedirectURL: (project) => `/k8s/cluster/projects/${project}/workloads`,
     },
   },
