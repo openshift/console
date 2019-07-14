@@ -19,7 +19,7 @@ import {
   silenceState,
 } from '../../reducers/monitoring';
 
-const fuzzyCaseInsensitive = (a, b) => fuzzy(_.toLower(a), _.toLower(b));
+export const fuzzyCaseInsensitive = (a, b) => fuzzy(_.toLower(a), _.toLower(b));
 
 // TODO: Table filters are undocumented, stringly-typed, and non-obvious. We can change that.
 export const tableFilters: TableFilterMap = {
