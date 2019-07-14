@@ -22,6 +22,7 @@ import {
 } from '../module/k8s';
 import { connectToFlags } from '../reducers/features';
 import { RootState } from '../redux';
+import { CheckBox, CheckBoxControls } from './row-filter';
 import { DefaultPage } from './default-resource';
 import { Table, TextFilter } from './factory';
 import { resourceListPages } from './resource-pages';
@@ -67,7 +68,7 @@ const APIResourceLink_: React.FC<APIResourceLinkStateProps & APIResourceLinkOwnP
 };
 const APIResourceLink = connect<APIResourceLinkStateProps, {}, APIResourceLinkOwnProps>(mapStateToProps)(APIResourceLink_);
 
-const EmptyMsg: React.FC<{}> = () => <EmptyBox label="API Resources" />;
+const EmptyAPIResourcesMsg: React.FC<{}> = () => <EmptyBox label="API Resources" />;
 
 const Group: React.FC<{value: string}> = ({value}) => {
   if (!value) {
@@ -97,7 +98,7 @@ const APIResourceHeader = () => [{
 const APIResourceRows = ({componentProps: {data}}) => _.map(data, (model: K8sKind) => [{
   title: <APIResourceLink model={model} />,
 }, {
-  title: <Group value={model.apiGroup} />,
+  title: <span className="co-select-to-copy"><Group value={model.apiGroup} /></span>,
 }, {
   title: model.apiVersion,
 }]);
@@ -196,7 +197,7 @@ const APIResourcesList = connect<APIResourcesListPropsFromState>(stateToProps)((
     </div>
     <div className="co-m-pane__body">
       <Table
-        EmptyMsg={EmptyMsg}
+        EmptyMsg={EmptyAPIResourcesMsg}
         Header={APIResourceHeader}
         Rows={APIResourceRows}
         aria-label="API Resources"
@@ -234,10 +235,10 @@ const APIResourceOverview: React.FC<APIResourceTabProps> = ({kindObj}) => {
         <dt>Namespaced</dt>
         <dd>{kindObj.namespaced ? 'true' : 'false'}</dd>
         {description && (
-          <React.Fragment>
+          <>
             <dt>Description</dt>
             <dd className="co-break-word co-pre-line"><LinkifyExternal>{description}</LinkifyExternal></dd>
-          </React.Fragment>
+          </>
         )}
       </dl>
     </div>
@@ -260,6 +261,18 @@ const APIResourceInstances: React.FC<APIResourceTabProps> = ({kindObj, namespace
   return <AsyncComponent loader={componentLoader} namespace={ns} kind={kindObj.crd ? referenceForModel(kindObj) : kindObj.kind} showTitle={false} autoFocus={false} />;
 };
 
+const Subject: React.FC<{value: string}> = ({value}) => {
+  const [first, ...rest] = value.split(':');
+  return first === 'system' && !_.isEmpty(rest)
+    ? (
+      <>
+        <span className="text-muted">{first}:</span>
+        {rest.join(':')}
+      </>
+    )
+    : <>{value}</>;
+};
+
 const AccessTableHeader = () => [{
   title: 'Subject',
   sortField: 'name',
@@ -271,19 +284,27 @@ const AccessTableHeader = () => [{
 }];
 
 const AccessTableRows = ({componentProps: {data}}) => _.map(data, (subject) => [{
-  title: <span className="co-break-word co-select-to-copy">{subject.name}</span>,
+  title: <span className="co-break-word co-select-to-copy"><Subject value={subject.name} /></span>,
 }, {
   title: subject.type,
 }]);
 
+const EmptyAccessReviewMsg: React.FC<{}> = () => <EmptyBox label="Subjects" />;
+
 const APIResourceAccessReview: React.FC<APIResourceTabProps> = ({kindObj, namespace}) => {
   // TODO: Make sure verbs are filled in for all models. Currently static models don't use verbs from API discovery.
   const verbs: K8sVerb[] = (kindObj.verbs || ['create', 'delete', 'deletecollection', 'get', 'list', 'patch', 'update', 'watch']).sort();
+
+  // state
   const [verb, setVerb] = React.useState(_.first(verbs));
   const [filter, setFilter] = React.useState('');
+  const [showUsers, setShowUsers] = React.useState(true);
+  const [showGroups, setShowGroups] = React.useState(true);
   const [showServiceAccounts, setShowServiceAccounts] = React.useState(false);
   const [accessResponse, setAccessResponse] = React.useState();
   const [error, setError] = React.useState(null);
+
+  // perform the access review
   React.useEffect(() => {
     setError(null);
     const accessReviewModel = namespace ? LocalResourceAccessReviewsModel : ResourceAccessReviewsModel;
@@ -309,23 +330,54 @@ const APIResourceAccessReview: React.FC<APIResourceTabProps> = ({kindObj, namesp
     return <Loading />;
   }
 
-  const verbOptions = _.zipObject(verbs, verbs);
-  const users = _.reduce(accessResponse.users, (result, name: string) => {
-    const isServiceAccount = name.startsWith('system:serviceaccount:');
-    if (!showServiceAccounts && isServiceAccount) {
-      return result;
+  // break into users, groups, and service accounts
+  const users = [];
+  const serviceAccounts = [];
+  _.each(accessResponse.users, (name: string) => {
+    if (name.startsWith('system:serviceaccount:')) {
+      serviceAccounts.push({name, type: 'ServiceAccount'});
+    } else {
+      users.push({name, type: 'User'});
     }
-    const type = isServiceAccount ? 'ServiceAccount' : 'User';
-    return [...result, { name, type }];
-  }, []);
+  });
   const groups = _.map(accessResponse.groups, (name: string) => ({ name, type: 'Group' }));
-  const filteredData = [...users, ...groups].filter(({name}: {name: string}) => fuzzy(filter, name));
+
+  // filter and sort
+  const verbOptions = _.zipObject(verbs, verbs);
+  const data = [
+    ...(showUsers ? users : []),
+    ...(showGroups ? groups : []),
+    ...(showServiceAccounts ? serviceAccounts : []),
+  ];
+  const allSelected = showUsers && showGroups && showServiceAccounts;
+  const itemCount = accessResponse.users.length + accessResponse.groups.length;
+  const selectedCount = data.length;
+  const filteredData = data.filter(({name}: {name: string}) => fuzzy(filter, name));
   const sortedData = _.orderBy(filteredData, ['type', 'name'], ['asc', 'asc']);
+
+  // event handlers
   const onFilterChange: React.ReactEventHandler<HTMLInputElement> = (e) => setFilter(e.currentTarget.value);
-  const onShowServiceAccountChange: React.ReactEventHandler<HTMLInputElement> = (e) => setShowServiceAccounts(e.currentTarget.checked);
+  const toggleShowUsers = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    setShowUsers(!showUsers);
+  };
+  const toggleShowGroups = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    setShowGroups(!showGroups);
+  };
+  const toggleShowServiceAccounts = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    setShowServiceAccounts(!showServiceAccounts);
+  };
+  const onSelectAll = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    setShowUsers(true);
+    setShowGroups(true);
+    setShowServiceAccounts(true);
+  };
 
   return (
-    <React.Fragment>
+    <>
       <div className="co-m-pane__filter-bar">
         <div className="co-m-pane__filter-bar-group">
           <Dropdown
@@ -342,36 +394,36 @@ const APIResourceAccessReview: React.FC<APIResourceTabProps> = ({kindObj, namesp
             onChange={onFilterChange}
           />
         </div>
-        <div className="co-m-pane__filter-bar-group co-m-pane__filter-bar-group--full-width">
-          <div className="checkbox">
-            <label>
-              <input type="checkbox"
-                onChange={onShowServiceAccountChange}
-                checked={showServiceAccounts}
-              />
-              Show service accounts
-            </label>
-          </div>
-        </div>
       </div>
       <div className="co-m-pane__body">
+        <CheckBoxControls
+          allSelected={allSelected}
+          itemCount={itemCount}
+          selectedCount={selectedCount}
+          onSelectAll={onSelectAll}
+        >
+          <CheckBox title="User" active={showUsers} number={users.length} toggle={toggleShowUsers} />
+          <CheckBox title="Group" active={showGroups} number={groups.length} toggle={toggleShowGroups} />
+          <CheckBox title="ServiceAccount" active={showServiceAccounts} number={serviceAccounts.length} toggle={toggleShowServiceAccounts} />
+        </CheckBoxControls>
         <p className="co-m-pane__explanation">
-          The following users and groups can {verb} {kindObj.plural}
-          {kindObj.namespaced && namespace && <React.Fragment> in namespace {namespace}</React.Fragment>}
-          {kindObj.namespaced && !namespace && <React.Fragment> in all namespaces</React.Fragment>}
-          {!kindObj.namespaced && <React.Fragment> at the cluster scope</React.Fragment>}
+          The following subjects can {verb} {kindObj.plural}
+          {kindObj.namespaced && namespace && <> in namespace {namespace}</>}
+          {kindObj.namespaced && !namespace && <> in all namespaces</>}
+          {!kindObj.namespaced && <> at the cluster scope</>}
           .
         </p>
         <Table
-          aria-label="API Resources"
-          data={sortedData}
+          EmptyMsg={EmptyAccessReviewMsg}
           Header={AccessTableHeader}
           Rows={AccessTableRows}
-          virtualize={false}
+          aria-label="API Resources"
+          data={sortedData}
           loaded
+          virtualize={false}
         />
       </div>
-    </React.Fragment>
+    </>
   );
 };
 
@@ -417,7 +469,7 @@ const APIResourcePage_ = ({match, kindObj, kindsInFlight, flags}: {match: any, k
 
   const namespace = kindObj.namespaced ? match.params.ns : null;
 
-  return <React.Fragment>
+  return <>
     <ScrollToTopOnMount />
     <Helmet>
       <title>{kindObj.label}</title>
@@ -432,7 +484,7 @@ const APIResourcePage_ = ({match, kindObj, kindsInFlight, flags}: {match: any, k
       tabProps={{kindObj, namespace}}
       tabs={tabs}
     />
-  </React.Fragment>;
+  </>;
 };
 export const APIResourcePage = connectToModel(connectToFlags(FLAGS.OPENSHIFT)(APIResourcePage_));
 
