@@ -1,8 +1,16 @@
 import * as classNames from 'classnames';
 import * as fuzzy from 'fuzzysearch';
 import * as _ from 'lodash-es';
-import { Switch } from '@patternfly/react-core';
-import { TimesIcon } from '@patternfly/react-icons';
+import {
+  Button,
+  EmptyState,
+  EmptyStateBody,
+  EmptyStateIcon,
+  EmptyStateVariant,
+  Switch,
+  Title,
+} from '@patternfly/react-core';
+import { ChartLineIcon, TimesIcon } from '@patternfly/react-icons';
 import {
   IDecorator,
   ISortBy,
@@ -366,7 +374,7 @@ export const QueryBrowserPage = withFallback(() => {
 
   const deleteAllQueries = () => setQueries([defaultQueryObj]);
 
-  const runQueries = () => setQueries(queries.map(q => q.enabled ? Object.assign({}, q, {query: q.text}) : q));
+  const runQueries = () => setQueries(queries.map(q => q.enabled ? Object.assign({}, q, {query: _.trim(q.text)}) : q));
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -410,6 +418,11 @@ export const QueryBrowserPage = withFallback(() => {
     }
   };
 
+  const insertExampleQuery = () => updateQuery(0, {
+    text: 'sum(sort_desc(sum_over_time(ALERTS{alertstate="firing"}[24h]))) by (alertname)',
+    enabled: true,
+  });
+
   React.useEffect(() => {
     if (focusedQuery && restoreSelection) {
       focusedQuery.target.setSelectionRange(...restoreSelection);
@@ -418,13 +431,15 @@ export const QueryBrowserPage = withFallback(() => {
 
   let colorOffset = 0;
 
+  const queryStrings = _.map(queries, 'query');
+
   return <React.Fragment>
     <Helmet>
       <title>Metrics</title>
     </Helmet>
     <div className="co-m-nav-title">
       <h1 className="co-m-pane__heading">
-        <span>Metrics<HeaderPrometheusLink queries={_.map(queries, 'query')} /></span>
+        <span>Metrics<HeaderPrometheusLink queries={queryStrings} /></span>
         <div className="co-actions">
           <ActionsMenu actions={actionsMenuActions} />
         </div>
@@ -438,12 +453,21 @@ export const QueryBrowserPage = withFallback(() => {
       </div>
       <div className="row">
         <div className="col-xs-12">
-          <QueryBrowser
-            defaultTimespan={30 * 60 * 1000}
-            disabledSeries={_.map(queries, 'disabledSeries')}
-            onDataUpdate={onDataUpdate}
-            queries={_.map(queries, 'query')}
-          />
+          {queryStrings.join('') === ''
+            ? <div className="query-browser__wrapper graph-empty-state">
+              <EmptyState variant={EmptyStateVariant.full}>
+                <EmptyStateIcon size="sm" icon={ChartLineIcon} />
+                <Title size="sm">No Query Entered</Title>
+                <EmptyStateBody>Enter a query in the box below to explore metrics for this cluster</EmptyStateBody>
+                <Button onClick={insertExampleQuery} variant="primary">Insert Example Query</Button>
+              </EmptyState>
+            </div>
+            : <QueryBrowser
+              defaultTimespan={30 * 60 * 1000}
+              disabledSeries={_.map(queries, 'disabledSeries')}
+              onDataUpdate={onDataUpdate}
+              queries={queryStrings}
+            />}
           <form onSubmit={onSubmit}>
             <div className="query-browser__controls">
               <div className="query-browser__controls--left">
