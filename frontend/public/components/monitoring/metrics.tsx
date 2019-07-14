@@ -1,5 +1,4 @@
 import * as classNames from 'classnames';
-import * as fuzzy from 'fuzzysearch';
 import * as _ from 'lodash-es';
 import { Switch } from '@patternfly/react-core';
 import { TimesIcon } from '@patternfly/react-icons';
@@ -19,6 +18,7 @@ import { connect } from 'react-redux';
 
 import * as UIActions from '../../actions/ui';
 import { connectToURLs, MonitoringRoutes } from '../../reducers/monitoring';
+import { fuzzyCaseInsensitive } from '../factory/table-filters';
 import { PROMETHEUS_BASE_PATH } from '../graphs';
 import { PrometheusEndpoint } from '../graphs/helpers';
 import { getPrometheusExpressionBrowserURL } from '../graphs/prometheus-graph';
@@ -134,7 +134,7 @@ const MetricsDropdown = ({onChange, onLoad}) => {
   }
 
   return <Dropdown
-    autocompleteFilter={fuzzy}
+    autocompleteFilter={fuzzyCaseInsensitive}
     id="metrics-dropdown"
     items={items}
     menuClassName="query-browser__metrics-dropdown-menu query-browser__metrics-dropdown-menu--insert"
@@ -213,7 +213,7 @@ const QueryInput: React.FC<QueryInputProps> = ({metrics = [], onBlur, onSubmit, 
     inputRef.current.focus();
   };
 
-  const isMatch = v => fuzzy(token.toLowerCase(), v.toLowerCase());
+  const isMatch = v => fuzzyCaseInsensitive(token, v);
   const allSuggestions = token.length < 2
     ? {}
     : _.omitBy({
