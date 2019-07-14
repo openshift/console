@@ -1,3 +1,4 @@
+import * as classNames from 'classnames';
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import {
@@ -42,8 +43,6 @@ export const graphColors = [
 
 // Takes a Prometheus labels object and removes the internal labels (those beginning with "__")
 export const omitInternalLabels = (labels: Labels): Labels => _.omitBy(labels, (v, k) => _.startsWith(k, '__'));
-
-const NoQueryMessage = () => <div className="text-center text-muted">Enter a query in the box below to explore the metrics gathered for this cluster</div>;
 
 const Error = ({error}) => <Alert isInline className="co-alert" variant="danger" title="An error occurred">{_.get(error, 'json.error', error.message)}</Alert>;
 
@@ -229,18 +228,13 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
     setSpan(x[1] - x[0]);
   }, []);
 
-  const isEmptyState = !updating && _.isEmpty(graphData);
-
   if (hideGraphs) {
-    if (_.isEmpty(queries)) {
-      return <div className="query-browser__wrapper">
-        {_.isEmpty(queries) && <NoQueryMessage />}
-      </div>;
-    }
     return error ? <Error error={error} /> : null;
   }
 
-  return <div className="query-browser__wrapper">
+  const isEmptyState = !updating && _.isEmpty(graphData);
+
+  return <div className={classNames('query-browser__wrapper', {'graph-empty-state': isEmptyState})}>
     <div className="query-browser__controls query-browser__controls--graph">
       <div className="query-browser__controls--left">
         <SpanControls defaultSpanText={defaultSpanText} onChange={onSpanChange} span={span} />
@@ -252,16 +246,12 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
         <GraphLink />
       </div>}
     </div>
-    {_.isEmpty(queries)
-      ? <NoQueryMessage />
-      : <React.Fragment>
-        {error && <Error error={error} />}
-        {isEmptyState && <EmptyState className="graph-empty-state" variant={EmptyStateVariant.full}>
-          <EmptyStateIcon size="sm" icon={ChartLineIcon} />
-          <Title size="sm">No Prometheus datapoints found.</Title>
-        </EmptyState>}
-        {!isEmptyState && <Graph data={graphData} domain={domain} onZoom={onZoom} span={span} />}
-      </React.Fragment>}
+    {error && <Error error={error} />}
+    {isEmptyState && <EmptyState variant={EmptyStateVariant.full}>
+      <EmptyStateIcon size="sm" icon={ChartLineIcon} />
+      <Title size="sm">No Prometheus datapoints found</Title>
+    </EmptyState>}
+    {!_.isEmpty(graphData) && <Graph data={graphData} domain={domain} onZoom={onZoom} span={span} />}
   </div>;
 };
 const stateToProps = ({UI}) => ({hideGraphs: !!UI.getIn(['monitoring', 'hideGraphs'])});
