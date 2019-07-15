@@ -1,18 +1,31 @@
 import * as _ from 'lodash';
 import * as React from 'react';
-import { asAccessReview, Kebab, KebabOption } from '@console/internal/components/utils';
-import { K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
+import { getResource, CloneDialog } from 'kubevirt-web-ui-components';
+import {
+  asAccessReview,
+  Kebab,
+  KebabOption,
+  LoadingInline,
+  FirehoseResult,
+} from '@console/internal/components/utils';
+import { k8sCreate, k8sPatch, K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { getName, getNamespace } from '@console/shared';
 import { confirmModal } from '@console/internal/components/modals';
+import { NamespaceModel, PersistentVolumeClaimModel } from '@console/internal/models';
 import { VMIKind, VMKind } from '../../types/vm';
 import { isVMImporting, isVMRunning, isVMRunningWithVMI } from '../../selectors/vm';
 import { getMigrationVMIName, isMigrating } from '../../selectors/vmim';
-import { VirtualMachineInstanceMigrationModel } from '../../models';
+import {
+  DataVolumeModel,
+  VirtualMachineInstanceMigrationModel,
+  VirtualMachineModel,
+} from '../../models';
 import { K8sEntityMap, VMMultiStatus } from '../../types';
-import { getLookupId } from '../../utils';
+import { getLoadedData, getLookupId } from '../../utils';
 import { restartVM, startVM, stopVM, VMActionType } from '../../k8s/requests/vm';
 import { startVMIMigration } from '../../k8s/requests/vmi';
 import { cancelMigration } from '../../k8s/requests/vmim';
+import { createModalResourceLauncher } from '../modals/modal-resource-launcher';
 
 type ActionArgs = {
   migrationLookup?: K8sEntityMap<K8sResourceKind>;
@@ -140,12 +153,46 @@ const menuActionCancelMigration = (
   };
 };
 
+const menuActionClone = (kindObj: K8sKind, vm: VMKind, { vmStatus }: ActionArgs): KebabOption => {
+  return {
+    hidden: isVMImporting(vmStatus),
+    label: 'Clone Virtual Machine',
+    callback: () => {
+      const namespace = getNamespace(vm);
+      const resources = [
+        getResource(NamespaceModel, { prop: 'namespaces' }),
+        getResource(VirtualMachineModel, { prop: 'virtualMachines' }),
+        getResource(PersistentVolumeClaimModel, { namespace, prop: 'persistentVolumeClaims' }),
+        getResource(DataVolumeModel, { namespace, prop: 'dataVolumes' }),
+      ];
+
+      const resourcesToProps = (firehoseResults: { [key: string]: FirehoseResult }) => ({
+        ...resources
+          .map((r) => r.prop)
+          .reduce((mappedResources, propName) => {
+            mappedResources[propName] = getLoadedData(firehoseResults[propName], []);
+            return mappedResources;
+          }, {}),
+      });
+      const launcher = createModalResourceLauncher(CloneDialog, resources, resourcesToProps);
+      launcher({
+        vm,
+        k8sCreate,
+        k8sPatch,
+        LoadingComponent: LoadingInline,
+      });
+    },
+    accessReview: asAccessReview(kindObj, vm, 'patch'),
+  };
+};
+
 export const menuActions = [
   menuActionStart,
   menuActionStop,
   menuActionRestart,
   menuActionMigrate,
   menuActionCancelMigration,
+  menuActionClone,
   Kebab.factory.ModifyLabels,
   Kebab.factory.ModifyAnnotations,
   Kebab.factory.Delete,
