@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Icon } from 'patternfly-react';
+import { OffIcon } from '@patternfly/react-icons';
 import {
   getVmStatus,
   VM_STATUS_V2V_CONVERSION_ERROR,
@@ -76,5 +76,5 @@ export const getVMStatusGroups: StatusGroupMapper = (vms, { pods, migrations }) 
 };
 
 export const VMOffGroupIcon: React.FC<{}> = () => (
-  <Icon type="pf" name="off" className="kubevirt-inventory-card__status-icon--off" />
+  <OffIcon className="kubevirt-inventory-card__status-icon--off" />
 );

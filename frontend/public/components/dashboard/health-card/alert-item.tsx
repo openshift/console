@@ -1,19 +1,19 @@
 import * as React from 'react';
-import { Icon } from 'patternfly-react';
 
 import { getAlertSeverity, getAlertMessage, getAlertDescription } from './';
 import { Alert } from '../../monitoring';
+import { RedExclamationCircleIcon, YellowExclamationTriangleIcon } from '@console/internal/components/utils/status-icon';
 
 const getSeverityIcon = (severity: string) => {
   switch (severity) {
     case 'critical':
       return (
-        <Icon type="fa" name="exclamation-circle" className="co-health-card__alerts-icon co-health-card__alerts-icon--critical" />
+        <RedExclamationCircleIcon className="co-health-card__alerts-icon" />
       );
     case 'warning':
     default:
       return (
-        <Icon type="fa" name="exclamation-triangle" className="co-health-card__alerts-icon co-health-card__alerts-icon--warning" />
+        <YellowExclamationTriangleIcon className="co-health-card__alerts-icons" />
       );
   }
 };

@@ -23,6 +23,10 @@ export const RedExclamationCircleIcon: React.FunctionComponent<ColoredIconProps>
   return <ExclamationCircleIcon color="var(--pf-global--danger-color--100)" className={className} />;
 };
 
+export const YellowExclamationTriangleIcon: React.FunctionComponent<ColoredIconProps> = ({className}) => {
+  return <ExclamationTriangleIcon color="var(--pf-global--warning-color--100)" className={className} />;
+};
+
 export const StatusIcon: React.FunctionComponent<StatusIconProps> = ({status, spin, icon, additionalIconClassName}) => {
   const className = classNames(spin && 'fa-spin', additionalIconClassName);
 
@@ -53,7 +57,7 @@ export const StatusIcon: React.FunctionComponent<StatusIconProps> = ({status, sp
       return <BanIcon className={className} />;
 
     case 'Warning':
-      return <ExclamationTriangleIcon color="var(--pf-global--warning-color--100)" className={className} />;
+      return <YellowExclamationTriangleIcon className={className} />;
 
     case 'ContainerCannotRun':
     case 'CrashLoopBackOff':

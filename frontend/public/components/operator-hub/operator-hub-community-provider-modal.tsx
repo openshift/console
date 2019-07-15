@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import { Checkbox, Icon } from 'patternfly-react';
+import { Checkbox } from 'patternfly-react';
+import { InfoCircleIcon } from '@patternfly/react-icons';
 
 import { RH_OPERATOR_SUPPORT_POLICY_LINK } from '../../const';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
@@ -32,7 +33,7 @@ export class OperatorHubCommunityProviderModal extends React.Component<OperatorH
       <ModalBody>
         <div className="co-modal-ignore-warning__content">
           <div className="co-modal-ignore-warning__icon">
-            <Icon type="pf" name="info" />
+            <InfoCircleIcon />
           </div>
           <div>
             <p>
