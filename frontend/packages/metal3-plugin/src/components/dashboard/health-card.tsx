@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as _ from 'lodash';
 
 import { DashboardItemProps } from '@console/internal/components/dashboards-page/with-dashboard-resources';
 import { DashboardCard } from '@console/internal/components/dashboard/dashboard-card';
@@ -8,8 +9,14 @@ import { DashboardCardTitle } from '@console/internal/components/dashboard/dashb
 import { HealthBody } from '@console/internal/components/dashboard/health-card/health-body';
 import { HealthItem } from '@console/internal/components/dashboard/health-card/health-item';
 import { HealthState } from '@console/internal/components/dashboard/health-card/states';
-
+import {
+  AlertsBody,
+  AlertItem,
+  getAlerts,
+} from '@console/internal/components/dashboard/health-card';
+import { Alert } from '@console/internal/components/monitoring';
 import { K8sResourceKind } from '@console/internal/module/k8s';
+
 import {
   HOST_STATUS_OK,
   HOST_HEALTH_OK,
@@ -41,8 +48,23 @@ const getHostHealthState = (obj): HostHealthState => {
   }
 };
 
-export const HealthCard: React.FC<HealthCardProps> = ({ obj }) => {
+const filterAlerts = (alerts: Alert[]): Alert[] =>
+  alerts.filter((alert) => _.get(alert, 'labels.hwalert'));
+
+export const HealthCard: React.FC<HealthCardProps> = ({
+  obj,
+  watchAlerts,
+  stopWatchAlerts,
+  alertsResults,
+}) => {
+  React.useEffect(() => {
+    watchAlerts();
+    return () => stopWatchAlerts();
+  }, [watchAlerts, stopWatchAlerts]);
+
   const health = getHostHealthState(obj);
+  const alerts = filterAlerts(getAlerts(alertsResults));
+
   return (
     <DashboardCard>
       <DashboardCardHeader>
@@ -53,6 +75,20 @@ export const HealthCard: React.FC<HealthCardProps> = ({ obj }) => {
           <HealthItem state={health.state} message={health.message} />
         </HealthBody>
       </DashboardCardBody>
+      {alerts.length > 0 && (
+        <React.Fragment>
+          <DashboardCardHeader className="co-health-card__alerts-border">
+            <DashboardCardTitle>Alerts</DashboardCardTitle>
+          </DashboardCardHeader>
+          <DashboardCardBody>
+            <AlertsBody>
+              {alerts.map((alert) => (
+                <AlertItem key={alert.fingerprint} alert={alert} />
+              ))}
+            </AlertsBody>
+          </DashboardCardBody>
+        </React.Fragment>
+      )}
     </DashboardCard>
   );
 };
