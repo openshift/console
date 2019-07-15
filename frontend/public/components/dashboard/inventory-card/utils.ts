@@ -16,6 +16,12 @@ const PVC_STATUS_GROUP_MAPPING = {
   [InventoryStatusGroup.PROGRESS]: ['Pending'],
 };
 
+const PV_STATUS_GROUP_MAPPING = {
+  [InventoryStatusGroup.OK]: ['Available', 'Bound'],
+  [InventoryStatusGroup.PROGRESS]: ['Released'],
+  [InventoryStatusGroup.ERROR]: ['Failed'],
+};
+
 const NODE_STATUS_GROUP_MAPPING = {
   [InventoryStatusGroup.OK]: ['Ready'],
   [InventoryStatusGroup.PROGRESS]: ['Not Ready'],
@@ -48,3 +54,4 @@ const getStatusGroups = (resources, mapping, mapper, filterType) => {
 export const getPodStatusGroups: StatusGroupMapper = resources => getStatusGroups(resources, POD_PHASE_GROUP_MAPPING, podPhaseFilterReducer, 'pod-status');
 export const getNodeStatusGroups: StatusGroupMapper = resources => getStatusGroups(resources, NODE_STATUS_GROUP_MAPPING, nodeStatus, 'node-status');
 export const getPVCStatusGroups: StatusGroupMapper = resources => getStatusGroups(resources, PVC_STATUS_GROUP_MAPPING, pvcPhase, 'pvc-status');
+export const getPVStatusGroups: StatusGroupMapper = resources => getStatusGroups(resources, PV_STATUS_GROUP_MAPPING, (pv) => pv.status.phase, 'pv-status');
