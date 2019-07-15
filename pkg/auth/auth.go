@@ -151,6 +151,7 @@ func newHTTPClient(issuerCA string, includeSystemRoots bool) (*http.Client, erro
 
 	httpClient := &http.Client{
 		Transport: &http.Transport{
+			Proxy: http.ProxyFromEnvironment,
 			TLSClientConfig: &tls.Config{
 				RootCAs: certPool,
 			},
