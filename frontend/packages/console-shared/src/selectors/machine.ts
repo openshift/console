@@ -14,5 +14,5 @@ export const getMachineNodeName = (obj: MachineKind) => _.get(obj, 'status.nodeR
 export const getMachineAWSPlacement = (machine: MachineKind) =>
   _.get(machine, 'spec.providerSpec.value.placement') || {};
 
-export const getMachineNode = (machine: MachineKind, nodes: NodeKind[]) =>
+export const getMachineNode = (machine: MachineKind, nodes: NodeKind[] = []) =>
   nodes.find((node) => getMachineNodeName(machine) === getName(node));
