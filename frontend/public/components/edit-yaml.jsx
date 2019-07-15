@@ -43,7 +43,7 @@ const stateToProps = ({k8s, UI}) => ({
  * This component loads the entire Ace editor library (~100kB) with it.
  * Consider using `AsyncComponent` to dynamically load this component when needed.
  */
-/** @augments {React.Component<{obj?: any, create: boolean, kind: string, redirectURL?: string, resourceObjPath?: (obj: k8sKind, objRef: string) => string}>} */
+/** @augments {React.Component<{obj?: any, create: boolean, kind: string, redirectURL?: string, resourceObjPath?: (obj: K8sResourceKind, objRef: string) => string}>} */
 export const EditYAML = connect(stateToProps)(
   class EditYAML extends React.Component {
     constructor(props) {
