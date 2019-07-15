@@ -113,6 +113,7 @@ const HostsTableRow: React.FC<HostsTableRowProps> = ({
               nodeMaintenance,
               nodeName,
               hasNodeMaintenanceCapability,
+              status: status.status,
             }),
           )}
           key={`kebab-for-${uid}`}
