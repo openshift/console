@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { asAccessReview, KebabOption } from '@console/internal/components/utils';
-import { k8sKill, K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
+import { k8sKill, K8sKind, K8sResourceKind, MachineKind } from '@console/internal/module/k8s';
 import { getMachineNodeName, getName } from '@console/shared';
 import { confirmModal } from '@console/internal/components/modals';
 import { findNodeMaintenance, getHostMachine, getNodeMaintenanceReason } from '../selectors';
@@ -58,10 +58,12 @@ export const RemoveNodeMaintanance = (
 
 export const menuActions = [SetNodeMaintanance, RemoveNodeMaintanance];
 
+type ExtraResources = { machines: MachineKind[]; nodeMaintenances: K8sResourceKind[] };
+
 export const menuActionsCreator = (
   kindObj: K8sKind,
   host: K8sResourceKind,
-  { machines, nodeMaintenances },
+  { machines, nodeMaintenances }: ExtraResources,
   { hasNodeMaintenanceCapability },
 ) => {
   const machine = getHostMachine(host, machines);

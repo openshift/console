@@ -190,7 +190,13 @@ export const menuActions = [
   Kebab.factory.Delete,
 ];
 
-export const menuActionsCreator = (kindObj: K8sKind, vm: VMKind, { vmi, pods, migrations }) => {
+type ExtraResources = { vmi: VMIKind; pods: K8sResourceKind[]; migrations: K8sResourceKind[] };
+
+export const menuActionsCreator = (
+  kindObj: K8sKind,
+  vm: VMKind,
+  { vmi, pods, migrations }: ExtraResources,
+) => {
   const vmStatus = getVmStatus(vm, pods, migrations);
   const migration = findVMIMigration(migrations, vmi);
 

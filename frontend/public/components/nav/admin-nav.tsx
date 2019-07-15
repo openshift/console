@@ -9,19 +9,15 @@ import { monitoringReducerName, MonitoringRoutes } from '../../reducers/monitori
 import {
   BuildConfigModel,
   BuildModel,
-  CatalogSourceModel,
   ChargebackReportModel,
   ClusterServiceVersionModel,
   DeploymentConfigModel,
   ImageStreamModel,
-  InstallPlanModel,
   MachineAutoscalerModel,
   MachineConfigModel,
   MachineConfigPoolModel,
   MachineModel,
   MachineSetModel,
-  PackageManifestModel,
-  SubscriptionModel,
 } from '../../models';
 
 import { referenceForModel } from '../../module/k8s';
@@ -35,18 +31,6 @@ type SeparatorProps = {
 const Separator: React.FC<SeparatorProps> = () => <NavItemSeparator />;
 
 const searchStartsWith = ['search'];
-const operatorManagementStartsWith = [
-  referenceForModel(PackageManifestModel),
-  PackageManifestModel.plural,
-  // FIXME(alecmerdler): Needed for backwards-compatibility with new API groups
-  'packages.apps.redhat.com~v1alpha1~PackageManifest',
-  referenceForModel(SubscriptionModel),
-  SubscriptionModel.plural,
-  referenceForModel(InstallPlanModel),
-  InstallPlanModel.plural,
-  referenceForModel(CatalogSourceModel),
-  CatalogSourceModel.plural,
-];
 const provisionedServicesStartsWith = ['serviceinstances', 'servicebindings'];
 const brokerManagementStartsWith = ['clusterservicebrokers', 'clusterserviceclasses'];
 const rolesStartsWith = ['roles', 'clusterroles'];
@@ -102,12 +86,6 @@ const AdminNav = () => (
         resource={ClusterServiceVersionModel.plural}
         required={FLAGS.CAN_LIST_PACKAGE_MANIFEST}
         name="Installed Operators"
-      />
-      <HrefLink
-        href="/operatormanagement"
-        name="Operator Management"
-        activePath="/operatormanagement/"
-        startsWith={operatorManagementStartsWith}
       />
     </NavSection>
 

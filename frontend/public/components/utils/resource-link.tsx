@@ -4,14 +4,14 @@ import { Link } from 'react-router-dom';
 import * as classNames from 'classnames';
 
 import { ResourceIcon } from './index';
-import { modelFor, referenceForModel } from '../../module/k8s';
+import { modelFor, referenceForModel, K8sKind, K8sResourceKindReference, K8sResourceKind } from '../../module/k8s';
 import { connectToModel } from '../../kinds';
 import { connectToFlags } from '../../reducers/features';
 import { FLAGS } from '../../const';
 
 const unknownKinds = new Set();
 
-export const resourcePathFromModel = (model, name, namespace) => {
+export const resourcePathFromModel = (model: K8sKind, name?: string, namespace?: string) => {
   const {plural, namespaced, crd} = model;
 
   let url = '/k8s/';
@@ -37,12 +37,12 @@ export const resourcePathFromModel = (model, name, namespace) => {
   return url;
 };
 
-export const resourceListPathFromModel = (model, namespace) => resourcePathFromModel(model, null, namespace);
+export const resourceListPathFromModel = (model: K8sKind, namespace: string) => resourcePathFromModel(model, null, namespace);
 
 /**
  * NOTE: This will not work for runtime-defined resources. Use a `connect`-ed component like `ResourceLink` instead.
  */
-export const resourcePath = (kind, name, namespace) => {
+export const resourcePath = (kind: K8sResourceKindReference, name: string, namespace: string) => {
   const model = modelFor(kind);
   if (!model) {
     if (!unknownKinds.has(kind)) {
@@ -56,7 +56,7 @@ export const resourcePath = (kind, name, namespace) => {
   return resourcePathFromModel(model, name, namespace);
 };
 
-export const resourceObjPath = (obj, kind) => resourcePath(kind, _.get(obj, 'metadata.name'), _.get(obj, 'metadata.namespace'));
+export const resourceObjPath = (obj: K8sResourceKind, kind: K8sResourceKindReference) => resourcePath(kind, _.get(obj, 'metadata.name'), _.get(obj, 'metadata.namespace'));
 
 export const ResourceLink = connectToModel(
   ({className, displayName, inline = false, kind, linkTo = true, name, namespace, hideIcon, title, children}) => {
@@ -74,9 +74,7 @@ export const ResourceLink = connectToModel(
     </span>;
   });
 
-ResourceLink.displayName = 'ResourceLink';
-
-const NodeLink_ = (props) => {
+const NodeLink_: React.FC<NodeLinkProps> = (props) => {
   const {name, flags} = props;
   if (!name) {
     return <React.Fragment>-</React.Fragment>;
@@ -86,4 +84,11 @@ const NodeLink_ = (props) => {
     : <React.Fragment>{name}</React.Fragment>;
 };
 
-export const NodeLink = connectToFlags(FLAGS.CAN_LIST_NODE)(NodeLink_);
+export const NodeLink = connectToFlags<NodeLinkProps>(FLAGS.CAN_LIST_NODE)(NodeLink_);
+
+type NodeLinkProps = {
+  name: string;
+  flags: {[key: string]: boolean};
+};
+
+ResourceLink.displayName = 'ResourceLink';

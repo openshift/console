@@ -6,6 +6,7 @@ import { history, resourceListPathFromModel, withHandlePromise } from '../utils'
 import { ClusterServiceVersionKind, SubscriptionKind } from '../operator-lifecycle-manager';
 import { K8sKind, K8sResourceKind } from '../../module/k8s';
 import { ClusterServiceVersionModel, SubscriptionModel } from '../../models';
+import { getActiveNamespace } from '../../actions/ui';
 
 export const DisableApplicationModal = withHandlePromise((props: DisableApplicationModalProps) => {
   const [deleteCSV, setDeleteCSV] = React.useState(true);
@@ -23,8 +24,9 @@ export const DisableApplicationModal = withHandlePromise((props: DisableApplicat
     props.handlePromise(Promise.all(promises)).then(() => {
       props.close();
 
-      if (new RegExp(`/${subscription.metadata.name}(/|$)`).test(window.location.pathname)) {
-        history.push(resourceListPathFromModel(SubscriptionModel, subscription.metadata.namespace));
+      if (window.location.pathname.split('/').includes(subscription.metadata.name)
+        || window.location.pathname.split('/').includes(subscription.status.installedCSV)) {
+        history.push(resourceListPathFromModel(ClusterServiceVersionModel, getActiveNamespace()));
       }
     });
   };

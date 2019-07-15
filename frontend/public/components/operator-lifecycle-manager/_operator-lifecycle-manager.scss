@@ -111,11 +111,9 @@
   margin-bottom: 20px;
 }
 
-.co-clusterserviceversion-list__disabled-icon {
-  margin: 10px;
-  width: 100px;
-  height: 100px;
-  filter: grayscale(100%);
+.co-clusterserviceversion-row__status {
+  display: flex;
+  flex-direction: column;
 }
 
 .co-spec-descriptor--resource-requirements {

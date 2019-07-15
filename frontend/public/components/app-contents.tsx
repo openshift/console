@@ -143,10 +143,6 @@ const AppContents = connect((state: RootState) => ({
           <LazyRoute path="/provisionedservices/ns/:ns" loader={() => import('./provisioned-services' /* webpackChunkName: "provisionedservices" */).then(m => m.ProvisionedServicesPage)} />
           <Route path="/provisionedservices" component={NamespaceRedirect} />
 
-          <LazyRoute path="/operatormanagement/all-namespaces" loader={() => import('./operator-management' /* webpackChunkName: "operator-management" */).then(m => m.OperatorManagementPage)} />
-          <LazyRoute path="/operatormanagement/ns/:ns" loader={() => import('./operator-management' /* webpackChunkName: "operator-management" */).then(m => m.OperatorManagementPage)} />
-          <Route path="/operatormanagement" component={NamespaceRedirect} />
-
           <LazyRoute path="/brokermanagement" loader={() => import('./broker-management' /* webpackChunkName: "brokermanagment" */).then(m => m.BrokerManagementPage)} />
 
           <LazyRoute path={`/k8s/ns/:ns/${SubscriptionModel.plural}/~new`} exact loader={() => import('./operator-lifecycle-manager' /* webpackChunkName: "create-subscription-yaml" */).then(m => NamespaceFromURL(m.CreateSubscriptionYAML))} />

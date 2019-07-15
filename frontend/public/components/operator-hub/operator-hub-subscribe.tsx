@@ -4,9 +4,9 @@ import { Helmet } from 'react-helmet';
 import { match } from 'react-router';
 import { Alert } from '@patternfly/react-core';
 
-import { Firehose, history, NsDropdown, resourcePathFromModel, BreadCrumbs, StatusBox } from '../utils';
+import { Firehose, history, NsDropdown, BreadCrumbs, StatusBox, resourceListPathFromModel } from '../utils';
 import { referenceForModel, k8sCreate, apiVersionForModel, kindForReference, apiVersionForReference, k8sListPartialMetadata } from '../../module/k8s';
-import { SubscriptionModel, OperatorGroupModel, PackageManifestModel } from '../../models';
+import { SubscriptionModel, OperatorGroupModel, PackageManifestModel, ClusterServiceVersionModel } from '../../models';
 import {
   OperatorGroupKind,
   PackageManifestKind,
@@ -125,7 +125,7 @@ export const OperatorHubSubscribeForm: React.FC<OperatorHubSubscribeFormProps> =
       ? Promise.resolve()
       : k8sCreate(OperatorGroupModel, operatorGroup))
       .then(() => k8sCreate(SubscriptionModel, subscription))
-      .then(() => history.push(resourcePathFromModel(SubscriptionModel, packageName, subscription.metadata.namespace)));
+      .then(() => history.push(resourceListPathFromModel(ClusterServiceVersionModel, targetNamespace || props.targetNamespace || selectedTargetNamespace)));
   };
 
   const formValid = () => [selectedUpdateChannel, selectedInstallMode, selectedTargetNamespace, selectedApproval].some(v => _.isNil(v) || _.isEmpty(v))
