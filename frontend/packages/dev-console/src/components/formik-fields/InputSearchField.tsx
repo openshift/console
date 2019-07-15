@@ -17,7 +17,9 @@ const InputSearchField: React.FC<SearchInputFieldProps> = ({
       controlId={`${props.name}-field`}
       validationState={getValidationState(error, touched)}
     >
-      <ControlLabel className={cx({ 'co-required': props.required })}>{label}</ControlLabel>
+      {label && (
+        <ControlLabel className={cx({ 'co-required': props.required })}>{label}</ControlLabel>
+      )}
       <InputGroup>
         <FormControl
           {...field}
@@ -25,7 +27,7 @@ const InputSearchField: React.FC<SearchInputFieldProps> = ({
           aria-describedby={helpText && `${props.name}-help`}
           onKeyDown={(e: KeyboardEvent) => e.keyCode === 13 && onSearch(field.value)}
         />
-        <span className="input-group-btn ">
+        <span className="input-group-btn">
           <button
             type="button"
             className="btn btn-default"

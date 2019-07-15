@@ -9,7 +9,9 @@ const EnvironmentField: React.FC<EnvironmentFieldProps> = ({ label, helpText, ..
   const { setFieldValue } = useFormikContext<FormikValues>();
   return (
     <FormGroup controlId={`${props.name}-field`}>
-      <ControlLabel className={cx({ 'co-required': props.required })}>{label}</ControlLabel>
+      {label && (
+        <ControlLabel className={cx({ 'co-required': props.required })}>{label}</ControlLabel>
+      )}
       <EnvironmentPage
         obj={props.obj}
         envPath={props.envPath}

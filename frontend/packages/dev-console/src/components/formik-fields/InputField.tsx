@@ -13,7 +13,9 @@ const InputField: React.FC<InputFieldProps> = ({ label, helpText, ...props }) =>
       name={`${props.name}-field`}
       validationState={getValidationState(error, touched)}
     >
-      <ControlLabel className={cx({ 'co-required': props.required })}>{label}</ControlLabel>
+      {label && (
+        <ControlLabel className={cx({ 'co-required': props.required })}>{label}</ControlLabel>
+      )}
       <FormControl {...field} {...props} aria-describedby={helpText && `${props.name}-help`} />
       {helpText && <HelpBlock id={`${props.name}-help`}>{helpText}</HelpBlock>}
       {touched && error && <HelpBlock>{error}</HelpBlock>}

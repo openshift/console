@@ -6,3 +6,4 @@ export { default as NumberSpinnerField } from './NumberSpinnerField';
 export { default as EnvironmentField } from './EnvironmentField';
 export { default as DroppableFileInputField } from './DroppableFileInputField';
 export { default as InputSearchField } from './InputSearchField';
+export { default as MultiColumnField } from './multi-column-field/MultiColumnField';
