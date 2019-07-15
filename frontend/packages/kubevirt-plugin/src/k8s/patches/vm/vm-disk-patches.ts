@@ -8,11 +8,11 @@ import {
   getVolumeDataVolumeName,
   getVolumes,
 } from '../../../selectors/vm';
-import { getVmLikePatches } from '../vm-template';
+import { getVMLikePatches } from '../vm-template';
 import { VMLikeEntityKind } from '../../../types';
 
 export const getRemoveDiskPatches = (vmLikeEntity: VMLikeEntityKind, disk): Patch[] => {
-  return getVmLikePatches(vmLikeEntity, (vm) => {
+  return getVMLikePatches(vmLikeEntity, (vm) => {
     const diskName = disk.name;
     const disks = getDisks(vm);
     const volumes = getVolumes(vm);
@@ -60,7 +60,7 @@ export const getRemoveDiskPatches = (vmLikeEntity: VMLikeEntityKind, disk): Patc
 };
 
 export const getAddDiskPatches = (vmLikeEntity: VMLikeEntityKind, disk: object): Patch[] => {
-  return getVmLikePatches(vmLikeEntity, (vm) => {
+  return getVMLikePatches(vmLikeEntity, (vm) => {
     return getAddDiskPatch(vm, disk);
   });
 };

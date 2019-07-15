@@ -6,6 +6,8 @@ import {
   ScrollToTopOnMount,
   SectionHeading,
   FirehoseResult,
+  useAccessReview,
+  asAccessReview,
 } from '@console/internal/components/utils';
 import { getNamespace } from '@console/shared';
 import { K8sResourceKind, PodKind } from '@console/internal/module/k8s';
@@ -13,6 +15,7 @@ import { ServiceModel } from '@console/internal/models';
 import { ServicesList } from '@console/internal/components/service';
 import { VMKind, VMIKind } from '../../types';
 import { getLoadedData } from '../../utils';
+import { VirtualMachineInstanceModel } from '../../models';
 import { VMResourceSummary, VMDetailsList } from './vm-resource';
 import { VMTabProps } from './types';
 
@@ -39,6 +42,8 @@ const VMDetails: React.FC<VMDetailsProps> = (props) => {
 
   const vmServicesData = getServicesForVm(getLoadedData(props.services, []), vm);
 
+  const canUpdate = useAccessReview(asAccessReview(VirtualMachineInstanceModel, vm, 'patch'));
+
   return (
     <StatusBox data={vm} {...restProps}>
       <ScrollToTopOnMount />
@@ -46,7 +51,7 @@ const VMDetails: React.FC<VMDetailsProps> = (props) => {
         <SectionHeading text="VM Overview" />
         <div className="row">
           <div className="col-sm-6">
-            <VMResourceSummary {...mainResources} />
+            <VMResourceSummary canUpdateVM={canUpdate} {...mainResources} />
           </div>
           <div className="col-sm-6">
             <VMDetailsList {...mainResources} />

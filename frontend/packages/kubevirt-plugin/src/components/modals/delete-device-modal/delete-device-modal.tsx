@@ -8,10 +8,8 @@ import {
 } from '@console/internal/components/factory';
 import { k8sPatch } from '@console/internal/module/k8s';
 import { getName } from '@console/shared';
-import { TemplateModel } from '@console/internal/models';
-import { VirtualMachineModel } from '../../../models';
 import { VMLikeEntityKind } from '../../../types';
-import { isVm } from '../../../selectors/selectors';
+import { getVMLikeModel } from '../../../selectors/selectors';
 import { getRemoveDiskPatches } from '../../../k8s/patches/vm/vm-disk-patches';
 import { getRemoveNicPatches } from '../../../k8s/patches/vm/vm-nic-patches';
 
@@ -53,10 +51,8 @@ export const DeleteDeviceModal = withHandlePromise((props: DeleteDeviceModalProp
     if (!patches || patches.length === 0) {
       close();
     } else {
-      const model = isVm(vmLikeEntity) ? VirtualMachineModel : TemplateModel;
-      const promise = k8sPatch(model, vmLikeEntity, patches);
-      // eslint-disable-next-line promise/catch-or-return
-      handlePromise(promise).then(close);
+      const promise = k8sPatch(getVMLikeModel(vmLikeEntity), vmLikeEntity, patches);
+      handlePromise(promise).then(close); // eslint-disable-line promise/catch-or-return
     }
   };
 

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { connect } from 'react-redux';
 import { getResource } from 'kubevirt-web-ui-components';
 import { getNamespace } from '@console/shared';
 import {
@@ -7,9 +8,11 @@ import {
   StatusBox,
   ScrollToTopOnMount,
   SectionHeading,
+  useAccessReview,
+  asAccessReview,
 } from '@console/internal/components/utils';
 import { TemplateKind } from '@console/internal/module/k8s';
-import { connect } from 'react-redux';
+import { TemplateModel } from '@console/internal/models';
 import { DataVolumeModel } from '../../models';
 import { VMTemplateResourceSummary, VMTemplateDetailsList } from './vm-template-resource';
 
@@ -50,6 +53,8 @@ const VMTemplateDetails: React.FC<VMTemplateDetailsProps> = (props) => {
   };
   const loaded = props.loaded || !props.hasDataVolumes;
 
+  const canUpdate = useAccessReview(asAccessReview(TemplateModel, template, 'patch'));
+
   return (
     <StatusBox data={template} {...restProps} loaded={loaded}>
       <ScrollToTopOnMount />
@@ -57,7 +62,7 @@ const VMTemplateDetails: React.FC<VMTemplateDetailsProps> = (props) => {
         <SectionHeading text="VM Template Overview" />
         <div className="row">
           <div className="col-sm-6">
-            <VMTemplateResourceSummary {...flatResources} />
+            <VMTemplateResourceSummary {...flatResources} canUpdateTemplate={canUpdate} />
           </div>
           <div className="col-sm-6">
             <VMTemplateDetailsList {...flatResources} />
