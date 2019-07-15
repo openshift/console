@@ -157,7 +157,7 @@ class CreateInstance extends React.Component<CreateInstanceProps, CreateInstance
                 </div>
                 <div className="form-group co-create-service-instance__name">
                   <label className="control-label co-required" htmlFor="name">Service Instance Name</label>
-                  <input className="form-control"
+                  <input className="pf-c-form-control"
                     type="text"
                     onChange={this.onNameChange}
                     value={this.state.name}
