@@ -43,7 +43,7 @@ const stateToProps = ({k8s, UI}) => ({
  * This component loads the entire Ace editor library (~100kB) with it.
  * Consider using `AsyncComponent` to dynamically load this component when needed.
  */
-/** @augments {React.Component<{obj?: any, create: boolean, kind: string, redirectURL?: string}>} */
+/** @augments {React.Component<{obj?: any, create: boolean, kind: string, redirectURL?: string, resourceObjPath?: (obj: K8sResourceKind, objRef: string) => string}>} */
 export const EditYAML = connect(stateToProps)(
   class EditYAML extends React.Component {
     constructor(props) {
@@ -299,7 +299,12 @@ export const EditYAML = connect(stateToProps)(
         action(model, obj, newNamespace, newName)
           .then(o => {
             if (redirect) {
-              history.push(this.props.redirectURL || resourceObjPath(o, referenceFor(o)));
+              let url = this.props.redirectURL;
+              if (!url) {
+                const path = _.isFunction(this.props.resourceObjPath) ? this.props.resourceObjPath : resourceObjPath;
+                url = path(o, referenceFor(o));
+              }
+              history.push(url);
               // TODO: (ggreer). show message on new page. maybe delete old obj?
               return;
             }
