@@ -74,7 +74,7 @@ const OAuthDetails: React.SFC<OAuthDetailsProps> = ({obj}: {obj: OAuthKind}) => 
     <div className="co-m-pane__body">
       <SectionHeading text="Identity Providers" />
       <p className="co-m-pane__explanation co-m-pane__explanation--alt">
-        Identity providers determine how users log into the cluster. To specify how new identities are mapped to logged in users the mapping method is always set to the value: claim.
+        Identity providers determine how users log into the cluster.
       </p>
       <Dropdown
         className="co-m-pane__dropdown"
