@@ -23,7 +23,7 @@ const getTolerations = (obj: K8sResourceKind): Toleration[] => {
     : _.get(obj, 'spec.template.spec.tolerations');
 };
 
-export const ResourceSummary: React.SFC<ResourceSummaryProps> = ({children, resource, showPodSelector = false, showNodeSelector = false, showAnnotations = true, showTolerations = false, podSelector = 'spec.selector'}) => {
+export const ResourceSummary: React.SFC<ResourceSummaryProps> = ({children, priorityInfo, resource, showPodSelector = false, showNodeSelector = false, showAnnotations = true, showTolerations = false, podSelector = 'spec.selector'}) => {
   const { metadata, type } = resource;
   const reference = referenceFor(resource);
   const model = modelFor(reference);
@@ -42,6 +42,7 @@ export const ResourceSummary: React.SFC<ResourceSummaryProps> = ({children, reso
   return <dl data-test-id="resource-summary" className="co-m-pane__details">
     <dt>Name</dt>
     <dd>{metadata.name || '-'}</dd>
+    { priorityInfo }
     { metadata.namespace ? <dt>Namespace</dt> : null }
     { metadata.namespace ? <dd><ResourceLink kind="Namespace" name={metadata.namespace} title={metadata.uid} namespace={null} /></dd> : null }
     { type ? <dt>Type</dt> : null }
@@ -90,6 +91,7 @@ export type ResourceSummaryProps = {
   showAnnotations?: boolean;
   showTolerations?: boolean;
   podSelector?: string;
+  priorityInfo?: React.ReactNode;
   children?: React.ReactNode;
 };
 
