@@ -25,6 +25,7 @@ export interface TopologyDataResources {
   replicasets: Resource;
   buildconfigs: Resource;
   builds: Resource;
+  daemonSets?: Resource;
 }
 
 export interface Node {

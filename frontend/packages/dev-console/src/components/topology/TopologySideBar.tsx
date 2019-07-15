@@ -28,7 +28,7 @@ const TopologySideBar: React.FC<TopologySideBarProps> = ({ item, show, onClose }
   let itemtoShowOnSideBar;
   if (item) {
     const dc = item.resources.filter(
-      (o) => o.kind === 'DeploymentConfig' || o.kind === 'Deployment',
+      (o) => o.kind === 'DeploymentConfig' || o.kind === 'Deployment' || o.kind === 'DaemonSet',
     );
     const routes = metadataUIDCheck(item.resources.filter((o) => o.kind === 'Route'));
     const services = metadataUIDCheck(item.resources.filter((o) => o.kind === 'Service'));

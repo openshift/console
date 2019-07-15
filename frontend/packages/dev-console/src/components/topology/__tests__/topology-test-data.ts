@@ -10,6 +10,7 @@ export const resources: TopologyDataResources = {
   replicasets: { data: [] },
   buildconfigs: { data: [] },
   builds: { data: [] },
+  daemonSets: { data: [] },
 };
 
 export const topologyData: TopologyDataModel = {
@@ -482,6 +483,44 @@ export const samplePods: Resource = {
       spec: {},
       status: {
         phase: 'Running',
+      },
+    },
+    {
+      kind: 'Pod',
+      apiVersion: 'v1',
+      metadata: {
+        generateName: 'daemonset-testing-',
+        annotations: {
+          'k8s.v1.cni.cncf.io/networks-status':
+            '[{\n    "name": "openshift-sdn",\n    "interface": "eth0",\n    "ips": [\n        "10.128.0.89"\n    ],\n    "default": true,\n    "dns": {}\n}]',
+          'openshift.io/scc': 'restricted',
+        },
+        selfLink: '/api/v1/namespaces/testing/pods/daemonset-testing-62h94',
+        resourceVersion: '700638',
+        name: 'daemonset-testing-62h94',
+        uid: '0c4dd58f-a6e6-11e9-a20f-52fdfc072182',
+        creationTimestamp: '2019-07-15T09:50:59Z',
+        namespace: 'testing',
+        ownerReferences: [
+          {
+            apiVersion: 'apps/v1',
+            kind: 'DaemonSet',
+            name: 'daemonset-testing',
+            uid: '0c4a82c9-a6e6-11e9-a20f-52fdfc072182',
+            controller: true,
+            blockOwnerDeletion: true,
+          },
+        ],
+        labels: {
+          app: 'hello-openshift',
+          'controller-revision-hash': '5b58864494',
+          'pod-template-generation': '1',
+        },
+      },
+      spec: {},
+      status: {
+        phase: 'Pending',
+        startTime: '2019-07-15T09:50:59Z',
       },
     },
   ],
@@ -986,6 +1025,80 @@ const sampleBuilds: Resource = {
   ],
 };
 
+const sampleDaemonSets = {
+  data: [
+    {
+      metadata: {
+        name: 'daemonset-testing',
+        namespace: 'testing',
+        selfLink: '/apis/apps/v1/namespaces/testing/daemonsets/daemonset-testing',
+        uid: '0c4a82c9-a6e6-11e9-a20f-52fdfc072182',
+        resourceVersion: '700614',
+        generation: 1,
+        creationTimestamp: '2019-07-15T09:50:59Z',
+        annotations: {
+          'deprecated.daemonset.template.generation': '1',
+        },
+      },
+      spec: {
+        selector: {
+          matchLabels: {
+            app: 'hello-openshift',
+          },
+        },
+        template: {
+          metadata: {
+            creationTimestamp: null,
+            labels: {
+              app: 'hello-openshift',
+            },
+          },
+          spec: {
+            containers: [
+              {
+                name: 'hello-openshift',
+                image: 'openshift/hello-openshift',
+                ports: [
+                  {
+                    containerPort: 8080,
+                    protocol: 'TCP',
+                  },
+                ],
+                resources: {},
+                terminationMessagePath: '/dev/termination-log',
+                terminationMessagePolicy: 'File',
+                imagePullPolicy: 'Always',
+              },
+            ],
+            restartPolicy: 'Always',
+            terminationGracePeriodSeconds: 30,
+            dnsPolicy: 'ClusterFirst',
+            securityContext: {},
+            schedulerName: 'default-scheduler',
+          },
+        },
+        updateStrategy: {
+          type: 'RollingUpdate',
+          rollingUpdate: {
+            maxUnavailable: 1,
+          },
+        },
+        revisionHistoryLimit: 10,
+      },
+      status: {
+        currentNumberScheduled: 1,
+        numberMisscheduled: 0,
+        desiredNumberScheduled: 1,
+        numberReady: 0,
+        observedGeneration: 1,
+        updatedNumberScheduled: 1,
+        numberUnavailable: 1,
+      },
+      kind: 'DaemonSet',
+      name: 'daemonset-testing',
+    },
+  ],
+};
 export const MockResources: TopologyDataResources = {
   deployments: sampleDeployments,
   deploymentConfigs: sampleDeploymentConfigs,
@@ -996,4 +1109,5 @@ export const MockResources: TopologyDataResources = {
   routes: sampleRoutes,
   buildconfigs: sampleBuildConfigs,
   builds: sampleBuilds,
+  daemonSets: sampleDaemonSets,
 };
