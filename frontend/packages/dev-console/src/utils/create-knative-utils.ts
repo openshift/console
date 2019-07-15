@@ -5,7 +5,7 @@ export const createKnativeService = (
   name: string,
   namespace: string,
   imageStreamName: string,
-  imageStreamTag: string,
+  imageStreamTag?: string,
   cpuResource: string = '100m',
   memoryResource: string = '100Mi',
 ): Promise<K8sResourceKind> => {
@@ -22,7 +22,7 @@ export const createKnativeService = (
           revisionTemplate: {
             spec: {
               container: {
-                image: `${imageStreamName}:${imageStreamTag}`,
+                image: `${imageStreamName}${imageStreamTag ? `:${imageStreamTag}` : ''}`,
                 resources: {
                   requests: {
                     cpu: `${cpuResource}`,

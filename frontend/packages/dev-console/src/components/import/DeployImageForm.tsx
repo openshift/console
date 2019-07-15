@@ -7,6 +7,7 @@ import { NormalizedBuilderImages } from '../../utils/imagestream-utils';
 import ImageSearchSection from './image-search/ImageSearchSection';
 import AppSection from './app/AppSection';
 import AdvancedSection from './advanced/AdvancedSection';
+import ServerlessSection from './serverless/ServerlessSection';
 
 export interface DeployImageFormProps {
   builderImages?: NormalizedBuilderImages;
@@ -34,6 +35,7 @@ const DeployImageForm: React.FC<FormikProps<FormikValues> & DeployImageFormProps
     <div className="co-m-pane__form">
       <AppSection project={values.project} />
       <ImageSearchSection />
+      <ServerlessSection />
       <AdvancedSection values={values} />
     </div>
     <br />

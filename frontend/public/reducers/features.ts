@@ -89,7 +89,7 @@ type WithFlagsProps = {
   flags: {[key: string]: boolean};
 };
 
-export type ConnectToFlags = <P extends WithFlagsProps>(...flags: FLAGS[]) => (C: React.ComponentType<P>) =>
+export type ConnectToFlags = <P extends WithFlagsProps>(...flags: (FLAGS | string)[]) => (C: React.ComponentType<P>) =>
   React.ComponentType<Omit<P, keyof WithFlagsProps>> & {WrappedComponent: React.ComponentType<P>};
 export const connectToFlags: ConnectToFlags = (...flags) => connect(state => stateToProps(flags, state), null, null, {areStatePropsEqual: _.isEqual});
 
