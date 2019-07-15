@@ -10,6 +10,14 @@ export enum StorageDashboardQuery {
   UTILIZATION_RECOVERY_RATE_QUERY = 'UTILIZATION_RECOVERY_RATE_QUERY',
   CEPH_CAPACITY_TOTAL = 'CAPACITY_TOTAL',
   CEPH_CAPACITY_USED = 'CAPACITY_USED',
+  PODS_BY_REQUESTED = 'PODS_BY_REQUESTED',
+  PODS_BY_USED = 'PODS_BY_USED',
+  PROJECTS_BY_REQUESTED = 'PROJECTS_BY_REQUESTED',
+  PROJECTS_BY_USED = 'PROJECTS_BY_USED',
+  STORAGE_CLASSES_BY_REQUESTED = 'STORAGE_CLASSES_BY_REQUESTED',
+  STORAGE_CLASSES_BY_USED = 'STORAGE_CLASSES_BY_USED',
+  VMS_BY_REQUESTED = 'VMS_BY_REQUESTED',
+  VMS_BY_USED = 'VMS_BY_USED',
 }
 
 export const STORAGE_HEALTH_QUERIES = {
@@ -41,4 +49,23 @@ export const UTILIZATION_QUERY_HOUR_MAP = {
 export const CAPACITY_USAGE_QUERIES = {
   [StorageDashboardQuery.CEPH_CAPACITY_TOTAL]: 'ceph_cluster_total_bytes',
   [StorageDashboardQuery.CEPH_CAPACITY_USED]: 'ceph_cluster_total_used_bytes[60m:5m]',
+};
+
+export const TOP_CONSUMER_QUERIES = {
+  [StorageDashboardQuery.PODS_BY_REQUESTED]:
+    '(sort(topk(5, sum(avg_over_time(kube_persistentvolumeclaim_resource_requests_storage_bytes[1h]) * on (namespace,persistentvolumeclaim) group_left(pod) kube_pod_spec_volumes_persistentvolumeclaims_info) by (pod))))[10m:1m]',
+  [StorageDashboardQuery.PODS_BY_USED]:
+    '(sort(topk(5, sum(avg_over_time(kubelet_volume_stats_used_bytes[1h]) * on (namespace,persistentvolumeclaim) group_left(pod) kube_pod_spec_volumes_persistentvolumeclaims_info) by (pod))))[10m:1m]',
+  [StorageDashboardQuery.PROJECTS_BY_REQUESTED]:
+    '(sort(topk(5, sum(avg_over_time(kube_persistentvolumeclaim_resource_requests_storage_bytes[1h]) * on (namespace,persistentvolumeclaim) group_left(storageclass) kube_persistentvolumeclaim_info) by (namespace))))[10m:1m]',
+  [StorageDashboardQuery.PROJECTS_BY_USED]:
+    '(sort(topk(5, sum(avg_over_time(kubelet_volume_stats_used_bytes[1h]) * on (namespace,persistentvolumeclaim) group_left(storageclass) kube_persistentvolumeclaim_info) by (namespace))))[10m:1m]',
+  [StorageDashboardQuery.STORAGE_CLASSES_BY_REQUESTED]:
+    '(sort(topk(5, sum(avg_over_time(kube_persistentvolumeclaim_resource_requests_storage_bytes[1h]) * on (namespace,persistentvolumeclaim) group_left(storageclass) kube_persistentvolumeclaim_info) by (storageclass))))[10m:1m]',
+  [StorageDashboardQuery.STORAGE_CLASSES_BY_USED]:
+    '(sort(topk(5, sum(avg_over_time(kubelet_volume_stats_used_bytes[1h]) * on (namespace,persistentvolumeclaim) group_left(storageclass) kube_persistentvolumeclaim_info) by (storageclass))))[10m:1m]',
+  [StorageDashboardQuery.VMS_BY_REQUESTED]:
+    '(sort(topk(5, sum(avg_over_time(kube_persistentvolumeclaim_resource_requests_storage_bytes[1h]) * on (namespace,persistentvolumeclaim) group_left(pod) kube_pod_spec_volumes_persistentvolumeclaims_info{pod=~"virt-launcher-.*"}) by (pod))))[10m:1m]',
+  [StorageDashboardQuery.VMS_BY_USED]:
+    '(sort(topk(5, sum(max(avg_over_time(kubelet_volume_stats_used_bytes[1h]) * on (namespace,persistentvolumeclaim) group_left(pod) kube_pod_spec_volumes_persistentvolumeclaims_info{pod=~"virt-launcher-.*"}) by (pod,persistentvolumeclaim)) by (pod))))[10m:1m]',
 };
