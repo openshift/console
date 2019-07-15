@@ -4,9 +4,9 @@ import { connect } from 'react-redux';
 import * as classNames from 'classnames';
 
 import { filterList } from '../actions/k8s';
-import { getQueryArgument, pluralize, setQueryArgument } from './utils';
+import { getQueryArgument, setQueryArgument } from './utils';
 
-const CheckBox = ({title, active, number, toggle}) => {
+export const CheckBox = ({title, active, number, toggle}) => {
   const klass = classNames('row-filter__box', {
     'row-filter__box--active': active, 'row-filter__box--empty': !number,
   });
@@ -15,6 +15,22 @@ const CheckBox = ({title, active, number, toggle}) => {
     <span className="row-filter__number-bubble">{number}</span>{title}
   </a>;
 };
+
+export const CheckBoxControls = ({allSelected, itemCount, selectedCount, onSelectAll, children}) => (
+  <div className="row">
+    <div className="col-xs-12">
+      <div className="row-filter">
+        {children}
+        <div className="co-m-row-filter__controls">
+          <button className="btn btn-link co-m-row-filter__selector" disabled={allSelected} type="button" onClick={onSelectAll}>Select All Filters</button>
+          <span className="co-m-row-filter__items">
+            {itemCount === selectedCount ? itemCount : <>{selectedCount} of {itemCount}</>} Item{itemCount !== 1 && 's'}
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+);
 
 export const storagePrefix = 'rowFilter-';
 
@@ -86,38 +102,29 @@ class CheckBoxes_ extends React.Component {
     this.setQueryParameters(selected);
   }
 
-  countNumItems() {
-    const selectedCheckboxCounts = _.map(this.state.selected, (id) => {
-      return this.props.numbers[id] || 0;
-    });
-    const numSelectedItems = _.sum(selectedCheckboxCounts);
-    const allSelected = _.isEmpty(_.xor(this.state.selected, _.map(this.props.items, 'id')));
-    const totalItems = pluralize(this.props.itemCount, 'Item');
-    return allSelected ? totalItems : `${numSelectedItems} of ${totalItems}`;
-  }
-
   render() {
-    const {allSelected} = this.state;
-    const checkboxes = _.map(this.props.items, ({id, title}) => {
-      return <CheckBox
-        key={id}
-        title={title}
-        number={this.props.numbers[id] || 0}
-        active={_.includes(this.state.selected, id)}
-        toggle={event => this.toggle(event, id)}
-      />;
-    });
-    const count = this.countNumItems();
-
-    return <div className="col-xs-12">
-      <div className="row-filter">
-        {checkboxes}
-        <div className="co-m-row-filter__controls">
-          <button className="btn btn-link co-m-row-filter__selector" disabled={allSelected} type="button" onClick={this.selectAll}>Select All Filters</button>
-          <span className="co-m-row-filter__items">{count}</span>
-        </div>
-      </div>
-    </div>;
+    const {items, itemCount} = this.props;
+    const {selected} = this.state;
+    const allSelected = _.every(items, ({id}) => _.includes(selected, id));
+    const selectedCount = _.reduce(selected, (count, id) => count + (this.props.numbers[id] || 0), 0);
+    return (
+      <CheckBoxControls
+        allSelected={allSelected}
+        itemCount={itemCount}
+        selectedCount={selectedCount}
+        onSelectAll={this.selectAll}
+      >
+        {_.map(items, ({id, title}) =>
+          <CheckBox
+            key={id}
+            title={title}
+            number={this.props.numbers[id] || 0}
+            active={_.includes(selected, id)}
+            toggle={event => this.toggle(event, id)}
+          />
+        )}
+      </CheckBoxControls>
+    );
   }
 }
 
