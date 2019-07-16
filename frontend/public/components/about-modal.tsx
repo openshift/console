@@ -10,7 +10,7 @@ import { Firehose } from './utils';
 import { ClusterVersionModel } from '../models';
 import { ClusterVersionKind, referenceForModel } from '../module/k8s';
 import { k8sVersion } from '../module/status';
-import { hasAvailableUpdates, getK8sGitVersion, getOpenShiftVersion } from '../module/k8s/cluster-settings';
+import { hasAvailableUpdates, getK8sGitVersion, getOpenShiftVersion, getClusterID } from '../module/k8s/cluster-settings';
 
 const AboutModalItems: React.FC<AboutModalItemsProps> = ({closeAboutModal, cv}) => {
   const [kubernetesVersion, setKubernetesVersion] = React.useState('');
@@ -19,9 +19,11 @@ const AboutModalItems: React.FC<AboutModalItemsProps> = ({closeAboutModal, cv}) 
       .then(response => setKubernetesVersion(getK8sGitVersion(response) || '-'))
       .catch(() => setKubernetesVersion('unknown'));
   }, []);
-  const clusterID: string = _.get(cv, 'data.spec.clusterID');
+
+  const clusterVersion = _.get(cv, 'data') as ClusterVersionKind;
+  const clusterID = getClusterID(clusterVersion);
   const channel: string = _.get(cv, 'data.spec.channel');
-  const openshiftVersion = getOpenShiftVersion(_.get(cv, 'data'));
+  const openshiftVersion = getOpenShiftVersion(clusterVersion);
   return (
     <React.Fragment>
       {hasAvailableUpdates(cv.data) && <Alert className="co-alert co-about-modal__alert" variant="info" title={<React.Fragment>Update available. <Link to="/settings/cluster" onClick={closeAboutModal}>View Cluster Settings</Link></React.Fragment>} />}

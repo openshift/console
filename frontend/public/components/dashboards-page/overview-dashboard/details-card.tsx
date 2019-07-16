@@ -11,7 +11,7 @@ import {
 import { DetailsBody, DetailItem } from '../../dashboard/details-card';
 import { DashboardItemProps, withDashboardResources } from '../with-dashboard-resources';
 import { InfrastructureModel, ClusterVersionModel } from '../../../models';
-import { referenceForModel, K8sResourceKind, getOpenShiftVersion, getK8sGitVersion, getClusterName, ClusterVersionKind } from '../../../module/k8s';
+import { referenceForModel, K8sResourceKind, getOpenShiftVersion, getK8sGitVersion, ClusterVersionKind, getClusterID } from '../../../module/k8s';
 import { FLAGS } from '../../../const';
 import { flagPending, featureReducerName } from '../../../reducers/features';
 import { FirehoseResource } from '../../utils';
@@ -68,7 +68,7 @@ export const DetailsCard_ = connect(mapStateToProps)(({
 
   const clusterVersionLoaded = _.get(resources.cv, 'loaded', false);
   const clusterVersionError = _.get(resources.cv, 'loadError');
-  const openshiftVersion = getOpenShiftVersion(_.get(resources.cv, 'data') as ClusterVersionKind);
+  const clusterVersionData = _.get(resources.cv, 'data') as ClusterVersionKind;
 
   const infrastructureLoaded = _.get(resources.infrastructure, 'loaded', false);
   const infrastructureError = _.get(resources.infrastructure, 'loadError');
@@ -87,10 +87,10 @@ export const DetailsCard_ = connect(mapStateToProps)(({
           {openshiftFlag ? (
             <>
               <DetailItem
-                key="name"
-                title="Name"
-                value={getClusterName()}
-                isLoading={false}
+                key="clusterid"
+                title="Cluster ID"
+                value={getClusterID(clusterVersionData)}
+                isLoading={!clusterVersionLoaded && !clusterVersionError}
               />
               <DetailItem
                 key="provider"
@@ -101,7 +101,7 @@ export const DetailsCard_ = connect(mapStateToProps)(({
               <DetailItem
                 key="openshift"
                 title="OpenShift version"
-                value={openshiftVersion}
+                value={getOpenShiftVersion(clusterVersionData)}
                 isLoading={!clusterVersionLoaded && !clusterVersionError}
               />
             </>
