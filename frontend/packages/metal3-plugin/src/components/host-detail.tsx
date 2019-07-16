@@ -2,6 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash';
 
 import { Row, Col } from 'patternfly-react';
+import { OffIcon, OnRunningIcon } from '@patternfly/react-icons';
 
 import {
   referenceForModel,
@@ -138,7 +139,7 @@ const BaremetalHostDetails: React.FC<BaremetalHostDetailsProps> = ({
             <dd>
               <StatusIconAndText
                 status={hostPoweredOn ? 'Running' : 'Powered Off'}
-                iconName={hostPoweredOn ? 'on-running' : 'off'}
+                icon={hostPoweredOn ? <OnRunningIcon /> : <OffIcon />}
               />
             </dd>
             {role && (

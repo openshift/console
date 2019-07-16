@@ -1,8 +1,13 @@
 import * as React from 'react';
 import { Button } from 'patternfly-react';
+import { AddCircleOIcon, SyncAltIcon, UnknownIcon } from '@patternfly/react-icons';
 
 import { K8sResourceKind } from '@console/internal/module/k8s';
-import { StatusIconAndText } from '@console/internal/components/utils/status-icon';
+import {
+  StatusIconAndText,
+  GreenCheckCircleIcon,
+  RedExclamationCircleIcon,
+} from '@console/internal/components/utils/status-icon';
 import { RequireCreatePermission } from '@console/internal/components/utils';
 import { getHostStatus } from '../utils/host-status';
 
@@ -26,7 +31,7 @@ export const AddDiscoveredHostButton: React.FC<{ host: K8sResourceKind }> = (
   return (
     <RequireCreatePermission model={BaremetalHostModel} namespace={namespace}>
       <Button bsStyle="link">
-        <StatusIconAndText status="Add host" iconName="add-circle-o" />
+        <StatusIconAndText status="Add host" icon={<AddCircleOIcon />} />
       </Button>
     </RequireCreatePermission>
   );
@@ -46,13 +51,13 @@ const BaremetalHostStatus = ({ host }: BaremetalHostStatusProps) => {
     case status === HOST_STATUS_DISCOVERED:
       return <AddDiscoveredHostButton host={host} />;
     case HOST_PROGRESS_STATES.includes(status):
-      return <StatusIconAndText status={title} iconName="refresh" />;
+      return <StatusIconAndText status={title} icon={<SyncAltIcon />} />;
     case HOST_SUCCESS_STATES.includes(status):
-      return <StatusIconAndText status={title} iconName="ok" />;
+      return <StatusIconAndText status={title} icon={<GreenCheckCircleIcon />} />;
     case HOST_ERROR_STATES.includes(status):
-      return <StatusIconAndText status={title} iconName="error-circle-o" />;
+      return <StatusIconAndText status={title} icon={<RedExclamationCircleIcon />} />;
     default:
-      return <StatusIconAndText status={title} iconName="unknown" />;
+      return <StatusIconAndText status={title} icon={<UnknownIcon />} />;
   }
 };
 

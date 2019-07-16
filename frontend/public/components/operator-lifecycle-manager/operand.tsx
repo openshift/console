@@ -18,6 +18,7 @@ import { apiVersionForReference, kindForReference, K8sResourceKind, OwnerReferen
 import { ClusterServiceVersionModel } from '../../models';
 import { deleteModal } from '../modals';
 import { RootState } from '../../redux';
+import { GreenCheckCircleIcon } from '@console/internal/components/utils/status-icon';
 
 const csvName = () => location.pathname.split('/').find((part, i, allParts) => allParts[i - 1] === referenceForModel(ClusterServiceVersionModel) || allParts[i - 1] === ClusterServiceVersionModel.plural);
 
@@ -112,7 +113,7 @@ export const OperandTableRow: React.FC<OperandTableRowProps> = ({obj, index, key
       <TableData className={tableColumnClasses[3]}>
         {_.isEmpty(status) ?
           <div className="text-muted">Unknown</div> :
-          <StatusIconAndText status={status} iconName={status === 'Running' ? 'ok' : undefined} />
+          <StatusIconAndText status={status} icon={status === 'Running' ? <GreenCheckCircleIcon /> : undefined} />
         }
       </TableData>
       <TableData className={tableColumnClasses[4]}>
