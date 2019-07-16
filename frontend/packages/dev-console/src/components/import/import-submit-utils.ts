@@ -316,6 +316,8 @@ export const createResources = async (
     route: { create: canCreateRoute },
     image: { ports },
     build: { strategy: buildStrategy },
+    limits,
+    serverless: { scaling },
   } = formData;
 
   const requests: Promise<K8sResourceKind>[] = [
@@ -334,7 +336,8 @@ export const createResources = async (
       createKnativeService(
         applicationName,
         projectName,
-        formData.serverless.scaling,
+        scaling,
+        limits,
         imageStreamResponse.status.dockerImageRepository,
       ),
     ]);

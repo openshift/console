@@ -14,15 +14,41 @@ interface ServerlessScaling {
   concurrencylimit: number | '';
 }
 
+interface LimitsData {
+  cpu: ResourceType;
+  memory: ResourceType;
+}
+
+interface ResourceType {
+  request: number;
+  requestUnit: string;
+  limit: number;
+  limitUnit: string;
+}
+
 export const createKnativeService = (
   name: string,
   namespace: string,
   scaling: ServerlessScaling,
+  limits: LimitsData,
   imageStreamName: string,
   imageStreamTag?: string,
-  cpuResource: string = '100m',
-  memoryResource: string = '100Mi',
 ): Promise<K8sResourceKind> => {
+  const { concurrencylimit, concurrencytarget, minpods, maxpods } = scaling;
+  const {
+    cpu: {
+      request: cpuRequest,
+      requestUnit: cpuRequestUnit,
+      limit: cpuLimit,
+      limitUnit: cpuLimitUnit,
+    },
+    memory: {
+      request: memoryRequest,
+      requestUnit: memoryRequestUnit,
+      limit: memoryLimit,
+      limitUnit: memoryLimitUnit,
+    },
+  } = limits;
   const knativeDeployResource: K8sResourceKind = {
     kind: 'Service',
     apiVersion: 'serving.knative.dev/v1alpha1',
@@ -34,22 +60,30 @@ export const createKnativeService = (
       template: {
         metadata: {
           annotations: {
-            ...(scaling.concurrencytarget && {
-              'autoscaling.knative.dev/target': `${scaling.concurrencytarget}`,
+            ...(concurrencytarget && {
+              'autoscaling.knative.dev/target': `${concurrencytarget}`,
             }),
-            ...(scaling.minpods && { 'autoscaling.knative.dev/minScale': `${scaling.minpods}` }),
-            ...(scaling.maxpods && { 'autoscaling.knative.dev/maxScale': `${scaling.maxpods}` }),
+            ...(minpods && { 'autoscaling.knative.dev/minScale': `${minpods}` }),
+            ...(maxpods && { 'autoscaling.knative.dev/maxScale': `${maxpods}` }),
           },
         },
         spec: {
-          ...(scaling.concurrencylimit && { containerConcurrency: scaling.concurrencylimit }),
+          ...(concurrencylimit && { containerConcurrency: concurrencylimit }),
           container: {
             image: `${imageStreamName}${imageStreamTag ? `:${imageStreamTag}` : ''}`,
             resources: {
-              requests: {
-                cpu: `${cpuResource}`,
-                memory: `${memoryResource}`,
-              },
+              ...((cpuLimit || memoryLimit) && {
+                limits: {
+                  ...(cpuLimit && { cpu: `${cpuLimit}${cpuLimitUnit}` }),
+                  ...(memoryLimit && { memory: `${memoryLimit}${memoryLimitUnit}` }),
+                },
+              }),
+              ...((cpuRequest || memoryRequest) && {
+                requests: {
+                  ...(cpuRequest && { cpu: `${cpuRequest}${cpuRequestUnit}` }),
+                  ...(memoryRequest && { memory: `${memoryRequest}${memoryRequestUnit}` }),
+                },
+              }),
             },
           },
         },

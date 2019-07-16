@@ -30,6 +30,7 @@ export interface DeployImageFormData {
   route: RouteData;
   build: BuildData;
   deployment: DeploymentData;
+  limits: LimitsData;
 }
 
 export interface GitImportFormData {

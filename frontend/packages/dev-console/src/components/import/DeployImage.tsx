@@ -80,6 +80,20 @@ const DeployImage: React.FC<DeployImageProps> = ({ namespace }) => {
     },
     labels: {},
     env: {},
+    limits: {
+      cpu: {
+        request: null,
+        requestUnit: 'm',
+        limit: null,
+        limitUnit: 'm',
+      },
+      memory: {
+        request: null,
+        requestUnit: 'Mi',
+        limit: null,
+        limitUnit: 'Mi',
+      },
+    },
   };
 
   const handleSubmit = (values, actions) => {
