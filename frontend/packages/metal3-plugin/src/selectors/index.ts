@@ -8,7 +8,7 @@ export const getHostOperationalStatus = (host: K8sResourceKind) =>
   _.get(host, 'status.operationalStatus');
 export const getHostProvisioningState = (host: K8sResourceKind) =>
   _.get(host, 'status.provisioning.state');
-export const getHostMachineName = (host: K8sResourceKind) => _.get(host, 'spec.machineRef.name');
+export const getHostMachineName = (host: K8sResourceKind) => _.get(host, 'spec.consumerRef.name');
 export const getHostBMCAddress = (host: K8sResourceKind) => _.get(host, 'spec.bmc.address');
 export const isHostOnline = (host: K8sResourceKind) => _.get(host, 'spec.online', false);
 export const getHostNICs = (host: K8sResourceKind) => _.get(host, 'status.hardware.nics', []);
