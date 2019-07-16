@@ -1,5 +1,5 @@
-import { TemplateKind } from '@console/internal/module/k8s';
-import { Patch, VMLikeEntityKind, VMKind } from '../../../types';
+import { TemplateKind, Patch } from '@console/internal/module/k8s';
+import { VMLikeEntityKind, VMKind } from '../../../types';
 import { isVm } from '../../../selectors/selectors';
 import { selectVm } from '../../../selectors/vm-template/selectors';
 

@@ -6,12 +6,6 @@ export type VMLikeEntityKind = VMKind | TemplateKind;
 export type EntityMap<A> = { [propertyName: string]: A };
 export type K8sEntityMap<A extends K8sResourceKind> = EntityMap<A>;
 
-export type Patch = {
-  op: string;
-  path: string;
-  value?: any;
-};
-
 export type VMMultiStatus = {
   status: string;
   message?: string;

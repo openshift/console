@@ -1,5 +1,6 @@
 import { getName } from '@console/shared';
 import { getAddDiskPatch, getDeviceBootOrderPatch } from 'kubevirt-web-ui-components';
+import { Patch } from '@console/internal/module/k8s';
 import {
   getDataVolumeTemplates,
   getDiskBootOrder,
@@ -8,7 +9,7 @@ import {
   getVolumes,
 } from '../../../selectors/vm';
 import { getVmLikePatches } from '../vm-template';
-import { Patch, VMLikeEntityKind } from '../../../types';
+import { VMLikeEntityKind } from '../../../types';
 
 export const getRemoveDiskPatches = (vmLikeEntity: VMLikeEntityKind, disk): Patch[] => {
   return getVmLikePatches(vmLikeEntity, (vm) => {
