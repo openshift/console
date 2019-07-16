@@ -131,6 +131,7 @@ export const EditYAML = connect(stateToProps)(
       editor.layout();
       editor.focus();
       this.registerYAMLinMonaco(monaco);
+      monaco.editor.getModels()[0].updateOptions({ tabSize: 2});
     }
 
     get editorHeight() {
