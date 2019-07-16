@@ -33,6 +33,7 @@ import {
   togglePaused,
   WorkloadPausedAlert,
 } from './utils';
+import { ResourceEventStream } from './events';
 
 const pauseAction: KebabAction = (kind, obj) => ({
   label: obj.spec.paused ? 'Resume Updates' : 'Pause Updates',
@@ -187,6 +188,7 @@ const pages = [
   navFactory.details(MachineConfigPoolDetails),
   navFactory.editYaml(),
   navFactory.machineConfigs(MachineConfigList),
+  navFactory.events(ResourceEventStream),
 ];
 
 export const MachineConfigPoolDetailsPage: React.SFC<any> = props => (
