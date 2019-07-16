@@ -120,6 +120,7 @@ ListPageWrapper_.propTypes = {
   ListComponent: PropTypes.func.isRequired,
   rowFilters: PropTypes.array,
   staticFilters: PropTypes.array,
+  customData: PropTypes.any,
 };
 
 export const FireMan_ = connect(null, {filterList})(
@@ -385,7 +386,7 @@ export const ListPage = withFallback(props => {
 
 ListPage.displayName = 'ListPage';
 
-/** @type {React.SFC<{canCreate?: boolean, createButtonText?: string, createProps?: any, flatten?: Function, title?: string, showTitle?: boolean, helpText?: any, filterLabel?: string, textFilter?: string, rowFilters?: any[], resources: any[], ListComponent: React.ComponentType<any>, namespace?: string}>} */
+/** @type {React.SFC<{canCreate?: boolean, createButtonText?: string, createProps?: any, flatten?: Function, title?: string, showTitle?: boolean, helpText?: any, filterLabel?: string, textFilter?: string, rowFilters?: any[], resources: any[], ListComponent: React.ComponentType<any>, namespace?: string, customData?: any}>} */
 export const MultiListPage = props => {
   const {
     autoFocus,
@@ -406,6 +407,7 @@ export const MultiListPage = props => {
     staticFilters,
     textFilter,
     title,
+    customData,
   } = props;
 
   const resources = _.map(props.resources, (r) => ({
@@ -438,6 +440,7 @@ export const MultiListPage = props => {
         ListComponent={ListComponent}
         rowFilters={rowFilters}
         staticFilters={staticFilters}
+        customData={customData}
       />
     </Firehose>
   </FireMan_>;

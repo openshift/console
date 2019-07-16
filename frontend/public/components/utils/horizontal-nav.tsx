@@ -182,7 +182,7 @@ export const HorizontalNav: React.FC<HorizontalNavProps> = React.memo((props) =>
   const routes = pages.map(p => {
     const path = `${props.match.url}/${p.href}`;
     const render = () => {
-      return <p.component {...componentProps} {...extraResources} />;
+      return <p.component {...componentProps} {...extraResources} customData={props.customData} />;
     };
     return <Route path={path} exact key={p.name} render={render} />;
   });
@@ -220,6 +220,7 @@ export type HorizontalNavProps = {
   hideDivider?: boolean;
   EmptyMsg?: React.ComponentType<any>;
   noStatusBox?: boolean;
+  customData?: any;
 };
 
 HorizontalNav.displayName = 'HorizontalNav';

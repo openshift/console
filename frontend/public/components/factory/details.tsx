@@ -29,6 +29,7 @@ export const DetailsPage = withFallback<DetailsPageProps>((props) => {
         kind={props.kind}
         breadcrumbsFor={props.breadcrumbsFor ? props.breadcrumbsFor : breadcrumbsForDetailsPage(props.kindObj, props.match)}
         resourceKeys={resourceKeys}
+        customData={props.customData}
       />
       <HorizontalNav
         pages={props.pages}
@@ -37,6 +38,7 @@ export const DetailsPage = withFallback<DetailsPageProps>((props) => {
         match={props.match}
         label={props.label || (props.kind as any).label}
         resourceKeys={resourceKeys}
+        customData={props.customData}
       />
     </Firehose>
   );
@@ -63,6 +65,7 @@ export type DetailsPageProps = {
   namespace?: string;
   resources?: FirehoseResource[];
   breadcrumbsFor?: (obj: K8sResourceKind) => {name: string, path: string}[];
+  customData?: any;
 };
 
 DetailsPage.displayName = 'DetailsPage';

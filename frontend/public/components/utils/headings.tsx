@@ -39,7 +39,7 @@ const ActionButtons: React.SFC<ActionButtonsProps> = ({actionButtons}) => <div c
 </div>;
 
 export const PageHeading = connectToModel((props: PageHeadingProps) => {
-  const {kind, kindObj, detail, title, menuActions, buttonActions, obj, breadcrumbsFor, titleFunc, style} = props;
+  const {kind, kindObj, detail, title, menuActions, buttonActions, obj, breadcrumbsFor, titleFunc, style, customData} = props;
   const extraResources = _.reduce(props.resourceKeys, (extraObjs, key) => ({...extraObjs, [key]: _.get(props[key], 'data')}), {});
   const data = _.get(obj, 'data');
   const resourceTitle = (titleFunc && data) ? titleFunc(data) : title;
@@ -61,7 +61,7 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
       { logo }
       { showActions && <div className="co-actions" data-test-id="details-actions">
         { hasButtonActions && <ActionButtons actionButtons={buttonActions.map(a => a(kindObj, data))} /> }
-        { hasMenuActions && <ActionsMenu actions={_.isFunction(menuActions) ? menuActions(kindObj, data, extraResources) : menuActions.map(a => a(kindObj, data, extraResources))} /> }
+        { hasMenuActions && <ActionsMenu actions={_.isFunction(menuActions) ? menuActions(kindObj, data, extraResources, customData) : menuActions.map(a => a(kindObj, data, extraResources, customData))} /> }
       </div> }
     </h1>
     {props.children}
@@ -113,6 +113,7 @@ export type PageHeadingProps = {
   style?: object;
   title?: string | JSX.Element;
   titleFunc?: (obj: K8sResourceKind) => string | JSX.Element;
+  customData?: any;
 };
 
 export type ResourceOverviewHeadingProps = {

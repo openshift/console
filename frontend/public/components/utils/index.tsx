@@ -90,7 +90,8 @@ export type FirehoseResource = {
   isList?: boolean;
   selector?: Selector;
   prop: string;
-  namespaced?: boolean,
+  namespaced?: boolean;
+  optional?: boolean;
 };
 
 export type FirehoseResult<R extends K8sResourceKind | K8sResourceKind[] = K8sResourceKind[]> = {
