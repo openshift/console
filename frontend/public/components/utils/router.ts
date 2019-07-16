@@ -40,6 +40,13 @@ export const setQueryArgument = (k: string, v: string) => {
   history.replace(`${url.pathname}?${params.toString()}${url.hash}`);
 };
 
+export const setAllQueryArguments = (newParams: {[k: string]: string}) => {
+  const params = new URLSearchParams();
+  _.each(newParams, (v, k) => params.set(k, v));
+  const url = new URL(window.location.href);
+  history.replace(`${url.pathname}?${params.toString()}${url.hash}`);
+};
+
 export const removeQueryArgument = (k: string) => {
   const params = new URLSearchParams(window.location.search);
   params.delete(k);
