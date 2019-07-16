@@ -141,6 +141,11 @@
     "webpack-cli": "^2.0.12",
     "webpack-virtual-modules": "^0.1.10"
   },
+  "transformPackages": [
+    "@console",
+    "@spice-project",
+    "lodash-es"
+  ],
   "engines": {
     "node": ">=8.x"
   }

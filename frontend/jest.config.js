@@ -1,5 +1,7 @@
 /* eslint-env node */
 
+const transformPackages = require('./package.json').transformPackages;
+
 module.exports = {
   moduleFileExtensions: ['js', 'jsx', 'ts', 'tsx', 'json'],
   moduleNameMapper: {
@@ -10,7 +12,7 @@ module.exports = {
     '.(ts|tsx|js|jsx)': './node_modules/ts-jest/preprocessor.js',
   },
   transformIgnorePatterns: [
-    '<rootDir>/node_modules/(?!lodash-es|@console)',
+    `<rootDir>/node_modules/(?!${transformPackages.join('|')})`,
   ],
   testRegex: '/__tests__/.*\\.spec\\.(ts|tsx|js|jsx)$',
   testURL: 'http://localhost',

@@ -1,5 +1,10 @@
 /* eslint-env node */
 
+// Assume test environment for the purpose of Console plugin stat reporting.
+process.env.NODE_ENV = 'test';
+
+const transformPackages = require('./package.json').transformPackages;
+
 require('ts-node').register({
   typeCheck: false,
   compilerOptions: {
@@ -7,7 +12,7 @@ require('ts-node').register({
     module: 'commonjs',
   },
   ignore: [
-    /node_modules\/(?!lodash-es|@console|@spice-project)/,
+    new RegExp(`/node_modules/(?!${transformPackages.join('|')})`),
   ],
 });
 
@@ -16,9 +21,6 @@ require('ts-node').register({
 ['.css', '.scss'].forEach(ext => {
   require.extensions[ext] = () => undefined;
 });
-
-// Assume test environment for the purpose of Console plugin stat reporting.
-process.env.NODE_ENV = 'test';
 
 require('browser-env')({ url: 'http://localhost' });
 require('./__mocks__/matchMedia');
