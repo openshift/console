@@ -47,7 +47,7 @@ const HostsTableHeader = () => [
   },
   {
     title: 'Machine',
-    sortField: 'spec.machineRef.name',
+    sortField: 'spec.consumerRef.name',
     transforms: [sortable],
     props: { className: tableColumnClasses[2] },
   },
@@ -59,7 +59,7 @@ const HostsTableHeader = () => [
   },
   {
     title: 'Management Address',
-    sortField: 'spec.machineRef.name',
+    sortField: 'spec.consumerRef.name',
     transforms: [sortable],
     props: { className: tableColumnClasses[4] },
   },
