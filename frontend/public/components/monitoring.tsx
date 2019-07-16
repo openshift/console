@@ -181,7 +181,7 @@ const Graph_ = ({hideGraphs, filterLabels = undefined, rule}) => {
   const timespan = Math.max(3 * duration, 30 * 60) * 1000;
 
   const GraphLink = () => query
-    ? <Link to={`/monitoring/query-browser?query=${encodeURIComponent(query)}`}>View in Metrics</Link>
+    ? <Link to={`/monitoring/query-browser?query0=${encodeURIComponent(query)}`}>View in Metrics</Link>
     : null;
 
   return <QueryBrowser

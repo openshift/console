@@ -32,6 +32,7 @@ import { PrometheusEndpoint } from '../graphs/helpers';
 import { getPrometheusExpressionBrowserURL } from '../graphs/prometheus-graph';
 import { ActionsMenu, Dropdown, ExternalLink, getURLSearchParams, Kebab, LoadingInline, useSafeFetch } from '../utils';
 import { withFallback } from '../utils/error-boundary';
+import { setAllQueryArguments } from '../utils/router';
 import { graphColors, Labels, omitInternalLabels, PrometheusSeries, QueryBrowser } from './query-browser';
 
 const aggregationOperators = [
@@ -348,22 +349,29 @@ const Query: React.FC<QueryProps> = ({colorOffset, metrics, onBlur, onDelete, on
   </div>;
 };
 
+const getParamsQueries = () => {
+  const queries = [];
+  const searchParams = getURLSearchParams();
+  for (let i = 0; _.has(searchParams, `query${i}`); ++i) {
+    const query = searchParams[`query${i}`];
+    queries.push({disabledSeries: [], enabled: true, expanded: true, query, text: query});
+  }
+  return queries;
+};
+
 export const QueryBrowserPage = withFallback(() => {
   const [focusedQuery, setFocusedQuery] = React.useState();
   const [metrics, setMetrics] = React.useState();
+  const [queries, setQueries] = React.useState(getParamsQueries());
   const [restoreSelection, setRestoreSelection] = React.useState();
 
-  const defaultQuery = getURLSearchParams().query || '';
+  const updateURLParams = () => {
+    const newParams = {};
+    _.each(queries, (q, i) => newParams[`query${i}`] = q.text);
+    setAllQueryArguments(newParams);
+  };
 
   // `text` is the current string in the text input and `query` is the value displayed in the graph
-  const [queries, setQueries] = React.useState([{
-    disabledSeries: [],
-    enabled: true,
-    expanded: true,
-    query: defaultQuery,
-    text: defaultQuery,
-  }]);
-
   const defaultQueryObj = {disabledSeries: [], enabled: true, expanded: true, query: '', text: ''};
 
   const updateQuery = (i: number, patch: PrometheusQuery) => {
@@ -374,7 +382,10 @@ export const QueryBrowserPage = withFallback(() => {
 
   const deleteAllQueries = () => setQueries([defaultQueryObj]);
 
-  const runQueries = () => setQueries(queries.map(q => q.enabled ? Object.assign({}, q, {query: _.trim(q.text)}) : q));
+  const runQueries = () => {
+    setQueries(queries.map(q => q.enabled ? Object.assign({}, q, {query: _.trim(q.text)}) : q));
+    updateURLParams();
+  };
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
