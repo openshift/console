@@ -14,6 +14,7 @@ import { getNamespace, getName } from '@console/shared';
 
 import { VMTemplateYAMLTemplates } from '../../models/templates';
 import { VM_TEMPLATE_CREATE_HEADER } from '../../constants/vm-templates';
+import { K8sResourceKind } from '../../../../../public/module/k8s/index';
 
 const CreateVMTemplateYAMLConnected = connectToPlural(
   ({ match, kindsInFlight, kindObj }: CreateYAMLProps) => {
@@ -30,20 +31,18 @@ const CreateVMTemplateYAMLConnected = connectToPlural(
     obj.metadata = obj.metadata || {};
     obj.metadata.namespace = match.params.ns || 'default';
 
-    const vmTemplateObjPath = (o) =>
+    const vmTemplateObjPath = (o: K8sResourceKind) =>
       resourcePathFromModel(
         { ...TemplateModel, plural: 'vmtemplates' },
         getName(o),
         getNamespace(o),
       );
+    const DroppableEditYAML = () =>
+      import('@console/internal/components/droppable-edit-yaml').then((c) => c.DroppableEditYAML);
 
     return (
       <AsyncComponent
-        loader={() =>
-          import('@console/internal/components/droppable-edit-yaml').then(
-            (c) => c.DroppableEditYAML,
-          )
-        }
+        loader={DroppableEditYAML}
         obj={obj}
         create
         kind={kindObj.kind}
