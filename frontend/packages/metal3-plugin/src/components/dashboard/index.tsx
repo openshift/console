@@ -14,7 +14,7 @@ export const HostDashboard: React.FC<{ obj: K8sResourceKind }> = ({ obj }) => {
     obj,
   });
 
-  const mainCards = [ConnectedHealthCard, ConnectedUtilizationCard];
+  const mainCards = [{ Card: ConnectedHealthCard }, { Card: ConnectedUtilizationCard }];
   const leftCards = [];
 
   return (
