@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { getResource } from 'kubevirt-web-ui-components';
 
 import { navFactory } from '@console/internal/components/utils';
 
@@ -6,15 +7,32 @@ import { ResourceEventStream } from '@console/internal/components/events';
 import { DetailsPage } from '@console/internal/components/factory';
 import { K8sResourceKindReference } from '@console/internal/module/k8s';
 
+import { PodModel } from '@console/internal/models';
 import { VMDetailsFirehose } from './vm-details';
 import { VMDisksFirehose } from '../vm-disks';
 import { VMNics } from '../vm-nics';
 import { VMConsoleFirehose } from './vm-console';
 
-// import { VmEvents } from './vm-events';
-// import { menuActions } from './menu-actions';
+import { VirtualMachineInstanceMigrationModel, VirtualMachineInstanceModel } from '../../models';
+import { menuActionsCreator } from './menu-actions';
 
-export const VirtualMachinesDetailsPage = (props: VirtualMachinesDetailsPageProps) => {
+// import { VmEvents } from './vm-events';
+
+export const VirtualMachinesDetailsPage: React.FC<VirtualMachinesDetailsPageProps> = (props) => {
+  const { name, namespace } = props;
+
+  const resources = [
+    getResource(VirtualMachineInstanceModel, {
+      name,
+      namespace,
+      isList: false,
+      prop: 'vmi',
+      optional: true,
+    }),
+    getResource(PodModel, { namespace, prop: 'pods' }),
+    getResource(VirtualMachineInstanceMigrationModel, { namespace, prop: 'migrations' }),
+  ];
+
   const consolePage = {
     href: 'consoles',
     name: 'Consoles',
@@ -42,9 +60,9 @@ export const VirtualMachinesDetailsPage = (props: VirtualMachinesDetailsPageProp
     disksPage,
   ];
 
-  const menuActions = undefined; // TODO(mlibra): menuActions
-
-  return <DetailsPage {...props} menuActions={menuActions} pages={pages} />;
+  return (
+    <DetailsPage {...props} menuActions={menuActionsCreator} pages={pages} resources={resources} />
+  );
 };
 
 type VirtualMachinesDetailsPageProps = {
