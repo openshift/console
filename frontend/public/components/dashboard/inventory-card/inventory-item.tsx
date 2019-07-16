@@ -1,46 +1,40 @@
 import * as React from 'react';
-import { Icon } from 'patternfly-react';
 import { Link } from 'react-router-dom';
 
 import * as plugins from '../../../plugins';
-import { LoadingInline } from '../../utils';
+import { LoadingInline, StatusIcon } from '../../utils';
 import { K8sResourceKind, K8sKind } from '../../../module/k8s';
 import { InventoryStatusGroup } from './status-group';
 
 const defaultStatusGroupIcons = {
   [InventoryStatusGroup.OK]: (
-    <Icon
-      type="fa"
-      name="check-circle"
-      className="co-inventory-card__status-icon co-inventory-card__status-icon--ok"
+    <StatusIcon
+      status="Ready"
+      additionalIconClassName="co-inventory-card__status-icon co-inventory-card__status-icon--ok"
     />
   ),
   [InventoryStatusGroup.WARN]: (
-    <Icon
-      type="fa"
-      name="exclamation-triangle"
-      className="co-inventory-card__status-icon co-inventory-card__status-icon--warn"
+    <StatusIcon
+      status="Warning"
+      additionalIconClassName="co-inventory-card__status-icon co-inventory-card__status-icon--warn"
     />
   ),
   [InventoryStatusGroup.ERROR]: (
-    <Icon
-      type="fa"
-      name="exclamation-circle"
-      className="co-inventory-card__status-icon co-inventory-card__status-icon--error"
+    <StatusIcon
+      status="Error"
+      additionalIconClassName="co-inventory-card__status-icon co-inventory-card__status-icon--error"
     />
   ),
   [InventoryStatusGroup.PROGRESS]: (
-    <Icon
-      type="pf"
-      name="in-progress"
-      className="co-inventory-card__status-icon co-inventory-card__status-icon--progress"
+    <StatusIcon
+      status="In Progress"
+      additionalIconClassName="co-inventory-card__status-icon co-inventory-card__status-icon--progress"
     />
   ),
   [InventoryStatusGroup.NOT_MAPPED]: (
-    <Icon
-      type="fa"
-      name="question-circle"
-      className="co-inventory-card__status-icon co-inventory-card__status-icon--question"
+    <StatusIcon
+      status="Unknown"
+      additionalIconClassName="co-inventory-card__status-icon co-inventory-card__status-icon--question"
     />
   ),
 };
