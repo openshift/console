@@ -25,46 +25,6 @@
     "analyze": "NODE_ENV=production ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/webpack --mode=production --profile --json | awk '{if(NR>2)print}' > public/dist/stats.json && ts-node -O '{\"module\":\"commonjs\"}' ./node_modules/.bin/webpack-bundle-analyzer --mode static -r public/dist/report.html public/dist/stats.json",
     "plugin-stats": "node ./plugin-stats.js"
   },
-  "jest": {
-    "moduleFileExtensions": [
-      "js",
-      "jsx",
-      "ts",
-      "tsx",
-      "json"
-    ],
-    "moduleNameMapper": {
-      "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/__mocks__/fileMock.js",
-      "\\.(css|less|scss)$": "<rootDir>/__mocks__/styleMock.js"
-    },
-    "transform": {
-      ".(ts|tsx|js|jsx)": "./node_modules/ts-jest/preprocessor.js"
-    },
-    "transformIgnorePatterns": [
-      "<rootDir>/node_modules/(?!lodash-es|@console)"
-    ],
-    "testRegex": "/__tests__/.*\\.spec\\.(ts|tsx|js|jsx)$",
-    "testURL": "http://localhost",
-    "setupFiles": [
-      "./__mocks__/localStorage.ts",
-      "./__mocks__/matchMedia.js",
-      "./__mocks__/serverFlags.js",
-      "./before-tests.js"
-    ],
-    "coverageDirectory": "__coverage__",
-    "coverageReporters": [
-      "json",
-      "lcov",
-      "text",
-      "text-summary"
-    ],
-    "collectCoverageFrom": [
-      "public/*.{js,jsx,ts,tsx}",
-      "public/{components,module,ui}/**/*.{js,jsx,ts,tsx}",
-      "packages/*/src/**/*.{js,jsx,ts,tsx}",
-      "!**/node_modules/**"
-    ]
-  },
   "dependencies": {
     "@patternfly/patternfly": "2.17.2",
     "@patternfly/react-charts": "4.4.16",
