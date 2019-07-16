@@ -28,6 +28,7 @@ const WorkloadNode: React.FC<NodeProps<WorkloadData>> = ({
       innerRadius={radius * 0.55}
       icon={workload.data.builderImage}
       label={workload.name}
+      kind={workload.data.kind}
       selected={selected}
       onSelect={onSelect}
       attachments={[

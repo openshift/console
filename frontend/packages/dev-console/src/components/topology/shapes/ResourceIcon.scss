@@ -1,0 +1,13 @@
+.odc-resource-icon {
+  font-size: 80%;
+  fill: var(--pf-global--info-color--200);
+  text {
+    fill: #fff !important;
+  }
+}
+
+.odc-resource-icon-deployment,
+.odc-resource-icon-daemonset,
+.odc-resource-icon-deploymentconfig {
+  fill: var(--pf-global--info-color--200);
+}

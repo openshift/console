@@ -68,7 +68,7 @@ export default class PodTooltip extends React.PureComponent<TooltipProps> {
           </React.Fragment>
         )}
         <g ref={this.groupRef}>
-          <text x={x} y={y} dx={10} textAnchor="middle" dy="0.3em">
+          <text x={x} y={y} dx={10} textAnchor="middle" dy="0.35em">
             <tspan>{this.props.datum.x}</tspan>
             {this.props.datum.x !== 'Scaled to 0' && (
               <tspan dx={20}>{Math.round(this.props.datum.y)}</tspan>

@@ -19,6 +19,7 @@ export interface BaseNodeProps {
   onSelect?: Function;
   icon?: string;
   label?: string;
+  kind?: string;
   children?: React.ReactNode;
   attachments?: React.ReactNode;
 }
@@ -50,6 +51,7 @@ export default class BaseNode extends React.Component<BaseNodeProps, State> {
       selected,
       icon,
       label,
+      kind,
       onSelect,
       children,
       attachments,
@@ -95,6 +97,7 @@ export default class BaseNode extends React.Component<BaseNodeProps, State> {
               x={0}
               paddingX={8}
               paddingY={4}
+              kind={kind}
             >
               {selected || hover ? label : truncateEnd(label)}
             </SvgBoxedText>
