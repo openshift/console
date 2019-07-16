@@ -73,6 +73,17 @@ const plugin: Plugin<ConsumedExtensions> = [
     type: 'Dashboards/Card',
     properties: {
       tab: 'persistent-storage',
+      position: GridPosition.MAIN,
+      loader: () =>
+        import(
+          './components/dashboard-page/storage-dashboard/capacity-card/capacity-card' /* webpackChunkName: "ceph-storage-capacity-card" */
+        ).then((m) => m.default),
+    },
+  },
+  {
+    type: 'Dashboards/Card',
+    properties: {
+      tab: 'persistent-storage',
       position: GridPosition.RIGHT,
       loader: () =>
         import(
