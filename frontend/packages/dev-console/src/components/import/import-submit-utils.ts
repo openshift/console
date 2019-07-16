@@ -10,6 +10,7 @@ import { k8sCreate, K8sResourceKind } from '@console/internal/module/k8s';
 import { makePortName } from '../../utils/imagestream-utils';
 import { getAppLabels, getPodLabels } from '../../utils/resource-label-utils';
 import { GitImportFormData } from './import-types';
+import { createKnativeService } from '../../utils/create-knative-utils';
 
 const dryRunOpt = { queryParams: { dryRun: 'All' } };
 
@@ -250,21 +251,40 @@ export const createRoute = (
   return k8sCreate(RouteModel, route, dryRun ? dryRunOpt : {});
 };
 
-export const createResources = (
+export const createResources = async (
   formData: GitImportFormData,
   imageStream: K8sResourceKind,
   dryRun: boolean = false,
 ): Promise<K8sResourceKind[]> => {
   const {
+    application: { name: applicationName },
+    project: { name: projectName },
     route: { create: canCreateRoute },
     image: { ports },
   } = formData;
 
   const requests: Promise<K8sResourceKind>[] = [
-    createDeploymentConfig(formData, imageStream, dryRun),
     createImageStream(formData, imageStream, dryRun),
     createBuildConfig(formData, imageStream, dryRun),
   ];
+
+  if (formData.serverless.trigger) {
+    // knative service doesn't have dry run capability so returning the promises.
+    if (dryRun) {
+      return Promise.all(requests);
+    }
+
+    const [imageStreamResponse] = await Promise.all(requests);
+    return Promise.all([
+      createKnativeService(
+        applicationName,
+        projectName,
+        imageStreamResponse.status.dockerImageRepository,
+      ),
+    ]);
+  }
+
+  requests.push(createDeploymentConfig(formData, imageStream, dryRun));
 
   if (!_.isEmpty(ports)) {
     requests.push(createService(formData, imageStream, dryRun));
@@ -272,6 +292,5 @@ export const createResources = (
       requests.push(createRoute(formData, imageStream, dryRun));
     }
   }
-
   return Promise.all(requests);
 };

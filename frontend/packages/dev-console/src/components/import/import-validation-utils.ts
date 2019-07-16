@@ -59,6 +59,9 @@ export const validationSchema = yup.object().shape({
       .string()
       .matches(pathRegex, { message: 'Path must start with /.', excludeEmptyString: true }),
   }),
+  serverless: yup.object().shape({
+    trigger: yup.boolean(),
+  }),
 });
 
 export const detectGitType = (url: string): string => {

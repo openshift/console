@@ -56,4 +56,7 @@ export const mockFormData: GitImportFormData = {
     replicas: 1,
   },
   labels: {},
+  serverless: {
+    trigger: false,
+  },
 };
