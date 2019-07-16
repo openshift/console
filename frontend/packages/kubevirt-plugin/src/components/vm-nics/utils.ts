@@ -13,6 +13,17 @@ export const getNetworkBindings = (networkType) => {
   }
 };
 
+export const getDefaultNetworkBinding = (networkType) => {
+  switch (networkType) {
+    case NetworkType.MULTUS:
+      return NetworkBinding.BRIDGE;
+    case NetworkType.POD:
+      return NetworkBinding.MASQUERADE;
+    default:
+      return null;
+  }
+};
+
 export const getInterfaceBinding = (intface) => {
   if (intface.bridge) {
     return NetworkBinding.BRIDGE;

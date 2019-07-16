@@ -136,8 +136,8 @@ export const CreateDiskRow: React.FC<CreateDiskRowProps> = ({
             createDisk({ vmLikeEntity, disk: { name, size, bus, storageClass } })
               .then(onCreateRowDismiss)
               .catch((error) => {
+                onCreateRowError((error && error.message) || 'Error occured, please try again');
                 setCreating(false);
-                onCreateRowError(error || 'Error occured, please try again');
               });
           }}
           disabled={!isValid}
