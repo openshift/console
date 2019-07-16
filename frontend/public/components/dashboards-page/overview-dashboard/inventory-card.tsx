@@ -59,17 +59,17 @@ const InventoryCard_: React.FC<DashboardItemProps> = ({ watchK8sResource, stopWa
     };
   }, [watchK8sResource, stopWatchK8sResource]);
 
-  const nodes = _.get(resources, 'nodes');
-  const nodesLoaded = _.get(nodes, 'loaded');
-  const nodesData = _.get(nodes, 'data', []) as K8sResourceKind[];
+  const nodesLoaded = _.get(resources.nodes, 'loaded');
+  const nodesLoadError = _.get(resources.nodes, 'loadError');
+  const nodesData = _.get(resources.nodes, 'data', []) as K8sResourceKind[];
 
-  const pods = _.get(resources, 'pods');
-  const podsLoaded = _.get(pods, 'loaded');
-  const podsData = _.get(pods, 'data', []) as PodKind[];
+  const podsLoaded = _.get(resources.pods, 'loaded');
+  const podsLoadError = _.get(resources.pods, 'loadError');
+  const podsData = _.get(resources.pods, 'data', []) as PodKind[];
 
-  const pvcs = _.get(resources, 'pvcs');
-  const pvcsLoaded = _.get(pvcs, 'loaded');
-  const pvcsData = _.get(pvcs, 'data', []) as K8sResourceKind[];
+  const pvcsLoaded = _.get(resources.pvcs, 'loaded');
+  const pvcsLoadError = _.get(resources.pvcs, 'loadError');
+  const pvcsData = _.get(resources.pvcs, 'data', []) as K8sResourceKind[];
 
   const pluginItems = plugins.registry.getDashboardsOverviewInventoryItems();
   return (
@@ -78,12 +78,13 @@ const InventoryCard_: React.FC<DashboardItemProps> = ({ watchK8sResource, stopWa
         <DashboardCardTitle>Cluster inventory</DashboardCardTitle>
       </DashboardCardHeader>
       <DashboardCardBody>
-        <ResourceInventoryItem isLoading={!nodesLoaded} kind={NodeModel} resources={nodesData} mapper={getNodeStatusGroups} />
-        <ResourceInventoryItem isLoading={!podsLoaded} kind={PodModel} resources={podsData} mapper={getPodStatusGroups} />
-        <ResourceInventoryItem isLoading={!pvcsLoaded} kind={PersistentVolumeClaimModel} useAbbr resources={pvcsData} mapper={getPVCStatusGroups} />
+        <ResourceInventoryItem isLoading={!nodesLoaded} error={!!nodesLoadError} kind={NodeModel} resources={nodesData} mapper={getNodeStatusGroups} />
+        <ResourceInventoryItem isLoading={!podsLoaded} error={!!podsLoadError} kind={PodModel} resources={podsData} mapper={getPodStatusGroups} />
+        <ResourceInventoryItem isLoading={!pvcsLoaded} error={!!pvcsLoadError} kind={PersistentVolumeClaimModel} useAbbr resources={pvcsData} mapper={getPVCStatusGroups} />
         {pluginItems.map((item, index) => {
           const resource = _.get(resources, uniqueResource(item.properties.resource, index).prop);
           const resourceLoaded = _.get(resource, 'loaded');
+          const resourceLoadError = _.get(resource, 'loadError');
           const resourceData = _.get(resource, 'data', []) as K8sResourceKind[];
 
           const additionalResources = {};
@@ -101,6 +102,7 @@ const InventoryCard_: React.FC<DashboardItemProps> = ({ watchK8sResource, stopWa
             <ResourceInventoryItem
               key={index}
               isLoading={!resourceLoaded || !additionalResourcesLoaded}
+              error={!!resourceLoadError}
               kind={item.properties.model}
               resources={resourceData}
               additionalResources={additionalResourcesData}
