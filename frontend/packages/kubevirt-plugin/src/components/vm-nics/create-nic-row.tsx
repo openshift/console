@@ -24,12 +24,13 @@ import { NetworkAttachmentDefinitionModel, VirtualMachineModel } from '../../mod
 import { getAddNicPatches } from '../../k8s/patches/vm/vm-nic-patches';
 import { VMKind, VMLikeEntityKind } from '../../types';
 
-import '../vm-disks/_create-device-row.scss';
-import { getNetworkBindings, nicTableColumnClasses } from './utils';
+import { getDefaultNetworkBinding, getNetworkBindings, nicTableColumnClasses } from './utils';
 import { getNetworkChoices } from '../../selectors/vm';
 import { dimensifyRow } from '../../utils/table';
 import { NetworkType } from '../../constants/vm';
 import { validateNicName } from '../../utils/validations/vm';
+
+import '../vm-disks/_create-device-row.scss';
 
 const createNic = ({
   vmLikeEntity,
@@ -136,9 +137,15 @@ export const CreateNicRow: React.FC<CreateNicRowProps> = ({
         <NetworkColumn
           network={network}
           onChange={(net) => {
-            if (net.networkType === NetworkType.POD) {
+            const { networkType: newNetworkType } = net;
+            if (newNetworkType === NetworkType.POD) {
               setMacAddress('');
             }
+
+            if (!binding || !getNetworkBindings(newNetworkType).includes(binding)) {
+              setBinding(getDefaultNetworkBinding(newNetworkType));
+            }
+
             setNetwork(net);
           }}
           hasNADs={hasNADs}
@@ -172,8 +179,8 @@ export const CreateNicRow: React.FC<CreateNicRowProps> = ({
             createNic({ vmLikeEntity, nic: { name, model, network, binding, mac: macAddress } })
               .then(onCreateRowDismiss)
               .catch((error) => {
+                onCreateRowError((error && error.message) || 'Error occured, please try again');
                 setCreating(false);
-                onCreateRowError(error || 'Error occured, please try again');
               });
           }}
           disabled={!isValid}

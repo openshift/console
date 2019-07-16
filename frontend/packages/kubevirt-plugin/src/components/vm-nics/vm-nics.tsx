@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Alert, Button } from 'patternfly-react';
+import { Button } from 'patternfly-react';
+import { Alert, AlertActionCloseButton } from '@patternfly/react-core';
 import * as _ from 'lodash';
 
 import { Table } from '@console/internal/components/factory';
@@ -67,7 +68,14 @@ export const VMNics: React.FC<VMLikeEntityTabProps> = ({ obj: vmLikeEntity }) =>
         </div>
       </div>
       <div className="co-m-pane__body">
-        {createError && <Alert onDismiss={() => setCreateError(null)}>{createError}</Alert>}
+        {createError && (
+          <Alert
+            variant="danger"
+            title={createError}
+            className="kubevirt-vm-create-device-error"
+            action={<AlertActionCloseButton onClose={() => setCreateError(null)} />}
+          />
+        )}
         <Table
           aria-label="VM Nics List"
           data={getStoragesData(vmLikeEntity, isCreating)}
@@ -122,6 +130,7 @@ export const VMNics: React.FC<VMLikeEntityTabProps> = ({ obj: vmLikeEntity }) =>
               setCreateError(error);
             },
           }}
+          virtualize
           loaded
         />
       </div>
