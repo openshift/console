@@ -28,10 +28,11 @@ const config: webpack.Configuration = {
   },
   node: {
     fs: 'empty',
+    // eslint-disable-next-line camelcase
     child_process: 'empty',
     net: 'empty',
     crypto: 'empty',
-    module: 'empty'
+    module: 'empty',
   },
   module: {
     rules: [
