@@ -11,7 +11,7 @@ export class ResourceSidebarWrapper extends React.Component {
     super(props);
     this.toggleSidebar = this.toggleSidebar.bind(this);
     this.state = {
-      showSidebar: true,
+      showSidebar: !props.startHidden,
     };
   }
 
