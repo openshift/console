@@ -207,7 +207,7 @@ export type KebabOption = {
   href?: string, callback?: () => any;
   accessReview?: AccessReviewResourceAttributes;
 };
-export type KebabAction = (kind: K8sKind, obj: K8sResourceKind) => KebabOption;
+export type KebabAction = (kind: K8sKind, obj: K8sResourceKind, resources?: any) => KebabOption;
 
 export type ResourceKebabProps = {
   kindObj: K8sKind;

@@ -3,7 +3,7 @@ import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
 import { Link } from 'react-router-dom';
 import { Button } from '@patternfly/react-core';
-import { ActionsMenu, ResourceIcon, KebabAction, resourcePath } from './index';
+import { ActionsMenu, ResourceIcon, KebabAction, resourcePath, FirehoseResult, KebabOption } from './index';
 import { ClusterServiceVersionLogo } from '../operator-lifecycle-manager';
 import { connectToModel } from '../../kinds';
 import { ClusterServiceVersionModel } from '../../models';
@@ -40,6 +40,7 @@ const ActionButtons: React.SFC<ActionButtonsProps> = ({actionButtons}) => <div c
 
 export const PageHeading = connectToModel((props: PageHeadingProps) => {
   const {kind, kindObj, detail, title, menuActions, buttonActions, obj, breadcrumbsFor, titleFunc, style} = props;
+  const extraResources = _.reduce(props.resourceKeys, (extraObjs, key) => ({...extraObjs, [key]: _.get(props[key], 'data')}), {});
   const data = _.get(obj, 'data');
   const resourceTitle = (titleFunc && data) ? titleFunc(data) : title;
   const isCSV = kind === referenceForModel(ClusterServiceVersionModel);
@@ -51,7 +52,7 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
     ? csvLogo()
     : <div className="co-m-pane__name co-resource-item">{ kind && <ResourceIcon kind={kind} className="co-m-resource-icon--lg" /> } <span id="resource-title" className="co-resource-item__resource-name">{resourceTitle}</span></div>;
   const hasButtonActions = !_.isEmpty(buttonActions);
-  const hasMenuActions = !_.isEmpty(menuActions);
+  const hasMenuActions = _.isFunction(menuActions) || !_.isEmpty(menuActions);
   const showActions = (hasButtonActions || hasMenuActions) && !_.isEmpty(data) && !_.get(data, 'deletionTimestamp');
 
   return <div className={classNames('co-m-nav-title', {'co-m-nav-title--detail': detail}, {'co-m-nav-title--logo': isCSV}, {'co-m-nav-title--breadcrumbs': breadcrumbsFor && !_.isEmpty(data)})} style={style}>
@@ -60,7 +61,7 @@ export const PageHeading = connectToModel((props: PageHeadingProps) => {
       { logo }
       { showActions && <div className="co-actions" data-test-id="details-actions">
         { hasButtonActions && <ActionButtons actionButtons={buttonActions.map(a => a(kindObj, data))} /> }
-        { hasMenuActions && <ActionsMenu actions={menuActions.map(a => a(kindObj, data))} /> }
+        { hasMenuActions && <ActionsMenu actions={_.isFunction(menuActions) ? menuActions(kindObj, data, extraResources) : menuActions.map(a => a(kindObj, data, extraResources))} /> }
       </div> }
     </h1>
     {props.children}
@@ -97,6 +98,8 @@ export type BreadCrumbsProps = {
   breadcrumbs: {name: string, path: string}[];
 };
 
+export type KebabOptionsCreator = (...args: Parameters<KebabAction>) => KebabOption[];
+
 export type PageHeadingProps = {
   breadcrumbsFor?: (obj: K8sResourceKind) => {name: string, path: string}[];
   buttonActions?: any[];
@@ -104,8 +107,9 @@ export type PageHeadingProps = {
   detail?: boolean;
   kind?: K8sResourceKindReference;
   kindObj?: K8sKind;
-  menuActions?: any[];
-  obj?: {data: K8sResourceKind};
+  menuActions?: Function[] | KebabOptionsCreator; // FIXME should be "KebabAction[] |" refactor pipeline-actions.tsx, etc.
+  obj?: FirehoseResult<K8sResourceKind>;
+  resourceKeys?: string[];
   style?: object;
   title?: string | JSX.Element;
   titleFunc?: (obj: K8sResourceKind) => string | JSX.Element;
