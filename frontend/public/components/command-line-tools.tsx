@@ -8,6 +8,7 @@ import { connectToFlags } from '../reducers/features';
 import { ConsoleCLIDownloadModel } from '../models';
 import { referenceForModel } from '../module/k8s';
 import { MarkdownView } from './operator-lifecycle-manager/clusterserviceversion';
+import { TechPreviewBadge } from '@console/shared';
 
 const CommandLineTools: React.FC<CommandLineToolsProps> = ({obj}) => {
   const title = 'Command Line Tools';
@@ -49,7 +50,7 @@ const CommandLineTools: React.FC<CommandLineToolsProps> = ({obj}) => {
       </p>
       <hr />
       <h2 className="co-section-heading">odo - Developer-focused CLI for OpenShift</h2>
-      <p><span className="label label-warning">Tech Preview</span></p>
+      <p><TechPreviewBadge /></p>
       <p>OpenShift Do (odo) is a fast, iterative, and straightforward CLI tool for developers who write, build, and deploy applications on OpenShift.</p>
       <p>odo abstracts away complex Kubernetes and OpenShift concepts, thus allowing developers to focus on what is most important to them: code.</p>
       <p><ExternalLink href={ODO_DOWNLOAD_LINK} text="Download odo" /></p>
