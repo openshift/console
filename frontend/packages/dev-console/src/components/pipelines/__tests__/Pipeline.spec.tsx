@@ -24,24 +24,6 @@ describe('Pipeline List', () => {
     expect(pipelineWrapper.exists()).toBe(true);
     expect(pipelineWrapper.find(ListPage).exists());
   });
-
-  it('List renders Pipeline resources', () => {
-    expect(pipelineWrapper.exists()).toBe(true);
-    expect(pipelineWrapper.find(ListPage).prop('kind')).toMatch('Pipeline');
-  });
-
-  it('List renders Pipeline namespace with all-namespaces', () => {
-    expect(pipelineWrapper.find(ListPage).prop('namespace')).toBe('all-namespaces');
-  });
-
-  it('List renders Pipeline with canCreate false', () => {
-    expect(pipelineWrapper.find(ListPage).prop('canCreate')).toBeFalsy();
-  });
-
-  it('List renders Pipeline with default filter', () => {
-    expect(pipelineWrapper.find(ListPage).prop('rowFilters')[0].type).toEqual('pipeline-status');
-    expect(pipelineWrapper.find(ListPage).prop('rowFilters')[0].items).toHaveLength(3);
-  });
 });
 
 describe('Pipeline Run List', () => {
