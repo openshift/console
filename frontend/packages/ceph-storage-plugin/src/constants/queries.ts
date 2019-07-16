@@ -8,6 +8,8 @@ export enum StorageDashboardQuery {
   UTILIZATION_LATENCY_QUERY = 'UTILIZATION_LATENCY_QUERY',
   UTILIZATION_THROUGHPUT_QUERY = 'UTILIZATION_THROUGHPUT_QUERY',
   UTILIZATION_RECOVERY_RATE_QUERY = 'UTILIZATION_RECOVERY_RATE_QUERY',
+  CEPH_CAPACITY_TOTAL = 'CAPACITY_TOTAL',
+  CEPH_CAPACITY_USED = 'CAPACITY_USED',
 }
 
 export const STORAGE_HEALTH_QUERIES = {
@@ -34,4 +36,10 @@ export const UTILIZATION_QUERY_HOUR_MAP = {
   [ONE_HR]: '[1h:10m]',
   [SIX_HR]: '[6h:1h]',
   [TWENTY_FOUR_HR]: '[24h:4h]',
+};
+
+export const CAPACITY_USAGE_QUERIES = {
+  [StorageDashboardQuery.CEPH_CAPACITY_TOTAL]: 'sum(node_filesystem_size_bytes)',
+  [StorageDashboardQuery.CEPH_CAPACITY_USED]:
+    '(sum(node_filesystem_size_bytes) - sum(node_filesystem_free_bytes))[60m:5m]',
 };
