@@ -85,6 +85,7 @@ const MonitoringNavSection = connect(monitoringNavSectionStateToProps)(Monitorin
 const AdminNav = () => (
   <React.Fragment>
     <NavSection title="Home">
+      <HrefLink href="/dashboards" activePath="/dashboards/" name="Dashboards" required={FLAGS.CAN_LIST_NS} />
       <ResourceClusterLink resource="projects" name="Projects" required={FLAGS.OPENSHIFT} />
       <HrefLink href="/search" name="Search" startsWith={searchStartsWith} />
       <ResourceNSLink resource="events" name="Events" />
@@ -178,7 +179,6 @@ const AdminNav = () => (
     </NavSection>
 
     <NavSection title="Administration">
-      <HrefLink href="/cluster-status" name="Cluster Status" activePath="/cluster-status/" required={FLAGS.CAN_LIST_NS} />
       <HrefLink href="/settings/cluster" activePath="/settings/cluster/" name="Cluster Settings" required={FLAGS.CLUSTER_VERSION} startsWith={clusterSettingsStartsWith} />
       <ResourceClusterLink resource="namespaces" name="Namespaces" required={FLAGS.CAN_LIST_NS} />
       <ResourceNSLink resource="serviceaccounts" name="Service Accounts" />
