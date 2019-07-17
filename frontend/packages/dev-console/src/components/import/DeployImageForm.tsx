@@ -8,6 +8,7 @@ import ImageSearchSection from './image-search/ImageSearchSection';
 import AppSection from './app/AppSection';
 import AdvancedSection from './advanced/AdvancedSection';
 import ServerlessSection from './serverless/ServerlessSection';
+import RouteCheckbox from './route/RouteCheckbox';
 
 export interface DeployImageFormProps {
   builderImages?: NormalizedBuilderImages;
@@ -36,6 +37,7 @@ const DeployImageForm: React.FC<FormikProps<FormikValues> & DeployImageFormProps
       <AppSection project={values.project} />
       <ImageSearchSection />
       <ServerlessSection />
+      <RouteCheckbox />
       <AdvancedSection values={values} />
     </div>
     <br />

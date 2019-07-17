@@ -9,6 +9,7 @@ import BuilderSection from './builder/BuilderSection';
 import AppSection from './app/AppSection';
 import AdvancedSection from './advanced/AdvancedSection';
 import ServerlessSection from './serverless/ServerlessSection';
+import RouteCheckbox from './route/RouteCheckbox';
 
 export interface SourceToImageFormProps {
   builderImages?: NormalizedBuilderImages;
@@ -30,6 +31,7 @@ const SourceToImageForm: React.FC<FormikProps<FormikValues> & SourceToImageFormP
       <ServerlessSection />
       <BuilderSection image={values.image} builderImages={builderImages} />
       <GitSection project={values.project} showSample />
+      <RouteCheckbox />
       <AdvancedSection values={values} />
     </div>
     <br />

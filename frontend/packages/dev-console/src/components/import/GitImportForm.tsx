@@ -9,6 +9,7 @@ import BuilderSection from './builder/BuilderSection';
 import AppSection from './app/AppSection';
 import AdvancedSection from './advanced/AdvancedSection';
 import ServerlessSection from './serverless/ServerlessSection';
+import RouteCheckbox from './route/RouteCheckbox';
 
 export interface GitImportFormProps {
   builderImages?: NormalizedBuilderImages;
@@ -30,6 +31,7 @@ const GitImportForm: React.FC<FormikProps<FormikValues> & GitImportFormProps> = 
       <AppSection project={values.project} />
       <ServerlessSection />
       <BuilderSection image={values.image} builderImages={builderImages} />
+      <RouteCheckbox />
       <AdvancedSection values={values} />
     </div>
     <br />
