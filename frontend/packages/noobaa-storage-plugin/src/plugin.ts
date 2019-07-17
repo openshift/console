@@ -76,6 +76,17 @@ const plugin: Plugin<ConsumedExtensions> = [
       position: GridPosition.RIGHT,
       loader: () =>
         import(
+          './components/data-resiliency-card/data-resiliency-card' /* webpackChunkName: "object-service-data-resiliency-card" */
+        ).then((m) => m.default),
+    },
+  },
+  {
+    type: 'Dashboards/Card',
+    properties: {
+      tab: 'object-service',
+      position: GridPosition.RIGHT,
+      loader: () =>
+        import(
           './components/object-data-reduction-card/object-data-reduction-card' /* webpackChunkName: "object-service-data-reduction-card" */
         ).then((m) => m.default),
     },
