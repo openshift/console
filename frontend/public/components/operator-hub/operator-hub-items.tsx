@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import { Icon, Modal } from 'patternfly-react';
+import { Modal } from 'patternfly-react';
 import { CatalogTile } from 'patternfly-react-extensions';
 
 import { history } from '../utils/router';
@@ -10,6 +10,7 @@ import { TileViewPage } from '../utils/tile-view-page';
 import { OperatorHubItemDetails } from './operator-hub-item-details';
 import { communityOperatorWarningModal } from './operator-hub-community-provider-modal';
 import { OperatorHubItem, InstalledState, ProviderType, CapabilityLevel } from './index';
+import { GreenCheckCircleIcon } from '../utils/status-icon';
 
 const badge = (text: string) => <span key="1" className="pf-c-badge pf-m-read">{text}</span>;
 
@@ -270,7 +271,7 @@ export const OperatorHubTileView: React.FC<OperatorHubTileViewProps> = (props) =
         vendor={vendor}
         description={description}
         onClick={() => openOverlay(item)}
-        footer={installed ? <span><Icon type="pf" name="ok" /> Installed</span> : null}
+        footer={installed ? <span><GreenCheckCircleIcon /> Installed</span> : null}
         data-test={uid}
       />
     );

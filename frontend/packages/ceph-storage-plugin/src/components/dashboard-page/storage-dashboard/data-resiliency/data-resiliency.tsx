@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import { Icon } from 'patternfly-react';
 import { Progress } from '@patternfly/react-core';
 
 import './data-resiliency.scss';
@@ -13,6 +12,10 @@ import {
   withDashboardResources,
   DashboardItemProps,
 } from '@console/internal/components/dashboards-page/with-dashboard-resources';
+import {
+  GreenCheckCircleIcon,
+  RedExclamationCircleIcon,
+} from '@console/internal/components/utils/status-icon';
 
 import { DATA_RESILIENCY_QUERIES } from '../../../../constants/queries';
 
@@ -25,13 +28,13 @@ const DataResiliencyStatusBody: React.FC<DataResiliencyStatusBody> = ({ isResili
     <>
       <div className="ceph-data-resiliency__status-title-ok">Your data is resilient</div>
       <div className="ceph-data-resiliency__icon-ok">
-        <Icon type="fa" name="check-circle" size="5x" />
+        <GreenCheckCircleIcon />
       </div>
     </>
   ) : (
     <>
       <div className="ceph-data-resiliency__icon-error">
-        <Icon type="fa" name="exclamation-triangle" size="5x" />
+        <RedExclamationCircleIcon />
       </div>
       <div className="ceph-data-resiliency__status-title-error">No data available</div>
     </>

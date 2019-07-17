@@ -1,47 +1,32 @@
 import * as React from 'react';
-import { Icon } from 'patternfly-react';
 import { Link } from 'react-router-dom';
+import { InProgressIcon, QuestionCircleIcon } from '@patternfly/react-icons';
 
 import * as plugins from '../../../plugins';
-import { LoadingInline } from '../../utils';
+import {
+  GreenCheckCircleIcon,
+  LoadingInline,
+  RedExclamationCircleIcon,
+  YellowExclamationTriangleIcon,
+} from '../../utils';
 import { K8sResourceKind, K8sKind } from '../../../module/k8s';
 import { InventoryStatusGroup } from './status-group';
 
 const defaultStatusGroupIcons = {
   [InventoryStatusGroup.OK]: (
-    <Icon
-      type="fa"
-      name="check-circle"
-      className="co-inventory-card__status-icon co-inventory-card__status-icon--ok"
-    />
+    <GreenCheckCircleIcon className="co-inventory-card__status-icon" />
   ),
   [InventoryStatusGroup.WARN]: (
-    <Icon
-      type="fa"
-      name="exclamation-triangle"
-      className="co-inventory-card__status-icon co-inventory-card__status-icon--warn"
-    />
+    <YellowExclamationTriangleIcon className="co-inventory-card__status-icon" />
   ),
   [InventoryStatusGroup.ERROR]: (
-    <Icon
-      type="fa"
-      name="exclamation-circle"
-      className="co-inventory-card__status-icon co-inventory-card__status-icon--error"
-    />
+    <RedExclamationCircleIcon className="co-inventory-card__status-icon" />
   ),
   [InventoryStatusGroup.PROGRESS]: (
-    <Icon
-      type="pf"
-      name="in-progress"
-      className="co-inventory-card__status-icon co-inventory-card__status-icon--progress"
-    />
+    <InProgressIcon className="co-inventory-card__status-icon co-inventory-card__status-icon--progress" />
   ),
   [InventoryStatusGroup.NOT_MAPPED]: (
-    <Icon
-      type="fa"
-      name="question-circle"
-      className="co-inventory-card__status-icon co-inventory-card__status-icon--question"
-    />
+    <QuestionCircleIcon className="co-inventory-card__status-icon co-inventory-card__status-icon--question" />
   ),
 };
 

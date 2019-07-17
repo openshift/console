@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
-import { Icon, ListGroup } from 'patternfly-react';
+import { ListGroup } from 'patternfly-react';
+import { LongArrowAltRightIcon } from '@patternfly/react-icons';
 
 import { K8sResourceKind } from '../../module/k8s';
 import { RouteLocation } from '../routes';
@@ -13,7 +14,7 @@ const ServicePortList: React.SFC<ServicePortListProps> = ({service}) => {
       _.map(ports, ({name, port, protocol, targetPort}) =>
         <li key={name || `${protocol}/${port}`}>
           <span className="text-muted">Service port:</span> {name || `${protocol}/${port}`}
-          &nbsp;<Icon type="fa" name="long-arrow-right" />&nbsp;
+          &nbsp;<LongArrowAltRightIcon />&nbsp;
           <span className="text-muted">Pod Port:</span> {targetPort}
         </li>
       )

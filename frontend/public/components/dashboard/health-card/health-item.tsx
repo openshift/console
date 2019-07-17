@@ -1,30 +1,30 @@
 import * as React from 'react';
-import { Icon } from 'patternfly-react';
 import classNames from 'classnames';
 
 import { HealthState } from './states';
-import { LoadingInline } from '../../utils';
+import {
+  GreenCheckCircleIcon,
+  LoadingInline,
+  RedExclamationCircleIcon,
+  YellowExclamationTriangleIcon,
+} from '../../utils';
 
 const HealthItemIcon: React.FC<HealthItemIconProps> = ({ state }) => {
   let icon;
-  let iconClassModifier;
   switch (state) {
     case HealthState.OK:
-      icon = 'check-circle';
-      iconClassModifier = 'ok';
+      icon = <GreenCheckCircleIcon />;
       break;
     case HealthState.ERROR:
-      icon = 'exclamation-circle';
-      iconClassModifier = 'error';
+      icon = <RedExclamationCircleIcon />;
       break;
     case HealthState.WARNING:
     default:
-      icon = 'exclamation-triangle';
-      iconClassModifier = 'warning';
+      icon = <YellowExclamationTriangleIcon />;
   }
   return (
-    <div className={`co-health-card__icon co-health-card__icon--${iconClassModifier}`}>
-      <Icon type="fa" name={icon} />
+    <div className="co-health-card__icon">
+      {icon}
     </div>
   );
 };
