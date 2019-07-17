@@ -279,6 +279,7 @@ export const createResources = async (
       createKnativeService(
         applicationName,
         projectName,
+        formData.serverless.scaling,
         imageStreamResponse.status.dockerImageRepository,
       ),
     ]);

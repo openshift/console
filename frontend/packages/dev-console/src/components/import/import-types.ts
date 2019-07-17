@@ -107,6 +107,14 @@ export interface DeploymentData {
 
 export interface ServerlessData {
   trigger: boolean;
+  scaling: ServerlessScaling;
+}
+
+export interface ServerlessScaling {
+  minpods: number;
+  maxpods: number | '';
+  concurrencytarget: number | '';
+  concurrencylimit: number | '';
 }
 
 export enum GitTypes {

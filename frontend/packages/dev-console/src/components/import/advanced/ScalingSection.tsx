@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars, no-undef */
 import * as React from 'react';
 import { NumberSpinnerField } from '../../formik-fields';
 import FormSection from '../section/FormSection';

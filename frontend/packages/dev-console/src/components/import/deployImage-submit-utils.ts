@@ -286,7 +286,9 @@ export const createResources = (
     }
   } else if (!dryRun) {
     // Do not run serverless call during the dry run.
-    requests.push(createKnativeService(name, projectName, isiName, tag));
+    requests.push(
+      createKnativeService(name, projectName, formData.serverless.scaling, isiName, tag),
+    );
   }
 
   return Promise.all(requests);
