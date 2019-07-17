@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Col, Row } from 'patternfly-react';
 import { global_breakpoint_sm as breakpointSM } from '@patternfly/react-tokens';
 
-import { useRefWidth, LoadingInline, Humanize } from '../../utils';
+import { useRefWidth, Humanize } from '../../utils';
 import { DataPoint } from '../../graphs';
 import { AreaChart } from '../../graphs/area';
 
@@ -11,26 +11,22 @@ export const UtilizationItem: React.FC<UtilizationItemProps> = React.memo(
     const [containerRef, width] = useRefWidth();
 
     let current;
-    let chart;
-    if (isLoading) {
-      chart = <LoadingInline />;
-    } else {
-      if (data.length) {
-        const latestData = data[data.length - 1];
-        current = humanizeValue(latestData.y).string;
-      }
-
-      chart = (
-        <AreaChart
-          data={data}
-          query={query}
-          xAxis={false}
-          humanize={humanizeValue}
-          padding={{ top: 20, left: 70, bottom: 7, right: 30 }}
-          height={100}
-        />
-      );
+    if (data.length) {
+      const latestData = data[data.length - 1];
+      current = humanizeValue(latestData.y).string;
     }
+
+    const chart = (
+      <AreaChart
+        data={data}
+        loading={isLoading}
+        query={query}
+        xAxis={false}
+        humanize={humanizeValue}
+        padding={{ top: 20, left: 70, bottom: 7, right: 30 }}
+        height={100}
+      />
+    );
 
     const rows = width < parseInt(breakpointSM.value, 10) ? (
       <div className="co-utilization-card__item">

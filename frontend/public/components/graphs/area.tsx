@@ -1,11 +1,4 @@
 import * as React from 'react';
-import { ChartAreaIcon } from '@patternfly/react-icons';
-import {
-  EmptyState,
-  EmptyStateVariant,
-  EmptyStateIcon,
-  Title,
-} from '@patternfly/react-core';
 import {
   Chart,
   ChartArea,
@@ -24,6 +17,7 @@ import { usePrometheusPoll } from './prometheus-poll-hook';
 import { areaTheme } from './themes';
 import { DataPoint } from './';
 import { getRangeVectorStats } from './utils';
+import { GraphEmpty } from './graph-empty';
 
 const DEFAULT_HEIGHT = 180;
 const DEFAULT_SAMPLES = 60;
@@ -32,23 +26,24 @@ const DEFAULT_TIMESPAN = 60 * 60 * 1000; // 1 hour
 
 export const AreaChart: React.FC<AreaChartProps> = ({
   className,
-  query,
-  title,
+  data,
+  formatDate = twentyFourHourTime,
   height = DEFAULT_HEIGHT,
+  humanize = humanizeNumber,
+  loading = true,
+  padding,
+  query,
   theme = getCustomTheme(ChartThemeColor.blue, ChartThemeVariant.light, areaTheme),
   tickCount = DEFAULT_TICK_COUNT,
-  humanize = humanizeNumber,
-  formatDate = twentyFourHourTime,
-  data,
+  title,
   xAxis = true,
   yAxis = true,
-  padding,
 }) => {
   const [containerRef, width] = useRefWidth();
   const getLabel = ({x, y}) => `${humanize(y).string} at ${formatDate(x)}`;
   const container = <ChartVoronoiContainer voronoiDimension="x" labels={getLabel} />;
   return (
-    <PrometheusGraph ref={containerRef} className={className} title={title}>
+    <PrometheusGraph className={className} ref={containerRef} title={title}>
       {data.length ? (
         <PrometheusGraphLink query={query}>
           <Chart
@@ -66,13 +61,10 @@ export const AreaChart: React.FC<AreaChartProps> = ({
           </Chart>
         </PrometheusGraphLink>
       ) : (
-        <EmptyState className="graph-empty-state" variant={EmptyStateVariant.full}>
-          <EmptyStateIcon size="sm" icon={ChartAreaIcon} />
-          <Title size="sm">No Prometheus datapoints found.</Title>
-        </EmptyState>
+        <GraphEmpty height={height} loading={loading} />
       )}
-    </PrometheusGraph>)
-  ;
+    </PrometheusGraph>
+  );
 };
 
 export const Area: React.FC<AreaProps> = ({
@@ -83,7 +75,7 @@ export const Area: React.FC<AreaProps> = ({
   timespan = DEFAULT_TIMESPAN,
   ...rest
 }) => {
-  const [response] = usePrometheusPoll({
+  const [response,, loading] = usePrometheusPoll({
     endpoint: PrometheusEndpoint.QUERY_RANGE,
     namespace,
     query,
@@ -92,9 +84,7 @@ export const Area: React.FC<AreaProps> = ({
     timespan,
   });
   const data = getRangeVectorStats(response);
-  return (
-    <AreaChart data={data} query={query} {...rest} />
-  );
+  return <AreaChart data={data} loading={loading} query={query} {...rest} />;
 };
 
 type AreaChartProps = {
@@ -102,6 +92,7 @@ type AreaChartProps = {
   formatDate?: (date: Date) => string;
   humanize?: Humanize;
   height?: number,
+  loading?: boolean;
   query: string;
   theme?: any; // TODO figure out the best way to import VictoryThemeDefinition
   tickCount?: number;

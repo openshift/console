@@ -27,12 +27,14 @@ export const PrometheusGraphLink = connectToURLs(MonitoringRoutes.Prometheus)(
   }
 );
 
-export const PrometheusGraph: React.FC<PrometheusGraphProps> = React.forwardRef(({children, className, title}, ref: React.RefObject<HTMLDivElement>) => {
-  return <div ref={ref} className={classNames('graph-wrapper', className)}>
-    {title && <h5 className="graph-title">{title}</h5>}
-    {children}
-  </div>;
-});
+export const PrometheusGraph: React.FC<PrometheusGraphProps> = React.forwardRef(
+  ({children, className, title}, ref: React.RefObject<HTMLDivElement>) => (
+    <div ref={ref} className={classNames('graph-wrapper', className)}>
+      {title && <h5 className="graph-title">{title}</h5>}
+      {children}
+    </div>
+  )
+);
 
 type PrometheusGraphLinkProps = {
   query: string;
@@ -40,7 +42,7 @@ type PrometheusGraphLinkProps = {
 };
 
 type PrometheusGraphProps = {
-  ref?: React.Ref<HTMLDivElement>;
   className?: string;
+  ref?: React.Ref<HTMLDivElement>;
   title?: string;
 }
