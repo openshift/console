@@ -92,6 +92,7 @@ export class TransformTopologyData {
 
   private deploymentKindMap = {
     deployments: { dcKind: 'Deployment', rcKind: 'ReplicaSet', rController: 'replicasets' },
+    daemonSets: { dcKind: 'DaemonSet', rcKind: 'ReplicaSet', rController: 'replicasets' },
     deploymentConfigs: {
       dcKind: 'DeploymentConfig',
       rcKind: 'ReplicationController',
@@ -139,7 +140,7 @@ export class TransformTopologyData {
         deploymentConfig,
         targetDeployment,
       );
-      const dcPods = this.getPods(replicationController);
+      const dcPods = this.getPods(replicationController, deploymentConfig);
       const service = this.getService(deploymentConfig);
       const route = this.getRoute(service);
       const buildConfigs = this.getBuildConfigs(deploymentConfig);
@@ -296,12 +297,18 @@ export class TransformTopologyData {
    * Get all the pods from a replication controller or a replicaset.
    * @param replicationController
    */
-  private getPods(replicationController: ResourceProps) {
+  private getPods(replicationController: ResourceProps, deploymentConfig: ResourceProps) {
+    const deploymentCondition = {
+      uid: _.get(replicationController, 'metadata.uid'),
+      controller: true,
+    };
+    const daemonSetCondition = {
+      uid: _.get(deploymentConfig, 'metadata.uid'),
+    };
+    const condition =
+      deploymentConfig.kind === 'DaemonSet' ? daemonSetCondition : deploymentCondition;
     const dcPodsData = _.filter(this.resources.pods.data, (pod) => {
-      return _.some(_.get(pod, 'metadata.ownerReferences'), {
-        uid: _.get(replicationController, 'metadata.uid'),
-        controller: true,
-      });
+      return _.some(_.get(pod, 'metadata.ownerReferences'), condition);
     });
     if (
       dcPodsData &&

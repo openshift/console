@@ -139,4 +139,25 @@ describe('TopologyUtils ', () => {
     const keys = Object.keys(topologyTransformedData);
     expect((topologyTransformedData[keys[0]].data as WorkloadData).isKnativeResource).toBeTruthy();
   });
+
+  it('should return a valid daemon set', () => {
+    const transformTopologyData = new TransformTopologyData(MockResources);
+    transformTopologyData.transformDataBy('daemonSets');
+    const result = transformTopologyData.getTopologyData();
+    const topologyTransformedData = result.topology;
+    const keys = Object.keys(topologyTransformedData);
+    expect(result.graph.nodes).toHaveLength(1);
+    expect(topologyTransformedData[keys[0]].resources[0].kind).toEqual('DaemonSet');
+  });
+  it('should return a daemon set pod ', () => {
+    const transformTopologyData = new TransformTopologyData(MockResources);
+    transformTopologyData.transformDataBy('daemonSets');
+    const result = transformTopologyData.getTopologyData();
+    const topologyTransformedData = result.topology;
+    const keys = Object.keys(topologyTransformedData);
+    expect(result.graph.nodes).toHaveLength(1);
+    expect((topologyTransformedData[keys[0]].data as WorkloadData).donutStatus.pods).toHaveLength(
+      1,
+    );
+  });
 });
