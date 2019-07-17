@@ -8,6 +8,7 @@
     "test": "yarn --cwd ../.. run test packages/console-app"
   },
   "dependencies": {
+    "@console/ceph-storage-plugin": "0.0.0-fixed",
     "@console/dev-console": "0.0.0-fixed",
     "@console/internal": "0.0.0-fixed",
     "@console/knative-plugin": "0.0.0-fixed",
