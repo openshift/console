@@ -41,7 +41,7 @@
       ".(ts|tsx|js|jsx)": "./node_modules/ts-jest/preprocessor.js"
     },
     "transformIgnorePatterns": [
-      "<rootDir>/node_modules/(?!lodash-es|@console)"
+      "<rootDir>/node_modules/(?!(lodash-es|@console|@novnc|@spice-project)/.*)"
     ],
     "testRegex": "/__tests__/.*\\.spec\\.(ts|tsx|js|jsx)$",
     "testURL": "http://localhost",
@@ -49,6 +49,7 @@
       "./__mocks__/localStorage.ts",
       "./__mocks__/matchMedia.js",
       "./__mocks__/serverFlags.js",
+      "./__mocks__/mutationObserver.js",
       "./before-tests.js"
     ],
     "coverageDirectory": "__coverage__",
