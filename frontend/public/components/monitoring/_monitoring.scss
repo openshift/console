@@ -130,6 +130,33 @@
   padding-right: 0;
 }
 
+.query-browser__tooltip {
+  background-color: #151515;
+  color: #eee;
+  overflow: scroll;
+  padding: 15px;
+  z-index: 999999;
+}
+
+.query-browser__tooltip-group {
+  display: flex;
+  margin-bottom: 15px;
+}
+
+.query-browser__tooltip-label-key {
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.query-browser__tooltip-time, .query-browser__tooltip-value {
+  margin-left: auto;
+  padding-left: 15px;
+};
+
+.query-browser__tooltip-value {
+  font-weight: 600;
+}
+
 .query-browser__wrapper {
   border: 1px solid $color-grey-background-border;
   margin: 0 0 20px 0;
