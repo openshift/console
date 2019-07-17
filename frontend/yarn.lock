@@ -145,9 +145,9 @@
     victory-legend "^32.2.3"
 
 "@patternfly/react-console@1.x":
-  version "1.10.50"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-console/-/react-console-1.10.50.tgz#a9e270b5acd95572909df89bdb8d469d91626102"
-  integrity sha512-yAjtXFP3wzYCz1xA/MTzzgS9Z5113u/7OZ1VpPwP5OGVOPo2C2MykmGDKkBC0B7SXmtkYlrAL3TRHeiNUjsu0w==
+  version "1.11.6"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-console/-/react-console-1.11.6.tgz#693b75c42171e9d04252a7a67c76b36f3c982c3b"
+  integrity sha512-/MjvRkBBoObZJ8FW2m+F2RbRAievqytaAwPvKaY+X6IrZRdY0w1GompHoe3YG8nuFW0oiCoeJkSoqG2zacmQ9A==
   dependencies:
     "@novnc/novnc" "^1.0.0"
     "@spice-project/spice-html5" "^0.2.1"
@@ -7335,10 +7335,10 @@ kind-of@^6.0.0, kind-of@^6.0.2:
   version "6.0.2"
   resolved "https://registry.yarnpkg.com/kind-of/-/kind-of-6.0.2.tgz#01146b36a6218e64e58f3a8d66de5d7fc6f6d051"
 
-kubevirt-web-ui-components@~0.1.36:
-  version "0.1.36"
-  resolved "https://registry.yarnpkg.com/kubevirt-web-ui-components/-/kubevirt-web-ui-components-0.1.36.tgz#b39488fb17ca20de6d5dfc53a1886676244c655e"
-  integrity sha512-/78PcQ75PiZWi2On2nvHnTbF2XhBas0s/+PhRJ0zxWI8alHSj9bJ1IF7TfFevBXCBUsDl20Z1R6DoMR3Ocfs7g==
+kubevirt-web-ui-components@~0.1.38:
+  version "0.1.38"
+  resolved "https://registry.yarnpkg.com/kubevirt-web-ui-components/-/kubevirt-web-ui-components-0.1.38.tgz#6393309718d0089655738782f590cf9a46ec392d"
+  integrity sha512-R7qk5ps0r7hATrJjmWJcYkabPGFeCXhbQAOafvnMlxbMNmNM0Qixx2hd9BNp4VCJJBVdxpY2YFlJan2+RnMaQA==
   dependencies:
     "@patternfly/react-console" "1.x"
     classnames "2.x"
@@ -7678,13 +7678,18 @@ lodash@3.10.0:
   version "3.10.0"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-3.10.0.tgz#93d51c672828a4416a12af57220ba8a8737e2fbb"
 
-lodash@4.x, lodash@^4.17.10, lodash@^4.17.11, lodash@^4.17.2, lodash@^4.17.4:
-  version "4.17.11"
-  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.11.tgz#b39ea6229ef607ecd89e2c8df12536891cac9b8d"
+lodash@4.x, lodash@^4.17.10:
+  version "4.17.14"
+  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.14.tgz#9ce487ae66c96254fe20b599f21b6816028078ba"
+  integrity sha512-mmKYbW3GLuJeX+iGP+Y7Gp1AiGHGbXHCOh/jZmrawMmsE7MS4znI3RL2FsjbqOyMayHInjOeykW7PEajUk1/xw==
 
 lodash@^4.0.0, lodash@^4.13.1, lodash@^4.14.0, lodash@^4.15.0, lodash@^4.17.3, lodash@^4.17.5, lodash@^4.2.1, lodash@^4.3.0, lodash@~4.17.4:
   version "4.17.5"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.5.tgz#99a92d65c0272debe8c96b6057bc8fbfa3bed511"
+
+lodash@^4.17.11, lodash@^4.17.2, lodash@^4.17.4:
+  version "4.17.11"
+  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.11.tgz#b39ea6229ef607ecd89e2c8df12536891cac9b8d"
 
 lodash@^4.2.0:
   version "4.17.10"
@@ -12994,9 +12999,9 @@ xterm@^3.12.2:
   integrity sha512-FSXovDdsqIKqoayC6+zFzhaHi+A3NSceM5rgTW88DH7sS96HdwMToB2p1rW+FyNsSqfAgFwlXDRQk+fh/aHvPQ==
 
 xterm@^3.3.0:
-  version "3.14.2"
-  resolved "https://registry.yarnpkg.com/xterm/-/xterm-3.14.2.tgz#f1285288bdc7df7056ef4bde64311900748c3e5d"
-  integrity sha512-L50XMhfAC953/3EzmL+lq8jyD6CQ3SZ83UDrxalpKzE3d7Wo5JqehSd4yOrHYZYrijOT3pX6kBsZEI9uuZ1lmQ==
+  version "3.14.5"
+  resolved "https://registry.yarnpkg.com/xterm/-/xterm-3.14.5.tgz#c9d14e48be6873aa46fb429f22f2165557fd2dea"
+  integrity sha512-DVmQ8jlEtL+WbBKUZuMxHMBgK/yeIZwkXB81bH+MGaKKnJGYwA+770hzhXPfwEIokK9On9YIFPRleVp/5G7z9g==
 
 y18n@^3.2.1:
   version "3.2.1"
