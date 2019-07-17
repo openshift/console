@@ -2,7 +2,6 @@
 
 // Root path where you plan to host console.
 $consoleWebDistPath: './';
-$consoleWebFontPath: $consoleWebDistPath + 'fonts';
 
 // PatternFly color variables -- imported here so they can be used throughout
 // PF3 color variables
@@ -16,17 +15,13 @@ $consoleWebFontPath: $consoleWebDistPath + 'fonts';
 // == Overrides of external dependency variables
 
 // FontAwesome font path.
-$fa-font-path: $consoleWebFontPath;
+$fa-font-path: $consoleWebDistPath + '/';
 // Use PatternFly 4 font family in PatternFly 3.
 $font-family-base: var(--pf-global--FontFamily--sans-serif);
-// PatternFly 3 font path for PatternFly 3 icons.
-$font-path: '~patternfly/dist/fonts/';
 // Patternfly 3 defaults to 12px, which is too small in many cases.
 $font-size-base: 14px;
 // Patternfly 3 defaults to 40px, which leaves a lot more whitespace than we're used to.
 $grid-gutter-width: 30px;
-// Bootstrap font path.
-$icon-font-path: $consoleWebFontPath + '/';
 $kbd-bg: transparent;
 $kbd-color: $color-pf-black-600;
 // Disable PatternFly 4 reset.

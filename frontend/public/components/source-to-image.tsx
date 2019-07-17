@@ -10,6 +10,7 @@ import { ContainerPort, k8sCreate, k8sGet, K8sResourceKind } from '../module/k8s
 import { ImageStreamIcon } from './catalog/catalog-item-icon';
 import { getAnnotationTags, getBuilderTagsSortedByVersion } from './image-stream';
 import { ButtonBar } from './utils/button-bar';
+import { LevelUpAltIcon } from '@patternfly/react-icons';
 
 const getSampleRepo = tag => _.get(tag, 'annotations.sampleRepo');
 const getSampleRef = tag => _.get(tag, 'annotations.sampleRef');
@@ -462,7 +463,7 @@ class BuildSource extends React.Component<BuildSourceProps, BuildSourceState> {
               required />
             {sampleRepo && <div className="help-block">
               <button type="button" className="btn btn-link btn-link--no-btn-default-values" onClick={this.fillSample}>
-                Try Sample <i className="fa fa-level-up" aria-hidden="true" />
+                Try Sample<LevelUpAltIcon className="co-icon-space-l" />
               </button>
             </div>}
             <div className="help-block">

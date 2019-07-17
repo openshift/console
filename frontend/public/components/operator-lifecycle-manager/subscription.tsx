@@ -3,6 +3,8 @@ import * as _ from 'lodash-es';
 import { match, Link } from 'react-router-dom';
 import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
+import { InProgressIcon } from '@patternfly/react-icons';
+
 import { DetailsPage, MultiListPage, Table, TableRow, TableData } from '../factory';
 import { requireOperatorGroup } from './operator-group';
 import { MsgBox, ResourceLink, ResourceKebab, navFactory, Kebab, ResourceSummary, LoadingInline, SectionHeading } from '../utils';
@@ -13,6 +15,7 @@ import { SubscriptionModel, ClusterServiceVersionModel, CatalogSourceModel, Inst
 import { createDisableApplicationModal } from '../modals/disable-application-modal';
 import { createSubscriptionChannelModal } from '../modals/subscription-channel-modal';
 import { createInstallPlanApprovalModal } from '../modals/installplan-approval-modal';
+import { YellowExclamationTriangleIcon, GreenCheckCircleIcon } from '@console/shared';
 
 const tableColumnClasses = [
   classNames('col-md-3', 'col-sm-4', 'col-xs-6'),
@@ -51,9 +54,9 @@ SubscriptionTableHeader.displayName = 'SubscriptionTableHeader';
 
 const subscriptionState = (state: SubscriptionState) => {
   switch (state) {
-    case SubscriptionState.SubscriptionStateUpgradeAvailable: return <span><i className="pficon pficon-warning-triangle-o text-warning" /> Upgrade available</span>;
-    case SubscriptionState.SubscriptionStateUpgradePending: return <span><i className="pficon pficon-in-progress text-primary" /> Upgrading</span>;
-    case SubscriptionState.SubscriptionStateAtLatest: return <span><i className="pficon pficon-ok co-m-status--ok" /> Up to date</span>;
+    case SubscriptionState.SubscriptionStateUpgradeAvailable: return <span><YellowExclamationTriangleIcon /> Upgrade available</span>;
+    case SubscriptionState.SubscriptionStateUpgradePending: return <span><InProgressIcon className="text-primary" /> Upgrading</span>;
+    case SubscriptionState.SubscriptionStateAtLatest: return <span><GreenCheckCircleIcon /> Up to date</span>;
     default: return <span className={_.isEmpty(state) ? 'text-muted' : ''}>{state || 'Unknown'}</span>;
   }
 };

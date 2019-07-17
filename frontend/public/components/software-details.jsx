@@ -1,33 +1,7 @@
 import * as React from 'react';
-import * as classNames from 'classnames';
 
 import { k8sVersion } from '../module/status';
 import { LoadingInline } from './utils';
-
-
-const StatusIconRow = ({state, text}) => {
-  const iconClasses = {
-    ok: 'pficon-ok',
-    warning: 'pficon-warning-triangle-o',
-    critical: 'pficon-error-circle-o',
-    unknown: 'pficon-unknown',
-    'access-denied': 'fa-ban',
-  };
-  return <div className={classNames('co-m-status', [`co-m-status--${state}`])}>
-    <i className={classNames('co-m-status__icon', 'pficon', iconClasses[state])}></i>
-    <span className="co-m-status__text">{text}</span>
-  </div>;
-};
-
-export const StatusIcon = ({state, text}) => {
-  if (['ok', 'warning', 'critical', 'unknown', 'access-denied'].includes(state)) {
-    return <StatusIconRow state={state} text={text} />;
-  }
-
-  return <div className="co-m-status">
-    <span className="co-m-status__text">{text}</span>
-  </div>;
-};
 
 export const SubHeaderRow = ({header, children}) => {
   return <div className="row">
@@ -48,7 +22,7 @@ const SoftwareDetailRow = ({title, detail, text, children}) => {
     <div className="col-xs-6 text-right">
       <div>
         {!detail && <LoadingInline />}
-        {detail === 'unknown' ? <StatusIcon state={detail} text={text} /> : detail}
+        {detail === 'unknown' ? text : detail}
       </div>
       {children}
     </div>

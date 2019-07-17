@@ -1,7 +1,7 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Button } from '@patternfly/react-core';
-import { PlusCircleIcon } from '@patternfly/react-icons';
+import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 
 import { Dropdown, EmptyBox, PromiseComponent } from '../utils';
 import { K8sKind, k8sPatch, Toleration, TolerationOperator } from '../../module/k8s';
@@ -161,7 +161,7 @@ class TolerationsModal extends PromiseComponent<TolerationsModalProps, Toleratio
                 <div className="col-md-1 col-sm-2 col-xs-2">
                   {this._isEditable(t) && (
                     <button type="button" className="btn btn-link btn-link--inherit-color toleration-modal__delete-icon" onClick={() => this._remove(i)} aria-label="Delete">
-                      <i className="fa fa-minus-circle pairs-list__side-btn pairs-list__delete-icon" aria-hidden="true" />
+                      <MinusCircleIcon className="pairs-list__side-btn pairs-list__delete-icon" />
                     </button>
                   )}
                 </div>
@@ -174,7 +174,7 @@ class TolerationsModal extends PromiseComponent<TolerationsModalProps, Toleratio
           onClick={this._addRow}
           type="button"
           variant="link">
-          <PlusCircleIcon data-test-id="pairs-list__add-icon" /> Add More
+          <PlusCircleIcon data-test-id="pairs-list__add-icon" className="co-icon-space-r" />Add More
         </Button>
       </ModalBody>
       <ModalSubmitFooter errorMessage={errorMessage} inProgress={inProgress} submitText="Save" cancel={this._cancel} />

@@ -55,6 +55,7 @@ $overview-sidebar-width: 550px;
     padding: 0 5px;
 
     .close {
+      font-size: 16px;
       // adjustments to increase click target and default color contrast because it's on a grey background
       opacity: .3;
       padding: 10px 15px;
@@ -62,10 +63,6 @@ $overview-sidebar-width: 550px;
       &:hover, &:focus {
         opacity: .6;
       }
-    }
-
-    .pficon-close {
-      font-size: 16px;
     }
   }
 }

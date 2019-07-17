@@ -3,7 +3,8 @@
 
 // External dependencies (tilde tells Webpack not to use relative path). Seperate SCSS entrypoint here because some modules break sourcemaps.
 @import "~openshift-logos-icon/style";
-@import "~font-awesome/scss/font-awesome";  // Including this file breaks sourcemaps
+@import "~@fortawesome/fontawesome-free/scss/fontawesome";
+@import "~@fortawesome/fontawesome-free/scss/solid";
 @import '~patternfly/dist/sass/patternfly/variables';
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/variables";
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/mixins";
@@ -30,7 +31,6 @@
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/responsive-utilities";
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/popovers";
 @import "~patternfly/dist/sass/patternfly/mixins";  // Including this file breaks sourcemaps
-@import '~patternfly/dist/sass/patternfly/icons';  // Including this file breaks sourcemaps
 @import '~patternfly/dist/sass/patternfly/type';
 @import '~patternfly/dist/sass/patternfly/buttons';
 @import '~patternfly/dist/sass/patternfly/dropdowns';

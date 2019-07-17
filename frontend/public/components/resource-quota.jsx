@@ -3,6 +3,14 @@ import * as React from 'react';
 import { FieldLevelHelp } from 'patternfly-react';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
+import {
+  OutlinedCircleIcon,
+  ResourcesAlmostEmptyIcon,
+  ResourcesAlmostFullIcon,
+  ResourcesFullIcon,
+  UnknownIcon,
+} from '@patternfly/react-icons';
+
 import { DetailsPage, MultiListPage, Table, TableRow, TableData } from './factory';
 import { Kebab, SectionHeading, navFactory, ResourceKebab, ResourceLink, ResourceSummary, convertToBaseValue } from './utils';
 import { connectToFlags, flagPending } from '../reducers/features';
@@ -11,6 +19,7 @@ import { Gauge } from './graphs';
 import { LoadingBox } from './utils/status-box';
 import { referenceForModel } from '../module/k8s';
 import { ResourceQuotaModel, ClusterResourceQuotaModel } from '../models';
+import { YellowExclamationTriangleIcon } from '@console/shared';
 
 const { common } = Kebab.factory;
 const menuActions = [...common];
@@ -82,19 +91,19 @@ export const ResourceQuotaTableRow = ({obj: rq, index, key, style}) => {
 ResourceQuotaTableRow.displayName = 'ResourceQuotaTableRow';
 
 export const UsageIcon = ({percent}) => {
-  let usageIconClass = 'pficon pficon-unknown';
+  let usageIcon = <UnknownIcon />;
   if (percent === 0) {
-    usageIconClass = 'fa fa-circle-thin co-resource-quota-empty';
+    usageIcon = <OutlinedCircleIcon className="co-resource-quota-empty" />;
   } else if (percent > 0 && percent < 50) {
-    usageIconClass = 'pficon pficon-resources-almost-empty';
+    usageIcon = <ResourcesAlmostEmptyIcon className="co-resource-quota-almost-empty" />;
   } else if (percent >= 50 && percent < 100){
-    usageIconClass = 'pficon pficon-resources-almost-full';
+    usageIcon = <ResourcesAlmostFullIcon className="co-resource-quota-almost-full" />;
   } else if (percent === 100) {
-    usageIconClass = 'pficon pficon-resources-full';
+    usageIcon = <ResourcesFullIcon className="co-resource-quota-full" />;
   } else if (percent > 100) {
-    usageIconClass = 'pficon pficon-warning-triangle-o';
+    usageIcon = <YellowExclamationTriangleIcon className="co-resource-quota-exceeded" />;
   }
-  return <i className={usageIconClass} aria-hidden="true" />;
+  return usageIcon;
 };
 
 export const ResourceUsageRow = ({quota, resourceType}) => {

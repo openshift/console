@@ -3,7 +3,7 @@ import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { Base64 } from 'js-base64';
 import { ActionGroup, Button } from '@patternfly/react-core';
-import { PlusCircleIcon, TimesIcon } from '@patternfly/react-icons';
+import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 
 import { k8sCreate, k8sUpdate, K8sResourceKind, referenceFor } from '../../module/k8s';
 import { ButtonBar, Firehose, history, StatusBox, LoadingBox, Dropdown, resourceObjPath } from '../utils';
@@ -547,7 +547,7 @@ class CreateConfigSubform extends React.Component<CreateConfigSubformProps, Crea
             onClick={() => this.removeEntry(index)}
             type="button"
             variant="link">
-            <TimesIcon /> Remove Credentials
+            <MinusCircleIcon className="co-icon-space-r" />Remove Credentials
           </Button>
         </div>}
         <ConfigEntryForm id={index} entry={entryData.entry} onChange={this.onDataChanged} />
@@ -561,7 +561,7 @@ class CreateConfigSubform extends React.Component<CreateConfigSubformProps, Crea
           onClick={() => this.addEntry()}
           type="button"
           variant="link">
-          <PlusCircleIcon /> Add Credentials
+          <PlusCircleIcon className="co-icon-space-r" />Add Credentials
         </Button>
       </React.Fragment>
     );
@@ -869,7 +869,7 @@ class GenericSecretForm extends React.Component<GenericSecretFormProps, GenericS
             type="button"
             onClick={() => this.removeEntry(index)}
             variant="link">
-            <TimesIcon /> Remove Key/Value
+            <MinusCircleIcon className="co-icon-space-r" />Remove Key/Value
           </Button>
         </div>}
         <KeyValueEntryForm id={index} entry={entryData.entry} onChange={this.onDataChanged} />
@@ -883,7 +883,7 @@ class GenericSecretForm extends React.Component<GenericSecretFormProps, GenericS
           onClick={() => this.addEntry()}
           type="button"
           variant="link">
-          <i className="fa fa-plus-circle" aria-hidden="true" /> Add Key/Value
+          <PlusCircleIcon className="co-icon-space-r" />Add Key/Value
         </Button>
       </React.Fragment>
     );

@@ -4,6 +4,7 @@ import * as React from 'react';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
 import { PromiseComponent, history, resourceListPathFromModel } from '../utils';
 import { k8sKill } from '../../module/k8s/';
+import { YellowExclamationTriangleIcon } from '@console/shared';
 
 //Modal for resource deletion and allows cascading deletes if propagationPolicy is provided for the enum
 class DeleteModal extends PromiseComponent {
@@ -50,7 +51,7 @@ class DeleteModal extends PromiseComponent {
       <ModalTitle>Delete {kind.label}</ModalTitle>
       <ModalBody className="modal-body">
         <div className="co-delete-modal">
-          <span aria-hidden="true" className="co-delete-modal__icon pficon pficon-warning-triangle-o"></span>
+          <YellowExclamationTriangleIcon className="co-delete-modal__icon" />
           <div>
             <p className="lead">Delete <span className="co-break-word">{resource.metadata.name}</span>?</p>
             <div>Are you sure you want to delete <strong className="co-break-word">{resource.metadata.name}</strong>

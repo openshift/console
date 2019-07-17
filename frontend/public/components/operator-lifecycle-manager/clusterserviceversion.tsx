@@ -262,7 +262,7 @@ export const CRDCard: React.SFC<CRDCardProps> = (props) => {
     </CardBody>
     { canCreate && <CardFooter>
       <Link to={createRoute()}>
-        <AddCircleOIcon /> Create Instance
+        <AddCircleOIcon className="co-icon-space-r" />Create Instance
       </Link>
     </CardFooter> }
   </Card>;

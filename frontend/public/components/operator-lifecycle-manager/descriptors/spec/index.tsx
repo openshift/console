@@ -9,6 +9,7 @@ import { configureSizeModal } from './configure-size';
 import { Selector, ResourceLink, LoadingInline, AsyncComponent } from '../../../utils';
 import { Tooltip } from '../../../utils/tooltip';
 import { k8sPatch } from '../../../../module/k8s';
+import { YellowExclamationTriangleIcon } from '@console/shared';
 
 const Default: React.SFC<SpecCapabilityProps> = ({value}) => {
   if (_.isEmpty(value) && !_.isNumber(value)) {
@@ -67,7 +68,7 @@ const BooleanSwitch: React.FC<SpecCapabilityProps> = (props) => {
     &nbsp;&nbsp;
     {value !== props.value && confirmed && <LoadingInline />}
     {value !== props.value && !confirmed && <React.Fragment>
-      &nbsp;&nbsp;<i className="fa fa-exclamation-triangle text-warning" aria-hidden="true" />
+      &nbsp;&nbsp;<YellowExclamationTriangleIcon />
       <button className="btn btn-link" onClick={update}>Confirm change</button>
     </React.Fragment>}
   </div>;

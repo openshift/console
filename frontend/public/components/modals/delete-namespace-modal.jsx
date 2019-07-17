@@ -3,7 +3,8 @@ import * as PropTypes from 'prop-types';
 
 import { k8sKill } from '../../module/k8s';
 import { createModalLauncher, ModalTitle, ModalBody, ModalSubmitFooter } from '../factory/modal';
-import { history, PromiseComponent} from '../utils';
+import { history, PromiseComponent } from '../utils';
+import { YellowExclamationTriangleIcon } from '@console/shared';
 
 class DeleteNamespaceModal extends PromiseComponent {
   constructor(props) {
@@ -32,7 +33,7 @@ class DeleteNamespaceModal extends PromiseComponent {
       <ModalTitle>Delete {this.props.kind.label}</ModalTitle>
       <ModalBody>
         <div className="co-delete-modal">
-          <span aria-hidden="true" className="co-delete-modal__icon pficon pficon-warning-triangle-o"></span>
+          <YellowExclamationTriangleIcon className="co-delete-modal__icon" />
           <div>
             <p>This action cannot be undone. It will destroy all pods, services and other objects in the deleted namespace.</p>
             <p>Confirm deletion by typing <strong className="co-break-word">{this.props.resource.metadata.name}</strong> below:</p>

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
+import { CircleIcon, SquareIcon } from '@patternfly/react-icons';
 
 import { K8sResourceKindReference } from '../module/k8s';
 import { ResourceLink, Timestamp, EmptyBox } from './utils';
@@ -12,7 +13,7 @@ const ImageStreamTimelineItem: React.FC<ImageStreamTimelineItemProps> = ({tag, i
   return <React.Fragment>
     <li>
       <div className="co-images-stream-tag-timeline__item-row">
-        <span className="co-images-stream-tag-timeline__circle-icon"><i className="fa fa-circle" aria-hidden="true" /></span>
+        <span className="co-images-stream-tag-timeline__circle-icon"><CircleIcon /></span>
         <div className="co-images-stream-tag-timeline__timestamp"><Timestamp timestamp={tag.created} simple={true} /></div>
       </div>
 
@@ -49,7 +50,7 @@ export const ImageStreamTimeline: React.FC<ImageStreamTimelineProps> = ({ imageS
     <ul className="co-images-stream-tag-timeline">
       {timeline}
       <div>
-        <span className="co-images-stream-tag-timeline__square-icon"><i className="fa fa-square" aria-hidden="true" /></span>
+        <span className="co-images-stream-tag-timeline__square-icon"><SquareIcon /></span>
       </div>
     </ul>
   </React.Fragment>;

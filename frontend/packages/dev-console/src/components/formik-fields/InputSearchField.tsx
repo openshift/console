@@ -2,6 +2,7 @@ import * as React from 'react';
 import cx from 'classnames';
 import { useField } from 'formik';
 import { ControlLabel, FormControl, FormGroup, HelpBlock, InputGroup } from 'patternfly-react';
+import { SearchIcon } from '@patternfly/react-icons';
 import { SearchInputFieldProps } from './field-types';
 import { getValidationState } from './field-utils';
 
@@ -35,7 +36,7 @@ const InputSearchField: React.FC<SearchInputFieldProps> = ({
             onClick={() => onSearch(field.value)}
             disabled={!field.value}
           >
-            <i className="fa fa-search" aria-hidden="true" />
+            <SearchIcon />
             <span className="sr-only">Find</span>
           </button>
         </span>

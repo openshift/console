@@ -3,7 +3,7 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 import * as PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { CaretDownIcon } from '@patternfly/react-icons';
+import { CaretDownIcon, MinusCircleIcon, PlusCircleIcon, StarIcon } from '@patternfly/react-icons';
 import { impersonateStateToProps } from '../../reducers/ui';
 import { checkAccess, history, KebabItems, ResourceName } from './index';
 
@@ -109,16 +109,16 @@ class DropDownRow extends React.PureComponent {
       </li>;
     }
     if (onUnBookmark) {
-      prefix = <a href="#" className={classNames('bookmarker', {hover, focus: selected})} onClick={e => onUnBookmark(e, itemKey)}><i aria-hidden className="fa fa-minus-circle" /></a>;
+      prefix = <a href="#" className={classNames('bookmarker', {hover, focus: selected})} onClick={e => onUnBookmark(e, itemKey)}><MinusCircleIcon /></a>;
     }
     if (onBookmark) {
-      prefix = <a href="#" className={classNames('bookmarker', {hover, focus: selected})} onClick={e => onBookmark(e, itemKey, content)}><i aria-hidden className="fa fa-plus-circle" /></a>;
+      prefix = <a href="#" className={classNames('bookmarker', {hover, focus: selected})} onClick={e => onBookmark(e, itemKey, content)}><PlusCircleIcon /></a>;
     }
 
     let suffix;
     if (onUnBookmark && canFavorite) {
       const isFavorite = favoriteKey === itemKey;
-      suffix = <a href="#" className={classNames('bookmarker', {hover, focus: selected})} onClick={e => onFavorite(e, (isFavorite ? undefined : itemKey))}><i aria-hidden className={classNames('fa fa-star', {'favorite': isFavorite})} /></a>;
+      suffix = <a href="#" className={classNames('bookmarker', {hover, focus: selected})} onClick={e => onFavorite(e, (isFavorite ? undefined : itemKey))}><StarIcon className={classNames({'favorite': isFavorite})} /></a>;
     }
 
     return <li role="option" className={classNames(className)} key={itemKey}>

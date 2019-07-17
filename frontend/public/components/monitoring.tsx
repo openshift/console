@@ -7,7 +7,15 @@ import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
 import { Link, Redirect, Route, Switch } from 'react-router-dom';
-import { PlusCircleIcon } from '@patternfly/react-icons';
+import {
+  BanIcon,
+  BellIcon,
+  BellSlashIcon,
+  HourglassHalfIcon,
+  MinusCircleIcon,
+  OutlinedBellIcon,
+  PlusCircleIcon,
+} from '@patternfly/react-icons';
 
 import * as k8sActions from '../actions/k8s';
 import * as UIActions from '../actions/ui';
@@ -36,6 +44,7 @@ import {
   StatusBox,
   Timestamp,
 } from './utils';
+import { GreenCheckCircleIcon } from '@console/shared';
 
 const AlertResource = {
   kind: 'Alert',
@@ -132,22 +141,22 @@ const AlertState: React.SFC<AlertStateProps> = ({state}) => {
   if (state === AlertStates.NotFiring) {
     return <span className="text-muted">Not Firing</span>;
   }
-  const klass = {
-    [AlertStates.Firing]: 'fa fa-fw fa-bell alert-firing',
-    [AlertStates.Silenced]: 'fa fa-fw fa-bell-slash text-muted',
-    [AlertStates.Pending]: 'fa fa-fw fa-bell-o alert-pending',
+  const icon = {
+    [AlertStates.Firing]: <BellIcon className="alert-firing" />,
+    [AlertStates.Silenced]: <BellSlashIcon className="text-muted" />,
+    [AlertStates.Pending]: <OutlinedBellIcon className="alert-pending" />,
   }[state];
-  return klass ? <React.Fragment><i className={klass} aria-hidden="true"></i> {_.startCase(state)}</React.Fragment> : null;
+  return icon ? <React.Fragment>{icon} {_.startCase(state)}</React.Fragment> : null;
 };
 
 const SilenceState = ({silence}) => {
   const state = silenceState(silence);
-  const klass = {
-    [SilenceStates.Active]: 'pficon pficon-ok fa-fw',
-    [SilenceStates.Pending]: 'fa fa-fw fa-hourglass-half monitoring-state-icon--pending',
-    [SilenceStates.Expired]: 'fa fa-fw fa-ban text-muted',
+  const icon = {
+    [SilenceStates.Active]: <GreenCheckCircleIcon />,
+    [SilenceStates.Pending]: <HourglassHalfIcon className="monitoring-state-icon--pending" />,
+    [SilenceStates.Expired]: <BanIcon className="text-muted" data-test-id="ban-icon" />,
   }[state];
-  return klass ? <React.Fragment><i className={klass} aria-hidden="true"></i> {_.startCase(state)}</React.Fragment> : null;
+  return icon ? <React.Fragment>{icon} {_.startCase(state)}</React.Fragment> : null;
 };
 
 const StateTimestamp = ({text, timestamp}) => <div className="text-muted monitoring-timestamp">
@@ -940,8 +949,8 @@ class SilenceForm_ extends React.Component<SilenceFormProps, SilenceFormState> {
               </label>
             </div>
             <div className="col-xs-1">
-              <button type="button" className="btn btn-link" onClick={() => this.removeMatcher(i)} aria-label="Remove matcher">
-                <i className="fa fa-minus-circle" aria-hidden="true" />
+              <button type="button" className="btn btn-link btn-link--inherit-color" onClick={() => this.removeMatcher(i)} aria-label="Remove matcher">
+                <MinusCircleIcon />
               </button>
             </div>
           </div>)}
@@ -949,7 +958,7 @@ class SilenceForm_ extends React.Component<SilenceFormProps, SilenceFormState> {
             onClick={this.addMatcher}
             type="button"
             variant="link">
-            <PlusCircleIcon /> Add More
+            <PlusCircleIcon className="co-icon-space-r" />Add More
           </Button>
         </div>
         <div className="co-form-section__separator"></div>

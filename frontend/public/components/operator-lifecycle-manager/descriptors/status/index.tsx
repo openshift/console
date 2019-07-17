@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { Map as ImmutableMap } from 'immutable';
-import { Status, SuccessStatus } from '@console/shared';
 
+import { Status, SuccessStatus, YellowExclamationTriangleIcon } from '@console/shared';
 import { ResourceLink } from '../../../utils';
 import { StatusCapability, CapabilityProps, DescriptorProps } from '../types';
 import { Phase } from './phase';
@@ -11,7 +11,7 @@ import { Tooltip } from '../../../utils/tooltip';
 import { Conditions } from '../../../conditions';
 
 const Invalid: React.SFC<StatusCapabilityProps> = (props) => <span className="text-muted">
-  <i className="fa fa-exclamation-triangle text-warning" aria-hidden="true" />&nbsp;&nbsp;The field <code>status.{props.descriptor.path}</code> is invalid
+  <YellowExclamationTriangleIcon />&nbsp;&nbsp;The field <code>status.{props.descriptor.path}</code> is invalid
 </span>;
 
 const Default: React.SFC<StatusCapabilityProps> = ({value}) => {

@@ -1,7 +1,7 @@
 import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Button } from '@patternfly/react-core';
-import { PlusCircleIcon } from '@patternfly/react-icons';
+import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 
 import { Dropdown, EmptyBox, PromiseComponent } from '../utils';
 import { K8sKind, k8sPatch, NodeKind, Taint } from '../../module/k8s';
@@ -104,8 +104,8 @@ class TaintsModal extends PromiseComponent<TaintsModalProps, TaintsModalState> {
                     title={effects[c.effect]} />
                 </div>
                 <div className="col-md-1 col-md-offset-0 col-sm-offset-11 col-xs-offset-11">
-                  <button type="button" className="btn btn-link taint-modal__delete-icon" onClick={() => this._remove(i)} aria-label="Delete">
-                    <i className="fa fa-minus-circle pairs-list__side-btn pairs-list__delete-icon" aria-hidden="true" />
+                  <button type="button" className="btn btn-link btn-link--inherit-color taint-modal__delete-icon" onClick={() => this._remove(i)} aria-label="Delete">
+                    <MinusCircleIcon className="pairs-list__side-btn pairs-list__delete-icon" />
                   </button>
                 </div>
               </div>
@@ -115,7 +115,7 @@ class TaintsModal extends PromiseComponent<TaintsModalProps, TaintsModalState> {
           onClick={this._addRow}
           type="button"
           variant="link">
-          <PlusCircleIcon data-test-id="pairs-list__add-icon" /> Add More
+          <PlusCircleIcon data-test-id="pairs-list__add-icon" className="co-icon-space-r" />Add More
         </Button>
       </ModalBody>
       <ModalSubmitFooter errorMessage={errorMessage} inProgress={inProgress} submitText="Save" cancel={this._cancel} />

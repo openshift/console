@@ -1,5 +1,6 @@
 $drag-column-width: 28px;
-$drag-row-margin: 8px;
+$drag-row-margin-left: 8px;
+$drag-row-margin-top: 6px;
 
 .co-empty__header {
   padding: 0;
@@ -52,12 +53,12 @@ $drag-row-margin: 8px;
 }
 
 .pairs-list__action-icon {
-  margin-left: $drag-row-margin;
+  margin-left: $drag-row-margin-left;
+  margin-top: $drag-row-margin-top;
   width: auto;
 }
 
 .pairs-list__action-icon--reorder {
-  line-height: 35px;
   cursor: move;
 }
 
@@ -66,6 +67,7 @@ $drag-row-margin: 8px;
 }
 
 .pairs-list__span-btns {
-  margin-left: -$drag-row-margin;
+  margin-left: -$drag-row-margin-left;
+  margin-top: $drag-row-margin-top;
   white-space: pre;
 }

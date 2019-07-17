@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import * as classNames from 'classnames';
 import { Button } from '@patternfly/react-core';
-import { PlusCircleIcon } from '@patternfly/react-icons';
+import { PlusCircleIcon, MinusCircleIcon } from '@patternfly/react-icons';
 
 export class ListInput extends React.Component<ListInputProps, ListInputState> {
   private helpID: string = _.uniqueId('list-view-help-');
@@ -62,7 +62,7 @@ export class ListInput extends React.Component<ListInputProps, ListInputState> {
             </div>
             <div className="co-list-input__remove-btn">
               <button type="button" className="btn btn-link btn-link--inherit-color" onClick={() => this.removeValue(i)} aria-label="Remove">
-                <i className="fa fa-minus-circle pairs-list__side-btn pairs-list__delete-icon" aria-hidden="true" />
+                <MinusCircleIcon className="pairs-list__side-btn pairs-list__delete-icon" />
               </button>
             </div>
           </div>
@@ -73,7 +73,7 @@ export class ListInput extends React.Component<ListInputProps, ListInputState> {
           onClick={() => this.addValue()}
           type="button"
           variant="link">
-          <PlusCircleIcon /> Add More
+          <PlusCircleIcon className="co-icon-space-r" />Add More
         </Button>
       </div>
     );

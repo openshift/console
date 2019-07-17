@@ -4,6 +4,8 @@ import { match, Link } from 'react-router-dom';
 import { Map as ImmutableMap } from 'immutable';
 import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
+import { AddCircleOIcon } from '@patternfly/react-icons';
+
 import { MultiListPage, DetailsPage, Table, TableRow, TableData } from '../factory';
 import { SectionHeading, MsgBox, ResourceLink, ResourceKebab, Kebab, ResourceIcon, navFactory, ResourceSummary, history } from '../utils';
 import { InstallPlanKind, InstallPlanApproval, olmNamespace, Step, referenceForStepResource } from './index';
@@ -11,6 +13,10 @@ import { K8sResourceKind, referenceForModel, referenceForOwnerRef, k8sUpdate, ap
 import { SubscriptionModel, ClusterServiceVersionModel, InstallPlanModel, CatalogSourceModel, OperatorGroupModel } from '../../models';
 import { requireOperatorGroup } from './operator-group';
 import { installPlanPreviewModal } from '../modals';
+import {
+  GreenCheckCircleIcon,
+  YellowExclamationTriangleIcon,
+} from '@console/shared';
 
 const tableColumnClasses = [
   classNames('col-md-3', 'col-sm-4', 'col-xs-6'),
@@ -50,7 +56,7 @@ InstallPlanTableHeader.displayName = 'InstallPlanTableHeader';
 
 export const InstallPlanTableRow: React.FC<InstallPlanTableRowProps> = ({obj, index, key, style}) => {
   const phaseFor = (phase: InstallPlanKind['status']['phase']) => phase === 'RequiresApproval'
-    ? <React.Fragment><i className="fa fa-exclamation-triangle text-warning" aria-hidden="true" /> {phase}</React.Fragment>
+    ? <React.Fragment><YellowExclamationTriangleIcon /> {phase}</React.Fragment>
     : phase;
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
@@ -173,8 +179,8 @@ export class InstallPlanPreview extends React.Component<InstallPlanPreviewProps,
       .catch((error) => this.setState({error}));
 
     const stepStatus = (status: Step['status']) => <React.Fragment>
-      {status === 'Present' && <i className="pficon pficon-ok co-icon-space-r" aria-hidden="true" />}
-      {status === 'Created' && <i className="pficon pficon-add-circle-o co-icon-space-r" aria-hidden="true" />}
+      {status === 'Present' && <GreenCheckCircleIcon className="co-icon-space-r" />}
+      {status === 'Created' && <AddCircleOIcon className="co-icon-space-r" />}
       {status}
     </React.Fragment>;
 

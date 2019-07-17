@@ -9,11 +9,13 @@
 
   // play icon
   &.co-toggle-play--inactive:before {
-    content: $fa-var-play;
+    @include font-awesome-free-solid;
+    content: fa-content($fa-var-play);
   }
   // pause icon
   &.co-toggle-play--active:before {
-    content: $fa-var-pause;
+    @include font-awesome-free-solid;
+    content: fa-content($fa-var-pause);
   }
 
   &.co-toggle-play--active {

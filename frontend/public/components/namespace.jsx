@@ -7,6 +7,7 @@ import { Tooltip } from './utils/tooltip';
 import { Link } from 'react-router-dom';
 import * as fuzzy from 'fuzzysearch';
 import { Status } from '@console/shared';
+import { PlusCircleIcon } from '@patternfly/react-icons';
 
 import { NamespaceModel, ProjectModel, SecretModel } from '../models';
 import { k8sGet } from '../module/k8s';
@@ -409,7 +410,7 @@ class NamespaceBarDropdowns_ extends React.Component {
         storageKey={NAMESPACE_LOCAL_STORAGE_KEY}
         shortCut={KEYBOARD_SHORTCUTS.focusNamespaceDropdown} />
       { children }
-      <Link to={UIActions.formatNamespacedRouteForResource('import', activeNamespace)} className="co-namespace-bar__import"><span className="fa fa-plus-circle co-add-actions-selector__icon" aria-hidden="true"></span>Import YAML</Link>
+      <Link to={UIActions.formatNamespacedRouteForResource('import', activeNamespace)} className="co-namespace-bar__import"><PlusCircleIcon className="co-add-actions-selector__icon" />Import YAML</Link>
     </div>;
   }
 }

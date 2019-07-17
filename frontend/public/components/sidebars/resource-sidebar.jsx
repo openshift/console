@@ -1,4 +1,10 @@
 import * as React from 'react';
+import {
+  CloseIcon,
+  DownloadIcon,
+  InfoCircleIcon,
+  PasteIcon,
+} from '@patternfly/react-icons';
 
 import { resourceSidebars } from './resource-sidebars';
 
@@ -29,7 +35,7 @@ export class ResourceSidebarWrapper extends React.Component {
     if (!showSidebar) {
       return <div className="co-p-has-sidebar__sidebar--hidden hidden-sm hidden-xs">
         <button className="btn btn-link" onClick={this.toggleSidebar}>
-          <i className="fa fa-fw fa-info-circle co-p-has-sidebar__sidebar-link-icon" aria-hidden="true" />{linkLabel}
+          <InfoCircleIcon className="co-icon-space-r co-p-has-sidebar__sidebar-link-icon" />{linkLabel}
         </button>
       </div>;
     }
@@ -37,7 +43,7 @@ export class ResourceSidebarWrapper extends React.Component {
     return <div className="co-p-has-sidebar__sidebar co-p-has-sidebar__sidebar--bordered hidden-sm hidden-xs" style={{height}}>
       <div className="co-m-pane__body">
         <button type="button" className="close" aria-label="Close" onClick={this.toggleSidebar}>
-          <i className="pficon pficon-close" aria-hidden="true" />
+          <CloseIcon />
         </button>
         <h1 className="co-p-has-sidebar__sidebar-heading co-resource-sidebar-header text-capitalize">
           {label}
@@ -59,10 +65,10 @@ export const SampleYaml = ({sample, loadSampleYaml, downloadSampleYaml}) => {
       {details}
     </p>
     <button className="btn btn-link" onClick={() => loadSampleYaml(templateName, kind)}>
-      <span className="fa fa-fw fa-paste" aria-hidden="true"></span> Try it
+      <PasteIcon className="co-icon-space-r" />Try it
     </button>
     <button className="btn btn-link pull-right" onClick={() => downloadSampleYaml(templateName, kind)}>
-      <span className="fa fa-fw fa-download" aria-hidden="true"></span> Download YAML
+      <DownloadIcon className="co-icon-space-r" />Download YAML
     </button>
   </li>;
 };

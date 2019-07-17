@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
+import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 
 import { MatchExpressions } from './match-expressions';
 import { NodeAffinity as NodeAffinityType, MatchExpression, PodAffinity as PodAffinityType } from '../../../../module/k8s';
@@ -44,7 +45,7 @@ export const NodeAffinity: React.FC<NodeAffinityProps> = (props) => {
           className="btn btn-link co-affinity-term__remove"
           style={{marginLeft: 'auto'}}
           onClick={() => props.onChangeAffinity(removeRequired(i))}>
-          <i aria-hidden="true" className="fa fa-minus-circle pairs-list__add-icon" />Remove Required
+          <MinusCircleIcon className="co-icon-space-r" />Remove Required
         </button> }
         <MatchExpressions
           matchExpressions={nodeSelector.matchExpressions || [] as MatchExpression[]}
@@ -57,7 +58,7 @@ export const NodeAffinity: React.FC<NodeAffinityProps> = (props) => {
           className="btn btn-link"
           style={{marginLeft: '10px'}}
           onClick={() => props.onChangeAffinity(addRequired())}>
-          <i aria-hidden="true" className="fa fa-plus-circle pairs-list__add-icon" />Add Required
+          <PlusCircleIcon className="co-icon-space-r" />Add Required
         </button>
       </div>
     </dd>
@@ -70,7 +71,7 @@ export const NodeAffinity: React.FC<NodeAffinityProps> = (props) => {
           type="button"
           className="btn btn-link co-affinity-term__remove"
           onClick={() => props.onChangeAffinity(removePreferred(i))}>
-          <i aria-hidden="true" className="fa fa-minus-circle pairs-list__add-icon" />Remove Preferred
+          <MinusCircleIcon className="co-icon-space-r" />Remove Preferred
         </button> }
         <label className="control-label co-required" htmlFor={`preference-${i}`}>Weight</label>
         <input
@@ -90,7 +91,7 @@ export const NodeAffinity: React.FC<NodeAffinityProps> = (props) => {
           className="btn btn-link"
           style={{marginLeft: '10px'}}
           onClick={() => props.onChangeAffinity(addPreference())}>
-          <i aria-hidden="true" className="fa fa-plus-circle pairs-list__add-icon" />Add Preferred
+          <PlusCircleIcon className="co-icon-space-r" />Add Preferred
         </button>
       </div>
     </dd>
@@ -136,7 +137,7 @@ export const PodAffinity: React.FC<PodAffinityProps> = (props) => {
           type="button"
           className="btn btn-link co-affinity-term__remove"
           onClick={() => props.onChangeAffinity(removeRequired(i))}>
-          <i aria-hidden="true" className="fa fa-minus-circle pairs-list__add-icon" />Remove Preferred
+          <MinusCircleIcon className="co-icon-space-r" />Remove Preferred
         </button> }
         <div className="co-affinity-term__topology">
           <div className="co-affinity-term__topology-input">
@@ -160,7 +161,7 @@ export const PodAffinity: React.FC<PodAffinityProps> = (props) => {
           className="btn btn-link"
           style={{marginLeft: '10px'}}
           onClick={() => props.onChangeAffinity(addRequired())}>
-          <i aria-hidden="true" className="fa fa-plus-circle pairs-list__add-icon" />Add Required
+          <PlusCircleIcon className="co-icon-space-r" />Add Required
         </button>
       </div>
     </dd>
@@ -173,7 +174,7 @@ export const PodAffinity: React.FC<PodAffinityProps> = (props) => {
           type="button"
           className="btn btn-link co-affinity-term__remove"
           onClick={() => props.onChangeAffinity(removePreferred(i))}>
-          <i aria-hidden="true" className="fa fa-minus-circle pairs-list__add-icon" />Remove Preferred
+          <MinusCircleIcon className="co-icon-space-r" />Remove Preferred
         </button> }
         <div className="co-affinity-term__topology">
           <div className="co-affinity-term__topology-input">
@@ -206,7 +207,7 @@ export const PodAffinity: React.FC<PodAffinityProps> = (props) => {
           className="btn btn-link"
           style={{marginLeft: '10px'}}
           onClick={() => props.onChangeAffinity(addPreference())}>
-          <i aria-hidden="true" className="fa fa-plus-circle pairs-list__add-icon" />Add Another Preference
+          <PlusCircleIcon className="co-icon-space-r" />Add Another Preference
         </button>
       </div>
     </dd>

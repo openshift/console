@@ -3,7 +3,7 @@ import * as React from 'react';
 import * as classNames from 'classnames';
 import { Popover } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
-import { QuestionCircleIcon } from '@patternfly/react-icons';
+import { EyeIcon, EyeSlashIcon, QuestionCircleIcon } from '@patternfly/react-icons';
 
 import { Status } from '@console/shared';
 import { DetailsPage,ListPage, Table, TableRow, TableData } from './factory';
@@ -212,8 +212,8 @@ class TLSSettings extends React.Component<TLSDataProps, TLSDataState> {
           <button className="btn btn-link co-m-route-tls-reveal__btn" type="button" onClick={this.toggleKey}>
             {
               showPrivateKey
-                ? <React.Fragment><i className="fa fa-eye-slash" aria-hidden="true"></i> Hide</React.Fragment>
-                : <React.Fragment><i className="fa fa-eye" aria-hidden="true"></i> Reveal</React.Fragment>
+                ? <React.Fragment><EyeSlashIcon className="co-icon-space-r" />Hide</React.Fragment>
+                : <React.Fragment><EyeIcon className="co-icon-space-r" />Reveal</React.Fragment>
             }
           </button>}
         </dt>

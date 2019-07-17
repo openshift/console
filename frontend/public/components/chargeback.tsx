@@ -2,6 +2,8 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
+import { ExternalLinkAltIcon } from '@patternfly/react-icons';
+
 import { connectToFlags, flagPending } from '../reducers/features';
 import { FLAGS } from '../const';
 import { Conditions } from './conditions';
@@ -345,7 +347,7 @@ const ReportsPage_: React.SFC<ReportsPageProps> = props => {
         Chargeback is an alpha feature.
       </p>
       <a href="https://coreos.com/tectonic/docs/latest/reports/install-chargeback.html" target="_blank" rel="noopener noreferrer">
-        <button className="btn btn-info">Installing Chargeback Report <i className="fa fa-external-link" /></button>
+        <button className="btn btn-info">Installing Chargeback Report <ExternalLinkAltIcon /></button>
       </a>
     </div>
     <ListPage {...props} canCreate kind={ReportReference} ListComponent={ReportsList} mock title="Chargeback Reporting" />

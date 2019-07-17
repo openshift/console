@@ -3,6 +3,7 @@
 }
 
 .co-delete-modal__icon {
+  flex: 0 0 auto;
   font-size: 30px;
   margin-right: 15px;
 }
@@ -100,6 +101,7 @@
 
   &__delete-icon {
     height: 29px;
+    margin-top: 7px;
     @media(max-width: $screen-sm-max) {
       padding: 0;
     }
