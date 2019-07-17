@@ -8,24 +8,29 @@ import * as _ from 'lodash-es';
 import { Alert } from '@patternfly/react-core';
 
 import {
-  K8sResourceKindReference,
-  referenceForModel,
-  referenceFor,
-  kindForReference,
+  apiVersionForModel,
+  GroupVersionKind,
+  ImagePullPolicy,
+  k8sCreate,
   K8sKind,
   K8sResourceKind,
-  apiVersionForModel,
-  k8sCreate,
+  K8sResourceKindReference,
+  kindForReference,
+  referenceFor,
+  referenceForModel,
   Status,
 } from '../../module/k8s';
 import { ClusterServiceVersionKind, referenceForProvidedAPI, providedAPIsFor, CRDDescription, ClusterServiceVersionLogo, APIServiceDefinition } from './index';
 import { ClusterServiceVersionModel } from '../../models';
 import { Firehose } from '../utils/firehose';
-import { NumberSpinner, StatusBox, BreadCrumbs, history, SelectorInput } from '../utils';
+import { NumberSpinner, StatusBox, BreadCrumbs, history, SelectorInput, ListDropdown, AsyncComponent } from '../utils';
 import { SpecCapability, StatusCapability, Descriptor } from './descriptors/types';
 import { ResourceRequirements } from './descriptors/spec/resource-requirements';
 import { RootState } from '../../redux';
 import { CreateYAML } from '../create-yaml';
+import { RadioGroup } from '../radio';
+import { ConfigureUpdateStrategy } from '../modals/configure-update-strategy-modal';
+import { NodeAffinity, PodAffinity } from './descriptors/spec/affinity';
 
 const annotationKey = 'alm-examples';
 
@@ -50,16 +55,69 @@ const fieldsFor = (providedAPI: CRDDescription) => _.get(providedAPI, 'specDescr
 })) as OperandField[];
 
 export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
-  type FormValues = {[path: string]: any};
-  const [formValues, setFormValues] = React.useState<FormValues>({'metadata.name': 'example', 'metadata.labels': []});
-  const [error, setError] = React.useState();
-
   const fields: OperandField[] = !_.isEmpty(props.clusterServiceVersion)
     ? fieldsFor(providedAPIsFor(props.clusterServiceVersion).find(desc => referenceForProvidedAPI(desc) === referenceForProvidedAPI(props.providedAPI)))
     : [];
 
+  const defaultValueFor = (field: OperandField) => {
+    if (field.capabilities.includes(SpecCapability.podCount)) {
+      return 1;
+    }
+    if (field.capabilities.includes(SpecCapability.resourceRequirements)) {
+      return {limits: {cpu: '', memory: ''}, requests: {cpu: '', memory: ''}};
+    }
+    if (field.capabilities.includes(SpecCapability.password)) {
+      return '';
+    }
+    if (field.capabilities.some(c => c.startsWith(SpecCapability.k8sResourcePrefix))) {
+      return null;
+    }
+    if (field.capabilities.includes(SpecCapability.checkbox)) {
+      return false;
+    }
+    if (field.capabilities.includes(SpecCapability.booleanSwitch)) {
+      return false;
+    }
+    if (field.capabilities.includes(SpecCapability.imagePullPolicy)) {
+      return ImagePullPolicy.IfNotPresent;
+    }
+    if (field.capabilities.includes(SpecCapability.updateStrategy)) {
+      return 'Rolling';
+    }
+    if (field.capabilities.includes(SpecCapability.text)) {
+      return '';
+    }
+    if (field.capabilities.includes(SpecCapability.number)) {
+      return '';
+    }
+    if (field.capabilities.includes(SpecCapability.nodeAffinity)) {
+      return null;
+    }
+    if (field.capabilities.includes(SpecCapability.podAffinity) || field.capabilities.includes(SpecCapability.podAntiAffinity)) {
+      return null;
+    }
+    return null;
+  };
+
+  type FormValues = {[path: string]: any};
+
+  const defaultFormValues = fields.reduce((allFields, field) => ({...allFields, [field.path]: defaultValueFor(field)}), {} as FormValues);
+  const sampleFormValues = fields.reduce((allFields, field) => {
+    const sampleValue = _.get(props.sample, `spec.${field.path}`);
+    return sampleValue ? {...allFields, [field.path]: sampleValue} : allFields;
+  }, {} as FormValues);
+
+  const [formValues, setFormValues] = React.useState<FormValues>({'metadata.name': 'example', 'metadata.labels': [], ...defaultFormValues, ...sampleFormValues});
+  const [error, setError] = React.useState();
+
+  const updateFormValues = (values: FormValues) => (path: string, value: any) => {
+    return _.set(_.cloneDeep(values), path, value);
+  };
+
   const submit = (e) => {
     e.preventDefault();
+
+    const specValues = _.omitBy(formValues, (val, path) => path.startsWith('metadata') || _.isNil(val));
 
     const obj = {
       apiVersion: apiVersionForModel(props.operandModel),
@@ -69,7 +127,7 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
         name: formValues['metadata.name'],
         labels: SelectorInput.objectify(formValues['metadata.labels']),
       },
-      spec: _.reduce(_.omitBy(formValues, (val, path) => path.startsWith('metadata')), (spec, value, path) => _.set(spec, path, value), {}),
+      spec: _.reduce(specValues, (spec, value, path) => _.set(spec, path, value), {}),
     } as K8sResourceKind;
 
     k8sCreate(props.operandModel, obj)
@@ -77,13 +135,14 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
       .catch((err: Status) => setError(err.message));
   };
 
+  // TODO(alecmerdler): Move this into a single `<SpecDescriptorInput>` entry component in the `descriptors/` directory
   const inputFor = (field: OperandField) => {
     if (field.capabilities.includes(SpecCapability.podCount)) {
       return <NumberSpinner
-        className="form-control"
-        value={_.get(formValues, field.path, 1)}
-        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormValues({...formValues, [field.path]: _.toInteger(e.target.value)})}
-        changeValueBy={operation => setFormValues({...formValues, [field.path]: _.toInteger(formValues[field.path]) + operation})}
+        className="pf-c-form-control"
+        value={_.get(formValues, field.path)}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormValues(values => ({...values, [field.path]: _.toInteger(e.target.value)}))}
+        changeValueBy={operation => setFormValues(values => ({...values, [field.path]: _.toInteger(formValues[field.path]) + operation}))}
         autoFocus
         required />;
     }
@@ -92,33 +151,117 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
         <dt>Limits</dt>
         <dd>
           <ResourceRequirements
-            cpu={formValues[`${field.path}.limits.cpu`] as string}
-            memory={formValues[`${field.path}.limits.memory`] as string}
-            onChangeCPU={cpu => setFormValues({...formValues, [`${field.path}.cpu`]: cpu})}
-            onChangeMemory={memory => setFormValues({...formValues, [`${field.path}.memory`]: memory})} />
+            cpu={_.get(formValues, `${field.path}.limits.cpu`)}
+            memory={_.get(formValues, `${field.path}.limits.memory`)}
+            onChangeCPU={cpu => setFormValues(values => updateFormValues(values)(`${field.path}.limits.cpu`, cpu))}
+            onChangeMemory={memory => setFormValues(values => updateFormValues(values)(`${field.path}.limits.memory`, memory))} />
         </dd>
         <dt>Requests</dt>
         <dd>
           <ResourceRequirements
-            cpu={formValues[`${field.path}.requests.cpu`] as string}
-            memory={formValues[`${field.path}.requests.memory`] as string}
-            onChangeCPU={cpu => setFormValues({...formValues, [`${field.path}.cpu`]: cpu})}
-            onChangeMemory={memory => setFormValues({...formValues, [`${field.path}.memory`]: memory})} />
+            cpu={_.get(formValues, `${field.path}.requests.cpu`)}
+            memory={_.get(formValues, `${field.path}.requests.memory`)}
+            onChangeCPU={cpu => setFormValues(values => updateFormValues(values)(`${field.path}.requests.cpu`, cpu))}
+            onChangeMemory={memory => setFormValues(values => updateFormValues(values)(`${field.path}.requests.memory`, memory))} />
         </dd>
       </dl>;
+    }
+    if (field.capabilities.includes(SpecCapability.password)) {
+      return <input
+        className="pf-c-form-control"
+        id={field.path}
+        type="password"
+        onChange={e => setFormValues(values => ({...values, [field.path]: e.target.value}))}
+        value={formValues[field.path]} />;
+    }
+    if (field.capabilities.some(c => c.startsWith(SpecCapability.k8sResourcePrefix))) {
+      const groupVersionKind: GroupVersionKind = field.capabilities.find(c => c.startsWith(SpecCapability.k8sResourcePrefix)).split(SpecCapability.k8sResourcePrefix)[1];
+
+      return <div style={{width: '50%'}}>
+        <ListDropdown
+          resources={[{kind: groupVersionKind, namespace: props.namespace}]}
+          desc={field.description}
+          placeholder={`Select ${kindForReference(groupVersionKind)}`}
+          onChange={name => setFormValues(values => ({...values, [field.path]: name}))} />
+      </div>;
+    }
+    if (field.capabilities.includes(SpecCapability.checkbox)) {
+      return <input
+        type="checkbox"
+        id={field.path}
+        style={{marginLeft: '10px'}}
+        checked={formValues[field.path] as boolean}
+        onChange={e => setFormValues(values => ({...values, [field.path]: e.target.checked}))} />;
+    }
+    if (field.capabilities.includes(SpecCapability.booleanSwitch)) {
+      return <div>
+        <AsyncComponent
+          loader={() => import('patternfly-react').then(m => m.Switch)}
+          value={formValues[field.path]}
+          onChange={(el, val) => setFormValues(values => ({...values, [field.path]: val}))}
+          onText="True"
+          offText="False"
+          bsSize="mini" />
+      </div>;
+    }
+    if (field.capabilities.includes(SpecCapability.imagePullPolicy)) {
+      return <RadioGroup
+        currentValue={formValues[field.path]}
+        items={_.values(ImagePullPolicy).map(policy => ({value: policy, title: policy}))}
+        onChange={e => setFormValues(values => ({...values, [field.path]: e.currentTarget.value}))} />;
+    }
+    if (field.capabilities.includes(SpecCapability.updateStrategy)) {
+      return <ConfigureUpdateStrategy
+        strategyType={formValues[`${field.path}.type`]}
+        maxUnavailable={formValues[`${field.path}.rollingUpdate.maxUnavailable`]}
+        maxSurge={formValues[`${field.path}.rollingUpdate.maxSurge`]}
+        onChangeStrategyType={type => setFormValues(values => ({...values, [`${field.path}.type`]: type}))}
+        onChangeMaxUnavailable={maxUnavailable => setFormValues(values => ({...values, [`${field.path}.rollingUpdate.maxUnavailable`]: maxUnavailable}))}
+        onChangeMaxSurge={maxSurge => setFormValues(values => ({...values, [`${field.path}.rollingUpdate.maxSurge`]: maxSurge}))}
+        replicas={1} />;
+    }
+    if (field.capabilities.includes(SpecCapability.text)) {
+      return <div style={{width: '50%'}}>
+        <input
+          className="pf-c-form-control"
+          id={field.path}
+          type="text"
+          onChange={e => setFormValues(values => ({...values, [field.path]: e.currentTarget.value}))}
+          value={formValues[field.path]} />
+      </div>;
+    }
+    if (field.capabilities.includes(SpecCapability.number)) {
+      return <div style={{width: '50%'}}>
+        <input
+          className="pf-c-form-control"
+          id={field.path}
+          type="number"
+          onChange={e => setFormValues(values => ({...values, [field.path]: _.toInteger(e.currentTarget.value)}))}
+          value={formValues[field.path]} />
+      </div>;
+    }
+    if (field.capabilities.includes(SpecCapability.nodeAffinity)) {
+      return <div style={{marginLeft: '15px'}}>
+        <NodeAffinity affinity={formValues[field.path]} onChangeAffinity={affinity => setFormValues(values => ({...values, [field.path]: affinity}))} />
+      </div>;
+    }
+    if (field.capabilities.includes(SpecCapability.podAffinity) || field.capabilities.includes(SpecCapability.podAntiAffinity)) {
+      return <div style={{marginLeft: '15px'}}>
+        <PodAffinity affinity={formValues[field.path]} onChangeAffinity={affinity => setFormValues(values => ({...values, [field.path]: affinity}))} />
+      </div>;
     }
     return null;
   };
 
   return <div className="co-m-pane__body">
-    <form className="col-md-4" onSubmit={submit}>
+    <form className="col-md-6" onSubmit={submit}>
       <div className="row">
         <div className="form-group">
           <label className="control-label co-required" htmlFor="name">Name</label>
           <input
-            className="form-control"
+            className="pf-c-form-control"
             type="text"
-            onChange={e => setFormValues({...formValues, 'metadata.name': e.target.value})}
+            onChange={e => setFormValues(values => ({...values, 'metadata.name': e.currentTarget.value}))}
             value={formValues['metadata.name']}
             id="name"
             required />
@@ -127,12 +270,12 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
       <div className="row">
         <div className="form-group">
           <label className="control-label" htmlFor="tags-input">Labels</label>
-          <SelectorInput onChange={labels => setFormValues({...formValues, 'metadata.labels': labels})} tags={formValues['metadata.labels']} />
+          <SelectorInput onChange={labels => setFormValues(values => ({...values, 'metadata.labels': labels}))} tags={formValues['metadata.labels']} />
         </div>
       </div>
       { fields.filter(f => !_.isNil(inputFor(f))).map(field => <div className="row" key={field.path}>
         <div className="form-group">
-          <label className="form-label co-required" htmlFor={field.path}>{field.displayName}</label>
+          <label className="form-label" htmlFor={field.path}>{field.displayName}</label>
           { inputFor(field) }
           { field.description && <span className="help-block text-muted">{field.description}</span> }
         </div>
@@ -145,7 +288,7 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
         <Link className="btn btn-default" to={`/k8s/ns/${props.namespace}/clusterserviceversions/${props.clusterServiceVersion.metadata.name}/${referenceForModel(props.operandModel)}`}>Cancel</Link>
       </div>
     </form>
-    <div className="col-md-8">
+    <div className="col-md-6">
       { props.clusterServiceVersion && props.providedAPI && <div>
         <ClusterServiceVersionLogo
           displayName={props.providedAPI.displayName}
@@ -199,6 +342,7 @@ export const CreateOperand: React.FC<CreateOperandProps> = (props) => {
         namespace={props.match.params.ns}
         operandModel={props.operandModel}
         providedAPI={providedAPI()}
+        sample={props.loaded ? sample() : null}
         clusterServiceVersion={props.clusterServiceVersion.data} /> ||
       method === 'yaml' && <CreateOperandYAML
         match={props.match}
@@ -257,6 +401,11 @@ export type CreateOperandYAMLProps = {
 export type CreateOperandPageProps = {
   match: match<{appName: string, ns: string, plural: K8sResourceKindReference}>;
   operandModel: K8sKind;
+};
+
+export type SpecDescriptorInputProps = {
+  field: OperandField;
+  sample?: K8sResourceKind;
 };
 
 CreateOperandPage.displayName = 'CreateOperandPage';

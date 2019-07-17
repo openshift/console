@@ -14,7 +14,7 @@ const Default: React.SFC<SpecCapabilityProps> = ({value}) => {
   if (_.isEmpty(value) && !_.isNumber(value)) {
     return <span className="text-muted">None</span>;
   } else if (_.isObject(value)) {
-    return <div>{_.map(value, (v, k) => <span key={k} className="row">{k}: {v}</span>)}</div>;
+    return <span className="text-muted">Unsupported</span>;
   }
   return <span>{_.toString(value)}</span>;
 };
@@ -26,7 +26,9 @@ const Endpoints: React.SFC<SpecCapabilityProps> = ({value}) => <EndpointList end
 
 const Label: React.SFC<SpecCapabilityProps> = ({value}) => <span>{value || '--'}</span>;
 
-const NamespaceSelector: React.SFC<SpecCapabilityProps> = ({value}) => <ResourceLink kind="Namespace" name={value.matchNames[0]} title={value.matchNames[0]} />;
+const NamespaceSelector: React.SFC<SpecCapabilityProps> = ({value}) => _.get(value, 'matchNames[0]')
+  ? <ResourceLink kind="Namespace" name={value.matchNames[0]} title={value.matchNames[0]} />
+  : <span className="text-muted">None</span>;
 
 const ResourceRequirements: React.SFC<SpecCapabilityProps> = ({obj, descriptor}) => <dl className="co-spec-descriptor--resource-requirements">
   <dt>Resource Limits</dt>
