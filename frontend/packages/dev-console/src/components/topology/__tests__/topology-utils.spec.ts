@@ -105,6 +105,24 @@ describe('TopologyUtils ', () => {
     );
   });
 
+  it('should return a Scaled to zero pod status in a non-serverless application', () => {
+    // simulate pod are scaled to zero in nodejs deployment.
+    const mockResources = { ...MockResources, pods: { data: [] } };
+    mockResources.deploymentConfigs.data[0].metadata.annotations = {
+      'idling.alpha.openshift.io/idled-at': '2019-04-22T11:58:33Z',
+    };
+    const transformTopologyData = new TransformTopologyData(mockResources);
+    transformTopologyData.transformDataBy('deploymentConfigs');
+    const result = transformTopologyData.getTopologyData();
+    const topologyTransformedData = result.topology;
+    const keys = Object.keys(topologyTransformedData);
+    const status = getPodStatus(
+      (topologyTransformedData[keys[0]].data as WorkloadData).donutStatus.pods[0],
+    );
+    expect(podStatus.includes(status)).toBe(true);
+    expect(status).toEqual('Scaled to 0');
+  });
+
   it('should return false for non knative resource', () => {
     const mockResources = { ...MockResources, pods: { data: [] } };
     const transformTopologyData = new TransformTopologyData(mockResources);

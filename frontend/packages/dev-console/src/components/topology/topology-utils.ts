@@ -398,6 +398,18 @@ export class TransformTopologyData {
   }
 
   /**
+   * check if the deployment/deploymentconfig is idled.
+   * @param deploymentConfig
+   */
+  private isIdled(deploymentConfig: ResourceProps): boolean {
+    return !!_.get(
+      deploymentConfig,
+      "metadata.annotations['idling.alpha.openshift.io/idled-at']",
+      false,
+    );
+  }
+
+  /**
    * Get all the pods from a replication controller or a replicaset.
    * @param replicationController
    */
@@ -417,7 +429,8 @@ export class TransformTopologyData {
     if (
       dcPodsData &&
       !dcPodsData.length &&
-      this.isKnativeServing(replicationController, 'metadata.labels')
+      (this.isKnativeServing(replicationController, 'metadata.labels') ||
+        this.isIdled(deploymentConfig))
     ) {
       return [
         {
