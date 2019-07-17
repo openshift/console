@@ -6,6 +6,11 @@
   margin-top: 1.5em;
 }
 
+.co-dashboard-card__button-link {
+  line-height: 1;
+  padding: 0;
+}
+
 .co-dashboard-card__header {
   align-items: center;
   border-bottom: 1px solid $pf-color-black-300;
@@ -13,7 +18,7 @@
   justify-content: space-between;
 }
 
-.co-dashboard-card__see-all {
+.co-dashboard-card__link {
   line-height: 1;
   padding: 0;
 }
