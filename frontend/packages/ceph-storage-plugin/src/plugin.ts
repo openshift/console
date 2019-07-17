@@ -3,15 +3,30 @@ import * as _ from 'lodash';
 import {
   DashboardsCard,
   DashboardsTab,
+  DashboardsOverviewHealthPrometheusSubsystem,
   ModelFeatureFlag,
   ModelDefinition,
   Plugin,
+  DashboardsOverviewQuery,
 } from '@console/plugin-sdk';
-
 import { GridPosition } from '@console/internal/components/dashboard';
-import * as models from './models';
+import { OverviewQuery } from '@console/internal/components/dashboards-page/overview-dashboard/queries';
 
-type ConsumedExtensions = ModelFeatureFlag | ModelDefinition | DashboardsTab | DashboardsCard;
+import * as models from './models';
+import {
+  CAPACITY_USAGE_QUERIES,
+  StorageDashboardQuery,
+  STORAGE_HEALTH_QUERIES,
+} from './constants/queries';
+import { getCephHealthState } from './components/dashboard-page/storage-dashboard/health-card/utils';
+
+type ConsumedExtensions =
+  | ModelFeatureFlag
+  | ModelDefinition
+  | DashboardsTab
+  | DashboardsCard
+  | DashboardsOverviewHealthPrometheusSubsystem
+  | DashboardsOverviewQuery;
 
 const CEPH_FLAG = 'CEPH';
 
@@ -43,7 +58,7 @@ const plugin: Plugin<ConsumedExtensions> = [
       position: GridPosition.MAIN,
       loader: () =>
         import(
-          './components/dashboard-page/storage-dashboard/health-card' /* webpackChunkName: "ceph-storage-health-card" */
+          './components/dashboard-page/storage-dashboard/health-card/health-card' /* webpackChunkName: "ceph-storage-health-card" */
         ).then((m) => m.default),
     },
   },
@@ -100,6 +115,28 @@ const plugin: Plugin<ConsumedExtensions> = [
         import(
           './components/dashboard-page/storage-dashboard/events-card' /* webpackChunkName: "ceph-storage-events-card" */
         ).then((m) => m.default),
+    },
+  },
+  {
+    type: 'Dashboards/Overview/Health/Prometheus',
+    properties: {
+      title: 'Storage',
+      query: STORAGE_HEALTH_QUERIES[StorageDashboardQuery.CEPH_STATUS_QUERY],
+      healthHandler: getCephHealthState,
+    },
+  },
+  {
+    type: 'Dashboards/Overview/Query',
+    properties: {
+      queryKey: OverviewQuery.STORAGE_TOTAL,
+      query: CAPACITY_USAGE_QUERIES[StorageDashboardQuery.CEPH_CAPACITY_TOTAL],
+    },
+  },
+  {
+    type: 'Dashboards/Overview/Query',
+    properties: {
+      queryKey: OverviewQuery.STORAGE_UTILIZATION,
+      query: CAPACITY_USAGE_QUERIES[StorageDashboardQuery.CEPH_CAPACITY_USED],
     },
   },
 ];

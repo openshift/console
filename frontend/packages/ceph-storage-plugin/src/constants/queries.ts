@@ -39,7 +39,6 @@ export const UTILIZATION_QUERY_HOUR_MAP = {
 };
 
 export const CAPACITY_USAGE_QUERIES = {
-  [StorageDashboardQuery.CEPH_CAPACITY_TOTAL]: 'sum(node_filesystem_size_bytes)',
-  [StorageDashboardQuery.CEPH_CAPACITY_USED]:
-    '(sum(node_filesystem_size_bytes) - sum(node_filesystem_free_bytes))[60m:5m]',
+  [StorageDashboardQuery.CEPH_CAPACITY_TOTAL]: 'ceph_cluster_total_bytes',
+  [StorageDashboardQuery.CEPH_CAPACITY_USED]: 'ceph_cluster_total_used_bytes[60m:5m]',
 };
