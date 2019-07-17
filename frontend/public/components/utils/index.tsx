@@ -27,7 +27,6 @@ export * from './number-spinner';
 export * from './cloud-provider';
 export * from './documentation';
 export * from './router';
-export * from './operator-states';
 export * from './link';
 export * from './alerts';
 export * from './async';
