@@ -1,6 +1,23 @@
-@import '~kubevirt-web-ui-components/dist/sass/components';
-
-@import '~patternfly/dist/sass/patternfly/variables';
+// Bootstrap Core variables and mixins
 @import "~bootstrap-sass/assets/stylesheets/bootstrap/variables";
+@import "~bootstrap-sass/assets/stylesheets/bootstrap/mixins";
+
+// Patternfly Core variables and mixins
+@import "~patternfly/dist/sass/patternfly/variables";
+@import "~patternfly/dist/sass/patternfly/bootstrap-mixin-overrides";
+@import "~patternfly/dist/sass/patternfly/mixins";
+@import "~patternfly-react/dist/sass/patternfly-react";
 
 @import '~patternfly/dist/sass/patternfly/wizard';
+
+@import '~kubevirt-web-ui-components/dist/sass/components';
+
+// Console StyleSheets
+@import "~xterm/dist/xterm.css";
+
+@import "~@patternfly/react-console/dist/sass/variables";
+@import "~@patternfly/react-console/dist/sass/access-consoles";
+@import "~@patternfly/react-console/dist/sass/console-selector";
+@import "~@patternfly/react-console/dist/sass/serial-console";
+@import "~@patternfly/react-console/dist/sass/vnc-console";
+@import "~@patternfly/react-console/dist/sass/desktop-viewer";
