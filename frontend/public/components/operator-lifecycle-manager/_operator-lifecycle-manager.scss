@@ -46,39 +46,15 @@
   display: flex;
   flex-wrap: wrap;
   margin-bottom: 15px;
+
+  .pf-c-card {
+    width: 300px;
+    margin-right: 20px;
+    margin-bottom: 20px;
+  }
 }
 
-.co-crd-card {
-  border: 1px solid rgba(209,209,209,0.75);
-  box-shadow: 0 1px 1px rgba(3,3,3,0.175);
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: 0 15px;
-  max-width: 300px;
-  min-width: 300px;
-  margin: 0 20px 20px 0;
-}
 
-.co-crd-card:hover {
-  box-shadow: 0 1px 10px rgba(3,3,3,0.175);
-}
-
-.co-crd-card__title {
-  margin: 15px 0;
-  padding: 0;
-}
-
-.co-crd-card__body {
-  padding: 0 0 15px;
-}
-
-.co-crd-card__footer {
-  background-color: $color-pf-black-100;
-  border-top: 1px solid $color-pf-black-300;
-  margin: 0 -15px !important;
-  padding: 7.5px 15px;
-}
 
 .co-operand-details__compact-expand {
   display: flex;

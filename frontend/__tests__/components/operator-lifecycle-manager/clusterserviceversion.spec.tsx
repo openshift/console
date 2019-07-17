@@ -2,6 +2,7 @@ import * as React from 'react';
 import { shallow, ShallowWrapper, mount, ReactWrapper } from 'enzyme';
 import { Link } from 'react-router-dom';
 import * as _ from 'lodash-es';
+import { CardHeader, CardBody, CardFooter } from '@patternfly/react-core';
 
 import {
   ClusterServiceVersionsDetailsPage,
@@ -172,21 +173,21 @@ describe(CRDCard.displayName, () => {
   it('renders a card with title, body, and footer', () => {
     const wrapper = shallow(<CRDCard canCreate={true} crd={crd} csv={testClusterServiceVersion} />);
 
-    expect(wrapper.find('.co-crd-card__title').exists()).toBe(true);
-    expect(wrapper.find('.co-crd-card__body').exists()).toBe(true);
-    expect(wrapper.find('.co-crd-card__footer').exists()).toBe(true);
+    expect(wrapper.find(CardHeader).exists()).toBe(true);
+    expect(wrapper.find(CardBody).exists()).toBe(true);
+    expect(wrapper.find(CardFooter).exists()).toBe(true);
   });
 
   it('renders a link to create a new instance', () => {
     const wrapper = shallow(<CRDCard canCreate={true} crd={crd} csv={testClusterServiceVersion} />);
 
-    expect(wrapper.find('.co-crd-card__footer').find(Link).props().to).toEqual(`/k8s/ns/${testClusterServiceVersion.metadata.namespace}/${ClusterServiceVersionModel.plural}/${testClusterServiceVersion.metadata.name}/${referenceForProvidedAPI(crd)}/~new`);
+    expect(wrapper.find(CardFooter).find(Link).props().to).toEqual(`/k8s/ns/${testClusterServiceVersion.metadata.namespace}/${ClusterServiceVersionModel.plural}/${testClusterServiceVersion.metadata.name}/${referenceForProvidedAPI(crd)}/~new`);
   });
 
   it('does not render link to create new instance if `props.canCreate` is false', () => {
     const wrapper = shallow(<CRDCard canCreate={false} crd={crd} csv={testClusterServiceVersion} />);
 
-    expect(wrapper.find('.co-crd-card__footer').find(Link).exists()).toBe(false);
+    expect(wrapper.find(CardFooter).find(Link).exists()).toBe(false);
   });
 });
 
