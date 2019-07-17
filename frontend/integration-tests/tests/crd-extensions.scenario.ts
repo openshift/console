@@ -76,13 +76,13 @@ describe('CRD extensions', () => {
     const testObjs = [{
       name,
       dropdownMenuName: 'help menu',
-      dropdownToggle: $('[data-test=help-dropdown-toggle]'),
+      dropdownToggle: $('[data-test=help-dropdown-toggle] .pf-c-app-launcher__toggle'),
       menuLinkLocation: 'HelpMenu',
       menuLinkText: `${name} help menu link`,
     }, {
       name,
       dropdownMenuName: 'user menu',
-      dropdownToggle: $('[data-test=user-dropdown] .pf-c-dropdown__toggle'),
+      dropdownToggle: $('[data-test=user-dropdown] .pf-c-app-launcher__toggle'),
       menuLinkLocation: 'UserMenu',
       menuLinkText: `${name} user menu link`,
     }];
@@ -118,8 +118,8 @@ describe('CRD extensions', () => {
         await browser.refresh();
         await browser.wait(until.presenceOf(dropdownToggle));
         await browser.wait(dropdownToggle.click());
-        await browser.wait(until.presenceOf(element(by.linkText(menuLinkText))));
-        expect(element(by.linkText(menuLinkText)).getText()).toEqual(menuLinkText);
+        await browser.wait(until.presenceOf(element(by.cssContainingText('.pf-c-app-launcher__menu-item', menuLinkText))));
+        expect(element(by.cssContainingText('.pf-c-app-launcher__menu-item', menuLinkText)).getText()).toContain(menuLinkText);
       });
 
       it(`deletes the ${crd} ${dropdownMenuName} instance`, async() => {

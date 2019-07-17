@@ -1,10 +1,17 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { connect } from 'react-redux';
-import { ArrowCircleUpIcon, QuestionCircleIcon, ThIcon } from '@patternfly/react-icons';
-import { Button, Dropdown, DropdownToggle, DropdownSeparator, DropdownItem, KebabToggle, Toolbar, ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
+import { ArrowCircleUpIcon, CaretDownIcon, EllipsisVIcon, QuestionCircleIcon } from '@patternfly/react-icons';
+import {
+  ApplicationLauncher,
+  ApplicationLauncherItem,
+  ApplicationLauncherSeparator,
+  Button,
+  Toolbar,
+  ToolbarGroup,
+  ToolbarItem,
+} from '@patternfly/react-core';
 
-import * as UIActions from '../actions/ui';
 import { connectToFlags, flagPending } from '../reducers/features';
 import { FLAGS } from '../const';
 import { authSvc } from '../module/auth';
@@ -12,12 +19,12 @@ import { history, Firehose } from './utils';
 import { openshiftHelpBase } from './utils/documentation';
 import { AboutModal } from './about-modal';
 import { getAvailableClusterUpdates, clusterVersionReference } from '../module/k8s/cluster-settings';
-import * as plugins from '../plugins';
+import * as openshiftLogoImg from '../imgs/logos/openshift.svg';
 
 const SystemStatusButton = ({statuspageData, className}) => !_.isEmpty(_.get(statuspageData, 'incidents'))
   ? <ToolbarItem className={className}>
     <a className="pf-c-button pf-m-plain" aria-label="System Status" href={statuspageData.page.url} target="_blank" rel="noopener noreferrer">
-      <span className="pficon pficon-warning-triangle-o co-system-status-icon" aria-hidden="true"></span>
+      <span className="pficon pficon-warning-triangle-o co-system-status-icon" aria-hidden="true" />
     </a>
   </ToolbarItem>
   : null;
@@ -52,7 +59,6 @@ class MastheadToolbar_ extends React.Component {
     this._onUserDropdownSelect = this._onUserDropdownSelect.bind(this);
     this._onKebabDropdownToggle = this._onKebabDropdownToggle.bind(this);
     this._onKebabDropdownSelect = this._onKebabDropdownSelect.bind(this);
-    this._renderMenuItems = this._renderMenuItems.bind(this);
     this._renderMenu = this._renderMenu.bind(this);
     this._onClusterUpdatesAvailable = this._onClusterUpdatesAvailable.bind(this);
     this._onApplicationLauncherDropdownSelect = this._onApplicationLauncherDropdownSelect.bind(this);
@@ -146,11 +152,6 @@ class MastheadToolbar_ extends React.Component {
     });
   }
 
-  _onClusterManager(e) {
-    e.preventDefault();
-    window.open('https://cloud.redhat.com/openshift', '_blank').opener = null;
-  }
-
   _onAboutModal(e) {
     e.preventDefault();
     this.setState({ showAboutModal: true });
@@ -158,11 +159,6 @@ class MastheadToolbar_ extends React.Component {
 
   _closeAboutModal() {
     this.setState({ showAboutModal: false });
-  }
-
-  _onDocumentation(e) {
-    e.preventDefault();
-    window.open(openshiftHelpBase, '_blank').opener = null;
   }
 
   _onCommandLineTools(e) {
@@ -175,27 +171,6 @@ class MastheadToolbar_ extends React.Component {
     window.open(window.SERVER_FLAGS.requestTokenURL, '_blank').opener = null;
   }
 
-  _getPerspectiveActions() {
-    const perspectives = plugins.registry.getPerspectives();
-    if (perspectives.length <= 1) {
-      return [];
-    }
-    const { setActivePerspective } = this.props;
-    return [
-      { separator: true },
-      ...perspectives
-        .sort((a, b) => a.properties.name.localeCompare(b.properties.name))
-        .map(p => ({
-          label: <React.Fragment>{p.properties.icon}{' '}{p.properties.name}</React.Fragment>,
-          callback: e => {
-            e.preventDefault();
-            setActivePerspective(p.properties.id);
-            history.push('/');
-          },
-        })),
-    ];
-  }
-
   _getAdditionalLinks(links, type) {
     return _.sortBy(_.filter(links, link => link.spec.location === type), 'spec.text');
   }
@@ -204,10 +179,10 @@ class MastheadToolbar_ extends React.Component {
     return [
       {
         label: 'Multi-Cluster Manager',
-        callback: this._onClusterManager,
         externalLink: true,
+        href: 'https://cloud.redhat.com/openshift',
+        image: <img src={openshiftLogoImg} alt="" />,
       },
-      ...this._getPerspectiveActions(),
     ];
   }
 
@@ -215,8 +190,8 @@ class MastheadToolbar_ extends React.Component {
     const helpActions = [];
     helpActions.push({
       label: 'Documentation',
-      callback: this._onDocumentation,
       externalLink: true,
+      href: openshiftHelpBase,
     }, {
       label: 'Command Line Tools',
       callback: this._onCommandLineTools,
@@ -240,13 +215,22 @@ class MastheadToolbar_ extends React.Component {
     });
   }
 
-  _renderMenuItems(actions) {
-    return actions.map((action, i) => action.separator
-      ? <DropdownSeparator key={i} />
-      : <DropdownItem key={i} onClick={action.callback}>
-        {action.label}{action.externalLink && <span className="co-external-link"></span>}
-      </DropdownItem>
-    );
+  _renderApplicationItems(actions) {
+    return _.map(actions, (action, index) => {
+      const externalProps = action.externalLink ? {isExternal: true, target: '_blank', rel: 'noopener noreferrer'} : {};
+      return action.separator ? <ApplicationLauncherSeparator key={`separator_${index}`} /> :
+        (
+          <ApplicationLauncherItem
+            key={action.label}
+            icon={action.image}
+            href={action.href || '#'}
+            onClick={action.callback}
+            {...externalProps}
+          >
+            {action.label}
+          </ApplicationLauncherItem>
+        );
+    });
   }
 
   _renderMenu(mobile) {
@@ -309,13 +293,14 @@ class MastheadToolbar_ extends React.Component {
       }
 
       return (
-        <Dropdown
-          isPlain
-          position="right"
+        <ApplicationLauncher
+          className="co-app-launcher"
           onSelect={this._onKebabDropdownSelect}
-          toggle={<KebabToggle onToggle={this._onKebabDropdownToggle} />}
+          onToggle={this._onKebabDropdownToggle}
           isOpen={isKebabDropdownOpen}
-          dropdownItems={this._renderMenuItems(actions)}
+          items={this._renderApplicationItems(actions)}
+          position="right"
+          toggleIcon={<EllipsisVIcon />}
         />
       );
     }
@@ -324,15 +309,23 @@ class MastheadToolbar_ extends React.Component {
       return <div className="co-username">{username}</div>;
     }
 
+    const userToggle = (
+      <span className="pf-c-dropdown__toggle">
+        <span className="co-username">{username}</span>
+        <CaretDownIcon className="pf-c-dropdown__toggle-icon" />
+      </span>
+    );
+
     return (
-      <Dropdown
+      <ApplicationLauncher
         data-test="user-dropdown"
-        isPlain
-        position="right"
+        className="co-app-launcher"
         onSelect={this._onUserDropdownSelect}
+        onToggle={this._onUserDropdownToggle}
         isOpen={isUserDropdownOpen}
-        toggle={<DropdownToggle className="co-username" onToggle={this._onUserDropdownToggle}>{username}</DropdownToggle>}
-        dropdownItems={this._renderMenuItems(actions)}
+        items={this._renderApplicationItems(actions)}
+        position="right"
+        toggleIcon={userToggle}
       />
     );
   }
@@ -361,32 +354,26 @@ class MastheadToolbar_ extends React.Component {
             }
             {/* desktop -- (application launcher dropdown), help dropdown [documentation, about] */}
             {flags[FLAGS.OPENSHIFT] && <ToolbarItem>
-              <Dropdown
-                isPlain
-                position="right"
+              <ApplicationLauncher
+                className="co-app-launcher"
                 data-test-id="application-launcher"
                 onSelect={this._onApplicationLauncherDropdownSelect}
-                toggle={
-                  <DropdownToggle aria-label="Application Launcher" iconComponent={null} onToggle={this._onApplicationLauncherDropdownToggle}>
-                    <ThIcon />
-                  </DropdownToggle>
-                }
+                onToggle={this._onApplicationLauncherDropdownToggle}
                 isOpen={isApplicationLauncherDropdownOpen}
-                dropdownItems={this._renderMenuItems(this._launchActions())}
+                items={this._renderApplicationItems(this._launchActions())}
+                position="right"
               />
             </ToolbarItem>}
             <ToolbarItem>
-              <Dropdown
-                isPlain
-                position="right"
+              <ApplicationLauncher
+                className="co-app-launcher"
+                data-test="help-dropdown-toggle"
                 onSelect={this._onHelpDropdownSelect}
-                toggle={
-                  <DropdownToggle aria-label="Help" iconComponent={null} onToggle={this._onHelpDropdownToggle} data-test="help-dropdown-toggle">
-                    <QuestionCircleIcon />
-                  </DropdownToggle>
-                }
+                onToggle={this._onHelpDropdownToggle}
                 isOpen={isHelpDropdownOpen}
-                dropdownItems={this._renderMenuItems(this._helpActions(this._getAdditionalActions(this._getAdditionalLinks(consoleLinks, 'HelpMenu'))))}
+                items={this._renderApplicationItems(this._helpActions(this._getAdditionalActions(this._getAdditionalLinks(consoleLinks, 'HelpMenu'))))}
+                position="right"
+                toggleIcon={<QuestionCircleIcon />}
               />
             </ToolbarItem>
           </ToolbarGroup>
@@ -411,8 +398,7 @@ const mastheadToolbarStateToProps = state => ({
 });
 
 export const MastheadToolbar = connect(
-  mastheadToolbarStateToProps,
-  { setActivePerspective: UIActions.setActivePerspective }
+  mastheadToolbarStateToProps
 )(
   connectToFlags(FLAGS.AUTH_ENABLED, FLAGS.OPENSHIFT, FLAGS.CLUSTER_VERSION)(
     MastheadToolbar_
