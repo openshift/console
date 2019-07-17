@@ -97,7 +97,7 @@ const HostsTableRow: React.FC<HostsTableRowProps> = ({
         />
       </TableData>
       <TableData className={tableColumnClasses[1]}>
-        <BaremetalHostStatus host={host} status={status} />
+        <BaremetalHostStatus status={status} />
       </TableData>
       <TableData className={tableColumnClasses[2]}>
         <MachineCell host={host} status={status} />

@@ -140,7 +140,7 @@ const BaremetalHostDetails: React.FC<BaremetalHostDetailsProps> = ({
           <dl>
             <dt>Status</dt>
             <dd>
-              <BaremetalHostStatus host={host} status={status} />
+              <BaremetalHostStatus status={status} />
             </dd>
             <dt>Power Status</dt>
             <dd>
