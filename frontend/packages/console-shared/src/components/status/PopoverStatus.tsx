@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { Popover, PopoverPosition } from '@patternfly/react-core';
-import { Button } from 'patternfly-react';
+import { Button, Popover, PopoverPosition } from '@patternfly/react-core';
 import StatusIconAndText from './StatusIconAndText';
 
 const PopoverStatus: React.FC<React.ComponentProps<typeof StatusIconAndText>> = ({
@@ -11,7 +10,7 @@ const PopoverStatus: React.FC<React.ComponentProps<typeof StatusIconAndText>> = 
   iconOnly,
 }) => (
   <Popover position={PopoverPosition.right} headerContent={title} bodyContent={children}>
-    <Button bsStyle="link">
+    <Button variant="link" isInline>
       <StatusIconAndText icon={icon} title={title} spin={spin} iconOnly={iconOnly} />
     </Button>
   </Popover>
