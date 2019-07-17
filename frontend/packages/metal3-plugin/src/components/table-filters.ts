@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { Filter } from '@console/shared';
+import { Filter } from '@console/shared/src/types';
 import {
   HOST_REGISTERING_STATES,
   HOST_PROVISIONING_STATES,
@@ -37,7 +37,7 @@ const hostStatesToFilterMap = Object.freeze({
   },
 });
 
-const getHostFilterStatus = (bundle: HostRowBundle): string => {
+export const getHostFilterStatus = (bundle: HostRowBundle): string => {
   return _.findKey(hostStatesToFilterMap, ({ states }) => states.includes(bundle.status.status));
 };
 

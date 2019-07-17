@@ -1,5 +1,5 @@
 import { K8sResourceKind, MachineKind, NodeKind } from '@console/internal/module/k8s';
-import { getDeletetionTimestamp } from '@console/shared';
+import { getDeletetionTimestamp } from '@console/shared/src/selectors';
 import {
   getHostOperationalStatus,
   getHostProvisioningState,
