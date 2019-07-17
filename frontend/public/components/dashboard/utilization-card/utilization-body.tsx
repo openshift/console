@@ -21,7 +21,7 @@ const UtilizationAxis: React.FC<UtilizationAxisProps> = ({ timestamps, narrow = 
         orientation="top"
         height={15}
         width={width}
-        padding={{ top: 25, bottom: 0, left: 70, right: narrow ? 45 : 30 }}
+        padding={{ top: 30, bottom: 0, left: 70, right: narrow ? 45 : 30 }}
         style={{
           axis: {visibility: 'hidden'},
         }}
