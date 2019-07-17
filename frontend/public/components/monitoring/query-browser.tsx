@@ -8,6 +8,7 @@ import {
   ChartLine,
   ChartThemeColor,
   ChartThemeVariant,
+  ChartTooltip,
   getCustomTheme,
 } from '@patternfly/react-charts';
 import { Alert, TextInput } from '@patternfly/react-core';
@@ -15,7 +16,7 @@ import { ChartLineIcon } from '@patternfly/react-icons';
 import { connect } from 'react-redux';
 
 // This is not yet available as part of PatternFly
-import { VictorySelectionContainer } from 'victory-selection-container';
+import { createContainer } from 'victory-create-container';
 
 import { Dropdown, humanizeNumber, LoadingInline, usePoll, useRefWidth, useSafeFetch } from '../utils';
 import { formatPrometheusDuration, parsePrometheusDuration, twentyFourHourTime } from '../utils/datetime';
@@ -80,13 +81,52 @@ const SpanControls: React.FC<SpanControlsProps> = React.memo(({defaultSpanText, 
   </React.Fragment>;
 });
 
-const Graph: React.FC<GraphProps> = React.memo(({domain, data, onZoom, span}) => {
+const Tooltip = ({datum = undefined, metadata, x = 0, y = 0}) => {
+  if (!datum) {
+    return null;
+  }
+  const colors = chartTheme.line.colorScale;
+  const i = datum._stack - 1;
+  const {labels, query} = metadata[i];
+  const width = 240;
+
+  // This is actually the max tooltip height, so set it to the available space above the cursor location
+  const height = 180 + y;
+
+  return <foreignObject height={height} width={width} x={x - width/2} y={y - height}>
+    <div className="query-browser__tooltip-wrap">
+      <div className="query-browser__tooltip-arrow"></div>
+      <div className="query-browser__tooltip">
+        <div className="query-browser__tooltip-group">
+          <div className="query-browser__series-btn" style={{backgroundColor: colors[i % colors.length]}}></div>
+          <div className="query-browser__tooltip-time">{twentyFourHourTime(datum.x)}</div>
+        </div>
+        <div className="query-browser__tooltip-group">
+          <div className="co-nowrap co-truncate">{query}</div>
+          <div className="query-browser__tooltip-value">{humanizeNumber(datum.y).string}</div>
+        </div>
+        {_.map(labels, (v, k) => <div key={k}><span className="query-browser__tooltip-label-key">{k}</span> {v}</div>)}
+      </div>
+    </div>
+  </foreignObject>;
+};
+
+const Graph: React.FC<GraphProps> = React.memo(({domain, data, metadata, onZoom, span}) => {
   const [containerRef, width] = useRefWidth();
+
+  const Container = createContainer('selection', 'voronoi');
+  const flyoutComponent = <Tooltip metadata={metadata} />;
+  const labelComponent = <ChartTooltip flyoutComponent={flyoutComponent} />;
+  const containerComponent = <Container
+    labels={_.noop}
+    labelComponent={labelComponent}
+    onSelection={(points, range) => onZoom(range)}
+  />;
 
   return <div className="graph-wrapper">
     <div ref={containerRef} style={{width: '100%'}}>
       <Chart
-        containerComponent={<VictorySelectionContainer onSelection={(points, range) => onZoom(range)} />}
+        containerComponent={containerComponent}
         domain={domain || {x: [Date.now() - span, Date.now()], y: undefined}}
         domainPadding={{y: 20}}
         height={200}
@@ -223,6 +263,11 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
     return error ? <Error error={error} /> : null;
   }
 
+  const metadata = _.flatMap(results, (r, i) => _.map(r, ({metric}) => ({
+    query: queries[i],
+    labels: omitInternalLabels(metric),
+  })));
+
   return <div className={classNames('query-browser__wrapper', {'graph-empty-state': _.isEmpty(graphData)})}>
     <div className="query-browser__controls query-browser__controls--graph">
       <div className="query-browser__controls--left">
@@ -237,7 +282,7 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
     </div>
     {error && <Error error={error} />}
     {(_.isEmpty(graphData) && !updating) && <GraphEmpty icon={ChartLineIcon} />}
-    {!_.isEmpty(graphData) && <Graph data={graphData} domain={domain} onZoom={onZoom} span={span} />}
+    {!_.isEmpty(graphData) && <Graph data={graphData} domain={domain} metadata={metadata} onZoom={onZoom} span={span} />}
   </div>;
 };
 const stateToProps = ({UI}) => ({hideGraphs: !!UI.getIn(['monitoring', 'hideGraphs'])});
@@ -265,6 +310,7 @@ export type PrometheusSeries = {
 type GraphProps = {
   data: GraphDataPoint[][];
   domain: Domain;
+  metadata: {labels: Labels, query: string}[];
   onZoom: (range: Domain) => void;
   span: number;
 };
