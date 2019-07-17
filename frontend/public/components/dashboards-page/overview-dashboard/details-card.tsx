@@ -66,13 +66,13 @@ export const DetailsCard_ = connect(mapStateToProps)(({
     };
   }, [openshiftFlag, watchK8sResource, stopWatchK8sResource, watchURL, stopWatchURL]);
 
-  const clusterVersion = _.get(resources, 'cv');
-  const clusterVersionLoaded = _.get(clusterVersion, 'loaded', false);
-  const openshiftVersion = getOpenShiftVersion(_.get(clusterVersion, 'data') as ClusterVersionKind);
+  const clusterVersionLoaded = _.get(resources.cv, 'loaded', false);
+  const clusterVersionError = _.get(resources.cv, 'loadError');
+  const openshiftVersion = getOpenShiftVersion(_.get(resources.cv, 'data') as ClusterVersionKind);
 
-  const infrastructure = _.get(resources, 'infrastructure');
-  const infrastructureLoaded = _.get(infrastructure, 'loaded', false);
-  const infrastructureData = _.get(infrastructure, 'data') as K8sResourceKind;
+  const infrastructureLoaded = _.get(resources.infrastructure, 'loaded', false);
+  const infrastructureError = _.get(resources.infrastructure, 'loadError');
+  const infrastructureData = _.get(resources.infrastructure, 'data') as K8sResourceKind;
 
 
   const kubernetesVersionResponse = urlResults.getIn(['version', 'result']);
@@ -96,13 +96,13 @@ export const DetailsCard_ = connect(mapStateToProps)(({
                 key="provider"
                 title="Provider"
                 value={getInfrastructurePlatform(infrastructureData)}
-                isLoading={!infrastructureLoaded}
+                isLoading={!infrastructureLoaded && !infrastructureError}
               />
               <DetailItem
                 key="openshift"
                 title="OpenShift version"
                 value={openshiftVersion}
-                isLoading={!clusterVersionLoaded}
+                isLoading={!clusterVersionLoaded && !clusterVersionError}
               />
             </>
           ) : (

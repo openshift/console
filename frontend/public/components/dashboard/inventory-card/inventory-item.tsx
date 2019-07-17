@@ -55,19 +55,25 @@ const getStatusGroupIcons = () => {
   return groupStatusIcons;
 };
 
-export const InventoryItem: React.FC<InventoryItemProps> = ({ isLoading, singularTitle, pluralTitle, count, children }) => {
-  const title = count !== 1 ? pluralTitle : singularTitle;
-  return (
-    <div className="co-inventory-card__item">
-      <div className="co-inventory-card__item-title">{isLoading ? title : `${count} ${title}`}</div>
-      {isLoading ? <LoadingInline /> : (
-        <div className="co-inventory-card__item-status">
-          {children}
-        </div>
-      )}
-    </div>
-  );
-};
+export const InventoryItem: React.FC<InventoryItemProps> = React.memo(
+  ({ isLoading, singularTitle, pluralTitle, count, children, error = false }) => {
+    const title = count !== 1 ? pluralTitle : singularTitle;
+    let status: React.ReactNode;
+    if (error) {
+      status = <div className="text-secondary">Unavailable</div>;
+    } else if (isLoading) {
+      status = <LoadingInline />;
+    } else {
+      status = children;
+    }
+    return (
+      <div className="co-inventory-card__item">
+        <div className="co-inventory-card__item-title">{isLoading || error ? title : `${count} ${title}`}</div>
+        <div className="co-inventory-card__item-status">{status}</div>
+      </div>
+    );
+  }
+);
 
 const Status: React.FC<StatusProps> = React.memo(({ groupID, count, statusIDs, kind, namespace, filterType}) => {
   const statusItems = encodeURIComponent(statusIDs.join(','));
@@ -85,39 +91,43 @@ const Status: React.FC<StatusProps> = React.memo(({ groupID, count, statusIDs, k
   );
 });
 
-export const ResourceInventoryItem: React.FC<ResourceInventoryItemProps> = React.memo(({ kind, useAbbr, resources, additionalResources, isLoading, mapper, namespace }) => {
-  const groups = mapper(resources, additionalResources);
-  const [singularTitle, pluralTitle] = useAbbr ? [kind.abbr, `${kind.abbr}s`] : [kind.label, kind.labelPlural];
-  return (
-    <InventoryItem
-      isLoading={isLoading}
-      singularTitle={singularTitle}
-      pluralTitle={pluralTitle}
-      count={resources.length}
-    >
-      {Object.keys(groups).filter(key => groups[key].count > 0).map(key => (
-        <Status
-          key={key}
-          kind={kind}
-          namespace={namespace}
-          groupID={key}
-          count={groups[key].count}
-          statusIDs={groups[key].statusIDs}
-          filterType={groups[key].filterType}
-        />
-      ))}
-    </InventoryItem>
-  );
-});
+export const ResourceInventoryItem: React.FC<ResourceInventoryItemProps> = React.memo(
+  ({ kind, useAbbr, resources, additionalResources, isLoading, mapper, namespace, error }) => {
+    const groups = mapper(resources, additionalResources);
+    const [singularTitle, pluralTitle] = useAbbr ? [kind.abbr, `${kind.abbr}s`] : [kind.label, kind.labelPlural];
+    return (
+      <InventoryItem
+        isLoading={isLoading}
+        singularTitle={singularTitle}
+        pluralTitle={pluralTitle}
+        count={resources.length}
+        error={error}
+      >
+        {Object.keys(groups).filter(key => groups[key].count > 0).map(key => (
+          <Status
+            key={key}
+            kind={kind}
+            namespace={namespace}
+            groupID={key}
+            count={groups[key].count}
+            statusIDs={groups[key].statusIDs}
+            filterType={groups[key].filterType}
+          />
+        ))}
+      </InventoryItem>
+    );
+  }
+);
 
 export type StatusGroupMapper = (resources: K8sResourceKind[], additionalResources?: {[key: string]: K8sResourceKind[]}) => {[key in InventoryStatusGroup | string]: {filterType?: string, statusIDs: string[], count: number}};
 
 type InventoryItemProps = {
-  isLoading: boolean,
-  singularTitle: string,
-  pluralTitle: string,
-  count: number,
-  children?: React.ReactChild[],
+  isLoading: boolean;
+  singularTitle: string;
+  pluralTitle: string;
+  count: number;
+  children?: React.ReactNode;
+  error: boolean;
 };
 
 type StatusProps = {
@@ -137,4 +147,5 @@ type ResourceInventoryItemProps = {
   useAbbr?: boolean;
   isLoading: boolean;
   namespace?: string;
+  error: boolean;
 }
