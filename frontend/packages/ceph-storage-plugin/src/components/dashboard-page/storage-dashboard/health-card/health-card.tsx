@@ -1,5 +1,4 @@
 import * as React from 'react';
-import * as _ from 'lodash';
 
 import {
   AlertsBody,
@@ -17,36 +16,10 @@ import {
 import { HealthBody } from '@console/internal/components/dashboard/health-card/health-body';
 import { HealthItem } from '@console/internal/components/dashboard/health-card/health-item';
 import { HealthState } from '@console/internal/components/dashboard/health-card/states';
-import { STORAGE_HEALTH_QUERIES } from '../../../constants/queries';
-import { CEPH_HEALTHY, CEPH_DEGRADED, CEPH_ERROR, CEPH_UNKNOWN } from '../../../constants';
-import { filterCephAlerts } from '../../../selectors';
 
-const CephHealthStatus = [
-  {
-    message: CEPH_HEALTHY,
-    state: HealthState.OK,
-  },
-  {
-    message: CEPH_DEGRADED,
-    state: HealthState.WARNING,
-  },
-  {
-    message: CEPH_ERROR,
-    state: HealthState.ERROR,
-  },
-  {
-    message: CEPH_UNKNOWN,
-    state: HealthState.ERROR,
-  },
-];
-
-const getCephHealthState = (ocsResponse): CephHealth => {
-  if (!ocsResponse) {
-    return { state: HealthState.LOADING };
-  }
-  const value = _.get(ocsResponse, 'data.result[0].value[1]');
-  return CephHealthStatus[value] || CephHealthStatus[3];
-};
+import { STORAGE_HEALTH_QUERIES, StorageDashboardQuery } from '../../../../constants/queries';
+import { filterCephAlerts } from '../../../../selectors';
+import { getCephHealthState } from './utils';
 
 const HealthCard: React.FC<DashboardItemProps> = ({
   watchPrometheus,
@@ -58,14 +31,17 @@ const HealthCard: React.FC<DashboardItemProps> = ({
 }) => {
   React.useEffect(() => {
     watchAlerts();
-    watchPrometheus(STORAGE_HEALTH_QUERIES.CEPH_STATUS_QUERY);
+    watchPrometheus(STORAGE_HEALTH_QUERIES[StorageDashboardQuery.CEPH_STATUS_QUERY]);
     return () => {
       stopWatchAlerts();
-      stopWatchPrometheusQuery(STORAGE_HEALTH_QUERIES.CEPH_STATUS_QUERY);
+      stopWatchPrometheusQuery(STORAGE_HEALTH_QUERIES[StorageDashboardQuery.CEPH_STATUS_QUERY]);
     };
   }, [watchPrometheus, stopWatchPrometheusQuery, watchAlerts, stopWatchAlerts]);
 
-  const queryResult = prometheusResults.getIn([STORAGE_HEALTH_QUERIES.CEPH_STATUS_QUERY, 'result']);
+  const queryResult = prometheusResults.getIn([
+    STORAGE_HEALTH_QUERIES[StorageDashboardQuery.CEPH_STATUS_QUERY],
+    'result',
+  ]);
 
   const cephHealthState = getCephHealthState(queryResult);
   const alerts = filterCephAlerts(getAlerts(alertsResults));
@@ -99,8 +75,3 @@ const HealthCard: React.FC<DashboardItemProps> = ({
 };
 
 export default withDashboardResources(HealthCard);
-
-type CephHealth = {
-  state: HealthState;
-  message?: string;
-};
