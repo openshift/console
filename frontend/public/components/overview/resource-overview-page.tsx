@@ -45,6 +45,6 @@ export const ResourceOverviewPage = connectToModel(({kindObj, item}) => {
   return <AsyncComponent loader={loader} kindObj={kindObj} item={item} />;
 });
 
-type OverviewDetailsResourcesTabProps = {
+export type OverviewDetailsResourcesTabProps = {
   item: OverviewItem;
 };

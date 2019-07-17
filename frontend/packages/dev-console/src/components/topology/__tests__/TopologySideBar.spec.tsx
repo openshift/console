@@ -8,6 +8,7 @@ describe('TopologySideBar:', () => {
     show: true,
     item: {
       resources: [{ kind: 'DeploymentConfig' }, { kind: 'Route' }, { kind: 'Service' }],
+      data: {},
     } as any,
     onClose: () => '',
   };

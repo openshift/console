@@ -1,6 +1,18 @@
-import { k8sCreate, K8sResourceKind } from '@console/internal/module/k8s';
-import { ServiceModel } from '@console/knative-plugin';
-import { ServerlessScaling } from '../components/import/import-types';
+import { k8sCreate, K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
+import { FirehoseResource } from '@console/internal/components/utils';
+import {
+  ServiceModel,
+  RevisionModel,
+  ConfigurationModel,
+  RouteModel,
+} from '@console/knative-plugin';
+
+interface ServerlessScaling {
+  minpods: number;
+  maxpods: number | '';
+  concurrencytarget: number | '';
+  concurrencylimit: number | '';
+}
 
 export const createKnativeService = (
   name: string,
@@ -46,4 +58,34 @@ export const createKnativeService = (
   };
 
   return k8sCreate(ServiceModel, knativeDeployResource);
+};
+
+export const knativeServingResources = (namespace: string): FirehoseResource[] => {
+  const knativeResource = [
+    {
+      isList: true,
+      kind: referenceForModel(RevisionModel),
+      namespace,
+      prop: 'revisions',
+    },
+    {
+      isList: true,
+      kind: referenceForModel(ConfigurationModel),
+      namespace,
+      prop: 'configurations',
+    },
+    {
+      isList: true,
+      kind: referenceForModel(RouteModel),
+      namespace,
+      prop: 'ksroutes',
+    },
+    {
+      isList: true,
+      kind: referenceForModel(ServiceModel),
+      namespace,
+      prop: 'ksservices',
+    },
+  ];
+  return knativeResource;
 };

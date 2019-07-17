@@ -1,10 +1,24 @@
 import * as _ from 'lodash';
-import { Plugin, ResourceNSNavItem, ModelFeatureFlag, ModelDefinition } from '@console/plugin-sdk';
+import {
+  Plugin,
+  ResourceNSNavItem,
+  ModelFeatureFlag,
+  ModelDefinition,
+  OverviewResourceTab,
+  OverviewCRD,
+} from '@console/plugin-sdk';
 import { referenceForModel } from '@console/internal/module/k8s';
 import * as models from './models';
 import { FLAG_KNATIVE_SERVING } from './const';
+import { knativeServingResources } from './utils/create-knative-utils';
+import { getKnativeServingResources } from './utils/get-knative-resources';
 
-type ConsumedExtensions = ResourceNSNavItem | ModelFeatureFlag | ModelDefinition;
+type ConsumedExtensions =
+  | ResourceNSNavItem
+  | ModelFeatureFlag
+  | ModelDefinition
+  | OverviewResourceTab
+  | OverviewCRD;
 
 const plugin: Plugin<ConsumedExtensions> = [
   {
@@ -51,6 +65,25 @@ const plugin: Plugin<ConsumedExtensions> = [
         resource: referenceForModel(models.ConfigurationModel),
         required: FLAG_KNATIVE_SERVING,
       },
+    },
+  },
+  {
+    type: 'Overview/Resource',
+    properties: {
+      name: 'Resources',
+      key: 'configurations',
+      loader: () =>
+        import(
+          './components/overview/OverviewDetailsKnativeResourcesTab' /* webpackChunkName: "knative-overview" */
+        ).then((m) => m.default),
+    },
+  },
+  {
+    type: 'Overview/CRD',
+    properties: {
+      resources: knativeServingResources,
+      required: FLAG_KNATIVE_SERVING,
+      utils: getKnativeServingResources,
     },
   },
 ];
