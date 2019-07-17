@@ -20,6 +20,7 @@ import {
   ResourceSummary,
   SectionHeading,
 } from './utils';
+import { ResourceEventStream } from './events';
 
 
 export const machineConfigReference = referenceForModel(MachineConfigModel);
@@ -46,6 +47,7 @@ const MachineConfigDetails: React.SFC<MachineConfigDetailsProps> = ({obj}) => (
 const pages = [
   navFactory.details(MachineConfigDetails),
   navFactory.editYaml(),
+  navFactory.events(ResourceEventStream),
 ];
 
 export const MachineConfigDetailsPage: React.SFC<any> = props => {
