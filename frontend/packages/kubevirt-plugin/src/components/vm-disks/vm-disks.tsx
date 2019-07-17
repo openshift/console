@@ -7,7 +7,7 @@ import { Table } from '@console/internal/components/factory';
 import { PersistentVolumeClaimModel } from '@console/internal/models';
 import { Firehose, FirehoseResult, Kebab } from '@console/internal/components/utils';
 import { getResource } from 'kubevirt-web-ui-components';
-import { getNamespace, getName } from '@console/shared';
+import { getNamespace, getName, createBasicLookup, createLookup } from '@console/shared';
 import { useSafetyFirst } from '@console/internal/components/safety-first';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { sortable } from '@patternfly/react-table';
@@ -22,7 +22,6 @@ import {
   getVolumePersistentVolumeClaimName,
   getVolumes,
 } from '../../selectors/vm';
-import { createBasicLookup, createLookup } from '../../utils';
 import { DiskRow } from './disk-row';
 import { StorageBundle, StorageType, VMDiskRowProps } from './types';
 import { CreateDiskRowFirehose } from './create-disk-row';

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Button } from 'patternfly-react';
-import { AddCircleOIcon, SyncAltIcon, UnknownIcon } from '@patternfly/react-icons';
+import { AddCircleOIcon, SyncAltIcon, UnknownIcon, MaintenanceIcon } from '@patternfly/react-icons';
 
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import {
@@ -9,13 +9,14 @@ import {
   RedExclamationCircleIcon,
 } from '@console/internal/components/utils/status-icon';
 import { RequireCreatePermission } from '@console/internal/components/utils';
-import { getHostStatus } from '../utils/host-status';
+import { HostMultiStatus } from '../utils/host-status';
 
 import {
   HOST_STATUS_DISCOVERED,
   HOST_PROGRESS_STATES,
   HOST_ERROR_STATES,
   HOST_SUCCESS_STATES,
+  HOST_STATUS_UNDER_MAINTENANCE,
 } from '../constants';
 import { BaremetalHostModel } from '../models';
 
@@ -38,26 +39,26 @@ export const AddDiscoveredHostButton: React.FC<{ host: K8sResourceKind }> = (
 };
 
 type BaremetalHostStatusProps = {
-  host: K8sResourceKind;
-  machine?: K8sResourceKind;
-  node?: K8sResourceKind;
+  host?: K8sResourceKind;
+  status: HostMultiStatus;
 };
 
-const BaremetalHostStatus = ({ host }: BaremetalHostStatusProps) => {
-  const hostStatus = getHostStatus(host);
-  const { status, title } = hostStatus;
+const BaremetalHostStatus = ({ host, status: { status, title } }: BaremetalHostStatusProps) => {
+  const statusTitle = title || status;
 
   switch (true) {
     case status === HOST_STATUS_DISCOVERED:
       return <AddDiscoveredHostButton host={host} />;
+    case status === HOST_STATUS_UNDER_MAINTENANCE:
+      return <StatusIconAndText status={statusTitle} icon={<MaintenanceIcon />} />;
     case HOST_PROGRESS_STATES.includes(status):
-      return <StatusIconAndText status={title} icon={<SyncAltIcon />} />;
+      return <StatusIconAndText status={statusTitle} icon={<SyncAltIcon />} />;
     case HOST_SUCCESS_STATES.includes(status):
-      return <StatusIconAndText status={title} icon={<GreenCheckCircleIcon />} />;
+      return <StatusIconAndText status={statusTitle} icon={<GreenCheckCircleIcon />} />;
     case HOST_ERROR_STATES.includes(status):
-      return <StatusIconAndText status={title} icon={<RedExclamationCircleIcon />} />;
+      return <StatusIconAndText status={statusTitle} icon={<RedExclamationCircleIcon />} />;
     default:
-      return <StatusIconAndText status={title} icon={<UnknownIcon />} />;
+      return <StatusIconAndText status={statusTitle} icon={<UnknownIcon />} />;
   }
 };
 

@@ -1,5 +1,5 @@
 import { validateDNS1123SubdomainValue, VALIDATION_ERROR_TYPE } from 'kubevirt-web-ui-components';
-import { EntityMap } from '../../../types';
+import { EntityMap } from '@console/shared';
 
 export const validateNicName = (name: string, interfaceLookup: EntityMap<any>) => {
   let validation = validateDNS1123SubdomainValue(name);

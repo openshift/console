@@ -1,4 +1,5 @@
-import { EntityMap, VMKind, VMLikeEntityKind } from '../../types';
+import { EntityMap } from '@console/shared';
+import { VMKind, VMLikeEntityKind } from '../../types';
 
 export enum NetworkRowType {
   NETWORK_TYPE_VM = 'network-type-vm',

@@ -11,7 +11,7 @@ import {
   // VM_SIMPLE_STATUS_TO_TEXT,
   //  DASHES,
 } from 'kubevirt-web-ui-components';
-import { getName, getNamespace, getUID } from '@console/shared';
+import { getName, getNamespace, getUID, createLookup, K8sEntityMap } from '@console/shared';
 
 import { NamespaceModel, PodModel } from '@console/internal/models';
 import { Table, MultiListPage, TableRow, TableData } from '@console/internal/components/factory';
@@ -24,12 +24,12 @@ import {
   VirtualMachineModel,
 } from '../../models';
 
-import { K8sEntityMap, VMIKind, VMKind } from '../../types';
+import { VMIKind, VMKind } from '../../types';
 import { menuActions } from './menu-actions';
-import { createLookup, getLookupId } from '../../utils';
 import { getMigrationVMIName, isMigrating } from '../../selectors/vmi-migration';
 import { vmStatusFilter } from './table-filters';
 import { dimensifyHeader, dimensifyRow } from '../../utils/table';
+import { getBasicID } from '../../utils';
 
 import { openCreateVmWizard } from '../modals';
 
@@ -77,10 +77,10 @@ const VMRow: React.FC<VMRowProps> = ({
   const namespace = getNamespace(vm);
   const uid = getUID(vm);
   const vmStatus = getVmStatus(vm, pods, migrations);
-  const lookupId = getLookupId(vm);
+  const lookupID = getBasicID(vm);
 
-  const migration = migrationLookup[lookupId];
-  const vmi = vmiLookup[lookupId];
+  const migration = migrationLookup[lookupID];
+  const vmi = vmiLookup[lookupID];
 
   return (
     <TableRow id={uid} index={index} trKey={key} style={style}>
@@ -121,7 +121,7 @@ const VMList: React.FC<React.ComponentProps<typeof Table> & VMListProps> = (prop
       customData={{
         pods: resources.pods.data || [],
         migrations: resources.migrations.data || [],
-        vmiLookup: createLookup(resources.vmis),
+        vmiLookup: createLookup(resources.vmis, getBasicID),
         migrationLookup: createLookup(
           resources.migrations,
           (m) => isMigrating(m) && `${getNamespace(m)}-${getMigrationVMIName(m)}`,

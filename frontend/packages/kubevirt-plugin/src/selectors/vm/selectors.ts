@@ -1,10 +1,10 @@
 import * as _ from 'lodash';
+import { createBasicLookup } from '@console/shared';
 import { getDiskBus } from './disk';
 import { BUS_VIRTIO, NetworkType } from '../../constants/vm';
 import { VMKind } from '../../types';
 import { getNicBus } from './nic';
 import { Network } from './types';
-import { createBasicLookup } from '../../utils';
 
 export const getDisks = (vm: VMKind) => _.get(vm, 'spec.template.spec.domain.devices.disks', []);
 export const getInterfaces = (vm: VMKind) =>

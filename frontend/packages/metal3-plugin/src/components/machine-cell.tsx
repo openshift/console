@@ -12,13 +12,14 @@ import {
 import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
 
 import { getHostMachineName } from '../selectors';
-import { canHostAddMachine } from '../utils/host-status';
+import { canHostAddMachine, HostMultiStatus } from '../utils/host-status';
 
 interface MachineCellProps {
   host: K8sResourceKind;
+  status: HostMultiStatus;
 }
 
-const MachineCell: React.FC<MachineCellProps> = ({ host }) => {
+const MachineCell: React.FC<MachineCellProps> = ({ host, status }) => {
   const machineName = getHostMachineName(host);
 
   const {
@@ -35,7 +36,7 @@ const MachineCell: React.FC<MachineCellProps> = ({ host }) => {
       />
     );
   }
-  if (canHostAddMachine(host)) {
+  if (canHostAddMachine(status.status)) {
     const ns = namespace || 'default';
     const href = `/k8s/ns/${ns}/${referenceForModel(MachineModel)}/~new`;
     return (
