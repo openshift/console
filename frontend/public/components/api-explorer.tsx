@@ -22,7 +22,7 @@ import {
   referenceForModel,
   ResourceAccessReviewRequest,
 } from '../module/k8s';
-import { connectToFlags } from '../reducers/features';
+import { connectToFlags, FlagsObject } from '../reducers/features';
 import { RootState } from '../redux';
 import { CheckBox, CheckBoxControls } from './row-filter';
 import { DefaultPage } from './default-resource';
@@ -626,7 +626,7 @@ const APIResourcePage_ = ({
   match: any;
   kindObj: K8sKind;
   kindsInFlight: boolean;
-  flags: { [key: string]: boolean };
+  flags: FlagsObject;
 }) => {
   if (!kindObj) {
     return kindsInFlight ? (

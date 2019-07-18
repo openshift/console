@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { FlagsObject } from '@console/internal/reducers/features';
 import { Extension } from './extension';
 
 namespace ExtensionProperties {
@@ -24,8 +25,8 @@ export interface Perspective extends Extension<ExtensionProperties.Perspective> 
   type: 'Perspective';
 }
 
-export const isPerspective = (e: Extension<any>): e is Perspective => {
+export const isPerspective = (e: Extension): e is Perspective => {
   return e.type === 'Perspective';
 };
 
-export type GetLandingPage = (flags: { [key: string]: boolean }) => string;
+export type GetLandingPage = (flags: FlagsObject) => string;

@@ -22,6 +22,6 @@ export interface GlobalConfig extends Extension<ExtensionProperties.GlobalConfig
   type: 'GlobalConfig';
 }
 
-export function isGlobalConfig(e: Extension<any>): e is GlobalConfig {
+export function isGlobalConfig(e: Extension): e is GlobalConfig {
   return e.type === 'GlobalConfig';
 }

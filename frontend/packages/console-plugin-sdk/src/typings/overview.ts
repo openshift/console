@@ -37,7 +37,7 @@ export interface OverviewCRD extends Extension<ExtensionProperties.OverviewCRD> 
   type: 'Overview/CRD';
 }
 
-export const isOverviewCRD = (e: Extension<any>): e is OverviewCRD => {
+export const isOverviewCRD = (e: Extension): e is OverviewCRD => {
   return e.type === 'Overview/CRD';
 };
 
@@ -45,6 +45,6 @@ export interface OverviewResourceTab extends Extension<ExtensionProperties.Overv
   type: 'Overview/Resource';
 }
 
-export const isOverviewResourceTab = (e: Extension<any>): e is OverviewResourceTab => {
+export const isOverviewResourceTab = (e: Extension): e is OverviewResourceTab => {
   return e.type === 'Overview/Resource';
 };

@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { Redirect, Route, Switch, withRouter } from 'react-router-dom';
 
 import { FLAGS } from '../const';
-import { connectToFlags, flagPending } from '../reducers/features';
+import { connectToFlags, flagPending, FlagsObject } from '../reducers/features';
 import { GlobalNotifications } from './global-notifications';
 import { NamespaceBar } from './namespace';
 import { SearchPage } from './search';
@@ -47,7 +47,7 @@ _.each(namespacedPrefixes, (p) => {
 
 type DefaultPageProps = {
   activePerspective: string;
-  flags: { [key: string]: boolean };
+  flags: FlagsObject;
 };
 
 // The default page component lets us connect to flags without connecting the entire App.

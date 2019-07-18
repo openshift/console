@@ -61,14 +61,14 @@ export interface RoutePage extends Extension<ExtensionProperties.RoutePage> {
 
 export type ResourcePage = ResourceListPage | ResourceDetailsPage;
 
-export const isResourceListPage = (e: Extension<any>): e is ResourceListPage => {
+export const isResourceListPage = (e: Extension): e is ResourceListPage => {
   return e.type === 'Page/Resource/List';
 };
 
-export const isResourceDetailsPage = (e: Extension<any>): e is ResourceDetailsPage => {
+export const isResourceDetailsPage = (e: Extension): e is ResourceDetailsPage => {
   return e.type === 'Page/Resource/Details';
 };
 
-export const isRoutePage = (e: Extension<any>): e is RoutePage => {
+export const isRoutePage = (e: Extension): e is RoutePage => {
   return e.type === 'Page/Route';
 };

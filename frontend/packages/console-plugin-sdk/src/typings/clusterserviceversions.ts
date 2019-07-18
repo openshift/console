@@ -19,6 +19,5 @@ export interface ClusterServiceVersionAction
   type: 'ClusterServiceVersion/Action';
 }
 
-export const isClusterServiceVersionAction = (
-  e: Extension<any>,
-): e is ClusterServiceVersionAction => e.type === 'ClusterServiceVersion/Action';
+export const isClusterServiceVersionAction = (e: Extension): e is ClusterServiceVersionAction =>
+  e.type === 'ClusterServiceVersion/Action';

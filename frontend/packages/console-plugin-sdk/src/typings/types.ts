@@ -1,1 +1,1 @@
-export type LazyLoader<T extends {}> = () => Promise<React.ComponentType<Partial<T>>>;
+export type LazyLoader<T extends {} = {}> = () => Promise<React.ComponentType<Partial<T>>>;
