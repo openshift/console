@@ -1,6 +1,5 @@
 import * as _ from 'lodash';
 import {
-  BuildConfigModel,
   DeploymentConfigModel,
   ImageStreamModel,
   ServiceModel,
@@ -33,7 +32,7 @@ export const createImageStream = (
     isi: { name: isiName, tag },
     labels: userLabels,
   } = formData;
-  const defaultLabels = getAppLabels(name, application, isiName);
+  const defaultLabels = getAppLabels(name, application);
   const imageStream = {
     apiVersion: 'image.openshift.io/v1',
     kind: 'ImageStream',
@@ -63,56 +62,6 @@ export const createImageStream = (
   return k8sCreate(ImageStreamModel, imageStream, dryRun ? dryRunOpt : {});
 };
 
-export const createBuildConfig = (
-  formData: DeployImageFormData,
-  dryRun: boolean,
-): Promise<K8sResourceKind> => {
-  const {
-    project: { name: namespace },
-    application: { name: application },
-    name,
-    isi: { name: isiName, tag },
-    build: { env, triggers },
-    labels: userLabels,
-  } = formData;
-
-  const defaultLabels = getAppLabels(name, application, isiName);
-  const buildConfig = {
-    apiVersion: 'build.openshift.io/v1',
-    kind: 'BuildConfig',
-    metadata: {
-      name,
-      namespace,
-      labels: { ...defaultLabels, ...userLabels },
-    },
-    spec: {
-      output: {
-        to: {
-          kind: 'ImageStreamTag',
-          name: `${name}:latest`,
-        },
-      },
-      strategy: {
-        type: 'Source',
-        sourceStrategy: {
-          env,
-          from: {
-            kind: 'ImageStreamTag',
-            name: `${isiName}:${tag}`,
-            namespace,
-          },
-        },
-      },
-      triggers: [
-        ...(triggers.image ? [{ type: 'ImageChange', imageChange: {} }] : []),
-        ...(triggers.config ? [{ type: 'ConfigChange' }] : []),
-      ],
-    },
-  };
-
-  return k8sCreate(BuildConfigModel, buildConfig, dryRun ? dryRunOpt : {});
-};
-
 export const createDeploymentConfig = (
   formData: DeployImageFormData,
   dryRun: boolean,
@@ -122,12 +71,12 @@ export const createDeploymentConfig = (
     application: { name: application },
     name,
     searchTerm,
-    isi: { name: isiName, tag, ports },
+    isi: { tag, ports },
     deployment: { env, replicas, triggers },
     labels: userLabels,
   } = formData;
 
-  const defaultLabels = getAppLabels(name, application, isiName);
+  const defaultLabels = getAppLabels(name, application);
   const labels = _.isEmpty(userLabels) ? { app: application } : SelectorInput.objectify(userLabels);
 
   const deploymentConfig = {
@@ -188,11 +137,11 @@ export const createService = (
     project: { name: namespace },
     application: { name: application },
     name,
-    isi: { name: isiName, ports },
+    isi: { ports },
     labels: userLabels,
   } = formData;
 
-  const defaultLabels = getAppLabels(name, application, isiName);
+  const defaultLabels = getAppLabels(name, application);
   const podLabels = getPodLabels(name);
   const service = {
     kind: 'Service',
@@ -226,12 +175,12 @@ export const createRoute = (
     project: { name: namespace },
     application: { name: application },
     name,
-    isi: { name: isiName, ports },
+    isi: { ports },
     labels: userLabels,
   } = formData;
 
   const firstPort = _.head(ports);
-  const defaultLabels = getAppLabels(name, application, isiName);
+  const defaultLabels = getAppLabels(name, application);
   const route = {
     kind: 'Route',
     apiVersion: 'route.openshift.io/v1',
@@ -276,7 +225,6 @@ export const createResources = (
   if (!formData.serverless.trigger) {
     requests.push(createDeploymentConfig(formData, dryRun));
     requests.push(createImageStream(formData, dryRun));
-    requests.push(createBuildConfig(formData, dryRun));
 
     if (!_.isEmpty(ports)) {
       requests.push(createService(formData, dryRun));
