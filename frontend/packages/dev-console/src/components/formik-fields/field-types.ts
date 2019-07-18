@@ -1,7 +1,7 @@
 export interface InputFieldProps {
-  type?: string;
   name: string;
-  label: string;
+  type?: string;
+  label?: string;
   helpText?: string;
   required?: boolean;
   placeholder?: string;
@@ -15,7 +15,7 @@ export interface SearchInputFieldProps extends InputFieldProps {
 
 export interface DropdownFieldProps extends InputFieldProps {
   items?: object;
-  selectedKey: string;
+  selectedKey?: string;
   title?: React.ReactNode;
   fullWidth?: boolean;
 }

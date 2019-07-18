@@ -15,7 +15,9 @@ const NumberSpinnerField: React.FC<InputFieldProps> = ({ label, helpText, ...pro
       controlId={`${props.name}-field`}
       validationState={getValidationState(error, touched)}
     >
-      <ControlLabel className={cx({ 'co-required': props.required })}>{label}</ControlLabel>
+      {label && (
+        <ControlLabel className={cx({ 'co-required': props.required })}>{label}</ControlLabel>
+      )}
       <NumberSpinner
         id={`${props.name}-field`}
         {...field}
