@@ -1,12 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-import {
-  CancelAcceptButtons,
-  Dropdown,
-  getResource,
-  Text,
-  VALIDATION_INFO_TYPE,
-} from 'kubevirt-web-ui-components';
+import { CancelAcceptButtons, Dropdown, getResource, Text } from 'kubevirt-web-ui-components';
 import { connect } from 'react-redux';
 import { TableData, TableRow } from '@console/internal/components/factory';
 import { Firehose, FirehoseResult, LoadingInline } from '@console/internal/components/utils';
@@ -21,6 +15,7 @@ import { VMKind, VMLikeEntityKind } from '../../types';
 import { getNetworkChoices } from '../../selectors/vm';
 import { dimensifyRow } from '../../utils/table';
 import { NetworkType } from '../../constants/vm';
+import { ValidationErrorType } from '../../utils/validations/common';
 import { validateNicName } from '../../utils/validations/vm';
 import { getDefaultNetworkBinding, getNetworkBindings, nicTableColumnClasses } from './utils';
 import { VMNicRowProps } from './types';
@@ -110,14 +105,12 @@ export const CreateNicRow: React.FC<CreateNicRowProps> = ({
         <FormGroup
           className="kubevirt-vm-create-device-row__cell--no_bottom"
           validationState={
-            nameError && !nameError.isEmptyError && nameError.type !== VALIDATION_INFO_TYPE
-              ? nameError.type
-              : null
+            nameError && nameError.type === ValidationErrorType.Error ? nameError.type : null
           }
         >
           <Text id="nic-name" disabled={creating} onChange={setName} value={name} />
           <HelpBlock className="kubevirt-vm-create-device-row__cell--help">
-            {nameError && !nameError.isEmptyError && nameError.message}
+            {nameError && nameError.type === ValidationErrorType.Error && nameError.message}
           </HelpBlock>
         </FormGroup>
       </TableData>

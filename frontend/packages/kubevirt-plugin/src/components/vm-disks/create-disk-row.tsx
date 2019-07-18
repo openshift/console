@@ -4,7 +4,6 @@ import {
   Integer,
   Dropdown,
   CancelAcceptButtons,
-  VALIDATION_INFO_TYPE,
   getResource,
 } from 'kubevirt-web-ui-components';
 import { TableData, TableRow } from '@console/internal/components/factory';
@@ -18,6 +17,7 @@ import { getVmPreferableDiskBus } from '../../selectors/vm';
 import { getVMLikeModel } from '../../selectors/selectors';
 import { getAddDiskPatches } from '../../k8s/patches/vm/vm-disk-patches';
 import { VMLikeEntityKind } from '../../types';
+import { ValidationErrorType } from '../../utils/validations/common';
 import { validateDiskName } from '../../utils/validations/vm';
 import { VMDiskRowProps } from './types';
 
@@ -90,14 +90,12 @@ export const CreateDiskRow: React.FC<CreateDiskRowProps> = ({
         <FormGroup
           className="kubevirt-vm-create-device-row__cell--no_bottom"
           validationState={
-            nameError && !nameError.isEmptyError && nameError.type !== VALIDATION_INFO_TYPE
-              ? nameError.type
-              : null
+            nameError && nameError.type === ValidationErrorType.Error ? nameError.type : null
           }
         >
           <Text id="disk-name" disabled={creating} onChange={setName} value={name} />
           <HelpBlock className="kubevirt-vm-create-device-row__cell--help">
-            {nameError && !nameError.isEmptyError && nameError.message}
+            {nameError && nameError.type === ValidationErrorType.Error && nameError.message}
           </HelpBlock>
         </FormGroup>
       </TableData>

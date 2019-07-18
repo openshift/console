@@ -23,7 +23,7 @@ import {
 import { VMIKind, VMKind } from '../../types';
 import { getMigrationVMIName, isMigrating } from '../../selectors/vmi-migration';
 import { dimensifyHeader, dimensifyRow } from '../../utils/table';
-import { getBasicID } from '../../utils';
+import { getBasicID, getLoadedData } from '../../utils';
 import { openCreateVmWizard } from '../modals';
 import { vmStatusFilter } from './table-filters';
 import { menuActions } from './menu-actions';
@@ -114,8 +114,8 @@ const VMList: React.FC<React.ComponentProps<typeof Table> & VMListProps> = (prop
       Header={VMHeader}
       Row={VMRow}
       customData={{
-        pods: resources.pods.data || [],
-        migrations: resources.migrations.data || [],
+        pods: getLoadedData(resources.pods, []),
+        migrations: getLoadedData(resources.migrations, []),
         vmiLookup: createLookup(resources.vmis, getBasicID),
         migrationLookup: createLookup(
           resources.migrations,
@@ -151,8 +151,7 @@ export const VirtualMachinesPage: React.FC<VirtualMachinesPageProps> = (props) =
     }),
   ];
 
-  const flatten = ({ vms: { data: vmsData, loaded, loadError } }) =>
-    loaded && !loadError ? vmsData : [];
+  const flatten = ({ vms }) => getLoadedData(vms, []);
 
   return (
     <MultiListPage
