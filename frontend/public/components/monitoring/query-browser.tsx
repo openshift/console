@@ -33,13 +33,7 @@ import { queryBrowserTheme } from '../graphs/themes';
 
 const spans = ['5m', '15m', '30m', '1h', '2h', '6h', '12h', '1d', '2d', '1w', '2w'];
 const dropdownItems = _.zipObject(spans, spans);
-const theme = getCustomTheme(ChartThemeColor.multi, ChartThemeVariant.light, queryBrowserTheme);
-
-// Plotly default colors
-// TODO: Remove this once PatternFly's default colors are finalized
-export const graphColors = [
-  '#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf',
-];
+export const chartTheme = getCustomTheme(ChartThemeColor.multi, ChartThemeVariant.light, queryBrowserTheme);
 
 // Takes a Prometheus labels object and removes the internal labels (those beginning with "__")
 export const omitInternalLabels = (labels: Labels): Labels => _.omitBy(labels, (v, k) => _.startsWith(k, '__'));
@@ -100,12 +94,12 @@ const Graph: React.FC<GraphProps> = React.memo(({domain, data, onZoom, span}) =>
         domainPadding={{y: 20}}
         height={200}
         width={width}
-        theme={theme}
+        theme={chartTheme}
         scale={{x: 'time', y: 'linear'}}
       >
         <ChartAxis tickCount={5} tickFormat={twentyFourHourTime} />
         <ChartAxis dependentAxis tickCount={5} tickFormat={value => humanizeNumber(value).string} />
-        <ChartGroup colorScale={graphColors}>
+        <ChartGroup>
           {_.map(data, (values, i) => <ChartLine key={i} data={values} />)}
         </ChartGroup>
       </Chart>

@@ -33,7 +33,7 @@ import { getPrometheusExpressionBrowserURL } from '../graphs/prometheus-graph';
 import { ActionsMenu, Dropdown, ExternalLink, getURLSearchParams, Kebab, LoadingInline, useSafeFetch } from '../utils';
 import { withFallback } from '../utils/error-boundary';
 import { setAllQueryArguments } from '../utils/router';
-import { graphColors, Labels, omitInternalLabels, PrometheusSeries, QueryBrowser } from './query-browser';
+import { chartTheme, Labels, omitInternalLabels, PrometheusSeries, QueryBrowser } from './query-browser';
 
 const aggregationOperators = [
   'avg',
@@ -161,11 +161,13 @@ const ExpandButton = ({isExpanded, onClick}) => {
 
 const SeriesButton = ({colorIndex, isDisabled, onClick}) => {
   const title = `${isDisabled ? 'Show' : 'Hide'} series`;
+  const colors = chartTheme.line.colorScale;
+
   return <button
     aria-label={title}
     className={classNames('query-browser__series-btn', {'query-browser__series-btn--disabled': isDisabled})}
     onClick={onClick}
-    style={isDisabled ? undefined : {backgroundColor: graphColors[colorIndex % graphColors.length]}}
+    style={isDisabled ? undefined : {backgroundColor: colors[colorIndex % colors.length]}}
     title={title}
     type="button"
   ></button>;
