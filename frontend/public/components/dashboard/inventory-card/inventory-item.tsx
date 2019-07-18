@@ -71,7 +71,7 @@ export const Status: React.FC<StatusProps> = React.memo(({ groupID, count }) => 
   );
 });
 
-const StatusLink: React.FC<StatusLinkProps> = React.memo(({ groupID, count, statusIDs, kind, namespace, filterType}) => {
+const StatusLink: React.FC<StatusLinkProps> = React.memo(({groupID, count, statusIDs, kind, namespace, filterType}) => {
   const statusItems = encodeURIComponent(statusIDs.join(','));
   const namespacePath = namespace ? `ns/${namespace}` : 'all-namespaces';
   const to = filterType && statusItems.length > 0 ? `/k8s/${namespacePath}/${kind.plural}?rowFilter-${filterType}=${statusItems}` : `/k8s/${namespacePath}/${kind.plural}`;
