@@ -20,6 +20,7 @@ import {
   DashboardsInventoryItemGroup,
   DashboardsOverviewQuery,
   DashboardsOverviewUtilizationItem,
+  DashboardsOverviewTopConsumerItem,
 } from '@console/plugin-sdk';
 
 // TODO(vojtech): internal code needed by plugins should be moved to console-shared package
@@ -28,6 +29,7 @@ import { FLAGS } from '@console/internal/const';
 import { GridPosition } from '@console/internal/components/dashboard/grid';
 import { humanizeBinaryBytesWithoutB } from '@console/internal/components/utils/units';
 import { OverviewQuery } from '@console/internal/components/dashboards-page/overview-dashboard/queries';
+import { MetricType } from '@console/internal/components/dashboard/top-consumers-card/metric-type';
 
 import { FooBarModel } from './models';
 import { yamlTemplates } from './yaml-templates';
@@ -53,7 +55,8 @@ type ConsumedExtensions =
   | DashboardsOverviewInventoryItem
   | DashboardsInventoryItemGroup
   | DashboardsOverviewQuery
-  | DashboardsOverviewUtilizationItem;
+  | DashboardsOverviewUtilizationItem
+  | DashboardsOverviewTopConsumerItem;
 
 const plugin: Plugin<ConsumedExtensions> = [
   {
@@ -240,6 +243,19 @@ const plugin: Plugin<ConsumedExtensions> = [
       title: 'Foo',
       query: 'barQuery',
       humanizeValue: humanizeBinaryBytesWithoutB,
+    },
+  },
+  {
+    type: 'Dashboards/Overview/TopConsumers/Item',
+    properties: {
+      name: 'Prometheus',
+      metric: 'pod_name',
+      queries: {
+        [MetricType.CPU]:
+          'sort(topk(5, pod_name:container_cpu_usage:sum{pod_name=~"prometheus-.*"}))',
+      },
+      mutator: (data) =>
+        data.map((datum) => ({ ...datum, x: (datum.x as string).replace('prometheus-', '') })),
     },
   },
 ];

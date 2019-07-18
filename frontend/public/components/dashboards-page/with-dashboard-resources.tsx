@@ -43,6 +43,7 @@ export const withDashboardResources = <P extends DashboardItemProps>(WrappedComp
     class WithDashboardResources extends React.Component<WithDashboardResourcesProps, WithDashboardResourcesState> {
       private urls: Array<string> = [];
       private queries: Array<string> = [];
+      private watchingAlerts: boolean = false;
 
       constructor(props) {
         super(props);
@@ -61,7 +62,7 @@ export const withDashboardResources = <P extends DashboardItemProps>(WrappedComp
         const alertsResultChanged = this.props[RESULTS_TYPE.ALERTS].getIn([ALERTS_KEY, 'result']) !== nextProps[RESULTS_TYPE.PROMETHEUS].getIn([ALERTS_KEY, 'result']);
         const k8sResourcesChanged = this.state.k8sResources !== nextState.k8sResources;
 
-        return urlResultChanged || queryResultChanged || alertsResultChanged || k8sResourcesChanged;
+        return urlResultChanged || queryResultChanged || k8sResourcesChanged || (this.watchingAlerts && alertsResultChanged);
       }
 
       watchURL: WatchURL = (url, fetch) => {
@@ -75,7 +76,13 @@ export const withDashboardResources = <P extends DashboardItemProps>(WrappedComp
       };
 
       watchAlerts: WatchAlerts = () => {
+        this.watchingAlerts = true;
         this.props.watchAlerts();
+      };
+
+      stopWatchAlerts: StopWatchAlerts = () => {
+        this.watchingAlerts = false;
+        this.props.stopWatchAlerts();
       };
 
       watchK8sResource: WatchK8sResource = resource => {
@@ -99,7 +106,7 @@ export const withDashboardResources = <P extends DashboardItemProps>(WrappedComp
               watchPrometheus={this.watchPrometheus}
               stopWatchPrometheusQuery={this.props.stopWatchPrometheusQuery}
               watchAlerts={this.watchAlerts}
-              stopWatchAlerts={this.props.stopWatchAlerts}
+              stopWatchAlerts={this.stopWatchAlerts}
               urlResults={this.props[RESULTS_TYPE.URL]}
               prometheusResults={this.props[RESULTS_TYPE.PROMETHEUS]}
               alertsResults={this.props[RESULTS_TYPE.ALERTS]}
