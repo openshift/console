@@ -1,19 +1,15 @@
 import * as React from 'react';
 import { getResource } from 'kubevirt-web-ui-components';
-
 import { navFactory } from '@console/internal/components/utils';
-
 import { ResourceEventStream } from '@console/internal/components/events';
 import { DetailsPage } from '@console/internal/components/factory';
 import { K8sResourceKindReference } from '@console/internal/module/k8s';
-
 import { PodModel } from '@console/internal/models';
-import { VMDetailsFirehose } from './vm-details';
 import { VMDisksFirehose } from '../vm-disks';
 import { VMNics } from '../vm-nics';
-import { VMConsoleFirehose } from './vm-console';
-
 import { VirtualMachineInstanceMigrationModel, VirtualMachineInstanceModel } from '../../models';
+import { VMConsoleFirehose } from './vm-console';
+import { VMDetailsFirehose } from './vm-details';
 import { menuActionsCreator } from './menu-actions';
 
 // import { VmEvents } from './vm-events';

@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { AddressBookIcon } from '@patternfly/react-icons';
-
 import { StatusGroupMapper } from '@console/internal/components/dashboard/inventory-card/inventory-item';
 
 export const getRouteStatusGroups: StatusGroupMapper = (resources) => ({

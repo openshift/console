@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-
 import { Timestamp, units } from '@console/internal/components/utils';
 import { Alert } from '@patternfly/react-core';
 import { useFormikContext, FormikValues } from 'formik';

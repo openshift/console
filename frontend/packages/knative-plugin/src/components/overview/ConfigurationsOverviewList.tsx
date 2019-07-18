@@ -1,7 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { ListGroup } from 'patternfly-react';
-
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { ResourceLink } from '@console/internal/components/utils';
 import { ConfigurationModel } from '@console/knative-plugin';

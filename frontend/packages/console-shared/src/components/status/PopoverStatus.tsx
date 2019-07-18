@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Popover, PopoverPosition } from '@patternfly/react-core';
 import { Button } from 'patternfly-react';
-
 import StatusIconAndText from './StatusIconAndText';
 
 const PopoverStatus: React.FC<React.ComponentProps<typeof StatusIconAndText>> = ({

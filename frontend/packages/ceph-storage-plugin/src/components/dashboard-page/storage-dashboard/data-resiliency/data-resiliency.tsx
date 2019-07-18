@@ -1,9 +1,6 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { Progress } from '@patternfly/react-core';
-
-import './data-resiliency.scss';
-
 import { GreenCheckCircleIcon, RedExclamationCircleIcon } from '@console/shared';
 import { DashboardCard } from '@console/internal/components/dashboard/dashboard-card/card';
 import { DashboardCardBody } from '@console/internal/components/dashboard/dashboard-card/card-body';
@@ -13,8 +10,9 @@ import {
   withDashboardResources,
   DashboardItemProps,
 } from '@console/internal/components/dashboards-page/with-dashboard-resources';
-
 import { DATA_RESILIENCY_QUERIES } from '../../../../constants/queries';
+
+import './data-resiliency.scss';
 
 const getCapacityStats = (response) => {
   return _.get(response, 'data.result[0].value[1]');

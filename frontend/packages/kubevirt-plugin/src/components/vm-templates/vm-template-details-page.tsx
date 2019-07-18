@@ -1,14 +1,12 @@
 import * as React from 'react';
-
 import { navFactory } from '@console/internal/components/utils';
 import { DetailsPage } from '@console/internal/components/factory';
 import { K8sResourceKindReference } from '@console/internal/module/k8s';
 import { TemplateModel } from '@console/internal/models';
-
 import { VMDisksFirehose } from '../vm-disks';
-import { VMTemplateDetailsConnected } from './vm-template-details';
 import { VMNics } from '../vm-nics';
 import { VM_TEMPLATE_LABEL_PLURAL } from '../../constants/vm-templates';
+import { VMTemplateDetailsConnected } from './vm-template-details';
 
 export const VMTemplateDetailsPage: React.FC<VMTemplateDetailsPageProps> = (props) => {
   const nicsPage = {

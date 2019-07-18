@@ -1,13 +1,11 @@
 import * as React from 'react';
-
 import { asAccessReview, KebabOption } from '@console/internal/components/utils';
 import { k8sKill, K8sKind, K8sResourceKind } from '@console/internal/module/k8s';
 import { getMachineNodeName, getName } from '@console/shared';
 import { confirmModal } from '@console/internal/components/modals';
-
 import { findNodeMaintenance, getHostMachine, getNodeMaintenanceReason } from '../selectors';
-import { startNodeMaintenanceModal } from './modals/start-node-maintenance-modal';
 import { NodeMaintenanceModel } from '../models';
+import { startNodeMaintenanceModal } from './modals/start-node-maintenance-modal';
 
 type ActionArgs = {
   nodeName?: string;

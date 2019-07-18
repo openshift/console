@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { OutlinedCheckSquareIcon, OutlinedSquareIcon } from '@patternfly/react-icons';
 import { sortable } from '@patternfly/react-table';
-
 import { Table, TableRow, TableData } from '@console/internal/components/factory';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { getHostNICs } from '../selectors';

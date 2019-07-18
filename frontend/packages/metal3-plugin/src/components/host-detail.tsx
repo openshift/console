@@ -1,10 +1,8 @@
 import * as React from 'react';
 import * as _ from 'lodash';
 import { connect } from 'react-redux';
-
 import { Row, Col } from 'patternfly-react';
 import { OffIcon, OnRunningIcon } from '@patternfly/react-icons';
-
 import {
   referenceForModel,
   K8sResourceKind,
@@ -30,10 +28,8 @@ import {
   StatusIconAndText,
 } from '@console/shared';
 import { ResourceEventStream } from '@console/internal/components/events';
-
 import { BaremetalHostModel, NodeMaintenanceModel } from '../models';
 import { canHostAddMachine, getHostStatus } from '../utils/host-status';
-import MachineCell from './machine-cell';
 import {
   getHostNICs,
   getHostDescription,
@@ -47,6 +43,7 @@ import {
   getHostMachine,
   findNodeMaintenance,
 } from '../selectors';
+import MachineCell from './machine-cell';
 import BaremetalHostStatus from './host-status';
 import BaremetalHostNICList from './host-nics';
 import BaremetalHostDiskList from './host-disks';

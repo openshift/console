@@ -1,12 +1,10 @@
 import { K8sResourceKind, MachineKind, NodeKind } from '@console/internal/module/k8s';
-
 import { getDeletetionTimestamp } from '@console/shared';
 import {
   getHostOperationalStatus,
   getHostProvisioningState,
   getHostErrorMessage,
 } from '../selectors';
-
 import {
   HOST_STATUS_TITLES,
   HOST_STATUS_UNDER_MAINTENANCE,

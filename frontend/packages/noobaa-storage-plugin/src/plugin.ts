@@ -1,5 +1,4 @@
 import * as _ from 'lodash';
-
 import {
   DashboardsCard,
   DashboardsTab,
@@ -8,7 +7,6 @@ import {
   Plugin,
 } from '@console/plugin-sdk';
 import { GridPosition } from '@console/internal/components/dashboard/grid';
-
 import * as models from './models';
 
 type ConsumedExtensions = ModelFeatureFlag | ModelDefinition | DashboardsTab | DashboardsCard;

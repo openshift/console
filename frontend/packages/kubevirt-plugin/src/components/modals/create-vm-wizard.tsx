@@ -1,5 +1,4 @@
 import * as _ from 'lodash';
-
 import {
   CreateVmWizard,
   getResource,
@@ -7,7 +6,6 @@ import {
   TEMPLATE_TYPE_VM,
   TEMPLATE_TYPE_BASE,
 } from 'kubevirt-web-ui-components';
-
 import {
   NamespaceModel,
   TemplateModel,

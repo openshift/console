@@ -8,10 +8,10 @@ import { StatusBox } from '@console/internal/components/utils';
 import { RootState } from '@console/internal/redux';
 import { FLAG_KNATIVE_SERVING } from '@console/knative-plugin/src/const';
 import EmptyState from '../EmptyState';
-import TopologyDataController, { RenderProps } from './TopologyDataController';
-import Topology from './Topology';
 import NamespacedPage from '../NamespacedPage';
 import DefaultPage from '../DefaultPage';
+import TopologyDataController, { RenderProps } from './TopologyDataController';
+import Topology from './Topology';
 
 interface StateProps {
   activeApplication: string;

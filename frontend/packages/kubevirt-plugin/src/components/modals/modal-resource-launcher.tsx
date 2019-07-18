@@ -2,7 +2,6 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { Provider } from 'react-redux';
 import { Router } from 'react-router-dom';
-
 import store from '@console/internal/redux';
 import {
   Firehose,

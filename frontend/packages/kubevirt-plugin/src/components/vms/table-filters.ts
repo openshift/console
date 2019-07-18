@@ -1,5 +1,4 @@
 import * as _ from 'lodash';
-
 import {
   getSimpleVmStatus,
   VM_SIMPLE_STATUS_ALL,

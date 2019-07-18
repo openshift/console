@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { Firehose } from '@console/internal/components/utils';
 import { Table } from '@console/internal/components/factory';
+import { getResources, PropPipelineData, Resource } from '../../utils/pipeline-augment';
+import { PipelineModel } from '../../models';
 import PipelineHeader from './PipelineHeader';
 import PipelineRow from './PipelineRow';
 import PipelineAugmentRuns from './PipelineAugmentRuns';
-import { getResources, PropPipelineData, Resource } from '../../utils/pipeline-augment';
-import { PipelineModel } from '../../models';
 
 export interface PipelineListProps {
   data?: PropPipelineData[];

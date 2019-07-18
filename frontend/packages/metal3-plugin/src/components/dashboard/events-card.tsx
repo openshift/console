@@ -17,7 +17,6 @@ import {
 } from '@console/internal/module/k8s';
 import { DashboardItemProps } from '@console/internal/components/dashboards-page/with-dashboard-resources';
 import { getName, getNamespace, getMachineNodeName } from '@console/shared';
-
 import { getHostMachineName } from '../../selectors';
 import { BaremetalHostModel } from '../../models';
 

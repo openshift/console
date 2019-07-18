@@ -1,5 +1,4 @@
 import * as React from 'react';
-
 import {
   getDescription,
   getOperatingSystemName,
@@ -15,12 +14,10 @@ import {
   isVmOff,
   getBootableDevicesInOrder,
 } from 'kubevirt-web-ui-components';
-
 import { ResourceSummary, NodeLink, ResourceLink } from '@console/internal/components/utils';
 import { PodKind } from '@console/internal/module/k8s';
 import { getName, getNamespace, DASH } from '@console/shared';
 import { PodModel } from '@console/internal/models';
-
 import { VMKind, VMIKind } from '../../types';
 import { VMTemplateLink } from '../vm-templates/vm-template-link';
 

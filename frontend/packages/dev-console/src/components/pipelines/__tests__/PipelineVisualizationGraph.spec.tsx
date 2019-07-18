@@ -3,8 +3,8 @@ import { shallow, ShallowWrapper } from 'enzyme';
 import * as Renderer from 'react-test-renderer';
 import { PipelineVisualizationGraph } from '../PipelineVisualizationGraph';
 import { PipelineVisualizationProps } from '../PipelineVisualization';
-import { mockPipelineGraph } from './pipeline-visualization-test-data';
 import { getPipelineTasks } from '../../../utils/pipeline-utils';
+import { mockPipelineGraph } from './pipeline-visualization-test-data';
 import { mockPipeline } from './pipeline-mock';
 import { mockPipelineRun } from './pipelinerun-mock';
 

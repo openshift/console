@@ -1,5 +1,4 @@
 import * as readPkg from 'read-pkg';
-
 import {
   Package,
   PluginPackage,

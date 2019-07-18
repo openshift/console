@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { SectionHeading, ResourceSummary, ResourceLink } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
-import { PipelineVisualization } from './PipelineVisualization';
 import { TaskModel } from '../../models';
+import { PipelineVisualization } from './PipelineVisualization';
 
 const PipelineDetails = ({ obj: pipeline }) => (
   <div className="co-m-pane__body">

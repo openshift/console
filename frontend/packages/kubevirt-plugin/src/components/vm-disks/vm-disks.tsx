@@ -2,7 +2,6 @@ import * as _ from 'lodash';
 import * as React from 'react';
 import { Button } from 'patternfly-react';
 import { Alert, AlertActionCloseButton } from '@patternfly/react-core';
-
 import { Table } from '@console/internal/components/factory';
 import { PersistentVolumeClaimModel } from '@console/internal/models';
 import { Firehose, FirehoseResult, Kebab } from '@console/internal/components/utils';
@@ -12,7 +11,6 @@ import { useSafetyFirst } from '@console/internal/components/safety-first';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { sortable } from '@patternfly/react-table';
 import { DataVolumeModel } from '../../models';
-
 import { VMLikeEntityKind } from '../../types';
 import { asVm } from '../../selectors/selectors';
 import {
@@ -22,15 +20,15 @@ import {
   getVolumePersistentVolumeClaimName,
   getVolumes,
 } from '../../selectors/vm';
-import { DiskRow } from './disk-row';
-import { StorageBundle, StorageType, VMDiskRowProps } from './types';
-import { CreateDiskRowFirehose } from './create-disk-row';
 import { getPvcStorageClassName, getPvcStorageSize } from '../../selectors/pvc/selectors';
 import {
   getDataVolumeStorageClassName,
   getDataVolumeStorageSize,
 } from '../../selectors/dv/selectors';
 import { VMLikeEntityTabProps } from '../vms/types';
+import { DiskRow } from './disk-row';
+import { StorageBundle, StorageType, VMDiskRowProps } from './types';
+import { CreateDiskRowFirehose } from './create-disk-row';
 
 export const VMDiskRow: React.FC<VMDiskRowProps> = (props) => {
   switch (props.obj.storageType) {

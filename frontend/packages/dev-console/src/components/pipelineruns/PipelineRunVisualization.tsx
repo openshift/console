@@ -2,7 +2,6 @@ import * as React from 'react';
 import { K8sResourceKind, k8sGet } from '@console/internal/module/k8s';
 import { PipelineVisualizationGraph } from '../pipelines/PipelineVisualizationGraph';
 import { getPipelineTasks } from '../../utils/pipeline-utils';
-
 import { PipelineModel } from '../../models';
 
 export interface PipelineRunVisualizationProps {

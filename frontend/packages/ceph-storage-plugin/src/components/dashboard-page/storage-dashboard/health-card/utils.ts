@@ -1,6 +1,5 @@
 import * as _ from 'lodash';
 import { HealthState } from '@console/internal/components/dashboard/health-card/states';
-
 import { CEPH_HEALTHY, CEPH_DEGRADED, CEPH_ERROR, CEPH_UNKNOWN } from '../../../../constants';
 
 const CephHealthStatus = [

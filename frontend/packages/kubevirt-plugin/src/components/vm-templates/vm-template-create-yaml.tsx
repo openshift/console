@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { safeLoad } from 'js-yaml';
-
 import { TemplateModel } from '@console/internal/models';
 import { connectToPlural } from '@console/internal/kinds';
 import { CreateYAMLProps } from '@console/internal/components/create-yaml';
@@ -11,7 +10,6 @@ import {
 } from '@console/internal/components/utils';
 import { ErrorPage404 } from '@console/internal/components/error';
 import { getNamespace, getName } from '@console/shared';
-
 import { VMTemplateYAMLTemplates } from '../../models/templates';
 import { VM_TEMPLATE_CREATE_HEADER } from '../../constants/vm-templates';
 import { K8sResourceKind } from '../../../../../public/module/k8s/index';

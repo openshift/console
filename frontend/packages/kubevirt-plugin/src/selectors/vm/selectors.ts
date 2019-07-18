@@ -1,8 +1,8 @@
 import * as _ from 'lodash';
 import { createBasicLookup } from '@console/shared';
-import { getDiskBus } from './disk';
 import { BUS_VIRTIO, NetworkType } from '../../constants/vm';
 import { VMKind } from '../../types';
+import { getDiskBus } from './disk';
 import { getNicBus } from './nic';
 import { Network } from './types';
 

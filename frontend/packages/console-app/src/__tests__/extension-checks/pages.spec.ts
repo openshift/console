@@ -1,5 +1,4 @@
 import * as _ from 'lodash';
-
 import { referenceForModel } from '@console/internal/module/k8s';
 import { baseListPages, baseDetailsPages } from '@console/internal/components/resource-pages';
 import { testedRegistry, getDuplicates } from '../plugin-test-utils';

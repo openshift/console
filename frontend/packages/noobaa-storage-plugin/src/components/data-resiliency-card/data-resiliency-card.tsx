@@ -2,7 +2,6 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import { Icon } from 'patternfly-react';
 import { pluralize, Progress } from '@patternfly/react-core';
-
 import {
   DashboardCard,
   DashboardCardBody,
@@ -14,7 +13,6 @@ import {
   DashboardItemProps,
   withDashboardResources,
 } from '@console/internal/components/dashboards-page/with-dashboard-resources';
-
 import { DATA_RESILIENCE_QUERIES } from '../../queries';
 import { getPropsData } from '../../utils';
 import './data-resiliency-card.scss';

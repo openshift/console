@@ -2,21 +2,19 @@ import * as React from 'react';
 import { Button } from 'patternfly-react';
 import { Alert, AlertActionCloseButton } from '@patternfly/react-core';
 import * as _ from 'lodash';
-
 import { Table } from '@console/internal/components/factory';
 import { useSafetyFirst } from '@console/internal/components/safety-first';
-
 import { sortable } from '@patternfly/react-table';
 import { createBasicLookup } from '@console/shared';
 import { VMLikeEntityKind } from '../../types';
 import { asVm } from '../../selectors/selectors';
 import { getInterfaces, getNetworks, getVmPreferableNicBus } from '../../selectors/vm';
+import { dimensifyHeader } from '../../utils/table';
+import { VMLikeEntityTabProps } from '../vms/types';
 import { NicRow } from './nic-row';
 import { NetworkBundle, NetworkRowType, VMNicRowProps } from './types';
 import { CreateNicRowConnected } from './create-nic-row';
-import { dimensifyHeader } from '../../utils/table';
 import { getInterfaceBinding, getNetworkName, nicTableColumnClasses } from './utils';
-import { VMLikeEntityTabProps } from '../vms/types';
 
 export const VMNicRow: React.FC<VMNicRowProps> = (props) => {
   switch (props.obj.networkType) {

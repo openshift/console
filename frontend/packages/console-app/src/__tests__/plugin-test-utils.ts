@@ -1,5 +1,4 @@
 import * as _ from 'lodash';
-
 import { ExtensionRegistry } from '@console/plugin-sdk';
 import { resolvePluginPackages, loadActivePlugins } from '@console/plugin-sdk/src/codegen';
 

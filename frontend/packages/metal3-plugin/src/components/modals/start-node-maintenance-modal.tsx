@@ -1,7 +1,5 @@
 import * as React from 'react';
-
 import { FormControl } from 'patternfly-react';
-
 import { withHandlePromise } from '@console/internal/components/utils';
 import {
   createModalLauncher,
@@ -9,7 +7,6 @@ import {
   ModalBody,
   ModalSubmitFooter,
 } from '@console/internal/components/factory';
-
 import { startNodeMaintenance } from '../../k8s/requests/node-maintenance';
 
 const StartNodeMaintenanceModal = withHandlePromise((props: NodeMaintenanceModalProps) => {

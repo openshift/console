@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { TopologyView } from '@patternfly/react-topology';
-
 import { nodeProvider, edgeProvider, groupProvider } from './shape-providers';
 import Graph from './Graph';
 import { GraphApi, TopologyDataModel } from './topology-types';

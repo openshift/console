@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { PenIcon, ExternalLinkAltIcon } from '@patternfly/react-icons';
+import { NodeProps, WorkloadData } from '../topology-types';
 import Decorator from './Decorator';
 import BaseNode from './BaseNode';
 import PodStatus from './PodStatus';
-import { NodeProps, WorkloadData } from '../topology-types';
 import KnativeIcon from './KnativeIcon';
 
 const WorkloadNode: React.FC<NodeProps<WorkloadData>> = ({

@@ -3,12 +3,12 @@ import { DetailsPage, DetailsPageProps } from '@console/internal/components/fact
 import { Kebab, navFactory } from '@console/internal/components/utils';
 import { viewYamlComponent } from '@console/internal/components//utils/horizontal-nav';
 import { k8sGet, k8sList } from '@console/internal/module/k8s';
-import PipelinEnvironmentComponent from './PipelineEnvironment';
-import PipelineDetails from './PipelineDetails';
-import PipelineRuns from './PipelineRuns';
 import { triggerPipeline, rerunPipeline } from '../../utils/pipeline-actions';
 import { getLatestRun } from '../../utils/pipeline-augment';
 import { PipelineRunModel, PipelineModel } from '../../models';
+import PipelinEnvironmentComponent from './PipelineEnvironment';
+import PipelineDetails from './PipelineDetails';
+import PipelineRuns from './PipelineRuns';
 
 interface PipelineDetailsPageStates {
   menuActions: Function[];

@@ -1,6 +1,6 @@
 import * as React from 'react';
-import SvgDropShadowFilter from './SvgDropShadowFilter';
 import { createSvgIdUrl } from '../../utils/svg-utils';
+import SvgDropShadowFilter from './SvgDropShadowFilter';
 
 export interface State {
   bb?: { width: number; height: number };

@@ -6,7 +6,6 @@ import {
   ModelFeatureFlag,
   ModelDefinition,
 } from '@console/plugin-sdk';
-
 import { BaremetalHostModel } from './models';
 
 type ConsumedExtensions =
