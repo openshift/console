@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { ArrowCircleUpIcon, CaretDownIcon, EllipsisVIcon, QuestionCircleIcon } from '@patternfly/react-icons';
 import {
   ApplicationLauncher,
+  ApplicationLauncherGroup,
   ApplicationLauncherItem,
   ApplicationLauncherSeparator,
   Button,
@@ -20,6 +21,13 @@ import { openshiftHelpBase } from './utils/documentation';
 import { AboutModal } from './about-modal';
 import { getAvailableClusterUpdates, clusterVersionReference } from '../module/k8s/cluster-settings';
 import * as openshiftLogoImg from '../imgs/logos/openshift.svg';
+
+const multiClusterManager = {
+  label: 'OpenShift Cluster Manager',
+  externalLink: true,
+  href: 'https://cloud.redhat.com/openshift',
+  image: <img src={openshiftLogoImg} alt="" />,
+};
 
 const SystemStatusButton = ({statuspageData, className}) => !_.isEmpty(_.get(statuspageData, 'incidents'))
   ? <ToolbarItem className={className}>
@@ -175,35 +183,98 @@ class MastheadToolbar_ extends React.Component {
     return _.sortBy(_.filter(links, link => link.spec.location === type), 'spec.text');
   }
 
-  _launchActions() {
-    return [
-      {
-        label: 'Multi-Cluster Manager',
-        externalLink: true,
-        href: 'https://cloud.redhat.com/openshift',
-        image: <img src={openshiftLogoImg} alt="" />,
-      },
-    ];
+  _getSectionLauncherItems(launcherItems, sectionName) {
+    return _.sortBy(
+      _.filter(launcherItems, link => _.get(link, 'spec.applicationMenu.section', '') === sectionName),
+      'spec.text'
+    );
   }
+
+  _sectionSort(section) {
+    switch (section.name) {
+      case 'Red Hat Applications':
+        return 0;
+      case 'Third Party Applications':
+        return 1;
+      case 'Customer Applications':
+        return 2;
+      case '':
+        return 9; // Items w/o sections go last
+      default:
+        return 3; // Custom groups come after well-known groups
+    }
+  }
+
+  _launchActions = () => {
+    const { consoleLinks } = this.props;
+    const launcherItems = this._getAdditionalLinks(consoleLinks, 'ApplicationMenu');
+
+    const redHatApplications = {
+      name: 'Red Hat Applications',
+      isSection: true,
+      actions: [multiClusterManager],
+    };
+
+    const sections = _.reduce(launcherItems, (accumulator, item) => {
+      const sectionName = _.get(item, 'spec.applicationMenu.section', '');
+      if (!_.find(accumulator, {name: sectionName})) {
+        accumulator.push({name: sectionName, isSection: true, actions: []});
+      }
+      return accumulator;
+    }, [redHatApplications]);
+
+    _.sortBy(sections, [this._sectionSort, 'name']);
+
+    _.each(sections, section => {
+      const sectionItems = this._getSectionLauncherItems(launcherItems, section.name);
+      _.each(sectionItems, item => {
+        section.actions.push(
+          {
+            label: _.get(item, 'spec.text'),
+            externalLink: true,
+            href: _.get(item, 'spec.href'),
+            image: <img src={_.get(item, 'spec.applicationMenu.imageURL')} alt="" />,
+          }
+        );
+      });
+    });
+
+    return sections;
+  };
 
   _helpActions(additionalHelpActions) {
     const helpActions = [];
-    helpActions.push({
-      label: 'Documentation',
-      externalLink: true,
-      href: openshiftHelpBase,
-    }, {
-      label: 'Command Line Tools',
-      callback: this._onCommandLineTools,
-    }, {
-      label: 'About',
-      callback: this._onAboutModal,
-    }, ...additionalHelpActions);
+    helpActions.push(
+      {
+        name: '',
+        isSection: true,
+        actions: [
+          {
+            label: 'Documentation',
+            externalLink: true,
+            href: openshiftHelpBase,
+          },
+          {
+            label: 'Command Line Tools',
+            callback: this._onCommandLineTools,
+          },
+          {
+            label: 'About',
+            callback: this._onAboutModal,
+          },
+        ],
+      }
+    );
+
+    if (!_.isEmpty(additionalHelpActions.actions)) {
+      helpActions.push(additionalHelpActions);
+    }
+
     return helpActions;
   }
 
   _getAdditionalActions(links) {
-    return _.map(links, link => {
+    const actions = _.map(links, link => {
       return {
         callback: (e) => {
           e.preventDefault();
@@ -213,23 +284,58 @@ class MastheadToolbar_ extends React.Component {
         externalLink: true,
       };
     });
+
+    return {
+      name: '',
+      isSection: true,
+      actions,
+    };
   }
+
+  _externalProps = action => action.externalLink ? {isExternal: true, target: '_blank', rel: 'noopener noreferrer'} : {};
 
   _renderApplicationItems(actions) {
     return _.map(actions, (action, index) => {
-      const externalProps = action.externalLink ? {isExternal: true, target: '_blank', rel: 'noopener noreferrer'} : {};
-      return action.separator ? <ApplicationLauncherSeparator key={`separator_${index}`} /> :
-        (
-          <ApplicationLauncherItem
-            key={action.label}
-            icon={action.image}
-            href={action.href || '#'}
-            onClick={action.callback}
-            {...externalProps}
-          >
-            {action.label}
-          </ApplicationLauncherItem>
+
+      if (action.isSection) {
+        return (
+          <ApplicationLauncherGroup key={`group_${index}`} label={action.name}>
+            <React.Fragment>
+              {_.map(action.actions, sectionAction => {
+                return (
+                  <ApplicationLauncherItem
+                    key={sectionAction.label}
+                    icon={sectionAction.image}
+                    href={sectionAction.href || '#'}
+                    onClick={sectionAction.callback}
+                    {...this._externalProps(sectionAction)}
+                  >
+                    {sectionAction.label}
+                  </ApplicationLauncherItem>
+                );
+              })}
+              {index < actions.length - 1 && <ApplicationLauncherSeparator key={`separator-${index}`} />}
+            </React.Fragment>
+          </ApplicationLauncherGroup>
         );
+      }
+
+      return (
+        <ApplicationLauncherGroup key={`group_${index}`}>
+          <React.Fragment>
+            <ApplicationLauncherItem
+              key={action.label}
+              icon={action.image}
+              href={action.href || '#'}
+              onClick={action.callback}
+              {...this._externalProps(action)}
+            >
+              {action.label}
+            </ApplicationLauncherItem>
+            {index < actions.length - 1 && <ApplicationLauncherSeparator key={`separator-${index}`} />}
+          </React.Fragment>
+        </ApplicationLauncherGroup>
+      );
     });
   }
 
@@ -246,6 +352,8 @@ class MastheadToolbar_ extends React.Component {
 
     const actions = [];
     if (flags[FLAGS.AUTH_ENABLED]) {
+      const userActions = [];
+
       const logout = e => {
         e.preventDefault();
         if (flags[FLAGS.OPENSHIFT]) {
@@ -255,41 +363,35 @@ class MastheadToolbar_ extends React.Component {
         }
       };
 
-      if (mobile || !_.isEmpty(additionalUserActions)) {
-        actions.push({
-          separator: true,
-        });
-      }
-
       if (window.SERVER_FLAGS.requestTokenURL) {
-        actions.push({
+        userActions.push({
           label: 'Copy Login Command',
           callback: this._copyLoginCommand,
           externalLink: true,
         });
       }
 
-      actions.push({
+      userActions.push({
         label: 'Log out',
         callback: logout,
       });
+
+      actions.push({
+        name: '',
+        isSection: true,
+        actions: userActions,
+      });
     }
 
-    if (!_.isEmpty(additionalUserActions)) {
-      actions.unshift(...additionalUserActions);
-
-      if (mobile) {
-        actions.unshift({
-          separator: true,
-        });
-      }
+    if (!_.isEmpty(additionalUserActions.actions)) {
+      actions.unshift(additionalUserActions);
     }
 
     if (mobile) {
       actions.unshift(...helpActions);
 
       if (flags[FLAGS.OPENSHIFT]) {
-        actions.unshift(...launchActions, {separator: true});
+        actions.unshift(...launchActions);
       }
 
       return (
@@ -301,6 +403,7 @@ class MastheadToolbar_ extends React.Component {
           items={this._renderApplicationItems(actions)}
           position="right"
           toggleIcon={<EllipsisVIcon />}
+          isGrouped
         />
       );
     }
@@ -326,6 +429,7 @@ class MastheadToolbar_ extends React.Component {
         items={this._renderApplicationItems(actions)}
         position="right"
         toggleIcon={userToggle}
+        isGrouped
       />
     );
   }
@@ -362,6 +466,7 @@ class MastheadToolbar_ extends React.Component {
                 isOpen={isApplicationLauncherDropdownOpen}
                 items={this._renderApplicationItems(this._launchActions())}
                 position="right"
+                isGrouped
               />
             </ToolbarItem>}
             <ToolbarItem>
@@ -374,6 +479,7 @@ class MastheadToolbar_ extends React.Component {
                 items={this._renderApplicationItems(this._helpActions(this._getAdditionalActions(this._getAdditionalLinks(consoleLinks, 'HelpMenu'))))}
                 position="right"
                 toggleIcon={<QuestionCircleIcon />}
+                isGrouped
               />
             </ToolbarItem>
           </ToolbarGroup>
