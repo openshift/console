@@ -367,7 +367,6 @@ export const QueryBrowserPage = withFallback(() => {
   const [focusedQuery, setFocusedQuery] = React.useState();
   const [metrics, setMetrics] = React.useState();
   const [queries, setQueries] = React.useState(getParamsQueries());
-  const [restoreSelection, setRestoreSelection] = React.useState();
 
   const updateURLParams = () => {
     const newParams = {};
@@ -425,8 +424,8 @@ export const QueryBrowserPage = withFallback(() => {
       updateQuery(index, {text});
       target.focus();
 
-      // Restore the cursor position / currently selected text
-      setRestoreSelection([selection.start, selection.start + metric.length]);
+      // Restore the cursor position / currently selected text (use _.defer() to delay until after the input value is set)
+      _.defer(() => target.setSelectionRange(selection.start, selection.start + metric.length));
     } else {
       // No focused query, so add the metric to the end of the first query input
       updateQuery(0, {text: _.get(queries, [0, 'text']) + metric});
@@ -437,12 +436,6 @@ export const QueryBrowserPage = withFallback(() => {
     text: 'sum(sort_desc(sum_over_time(ALERTS{alertstate="firing"}[24h]))) by (alertname)',
     enabled: true,
   });
-
-  React.useEffect(() => {
-    if (focusedQuery && restoreSelection) {
-      focusedQuery.target.setSelectionRange(...restoreSelection);
-    }
-  }, [focusedQuery, restoreSelection]);
 
   let colorOffset = 0;
 
