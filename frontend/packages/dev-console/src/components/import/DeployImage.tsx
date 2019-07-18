@@ -68,6 +68,7 @@ const DeployImage: React.FC<DeployImageProps> = ({ namespace }) => {
         image: true,
         config: true,
       },
+      strategy: 'Source',
     },
     deployment: {
       env: [],

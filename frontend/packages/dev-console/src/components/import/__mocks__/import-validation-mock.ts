@@ -46,6 +46,7 @@ export const mockFormData: GitImportFormData = {
       image: true,
       config: true,
     },
+    strategy: 'Source',
   },
   deployment: {
     env: [],

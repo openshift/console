@@ -3,17 +3,13 @@ import * as _ from 'lodash';
 import { Form, Button } from 'patternfly-react';
 import { FormikProps, FormikValues } from 'formik';
 import { ButtonBar } from '@console/internal/components/utils';
-import { NormalizedBuilderImages } from '../../utils/imagestream-utils';
+import { GitImportFormProps } from './import-types';
 import GitSection from './git/GitSection';
 import BuilderSection from './builder/BuilderSection';
 import AppSection from './app/AppSection';
 import AdvancedSection from './advanced/AdvancedSection';
 import ServerlessSection from './serverless/ServerlessSection';
 import RouteCheckbox from './route/RouteCheckbox';
-
-export interface GitImportFormProps {
-  builderImages?: NormalizedBuilderImages;
-}
 
 const GitImportForm: React.FC<FormikProps<FormikValues> & GitImportFormProps> = ({
   values,

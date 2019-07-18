@@ -16,7 +16,7 @@ const dryRunOpt = { queryParams: { dryRun: 'All' } };
 
 export const createImageStream = (
   formData: GitImportFormData,
-  { metadata: { name: imageStreamName } }: K8sResourceKind,
+  imageStreamData: K8sResourceKind,
   dryRun: boolean,
 ): Promise<K8sResourceKind> => {
   const {
@@ -25,6 +25,7 @@ export const createImageStream = (
     application: { name: application },
     labels: userLabels,
   } = formData;
+  const imageStreamName = imageStreamData && imageStreamData.metadata.name;
   const defaultLabels = getAppLabels(name, application, imageStreamName);
   const imageStream = {
     apiVersion: 'image.openshift.io/v1',
@@ -48,13 +49,41 @@ export const createBuildConfig = (
     name,
     project: { name: namespace },
     application: { name: application },
-    git: { url: repository, ref = 'master', dir: contextDir, secret: secretName },
+    git: { url: repository, ref = 'master', dir: contextDir, secret: secretName, dockerfilePath },
     image: { tag: selectedTag },
-    build: { env, triggers },
+    build: { env, triggers, strategy: buildStrategy },
     labels: userLabels,
   } = formData;
 
-  const defaultLabels = getAppLabels(name, application, imageStream.metadata.name);
+  const imageStreamName = imageStream && imageStream.metadata.name;
+  const imageStreamNamespace = imageStream && imageStream.metadata.namespace;
+
+  const defaultLabels = getAppLabels(name, application, imageStreamName);
+  let buildStrategyData;
+
+  switch (buildStrategy) {
+    case 'Source':
+      buildStrategyData = {
+        sourceStrategy: {
+          env,
+          from: {
+            kind: 'ImageStreamTag',
+            name: `${imageStreamName}:${selectedTag}`,
+            namespace: imageStreamNamespace,
+          },
+        },
+      };
+      break;
+    case 'Docker':
+      buildStrategyData = {
+        dockerStrategy: { env, dockerfilePath },
+      };
+      break;
+    default:
+      buildStrategyData = {};
+      break;
+  }
+
   const buildConfig = {
     apiVersion: 'build.openshift.io/v1',
     kind: 'BuildConfig',
@@ -80,15 +109,8 @@ export const createBuildConfig = (
         ...(secretName ? { sourceSecret: { name: secretName } } : {}),
       },
       strategy: {
-        type: 'Source',
-        sourceStrategy: {
-          env,
-          from: {
-            kind: 'ImageStreamTag',
-            name: `${imageStream.metadata.name}:${selectedTag}`,
-            namespace: imageStream.metadata.namespace,
-          },
-        },
+        type: buildStrategy,
+        ...buildStrategyData,
       },
       triggers: [
         ...(triggers.image ? [{ type: 'ImageChange', imageChange: {} }] : []),
@@ -115,7 +137,8 @@ export const createDeploymentConfig = (
     limits: { cpu, memory },
   } = formData;
 
-  const defaultLabels = getAppLabels(name, application, imageStream.metadata.name);
+  const imageStreamName = imageStream && imageStream.metadata.name;
+  const defaultLabels = getAppLabels(name, application, imageStreamName);
   const podLabels = getPodLabels(name);
 
   const deploymentConfig = {
@@ -192,7 +215,8 @@ export const createService = (
   } = formData;
 
   const firstPort = _.head(ports);
-  const defaultLabels = getAppLabels(name, application, imageStream.metadata.name);
+  const imageStreamName = imageStream && imageStream.metadata.name;
+  const defaultLabels = getAppLabels(name, application, imageStreamName);
   const podLabels = getPodLabels(name);
   const service = {
     kind: 'Service',
@@ -234,7 +258,8 @@ export const createRoute = (
   } = formData;
 
   const firstPort = _.head(ports);
-  const defaultLabels = getAppLabels(name, application, imageStream.metadata.name);
+  const imageStreamName = imageStream && imageStream.metadata.name;
+  const defaultLabels = getAppLabels(name, application, imageStreamName);
   const route = {
     kind: 'Route',
     apiVersion: 'route.openshift.io/v1',

@@ -15,9 +15,12 @@ export const validationSchema = yup.object().shape({
     name: yup.string().required('Required'),
     selectedKey: yup.string().required('Required'),
   }),
-  image: yup.object().shape({
-    selected: yup.string().required('Required'),
-    tag: yup.string().required('Required'),
+  image: yup.object().when('build', {
+    is: (build) => build.strategy !== 'Docker',
+    then: yup.object().shape({
+      selected: yup.string().required('Required'),
+      tag: yup.string().required('Required'),
+    }),
   }),
   git: yup.object().shape({
     url: yup
@@ -172,6 +175,9 @@ export const validationSchema = yup.object().shape({
         }),
       limitUnit: yup.string('Unit must be Mi or Gi.'),
     }),
+  }),
+  build: yup.object().shape({
+    strategy: yup.string(),
   }),
 });
 
