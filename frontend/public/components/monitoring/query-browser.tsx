@@ -54,13 +54,16 @@ const SpanControls: React.FC<SpanControlsProps> = React.memo(({defaultSpanText, 
     setText(formatPrometheusDuration(span));
   }, [span]);
 
-  const setSpan = (newText: string) => {
+  const debouncedOnChange = React.useCallback(_.debounce(onChange, 400), [onChange]);
+
+  const setSpan = (newText: string, isDebounced = false) => {
     const newSpan = parsePrometheusDuration(newText);
     const newIsValid = (newSpan > 0);
     setIsValid(newIsValid);
     setText(newText);
     if (newIsValid && newSpan !== span) {
-      onChange(newSpan);
+      const fn = isDebounced ? debouncedOnChange : onChange;
+      fn(newSpan);
     }
   };
 
@@ -69,7 +72,7 @@ const SpanControls: React.FC<SpanControlsProps> = React.memo(({defaultSpanText, 
       aria-label="graph timespan"
       className="query-browser__span-text"
       isValid={isValid}
-      onChange={setSpan}
+      onChange={v => setSpan(v, true)}
       type="text"
       value={text}
     />
@@ -78,7 +81,7 @@ const SpanControls: React.FC<SpanControlsProps> = React.memo(({defaultSpanText, 
       items={dropdownItems}
       menuClassName="query-browser__span-dropdown-menu"
       noSelection={true}
-      onChange={setSpan}
+      onChange={v => setSpan(v)}
       title="&nbsp;"
     />
     <button
