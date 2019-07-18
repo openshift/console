@@ -90,7 +90,7 @@ const PVTableRow = ({obj, index, key, style}) => {
 };
 PVTableRow.displayName = 'PVTableRow';
 
-const Details = ({obj: pv}) =>{
+const Details = ({obj: pv}) => {
   const storageClassName = _.get(pv, 'spec.storageClassName');
   const pvcName = _.get(pv, 'spec.claimRef.name');
   const namespace = _.get(pv, 'spec.claimRef.namespace');
@@ -112,18 +112,18 @@ const Details = ({obj: pv}) =>{
           <dl>
             <dt>Status</dt>
             <dd><PVStatus pv={pv} /></dd>
-            {storage && <React.Fragment><dt>Capacity</dt><dd>{storage}</dd></React.Fragment>}
-            {!_.isEmpty(accessModes) && <React.Fragment><dt>Access Modes</dt><dd>{accessModes.join(', ')}</dd></React.Fragment>}
+            {storage && <><dt>Capacity</dt><dd>{storage}</dd></>}
+            {!_.isEmpty(accessModes) && <><dt>Access Modes</dt><dd>{accessModes.join(', ')}</dd></>}
             <dt>Volume Mode</dt>
             <dd>{volumeMode || 'Filesystem' }</dd>
             <dt>Storage Class</dt>
             <dd>
               {storageClassName ? <ResourceLink kind="StorageClass" name={storageClassName} /> : 'None'}
             </dd>
-            {pvcName && <React.Fragment>
+            {pvcName && <>
               <dt>Persistent Volume Claim</dt>
               <dd><ResourceLink kind="PersistentVolumeClaim" name={pvcName} namespace={namespace} /></dd>
-            </React.Fragment>}
+            </>}
           </dl>
         </div>
       </div>
