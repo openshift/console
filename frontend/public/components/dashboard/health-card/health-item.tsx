@@ -1,13 +1,13 @@
 import * as React from 'react';
 import classNames from 'classnames';
 
-import { HealthState } from './states';
 import {
   GreenCheckCircleIcon,
-  LoadingInline,
   RedExclamationCircleIcon,
   YellowExclamationTriangleIcon,
-} from '../../utils';
+} from '@console/shared';
+import { HealthState } from './states';
+import { LoadingInline } from '../../utils';
 
 const HealthItemIcon: React.FC<HealthItemIconProps> = ({ state }) => {
   let icon;
@@ -22,22 +22,20 @@ const HealthItemIcon: React.FC<HealthItemIconProps> = ({ state }) => {
     default:
       icon = <YellowExclamationTriangleIcon />;
   }
-  return (
-    <div className="co-health-card__icon">
-      {icon}
-    </div>
-  );
+  return <div className="co-health-card__icon">{icon}</div>;
 };
 
-export const HealthItem: React.FC<HealthItemProps> = React.memo(({ className, state, message, details }) => (
-  <div className={classNames('co-health-card__item', className)}>
-    {state === HealthState.LOADING ? <LoadingInline /> : <HealthItemIcon state={state} />}
-    <div>
-      {message && <span className="co-health-card__text">{message}</span>}
-      {details && <div className="co-health-card__text co-health-card__subtitle">{details}</div>}
+export const HealthItem: React.FC<HealthItemProps> = React.memo(
+  ({ className, state, message, details }) => (
+    <div className={classNames('co-health-card__item', className)}>
+      {state === HealthState.LOADING ? <LoadingInline /> : <HealthItemIcon state={state} />}
+      <div>
+        {message && <span className="co-health-card__text">{message}</span>}
+        {details && <div className="co-health-card__text co-health-card__subtitle">{details}</div>}
+      </div>
     </div>
-  </div>
-));
+  ),
+);
 
 type HealthItemProps = {
   className?: string;
@@ -48,4 +46,4 @@ type HealthItemProps = {
 
 type HealthItemIconProps = {
   state?: HealthState;
-}
+};

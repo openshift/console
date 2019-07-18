@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { ListView } from 'patternfly-react';
 
+import { Status as TooltipStatus } from '@console/shared';
 import { KEYBOARD_SHORTCUTS } from '../../const';
 import { Tooltip } from '../utils/tooltip';
 import { K8sResourceKind } from '../../module/k8s';
@@ -13,7 +14,6 @@ import {
   pluralize,
   ResourceIcon,
   resourceObjPath,
-  StatusIcon,
   truncateMiddle,
 } from '../utils';
 
@@ -151,7 +151,7 @@ const AlertTooltip = ({alerts, severity, noSeverityLabel=false}) => {
   // Disable the tooltip on mobile since a touch also opens the sidebar, which
   // immediately covers the tooltip content.
   return <Tooltip content={content} styles={overviewTooltipStyles} disableOnMobile>
-    <StatusIcon status={severity} spin={severity === 'Running'} /> {noSeverityLabel ? count : pluralize(count, label)}
+    <TooltipStatus status={severity} title={noSeverityLabel ? String(count) : pluralize(count, label)} />
   </Tooltip>;
 };
 

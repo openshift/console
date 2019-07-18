@@ -48,7 +48,6 @@ export * from './request-size-input';
 export * from './k8s-watcher';
 export * from './workload-pause';
 export * from './list-dropdown';
-export * from './status-icon';
 export * from './list-input';
 export * from './rbac';
 export * from './poll-hook';

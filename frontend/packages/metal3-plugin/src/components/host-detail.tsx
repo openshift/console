@@ -17,7 +17,6 @@ import {
   SectionHeading,
   Timestamp,
   humanizeDecimalBytes,
-  StatusIconAndText,
   ResourceLink,
   FirehoseResource,
 } from '@console/internal/components/utils';
@@ -28,6 +27,7 @@ import {
   getMachineNodeName,
   getNamespace,
   getMachineRole,
+  StatusIconAndText,
 } from '@console/shared';
 import { ResourceEventStream } from '@console/internal/components/events';
 
@@ -148,7 +148,7 @@ const BaremetalHostDetails: React.FC<BaremetalHostDetailsProps> = ({
             <dt>Power Status</dt>
             <dd>
               <StatusIconAndText
-                status={hostPoweredOn ? 'Running' : 'Powered Off'}
+                title={hostPoweredOn ? 'Running' : 'Powered Off'}
                 icon={hostPoweredOn ? <OnRunningIcon /> : <OffIcon />}
               />
             </dd>

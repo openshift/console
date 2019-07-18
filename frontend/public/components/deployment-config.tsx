@@ -1,5 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
+
+import { Status } from '@console/shared';
 import { k8sCreate, K8sKind, K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
 import { errorModal } from './modals';
 import { DeploymentConfigModel } from '../models';
@@ -25,7 +27,6 @@ import {
   SectionHeading,
   togglePaused,
   WorkloadPausedAlert,
-  StatusIconAndText,
 } from './utils';
 
 import {
@@ -139,8 +140,8 @@ export const DeploymentConfigsDetails: React.FC<{obj: K8sResourceKind}> = ({obj:
               <dt>Status</dt>
               <dd>
                 {dc.status.availableReplicas === dc.status.updatedReplicas && dc.spec.replicas === dc.status.availableReplicas
-                  ? <StatusIconAndText status="Up to date" />
-                  : <StatusIconAndText status="Updating" />}
+                  ? <Status status="Up to date" />
+                  : <Status status="Updating" />}
               </dd>
             </ResourceSummary>
           </div>

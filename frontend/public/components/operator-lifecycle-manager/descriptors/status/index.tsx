@@ -1,14 +1,14 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 import { Map as ImmutableMap } from 'immutable';
+import { Status, SuccessStatus } from '@console/shared';
 
-import { ResourceLink, StatusIconAndText } from '../../../utils';
+import { ResourceLink } from '../../../utils';
 import { StatusCapability, CapabilityProps, DescriptorProps } from '../types';
 import { Phase } from './phase';
 import { PodStatusChart } from './pods';
 import { Tooltip } from '../../../utils/tooltip';
 import { Conditions } from '../../../conditions';
-import { GreenCheckCircleIcon } from '@console/internal/components/utils/status-icon';
 
 const Invalid: React.SFC<StatusCapabilityProps> = (props) => <span className="text-muted">
   <i className="fa fa-exclamation-triangle text-warning" aria-hidden="true" />&nbsp;&nbsp;The field <code>status.{props.descriptor.path}</code> is invalid
@@ -83,8 +83,8 @@ export const StatusDescriptor: React.SFC<DescriptorProps> = (props) => {
     <dd className="olm-descriptor__value">
       {
         descriptor.displayName === 'Status'
-          ? (<StatusIconAndText status={value} icon={value === 'Running' ? <GreenCheckCircleIcon /> : undefined} />)
-          : (<Capability descriptor={descriptor} capability={capability} value={value} namespace={namespace} />)
+          ? (value === 'Running' ? <SuccessStatus title={value} /> : <Status status={value} />)
+          : <Capability descriptor={descriptor} capability={capability} value={value} namespace={namespace} />
       }
     </dd>
   </dl>;

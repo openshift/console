@@ -2,6 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Button, ListGroup } from 'patternfly-react';
 
+import { Status, StatusIconAndText } from '@console/shared';
 import { BuildNumberLink, BuildLogLink } from '../build';
 import { errorModal } from '../modals/error-modal';
 import { fromNow } from '../utils/datetime';
@@ -13,10 +14,10 @@ import {
 import {
   ResourceLink,
   SidebarSectionHeading,
-  StatusIcon,
 } from '../utils';
 
 import { BuildConfigOverviewItem } from '.';
+import { SyncIcon } from '@patternfly/react-icons';
 
 const conjugateBuildPhase = (phase: BuildPhase): string => {
   switch (phase) {
@@ -50,17 +51,23 @@ const BuildOverviewItem: React.SFC<BuildOverviewListItemProps> = ({build}) => {
     || startTimestamp
     || creationTimestamp;
 
+  const statusTitle = (
+    <>
+      Build
+      &nbsp;
+      <BuildNumberLink build={build} />
+      &nbsp;
+      {conjugateBuildPhase(phase)}
+      {lastUpdated && <span className="text-muted">&nbsp;({fromNow(lastUpdated)})</span>}
+    </>
+  );
+
   return <li className="list-group-item build-overview__item">
     <div className="build-overview__item-title">
       <div>
-        <StatusIcon status={phase} spin={phase === 'Running'} />
-        &nbsp;
-        Build
-        &nbsp;
-        <BuildNumberLink build={build} />
-        &nbsp;
-        {conjugateBuildPhase(phase)}
-        {lastUpdated && <span className="text-muted">&nbsp;({fromNow(lastUpdated)})</span>}
+        {phase === 'Running'
+          ? <><StatusIconAndText icon={<SyncIcon />} title={phase} spin iconOnly /> {statusTitle}</>
+          : <><Status status={phase} iconOnly /> {statusTitle}</>}
       </div>
       <div>
         <BuildLogLink build={build} />

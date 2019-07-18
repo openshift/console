@@ -2,13 +2,9 @@ import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { AddCircleOIcon } from '@patternfly/react-icons';
 
-import { DASH } from '@console/shared';
+import { DASH, StatusIconAndText } from '@console/shared';
 import { MachineModel } from '@console/internal/models';
-import {
-  ResourceLink,
-  RequireCreatePermission,
-  StatusIconAndText,
-} from '@console/internal/components/utils';
+import { ResourceLink, RequireCreatePermission } from '@console/internal/components/utils';
 import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
 
 import { getHostMachineName } from '../selectors';
@@ -42,7 +38,7 @@ const MachineCell: React.FC<MachineCellProps> = ({ host, status }) => {
     return (
       <RequireCreatePermission model={MachineModel} namespace={ns}>
         <Link to={href}>
-          <StatusIconAndText status="Add machine" icon={<AddCircleOIcon />} />
+          <StatusIconAndText icon={<AddCircleOIcon />} title="Add machine" />
         </Link>
       </RequireCreatePermission>
     );

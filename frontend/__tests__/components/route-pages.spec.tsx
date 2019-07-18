@@ -196,8 +196,9 @@ describe(RouteStatus.displayName, () => {
     };
 
     const wrapper = mount(<RouteStatus obj={route} />);
-    expect(wrapper.find('.co-icon-and-text__icon').exists()).toBe(true);
-    expect(wrapper.text()).toEqual('Accepted');
+    const statusComponent = wrapper.find('SuccessStatus');
+    expect(statusComponent.exists()).toBeTruthy();
+    expect(statusComponent.prop('title')).toEqual('Accepted');
   });
 
   it('renders Rejected status', () => {
@@ -223,8 +224,9 @@ describe(RouteStatus.displayName, () => {
     };
 
     const wrapper = mount(<RouteStatus obj={route} />);
-    expect(wrapper.find('.co-icon-and-text__icon').exists()).toBe(true);
-    expect(wrapper.text()).toEqual('Rejected');
+    const statusComponent = wrapper.find('ErrorStatus');
+    expect(statusComponent.exists()).toBeTruthy();
+    expect(statusComponent.prop('title')).toEqual('Rejected');
   });
 
   it('renders Pending status', () => {
@@ -237,7 +239,9 @@ describe(RouteStatus.displayName, () => {
     };
 
     const wrapper = mount(<RouteStatus obj={route} />);
-    expect(wrapper.find('.co-icon-and-text__icon').exists()).toBe(true);
-    expect(wrapper.text()).toEqual('Pending');
+    const statusComponent = wrapper.find('StatusIconAndText');
+    const icon = wrapper.find('HourglassHalfIcon');
+    expect(icon.exists()).toBeTruthy();
+    expect(statusComponent.prop('title')).toEqual('Pending');
   });
 });

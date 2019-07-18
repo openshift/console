@@ -2,11 +2,13 @@ import * as React from 'react';
 import * as _ from 'lodash-es';
 import { sortable } from '@patternfly/react-table';
 import * as classNames from 'classnames';
+
+import { Status } from '@console/shared';
 import { connectToFlags } from '../reducers/features';
 import { Conditions } from './conditions';
 import { FLAGS } from '../const';
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
-import { Kebab, navFactory, ResourceKebab, SectionHeading, ResourceLink, ResourceSummary, Selector, StatusIconAndText } from './utils';
+import { Kebab, navFactory, ResourceKebab, SectionHeading, ResourceLink, ResourceSummary, Selector } from './utils';
 import { ResourceEventStream } from './events';
 
 export const pvcPhase = pvc => pvc.status.phase;
@@ -16,7 +18,7 @@ const menuActions = [ExpandPVC, ...common];
 
 const PVCStatus = ({pvc}) => {
   const phase = pvcPhase(pvc);
-  return <StatusIconAndText status={phase} />;
+  return <Status status={phase} />;
 };
 
 const tableColumnClasses = [

@@ -4,6 +4,8 @@ import * as _ from 'lodash-es';
 import { connect } from 'react-redux';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
+
+import { Status, SuccessStatus } from '@console/shared';
 import { ClusterServiceVersionKind, referenceForProvidedAPI } from './index';
 import { StatusDescriptor } from './descriptors/status';
 import { SpecDescriptor } from './descriptors/spec';
@@ -12,13 +14,12 @@ import { StatusCapability, Descriptor } from './descriptors/types';
 import { Resources } from './k8s-resource';
 import { ErrorPage404 } from '../error';
 import { MultiListPage, ListPage, DetailsPage, Table, TableRow, TableData } from '../factory';
-import { ResourceSummary, StatusBox, navFactory, Timestamp, LabelList, ResourceIcon, MsgBox, ResourceKebab, Kebab, KebabAction, LoadingBox, StatusIconAndText } from '../utils';
+import { ResourceSummary, StatusBox, navFactory, Timestamp, LabelList, ResourceIcon, MsgBox, ResourceKebab, Kebab, KebabAction, LoadingBox } from '../utils';
 import { connectToModel } from '../../kinds';
 import { apiVersionForReference, kindForReference, K8sResourceKind, OwnerReference, K8sKind, referenceFor, GroupVersionKind, referenceForModel } from '../../module/k8s';
 import { ClusterServiceVersionModel } from '../../models';
 import { deleteModal } from '../modals';
 import { RootState } from '../../redux';
-import { GreenCheckCircleIcon } from '@console/internal/components/utils/status-icon';
 
 const csvName = () => location.pathname.split('/').find((part, i, allParts) => allParts[i - 1] === referenceForModel(ClusterServiceVersionModel) || allParts[i - 1] === ClusterServiceVersionModel.plural);
 
@@ -113,7 +114,7 @@ export const OperandTableRow: React.FC<OperandTableRowProps> = ({obj, index, key
       <TableData className={tableColumnClasses[3]}>
         {_.isEmpty(status) ?
           <div className="text-muted">Unknown</div> :
-          <StatusIconAndText status={status} icon={status === 'Running' ? <GreenCheckCircleIcon /> : undefined} />
+          <>{status === 'Running' ? <SuccessStatus title={status} /> : <Status status={status} />}</>
         }
       </TableData>
       <TableData className={tableColumnClasses[4]}>

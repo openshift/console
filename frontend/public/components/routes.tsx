@@ -4,8 +4,10 @@ import * as classNames from 'classnames';
 import { Popover } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
 import { QuestionCircleIcon } from '@patternfly/react-icons';
+
+import { Status } from '@console/shared';
 import { DetailsPage,ListPage, Table, TableRow, TableData } from './factory';
-import { Kebab, CopyToClipboard, SectionHeading, ResourceKebab, detailsPage, navFactory, ResourceLink, ResourceSummary, StatusIconAndText, ExternalLink } from './utils';
+import { Kebab, CopyToClipboard, SectionHeading, ResourceKebab, detailsPage, navFactory, ResourceLink, ResourceSummary, ExternalLink } from './utils';
 import { MaskedData } from './configmap-and-secret-data';
 import { K8sResourceKind, K8sResourceKindReference } from '../module/k8s';
 import { Conditions, conditionProps } from './conditions';
@@ -104,7 +106,7 @@ export const routeStatus = (route) => {
 
 export const RouteStatus: React.SFC<RouteStatusProps> = ({obj: route}) => {
   const status: string = routeStatus(route);
-  return <StatusIconAndText status={status} />;
+  return <Status status={status} />;
 };
 RouteStatus.displayName = 'RouteStatus';
 
