@@ -16,9 +16,6 @@ const annotations = {
   'openshift.io/generated-by': 'OpenShiftWebConsole',
 };
 
-const volumes = [];
-const volumeMounts = [];
-
 const dryRunOpt = { queryParams: { dryRun: 'All' } };
 
 export const createImageStream = (
@@ -71,13 +68,29 @@ export const createDeploymentConfig = (
     application: { name: application },
     name,
     searchTerm,
-    isi: { tag, ports },
+    isi: { image, tag, ports },
     deployment: { env, replicas, triggers },
     labels: userLabels,
   } = formData;
 
   const defaultLabels = getAppLabels(name, application);
   const labels = _.isEmpty(userLabels) ? { app: application } : SelectorInput.objectify(userLabels);
+
+  const volumes = [];
+  const volumeMounts = [];
+  let volumeNumber = 0;
+  _.each(_.get(image, ['dockerImageMetadata', 'Config', 'Volumes']), (value, path) => {
+    volumeNumber++;
+    const volumeName = `${name}-${volumeNumber}`;
+    volumes.push({
+      name: volumeName,
+      emptyDir: {},
+    });
+    volumeMounts.push({
+      name: volumeName,
+      mountPath: path,
+    });
+  });
 
   const deploymentConfig = {
     kind: 'DeploymentConfig',
