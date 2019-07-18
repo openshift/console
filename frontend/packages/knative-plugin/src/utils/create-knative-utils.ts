@@ -31,9 +31,11 @@ export const createKnativeService = (
   namespace: string,
   scaling: ServerlessScaling,
   limits: LimitsData,
+  { targetPort },
   imageStreamName: string,
   imageStreamTag?: string,
 ): Promise<K8sResourceKind> => {
+  const contTargetPort: number = parseInt(targetPort, 10);
   const { concurrencylimit, concurrencytarget, minpods, maxpods } = scaling;
   const {
     cpu: {
@@ -71,6 +73,13 @@ export const createKnativeService = (
           ...(concurrencylimit && { containerConcurrency: concurrencylimit }),
           container: {
             image: `${imageStreamName}${imageStreamTag ? `:${imageStreamTag}` : ''}`,
+            ...(contTargetPort && {
+              ports: [
+                {
+                  containerPort: contTargetPort,
+                },
+              ],
+            }),
             resources: {
               ...((cpuLimit || memoryLimit) && {
                 limits: {
