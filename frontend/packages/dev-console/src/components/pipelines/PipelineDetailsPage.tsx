@@ -7,7 +7,6 @@ import { ErrorPage404 } from '@console/internal/components/error';
 import { triggerPipeline, rerunPipeline } from '../../utils/pipeline-actions';
 import { getLatestRun } from '../../utils/pipeline-augment';
 import { PipelineRunModel, PipelineModel } from '../../models';
-import PipelinEnvironmentComponent from './PipelineEnvironment';
 import PipelineDetails from './PipelineDetails';
 import PipelineRuns from './PipelineRuns';
 
@@ -62,13 +61,21 @@ class PipelineDetailsPage extends React.Component<DetailsPageProps, PipelineDeta
         pages={[
           navFactory.details(PipelineDetails),
           navFactory.editYaml(viewYamlComponent),
-
           {
             href: 'Runs',
             name: 'Pipeline Runs',
             component: PipelineRuns,
           },
-          navFactory.envEditor(PipelinEnvironmentComponent),
+          {
+            href: 'parameters',
+            name: 'Parameters',
+            component: PipelineParameters,
+          },
+          {
+            href: 'resources',
+            name: 'Resources',
+            component: PipelineResources,
+          },
         ]}
       />
     );
