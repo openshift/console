@@ -16,6 +16,6 @@ export interface YAMLTemplate extends Extension<ExtensionProperties.YAMLTemplate
   type: 'YAMLTemplate';
 }
 
-export function isYAMLTemplate(e: Extension<any>): e is YAMLTemplate {
+export function isYAMLTemplate(e: Extension): e is YAMLTemplate {
   return e.type === 'YAMLTemplate';
 }

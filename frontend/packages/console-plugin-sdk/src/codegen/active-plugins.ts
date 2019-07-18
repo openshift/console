@@ -13,7 +13,7 @@ export const loadActivePlugins = (pluginPackages: PluginPackage[]) => {
 
   for (const pkg of pluginPackages) {
     // eslint-disable-next-line
-    const plugin = require(`${pkg.name}/${pkg.consolePlugin.entry}`).default as Plugin<Extension<any>>;
+    const plugin = require(`${pkg.name}/${pkg.consolePlugin.entry}`).default as Plugin<Extension>;
     activePlugins.push({ name: pkg.name, extensions: plugin });
   }
 

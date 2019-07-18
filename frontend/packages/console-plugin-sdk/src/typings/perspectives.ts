@@ -24,7 +24,7 @@ export interface Perspective extends Extension<ExtensionProperties.Perspective> 
   type: 'Perspective';
 }
 
-export const isPerspective = (e: Extension<any>): e is Perspective => {
+export const isPerspective = (e: Extension): e is Perspective => {
   return e.type === 'Perspective';
 };
 

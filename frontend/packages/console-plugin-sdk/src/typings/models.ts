@@ -12,6 +12,6 @@ export interface ModelDefinition extends Extension<ExtensionProperties.ModelDefi
   type: 'ModelDefinition';
 }
 
-export const isModelDefinition = (e: Extension<any>): e is ModelDefinition => {
+export const isModelDefinition = (e: Extension): e is ModelDefinition => {
   return e.type === 'ModelDefinition';
 };

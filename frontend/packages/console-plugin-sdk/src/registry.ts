@@ -27,7 +27,7 @@ import {
  * Registry used to query for Console extensions.
  */
 export class ExtensionRegistry {
-  private readonly extensions: Extension<any>[];
+  private readonly extensions: Extension[];
 
   public constructor(plugins: ActivePlugin[]) {
     this.extensions = _.flatMap(plugins.map((p) => p.extensions));

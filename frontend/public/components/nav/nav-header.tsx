@@ -29,7 +29,7 @@ const NavHeader_: React.FC<NavHeaderProps & StateProps> = ({
     setPerspectiveDropdownOpen(!isPerspectiveDropdownOpen);
   };
 
-  const onPerspectiveSelect = (perspective: Extension<any>):void => {
+  const onPerspectiveSelect = (perspective: Extension):void => {
     if (perspective.properties.id !== activePerspective) {
       setActivePerspective(perspective.properties.id);
       history.push(perspective.properties.landingPageURL);
@@ -55,8 +55,8 @@ const NavHeader_: React.FC<NavHeaderProps & StateProps> = ({
     </DropdownToggle>
   );
 
-  const getPerspectiveItems = (perspectives: Extension<any>[]) => {
-    return perspectives.map((nextPerspective: Extension<any>) => (
+  const getPerspectiveItems = (perspectives: Extension[]) => {
+    return perspectives.map((nextPerspective: Extension) => (
       <DropdownItem
         key={nextPerspective.properties.id}
         onClick={() => onPerspectiveSelect(nextPerspective)}
@@ -74,7 +74,7 @@ const NavHeader_: React.FC<NavHeaderProps & StateProps> = ({
     ));
   };
 
-  const perspectives: Extension<any>[] = plugins.registry.getPerspectives();
+  const perspectives: Extension[] = plugins.registry.getPerspectives();
   const { icon, name } = perspectives.find((p) => p.properties.id === activePerspective).properties;
 
   return (

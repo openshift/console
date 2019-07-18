@@ -13,7 +13,7 @@
  *
  * TODO(vojtech): write ESLint rule to guard against extension type duplicity
  */
-export type Extension<P> = {
+export type Extension<P = any> = {
   type: string;
   properties: P;
 };
@@ -57,7 +57,7 @@ export type Extension<P> = {
  *  export default plugin;
  * ```
  */
-export type Plugin<E extends Extension<any>> = E[];
+export type Plugin<E extends Extension> = E[];
 
 /**
  * From Console application perspective, a plugin is a list of extensions
@@ -65,5 +65,5 @@ export type Plugin<E extends Extension<any>> = E[];
  */
 export type ActivePlugin = {
   name: string;
-  extensions: Extension<any>[];
+  extensions: Extension[];
 };

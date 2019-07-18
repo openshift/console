@@ -47,18 +47,18 @@ export interface ResourceClusterNavItem
 
 export type NavItem = HrefNavItem | ResourceNSNavItem | ResourceClusterNavItem;
 
-export const isHrefNavItem = (e: Extension<any>): e is HrefNavItem => {
+export const isHrefNavItem = (e: Extension): e is HrefNavItem => {
   return e.type === 'NavItem/Href';
 };
 
-export const isResourceNSNavItem = (e: Extension<any>): e is ResourceNSNavItem => {
+export const isResourceNSNavItem = (e: Extension): e is ResourceNSNavItem => {
   return e.type === 'NavItem/ResourceNS';
 };
 
-export const isResourceClusterNavItem = (e: Extension<any>): e is ResourceClusterNavItem => {
+export const isResourceClusterNavItem = (e: Extension): e is ResourceClusterNavItem => {
   return e.type === 'NavItem/ResourceCluster';
 };
 
-export const isNavItem = (e: Extension<any>): e is NavItem => {
+export const isNavItem = (e: Extension): e is NavItem => {
   return isHrefNavItem(e) || isResourceNSNavItem(e) || isResourceClusterNavItem(e);
 };
