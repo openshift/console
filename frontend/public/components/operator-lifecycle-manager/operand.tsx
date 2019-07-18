@@ -99,7 +99,6 @@ export const OperandLink: React.SFC<OperandLinkProps> = (props) => {
 };
 
 export const OperandTableRow: React.FC<OperandTableRowProps> = ({obj, index, key, style}) => {
-  const status = _.get(obj.status, 'phase');
   return (
     <TableRow id={obj.metadata.uid} index={index} trKey={key} style={style}>
       <TableData className={tableColumnClasses[0]}>
@@ -112,10 +111,7 @@ export const OperandTableRow: React.FC<OperandTableRowProps> = ({obj, index, key
         {obj.kind}
       </TableData>
       <TableData className={tableColumnClasses[3]}>
-        {_.isEmpty(status) ?
-          <div className="text-muted">Unknown</div> :
-          <>{status === 'Running' ? <SuccessStatus title={status} /> : <Status status={status} />}</>
-        }
+        <OperandStatusIconAndText statusObject={obj.status} />
       </TableData>
       <TableData className={tableColumnClasses[4]}>
         {_.get(obj.spec, 'version') || <div className="text-muted">Unknown</div>}
@@ -128,6 +124,29 @@ export const OperandTableRow: React.FC<OperandTableRowProps> = ({obj, index, key
       </TableData>
     </TableRow>
   );
+};
+
+enum OperatorStatusType {
+  condition = 'condition',
+  phase = 'phase',
+  status = 'status',
+}
+
+const OperatorStatusTypeText = {
+  [OperatorStatusType.condition]: 'Condition:',
+  [OperatorStatusType.phase]: 'Phase:',
+  [OperatorStatusType.status]: 'Status:',
+};
+
+const OperandStatusIconAndText: React.FunctionComponent<OperandStatusIconAndTextProps> = ({statusObject}) => {
+  for (const key of Object.keys(OperatorStatusType)) {
+    if (statusObject.hasOwnProperty(key)) {
+      const status = statusObject[key];
+      const statusIcon = status === 'Running' ? <SuccessStatus title={status} /> : <Status status={status} />;
+      return <span className="co-icon-and-text">{OperatorStatusTypeText[key]}&nbsp;{statusIcon}</span>;
+    }
+  }
+  return <div className="text-muted">Unknown</div>;
 };
 
 export const OperandList: React.SFC<OperandListProps> = (props) => {
@@ -388,6 +407,10 @@ export type OperandTableRowProps = {
   index: number;
   key?: string;
   style: object;
+};
+
+type OperandStatusIconAndTextProps = {
+  statusObject: object;
 };
 
 // TODO(alecmerdler): Find Webpack loader/plugin to add `displayName` to React components automagically
