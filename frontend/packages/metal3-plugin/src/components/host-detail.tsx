@@ -28,7 +28,7 @@ import {
 } from '@console/shared';
 import { ResourceEventStream } from '@console/internal/components/events';
 import { BaremetalHostModel, NodeMaintenanceModel } from '../models';
-import { canHostAddMachine, getHostStatus } from '../utils/host-status';
+import { getHostStatus } from '../utils/host-status';
 import {
   getHostNICs,
   getHostDescription,
@@ -36,14 +36,12 @@ import {
   getHostCPU,
   getHostRAMMiB,
   getHostTotalStorageCapacity,
-  getHostMachineName,
   getHostPowerStatus,
   getHostVendorInfo,
   getHostMachine,
   findNodeMaintenance,
   getHostBios,
 } from '../selectors';
-import MachineCell from './machine-cell';
 import BaremetalHostStatus from './host-status';
 import BaremetalHostNICList from './host-nics';
 import BaremetalHostDiskList from './host-disks';
@@ -75,7 +73,6 @@ const BaremetalHostDetails: React.FC<BaremetalHostDetailsProps> = ({
   const namespace = getNamespace(host);
   const nics = getHostNICs(host);
   const ips = nics.map((nic) => nic.ip).join(', ');
-  const machineName = getHostMachineName(host);
   const machine = getHostMachine(host, machines);
   const nodeName = getMachineNodeName(machine);
   const node = getMachineNode(machine, nodes);
@@ -111,14 +108,6 @@ const BaremetalHostDetails: React.FC<BaremetalHostDetailsProps> = ({
               <br />
               NICs: {ips}
             </dd>
-            {(canHostAddMachine(status.status) || machineName) && (
-              <>
-                <dt>Machine</dt>
-                <dd>
-                  <MachineCell host={host} status={status} />
-                </dd>
-              </>
-            )}
             {nodeName && (
               <>
                 <dt>Node</dt>

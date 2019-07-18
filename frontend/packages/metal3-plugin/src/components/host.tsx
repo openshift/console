@@ -16,7 +16,6 @@ import BaremetalHostStatus from './host-status';
 import { hostStatusFilter } from './table-filters';
 import { menuActions } from './host-menu-actions';
 import { HostRowBundle } from './types';
-import NodeCell from './NodeCell';
 
 const tableColumnClasses = [
   classNames('col-lg-3', 'col-md-4', 'col-sm-12', 'col-xs-12'),
@@ -99,9 +98,7 @@ const HostsTableRow: React.FC<HostsTableRowProps> = ({
       <TableData className={tableColumnClasses[1]}>
         <BaremetalHostStatus status={status} />
       </TableData>
-      <TableData className={tableColumnClasses[2]}>
-        <NodeCell nodeName={nodeName} namespace={namespace} />
-      </TableData>
+      <TableData className={tableColumnClasses[2]} />
       <TableData className={tableColumnClasses[3]}>
         <BaremetalHostRole machine={machine} />
       </TableData>
