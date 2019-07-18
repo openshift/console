@@ -6,7 +6,6 @@ import {
   RouteModel,
 } from '@console/internal/models';
 import { k8sCreate, K8sResourceKind } from '@console/internal/module/k8s';
-import { SelectorInput } from '@console/internal/components/utils';
 import { createKnativeService } from '@console/knative-plugin/src/utils/create-knative-utils';
 import { makePortName } from '../../utils/imagestream-utils';
 import { getAppLabels, getPodLabels } from '../../utils/resource-label-utils';
@@ -48,7 +47,7 @@ export const createImageStream = (
           },
           from: {
             kind: 'DockerImage',
-            name: `${isiName}:${tag}`,
+            name: `${isiName}`,
           },
           importPolicy: {},
         },
@@ -67,14 +66,13 @@ export const createDeploymentConfig = (
     project: { name: namespace },
     application: { name: application },
     name,
-    searchTerm,
     isi: { image, tag, ports },
     deployment: { env, replicas, triggers },
     labels: userLabels,
   } = formData;
 
   const defaultLabels = getAppLabels(name, application);
-  const labels = _.isEmpty(userLabels) ? { app: application } : SelectorInput.objectify(userLabels);
+  const labels = { ...defaultLabels, ...userLabels };
 
   const volumes = [];
   const volumeMounts = [];
@@ -98,7 +96,7 @@ export const createDeploymentConfig = (
     metadata: {
       name,
       namespace,
-      labels: { ...defaultLabels, ...userLabels },
+      labels,
       annotations,
     },
     spec: {
@@ -114,7 +112,7 @@ export const createDeploymentConfig = (
           containers: [
             {
               name,
-              image: `${searchTerm}:latest`,
+              image: _.get(image, ['dockerImageMetadata', 'Config', 'Image']),
               ports,
               volumeMounts,
               env,
@@ -131,6 +129,7 @@ export const createDeploymentConfig = (
             from: {
               kind: 'ImageStreamTag',
               name: `${name}:${tag}`,
+              namespace,
             },
           },
         },
