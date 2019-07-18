@@ -1,18 +1,21 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import * as _ from 'lodash-es';
+
+import { isNavItem, Extension, connectToExtensions, NavItem } from '@console/plugin-sdk';
+
 import { createLink } from './items';
 import { NavSection } from './section';
 import AdminNav from './admin-nav';
 import { getActivePerspective } from '../../reducers/ui';
 import { RootState } from '../../redux';
-import * as plugins from '../../plugins';
 
-type StateProps = {
+type PerspectiveNavProps = {
   perspective: string;
+  pluginNavItems: NavItem[];
 };
 
-const PerspectiveNav: React.FC<StateProps> = ({ perspective }) => {
+const PerspectiveNav: React.FC<PerspectiveNavProps> = ({ perspective, pluginNavItems }) => {
   // Until admin perspective is contributed through extensions, simply render static `AdminNav`
   if (perspective === 'admin') {
     return <AdminNav />;
@@ -24,8 +27,7 @@ const PerspectiveNav: React.FC<StateProps> = ({ perspective }) => {
   return (
     <React.Fragment>
       {_.compact(
-        plugins.registry
-          .getNavItems()
+        pluginNavItems
           .filter(item => item.properties.perspective === perspective)
           .map(item => {
             const { section } = item.properties;
@@ -43,10 +45,12 @@ const PerspectiveNav: React.FC<StateProps> = ({ perspective }) => {
   );
 };
 
-const mapStateToProps = (state: RootState): StateProps => {
-  return {
-    perspective: getActivePerspective(state),
-  };
-};
+const mapStateToProps = (state: RootState) => ({
+  perspective: getActivePerspective(state),
+});
 
-export default connect(mapStateToProps)(PerspectiveNav);
+const mapExtensionsToProps = (extensions: Extension[]) => ({
+  pluginNavItems: extensions.filter(isNavItem),
+});
+
+export default connect(mapStateToProps)(connectToExtensions(mapExtensionsToProps)(PerspectiveNav));

@@ -1,11 +1,12 @@
 import { Map as ImmutableMap } from 'immutable';
 import * as _ from 'lodash-es';
 
+import { isModelDefinition } from '@console/plugin-sdk';
 import { K8sResourceKindReference, K8sKind } from './index';
 import * as staticModels from '../../models';
 import { referenceForModel, kindForReference } from './k8s';
 import store from '../../redux';
-import * as plugins from '../../plugins';
+import { pluginStore } from '../../plugins';
 
 export const modelsToMap = (models: K8sKind[]): ImmutableMap<K8sResourceKindReference, K8sKind> => {
   return ImmutableMap<K8sResourceKindReference, K8sKind>()
@@ -30,7 +31,8 @@ let k8sModels = modelsToMap(_.values(staticModels));
 const hasModel = (model: K8sKind) => k8sModels.has(referenceForModel(model)) || k8sModels.has(model.kind);
 
 k8sModels = k8sModels.withMutations(map => {
-  const pluginModels = _.flatMap(plugins.registry.getModelDefinitions().map(md => md.properties.models));
+  const pluginModelDefinitions = pluginStore.getAlwaysOnExtensions().filter(isModelDefinition);
+  const pluginModels = _.flatMap(pluginModelDefinitions.map(md => md.properties.models));
   map.merge(modelsToMap(pluginModels.filter(model => !hasModel(model))));
 });
 

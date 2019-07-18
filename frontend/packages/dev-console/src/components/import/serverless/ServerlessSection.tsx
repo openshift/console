@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { connectToFlags } from '@console/internal/reducers/features';
+import { connectToFlags, FlagsObject } from '@console/internal/reducers/features';
 import { FLAG_KNATIVE_SERVING } from '@console/knative-plugin';
 import { TechPreviewBadge } from '@console/shared';
 import { Split, SplitItem } from '@patternfly/react-core';
@@ -7,7 +7,7 @@ import { CheckboxField } from '../../formik-fields';
 import FormSection from '../section/FormSection';
 
 type ServerlessSectionProps = {
-  flags: { [key: string]: boolean };
+  flags: FlagsObject;
 };
 
 const ServerlessSection: React.FC<ServerlessSectionProps> = ({ flags }) => {

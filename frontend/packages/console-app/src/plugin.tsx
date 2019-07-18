@@ -12,10 +12,10 @@ const plugin: Plugin<ConsumedExtensions> = [
       id: 'admin',
       name: 'Administrator',
       icon: <CogsIcon />,
+      default: true,
       getLandingPageURL: (flags) =>
         flags[FLAGS.CAN_LIST_NS] ? '/dashboards' : '/k8s/cluster/projects',
       getK8sLandingPageURL: () => '/dashboards',
-      default: true,
       getImportRedirectURL: (project) => `/k8s/cluster/projects/${project}/workloads`,
     },
   },

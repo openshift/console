@@ -13,7 +13,7 @@ import { AlertStates, isSilenced, SilenceStates } from '../reducers/monitoring';
 import { legalNamePattern, getNamespace } from '../components/utils/link';
 import { OverviewSpecialGroup } from '../components/overview/constants';
 import { RootState } from '../redux';
-import * as plugins from '../plugins';
+import * as plugins from '../plugins'; // TODO(vojtech): remove import
 
 export type UIState = ImmutableMap<string, any>;
 

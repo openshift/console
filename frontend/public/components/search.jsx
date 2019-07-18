@@ -3,13 +3,15 @@ import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 
+import { connectToExtensions } from '@console/plugin-sdk';
 import { AsyncComponent } from './utils/async';
 import { connectToModel } from '../kinds';
 import { DefaultPage } from './default-resource';
 import { namespaceProptype } from '../propTypes';
 import { requirementFromString } from '../module/k8s/selector-requirement';
 import { ResourceListDropdown } from './resource-dropdown';
-import { resourceListPages } from './resource-pages';
+import { getResourceListPages } from './resource-pages';
+import { mapListPageExtensionsToProps } from './resource-list';
 import { withStartGuide } from './start-guide';
 import { split, selectorFromString } from '../module/k8s/selector';
 import { referenceForModel, kindForReference } from '../module/k8s';
@@ -20,16 +22,18 @@ import {
   SelectorInput,
 } from './utils';
 
-const ResourceList = connectToModel(({kindObj, mock, namespace, selector}) => {
-  if (!kindObj) {
-    return <LoadingBox />;
+const ResourceList = connectToModel(connectToExtensions(mapListPageExtensionsToProps)(
+  ({kindObj, mock, namespace, selector, pluginListPages}) => {
+    if (!kindObj) {
+      return <LoadingBox />;
+    }
+
+    const componentLoader = getResourceListPages(pluginListPages).get(referenceForModel(kindObj), () => Promise.resolve(DefaultPage));
+    const ns = kindObj.namespaced ? namespace : undefined;
+
+    return <AsyncComponent loader={componentLoader} namespace={ns} selector={selector} kind={kindObj.crd ? referenceForModel(kindObj) : kindObj.kind} showTitle={false} autoFocus={false} mock={mock} />;
   }
-
-  const componentLoader = resourceListPages.get(referenceForModel(kindObj), () => Promise.resolve(DefaultPage));
-  const ns = kindObj.namespaced ? namespace : undefined;
-
-  return <AsyncComponent loader={componentLoader} namespace={ns} selector={selector} kind={kindObj.crd ? referenceForModel(kindObj) : kindObj.kind} showTitle={false} autoFocus={false} mock={mock} />;
-});
+));
 
 const updateUrlParams = (k, v) => {
   const url = new URL(window.location);

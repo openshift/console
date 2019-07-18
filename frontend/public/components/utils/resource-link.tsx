@@ -6,7 +6,7 @@ import * as classNames from 'classnames';
 import { ResourceIcon } from './index';
 import { modelFor, referenceForModel, K8sKind, K8sResourceKindReference, K8sResourceKind } from '../../module/k8s';
 import { connectToModel } from '../../kinds';
-import { connectToFlags } from '../../reducers/features';
+import { connectToFlags, FlagsObject } from '../../reducers/features';
 import { FLAGS } from '../../const';
 
 const unknownKinds = new Set();
@@ -88,7 +88,7 @@ export const NodeLink = connectToFlags<NodeLinkProps>(FLAGS.CAN_LIST_NODE)(NodeL
 
 type NodeLinkProps = {
   name: string;
-  flags: {[key: string]: boolean};
+  flags: FlagsObject;
 };
 
 ResourceLink.displayName = 'ResourceLink';

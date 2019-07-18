@@ -4,10 +4,12 @@ import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import { BanIcon } from '@patternfly/react-icons';
 
+import { connectToExtensions } from '@console/plugin-sdk';
 import { DetailsPage, ListPage, Table, TableRow, TableData } from './factory';
 import { AsyncComponent, Kebab, navFactory, ResourceKebab, ResourceLink, ResourceSummary, SectionHeading } from './utils';
 import { K8sResourceKind, referenceForCRD, CustomResourceDefinitionKind } from '../module/k8s';
-import { resourceListPages } from './resource-pages';
+import { getResourceListPages } from './resource-pages';
+import { mapListPageExtensionsToProps, ResourceListPageExtensionProps } from './resource-list';
 import { DefaultPage } from './default-resource';
 import { GreenCheckCircleIcon } from '@console/shared';
 
@@ -113,11 +115,13 @@ const Details = ({obj: crd}) => {
   </div>;
 };
 
-const Instances: React.FC<InstancesProps> = ({obj, namespace}) => {
-  const crdKind = referenceForCRD(obj);
-  const componentLoader = resourceListPages.get(crdKind, () => Promise.resolve(DefaultPage));
-  return <AsyncComponent loader={componentLoader} namespace={namespace ? namespace : undefined} kind={crdKind} showTitle={false} autoFocus={false} />;
-};
+const Instances = connectToExtensions(mapListPageExtensionsToProps)(
+  ({obj, namespace, pluginListPages}: InstancesProps & ResourceListPageExtensionProps) => {
+    const crdKind = referenceForCRD(obj);
+    const componentLoader = getResourceListPages(pluginListPages).get(crdKind, () => Promise.resolve(DefaultPage));
+    return <AsyncComponent loader={componentLoader} namespace={namespace ? namespace : undefined} kind={crdKind} showTitle={false} autoFocus={false} />;
+  }
+);
 
 export const CustomResourceDefinitionsList: React.FC<CustomResourceDefinitionsListProps> = props => <Table {...props} aria-label="Custom Resource Definitions" Header={CRDTableHeader} Row={CRDTableRow} defaultSortField="spec.names.kind" virtualize />;
 

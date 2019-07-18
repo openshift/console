@@ -1,16 +1,18 @@
 import { K8sKind } from '@console/internal/module/k8s';
-import { Extension } from './extension';
+import { Extension, AlwaysOnExtension } from './common';
 
 namespace ExtensionProperties {
   export interface ModelFeatureFlag {
-    /** If a CRD for this model exists, the feature will be enabled. */
+    /** If a CRD for this model exists, the feature flag will be enabled. */
     model: K8sKind;
     /** The name of the feature flag. */
     flag: string;
+    /** Whether to gate all of the plugin's extensions by this feature flag. Defaults to `true`. */
+    gateExtensions?: boolean;
   }
 }
 
-export interface ModelFeatureFlag extends Extension<ExtensionProperties.ModelFeatureFlag> {
+export interface ModelFeatureFlag extends AlwaysOnExtension<ExtensionProperties.ModelFeatureFlag> {
   type: 'FeatureFlag/Model';
 }
 

@@ -6,12 +6,14 @@ import { connect } from 'react-redux';
 import { CSSTransition } from 'react-transition-group';
 import { Link } from 'react-router-dom';
 
+import { connectToExtensions, Extension, OverviewCRD, isOverviewCRD } from '@console/plugin-sdk';
 import { coFetchJSON } from '../../co-fetch';
 import { getBuildNumber } from '../../module/k8s/builds';
 import { PROMETHEUS_TENANCY_BASE_PATH } from '../graphs';
 import { TextFilter } from '../factory';
 import { PodStatus } from '../pod';
 import * as UIActions from '../../actions/ui';
+import { FeatureState } from '../../reducers/features';
 import {
   apiVersionForModel,
   K8sResourceKind,
@@ -42,8 +44,6 @@ import {
 import { ProjectOverview } from './project-overview';
 import { ResourceOverviewPage } from './resource-overview-page';
 import { OverviewSpecialGroup } from './constants';
-import * as plugins from '../../plugins';
-import { OverviewCRD } from '@console/plugin-sdk';
 
 // List of container status waiting reason values that we should call out as errors in project status rows.
 const CONTAINER_WAITING_STATE_ERROR_REASONS = ['CrashLoopBackOff', 'ErrImagePull', 'ImagePullBackOff'];
@@ -307,7 +307,6 @@ const sortReplicationControllersByRevision = (replicationControllers: K8sResourc
 };
 
 export const sortBuilds = (builds: K8sResourceKind[]): K8sResourceKind[] => {
-
   const byCreationTime = (left, right) => {
     const leftCreationTime = new Date(_.get(left, 'metadata.creationTimestamp', Date.now()));
     const rightCreationTime = new Date(_.get(right, 'metadata.creationTimestamp', Date.now()));
@@ -930,13 +929,14 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
 
 const OverviewMainContent = connect<OverviewMainContentPropsFromState, OverviewMainContentPropsFromDispatch, OverviewMainContentOwnProps>(mainContentStateToProps, mainContentDispatchToProps)(OverviewMainContent_);
 
-const overviewStateToProps = ({UI,FLAGS}): OverviewPropsFromState => {
+const overviewStateToProps = ({ UI, FLAGS }): OverviewPropsFromState => {
   const selectedUID = UI.getIn(['overview', 'selectedUID']);
   const resources = UI.getIn(['overview', 'resources']);
-  const resourceList = plugins.registry.getOverviewCRDs().filter(resource => FLAGS.get(resource.properties.required));
   const selectedItem = !!resources && resources.get(selectedUID);
-  return { selectedItem , resourceList};
-
+  return {
+    selectedItem,
+    flags: FLAGS,
+  };
 };
 
 const overviewDispatchToProps = (dispatch): OverviewPropsFromDispatch => {
@@ -944,6 +944,15 @@ const overviewDispatchToProps = (dispatch): OverviewPropsFromDispatch => {
     dismissDetails: () => dispatch(UIActions.dismissOverviewDetails()),
   };
 };
+
+const overviewExtensionsToProps = (
+  extensions: Extension[],
+  ownProps: OverviewPropsFromState & OverviewPropsFromDispatch
+) => ({
+  resourceList: extensions
+    .filter(isOverviewCRD)
+    .filter(resource => ownProps.flags.get(resource.properties.required)),
+});
 
 const Overview_: React.SFC<OverviewProps> = ({mock, match, selectedItem, resourceList, title, dismissDetails}) => {
   const namespace = _.get(match, 'params.name');
@@ -1076,7 +1085,9 @@ const Overview_: React.SFC<OverviewProps> = ({mock, match, selectedItem, resourc
   </div>;
 };
 
-export const Overview = connect<OverviewPropsFromState, OverviewPropsFromDispatch, OverviewOwnProps>(overviewStateToProps, overviewDispatchToProps)(Overview_);
+export const Overview = connect<OverviewPropsFromState, OverviewPropsFromDispatch, OverviewOwnProps>(overviewStateToProps, overviewDispatchToProps)(
+  connectToExtensions(overviewExtensionsToProps)(Overview_)
+);
 
 type OverviewItemAlerts = {
   [key: string]: {
@@ -1202,11 +1213,15 @@ type OverviewMainContentState = {
 
 type OverviewPropsFromState = {
   selectedItem: any;
-  resourceList: OverviewCRD[];
+  flags: FeatureState;
 };
 
 type OverviewPropsFromDispatch = {
   dismissDetails: () => void;
+};
+
+type OverviewExtensionProps = {
+  resourceList: OverviewCRD[];
 };
 
 type OverviewOwnProps = {
@@ -1215,4 +1230,7 @@ type OverviewOwnProps = {
   title: string;
 };
 
-type OverviewProps = OverviewPropsFromState & OverviewPropsFromDispatch & OverviewOwnProps;
+type OverviewProps = OverviewPropsFromState
+  & OverviewPropsFromDispatch
+  & OverviewExtensionProps
+  & OverviewOwnProps;

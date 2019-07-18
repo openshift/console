@@ -1,13 +1,17 @@
 import * as _ from 'lodash';
 import { referenceForModel } from '@console/internal/module/k8s';
 import * as staticModels from '@console/internal/models';
-import { testedRegistry } from '../plugin-test-utils';
+import { isModelDefinition } from '@console/plugin-sdk';
+import { testedPluginStore } from '../plugin-test-utils';
 
 describe('ModelDefinition', () => {
   it('duplicate models are not allowed', () => {
     const baseModels = _.values(staticModels);
     const pluginModels = _.flatMap(
-      testedRegistry.getModelDefinitions().map((md) => md.properties.models),
+      testedPluginStore
+        .getAllExtensions()
+        .filter(isModelDefinition)
+        .map((md) => md.properties.models),
     );
     const allModels = baseModels.concat(pluginModels);
     const dedupedModels = _.uniqWith(

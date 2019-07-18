@@ -3,7 +3,7 @@ import uiReducer, { getActivePerspective, getDefaultPerspective } from '../../pu
 import { LAST_PERSPECTIVE_LOCAL_STORAGE_KEY } from '../../public/const';
 import * as UIActions from '../../public/actions/ui';
 import { RootState } from '@console/internal/redux';
-import * as plugins from '../../public/plugins';
+import * as plugins from '../../public/plugins'; // TODO(vojtech): remove import
 import '../../__mocks__/localStorage';
 
 describe('getDefaultPerspective', () => {

@@ -1,9 +1,9 @@
 import * as _ from 'lodash';
 import { Map as ImmutableMap } from 'immutable';
 import { referenceForModel, GroupVersionKind } from '@console/internal/module/k8s';
-import { baseTemplates } from '@console/internal/models/yaml-templates';
-import { YAMLTemplate } from '@console/plugin-sdk';
-import { testedRegistry, getDuplicates } from '../plugin-test-utils';
+import { getYAMLTemplates } from '@console/internal/models/yaml-templates';
+import { YAMLTemplate, isYAMLTemplate } from '@console/plugin-sdk';
+import { testedPluginStore, getDuplicates } from '../plugin-test-utils';
 
 type TemplateEntry = [GroupVersionKind, ImmutableMap<string, string>];
 
@@ -26,9 +26,18 @@ const extensionToKeys = (e: YAMLTemplate) => {
 
 describe('YAMLTemplate', () => {
   it('only one named template per model is allowed', () => {
-    const baseTemplateEntries = _.values(baseTemplates.entrySeq().toObject()) as TemplateEntry[];
+    const baseTemplateEntries = _.values(
+      getYAMLTemplates([])
+        .entrySeq()
+        .toObject(),
+    ) as TemplateEntry[];
     const baseTemplateKeys = _.flatMap(baseTemplateEntries.map(entryToKeys));
-    const pluginTemplateKeys = _.flatMap(testedRegistry.getYAMLTemplates().map(extensionToKeys));
+    const pluginTemplateKeys = _.flatMap(
+      testedPluginStore
+        .getAllExtensions()
+        .filter(isYAMLTemplate)
+        .map(extensionToKeys),
+    );
     const allTemplateKeys = baseTemplateKeys.concat(pluginTemplateKeys);
     const duplicateTemplateKeys = getDuplicates(allTemplateKeys);
 

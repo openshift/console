@@ -1,5 +1,5 @@
 import { K8sKind } from '@console/internal/module/k8s';
-import { Extension } from './extension';
+import { Extension, AlwaysOnExtension } from './common';
 
 namespace ExtensionProperties {
   export interface ModelDefinition {
@@ -8,7 +8,7 @@ namespace ExtensionProperties {
   }
 }
 
-export interface ModelDefinition extends Extension<ExtensionProperties.ModelDefinition> {
+export interface ModelDefinition extends AlwaysOnExtension<ExtensionProperties.ModelDefinition> {
   type: 'ModelDefinition';
 }
 

@@ -1,7 +1,6 @@
 import { RouteProps, RouteComponentProps } from 'react-router-dom';
 import { K8sKind, K8sResourceKindReference } from '@console/internal/module/k8s';
-import { Extension } from './extension';
-import { LazyLoader } from './types';
+import { Extension, LazyLoader } from './common';
 
 namespace ExtensionProperties {
   export interface ResourcePage<T> {

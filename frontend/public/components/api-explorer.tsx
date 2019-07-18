@@ -7,6 +7,7 @@ import { Map as ImmutableMap } from 'immutable';
 import * as fuzzy from 'fuzzysearch';
 import { sortable } from '@patternfly/react-table';
 
+import { connectToExtensions } from '@console/plugin-sdk';
 import { ALL_NAMESPACES_KEY, FLAGS } from '../const';
 import { connectToModel } from '../kinds';
 import { LocalResourceAccessReviewsModel, ResourceAccessReviewsModel } from '../models';
@@ -20,12 +21,13 @@ import {
   referenceForModel,
   ResourceAccessReviewRequest,
 } from '../module/k8s';
-import { connectToFlags } from '../reducers/features';
+import { connectToFlags, FlagsObject } from '../reducers/features';
 import { RootState } from '../redux';
 import { CheckBox, CheckBoxControls } from './row-filter';
 import { DefaultPage } from './default-resource';
 import { Table, TextFilter } from './factory';
-import { resourceListPages } from './resource-pages';
+import { getResourceListPages } from './resource-pages';
+import { mapListPageExtensionsToProps, ResourceListPageExtensionProps } from './resource-list';
 import { ExploreType } from './sidebars/explore-type-sidebar';
 import {
   AsyncComponent,
@@ -38,6 +40,7 @@ import {
   ResourceIcon,
   ScrollToTopOnMount,
   SimpleTabNav,
+  SimpleTabNavProps,
 } from './utils';
 
 const mapStateToProps = (state: RootState): APIResourceLinkStateProps => {
@@ -254,12 +257,14 @@ const APIResourceSchema: React.FC<APIResourceTabProps> = ({kindObj}) => {
   );
 };
 
-const APIResourceInstances: React.FC<APIResourceTabProps> = ({kindObj, namespace}) => {
-  const componentLoader = resourceListPages.get(referenceForModel(kindObj), () => Promise.resolve(DefaultPage));
-  const ns = kindObj.namespaced ? namespace : undefined;
+const APIResourceInstances = connectToExtensions(mapListPageExtensionsToProps)(
+  ({kindObj, namespace, pluginListPages}: APIResourceTabProps & ResourceListPageExtensionProps) => {
+    const componentLoader = getResourceListPages(pluginListPages).get(referenceForModel(kindObj), () => Promise.resolve(DefaultPage));
+    const ns = kindObj.namespaced ? namespace : undefined;
 
-  return <AsyncComponent loader={componentLoader} namespace={ns} kind={kindObj.crd ? referenceForModel(kindObj) : kindObj.kind} showTitle={false} autoFocus={false} />;
-};
+    return <AsyncComponent loader={componentLoader} namespace={ns} kind={kindObj.crd ? referenceForModel(kindObj) : kindObj.kind} showTitle={false} autoFocus={false} />;
+  }
+);
 
 const Subject: React.FC<{value: string}> = ({value}) => {
   const [first, ...rest] = value.split(':');
@@ -427,7 +432,7 @@ const APIResourceAccessReview: React.FC<APIResourceTabProps> = ({kindObj, namesp
   );
 };
 
-const APIResourcePage_ = ({match, kindObj, kindsInFlight, flags}: {match: any, kindObj: K8sKind, kindsInFlight: boolean, flags: {[key: string]: boolean}}) => {
+const APIResourcePage_ = ({match, kindObj, kindsInFlight, flags}: {match: any, kindObj: K8sKind, kindsInFlight: boolean, flags: FlagsObject}) => {
   const [selectedTab, onClickTab] = React.useState('Overview');
   if (!kindObj) {
     return kindsInFlight
@@ -445,7 +450,7 @@ const APIResourcePage_ = ({match, kindObj, kindsInFlight, flags}: {match: any, k
     path: match.url,
   }];
 
-  const tabs = [{
+  const tabs: SimpleTabNavProps['tabs'] = [{
     name: 'Overview',
     component: APIResourceOverview,
   }, {

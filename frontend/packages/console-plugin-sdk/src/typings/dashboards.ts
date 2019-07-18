@@ -6,8 +6,7 @@ import { StatusGroupMapper } from '@console/internal/components/dashboard/invent
 import { OverviewQuery } from '@console/internal/components/dashboards-page/overview-dashboard/queries';
 import { ConsumerMutator } from '@console/internal/components/dashboards-page/overview-dashboard/top-consumers-card';
 import { MetricType } from '@console/internal/components/dashboard/top-consumers-card/metric-type';
-import { Extension } from './extension';
-import { LazyLoader } from './types';
+import { Extension, LazyLoader } from './common';
 
 namespace ExtensionProperties {
   interface DashboardsOverviewHealthSubsystem<R> {
@@ -153,15 +152,13 @@ export interface DashboardsTab extends Extension<ExtensionProperties.DashboardsT
   type: 'Dashboards/Tab';
 }
 
-export const isDashboardsTab = (e: Extension): e is DashboardsTab =>
-  e.type === 'Dashboards/Tab';
+export const isDashboardsTab = (e: Extension): e is DashboardsTab => e.type === 'Dashboards/Tab';
 
 export interface DashboardsCard extends Extension<ExtensionProperties.DashboardsCard> {
   type: 'Dashboards/Card';
 }
 
-export const isDashboardsCard = (e: Extension): e is DashboardsCard =>
-  e.type === 'Dashboards/Card';
+export const isDashboardsCard = (e: Extension): e is DashboardsCard => e.type === 'Dashboards/Card';
 
 export interface DashboardsOverviewQuery
   extends Extension<ExtensionProperties.DashboardsOverviewQuery> {
@@ -194,9 +191,8 @@ export interface DashboardsInventoryItemGroup
   type: 'Dashboards/Inventory/Item/Group';
 }
 
-export const isDashboardsInventoryItemGroup = (
-  e: Extension,
-): e is DashboardsInventoryItemGroup => e.type === 'Dashboards/Inventory/Item/Group';
+export const isDashboardsInventoryItemGroup = (e: Extension): e is DashboardsInventoryItemGroup =>
+  e.type === 'Dashboards/Inventory/Item/Group';
 
 export interface DashboardsOverviewTopConsumerItem
   extends Extension<ExtensionProperties.DashboardsOverviewTopConsumerItem> {

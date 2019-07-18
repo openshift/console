@@ -4,7 +4,7 @@ import { safeLoad, safeDump } from 'js-yaml';
 
 import { CreateYAML, CreateYAMLProps } from '../../public/components/create-yaml';
 import { PodModel } from '../../public/models';
-import { yamlTemplates } from '../../public/models/yaml-templates';
+import { getYAMLTemplates } from '../../public/models/yaml-templates';
 import { AsyncComponent, LoadingBox } from '../../public/components/utils';
 import { referenceForModel } from '../../public/module/k8s';
 
@@ -36,7 +36,7 @@ describe(CreateYAML.displayName, () => {
   });
 
   it('creates sample object using default YAML template for model', () => {
-    const expectedObj = safeLoad(yamlTemplates.getIn([referenceForModel(PodModel), 'default']));
+    const expectedObj = safeLoad(getYAMLTemplates([]).getIn([referenceForModel(PodModel), 'default']));
     expectedObj.metadata.namespace = 'default';
 
     expect(wrapper.find(AsyncComponent).props().obj).toEqual(expectedObj);

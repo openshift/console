@@ -3,8 +3,8 @@ import * as _ from 'lodash-es';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Alert } from '@patternfly/react-core';
-import * as plugins from '../../plugins';
 
+import { connectToExtensions, Extension, isGlobalConfig, GlobalConfig } from '@console/plugin-sdk';
 import { RootState } from '../../redux';
 import { featureReducerName, flagPending, FeatureState } from '../../reducers/features';
 import { K8sKind, k8sList, referenceForModel } from '../../module/k8s';
@@ -14,6 +14,10 @@ import { addIDPItems } from './oauth';
 const stateToProps = (state: RootState) => ({
   configResources: state.k8s.getIn(['RESOURCES', 'configResources']),
   flags: state[featureReducerName],
+});
+
+const extensionsToProps = (extensions: Extension[]) => ({
+  globalConfigs: extensions.filter(isGlobalConfig),
 });
 
 const editYAMLMenuItem = (name: string, resourceLink: string) => ({
@@ -57,10 +61,6 @@ class GlobalConfigPage_ extends React.Component<GlobalConfigPageProps, GlobalCon
     loading: true,
   }
 
-  getGlobalConfigs(): plugins.GlobalConfig[] {
-    return plugins.registry.getGlobalConfigs();
-  }
-
   componentDidMount() {
     let errorMessage = '';
     Promise.all(this.props.configResources.map((model: K8sKind) => {
@@ -82,7 +82,7 @@ class GlobalConfigPage_ extends React.Component<GlobalConfigPageProps, GlobalCon
     });
   }
 
-  checkFlags(c: plugins.GlobalConfig): GlobalConfigObjectProps {
+  checkFlags(c: GlobalConfig): GlobalConfigObjectProps {
     const { flags } = this.props;
     const { required } = c.properties;
 
@@ -96,8 +96,7 @@ class GlobalConfigPage_ extends React.Component<GlobalConfigPageProps, GlobalCon
   render() {
     const { errorMessage, items, loading } = this.state;
 
-    const globalConfigs = this.getGlobalConfigs();
-    const usableConfigs = globalConfigs.filter(item => this.checkFlags(item)).map(item => item.properties);
+    const usableConfigs = this.props.globalConfigs.filter(item => this.checkFlags(item)).map(item => item.properties);
     const allItems = usableConfigs.length > 0 && items.concat(usableConfigs);
     const sortedItems = usableConfigs.length > 0 ? _.sortBy(_.flatten(allItems), 'kind', 'asc') : items;
 
@@ -122,10 +121,11 @@ class GlobalConfigPage_ extends React.Component<GlobalConfigPageProps, GlobalCon
   }
 }
 
-export const GlobalConfigPage = connect(stateToProps)(GlobalConfigPage_);
+export const GlobalConfigPage = connect(stateToProps)(connectToExtensions(extensionsToProps)(GlobalConfigPage_));
 
 type GlobalConfigPageProps = {
   configResources: K8sKind[];
+  globalConfigs: GlobalConfig[];
   flags?: FeatureState;
 };
 

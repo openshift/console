@@ -45,10 +45,9 @@ const reducers = combineReducers<RootState>({
 
 const store = createStore(reducers, {}, composeEnhancers(applyMiddleware(thunk)));
 
-// eslint-disable-next-line no-undef
 if (process.env.NODE_ENV !== 'production') {
   // Expose Redux store for debugging
-  (window as any).store = store;
+  window.store = store;
 }
 
 export default store;

@@ -1,5 +1,6 @@
 import { Map as ImmutableMap } from 'immutable';
 
+import { ResourcePage, ResourceListPage, ResourceDetailsPage } from '@console/plugin-sdk';
 import { ReportReference, ReportGenerationQueryReference } from './chargeback';
 import { referenceForModel, GroupVersionKind } from '../module/k8s';
 import {
@@ -62,9 +63,7 @@ import {
   TemplateInstanceModel,
 } from '../models';
 
-import * as plugins from '../plugins';
-
-const addResourcePage = (map: ImmutableMap<ResourceMapKey, ResourceMapValue>, page: plugins.ResourcePage) => {
+const addResourcePage = (map: ImmutableMap<ResourceMapKey, ResourceMapValue>, page: ResourcePage) => {
   const key = referenceForModel(page.properties.model);
   if (!map.has(key)) {
     map.set(key, page.properties.loader);
@@ -74,7 +73,7 @@ const addResourcePage = (map: ImmutableMap<ResourceMapKey, ResourceMapValue>, pa
 type ResourceMapKey = GroupVersionKind | string;
 type ResourceMapValue = () => Promise<React.ComponentType<any>>;
 
-export const baseDetailsPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
+const baseDetailsPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
   .set(referenceForModel(ClusterServiceClassModel), () => import('./cluster-service-class' /* webpackChunkName: "cluster-service-class" */).then(m => m.ClusterServiceClassDetailsPage))
   .set(referenceForModel(ClusterServiceBrokerModel), () => import('./cluster-service-broker' /* webpackChunkName: "cluster-service-broker" */).then(m => m.ClusterServiceBrokerDetailsPage))
   .set(referenceForModel(ClusterServicePlanModel), () => import('./cluster-service-plan' /* webpackChunkName: "cluster-service-plan" */).then(m => m.ClusterServicePlanDetailsPage))
@@ -131,15 +130,15 @@ export const baseDetailsPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
   .set(referenceForModel(ClusterVersionModel), () => import('./cluster-settings/cluster-version' /* webpackChunkName: "cluster-version" */).then(m => m.ClusterVersionDetailsPage))
   .set(referenceForModel(OAuthModel), () => import('./cluster-settings/oauth' /* webpackChunkName: "oauth" */).then(m => m.OAuthDetailsPage));
 
-export const resourceDetailsPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
-  .merge(baseDetailsPages)
-  .withMutations(map => {
-    plugins.registry.getResourceDetailsPages().forEach(page => {
+// TODO(vojtech) _.memoize with resolver _.isEqual
+export const getResourceDetailsPages = (pluginDetailsPages: ResourceDetailsPage[]) =>
+  baseDetailsPages.withMutations(map => {
+    pluginDetailsPages.forEach(page => {
       addResourcePage(map, page);
     });
   });
 
-export const baseListPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
+const baseListPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
   .set(referenceForModel(ClusterServiceClassModel), () => import('./cluster-service-class' /* webpackChunkName: "cluster-service-class" */).then(m => m.ClusterServiceClassPage))
   .set(referenceForModel(ClusterServiceBrokerModel), () => import('./cluster-service-broker' /* webpackChunkName: "cluster-service-broker" */).then(m => m.ClusterServiceBrokerPage))
   .set(referenceForModel(ClusterServicePlanModel), () => import('./cluster-service-plan' /* webpackChunkName: "cluster-service-plan" */).then(m => m.ClusterServicePlanPage))
@@ -194,10 +193,10 @@ export const baseListPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
   .set(referenceForModel(InstallPlanModel), () => import('./operator-lifecycle-manager/install-plan' /* webpackChunkName: "install-plan" */).then(m => m.InstallPlansPage))
   .set(referenceForModel(ClusterOperatorModel), () => import('./cluster-settings/cluster-operator' /* webpackChunkName: "cluster-operator" */).then(m => m.ClusterOperatorPage));
 
-export const resourceListPages = ImmutableMap<ResourceMapKey, ResourceMapValue>()
-  .merge(baseListPages)
-  .withMutations(map => {
-    plugins.registry.getResourceListPages().forEach(page => {
+// TODO(vojtech) _.memoize with resolver _.isEqual
+export const getResourceListPages = (pluginListPages: ResourceListPage[]) =>
+  baseListPages.withMutations(map => {
+    pluginListPages.forEach(page => {
       addResourcePage(map, page);
     });
   });

@@ -2,6 +2,7 @@ import { connect } from 'react-redux';
 import { Map as ImmutableMap } from 'immutable';
 import * as _ from 'lodash-es';
 
+import { isModelFeatureFlag } from '@console/plugin-sdk';
 import {
   ChargebackReportModel,
   ClusterServiceClassModel,
@@ -19,7 +20,7 @@ import { referenceForModel } from '../module/k8s';
 import { ActionType as K8sActionType } from '../actions/k8s';
 import { FeatureAction, ActionType } from '../actions/features';
 import { FLAGS } from '../const';
-import * as plugins from '../plugins';
+import { pluginStore } from '../plugins';
 
 export const defaults = _.mapValues(FLAGS, flag => flag === FLAGS.AUTH_ENABLED
   ? !window.SERVER_FLAGS.authDisabled
@@ -42,7 +43,7 @@ export const baseCRDs = {
 
 const CRDs = { ...baseCRDs };
 
-plugins.registry.getFeatureFlags().filter(plugins.isModelFeatureFlag).forEach(ff => {
+pluginStore.getAlwaysOnExtensions().filter(isModelFeatureFlag).forEach(ff => {
   const modelRef = referenceForModel(ff.properties.model);
   if (!CRDs[modelRef]) {
     CRDs[modelRef] = ff.properties.flag as FLAGS;
@@ -82,18 +83,29 @@ export const featureReducer = (state: FeatureState, action: FeatureAction): Feat
   }
 };
 
-export const stateToProps = (desiredFlags: string[], state) => {
-  const flags = desiredFlags.reduce((allFlags, f) => ({...allFlags, [f]: state[featureReducerName].get(f)}), {});
+export const stateToProps = (desiredFlags: string[] = [], state) => {
+  const featureState = state[featureReducerName] as FeatureState;
+  const flags = desiredFlags.reduce((allFlags, f) => ({...allFlags, [f]: featureState.get(f)}), {});
   return {flags};
 };
 
+export type FlagsObject = {[key: string]: boolean};
+
 type WithFlagsProps = {
-  flags: {[key: string]: boolean};
+  flags: FlagsObject;
 };
 
-export type ConnectToFlags = <P extends WithFlagsProps>(...flags: (FLAGS | string)[]) => (C: React.ComponentType<P>) =>
-  React.ComponentType<Omit<P, keyof WithFlagsProps>> & {WrappedComponent: React.ComponentType<P>};
-export const connectToFlags: ConnectToFlags = (...flags) => connect(state => stateToProps(flags, state), null, null, {areStatePropsEqual: _.isEqual});
+export type ConnectToFlags = <P extends WithFlagsProps>(
+  ...flags: (FLAGS | string)[]
+) => (C: React.ComponentType<P>)
+  => React.ComponentType<Omit<P, keyof WithFlagsProps>> & {WrappedComponent: React.ComponentType<P>};
+
+export const connectToFlags: ConnectToFlags = (...flags) => connect(
+  (state) => stateToProps(flags, state),
+  null, // mapDispatchToProps
+  null, // mergeProps
+  {areStatePropsEqual: _.isEqual},
+);
 
 // Flag detection is not complete if the flag's value is `undefined`.
 export const flagPending = flag => flag === undefined;

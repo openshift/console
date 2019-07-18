@@ -62,13 +62,13 @@ export class SimpleTabNav extends React.Component<SimpleTabNavProps, SimpleTabNa
   }
 }
 
-type SimpleTabNavProps = {
+export type SimpleTabNavProps = {
   onClickTab?: (name: string) => void;
   selectedTab?: string,
   tabProps: any;
   tabs: {
     name: string;
-    component: any;
+    component: React.ComponentType;
   }[];
 };
 

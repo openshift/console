@@ -3,10 +3,17 @@ import { Link, LinkProps } from 'react-router-dom';
 import * as _ from 'lodash-es';
 import { NavItem } from '@patternfly/react-core';
 import { connect } from 'react-redux';
+
+import {
+  NavItem as NavItemExtension,
+  isNavItem,
+  isHrefNavItem,
+  isResourceNSNavItem,
+  isResourceClusterNavItem,
+} from '@console/plugin-sdk';
 import { formatNamespacedRouteForResource } from '../../actions/ui';
 import { referenceForModel, K8sKind } from '../../module/k8s';
 import { stripBasePath } from '../utils';
-import * as plugins from '../../plugins';
 import { featureReducerName } from '../../reducers/features';
 import { RootState } from '../../redux';
 import { getActiveNamespace } from '../../reducers/ui';
@@ -125,16 +132,16 @@ type NavLinkComponent<T extends NavLinkProps = NavLinkProps> = React.ComponentTy
   isActive: (props: T, resourcePath: string, activeNamespace: string) => boolean;
 };
 
-export const createLink = (item: plugins.NavItem, rootNavLink = false): React.ReactElement => {
-  if (plugins.isNavItem(item)) {
+export const createLink = (item: NavItemExtension, rootNavLink = false): React.ReactElement => {
+  if (isNavItem(item)) {
     let Component: NavLinkComponent = null;
-    if (plugins.isHrefNavItem(item)) {
+    if (isHrefNavItem(item)) {
       Component = HrefLink;
     }
-    if (plugins.isResourceNSNavItem(item)) {
+    if (isResourceNSNavItem(item)) {
       Component = ResourceNSLink;
     }
-    if (plugins.isResourceClusterNavItem(item)) {
+    if (isResourceClusterNavItem(item)) {
       Component = ResourceClusterLink;
     }
     if (Component) {

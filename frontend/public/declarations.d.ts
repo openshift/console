@@ -36,8 +36,11 @@ declare interface Window {
   };
   windowError?: boolean;
   __REDUX_DEVTOOLS_EXTENSION_COMPOSE__?: Function;
+  store?: {}; // Redux store for debugging
+  pluginStore?: {}; // Console plugin store for debugging
 }
 
 // From https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-8.html
+// TODO(vojtech): TypeScript 3.5 adds Omit to the standard library
 declare type Omit<T, K> = Pick<T, Exclude<keyof T, K>>;
 declare type Diff<T, K> = Omit<T, keyof K>;

@@ -177,7 +177,7 @@ export const watchK8sList = (id: string, query: {[key: string]: string}, k8skind
 
       if (WS[id]) {
         // eslint-disable-next-line no-console
-        console.warn(`Attempted to create multiple websockets for ${id}.  This should never happen.`);
+        console.warn(`Attempted to create multiple websockets for ${id}.`);
         return;
       }
 

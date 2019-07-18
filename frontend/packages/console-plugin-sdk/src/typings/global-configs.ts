@@ -1,5 +1,5 @@
 import { K8sKind } from '@console/internal/module/k8s';
-import { Extension } from './extension';
+import { Extension } from './common';
 
 namespace ExtensionProperties {
   export interface GlobalConfig {
@@ -12,6 +12,7 @@ namespace ExtensionProperties {
     /** Namespace of this item. */
     namespace: string;
     /** Name of feature flag for this item. */
+    // TODO(vojtech): remove this property, obsoleted by Extension.flags
     required: string;
     /** Unique identifier for this item. */
     uid: string;

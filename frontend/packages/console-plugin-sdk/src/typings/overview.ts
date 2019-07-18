@@ -2,8 +2,7 @@ import { K8sResourceKind } from '@console/internal/module/k8s';
 import { FirehoseResource } from '@console/internal/components/utils';
 import { OverviewDetailsResourcesTabProps } from '@console/internal/components/overview/resource-overview-page';
 import { OverviewMainContentProps } from '@console/internal/components/overview';
-import { Extension } from './extension';
-import { LazyLoader } from './types';
+import { Extension, LazyLoader } from './common';
 
 type ResourceItem = {
   [key: string]: K8sResourceKind[];
@@ -15,6 +14,7 @@ namespace ExtensionProperties {
     resources: (namespace: string) => FirehoseResource[];
 
     /** The name of the feature flag. */
+    // TODO(vojtech): remove this property, obsoleted by Extension.flags
     required: string;
 
     /** util to check get resources. */

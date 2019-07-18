@@ -1,7 +1,13 @@
 import * as React from 'react';
 import * as _ from 'lodash-es';
 
-import * as plugins from '../../../plugins';
+import {
+  connectToExtensions,
+  Extension,
+  isDashboardsOverviewQuery,
+  isDashboardsOverviewUtilizationItem,
+  DashboardsOverviewUtilizationItem,
+} from '@console/plugin-sdk';
 import {
   DashboardCard,
   DashboardCardBody,
@@ -13,36 +19,24 @@ import { DashboardItemProps, withDashboardResources } from '../with-dashboard-re
 import { getRangeVectorStats } from '../../graphs/utils';
 import { humanizePercentage, humanizeBinaryBytesWithoutB } from '../../utils';
 import { OverviewQuery, utilizationQueries } from './queries';
+import { useEffectDeepCompare } from '../../utils/use-effect-deep-compare';
 
-const getQueries = () => {
-  const pluginQueries = {};
-  plugins.registry.getDashboardsOverviewQueries().forEach(pluginQuery => {
-    const queryKey = pluginQuery.properties.queryKey;
-    if (!pluginQueries[queryKey]) {
-      pluginQueries[queryKey] = pluginQuery.properties.query;
-    }
-  });
-  return _.defaults(pluginQueries, utilizationQueries);
-};
-
-const UtilizationCard_: React.FC<DashboardItemProps> = ({
+const UtilizationCard_: React.FC<UtilizationCardProps> = ({
   watchPrometheus,
   stopWatchPrometheusQuery,
   prometheusResults,
+  queries,
+  pluginUtilizationItems,
 }) => {
-  React.useEffect(() => {
-    const queries = getQueries();
+  useEffectDeepCompare(() => {
     Object.keys(queries).forEach(key => watchPrometheus(queries[key]));
-
-    const pluginItems = plugins.registry.getDashboardsOverviewUtilizationItems();
-    pluginItems.forEach(item => watchPrometheus(item.properties.query));
+    pluginUtilizationItems.forEach(item => watchPrometheus(item.properties.query));
     return () => {
       Object.keys(queries).forEach(key => stopWatchPrometheusQuery(queries[key]));
-      pluginItems.forEach(item => stopWatchPrometheusQuery(item.properties.query));
+      pluginUtilizationItems.forEach(item => stopWatchPrometheusQuery(item.properties.query));
     };
-  }, [watchPrometheus, stopWatchPrometheusQuery]);
+  }, [watchPrometheus, stopWatchPrometheusQuery], [queries]);
 
-  const queries = getQueries();
   const cpuUtilization = prometheusResults.getIn([queries[OverviewQuery.CPU_UTILIZATION], 'result']);
   const memoryUtilization = prometheusResults.getIn([queries[OverviewQuery.MEMORY_UTILIZATION], 'result']);
   const storageUtilization = prometheusResults.getIn([queries[OverviewQuery.STORAGE_UTILIZATION], 'result']);
@@ -50,8 +44,6 @@ const UtilizationCard_: React.FC<DashboardItemProps> = ({
   const cpuStats = getRangeVectorStats(cpuUtilization);
   const memoryStats = getRangeVectorStats(memoryUtilization);
   const storageStats = getRangeVectorStats(storageUtilization);
-
-  const pluginItems = plugins.registry.getDashboardsOverviewUtilizationItems();
 
   return (
     <DashboardCard>
@@ -81,7 +73,7 @@ const UtilizationCard_: React.FC<DashboardItemProps> = ({
             humanizeValue={humanizeBinaryBytesWithoutB}
             query={queries[OverviewQuery.STORAGE_UTILIZATION]}
           />
-          {pluginItems.map(({ properties }, index) => {
+          {pluginUtilizationItems.map(({ properties }, index) => {
             const utilization = prometheusResults.getIn([properties.query, 'result']);
             const utilizationStats = getRangeVectorStats(utilization);
             return (
@@ -101,4 +93,23 @@ const UtilizationCard_: React.FC<DashboardItemProps> = ({
   );
 };
 
-export const UtilizationCard = withDashboardResources(UtilizationCard_);
+const mapExtensionsToProps = (extensions: Extension[]) => {
+  const pluginQueries = {};
+  extensions.filter(isDashboardsOverviewQuery).forEach(pluginQuery => {
+    const queryKey = pluginQuery.properties.queryKey;
+    if (!pluginQueries[queryKey]) {
+      pluginQueries[queryKey] = pluginQuery.properties.query;
+    }
+  });
+  return {
+    queries: _.defaults(pluginQueries, utilizationQueries),
+    pluginUtilizationItems: extensions.filter(isDashboardsOverviewUtilizationItem),
+  };
+};
+
+export const UtilizationCard = withDashboardResources(connectToExtensions(mapExtensionsToProps)(UtilizationCard_));
+
+type UtilizationCardProps = DashboardItemProps & {
+  queries: {[key in OverviewQuery]: string};
+  pluginUtilizationItems: DashboardsOverviewUtilizationItem[];
+}

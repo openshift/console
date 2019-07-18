@@ -1,2 +1,3 @@
 export * from './typings';
-export * from './registry';
+export * from './store';
+export * from './connect';

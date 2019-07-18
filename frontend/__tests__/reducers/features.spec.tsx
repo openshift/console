@@ -4,7 +4,7 @@ import * as Immutable from 'immutable';
 import { setFlag } from '../../public/actions/features';
 import { receivedResources } from '../../public/actions/k8s';
 import { FLAGS } from '../../public/const';
-import { featureReducer, defaults, connectToFlags } from '../../public/reducers/features';
+import { featureReducer, defaults, connectToFlags, FlagsObject } from '../../public/reducers/features';
 import { ClusterServiceVersionModel } from '../../public/models';
 
 describe('featureReducer', () => {
@@ -53,7 +53,7 @@ describe('featureReducer', () => {
 });
 
 describe('connectToFlags', () => {
-  type MyComponentProps = {propA: number, propB: boolean, flags: {[key: string]: boolean}};
+  type MyComponentProps = {propA: number, propB: boolean, flags: FlagsObject};
 
   class MyComponent extends React.Component<MyComponentProps> {
     render() {
