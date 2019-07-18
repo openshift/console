@@ -320,6 +320,8 @@ const Query: React.FC<QueryProps> = ({colorOffset, metrics, onBlur, onDelete, on
     breakPoint = 'grid2xl';
   }
 
+  const switchLabel = `${enabled ? 'Disable' : 'Enable'} query`;
+
   return <div className={classNames('query-browser__table', {'query-browser__table--expanded': expanded})}>
     <div className="query-browser__query-controls">
       <ExpandButton isExpanded={expanded} onClick={() => onUpdate({expanded: !expanded})} />
@@ -330,7 +332,9 @@ const Query: React.FC<QueryProps> = ({colorOffset, metrics, onBlur, onDelete, on
         onUpdate={v => onUpdate({text: v})}
         value={text}
       />
-      <Switch aria-label={`${enabled ? 'Disable' : 'Enable'} query`} isChecked={enabled} onChange={toggleEnabled} />
+      <div title={switchLabel}>
+        <Switch aria-label={switchLabel} isChecked={enabled} onChange={toggleEnabled} />
+      </div>
       <div className="dropdown-kebab-pf">
         <Kebab options={kebabOptions} />
       </div>
