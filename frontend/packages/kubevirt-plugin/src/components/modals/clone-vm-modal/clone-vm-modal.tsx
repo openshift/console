@@ -32,7 +32,6 @@ import { VMKind } from '../../../types';
 import { getDescription } from '../../../selectors/selectors';
 import { getLoadedData, getLoadError, prefixedID } from '../../../utils';
 import { DataVolumeModel, VirtualMachineModel } from '../../../models';
-import { ConfigurationSummary } from './configuration-summary';
 import { cloneVM } from '../../../k8s/requests/vm/clone';
 import { validateVmName } from '../../../utils/validations/vm';
 import {
@@ -42,6 +41,7 @@ import {
   isVMRunning,
 } from '../../../selectors/vm';
 import { ValidationErrorType } from '../../../utils/validations/common';
+import { ConfigurationSummary } from './configuration-summary';
 
 import './_clone-vm-modal.scss';
 

@@ -1,9 +1,10 @@
+import * as _ from 'lodash';
 import { getName, getNamespace } from '@console/shared';
 import { apiVersionForModel, K8sResourceKind } from '@console/internal/module/k8s';
-import { VMIKind } from '../../../../types/vm';
-import { VirtualMachineInstanceMigrationModel } from '../../../../models';
+import { VMIKind } from '../../../types/vm';
+import { VirtualMachineInstanceMigrationModel } from '../../../models';
 
-export class Migration {
+export class VMIMigration {
   private data: K8sResourceKind;
 
   constructor() {
@@ -32,6 +33,6 @@ export class Migration {
   }
 
   build() {
-    return this.data;
+    return _.cloneDeep(this.data);
   }
 }

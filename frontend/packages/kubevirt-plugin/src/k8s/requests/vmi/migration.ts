@@ -3,12 +3,15 @@ import { k8sCreate } from '@console/internal/module/k8s';
 import { VMIKind } from '../../../types/vm';
 import { VirtualMachineInstanceMigrationModel } from '../../../models';
 import { prefixedID } from '../../../utils';
-import { Migration } from './objects/migration';
+import { VMIMigration } from '../../objects/vmi-migration/vmi-migration';
 
 export const getMigrationName = (vmi: VMIKind) => prefixedID(getName(vmi), 'migration');
 
 export const startVMIMigration = (vmi: VMIKind) => {
-  const migration = new Migration().setName(getMigrationName(vmi)).setVMI(vmi);
+  const migration = new VMIMigration()
+    .setName(getMigrationName(vmi))
+    .setVMI(vmi)
+    .build();
 
-  return k8sCreate(VirtualMachineInstanceMigrationModel, migration.build());
+  return k8sCreate(VirtualMachineInstanceMigrationModel, migration);
 };

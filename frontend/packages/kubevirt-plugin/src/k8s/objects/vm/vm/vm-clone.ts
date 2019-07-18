@@ -8,7 +8,6 @@ import {
   getPvcStorageSize,
 } from '../../../../selectors/pvc/selectors';
 import { DataVolumeTemplate } from '../datavolume-template';
-import { SafeVM } from './safe-vm';
 import {
   getOperatingSystem,
   getOperatingSystemName,
@@ -21,6 +20,7 @@ import {
   getDataVolumeStorageSize,
 } from '../../../../selectors/dv/selectors';
 import { TEMPLATE_OS_NAME_ANNOTATION, TEMPLATE_VM_NAME_LABEL } from '../../../../constants/vm';
+import { SafeVM } from './safe-vm';
 
 export type CloneTo = {
   name: string;
