@@ -9,32 +9,16 @@ import {
   TEMPLATE_TYPE_LABEL,
 } from 'kubevirt-web-ui-components';
 import { ListPage, Table, TableRow, TableData } from '@console/internal/components/factory';
-import {
-  Kebab,
-  ResourceLink,
-  ResourceKebab,
-  asAccessReview,
-} from '@console/internal/components/utils';
-import { getNamespace, DASH, getName } from '@console/shared';
+import { Kebab, ResourceLink, ResourceKebab } from '@console/internal/components/utils';
+import { getNamespace, DASH } from '@console/shared';
 import { TemplateModel } from '@console/internal/models';
 import { TemplateKind } from '@console/internal/module/k8s';
 import { match } from 'react-router';
 import { dimensifyHeader, dimensifyRow } from '../../utils/table';
 import { openCreateVmWizard } from '../modals';
 import { VM_TEMPLATE_LABEL_PLURAL } from '../../constants/vm-templates';
+import { menuActions } from './menu-actions';
 import { VMTemplateLink } from './vm-template-link';
-
-const vmTemplateEditAction = (kind, obj) => ({
-  label: `Edit VM Template`,
-  href: `/k8s/ns/${getNamespace(obj)}/vmtemplates/${getName(obj)}/yaml`,
-  accessReview: asAccessReview(kind, obj, 'update'),
-});
-const menuActions = [
-  Kebab.factory.ModifyLabels,
-  Kebab.factory.ModifyAnnotations,
-  vmTemplateEditAction,
-  Kebab.factory.Delete,
-];
 
 const { kind } = TemplateModel;
 const selector = {
