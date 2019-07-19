@@ -115,7 +115,7 @@ const Details = ({obj: pv}) => {
             {storage && <><dt>Capacity</dt><dd>{storage}</dd></>}
             {!_.isEmpty(accessModes) && <><dt>Access Modes</dt><dd>{accessModes.join(', ')}</dd></>}
             <dt>Volume Mode</dt>
-            <dd>{volumeMode || 'Filesystem' }</dd>
+            <dd>{volumeMode || 'Filesystem'}</dd>
             <dt>Storage Class</dt>
             <dd>
               {storageClassName ? <ResourceLink kind="StorageClass" name={storageClassName} /> : 'None'}
