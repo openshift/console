@@ -7,11 +7,26 @@
     padding-right: var(--pf-global--spacer--md);
   }
 
+  &__icon {
+    margin-right: var(--pf-global--spacer--sm);
+  }
+
   .pf-c-dropdown {
     width: 100%;
 
     &.pf-m-expanded .pf-c-dropdown__toggle {
       background-color: var(--pf-global--BackgroundColor--dark-200);
+    }
+  }
+  .pf-c-dropdown__menu-item  {
+    padding-left: 7px;
+  }
+
+  .pf-c-dropdown__menu-item,
+  // For Edge
+  .pf-c-dropdown__toggle {
+    h1 {
+      font-size: $co-side-nav-font-size;
     }
   }
 
@@ -35,14 +50,4 @@
     }
   }
 
-  .pf-c-dropdown__menu-item  {
-    padding-left: 7px;
-    > h1 {
-      font-size: $co-side-nav-font-size;
-    }
-  }
-
-  &__icon {
-    margin-right: var(--pf-global--spacer--sm);
-  }
 }
