@@ -57,7 +57,7 @@ const Details = ({obj: replicationController}) => {
       <ContainerTable containers={replicationController.spec.template.spec.containers} />
     </div>
     <div className="co-m-pane__body">
-      <VolumesTable podTemplate={replicationController.spec.template} heading="Volumes" />
+      <VolumesTable resource={replicationController} heading="Volumes" />
     </div>
   </React.Fragment>;
 };

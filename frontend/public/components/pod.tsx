@@ -274,7 +274,7 @@ const Details: React.FC<PodDetailsProps> = ({obj: pod}) => {
       <PodContainerTable key="containerTable" heading="Containers" containers={pod.spec.containers} pod={pod} />
     </div>
     <div className="co-m-pane__body">
-      <VolumesTable podTemplate={pod} heading="Volumes" />
+      <VolumesTable resource={pod} heading="Volumes" />
     </div>
   </React.Fragment>;
 };

@@ -10,7 +10,6 @@ export * from './log-window';
 export * from './resource-icon';
 export * from './resource-link';
 export * from './resource-log';
-export * from './volume-icon';
 export * from './timestamp';
 export * from './horizontal-nav';
 export * from './details-page';
@@ -56,6 +55,7 @@ export * from './safe-fetch-hook';
 export * from './camel-case-wrap';
 export * from './truncate-middle';
 export * from './expand-collapse';
+export * from './volume-type';
 
 /*
   Add the enum for NameValueEditorPair here and not in its namesake file because the editor should always be

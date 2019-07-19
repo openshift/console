@@ -156,7 +156,7 @@ export const DeploymentConfigsDetails: React.FC<{obj: K8sResourceKind}> = ({obj:
       <ContainerTable containers={dc.spec.template.spec.containers} />
     </div>
     <div className="co-m-pane__body">
-      <VolumesTable podTemplate={dc.spec.template} heading="Volumes" />
+      <VolumesTable resource={dc} heading="Volumes" />
     </div>
     <div className="co-m-pane__body">
       <SectionHeading text="Conditions" />
