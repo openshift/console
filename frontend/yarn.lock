@@ -129,6 +129,11 @@
   resolved "https://registry.yarnpkg.com/@patternfly/patternfly/-/patternfly-2.17.2.tgz#c8bbf275a3553479c6112e0ca8d2fbe39d0ce16a"
   integrity sha512-E4FiZLcNTIKBCLU7Bttb/IlQivPh5I0ZXmKSix2Z/D3l/vwplYp0M0XYu82kl7djpysaxmP+YC5LGoNCakdOhQ==
 
+"@patternfly/patternfly@2.21.5":
+  version "2.21.5"
+  resolved "https://registry.yarnpkg.com/@patternfly/patternfly/-/patternfly-2.21.5.tgz#86c99040c6ad1e03abc3652dbea58e02ff62156f"
+  integrity sha512-BzfQaEIwDF/Ef3RqafwmbZSKpMuKE7VBwZrI2Gp1jKPQ2p3VLEhEdASt7Th4LFLUxAmaMjAOhs6LXNNUvRTwmg==
+
 "@patternfly/react-charts@4.4.16":
   version "4.4.16"
   resolved "https://registry.yarnpkg.com/@patternfly/react-charts/-/react-charts-4.4.16.tgz#972aa7bbee6209744c6aa0dd3f07d4c43ee95d7b"
@@ -156,18 +161,18 @@
     file-saver "^1.3.8"
     xterm "^3.3.0"
 
-"@patternfly/react-core@3.67.4":
-  version "3.67.4"
-  resolved "https://registry.yarnpkg.com/@patternfly/react-core/-/react-core-3.67.4.tgz#0dc73b293fc8fc9a7031e820c91c31c75b96b1c5"
-  integrity sha512-TGsKj3yQryeCrophA0vPGobOE3kGdtm1UogA0K+069Sk/sldhwd/MBzhDNIW9bctzdShTal4guJCTYZv/zvVpg==
+"@patternfly/react-core@3.73.1":
+  version "3.73.1"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-core/-/react-core-3.73.1.tgz#fe20ecdb52808b1f04394ecf1ce44983619f9501"
+  integrity sha512-1BDPjfwA855/uamGj+UcZtPzNAqIIbXktffKtHPN+h3bOhRP3sJ2Spdv8iNAj6Xmf2Chh8AGVA3vqFWuXFgE2A==
   dependencies:
-    "@patternfly/react-icons" "^3.10.9"
-    "@patternfly/react-styles" "^3.5.2"
-    "@patternfly/react-tokens" "^2.6.8"
-    "@tippy.js/react" "^1.1.1"
+    "@patternfly/react-icons" "^3.10.12"
+    "@patternfly/react-styles" "^3.5.5"
+    "@patternfly/react-tokens" "^2.6.11"
     emotion "^9.2.9"
     exenv "^1.2.2"
     focus-trap-react "^4.0.1"
+    tippy.js "^3.2.0"
 
 "@patternfly/react-core@^3.67.4":
   version "3.70.1"
@@ -186,6 +191,13 @@
   version "3.10.10"
   resolved "https://registry.yarnpkg.com/@patternfly/react-icons/-/react-icons-3.10.10.tgz#a16451896ed720967c85dd7c236fa8d6a044e28e"
   integrity sha512-UbTJxGtaaruFG0QhdJi3QlTzRWjK/dBbg35gdGe5EReUVHM4X1hJ1cOID/6ntEna45yCpeb43fpLRUYY5daMiw==
+  dependencies:
+    "@fortawesome/free-brands-svg-icons" "^5.8.1"
+
+"@patternfly/react-icons@^3.10.12":
+  version "3.10.12"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-icons/-/react-icons-3.10.12.tgz#76b5805face55c0a7b63f3e7ae51b509ed967746"
+  integrity sha512-ZuAUzHOV8y4d31YuOKh4SzNg9o6vBECxoEdFuVWO3LxkNCUAg+XN7IBe7SG7FDQ/Cn/DErpB/QDxlx8jZE86Ww==
   dependencies:
     "@fortawesome/free-brands-svg-icons" "^5.8.1"
 
@@ -234,6 +246,25 @@
     resolve-from "^4.0.0"
     typescript "3.4.5"
 
+"@patternfly/react-styles@^3.5.5":
+  version "3.5.5"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-styles/-/react-styles-3.5.5.tgz#a1bf02584a08ad24a61dc3626d0361e1b285d8e6"
+  integrity sha512-9PpHkl2mNiDwu0cl3JMx0qqaQjJvY/DZST5lnE+zU0KHNgXTHOlF+RNWyC7ebid/Ti5BIsOVsS3U8sB/bR4b7g==
+  dependencies:
+    "@babel/helper-plugin-utils" "^7.0.0-beta.48"
+    camel-case "^3.0.0"
+    css "^2.2.3"
+    cssom "^0.3.4"
+    cssstyle "^0.3.1"
+    emotion "^9.2.9"
+    emotion-server "^9.2.9"
+    fbjs-scripts "^0.8.3"
+    fs-extra "^6.0.1"
+    jsdom "^15.1.0"
+    relative "^3.0.2"
+    resolve-from "^4.0.0"
+    typescript "3.4.5"
+
 "@patternfly/react-table@2.14.7":
   version "2.14.7"
   resolved "https://registry.yarnpkg.com/@patternfly/react-table/-/react-table-2.14.7.tgz#3372e62ec7b387c4b82d2c064038569f4dda7ad8"
@@ -252,6 +283,11 @@
   version "2.6.8"
   resolved "https://registry.yarnpkg.com/@patternfly/react-tokens/-/react-tokens-2.6.8.tgz#501d9966dcb0525a863d5c4a0819e097c3472725"
   integrity sha512-I68SRNc0PC6cXV3GLraLGTxZgzm+pbMdNHhA9P/Ps7cF0aJj14+EtEqsI983NQvmmDac1TyZrsotgCZSzUO8/g==
+
+"@patternfly/react-tokens@^2.6.11":
+  version "2.6.11"
+  resolved "https://registry.yarnpkg.com/@patternfly/react-tokens/-/react-tokens-2.6.11.tgz#e73bcb160e583f4c012b515dc65e8b6fe7e8a0a9"
+  integrity sha512-8pkMIYtgM4tijoch/4FA0zbuwVBT0vbeLiMkrYZfBuJs5bBfdiGcBrFKNWjx2fn/vugNLBMp0GGz2rI5BIV6+Q==
 
 "@patternfly/react-tokens@^2.6.9":
   version "2.6.9"
