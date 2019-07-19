@@ -247,18 +247,18 @@ $dropdown-background--hover: $color-pf-black-200; // pf-c-dropdown__menu-item--h
   overflow-y: auto;
 }
 
-.pf-c-dropdown__menu {
-  border-width: 0 !important; // TEMP fix until https://github.com/patternfly/patternfly-next/issues/2019 is fixed upstream
-  list-style: none;
-  -webkit-overflow-scrolling: touch;
-}
-
 // TEMP fix until https://github.com/patternfly/patternfly-next/issues/1543 is fixed upstream
-.pf-c-dropdown__menu-item {
+.pf-c-app-launcher__menu-item {
   &:focus,
   &:hover {
     color: var(--pf-global--Color--dark-100);
   }
+}
+
+.pf-c-dropdown__menu {
+  border-width: 0 !important; // TEMP fix until https://github.com/patternfly/patternfly-next/issues/2019 is fixed upstream
+  list-style: none;
+  -webkit-overflow-scrolling: touch;
 }
 
 .pf-c-dropdown__toggle {
