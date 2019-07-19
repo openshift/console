@@ -14,3 +14,8 @@ export enum HealthCardQueries {
   POOLS_COUNT = 'Noobaa_num_pools',
   UNHEALTHY_POOLS = 'Noobaa_num_unhealthy_pools',
 }
+
+export const ObjectCapacityQueries = {
+  PROJECT_QUERY: 'NooBaa_projects_capacity_usage',
+  BUCKET_CLASS_QUERY: 'NooBaa_bucket_class_capacity_usage',
+};

@@ -111,6 +111,17 @@ const plugin: Plugin<ConsumedExtensions> = [
         ).then((m) => m.default),
     },
   },
+  {
+    type: 'Dashboards/Card',
+    properties: {
+      tab: 'object-service',
+      position: GridPosition.RIGHT,
+      loader: () =>
+        import(
+          './components/capacity-card/capacity-card' /* webpackChunkName: "object-service-capacity-card" */
+        ).then((m) => m.default),
+    },
+  },
 ];
 
 export default plugin;
