@@ -165,14 +165,16 @@ const SeriesButton = ({colorIndex, isDisabled, onClick}) => {
   const title = `${isDisabled ? 'Show' : 'Hide'} series`;
   const colors = chartTheme.line.colorScale;
 
-  return <button
-    aria-label={title}
-    className={classNames('query-browser__series-btn', {'query-browser__series-btn--disabled': isDisabled})}
-    onClick={onClick}
-    style={isDisabled ? undefined : {backgroundColor: colors[colorIndex % colors.length]}}
-    title={title}
-    type="button"
-  ></button>;
+  return <div className="query-browser__series-btn-wrap">
+    <button
+      aria-label={title}
+      className={classNames('query-browser__series-btn', {'query-browser__series-btn--disabled': isDisabled})}
+      onClick={onClick}
+      style={isDisabled ? undefined : {backgroundColor: colors[colorIndex % colors.length]}}
+      title={title}
+      type="button"
+    ></button>
+  </div>;
 };
 
 const QueryInput: React.FC<QueryInputProps> = ({metrics = [], onBlur, onSubmit, onUpdate, value = ''}) => {
@@ -470,7 +472,7 @@ export const QueryBrowserPage = withFallback(() => {
               <EmptyState variant={EmptyStateVariant.full}>
                 <EmptyStateIcon size="sm" icon={ChartLineIcon} />
                 <Title size="sm">No Query Entered</Title>
-                <EmptyStateBody>Enter a query in the box below to explore metrics for this cluster</EmptyStateBody>
+                <EmptyStateBody>Enter a query in the box below to explore metrics for this cluster.</EmptyStateBody>
                 <Button onClick={insertExampleQuery} variant="primary">Insert Example Query</Button>
               </EmptyState>
             </div>
