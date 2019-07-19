@@ -37,6 +37,7 @@ export interface GitImportFormData {
   project: ProjectData;
   application: ApplicationData;
   git: GitData;
+  docker: DockerData;
   serverless?: ServerlessData;
   image: ImageData;
   route: RouteData;
@@ -78,7 +79,11 @@ export interface GitData {
   dir: string;
   showGitType: boolean;
   secret: string;
+}
+
+export interface DockerData {
   dockerfilePath?: string;
+  containerPort?: number;
 }
 
 export interface RouteData {

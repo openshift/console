@@ -49,7 +49,8 @@ export const createBuildConfig = (
     name,
     project: { name: namespace },
     application: { name: application },
-    git: { url: repository, ref = 'master', dir: contextDir, secret: secretName, dockerfilePath },
+    git: { url: repository, ref = 'master', dir: contextDir, secret: secretName },
+    docker: { dockerfilePath },
     image: { tag: selectedTag },
     build: { env, triggers, strategy: buildStrategy },
     labels: userLabels,
@@ -62,7 +63,12 @@ export const createBuildConfig = (
   let buildStrategyData;
 
   switch (buildStrategy) {
-    case 'Source':
+    case 'Docker':
+      buildStrategyData = {
+        dockerStrategy: { env, dockerfilePath },
+      };
+      break;
+    default:
       buildStrategyData = {
         sourceStrategy: {
           env,
@@ -73,14 +79,6 @@ export const createBuildConfig = (
           },
         },
       };
-      break;
-    case 'Docker':
-      buildStrategyData = {
-        dockerStrategy: { env, dockerfilePath },
-      };
-      break;
-    default:
-      buildStrategyData = {};
       break;
   }
 
@@ -212,9 +210,17 @@ export const createService = (
     application: { name: application },
     image: { ports },
     labels: userLabels,
+    route: { targetPort },
+    docker: { containerPort },
+    build: { strategy: buildStrategy },
   } = formData;
+  let port;
+  if (buildStrategy === 'Docker') {
+    port = { containerPort, protocol: 'TCP' };
+  } else {
+    port = ports.find((p) => targetPort === makePortName(p)) || _.head(ports);
+  }
 
-  const firstPort = _.head(ports);
   const imageStreamName = imageStream && imageStream.metadata.name;
   const defaultLabels = getAppLabels(name, application, imageStreamName);
   const podLabels = getPodLabels(name);
@@ -230,11 +236,11 @@ export const createService = (
       selector: podLabels,
       ports: [
         {
-          port: firstPort.containerPort,
-          targetPort: firstPort.containerPort,
-          protocol: firstPort.protocol,
+          port: port.containerPort,
+          targetPort: port.containerPort,
+          protocol: port.protocol,
           // Use the same naming convention as the CLI.
-          name: makePortName(firstPort),
+          name: makePortName(port),
         },
       ],
     },
@@ -254,10 +260,18 @@ export const createRoute = (
     application: { name: application },
     image: { ports },
     labels: userLabels,
-    route: { hostname, secure, path, tls },
+    route: { hostname, secure, path, tls, targetPort: routeTargetPort },
+    docker: { containerPort },
+    build: { strategy: buildStrategy },
   } = formData;
 
-  const firstPort = _.head(ports);
+  let targetPort;
+  if (buildStrategy === 'Docker') {
+    targetPort = makePortName({ containerPort: _.toInteger(containerPort), protocol: 'TCP' });
+  } else {
+    targetPort = routeTargetPort || makePortName(_.head(ports));
+  }
+
   const imageStreamName = imageStream && imageStream.metadata.name;
   const defaultLabels = getAppLabels(name, application, imageStreamName);
   const route = {
@@ -282,7 +296,7 @@ export const createRoute = (
         // at endpoints, not services, when resolving ports, so port numbers
         // will not resolve correctly if the service port and container port
         // numbers don't match.
-        targetPort: makePortName(firstPort),
+        targetPort,
       },
       wildcardPolicy: 'None',
     },
@@ -301,6 +315,7 @@ export const createResources = async (
     project: { name: projectName },
     route: { create: canCreateRoute },
     image: { ports },
+    build: { strategy: buildStrategy },
   } = formData;
 
   const requests: Promise<K8sResourceKind>[] = [
@@ -327,7 +342,7 @@ export const createResources = async (
 
   requests.push(createDeploymentConfig(formData, imageStream, dryRun));
 
-  if (!_.isEmpty(ports)) {
+  if (!_.isEmpty(ports) || buildStrategy === 'Docker') {
     requests.push(createService(formData, imageStream, dryRun));
     if (canCreateRoute) {
       requests.push(createRoute(formData, imageStream, dryRun));

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
-import { PageHeading, Firehose } from '@console/internal/components/utils';
+import { PageHeading, Firehose, FirehoseResource } from '@console/internal/components/utils';
 import { ImageStreamModel } from '@console/internal/models';
 import ImportForm from './ImportForm';
 import { ImportTypes, ImportData } from './import-types';
@@ -42,8 +42,8 @@ const ImportPage: React.FunctionComponent<ImportPageProps> = ({ match, location 
   const preselectedNamespace = searchParams.get('preselected-ns');
   const importType = searchParams.get('importType');
 
-  let importData;
-  let resources;
+  let importData: ImportData;
+  let resources: FirehoseResource[];
   if (imageStreamName && imageStreamNamespace) {
     importData = ImportFlows.s2i;
     resources = [

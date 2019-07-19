@@ -5,6 +5,7 @@ import { convertToBaseValue } from '@console/internal/components/utils';
 const urlRegex = /^(((ssh|git|https?):\/\/[\w]+)|(git@[\w]+.[\w]+:))([\w\-._~/?#[\]!$&'()*+,;=])+$/;
 const hostnameRegex = /^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$/;
 const pathRegex = /^\/.*$/;
+const relativePathRegex = /^[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?(\/.[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?)*$/;
 
 export const validationSchema = yup.object().shape({
   name: yup.string().required('Required'),
@@ -32,6 +33,15 @@ export const validationSchema = yup.object().shape({
       then: yup.string().required('We failed to detect the git type. Please choose a git type.'),
     }),
     showGitType: yup.boolean(),
+  }),
+  docker: yup.object().when('build', {
+    is: (build) => build.strategy === 'Docker',
+    then: yup.object().shape({
+      dockerfilePath: yup
+        .string()
+        .matches(relativePathRegex, 'DockerfilePath must be a relative path'),
+      containerPort: yup.number().integer('Container port should be an Integer'),
+    }),
   }),
   deployment: yup.object().shape({
     replicas: yup
