@@ -84,6 +84,11 @@ export const VolumeSource = {
     label: 'Projected',
     description: 'A projected volume maps several existing volume sources into the same directory.',
   },
+  persistentVolumeClaim: {
+    id: 'persistentVolumeClaim',
+    label: 'Persistent Volume Claim',
+    description: 'A Persistent Volume Claim is a request for Storage from a Persistent Volume',
+  },
 };
 
 export const getVolumeType = (volume: Volume) => {
