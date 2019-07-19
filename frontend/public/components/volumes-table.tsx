@@ -5,8 +5,6 @@ import * as classNames from 'classnames';
 
 import {
   ContainerSpec,
-  getVolumeType,
-  getVolumeLocation,
   K8sKind,
   K8sResourceKind,
   K8sResourceKindReference,
@@ -15,11 +13,11 @@ import {
   Volume,
   VolumeMount,
 } from '../module/k8s';
-import { asAccessReview, EmptyBox, Kebab, KebabOption, VolumeIcon, ResourceIcon, SectionHeading } from './utils';
+import { asAccessReview, EmptyBox, Kebab, KebabOption, ResourceIcon, SectionHeading, VolumeType } from './utils';
 import { Table, TableData, TableRow } from './factory';
 import { sortable } from '@patternfly/react-table';
 import { removeVolumeModal } from './modals';
-import {connectToModel} from '../kinds';
+import { connectToModel } from '../kinds';
 
 const removeVolume = (kind: K8sKind, obj: K8sResourceKind, volume: RowVolumeData): KebabOption => {
   return {
@@ -56,7 +54,7 @@ const getRowVolumeData = (resource: K8sResourceKind): RowVolumeData[] => {
       const k = `${v.name}_${v.readOnly ? 'ro' : 'rw'}_${v.mountPath}`;
       const mount = {container: c.name, mountPath: v.mountPath, subPath: v.subPath};
       m[k] = {name: v.name, readOnly: !!v.readOnly, volumeDetail: volumes[v.name],
-        container: mount.container, mountPath: mount.mountPath, subPath: mount.subPath,resource};
+        container: mount.container, mountPath: mount.mountPath, subPath: mount.subPath, resource};
     });
   });
   return _.values(m);
@@ -68,7 +66,7 @@ const ContainerLink: React.FC<ContainerLinkProps> = ({name, pod}) => <span class
 </span>;
 ContainerLink.displayName = 'ContainerLink';
 
-const volumeRoColumnClasses = [
+const volumeRowColumnClasses = [
   classNames('col-lg-2', 'col-md-3', 'col-sm-4', 'col-xs-5'),
   classNames('col-lg-2', 'col-md-3', 'col-sm-4', 'col-xs-7'),
   classNames('col-lg-2', 'col-md-2', 'col-sm-4', 'hidden-xs'),
@@ -82,58 +80,54 @@ const VolumesTableHeader = () => {
   return [
     {
       title: 'Name', sortField: 'name', transforms: [sortable],
-      props: { className: volumeRoColumnClasses[0]},
+      props: { className: volumeRowColumnClasses[0]},
     },
     {
       title: 'Mount Path', sortField: 'mountPath', transforms: [sortable],
-      props: { className: volumeRoColumnClasses[1]},
+      props: { className: volumeRowColumnClasses[1]},
     },
     {
       title: 'SubPath', sortField: 'subPath', transforms: [sortable],
-      props: { className: volumeRoColumnClasses[2]},
+      props: { className: volumeRowColumnClasses[2]},
     },
     {
       title: 'Type',
-      props: { className: volumeRoColumnClasses[3]},
+      props: { className: volumeRowColumnClasses[3]},
     },
     {
       title: 'Permissions', sortField: 'readOnly', transforms: [sortable],
-      props: { className: volumeRoColumnClasses[4]},
+      props: { className: volumeRowColumnClasses[4]},
     },
     {
       title: 'Utilized By', sortField: 'container', transforms: [sortable],
-      props: { className: volumeRoColumnClasses[5]},
+      props: { className: volumeRowColumnClasses[5]},
     },
     {
       title: '',
-      props: { className: volumeRoColumnClasses[6]},
+      props: { className: volumeRowColumnClasses[6]},
     },
   ];
 };
 VolumesTableHeader.displayName = 'VolumesTableHeader';
 
 const VolumesTableRow = ({obj: volume, index, key, style}) => {
-  const type = _.get(getVolumeType(volume.volumeDetail), 'id', '');
-  const loc = getVolumeLocation(volume.volumeDetail);
-  const name = volume.name;
-  const permission = volume.readOnly ? 'Read-only' : 'Read/Write';
-  const { resource } = volume;
+  const { name, resource, readOnly, mountPath, subPath, volumeDetail } = volume;
+  const permission = readOnly ? 'Read-only' : 'Read/Write';
   const pod: PodTemplate = getPodTemplate(resource);
 
   return (
-    <TableRow id={`${name}-${volume.mountPath}`} index={index} trKey={key} style={style}>
-      <TableData className={volumeRoColumnClasses[0]}>{name}</TableData>
-      <TableData className={classNames(volumeRoColumnClasses[1], 'co-break-word')}>{volume.mountPath}</TableData>
-      <TableData className={volumeRoColumnClasses[2]}>{volume.subPath}</TableData>
-      <TableData className={volumeRoColumnClasses[3]}>
-        <VolumeIcon kind={type} />
-        <span className="co-break-word">{loc && ` (${loc})`}</span>
+    <TableRow id={`${name}-${mountPath}`} index={index} trKey={key} style={style}>
+      <TableData className={volumeRowColumnClasses[0]}>{name}</TableData>
+      <TableData className={classNames(volumeRowColumnClasses[1], 'co-break-word')}>{mountPath}</TableData>
+      <TableData className={volumeRowColumnClasses[2]}>{subPath}</TableData>
+      <TableData className={volumeRowColumnClasses[3]}>
+        <VolumeType volume={volumeDetail} namespace={resource.metadata.namespace} />
       </TableData>
-      <TableData className={volumeRoColumnClasses[4]}>{permission}</TableData>
-      <TableData className={volumeRoColumnClasses[5]}>
+      <TableData className={volumeRowColumnClasses[4]}>{permission}</TableData>
+      <TableData className={volumeRowColumnClasses[5]}>
         {_.get(pod, 'kind') === 'Pod' ? <ContainerLink name={volume.container} pod={pod as PodKind} /> : <div>{volume.container}</div>}
       </TableData>
-      <TableData className={volumeRoColumnClasses[6]}>
+      <TableData className={volumeRowColumnClasses[6]}>
         <VolumeKebab actions={menuActions} kind={resource.kind} resource={resource} rowVolumeData={volume} />
       </TableData>
     </TableRow>
