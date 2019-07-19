@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { InfoCircleIcon } from '@patternfly/react-icons';
-
 import PopoverStatus from './PopoverStatus';
 import StatusIconAndText from './StatusIconAndText';
 

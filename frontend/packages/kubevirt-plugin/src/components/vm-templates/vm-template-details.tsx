@@ -1,10 +1,7 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-
 import { getResource } from 'kubevirt-web-ui-components';
-
 import { getNamespace } from '@console/shared';
-
 import {
   Firehose,
   StatusBox,
@@ -12,10 +9,9 @@ import {
   SectionHeading,
 } from '@console/internal/components/utils';
 import { TemplateKind } from '@console/internal/module/k8s';
-
 import { connect } from 'react-redux';
-import { VMTemplateResourceSummary, VMTemplateDetailsList } from './vm-template-resource';
 import { DataVolumeModel } from '../../models';
+import { VMTemplateResourceSummary, VMTemplateDetailsList } from './vm-template-resource';
 
 const VMTemplateDetailsFirehose: React.FC<VMTemplateDetailsFirehoseProps> = (props) => {
   const { obj: template, hasDataVolumes } = props;

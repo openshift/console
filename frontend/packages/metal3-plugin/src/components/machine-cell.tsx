@@ -1,12 +1,10 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 import { AddCircleOIcon } from '@patternfly/react-icons';
-
 import { DASH, StatusIconAndText } from '@console/shared';
 import { MachineModel } from '@console/internal/models';
 import { ResourceLink, RequireCreatePermission } from '@console/internal/components/utils';
 import { referenceForModel, K8sResourceKind } from '@console/internal/module/k8s';
-
 import { getHostMachineName } from '../selectors';
 import { canHostAddMachine, HostMultiStatus } from '../utils/host-status';
 

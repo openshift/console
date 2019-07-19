@@ -1,7 +1,7 @@
 import { TransformTopologyData, getPodStatus, podStatus } from '../topology-utils';
+import { WorkloadData } from '../topology-types';
 import { resources, topologyData, MockResources } from './topology-test-data';
 import { MockKnativeResources } from './topology-knative-test-data';
-import { WorkloadData } from '../topology-types';
 
 describe('TopologyUtils ', () => {
   it('should be able to create an object', () => {

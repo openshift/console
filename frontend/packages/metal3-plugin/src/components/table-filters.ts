@@ -1,5 +1,4 @@
 import * as _ from 'lodash';
-
 import { Filter } from '@console/shared';
 import {
   HOST_REGISTERING_STATES,

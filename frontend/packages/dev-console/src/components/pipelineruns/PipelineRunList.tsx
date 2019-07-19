@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Table } from '@console/internal/components/factory';
+import { PipelineRunModel } from '../../models';
 import PipelineRunHeader from './PipelineRunHeader';
 import PipelineRunRow from './PipelineRunRow';
-import { PipelineRunModel } from '../../models';
 
 export const PipelineRunList: React.FC = (props) => (
   <Table

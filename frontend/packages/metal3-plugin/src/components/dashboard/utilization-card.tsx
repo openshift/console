@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-
 import { DashboardItemProps } from '@console/internal/components/dashboards-page/with-dashboard-resources';
 import {
   DashboardCard,
@@ -21,9 +20,8 @@ import {
 import { K8sResourceKind, referenceForModel } from '@console/internal/module/k8s';
 import { MachineModel } from '@console/internal/models';
 import { getNamespace } from '@console/shared';
-
-import { getUtilizationQueries, HostQuery } from './queries';
 import { getHostMachineName } from '../../selectors';
+import { getUtilizationQueries, HostQuery } from './queries';
 
 const getMachineResource = (namespace: string, name: string): FirehoseResource => ({
   isList: false,

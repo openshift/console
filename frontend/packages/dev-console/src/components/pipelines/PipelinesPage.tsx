@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { ListPage } from '@console/internal/components/factory';
-import PipelineList from './PipelineList';
 import { pipelineFilterReducer, pipelineStatusFilter } from '../../utils/pipeline-filter-reducer';
 import { PipelineModel } from '../../models';
 import DefaultPage from '../DefaultPage';
+import PipelineList from './PipelineList';
 
 const filters = [
   {

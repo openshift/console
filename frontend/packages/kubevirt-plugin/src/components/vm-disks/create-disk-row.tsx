@@ -1,5 +1,4 @@
 import * as React from 'react';
-
 import {
   Text,
   Integer,
@@ -8,7 +7,6 @@ import {
   VALIDATION_INFO_TYPE,
   getResource,
 } from 'kubevirt-web-ui-components';
-
 import { TableData, TableRow } from '@console/internal/components/factory';
 import { Firehose, FirehoseResult, LoadingInline } from '@console/internal/components/utils';
 import { HelpBlock, FormGroup } from 'patternfly-react';
@@ -16,15 +14,15 @@ import { StorageClassModel, TemplateModel } from '@console/internal/models';
 import { getName } from '@console/shared';
 import { useSafetyFirst } from '@console/internal/components/safety-first';
 import { k8sPatch, K8sResourceKind } from '@console/internal/module/k8s';
-import { VMDiskRowProps } from './types';
 import { getVmPreferableDiskBus } from '../../selectors/vm';
 import { isVm } from '../../selectors/selectors';
 import { VirtualMachineModel } from '../../models';
 import { getAddDiskPatches } from '../../k8s/patches/vm/vm-disk-patches';
 import { VMLikeEntityKind } from '../../types';
+import { validateDiskName } from '../../utils/validations/vm';
+import { VMDiskRowProps } from './types';
 
 import './_create-device-row.scss';
-import { validateDiskName } from '../../utils/validations/vm';
 
 const createDisk = ({
   vmLikeEntity,

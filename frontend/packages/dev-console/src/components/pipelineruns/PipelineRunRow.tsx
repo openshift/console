@@ -1,15 +1,14 @@
 import * as React from 'react';
-
 import { Status } from '@console/shared';
 import { TableRow, TableData } from '@console/internal/components/factory';
 import { Kebab, ResourceLink, Timestamp, ResourceKebab } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
 import { pipelineRunFilterReducer } from '../../utils/pipeline-filter-reducer';
 import { reRunPipelineRun, stopPipelineRun } from '../../utils/pipeline-actions';
-import { PipelineTaskStatus } from './PipelineTaskStatus';
 import { PipelineRun } from '../../utils/pipeline-augment';
-import { tableColumnClasses } from './pipelinerun-table';
 import { PipelineRunModel } from '../../models';
+import { PipelineTaskStatus } from './PipelineTaskStatus';
+import { tableColumnClasses } from './pipelinerun-table';
 
 const pipelinerunReference = referenceForModel(PipelineRunModel);
 

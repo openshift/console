@@ -3,15 +3,13 @@ import {
   VM_STATUS_IMPORTING,
   VM_STATUS_V2V_CONVERSION_IN_PROGRESS,
 } from 'kubevirt-web-ui-components';
-
 import { getName, createBasicLookup } from '@console/shared';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-
 import { VMIKind, VMKind } from '../../types/vm';
-import { getUsedNetworks, isVMRunning } from './selectors';
 import { VMMultiStatus } from '../../types';
-import { Network } from './types';
 import { NetworkType, POD_NETWORK } from '../../constants/vm';
+import { getUsedNetworks, isVMRunning } from './selectors';
+import { Network } from './types';
 
 const IMPORTING_STATUSES = new Set([VM_STATUS_IMPORTING, VM_STATUS_V2V_CONVERSION_IN_PROGRESS]);
 

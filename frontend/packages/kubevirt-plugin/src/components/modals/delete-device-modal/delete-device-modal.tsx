@@ -1,16 +1,12 @@
 import * as React from 'react';
-
 import { withHandlePromise } from '@console/internal/components/utils';
-
 import {
   createModalLauncher,
   ModalTitle,
   ModalBody,
   ModalSubmitFooter,
 } from '@console/internal/components/factory';
-
 import { k8sPatch } from '@console/internal/module/k8s';
-
 import { getName } from '@console/shared';
 import { TemplateModel } from '@console/internal/models';
 import { VirtualMachineModel } from '../../../models';

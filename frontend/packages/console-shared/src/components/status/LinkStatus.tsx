@@ -1,7 +1,6 @@
 import * as React from 'react';
 import * as History from 'history';
 import { Link } from 'react-router-dom';
-
 import StatusIconAndText from './StatusIconAndText';
 
 type LinkStatusProps = React.ComponentProps<typeof StatusIconAndText> & {

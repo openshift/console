@@ -1,5 +1,4 @@
 import * as React from 'react';
-
 import { GreenCheckCircleIcon } from './Icons';
 import StatusIconAndText from './StatusIconAndText';
 

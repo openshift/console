@@ -1,5 +1,4 @@
 import * as React from 'react';
-
 import PopoverStatus from './PopoverStatus';
 import StatusIconAndText from './StatusIconAndText';
 import { RedExclamationCircleIcon } from './Icons';

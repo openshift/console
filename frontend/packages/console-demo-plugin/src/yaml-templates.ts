@@ -1,5 +1,4 @@
 import { Map as ImmutableMap } from 'immutable';
-
 import { FooBarModel } from './models';
 
 export const yamlTemplates = ImmutableMap().setIn(

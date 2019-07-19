@@ -7,13 +7,12 @@ import {
   ExclamationTriangleIcon,
   UnknownIcon,
 } from '@patternfly/react-icons';
-
+import { DASH } from '../../constants';
 import StatusIconAndText from './StatusIconAndText';
 import ProgressStatus from './ProgressStatus';
 import ErrorStatus from './ErrorStatus';
 import SuccessStatus from './SuccessStatus';
 import InfoStatus from './InfoStatus';
-import { DASH } from '../../constants';
 
 export type StatusProps = {
   status?: string;

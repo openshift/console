@@ -1,5 +1,4 @@
 import * as React from 'react';
-
 import {
   getDescription,
   getOperatingSystemName,
@@ -11,7 +10,6 @@ import {
   getBootableDevicesInOrder,
   TemplateSource,
 } from 'kubevirt-web-ui-components';
-
 import { ResourceSummary } from '@console/internal/components/utils';
 import { DASH } from '@console/shared';
 import { TemplateKind, K8sResourceKind } from '@console/internal/module/k8s';

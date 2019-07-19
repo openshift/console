@@ -1,6 +1,5 @@
 import * as _ from 'lodash';
 import { getAddNicPatch, getDeviceBootOrderPatch } from 'kubevirt-web-ui-components';
-
 import { Patch } from '@console/internal/module/k8s';
 import { getInterfaces, getNetworks, getNicBootOrder } from '../../../selectors/vm';
 import { getVmLikePatches } from '../vm-template';

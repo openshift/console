@@ -1,9 +1,8 @@
 import * as _ from 'lodash';
-
 import { TemplateKind } from '@console/internal/module/k8s';
 import { VirtualMachineModel } from '../models';
-import { selectVm } from './vm-template/selectors';
 import { VMLikeEntityKind, VMKind } from '../types';
+import { selectVm } from './vm-template/selectors';
 
 export const getStorageSize = (value): string => _.get(value, 'requests.storage');
 

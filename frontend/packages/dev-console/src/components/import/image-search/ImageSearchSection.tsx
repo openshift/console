@@ -1,7 +1,6 @@
 import * as React from 'react';
-
-import ImageSearch from './ImageSearch';
 import FormSection from '../section/FormSection';
+import ImageSearch from './ImageSearch';
 import SearchStatus from './SearchStatus';
 import SearchResults from './SearchResults';
 

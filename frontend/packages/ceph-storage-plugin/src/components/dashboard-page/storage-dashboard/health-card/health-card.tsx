@@ -1,5 +1,4 @@
 import * as React from 'react';
-
 import {
   AlertsBody,
   AlertItem,
@@ -16,7 +15,6 @@ import {
 import { HealthBody } from '@console/internal/components/dashboard/health-card/health-body';
 import { HealthItem } from '@console/internal/components/dashboard/health-card/health-item';
 import { HealthState } from '@console/internal/components/dashboard/health-card/states';
-
 import { STORAGE_HEALTH_QUERIES, StorageDashboardQuery } from '../../../../constants/queries';
 import { filterCephAlerts } from '../../../../selectors';
 import { getCephHealthState } from './utils';

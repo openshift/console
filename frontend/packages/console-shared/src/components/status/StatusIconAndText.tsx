@@ -1,6 +1,5 @@
 import * as React from 'react';
 import classNames from 'classnames';
-
 import { CamelCaseWrap } from '@console/internal/components/utils';
 import { DASH } from '../../constants';
 

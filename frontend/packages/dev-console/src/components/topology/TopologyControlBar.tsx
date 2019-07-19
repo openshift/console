@@ -4,7 +4,6 @@ import {
   createTopologyControlButtons,
   defaultControlButtonsOptions,
 } from '@patternfly/react-topology';
-
 import { GraphApi } from './topology-types';
 
 export interface TopologyControlBarProps {

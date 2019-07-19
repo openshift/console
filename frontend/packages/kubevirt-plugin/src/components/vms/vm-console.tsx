@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Firehose, FirehoseResult, LoadingInline } from '@console/internal/components/utils';
-
 import {
   VmConsoles,
   isWindows,
@@ -12,9 +11,7 @@ import { getName, getNamespace } from '@console/shared';
 import { WSFactory } from '@console/internal/module/ws-factory';
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { PodModel, ServiceModel } from '@console/internal/models';
-
 import { VIRT_LAUNCHER_POD_PREFIX } from '../../constants/vm';
-import { menuActionStart } from './menu-actions';
 import {
   VirtualMachineInstanceMigrationModel,
   VirtualMachineInstanceModel,
@@ -28,6 +25,7 @@ import {
 } from '../../selectors/vmi';
 import { VMIKind, VMKind } from '../../types/vm';
 import { getLoadedData } from '../../utils';
+import { menuActionStart } from './menu-actions';
 import { VMTabProps } from './types';
 
 const VmConsolesWrapper: React.FC<VmConsolesWrapperProps> = (props) => {

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import FormSection from '../section/FormSection';
+import { RouteData } from '../import-types';
 import CreateRoute from './CreateRoute';
 import SecureRoute from './SecureRoute';
-import { RouteData } from '../import-types';
 
 interface RouteSectionProps {
   route: RouteData;

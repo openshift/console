@@ -1,5 +1,4 @@
 import * as _ from 'lodash';
-
 import { referenceForModel } from '@console/internal/module/k8s';
 import { baseCRDs } from '@console/internal/reducers/features';
 import { isModelFeatureFlag } from '@console/plugin-sdk';

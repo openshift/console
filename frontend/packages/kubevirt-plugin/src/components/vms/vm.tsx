@@ -1,7 +1,6 @@
 import * as React from 'react';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
-
 import {
   getResource,
   getVmStatus,
@@ -12,26 +11,22 @@ import {
   //  DASHES,
 } from 'kubevirt-web-ui-components';
 import { getName, getNamespace, getUID, createLookup, K8sEntityMap } from '@console/shared';
-
 import { NamespaceModel, PodModel } from '@console/internal/models';
 import { Table, MultiListPage, TableRow, TableData } from '@console/internal/components/factory';
 import { FirehoseResult, Kebab, ResourceLink } from '@console/internal/components/utils';
 import { K8sResourceKind, PodKind } from '@console/internal/module/k8s';
-
 import {
   VirtualMachineInstanceMigrationModel,
   VirtualMachineInstanceModel,
   VirtualMachineModel,
 } from '../../models';
-
 import { VMIKind, VMKind } from '../../types';
-import { menuActions } from './menu-actions';
 import { getMigrationVMIName, isMigrating } from '../../selectors/vmi-migration';
-import { vmStatusFilter } from './table-filters';
 import { dimensifyHeader, dimensifyRow } from '../../utils/table';
 import { getBasicID } from '../../utils';
-
 import { openCreateVmWizard } from '../modals';
+import { vmStatusFilter } from './table-filters';
+import { menuActions } from './menu-actions';
 
 const tableColumnClasses = [
   classNames('col-lg-4', 'col-md-4', 'col-sm-6', 'col-xs-6'),

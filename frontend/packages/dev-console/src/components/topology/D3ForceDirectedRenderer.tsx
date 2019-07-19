@@ -3,6 +3,7 @@ import * as React from 'react';
 import * as d3 from 'd3';
 import * as ReactDOM from 'react-dom';
 import * as _ from 'lodash';
+import SvgDefsProvider from '../svg/SvgDefsProvider';
 import {
   ViewNode,
   ViewEdge,
@@ -17,7 +18,6 @@ import {
   GroupProvider,
   GroupProps,
 } from './topology-types';
-import SvgDefsProvider from '../svg/SvgDefsProvider';
 
 const ZOOM_EXTENT: [number, number] = [0.25, 4];
 

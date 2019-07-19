@@ -3,21 +3,19 @@ import * as _ from 'lodash';
 import { connect } from 'react-redux';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
-
 import { getName, getNamespace, getUID, getMachineNode, createLookup } from '@console/shared';
 import { MachineModel, NodeModel } from '@console/internal/models';
 import { MultiListPage, Table, TableRow, TableData } from '@console/internal/components/factory';
 import { Kebab, ResourceLink, FirehoseResource } from '@console/internal/components/utils';
 import { referenceForModel } from '@console/internal/module/k8s';
-
 import { BaremetalHostModel, NodeMaintenanceModel } from '../models';
 import { getHostBMCAddress, getHostMachine, getNodeMaintenanceNodeName } from '../selectors';
+import { getHostStatus } from '../utils/host-status';
 import { BaremetalHostRole } from './host-role';
 import MachineCell from './machine-cell';
 import BaremetalHostStatus from './host-status';
 import { hostStatusFilter } from './table-filters';
 import { menuActions } from './host-menu-actions';
-import { getHostStatus } from '../utils/host-status';
 import { HostRowBundle } from './types';
 
 const tableColumnClasses = [

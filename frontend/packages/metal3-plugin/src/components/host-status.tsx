@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Button } from 'patternfly-react';
 import { AddCircleOIcon, MaintenanceIcon } from '@patternfly/react-icons';
-
 import {
   ProgressStatus,
   SuccessStatus,
@@ -12,7 +11,6 @@ import {
 import { K8sResourceKind } from '@console/internal/module/k8s';
 import { RequireCreatePermission } from '@console/internal/components/utils';
 import { HostMultiStatus } from '../utils/host-status';
-
 import {
   HOST_STATUS_DISCOVERED,
   HOST_PROGRESS_STATES,

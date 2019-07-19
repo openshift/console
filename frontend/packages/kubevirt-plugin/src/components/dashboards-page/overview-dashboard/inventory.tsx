@@ -15,7 +15,6 @@ import {
   VM_STATUS_ERROR,
   VM_STATUS_IMPORT_ERROR,
 } from 'kubevirt-web-ui-components';
-
 import { StatusGroupMapper } from '@console/internal/components/dashboard/inventory-card/inventory-item';
 import { InventoryStatusGroup } from '@console/internal/components/dashboard/inventory-card/status-group';
 

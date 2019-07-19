@@ -1,5 +1,4 @@
 import * as _ from 'lodash';
-
 import { K8sResourceKind } from '@console/internal/module/k8s';
 
 export const getName = <A extends K8sResourceKind = K8sResourceKind>(value: A) =>

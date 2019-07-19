@@ -1,6 +1,5 @@
 import * as _ from 'lodash';
 import { Map as ImmutableMap } from 'immutable';
-
 import { referenceForModel, GroupVersionKind } from '@console/internal/module/k8s';
 import { baseTemplates } from '@console/internal/models/yaml-templates';
 import { YAMLTemplate } from '@console/plugin-sdk';

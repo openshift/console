@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Firehose, FirehoseResource } from '@console/internal/components/utils';
-
 import { knativeServingResources } from '@console/knative-plugin/src/utils/create-knative-utils';
 import { TopologyDataResources, TopologyDataModel } from './topology-types';
 import { TransformTopologyData } from './topology-utils';

@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-
 import {
   DashboardCard,
   DashboardCardBody,
@@ -11,10 +10,9 @@ import {
   DashboardItemProps,
   withDashboardResources,
 } from '@console/internal/components/dashboards-page/with-dashboard-resources';
-
-import { EfficiencyItem, SavingsItem } from './object-data-reduction-card-item';
 import { getPropsData } from '../../utils';
 import { ObjectDataReductionQueries } from '../../queries';
+import { EfficiencyItem, SavingsItem } from './object-data-reduction-card-item';
 import './object-data-reduction-card.scss';
 
 const DataReductionCard: React.FC<DashboardItemProps> = ({

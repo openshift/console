@@ -1,5 +1,4 @@
 import * as React from 'react';
-
 import {
   Plugin,
   ModelDefinition,
@@ -22,7 +21,6 @@ import {
   DashboardsOverviewUtilizationItem,
   DashboardsOverviewTopConsumerItem,
 } from '@console/plugin-sdk';
-
 // TODO(vojtech): internal code needed by plugins should be moved to console-shared package
 import { PodModel, RouteModel } from '@console/internal/models';
 import { FLAGS } from '@console/internal/const';
@@ -30,7 +28,6 @@ import { GridPosition } from '@console/internal/components/dashboard/grid';
 import { humanizeBinaryBytesWithoutB } from '@console/internal/components/utils/units';
 import { OverviewQuery } from '@console/internal/components/dashboards-page/overview-dashboard/queries';
 import { MetricType } from '@console/internal/components/dashboard/top-consumers-card/metric-type';
-
 import { FooBarModel } from './models';
 import { yamlTemplates } from './yaml-templates';
 import TestIcon from './components/test-icon';

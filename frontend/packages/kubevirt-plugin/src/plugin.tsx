@@ -14,7 +14,6 @@ import {
   DashboardsInventoryItemGroup,
 } from '@console/plugin-sdk';
 import { TemplateModel, PodModel } from '@console/internal/models';
-
 import * as models from './models';
 import { VMTemplateYAMLTemplates, VirtualMachineYAMLTemplates } from './models/templates';
 import { getKubevirtHealthState } from './components/dashboards-page/overview-dashboard/health';

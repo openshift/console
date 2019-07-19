@@ -1,5 +1,4 @@
 import * as _ from 'lodash';
-
 import {
   DashboardsCard,
   DashboardsTab,
@@ -11,7 +10,6 @@ import {
 } from '@console/plugin-sdk';
 import { GridPosition } from '@console/internal/components/dashboard';
 import { OverviewQuery } from '@console/internal/components/dashboards-page/overview-dashboard/queries';
-
 import * as models from './models';
 import {
   CAPACITY_USAGE_QUERIES,

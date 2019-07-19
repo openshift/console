@@ -2,14 +2,12 @@ import * as React from 'react';
 import * as _ from 'lodash';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
-
 import {
   TemplateSource,
   getTemplateOperatingSystems,
   getTemplateFlavors,
   TEMPLATE_TYPE_LABEL,
 } from 'kubevirt-web-ui-components';
-
 import { ListPage, Table, TableRow, TableData } from '@console/internal/components/factory';
 import {
   Kebab,
@@ -22,9 +20,9 @@ import { TemplateModel } from '@console/internal/models';
 import { TemplateKind } from '@console/internal/module/k8s';
 import { match } from 'react-router';
 import { dimensifyHeader, dimensifyRow } from '../../utils/table';
-import { VMTemplateLink } from './vm-template-link';
 import { openCreateVmWizard } from '../modals';
 import { VM_TEMPLATE_LABEL_PLURAL } from '../../constants/vm-templates';
+import { VMTemplateLink } from './vm-template-link';
 
 const vmTemplateEditAction = (kind, obj) => ({
   label: `Edit VM Template`,

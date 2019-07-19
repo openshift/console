@@ -1,8 +1,8 @@
 /* eslint-env node */
 
+import * as path from 'path';
 import * as _ from 'lodash';
 import * as glob from 'glob';
-import * as path from 'path';
 import * as readPkg from 'read-pkg';
 
 // the name of Console application package

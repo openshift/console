@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { Table } from '@console/internal/components/factory';
-import PipelineHeader from './PipelineHeader';
-import PipelineRow from './PipelineRow';
 import { augmentRunsToData, PropPipelineData, KeyedRuns } from '../../utils/pipeline-augment';
 import { PipelineModel } from '../../models';
+import PipelineHeader from './PipelineHeader';
+import PipelineRow from './PipelineRow';
 
 export type PipelineAugmentRunsProps = {
   data?: PropPipelineData[];

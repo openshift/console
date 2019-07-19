@@ -1,6 +1,5 @@
 import * as React from 'react';
 import * as _ from 'lodash';
-
 import { DashboardItemProps } from '@console/internal/components/dashboards-page/with-dashboard-resources';
 import { DashboardCard } from '@console/internal/components/dashboard/dashboard-card';
 import { DashboardCardBody } from '@console/internal/components/dashboard/dashboard-card/card-body';
@@ -16,7 +15,6 @@ import {
 } from '@console/internal/components/dashboard/health-card';
 import { Alert } from '@console/internal/components/monitoring';
 import { K8sResourceKind } from '@console/internal/module/k8s';
-
 import {
   HOST_STATUS_OK,
   HOST_HEALTH_OK,
