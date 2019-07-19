@@ -19,10 +19,10 @@ trap copyArtifacts EXIT
 set +x
 export BRIDGE_KUBEADMIN_PASSWORD="$(cat "${INSTALLER_DIR}/auth/kubeadmin-password")"
 set -x
-export BRIDGE_BASE_ADDRESS="$(oc get consoles.config.openshift.io cluster -o jsonpath='{.status.consoleURL}')"
+export BRIDGE_BASE_ADDRESS="$(kubectl get consoles.config.openshift.io cluster -o jsonpath='{.status.consoleURL}')"
 
 # Add htpasswd IDP
-oc apply -f ./frontend/integration-tests/data/htpasswd-secret.yaml
-oc patch oauths cluster --patch "$(cat ./frontend/integration-tests/data/patch-htpasswd.yaml)" --type=merge
+kubectl apply -f ./frontend/integration-tests/data/htpasswd-secret.yaml
+kubectl patch oauths cluster --patch "$(cat ./frontend/integration-tests/data/patch-htpasswd.yaml)" --type=merge
 
 ./test-gui.sh ${1:-e2e}

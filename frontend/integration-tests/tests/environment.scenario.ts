@@ -29,8 +29,8 @@ describe('Interacting with the environment variable editor', () => {
     await crudView.saveChangesBtn.click();
     // Wait until the resource is created and the details page loads before continuing.
     await browser.wait(until.presenceOf(crudView.actionsButton));
-    execSync(`oc create cm my-config --from-literal=cmk1=config1 --from-literal=cmk2=config2 -n ${testName}`);
-    execSync(`oc create secret generic my-secret --from-literal=key1=supersecret --from-literal=key2=topsecret -n ${testName}`);
+    execSync(`kubectl create cm my-config --from-literal=cmk1=config1 --from-literal=cmk2=config2 -n ${testName}`);
+    execSync(`kubectl create secret generic my-secret --from-literal=key1=supersecret --from-literal=key2=topsecret -n ${testName}`);
     checkLogs();
     checkErrors();
   });
@@ -46,8 +46,8 @@ describe('Interacting with the environment variable editor', () => {
     await crudView.nameFilter.sendKeys(WORKLOAD_NAME);
     await browser.wait(until.elementToBeClickable(crudView.resourceRowNamesAndNs.first()), BROWSER_TIMEOUT);
     await crudView.deleteRow('Deployment')(WORKLOAD_NAME);
-    execSync(`oc delete cm my-config -n ${testName}`);
-    execSync(`oc delete secret my-secret -n ${testName}`);
+    execSync(`kubectl delete cm my-config -n ${testName}`);
+    execSync(`kubectl delete secret my-secret -n ${testName}`);
     checkLogs();
     checkErrors();
   });
