@@ -11,14 +11,18 @@ import {
 
 import { BuildOverview } from './build-overview';
 import { NetworkingOverview } from './networking-overview';
+import { PodsOverview } from './pods-overview';
 import { OverviewItem } from '.';
 import { resourceOverviewPages } from './resource-overview-pages';
 
 const { common } = Kebab.factory;
 const menuActions = [...common];
 
-export const OverviewDetailsResourcesTab: React.SFC<OverviewDetailsResourcesTabProps>= ({item: {buildConfigs, routes, services}}) => (
+export const OverviewDetailsResourcesTab: React.SFC<OverviewDetailsResourcesTabProps> = (
+  {item: { buildConfigs, routes, services, pods, obj }}
+) => (
   <div className="overview__sidebar-pane-body">
+    <PodsOverview pods={pods} obj={obj} />
     <BuildOverview buildConfigs={buildConfigs} />
     <NetworkingOverview services={services} routes={routes} />
   </div>

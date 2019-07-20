@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { LabelSelector } from '@console/internal/module/k8s/label-selector';
+import { K8sResourceKind, LabelSelector } from '@console/internal/module/k8s';
 import { getRouteWebURL } from '@console/internal/components/routes';
 import { KNATIVE_SERVING_LABEL } from '@console/knative-plugin';
 import { TopologyDataResources, ResourceProps, TopologyDataModel } from './topology-types';
@@ -105,6 +105,16 @@ export class TransformTopologyData {
     },
   };
 
+  private transformPods = (pods): K8sResourceKind[] => {
+    return _.map(pods, (pod) =>
+      _.merge(_.pick(pod, 'metadata', 'status', 'spec.containers'), {
+        id: pod.metadata.uid,
+        name: pod.metadata.name,
+        kind: 'Pod',
+      }),
+    );
+  };
+
   private selectorsByService;
 
   private allServices;
@@ -155,11 +165,18 @@ export class TransformTopologyData {
       deploymentConfig.kind = targetDeploymentsKind;
       const dcUID = _.get(deploymentConfig, 'metadata.uid');
 
-      const replicationController = this.getReplicationController(
+      const replicationControllers = this.getReplicationControllers(
         deploymentConfig,
         targetDeployment,
       );
-      const dcPods = this.getPods(replicationController, deploymentConfig);
+      const current = _.head(replicationControllers);
+      const previous = _.nth(replicationControllers, 1);
+      const currentPods = current
+        ? this.transformPods(this.getPods(current, deploymentConfig))
+        : [];
+      const previousPods = previous
+        ? this.transformPods(this.getPods(previous, deploymentConfig))
+        : [];
       const service = this.getService(deploymentConfig);
       const route = this.getRoute(service);
       const buildConfigs = this.getBuildConfigs(deploymentConfig);
@@ -170,7 +187,7 @@ export class TransformTopologyData {
       // list of resources in the
       const nodeResources = [
         deploymentConfig,
-        replicationController,
+        current,
         service,
         route,
         buildConfigs,
@@ -191,9 +208,12 @@ export class TransformTopologyData {
 
         type: 'workload',
         resources: _.map(nodeResources, (resource) => {
-          resource.name = _.get(resource, 'metadata.name');
-          return resource;
+          return {
+            ...resource,
+            name: _.get(resource, 'metadata.name'),
+          };
         }),
+        pods: [...currentPods, ...previousPods],
         data: {
           url: !_.isEmpty(route.spec) ? getRouteWebURL(route) : this.getRouteData(ksroute),
           kind: targetDeploymentsKind,
@@ -201,13 +221,7 @@ export class TransformTopologyData {
           builderImage: deploymentsLabels['app.kubernetes.io/name'],
           isKnativeResource: this.isKnativeServing(deploymentConfig, 'metadata.labels'),
           donutStatus: {
-            pods: _.map(dcPods, (pod) =>
-              _.merge(_.pick(pod, 'metadata', 'status', 'spec.containers'), {
-                id: _.get(pod, 'metadata.uid'),
-                name: _.get(pod, 'metadata.name'),
-                kind: 'Pod',
-              }),
-            ),
+            pods: currentPods,
           },
         },
       };
@@ -448,10 +462,10 @@ export class TransformTopologyData {
    * @param deploymentConfig
    * @param targetDeployment 'deployments' || 'deploymentConfigs'
    */
-  private getReplicationController(
+  private getReplicationControllers(
     deploymentConfig: ResourceProps,
     targetDeployment: string,
-  ): ResourceProps {
+  ): ResourceProps[] {
     // Get the current replication controller or replicaset
     const targetReplicationControllersKind = this.deploymentKindMap[targetDeployment].rcKind;
     const replicationControllers = this.deploymentKindMap[targetDeployment].rController;
@@ -467,9 +481,13 @@ export class TransformTopologyData {
       },
     );
     const sortedControllers = this.sortByDeploymentVersion(rControllers, true);
-    return _.merge(_.head(sortedControllers), {
-      kind: targetReplicationControllersKind,
-    });
+    return _.size(sortedControllers)
+      ? _.map(sortedControllers, (nextController) =>
+          _.merge(nextController, {
+            kind: targetReplicationControllersKind,
+          }),
+        )
+      : ([{ kind: targetReplicationControllersKind }] as ResourceProps[]);
   }
 
   /**

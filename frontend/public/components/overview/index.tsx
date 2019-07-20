@@ -45,7 +45,6 @@ import { OverviewSpecialGroup } from './constants';
 import * as plugins from '../../plugins';
 import { OverviewCRD } from '@console/plugin-sdk';
 
-
 // List of container status waiting reason values that we should call out as errors in project status rows.
 const CONTAINER_WAITING_STATE_ERROR_REASONS = ['CrashLoopBackOff', 'ErrImagePull', 'ImagePullBackOff'];
 
@@ -739,6 +738,7 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
         isRollingOut,
         obj,
         previous,
+        pods: [..._.get(current, 'pods', []), ..._.get(previous, 'pods', [])],
         routes,
         services,
         status,
@@ -786,6 +786,7 @@ class OverviewMainContent_ extends React.Component<OverviewMainContentProps, Ove
         isRollingOut,
         obj,
         previous,
+        pods: [..._.get(current, 'pods', []), ..._.get(previous, 'pods', [])],
         routes,
         services,
         status,
