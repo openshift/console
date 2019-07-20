@@ -26,23 +26,29 @@ const AdvancedSection: React.FC<AdvancedSectionProps> = ({ values }) => {
       visibleItems={visibleItems}
       onVisibleItemChange={handleVisibleItemChange}
     >
-      <ProgressiveListItem name="Route">
+      <ProgressiveListItem name="Routing">
         <RouteSection route={values.route} />
+      </ProgressiveListItem>
+      {/* Hide Build for Deploy Image */}
+      {values.isi ? null : (
+        <ProgressiveListItem name="Build Configuration">
+          <BuildConfigSection namespace={values.project.name} />
+        </ProgressiveListItem>
+      )}
+      {/* Hide Deployment for Serverless */}
+      {values.serverless.trigger ? null : (
+        <ProgressiveListItem name="Deployment Configuration">
+          <DeploymentConfigSection namespace={values.project.name} />
+        </ProgressiveListItem>
+      )}
+      <ProgressiveListItem name="Scaling">
+        {values.serverless.trigger ? <ServerlessScalingSection /> : <ScalingSection />}
+      </ProgressiveListItem>
+      <ProgressiveListItem name="Resource Limits">
+        <ResourceLimitSection />
       </ProgressiveListItem>
       <ProgressiveListItem name="Labels">
         <LabelSection />
-      </ProgressiveListItem>
-      <ProgressiveListItem name="Scale">
-        {values.serverless.trigger ? <ServerlessScalingSection /> : <ScalingSection />}
-      </ProgressiveListItem>
-      <ProgressiveListItem name="Build Config">
-        <BuildConfigSection namespace={values.project.name} />
-      </ProgressiveListItem>
-      <ProgressiveListItem name="Deployment Config">
-        <DeploymentConfigSection namespace={values.project.name} />
-      </ProgressiveListItem>
-      <ProgressiveListItem name="Resource Limit">
-        <ResourceLimitSection />
       </ProgressiveListItem>
     </ProgressiveList>
   );
