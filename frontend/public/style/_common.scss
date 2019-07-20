@@ -1,3 +1,5 @@
+$co-external-link-padding-right: 15px;
+
 .co-m-pane__body {
   margin: $grid-gutter-width 0 0;
   padding: 0 ($grid-gutter-width / 2) $grid-gutter-width;
@@ -280,11 +282,15 @@
 }
 .co-external-link {
   display: inline-block;
-  padding-right: 15px;
+  padding-right: $co-external-link-padding-right;
 }
 // Enable break word within co-m-table-grid
 .co-external-link--block {
   display: block;
+}
+// Add additional padding-right so icon doesn't abut .co-action-divider
+.co-external-link--within-toolbar {
+  padding-right:  ($co-external-link-padding-right + $padding-base-horizontal);
 }
 
 .co-toolbar {

@@ -3,13 +3,18 @@ import * as React from 'react';
 import { Base64 } from 'js-base64';
 import { saveAs } from 'file-saver';
 import { Alert, AlertActionLink } from '@patternfly/react-core';
+import * as _ from 'lodash-es';
 
-import { LoadingInline, LogWindow, TogglePlay } from './';
+import { LoadingInline, LogWindow, TogglePlay, ExternalLink } from './';
 import * as classNames from 'classnames';
 import { modelFor, resourceURL } from '../../module/k8s';
 import { WSFactory } from '../../module/ws-factory';
 import { LineBuffer } from './line-buffer';
 import * as screenfull from 'screenfull';
+import { k8sGet } from '@console/internal/module/k8s';
+import { ConsoleExternalLogLinkModel } from '@console/internal/models';
+import { FLAGS } from '../../const';
+import { connectToFlags } from '../../reducers/features';
 
 export const STREAM_EOF = 'eof';
 export const STREAM_LOADING = 'loading';
@@ -30,7 +35,7 @@ const streamStatusMessages = {
 };
 
 // Component for log stream controls
-const LogControls = ({dropdown, onDownload, toggleFullscreen, isFullscreen, status, toggleStreaming}) => {
+const LogControls = ({dropdown, onDownload, toggleFullscreen, isFullscreen, status, toggleStreaming, resource, containerName, podLogLinks}) => {
   const expandCompressClass = classNames('fa', {
     'fa-expand': !isFullscreen,
     'fa-compress': isFullscreen,
@@ -45,6 +50,32 @@ const LogControls = ({dropdown, onDownload, toggleFullscreen, isFullscreen, stat
       {dropdown && <div className="co-toolbar__item">{dropdown}</div>}
     </div>
     <div className="co-toolbar__group co-toolbar__group--right">
+      {!_.isEmpty(podLogLinks) && _.map(_.sortBy(podLogLinks, 'metadata.name'), link => {
+        const namespace = resource.metadata.namespace;
+        const namespaceFilter = link.spec.namespaceFilter;
+        if (namespaceFilter) {
+          try {
+            const namespaceRegExp = new RegExp(namespaceFilter, 'g');
+            if (namespace.search(namespaceRegExp)) {
+              return null;
+            }
+          } catch (e) {
+            // eslint-disable-next-line no-console
+            console.warn('invalid log link regex', namespaceFilter, e);
+            return null;
+          }
+        }
+        const url = link.spec.hrefTemplate
+          .replace('${resourceName}', encodeURIComponent(resource.metadata.name))
+          .replace('${resourceUID}', encodeURIComponent(resource.metadata.uid))
+          .replace('${containerName}', encodeURIComponent(containerName))
+          .replace('${resourceNamespace}', encodeURIComponent(namespace))
+          .replace('${podLabels}', JSON.stringify(resource.metadata.labels));
+        return <React.Fragment key={link.metadata.uid}>
+          <ExternalLink href={url} text={link.spec.text} additionalClassName="co-external-link--within-toolbar btn btn-link" />
+          <span aria-hidden="true" className="co-action-divider hidden-xs">|</span>
+        </React.Fragment>;
+      })}
       <button className="btn btn-link" onClick={onDownload}>
         <i className="fa fa-download" aria-hidden="true"></i>&nbsp;Download
       </button>
@@ -57,7 +88,7 @@ const LogControls = ({dropdown, onDownload, toggleFullscreen, isFullscreen, stat
 };
 
 // Resource agnostic log component
-export class ResourceLog extends React.Component {
+class ResourceLog_ extends React.Component {
   constructor(props) {
     super(props);
     this._buffer = new LineBuffer(props.bufferSize);
@@ -95,7 +126,16 @@ export class ResourceLog extends React.Component {
     return null;
   }
 
+  fetchLogLinks() {
+    k8sGet(ConsoleExternalLogLinkModel)
+      .then(podLogLinks => this.setState({podLogLinks: podLogLinks.items}))
+      .catch(e => this.setState({error: e}));
+  }
+
   componentDidMount() {
+    if (this.props.flags.CONSOLE_EXTERNAL_LOG_LINK && this.props.resource.kind === 'Pod') {
+      this.fetchLogLinks();
+    }
     this._wsInit(this.props);
     if (screenfull.enabled) {
       screenfull.on('change', () => {
@@ -125,9 +165,9 @@ export class ResourceLog extends React.Component {
 
   // Download currently displayed log content
   _download() {
-    const {resourceName, containerName} = this.props;
+    const {resource, containerName} = this.props;
     const blob = this._buffer.getBlob({type: 'text/plain;charset=utf-8'});
-    let filename = resourceName;
+    let filename = resource.metadata.name;
     if (containerName) {
       filename = `${filename}-${containerName}`;
     }
@@ -215,11 +255,11 @@ export class ResourceLog extends React.Component {
   }
 
   // Initialize websocket connection and wire up handlers
-  _wsInit({kind, namespace, resourceName, containerName, bufferSize}) {
+  _wsInit({resource, containerName, bufferSize}) {
     if ([LOG_SOURCE_RUNNING, LOG_SOURCE_TERMINATED, LOG_SOURCE_RESTARTING].includes(this.state.resourceStatus)) {
       const urlOpts = {
-        ns: namespace,
-        name: resourceName,
+        ns: resource.metadata.namespace,
+        name: resource.metadata.name,
         path: 'log',
         queryParams: {
           container: containerName || '',
@@ -227,7 +267,7 @@ export class ResourceLog extends React.Component {
           tailLines: bufferSize,
         },
       };
-      const watchURL = resourceURL(modelFor(kind), urlOpts);
+      const watchURL = resourceURL(modelFor(resource.kind), urlOpts);
       const wsOpts = {
         host: 'auto',
         path: watchURL,
@@ -243,8 +283,8 @@ export class ResourceLog extends React.Component {
   }
 
   render() {
-    const {dropdown, kind, bufferSize} = this.props;
-    const {error, lines, linesBehind, stale, status, isFullscreen} = this.state;
+    const {resource, containerName, dropdown, bufferSize} = this.props;
+    const {error, lines, linesBehind, stale, status, isFullscreen, podLogLinks} = this.state;
     const bufferFull = lines.length === bufferSize;
 
     return <React.Fragment>
@@ -259,7 +299,7 @@ export class ResourceLog extends React.Component {
         isInline
         className="co-alert"
         variant="info"
-        title={`The logs for this ${kind} may be stale.`}
+        title={`The logs for this ${resource.kind} may be stale.`}
         action={<AlertActionLink onClick={this._restartStream}>Refresh</AlertActionLink>}
       />}
       <div ref={this._resourceLogRef} className={classNames('resource-log', {'resource-log--fullscreen': isFullscreen})}>
@@ -269,7 +309,10 @@ export class ResourceLog extends React.Component {
           onDownload={this._download}
           status={status}
           toggleFullscreen={this._toggleFullscreen}
-          toggleStreaming={this._toggleStreaming} />
+          toggleStreaming={this._toggleStreaming}
+          resource={resource}
+          containerName={containerName}
+          podLogLinks={podLogLinks} />
         <LogWindow
           lines={lines}
           linesBehind={linesBehind}
@@ -282,6 +325,8 @@ export class ResourceLog extends React.Component {
   }
 }
 
+export const ResourceLog = connectToFlags(FLAGS.CONSOLE_EXTERNAL_LOG_LINK)(ResourceLog_);
+
 ResourceLog.defaultProps = {
   bufferSize: 1000,
 };
@@ -290,8 +335,6 @@ ResourceLog.propTypes = {
   bufferSize: PropTypes.number.isRequired,
   containerName: PropTypes.string,
   dropdown: PropTypes.element,
-  kind: PropTypes.string.isRequired,
-  namespace: PropTypes.string.isRequired,
-  resourceName: PropTypes.string.isRequired,
+  resource: PropTypes.object.isRequired,
   resourceStatus: PropTypes.string.isRequired,
 };

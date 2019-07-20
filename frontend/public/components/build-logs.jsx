@@ -53,16 +53,13 @@ export class BuildLogs extends React.Component {
 
   render() {
     const { obj: build } = this.props;
-    const { name, namespace } = build.metadata;
     const isPipeline = _.get(build, 'spec.strategy.type') === BuildStrategyType.JenkinsPipeline;
 
     return <div className="co-m-pane__body">
       { isPipeline
         ? <PipelineLogMessage build={build} />
         : <ResourceLog
-          kind="Build"
-          namespace={namespace}
-          resourceName={name}
+          resource={build}
           resourceStatus={this.state.status}
         />
       }
