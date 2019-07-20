@@ -9,10 +9,10 @@ namespace ExtensionProperties {
     name: string;
     /** The perspective display icon. */
     icon: React.ReactElement;
-    /** The perspective landing page URL. */
-    landingPageURL: string;
-    /** The perspective landing page URL. */
-    k8sLandingPageURL: string;
+    /** The function to get perspective landing page URL. */
+    getLandingPageURL: GetLandingPage;
+    /** The function to get perspective landing page URL for k8s. */
+    getK8sLandingPageURL: GetLandingPage;
     /** Whether the perspective is the default. There can only be one default. */
     default?: boolean;
     /** The function to get redirect URL for import flow. */
@@ -27,3 +27,5 @@ export interface Perspective extends Extension<ExtensionProperties.Perspective> 
 export const isPerspective = (e: Extension<any>): e is Perspective => {
   return e.type === 'Perspective';
 };
+
+export type GetLandingPage = (flags: { [key: string]: boolean }) => string;

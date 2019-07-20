@@ -55,24 +55,22 @@ type DefaultPageProps = {
 
 // The default page component lets us connect to flags without connecting the entire App.
 const DefaultPage_: React.FC<DefaultPageProps> = ({ flags, activePerspective }) => {
-  const openshiftFlag = flags[FLAGS.OPENSHIFT];
-
-  if (flagPending(openshiftFlag)) {
+  if (Object.keys(flags).some(key => flagPending(flags[key]))) {
     return <Loading />;
   }
   // support redirecting to perspective landing page
-  return openshiftFlag ? (
+  return flags[FLAGS.OPENSHIFT] ? (
     <Redirect
       to={
         plugins.registry.getPerspectives().find((p) => p.properties.id === activePerspective)
-          .properties.landingPageURL
+          .properties.getLandingPageURL(flags)
       }
     />
   ) : (
     <Redirect
       to={
         plugins.registry.getPerspectives().find((p) => p.properties.id === activePerspective)
-          .properties.k8sLandingPageURL
+          .properties.getK8sLandingPageURL(flags)
       }
     />
   );
@@ -81,7 +79,7 @@ const DefaultPage_: React.FC<DefaultPageProps> = ({ flags, activePerspective }) 
 const DefaultPage = connect((state: RootState) => ({
   activePerspective: getActivePerspective(state),
 }))(
-  connectToFlags(FLAGS.OPENSHIFT)(DefaultPage_),
+  connectToFlags(FLAGS.OPENSHIFT, FLAGS.CAN_LIST_NS)(DefaultPage_),
 );
 
 const LazyRoute = (props) => (
