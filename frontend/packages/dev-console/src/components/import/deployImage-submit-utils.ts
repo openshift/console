@@ -1,13 +1,11 @@
 import * as _ from 'lodash';
 import {
-  BuildConfigModel,
   DeploymentConfigModel,
   ImageStreamModel,
   ServiceModel,
   RouteModel,
 } from '@console/internal/models';
 import { k8sCreate, K8sResourceKind } from '@console/internal/module/k8s';
-import { SelectorInput } from '@console/internal/components/utils';
 import { createKnativeService } from '@console/knative-plugin/src/utils/create-knative-utils';
 import { makePortName } from '../../utils/imagestream-utils';
 import { getAppLabels, getPodLabels } from '../../utils/resource-label-utils';
@@ -16,9 +14,6 @@ import { DeployImageFormData } from './import-types';
 const annotations = {
   'openshift.io/generated-by': 'OpenShiftWebConsole',
 };
-
-const volumes = [];
-const volumeMounts = [];
 
 const dryRunOpt = { queryParams: { dryRun: 'All' } };
 
@@ -33,7 +28,7 @@ export const createImageStream = (
     isi: { name: isiName, tag },
     labels: userLabels,
   } = formData;
-  const defaultLabels = getAppLabels(name, application, isiName);
+  const defaultLabels = getAppLabels(name, application);
   const imageStream = {
     apiVersion: 'image.openshift.io/v1',
     kind: 'ImageStream',
@@ -52,7 +47,7 @@ export const createImageStream = (
           },
           from: {
             kind: 'DockerImage',
-            name: `${isiName}:${tag}`,
+            name: `${isiName}`,
           },
           importPolicy: {},
         },
@@ -63,56 +58,6 @@ export const createImageStream = (
   return k8sCreate(ImageStreamModel, imageStream, dryRun ? dryRunOpt : {});
 };
 
-export const createBuildConfig = (
-  formData: DeployImageFormData,
-  dryRun: boolean,
-): Promise<K8sResourceKind> => {
-  const {
-    project: { name: namespace },
-    application: { name: application },
-    name,
-    isi: { name: isiName, tag },
-    build: { env, triggers },
-    labels: userLabels,
-  } = formData;
-
-  const defaultLabels = getAppLabels(name, application, isiName);
-  const buildConfig = {
-    apiVersion: 'build.openshift.io/v1',
-    kind: 'BuildConfig',
-    metadata: {
-      name,
-      namespace,
-      labels: { ...defaultLabels, ...userLabels },
-    },
-    spec: {
-      output: {
-        to: {
-          kind: 'ImageStreamTag',
-          name: `${name}:latest`,
-        },
-      },
-      strategy: {
-        type: 'Source',
-        sourceStrategy: {
-          env,
-          from: {
-            kind: 'ImageStreamTag',
-            name: `${isiName}:${tag}`,
-            namespace,
-          },
-        },
-      },
-      triggers: [
-        ...(triggers.image ? [{ type: 'ImageChange', imageChange: {} }] : []),
-        ...(triggers.config ? [{ type: 'ConfigChange' }] : []),
-      ],
-    },
-  };
-
-  return k8sCreate(BuildConfigModel, buildConfig, dryRun ? dryRunOpt : {});
-};
-
 export const createDeploymentConfig = (
   formData: DeployImageFormData,
   dryRun: boolean,
@@ -121,14 +66,29 @@ export const createDeploymentConfig = (
     project: { name: namespace },
     application: { name: application },
     name,
-    searchTerm,
-    isi: { name: isiName, tag, ports },
+    isi: { image, tag, ports },
     deployment: { env, replicas, triggers },
     labels: userLabels,
   } = formData;
 
-  const defaultLabels = getAppLabels(name, application, isiName);
-  const labels = _.isEmpty(userLabels) ? { app: application } : SelectorInput.objectify(userLabels);
+  const defaultLabels = getAppLabels(name, application);
+  const labels = { ...defaultLabels, ...userLabels };
+
+  const volumes = [];
+  const volumeMounts = [];
+  let volumeNumber = 0;
+  _.each(_.get(image, ['dockerImageMetadata', 'Config', 'Volumes']), (value, path) => {
+    volumeNumber++;
+    const volumeName = `${name}-${volumeNumber}`;
+    volumes.push({
+      name: volumeName,
+      emptyDir: {},
+    });
+    volumeMounts.push({
+      name: volumeName,
+      mountPath: path,
+    });
+  });
 
   const deploymentConfig = {
     kind: 'DeploymentConfig',
@@ -136,7 +96,7 @@ export const createDeploymentConfig = (
     metadata: {
       name,
       namespace,
-      labels: { ...defaultLabels, ...userLabels },
+      labels,
       annotations,
     },
     spec: {
@@ -152,7 +112,7 @@ export const createDeploymentConfig = (
           containers: [
             {
               name,
-              image: `${searchTerm}:latest`,
+              image: _.get(image, ['dockerImageMetadata', 'Config', 'Image']),
               ports,
               volumeMounts,
               env,
@@ -169,6 +129,7 @@ export const createDeploymentConfig = (
             from: {
               kind: 'ImageStreamTag',
               name: `${name}:${tag}`,
+              namespace,
             },
           },
         },
@@ -188,11 +149,11 @@ export const createService = (
     project: { name: namespace },
     application: { name: application },
     name,
-    isi: { name: isiName, ports },
+    isi: { ports },
     labels: userLabels,
   } = formData;
 
-  const defaultLabels = getAppLabels(name, application, isiName);
+  const defaultLabels = getAppLabels(name, application);
   const podLabels = getPodLabels(name);
   const service = {
     kind: 'Service',
@@ -226,12 +187,12 @@ export const createRoute = (
     project: { name: namespace },
     application: { name: application },
     name,
-    isi: { name: isiName, ports },
+    isi: { ports },
     labels: userLabels,
   } = formData;
 
   const firstPort = _.head(ports);
-  const defaultLabels = getAppLabels(name, application, isiName);
+  const defaultLabels = getAppLabels(name, application);
   const route = {
     kind: 'Route',
     apiVersion: 'route.openshift.io/v1',
@@ -276,7 +237,6 @@ export const createResources = (
   if (!formData.serverless.trigger) {
     requests.push(createDeploymentConfig(formData, dryRun));
     requests.push(createImageStream(formData, dryRun));
-    requests.push(createBuildConfig(formData, dryRun));
 
     if (!_.isEmpty(ports)) {
       requests.push(createService(formData, dryRun));
