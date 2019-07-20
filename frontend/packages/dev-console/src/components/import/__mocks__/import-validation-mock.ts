@@ -17,6 +17,10 @@ export const mockFormData: GitImportFormData = {
     showGitType: false,
     secret: '',
   },
+  docker: {
+    dockerfilePath: 'Dockerfile',
+    containerPort: 8080,
+  },
   image: {
     selected: 'nodejs',
     recommended: '',
@@ -46,6 +50,7 @@ export const mockFormData: GitImportFormData = {
       image: true,
       config: true,
     },
+    strategy: 'Source',
   },
   deployment: {
     env: [],

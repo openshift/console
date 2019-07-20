@@ -1,5 +1,15 @@
 import { K8sResourceKind, ContainerPort } from '@console/internal/module/k8s';
+import { LazyLoader } from '@console/plugin-sdk/src/typings/types';
 import { NameValuePair, NameValueFromPair } from '../formik-fields/field-types';
+import { NormalizedBuilderImages } from '../../utils/imagestream-utils';
+
+export interface SourceToImageFormProps {
+  builderImages?: NormalizedBuilderImages;
+}
+
+export interface GitImportFormProps {
+  builderImages?: NormalizedBuilderImages;
+}
 
 export interface FirehoseList {
   data?: K8sResourceKind[];
@@ -27,6 +37,7 @@ export interface GitImportFormData {
   project: ProjectData;
   application: ApplicationData;
   git: GitData;
+  docker: DockerData;
   serverless?: ServerlessData;
   image: ImageData;
   route: RouteData;
@@ -70,6 +81,11 @@ export interface GitData {
   secret: string;
 }
 
+export interface DockerData {
+  dockerfilePath?: string;
+  containerPort?: number;
+}
+
 export interface RouteData {
   create: boolean;
   targetPort: string;
@@ -95,6 +111,7 @@ export interface BuildData {
     config: boolean;
   };
   env: (NameValuePair | NameValueFromPair)[];
+  strategy: string;
 }
 
 export interface DeploymentData {
@@ -123,6 +140,19 @@ export enum GitTypes {
   github = 'GitHub',
   gitlab = 'GitLab',
   bitbucket = 'Bitbucket',
+}
+
+export enum ImportTypes {
+  git = 'git',
+  docker = 'docker',
+  s2i = 's2i',
+}
+
+export interface ImportData {
+  type: ImportTypes;
+  title: string;
+  buildStrategy: string;
+  loader: LazyLoader<GitImportFormProps | SourceToImageFormProps>;
 }
 
 export enum TerminationTypes {

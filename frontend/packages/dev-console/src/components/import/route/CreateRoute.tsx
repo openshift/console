@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { FormGroup } from 'patternfly-react';
 import { useFormikContext, FormikValues } from 'formik';
+import * as _ from 'lodash';
 import { InputField, DropdownField } from '../../formik-fields';
 import { makePortName } from '../../../utils/imagestream-utils';
 
@@ -50,15 +51,17 @@ const CreateRoute: React.FC = () => {
         placeholder="/"
         helpText="Path that the router watches to route traffic to the service."
       />
-      <DropdownField
-        name="route.targetPort"
-        label="Target Port"
-        items={portOptions}
-        selectedKey={targetPort}
-        title={portOptions[targetPort] || 'Select target port'}
-        helpText="Target port for traffic."
-        fullWidth
-      />
+      {!_.isEmpty(ports) && (
+        <DropdownField
+          name="route.targetPort"
+          label="Target Port"
+          items={portOptions}
+          selectedKey={targetPort}
+          title={portOptions[targetPort] || 'Select target port'}
+          helpText="Target port for traffic."
+          fullWidth
+        />
+      )}
     </FormGroup>
   );
 };
