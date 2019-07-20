@@ -73,5 +73,39 @@ describe('ValidationUtils', () => {
         );
       });
     });
+
+    it('should throw an error if request is greater than limit', async () => {
+      const mockData = cloneDeep(mockFormData);
+      mockData.limits.cpu.request = 3;
+      mockData.limits.cpu.requestUnit = 'm';
+      mockData.limits.cpu.limit = 2;
+      mockData.limits.cpu.limitUnit = 'm';
+      await validationSchema.isValid(mockData).then((valid) => expect(valid).toEqual(false));
+      await validationSchema.validate(mockData).catch((err) => {
+        expect(err.message).toBe('CPU limit must be greater than or equal to request.');
+      });
+    });
+
+    it('should throw an error if memory request is greater than limit', async () => {
+      const mockData = cloneDeep(mockFormData);
+      mockData.limits.memory.request = 3;
+      mockData.limits.memory.requestUnit = 'Gi';
+      mockData.limits.memory.limit = 3;
+      mockData.limits.memory.limitUnit = 'Mi';
+      await validationSchema.isValid(mockData).then((valid) => expect(valid).toEqual(false));
+      await validationSchema.validate(mockData).catch((err) => {
+        expect(err.message).toBe('Memory limit must be greater than or equal to request.');
+      });
+    });
+
+    it('request should entered individual without validation of limit field', async () => {
+      const mockData = cloneDeep(mockFormData);
+      mockData.limits.cpu.request = 3;
+      mockData.limits.cpu.requestUnit = 'm';
+      await validationSchema.isValid(mockData).then((valid) => expect(valid).toEqual(true));
+      await validationSchema.validate(mockData).catch((err) => {
+        expect(err.message).toBe('');
+      });
+    });
   });
 });

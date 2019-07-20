@@ -33,6 +33,7 @@ export interface GitImportFormData {
   build: BuildData;
   deployment: DeploymentData;
   labels: { [name: string]: string };
+  limits: LimitsData;
 }
 
 export interface ApplicationData {
@@ -139,4 +140,26 @@ export enum InsecureTrafficTypes {
 export enum PassthroughInsecureTrafficTypes {
   none = 'None',
   redirect = 'Redirect',
+}
+
+export interface LimitsData {
+  cpu: ResourceType;
+  memory: ResourceType;
+}
+
+export interface ResourceType {
+  request: number;
+  requestUnit: string;
+  limit: number;
+  limitUnit: string;
+}
+
+export enum CPUUnits {
+  m = 'millicores',
+  '' = 'cores',
+}
+
+export enum MemoryUnits {
+  Mi = 'Mi',
+  Gi = 'Gi',
 }

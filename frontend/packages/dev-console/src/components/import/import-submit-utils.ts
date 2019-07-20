@@ -112,6 +112,7 @@ export const createDeploymentConfig = (
     image: { ports },
     deployment: { env, replicas, triggers },
     labels: userLabels,
+    limits: { cpu, memory },
   } = formData;
 
   const defaultLabels = getAppLabels(name, application, imageStream.metadata.name);
@@ -139,6 +140,20 @@ export const createDeploymentConfig = (
               image: `${name}:latest`,
               ports,
               env,
+              resources: {
+                ...((cpu.limit || memory.limit) && {
+                  limits: {
+                    ...(cpu.limit && { cpu: `${cpu.limit}${cpu.limitUnit}` }),
+                    ...(memory.limit && { memory: `${memory.limit}${memory.limitUnit}` }),
+                  },
+                }),
+                ...((cpu.request || memory.request) && {
+                  requests: {
+                    ...(cpu.request && { cpu: `${cpu.request}${cpu.requestUnit}` }),
+                    ...(memory.request && { memory: `${memory.request}${memory.requestUnit}` }),
+                  },
+                }),
+              },
             },
           ],
         },
