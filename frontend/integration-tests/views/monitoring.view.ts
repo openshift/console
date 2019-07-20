@@ -27,3 +27,8 @@ export const saveButton = $('button[type=submit]');
 
 // Modal
 export const modalConfirmButton = $('#confirm-action');
+
+// YAML form
+export const alertManagerYamlForm = $('.co-alert-manager-yaml__form');
+export const successAlert = $('.pf-m-success');
+export const helpText = $('.co-help-text');

@@ -53,7 +53,7 @@ const rolesStartsWith = ['roles', 'clusterroles'];
 const rolebindingsStartsWith = ['rolebindings', 'clusterrolebindings'];
 const quotaStartsWith = ['resourcequotas', 'clusterresourcequotas'];
 const imagestreamsStartsWith = ['imagestreams', 'imagestreamtags'];
-const monitoringAlertsStartsWith = ['monitoring/alerts', 'monitoring/alertrules'];
+const monitoringAlertsStartsWith = ['monitoring/alerts', 'monitoring/alertrules', 'monitoring/silences', 'monitoring/alertmanageryaml'];
 const clusterSettingsStartsWith = ['settings/cluster', 'settings/idp', 'config.openshift.io'];
 const apiExplorerStartsWith = ['api-explorer', 'api-resource'];
 
@@ -71,8 +71,7 @@ const MonitoringNavSection_ = ({grafanaURL, canAccess, kibanaURL, prometheusURL}
   const showGrafana = canAccess && !!grafanaURL;
   return showAlerts || showSilences || showPrometheus || showGrafana || kibanaURL
     ? <NavSection title="Monitoring">
-      {showAlerts && <HrefLink href="/monitoring/alerts" name="Alerts" startsWith={monitoringAlertsStartsWith} />}
-      {showSilences && <HrefLink href="/monitoring/silences" name="Silences" />}
+      {showAlerts && <HrefLink href="/monitoring/alerts" name="Alerting" startsWith={monitoringAlertsStartsWith} />}
       {showAlerts && <HrefLink href="/monitoring/query-browser" name="Query Browser" />}
       {showPrometheus && <ExternalLink href={prometheusURL} name="Metrics" />}
       {showGrafana && <ExternalLink href={grafanaURL} name="Dashboards" />}

@@ -22,13 +22,15 @@ const ErrorMessage = ({message}) => (
   </Alert>
 );
 const InfoMessage = ({message}) => <Alert isInline className="co-alert" variant="info" title={message} />;
+const SuccessMessage = ({message}) => <Alert isInline className="co-alert" variant="success" title={message} />;
 
 // NOTE: DO NOT use <a> elements within a ButtonBar.
 // They don't support the disabled attribute, and therefore
 // can't be disabled during a pending promise/request.
-/** @type {React.SFC<{children: any, className?: string, errorMessage?: string, infoMessage?: string, inProgress: boolean}}>} */
-export const ButtonBar = ({children, className, errorMessage, infoMessage, inProgress}) => {
+/** @type {React.SFC<{children: any, className?: string, errorMessage?: string, infoMessage?: string, successMessage?: string, inProgress: boolean}}>} */
+export const ButtonBar = ({children, className, errorMessage, infoMessage, successMessage, inProgress}) => {
   return <div className={classNames(className, 'co-m-btn-bar')}>
+    {successMessage && <SuccessMessage message={successMessage} />}
     {errorMessage && <ErrorMessage message={errorMessage} />}
     {injectDisabled(children, inProgress)}
     {inProgress && <LoadingInline />}
@@ -38,6 +40,7 @@ export const ButtonBar = ({children, className, errorMessage, infoMessage, inPro
 
 ButtonBar.propTypes = {
   children: PropTypes.node.isRequired,
+  successMessage: PropTypes.string,
   errorMessage: PropTypes.string,
   infoMessage: PropTypes.string,
   inProgress: PropTypes.bool.isRequired,
