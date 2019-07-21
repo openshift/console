@@ -24,6 +24,7 @@ import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
 
+import { RedExclamationCircleIcon } from '@console/shared';
 import * as UIActions from '../../actions/ui';
 import { connectToURLs, MonitoringRoutes } from '../../reducers/monitoring';
 import { fuzzyCaseInsensitive } from '../factory/table-filters';
@@ -137,13 +138,14 @@ const MetricsDropdown = ({onChange, onLoad}) => {
 
   let title: React.ReactNode = 'Insert Metric at Cursor';
   if (isError) {
-    title = 'Failed to load metrics list';
+    title = <span><RedExclamationCircleIcon /> Failed to load metrics list.</span>;
   } else if (_.isEmpty(items)) {
     title = <LoadingInline />;
   }
 
   return <Dropdown
     autocompleteFilter={fuzzyCaseInsensitive}
+    disabled={isError}
     id="metrics-dropdown"
     items={items}
     menuClassName="query-browser__metrics-dropdown-menu query-browser__metrics-dropdown-menu--insert"
