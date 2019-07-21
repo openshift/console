@@ -93,7 +93,9 @@ const InventoryCard_: React.FC<DashboardItemProps> = ({ watchK8sResource, stopWa
               additionalResources[ar.prop] = _.get(resources, uniqueResource(ar, index).prop);
             });
           }
-          const additionalResourcesLoaded = Object.keys(additionalResources).every(key => _.get(additionalResources[key], 'loaded'));
+          const additionalResourcesLoaded = Object.keys(additionalResources).every(key =>
+            !additionalResources[key] || additionalResources[key].loaded || additionalResources[key].loadError
+          );
           const additionalResourcesData = {};
 
           Object.keys(additionalResources).forEach(key => additionalResourcesData[key] = _.get(additionalResources[key], 'data', []));
