@@ -1,0 +1,15 @@
+@import '~@patternfly/patternfly/sass-utilities/colors';
+
+.ceph-top-consumer-card__dropdown {
+  border-bottom: 1px solid $pf-color-black-300;
+  display: flex;
+  padding-bottom: 0.6em;
+}
+
+.ceph-top-consumer-card__dropdown--left {
+  padding-left: 0.3em;
+}
+
+.ceph-top-consumer-card__dropdown--right {
+  padding-right: 0.3em;
+}

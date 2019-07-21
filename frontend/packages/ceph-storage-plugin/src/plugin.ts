@@ -129,6 +129,17 @@ const plugin: Plugin<ConsumedExtensions> = [
     },
   },
   {
+    type: 'Dashboards/Card',
+    properties: {
+      tab: 'persistent-storage',
+      position: GridPosition.MAIN,
+      loader: () =>
+        import(
+          './components/dashboard-page/storage-dashboard/top-consumers-card/top-consumers-card' /* webpackChunkName: "ceph-storage-top-consumers-card" */
+        ).then((m) => m.default),
+    },
+  },
+  {
     type: 'Dashboards/Overview/Health/Prometheus',
     properties: {
       title: 'Storage',
