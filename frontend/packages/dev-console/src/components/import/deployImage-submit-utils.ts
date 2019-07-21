@@ -222,7 +222,7 @@ export const createRoute = (
   return k8sCreate(RouteModel, route, dryRun ? dryRunOpt : {});
 };
 
-export const createResources = (
+export const createResources = async (
   formData: DeployImageFormData,
   dryRun: boolean = false,
 ): Promise<K8sResourceKind[]> => {
@@ -230,13 +230,14 @@ export const createResources = (
     route: { create: canCreateRoute },
     project: { name: projectName },
     name,
-    isi: { name: isiName, tag, ports },
+    isi: { ports },
+    serverless: { scaling },
   } = formData;
 
   const requests: Promise<K8sResourceKind>[] = [];
+  requests.push(createImageStream(formData, dryRun));
   if (!formData.serverless.trigger) {
     requests.push(createDeploymentConfig(formData, dryRun));
-    requests.push(createImageStream(formData, dryRun));
 
     if (!_.isEmpty(ports)) {
       requests.push(createService(formData, dryRun));
@@ -246,8 +247,14 @@ export const createResources = (
     }
   } else if (!dryRun) {
     // Do not run serverless call during the dry run.
+    const [imageStreamResponse] = await Promise.all(requests);
     requests.push(
-      createKnativeService(name, projectName, formData.serverless.scaling, isiName, tag),
+      createKnativeService(
+        name,
+        projectName,
+        scaling,
+        imageStreamResponse.status.dockerImageRepository,
+      ),
     );
   }
 
