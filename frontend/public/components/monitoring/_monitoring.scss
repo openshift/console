@@ -4,7 +4,7 @@
   padding: 0;
   position: absolute;
   right: 4px;
-  top: 0;
+  top: 2px;
 }
 
 .query-browser__dropdown--subtitle {
@@ -72,6 +72,7 @@
 }
 
 .query-browser__query {
+  line-height: 1;
   margin-left: 10px;
   margin-right: 15px;
   width: 100%;

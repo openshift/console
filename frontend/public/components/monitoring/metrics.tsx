@@ -241,7 +241,7 @@ const QueryInput: React.FC<QueryInputProps> = ({metrics = [], onBlur, onSubmit, 
   return <div className="query-browser__query pf-c-dropdown">
     <textarea
       autoFocus
-      className="form-control query-browser__query-input"
+      className="pf-c-form-control query-browser__query-input"
       onBlur={onTextareaBlur}
       onChange={onChange}
       onKeyDown={onKeyDown}
