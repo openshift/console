@@ -3,7 +3,7 @@ import * as _ from 'lodash-es';
 import * as PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { FieldLevelHelp } from 'patternfly-react';
-import { Alert } from '@patternfly/react-core';
+import { Alert, Button, ActionGroup } from '@patternfly/react-core';
 import * as classNames from 'classnames';
 
 import { k8sPatch, k8sGet, referenceFor, referenceForOwnerRef } from '../module/k8s';
@@ -508,13 +508,14 @@ export const EnvironmentPage = connect(stateToProps)(
       return <div className={classNames({'co-m-pane__body': !currentEnvVars.isCreate})}>
         {containerVars}
         { !currentEnvVars.isCreate && <div className="co-m-pane__body-group">
-          <div className="environment-buttons">
+          <div className="pf-c-form environment-buttons">
             {errorMessage && <Alert isInline className="co-alert" variant="danger" title={errorMessage} />}
             {stale && <Alert isInline className="co-alert" variant="info" title="The information on this page is no longer current.">Click Reload to update and lose edits, or Save Changes to overwrite.</Alert>}
             {success && <Alert isInline className="co-alert" variant="success" title={success} />}
-            {!readOnly &&
-            <button disabled={inProgress} type="submit" className="btn btn-primary" onClick={this.saveChanges}>Save</button>}
-            {!readOnly && <button disabled={inProgress} type="button" className="btn btn-default" onClick={this.reload}>Reload</button>}
+            {!readOnly && <ActionGroup>
+              <Button isDisabled={inProgress} type="submit" variant="primary" onClick={this.saveChanges}>Save</Button>
+              <Button isDisabled={inProgress} type="button" variant="secondary" onClick={this.reload}>Reload</Button>
+            </ActionGroup>}
           </div>
         </div> }
       </div>;

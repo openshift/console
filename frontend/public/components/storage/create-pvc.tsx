@@ -2,6 +2,7 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { Link } from 'react-router-dom';
+import { ActionGroup, Button } from '@patternfly/react-core';
 
 import { k8sCreate, K8sResourceKind, referenceFor } from '../../module/k8s';
 import {
@@ -267,12 +268,20 @@ class CreatePVCPage extends React.Component<CreatePVCPageProps, CreatePVCPageSta
         <form className="co-m-pane__body-group" onSubmit={this.save}>
           <CreatePVCForm onChange={this.onChange} namespace={namespace} />
           <ButtonBar errorMessage={error} inProgress={inProgress}>
-            <button type="submit" className="btn btn-primary" id="save-changes">
-              Create
-            </button>
-            <button type="button" className="btn btn-default" onClick={history.goBack}>
-              Cancel
-            </button>
+            <ActionGroup className="pf-c-form">
+              <Button
+                id="save-changes"
+                type="submit"
+                variant="primary">
+                Create
+              </Button>
+              <Button
+                onClick={history.goBack}
+                type="button"
+                variant="secondary">
+                Cancel
+              </Button>
+            </ActionGroup>
           </ButtonBar>
         </form>
       </div>

@@ -1,12 +1,13 @@
 import * as classNames from 'classnames';
 import * as _ from 'lodash-es';
 import { murmur3 } from 'murmurhash-js';
-import { Alert } from '@patternfly/react-core';
+import { Alert , ActionGroup, Button } from '@patternfly/react-core';
 import { sortable } from '@patternfly/react-table';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
 import { Link, Redirect, Route, Switch } from 'react-router-dom';
+import { PlusCircleIcon } from '@patternfly/react-icons';
 
 import * as k8sActions from '../actions/k8s';
 import * as UIActions from '../actions/ui';
@@ -791,7 +792,7 @@ const silencesRowFilter = {
 };
 
 const CreateButton = () => <Link className="co-m-primary-action" to="/monitoring/silences/~new">
-  <button className="btn btn-primary">Create Silence</button>
+  <Button variant="primary">Create Silence</Button>
 </Link>;
 
 const SilencesPage_ = props => <MonitoringListPage
@@ -944,9 +945,12 @@ class SilenceForm_ extends React.Component<SilenceFormProps, SilenceFormState> {
               </button>
             </div>
           </div>)}
-          <button type="button" className="btn btn-link btn--silence-add-more" onClick={this.addMatcher}>
-            <i className="fa fa-plus-circle" aria-hidden="true" /> Add More
-          </button>
+          <Button
+            onClick={this.addMatcher}
+            type="button"
+            variant="link">
+            <PlusCircleIcon /> Add More
+          </Button>
         </div>
         <div className="co-form-section__separator"></div>
 
@@ -960,8 +964,19 @@ class SilenceForm_ extends React.Component<SilenceFormProps, SilenceFormState> {
         </div>
 
         <ButtonBar errorMessage={error} inProgress={inProgress}>
-          <button type="submit" className="btn btn-primary">{saveButtonText || 'Save'}</button>
-          <Link to={data.id ? `${SilenceResource.plural}/${data.id}` : SilenceResource.plural} className="btn btn-default">Cancel</Link>
+          <ActionGroup className="pf-c-form">
+            <Button
+              type="submit"
+              variant="primary">
+              {saveButtonText || 'Save'}
+            </Button>
+            <Button
+              component="a"
+              href={data.id ? `${SilenceResource.plural}/${data.id}` : SilenceResource.plural}
+              variant="secondary">
+              Cancel
+            </Button>
+          </ActionGroup>
         </ButtonBar>
       </form>
     </div>;

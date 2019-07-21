@@ -4,6 +4,7 @@ import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { Button } from '@patternfly/react-core';
 
 import { KEYBOARD_SHORTCUTS } from '../../const';
 import { filterList } from '../../actions/k8s';
@@ -210,7 +211,7 @@ export const FireMan_ = connect(null, {filterList})(
       if (canCreate) {
         if (createProps.to) {
           createLink = <Link className="co-m-primary-action" {...createProps}>
-            <button className="btn btn-primary" id="yaml-create">{createButtonText}</button>
+            <Button variant="primary" id="yaml-create">{createButtonText}</Button>
           </Link>;
         } else if (createProps.items) {
           createLink = <div className="co-m-primary-action">
@@ -225,7 +226,7 @@ export const FireMan_ = connect(null, {filterList})(
           </div>;
         } else {
           createLink = <div className="co-m-primary-action">
-            <button className="btn btn-primary" id="yaml-create" {...createProps}>{createButtonText}</button>
+            <Button variant="primary" id="yaml-create" {...createProps}>{createButtonText}</Button>
           </div>;
         }
         if (!_.isEmpty(createAccessReview)) {

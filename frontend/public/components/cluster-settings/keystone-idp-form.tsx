@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import * as _ from 'lodash-es';
+import { ActionGroup, Button } from '@patternfly/react-core';
 
 import { SecretModel, ConfigMapModel } from '../../models';
 import { IdentityProvider, k8sCreate, K8sResourceKind, OAuthKind } from '../../module/k8s';
@@ -201,8 +202,19 @@ export class AddKeystonePage extends PromiseComponent<{}, AddKeystonePageState> 
             inputFieldHelpText="PEM-encoded TLS private key for the client certificate. Required if Certificate is specified." />
         </div>
         <ButtonBar errorMessage={this.state.errorMessage} inProgress={this.state.inProgress}>
-          <button type="submit" className="btn btn-primary">Add</button>
-          <button type="button" className="btn btn-default" onClick={history.goBack}>Cancel</button>
+          <ActionGroup className="pf-c-form">
+            <Button
+              type="submit"
+              variant="primary">
+              Add
+            </Button>
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={history.goBack}>
+              Cancel
+            </Button>
+          </ActionGroup>
         </ButtonBar>
       </form>
     </div>;

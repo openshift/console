@@ -2,7 +2,7 @@ import * as React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
 import * as _ from 'lodash';
 import Spy = jasmine.Spy;
-import { Alert } from '@patternfly/react-core';
+import { Alert, Button } from '@patternfly/react-core';
 
 import {
   CreateOperandForm,
@@ -37,7 +37,7 @@ describe(CreateOperand.displayName, () => {
   });
 
   it('renders YAML editor by default', () => {
-    expect(wrapper.find('button').text()).toEqual('Edit Form');
+    expect(wrapper.find(Button).shallow().text()).toEqual('Edit Form');
     expect(wrapper.find(CreateOperandYAML).exists()).toBe(true);
     expect(wrapper.find(CreateOperandForm).exists()).toBe(false);
   });
@@ -51,8 +51,8 @@ describe(CreateOperand.displayName, () => {
   });
 
   it('switches to form component when button is clicked', () => {
-    wrapper.find('button').simulate('click');
-    expect(wrapper.find('button').text()).toEqual('Edit YAML');
+    wrapper.find(Button).shallow().simulate('click');
+    expect(wrapper.find(Button).shallow().text()).toEqual('Edit YAML');
     expect(wrapper.find(CreateOperandYAML).exists()).toBe(false);
     expect(wrapper.find(CreateOperandForm).exists()).toBe(true);
   });
@@ -102,7 +102,7 @@ describe(CreateOperandForm.displayName, () => {
         done();
       });
 
-    wrapper.find('.btn-primary').simulate('click', new Event('click'));
+    wrapper.find({type: 'submit'}).shallow().simulate('click', new Event('click'));
   });
 
   it('displays errors if calling `k8sCreate` fails', (done) => {
@@ -114,7 +114,7 @@ describe(CreateOperandForm.displayName, () => {
         done();
       });
 
-    wrapper.find('.btn-primary').simulate('click', new Event('click'));
+    wrapper.find({type: 'submit'}).shallow().simulate('click', new Event('click'));
   });
 });
 

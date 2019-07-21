@@ -5,7 +5,7 @@ import * as classNames from 'classnames';
 import * as fuzzy from 'fuzzysearch';
 import * as _ from 'lodash-es';
 import { Form, FormControl, FormGroup, HelpBlock } from 'patternfly-react';
-
+import { ActionGroup, Button } from '@patternfly/react-core';
 import {
   AsyncComponent,
   ButtonBar,
@@ -857,21 +857,23 @@ export class StorageClassForm_ extends React.Component<StorageClassFormProps, St
           </div>
 
           <ButtonBar errorMessage={this.state.error ? this.state.error.message : ''} inProgress={this.state.loading}>
-            <button
-              type="submit"
-              className="btn btn-primary"
-              id="save-changes"
-              disabled={!this.state.validationSuccessful}
-              onClick={this.createStorageClass}>
-              Create
-            </button>
-            <button
-              type="button"
-              className="btn btn-default"
-              id="cancel"
-              onClick={() => history.push('/k8s/cluster/storageclasses')}>
-              Cancel
-            </button>
+            <ActionGroup className="pf-c-form">
+              <Button
+                id="save-changes"
+                isDisabled={!this.state.validationSuccessful}
+                onClick={this.createStorageClass}
+                type="submit"
+                variant="primary">
+                Create
+              </Button>
+              <Button
+                id="cancel"
+                onClick={() => history.push('/k8s/cluster/storageclasses')}
+                type="button"
+                variant="secondary">
+                Cancel
+              </Button>
+            </ActionGroup>
           </ButtonBar>
         </Form>
       </div>

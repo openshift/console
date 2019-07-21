@@ -294,6 +294,7 @@ describe('Kubernetes resource CRUD operations', () => {
   describe('Editing labels', () => {
     const name = `${testName}-editlabels`;
     const plural = 'configmaps';
+    const kind = 'ConfigMap';
     const labelValue = 'appblah';
 
     beforeAll(async() => {
@@ -328,14 +329,7 @@ describe('Kubernetes resource CRUD operations', () => {
     });
 
     afterAll(async() => {
-      await browser.get(`${appHost}/k8s/ns/${testName}/${plural}/${name}`);
-      await browser.wait(until.presenceOf(crudView.actionsButton));
-      await crudView.actionsButton.click();
-      await browser.wait(until.presenceOf(crudView.actionsDropdownMenu), 1000);
-      await crudView.actionsDropdownMenu.element(by.partialLinkText('Delete ')).click();
-      await browser.wait(until.presenceOf($('#confirm-action')));
-      await $('.modal-footer #confirm-action').click();
-
+      await crudView.deleteResource(plural, kind, name);
       leakedResources.delete(JSON.stringify({name, plural, namespace: testName}));
     });
   });

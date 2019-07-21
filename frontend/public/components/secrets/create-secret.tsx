@@ -2,6 +2,8 @@ import * as _ from 'lodash-es';
 import * as React from 'react';
 import { Helmet } from 'react-helmet';
 import { Base64 } from 'js-base64';
+import { ActionGroup, Button } from '@patternfly/react-core';
+import { PlusCircleIcon, TimesIcon } from '@patternfly/react-icons';
 
 import { k8sCreate, k8sUpdate, K8sResourceKind, referenceFor } from '../../module/k8s';
 import { ButtonBar, Firehose, history, StatusBox, LoadingBox, Dropdown, resourceObjPath } from '../utils';
@@ -227,17 +229,19 @@ export const withSecretForm = (SubForm, modal?: boolean) => class SecretFormComp
           <p className="co-m-pane__explanation">{this.props.explanation}</p>
           {this.renderBody()}
           <ButtonBar errorMessage={this.state.error} inProgress={this.state.inProgress}>
-            <button
-              type="submit"
-              disabled={this.state.disableForm}
-              className="btn btn-primary"
-              id="save-changes"
-            >
-              {this.props.saveButtonText || 'Create'}
-            </button>
-            <button type="button" className="btn btn-default" id="cancel" onClick={onCancel}>
-              Cancel
-            </button>
+            <ActionGroup className="pf-c-form">
+              <Button
+                type="submit"
+                isDisabled={this.state.disableForm}
+                variant="primary"
+                id="save-changes"
+              >
+                {this.props.saveButtonText || 'Create'}
+              </Button>
+              <Button type="button" variant="secondary" id="cancel" onClick={onCancel}>
+                Cancel
+              </Button>
+            </ActionGroup>
           </ButtonBar>
         </form>
       </div>
@@ -539,9 +543,12 @@ class CreateConfigSubform extends React.Component<CreateConfigSubformProps, Crea
     const secretEntriesList = _.map(this.state.secretEntriesArray, (entryData, index) => {
       return <div className="co-create-secret__form-entry-wrapper" key={entryData.uid}>
         {_.size(this.state.secretEntriesArray) > 1 && <div className="co-create-secret-form__link--remove-entry">
-          <button className="btn btn-link" type="button" onClick={() => this.removeEntry(index)}>
-            <i className="fa fa-minus-circle" aria-hidden="true" /> Remove Credentials
-          </button>
+          <Button
+            onClick={() => this.removeEntry(index)}
+            type="button"
+            variant="link">
+            <TimesIcon /> Remove Credentials
+          </Button>
         </div>}
         <ConfigEntryForm id={index} entry={entryData.entry} onChange={this.onDataChanged} />
       </div>;
@@ -549,9 +556,13 @@ class CreateConfigSubform extends React.Component<CreateConfigSubformProps, Crea
     return (
       <React.Fragment>
         {secretEntriesList}
-        <button className="btn btn-link co-create-secret-form__link--add-entry" type="button" onClick={() => this.addEntry()}>
-          <i className="fa fa-plus-circle" aria-hidden="true" /> Add Credentials
-        </button>
+        <Button
+          className="co-create-secret-form__link--add-entry pf-m-link--align-left"
+          onClick={() => this.addEntry()}
+          type="button"
+          variant="link">
+          <PlusCircleIcon /> Add Credentials
+        </Button>
       </React.Fragment>
     );
   }
@@ -854,9 +865,12 @@ class GenericSecretForm extends React.Component<GenericSecretFormProps, GenericS
     const secretEntriesList = _.map(this.state.secretEntriesArray, (entryData, index) => {
       return <div className="co-create-secret__form-entry-wrapper" key={entryData.uid}>
         {_.size(this.state.secretEntriesArray) > 1 && <div className="co-create-secret-form__link--remove-entry">
-          <button className="btn btn-link" type="button" onClick={() => this.removeEntry(index)}>
-            <i className="fa fa-minus-circle" aria-hidden="true" /> Remove Key/Value
-          </button>
+          <Button
+            type="button"
+            onClick={() => this.removeEntry(index)}
+            variant="link">
+            <TimesIcon /> Remove Key/Value
+          </Button>
         </div>}
         <KeyValueEntryForm id={index} entry={entryData.entry} onChange={this.onDataChanged} />
       </div>;
@@ -864,9 +878,13 @@ class GenericSecretForm extends React.Component<GenericSecretFormProps, GenericS
     return (
       <React.Fragment>
         {secretEntriesList}
-        <button className="btn btn-link co-create-secret-form__link--add-entry" type="button" onClick={() => this.addEntry()}>
+        <Button
+          className="co-create-secret-form__link--add-entry pf-m-link--align-left"
+          onClick={() => this.addEntry()}
+          type="button"
+          variant="link">
           <i className="fa fa-plus-circle" aria-hidden="true" /> Add Key/Value
-        </button>
+        </Button>
       </React.Fragment>
     );
   }

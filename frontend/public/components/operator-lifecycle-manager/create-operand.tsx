@@ -3,9 +3,8 @@ import { connect } from 'react-redux';
 import { match } from 'react-router';
 import { Helmet } from 'react-helmet';
 import { safeDump } from 'js-yaml';
-import { Link } from 'react-router-dom';
 import * as _ from 'lodash-es';
-import { Alert } from '@patternfly/react-core';
+import { Alert, ActionGroup, Button } from '@patternfly/react-core';
 
 import {
   apiVersionForModel,
@@ -284,8 +283,20 @@ export const CreateOperandForm: React.FC<CreateOperandFormProps> = (props) => {
         <Alert isInline className="co-alert co-break-word" variant="danger" title={error} />
       </div>}
       <div className="row">
-        <button className="btn btn-primary" type="submit" onClick={submit}>Create</button>
-        <Link className="btn btn-default" to={`/k8s/ns/${props.namespace}/clusterserviceversions/${props.clusterServiceVersion.metadata.name}/${referenceForModel(props.operandModel)}`}>Cancel</Link>
+        <ActionGroup className="pf-c-form">
+          <Button
+            onClick={submit}
+            type="submit"
+            variant="primary">
+            Create
+          </Button>
+          <Button
+            component="a"
+            href={`/k8s/ns/${props.namespace}/clusterserviceversions/${props.clusterServiceVersion.metadata.name}/${referenceForModel(props.operandModel)}`}
+            variant="secondary">
+            Cancel
+          </Button>
+        </ActionGroup>
       </div>
     </form>
     <div className="col-md-6">
@@ -327,8 +338,8 @@ export const CreateOperand: React.FC<CreateOperandProps> = (props) => {
           {name: `Create ${props.operandModel.label}`, path: window.location.pathname},
         ]} />
         <div style={{marginLeft: 'auto'}}>{
-          method === 'form' && <button className="btn btn-link" onClick={() => setMethod('yaml')}>Edit YAML</button> ||
-          method === 'yaml' && <button className="btn btn-link" onClick={() => setMethod('form')}>Edit Form</button>
+          method === 'form' && <Button variant="link" onClick={() => setMethod('yaml')}>Edit YAML</Button> ||
+          method === 'yaml' && <Button variant="link" onClick={() => setMethod('form')}>Edit Form</Button>
         }</div>
       </div>
       <h1 className="co-create-operand__header-text">{`Create ${props.operandModel.label}`}</h1>
