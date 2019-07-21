@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { DashboardCard, DashboardCardHeader, DashboardCardBody, DashboardCardTitle } from '../../dashboard/dashboard-card';
+import { DashboardCard, DashboardCardHeader, DashboardCardBody, DashboardCardTitle, DashboardCardLink } from '../../dashboard/dashboard-card';
 import { EventsBody } from '../../dashboard/events-card/events-body';
 import { DashboardItemProps, withDashboardResources } from '../with-dashboard-resources';
 import { EventModel } from '../../../models';
@@ -18,6 +18,7 @@ const EventsCard_: React.FC<DashboardItemProps> = ({ watchK8sResource, stopWatch
     <DashboardCard>
       <DashboardCardHeader>
         <DashboardCardTitle>Events</DashboardCardTitle>
+        <DashboardCardLink to="/k8s/all-namespaces/events">View all</DashboardCardLink>
       </DashboardCardHeader>
       <DashboardCardBody>
         <EventsBody events={resources.events as FirehoseResult<EventKind[]>} />

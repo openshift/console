@@ -7,7 +7,7 @@ import {
   DashboardCardBody,
   DashboardCardHeader,
   DashboardCardTitle,
-  DashboardCardSeeAll,
+  DashboardCardPopupLink,
 } from '../../dashboard/dashboard-card';
 import { AlertsBody, AlertItem, getAlerts, HealthBody, HealthItem } from '../../dashboard/health-card';
 import { HealthState } from '../../dashboard/health-card/states';
@@ -129,7 +129,7 @@ const HealthCard_ = connect(mapStateToProps)(({
       <DashboardCardHeader>
         <DashboardCardTitle>Cluster Health</DashboardCardTitle>
         {subsystems.length > 0 && !flagPending(openshiftFlag) && (
-          <DashboardCardSeeAll title="Subsystem health">
+          <DashboardCardPopupLink linkTitle="See all" popupTitle="Subsystem health">
             <HealthItem
               message={getName(openshiftFlag)}
               details={k8sHealthState.message}
@@ -146,7 +146,7 @@ const HealthCard_ = connect(mapStateToProps)(({
                 />
               </div>
             ))}
-          </DashboardCardSeeAll>
+          </DashboardCardPopupLink>
         )}
       </DashboardCardHeader>
       <DashboardCardBody isLoading={flagPending(openshiftFlag)}>
