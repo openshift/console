@@ -18,6 +18,10 @@ export enum StorageDashboardQuery {
   STORAGE_CLASSES_BY_USED = 'STORAGE_CLASSES_BY_USED',
   VMS_BY_REQUESTED = 'VMS_BY_REQUESTED',
   VMS_BY_USED = 'VMS_BY_USED',
+  STORAGE_CEPH_CAPACITY_VMS_QUERY = 'STORAGE_CEPH_CAPACITY_VMS_QUERY',
+  STORAGE_CEPH_CAPACITY_PODS_QUERY = 'STORAGE_CEPH_CAPACITY_PODS_QUERY',
+  STORAGE_CEPH_CAPACITY_REQUESTED_QUERY = 'STORAGE_CEPH_CAPACITY_REQUESTED_QUERY',
+  STORAGE_CEPH_CAPACITY_USED_QUERY = 'STORAGE_CEPH_CAPACITY_USED_QUERY',
 }
 
 export const STORAGE_HEALTH_QUERIES = {
@@ -49,6 +53,14 @@ export const UTILIZATION_QUERY_HOUR_MAP = {
 export const CAPACITY_USAGE_QUERIES = {
   [StorageDashboardQuery.CEPH_CAPACITY_TOTAL]: 'ceph_cluster_total_bytes',
   [StorageDashboardQuery.CEPH_CAPACITY_USED]: 'ceph_cluster_total_used_bytes[60m:5m]',
+  [StorageDashboardQuery.STORAGE_CEPH_CAPACITY_VMS_QUERY]:
+    '(sort(topk(5, sum(avg_over_time(kube_persistentvolumeclaim_resource_requests_storage_bytes[1h]) * on (namespace,persistentvolumeclaim) group_left(pod) kube_pod_spec_volumes_persistentvolumeclaims_info{pod=~"virt-launcher-.*"}) by (pod))))',
+  [StorageDashboardQuery.STORAGE_CEPH_CAPACITY_PODS_QUERY]:
+    '(sort(topk(5, sum(avg_over_time(kube_persistentvolumeclaim_resource_requests_storage_bytes[1h]) * on (namespace,persistentvolumeclaim) group_left(pod) kube_pod_spec_volumes_persistentvolumeclaims_info) by (pod))))',
+  [StorageDashboardQuery.STORAGE_CEPH_CAPACITY_REQUESTED_QUERY]:
+    'sum(max(kube_persistentvolumeclaim_resource_requests_storage_bytes) by (persistentvolumeclaim))',
+  [StorageDashboardQuery.STORAGE_CEPH_CAPACITY_USED_QUERY]:
+    'sum(max(kubelet_volume_stats_used_bytes) by (persistentvolumeclaim))',
 };
 
 export const TOP_CONSUMER_QUERIES = {
