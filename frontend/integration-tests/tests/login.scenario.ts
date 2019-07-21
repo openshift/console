@@ -47,9 +47,8 @@ describe('Auth test', () => {
       expect(sidenavView.navSectionFor('Administration')).not.toContain('Custom Resource Definitions');
     });
 
-    it('does not show admin nav items in Catalog to htpasswd user', async() => {
-      await browser.wait(until.visibilityOf(sidenavView.navSectionFor('Operators')));
-      expect(sidenavView.navSectionFor('Operators')).not.toContain('OperatorHub');
+    it('does not show admin nav items in Operators to htpasswd user', async() => {
+      expect(sidenavView.navSectionFor('Operators').isPresent()).toBe(false);
     });
 
     it('does not show admin nav items in Storage to htpasswd user', async() => {

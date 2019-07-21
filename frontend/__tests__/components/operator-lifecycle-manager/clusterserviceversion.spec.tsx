@@ -28,8 +28,8 @@ import {
   CSVConditionReason,
   copiedLabelKey,
 } from '../../../public/components/operator-lifecycle-manager';
-import { DetailsPage, ListPage, TableInnerProps, Table, TableRow } from '../../../public/components/factory';
-import { testClusterServiceVersion } from '../../../__mocks__/k8sResourcesMocks';
+import { DetailsPage, TableInnerProps, Table, TableRow, MultiListPage } from '../../../public/components/factory';
+import { testClusterServiceVersion, testSubscription } from '../../../__mocks__/k8sResourcesMocks';
 import {
   Timestamp,
   ResourceLink,
@@ -38,6 +38,7 @@ import {
   ScrollToTopOnMount,
   SectionHeading,
   Firehose,
+  resourceObjPath,
 } from '../../../public/components/utils';
 import { referenceForModel } from '../../../public/module/k8s';
 import { ClusterServiceVersionModel, SubscriptionModel, PackageManifestModel } from '../../../public/models';
@@ -54,11 +55,11 @@ describe(ClusterServiceVersionTableRow.displayName, () => {
   let wrapper: ShallowWrapper<ClusterServiceVersionTableRowProps>;
 
   beforeEach(() => {
-    wrapper = shallow(<ClusterServiceVersionTableRow obj={testClusterServiceVersion} index={0} style={{}} />).childAt(0).shallow();
+    wrapper = shallow(<ClusterServiceVersionTableRow obj={testClusterServiceVersion} subscription={testSubscription} index={0} style={{}} />).childAt(0).shallow();
   });
 
   it('renders a component wrapped in an `ErrorBoundary', () => {
-    wrapper = shallow(<ClusterServiceVersionTableRow obj={testClusterServiceVersion} index={0} style={{}} />);
+    wrapper = shallow(<ClusterServiceVersionTableRow obj={testClusterServiceVersion} subscription={testSubscription} index={0} style={{}} />);
 
     expect(wrapper.find(ErrorBoundary).exists()).toBe(true);
   });
@@ -68,13 +69,13 @@ describe(ClusterServiceVersionTableRow.displayName, () => {
 
     expect(col.find(ResourceKebab).props().resource).toEqual(testClusterServiceVersion);
     expect(col.find(ResourceKebab).props().kind).toEqual(referenceForModel(ClusterServiceVersionModel));
-    expect(col.find(ResourceKebab).props().actions.length).toEqual(1);
+    expect(col.find(ResourceKebab).props().actions.length).toEqual(3);
   });
 
   it('renders clickable column for app logo and name', () => {
     const col = wrapper.find(TableRow).childAt(0);
 
-    expect(col.find(Link).props().to).toEqual(`/k8s/ns/${testClusterServiceVersion.metadata.namespace}/${ClusterServiceVersionModel.plural}/${testClusterServiceVersion.metadata.name}`);
+    expect(col.find(Link).props().to).toEqual(resourceObjPath(testClusterServiceVersion, referenceForModel(ClusterServiceVersionModel)));
     expect(col.find(Link).find(ClusterServiceVersionLogo).exists()).toBe(true);
   });
 
@@ -111,7 +112,7 @@ describe(ClusterServiceVersionTableRow.displayName, () => {
     const col = wrapper.find(TableRow).childAt(4);
     testClusterServiceVersion.spec.customresourcedefinitions.owned.forEach((desc, i) => {
       expect(col.find(Link).at(i).props().title).toEqual(desc.name);
-      expect(col.find(Link).at(i).props().to).toEqual(`/k8s/ns/default/clusterserviceversions/testapp/${referenceForProvidedAPI(desc)}`);
+      expect(col.find(Link).at(i).props().to).toEqual(`${resourceObjPath(testClusterServiceVersion, referenceForModel(ClusterServiceVersionModel))}/${referenceForProvidedAPI(desc)}`);
     });
   });
 });
@@ -146,8 +147,8 @@ describe(ClusterServiceVersionLogo.displayName, () => {
 describe(ClusterServiceVersionList.displayName, () => {
 
   it('renders `List` with correct props', () => {
-    const wrapper = shallow(<ClusterServiceVersionList data={[]} loaded={true} />);
-    expect(wrapper.find<TableInnerProps>(Table).props().Row).toEqual(ClusterServiceVersionTableRow);
+    const wrapper = shallow(<ClusterServiceVersionList data={[]} subscription={{loaded: true, data: [testSubscription], loadError: null}} loaded={true} />);
+
     expect(wrapper.find<TableInnerProps>(Table).props().Header).toEqual(ClusterServiceVersionTableHeader);
   });
 });
@@ -159,10 +160,13 @@ describe(ClusterServiceVersionsPage.displayName, () => {
     wrapper = shallow(<ClusterServiceVersionsPage kind={referenceForModel(ClusterServiceVersionModel)} resourceDescriptions={[]} namespace="foo" />);
   });
 
-  it('renders a `ListPage` with correct props', () => {
-    const listPage = wrapper.find(ListPage);
+  it('renders a `MultiListPage` with correct props', () => {
+    const listPage = wrapper.find(MultiListPage);
 
-    expect(listPage.props().kind).toEqual(referenceForModel(ClusterServiceVersionModel));
+    expect(listPage.props().resources).toEqual([
+      {kind: referenceForModel(ClusterServiceVersionModel), namespace: 'foo', prop: 'clusterServiceVersion'},
+      {kind: referenceForModel(SubscriptionModel), prop: 'subscription'},
+    ]);
     expect(listPage.props().ListComponent).toEqual(ClusterServiceVersionList);
     expect(listPage.props().showTitle).toBe(false);
   });

@@ -98,7 +98,12 @@ export type BreadCrumbsProps = {
   breadcrumbs: {name: string, path: string}[];
 };
 
-export type KebabOptionsCreator = (...args: Parameters<KebabAction>) => KebabOption[];
+export type KebabOptionsCreator = (
+  kindObj: K8sKind,
+  data: K8sResourceKind,
+  extraResources?: {[prop: string]: K8sResourceKind | K8sResourceKind[]},
+  customData?: any
+) => KebabOption[];
 
 export type PageHeadingProps = {
   breadcrumbsFor?: (obj: K8sResourceKind) => {name: string, path: string}[];

@@ -52,6 +52,7 @@ export enum InstallPlanApproval {
 
 export enum SubscriptionState {
   SubscriptionStateNone = '',
+  SubscriptionStateFailed = 'UpgradeFailed',
   SubscriptionStateUpgradeAvailable = 'UpgradeAvailable',
   SubscriptionStateUpgradePending = 'UpgradePending',
   SubscriptionStateAtLatest = 'AtLatestKnown',

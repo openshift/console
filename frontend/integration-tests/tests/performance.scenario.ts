@@ -9,7 +9,6 @@ import * as crudView from '../views/crud.view';
 import * as yamlView from '../views/yaml.view';
 
 const chunkedRoutes = OrderedMap<string, {section: string, name: string}>()
-  .set('operator-management', {section: 'Operators', name: 'Operator Management'})
   .set('daemon-set', {section: 'Workloads', name: 'Daemon Sets'})
   .set('deployment', {section: 'Workloads', name: 'Deployments'})
   .set('deployment-config', {section: 'Workloads', name: 'Deployment Configs'})
