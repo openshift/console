@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
-import { testName } from '../../../../integration-tests/protractor.conf';
-import { isLoaded, resourceTitle } from '../../../../integration-tests/views/crud.view';
+import { testName } from '@console/internal-integration-tests/protractor.conf';
+import { isLoaded, resourceTitle } from '@console/internal-integration-tests/views/crud.view';
 import * as vmView from '../views/virtualMachine.view';
 import {
   asyncForEach,

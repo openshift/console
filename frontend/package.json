@@ -5,7 +5,8 @@
   "private": true,
   "workspaces": [
     "packages/*",
-    "public"
+    "public",
+    "integration-tests"
   ],
   "scripts": {
     "clean": "rm -rf ./public/dist",

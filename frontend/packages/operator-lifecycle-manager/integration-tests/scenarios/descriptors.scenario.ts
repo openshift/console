@@ -16,10 +16,10 @@ import {
   checkLogs,
   checkErrors,
   create,
-} from '../../../../integration-tests/protractor.conf';
+} from '@console/internal-integration-tests/protractor.conf';
+import * as crudView from '@console/internal-integration-tests/views/crud.view';
+import * as yamlView from '@console/internal-integration-tests/views/yaml.view';
 import { SpecCapability, StatusCapability } from '../../src/components/descriptors/types';
-import * as crudView from '../../../../integration-tests/views/crud.view';
-import * as yamlView from '../../../../integration-tests/views/yaml.view';
 
 const defaultValueFor = <C extends SpecCapability | StatusCapability>(capability: C) => {
   switch (capability) {

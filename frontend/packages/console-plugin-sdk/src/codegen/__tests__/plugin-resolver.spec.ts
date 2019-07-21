@@ -11,6 +11,7 @@ export const templatePackage: Package = Object.freeze({
   name: 'test',
   version: '0.0.0',
   readme: '',
+  _path: '/test/packages/test-plugin',
   _id: '@',
 });
 
@@ -67,12 +68,14 @@ describe('plugin-resolver', () => {
       const appPackage: Package = {
         ...templatePackage,
         name: '@console/app',
+        _path: '/test/packages/console-app',
       };
 
       const pluginPackage: PluginPackage = {
         ...templatePackage,
         name: '@console/foo-plugin',
         consolePlugin: { entry: 'plugin.ts' },
+        _path: '/test/packages/foo-plugin',
       };
 
       const utilsPackage: Package = {

@@ -8,6 +8,12 @@
     "@console/shared": "0.0.0-fixed"
   },
   "consolePlugin": {
-    "entry": "src/plugin.tsx"
+    "entry": "src/plugin.tsx",
+    "integrationTestSuites": {
+      "demo": [
+        "@console/internal-integration-tests/tests/base.scenario.ts",
+        "./integration-tests/tests/demo.scenario.ts"
+      ]
+    }
   }
 }

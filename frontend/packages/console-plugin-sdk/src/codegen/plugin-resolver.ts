@@ -28,12 +28,13 @@ export const isPluginPackage = (pkg: Package): pkg is PluginPackage => {
  * Read package metadata and detect any plugins.
  */
 export const readPackages = (packageFiles: string[]) => {
-  const pkgList: Package[] = packageFiles.map((file) =>
-    readPkg.sync({
+  const pkgList: Package[] = packageFiles.map((file) => ({
+    ...readPkg.sync({
       cwd: path.dirname(file),
       normalize: true,
     }),
-  );
+    _path: path.dirname(file),
+  }));
 
   return {
     appPackage: pkgList.find((pkg) => pkg.name === consoleAppName),
@@ -88,11 +89,14 @@ export const resolvePluginPackages = (
   return pluginFilter(appPackage, pluginPackages);
 };
 
-export type Package = readPkg.NormalizedPackageJson;
+export type Package = readPkg.NormalizedPackageJson & {
+  _path: string;
+};
 
 export type PluginPackage = Package & {
   consolePlugin: {
     entry: string;
+    integrationTestSuites?: Record<string, string[]>;
   };
 };
 

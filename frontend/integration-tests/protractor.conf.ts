@@ -7,6 +7,7 @@ import * as ConsoleReporter from 'jasmine-console-reporter';
 import * as failFast from 'protractor-fail-fast';
 import { createWriteStream, writeFileSync } from 'fs';
 import { format } from 'util';
+import { getPluginIntegrationTestSuites } from '@console/plugin-sdk/src/codegen';
 
 const tap = !!process.env.TAP;
 
@@ -113,6 +114,7 @@ export const config: Config = {
     return new Promise((resolve) => htmlReporter.afterLaunch(resolve.bind(this, exitCode)));
   },
   suites: {
+    ...getPluginIntegrationTestSuites(),
     filter: suite(['tests/filter.scenario.ts']),
     annotation: suite(['tests/modal-annotations.scenario.ts']),
     environment: suite(['tests/environment.scenario.ts']),
