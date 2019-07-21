@@ -232,6 +232,7 @@ export const createResources = async (
     name,
     isi: { ports },
     serverless: { scaling },
+    limits,
   } = formData;
 
   const requests: Promise<K8sResourceKind>[] = [];
@@ -253,6 +254,7 @@ export const createResources = async (
         name,
         projectName,
         scaling,
+        limits,
         imageStreamResponse.status.dockerImageRepository,
       ),
     );
