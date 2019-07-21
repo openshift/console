@@ -10,14 +10,7 @@ import {
   ChartThemeVariant,
   getCustomTheme,
 } from '@patternfly/react-charts';
-import {
-  Alert,
-  EmptyState,
-  EmptyStateIcon,
-  EmptyStateVariant,
-  TextInput,
-  Title,
-} from '@patternfly/react-core';
+import { Alert, TextInput } from '@patternfly/react-core';
 import { ChartLineIcon } from '@patternfly/react-icons';
 import { connect } from 'react-redux';
 
@@ -28,6 +21,7 @@ import { Dropdown, humanizeNumber, LoadingInline, usePoll, useRefWidth, useSafeF
 import { formatPrometheusDuration, parsePrometheusDuration, twentyFourHourTime } from '../utils/datetime';
 import { withFallback } from '../utils/error-boundary';
 import { PrometheusResponse } from '../graphs';
+import { GraphEmpty } from '../graphs/graph-empty';
 import { getPrometheusURL, PrometheusEndpoint } from '../graphs/helpers';
 import { queryBrowserTheme } from '../graphs/themes';
 
@@ -232,25 +226,20 @@ const QueryBrowser_: React.FC<QueryBrowserProps> = ({
     return error ? <Error error={error} /> : null;
   }
 
-  const isEmptyState = !updating && _.isEmpty(graphData);
-
-  return <div className={classNames('query-browser__wrapper', {'graph-empty-state': isEmptyState})}>
+  return <div className={classNames('query-browser__wrapper', {'graph-empty-state': _.isEmpty(graphData)})}>
     <div className="query-browser__controls query-browser__controls--graph">
       <div className="query-browser__controls--left">
         <SpanControls defaultSpanText={defaultSpanText} onChange={onSpanChange} span={span} />
-        <div className="query-browser__loading">
-          {updating && <LoadingInline />}
-        </div>
+        {updating && <div className="query-browser__loading">
+          <LoadingInline />
+        </div>}
       </div>
       {GraphLink && <div className="query-browser__controls--right">
         <GraphLink />
       </div>}
     </div>
     {error && <Error error={error} />}
-    {isEmptyState && <EmptyState variant={EmptyStateVariant.full}>
-      <EmptyStateIcon size="sm" icon={ChartLineIcon} />
-      <Title size="sm">No Prometheus datapoints found</Title>
-    </EmptyState>}
+    {(_.isEmpty(graphData) && !updating) && <GraphEmpty icon={ChartLineIcon} />}
     {!_.isEmpty(graphData) && <Graph data={graphData} domain={domain} onZoom={onZoom} span={span} />}
   </div>;
 };
