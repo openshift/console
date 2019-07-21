@@ -11,12 +11,11 @@ import { connect } from 'react-redux';
 import { TableData, TableRow } from '@console/internal/components/factory';
 import { Firehose, FirehoseResult, LoadingInline } from '@console/internal/components/utils';
 import { FormGroup, HelpBlock } from 'patternfly-react';
-import { TemplateModel } from '@console/internal/models';
 import { useSafetyFirst } from '@console/internal/components/safety-first';
 import { k8sPatch, K8sResourceKind } from '@console/internal/module/k8s';
 import { getNamespace } from '@console/shared';
-import { isVm } from '../../selectors/selectors';
-import { NetworkAttachmentDefinitionModel, VirtualMachineModel } from '../../models';
+import { getVMLikeModel } from '../../selectors/selectors';
+import { NetworkAttachmentDefinitionModel } from '../../models';
 import { getAddNicPatches } from '../../k8s/patches/vm/vm-nic-patches';
 import { VMKind, VMLikeEntityKind } from '../../types';
 import { getNetworkChoices } from '../../selectors/vm';
@@ -34,12 +33,8 @@ const createNic = ({
 }: {
   vmLikeEntity: VMLikeEntityKind;
   nic: any;
-}): Promise<VMLikeEntityKind> => {
-  const patches = getAddNicPatches(vmLikeEntity, nic);
-  const model = isVm(vmLikeEntity) ? VirtualMachineModel : TemplateModel;
-
-  return k8sPatch(model, vmLikeEntity, patches);
-};
+}): Promise<VMLikeEntityKind> =>
+  k8sPatch(getVMLikeModel(vmLikeEntity), vmLikeEntity, getAddNicPatches(vmLikeEntity, nic));
 
 type NetworkColumn = {
   network: string;

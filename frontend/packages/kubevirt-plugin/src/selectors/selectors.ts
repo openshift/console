@@ -1,21 +1,30 @@
 import * as _ from 'lodash';
-import { TemplateKind } from '@console/internal/module/k8s';
+import { K8sKind, TemplateKind } from '@console/internal/module/k8s';
+import { TemplateModel } from '@console/internal/models';
 import { VirtualMachineModel } from '../models';
-import { VMLikeEntityKind, VMKind } from '../types';
-import { selectVm } from './vm-template/selectors';
+import { VMKind, VMLikeEntityKind } from '../types';
+import { selectVM } from './vm-template/selectors';
+
+export const getAnnotations = (vm: VMLikeEntityKind, defaultValue?: any) =>
+  _.get(vm, 'metadata.annotations', defaultValue);
+export const getDescription = (vm: VMLikeEntityKind) =>
+  _.get(vm, 'metadata.annotations.description');
 
 export const getStorageSize = (value): string => _.get(value, 'requests.storage');
 
-export const isVm = (vmLikeEntity: VMLikeEntityKind): boolean =>
+export const isVM = (vmLikeEntity: VMLikeEntityKind): boolean =>
   vmLikeEntity && vmLikeEntity.kind === VirtualMachineModel.kind;
 
-export const asVm = (vmLikeEntity: VMLikeEntityKind): VMKind => {
+export const getVMLikeModel = (vmLikeEntity: VMLikeEntityKind): K8sKind =>
+  isVM(vmLikeEntity) ? VirtualMachineModel : TemplateModel;
+
+export const asVM = (vmLikeEntity: VMLikeEntityKind): VMKind => {
   if (!vmLikeEntity) {
     return null;
   }
 
-  if (isVm(vmLikeEntity)) {
+  if (isVM(vmLikeEntity)) {
     return vmLikeEntity as VMKind;
   }
-  return selectVm(vmLikeEntity as TemplateKind);
+  return selectVM(vmLikeEntity as TemplateKind);
 };

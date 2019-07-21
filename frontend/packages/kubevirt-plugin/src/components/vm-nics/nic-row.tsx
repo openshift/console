@@ -7,7 +7,7 @@ import { BUS_VIRTIO } from '../../constants/vm';
 import { deleteDeviceModal, DeviceType } from '../modals/delete-device-modal';
 import { VMLikeEntityKind } from '../../types';
 import { VirtualMachineModel } from '../../models';
-import { isVm } from '../../selectors/selectors';
+import { isVM } from '../../selectors/selectors';
 import { dimensifyRow } from '../../utils/table';
 import { nicTableColumnClasses } from './utils';
 import { VMNicRowProps } from './types';
@@ -21,7 +21,7 @@ const menuActionDelete = (vmLikeEntity: VMLikeEntityKind, nic): KebabOption => (
       vmLikeEntity,
     }),
   accessReview: asAccessReview(
-    isVm(vmLikeEntity) ? VirtualMachineModel : TemplateModel,
+    isVM(vmLikeEntity) ? VirtualMachineModel : TemplateModel,
     vmLikeEntity,
     'patch',
   ),

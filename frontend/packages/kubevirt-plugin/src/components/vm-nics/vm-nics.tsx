@@ -7,7 +7,7 @@ import { useSafetyFirst } from '@console/internal/components/safety-first';
 import { sortable } from '@patternfly/react-table';
 import { createBasicLookup } from '@console/shared';
 import { VMLikeEntityKind } from '../../types';
-import { asVm } from '../../selectors/selectors';
+import { asVM } from '../../selectors/selectors';
 import { getInterfaces, getNetworks, getVmPreferableNicBus } from '../../selectors/vm';
 import { dimensifyHeader } from '../../utils/table';
 import { VMLikeEntityTabProps } from '../vms/types';
@@ -28,7 +28,7 @@ export const VMNicRow: React.FC<VMNicRowProps> = (props) => {
 };
 
 const getStoragesData = (vmLikeEntity: VMLikeEntityKind, addNewNic: boolean): NetworkBundle[] => {
-  const vm = asVm(vmLikeEntity);
+  const vm = asVM(vmLikeEntity);
   const networkLookup = createBasicLookup(getNetworks(vm), (network) => _.get(network, 'name'));
 
   const nicsWithType = getInterfaces(vm).map((nic) => ({
@@ -48,7 +48,7 @@ export const VMNics: React.FC<VMLikeEntityTabProps> = ({ obj: vmLikeEntity }) =>
   const [isCreating, setIsCreating] = useSafetyFirst(false);
   const [createError, setCreateError] = useSafetyFirst(null);
 
-  const vm = asVm(vmLikeEntity);
+  const vm = asVM(vmLikeEntity);
   const preferableNicBus = getVmPreferableNicBus(vm);
 
   return (

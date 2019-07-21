@@ -12,7 +12,7 @@ import { K8sResourceKind } from '@console/internal/module/k8s';
 import { sortable } from '@patternfly/react-table';
 import { DataVolumeModel } from '../../models';
 import { VMLikeEntityKind } from '../../types';
-import { asVm } from '../../selectors/selectors';
+import { asVM } from '../../selectors/selectors';
 import {
   getDataVolumeTemplates,
   getDisks,
@@ -53,7 +53,7 @@ const getStoragesData = (
   },
   addNewDisk: boolean,
 ): StorageBundle[] => {
-  const vm = asVm(vmLikeEntity);
+  const vm = asVM(vmLikeEntity);
 
   const pvcLookup = createLookup(pvcs, getName);
   const datavolumeLookup = createLookup(datavolumes, getName);
@@ -109,7 +109,7 @@ export const VMDisks: React.FC<VMDisksProps> = ({ vmLikeEntity, pvcs, datavolume
   const [isCreating, setIsCreating] = useSafetyFirst(false);
   const [createError, setCreateError] = useSafetyFirst(null);
 
-  const vm = asVm(vmLikeEntity);
+  const vm = asVM(vmLikeEntity);
 
   return (
     <div className="co-m-list">

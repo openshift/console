@@ -13,7 +13,7 @@ import { deleteDeviceModal, DeviceType } from '../modals/delete-device-modal';
 import { VMLikeEntityKind } from '../../types';
 import { getDiskBus } from '../../selectors/vm';
 import { VirtualMachineModel } from '../../models';
-import { isVm } from '../../selectors/selectors';
+import { isVM } from '../../selectors/selectors';
 import { VMDiskRowProps } from './types';
 
 const menuActionDelete = (vmLikeEntity: VMLikeEntityKind, disk): KebabOption => ({
@@ -25,7 +25,7 @@ const menuActionDelete = (vmLikeEntity: VMLikeEntityKind, disk): KebabOption => 
       vmLikeEntity,
     }),
   accessReview: asAccessReview(
-    isVm(vmLikeEntity) ? VirtualMachineModel : TemplateModel,
+    isVM(vmLikeEntity) ? VirtualMachineModel : TemplateModel,
     vmLikeEntity,
     'patch',
   ),
