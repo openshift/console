@@ -5,7 +5,8 @@ import { connect } from 'react-redux';
 import * as classNames from 'classnames';
 import { sortable } from '@patternfly/react-table';
 import { Helmet } from 'react-helmet';
-import { Alert } from '@patternfly/react-core';
+import { AddCircleOIcon } from '@patternfly/react-icons';
+import { Alert, Card, CardBody, CardFooter, CardHeader } from '@patternfly/react-core';
 
 import { SuccessStatus, ErrorStatus } from '@console/shared';
 import { ProvidedAPIsPage, ProvidedAPIPage } from './operand';
@@ -159,21 +160,19 @@ export const CRDCard: React.SFC<CRDCardProps> = (props) => {
   const {csv, crd, canCreate} = props;
   const createRoute = () => `/k8s/ns/${csv.metadata.namespace}/${ClusterServiceVersionModel.plural}/${csv.metadata.name}/${referenceForProvidedAPI(crd)}/~new`;
 
-  return <div className="co-crd-card">
-    <div className="co-crd-card__title">
-      <div style={{display: 'flex', alignItems: 'center', fontWeight: 600}}>
-        <ResourceLink kind={referenceForProvidedAPI(crd)} title={crd.name} linkTo={false} displayName={crd.displayName} />
-      </div>
-    </div>
-    <div className="co-crd-card__body" style={{margin: '0'}}>
+  return <Card>
+    <CardHeader>
+      <ResourceLink kind={referenceForProvidedAPI(crd)} title={crd.name} linkTo={false} displayName={crd.displayName} />
+    </CardHeader>
+    <CardBody>
       <p>{crd.description}</p>
-    </div>
-    { canCreate && <div className="co-crd-card__footer">
-      <Link className="co-crd-card__link" to={createRoute()}>
-        <span className="pficon pficon-add-circle-o" aria-hidden="true"></span> Create New
+    </CardBody>
+    { canCreate && <CardFooter>
+      <Link to={createRoute()}>
+        <AddCircleOIcon /> Create Instance
       </Link>
-    </div> }
-  </div>;
+    </CardFooter> }
+  </Card>;
 };
 
 const crdCardRowStateToProps = ({k8s}, {crdDescs}) => {
@@ -201,6 +200,13 @@ export const ClusterServiceVersionDetails: React.SFC<ClusterServiceVersionDetail
     <div className="co-m-pane__body">
       <div className="co-m-pane__body-group">
         <div className="row">
+          <div className="col-sm-9">
+            {status.phase === ClusterServiceVersionPhase.CSVPhaseFailed && <Alert isInline className="co-alert" variant="danger" title={`${status.phase}: ${status.message}`} />}
+            <SectionHeading text="Provided APIs" />
+            <CRDCardRow csv={props.obj} crdDescs={providedAPIsFor(props.obj)} />
+            <SectionHeading text="Description" />
+            <MarkdownView content={spec.description || 'Not available'} />
+          </div>
           <div className="col-sm-3">
             <dl className="co-clusterserviceversion-details__field">
               <dt>Provider</dt>
@@ -224,13 +230,6 @@ export const ClusterServiceVersionDetails: React.SFC<ClusterServiceVersionDetail
                 </dd>)
                 : <dd>Not available</dd> }
             </dl>
-          </div>
-          <div className="col-sm-9">
-            {status.phase === ClusterServiceVersionPhase.CSVPhaseFailed && <Alert isInline className="co-alert" variant="danger" title={`${status.phase}: ${status.message}`} />}
-            <SectionHeading text="Provided APIs" />
-            <CRDCardRow csv={props.obj} crdDescs={providedAPIsFor(props.obj)} />
-            <SectionHeading text="Description" />
-            <MarkdownView content={spec.description || 'Not available'} />
           </div>
         </div>
       </div>
