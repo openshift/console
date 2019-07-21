@@ -76,6 +76,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       tab: 'persistent-storage',
       position: GridPosition.MAIN,
+      span: 6,
       loader: () =>
         import(
           './components/dashboard-page/storage-dashboard/data-resiliency/data-resiliency' /* webpackChunkName: "ceph-storage-data-resiliency-card" */
@@ -87,6 +88,7 @@ const plugin: Plugin<ConsumedExtensions> = [
     properties: {
       tab: 'persistent-storage',
       position: GridPosition.MAIN,
+      span: 6,
       loader: () =>
         import(
           './components/dashboard-page/storage-dashboard/capacity-card/capacity-card' /* webpackChunkName: "ceph-storage-capacity-card" */
