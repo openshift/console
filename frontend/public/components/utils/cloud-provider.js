@@ -10,4 +10,3 @@ export const cloudProviderNames = (providerNames) => {
   return '';
 
 };
-

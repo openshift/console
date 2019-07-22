@@ -33,4 +33,3 @@ export const serviceCatalogStatus = (obj: K8sResourceKind) => {
 
   return 'Not Ready';
 };
-

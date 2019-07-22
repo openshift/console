@@ -187,4 +187,3 @@ type ContainerLinkProps = {
   pod: PodKind;
   name: string;
 };
-
