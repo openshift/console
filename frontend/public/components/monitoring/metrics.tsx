@@ -366,22 +366,22 @@ const getParamsQueries = () => {
     const query = searchParams[`query${i}`];
     queries.push({disabledSeries: [], enabled: true, expanded: true, query, text: query});
   }
-  return queries;
+  return _.isEmpty(queries) ? undefined : queries;
 };
 
 export const QueryBrowserPage = withFallback(() => {
+  // `text` is the current string in the text input and `query` is the value displayed in the graph
+  const defaultQueryObj = {disabledSeries: [], enabled: true, expanded: true, query: '', text: ''};
+
   const [focusedQuery, setFocusedQuery] = React.useState();
   const [metrics, setMetrics] = React.useState();
-  const [queries, setQueries] = React.useState(getParamsQueries());
+  const [queries, setQueries] = React.useState(getParamsQueries() || [defaultQueryObj]);
 
   const updateURLParams = () => {
     const newParams = {};
     _.each(queries, (q, i) => newParams[`query${i}`] = q.text);
     setAllQueryArguments(newParams);
   };
-
-  // `text` is the current string in the text input and `query` is the value displayed in the graph
-  const defaultQueryObj = {disabledSeries: [], enabled: true, expanded: true, query: '', text: ''};
 
   const updateQuery = (i: number, patch: PrometheusQuery) => {
     setQueries(_.map(queries, (q, j) => i === j ? Object.assign({}, q, patch) : q));
