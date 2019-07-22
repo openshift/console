@@ -211,17 +211,7 @@ DeploymentConfigTableHeader.displayName = 'DeploymentConfigTableHeader';
 export const DeploymentConfigsList: React.FC = props => <Table {...props} aria-label="Deployment Configs" Header={DeploymentConfigTableHeader} Row={DeploymentConfigTableRow} virtualize />;
 DeploymentConfigsList.displayName = 'DeploymentConfigsList';
 
-export const DeploymentConfigsPage: React.FC<DeploymentConfigsPageProps> = props => {
-  const createItems = {
-    yaml: 'From YAML',
-  };
-
-  const createProps = {
-    items: createItems,
-    createLink: () => `/k8s/ns/${props.namespace || 'default'}/deploymentconfigs/~new`,
-  };
-  return <ListPage {...props} title="Deployment Configs" kind={DeploymentConfigsReference} ListComponent={DeploymentConfigsList} canCreate={true} createButtonText="Create" createProps={createProps} filterLabel={props.filterLabel} />;
-};
+export const DeploymentConfigsPage: React.FC<DeploymentConfigsPageProps> = props => <ListPage kind={DeploymentConfigsReference} ListComponent={DeploymentConfigsList} canCreate={true} {...props} />;
 DeploymentConfigsPage.displayName = 'DeploymentConfigsListPage';
 
 type DeploymentConfigsPageProps = {
