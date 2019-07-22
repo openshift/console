@@ -37,8 +37,8 @@ describe('CRD extensions', () => {
       await crudView.isLoaded();
       await crudView.createYAMLButton.click();
       await yamlView.isLoaded();
-      await yamlView.setContent(safeDump(crdObj));
-      expect(yamlView.editorContent.getText()).toContain(`kind: ${crd}`);
+      await yamlView.setEditorContent(safeDump(crdObj));
+      expect(yamlView.getEditorContent()).toContain(`kind: ${crd}`);
     });
 
     it(`creates a new ${crd} instance`, async() => {
@@ -95,10 +95,10 @@ describe('CRD extensions', () => {
         await crudView.isLoaded();
         await crudView.createYAMLButton.click();
         await yamlView.isLoaded();
-        const content = await yamlView.editorContent.getText();
+        const content = await yamlView.getEditorContent();
         const newContent = _.defaultsDeep({}, {metadata: {name: instanceName}, spec: {location: menuLinkLocation, text: menuLinkText}}, safeLoad(content));
-        await yamlView.setContent(safeDump(newContent));
-        expect(yamlView.editorContent.getText()).toContain(`kind: ${crd}`);
+        await yamlView.setEditorContent(safeDump(newContent));
+        expect(yamlView.getEditorContent()).toContain(`kind: ${crd}`);
       });
 
       it(`creates a new ${crd} ${dropdownMenuName} instance`, async() => {
@@ -146,10 +146,10 @@ describe('CRD extensions', () => {
       await crudView.isLoaded();
       await crudView.createYAMLButton.click();
       await yamlView.isLoaded();
-      const content = await yamlView.editorContent.getText();
+      const content = await yamlView.getEditorContent();
       const newContent = _.defaultsDeep({}, {metadata: {name}, spec: {location, text}}, safeLoad(content));
-      await yamlView.setContent(safeDump(newContent));
-      expect(yamlView.editorContent.getText()).toContain(`kind: ${crd}`);
+      await yamlView.setEditorContent(safeDump(newContent));
+      expect(yamlView.getEditorContent()).toContain(`kind: ${crd}`);
     });
 
     it(`creates a new ${crd} instance`, async() => {
@@ -173,10 +173,10 @@ describe('CRD extensions', () => {
       text = `${name} notification that appears ${location}`;
       await browser.getCurrentUrl().then((url) => browser.get(`${url}/yaml`));
       await yamlView.isLoaded();
-      const content = await yamlView.editorContent.getText();
+      const content = await yamlView.getEditorContent();
       const newContent = _.defaultsDeep({}, {spec: {location, text}}, safeLoad(content));
-      await yamlView.setContent(safeDump(newContent));
-      expect(yamlView.editorContent.getText()).toContain(`location: ${location}`);
+      await yamlView.setEditorContent(safeDump(newContent));
+      expect(yamlView.getEditorContent()).toContain(`location: ${location}`);
       await yamlView.saveButton.click();
       await browser.wait(until.visibilityOf(crudView.successMessage), 1000);
       expect(crudView.successMessage.isPresent()).toBe(true);

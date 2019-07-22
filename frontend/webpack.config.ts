@@ -8,13 +8,15 @@ import * as VirtualModulesPlugin from 'webpack-virtual-modules';
 
 import { resolvePluginPackages, getActivePluginsModule } from '@console/plugin-sdk/src/codegen';
 
+const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
+
 const NODE_ENV = process.env.NODE_ENV;
 
 /* Helpers */
 const extractCSS = new MiniCssExtractPlugin({filename: 'app-bundle.css'});
 
 const config: webpack.Configuration = {
-  entry: ['./polyfills.js', '@console/app'],
+  entry: ['./polyfills.js', '@console/app', 'monaco-editor-core/esm/vs/editor/editor.worker.js'],
   output: {
     path: path.resolve(__dirname, 'public/dist'),
     publicPath: 'static/',
@@ -26,6 +28,11 @@ const config: webpack.Configuration = {
   },
   node: {
     fs: 'empty',
+    // eslint-disable-next-line camelcase
+    child_process: 'empty',
+    net: 'empty',
+    crypto: 'empty',
+    module: 'empty',
   },
   module: {
     rules: [
@@ -85,6 +92,11 @@ const config: webpack.Configuration = {
         ],
       },
       {
+        test: /\.css$/,
+        include: path.resolve(__dirname, './node_modules/monaco-editor'),
+        use: ['style-loader', 'css-loader'],
+      },
+      {
         test: /\.(png|jpg|jpeg|gif|svg|woff2?|ttf|eot|otf)(\?.*$|$)/,
         loader: 'file-loader',
         options: {
@@ -113,6 +125,9 @@ const config: webpack.Configuration = {
       template: './public/index.html',
       production: NODE_ENV === 'production',
       chunksSortMode: 'none',
+    }),
+    new MonacoWebpackPlugin({
+      languages: ['yaml'],
     }),
     extractCSS,
   ],

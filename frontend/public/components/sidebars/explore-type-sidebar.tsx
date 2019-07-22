@@ -117,7 +117,7 @@ export const ExploreType: React.FC<ExploreTypeProps> = (props) => {
 };
 
 export const ExploreTypeSidebar: React.FC<ExploreTypeSidebarProps> = ({height, ...exploreTypeProps}) => (
-  <ResourceSidebarWrapper label={exploreTypeProps.kindObj.kind} linkLabel="View Schema" style={{height}}>
+  <ResourceSidebarWrapper label={exploreTypeProps.kindObj.kind} linkLabel="View Schema" style={{height}} startHidden>
     <ExploreType {...exploreTypeProps} scrollTop={sidebarScrollTop} />
   </ResourceSidebarWrapper>
 );
