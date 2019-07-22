@@ -191,7 +191,7 @@ export const validationSchema = yup.object().shape({
   }),
 });
 
-export const detectGitType = (url: string): string => {
+export const detectGitType = (url: string): string | undefined => {
   if (!urlRegex.test(url)) {
     return undefined;
   }
@@ -205,4 +205,12 @@ export const detectGitType = (url: string): string => {
     return 'gitlab';
   }
   return '';
+};
+
+export const detectGitRepoName = (url: string): string | undefined => {
+  if (!urlRegex.test(url)) {
+    return undefined;
+  }
+
+  return url.split('/').pop();
 };

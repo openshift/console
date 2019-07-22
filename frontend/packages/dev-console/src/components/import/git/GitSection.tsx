@@ -3,7 +3,7 @@ import { useFormikContext, FormikValues } from 'formik';
 import { ExpandCollapse } from '@console/internal/components/utils';
 import { InputField, DropdownField } from '../../formik-fields';
 import { GitTypes, ProjectData } from '../import-types';
-import { detectGitType } from '../import-validation-utils';
+import { detectGitType, detectGitRepoName } from '../import-validation-utils';
 import { getSampleRepo, getSampleRef, getSampleContextDir } from '../../../utils/imagestream-utils';
 import FormSection from '../section/FormSection';
 import SampleRepo from './SampleRepo';
@@ -21,13 +21,15 @@ const GitSection: React.FC<GitSectionProps> = ({ project, showSample }) => {
 
   const handleGitUrlBlur: React.ReactEventHandler<HTMLInputElement> = React.useCallback(() => {
     const gitType = detectGitType(values.git.url);
+    const gitRepoName = detectGitRepoName(values.git.url);
     const showGitType = gitType === '';
     setFieldValue('git.type', gitType);
     setFieldValue('git.showGitType', showGitType);
+    gitRepoName && !values.name && setFieldValue('name', gitRepoName);
     setFieldTouched('git.url', true);
     setFieldTouched('git.type', showGitType);
     validateForm();
-  }, [setFieldTouched, setFieldValue, validateForm, values.git.url]);
+  }, [setFieldTouched, setFieldValue, validateForm, values.git.url, values.name]);
 
   const fillSample: React.ReactEventHandler<HTMLButtonElement> = React.useCallback(() => {
     const url = sampleRepo;
