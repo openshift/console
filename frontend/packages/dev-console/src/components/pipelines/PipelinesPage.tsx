@@ -2,9 +2,9 @@ import * as React from 'react';
 import { FireMan_ as FireMan } from '@console/internal/components/factory';
 import { Firehose } from '@console/internal/components/utils';
 import { PipelineModel } from '../../models';
+import DefaultPage from '../DefaultPage';
 import { filters } from './PipelineAugmentRuns';
 import PipelineAugmentRunsWrapper from './PipelineAugmentRunsWrapper';
-import DefaultPage from '../DefaultPage';
 
 interface PipelinesPageProps {
   namespace: string;
